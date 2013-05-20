@@ -1,85 +1,110 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [f2fs-dev] [PATCH 03/15] f2fs: fix por_doing variable coverage
-Date: Mon, 20 May 2013 12:32:17 +0900
-Message-ID: <1369020743-18520-3-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 07/15] f2fs: change get_new_data_page to pass a locked node page
+Date: Mon, 20 May 2013 12:32:21 +0900
+Message-ID: <1369020743-18520-7-git-send-email-jaegeuk.kim@samsung.com>
 References: <1369020743-18520-1-git-send-email-jaegeuk.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1UeGr4-0007aP-9Q
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 May 2013 03:33:46 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1UeGr3-000513-7K for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 May 2013 03:33:46 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MN2000TKV7K42I0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 May 2013 12:33:34 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1369020743-18520-1-git-send-email-jaegeuk.kim@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-The reason of using sbi->por_doing is to alleviate data writes during the
-recovery.
-The find_fsync_dnodes() produces some dirty dentry pages, so we should
-cover it too with sbi->por_doing.
+This patch is for passing a locked node page to get_dnode_of_data.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/recovery.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/data.c | 12 +++++++-----
+ fs/f2fs/dir.c  |  4 ++--
+ fs/f2fs/f2fs.h |  2 +-
+ fs/f2fs/file.c |  2 +-
+ 4 files changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 993b601..f77aedd 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -377,6 +377,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- 	INIT_LIST_HEAD(&inode_list);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 05fb5c6..af74549 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -280,8 +280,8 @@ repeat:
+  * Also, caller should grab and release a mutex by calling mutex_lock_op() and
+  * mutex_unlock_op().
+  */
+-struct page *get_new_data_page(struct inode *inode, pgoff_t index,
+-						bool new_i_size)
++struct page *get_new_data_page(struct inode *inode,
++		struct page *npage, pgoff_t index, bool new_i_size)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+ 	struct address_space *mapping = inode->i_mapping;
+@@ -289,18 +289,20 @@ struct page *get_new_data_page(struct inode *inode, pgoff_t index,
+ 	struct dnode_of_data dn;
+ 	int err;
  
- 	/* step #1: find fsynced inode numbers */
-+	sbi->por_doing = 1;
- 	err = find_fsync_dnodes(sbi, &inode_list);
+-	set_new_dnode(&dn, inode, NULL, NULL, 0);
++	set_new_dnode(&dn, inode, npage, npage, 0);
+ 	err = get_dnode_of_data(&dn, index, ALLOC_NODE);
  	if (err)
- 		goto out;
-@@ -385,13 +386,12 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- 		goto out;
+ 		return ERR_PTR(err);
  
- 	/* step #2: recover data */
--	sbi->por_doing = 1;
- 	err = recover_data(sbi, &inode_list, CURSEG_WARM_NODE);
--	sbi->por_doing = 0;
- 	BUG_ON(!list_empty(&inode_list));
- out:
- 	destroy_fsync_dnodes(sbi, &inode_list);
- 	kmem_cache_destroy(fsync_entry_slab);
-+	sbi->por_doing = 0;
- 	write_checkpoint(sbi, false);
- 	return err;
- }
+ 	if (dn.data_blkaddr == NULL_ADDR) {
+ 		if (reserve_new_block(&dn)) {
+-			f2fs_put_dnode(&dn);
++			if (!npage)
++				f2fs_put_dnode(&dn);
+ 			return ERR_PTR(-ENOSPC);
+ 		}
+ 	}
+-	f2fs_put_dnode(&dn);
++	if (!npage)
++		f2fs_put_dnode(&dn);
+ repeat:
+ 	page = grab_cache_page(mapping, index);
+ 	if (!page)
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 1ac6b93..7db6e58 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -287,7 +287,7 @@ static int make_empty_dir(struct inode *inode, struct inode *parent)
+ 	struct f2fs_dir_entry *de;
+ 	void *kaddr;
+ 
+-	dentry_page = get_new_data_page(inode, 0, true);
++	dentry_page = get_new_data_page(inode, NULL, 0, true);
+ 	if (IS_ERR(dentry_page))
+ 		return PTR_ERR(dentry_page);
+ 
+@@ -448,7 +448,7 @@ start:
+ 	bidx = dir_block_index(level, (le32_to_cpu(dentry_hash) % nbucket));
+ 
+ 	for (block = bidx; block <= (bidx + nblock - 1); block++) {
+-		dentry_page = get_new_data_page(dir, block, true);
++		dentry_page = get_new_data_page(dir, NULL, block, true);
+ 		if (IS_ERR(dentry_page))
+ 			return PTR_ERR(dentry_page);
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ef6cac8..cbae2b6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1027,7 +1027,7 @@ int reserve_new_block(struct dnode_of_data *);
+ void update_extent_cache(block_t, struct dnode_of_data *);
+ struct page *find_data_page(struct inode *, pgoff_t, bool);
+ struct page *get_lock_data_page(struct inode *, pgoff_t);
+-struct page *get_new_data_page(struct inode *, pgoff_t, bool);
++struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
+ int f2fs_readpage(struct f2fs_sb_info *, struct page *, block_t, int);
+ int do_write_data_page(struct page *);
+ 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 1cae864..b8e34db 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -387,7 +387,7 @@ static void fill_zero(struct inode *inode, pgoff_t index,
+ 	f2fs_balance_fs(sbi);
+ 
+ 	ilock = mutex_lock_op(sbi);
+-	page = get_new_data_page(inode, index, false);
++	page = get_new_data_page(inode, NULL, index, false);
+ 	mutex_unlock_op(sbi, ilock);
+ 
+ 	if (!IS_ERR(page)) {
 -- 
 1.8.1.3.566.gaa39828
-
-
-------------------------------------------------------------------------------
-AlienVault Unified Security Management (USM) platform delivers complete
-security visibility with the essential security capabilities. Easily and
-efficiently configure, manage, and operate all of your security controls
-from a single console and one unified framework. Download a free trial.
-http://p.sf.net/sfu/alienvault_d2d
