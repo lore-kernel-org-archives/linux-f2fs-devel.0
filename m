@@ -1,79 +1,165 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [f2fs-dev] [PATCH 06/15] f2fs: skip get_node_page if locked node
-	page is passed
-Date: Mon, 20 May 2013 12:32:20 +0900
-Message-ID: <1369020743-18520-6-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 09/15] f2fs: add debug msgs in the recovery routine
+Date: Mon, 20 May 2013 12:32:23 +0900
+Message-ID: <1369020743-18520-9-git-send-email-jaegeuk.kim@samsung.com>
 References: <1369020743-18520-1-git-send-email-jaegeuk.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1UeGrT-0007bb-Hd
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 May 2013 03:34:11 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1UeGrL-000513-OI for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 May 2013 03:34:11 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MN2000TKV7K42I0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 May 2013 12:33:34 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1369020743-18520-1-git-send-email-jaegeuk.kim@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If get_dnode_of_data gets a locked node page, let's skip redundant
-get_node_page calls.
-This is for the futher enhancement.
+This patch adds some trivial debugging messages in the recovery process.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/node.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/f2fs/node.c     |  1 -
+ fs/f2fs/recovery.c | 44 +++++++++++++++++++++++++-------------------
+ 2 files changed, 25 insertions(+), 20 deletions(-)
 
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 9641534..f63f0a4 100644
+index b41482d..5a59780 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -408,10 +408,13 @@ int get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
- 	level = get_node_path(index, offset, noffset);
+@@ -1495,7 +1495,6 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ 		WARN_ON(1);
+ 	set_node_addr(sbi, &new_ni, NEW_ADDR);
+ 	inc_valid_inode_count(sbi);
+-
+ 	f2fs_put_page(ipage, 1);
+ 	return 0;
+ }
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index c573944..774efdb 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -49,9 +49,6 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
+ 	struct inode *dir;
+ 	int err = 0;
  
- 	nids[0] = dn->inode->i_ino;
--	npage[0] = get_node_page(sbi, nids[0]);
--	if (IS_ERR(npage[0]))
--		return PTR_ERR(npage[0]);
-+	npage[0] = dn->inode_page;
+-	if (!is_dent_dnode(ipage))
+-		goto out;
+-
+ 	dir = check_dirty_dir_inode(F2FS_SB(inode->i_sb), pino);
+ 	if (!dir) {
+ 		dir = f2fs_iget(inode->i_sb, pino);
+@@ -73,6 +70,9 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
+ 		err = __f2fs_add_link(dir, &name, inode);
+ 	}
+ out:
++	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode and its dentry: "
++			"ino = %x, name = %s, dir = %lx, err = %d",
++			ino_of_node(ipage), raw_inode->i_name, dir->i_ino, err);
+ 	kunmap(ipage);
+ 	return err;
+ }
+@@ -83,6 +83,9 @@ static int recover_inode(struct inode *inode, struct page *node_page)
+ 	struct f2fs_node *raw_node = (struct f2fs_node *)kaddr;
+ 	struct f2fs_inode *raw_inode = &(raw_node->i);
  
-+	if (!npage[0]) {
-+		npage[0] = get_node_page(sbi, nids[0]);
-+		if (IS_ERR(npage[0]))
-+			return PTR_ERR(npage[0]);
-+	}
- 	parent = npage[0];
- 	if (level != 0)
- 		nids[1] = get_nid(parent, offset[0], true);
++	if (!IS_INODE(node_page))
++		return 0;
++
+ 	inode->i_mode = le16_to_cpu(raw_inode->i_mode);
+ 	i_size_write(inode, le64_to_cpu(raw_inode->i_size));
+ 	inode->i_atime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
+@@ -92,7 +95,12 @@ static int recover_inode(struct inode *inode, struct page *node_page)
+ 	inode->i_ctime.tv_nsec = le32_to_cpu(raw_inode->i_ctime_nsec);
+ 	inode->i_mtime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
+ 
+-	return recover_dentry(node_page, inode);
++	if (is_dent_dnode(node_page))
++		return recover_dentry(node_page, inode);
++
++	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode: ino = %x, name = %s",
++			ino_of_node(node_page), raw_inode->i_name);
++	return 0;
+ }
+ 
+ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+@@ -123,7 +131,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ 		lock_page(page);
+ 
+ 		if (cp_ver != cpver_of_node(page))
+-			goto unlock_out;
++			break;
+ 
+ 		if (!is_fsync_dnode(page))
+ 			goto next;
+@@ -133,40 +141,33 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ 			if (IS_INODE(page) && is_dent_dnode(page)) {
+ 				err = recover_inode_page(sbi, page);
+ 				if (err)
+-					goto unlock_out;
++					break;
+ 			}
+ 
+ 			/* add this fsync inode to the list */
+ 			entry = kmem_cache_alloc(fsync_entry_slab, GFP_NOFS);
+ 			if (!entry) {
+ 				err = -ENOMEM;
+-				goto unlock_out;
++				break;
+ 			}
+ 
+ 			entry->inode = f2fs_iget(sbi->sb, ino_of_node(page));
+ 			if (IS_ERR(entry->inode)) {
+ 				err = PTR_ERR(entry->inode);
+ 				kmem_cache_free(fsync_entry_slab, entry);
+-				goto unlock_out;
++				break;
+ 			}
+ 			list_add_tail(&entry->list, head);
+ 		}
+ 		entry->blkaddr = blkaddr;
+ 
+-		if (IS_INODE(page)) {
+-			err = recover_inode(entry->inode, page);
+-			if (err == -ENOENT) {
+-				goto next;
+-			} else if (err) {
+-				err = -EINVAL;
+-				goto unlock_out;
+-			}
+-		}
++		err = recover_inode(entry->inode, page);
++		if (err && err != -ENOENT)
++			break;
+ next:
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
+ 	}
+-unlock_out:
+ 	unlock_page(page);
+ out:
+ 	__free_pages(page, 0);
+@@ -244,7 +245,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	struct dnode_of_data dn;
+ 	struct f2fs_summary sum;
+ 	struct node_info ni;
+-	int err = 0;
++	int err = 0, recovered = 0;
+ 	int ilock;
+ 
+ 	start = start_bidx_of_node(ofs_of_node(page));
+@@ -289,6 +290,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			/* write dummy data page */
+ 			recover_data_page(sbi, NULL, &sum, src, dest);
+ 			update_extent_cache(dest, &dn);
++			recovered++;
+ 		}
+ 		dn.ofs_in_node++;
+ 	}
+@@ -306,6 +308,10 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	recover_node_page(sbi, dn.node_page, &sum, &ni, blkaddr);
+ 	f2fs_put_dnode(&dn);
+ 	mutex_unlock_op(sbi, ilock);
++
++	f2fs_msg(sbi->sb, KERN_NOTICE, "recover_data: ino = %lx, "
++			"recovered_data = %d blocks",
++			inode->i_ino, recovered);
+ 	return 0;
+ }
+ 
 -- 
 1.8.1.3.566.gaa39828
-
-
-------------------------------------------------------------------------------
-AlienVault Unified Security Management (USM) platform delivers complete
-security visibility with the essential security capabilities. Easily and
-efficiently configure, manage, and operate all of your security controls
-from a single console and one unified framework. Download a free trial.
-http://p.sf.net/sfu/alienvault_d2d
