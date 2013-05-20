@@ -1,143 +1,85 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 04/15] f2fs: fix BUG_ON during f2fs_evict_inode(dir)
-Date: Mon, 20 May 2013 12:32:18 +0900
-Message-ID: <1369020743-18520-4-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [f2fs-dev] [PATCH 03/15] f2fs: fix por_doing variable coverage
+Date: Mon, 20 May 2013 12:32:17 +0900
+Message-ID: <1369020743-18520-3-git-send-email-jaegeuk.kim@samsung.com>
 References: <1369020743-18520-1-git-send-email-jaegeuk.kim@samsung.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1UeGr4-0007aP-9Q
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 20 May 2013 03:33:46 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UeGr3-000513-7K for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 20 May 2013 03:33:46 +0000
+Received: from epcpsbgr4.samsung.com
+	(u144.gpu120.samsung.co.kr [203.254.230.144])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MN2000TKV7K42I0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 20 May 2013 12:33:34 +0900 (KST)
 In-reply-to: <1369020743-18520-1-git-send-email-jaegeuk.kim@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-During the dentry recovery routine, recover_inode() triggers __f2fs_add_link
-with its directory inode.
-
-In the following scenario, a bug is captured.
- 1. dir = f2fs_iget(pino)
- 2. __f2fs_add_link(dir, name)
- 3. iput(dir)
-  -> f2fs_evict_inode() faces with BUG_ON(atomic_read(fi->dirty_dents))
-
-Kernel BUG at ffffffffa01c0676 [verbose debug info unavailable]
-[<ffffffffa01c0676>] f2fs_evict_inode+0x276/0x300 [f2fs]
-Call Trace:
- [<ffffffff8118ea00>] evict+0xb0/0x1b0
- [<ffffffff8118f1c5>] iput+0x105/0x190
- [<ffffffffa01d2dac>] recover_fsync_data+0x3bc/0x1070 [f2fs]
- [<ffffffff81692e8a>] ? io_schedule+0xaa/0xd0
- [<ffffffff81690acb>] ? __wait_on_bit_lock+0x7b/0xc0
- [<ffffffff8111a0e7>] ? __lock_page+0x67/0x70
- [<ffffffff81165e21>] ? kmem_cache_alloc+0x31/0x140
- [<ffffffff8118a502>] ? __d_instantiate+0x92/0xf0
- [<ffffffff812a949b>] ? security_d_instantiate+0x1b/0x30
- [<ffffffff8118a5b4>] ? d_instantiate+0x54/0x70
-
-This means that we should flush all the dentry pages between iget and iput().
-But, during the recovery routine, it is unallowed due to consistency, so we
-have to wait the whole recovery process.
-And then, write_checkpoint flushes all the dirty dentry blocks, and nicely we
-can put the stale dir inodes from the dirty_dir_inode_list.
+The reason of using sbi->por_doing is to alleviate data writes during the
+recovery.
+The find_fsync_dnodes() produces some dirty dentry pages, so we should
+cover it too with sbi->por_doing.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/checkpoint.c | 23 +++++++++++++++++++++++
- fs/f2fs/f2fs.h       |  2 ++
- fs/f2fs/recovery.c   | 14 +++++++++-----
- 3 files changed, 34 insertions(+), 5 deletions(-)
+ fs/f2fs/recovery.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index b1de01d..3d11449 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -514,6 +514,29 @@ void remove_dirty_dir_inode(struct inode *inode)
- 	}
- out:
- 	spin_unlock(&sbi->dir_inode_lock);
-+
-+	/* Only from the recovery routine */
-+	if (is_inode_flag_set(F2FS_I(inode), FI_DELAY_IPUT))
-+		iput(inode);
-+}
-+
-+struct inode *check_dirty_dir_inode(struct f2fs_sb_info *sbi, nid_t ino)
-+{
-+	struct list_head *head = &sbi->dir_inode_list;
-+	struct list_head *this;
-+	struct inode *inode = NULL;
-+
-+	spin_lock(&sbi->dir_inode_lock);
-+	list_for_each(this, head) {
-+		struct dir_inode_entry *entry;
-+		entry = list_entry(this, struct dir_inode_entry, list);
-+		if (entry->inode->i_ino == ino) {
-+			inode = entry->inode;
-+			break;
-+		}
-+	}
-+	spin_unlock(&sbi->dir_inode_lock);
-+	return inode;
- }
- 
- void sync_dirty_dir_inodes(struct f2fs_sb_info *sbi)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 20aab02..ef6cac8 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -846,6 +846,7 @@ enum {
- 	FI_INC_LINK,		/* need to increment i_nlink */
- 	FI_ACL_MODE,		/* indicate acl mode */
- 	FI_NO_ALLOC,		/* should not allocate any blocks */
-+	FI_DELAY_IPUT,		/* used for the recovery */
- };
- 
- static inline void set_inode_flag(struct f2fs_inode_info *fi, int flag)
-@@ -1012,6 +1013,7 @@ int recover_orphan_inodes(struct f2fs_sb_info *);
- int get_valid_checkpoint(struct f2fs_sb_info *);
- void set_dirty_dir_page(struct inode *, struct page *);
- void remove_dirty_dir_inode(struct inode *);
-+struct inode *check_dirty_dir_inode(struct f2fs_sb_info *, nid_t);
- void sync_dirty_dir_inodes(struct f2fs_sb_info *);
- void write_checkpoint(struct f2fs_sb_info *, bool);
- void init_orphan_info(struct f2fs_sb_info *);
 diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index f77aedd..c573944 100644
+index 993b601..f77aedd 100644
 --- a/fs/f2fs/recovery.c
 +++ b/fs/f2fs/recovery.c
-@@ -42,6 +42,7 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
- {
- 	struct f2fs_node *raw_node = (struct f2fs_node *)kmap(ipage);
- 	struct f2fs_inode *raw_inode = &(raw_node->i);
-+	nid_t pino = le32_to_cpu(raw_inode->i_pino);
- 	struct qstr name;
- 	struct f2fs_dir_entry *de;
- 	struct page *page;
-@@ -51,10 +52,14 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
- 	if (!is_dent_dnode(ipage))
+@@ -377,6 +377,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
+ 	INIT_LIST_HEAD(&inode_list);
+ 
+ 	/* step #1: find fsynced inode numbers */
++	sbi->por_doing = 1;
+ 	err = find_fsync_dnodes(sbi, &inode_list);
+ 	if (err)
+ 		goto out;
+@@ -385,13 +386,12 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
  		goto out;
  
--	dir = f2fs_iget(inode->i_sb, le32_to_cpu(raw_inode->i_pino));
--	if (IS_ERR(dir)) {
--		err = PTR_ERR(dir);
--		goto out;
-+	dir = check_dirty_dir_inode(F2FS_SB(inode->i_sb), pino);
-+	if (!dir) {
-+		dir = f2fs_iget(inode->i_sb, pino);
-+		if (IS_ERR(dir)) {
-+			err = PTR_ERR(dir);
-+			goto out;
-+		}
-+		set_inode_flag(F2FS_I(dir), FI_DELAY_IPUT);
- 	}
- 
- 	name.len = le32_to_cpu(raw_inode->i_namelen);
-@@ -67,7 +72,6 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
- 	} else {
- 		err = __f2fs_add_link(dir, &name, inode);
- 	}
--	iput(dir);
+ 	/* step #2: recover data */
+-	sbi->por_doing = 1;
+ 	err = recover_data(sbi, &inode_list, CURSEG_WARM_NODE);
+-	sbi->por_doing = 0;
+ 	BUG_ON(!list_empty(&inode_list));
  out:
- 	kunmap(ipage);
+ 	destroy_fsync_dnodes(sbi, &inode_list);
+ 	kmem_cache_destroy(fsync_entry_slab);
++	sbi->por_doing = 0;
+ 	write_checkpoint(sbi, false);
  	return err;
+ }
 -- 
 1.8.1.3.566.gaa39828
 
+
+------------------------------------------------------------------------------
+AlienVault Unified Security Management (USM) platform delivers complete
+security visibility with the essential security capabilities. Easily and
+efficiently configure, manage, and operate all of your security controls
+from a single console and one unified framework. Download a free trial.
+http://p.sf.net/sfu/alienvault_d2d
