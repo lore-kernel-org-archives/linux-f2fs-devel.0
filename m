@@ -1,7 +1,8 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [f2fs-dev] [patch] f2fs: dereferencing an ERR_PTR
-Date: Thu, 23 May 2013 13:02:13 +0300
-Message-ID: <20130523100213.GA19107@elgon.mountain>
+Subject: Re: [f2fs-dev] [patch] f2fs: dereferencing an ERR_PTR
+Date: Thu, 23 May 2013 13:12:40 +0300
+Message-ID: <20130523101240.GG30128@mwanda>
+References: <20130523100213.GA19107@elgon.mountain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -9,15 +10,16 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <dan.carpenter@oracle.com>) id 1UfSLx-0008UN-Cl
+	(envelope-from <dan.carpenter@oracle.com>) id 1UfSW0-0000hM-TQ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 May 2013 10:02:33 +0000
+	Thu, 23 May 2013 10:12:56 +0000
 Received: from userp1040.oracle.com ([156.151.31.81])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1UfSLw-0003wC-GH
+	(Exim 4.76) id 1UfSW0-0004Zg-6C
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 May 2013 10:02:33 +0000
+	Thu, 23 May 2013 10:12:56 +0000
 Content-Disposition: inline
+In-Reply-To: <20130523100213.GA19107@elgon.mountain>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,24 +32,29 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-There is an error path where "dir" is an ERR_PTR.
+Btw, Linus's new Sparse changes don't like the f2fs's NEW_ADDR
+macro.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+#define NEW_ADDR                -1U
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 5148d90..921aede 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -71,7 +71,8 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
- out:
- 	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode and its dentry: "
- 			"ino = %x, name = %s, dir = %lx, err = %d",
--			ino_of_node(ipage), raw_inode->i_name, dir->i_ino, err);
-+			ino_of_node(ipage), raw_inode->i_name,
-+			IS_ERR(dir) ? 0 : dir->i_ino, err);
- 	return err;
- }
- 
+We use it like this:
+
+	block_t src, dest;
+
+	if (src != dest && dest != NEW_ADDR && dest != NULL_ADDR) {
+
+block_t is 64 bits so probably the macro should probably be:
+
+#define NEW_ADDR               ((block_t)-1)
+
+I'm not able to test this so there may be some reason why changing
+this breaks something.  In that case we could do:
+
+#define NEW_ADDR               ((u32)(block_t)-1) /* explanation */
+
+regards,
+dan carpenter
+
 
 ------------------------------------------------------------------------------
 Try New Relic Now & We'll Send You this Cool Shirt
