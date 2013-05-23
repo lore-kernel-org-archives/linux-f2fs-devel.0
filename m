@@ -1,30 +1,23 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: use ihold
-Date: Wed, 22 May 2013 12:33:04 +0900
-Message-ID: <1369193584-2963-2-git-send-email-jaegeuk.kim@samsung.com>
-References: <1369193584-2963-1-git-send-email-jaegeuk.kim@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [f2fs-dev] [patch] f2fs: dereferencing an ERR_PTR
+Date: Thu, 23 May 2013 13:02:13 +0300
+Message-ID: <20130523100213.GA19107@elgon.mountain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Uezoo-0005Xw-Bx
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <dan.carpenter@oracle.com>) id 1UfSLx-0008UN-Cl
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 22 May 2013 03:34:26 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Uezon-0002rc-89 for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 22 May 2013 03:34:26 +0000
-Received: from epcpsbgr5.samsung.com
-	(u145.gpu120.samsung.co.kr [203.254.230.145])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MN6007P2KKTT1C0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 22 May 2013 12:34:16 +0900 (KST)
-In-reply-to: <1369193584-2963-1-git-send-email-jaegeuk.kim@samsung.com>
+	Thu, 23 May 2013 10:02:33 +0000
+Received: from userp1040.oracle.com ([156.151.31.81])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1UfSLw-0003wC-GH
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 23 May 2013 10:02:33 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,39 +27,27 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Use the following helper function committed by Al.
+There is an error path where "dir" is an ERR_PTR.
 
-commit 7de9c6ee3ecffd99e1628e81a5ea5468f7581a1f
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Sat Oct 23 11:11:40 2010 -0400
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-    new helper: ihold()
-
-...
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 71aa305..efe0a12 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -172,7 +172,7 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
- 	f2fs_balance_fs(sbi);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 5148d90..921aede 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -71,7 +71,8 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
+ out:
+ 	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode and its dentry: "
+ 			"ino = %x, name = %s, dir = %lx, err = %d",
+-			ino_of_node(ipage), raw_inode->i_name, dir->i_ino, err);
++			ino_of_node(ipage), raw_inode->i_name,
++			IS_ERR(dir) ? 0 : dir->i_ino, err);
+ 	return err;
+ }
  
- 	inode->i_ctime = CURRENT_TIME;
--	atomic_inc(&inode->i_count);
-+	ihold(inode);
- 
- 	set_inode_flag(F2FS_I(inode), FI_INC_LINK);
- 	ilock = mutex_lock_op(sbi);
--- 
-1.8.1.3.566.gaa39828
-
 
 ------------------------------------------------------------------------------
 Try New Relic Now & We'll Send You this Cool Shirt
