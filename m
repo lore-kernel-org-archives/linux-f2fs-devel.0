@@ -1,31 +1,31 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: add sysfs support for controlling
-	the gc_thread
-Date: Mon, 27 May 2013 10:46:54 +0900
-Message-ID: <1369619214.10521.25.camel@kjgkr>
-References: <1369533945-6955-1-git-send-email-linkinjeon@gmail.com>
+Subject: Re: [f2fs-dev] [GIT PULL v2] f2fs updates for v3.10
+Date: Mon, 27 May 2013 12:37:03 +0900
+Message-ID: <1369625823.10521.29.camel@kjgkr>
+References: <1367989951.16581.50.camel@kjgkr> <1368011413.16581.67.camel@kjgkr>
+	<CAJL_dMtUfX-_3-4xb51HWPk54NyMU_frw84XdJc3OZWv52Dwcg@mail.gmail.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5046686884936165052=="
+Content-Type: multipart/mixed; boundary="===============8093507894660877857=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1UgmXn-0001Kd-D9
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1UgoGN-0002eG-SX
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 May 2013 01:48:15 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1UgmXk-00041x-GD for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 May 2013 01:48:15 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
+	Mon, 27 May 2013 03:38:23 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UgoGK-00057b-Mu for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 May 2013 03:38:23 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MNF00E6TP048ND0@mailout3.samsung.com> for
+	with ESMTP id <0MNF00BZWU19U2J0@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 May 2013 10:48:05 +0900 (KST)
-In-reply-to: <1369533945-6955-1-git-send-email-linkinjeon@gmail.com>
+	Mon, 27 May 2013 12:38:14 +0900 (KST)
+In-reply-to: <CAJL_dMtUfX-_3-4xb51HWPk54NyMU_frw84XdJc3OZWv52Dwcg@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,438 +35,216 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Namjae Jeon <linkinjeon@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Anca Emanuel <anca.emanuel@gmail.com>
+Cc: "Linux FS DEV, Mailing List" <linux-fsdevel@vger.kernel.org>, "Linux Kernel,
+	Mailing List" <linux-kernel@vger.kernel.org>, "Linux F2FS DEV,
+	Mailing List" <linux-f2fs-devel@lists.sourceforge.net>
 
 
---===============5046686884936165052==
+--===============8093507894660877857==
 Content-type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="=-OqY9OrQ1q4scaTORAaCX"
+	protocol="application/pgp-signature"; boundary="=-Z0vOO6DGg0aBIm2mTt19"
 
 
---=-OqY9OrQ1q4scaTORAaCX
+--=-Z0vOO6DGg0aBIm2mTt19
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Namjae,
+Hi,
+Thank you for the report.
 
-This is an interesting functionality.
-Could you describe why and when we need to do this?
-What are pros and cons?
-How can we use this?
-
-IMO, when users try to control IO latencies, it seems that they can
-trigger such the explicit GCs, but in order to do that, they also need
-to know the status of current f2fs in more precisely. Does the debugfs
-show it enoughly?
-
-Afterwards, it is worth to add some information to
-Document/filesystems/f2fs.txt.
-
+I'm not able to reproduce this at all.
+In my runs, there was no regression.
+Can you do that?
 Thanks,
 
-2013-05-26 (=EC=9D=BC), 11:05 +0900, Namjae Jeon:
-> From: Namjae Jeon <namjae.jeon@samsung.com>
+2013-05-15 (=EC=88=98), 12:09 +0300, Anca Emanuel:
+> Regresions: http://www.phoronix.com/scan.php?page=3Darticle&item=3Dlinux_=
+310_f2fs&num=3D3
 >=20
-> Add sysfs entries to control the timing parameters for
-> f2fs gc thread and also provide a control flag, which will
-> allow the user to forcefully start a FG garbage collection
-> if required.
+> The most notable one is PostgreSQL pgbench v8.4.11
+> Transactions per second: 3032 in kernel 3.9
+> down to 832 in kernel 3.10-rc1
 >=20
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Pankaj Kumar <pankaj.km@samsung.com>
-> ---
->  fs/f2fs/f2fs.h  |    6 +++
->  fs/f2fs/gc.c    |   20 +++++---
->  fs/f2fs/gc.h    |   33 +++++++------
->  fs/f2fs/super.c |  147 +++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  4 files changed, 185 insertions(+), 21 deletions(-)
->=20
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 00c8c5f..40abd81 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -400,6 +400,8 @@ struct f2fs_sb_info {
->  	struct mutex gc_mutex;			/* mutex for GC */
->  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
->  	unsigned int cur_victim_sec;		/* current victim section num */
-> +	unsigned int forced_fg;			/* forced forgound gc */
-> +
-> =20
->  	/*
->  	 * for stat information.
-> @@ -415,6 +417,10 @@ struct f2fs_sb_info {
->  #endif
->  	unsigned int last_victim[2];		/* last victim segment # */
->  	spinlock_t stat_lock;			/* lock for stat operations */
-> +
-> +	/* For sysfs suppport */
-> +	struct kobject s_kobj;
-> +	struct completion s_kobj_unregister;
->  };
-> =20
->  /*
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index ddc2c67..8041d70 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -29,10 +29,11 @@ static struct kmem_cache *winode_slab;
->  static int gc_thread_func(void *data)
->  {
->  	struct f2fs_sb_info *sbi =3D data;
-> +	struct f2fs_gc_kthread *gc_th =3D sbi->gc_thread;
->  	wait_queue_head_t *wq =3D &sbi->gc_thread->gc_wait_queue_head;
->  	long wait_ms;
-> =20
-> -	wait_ms =3D GC_THREAD_MIN_SLEEP_TIME;
-> +	wait_ms =3D gc_th->min_sleep_time;
-> =20
->  	do {
->  		if (try_to_freeze())
-> @@ -45,7 +46,7 @@ static int gc_thread_func(void *data)
->  			break;
-> =20
->  		if (sbi->sb->s_writers.frozen >=3D SB_FREEZE_WRITE) {
-> -			wait_ms =3D GC_THREAD_MAX_SLEEP_TIME;
-> +			wait_ms =3D gc_th->max_sleep_time;
->  			continue;
->  		}
-> =20
-> @@ -66,15 +67,15 @@ static int gc_thread_func(void *data)
->  			continue;
-> =20
->  		if (!is_idle(sbi)) {
-> -			wait_ms =3D increase_sleep_time(wait_ms);
-> +			wait_ms =3D increase_sleep_time(gc_th, wait_ms);
->  			mutex_unlock(&sbi->gc_mutex);
->  			continue;
->  		}
-> =20
->  		if (has_enough_invalid_blocks(sbi))
-> -			wait_ms =3D decrease_sleep_time(wait_ms);
-> +			wait_ms =3D decrease_sleep_time(gc_th, wait_ms);
->  		else
-> -			wait_ms =3D increase_sleep_time(wait_ms);
-> +			wait_ms =3D increase_sleep_time(gc_th, wait_ms);
-> =20
->  #ifdef CONFIG_F2FS_STAT_FS
->  		sbi->bg_gc++;
-> @@ -82,7 +83,7 @@ static int gc_thread_func(void *data)
-> =20
->  		/* if return value is not zero, no victim was selected */
->  		if (f2fs_gc(sbi))
-> -			wait_ms =3D GC_THREAD_NOGC_SLEEP_TIME;
-> +			wait_ms =3D gc_th->no_gc_sleep_time;
->  	} while (!kthread_should_stop());
->  	return 0;
->  }
-> @@ -101,7 +102,12 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
->  		goto out;
->  	}
-> =20
-> +	gc_th->min_sleep_time =3D DEF_GC_THREAD_MIN_SLEEP_TIME;
-> +	gc_th->max_sleep_time =3D DEF_GC_THREAD_MAX_SLEEP_TIME;
-> +	gc_th->no_gc_sleep_time =3D DEF_GC_THREAD_NOGC_SLEEP_TIME;
-> +
->  	sbi->gc_thread =3D gc_th;
-> +
->  	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
->  	sbi->gc_thread->f2fs_gc_task =3D kthread_run(gc_thread_func, sbi,
->  			"f2fs_gc-%u:%u", MAJOR(dev), MINOR(dev));
-> @@ -677,7 +683,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi)
->  {
->  	struct list_head ilist;
->  	unsigned int segno, i;
-> -	int gc_type =3D BG_GC;
-> +	int gc_type =3D sbi->forced_fg ? FG_GC : BG_GC;
->  	int nfree =3D 0;
->  	int ret =3D -1;
-> =20
-> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> index 2c6a6bd..f4bf44c 100644
-> --- a/fs/f2fs/gc.h
-> +++ b/fs/f2fs/gc.h
-> @@ -13,9 +13,9 @@
->  						 * whether IO subsystem is idle
->  						 * or not
->  						 */
-> -#define GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
-> -#define GC_THREAD_MAX_SLEEP_TIME	60000
-> -#define GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
-> +#define DEF_GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
-> +#define DEF_GC_THREAD_MAX_SLEEP_TIME	60000
-> +#define DEF_GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
->  #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
->  #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
-> =20
-> @@ -25,6 +25,11 @@
->  struct f2fs_gc_kthread {
->  	struct task_struct *f2fs_gc_task;
->  	wait_queue_head_t gc_wait_queue_head;
-> +
-> +	/* for gc sleep time */
-> +	unsigned int min_sleep_time;
-> +	unsigned int max_sleep_time;
-> +	unsigned int no_gc_sleep_time;
->  };
-> =20
->  struct inode_entry {
-> @@ -56,25 +61,25 @@ static inline block_t limit_free_user_blocks(struct f=
-2fs_sb_info *sbi)
->  	return (long)(reclaimable_user_blocks * LIMIT_FREE_BLOCK) / 100;
->  }
-> =20
-> -static inline long increase_sleep_time(long wait)
-> +static inline long increase_sleep_time(struct f2fs_gc_kthread *gc_th, lo=
-ng wait)
->  {
-> -	if (wait =3D=3D GC_THREAD_NOGC_SLEEP_TIME)
-> +	if (wait =3D=3D gc_th->no_gc_sleep_time)
->  		return wait;
-> =20
-> -	wait +=3D GC_THREAD_MIN_SLEEP_TIME;
-> -	if (wait > GC_THREAD_MAX_SLEEP_TIME)
-> -		wait =3D GC_THREAD_MAX_SLEEP_TIME;
-> +	wait +=3D gc_th->min_sleep_time;
-> +	if (wait > gc_th->max_sleep_time)
-> +		wait =3D gc_th->max_sleep_time;
->  	return wait;
->  }
-> =20
-> -static inline long decrease_sleep_time(long wait)
-> +static inline long decrease_sleep_time(struct f2fs_gc_kthread *gc_th, lo=
-ng wait)
->  {
-> -	if (wait =3D=3D GC_THREAD_NOGC_SLEEP_TIME)
-> -		wait =3D GC_THREAD_MAX_SLEEP_TIME;
-> +	if (wait =3D=3D gc_th->no_gc_sleep_time)
-> +		wait =3D gc_th->max_sleep_time;
-> =20
-> -	wait -=3D GC_THREAD_MIN_SLEEP_TIME;
-> -	if (wait <=3D GC_THREAD_MIN_SLEEP_TIME)
-> -		wait =3D GC_THREAD_MIN_SLEEP_TIME;
-> +	wait -=3D gc_th->min_sleep_time;
-> +	if (wait <=3D gc_th->min_sleep_time)
-> +		wait =3D gc_th->min_sleep_time;
->  	return wait;
->  }
-> =20
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 3ac305d..ef16d2c 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -22,16 +22,20 @@
->  #include <linux/exportfs.h>
->  #include <linux/blkdev.h>
->  #include <linux/f2fs_fs.h>
-> +#include <linux/kobject.h>
-> +#include <linux/sysfs.h>
-> =20
->  #include "f2fs.h"
->  #include "node.h"
->  #include "segment.h"
->  #include "xattr.h"
-> +#include "gc.h"
-> =20
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/f2fs.h>
-> =20
->  static struct kmem_cache *f2fs_inode_cachep;
-> +static struct kset *f2fs_kset;
-> =20
->  enum {
->  	Opt_gc_background_off,
-> @@ -57,6 +61,136 @@ static match_table_t f2fs_tokens =3D {
->  	{Opt_err, NULL},
->  };
-> =20
-> +/*Sysfs support for F2fs */
-> +struct f2fs_attr {
-> +	struct attribute attr;
-> +	ssize_t (*show)(struct f2fs_attr *, struct f2fs_sb_info *, char *);
-> +	ssize_t (*store)(struct f2fs_attr *, struct f2fs_sb_info *,
-> +			 const char *, size_t);
-> +	int offset;
-> +};
-> +
-> +static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
-> +			   struct f2fs_sb_info *sbi, char *buf)
-> +{
-> +	struct f2fs_gc_kthread *gc_kth =3D sbi->gc_thread;
-> +	unsigned int *ui =3D (unsigned int *) (((char *)gc_kth) + a->offset);
-> +
-> +	return snprintf(buf, PAGE_SIZE, "%u\n", *ui);
-> +}
-> +
-> +static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
-> +			    struct f2fs_sb_info *sbi,
-> +			    const char *buf, size_t count)
-> +{
-> +	struct f2fs_gc_kthread *gc_kth =3D sbi->gc_thread;
-> +	unsigned int *ui =3D (unsigned int *) (((char *)gc_kth) + a->offset);
-> +	unsigned long t;
-> +	ssize_t ret;
-> +
-> +	ret =3D kstrtoul(skip_spaces(buf), 0, &t);
-> +	if (ret < 0)
-> +		return ret;
-> +	*ui =3D t;
-> +	return count;
-> +}
-> +
-> +static ssize_t f2fs_forced_fg_trigger(struct f2fs_attr *a,
-> +					struct f2fs_sb_info *sbi,
-> +					const char *buf, size_t count)
-> +{
-> +	unsigned long t;
-> +	ssize_t ret;
-> +
-> +	ret =3D kstrtoul(skip_spaces(buf), 0, &t);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (t =3D=3D 0)
-> +		return count;
-> +	else if (t =3D=3D 1) {
-> +		sbi->forced_fg =3D t;
-> +		mutex_lock(&sbi->gc_mutex);
-> +		f2fs_gc(sbi);
-> +		sbi->forced_fg =3D 0;
-> +	}
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t f2fs_forced_fg_show(struct f2fs_attr *a,
-> +					struct f2fs_sb_info *sbi,
-> +							char *buf)
-> +{
-> +	return snprintf(buf, PAGE_SIZE, "%u\n", sbi->forced_fg);
-> +}
-> +
-> +static ssize_t f2fs_attr_show(struct kobject *kobj,
-> +				struct attribute *attr, char *buf)
-> +{
-> +	struct f2fs_sb_info *sbi =3D container_of(kobj, struct f2fs_sb_info,
-> +								s_kobj);
-> +	struct f2fs_attr *a =3D container_of(attr, struct f2fs_attr, attr);
-> +
-> +	return a->show ? a->show(a, sbi, buf) : 0;
-> +}
-> +
-> +static ssize_t f2fs_attr_store(struct kobject *kobj, struct attribute *a=
-ttr,
-> +						const char *buf, size_t len)
-> +{
-> +	struct f2fs_sb_info *sbi =3D container_of(kobj, struct f2fs_sb_info,
-> +									s_kobj);
-> +	struct f2fs_attr *a =3D container_of(attr, struct f2fs_attr, attr);
-> +
-> +	return a->store ? a->store(a, sbi, buf, len) : 0;
-> +}
-> +
-> +static void f2fs_sb_release(struct kobject *kobj)
-> +{
-> +	struct f2fs_sb_info *sbi =3D container_of(kobj, struct f2fs_sb_info,
-> +								s_kobj);
-> +	complete(&sbi->s_kobj_unregister);
-> +}
-> +
-> +#define F2FS_ATTR_OFFSET(_name, _mode, _show, _store, _elname) \
-> +static struct f2fs_attr f2fs_attr_##_name =3D {			\
-> +	.attr =3D {.name =3D __stringify(_name), .mode =3D _mode },	\
-> +	.show	=3D _show,					\
-> +	.store	=3D _store,					\
-> +	.offset =3D offsetof(struct f2fs_gc_kthread, _elname),	\
-> +}
-> +
-> +#define F2FS_ATTR(name, mode, show, store) \
-> +static struct f2fs_attr f2fs_attr_##name =3D __ATTR(name, mode, show, st=
-ore)
-> +
-> +#define F2FS_RW_ATTR(name, elname)	\
-> +	F2FS_ATTR_OFFSET(name, 0644, f2fs_sbi_show, f2fs_sbi_store, elname)
-> +
-> +F2FS_RW_ATTR(gc_min_sleep_time, min_sleep_time);
-> +F2FS_RW_ATTR(gc_max_sleep_time, max_sleep_time);
-> +F2FS_RW_ATTR(gc_no_gc_sleep_time, no_gc_sleep_time);
-> +F2FS_ATTR(gc_forced_fg, 0644, f2fs_forced_fg_show, f2fs_forced_fg_trigge=
-r);
-> +
-> +#define ATTR_LIST(name) (&f2fs_attr_##name.attr)
-> +static struct attribute *f2fs_attrs[] =3D {
-> +	ATTR_LIST(gc_min_sleep_time),
-> +	ATTR_LIST(gc_max_sleep_time),
-> +	ATTR_LIST(gc_no_gc_sleep_time),
-> +	ATTR_LIST(gc_forced_fg),
-> +	NULL,
-> +};
-> +
-> +static const struct sysfs_ops f2fs_attr_ops =3D {
-> +	.show   =3D f2fs_attr_show,
-> +	.store  =3D f2fs_attr_store,
-> +};
-> +
-> +static struct kobj_type f2fs_ktype =3D {
-> +	.default_attrs  =3D f2fs_attrs,
-> +	.sysfs_ops      =3D &f2fs_attr_ops,
-> +	.release        =3D f2fs_sb_release,
-> +};
-> +
-> +
->  void f2fs_msg(struct super_block *sb, const char *level, const char *fmt=
-, ...)
->  {
->  	struct va_format vaf;
-> @@ -582,6 +716,7 @@ static int f2fs_fill_super(struct super_block *sb, vo=
-id *data, int silent)
->  		mutex_init(&sbi->fs_lock[i]);
->  	mutex_init(&sbi->node_write);
->  	sbi->por_doing =3D 0;
-> +	sbi->forced_fg =3D 0;
->  	spin_lock_init(&sbi->stat_lock);
->  	init_rwsem(&sbi->bio_sem);
->  	init_sb_info(sbi);
-> @@ -691,6 +826,14 @@ static int f2fs_fill_super(struct super_block *sb, v=
-oid *data, int silent)
->  					"the device does not support discard");
->  	}
-> =20
-> +	sbi->s_kobj.kset =3D f2fs_kset;
-> +	init_completion(&sbi->s_kobj_unregister);
-> +	err =3D kobject_init_and_add(&sbi->s_kobj, &f2fs_ktype, NULL,
-> +							"%s", sb->s_id);
-> +	if (err)
-> +		goto fail;
-> +
-> +
->  	return 0;
->  fail:
->  	stop_gc_thread(sbi);
-> @@ -765,6 +908,9 @@ static int __init init_f2fs_fs(void)
->  	err =3D create_checkpoint_caches();
->  	if (err)
->  		goto fail;
-> +	f2fs_kset =3D kset_create_and_add("f2fs", NULL, fs_kobj);
-> +	if (!f2fs_kset)
-> +		goto fail;
->  	err =3D register_filesystem(&f2fs_fs_type);
->  	if (err)
->  		goto fail;
-> @@ -781,6 +927,7 @@ static void __exit exit_f2fs_fs(void)
->  	destroy_gc_caches();
->  	destroy_node_manager_caches();
->  	destroy_inodecache();
-> +	kset_unregister(f2fs_kset);
->  }
-> =20
->  module_init(init_f2fs_fs)
+> On Wed, May 8, 2013 at 2:10 PM, Jaegeuk Kim <jaegeuk.kim@samsung.com> wro=
+te:
+> > Hi Linus,
+> >
+> > I've rebased one of patches, so could you consider the following pull
+> > request?
+> > Sorry for the noise.
+> >
+> > The following changes since commit
+> > 47b3bc907328db968bc9b43c41f48f8d1e140750:
+> >
+> >   Merge branch 'x86-urgent-for-linus' of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2013-03-07
+> > 15:57:38 -0800)
+> >
+> > are available in the git repository at:
+> >
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+> > tags/f2fs-for-v3.10
+> >
+> > for you to fetch changes up to 59bbd474abb9dd6a0c1a74df758ec29c7a8b150f=
+:
+> >
+> >   f2fs: cover free_nid management with spin_lock (2013-05-08 19:54:22
+> > +0900)
+> >
+> > ----------------------------------------------------------------
+> > f2fs updates for v3.10
+> >
+> > This patch-set includes the following major enhancement patches.
+> > o introduce a new gloabl lock scheme
+> > o add tracepoints on several major functions
+> > o fix the overall cleaning process focused on victim selection
+> > o apply the block plugging to merge IOs as much as possible
+> > o enhance management of free nids and its list
+> > o enhance the readahead mode for node pages
+> > o address several cretical deadlock conditions
+> > o reduce lock_page calls
+> >
+> > The other minor bug fixes and enhancements are as follows.
+> > o calculation mistakes: overflow
+> > o bio types: READ, READA, and READ_SYNC
+> > o fix the recovery flow, data races, and null pointer errors
+> >
+> > ----------------------------------------------------------------
+> > Alexandru Gheorghiu (1):
+> >       f2fs: use kmemdup
+> >
+> > Changman Lee (3):
+> >       f2fs: fix overflow when calculating utilization on 32-bit
+> >       f2fs: check the level before calling get_nid function
+> >       f2fs: update f2fs.txt related with discard at mkfs
+> >
+> > Chris Fries (2):
+> >       f2fs: continue to mount after failing recovery
+> >       f2fs: recover when journal contains deleted files
+> >
+> > Haicheng Li (5):
+> >       f2fs: fix inconsistent using of NM_WOUT_THRESHOLD
+> >       f2fs: remove useless #include <linux/proc_fs.h> as we're now usin=
+g
+> > sysfs as debug entry.
+> >       f2fs: bugfix for alloc_nid_failed()
+> >       f2fs: code cleanup for scan_nat_page() and build_free_nids()
+> >       f2fs: optimize scan_nat_page()
+> >
+> > Jaegeuk Kim (35):
+> >       f2fs: fix to unlock node page when it was truncated
+> >       f2fs: read with READ_SYNC when getting dnode page
+> >       f2fs: introduce readahead mode of node pages
+> >       f2fs: align f2fs maximum name length to linux based filesystem
+> >       f2fs: reduce unncessary locking pages during read
+> >       f2fs: should check the node page was truncated first
+> >       f2fs: scan next nat page to reuse free nids in there
+> >       f2fs: fix return value of releasepage for node and data
+> >       f2fs: fix not to allocate max_nid
+> >       f2fs: fix to call WRITE_FLUSH at the end of fsync
+> >       f2fs: fix the recovery flow to handle errors correctly
+> >       f2fs: do not skip writing file meta during fsync
+> >       f2fs: remain nat cache entries for further free nid allocation
+> >       f2fs: fix to give correct parent inode number for roll forward
+> >       f2fs: do not use duplicate names in a macro
+> >       f2fs: introduce TOTAL_SECS macro
+> >       f2fs: remove redundant lock_page calls
+> >       f2fs: allocate new segment aligned with sections
+> >       f2fs: change GC bitmaps to apply the section granularity
+> >       f2fs: check completion of foreground GC
+> >       f2fs: allocate remained free segments in the LFS mode
+> >       f2fs: avoid race for summary information
+> >       f2fs: fix the bitmap consistency of dirty segments
+> >       f2fs: reduce redundant spin_lock operations
+> >       f2fs: introduce a new global lock scheme
+> >       f2fs: write checkpoint before starting FG_GC
+> >       f2fs: avoid frequent background GC
+> >       f2fs: give a chance to merge IOs by IO scheduler
+> >       f2fs: check nid =3D=3D 0 in add_free_nid
+> >       f2fs: add a tracepoint on f2fs_new_inode
+> >       f2fs: enhance alloc_nid and build_free_nids flows
+> >       f2fs: check truncation of mapping after lock_page
+> >       f2fs: modify the number of issued pages to merge IOs
+> >       f2fs: avoid deadlock during evict after f2fs_gc
+> >       f2fs: cover free_nid management with spin_lock
+> >
+> > Jason Hrycay (1):
+> >       f2fs: move f2fs_balance_fs from truncate to punch_hole
+> >
+> > Masanari Iida (1):
+> >       f2fs: fix typo in comments
+> >
+> > Namjae Jeon (17):
+> >       f2fs: optimize get node page readahead part
+> >       f2fs: optimize and change return path in lookup_free_nid_list
+> >       f2fs: avoid extra ++ while returning from get_node_path
+> >       f2fs: notify when discard is not supported
+> >       f2fs: reorganize f2fs_setxattr
+> >       f2fs: fix return values from validate superblock
+> >       f2fs: avoid BUG_ON from check_nid_range and update return path in
+> > do_read_inode
+> >       f2fs: fix typo mistakes
+> >       f2fs: make is_multimedia_file code align with its name
+> >       f2fs: add tracepoints for sync & inode operations
+> >       f2fs: add tracepoints for truncate operation
+> >       f2fs: add tracepoint for tracing the page i/o
+> >       f2fs: add tracepoints for GC threads
+> >       f2fs: add tracepoints to debug the block allocation
+> >       f2fs: add tracepoints for write page operations
+> >       f2fs: add tracepoints to debug checkpoint request
+> >       f2fs: add REQ_META about metadata requests for submit
+> >
+> > P J P (1):
+> >       f2fs: add NULL pointer check
+> >
+> > Wei Yongjun (1):
+> >       f2fs: fix error return code in f2fs_fill_super()
+> >
+> > Zhihui Zhang (1):
+> >       f2fs: fix the logic of IS_DNODE()
+> >
+> >  Documentation/filesystems/f2fs.txt |   4 +-
+> >  fs/f2fs/checkpoint.c               |  63 ++--
+> >  fs/f2fs/data.c                     | 202 ++++++-----
+> >  fs/f2fs/debug.c                    |  10 +-
+> >  fs/f2fs/dir.c                      | 110 +++---
+> >  fs/f2fs/f2fs.h                     |  95 ++++--
+> >  fs/f2fs/file.c                     | 116 +++----
+> >  fs/f2fs/gc.c                       | 125 ++++---
+> >  fs/f2fs/gc.h                       |  12 +-
+> >  fs/f2fs/inode.c                    |  68 ++--
+> >  fs/f2fs/namei.c                    |  80 +++--
+> >  fs/f2fs/node.c                     | 411 ++++++++++++----------
+> >  fs/f2fs/node.h                     |  20 +-
+> >  fs/f2fs/recovery.c                 |  83 +++--
+> >  fs/f2fs/segment.c                  | 137 +++++---
+> >  fs/f2fs/segment.h                  |  41 ++-
+> >  fs/f2fs/super.c                    |  69 +++-
+> >  fs/f2fs/xattr.c                    |  28 +-
+> >  include/linux/f2fs_fs.h            |  17 +-
+> >  include/trace/events/f2fs.h        | 682
+> > +++++++++++++++++++++++++++++++++++++
+> >  20 files changed, 1679 insertions(+), 694 deletions(-)
+> >  create mode 100644 include/trace/events/f2fs.h
+> >
+> >
+> > --
+> > Jaegeuk Kim
+> > Samsung
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" i=
+n
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
 --=20
 Jaegeuk Kim
 Samsung
 
---=-OqY9OrQ1q4scaTORAaCX
+--=-Z0vOO6DGg0aBIm2mTt19
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -474,26 +252,26 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAABAgAGBQJRorsOAAoJEEAUqH6CSFDSgqcP/0ORTaQr8edrTbrnX73EPlUy
-pD+SRNzCpS4bQzbUx4tqOWqdCQ1tTVLsOMW0JmvaN5s0tBhcIBVp8Ie/JoZarBIV
-f5gjPgXbd51ialT3SgUp6//vOYEK5Wgi4WLYJG2RxPg8krJjywTkvtS8G0aACsP0
-MfyesXK65OEXxRXiEGO1ujS6ca6bm0xPwgbmAWr6wHeWzFIuK7NnAKJeUrC1LeMs
-Clt9FW8W+ysnp6lkIvnG/LJ8guLAFVfQxBtVOQ0imsdntmnwlfg2nBfFT1k4Fm28
-hreRcHre8MJ2v6Y6LqzoRL9IrmHfBXgerfoIpMdkwplMarc1UaKEzOACb1vV5aHs
-ZBiBPHvn9BQZEfKFcBQuVVQu247OlCerYgnrlZFxxoCTSLi53WwRlFEPag+DFBBJ
-z/ITZPj3cm37cJ9L5AF3L0shWNeVzFQno+u18yZ2yNW+ReU185WqRVkKdmRelwkh
-t41H0ppt6KTOMmhEeTuh5e5d5JBPYsYnS+WVHvI1b1cP/n7eyvd82BX75w1cxLKN
-p8v3oBUh7XpgvvVBhPJ6JYAzxNvF0Fml41/V8ura+wvs31ZHO+2lh0n8Bz8tA03S
-cY1NFezV4BehZ2lBXFWNh4rnxfoZ5yujoAzWLbSIIAbnVr29IYew1i9Y/rNGQbgQ
-MB2fIT5IelAfDMVlO0rb
-=U/uz
+iQIcBAABAgAGBQJRotTfAAoJEEAUqH6CSFDSKwcP/iQ2622yy7mbvf6MSZ+d2LWC
+oZxaLe5EuLfRZv2Z+GHD92OAyUQ+KNwx8J6xLtUNYK1yx1B8mN6XnMvwhqFJ+0YC
+lBTXyNYTZqHoevgxq5oPWlJTgc/cghj4YhQ6J8QhcZAXjwGg77y8h7DxA2X6eEm/
+X+WF0+BG+D4A29jin9sLD2cPOOXYNsFORAanMLRGJ5shKO7BLXqezn68V6naIuYf
+zwBUrrKOAcOrvCwpfhG57+DYX7KxhSS/SZhsx5Hq44YEo87bCEbaXDW6hYBvB4CX
+VQiyH7yUXBpDpUtCU0rZjUEU1+C5kuR4bY/oU2nWo/MkB0fo92D20eU1ZeYkdIiz
+Izy+FaKVrI0oFfZvwfE6SGcN2nOIUchxjroFie23rs5IRpVo6maw7eGRJ5o5PTSs
+7m67YXaq2hfxETLg8x8Lpp0fsbiPkXlBBQBA5jS5d8T4f6whr4a4hLoePwMUit8B
+K5z/OFRqu3sxLj3eX3Wc2Q2JuWwT1+mkdgl/c042dKi+flgF5hWNa2fbMw5S1XdQ
+xrMF4747AvxO0p7mc7FApC1gx+NVR7ErJBqQ0Ooj+Uz6AoD+WbzF0DNh1H/bqPEk
+LfQiuL1cY0FONhEjgl1IReJ8U6UjFLJbUNO71bJsbHcpk7YRKZuxtPtpe+ZwR6Pm
+FCQFFZcgj5ySoQXtoNT4
+=rM3j
 -----END PGP SIGNATURE-----
 
---=-OqY9OrQ1q4scaTORAaCX--
+--=-Z0vOO6DGg0aBIm2mTt19--
 
 
 
---===============5046686884936165052==
+--===============8093507894660877857==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -505,7 +283,7 @@ New Relic is the only SaaS-based application performance monitoring service
 that delivers powerful full stack analytics. Optimize and monitor your
 browser, app, & servers with just a few lines of code. Try New Relic
 and get this awesome Nerd Life shirt! http://p.sf.net/sfu/newrelic_d2d_may
---===============5046686884936165052==
+--===============8093507894660877857==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -516,4 +294,4 @@ Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
---===============5046686884936165052==--
+--===============8093507894660877857==--
