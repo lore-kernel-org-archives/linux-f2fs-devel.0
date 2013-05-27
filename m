@@ -1,29 +1,25 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: add sysfs support for controlling
-	the gc_thread
-Date: Mon, 27 May 2013 13:45:55 +0900
-Message-ID: <CAKYAXd_QZronHD536LOfeFWLmtCoweRq3gbH94R4_7oKC7hv3w@mail.gmail.com>
-References: <1369533945-6955-1-git-send-email-linkinjeon@gmail.com>
-	<1369619214.10521.25.camel@kjgkr>
+From: walter harms <wharms@bfs.de>
+Subject: Re: [f2fs-dev] [patch] f2fs: dereferencing an ERR_PTR
+Date: Mon, 27 May 2013 09:13:12 +0200
+Message-ID: <51A30788.4050106@bfs.de>
+References: <20130523100213.GA19107@elgon.mountain> <51A224AB.8010209@bfs.de>
+	<20130526204116.GE23932@mwanda>
+Reply-To: wharms@bfs.de
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <linkinjeon@gmail.com>) id 1UgpJr-0004b1-Ub
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <wharms@bfs.de>) id 1UgrcS-00019M-Qo
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 May 2013 04:46:04 +0000
-Received: from mail-pb0-f50.google.com ([209.85.160.50])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1UgpJp-0007x7-6X
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 May 2013 04:46:03 +0000
-Received: by mail-pb0-f50.google.com with SMTP id wy17so6326228pbc.9
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 26 May 2013 21:45:55 -0700 (PDT)
-In-Reply-To: <1369619214.10521.25.camel@kjgkr>
+	Mon, 27 May 2013 07:13:24 +0000
+Received: from mx01-sz.bfs.de ([194.94.69.67])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UgrcP-0000kV-Ez for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 May 2013 07:13:24 +0000
+In-Reply-To: <20130526204116.GE23932@mwanda>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,56 +29,51 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-MjAxMy81LzI3LCBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb20+Ogo+IEhpIE5h
-bWphZSwKSGkgSmFlZ2V1ay4KCkZpcnN0LCBUaGFua3MgZm9yIHlvdXIgaW50ZXJlc3QuCj4KPiBU
-aGlzIGlzIGFuIGludGVyZXN0aW5nIGZ1bmN0aW9uYWxpdHkuCj4gQ291bGQgeW91IGRlc2NyaWJl
-IHdoeSBhbmQgd2hlbiB3ZSBuZWVkIHRvIGRvIHRoaXM/Cj4gV2hhdCBhcmUgcHJvcyBhbmQgY29u
-cz8KPiBIb3cgY2FuIHdlIHVzZSB0aGlzPwpBcyB0aGUgZGVmYXVsdCBzaXplIG9mIHRoZSBGMkZT
-IHBhcmFtZXRlciBjYW4gdmFyeSBhcyBwZXIgdGhlIHN0b3JhZ2UKc2l6ZSwgc28gd2UgY2FuIGZp
-Z3VyZSBvdXQgdGhlIGRlZmF1bHQgdmFsdWVzIGZvciBHYXJiYWdlIGNvbGxlY3Rpb24Kb24gZWFj
-aCBkZXZpY2UuCkl0IHdpbGwgYmUgZ29vZCBpZiB3ZSBjYW4gcHJvdmlkZSBhbiBpbnRlcmZhY2Ug
-d2hpY2ggaGVscHMgaW4gdHVubmluZwp0aGVzZSB0aW1pbmcgcGFyYW1ldGVycyB0byBvcHRpbWl6
-ZSB0aGUgYmVoYXZpb3Igb2YgR0MgdGhyZWFkLgoKQXMgeW91IGtub3csIHdlIGNhbiBzZWUgcGVy
-Zm9ybWFuY2UgZHJvcHBpbmcgc3VkZGVubHkgYnkgR0MgdGhyZWFkLiBHQwp0aHJlYWQgaXMgd29y
-a2luZyBtb3JlIHJvdWdobHkgZm9yIGJpZyBzaXplIGRpc2suIEFuZCBvbiBvdGhlciBoYW5kLApp
-dCBpcyBtb3JlIHdvcmsgaGFyZCBmb3IgdmVyeSBzbWFsbCBwYXJ0aXRpb24uCgpBbmQgSWYgQXBw
-IGRpZG4ndCBhY2Nlc3MgZjJmcyBwYXJ0aXRpb24gZm9yIGEgd2hpbGUuIFdlIGNhbiB1c2UgdGhp
-cwp0aW1lIHRvIG1ha2UgcG9zc2libGUgdmFsaWQgYmxvY2tzIHVzaW5nIGZvcmVnb3VuZCBnYyB0
-aHJlYWQgd29ya2luZy4KU28gd2Ugc2hvdWxkIG5lZWQgZ2MgdGhyZWFkIGZnIHN0YXJ0IGFuZCBz
-dG9wIGZ1bmN0aW9uYWxpdHkuCldlIHdpbGwgZGVzY3JpYmUgaG93IHRvIHVzZSBpdCBhbmQgbW9y
-ZSBkZXRhaWwgaW4gcGF0Y2ggY2hhbmdlbG9nKHYyKS4KCj4KPiBJTU8sIHdoZW4gdXNlcnMgdHJ5
-IHRvIGNvbnRyb2wgSU8gbGF0ZW5jaWVzLCBpdCBzZWVtcyB0aGF0IHRoZXkgY2FuCj4gdHJpZ2dl
-ciBzdWNoIHRoZSBleHBsaWNpdCBHQ3MsIGJ1dCBpbiBvcmRlciB0byBkbyB0aGF0LCB0aGV5IGFs
-c28gbmVlZAo+IHRvIGtub3cgdGhlIHN0YXR1cyBvZiBjdXJyZW50IGYyZnMgaW4gbW9yZSBwcmVj
-aXNlbHkuIERvZXMgdGhlIGRlYnVnZnMKPiBzaG93IGl0IGVub3VnaGx5PwpGaXJzdCBpbXBvcnRh
-bnQgdGhpbmcgYmVmb3JlIHJ1bm5pbmcgdGhlIEdDIHRocmVhZCBmb3JlY2VmdWxseSBmcm9tCnRo
-ZSB1c2VyIGxldmVsIOKAmHN5c2Zz4oCZIGlzIHRvIGhhdmUgZGlhZ25vc3RpYyB2YWx1ZXMgb2Yg
-dGhlIEZMQVNICnBhcnRpdGlvbi4gU28sIHdlIGFyZSB0cnlpbmcgdG8gZmlndXJlIG91dCBob3cg
-d2UgY2FuIGNoZWNrIHRoZSBzdGF0cwpyZWdhcmRpbmcgcnVubmluZyB0aGUgR0MgdGhyZWFkLgoK
-SSBoYXZlIHRob3VnaHQgbW9yZSBhZnRlciBnZXR0aW5nIHlvdXIgcmVwbHkuCmYyZnNfY2xlYW5l
-cihhIHRlbnRhdGl2ZSBuYW1lKSBpcyB0aGF0IHByb3ZpZGUgdGhlIGZvbGxvd2luZyBzZXZlcmFs
-Cm9wdGlvbnMgdG8gY29udHJvbCBnYyB0aHJlYWQuCjEuIHN0YXJ0IGZvcmdyb3VuZCBnYyB0aHJl
-YWQgdG8gY2xlYW4gYWxsIGludmFsaWQgYmxvY2tzLgoyLiBzdG9wIG51bWJlciAxKGZnKSB3b3Jr
-aW5nLgozLiBzZXQgbmV3IHR1bm5pbmcgcGFyYW1ldGVyIChtaW4vbWF4L25vX2djKS4KNC4gZ2V0
-IHN0YXR1cyBvZiBjdXJyZW50IGYyZnMuCgpXZSB3aWxsIHByb3ZpZGUgdXNlciBsZXZlbCB1dGls
-IGluIGYyZnMgdG9vbHMgYW5kIHN5c2ZzIGF0IHRoZSBzYW1lIHRpbWUuCkl0IGlzIHVzZWZ1bCBp
-ZiB0aGUgY29uc29sZSBsZXZlbCB1c2VyL0FwcCB1c2VyIGNhbiBjaGFuZ2UgdGhlbSBlYXNpbHku
-Cgo+Cj4gQWZ0ZXJ3YXJkcywgaXQgaXMgd29ydGggdG8gYWRkIHNvbWUgaW5mb3JtYXRpb24gdG8K
-PiBEb2N1bWVudC9maWxlc3lzdGVtcy9mMmZzLnR4dC4KWWVzLCBJdCB3aWxsIGJlIGluY2x1ZGVk
-IGluIG5leHQgc2VyaWVzIHBhdGNoZXMuCkhvdyBkbyB5b3UgdGhpbmsgPyBJZiB5b3UgYWdyZWUg
-bXkgc3VnZ2VzdGlvbiwgSSB3aWxsIHN0YXJ0IHRvIHdvcmsKdGhlIGFib3ZlIGpvYnMuCgpMZXQg
-bWUga25vdyB5b3VyIG9waW5pb24uCgpUaGFua3MuCj4KPiBUaGFua3MsCj4KCi0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQpUcnkgTmV3IFJlbGljIE5vdyAmIFdlJ2xsIFNlbmQgWW91IHRoaXMgQ29vbCBT
-aGlydApOZXcgUmVsaWMgaXMgdGhlIG9ubHkgU2FhUy1iYXNlZCBhcHBsaWNhdGlvbiBwZXJmb3Jt
-YW5jZSBtb25pdG9yaW5nIHNlcnZpY2UgCnRoYXQgZGVsaXZlcnMgcG93ZXJmdWwgZnVsbCBzdGFj
-ayBhbmFseXRpY3MuIE9wdGltaXplIGFuZCBtb25pdG9yIHlvdXIKYnJvd3NlciwgYXBwLCAmIHNl
-cnZlcnMgd2l0aCBqdXN0IGEgZmV3IGxpbmVzIG9mIGNvZGUuIFRyeSBOZXcgUmVsaWMKYW5kIGdl
-dCB0aGlzIGF3ZXNvbWUgTmVyZCBMaWZlIHNoaXJ0ISBodHRwOi8vcC5zZi5uZXQvc2Z1L25ld3Jl
-bGljX2QyZF9tYXkKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5z
-b3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGlu
-Zm8vbGludXgtZjJmcy1kZXZlbAo=
+
+
+Am 26.05.2013 22:41, schrieb Dan Carpenter:
+> On Sun, May 26, 2013 at 05:05:15PM +0200, walter harms wrote:
+>>
+>>
+>> Am 23.05.2013 12:02, schrieb Dan Carpenter:
+>>> There is an error path where "dir" is an ERR_PTR.
+>>>
+>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>>
+>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+>>> index 5148d90..921aede 100644
+>>> --- a/fs/f2fs/recovery.c
+>>> +++ b/fs/f2fs/recovery.c
+>>> @@ -71,7 +71,8 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
+>>>  out:
+>>>  	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode and its dentry: "
+>>>  			"ino = %x, name = %s, dir = %lx, err = %d",
+>>> -			ino_of_node(ipage), raw_inode->i_name, dir->i_ino, err);
+>>> +			ino_of_node(ipage), raw_inode->i_name,
+>>> +			IS_ERR(dir) ? 0 : dir->i_ino, err);
+>>>  	return err;
+>>>  }
+>>>  
+>> I am not an expert on  this matter so a simple question:
+>> dir->i_ino==0 is not valid ?
+> 
+> That is a valid question.  The trick is that we also print the err
+> code so error conditions should be pretty obvious.
+> 
+hi dan,
+people never read error messages propperly, i would go for -1
+or at least something obvoius like 57005 (0xdead :).
+
+re,
+ wh
+
+
+------------------------------------------------------------------------------
+Try New Relic Now & We'll Send You this Cool Shirt
+New Relic is the only SaaS-based application performance monitoring service 
+that delivers powerful full stack analytics. Optimize and monitor your
+browser, app, & servers with just a few lines of code. Try New Relic
+and get this awesome Nerd Life shirt! http://p.sf.net/sfu/newrelic_d2d_may
