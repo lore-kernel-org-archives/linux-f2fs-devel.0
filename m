@@ -1,85 +1,136 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [f2fs-dev] [PATCH 3/3] f2fs: fix incorrect iputs during the dentry
-	recovery
-Date: Tue, 28 May 2013 10:19:45 +0900
-Message-ID: <1369703985-26284-3-git-send-email-jaegeuk.kim@samsung.com>
-References: <1369703985-26284-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: Re: [PATCH 2/2] f2fs: add sysfs support for controlling the gc_thread
+Date: Tue, 28 May 2013 10:34:27 +0900
+Message-ID: <1369704867.10521.46.camel@kjgkr>
+References: <1369533945-6955-1-git-send-email-linkinjeon@gmail.com>
+ <1369619214.10521.25.camel@kjgkr>
+ <CAKYAXd_QZronHD536LOfeFWLmtCoweRq3gbH94R4_7oKC7hv3w@mail.gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature"; boundary="=-+QrFJcKhcSoQM45hooja"
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <CAKYAXd_QZronHD536LOfeFWLmtCoweRq3gbH94R4_7oKC7hv3w@mail.gmail.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Namjae Jeon <linkinjeon@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+
+--=-+QrFJcKhcSoQM45hooja
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+2013-05-27 (=EC=9B=94), 13:45 +0900, Namjae Jeon:
+> 2013/5/27, Jaegeuk Kim <jaegeuk.kim@samsung.com>:
+> > Hi Namjae,
+> Hi Jaegeuk.
+>=20
+> First, Thanks for your interest.
+> >
+> > This is an interesting functionality.
+> > Could you describe why and when we need to do this?
+> > What are pros and cons?
+> > How can we use this?
+> As the default size of the F2FS parameter can vary as per the storage
+> size, so we can figure out the default values for Garbage collection
+> on each device.
+> It will be good if we can provide an interface which helps in tunning
+> these timing parameters to optimize the behavior of GC thread.
+
+Agreed.
+
+>=20
+> As you know, we can see performance dropping suddenly by GC thread. GC
+> thread is working more roughly for big size disk. And on other hand,
+> it is more work hard for very small partition.
+>=20
+> And If App didn't access f2fs partition for a while. We can use this
+> time to make possible valid blocks using foregound gc thread working.
+> So we should need gc thread fg start and stop functionality.
+> We will describe how to use it and more detail in patch changelog(v2).
+> >
+> > IMO, when users try to control IO latencies, it seems that they can
+> > trigger such the explicit GCs, but in order to do that, they also need
+> > to know the status of current f2fs in more precisely. Does the debugfs
+> > show it enoughly?
+> First important thing before running the GC thread forecefully from
+> the user level =E2=80=98sysfs=E2=80=99 is to have diagnostic values of th=
+e FLASH
+> partition. So, we are trying to figure out how we can check the stats
+> regarding running the GC thread.
+>=20
+> I have thought more after getting your reply.
+> f2fs_cleaner(a tentative name) is that provide the following several
+> options to control gc thread.
+> 1. start forground gc thread to clean all invalid blocks.
+> 2. stop number 1(fg) working.
+> 3. set new tunning parameter (min/max/no_gc).
+> 4. get status of current f2fs.
+> We will provide user level util in f2fs tools and sysfs at the same time.
+> It is useful if the console level user/App user can change them easily.
+>=20
+> >
+> > Afterwards, it is worth to add some information to
+> > Document/filesystems/f2fs.txt.
+> Yes, It will be included in next series patches.
+> How do you think ? If you agree my suggestion, I will start to work
+> the above jobs.
+
+As I described, basically I agreed that this kind of interfaces and user
+apps are definitely beneficial to the f2fs users.
+
+But wrt design and implementation of new interfaces, we'd better discuss
+how to use them in more detail and what information should be needed for
+user-made cleaner.
+After then, we'd better start to design the interfaces as well as user
+scenarios clearly.
+
+IMO, the following issues should be addressed.
+- how to know system idle time by users?
+- any priority scheme for cleaning?
+- what status of current f2fs?
+- how about supporting that f2fs controls gc times dynamically instead
+of the user decision?
+
+Thanks,
+
+>=20
+> Let me know your opinion.
+>=20
+> Thanks.
+> >
+> > Thanks,
+> >
+
+--=20
+Jaegeuk Kim
+Samsung
+
+--=-+QrFJcKhcSoQM45hooja
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Uh8bC-0004IZ-3q
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 May 2013 01:21:14 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Uh8bB-0002Pu-3q for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 May 2013 01:21:14 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MNH00H58IEW3DB0@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 May 2013 10:21:00 +0900 (KST)
-In-reply-to: <1369703985-26284-1-git-send-email-jaegeuk.kim@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-- iget/iput flow in the dentry recovery process
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-1. *dir* = f2fs_iget
-2. set FI_DELAY_IPUT to *dir*
-3. add *dir* to the dirty_dir_list
-		   - __f2fs_add_link
-		     - recover_dentry)
-4. iput *dir* by remove_dirty_dir_inode
-		   - sync_dirty_dir_inodes
-		     - write_chekcpoint
+iQIcBAABAgAGBQJRpAmjAAoJEEAUqH6CSFDSWUwP/2DbVKxhzQysNexbNgrYp6xK
+VvAq8TEj05nSHyQlmhFtr+9ytXwJ0e5StkuQ1SCKZ2wKCeMAnbt76wFRZo2lHiQB
+SiopzSO/p8BcEHikOcinqL2FRNFDRu/uyXtzWKa63lFBZnb2GOjx3HAcb1zNzPiy
+1iJd0NSNfO4d75H7LJXFaMGxS+eGHzVR6YFpFazD3ccy1dEgUbAxs2EMfzpPrU+1
+0xZdgx7puu4vmzaI6XelFDPUu0KxKSdn/4NrFX3BTT0zD3WG4dd2XfhmLUNqnlQz
+7SlAfFP6NCneQMdtWpXAkErMky4+zmyZhbM9ATm2oBSazDP/B2EJS/hwR/NQV++d
+WEu3MLWY4oAVy7vS5DTJIXI9cmhd0ttWrQPr6WpdhdPznCoEVQ+g99pLM3gDCdgc
+fBDo6MxHvA19AOR8akSBp0K+MIdHldOe3MK4rqYFBApehl8/QDyFkrVEnQut8KrZ
+0m5Xt6z2K2DWayCJwcINwTZsraMkllj5mEPMqx+zBCg7Qw0VEg9JD/qk60EsxYYe
+gZ8Y9sQgwOeGQoyMchIvPp7M6KJLG0vg4DuNl2lQbFscjwwJmqHQ3RNKeuQ10gQf
+lBZvC/ggEuiy8Lfmpx6ToiLqRhTBCHCu5LdWbup58BL1dAqGsejImhe8tU4/mOa9
+Z6oP2NR4cJnG57/IPs8X
+=hyi9
+-----END PGP SIGNATURE-----
 
-If *dir*'s i_count is not 1 (i.e., root dir), remove_dirty_dir_inode is called
-later and then iput is triggered again due to the FI_DELAY_IPUT flag.
-So, let's unset the flag properly once iput is triggered.
+--=-+QrFJcKhcSoQM45hooja--
 
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/checkpoint.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 0d3701d..6f56e57 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -521,8 +521,10 @@ void remove_dirty_dir_inode(struct inode *inode)
- 	spin_unlock(&sbi->dir_inode_lock);
- 
- 	/* Only from the recovery routine */
--	if (is_inode_flag_set(F2FS_I(inode), FI_DELAY_IPUT))
-+	if (is_inode_flag_set(F2FS_I(inode), FI_DELAY_IPUT)) {
-+		clear_inode_flag(F2FS_I(inode), FI_DELAY_IPUT);
- 		iput(inode);
-+	}
- }
- 
- struct inode *check_dirty_dir_inode(struct f2fs_sb_info *sbi, nid_t ino)
--- 
-1.8.1.3.566.gaa39828
-
-
-------------------------------------------------------------------------------
-Try New Relic Now & We'll Send You this Cool Shirt
-New Relic is the only SaaS-based application performance monitoring service 
-that delivers powerful full stack analytics. Optimize and monitor your
-browser, app, & servers with just a few lines of code. Try New Relic
-and get this awesome Nerd Life shirt! http://p.sf.net/sfu/newrelic_d2d_may
