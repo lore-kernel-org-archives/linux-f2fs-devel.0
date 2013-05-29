@@ -1,136 +1,125 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 2/2] f2fs: add sysfs support for controlling the gc_thread
-Date: Tue, 28 May 2013 10:34:27 +0900
-Message-ID: <1369704867.10521.46.camel@kjgkr>
+From: Namjae Jeon <linkinjeon@gmail.com>
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: add sysfs support for controlling
+	the gc_thread
+Date: Wed, 29 May 2013 09:01:49 +0900
+Message-ID: <CAKYAXd-OO5niMiFv+ysStw=c-NQXT4AkTz3m7o1wTRZRd=WYFw@mail.gmail.com>
 References: <1369533945-6955-1-git-send-email-linkinjeon@gmail.com>
- <1369619214.10521.25.camel@kjgkr>
- <CAKYAXd_QZronHD536LOfeFWLmtCoweRq3gbH94R4_7oKC7hv3w@mail.gmail.com>
-Reply-To: jaegeuk.kim@samsung.com
+	<1369619214.10521.25.camel@kjgkr>
+	<CAKYAXd_QZronHD536LOfeFWLmtCoweRq3gbH94R4_7oKC7hv3w@mail.gmail.com>
+	<1369704867.10521.46.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature"; boundary="=-+QrFJcKhcSoQM45hooja"
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <CAKYAXd_QZronHD536LOfeFWLmtCoweRq3gbH94R4_7oKC7hv3w@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Namjae Jeon <linkinjeon@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <linkinjeon@gmail.com>) id 1UhTq0-0007nY-CR
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 29 May 2013 00:01:56 +0000
+Received: from mail-pa0-f47.google.com ([209.85.220.47])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1UhTpz-0000B2-Fp
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 29 May 2013 00:01:56 +0000
+Received: by mail-pa0-f47.google.com with SMTP id kl13so2355309pab.6
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 28 May 2013 17:01:49 -0700 (PDT)
+In-Reply-To: <1369704867.10521.46.camel@kjgkr>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-
---=-+QrFJcKhcSoQM45hooja
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-2013-05-27 (=EC=9B=94), 13:45 +0900, Namjae Jeon:
-> 2013/5/27, Jaegeuk Kim <jaegeuk.kim@samsung.com>:
-> > Hi Namjae,
-> Hi Jaegeuk.
->=20
-> First, Thanks for your interest.
-> >
-> > This is an interesting functionality.
-> > Could you describe why and when we need to do this?
-> > What are pros and cons?
-> > How can we use this?
-> As the default size of the F2FS parameter can vary as per the storage
-> size, so we can figure out the default values for Garbage collection
-> on each device.
-> It will be good if we can provide an interface which helps in tunning
-> these timing parameters to optimize the behavior of GC thread.
-
-Agreed.
-
->=20
-> As you know, we can see performance dropping suddenly by GC thread. GC
-> thread is working more roughly for big size disk. And on other hand,
-> it is more work hard for very small partition.
->=20
-> And If App didn't access f2fs partition for a while. We can use this
-> time to make possible valid blocks using foregound gc thread working.
-> So we should need gc thread fg start and stop functionality.
-> We will describe how to use it and more detail in patch changelog(v2).
-> >
-> > IMO, when users try to control IO latencies, it seems that they can
-> > trigger such the explicit GCs, but in order to do that, they also need
-> > to know the status of current f2fs in more precisely. Does the debugfs
-> > show it enoughly?
-> First important thing before running the GC thread forecefully from
-> the user level =E2=80=98sysfs=E2=80=99 is to have diagnostic values of th=
-e FLASH
-> partition. So, we are trying to figure out how we can check the stats
-> regarding running the GC thread.
->=20
-> I have thought more after getting your reply.
-> f2fs_cleaner(a tentative name) is that provide the following several
-> options to control gc thread.
-> 1. start forground gc thread to clean all invalid blocks.
-> 2. stop number 1(fg) working.
-> 3. set new tunning parameter (min/max/no_gc).
-> 4. get status of current f2fs.
-> We will provide user level util in f2fs tools and sysfs at the same time.
-> It is useful if the console level user/App user can change them easily.
->=20
-> >
-> > Afterwards, it is worth to add some information to
-> > Document/filesystems/f2fs.txt.
-> Yes, It will be included in next series patches.
-> How do you think ? If you agree my suggestion, I will start to work
-> the above jobs.
-
-As I described, basically I agreed that this kind of interfaces and user
-apps are definitely beneficial to the f2fs users.
-
-But wrt design and implementation of new interfaces, we'd better discuss
-how to use them in more detail and what information should be needed for
-user-made cleaner.
-After then, we'd better start to design the interfaces as well as user
-scenarios clearly.
-
-IMO, the following issues should be addressed.
-- how to know system idle time by users?
-- any priority scheme for cleaning?
-- what status of current f2fs?
-- how about supporting that f2fs controls gc times dynamically instead
-of the user decision?
-
-Thanks,
-
->=20
-> Let me know your opinion.
->=20
-> Thanks.
-> >
-> > Thanks,
-> >
-
---=20
-Jaegeuk Kim
-Samsung
-
---=-+QrFJcKhcSoQM45hooja
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAABAgAGBQJRpAmjAAoJEEAUqH6CSFDSWUwP/2DbVKxhzQysNexbNgrYp6xK
-VvAq8TEj05nSHyQlmhFtr+9ytXwJ0e5StkuQ1SCKZ2wKCeMAnbt76wFRZo2lHiQB
-SiopzSO/p8BcEHikOcinqL2FRNFDRu/uyXtzWKa63lFBZnb2GOjx3HAcb1zNzPiy
-1iJd0NSNfO4d75H7LJXFaMGxS+eGHzVR6YFpFazD3ccy1dEgUbAxs2EMfzpPrU+1
-0xZdgx7puu4vmzaI6XelFDPUu0KxKSdn/4NrFX3BTT0zD3WG4dd2XfhmLUNqnlQz
-7SlAfFP6NCneQMdtWpXAkErMky4+zmyZhbM9ATm2oBSazDP/B2EJS/hwR/NQV++d
-WEu3MLWY4oAVy7vS5DTJIXI9cmhd0ttWrQPr6WpdhdPznCoEVQ+g99pLM3gDCdgc
-fBDo6MxHvA19AOR8akSBp0K+MIdHldOe3MK4rqYFBApehl8/QDyFkrVEnQut8KrZ
-0m5Xt6z2K2DWayCJwcINwTZsraMkllj5mEPMqx+zBCg7Qw0VEg9JD/qk60EsxYYe
-gZ8Y9sQgwOeGQoyMchIvPp7M6KJLG0vg4DuNl2lQbFscjwwJmqHQ3RNKeuQ10gQf
-lBZvC/ggEuiy8Lfmpx6ToiLqRhTBCHCu5LdWbup58BL1dAqGsejImhe8tU4/mOa9
-Z6oP2NR4cJnG57/IPs8X
-=hyi9
------END PGP SIGNATURE-----
-
---=-+QrFJcKhcSoQM45hooja--
-
+MjAxMy81LzI4LCBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb20+Ogo+IEhpLAo+
+Cj4gMjAxMy0wNS0yNyAo7JuUKSwgMTM6NDUgKzA5MDAsIE5hbWphZSBKZW9uOgo+PiAyMDEzLzUv
+MjcsIEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT46Cj4+ID4gSGkgTmFtamFl
+LAo+PiBIaSBKYWVnZXVrLgo+Pgo+PiBGaXJzdCwgVGhhbmtzIGZvciB5b3VyIGludGVyZXN0Lgo+
+PiA+Cj4+ID4gVGhpcyBpcyBhbiBpbnRlcmVzdGluZyBmdW5jdGlvbmFsaXR5Lgo+PiA+IENvdWxk
+IHlvdSBkZXNjcmliZSB3aHkgYW5kIHdoZW4gd2UgbmVlZCB0byBkbyB0aGlzPwo+PiA+IFdoYXQg
+YXJlIHByb3MgYW5kIGNvbnM/Cj4+ID4gSG93IGNhbiB3ZSB1c2UgdGhpcz8KPj4gQXMgdGhlIGRl
+ZmF1bHQgc2l6ZSBvZiB0aGUgRjJGUyBwYXJhbWV0ZXIgY2FuIHZhcnkgYXMgcGVyIHRoZSBzdG9y
+YWdlCj4+IHNpemUsIHNvIHdlIGNhbiBmaWd1cmUgb3V0IHRoZSBkZWZhdWx0IHZhbHVlcyBmb3Ig
+R2FyYmFnZSBjb2xsZWN0aW9uCj4+IG9uIGVhY2ggZGV2aWNlLgo+PiBJdCB3aWxsIGJlIGdvb2Qg
+aWYgd2UgY2FuIHByb3ZpZGUgYW4gaW50ZXJmYWNlIHdoaWNoIGhlbHBzIGluIHR1bm5pbmcKPj4g
+dGhlc2UgdGltaW5nIHBhcmFtZXRlcnMgdG8gb3B0aW1pemUgdGhlIGJlaGF2aW9yIG9mIEdDIHRo
+cmVhZC4KPgo+IEFncmVlZC4KPgo+Pgo+PiBBcyB5b3Uga25vdywgd2UgY2FuIHNlZSBwZXJmb3Jt
+YW5jZSBkcm9wcGluZyBzdWRkZW5seSBieSBHQyB0aHJlYWQuIEdDCj4+IHRocmVhZCBpcyB3b3Jr
+aW5nIG1vcmUgcm91Z2hseSBmb3IgYmlnIHNpemUgZGlzay4gQW5kIG9uIG90aGVyIGhhbmQsCj4+
+IGl0IGlzIG1vcmUgd29yayBoYXJkIGZvciB2ZXJ5IHNtYWxsIHBhcnRpdGlvbi4KPj4KPj4gQW5k
+IElmIEFwcCBkaWRuJ3QgYWNjZXNzIGYyZnMgcGFydGl0aW9uIGZvciBhIHdoaWxlLiBXZSBjYW4g
+dXNlIHRoaXMKPj4gdGltZSB0byBtYWtlIHBvc3NpYmxlIHZhbGlkIGJsb2NrcyB1c2luZyBmb3Jl
+Z291bmQgZ2MgdGhyZWFkIHdvcmtpbmcuCj4+IFNvIHdlIHNob3VsZCBuZWVkIGdjIHRocmVhZCBm
+ZyBzdGFydCBhbmQgc3RvcCBmdW5jdGlvbmFsaXR5Lgo+PiBXZSB3aWxsIGRlc2NyaWJlIGhvdyB0
+byB1c2UgaXQgYW5kIG1vcmUgZGV0YWlsIGluIHBhdGNoIGNoYW5nZWxvZyh2MikuCj4+ID4KPj4g
+PiBJTU8sIHdoZW4gdXNlcnMgdHJ5IHRvIGNvbnRyb2wgSU8gbGF0ZW5jaWVzLCBpdCBzZWVtcyB0
+aGF0IHRoZXkgY2FuCj4+ID4gdHJpZ2dlciBzdWNoIHRoZSBleHBsaWNpdCBHQ3MsIGJ1dCBpbiBv
+cmRlciB0byBkbyB0aGF0LCB0aGV5IGFsc28gbmVlZAo+PiA+IHRvIGtub3cgdGhlIHN0YXR1cyBv
+ZiBjdXJyZW50IGYyZnMgaW4gbW9yZSBwcmVjaXNlbHkuIERvZXMgdGhlIGRlYnVnZnMKPj4gPiBz
+aG93IGl0IGVub3VnaGx5Pwo+PiBGaXJzdCBpbXBvcnRhbnQgdGhpbmcgYmVmb3JlIHJ1bm5pbmcg
+dGhlIEdDIHRocmVhZCBmb3JlY2VmdWxseSBmcm9tCj4+IHRoZSB1c2VyIGxldmVsIOKAmHN5c2Zz
+4oCZIGlzIHRvIGhhdmUgZGlhZ25vc3RpYyB2YWx1ZXMgb2YgdGhlIEZMQVNICj4+IHBhcnRpdGlv
+bi4gU28sIHdlIGFyZSB0cnlpbmcgdG8gZmlndXJlIG91dCBob3cgd2UgY2FuIGNoZWNrIHRoZSBz
+dGF0cwo+PiByZWdhcmRpbmcgcnVubmluZyB0aGUgR0MgdGhyZWFkLgo+Pgo+PiBJIGhhdmUgdGhv
+dWdodCBtb3JlIGFmdGVyIGdldHRpbmcgeW91ciByZXBseS4KPj4gZjJmc19jbGVhbmVyKGEgdGVu
+dGF0aXZlIG5hbWUpIGlzIHRoYXQgcHJvdmlkZSB0aGUgZm9sbG93aW5nIHNldmVyYWwKPj4gb3B0
+aW9ucyB0byBjb250cm9sIGdjIHRocmVhZC4KPj4gMS4gc3RhcnQgZm9yZ3JvdW5kIGdjIHRocmVh
+ZCB0byBjbGVhbiBhbGwgaW52YWxpZCBibG9ja3MuCj4+IDIuIHN0b3AgbnVtYmVyIDEoZmcpIHdv
+cmtpbmcuCj4+IDMuIHNldCBuZXcgdHVubmluZyBwYXJhbWV0ZXIgKG1pbi9tYXgvbm9fZ2MpLgo+
+PiA0LiBnZXQgc3RhdHVzIG9mIGN1cnJlbnQgZjJmcy4KPj4gV2Ugd2lsbCBwcm92aWRlIHVzZXIg
+bGV2ZWwgdXRpbCBpbiBmMmZzIHRvb2xzIGFuZCBzeXNmcyBhdCB0aGUgc2FtZSB0aW1lLgo+PiBJ
+dCBpcyB1c2VmdWwgaWYgdGhlIGNvbnNvbGUgbGV2ZWwgdXNlci9BcHAgdXNlciBjYW4gY2hhbmdl
+IHRoZW0gZWFzaWx5Lgo+Pgo+PiA+Cj4+ID4gQWZ0ZXJ3YXJkcywgaXQgaXMgd29ydGggdG8gYWRk
+IHNvbWUgaW5mb3JtYXRpb24gdG8KPj4gPiBEb2N1bWVudC9maWxlc3lzdGVtcy9mMmZzLnR4dC4K
+Pj4gWWVzLCBJdCB3aWxsIGJlIGluY2x1ZGVkIGluIG5leHQgc2VyaWVzIHBhdGNoZXMuCj4+IEhv
+dyBkbyB5b3UgdGhpbmsgPyBJZiB5b3UgYWdyZWUgbXkgc3VnZ2VzdGlvbiwgSSB3aWxsIHN0YXJ0
+IHRvIHdvcmsKPj4gdGhlIGFib3ZlIGpvYnMuCkhpLiBKYWVnZXVrLgo+Cj4gQXMgSSBkZXNjcmli
+ZWQsIGJhc2ljYWxseSBJIGFncmVlZCB0aGF0IHRoaXMga2luZCBvZiBpbnRlcmZhY2VzIGFuZCB1
+c2VyCj4gYXBwcyBhcmUgZGVmaW5pdGVseSBiZW5lZmljaWFsIHRvIHRoZSBmMmZzIHVzZXJzLgo+
+Cj4gQnV0IHdydCBkZXNpZ24gYW5kIGltcGxlbWVudGF0aW9uIG9mIG5ldyBpbnRlcmZhY2VzLCB3
+ZSdkIGJldHRlciBkaXNjdXNzCj4gaG93IHRvIHVzZSB0aGVtIGluIG1vcmUgZGV0YWlsIGFuZCB3
+aGF0IGluZm9ybWF0aW9uIHNob3VsZCBiZSBuZWVkZWQgZm9yCj4gdXNlci1tYWRlIGNsZWFuZXIu
+Cj4gQWZ0ZXIgdGhlbiwgd2UnZCBiZXR0ZXIgc3RhcnQgdG8gZGVzaWduIHRoZSBpbnRlcmZhY2Vz
+IGFzIHdlbGwgYXMgdXNlcgo+IHNjZW5hcmlvcyBjbGVhcmx5LgpPa2F5LiBJIGFncmVlLgoKPgo+
+IElNTywgdGhlIGZvbGxvd2luZyBpc3N1ZXMgc2hvdWxkIGJlIGFkZHJlc3NlZC4KPiAtIGhvdyB0
+byBrbm93IHN5c3RlbSBpZGxlIHRpbWUgYnkgdXNlcnM/CmUuZy4gV2hlbiBwbGF5aW5nIFBWUiBm
+dW5jdGlvbiwgSW4gY2FzZSBvZiBEVFYsIEFwcCB0cnkgdG8gcmVhZCBkYXRhCmZyb20gZmlsZXN5
+c3RlbSBvZiB1c2IgZGV2aWNlLgpub3cgdGhhdCwgdXNlciBhcHAgd2lsbCBuZXZlciBhY2Nlc3Mg
+Zmxhc2ggcncgcGFydGl0aW9uIGFuZCBkb24ndCBuZWVkCnRvIGFjY2VzcyB0aGVyZS4KSSB0aGlu
+ayB0aGF0IHdlIGNhbiBjbGV2ZXJseSB1c2Ugc3VjaCB0aW1lIHRvIGF2b2lkIG9yIG1ha2Ugc2xv
+d2x5CmNvbWUgaW4gdGhlIHBvc3NpYmxlIHBlcmZvcm1hbmNlIHJlZ3Jlc3Npb24gbGF0ZXIuCgo+
+IC0gYW55IHByaW9yaXR5IHNjaGVtZSBmb3IgY2xlYW5pbmc/CkNvdWxkIHlvdSBwbHogdGVsbCBt
+ZSBhIGxpdHRsZSBtb3JlIGRldGFpbCA/Cgo+IC0gd2hhdCBzdGF0dXMgb2YgY3VycmVudCBmMmZz
+PwpJIHRoaW5rIHRoYXQgd2UgY2FuIGdldCB0aGlzIGluZm9ybWF0aW9uIGhvdyBtYW55IHZpY3Rp
+bSBzZWN0aW9uIGFuZApzZWdtZW50IGlzIHBvc3NpYmxlIHRvIHJlY2xhaW0gaW4gc3lzZnMuCkl0
+IHdpbGwgYmUgZWFzaWx5IGludGVycHJldGVkIGJ5IHRoZSB1c2VyIGFuZCBpdCBhbGxvd3MgdGhl
+IHVzZXIgdGhlCmZyZWVkb20gdG8gY2hlY2sgaXRzZWxmIGlmIHJlYWxseSBydW5uaW5nIEdDIGlz
+IHVzZWZ1bAphbmQgdXNlciBjYW4gZGVjaWRlIHRvIHJ1biBjbGVhbmVyIGF0IHRpbWluZyB0aGV5
+IHdhbnQuCgo+IC0gaG93IGFib3V0IHN1cHBvcnRpbmcgdGhhdCBmMmZzIGNvbnRyb2xzIGdjIHRp
+bWVzIGR5bmFtaWNhbGx5IGluc3RlYWQKPiBvZiB0aGUgdXNlciBkZWNpc2lvbj8KWWVzLCBJIHRo
+b3VnaHQgc3VjaCBpZGVhIGJlZm9yZS4gSXQgbWlnaHQgYmUgdXNlZnVsIGlmIGdjIHRocmVhZCBj
+YW4KZHluYW1pY2FsbHkgY29udHJvbCBvd24gZ2MgdGltZXMgd2l0aCBkaWZmZXJlbnQgcGFydGl0
+aW9uIHNpemUgYW5kCmF2YWlsYWJsZSBzaXplLgpCdXQgSSB0aGluayB0aGVyZSBpcyBhIGxpbWl0
+YXRpb24gdGhhdCBmMmZzIGRvbid0IHByZWRpY3Qgd2hlbiB1c2VyIGFjY2VzcyBmMmZzLgpTbyBJ
+IHRoaW5rIHRoYXQgdXNlciBsZXZlbCBjb250cm9sbGVyIHN1cmVseSBpcyBuZWVkZWQuCkFoLCwg
+QW5kIEl0IHdpbGwgYmUgYWxzbyB1c2VmdWwgaWYgZjJmcyBpcyBtb3VudGVkIHdpdGggYmFja2dy
+b3VuZF9nY19vZmYuCgpMZXQgbWUga25vdyB5b3VyIG9waW5pb25+LgoKVGhhbmtzOikKPgo+IFRo
+YW5rcywKPgo+Pgo+PiBMZXQgbWUga25vdyB5b3VyIG9waW5pb24uCj4+Cj4+IFRoYW5rcy4KPj4g
+Pgo+PiA+IFRoYW5rcywKPj4gPgo+Cj4gLS0KPiBKYWVnZXVrIEtpbQo+IFNhbXN1bmcKPgoKLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tCkludHJvZHVjaW5nIEFwcER5bmFtaWNzIExpdGUsIGEgZnJlZSB0
+cm91Ymxlc2hvb3RpbmcgdG9vbCBmb3IgSmF2YS8uTkVUCkdldCAxMDAlIHZpc2liaWxpdHkgaW50
+byB5b3VyIHByb2R1Y3Rpb24gYXBwbGljYXRpb24gLSBhdCBubyBjb3N0LgpDb2RlLWxldmVsIGRp
+YWdub3N0aWNzIGZvciBwZXJmb3JtYW5jZSBib3R0bGVuZWNrcyB3aXRoIDwyJSBvdmVyaGVhZApE
+b3dubG9hZCBmb3IgZnJlZSBhbmQgZ2V0IHN0YXJ0ZWQgdHJvdWJsZXNob290aW5nIGluIG1pbnV0
+ZXMuCmh0dHA6Ly9wLnNmLm5ldC9zZnUvYXBwZHluX2QyZF9hcDEKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
+c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
+b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
