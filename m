@@ -1,179 +1,227 @@
 From: Huajun Li <huajun.li@intel.com>
-Subject: [RFC 1/5] f2fs: Add helper functions and flag to support inline data
-Date: Mon,  3 Jun 2013 18:04:10 +0800
-Message-ID: <1370253854-15084-2-git-send-email-huajun.li@intel.com>
+Subject: [f2fs-dev] [RFC 2/5] f2fs: Handle inline data read and write
+Date: Mon,  3 Jun 2013 18:04:11 +0800
+Message-ID: <1370253854-15084-3-git-send-email-huajun.li@intel.com>
 References: <1370253854-15084-1-git-send-email-huajun.li@intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <huajun.li@intel.com>) id 1UjRdU-0001mp-Bb
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 03 Jun 2013 10:05:08 +0000
+Received: from mga03.intel.com ([143.182.124.21])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UjRdS-0006rF-Nj for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 03 Jun 2013 10:05:08 +0000
 In-Reply-To: <1370253854-15084-1-git-send-email-huajun.li@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk.kim@samsung.com, linux-fsdevel@vger.kernel.org, huajun.li.lee@gmail.com
-Cc: namjae.jeon@samsung.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Haicheng Li <haicheng.li@linux.intel.com>, Huajun Li <huajun.li@intel.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: namjae.jeon@samsung.com, Huajun Li <huajun.li@intel.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-From: Haicheng Li <haicheng.li@linux.intel.com>
+Hook inline data read/write in address space operations.
 
-Add a new flag i_dyn_flags to struct f2fs_inode_info to indicate whether
-the inode has inline data, and sync the flag with raw inode while update
-file.
-
-Signed-off-by: Haicheng Li <haicheng.li@linux.intel.com>
 Signed-off-by: Huajun Li <huajun.li@intel.com>
+Signed-off-by: Haicheng Li <haicheng.li@linux.intel.com>
 ---
- fs/f2fs/f2fs.h          |   70 +++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/inode.c         |    8 ++++++
- include/linux/f2fs_fs.h |    5 ++++
- 3 files changed, 83 insertions(+)
+ fs/f2fs/data.c |   78 ++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ fs/f2fs/file.c |    9 +++++--
+ 2 files changed, 83 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 40b137a..9382f76 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -162,6 +162,7 @@ struct f2fs_inode_info {
- 	umode_t i_acl_mode;		/* keep file acl mode temporarily */
- 
- 	/* Use below internally in f2fs*/
-+	unsigned long i_dyn_flags;	/* use to mark dynamic features */
- 	unsigned long flags;		/* use to pass per-file flags */
- 	atomic_t dirty_dents;		/* # of dirty dentry pages */
- 	f2fs_hash_t chash;		/* hash value of given file name */
-@@ -170,6 +171,14 @@ struct f2fs_inode_info {
- 	struct extent_info ext;		/* in-memory extent cache entry */
- };
- 
-+/*
-+ * Flags on f2fs_inode_info.i_dyn_flags
-+ *
-+ * These can change much more often than i_flags.
-+ */
-+#define F2FS_INLINE_DATA_FL       (0x00000001)	/* Data stored in inode block */
-+#define F2FS_INLINE_DATA_ATTEMPT  (0x00000002)	/* Data stored in inode block */
-+
- static inline void get_extent_info(struct extent_info *ext,
- 					struct f2fs_extent i_ext)
- {
-@@ -877,6 +886,21 @@ static inline void clear_inode_flag(struct f2fs_inode_info *fi, int flag)
- 	clear_bit(flag, &fi->flags);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 93917e3..bac25f3 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -64,6 +64,23 @@ int reserve_new_block(struct dnode_of_data *dn)
+ 	return 0;
  }
  
-+static inline void set_inode_dyn_flag(struct f2fs_inode_info *fi, int flag)
++int f2fs_reserve_block(struct inode *inode, pgoff_t index)
 +{
-+	set_bit(flag, &fi->i_dyn_flags);
++	int err;
++	struct dnode_of_data dn;
++
++	set_new_dnode(&dn, inode, NULL, NULL, 0);
++	err = get_dnode_of_data(&dn, index, ALLOC_NODE);
++	if (err)
++		return err;
++	if (dn.data_blkaddr == NULL_ADDR)
++		err = reserve_new_block(&dn);
++
++	f2fs_put_dnode(&dn);
++
++	return err;
 +}
 +
-+static inline int is_inode_dyn_flag_set(struct f2fs_inode_info *fi, int flag)
-+{
-+	return test_bit(flag, &fi->i_dyn_flags);
-+}
-+
-+static inline void clear_inode_dyn_flag(struct f2fs_inode_info *fi, int flag)
-+{
-+	clear_bit(flag, &fi->i_dyn_flags);
-+}
-+
- static inline void set_acl_inode(struct f2fs_inode_info *fi, umode_t mode)
+ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 					struct buffer_head *bh_result)
  {
- 	fi->i_acl_mode = mode;
-@@ -1042,6 +1066,7 @@ void destroy_checkpoint_caches(void);
-  * data.c
-  */
- int reserve_new_block(struct dnode_of_data *);
-+int f2fs_reserve_block(struct inode *, pgoff_t);
- void update_extent_cache(block_t, struct dnode_of_data *);
- struct page *find_data_page(struct inode *, pgoff_t, bool);
- struct page *get_lock_data_page(struct inode *, pgoff_t);
-@@ -1144,6 +1169,51 @@ static inline void __init f2fs_create_root_stats(void) { }
- static inline void f2fs_destroy_root_stats(void) { }
- #endif
+@@ -461,13 +478,28 @@ static int get_data_block_ro(struct inode *inode, sector_t iblock,
  
-+/*
-+ * inline.c
-+ */
-+#ifdef CONFIG_F2FS_INLINE_DATA
-+#define MAX_INLINE_DATA		(sizeof(__le32) * (ADDRS_PER_INODE + 5))
-+#define INLINE_DATA_OFFSET	(PAGE_CACHE_SIZE - sizeof(struct node_footer)\
-+					- MAX_INLINE_DATA)
+ static int f2fs_read_data_page(struct file *file, struct page *page)
+ {
+-	return mpage_readpage(page, get_data_block_ro);
++	int ret;
++	struct inode *inode = file->f_mapping->host;
 +
-+void f2fs_clear_inode_inline_flag(struct f2fs_inode *);
-+void f2fs_set_inode_inline_flag(struct f2fs_inode *);
-+int f2fs_inline_data_attempt(struct inode *);
-+int f2fs_has_inline_data(struct inode *);
-+int f2fs_read_inline_data_page(struct inode *, struct page *);
-+int f2fs_convert_inline_data(struct page *, struct inode *, unsigned);
-+int f2fs_write_inline_data(struct inode *, struct page *, unsigned int);
++	/* If the file has inline data, try to read it directlly */
++	if (f2fs_has_inline_data(inode))
++		ret = f2fs_read_inline_data_page(inode, page);
++	else
++		ret = mpage_readpage(page, get_data_block_ro);
++
++	return ret;
+ }
+ 
+ static int f2fs_read_data_pages(struct file *file,
+ 			struct address_space *mapping,
+ 			struct list_head *pages, unsigned nr_pages)
+ {
++	struct inode *inode = file->f_mapping->host;
++
++	/* If the file has inline data, skip readpages */
++	if (f2fs_has_inline_data(inode))
++		return 0;
++
+ 	return mpage_readpages(mapping, pages, nr_pages, get_data_block_ro);
+ }
+ 
+@@ -517,7 +549,7 @@ static int f2fs_write_data_page(struct page *page,
+ 	loff_t i_size = i_size_read(inode);
+ 	const pgoff_t end_index = ((unsigned long long) i_size)
+ 							>> PAGE_CACHE_SHIFT;
+-	unsigned offset;
++	unsigned offset = 0;
+ 	bool need_balance_fs = false;
+ 	int err = 0;
+ 
+@@ -551,7 +583,16 @@ write:
+ 		err = do_write_data_page(page);
+ 	} else {
+ 		int ilock = mutex_lock_op(sbi);
++
++#ifdef CONFIG_F2FS_INLINE_DATA
++		if (i_size <= MAX_INLINE_DATA)
++			err = f2fs_write_inline_data(inode, page, offset);
++		else
++			err = do_write_data_page(page);
 +#else
-+static inline void
-+f2fs_clear_inode_inline_flag(struct f2fs_inode *raw_inode) { }
-+static inline void
-+f2fs_set_inode_inline_flag(struct f2fs_inode *raw_inode) { }
-+int f2fs_inline_data_attempt(struct inode *inode)
-+{
-+	return 0;
-+}
-+static inline int f2fs_has_inline_data(struct inode *inode)
-+{
-+	return 0;
-+}
-+static inline int f2fs_read_inline_data_page(struct inode *inode,
-+						struct page *page)
-+{
-+	return 0;
-+}
-+static inline int f2fs_convert_inline_data(struct page *page,
-+					   struct inode *inode, unsigned flags)
-+{
-+	return 0;
-+}
-+static inline int f2fs_write_inline_data(struct inode *inode,
-+					 struct page *page, unsigned size)
-+{
-+	return 0;
-+}
+ 		err = do_write_data_page(page);
 +#endif
 +
- extern const struct file_operations f2fs_dir_operations;
- extern const struct file_operations f2fs_file_operations;
- extern const struct inode_operations f2fs_file_inode_operations;
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index b44a4c1..1d7b0b5 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -84,6 +84,9 @@ static int do_read_inode(struct inode *inode)
- 	fi->flags = 0;
- 	fi->i_advise = ri->i_advise;
- 	fi->i_pino = le32_to_cpu(ri->i_pino);
-+	if (ri->i_reserved & F2FS_INODE_INLINE_DATA)
-+		set_inode_dyn_flag(fi, F2FS_INLINE_DATA_FL);
-+
- 	get_extent_info(&fi->ext, ri->i_ext);
- 	f2fs_put_page(node_page, 1);
- 	return 0;
-@@ -177,6 +180,11 @@ void update_inode(struct inode *inode, struct page *node_page)
- 	ri->i_pino = cpu_to_le32(F2FS_I(inode)->i_pino);
- 	ri->i_generation = cpu_to_le32(inode->i_generation);
+ 		mutex_unlock_op(sbi, ilock);
+ 		need_balance_fs = true;
+ 	}
+@@ -643,6 +684,25 @@ repeat:
+ 		return -ENOMEM;
+ 	*pagep = page;
  
++#ifdef CONFIG_F2FS_INLINE_DATA
++	if ((pos + len) <= MAX_INLINE_DATA) {
++		set_inode_dyn_flag(F2FS_I(inode), F2FS_INLINE_DATA_ATTEMPT);
++		goto inline_data;
++	} else if (f2fs_has_inline_data(inode)) {
++		err = f2fs_convert_inline_data(page, inode, flags);
++		if (err)
++			return err;
++	} else if (f2fs_inline_data_attempt(inode)) {
++		clear_inode_dyn_flag(F2FS_I(inode), F2FS_INLINE_DATA_ATTEMPT);
++
++		ilock = mutex_lock_op(sbi);
++		err = f2fs_reserve_block(inode, 0);
++		if (err)
++			goto err;
++		mutex_unlock_op(sbi, ilock);
++	}
++#endif
++
+ 	ilock = mutex_lock_op(sbi);
+ 
+ 	set_new_dnode(&dn, inode, NULL, NULL, 0);
+@@ -659,6 +719,7 @@ repeat:
+ 
+ 	mutex_unlock_op(sbi, ilock);
+ 
++inline_data:
+ 	if ((len == PAGE_CACHE_SIZE) || PageUptodate(page))
+ 		return 0;
+ 
+@@ -674,7 +735,16 @@ repeat:
+ 	if (dn.data_blkaddr == NEW_ADDR) {
+ 		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
+ 	} else {
++#ifdef CONFIG_F2FS_INLINE_DATA
++		if ((pos + len) <= MAX_INLINE_DATA)
++			err = f2fs_read_inline_data_page(inode, page);
++		else
++			err = f2fs_readpage(sbi, page,
++					    dn.data_blkaddr, READ_SYNC);
++#else
+ 		err = f2fs_readpage(sbi, page, dn.data_blkaddr, READ_SYNC);
++#endif
++
+ 		if (err)
+ 			return err;
+ 		lock_page(page);
+@@ -707,6 +777,10 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
+ 	if (rw == WRITE)
+ 		return 0;
+ 
++	/* Let buffer I/O handle the inline data case. */
 +	if (f2fs_has_inline_data(inode))
-+		f2fs_set_inode_inline_flag(ri);
-+	else
-+		f2fs_clear_inode_inline_flag(ri);
++		return 0;
 +
- 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode)) {
- 		if (old_valid_dev(inode->i_rdev)) {
- 			ri->i_addr[0] =
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 383d5e3..505808c 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -176,6 +176,11 @@ struct f2fs_inode {
- 						double_indirect(1) node id */
- } __packed;
+ 	/* Needs synchronization with the cleaner */
+ 	return blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
+ 						  get_data_block_ro);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index deefd25..03b13b3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -178,6 +178,9 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 	raw_node = page_address(dn->node_page);
+ 	addr = blkaddr_in_node(raw_node) + ofs;
  
-+/*
-+ * Flags on f2fs_inode.i_reserved
-+ */
-+#define F2FS_INODE_INLINE_DATA	0x01    /* Inode has inline data */
++	if (f2fs_has_inline_data(dn->inode))
++		return nr_free;
 +
- struct direct_node {
- 	__le32 addr[ADDRS_PER_BLOCK];	/* array of data block address */
- } __packed;
+ 	for ( ; count > 0; count--, addr++, dn->ofs_in_node++) {
+ 		block_t blkaddr = le32_to_cpu(*addr);
+ 		if (blkaddr == NULL_ADDR)
+@@ -267,11 +270,13 @@ static int truncate_blocks(struct inode *inode, u64 from)
+ 
+ 	f2fs_put_dnode(&dn);
+ free_next:
+-	err = truncate_inode_blocks(inode, free_from);
++	if (!f2fs_has_inline_data(inode))
++		err = truncate_inode_blocks(inode, free_from);
+ 	mutex_unlock_op(sbi, ilock);
+ 
+ 	/* lastly zero out the first data page */
+-	truncate_partial_data_page(inode, from);
++	if (!f2fs_has_inline_data(inode))
++		truncate_partial_data_page(inode, from);
+ 
+ 	trace_f2fs_truncate_blocks_exit(inode, err);
+ 	return err;
 -- 
 1.7.9.5
+
+
+------------------------------------------------------------------------------
+Get 100% visibility into Java/.NET code with AppDynamics Lite
+It's a free troubleshooting tool designed for production
+Get down to code-level detail for bottlenecks, with <2% overhead.
+Download for free and get started troubleshooting in minutes.
+http://p.sf.net/sfu/appdyn_d2d_ap2
