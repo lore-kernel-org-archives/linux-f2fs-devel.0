@@ -1,21 +1,22 @@
 From: Huajun Li <huajun.li@intel.com>
-Subject: [f2fs-dev] [RFC 3/5] f2fs: Key functions to handle inline data
-Date: Mon,  3 Jun 2013 18:04:12 +0800
-Message-ID: <1370253854-15084-4-git-send-email-huajun.li@intel.com>
+Subject: [f2fs-dev] [RFC 4/5] f2fs: Add Kconfig interface for inline data
+	support
+Date: Mon,  3 Jun 2013 18:04:13 +0800
+Message-ID: <1370253854-15084-5-git-send-email-huajun.li@intel.com>
 References: <1370253854-15084-1-git-send-email-huajun.li@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <huajun.li@intel.com>) id 1UjRdY-0007lr-1Y
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <huajun.li@intel.com>) id 1UjRdY-0007td-8w
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Mon, 03 Jun 2013 10:05:12 +0000
 Received: from mga03.intel.com ([143.182.124.21])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1UjRdX-0006rF-6Q for linux-f2fs-devel@lists.sourceforge.net;
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UjRdX-000185-Cu for linux-f2fs-devel@lists.sourceforge.net;
 	Mon, 03 Jun 2013 10:05:12 +0000
 In-Reply-To: <1370253854-15084-1-git-send-email-huajun.li@intel.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
@@ -30,174 +31,45 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk.kim@samsung.com, linux-fsdevel@vger.kernel.org, huajun.li.lee@gmail.com
 Cc: namjae.jeon@samsung.com, Huajun Li <huajun.li@intel.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Functions to implement inline data read/write, and move inline data to
-normal data block when file size exceeds inline data limitation.
+From: Haicheng Li <haicheng.li@linux.intel.com>
 
-Signed-off-by: Huajun Li <huajun.li@intel.com>
+Add Kconfig interface for inline data support, and update Makefile to
+compile new added source file.
+
 Signed-off-by: Haicheng Li <haicheng.li@linux.intel.com>
+Signed-off-by: Huajun Li <huajun.li@intel.com>
 ---
- fs/f2fs/inline.c |  152 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 152 insertions(+)
- create mode 100644 fs/f2fs/inline.c
+ fs/f2fs/Kconfig  |   10 ++++++++++
+ fs/f2fs/Makefile |    1 +
+ 2 files changed, 11 insertions(+)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-new file mode 100644
-index 0000000..a2aa056
---- /dev/null
-+++ b/fs/f2fs/inline.c
-@@ -0,0 +1,152 @@
-+/*
-+ * fs/f2fs/inline.c
-+ *
-+ * Copyright (c) 2013, Intel Corporation.
-+ * Authors:
-+ *      Huajun Li <huajun.li@intel.com>
-+ *      Haicheng Li <haicheng.li@intel.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/fs.h>
-+#include <linux/f2fs_fs.h>
+diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+index fd27e7e..75da2e4 100644
+--- a/fs/f2fs/Kconfig
++++ b/fs/f2fs/Kconfig
+@@ -51,3 +51,13 @@ config F2FS_FS_POSIX_ACL
+ 	  Linux website <http://acl.bestbits.at/>.
+ 
+ 	  If you don't know what Access Control Lists are, say N
 +
-+#include "f2fs.h"
++config F2FS_INLINE_DATA
++	bool "F2FS inline data support"
++	depends on F2FS_FS
++	default y
++	help
++	  Inline data support is an optimization of F2FS data space management,
++	  which utilizes the unused space within f2fs inode to keep real data.
 +
-+void f2fs_clear_inode_inline_flag(struct f2fs_inode *raw_inode)
-+{
-+	raw_inode->i_reserved &= ~F2FS_INODE_INLINE_DATA;
-+}
-+
-+void f2fs_set_inode_inline_flag(struct f2fs_inode *raw_inode)
-+{
-+	raw_inode->i_reserved |= F2FS_INODE_INLINE_DATA;
-+}
-+
-+int f2fs_inline_data_attempt(struct inode *inode)
-+{
-+	return is_inode_dyn_flag_set(F2FS_I(inode), F2FS_INLINE_DATA_ATTEMPT);
-+}
-+
-+int f2fs_has_inline_data(struct inode *inode)
-+{
-+	return is_inode_dyn_flag_set(F2FS_I(inode), F2FS_INLINE_DATA_FL);
-+}
-+
-+static int f2fs_read_inline_data(struct inode *inode, struct page *page)
-+{
-+	void *src_addr, *dst_addr;
-+	loff_t size = i_size_read(inode);
-+	struct page *ipage = get_node_page(F2FS_SB(inode->i_sb), inode->i_ino);
-+
-+	if (IS_ERR(ipage))
-+		return PTR_ERR(ipage);
-+
-+	src_addr = page_address(ipage);
-+	dst_addr = page_address(page);
-+
-+	memcpy(dst_addr, src_addr + INLINE_DATA_OFFSET, size);
-+	zero_user_segment(page, INLINE_DATA_OFFSET + size, PAGE_CACHE_SIZE);
-+	SetPageUptodate(page);
-+
-+	f2fs_put_page(ipage, 1);
-+
-+	return 0;
-+}
-+
-+int f2fs_read_inline_data_page(struct inode *inode, struct page *page)
-+{
-+	int ret = 0;
-+
-+	if (!page->index) {
-+		ret = f2fs_read_inline_data(inode, page);
-+	} else if (!PageUptodate(page)) {
-+		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
-+		SetPageUptodate(page);
-+	}
-+
-+	unlock_page(page);
-+
-+	return ret;
-+}
-+
-+int f2fs_convert_inline_data(struct page *p,
-+			     struct inode *inode, unsigned flags)
-+{
-+	int err;
-+	int ilock;
-+	loff_t size;
-+	struct page *page, *ipage;
-+	void *src_addr, *dst_addr;
-+	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-+
-+	if (!p->index)
-+		page = p;
-+	else
-+		page = grab_cache_page_write_begin(inode->i_mapping, 0, flags);
-+
-+	if (IS_ERR(page))
-+		return PTR_ERR(page);
-+
-+	ipage = get_node_page(sbi, inode->i_ino);
-+	if (IS_ERR(ipage)) {
-+		f2fs_put_page(page, 1);
-+		return PTR_ERR(ipage);
-+	}
-+
-+	src_addr = page_address(ipage);
-+	dst_addr = page_address(page);
-+
-+	size = i_size_read(inode);
-+	memcpy(dst_addr, src_addr + INLINE_DATA_OFFSET, size);
-+	zero_user_segment(ipage, INLINE_DATA_OFFSET,
-+			  INLINE_DATA_OFFSET + MAX_INLINE_DATA);
-+	clear_inode_dyn_flag(F2FS_I(inode), F2FS_INLINE_DATA_FL);
-+	set_page_dirty(ipage);
-+	f2fs_put_page(ipage, 1);
-+
-+	if (!p->index) {
-+		SetPageUptodate(page);
-+	} else {
-+		ilock = mutex_lock_op(sbi);
-+		err = f2fs_reserve_block(inode, 0);
-+		if (err)
-+			goto err;
-+		mutex_unlock_op(sbi, ilock);
-+
-+		set_page_dirty(page);
-+		f2fs_put_page(page, 1);
-+	}
-+
-+	return 0;
-+
-+err:
-+	mutex_unlock_op(sbi, ilock);
-+	f2fs_put_page(page, 1);
-+	return err;
-+}
-+
-+int f2fs_write_inline_data(struct inode *inode,
-+			   struct page *page, unsigned size)
-+{
-+	void *src_addr, *dst_addr;
-+	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-+	struct page *ipage = get_node_page(sbi, inode->i_ino);
-+
-+	if (IS_ERR(ipage))
-+		return PTR_ERR(ipage);
-+
-+	src_addr = page_address(page);
-+	dst_addr = page_address(ipage);
-+
-+	memcpy(dst_addr + INLINE_DATA_OFFSET, src_addr, size);
-+	clear_inode_dyn_flag(F2FS_I(inode), F2FS_INLINE_DATA_ATTEMPT);
-+	if (!f2fs_has_inline_data(inode))
-+		set_inode_dyn_flag(F2FS_I(inode), F2FS_INLINE_DATA_FL);
-+	set_page_dirty(ipage);
-+	f2fs_put_page(ipage, 1);
-+
-+	return 0;
-+}
++	  If unsure, say N.
+diff --git a/fs/f2fs/Makefile b/fs/f2fs/Makefile
+index 27a0820..e1ff7b8 100644
+--- a/fs/f2fs/Makefile
++++ b/fs/f2fs/Makefile
+@@ -5,3 +5,4 @@ f2fs-y		+= checkpoint.o gc.o data.o node.o segment.o recovery.o
+ f2fs-$(CONFIG_F2FS_STAT_FS) += debug.o
+ f2fs-$(CONFIG_F2FS_FS_XATTR) += xattr.o
+ f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) += acl.o
++f2fs-$(CONFIG_F2FS_INLINE_DATA) += inline.o
 -- 
 1.7.9.5
 
