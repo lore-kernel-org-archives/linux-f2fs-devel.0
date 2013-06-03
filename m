@@ -1,26 +1,21 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: reorganise the function
-	get_victim_by_default
-Date: Sat,  1 Jun 2013 16:20:26 +0900
-Message-ID: <1370071226-7749-1-git-send-email-linkinjeon@gmail.com>
+From: Huajun Li <huajun.li@intel.com>
+Subject: [f2fs-dev] [RFC 0/5] Enable f2fs support inline data
+Date: Mon,  3 Jun 2013 18:04:09 +0800
+Message-ID: <1370253854-15084-1-git-send-email-huajun.li@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <linkinjeon@gmail.com>) id 1Uig7G-00038j-1P
+	(envelope-from <huajun.li@intel.com>) id 1UjRd7-0007kJ-JY
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jun 2013 07:20:42 +0000
-Received: from mail-pa0-f43.google.com ([209.85.220.43])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1Uig7F-0007r6-5R
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 01 Jun 2013 07:20:42 +0000
-Received: by mail-pa0-f43.google.com with SMTP id hz10so318154pad.16
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 01 Jun 2013 00:20:35 -0700 (PDT)
+	Mon, 03 Jun 2013 10:04:45 +0000
+Received: from mga14.intel.com ([143.182.124.37])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UjRd6-0006Vy-MR for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 03 Jun 2013 10:04:45 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,86 +25,39 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: Namjae Jeon <linkinjeon@gmail.com>, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com, linux-fsdevel@vger.kernel.org, huajun.li.lee@gmail.com
+Cc: namjae.jeon@samsung.com, Huajun Li <huajun.li@intel.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-From: Namjae Jeon <namjae.jeon@samsung.com>
+f2fs inode is so large, small files can be stored directly in the inode,
+rather than just storing a single block address and storing the data elsewhere.
 
-Fix the function get_victim_by_default, where it checks
-for the condition  that p.min_segno != NULL_SEGNO as
-shown:
+This RFC patch set is just to enable f2fs support inline data: files less than
+about 3.6K can be stored directly in inode block.
 
-if (p.min_segno != NULL_SEGNO)
-           goto got_it;
+TODO: make small dirs inline too.
 
-and if above condition is true then
 
-got_it:
-        if (p.min_segno != NULL_SEGNO) {
+Haicheng Li (3):
+  f2fs: Add helper functions and flag to support inline data
+  f2fs: Add interface for inline data support
+  f2fs: add tracepoints to debug inline data operations
 
-So this condition is being checked twice. Hence move the goto
-statement after the if condition so that duplication of condition
-check is avoided.
+Huajun Li (2):
+  f2fs: Handle inline data read and write
+  f2fs: Key functions to handle inline data
 
-Also this function makes a call to get_max_cost() to compute
-the max cost based on the f2fs_sbi_info and victim policy. Since
-get_max_cost depends on on three parameters of victim_sel_policy
-=> alloc_mode, gc_mode & ofs_unit, once this victim policy is
-initialised, these value will not change till the execution
-time of get_victim_by_default() & also f2fs_sbi_info structure
-parameters will not change.
+ fs/f2fs/Kconfig             |   10 +++
+ fs/f2fs/Makefile            |    1 +
+ fs/f2fs/data.c              |   78 +++++++++++++++++++++-
+ fs/f2fs/f2fs.h              |   70 +++++++++++++++++++
+ fs/f2fs/file.c              |    9 ++-
+ fs/f2fs/inline.c            |  156 +++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/inode.c             |    8 +++
+ include/linux/f2fs_fs.h     |    5 ++
+ include/trace/events/f2fs.h |   69 +++++++++++++++++++
+ 9 files changed, 402 insertions(+), 4 deletions(-)
+ create mode 100644 fs/f2fs/inline.c
 
-Hence making calls to get_max_cost() in while loop does not seems to
-be a good point. Instead we can call it once in begining and store
-the results in local variable, which later can serve our purpose
-for comparing the cost with max cost inside the while loop.
-
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-Signed-off-by: Pankaj Kumar <pankaj.km@samsung.com>
----
- fs/f2fs/gc.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index ddc2c67..3a9df36 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -241,14 +241,14 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- {
- 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
- 	struct victim_sel_policy p;
--	unsigned int secno;
-+	unsigned int secno, max_cost;
- 	int nsearched = 0;
- 
- 	p.alloc_mode = alloc_mode;
- 	select_policy(sbi, gc_type, type, &p);
- 
- 	p.min_segno = NULL_SEGNO;
--	p.min_cost = get_max_cost(sbi, &p);
-+	p.min_cost = max_cost = get_max_cost(sbi, &p);
- 
- 	mutex_lock(&dirty_i->seglist_lock);
- 
-@@ -287,7 +287,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 			p.min_cost = cost;
- 		}
- 
--		if (cost == get_max_cost(sbi, &p))
-+		if (cost == max_cost)
- 			continue;
- 
- 		if (nsearched++ >= MAX_VICTIM_SEARCH) {
-@@ -295,8 +295,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 			break;
- 		}
- 	}
--got_it:
- 	if (p.min_segno != NULL_SEGNO) {
-+got_it:
- 		if (p.alloc_mode == LFS) {
- 			secno = GET_SECNO(sbi, p.min_segno);
- 			if (gc_type == FG_GC)
 -- 
 1.7.9.5
 
