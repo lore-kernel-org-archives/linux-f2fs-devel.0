@@ -1,82 +1,115 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: Re: [f2fs-dev] [RFC 0/5] Enable f2fs support inline data
-Date: Tue, 4 Jun 2013 13:23:57 +0900
-Message-ID: <CAKYAXd-87rGatnEC8wbocR_wt6Qdpec3HzZaH9ukpzmst6DK=A@mail.gmail.com>
+From: Haicheng Li <haicheng.li@linux.intel.com>
+Subject: Re: [RFC 0/5] Enable f2fs support inline data
+Date: Tue, 4 Jun 2013 14:01:20 +0800
+Message-ID: <20130604060119.GA3265@hli22-desktop>
 References: <1370253854-15084-1-git-send-email-huajun.li@intel.com>
-	<1370312366.3600.3.camel@kjgkr>
+ <1370312366.3600.3.camel@kjgkr>
+ <CAKYAXd-87rGatnEC8wbocR_wt6Qdpec3HzZaH9ukpzmst6DK=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <linkinjeon@gmail.com>) id 1Ujin1-0004kw-0q
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 04 Jun 2013 04:24:07 +0000
-Received: from mail-pd0-f179.google.com ([209.85.192.179])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1Ujimx-0006M8-PK
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 04 Jun 2013 04:24:06 +0000
-Received: by mail-pd0-f179.google.com with SMTP id q11so6566112pdj.24
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 03 Jun 2013 21:23:57 -0700 (PDT)
-In-Reply-To: <1370312366.3600.3.camel@kjgkr>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Huajun Li <huajun.li@intel.com>
-Cc: namjae.jeon@samsung.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAKYAXd-87rGatnEC8wbocR_wt6Qdpec3HzZaH9ukpzmst6DK=A@mail.gmail.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Namjae Jeon <linkinjeon@gmail.com>
+Cc: Huajun Li <huajun.li@intel.com>, jaegeuk.kim@samsung.com, linux-fsdevel@vger.kernel.org, huajun.li.lee@gmail.com, namjae.jeon@samsung.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkuIEh1YWp1bi4KCkkgYWdyZWUgamFlZ2V1aydzIG9waW5pb24uCkFkZGl0aW9uYWxseSwgSXQg
-aXMgYmV0dGVyIHRoYXQgeW91IGRlc2NyaWJlIHRoZSBlZmZlY3QgaW4gY2hhbmdlLWxvZwp3aGVu
-IHRoaXMgZmVhdHVyZSBpcyBhZGRlZCB0byBmMmZzLgplLmcuCiAgICAxLiBob3cgbXVjaCBzcGFj
-ZSBpcyBzYXZlZCB3aGVuIHN0b3Jpbmcga2VybmVsLXRyZWUoc21hbGwgZmlsZXMpID8KICAgIDIu
-IHNtYWxsIGZpbGVzIGNyZWF0aW9uIHBlcmZvcm1hbmNlIHRlc3QuCiAgICAzLiBmaWxlIGxvb2st
-dXAgcGVyZm9ybWFuY2UgdGVzdC4KICAgIDQuIG90aGVyIHBlcmZvcm1hbmNlIHRvb2xzICdzIHJl
-c3VsdC4KClRoYW5rcy4KCjIwMTMvNi80IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5n
-LmNvbT46Cj4gSGksCj4KPiBUaGlzIGZlYXR1cmUgaXMgb25lIG9mIG15IHRvZG8gaXRlbXMuIDsp
-Cj4gVGhhbmsgeW91IGZvciB0aGUgY29udHJpYnV0aW9uLgo+Cj4gQmVmb3JlIHJldmlld2luZyB0
-aGUgYmVsb3cgY29kZSBpbnRlbnNpdmVseSwgd2UgbmVlZCB0byBjaGVjayB0aGUKPiBmb2xsb3dp
-bmcgaXNzdWVzLgo+Cj4gLSBkZWFkbG9jayBjb25kaXRpb25zCj4gLSBGUyBjb25zaXN0ZW5jeQo+
-IC0gcmVjb3Zlcnkgcm91dGluZQo+Cj4gQ291bGQgeW91IGNoZWNrIG9uZSBtb3JlIHRpbWU/Cj4g
-VGhhbmtzIGFnYWluLAo+Cj4gMjAxMy0wNi0wMyAo7JuUKSwgMTg6MDQgKzA4MDAsIEh1YWp1biBM
-aToKPj4gZjJmcyBpbm9kZSBpcyBzbyBsYXJnZSwgc21hbGwgZmlsZXMgY2FuIGJlIHN0b3JlZCBk
-aXJlY3RseSBpbiB0aGUgaW5vZGUsCj4+IHJhdGhlciB0aGFuIGp1c3Qgc3RvcmluZyBhIHNpbmds
-ZSBibG9jayBhZGRyZXNzIGFuZCBzdG9yaW5nIHRoZSBkYXRhIGVsc2V3aGVyZS4KPj4KPj4gVGhp
-cyBSRkMgcGF0Y2ggc2V0IGlzIGp1c3QgdG8gZW5hYmxlIGYyZnMgc3VwcG9ydCBpbmxpbmUgZGF0
-YTogZmlsZXMgbGVzcyB0aGFuCj4+IGFib3V0IDMuNksgY2FuIGJlIHN0b3JlZCBkaXJlY3RseSBp
-biBpbm9kZSBibG9jay4KPj4KPj4gVE9ETzogbWFrZSBzbWFsbCBkaXJzIGlubGluZSB0b28uCj4+
-Cj4+Cj4+IEhhaWNoZW5nIExpICgzKToKPj4gICBmMmZzOiBBZGQgaGVscGVyIGZ1bmN0aW9ucyBh
-bmQgZmxhZyB0byBzdXBwb3J0IGlubGluZSBkYXRhCj4+ICAgZjJmczogQWRkIGludGVyZmFjZSBm
-b3IgaW5saW5lIGRhdGEgc3VwcG9ydAo+PiAgIGYyZnM6IGFkZCB0cmFjZXBvaW50cyB0byBkZWJ1
-ZyBpbmxpbmUgZGF0YSBvcGVyYXRpb25zCj4+Cj4+IEh1YWp1biBMaSAoMik6Cj4+ICAgZjJmczog
-SGFuZGxlIGlubGluZSBkYXRhIHJlYWQgYW5kIHdyaXRlCj4+ICAgZjJmczogS2V5IGZ1bmN0aW9u
-cyB0byBoYW5kbGUgaW5saW5lIGRhdGEKPj4KPj4gIGZzL2YyZnMvS2NvbmZpZyAgICAgICAgICAg
-ICB8ICAgMTAgKysrCj4+ICBmcy9mMmZzL01ha2VmaWxlICAgICAgICAgICAgfCAgICAxICsKPj4g
-IGZzL2YyZnMvZGF0YS5jICAgICAgICAgICAgICB8ICAgNzggKysrKysrKysrKysrKysrKysrKysr
-LQo+PiAgZnMvZjJmcy9mMmZzLmggICAgICAgICAgICAgIHwgICA3MCArKysrKysrKysrKysrKysr
-KysrCj4+ICBmcy9mMmZzL2ZpbGUuYyAgICAgICAgICAgICAgfCAgICA5ICsrLQo+PiAgZnMvZjJm
-cy9pbmxpbmUuYyAgICAgICAgICAgIHwgIDE1NiArKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrCj4+ICBmcy9mMmZzL2lub2RlLmMgICAgICAgICAgICAgfCAgICA4ICsr
-Kwo+PiAgaW5jbHVkZS9saW51eC9mMmZzX2ZzLmggICAgIHwgICAgNSArKwo+PiAgaW5jbHVkZS90
-cmFjZS9ldmVudHMvZjJmcy5oIHwgICA2OSArKysrKysrKysrKysrKysrKysrCj4+ICA5IGZpbGVz
-IGNoYW5nZWQsIDQwMiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+PiAgY3JlYXRlIG1v
-ZGUgMTAwNjQ0IGZzL2YyZnMvaW5saW5lLmMKPj4KPgo+IC0tCj4gSmFlZ2V1ayBLaW0KPiBTYW1z
-dW5nCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KSG93IFNlcnZpY2VOb3cgaGVscHMgSVQgcGVvcGxl
-IHRyYW5zZm9ybSBJVCBkZXBhcnRtZW50czoKMS4gQSBjbG91ZCBzZXJ2aWNlIHRvIGF1dG9tYXRl
-IElUIGRlc2lnbiwgdHJhbnNpdGlvbiBhbmQgb3BlcmF0aW9ucwoyLiBEYXNoYm9hcmRzIHRoYXQg
-b2ZmZXIgaGlnaC1sZXZlbCB2aWV3cyBvZiBlbnRlcnByaXNlIHNlcnZpY2VzCjMuIEEgc2luZ2xl
-IHN5c3RlbSBvZiByZWNvcmQgZm9yIGFsbCBJVCBwcm9jZXNzZXMKaHR0cDovL3Auc2YubmV0L3Nm
-dS9zZXJ2aWNlbm93LWQyZC1qCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxA
-bGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3Rz
-L2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Hi Jaegeuk & Namjae,
+
+Sure, we'll address your comments. And this version is RFC, just wanna =
+to
+make sure this feature is meaningful for f2fs project, and there is no =
+obvious
+mistake, e.g. missing some critical path.
+
+And if you team has some special opensource test suites used in your da=
+ily
+f2fs test cycle, pls. kindly share the info with us, then we can make s=
+ure our
+patchset can pass these cases before we send out next version.
+
+BTW, test the kernel source tree or kernel build is a good suggestion. =
+thanks.
+
+On Tue, Jun 04, 2013 at 01:23:57PM +0900, Namjae Jeon wrote:
+> Hi. Huajun.
+>=20
+> I agree jaegeuk's opinion.
+> Additionally, It is better that you describe the effect in change-log
+> when this feature is added to f2fs.
+> e.g.
+>     1. how much space is saved when storing kernel-tree(small files) =
+?
+>     2. small files creation performance test.
+>     3. file look-up performance test.
+>     4. other performance tools 's result.
+>=20
+> Thanks.
+>=20
+> 2013/6/4 Jaegeuk Kim <jaegeuk.kim@samsung.com>:
+> > Hi,
+> >
+> > This feature is one of my todo items. ;)
+> > Thank you for the contribution.
+> >
+> > Before reviewing the below code intensively, we need to check the
+> > following issues.
+> >
+> > - deadlock conditions
+> > - FS consistency
+> > - recovery routine
+> >
+> > Could you check one more time?
+> > Thanks again,
+> >
+> > 2013-06-03 (=EC=9B=94), 18:04 +0800, Huajun Li:
+> >> f2fs inode is so large, small files can be stored directly in the =
+inode,
+> >> rather than just storing a single block address and storing the da=
+ta elsewhere.
+> >>
+> >> This RFC patch set is just to enable f2fs support inline data: fil=
+es less than
+> >> about 3.6K can be stored directly in inode block.
+> >>
+> >> TODO: make small dirs inline too.
+> >>
+> >>
+> >> Haicheng Li (3):
+> >>   f2fs: Add helper functions and flag to support inline data
+> >>   f2fs: Add interface for inline data support
+> >>   f2fs: add tracepoints to debug inline data operations
+> >>
+> >> Huajun Li (2):
+> >>   f2fs: Handle inline data read and write
+> >>   f2fs: Key functions to handle inline data
+> >>
+> >>  fs/f2fs/Kconfig             |   10 +++
+> >>  fs/f2fs/Makefile            |    1 +
+> >>  fs/f2fs/data.c              |   78 +++++++++++++++++++++-
+> >>  fs/f2fs/f2fs.h              |   70 +++++++++++++++++++
+> >>  fs/f2fs/file.c              |    9 ++-
+> >>  fs/f2fs/inline.c            |  156 ++++++++++++++++++++++++++++++=
++++++++++++++
+> >>  fs/f2fs/inode.c             |    8 +++
+> >>  include/linux/f2fs_fs.h     |    5 ++
+> >>  include/trace/events/f2fs.h |   69 +++++++++++++++++++
+> >>  9 files changed, 402 insertions(+), 4 deletions(-)
+> >>  create mode 100644 fs/f2fs/inline.c
+> >>
+> >
+> > --
+> > Jaegeuk Kim
+> > Samsung
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fsdev=
+el" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
