@@ -1,63 +1,31 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 2/2 v2] f2fs: support xattr security labels
-Date: Fri, 7 Jun 2013 19:50:31 +0900
-Message-ID: <CAKYAXd9V39ff3b3V13nOOH2nxZAMesMe9KzwUK-ovzBVUCkhGw@mail.gmail.com>
-References: <1370584557-20592-1-git-send-email-jaegeuk.kim@samsung.com>
-	<1370584557-20592-2-git-send-email-jaegeuk.kim@samsung.com>
-	<1370592580.3600.42.camel@kjgkr>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH 2/2] f2fs: support xattr security labels
+Date: Fri, 07 Jun 2013 15:13:43 -0700
+Message-ID: <51B25B17.3010807@schaufler-ca.com>
+References: <1370584557-20592-1-git-send-email-jaegeuk.kim@samsung.com> <1370584557-20592-2-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <linkinjeon@gmail.com>) id 1UkuFk-0003zg-LI
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Jun 2013 10:50:40 +0000
-Received: from mail-pa0-f43.google.com ([209.85.220.43])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1UkuFh-0002fm-EU
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Jun 2013 10:50:40 +0000
-Received: by mail-pa0-f43.google.com with SMTP id hz11so1632922pad.30
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 07 Jun 2013 03:50:31 -0700 (PDT)
-In-Reply-To: <1370592580.3600.42.camel@kjgkr>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1370584557-20592-2-git-send-email-jaegeuk.kim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-2013/6/7, Jaegeuk Kim <jaegeuk.kim@samsung.com>:
-> Change log from v1:
->  o fix a bug
->
-> From 901aea226653e26aa3556edd88ca1e48fa89eb5f Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-> Date: Mon, 3 Jun 2013 19:46:19 +0900
-> Subject: [PATCH 2/2] f2fs: support xattr security labels
-> Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-> linux-f2fs-devel@lists.sourceforge.net
->
+On 6/6/2013 10:55 PM, Jaegeuk Kim wrote:
 > This patch adds the support of security labels for f2fs, which will be used
 > by SElinux.
->
+
+Please be inclusive. Security xattrs are used by LSMs other than SELinux.
+
 > Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 > ---
 >  fs/f2fs/Kconfig |  9 +++++++++
 >  fs/f2fs/dir.c   |  5 +++++
->  fs/f2fs/xattr.c | 60
-> +++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+>  fs/f2fs/xattr.c | 59 +++++++++++++++++++++++++++++++++++++++++++++++++++++++--
 >  fs/f2fs/xattr.h | 12 +++++++++++-
->  4 files changed, 83 insertions(+), 3 deletions(-)
+>  4 files changed, 82 insertions(+), 3 deletions(-)
 >
 > diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
 > index fd27e7e..2214cc9 100644
@@ -65,25 +33,206 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-deve
 > +++ b/fs/f2fs/Kconfig
 > @@ -51,3 +51,12 @@ config F2FS_FS_POSIX_ACL
 >  	  Linux website <http://acl.bestbits.at/>.
->
+>  
 >  	  If you don't know what Access Control Lists are, say N
 > +
 > +config F2FS_FS_SECURITY
 > +	bool "F2FS Security Labels"
 > +	depends on F2FS_FS_XATTR
-Hi Jaegeuk.
-Do we need to add "default y" as other xattr options ?
-
-Thanks.
 > +	help
 > +	  Security labels provide acls used by the security modules
 > +	  like SELinux. This option should be used with the xattr mode.
+
+This description missuses the term "acl". Security labels are not
+Access Control Lists (ACLs). What is the "xattr mode"? If this option
+depends on xattr support "should" is not correct.
+
 > +
 > +	  If you are not using a security module, say N.
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 67e2d13..81a1d6f 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -13,6 +13,7 @@
+>  #include "f2fs.h"
+>  #include "node.h"
+>  #include "acl.h"
+> +#include "xattr.h"
+>  
+>  static unsigned long dir_blocks(struct inode *inode)
+>  {
+> @@ -334,6 +335,10 @@ static struct page *init_inode_metadata(struct inode *inode,
+>  		if (err)
+>  			goto error;
+>  
+> +		err = f2fs_init_security(inode, dir, name);
+> +		if (err)
+> +			goto error;
+> +
+>  		wait_on_page_writeback(page);
+>  	} else {
+>  		page = get_node_page(F2FS_SB(dir->i_sb), inode->i_ino);
+> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+> index ae61f35..b5292fa 100644
+> --- a/fs/f2fs/xattr.c
+> +++ b/fs/f2fs/xattr.c
+> @@ -20,6 +20,7 @@
+>   */
+>  #include <linux/rwsem.h>
+>  #include <linux/f2fs_fs.h>
+> +#include <linux/security.h>
+>  #include "f2fs.h"
+>  #include "xattr.h"
+>  
+> @@ -43,6 +44,10 @@ static size_t f2fs_xattr_generic_list(struct dentry *dentry, char *list,
+>  		prefix = XATTR_TRUSTED_PREFIX;
+>  		prefix_len = XATTR_TRUSTED_PREFIX_LEN;
+>  		break;
+> +	case F2FS_XATTR_INDEX_SECURITY:
+> +		prefix = XATTR_SECURITY_PREFIX;
+> +		prefix_len = XATTR_SECURITY_PREFIX_LEN;
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -70,13 +75,14 @@ static int f2fs_xattr_generic_get(struct dentry *dentry, const char *name,
+>  		if (!capable(CAP_SYS_ADMIN))
+>  			return -EPERM;
+>  		break;
+> +	case F2FS_XATTR_INDEX_SECURITY:
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+>  	if (strcmp(name, "") == 0)
+>  		return -EINVAL;
+> -	return f2fs_getxattr(dentry->d_inode, type, name,
+> -			buffer, size);
+> +	return f2fs_getxattr(dentry->d_inode, type, name, buffer, size);
+>  }
+>  
+>  static int f2fs_xattr_generic_set(struct dentry *dentry, const char *name,
+> @@ -93,6 +99,8 @@ static int f2fs_xattr_generic_set(struct dentry *dentry, const char *name,
+>  		if (!capable(CAP_SYS_ADMIN))
+>  			return -EPERM;
+>  		break;
+> +	case F2FS_XATTR_INDEX_SECURITY:
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -145,6 +153,40 @@ static int f2fs_xattr_advise_set(struct dentry *dentry, const char *name,
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_F2FS_FS_SECURITY
+> +static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
+> +		void *fs_info)
+> +{
+> +	const struct xattr *xattr;
+> +	char *name;
+> +	int err = 0;
+> +
+> +	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
+> +		name = kmalloc(XATTR_SECURITY_PREFIX_LEN +
+> +			       strlen(xattr->name) + 1, GFP_NOFS);
+> +		if (!name) {
+> +			err = -ENOMEM;
+> +			break;
+> +		}
+> +		strcpy(name, XATTR_SECURITY_PREFIX);
+> +		strcpy(name + XATTR_SECURITY_PREFIX_LEN, xattr->name);
 
-------------------------------------------------------------------------------
-How ServiceNow helps IT people transform IT departments:
-1. A cloud service to automate IT design, transition and operations
-2. Dashboards that offer high-level views of enterprise services
-3. A single system of record for all IT processes
-http://p.sf.net/sfu/servicenow-d2d-j
+		sprintf(name, XATTR_SECURITY_PREFIX "%s", xattr->name);
+
+might look simpler.
+
+> +		err = f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY, name,
+> +					xattr->value, xattr->value_len);
+> +		kfree(name);
+> +		if (err < 0)
+> +			break;
+> +	}
+> +	return err;
+> +}
+> +
+> +int f2fs_init_security(struct inode *inode, struct inode *dir,
+> +				const struct qstr *qstr)
+> +{
+> +	return security_inode_init_security(inode, dir, qstr,
+> +				&f2fs_initxattrs, NULL);
+> +}
+> +#endif
+> +
+>  const struct xattr_handler f2fs_xattr_user_handler = {
+>  	.prefix	= XATTR_USER_PREFIX,
+>  	.flags	= F2FS_XATTR_INDEX_USER,
+> @@ -169,6 +211,13 @@ const struct xattr_handler f2fs_xattr_advise_handler = {
+>  	.set    = f2fs_xattr_advise_set,
+>  };
+>  
+> +const struct xattr_handler f2fs_xattr_security_handler = {
+> +	.prefix	= XATTR_SECURITY_PREFIX,
+> +	.list	= f2fs_xattr_generic_list,
+> +	.get	= f2fs_xattr_generic_get,
+> +	.set	= f2fs_xattr_generic_set,
+> +};
+> +
+>  static const struct xattr_handler *f2fs_xattr_handler_map[] = {
+>  	[F2FS_XATTR_INDEX_USER] = &f2fs_xattr_user_handler,
+>  #ifdef CONFIG_F2FS_FS_POSIX_ACL
+> @@ -177,6 +226,9 @@ static const struct xattr_handler *f2fs_xattr_handler_map[] = {
+>  #endif
+>  	[F2FS_XATTR_INDEX_TRUSTED] = &f2fs_xattr_trusted_handler,
+>  	[F2FS_XATTR_INDEX_ADVISE] = &f2fs_xattr_advise_handler,
+> +#ifdef CONFIG_F2FS_FS_SECURITY
+> +	[F2FS_XATTR_INDEX_SECURITY] = &f2fs_xattr_security_handler,
+> +#endif
+>  };
+>  
+>  const struct xattr_handler *f2fs_xattr_handlers[] = {
+> @@ -187,6 +239,9 @@ const struct xattr_handler *f2fs_xattr_handlers[] = {
+>  #endif
+>  	&f2fs_xattr_trusted_handler,
+>  	&f2fs_xattr_advise_handler,
+> +#ifdef CONFIG_F2FS_FS_SECURITY
+> +	&f2fs_xattr_security_handler,
+> +#endif
+>  	NULL,
+>  };
+>  
+> diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
+> index 49c9558..14e1329 100644
+> --- a/fs/f2fs/xattr.h
+> +++ b/fs/f2fs/xattr.h
+> @@ -112,6 +112,7 @@ extern const struct xattr_handler f2fs_xattr_trusted_handler;
+>  extern const struct xattr_handler f2fs_xattr_acl_access_handler;
+>  extern const struct xattr_handler f2fs_xattr_acl_default_handler;
+>  extern const struct xattr_handler f2fs_xattr_advise_handler;
+> +extern const struct xattr_handler f2fs_xattr_security_handler;
+>  
+>  extern const struct xattr_handler *f2fs_xattr_handlers[];
+>  
+> @@ -121,7 +122,6 @@ extern int f2fs_getxattr(struct inode *inode, int name_index, const char *name,
+>  		void *buffer, size_t buffer_size);
+>  extern ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer,
+>  		size_t buffer_size);
+> -
+>  #else
+>  
+>  #define f2fs_xattr_handlers	NULL
+> @@ -142,4 +142,14 @@ static inline ssize_t f2fs_listxattr(struct dentry *dentry, char *buffer,
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_F2FS_FS_SECURITY
+> +extern int f2fs_init_security(struct inode *inode, struct inode *dir,
+> +				const struct qstr *qstr);
+> +#else
+> +static inline int f2fs_init_security(struct inode *inode, struct inode *dir,
+> +				const struct qstr *qstr)
+> +{
+> +	return 0;
+> +}
+> +#endif
+>  #endif /* __F2FS_XATTR_H__ */
