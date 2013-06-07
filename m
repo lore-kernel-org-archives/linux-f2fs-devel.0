@@ -1,90 +1,79 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [f2fs-dev] [PATCH] f2fs: Set sb->s_fs_info before calling
-	parse_options()
-Date: Fri, 07 Jun 2013 14:16:53 +0800
-Message-ID: <51B17AD5.6060908@cn.fujitsu.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1Ukq1Z-00014C-A6
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Jun 2013 06:19:45 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Ukq1X-0003cu-Nl for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Jun 2013 06:19:45 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: guz.fnst@cn.fujitsu.com, linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH] f2fs: fix i_blocks translation on various types of files
+Date: Fri, 07 Jun 2013 17:07:23 +0900
+Message-ID: <1370592443-30457-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In f2fs_fill_super(), set sb->s_fs_info before calling parse_options(), then we can get
-f2fs_sb_info via F2FS_SB(sb) in parse_options().
-So that the second argument "sbi" of func parse_options() is no longer needed.
+Basically an inode manages the number of allocated blocks with inode->i_blocks
+which is represented in a unit of sectors, not file system blocks.
+But, f2fs has used i_blocks in a unit of file system blocks, and f2fs_getattr
+translates it to the number of sectors when fstat is called.
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+However, previously f2fs_file_inode_operations only has this, so this patch adds
+it to all the types of inode_operations.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/super.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ fs/f2fs/f2fs.h  | 1 +
+ fs/f2fs/file.c  | 2 +-
+ fs/f2fs/namei.c | 3 +++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8555f7d..58516b5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -303,9 +303,9 @@ static const struct export_operations f2fs_export_ops = {
- 	.get_parent = f2fs_get_parent,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d6e63da..bfb97c9 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -903,6 +903,7 @@ static inline int f2fs_readonly(struct super_block *sb)
+ int f2fs_sync_file(struct file *, loff_t, loff_t, int);
+ void truncate_data_blocks(struct dnode_of_data *);
+ void f2fs_truncate(struct inode *);
++int f2fs_getattr(struct vfsmount *, struct dentry *, struct kstat *);
+ int f2fs_setattr(struct dentry *, struct iattr *);
+ int truncate_hole(struct inode *, pgoff_t, pgoff_t);
+ int truncate_data_blocks_range(struct dnode_of_data *, int);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index deefd25..8d2fce9 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -291,7 +291,7 @@ void f2fs_truncate(struct inode *inode)
+ 	}
+ }
+ 
+-static int f2fs_getattr(struct vfsmount *mnt,
++int f2fs_getattr(struct vfsmount *mnt,
+ 			 struct dentry *dentry, struct kstat *stat)
+ {
+ 	struct inode *inode = dentry->d_inode;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 1fe1502..810444e 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -490,6 +490,7 @@ const struct inode_operations f2fs_dir_inode_operations = {
+ 	.rmdir		= f2fs_rmdir,
+ 	.mknod		= f2fs_mknod,
+ 	.rename		= f2fs_rename,
++	.getattr	= f2fs_getattr,
+ 	.setattr	= f2fs_setattr,
+ 	.get_acl	= f2fs_get_acl,
+ #ifdef CONFIG_F2FS_FS_XATTR
+@@ -504,6 +505,7 @@ const struct inode_operations f2fs_symlink_inode_operations = {
+ 	.readlink       = generic_readlink,
+ 	.follow_link    = page_follow_link_light,
+ 	.put_link       = page_put_link,
++	.getattr	= f2fs_getattr,
+ 	.setattr	= f2fs_setattr,
+ #ifdef CONFIG_F2FS_FS_XATTR
+ 	.setxattr	= generic_setxattr,
+@@ -514,6 +516,7 @@ const struct inode_operations f2fs_symlink_inode_operations = {
  };
  
--static int parse_options(struct super_block *sb, struct f2fs_sb_info *sbi,
--				char *options)
-+static int parse_options(struct super_block *sb, char *options)
- {
-+	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	substring_t args[MAX_OPT_ARGS];
- 	char *p;
- 	int arg = 0;
-@@ -541,6 +541,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		if (err)
- 			goto free_sb_buf;
- 	}
-+	sb->s_fs_info = sbi;
- 	/* init some FS parameters */
- 	sbi->active_logs = NR_CURSEG_TYPE;
- 
-@@ -553,7 +554,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	set_opt(sbi, POSIX_ACL);
- #endif
- 	/* parse mount options */
--	err = parse_options(sb, sbi, (char *)data);
-+	err = parse_options(sb, (char *)data);
- 	if (err)
- 		goto free_sb_buf;
- 
-@@ -565,7 +566,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_xattr = f2fs_xattr_handlers;
- 	sb->s_export_op = &f2fs_export_ops;
- 	sb->s_magic = F2FS_SUPER_MAGIC;
--	sb->s_fs_info = sbi;
- 	sb->s_time_gran = 1;
- 	sb->s_flags = (sb->s_flags & ~MS_POSIXACL) |
- 		(test_opt(sbi, POSIX_ACL) ? MS_POSIXACL : 0);
+ const struct inode_operations f2fs_special_inode_operations = {
++	.getattr	= f2fs_getattr,
+ 	.setattr        = f2fs_setattr,
+ 	.get_acl	= f2fs_get_acl,
+ #ifdef CONFIG_F2FS_FS_XATTR
 -- 
-1.7.7
-
-------------------------------------------------------------------------------
-How ServiceNow helps IT people transform IT departments:
-1. A cloud service to automate IT design, transition and operations
-2. Dashboards that offer high-level views of enterprise services
-3. A single system of record for all IT processes
-http://p.sf.net/sfu/servicenow-d2d-j
+1.8.1.3.566.gaa39828
