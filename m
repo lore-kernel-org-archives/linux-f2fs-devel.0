@@ -1,107 +1,129 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH] f2fs: sync dir->i_size with its block allocation
-Date: Mon, 10 Jun 2013 08:11:05 +0900
-Message-ID: <1370819465-28653-1-git-send-email-jaegeuk.kim@samsung.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: reorganize the f2fs_setattr()
+ function.
+Date: Mon, 10 Jun 2013 09:38:32 +0900
+Message-ID: <1370824712.22405.18.camel@lcm>
+References: <1370694303-2738-1-git-send-email-linkinjeon@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cm224.lee@samsung.com>) id 1Ulq9Z-0007FY-Dx
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 10 Jun 2013 00:40:09 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Ulq9X-00031t-58 for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 10 Jun 2013 00:40:09 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MO500K6OJ6GBCB0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 10 Jun 2013 09:40:00 +0900 (KST)
+In-reply-to: <1370694303-2738-1-git-send-email-linkinjeon@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Namjae Jeon <linkinjeon@gmail.com>
+Cc: Namjae Jeon <namjae.jeon@samsung.com>, linux-kernel@vger.kernel.org, Pankaj Kumar <pankaj.km@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 
-If new dentry block is allocated and its i_size is updated, we should update
-its inode block together in order to sync i_size and its block allocation.
-Otherwise, we can loose additional dentry block due to the unconsistent i_size.
-
-Errorneous Scenario
--------------------
-
-In the recovery routine,
- - recovery_dentry
- | - __f2fs_add_link
- | | - get_new_data_page
- | | | - i_size_write(new_i_size)
- | | | - mark_inode_dirty_sync(dir)
- | | - update_parent_metadata
- | | | - mark_inode_dirty(dir)
- |
- - write_checkpoint
-   - sync_dirty_dir_inodes
-     - filemap_flush(dentry_blocks)
-       - f2fs_write_data_page
-         - skip to write the last dentry block due to index < i_size
-
-In the above flow, new_i_size is not updated to its inode block so that the
-last dentry block will be lost accordingly.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/data.c | 2 ++
- fs/f2fs/dir.c  | 9 ++++-----
- fs/f2fs/f2fs.h | 1 +
- 3 files changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 93917e3..5b145fc 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -339,6 +339,8 @@ repeat:
- 	if (new_i_size &&
- 		i_size_read(inode) < ((index + 1) << PAGE_CACHE_SHIFT)) {
- 		i_size_write(inode, ((index + 1) << PAGE_CACHE_SHIFT));
-+		/* Only the directory inode sets new_i_size */
-+		set_inode_flag(F2FS_I(inode), FI_UPDATE_DIR);
- 		mark_inode_dirty_sync(inode);
- 	}
- 	return page;
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 81a1d6f..b72b274 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -370,22 +370,20 @@ error:
- static void update_parent_metadata(struct inode *dir, struct inode *inode,
- 						unsigned int current_depth)
- {
--	bool need_dir_update = false;
--
- 	if (is_inode_flag_set(F2FS_I(inode), FI_NEW_INODE)) {
- 		if (S_ISDIR(inode->i_mode)) {
- 			inc_nlink(dir);
--			need_dir_update = true;
-+			set_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
- 		}
- 		clear_inode_flag(F2FS_I(inode), FI_NEW_INODE);
- 	}
- 	dir->i_mtime = dir->i_ctime = CURRENT_TIME;
- 	if (F2FS_I(dir)->i_current_depth != current_depth) {
- 		F2FS_I(dir)->i_current_depth = current_depth;
--		need_dir_update = true;
-+		set_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
- 	}
- 
--	if (need_dir_update)
-+	if (is_inode_flag_set(F2FS_I(inode), FI_UPDATE_DIR))
- 		update_inode_page(dir);
- 	else
- 		mark_inode_dirty(dir);
-@@ -502,6 +500,7 @@ add_dentry:
- 
- 	update_parent_metadata(dir, inode, current_depth);
- fail:
-+	clear_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
- 	kunmap(dentry_page);
- 	f2fs_put_page(dentry_page, 1);
- 	return err;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index bfb97c9..091c688 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -859,6 +859,7 @@ enum {
- 	FI_INC_LINK,		/* need to increment i_nlink */
- 	FI_ACL_MODE,		/* indicate acl mode */
- 	FI_NO_ALLOC,		/* should not allocate any blocks */
-+	FI_UPDATE_DIR,		/* should update inode block for consistency */
- 	FI_DELAY_IPUT,		/* used for the recovery */
- };
- 
--- 
-1.8.1.3.566.gaa39828
-
+SGVsbG8sIE5hbWphZQoKSWYgdXNpbmcgQUNMLCB3aGVuZXZlciBpX21vZGUgaXMgY2hhbmdlZCB3
+ZSBzaG91bGQgdXBkYXRlIGFjbF9tb2RlIHdoaWNoCmlzIHdyaXR0ZW4gdG8geGF0dHIgYmxvY2ss
+IHRvby4gQW5kIHZpY2UgdmVyc2EuCkJlY2F1c2UgdXBkYXRlX2lub2RlKCkgaXMgY2FsbGVkIGF0
+IGFueSByZWFzb24gYW5kIGFueXRpbWUsIHNvIHdlIHNob3VsZApzeW5jIGJvdGggdGhlIG1vbWVu
+dCB4YXR0ciBpcyB3cml0dGVuLgpXZSBkb24ndCBob3BlIHRoYXQgb25seSBpX21vZGUgaXMgd3Jp
+dHRlbiB0byBkaXNrIGFuZCB4YXR0ciBpcyBub3QuIFNvCmYyZnNfc2V0YXR0ciBpcyBkaXJ0eS4K
+CkFuZCwgYmVsb3cgY29kZSBoYXMgYSBidWcuIFdoZW4gZXJyb3IgaXMgb2NjdXJyZWQsIGlub2Rl
+LT5pX21vZGUKc2hvdWxkbid0IGJlIGNoYW5nZWQuIFBsZWFzZSwgY2hlY2sgb25lIG1vcmUgdGlt
+ZSwgTmFtamFlLgoKZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZmlsZS5jIGIvZnMvZjJmcy9maWxlLmMK
+aW5kZXggZGVlZmQyNS4uMjljZDQ0OSAxMDA2NDQKLS0tIGEvZnMvZjJmcy9maWxlLmMKKysrIGIv
+ZnMvZjJmcy9maWxlLmMKQEAgLTM1MiwxMCArMzUyLDggQEAgaW50IGYyZnNfc2V0YXR0cihzdHJ1
+Y3QgZGVudHJ5ICpkZW50cnksIHN0cnVjdAppYXR0ciAqYXR0cikKIAogICAgICAgIGlmIChhdHRy
+LT5pYV92YWxpZCAmIEFUVFJfTU9ERSkgewogICAgICAgICAgICAgICAgZXJyID0gZjJmc19hY2xf
+Y2htb2QoaW5vZGUpOwotICAgICAgICAgICAgICAgaWYgKGVyciB8fCBpc19pbm9kZV9mbGFnX3Nl
+dChmaSwgRklfQUNMX01PREUpKSB7Ci0gICAgICAgICAgICAgICAgICAgICAgIGlub2RlLT5pX21v
+ZGUgPSBmaS0+aV9hY2xfbW9kZTsKKyAgICAgICAgICAgICAgIGlmIChlcnIgfHwgaXNfaW5vZGVf
+ZmxhZ19zZXQoZmksIEZJX0FDTF9NT0RFKSkKICAgICAgICAgICAgICAgICAgICAgICAgY2xlYXJf
+aW5vZGVfZmxhZyhmaSwgRklfQUNMX01PREUpOwotICAgICAgICAgICAgICAgfQogICAgICAgIH0K
+ClRoYW5rcy4KCgpPbiDthqAsIDIwMTMtMDYtMDggYXQgMjE6MjUgKzA5MDAsIE5hbWphZSBKZW9u
+IHdyb3RlOgo+IEZyb206IE5hbWphZSBKZW9uIDxuYW1qYWUuamVvbkBzYW1zdW5nLmNvbT4KPiAK
+PiBSZW1vdmUgdGhlIHJlZHVuZGFudCBjb2RlIGZyb20gdGhpcyBmdW5jdGlvbiBhbmQgbWFrZSBp
+dCBhbGlnbmVkIHdpdGgKPiB1c2FnZXMgb2YgbGF0ZXN0IGdlbmVyaWMgdmZzIGxheWVyIGZ1bmN0
+aW9uIGUuZyB1c2luZyB0aGUgc2V0YXR0cl9jb3B5KCkKPiBpbnN0ZWFkIG9mIHVzaW5nIHRoZSBm
+MmZzIHNwZWNpZmljIGZ1bmN0aW9uLgo+IAo+IEFsc28gY29ycmVjdCB0aGUgY29uZGl0aW9uIGZv
+ciB1cGRhdGluZyB0aGUgc2l6ZSBvZiBmaWxlIHZpYQo+IHRydW5jYXRlX3NldHNpemUoKS4KPiAK
+PiBTaWduZWQtb2ZmLWJ5OiBOYW1qYWUgSmVvbiA8bmFtamFlLmplb25Ac2Ftc3VuZy5jb20+Cj4g
+U2lnbmVkLW9mZi1ieTogUGFua2FqIEt1bWFyIDxwYW5rYWoua21Ac2Ftc3VuZy5jb20+Cj4gLS0t
+Cj4gIGZzL2YyZnMvYWNsLmMgIHwgICAgNSArLS0tLQo+ICBmcy9mMmZzL2ZpbGUuYyB8ICAgNDcg
+KysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgMiBmaWxl
+cyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDQ2IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1n
+aXQgYS9mcy9mMmZzL2FjbC5jIGIvZnMvZjJmcy9hY2wuYwo+IGluZGV4IDQ0YWJjMmYuLjJkMTNm
+NDQgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9hY2wuYwo+ICsrKyBiL2ZzL2YyZnMvYWNsLmMKPiBA
+QCAtMTcsOSArMTcsNiBAQAo+ICAjaW5jbHVkZSAieGF0dHIuaCIKPiAgI2luY2x1ZGUgImFjbC5o
+Igo+ICAKPiAtI2RlZmluZSBnZXRfaW5vZGVfbW9kZShpKQkoKGlzX2lub2RlX2ZsYWdfc2V0KEYy
+RlNfSShpKSwgRklfQUNMX01PREUpKSA/IFwKPiAtCQkJCQkoRjJGU19JKGkpLT5pX2FjbF9tb2Rl
+KSA6ICgoaSktPmlfbW9kZSkpCj4gLQo+ICBzdGF0aWMgaW5saW5lIHNpemVfdCBmMmZzX2FjbF9z
+aXplKGludCBjb3VudCkKPiAgewo+ICAJaWYgKGNvdW50IDw9IDQpIHsKPiBAQCAtMjk5LDcgKzI5
+Niw3IEBAIGludCBmMmZzX2FjbF9jaG1vZChzdHJ1Y3QgaW5vZGUgKmlub2RlKQo+ICAJc3RydWN0
+IGYyZnNfc2JfaW5mbyAqc2JpID0gRjJGU19TQihpbm9kZS0+aV9zYik7Cj4gIAlzdHJ1Y3QgcG9z
+aXhfYWNsICphY2w7Cj4gIAlpbnQgZXJyb3I7Cj4gLQl1bW9kZV90IG1vZGUgPSBnZXRfaW5vZGVf
+bW9kZShpbm9kZSk7Cj4gKwl1bW9kZV90IG1vZGUgPSBpbm9kZS0+aV9tb2RlOwo+ICAKPiAgCWlm
+ICghdGVzdF9vcHQoc2JpLCBQT1NJWF9BQ0wpKQo+ICAJCXJldHVybiAwOwo+IGRpZmYgLS1naXQg
+YS9mcy9mMmZzL2ZpbGUuYyBiL2ZzL2YyZnMvZmlsZS5jCj4gaW5kZXggZGVlZmQyNS4uOGRmYzFk
+YSAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL2ZpbGUuYwo+ICsrKyBiL2ZzL2YyZnMvZmlsZS5jCj4g
+QEAgLTMwMCw2MyArMzAwLDI2IEBAIHN0YXRpYyBpbnQgZjJmc19nZXRhdHRyKHN0cnVjdCB2ZnNt
+b3VudCAqbW50LAo+ICAJcmV0dXJuIDA7Cj4gIH0KPiAgCj4gLSNpZmRlZiBDT05GSUdfRjJGU19G
+U19QT1NJWF9BQ0wKPiAtc3RhdGljIHZvaWQgX19zZXRhdHRyX2NvcHkoc3RydWN0IGlub2RlICpp
+bm9kZSwgY29uc3Qgc3RydWN0IGlhdHRyICphdHRyKQo+IC17Cj4gLQlzdHJ1Y3QgZjJmc19pbm9k
+ZV9pbmZvICpmaSA9IEYyRlNfSShpbm9kZSk7Cj4gLQl1bnNpZ25lZCBpbnQgaWFfdmFsaWQgPSBh
+dHRyLT5pYV92YWxpZDsKPiAtCj4gLQlpZiAoaWFfdmFsaWQgJiBBVFRSX1VJRCkKPiAtCQlpbm9k
+ZS0+aV91aWQgPSBhdHRyLT5pYV91aWQ7Cj4gLQlpZiAoaWFfdmFsaWQgJiBBVFRSX0dJRCkKPiAt
+CQlpbm9kZS0+aV9naWQgPSBhdHRyLT5pYV9naWQ7Cj4gLQlpZiAoaWFfdmFsaWQgJiBBVFRSX0FU
+SU1FKQo+IC0JCWlub2RlLT5pX2F0aW1lID0gdGltZXNwZWNfdHJ1bmMoYXR0ci0+aWFfYXRpbWUs
+Cj4gLQkJCQkJCWlub2RlLT5pX3NiLT5zX3RpbWVfZ3Jhbik7Cj4gLQlpZiAoaWFfdmFsaWQgJiBB
+VFRSX01USU1FKQo+IC0JCWlub2RlLT5pX210aW1lID0gdGltZXNwZWNfdHJ1bmMoYXR0ci0+aWFf
+bXRpbWUsCj4gLQkJCQkJCWlub2RlLT5pX3NiLT5zX3RpbWVfZ3Jhbik7Cj4gLQlpZiAoaWFfdmFs
+aWQgJiBBVFRSX0NUSU1FKQo+IC0JCWlub2RlLT5pX2N0aW1lID0gdGltZXNwZWNfdHJ1bmMoYXR0
+ci0+aWFfY3RpbWUsCj4gLQkJCQkJCWlub2RlLT5pX3NiLT5zX3RpbWVfZ3Jhbik7Cj4gLQlpZiAo
+aWFfdmFsaWQgJiBBVFRSX01PREUpIHsKPiAtCQl1bW9kZV90IG1vZGUgPSBhdHRyLT5pYV9tb2Rl
+Owo+IC0KPiAtCQlpZiAoIWluX2dyb3VwX3AoaW5vZGUtPmlfZ2lkKSAmJiAhY2FwYWJsZShDQVBf
+RlNFVElEKSkKPiAtCQkJbW9kZSAmPSB+U19JU0dJRDsKPiAtCQlzZXRfYWNsX2lub2RlKGZpLCBt
+b2RlKTsKPiAtCX0KPiAtfQo+IC0jZWxzZQo+IC0jZGVmaW5lIF9fc2V0YXR0cl9jb3B5IHNldGF0
+dHJfY29weQo+IC0jZW5kaWYKPiAtCj4gIGludCBmMmZzX3NldGF0dHIoc3RydWN0IGRlbnRyeSAq
+ZGVudHJ5LCBzdHJ1Y3QgaWF0dHIgKmF0dHIpCj4gIHsKPiAgCXN0cnVjdCBpbm9kZSAqaW5vZGUg
+PSBkZW50cnktPmRfaW5vZGU7Cj4gLQlzdHJ1Y3QgZjJmc19pbm9kZV9pbmZvICpmaSA9IEYyRlNf
+SShpbm9kZSk7Cj4gIAlpbnQgZXJyOwo+ICAKPiAgCWVyciA9IGlub2RlX2NoYW5nZV9vayhpbm9k
+ZSwgYXR0cik7Cj4gIAlpZiAoZXJyKQo+ICAJCXJldHVybiBlcnI7Cj4gIAo+IC0JaWYgKChhdHRy
+LT5pYV92YWxpZCAmIEFUVFJfU0laRSkgJiYKPiAtCQkJYXR0ci0+aWFfc2l6ZSAhPSBpX3NpemVf
+cmVhZChpbm9kZSkpIHsKPiAtCQl0cnVuY2F0ZV9zZXRzaXplKGlub2RlLCBhdHRyLT5pYV9zaXpl
+KTsKPiArCWlmICgoYXR0ci0+aWFfdmFsaWQgJiBBVFRSX1NJWkUpKSB7Cj4gKwkJaWYgKGF0dHIt
+PmlhX3NpemUgIT0gaV9zaXplX3JlYWQoaW5vZGUpKQo+ICsJCQl0cnVuY2F0ZV9zZXRzaXplKGlu
+b2RlLCBhdHRyLT5pYV9zaXplKTsKPiAgCQlmMmZzX3RydW5jYXRlKGlub2RlKTsKPiAgCQlmMmZz
+X2JhbGFuY2VfZnMoRjJGU19TQihpbm9kZS0+aV9zYikpOwo+ICAJfQo+ICAKPiAtCV9fc2V0YXR0
+cl9jb3B5KGlub2RlLCBhdHRyKTsKPiArCXNldGF0dHJfY29weShpbm9kZSwgYXR0cik7Cj4gIAo+
+IC0JaWYgKGF0dHItPmlhX3ZhbGlkICYgQVRUUl9NT0RFKSB7Cj4gKwlpZiAoYXR0ci0+aWFfdmFs
+aWQgJiBBVFRSX01PREUpCj4gIAkJZXJyID0gZjJmc19hY2xfY2htb2QoaW5vZGUpOwo+IC0JCWlm
+IChlcnIgfHwgaXNfaW5vZGVfZmxhZ19zZXQoZmksIEZJX0FDTF9NT0RFKSkgewo+IC0JCQlpbm9k
+ZS0+aV9tb2RlID0gZmktPmlfYWNsX21vZGU7Cj4gLQkJCWNsZWFyX2lub2RlX2ZsYWcoZmksIEZJ
+X0FDTF9NT0RFKTsKPiAtCQl9Cj4gLQl9Cj4gIAo+ICAJbWFya19pbm9kZV9kaXJ0eShpbm9kZSk7
+Cj4gIAlyZXR1cm4gZXJyOwoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KSG93IFNlcnZpY2VOb3cg
+aGVscHMgSVQgcGVvcGxlIHRyYW5zZm9ybSBJVCBkZXBhcnRtZW50czoKMS4gQSBjbG91ZCBzZXJ2
+aWNlIHRvIGF1dG9tYXRlIElUIGRlc2lnbiwgdHJhbnNpdGlvbiBhbmQgb3BlcmF0aW9ucwoyLiBE
+YXNoYm9hcmRzIHRoYXQgb2ZmZXIgaGlnaC1sZXZlbCB2aWV3cyBvZiBlbnRlcnByaXNlIHNlcnZp
+Y2VzCjMuIEEgc2luZ2xlIHN5c3RlbSBvZiByZWNvcmQgZm9yIGFsbCBJVCBwcm9jZXNzZXMKaHR0
+cDovL3Auc2YubmV0L3NmdS9zZXJ2aWNlbm93LWQyZC1qCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
+bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
+Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
