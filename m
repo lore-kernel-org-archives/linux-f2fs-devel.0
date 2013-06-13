@@ -1,75 +1,66 @@
 From: Haicheng Li <haicheng.li@linux.intel.com>
-Subject: [f2fs-dev] [PATCH 2/3] f2fs: make locate_dirty_segment() as static
-Date: Thu, 13 Jun 2013 16:59:28 +0800
-Message-ID: <1371113969-946-3-git-send-email-haicheng.li@linux.intel.com>
+Subject: [PATCH 1/3] f2fs: remove unnecessary parameter "offset" from __add_sum_entry()
+Date: Thu, 13 Jun 2013 16:59:27 +0800
+Message-ID: <1371113969-946-2-git-send-email-haicheng.li@linux.intel.com>
 References: <1371113969-946-1-git-send-email-haicheng.li@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <haicheng.li@linux.intel.com>) id 1Un3Ok-0005HR-NR
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Jun 2013 09:00:50 +0000
-Received: from mga14.intel.com ([143.182.124.37])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Un3Oj-0002C2-Po for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Jun 2013 09:00:50 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1371113969-946-1-git-send-email-haicheng.li@linux.intel.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: Haicheng Li <haicheng.lee@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Haicheng Li <haicheng.lee@gmail.com>, Haicheng Li <haicheng.li@linux.intel.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-It's used only locally and could be static.
+We can get the value directly from pointer "curseg".
 
 Signed-off-by: Haicheng Li <haicheng.li@linux.intel.com>
 ---
- fs/f2fs/f2fs.h    |    1 -
- fs/f2fs/segment.c |    2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ fs/f2fs/segment.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a05aa65..3e7cb33 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -996,7 +996,6 @@ void destroy_node_manager_caches(void);
-  */
- void f2fs_balance_fs(struct f2fs_sb_info *);
- void invalidate_blocks(struct f2fs_sb_info *, block_t);
--void locate_dirty_segment(struct f2fs_sb_info *, unsigned int);
- void clear_prefree_segments(struct f2fs_sb_info *);
- int npages_for_summary_flush(struct f2fs_sb_info *);
- void allocate_new_segments(struct f2fs_sb_info *);
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 77f31c0..b15debc 100644
+index be668ff..77f31c0 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -94,7 +94,7 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
-  * Adding dirty entry into seglist is not critical operation.
-  * If a given segment is one of current working segments, it won't be added.
+@@ -255,11 +255,11 @@ void invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+  * This function should be resided under the curseg_mutex lock
   */
--void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
-+static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+ static void __add_sum_entry(struct f2fs_sb_info *sbi, int type,
+-		struct f2fs_summary *sum, unsigned short offset)
++					struct f2fs_summary *sum)
  {
- 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
- 	unsigned short valid_blocks;
+ 	struct curseg_info *curseg = CURSEG_I(sbi, type);
+ 	void *addr = curseg->sum_blk;
+-	addr += offset * sizeof(struct f2fs_summary);
++	addr += curseg->next_blkoff * sizeof(struct f2fs_summary);
+ 	memcpy(addr, sum, sizeof(struct f2fs_summary));
+ 	return;
+ }
+@@ -845,7 +845,7 @@ static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
+ 	 * because, this function updates a summary entry in the
+ 	 * current summary block.
+ 	 */
+-	__add_sum_entry(sbi, type, sum, curseg->next_blkoff);
++	__add_sum_entry(sbi, type, sum);
+ 
+ 	mutex_lock(&sit_i->sentry_lock);
+ 	__refresh_next_blkoff(sbi, curseg);
+@@ -946,7 +946,7 @@ void recover_data_page(struct f2fs_sb_info *sbi,
+ 
+ 	curseg->next_blkoff = GET_SEGOFF_FROM_SEG0(sbi, new_blkaddr) &
+ 					(sbi->blocks_per_seg - 1);
+-	__add_sum_entry(sbi, type, sum, curseg->next_blkoff);
++	__add_sum_entry(sbi, type, sum);
+ 
+ 	refresh_sit_entry(sbi, old_blkaddr, new_blkaddr);
+ 
+@@ -983,7 +983,7 @@ void rewrite_node_page(struct f2fs_sb_info *sbi,
+ 	}
+ 	curseg->next_blkoff = GET_SEGOFF_FROM_SEG0(sbi, new_blkaddr) &
+ 					(sbi->blocks_per_seg - 1);
+-	__add_sum_entry(sbi, type, sum, curseg->next_blkoff);
++	__add_sum_entry(sbi, type, sum);
+ 
+ 	/* change the current log to the next block addr in advance */
+ 	if (next_segno != segno) {
 -- 
 1.7.9.5
-
-
-------------------------------------------------------------------------------
-This SF.net email is sponsored by Windows:
-
-Build for Windows Store.
-
-http://p.sf.net/sfu/windows-dev2dev
