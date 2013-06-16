@@ -1,386 +1,362 @@
 From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: reorganize the f2fs_setattr() function.
-Date: Fri, 14 Jun 2013 13:20:18 +0900
-Message-ID: <CAKYAXd_44td8BDbnuGR-ChHXjmhTnoVNq4vgujgAyAtbO6vayw@mail.gmail.com>
-References: <1370694303-2738-1-git-send-email-linkinjeon@gmail.com>
-	<1370824712.22405.18.camel@lcm>
-	<CAKYAXd-V9iF0o5nvFyFPgJX0waDLh4c_eNJ7V_o-tbbrtX1JLQ@mail.gmail.com>
-	<1370929716.14857.8.camel@lcm>
-	<CAKYAXd98cgBU_JzL3zx2qT87H-XdqntdKYbCdOsx9gCeDwUO4Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <CAKYAXd98cgBU_JzL3zx2qT87H-XdqntdKYbCdOsx9gCeDwUO4Q@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: jaegeuk.kim@samsung.com, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH 1/2] f2fs: add remount_fs callback support
+Date: Sun, 16 Jun 2013 09:48:48 +0900
+Message-ID: <1371343728-2676-1-git-send-email-linkinjeon@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <linkinjeon@gmail.com>, Namjae Jeon <namjae.jeon@samsung.com>, Gu Zheng <guz.fnst@cn.fujitsu.com>, Pankaj Kumar <pankaj.km@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-2013/6/11, Namjae Jeon <linkinjeon@gmail.com>:
-> 2013/6/11, Changman Lee <cm224.lee@samsung.com>:
->> On =ED=99=94, 2013-06-11 at 07:57 +0900, Namjae Jeon wrote:
->>> 2013/6/10, Changman Lee <cm224.lee@samsung.com>:
->>> > Hello, Namjae
->>> Hi. Changman.
->>> >
->>> > If using ACL, whenever i_mode is changed we should update acl_mod=
-e
->>> > which
->>> > is written to xattr block, too. And vice versa.
->>> > Because update_inode() is called at any reason and anytime, so we
->>> > should
->>> > sync both the moment xattr is written.
->>> > We don't hope that only i_mode is written to disk and xattr is no=
-t. So
->>> > f2fs_setattr is dirty.
->>> Yes, agreed this could be issue.
->>> >
->>> > And, below code has a bug. When error is occurred, inode->i_mode
->>> > shouldn't be changed. Please, check one more time, Namjae.
->>> And, below code has a bug. When error is occurred, inode->i_mode
->>> shouldn't be changed. Please, check one more time, Namjae.
->>>
->>> This was part of the default code, when =E2=80=98acl=E2=80=99 is no=
-t set for file=E2=80=99
->>> Then, inode should be updated by these conditions (i.e., it covers =
-the
->>> =E2=80=98chmod=E2=80=99 and =E2=80=98setacl=E2=80=99 scenario).
->>> When ACL is not present on the file and =E2=80=98chmod=E2=80=99 is =
-done, then mode is
->>> changed from this part, as f2fs_get_acl() will fail and cause the
->>> below code to be executed:
->>>
->>>     if (err || is_inode_flag_set(fi, FI_ACL_MODE)) {
->>>              inode->i_mode =3D fi->i_acl_mode;
->>>              clear_inode_flag(fi, FI_ACL_MODE);
->>>       }
->>>
->>> Now, in order to make it consistent and work on all scenario we nee=
-d
->>> to make further change like this in addition to the patch changes.
->>> setattr_copy(inode, attr);
->>>         if (attr->ia_valid & ATTR_MODE) {
->>> +             set_acl_inode(fi, inode->i_mode);
->>>               err =3D f2fs_acl_chmod(inode);
->>>               if (err || is_inode_flag_set(fi, FI_ACL_MODE)) {
->>>
->>> Let me know your opinion.
->>> Thanks.
->>>
->>
->> setattr_copy changes inode->i_mode, this is not our expectation.
->> So I made redundant __setatt_copy that copy attr->mode to
->> fi->i_acl_mode.
->> When acl_mode is reflected in xattr, acl_mode is copied to
->> inode->i_mode.
->>
->> Agree?
->>
-> Hi Changman.
->
-> First, Sorry for interrupt.
-> I think that inode i_mode should be updated regardless of f2fs_acl_ch=
-mod.
-> Actually I am still not understand the reason why we should use
-> temporarily acl mode(i_acl_mode).
-> I wroted the v2 patch to not use i_acl_mode like this.
-> Am I missing something ?
-To Changman,
-I am still waiting for your reply. Correct us if we are wrong or
-missing something.
+From: Namjae Jeon <namjae.jeon@samsung.com>
 
-Hi Jaegeuk,
-Could you please share your views on this?
+Add the f2fs_remount function call which will be used
+during the filesystem remounting. This function
+will help us to change the mount options specific to
+f2fs.
 
-Thanks.
+Also modify the f2fs background_gc mount option, which
+will allow the user to dynamically trun on/off the
+garbage collection in f2fs based on the background_gc
+value. If background_gc=on, Garbage collection will
+be turned off & if background_gc=off, Garbage collection
+will be truned on.
 
->
-> ---------------------------------------------------------------------=
--------------------------------------------
-> Subject: [PATCH v2] f2fs: reorganize the f2fs_setattr(), f2fs_set_acl=
-,
-> f2fs_setxattr()
-> From: Namjae Jeon <namjae.jeon@samsung.com>
->
-> Remove the redundant code from f2fs_setattr() function and make it al=
-igned
-> with usages of generic vfs layer function e.g using the setattr_copy(=
-)
-> instead of using the f2fs specific function.
->
-> Also correct the condition for updating the size of file via
-> truncate_setsize().
->
-> Also modify the code of f2fs_set_acl and f2fs_setxattr for removing t=
-he
-> redundant code & add the required changes to correct the requested
-> operations.
->
-> Remove the variable "i_acl_mode" from the f2fs_inode_info struct sinc=
-e
-> i_mode will
-> hold the latest 'mode' value which can be used for any further
-> references. And in
-> order to make 'chmod' work without ACL support, inode i_mode should b=
-e
-> first
-> updated correctly.
->
-> Remove the helper functions to access and set the i_acl_mode.
->
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Pankaj Kumar <pankaj.km@samsung.com>
-> ---
->  fs/f2fs/acl.c   |   23 +++++++++--------------
->  fs/f2fs/f2fs.h  |   17 -----------------
->  fs/f2fs/file.c  |   48 ++++++---------------------------------------=
+By default the garbage collection is on in f2fs.
+
+Change Log:
+v2: Incorporated the review comments by Gu Zheng.
+    Removing the restore part for VFS flags
+    Updating comments with proper flag conditions
+    Display GC background option as ON/OFF
+    Revised conditions to stop GC in case of remount
+
+v1: Initial changes for adding remount_fs callback
+support.
+
+Cc: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+Signed-off-by: Pankaj Kumar <pankaj.km@samsung.com>
 ---
->  fs/f2fs/xattr.c |    9 ++-------
->  4 files changed, 17 insertions(+), 80 deletions(-)
->
-> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-> index 44abc2f..7ebddf1 100644
-> --- a/fs/f2fs/acl.c
-> +++ b/fs/f2fs/acl.c
-> @@ -17,9 +17,6 @@
->  #include "xattr.h"
->  #include "acl.h"
->
-> -#define get_inode_mode(i)	((is_inode_flag_set(F2FS_I(i), FI_ACL_MODE=
-)) ? \
-> -					(F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
-> -
->  static inline size_t f2fs_acl_size(int count)
->  {
->  	if (count <=3D 4) {
-> @@ -208,7 +205,6 @@ struct posix_acl *f2fs_get_acl(struct inode
-> *inode, int type)
->  static int f2fs_set_acl(struct inode *inode, int type, struct posix_=
-acl
-> *acl)
->  {
->  	struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
-> -	struct f2fs_inode_info *fi =3D F2FS_I(inode);
->  	int name_index;
->  	void *value =3D NULL;
->  	size_t size =3D 0;
-> @@ -226,9 +222,12 @@ static int f2fs_set_acl(struct inode *inode, int
-> type, struct posix_acl *acl)
->  			error =3D posix_acl_equiv_mode(acl, &inode->i_mode);
->  			if (error < 0)
->  				return error;
-> -			set_acl_inode(fi, inode->i_mode);
-> -			if (error =3D=3D 0)
-> -				acl =3D NULL;
-> +			else {
-> +				inode->i_ctime =3D CURRENT_TIME;
-> +				mark_inode_dirty(inode);
-> +				if (error =3D=3D 0)
-> +					acl =3D NULL;
-> +			}
->  		}
->  		break;
->
-> @@ -244,10 +243,8 @@ static int f2fs_set_acl(struct inode *inode, int
-> type, struct posix_acl *acl)
->
->  	if (acl) {
->  		value =3D f2fs_acl_to_disk(acl, &size);
-> -		if (IS_ERR(value)) {
-> -			cond_clear_inode_flag(fi, FI_ACL_MODE);
-> +		if (IS_ERR(value))
->  			return (int)PTR_ERR(value);
-> -		}
->  	}
->
->  	error =3D f2fs_setxattr(inode, name_index, "", value, size);
-> @@ -256,7 +253,6 @@ static int f2fs_set_acl(struct inode *inode, int
-> type, struct posix_acl *acl)
->  	if (!error)
->  		set_cached_acl(inode, type, acl);
->
-> -	cond_clear_inode_flag(fi, FI_ACL_MODE);
->  	return error;
->  }
->
-> @@ -299,18 +295,17 @@ int f2fs_acl_chmod(struct inode *inode)
->  	struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
->  	struct posix_acl *acl;
->  	int error;
-> -	umode_t mode =3D get_inode_mode(inode);
->
->  	if (!test_opt(sbi, POSIX_ACL))
->  		return 0;
-> -	if (S_ISLNK(mode))
-> +	if (S_ISLNK(inode->i_mode))
->  		return -EOPNOTSUPP;
->
->  	acl =3D f2fs_get_acl(inode, ACL_TYPE_ACCESS);
->  	if (IS_ERR(acl) || !acl)
->  		return PTR_ERR(acl);
->
-> -	error =3D posix_acl_chmod(&acl, GFP_KERNEL, mode);
-> +	error =3D posix_acl_chmod(&acl, GFP_KERNEL, inode->i_mode);
->  	if (error)
->  		return error;
->  	error =3D f2fs_set_acl(inode, ACL_TYPE_ACCESS, acl);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 40b137a..241ba31 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -159,7 +159,6 @@ struct f2fs_inode_info {
->  	unsigned char i_advise;		/* use to give file attribute hints */
->  	unsigned int i_current_depth;	/* use only in directory structure */
->  	unsigned int i_pino;		/* parent inode number */
-> -	umode_t i_acl_mode;		/* keep file acl mode temporarily */
->
->  	/* Use below internally in f2fs*/
->  	unsigned long flags;		/* use to pass per-file flags */
-> @@ -857,7 +856,6 @@ static inline int f2fs_clear_bit(unsigned int nr,
-> char *addr)
->  enum {
->  	FI_NEW_INODE,		/* indicate newly allocated inode */
->  	FI_INC_LINK,		/* need to increment i_nlink */
-> -	FI_ACL_MODE,		/* indicate acl mode */
->  	FI_NO_ALLOC,		/* should not allocate any blocks */
->  	FI_DELAY_IPUT,		/* used for the recovery */
->  };
-> @@ -877,21 +875,6 @@ static inline void clear_inode_flag(struct
-> f2fs_inode_info *fi, int flag)
->  	clear_bit(flag, &fi->flags);
->  }
->
-> -static inline void set_acl_inode(struct f2fs_inode_info *fi, umode_t=
- mode)
-> -{
-> -	fi->i_acl_mode =3D mode;
-> -	set_inode_flag(fi, FI_ACL_MODE);
-> -}
-> -
-> -static inline int cond_clear_inode_flag(struct f2fs_inode_info *fi, =
-int
-> flag)
-> -{
-> -	if (is_inode_flag_set(fi, FI_ACL_MODE)) {
-> -		clear_inode_flag(fi, FI_ACL_MODE);
-> -		return 1;
-> -	}
-> -	return 0;
-> -}
-> -
->  static inline int f2fs_readonly(struct super_block *sb)
->  {
->  	return sb->s_flags & MS_RDONLY;
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index deefd25..4162fbb 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -300,37 +300,6 @@ static int f2fs_getattr(struct vfsmount *mnt,
->  	return 0;
->  }
->
-> -#ifdef CONFIG_F2FS_FS_POSIX_ACL
-> -static void __setattr_copy(struct inode *inode, const struct iattr *=
-attr)
-> -{
-> -	struct f2fs_inode_info *fi =3D F2FS_I(inode);
-> -	unsigned int ia_valid =3D attr->ia_valid;
-> -
-> -	if (ia_valid & ATTR_UID)
-> -		inode->i_uid =3D attr->ia_uid;
-> -	if (ia_valid & ATTR_GID)
-> -		inode->i_gid =3D attr->ia_gid;
-> -	if (ia_valid & ATTR_ATIME)
-> -		inode->i_atime =3D timespec_trunc(attr->ia_atime,
-> -						inode->i_sb->s_time_gran);
-> -	if (ia_valid & ATTR_MTIME)
-> -		inode->i_mtime =3D timespec_trunc(attr->ia_mtime,
-> -						inode->i_sb->s_time_gran);
-> -	if (ia_valid & ATTR_CTIME)
-> -		inode->i_ctime =3D timespec_trunc(attr->ia_ctime,
-> -						inode->i_sb->s_time_gran);
-> -	if (ia_valid & ATTR_MODE) {
-> -		umode_t mode =3D attr->ia_mode;
-> -
-> -		if (!in_group_p(inode->i_gid) && !capable(CAP_FSETID))
-> -			mode &=3D ~S_ISGID;
-> -		set_acl_inode(fi, mode);
-> -	}
-> -}
-> -#else
-> -#define __setattr_copy setattr_copy
-> -#endif
-> -
->  int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
->  {
->  	struct inode *inode =3D dentry->d_inode;
-> @@ -341,24 +310,19 @@ int f2fs_setattr(struct dentry *dentry, struct
-> iattr *attr)
->  	if (err)
->  		return err;
->
-> -	if ((attr->ia_valid & ATTR_SIZE) &&
-> -			attr->ia_size !=3D i_size_read(inode)) {
-> -		truncate_setsize(inode, attr->ia_size);
-> +	if ((attr->ia_valid & ATTR_SIZE)) {
-> +		if (attr->ia_size !=3D i_size_read(inode))
-> +			truncate_setsize(inode, attr->ia_size);
->  		f2fs_truncate(inode);
->  		f2fs_balance_fs(F2FS_SB(inode->i_sb));
->  	}
->
-> -	__setattr_copy(inode, attr);
-> +	setattr_copy(inode, attr);
-> +	mark_inode_dirty(inode);
->
-> -	if (attr->ia_valid & ATTR_MODE) {
-> +	if (attr->ia_valid & ATTR_MODE)
->  		err =3D f2fs_acl_chmod(inode);
-> -		if (err || is_inode_flag_set(fi, FI_ACL_MODE)) {
-> -			inode->i_mode =3D fi->i_acl_mode;
-> -			clear_inode_flag(fi, FI_ACL_MODE);
-> -		}
-> -	}
->
-> -	mark_inode_dirty(inode);
->  	return err;
->  }
->
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index 0b02dce..8f02acf 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -333,7 +333,6 @@ int f2fs_setxattr(struct inode *inode, int
-> name_index, const char *name,
->  			goto exit;
->  		}
->  		set_new_dnode(&dn, inode, NULL, NULL, fi->i_xattr_nid);
-> -		mark_inode_dirty(inode);
->
->  		page =3D new_node_page(&dn, XATTR_NODE_OFFSET);
->  		if (IS_ERR(page)) {
-> @@ -430,12 +429,8 @@ int f2fs_setxattr(struct inode *inode, int
-> name_index, const char *name,
->  	set_page_dirty(page);
->  	f2fs_put_page(page, 1);
->
-> -	if (is_inode_flag_set(fi, FI_ACL_MODE)) {
-> -		inode->i_mode =3D fi->i_acl_mode;
-> -		inode->i_ctime =3D CURRENT_TIME;
-> -		clear_inode_flag(fi, FI_ACL_MODE);
-> -	}
-> -	update_inode_page(inode);
-> +	inode->i_ctime =3D CURRENT_TIME;
-> +	mark_inode_dirty(inode);
->  	mutex_unlock_op(sbi, ilock);
->
->  	return 0;
-> --
-> 1.7.2.3
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ Documentation/filesystems/f2fs.txt |    9 +-
+ fs/f2fs/super.c                    |  235 +++++++++++++++++++++++-------------
+ 2 files changed, 160 insertions(+), 84 deletions(-)
+
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index bd3c56c..b91e2f2 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -98,8 +98,13 @@ Cleaning Overhead
+ MOUNT OPTIONS
+ ================================================================================
+ 
+-background_gc_off      Turn off cleaning operations, namely garbage collection,
+-		       triggered in background when I/O subsystem is idle.
++background_gc=%s       Turn on/off cleaning operations, namely garbage
++                       collection, triggered in background when I/O subsystem is
++                       idle. If background_gc=on, it will turn on the garbage
++                       collection and if background_gc=off, garbage collection
++                       will be truned off.
++                       Default value for this option is on. So garbage
++                       collection is on by default.
+ disable_roll_forward   Disable the roll-forward recovery routine
+ discard                Issue discard/TRIM commands when a segment is cleaned.
+ no_heap                Disable heap-style segment allocation which finds free
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index ba56549..5a11484 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -34,7 +34,7 @@
+ static struct kmem_cache *f2fs_inode_cachep;
+ 
+ enum {
+-	Opt_gc_background_off,
++	Opt_gc_background,
+ 	Opt_disable_roll_forward,
+ 	Opt_discard,
+ 	Opt_noheap,
+@@ -46,7 +46,7 @@ enum {
+ };
+ 
+ static match_table_t f2fs_tokens = {
+-	{Opt_gc_background_off, "background_gc_off"},
++	{Opt_gc_background, "background_gc=%s"},
+ 	{Opt_disable_roll_forward, "disable_roll_forward"},
+ 	{Opt_discard, "discard"},
+ 	{Opt_noheap, "no_heap"},
+@@ -76,6 +76,91 @@ static void init_once(void *foo)
+ 	inode_init_once(&fi->vfs_inode);
+ }
+ 
++static int parse_options(struct super_block *sb, char *options)
++{
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++	substring_t args[MAX_OPT_ARGS];
++	char *p, *name;
++	int arg = 0;
++
++	if (!options)
++		return 0;
++
++	while ((p = strsep(&options, ",")) != NULL) {
++		int token;
++		if (!*p)
++			continue;
++		/*
++		 * Initialize args struct so we know whether arg was
++		 * found; some options take optional arguments.
++		 */
++		args[0].to = args[0].from = NULL;
++		token = match_token(p, f2fs_tokens, args);
++
++		switch (token) {
++		case Opt_gc_background:
++			name = match_strdup(&args[0]);
++
++			if (!name)
++				return -ENOMEM;
++			if (!strncmp(name, "on", 2))
++				set_opt(sbi, BG_GC);
++			else if (!strncmp(name, "off", 3))
++				clear_opt(sbi, BG_GC);
++			else {
++				kfree(name);
++				return -EINVAL;
++			}
++			kfree(name);
++			break;
++		case Opt_disable_roll_forward:
++			set_opt(sbi, DISABLE_ROLL_FORWARD);
++			break;
++		case Opt_discard:
++			set_opt(sbi, DISCARD);
++			break;
++		case Opt_noheap:
++			set_opt(sbi, NOHEAP);
++			break;
++#ifdef CONFIG_F2FS_FS_XATTR
++		case Opt_nouser_xattr:
++			clear_opt(sbi, XATTR_USER);
++			break;
++#else
++		case Opt_nouser_xattr:
++			f2fs_msg(sb, KERN_INFO,
++				"nouser_xattr options not supported");
++			break;
++#endif
++#ifdef CONFIG_F2FS_FS_POSIX_ACL
++		case Opt_noacl:
++			clear_opt(sbi, POSIX_ACL);
++			break;
++#else
++		case Opt_noacl:
++			f2fs_msg(sb, KERN_INFO, "noacl options not supported");
++			break;
++#endif
++		case Opt_active_logs:
++			if (args->from && match_int(args, &arg))
++				return -EINVAL;
++			if (arg != 2 && arg != 4 && arg != NR_CURSEG_TYPE)
++				return -EINVAL;
++			sbi->active_logs = arg;
++			break;
++		case Opt_disable_ext_identify:
++			set_opt(sbi, DISABLE_EXT_IDENTIFY);
++			break;
++		default:
++			f2fs_msg(sb, KERN_ERR,
++				"Unrecognized mount option \"%s\" or missing value",
++				p);
++			return -EINVAL;
++		}
++	}
++	return 0;
++}
++
+ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ {
+ 	struct f2fs_inode_info *fi;
+@@ -225,10 +310,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(root->d_sb);
+ 
+-	if (test_opt(sbi, BG_GC))
+-		seq_puts(seq, ",background_gc_on");
++	if (!(root->d_sb->s_flags & MS_RDONLY) && test_opt(sbi, BG_GC))
++		seq_printf(seq, ",background_gc=%s", "on");
+ 	else
+-		seq_puts(seq, ",background_gc_off");
++		seq_printf(seq, ",background_gc=%s", "off");
+ 	if (test_opt(sbi, DISABLE_ROLL_FORWARD))
+ 		seq_puts(seq, ",disable_roll_forward");
+ 	if (test_opt(sbi, DISCARD))
+@@ -255,6 +340,58 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 	return 0;
+ }
+ 
++static int f2fs_remount(struct super_block *sb, int *flags, char *data)
++{
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++	struct f2fs_mount_info org_mount_opt;
++	int err, active_logs;
++
++	/**
++	 * Save the old mount options in case we
++	 * need to restore them.
++	 */
++	org_mount_opt = sbi->mount_opt;
++	active_logs = sbi->active_logs;
++
++	/* parse mount options */
++	err = parse_options(sb, data);
++	if (err)
++		goto restore_opts;
++
++	/**
++	 * Previous and new state of filesystem is RO,
++	 * so no point in checking GC conditions.
++	 */
++	if ((sb->s_flags & MS_RDONLY) && (*flags & MS_RDONLY))
++		goto skip;
++
++	/**
++	 * We stop the GC thread if FS is mounted as RO
++	 * or if background_gc = off is passed in mount
++	 * option. Also sync the filesystem.
++	 */
++	if ((*flags & MS_RDONLY) || !test_opt(sbi, BG_GC)) {
++		if (sbi->gc_thread) {
++			stop_gc_thread(sbi);
++			f2fs_sync_fs(sb, 1);
++		}
++	} else if (test_opt(sbi, BG_GC) && !sbi->gc_thread) {
++		err = start_gc_thread(sbi);
++		if (err)
++			goto restore_opts;
++	}
++skip:
++	/* Update the POSIXACL Flag */
++	 sb->s_flags = (sb->s_flags & ~MS_POSIXACL) |
++		(test_opt(sbi, POSIX_ACL) ? MS_POSIXACL : 0);
++	return 0;
++
++restore_opts:
++	sbi->mount_opt = org_mount_opt;
++	sbi->active_logs = active_logs;
++	return err;
++}
++
+ static struct super_operations f2fs_sops = {
+ 	.alloc_inode	= f2fs_alloc_inode,
+ 	.drop_inode	= f2fs_drop_inode,
+@@ -268,6 +405,7 @@ static struct super_operations f2fs_sops = {
+ 	.freeze_fs	= f2fs_freeze,
+ 	.unfreeze_fs	= f2fs_unfreeze,
+ 	.statfs		= f2fs_statfs,
++	.remount_fs	= f2fs_remount,
+ };
+ 
+ static struct inode *f2fs_nfs_get_inode(struct super_block *sb,
+@@ -315,79 +453,6 @@ static const struct export_operations f2fs_export_ops = {
+ 	.get_parent = f2fs_get_parent,
+ };
+ 
+-static int parse_options(struct super_block *sb, char *options)
+-{
+-	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+-	substring_t args[MAX_OPT_ARGS];
+-	char *p;
+-	int arg = 0;
+-
+-	if (!options)
+-		return 0;
+-
+-	while ((p = strsep(&options, ",")) != NULL) {
+-		int token;
+-		if (!*p)
+-			continue;
+-		/*
+-		 * Initialize args struct so we know whether arg was
+-		 * found; some options take optional arguments.
+-		 */
+-		args[0].to = args[0].from = NULL;
+-		token = match_token(p, f2fs_tokens, args);
+-
+-		switch (token) {
+-		case Opt_gc_background_off:
+-			clear_opt(sbi, BG_GC);
+-			break;
+-		case Opt_disable_roll_forward:
+-			set_opt(sbi, DISABLE_ROLL_FORWARD);
+-			break;
+-		case Opt_discard:
+-			set_opt(sbi, DISCARD);
+-			break;
+-		case Opt_noheap:
+-			set_opt(sbi, NOHEAP);
+-			break;
+-#ifdef CONFIG_F2FS_FS_XATTR
+-		case Opt_nouser_xattr:
+-			clear_opt(sbi, XATTR_USER);
+-			break;
+-#else
+-		case Opt_nouser_xattr:
+-			f2fs_msg(sb, KERN_INFO,
+-				"nouser_xattr options not supported");
+-			break;
+-#endif
+-#ifdef CONFIG_F2FS_FS_POSIX_ACL
+-		case Opt_noacl:
+-			clear_opt(sbi, POSIX_ACL);
+-			break;
+-#else
+-		case Opt_noacl:
+-			f2fs_msg(sb, KERN_INFO, "noacl options not supported");
+-			break;
+-#endif
+-		case Opt_active_logs:
+-			if (args->from && match_int(args, &arg))
+-				return -EINVAL;
+-			if (arg != 2 && arg != 4 && arg != NR_CURSEG_TYPE)
+-				return -EINVAL;
+-			sbi->active_logs = arg;
+-			break;
+-		case Opt_disable_ext_identify:
+-			set_opt(sbi, DISABLE_EXT_IDENTIFY);
+-			break;
+-		default:
+-			f2fs_msg(sb, KERN_ERR,
+-				"Unrecognized mount option \"%s\" or missing value",
+-				p);
+-			return -EINVAL;
+-		}
+-	}
+-	return 0;
+-}
+-
+ static loff_t max_file_size(unsigned bits)
+ {
+ 	loff_t result = ADDRS_PER_INODE;
+@@ -686,10 +751,16 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 				"Cannot recover all fsync data errno=%ld", err);
+ 	}
+ 
+-	/* After POR, we can run background GC thread */
+-	err = start_gc_thread(sbi);
+-	if (err)
+-		goto fail;
++	/**
++	 * If filesystem is not mounted as read-only then
++	 * do start the gc_thread.
++	 */
++	if (!(sb->s_flags & MS_RDONLY)) {
++		/* After POR, we can run background GC thread.*/
++		err = start_gc_thread(sbi);
++		if (err)
++			goto fail;
++	}
+ 
+ 	err = f2fs_build_stats(sbi);
+ 	if (err)
+-- 
+1.7.9.5
