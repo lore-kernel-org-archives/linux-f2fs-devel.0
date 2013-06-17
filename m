@@ -1,32 +1,26 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+From: Oded Gabbay <ogabbay@advaoptical.com>
 Subject: Re: [f2fs-dev] Kernel BUG when writing to f2fs drive, PowerPC,
  SD card, USB3
-Date: Mon, 17 Jun 2013 21:11:08 +0900
-Message-ID: <1371471068.10480.8.camel@kjgkr>
+Date: Mon, 17 Jun 2013 15:38:23 +0300
+Message-ID: <51BF033F.4080804@advaoptical.com>
 References: <51BDA6BE.1040800@advaoptical.com>
-Reply-To: jaegeuk.kim@samsung.com
+	<CA+v9cxZUftbQigWM5fAn9-5VBciAyKG9_yf5d2LpXUD6JOeiTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1UoYH6-0006Zl-KJ
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <OGabbay@advaoptical.com>) id 1UoYhz-0007Jc-QF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Jun 2013 12:11:08 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1UoYH4-0003Wn-0R for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Jun 2013 12:11:08 +0000
-Received: from epcpsbgr1.samsung.com
-	(u141.gpu120.samsung.co.kr [203.254.230.141])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MOJ00J5YDU1SS00@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Jun 2013 21:10:59 +0900 (KST)
-In-reply-to: <51BDA6BE.1040800@advaoptical.com>
+	Mon, 17 Jun 2013 12:38:55 +0000
+Received: from mail.advaoptical.com ([91.217.199.15])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1UoYhw-00047k-Os
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 17 Jun 2013 12:38:55 +0000
+In-Reply-To: <CA+v9cxZUftbQigWM5fAn9-5VBciAyKG9_yf5d2LpXUD6JOeiTA@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,105 +30,215 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Oded Gabbay <ogabbay@advaoptical.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Huajun Li <huajun.li.lee@gmail.com>
+Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
-SGksCgpUaGFuayB5b3UgZm9yIHRoZSByZXBvcnQuIDopCgpDYW4geW91IHNlbmQgbWUgdGhlIGRp
-c2sgaW1hZ2UgcmlnaHQgYWZ0ZXIgZm9ybWF0dGluZyBmMmZzPwpBcyB5b3VyIHByZXZpb3VzIHBh
-dGNoLCBJIHN0cm9uZ2x5IHN1c3BlY3QgdGhlIGVuZGlhbiBjb252ZXJzaW9uIGJ1Zy4KCk90aGVy
-d2lzZSwgSSByZWNvbW1lbmQgeW91IHRvIHRlc3Qgd2l0aCB0aGUgbGF0ZXN0IHRyZWUgZnJvbToK
-aHR0cDovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9qYWVnZXVrL2YyZnMu
-Z2l0CgpUaGFua3MsCgoyMDEzLTA2LTE2ICjsnbwpLCAxNDo1MSArMDMwMCwgT2RlZCBHYWJiYXk6
-Cj4gSGksCj4gCj4gSSdtIHdvcmtpbmcgb24gYSBjdXN0b20gYm9hcmQgd2l0aCBhIFBvd2VyUEMg
-cHJvY2Vzc29yIChGcmVlc2NhbGUKPiBQMjAyMCkuCj4gT24gdGhlIGJvYXJkIHRoZXJlIGlzIGFu
-IFNEIGNhcmQsIHdoaWNoIGlzIGNvbm5lY3RlZCB0byBhIFVTQjMgY2hpcAo+IChmcm9tIFRJKSwg
-d2hpY2ggaXMgY29ubmVjdGVkIHRvIHRoZSBQQ0ktZSBjb250cm9sbGVyIG9mIHRoZSBDUFUuCj4g
-SSdtIHJ1bm5pbmcgd2l0aCBMaW51eCBrZXJuZWwgMy45LjYsIHdpdGggb3VyIGN1c3RvbSByb290
-RlMuCj4gCj4gSSBmb3JtYXR0ZWQgYW4gU0QgY2FyZCB1c2luZyB0aGUgbWtmcy5mMmZzIHV0aWxp
-dHkgKGFmdGVyIGZpeGluZyBzb21lCj4gQmlnLWVuZGlhbiBpc3N1ZXMgLSBzZW50IGEgcGF0Y2gg
-YSBmZXcgZGF5cyBhZ28pLgo+IEkgdGhlbiBtb3VudGVkIHRoZSBTRCBjYXJkLCB1c2luZyAibW91
-bnQgLW8KPiBub2F0aW1lLG5vZGlyYXRpbWUscncsbm9zdWlkLG5vZGV2LHJlbGF0aW1lLGFjdGl2
-ZV9sb2dzPTYsdWhlbHBlcj11ZGlza3MyLGJhY2tncm91bmRfZ2Nfb2ZmIC9kZXYvc2RhIC9tbnQv
-c2QxIgo+IFRoZW4sIEkgc3RhcnRlZCBhIHNtYWxsIHVzZXItc3BhY2UgdGVzdCBhcHBsaWNhdGlv
-biB3aGljaCBvcGVucyBhIGZpbGUKPiBvbiB0aGUgbW91bnQgZm9sZGVyIGFuZCBzdGFydHMgdG8g
-ZG8gImZ3cml0ZSIgaW50byB0aGUgZmlsZS4KPiBBZnRlciAyLTMgc2Vjb25kcywgdGhlIGtlcm5l
-bCBnaXZlcyBtZSBhIEJVRyBhbmQgdGhlIHN5c3RlbSByZXN0YXJ0cy4gCj4gV2hlbiB0aGUgc3lz
-dGVtIGlzIHVwIGFuZCBJIHRyeSB0byByZS1tb3VudCB0aGUgU0QgY2FyZCwgSSBnZXQgdGhlCj4g
-Zm9sbG93aW5nIGVycm9yIG1lc3NhZ2U6Cj4gCj4gRjJGUy1mcyAoc2RhKTogRmFpbGVkIHRvIGdl
-dCB2YWxpZCBGMkZTIGNoZWNrcG9pbnQKPiBtb3VudDogeW91IG11c3Qgc3BlY2lmeSB0aGUgZmls
-ZXN5c3RlbSB0eXBlCj4gCj4gT25seSB3YXkgaXMgdG8gcmUtZm9ybWF0IHRoZSBjYXJkIHVzaW5n
-IG1rZnMuZjJmcwo+IAo+IEkgdG9vayB0aGUgZjJmcyBwYXRjaCB0aGF0IEphZWdldWsgS2ltIHNl
-bnQgdG8gTGludXMgZm9yIDMuMTAgKGhlcmUgLQo+IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDEz
-LzUvOC8xMjIpIGFuZCBhcHBsaWVkIGl0IGNsZWFubHkgdG8gMy45LjYKPiBJIHJlcGVhdGVkIHRo
-ZSBwcm9jZWR1cmUgYnV0IGdvdCB0aGUgc2FtZSByZXN1bHQuCj4gCj4gVGhlIEJVRyBpcyBmcm9t
-IHRoaXMgbGluZSwgZnJvbSBzZWdtZW50LmM6IAo+ICAgICAgICAgaWYgKCFmMmZzX2NsZWFyX2Jp
-dChvZmZzZXQsIHNlLT5jdXJfdmFsaWRfbWFwKSkKPiAgICAgICAgICAgICBCVUcoKTsKPiAKPiBB
-ZGRpdGlvbmFsIGluZm9ybWF0aW9uIEkgY2FuIGdpdmUgaXMgCj4gCj4gMS4gSSB0cmllZCB1c2lu
-ZyBGMkZTIGluIEFyY2hMaW51eCwga2VybmVsIDMuOS41LCBvbiBhbiB4ODYgbWFjaGluZSwKPiB3
-aXRoIHRoZSBzYW1lIFNEIGNhcmQgYW5kIHRoZSBzYW1lIFVTQjMtdG8tUENJZSBjaGlwIGFuZCBp
-dCB3b3JrZWQKPiBmbGF3bGVzc2x5IHRoZXJlLgo+IDIuIEkgY2FuIHdvcmsgd2l0aCBvdGhlciBG
-UyBvbiB0aGUgU0QgY2FyZCBvbiBvdXIgY3VzdG9tIGJvYXJkLCBzdWNoCj4gYXMgRXh0MywgRXh0
-NCBhbmQgdmZhdCwgc28gdGhpcyBpcyBub3QgYSBIL1cgaXNzdWUuCj4gCj4gQ291bGQgeW91IHBs
-ZWFzZSB0cnkgdG8gaGVscCBtZSBwaW5wb2ludC9kZWJ1ZyB0aGUgcHJvYmxlbSA/Cj4gCj4gSGVy
-ZSBpcyB0aGUgY29tcGxldGUga2VybmVsIEJVRyBwcmludDoKPiAKPiBrZXJuZWwgQlVHIGF0IC4u
-Li9saW51eC0zLjkuNi1hZHZhL2ZzL2YyZnMvc2VnbWVudC5jOjIxNCEKPiBPb3BzOiBFeGNlcHRp
-b24gaW4ga2VybmVsIG1vZGUsIHNpZzogNSBbIzFdCj4gUFJFRU1QVCBTTVAgTlJfQ1BVUz0yIFAy
-MDIwIEZTUDE1MAo+IE1vZHVsZXMgbGlua2VkIGluOiBtZGlvKE8pIGhhcmR3YXJlX3ZlcnNpb24o
-UE8pIGNsaXByZXNlbnQoUE8pCj4gbW9ub3RvbmljKE8pIHJlc3RhcnRjYXVzZShQTykgcGFuaWNf
-YnVmZmVyKE8pCj4gTklQOiBjMDI2YTdlMCBMUjogYzAyNmE2NjAgQ1RSOiAwMDAwMDAwMAo+IFJF
-R1M6IGVlNzYxYTYwIFRSQVA6IDA3MDAgICBUYWludGVkOiBQICAgICAgICAgICBPCj4gKDMuOS42
-LWRldl9vZ2FiYmF5LTEwOTQ4MiopCj4gTVNSOiAwMDAyOTAwMCA8Q0UsRUUsTUU+ICBDUjogMjRh
-NTI1ODggIFhFUjogMjAwMDAwMDAKPiBUQVNLID0gZWZiNDQ0YzBbMTc1NV0gJ2ZsdXNoLTg6MCcg
-VEhSRUFEOiBlZTc2MDAwMCBDUFU6IDEKPiBHUFIwMDogMDAwMDAwMDAgZWU3NjFiMTAgZWZiNDQ0
-YzAgMDAwMDAwNGMgMDAwMDAwMDAgMDAwMDAwMDAgMDFkYzQ5MDAKPiBlYjBmYTcwMCAKPiBHUFIw
-ODogMDAwMDAwMDAgZWIyNGNiMDAgMDAwMDAwNDAgMDAwMDAwNDAgMDAwMDAwMzggMDAwMDAwMDAg
-ZWU3NjFjNjQKPiAwMDAwMDAwMCAKPiBHUFIxNjogYzBhZWVhODAgMDAwODAwMDAgMDAwMDAwMDAg
-MDAwMDAwMDAgMDAwMGVkMzEgZWIwZmE3MDAgMDAwMDAwMDAKPiBlYjBmYTczNCAKPiBHUFIyNDog
-ZWIwZmE3MDAgMDAwMDAwODAgZjIwMzA2MjAgZmZmZmZmZmYgZmZmZmZmYzggMDAwMGVkMzEgZmZm
-ZmZmZmYKPiBjNTVhMTAwMCAKPiBOSVAgW2MwMjZhN2UwXSB1cGRhdGVfc2l0X2VudHJ5KzB4MjQw
-LzB4MjQ4Cj4gTFIgW2MwMjZhNjYwXSB1cGRhdGVfc2l0X2VudHJ5KzB4YzAvMHgyNDgKPiBDYWxs
-IFRyYWNlOgo+IFtlZTc2MWIxMF0gW2M1NWExMDAwXSAweGM1NWExMDAwICh1bnJlbGlhYmxlKQo+
-IFtlZTc2MWI0MF0gW2MwMjZkMWY0XSBkb193cml0ZV9wYWdlKzB4MTk4LzB4NjYwCj4gW2VlNzYx
-YjgwXSBbYzAyNmQ4NGNdIHdyaXRlX2RhdGFfcGFnZSsweGE0LzB4YjgKPiBbZWU3NjFiYzBdIFtj
-MDI2NTExOF0gZG9fd3JpdGVfZGF0YV9wYWdlKzB4MWU4LzB4MjBjCj4gW2VlNzYxYzIwXSBbYzAy
-NjUzZGNdIGYyZnNfd3JpdGVfZGF0YV9wYWdlKzB4MmEwLzB4MmMwCj4gW2VlNzYxYzQwXSBbYzAy
-NjNhZDhdIF9fZjJmc193cml0ZXBhZ2UrMHgyNC8weDgwCj4gW2VlNzYxYzUwXSBbYzAwYjA1ZGNd
-IHdyaXRlX2NhY2hlX3BhZ2VzKzB4MWQwLzB4MzVjCj4gW2VlNzYxZDAwXSBbYzAyNjNjZjRdIGYy
-ZnNfd3JpdGVfZGF0YV9wYWdlcysweGY0LzB4ZmMKPiBbZWU3NjFkMzBdIFtjMDBiMWQzY10gZG9f
-d3JpdGVwYWdlcysweDMwLzB4NjQKPiBbZWU3NjFkNDBdIFtjMDEwM2ZiY10gX193cml0ZWJhY2tf
-c2luZ2xlX2lub2RlKzB4MzQvMHgxMGMKPiBbZWU3NjFkNjBdIFtjMDEwNGVmOF0gd3JpdGViYWNr
-X3NiX2lub2RlcysweDIwNC8weDM3MAo+IFtlZTc2MWRkMF0gW2MwMTA1MGY0XSBfX3dyaXRlYmFj
-a19pbm9kZXNfd2IrMHg5MC8weGQ0Cj4gW2VlNzYxZTAwXSBbYzAxMDU0Y2NdIHdiX3dyaXRlYmFj
-aysweDIwNC8weDIwYwo+IFtlZTc2MWU1MF0gW2MwMTA1ODQ0XSB3Yl9kb193cml0ZWJhY2srMHgx
-NDQvMHgyMGMKPiBbZWU3NjFlYjBdIFtjMDEwNTk4MF0gYmRpX3dyaXRlYmFja190aHJlYWQrMHg3
-NC8weDE0NAo+IFtlZTc2MWVlMF0gW2MwMDU5ZGM0XSBrdGhyZWFkKzB4YTgvMHhhYwo+IFtlZTc2
-MWY0MF0gW2MwMDBmMDE0XSByZXRfZnJvbV9rZXJuZWxfdGhyZWFkKzB4NjQvMHg2Ywo+IEluc3Ry
-dWN0aW9uIGR1bXA6Cj4gNGJmZmZmMmMgODEzYTAwMDQgNTcyMGU4ZmUgN2YzOWM4ZjggMzk0MDAw
-MDEgNTczOTA3N2UgN2Q2OTAwYWUKPiA3ZDU5YzgzMCAKPiA3ZDZhYzg3OCA3ZDY4YzgzOSA3ZDQ5
-MDFhZSA0MDgyZmVmMCA8MGZlMDAwMDA+IDBmZTAwMDAwIDk0MjFmZmUwCj4gN2MwODAyYTYgCj4g
-Cj4gLS0gCj4gQmVzdCByZWdhcmRzLAo+IE9kZWQgR2FiYmF5Cj4gUHJpbmNpcGFsIEVuZ2luZWVy
-IEFkdmFuY2VkIFBhY2tldCBUZWNobm9sb2dpZXMKPiBBRFZBIE9wdGljYWwgTmV0d29ya2luZyBJ
-c3JhZWwgTHRkLgo+IFAuTy4gQm94IDI1NTIKPiAyIEhhdGlkaGFyIFN0Lgo+IFJhYW5hbmEgNDM2
-NjUwNCwgSXNyYWVsCj4gVGVsOiArKDk3MiktOS03NzUwMTMwCj4gRmF4OiArKDk3MiktOS03NDYy
-MDkyCj4gTW9iaWxlOiArKDk3MiktNTQtNjU0Mzk5OAo+IEUtbWFpbDogb2dhYmJheUBhZHZhb3B0
-aWNhbC5jb20KPiAgCj4gd3d3LmFkdmFvcHRpY2FsLmNvbQo+IExldCdzIEFEVkFOQ0UKPiAgCj4g
-QURWQSBPcHRpY2FsIE5ldHdvcmtpbmcgU0UgaXMgYSBFdXJvcGVhbiBzdG9jayBjb3Jwb3JhdGlv
-biAoXCJTb2NpZXRhcwo+IEV1cm9wYWVhXCIpIHdpdGggcmVnaXN0ZXJlZCBvZmZpY2VzIGF0IE1h
-ZXJ6ZW5xdWVsbGUgMS0zLCBELTk4NjE3Cj4gTWVpbmluZ2VuLCBHZXJtYW55ICogQ0VPOiBCcmlh
-biBMLiBQcm90aXZhLCBDaGllZiBPZmZpY2VyczogRHIuCj4gQ2hyaXN0b3BoIEdsaW5nZW5lciwg
-Q2hyaXN0aWFuIFVudGVyYmVyZ2VyLCBKYXN3aXIgU2luZ2ggKiBDaGFpcm1hbiBvZgo+IHRoZSBT
-dXBlcnZpc29yeSBCb2FyZDogQW50aG9ueSBNYWhlciAqIEFHIEplbmEgSFJCIDUwODE1NSAqIFZB
-VCBOby4gREUKPiAxNzUgNDQ2IDM0OQo+IAo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IFRoaXMg
-U0YubmV0IGVtYWlsIGlzIHNwb25zb3JlZCBieSBXaW5kb3dzOgo+IAo+IEJ1aWxkIGZvciBXaW5k
-b3dzIFN0b3JlLgo+IAo+IGh0dHA6Ly9wLnNmLm5ldC9zZnUvd2luZG93cy1kZXYyZGV2Cj4gX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18gTGludXgtZjJmcy1k
-ZXZlbCBtYWlsaW5nIGxpc3QgTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQg
-aHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1k
-ZXZlbAoKLS0gCkphZWdldWsgS2ltClNhbXN1bmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClRo
-aXMgU0YubmV0IGVtYWlsIGlzIHNwb25zb3JlZCBieSBXaW5kb3dzOgoKQnVpbGQgZm9yIFdpbmRv
-d3MgU3RvcmUuCgpodHRwOi8vcC5zZi5uZXQvc2Z1L3dpbmRvd3MtZGV2MmRldgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
-aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
-L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi,
+
+Thanks for the patch.
+Unfortunately, I tried it and it didn't help. I got the same result.
+Oded
+
+On 06/17/2013 10:20 AM, Huajun Li wrote:
+> Hi,
+> Is it possible caused by bitmap ? you know, bitmaps are unsigned
+> variable, while f2fs_{clear, set, test}_bit() parameter is signed
+> variable.
+> So, could you please try following patch, and update the same issue in
+> mkfs.f2fs tool.
+>
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 3e7cb33..28d31f1 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -209,7 +209,7 @@ struct f2fs_nm_info {
+>       struct mutex build_lock;    /* lock for build free nids */
+>
+>       /* for checkpoint */
+> -    char *nat_bitmap;        /* NAT bitmap pointer */
+> +    unsigned char *nat_bitmap;    /* NAT bitmap pointer */
+>       int bitmap_size;        /* bitmap size */
+>   };
+>
+> @@ -820,7 +820,7 @@ static inline block_t datablock_addr(struct page *node_page,
+>       return le32_to_cpu(addr_array[offset]);
+>   }
+>
+> -static inline int f2fs_test_bit(unsigned int nr, char *addr)
+> +static inline int f2fs_test_bit(unsigned int nr, unsigned char *addr)
+>   {
+>       int mask;
+>
+> @@ -829,7 +829,7 @@ static inline int f2fs_test_bit(unsigned int nr, char *addr)
+>       return mask & *addr;
+>   }
+>
+> -static inline int f2fs_set_bit(unsigned int nr, char *addr)
+> +static inline int f2fs_set_bit(unsigned int nr, unsigned char *addr)
+>   {
+>       int mask;
+>       int ret;
+> @@ -841,7 +841,7 @@ static inline int f2fs_set_bit(unsigned int nr, char *addr)
+>       return ret;
+>   }
+>
+> -static inline int f2fs_clear_bit(unsigned int nr, char *addr)
+> +static inline int f2fs_clear_bit(unsigned int nr, unsigned char *addr)
+>   {
+>       int mask;
+>       int ret;
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index b15debc..b191449 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1402,7 +1402,7 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+>       struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+>       struct sit_info *sit_i;
+>       unsigned int sit_segs, start;
+> -    char *src_bitmap, *dst_bitmap;
+> +    unsigned char *src_bitmap, *dst_bitmap;
+>       unsigned int bitmap_size;
+>
+>       /* allocate memory for SIT information */
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 062424a..a96f7f4 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -175,7 +175,7 @@ struct sit_info {
+>       block_t sit_base_addr;        /* start block address of SIT area */
+>       block_t sit_blocks;        /* # of blocks used by SIT area */
+>       block_t written_valid_blocks;    /* # of valid blocks in main area */
+> -    char *sit_bitmap;        /* SIT bitmap pointer */
+> +    unsigned char *sit_bitmap;    /* SIT bitmap pointer */
+>       unsigned int bitmap_size;    /* SIT bitmap size */
+>
+>       unsigned long *dirty_sentries_bitmap;    /* bitmap for dirty sentries */
+>
+> On Sun, Jun 16, 2013 at 7:51 PM, Oded Gabbay <ogabbay@advaoptical.com> wrote:
+>> Hi,
+>>
+>> I'm working on a custom board with a PowerPC processor (Freescale P2020).
+>> On the board there is an SD card, which is connected to a USB3 chip (from
+>> TI), which is connected to the PCI-e controller of the CPU.
+>> I'm running with Linux kernel 3.9.6, with our custom rootFS.
+>>
+>> I formatted an SD card using the mkfs.f2fs utility (after fixing some
+>> Big-endian issues - sent a patch a few days ago).
+>> I then mounted the SD card, using "mount -o
+>> noatime,nodiratime,rw,nosuid,nodev,relatime,active_logs=6,uhelper=udisks2,background_gc_off
+>> /dev/sda /mnt/sd1"
+>> Then, I started a small user-space test application which opens a file on
+>> the mount folder and starts to do "fwrite" into the file.
+>> After 2-3 seconds, the kernel gives me a BUG and the system restarts.
+>> When the system is up and I try to re-mount the SD card, I get the following
+>> error message:
+>>
+>> F2FS-fs (sda): Failed to get valid F2FS checkpoint
+>> mount: you must specify the filesystem type
+>>
+>> Only way is to re-format the card using mkfs.f2fs
+>>
+>> I took the f2fs patch that Jaegeuk Kim sent to Linus for 3.10 (here -
+>> https://lkml.org/lkml/2013/5/8/122) and applied it cleanly to 3.9.6
+>> I repeated the procedure but got the same result.
+>>
+>> The BUG is from this line, from segment.c:
+>>          if (!f2fs_clear_bit(offset, se->cur_valid_map))
+>>              BUG();
+>>
+>> Additional information I can give is
+>>
+>> 1. I tried using F2FS in ArchLinux, kernel 3.9.5, on an x86 machine, with
+>> the same SD card and the same USB3-to-PCIe chip and it worked flawlessly
+>> there.
+>> 2. I can work with other FS on the SD card on our custom board, such as
+>> Ext3, Ext4 and vfat, so this is not a H/W issue.
+>>
+>> Could you please try to help me pinpoint/debug the problem ?
+>>
+>> Here is the complete kernel BUG print:
+>>
+>> kernel BUG at .../linux-3.9.6-adva/fs/f2fs/segment.c:214!
+>> Oops: Exception in kernel mode, sig: 5 [#1]
+>> PREEMPT SMP NR_CPUS=2 P2020 FSP150
+>> Modules linked in: mdio(O) hardware_version(PO) clipresent(PO) monotonic(O)
+>> restartcause(PO) panic_buffer(O)
+>> NIP: c026a7e0 LR: c026a660 CTR: 00000000
+>> REGS: ee761a60 TRAP: 0700   Tainted: P           O
+>> (3.9.6-dev_ogabbay-109482*)
+>> MSR: 00029000 <CE,EE,ME>  CR: 24a52588  XER: 20000000
+>> TASK = efb444c0[1755] 'flush-8:0' THREAD: ee760000 CPU: 1
+>> GPR00: 00000000 ee761b10 efb444c0 0000004c 00000000 00000000 01dc4900
+>> eb0fa700
+>> GPR08: 00000000 eb24cb00 00000040 00000040 00000038 00000000 ee761c64
+>> 00000000
+>> GPR16: c0aeea80 00080000 00000000 00000000 0000ed31 eb0fa700 00000000
+>> eb0fa734
+>> GPR24: eb0fa700 00000080 f2030620 ffffffff ffffffc8 0000ed31 ffffffff
+>> c55a1000
+>> NIP [c026a7e0] update_sit_entry+0x240/0x248
+>> LR [c026a660] update_sit_entry+0xc0/0x248
+>> Call Trace:
+>> [ee761b10] [c55a1000] 0xc55a1000 (unreliable)
+>> [ee761b40] [c026d1f4] do_write_page+0x198/0x660
+>> [ee761b80] [c026d84c] write_data_page+0xa4/0xb8
+>> [ee761bc0] [c0265118] do_write_data_page+0x1e8/0x20c
+>> [ee761c20] [c02653dc] f2fs_write_data_page+0x2a0/0x2c0
+>> [ee761c40] [c0263ad8] __f2fs_writepage+0x24/0x80
+>> [ee761c50] [c00b05dc] write_cache_pages+0x1d0/0x35c
+>> [ee761d00] [c0263cf4] f2fs_write_data_pages+0xf4/0xfc
+>> [ee761d30] [c00b1d3c] do_writepages+0x30/0x64
+>> [ee761d40] [c0103fbc] __writeback_single_inode+0x34/0x10c
+>> [ee761d60] [c0104ef8] writeback_sb_inodes+0x204/0x370
+>> [ee761dd0] [c01050f4] __writeback_inodes_wb+0x90/0xd4
+>> [ee761e00] [c01054cc] wb_writeback+0x204/0x20c
+>> [ee761e50] [c0105844] wb_do_writeback+0x144/0x20c
+>> [ee761eb0] [c0105980] bdi_writeback_thread+0x74/0x144
+>> [ee761ee0] [c0059dc4] kthread+0xa8/0xac
+>> [ee761f40] [c000f014] ret_from_kernel_thread+0x64/0x6c
+>> Instruction dump:
+>> 4bffff2c 813a0004 5720e8fe 7f39c8f8 39400001 5739077e 7d6900ae 7d59c830
+>> 7d6ac878 7d68c839 7d4901ae 4082fef0 <0fe00000> 0fe00000 9421ffe0 7c0802a6
+>>
+>> --
+>> Best regards,
+>> Oded Gabbay
+>> Principal Engineer Advanced Packet Technologies
+>> ADVA Optical Networking Israel Ltd.
+>> P.O. Box 2552
+>> 2 Hatidhar St.
+>> Raanana 4366504, Israel
+>> Tel: +(972)-9-7750130
+>> Fax: +(972)-9-7462092
+>> Mobile: +(972)-54-6543998
+>> E-mail: ogabbay@advaoptical.com
+>>
+>> www.advaoptical.com
+>> Let's ADVANCE
+>>
+>> ADVA Optical Networking SE is a European stock corporation (\"Societas
+>> Europaea\") with registered offices at Maerzenquelle 1-3, D-98617 Meiningen,
+>> Germany * CEO: Brian L. Protiva, Chief Officers: Dr. Christoph Glingener,
+>> Christian Unterberger, Jaswir Singh * Chairman of the Supervisory Board:
+>> Anthony Maher * AG Jena HRB 508155 * VAT No. DE 175 446 349
+>>
+>>
+>> ------------------------------------------------------------------------------
+>> This SF.net email is sponsored by Windows:
+>>
+>> Build for Windows Store.
+>>
+>> http://p.sf.net/sfu/windows-dev2dev
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>
+
+
+------------------------------------------------------------------------------
+This SF.net email is sponsored by Windows:
+
+Build for Windows Store.
+
+http://p.sf.net/sfu/windows-dev2dev
