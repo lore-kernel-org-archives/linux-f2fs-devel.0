@@ -1,374 +1,238 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH 1/2] f2fs: add remount_fs callback support
-Date: Mon, 17 Jun 2013 10:39:25 +0800
-Message-ID: <51BE76DD.2090604@cn.fujitsu.com>
-References: <1371343728-2676-1-git-send-email-linkinjeon@gmail.com>
+From: Huajun Li <huajun.li.lee@gmail.com>
+Subject: Re: [f2fs-dev] Kernel BUG when writing to f2fs drive, PowerPC,
+ SD card, USB3
+Date: Mon, 17 Jun 2013 15:20:29 +0800
+Message-ID: <CA+v9cxZUftbQigWM5fAn9-5VBciAyKG9_yf5d2LpXUD6JOeiTA@mail.gmail.com>
+References: <51BDA6BE.1040800@advaoptical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1371343728-2676-1-git-send-email-linkinjeon@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Namjae Jeon <linkinjeon@gmail.com>
-Cc: jaegeuk.kim@samsung.com, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <huajun.li.lee@gmail.com>) id 1UoTjy-0002Rq-05
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 17 Jun 2013 07:20:38 +0000
+Received: from mail-ve0-f173.google.com ([209.85.128.173])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1UoTjv-0003SL-HA
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 17 Jun 2013 07:20:36 +0000
+Received: by mail-ve0-f173.google.com with SMTP id jw11so1839142veb.32
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 17 Jun 2013 00:20:30 -0700 (PDT)
+In-Reply-To: <51BDA6BE.1040800@advaoptical.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Oded Gabbay <ogabbay@advaoptical.com>
+Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
-On 06/16/2013 08:48 AM, Namjae Jeon wrote:
+Hi,
+Is it possible caused by bitmap ? you know, bitmaps are unsigned
+variable, while f2fs_{clear, set, test}_bit() parameter is signed
+variable.
+So, could you please try following patch, and update the same issue in
+mkfs.f2fs tool.
 
-> From: Namjae Jeon <namjae.jeon@samsung.com>
-> 
-> Add the f2fs_remount function call which will be used
-> during the filesystem remounting. This function
-> will help us to change the mount options specific to
-> f2fs.
-> 
-> Also modify the f2fs background_gc mount option, which
-> will allow the user to dynamically trun on/off the
-> garbage collection in f2fs based on the background_gc
-> value. If background_gc=on, Garbage collection will
-> be turned off & if background_gc=off, Garbage collection
-> will be truned on.
-> 
-> By default the garbage collection is on in f2fs.
-> 
-> Change Log:
-> v2: Incorporated the review comments by Gu Zheng.
->     Removing the restore part for VFS flags
->     Updating comments with proper flag conditions
->     Display GC background option as ON/OFF
->     Revised conditions to stop GC in case of remount
-> 
-> v1: Initial changes for adding remount_fs callback
-> support.
-> 
-> Cc: Gu Zheng <guz.fnst@cn.fujitsu.com>
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Pankaj Kumar <pankaj.km@samsung.com>
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3e7cb33..28d31f1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -209,7 +209,7 @@ struct f2fs_nm_info {
+     struct mutex build_lock;    /* lock for build free nids */
 
+     /* for checkpoint */
+-    char *nat_bitmap;        /* NAT bitmap pointer */
++    unsigned char *nat_bitmap;    /* NAT bitmap pointer */
+     int bitmap_size;        /* bitmap size */
+ };
 
-Reviewed-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+@@ -820,7 +820,7 @@ static inline block_t datablock_addr(struct page *node_page,
+     return le32_to_cpu(addr_array[offset]);
+ }
 
-Thanks,
-Gu
+-static inline int f2fs_test_bit(unsigned int nr, char *addr)
++static inline int f2fs_test_bit(unsigned int nr, unsigned char *addr)
+ {
+     int mask;
 
-> ---
->  Documentation/filesystems/f2fs.txt |    9 +-
->  fs/f2fs/super.c                    |  235 +++++++++++++++++++++++-------------
->  2 files changed, 160 insertions(+), 84 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index bd3c56c..b91e2f2 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -98,8 +98,13 @@ Cleaning Overhead
->  MOUNT OPTIONS
->  ================================================================================
->  
-> -background_gc_off      Turn off cleaning operations, namely garbage collection,
-> -		       triggered in background when I/O subsystem is idle.
-> +background_gc=%s       Turn on/off cleaning operations, namely garbage
-> +                       collection, triggered in background when I/O subsystem is
-> +                       idle. If background_gc=on, it will turn on the garbage
-> +                       collection and if background_gc=off, garbage collection
-> +                       will be truned off.
-> +                       Default value for this option is on. So garbage
-> +                       collection is on by default.
->  disable_roll_forward   Disable the roll-forward recovery routine
->  discard                Issue discard/TRIM commands when a segment is cleaned.
->  no_heap                Disable heap-style segment allocation which finds free
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index ba56549..5a11484 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -34,7 +34,7 @@
->  static struct kmem_cache *f2fs_inode_cachep;
->  
->  enum {
-> -	Opt_gc_background_off,
-> +	Opt_gc_background,
->  	Opt_disable_roll_forward,
->  	Opt_discard,
->  	Opt_noheap,
-> @@ -46,7 +46,7 @@ enum {
->  };
->  
->  static match_table_t f2fs_tokens = {
-> -	{Opt_gc_background_off, "background_gc_off"},
-> +	{Opt_gc_background, "background_gc=%s"},
->  	{Opt_disable_roll_forward, "disable_roll_forward"},
->  	{Opt_discard, "discard"},
->  	{Opt_noheap, "no_heap"},
-> @@ -76,6 +76,91 @@ static void init_once(void *foo)
->  	inode_init_once(&fi->vfs_inode);
->  }
->  
-> +static int parse_options(struct super_block *sb, char *options)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> +	substring_t args[MAX_OPT_ARGS];
-> +	char *p, *name;
-> +	int arg = 0;
-> +
-> +	if (!options)
-> +		return 0;
-> +
-> +	while ((p = strsep(&options, ",")) != NULL) {
-> +		int token;
-> +		if (!*p)
-> +			continue;
-> +		/*
-> +		 * Initialize args struct so we know whether arg was
-> +		 * found; some options take optional arguments.
-> +		 */
-> +		args[0].to = args[0].from = NULL;
-> +		token = match_token(p, f2fs_tokens, args);
-> +
-> +		switch (token) {
-> +		case Opt_gc_background:
-> +			name = match_strdup(&args[0]);
-> +
-> +			if (!name)
-> +				return -ENOMEM;
-> +			if (!strncmp(name, "on", 2))
-> +				set_opt(sbi, BG_GC);
-> +			else if (!strncmp(name, "off", 3))
-> +				clear_opt(sbi, BG_GC);
-> +			else {
-> +				kfree(name);
-> +				return -EINVAL;
-> +			}
-> +			kfree(name);
-> +			break;
-> +		case Opt_disable_roll_forward:
-> +			set_opt(sbi, DISABLE_ROLL_FORWARD);
-> +			break;
-> +		case Opt_discard:
-> +			set_opt(sbi, DISCARD);
-> +			break;
-> +		case Opt_noheap:
-> +			set_opt(sbi, NOHEAP);
-> +			break;
-> +#ifdef CONFIG_F2FS_FS_XATTR
-> +		case Opt_nouser_xattr:
-> +			clear_opt(sbi, XATTR_USER);
-> +			break;
-> +#else
-> +		case Opt_nouser_xattr:
-> +			f2fs_msg(sb, KERN_INFO,
-> +				"nouser_xattr options not supported");
-> +			break;
-> +#endif
-> +#ifdef CONFIG_F2FS_FS_POSIX_ACL
-> +		case Opt_noacl:
-> +			clear_opt(sbi, POSIX_ACL);
-> +			break;
-> +#else
-> +		case Opt_noacl:
-> +			f2fs_msg(sb, KERN_INFO, "noacl options not supported");
-> +			break;
-> +#endif
-> +		case Opt_active_logs:
-> +			if (args->from && match_int(args, &arg))
-> +				return -EINVAL;
-> +			if (arg != 2 && arg != 4 && arg != NR_CURSEG_TYPE)
-> +				return -EINVAL;
-> +			sbi->active_logs = arg;
-> +			break;
-> +		case Opt_disable_ext_identify:
-> +			set_opt(sbi, DISABLE_EXT_IDENTIFY);
-> +			break;
-> +		default:
-> +			f2fs_msg(sb, KERN_ERR,
-> +				"Unrecognized mount option \"%s\" or missing value",
-> +				p);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
->  static struct inode *f2fs_alloc_inode(struct super_block *sb)
->  {
->  	struct f2fs_inode_info *fi;
-> @@ -225,10 +310,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
->  {
->  	struct f2fs_sb_info *sbi = F2FS_SB(root->d_sb);
->  
-> -	if (test_opt(sbi, BG_GC))
-> -		seq_puts(seq, ",background_gc_on");
-> +	if (!(root->d_sb->s_flags & MS_RDONLY) && test_opt(sbi, BG_GC))
-> +		seq_printf(seq, ",background_gc=%s", "on");
->  	else
-> -		seq_puts(seq, ",background_gc_off");
-> +		seq_printf(seq, ",background_gc=%s", "off");
->  	if (test_opt(sbi, DISABLE_ROLL_FORWARD))
->  		seq_puts(seq, ",disable_roll_forward");
->  	if (test_opt(sbi, DISCARD))
-> @@ -255,6 +340,58 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
->  	return 0;
->  }
->  
-> +static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> +	struct f2fs_mount_info org_mount_opt;
-> +	int err, active_logs;
-> +
-> +	/**
-> +	 * Save the old mount options in case we
-> +	 * need to restore them.
-> +	 */
-> +	org_mount_opt = sbi->mount_opt;
-> +	active_logs = sbi->active_logs;
-> +
-> +	/* parse mount options */
-> +	err = parse_options(sb, data);
-> +	if (err)
-> +		goto restore_opts;
-> +
-> +	/**
-> +	 * Previous and new state of filesystem is RO,
-> +	 * so no point in checking GC conditions.
-> +	 */
-> +	if ((sb->s_flags & MS_RDONLY) && (*flags & MS_RDONLY))
-> +		goto skip;
-> +
-> +	/**
-> +	 * We stop the GC thread if FS is mounted as RO
-> +	 * or if background_gc = off is passed in mount
-> +	 * option. Also sync the filesystem.
-> +	 */
-> +	if ((*flags & MS_RDONLY) || !test_opt(sbi, BG_GC)) {
-> +		if (sbi->gc_thread) {
-> +			stop_gc_thread(sbi);
-> +			f2fs_sync_fs(sb, 1);
-> +		}
-> +	} else if (test_opt(sbi, BG_GC) && !sbi->gc_thread) {
-> +		err = start_gc_thread(sbi);
-> +		if (err)
-> +			goto restore_opts;
-> +	}
-> +skip:
-> +	/* Update the POSIXACL Flag */
-> +	 sb->s_flags = (sb->s_flags & ~MS_POSIXACL) |
-> +		(test_opt(sbi, POSIX_ACL) ? MS_POSIXACL : 0);
-> +	return 0;
-> +
-> +restore_opts:
-> +	sbi->mount_opt = org_mount_opt;
-> +	sbi->active_logs = active_logs;
-> +	return err;
-> +}
-> +
->  static struct super_operations f2fs_sops = {
->  	.alloc_inode	= f2fs_alloc_inode,
->  	.drop_inode	= f2fs_drop_inode,
-> @@ -268,6 +405,7 @@ static struct super_operations f2fs_sops = {
->  	.freeze_fs	= f2fs_freeze,
->  	.unfreeze_fs	= f2fs_unfreeze,
->  	.statfs		= f2fs_statfs,
-> +	.remount_fs	= f2fs_remount,
->  };
->  
->  static struct inode *f2fs_nfs_get_inode(struct super_block *sb,
-> @@ -315,79 +453,6 @@ static const struct export_operations f2fs_export_ops = {
->  	.get_parent = f2fs_get_parent,
->  };
->  
-> -static int parse_options(struct super_block *sb, char *options)
-> -{
-> -	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> -	substring_t args[MAX_OPT_ARGS];
-> -	char *p;
-> -	int arg = 0;
-> -
-> -	if (!options)
-> -		return 0;
-> -
-> -	while ((p = strsep(&options, ",")) != NULL) {
-> -		int token;
-> -		if (!*p)
-> -			continue;
-> -		/*
-> -		 * Initialize args struct so we know whether arg was
-> -		 * found; some options take optional arguments.
-> -		 */
-> -		args[0].to = args[0].from = NULL;
-> -		token = match_token(p, f2fs_tokens, args);
-> -
-> -		switch (token) {
-> -		case Opt_gc_background_off:
-> -			clear_opt(sbi, BG_GC);
-> -			break;
-> -		case Opt_disable_roll_forward:
-> -			set_opt(sbi, DISABLE_ROLL_FORWARD);
-> -			break;
-> -		case Opt_discard:
-> -			set_opt(sbi, DISCARD);
-> -			break;
-> -		case Opt_noheap:
-> -			set_opt(sbi, NOHEAP);
-> -			break;
-> -#ifdef CONFIG_F2FS_FS_XATTR
-> -		case Opt_nouser_xattr:
-> -			clear_opt(sbi, XATTR_USER);
-> -			break;
-> -#else
-> -		case Opt_nouser_xattr:
-> -			f2fs_msg(sb, KERN_INFO,
-> -				"nouser_xattr options not supported");
-> -			break;
-> -#endif
-> -#ifdef CONFIG_F2FS_FS_POSIX_ACL
-> -		case Opt_noacl:
-> -			clear_opt(sbi, POSIX_ACL);
-> -			break;
-> -#else
-> -		case Opt_noacl:
-> -			f2fs_msg(sb, KERN_INFO, "noacl options not supported");
-> -			break;
-> -#endif
-> -		case Opt_active_logs:
-> -			if (args->from && match_int(args, &arg))
-> -				return -EINVAL;
-> -			if (arg != 2 && arg != 4 && arg != NR_CURSEG_TYPE)
-> -				return -EINVAL;
-> -			sbi->active_logs = arg;
-> -			break;
-> -		case Opt_disable_ext_identify:
-> -			set_opt(sbi, DISABLE_EXT_IDENTIFY);
-> -			break;
-> -		default:
-> -			f2fs_msg(sb, KERN_ERR,
-> -				"Unrecognized mount option \"%s\" or missing value",
-> -				p);
-> -			return -EINVAL;
-> -		}
-> -	}
-> -	return 0;
-> -}
-> -
->  static loff_t max_file_size(unsigned bits)
->  {
->  	loff_t result = ADDRS_PER_INODE;
-> @@ -686,10 +751,16 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  				"Cannot recover all fsync data errno=%ld", err);
->  	}
->  
-> -	/* After POR, we can run background GC thread */
-> -	err = start_gc_thread(sbi);
-> -	if (err)
-> -		goto fail;
-> +	/**
-> +	 * If filesystem is not mounted as read-only then
-> +	 * do start the gc_thread.
-> +	 */
-> +	if (!(sb->s_flags & MS_RDONLY)) {
-> +		/* After POR, we can run background GC thread.*/
-> +		err = start_gc_thread(sbi);
-> +		if (err)
-> +			goto fail;
-> +	}
->  
->  	err = f2fs_build_stats(sbi);
->  	if (err)
+@@ -829,7 +829,7 @@ static inline int f2fs_test_bit(unsigned int nr, char *addr)
+     return mask & *addr;
+ }
+
+-static inline int f2fs_set_bit(unsigned int nr, char *addr)
++static inline int f2fs_set_bit(unsigned int nr, unsigned char *addr)
+ {
+     int mask;
+     int ret;
+@@ -841,7 +841,7 @@ static inline int f2fs_set_bit(unsigned int nr, char *addr)
+     return ret;
+ }
+
+-static inline int f2fs_clear_bit(unsigned int nr, char *addr)
++static inline int f2fs_clear_bit(unsigned int nr, unsigned char *addr)
+ {
+     int mask;
+     int ret;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b15debc..b191449 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1402,7 +1402,7 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+     struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+     struct sit_info *sit_i;
+     unsigned int sit_segs, start;
+-    char *src_bitmap, *dst_bitmap;
++    unsigned char *src_bitmap, *dst_bitmap;
+     unsigned int bitmap_size;
+
+     /* allocate memory for SIT information */
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 062424a..a96f7f4 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -175,7 +175,7 @@ struct sit_info {
+     block_t sit_base_addr;        /* start block address of SIT area */
+     block_t sit_blocks;        /* # of blocks used by SIT area */
+     block_t written_valid_blocks;    /* # of valid blocks in main area */
+-    char *sit_bitmap;        /* SIT bitmap pointer */
++    unsigned char *sit_bitmap;    /* SIT bitmap pointer */
+     unsigned int bitmap_size;    /* SIT bitmap size */
+
+     unsigned long *dirty_sentries_bitmap;    /* bitmap for dirty sentries */
+
+On Sun, Jun 16, 2013 at 7:51 PM, Oded Gabbay <ogabbay@advaoptical.com> wrote:
+> Hi,
+>
+> I'm working on a custom board with a PowerPC processor (Freescale P2020).
+> On the board there is an SD card, which is connected to a USB3 chip (from
+> TI), which is connected to the PCI-e controller of the CPU.
+> I'm running with Linux kernel 3.9.6, with our custom rootFS.
+>
+> I formatted an SD card using the mkfs.f2fs utility (after fixing some
+> Big-endian issues - sent a patch a few days ago).
+> I then mounted the SD card, using "mount -o
+> noatime,nodiratime,rw,nosuid,nodev,relatime,active_logs=6,uhelper=udisks2,background_gc_off
+> /dev/sda /mnt/sd1"
+> Then, I started a small user-space test application which opens a file on
+> the mount folder and starts to do "fwrite" into the file.
+> After 2-3 seconds, the kernel gives me a BUG and the system restarts.
+> When the system is up and I try to re-mount the SD card, I get the following
+> error message:
+>
+> F2FS-fs (sda): Failed to get valid F2FS checkpoint
+> mount: you must specify the filesystem type
+>
+> Only way is to re-format the card using mkfs.f2fs
+>
+> I took the f2fs patch that Jaegeuk Kim sent to Linus for 3.10 (here -
+> https://lkml.org/lkml/2013/5/8/122) and applied it cleanly to 3.9.6
+> I repeated the procedure but got the same result.
+>
+> The BUG is from this line, from segment.c:
+>         if (!f2fs_clear_bit(offset, se->cur_valid_map))
+>             BUG();
+>
+> Additional information I can give is
+>
+> 1. I tried using F2FS in ArchLinux, kernel 3.9.5, on an x86 machine, with
+> the same SD card and the same USB3-to-PCIe chip and it worked flawlessly
+> there.
+> 2. I can work with other FS on the SD card on our custom board, such as
+> Ext3, Ext4 and vfat, so this is not a H/W issue.
+>
+> Could you please try to help me pinpoint/debug the problem ?
+>
+> Here is the complete kernel BUG print:
+>
+> kernel BUG at .../linux-3.9.6-adva/fs/f2fs/segment.c:214!
+> Oops: Exception in kernel mode, sig: 5 [#1]
+> PREEMPT SMP NR_CPUS=2 P2020 FSP150
+> Modules linked in: mdio(O) hardware_version(PO) clipresent(PO) monotonic(O)
+> restartcause(PO) panic_buffer(O)
+> NIP: c026a7e0 LR: c026a660 CTR: 00000000
+> REGS: ee761a60 TRAP: 0700   Tainted: P           O
+> (3.9.6-dev_ogabbay-109482*)
+> MSR: 00029000 <CE,EE,ME>  CR: 24a52588  XER: 20000000
+> TASK = efb444c0[1755] 'flush-8:0' THREAD: ee760000 CPU: 1
+> GPR00: 00000000 ee761b10 efb444c0 0000004c 00000000 00000000 01dc4900
+> eb0fa700
+> GPR08: 00000000 eb24cb00 00000040 00000040 00000038 00000000 ee761c64
+> 00000000
+> GPR16: c0aeea80 00080000 00000000 00000000 0000ed31 eb0fa700 00000000
+> eb0fa734
+> GPR24: eb0fa700 00000080 f2030620 ffffffff ffffffc8 0000ed31 ffffffff
+> c55a1000
+> NIP [c026a7e0] update_sit_entry+0x240/0x248
+> LR [c026a660] update_sit_entry+0xc0/0x248
+> Call Trace:
+> [ee761b10] [c55a1000] 0xc55a1000 (unreliable)
+> [ee761b40] [c026d1f4] do_write_page+0x198/0x660
+> [ee761b80] [c026d84c] write_data_page+0xa4/0xb8
+> [ee761bc0] [c0265118] do_write_data_page+0x1e8/0x20c
+> [ee761c20] [c02653dc] f2fs_write_data_page+0x2a0/0x2c0
+> [ee761c40] [c0263ad8] __f2fs_writepage+0x24/0x80
+> [ee761c50] [c00b05dc] write_cache_pages+0x1d0/0x35c
+> [ee761d00] [c0263cf4] f2fs_write_data_pages+0xf4/0xfc
+> [ee761d30] [c00b1d3c] do_writepages+0x30/0x64
+> [ee761d40] [c0103fbc] __writeback_single_inode+0x34/0x10c
+> [ee761d60] [c0104ef8] writeback_sb_inodes+0x204/0x370
+> [ee761dd0] [c01050f4] __writeback_inodes_wb+0x90/0xd4
+> [ee761e00] [c01054cc] wb_writeback+0x204/0x20c
+> [ee761e50] [c0105844] wb_do_writeback+0x144/0x20c
+> [ee761eb0] [c0105980] bdi_writeback_thread+0x74/0x144
+> [ee761ee0] [c0059dc4] kthread+0xa8/0xac
+> [ee761f40] [c000f014] ret_from_kernel_thread+0x64/0x6c
+> Instruction dump:
+> 4bffff2c 813a0004 5720e8fe 7f39c8f8 39400001 5739077e 7d6900ae 7d59c830
+> 7d6ac878 7d68c839 7d4901ae 4082fef0 <0fe00000> 0fe00000 9421ffe0 7c0802a6
+>
+> --
+> Best regards,
+> Oded Gabbay
+> Principal Engineer Advanced Packet Technologies
+> ADVA Optical Networking Israel Ltd.
+> P.O. Box 2552
+> 2 Hatidhar St.
+> Raanana 4366504, Israel
+> Tel: +(972)-9-7750130
+> Fax: +(972)-9-7462092
+> Mobile: +(972)-54-6543998
+> E-mail: ogabbay@advaoptical.com
+>
+> www.advaoptical.com
+> Let's ADVANCE
+>
+> ADVA Optical Networking SE is a European stock corporation (\"Societas
+> Europaea\") with registered offices at Maerzenquelle 1-3, D-98617 Meiningen,
+> Germany * CEO: Brian L. Protiva, Chief Officers: Dr. Christoph Glingener,
+> Christian Unterberger, Jaswir Singh * Chairman of the Supervisory Board:
+> Anthony Maher * AG Jena HRB 508155 * VAT No. DE 175 446 349
+>
+>
+> ------------------------------------------------------------------------------
+> This SF.net email is sponsored by Windows:
+>
+> Build for Windows Store.
+>
+> http://p.sf.net/sfu/windows-dev2dev
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>
+
+------------------------------------------------------------------------------
+This SF.net email is sponsored by Windows:
+
+Build for Windows Store.
+
+http://p.sf.net/sfu/windows-dev2dev
