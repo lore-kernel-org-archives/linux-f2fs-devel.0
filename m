@@ -1,28 +1,29 @@
-From: Huajun Li <huajun.li.lee@gmail.com>
-Subject: Re: [f2fs-dev] Kernel BUG when writing to f2fs drive, PowerPC,
- SD card, USB3
-Date: Mon, 17 Jun 2013 15:20:29 +0800
-Message-ID: <CA+v9cxZUftbQigWM5fAn9-5VBciAyKG9_yf5d2LpXUD6JOeiTA@mail.gmail.com>
-References: <51BDA6BE.1040800@advaoptical.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [f2fs-dev] [PATCH] f2fs: recover wrong pino after checkpoint during
+	fsync
+Date: Mon, 17 Jun 2013 21:09:04 +0900
+Message-ID: <1371470944-15012-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <huajun.li.lee@gmail.com>) id 1UoTjy-0002Rq-05
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1UoYFg-00069C-AS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Jun 2013 07:20:38 +0000
-Received: from mail-ve0-f173.google.com ([209.85.128.173])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1UoTjv-0003SL-HA
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Jun 2013 07:20:36 +0000
-Received: by mail-ve0-f173.google.com with SMTP id jw11so1839142veb.32
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 17 Jun 2013 00:20:30 -0700 (PDT)
-In-Reply-To: <51BDA6BE.1040800@advaoptical.com>
+	Mon, 17 Jun 2013 12:09:40 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UoYFQ-0003Rl-2L for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 17 Jun 2013 12:09:40 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MOJ007X8DQQ35E0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 17 Jun 2013 21:08:58 +0900 (KST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,203 +33,163 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Oded Gabbay <ogabbay@advaoptical.com>
-Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
-Is it possible caused by bitmap ? you know, bitmaps are unsigned
-variable, while f2fs_{clear, set, test}_bit() parameter is signed
-variable.
-So, could you please try following patch, and update the same issue in
-mkfs.f2fs tool.
+If a file is linked, f2fs loose its parent inode number so that fsync calls
+for the linked file should do checkpoint all the time.
+But, if we can recover its parent inode number after the checkpoint, we can
+adjust roll-forward mechanism for the further fsync calls, which is able to
+improve the fsync performance significatly.
 
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/dir.c     |  2 +-
+ fs/f2fs/f2fs.h    |  2 +-
+ fs/f2fs/file.c    | 31 ++++++++++++++++++++++++++++++-
+ fs/f2fs/namei.c   |  2 +-
+ fs/f2fs/node.h    | 15 +++++++++++----
+ fs/f2fs/segment.c |  2 +-
+ 6 files changed, 45 insertions(+), 9 deletions(-)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 69ca049..4f21452 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -356,7 +356,7 @@ static struct page *init_inode_metadata(struct inode *inode,
+ 	 * We lost i_pino from now on.
+ 	 */
+ 	if (is_inode_flag_set(F2FS_I(inode), FI_INC_LINK)) {
+-		set_cp_file(inode);
++		file_lost_pino(inode);
+ 		inc_nlink(inode);
+ 	}
+ 	return page;
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3e7cb33..28d31f1 100644
+index 3e7cb33..863a5e91 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -209,7 +209,7 @@ struct f2fs_nm_info {
-     struct mutex build_lock;    /* lock for build free nids */
-
-     /* for checkpoint */
--    char *nat_bitmap;        /* NAT bitmap pointer */
-+    unsigned char *nat_bitmap;    /* NAT bitmap pointer */
-     int bitmap_size;        /* bitmap size */
+@@ -151,7 +151,7 @@ struct extent_info {
+  * i_advise uses FADVISE_XXX_BIT. We can add additional hints later.
+  */
+ #define FADVISE_COLD_BIT	0x01
+-#define FADVISE_CP_BIT		0x02
++#define FADVISE_LOST_PINO_BIT	0x02
+ 
+ struct f2fs_inode_info {
+ 	struct inode vfs_inode;		/* serve a vfs inode */
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index fda226f..d2d2b7d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -102,6 +102,24 @@ static const struct vm_operations_struct f2fs_file_vm_ops = {
+ 	.remap_pages	= generic_file_remap_pages,
  };
-
-@@ -820,7 +820,7 @@ static inline block_t datablock_addr(struct page *node_page,
-     return le32_to_cpu(addr_array[offset]);
- }
-
--static inline int f2fs_test_bit(unsigned int nr, char *addr)
-+static inline int f2fs_test_bit(unsigned int nr, unsigned char *addr)
+ 
++static int get_parent_ino(struct inode *inode, nid_t *pino)
++{
++	struct dentry *dentry;
++
++	inode = igrab(inode);
++	dentry = d_find_any_alias(inode);
++	iput(inode);
++	if (!dentry)
++		return 0;
++
++	inode = igrab(dentry->d_parent->d_inode);
++	dput(dentry);
++
++	*pino = inode->i_ino;
++	iput(inode);
++	return 1;
++}
++
+ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
  {
-     int mask;
-
-@@ -829,7 +829,7 @@ static inline int f2fs_test_bit(unsigned int nr, char *addr)
-     return mask & *addr;
+ 	struct inode *inode = file->f_mapping->host;
+@@ -134,7 +152,7 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 
+ 	if (!S_ISREG(inode->i_mode) || inode->i_nlink != 1)
+ 		need_cp = true;
+-	else if (is_cp_file(inode))
++	else if (file_wrong_pino(inode))
+ 		need_cp = true;
+ 	else if (!space_for_roll_forward(sbi))
+ 		need_cp = true;
+@@ -142,8 +160,19 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 		need_cp = true;
+ 
+ 	if (need_cp) {
++		nid_t pino;
++
+ 		/* all the dirty node pages should be flushed for POR */
+ 		ret = f2fs_sync_fs(inode->i_sb, 1);
++		if (file_wrong_pino(inode) && inode->i_nlink == 1 &&
++					get_parent_ino(inode, &pino)) {
++			F2FS_I(inode)->i_pino = pino;
++			file_got_pino(inode);
++			mark_inode_dirty_sync(inode);
++			ret = f2fs_write_inode(inode, NULL);
++			if (ret)
++				goto out;
++		}
+ 	} else {
+ 		/* if there is no written node page, write its inode page */
+ 		while (!sync_node_pages(sbi, inode->i_ino, &wbc)) {
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 810444e..64c0716 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -112,7 +112,7 @@ static inline void set_cold_files(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	int count = le32_to_cpu(sbi->raw_super->extension_count);
+ 	for (i = 0; i < count; i++) {
+ 		if (is_multimedia_file(name, extlist[i])) {
+-			set_cold_file(inode);
++			file_set_cold(inode);
+ 			break;
+ 		}
+ 	}
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index a503661..c65fb4f 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -285,10 +285,17 @@ static inline void set_file(struct inode *inode, int type)
+ 	F2FS_I(inode)->i_advise |= type;
  }
-
--static inline int f2fs_set_bit(unsigned int nr, char *addr)
-+static inline int f2fs_set_bit(unsigned int nr, unsigned char *addr)
+ 
+-#define is_cold_file(inode)	is_file(inode, FADVISE_COLD_BIT)
+-#define is_cp_file(inode)	is_file(inode, FADVISE_CP_BIT)
+-#define set_cold_file(inode)	set_file(inode, FADVISE_COLD_BIT)
+-#define set_cp_file(inode)	set_file(inode, FADVISE_CP_BIT)
++static inline void clear_file(struct inode *inode, int type)
++{
++	F2FS_I(inode)->i_advise &= ~type;
++}
++
++#define file_is_cold(inode)	is_file(inode, FADVISE_COLD_BIT)
++#define file_wrong_pino(inode)	is_file(inode, FADVISE_LOST_PINO_BIT)
++#define file_set_cold(inode)	set_file(inode, FADVISE_COLD_BIT)
++#define file_lost_pino(inode)	set_file(inode, FADVISE_LOST_PINO_BIT)
++#define file_clear_cold(inode)	clear_file(inode, FADVISE_COLD_BIT)
++#define file_got_pino(inode)	clear_file(inode, FADVISE_LOST_PINO_BIT)
+ 
+ static inline int is_cold_data(struct page *page)
  {
-     int mask;
-     int ret;
-@@ -841,7 +841,7 @@ static inline int f2fs_set_bit(unsigned int nr, char *addr)
-     return ret;
- }
-
--static inline int f2fs_clear_bit(unsigned int nr, char *addr)
-+static inline int f2fs_clear_bit(unsigned int nr, unsigned char *addr)
- {
-     int mask;
-     int ret;
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b15debc..b191449 100644
+index b15debc..0e1a60a 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -1402,7 +1402,7 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
-     struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-     struct sit_info *sit_i;
-     unsigned int sit_segs, start;
--    char *src_bitmap, *dst_bitmap;
-+    unsigned char *src_bitmap, *dst_bitmap;
-     unsigned int bitmap_size;
+@@ -796,7 +796,7 @@ static int __get_segment_type_6(struct page *page, enum page_type p_type)
+ 
+ 		if (S_ISDIR(inode->i_mode))
+ 			return CURSEG_HOT_DATA;
+-		else if (is_cold_data(page) || is_cold_file(inode))
++		else if (is_cold_data(page) || file_is_cold(inode))
+ 			return CURSEG_COLD_DATA;
+ 		else
+ 			return CURSEG_WARM_DATA;
+-- 
+1.8.3.1.437.g0dbd812
 
-     /* allocate memory for SIT information */
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 062424a..a96f7f4 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -175,7 +175,7 @@ struct sit_info {
-     block_t sit_base_addr;        /* start block address of SIT area */
-     block_t sit_blocks;        /* # of blocks used by SIT area */
-     block_t written_valid_blocks;    /* # of valid blocks in main area */
--    char *sit_bitmap;        /* SIT bitmap pointer */
-+    unsigned char *sit_bitmap;    /* SIT bitmap pointer */
-     unsigned int bitmap_size;    /* SIT bitmap size */
-
-     unsigned long *dirty_sentries_bitmap;    /* bitmap for dirty sentries */
-
-On Sun, Jun 16, 2013 at 7:51 PM, Oded Gabbay <ogabbay@advaoptical.com> wrote:
-> Hi,
->
-> I'm working on a custom board with a PowerPC processor (Freescale P2020).
-> On the board there is an SD card, which is connected to a USB3 chip (from
-> TI), which is connected to the PCI-e controller of the CPU.
-> I'm running with Linux kernel 3.9.6, with our custom rootFS.
->
-> I formatted an SD card using the mkfs.f2fs utility (after fixing some
-> Big-endian issues - sent a patch a few days ago).
-> I then mounted the SD card, using "mount -o
-> noatime,nodiratime,rw,nosuid,nodev,relatime,active_logs=6,uhelper=udisks2,background_gc_off
-> /dev/sda /mnt/sd1"
-> Then, I started a small user-space test application which opens a file on
-> the mount folder and starts to do "fwrite" into the file.
-> After 2-3 seconds, the kernel gives me a BUG and the system restarts.
-> When the system is up and I try to re-mount the SD card, I get the following
-> error message:
->
-> F2FS-fs (sda): Failed to get valid F2FS checkpoint
-> mount: you must specify the filesystem type
->
-> Only way is to re-format the card using mkfs.f2fs
->
-> I took the f2fs patch that Jaegeuk Kim sent to Linus for 3.10 (here -
-> https://lkml.org/lkml/2013/5/8/122) and applied it cleanly to 3.9.6
-> I repeated the procedure but got the same result.
->
-> The BUG is from this line, from segment.c:
->         if (!f2fs_clear_bit(offset, se->cur_valid_map))
->             BUG();
->
-> Additional information I can give is
->
-> 1. I tried using F2FS in ArchLinux, kernel 3.9.5, on an x86 machine, with
-> the same SD card and the same USB3-to-PCIe chip and it worked flawlessly
-> there.
-> 2. I can work with other FS on the SD card on our custom board, such as
-> Ext3, Ext4 and vfat, so this is not a H/W issue.
->
-> Could you please try to help me pinpoint/debug the problem ?
->
-> Here is the complete kernel BUG print:
->
-> kernel BUG at .../linux-3.9.6-adva/fs/f2fs/segment.c:214!
-> Oops: Exception in kernel mode, sig: 5 [#1]
-> PREEMPT SMP NR_CPUS=2 P2020 FSP150
-> Modules linked in: mdio(O) hardware_version(PO) clipresent(PO) monotonic(O)
-> restartcause(PO) panic_buffer(O)
-> NIP: c026a7e0 LR: c026a660 CTR: 00000000
-> REGS: ee761a60 TRAP: 0700   Tainted: P           O
-> (3.9.6-dev_ogabbay-109482*)
-> MSR: 00029000 <CE,EE,ME>  CR: 24a52588  XER: 20000000
-> TASK = efb444c0[1755] 'flush-8:0' THREAD: ee760000 CPU: 1
-> GPR00: 00000000 ee761b10 efb444c0 0000004c 00000000 00000000 01dc4900
-> eb0fa700
-> GPR08: 00000000 eb24cb00 00000040 00000040 00000038 00000000 ee761c64
-> 00000000
-> GPR16: c0aeea80 00080000 00000000 00000000 0000ed31 eb0fa700 00000000
-> eb0fa734
-> GPR24: eb0fa700 00000080 f2030620 ffffffff ffffffc8 0000ed31 ffffffff
-> c55a1000
-> NIP [c026a7e0] update_sit_entry+0x240/0x248
-> LR [c026a660] update_sit_entry+0xc0/0x248
-> Call Trace:
-> [ee761b10] [c55a1000] 0xc55a1000 (unreliable)
-> [ee761b40] [c026d1f4] do_write_page+0x198/0x660
-> [ee761b80] [c026d84c] write_data_page+0xa4/0xb8
-> [ee761bc0] [c0265118] do_write_data_page+0x1e8/0x20c
-> [ee761c20] [c02653dc] f2fs_write_data_page+0x2a0/0x2c0
-> [ee761c40] [c0263ad8] __f2fs_writepage+0x24/0x80
-> [ee761c50] [c00b05dc] write_cache_pages+0x1d0/0x35c
-> [ee761d00] [c0263cf4] f2fs_write_data_pages+0xf4/0xfc
-> [ee761d30] [c00b1d3c] do_writepages+0x30/0x64
-> [ee761d40] [c0103fbc] __writeback_single_inode+0x34/0x10c
-> [ee761d60] [c0104ef8] writeback_sb_inodes+0x204/0x370
-> [ee761dd0] [c01050f4] __writeback_inodes_wb+0x90/0xd4
-> [ee761e00] [c01054cc] wb_writeback+0x204/0x20c
-> [ee761e50] [c0105844] wb_do_writeback+0x144/0x20c
-> [ee761eb0] [c0105980] bdi_writeback_thread+0x74/0x144
-> [ee761ee0] [c0059dc4] kthread+0xa8/0xac
-> [ee761f40] [c000f014] ret_from_kernel_thread+0x64/0x6c
-> Instruction dump:
-> 4bffff2c 813a0004 5720e8fe 7f39c8f8 39400001 5739077e 7d6900ae 7d59c830
-> 7d6ac878 7d68c839 7d4901ae 4082fef0 <0fe00000> 0fe00000 9421ffe0 7c0802a6
->
-> --
-> Best regards,
-> Oded Gabbay
-> Principal Engineer Advanced Packet Technologies
-> ADVA Optical Networking Israel Ltd.
-> P.O. Box 2552
-> 2 Hatidhar St.
-> Raanana 4366504, Israel
-> Tel: +(972)-9-7750130
-> Fax: +(972)-9-7462092
-> Mobile: +(972)-54-6543998
-> E-mail: ogabbay@advaoptical.com
->
-> www.advaoptical.com
-> Let's ADVANCE
->
-> ADVA Optical Networking SE is a European stock corporation (\"Societas
-> Europaea\") with registered offices at Maerzenquelle 1-3, D-98617 Meiningen,
-> Germany * CEO: Brian L. Protiva, Chief Officers: Dr. Christoph Glingener,
-> Christian Unterberger, Jaswir Singh * Chairman of the Supervisory Board:
-> Anthony Maher * AG Jena HRB 508155 * VAT No. DE 175 446 349
->
->
-> ------------------------------------------------------------------------------
-> This SF.net email is sponsored by Windows:
->
-> Build for Windows Store.
->
-> http://p.sf.net/sfu/windows-dev2dev
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->
 
 ------------------------------------------------------------------------------
 This SF.net email is sponsored by Windows:
