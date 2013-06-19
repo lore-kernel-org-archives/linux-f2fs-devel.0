@@ -1,26 +1,34 @@
-From: Oded Gabbay <ogabbay@advaoptical.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 Subject: Re: [f2fs-dev] Kernel BUG when writing to f2fs drive, PowerPC,
  SD card, USB3
-Date: Tue, 18 Jun 2013 15:10:12 +0300
-Message-ID: <51C04E24.6090200@advaoptical.com>
+Date: Wed, 19 Jun 2013 21:43:48 +0900
+Message-ID: <1371645828.2072.22.camel@kjgkr>
 References: <51BDA6BE.1040800@advaoptical.com> <1371471068.10480.8.camel@kjgkr>
-	<51BF1B84.8080802@advaoptical.com>
-	<51C02BE6.4070007@advaoptical.com>
+	<51BF1B84.8080802@advaoptical.com> <51C02BE6.4070007@advaoptical.com>
+	<51C04E24.6090200@advaoptical.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3556903000012821219=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <OGabbay@advaoptical.com>) id 1UoukK-0006T8-Gv
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1UpHjq-00052g-6U
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 18 Jun 2013 12:10:48 +0000
-Received: from mail.advaoptical.com ([91.217.199.15])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1UoukG-0004HM-Id
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 18 Jun 2013 12:10:48 +0000
-In-Reply-To: <51C02BE6.4070007@advaoptical.com>
+	Wed, 19 Jun 2013 12:43:51 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UpHjn-0004zy-8y for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 19 Jun 2013 12:43:50 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MON009GX4OR2H70@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 19 Jun 2013 21:43:40 +0900 (KST)
+In-reply-to: <51C04E24.6090200@advaoptical.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,816 +38,251 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
+To: Oded Gabbay <ogabbay@advaoptical.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
---===============3556903000012821219==
-Content-Type: multipart/alternative;
-	boundary="------------010901040905040206050505"
-
---------------010901040905040206050505
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by
-	muc-vsrv-fsmail.advaoptical.com id r5ICAb9A001179
-
-Hi,
-
-I printed also the segment no. and it appears that every time that=20
-segment 187 is written to, which is assigned to the HOT data, the system=20
-crashes.
-BTW, even if I just do "echo oded > /mnt/file" and then just wait for=20
-about 30-45 seconds, the crash occurs
-
-I got the following prints when I did the echo thing:
-
-REMOVE_ME update_sit_entry(202):
-offset =3D 0, segoff =3D 3584, blkaddr =3D 4096, segno =3D 0
-REMOVE_ME update_sit_entry(202):
-offset =3D 1, segoff =3D 99329, blkaddr =3D 99841, segno =3D 187
-REMOVE_ME update_sit_entry(202):
-offset =3D 0, segoff =3D 99328, blkaddr =3D 99840, segno =3D 187
-------------[ cut here ]------------
-kernel BUG at=20
-/home/ogabbay/views/r5.xcj/software/os-software/powerpc/usr/src/linux-3.9=
-.6-adva/fs/f2fs/segment.c:217!
-
-Here is the print from the debugfs. You can see segment 187 is allocated=20
-to HOT data:
-
-[cj:~] # cat /sys/kernel/debug/f2fs/status
-
-=3D=3D=3D=3D=3D[ partition info(loop0). #0 ]=3D=3D=3D=3D=3D
-[SB: 1] [CP: 2] [SIT: 2] [NAT: 2] [SSA: 1] [MAIN: 192(OverProv:55 Resv:48=
-)]
-
-Utilization: 0% (4 valid blocks)
-   - Node: 2 (Inode: 2, Other: 0)
-   - Data: 2
-
-Main area: 192 segs, 192 secs 192 zones
-   - COLD  data: 0, 0, 0
-   - WARM  data: 1, 1, 1
-   - HOT   data: 187, 187, 187
-   - Dir   dnode: 190, 190, 190
-   - File   dnode: 189, 189, 189
-   - Indir nodes: 188, 188, 188
-
-   - Valid: 6
-   - Dirty: 0
-   - Prefree: 0
-   - Free: 186 (186)
-
-GC calls: 0 (BG: 0)
-   - data segments : 0
-   - node segments : 0
-Try to move 0 blocks
-   - data blocks : 0
-   - node blocks : 0
-
-Extent Hit Ratio: 0 / 0
-
-Balancing F2FS Async:
-   - nodes    1 in    2
-   - dents    1 in dirs:   1
-   - meta    0 in   21
-   - NATs     2 > 29120
-   - SITs:     0
-   - free_nids:  2270
-
-Distribution of User Blocks: [ valid | invalid | free ]
-   [|---|-----------------------------------------------]
-
-SSR: 0 blocks in 0 segments
-LFS: 0 blocks in 0 segments
-
-BDF: 100, avg. vblocks: 0
-
-Memory: 154 KB =3D static: 60 + cached: 94
-
-
-On 06/18/2013 12:44 PM, Oded Gabbay wrote:
-> Hi,
->
-> I would like to share additional information I have from pr_err I put=20
-> into the update_sit_entry function.
->
-> The following is the printout from the terminal. This is only the end=20
-> of the printout. The start was with "segoff =3D 3584" and it went=20
-> sequentially up until 9215, where then it jumped to 99329 and after=20
-> that 99328 - which is the entry that caused the crash.
-> Each time I repeated the experiment I got exactly the same results.
->
-> I put the pr_err after the line: "offset =3D GET_SEGOFF_FROM_SEG0(sbi,=20
-> blkaddr) & (sbi->blocks_per_seg - 1);"
-> where segoff =3D GET_SEGOFF_FROM_SEG0(sbi, blkaddr)
->
-> Hope this helps.
->
-> REMOVE_ME update_sit_entry(202): offset =3D 0, segoff =3D 3584,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 1, segoff =3D 3585,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 2, segoff =3D 3586,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 3, segoff =3D 3587,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 4, segoff =3D 3588,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 5, segoff =3D 3589,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 6, segoff =3D 3590,=20
-> sbi->blocks_per_seg =3D 512
-> :::
-> REMOVE_ME update_sit_entry(202): offset =3D 502, segoff =3D 9206,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 503, segoff =3D 9207,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 504, segoff =3D 9208,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 505, segoff =3D 9209,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 506, segoff =3D 9210,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 507, segoff =3D 9211,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 508, segoff =3D 9212,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 509, segoff =3D 9213,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 510, segoff =3D 9214,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 511, segoff =3D 9215,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 1, segoff =3D 99329,=20
-> sbi->blocks_per_seg =3D 512
-> REMOVE_ME update_sit_entry(202): offset =3D 0, segoff =3D 99328,=20
-> sbi->blocks_per_seg =3D 512
->
-> ------------[ cut here ]------------
-> kernel BUG at=20
-> /home/ogabbay/views/r5.xcj/software/os-software/powerpc/usr/src/linux-3=
-.9.6-adva/fs/f2fs/segment.c:217!
-> Oops: Exception in kernel mode, sig: 5 [#1]
-> PREEMPT SMP NR_CPUS=3D2 P2020 FSP150
-> Modules linked in: mdio(O) hardware_version(PO) clipresent(PO)=20
-> monotonic(O) restartcause(PO) panic_buffer(O)
-> NIP: c026c038 LR: c026bf0c CTR: 00000000
-> REGS: c5665a60 TRAP: 0700   Tainted: P           O=20
-> (3.9.6-dev_ogabbay-109564*)
-> MSR: 00029000 <CE,EE,ME>  CR: 24f82c48  XER: 20000000
-> TASK =3D ef943e80[1774] 'flush-7:0' THREAD: c5664000 CPU: 1
-> GPR00: 00000000 c5665b10 ef943e80 000000a6 00021000 00000000 f1e26054=20
-> 725f7365
-> GPR08: 00000000 c5a13e40 00000040 00000040 00000067 00000000 c5665c64=20
-> 00000000
-> GPR16: c1419240 00080000 00000000 00000000 000000bb ef8ce100 00000000=20
-> ef8ce134
-> GPR24: ffffffff ffffff99 000000bb ef8ce100 00000080 f1e57760 ffffffff=20
-> c561e800
-> NIP [c026c038] update_sit_entry+0x234/0x23c
-> LR [c026bf0c] update_sit_entry+0x108/0x23c
-> Call Trace:
-> [c5665b10] [c026bed4] update_sit_entry+0xd0/0x23c (unreliable)
-> [c5665b40] [c026d1e8] do_write_page+0x198/0x660
-> [c5665b80] [c026d840] write_data_page+0xa4/0xb8
-> [c5665bc0] [c0265118] do_write_data_page+0x1e8/0x20c
-> [c5665c20] [c02653dc] f2fs_write_data_page+0x2a0/0x2c0
-> [c5665c40] [c0263ad8] __f2fs_writepage+0x24/0x80
-> [c5665c50] [c00b05dc] write_cache_pages+0x1d0/0x35c
-> [c5665d00] [c0263cf4] f2fs_write_data_pages+0xf4/0xfc
-> [c5665d30] [c00b1d3c] do_writepages+0x30/0x64
-> [c5665d40] [c0103fbc] __writeback_single_inode+0x34/0x10c
-> [c5665d60] [c0104ef8] writeback_sb_inodes+0x204/0x370
-> [c5665dd0] [c01050f4] __writeback_inodes_wb+0x90/0xd4
-> [c5665e00] [c01054cc] wb_writeback+0x204/0x20c
-> [c5665e50] [c0105844] wb_do_writeback+0x144/0x20c
-> [c5665eb0] [c0105980] bdi_writeback_thread+0x74/0x144
-> [c5665ee0] [c0059dc4] kthread+0xa8/0xac
-> [c5665f40] [c000f014] ret_from_kernel_thread+0x64/0x6c
-> --- Exception: 0 at   (null)
->     LR =3D   (null)
-> Instruction dump:
-> 4bffff80 813d0004 5780e8fe 7f9ce0f8 39400001 579c077e 7d6900ae 7d5ce030
-> 7d6ae078 7d68e039 7d4901ae 4082ff44 <0fe00000> 0fe00000 9421ffe0 7c0802=
-a6
-> ---[ end trace 707fc0870875373e ]---
->
-> Oded
-> On 06/17/2013 05:21 PM, Oded Gabbay wrote:
->> Hi,
->>
->> I also suspect the endian conversion issue.
->> Attached is a gzip-ed file, which represent an image of a freshly=20
->> formatted disk in f2fs in powerpc machine. I preferred to do it this=20
->> way so I could have a small file to send you.
->> I did the following to create it:
->>
->> [cj:~] # dd if=3D/dev/zero of=3D/tmp/test_file bs=3D4096 count=3D10240=
-0
->> 102400+0 records in
->> 102400+0 records out
->> 419430400 bytes (419 MB) copied, 1.05112 s, 399 MB/s
->> [cj:~] # losetup /dev/loop0 /tmp/test_file
->> [cj:~] # mkfs.f2fs -l label /dev/loop0
->>
->>         F2FS-tools: mkfs.f2fs Ver: 1.1.0 (2013-06-13)
->>
->> Info: Label =3D label
->> Info: sector size =3D 512
->> Info: total sectors =3D 819200 (in 512bytes)
->> Info: zone aligned segment0 blkaddr: 512
->> Info: format successful
->> [cj:~] # losetup -d /dev/loop0
->> [cj:/tmp] # gzip test_file
->>
->> I then run my test application and got the same kernel BUG message.
->>
->> Oded
->>
->> On 06/17/2013 03:11 PM, Jaegeuk Kim wrote:
->>> Hi,
->>>
->>> Thank you for the report. :)
->>>
->>> Can you send me the disk image right after formatting f2fs?
->>> As your previous patch, I strongly suspect the endian conversion bug.
->>>
->>> Otherwise, I recommend you to test with the latest tree from:
->>> http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git
->>>
->>> Thanks,
->>>
->>> 2013-06-16 (=EC=9D=BC), 14:51 +0300, Oded Gabbay:
->>>> Hi,
->>>>
->>>> I'm working on a custom board with a PowerPC processor (Freescale
->>>> P2020).
->>>> On the board there is an SD card, which is connected to a USB3 chip
->>>> (from TI), which is connected to the PCI-e controller of the CPU.
->>>> I'm running with Linux kernel 3.9.6, with our custom rootFS.
->>>>
->>>> I formatted an SD card using the mkfs.f2fs utility (after fixing som=
-e
->>>> Big-endian issues - sent a patch a few days ago).
->>>> I then mounted the SD card, using "mount -o
->>>> noatime,nodiratime,rw,nosuid,nodev,relatime,active_logs=3D6,uhelper=3D=
-udisks2,background_gc_off /dev/sda /mnt/sd1"
->>>> Then, I started a small user-space test application which opens a fi=
-le
->>>> on the mount folder and starts to do "fwrite" into the file.
->>>> After 2-3 seconds, the kernel gives me a BUG and the system restarts.
->>>> When the system is up and I try to re-mount the SD card, I get the
->>>> following error message:
->>>>
->>>> F2FS-fs (sda): Failed to get valid F2FS checkpoint
->>>> mount: you must specify the filesystem type
->>>>
->>>> Only way is to re-format the card using mkfs.f2fs
->>>>
->>>> I took the f2fs patch that Jaegeuk Kim sent to Linus for 3.10 (here =
--
->>>> https://lkml.org/lkml/2013/5/8/122) and applied it cleanly to 3.9.6
->>>> I repeated the procedure but got the same result.
->>>>
->>>> The BUG is from this line, from segment.c:
->>>>          if (!f2fs_clear_bit(offset, se->cur_valid_map))
->>>>              BUG();
->>>>
->>>> Additional information I can give is
->>>>
->>>> 1. I tried using F2FS in ArchLinux, kernel 3.9.5, on an x86 machine,
->>>> with the same SD card and the same USB3-to-PCIe chip and it worked
->>>> flawlessly there.
->>>> 2. I can work with other FS on the SD card on our custom board, such
->>>> as Ext3, Ext4 and vfat, so this is not a H/W issue.
->>>>
->>>> Could you please try to help me pinpoint/debug the problem ?
->>>>
->>>> Here is the complete kernel BUG print:
->>>>
->>>> kernel BUG at .../linux-3.9.6-adva/fs/f2fs/segment.c:214!
->>>> Oops: Exception in kernel mode, sig: 5 [#1]
->>>> PREEMPT SMP NR_CPUS=3D2 P2020 FSP150
->>>> Modules linked in: mdio(O) hardware_version(PO) clipresent(PO)
->>>> monotonic(O) restartcause(PO) panic_buffer(O)
->>>> NIP: c026a7e0 LR: c026a660 CTR: 00000000
->>>> REGS: ee761a60 TRAP: 0700   Tainted: P           O
->>>> (3.9.6-dev_ogabbay-109482*)
->>>> MSR: 00029000 <CE,EE,ME>  CR: 24a52588  XER: 20000000
->>>> TASK =3D efb444c0[1755] 'flush-8:0' THREAD: ee760000 CPU: 1
->>>> GPR00: 00000000 ee761b10 efb444c0 0000004c 00000000 00000000 01dc490=
-0
->>>> eb0fa700
->>>> GPR08: 00000000 eb24cb00 00000040 00000040 00000038 00000000 ee761c6=
-4
->>>> 00000000
->>>> GPR16: c0aeea80 00080000 00000000 00000000 0000ed31 eb0fa700 0000000=
-0
->>>> eb0fa734
->>>> GPR24: eb0fa700 00000080 f2030620 ffffffff ffffffc8 0000ed31 fffffff=
-f
->>>> c55a1000
->>>> NIP [c026a7e0] update_sit_entry+0x240/0x248
->>>> LR [c026a660] update_sit_entry+0xc0/0x248
->>>> Call Trace:
->>>> [ee761b10] [c55a1000] 0xc55a1000 (unreliable)
->>>> [ee761b40] [c026d1f4] do_write_page+0x198/0x660
->>>> [ee761b80] [c026d84c] write_data_page+0xa4/0xb8
->>>> [ee761bc0] [c0265118] do_write_data_page+0x1e8/0x20c
->>>> [ee761c20] [c02653dc] f2fs_write_data_page+0x2a0/0x2c0
->>>> [ee761c40] [c0263ad8] __f2fs_writepage+0x24/0x80
->>>> [ee761c50] [c00b05dc] write_cache_pages+0x1d0/0x35c
->>>> [ee761d00] [c0263cf4] f2fs_write_data_pages+0xf4/0xfc
->>>> [ee761d30] [c00b1d3c] do_writepages+0x30/0x64
->>>> [ee761d40] [c0103fbc] __writeback_single_inode+0x34/0x10c
->>>> [ee761d60] [c0104ef8] writeback_sb_inodes+0x204/0x370
->>>> [ee761dd0] [c01050f4] __writeback_inodes_wb+0x90/0xd4
->>>> [ee761e00] [c01054cc] wb_writeback+0x204/0x20c
->>>> [ee761e50] [c0105844] wb_do_writeback+0x144/0x20c
->>>> [ee761eb0] [c0105980] bdi_writeback_thread+0x74/0x144
->>>> [ee761ee0] [c0059dc4] kthread+0xa8/0xac
->>>> [ee761f40] [c000f014] ret_from_kernel_thread+0x64/0x6c
->>>> Instruction dump:
->>>> 4bffff2c 813a0004 5720e8fe 7f39c8f8 39400001 5739077e 7d6900ae
->>>> 7d59c830
->>>> 7d6ac878 7d68c839 7d4901ae 4082fef0 <0fe00000> 0fe00000 9421ffe0
->>>> 7c0802a6
->>>>
->>>> --=20
->>>> Best regards,
->>>> Oded Gabbay
->>>> Principal Engineer Advanced Packet Technologies
->>>> ADVA Optical Networking Israel Ltd.
->>>> P.O. Box 2552
->>>> 2 Hatidhar St.
->>>> Raanana 4366504, Israel
->>>> Tel: +(972)-9-7750130
->>>> Fax: +(972)-9-7462092
->>>> Mobile: +(972)-54-6543998
->>>> E-mail:ogabbay@advaoptical.com
->>>>  =20
->>>> www.advaoptical.com
->>>> Let's ADVANCE
->>>>  =20
->>>> ADVA Optical Networking SE is a European stock corporation (\"Societ=
-as
->>>> Europaea\") with registered offices at Maerzenquelle 1-3, D-98617
->>>> Meiningen, Germany * CEO: Brian L. Protiva, Chief Officers: Dr.
->>>> Christoph Glingener, Christian Unterberger, Jaswir Singh * Chairman =
-of
->>>> the Supervisory Board: Anthony Maher * AG Jena HRB 508155 * VAT No. =
-DE
->>>> 175 446 349
->>>>
->>>> --------------------------------------------------------------------=
-----------
->>>> This SF.net email is sponsored by Windows:
->>>>
->>>> Build for Windows Store.
->>>>
->>>> http://p.sf.net/sfu/windows-dev2dev
->>>> _______________________________________________ Linux-f2fs-devel mai=
-ling listLinux-f2fs-devel@lists.sourceforge.net  https://lists.sourceforg=
-e.net/lists/listinfo/linux-f2fs-devel
->>
->
-
-
---------------010901040905040206050505
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by
-	muc-vsrv-fsmail.advaoptical.com id r5ICAb9A001179
-
-<html>
-  <head>
-    <meta content=3D"text/html; charset=3DUTF-8" http-equiv=3D"Content-Ty=
-pe">
-  </head>
-  <body bgcolor=3D"#FFFFFF" text=3D"#000000">
-    Hi,<br>
-    <br>
-    I printed also the segment no. and it appears that every time that
-    segment 187 is written to, which is assigned to the HOT data, the
-    system crashes.<br>
-    BTW, even if I just do "echo oded &gt; /mnt/file" and then just wait
-    for about 30-45 seconds, the crash occurs<br>
-    <br>
-    I got the following prints when I did the echo thing:<br>
-    <br>
-    REMOVE_ME update_sit_entry(202): <br>
-    offset =3D 0, segoff =3D 3584, blkaddr =3D 4096, segno =3D 0<br>
-    REMOVE_ME update_sit_entry(202): <br>
-    offset =3D 1, segoff =3D 99329, blkaddr =3D 99841, segno =3D 187<br>
-    REMOVE_ME update_sit_entry(202): <br>
-    offset =3D 0, segoff =3D 99328, blkaddr =3D 99840, segno =3D 187<br>
-    ------------[ cut here ]------------<br>
-    kernel BUG at
-/home/ogabbay/views/r5.xcj/software/os-software/powerpc/usr/src/linux-3.9=
-.6-adva/fs/f2fs/segment.c:217!<br>
-    <br>
-    Here is the print from the debugfs. You can see segment 187 is
-    allocated to HOT data:<br>
-    <br>
-    [cj:~] # cat /sys/kernel/debug/f2fs/status <br>
-    <br>
-    =3D=3D=3D=3D=3D[ partition info(loop0). #0 ]=3D=3D=3D=3D=3D<br>
-    [SB: 1] [CP: 2] [SIT: 2] [NAT: 2] [SSA: 1] [MAIN: 192(OverProv:55
-    Resv:48)]<br>
-    <br>
-    Utilization: 0% (4 valid blocks)<br>
-    =C2=A0 - Node: 2 (Inode: 2, Other: 0)<br>
-    =C2=A0 - Data: 2<br>
-    <br>
-    Main area: 192 segs, 192 secs 192 zones<br>
-    =C2=A0 - COLD=C2=A0 data: 0, 0, 0<br>
-    =C2=A0 - WARM=C2=A0 data: 1, 1, 1<br>
-    =C2=A0 - HOT=C2=A0=C2=A0 data: 187, 187, 187<br>
-    =C2=A0 - Dir=C2=A0=C2=A0 dnode: 190, 190, 190<br>
-    =C2=A0 - File=C2=A0=C2=A0 dnode: 189, 189, 189<br>
-    =C2=A0 - Indir nodes: 188, 188, 188<br>
-    <br>
-    =C2=A0 - Valid: 6<br>
-    =C2=A0 - Dirty: 0<br>
-    =C2=A0 - Prefree: 0<br>
-    =C2=A0 - Free: 186 (186)<br>
-    <br>
-    GC calls: 0 (BG: 0)<br>
-    =C2=A0 - data segments : 0<br>
-    =C2=A0 - node segments : 0<br>
-    Try to move 0 blocks<br>
-    =C2=A0 - data blocks : 0<br>
-    =C2=A0 - node blocks : 0<br>
-    <br>
-    Extent Hit Ratio: 0 / 0<br>
-    <br>
-    Balancing F2FS Async:<br>
-    =C2=A0 - nodes=C2=A0=C2=A0=C2=A0 1 in=C2=A0=C2=A0=C2=A0 2<br>
-    =C2=A0 - dents=C2=A0=C2=A0=C2=A0 1 in dirs:=C2=A0=C2=A0 1<br>
-    =C2=A0 - meta=C2=A0=C2=A0=C2=A0 0 in=C2=A0=C2=A0 21<br>
-    =C2=A0 - NATs=C2=A0=C2=A0=C2=A0=C2=A0 2 &gt; 29120<br>
-    =C2=A0 - SITs:=C2=A0=C2=A0=C2=A0=C2=A0 0<br>
-    =C2=A0 - free_nids:=C2=A0 2270<br>
-    <br>
-    Distribution of User Blocks: [ valid | invalid | free ]<br>
-    =C2=A0 [|---|-----------------------------------------------]<br>
-    <br>
-    SSR: 0 blocks in 0 segments<br>
-    LFS: 0 blocks in 0 segments<br>
-    <br>
-    BDF: 100, avg. vblocks: 0<br>
-    <br>
-    Memory: 154 KB =3D static: 60 + cached: 94<br>
-    <br>
-    <br>
-    <div class=3D"moz-cite-prefix">On 06/18/2013 12:44 PM, Oded Gabbay
-      wrote:<br>
-    </div>
-    <blockquote cite=3D"mid:51C02BE6.4070007@advaoptical.com" type=3D"cit=
-e">
-      <meta content=3D"text/html; charset=3DUTF-8" http-equiv=3D"Content-=
-Type">
-      Hi,<br>
-      <br>
-      I would like to share additional information I have from pr_err I
-      put into the update_sit_entry function.<br>
-      <br>
-      The following is the printout from the terminal. This is only the
-      end of the printout. The start was with "segoff =3D 3584" and it
-      went sequentially up until 9215, where then it jumped to 99329 and
-      after that 99328 - which is the entry that caused the crash.<br>
-      Each time I repeated the experiment I got exactly the same
-      results.<br>
-      <br>
-      I put the pr_err after the line: "offset =3D
-      GET_SEGOFF_FROM_SEG0(sbi, blkaddr) &amp; (sbi-&gt;blocks_per_seg -
-      1);" <br>
-      where segoff =3D GET_SEGOFF_FROM_SEG0(sbi, blkaddr)<br>
-      <br>
-      Hope this helps.<br>
-      <br>
-      REMOVE_ME update_sit_entry(202): offset =3D 0, segoff =3D 3584,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 1, segoff =3D 3585,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 2, segoff =3D 3586,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 3, segoff =3D 3587,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 4, segoff =3D 3588,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 5, segoff =3D 3589,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 6, segoff =3D 3590,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      :::<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 502, segoff =3D 9206,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 503, segoff =3D 9207,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 504, segoff =3D 9208,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 505, segoff =3D 9209,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 506, segoff =3D 9210,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 507, segoff =3D 9211,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 508, segoff =3D 9212,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 509, segoff =3D 9213,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 510, segoff =3D 9214,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 511, segoff =3D 9215,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 1, segoff =3D 99329,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      REMOVE_ME update_sit_entry(202): offset =3D 0, segoff =3D 99328,
-      sbi-&gt;blocks_per_seg =3D 512<br>
-      <br>
-      ------------[ cut here ]------------<br>
-      kernel BUG at
-/home/ogabbay/views/r5.xcj/software/os-software/powerpc/usr/src/linux-3.9=
-.6-adva/fs/f2fs/segment.c:217!<br>
-      Oops: Exception in kernel mode, sig: 5 [#1]<br>
-      PREEMPT SMP NR_CPUS=3D2 P2020 FSP150<br>
-      Modules linked in: mdio(O) hardware_version(PO) clipresent(PO)
-      monotonic(O) restartcause(PO) panic_buffer(O)<br>
-      NIP: c026c038 LR: c026bf0c CTR: 00000000<br>
-      REGS: c5665a60 TRAP: 0700=C2=A0=C2=A0 Tainted: P=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 O=C2=A0
-      (3.9.6-dev_ogabbay-109564*)<br>
-      MSR: 00029000 &lt;CE,EE,ME&gt;=C2=A0 CR: 24f82c48=C2=A0 XER: 200000=
-00<br>
-      TASK =3D ef943e80[1774] 'flush-7:0' THREAD: c5664000 CPU: 1<br>
-      GPR00: 00000000 c5665b10 ef943e80 000000a6 00021000 00000000
-      f1e26054 725f7365 <br>
-      GPR08: 00000000 c5a13e40 00000040 00000040 00000067 00000000
-      c5665c64 00000000 <br>
-      GPR16: c1419240 00080000 00000000 00000000 000000bb ef8ce100
-      00000000 ef8ce134 <br>
-      GPR24: ffffffff ffffff99 000000bb ef8ce100 00000080 f1e57760
-      ffffffff c561e800 <br>
-      NIP [c026c038] update_sit_entry+0x234/0x23c<br>
-      LR [c026bf0c] update_sit_entry+0x108/0x23c<br>
-      Call Trace:<br>
-      [c5665b10] [c026bed4] update_sit_entry+0xd0/0x23c (unreliable)<br>
-      [c5665b40] [c026d1e8] do_write_page+0x198/0x660<br>
-      [c5665b80] [c026d840] write_data_page+0xa4/0xb8<br>
-      [c5665bc0] [c0265118] do_write_data_page+0x1e8/0x20c<br>
-      [c5665c20] [c02653dc] f2fs_write_data_page+0x2a0/0x2c0<br>
-      [c5665c40] [c0263ad8] __f2fs_writepage+0x24/0x80<br>
-      [c5665c50] [c00b05dc] write_cache_pages+0x1d0/0x35c<br>
-      [c5665d00] [c0263cf4] f2fs_write_data_pages+0xf4/0xfc<br>
-      [c5665d30] [c00b1d3c] do_writepages+0x30/0x64<br>
-      [c5665d40] [c0103fbc] __writeback_single_inode+0x34/0x10c<br>
-      [c5665d60] [c0104ef8] writeback_sb_inodes+0x204/0x370<br>
-      [c5665dd0] [c01050f4] __writeback_inodes_wb+0x90/0xd4<br>
-      [c5665e00] [c01054cc] wb_writeback+0x204/0x20c<br>
-      [c5665e50] [c0105844] wb_do_writeback+0x144/0x20c<br>
-      [c5665eb0] [c0105980] bdi_writeback_thread+0x74/0x144<br>
-      [c5665ee0] [c0059dc4] kthread+0xa8/0xac<br>
-      [c5665f40] [c000f014] ret_from_kernel_thread+0x64/0x6c<br>
-      --- Exception: 0 at=C2=A0=C2=A0 (null)<br>
-      =C2=A0=C2=A0=C2=A0 LR =3D=C2=A0=C2=A0 (null)<br>
-      Instruction dump:<br>
-      4bffff80 813d0004 5780e8fe 7f9ce0f8 39400001 579c077e 7d6900ae
-      7d5ce030 <br>
-      7d6ae078 7d68e039 7d4901ae 4082ff44 &lt;0fe00000&gt; 0fe00000
-      9421ffe0 7c0802a6 <br>
-      ---[ end trace 707fc0870875373e ]---<br>
-      <br>
-      Oded<br>
-      <div class=3D"moz-cite-prefix">On 06/17/2013 05:21 PM, Oded Gabbay
-        wrote:<br>
-      </div>
-      <blockquote cite=3D"mid:51BF1B84.8080802@advaoptical.com"
-        type=3D"cite">
-        <meta content=3D"text/html; charset=3DUTF-8"
-          http-equiv=3D"Content-Type">
-        Hi,<br>
-        <br>
-        I also suspect the endian conversion issue.<br>
-        Attached is a gzip-ed file, which represent an image of a
-        freshly formatted disk in f2fs in powerpc machine. I preferred
-        to do it this way so I could have a small file to send you.<br>
-        I did the following to create it:<br>
-        <br>
-        <font face=3D"Times New Roman, Times, serif">[cj:~] # dd
-          if=3D/dev/zero of=3D/tmp/test_file bs=3D4096 count=3D102400<br>
-          102400+0 records in<br>
-          102400+0 records out<br>
-          419430400 bytes (419 MB) copied, 1.05112 s, 399 MB/s<br>
-          [cj:~] # losetup /dev/loop0 /tmp/test_file <br>
-          [cj:~] # mkfs.f2fs -l label /dev/loop0<br>
-          <br>
-          =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 F2FS-tools: mkfs.f2f=
-s Ver: 1.1.0 (2013-06-13)<br>
-          <br>
-          Info: Label =3D label<br>
-          Info: sector size =3D 512<br>
-          Info: total sectors =3D 819200 (in 512bytes)<br>
-          Info: zone aligned segment0 blkaddr: 512<br>
-          Info: format successful<br>
-          [cj:~] # losetup -d /dev/loop0<br>
-          [cj:/tmp] # gzip test_file<br>
-          <br>
-          <font face=3D"sans-serif">I then run my test application and go=
-t
-            the same kernel BUG message.<br>
-            <br>
-            Oded<br>
-            <br>
-          </font></font>
-        <div class=3D"moz-cite-prefix">On 06/17/2013 03:11 PM, Jaegeuk Ki=
-m
-          wrote:<br>
-        </div>
-        <blockquote cite=3D"mid:1371471068.10480.8.camel@kjgkr"
-          type=3D"cite">
-          <pre wrap=3D"">Hi,
-
-Thank you for the report. :)
-
-Can you send me the disk image right after formatting f2fs?
-As your previous patch, I strongly suspect the endian conversion bug.
-
-Otherwise, I recommend you to test with the latest tree from:
-<a moz-do-not-send=3D"true" class=3D"moz-txt-link-freetext" href=3D"http:=
-//git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git">http://git.kerne=
-l.org/cgit/linux/kernel/git/jaegeuk/f2fs.git</a>
-
-Thanks,
-
-2013-06-16 (=EC=9D=BC), 14:51 +0300, Oded Gabbay:
-</pre>
-          <blockquote type=3D"cite">
-            <pre wrap=3D"">Hi,
-
-I'm working on a custom board with a PowerPC processor (Freescale
-P2020).
-On the board there is an SD card, which is connected to a USB3 chip
-(from TI), which is connected to the PCI-e controller of the CPU.
-I'm running with Linux kernel 3.9.6, with our custom rootFS.
-
-I formatted an SD card using the mkfs.f2fs utility (after fixing some
-Big-endian issues - sent a patch a few days ago).
-I then mounted the SD card, using "mount -o
-noatime,nodiratime,rw,nosuid,nodev,relatime,active_logs=3D6,uhelper=3Dudi=
-sks2,background_gc_off /dev/sda /mnt/sd1"
-Then, I started a small user-space test application which opens a file
-on the mount folder and starts to do "fwrite" into the file.
-After 2-3 seconds, the kernel gives me a BUG and the system restarts.=20
-When the system is up and I try to re-mount the SD card, I get the
-following error message:
-
-F2FS-fs (sda): Failed to get valid F2FS checkpoint
-mount: you must specify the filesystem type
-
-Only way is to re-format the card using mkfs.f2fs
-
-I took the f2fs patch that Jaegeuk Kim sent to Linus for 3.10 (here -
-<a moz-do-not-send=3D"true" class=3D"moz-txt-link-freetext" href=3D"https=
-://lkml.org/lkml/2013/5/8/122">https://lkml.org/lkml/2013/5/8/122</a>) an=
-d applied it cleanly to 3.9.6
-I repeated the procedure but got the same result.
-
-The BUG is from this line, from segment.c:=20
-        if (!f2fs_clear_bit(offset, se-&gt;cur_valid_map))
-            BUG();
-
-Additional information I can give is=20
-
-1. I tried using F2FS in ArchLinux, kernel 3.9.5, on an x86 machine,
-with the same SD card and the same USB3-to-PCIe chip and it worked
-flawlessly there.
-2. I can work with other FS on the SD card on our custom board, such
-as Ext3, Ext4 and vfat, so this is not a H/W issue.
-
-Could you please try to help me pinpoint/debug the problem ?
-
-Here is the complete kernel BUG print:
-
-kernel BUG at .../linux-3.9.6-adva/fs/f2fs/segment.c:214!
-Oops: Exception in kernel mode, sig: 5 [#1]
-PREEMPT SMP NR_CPUS=3D2 P2020 FSP150
-Modules linked in: mdio(O) hardware_version(PO) clipresent(PO)
-monotonic(O) restartcause(PO) panic_buffer(O)
-NIP: c026a7e0 LR: c026a660 CTR: 00000000
-REGS: ee761a60 TRAP: 0700   Tainted: P           O
-(3.9.6-dev_ogabbay-109482*)
-MSR: 00029000 &lt;CE,EE,ME&gt;  CR: 24a52588  XER: 20000000
-TASK =3D efb444c0[1755] 'flush-8:0' THREAD: ee760000 CPU: 1
-GPR00: 00000000 ee761b10 efb444c0 0000004c 00000000 00000000 01dc4900
-eb0fa700=20
-GPR08: 00000000 eb24cb00 00000040 00000040 00000038 00000000 ee761c64
-00000000=20
-GPR16: c0aeea80 00080000 00000000 00000000 0000ed31 eb0fa700 00000000
-eb0fa734=20
-GPR24: eb0fa700 00000080 f2030620 ffffffff ffffffc8 0000ed31 ffffffff
-c55a1000=20
-NIP [c026a7e0] update_sit_entry+0x240/0x248
-LR [c026a660] update_sit_entry+0xc0/0x248
-Call Trace:
-[ee761b10] [c55a1000] 0xc55a1000 (unreliable)
-[ee761b40] [c026d1f4] do_write_page+0x198/0x660
-[ee761b80] [c026d84c] write_data_page+0xa4/0xb8
-[ee761bc0] [c0265118] do_write_data_page+0x1e8/0x20c
-[ee761c20] [c02653dc] f2fs_write_data_page+0x2a0/0x2c0
-[ee761c40] [c0263ad8] __f2fs_writepage+0x24/0x80
-[ee761c50] [c00b05dc] write_cache_pages+0x1d0/0x35c
-[ee761d00] [c0263cf4] f2fs_write_data_pages+0xf4/0xfc
-[ee761d30] [c00b1d3c] do_writepages+0x30/0x64
-[ee761d40] [c0103fbc] __writeback_single_inode+0x34/0x10c
-[ee761d60] [c0104ef8] writeback_sb_inodes+0x204/0x370
-[ee761dd0] [c01050f4] __writeback_inodes_wb+0x90/0xd4
-[ee761e00] [c01054cc] wb_writeback+0x204/0x20c
-[ee761e50] [c0105844] wb_do_writeback+0x144/0x20c
-[ee761eb0] [c0105980] bdi_writeback_thread+0x74/0x144
-[ee761ee0] [c0059dc4] kthread+0xa8/0xac
-[ee761f40] [c000f014] ret_from_kernel_thread+0x64/0x6c
-Instruction dump:
-4bffff2c 813a0004 5720e8fe 7f39c8f8 39400001 5739077e 7d6900ae
-7d59c830=20
-7d6ac878 7d68c839 7d4901ae 4082fef0 &lt;0fe00000&gt; 0fe00000 9421ffe0
-7c0802a6=20
-
---=20
-Best regards,
-Oded Gabbay
-Principal Engineer Advanced Packet Technologies
-ADVA Optical Networking Israel Ltd.
-P.O. Box 2552
-2 Hatidhar St.
-Raanana 4366504, Israel
-Tel: +(972)-9-7750130
-Fax: +(972)-9-7462092
-Mobile: +(972)-54-6543998
-E-mail: <a moz-do-not-send=3D"true" class=3D"moz-txt-link-abbreviated" hr=
-ef=3D"mailto:ogabbay@advaoptical.com">ogabbay@advaoptical.com</a>
-=20
-<a moz-do-not-send=3D"true" class=3D"moz-txt-link-abbreviated" href=3D"ht=
-tp://www.advaoptical.com">www.advaoptical.com</a>
-Let's ADVANCE
-=20
-ADVA Optical Networking SE is a European stock corporation (\"Societas
-Europaea\") with registered offices at Maerzenquelle 1-3, D-98617
-Meiningen, Germany * CEO: Brian L. Protiva, Chief Officers: Dr.
-Christoph Glingener, Christian Unterberger, Jaswir Singh * Chairman of
-the Supervisory Board: Anthony Maher * AG Jena HRB 508155 * VAT No. DE
-175 446 349
-
--------------------------------------------------------------------------=
------
-This SF.net email is sponsored by Windows:
-
-Build for Windows Store.
-
-<a moz-do-not-send=3D"true" class=3D"moz-txt-link-freetext" href=3D"http:=
-//p.sf.net/sfu/windows-dev2dev">http://p.sf.net/sfu/windows-dev2dev</a>
-_______________________________________________ Linux-f2fs-devel mailing =
-list <a moz-do-not-send=3D"true" class=3D"moz-txt-link-abbreviated" href=3D=
-"mailto:Linux-f2fs-devel@lists.sourceforge.net">Linux-f2fs-devel@lists.so=
-urceforge.net</a> <a moz-do-not-send=3D"true" class=3D"moz-txt-link-freet=
-ext" href=3D"https://lists.sourceforge.net/lists/listinfo/linux-f2fs-deve=
-l">https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel</a>
-</pre>
-          </blockquote>
-        </blockquote>
-        <br>
-      </blockquote>
-      <br>
-    </blockquote>
-    <br>
-  </body>
-</html>
-
---------------010901040905040206050505--
-
-
---===============3556903000012821219==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-------------------------------------------------------------------------------
-This SF.net email is sponsored by Windows:
-
-Build for Windows Store.
-
-http://p.sf.net/sfu/windows-dev2dev
---===============3556903000012821219==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============3556903000012821219==--
+SGksCkNvdWxkIHlvdSB0ZXN0IHRoZSBmb2xsb3dpbmcgdGhyZWUgcGF0Y2hlcyBzZW50IHJpZ2h0
+IGFmdGVyIHRoaXMgZW1haWw/CgpGb3IgZjJmcy10b29sczoKIDEuIHN0b3JlIGNyYyBhcyBfX2xl
+MzIKIDIuIHN0b3JlIGNoZWNrcG9pbnQgZmxhZ3MgYXMgX19sZTMyCgpGb3IgZjJmczoKIDEuIGhh
+bmRsZSBjcmMgYXMgX19sZTMyCgpJIHN1c3BlY3QgdGhhdDoKMS4gbW91bnQgZmFpbHVyZSBpcyBh
+YmxlIHRvIGJlIG9jY3VycmVkIGR1ZSB0byB0aGUgY3JjIGVuZGlhbiBlcnJvci4KMi4gdXBkYXRl
+X3NpdF9lbnRyeSBidWdfb24gaXMgY2F1c2VkIGJ5IHRoZSBlbmRpYW4gcHJvYmxlbSBvbiB0aGUK
+Y2hlY2twb2ludCBmbGFncy4KCklmIHdyb25nIGNoZWNrcG9pbnQgZmxhZyBpcyBnb3QgYXQgbW91
+bnQgdGltZSwgd2UgY2Fubm90IGJ1aWxkIHRoZQpsYXRlc3Qgc2l0IGVudHJpZXMgY29ycmVjdGx5
+LgoKVGhhbmtzLAoKMjAxMy0wNi0xOCAo7ZmUKSwgMTU6MTAgKzAzMDAsIE9kZWQgR2FiYmF5Ogo+
+IEhpLAo+IAo+IEkgcHJpbnRlZCBhbHNvIHRoZSBzZWdtZW50IG5vLiBhbmQgaXQgYXBwZWFycyB0
+aGF0IGV2ZXJ5IHRpbWUgdGhhdAo+IHNlZ21lbnQgMTg3IGlzIHdyaXR0ZW4gdG8sIHdoaWNoIGlz
+IGFzc2lnbmVkIHRvIHRoZSBIT1QgZGF0YSwgdGhlCj4gc3lzdGVtIGNyYXNoZXMuCj4gQlRXLCBl
+dmVuIGlmIEkganVzdCBkbyAiZWNobyBvZGVkID4gL21udC9maWxlIiBhbmQgdGhlbiBqdXN0IHdh
+aXQgZm9yCj4gYWJvdXQgMzAtNDUgc2Vjb25kcywgdGhlIGNyYXNoIG9jY3Vycwo+IAo+IEkgZ290
+IHRoZSBmb2xsb3dpbmcgcHJpbnRzIHdoZW4gSSBkaWQgdGhlIGVjaG8gdGhpbmc6Cj4gCj4gUkVN
+T1ZFX01FIHVwZGF0ZV9zaXRfZW50cnkoMjAyKTogCj4gb2Zmc2V0ID0gMCwgc2Vnb2ZmID0gMzU4
+NCwgYmxrYWRkciA9IDQwOTYsIHNlZ25vID0gMAo+IFJFTU9WRV9NRSB1cGRhdGVfc2l0X2VudHJ5
+KDIwMik6IAo+IG9mZnNldCA9IDEsIHNlZ29mZiA9IDk5MzI5LCBibGthZGRyID0gOTk4NDEsIHNl
+Z25vID0gMTg3Cj4gUkVNT1ZFX01FIHVwZGF0ZV9zaXRfZW50cnkoMjAyKTogCj4gb2Zmc2V0ID0g
+MCwgc2Vnb2ZmID0gOTkzMjgsIGJsa2FkZHIgPSA5OTg0MCwgc2Vnbm8gPSAxODcKPiAtLS0tLS0t
+LS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KPiBrZXJuZWwgQlVHCj4gYXQgL2hvbWUvb2dh
+YmJheS92aWV3cy9yNS54Y2ovc29mdHdhcmUvb3Mtc29mdHdhcmUvcG93ZXJwYy91c3Ivc3JjL2xp
+bnV4LTMuOS42LWFkdmEvZnMvZjJmcy9zZWdtZW50LmM6MjE3IQo+IAo+IEhlcmUgaXMgdGhlIHBy
+aW50IGZyb20gdGhlIGRlYnVnZnMuIFlvdSBjYW4gc2VlIHNlZ21lbnQgMTg3IGlzCj4gYWxsb2Nh
+dGVkIHRvIEhPVCBkYXRhOgo+IAo+IFtjajp+XSAjIGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy9mMmZz
+L3N0YXR1cyAKPiAKPiA9PT09PVsgcGFydGl0aW9uIGluZm8obG9vcDApLiAjMCBdPT09PT0KPiBb
+U0I6IDFdIFtDUDogMl0gW1NJVDogMl0gW05BVDogMl0gW1NTQTogMV0gW01BSU46IDE5MihPdmVy
+UHJvdjo1NQo+IFJlc3Y6NDgpXQo+IAo+IFV0aWxpemF0aW9uOiAwJSAoNCB2YWxpZCBibG9ja3Mp
+Cj4gICAtIE5vZGU6IDIgKElub2RlOiAyLCBPdGhlcjogMCkKPiAgIC0gRGF0YTogMgo+IAo+IE1h
+aW4gYXJlYTogMTkyIHNlZ3MsIDE5MiBzZWNzIDE5MiB6b25lcwo+ICAgLSBDT0xEICBkYXRhOiAw
+LCAwLCAwCj4gICAtIFdBUk0gIGRhdGE6IDEsIDEsIDEKPiAgIC0gSE9UICAgZGF0YTogMTg3LCAx
+ODcsIDE4Nwo+ICAgLSBEaXIgICBkbm9kZTogMTkwLCAxOTAsIDE5MAo+ICAgLSBGaWxlICAgZG5v
+ZGU6IDE4OSwgMTg5LCAxODkKPiAgIC0gSW5kaXIgbm9kZXM6IDE4OCwgMTg4LCAxODgKPiAKPiAg
+IC0gVmFsaWQ6IDYKPiAgIC0gRGlydHk6IDAKPiAgIC0gUHJlZnJlZTogMAo+ICAgLSBGcmVlOiAx
+ODYgKDE4NikKPiAKPiBHQyBjYWxsczogMCAoQkc6IDApCj4gICAtIGRhdGEgc2VnbWVudHMgOiAw
+Cj4gICAtIG5vZGUgc2VnbWVudHMgOiAwCj4gVHJ5IHRvIG1vdmUgMCBibG9ja3MKPiAgIC0gZGF0
+YSBibG9ja3MgOiAwCj4gICAtIG5vZGUgYmxvY2tzIDogMAo+IAo+IEV4dGVudCBIaXQgUmF0aW86
+IDAgLyAwCj4gCj4gQmFsYW5jaW5nIEYyRlMgQXN5bmM6Cj4gICAtIG5vZGVzICAgIDEgaW4gICAg
+Mgo+ICAgLSBkZW50cyAgICAxIGluIGRpcnM6ICAgMQo+ICAgLSBtZXRhICAgIDAgaW4gICAyMQo+
+ICAgLSBOQVRzICAgICAyID4gMjkxMjAKPiAgIC0gU0lUczogICAgIDAKPiAgIC0gZnJlZV9uaWRz
+OiAgMjI3MAo+IAo+IERpc3RyaWJ1dGlvbiBvZiBVc2VyIEJsb2NrczogWyB2YWxpZCB8IGludmFs
+aWQgfCBmcmVlIF0KPiAgIFt8LS0tfC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tXQo+IAo+IFNTUjogMCBibG9ja3MgaW4gMCBzZWdtZW50cwo+IExGUzogMCBi
+bG9ja3MgaW4gMCBzZWdtZW50cwo+IAo+IEJERjogMTAwLCBhdmcuIHZibG9ja3M6IDAKPiAKPiBN
+ZW1vcnk6IDE1NCBLQiA9IHN0YXRpYzogNjAgKyBjYWNoZWQ6IDk0Cj4gCj4gCj4gT24gMDYvMTgv
+MjAxMyAxMjo0NCBQTSwgT2RlZCBHYWJiYXkgd3JvdGU6Cj4gCj4gPiBIaSwKPiA+IAo+ID4gSSB3
+b3VsZCBsaWtlIHRvIHNoYXJlIGFkZGl0aW9uYWwgaW5mb3JtYXRpb24gSSBoYXZlIGZyb20gcHJf
+ZXJyIEkKPiA+IHB1dCBpbnRvIHRoZSB1cGRhdGVfc2l0X2VudHJ5IGZ1bmN0aW9uLgo+ID4gCj4g
+PiBUaGUgZm9sbG93aW5nIGlzIHRoZSBwcmludG91dCBmcm9tIHRoZSB0ZXJtaW5hbC4gVGhpcyBp
+cyBvbmx5IHRoZQo+ID4gZW5kIG9mIHRoZSBwcmludG91dC4gVGhlIHN0YXJ0IHdhcyB3aXRoICJz
+ZWdvZmYgPSAzNTg0IiBhbmQgaXQgd2VudAo+ID4gc2VxdWVudGlhbGx5IHVwIHVudGlsIDkyMTUs
+IHdoZXJlIHRoZW4gaXQganVtcGVkIHRvIDk5MzI5IGFuZCBhZnRlcgo+ID4gdGhhdCA5OTMyOCAt
+IHdoaWNoIGlzIHRoZSBlbnRyeSB0aGF0IGNhdXNlZCB0aGUgY3Jhc2guCj4gPiBFYWNoIHRpbWUg
+SSByZXBlYXRlZCB0aGUgZXhwZXJpbWVudCBJIGdvdCBleGFjdGx5IHRoZSBzYW1lIHJlc3VsdHMu
+Cj4gPiAKPiA+IEkgcHV0IHRoZSBwcl9lcnIgYWZ0ZXIgdGhlIGxpbmU6ICJvZmZzZXQgPSBHRVRf
+U0VHT0ZGX0ZST01fU0VHMChzYmksCj4gPiBibGthZGRyKSAmIChzYmktPmJsb2Nrc19wZXJfc2Vn
+IC0gMSk7IiAKPiA+IHdoZXJlIHNlZ29mZiA9IEdFVF9TRUdPRkZfRlJPTV9TRUcwKHNiaSwgYmxr
+YWRkcikKPiA+IAo+ID4gSG9wZSB0aGlzIGhlbHBzLgo+ID4gCj4gPiBSRU1PVkVfTUUgdXBkYXRl
+X3NpdF9lbnRyeSgyMDIpOiBvZmZzZXQgPSAwLCBzZWdvZmYgPSAzNTg0LAo+ID4gc2JpLT5ibG9j
+a3NfcGVyX3NlZyA9IDUxMgo+ID4gUkVNT1ZFX01FIHVwZGF0ZV9zaXRfZW50cnkoMjAyKTogb2Zm
+c2V0ID0gMSwgc2Vnb2ZmID0gMzU4NSwKPiA+IHNiaS0+YmxvY2tzX3Blcl9zZWcgPSA1MTIKPiA+
+IFJFTU9WRV9NRSB1cGRhdGVfc2l0X2VudHJ5KDIwMik6IG9mZnNldCA9IDIsIHNlZ29mZiA9IDM1
+ODYsCj4gPiBzYmktPmJsb2Nrc19wZXJfc2VnID0gNTEyCj4gPiBSRU1PVkVfTUUgdXBkYXRlX3Np
+dF9lbnRyeSgyMDIpOiBvZmZzZXQgPSAzLCBzZWdvZmYgPSAzNTg3LAo+ID4gc2JpLT5ibG9ja3Nf
+cGVyX3NlZyA9IDUxMgo+ID4gUkVNT1ZFX01FIHVwZGF0ZV9zaXRfZW50cnkoMjAyKTogb2Zmc2V0
+ID0gNCwgc2Vnb2ZmID0gMzU4OCwKPiA+IHNiaS0+YmxvY2tzX3Blcl9zZWcgPSA1MTIKPiA+IFJF
+TU9WRV9NRSB1cGRhdGVfc2l0X2VudHJ5KDIwMik6IG9mZnNldCA9IDUsIHNlZ29mZiA9IDM1ODks
+Cj4gPiBzYmktPmJsb2Nrc19wZXJfc2VnID0gNTEyCj4gPiBSRU1PVkVfTUUgdXBkYXRlX3NpdF9l
+bnRyeSgyMDIpOiBvZmZzZXQgPSA2LCBzZWdvZmYgPSAzNTkwLAo+ID4gc2JpLT5ibG9ja3NfcGVy
+X3NlZyA9IDUxMgo+ID4gOjo6Cj4gPiBSRU1PVkVfTUUgdXBkYXRlX3NpdF9lbnRyeSgyMDIpOiBv
+ZmZzZXQgPSA1MDIsIHNlZ29mZiA9IDkyMDYsCj4gPiBzYmktPmJsb2Nrc19wZXJfc2VnID0gNTEy
+Cj4gPiBSRU1PVkVfTUUgdXBkYXRlX3NpdF9lbnRyeSgyMDIpOiBvZmZzZXQgPSA1MDMsIHNlZ29m
+ZiA9IDkyMDcsCj4gPiBzYmktPmJsb2Nrc19wZXJfc2VnID0gNTEyCj4gPiBSRU1PVkVfTUUgdXBk
+YXRlX3NpdF9lbnRyeSgyMDIpOiBvZmZzZXQgPSA1MDQsIHNlZ29mZiA9IDkyMDgsCj4gPiBzYmkt
+PmJsb2Nrc19wZXJfc2VnID0gNTEyCj4gPiBSRU1PVkVfTUUgdXBkYXRlX3NpdF9lbnRyeSgyMDIp
+OiBvZmZzZXQgPSA1MDUsIHNlZ29mZiA9IDkyMDksCj4gPiBzYmktPmJsb2Nrc19wZXJfc2VnID0g
+NTEyCj4gPiBSRU1PVkVfTUUgdXBkYXRlX3NpdF9lbnRyeSgyMDIpOiBvZmZzZXQgPSA1MDYsIHNl
+Z29mZiA9IDkyMTAsCj4gPiBzYmktPmJsb2Nrc19wZXJfc2VnID0gNTEyCj4gPiBSRU1PVkVfTUUg
+dXBkYXRlX3NpdF9lbnRyeSgyMDIpOiBvZmZzZXQgPSA1MDcsIHNlZ29mZiA9IDkyMTEsCj4gPiBz
+YmktPmJsb2Nrc19wZXJfc2VnID0gNTEyCj4gPiBSRU1PVkVfTUUgdXBkYXRlX3NpdF9lbnRyeSgy
+MDIpOiBvZmZzZXQgPSA1MDgsIHNlZ29mZiA9IDkyMTIsCj4gPiBzYmktPmJsb2Nrc19wZXJfc2Vn
+ID0gNTEyCj4gPiBSRU1PVkVfTUUgdXBkYXRlX3NpdF9lbnRyeSgyMDIpOiBvZmZzZXQgPSA1MDks
+IHNlZ29mZiA9IDkyMTMsCj4gPiBzYmktPmJsb2Nrc19wZXJfc2VnID0gNTEyCj4gPiBSRU1PVkVf
+TUUgdXBkYXRlX3NpdF9lbnRyeSgyMDIpOiBvZmZzZXQgPSA1MTAsIHNlZ29mZiA9IDkyMTQsCj4g
+PiBzYmktPmJsb2Nrc19wZXJfc2VnID0gNTEyCj4gPiBSRU1PVkVfTUUgdXBkYXRlX3NpdF9lbnRy
+eSgyMDIpOiBvZmZzZXQgPSA1MTEsIHNlZ29mZiA9IDkyMTUsCj4gPiBzYmktPmJsb2Nrc19wZXJf
+c2VnID0gNTEyCj4gPiBSRU1PVkVfTUUgdXBkYXRlX3NpdF9lbnRyeSgyMDIpOiBvZmZzZXQgPSAx
+LCBzZWdvZmYgPSA5OTMyOSwKPiA+IHNiaS0+YmxvY2tzX3Blcl9zZWcgPSA1MTIKPiA+IFJFTU9W
+RV9NRSB1cGRhdGVfc2l0X2VudHJ5KDIwMik6IG9mZnNldCA9IDAsIHNlZ29mZiA9IDk5MzI4LAo+
+ID4gc2JpLT5ibG9ja3NfcGVyX3NlZyA9IDUxMgo+ID4gCj4gPiAtLS0tLS0tLS0tLS1bIGN1dCBo
+ZXJlIF0tLS0tLS0tLS0tLS0KPiA+IGtlcm5lbCBCVUcKPiA+IGF0IC9ob21lL29nYWJiYXkvdmll
+d3MvcjUueGNqL3NvZnR3YXJlL29zLXNvZnR3YXJlL3Bvd2VycGMvdXNyL3NyYy9saW51eC0zLjku
+Ni1hZHZhL2ZzL2YyZnMvc2VnbWVudC5jOjIxNyEKPiA+IE9vcHM6IEV4Y2VwdGlvbiBpbiBrZXJu
+ZWwgbW9kZSwgc2lnOiA1IFsjMV0KPiA+IFBSRUVNUFQgU01QIE5SX0NQVVM9MiBQMjAyMCBGU1Ax
+NTAKPiA+IE1vZHVsZXMgbGlua2VkIGluOiBtZGlvKE8pIGhhcmR3YXJlX3ZlcnNpb24oUE8pIGNs
+aXByZXNlbnQoUE8pCj4gPiBtb25vdG9uaWMoTykgcmVzdGFydGNhdXNlKFBPKSBwYW5pY19idWZm
+ZXIoTykKPiA+IE5JUDogYzAyNmMwMzggTFI6IGMwMjZiZjBjIENUUjogMDAwMDAwMDAKPiA+IFJF
+R1M6IGM1NjY1YTYwIFRSQVA6IDA3MDAgICBUYWludGVkOiBQICAgICAgICAgICBPCj4gPiAoMy45
+LjYtZGV2X29nYWJiYXktMTA5NTY0KikKPiA+IE1TUjogMDAwMjkwMDAgPENFLEVFLE1FPiAgQ1I6
+IDI0ZjgyYzQ4ICBYRVI6IDIwMDAwMDAwCj4gPiBUQVNLID0gZWY5NDNlODBbMTc3NF0gJ2ZsdXNo
+LTc6MCcgVEhSRUFEOiBjNTY2NDAwMCBDUFU6IDEKPiA+IEdQUjAwOiAwMDAwMDAwMCBjNTY2NWIx
+MCBlZjk0M2U4MCAwMDAwMDBhNiAwMDAyMTAwMCAwMDAwMDAwMAo+ID4gZjFlMjYwNTQgNzI1Zjcz
+NjUgCj4gPiBHUFIwODogMDAwMDAwMDAgYzVhMTNlNDAgMDAwMDAwNDAgMDAwMDAwNDAgMDAwMDAw
+NjcgMDAwMDAwMDAKPiA+IGM1NjY1YzY0IDAwMDAwMDAwIAo+ID4gR1BSMTY6IGMxNDE5MjQwIDAw
+MDgwMDAwIDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMGJiIGVmOGNlMTAwCj4gPiAwMDAwMDAwMCBl
+ZjhjZTEzNCAKPiA+IEdQUjI0OiBmZmZmZmZmZiBmZmZmZmY5OSAwMDAwMDBiYiBlZjhjZTEwMCAw
+MDAwMDA4MCBmMWU1Nzc2MAo+ID4gZmZmZmZmZmYgYzU2MWU4MDAgCj4gPiBOSVAgW2MwMjZjMDM4
+XSB1cGRhdGVfc2l0X2VudHJ5KzB4MjM0LzB4MjNjCj4gPiBMUiBbYzAyNmJmMGNdIHVwZGF0ZV9z
+aXRfZW50cnkrMHgxMDgvMHgyM2MKPiA+IENhbGwgVHJhY2U6Cj4gPiBbYzU2NjViMTBdIFtjMDI2
+YmVkNF0gdXBkYXRlX3NpdF9lbnRyeSsweGQwLzB4MjNjICh1bnJlbGlhYmxlKQo+ID4gW2M1NjY1
+YjQwXSBbYzAyNmQxZThdIGRvX3dyaXRlX3BhZ2UrMHgxOTgvMHg2NjAKPiA+IFtjNTY2NWI4MF0g
+W2MwMjZkODQwXSB3cml0ZV9kYXRhX3BhZ2UrMHhhNC8weGI4Cj4gPiBbYzU2NjViYzBdIFtjMDI2
+NTExOF0gZG9fd3JpdGVfZGF0YV9wYWdlKzB4MWU4LzB4MjBjCj4gPiBbYzU2NjVjMjBdIFtjMDI2
+NTNkY10gZjJmc193cml0ZV9kYXRhX3BhZ2UrMHgyYTAvMHgyYzAKPiA+IFtjNTY2NWM0MF0gW2Mw
+MjYzYWQ4XSBfX2YyZnNfd3JpdGVwYWdlKzB4MjQvMHg4MAo+ID4gW2M1NjY1YzUwXSBbYzAwYjA1
+ZGNdIHdyaXRlX2NhY2hlX3BhZ2VzKzB4MWQwLzB4MzVjCj4gPiBbYzU2NjVkMDBdIFtjMDI2M2Nm
+NF0gZjJmc193cml0ZV9kYXRhX3BhZ2VzKzB4ZjQvMHhmYwo+ID4gW2M1NjY1ZDMwXSBbYzAwYjFk
+M2NdIGRvX3dyaXRlcGFnZXMrMHgzMC8weDY0Cj4gPiBbYzU2NjVkNDBdIFtjMDEwM2ZiY10gX193
+cml0ZWJhY2tfc2luZ2xlX2lub2RlKzB4MzQvMHgxMGMKPiA+IFtjNTY2NWQ2MF0gW2MwMTA0ZWY4
+XSB3cml0ZWJhY2tfc2JfaW5vZGVzKzB4MjA0LzB4MzcwCj4gPiBbYzU2NjVkZDBdIFtjMDEwNTBm
+NF0gX193cml0ZWJhY2tfaW5vZGVzX3diKzB4OTAvMHhkNAo+ID4gW2M1NjY1ZTAwXSBbYzAxMDU0
+Y2NdIHdiX3dyaXRlYmFjaysweDIwNC8weDIwYwo+ID4gW2M1NjY1ZTUwXSBbYzAxMDU4NDRdIHdi
+X2RvX3dyaXRlYmFjaysweDE0NC8weDIwYwo+ID4gW2M1NjY1ZWIwXSBbYzAxMDU5ODBdIGJkaV93
+cml0ZWJhY2tfdGhyZWFkKzB4NzQvMHgxNDQKPiA+IFtjNTY2NWVlMF0gW2MwMDU5ZGM0XSBrdGhy
+ZWFkKzB4YTgvMHhhYwo+ID4gW2M1NjY1ZjQwXSBbYzAwMGYwMTRdIHJldF9mcm9tX2tlcm5lbF90
+aHJlYWQrMHg2NC8weDZjCj4gPiAtLS0gRXhjZXB0aW9uOiAwIGF0ICAgKG51bGwpCj4gPiAgICAg
+TFIgPSAgIChudWxsKQo+ID4gSW5zdHJ1Y3Rpb24gZHVtcDoKPiA+IDRiZmZmZjgwIDgxM2QwMDA0
+IDU3ODBlOGZlIDdmOWNlMGY4IDM5NDAwMDAxIDU3OWMwNzdlIDdkNjkwMGFlCj4gPiA3ZDVjZTAz
+MCAKPiA+IDdkNmFlMDc4IDdkNjhlMDM5IDdkNDkwMWFlIDQwODJmZjQ0IDwwZmUwMDAwMD4gMGZl
+MDAwMDAgOTQyMWZmZTAKPiA+IDdjMDgwMmE2IAo+ID4gLS0tWyBlbmQgdHJhY2UgNzA3ZmMwODcw
+ODc1MzczZSBdLS0tCj4gPiAKPiA+IE9kZWQKPiA+IE9uIDA2LzE3LzIwMTMgMDU6MjEgUE0sIE9k
+ZWQgR2FiYmF5IHdyb3RlOgo+ID4gCj4gPiA+IEhpLAo+ID4gPiAKPiA+ID4gSSBhbHNvIHN1c3Bl
+Y3QgdGhlIGVuZGlhbiBjb252ZXJzaW9uIGlzc3VlLgo+ID4gPiBBdHRhY2hlZCBpcyBhIGd6aXAt
+ZWQgZmlsZSwgd2hpY2ggcmVwcmVzZW50IGFuIGltYWdlIG9mIGEgZnJlc2hseQo+ID4gPiBmb3Jt
+YXR0ZWQgZGlzayBpbiBmMmZzIGluIHBvd2VycGMgbWFjaGluZS4gSSBwcmVmZXJyZWQgdG8gZG8g
+aXQKPiA+ID4gdGhpcyB3YXkgc28gSSBjb3VsZCBoYXZlIGEgc21hbGwgZmlsZSB0byBzZW5kIHlv
+dS4KPiA+ID4gSSBkaWQgdGhlIGZvbGxvd2luZyB0byBjcmVhdGUgaXQ6Cj4gPiA+IAo+ID4gPiBb
+Y2o6fl0gIyBkZCBpZj0vZGV2L3plcm8gb2Y9L3RtcC90ZXN0X2ZpbGUgYnM9NDA5NiBjb3VudD0x
+MDI0MDAKPiA+ID4gMTAyNDAwKzAgcmVjb3JkcyBpbgo+ID4gPiAxMDI0MDArMCByZWNvcmRzIG91
+dAo+ID4gPiA0MTk0MzA0MDAgYnl0ZXMgKDQxOSBNQikgY29waWVkLCAxLjA1MTEyIHMsIDM5OSBN
+Qi9zCj4gPiA+IFtjajp+XSAjIGxvc2V0dXAgL2Rldi9sb29wMCAvdG1wL3Rlc3RfZmlsZSAKPiA+
+ID4gW2NqOn5dICMgbWtmcy5mMmZzIC1sIGxhYmVsIC9kZXYvbG9vcDAKPiA+ID4gCj4gPiA+ICAg
+ICAgICAgRjJGUy10b29sczogbWtmcy5mMmZzIFZlcjogMS4xLjAgKDIwMTMtMDYtMTMpCj4gPiA+
+IAo+ID4gPiBJbmZvOiBMYWJlbCA9IGxhYmVsCj4gPiA+IEluZm86IHNlY3RvciBzaXplID0gNTEy
+Cj4gPiA+IEluZm86IHRvdGFsIHNlY3RvcnMgPSA4MTkyMDAgKGluIDUxMmJ5dGVzKQo+ID4gPiBJ
+bmZvOiB6b25lIGFsaWduZWQgc2VnbWVudDAgYmxrYWRkcjogNTEyCj4gPiA+IEluZm86IGZvcm1h
+dCBzdWNjZXNzZnVsCj4gPiA+IFtjajp+XSAjIGxvc2V0dXAgLWQgL2Rldi9sb29wMAo+ID4gPiBb
+Y2o6L3RtcF0gIyBnemlwIHRlc3RfZmlsZQo+ID4gPiAKPiA+ID4gSSB0aGVuIHJ1biBteSB0ZXN0
+IGFwcGxpY2F0aW9uIGFuZCBnb3QgdGhlIHNhbWUga2VybmVsIEJVRwo+ID4gPiBtZXNzYWdlLgo+
+ID4gPiAKPiA+ID4gT2RlZAo+ID4gPiAKPiA+ID4gT24gMDYvMTcvMjAxMyAwMzoxMSBQTSwgSmFl
+Z2V1ayBLaW0gd3JvdGU6Cj4gPiA+IAo+ID4gPiA+IEhpLAo+ID4gPiA+IAo+ID4gPiA+IFRoYW5r
+IHlvdSBmb3IgdGhlIHJlcG9ydC4gOikKPiA+ID4gPiAKPiA+ID4gPiBDYW4geW91IHNlbmQgbWUg
+dGhlIGRpc2sgaW1hZ2UgcmlnaHQgYWZ0ZXIgZm9ybWF0dGluZyBmMmZzPwo+ID4gPiA+IEFzIHlv
+dXIgcHJldmlvdXMgcGF0Y2gsIEkgc3Ryb25nbHkgc3VzcGVjdCB0aGUgZW5kaWFuIGNvbnZlcnNp
+b24gYnVnLgo+ID4gPiA+IAo+ID4gPiA+IE90aGVyd2lzZSwgSSByZWNvbW1lbmQgeW91IHRvIHRl
+c3Qgd2l0aCB0aGUgbGF0ZXN0IHRyZWUgZnJvbToKPiA+ID4gPiBodHRwOi8vZ2l0Lmtlcm5lbC5v
+cmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2phZWdldWsvZjJmcy5naXQKPiA+ID4gPiAKPiA+ID4g
+PiBUaGFua3MsCj4gPiA+ID4gCj4gPiA+ID4gMjAxMy0wNi0xNiAo7J28KSwgMTQ6NTEgKzAzMDAs
+IE9kZWQgR2FiYmF5Ogo+ID4gPiA+ID4gSGksCj4gPiA+ID4gPiAKPiA+ID4gPiA+IEknbSB3b3Jr
+aW5nIG9uIGEgY3VzdG9tIGJvYXJkIHdpdGggYSBQb3dlclBDIHByb2Nlc3NvciAoRnJlZXNjYWxl
+Cj4gPiA+ID4gPiBQMjAyMCkuCj4gPiA+ID4gPiBPbiB0aGUgYm9hcmQgdGhlcmUgaXMgYW4gU0Qg
+Y2FyZCwgd2hpY2ggaXMgY29ubmVjdGVkIHRvIGEgVVNCMyBjaGlwCj4gPiA+ID4gPiAoZnJvbSBU
+SSksIHdoaWNoIGlzIGNvbm5lY3RlZCB0byB0aGUgUENJLWUgY29udHJvbGxlciBvZiB0aGUgQ1BV
+Lgo+ID4gPiA+ID4gSSdtIHJ1bm5pbmcgd2l0aCBMaW51eCBrZXJuZWwgMy45LjYsIHdpdGggb3Vy
+IGN1c3RvbSByb290RlMuCj4gPiA+ID4gPiAKPiA+ID4gPiA+IEkgZm9ybWF0dGVkIGFuIFNEIGNh
+cmQgdXNpbmcgdGhlIG1rZnMuZjJmcyB1dGlsaXR5IChhZnRlciBmaXhpbmcgc29tZQo+ID4gPiA+
+ID4gQmlnLWVuZGlhbiBpc3N1ZXMgLSBzZW50IGEgcGF0Y2ggYSBmZXcgZGF5cyBhZ28pLgo+ID4g
+PiA+ID4gSSB0aGVuIG1vdW50ZWQgdGhlIFNEIGNhcmQsIHVzaW5nICJtb3VudCAtbwo+ID4gPiA+
+ID4gbm9hdGltZSxub2RpcmF0aW1lLHJ3LG5vc3VpZCxub2RldixyZWxhdGltZSxhY3RpdmVfbG9n
+cz02LHVoZWxwZXI9dWRpc2tzMixiYWNrZ3JvdW5kX2djX29mZiAvZGV2L3NkYSAvbW50L3NkMSIK
+PiA+ID4gPiA+IFRoZW4sIEkgc3RhcnRlZCBhIHNtYWxsIHVzZXItc3BhY2UgdGVzdCBhcHBsaWNh
+dGlvbiB3aGljaCBvcGVucyBhIGZpbGUKPiA+ID4gPiA+IG9uIHRoZSBtb3VudCBmb2xkZXIgYW5k
+IHN0YXJ0cyB0byBkbyAiZndyaXRlIiBpbnRvIHRoZSBmaWxlLgo+ID4gPiA+ID4gQWZ0ZXIgMi0z
+IHNlY29uZHMsIHRoZSBrZXJuZWwgZ2l2ZXMgbWUgYSBCVUcgYW5kIHRoZSBzeXN0ZW0gcmVzdGFy
+dHMuIAo+ID4gPiA+ID4gV2hlbiB0aGUgc3lzdGVtIGlzIHVwIGFuZCBJIHRyeSB0byByZS1tb3Vu
+dCB0aGUgU0QgY2FyZCwgSSBnZXQgdGhlCj4gPiA+ID4gPiBmb2xsb3dpbmcgZXJyb3IgbWVzc2Fn
+ZToKPiA+ID4gPiA+IAo+ID4gPiA+ID4gRjJGUy1mcyAoc2RhKTogRmFpbGVkIHRvIGdldCB2YWxp
+ZCBGMkZTIGNoZWNrcG9pbnQKPiA+ID4gPiA+IG1vdW50OiB5b3UgbXVzdCBzcGVjaWZ5IHRoZSBm
+aWxlc3lzdGVtIHR5cGUKPiA+ID4gPiA+IAo+ID4gPiA+ID4gT25seSB3YXkgaXMgdG8gcmUtZm9y
+bWF0IHRoZSBjYXJkIHVzaW5nIG1rZnMuZjJmcwo+ID4gPiA+ID4gCj4gPiA+ID4gPiBJIHRvb2sg
+dGhlIGYyZnMgcGF0Y2ggdGhhdCBKYWVnZXVrIEtpbSBzZW50IHRvIExpbnVzIGZvciAzLjEwICho
+ZXJlIC0KPiA+ID4gPiA+IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDEzLzUvOC8xMjIpIGFuZCBh
+cHBsaWVkIGl0IGNsZWFubHkgdG8gMy45LjYKPiA+ID4gPiA+IEkgcmVwZWF0ZWQgdGhlIHByb2Nl
+ZHVyZSBidXQgZ290IHRoZSBzYW1lIHJlc3VsdC4KPiA+ID4gPiA+IAo+ID4gPiA+ID4gVGhlIEJV
+RyBpcyBmcm9tIHRoaXMgbGluZSwgZnJvbSBzZWdtZW50LmM6IAo+ID4gPiA+ID4gICAgICAgICBp
+ZiAoIWYyZnNfY2xlYXJfYml0KG9mZnNldCwgc2UtPmN1cl92YWxpZF9tYXApKQo+ID4gPiA+ID4g
+ICAgICAgICAgICAgQlVHKCk7Cj4gPiA+ID4gPiAKPiA+ID4gPiA+IEFkZGl0aW9uYWwgaW5mb3Jt
+YXRpb24gSSBjYW4gZ2l2ZSBpcyAKPiA+ID4gPiA+IAo+ID4gPiA+ID4gMS4gSSB0cmllZCB1c2lu
+ZyBGMkZTIGluIEFyY2hMaW51eCwga2VybmVsIDMuOS41LCBvbiBhbiB4ODYgbWFjaGluZSwKPiA+
+ID4gPiA+IHdpdGggdGhlIHNhbWUgU0QgY2FyZCBhbmQgdGhlIHNhbWUgVVNCMy10by1QQ0llIGNo
+aXAgYW5kIGl0IHdvcmtlZAo+ID4gPiA+ID4gZmxhd2xlc3NseSB0aGVyZS4KPiA+ID4gPiA+IDIu
+IEkgY2FuIHdvcmsgd2l0aCBvdGhlciBGUyBvbiB0aGUgU0QgY2FyZCBvbiBvdXIgY3VzdG9tIGJv
+YXJkLCBzdWNoCj4gPiA+ID4gPiBhcyBFeHQzLCBFeHQ0IGFuZCB2ZmF0LCBzbyB0aGlzIGlzIG5v
+dCBhIEgvVyBpc3N1ZS4KPiA+ID4gPiA+IAo+ID4gPiA+ID4gQ291bGQgeW91IHBsZWFzZSB0cnkg
+dG8gaGVscCBtZSBwaW5wb2ludC9kZWJ1ZyB0aGUgcHJvYmxlbSA/Cj4gPiA+ID4gPiAKPiA+ID4g
+PiA+IEhlcmUgaXMgdGhlIGNvbXBsZXRlIGtlcm5lbCBCVUcgcHJpbnQ6Cj4gPiA+ID4gPiAKPiA+
+ID4gPiA+IGtlcm5lbCBCVUcgYXQgLi4uL2xpbnV4LTMuOS42LWFkdmEvZnMvZjJmcy9zZWdtZW50
+LmM6MjE0IQo+ID4gPiA+ID4gT29wczogRXhjZXB0aW9uIGluIGtlcm5lbCBtb2RlLCBzaWc6IDUg
+WyMxXQo+ID4gPiA+ID4gUFJFRU1QVCBTTVAgTlJfQ1BVUz0yIFAyMDIwIEZTUDE1MAo+ID4gPiA+
+ID4gTW9kdWxlcyBsaW5rZWQgaW46IG1kaW8oTykgaGFyZHdhcmVfdmVyc2lvbihQTykgY2xpcHJl
+c2VudChQTykKPiA+ID4gPiA+IG1vbm90b25pYyhPKSByZXN0YXJ0Y2F1c2UoUE8pIHBhbmljX2J1
+ZmZlcihPKQo+ID4gPiA+ID4gTklQOiBjMDI2YTdlMCBMUjogYzAyNmE2NjAgQ1RSOiAwMDAwMDAw
+MAo+ID4gPiA+ID4gUkVHUzogZWU3NjFhNjAgVFJBUDogMDcwMCAgIFRhaW50ZWQ6IFAgICAgICAg
+ICAgIE8KPiA+ID4gPiA+ICgzLjkuNi1kZXZfb2dhYmJheS0xMDk0ODIqKQo+ID4gPiA+ID4gTVNS
+OiAwMDAyOTAwMCA8Q0UsRUUsTUU+ICBDUjogMjRhNTI1ODggIFhFUjogMjAwMDAwMDAKPiA+ID4g
+PiA+IFRBU0sgPSBlZmI0NDRjMFsxNzU1XSAnZmx1c2gtODowJyBUSFJFQUQ6IGVlNzYwMDAwIENQ
+VTogMQo+ID4gPiA+ID4gR1BSMDA6IDAwMDAwMDAwIGVlNzYxYjEwIGVmYjQ0NGMwIDAwMDAwMDRj
+IDAwMDAwMDAwIDAwMDAwMDAwIDAxZGM0OTAwCj4gPiA+ID4gPiBlYjBmYTcwMCAKPiA+ID4gPiA+
+IEdQUjA4OiAwMDAwMDAwMCBlYjI0Y2IwMCAwMDAwMDA0MCAwMDAwMDA0MCAwMDAwMDAzOCAwMDAw
+MDAwMCBlZTc2MWM2NAo+ID4gPiA+ID4gMDAwMDAwMDAgCj4gPiA+ID4gPiBHUFIxNjogYzBhZWVh
+ODAgMDAwODAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMGVkMzEgZWIwZmE3MDAgMDAwMDAwMDAK
+PiA+ID4gPiA+IGViMGZhNzM0IAo+ID4gPiA+ID4gR1BSMjQ6IGViMGZhNzAwIDAwMDAwMDgwIGYy
+MDMwNjIwIGZmZmZmZmZmIGZmZmZmZmM4IDAwMDBlZDMxIGZmZmZmZmZmCj4gPiA+ID4gPiBjNTVh
+MTAwMCAKPiA+ID4gPiA+IE5JUCBbYzAyNmE3ZTBdIHVwZGF0ZV9zaXRfZW50cnkrMHgyNDAvMHgy
+NDgKPiA+ID4gPiA+IExSIFtjMDI2YTY2MF0gdXBkYXRlX3NpdF9lbnRyeSsweGMwLzB4MjQ4Cj4g
+PiA+ID4gPiBDYWxsIFRyYWNlOgo+ID4gPiA+ID4gW2VlNzYxYjEwXSBbYzU1YTEwMDBdIDB4YzU1
+YTEwMDAgKHVucmVsaWFibGUpCj4gPiA+ID4gPiBbZWU3NjFiNDBdIFtjMDI2ZDFmNF0gZG9fd3Jp
+dGVfcGFnZSsweDE5OC8weDY2MAo+ID4gPiA+ID4gW2VlNzYxYjgwXSBbYzAyNmQ4NGNdIHdyaXRl
+X2RhdGFfcGFnZSsweGE0LzB4YjgKPiA+ID4gPiA+IFtlZTc2MWJjMF0gW2MwMjY1MTE4XSBkb193
+cml0ZV9kYXRhX3BhZ2UrMHgxZTgvMHgyMGMKPiA+ID4gPiA+IFtlZTc2MWMyMF0gW2MwMjY1M2Rj
+XSBmMmZzX3dyaXRlX2RhdGFfcGFnZSsweDJhMC8weDJjMAo+ID4gPiA+ID4gW2VlNzYxYzQwXSBb
+YzAyNjNhZDhdIF9fZjJmc193cml0ZXBhZ2UrMHgyNC8weDgwCj4gPiA+ID4gPiBbZWU3NjFjNTBd
+IFtjMDBiMDVkY10gd3JpdGVfY2FjaGVfcGFnZXMrMHgxZDAvMHgzNWMKPiA+ID4gPiA+IFtlZTc2
+MWQwMF0gW2MwMjYzY2Y0XSBmMmZzX3dyaXRlX2RhdGFfcGFnZXMrMHhmNC8weGZjCj4gPiA+ID4g
+PiBbZWU3NjFkMzBdIFtjMDBiMWQzY10gZG9fd3JpdGVwYWdlcysweDMwLzB4NjQKPiA+ID4gPiA+
+IFtlZTc2MWQ0MF0gW2MwMTAzZmJjXSBfX3dyaXRlYmFja19zaW5nbGVfaW5vZGUrMHgzNC8weDEw
+Ywo+ID4gPiA+ID4gW2VlNzYxZDYwXSBbYzAxMDRlZjhdIHdyaXRlYmFja19zYl9pbm9kZXMrMHgy
+MDQvMHgzNzAKPiA+ID4gPiA+IFtlZTc2MWRkMF0gW2MwMTA1MGY0XSBfX3dyaXRlYmFja19pbm9k
+ZXNfd2IrMHg5MC8weGQ0Cj4gPiA+ID4gPiBbZWU3NjFlMDBdIFtjMDEwNTRjY10gd2Jfd3JpdGVi
+YWNrKzB4MjA0LzB4MjBjCj4gPiA+ID4gPiBbZWU3NjFlNTBdIFtjMDEwNTg0NF0gd2JfZG9fd3Jp
+dGViYWNrKzB4MTQ0LzB4MjBjCj4gPiA+ID4gPiBbZWU3NjFlYjBdIFtjMDEwNTk4MF0gYmRpX3dy
+aXRlYmFja190aHJlYWQrMHg3NC8weDE0NAo+ID4gPiA+ID4gW2VlNzYxZWUwXSBbYzAwNTlkYzRd
+IGt0aHJlYWQrMHhhOC8weGFjCj4gPiA+ID4gPiBbZWU3NjFmNDBdIFtjMDAwZjAxNF0gcmV0X2Zy
+b21fa2VybmVsX3RocmVhZCsweDY0LzB4NmMKPiA+ID4gPiA+IEluc3RydWN0aW9uIGR1bXA6Cj4g
+PiA+ID4gPiA0YmZmZmYyYyA4MTNhMDAwNCA1NzIwZThmZSA3ZjM5YzhmOCAzOTQwMDAwMSA1NzM5
+MDc3ZSA3ZDY5MDBhZQo+ID4gPiA+ID4gN2Q1OWM4MzAgCj4gPiA+ID4gPiA3ZDZhYzg3OCA3ZDY4
+YzgzOSA3ZDQ5MDFhZSA0MDgyZmVmMCA8MGZlMDAwMDA+IDBmZTAwMDAwIDk0MjFmZmUwCj4gPiA+
+ID4gPiA3YzA4MDJhNiAKPiA+ID4gPiA+IAo+ID4gPiA+IAotLSAKSmFlZ2V1ayBLaW0KU2Ftc3Vu
+ZwoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVGhpcyBTRi5uZXQgZW1haWwgaXMgc3BvbnNvcmVk
+IGJ5IFdpbmRvd3M6CgpCdWlsZCBmb3IgV2luZG93cyBTdG9yZS4KCmh0dHA6Ly9wLnNmLm5ldC9z
+ZnUvd2luZG93cy1kZXYyZGV2Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxA
+bGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3Rz
+L2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
