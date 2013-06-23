@@ -1,45 +1,50 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: f2fs tests
-Date: Fri, 21 Jun 2013 21:36:00 +0200
-Message-ID: <20130621193600.GA12712@amd.pavel.ucw.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com, linux-f2fs-devel@lists.sourceforge.net, kernel list <linux-kernel@vger.kernel.org>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH] f2fs: fix an endian conversion bug detected by sparse
+Date: Mon, 24 Jun 2013 07:51:45 +0900
+Message-ID: <1372027905-24393-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi!
+This patch should fix the following bug reported by kbuild test robot.
 
-I played a bit with f2fs...
+fs/f2fs/recovery.c:233:33: sparse: incorrect type in assignment
+(different base types)
 
-First, I had to compile the f2fstools... Unfortunately they require
-never autoconf than available on debian. I tried to hack it, but then
-I decided that compiling it by hand is just simpler.
+parse warnings: (new ones prefixed by >>)
 
-gcc -I include/ -I . lib/*.c mkfs/*.c /usr/lib/libuuid.so
+>> fs/f2fs/recovery.c:233:33: sparse: incorrect type in assignment (different base types)
+   fs/f2fs/recovery.c:233:33:    expected unsigned int [unsigned] [assigned] ofs_in_node
+   fs/f2fs/recovery.c:233:33:    got restricted __le16 [assigned] [usertype] ofs_in_node
+>> fs/f2fs/recovery.c:238:33: sparse: incorrect type in assignment (different base types)
+   fs/f2fs/recovery.c:238:33:    expected unsigned int [unsigned] ofs_in_node
+   fs/f2fs/recovery.c:238:33:    got restricted __le16 [assigned] [usertype] ofs_in_node
 
-does the trick.
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/recovery.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I was quite surprised there's no fsck in the repository... Do you have
-fsck somewhere?
-
-I tested with copy of kernel and 4GB stick (with RedHat logo, thanks
-:-)... copying it from hdd took 46 minutes for VFAT and 19 minutes for
-F2FS. Good.
-
-VFAT: time find . -name "not-here" took 26 seconds.
-F2F:  time find . -name "not-here" took 22-24 seconds.
-
-Faster copy, same speed find, good. (Find is even slightly faster than
-HDD, with 27-30 seconds).
-
-But now the strange stuff: the same data takes 861MB on ext3 and 1.3GB
-on f2fs. (It was even bigger than that on VFAT). I guess I should test
-the patch for inlining small files into inodes?
-
-									Pavel
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index ddde14f..9db8239 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -246,12 +246,12 @@ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+ 		struct dnode_of_data tdn = *dn;
+ 		tdn.nid = nid;
+ 		tdn.node_page = dn->inode_page;
+-		tdn.ofs_in_node = sum.ofs_in_node;
++		tdn.ofs_in_node = le16_to_cpu(sum.ofs_in_node);
+ 		truncate_data_blocks_range(&tdn, 1);
+ 		return 0;
+ 	} else if (dn->nid == nid) {
+ 		struct dnode_of_data tdn = *dn;
+-		tdn.ofs_in_node = sum.ofs_in_node;
++		tdn.ofs_in_node = le16_to_cpu(sum.ofs_in_node);
+ 		truncate_data_blocks_range(&tdn, 1);
+ 		return 0;
+ 	}
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+1.8.3.1.437.g0dbd812
+
