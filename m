@@ -1,25 +1,31 @@
-From: Ryan Wang <openspace.wang@gmail.com>
-Subject: [f2fs-dev] configure failed even through libuuid is installed
-Date: Mon, 24 Jun 2013 13:35:14 +0800
-Message-ID: <CAPxxNQk+bmtbhM9E9BiNtGqLfhPO1f1Ju02cYj5KPPz5qRkB9Q@mail.gmail.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [f2fs-dev] configure failed even through libuuid is installed
+Date: Mon, 24 Jun 2013 20:22:36 +0900
+Message-ID: <1372072956.28480.9.camel@kjgkr>
+References: <CAPxxNQk+bmtbhM9E9BiNtGqLfhPO1f1Ju02cYj5KPPz5qRkB9Q@mail.gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <openspace.wang@gmail.com>) id 1UqzQv-0007AR-Uk
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1Ur4r3-0005EU-Ak
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Jun 2013 05:35:22 +0000
-Received: from mail-oa0-f46.google.com ([209.85.219.46])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1UqzQt-0002cl-Sp
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Jun 2013 05:35:21 +0000
-Received: by mail-oa0-f46.google.com with SMTP id h1so11449972oag.19
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 23 Jun 2013 22:35:14 -0700 (PDT)
+	Mon, 24 Jun 2013 11:22:41 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Ur4r0-0004d6-Tz for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 24 Jun 2013 11:22:41 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MOW006P9A9DGQI0@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 24 Jun 2013 20:22:31 +0900 (KST)
+In-reply-to: <CAPxxNQk+bmtbhM9E9BiNtGqLfhPO1f1Ju02cYj5KPPz5qRkB9Q@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,157 +35,123 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk.kim@samsung.com
+To: Ryan Wang <openspace.wang@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
-
-
-I wanted to try f2fs on my box, but failed at the installation phase.
-
-OS: RHEL6.4
-auto tools:
-          autoconf-2.69.tar.gz
-          automake-1.13.tar.gz
-          libtool-2.4.2.tar.gz
-
-libuuid is installed:
-========================
-/usr/include/uuid
-/usr/include/uuid/uuid.h
-/usr/lib64/libuuid.a
-/usr/lib64/libuuid.so
-/usr/lib64/pkgconfig/uuid.pc
-/usr/share/man/man3/uuid.3.gz
-/usr/share/man/man3/uuid_clear.3.gz
-/usr/share/man/man3/uuid_compare.3.gz
-/usr/share/man/man3/uuid_copy.3.gz
-/usr/share/man/man3/uuid_generate.3.gz
-/usr/share/man/man3/uuid_generate_random.3.gz
-/usr/share/man/man3/uuid_generate_time.3.gz
-/usr/share/man/man3/uuid_is_null.3.gz
-/usr/share/man/man3/uuid_parse.3.gz
-/usr/share/man/man3/uuid_time.3.gz
-/usr/share/man/man3/uuid_unparse.3.gz
-
-./configure outputs:
-========================
-# autoreconf --install
-libtoolize: putting auxiliary files in AC_CONFIG_AUX_DIR, `build-aux'.
-libtoolize: copying file `build-aux/ltmain.sh'
-libtoolize: putting macros in AC_CONFIG_MACRO_DIR, `m4'.
-libtoolize: copying file `m4/libtool.m4'
-libtoolize: copying file `m4/ltoptions.m4'
-libtoolize: copying file `m4/ltsugar.m4'
-libtoolize: copying file `m4/ltversion.m4'
-libtoolize: copying file `m4/lt~obsolete.m4'
-configure.ac:50: installing 'build-aux/config.guess'
-configure.ac:50: installing 'build-aux/config.sub'
-configure.ac:36: installing 'build-aux/install-sh'
-configure.ac:36: installing 'build-aux/missing'
-lib/Makefile.am: installing 'build-aux/depcomp'
-[root@benlp1 f2fs-tools]# ./configure
-checking for .git... yes
-checking for a BSD-compatible install... /usr/bin/install -c
-checking whether build environment is sane... yes
-checking for a thread-safe mkdir -p... /bin/mkdir -p
-checking for gawk... gawk
-checking whether make sets $(MAKE)... yes
-checking whether make supports nested variables... yes
-checking how to create a pax tar archive... gnutar
-checking for style of include used by make... GNU
-checking for gcc... gcc
-checking whether the C compiler works... yes
-checking for C compiler default output file name... a.out
-checking for suffix of executables...
-checking whether we are cross compiling... no
-checking for suffix of object files... o
-checking whether we are using the GNU C compiler... yes
-checking whether gcc accepts -g... yes
-checking for gcc option to accept ISO C89... none needed
-checking dependency style of gcc... gcc3
-checking how to run the C preprocessor... gcc -E
-checking for grep that handles long lines and -e... /bin/grep
-checking for egrep... /bin/grep -E
-checking for ANSI C header files... yes
-checking for sys/types.h... yes
-checking for sys/stat.h... yes
-checking for stdlib.h... yes
-checking for string.h... yes
-checking for memory.h... yes
-checking for strings.h... yes
-checking for inttypes.h... yes
-checking for stdint.h... yes
-checking for unistd.h... yes
-checking for fcntl.h... yes
-checking for mntent.h... yes
-checking for stdlib.h... (cached) yes
-checking for string.h... (cached) yes
-checking for unistd.h... (cached) yes
-checking for sys/ioctl.h... yes
-checking for sys/mount.h... yes
-checking for gcc... (cached) gcc
-checking whether we are using the GNU C compiler... (cached) yes
-checking whether gcc accepts -g... (cached) yes
-checking for gcc option to accept ISO C89... (cached) none needed
-checking dependency style of gcc... (cached) gcc3
-checking build system type... powerpc64-unknown-linux-gnu
-checking host system type... powerpc64-unknown-linux-gnu
-checking how to print strings... printf
-checking for a sed that does not truncate output... /bin/sed
-checking for fgrep... /bin/grep -F
-checking for ld used by gcc... /usr/bin/ld
-checking if the linker (/usr/bin/ld) is GNU ld... yes
-checking for BSD- or MS-compatible name lister (nm)... /usr/bin/nm -B
-checking the name lister (/usr/bin/nm -B) interface... BSD nm
-checking whether ln -s works... yes
-checking the maximum length of command line arguments... 1966080
-checking whether the shell understands some XSI constructs... yes
-checking whether the shell understands "+="... yes
-checking how to convert powerpc64-unknown-linux-gnu file names to
-powerpc64-unknown-linux-gnu format... func_convert_file_noop
-checking how to convert powerpc64-unknown-linux-gnu file names to
-toolchain format... func_convert_file_noop
-checking for /usr/bin/ld option to reload object files... -r
-checking for objdump... objdump
-checking how to recognize dependent libraries... pass_all
-checking for dlltool... no
-checking how to associate runtime and link libraries... printf %s\n
-checking for ar... ar
-checking for archiver @FILE support... @
-checking for strip... strip
-checking for ranlib... ranlib
-checking command to parse /usr/bin/nm -B output from gcc object... ok
-checking for sysroot... no
-checking for mt... no
-checking if : is a manifest tool... no
-checking for dlfcn.h... yes
-checking for objdir... .libs
-checking if gcc supports -fno-rtti -fno-exceptions... no
-checking for gcc option to produce PIC... -fPIC -DPIC
-checking if gcc PIC flag -fPIC -DPIC works... yes
-checking if gcc static flag -static works... no
-checking if gcc supports -c -o file.o... yes
-checking if gcc supports -c -o file.o... (cached) yes
-checking whether the gcc linker (/usr/bin/ld -m elf64ppc) supports
-shared libraries... yes
-checking whether -lc should be explicitly linked in... no
-checking dynamic linker characteristics... GNU/Linux ld.so
-checking how to hardcode library paths into programs... immediate
-checking whether stripping libraries is possible... yes
-checking if libtool supports shared libraries... yes
-checking whether to build shared libraries... yes
-checking whether to build static libraries... yes
-checking for ldconfig... /sbin/ldconfig
-./configure: line 12339: syntax error near unexpected token `libuuid,'
-./configure: line 12339: `PKG_CHECK_MODULES(libuuid, uuid)'
-
-
-Regards,
-Ryan
-
-------------------------------------------------------------------------------
-This SF.net email is sponsored by Windows:
-
-Build for Windows Store.
-
-http://p.sf.net/sfu/windows-dev2dev
+SGksCgpJdCBzZWVtcyB0aGF0IHlvdSBuZWVkIHRvIGluc3RhbGwgcGtnLWNvbmZpZy4KQ291bGQg
+eW91IGNoZWNrIHRoaXMgb3V0PwpUaGFua3MsCgoyMDEzLTA2LTI0ICjsm5QpLCAxMzozNSArMDgw
+MCwgUnlhbiBXYW5nOgo+IEhpLAo+IAo+IAo+IEkgd2FudGVkIHRvIHRyeSBmMmZzIG9uIG15IGJv
+eCwgYnV0IGZhaWxlZCBhdCB0aGUgaW5zdGFsbGF0aW9uIHBoYXNlLgo+IAo+IE9TOiBSSEVMNi40
+Cj4gYXV0byB0b29sczoKPiAgICAgICAgICAgYXV0b2NvbmYtMi42OS50YXIuZ3oKPiAgICAgICAg
+ICAgYXV0b21ha2UtMS4xMy50YXIuZ3oKPiAgICAgICAgICAgbGlidG9vbC0yLjQuMi50YXIuZ3oK
+PiAKPiBsaWJ1dWlkIGlzIGluc3RhbGxlZDoKPiA9PT09PT09PT09PT09PT09PT09PT09PT0KPiAv
+dXNyL2luY2x1ZGUvdXVpZAo+IC91c3IvaW5jbHVkZS91dWlkL3V1aWQuaAo+IC91c3IvbGliNjQv
+bGlidXVpZC5hCj4gL3Vzci9saWI2NC9saWJ1dWlkLnNvCj4gL3Vzci9saWI2NC9wa2djb25maWcv
+dXVpZC5wYwo+IC91c3Ivc2hhcmUvbWFuL21hbjMvdXVpZC4zLmd6Cj4gL3Vzci9zaGFyZS9tYW4v
+bWFuMy91dWlkX2NsZWFyLjMuZ3oKPiAvdXNyL3NoYXJlL21hbi9tYW4zL3V1aWRfY29tcGFyZS4z
+Lmd6Cj4gL3Vzci9zaGFyZS9tYW4vbWFuMy91dWlkX2NvcHkuMy5nego+IC91c3Ivc2hhcmUvbWFu
+L21hbjMvdXVpZF9nZW5lcmF0ZS4zLmd6Cj4gL3Vzci9zaGFyZS9tYW4vbWFuMy91dWlkX2dlbmVy
+YXRlX3JhbmRvbS4zLmd6Cj4gL3Vzci9zaGFyZS9tYW4vbWFuMy91dWlkX2dlbmVyYXRlX3RpbWUu
+My5nego+IC91c3Ivc2hhcmUvbWFuL21hbjMvdXVpZF9pc19udWxsLjMuZ3oKPiAvdXNyL3NoYXJl
+L21hbi9tYW4zL3V1aWRfcGFyc2UuMy5nego+IC91c3Ivc2hhcmUvbWFuL21hbjMvdXVpZF90aW1l
+LjMuZ3oKPiAvdXNyL3NoYXJlL21hbi9tYW4zL3V1aWRfdW5wYXJzZS4zLmd6Cj4gCj4gLi9jb25m
+aWd1cmUgb3V0cHV0czoKPiA9PT09PT09PT09PT09PT09PT09PT09PT0KPiAjIGF1dG9yZWNvbmYg
+LS1pbnN0YWxsCj4gbGlidG9vbGl6ZTogcHV0dGluZyBhdXhpbGlhcnkgZmlsZXMgaW4gQUNfQ09O
+RklHX0FVWF9ESVIsIGBidWlsZC1hdXgnLgo+IGxpYnRvb2xpemU6IGNvcHlpbmcgZmlsZSBgYnVp
+bGQtYXV4L2x0bWFpbi5zaCcKPiBsaWJ0b29saXplOiBwdXR0aW5nIG1hY3JvcyBpbiBBQ19DT05G
+SUdfTUFDUk9fRElSLCBgbTQnLgo+IGxpYnRvb2xpemU6IGNvcHlpbmcgZmlsZSBgbTQvbGlidG9v
+bC5tNCcKPiBsaWJ0b29saXplOiBjb3B5aW5nIGZpbGUgYG00L2x0b3B0aW9ucy5tNCcKPiBsaWJ0
+b29saXplOiBjb3B5aW5nIGZpbGUgYG00L2x0c3VnYXIubTQnCj4gbGlidG9vbGl6ZTogY29weWlu
+ZyBmaWxlIGBtNC9sdHZlcnNpb24ubTQnCj4gbGlidG9vbGl6ZTogY29weWluZyBmaWxlIGBtNC9s
+dH5vYnNvbGV0ZS5tNCcKPiBjb25maWd1cmUuYWM6NTA6IGluc3RhbGxpbmcgJ2J1aWxkLWF1eC9j
+b25maWcuZ3Vlc3MnCj4gY29uZmlndXJlLmFjOjUwOiBpbnN0YWxsaW5nICdidWlsZC1hdXgvY29u
+ZmlnLnN1YicKPiBjb25maWd1cmUuYWM6MzY6IGluc3RhbGxpbmcgJ2J1aWxkLWF1eC9pbnN0YWxs
+LXNoJwo+IGNvbmZpZ3VyZS5hYzozNjogaW5zdGFsbGluZyAnYnVpbGQtYXV4L21pc3NpbmcnCj4g
+bGliL01ha2VmaWxlLmFtOiBpbnN0YWxsaW5nICdidWlsZC1hdXgvZGVwY29tcCcKPiBbcm9vdEBi
+ZW5scDEgZjJmcy10b29sc10jIC4vY29uZmlndXJlCj4gY2hlY2tpbmcgZm9yIC5naXQuLi4geWVz
+Cj4gY2hlY2tpbmcgZm9yIGEgQlNELWNvbXBhdGlibGUgaW5zdGFsbC4uLiAvdXNyL2Jpbi9pbnN0
+YWxsIC1jCj4gY2hlY2tpbmcgd2hldGhlciBidWlsZCBlbnZpcm9ubWVudCBpcyBzYW5lLi4uIHll
+cwo+IGNoZWNraW5nIGZvciBhIHRocmVhZC1zYWZlIG1rZGlyIC1wLi4uIC9iaW4vbWtkaXIgLXAK
+PiBjaGVja2luZyBmb3IgZ2F3ay4uLiBnYXdrCj4gY2hlY2tpbmcgd2hldGhlciBtYWtlIHNldHMg
+JChNQUtFKS4uLiB5ZXMKPiBjaGVja2luZyB3aGV0aGVyIG1ha2Ugc3VwcG9ydHMgbmVzdGVkIHZh
+cmlhYmxlcy4uLiB5ZXMKPiBjaGVja2luZyBob3cgdG8gY3JlYXRlIGEgcGF4IHRhciBhcmNoaXZl
+Li4uIGdudXRhcgo+IGNoZWNraW5nIGZvciBzdHlsZSBvZiBpbmNsdWRlIHVzZWQgYnkgbWFrZS4u
+LiBHTlUKPiBjaGVja2luZyBmb3IgZ2NjLi4uIGdjYwo+IGNoZWNraW5nIHdoZXRoZXIgdGhlIEMg
+Y29tcGlsZXIgd29ya3MuLi4geWVzCj4gY2hlY2tpbmcgZm9yIEMgY29tcGlsZXIgZGVmYXVsdCBv
+dXRwdXQgZmlsZSBuYW1lLi4uIGEub3V0Cj4gY2hlY2tpbmcgZm9yIHN1ZmZpeCBvZiBleGVjdXRh
+Ymxlcy4uLgo+IGNoZWNraW5nIHdoZXRoZXIgd2UgYXJlIGNyb3NzIGNvbXBpbGluZy4uLiBubwo+
+IGNoZWNraW5nIGZvciBzdWZmaXggb2Ygb2JqZWN0IGZpbGVzLi4uIG8KPiBjaGVja2luZyB3aGV0
+aGVyIHdlIGFyZSB1c2luZyB0aGUgR05VIEMgY29tcGlsZXIuLi4geWVzCj4gY2hlY2tpbmcgd2hl
+dGhlciBnY2MgYWNjZXB0cyAtZy4uLiB5ZXMKPiBjaGVja2luZyBmb3IgZ2NjIG9wdGlvbiB0byBh
+Y2NlcHQgSVNPIEM4OS4uLiBub25lIG5lZWRlZAo+IGNoZWNraW5nIGRlcGVuZGVuY3kgc3R5bGUg
+b2YgZ2NjLi4uIGdjYzMKPiBjaGVja2luZyBob3cgdG8gcnVuIHRoZSBDIHByZXByb2Nlc3Nvci4u
+LiBnY2MgLUUKPiBjaGVja2luZyBmb3IgZ3JlcCB0aGF0IGhhbmRsZXMgbG9uZyBsaW5lcyBhbmQg
+LWUuLi4gL2Jpbi9ncmVwCj4gY2hlY2tpbmcgZm9yIGVncmVwLi4uIC9iaW4vZ3JlcCAtRQo+IGNo
+ZWNraW5nIGZvciBBTlNJIEMgaGVhZGVyIGZpbGVzLi4uIHllcwo+IGNoZWNraW5nIGZvciBzeXMv
+dHlwZXMuaC4uLiB5ZXMKPiBjaGVja2luZyBmb3Igc3lzL3N0YXQuaC4uLiB5ZXMKPiBjaGVja2lu
+ZyBmb3Igc3RkbGliLmguLi4geWVzCj4gY2hlY2tpbmcgZm9yIHN0cmluZy5oLi4uIHllcwo+IGNo
+ZWNraW5nIGZvciBtZW1vcnkuaC4uLiB5ZXMKPiBjaGVja2luZyBmb3Igc3RyaW5ncy5oLi4uIHll
+cwo+IGNoZWNraW5nIGZvciBpbnR0eXBlcy5oLi4uIHllcwo+IGNoZWNraW5nIGZvciBzdGRpbnQu
+aC4uLiB5ZXMKPiBjaGVja2luZyBmb3IgdW5pc3RkLmguLi4geWVzCj4gY2hlY2tpbmcgZm9yIGZj
+bnRsLmguLi4geWVzCj4gY2hlY2tpbmcgZm9yIG1udGVudC5oLi4uIHllcwo+IGNoZWNraW5nIGZv
+ciBzdGRsaWIuaC4uLiAoY2FjaGVkKSB5ZXMKPiBjaGVja2luZyBmb3Igc3RyaW5nLmguLi4gKGNh
+Y2hlZCkgeWVzCj4gY2hlY2tpbmcgZm9yIHVuaXN0ZC5oLi4uIChjYWNoZWQpIHllcwo+IGNoZWNr
+aW5nIGZvciBzeXMvaW9jdGwuaC4uLiB5ZXMKPiBjaGVja2luZyBmb3Igc3lzL21vdW50LmguLi4g
+eWVzCj4gY2hlY2tpbmcgZm9yIGdjYy4uLiAoY2FjaGVkKSBnY2MKPiBjaGVja2luZyB3aGV0aGVy
+IHdlIGFyZSB1c2luZyB0aGUgR05VIEMgY29tcGlsZXIuLi4gKGNhY2hlZCkgeWVzCj4gY2hlY2tp
+bmcgd2hldGhlciBnY2MgYWNjZXB0cyAtZy4uLiAoY2FjaGVkKSB5ZXMKPiBjaGVja2luZyBmb3Ig
+Z2NjIG9wdGlvbiB0byBhY2NlcHQgSVNPIEM4OS4uLiAoY2FjaGVkKSBub25lIG5lZWRlZAo+IGNo
+ZWNraW5nIGRlcGVuZGVuY3kgc3R5bGUgb2YgZ2NjLi4uIChjYWNoZWQpIGdjYzMKPiBjaGVja2lu
+ZyBidWlsZCBzeXN0ZW0gdHlwZS4uLiBwb3dlcnBjNjQtdW5rbm93bi1saW51eC1nbnUKPiBjaGVj
+a2luZyBob3N0IHN5c3RlbSB0eXBlLi4uIHBvd2VycGM2NC11bmtub3duLWxpbnV4LWdudQo+IGNo
+ZWNraW5nIGhvdyB0byBwcmludCBzdHJpbmdzLi4uIHByaW50Zgo+IGNoZWNraW5nIGZvciBhIHNl
+ZCB0aGF0IGRvZXMgbm90IHRydW5jYXRlIG91dHB1dC4uLiAvYmluL3NlZAo+IGNoZWNraW5nIGZv
+ciBmZ3JlcC4uLiAvYmluL2dyZXAgLUYKPiBjaGVja2luZyBmb3IgbGQgdXNlZCBieSBnY2MuLi4g
+L3Vzci9iaW4vbGQKPiBjaGVja2luZyBpZiB0aGUgbGlua2VyICgvdXNyL2Jpbi9sZCkgaXMgR05V
+IGxkLi4uIHllcwo+IGNoZWNraW5nIGZvciBCU0QtIG9yIE1TLWNvbXBhdGlibGUgbmFtZSBsaXN0
+ZXIgKG5tKS4uLiAvdXNyL2Jpbi9ubSAtQgo+IGNoZWNraW5nIHRoZSBuYW1lIGxpc3RlciAoL3Vz
+ci9iaW4vbm0gLUIpIGludGVyZmFjZS4uLiBCU0Qgbm0KPiBjaGVja2luZyB3aGV0aGVyIGxuIC1z
+IHdvcmtzLi4uIHllcwo+IGNoZWNraW5nIHRoZSBtYXhpbXVtIGxlbmd0aCBvZiBjb21tYW5kIGxp
+bmUgYXJndW1lbnRzLi4uIDE5NjYwODAKPiBjaGVja2luZyB3aGV0aGVyIHRoZSBzaGVsbCB1bmRl
+cnN0YW5kcyBzb21lIFhTSSBjb25zdHJ1Y3RzLi4uIHllcwo+IGNoZWNraW5nIHdoZXRoZXIgdGhl
+IHNoZWxsIHVuZGVyc3RhbmRzICIrPSIuLi4geWVzCj4gY2hlY2tpbmcgaG93IHRvIGNvbnZlcnQg
+cG93ZXJwYzY0LXVua25vd24tbGludXgtZ251IGZpbGUgbmFtZXMgdG8KPiBwb3dlcnBjNjQtdW5r
+bm93bi1saW51eC1nbnUgZm9ybWF0Li4uIGZ1bmNfY29udmVydF9maWxlX25vb3AKPiBjaGVja2lu
+ZyBob3cgdG8gY29udmVydCBwb3dlcnBjNjQtdW5rbm93bi1saW51eC1nbnUgZmlsZSBuYW1lcyB0
+bwo+IHRvb2xjaGFpbiBmb3JtYXQuLi4gZnVuY19jb252ZXJ0X2ZpbGVfbm9vcAo+IGNoZWNraW5n
+IGZvciAvdXNyL2Jpbi9sZCBvcHRpb24gdG8gcmVsb2FkIG9iamVjdCBmaWxlcy4uLiAtcgo+IGNo
+ZWNraW5nIGZvciBvYmpkdW1wLi4uIG9iamR1bXAKPiBjaGVja2luZyBob3cgdG8gcmVjb2duaXpl
+IGRlcGVuZGVudCBsaWJyYXJpZXMuLi4gcGFzc19hbGwKPiBjaGVja2luZyBmb3IgZGxsdG9vbC4u
+LiBubwo+IGNoZWNraW5nIGhvdyB0byBhc3NvY2lhdGUgcnVudGltZSBhbmQgbGluayBsaWJyYXJp
+ZXMuLi4gcHJpbnRmICVzXG4KPiBjaGVja2luZyBmb3IgYXIuLi4gYXIKPiBjaGVja2luZyBmb3Ig
+YXJjaGl2ZXIgQEZJTEUgc3VwcG9ydC4uLiBACj4gY2hlY2tpbmcgZm9yIHN0cmlwLi4uIHN0cmlw
+Cj4gY2hlY2tpbmcgZm9yIHJhbmxpYi4uLiByYW5saWIKPiBjaGVja2luZyBjb21tYW5kIHRvIHBh
+cnNlIC91c3IvYmluL25tIC1CIG91dHB1dCBmcm9tIGdjYyBvYmplY3QuLi4gb2sKPiBjaGVja2lu
+ZyBmb3Igc3lzcm9vdC4uLiBubwo+IGNoZWNraW5nIGZvciBtdC4uLiBubwo+IGNoZWNraW5nIGlm
+IDogaXMgYSBtYW5pZmVzdCB0b29sLi4uIG5vCj4gY2hlY2tpbmcgZm9yIGRsZmNuLmguLi4geWVz
+Cj4gY2hlY2tpbmcgZm9yIG9iamRpci4uLiAubGlicwo+IGNoZWNraW5nIGlmIGdjYyBzdXBwb3J0
+cyAtZm5vLXJ0dGkgLWZuby1leGNlcHRpb25zLi4uIG5vCj4gY2hlY2tpbmcgZm9yIGdjYyBvcHRp
+b24gdG8gcHJvZHVjZSBQSUMuLi4gLWZQSUMgLURQSUMKPiBjaGVja2luZyBpZiBnY2MgUElDIGZs
+YWcgLWZQSUMgLURQSUMgd29ya3MuLi4geWVzCj4gY2hlY2tpbmcgaWYgZ2NjIHN0YXRpYyBmbGFn
+IC1zdGF0aWMgd29ya3MuLi4gbm8KPiBjaGVja2luZyBpZiBnY2Mgc3VwcG9ydHMgLWMgLW8gZmls
+ZS5vLi4uIHllcwo+IGNoZWNraW5nIGlmIGdjYyBzdXBwb3J0cyAtYyAtbyBmaWxlLm8uLi4gKGNh
+Y2hlZCkgeWVzCj4gY2hlY2tpbmcgd2hldGhlciB0aGUgZ2NjIGxpbmtlciAoL3Vzci9iaW4vbGQg
+LW0gZWxmNjRwcGMpIHN1cHBvcnRzCj4gc2hhcmVkIGxpYnJhcmllcy4uLiB5ZXMKPiBjaGVja2lu
+ZyB3aGV0aGVyIC1sYyBzaG91bGQgYmUgZXhwbGljaXRseSBsaW5rZWQgaW4uLi4gbm8KPiBjaGVj
+a2luZyBkeW5hbWljIGxpbmtlciBjaGFyYWN0ZXJpc3RpY3MuLi4gR05VL0xpbnV4IGxkLnNvCj4g
+Y2hlY2tpbmcgaG93IHRvIGhhcmRjb2RlIGxpYnJhcnkgcGF0aHMgaW50byBwcm9ncmFtcy4uLiBp
+bW1lZGlhdGUKPiBjaGVja2luZyB3aGV0aGVyIHN0cmlwcGluZyBsaWJyYXJpZXMgaXMgcG9zc2li
+bGUuLi4geWVzCj4gY2hlY2tpbmcgaWYgbGlidG9vbCBzdXBwb3J0cyBzaGFyZWQgbGlicmFyaWVz
+Li4uIHllcwo+IGNoZWNraW5nIHdoZXRoZXIgdG8gYnVpbGQgc2hhcmVkIGxpYnJhcmllcy4uLiB5
+ZXMKPiBjaGVja2luZyB3aGV0aGVyIHRvIGJ1aWxkIHN0YXRpYyBsaWJyYXJpZXMuLi4geWVzCj4g
+Y2hlY2tpbmcgZm9yIGxkY29uZmlnLi4uIC9zYmluL2xkY29uZmlnCj4gLi9jb25maWd1cmU6IGxp
+bmUgMTIzMzk6IHN5bnRheCBlcnJvciBuZWFyIHVuZXhwZWN0ZWQgdG9rZW4gYGxpYnV1aWQsJwo+
+IC4vY29uZmlndXJlOiBsaW5lIDEyMzM5OiBgUEtHX0NIRUNLX01PRFVMRVMobGlidXVpZCwgdXVp
+ZCknCj4gCj4gCj4gUmVnYXJkcywKPiBSeWFuCgotLSAKSmFlZ2V1ayBLaW0KU2Ftc3VuZwoKCi0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLQpUaGlzIFNGLm5ldCBlbWFpbCBpcyBzcG9uc29yZWQgYnkgV2lu
+ZG93czoKCkJ1aWxkIGZvciBXaW5kb3dzIFN0b3JlLgoKaHR0cDovL3Auc2YubmV0L3NmdS93aW5k
+b3dzLWRldjJkZXYKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5z
+b3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGlu
+Zm8vbGludXgtZjJmcy1kZXZlbAo=
