@@ -1,127 +1,71 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: Re: [PATCH 2/2] f2fs: add sysfs support for controlling the gc_thread
-Date: Wed, 26 Jun 2013 14:10:42 +0900
-Message-ID: <CAKYAXd-NEKCuEyoLwWHLrN165yq7EKRRcz9RknfdbR5EOO6cvQ@mail.gmail.com>
-References: <1369533945-6955-1-git-send-email-linkinjeon@gmail.com>
-	<1369619214.10521.25.camel@kjgkr>
-	<CAKYAXd_QZronHD536LOfeFWLmtCoweRq3gbH94R4_7oKC7hv3w@mail.gmail.com>
-	<1369704867.10521.46.camel@kjgkr>
-	<CAKYAXd-OO5niMiFv+ysStw=c-NQXT4AkTz3m7o1wTRZRd=WYFw@mail.gmail.com>
-	<1372140227.28480.69.camel@kjgkr>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [f2fs-dev] [PATCH] f2fs: Remove the unused argument "sbi" of func
+	destroy_fsync_dnodes()
+Date: Wed, 26 Jun 2013 17:58:14 +0800
+Message-ID: <51CABB36.4060808@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1372140227.28480.69.camel@kjgkr>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1UrmXW-0003Xa-Uk
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 26 Jun 2013 10:01:26 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UrmXU-0007wl-3t for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 26 Jun 2013 10:01:25 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk.kim@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-2013/6/25, Jaegeuk Kim <jaegeuk.kim@samsung.com>:
-> Hi Namjae,
->
-> Sorry for the late reply.
->
-> 2013-05-29 (=EC=88=98), 09:01 +0900, Namjae Jeon:
->> >> I have thought more after getting your reply.
->> >> f2fs_cleaner(a tentative name) is that provide the following seve=
-ral
->> >> options to control gc thread.
->> >> 1. start forground gc thread to clean all invalid blocks.
->> >> 2. stop number 1(fg) working.
->> >> 3. set new tunning parameter (min/max/no_gc).
->> >> 4. get status of current f2fs.
->> >> We will provide user level util in f2fs tools and sysfs at the sa=
-me
->> >> time.
->> >> It is useful if the console level user/App user can change them
->> >> easily.
->
-> I think we'd better support configurable min/max/no_gc times only.
-> And I don't think users need to do foreground GCs explicitly, since
-> foreground GCs should be done only when the file system suffers from =
-the
-> shortage of free space. The foreground GC is the most costly operatio=
-n
-> so that I'd like to avoid triggering it as much as possible even if
-> users want to do.
->
-> Otherwise, if users would like to move data, they can just adjust
-> background GC times appropriately and then do sync if they really mov=
-e
-> data synchronously.
-Hi Jaegeuk.
+Destroy_fsync_dnodes() is a simple list-cleanup func, so delete the unused and unrelated f2fs_sb_info argument of it.
 
-Agreed, we can provide only time update values to the user and leave
-the user to work out the setting as per the environment.
 
->
->> >>
->> >> >
->> >> > Afterwards, it is worth to add some information to
->> >> > Document/filesystems/f2fs.txt.
->> >> Yes, It will be included in next series patches.
->> >> How do you think ? If you agree my suggestion, I will start to wo=
-rk
->> >> the above jobs.
->> Hi. Jaegeuk.
->> >
->> > As I described, basically I agreed that this kind of interfaces an=
-d
->> > user
->> > apps are definitely beneficial to the f2fs users.
->> >
->> > But wrt design and implementation of new interfaces, we'd better
->> > discuss
->> > how to use them in more detail and what information should be need=
-ed
->> > for
->> > user-made cleaner.
->> > After then, we'd better start to design the interfaces as well as =
-user
->> > scenarios clearly.
->> Okay. I agree.
->>
->> >
->> > IMO, the following issues should be addressed.
->> > - how to know system idle time by users?
->> e.g. When playing PVR function, In case of DTV, App try to read data
->> from filesystem of usb device.
->> now that, user app will never access flash rw partition and don't ne=
-ed
->> to access there.
->> I think that we can cleverly use such time to avoid or make slowly
->> come in the possible performance regression later.
->
-> Okay.
->
->>
->> > - any priority scheme for cleaning?
->> Could you plz tell me a little more detail ?
->
-> I meant, as well as the GC times, user also gives a kind of status li=
-ke:
-> LONG_IDLE, SHORT_IDLE, something like that.
-> Therefore, how about using this information to select a victim select=
-ion
-> policy between cost-benefit and greedy algorithms?
-currently we will provide the option of updating the time values from
-the =E2=80=98sysfs=E2=80=99 interface, and the GC policy is selected by=
- default from
-GC thread based upon the gc type, BG or FG.
-So, do you mean we should provide an option to select the default GC
-policy for the user using =E2=80=98sysfs=E2=80=99 interface? Like, if t=
-he user sets
-=E2=80=9CLONG_IDLE=E2=80=9D =E2=80=93 we choose Cost Benefit and in cas=
-e of SHORT_IDLE
-=E2=80=9CGreedy=E2=80=9D ? Please elaborate more on this.
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/recovery.c |    5 ++---
+ 1 files changed, 2 insertions(+), 3 deletions(-)
 
-Thanks.
->
->>
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 9db8239..d56d951 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -192,8 +192,7 @@ out:
+        return err;
+ }
+ 
+-static void destroy_fsync_dnodes(struct f2fs_sb_info *sbi,
+-                                       struct list_head *head)
++static void destroy_fsync_dnodes(struct list_head *head)
+ {
+        struct fsync_inode_entry *entry, *tmp;
+ 
+@@ -438,7 +437,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
+        err = recover_data(sbi, &inode_list, CURSEG_WARM_NODE);
+        BUG_ON(!list_empty(&inode_list));
+ out:
+-       destroy_fsync_dnodes(sbi, &inode_list);
++       destroy_fsync_dnodes(&inode_list);
+        kmem_cache_destroy(fsync_entry_slab);
+        sbi->por_doing = 0;
+        if (!err)
+-- 
+1.7.7
+
+------------------------------------------------------------------------------
+This SF.net email is sponsored by Windows:
+
+Build for Windows Store.
+
+http://p.sf.net/sfu/windows-dev2dev
