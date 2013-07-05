@@ -1,130 +1,130 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix readdir incorrectness
-Date: Fri, 05 Jul 2013 17:28:12 +0900
-Message-ID: <1373012892.26443.1.camel@kjgkr>
-References: <1373001730-6928-1-git-send-email-jaegeuk.kim@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Uv1NU-0003VR-Mw
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 05 Jul 2013 08:28:28 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Uv1NR-0001Rw-87 for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 05 Jul 2013 08:28:28 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MPG006GSFJ6YPA0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 05 Jul 2013 17:28:18 +0900 (KST)
-In-reply-to: <1373001730-6928-1-git-send-email-jaegeuk.kim@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs: add proc entry to monitor current usage of segments
+Date: Fri, 05 Jul 2013 17:42:29 +0900
+Message-ID: <1373013749-10370-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Chang log from v1:
- o fix another scenario
+You can monitor valid block counts of whole segments in:
+  /proc/fs/f2fs/sdb1/segment_info.
 
->From 2ee3c8144187ab230d0f47f9b95e5406af87ada8 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Fri, 5 Jul 2013 14:06:04 +0900
-Subject: [PATCH] f2fs: fix readdir incorrectness
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-linux-f2fs-devel@lists.sourceforge.net
-
-In the previous Al Viro's readdir patch set, there occurs a bug when
-running
-xfstest: 006 as follows.
-
-[Error output]
-alpha size = 4, name length = 6, total files = 4096, nproc=1
-1023 files created
-rm: cannot remove `/mnt/f2fs/permname.15150/a': Directory not empty
-
-[Correct output]
-alpha size = 4, name length = 6, total files = 4096, nproc=1
-4097 files created
-
-This bug is due to the misupdate of directory position in ctx.
-So, this patch fixes this.
-
-CC: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/dir.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/super.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 47 insertions(+)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 9d1cd42..dffc4f7 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -634,19 +634,19 @@ static int f2fs_readdir(struct file *file, struct
-dir_context *ctx)
- 			if (bit_pos >= NR_DENTRY_IN_BLOCK)
- 				break;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 82e187f..e3a611d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -365,6 +365,7 @@ enum page_type {
  
--			ctx->pos += bit_pos - start_bit_pos;
- 			de = &dentry_blk->dentry[bit_pos];
- 			if (de->file_type < F2FS_FT_MAX)
- 				d_type = f2fs_filetype_table[de->file_type];
- 			else
- 				d_type = DT_UNKNOWN;
- 			if (!dir_emit(ctx,
--				      dentry_blk->filename[bit_pos],
--				      le16_to_cpu(de->name_len),
--				      le32_to_cpu(de->ino), d_type))
--				goto success;
--			slots = GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
--			bit_pos += slots;
-+					dentry_blk->filename[bit_pos],
-+					le16_to_cpu(de->name_len),
-+					le32_to_cpu(de->ino), d_type))
-+				goto stop;
+ struct f2fs_sb_info {
+ 	struct super_block *sb;			/* pointer to VFS super block */
++	struct proc_dir_entry *s_proc;		/* proc entry */
+ 	struct buffer_head *raw_super_buf;	/* buffer head of raw sb */
+ 	struct f2fs_super_block *raw_super;	/* raw super block pointer */
+ 	int s_dirty;				/* dirty flag for checkpoint */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index d48d995..1ed0279 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -18,6 +18,7 @@
+ #include <linux/parser.h>
+ #include <linux/mount.h>
+ #include <linux/seq_file.h>
++#include <linux/proc_fs.h>
+ #include <linux/random.h>
+ #include <linux/exportfs.h>
+ #include <linux/blkdev.h>
+@@ -31,6 +32,7 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/f2fs.h>
+ 
++static struct proc_dir_entry *f2fs_proc_root;
+ static struct kmem_cache *f2fs_inode_cachep;
+ 
+ enum {
+@@ -404,6 +406,11 @@ static void f2fs_put_super(struct super_block *sb)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+ 
++	if (sbi->s_proc) {
++		remove_proc_entry("segment_info", sbi->s_proc);
++		remove_proc_entry(sb->s_id, f2fs_proc_root);
++	}
 +
-+			bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-+			ctx->pos = n * NR_DENTRY_IN_BLOCK + bit_ops;
- 		}
- 		bit_pos = 0;
- 		ctx->pos = (n + 1) * NR_DENTRY_IN_BLOCK;
-@@ -654,7 +654,7 @@ static int f2fs_readdir(struct file *file, struct
-dir_context *ctx)
- 		f2fs_put_page(dentry_page, 1);
- 		dentry_page = NULL;
- 	}
--success:
-+stop:
- 	if (dentry_page && !IS_ERR(dentry_page)) {
- 		kunmap(dentry_page);
- 		f2fs_put_page(dentry_page, 1);
+ 	f2fs_destroy_stats(sbi);
+ 	stop_gc_thread(sbi);
+ 
+@@ -521,6 +528,36 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 	return 0;
+ }
+ 
++static int segment_info_seq_show(struct seq_file *seq, void *offset)
++{
++	struct super_block *sb = seq->private;
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++	unsigned int total_segs = le32_to_cpu(sbi->raw_super->segment_count_main);
++	int i;
++
++	for (i = 0; i < total_segs; i++) {
++		seq_printf(seq, "%u", get_valid_blocks(sbi, i, 1));
++		if (i != 0 && (i % 10) == 0)
++			seq_puts(seq, "\n");
++		else
++			seq_puts(seq, " ");
++	}
++	return 0;
++}
++
++static int segment_info_open_fs(struct inode *inode, struct file *file)
++{
++	return single_open(file, segment_info_seq_show, PDE_DATA(inode));
++}
++
++static const struct file_operations f2fs_seq_segment_info_fops = {
++	.owner = THIS_MODULE,
++	.open = segment_info_open_fs,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
++
+ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -947,6 +984,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (err)
+ 		goto fail;
+ 
++	if (f2fs_proc_root)
++		sbi->s_proc = proc_mkdir(sb->s_id, f2fs_proc_root);
++
++	if (sbi->s_proc)
++		proc_create_data("segment_info", S_IRUGO, sbi->s_proc,
++				 &f2fs_seq_segment_info_fops, sb);
++
+ 	if (test_opt(sbi, DISCARD)) {
+ 		struct request_queue *q = bdev_get_queue(sb->s_bdev);
+ 		if (!blk_queue_discard(q))
+@@ -1033,12 +1077,14 @@ static int __init init_f2fs_fs(void)
+ 	if (err)
+ 		goto fail;
+ 	f2fs_create_root_stats();
++	f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
+ fail:
+ 	return err;
+ }
+ 
+ static void __exit exit_f2fs_fs(void)
+ {
++	remove_proc_entry("fs/f2fs", NULL);
+ 	f2fs_destroy_root_stats();
+ 	unregister_filesystem(&f2fs_fs_type);
+ 	destroy_checkpoint_caches();
 -- 
 1.8.3.1.437.g0dbd812
-
-
-
--- 
-Jaegeuk Kim
-Samsung
-
-
-------------------------------------------------------------------------------
-This SF.net email is sponsored by Windows:
-
-Build for Windows Store.
-
-http://p.sf.net/sfu/windows-dev2dev
