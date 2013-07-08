@@ -1,27 +1,30 @@
-From: folkert <folkert@vanheusden.com>
-Subject: [f2fs-dev] fsck: assertion failed
-Date: Sun, 7 Jul 2013 12:19:30 +0200
-Message-ID: <20130707101930.GD19245@belle.intranet.vanheusden.com>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [f2fs-dev] fsck: assertion failed
+Date: Mon, 08 Jul 2013 13:58:27 +0900
+Message-ID: <1373259507.14296.24.camel@lcm>
+References: <20130707101930.GD19245@belle.intranet.vanheusden.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <folkert@vanheusden.com>) id 1Uvm4C-0004wU-Au
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cm224.lee@samsung.com>) id 1Uw3YU-0006Im-5D
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 07 Jul 2013 10:19:40 +0000
-Received: from keetweej.vanheusden.com ([80.101.105.103])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1Uvm49-0007UA-Kv
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 07 Jul 2013 10:19:40 +0000
-Received: from belle.intranet.vanheusden.com (unknown [192.168.64.100])
-	by keetweej.vanheusden.com (Postfix) with ESMTP id 3A536162EC8
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun,  7 Jul 2013 12:19:31 +0200 (CEST)
-Content-Disposition: inline
+	Mon, 08 Jul 2013 05:00:06 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Uw3YQ-0005B8-Aj for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 08 Jul 2013 05:00:06 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MPL00CD2PVM5440@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 08 Jul 2013 13:59:55 +0900 (KST)
+In-reply-to: <20130707101930.GD19245@belle.intranet.vanheusden.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,71 +34,68 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: folkert <folkert@vanheusden.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hello,
-
-Trying to fsck an f2fs volume. This gives an assertion failed:
-
-+--------------------------------------------------------+
-| Checkpoint                                             |
-+--------------------------------------------------------+  
-checkpoint_ver                          [0x      82 : 130]
-user_block_count                        [0x 1bcfe00 : 29163008]  
-valid_block_count                       [0x  cb2600 : 13313536]
-rsvd_segment_count                      [0x      19 : 25]  
-overprov_segment_count                  [0x     bce : 3022]
-free_segment_count                      [0x    84b3 : 33971]  
-alloc_type[CURSEG_HOT_NODE]             [0x       0 : 0]
-alloc_type[CURSEG_WARM_NODE]            [0x       0 : 0]  
-alloc_type[CURSEG_COLD_NODE]            [0x       0 : 0]
-cur_node_segno[0]                       [0x    e4e6 : 58598]  
-cur_node_segno[1]                       [0x    e546 : 58694]  
-cur_node_segno[2]                       [0x    e902 : 59650]
-cur_node_blkoff[0]                      [0x      5c : 92]  
-cur_node_blkoff[1]                      [0x      91 : 145]
-cur_node_blkoff[2]                      [0x     1b8 : 440]  
-alloc_type[CURSEG_HOT_DATA]             [0x       0 : 0]
-alloc_type[CURSEG_WARM_DATA]            [0x       0 : 0]  
-alloc_type[CURSEG_COLD_DATA]            [0x       0 : 0]
-cur_data_segno[0]                       [0x    e3ff : 58367]  
-cur_data_segno[1]                       [0x    219e : 8606]
-cur_data_segno[2]                       [0x    e4a3 : 58531]  
-cur_data_blkoff[0]                      [0x     152 : 338]
-cur_data_blkoff[1]                      [0x      63 : 99]  
-cur_data_blkoff[2]                      [0x     11b : 283]
-ckpt_flags                              [0x       5 : 5]  
-cp_pack_total_block_count               [0x       7 : 7]
-cp_pack_start_sum                       [0x       1 : 1]  
-valid_node_count                        [0x   ccdba : 839098]
-valid_inode_count                       [0x   cb031 : 831537]  
-next_free_nid                           [0x  113607 : 1127943]
-sit_ver_bitmap_bytesize                 [0x      c0 : 192]  
-nat_ver_bitmap_bytesize                 [0x     e80 : 3712]
-checksum_offset                         [0x     ffc : 4092]  
-elapsed_time                            [0x  2d76c1 : 2979521]
-sit_nat_version_bitmap[0]               [0x      81 : 129]  
-
-
-[build_nat_area_bitmap:1031] valid nat entries (block_addr != 0x0) [0x   ce30b : 844555]  
-[build_sit_area_bitmap: 937] Blocks [0xcb2600] Free Segs [0x84b3]
-
-Assertion failed!
-[fsck_chk_dentry_blk: 509] le32_to_cpu(de_blk->dentry[i].hash_code) == hash_code
-
-
-
-Folkert van Heusden
-
--- 
-Ever wonder what is out there? Any alien races? Then please support
-the seti@home project: setiathome.ssl.berkeley.edu
-----------------------------------------------------------------------
-Phone: +31-6-41278122, PGP-key: 1F28D8AE, www.vanheusden.com
-
-------------------------------------------------------------------------------
-This SF.net email is sponsored by Windows:
-
-Build for Windows Store.
-
-http://p.sf.net/sfu/windows-dev2dev
+ClRoYW5rcyBmb3IgeW91ciByZXBvcnQuCgpJIGhhdmUgc29tZSBxdWVzdGlvbnMuIERpZCB5b3Ug
+dW1vdW50IGFuZCByYW4gZnNjaz8gT3RoZXJ3aXNlLCBhZnRlciBTUE8KKFN1ZGRlbiBQb3dlciBP
+ZmYpIGRpZCB5b3UgZG8gaXQ/CgpJIHdpc2ggdG8gZ2V0IGEgZHVtcCBpbWFnZSBvZiB5b3VyIGRp
+c2suIEhvd2V2ZXIgeW91ciBkaXNrIGlzIHN1Y2ggbGFyZ2UKb25lIHRoYXQgSSBjb3VsZG4ndCBn
+ZXQgaXQuIFNvIEkgaGF2ZSBhIHJlcXVlc3QuCkNvdWxkIHlvdSB0cnkgaXQgaW4gc21hbGxlciBw
+YXJ0aXRpb24gYWdhaW4gd2hldGhlciBzdWNjZWVkIG9yIGZhaWw/CgoKT24g7J28LCAyMDEzLTA3
+LTA3IGF0IDEyOjE5ICswMjAwLCBmb2xrZXJ0IHdyb3RlOgo+IEhlbGxvLAo+IAo+IFRyeWluZyB0
+byBmc2NrIGFuIGYyZnMgdm9sdW1lLiBUaGlzIGdpdmVzIGFuIGFzc2VydGlvbiBmYWlsZWQ6Cj4g
+Cj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tKwo+IHwgQ2hlY2twb2ludCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHwKPiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0rICAKPiBjaGVja3BvaW50X3ZlciAgICAgICAgICAgICAgICAgICAgICAgICAg
+WzB4ICAgICAgODIgOiAxMzBdCj4gdXNlcl9ibG9ja19jb3VudCAgICAgICAgICAgICAgICAgICAg
+ICAgIFsweCAxYmNmZTAwIDogMjkxNjMwMDhdICAKPiB2YWxpZF9ibG9ja19jb3VudCAgICAgICAg
+ICAgICAgICAgICAgICAgWzB4ICBjYjI2MDAgOiAxMzMxMzUzNl0KPiByc3ZkX3NlZ21lbnRfY291
+bnQgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgMTkgOiAyNV0gIAo+IG92ZXJwcm92X3Nl
+Z21lbnRfY291bnQgICAgICAgICAgICAgICAgICBbMHggICAgIGJjZSA6IDMwMjJdCj4gZnJlZV9z
+ZWdtZW50X2NvdW50ICAgICAgICAgICAgICAgICAgICAgIFsweCAgICA4NGIzIDogMzM5NzFdICAK
+PiBhbGxvY190eXBlW0NVUlNFR19IT1RfTk9ERV0gICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAw
+XQo+IGFsbG9jX3R5cGVbQ1VSU0VHX1dBUk1fTk9ERV0gICAgICAgICAgICBbMHggICAgICAgMCA6
+IDBdICAKPiBhbGxvY190eXBlW0NVUlNFR19DT0xEX05PREVdICAgICAgICAgICAgWzB4ICAgICAg
+IDAgOiAwXQo+IGN1cl9ub2RlX3NlZ25vWzBdICAgICAgICAgICAgICAgICAgICAgICBbMHggICAg
+ZTRlNiA6IDU4NTk4XSAgCj4gY3VyX25vZGVfc2Vnbm9bMV0gICAgICAgICAgICAgICAgICAgICAg
+IFsweCAgICBlNTQ2IDogNTg2OTRdICAKPiBjdXJfbm9kZV9zZWdub1syXSAgICAgICAgICAgICAg
+ICAgICAgICAgWzB4ICAgIGU5MDIgOiA1OTY1MF0KPiBjdXJfbm9kZV9ibGtvZmZbMF0gICAgICAg
+ICAgICAgICAgICAgICAgWzB4ICAgICAgNWMgOiA5Ml0gIAo+IGN1cl9ub2RlX2Jsa29mZlsxXSAg
+ICAgICAgICAgICAgICAgICAgICBbMHggICAgICA5MSA6IDE0NV0KPiBjdXJfbm9kZV9ibGtvZmZb
+Ml0gICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAxYjggOiA0NDBdICAKPiBhbGxvY190eXBl
+W0NVUlNFR19IT1RfREFUQV0gICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAwXQo+IGFsbG9jX3R5
+cGVbQ1VSU0VHX1dBUk1fREFUQV0gICAgICAgICAgICBbMHggICAgICAgMCA6IDBdICAKPiBhbGxv
+Y190eXBlW0NVUlNFR19DT0xEX0RBVEFdICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAwXQo+IGN1
+cl9kYXRhX3NlZ25vWzBdICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgZTNmZiA6IDU4MzY3
+XSAgCj4gY3VyX2RhdGFfc2Vnbm9bMV0gICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAyMTll
+IDogODYwNl0KPiBjdXJfZGF0YV9zZWdub1syXSAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAg
+IGU0YTMgOiA1ODUzMV0gIAo+IGN1cl9kYXRhX2Jsa29mZlswXSAgICAgICAgICAgICAgICAgICAg
+ICBbMHggICAgIDE1MiA6IDMzOF0KPiBjdXJfZGF0YV9ibGtvZmZbMV0gICAgICAgICAgICAgICAg
+ICAgICAgWzB4ICAgICAgNjMgOiA5OV0gIAo+IGN1cl9kYXRhX2Jsa29mZlsyXSAgICAgICAgICAg
+ICAgICAgICAgICBbMHggICAgIDExYiA6IDI4M10KPiBja3B0X2ZsYWdzICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgWzB4ICAgICAgIDUgOiA1XSAgCj4gY3BfcGFja190b3RhbF9ibG9ja19j
+b3VudCAgICAgICAgICAgICAgIFsweCAgICAgICA3IDogN10KPiBjcF9wYWNrX3N0YXJ0X3N1bSAg
+ICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgIDEgOiAxXSAgCj4gdmFsaWRfbm9kZV9jb3Vu
+dCAgICAgICAgICAgICAgICAgICAgICAgIFsweCAgIGNjZGJhIDogODM5MDk4XQo+IHZhbGlkX2lu
+b2RlX2NvdW50ICAgICAgICAgICAgICAgICAgICAgICBbMHggICBjYjAzMSA6IDgzMTUzN10gIAo+
+IG5leHRfZnJlZV9uaWQgICAgICAgICAgICAgICAgICAgICAgICAgICBbMHggIDExMzYwNyA6IDEx
+Mjc5NDNdCj4gc2l0X3Zlcl9iaXRtYXBfYnl0ZXNpemUgICAgICAgICAgICAgICAgIFsweCAgICAg
+IGMwIDogMTkyXSAgCj4gbmF0X3Zlcl9iaXRtYXBfYnl0ZXNpemUgICAgICAgICAgICAgICAgIFsw
+eCAgICAgZTgwIDogMzcxMl0KPiBjaGVja3N1bV9vZmZzZXQgICAgICAgICAgICAgICAgICAgICAg
+ICAgWzB4ICAgICBmZmMgOiA0MDkyXSAgCj4gZWxhcHNlZF90aW1lICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIFsweCAgMmQ3NmMxIDogMjk3OTUyMV0KPiBzaXRfbmF0X3ZlcnNpb25fYml0bWFw
+WzBdICAgICAgICAgICAgICAgWzB4ICAgICAgODEgOiAxMjldICAKPiAKPiAKPiBbYnVpbGRfbmF0
+X2FyZWFfYml0bWFwOjEwMzFdIHZhbGlkIG5hdCBlbnRyaWVzIChibG9ja19hZGRyICE9IDB4MCkg
+WzB4ICAgY2UzMGIgOiA4NDQ1NTVdICAKPiBbYnVpbGRfc2l0X2FyZWFfYml0bWFwOiA5MzddIEJs
+b2NrcyBbMHhjYjI2MDBdIEZyZWUgU2VncyBbMHg4NGIzXQo+IAo+IEFzc2VydGlvbiBmYWlsZWQh
+Cj4gW2ZzY2tfY2hrX2RlbnRyeV9ibGs6IDUwOV0gbGUzMl90b19jcHUoZGVfYmxrLT5kZW50cnlb
+aV0uaGFzaF9jb2RlKSA9PSBoYXNoX2NvZGUKPiAKPiAKPiAKPiBGb2xrZXJ0IHZhbiBIZXVzZGVu
+Cj4gCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpUaGlzIFNGLm5ldCBlbWFpbCBpcyBzcG9uc29y
+ZWQgYnkgV2luZG93czoKCkJ1aWxkIGZvciBXaW5kb3dzIFN0b3JlLgoKaHR0cDovL3Auc2YubmV0
+L3NmdS93aW5kb3dzLWRldjJkZXYKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
+bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
+dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
