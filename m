@@ -1,30 +1,26 @@
-From: Changman Lee <cm224.lee@samsung.com>
+From: folkert <folkert@vanheusden.com>
 Subject: Re: [f2fs-dev] fsck: assertion failed
-Date: Mon, 08 Jul 2013 13:58:27 +0900
-Message-ID: <1373259507.14296.24.camel@lcm>
+Date: Mon, 8 Jul 2013 08:47:40 +0200
+Message-ID: <20130708064738.GI19245@belle.intranet.vanheusden.com>
 References: <20130707101930.GD19245@belle.intranet.vanheusden.com>
+	<1373259507.14296.24.camel@lcm>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cm224.lee@samsung.com>) id 1Uw3YU-0006Im-5D
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <folkert@vanheusden.com>) id 1Uw5En-0005Vh-4I
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 08 Jul 2013 05:00:06 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Uw3YQ-0005B8-Aj for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 08 Jul 2013 05:00:06 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MPL00CD2PVM5440@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 08 Jul 2013 13:59:55 +0900 (KST)
-In-reply-to: <20130707101930.GD19245@belle.intranet.vanheusden.com>
+	Mon, 08 Jul 2013 06:47:53 +0000
+Received: from keetweej.vanheusden.com ([80.101.105.103])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1Uw5Ej-00017z-CG
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 08 Jul 2013 06:47:52 +0000
+Content-Disposition: inline
+In-Reply-To: <1373259507.14296.24.camel@lcm>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,68 +30,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: folkert <folkert@vanheusden.com>
+To: Changman Lee <cm224.lee@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-ClRoYW5rcyBmb3IgeW91ciByZXBvcnQuCgpJIGhhdmUgc29tZSBxdWVzdGlvbnMuIERpZCB5b3Ug
-dW1vdW50IGFuZCByYW4gZnNjaz8gT3RoZXJ3aXNlLCBhZnRlciBTUE8KKFN1ZGRlbiBQb3dlciBP
-ZmYpIGRpZCB5b3UgZG8gaXQ/CgpJIHdpc2ggdG8gZ2V0IGEgZHVtcCBpbWFnZSBvZiB5b3VyIGRp
-c2suIEhvd2V2ZXIgeW91ciBkaXNrIGlzIHN1Y2ggbGFyZ2UKb25lIHRoYXQgSSBjb3VsZG4ndCBn
-ZXQgaXQuIFNvIEkgaGF2ZSBhIHJlcXVlc3QuCkNvdWxkIHlvdSB0cnkgaXQgaW4gc21hbGxlciBw
-YXJ0aXRpb24gYWdhaW4gd2hldGhlciBzdWNjZWVkIG9yIGZhaWw/CgoKT24g7J28LCAyMDEzLTA3
-LTA3IGF0IDEyOjE5ICswMjAwLCBmb2xrZXJ0IHdyb3RlOgo+IEhlbGxvLAo+IAo+IFRyeWluZyB0
-byBmc2NrIGFuIGYyZnMgdm9sdW1lLiBUaGlzIGdpdmVzIGFuIGFzc2VydGlvbiBmYWlsZWQ6Cj4g
-Cj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tKwo+IHwgQ2hlY2twb2ludCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHwKPiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0rICAKPiBjaGVja3BvaW50X3ZlciAgICAgICAgICAgICAgICAgICAgICAgICAg
-WzB4ICAgICAgODIgOiAxMzBdCj4gdXNlcl9ibG9ja19jb3VudCAgICAgICAgICAgICAgICAgICAg
-ICAgIFsweCAxYmNmZTAwIDogMjkxNjMwMDhdICAKPiB2YWxpZF9ibG9ja19jb3VudCAgICAgICAg
-ICAgICAgICAgICAgICAgWzB4ICBjYjI2MDAgOiAxMzMxMzUzNl0KPiByc3ZkX3NlZ21lbnRfY291
-bnQgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgMTkgOiAyNV0gIAo+IG92ZXJwcm92X3Nl
-Z21lbnRfY291bnQgICAgICAgICAgICAgICAgICBbMHggICAgIGJjZSA6IDMwMjJdCj4gZnJlZV9z
-ZWdtZW50X2NvdW50ICAgICAgICAgICAgICAgICAgICAgIFsweCAgICA4NGIzIDogMzM5NzFdICAK
-PiBhbGxvY190eXBlW0NVUlNFR19IT1RfTk9ERV0gICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAw
-XQo+IGFsbG9jX3R5cGVbQ1VSU0VHX1dBUk1fTk9ERV0gICAgICAgICAgICBbMHggICAgICAgMCA6
-IDBdICAKPiBhbGxvY190eXBlW0NVUlNFR19DT0xEX05PREVdICAgICAgICAgICAgWzB4ICAgICAg
-IDAgOiAwXQo+IGN1cl9ub2RlX3NlZ25vWzBdICAgICAgICAgICAgICAgICAgICAgICBbMHggICAg
-ZTRlNiA6IDU4NTk4XSAgCj4gY3VyX25vZGVfc2Vnbm9bMV0gICAgICAgICAgICAgICAgICAgICAg
-IFsweCAgICBlNTQ2IDogNTg2OTRdICAKPiBjdXJfbm9kZV9zZWdub1syXSAgICAgICAgICAgICAg
-ICAgICAgICAgWzB4ICAgIGU5MDIgOiA1OTY1MF0KPiBjdXJfbm9kZV9ibGtvZmZbMF0gICAgICAg
-ICAgICAgICAgICAgICAgWzB4ICAgICAgNWMgOiA5Ml0gIAo+IGN1cl9ub2RlX2Jsa29mZlsxXSAg
-ICAgICAgICAgICAgICAgICAgICBbMHggICAgICA5MSA6IDE0NV0KPiBjdXJfbm9kZV9ibGtvZmZb
-Ml0gICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAxYjggOiA0NDBdICAKPiBhbGxvY190eXBl
-W0NVUlNFR19IT1RfREFUQV0gICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAwXQo+IGFsbG9jX3R5
-cGVbQ1VSU0VHX1dBUk1fREFUQV0gICAgICAgICAgICBbMHggICAgICAgMCA6IDBdICAKPiBhbGxv
-Y190eXBlW0NVUlNFR19DT0xEX0RBVEFdICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAwXQo+IGN1
-cl9kYXRhX3NlZ25vWzBdICAgICAgICAgICAgICAgICAgICAgICBbMHggICAgZTNmZiA6IDU4MzY3
-XSAgCj4gY3VyX2RhdGFfc2Vnbm9bMV0gICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAyMTll
-IDogODYwNl0KPiBjdXJfZGF0YV9zZWdub1syXSAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAg
-IGU0YTMgOiA1ODUzMV0gIAo+IGN1cl9kYXRhX2Jsa29mZlswXSAgICAgICAgICAgICAgICAgICAg
-ICBbMHggICAgIDE1MiA6IDMzOF0KPiBjdXJfZGF0YV9ibGtvZmZbMV0gICAgICAgICAgICAgICAg
-ICAgICAgWzB4ICAgICAgNjMgOiA5OV0gIAo+IGN1cl9kYXRhX2Jsa29mZlsyXSAgICAgICAgICAg
-ICAgICAgICAgICBbMHggICAgIDExYiA6IDI4M10KPiBja3B0X2ZsYWdzICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgWzB4ICAgICAgIDUgOiA1XSAgCj4gY3BfcGFja190b3RhbF9ibG9ja19j
-b3VudCAgICAgICAgICAgICAgIFsweCAgICAgICA3IDogN10KPiBjcF9wYWNrX3N0YXJ0X3N1bSAg
-ICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAgIDEgOiAxXSAgCj4gdmFsaWRfbm9kZV9jb3Vu
-dCAgICAgICAgICAgICAgICAgICAgICAgIFsweCAgIGNjZGJhIDogODM5MDk4XQo+IHZhbGlkX2lu
-b2RlX2NvdW50ICAgICAgICAgICAgICAgICAgICAgICBbMHggICBjYjAzMSA6IDgzMTUzN10gIAo+
-IG5leHRfZnJlZV9uaWQgICAgICAgICAgICAgICAgICAgICAgICAgICBbMHggIDExMzYwNyA6IDEx
-Mjc5NDNdCj4gc2l0X3Zlcl9iaXRtYXBfYnl0ZXNpemUgICAgICAgICAgICAgICAgIFsweCAgICAg
-IGMwIDogMTkyXSAgCj4gbmF0X3Zlcl9iaXRtYXBfYnl0ZXNpemUgICAgICAgICAgICAgICAgIFsw
-eCAgICAgZTgwIDogMzcxMl0KPiBjaGVja3N1bV9vZmZzZXQgICAgICAgICAgICAgICAgICAgICAg
-ICAgWzB4ICAgICBmZmMgOiA0MDkyXSAgCj4gZWxhcHNlZF90aW1lICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIFsweCAgMmQ3NmMxIDogMjk3OTUyMV0KPiBzaXRfbmF0X3ZlcnNpb25fYml0bWFw
-WzBdICAgICAgICAgICAgICAgWzB4ICAgICAgODEgOiAxMjldICAKPiAKPiAKPiBbYnVpbGRfbmF0
-X2FyZWFfYml0bWFwOjEwMzFdIHZhbGlkIG5hdCBlbnRyaWVzIChibG9ja19hZGRyICE9IDB4MCkg
-WzB4ICAgY2UzMGIgOiA4NDQ1NTVdICAKPiBbYnVpbGRfc2l0X2FyZWFfYml0bWFwOiA5MzddIEJs
-b2NrcyBbMHhjYjI2MDBdIEZyZWUgU2VncyBbMHg4NGIzXQo+IAo+IEFzc2VydGlvbiBmYWlsZWQh
-Cj4gW2ZzY2tfY2hrX2RlbnRyeV9ibGs6IDUwOV0gbGUzMl90b19jcHUoZGVfYmxrLT5kZW50cnlb
-aV0uaGFzaF9jb2RlKSA9PSBoYXNoX2NvZGUKPiAKPiAKPiAKPiBGb2xrZXJ0IHZhbiBIZXVzZGVu
-Cj4gCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpUaGlzIFNGLm5ldCBlbWFpbCBpcyBzcG9uc29y
-ZWQgYnkgV2luZG93czoKCkJ1aWxkIGZvciBXaW5kb3dzIFN0b3JlLgoKaHR0cDovL3Auc2YubmV0
-L3NmdS93aW5kb3dzLWRldjJkZXYKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
-bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
-dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+> Thanks for your report.
+> I have some questions. Did you umount and ran fsck? Otherwise, after SPO
+> (Sudden Power Off) did you do it?
+
+The system had a SPO yes. The fsck was on an unmounted filesytem.
+
+> I wish to get a dump image of your disk. However your disk is such large
+> one that I couldn't get it. So I have a request.
+> Could you try it in smaller partition again whether succeed or fail?
+
+I cannot, of course, give a filesystem dump as that disk contains rather
+private data.
+
+
+Folkert van Heusden
+
+-- 
+www.vanheusden.com/multitail - multitail is tail on steroids. multiple
+               windows, filtering, coloring, anything you can think of
+----------------------------------------------------------------------
+Phone: +31-6-41278122, PGP-key: 1F28D8AE, www.vanheusden.com
+
+------------------------------------------------------------------------------
+This SF.net email is sponsored by Windows:
+
+Build for Windows Store.
+
+http://p.sf.net/sfu/windows-dev2dev
