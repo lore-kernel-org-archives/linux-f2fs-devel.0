@@ -1,115 +1,332 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [f2fs-dev] [PATCH RESEND] f2fs: Modify do_garbage_collect() to
- collect all the segs in once
-Date: Mon, 15 Jul 2013 09:47:13 +0800
-Message-ID: <51E354A1.9060109@cn.fujitsu.com>
-References: <51DF996A.4010803@cn.fujitsu.com> <1373846174.26443.6.camel@kjgkr>
+Subject: [PATCH] f2fs: introduce help function F2FS_NODE()
+Date: Mon, 15 Jul 2013 17:57:38 +0800
+Message-ID: <51E3C792.4060202@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1UyXwI-0001Z4-Dv
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Jul 2013 01:50:58 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1UyXwE-0002SL-6L for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Jul 2013 01:50:58 +0000
-In-Reply-To: <1373846174.26443.6.camel@kjgkr>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kim <jaegeuk.kim@samsung.com>
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gMDcvMTUvMjAxMyAwNzo1NiBBTSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cgo+IEhpIEd1LAo+IAoK
-SGkgS2ltLAoKPiBTb3JyeSBmb3IgdGhlIGRlbGF5Lgo+IENvdWxkIHlvdSBleHBsYWluIHdoeSB0
-aGlzIHNob3VsZCBiZSBhcHBsaWVkPwoKPiAKPiBJTU8sIG5vdGhpbmcgd2FzIGRpZmZlcmVudDog
-bm8gcmVtb3ZhbCBvZiBsb29wcywgbm8gYmV0dGVyIGNvZGUKPiByZWFkYWJpbGl0eSwgbm8gcGVy
-Zm9ybWFuY2UgaW1wcm92ZW1lbnQuCj4gUmF0aGVyIHRoYW4gdGhhdCwgaXQgc2VlbXMgdGhhdCBp
-dCdkIGJlIGJldHRlciB0aGF0IGRvX2dhcmJhZ2VfY29sbGVjdAo+IGNvbmR1Y3RzIEdDIGp1c3Qg
-Zm9yIG9uZSBzZWdtZW50Lgo+IEFueSBvcGluaW9uPwoKWWVhaCwgaW4gdGhlIGRlZmF1bHQgY2Fz
-ZSwgcGVyIHNlY3Rpb24gY29udGFpbnMgb25lIHNlZ21lbnQuIEJ1dCB3ZSBjYW4gc2V0IG1vcmUK
-dGhhbiBvbmUgc2VnbWVudHMgaW4gb25lIHNlY3Rpb24sIGluIHRoaXMgY2FzZSwgd2UgbmVlZCB0
-byBjYWxsCmRvX2dhcmJhZ2VfY29sbGVjdCgpIG1hbnkgdGltZXMgdG8gY29sbGVjdCBhbGwgdGhl
-IHNlZ21lbnRzLiBJZiB3ZSBtb3ZlIHRoZSBsb29wCmludG8gZG9fZ2FyYmFnZV9jb2xsZWN0KCks
-IHdlIG9ubHkgbmVlZCB0byBjYWxsIGRvX2dhcmJhZ2VfY29sbGVjdCgpIG9uZSB0aW1lLApubyBt
-YXR0ZXIgaG93IG1hbnkgc2VnbWVudHMgaW4gb25lIHNlY3Rpb24uIEkgdGhpbmsgdGhpcyBpcyBh
-IGltcHJvdmVtZW50LAp0aG91Z2ggaXQgc2VlbXMgdGlueS46KQpJZiB5b3UgdGhpbmsgdGhpcyBj
-aGFuZ2UgaXMgbmVlZGxlc3MsIHBsZWFzZSBmZWVsIGZyZWUgdG8gaWdub3JlIGl0LjopCgpCZXN0
-IHJlZ2FyZHMsCkd1ICAKCj4gCj4gVGhhbmtzLAo+IAo+IDIwMTMtMDctMTIgKOq4iCksIDEzOjUx
-ICswODAwLCBHdSBaaGVuZzoKPj4gQ3VycmVudCBkb19nYXJiYWdlX2NvbGxlY3QoKSBjb2xsZWN0
-IHBlciBzZWdtZW50IHBlciB0aW1lLiBJZiB0aGVyZSBhcmUgbW9yZQo+PiB0aGFuIG9uZSBzZWdt
-ZW50cyBpbiBzZWN0aW9uLCB3ZSBuZWVkIHRvIGNhbGwgZG9fZ2FyYmFnZV9jb2xsZWN0KCkgbWFu
-eSB0aW1lcyB0bwo+PiBjb2xsZWN0IGFsbCB0aGUgc2VnbWVudHMoY3VycmVudCBpcyBhIGZvciBs
-b29wKS4gV2UgY2FuIG1vdmUgdGhlIGxvb3AgaW50byB0aGUKPj4gZG9fZ2FyYmFnZV9jb2xsZWN0
-KCksIHNvIHRoYXQgd2UgY2FuIGNvbGxlY3QgYWxsIHRoZSBzZWdzIG9mIHNlY3Rpb24gaW4gb25l
-IHRpbWUuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEd1IFpoZW5nIDxndXouZm5zdEBjbi5mdWppdHN1
-LmNvbT4KPj4gLS0tCj4+ICBmcy9mMmZzL2djLmMgfCAgIDU5ICsrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+PiAgMSBmaWxlcyBjaGFuZ2Vk
-LCAzMyBpbnNlcnRpb25zKCspLCAyNiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2Zz
-L2YyZnMvZ2MuYyBiL2ZzL2YyZnMvZ2MuYwo+PiBpbmRleCAzNWY5YjFhLi45NTg5ZmZlIDEwMDY0
-NAo+PiAtLS0gYS9mcy9mMmZzL2djLmMKPj4gKysrIGIvZnMvZjJmcy9nYy5jCj4+IEBAIC02MzQs
-NDIgKzYzNCw1MCBAQCBzdGF0aWMgaW50IF9fZ2V0X3ZpY3RpbShzdHJ1Y3QgZjJmc19zYl9pbmZv
-ICpzYmksIHVuc2lnbmVkCj4+IGludCAqdmljdGltLAo+PiAgCXJldHVybiByZXQ7Cj4+ICB9Cj4+
-Cj4+IC1zdGF0aWMgdm9pZCBkb19nYXJiYWdlX2NvbGxlY3Qoc3RydWN0IGYyZnNfc2JfaW5mbyAq
-c2JpLCB1bnNpZ25lZCBpbnQgc2Vnbm8sCj4+IC0JCQkJc3RydWN0IGxpc3RfaGVhZCAqaWxpc3Qs
-IGludCBnY190eXBlKQo+PiArc3RhdGljIHZvaWQgZG9fZ2FyYmFnZV9jb2xsZWN0KHN0cnVjdCBm
-MmZzX3NiX2luZm8gKnNiaSwKPj4gKwkJdW5zaWduZWQgaW50IHN0YXJ0X3NlZ25vLCBzdHJ1Y3Qg
-bGlzdF9oZWFkICppbGlzdCwgaW50IGdjX3R5cGUpCj4+ICB7Cj4+IC0Jc3RydWN0IHBhZ2UgKnN1
-bV9wYWdlOwo+PiAtCXN0cnVjdCBmMmZzX3N1bW1hcnlfYmxvY2sgKnN1bTsKPj4gLQlzdHJ1Y3Qg
-YmxrX3BsdWcgcGx1ZzsKPj4gKwl1bnNpZ25lZCBpbnQgc2Vnbm8gPSBzdGFydF9zZWdubzsKPj4K
-Pj4gLQkvKiByZWFkIHNlZ21lbnQgc3VtbWFyeSBvZiB2aWN0aW0gKi8KPj4gLQlzdW1fcGFnZSA9
-IGdldF9zdW1fcGFnZShzYmksIHNlZ25vKTsKPj4gLQlpZiAoSVNfRVJSKHN1bV9wYWdlKSkKPj4g
-LQkJcmV0dXJuOwo+PiArCWZvciAoOyBzYmktPnNlZ3NfcGVyX3NlYy0tOyBzZWdubysrKSB7Cj4+
-ICsJCXN0cnVjdCBwYWdlICpzdW1fcGFnZTsKPj4gKwkJc3RydWN0IGYyZnNfc3VtbWFyeV9ibG9j
-ayAqc3VtOwo+PiArCQlzdHJ1Y3QgYmxrX3BsdWcgcGx1ZzsKPj4KPj4gLQlibGtfc3RhcnRfcGx1
-ZygmcGx1Zyk7Cj4+ICsJCS8qIHJlYWQgc2VnbWVudCBzdW1tYXJ5IG9mIHZpY3RpbSAqLwo+PiAr
-CQlzdW1fcGFnZSA9IGdldF9zdW1fcGFnZShzYmksIHNlZ25vKTsKPj4gKwkJaWYgKElTX0VSUihz
-dW1fcGFnZSkpCj4+ICsJCQljb250aW51ZTsKPj4KPj4gLQlzdW0gPSBwYWdlX2FkZHJlc3Moc3Vt
-X3BhZ2UpOwo+PiArCQlibGtfc3RhcnRfcGx1ZygmcGx1Zyk7Cj4+Cj4+IC0Jc3dpdGNoIChHRVRf
-U1VNX1RZUEUoKCZzdW0tPmZvb3RlcikpKSB7Cj4+IC0JY2FzZSBTVU1fVFlQRV9OT0RFOgo+PiAt
-CQlnY19ub2RlX3NlZ21lbnQoc2JpLCBzdW0tPmVudHJpZXMsIHNlZ25vLCBnY190eXBlKTsKPj4g
-LQkJYnJlYWs7Cj4+IC0JY2FzZSBTVU1fVFlQRV9EQVRBOgo+PiAtCQlnY19kYXRhX3NlZ21lbnQo
-c2JpLCBzdW0tPmVudHJpZXMsIGlsaXN0LCBzZWdubywgZ2NfdHlwZSk7Cj4+IC0JCWJyZWFrOwo+
-PiAtCX0KPj4gLQlibGtfZmluaXNoX3BsdWcoJnBsdWcpOwo+PiArCQlzdW0gPSBwYWdlX2FkZHJl
-c3Moc3VtX3BhZ2UpOwo+Pgo+PiAtCXN0YXRfaW5jX3NlZ19jb3VudChzYmksIEdFVF9TVU1fVFlQ
-RSgoJnN1bS0+Zm9vdGVyKSkpOwo+PiAtCXN0YXRfaW5jX2NhbGxfY291bnQoc2JpLT5zdGF0X2lu
-Zm8pOwo+PiArCQlzd2l0Y2ggKEdFVF9TVU1fVFlQRSgoJnN1bS0+Zm9vdGVyKSkpIHsKPj4gKwkJ
-Y2FzZSBTVU1fVFlQRV9OT0RFOgo+PiArCQkJZ2Nfbm9kZV9zZWdtZW50KHNiaSwgc3VtLT5lbnRy
-aWVzLAo+PiArCQkJCXNlZ25vLCBnY190eXBlKTsKPj4gKwkJCWJyZWFrOwo+PiArCQljYXNlIFNV
-TV9UWVBFX0RBVEE6Cj4+ICsJCQlnY19kYXRhX3NlZ21lbnQoc2JpLCBzdW0tPmVudHJpZXMsIGls
-aXN0LAo+PiArCQkJCXNlZ25vLCBnY190eXBlKTsKPj4gKwkJCWJyZWFrOwo+PiArCQlkZWZhdWx0
-Ogo+PiArCQkJQlVHKCk7Cj4+ICsJCX0KPj4gKwkJYmxrX2ZpbmlzaF9wbHVnKCZwbHVnKTsKPj4g
-Kwo+PiArCQlzdGF0X2luY19zZWdfY291bnQoc2JpLCBHRVRfU1VNX1RZUEUoKCZzdW0tPmZvb3Rl
-cikpKTsKPj4gKwkJc3RhdF9pbmNfY2FsbF9jb3VudChzYmktPnN0YXRfaW5mbyk7Cj4+Cj4+IC0J
-ZjJmc19wdXRfcGFnZShzdW1fcGFnZSwgMSk7Cj4+ICsJCWYyZnNfcHV0X3BhZ2Uoc3VtX3BhZ2Us
-IDEpOwo+PiArCX0KPj4gIH0KPj4KPj4gIGludCBmMmZzX2djKHN0cnVjdCBmMmZzX3NiX2luZm8g
-KnNiaSkKPj4gIHsKPj4gIAlzdHJ1Y3QgbGlzdF9oZWFkIGlsaXN0Owo+PiAtCXVuc2lnbmVkIGlu
-dCBzZWdubywgaTsKPj4gKwl1bnNpZ25lZCBpbnQgc2Vnbm87Cj4+ICAJaW50IGdjX3R5cGUgPSBC
-R19HQzsKPj4gIAlpbnQgbmZyZWUgPSAwOwo+PiAgCWludCByZXQgPSAtMTsKPj4gQEAgLTY4OCw4
-ICs2OTYsNyBAQCBnY19tb3JlOgo+PiAgCQlnb3RvIHN0b3A7Cj4+ICAJcmV0ID0gMDsKPj4KPj4g
-LQlmb3IgKGkgPSAwOyBpIDwgc2JpLT5zZWdzX3Blcl9zZWM7IGkrKykKPj4gLQkJZG9fZ2FyYmFn
-ZV9jb2xsZWN0KHNiaSwgc2Vnbm8gKyBpLCAmaWxpc3QsIGdjX3R5cGUpOwo+PiArCWRvX2dhcmJh
-Z2VfY29sbGVjdChzYmksIHNlZ25vLCAmaWxpc3QsIGdjX3R5cGUpOwo+Pgo+PiAgCWlmIChnY190
-eXBlID09IEZHX0dDKSB7Cj4+ICAJCXNiaS0+Y3VyX3ZpY3RpbV9zZWMgPSBOVUxMX1NFR05POwo+
-IAoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KU2VlIGV2ZXJ5dGhpbmcgZnJvbSB0aGUgYnJvd3Nl
-ciB0byB0aGUgZGF0YWJhc2Ugd2l0aCBBcHBEeW5hbWljcwpHZXQgZW5kLXRvLWVuZCB2aXNpYmls
-aXR5IHdpdGggYXBwbGljYXRpb24gbW9uaXRvcmluZyBmcm9tIEFwcER5bmFtaWNzCklzb2xhdGUg
-Ym90dGxlbmVja3MgYW5kIGRpYWdub3NlIHJvb3QgY2F1c2UgaW4gc2Vjb25kcy4KU3RhcnQgeW91
-ciBmcmVlIHRyaWFsIG9mIEFwcER5bmFtaWNzIFBybyB0b2RheSEKaHR0cDovL3B1YmFkcy5nLmRv
-dWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTQ4ODA4ODMxJml1PS80MTQwL29zdGcuY2xrdHJr
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYy
-ZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
-ZnMtZGV2ZWwK
+Introduce help function F2FS_NODE() to simplify the conversion of node_page to
+f2fs_node.
+
+
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/data.c     |    2 +-
+ fs/f2fs/dir.c      |    2 +-
+ fs/f2fs/f2fs.h     |    9 +++++++--
+ fs/f2fs/file.c     |    2 +-
+ fs/f2fs/inode.c    |    4 ++--
+ fs/f2fs/node.c     |   10 +++++-----
+ fs/f2fs/node.h     |   40 ++++++++++++++++------------------------
+ fs/f2fs/recovery.c |    6 ++----
+ 8 files changed, 35 insertions(+), 40 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 035f9a3..c73c394 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -39,7 +39,7 @@ static void __set_data_blkaddr(struct dnode_of_data *dn,
+block_t new_addr)
+
+ 	wait_on_page_writeback(node_page);
+
+-	rn = (struct f2fs_node *)page_address(node_page);
++	rn = F2FS_NODE(node_page);
+
+ 	/* Get physical address of data block */
+ 	addr_array = blkaddr_in_node(rn);
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 62f0d59..89ecb37 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -270,7 +270,7 @@ static void init_dent_inode(const struct qstr *name, struct
+page *ipage)
+ 	struct f2fs_node *rn;
+
+ 	/* copy name info. to this inode page */
+-	rn = (struct f2fs_node *)page_address(ipage);
++	rn = F2FS_NODE(ipage);
+ 	rn->i.i_namelen = cpu_to_le32(name->len);
+ 	memcpy(rn->i.i_name, name->name, name->len);
+ 	set_page_dirty(ipage);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c7620b9..ffa34f4 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -455,6 +455,11 @@ static inline struct f2fs_checkpoint *F2FS_CKPT(struct
+f2fs_sb_info *sbi)
+ 	return (struct f2fs_checkpoint *)(sbi->ckpt);
+ }
+
++static inline struct f2fs_node *F2FS_NODE(struct page *page)
++{
++	return (struct f2fs_node *)page_address(page);
++}
++
+ static inline struct f2fs_nm_info *NM_I(struct f2fs_sb_info *sbi)
+ {
+ 	return (struct f2fs_nm_info *)(sbi->nm_info);
+@@ -813,7 +818,7 @@ static inline struct kmem_cache
+*f2fs_kmem_cache_create(const char *name,
+
+ static inline bool IS_INODE(struct page *page)
+ {
+-	struct f2fs_node *p = (struct f2fs_node *)page_address(page);
++	struct f2fs_node *p = F2FS_NODE(page);
+ 	return RAW_IS_INODE(p);
+ }
+
+@@ -827,7 +832,7 @@ static inline block_t datablock_addr(struct page *node_page,
+ {
+ 	struct f2fs_node *raw_node;
+ 	__le32 *addr_array;
+-	raw_node = (struct f2fs_node *)page_address(node_page);
++	raw_node = F2FS_NODE(node_page);
+ 	addr_array = blkaddr_in_node(raw_node);
+ 	return le32_to_cpu(addr_array[offset]);
+ }
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 157a635..65ca3b3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -206,7 +206,7 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int
+count)
+ 	struct f2fs_node *raw_node;
+ 	__le32 *addr;
+
+-	raw_node = page_address(dn->node_page);
++	raw_node = F2FS_NODE(dn->node_page);
+ 	addr = blkaddr_in_node(raw_node) + ofs;
+
+ 	for ( ; count > 0; count--, addr++, dn->ofs_in_node++) {
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 2b2d45d1..debf743 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -56,7 +56,7 @@ static int do_read_inode(struct inode *inode)
+ 	if (IS_ERR(node_page))
+ 		return PTR_ERR(node_page);
+
+-	rn = page_address(node_page);
++	rn = F2FS_NODE(node_page);
+ 	ri = &(rn->i);
+
+ 	inode->i_mode = le16_to_cpu(ri->i_mode);
+@@ -153,7 +153,7 @@ void update_inode(struct inode *inode, struct page *node_page)
+
+ 	wait_on_page_writeback(node_page);
+
+-	rn = page_address(node_page);
++	rn = F2FS_NODE(node_page);
+ 	ri = &(rn->i);
+
+ 	ri->i_mode = cpu_to_le16(inode->i_mode);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index b418aee..f5172e2 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -565,7 +565,7 @@ static int truncate_nodes(struct dnode_of_data *dn, unsigned
+int nofs,
+ 		return PTR_ERR(page);
+ 	}
+
+-	rn = (struct f2fs_node *)page_address(page);
++	rn = F2FS_NODE(page);
+ 	if (depth < 3) {
+ 		for (i = ofs; i < NIDS_PER_BLOCK; i++, freed++) {
+ 			child_nid = le32_to_cpu(rn->in.nid[i]);
+@@ -698,7 +698,7 @@ restart:
+ 	set_new_dnode(&dn, inode, page, NULL, 0);
+ 	unlock_page(page);
+
+-	rn = page_address(page);
++	rn = F2FS_NODE(page);
+ 	switch (level) {
+ 	case 0:
+ 	case 1:
+@@ -1484,8 +1484,8 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct
+page *page)
+ 	SetPageUptodate(ipage);
+ 	fill_node_footer(ipage, ino, ino, 0, true);
+
+-	src = (struct f2fs_node *)page_address(page);
+-	dst = (struct f2fs_node *)page_address(ipage);
++	src = F2FS_NODE(page);
++	dst = F2FS_NODE(ipage);
+
+ 	memcpy(dst, src, (unsigned long)&src->i.i_ext - (unsigned long)&src->i);
+ 	dst->i.i_size = 0;
+@@ -1535,7 +1535,7 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 			goto out;
+
+ 		lock_page(page);
+-		rn = (struct f2fs_node *)page_address(page);
++		rn = F2FS_NODE(page);
+ 		sum_entry->nid = rn->footer.nid;
+ 		sum_entry->version = 0;
+ 		sum_entry->ofs_in_node = 0;
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index c65fb4f..87349c4 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -155,8 +155,7 @@ static inline void set_to_next_nat(struct f2fs_nm_info
+*nm_i, nid_t start_nid)
+ static inline void fill_node_footer(struct page *page, nid_t nid,
+ 				nid_t ino, unsigned int ofs, bool reset)
+ {
+-	void *kaddr = page_address(page);
+-	struct f2fs_node *rn = (struct f2fs_node *)kaddr;
++	struct f2fs_node *rn = F2FS_NODE(page);
+ 	if (reset)
+ 		memset(rn, 0, sizeof(*rn));
+ 	rn->footer.nid = cpu_to_le32(nid);
+@@ -166,10 +165,8 @@ static inline void fill_node_footer(struct page *page,
+nid_t nid,
+
+ static inline void copy_node_footer(struct page *dst, struct page *src)
+ {
+-	void *src_addr = page_address(src);
+-	void *dst_addr = page_address(dst);
+-	struct f2fs_node *src_rn = (struct f2fs_node *)src_addr;
+-	struct f2fs_node *dst_rn = (struct f2fs_node *)dst_addr;
++	struct f2fs_node *src_rn = F2FS_NODE(src);
++	struct f2fs_node *dst_rn = F2FS_NODE(dst);
+ 	memcpy(&dst_rn->footer, &src_rn->footer, sizeof(struct node_footer));
+ }
+
+@@ -177,45 +174,40 @@ static inline void fill_node_footer_blkaddr(struct page
+*page, block_t blkaddr)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(page->mapping->host->i_sb);
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+-	void *kaddr = page_address(page);
+-	struct f2fs_node *rn = (struct f2fs_node *)kaddr;
++	struct f2fs_node *rn = F2FS_NODE(page);
++
+ 	rn->footer.cp_ver = ckpt->checkpoint_ver;
+ 	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
+ }
+
+ static inline nid_t ino_of_node(struct page *node_page)
+ {
+-	void *kaddr = page_address(node_page);
+-	struct f2fs_node *rn = (struct f2fs_node *)kaddr;
++	struct f2fs_node *rn = F2FS_NODE(node_page);
+ 	return le32_to_cpu(rn->footer.ino);
+ }
+
+ static inline nid_t nid_of_node(struct page *node_page)
+ {
+-	void *kaddr = page_address(node_page);
+-	struct f2fs_node *rn = (struct f2fs_node *)kaddr;
++	struct f2fs_node *rn = F2FS_NODE(node_page);
+ 	return le32_to_cpu(rn->footer.nid);
+ }
+
+ static inline unsigned int ofs_of_node(struct page *node_page)
+ {
+-	void *kaddr = page_address(node_page);
+-	struct f2fs_node *rn = (struct f2fs_node *)kaddr;
++	struct f2fs_node *rn = F2FS_NODE(node_page);
+ 	unsigned flag = le32_to_cpu(rn->footer.flag);
+ 	return flag >> OFFSET_BIT_SHIFT;
+ }
+
+ static inline unsigned long long cpver_of_node(struct page *node_page)
+ {
+-	void *kaddr = page_address(node_page);
+-	struct f2fs_node *rn = (struct f2fs_node *)kaddr;
++	struct f2fs_node *rn = F2FS_NODE(node_page);
+ 	return le64_to_cpu(rn->footer.cp_ver);
+ }
+
+ static inline block_t next_blkaddr_of_node(struct page *node_page)
+ {
+-	void *kaddr = page_address(node_page);
+-	struct f2fs_node *rn = (struct f2fs_node *)kaddr;
++	struct f2fs_node *rn = F2FS_NODE(node_page);
+ 	return le32_to_cpu(rn->footer.next_blkaddr);
+ }
+
+@@ -250,7 +242,7 @@ static inline bool IS_DNODE(struct page *node_page)
+
+ static inline void set_nid(struct page *p, int off, nid_t nid, bool i)
+ {
+-	struct f2fs_node *rn = (struct f2fs_node *)page_address(p);
++	struct f2fs_node *rn = F2FS_NODE(p);
+
+ 	wait_on_page_writeback(p);
+
+@@ -263,7 +255,8 @@ static inline void set_nid(struct page *p, int off, nid_t
+nid, bool i)
+
+ static inline nid_t get_nid(struct page *p, int off, bool i)
+ {
+-	struct f2fs_node *rn = (struct f2fs_node *)page_address(p);
++	struct f2fs_node *rn = F2FS_NODE(p);
++
+ 	if (i)
+ 		return le32_to_cpu(rn->i.i_nid[off - NODE_DIR1_BLOCK]);
+ 	return le32_to_cpu(rn->in.nid[off]);
+@@ -314,8 +307,7 @@ static inline void clear_cold_data(struct page *page)
+
+ static inline int is_node(struct page *page, int type)
+ {
+-	void *kaddr = page_address(page);
+-	struct f2fs_node *rn = (struct f2fs_node *)kaddr;
++	struct f2fs_node *rn = F2FS_NODE(page);
+ 	return le32_to_cpu(rn->footer.flag) & (1 << type);
+ }
+
+@@ -325,7 +317,7 @@ static inline int is_node(struct page *page, int type)
+
+ static inline void set_cold_node(struct inode *inode, struct page *page)
+ {
+-	struct f2fs_node *rn = (struct f2fs_node *)page_address(page);
++	struct f2fs_node *rn = F2FS_NODE(page);
+ 	unsigned int flag = le32_to_cpu(rn->footer.flag);
+
+ 	if (S_ISDIR(inode->i_mode))
+@@ -337,7 +329,7 @@ static inline void set_cold_node(struct inode *inode, struct
+page *page)
+
+ static inline void set_mark(struct page *page, int mark, int type)
+ {
+-	struct f2fs_node *rn = (struct f2fs_node *)page_address(page);
++	struct f2fs_node *rn = F2FS_NODE(page);
+ 	unsigned int flag = le32_to_cpu(rn->footer.flag);
+ 	if (mark)
+ 		flag |= (0x1 << type);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index d56d951..639eb34 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -40,8 +40,7 @@ static struct fsync_inode_entry *get_fsync_inode(struct
+list_head *head,
+
+ static int recover_dentry(struct page *ipage, struct inode *inode)
+ {
+-	void *kaddr = page_address(ipage);
+-	struct f2fs_node *raw_node = (struct f2fs_node *)kaddr;
++	struct f2fs_node *raw_node = F2FS_NODE(ipage);
+ 	struct f2fs_inode *raw_inode = &(raw_node->i);
+ 	nid_t pino = le32_to_cpu(raw_inode->i_pino);
+ 	struct f2fs_dir_entry *de;
+@@ -93,8 +92,7 @@ out:
+
+ static int recover_inode(struct inode *inode, struct page *node_page)
+ {
+-	void *kaddr = page_address(node_page);
+-	struct f2fs_node *raw_node = (struct f2fs_node *)kaddr;
++	struct f2fs_node *raw_node = F2FS_NODE(node_page);
+ 	struct f2fs_inode *raw_inode = &(raw_node->i);
+
+ 	if (!IS_INODE(node_page))
+-- 
+1.7.7
