@@ -1,28 +1,28 @@
 From: Changman Lee <cm224.lee@samsung.com>
-Subject: [f2fs-dev] [PATCH] f2fs-tools: dump inode information from blkaddr
-Date: Thu, 18 Jul 2013 11:20:05 +0900
-Message-ID: <1374114005-9356-1-git-send-email-cm224.lee@samsung.com>
+Subject: [f2fs-dev] [PATCH] f2fs-tools: add fibmap
+Date: Thu, 18 Jul 2013 18:08:01 +0900
+Message-ID: <1374138481-12867-1-git-send-email-cm224.lee@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cm224.lee@samsung.com>) id 1Uzdr8-0005ga-Oj
+	(envelope-from <cm224.lee@samsung.com>) id 1UzkDb-0005kb-V7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 18 Jul 2013 02:22:10 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Uzdr5-0002k3-31 for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 18 Jul 2013 02:22:10 +0000
-Received: from epcpsbgr5.samsung.com
-	(u145.gpu120.samsung.co.kr [203.254.230.145])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
+	Thu, 18 Jul 2013 09:09:47 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1UzkDZ-0003GR-T1 for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 18 Jul 2013 09:09:47 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MQ4009SU177GAH0@mailout4.samsung.com> for
+	with ESMTP id <0MQ400IC0K4185X0@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 18 Jul 2013 11:22:00 +0900 (KST)
+	Thu, 18 Jul 2013 18:09:37 +0900 (KST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,245 +34,144 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-This patch is to dump inode which blkaddr belongs in.
-Usage:
-  dump.f2fs /dev/sdx -b blk_addr (in 4KB)
+This is to get physical location of file data.
+We can check the percentage of fragmentation on a file.
+
+Note that it uses fsync to get exact blkaddr.
 
 Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 ---
- fsck/dump.c  |   42 ++++++++++++++++++++++++++++++++++++++++--
- fsck/fsck.c  |    4 +---
- fsck/fsck.h  |    5 +++--
- fsck/main.c  |   20 ++++++++++++++++++--
- fsck/mount.c |   10 +++++++---
- 5 files changed, 69 insertions(+), 12 deletions(-)
+ fsck/Makefile.am |    4 ++-
+ fsck/fibmap.c    |  103 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 106 insertions(+), 1 deletion(-)
+ create mode 100644 fsck/fibmap.c
 
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 1ec794a..4c113dd 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -12,6 +12,13 @@
+diff --git a/fsck/Makefile.am b/fsck/Makefile.am
+index 3258e47..c7be063 100644
+--- a/fsck/Makefile.am
++++ b/fsck/Makefile.am
+@@ -2,9 +2,11 @@
  
- #define BUF_SZ	80
+ AM_CPPFLAGS = ${libuuid_CFLAGS} -I$(top_srcdir)/include
+ AM_CFLAGS = -Wall
+-sbin_PROGRAMS = fsck.f2fs
++sbin_PROGRAMS = fsck.f2fs fibmap
+ fsck_f2fs_SOURCES = main.c fsck.c dump.c mount.c
+ fsck_f2fs_LDADD = ${libuuid_LIBS} $(top_builddir)/lib/libf2fs.la
  
-+const char *seg_type_name[SEG_TYPE_MAX] = {
-+	"SEG_TYPE_DATA",
-+	"SEG_TYPE_CUR_DATA",
-+	"SEG_TYPE_NODE",
-+	"SEG_TYPE_CUR_NODE",
++fibmap_SOURCES = fibmap.c
++
+ install-data-hook:
+ 	ln -sf fsck.f2fs $(DESTDIR)/$(sbindir)/dump.f2fs
+diff --git a/fsck/fibmap.c b/fsck/fibmap.c
+new file mode 100644
+index 0000000..8726d3d
+--- /dev/null
++++ b/fsck/fibmap.c
+@@ -0,0 +1,103 @@
++#define _LARGEFILE64_SOURCE
++#include <unistd.h>
++#include <string.h>
++#include <stdlib.h>
++#include <stdio.h>
++#include <fcntl.h>
++#include <errno.h>
++#include <sys/ioctl.h>
++#include <sys/stat.h>
++#include <linux/types.h>
++#include <linux/fs.h>
++
++struct file_ext {
++	__u32 f_pos;
++	__u32 start_blk;
++	__u32 end_blk;
++	__u32 blk_count;
 +};
 +
- void sit_dump(struct f2fs_sb_info *sbi, int start_sit, int end_sit)
- {
- 	struct seg_entry *se;
-@@ -137,7 +144,38 @@ int dump_node(struct f2fs_sb_info *sbi, nid_t nid)
- 	return 0;
- }
- 
--void dump_cleanup(struct f2fs_sb_info *sbi)
-+int dump_inode_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
- {
--	f2fs_do_umount(sbi);
-+	nid_t ino, nid;
-+	int ret;
-+	struct f2fs_summary sum_entry;
-+	struct node_info ni;
-+	struct f2fs_node *node_blk;
++void print_ext(struct file_ext *ext)
++{
++	if (ext->end_blk == 0)
++		printf("%8d    %8d    %8d    %8d\n", ext->f_pos, 0, 0, ext->blk_count);
++	else
++		printf("%8d    %8d    %8d    %8d\n", ext->f_pos, ext->start_blk,
++					ext->end_blk, ext->blk_count);
++}
 +
-+	ret = get_sum_entry(sbi, blk_addr, &sum_entry);
-+	nid = le32_to_cpu(sum_entry.nid);
++int main(int argc, char *argv[])
++{
++	int fd;
++	int ret = 0;
++	char *filename;
++	struct stat64 st;
++	int total_blks;
++	unsigned int i;
++	struct file_ext ext;
++	__u32 blknum;
 +
-+	DBG(1, "Node ID               [0x%x]\n", nid);
-+	DBG(1, "Segment Type          [%s]\n", seg_type_name[ret]);
-+	DBG(1, "version               [%d]\n", sum_entry.version);
-+	DBG(1, "ofs_in_node           [%d]\n", sum_entry.ofs_in_node);
-+	ret = get_node_info(sbi, nid, &ni);
-+	ASSERT(ret >= 0);
++	if (argc != 2) {
++		fprintf(stderr, "No filename\n");
++		exit(-1);
++	}
++	filename = argv[1];
 +
-+	node_blk = calloc(BLOCK_SZ, 1);
-+
-+read_node_blk:
-+	dev_read_block(node_blk, ni.blk_addr);
-+
-+	ino = le32_to_cpu(node_blk->footer.ino);
-+	nid = le32_to_cpu(node_blk->footer.nid);
-+	if (ino == nid) {
-+		print_inode_info(&node_blk->i);
-+	} else {
-+		ret = get_node_info(sbi, ino, &ni);
-+		goto read_node_blk;
++	fd = open(filename, O_RDONLY|O_LARGEFILE);
++	if (fd < 0) {
++		ret = errno;
++		perror(filename);
++		exit(-1);
 +	}
 +
-+	free(node_blk);
-+	return ino;
- }
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 1e4afd9..907dc10 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -793,7 +793,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
- void fsck_free(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
--		if (fsck->main_area_bitmap)
-+	if (fsck->main_area_bitmap)
- 		free(fsck->main_area_bitmap);
- 
- 	if (fsck->nat_area_bitmap)
-@@ -801,6 +801,4 @@ void fsck_free(struct f2fs_sb_info *sbi)
- 
- 	if (fsck->sit_area_bitmap)
- 		free(fsck->sit_area_bitmap);
--
--	f2fs_do_umount(sbi);
- }
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index b439222..a8f440c 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -73,9 +73,9 @@ enum seg_type {
- 	SEG_TYPE_CUR_DATA,
- 	SEG_TYPE_NODE,
- 	SEG_TYPE_CUR_NODE,
-+	SEG_TYPE_MAX,
- };
- 
--
- extern int fsck_chk_xattr_blk(struct f2fs_sb_info *sbi, u32 x_nid, u32 *blk_cnt);
- extern int fsck_chk_orphan_node(struct f2fs_sb_info *sbi);
- 
-@@ -134,6 +134,7 @@ extern int fsck_chk_dentry_blk(struct f2fs_sb_info *sbi,
- 		int last_blk);
- 
- extern void print_node_info(struct f2fs_node *node_block);
-+extern void print_inode_info(struct f2fs_inode *inode);
- extern struct seg_entry *get_seg_entry(struct f2fs_sb_info *sbi, unsigned int segno);
- extern int get_sum_block(struct f2fs_sb_info *sbi, unsigned int segno, struct f2fs_summary_block *sum_blk);
- extern int get_sum_entry(struct f2fs_sb_info *sbi, u32 blk_addr, struct f2fs_summary *sum_entry);
-@@ -153,11 +154,11 @@ struct dump_option {
- 	int end_sit;
- 	int start_ssa;
- 	int end_ssa;
-+	u32 blk_addr;
- };
- 
- extern void sit_dump(struct f2fs_sb_info *sbi, int start_sit, int end_sit);
- extern void ssa_dump(struct f2fs_sb_info *sbi, int start_ssa, int end_ssa);
- extern int dump_node(struct f2fs_sb_info *sbi, nid_t nid);
--extern void dump_cleanup(struct f2fs_sb_info *sbi);
- 
- #endif /* _FSCK_H_ */
-diff --git a/fsck/main.c b/fsck/main.c
-index 3e12dd8..d72533d 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -31,6 +31,7 @@ void dump_usage()
- 	MSG(0, "  -i inode no (hex)\n");
- 	MSG(0, "  -s [SIT dump segno from #1~#2 (decimal), for all 0~-1]\n");
- 	MSG(0, "  -a [SSA dump segno from #1~#2 (decimal), for all 0~-1]\n");
-+	MSG(0, "  -b blk_addr (in 4KB)\n");
- 
- 	exit(1);
- }
-@@ -57,13 +58,14 @@ void f2fs_parse_options(int argc, char *argv[])
- 			}
- 		}
- 	} else if (!strcmp("dump.f2fs", prog)) {
--		const char *option_string = "d:i:s:a:";
-+		const char *option_string = "d:i:s:a:b:";
- 		static struct dump_option dump_opt = {
- 			.nid = 3,	/* default root ino */
- 			.start_sit = -1,
- 			.end_sit = -1,
- 			.start_ssa = -1,
- 			.end_ssa = -1,
-+			.blk_addr = -1,
- 		};
- 
- 		config.func = DUMP;
-@@ -82,6 +84,9 @@ void f2fs_parse_options(int argc, char *argv[])
- 				case 'a':
- 					sscanf(optarg, "%d~%d", &dump_opt.start_ssa, &dump_opt.end_ssa);
- 					break;
-+				case 'b':
-+					sscanf(optarg, "%d", &dump_opt.blk_addr);
-+					break;
- 				default:
- 					MSG(0, "\tError: Unknown option %c\n", option);
- 					dump_usage();
-@@ -134,6 +139,11 @@ out1:
- int do_dump(struct f2fs_sb_info *sbi)
- {
- 	struct dump_option *opt = (struct dump_option *)config.private;
-+	int ret;
++	fsync(fd);
 +
-+	ret = fsck_init(sbi);
-+	if (ret < 0)
-+		return ret;
- 
- 	if (opt->end_sit == -1)
- 		opt->end_sit = SM_I(sbi)->main_segments;
-@@ -143,10 +153,15 @@ int do_dump(struct f2fs_sb_info *sbi)
- 		sit_dump(sbi, opt->start_sit, opt->end_sit);
- 	if (opt->start_ssa != -1)
- 		ssa_dump(sbi, opt->start_ssa, opt->end_ssa);
-+	if (opt->blk_addr != -1) {
-+		dump_inode_from_blkaddr(sbi, opt->blk_addr);
-+		goto cleanup;
++	if (fstat64(fd, &st) < 0) {
++		ret = errno;
++		perror(filename);
++		goto out;
 +	}
- 
- 	dump_node(sbi, opt->nid);
- 
--	dump_cleanup(sbi);
-+cleanup:
-+	fsck_free(sbi);
- 	return 0;
- }
- 
-@@ -178,6 +193,7 @@ int main (int argc, char **argv)
- 			break;
- 	}
- 
-+	f2fs_do_umount(sbi);
- 	printf("\nDone.\n");
- 	return ret;
- }
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 1ed5050..13a3ef1 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -77,7 +77,11 @@ void print_node_info(struct f2fs_node *node_block)
- 		DBG(0, "Node ID [0x%x:%u] is inode\n", nid, nid);
- 		print_inode_info(&node_block->i);
- 	} else {
-+		int i;
-+		u32 *dump_blk = (u32 *)node_block;
- 		DBG(0, "Node ID [0x%x:%u] is direct node or indirect node.\n", nid, nid);
-+		for (i = 0; i <= 10; i++)
-+			MSG(0, "[%d]\t\t\t[0x%8x : %d]\n", i, dump_blk[i], dump_blk[i]);
- 	}
- }
- 
-@@ -782,8 +786,8 @@ int get_nat_entry(struct f2fs_sb_info *sbi, nid_t nid, struct f2fs_nat_entry *ra
- 	int seg_off, entry_off;
- 	int ret;
- 
--	if (nid / NAT_ENTRY_PER_BLOCK > (fsck->nat_area_bitmap_sz * 8)) {
--		DBG(0, "\n");
-+	if ((nid / NAT_ENTRY_PER_BLOCK) > fsck->nr_nat_entries) {
-+		DBG(0, "nid is over max nid\n");
- 		return -EINVAL;
- 	}
- 
-@@ -934,7 +938,7 @@ int build_sit_area_bitmap(struct f2fs_sb_info *sbi)
- 	fsck->chk.sit_valid_blocks = sum_vblocks;
- 	fsck->chk.sit_free_segs = free_segs;
- 
--	DBG(0, "Blocks [0x%x] Free Segs [0x%x]\n", sum_vblocks, free_segs);
-+	DBG(0, "Blocks [0x%x] Free Segs [0x%x]\n\n", sum_vblocks, free_segs);
- 	return 0;
- }
- 
++
++	total_blks = (st.st_size + st.st_blksize - 1) / st.st_blksize;
++
++	printf("\n%s :\n", filename);
++	printf("file_pos   start_blk     end_blk        blks\n");
++
++	blknum = 0;
++	if (ioctl(fd, FIBMAP, &blknum) < 0) {
++		ret = errno;
++		perror("ioctl(FIBMAP)");
++		goto out;
++	}
++	ext.f_pos = 0;
++	ext.start_blk = blknum;
++	ext.end_blk = blknum;
++	ext.blk_count = 1;
++
++	for (i = 1; i < total_blks; i++) {
++		blknum = i;
++
++		if (ioctl(fd, FIBMAP, &blknum) < 0) {
++			ret = errno;
++			perror("ioctl(FIBMAP)");
++			goto out;
++		}
++
++		if ((blknum == 0 && blknum == ext.end_blk) || (ext.end_blk + 1) == blknum) {
++			ext.end_blk = blknum;
++			ext.blk_count++;
++		} else {
++			ext.blk_count++;
++			print_ext(&ext);
++			ext.f_pos = i * st.st_blksize;
++			ext.start_blk = blknum;
++			ext.end_blk = blknum;
++			ext.blk_count = 0;
++		}
++	}
++
++	print_ext(&ext);
++out:
++	close(fd);
++	return ret;
++}
 -- 
 1.7.10.4
 
