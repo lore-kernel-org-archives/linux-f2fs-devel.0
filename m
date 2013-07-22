@@ -1,68 +1,116 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add the missing delection of orphan
- inode entry in write_orphan_inodes()
-Date: Mon, 22 Jul 2013 21:51:19 +0900
-Message-ID: <1374497479.26443.20.camel@kjgkr>
-References: <51E8F65F.9040007@cn.fujitsu.com>
+Subject: Re: [PATCH] f2fs: update file name in the inode block during
+ f2fs_rename
+Date: Mon, 22 Jul 2013 22:24:46 +0900
+Message-ID: <1374499486.26443.39.camel@kjgkr>
+References: <1374138684-28520-1-git-send-email-jaegeuk.kim@samsung.com>
+ <20130718092211.GA4165@ZenIV.linux.org.uk>
+ <CAOtxgyetWtucBEQJmCU0nLNk9_r42yQSC1+X1i+iHM18rDge+Q@mail.gmail.com>
+ <20130719074937.GD4165@ZenIV.linux.org.uk>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1V1FaX-00059C-Vb
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 22 Jul 2013 12:51:42 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1V1FaW-00020d-0r for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 22 Jul 2013 12:51:41 +0000
-Received: from epcpsbgr1.samsung.com
-	(u141.gpu120.samsung.co.kr [203.254.230.141])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MQC0090Q91GIWT0@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 22 Jul 2013 21:51:33 +0900 (KST)
-In-reply-to: <51E8F65F.9040007@cn.fujitsu.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <20130719074937.GD4165@ZenIV.linux.org.uk>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Kim Jaegeuk <jaegeuk.kim@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgoyMDEzLTA3LTE5ICjquIgpLCAxNjoxOCArMDgwMCwgR3UgWmhlbmc6Cj4gQWZ0ZXIgd3Jp
-dGluZyBvcnBoYW4gaW5vZGUgZW50cnkgaW4gam9ybmFsIGJsb2NrLCB3ZSBuZWVkIHRvIGRlbGV0
-ZSBlYWNoCj4gZW50cnkgZnJvbSB0aGUgb3JwaGFuIGVudHJ5IGxpc3QsIGFuZCByZWxlYXNlIHRo
-ZW0uCj4gCj4gCj4gU2lnbmVkLW9mZi1ieTogR3UgWmhlbmcgPGd1ei5mbnN0QGNuLmZ1aml0c3Uu
-Y29tPgo+IC0tLQo+ICBmcy9mMmZzL2NoZWNrcG9pbnQuYyB8ICAgIDQgKysrKwo+ICAxIGZpbGVz
-IGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0
-IGEvZnMvZjJmcy9jaGVja3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+IGluZGV4IDY2
-YTZiODUuLjI5MGRiMDQgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9jaGVja3BvaW50LmMKPiArKysg
-Yi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+IEBAIC0zMzcsNiArMzM3LDEwIEBAIHN0YXRpYyB2b2lk
-IHdyaXRlX29ycGhhbl9pbm9kZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBibG9ja190IHN0
-YXJ0X2JsaykKPiAgCQltZW1zZXQob3JwaGFuX2JsaywgMCwgc2l6ZW9mKCpvcnBoYW5fYmxrKSk7
-Cj4gIHBhZ2VfZXhpc3Q6Cj4gIAkJb3JwaGFuX2Jsay0+aW5vW25lbnRyaWVzKytdID0gY3B1X3Rv
-X2xlMzIob3JwaGFuLT5pbm8pOwo+ICsKPiArCQlsaXN0X2RlbCgmb3JwaGFuLT5saXN0KTsKPiAr
-CQlrbWVtX2NhY2hlX2ZyZWUob3JwaGFuX2VudHJ5X3NsYWIsIG9ycGhhbik7Cj4gKwkJc2JpLT5u
-X29ycGhhbnMtLTsKCk5BSy4KV2Ugc2hvdWxkIG5vdCByZWxlYXNlIHRoZW0gaGVyZS4KT25seSBm
-MmZzX2V2aWN0X2lub2RlIGNhbiBkbyBpdC4gCgo+ICAJfQo+ICAJaWYgKCFwYWdlKQo+ICAJCWdv
-dG8gZW5kOwoKLS0gCkphZWdldWsgS2ltClNhbXN1bmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-ClNlZSBldmVyeXRoaW5nIGZyb20gdGhlIGJyb3dzZXIgdG8gdGhlIGRhdGFiYXNlIHdpdGggQXBw
-RHluYW1pY3MKR2V0IGVuZC10by1lbmQgdmlzaWJpbGl0eSB3aXRoIGFwcGxpY2F0aW9uIG1vbml0
-b3JpbmcgZnJvbSBBcHBEeW5hbWljcwpJc29sYXRlIGJvdHRsZW5lY2tzIGFuZCBkaWFnbm9zZSBy
-b290IGNhdXNlIGluIHNlY29uZHMuClN0YXJ0IHlvdXIgZnJlZSB0cmlhbCBvZiBBcHBEeW5hbWlj
-cyBQcm8gdG9kYXkhCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9p
-ZD00ODgwODgzMSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51
-eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZv
-cmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi Al,
+
+2013-07-19 (=EA=B8=88), 08:49 +0100, Al Viro:
+> On Fri, Jul 19, 2013 at 12:40:47PM +0900, Kim Jaegeuk wrote:
+> > Hi,
+> >=20
+> > 2013. 7. 18. ???? 6:22?? "Al Viro" <viro@zeniv.linux.org.uk>???? ??=
+??:
+> > >
+> > > On Thu, Jul 18, 2013 at 06:11:23PM +0900, Jaegeuk Kim wrote:
+> > > > The error is reproducible by:
+> > > >
+> > > > After this, when we retrieve the inode->i_name of test2 by dump=
+=2Ef2fs,
+> > we get
+> > > > test1 instead of test2.
+> > > > This is because f2fs didn't update the file name during the f2f=
+s_rename.
+> > >
+> > > Er...  Correct me if I'm wrong, but f2fs appears to support link(=
+2) and
+> > > if rename(2) creates some problem for dump.f2fs, I would expect a=
+n
+> > > equivalent link()+unlink() combination to do the same...
+> >=20
+> > Right. I will check that too.
+> > Thank you. :)
+>=20
+> You do realize that having unlink() hunt for the surviving links woul=
+d be
+> both very costly and painful wrt locking, right?
+
+What I meant that I need to check f2fs_sync_file() to deal with the
+link() + unlink() combination case.
+
+>=20
+> The real question is, what are the warranties for that ->i_name thing=
+?
+> What should it be while there are multiple links?  Matter of fact,
+> after looking at the users... What about ->i_pino in the same scenari=
+o
+> (link+unlink instead of rename)?
+
+The only usage of both i_name and i_pino is for the roll-forward
+recovery.=20
+
+Let me give a scenario like this.
+1. create "file a"
+2. fsync "file a"
+  -> At this moment, in order to recover "file a", naive f2fs needs to
+conduct costly checkpoint to flush all the dentry blocks.
+
+But, in the roll-forward machinism with a dentry recovery routine,
+1. create "file a"
+2. fsync "file a"
+  -> The f2fs stores i_name as "file a" and its i_pino so that
+recover_dentry() can add link again with "file a" under i_pino.
+
+But, there are some creteria like:
+1. link_count should be one, and
+2. its i_name should be correct.
+
+But, I think i_pino is correctly fixed at f2fs_sync_file() even if ther=
+e
+have been experienced link() + unlink() combinations before.
+But, i_name should have to be fixed too not just for f2fs_rename().
+This is what I concerned before.
+
+>=20
+> BTW, while looking at i_pino... Why does get_parent_ino() bother with
+> igrab/iput?  If you have found an alias, just use parent_ino(dentry)
+> and be done with that - as it is, you have a race with d_move() there=
+,
+> so you'd need to reproduce parent_ino() locking anyway (->d_lock on
+> dentry holds d_move() away and stabilizes ->d_parent->d_inode)
+
+Oh, I didn't realize that.
+I'll fix like that.
+Thanks,
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+
+--=20
+Jaegeuk Kim
+Samsung
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
