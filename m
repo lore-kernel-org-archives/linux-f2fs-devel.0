@@ -1,22 +1,22 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [f2fs-dev] [PATCH] f2fs: use list_for_each rather than
- list_for_each_safe, in remove_orphan_inode()
-Date: Fri, 19 Jul 2013 16:24:06 +0800
-Message-ID: <51E8F7A6.7030708@cn.fujitsu.com>
+Subject: [f2fs-dev] [PATCH] f2fs/debug.c : use seq_puts()/seq_putc() rather
+ than seq_printf() where possible
+Date: Mon, 22 Jul 2013 16:33:32 +0800
+Message-ID: <51ECEE5C.3060407@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1V062U-0004EB-CQ
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1V1BcN-0004vh-Rh
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Jul 2013 08:27:46 +0000
+	Mon, 22 Jul 2013 08:37:19 +0000
 Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1V062T-0003zC-ES for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Jul 2013 08:27:46 +0000
+	id 1V1BcJ-00080K-OF for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 22 Jul 2013 08:37:19 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,34 +29,49 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Kim <jaegeuk.kim@samsung.com>
 Cc: linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-As we remove the target single node, so list_for_each is enought, in order to
-clean up, we use list_for_each_entry instead.
+For string without format specifiers, using seq_puts()/seq_putc()
+instead of seq_printf().
 
 Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
- fs/f2fs/checkpoint.c |    5 ++---
- 1 files changed, 2 insertions(+), 3 deletions(-)
+ fs/f2fs/debug.c |   18 +++++++++---------
+ 1 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 290db04..87f7bc2 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -237,13 +237,12 @@ out:
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index fd12b7f..a84b0a8 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -253,21 +253,21 @@ static int stat_show(struct seq_file *s, void *v)
+ 			   si->nats, NM_WOUT_THRESHOLD);
+ 		seq_printf(s, "  - SITs: %5d\n  - free_nids: %5d\n",
+ 			   si->sits, si->fnids);
+-		seq_printf(s, "\nDistribution of User Blocks:");
+-		seq_printf(s, " [ valid | invalid | free ]\n");
+-		seq_printf(s, "  [");
++		seq_puts(s, "\nDistribution of User Blocks:");
++		seq_puts(s, " [ valid | invalid | free ]\n");
++		seq_puts(s, "  [");
  
- void remove_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
- {
--	struct list_head *this, *next, *head;
-+	struct list_head *head;
- 	struct orphan_inode_entry *orphan;
+ 		for (j = 0; j < si->util_valid; j++)
+-			seq_printf(s, "-");
+-		seq_printf(s, "|");
++			seq_putc(s, '-');
++		seq_putc(s, '|');
  
- 	mutex_lock(&sbi->orphan_inode_mutex);
- 	head = &sbi->orphan_inode_list;
--	list_for_each_safe(this, next, head) {
--		orphan = list_entry(this, struct orphan_inode_entry, list);
-+	list_for_each_entry(orphan, head, list) {
- 		if (orphan->ino == ino) {
- 			list_del(&orphan->list);
- 			kmem_cache_free(orphan_entry_slab, orphan);
+ 		for (j = 0; j < si->util_invalid; j++)
+-			seq_printf(s, "-");
+-		seq_printf(s, "|");
++			seq_putc(s, '-');
++		seq_putc(s, '|');
+ 
+ 		for (j = 0; j < si->util_free; j++)
+-			seq_printf(s, "-");
+-		seq_printf(s, "]\n\n");
++			seq_putc(s, '-');
++		seq_puts(s, "]\n\n");
+ 		seq_printf(s, "SSR: %u blocks in %u segments\n",
+ 			   si->block_count[SSR], si->segment_count[SSR]);
+ 		seq_printf(s, "LFS: %u blocks in %u segments\n",
 -- 
 1.7.7
 
