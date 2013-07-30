@@ -1,82 +1,64 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH RESEND] f2fs: move bio_private allocation out of f2fs_bio_alloc()
-Date: Mon, 29 Jul 2013 09:57:50 +0800
-Message-ID: <51F5CC1E.8070901@cn.fujitsu.com>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: [PATCH 1/4] f2fs-tools: fix missing function declaration
+Date: Tue, 30 Jul 2013 16:39:03 +0900
+Message-ID: <1375169946-2887-1-git-send-email-cm224.lee@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kim <jaegeuk.kim@samsung.com>
-Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cm224.lee@samsung.com>) id 1V44YJ-0005pE-Bz
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 30 Jul 2013 07:41:03 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1V44YH-0001R5-8g for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 30 Jul 2013 07:41:03 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MQQ00FQUO04FOQ0@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 30 Jul 2013 16:40:52 +0900 (KST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-bio->bi_private is not always needed. As in the reading data path,
-end_read_io does not need bio_private for further using, so moving
-bio_private allocation out of f2fs_bio_alloc(). Alloc it in the
-submit_write_page(), and ignore it in the f2fs_readpage().
+Explicitly declare function name.
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 ---
- fs/f2fs/data.c    |    1 -
- fs/f2fs/segment.c |   19 +++++++++++--------
- 2 files changed, 11 insertions(+), 9 deletions(-)
+ fsck/fsck.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index c73c394..19cd7c6 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -365,7 +365,6 @@ static void read_end_io(struct bio *bio, int err)
- 		}
- 		unlock_page(page);
- 	} while (bvec >= bio->bi_io_vec);
--	kfree(bio->bi_private);
- 	bio_put(bio);
- }
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index a8f440c..94808b8 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -160,5 +160,6 @@ struct dump_option {
+ extern void sit_dump(struct f2fs_sb_info *sbi, int start_sit, int end_sit);
+ extern void ssa_dump(struct f2fs_sb_info *sbi, int start_ssa, int end_ssa);
+ extern int dump_node(struct f2fs_sb_info *sbi, nid_t nid);
++extern int dump_inode_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr);
  
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a86d125..9b74ae2 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -611,18 +611,12 @@ static void f2fs_end_io_write(struct bio *bio, int err)
- struct bio *f2fs_bio_alloc(struct block_device *bdev, int npages)
- {
- 	struct bio *bio;
--	struct bio_private *priv;
--retry:
--	priv = kmalloc(sizeof(struct bio_private), GFP_NOFS);
--	if (!priv) {
--		cond_resched();
--		goto retry;
--	}
- 
- 	/* No failure on bio allocation */
- 	bio = bio_alloc(GFP_NOIO, npages);
- 	bio->bi_bdev = bdev;
--	bio->bi_private = priv;
-+	bio->bi_private = NULL;
-+
- 	return bio;
- }
- 
-@@ -681,8 +675,17 @@ static void submit_write_page(struct f2fs_sb_info *sbi, struct page *page,
- 		do_submit_bio(sbi, type, false);
- alloc_new:
- 	if (sbi->bio[type] == NULL) {
-+		struct bio_private *priv;
-+retry:
-+		priv = kmalloc(sizeof(struct bio_private), GFP_NOFS);
-+		if (!priv) {
-+			cond_resched();
-+			goto retry;
-+		}
-+
- 		sbi->bio[type] = f2fs_bio_alloc(bdev, max_hw_blocks(sbi));
- 		sbi->bio[type]->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
-+		sbi->bio[type]->bi_private = priv;
- 		/*
- 		 * The end_io will be assigned at the sumbission phase.
- 		 * Until then, let bio_add_page() merge consecutive IOs as much
+ #endif /* _FSCK_H_ */
 -- 
-1.7.7
+1.7.10.4
 
+
+------------------------------------------------------------------------------
+Get your SQL database under version control now!
+Version control is standard for application code, but databases havent 
+caught up. So what steps can you take to put your SQL databases under 
+version control? Why should you start doing it? Read more to find out.
+http://pubads.g.doubleclick.net/gampad/clk?id=49501711&iu=/4140/ostg.clktrk
