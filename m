@@ -1,186 +1,126 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
 Subject: Re: [PATCH] f2fs: add a wait step when submit bio with
- {READ,WRITE}_SYNC
-Date: Tue, 30 Jul 2013 21:29:58 +0900
-Message-ID: <1375187398.26443.69.camel@kjgkr>
-References: <51F7901E.3010204@cn.fujitsu.com>
-Reply-To: jaegeuk.kim@samsung.com
+	{READ, WRITE}_SYNC
+Date: Wed, 31 Jul 2013 09:59:03 +0800
+Message-ID: <51F86F67.1070605@cn.fujitsu.com>
+References: <51F7901E.3010204@cn.fujitsu.com> <1375187398.26443.69.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <51F7901E.3010204@cn.fujitsu.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1V4Lki-0000nD-0h
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 31 Jul 2013 02:03:00 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1V4Lkf-0002Kn-J4 for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 31 Jul 2013 02:02:59 +0000
+In-Reply-To: <1375187398.26443.69.camel@kjgkr>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Gu,
-
-The original read flow was to avoid redandunt lock/unlock_page() calls.
-And we should not wait for WRITE_SYNC, since it is just for write
-priority, not for synchronization of the file system.
-Thanks,
-
-2013-07-30 (=ED=99=94), 18:06 +0800, Gu Zheng:
-> When we submit bio with READ_SYNC or WRITE_SYNC, we need to wait a
-> moment for the io completion, current codes only find_data_page() fol=
-lows the
-> rule, other places missing this step, so add it.
->=20
-> Further more, moving the PageUptodate check into f2fs_readpage() to c=
-lean up
-> the codes.
->=20
-> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
-> ---
->  fs/f2fs/checkpoint.c |    1 -
->  fs/f2fs/data.c       |   39 +++++++++++++++++----------------------
->  fs/f2fs/node.c       |    1 -
->  fs/f2fs/recovery.c   |    2 --
->  fs/f2fs/segment.c    |    2 +-
->  5 files changed, 18 insertions(+), 27 deletions(-)
->=20
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index fe91773..e376a42 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -64,7 +64,6 @@ repeat:
->  	if (f2fs_readpage(sbi, page, index, READ_SYNC))
->  		goto repeat;
-> =20
-> -	lock_page(page);
->  	if (page->mapping !=3D mapping) {
->  		f2fs_put_page(page, 1);
->  		goto repeat;
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 19cd7c6..b048936 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -216,13 +216,11 @@ struct page *find_data_page(struct inode *inode=
-, pgoff_t index, bool sync)
-> =20
->  	err =3D f2fs_readpage(sbi, page, dn.data_blkaddr,
->  					sync ? READ_SYNC : READA);
-> -	if (sync) {
-> -		wait_on_page_locked(page);
-> -		if (!PageUptodate(page)) {
-> -			f2fs_put_page(page, 0);
-> -			return ERR_PTR(-EIO);
-> -		}
-> -	}
-> +	if (err)
-> +		return ERR_PTR(err);
-> +
-> +	if (sync)
-> +		unlock_page(page);
->  	return page;
->  }
-> =20
-> @@ -267,11 +265,6 @@ repeat:
->  	if (err)
->  		return ERR_PTR(err);
-> =20
-> -	lock_page(page);
-> -	if (!PageUptodate(page)) {
-> -		f2fs_put_page(page, 1);
-> -		return ERR_PTR(-EIO);
-> -	}
->  	if (page->mapping !=3D mapping) {
->  		f2fs_put_page(page, 1);
->  		goto repeat;
-> @@ -325,11 +318,7 @@ repeat:
->  		err =3D f2fs_readpage(sbi, page, dn.data_blkaddr, READ_SYNC);
->  		if (err)
->  			return ERR_PTR(err);
-> -		lock_page(page);
-> -		if (!PageUptodate(page)) {
-> -			f2fs_put_page(page, 1);
-> -			return ERR_PTR(-EIO);
-> -		}
-> +
->  		if (page->mapping !=3D mapping) {
->  			f2fs_put_page(page, 1);
->  			goto repeat;
-> @@ -399,6 +388,16 @@ int f2fs_readpage(struct f2fs_sb_info *sbi, stru=
-ct page *page,
-> =20
->  	submit_bio(type, bio);
->  	up_read(&sbi->bio_sem);
-> +
-> +	if (type =3D=3D READ_SYNC) {
-> +		wait_on_page_locked(page);
-> +		lock_page(page);
-> +		if (!PageUptodate(page)) {
-> +			f2fs_put_page(page, 1);
-> +			return -EIO;
-> +		}
-> +	}
-> +
->  	return 0;
->  }
-> =20
-> @@ -679,11 +678,7 @@ repeat:
->  		err =3D f2fs_readpage(sbi, page, dn.data_blkaddr, READ_SYNC);
->  		if (err)
->  			return err;
-> -		lock_page(page);
-> -		if (!PageUptodate(page)) {
-> -			f2fs_put_page(page, 1);
-> -			return -EIO;
-> -		}
-> +
->  		if (page->mapping !=3D mapping) {
->  			f2fs_put_page(page, 1);
->  			goto repeat;
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index f5172e2..f061554 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1534,7 +1534,6 @@ int restore_node_summary(struct f2fs_sb_info *s=
-bi,
->  		if (f2fs_readpage(sbi, page, addr, READ_SYNC))
->  			goto out;
-> =20
-> -		lock_page(page);
->  		rn =3D F2FS_NODE(page);
->  		sum_entry->nid =3D rn->footer.nid;
->  		sum_entry->version =3D 0;
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index 639eb34..ec68183 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -140,8 +140,6 @@ static int find_fsync_dnodes(struct f2fs_sb_info =
-*sbi, struct list_head *head)
->  		if (err)
->  			goto out;
-> =20
-> -		lock_page(page);
-> -
->  		if (cp_ver !=3D cpver_of_node(page))
->  			break;
-> =20
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 9b74ae2..bcd19db 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -639,7 +639,7 @@ static void do_submit_bio(struct f2fs_sb_info *sb=
-i,
-> =20
->  		trace_f2fs_do_submit_bio(sbi->sb, btype, sync, sbi->bio[btype]);
-> =20
-> -		if (type =3D=3D META_FLUSH) {
-> +		if ((type =3D=3D META_FLUSH) || (rw & WRITE_SYNC)) {
->  			DECLARE_COMPLETION_ONSTACK(wait);
->  			p->is_sync =3D true;
->  			p->wait =3D &wait;
-
---=20
-Jaegeuk Kim
-Samsung
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgS2ltLAoKT24gMDcvMzAvMjAxMyAwODoyOSBQTSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cgo+IEhp
+IEd1LAo+IAo+IFRoZSBvcmlnaW5hbCByZWFkIGZsb3cgd2FzIHRvIGF2b2lkIHJlZGFuZHVudCBs
+b2NrL3VubG9ja19wYWdlKCkgY2FsbHMuCgpSaWdodCwgdGhpcyBjYW4gZ2FpbiBiZXR0ZXIgcmVh
+ZCBwZXJmb3JtYW5jZS4gQnV0IGlzIHRoZSB3YWl0IHN0ZXAgYWZ0ZXIgCnN1Ym1pdHRpbmcgYmlv
+IHdpdGggUkVBRF9TWU5DIG5lZWRsZXNzIHRvbz8KCj4gQW5kIHdlIHNob3VsZCBub3Qgd2FpdCBm
+b3IgV1JJVEVfU1lOQywgc2luY2UgaXQgaXMganVzdCBmb3Igd3JpdGUKPiBwcmlvcml0eSwgbm90
+IGZvciBzeW5jaHJvbml6YXRpb24gb2YgdGhlIGZpbGUgc3lzdGVtLgoKR290IGl0LCB0aGFua3Mg
+Zm9yIHlvdXIgZXhwbGFuYXRpb24uOikgCgpCZXN0IHJlZ2FyZHMsCkd1Cgo+IFRoYW5rcywKPiAK
+PiAyMDEzLTA3LTMwICjtmZQpLCAxODowNiArMDgwMCwgR3UgWmhlbmc6Cj4+IFdoZW4gd2Ugc3Vi
+bWl0IGJpbyB3aXRoIFJFQURfU1lOQyBvciBXUklURV9TWU5DLCB3ZSBuZWVkIHRvIHdhaXQgYQo+
+PiBtb21lbnQgZm9yIHRoZSBpbyBjb21wbGV0aW9uLCBjdXJyZW50IGNvZGVzIG9ubHkgZmluZF9k
+YXRhX3BhZ2UoKSBmb2xsb3dzIHRoZQo+PiBydWxlLCBvdGhlciBwbGFjZXMgbWlzc2luZyB0aGlz
+IHN0ZXAsIHNvIGFkZCBpdC4KPj4KPj4gRnVydGhlciBtb3JlLCBtb3ZpbmcgdGhlIFBhZ2VVcHRv
+ZGF0ZSBjaGVjayBpbnRvIGYyZnNfcmVhZHBhZ2UoKSB0byBjbGVhbiB1cAo+PiB0aGUgY29kZXMu
+Cj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEd1IFpoZW5nIDxndXouZm5zdEBjbi5mdWppdHN1LmNvbT4K
+Pj4gLS0tCj4+ICBmcy9mMmZzL2NoZWNrcG9pbnQuYyB8ICAgIDEgLQo+PiAgZnMvZjJmcy9kYXRh
+LmMgICAgICAgfCAgIDM5ICsrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+
+PiAgZnMvZjJmcy9ub2RlLmMgICAgICAgfCAgICAxIC0KPj4gIGZzL2YyZnMvcmVjb3ZlcnkuYyAg
+IHwgICAgMiAtLQo+PiAgZnMvZjJmcy9zZWdtZW50LmMgICAgfCAgICAyICstCj4+ICA1IGZpbGVz
+IGNoYW5nZWQsIDE4IGluc2VydGlvbnMoKyksIDI3IGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0t
+Z2l0IGEvZnMvZjJmcy9jaGVja3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+PiBpbmRl
+eCBmZTkxNzczLi5lMzc2YTQyIDEwMDY0NAo+PiAtLS0gYS9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+
+PiArKysgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+PiBAQCAtNjQsNyArNjQsNiBAQCByZXBlYXQ6
+Cj4+ICAJaWYgKGYyZnNfcmVhZHBhZ2Uoc2JpLCBwYWdlLCBpbmRleCwgUkVBRF9TWU5DKSkKPj4g
+IAkJZ290byByZXBlYXQ7Cj4+ICAKPj4gLQlsb2NrX3BhZ2UocGFnZSk7Cj4+ICAJaWYgKHBhZ2Ut
+Pm1hcHBpbmcgIT0gbWFwcGluZykgewo+PiAgCQlmMmZzX3B1dF9wYWdlKHBhZ2UsIDEpOwo+PiAg
+CQlnb3RvIHJlcGVhdDsKPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZGF0YS5jIGIvZnMvZjJmcy9k
+YXRhLmMKPj4gaW5kZXggMTljZDdjNi4uYjA0ODkzNiAxMDA2NDQKPj4gLS0tIGEvZnMvZjJmcy9k
+YXRhLmMKPj4gKysrIGIvZnMvZjJmcy9kYXRhLmMKPj4gQEAgLTIxNiwxMyArMjE2LDExIEBAIHN0
+cnVjdCBwYWdlICpmaW5kX2RhdGFfcGFnZShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBwZ29mZl90IGlu
+ZGV4LCBib29sIHN5bmMpCj4+ICAKPj4gIAllcnIgPSBmMmZzX3JlYWRwYWdlKHNiaSwgcGFnZSwg
+ZG4uZGF0YV9ibGthZGRyLAo+PiAgCQkJCQlzeW5jID8gUkVBRF9TWU5DIDogUkVBREEpOwo+PiAt
+CWlmIChzeW5jKSB7Cj4+IC0JCXdhaXRfb25fcGFnZV9sb2NrZWQocGFnZSk7Cj4+IC0JCWlmICgh
+UGFnZVVwdG9kYXRlKHBhZ2UpKSB7Cj4+IC0JCQlmMmZzX3B1dF9wYWdlKHBhZ2UsIDApOwo+PiAt
+CQkJcmV0dXJuIEVSUl9QVFIoLUVJTyk7Cj4+IC0JCX0KPj4gLQl9Cj4+ICsJaWYgKGVycikKPj4g
+KwkJcmV0dXJuIEVSUl9QVFIoZXJyKTsKPj4gKwo+PiArCWlmIChzeW5jKQo+PiArCQl1bmxvY2tf
+cGFnZShwYWdlKTsKPj4gIAlyZXR1cm4gcGFnZTsKPj4gIH0KPj4gIAo+PiBAQCAtMjY3LDExICsy
+NjUsNiBAQCByZXBlYXQ6Cj4+ICAJaWYgKGVycikKPj4gIAkJcmV0dXJuIEVSUl9QVFIoZXJyKTsK
+Pj4gIAo+PiAtCWxvY2tfcGFnZShwYWdlKTsKPj4gLQlpZiAoIVBhZ2VVcHRvZGF0ZShwYWdlKSkg
+ewo+PiAtCQlmMmZzX3B1dF9wYWdlKHBhZ2UsIDEpOwo+PiAtCQlyZXR1cm4gRVJSX1BUUigtRUlP
+KTsKPj4gLQl9Cj4+ICAJaWYgKHBhZ2UtPm1hcHBpbmcgIT0gbWFwcGluZykgewo+PiAgCQlmMmZz
+X3B1dF9wYWdlKHBhZ2UsIDEpOwo+PiAgCQlnb3RvIHJlcGVhdDsKPj4gQEAgLTMyNSwxMSArMzE4
+LDcgQEAgcmVwZWF0Ogo+PiAgCQllcnIgPSBmMmZzX3JlYWRwYWdlKHNiaSwgcGFnZSwgZG4uZGF0
+YV9ibGthZGRyLCBSRUFEX1NZTkMpOwo+PiAgCQlpZiAoZXJyKQo+PiAgCQkJcmV0dXJuIEVSUl9Q
+VFIoZXJyKTsKPj4gLQkJbG9ja19wYWdlKHBhZ2UpOwo+PiAtCQlpZiAoIVBhZ2VVcHRvZGF0ZShw
+YWdlKSkgewo+PiAtCQkJZjJmc19wdXRfcGFnZShwYWdlLCAxKTsKPj4gLQkJCXJldHVybiBFUlJf
+UFRSKC1FSU8pOwo+PiAtCQl9Cj4+ICsKPj4gIAkJaWYgKHBhZ2UtPm1hcHBpbmcgIT0gbWFwcGlu
+Zykgewo+PiAgCQkJZjJmc19wdXRfcGFnZShwYWdlLCAxKTsKPj4gIAkJCWdvdG8gcmVwZWF0Owo+
+PiBAQCAtMzk5LDYgKzM4OCwxNiBAQCBpbnQgZjJmc19yZWFkcGFnZShzdHJ1Y3QgZjJmc19zYl9p
+bmZvICpzYmksIHN0cnVjdCBwYWdlICpwYWdlLAo+PiAgCj4+ICAJc3VibWl0X2Jpbyh0eXBlLCBi
+aW8pOwo+PiAgCXVwX3JlYWQoJnNiaS0+YmlvX3NlbSk7Cj4+ICsKPj4gKwlpZiAodHlwZSA9PSBS
+RUFEX1NZTkMpIHsKPj4gKwkJd2FpdF9vbl9wYWdlX2xvY2tlZChwYWdlKTsKPj4gKwkJbG9ja19w
+YWdlKHBhZ2UpOwo+PiArCQlpZiAoIVBhZ2VVcHRvZGF0ZShwYWdlKSkgewo+PiArCQkJZjJmc19w
+dXRfcGFnZShwYWdlLCAxKTsKPj4gKwkJCXJldHVybiAtRUlPOwo+PiArCQl9Cj4+ICsJfQo+PiAr
+Cj4+ICAJcmV0dXJuIDA7Cj4+ICB9Cj4+ICAKPj4gQEAgLTY3OSwxMSArNjc4LDcgQEAgcmVwZWF0
+Ogo+PiAgCQllcnIgPSBmMmZzX3JlYWRwYWdlKHNiaSwgcGFnZSwgZG4uZGF0YV9ibGthZGRyLCBS
+RUFEX1NZTkMpOwo+PiAgCQlpZiAoZXJyKQo+PiAgCQkJcmV0dXJuIGVycjsKPj4gLQkJbG9ja19w
+YWdlKHBhZ2UpOwo+PiAtCQlpZiAoIVBhZ2VVcHRvZGF0ZShwYWdlKSkgewo+PiAtCQkJZjJmc19w
+dXRfcGFnZShwYWdlLCAxKTsKPj4gLQkJCXJldHVybiAtRUlPOwo+PiAtCQl9Cj4+ICsKPj4gIAkJ
+aWYgKHBhZ2UtPm1hcHBpbmcgIT0gbWFwcGluZykgewo+PiAgCQkJZjJmc19wdXRfcGFnZShwYWdl
+LCAxKTsKPj4gIAkJCWdvdG8gcmVwZWF0Owo+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmMg
+Yi9mcy9mMmZzL25vZGUuYwo+PiBpbmRleCBmNTE3MmUyLi5mMDYxNTU0IDEwMDY0NAo+PiAtLS0g
+YS9mcy9mMmZzL25vZGUuYwo+PiArKysgYi9mcy9mMmZzL25vZGUuYwo+PiBAQCAtMTUzNCw3ICsx
+NTM0LDYgQEAgaW50IHJlc3RvcmVfbm9kZV9zdW1tYXJ5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNi
+aSwKPj4gIAkJaWYgKGYyZnNfcmVhZHBhZ2Uoc2JpLCBwYWdlLCBhZGRyLCBSRUFEX1NZTkMpKQo+
+PiAgCQkJZ290byBvdXQ7Cj4+ICAKPj4gLQkJbG9ja19wYWdlKHBhZ2UpOwo+PiAgCQlybiA9IEYy
+RlNfTk9ERShwYWdlKTsKPj4gIAkJc3VtX2VudHJ5LT5uaWQgPSBybi0+Zm9vdGVyLm5pZDsKPj4g
+IAkJc3VtX2VudHJ5LT52ZXJzaW9uID0gMDsKPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvcmVjb3Zl
+cnkuYyBiL2ZzL2YyZnMvcmVjb3ZlcnkuYwo+PiBpbmRleCA2MzllYjM0Li5lYzY4MTgzIDEwMDY0
+NAo+PiAtLS0gYS9mcy9mMmZzL3JlY292ZXJ5LmMKPj4gKysrIGIvZnMvZjJmcy9yZWNvdmVyeS5j
+Cj4+IEBAIC0xNDAsOCArMTQwLDYgQEAgc3RhdGljIGludCBmaW5kX2ZzeW5jX2Rub2RlcyhzdHJ1
+Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0cnVjdCBsaXN0X2hlYWQgKmhlYWQpCj4+ICAJCWlmIChl
+cnIpCj4+ICAJCQlnb3RvIG91dDsKPj4gIAo+PiAtCQlsb2NrX3BhZ2UocGFnZSk7Cj4+IC0KPj4g
+IAkJaWYgKGNwX3ZlciAhPSBjcHZlcl9vZl9ub2RlKHBhZ2UpKQo+PiAgCQkJYnJlYWs7Cj4+ICAK
+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50LmMKPj4g
+aW5kZXggOWI3NGFlMi4uYmNkMTlkYiAxMDA2NDQKPj4gLS0tIGEvZnMvZjJmcy9zZWdtZW50LmMK
+Pj4gKysrIGIvZnMvZjJmcy9zZWdtZW50LmMKPj4gQEAgLTYzOSw3ICs2MzksNyBAQCBzdGF0aWMg
+dm9pZCBkb19zdWJtaXRfYmlvKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPj4gIAo+PiAgCQl0
+cmFjZV9mMmZzX2RvX3N1Ym1pdF9iaW8oc2JpLT5zYiwgYnR5cGUsIHN5bmMsIHNiaS0+YmlvW2J0
+eXBlXSk7Cj4+ICAKPj4gLQkJaWYgKHR5cGUgPT0gTUVUQV9GTFVTSCkgewo+PiArCQlpZiAoKHR5
+cGUgPT0gTUVUQV9GTFVTSCkgfHwgKHJ3ICYgV1JJVEVfU1lOQykpIHsKPj4gIAkJCURFQ0xBUkVf
+Q09NUExFVElPTl9PTlNUQUNLKHdhaXQpOwo+PiAgCQkJcC0+aXNfc3luYyA9IHRydWU7Cj4+ICAJ
+CQlwLT53YWl0ID0gJndhaXQ7Cj4gCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpHZXQgeW91ciBT
+UUwgZGF0YWJhc2UgdW5kZXIgdmVyc2lvbiBjb250cm9sIG5vdyEKVmVyc2lvbiBjb250cm9sIGlz
+IHN0YW5kYXJkIGZvciBhcHBsaWNhdGlvbiBjb2RlLCBidXQgZGF0YWJhc2VzIGhhdmVudCAKY2F1
+Z2h0IHVwLiBTbyB3aGF0IHN0ZXBzIGNhbiB5b3UgdGFrZSB0byBwdXQgeW91ciBTUUwgZGF0YWJh
+c2VzIHVuZGVyIAp2ZXJzaW9uIGNvbnRyb2w/IFdoeSBzaG91bGQgeW91IHN0YXJ0IGRvaW5nIGl0
+PyBSZWFkIG1vcmUgdG8gZmluZCBvdXQuCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQv
+Z2FtcGFkL2Nsaz9pZD00OTUwMTcxMSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxp
+bmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xp
+c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
