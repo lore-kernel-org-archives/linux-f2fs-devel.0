@@ -1,221 +1,426 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH] f2fs: add a wait step when submit bio with {READ,WRITE}_SYNC
-Date: Wed, 31 Jul 2013 18:09:49 +0800
-Message-ID: <51F8E26D.2070907@cn.fujitsu.com>
-References: <51F7901E.3010204@cn.fujitsu.com> <1375187398.26443.69.camel@kjgkr> <51F86F67.1070605@cn.fujitsu.com> <1375265195.26443.78.camel@kjgkr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Namjae Jeon <linkinjeon@gmail.com>
+Subject: [PATCH 1/2] f2fs: add sysfs support for controlling the gc_thread
+Date: Wed, 31 Jul 2013 23:33:00 +0900
+Message-ID: <1375281181-15526-1-git-send-email-linkinjeon@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1375265195.26443.78.camel@kjgkr>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk.kim@samsung.com
-Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <linkinjeon@gmail.com>, Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 07/31/2013 06:06 PM, Jaegeuk Kim wrote:
+From: Namjae Jeon <namjae.jeon@samsung.com>
 
-> 2013-07-31 (=EC=88=98), 09:59 +0800, Gu Zheng:
->> Hi Kim,
->>
->> On 07/30/2013 08:29 PM, Jaegeuk Kim wrote:
->>
->>> Hi Gu,
->>>
->>> The original read flow was to avoid redandunt lock/unlock_page() ca=
-lls.
->>
->> Right, this can gain better read performance. But is the wait step a=
-fter=20
->> submitting bio with READ_SYNC needless too?
->=20
-> Correct, the READ_SYNC is also used for IO priority.
-> The basic read policy here is that the caller should lock the page on=
-ly
-> when it wants to manipulate there-in data.
+Add sysfs entries to control the timing parameters for
+f2fs gc thread.
 
-> Otherwise, we don't need to unnecessary lock and unlocks.
+Various Sysfs options introduced are:
+gc_min_sleep_time: Min Sleep time for GC in ms
+gc_max_sleep_time: Max Sleep time for GC in ms
+gc_no_gc_sleep_time: Default Sleep time for GC in ms
 
-Got it, it seems that I had some miss reading originally, it's
-clear now, thanks very much for your explanation.:)
+Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+Signed-off-by: Pankaj Kumar <pankaj.km@samsung.com>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs |   22 ++++++
+ Documentation/filesystems/f2fs.txt      |   26 +++++++
+ fs/f2fs/f2fs.h                          |    4 +
+ fs/f2fs/gc.c                            |   17 +++--
+ fs/f2fs/gc.h                            |   33 ++++----
+ fs/f2fs/super.c                         |  124 +++++++++++++++++++++++++++++++
+ 6 files changed, 206 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-fs-f2fs
 
-Regards,
-Gu
-
-> Thanks,
-
->=20
->>
->>> And we should not wait for WRITE_SYNC, since it is just for write
->>> priority, not for synchronization of the file system.
->>
->> Got it, thanks for your explanation.:)=20
->>
->> Best regards,
->> Gu
->>
->>> Thanks,
->>>
->>> 2013-07-30 (=ED=99=94), 18:06 +0800, Gu Zheng:
->>>> When we submit bio with READ_SYNC or WRITE_SYNC, we need to wait a
->>>> moment for the io completion, current codes only find_data_page() =
-follows the
->>>> rule, other places missing this step, so add it.
->>>>
->>>> Further more, moving the PageUptodate check into f2fs_readpage() t=
-o clean up
->>>> the codes.
->>>>
->>>> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
->>>> ---
->>>>  fs/f2fs/checkpoint.c |    1 -
->>>>  fs/f2fs/data.c       |   39 +++++++++++++++++--------------------=
---
->>>>  fs/f2fs/node.c       |    1 -
->>>>  fs/f2fs/recovery.c   |    2 --
->>>>  fs/f2fs/segment.c    |    2 +-
->>>>  5 files changed, 18 insertions(+), 27 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>> index fe91773..e376a42 100644
->>>> --- a/fs/f2fs/checkpoint.c
->>>> +++ b/fs/f2fs/checkpoint.c
->>>> @@ -64,7 +64,6 @@ repeat:
->>>>  	if (f2fs_readpage(sbi, page, index, READ_SYNC))
->>>>  		goto repeat;
->>>> =20
->>>> -	lock_page(page);
->>>>  	if (page->mapping !=3D mapping) {
->>>>  		f2fs_put_page(page, 1);
->>>>  		goto repeat;
->>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>> index 19cd7c6..b048936 100644
->>>> --- a/fs/f2fs/data.c
->>>> +++ b/fs/f2fs/data.c
->>>> @@ -216,13 +216,11 @@ struct page *find_data_page(struct inode *in=
-ode, pgoff_t index, bool sync)
->>>> =20
->>>>  	err =3D f2fs_readpage(sbi, page, dn.data_blkaddr,
->>>>  					sync ? READ_SYNC : READA);
->>>> -	if (sync) {
->>>> -		wait_on_page_locked(page);
->>>> -		if (!PageUptodate(page)) {
->>>> -			f2fs_put_page(page, 0);
->>>> -			return ERR_PTR(-EIO);
->>>> -		}
->>>> -	}
->>>> +	if (err)
->>>> +		return ERR_PTR(err);
->>>> +
->>>> +	if (sync)
->>>> +		unlock_page(page);
->>>>  	return page;
->>>>  }
->>>> =20
->>>> @@ -267,11 +265,6 @@ repeat:
->>>>  	if (err)
->>>>  		return ERR_PTR(err);
->>>> =20
->>>> -	lock_page(page);
->>>> -	if (!PageUptodate(page)) {
->>>> -		f2fs_put_page(page, 1);
->>>> -		return ERR_PTR(-EIO);
->>>> -	}
->>>>  	if (page->mapping !=3D mapping) {
->>>>  		f2fs_put_page(page, 1);
->>>>  		goto repeat;
->>>> @@ -325,11 +318,7 @@ repeat:
->>>>  		err =3D f2fs_readpage(sbi, page, dn.data_blkaddr, READ_SYNC);
->>>>  		if (err)
->>>>  			return ERR_PTR(err);
->>>> -		lock_page(page);
->>>> -		if (!PageUptodate(page)) {
->>>> -			f2fs_put_page(page, 1);
->>>> -			return ERR_PTR(-EIO);
->>>> -		}
->>>> +
->>>>  		if (page->mapping !=3D mapping) {
->>>>  			f2fs_put_page(page, 1);
->>>>  			goto repeat;
->>>> @@ -399,6 +388,16 @@ int f2fs_readpage(struct f2fs_sb_info *sbi, s=
-truct page *page,
->>>> =20
->>>>  	submit_bio(type, bio);
->>>>  	up_read(&sbi->bio_sem);
->>>> +
->>>> +	if (type =3D=3D READ_SYNC) {
->>>> +		wait_on_page_locked(page);
->>>> +		lock_page(page);
->>>> +		if (!PageUptodate(page)) {
->>>> +			f2fs_put_page(page, 1);
->>>> +			return -EIO;
->>>> +		}
->>>> +	}
->>>> +
->>>>  	return 0;
->>>>  }
->>>> =20
->>>> @@ -679,11 +678,7 @@ repeat:
->>>>  		err =3D f2fs_readpage(sbi, page, dn.data_blkaddr, READ_SYNC);
->>>>  		if (err)
->>>>  			return err;
->>>> -		lock_page(page);
->>>> -		if (!PageUptodate(page)) {
->>>> -			f2fs_put_page(page, 1);
->>>> -			return -EIO;
->>>> -		}
->>>> +
->>>>  		if (page->mapping !=3D mapping) {
->>>>  			f2fs_put_page(page, 1);
->>>>  			goto repeat;
->>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->>>> index f5172e2..f061554 100644
->>>> --- a/fs/f2fs/node.c
->>>> +++ b/fs/f2fs/node.c
->>>> @@ -1534,7 +1534,6 @@ int restore_node_summary(struct f2fs_sb_info=
- *sbi,
->>>>  		if (f2fs_readpage(sbi, page, addr, READ_SYNC))
->>>>  			goto out;
->>>> =20
->>>> -		lock_page(page);
->>>>  		rn =3D F2FS_NODE(page);
->>>>  		sum_entry->nid =3D rn->footer.nid;
->>>>  		sum_entry->version =3D 0;
->>>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>>> index 639eb34..ec68183 100644
->>>> --- a/fs/f2fs/recovery.c
->>>> +++ b/fs/f2fs/recovery.c
->>>> @@ -140,8 +140,6 @@ static int find_fsync_dnodes(struct f2fs_sb_in=
-fo *sbi, struct list_head *head)
->>>>  		if (err)
->>>>  			goto out;
->>>> =20
->>>> -		lock_page(page);
->>>> -
->>>>  		if (cp_ver !=3D cpver_of_node(page))
->>>>  			break;
->>>> =20
->>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>> index 9b74ae2..bcd19db 100644
->>>> --- a/fs/f2fs/segment.c
->>>> +++ b/fs/f2fs/segment.c
->>>> @@ -639,7 +639,7 @@ static void do_submit_bio(struct f2fs_sb_info =
-*sbi,
->>>> =20
->>>>  		trace_f2fs_do_submit_bio(sbi->sb, btype, sync, sbi->bio[btype])=
-;
->>>> =20
->>>> -		if (type =3D=3D META_FLUSH) {
->>>> +		if ((type =3D=3D META_FLUSH) || (rw & WRITE_SYNC)) {
->>>>  			DECLARE_COMPLETION_ONSTACK(wait);
->>>>  			p->is_sync =3D true;
->>>>  			p->wait =3D &wait;
->>>
->>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-fsde=
-vel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+new file mode 100644
+index 0000000..5f44095
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -0,0 +1,22 @@
++What:		/sys/fs/f2fs/<disk>/gc_max_sleep_time
++Date:		July 2013
++Contact:	"Namjae Jeon" <namjae.jeon@samsung.com>
++Description:
++		 Controls the maximun sleep time for gc_thread. Time
++		 is in milliseconds.
++
++What:		/sys/fs/f2fs/<disk>/gc_min_sleep_time
++Date:		July 2013
++Contact:	"Namjae Jeon" <namjae.jeon@samsung.com>
++Description:
++		 Controls the minimum sleep time for gc_thread. Time
++		 is in milliseconds.
++
++What:		/sys/fs/f2fs/<disk>/gc_no_gc_sleep_time
++Date:		July 2013
++Contact:	"Namjae Jeon" <namjae.jeon@samsung.com>
++Description:
++		 Controls the default sleep time for gc_thread. Time
++		 is in milliseconds.
++
++
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 0500c19..2e9e873 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -133,6 +133,32 @@ f2fs. Each file shows the whole f2fs information.
+  - current memory footprint consumed by f2fs.
+ 
+ ================================================================================
++SYSFS ENTRIES
++================================================================================
++
++Information about mounted f2fs file systems can be found in
++/sys/fs/f2fs.  Each mounted filesystem will have a directory in
++/sys/fs/f2fs based on its device name (i.e., /sys/fs/f2fs/sda).
++The files in each per-device directory are shown in table below.
++
++Files in /sys/fs/f2fs/<devname>
++(see also Documentation/ABI/testing/sysfs-fs-f2fs)
++..............................................................................
++ File                         Content
++
++ gc_max_sleep_time            This tuning parameter controls the maximum sleep
++                              time for the garbage collection thread. Time is
++                              in milliseconds.
++
++ gc_min_sleep_time            This tuning parameter controls the minimum sleep
++                              time for the garbage collection thread. Time is
++                              in milliseconds.
++
++ gc_no_gc_sleep_time          This tuning parameter controls the default sleep
++                              time for the garbage collection thread. Time is
++                              in milliseconds.
++
++================================================================================
+ USAGE
+ ================================================================================
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 78777cd..63813be 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -430,6 +430,10 @@ struct f2fs_sb_info {
+ #endif
+ 	unsigned int last_victim[2];		/* last victim segment # */
+ 	spinlock_t stat_lock;			/* lock for stat operations */
++
++	/* For sysfs suppport */
++	struct kobject s_kobj;
++	struct completion s_kobj_unregister;
+ };
+ 
+ /*
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 35f9b1a..60d4f67 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -29,10 +29,11 @@ static struct kmem_cache *winode_slab;
+ static int gc_thread_func(void *data)
+ {
+ 	struct f2fs_sb_info *sbi = data;
++	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
+ 	wait_queue_head_t *wq = &sbi->gc_thread->gc_wait_queue_head;
+ 	long wait_ms;
+ 
+-	wait_ms = GC_THREAD_MIN_SLEEP_TIME;
++	wait_ms = gc_th->min_sleep_time;
+ 
+ 	do {
+ 		if (try_to_freeze())
+@@ -45,7 +46,7 @@ static int gc_thread_func(void *data)
+ 			break;
+ 
+ 		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE) {
+-			wait_ms = GC_THREAD_MAX_SLEEP_TIME;
++			wait_ms = increase_sleep_time(gc_th, wait_ms);
+ 			continue;
+ 		}
+ 
+@@ -66,15 +67,15 @@ static int gc_thread_func(void *data)
+ 			continue;
+ 
+ 		if (!is_idle(sbi)) {
+-			wait_ms = increase_sleep_time(wait_ms);
++			wait_ms = increase_sleep_time(gc_th, wait_ms);
+ 			mutex_unlock(&sbi->gc_mutex);
+ 			continue;
+ 		}
+ 
+ 		if (has_enough_invalid_blocks(sbi))
+-			wait_ms = decrease_sleep_time(wait_ms);
++			wait_ms = decrease_sleep_time(gc_th, wait_ms);
+ 		else
+-			wait_ms = increase_sleep_time(wait_ms);
++			wait_ms = increase_sleep_time(gc_th, wait_ms);
+ 
+ #ifdef CONFIG_F2FS_STAT_FS
+ 		sbi->bg_gc++;
+@@ -82,7 +83,7 @@ static int gc_thread_func(void *data)
+ 
+ 		/* if return value is not zero, no victim was selected */
+ 		if (f2fs_gc(sbi))
+-			wait_ms = GC_THREAD_NOGC_SLEEP_TIME;
++			wait_ms = gc_th->no_gc_sleep_time;
+ 	} while (!kthread_should_stop());
+ 	return 0;
+ }
+@@ -101,6 +102,10 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+ 		goto out;
+ 	}
+ 
++	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
++	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
++	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
++
+ 	sbi->gc_thread = gc_th;
+ 	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
+ 	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index 2c6a6bd..f4bf44c 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -13,9 +13,9 @@
+ 						 * whether IO subsystem is idle
+ 						 * or not
+ 						 */
+-#define GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
+-#define GC_THREAD_MAX_SLEEP_TIME	60000
+-#define GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
++#define DEF_GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
++#define DEF_GC_THREAD_MAX_SLEEP_TIME	60000
++#define DEF_GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
+ #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
+ #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
+ 
+@@ -25,6 +25,11 @@
+ struct f2fs_gc_kthread {
+ 	struct task_struct *f2fs_gc_task;
+ 	wait_queue_head_t gc_wait_queue_head;
++
++	/* for gc sleep time */
++	unsigned int min_sleep_time;
++	unsigned int max_sleep_time;
++	unsigned int no_gc_sleep_time;
+ };
+ 
+ struct inode_entry {
+@@ -56,25 +61,25 @@ static inline block_t limit_free_user_blocks(struct f2fs_sb_info *sbi)
+ 	return (long)(reclaimable_user_blocks * LIMIT_FREE_BLOCK) / 100;
+ }
+ 
+-static inline long increase_sleep_time(long wait)
++static inline long increase_sleep_time(struct f2fs_gc_kthread *gc_th, long wait)
+ {
+-	if (wait == GC_THREAD_NOGC_SLEEP_TIME)
++	if (wait == gc_th->no_gc_sleep_time)
+ 		return wait;
+ 
+-	wait += GC_THREAD_MIN_SLEEP_TIME;
+-	if (wait > GC_THREAD_MAX_SLEEP_TIME)
+-		wait = GC_THREAD_MAX_SLEEP_TIME;
++	wait += gc_th->min_sleep_time;
++	if (wait > gc_th->max_sleep_time)
++		wait = gc_th->max_sleep_time;
+ 	return wait;
+ }
+ 
+-static inline long decrease_sleep_time(long wait)
++static inline long decrease_sleep_time(struct f2fs_gc_kthread *gc_th, long wait)
+ {
+-	if (wait == GC_THREAD_NOGC_SLEEP_TIME)
+-		wait = GC_THREAD_MAX_SLEEP_TIME;
++	if (wait == gc_th->no_gc_sleep_time)
++		wait = gc_th->max_sleep_time;
+ 
+-	wait -= GC_THREAD_MIN_SLEEP_TIME;
+-	if (wait <= GC_THREAD_MIN_SLEEP_TIME)
+-		wait = GC_THREAD_MIN_SLEEP_TIME;
++	wait -= gc_th->min_sleep_time;
++	if (wait <= gc_th->min_sleep_time)
++		wait = gc_th->min_sleep_time;
+ 	return wait;
+ }
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 70dbb31..30de280 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -23,17 +23,21 @@
+ #include <linux/exportfs.h>
+ #include <linux/blkdev.h>
+ #include <linux/f2fs_fs.h>
++#include <linux/kobject.h>
++#include <linux/sysfs.h>
+ 
+ #include "f2fs.h"
+ #include "node.h"
+ #include "segment.h"
+ #include "xattr.h"
++#include "gc.h"
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/f2fs.h>
+ 
+ static struct proc_dir_entry *f2fs_proc_root;
+ static struct kmem_cache *f2fs_inode_cachep;
++static struct kset *f2fs_kset;
+ 
+ enum {
+ 	Opt_gc_background,
+@@ -59,6 +63,114 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_err, NULL},
+ };
+ 
++/*Sysfs support for F2fs */
++struct f2fs_attr {
++	struct attribute attr;
++	ssize_t (*show)(struct f2fs_attr *, struct f2fs_sb_info *, char *);
++	ssize_t (*store)(struct f2fs_attr *, struct f2fs_sb_info *,
++			 const char *, size_t);
++	int offset;
++};
++
++static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
++			   struct f2fs_sb_info *sbi, char *buf)
++{
++	struct f2fs_gc_kthread *gc_kth = sbi->gc_thread;
++	unsigned int *ui;
++
++	if (!gc_kth)
++		return -EFAULT;
++
++	ui = (unsigned int *) (((char *)gc_kth) + a->offset);
++
++	return snprintf(buf, PAGE_SIZE, "%u\n", *ui);
++}
++
++static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
++			    struct f2fs_sb_info *sbi,
++			    const char *buf, size_t count)
++{
++	struct f2fs_gc_kthread *gc_kth = sbi->gc_thread;
++	unsigned long t;
++	unsigned int *ui;
++	ssize_t ret;
++
++	if (!gc_kth)
++		return -EFAULT;
++
++	ui = (unsigned int *) (((char *)gc_kth) + a->offset);
++
++	ret = kstrtoul(skip_spaces(buf), 0, &t);
++	if (ret < 0)
++		return ret;
++	*ui = t;
++	return count;
++}
++
++static ssize_t f2fs_attr_show(struct kobject *kobj,
++				struct attribute *attr, char *buf)
++{
++	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
++								s_kobj);
++	struct f2fs_attr *a = container_of(attr, struct f2fs_attr, attr);
++
++	return a->show ? a->show(a, sbi, buf) : 0;
++}
++
++static ssize_t f2fs_attr_store(struct kobject *kobj, struct attribute *attr,
++						const char *buf, size_t len)
++{
++	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
++									s_kobj);
++	struct f2fs_attr *a = container_of(attr, struct f2fs_attr, attr);
++
++	return a->store ? a->store(a, sbi, buf, len) : 0;
++}
++
++static void f2fs_sb_release(struct kobject *kobj)
++{
++	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
++								s_kobj);
++	complete(&sbi->s_kobj_unregister);
++}
++
++#define F2FS_ATTR_OFFSET(_name, _mode, _show, _store, _elname) \
++static struct f2fs_attr f2fs_attr_##_name = {			\
++	.attr = {.name = __stringify(_name), .mode = _mode },	\
++	.show	= _show,					\
++	.store	= _store,					\
++	.offset = offsetof(struct f2fs_gc_kthread, _elname),	\
++}
++
++#define F2FS_ATTR(name, mode, show, store) \
++static struct f2fs_attr f2fs_attr_##name = __ATTR(name, mode, show, store)
++
++#define F2FS_RW_ATTR(name, elname)	\
++	F2FS_ATTR_OFFSET(name, 0644, f2fs_sbi_show, f2fs_sbi_store, elname)
++
++F2FS_RW_ATTR(gc_min_sleep_time, min_sleep_time);
++F2FS_RW_ATTR(gc_max_sleep_time, max_sleep_time);
++F2FS_RW_ATTR(gc_no_gc_sleep_time, no_gc_sleep_time);
++
++#define ATTR_LIST(name) (&f2fs_attr_##name.attr)
++static struct attribute *f2fs_attrs[] = {
++	ATTR_LIST(gc_min_sleep_time),
++	ATTR_LIST(gc_max_sleep_time),
++	ATTR_LIST(gc_no_gc_sleep_time),
++	NULL,
++};
++
++static const struct sysfs_ops f2fs_attr_ops = {
++	.show   = f2fs_attr_show,
++	.store  = f2fs_attr_store,
++};
++
++static struct kobj_type f2fs_ktype = {
++	.default_attrs  = f2fs_attrs,
++	.sysfs_ops      = &f2fs_attr_ops,
++	.release        = f2fs_sb_release,
++};
++
+ void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...)
+ {
+ 	struct va_format vaf;
+@@ -243,6 +355,7 @@ static void f2fs_put_super(struct super_block *sb)
+ 	destroy_segment_manager(sbi);
+ 
+ 	kfree(sbi->ckpt);
++	kobject_del(&sbi->s_kobj);
+ 
+ 	sb->s_fs_info = NULL;
+ 	brelse(sbi->raw_super_buf);
+@@ -818,6 +931,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 					"the device does not support discard");
+ 	}
+ 
++	sbi->s_kobj.kset = f2fs_kset;
++	init_completion(&sbi->s_kobj_unregister);
++	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_ktype, NULL,
++							"%s", sb->s_id);
++	if (err)
++		goto fail;
++
+ 	return 0;
+ fail:
+ 	stop_gc_thread(sbi);
+@@ -892,6 +1012,9 @@ static int __init init_f2fs_fs(void)
+ 	err = create_checkpoint_caches();
+ 	if (err)
+ 		goto fail;
++	f2fs_kset = kset_create_and_add("f2fs", NULL, fs_kobj);
++	if (!f2fs_kset)
++		goto fail;
+ 	err = register_filesystem(&f2fs_fs_type);
+ 	if (err)
+ 		goto fail;
+@@ -910,6 +1033,7 @@ static void __exit exit_f2fs_fs(void)
+ 	destroy_gc_caches();
+ 	destroy_node_manager_caches();
+ 	destroy_inodecache();
++	kset_unregister(f2fs_kset);
+ }
+ 
+ module_init(init_f2fs_fs)
+-- 
+1.7.9.5
