@@ -1,186 +1,426 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH] libf2fs: check more conditions on mounted
-	filesystem
-Date: Fri, 02 Aug 2013 17:09:49 +0900
-Message-ID: <1375430989-4689-1-git-send-email-jaegeuk.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1V5ARM-0004nN-PC
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 02 Aug 2013 08:10:24 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1V5ARJ-0002Kp-9v for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 02 Aug 2013 08:10:23 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MQW00JQA9D2OGC0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 02 Aug 2013 17:10:14 +0900 (KST)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Namjae Jeon <linkinjeon@gmail.com>
+Subject: [PATCH 1/3] f2fs: add sysfs support for controlling the gc_thread
+Date: Sun,  4 Aug 2013 23:09:40 +0900
+Message-ID: <1375625380-2801-1-git-send-email-linkinjeon@gmail.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Namjae Jeon <linkinjeon@gmail.com>, Namjae Jeon <namjae.jeon@samsung.com>, Gu Zheng <guz.fnst@cn.fujitsu.com>, Pankaj Kumar <pankaj.km@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In the case of lazy umount, "umount -l", some processes are able to use the
-file system even if its mountpoint was disconnected.
-At this moment, we should not allow mkfs.f2fs.
-This patch adds this condition check.
+From: Namjae Jeon <namjae.jeon@samsung.com>
 
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Add sysfs entries to control the timing parameters for
+f2fs gc thread.
+
+Various Sysfs options introduced are:
+gc_min_sleep_time: Min Sleep time for GC in ms
+gc_max_sleep_time: Max Sleep time for GC in ms
+gc_no_gc_sleep_time: Default Sleep time for GC in ms
+
+Cc: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+Signed-off-by: Pankaj Kumar <pankaj.km@samsung.com>
 ---
- fsck/main.c        |  2 +-
- include/f2fs_fs.h  |  2 +-
- lib/libf2fs.c      | 60 +++++++++++++++++++++++++++++++++++++++---------------
- mkfs/f2fs_format.c |  2 +-
- 4 files changed, 47 insertions(+), 19 deletions(-)
+ Documentation/ABI/testing/sysfs-fs-f2fs |   22 ++++++
+ Documentation/filesystems/f2fs.txt      |   26 +++++++
+ fs/f2fs/f2fs.h                          |    4 +
+ fs/f2fs/gc.c                            |   17 +++--
+ fs/f2fs/gc.h                            |   33 +++++----
+ fs/f2fs/super.c                         |  122 +++++++++++++++++++++++++++++++
+ 6 files changed, 204 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-fs-f2fs
 
-diff --git a/fsck/main.c b/fsck/main.c
-index 80db15d..a0144fc 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -183,7 +183,7 @@ int main (int argc, char **argv)
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+new file mode 100644
+index 0000000..5f44095
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -0,0 +1,22 @@
++What:		/sys/fs/f2fs/<disk>/gc_max_sleep_time
++Date:		July 2013
++Contact:	"Namjae Jeon" <namjae.jeon@samsung.com>
++Description:
++		 Controls the maximun sleep time for gc_thread. Time
++		 is in milliseconds.
++
++What:		/sys/fs/f2fs/<disk>/gc_min_sleep_time
++Date:		July 2013
++Contact:	"Namjae Jeon" <namjae.jeon@samsung.com>
++Description:
++		 Controls the minimum sleep time for gc_thread. Time
++		 is in milliseconds.
++
++What:		/sys/fs/f2fs/<disk>/gc_no_gc_sleep_time
++Date:		July 2013
++Contact:	"Namjae Jeon" <namjae.jeon@samsung.com>
++Description:
++		 Controls the default sleep time for gc_thread. Time
++		 is in milliseconds.
++
++
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 0500c19..5daf3bb 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -133,6 +133,32 @@ f2fs. Each file shows the whole f2fs information.
+  - current memory footprint consumed by f2fs.
  
- 	f2fs_parse_options(argc, argv);
+ ================================================================================
++SYSFS ENTRIES
++================================================================================
++
++Information about mounted f2f2 file systems can be found in
++/sys/fs/f2fs.  Each mounted filesystem will have a directory in
++/sys/fs/f2fs based on its device name (i.e., /sys/fs/f2fs/sda).
++The files in each per-device directory are shown in table below.
++
++Files in /sys/fs/f2fs/<devname>
++(see also Documentation/ABI/testing/sysfs-fs-f2fs)
++..............................................................................
++ File                         Content
++
++ gc_max_sleep_time            This tuning parameter controls the maximum sleep
++                              time for the garbage collection thread. Time is
++                              in milliseconds.
++
++ gc_min_sleep_time            This tuning parameter controls the minimum sleep
++                              time for the garbage collection thread. Time is
++                              in milliseconds.
++
++ gc_no_gc_sleep_time          This tuning parameter controls the default sleep
++                              time for the garbage collection thread. Time is
++                              in milliseconds.
++
++================================================================================
+ USAGE
+ ================================================================================
  
--	if (f2fs_dev_is_mounted(&config) < 0)
-+	if (f2fs_dev_is_umounted(&config) < 0)
- 		return -1;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 78777cd..63813be 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -430,6 +430,10 @@ struct f2fs_sb_info {
+ #endif
+ 	unsigned int last_victim[2];		/* last victim segment # */
+ 	spinlock_t stat_lock;			/* lock for stat operations */
++
++	/* For sysfs suppport */
++	struct kobject s_kobj;
++	struct completion s_kobj_unregister;
+ };
  
- 	/* Get device */
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index d0fc79e..7081e5e 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -641,7 +641,7 @@ extern u_int32_t f2fs_cal_crc32(u_int32_t, void *, int);
- extern int f2fs_crc_valid(u_int32_t blk_crc, void *buf, int len);
- 
- extern void f2fs_init_configuration(struct f2fs_configuration *);
--extern int f2fs_dev_is_mounted(struct f2fs_configuration *);
-+extern int f2fs_dev_is_umounted(struct f2fs_configuration *);
- extern int f2fs_get_device_info(struct f2fs_configuration *);
- 
- extern int dev_read(void *, __u64, size_t);
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index b02072f..6947425 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -13,6 +13,7 @@
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <errno.h>
- #include <unistd.h>
- #include <fcntl.h>
- #include <mntent.h>
-@@ -365,31 +366,58 @@ void f2fs_init_configuration(struct f2fs_configuration *c)
- 	c->device_name = NULL;
- }
- 
--int f2fs_dev_is_mounted(struct f2fs_configuration *c)
-+static int is_mounted(const char *mpt, const char *device)
+ /*
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 35f9b1a..60d4f67 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -29,10 +29,11 @@ static struct kmem_cache *winode_slab;
+ static int gc_thread_func(void *data)
  {
- 	FILE *file = NULL;
- 	struct mntent *mnt = NULL;
+ 	struct f2fs_sb_info *sbi = data;
++	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
+ 	wait_queue_head_t *wq = &sbi->gc_thread->gc_wait_queue_head;
+ 	long wait_ms;
  
--	file = setmntent(MOUNTED, "r");
--	if (file == NULL) {
--		/* if failed due to /etc/mtab file not present
--		   try with /proc/mounts */
--		file = setmntent("/proc/mounts", "r");
--		if (file == NULL)
--			return 0;
--	}
-+	file = setmntent(mpt, "r");
-+	if (file == NULL)
-+		return 0;
+-	wait_ms = GC_THREAD_MIN_SLEEP_TIME;
++	wait_ms = gc_th->min_sleep_time;
  
--	while (1) {
--		mnt = getmntent(file);
--		if (mnt == NULL)
-+	while ((mnt = getmntent(file)) != NULL) {
-+		if (!strcmp(device, mnt->mnt_fsname))
+ 	do {
+ 		if (try_to_freeze())
+@@ -45,7 +46,7 @@ static int gc_thread_func(void *data)
  			break;
--		if (!strcmp(c->device_name, mnt->mnt_fsname)) {
--			endmntent(file);
--			MSG(0, "\tError: Not available on mounted device!\n");
-+	}
-+	endmntent(file);
-+	return mnt ? 1 : 0;
-+}
-+
-+int f2fs_dev_is_umounted(struct f2fs_configuration *c)
-+{
-+	struct stat st_buf;
-+	int ret = 0;
-+
-+	ret = is_mounted(MOUNTED, c->device_name);
-+	if (ret) {
-+		MSG(0, "\tError: Not available on mounted device!\n");
-+		return -1;
-+	}
-+
-+	/*
-+	 * if failed due to /etc/mtab file not present
-+	 * try with /proc/mounts.
-+	 */
-+	ret = is_mounted("/proc/mounts", c->device_name);
-+	if (ret) {
-+		MSG(0, "\tError: Not available on mounted device!\n");
-+		return -1;
-+	}
-+
-+	/*
-+	 * If f2fs is umounted with -l, the process can still use
-+	 * the file system. In this case, we should not format.
-+	 */
-+	if (stat(c->device_name, &st_buf) == 0 && S_ISBLK(st_buf.st_mode)) {
-+		int fd = open(c->device_name, O_RDONLY | O_EXCL);
-+
-+		if (fd >= 0) {
-+			close(fd);
-+		} else if (errno == EBUSY) {
-+			MSG(0, "\tError: In use by the system!\n");
- 			return -1;
+ 
+ 		if (sbi->sb->s_writers.frozen >= SB_FREEZE_WRITE) {
+-			wait_ms = GC_THREAD_MAX_SLEEP_TIME;
++			wait_ms = increase_sleep_time(gc_th, wait_ms);
+ 			continue;
  		}
- 	}
--	endmntent(file);
+ 
+@@ -66,15 +67,15 @@ static int gc_thread_func(void *data)
+ 			continue;
+ 
+ 		if (!is_idle(sbi)) {
+-			wait_ms = increase_sleep_time(wait_ms);
++			wait_ms = increase_sleep_time(gc_th, wait_ms);
+ 			mutex_unlock(&sbi->gc_mutex);
+ 			continue;
+ 		}
+ 
+ 		if (has_enough_invalid_blocks(sbi))
+-			wait_ms = decrease_sleep_time(wait_ms);
++			wait_ms = decrease_sleep_time(gc_th, wait_ms);
+ 		else
+-			wait_ms = increase_sleep_time(wait_ms);
++			wait_ms = increase_sleep_time(gc_th, wait_ms);
+ 
+ #ifdef CONFIG_F2FS_STAT_FS
+ 		sbi->bg_gc++;
+@@ -82,7 +83,7 @@ static int gc_thread_func(void *data)
+ 
+ 		/* if return value is not zero, no victim was selected */
+ 		if (f2fs_gc(sbi))
+-			wait_ms = GC_THREAD_NOGC_SLEEP_TIME;
++			wait_ms = gc_th->no_gc_sleep_time;
+ 	} while (!kthread_should_stop());
  	return 0;
  }
+@@ -101,6 +102,10 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+ 		goto out;
+ 	}
  
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index d60f990..5b017c7 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -998,7 +998,7 @@ int main(int argc, char *argv[])
++	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
++	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
++	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
++
+ 	sbi->gc_thread = gc_th;
+ 	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
+ 	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index 2c6a6bd..f4bf44c 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -13,9 +13,9 @@
+ 						 * whether IO subsystem is idle
+ 						 * or not
+ 						 */
+-#define GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
+-#define GC_THREAD_MAX_SLEEP_TIME	60000
+-#define GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
++#define DEF_GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
++#define DEF_GC_THREAD_MAX_SLEEP_TIME	60000
++#define DEF_GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
+ #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
+ #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
  
- 	f2fs_parse_options(argc, argv);
+@@ -25,6 +25,11 @@
+ struct f2fs_gc_kthread {
+ 	struct task_struct *f2fs_gc_task;
+ 	wait_queue_head_t gc_wait_queue_head;
++
++	/* for gc sleep time */
++	unsigned int min_sleep_time;
++	unsigned int max_sleep_time;
++	unsigned int no_gc_sleep_time;
+ };
  
--	if (f2fs_dev_is_mounted(&config) < 0)
-+	if (f2fs_dev_is_umounted(&config) < 0)
- 		return -1;
+ struct inode_entry {
+@@ -56,25 +61,25 @@ static inline block_t limit_free_user_blocks(struct f2fs_sb_info *sbi)
+ 	return (long)(reclaimable_user_blocks * LIMIT_FREE_BLOCK) / 100;
+ }
  
- 	if (f2fs_get_device_info(&config) < 0)
+-static inline long increase_sleep_time(long wait)
++static inline long increase_sleep_time(struct f2fs_gc_kthread *gc_th, long wait)
+ {
+-	if (wait == GC_THREAD_NOGC_SLEEP_TIME)
++	if (wait == gc_th->no_gc_sleep_time)
+ 		return wait;
+ 
+-	wait += GC_THREAD_MIN_SLEEP_TIME;
+-	if (wait > GC_THREAD_MAX_SLEEP_TIME)
+-		wait = GC_THREAD_MAX_SLEEP_TIME;
++	wait += gc_th->min_sleep_time;
++	if (wait > gc_th->max_sleep_time)
++		wait = gc_th->max_sleep_time;
+ 	return wait;
+ }
+ 
+-static inline long decrease_sleep_time(long wait)
++static inline long decrease_sleep_time(struct f2fs_gc_kthread *gc_th, long wait)
+ {
+-	if (wait == GC_THREAD_NOGC_SLEEP_TIME)
+-		wait = GC_THREAD_MAX_SLEEP_TIME;
++	if (wait == gc_th->no_gc_sleep_time)
++		wait = gc_th->max_sleep_time;
+ 
+-	wait -= GC_THREAD_MIN_SLEEP_TIME;
+-	if (wait <= GC_THREAD_MIN_SLEEP_TIME)
+-		wait = GC_THREAD_MIN_SLEEP_TIME;
++	wait -= gc_th->min_sleep_time;
++	if (wait <= gc_th->min_sleep_time)
++		wait = gc_th->min_sleep_time;
+ 	return wait;
+ }
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 70dbb31..0a3e88f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -23,17 +23,21 @@
+ #include <linux/exportfs.h>
+ #include <linux/blkdev.h>
+ #include <linux/f2fs_fs.h>
++#include <linux/kobject.h>
++#include <linux/sysfs.h>
+ 
+ #include "f2fs.h"
+ #include "node.h"
+ #include "segment.h"
+ #include "xattr.h"
++#include "gc.h"
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/f2fs.h>
+ 
+ static struct proc_dir_entry *f2fs_proc_root;
+ static struct kmem_cache *f2fs_inode_cachep;
++static struct kset *f2fs_kset;
+ 
+ enum {
+ 	Opt_gc_background,
+@@ -59,6 +63,111 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_err, NULL},
+ };
+ 
++/*Sysfs support for F2fs */
++struct f2fs_attr {
++	struct attribute attr;
++	ssize_t (*show)(struct f2fs_attr *, struct f2fs_sb_info *, char *);
++	ssize_t (*store)(struct f2fs_attr *, struct f2fs_sb_info *,
++			 const char *, size_t);
++	int offset;
++};
++
++static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
++			   struct f2fs_sb_info *sbi, char *buf)
++{
++	struct f2fs_gc_kthread *gc_kth = sbi->gc_thread;
++	unsigned int *ui;
++
++	if (!gc_kth)
++		return -EFAULT;
++
++	ui = (unsigned int *) (((char *)gc_kth) + a->offset);
++
++	return snprintf(buf, PAGE_SIZE, "%u\n", *ui);
++}
++
++static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
++			    struct f2fs_sb_info *sbi,
++			    const char *buf, size_t count)
++{
++	struct f2fs_gc_kthread *gc_kth = sbi->gc_thread;
++	unsigned long t;
++	unsigned int *ui;
++	ssize_t ret;
++
++	if (!gc_kth)
++		return -EFAULT;
++
++	ui = (unsigned int *) (((char *)gc_kth) + a->offset);
++
++	ret = kstrtoul(skip_spaces(buf), 0, &t);
++	if (ret < 0)
++		return ret;
++	*ui = t;
++	return count;
++}
++
++static ssize_t f2fs_attr_show(struct kobject *kobj,
++				struct attribute *attr, char *buf)
++{
++	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
++								s_kobj);
++	struct f2fs_attr *a = container_of(attr, struct f2fs_attr, attr);
++
++	return a->show ? a->show(a, sbi, buf) : 0;
++}
++
++static ssize_t f2fs_attr_store(struct kobject *kobj, struct attribute *attr,
++						const char *buf, size_t len)
++{
++	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
++									s_kobj);
++	struct f2fs_attr *a = container_of(attr, struct f2fs_attr, attr);
++
++	return a->store ? a->store(a, sbi, buf, len) : 0;
++}
++
++static void f2fs_sb_release(struct kobject *kobj)
++{
++	struct f2fs_sb_info *sbi = container_of(kobj, struct f2fs_sb_info,
++								s_kobj);
++	complete(&sbi->s_kobj_unregister);
++}
++
++#define F2FS_ATTR_OFFSET(_name, _mode, _show, _store, _elname) \
++static struct f2fs_attr f2fs_attr_##_name = {			\
++	.attr = {.name = __stringify(_name), .mode = _mode },	\
++	.show	= _show,					\
++	.store	= _store,					\
++	.offset = offsetof(struct f2fs_gc_kthread, _elname),	\
++}
++
++#define F2FS_RW_ATTR(name, elname)	\
++	F2FS_ATTR_OFFSET(name, 0644, f2fs_sbi_show, f2fs_sbi_store, elname)
++
++F2FS_RW_ATTR(gc_min_sleep_time, min_sleep_time);
++F2FS_RW_ATTR(gc_max_sleep_time, max_sleep_time);
++F2FS_RW_ATTR(gc_no_gc_sleep_time, no_gc_sleep_time);
++
++#define ATTR_LIST(name) (&f2fs_attr_##name.attr)
++static struct attribute *f2fs_attrs[] = {
++	ATTR_LIST(gc_min_sleep_time),
++	ATTR_LIST(gc_max_sleep_time),
++	ATTR_LIST(gc_no_gc_sleep_time),
++	NULL,
++};
++
++static const struct sysfs_ops f2fs_attr_ops = {
++	.show   = f2fs_attr_show,
++	.store  = f2fs_attr_store,
++};
++
++static struct kobj_type f2fs_ktype = {
++	.default_attrs  = f2fs_attrs,
++	.sysfs_ops      = &f2fs_attr_ops,
++	.release        = f2fs_sb_release,
++};
++
+ void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...)
+ {
+ 	struct va_format vaf;
+@@ -243,6 +352,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 	destroy_segment_manager(sbi);
+ 
+ 	kfree(sbi->ckpt);
++	kobject_del(&sbi->s_kobj);
++	wait_for_completion(&sbi->s_kobj_unregister);
+ 
+ 	sb->s_fs_info = NULL;
+ 	brelse(sbi->raw_super_buf);
+@@ -818,6 +929,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 					"the device does not support discard");
+ 	}
+ 
++	sbi->s_kobj.kset = f2fs_kset;
++	init_completion(&sbi->s_kobj_unregister);
++	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_ktype, NULL,
++							"%s", sb->s_id);
++	if (err)
++		goto fail;
++
+ 	return 0;
+ fail:
+ 	stop_gc_thread(sbi);
+@@ -892,6 +1010,9 @@ static int __init init_f2fs_fs(void)
+ 	err = create_checkpoint_caches();
+ 	if (err)
+ 		goto fail;
++	f2fs_kset = kset_create_and_add("f2fs", NULL, fs_kobj);
++	if (!f2fs_kset)
++		goto fail;
+ 	err = register_filesystem(&f2fs_fs_type);
+ 	if (err)
+ 		goto fail;
+@@ -910,6 +1031,7 @@ static void __exit exit_f2fs_fs(void)
+ 	destroy_gc_caches();
+ 	destroy_node_manager_caches();
+ 	destroy_inodecache();
++	kset_unregister(f2fs_kset);
+ }
+ 
+ module_init(init_f2fs_fs)
 -- 
-1.8.3.1.437.g0dbd812
+1.7.9.5
 
-
-------------------------------------------------------------------------------
-Get your SQL database under version control now!
-Version control is standard for application code, but databases havent 
-caught up. So what steps can you take to put your SQL databases under 
-version control? Why should you start doing it? Read more to find out.
-http://pubads.g.doubleclick.net/gampad/clk?id=49501711&iu=/4140/ostg.clktrk
