@@ -1,24 +1,25 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH 2/3] f2fs: add sysfs entries to select the gc
-	policy
-Date: Mon, 05 Aug 2013 10:00:13 +0800
-Message-ID: <51FF072D.80806@cn.fujitsu.com>
-References: <1375625415-2835-1-git-send-email-linkinjeon@gmail.com>
+From: Jin Xu <jinuxstyle@gmail.com>
+Subject: [PATCH] f2fs: fix a deadlock in fsync
+Date: Mon,  5 Aug 2013 20:02:04 +0800
+Message-ID: <1375704124-22274-1-git-send-email-jinuxstyle@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1V6A9h-0000fo-Pa
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jinuxstyle@gmail.com>) id 1V6JUx-0004xc-8V
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 05 Aug 2013 02:04:17 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1V6A9f-0003M4-H2 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 05 Aug 2013 02:04:17 +0000
-In-Reply-To: <1375625415-2835-1-git-send-email-linkinjeon@gmail.com>
+	Mon, 05 Aug 2013 12:02:51 +0000
+Received: from mail-pb0-f52.google.com ([209.85.160.52])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1V6JUv-0000Vc-I5
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 05 Aug 2013 12:02:51 +0000
+Received: by mail-pb0-f52.google.com with SMTP id wz12so3264717pbc.25
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 05 Aug 2013 05:02:43 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,150 +29,119 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Namjae Jeon <linkinjeon@gmail.com>
-Cc: Namjae Jeon <namjae.jeon@samsung.com>, Pankaj Kumar <pankaj.km@samsung.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, jinuxstyle@gmail.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 08/04/2013 10:10 PM, Namjae Jeon wrote:
+From: Jin Xu <jinuxstyle@gmail.com>
 
-> From: Namjae Jeon <namjae.jeon@samsung.com>
-> 
-> Add sysfs entry gc_idle to control the gc policy. Where
-> gc_idle = 1 corresponds to selecting a cost benefit approach,
-> while gc_idle = 2 corresponds to selecting a greedy approach
-> to garbage collection. The selection is mutually exclusive one
-> approach will work at any point. If gc_idle = 0, then this
-> option is disabled.
-> 
-> Cc: Gu Zheng <guz.fnst@cn.fujitsu.com>
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Pankaj Kumar <pankaj.km@samsung.com>
+This patch fixes a deadlock bug that occurs quite often when there are
+concurrent write and fsync on a same file.
 
+Following is the simplified call trace when tasks get hung.
 
-Reviewed-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+fsync thread:
+- f2fs_sync_file
+ ...
+ - f2fs_write_data_pages
+ ...
+  - update_extent_cache
+  ...
+   - update_inode
+    - wait_on_page_writeback
 
-> ---
->  Documentation/ABI/testing/sysfs-fs-f2fs |    6 +++++-
->  Documentation/filesystems/f2fs.txt      |    6 ++++++
->  fs/f2fs/gc.c                            |   24 +++++++++++++++++++++---
->  fs/f2fs/gc.h                            |    3 +++
->  fs/f2fs/super.c                         |    2 ++
->  5 files changed, 37 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index 5f44095..31942ef 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -19,4 +19,8 @@ Description:
->  		 Controls the default sleep time for gc_thread. Time
->  		 is in milliseconds.
->  
-> -
-> +What:		/sys/fs/f2fs/<disk>/gc_idle
-> +Date:		July 2013
-> +Contact:	"Namjae Jeon" <namjae.jeon@samsung.com>
-> +Description:
-> +		 Controls the victim selection policy for garbage collection.
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index 5daf3bb..3cd27be 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -158,6 +158,12 @@ Files in /sys/fs/f2fs/<devname>
->                                time for the garbage collection thread. Time is
->                                in milliseconds.
->  
-> + gc_idle                      This parameter controls the selection of victim
-> +                              policy for garbage collection. Setting gc_idle = 0
-> +                              (default) will disable this option. Setting
-> +                              gc_idle = 1 will select the Cost Benefit approach
-> +                              & setting gc_idle = 2 will select the greedy aproach.
-> +
->  ================================================================================
->  USAGE
->  ================================================================================
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 60d4f67..2c0c8ad 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -106,6 +106,8 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
->  	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
->  	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
->  
-> +	gc_th->gc_idle = 0;
-> +
->  	sbi->gc_thread = gc_th;
->  	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
->  	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
-> @@ -130,9 +132,25 @@ void stop_gc_thread(struct f2fs_sb_info *sbi)
->  	sbi->gc_thread = NULL;
->  }
->  
-> -static int select_gc_type(int gc_type)
-> +static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
->  {
-> -	return (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
-> +	int gc_mode;
-> +
-> +	if (gc_th && gc_th->gc_idle) {
-> +		/* Cost Benefit Policy */
-> +		if (gc_th->gc_idle == 1) {
-> +			gc_mode = GC_CB;
-> +			goto out;
-> +		} else if (gc_th->gc_idle == 2) {
-> +			/* Greedy Policy */
-> +			gc_mode = GC_GREEDY;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
-> +out:
-> +	return gc_mode;
->  }
->  
->  static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
-> @@ -145,7 +163,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
->  		p->dirty_segmap = dirty_i->dirty_segmap[type];
->  		p->ofs_unit = 1;
->  	} else {
-> -		p->gc_mode = select_gc_type(gc_type);
-> +		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
->  		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
->  		p->ofs_unit = sbi->segs_per_sec;
->  	}
-> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> index f4bf44c..c22dee9 100644
-> --- a/fs/f2fs/gc.h
-> +++ b/fs/f2fs/gc.h
-> @@ -30,6 +30,9 @@ struct f2fs_gc_kthread {
->  	unsigned int min_sleep_time;
->  	unsigned int max_sleep_time;
->  	unsigned int no_gc_sleep_time;
-> +
-> +	/* for changing gc mode */
-> +	unsigned int gc_idle;
->  };
->  
->  struct inode_entry {
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 0a3e88f..f9c6c0b 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -148,12 +148,14 @@ static struct f2fs_attr f2fs_attr_##_name = {			\
->  F2FS_RW_ATTR(gc_min_sleep_time, min_sleep_time);
->  F2FS_RW_ATTR(gc_max_sleep_time, max_sleep_time);
->  F2FS_RW_ATTR(gc_no_gc_sleep_time, no_gc_sleep_time);
-> +F2FS_RW_ATTR(gc_idle, gc_idle);
->  
->  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
->  static struct attribute *f2fs_attrs[] = {
->  	ATTR_LIST(gc_min_sleep_time),
->  	ATTR_LIST(gc_max_sleep_time),
->  	ATTR_LIST(gc_no_gc_sleep_time),
-> +	ATTR_LIST(gc_idle),
->  	NULL,
->  };
->  
+bdi writeback thread
+- __writeback_single_inode
+ - f2fs_write_data_pages
+  - mutex_lock(sbi->writepages)
 
+The deadlock happens when the fsync thread waits on a inode page that has
+been added to the f2fs' cached bio sbi->bio[NODE], and unfortunately,
+no one else could be able to submit the cached bio to block layer for
+writeback. This is because the fsync thread already hold a sbi->fs_lock and
+the sbi->writepages lock, causing the bdi thread being blocked when attempt
+to write data pages for the same inode. At the same time, f2fs_gc thread
+does not notice the situation and could not help. Even the sync syscall
+gets blocked.
+
+To fix it, we could submit the cached bio first before waiting on a inode page
+that is being written back.
+
+Signed-off-by: Jin Xu <jinuxstyle@gmail.com>
+---
+ fs/f2fs/f2fs.h    |    2 ++
+ fs/f2fs/gc.c      |    5 +----
+ fs/f2fs/inode.c   |    3 ++-
+ fs/f2fs/segment.c |    9 +++++++++
+ 4 files changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 467d42d..064d3f9 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1013,6 +1013,8 @@ void allocate_new_segments(struct f2fs_sb_info *);
+ struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
+ struct bio *f2fs_bio_alloc(struct block_device *, int);
+ void f2fs_submit_bio(struct f2fs_sb_info *, enum page_type, bool sync);
++void f2fs_wait_on_page_writeback(struct f2fs_sb_info *sbi,
++		struct page *page, enum page_type type, bool sync);
+ void write_meta_page(struct f2fs_sb_info *, struct page *);
+ void write_node_page(struct f2fs_sb_info *, struct page *, unsigned int,
+ 					block_t, block_t *);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 35f9b1a..acfa411 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -508,10 +508,7 @@ static void move_data_page(struct inode *inode, struct page *page, int gc_type)
+ 	} else {
+ 		struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+ 
+-		if (PageWriteback(page)) {
+-			f2fs_submit_bio(sbi, DATA, true);
+-			wait_on_page_writeback(page);
+-		}
++		f2fs_wait_on_page_writeback(sbi, page, DATA, true);
+ 
+ 		if (clear_page_dirty_for_io(page) &&
+ 			S_ISDIR(inode->i_mode)) {
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 2b2d45d1..d42b85b 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -148,10 +148,11 @@ bad_inode:
+ 
+ void update_inode(struct inode *inode, struct page *node_page)
+ {
++	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+ 	struct f2fs_node *rn;
+ 	struct f2fs_inode *ri;
+ 
+-	wait_on_page_writeback(node_page);
++	f2fs_wait_on_page_writeback(sbi, node_page, NODE, false);
+ 
+ 	rn = page_address(node_page);
+ 	ri = &(rn->i);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a86d125..7056cc0 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -702,6 +702,15 @@ alloc_new:
+ 	trace_f2fs_submit_write_page(page, blk_addr, type);
+ }
+ 
++void f2fs_wait_on_page_writeback(struct f2fs_sb_info *sbi,
++		struct page *page, enum page_type type, bool sync)
++{
++	if (PageWriteback(page)) {
++		f2fs_submit_bio(sbi, type, sync);
++		wait_on_page_writeback(page);
++	}
++}
++
+ static bool __has_curseg_space(struct f2fs_sb_info *sbi, int type)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, type);
+-- 
+1.7.9.5
 
 
 ------------------------------------------------------------------------------
