@@ -1,25 +1,31 @@
-From: Jin Xu <jinuxstyle@gmail.com>
-Subject: [PATCH] f2fs: fix a deadlock in fsync
-Date: Mon,  5 Aug 2013 20:02:04 +0800
-Message-ID: <1375704124-22274-1-git-send-email-jinuxstyle@gmail.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [PATCH] f2fs: fix a deadlock in fsync
+Date: Tue, 06 Aug 2013 21:46:15 +0900
+Message-ID: <1375793175.22638.18.camel@kjgkr>
+References: <1375704124-22274-1-git-send-email-jinuxstyle@gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jinuxstyle@gmail.com>) id 1V6JUx-0004xc-8V
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1V6gfA-0007hl-68
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 05 Aug 2013 12:02:51 +0000
-Received: from mail-pb0-f52.google.com ([209.85.160.52])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1V6JUv-0000Vc-I5
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 05 Aug 2013 12:02:51 +0000
-Received: by mail-pb0-f52.google.com with SMTP id wz12so3264717pbc.25
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 05 Aug 2013 05:02:43 -0700 (PDT)
+	Tue, 06 Aug 2013 12:46:56 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1V6gf7-00020K-RR for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 06 Aug 2013 12:46:56 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MR400GOU0TQUKQ0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 06 Aug 2013 21:46:38 +0900 (KST)
+In-reply-to: <1375704124-22274-1-git-send-email-jinuxstyle@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,10 +35,38 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, jinuxstyle@gmail.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jin Xu <jinuxstyle@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
+Hi, Jin,
+
+IMO, this patch tries to fix the deadlock condition on
+f2fs_write_data_pages.
+
+I think the errorneous scenario is something like this.
+When there remains only one fs_lock during the checkpoint procedure,
+f2fs_write_data_pages successfully gets the last one at the moment.
+Then, other operations like sync and writeback thread are definitely
+blocked too.
+
+Meanwhile, in the flow of f2fs_write_data_pages, it is able to wait on
+writebacked node page, which is what you decribed.
+
+If you indicated this scenario correctly, as I examined the flow again,
+I found one more case, __set_data_blkaddr, in addition to the
+update_inode. And, I can clean up another minor flow too.
+
+Please check the below patch.
+Thanks,
+
+----> 
+
+>From a9c62162ea89c9b6b52d39d6db3f8f27c4d2ce5c Mon Sep 17 00:00:00 2001
 From: Jin Xu <jinuxstyle@gmail.com>
+Date: Mon, 5 Aug 2013 20:02:04 +0800
+Subject: [PATCH] f2fs: fix a deadlock in fsync
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+linux-f2fs-devel@lists.sourceforge.net
 
 This patch fixes a deadlock bug that occurs quite often when there are
 concurrent write and fsync on a same file.
@@ -54,44 +88,79 @@ bdi writeback thread
  - f2fs_write_data_pages
   - mutex_lock(sbi->writepages)
 
-The deadlock happens when the fsync thread waits on a inode page that has
+The deadlock happens when the fsync thread waits on a inode page that
+has
 been added to the f2fs' cached bio sbi->bio[NODE], and unfortunately,
 no one else could be able to submit the cached bio to block layer for
-writeback. This is because the fsync thread already hold a sbi->fs_lock and
-the sbi->writepages lock, causing the bdi thread being blocked when attempt
+writeback. This is because the fsync thread already hold a sbi->fs_lock
+and
+the sbi->writepages lock, causing the bdi thread being blocked when
+attempt
 to write data pages for the same inode. At the same time, f2fs_gc thread
 does not notice the situation and could not help. Even the sync syscall
 gets blocked.
 
-To fix it, we could submit the cached bio first before waiting on a inode page
+To fix it, we could submit the cached bio first before waiting on a
+inode page
 that is being written back.
 
 Signed-off-by: Jin Xu <jinuxstyle@gmail.com>
+[Jaegeuk Kim: add more cases to use f2fs_wait_on_page_writeback]
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/f2fs.h    |    2 ++
- fs/f2fs/gc.c      |    5 +----
- fs/f2fs/inode.c   |    3 ++-
- fs/f2fs/segment.c |    9 +++++++++
- 4 files changed, 14 insertions(+), 5 deletions(-)
+ fs/f2fs/data.c    |  2 +-
+ fs/f2fs/f2fs.h    |  3 ++-
+ fs/f2fs/gc.c      |  8 ++------
+ fs/f2fs/inode.c   |  2 +-
+ fs/f2fs/segment.c | 10 ++++++++++
+ 5 files changed, 16 insertions(+), 9 deletions(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index f458883..a7eb529 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -37,7 +37,7 @@ static void __set_data_blkaddr(struct dnode_of_data
+*dn, block_t new_addr)
+ 	struct page *node_page = dn->node_page;
+ 	unsigned int ofs_in_node = dn->ofs_in_node;
+ 
+-	wait_on_page_writeback(node_page);
++	f2fs_wait_on_page_writeback(node_page, NODE, false);
+ 
+ 	rn = F2FS_NODE(node_page);
+ 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 467d42d..064d3f9 100644
+index 63813be..13db10b 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1013,6 +1013,8 @@ void allocate_new_segments(struct f2fs_sb_info *);
+@@ -1023,7 +1023,8 @@ int npages_for_summary_flush(struct f2fs_sb_info
+*);
+ void allocate_new_segments(struct f2fs_sb_info *);
  struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
  struct bio *f2fs_bio_alloc(struct block_device *, int);
- void f2fs_submit_bio(struct f2fs_sb_info *, enum page_type, bool sync);
-+void f2fs_wait_on_page_writeback(struct f2fs_sb_info *sbi,
-+		struct page *page, enum page_type type, bool sync);
+-void f2fs_submit_bio(struct f2fs_sb_info *, enum page_type, bool sync);
++void f2fs_submit_bio(struct f2fs_sb_info *, enum page_type, bool);
++void f2fs_wait_on_page_writeback(struct page *, enum page_type, bool);
  void write_meta_page(struct f2fs_sb_info *, struct page *);
- void write_node_page(struct f2fs_sb_info *, struct page *, unsigned int,
+ void write_node_page(struct f2fs_sb_info *, struct page *, unsigned
+int,
  					block_t, block_t *);
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 35f9b1a..acfa411 100644
+index d286d8b..e6b3ffd 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -508,10 +508,7 @@ static void move_data_page(struct inode *inode, struct page *page, int gc_type)
+@@ -422,8 +422,7 @@ next_step:
+ 
+ 		/* set page dirty and write it */
+ 		if (gc_type == FG_GC) {
+-			f2fs_submit_bio(sbi, NODE, true);
+-			wait_on_page_writeback(node_page);
++			f2fs_wait_on_page_writeback(node_page, NODE, true);
+ 			set_page_dirty(node_page);
+ 		} else {
+ 			if (!PageWriteback(node_page))
+@@ -523,10 +522,7 @@ static void move_data_page(struct inode *inode,
+struct page *page, int gc_type)
  	} else {
  		struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
  
@@ -99,38 +168,36 @@ index 35f9b1a..acfa411 100644
 -			f2fs_submit_bio(sbi, DATA, true);
 -			wait_on_page_writeback(page);
 -		}
-+		f2fs_wait_on_page_writeback(sbi, page, DATA, true);
++		f2fs_wait_on_page_writeback(page, DATA, true);
  
  		if (clear_page_dirty_for_io(page) &&
  			S_ISDIR(inode->i_mode)) {
 diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 2b2d45d1..d42b85b 100644
+index debf743..9ab81e7 100644
 --- a/fs/f2fs/inode.c
 +++ b/fs/f2fs/inode.c
-@@ -148,10 +148,11 @@ bad_inode:
- 
- void update_inode(struct inode *inode, struct page *node_page)
- {
-+	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+@@ -151,7 +151,7 @@ void update_inode(struct inode *inode, struct page
+*node_page)
  	struct f2fs_node *rn;
  	struct f2fs_inode *ri;
  
 -	wait_on_page_writeback(node_page);
-+	f2fs_wait_on_page_writeback(sbi, node_page, NODE, false);
++	f2fs_wait_on_page_writeback(node_page, NODE, false);
  
- 	rn = page_address(node_page);
+ 	rn = F2FS_NODE(node_page);
  	ri = &(rn->i);
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index a86d125..7056cc0 100644
+index 9b74ae2..68e344f 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -702,6 +702,15 @@ alloc_new:
+@@ -705,6 +705,16 @@ retry:
  	trace_f2fs_submit_write_page(page, blk_addr, type);
  }
  
-+void f2fs_wait_on_page_writeback(struct f2fs_sb_info *sbi,
-+		struct page *page, enum page_type type, bool sync)
++void f2fs_wait_on_page_writeback(struct page *page,
++				enum page_type type, bool sync)
 +{
++	struct f2fs_sb_info *sbi = F2FS_SB(page->mapping->host->i_sb);
 +	if (PageWriteback(page)) {
 +		f2fs_submit_bio(sbi, type, sync);
 +		wait_on_page_writeback(page);
@@ -141,7 +208,13 @@ index a86d125..7056cc0 100644
  {
  	struct curseg_info *curseg = CURSEG_I(sbi, type);
 -- 
-1.7.9.5
+1.8.3.1.437.g0dbd812
+
+
+
+-- 
+Jaegeuk Kim
+Samsung
 
 
 ------------------------------------------------------------------------------
@@ -149,4 +222,4 @@ Get your SQL database under version control now!
 Version control is standard for application code, but databases havent 
 caught up. So what steps can you take to put your SQL databases under 
 version control? Why should you start doing it? Read more to find out.
-http://pubads.g.doubleclick.net/gampad/clk?id=49501711&iu=/4140/ostg.clktrk
+http://pubads.g.doubleclick.net/gampad/clk?id=48897031&iu=/4140/ostg.clktrk
