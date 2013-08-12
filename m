@@ -1,22 +1,23 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 1/2] f2fs: check the free space first in
-	new_node_page
-Date: Mon, 12 Aug 2013 16:58:53 +0900
-Message-ID: <1376294334-11699-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 2/2] f2fs: should cover i_xattr_nid with its
+ xattr node page lock
+Date: Mon, 12 Aug 2013 16:58:54 +0900
+Message-ID: <1376294334-11699-2-git-send-email-jaegeuk.kim@samsung.com>
+References: <1376294334-11699-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1V8n1n-0005x6-TX
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1V8n1q-0003QG-FT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Aug 2013 07:58:59 +0000
+	Mon, 12 Aug 2013 07:59:02 +0000
 Received: from mailout4.samsung.com ([203.254.224.34])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1V8n1l-0000Ue-Vk for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Aug 2013 07:58:59 +0000
+	id 1V8n1o-0000Ue-2w for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 12 Aug 2013 07:59:02 +0000
 Received: from epcpsbgr3.samsung.com
 	(u143.gpu120.samsung.co.kr [203.254.230.143])
 	by mailout4.samsung.com (Oracle Communications Messaging Server
@@ -24,6 +25,7 @@ Received: from epcpsbgr3.samsung.com
 	with ESMTP id <0MRE0009FRHUW4G0@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
 	Mon, 12 Aug 2013 16:58:51 +0900 (KST)
+In-reply-to: <1376294334-11699-1-git-send-email-jaegeuk.kim@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,57 +37,78 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Let's check the free space in prior to the main process of allocating a new node
-page.
+Previously, f2fs_setxattr assigns i_xattr_nid in the inode page inconsistently.
+
+The scenario is:
+
+= Thread 1 =         = Thread 2 =     = fi->i_xattr_nid =  = on-disk nid =
+
+f2fs_setxattr                                   0                 0
+  new_node_page                                 X                 0
+                   sync_inode_page              X                 X
+                   checkpoint                   X                 X -.
+    grab_cache_page                             X                 X  |
+--> allocate a new xattr node block or -ENOSPC      <----------------'
+
+At this moment, the checkpoint stores inconsistent data where the inode has
+i_xattr_nid but actual xattr node block is not allocated yet.
+
+So, we should assign the real i_xattr_nid only after its xattr node block is
+allocated.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/node.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/f2fs/node.c  |  3 +++
+ fs/f2fs/xattr.c | 10 +++++-----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index bb8fbda..858a333 100644
+index 858a333..1c21344 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -833,29 +833,29 @@ struct page *new_node_page(struct dnode_of_data *dn,
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
+@@ -851,6 +851,9 @@ struct page *new_node_page(struct dnode_of_data *dn,
+ 	SetPageUptodate(page);
+ 	set_page_dirty(page);
  
--	get_node_info(sbi, dn->nid, &old_ni);
-+	if (!inc_valid_node_count(sbi, dn->inode, 1)) {
-+		err = -ENOSPC;
-+		goto fail;
-+	}
- 
--	SetPageUptodate(page);
--	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
-+	get_node_info(sbi, dn->nid, &old_ni);
- 
- 	/* Reinitialize old_ni with new node page */
- 	BUG_ON(old_ni.blk_addr != NULL_ADDR);
- 	new_ni = old_ni;
- 	new_ni.ino = dn->inode->i_ino;
--
--	if (!inc_valid_node_count(sbi, dn->inode, 1)) {
--		err = -ENOSPC;
--		goto fail;
--	}
- 	set_node_addr(sbi, &new_ni, NEW_ADDR);
++	if (ofs == XATTR_NODE_OFFSET)
++		F2FS_I(dn->inode)->i_xattr_nid = dn->nid;
 +
-+	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
- 	set_cold_node(dn->inode, page);
-+	SetPageUptodate(page);
-+	set_page_dirty(page);
- 
  	dn->node_page = page;
  	if (ipage)
  		update_inode(dn->inode, ipage);
- 	else
- 		sync_inode_page(dn);
--	set_page_dirty(page);
- 	if (ofs == 0)
- 		inc_valid_inode_count(sbi);
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index fb16f71..3bc307c 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -378,23 +378,23 @@ int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
+ 	if (!fi->i_xattr_nid) {
+ 		/* Allocate new attribute block */
+ 		struct dnode_of_data dn;
++		nid_t new_nid;
  
+-		if (!alloc_nid(sbi, &fi->i_xattr_nid)) {
++		if (!alloc_nid(sbi, &new_nid)) {
+ 			error = -ENOSPC;
+ 			goto exit;
+ 		}
+-		set_new_dnode(&dn, inode, NULL, NULL, fi->i_xattr_nid);
++		set_new_dnode(&dn, inode, NULL, NULL, new_nid);
+ 		mark_inode_dirty(inode);
+ 
+ 		page = new_node_page(&dn, XATTR_NODE_OFFSET, ipage);
+ 		if (IS_ERR(page)) {
+-			alloc_nid_failed(sbi, fi->i_xattr_nid);
+-			fi->i_xattr_nid = 0;
++			alloc_nid_failed(sbi, new_nid);
+ 			error = PTR_ERR(page);
+ 			goto exit;
+ 		}
+ 
+-		alloc_nid_done(sbi, fi->i_xattr_nid);
++		alloc_nid_done(sbi, new_nid);
+ 		base_addr = page_address(page);
+ 		header = XATTR_HDR(base_addr);
+ 		header->h_magic = cpu_to_le32(F2FS_XATTR_MAGIC);
 -- 
 1.8.3.1.437.g0dbd812
 
