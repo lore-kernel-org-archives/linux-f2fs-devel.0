@@ -1,87 +1,58 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch v2] f2fs: alloc_page() doesn't return an ERR_PTR
-Date: Thu, 15 Aug 2013 08:54:56 +0300
-Message-ID: <20130815055456.GD23580@elgon.mountain>
-References: <1376486676.2354.5.camel@kjgkr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <dan.carpenter@oracle.com>) id 1V9qWn-00089Y-8t
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 15 Aug 2013 05:55:21 +0000
-Received: from aserp1040.oracle.com ([141.146.126.69])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1V9qWi-0006J3-Ig
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 15 Aug 2013 05:55:21 +0000
-Content-Disposition: inline
-In-Reply-To: <1376486676.2354.5.camel@kjgkr>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Jin Xu <jinuxstyle@gmail.com>
+Subject: [PATCH] f2fs: avoid writing inode redundantly when creating a file
+Date: Thu, 15 Aug 2013 19:17:01 +0800
+Message-ID: <1376565421-7218-1-git-send-email-jinuxstyle@gmail.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, jinuxstyle@gmail.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-alloc_page() returns a NULL on failure, it never returns an ERR_PTR.
+From: Jin Xu <jinuxstyle@gmail.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+In f2fs_write_inode, updating inode after f2fs_balance_fs is not
+a optimized way in the case that f2fs_gc is performed ahead. The
+inode page will be unnecessarily written out twice, one of which
+is in f2fs_gc->...->sync_node_pages and the other is in
+update_inode_page.
+
+Let's update the inode page in prior to f2fs_balance_fs to avoid
+this.
+
+To reproduce it,
+$ touch file (before this step, should make the device need f2fs_gc)
+$ sync (or wait the bdi to write dirty inode)
+
+Signed-off-by: Jin Xu <jinuxstyle@gmail.com>
 ---
-v2: fix the calls in recovery.c as well.
+ fs/f2fs/inode.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f5172e2..3e87fe0 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1515,8 +1515,8 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index d42b85b..675b84a 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -222,9 +222,6 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	if (!is_inode_flag_set(F2FS_I(inode), FI_DIRTY_INODE))
+ 		return 0;
  
- 	/* alloc temporal page for read node */
- 	page = alloc_page(GFP_NOFS | __GFP_ZERO);
--	if (IS_ERR(page))
--		return PTR_ERR(page);
-+	if (!page)
-+		return -ENOMEM;
- 	lock_page(page);
+-	if (wbc)
+-		f2fs_balance_fs(sbi);
+-
+ 	/*
+ 	 * We need to lock here to prevent from producing dirty node pages
+ 	 * during the urgent cleaning time when runing out of free sections.
+@@ -232,6 +229,10 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	ilock = mutex_lock_op(sbi);
+ 	ret = update_inode_page(inode);
+ 	mutex_unlock_op(sbi, ilock);
++
++	if (wbc)
++		f2fs_balance_fs(sbi);
++
+ 	return ret;
+ }
  
- 	/* scan the node segment */
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 639eb34..889b4bd 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -129,8 +129,8 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
- 
- 	/* read node page */
- 	page = alloc_page(GFP_F2FS_ZERO);
--	if (IS_ERR(page))
--		return PTR_ERR(page);
-+	if (!page)
-+		return -ENOMEM;
- 	lock_page(page);
- 
- 	while (1) {
-@@ -367,7 +367,7 @@ static int recover_data(struct f2fs_sb_info *sbi,
- 
- 	/* read node page */
- 	page = alloc_page(GFP_NOFS | __GFP_ZERO);
--	if (IS_ERR(page))
-+	if (!page)
- 		return -ENOMEM;
- 
- 	lock_page(page);
+-- 
+1.7.9.5
 
-
-------------------------------------------------------------------------------
-Get 100% visibility into Java/.NET code with AppDynamics Lite!
-It's a free troubleshooting tool designed for production.
-Get down to code-level detail for bottlenecks, with <2% overhead. 
-Download for free and get started troubleshooting in minutes. 
-http://pubads.g.doubleclick.net/gampad/clk?id=48897031&iu=/4140/ostg.clktrk
