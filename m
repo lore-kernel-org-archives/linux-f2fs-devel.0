@@ -1,58 +1,57 @@
-From: Jin Xu <jinuxstyle@gmail.com>
-Subject: [PATCH] f2fs: avoid writing inode redundantly when creating a file
-Date: Thu, 15 Aug 2013 19:17:01 +0800
-Message-ID: <1376565421-7218-1-git-send-email-jinuxstyle@gmail.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, jinuxstyle@gmail.com
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH] f2fs: fix a compound statement label error
+Date: Mon, 19 Aug 2013 09:50:59 +0800
+Message-ID: <52117A03.4030800@cn.fujitsu.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kim <jaegeuk.kim@samsung.com>
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, linux-kernel <linux-kernel@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Jin Xu <jinuxstyle@gmail.com>
+>From 685b72b66cb8ce019429b1958c91f346b260bc65 Mon Sep 17 00:00:00 2001
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Date: Mon, 19 Aug 2013 09:41:15 +0800
+Subject: [PATCH] f2fs: fix a compound statement label error
+An error "label at end of compound statement" will occur if CONFIG_F2FS_STAT_FS
+disabled.
+fs/f2fs/segment.c:556:1: error: label at end of compound statement
+So clean up the 'out' label to fix it.
 
-In f2fs_write_inode, updating inode after f2fs_balance_fs is not
-a optimized way in the case that f2fs_gc is performed ahead. The
-inode page will be unnecessarily written out twice, one of which
-is in f2fs_gc->...->sync_node_pages and the other is in
-update_inode_page.
-
-Let's update the inode page in prior to f2fs_balance_fs to avoid
-this.
-
-To reproduce it,
-$ touch file (before this step, should make the device need f2fs_gc)
-$ sync (or wait the bdi to write dirty inode)
-
-Signed-off-by: Jin Xu <jinuxstyle@gmail.com>
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
- fs/f2fs/inode.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/f2fs/segment.c |    8 ++------
+ 1 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index d42b85b..675b84a 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -222,9 +222,6 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 	if (!is_inode_flag_set(F2FS_I(inode), FI_DIRTY_INODE))
- 		return 0;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9c45b8e..09af9c7 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -540,12 +540,9 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, type);
  
--	if (wbc)
--		f2fs_balance_fs(sbi);
+-	if (force) {
++	if (force)
+ 		new_curseg(sbi, type, true);
+-		goto out;
+-	}
 -
- 	/*
- 	 * We need to lock here to prevent from producing dirty node pages
- 	 * during the urgent cleaning time when runing out of free sections.
-@@ -232,6 +229,10 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 	ilock = mutex_lock_op(sbi);
- 	ret = update_inode_page(inode);
- 	mutex_unlock_op(sbi, ilock);
-+
-+	if (wbc)
-+		f2fs_balance_fs(sbi);
-+
- 	return ret;
- }
- 
+-	if (type == CURSEG_WARM_NODE)
++	else if (type == CURSEG_WARM_NODE)
+ 		new_curseg(sbi, type, false);
+ 	else if (curseg->alloc_type == LFS && is_next_segment_free(sbi, type))
+ 		new_curseg(sbi, type, false);
+@@ -553,7 +550,6 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
+ 		change_curseg(sbi, type, true);
+ 	else
+ 		new_curseg(sbi, type, false);
+-out:
+ #ifdef CONFIG_F2FS_STAT_FS
+ 	sbi->segment_count[curseg->alloc_type]++;
+ #endif
 -- 
-1.7.9.5
-
+1.7.7
