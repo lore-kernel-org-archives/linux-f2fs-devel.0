@@ -1,26 +1,26 @@
 From: "JKwok@unioncomputersuppliesltd.com" <JKwok@unioncomputersuppliesltd.com>
 Subject: [SPAM]
 	=?134?Q?Spanish:__Genuino_HP_CE505A_USD61.50_(Union_Computer_Supplies_Ltd._in_Hong_Kong)?=
-Date: Tue, 20 Aug 2013 08:59:01 +0800
-Message-ID: <ee7d8065fe4bd64fed614c7000125500@unioncomputersuppliesltd.com>
+Date: Tue, 20 Aug 2013 10:33:21 +0800
+Message-ID: <4437f96e159249135e97fcfb00148b77@unioncomputersuppliesltd.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7749973365604886720=="
+Content-Type: multipart/mixed; boundary="===============8170776717759124656=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
 	(envelope-from <JKwok@unioncomputersuppliesltd.com>)
-	id 1VBaVE-0002pv-Tc for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Aug 2013 01:12:56 +0000
+	id 1VBbyn-0006P2-Eg for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 20 Aug 2013 02:47:33 +0000
 Received: from [202.64.67.28] (helo=server.uniondutyfree.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VBaVB-0003En-RR for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Aug 2013 01:12:56 +0000
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VBbyk-0006zn-9I for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 20 Aug 2013 02:47:33 +0000
 Received: from JESSICA-XP ([123.123.123.43])
 	by company.mail (company.mail [123.123.123.87]) (MDaemon PRO v9.6.1)
-	with ESMTP id md50006644632.msg
+	with ESMTP id md50006652672.msg
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 20 Aug 2013 09:12:17 +0800
+	Tue, 20 Aug 2013 10:46:51 +0800
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,17 +34,17 @@ To: linux-f2fs-devel@lists.sourceforge.net
 
 This is a multi-part message in MIME format.
 
---===============7749973365604886720==
-Content-Type: multipart/related; boundary="----=SPLITOR00A_001_316786609D";
+--===============8170776717759124656==
+Content-Type: multipart/related; boundary="----=SPLITOR00A_001_322462843D";
 	type="multipart/alternative"
 
 This is a multi-part message in MIME format.
 
-------=SPLITOR00A_001_316786609D
-Content-Type: multipart/alternative; boundary="----=SPLITOR00B_001_316786609D"
+------=SPLITOR00A_001_322462843D
+Content-Type: multipart/alternative; boundary="----=SPLITOR00B_001_322462843D"
 
 
-------=SPLITOR00B_001_316786609D
+------=SPLITOR00B_001_322462843D
 Content-Type: text/plain;
 	charset="134"
 Content-Transfer-Encoding: quoted-printable
@@ -54,7 +54,7 @@ Hello Export Sales Manager,
 
 
 
-------=SPLITOR00B_001_316786609D
+------=SPLITOR00B_001_322462843D
 Content-Type: text/html;
 	charset="134"
 Content-Transfer-Encoding: quoted-printable
@@ -77,9 +77,9 @@ COLOR: rgb(34,34,34); WORD-SPACING: 0px; -webkit-text-size-adjust: auto; =
 class=3DMsoNormal><span style=3D"FONT-FAMILY: Arial, sans-serif; =
 FONT-SIZE: 10pt"=20
 lang=3DEN-US><img style=3D"WIDTH: 141px; HEIGHT: 126px" border=3D0=20
-src=3D"cid:3180an$IN468013769603410@JESSICA-XP" width=3D175 =
+src=3D"cid:3180an$IN468013769660010@JESSICA-XP" width=3D175 =
 height=3D152><img=20
-border=3D0 src=3D"cid:3180an$IN508013769603411@JESSICA-XP" width=3D207=20
+border=3D0 src=3D"cid:3180an$IN508013769660011@JESSICA-XP" width=3D207=20
 height=3D135>S=A8=AElo los productos originales de HP distribuidores =
 autorizados y=20
 revendedores</span></p>
@@ -817,13 +817,13 @@ lang=3DEN-US><o:p>&nbsp;</o:p></span></p></div></body></html>
 
 
 
-------=SPLITOR00B_001_316786609D--
+------=SPLITOR00B_001_322462843D--
 
-------=SPLITOR00A_001_316786609D
+------=SPLITOR00A_001_322462843D
 Content-Type: image/jpeg;
 	name="images.jpg"
 Content-Transfer-Encoding: base64
-Content-ID: <3180an$IN468013769603410@JESSICA-XP>
+Content-ID: <3180an$IN468013769660010@JESSICA-XP>
 
 /9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBhQREBMQExMSFBQSERUWFhQSFBIXGBYUFxMXFhgU
 GBgXGyYeFxojHhgSHy8gJCcpLCwsFh8xNTAqNSYrLCkBCQoKDgwOGg8PGiwkHyQwKTIvLCwsLCws
@@ -936,11 +936,11 @@ Wvlyvy/I1HDp/m+CE3PkA91HTnMb7DTVx3nUOFVNbBd0cDMyNga3u295JxJ3rZRIZM1ZPI/jwxj8
 IIiLI2CIiACIiACIiACIiACIiACIiACIiACIiACIiACjuXf/AEh/7jPmiLXD/wAi/syzf8df0QGy
 a1Nrg1BET/I8E/jeSUt1L6iKWVQiIgAiIgAiIgAiIgAiIgAiIgD/2Q==
 
-------=SPLITOR00A_001_316786609D
+------=SPLITOR00A_001_322462843D
 Content-Type: image/jpeg;
 	name="=?134?Q?images_(1).jpg?="
 Content-Transfer-Encoding: base64
-Content-ID: <3180an$IN508013769603411@JESSICA-XP>
+Content-ID: <3180an$IN508013769660011@JESSICA-XP>
 
 /9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBhMSEBQUEBASFRQWFxkWFRUVGBUYGBAUFRUXFRgX
 FBUXGyYfFxwjGhgVHzEiJSkqLC8tGB8xNTEqNSguLCkBCQoKDgwOGg8PGi8kHyUsLCksKiwsLCos
@@ -1064,12 +1064,12 @@ b6yD79bPZZdtZImjPRipPtUkVsaUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKU
 ClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKUClKU
 ClKUClKUClKUH//Z
 
-------=SPLITOR00A_001_316786609D--
+------=SPLITOR00A_001_322462843D--
 
 
 
 
---===============7749973365604886720==
+--===============8170776717759124656==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -1081,7 +1081,7 @@ AppDynamics. Performance Central is your source for news, insights,
 analysis and resources for efficient Application Performance Management. 
 Visit us today!
 http://pubads.g.doubleclick.net/gampad/clk?id=48897511&iu=/4140/ostg.clktrk
---===============7749973365604886720==
+--===============8170776717759124656==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -1092,4 +1092,4 @@ Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
---===============7749973365604886720==--
+--===============8170776717759124656==--
