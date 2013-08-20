@@ -1,126 +1,54 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH] f2fs: fix memory leak when init f2fs
-	filesystem fail
-Date: Tue, 20 Aug 2013 19:03:39 +0900
-Message-ID: <1376993019.2354.10.camel@kjgkr>
-References: <52132DAF.5050507@huawei.com>
-Reply-To: jaegeuk.kim@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VBimw-0007Hu-N4
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Aug 2013 10:03:46 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VBimu-0004yq-Gz for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Aug 2013 10:03:46 +0000
-Received: from epcpsbgr1.samsung.com
-	(u141.gpu120.samsung.co.kr [203.254.230.141])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MRT00EALQM2HR90@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Aug 2013 19:03:38 +0900 (KST)
-In-reply-to: <52132DAF.5050507@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Zhao Hongjiang <zhaohongjiang@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs: fix wrong BUG_ON condition
+Date: Tue, 20 Aug 2013 19:46:04 +0900
+Message-ID: <1376995564-8691-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+This patch removes a false-alaramed BUG_ON.
+The previous BUG_ON condition didn't cover the following true scenario.
 
-I think you'd like to make a patch like below.
-If no objection, I'll merge this.
-Thank you,
+In f2fs_add_link, 1) get_new_data_page gives an uptodate page successfully,
+and then, 2) init_inode_metadata returns -ENOSPC.
+At this moment, a new clean data page is remained in the page cache, but its
+block address still indicates NEW_ADDR.
+After then, even if sync is called, this clean data page cannot be written to
+the disk due to the clean state.
 
-Change log:
- o add return 0;
- o make a patch with the latest f2fs
+So this means that get_lock_data_page should make a new empty page when its
+block address is NEW_ADDR and its page is not uptodated.
 
->From 9890ff3f23ed78c63611f661006cd5ae38550f44 Mon Sep 17 00:00:00 2001
-From: Zhao Hongjiang <zhaohongjiang@huawei.com>
-Date: Tue, 20 Aug 2013 16:49:51 +0800
-Subject: [PATCH] f2fs: fix memory leak when init f2fs filesystem fail
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-linux-f2fs-devel@lists.sourceforge.net
-
-When any of the caches create fails in init_f2fs_fs(), the other caches
-which are
-create successful should be free.
-
-Signed-off-by: Zhao Hongjiang <zhaohongjiang@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/super.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ fs/f2fs/data.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1d12e60..9e51e4f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1004,21 +1004,33 @@ static int __init init_f2fs_fs(void)
- 		goto fail;
- 	err = create_node_manager_caches();
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index ea3cb29..6b328de 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -259,8 +259,17 @@ repeat:
+ 	if (PageUptodate(page))
+ 		return page;
+ 
+-	BUG_ON(dn.data_blkaddr == NEW_ADDR);
+-	BUG_ON(dn.data_blkaddr == NULL_ADDR);
++	/*
++	 * A new dentry page is allocated but not able to be written, since its
++	 * new inode page couldn't be allocated due to -ENOSPC.
++	 * In such the case, its blkaddr can be remained as NEW_ADDR.
++	 * see, f2fs_add_link -> get_new_data_page -> init_inode_metadata.
++	 */
++	if (dn.data_blkaddr == NEW_ADDR) {
++		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
++		SetPageUptodate(page);
++		return page;
++	}
+ 
+ 	err = f2fs_readpage(sbi, page, dn.data_blkaddr, READ_SYNC);
  	if (err)
--		goto fail;
-+		goto free_inodecache;
- 	err = create_gc_caches();
- 	if (err)
--		goto fail;
-+		goto free_node_manager_caches;
- 	err = create_checkpoint_caches();
- 	if (err)
--		goto fail;
-+		goto free_gc_caches;
- 	f2fs_kset = kset_create_and_add("f2fs", NULL, fs_kobj);
- 	if (!f2fs_kset)
--		goto fail;
-+		goto free_checkpoint_caches;
- 	err = register_filesystem(&f2fs_fs_type);
- 	if (err)
--		goto fail;
-+		goto free_kset;
- 	f2fs_create_root_stats();
- 	f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
-+	return 0;
-+
-+free_kset:
-+	kset_unregister(f2fs_kset);
-+free_checkpoint_caches:
-+	destroy_checkpoint_caches();
-+free_gc_caches:
-+	destroy_gc_caches();
-+free_node_manager_caches:
-+	destroy_node_manager_caches();
-+free_inodecache:
-+	destroy_inodecache();
- fail:
- 	return err;
- }
 -- 
 1.8.3.1.437.g0dbd812
 
-
--- 
-Jaegeuk Kim
-Samsung
-
-
-------------------------------------------------------------------------------
-Introducing Performance Central, a new site from SourceForge and 
-AppDynamics. Performance Central is your source for news, insights, 
-analysis and resources for efficient Application Performance Management. 
-Visit us today!
-http://pubads.g.doubleclick.net/gampad/clk?id=48897511&iu=/4140/ostg.clktrk
