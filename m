@@ -1,47 +1,41 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH] f2fs: use strncasecmp() simplify the string comparison
-Date: Thu, 22 Aug 2013 18:11:25 +0800
-Message-ID: <5215E3CD.5000903@cn.fujitsu.com>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH -next] f2fs: fix error return code in init_f2fs_fs()
+Date: Fri, 23 Aug 2013 08:30:20 +0800
+Message-ID: <CAPgLHd-bUFP3Rr+yBkSgP7mm12dx4oHAvuZgswf1eTkhkdBdaA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kim <jaegeuk.kim@samsung.com>
-Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, linux-kernel <linux-kernel@vger.kernel.org>, fsdevel <linux-fsdevel@vger.kernel.org>
+To: jaegeuk.kim@samsung.com, namjae.jeon@samsung.com
+Cc: yongjun_wei@trendmicro.com.cn, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
----
- fs/f2fs/namei.c |   12 +-----------
- 1 files changed, 1 insertions(+), 11 deletions(-)
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 4e47518..106c0b4 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -83,21 +83,11 @@ static int is_multimedia_file(const unsigned char *s, const char *sub)
- {
- 	size_t slen = strlen(s);
- 	size_t sublen = strlen(sub);
--	int ret;
- 
- 	if (sublen > slen)
- 		return 0;
- 
--	ret = memcmp(s + slen - sublen, sub, sublen);
--	if (ret) {	/* compare upper case */
--		int i;
--		char upper_sub[8];
--		for (i = 0; i < sublen && i < sizeof(upper_sub); i++)
--			upper_sub[i] = toupper(sub[i]);
--		return !memcmp(s + slen - sublen, upper_sub, sublen);
--	}
--
--	return !ret;
-+	return !strncasecmp(s + slen - sublen, sub, sublen);
- }
- 
- /*
--- 
-1.7.7
+Fix to return -ENOMEM in the kset create and add error handling
+case instead of 0, as done elsewhere in this function.
+
+Introduced by commit b59d0bae6ca30c496f298881616258f9cde0d9c6.
+(f2fs: add sysfs support for controlling the gc_thread)
+
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+---
+ fs/f2fs/super.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 66d1ec1..33a809f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1013,8 +1013,10 @@ static int __init init_f2fs_fs(void)
+ 	if (err)
+ 		goto fail;
+ 	f2fs_kset = kset_create_and_add("f2fs", NULL, fs_kobj);
+-	if (!f2fs_kset)
++	if (!f2fs_kset) {
++		err = -ENOMEM;
+ 		goto fail;
++	}
+ 	err = register_filesystem(&f2fs_fs_type);
+ 	if (err)
+ 		goto fail;
