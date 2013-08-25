@@ -1,25 +1,52 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: Re: [PATCH -next] f2fs: fix error return code in init_f2fs_fs()
-Date: Fri, 23 Aug 2013 16:44:25 +0900
-Message-ID: <CAKYAXd_f_Fo9a5mSTcG5=89u9wbgm3umGHGLGPcnwc7uiYVduQ@mail.gmail.com>
-References: <CAPgLHd-bUFP3Rr+yBkSgP7mm12dx4oHAvuZgswf1eTkhkdBdaA@mail.gmail.com>
+From: "reaal@sns.nl" <reaal@sns.nl>
+Subject: =?utf-8?q?=5BSPAM=5D_-_let=27s_discuss_further?=
+Date: Sun, 25 Aug 2013 05:02:42 -0700
+Message-ID: <SERVER1wtcLQVSd2G0w000141f7@ci.white-salmon.wa.us>
+Reply-To: boucherdavid01@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPgLHd-bUFP3Rr+yBkSgP7mm12dx4oHAvuZgswf1eTkhkdBdaA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: jaegeuk.kim@samsung.com, namjae.jeon@samsung.com, yongjun_wei@trendmicro.com.cn, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <reaal@sns.nl>) id 1VDZfq-0003Z4-86
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 25 Aug 2013 12:44:06 +0000
+Received: from or-65-40-220-155.sta.embarqhsd.net ([65.40.220.155]
+	helo=ci.white-salmon.wa.us)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VDZfo-00070z-TY for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 25 Aug 2013 12:44:06 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-2013/8/23, Wei Yongjun <weiyj.lk@gmail.com>:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->
-> Fix to return -ENOMEM in the kset create and add error handling
-> case instead of 0, as done elsewhere in this function.
->
-> Introduced by commit b59d0bae6ca30c496f298881616258f9cde0d9c6.
-> (f2fs: add sysfs support for controlling the gc_thread)
->
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-Acked-by: Namjae Jeon <namjae.jeon@samsung.com>
+Hello,
+
+How are you and i hope your day is going well.
+
+Without taking much of your time, i want to bring you into a business
+venture which i think would be of interest and concern to you, since it has
+to do with a perceived family member of yours. However i need to
+be sure that you must have received this communication so i will not divulge
+much information about it until i get a response from you.
+
+Kindly respond back to me.
+Regards,
+David
+
+
+------------------------------------------------------------------------------
+Introducing Performance Central, a new site from SourceForge and 
+AppDynamics. Performance Central is your source for news, insights, 
+analysis and resources for efficient Application Performance Management. 
+Visit us today!
+http://pubads.g.doubleclick.net/gampad/clk?id=48897511&iu=/4140/ostg.clktrk
