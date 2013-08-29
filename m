@@ -1,43 +1,64 @@
 From: Joe Perches <joe@perches.com>
-Subject: [PATCH 0/6] treewide: kmem_cache_alloc GFP_ZERO cleanups
-Date: Thu, 29 Aug 2013 13:11:04 -0700
-Message-ID: <cover.1377806578.git.joe@perches.com>
-Return-path: <owner-linux-aio@kvack.org>
-Sender: owner-linux-aio@kvack.org
+Subject: [PATCH 6/6] f2fs: Convert kmem_cache_alloc(...GFP_ZERO)
+	to kmem_cache_zalloc
+Date: Thu, 29 Aug 2013 13:11:10 -0700
+Message-ID: <075e5f4b42ddc2d3192a59f8b31e52fd3f220804.1377806578.git.joe@perches.com>
+References: <cover.1377806578.git.joe@perches.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <joe@perches.com>) id 1VF8Zk-0004xy-CD
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 29 Aug 2013 20:12:16 +0000
+Received: from perches-mx.perches.com ([206.117.179.246] helo=labridge.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps
+	(SSLv3:DES-CBC3-SHA:168) (Exim 4.76) id 1VF8Zj-0000br-LS
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 29 Aug 2013 20:12:16 +0000
+In-Reply-To: <cover.1377806578.git.joe@perches.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-aio@kvack.org, ceph-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Just a few cleanups to use zalloc style calls and reduce
-the uses of __GFP_ZERO for kmem_cache_alloc[_node] uses.
+The helper exists, might as well use it instead of __GFP_ZERO.
 
-Use the more kernel normal zalloc style.
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ fs/f2fs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Joe Perches (6):
-  slab/block: Add and use kmem_cache_zalloc_node
-  block: Convert kmem_cache_alloc(...GFP_ZERO) to kmem_cache_zalloc
-  i915_gem: Convert kmem_cache_alloc(...GFP_ZERO) to kmem_cache_zalloc
-  aio: Convert kmem_cache_alloc(...GFP_ZERO) to kmem_cache_zalloc
-  ceph: Convert kmem_cache_alloc(...GFP_ZERO) to kmem_cache_zalloc
-  f2fs: Convert kmem_cache_alloc(...GFP_ZERO) to kmem_cache_zalloc
-
- block/blk-core.c                |  3 +--
- block/blk-integrity.c           |  3 +--
- block/blk-ioc.c                 |  6 ++----
- block/cfq-iosched.c             | 10 ++++------
- drivers/gpu/drm/i915/i915_gem.c |  2 +-
- fs/aio.c                        |  2 +-
- fs/ceph/dir.c                   |  2 +-
- fs/ceph/file.c                  |  2 +-
- fs/f2fs/super.c                 |  2 +-
- include/linux/slab.h            |  5 +++++
- 10 files changed, 18 insertions(+), 19 deletions(-)
-
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 13d0a0f..d43709a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -286,7 +286,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ {
+ 	struct f2fs_inode_info *fi;
+ 
+-	fi = kmem_cache_alloc(f2fs_inode_cachep, GFP_NOFS | __GFP_ZERO);
++	fi = kmem_cache_zalloc(f2fs_inode_cachep, GFP_NOFS);
+ 	if (!fi)
+ 		return NULL;
+ 
 -- 
 1.8.1.2.459.gbcd45b4.dirty
 
---
-To unsubscribe, send a message with 'unsubscribe linux-aio' in
-the body to majordomo@kvack.org.  For more info on Linux AIO,
-see: http://www.kvack.org/aio/
-Don't email: <a href=mailto:"aart@kvack.org">aart@kvack.org</a>
+
+------------------------------------------------------------------------------
+Learn the latest--Visual Studio 2012, SharePoint 2013, SQL 2012, more!
+Discover the easy way to master current and previous Microsoft technologies
+and advance your career. Get an incredible 1,500+ hours of step-by-step
+tutorial videos with LearnDevNow. Subscribe today and save!
+http://pubads.g.doubleclick.net/gampad/clk?id=58040911&iu=/4140/ostg.clktrk
