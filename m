@@ -1,23 +1,22 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 2/2] f2fs: avoid an overflow during utilization
-	calculation
-Date: Tue, 03 Sep 2013 15:27:53 +0900
-Message-ID: <1378189673-32656-2-git-send-email-jaegeuk.kim@samsung.com>
-References: <1378189673-32656-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 1/2] f2fs: trigger GC when there are prefree
+	segments
+Date: Tue, 03 Sep 2013 15:27:52 +0900
+Message-ID: <1378189673-32656-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VGk60-0001Hy-La
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VGk5z-0000La-IP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 Sep 2013 06:28:12 +0000
+	Tue, 03 Sep 2013 06:28:11 +0000
 Received: from mailout4.samsung.com ([203.254.224.34])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VGk5z-000169-M1 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 Sep 2013 06:28:12 +0000
+	id 1VGk5x-000169-Et for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 03 Sep 2013 06:28:11 +0000
 Received: from epcpsbgr4.samsung.com
 	(u144.gpu120.samsung.co.kr [203.254.230.144])
 	by mailout4.samsung.com (Oracle Communications Messaging Server
@@ -25,7 +24,6 @@ Received: from epcpsbgr4.samsung.com
 	with ESMTP id <0MSJ00FMBDYQWN10@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
 	Tue, 03 Sep 2013 15:28:02 +0900 (KST)
-In-reply-to: <1378189673-32656-1-git-send-email-jaegeuk.kim@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,31 +35,29 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-The current f2fs uses all the block counts with 32 bit numbers, which is able to
-cover about 15TB volume.
-
-But in calculation of utilization, f2fs multiplies the count by 100 which can
-induce overflow.
-This patch fixes this.
+Previously, f2fs conducts SSR when free_sections() < overprovision_sections.
+But, even though there are a lot of prefree segments, it can consider SSR only.
+So, let's consider the number of prefree segments too for triggering SSR.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/segment.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/segment.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index cd9bd93..e0d6d3a 100644
+index 062424a..cd9bd93 100644
 --- a/fs/f2fs/segment.h
 +++ b/fs/f2fs/segment.h
-@@ -471,7 +471,7 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi, int freed)
+@@ -453,7 +453,8 @@ static inline int reserved_sections(struct f2fs_sb_info *sbi)
  
- static inline int utilization(struct f2fs_sb_info *sbi)
+ static inline bool need_SSR(struct f2fs_sb_info *sbi)
  {
--	return div_u64(valid_user_blocks(sbi) * 100, sbi->user_block_count);
-+	return div_u64((u64)valid_user_blocks(sbi) * 100, sbi->user_block_count);
+-	return (free_sections(sbi) < overprovision_sections(sbi));
++	return ((prefree_segments(sbi) / sbi->segs_per_sec)
++			+ free_sections(sbi) < overprovision_sections(sbi));
  }
  
- /*
+ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi, int freed)
 -- 
 1.8.3.1.437.g0dbd812
 
