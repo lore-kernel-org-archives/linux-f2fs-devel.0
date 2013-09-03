@@ -1,148 +1,74 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH] f2fs: optimize gc for better performance
-Date: Tue, 03 Sep 2013 09:45:18 +0900
-Message-ID: <1378169118.2354.56.camel@kjgkr>
-References: <1377737323-11803-1-git-send-email-jinuxstyle@gmail.com>
- <1377777368.2354.46.camel@kjgkr> <52201A4F.9020808@gmail.com>
-Reply-To: jaegeuk.kim@samsung.com
+Subject: [PATCH 2/2] f2fs: avoid an overflow during utilization
+	calculation
+Date: Tue, 03 Sep 2013 15:27:53 +0900
+Message-ID: <1378189673-32656-2-git-send-email-jaegeuk.kim@samsung.com>
+References: <1378189673-32656-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <52201A4F.9020808@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jin Xu <jinuxstyle@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VGk60-0001Hy-La
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 03 Sep 2013 06:28:12 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VGk5z-000169-M1 for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 03 Sep 2013 06:28:12 +0000
+Received: from epcpsbgr4.samsung.com
+	(u144.gpu120.samsung.co.kr [203.254.230.144])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MSJ00FMBDYQWN10@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 03 Sep 2013 15:28:02 +0900 (KST)
+In-reply-to: <1378189673-32656-1-git-send-email-jaegeuk.kim@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jin,
+The current f2fs uses all the block counts with 32 bit numbers, which is able to
+cover about 15TB volume.
 
-> [...]
-> >
-> > It seems that we can obtain the performance gain just by setting the
-> > MAX_VICTIM_SEARCH to 4096, for example.
-> > So, how about just adding an ending criteria like below?
-> >
-> 
-> I agree that we could get the performance improvement by simply
-> enlarging the MAX_VICTIM_SEARCH to 4096, but I am concerning the
-> scalability a little bit. Because it might always searching the whole
-> bitmap in some cases, for example, when dirty segments is 4000 and
-> total segments is 409600.
-> > [snip]
-> [...]
-> >
-> > 	if (p->max_search > MAX_VICTIM_SEARCH)
-> > 		p->max_search = MAX_VICTIM_SEARCH;
-> >
-> 
-> The optimization does not apply to SSR mode. There has a reason.
-> As noticed in the test, when SSR selected the segments that have most
-> garbage blocks, then when gc is needed, all the dirty segments might
-> have very less garbage blocks, thus the gc overhead is high. This might
-> lead to performance degradation. So the patch does not change the
-> victim selection policy for SSR.
+But in calculation of utilization, f2fs multiplies the count by 100 which can
+induce overflow.
+This patch fixes this.
 
-I think it doesn't care.
-GC is only triggered during the direct node block allocation.
-What it means that we need to consider the number of GC triggers where
-the GC triggers more frequently during the normal data allocation than
-the node block allocation.
-So, I think it would not degrade performance significatly.
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/segment.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BTW, could you show some numbers for this?
-Or could you test what I suggested?
-
-Thanks,
-
-> 
-> What do you think now?
-> 
-> > #define MAX_VICTIM_SEARCH 4096 /* covers 8GB */
-> >
-> >>   	p->offset = sbi->last_victim[p->gc_mode];
-> >> @@ -243,6 +245,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
-> >>   	struct victim_sel_policy p;
-> >>   	unsigned int secno, max_cost;
-> >>   	int nsearched = 0;
-> >> +	unsigned int max_search = MAX_VICTIM_SEARCH;
-> >> +	unsigned int nr_dirty;
-> >>
-> >>   	p.alloc_mode = alloc_mode;
-> >>   	select_policy(sbi, gc_type, type, &p);
-> >> @@ -258,6 +262,27 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
-> >>   			goto got_it;
-> >>   	}
-> >>
-> >> +	nr_dirty = dirty_i->nr_dirty[p.dirty_type];
-> >> +	if (p.gc_mode == GC_GREEDY && p.alloc_mode != SSR) {
-> >> +		if (TOTAL_SEGS(sbi) <= FULL_VICTIM_SEARCH_THRESH)
-> >> +			max_search = nr_dirty; /* search all the dirty segs */
-> >> +		else {
-> >> +			/*
-> >> +			 * With more dirty segments, garbage blocks are likely
-> >> +			 * more scattered, thus search harder for better
-> >> +			 * victim.
-> >> +			 */
-> >> +			max_search = div_u64 ((nr_dirty *
-> >> +				FULL_VICTIM_SEARCH_THRESH), TOTAL_SEGS(sbi));
-> >> +			if (max_search < MIN_VICTIM_SEARCH_GREEDY)
-> >> +				max_search = MIN_VICTIM_SEARCH_GREEDY;
-> >> +		}
-> >> +	}
-> >> +
-> >> +	/* no more than the total dirty segments */
-> >> +	if (max_search > nr_dirty)
-> >> +		max_search = nr_dirty;
-> >> +
-> >>   	while (1) {
-> >>   		unsigned long cost;
-> >>   		unsigned int segno;
-> >> @@ -290,7 +315,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
-> >>   		if (cost == max_cost)
-> >>   			continue;
-> >>
-> >> -		if (nsearched++ >= MAX_VICTIM_SEARCH) {
-> >> +		if (nsearched++ >= max_search) {
-> >
-> > 		if (nsearched++ >= p.max_search) {
-> >
-> >>   			sbi->last_victim[p.gc_mode] = segno;
-> >>   			break;
-> >>   		}
-> >> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> >> index 2c6a6bd..2f525aa 100644
-> >> --- a/fs/f2fs/gc.h
-> >> +++ b/fs/f2fs/gc.h
-> >> @@ -20,7 +20,9 @@
-> >>   #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
-> >>
-> >>   /* Search max. number of dirty segments to select a victim segment */
-> >> -#define MAX_VICTIM_SEARCH	20
-> >> +#define MAX_VICTIM_SEARCH		20
-> >> +#define MIN_VICTIM_SEARCH_GREEDY	20
-> >> +#define FULL_VICTIM_SEARCH_THRESH	4096
-> >>
-> >>   struct f2fs_gc_kthread {
-> >>   	struct task_struct *f2fs_gc_task;
-> >> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> >> index 062424a..cd33f96 100644
-> >> --- a/fs/f2fs/segment.h
-> >> +++ b/fs/f2fs/segment.h
-> >> @@ -142,6 +142,7 @@ struct victim_sel_policy {
-> >>   	int alloc_mode;			/* LFS or SSR */
-> >>   	int gc_mode;			/* GC_CB or GC_GREEDY */
-> >>   	unsigned long *dirty_segmap;	/* dirty segment bitmap */
-> >> +	int dirty_type;
-> >
-> > 	int max_search;		/* maximum # of segments to search */
-> >
-> >>   	unsigned int offset;		/* last scanned bitmap offset */
-> >>   	unsigned int ofs_unit;		/* bitmap search unit */
-> >>   	unsigned int min_cost;		/* minimum cost */
-> >
-> 
-
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index cd9bd93..e0d6d3a 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -471,7 +471,7 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi, int freed)
+ 
+ static inline int utilization(struct f2fs_sb_info *sbi)
+ {
+-	return div_u64(valid_user_blocks(sbi) * 100, sbi->user_block_count);
++	return div_u64((u64)valid_user_blocks(sbi) * 100, sbi->user_block_count);
+ }
+ 
+ /*
 -- 
-Jaegeuk Kim
-Samsung
+1.8.3.1.437.g0dbd812
+
+
+------------------------------------------------------------------------------
+Learn the latest--Visual Studio 2012, SharePoint 2013, SQL 2012, more!
+Discover the easy way to master current and previous Microsoft technologies
+and advance your career. Get an incredible 1,500+ hours of step-by-step
+tutorial videos with LearnDevNow. Subscribe today and save!
+http://pubads.g.doubleclick.net/gampad/clk?id=58040911&iu=/4140/ostg.clktrk
