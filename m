@@ -1,122 +1,130 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH] f2fs: merge more bios of node block writes
-Date: Thu, 05 Sep 2013 11:02:51 +0900
-Message-ID: <1378346571-11331-1-git-send-email-jaegeuk.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VHOuf-0006I1-Ja
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 05 Sep 2013 02:03:13 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VHOua-00056l-Gp for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 05 Sep 2013 02:03:13 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MSM00CNLR10CR90@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 05 Sep 2013 11:03:01 +0900 (KST)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Jin Xu <jinuxstyle@gmail.com>
+Subject: [PATCH] f2fs: optimize gc for better performance
+Date: Thu,  5 Sep 2013 12:45:26 +0800
+Message-ID: <1378356326-2915-1-git-send-email-jinuxstyle@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, jinuxstyle@gmail.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Previously, we experience bio traces as follows when running simple sequential
-write test.
+From: Jin Xu <jinuxstyle@gmail.com>
 
- f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500104928, size = 4K
- f2fs_do_submit_bio: type = NODE, io = no sync, sector = 499922208, size = 368K
- f2fs_do_submit_bio: type = NODE, io = no sync, sector = 499914752, size = 140K
+This patch improves the gc efficiency by optimizing the victim
+selection policy. With this optimization, the random re-write
+performance could increase up to 20%.
 
- -> total 512K
+For f2fs, when disk is in shortage of free spaces, gc will selects
+dirty segments and moves valid blocks around for making more space
+available. The gc cost of a segment is determined by the valid blocks
+in the segment. The less the valid blocks, the higher the efficiency.
+The ideal victim segment is the one that has the most garbage blocks.
 
-The first one is to write an indirect node block, and the others are to write
-direct node blocks.
+Currently, it searches up to 20 dirty segments for a victim segment.
+The selected victim is not likely the best victim for gc when there
+are much more dirty segments. Why not searching more dirty segments
+for a better victim? The cost of searching dirty segments is
+negligible in comparison to moving blocks.
 
-The reason why there are two separate bios for direct node blocks is:
-0. initial state
-------------------    ------------------
-|                |    |xxxxxxxx        |
-------------------    ------------------
+In this patch, it enlarges the MAX_VICTIM_SEARCH to 4096 to make
+the search more aggressively for a possible better victim. Since
+it also applies to victim selection for SSR, it will likely improve
+the SSR efficiency as well.
 
-1. write 368K
-------------------    ------------------
-|                |    |xxxxxxxxWWWWWWWW|
-------------------    ------------------
+The test case is simple. It creates as many files until the disk full.
+The size for each file is 32KB. Then it writes as many as 100000
+records of 4KB size to random offsets of random files in sync mode.
+The testing was done on a 2GB partition of a SDHC card. Let's see the
+test result of f2fs without and with the patch.
 
-2. write 140K
-------------------    ------------------
-|WWWWWWW         |    |xxxxxxxxWWWWWWWW|
-------------------    ------------------
+---------------------------------------
+2GB partition, SDHC
+create 52023 files of size 32768 bytes
+random re-write 100000 records of 4KB
+---------------------------------------
+| file creation (s) | rewrite time (s) | gc count | gc garbage blocks |
+[no patch]  341         4227             1174          174840
+[patched]   324         2958             645           106682
 
-This is because f2fs_write_node_pages tries to write just 512K totally, so that
-we can lose the chance to merge more bios nicely.
+It's obvious that, with the patch, f2fs finishes the test in 20+% less
+time than without the patch. And internally it does much less gc with
+higher efficiency than before.
 
-After this patch is applied, we can get the following bio traces.
+Since the performance improvement is related to gc, it might not be so
+obvious for other tests that do not trigger gc as often as this one (
+This is because f2fs selects dirty segments for SSR use most of the
+time when free space is in shortage). The well-known iozone test tool
+was not used for benchmarking the patch becuase it seems do not have
+a test case that performs random re-write on a full disk.
 
-  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500103168, size = 8K
-  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500111368, size = 4K
-  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500107272, size = 512K
-  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500108296, size = 512K
-  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500109320, size = 500K
+This patch is the revised version based on the suggestion from
+Jaegeuk Kim.
 
-And finally, we can improve the sequential write performance,
-    from 458.775 MB/s to 479.945 MB/s on SSD.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Signed-off-by: Jin Xu <jinuxstyle@gmail.com>
+[Jaegeuk Kim: suggested simpler solution]
+Reviewed-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/node.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/f2fs/gc.c      |    8 +++++++-
+ fs/f2fs/gc.h      |    2 +-
+ fs/f2fs/segment.h |    1 +
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index c3c03c9..51ef278 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1191,9 +1191,9 @@ static int f2fs_write_node_page(struct page *page,
- /*
-  * It is very important to gather dirty pages and write at once, so that we can
-  * submit a big bio without interfering other data writes.
-- * Be default, 512 pages (2MB), a segment size, is quite reasonable.
-+ * Be default, 512 pages (2MB) * 3 node types, is more reasonable.
-  */
--#define COLLECT_DIRTY_NODES	512
-+#define COLLECT_DIRTY_NODES	1536
- static int f2fs_write_node_pages(struct address_space *mapping,
- 			    struct writeback_control *wbc)
- {
-@@ -1211,9 +1211,10 @@ static int f2fs_write_node_pages(struct address_space *mapping,
- 		return 0;
- 
- 	/* if mounting is failed, skip writing node pages */
--	wbc->nr_to_write = max_hw_blocks(sbi);
-+	wbc->nr_to_write = 3 * max_hw_blocks(sbi);
- 	sync_node_pages(sbi, 0, wbc);
--	wbc->nr_to_write = nr_to_write - (max_hw_blocks(sbi) - wbc->nr_to_write);
-+	wbc->nr_to_write = nr_to_write - (3 * max_hw_blocks(sbi) -
-+						wbc->nr_to_write);
- 	return 0;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 35f9b1a..a78b8e3 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -138,12 +138,18 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+ 	if (p->alloc_mode == SSR) {
+ 		p->gc_mode = GC_GREEDY;
+ 		p->dirty_segmap = dirty_i->dirty_segmap[type];
++		p->max_search = dirty_i->nr_dirty[type];
+ 		p->ofs_unit = 1;
+ 	} else {
+ 		p->gc_mode = select_gc_type(gc_type);
+ 		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
++		p->max_search = dirty_i->nr_dirty[DIRTY];
+ 		p->ofs_unit = sbi->segs_per_sec;
+ 	}
++
++	if (p->max_search > MAX_VICTIM_SEARCH)
++		p->max_search = MAX_VICTIM_SEARCH;
++
+ 	p->offset = sbi->last_victim[p->gc_mode];
  }
  
+@@ -290,7 +296,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 		if (cost == max_cost)
+ 			continue;
+ 
+-		if (nsearched++ >= MAX_VICTIM_SEARCH) {
++		if (nsearched++ >= p.max_search) {
+ 			sbi->last_victim[p.gc_mode] = segno;
+ 			break;
+ 		}
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index 2c6a6bd..f8ee8a8 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -20,7 +20,7 @@
+ #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
+ 
+ /* Search max. number of dirty segments to select a victim segment */
+-#define MAX_VICTIM_SEARCH	20
++#define MAX_VICTIM_SEARCH 4096 /* covers 8GB */
+ 
+ struct f2fs_gc_kthread {
+ 	struct task_struct *f2fs_gc_task;
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 062424a..dca6379 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -142,6 +142,7 @@ struct victim_sel_policy {
+ 	int alloc_mode;			/* LFS or SSR */
+ 	int gc_mode;			/* GC_CB or GC_GREEDY */
+ 	unsigned long *dirty_segmap;	/* dirty segment bitmap */
++	unsigned int max_search;	/* maximum # of segments to search */
+ 	unsigned int offset;		/* last scanned bitmap offset */
+ 	unsigned int ofs_unit;		/* bitmap search unit */
+ 	unsigned int min_cost;		/* minimum cost */
 -- 
-1.8.3.1.437.g0dbd812
-
-
-------------------------------------------------------------------------------
-Learn the latest--Visual Studio 2012, SharePoint 2013, SQL 2012, more!
-Discover the easy way to master current and previous Microsoft technologies
-and advance your career. Get an incredible 1,500+ hours of step-by-step
-tutorial videos with LearnDevNow. Subscribe today and save!
-http://pubads.g.doubleclick.net/gampad/clk?id=58041391&iu=/4140/ostg.clktrk
+1.7.9.5
