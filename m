@@ -1,153 +1,122 @@
-From: Jin Xu <jinuxstyle@gmail.com>
-Subject: Re: [PATCH] f2fs: optimize gc for better performance
-Date: Thu, 05 Sep 2013 07:58:37 +0800
-Message-ID: <5227C92D.4040109@gmail.com>
-References: <1377737323-11803-1-git-send-email-jinuxstyle@gmail.com> <1377777368.2354.46.camel@kjgkr> <52201A4F.9020808@gmail.com> <1378169118.2354.56.camel@kjgkr> <522677ED.8090203@gmail.com> <1378287635.2354.84.camel@kjgkr> <522732EB.4020103@gmail.com> <1378338609.2354.86.camel@kjgkr>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH] f2fs: merge more bios of node block writes
+Date: Thu, 05 Sep 2013 11:02:51 +0900
+Message-ID: <1378346571-11331-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1378338609.2354.86.camel@kjgkr>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VHOuf-0006I1-Ja
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Sep 2013 02:03:13 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VHOua-00056l-Gp for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Sep 2013 02:03:13 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MSM00CNLR10CR90@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Sep 2013 11:03:01 +0900 (KST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Yes, I will submit the patch later.
+Previously, we experience bio traces as follows when running simple sequential
+write test.
 
-On 05/09/2013 07:50, Jaegeuk Kim wrote:
-> Hi Jin,
->
-> 2013-09-04 (=EC=88=98), 21:17 +0800, Jin Xu:
->> Hi Jaegeuk,
->>
->> On 04/09/2013 17:40, Jaegeuk Kim wrote:
->>> Hi Jin,
->>>
->>> 2013-09-04 (=EC=88=98), 07:59 +0800, Jin Xu:
->>>> Hi Jaegeuk,
->>>>
->>>> On 03/09/2013 08:45, Jaegeuk Kim wrote:
->>>>> Hi Jin,
->>>>>
->>>>>> [...]
->>>>>>>
->>>>>>> It seems that we can obtain the performance gain just by settin=
-g the
->>>>>>> MAX_VICTIM_SEARCH to 4096, for example.
->>>>>>> So, how about just adding an ending criteria like below?
->>>>>>>
->>>>>>
->>>>>> I agree that we could get the performance improvement by simply
->>>>>> enlarging the MAX_VICTIM_SEARCH to 4096, but I am concerning the
->>>>>> scalability a little bit. Because it might always searching the =
-whole
->>>>>> bitmap in some cases, for example, when dirty segments is 4000 a=
-nd
->>>>>> total segments is 409600.
->>>>>>> [snip]
->>>>>> [...]
->>>>>>>
->>>>>>> 	if (p->max_search > MAX_VICTIM_SEARCH)
->>>>>>> 		p->max_search =3D MAX_VICTIM_SEARCH;
->>>>>>>
->>>>>>
->>>>>> The optimization does not apply to SSR mode. There has a reason.
->>>>>> As noticed in the test, when SSR selected the segments that have=
- most
->>>>>> garbage blocks, then when gc is needed, all the dirty segments m=
-ight
->>>>>> have very less garbage blocks, thus the gc overhead is high. Thi=
-s might
->>>>>> lead to performance degradation. So the patch does not change th=
-e
->>>>>> victim selection policy for SSR.
->>>>>
->>>>> I think it doesn't care.
->>>>> GC is only triggered during the direct node block allocation.
->>>>> What it means that we need to consider the number of GC triggers =
-where
->>>>> the GC triggers more frequently during the normal data allocation=
- than
->>>>> the node block allocation.
->>>>> So, I think it would not degrade performance significatly.
->>>>>
->>>>> BTW, could you show some numbers for this?
->>>>> Or could you test what I suggested?
->>>>>
->>>>> Thanks,
->>>>>
->>>>
->>>> I re-ran the test and got the following result:
->>>>
->>>> ---------------------------------------
->>>> 2GB SDHC
->>>> create 52023 files of size 32768 bytes
->>>> random re-write 100000 records of 4KB
->>>> ---------------------------------------
->>>>
->>>> | file creation (s) | rewrite time (s) | gc count | gc garbage blo=
-cks |
->>>>
->>>> no patch       341         4227             1174          174840
->>>> patched        296         2995             634           109314
->>>> patched (KIM)  324         2958             645           106682
->>>>
->>>> In this test, it does not show the minor performance degradation c=
-aused
->>>> by applying the patch to SSR mode. Instead, the performance is a l=
-ittle
->>>> better with what you suggested.
->>>>
->>>> I agree that the performance degradation would not be significant =
-even
->>>> it does degrade. I ever saw the minor degradation in some workload=
-s, but
->>>> I didn't save the data.
->>>>
->>>> So, I agree that we can apply the patch to SSR mode as well.
->>>>
->>>> And do you still have concerns about the formula for calculating t=
-he #
->>>> of search?
->>>
->>> Thank you for the test. :)
->>> What I've concerned is that, if it is really important to get a vic=
-tim
->>> more accurately for the performance as you described, it doesn't ne=
-ed to
->>> calculate the number of searches IMO. Just let's select nr_dirty. W=
-hy
->>> not?
->>> Only the thing that we should consider is to handle the case where =
-the
->>> nr_dirty is too large.
->>> For this, we can just limit the # of searches to avoid performance
->>> degradation.
->>>
->>> Still actually, I'm not convincing the effectiveness of your formul=
-a.
->>> If possible, could you show it with numbers?
->>
->> It's not easy to prove the effectiveness of the formula. It's just f=
-or
->> eliminating my concern on the scalability of searching. Since it doe=
-s
->> not matter much for the performance improvement, we can put it aside
->> and choose the simpler method as you suggested.
->>
->> So, should I revise the patch based on what you suggested or will
->> you take care of it?
->
-> Could you make a patch with your performance description and sumbit i=
-t
-> again?
-> Thanks a lot,
->
+ f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500104928, size = 4K
+ f2fs_do_submit_bio: type = NODE, io = no sync, sector = 499922208, size = 368K
+ f2fs_do_submit_bio: type = NODE, io = no sync, sector = 499914752, size = 140K
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ -> total 512K
+
+The first one is to write an indirect node block, and the others are to write
+direct node blocks.
+
+The reason why there are two separate bios for direct node blocks is:
+0. initial state
+------------------    ------------------
+|                |    |xxxxxxxx        |
+------------------    ------------------
+
+1. write 368K
+------------------    ------------------
+|                |    |xxxxxxxxWWWWWWWW|
+------------------    ------------------
+
+2. write 140K
+------------------    ------------------
+|WWWWWWW         |    |xxxxxxxxWWWWWWWW|
+------------------    ------------------
+
+This is because f2fs_write_node_pages tries to write just 512K totally, so that
+we can lose the chance to merge more bios nicely.
+
+After this patch is applied, we can get the following bio traces.
+
+  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500103168, size = 8K
+  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500111368, size = 4K
+  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500107272, size = 512K
+  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500108296, size = 512K
+  f2fs_do_submit_bio: type = NODE, io = no sync, sector = 500109320, size = 500K
+
+And finally, we can improve the sequential write performance,
+    from 458.775 MB/s to 479.945 MB/s on SSD.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/node.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index c3c03c9..51ef278 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1191,9 +1191,9 @@ static int f2fs_write_node_page(struct page *page,
+ /*
+  * It is very important to gather dirty pages and write at once, so that we can
+  * submit a big bio without interfering other data writes.
+- * Be default, 512 pages (2MB), a segment size, is quite reasonable.
++ * Be default, 512 pages (2MB) * 3 node types, is more reasonable.
+  */
+-#define COLLECT_DIRTY_NODES	512
++#define COLLECT_DIRTY_NODES	1536
+ static int f2fs_write_node_pages(struct address_space *mapping,
+ 			    struct writeback_control *wbc)
+ {
+@@ -1211,9 +1211,10 @@ static int f2fs_write_node_pages(struct address_space *mapping,
+ 		return 0;
+ 
+ 	/* if mounting is failed, skip writing node pages */
+-	wbc->nr_to_write = max_hw_blocks(sbi);
++	wbc->nr_to_write = 3 * max_hw_blocks(sbi);
+ 	sync_node_pages(sbi, 0, wbc);
+-	wbc->nr_to_write = nr_to_write - (max_hw_blocks(sbi) - wbc->nr_to_write);
++	wbc->nr_to_write = nr_to_write - (3 * max_hw_blocks(sbi) -
++						wbc->nr_to_write);
+ 	return 0;
+ }
+ 
+-- 
+1.8.3.1.437.g0dbd812
+
+
+------------------------------------------------------------------------------
+Learn the latest--Visual Studio 2012, SharePoint 2013, SQL 2012, more!
+Discover the easy way to master current and previous Microsoft technologies
+and advance your career. Get an incredible 1,500+ hours of step-by-step
+tutorial videos with LearnDevNow. Subscribe today and save!
+http://pubads.g.doubleclick.net/gampad/clk?id=58041391&iu=/4140/ostg.clktrk
