@@ -1,29 +1,37 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: optimize fs_lock for better performance
-Date: Fri, 06 Sep 2013 09:48:09 +0000 (GMT)
-Message-ID: <02.95.21086.AD4A9225@epcpsbgx4.samsung.com>
-Reply-To: chao2.yu@samsung.com
+From: Russ Knize <Russ.Knize@motorola.com>
+Subject: Re: [PATCH] f2fs: optimize fs_lock for better performance
+Date: Fri, 6 Sep 2013 14:25:22 -0500
+Message-ID: <CAGfvh62EGuQfGBRhasNEXAVEvS2BwKCijnAS67f+GL2fHS-fTA@mail.gmail.com>
+References: <02.95.21086.AD4A9225@epcpsbgx4.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4014487456295871283=="
+Content-Type: multipart/mixed; boundary="===============3478283541911614591=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VHseJ-0001ZY-CP
+	(envelope-from <rknize2@motorola.com>) id 1VI2Dl-0002Pa-DA
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Sep 2013 09:48:19 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VHseG-00039D-JI for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Sep 2013 09:48:19 +0000
-Received: from epcpsbgx4.samsung.com
-	(u164.gpu120.samsung.co.kr [203.254.230.164])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MSP0067I76N2PP0@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Sep 2013 18:48:10 +0900 (KST)
-MIME-version: 1.0
+	Fri, 06 Sep 2013 20:01:33 +0000
+Received: from exprod5og105.obsmtp.com ([64.18.0.180])
+	by sog-mx-1.v43.ch3.sourceforge.com with smtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1VI2Dj-0000dH-Aj
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 06 Sep 2013 20:01:33 +0000
+Received: from DE01MGRG01.AM.MOT-MOBILITY.COM ([10.22.94.167])
+	by DE01MGRG01.AM.MOT-MOBILITY.COM (8.14.3/8.14.3) with ESMTP id
+	r86JPEYx016481 for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 6 Sep 2013 15:25:14 -0400 (EDT)
+Received: from mail-wi0-f178.google.com (mail-wi0-f178.google.com
+	[209.85.212.178])
+	by DE01MGRG01.AM.MOT-MOBILITY.COM (8.14.3/8.14.3) with ESMTP id
+	r86JPCc1016466
+	(version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=OK)
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 6 Sep 2013 15:25:13 -0400 (EDT)
+Received: by mail-wi0-f178.google.com with SMTP id hn9so1333123wib.5
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 06 Sep 2013 12:25:43 -0700 (PDT)
+In-Reply-To: <02.95.21086.AD4A9225@epcpsbgx4.samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,323 +41,386 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
+To: chao2.yu@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, shu.tan@samsung.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
---===============4014487456295871283==
-Content-type: multipart/related; boundary="=_NamoWEC-4k13z6xrku"
+--===============3478283541911614591==
+Content-Type: multipart/related; boundary=001a11c38c2e36052404e5bc0116
 
---=_NamoWEC-4k13z6xrku
-Content-Type: text/html;
-	charset="gb2312"
-Content-Transfer-Encoding: base64
+--001a11c38c2e36052404e5bc0116
+Content-Type: multipart/alternative; boundary=001a11c38c2e36052204e5bc0115
 
-PEhUTUwgeG1sbnM6byA9ICJ1cm46c2NoZW1hcy1taWNyb3NvZnQtY29tOm9mZmljZTpvZmZpY2Ui
-PjxIRUFEPjxUSVRMRT5TYW1zdW5nIEVudGVycHJpc2UgUG9ydGFsIG15U2luZ2xlPC9USVRMRT4N
-CjxNRVRBIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD1nYjIzMTIiIGh0dHAtZXF1aXY9Q29u
-dGVudC1UeXBlPg0KPFNUWUxFIGlkPW15c2luZ2xlX3N0eWxlIHR5cGU9dGV4dC9jc3M+UCB7DQoJ
-TUFSR0lOLVRPUDogNXB4OyBGT05ULUZBTUlMWTogc2ltc3VuLCBhcmlhbDsgTUFSR0lOLUJPVFRP
-TTogNXB4OyBGT05ULVNJWkU6IDlwdA0KfQ0KVEQgew0KCU1BUkdJTi1UT1A6IDVweDsgRk9OVC1G
-QU1JTFk6IHNpbXN1biwgYXJpYWw7IE1BUkdJTi1CT1RUT006IDVweDsgRk9OVC1TSVpFOiA5cHQN
-Cn0NCkxJIHsNCglNQVJHSU4tVE9QOiA1cHg7IEZPTlQtRkFNSUxZOiBzaW1zdW4sIGFyaWFsOyBN
-QVJHSU4tQk9UVE9NOiA1cHg7IEZPTlQtU0laRTogOXB0DQp9DQpCT0RZIHsNCglMSU5FLUhFSUdI
-VDogMS40OyBNQVJHSU46IDEwcHg7IEZPTlQtRkFNSUxZOiBzaW1zdW4sIGFyaWFsOyBGT05ULVNJ
-WkU6IDlwdA0KfQ0KPC9TVFlMRT4NCg0KPE1FVEEgbmFtZT1HRU5FUkFUT1IgY29udGVudD1BY3Rp
-dmVTcXVhcmU+PC9IRUFEPg0KPEJPRFk+PFNQQU4gbGFuZz1FTi1VUz4NCjxQIHN0eWxlPSJNQVJH
-SU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9O
-VC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVTPkhpIEtp
-bTo8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iTUFSR0lOOiAwY20gMGNtIDBwdDsg
-Rk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBU
-RVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz48bzpwPiZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOzwvbzpwPjwvU1BBTj48U1BBTiBsYW5nPUVOLVVTPkkgdGhpbmsgdGhlcmUg
-aXMgYSBwZXJmb3JtYW5jZSBwcm9ibGVtOiB3aGVuIGFsbCBzYmktJmd0O2ZzX2xvY2sgaXMgaG9s
-ZGVkLCA8L1NQQU4+PC9QPg0KPFAgc3R5bGU9Ik1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFN
-SUxZOiAnQ2FsaWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNP
-UkFUSU9OOiAiPjxTUEFOIGxhbmc9RU4tVVM+PC9TUEFOPjxTUEFOIGxhbmc9RU4tVVM+dGhlbiBh
-bGwgb3RoZXIgdGhyZWFkcyBtYXkgZ2V0IHRoZSBzYW1lIG5leHRfbG9jayB2YWx1ZSBmcm9tIHNi
-aS0mZ3Q7bmV4dF9sb2NrX251bSBpbiBmdW5jdGlvbiBtdXRleF9sb2NrX29wLCA8L1NQQU4+PC9Q
-Pg0KPFAgc3R5bGU9Ik1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2FsaWJyaScs
-J3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAiPjxTUEFO
-IGxhbmc9RU4tVVM+YW5kIHdhaXQgdG8gZ2V0IHRoZSBzYW1lIGxvY2sgYXQgcG9zaXRpb24gZnNf
-bG9ja1tuZXh0X2xvY2tdLCBpdCB1bmJhbGFuY2UgdGhlIGZzX2xvY2sgdXNhZ2UuIDwvU1BBTj48
-L1A+DQo8UCBzdHlsZT0iTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJp
-Jywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQ
-QU4gbGFuZz1FTi1VUz5JdCBtYXkgbG9zdCBwZXJmb3JtYW5jZSB3aGVuIHdlIGRvIHRoZSBtdWx0
-aXRocmVhZCB0ZXN0LjxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdO
-OiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdz
-YW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBs
-YW5nPUVOLVVTPjxvOnA+Jm5ic3A7PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFM
-SUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmkn
-LCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BB
-TiBsYW5nPUVOLVVTPkhlcmUgaXMgdGhlIHBhdGNoIHRvIGZpeCB0aGlzIHByb2JsZW06PG86cD48
-L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRFWFQtQUxJR046IGp1c3RpZnk7IE1BUkdJTjog
-MGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2FsaWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJ
-WkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAiPjxTUEFOIGxhbmc9RU4tVVM+PG86cD4mbmJz
-cDs8L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9Ik1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQt
-RkFNSUxZOiAnQ2FsaWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1E
-RUNPUkFUSU9OOiAiPjxTUEFOIGxhbmc9RU4tVVM+U2lnbmVkLW9mZi1ieTogWXUgQ2hhbyAmbHQ7
-PEEgaHJlZj0ibWFpbHRvOmNoYW8yLnl1QHNhbXN1bmcuY29tIj5jaGFvMi55dUBzYW1zdW5nLmNv
-bTwvQT4mZ3Q7PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRFWFQtQUxJR046IGp1
-c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2FsaWJyaScsJ3NhbnMt
-c2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAiPjxTUEFOIGxhbmc9
-RU4tVVM+ZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZjJmcy5oIGIvZnMvZjJmcy9mMmZzLmg8bzpwPjwv
-bzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lOOiAw
-Y20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQtU0la
-RTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz5vbGQgbW9kZSAx
-MDA2NDQ8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlm
-eTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJp
-Zic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1V
-Uz5uZXcgbW9kZSAxMDA3NTU8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1B
-TElHTjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJp
-Jywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQ
-QU4gbGFuZz1FTi1VUz5pbmRleCA0NjdkNDJkLi45ODNiYjQ1PG86cD48L286cD48L1NQQU4+PC9Q
-Pg0KPFAgc3R5bGU9IlRFWFQtQUxJR046IGp1c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZP
-TlQtRkFNSUxZOiAnQ2FsaWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVY
-VC1ERUNPUkFUSU9OOiAiPjxTUEFOIGxhbmc9RU4tVVM+LS0tIGEvZnMvZjJmcy9mMmZzLmg8bzpw
-PjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lO
-OiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQt
-U0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz4rKysgYi9m
-cy9mMmZzL2YyZnMuaDxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdO
-OiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdz
-YW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBs
-YW5nPUVOLVVTPkBAIC0zNzEsNiArMzcxLDcgQEAgc3RydWN0IGYyZnNfc2JfaW5mbyB7PG86cD48
-L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRFWFQtQUxJR046IGp1c3RpZnk7IE1BUkdJTjog
-MGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2FsaWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJ
-WkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAiPjxTUEFOIGxhbmc9RU4tVVM+PFNQQU4gc3R5
-bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsgPC9TUEFOPnN0cnVjdCBtdXRleCBmc19sb2NrW05SX0dMT0JBTF9MT0NLU107PFNQ
-QU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsgPC9TUEFOPi8qIGJsb2NraW5nIEZT
-IG9wZXJhdGlvbnMgKi88bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElH
-TjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywn
-c2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4g
-bGFuZz1FTi1VUz48U1BBTiBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQQU4+c3RydWN0IG11dGV4IG5vZGVfd3Jp
-dGU7PFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsgPC9TUEFOPi8qIGxvY2tpbmcgbm9kZSB3cml0ZXMgKi88bzpwPjwvbzpwPjwv
-U1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNt
-IDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAu
-NXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz48U1BBTiBzdHlsZT0ibXNv
-LXNwYWNlcnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyA8L1NQQU4+c3RydWN0IG11dGV4IHdyaXRlcGFnZXM7PFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1
-bjogeWVzIj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9TUEFOPi8qIG11dGV4
-IGZvciB3cml0ZXBhZ2VzKCkgKi88bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVY
-VC1BTElHTjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxp
-YnJpJywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+
-PFNQQU4gbGFuZz1FTi1VUz4rPFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9TUEFOPnNwaW5sb2NrX3Qgc3Bpbl9sb2Nr
-OzxTUEFOIHN0eWxlPSJtc28tc3BhY2VydW46IHllcyI+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IDwvU1BBTj4vKiBsb2NrIGZvciBuZXh0X2xvY2tf
-bnVtICovPG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRFWFQtQUxJR046IGp1c3Rp
-Znk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2FsaWJyaScsJ3NhbnMtc2Vy
-aWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAiPjxTUEFOIGxhbmc9RU4t
-VVM+PFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9TUEFOPnVuc2lnbmVkIGNoYXIgbmV4dF9sb2NrX251bTs8
-U1BBTiBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQQU4+Lyogcm91bmQt
-cm9iaW4gZ2xvYmFsIGxvY2tzICovPG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRF
-WFQtQUxJR046IGp1c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2Fs
-aWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAi
-PjxTUEFOIGxhbmc9RU4tVVM+PFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9TUEFOPmludCBwb3JfZG9pbmc7
-PFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsgPC9TUEFOPi8qIHJlY292ZXJ5IGlzIGRvaW5nIG9yIG5vdCAqLzxvOnA+PC9v
-OnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBj
-bSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpF
-OiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVTPjxTUEFOIHN0eWxl
-PSJtc28tc3BhY2VydW46IHllcyI+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7IDwvU1BBTj5pbnQgb25fYnVpbGRfZnJlZV9uaWRzOzxTUEFOIHN0eWxlPSJtc28tc3Bh
-Y2VydW46IHllcyI+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IDwvU1BB
-Tj4vKiBidWlsZF9mcmVlX25pZHMgaXMgZG9pbmcgKi88bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8
-UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1G
-QU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURF
-Q09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz5AQCAtNTMzLDE1ICs1MzQsMTkgQEAgc3RhdGlj
-IGlubGluZSB2b2lkIG11dGV4X3VubG9ja19hbGwoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKTxv
-OnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJH
-SU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9O
-VC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVTPjxTUEFO
-IHN0eWxlPSJtc28tc3BhY2VydW46IHllcyI+Jm5ic3A7PC9TUEFOPjxvOnA+PC9vOnA+PC9TUEFO
-PjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0
-OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7
-IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVTPjxTUEFOIHN0eWxlPSJtc28tc3Bh
-Y2VydW46IHllcyI+Jm5ic3A7PC9TUEFOPnN0YXRpYyBpbmxpbmUgaW50IG11dGV4X2xvY2tfb3Ao
-c3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKTxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxl
-PSJURVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTog
-J0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElP
-TjogIj48U1BBTiBsYW5nPUVOLVVTPjxTUEFOIHN0eWxlPSJtc28tc3BhY2VydW46IHllcyI+Jm5i
-c3A7PC9TUEFOPns8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjog
-anVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fu
-cy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFu
-Zz1FTi1VUz4tPFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9TUEFOPnVuc2lnbmVkIGNoYXIgbmV4dF9sb2NrID0gc2Jp
-LSZndDtuZXh0X2xvY2tfbnVtICUgTlJfR0xPQkFMX0xPQ0tTOzxvOnA+PC9vOnA+PC9TUEFOPjwv
-UD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBG
-T05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRF
-WFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVTPis8U1BBTiBzdHlsZT0ibXNvLXNwYWNl
-cnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQQU4+dW5z
-aWduZWQgY2hhciBuZXh0X2xvY2s7PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRF
-WFQtQUxJR046IGp1c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2Fs
-aWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAi
-PjxTUEFOIGxhbmc9RU4tVVM+PFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9TUEFOPmludCBpID0gMDs8bzpw
-PjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lO
-OiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQt
-U0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz48U1BBTiBz
-dHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOzwvU1BBTj48bzpwPjwvbzpwPjwvU1BBTj48
-L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsg
-Rk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBU
-RVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz48U1BBTiBzdHlsZT0ibXNvLXNwYWNl
-cnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQ
-QU4+Zm9yICg7IGkgJmx0OyBOUl9HTE9CQUxfTE9DS1M7IGkrKyk8bzpwPjwvbzpwPjwvU1BBTj48
-L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsg
-Rk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBU
-RVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz48U1BBTiBzdHlsZT0ibXNvLXNwYWNl
-cnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQQU4+aWYgKG11
-dGV4X3RyeWxvY2soJmFtcDtzYmktJmd0O2ZzX2xvY2tbaV0pKTxvOnA+PC9vOnA+PC9TUEFOPjwv
-UD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBG
-T05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRF
-WFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVTPjxTUEFOIHN0eWxlPSJtc28tc3BhY2Vy
-dW46IHllcyI+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IDwvU1BBTj48U1BB
-TiBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOzwvU1BBTj5yZXR1cm4gaTs8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8
-UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1G
-QU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURF
-Q09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz48U1BBTiBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5
-ZXMiPiZuYnNwOzwvU1BBTj48bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1B
-TElHTjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJp
-Jywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQ
-QU4gbGFuZz1FTi1VUz4tPFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9TUEFOPm11dGV4X2xvY2soJmFtcDtzYmktJmd0
-O2ZzX2xvY2tbbmV4dF9sb2NrXSk7PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRF
-WFQtQUxJR046IGp1c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2Fs
-aWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAi
-PjxTUEFOIGxhbmc9RU4tVVM+KzxTUEFOIHN0eWxlPSJtc28tc3BhY2VydW46IHllcyI+Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IDwvU1BBTj5zcGluX2xvY2soJmFtcDtzYmkt
-Jmd0O3NwaW5fbG9jayk7PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRFWFQtQUxJ
-R046IGp1c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2FsaWJyaScs
-J3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAiPjxTUEFO
-IGxhbmc9RU4tVVM+KzxTUEFOIHN0eWxlPSJtc28tc3BhY2VydW46IHllcyI+Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IDwvU1BBTj5uZXh0X2xvY2sgPSBzYmktJmd0O25leHRf
-bG9ja19udW0gJSBOUl9HTE9CQUxfTE9DS1M7PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5
-bGU9IlRFWFQtQUxJR046IGp1c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZ
-OiAnQ2FsaWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFU
-SU9OOiAiPjxTUEFOIGxhbmc9RU4tVVM+PFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4m
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9TUEFOPnNiaS0mZ3Q7
-bmV4dF9sb2NrX251bSsrOzxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFM
-SUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmkn
-LCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BB
-TiBsYW5nPUVOLVVTPis8U1BBTiBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQQU4+c3Bpbl91bmxvY2soJmFtcDtzYmktJmd0
-O3NwaW5fbG9jayk7PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRFWFQtQUxJR046
-IGp1c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2FsaWJyaScsJ3Nh
-bnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAiPjxTUEFOIGxh
-bmc9RU4tVVM+KzxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBq
-dXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5z
-LXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5n
-PUVOLVVTPis8U1BBTiBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQQU4+bXV0ZXhfbG9jaygmYW1wO3NiaS0mZ3Q7ZnNfbG9j
-a1tuZXh0X2xvY2tdKTs8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElH
-TjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywn
-c2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4g
-bGFuZz1FTi1VUz48U1BBTiBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQQU4+cmV0dXJuIG5leHRfbG9jazs8bzpw
-PjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lO
-OiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQt
-U0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz48U1BBTiBz
-dHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOzwvU1BBTj59PG86cD48L286cD48L1NQQU4+
-PC9QPg0KPFAgc3R5bGU9IlRFWFQtQUxJR046IGp1c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7
-IEZPTlQtRkFNSUxZOiAnQ2FsaWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsg
-VEVYVC1ERUNPUkFUSU9OOiAiPjxTUEFOIGxhbmc9RU4tVVM+PFNQQU4gc3R5bGU9Im1zby1zcGFj
-ZXJ1bjogeWVzIj4mbmJzcDs8L1NQQU4+PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9
-IlRFWFQtQUxJR046IGp1c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAn
-Q2FsaWJyaScsJ3NhbnMtc2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9O
-OiAiPjxTUEFOIGxhbmc9RU4tVVM+ZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3VwZXIuYyBiL2ZzL2Yy
-ZnMvc3VwZXIuYzxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBq
-dXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5z
-LXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5n
-PUVOLVVTPm9sZCBtb2RlIDEwMDY0NDxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJU
-RVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0Nh
-bGlicmknLCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjog
-Ij48U1BBTiBsYW5nPUVOLVVTPm5ldyBtb2RlIDEwMDc1NTxvOnA+PC9vOnA+PC9TUEFOPjwvUD4N
-CjxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05U
-LUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQt
-REVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVTPmluZGV4IDc1YzdkYzMuLjRmMjc1OTY8bzpw
-PjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lO
-OiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQt
-U0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz4tLS0gYS9m
-cy9mMmZzL3N1cGVyLmM8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElH
-TjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywn
-c2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4g
-bGFuZz1FTi1VUz4rKysgYi9mcy9mMmZzL3N1cGVyLmM8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8
-UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1G
-QU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURF
-Q09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz5AQCAtNjU3LDYgKzY1Nyw3IEBAIHN0YXRpYyBp
-bnQgZjJmc19maWxsX3N1cGVyKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHZvaWQgKmRhdGEsIGlu
-dCBzaWxlbnQpPG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9IlRFWFQtQUxJR046IGp1
-c3RpZnk7IE1BUkdJTjogMGNtIDBjbSAwcHQ7IEZPTlQtRkFNSUxZOiAnQ2FsaWJyaScsJ3NhbnMt
-c2VyaWYnOyBGT05ULVNJWkU6IDEwLjVwdDsgVEVYVC1ERUNPUkFUSU9OOiAiPjxTUEFOIGxhbmc9
-RU4tVVM+PFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgPC9TUEFOPm11dGV4X2luaXQoJmFtcDtzYmktJmd0O2Nw
-X211dGV4KTs8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVz
-dGlmeTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1z
-ZXJpZic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1F
-Ti1VUz48U1BBTiBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQQU4+Zm9yIChpID0gMDsgaSAmbHQ7IE5SX0dMT0JB
-TF9MT0NLUzsgaSsrKTxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdO
-OiBqdXN0aWZ5OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdz
-YW5zLXNlcmlmJzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBs
-YW5nPUVOLVVTPjxTUEFOIHN0eWxlPSJtc28tc3BhY2VydW46IHllcyI+Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7IDwvU1BBTj5tdXRleF9pbml0KCZhbXA7c2JpLSZndDtmc19sb2Nr
-W2ldKTs8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlm
-eTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJp
-Zic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1V
-Uz4rPFNQQU4gc3R5bGU9Im1zby1zcGFjZXJ1bjogeWVzIj4mbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsgPC9TUEFOPnNwaW5fbG9ja19pbml0KCZhbXA7c2JpLSZndDtzcGluX2xv
-Y2spOzxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5
-OyBNQVJHSU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlm
-JzsgRk9OVC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVT
-PjxTUEFOIHN0eWxlPSJtc28tc3BhY2VydW46IHllcyI+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7IDwvU1BBTj5tdXRleF9pbml0KCZhbXA7c2JpLSZndDtub2RlX3dy
-aXRlKTs8bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlm
-eTsgTUFSR0lOOiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJp
-Zic7IEZPTlQtU0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1V
-Uz48U1BBTiBzdHlsZT0ibXNvLXNwYWNlcnVuOiB5ZXMiPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyA8L1NQQU4+c2JpLSZndDtwb3JfZG9pbmcgPSAwOzxvOnA+PC9v
-OnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJHSU46IDBj
-bSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9OVC1TSVpF
-OiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVTPjxTUEFOIHN0eWxl
-PSJtc28tc3BhY2VydW46IHllcyI+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7IDwvU1BBTj5zcGluX2xvY2tfaW5pdCgmYW1wO3NiaS0mZ3Q7c3RhdF9sb2NrKTs8bzpw
-PjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iVEVYVC1BTElHTjoganVzdGlmeTsgTUFSR0lO
-OiAwY20gMGNtIDBwdDsgRk9OVC1GQU1JTFk6ICdDYWxpYnJpJywnc2Fucy1zZXJpZic7IEZPTlQt
-U0laRTogMTAuNXB0OyBURVhULURFQ09SQVRJT046ICI+PFNQQU4gbGFuZz1FTi1VUz4oRU5EKTxv
-OnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJURVhULUFMSUdOOiBqdXN0aWZ5OyBNQVJH
-SU46IDBjbSAwY20gMHB0OyBGT05ULUZBTUlMWTogJ0NhbGlicmknLCdzYW5zLXNlcmlmJzsgRk9O
-VC1TSVpFOiAxMC41cHQ7IFRFWFQtREVDT1JBVElPTjogIj48U1BBTiBsYW5nPUVOLVVTPjxvOnA+
-Jm5ic3A7PC9vOnA+PC9TUEFOPjwvU1BBTj48L1A+DQo8VEFCTEUgaWQ9Y29uZmlkZW50aWFsc2ln
-bmltZz4NCjxUQk9EWT4NCjxUUj4NCjxURCBOQU1PX0xPQ0s+DQo8UD48SU1HIGJvcmRlcj0wIHNy
-Yz0iY2lkOjJYWU5YNDhOMEVCNUBuYW1vLmNvLmtyIiB3aWR0aD01MjA+PC9QPjwvVEQ+PC9UUj48
-L1RCT0RZPjwvVEFCTEU+PC9CT0RZPjwvSFRNTD48aW1nIHNyYz0naHR0cDovL2V4dC5zYW1zdW5n
-Lm5ldC9tYWlsY2hlY2svU2VlblRpbWVDaGVja2VyP2RvPTA3YWZlNWI4M2MzZmQ3YjhhYzBlMmYy
-M2EyZTkzZjVhYTIxYjgwNDc4YTNiOGQ0YzRkYWViNTQ4OGFhYTZhMWQzODdmNTY4MGU2YjFlNjBl
-NzVlODZiMTlkY2NlZmJlOGRmZjFkYWY4OTRhYmFkN2Y2ZGY1YTYxMTM4NDdhMzQyMTU0NTY2ZGQ5
-MTBhZGE0Y2JiZmNmYzlmYzE1ZjVhNzBjZjg3OGY5YTI2Y2UxNWEwJyBib3JkZXI9MCB3aWR0aD0w
-IGhlaWdodD0wIHN0eWxlPSdkaXNwbGF5Om5vbmUnPg==
+--001a11c38c2e36052204e5bc0115
+Content-Type: text/plain; charset=ISO-8859-1
+
+I encountered this same issue recently and solved it in much the same way.
+ Can we rename "spin_lock" to something more meaningful?
+
+This race actually exposed a potential deadlock between f2fs_create() and
+f2fs_initxattrs():
+
+- vfs_create()
+ - f2fs_create() - takes an fs_lock
+  - f2fs_add_link()
+   - __f2fs_add_link()
+    - init_inode_metadata()
+     - f2fs_init_security()
+      - security_inode_init_security()
+       - f2fs_initxattrs()
+        - f2fs_setxattr() - also takes an fs_lock
+
+If another CPU happens to have the same lock that f2fs_setxattr() was
+trying to take because of the race around next_lock_num, we can get into a
+deadlock situation if the two threads are also contending over another
+resource (like bdi).
+
+Another scenario is if the above happens while another thread is in the
+middle of grabbing all of the locks via mutex_lock_all().  f2fs_create() is
+holding a lock that mutex_lock_all() is waiting for and mutex_lock_all() is
+holding a lock that f2fs_setxattr() is waiting for.
+
+Russ
 
 
---=_NamoWEC-4k13z6xrku
-Content-Type: image/gif;
-	name="201309061748313_TIC2ESYT.gif"
+On Fri, Sep 6, 2013 at 4:48 AM, Chao Yu <chao2.yu@samsung.com> wrote:
+
+>  Hi Kim:****
+>
+> **     **I think there is a performance problem: when all sbi->fs_lock is
+> holded,
+>
+> then all other threads may get the same next_lock value from
+> sbi->next_lock_num in function mutex_lock_op,
+>
+> and wait to get the same lock at position fs_lock[next_lock], it unbalance
+> the fs_lock usage.
+>
+> It may lost performance when we do the multithread test.****
+>
+> ** **
+>
+> Here is the patch to fix this problem:****
+>
+> ** **
+>
+> Signed-off-by: Yu Chao <chao2.yu@samsung.com>****
+>
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h****
+>
+> old mode 100644****
+>
+> new mode 100755****
+>
+> index 467d42d..983bb45****
+>
+> --- a/fs/f2fs/f2fs.h****
+>
+> +++ b/fs/f2fs/f2fs.h****
+>
+> @@ -371,6 +371,7 @@ struct f2fs_sb_info {****
+>
+>         struct mutex fs_lock[NR_GLOBAL_LOCKS];  /* blocking FS operations
+> */****
+>
+>         struct mutex node_write;                /* locking node writes */*
+> ***
+>
+>         struct mutex writepages;                /* mutex for writepages()
+> */****
+>
+> +       spinlock_t spin_lock;                   /* lock for next_lock_num
+> */****
+>
+>         unsigned char next_lock_num;            /* round-robin global
+> locks */****
+>
+>         int por_doing;                          /* recovery is doing or
+> not */****
+>
+>         int on_build_free_nids;                 /* build_free_nids is
+> doing */****
+>
+> @@ -533,15 +534,19 @@ static inline void mutex_unlock_all(struct
+> f2fs_sb_info *sbi)****
+>
+>  ****
+>
+>  static inline int mutex_lock_op(struct f2fs_sb_info *sbi)****
+>
+>  {****
+>
+> -       unsigned char next_lock = sbi->next_lock_num % NR_GLOBAL_LOCKS;***
+> *
+>
+> +       unsigned char next_lock;****
+>
+>         int i = 0;****
+>
+>  ****
+>
+>         for (; i < NR_GLOBAL_LOCKS; i++)****
+>
+>                 if (mutex_trylock(&sbi->fs_lock[i]))****
+>
+>                         return i;****
+>
+>  ****
+>
+> -       mutex_lock(&sbi->fs_lock[next_lock]);****
+>
+> +       spin_lock(&sbi->spin_lock);****
+>
+> +       next_lock = sbi->next_lock_num % NR_GLOBAL_LOCKS;****
+>
+>         sbi->next_lock_num++;****
+>
+> +       spin_unlock(&sbi->spin_lock);****
+>
+> +****
+>
+> +       mutex_lock(&sbi->fs_lock[next_lock]);****
+>
+>         return next_lock;****
+>
+>  }****
+>
+>  ****
+>
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c****
+>
+> old mode 100644****
+>
+> new mode 100755****
+>
+> index 75c7dc3..4f27596****
+>
+> --- a/fs/f2fs/super.c****
+>
+> +++ b/fs/f2fs/super.c****
+>
+> @@ -657,6 +657,7 @@ static int f2fs_fill_super(struct super_block *sb,
+> void *data, int silent)****
+>
+>         mutex_init(&sbi->cp_mutex);****
+>
+>         for (i = 0; i < NR_GLOBAL_LOCKS; i++)****
+>
+>                 mutex_init(&sbi->fs_lock[i]);****
+>
+> +       spin_lock_init(&sbi->spin_lock);****
+>
+>         mutex_init(&sbi->node_write);****
+>
+>         sbi->por_doing = 0;****
+>
+>         spin_lock_init(&sbi->stat_lock);****
+>
+> (END)****
+>
+> ** **
+>
+>
+>
+> ------------------------------------------------------------------------------
+> Learn the latest--Visual Studio 2012, SharePoint 2013, SQL 2012, more!
+> Discover the easy way to master current and previous Microsoft technologies
+> and advance your career. Get an incredible 1,500+ hours of step-by-step
+> tutorial videos with LearnDevNow. Subscribe today and save!
+> http://pubads.g.doubleclick.net/gampad/clk?id=58041391&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>
+>
+
+--001a11c38c2e36052204e5bc0115
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">I encountered this same issue recently and solved it in mu=
+ch the same way. =A0Can we rename &quot;spin_lock&quot; to something more m=
+eaningful?<div><br></div><div>This race actually exposed a potential deadlo=
+ck between f2fs_create() and f2fs_initxattrs():<div>
+
+<br></div><div>- vfs_create()</div><div>=A0- f2fs_create() - takes an fs_lo=
+ck</div><div>=A0 - f2fs_add_link()</div><div>=A0 =A0- __f2fs_add_link()</di=
+v><div>=A0 =A0 - init_inode_metadata()</div><div>=A0 =A0 =A0- f2fs_init_sec=
+urity()</div>
+<div>
+=A0 =A0 =A0 - security_inode_init_security()</div><div>=A0 =A0 =A0 =A0- f2f=
+s_initxattrs()</div><div>=A0 =A0 =A0 =A0 - f2fs_setxattr() - also takes an =
+fs_lock</div><div><br></div><div>If another CPU happens to have the same lo=
+ck that=A0f2fs_setxattr() was trying to take because of the race around=A0n=
+ext_lock_num, we can get into a deadlock situation if the two threads are a=
+lso contending over another resource (like bdi).</div>
+
+<div><br></div><div>Another scenario is if the above happens while another =
+thread is in the middle of grabbing all of the locks via=A0mutex_lock_all()=
+. =A0f2fs_create() is holding a lock that=A0mutex_lock_all() is waiting for=
+ and=A0mutex_lock_all() is holding a lock that=A0f2fs_setxattr() is waiting=
+ for.</div>
+
+</div><div><br></div><div>Russ</div></div><div class=3D"gmail_extra"><br><b=
+r><div class=3D"gmail_quote">On Fri, Sep 6, 2013 at 4:48 AM, Chao Yu <span =
+dir=3D"ltr">&lt;<a href=3D"mailto:chao2.yu@samsung.com" target=3D"_blank">c=
+hao2.yu@samsung.com</a>&gt;</span> wrote:<br>
+
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex">
+
+
+
+
+<div><span lang=3D"EN-US">
+<p><span lang=3D"EN-US">Hi Kim:<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><u></u>=A0=A0=A0=A0=A0<u></u></span><span lang=3D"E=
+N-US">I think there is a performance problem: when all sbi-&gt;fs_lock is h=
+olded, </span></p>
+<p><span lang=3D"EN-US"></span><span lang=3D"EN-US">then all other threads =
+may get the same next_lock value from sbi-&gt;next_lock_num in function mut=
+ex_lock_op, </span></p>
+<p><span lang=3D"EN-US">and wait to get the same lock at position fs_lock[n=
+ext_lock], it unbalance the fs_lock usage. </span></p>
+<p><span lang=3D"EN-US">It may lost performance when we do the multithread =
+test.<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><u></u>=A0<u></u></span></p>
+<p><span lang=3D"EN-US">Here is the patch to fix this problem:<u></u><u></u=
+></span></p>
+<p><span lang=3D"EN-US"><u></u>=A0<u></u></span></p>
+<p><span lang=3D"EN-US">Signed-off-by: Yu Chao &lt;<a href=3D"mailto:chao2.=
+yu@samsung.com" target=3D"_blank">chao2.yu@samsung.com</a>&gt;<u></u><u></u=
+></span></p>
+<p><span lang=3D"EN-US">diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h<u></u>=
+<u></u></span></p>
+<p><span lang=3D"EN-US">old mode 100644<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">new mode 100755<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">index 467d42d..983bb45<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">--- a/fs/f2fs/f2fs.h<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+++ b/fs/f2fs/f2fs.h<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">@@ -371,6 +371,7 @@ struct f2fs_sb_info {<u></u><u>=
+</u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>struct mutex fs_=
+lock[NR_GLOBAL_LOCKS];<span>=A0 </span>/* blocking FS operations */<u></u><=
+u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>struct mutex nod=
+e_write;<span>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 </span>/* locki=
+ng node writes */<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>struct mutex wri=
+tepages;<span>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 </span>/* mutex=
+ for writepages() */<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+<span>=A0=A0=A0=A0=A0=A0 </span>spinlock_t spin_lo=
+ck;<span>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 </span>/* l=
+ock for next_lock_num */<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>unsigned char ne=
+xt_lock_num;<span>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 </span>/* round-robin g=
+lobal locks */<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>int por_doing;<s=
+pan>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 </span>/* recovery is doing or not */<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>int on_build_fre=
+e_nids;<span>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 </span>/* bui=
+ld_free_nids is doing */<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">@@ -533,15 +534,19 @@ static inline void mutex_unlo=
+ck_all(struct f2fs_sb_info *sbi)<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0</span><u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0</span>static inline int mutex_lock_op(str=
+uct f2fs_sb_info *sbi)<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0</span>{<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">-<span>=A0=A0=A0=A0=A0=A0 </span>unsigned char next=
+_lock =3D sbi-&gt;next_lock_num % NR_GLOBAL_LOCKS;<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+<span>=A0=A0=A0=A0=A0=A0 </span>unsigned char next=
+_lock;<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>int i =3D 0;<u><=
+/u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0</span><u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>for (; i &lt; NR=
+_GLOBAL_LOCKS; i++)<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+ </span>if (mutex_trylock(&amp;sbi-&gt;fs_lock[i]))<u></u><u></u></span></p=
+>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0 </span><span>=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0</span>return i;<u></u><u></u></span=
+></p>
+<p><span lang=3D"EN-US"><span>=A0</span><u></u><u></u></span></p>
+<p><span lang=3D"EN-US">-<span>=A0=A0=A0=A0=A0=A0 </span>mutex_lock(&amp;sb=
+i-&gt;fs_lock[next_lock]);<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+<span>=A0=A0=A0=A0=A0=A0 </span>spin_lock(&amp;sbi=
+-&gt;spin_lock);<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+<span>=A0=A0=A0=A0=A0=A0 </span>next_lock =3D sbi-=
+&gt;next_lock_num % NR_GLOBAL_LOCKS;<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>sbi-&gt;next_loc=
+k_num++;<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+<span>=A0=A0=A0=A0=A0=A0 </span>spin_unlock(&amp;s=
+bi-&gt;spin_lock);<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+<span>=A0=A0=A0=A0=A0=A0 </span>mutex_lock(&amp;sb=
+i-&gt;fs_lock[next_lock]);<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>return next_lock=
+;<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0</span>}<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0</span><u></u><u></u></span></p>
+<p><span lang=3D"EN-US">diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c<u></=
+u><u></u></span></p>
+<p><span lang=3D"EN-US">old mode 100644<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">new mode 100755<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">index 75c7dc3..4f27596<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">--- a/fs/f2fs/super.c<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+++ b/fs/f2fs/super.c<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">@@ -657,6 +657,7 @@ static int f2fs_fill_super(stru=
+ct super_block *sb, void *data, int silent)<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>mutex_init(&amp;=
+sbi-&gt;cp_mutex);<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>for (i =3D 0; i =
+&lt; NR_GLOBAL_LOCKS; i++)<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+ </span>mutex_init(&amp;sbi-&gt;fs_lock[i]);<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">+<span>=A0=A0=A0=A0=A0=A0 </span>spin_lock_init(&am=
+p;sbi-&gt;spin_lock);<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>mutex_init(&amp;=
+sbi-&gt;node_write);<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>sbi-&gt;por_doin=
+g =3D 0;<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><span>=A0=A0=A0=A0=A0=A0=A0 </span>spin_lock_init(&=
+amp;sbi-&gt;stat_lock);<u></u><u></u></span></p>
+<p><span lang=3D"EN-US">(END)<u></u><u></u></span></p>
+<p><span lang=3D"EN-US"><u></u>=A0<u></u></span></p></span>
+<table>
+<tbody>
+<tr>
+<td>
+<p><img border=3D"0" src=3D"cid:2XYNX48N0EB5@namo.co.kr" width=3D"520"></p>=
+</td></tr></tbody></table></div><img border=3D"0" width=3D"0" height=3D"0">=
+<br>-----------------------------------------------------------------------=
+-------<br>
+
+
+Learn the latest--Visual Studio 2012, SharePoint 2013, SQL 2012, more!<br>
+Discover the easy way to master current and previous Microsoft technologies=
+<br>
+and advance your career. Get an incredible 1,500+ hours of step-by-step<br>
+tutorial videos with LearnDevNow. Subscribe today and save!<br>
+<a href=3D"http://pubads.g.doubleclick.net/gampad/clk?id=3D58041391&amp;iu=
+=3D/4140/ostg.clktrk" target=3D"_blank">http://pubads.g.doubleclick.net/gam=
+pad/clk?id=3D58041391&amp;iu=3D/4140/ostg.clktrk</a><br>___________________=
+____________________________<br>
+
+
+Linux-f2fs-devel mailing list<br>
+<a href=3D"mailto:Linux-f2fs-devel@lists.sourceforge.net">Linux-f2fs-devel@=
+lists.sourceforge.net</a><br>
+<a href=3D"https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel" t=
+arget=3D"_blank">https://lists.sourceforge.net/lists/listinfo/linux-f2fs-de=
+vel</a><br>
+<br></blockquote></div><br></div>
+
+--001a11c38c2e36052204e5bc0115--
+
+--001a11c38c2e36052404e5bc0116
+Content-Type: image/gif; name="201309061748313_TIC2ESYT.gif"
 Content-Transfer-Encoding: base64
 Content-ID: <2XYNX48N0EB5@namo.co.kr>
+X-Attachment-Id: ce79e56e6fdf3cc8_0.0.1
 
 R0lGODlhCAKQAMQAAEdHR4yMjLm5uQICAtt0dCoqKumiotTU1PLExMpMTG9vb9RiYvfZ2fvt7eSO
 juvr68k6Ov/+/jMzM////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C1hN
@@ -598,13 +669,10 @@ IxU5ckg8mjGSupNkGMHwx2UEUot9qGQVL3lJswjkkF7Mo3M+ya4s8g6UrGylK18Jy1geShl6k6Ut
 leGFTN5yl7yCDi9/CcxgCnOYxCxmLkOpy2Iqc5nBpCMzsyiZZwaTK9KspjWvic1nRhOZ2eymN78J
 znCKc5zkLGc2V2nOdKpznexspzvfCU8bNWOe9KynPe+Jz3zqc5/87Kc//wnQgAp0oAQtqEEPitCE
 KnShDG2oQx+K0BAAADs=
-
---=_NamoWEC-4k13z6xrku--
-
+--001a11c38c2e36052404e5bc0116--
 
 
-
---===============4014487456295871283==
+--===============3478283541911614591==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -616,7 +684,7 @@ Discover the easy way to master current and previous Microsoft technologies
 and advance your career. Get an incredible 1,500+ hours of step-by-step
 tutorial videos with LearnDevNow. Subscribe today and save!
 http://pubads.g.doubleclick.net/gampad/clk?id=58041391&iu=/4140/ostg.clktrk
---===============4014487456295871283==
+--===============3478283541911614591==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -627,4 +695,4 @@ Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
---===============4014487456295871283==--
+--===============3478283541911614591==--
