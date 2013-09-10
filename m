@@ -1,35 +1,80 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: optimize fs_lock for better performance
-Date: Tue, 10 Sep 2013 09:55:03 +0900
-Message-ID: <1378774503.2354.106.camel@kjgkr>
-References: <02.95.21086.AD4A9225@epcpsbgx4.samsung.com>
- <CAGfvh62EGuQfGBRhasNEXAVEvS2BwKCijnAS67f+GL2fHS-fTA@mail.gmail.com>
+Subject: Re: Re: [f2fs-dev] [PATCH] f2fs: optimize fs_lock for better
+ performance
+Date: Tue, 10 Sep 2013 09:59:10 +0900
+Message-ID: <1378774750.2354.110.camel@kjgkr>
+References: <04.C0.13361.61DDA225@epcpsbge5.samsung.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <CAGfvh62EGuQfGBRhasNEXAVEvS2BwKCijnAS67f+GL2fHS-fTA@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Russ Knize <Russ.Knize@motorola.com>
-Cc: chao2.yu@samsung.com, linux-fsdevel@vger.kernel.org, shu.tan@samsung.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <04.C0.13361.61DDA225@epcpsbge5.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: chao2.yu@samsung.com
+Cc: Russ Knize <Russ.Knize@motorola.com>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, =?UTF-8?Q?=E8=B0=AD=E5=A7=9D?= <shu.tan@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi,
 
-Nice catch.
-This is definitely a bug where one thread grabbed two fs_locks across
-the same flow.
-Any idea?
+2013-09-07 (=ED=86=A0), 08:00 +0000, Chao Yu:
+> Hi Knize,
+>=20
+>     Thanks for your reply, I think it's actually meaningless that it'=
+s
+> being named after "spin_lock",
+> it's better to rename this spinlock to "round_robin_lock".
+>=20
+>     This patch can only resolve the issue of unbalanced fs_lock usage=
+,
+> it can not fix the deadlock issue.
+> can we fix deadlock issue through this method:
+>=20
+> - vfs_create()
+>  - f2fs_create() - takes an fs_lock and save current thread info into
+> thread_info[NR_GLOBAL_LOCKS]
+>   - f2fs_add_link()
+>    - __f2fs_add_link()
+>     - init_inode_metadata()
+>      - f2fs_init_security()
+>       - security_inode_init_security()
+>        - f2fs_initxattrs()
+>         - f2fs_setxattr() - get fs_lock only if there is no current
+> thread info in thread_info
+>        =20
+> So it keeps one thread can only hold one fs_lock to avoid deadlock.
+> Can we use this solution?
+
+It could be.
+But, I think we can avoid to grab the fs_lock at the f2fs_initxattrs()
+level, since this case only happens when f2fs_initxattrs() is called.
+Let's think about ut in more detail.
 Thanks,
 
-2013-09-06 (=EA=B8=88), 14:25 -0500, Russ Knize:
+>=20
+> =20
+>=20
+> thanks again!
+>=20
+> =20
+>=20
+> ------- Original Message -------
+>=20
+> Sender : Russ Knize<Russ.Knize@motorola.com>
+>=20
+> Date : =E4=B9=9D=E6=9C=88 07, 2013 04:25 (GMT+09:00)
+>=20
+> Title : Re: [f2fs-dev] [PATCH] f2fs: optimize fs_lock for better
+> performance
+>=20
+> =20
+>=20
 > I encountered this same issue recently and solved it in much the same
-> way.  Can we rename "spin_lock" to something more meaningful?
+> way.  Can we rename "spin_lock" to something more meaningful?=20
 >=20
 >=20
 > This race actually exposed a potential deadlock between f2fs_create()
-> and f2fs_initxattrs():
+> and f2fs_initxattrs():=20
 >=20
 >=20
 > - vfs_create()
@@ -222,13 +267,16 @@ t
 >        =20
 >=20
 >=20
+> =20
+>=20
+> =20
+>=20
+> =20
+>=20
+>=20
+>=20
+>=20
 
 --=20
 Jaegeuk Kim
 Samsung
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
