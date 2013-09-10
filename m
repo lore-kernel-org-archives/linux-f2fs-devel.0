@@ -1,37 +1,38 @@
 From: Russ Knize <Russ.Knize@motorola.com>
-Subject: Re: [PATCH] f2fs: optimize fs_lock for better performance
-Date: Mon, 9 Sep 2013 23:17:11 -0500
-Message-ID: <CAGfvh63Kd0qtoJDzdCwY6V=8FRmoaFiDM6zQbK_h5pRAicGHtQ@mail.gmail.com>
-References: <04.C0.13361.61DDA225@epcpsbge5.samsung.com>
-	<1378774750.2354.110.camel@kjgkr>
+Subject: Re: [PATCH] f2fs: fix handling orphan inodes
+Date: Tue, 10 Sep 2013 10:42:18 -0500
+Message-ID: <CAGfvh60utYQ-uN=RPu-oO+zr1+Er8GABdOvWViZPz0X6SHwUqA@mail.gmail.com>
+References: <1375343917-24093-1-git-send-email-jaegeuk.kim@samsung.com>
+	<51FA2E1A.1080604@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6456360154466884907=="
+Content-Type: multipart/mixed; boundary="===============0849788426947639035=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <rknize2@motorola.com>) id 1VJFOZ-0007m9-VN
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <rknize2@motorola.com>) id 1VJQ5Z-0006x9-Dq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 10 Sep 2013 04:17:44 +0000
-Received: from exprod5og104.obsmtp.com ([64.18.0.178])
-	by sog-mx-1.v43.ch3.sourceforge.com with smtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1VJFOX-0000Af-Sn
+	Tue, 10 Sep 2013 15:42:49 +0000
+Received: from exprod5og112.obsmtp.com ([64.18.0.24])
+	by sog-mx-3.v43.ch3.sourceforge.com with smtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1VJQ5X-0008Kn-Fi
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 10 Sep 2013 04:17:43 +0000
+	Tue, 10 Sep 2013 15:42:49 +0000
 Received: from il93mgrg01.am.mot-mobility.com ([10.22.94.167])
 	by il93mgrg01.am.mot-mobility.com (8.14.3/8.14.3) with ESMTP id
-	r8A4EetB008872 for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 10 Sep 2013 00:14:40 -0400 (EDT)
-Received: from mail-wg0-f43.google.com (mail-wg0-f43.google.com [74.125.82.43])
+	r8AFdjE1026645 for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 10 Sep 2013 11:39:45 -0400 (EDT)
+Received: from mail-we0-f171.google.com (mail-we0-f171.google.com
+	[74.125.82.171])
 	by il93mgrg01.am.mot-mobility.com (8.14.3/8.14.3) with ESMTP id
-	r8A4EdUa008859
+	r8AFdieW026621
 	(version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=OK)
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 10 Sep 2013 00:14:40 -0400 (EDT)
-Received: by mail-wg0-f43.google.com with SMTP id z12so5949482wgg.34
+	Tue, 10 Sep 2013 11:39:45 -0400 (EDT)
+Received: by mail-we0-f171.google.com with SMTP id t61so5693296wes.16
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 09 Sep 2013 21:17:33 -0700 (PDT)
-In-Reply-To: <1378774750.2354.110.camel@kjgkr>
+	Tue, 10 Sep 2013 08:42:38 -0700 (PDT)
+In-Reply-To: <51FA2E1A.1080604@cn.fujitsu.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -41,642 +42,520 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "jaegeuk.kim" <jaegeuk.kim@samsung.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, =?UTF-8?B?6LCt5aed?= <shu.tan@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
---===============6456360154466884907==
-Content-Type: multipart/alternative; boundary=f46d043c7eeeac3a3a04e5ffc896
+--===============0849788426947639035==
+Content-Type: multipart/alternative; boundary=089e0122f49cc1411804e6095aee
 
---f46d043c7eeeac3a3a04e5ffc896
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+--089e0122f49cc1411804e6095aee
+Content-Type: text/plain; charset=ISO-8859-1
 
-I wasn't sure if f2fs_setxattr() needed the lock or not, since the call
-path from f2fs_xattr_set_acl() doesn't take one anywhere.  My first thought
-was to move the lock over to the acl code and remove it from here.
+Hi Jaegeuk,
+
+This patch seems to have introduced a bug in the handling of sbi->n_orphans
+during recovery.  Recovery can cause orphans to be added to the list
+without incrementing n_orphans via:
+
+- recover_fsync_data
+ - find_fsync_dnodes
+  - recover_inode
+   - recover_dentry
+    - f2fs_delete_entry
+     - add_orphan_inode
+
+Later, these orphans are removed via:
+
+- recover_fsync_data
+ - recover_data
+  - do_recover_data
+   - check_index_in_prev_nodes
+    - truncate_hole
+     - evict
+      - f2fs_evict_inode
+       - remove_inode_page
+        - truncate_node
+         - remove_orphan_inode
+
+remove_orphan_inode() will decrement sbi->n_orphans, which was initialized
+to zero by init_orphan_info().  Since it is unsigned, it rolls over and
+from then on the check in acquire_orphan_inode() returns ENOSPC.
+
+The obvious fix seems to be to call acquire_orphan_inode()
+from recover_dentry(), but I thought I'd run it past you first.
 
 Russ
 
-On Mon, Sep 9, 2013 at 7:59 PM, Jaegeuk Kim <jaegeuk.kim@samsung.com> wrote=
-:
 
-> Hi,
+
+On Thu, Aug 1, 2013 at 4:44 AM, Gu Zheng <guz.fnst@cn.fujitsu.com> wrote:
+
+> On 08/01/2013 03:58 PM, Jaegeuk Kim wrote:
 >
-> 2013-09-07 (=ED=86=A0), 08:00 +0000, Chao Yu:
-> > Hi Knize,
+> > This patch fixes mishandling of the sbi->n_orphans variable.
 > >
-> >     Thanks for your reply, I think it's actually meaningless that it's
-> > being named after "spin_lock",
-> > it's better to rename this spinlock to "round_robin_lock".
+> > If users request lots of f2fs_unlink(), check_orphan_space() could be
+> contended.
+> > In such the case, sbi->n_orphans can be read incorrectly so that
+> f2fs_unlink()
+> > would fall into the wrong state which results in the failure of
+> > add_orphan_inode().
 > >
-> >     This patch can only resolve the issue of unbalanced fs_lock usage,
-> > it can not fix the deadlock issue.
-> > can we fix deadlock issue through this method:
-> >
-> > - vfs_create()
-> >  - f2fs_create() - takes an fs_lock and save current thread info into
-> > thread_info[NR_GLOBAL_LOCKS]
-> >   - f2fs_add_link()
-> >    - __f2fs_add_link()
-> >     - init_inode_metadata()
-> >      - f2fs_init_security()
-> >       - security_inode_init_security()
-> >        - f2fs_initxattrs()
-> >         - f2fs_setxattr() - get fs_lock only if there is no current
-> > thread info in thread_info
-> >
-> > So it keeps one thread can only hold one fs_lock to avoid deadlock.
-> > Can we use this solution?
+> > So, let's increment sbi->n_orphans virtually prior to the actual orphan
+> inode
+> > stuffs. After that, let's release sbi->n_orphans by calling
+> release_orphan_inode
+> > or remove_orphan_inode.
 >
-> It could be.
-> But, I think we can avoid to grab the fs_lock at the f2fs_initxattrs()
-> level, since this case only happens when f2fs_initxattrs() is called.
-> Let's think about ut in more detail.
+> Hi Kim,
+> The key point is that we did not reduce sbi->n_orphans when we
+> release/remove orphan inode,
+> so just adding the reduction step can fix this issue.
+> But why moving the increment of sbi->n_orphans before we add orphan inode?
+> It seems that we
+> can not get benefit from it, and it makes the procedure a bit complex,
+> because we should
+> reduce the sbi->n_orphans in some fail pathes before we really add orphan
+> inode.
+>
 > Thanks,
+> Gu
 >
 > >
-> >
-> >
-> > thanks again!
-> >
-> >
-> >
-> > ------- Original Message -------
-> >
-> > Sender : Russ Knize<Russ.Knize@motorola.com>
-> >
-> > Date : =E4=B9=9D=E6=9C=88 07, 2013 04:25 (GMT+09:00)
-> >
-> > Title : Re: [f2fs-dev] [PATCH] f2fs: optimize fs_lock for better
-> > performance
-> >
-> >
-> >
-> > I encountered this same issue recently and solved it in much the same
-> > way.  Can we rename "spin_lock" to something more meaningful?
-> >
-> >
-> > This race actually exposed a potential deadlock between f2fs_create()
-> > and f2fs_initxattrs():
-> >
-> >
-> > - vfs_create()
-> >  - f2fs_create() - takes an fs_lock
-> >   - f2fs_add_link()
-> >    - __f2fs_add_link()
-> >     - init_inode_metadata()
-> >      - f2fs_init_security()
-> >       - security_inode_init_security()
-> >        - f2fs_initxattrs()
-> >         - f2fs_setxattr() - also takes an fs_lock
-> >
-> >
-> > If another CPU happens to have the same lock that f2fs_setxattr() was
-> > trying to take because of the race around next_lock_num, we can get
-> > into a deadlock situation if the two threads are also contending over
-> > another resource (like bdi).
-> >
-> >
-> > Another scenario is if the above happens while another thread is in
-> > the middle of grabbing all of the locks via mutex_lock_all().
-> >  f2fs_create() is holding a lock that mutex_lock_all() is waiting for
-> > and mutex_lock_all() is holding a lock that f2fs_setxattr() is waiting
-> > for.
-> >
-> >
-> > Russ
-> >
-> >
-> > On Fri, Sep 6, 2013 at 4:48 AM, Chao Yu <chao2.yu@samsung.com> wrote:
-> >         Hi Kim:
-> >
-> >              I think there is a performance problem: when all
-> >         sbi->fs_lock is holded,
-> >
-> >         then all other threads may get the same next_lock value from
-> >         sbi->next_lock_num in function mutex_lock_op,
-> >
-> >         and wait to get the same lock at position fs_lock[next_lock],
-> >         it unbalance the fs_lock usage.
-> >
-> >         It may lost performance when we do the multithread test.
-> >
-> >
-> >
-> >         Here is the patch to fix this problem:
-> >
-> >
-> >
-> >         Signed-off-by: Yu Chao <chao2.yu@samsung.com>
-> >
-> >         diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >
-> >         old mode 100644
-> >
-> >         new mode 100755
-> >
-> >         index 467d42d..983bb45
-> >
-> >         --- a/fs/f2fs/f2fs.h
-> >
-> >         +++ b/fs/f2fs/f2fs.h
-> >
-> >         @@ -371,6 +371,7 @@ struct f2fs_sb_info {
-> >
-> >                 struct mutex fs_lock[NR_GLOBAL_LOCKS];  /* blocking FS
-> >         operations */
-> >
-> >                 struct mutex node_write;                /* locking
-> >         node writes */
-> >
-> >                 struct mutex writepages;                /* mutex for
-> >         writepages() */
-> >
-> >         +       spinlock_t spin_lock;                   /* lock for
-> >         next_lock_num */
-> >
-> >                 unsigned char next_lock_num;            /* round-robin
-> >         global locks */
-> >
-> >                 int por_doing;                          /* recovery is
-> >         doing or not */
-> >
-> >                 int on_build_free_nids;                 /*
-> >         build_free_nids is doing */
-> >
-> >         @@ -533,15 +534,19 @@ static inline void
-> >         mutex_unlock_all(struct f2fs_sb_info *sbi)
-> >
-> >
-> >
-> >          static inline int mutex_lock_op(struct f2fs_sb_info *sbi)
-> >
-> >          {
-> >
-> >         -       unsigned char next_lock =3D sbi->next_lock_num %
-> >         NR_GLOBAL_LOCKS;
-> >
-> >         +       unsigned char next_lock;
-> >
-> >                 int i =3D 0;
-> >
-> >
-> >
-> >                 for (; i < NR_GLOBAL_LOCKS; i++)
-> >
-> >                         if (mutex_trylock(&sbi->fs_lock[i]))
-> >
-> >                                 return i;
-> >
-> >
-> >
-> >         -       mutex_lock(&sbi->fs_lock[next_lock]);
-> >
-> >         +       spin_lock(&sbi->spin_lock);
-> >
-> >         +       next_lock =3D sbi->next_lock_num % NR_GLOBAL_LOCKS;
-> >
-> >                 sbi->next_lock_num++;
-> >
-> >         +       spin_unlock(&sbi->spin_lock);
-> >
-> >         +
-> >
-> >         +       mutex_lock(&sbi->fs_lock[next_lock]);
-> >
-> >                 return next_lock;
-> >
-> >          }
-> >
-> >
-> >
-> >         diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >
-> >         old mode 100644
-> >
-> >         new mode 100755
-> >
-> >         index 75c7dc3..4f27596
-> >
-> >         --- a/fs/f2fs/super.c
-> >
-> >         +++ b/fs/f2fs/super.c
-> >
-> >         @@ -657,6 +657,7 @@ static int f2fs_fill_super(struct
-> >         super_block *sb, void *data, int silent)
-> >
-> >                 mutex_init(&sbi->cp_mutex);
-> >
-> >                 for (i =3D 0; i < NR_GLOBAL_LOCKS; i++)
-> >
-> >                         mutex_init(&sbi->fs_lock[i]);
-> >
-> >         +       spin_lock_init(&sbi->spin_lock);
-> >
-> >                 mutex_init(&sbi->node_write);
-> >
-> >                 sbi->por_doing =3D 0;
-> >
-> >                 spin_lock_init(&sbi->stat_lock);
-> >
-> >         (END)
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> -------------------------------------------------------------------------=
------
-> >         Learn the latest--Visual Studio 2012, SharePoint 2013, SQL
-> >         2012, more!
-> >         Discover the easy way to master current and previous Microsoft
-> >         technologies
-> >         and advance your career. Get an incredible 1,500+ hours of
-> >         step-by-step
-> >         tutorial videos with LearnDevNow. Subscribe today and save!
-> >
-> http://pubads.g.doubleclick.net/gampad/clk?id=3D58041391&iu=3D/4140/ostg.=
-clktrk
-> >         _______________________________________________
-> >         Linux-f2fs-devel mailing list
-> >         Linux-f2fs-devel@lists.sourceforge.net
-> >         https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> >
-> >
+> > Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+> > ---
+> >  fs/f2fs/checkpoint.c | 13 ++++++++++---
+> >  fs/f2fs/dir.c        |  2 ++
+> >  fs/f2fs/f2fs.h       |  3 ++-
+> >  fs/f2fs/namei.c      | 19 ++++++++++++++-----
+> >  4 files changed, 28 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index fe91773..c5a5c39 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -182,7 +182,7 @@ const struct address_space_operations f2fs_meta_aops
+> = {
+> >       .set_page_dirty = f2fs_set_meta_page_dirty,
+> >  };
+> >
+> > -int check_orphan_space(struct f2fs_sb_info *sbi)
+> > +int acquire_orphan_inode(struct f2fs_sb_info *sbi)
+> >  {
+> >       unsigned int max_orphans;
+> >       int err = 0;
+> > @@ -197,10 +197,19 @@ int check_orphan_space(struct f2fs_sb_info *sbi)
+> >       mutex_lock(&sbi->orphan_inode_mutex);
+> >       if (sbi->n_orphans >= max_orphans)
+> >               err = -ENOSPC;
+> > +     else
+> > +             sbi->n_orphans++;
+> >       mutex_unlock(&sbi->orphan_inode_mutex);
+> >       return err;
+> >  }
+> >
+> > +void release_orphan_inode(struct f2fs_sb_info *sbi)
+> > +{
+> > +     mutex_lock(&sbi->orphan_inode_mutex);
+> > +     sbi->n_orphans--;
+> > +     mutex_unlock(&sbi->orphan_inode_mutex);
+> > +}
+> > +
+> >  void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+> >  {
+> >       struct list_head *head, *this;
+> > @@ -229,8 +238,6 @@ retry:
+> >               list_add(&new->list, this->prev);
+> >       else
+> >               list_add_tail(&new->list, head);
+> > -
+> > -     sbi->n_orphans++;
+> >  out:
+> >       mutex_unlock(&sbi->orphan_inode_mutex);
+> >  }
+> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > index d1bb260..384c6da 100644
+> > --- a/fs/f2fs/dir.c
+> > +++ b/fs/f2fs/dir.c
+> > @@ -572,6 +572,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry
+> *dentry, struct page *page,
+> >
+> >               if (inode->i_nlink == 0)
+> >                       add_orphan_inode(sbi, inode->i_ino);
+> > +             else
+> > +                     release_orphan_inode(sbi);
+> >       }
+> >
+> >       if (bit_pos == NR_DENTRY_IN_BLOCK) {
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index a6858c7..78777cd 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1044,7 +1044,8 @@ void destroy_segment_manager(struct f2fs_sb_info
+> *);
+> >  struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);
+> >  struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);
+> >  long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
+> > -int check_orphan_space(struct f2fs_sb_info *);
+> > +int acquire_orphan_inode(struct f2fs_sb_info *);
+> > +void release_orphan_inode(struct f2fs_sb_info *);
+> >  void add_orphan_inode(struct f2fs_sb_info *, nid_t);
+> >  void remove_orphan_inode(struct f2fs_sb_info *, nid_t);
+> >  int recover_orphan_inodes(struct f2fs_sb_info *);
+> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> > index 3297278..4e47518 100644
+> > --- a/fs/f2fs/namei.c
+> > +++ b/fs/f2fs/namei.c
+> > @@ -239,7 +239,7 @@ static int f2fs_unlink(struct inode *dir, struct
+> dentry *dentry)
+> >       if (!de)
+> >               goto fail;
+> >
+> > -     err = check_orphan_space(sbi);
+> > +     err = acquire_orphan_inode(sbi);
+> >       if (err) {
+> >               kunmap(page);
+> >               f2fs_put_page(page, 0);
+> > @@ -393,7 +393,7 @@ static int f2fs_rename(struct inode *old_dir, struct
+> dentry *old_dentry,
+> >       struct inode *old_inode = old_dentry->d_inode;
+> >       struct inode *new_inode = new_dentry->d_inode;
+> >       struct page *old_dir_page;
+> > -     struct page *old_page;
+> > +     struct page *old_page, *new_page;
+> >       struct f2fs_dir_entry *old_dir_entry = NULL;
+> >       struct f2fs_dir_entry *old_entry;
+> >       struct f2fs_dir_entry *new_entry;
+> > @@ -415,7 +415,6 @@ static int f2fs_rename(struct inode *old_dir, struct
+> dentry *old_dentry,
+> >       ilock = mutex_lock_op(sbi);
+> >
+> >       if (new_inode) {
+> > -             struct page *new_page;
+> >
+> >               err = -ENOTEMPTY;
+> >               if (old_dir_entry && !f2fs_empty_dir(new_inode))
+> > @@ -427,9 +426,13 @@ static int f2fs_rename(struct inode *old_dir,
+> struct dentry *old_dentry,
+> >               if (!new_entry)
+> >                       goto out_dir;
+> >
+> > +             err = acquire_orphan_inode(sbi);
+> > +             if (err)
+> > +                     goto put_out_dir;
+> > +
+> >               if (update_dent_inode(old_inode, &new_dentry->d_name)) {
+> > -                     f2fs_put_page(new_page, 1);
+> > -                     goto out_dir;
+> > +                     release_orphan_inode(sbi);
+> > +                     goto put_out_dir;
+> >               }
+> >
+> >               f2fs_set_link(new_dir, new_entry, new_page, old_inode);
+> > @@ -438,8 +441,12 @@ static int f2fs_rename(struct inode *old_dir,
+> struct dentry *old_dentry,
+> >               if (old_dir_entry)
+> >                       drop_nlink(new_inode);
+> >               drop_nlink(new_inode);
+> > +
+> >               if (!new_inode->i_nlink)
+> >                       add_orphan_inode(sbi, new_inode->i_ino);
+> > +             else
+> > +                     release_orphan_inode(sbi);
+> > +
+> >               update_inode_page(new_inode);
+> >       } else {
+> >               err = f2fs_add_link(new_dentry, old_inode);
+> > @@ -472,6 +479,8 @@ static int f2fs_rename(struct inode *old_dir, struct
+> dentry *old_dentry,
+> >       mutex_unlock_op(sbi, ilock);
+> >       return 0;
+> >
+> > +put_out_dir:
+> > +     f2fs_put_page(new_page, 1);
+> >  out_dir:
+> >       if (old_dir_entry) {
+> >               kunmap(old_dir_page);
 >
-> --
-> Jaegeuk Kim
-> Samsung
 >
+>
+>
+> ------------------------------------------------------------------------------
+> Get your SQL database under version control now!
+> Version control is standard for application code, but databases havent
+> caught up. So what steps can you take to put your SQL databases under
+> version control? Why should you start doing it? Read more to find out.
+> http://pubads.g.doubleclick.net/gampad/clk?id=49501711&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 >
 
---f46d043c7eeeac3a3a04e5ffc896
-Content-Type: text/html; charset=UTF-8
+--089e0122f49cc1411804e6095aee
+Content-Type: text/html; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">I wasn&#39;t sure if f2fs_setxattr() needed the lock or no=
-t, since the call path from f2fs_xattr_set_acl() doesn&#39;t take one anywh=
-ere.=C2=A0 My first thought was to move the lock over to the acl code and r=
-emove it from here.<br>
+<div dir=3D"ltr">Hi Jaegeuk,<div><br></div><div>This patch seems to have in=
+troduced a bug in the handling of=A0sbi-&gt;n_orphans during recovery. =A0R=
+ecovery can cause orphans to be added to the list without incrementing n_or=
+phans via:</div>
 
-<div><div class=3D"gmail_extra"><br></div><div class=3D"gmail_extra">Russ<b=
-r></div><div class=3D"gmail_extra"><br><div class=3D"gmail_quote">On Mon, S=
-ep 9, 2013 at 7:59 PM, Jaegeuk Kim <span dir=3D"ltr">&lt;<a href=3D"mailto:=
-jaegeuk.kim@samsung.com" target=3D"_blank">jaegeuk.kim@samsung.com</a>&gt;<=
-/span> wrote:<br>
+<div><br></div><div>- recover_fsync_data<br></div><div>=A0- find_fsync_dnod=
+es<br></div><div>=A0 - recover_inode<br></div><div>=A0 =A0- recover_dentry<=
+br></div><div>=A0 =A0 - f2fs_delete_entry<br></div><div>=A0 =A0 =A0- add_or=
+phan_inode<br>
 
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">Hi,<br>
+</div><div><br></div><div>Later, these orphans are removed via:</div><div><=
+br></div><div>-=A0recover_fsync_data</div><div>=A0- recover_data<br></div><=
+div>=A0 - do_recover_data</div><div>=A0 =A0-=A0check_index_in_prev_nodes</d=
+iv><div>
+
+=A0 =A0 -=A0truncate_hole</div><div>=A0 =A0 =A0-=A0evict</div><div>=A0 =A0 =
+=A0 -=A0f2fs_evict_inode</div><div>=A0 =A0 =A0 =A0-=A0remove_inode_page</di=
+v><div>=A0 =A0 =A0 =A0 -=A0truncate_node</div><div>=A0 =A0 =A0 =A0 =A0-=A0r=
+emove_orphan_inode</div><div><br></div><div>remove_orphan_inode() will decr=
+ement=A0sbi-&gt;n_orphans, which was initialized to zero by=A0init_orphan_i=
+nfo(). =A0Since it is unsigned, it rolls over and from then on the check in=
+ acquire_orphan_inode() returns ENOSPC.<br>
+
+</div><div><br></div><div>The obvious fix seems to be to call=A0acquire_orp=
+han_inode() from=A0recover_dentry(), but I thought I&#39;d run it past you =
+first.</div><div><br></div><div>Russ</div><div><br></div></div><div class=
+=3D"gmail_extra">
+
+<br><br><div class=3D"gmail_quote">On Thu, Aug 1, 2013 at 4:44 AM, Gu Zheng=
+ <span dir=3D"ltr">&lt;<a href=3D"mailto:guz.fnst@cn.fujitsu.com" target=3D=
+"_blank">guz.fnst@cn.fujitsu.com</a>&gt;</span> wrote:<br><blockquote class=
+=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
+ing-left:1ex">
+
+<div class=3D"im">On 08/01/2013 03:58 PM, Jaegeuk Kim wrote:<br>
 <br>
-2013-09-07 (=ED=86=A0), 08:00 +0000, Chao Yu:<br>
-<div class=3D"im">&gt; Hi Knize,<br>
+&gt; This patch fixes mishandling of the sbi-&gt;n_orphans variable.<br>
 &gt;<br>
-&gt; =C2=A0 =C2=A0 Thanks for your reply, I think it&#39;s actually meaning=
-less that it&#39;s<br>
-&gt; being named after &quot;spin_lock&quot;,<br>
-&gt; it&#39;s better to rename this spinlock to &quot;round_robin_lock&quot=
-;.<br>
+&gt; If users request lots of f2fs_unlink(), check_orphan_space() could be =
+contended.<br>
+&gt; In such the case, sbi-&gt;n_orphans can be read incorrectly so that f2=
+fs_unlink()<br>
+&gt; would fall into the wrong state which results in the failure of<br>
+&gt; add_orphan_inode().<br>
 &gt;<br>
-&gt; =C2=A0 =C2=A0 This patch can only resolve the issue of unbalanced fs_l=
-ock usage,<br>
-&gt; it can not fix the deadlock issue.<br>
-&gt; can we fix deadlock issue through this method:<br>
-&gt;<br>
-</div>&gt; - vfs_create()<br>
-<div class=3D"im">&gt; =C2=A0- f2fs_create() - takes an fs_lock and save cu=
-rrent thread info into<br>
-&gt; thread_info[NR_GLOBAL_LOCKS]<br>
-</div><div class=3D"im">&gt; =C2=A0 - f2fs_add_link()<br>
-&gt; =C2=A0 =C2=A0- __f2fs_add_link()<br>
-&gt; =C2=A0 =C2=A0 - init_inode_metadata()<br>
-&gt; =C2=A0 =C2=A0 =C2=A0- f2fs_init_security()<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 - security_inode_init_security()<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0- f2fs_initxattrs()<br>
-</div><div class=3D"im">&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 - f2fs_setxattr() =
-- get fs_lock only if there is no current<br>
-&gt; thread info in thread_info<br>
-&gt;<br>
-&gt; So it keeps one thread can only hold one fs_lock to avoid deadlock.<br=
->
-&gt; Can we use this solution?<br>
+&gt; So, let&#39;s increment sbi-&gt;n_orphans virtually prior to the actua=
+l orphan inode<br>
+&gt; stuffs. After that, let&#39;s release sbi-&gt;n_orphans by calling rel=
+ease_orphan_inode<br>
+&gt; or remove_orphan_inode.<br>
 <br>
-</div>It could be.<br>
-But, I think we can avoid to grab the fs_lock at the f2fs_initxattrs()<br>
-level, since this case only happens when f2fs_initxattrs() is called.<br>
-Let&#39;s think about ut in more detail.<br>
+</div>Hi Kim,<br>
+The key point is that we did not reduce sbi-&gt;n_orphans when we release/r=
+emove orphan inode,<br>
+so just adding the reduction step can fix this issue.<br>
+But why moving the increment of sbi-&gt;n_orphans before we add orphan inod=
+e? It seems that we<br>
+can not get benefit from it, and it makes the procedure a bit complex, beca=
+use we should<br>
+reduce the sbi-&gt;n_orphans in some fail pathes before we really add orpha=
+n inode.<br>
+<br>
 Thanks,<br>
-<div class=3D"im HOEnZb"><br>
+Gu<br>
+<div><div class=3D"h5"><br>
 &gt;<br>
+&gt; Signed-off-by: Jaegeuk Kim &lt;<a href=3D"mailto:jaegeuk.kim@samsung.c=
+om">jaegeuk.kim@samsung.com</a>&gt;<br>
+&gt; ---<br>
+&gt; =A0fs/f2fs/checkpoint.c | 13 ++++++++++---<br>
+&gt; =A0fs/f2fs/dir.c =A0 =A0 =A0 =A0| =A02 ++<br>
+&gt; =A0fs/f2fs/f2fs.h =A0 =A0 =A0 | =A03 ++-<br>
+&gt; =A0fs/f2fs/namei.c =A0 =A0 =A0| 19 ++++++++++++++-----<br>
+&gt; =A04 files changed, 28 insertions(+), 9 deletions(-)<br>
 &gt;<br>
+&gt; diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c<br>
+&gt; index fe91773..c5a5c39 100644<br>
+&gt; --- a/fs/f2fs/checkpoint.c<br>
+&gt; +++ b/fs/f2fs/checkpoint.c<br>
+&gt; @@ -182,7 +182,7 @@ const struct address_space_operations f2fs_meta_ao=
+ps =3D {<br>
+&gt; =A0 =A0 =A0 .set_page_dirty =3D f2fs_set_meta_page_dirty,<br>
+&gt; =A0};<br>
 &gt;<br>
-&gt; thanks again!<br>
+&gt; -int check_orphan_space(struct f2fs_sb_info *sbi)<br>
+&gt; +int acquire_orphan_inode(struct f2fs_sb_info *sbi)<br>
+&gt; =A0{<br>
+&gt; =A0 =A0 =A0 unsigned int max_orphans;<br>
+&gt; =A0 =A0 =A0 int err =3D 0;<br>
+&gt; @@ -197,10 +197,19 @@ int check_orphan_space(struct f2fs_sb_info *sbi)=
+<br>
+&gt; =A0 =A0 =A0 mutex_lock(&amp;sbi-&gt;orphan_inode_mutex);<br>
+&gt; =A0 =A0 =A0 if (sbi-&gt;n_orphans &gt;=3D max_orphans)<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D -ENOSPC;<br>
+&gt; + =A0 =A0 else<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 sbi-&gt;n_orphans++;<br>
+&gt; =A0 =A0 =A0 mutex_unlock(&amp;sbi-&gt;orphan_inode_mutex);<br>
+&gt; =A0 =A0 =A0 return err;<br>
+&gt; =A0}<br>
 &gt;<br>
-&gt;<br>
-&gt;<br>
-&gt; ------- Original Message -------<br>
-&gt;<br>
-&gt; Sender : Russ Knize&lt;<a href=3D"mailto:Russ.Knize@motorola.com">Russ=
-.Knize@motorola.com</a>&gt;<br>
-&gt;<br>
-&gt; Date : =E4=B9=9D=E6=9C=88 07, 2013 04:25 (GMT+09:00)<br>
-&gt;<br>
-&gt; Title : Re: [f2fs-dev] [PATCH] f2fs: optimize fs_lock for better<br>
-&gt; performance<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-</div><div class=3D"HOEnZb"><div class=3D"h5">&gt; I encountered this same =
-issue recently and solved it in much the same<br>
-&gt; way. =C2=A0Can we rename &quot;spin_lock&quot; to something more meani=
-ngful?<br>
-&gt;<br>
-&gt;<br>
-&gt; This race actually exposed a potential deadlock between f2fs_create()<=
-br>
-&gt; and f2fs_initxattrs():<br>
-&gt;<br>
-&gt;<br>
-&gt; - vfs_create()<br>
-&gt; =C2=A0- f2fs_create() - takes an fs_lock<br>
-&gt; =C2=A0 - f2fs_add_link()<br>
-&gt; =C2=A0 =C2=A0- __f2fs_add_link()<br>
-&gt; =C2=A0 =C2=A0 - init_inode_metadata()<br>
-&gt; =C2=A0 =C2=A0 =C2=A0- f2fs_init_security()<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 - security_inode_init_security()<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0- f2fs_initxattrs()<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 - f2fs_setxattr() - also takes an fs_lock<=
-br>
-&gt;<br>
-&gt;<br>
-&gt; If another CPU happens to have the same lock that f2fs_setxattr() was<=
-br>
-&gt; trying to take because of the race around next_lock_num, we can get<br=
+&gt; +void release_orphan_inode(struct f2fs_sb_info *sbi)<br>
+&gt; +{<br>
+&gt; + =A0 =A0 mutex_lock(&amp;sbi-&gt;orphan_inode_mutex);<br>
+&gt; + =A0 =A0 sbi-&gt;n_orphans--;<br>
+&gt; + =A0 =A0 mutex_unlock(&amp;sbi-&gt;orphan_inode_mutex);<br>
+&gt; +}<br>
+&gt; +<br>
+&gt; =A0void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)<br>
+&gt; =A0{<br>
+&gt; =A0 =A0 =A0 struct list_head *head, *this;<br>
+&gt; @@ -229,8 +238,6 @@ retry:<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 list_add(&amp;new-&gt;list, this-&gt;prev)=
+;<br>
+&gt; =A0 =A0 =A0 else<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 list_add_tail(&amp;new-&gt;list, head);<br=
 >
-&gt; into a deadlock situation if the two threads are also contending over<=
+&gt; -<br>
+&gt; - =A0 =A0 sbi-&gt;n_orphans++;<br>
+&gt; =A0out:<br>
+&gt; =A0 =A0 =A0 mutex_unlock(&amp;sbi-&gt;orphan_inode_mutex);<br>
+&gt; =A0}<br>
+&gt; diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c<br>
+&gt; index d1bb260..384c6da 100644<br>
+&gt; --- a/fs/f2fs/dir.c<br>
+&gt; +++ b/fs/f2fs/dir.c<br>
+&gt; @@ -572,6 +572,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dent=
+ry, struct page *page,<br>
+&gt;<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (inode-&gt;i_nlink =3D=3D 0)<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 add_orphan_inode(sbi, inod=
+e-&gt;i_ino);<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 else<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 release_orphan_inode(sbi);<b=
+r>
+&gt; =A0 =A0 =A0 }<br>
+&gt;<br>
+&gt; =A0 =A0 =A0 if (bit_pos =3D=3D NR_DENTRY_IN_BLOCK) {<br>
+&gt; diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h<br>
+&gt; index a6858c7..78777cd 100644<br>
+&gt; --- a/fs/f2fs/f2fs.h<br>
+&gt; +++ b/fs/f2fs/f2fs.h<br>
+&gt; @@ -1044,7 +1044,8 @@ void destroy_segment_manager(struct f2fs_sb_info=
+ *);<br>
+&gt; =A0struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);<br>
+&gt; =A0struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);<br>
+&gt; =A0long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);<=
 br>
-&gt; another resource (like bdi).<br>
+&gt; -int check_orphan_space(struct f2fs_sb_info *);<br>
+&gt; +int acquire_orphan_inode(struct f2fs_sb_info *);<br>
+&gt; +void release_orphan_inode(struct f2fs_sb_info *);<br>
+&gt; =A0void add_orphan_inode(struct f2fs_sb_info *, nid_t);<br>
+&gt; =A0void remove_orphan_inode(struct f2fs_sb_info *, nid_t);<br>
+&gt; =A0int recover_orphan_inodes(struct f2fs_sb_info *);<br>
+&gt; diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c<br>
+&gt; index 3297278..4e47518 100644<br>
+&gt; --- a/fs/f2fs/namei.c<br>
+&gt; +++ b/fs/f2fs/namei.c<br>
+&gt; @@ -239,7 +239,7 @@ static int f2fs_unlink(struct inode *dir, struct d=
+entry *dentry)<br>
+&gt; =A0 =A0 =A0 if (!de)<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto fail;<br>
 &gt;<br>
+&gt; - =A0 =A0 err =3D check_orphan_space(sbi);<br>
+&gt; + =A0 =A0 err =3D acquire_orphan_inode(sbi);<br>
+&gt; =A0 =A0 =A0 if (err) {<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 kunmap(page);<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 f2fs_put_page(page, 0);<br>
+&gt; @@ -393,7 +393,7 @@ static int f2fs_rename(struct inode *old_dir, stru=
+ct dentry *old_dentry,<br>
+&gt; =A0 =A0 =A0 struct inode *old_inode =3D old_dentry-&gt;d_inode;<br>
+&gt; =A0 =A0 =A0 struct inode *new_inode =3D new_dentry-&gt;d_inode;<br>
+&gt; =A0 =A0 =A0 struct page *old_dir_page;<br>
+&gt; - =A0 =A0 struct page *old_page;<br>
+&gt; + =A0 =A0 struct page *old_page, *new_page;<br>
+&gt; =A0 =A0 =A0 struct f2fs_dir_entry *old_dir_entry =3D NULL;<br>
+&gt; =A0 =A0 =A0 struct f2fs_dir_entry *old_entry;<br>
+&gt; =A0 =A0 =A0 struct f2fs_dir_entry *new_entry;<br>
+&gt; @@ -415,7 +415,6 @@ static int f2fs_rename(struct inode *old_dir, stru=
+ct dentry *old_dentry,<br>
+&gt; =A0 =A0 =A0 ilock =3D mutex_lock_op(sbi);<br>
 &gt;<br>
-&gt; Another scenario is if the above happens while another thread is in<br=
->
-&gt; the middle of grabbing all of the locks via mutex_lock_all().<br>
-&gt; =C2=A0f2fs_create() is holding a lock that mutex_lock_all() is waiting=
- for<br>
-&gt; and mutex_lock_all() is holding a lock that f2fs_setxattr() is waiting=
-<br>
-&gt; for.<br>
+&gt; =A0 =A0 =A0 if (new_inode) {<br>
+&gt; - =A0 =A0 =A0 =A0 =A0 =A0 struct page *new_page;<br>
 &gt;<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D -ENOTEMPTY;<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (old_dir_entry &amp;&amp; !f2fs_empty_d=
+ir(new_inode))<br>
+&gt; @@ -427,9 +426,13 @@ static int f2fs_rename(struct inode *old_dir, str=
+uct dentry *old_dentry,<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!new_entry)<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out_dir;<br>
 &gt;<br>
-&gt; Russ<br>
-&gt;<br>
-&gt;<br>
-&gt; On Fri, Sep 6, 2013 at 4:48 AM, Chao Yu &lt;<a href=3D"mailto:chao2.yu=
-@samsung.com">chao2.yu@samsung.com</a>&gt; wrote:<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Hi Kim:<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0I think there is a per=
-formance problem: when all<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 sbi-&gt;fs_lock is holded,<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 then all other threads may get the same ne=
-xt_lock value from<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 sbi-&gt;next_lock_num in function mutex_lo=
-ck_op,<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 and wait to get the same lock at position =
-fs_lock[next_lock],<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 it unbalance the fs_lock usage.<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 It may lost performance when we do the mul=
-tithread test.<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Here is the patch to fix this problem:<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Signed-off-by: Yu Chao &lt;<a href=3D"mail=
-to:chao2.yu@samsung.com">chao2.yu@samsung.com</a>&gt;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs=
-.h<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 old mode 100644<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 new mode 100755<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 index 467d42d..983bb45<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 --- a/fs/f2fs/f2fs.h<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 +++ b/fs/f2fs/f2fs.h<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 @@ -371,6 +371,7 @@ struct f2fs_sb_info {<=
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 err =3D acquire_orphan_inode(sbi);<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 if (err)<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto put_out_dir;<br>
+&gt; +<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (update_dent_inode(old_inode, &amp;new_=
+dentry-&gt;d_name)) {<br>
+&gt; - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 f2fs_put_page(new_page, 1);<=
 br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mutex f=
-s_lock[NR_GLOBAL_LOCKS]; =C2=A0/* blocking FS<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 operations */<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mutex n=
-ode_write; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* lockin=
-g<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 node writes */<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mutex w=
-ritepages; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* mutex =
-for<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 writepages() */<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 spinlock_t spin_loc=
-k; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* lock f=
-or<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 next_lock_num */<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 unsigned char =
-next_lock_num; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* round-robin<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 global locks */<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 int por_doing;=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0/* recovery is<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 doing or not */<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 int on_build_f=
-ree_nids; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /*<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 build_free_nids is doing */<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 @@ -533,15 +534,19 @@ static inline void<b=
+&gt; - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out_dir;<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 release_orphan_inode(sbi);<b=
 r>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 mutex_unlock_all(struct f2fs_sb_info *sbi)=
-<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto put_out_dir;<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 }<br>
 &gt;<br>
-&gt;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0static inline int mutex_lock_op(stru=
-ct f2fs_sb_info *sbi)<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0{<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 - =C2=A0 =C2=A0 =C2=A0 unsigned char next_=
-lock =3D sbi-&gt;next_lock_num %<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 NR_GLOBAL_LOCKS;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 unsigned char next_=
-lock;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 int i =3D 0;<b=
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 f2fs_set_link(new_dir, new_entry, new_page=
+, old_inode);<br>
+&gt; @@ -438,8 +441,12 @@ static int f2fs_rename(struct inode *old_dir, str=
+uct dentry *old_dentry,<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (old_dir_entry)<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 drop_nlink(new_inode);<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 drop_nlink(new_inode);<br>
+&gt; +<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!new_inode-&gt;i_nlink)<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 add_orphan_inode(sbi, new_=
+inode-&gt;i_ino);<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 else<br>
+&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 release_orphan_inode(sbi);<b=
 r>
+&gt; +<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 update_inode_page(new_inode);<br>
+&gt; =A0 =A0 =A0 } else {<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D f2fs_add_link(new_dentry, old_inod=
+e);<br>
+&gt; @@ -472,6 +479,8 @@ static int f2fs_rename(struct inode *old_dir, stru=
+ct dentry *old_dentry,<br>
+&gt; =A0 =A0 =A0 mutex_unlock_op(sbi, ilock);<br>
+&gt; =A0 =A0 =A0 return 0;<br>
 &gt;<br>
-&gt;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for (; i &lt; =
-NR_GLOBAL_LOCKS; i++)<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 if (mutex_trylock(&amp;sbi-&gt;fs_lock[i]))<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return i;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 - =C2=A0 =C2=A0 =C2=A0 mutex_lock(&amp;sbi=
--&gt;fs_lock[next_lock]);<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 spin_lock(&amp;sbi-=
-&gt;spin_lock);<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 next_lock =3D sbi-&=
-gt;next_lock_num % NR_GLOBAL_LOCKS;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sbi-&gt;next_l=
-ock_num++;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 spin_unlock(&amp;sb=
-i-&gt;spin_lock);<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 +<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 mutex_lock(&amp;sbi=
--&gt;fs_lock[next_lock]);<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return next_lo=
-ck;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 diff --git a/fs/f2fs/super.c b/fs/f2fs/sup=
-er.c<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 old mode 100644<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 new mode 100755<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 index 75c7dc3..4f27596<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 --- a/fs/f2fs/super.c<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 +++ b/fs/f2fs/super.c<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 @@ -657,6 +657,7 @@ static int f2fs_fill_s=
-uper(struct<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 super_block *sb, void *data, int silent)<b=
-r>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mutex_init(&am=
-p;sbi-&gt;cp_mutex);<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for (i =3D 0; =
-i &lt; NR_GLOBAL_LOCKS; i++)<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 mutex_init(&amp;sbi-&gt;fs_lock[i]);<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 spin_lock_init(&amp=
-;sbi-&gt;spin_lock);<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mutex_init(&am=
-p;sbi-&gt;node_write);<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sbi-&gt;por_do=
-ing =3D 0;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 spin_lock_init=
-(&amp;sbi-&gt;stat_lock);<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 (END)<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 ------------------------------------------=
-------------------------------------<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Learn the latest--Visual Studio 2012, Shar=
-ePoint 2013, SQL<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 2012, more!<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Discover the easy way to master current an=
-d previous Microsoft<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 technologies<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 and advance your career. Get an incredible=
- 1,500+ hours of<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 step-by-step<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 tutorial videos with LearnDevNow. Subscrib=
-e today and save!<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"http://pubads.g.doubleclick.net=
-/gampad/clk?id=3D58041391&amp;iu=3D/4140/ostg.clktrk" target=3D"_blank">htt=
-p://pubads.g.doubleclick.net/gampad/clk?id=3D58041391&amp;iu=3D/4140/ostg.c=
-lktrk</a><br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 __________________________________________=
-_____<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Linux-f2fs-devel mailing list<br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"mailto:Linux-f2fs-devel@lists.s=
-ourceforge.net">Linux-f2fs-devel@lists.sourceforge.net</a><br>
-&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"https://lists.sourceforge.net/l=
-ists/listinfo/linux-f2fs-devel" target=3D"_blank">https://lists.sourceforge=
-.net/lists/listinfo/linux-f2fs-devel</a><br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
-&gt;<br>
+&gt; +put_out_dir:<br>
+&gt; + =A0 =A0 f2fs_put_page(new_page, 1);<br>
+&gt; =A0out_dir:<br>
+&gt; =A0 =A0 =A0 if (old_dir_entry) {<br>
+&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 kunmap(old_dir_page);<br>
 <br>
---<br>
-Jaegeuk Kim<br>
-Samsung<br>
 <br>
-</div></div></blockquote></div><br></div></div></div>
+<br>
+</div></div>---------------------------------------------------------------=
+---------------<br>
+Get your SQL database under version control now!<br>
+Version control is standard for application code, but databases havent<br>
+caught up. So what steps can you take to put your SQL databases under<br>
+version control? Why should you start doing it? Read more to find out.<br>
+<a href=3D"http://pubads.g.doubleclick.net/gampad/clk?id=3D49501711&amp;iu=
+=3D/4140/ostg.clktrk" target=3D"_blank">http://pubads.g.doubleclick.net/gam=
+pad/clk?id=3D49501711&amp;iu=3D/4140/ostg.clktrk</a><br>
+_______________________________________________<br>
+Linux-f2fs-devel mailing list<br>
+<a href=3D"mailto:Linux-f2fs-devel@lists.sourceforge.net">Linux-f2fs-devel@=
+lists.sourceforge.net</a><br>
+<a href=3D"https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel" t=
+arget=3D"_blank">https://lists.sourceforge.net/lists/listinfo/linux-f2fs-de=
+vel</a><br>
+</blockquote></div><br></div>
 
---f46d043c7eeeac3a3a04e5ffc896--
+--089e0122f49cc1411804e6095aee--
 
 
---===============6456360154466884907==
+--===============0849788426947639035==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -688,7 +567,7 @@ How ServiceNow helps IT people transform IT departments:
 2. Standardize and globalize service processes across IT
 3. Implement zero-touch automation to replace manual, redundant tasks
 http://pubads.g.doubleclick.net/gampad/clk?id=51271111&iu=/4140/ostg.clktrk
---===============6456360154466884907==
+--===============0849788426947639035==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -699,4 +578,4 @@ Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
---===============6456360154466884907==--
+--===============0849788426947639035==--
