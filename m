@@ -1,24 +1,38 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+From: Russ Knize <Russ.Knize@motorola.com>
 Subject: Re: [PATCH] f2fs: optimize fs_lock for better performance
-Date: Wed, 11 Sep 2013 11:22:39 +0800
-Message-ID: <522FE1FF.9010901@cn.fujitsu.com>
+Date: Tue, 10 Sep 2013 22:47:54 -0500
+Message-ID: <CAGfvh63mWMq4-eajOZVXqBDW3judq28DYmnrTCdFRM+N8t_S8w@mail.gmail.com>
 References: <04.C0.13361.61DDA225@epcpsbge5.samsung.com>
-	<1378774750.2354.110.camel@kjgkr>
+	<1378774750.2354.110.camel@kjgkr> <522FE1FF.9010901@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============4177077626772443318=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VJb5e-0000b2-I1
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <rknize2@motorola.com>) id 1VJbPq-0005iF-L7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 11 Sep 2013 03:27:38 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VJb5c-0002AW-H1 for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 11 Sep 2013 03:27:38 +0000
-In-Reply-To: <1378774750.2354.110.camel@kjgkr>
+	Wed, 11 Sep 2013 03:48:30 +0000
+Received: from exprod5og112.obsmtp.com ([64.18.0.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with smtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1VJbPm-0007TS-V1
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 11 Sep 2013 03:48:30 +0000
+Received: from DE01MGRG01.AM.MOT-MOBILITY.COM ([10.22.94.167])
+	by DE01MGRG01.AM.MOT-MOBILITY.COM (8.14.3/8.14.3) with ESMTP id
+	r8B3lkoD029020 for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 10 Sep 2013 23:47:46 -0400 (EDT)
+Received: from mail-we0-f178.google.com (mail-we0-f178.google.com
+	[74.125.82.178])
+	by DE01MGRG01.AM.MOT-MOBILITY.COM (8.14.3/8.14.3) with ESMTP id
+	r8B3liUO028983
+	(version=TLSv1/SSLv3 cipher=RC4-SHA bits=128 verify=OK)
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 10 Sep 2013 23:47:45 -0400 (EDT)
+Received: by mail-we0-f178.google.com with SMTP id u57so6256593wes.23
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 10 Sep 2013 20:48:14 -0700 (PDT)
+In-Reply-To: <522FE1FF.9010901@cn.fujitsu.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,153 +42,706 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: =?UTF-8?B?6LCt5aed?= <shu.tan@samsung.com>, Russ Knize <Russ.Knize@motorola.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+To: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Cc: =?UTF-8?B?6LCt5aed?= <shu.tan@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 
-SGkgSmFlZ2V1aywKT24gMDkvMTAvMjAxMyAwODo1OSBBTSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cgo+
-IEhpLAo+IAo+IDIwMTMtMDktMDcgKO2GoCksIDA4OjAwICswMDAwLCBDaGFvIFl1Ogo+PiBIaSBL
-bml6ZSwKPj4KPj4gICAgIFRoYW5rcyBmb3IgeW91ciByZXBseSwgSSB0aGluayBpdCdzIGFjdHVh
-bGx5IG1lYW5pbmdsZXNzIHRoYXQgaXQncwo+PiBiZWluZyBuYW1lZCBhZnRlciAic3Bpbl9sb2Nr
-IiwKPj4gaXQncyBiZXR0ZXIgdG8gcmVuYW1lIHRoaXMgc3BpbmxvY2sgdG8gInJvdW5kX3JvYmlu
-X2xvY2siLgo+Pgo+PiAgICAgVGhpcyBwYXRjaCBjYW4gb25seSByZXNvbHZlIHRoZSBpc3N1ZSBv
-ZiB1bmJhbGFuY2VkIGZzX2xvY2sgdXNhZ2UsCj4+IGl0IGNhbiBub3QgZml4IHRoZSBkZWFkbG9j
-ayBpc3N1ZS4KPj4gY2FuIHdlIGZpeCBkZWFkbG9jayBpc3N1ZSB0aHJvdWdoIHRoaXMgbWV0aG9k
-Ogo+Pgo+PiAtIHZmc19jcmVhdGUoKQo+PiAgLSBmMmZzX2NyZWF0ZSgpIC0gdGFrZXMgYW4gZnNf
-bG9jayBhbmQgc2F2ZSBjdXJyZW50IHRocmVhZCBpbmZvIGludG8KPj4gdGhyZWFkX2luZm9bTlJf
-R0xPQkFMX0xPQ0tTXQo+PiAgIC0gZjJmc19hZGRfbGluaygpCj4+ICAgIC0gX19mMmZzX2FkZF9s
-aW5rKCkKPj4gICAgIC0gaW5pdF9pbm9kZV9tZXRhZGF0YSgpCj4+ICAgICAgLSBmMmZzX2luaXRf
-c2VjdXJpdHkoKQo+PiAgICAgICAtIHNlY3VyaXR5X2lub2RlX2luaXRfc2VjdXJpdHkoKQo+PiAg
-ICAgICAgLSBmMmZzX2luaXR4YXR0cnMoKQo+PiAgICAgICAgIC0gZjJmc19zZXR4YXR0cigpIC0g
-Z2V0IGZzX2xvY2sgb25seSBpZiB0aGVyZSBpcyBubyBjdXJyZW50Cj4+IHRocmVhZCBpbmZvIGlu
-IHRocmVhZF9pbmZvCj4+ICAgICAgICAgCj4+IFNvIGl0IGtlZXBzIG9uZSB0aHJlYWQgY2FuIG9u
-bHkgaG9sZCBvbmUgZnNfbG9jayB0byBhdm9pZCBkZWFkbG9jay4KPj4gQ2FuIHdlIHVzZSB0aGlz
-IHNvbHV0aW9uPwo+IAo+IEl0IGNvdWxkIGJlLgo+IEJ1dCwgSSB0aGluayB3ZSBjYW4gYXZvaWQg
-dG8gZ3JhYiB0aGUgZnNfbG9jayBhdCB0aGUgZjJmc19pbml0eGF0dHJzKCkKCkFncmVlLiBUaGlz
-IGZzX2xvY2sgaGVyZSBpcyB1c2VkIHRvIHByb3RlY3QgdGhlIHhhdHRyIGZyb20gcGFyYWxsZWwg
-bW9kaWZpY2F0aW9uLApidXQgaGVyZSBpcyBpbiB0aGUgaW5pdHhhdHRycyByb3V0aW5lLCBwYXJh
-bGxlbCBtb2RpZmljYXRpb24gY2FuIG5vdCBoYXBwZW4uCkFuZCBpbiB0aGUgbm9ybWFsIHNldHhh
-dHRyIHJvdXRpbmUgdGhlIGlub2RlLT5pX211dGV4ICh2ZnMgbGF5ZXIpIGlzIHVzZWQgdG8KYXZv
-aWQgcGFyYWxsZWwgbW9kaWZpY2F0aW9uLiBTbyBJIHRoaW5rIHRoaXMgZnNfbG9jayBpcyBuZWVk
-bGVzcy4KQW0gSSBtaXNzaW5nIHNvbWV0aGluZz8KClJlZ2FyZHMsCkd1Cgo+IGxldmVsLCBzaW5j
-ZSB0aGlzIGNhc2Ugb25seSBoYXBwZW5zIHdoZW4gZjJmc19pbml0eGF0dHJzKCkgaXMgY2FsbGVk
-Lgo+IExldCdzIHRoaW5rIGFib3V0IHV0IGluIG1vcmUgZGV0YWlsLgo+IFRoYW5rcywKPiAKPj4K
-Pj4gIAo+Pgo+PiB0aGFua3MgYWdhaW4hCj4+Cj4+ICAKPj4KPj4gLS0tLS0tLSBPcmlnaW5hbCBN
-ZXNzYWdlIC0tLS0tLS0KPj4KPj4gU2VuZGVyIDogUnVzcyBLbml6ZTxSdXNzLktuaXplQG1vdG9y
-b2xhLmNvbT4KPj4KPj4gRGF0ZSA6IOS5neaciCAwNywgMjAxMyAwNDoyNSAoR01UKzA5OjAwKQo+
-Pgo+PiBUaXRsZSA6IFJlOiBbZjJmcy1kZXZdIFtQQVRDSF0gZjJmczogb3B0aW1pemUgZnNfbG9j
-ayBmb3IgYmV0dGVyCj4+IHBlcmZvcm1hbmNlCj4+Cj4+ICAKPj4KPj4gSSBlbmNvdW50ZXJlZCB0
-aGlzIHNhbWUgaXNzdWUgcmVjZW50bHkgYW5kIHNvbHZlZCBpdCBpbiBtdWNoIHRoZSBzYW1lCj4+
-IHdheS4gIENhbiB3ZSByZW5hbWUgInNwaW5fbG9jayIgdG8gc29tZXRoaW5nIG1vcmUgbWVhbmlu
-Z2Z1bD8gCj4+Cj4+Cj4+IFRoaXMgcmFjZSBhY3R1YWxseSBleHBvc2VkIGEgcG90ZW50aWFsIGRl
-YWRsb2NrIGJldHdlZW4gZjJmc19jcmVhdGUoKQo+PiBhbmQgZjJmc19pbml0eGF0dHJzKCk6IAo+
-Pgo+Pgo+PiAtIHZmc19jcmVhdGUoKQo+PiAgLSBmMmZzX2NyZWF0ZSgpIC0gdGFrZXMgYW4gZnNf
-bG9jawo+PiAgIC0gZjJmc19hZGRfbGluaygpCj4+ICAgIC0gX19mMmZzX2FkZF9saW5rKCkKPj4g
-ICAgIC0gaW5pdF9pbm9kZV9tZXRhZGF0YSgpCj4+ICAgICAgLSBmMmZzX2luaXRfc2VjdXJpdHko
-KQo+PiAgICAgICAtIHNlY3VyaXR5X2lub2RlX2luaXRfc2VjdXJpdHkoKQo+PiAgICAgICAgLSBm
-MmZzX2luaXR4YXR0cnMoKQo+PiAgICAgICAgIC0gZjJmc19zZXR4YXR0cigpIC0gYWxzbyB0YWtl
-cyBhbiBmc19sb2NrCj4+Cj4+Cj4+IElmIGFub3RoZXIgQ1BVIGhhcHBlbnMgdG8gaGF2ZSB0aGUg
-c2FtZSBsb2NrIHRoYXQgZjJmc19zZXR4YXR0cigpIHdhcwo+PiB0cnlpbmcgdG8gdGFrZSBiZWNh
-dXNlIG9mIHRoZSByYWNlIGFyb3VuZCBuZXh0X2xvY2tfbnVtLCB3ZSBjYW4gZ2V0Cj4+IGludG8g
-YSBkZWFkbG9jayBzaXR1YXRpb24gaWYgdGhlIHR3byB0aHJlYWRzIGFyZSBhbHNvIGNvbnRlbmRp
-bmcgb3Zlcgo+PiBhbm90aGVyIHJlc291cmNlIChsaWtlIGJkaSkuCj4+Cj4+Cj4+IEFub3RoZXIg
-c2NlbmFyaW8gaXMgaWYgdGhlIGFib3ZlIGhhcHBlbnMgd2hpbGUgYW5vdGhlciB0aHJlYWQgaXMg
-aW4KPj4gdGhlIG1pZGRsZSBvZiBncmFiYmluZyBhbGwgb2YgdGhlIGxvY2tzIHZpYSBtdXRleF9s
-b2NrX2FsbCgpLgo+PiAgZjJmc19jcmVhdGUoKSBpcyBob2xkaW5nIGEgbG9jayB0aGF0IG11dGV4
-X2xvY2tfYWxsKCkgaXMgd2FpdGluZyBmb3IKPj4gYW5kIG11dGV4X2xvY2tfYWxsKCkgaXMgaG9s
-ZGluZyBhIGxvY2sgdGhhdCBmMmZzX3NldHhhdHRyKCkgaXMgd2FpdGluZwo+PiBmb3IuCj4+Cj4+
-Cj4+IFJ1c3MKPj4KPj4KPj4gT24gRnJpLCBTZXAgNiwgMjAxMyBhdCA0OjQ4IEFNLCBDaGFvIFl1
-IDxjaGFvMi55dUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+ICAgICAgICAgSGkgS2ltOgo+PiAgICAg
-ICAgIAo+PiAgICAgICAgICAgICAgSSB0aGluayB0aGVyZSBpcyBhIHBlcmZvcm1hbmNlIHByb2Js
-ZW06IHdoZW4gYWxsCj4+ICAgICAgICAgc2JpLT5mc19sb2NrIGlzIGhvbGRlZCwgCj4+ICAgICAg
-ICAgCj4+ICAgICAgICAgdGhlbiBhbGwgb3RoZXIgdGhyZWFkcyBtYXkgZ2V0IHRoZSBzYW1lIG5l
-eHRfbG9jayB2YWx1ZSBmcm9tCj4+ICAgICAgICAgc2JpLT5uZXh0X2xvY2tfbnVtIGluIGZ1bmN0
-aW9uIG11dGV4X2xvY2tfb3AsIAo+PiAgICAgICAgIAo+PiAgICAgICAgIGFuZCB3YWl0IHRvIGdl
-dCB0aGUgc2FtZSBsb2NrIGF0IHBvc2l0aW9uIGZzX2xvY2tbbmV4dF9sb2NrXSwKPj4gICAgICAg
-ICBpdCB1bmJhbGFuY2UgdGhlIGZzX2xvY2sgdXNhZ2UuIAo+PiAgICAgICAgIAo+PiAgICAgICAg
-IEl0IG1heSBsb3N0IHBlcmZvcm1hbmNlIHdoZW4gd2UgZG8gdGhlIG11bHRpdGhyZWFkIHRlc3Qu
-Cj4+ICAgICAgICAgCj4+ICAgICAgICAgIAo+PiAgICAgICAgIAo+PiAgICAgICAgIEhlcmUgaXMg
-dGhlIHBhdGNoIHRvIGZpeCB0aGlzIHByb2JsZW06Cj4+ICAgICAgICAgCj4+ICAgICAgICAgIAo+
-PiAgICAgICAgIAo+PiAgICAgICAgIFNpZ25lZC1vZmYtYnk6IFl1IENoYW8gPGNoYW8yLnl1QHNh
-bXN1bmcuY29tPgo+PiAgICAgICAgIAo+PiAgICAgICAgIGRpZmYgLS1naXQgYS9mcy9mMmZzL2Yy
-ZnMuaCBiL2ZzL2YyZnMvZjJmcy5oCj4+ICAgICAgICAgCj4+ICAgICAgICAgb2xkIG1vZGUgMTAw
-NjQ0Cj4+ICAgICAgICAgCj4+ICAgICAgICAgbmV3IG1vZGUgMTAwNzU1Cj4+ICAgICAgICAgCj4+
-ICAgICAgICAgaW5kZXggNDY3ZDQyZC4uOTgzYmI0NQo+PiAgICAgICAgIAo+PiAgICAgICAgIC0t
-LSBhL2ZzL2YyZnMvZjJmcy5oCj4+ICAgICAgICAgCj4+ICAgICAgICAgKysrIGIvZnMvZjJmcy9m
-MmZzLmgKPj4gICAgICAgICAKPj4gICAgICAgICBAQCAtMzcxLDYgKzM3MSw3IEBAIHN0cnVjdCBm
-MmZzX3NiX2luZm8gewo+PiAgICAgICAgIAo+PiAgICAgICAgICAgICAgICAgc3RydWN0IG11dGV4
-IGZzX2xvY2tbTlJfR0xPQkFMX0xPQ0tTXTsgIC8qIGJsb2NraW5nIEZTCj4+ICAgICAgICAgb3Bl
-cmF0aW9ucyAqLwo+PiAgICAgICAgIAo+PiAgICAgICAgICAgICAgICAgc3RydWN0IG11dGV4IG5v
-ZGVfd3JpdGU7ICAgICAgICAgICAgICAgIC8qIGxvY2tpbmcKPj4gICAgICAgICBub2RlIHdyaXRl
-cyAqLwo+PiAgICAgICAgIAo+PiAgICAgICAgICAgICAgICAgc3RydWN0IG11dGV4IHdyaXRlcGFn
-ZXM7ICAgICAgICAgICAgICAgIC8qIG11dGV4IGZvcgo+PiAgICAgICAgIHdyaXRlcGFnZXMoKSAq
-Lwo+PiAgICAgICAgIAo+PiAgICAgICAgICsgICAgICAgc3BpbmxvY2tfdCBzcGluX2xvY2s7ICAg
-ICAgICAgICAgICAgICAgIC8qIGxvY2sgZm9yCj4+ICAgICAgICAgbmV4dF9sb2NrX251bSAqLwo+
-PiAgICAgICAgIAo+PiAgICAgICAgICAgICAgICAgdW5zaWduZWQgY2hhciBuZXh0X2xvY2tfbnVt
-OyAgICAgICAgICAgIC8qIHJvdW5kLXJvYmluCj4+ICAgICAgICAgZ2xvYmFsIGxvY2tzICovCj4+
-ICAgICAgICAgCj4+ICAgICAgICAgICAgICAgICBpbnQgcG9yX2RvaW5nOyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgLyogcmVjb3ZlcnkgaXMKPj4gICAgICAgICBkb2luZyBvciBub3QgKi8KPj4g
-ICAgICAgICAKPj4gICAgICAgICAgICAgICAgIGludCBvbl9idWlsZF9mcmVlX25pZHM7ICAgICAg
-ICAgICAgICAgICAvKgo+PiAgICAgICAgIGJ1aWxkX2ZyZWVfbmlkcyBpcyBkb2luZyAqLwo+PiAg
-ICAgICAgIAo+PiAgICAgICAgIEBAIC01MzMsMTUgKzUzNCwxOSBAQCBzdGF0aWMgaW5saW5lIHZv
-aWQKPj4gICAgICAgICBtdXRleF91bmxvY2tfYWxsKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkK
-Pj4gICAgICAgICAKPj4gICAgICAgICAgCj4+ICAgICAgICAgCj4+ICAgICAgICAgIHN0YXRpYyBp
-bmxpbmUgaW50IG11dGV4X2xvY2tfb3Aoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+PiAgICAg
-ICAgIAo+PiAgICAgICAgICB7Cj4+ICAgICAgICAgCj4+ICAgICAgICAgLSAgICAgICB1bnNpZ25l
-ZCBjaGFyIG5leHRfbG9jayA9IHNiaS0+bmV4dF9sb2NrX251bSAlCj4+ICAgICAgICAgTlJfR0xP
-QkFMX0xPQ0tTOwo+PiAgICAgICAgIAo+PiAgICAgICAgICsgICAgICAgdW5zaWduZWQgY2hhciBu
-ZXh0X2xvY2s7Cj4+ICAgICAgICAgCj4+ICAgICAgICAgICAgICAgICBpbnQgaSA9IDA7Cj4+ICAg
-ICAgICAgCj4+ICAgICAgICAgIAo+PiAgICAgICAgIAo+PiAgICAgICAgICAgICAgICAgZm9yICg7
-IGkgPCBOUl9HTE9CQUxfTE9DS1M7IGkrKykKPj4gICAgICAgICAKPj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgaWYgKG11dGV4X3RyeWxvY2soJnNiaS0+ZnNfbG9ja1tpXSkpCj4+ICAgICAgICAg
-Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGk7Cj4+ICAgICAgICAg
-Cj4+ICAgICAgICAgIAo+PiAgICAgICAgIAo+PiAgICAgICAgIC0gICAgICAgbXV0ZXhfbG9jaygm
-c2JpLT5mc19sb2NrW25leHRfbG9ja10pOwo+PiAgICAgICAgIAo+PiAgICAgICAgICsgICAgICAg
-c3Bpbl9sb2NrKCZzYmktPnNwaW5fbG9jayk7Cj4+ICAgICAgICAgCj4+ICAgICAgICAgKyAgICAg
-ICBuZXh0X2xvY2sgPSBzYmktPm5leHRfbG9ja19udW0gJSBOUl9HTE9CQUxfTE9DS1M7Cj4+ICAg
-ICAgICAgCj4+ICAgICAgICAgICAgICAgICBzYmktPm5leHRfbG9ja19udW0rKzsKPj4gICAgICAg
-ICAKPj4gICAgICAgICArICAgICAgIHNwaW5fdW5sb2NrKCZzYmktPnNwaW5fbG9jayk7Cj4+ICAg
-ICAgICAgCj4+ICAgICAgICAgKwo+PiAgICAgICAgIAo+PiAgICAgICAgICsgICAgICAgbXV0ZXhf
-bG9jaygmc2JpLT5mc19sb2NrW25leHRfbG9ja10pOwo+PiAgICAgICAgIAo+PiAgICAgICAgICAg
-ICAgICAgcmV0dXJuIG5leHRfbG9jazsKPj4gICAgICAgICAKPj4gICAgICAgICAgfQo+PiAgICAg
-ICAgIAo+PiAgICAgICAgICAKPj4gICAgICAgICAKPj4gICAgICAgICBkaWZmIC0tZ2l0IGEvZnMv
-ZjJmcy9zdXBlci5jIGIvZnMvZjJmcy9zdXBlci5jCj4+ICAgICAgICAgCj4+ICAgICAgICAgb2xk
-IG1vZGUgMTAwNjQ0Cj4+ICAgICAgICAgCj4+ICAgICAgICAgbmV3IG1vZGUgMTAwNzU1Cj4+ICAg
-ICAgICAgCj4+ICAgICAgICAgaW5kZXggNzVjN2RjMy4uNGYyNzU5Ngo+PiAgICAgICAgIAo+PiAg
-ICAgICAgIC0tLSBhL2ZzL2YyZnMvc3VwZXIuYwo+PiAgICAgICAgIAo+PiAgICAgICAgICsrKyBi
-L2ZzL2YyZnMvc3VwZXIuYwo+PiAgICAgICAgIAo+PiAgICAgICAgIEBAIC02NTcsNiArNjU3LDcg
-QEAgc3RhdGljIGludCBmMmZzX2ZpbGxfc3VwZXIoc3RydWN0Cj4+ICAgICAgICAgc3VwZXJfYmxv
-Y2sgKnNiLCB2b2lkICpkYXRhLCBpbnQgc2lsZW50KQo+PiAgICAgICAgIAo+PiAgICAgICAgICAg
-ICAgICAgbXV0ZXhfaW5pdCgmc2JpLT5jcF9tdXRleCk7Cj4+ICAgICAgICAgCj4+ICAgICAgICAg
-ICAgICAgICBmb3IgKGkgPSAwOyBpIDwgTlJfR0xPQkFMX0xPQ0tTOyBpKyspCj4+ICAgICAgICAg
-Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgIG11dGV4X2luaXQoJnNiaS0+ZnNfbG9ja1tpXSk7
-Cj4+ICAgICAgICAgCj4+ICAgICAgICAgKyAgICAgICBzcGluX2xvY2tfaW5pdCgmc2JpLT5zcGlu
-X2xvY2spOwo+PiAgICAgICAgIAo+PiAgICAgICAgICAgICAgICAgbXV0ZXhfaW5pdCgmc2JpLT5u
-b2RlX3dyaXRlKTsKPj4gICAgICAgICAKPj4gICAgICAgICAgICAgICAgIHNiaS0+cG9yX2RvaW5n
-ID0gMDsKPj4gICAgICAgICAKPj4gICAgICAgICAgICAgICAgIHNwaW5fbG9ja19pbml0KCZzYmkt
-PnN0YXRfbG9jayk7Cj4+ICAgICAgICAgCj4+ICAgICAgICAgKEVORCkKPj4gICAgICAgICAKPj4g
-ICAgICAgICAgCj4+ICAgICAgICAgCj4+ICAgICAgICAgCj4+ICAgICAgICAgCj4+ICAgICAgICAg
-Cj4+ICAgICAgICAgCj4+ICAgICAgICAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+ICAgICAgICAg
-TGVhcm4gdGhlIGxhdGVzdC0tVmlzdWFsIFN0dWRpbyAyMDEyLCBTaGFyZVBvaW50IDIwMTMsIFNR
-TAo+PiAgICAgICAgIDIwMTIsIG1vcmUhCj4+ICAgICAgICAgRGlzY292ZXIgdGhlIGVhc3kgd2F5
-IHRvIG1hc3RlciBjdXJyZW50IGFuZCBwcmV2aW91cyBNaWNyb3NvZnQKPj4gICAgICAgICB0ZWNo
-bm9sb2dpZXMKPj4gICAgICAgICBhbmQgYWR2YW5jZSB5b3VyIGNhcmVlci4gR2V0IGFuIGluY3Jl
-ZGlibGUgMSw1MDArIGhvdXJzIG9mCj4+ICAgICAgICAgc3RlcC1ieS1zdGVwCj4+ICAgICAgICAg
-dHV0b3JpYWwgdmlkZW9zIHdpdGggTGVhcm5EZXZOb3cuIFN1YnNjcmliZSB0b2RheSBhbmQgc2F2
-ZSEKPj4gICAgICAgICBodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/
-aWQ9NTgwNDEzOTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKPj4gICAgICAgICBfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+PiAgICAgICAgIExpbnV4LWYyZnMt
-ZGV2ZWwgbWFpbGluZyBsaXN0Cj4+ICAgICAgICAgTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQKPj4gICAgICAgICBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0
-cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCj4+ICAgICAgICAgCj4+Cj4+Cj4+ICAKPj4KPj4g
-IAo+Pgo+PiAgCj4+Cj4+Cj4+Cj4+Cj4gCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpIb3cgU2Vy
-dmljZU5vdyBoZWxwcyBJVCBwZW9wbGUgdHJhbnNmb3JtIElUIGRlcGFydG1lbnRzOgoxLiBDb25z
-b2xpZGF0ZSBsZWdhY3kgSVQgc3lzdGVtcyB0byBhIHNpbmdsZSBzeXN0ZW0gb2YgcmVjb3JkIGZv
-ciBJVAoyLiBTdGFuZGFyZGl6ZSBhbmQgZ2xvYmFsaXplIHNlcnZpY2UgcHJvY2Vzc2VzIGFjcm9z
-cyBJVAozLiBJbXBsZW1lbnQgemVyby10b3VjaCBhdXRvbWF0aW9uIHRvIHJlcGxhY2UgbWFudWFs
-LCByZWR1bmRhbnQgdGFza3MKaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQv
-Y2xrP2lkPTUxMjcxMTExJml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0
-CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291
-cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+--===============4177077626772443318==
+Content-Type: multipart/alternative; boundary=089e01493c32b86fe604e6137d23
+
+--089e01493c32b86fe604e6137d23
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jaegeuk/Gu,
+
+I've removed the lock and have been stress-testing with SELinux and some
+additional xattr torture for 24+ hours.  I have not encountered any issues
+yet.
+
+My previous suggestion about moving the lock is probably not a good idea
+without some significant code rework (thanks to the f2fs_balance_fs call in
+f2fs_setxattr).
+
+Russ
+
+On Tue, Sep 10, 2013 at 10:22 PM, Gu Zheng <guz.fnst@cn.fujitsu.com> wrote:
+
+> Hi Jaegeuk,
+> On 09/10/2013 08:59 AM, Jaegeuk Kim wrote:
+>
+> > Hi,
+> >
+> > 2013-09-07 (=ED=86=A0), 08:00 +0000, Chao Yu:
+> >> Hi Knize,
+> >>
+> >>     Thanks for your reply, I think it's actually meaningless that it's
+> >> being named after "spin_lock",
+> >> it's better to rename this spinlock to "round_robin_lock".
+> >>
+> >>     This patch can only resolve the issue of unbalanced fs_lock usage,
+> >> it can not fix the deadlock issue.
+> >> can we fix deadlock issue through this method:
+> >>
+> >> - vfs_create()
+> >>  - f2fs_create() - takes an fs_lock and save current thread info into
+> >> thread_info[NR_GLOBAL_LOCKS]
+> >>   - f2fs_add_link()
+> >>    - __f2fs_add_link()
+> >>     - init_inode_metadata()
+> >>      - f2fs_init_security()
+> >>       - security_inode_init_security()
+> >>        - f2fs_initxattrs()
+> >>         - f2fs_setxattr() - get fs_lock only if there is no current
+> >> thread info in thread_info
+> >>
+> >> So it keeps one thread can only hold one fs_lock to avoid deadlock.
+> >> Can we use this solution?
+> >
+> > It could be.
+> > But, I think we can avoid to grab the fs_lock at the f2fs_initxattrs()
+>
+> Agree. This fs_lock here is used to protect the xattr from parallel
+> modification,
+> but here is in the initxattrs routine, parallel modification can not
+> happen.
+> And in the normal setxattr routine the inode->i_mutex (vfs layer) is used
+> to
+> avoid parallel modification. So I think this fs_lock is needless.
+> Am I missing something?
+>
+> Regards,
+> Gu
+>
+> > level, since this case only happens when f2fs_initxattrs() is called.
+> > Let's think about ut in more detail.
+> > Thanks,
+> >
+> >>
+> >>
+> >>
+> >> thanks again!
+> >>
+> >>
+> >>
+> >> ------- Original Message -------
+> >>
+> >> Sender : Russ Knize<Russ.Knize@motorola.com>
+> >>
+> >> Date : =E4=B9=9D=E6=9C=88 07, 2013 04:25 (GMT+09:00)
+> >>
+> >> Title : Re: [f2fs-dev] [PATCH] f2fs: optimize fs_lock for better
+> >> performance
+> >>
+> >>
+> >>
+> >> I encountered this same issue recently and solved it in much the same
+> >> way.  Can we rename "spin_lock" to something more meaningful?
+> >>
+> >>
+> >> This race actually exposed a potential deadlock between f2fs_create()
+> >> and f2fs_initxattrs():
+> >>
+> >>
+> >> - vfs_create()
+> >>  - f2fs_create() - takes an fs_lock
+> >>   - f2fs_add_link()
+> >>    - __f2fs_add_link()
+> >>     - init_inode_metadata()
+> >>      - f2fs_init_security()
+> >>       - security_inode_init_security()
+> >>        - f2fs_initxattrs()
+> >>         - f2fs_setxattr() - also takes an fs_lock
+> >>
+> >>
+> >> If another CPU happens to have the same lock that f2fs_setxattr() was
+> >> trying to take because of the race around next_lock_num, we can get
+> >> into a deadlock situation if the two threads are also contending over
+> >> another resource (like bdi).
+> >>
+> >>
+> >> Another scenario is if the above happens while another thread is in
+> >> the middle of grabbing all of the locks via mutex_lock_all().
+> >>  f2fs_create() is holding a lock that mutex_lock_all() is waiting for
+> >> and mutex_lock_all() is holding a lock that f2fs_setxattr() is waiting
+> >> for.
+> >>
+> >>
+> >> Russ
+> >>
+> >>
+> >> On Fri, Sep 6, 2013 at 4:48 AM, Chao Yu <chao2.yu@samsung.com> wrote:
+> >>         Hi Kim:
+> >>
+> >>              I think there is a performance problem: when all
+> >>         sbi->fs_lock is holded,
+> >>
+> >>         then all other threads may get the same next_lock value from
+> >>         sbi->next_lock_num in function mutex_lock_op,
+> >>
+> >>         and wait to get the same lock at position fs_lock[next_lock],
+> >>         it unbalance the fs_lock usage.
+> >>
+> >>         It may lost performance when we do the multithread test.
+> >>
+> >>
+> >>
+> >>         Here is the patch to fix this problem:
+> >>
+> >>
+> >>
+> >>         Signed-off-by: Yu Chao <chao2.yu@samsung.com>
+> >>
+> >>         diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >>
+> >>         old mode 100644
+> >>
+> >>         new mode 100755
+> >>
+> >>         index 467d42d..983bb45
+> >>
+> >>         --- a/fs/f2fs/f2fs.h
+> >>
+> >>         +++ b/fs/f2fs/f2fs.h
+> >>
+> >>         @@ -371,6 +371,7 @@ struct f2fs_sb_info {
+> >>
+> >>                 struct mutex fs_lock[NR_GLOBAL_LOCKS];  /* blocking FS
+> >>         operations */
+> >>
+> >>                 struct mutex node_write;                /* locking
+> >>         node writes */
+> >>
+> >>                 struct mutex writepages;                /* mutex for
+> >>         writepages() */
+> >>
+> >>         +       spinlock_t spin_lock;                   /* lock for
+> >>         next_lock_num */
+> >>
+> >>                 unsigned char next_lock_num;            /* round-robin
+> >>         global locks */
+> >>
+> >>                 int por_doing;                          /* recovery is
+> >>         doing or not */
+> >>
+> >>                 int on_build_free_nids;                 /*
+> >>         build_free_nids is doing */
+> >>
+> >>         @@ -533,15 +534,19 @@ static inline void
+> >>         mutex_unlock_all(struct f2fs_sb_info *sbi)
+> >>
+> >>
+> >>
+> >>          static inline int mutex_lock_op(struct f2fs_sb_info *sbi)
+> >>
+> >>          {
+> >>
+> >>         -       unsigned char next_lock =3D sbi->next_lock_num %
+> >>         NR_GLOBAL_LOCKS;
+> >>
+> >>         +       unsigned char next_lock;
+> >>
+> >>                 int i =3D 0;
+> >>
+> >>
+> >>
+> >>                 for (; i < NR_GLOBAL_LOCKS; i++)
+> >>
+> >>                         if (mutex_trylock(&sbi->fs_lock[i]))
+> >>
+> >>                                 return i;
+> >>
+> >>
+> >>
+> >>         -       mutex_lock(&sbi->fs_lock[next_lock]);
+> >>
+> >>         +       spin_lock(&sbi->spin_lock);
+> >>
+> >>         +       next_lock =3D sbi->next_lock_num % NR_GLOBAL_LOCKS;
+> >>
+> >>                 sbi->next_lock_num++;
+> >>
+> >>         +       spin_unlock(&sbi->spin_lock);
+> >>
+> >>         +
+> >>
+> >>         +       mutex_lock(&sbi->fs_lock[next_lock]);
+> >>
+> >>                 return next_lock;
+> >>
+> >>          }
+> >>
+> >>
+> >>
+> >>         diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >>
+> >>         old mode 100644
+> >>
+> >>         new mode 100755
+> >>
+> >>         index 75c7dc3..4f27596
+> >>
+> >>         --- a/fs/f2fs/super.c
+> >>
+> >>         +++ b/fs/f2fs/super.c
+> >>
+> >>         @@ -657,6 +657,7 @@ static int f2fs_fill_super(struct
+> >>         super_block *sb, void *data, int silent)
+> >>
+> >>                 mutex_init(&sbi->cp_mutex);
+> >>
+> >>                 for (i =3D 0; i < NR_GLOBAL_LOCKS; i++)
+> >>
+> >>                         mutex_init(&sbi->fs_lock[i]);
+> >>
+> >>         +       spin_lock_init(&sbi->spin_lock);
+> >>
+> >>                 mutex_init(&sbi->node_write);
+> >>
+> >>                 sbi->por_doing =3D 0;
+> >>
+> >>                 spin_lock_init(&sbi->stat_lock);
+> >>
+> >>         (END)
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> -------------------------------------------------------------------------=
+-----
+> >>         Learn the latest--Visual Studio 2012, SharePoint 2013, SQL
+> >>         2012, more!
+> >>         Discover the easy way to master current and previous Microsoft
+> >>         technologies
+> >>         and advance your career. Get an incredible 1,500+ hours of
+> >>         step-by-step
+> >>         tutorial videos with LearnDevNow. Subscribe today and save!
+> >>
+> http://pubads.g.doubleclick.net/gampad/clk?id=3D58041391&iu=3D/4140/ostg.=
+clktrk
+> >>         _______________________________________________
+> >>         Linux-f2fs-devel mailing list
+> >>         Linux-f2fs-devel@lists.sourceforge.net
+> >>         https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>
+> >
+>
+>
+>
+
+--089e01493c32b86fe604e6137d23
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Jaegeuk/Gu,<br><div><br>I&#39;ve removed the lock and h=
+ave been stress-testing with SELinux and some additional xattr torture for =
+24+ hours.=C2=A0 I have not encountered any issues yet.<br><br>My previous =
+suggestion about moving the lock is probably not a good idea without some s=
+ignificant code rework (thanks to the f2fs_balance_fs call in f2fs_setxattr=
+).<br>
+
+<div class=3D"gmail_extra"><br></div><div class=3D"gmail_extra">Russ<br></d=
+iv><div class=3D"gmail_extra"><br><div class=3D"gmail_quote">On Tue, Sep 10=
+, 2013 at 10:22 PM, Gu Zheng <span dir=3D"ltr">&lt;<a href=3D"mailto:guz.fn=
+st@cn.fujitsu.com" target=3D"_blank">guz.fnst@cn.fujitsu.com</a>&gt;</span>=
+ wrote:<br>
+
+
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex">Hi Jaegeuk,<br>
+<div><div>On 09/10/2013 08:59 AM, Jaegeuk Kim wrote:<br>
+<br>
+&gt; Hi,<br>
+&gt;<br>
+&gt; 2013-09-07 (=ED=86=A0), 08:00 +0000, Chao Yu:<br>
+&gt;&gt; Hi Knize,<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 Thanks for your reply, I think it&#39;s actually mea=
+ningless that it&#39;s<br>
+&gt;&gt; being named after &quot;spin_lock&quot;,<br>
+&gt;&gt; it&#39;s better to rename this spinlock to &quot;round_robin_lock&=
+quot;.<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 This patch can only resolve the issue of unbalanced =
+fs_lock usage,<br>
+&gt;&gt; it can not fix the deadlock issue.<br>
+&gt;&gt; can we fix deadlock issue through this method:<br>
+&gt;&gt;<br>
+&gt;&gt; - vfs_create()<br>
+&gt;&gt; =C2=A0- f2fs_create() - takes an fs_lock and save current thread i=
+nfo into<br>
+&gt;&gt; thread_info[NR_GLOBAL_LOCKS]<br>
+&gt;&gt; =C2=A0 - f2fs_add_link()<br>
+&gt;&gt; =C2=A0 =C2=A0- __f2fs_add_link()<br>
+&gt;&gt; =C2=A0 =C2=A0 - init_inode_metadata()<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0- f2fs_init_security()<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 - security_inode_init_security()<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0- f2fs_initxattrs()<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 - f2fs_setxattr() - get fs_lock only i=
+f there is no current<br>
+&gt;&gt; thread info in thread_info<br>
+&gt;&gt;<br>
+&gt;&gt; So it keeps one thread can only hold one fs_lock to avoid deadlock=
+.<br>
+&gt;&gt; Can we use this solution?<br>
+&gt;<br>
+&gt; It could be.<br>
+&gt; But, I think we can avoid to grab the fs_lock at the f2fs_initxattrs()=
+<br>
+<br>
+</div></div>Agree. This fs_lock here is used to protect the xattr from para=
+llel modification,<br>
+but here is in the initxattrs routine, parallel modification can not happen=
+.<br>
+And in the normal setxattr routine the inode-&gt;i_mutex (vfs layer) is use=
+d to<br>
+avoid parallel modification. So I think this fs_lock is needless.<br>
+Am I missing something?<br>
+<br>
+Regards,<br>
+Gu<br>
+<div><div><br>
+&gt; level, since this case only happens when f2fs_initxattrs() is called.<=
+br>
+&gt; Let&#39;s think about ut in more detail.<br>
+&gt; Thanks,<br>
+&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; thanks again!<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; ------- Original Message -------<br>
+&gt;&gt;<br>
+&gt;&gt; Sender : Russ Knize&lt;<a href=3D"mailto:Russ.Knize@motorola.com" =
+target=3D"_blank">Russ.Knize@motorola.com</a>&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; Date : =E4=B9=9D=E6=9C=88 07, 2013 04:25 (GMT+09:00)<br>
+&gt;&gt;<br>
+&gt;&gt; Title : Re: [f2fs-dev] [PATCH] f2fs: optimize fs_lock for better<b=
+r>
+&gt;&gt; performance<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; I encountered this same issue recently and solved it in much the s=
+ame<br>
+&gt;&gt; way. =C2=A0Can we rename &quot;spin_lock&quot; to something more m=
+eaningful?<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; This race actually exposed a potential deadlock between f2fs_creat=
+e()<br>
+&gt;&gt; and f2fs_initxattrs():<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; - vfs_create()<br>
+&gt;&gt; =C2=A0- f2fs_create() - takes an fs_lock<br>
+&gt;&gt; =C2=A0 - f2fs_add_link()<br>
+&gt;&gt; =C2=A0 =C2=A0- __f2fs_add_link()<br>
+&gt;&gt; =C2=A0 =C2=A0 - init_inode_metadata()<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0- f2fs_init_security()<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 - security_inode_init_security()<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0- f2fs_initxattrs()<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 - f2fs_setxattr() - also takes an fs_l=
+ock<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; If another CPU happens to have the same lock that f2fs_setxattr() =
+was<br>
+&gt;&gt; trying to take because of the race around next_lock_num, we can ge=
+t<br>
+&gt;&gt; into a deadlock situation if the two threads are also contending o=
+ver<br>
+&gt;&gt; another resource (like bdi).<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; Another scenario is if the above happens while another thread is i=
+n<br>
+&gt;&gt; the middle of grabbing all of the locks via mutex_lock_all().<br>
+&gt;&gt; =C2=A0f2fs_create() is holding a lock that mutex_lock_all() is wai=
+ting for<br>
+&gt;&gt; and mutex_lock_all() is holding a lock that f2fs_setxattr() is wai=
+ting<br>
+&gt;&gt; for.<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; Russ<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; On Fri, Sep 6, 2013 at 4:48 AM, Chao Yu &lt;<a href=3D"mailto:chao=
+2.yu@samsung.com" target=3D"_blank">chao2.yu@samsung.com</a>&gt; wrote:<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Hi Kim:<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0I think there is a=
+ performance problem: when all<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 sbi-&gt;fs_lock is holded,<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 then all other threads may get the sam=
+e next_lock value from<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 sbi-&gt;next_lock_num in function mute=
+x_lock_op,<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 and wait to get the same lock at posit=
+ion fs_lock[next_lock],<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 it unbalance the fs_lock usage.<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 It may lost performance when we do the=
+ multithread test.<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Here is the patch to fix this problem:=
+<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Signed-off-by: Yu Chao &lt;<a href=3D"=
+mailto:chao2.yu@samsung.com" target=3D"_blank">chao2.yu@samsung.com</a>&gt;=
+<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/=
+f2fs.h<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 old mode 100644<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 new mode 100755<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 index 467d42d..983bb45<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 --- a/fs/f2fs/f2fs.h<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 +++ b/fs/f2fs/f2fs.h<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 @@ -371,6 +371,7 @@ struct f2fs_sb_inf=
+o {<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mut=
+ex fs_lock[NR_GLOBAL_LOCKS]; =C2=A0/* blocking FS<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 operations */<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mut=
+ex node_write; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* lo=
+cking<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 node writes */<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct mut=
+ex writepages; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* mu=
+tex for<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 writepages() */<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 spinlock_t spin=
+_lock; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* lo=
+ck for<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 next_lock_num */<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 unsigned c=
+har next_lock_num; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0/* round-robin<=
+br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 global locks */<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 int por_do=
+ing; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0/* recovery is<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 doing or not */<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 int on_bui=
+ld_free_nids; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /*<br=
+>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 build_free_nids is doing */<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 @@ -533,15 +534,19 @@ static inline vo=
+id<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 mutex_unlock_all(struct f2fs_sb_info *=
+sbi)<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0static inline int mutex_lock_op(=
+struct f2fs_sb_info *sbi)<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0{<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 - =C2=A0 =C2=A0 =C2=A0 unsigned char n=
+ext_lock =3D sbi-&gt;next_lock_num %<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 NR_GLOBAL_LOCKS;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 unsigned char n=
+ext_lock;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 int i =3D =
+0;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for (; i &=
+lt; NR_GLOBAL_LOCKS; i++)<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 if (mutex_trylock(&amp;sbi-&gt;fs_lock[i]))<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return i;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 - =C2=A0 =C2=A0 =C2=A0 mutex_lock(&amp=
+;sbi-&gt;fs_lock[next_lock]);<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 spin_lock(&amp;=
+sbi-&gt;spin_lock);<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 next_lock =3D s=
+bi-&gt;next_lock_num % NR_GLOBAL_LOCKS;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sbi-&gt;ne=
+xt_lock_num++;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 spin_unlock(&am=
+p;sbi-&gt;spin_lock);<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 +<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 mutex_lock(&amp=
+;sbi-&gt;fs_lock[next_lock]);<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return nex=
+t_lock;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 diff --git a/fs/f2fs/super.c b/fs/f2fs=
+/super.c<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 old mode 100644<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 new mode 100755<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 index 75c7dc3..4f27596<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 --- a/fs/f2fs/super.c<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 +++ b/fs/f2fs/super.c<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 @@ -657,6 +657,7 @@ static int f2fs_fi=
+ll_super(struct<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 super_block *sb, void *data, int silen=
+t)<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mutex_init=
+(&amp;sbi-&gt;cp_mutex);<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for (i =3D=
+ 0; i &lt; NR_GLOBAL_LOCKS; i++)<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 mutex_init(&amp;sbi-&gt;fs_lock[i]);<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 + =C2=A0 =C2=A0 =C2=A0 spin_lock_init(=
+&amp;sbi-&gt;spin_lock);<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mutex_init=
+(&amp;sbi-&gt;node_write);<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sbi-&gt;po=
+r_doing =3D 0;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 spin_lock_=
+init(&amp;sbi-&gt;stat_lock);<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 (END)<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 --------------------------------------=
+----------------------------------------<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Learn the latest--Visual Studio 2012, =
+SharePoint 2013, SQL<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 2012, more!<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Discover the easy way to master curren=
+t and previous Microsoft<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 technologies<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 and advance your career. Get an incred=
+ible 1,500+ hours of<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 step-by-step<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 tutorial videos with LearnDevNow. Subs=
+cribe today and save!<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"http://pubads.g.doubleclick=
+.net/gampad/clk?id=3D58041391&amp;iu=3D/4140/ostg.clktrk" target=3D"_blank"=
+>http://pubads.g.doubleclick.net/gampad/clk?id=3D58041391&amp;iu=3D/4140/os=
+tg.clktrk</a><br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 ______________________________________=
+_________<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 Linux-f2fs-devel mailing list<br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"mailto:Linux-f2fs-devel@lis=
+ts.sourceforge.net" target=3D"_blank">Linux-f2fs-devel@lists.sourceforge.ne=
+t</a><br>
+&gt;&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 <a href=3D"https://lists.sourceforge.n=
+et/lists/listinfo/linux-f2fs-devel" target=3D"_blank">https://lists.sourcef=
+orge.net/lists/listinfo/linux-f2fs-devel</a><br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;<br>
+<br>
+<br>
+</div></div></blockquote></div><br></div></div></div>
+
+--089e01493c32b86fe604e6137d23--
+
+
+--===============4177077626772443318==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+------------------------------------------------------------------------------
+How ServiceNow helps IT people transform IT departments:
+1. Consolidate legacy IT systems to a single system of record for IT
+2. Standardize and globalize service processes across IT
+3. Implement zero-touch automation to replace manual, redundant tasks
+http://pubads.g.doubleclick.net/gampad/clk?id=51271111&iu=/4140/ostg.clktrk
+--===============4177077626772443318==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============4177077626772443318==--
