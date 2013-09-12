@@ -1,32 +1,25 @@
-From: =?UTF-8?B?5L+e6LaF?= <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: optimize fs_lock for better performance
-Date: Thu, 12 Sep 2013 10:40:27 +0800
-Message-ID: <001001ceaf61$a4ea9a90$eebfcfb0$@samsung.com>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH V2] f2fs: optimize fs_lock for better performance
+Date: Thu, 12 Sep 2013 11:17:51 +0800
+Message-ID: <5231325F.3090700@cn.fujitsu.com>
 References: <88.C4.11914.9D4A9225@epcpsbge6.samsung.com>
 	<1378774324.2354.103.camel@kjgkr> <523001B6.3080506@cn.fujitsu.com>
+	<001001ceaf61$a4ea9a90$eebfcfb0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VJwr8-0001y1-DF
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VJxUY-0000Vi-O0
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Sep 2013 02:42:06 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VJwr5-0007Dn-Sa for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Sep 2013 02:42:06 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MSZ002FARHJY690@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Sep 2013 11:41:57 +0900 (KST)
-In-reply-to: <523001B6.3080506@cn.fujitsu.com>
-Content-language: zh-cn
+	Thu, 12 Sep 2013 03:22:50 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VJxUX-000532-13 for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 12 Sep 2013 03:22:50 +0000
+In-Reply-To: <001001ceaf61$a4ea9a90$eebfcfb0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,98 +29,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>, jaegeuk.kim@samsung.com
+To: jaegeuk.kim@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, shu.tan@samsung.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGkgR3UKCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiBGcm9tOiBHdSBaaGVuZyBbbWFp
-bHRvOmd1ei5mbnN0QGNuLmZ1aml0c3UuY29tXQo+IFNlbnQ6IFdlZG5lc2RheSwgU2VwdGVtYmVy
-IDExLCAyMDEzIDE6MzggUE0KPiBUbzogamFlZ2V1ay5raW1Ac2Ftc3VuZy5jb20KPiBDYzogY2hh
-bzIueXVAc2Ftc3VuZy5jb207IHNodS50YW5Ac2Ftc3VuZy5jb207Cj4gbGludXgtZnNkZXZlbEB2
-Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7Cj4gbGludXgtZjJm
-cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XVtQ
-QVRDSF0gZjJmczogb3B0aW1pemUgZnNfbG9jayBmb3IgYmV0dGVyIHBlcmZvcm1hbmNlCj4gCj4g
-SGkgSmFlZ2V1aywgQ2hhbywKPiAKPiBPbiAwOS8xMC8yMDEzIDA4OjUyIEFNLCBKYWVnZXVrIEtp
-bSB3cm90ZToKPiAKPiA+IEhpLAo+ID4KPiA+IEF0IGZpcnN0LCB0aGFuayB5b3UgZm9yIHRoZSBy
-ZXBvcnQgYW5kIHBsZWFzZSBmb2xsb3cgdGhlIGVtYWlsIHdyaXRpbmcKPiA+IHJ1bGVzLiA6KQo+
-ID4KPiA+IEFueXdheSwgSSBhZ3JlZSB0byB0aGUgYmVsb3cgaXNzdWUuCj4gPiBPbmUgdGhpbmcg
-dGhhdCBJIGNhbiB0aGluayBvZiBpcyB0aGF0IHdlIGRvbid0IG5lZWQgdG8gdXNlIHRoZQo+ID4g
-c3Bpbl9sb2NrLCBzaW5jZSB3ZSBkb24ndCBjYXJlIGFib3V0IHRoZSBleGFjdCBsb2NrIG51bWJl
-ciwgYnV0IGp1c3QKPiA+IG5lZWQgdG8gZ2V0IGFueSBub3QtY29sbGlkZWQgbnVtYmVyLgo+IAo+
-IElNSE8sIGp1c3QgbW92aW5nIHNiaS0+bmV4dF9sb2NrX251bSsrIGJlZm9yZQo+IG11dGV4X2xv
-Y2soJnNiaS0+ZnNfbG9ja1tuZXh0X2xvY2tdKQo+IGNhbiBhdm9pZCB1bmJhbGFuY2UgaXNzdWUg
-bW9zdGx5Lgo+IElNTywgdGhlIGNhc2UgdHdvIG9yIG1vcmUgdGhyZWFkcyBpbmNyZWFzZSBzYmkt
-Pm5leHRfbG9ja19udW0gaW4gdGhlIHNhbWUKPiB0aW1lIGlzIHJlYWxseSB2ZXJ5IHZlcnkgbGl0
-dGxlLiBJZiB5b3UgdGhpbmsgaXQgaXMgbm90IHJpZ29yb3VzLCBjaGFuZ2UKPiBuZXh0X2xvY2tf
-bnVtIHRvIGF0b21pYyBvbmUgY2FuIGZpeCBpdC4KPiBXaGF0J3MgeW91ciBvcGluaW9uPwo+IAo+
-IFJlZ2FyZHMsCj4gR3UKCkkgZGlkIHRoZSB0ZXN0IHNiaS0+bmV4dF9sb2NrX251bSsrIGNvbXBh
-cmUgd2l0aCB0aGUgYXRvbWljIG9uZSwKQW5kIEkgZm91bmQgcGVyZm9ybWFuY2Ugb2YgdGhlbSBp
-cyBhbG1vc3QgdGhlIHNhbWUgdW5kZXIgYSBzbWFsbCBudW1iZXIgdGhyZWFkIHJhY2luZy4KU28g
-YXMgeW91ciBhbmQgS2ltJ3Mgb3BpbmlvbiwgaXQncyBlbm91Z2ggdG8gdXNlICJzYmktPm5leHRf
-bG9ja19udW0rKyIgdG8gZml4IHRoaXMgaXNzdWUuCgpUaGFua3MgZm9yIHRoZSBhZHZpY2UuCj4g
-Cj4gPgo+ID4gU28sIGhvdyBhYm91dCByZW1vdmluZyB0aGUgc3Bpbl9sb2NrPwo+ID4gQW5kIGhv
-dyBhYm91dCB1c2luZyBhIHJhbmRvbSBudW1iZXI/Cj4gCj4gPiBUaGFua3MsCj4gPgo+ID4gMjAx
-My0wOS0wNiAo6riIKSwgMDk6NDggKzAwMDAsIENoYW8gWXU6Cj4gPj4gSGkgS2ltOgo+ID4+Cj4g
-Pj4gICAgICBJIHRoaW5rIHRoZXJlIGlzIGEgcGVyZm9ybWFuY2UgcHJvYmxlbTogd2hlbiBhbGwg
-c2JpLT5mc19sb2NrIGlzCj4gPj4gaG9sZGVkLAo+ID4+Cj4gPj4gdGhlbiBhbGwgb3RoZXIgdGhy
-ZWFkcyBtYXkgZ2V0IHRoZSBzYW1lIG5leHRfbG9jayB2YWx1ZSBmcm9tCj4gPj4gc2JpLT5uZXh0
-X2xvY2tfbnVtIGluIGZ1bmN0aW9uIG11dGV4X2xvY2tfb3AsCj4gPj4KPiA+PiBhbmQgd2FpdCB0
-byBnZXQgdGhlIHNhbWUgbG9jayBhdCBwb3NpdGlvbiBmc19sb2NrW25leHRfbG9ja10sIGl0Cj4g
-Pj4gdW5iYWxhbmNlIHRoZSBmc19sb2NrIHVzYWdlLgo+ID4+Cj4gPj4gSXQgbWF5IGxvc3QgcGVy
-Zm9ybWFuY2Ugd2hlbiB3ZSBkbyB0aGUgbXVsdGl0aHJlYWQgdGVzdC4KPiA+Pgo+ID4+Cj4gPj4K
-PiA+PiBIZXJlIGlzIHRoZSBwYXRjaCB0byBmaXggdGhpcyBwcm9ibGVtOgo+ID4+Cj4gPj4KPiA+
-Pgo+ID4+IFNpZ25lZC1vZmYtYnk6IFl1IENoYW8gPGNoYW8yLnl1QHNhbXN1bmcuY29tPgo+ID4+
-Cj4gPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZjJmcy5oIGIvZnMvZjJmcy9mMmZzLmgKPiA+Pgo+
-ID4+IG9sZCBtb2RlIDEwMDY0NAo+ID4+Cj4gPj4gbmV3IG1vZGUgMTAwNzU1Cj4gPj4KPiA+PiBp
-bmRleCA0NjdkNDJkLi45ODNiYjQ1Cj4gPj4KPiA+PiAtLS0gYS9mcy9mMmZzL2YyZnMuaAo+ID4+
-Cj4gPj4gKysrIGIvZnMvZjJmcy9mMmZzLmgKPiA+Pgo+ID4+IEBAIC0zNzEsNiArMzcxLDcgQEAg
-c3RydWN0IGYyZnNfc2JfaW5mbyB7Cj4gPj4KPiA+PiAgICAgICAgIHN0cnVjdCBtdXRleCBmc19s
-b2NrW05SX0dMT0JBTF9MT0NLU107ICAvKiBibG9ja2luZyBGUwo+ID4+IG9wZXJhdGlvbnMgKi8K
-PiA+Pgo+ID4+ICAgICAgICAgc3RydWN0IG11dGV4IG5vZGVfd3JpdGU7ICAgICAgICAgICAgICAg
-IC8qIGxvY2tpbmcgbm9kZQo+IHdyaXRlcwo+ID4+ICovCj4gPj4KPiA+PiAgICAgICAgIHN0cnVj
-dCBtdXRleCB3cml0ZXBhZ2VzOyAgICAgICAgICAgICAgICAvKiBtdXRleCBmb3IKPiA+PiB3cml0
-ZXBhZ2VzKCkgKi8KPiA+Pgo+ID4+ICsgICAgICAgc3BpbmxvY2tfdCBzcGluX2xvY2s7ICAgICAg
-ICAgICAgICAgICAgIC8qIGxvY2sgZm9yCj4gPj4gbmV4dF9sb2NrX251bSAqLwo+ID4+Cj4gPj4g
-ICAgICAgICB1bnNpZ25lZCBjaGFyIG5leHRfbG9ja19udW07ICAgICAgICAgICAgLyogcm91bmQt
-cm9iaW4KPiBnbG9iYWwKPiA+PiBsb2NrcyAqLwo+ID4+Cj4gPj4gICAgICAgICBpbnQgcG9yX2Rv
-aW5nOyAgICAgICAgICAgICAgICAgICAgICAgICAgLyogcmVjb3ZlcnkgaXMgZG9pbmcKPiA+PiBv
-ciBub3QgKi8KPiA+Pgo+ID4+ICAgICAgICAgaW50IG9uX2J1aWxkX2ZyZWVfbmlkczsgICAgICAg
-ICAgICAgICAgIC8qIGJ1aWxkX2ZyZWVfbmlkcyBpcwo+ID4+IGRvaW5nICovCj4gPj4KPiA+PiBA
-QCAtNTMzLDE1ICs1MzQsMTkgQEAgc3RhdGljIGlubGluZSB2b2lkIG11dGV4X3VubG9ja19hbGwo
-c3RydWN0Cj4gPj4gZjJmc19zYl9pbmZvICpzYmkpCj4gPj4KPiA+Pgo+ID4+Cj4gPj4gIHN0YXRp
-YyBpbmxpbmUgaW50IG11dGV4X2xvY2tfb3Aoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+ID4+
-Cj4gPj4gIHsKPiA+Pgo+ID4+IC0gICAgICAgdW5zaWduZWQgY2hhciBuZXh0X2xvY2sgPSBzYmkt
-Pm5leHRfbG9ja19udW0gJQo+ID4+IE5SX0dMT0JBTF9MT0NLUzsKPiA+Pgo+ID4+ICsgICAgICAg
-dW5zaWduZWQgY2hhciBuZXh0X2xvY2s7Cj4gPj4KPiA+PiAgICAgICAgIGludCBpID0gMDsKPiA+
-Pgo+ID4+Cj4gPj4KPiA+PiAgICAgICAgIGZvciAoOyBpIDwgTlJfR0xPQkFMX0xPQ0tTOyBpKysp
-Cj4gPj4KPiA+PiAgICAgICAgICAgICAgICAgaWYgKG11dGV4X3RyeWxvY2soJnNiaS0+ZnNfbG9j
-a1tpXSkpCj4gPj4KPiA+PiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gaTsKPiA+Pgo+
-ID4+Cj4gPj4KPiA+PiAtICAgICAgIG11dGV4X2xvY2soJnNiaS0+ZnNfbG9ja1tuZXh0X2xvY2td
-KTsKPiA+Pgo+ID4+ICsgICAgICAgc3Bpbl9sb2NrKCZzYmktPnNwaW5fbG9jayk7Cj4gPj4KPiA+
-PiArICAgICAgIG5leHRfbG9jayA9IHNiaS0+bmV4dF9sb2NrX251bSAlIE5SX0dMT0JBTF9MT0NL
-UzsKPiA+Pgo+ID4+ICAgICAgICAgc2JpLT5uZXh0X2xvY2tfbnVtKys7Cj4gPj4KPiA+PiArICAg
-ICAgIHNwaW5fdW5sb2NrKCZzYmktPnNwaW5fbG9jayk7Cj4gPj4KPiA+PiArCj4gPj4KPiA+PiAr
-ICAgICAgIG11dGV4X2xvY2soJnNiaS0+ZnNfbG9ja1tuZXh0X2xvY2tdKTsKPiA+Pgo+ID4+ICAg
-ICAgICAgcmV0dXJuIG5leHRfbG9jazsKPiA+Pgo+ID4+ICB9Cj4gPj4KPiA+Pgo+ID4+Cj4gPj4g
-ZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3VwZXIuYyBiL2ZzL2YyZnMvc3VwZXIuYwo+ID4+Cj4gPj4g
-b2xkIG1vZGUgMTAwNjQ0Cj4gPj4KPiA+PiBuZXcgbW9kZSAxMDA3NTUKPiA+Pgo+ID4+IGluZGV4
-IDc1YzdkYzMuLjRmMjc1OTYKPiA+Pgo+ID4+IC0tLSBhL2ZzL2YyZnMvc3VwZXIuYwo+ID4+Cj4g
-Pj4gKysrIGIvZnMvZjJmcy9zdXBlci5jCj4gPj4KPiA+PiBAQCAtNjU3LDYgKzY1Nyw3IEBAIHN0
-YXRpYyBpbnQgZjJmc19maWxsX3N1cGVyKHN0cnVjdCBzdXBlcl9ibG9jawo+ID4+ICpzYiwgdm9p
-ZCAqZGF0YSwgaW50IHNpbGVudCkKPiA+Pgo+ID4+ICAgICAgICAgbXV0ZXhfaW5pdCgmc2JpLT5j
-cF9tdXRleCk7Cj4gPj4KPiA+PiAgICAgICAgIGZvciAoaSA9IDA7IGkgPCBOUl9HTE9CQUxfTE9D
-S1M7IGkrKykKPiA+Pgo+ID4+ICAgICAgICAgICAgICAgICBtdXRleF9pbml0KCZzYmktPmZzX2xv
-Y2tbaV0pOwo+ID4+Cj4gPj4gKyAgICAgICBzcGluX2xvY2tfaW5pdCgmc2JpLT5zcGluX2xvY2sp
-Owo+ID4+Cj4gPj4gICAgICAgICBtdXRleF9pbml0KCZzYmktPm5vZGVfd3JpdGUpOwo+ID4+Cj4g
-Pj4gICAgICAgICBzYmktPnBvcl9kb2luZyA9IDA7Cj4gPj4KPiA+PiAgICAgICAgIHNwaW5fbG9j
-a19pbml0KCZzYmktPnN0YXRfbG9jayk7Cj4gPj4KPiA+PiAoRU5EKQo+ID4+Cj4gPj4KPiA+Pgo+
-ID4+Cj4gPj4KPiA+Pgo+ID4KPiAKPiAKPiA9CgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkhvdyBT
-ZXJ2aWNlTm93IGhlbHBzIElUIHBlb3BsZSB0cmFuc2Zvcm0gSVQgZGVwYXJ0bWVudHM6CjEuIENv
-bnNvbGlkYXRlIGxlZ2FjeSBJVCBzeXN0ZW1zIHRvIGEgc2luZ2xlIHN5c3RlbSBvZiByZWNvcmQg
-Zm9yIElUCjIuIFN0YW5kYXJkaXplIGFuZCBnbG9iYWxpemUgc2VydmljZSBwcm9jZXNzZXMgYWNy
-b3NzIElUCjMuIEltcGxlbWVudCB6ZXJvLXRvdWNoIGF1dG9tYXRpb24gdG8gcmVwbGFjZSBtYW51
-YWwsIHJlZHVuZGFudCB0YXNrcwpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBh
-ZC9jbGs/aWQ9NTEyNzExMTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+From: Yu Chao <chao2.yu@samsung.com>
+
+There is a performance problem: when all sbi->fs_lock are holded, then
+all the following threads may get the same next_lock value from sbi->next_lock_num
+in function mutex_lock_op, and wait for the same lock(fs_lock[next_lock]),
+it may cause performance reduce.
+So we move the sbi->next_lock_num++ before getting lock, this will average the
+following threads if all sbi->fs_lock are holded. 
+
+v1-->v2:
+	Drop the needless spin_lock as Jaegeuk suggested.
+
+Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Signed-off-by: Yu Chao <chao2.yu@samsung.com>
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/f2fs.h |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 608f0df..7fd99d8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -544,15 +544,15 @@ static inline void mutex_unlock_all(struct f2fs_sb_info *sbi)
+ 
+ static inline int mutex_lock_op(struct f2fs_sb_info *sbi)
+ {
+-	unsigned char next_lock = sbi->next_lock_num % NR_GLOBAL_LOCKS;
++	unsigned char next_lock;
+ 	int i = 0;
+ 
+ 	for (; i < NR_GLOBAL_LOCKS; i++)
+ 		if (mutex_trylock(&sbi->fs_lock[i]))
+ 			return i;
+ 
++	next_lock = sbi->next_lock_num++ % NR_GLOBAL_LOCKS;
+ 	mutex_lock(&sbi->fs_lock[next_lock]);
+-	sbi->next_lock_num++;
+ 	return next_lock;
+ }
+ 
+-- 
+1.7.7
+
+
+
+------------------------------------------------------------------------------
+How ServiceNow helps IT people transform IT departments:
+1. Consolidate legacy IT systems to a single system of record for IT
+2. Standardize and globalize service processes across IT
+3. Implement zero-touch automation to replace manual, redundant tasks
+http://pubads.g.doubleclick.net/gampad/clk?id=51271111&iu=/4140/ostg.clktrk
