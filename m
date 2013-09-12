@@ -1,276 +1,133 @@
-From: =?gb2312?B?0+GzrA==?= <chao2.yu@samsung.com>
-Subject: Re: Re: [f2fs-dev][PATCH] f2fs: optimize fs_lock for better performance
-Date: Thu, 12 Sep 2013 10:02:49 +0800
-Message-ID: <000f01ceaf5c$4fd452d0$ef7cf870$@samsung.com>
-References: <7684984.194071378867007969.JavaMail.weblogic@epml15>
- <CAOtxgyd3iDL6PHA4gFkuG6=Rw1Xr8HKnm5vNAfuyu9b-nvfe2g@mail.gmail.com>
+From: =?UTF-8?B?5L+e6LaF?= <chao2.yu@samsung.com>
+Subject: Re: [PATCH] f2fs: optimize fs_lock for better performance
+Date: Thu, 12 Sep 2013 10:40:27 +0800
+Message-ID: <001001ceaf61$a4ea9a90$eebfcfb0$@samsung.com>
+References: <88.C4.11914.9D4A9225@epcpsbge6.samsung.com>
+	<1378774324.2354.103.camel@kjgkr> <523001B6.3080506@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=gb2312
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAOtxgyd3iDL6PHA4gFkuG6=Rw1Xr8HKnm5vNAfuyu9b-nvfe2g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1VJwr8-0001y1-DF
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 12 Sep 2013 02:42:06 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VJwr5-0007Dn-Sa for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 12 Sep 2013 02:42:06 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0MSZ002FARHJY690@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 12 Sep 2013 11:41:57 +0900 (KST)
+In-reply-to: <523001B6.3080506@cn.fujitsu.com>
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Kim Jaegeuk' <jaegeuk.kim@gmail.com>
-Cc: '???' <jaegeuk.kim@samsung.com>, =?gb2312?B?J8y35q0n?= <shu.tan@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>, jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, shu.tan@samsung.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Kim
-
-> -----Original Message-----
-> From: Kim Jaegeuk [mailto:jaegeuk.kim@gmail.com]
-> Sent: Wednesday, September 11, 2013 9:15 PM
-> To: chao2.yu@samsung.com
-> Cc: ???; =CC=B7=E6=AD; linux-fsdevel@vger.kernel.org;
-linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: Re: [f2fs-dev][PATCH] f2fs: optimize fs_lock for better
-performance
->=20
-> Hi,
->=20
-> 2013/9/11 Chao Yu <chao2.yu@samsung.com>
-> >
-> > Hi Kim,
-> >
-> > I did some tests as you mention of using random instead of spin_loc=
-k.
-> > The test model is as following:
-> > eight threads race to grab one of eight locks for one thousand time=
-s,
-> > and I used four methods to generate lock num:
-> >
-> > 1.atomic_add_return(1, &sbi->next_lock_num) % NR_GLOBAL_LOCKS;
-> > 2.spin_lock(); next_lock_num++ % NR_GLOBAL_LOCKS; spin_unlock();
-> > 3.ktime_get().tv64 % NR_GLOBAL_LOCKS;
-> > 4.get_random_bytes(&next_lock, sizeof(unsigned int));
-> >
-> > the result indicate that:
-> > max count of collide continuously: 4 > 3 > 2 =3D 1 max-min count of=
- lock
-> > is grabbed: 4 > 3 > 2 =3D 1 elapsed time of generating: 3 > 2 > 4 >=
- 1
-> >
-> > So I think it's better to use atomic_add_return in round-robin meth=
-od
-> > to cost less time and reduce collide.
-> > What's your opinion?
->=20
-> Could you test with sbi->next_lock_num++ only instead of using
-> atomic_add_return?
-> IMO, this is just an integer value and still I don't think this value
-should be
-> covered by any kind of locks.
-> Thanks,
-
-Thanks for the advice, I have tested sbi->next_lock_num++.
-The time cost of it is a little bit lower than the atomic one's.
-for running 8 thread for 1000000 times test.
-the performance of it's balance and collide play quit well than I expec=
-ted.
-
-Can we modify this patch as following?
-
-root@virtaulmachine:/home/yuchao/git/linux-next/fs/f2fs# git diff --sta=
-t
- fs/f2fs/f2fs.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-root@virtaulmachine:/home/yuchao/git/linux-next/fs/f2fs# git diff
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 608f0df..7fd99d8 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -544,15 +544,15 @@ static inline void mutex_unlock_all(struct
-f2fs_sb_info *sbi)
-=20
- static inline int mutex_lock_op(struct f2fs_sb_info *sbi)
- {
--       unsigned char next_lock =3D sbi->next_lock_num % NR_GLOBAL_LOCK=
-S;
-+       unsigned char next_lock;
-        int i =3D 0;
-=20
-        for (; i < NR_GLOBAL_LOCKS; i++)
-                if (mutex_trylock(&sbi->fs_lock[i]))
-                        return i;
-=20
-+       next_lock =3D sbi->next_lock_num++ % NR_GLOBAL_LOCKS;
-        mutex_lock(&sbi->fs_lock[next_lock]);
--       sbi->next_lock_num++;
-        return next_lock;
- }
-
->=20
-> >
-> > thanks
-> >
-> > ------- Original Message -------
-> > Sender : ???<jaegeuk.kim@samsung.com> S5(??)/??/?????????(???)/????
-> > Date : =BE=C5=D4=C2 10, 2013 09:52 (GMT+09:00)
-> > Title : Re: [f2fs-dev][PATCH] f2fs: optimize fs_lock for better
-> > performance
-> >
-> > Hi,
-> >
-> > At first, thank you for the report and please follow the email writ=
-ing
-> > rules. :)
-> >
-> > Anyway, I agree to the below issue.
-> > One thing that I can think of is that we don't need to use the
-> > spin_lock, since we don't care about the exact lock number, but jus=
-t
-> > need to get any not-collided number.
-> >
-> > So, how about removing the spin_lock?
-> > And how about using a random number?
-> > Thanks,
-> >
-> > 2013-09-06 (?), 09:48 +0000, Chao Yu:
-> > > Hi Kim:
-> > >
-> > >      I think there is a performance problem: when all sbi->fs_loc=
-k
-> > > is holded,
-> > >
-> > > then all other threads may get the same next_lock value from
-> > > sbi->next_lock_num in function mutex_lock_op,
-> > >
-> > > and wait to get the same lock at position fs_lock[next_lock], it
-> > > unbalance the fs_lock usage.
-> > >
-> > > It may lost performance when we do the multithread test.
-> > >
-> > >
-> > >
-> > > Here is the patch to fix this problem:
-> > >
-> > >
-> > >
-> > > Signed-off-by: Yu Chao
-> > >
-> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > >
-> > > old mode 100644
-> > >
-> > > new mode 100755
-> > >
-> > > index 467d42d..983bb45
-> > >
-> > > --- a/fs/f2fs/f2fs.h
-> > >
-> > > +++ b/fs/f2fs/f2fs.h
-> > >
-> > > @@ -371,6 +371,7 @@ struct f2fs_sb_info {
-> > >
-> > >         struct mutex fs_lock[NR_GLOBAL_LOCKS];  /* blocking FS
-> > > operations */
-> > >
-> > >         struct mutex node_write;                /* locking node
-> writes
-> > > */
-> > >
-> > >         struct mutex writepages;                /* mutex for
-> > > writepages() */
-> > >
-> > > +       spinlock_t spin_lock;                   /* lock for
-> > > next_lock_num */
-> > >
-> > >         unsigned char next_lock_num;            /* round-robin
-> global
-> > > locks */
-> > >
-> > >         int por_doing;                          /* recovery is
-> doing
-> > > or not */
-> > >
-> > >         int on_build_free_nids;                 /* build_free_nid=
-s is
-> > > doing */
-> > >
-> > > @@ -533,15 +534,19 @@ static inline void mutex_unlock_all(struct
-> > > f2fs_sb_info *sbi)
-> > >
-> > >
-> > >
-> > >  static inline int mutex_lock_op(struct f2fs_sb_info *sbi)
-> > >
-> > >  {
-> > >
-> > > -       unsigned char next_lock =3D sbi->next_lock_num %
-> > > NR_GLOBAL_LOCKS;
-> > >
-> > > +       unsigned char next_lock;
-> > >
-> > >         int i =3D 0;
-> > >
-> > >
-> > >
-> > >         for (; i < NR_GLOBAL_LOCKS; i++)
-> > >
-> > >                 if (mutex_trylock(&sbi->fs_lock[i]))
-> > >
-> > >                         return i;
-> > >
-> > >
-> > >
-> > > -       mutex_lock(&sbi->fs_lock[next_lock]);
-> > >
-> > > +       spin_lock(&sbi->spin_lock);
-> > >
-> > > +       next_lock =3D sbi->next_lock_num % NR_GLOBAL_LOCKS;
-> > >
-> > >         sbi->next_lock_num++;
-> > >
-> > > +       spin_unlock(&sbi->spin_lock);
-> > >
-> > > +
-> > >
-> > > +       mutex_lock(&sbi->fs_lock[next_lock]);
-> > >
-> > >         return next_lock;
-> > >
-> > >  }
-> > >
-> > >
-> > >
-> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > >
-> > > old mode 100644
-> > >
-> > > new mode 100755
-> > >
-> > > index 75c7dc3..4f27596
-> > >
-> > > --- a/fs/f2fs/super.c
-> > >
-> > > +++ b/fs/f2fs/super.c
-> > >
-> > > @@ -657,6 +657,7 @@ static int f2fs_fill_super(struct super_block
-> > > *sb, void *data, int silent)
-> > >
-> > >         mutex_init(&sbi->cp_mutex);
-> > >
-> > >         for (i =3D 0; i < NR_GLOBAL_LOCKS; i++)
-> > >
-> > >                 mutex_init(&sbi->fs_lock[i]);
-> > >
-> > > +       spin_lock_init(&sbi->spin_lock);
-> > >
-> > >         mutex_init(&sbi->node_write);
-> > >
-> > >         sbi->por_doing =3D 0;
-> > >
-> > >         spin_lock_init(&sbi->stat_lock);
-> > >
-> > > (END)
-> > >
-> > >
-> > >
-> > >
-> > >
-> > >
-> >
-> > --
-> > Jaegeuk Kim
-> > Samsung
+SGkgR3UKCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiBGcm9tOiBHdSBaaGVuZyBbbWFp
+bHRvOmd1ei5mbnN0QGNuLmZ1aml0c3UuY29tXQo+IFNlbnQ6IFdlZG5lc2RheSwgU2VwdGVtYmVy
+IDExLCAyMDEzIDE6MzggUE0KPiBUbzogamFlZ2V1ay5raW1Ac2Ftc3VuZy5jb20KPiBDYzogY2hh
+bzIueXVAc2Ftc3VuZy5jb207IHNodS50YW5Ac2Ftc3VuZy5jb207Cj4gbGludXgtZnNkZXZlbEB2
+Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7Cj4gbGludXgtZjJm
+cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XVtQ
+QVRDSF0gZjJmczogb3B0aW1pemUgZnNfbG9jayBmb3IgYmV0dGVyIHBlcmZvcm1hbmNlCj4gCj4g
+SGkgSmFlZ2V1aywgQ2hhbywKPiAKPiBPbiAwOS8xMC8yMDEzIDA4OjUyIEFNLCBKYWVnZXVrIEtp
+bSB3cm90ZToKPiAKPiA+IEhpLAo+ID4KPiA+IEF0IGZpcnN0LCB0aGFuayB5b3UgZm9yIHRoZSBy
+ZXBvcnQgYW5kIHBsZWFzZSBmb2xsb3cgdGhlIGVtYWlsIHdyaXRpbmcKPiA+IHJ1bGVzLiA6KQo+
+ID4KPiA+IEFueXdheSwgSSBhZ3JlZSB0byB0aGUgYmVsb3cgaXNzdWUuCj4gPiBPbmUgdGhpbmcg
+dGhhdCBJIGNhbiB0aGluayBvZiBpcyB0aGF0IHdlIGRvbid0IG5lZWQgdG8gdXNlIHRoZQo+ID4g
+c3Bpbl9sb2NrLCBzaW5jZSB3ZSBkb24ndCBjYXJlIGFib3V0IHRoZSBleGFjdCBsb2NrIG51bWJl
+ciwgYnV0IGp1c3QKPiA+IG5lZWQgdG8gZ2V0IGFueSBub3QtY29sbGlkZWQgbnVtYmVyLgo+IAo+
+IElNSE8sIGp1c3QgbW92aW5nIHNiaS0+bmV4dF9sb2NrX251bSsrIGJlZm9yZQo+IG11dGV4X2xv
+Y2soJnNiaS0+ZnNfbG9ja1tuZXh0X2xvY2tdKQo+IGNhbiBhdm9pZCB1bmJhbGFuY2UgaXNzdWUg
+bW9zdGx5Lgo+IElNTywgdGhlIGNhc2UgdHdvIG9yIG1vcmUgdGhyZWFkcyBpbmNyZWFzZSBzYmkt
+Pm5leHRfbG9ja19udW0gaW4gdGhlIHNhbWUKPiB0aW1lIGlzIHJlYWxseSB2ZXJ5IHZlcnkgbGl0
+dGxlLiBJZiB5b3UgdGhpbmsgaXQgaXMgbm90IHJpZ29yb3VzLCBjaGFuZ2UKPiBuZXh0X2xvY2tf
+bnVtIHRvIGF0b21pYyBvbmUgY2FuIGZpeCBpdC4KPiBXaGF0J3MgeW91ciBvcGluaW9uPwo+IAo+
+IFJlZ2FyZHMsCj4gR3UKCkkgZGlkIHRoZSB0ZXN0IHNiaS0+bmV4dF9sb2NrX251bSsrIGNvbXBh
+cmUgd2l0aCB0aGUgYXRvbWljIG9uZSwKQW5kIEkgZm91bmQgcGVyZm9ybWFuY2Ugb2YgdGhlbSBp
+cyBhbG1vc3QgdGhlIHNhbWUgdW5kZXIgYSBzbWFsbCBudW1iZXIgdGhyZWFkIHJhY2luZy4KU28g
+YXMgeW91ciBhbmQgS2ltJ3Mgb3BpbmlvbiwgaXQncyBlbm91Z2ggdG8gdXNlICJzYmktPm5leHRf
+bG9ja19udW0rKyIgdG8gZml4IHRoaXMgaXNzdWUuCgpUaGFua3MgZm9yIHRoZSBhZHZpY2UuCj4g
+Cj4gPgo+ID4gU28sIGhvdyBhYm91dCByZW1vdmluZyB0aGUgc3Bpbl9sb2NrPwo+ID4gQW5kIGhv
+dyBhYm91dCB1c2luZyBhIHJhbmRvbSBudW1iZXI/Cj4gCj4gPiBUaGFua3MsCj4gPgo+ID4gMjAx
+My0wOS0wNiAo6riIKSwgMDk6NDggKzAwMDAsIENoYW8gWXU6Cj4gPj4gSGkgS2ltOgo+ID4+Cj4g
+Pj4gICAgICBJIHRoaW5rIHRoZXJlIGlzIGEgcGVyZm9ybWFuY2UgcHJvYmxlbTogd2hlbiBhbGwg
+c2JpLT5mc19sb2NrIGlzCj4gPj4gaG9sZGVkLAo+ID4+Cj4gPj4gdGhlbiBhbGwgb3RoZXIgdGhy
+ZWFkcyBtYXkgZ2V0IHRoZSBzYW1lIG5leHRfbG9jayB2YWx1ZSBmcm9tCj4gPj4gc2JpLT5uZXh0
+X2xvY2tfbnVtIGluIGZ1bmN0aW9uIG11dGV4X2xvY2tfb3AsCj4gPj4KPiA+PiBhbmQgd2FpdCB0
+byBnZXQgdGhlIHNhbWUgbG9jayBhdCBwb3NpdGlvbiBmc19sb2NrW25leHRfbG9ja10sIGl0Cj4g
+Pj4gdW5iYWxhbmNlIHRoZSBmc19sb2NrIHVzYWdlLgo+ID4+Cj4gPj4gSXQgbWF5IGxvc3QgcGVy
+Zm9ybWFuY2Ugd2hlbiB3ZSBkbyB0aGUgbXVsdGl0aHJlYWQgdGVzdC4KPiA+Pgo+ID4+Cj4gPj4K
+PiA+PiBIZXJlIGlzIHRoZSBwYXRjaCB0byBmaXggdGhpcyBwcm9ibGVtOgo+ID4+Cj4gPj4KPiA+
+Pgo+ID4+IFNpZ25lZC1vZmYtYnk6IFl1IENoYW8gPGNoYW8yLnl1QHNhbXN1bmcuY29tPgo+ID4+
+Cj4gPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZjJmcy5oIGIvZnMvZjJmcy9mMmZzLmgKPiA+Pgo+
+ID4+IG9sZCBtb2RlIDEwMDY0NAo+ID4+Cj4gPj4gbmV3IG1vZGUgMTAwNzU1Cj4gPj4KPiA+PiBp
+bmRleCA0NjdkNDJkLi45ODNiYjQ1Cj4gPj4KPiA+PiAtLS0gYS9mcy9mMmZzL2YyZnMuaAo+ID4+
+Cj4gPj4gKysrIGIvZnMvZjJmcy9mMmZzLmgKPiA+Pgo+ID4+IEBAIC0zNzEsNiArMzcxLDcgQEAg
+c3RydWN0IGYyZnNfc2JfaW5mbyB7Cj4gPj4KPiA+PiAgICAgICAgIHN0cnVjdCBtdXRleCBmc19s
+b2NrW05SX0dMT0JBTF9MT0NLU107ICAvKiBibG9ja2luZyBGUwo+ID4+IG9wZXJhdGlvbnMgKi8K
+PiA+Pgo+ID4+ICAgICAgICAgc3RydWN0IG11dGV4IG5vZGVfd3JpdGU7ICAgICAgICAgICAgICAg
+IC8qIGxvY2tpbmcgbm9kZQo+IHdyaXRlcwo+ID4+ICovCj4gPj4KPiA+PiAgICAgICAgIHN0cnVj
+dCBtdXRleCB3cml0ZXBhZ2VzOyAgICAgICAgICAgICAgICAvKiBtdXRleCBmb3IKPiA+PiB3cml0
+ZXBhZ2VzKCkgKi8KPiA+Pgo+ID4+ICsgICAgICAgc3BpbmxvY2tfdCBzcGluX2xvY2s7ICAgICAg
+ICAgICAgICAgICAgIC8qIGxvY2sgZm9yCj4gPj4gbmV4dF9sb2NrX251bSAqLwo+ID4+Cj4gPj4g
+ICAgICAgICB1bnNpZ25lZCBjaGFyIG5leHRfbG9ja19udW07ICAgICAgICAgICAgLyogcm91bmQt
+cm9iaW4KPiBnbG9iYWwKPiA+PiBsb2NrcyAqLwo+ID4+Cj4gPj4gICAgICAgICBpbnQgcG9yX2Rv
+aW5nOyAgICAgICAgICAgICAgICAgICAgICAgICAgLyogcmVjb3ZlcnkgaXMgZG9pbmcKPiA+PiBv
+ciBub3QgKi8KPiA+Pgo+ID4+ICAgICAgICAgaW50IG9uX2J1aWxkX2ZyZWVfbmlkczsgICAgICAg
+ICAgICAgICAgIC8qIGJ1aWxkX2ZyZWVfbmlkcyBpcwo+ID4+IGRvaW5nICovCj4gPj4KPiA+PiBA
+QCAtNTMzLDE1ICs1MzQsMTkgQEAgc3RhdGljIGlubGluZSB2b2lkIG11dGV4X3VubG9ja19hbGwo
+c3RydWN0Cj4gPj4gZjJmc19zYl9pbmZvICpzYmkpCj4gPj4KPiA+Pgo+ID4+Cj4gPj4gIHN0YXRp
+YyBpbmxpbmUgaW50IG11dGV4X2xvY2tfb3Aoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+ID4+
+Cj4gPj4gIHsKPiA+Pgo+ID4+IC0gICAgICAgdW5zaWduZWQgY2hhciBuZXh0X2xvY2sgPSBzYmkt
+Pm5leHRfbG9ja19udW0gJQo+ID4+IE5SX0dMT0JBTF9MT0NLUzsKPiA+Pgo+ID4+ICsgICAgICAg
+dW5zaWduZWQgY2hhciBuZXh0X2xvY2s7Cj4gPj4KPiA+PiAgICAgICAgIGludCBpID0gMDsKPiA+
+Pgo+ID4+Cj4gPj4KPiA+PiAgICAgICAgIGZvciAoOyBpIDwgTlJfR0xPQkFMX0xPQ0tTOyBpKysp
+Cj4gPj4KPiA+PiAgICAgICAgICAgICAgICAgaWYgKG11dGV4X3RyeWxvY2soJnNiaS0+ZnNfbG9j
+a1tpXSkpCj4gPj4KPiA+PiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gaTsKPiA+Pgo+
+ID4+Cj4gPj4KPiA+PiAtICAgICAgIG11dGV4X2xvY2soJnNiaS0+ZnNfbG9ja1tuZXh0X2xvY2td
+KTsKPiA+Pgo+ID4+ICsgICAgICAgc3Bpbl9sb2NrKCZzYmktPnNwaW5fbG9jayk7Cj4gPj4KPiA+
+PiArICAgICAgIG5leHRfbG9jayA9IHNiaS0+bmV4dF9sb2NrX251bSAlIE5SX0dMT0JBTF9MT0NL
+UzsKPiA+Pgo+ID4+ICAgICAgICAgc2JpLT5uZXh0X2xvY2tfbnVtKys7Cj4gPj4KPiA+PiArICAg
+ICAgIHNwaW5fdW5sb2NrKCZzYmktPnNwaW5fbG9jayk7Cj4gPj4KPiA+PiArCj4gPj4KPiA+PiAr
+ICAgICAgIG11dGV4X2xvY2soJnNiaS0+ZnNfbG9ja1tuZXh0X2xvY2tdKTsKPiA+Pgo+ID4+ICAg
+ICAgICAgcmV0dXJuIG5leHRfbG9jazsKPiA+Pgo+ID4+ICB9Cj4gPj4KPiA+Pgo+ID4+Cj4gPj4g
+ZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3VwZXIuYyBiL2ZzL2YyZnMvc3VwZXIuYwo+ID4+Cj4gPj4g
+b2xkIG1vZGUgMTAwNjQ0Cj4gPj4KPiA+PiBuZXcgbW9kZSAxMDA3NTUKPiA+Pgo+ID4+IGluZGV4
+IDc1YzdkYzMuLjRmMjc1OTYKPiA+Pgo+ID4+IC0tLSBhL2ZzL2YyZnMvc3VwZXIuYwo+ID4+Cj4g
+Pj4gKysrIGIvZnMvZjJmcy9zdXBlci5jCj4gPj4KPiA+PiBAQCAtNjU3LDYgKzY1Nyw3IEBAIHN0
+YXRpYyBpbnQgZjJmc19maWxsX3N1cGVyKHN0cnVjdCBzdXBlcl9ibG9jawo+ID4+ICpzYiwgdm9p
+ZCAqZGF0YSwgaW50IHNpbGVudCkKPiA+Pgo+ID4+ICAgICAgICAgbXV0ZXhfaW5pdCgmc2JpLT5j
+cF9tdXRleCk7Cj4gPj4KPiA+PiAgICAgICAgIGZvciAoaSA9IDA7IGkgPCBOUl9HTE9CQUxfTE9D
+S1M7IGkrKykKPiA+Pgo+ID4+ICAgICAgICAgICAgICAgICBtdXRleF9pbml0KCZzYmktPmZzX2xv
+Y2tbaV0pOwo+ID4+Cj4gPj4gKyAgICAgICBzcGluX2xvY2tfaW5pdCgmc2JpLT5zcGluX2xvY2sp
+Owo+ID4+Cj4gPj4gICAgICAgICBtdXRleF9pbml0KCZzYmktPm5vZGVfd3JpdGUpOwo+ID4+Cj4g
+Pj4gICAgICAgICBzYmktPnBvcl9kb2luZyA9IDA7Cj4gPj4KPiA+PiAgICAgICAgIHNwaW5fbG9j
+a19pbml0KCZzYmktPnN0YXRfbG9jayk7Cj4gPj4KPiA+PiAoRU5EKQo+ID4+Cj4gPj4KPiA+Pgo+
+ID4+Cj4gPj4KPiA+Pgo+ID4KPiAKPiAKPiA9CgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkhvdyBT
+ZXJ2aWNlTm93IGhlbHBzIElUIHBlb3BsZSB0cmFuc2Zvcm0gSVQgZGVwYXJ0bWVudHM6CjEuIENv
+bnNvbGlkYXRlIGxlZ2FjeSBJVCBzeXN0ZW1zIHRvIGEgc2luZ2xlIHN5c3RlbSBvZiByZWNvcmQg
+Zm9yIElUCjIuIFN0YW5kYXJkaXplIGFuZCBnbG9iYWxpemUgc2VydmljZSBwcm9jZXNzZXMgYWNy
+b3NzIElUCjMuIEltcGxlbWVudCB6ZXJvLXRvdWNoIGF1dG9tYXRpb24gdG8gcmVwbGFjZSBtYW51
+YWwsIHJlZHVuZGFudCB0YXNrcwpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBh
+ZC9jbGs/aWQ9NTEyNzExMTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
+c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
+b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
