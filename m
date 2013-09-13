@@ -1,25 +1,25 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH] f2fs: optimize fs_lock for better performance
-Date: Thu, 12 Sep 2013 11:18:00 +0800
-Message-ID: <52313268.4010002@cn.fujitsu.com>
-References: <88.C4.11914.9D4A9225@epcpsbge6.samsung.com>
-	<1378774324.2354.103.camel@kjgkr> <523001B6.3080506@cn.fujitsu.com>
-	<001001ceaf61$a4ea9a90$eebfcfb0$@samsung.com>
+From: Jin Xu <jinuxstyle@gmail.com>
+Subject: [PATCH] f2fs: optimize the victim searching loop slightly
+Date: Fri, 13 Sep 2013 08:38:54 +0800
+Message-ID: <1379032734-7677-1-git-send-email-jinuxstyle@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VJxUb-0003G2-0O
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jinuxstyle@gmail.com>) id 1VKHPi-0006sk-49
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Sep 2013 03:22:53 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VJxUZ-000532-MN for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Sep 2013 03:22:52 +0000
-In-Reply-To: <001001ceaf61$a4ea9a90$eebfcfb0$@samsung.com>
+	Fri, 13 Sep 2013 00:39:10 +0000
+Received: from mail-pa0-f43.google.com ([209.85.220.43])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1VKHPe-0007mP-Tf
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 13 Sep 2013 00:39:10 +0000
+Received: by mail-pa0-f43.google.com with SMTP id hz10so1815275pad.30
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Thu, 12 Sep 2013 17:39:00 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,103 +29,71 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: =?UTF-8?B?5L+e6LaF?= <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, shu.tan@samsung.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, jinuxstyle@gmail.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGkgQ2hhbywKT24gMDkvMTIvMjAxMyAxMDo0MCBBTSwg5L+e6LaFIHdyb3RlOgoKPiBIaSBHdQo+
-IAo+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+PiBGcm9tOiBHdSBaaGVuZyBbbWFpbHRv
-Omd1ei5mbnN0QGNuLmZ1aml0c3UuY29tXQo+PiBTZW50OiBXZWRuZXNkYXksIFNlcHRlbWJlciAx
-MSwgMjAxMyAxOjM4IFBNCj4+IFRvOiBqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbQo+PiBDYzogY2hh
-bzIueXVAc2Ftc3VuZy5jb207IHNodS50YW5Ac2Ftc3VuZy5jb207Cj4+IGxpbnV4LWZzZGV2ZWxA
-dmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOwo+PiBsaW51eC1m
-MmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+PiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2
-XVtQQVRDSF0gZjJmczogb3B0aW1pemUgZnNfbG9jayBmb3IgYmV0dGVyIHBlcmZvcm1hbmNlCj4+
-Cj4+IEhpIEphZWdldWssIENoYW8sCj4+Cj4+IE9uIDA5LzEwLzIwMTMgMDg6NTIgQU0sIEphZWdl
-dWsgS2ltIHdyb3RlOgo+Pgo+Pj4gSGksCj4+Pgo+Pj4gQXQgZmlyc3QsIHRoYW5rIHlvdSBmb3Ig
-dGhlIHJlcG9ydCBhbmQgcGxlYXNlIGZvbGxvdyB0aGUgZW1haWwgd3JpdGluZwo+Pj4gcnVsZXMu
-IDopCj4+Pgo+Pj4gQW55d2F5LCBJIGFncmVlIHRvIHRoZSBiZWxvdyBpc3N1ZS4KPj4+IE9uZSB0
-aGluZyB0aGF0IEkgY2FuIHRoaW5rIG9mIGlzIHRoYXQgd2UgZG9uJ3QgbmVlZCB0byB1c2UgdGhl
-Cj4+PiBzcGluX2xvY2ssIHNpbmNlIHdlIGRvbid0IGNhcmUgYWJvdXQgdGhlIGV4YWN0IGxvY2sg
-bnVtYmVyLCBidXQganVzdAo+Pj4gbmVlZCB0byBnZXQgYW55IG5vdC1jb2xsaWRlZCBudW1iZXIu
-Cj4+Cj4+IElNSE8sIGp1c3QgbW92aW5nIHNiaS0+bmV4dF9sb2NrX251bSsrIGJlZm9yZQo+PiBt
-dXRleF9sb2NrKCZzYmktPmZzX2xvY2tbbmV4dF9sb2NrXSkKPj4gY2FuIGF2b2lkIHVuYmFsYW5j
-ZSBpc3N1ZSBtb3N0bHkuCj4+IElNTywgdGhlIGNhc2UgdHdvIG9yIG1vcmUgdGhyZWFkcyBpbmNy
-ZWFzZSBzYmktPm5leHRfbG9ja19udW0gaW4gdGhlIHNhbWUKPj4gdGltZSBpcyByZWFsbHkgdmVy
-eSB2ZXJ5IGxpdHRsZS4gSWYgeW91IHRoaW5rIGl0IGlzIG5vdCByaWdvcm91cywgY2hhbmdlCj4+
-IG5leHRfbG9ja19udW0gdG8gYXRvbWljIG9uZSBjYW4gZml4IGl0Lgo+PiBXaGF0J3MgeW91ciBv
-cGluaW9uPwo+Pgo+PiBSZWdhcmRzLAo+PiBHdQo+IAo+IEkgZGlkIHRoZSB0ZXN0IHNiaS0+bmV4
-dF9sb2NrX251bSsrIGNvbXBhcmUgd2l0aCB0aGUgYXRvbWljIG9uZSwKPiBBbmQgSSBmb3VuZCBw
-ZXJmb3JtYW5jZSBvZiB0aGVtIGlzIGFsbW9zdCB0aGUgc2FtZSB1bmRlciBhIHNtYWxsIG51bWJl
-ciB0aHJlYWQgcmFjaW5nLgo+IFNvIGFzIHlvdXIgYW5kIEtpbSdzIG9waW5pb24sIGl0J3MgZW5v
-dWdoIHRvIHVzZSAic2JpLT5uZXh0X2xvY2tfbnVtKysiIHRvIGZpeCB0aGlzIGlzc3VlLgoKR29v
-ZCwgYnV0IGl0IHNlZW1zIHRoYXQgeW91ciByZXBsYXkgcGF0Y2ggaXMgb3V0IG9mIGZvcm1hdCwg
-YW5kIGl0J3MgaGFyZCBmb3IgSmFlZ2V1ayB0byBtZXJnZS4KSSdsbCBmb3JtYXQgaXQsIHNlZSB0
-aGUgZm9sbG93aW5nIHRocmVhZC4KClRoYW5rcywKR3UKCj4gCj4gVGhhbmtzIGZvciB0aGUgYWR2
-aWNlLgo+Pgo+Pj4KPj4+IFNvLCBob3cgYWJvdXQgcmVtb3ZpbmcgdGhlIHNwaW5fbG9jaz8KPj4+
-IEFuZCBob3cgYWJvdXQgdXNpbmcgYSByYW5kb20gbnVtYmVyPwo+Pgo+Pj4gVGhhbmtzLAo+Pj4K
-Pj4+IDIwMTMtMDktMDYgKOq4iCksIDA5OjQ4ICswMDAwLCBDaGFvIFl1Ogo+Pj4+IEhpIEtpbToK
-Pj4+Pgo+Pj4+ICAgICAgSSB0aGluayB0aGVyZSBpcyBhIHBlcmZvcm1hbmNlIHByb2JsZW06IHdo
-ZW4gYWxsIHNiaS0+ZnNfbG9jayBpcwo+Pj4+IGhvbGRlZCwKPj4+Pgo+Pj4+IHRoZW4gYWxsIG90
-aGVyIHRocmVhZHMgbWF5IGdldCB0aGUgc2FtZSBuZXh0X2xvY2sgdmFsdWUgZnJvbQo+Pj4+IHNi
-aS0+bmV4dF9sb2NrX251bSBpbiBmdW5jdGlvbiBtdXRleF9sb2NrX29wLAo+Pj4+Cj4+Pj4gYW5k
-IHdhaXQgdG8gZ2V0IHRoZSBzYW1lIGxvY2sgYXQgcG9zaXRpb24gZnNfbG9ja1tuZXh0X2xvY2td
-LCBpdAo+Pj4+IHVuYmFsYW5jZSB0aGUgZnNfbG9jayB1c2FnZS4KPj4+Pgo+Pj4+IEl0IG1heSBs
-b3N0IHBlcmZvcm1hbmNlIHdoZW4gd2UgZG8gdGhlIG11bHRpdGhyZWFkIHRlc3QuCj4+Pj4KPj4+
-Pgo+Pj4+Cj4+Pj4gSGVyZSBpcyB0aGUgcGF0Y2ggdG8gZml4IHRoaXMgcHJvYmxlbToKPj4+Pgo+
-Pj4+Cj4+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5OiBZdSBDaGFvIDxjaGFvMi55dUBzYW1zdW5nLmNv
-bT4KPj4+Pgo+Pj4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMvZjJmcy5o
-Cj4+Pj4KPj4+PiBvbGQgbW9kZSAxMDA2NDQKPj4+Pgo+Pj4+IG5ldyBtb2RlIDEwMDc1NQo+Pj4+
-Cj4+Pj4gaW5kZXggNDY3ZDQyZC4uOTgzYmI0NQo+Pj4+Cj4+Pj4gLS0tIGEvZnMvZjJmcy9mMmZz
-LmgKPj4+Pgo+Pj4+ICsrKyBiL2ZzL2YyZnMvZjJmcy5oCj4+Pj4KPj4+PiBAQCAtMzcxLDYgKzM3
-MSw3IEBAIHN0cnVjdCBmMmZzX3NiX2luZm8gewo+Pj4+Cj4+Pj4gICAgICAgICBzdHJ1Y3QgbXV0
-ZXggZnNfbG9ja1tOUl9HTE9CQUxfTE9DS1NdOyAgLyogYmxvY2tpbmcgRlMKPj4+PiBvcGVyYXRp
-b25zICovCj4+Pj4KPj4+PiAgICAgICAgIHN0cnVjdCBtdXRleCBub2RlX3dyaXRlOyAgICAgICAg
-ICAgICAgICAvKiBsb2NraW5nIG5vZGUKPj4gd3JpdGVzCj4+Pj4gKi8KPj4+Pgo+Pj4+ICAgICAg
-ICAgc3RydWN0IG11dGV4IHdyaXRlcGFnZXM7ICAgICAgICAgICAgICAgIC8qIG11dGV4IGZvcgo+
-Pj4+IHdyaXRlcGFnZXMoKSAqLwo+Pj4+Cj4+Pj4gKyAgICAgICBzcGlubG9ja190IHNwaW5fbG9j
-azsgICAgICAgICAgICAgICAgICAgLyogbG9jayBmb3IKPj4+PiBuZXh0X2xvY2tfbnVtICovCj4+
-Pj4KPj4+PiAgICAgICAgIHVuc2lnbmVkIGNoYXIgbmV4dF9sb2NrX251bTsgICAgICAgICAgICAv
-KiByb3VuZC1yb2Jpbgo+PiBnbG9iYWwKPj4+PiBsb2NrcyAqLwo+Pj4+Cj4+Pj4gICAgICAgICBp
-bnQgcG9yX2RvaW5nOyAgICAgICAgICAgICAgICAgICAgICAgICAgLyogcmVjb3ZlcnkgaXMgZG9p
-bmcKPj4+PiBvciBub3QgKi8KPj4+Pgo+Pj4+ICAgICAgICAgaW50IG9uX2J1aWxkX2ZyZWVfbmlk
-czsgICAgICAgICAgICAgICAgIC8qIGJ1aWxkX2ZyZWVfbmlkcyBpcwo+Pj4+IGRvaW5nICovCj4+
-Pj4KPj4+PiBAQCAtNTMzLDE1ICs1MzQsMTkgQEAgc3RhdGljIGlubGluZSB2b2lkIG11dGV4X3Vu
-bG9ja19hbGwoc3RydWN0Cj4+Pj4gZjJmc19zYl9pbmZvICpzYmkpCj4+Pj4KPj4+Pgo+Pj4+Cj4+
-Pj4gIHN0YXRpYyBpbmxpbmUgaW50IG11dGV4X2xvY2tfb3Aoc3RydWN0IGYyZnNfc2JfaW5mbyAq
-c2JpKQo+Pj4+Cj4+Pj4gIHsKPj4+Pgo+Pj4+IC0gICAgICAgdW5zaWduZWQgY2hhciBuZXh0X2xv
-Y2sgPSBzYmktPm5leHRfbG9ja19udW0gJQo+Pj4+IE5SX0dMT0JBTF9MT0NLUzsKPj4+Pgo+Pj4+
-ICsgICAgICAgdW5zaWduZWQgY2hhciBuZXh0X2xvY2s7Cj4+Pj4KPj4+PiAgICAgICAgIGludCBp
-ID0gMDsKPj4+Pgo+Pj4+Cj4+Pj4KPj4+PiAgICAgICAgIGZvciAoOyBpIDwgTlJfR0xPQkFMX0xP
-Q0tTOyBpKyspCj4+Pj4KPj4+PiAgICAgICAgICAgICAgICAgaWYgKG11dGV4X3RyeWxvY2soJnNi
-aS0+ZnNfbG9ja1tpXSkpCj4+Pj4KPj4+PiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4g
-aTsKPj4+Pgo+Pj4+Cj4+Pj4KPj4+PiAtICAgICAgIG11dGV4X2xvY2soJnNiaS0+ZnNfbG9ja1tu
-ZXh0X2xvY2tdKTsKPj4+Pgo+Pj4+ICsgICAgICAgc3Bpbl9sb2NrKCZzYmktPnNwaW5fbG9jayk7
-Cj4+Pj4KPj4+PiArICAgICAgIG5leHRfbG9jayA9IHNiaS0+bmV4dF9sb2NrX251bSAlIE5SX0dM
-T0JBTF9MT0NLUzsKPj4+Pgo+Pj4+ICAgICAgICAgc2JpLT5uZXh0X2xvY2tfbnVtKys7Cj4+Pj4K
-Pj4+PiArICAgICAgIHNwaW5fdW5sb2NrKCZzYmktPnNwaW5fbG9jayk7Cj4+Pj4KPj4+PiArCj4+
-Pj4KPj4+PiArICAgICAgIG11dGV4X2xvY2soJnNiaS0+ZnNfbG9ja1tuZXh0X2xvY2tdKTsKPj4+
-Pgo+Pj4+ICAgICAgICAgcmV0dXJuIG5leHRfbG9jazsKPj4+Pgo+Pj4+ICB9Cj4+Pj4KPj4+Pgo+
-Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc3VwZXIuYyBiL2ZzL2YyZnMvc3VwZXIuYwo+
-Pj4+Cj4+Pj4gb2xkIG1vZGUgMTAwNjQ0Cj4+Pj4KPj4+PiBuZXcgbW9kZSAxMDA3NTUKPj4+Pgo+
-Pj4+IGluZGV4IDc1YzdkYzMuLjRmMjc1OTYKPj4+Pgo+Pj4+IC0tLSBhL2ZzL2YyZnMvc3VwZXIu
-Ywo+Pj4+Cj4+Pj4gKysrIGIvZnMvZjJmcy9zdXBlci5jCj4+Pj4KPj4+PiBAQCAtNjU3LDYgKzY1
-Nyw3IEBAIHN0YXRpYyBpbnQgZjJmc19maWxsX3N1cGVyKHN0cnVjdCBzdXBlcl9ibG9jawo+Pj4+
-ICpzYiwgdm9pZCAqZGF0YSwgaW50IHNpbGVudCkKPj4+Pgo+Pj4+ICAgICAgICAgbXV0ZXhfaW5p
-dCgmc2JpLT5jcF9tdXRleCk7Cj4+Pj4KPj4+PiAgICAgICAgIGZvciAoaSA9IDA7IGkgPCBOUl9H
-TE9CQUxfTE9DS1M7IGkrKykKPj4+Pgo+Pj4+ICAgICAgICAgICAgICAgICBtdXRleF9pbml0KCZz
-YmktPmZzX2xvY2tbaV0pOwo+Pj4+Cj4+Pj4gKyAgICAgICBzcGluX2xvY2tfaW5pdCgmc2JpLT5z
-cGluX2xvY2spOwo+Pj4+Cj4+Pj4gICAgICAgICBtdXRleF9pbml0KCZzYmktPm5vZGVfd3JpdGUp
-Owo+Pj4+Cj4+Pj4gICAgICAgICBzYmktPnBvcl9kb2luZyA9IDA7Cj4+Pj4KPj4+PiAgICAgICAg
-IHNwaW5fbG9ja19pbml0KCZzYmktPnN0YXRfbG9jayk7Cj4+Pj4KPj4+PiAoRU5EKQo+Pj4+Cj4+
-Pj4KPj4+Pgo+Pj4+Cj4+Pj4KPj4+Pgo+Pj4KPj4KPj4KPj4gPQo+IAo+IAoKCgotLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0KSG93IFNlcnZpY2VOb3cgaGVscHMgSVQgcGVvcGxlIHRyYW5zZm9ybSBJVCBk
-ZXBhcnRtZW50czoKMS4gQ29uc29saWRhdGUgbGVnYWN5IElUIHN5c3RlbXMgdG8gYSBzaW5nbGUg
-c3lzdGVtIG9mIHJlY29yZCBmb3IgSVQKMi4gU3RhbmRhcmRpemUgYW5kIGdsb2JhbGl6ZSBzZXJ2
-aWNlIHByb2Nlc3NlcyBhY3Jvc3MgSVQKMy4gSW1wbGVtZW50IHplcm8tdG91Y2ggYXV0b21hdGlv
-biB0byByZXBsYWNlIG1hbnVhbCwgcmVkdW5kYW50IHRhc2tzCmh0dHA6Ly9wdWJhZHMuZy5kb3Vi
-bGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD01MTI3MTExMSZpdT0vNDE0MC9vc3RnLmNsa3Ryawpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
-LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
-dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
-LWRldmVsCg==
+Since the MAX_VICTIM_SEARCH has been enlarged from 20 to 4096,
+the victim searching overhead will be increased much than before,
+especially for SSR that searches victim for use quiet often.
+This patch intends to reduce the overhead a little bit by:
+- make the get_gc_cost a inline routine to reduce function call
+  overhead
+- reduce multiplication and division operations
+- reduce unnecessary comparison operation
+
+Signed-off-by: Jin Xu <jinuxstyle@gmail.com>
+---
+ fs/f2fs/gc.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index a78b8e3..14187bf 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -221,8 +221,8 @@ static unsigned int get_cb_cost(struct f2fs_sb_info *sbi, unsigned int segno)
+ 	return UINT_MAX - ((100 * (100 - u) * age) / (100 + u));
+ }
+ 
+-static unsigned int get_gc_cost(struct f2fs_sb_info *sbi, unsigned int segno,
+-					struct victim_sel_policy *p)
++static inline unsigned int get_gc_cost(struct f2fs_sb_info *sbi,
++			unsigned int segno, struct victim_sel_policy *p)
+ {
+ 	if (p->alloc_mode == SSR)
+ 		return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
+@@ -278,7 +278,11 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 			}
+ 			break;
+ 		}
+-		p.offset = ((segno / p.ofs_unit) * p.ofs_unit) + p.ofs_unit;
++
++		p.offset = segno + p.ofs_unit;
++		if (p.ofs_unit > 1)
++			p.offset -= segno % p.ofs_unit;
++
+ 		secno = GET_SECNO(sbi, segno);
+ 
+ 		if (sec_usage_check(sbi, secno))
+@@ -291,10 +295,9 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 		if (p.min_cost > cost) {
+ 			p.min_segno = segno;
+ 			p.min_cost = cost;
+-		}
+-
+-		if (cost == max_cost)
++		} else if (unlikely(cost == max_cost)) {
+ 			continue;
++		}
+ 
+ 		if (nsearched++ >= p.max_search) {
+ 			sbi->last_victim[p.gc_mode] = segno;
+-- 
+1.7.9.5
+
+
+------------------------------------------------------------------------------
+How ServiceNow helps IT people transform IT departments:
+1. Consolidate legacy IT systems to a single system of record for IT
+2. Standardize and globalize service processes across IT
+3. Implement zero-touch automation to replace manual, redundant tasks
+http://pubads.g.doubleclick.net/gampad/clk?id=51271111&iu=/4140/ostg.clktrk
