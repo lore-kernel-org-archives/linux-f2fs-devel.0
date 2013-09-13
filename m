@@ -1,85 +1,105 @@
-From: Jin Xu <linuxclimber@gmail.com>
-Subject: Re: [f2fs-dev][PATCH] f2fs: limit nr_iovecs in bio_alloc
-Date: Fri, 13 Sep 2013 19:49:20 +0800
-Message-ID: <5232FBC0.2030509@gmail.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH] f2fs: limit nr_iovecs in bio_alloc
+Date: Fri, 13 Sep 2013 20:10:37 +0800
+Message-ID: <000201ceb07a$60980fc0$21c82f40$@samsung.com>
 References: <000001ceb069$318a87a0$949f96e0$@samsung.com>
+	<5232FBC0.2030509@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=GB2312
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000001ceb069$318a87a0$949f96e0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: ??? <jaegeuk.kim@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?GB2312?B?zLfmrQ==?= <shu.tan@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1VKSDq-0003F0-Qw
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 13 Sep 2013 12:11:38 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VKSDo-0008Od-K0 for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 13 Sep 2013 12:11:38 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0MT2009KPCJ5X3R0@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 13 Sep 2013 21:11:29 +0900 (KST)
+In-reply-to: <5232FBC0.2030509@gmail.com>
+Content-language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Jin Xu' <linuxclimber@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, =?gb2312?B?J8y35q0n?= <shu.tan@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Did this patch pass the basic build? There seems have a typo
-regarding MAX_BIO_BLOCK.
-
---
-Jin
-
-On 13/09/2013 18:07, Chao Yu wrote:
-> This patch add macro MAX_BIO_BLOCKS to limit value of npages in
-> f2fs_bio_alloc,
-> it can avoid to return NULL in bio_alloc caused by npages is larger than
-> UIO_MAXIOV.
->
-> Signed-off-by: Yu Chao <chao2.yu@samsung.com>
->  ---
->  fs/f2fs/segment.c |    4 +++-
->  fs/f2fs/segment.h |    3 +++
->  2 files changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 09af9c7..bd79bbe 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -657,6 +657,7 @@ static void submit_write_page(struct f2fs_sb_info *sbi,
-> struct page *page,
->                                 block_t blk_addr, enum page_type type)
->  {
->         struct block_device *bdev = sbi->sb->s_bdev;
-> +       int bio_blocks;
->  
->         verify_block_addr(sbi, blk_addr);
->  
-> @@ -676,7 +677,8 @@ retry:
->                         goto retry;
->                 }
->  
-> -               sbi->bio[type] = f2fs_bio_alloc(bdev, max_hw_blocks(sbi));
-> +               bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
-> +               sbi->bio[type] = f2fs_bio_alloc(bdev, bio_blocks);
->                 sbi->bio[type]->bi_sector = SECTOR_FROM_BLOCK(sbi,
-> blk_addr);
->                 sbi->bio[type]->bi_private = priv;
->                 /*
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index bdd10ea..9cc95eb 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -9,6 +9,7 @@
->   * published by the Free Software Foundation.
->   */
->  #include <linux/blkdev.h>
-> +#include <linux/uio.h>
->  
->  /* constant macro */
->  #define NULL_SEGNO                     ((unsigned int)(~0))
-> @@ -90,6 +91,8 @@
->         (blk_addr << ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE))
->  #define SECTOR_TO_BLOCK(sbi, sectors)                                  \
->         (sectors >> ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE))
-> +#define MAX_BIO_BLOCK(max_hw_blocks)                                   \
-> +       (min((int)max_hw_blocks, UIO_MAXIOV))
->  
->  /* during checkpoint, bio_private is used to synchronize the last bio */
->  struct bio_private {
-> ---
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IEppbiBYdSBbbWFpbHRvOmxpbnV4
+Y2xpbWJlckBnbWFpbC5jb21dCj4gU2VudDogRnJpZGF5LCBTZXB0ZW1iZXIgMTMsIDIwMTMgNzo0
+OSBQTQo+IFRvOiBDaGFvIFl1Cj4gQ2M6ID8/PzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQ7CmxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOwo+IGxpbnV4LWtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmc7IMy35q0KPiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XVtQQVRDSF0g
+ZjJmczogbGltaXQgbnJfaW92ZWNzIGluIGJpb19hbGxvYwo+IAo+IERpZCB0aGlzIHBhdGNoIHBh
+c3MgdGhlIGJhc2ljIGJ1aWxkPyBUaGVyZSBzZWVtcyBoYXZlIGEgdHlwbyByZWdhcmRpbmcKPiBN
+QVhfQklPX0JMT0NLLgo+IAoKSSBhbSBzbyBzb3JyeSBhYm91dCB0aGF0LkkgbWlzcyB0aGUgJ1Mn
+IHdoZW4gbWVyZ2luZyB0aGUgY29kZSBieSBoYW5kd3JpdGluZwpmcm9tIGJ1aWxkIHBhdGggdG8g
+Z2l0IGJyYW5jaCBwYXRoLgpJIHdpbGwgY2hlY2sgdGhlIHBhdGNoIGNhcmVmdWxseSBhbmQgcmVz
+dWJtaXQgaXQuCgpUaGFua3MgZm9yIHJlbWluZGluZyEKCj4gLS0KPiBKaW4KPiAKPiBPbiAxMy8w
+OS8yMDEzIDE4OjA3LCBDaGFvIFl1IHdyb3RlOgo+ID4gVGhpcyBwYXRjaCBhZGQgbWFjcm8gTUFY
+X0JJT19CTE9DS1MgdG8gbGltaXQgdmFsdWUgb2YgbnBhZ2VzIGluCj4gPiBmMmZzX2Jpb19hbGxv
+YywgaXQgY2FuIGF2b2lkIHRvIHJldHVybiBOVUxMIGluIGJpb19hbGxvYyBjYXVzZWQgYnkKPiA+
+IG5wYWdlcyBpcyBsYXJnZXIgdGhhbiBVSU9fTUFYSU9WLgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6
+IFl1IENoYW8gPGNoYW8yLnl1QHNhbXN1bmcuY29tPgo+ID4gIC0tLQo+ID4gIGZzL2YyZnMvc2Vn
+bWVudC5jIHwgICAgNCArKystCj4gPiAgZnMvZjJmcy9zZWdtZW50LmggfCAgICAzICsrKwo+ID4g
+IDIgZmlsZXMgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gPgo+ID4g
+ZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50LmMgaW5kZXgK
+PiA+IDA5YWY5YzcuLmJkNzliYmUgMTAwNjQ0Cj4gPiAtLS0gYS9mcy9mMmZzL3NlZ21lbnQuYwo+
+ID4gKysrIGIvZnMvZjJmcy9zZWdtZW50LmMKPiA+IEBAIC02NTcsNiArNjU3LDcgQEAgc3RhdGlj
+IHZvaWQgc3VibWl0X3dyaXRlX3BhZ2Uoc3RydWN0IGYyZnNfc2JfaW5mbwo+ID4gKnNiaSwgc3Ry
+dWN0IHBhZ2UgKnBhZ2UsCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGJsb2Nr
+X3QgYmxrX2FkZHIsIGVudW0gcGFnZV90eXBlCj4gdHlwZSkKPiA+IHsKPiA+ICAgICAgICAgc3Ry
+dWN0IGJsb2NrX2RldmljZSAqYmRldiA9IHNiaS0+c2ItPnNfYmRldjsKPiA+ICsgICAgICAgaW50
+IGJpb19ibG9ja3M7Cj4gPgo+ID4gICAgICAgICB2ZXJpZnlfYmxvY2tfYWRkcihzYmksIGJsa19h
+ZGRyKTsKPiA+Cj4gPiBAQCAtNjc2LDcgKzY3Nyw4IEBAIHJldHJ5Ogo+ID4gICAgICAgICAgICAg
+ICAgICAgICAgICAgZ290byByZXRyeTsKPiA+ICAgICAgICAgICAgICAgICB9Cj4gPgo+ID4gLSAg
+ICAgICAgICAgICAgIHNiaS0+YmlvW3R5cGVdID0gZjJmc19iaW9fYWxsb2MoYmRldiwKbWF4X2h3
+X2Jsb2NrcyhzYmkpKTsKPiA+ICsgICAgICAgICAgICAgICBiaW9fYmxvY2tzID0gTUFYX0JJT19C
+TE9DS1MobWF4X2h3X2Jsb2NrcyhzYmkpKTsKPiA+ICsgICAgICAgICAgICAgICBzYmktPmJpb1t0
+eXBlXSA9IGYyZnNfYmlvX2FsbG9jKGJkZXYsIGJpb19ibG9ja3MpOwo+ID4gICAgICAgICAgICAg
+ICAgIHNiaS0+YmlvW3R5cGVdLT5iaV9zZWN0b3IgPSBTRUNUT1JfRlJPTV9CTE9DSyhzYmksCj4g
+PiBibGtfYWRkcik7Cj4gPiAgICAgICAgICAgICAgICAgc2JpLT5iaW9bdHlwZV0tPmJpX3ByaXZh
+dGUgPSBwcml2Owo+ID4gICAgICAgICAgICAgICAgIC8qCj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJm
+cy9zZWdtZW50LmggYi9mcy9mMmZzL3NlZ21lbnQuaCBpbmRleAo+ID4gYmRkMTBlYS4uOWNjOTVl
+YiAxMDA2NDQKPiA+IC0tLSBhL2ZzL2YyZnMvc2VnbWVudC5oCj4gPiArKysgYi9mcy9mMmZzL3Nl
+Z21lbnQuaAo+ID4gQEAgLTksNiArOSw3IEBACj4gPiAgICogcHVibGlzaGVkIGJ5IHRoZSBGcmVl
+IFNvZnR3YXJlIEZvdW5kYXRpb24uCj4gPiAgICovCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2Jsa2Rl
+di5oPgo+ID4gKyNpbmNsdWRlIDxsaW51eC91aW8uaD4KPiA+Cj4gPiAgLyogY29uc3RhbnQgbWFj
+cm8gKi8KPiA+ICAjZGVmaW5lIE5VTExfU0VHTk8gICAgICAgICAgICAgICAgICAgICAoKHVuc2ln
+bmVkIGludCkofjApKQo+ID4gQEAgLTkwLDYgKzkxLDggQEAKPiA+ICAgICAgICAgKGJsa19hZGRy
+IDw8ICgoc2JpKS0+bG9nX2Jsb2Nrc2l6ZSAtIEYyRlNfTE9HX1NFQ1RPUl9TSVpFKSkKPiA+ICAj
+ZGVmaW5lIFNFQ1RPUl9UT19CTE9DSyhzYmksIHNlY3RvcnMpCj4gXAo+ID4gICAgICAgICAoc2Vj
+dG9ycyA+PiAoKHNiaSktPmxvZ19ibG9ja3NpemUgLSBGMkZTX0xPR19TRUNUT1JfU0laRSkpCj4g
+PiArI2RlZmluZSBNQVhfQklPX0JMT0NLKG1heF9od19ibG9ja3MpCj4gXAo+ID4gKyAgICAgICAo
+bWluKChpbnQpbWF4X2h3X2Jsb2NrcywgVUlPX01BWElPVikpCj4gPgo+ID4gIC8qIGR1cmluZyBj
+aGVja3BvaW50LCBiaW9fcHJpdmF0ZSBpcyB1c2VkIHRvIHN5bmNocm9uaXplIHRoZSBsYXN0IGJp
+bwo+ID4gKi8gIHN0cnVjdCBiaW9fcHJpdmF0ZSB7Cj4gPiAtLS0KPiA+Cj4gPiAtLQo+ID4gVG8g
+dW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlCj4g
+PiBsaW51eC1rZXJuZWwiIGluIHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdl
+ci5rZXJuZWwub3JnCj4gPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJu
+ZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiA+IFBsZWFzZSByZWFkIHRoZSBGQVEgYXQgIGh0
+dHA6Ly93d3cudHV4Lm9yZy9sa21sLwoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpIb3cgU2Vydmlj
+ZU5vdyBoZWxwcyBJVCBwZW9wbGUgdHJhbnNmb3JtIElUIGRlcGFydG1lbnRzOgoxLiBDb25zb2xp
+ZGF0ZSBsZWdhY3kgSVQgc3lzdGVtcyB0byBhIHNpbmdsZSBzeXN0ZW0gb2YgcmVjb3JkIGZvciBJ
+VAoyLiBTdGFuZGFyZGl6ZSBhbmQgZ2xvYmFsaXplIHNlcnZpY2UgcHJvY2Vzc2VzIGFjcm9zcyBJ
+VAozLiBJbXBsZW1lbnQgemVyby10b3VjaCBhdXRvbWF0aW9uIHRvIHJlcGxhY2UgbWFudWFsLCBy
+ZWR1bmRhbnQgdGFza3MKaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xr
+P2lkPTUxMjcxMTExJml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
+bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
+Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
