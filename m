@@ -1,115 +1,169 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH RESEND] f2fs: avoid allocating failure in
- bio_alloc
-Date: Mon, 16 Sep 2013 11:26:05 +0800
-Message-ID: <000001ceb28c$9b293e20$d17bba60$@samsung.com>
-References: <000301ceb085$13189480$3949bd80$@samsung.com>
-	<5236684C.6020606@cn.fujitsu.com>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: Re: [f2fs-dev][PATCH RESEND] f2fs: avoid allocating failure in bio_alloc
+Date: Mon, 16 Sep 2013 12:40:18 +0800
+Message-ID: <52368BB2.7000008@cn.fujitsu.com>
+References: <000301ceb085$13189480$3949bd80$@samsung.com> <5236684C.6020606@cn.fujitsu.com> <000001ceb28c$9b293e20$d17bba60$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VLPSv-0006J6-Ju
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 Sep 2013 03:27:09 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VLPSt-0006cZ-MU for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 Sep 2013 03:27:09 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MT7001QA891DS20@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 Sep 2013 12:27:01 +0900 (KST)
-In-reply-to: <5236684C.6020606@cn.fujitsu.com>
-Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?gb2312?B?J8y35q0n?= <shu.tan@samsung.com>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=GB2312
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <000001ceb28c$9b293e20$d17bba60$@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: 'Kim Jaegeuk' <jaegeuk.kim@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?GB2312?B?J8y35q0n?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgR3UKCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiBGcm9tOiBHdSBaaGVuZyBbbWFp
-bHRvOmd1ei5mbnN0QGNuLmZ1aml0c3UuY29tXQo+IFNlbnQ6IE1vbmRheSwgU2VwdGVtYmVyIDE2
-LCAyMDEzIDEwOjA5IEFNCj4gVG86IENoYW8gWXUKPiBDYzogS2ltIEphZWdldWs7IGxpbnV4LWYy
-ZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Owo+IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyDMt+atCj4gU3ViamVjdDogUmU6
-IFtmMmZzLWRldl1bUEFUQ0ggUkVTRU5EXSBmMmZzOiBhdm9pZCBhbGxvY2F0aW5nIGZhaWx1cmUg
-aW4KYmlvX2FsbG9jCj4gCj4gSGkgQ2hhbywKPiAKPiBPbiAwOS8xMy8yMDEzIDA5OjI3IFBNLCBD
-aGFvIFl1IHdyb3RlOgo+IAo+ID4gVGhpcyBwYXRjaCBhZGQgbWFjcm8gTUFYX0JJT19CTE9DS1Mg
-dG8gbGltaXQgdmFsdWUgb2YgbnBhZ2VzIGluCj4gPiBmMmZzX2Jpb19hbGxvYywgaXQgY2FuIGF2
-b2lkIGFsbG9jYXRpbmcgZmFpbHVyZSBpbiBiaW9fYWxsb2MgY2F1c2VkIGJ5Cj4gPiBucGFnZXMg
-aXMgbGFyZ2VyIHRoYW4gVUlPX01BWElPVi4KPiAKPiBBcyBJIGtub3cgYmlvX2FsbG9jIGlzIGJh
-c2VkIG9mICpmc19iaW9fc2V0KiBwb29sLCB3aXRob3V0IHRoZSBsaW1pdGF0aW9uCm9mCj4gVUlP
-X01BWElPViwgYW0gSSBtaXNzaW5nIHNvbWV0aGluZz8KCkhlcmUgaXMgdGhlIGNvZGUgaW4gYmlv
-LmMsIGZzX2Jpb19zZXQgaXMgYXMgdGhlIGFjdHVhbCBwYXJhbWV0ZXIgcGFzcyB0byBicwp3aXRo
-b3V0IGJlaW5nIGluaXRlZC4KU28gaXQgbWF5IGhhdmUgb3Bwb3J0dW5pdHkgdG8gcmV0dXJuIE5V
-TEwgaW4gdGhpcyBmdW5jdGlvbi4KLS0tCkJpby5jIApzdHJ1Y3QgYmlvICpiaW9fYWxsb2NfYmlv
-c2V0KGdmcF90IGdmcF9tYXNrLCBpbnQgbnJfaW92ZWNzLCBzdHJ1Y3QgYmlvX3NldAoqYnMpCnsK
-Li4uLi4uCglpZiAoIWJzKSB7CgkJaWYgKG5yX2lvdmVjcyA+IFVJT19NQVhJT1YpCgkJCXJldHVy
-biBOVUxMOwotLS0KSSBkaWQgdGhlIGFibm9ybWFsIHRlc3Q6IG1vZGlmeSB0aGUgbWF4X3NlY3Rv
-cnNfa2IgaW4gL3N5cy9ibG9jay9zZHgvcXVldWUKdG8gMzI3NjcgZm9yIGEgZGlzayB3aXRoIGYy
-ZnMgZm9ybWF0LAphbmQgSSBnb3QgYSBzZWdmdWFsdCBpbiBmMmZzX2Jpb19hbGxvYyBhZnRlciB0
-aGUgaW1nIG1vdW50ZWQuCklzIHRoZXJlIGFueXRpbmcgSSBtaXNzZWQ/Cgo+IAo+IFRoYW5rcywK
-PiBHdQo+IAo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IFl1IENoYW8gPGNoYW8yLnl1QHNhbXN1bmcu
-Y29tPgo+ID4gIC0tLQo+ID4gIGZzL2YyZnMvc2VnbWVudC5jIHwgICAgNCArKystCj4gPiAgZnMv
-ZjJmcy9zZWdtZW50LmggfCAgICAzICsrKwo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgNiBpbnNlcnRp
-b25zKCspLCAxIGRlbGV0aW9uKC0pCj4gPgo+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVu
-dC5jIGIvZnMvZjJmcy9zZWdtZW50LmMgaW5kZXgKPiA+IDA5YWY5YzcuLmJkNzliYmUgMTAwNjQ0
-Cj4gPiAtLS0gYS9mcy9mMmZzL3NlZ21lbnQuYwo+ID4gKysrIGIvZnMvZjJmcy9zZWdtZW50LmMK
-PiA+IEBAIC02NTcsNiArNjU3LDcgQEAgc3RhdGljIHZvaWQgc3VibWl0X3dyaXRlX3BhZ2Uoc3Ry
-dWN0IGYyZnNfc2JfaW5mbwo+ID4gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsCj4gPiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIGJsb2NrX3QgYmxrX2FkZHIsIGVudW0gcGFnZV90eXBl
-Cj4gdHlwZSkKPiA+IHsKPiA+ICAgICAgICAgc3RydWN0IGJsb2NrX2RldmljZSAqYmRldiA9IHNi
-aS0+c2ItPnNfYmRldjsKPiA+ICsgICAgICAgaW50IGJpb19ibG9ja3M7Cj4gPgo+ID4gICAgICAg
-ICB2ZXJpZnlfYmxvY2tfYWRkcihzYmksIGJsa19hZGRyKTsKPiA+Cj4gPiBAQCAtNjc2LDcgKzY3
-Nyw4IEBAIHJldHJ5Ogo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgZ290byByZXRyeTsKPiA+
-ICAgICAgICAgICAgICAgICB9Cj4gPgo+ID4gLSAgICAgICAgICAgICAgIHNiaS0+YmlvW3R5cGVd
-ID0gZjJmc19iaW9fYWxsb2MoYmRldiwKbWF4X2h3X2Jsb2NrcyhzYmkpKTsKPiA+ICsgICAgICAg
-ICAgICAgICBiaW9fYmxvY2tzID0gTUFYX0JJT19CTE9DS1MobWF4X2h3X2Jsb2NrcyhzYmkpKTsK
-PiA+ICsgICAgICAgICAgICAgICBzYmktPmJpb1t0eXBlXSA9IGYyZnNfYmlvX2FsbG9jKGJkZXYs
-IGJpb19ibG9ja3MpOwo+ID4gICAgICAgICAgICAgICAgIHNiaS0+YmlvW3R5cGVdLT5iaV9zZWN0
-b3IgPSBTRUNUT1JfRlJPTV9CTE9DSyhzYmksCj4gPiBibGtfYWRkcik7Cj4gPiAgICAgICAgICAg
-ICAgICAgc2JpLT5iaW9bdHlwZV0tPmJpX3ByaXZhdGUgPSBwcml2Owo+ID4gICAgICAgICAgICAg
-ICAgIC8qCj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmggYi9mcy9mMmZzL3NlZ21l
-bnQuaCBpbmRleAo+ID4gYmRkMTBlYS4uNjM1MmFmMSAxMDA2NDQKPiA+IC0tLSBhL2ZzL2YyZnMv
-c2VnbWVudC5oCj4gPiArKysgYi9mcy9mMmZzL3NlZ21lbnQuaAo+ID4gQEAgLTksNiArOSw3IEBA
-Cj4gPiAgICogcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb24uCj4gPiAg
-ICovCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2Jsa2Rldi5oPgo+ID4gKyNpbmNsdWRlIDxsaW51eC91
-aW8uaD4KPiA+Cj4gPiAgLyogY29uc3RhbnQgbWFjcm8gKi8KPiA+ICAjZGVmaW5lIE5VTExfU0VH
-Tk8gICAgICAgICAgICAgICAgICAgICAoKHVuc2lnbmVkIGludCkofjApKQo+ID4gQEAgLTkwLDYg
-KzkxLDggQEAKPiA+ICAgICAgICAgKGJsa19hZGRyIDw8ICgoc2JpKS0+bG9nX2Jsb2Nrc2l6ZSAt
-IEYyRlNfTE9HX1NFQ1RPUl9TSVpFKSkKPiA+ICAjZGVmaW5lIFNFQ1RPUl9UT19CTE9DSyhzYmks
-IHNlY3RvcnMpCj4gXAo+ID4gICAgICAgICAoc2VjdG9ycyA+PiAoKHNiaSktPmxvZ19ibG9ja3Np
-emUgLSBGMkZTX0xPR19TRUNUT1JfU0laRSkpCj4gPiArI2RlZmluZSBNQVhfQklPX0JMT0NLUyht
-YXhfaHdfYmxvY2tzKQo+IFwKPiA+ICsgICAgICAgKG1pbigoaW50KW1heF9od19ibG9ja3MsIFVJ
-T19NQVhJT1YpKQo+ID4KPiA+ICAvKiBkdXJpbmcgY2hlY2twb2ludCwgYmlvX3ByaXZhdGUgaXMg
-dXNlZCB0byBzeW5jaHJvbml6ZSB0aGUgbGFzdCBiaW8KPiA+ICovICBzdHJ1Y3QgYmlvX3ByaXZh
-dGUgewo+ID4gLS0tCj4gPgo+ID4gLS0KPiA+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
-OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZQo+ID4gbGludXgta2VybmVsIiBpbiB0aGUgYm9k
-eSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+ID4gTW9yZSBtYWpv
-cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
-Cj4gPiBQbGVhc2UgcmVhZCB0aGUgRkFRIGF0ICBodHRwOi8vd3d3LnR1eC5vcmcvbGttbC8KPiA+
-CgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpMSU1JVEVEIFRJTUUgU0FMRSAtIEZ1bGwgWWVhciBv
-ZiBNaWNyb3NvZnQgVHJhaW5pbmcgRm9yIEp1c3QgJDQ5Ljk5IQoxLDUwMCsgaG91cnMgb2YgdHV0
-b3JpYWxzIGluY2x1ZGluZyBWaXN1YWxTdHVkaW8gMjAxMiwgV2luZG93cyA4LCBTaGFyZVBvaW50
-CjIwMTMsIFNRTCAyMDEyLCBNVkMgNCwgbW9yZS4gQkVTVCBWQUxVRTogTmV3IE11bHRpLUxpYnJh
-cnkgUG93ZXIgUGFjayBpbmNsdWRlcwpNb2JpbGUsIENsb3VkLCBKYXZhLCBhbmQgVVggRGVzaWdu
-LiBMb3dlc3QgcHJpY2UgZXZlciEgRW5kcyA5LzIwLzEzLiAKaHR0cDovL3B1YmFkcy5nLmRvdWJs
-ZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTU4MDQxMTUxJml1PS80MTQwL29zdGcuY2xrdHJrCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
-ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
-Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
-ZGV2ZWwK
+Hi Chao,
+
+On 09/16/2013 11:26 AM, Chao Yu wrote:
+
+> Hi Gu
+>=20
+>> -----Original Message-----
+>> From: Gu Zheng [mailto:guz.fnst@cn.fujitsu.com]
+>> Sent: Monday, September 16, 2013 10:09 AM
+>> To: Chao Yu
+>> Cc: Kim Jaegeuk; linux-f2fs-devel@lists.sourceforge.net;
+>> linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; =CC=B7=E6=
+=AD
+>> Subject: Re: [f2fs-dev][PATCH RESEND] f2fs: avoid allocating failure=
+ in
+> bio_alloc
+>>
+>> Hi Chao,
+>>
+>> On 09/13/2013 09:27 PM, Chao Yu wrote:
+>>
+>>> This patch add macro MAX_BIO_BLOCKS to limit value of npages in
+>>> f2fs_bio_alloc, it can avoid allocating failure in bio_alloc caused=
+ by
+>>> npages is larger than UIO_MAXIOV.
+>>
+>> As I know bio_alloc is based of *fs_bio_set* pool, without the limit=
+ation
+> of
+>> UIO_MAXIOV, am I missing something?
+>=20
+> Here is the code in bio.c, fs_bio_set is as the actual parameter pass=
+ to bs
+> without being inited.
+
+fs_bio_set was initiated early in the bio subsystem init.
+
+> So it may have opportunity to return NULL in this function.
+
+It may be, but may not be the thread you mentioned below.
+
+> ---
+> Bio.c=20
+> struct bio *bio_alloc_bioset(gfp_t gfp_mask, int nr_iovecs, struct bi=
+o_set
+> *bs)
+> {
+> ......
+> 	if (!bs) {
+> 		if (nr_iovecs > UIO_MAXIOV)
+> 			return NULL;
+> ---
+> I did the abnormal test: modify the max_sectors_kb in /sys/block/sdx/=
+queue
+> to 32767 for a disk with f2fs format,
+> and I got a segfualt in f2fs_bio_alloc after the img mounted.
+> Is there anyting I missed?
+
+Hmm, this change will also trigger bvec_alloc failed, did you add some =
+traces
+to debug this?
+
+Regards,
+Gu
+
+>=20
+>>
+>> Thanks,
+>> Gu
+>>
+>>>
+>>> Signed-off-by: Yu Chao <chao2.yu@samsung.com>
+>>>  ---
+>>>  fs/f2fs/segment.c |    4 +++-
+>>>  fs/f2fs/segment.h |    3 +++
+>>>  2 files changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c index
+>>> 09af9c7..bd79bbe 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -657,6 +657,7 @@ static void submit_write_page(struct f2fs_sb_in=
+fo
+>>> *sbi, struct page *page,
+>>>                                 block_t blk_addr, enum page_type
+>> type)
+>>> {
+>>>         struct block_device *bdev =3D sbi->sb->s_bdev;
+>>> +       int bio_blocks;
+>>>
+>>>         verify_block_addr(sbi, blk_addr);
+>>>
+>>> @@ -676,7 +677,8 @@ retry:
+>>>                         goto retry;
+>>>                 }
+>>>
+>>> -               sbi->bio[type] =3D f2fs_bio_alloc(bdev,
+> max_hw_blocks(sbi));
+>>> +               bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+>>> +               sbi->bio[type] =3D f2fs_bio_alloc(bdev, bio_blocks)=
+;
+>>>                 sbi->bio[type]->bi_sector =3D SECTOR_FROM_BLOCK(sbi=
+,
+>>> blk_addr);
+>>>                 sbi->bio[type]->bi_private =3D priv;
+>>>                 /*
+>>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index
+>>> bdd10ea..6352af1 100644
+>>> --- a/fs/f2fs/segment.h
+>>> +++ b/fs/f2fs/segment.h
+>>> @@ -9,6 +9,7 @@
+>>>   * published by the Free Software Foundation.
+>>>   */
+>>>  #include <linux/blkdev.h>
+>>> +#include <linux/uio.h>
+>>>
+>>>  /* constant macro */
+>>>  #define NULL_SEGNO                     ((unsigned int)(~0))
+>>> @@ -90,6 +91,8 @@
+>>>         (blk_addr << ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE))
+>>>  #define SECTOR_TO_BLOCK(sbi, sectors)
+>> \
+>>>         (sectors >> ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE))
+>>> +#define MAX_BIO_BLOCKS(max_hw_blocks)
+>> \
+>>> +       (min((int)max_hw_blocks, UIO_MAXIOV))
+>>>
+>>>  /* during checkpoint, bio_private is used to synchronize the last =
+bio
+>>> */  struct bio_private {
+>>> ---
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe
+>>> linux-kernel" in the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>> Please read the FAQ at  http://www.tux.org/lkml/
+>>>
+>=20
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+>=20
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
