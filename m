@@ -1,166 +1,203 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [f2fs-dev][PATCH RESEND] f2fs: avoid allocating failure in bio_alloc
-Date: Mon, 16 Sep 2013 12:40:18 +0800
-Message-ID: <52368BB2.7000008@cn.fujitsu.com>
-References: <000301ceb085$13189480$3949bd80$@samsung.com> <5236684C.6020606@cn.fujitsu.com> <000001ceb28c$9b293e20$d17bba60$@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev][PATCH RESEND] f2fs: avoid allocating failure in
+ bio_alloc
+Date: Tue, 17 Sep 2013 11:13:23 +0800
+Message-ID: <000201ceb353$ff0c80b0$fd258210$@samsung.com>
+References: <000301ceb085$13189480$3949bd80$@samsung.com>
+ <5236684C.6020606@cn.fujitsu.com>
+ <000001ceb28c$9b293e20$d17bba60$@samsung.com> <52368BB2.7000008@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=GB2312
+Content-Type: text/plain; charset=gb2312
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <000001ceb28c$9b293e20$d17bba60$@samsung.com>
+In-reply-to: <52368BB2.7000008@cn.fujitsu.com>
+Content-language: zh-cn
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: 'Kim Jaegeuk' <jaegeuk.kim@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?GB2312?B?J8y35q0n?= <shu.tan@samsung.com>
+To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>
+Cc: 'Kim Jaegeuk' <jaegeuk.kim@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?gb2312?B?J8y35q0n?= <shu.tan@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+Hi Gu
 
-On 09/16/2013 11:26 AM, Chao Yu wrote:
-
-> Hi Gu
+> -----Original Message-----
+> From: Gu Zheng [mailto:guz.fnst@cn.fujitsu.com]
+> Sent: Monday, September 16, 2013 12:40 PM
+> To: Chao Yu
+> Cc: 'Kim Jaegeuk'; linux-f2fs-devel@lists.sourceforge.net;
+> linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; '=CC=B7=E6=
+=AD'
+> Subject: Re: [f2fs-dev][PATCH RESEND] f2fs: avoid allocating failure =
+in
+bio_alloc
 >=20
->> -----Original Message-----
->> From: Gu Zheng [mailto:guz.fnst@cn.fujitsu.com]
->> Sent: Monday, September 16, 2013 10:09 AM
->> To: Chao Yu
->> Cc: Kim Jaegeuk; linux-f2fs-devel@lists.sourceforge.net;
->> linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; =CC=B7=E6=
-=AD
->> Subject: Re: [f2fs-dev][PATCH RESEND] f2fs: avoid allocating failure=
- in
-> bio_alloc
->>
->> Hi Chao,
->>
->> On 09/13/2013 09:27 PM, Chao Yu wrote:
->>
->>> This patch add macro MAX_BIO_BLOCKS to limit value of npages in
->>> f2fs_bio_alloc, it can avoid allocating failure in bio_alloc caused=
- by
->>> npages is larger than UIO_MAXIOV.
->>
->> As I know bio_alloc is based of *fs_bio_set* pool, without the limit=
-ation
-> of
->> UIO_MAXIOV, am I missing something?
+> Hi Chao,
 >=20
-> Here is the code in bio.c, fs_bio_set is as the actual parameter pass=
- to bs
-> without being inited.
+> On 09/16/2013 11:26 AM, Chao Yu wrote:
+>=20
+> > Hi Gu
+> >
+> >> -----Original Message-----
+> >> From: Gu Zheng [mailto:guz.fnst@cn.fujitsu.com]
+> >> Sent: Monday, September 16, 2013 10:09 AM
+> >> To: Chao Yu
+> >> Cc: Kim Jaegeuk; linux-f2fs-devel@lists.sourceforge.net;
+> >> linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; =CC=B7=
+=E6=AD
+> >> Subject: Re: [f2fs-dev][PATCH RESEND] f2fs: avoid allocating failu=
+re
+> >> in
+> > bio_alloc
+> >>
+> >> Hi Chao,
+> >>
+> >> On 09/13/2013 09:27 PM, Chao Yu wrote:
+> >>
+> >>> This patch add macro MAX_BIO_BLOCKS to limit value of npages in
+> >>> f2fs_bio_alloc, it can avoid allocating failure in bio_alloc caus=
+ed
+> >>> by npages is larger than UIO_MAXIOV.
+> >>
+> >> As I know bio_alloc is based of *fs_bio_set* pool, without the
+> >> limitation
+> > of
+> >> UIO_MAXIOV, am I missing something?
+> >
+> > Here is the code in bio.c, fs_bio_set is as the actual parameter pa=
+ss
+> > to bs without being inited.
+>=20
+> fs_bio_set was initiated early in the bio subsystem init.
+>=20
+> > So it may have opportunity to return NULL in this function.
+>=20
+> It may be, but may not be the thread you mentioned below.
+>=20
+> > ---
+> > Bio.c
+> > struct bio *bio_alloc_bioset(gfp_t gfp_mask, int nr_iovecs, struct
+> > bio_set
+> > *bs)
+> > {
+> > ......
+> > 	if (!bs) {
+> > 		if (nr_iovecs > UIO_MAXIOV)
+> > 			return NULL;
+> > ---
+> > I did the abnormal test: modify the max_sectors_kb in
+> > /sys/block/sdx/queue to 32767 for a disk with f2fs format, and I go=
+t a
+> > segfualt in f2fs_bio_alloc after the img mounted.
+> > Is there anyting I missed?
+>=20
+> Hmm, this change will also trigger bvec_alloc failed, did you add som=
+e
+traces to
+> debug this?
 
-fs_bio_set was initiated early in the bio subsystem init.
+I reviewed the code in bio_alloc, and then trace the process of bio_all=
+oc
+for verification.
+It indicate that bvec_alloc() will fail on the condition that nr_iovecs=
+ is
+greater than BIO_MAX_PAGES.
+The patch should be updated for that.
 
-> So it may have opportunity to return NULL in this function.
-
-It may be, but may not be the thread you mentioned below.
-
-> ---
-> Bio.c=20
-> struct bio *bio_alloc_bioset(gfp_t gfp_mask, int nr_iovecs, struct bi=
-o_set
-> *bs)
-> {
-> ......
-> 	if (!bs) {
-> 		if (nr_iovecs > UIO_MAXIOV)
-> 			return NULL;
-> ---
-> I did the abnormal test: modify the max_sectors_kb in /sys/block/sdx/=
-queue
-> to 32767 for a disk with f2fs format,
-> and I got a segfualt in f2fs_bio_alloc after the img mounted.
-> Is there anyting I missed?
-
-Hmm, this change will also trigger bvec_alloc failed, did you add some =
-traces
-to debug this?
-
-Regards,
-Gu
+I am sorry about the mistake in this patch, and thanks for the reviewin=
+g and
+reminding.
 
 >=20
->>
->> Thanks,
->> Gu
->>
->>>
->>> Signed-off-by: Yu Chao <chao2.yu@samsung.com>
->>>  ---
->>>  fs/f2fs/segment.c |    4 +++-
->>>  fs/f2fs/segment.h |    3 +++
->>>  2 files changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c index
->>> 09af9c7..bd79bbe 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -657,6 +657,7 @@ static void submit_write_page(struct f2fs_sb_in=
-fo
->>> *sbi, struct page *page,
->>>                                 block_t blk_addr, enum page_type
->> type)
->>> {
->>>         struct block_device *bdev =3D sbi->sb->s_bdev;
->>> +       int bio_blocks;
->>>
->>>         verify_block_addr(sbi, blk_addr);
->>>
->>> @@ -676,7 +677,8 @@ retry:
->>>                         goto retry;
->>>                 }
->>>
->>> -               sbi->bio[type] =3D f2fs_bio_alloc(bdev,
-> max_hw_blocks(sbi));
->>> +               bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
->>> +               sbi->bio[type] =3D f2fs_bio_alloc(bdev, bio_blocks)=
+> Regards,
+> Gu
+>=20
+> >
+> >>
+> >> Thanks,
+> >> Gu
+> >>
+> >>>
+> >>> Signed-off-by: Yu Chao <chao2.yu@samsung.com>
+> >>>  ---
+> >>>  fs/f2fs/segment.c |    4 +++-
+> >>>  fs/f2fs/segment.h |    3 +++
+> >>>  2 files changed, 6 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c index
+> >>> 09af9c7..bd79bbe 100644
+> >>> --- a/fs/f2fs/segment.c
+> >>> +++ b/fs/f2fs/segment.c
+> >>> @@ -657,6 +657,7 @@ static void submit_write_page(struct
+> >>> f2fs_sb_info *sbi, struct page *page,
+> >>>                                 block_t blk_addr, enum page_type
+> >> type)
+> >>> {
+> >>>         struct block_device *bdev =3D sbi->sb->s_bdev;
+> >>> +       int bio_blocks;
+> >>>
+> >>>         verify_block_addr(sbi, blk_addr);
+> >>>
+> >>> @@ -676,7 +677,8 @@ retry:
+> >>>                         goto retry;
+> >>>                 }
+> >>>
+> >>> -               sbi->bio[type] =3D f2fs_bio_alloc(bdev,
+> > max_hw_blocks(sbi));
+> >>> +               bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi))=
 ;
->>>                 sbi->bio[type]->bi_sector =3D SECTOR_FROM_BLOCK(sbi=
-,
->>> blk_addr);
->>>                 sbi->bio[type]->bi_private =3D priv;
->>>                 /*
->>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index
->>> bdd10ea..6352af1 100644
->>> --- a/fs/f2fs/segment.h
->>> +++ b/fs/f2fs/segment.h
->>> @@ -9,6 +9,7 @@
->>>   * published by the Free Software Foundation.
->>>   */
->>>  #include <linux/blkdev.h>
->>> +#include <linux/uio.h>
->>>
->>>  /* constant macro */
->>>  #define NULL_SEGNO                     ((unsigned int)(~0))
->>> @@ -90,6 +91,8 @@
->>>         (blk_addr << ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE))
->>>  #define SECTOR_TO_BLOCK(sbi, sectors)
->> \
->>>         (sectors >> ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE))
->>> +#define MAX_BIO_BLOCKS(max_hw_blocks)
->> \
->>> +       (min((int)max_hw_blocks, UIO_MAXIOV))
->>>
->>>  /* during checkpoint, bio_private is used to synchronize the last =
-bio
->>> */  struct bio_private {
->>> ---
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe
->>> linux-kernel" in the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>> Please read the FAQ at  http://www.tux.org/lkml/
->>>
+> >>> +               sbi->bio[type] =3D f2fs_bio_alloc(bdev, bio_block=
+s);
+> >>>                 sbi->bio[type]->bi_sector =3D
+> SECTOR_FROM_BLOCK(sbi,
+> >>> blk_addr);
+> >>>                 sbi->bio[type]->bi_private =3D priv;
+> >>>                 /*
+> >>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index
+> >>> bdd10ea..6352af1 100644
+> >>> --- a/fs/f2fs/segment.h
+> >>> +++ b/fs/f2fs/segment.h
+> >>> @@ -9,6 +9,7 @@
+> >>>   * published by the Free Software Foundation.
+> >>>   */
+> >>>  #include <linux/blkdev.h>
+> >>> +#include <linux/uio.h>
+> >>>
+> >>>  /* constant macro */
+> >>>  #define NULL_SEGNO                     ((unsigned int)(~0))
+> >>> @@ -90,6 +91,8 @@
+> >>>         (blk_addr << ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE=
+))
+> >>> #define SECTOR_TO_BLOCK(sbi, sectors)
+> >> \
+> >>>         (sectors >> ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE)=
+)
+> >>> +#define MAX_BIO_BLOCKS(max_hw_blocks)
+> >> \
+> >>> +       (min((int)max_hw_blocks, UIO_MAXIOV))
+> >>>
+> >>>  /* during checkpoint, bio_private is used to synchronize the las=
+t
+> >>> bio */  struct bio_private {
+> >>> ---
+> >>>
+> >>> --
+> >>> To unsubscribe from this list: send the line "unsubscribe
+> >>> linux-kernel" in the body of a message to majordomo@vger.kernel.o=
+rg
+> >>> More majordomo info at  http://vger.kernel.org/majordomo-info.htm=
+l
+> >>> Please read the FAQ at  http://www.tux.org/lkml/
+> >>>
+> >
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe
+> > linux-kernel" in the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > Please read the FAQ at  http://www.tux.org/lkml/
+> >
 >=20
 >=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
->=20
-
+> =3D
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
