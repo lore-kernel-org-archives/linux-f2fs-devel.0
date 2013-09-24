@@ -1,7 +1,7 @@
-From: "Russ W. Knize" <russ@knizefamily.net>
+From: "Russ W. Knize" <rknize@gmail.com>
 Subject: [PATCH 2/2] f2fs: account for orphan inodes during recovery
-Date: Tue, 24 Sep 2013 09:36:57 -0500
-Message-ID: <25a06e3e5ef81f00a220f0e59040806d@www.metagalaxy.net>
+Date: Tue, 24 Sep 2013 09:40:57 -0500
+Message-ID: <925870294c69c592c792dab867475df6@www.metagalaxy.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8;
  format=flowed
