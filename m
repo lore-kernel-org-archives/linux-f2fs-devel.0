@@ -1,101 +1,78 @@
 From: Russ Knize <Russ.Knize@motorola.com>
-Subject: Re: [f2fs-dev] [RFC] f2fs: dont take an fs_lock in f2fs_setxattr()
-Date: Tue, 24 Sep 2013 09:59:24 -0500
-Message-ID: <CAGfvh61tGsZW_vtB0ihTTJihZ+812RCEuLiCd9gX639hP-bLpQ@mail.gmail.com>
-References: <e28992f12d725c3f0c0137aa046c8786@www.metagalaxy.net>
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: account for orphan inodes during recovery
+Date: Tue, 24 Sep 2013 11:35:12 -0500
+Message-ID: <CAGfvh620A-cuUzQ2rVPiua_JFE33h9Fir90KSn5g9WnxR0cp7A@mail.gmail.com>
+References: <25a06e3e5ef81f00a220f0e59040806d@www.metagalaxy.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <e28992f12d725c3f0c0137aa046c8786@www.metagalaxy.net>
+In-Reply-To: <25a06e3e5ef81f00a220f0e59040806d@www.metagalaxy.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: "Russ W. Knize" <rknize@gmail.com>
+To: "Russ W. Knize" <russ@knizefamily.net>
 Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-I sent this as RFC do that we can continue the discussion about the
-design here.  Even with the above patch, we uncovered another deadlock
-condition:
+Sorry about the corrupted patches: I'm a bit rusty.  I'll resend them
+the old-fashioned way in a bit.
 
-- f2fs_write_begin()
- - f2fs_balance_fs() <-- takes gc_mutex
-  - f2fs_gc()
-   - write_checkpoint()
-    - block_operations()
-     - mutex_lock_all() <-- blocks trying to grab all fs_locks
-
-- f2fs_mkdir() <-- takes an fs_lock
- - __f2fs_add_link()
-  - f2fs_init_security()
-   - security_inode_init_security()
-    - f2fs_initxattrs()
-     - f2fs_setxattr()
-      - f2fs_balance_fs() <-- blocks trying to take gc_mutex
-
-The fundamental problem is the same: we are trying to call
-f2fs_settxattr from within the F2FS driver itself.  It seems like
-f2fs_init_security() should be using an internal API here.  The
-alternative is to remove the f2fs_balance_fs() from f2fs_setxattr() as
-well as the fs_lock.
-
-Russ
-
-On Tue, Sep 24, 2013 at 9:39 AM, Russ W. Knize <rknize@gmail.com> wrote:
-> The VFS layer already protects xattr_handler.set from concurrent
-> access via an inode mutex, so there is no reason to take an fs_lock
-> as well.  This avoids a potential dealock:
->
-> - vfs_create()
->   - f2fs_create() - takes an fs_lock
->    - f2fs_add_link()
->     - __f2fs_add_link()
->      - init_inode_metadata()
->       - f2fs_init_security()
->        - security_inode_init_security()
->         - f2fs_initxattrs()
->          - f2fs_setxattr() - also takes an fs_lock
->
-> If the caller happens to grab the same fs_lock from the pool in both
-> places, they will deadlock.
+On Tue, Sep 24, 2013 at 9:36 AM, Russ W. Knize <russ@knizefamily.net> wrote:
+> During recovery, orphan inodes are deleted via truncate_hole().
+> These orphans are added by recover_dentry() via f2fs_delete_entry().
+> However, f2fs_delete_entry() adds them via add_orphan_inode()
+> without calling acquire_orphan_inode() first.  This prevents the
+> counters from being incremented properly, which causes them to
+> underflow when remove_orphan_inode() is called later on.
 >
 > Signed-off-by: Russ Knize <rknize@motorola.com>
 > ---
->   fs/f2fs/xattr.c |    4 ----
->   1 file changed, 4 deletions(-)
+>   fs/f2fs/recovery.c |   19 +++++++++++++------
+>   1 file changed, 13 insertions(+), 6 deletions(-)
 >
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index 1ac8a5f..18b4080 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -478,7 +478,6 @@ int f2fs_setxattr(struct inode *inode, int
-> name_index, const char *name,
->         void *base_addr;
->         int found, newsize;
->         size_t name_len;
-> -       int ilock;
->         __u32 new_hsize;
->         int error = -ENOMEM;
->
-> @@ -495,8 +494,6 @@ int f2fs_setxattr(struct inode *inode, int
-> name_index, const char *name,
->
->         f2fs_balance_fs(sbi);
->
-> -       ilock = mutex_lock_op(sbi);
-> -
->         base_addr = read_all_xattrs(inode, ipage);
->         if (!base_addr)
->                 goto exit;
-> @@ -578,7 +575,6 @@ int f2fs_setxattr(struct inode *inode, int
-> name_index, const char *name,
->         else
->                 update_inode_page(inode);
->   exit:
-> -       mutex_unlock_op(sbi, ilock);
->         kzfree(base_addr);
->         return error;
->   }
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index e8cf621..908066d 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -67,24 +67,31 @@ static int recover_dentry(struct page *ipage,
+> struct inode *inode)
+>         name.name = raw_inode->i_name;
+>   retry:
+>         de = f2fs_find_entry(dir, &name, &page);
+> -       if (de && inode->i_ino == le32_to_cpu(de->ino)) {
+> -               kunmap(page);
+> -               f2fs_put_page(page, 0);
+> -               goto out;
+> -       }
+> +       if (de && inode->i_ino == le32_to_cpu(de->ino))
+> +               goto out_unmap_put;
+>         if (de) {
+>                 einode = f2fs_iget(inode->i_sb, le32_to_cpu(de->ino));
+>                 if (IS_ERR(einode)) {
+>                         WARN_ON(1);
+>                         if (PTR_ERR(einode) == -ENOENT)
+>                                 err = -EEXIST;
+> -                       goto out;
+> +                       goto out_unmap_put;
+> +               }
+> +               err = acquire_orphan_inode(F2FS_SB(inode->i_sb));
+> +               if (err) {
+> +                       iput(einode);
+> +                       goto out_unmap_put;
+>                 }
+>                 f2fs_delete_entry(de, page, einode);
+>                 iput(einode);
+>                 goto retry;
+>         }
+>         err = __f2fs_add_link(dir, &name, inode);
+> +       goto out;
+> +
+> +out_unmap_put:
+> +       kunmap(page);
+> +       f2fs_put_page(page, 0);
+>   out:
+>         f2fs_msg(inode->i_sb, KERN_DEBUG, "recover_inode and its dentry: "
+>                         "ino = %x, name = %s, dir = %lx, err = %d",
 > --
-> 1.7.10.4
+> 1.7.9.5
 >
 >
 > ------------------------------------------------------------------------------
