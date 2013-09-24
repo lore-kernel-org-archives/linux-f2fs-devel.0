@@ -1,139 +1,200 @@
-From: Russ Knize <Russ.Knize@motorola.com>
-Subject: Re: [RFC 1/1] f2fs: don't GC or take an fs_lock from f2fs_initxattrs()
-Date: Tue, 24 Sep 2013 15:53:56 -0500
-Message-ID: <CAGfvh62J=rkvAw_nxEt1CSE9EhDQqnow+waQJ_gNt1YmkrD9wg@mail.gmail.com>
+From: Kelly Anderson <kelly@xilka.com>
+Subject: [PATCH]: remount - don't error on xattr and acl options
+Date: Tue, 24 Sep 2013 16:41:45 -0600
+Message-ID: <2098899.Kj1kDSIWdu@comer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Russ Knize <rknize@gmail.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: multipart/mixed; boundary="nextPart11524138.g4E6JgEJo6"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kelly@xilka.com>) id 1VObrS-0001qm-Dm
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 24 Sep 2013 23:17:42 +0000
+Received: from ar100.montanavision.com ([216.146.103.100] helo=xilka.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1VObrQ-0005sq-OE
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 24 Sep 2013 23:17:42 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk.kim@samsung.com
 
-This is an alternate solution to the deadlock problem I mentioned in
-my previous patch.
+This is a multi-part message in MIME format.
 
-On Tue, Sep 24, 2013 at 3:49 PM, Russ Knize <rknize@gmail.com> wrote:
-> From: Russ Knize <Russ.Knize@motorola.com>
->
-> f2fs_initxattrs() is called internally from within F2FS and should
-> not call functions that are used by VFS handlers.  This avoids
-> certain deadlocks:
->
-> - vfs_create()
->  - f2fs_create() <-- takes an fs_lock
->   - f2fs_add_link()
->    - __f2fs_add_link()
->     - init_inode_metadata()
->      - f2fs_init_security()
->       - security_inode_init_security()
->        - f2fs_initxattrs()
->         - f2fs_setxattr() <-- also takes an fs_lock
->
-> If the caller happens to grab the same fs_lock from the pool in both
-> places, they will deadlock.  There are also deadlocks involving
-> multiple threads and mutexes:
->
-> - f2fs_write_begin()
->  - f2fs_balance_fs() <-- takes gc_mutex
->   - f2fs_gc()
->    - write_checkpoint()
->     - block_operations()
->      - mutex_lock_all() <-- blocks trying to grab all fs_locks
->
-> - f2fs_mkdir() <-- takes an fs_lock
->  - __f2fs_add_link()
->   - f2fs_init_security()
->    - security_inode_init_security()
->     - f2fs_initxattrs()
->      - f2fs_setxattr()
->       - f2fs_balance_fs() <-- blocks trying to take gc_mutex
->
-> Signed-off-by: Russ Knize <Russ.Knize@motorola.com>
-> ---
->  fs/f2fs/xattr.c |   35 +++++++++++++++++++++++++----------
->  1 file changed, 25 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index 1ac8a5f..3d900ea 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -154,6 +154,9 @@ static int f2fs_xattr_advise_set(struct dentry *dentry, const char *name,
->  }
->
->  #ifdef CONFIG_F2FS_FS_SECURITY
-> +static int __f2fs_setxattr(struct inode *inode, int name_index,
-> +                       const char *name, const void *value, size_t value_len,
-> +                       struct page *ipage);
->  static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
->                 void *page)
->  {
-> @@ -161,7 +164,7 @@ static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
->         int err = 0;
->
->         for (xattr = xattr_array; xattr->name != NULL; xattr++) {
-> -               err = f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY,
-> +               err = __f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY,
->                                 xattr->name, xattr->value,
->                                 xattr->value_len, (struct page *)page);
->                 if (err < 0)
-> @@ -469,16 +472,15 @@ cleanup:
->         return error;
->  }
->
-> -int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
-> -                       const void *value, size_t value_len, struct page *ipage)
-> +static int __f2fs_setxattr(struct inode *inode, int name_index,
-> +                       const char *name, const void *value, size_t value_len,
-> +                       struct page *ipage)
->  {
-> -       struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
->         struct f2fs_inode_info *fi = F2FS_I(inode);
->         struct f2fs_xattr_entry *here, *last;
->         void *base_addr;
->         int found, newsize;
->         size_t name_len;
-> -       int ilock;
->         __u32 new_hsize;
->         int error = -ENOMEM;
->
-> @@ -493,10 +495,6 @@ int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
->         if (name_len > F2FS_NAME_LEN || value_len > MAX_VALUE_LEN(inode))
->                 return -ERANGE;
->
-> -       f2fs_balance_fs(sbi);
-> -
-> -       ilock = mutex_lock_op(sbi);
-> -
->         base_addr = read_all_xattrs(inode, ipage);
->         if (!base_addr)
->                 goto exit;
-> @@ -578,7 +576,24 @@ int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
->         else
->                 update_inode_page(inode);
->  exit:
-> -       mutex_unlock_op(sbi, ilock);
->         kzfree(base_addr);
->         return error;
->  }
-> +
-> +int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
-> +                       const void *value, size_t value_len, struct page *ipage)
-> +{
-> +       struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-> +       int ilock;
-> +       int err;
-> +
-> +       f2fs_balance_fs(sbi);
-> +
-> +       ilock = mutex_lock_op(sbi);
-> +
-> +       err = __f2fs_setxattr(inode, name_index, name, value, value_len, ipage);
-> +
-> +       mutex_unlock_op(sbi, ilock);
-> +
-> +       return err;
-> +}
-> --
-> 1.7.10.4
->
+--nextPart11524138.g4E6JgEJo6
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+
+Hi,
+
+The current f2fs code errors if the xattr or acl options are passed when 
+remounting.  This is important in a typical scenario where f2fs is mounted
+as a "ro" root file-system by the boot loader and then the init process wants
+to remount it "rw" with the "remount,rw" option.
+
+The attached patch fixes the problem.
+
+Included here for review.
+
+--- ./fs/f2fs/super.c.orig	2013-09-22 19:17:07.713293098 -0600
++++ ./fs/f2fs/super.c	2013-09-22 19:27:59.604265911 -0600
+@@ -43,7 +43,9 @@ enum {
+ 	Opt_disable_roll_forward,
+ 	Opt_discard,
+ 	Opt_noheap,
++	Opt_user_xattr,
+ 	Opt_nouser_xattr,
++	Opt_acl,
+ 	Opt_noacl,
+ 	Opt_active_logs,
+ 	Opt_disable_ext_identify,
+@@ -56,7 +58,9 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_disable_roll_forward, "disable_roll_forward"},
+ 	{Opt_discard, "discard"},
+ 	{Opt_noheap, "no_heap"},
++	{Opt_user_xattr, "user_xattr"},
+ 	{Opt_nouser_xattr, "nouser_xattr"},
++	{Opt_acl, "acl"},
+ 	{Opt_noacl, "noacl"},
+ 	{Opt_active_logs, "active_logs=%u"},
+ 	{Opt_disable_ext_identify, "disable_ext_identify"},
+@@ -237,6 +241,9 @@ static int parse_options(struct super_bl
+ 			set_opt(sbi, NOHEAP);
+ 			break;
+ #ifdef CONFIG_F2FS_FS_XATTR
++		case Opt_user_xattr:
++			set_opt(sbi, XATTR_USER);
++			break;
+ 		case Opt_nouser_xattr:
+ 			clear_opt(sbi, XATTR_USER);
+ 			break;
+@@ -244,6 +251,10 @@ static int parse_options(struct super_bl
+ 			set_opt(sbi, INLINE_XATTR);
+ 			break;
+ #else
++		case Opt_user_xattr:
++			f2fs_msg(sb, KERN_INFO,
++				"user_xattr options not supported");
++			break;
+ 		case Opt_nouser_xattr:
+ 			f2fs_msg(sb, KERN_INFO,
+ 				"nouser_xattr options not supported");
+@@ -254,10 +265,16 @@ static int parse_options(struct super_bl
+ 			break;
+ #endif
+ #ifdef CONFIG_F2FS_FS_POSIX_ACL
++		case Opt_acl:
++			set_opt(sbi, POSIX_ACL);
++			break;
+ 		case Opt_noacl:
+ 			clear_opt(sbi, POSIX_ACL);
+ 			break;
+ #else
++		case Opt_acl:
++			f2fs_msg(sb, KERN_INFO, "acl options not supported");
++			break;
+ 		case Opt_noacl:
+ 			f2fs_msg(sb, KERN_INFO, "noacl options not supported");
+ 			break;
+
+--nextPart11524138.g4E6JgEJo6
+Content-Disposition: attachment;
+	filename="Kernel-3.12+-f2fs-dont-error-on-xattr-and-acl-options.patch"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/x-patch; charset="UTF-8";
+	name="Kernel-3.12+-f2fs-dont-error-on-xattr-and-acl-options.patch"
+
+--- ./fs/f2fs/super.c.orig	2013-09-22 19:17:07.713293098 -0600
++++ ./fs/f2fs/super.c	2013-09-22 19:27:59.604265911 -0600
+@@ -43,7 +43,9 @@ enum {
+ 	Opt_disable_roll_forward,
+ 	Opt_discard,
+ 	Opt_noheap,
++	Opt_user_xattr,
+ 	Opt_nouser_xattr,
++	Opt_acl,
+ 	Opt_noacl,
+ 	Opt_active_logs,
+ 	Opt_disable_ext_identify,
+@@ -56,7 +58,9 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_disable_roll_forward, "disable_roll_forward"},
+ 	{Opt_discard, "discard"},
+ 	{Opt_noheap, "no_heap"},
++	{Opt_user_xattr, "user_xattr"},
+ 	{Opt_nouser_xattr, "nouser_xattr"},
++	{Opt_acl, "acl"},
+ 	{Opt_noacl, "noacl"},
+ 	{Opt_active_logs, "active_logs=%u"},
+ 	{Opt_disable_ext_identify, "disable_ext_identify"},
+@@ -237,6 +241,9 @@ static int parse_options(struct super_bl
+ 			set_opt(sbi, NOHEAP);
+ 			break;
+ #ifdef CONFIG_F2FS_FS_XATTR
++		case Opt_user_xattr:
++			set_opt(sbi, XATTR_USER);
++			break;
+ 		case Opt_nouser_xattr:
+ 			clear_opt(sbi, XATTR_USER);
+ 			break;
+@@ -244,6 +251,10 @@ static int parse_options(struct super_bl
+ 			set_opt(sbi, INLINE_XATTR);
+ 			break;
+ #else
++		case Opt_user_xattr:
++			f2fs_msg(sb, KERN_INFO,
++				"user_xattr options not supported");
++			break;
+ 		case Opt_nouser_xattr:
+ 			f2fs_msg(sb, KERN_INFO,
+ 				"nouser_xattr options not supported");
+@@ -254,10 +265,16 @@ static int parse_options(struct super_bl
+ 			break;
+ #endif
+ #ifdef CONFIG_F2FS_FS_POSIX_ACL
++		case Opt_acl:
++			set_opt(sbi, POSIX_ACL);
++			break;
+ 		case Opt_noacl:
+ 			clear_opt(sbi, POSIX_ACL);
+ 			break;
+ #else
++		case Opt_acl:
++			f2fs_msg(sb, KERN_INFO, "acl options not supported");
++			break;
+ 		case Opt_noacl:
+ 			f2fs_msg(sb, KERN_INFO, "noacl options not supported");
+ 			break;
+
+--nextPart11524138.g4E6JgEJo6
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+------------------------------------------------------------------------------
+October Webinars: Code for Performance
+Free Intel webinars can help you accelerate application performance.
+Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
+the latest Intel processors and coprocessors. See abstracts and register >
+http://pubads.g.doubleclick.net/gampad/clk?id=60133471&iu=/4140/ostg.clktrk
+--nextPart11524138.g4E6JgEJo6
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--nextPart11524138.g4E6JgEJo6--
