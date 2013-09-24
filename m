@@ -1,87 +1,134 @@
-From: Russ Knize <Russ.Knize@motorola.com>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: account for orphan inodes during recovery
-Date: Tue, 24 Sep 2013 11:35:12 -0500
-Message-ID: <CAGfvh620A-cuUzQ2rVPiua_JFE33h9Fir90KSn5g9WnxR0cp7A@mail.gmail.com>
-References: <25a06e3e5ef81f00a220f0e59040806d@www.metagalaxy.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <25a06e3e5ef81f00a220f0e59040806d@www.metagalaxy.net>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: "Russ W. Knize" <russ@knizefamily.net>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+From: Russ Knize <rknize@gmail.com>
+Subject: [RFC 1/1] f2fs: don't GC or take an fs_lock from f2fs_initxattrs()
+Date: Tue, 24 Sep 2013 15:49:23 -0500
+Message-ID: <1380055763-13425-1-git-send-email-rknize@gmail.com>
+References: <n>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <n>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Russ Knize <Russ.Knize@motorola.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Sorry about the corrupted patches: I'm a bit rusty.  I'll resend them
-the old-fashioned way in a bit.
+From: Russ Knize <Russ.Knize@motorola.com>
 
-On Tue, Sep 24, 2013 at 9:36 AM, Russ W. Knize <russ@knizefamily.net> wrote:
-> During recovery, orphan inodes are deleted via truncate_hole().
-> These orphans are added by recover_dentry() via f2fs_delete_entry().
-> However, f2fs_delete_entry() adds them via add_orphan_inode()
-> without calling acquire_orphan_inode() first.  This prevents the
-> counters from being incremented properly, which causes them to
-> underflow when remove_orphan_inode() is called later on.
->
-> Signed-off-by: Russ Knize <rknize@motorola.com>
-> ---
->   fs/f2fs/recovery.c |   19 +++++++++++++------
->   1 file changed, 13 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index e8cf621..908066d 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -67,24 +67,31 @@ static int recover_dentry(struct page *ipage,
-> struct inode *inode)
->         name.name = raw_inode->i_name;
->   retry:
->         de = f2fs_find_entry(dir, &name, &page);
-> -       if (de && inode->i_ino == le32_to_cpu(de->ino)) {
-> -               kunmap(page);
-> -               f2fs_put_page(page, 0);
-> -               goto out;
-> -       }
-> +       if (de && inode->i_ino == le32_to_cpu(de->ino))
-> +               goto out_unmap_put;
->         if (de) {
->                 einode = f2fs_iget(inode->i_sb, le32_to_cpu(de->ino));
->                 if (IS_ERR(einode)) {
->                         WARN_ON(1);
->                         if (PTR_ERR(einode) == -ENOENT)
->                                 err = -EEXIST;
-> -                       goto out;
-> +                       goto out_unmap_put;
-> +               }
-> +               err = acquire_orphan_inode(F2FS_SB(inode->i_sb));
-> +               if (err) {
-> +                       iput(einode);
-> +                       goto out_unmap_put;
->                 }
->                 f2fs_delete_entry(de, page, einode);
->                 iput(einode);
->                 goto retry;
->         }
->         err = __f2fs_add_link(dir, &name, inode);
-> +       goto out;
-> +
-> +out_unmap_put:
-> +       kunmap(page);
-> +       f2fs_put_page(page, 0);
->   out:
->         f2fs_msg(inode->i_sb, KERN_DEBUG, "recover_inode and its dentry: "
->                         "ino = %x, name = %s, dir = %lx, err = %d",
-> --
-> 1.7.9.5
->
->
-> ------------------------------------------------------------------------------
-> October Webinars: Code for Performance
-> Free Intel webinars can help you accelerate application performance.
-> Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from
-> the latest Intel processors and coprocessors. See abstracts and register >
-> http://pubads.g.doubleclick.net/gampad/clk?id=60133471&iu=/4140/ostg.clktrk
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+f2fs_initxattrs() is called internally from within F2FS and should
+not call functions that are used by VFS handlers.  This avoids
+certain deadlocks:
+
+- vfs_create()
+ - f2fs_create() <-- takes an fs_lock
+  - f2fs_add_link()
+   - __f2fs_add_link()
+    - init_inode_metadata()
+     - f2fs_init_security()
+      - security_inode_init_security()
+       - f2fs_initxattrs()
+        - f2fs_setxattr() <-- also takes an fs_lock
+
+If the caller happens to grab the same fs_lock from the pool in both
+places, they will deadlock.  There are also deadlocks involving
+multiple threads and mutexes:
+
+- f2fs_write_begin()
+ - f2fs_balance_fs() <-- takes gc_mutex
+  - f2fs_gc()
+   - write_checkpoint()
+    - block_operations()
+     - mutex_lock_all() <-- blocks trying to grab all fs_locks
+
+- f2fs_mkdir() <-- takes an fs_lock
+ - __f2fs_add_link()
+  - f2fs_init_security()
+   - security_inode_init_security()
+    - f2fs_initxattrs()
+     - f2fs_setxattr()
+      - f2fs_balance_fs() <-- blocks trying to take gc_mutex
+
+Signed-off-by: Russ Knize <Russ.Knize@motorola.com>
+---
+ fs/f2fs/xattr.c |   35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 1ac8a5f..3d900ea 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -154,6 +154,9 @@ static int f2fs_xattr_advise_set(struct dentry *dentry, const char *name,
+ }
+ 
+ #ifdef CONFIG_F2FS_FS_SECURITY
++static int __f2fs_setxattr(struct inode *inode, int name_index,
++			const char *name, const void *value, size_t value_len,
++			struct page *ipage);
+ static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
+ 		void *page)
+ {
+@@ -161,7 +164,7 @@ static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
+ 	int err = 0;
+ 
+ 	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
+-		err = f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY,
++		err = __f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY,
+ 				xattr->name, xattr->value,
+ 				xattr->value_len, (struct page *)page);
+ 		if (err < 0)
+@@ -469,16 +472,15 @@ cleanup:
+ 	return error;
+ }
+ 
+-int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
+-			const void *value, size_t value_len, struct page *ipage)
++static int __f2fs_setxattr(struct inode *inode, int name_index,
++			const char *name, const void *value, size_t value_len,
++			struct page *ipage)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	struct f2fs_xattr_entry *here, *last;
+ 	void *base_addr;
+ 	int found, newsize;
+ 	size_t name_len;
+-	int ilock;
+ 	__u32 new_hsize;
+ 	int error = -ENOMEM;
+ 
+@@ -493,10 +495,6 @@ int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
+ 	if (name_len > F2FS_NAME_LEN || value_len > MAX_VALUE_LEN(inode))
+ 		return -ERANGE;
+ 
+-	f2fs_balance_fs(sbi);
+-
+-	ilock = mutex_lock_op(sbi);
+-
+ 	base_addr = read_all_xattrs(inode, ipage);
+ 	if (!base_addr)
+ 		goto exit;
+@@ -578,7 +576,24 @@ int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
+ 	else
+ 		update_inode_page(inode);
+ exit:
+-	mutex_unlock_op(sbi, ilock);
+ 	kzfree(base_addr);
+ 	return error;
+ }
++
++int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
++			const void *value, size_t value_len, struct page *ipage)
++{
++	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
++	int ilock;
++	int err;
++
++	f2fs_balance_fs(sbi);
++
++	ilock = mutex_lock_op(sbi);
++
++	err = __f2fs_setxattr(inode, name_index, name, value, value_len, ipage);
++
++	mutex_unlock_op(sbi, ilock);
++
++	return err;
++}
+-- 
+1.7.10.4
