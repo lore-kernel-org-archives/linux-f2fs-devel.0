@@ -1,92 +1,57 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: remove unneeded write checkpoint in
+Subject: [f2fs-dev] [PATCH RESEND] f2fs: remove unneeded write checkpoint in
  recover_fsync_data
-Date: Tue, 24 Sep 2013 09:10:04 +0800
-Message-ID: <000101ceb8c2$f47270f0$dd5752d0$@samsung.com>
-References: <000101ceb768$a8b43ff0$fa1cbfd0$@samsung.com>
-	<523F9F2D.1080501@cn.fujitsu.com>
+Date: Tue, 24 Sep 2013 09:26:24 +0800
+Message-ID: <000201ceb8c5$3c983840$b5c8a8c0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VOH9v-0006pH-BT
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Sep 2013 01:11:23 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VOH9t-00057P-8w for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Sep 2013 01:11:23 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MTL001J0V9JPNH0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Sep 2013 10:11:14 +0900 (KST)
-In-reply-to: <523F9F2D.1080501@cn.fujitsu.com>
+Content-Type: text/plain; charset=gb2312
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?gb2312?B?J8y35q0n?= <shu.tan@samsung.com>, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kim Jaegeuk <jaegeuk.kim@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?gb2312?B?zLfmrQ==?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgR3UKCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiBGcm9tOiBHdSBaaGVuZyBbbWFp
-bHRvOmd1ei5mbnN0QGNuLmZ1aml0c3UuY29tXQo+IFNlbnQ6IE1vbmRheSwgU2VwdGVtYmVyIDIz
-LCAyMDEzIDk6NTQgQU0KPiBUbzogQ2hhbyBZdQo+IENjOiBLaW0gSmFlZ2V1azsgbGludXgtZjJm
-cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7Cj4gbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5l
-bC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IMy35q0KPiBTdWJqZWN0OiBSZTog
-W2YyZnMtZGV2XSBbUEFUQ0hdIGYyZnM6IHJlbW92ZSB1bm5lZWRlZCB3cml0ZSBjaGVja3BvaW50
-IGluCj4gcmVjb3Zlcl9mc3luY19kYXRhCj4gCj4gT24gMDkvMjIvMjAxMyAwMzo1MSBQTSwgQ2hh
-byBZdSB3cm90ZToKPiAKPiA+IFByZXZpb3VzbHksIHJlY292ZXJfZnN5bmNfZGF0YSBzdGlsbCB0
-byB3cml0ZSBjaGVja3BvaW50IHdoZW4gdGhlcmUgaXMKPiA+IG5vdGhpbmcgdG8gcmVjb3ZlciB3
-aXRoIG5vcm1hbCB1bW91bnQgaW1hZ2UuCj4gPiBJdCBtYXkgcmVkdWNlIG1vdW50IHBlcmZvcm1h
-bmNlIGFuZCBmbGFzaCBtZW1vcnkgbGlmZXRpbWUsIHNvIGxldCdzCj4gPiByZW1vdmUgaXQuCj4g
-Pgo+ID4gU2lnbmVkLW9mZi1ieTogVGFuIFNodSA8c2h1LnRhbkBzYW1zdW5nLmNvbT4KPiA+IFNp
-Z25lZC1vZmYtYnk6IFl1IENoYW8gPGNoYW8yLnl1QHNhbXN1bmcuY29tPgo+ID4gLS0tCj4gPiAg
-ZnMvZjJmcy9yZWNvdmVyeS5jIHwgICAgNSArKysrLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA0IGlu
-c2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPiA+Cj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9y
-ZWNvdmVyeS5jIGIvZnMvZjJmcy9yZWNvdmVyeS5jIGluZGV4Cj4gPiA1MWVmNWVlLi42OTg4ZTFi
-IDEwMDY0NAo+ID4gLS0tIGEvZnMvZjJmcy9yZWNvdmVyeS5jCj4gPiArKysgYi9mcy9mMmZzL3Jl
-Y292ZXJ5LmMKPiA+IEBAIC00MTksNiArNDE5LDcgQEAgaW50IHJlY292ZXJfZnN5bmNfZGF0YShz
-dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4gPiB7Cj4gPiAgCXN0cnVjdCBsaXN0X2hlYWQgaW5v
-ZGVfbGlzdDsKPiA+ICAJaW50IGVycjsKPiA+ICsJaW50IGlzX3dyaXRlY3AgPSAwOwo+IAo+ICJu
-ZWVkX3dyaXRlY3AiIG1heSBiZSBtb3JlIHN1aXRhYmxlLgoKT2theSwgaXQgaW5jcmVhc2UgcmVh
-ZGFiaWxpdHkuIEkgd2lsbCBjaGFuZ2UgaXQuCgpUaGFua3MuCj4gCj4gVGhhbmtzLAo+IEd1Cj4g
-Cj4gPgo+ID4gIAlmc3luY19lbnRyeV9zbGFiID0gZjJmc19rbWVtX2NhY2hlX2NyZWF0ZSgiZjJm
-c19mc3luY19pbm9kZV9lbnRyeSIsCj4gPiAgCQkJc2l6ZW9mKHN0cnVjdCBmc3luY19pbm9kZV9l
-bnRyeSksIE5VTEwpOyBAQCAtNDM2LDYKKzQzNyw4Cj4gQEAgaW50Cj4gPiByZWNvdmVyX2ZzeW5j
-X2RhdGEoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+ID4gIAlpZiAobGlzdF9lbXB0eSgmaW5v
-ZGVfbGlzdCkpCj4gPiAgCQlnb3RvIG91dDsKPiA+Cj4gPiArCWlzX3dyaXRlY3AgPSAxOwo+ID4g
-Kwo+ID4gIAkvKiBzdGVwICMyOiByZWNvdmVyIGRhdGEgKi8KPiA+ICAJZXJyID0gcmVjb3Zlcl9k
-YXRhKHNiaSwgJmlub2RlX2xpc3QsIENVUlNFR19XQVJNX05PREUpOwo+ID4gIAlCVUdfT04oIWxp
-c3RfZW1wdHkoJmlub2RlX2xpc3QpKTsKPiA+IEBAIC00NDMsNyArNDQ2LDcgQEAgb3V0Ogo+ID4g
-IAlkZXN0cm95X2ZzeW5jX2Rub2RlcygmaW5vZGVfbGlzdCk7Cj4gPiAgCWttZW1fY2FjaGVfZGVz
-dHJveShmc3luY19lbnRyeV9zbGFiKTsKPiA+ICAJc2JpLT5wb3JfZG9pbmcgPSAwOwo+ID4gLQlp
-ZiAoIWVycikKPiA+ICsJaWYgKCFlcnIgJiYgaXNfd3JpdGVjcCkKPiA+ICAJCXdyaXRlX2NoZWNr
-cG9pbnQoc2JpLCBmYWxzZSk7Cj4gPiAgCXJldHVybiBlcnI7Cj4gPiAgfQo+ID4gLS0tCj4gPgo+
-ID4gLS0KPiA+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1
-bnN1YnNjcmliZQo+ID4gbGludXgta2VybmVsIiBpbiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8g
-bWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+ID4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0
-cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gPiBQbGVhc2UgcmVhZCB0
-aGUgRkFRIGF0ICBodHRwOi8vd3d3LnR1eC5vcmcvbGttbC8KPiA+CgoKCi0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQpPY3RvYmVyIFdlYmluYXJzOiBDb2RlIGZvciBQZXJmb3JtYW5jZQpGcmVlIEludGVs
-IHdlYmluYXJzIGNhbiBoZWxwIHlvdSBhY2NlbGVyYXRlIGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNl
-LgpFeHBsb3JlIHRpcHMgZm9yIE1QSSwgT3Blbk1QLCBhZHZhbmNlZCBwcm9maWxpbmcsIGFuZCBt
-b3JlLiBHZXQgdGhlIG1vc3QgZnJvbSAKdGhlIGxhdGVzdCBJbnRlbCBwcm9jZXNzb3JzIGFuZCBj
-b3Byb2Nlc3NvcnMuIFNlZSBhYnN0cmFjdHMgYW5kIHJlZ2lzdGVyID4KaHR0cDovL3B1YmFkcy5n
-LmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTYwMTMzNDcxJml1PS80MTQwL29zdGcuY2xr
-dHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4
-LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9y
-Z2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4
-LWYyZnMtZGV2ZWwK
+Previously, recover_fsync_data still to write checkpoint when there is
+nothing to recover with normal umount image.
+It may reduce mount performance and flash memory lifetime, so let's remove
+it.
+
+Signed-off-by: Tan Shu <shu.tan@samsung.com>
+Signed-off-by: Yu Chao <chao2.yu@samsung.com>
+---
+fs/f2fs/recovery.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 51ef5ee..d43e4cd 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -419,6 +419,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
+ {
+ 	struct list_head inode_list;
+ 	int err;
++	int need_writecp = 0;
+ 
+ 	fsync_entry_slab = f2fs_kmem_cache_create("f2fs_fsync_inode_entry",
+ 			sizeof(struct fsync_inode_entry), NULL);
+@@ -436,6 +437,8 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
+ 	if (list_empty(&inode_list))
+ 		goto out;
+ 
++	need_writecp = 1;
++
+ 	/* step #2: recover data */
+ 	err = recover_data(sbi, &inode_list, CURSEG_WARM_NODE);
+ 	BUG_ON(!list_empty(&inode_list));
+@@ -443,7 +446,7 @@ out:
+ 	destroy_fsync_dnodes(&inode_list);
+ 	kmem_cache_destroy(fsync_entry_slab);
+ 	sbi->por_doing = 0;
+-	if (!err)
++	if (!err && need_writecp)
+ 		write_checkpoint(sbi, false);
+ 	return err;
+ }
+---
