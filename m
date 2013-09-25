@@ -1,24 +1,32 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 Subject: Re: [RFC 1/1] f2fs: don't GC or take an fs_lock from
 	f2fs_initxattrs()
-Date: Wed, 25 Sep 2013 10:48:05 +0800
-Message-ID: <52424EE5.3070807@cn.fujitsu.com>
-References: <n> <1380055763-13425-1-git-send-email-rknize@gmail.com>
+Date: Wed, 25 Sep 2013 17:52:57 +0900
+Message-ID: <1380099177.4529.38.camel@kjgkr>
+References: <CAGfvh62J=rkvAw_nxEt1CSE9EhDQqnow+waQJ_gNt1YmkrD9wg@mail.gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VOfE4-000313-HO
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VOkqa-0005rY-M5
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 25 Sep 2013 02:53:16 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	Wed, 25 Sep 2013 08:53:24 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VOfE2-0002lD-Vj for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 25 Sep 2013 02:53:16 +0000
-In-Reply-To: <1380055763-13425-1-git-send-email-rknize@gmail.com>
+	id 1VOkqY-00045q-Fh for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 25 Sep 2013 08:53:24 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MTO000U4BCR1SD0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 25 Sep 2013 17:53:15 +0900 (KST)
+In-reply-to: <CAGfvh62J=rkvAw_nxEt1CSE9EhDQqnow+waQJ_gNt1YmkrD9wg@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,142 +36,106 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Russ Knize <rknize@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, Russ Knize <Russ.Knize@motorola.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Russ Knize <Russ.Knize@motorola.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On 09/25/2013 04:49 AM, Russ Knize wrote:
-
-> From: Russ Knize <Russ.Knize@motorola.com>
-> 
-> f2fs_initxattrs() is called internally from within F2FS and should
-> not call functions that are used by VFS handlers.  This avoids
-> certain deadlocks:
-> 
-> - vfs_create()
->  - f2fs_create() <-- takes an fs_lock
->   - f2fs_add_link()
->    - __f2fs_add_link()
->     - init_inode_metadata()
->      - f2fs_init_security()
->       - security_inode_init_security()
->        - f2fs_initxattrs()
->         - f2fs_setxattr() <-- also takes an fs_lock
-> 
-> If the caller happens to grab the same fs_lock from the pool in both
-> places, they will deadlock.  There are also deadlocks involving
-> multiple threads and mutexes:
-> 
-> - f2fs_write_begin()
->  - f2fs_balance_fs() <-- takes gc_mutex
->   - f2fs_gc()
->    - write_checkpoint()
->     - block_operations()
->      - mutex_lock_all() <-- blocks trying to grab all fs_locks
-> 
-> - f2fs_mkdir() <-- takes an fs_lock
->  - __f2fs_add_link()
->   - f2fs_init_security()
->    - security_inode_init_security()
->     - f2fs_initxattrs()
->      - f2fs_setxattr()
->       - f2fs_balance_fs() <-- blocks trying to take gc_mutex
-> 
-> Signed-off-by: Russ Knize <Russ.Knize@motorola.com>
-
-This solution is more thorough.
-
-Reviewed-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
-
-> ---
->  fs/f2fs/xattr.c |   35 +++++++++++++++++++++++++----------
->  1 file changed, 25 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index 1ac8a5f..3d900ea 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -154,6 +154,9 @@ static int f2fs_xattr_advise_set(struct dentry *dentry, const char *name,
->  }
->  
->  #ifdef CONFIG_F2FS_FS_SECURITY
-> +static int __f2fs_setxattr(struct inode *inode, int name_index,
-> +			const char *name, const void *value, size_t value_len,
-> +			struct page *ipage);
->  static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
->  		void *page)
->  {
-> @@ -161,7 +164,7 @@ static int f2fs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
->  	int err = 0;
->  
->  	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
-> -		err = f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY,
-> +		err = __f2fs_setxattr(inode, F2FS_XATTR_INDEX_SECURITY,
->  				xattr->name, xattr->value,
->  				xattr->value_len, (struct page *)page);
->  		if (err < 0)
-> @@ -469,16 +472,15 @@ cleanup:
->  	return error;
->  }
->  
-> -int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
-> -			const void *value, size_t value_len, struct page *ipage)
-> +static int __f2fs_setxattr(struct inode *inode, int name_index,
-> +			const char *name, const void *value, size_t value_len,
-> +			struct page *ipage)
->  {
-> -	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
->  	struct f2fs_xattr_entry *here, *last;
->  	void *base_addr;
->  	int found, newsize;
->  	size_t name_len;
-> -	int ilock;
->  	__u32 new_hsize;
->  	int error = -ENOMEM;
->  
-> @@ -493,10 +495,6 @@ int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
->  	if (name_len > F2FS_NAME_LEN || value_len > MAX_VALUE_LEN(inode))
->  		return -ERANGE;
->  
-> -	f2fs_balance_fs(sbi);
-> -
-> -	ilock = mutex_lock_op(sbi);
-> -
->  	base_addr = read_all_xattrs(inode, ipage);
->  	if (!base_addr)
->  		goto exit;
-> @@ -578,7 +576,24 @@ int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
->  	else
->  		update_inode_page(inode);
->  exit:
-> -	mutex_unlock_op(sbi, ilock);
->  	kzfree(base_addr);
->  	return error;
->  }
-> +
-> +int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
-> +			const void *value, size_t value_len, struct page *ipage)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-> +	int ilock;
-> +	int err;
-> +
-> +	f2fs_balance_fs(sbi);
-> +
-> +	ilock = mutex_lock_op(sbi);
-> +
-> +	err = __f2fs_setxattr(inode, name_index, name, value, value_len, ipage);
-> +
-> +	mutex_unlock_op(sbi, ilock);
-> +
-> +	return err;
-> +}
-
-
-
-------------------------------------------------------------------------------
-October Webinars: Code for Performance
-Free Intel webinars can help you accelerate application performance.
-Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
-the latest Intel processors and coprocessors. See abstracts and register >
-http://pubads.g.doubleclick.net/gampad/clk?id=60133471&iu=/4140/ostg.clktrk
+SGkgUnVzcywKClRoYXQncyB3aGF0IEkgd2FudGVkIGJlZm9yZS4KTWVyZ2VkLgpUaGFua3MsCgoy
+MDEzLTA5LTI0ICjtmZQpLCAxNTo1MyAtMDUwMCwgUnVzcyBLbml6ZToKPiBUaGlzIGlzIGFuIGFs
+dGVybmF0ZSBzb2x1dGlvbiB0byB0aGUgZGVhZGxvY2sgcHJvYmxlbSBJIG1lbnRpb25lZCBpbgo+
+IG15IHByZXZpb3VzIHBhdGNoLgo+IAo+IE9uIFR1ZSwgU2VwIDI0LCAyMDEzIGF0IDM6NDkgUE0s
+IFJ1c3MgS25pemUgPHJrbml6ZUBnbWFpbC5jb20+IHdyb3RlOgo+ID4gRnJvbTogUnVzcyBLbml6
+ZSA8UnVzcy5Lbml6ZUBtb3Rvcm9sYS5jb20+Cj4gPgo+ID4gZjJmc19pbml0eGF0dHJzKCkgaXMg
+Y2FsbGVkIGludGVybmFsbHkgZnJvbSB3aXRoaW4gRjJGUyBhbmQgc2hvdWxkCj4gPiBub3QgY2Fs
+bCBmdW5jdGlvbnMgdGhhdCBhcmUgdXNlZCBieSBWRlMgaGFuZGxlcnMuICBUaGlzIGF2b2lkcwo+
+ID4gY2VydGFpbiBkZWFkbG9ja3M6Cj4gPgo+ID4gLSB2ZnNfY3JlYXRlKCkKPiA+ICAtIGYyZnNf
+Y3JlYXRlKCkgPC0tIHRha2VzIGFuIGZzX2xvY2sKPiA+ICAgLSBmMmZzX2FkZF9saW5rKCkKPiA+
+ICAgIC0gX19mMmZzX2FkZF9saW5rKCkKPiA+ICAgICAtIGluaXRfaW5vZGVfbWV0YWRhdGEoKQo+
+ID4gICAgICAtIGYyZnNfaW5pdF9zZWN1cml0eSgpCj4gPiAgICAgICAtIHNlY3VyaXR5X2lub2Rl
+X2luaXRfc2VjdXJpdHkoKQo+ID4gICAgICAgIC0gZjJmc19pbml0eGF0dHJzKCkKPiA+ICAgICAg
+ICAgLSBmMmZzX3NldHhhdHRyKCkgPC0tIGFsc28gdGFrZXMgYW4gZnNfbG9jawo+ID4KPiA+IElm
+IHRoZSBjYWxsZXIgaGFwcGVucyB0byBncmFiIHRoZSBzYW1lIGZzX2xvY2sgZnJvbSB0aGUgcG9v
+bCBpbiBib3RoCj4gPiBwbGFjZXMsIHRoZXkgd2lsbCBkZWFkbG9jay4gIFRoZXJlIGFyZSBhbHNv
+IGRlYWRsb2NrcyBpbnZvbHZpbmcKPiA+IG11bHRpcGxlIHRocmVhZHMgYW5kIG11dGV4ZXM6Cj4g
+Pgo+ID4gLSBmMmZzX3dyaXRlX2JlZ2luKCkKPiA+ICAtIGYyZnNfYmFsYW5jZV9mcygpIDwtLSB0
+YWtlcyBnY19tdXRleAo+ID4gICAtIGYyZnNfZ2MoKQo+ID4gICAgLSB3cml0ZV9jaGVja3BvaW50
+KCkKPiA+ICAgICAtIGJsb2NrX29wZXJhdGlvbnMoKQo+ID4gICAgICAtIG11dGV4X2xvY2tfYWxs
+KCkgPC0tIGJsb2NrcyB0cnlpbmcgdG8gZ3JhYiBhbGwgZnNfbG9ja3MKPiA+Cj4gPiAtIGYyZnNf
+bWtkaXIoKSA8LS0gdGFrZXMgYW4gZnNfbG9jawo+ID4gIC0gX19mMmZzX2FkZF9saW5rKCkKPiA+
+ICAgLSBmMmZzX2luaXRfc2VjdXJpdHkoKQo+ID4gICAgLSBzZWN1cml0eV9pbm9kZV9pbml0X3Nl
+Y3VyaXR5KCkKPiA+ICAgICAtIGYyZnNfaW5pdHhhdHRycygpCj4gPiAgICAgIC0gZjJmc19zZXR4
+YXR0cigpCj4gPiAgICAgICAtIGYyZnNfYmFsYW5jZV9mcygpIDwtLSBibG9ja3MgdHJ5aW5nIHRv
+IHRha2UgZ2NfbXV0ZXgKPiA+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBSdXNzIEtuaXplIDxSdXNzLktu
+aXplQG1vdG9yb2xhLmNvbT4KPiA+IC0tLQo+ID4gIGZzL2YyZnMveGF0dHIuYyB8ICAgMzUgKysr
+KysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMjUg
+aW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCj4gPgo+ID4gZGlmZiAtLWdpdCBhL2ZzL2Yy
+ZnMveGF0dHIuYyBiL2ZzL2YyZnMveGF0dHIuYwo+ID4gaW5kZXggMWFjOGE1Zi4uM2Q5MDBlYSAx
+MDA2NDQKPiA+IC0tLSBhL2ZzL2YyZnMveGF0dHIuYwo+ID4gKysrIGIvZnMvZjJmcy94YXR0ci5j
+Cj4gPiBAQCAtMTU0LDYgKzE1NCw5IEBAIHN0YXRpYyBpbnQgZjJmc194YXR0cl9hZHZpc2Vfc2V0
+KHN0cnVjdCBkZW50cnkgKmRlbnRyeSwgY29uc3QgY2hhciAqbmFtZSwKPiA+ICB9Cj4gPgo+ID4g
+ICNpZmRlZiBDT05GSUdfRjJGU19GU19TRUNVUklUWQo+ID4gK3N0YXRpYyBpbnQgX19mMmZzX3Nl
+dHhhdHRyKHN0cnVjdCBpbm9kZSAqaW5vZGUsIGludCBuYW1lX2luZGV4LAo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgY29uc3QgY2hhciAqbmFtZSwgY29uc3Qgdm9pZCAqdmFsdWUsIHNpemVf
+dCB2YWx1ZV9sZW4sCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgcGFnZSAqaXBh
+Z2UpOwo+ID4gIHN0YXRpYyBpbnQgZjJmc19pbml0eGF0dHJzKHN0cnVjdCBpbm9kZSAqaW5vZGUs
+IGNvbnN0IHN0cnVjdCB4YXR0ciAqeGF0dHJfYXJyYXksCj4gPiAgICAgICAgICAgICAgICAgdm9p
+ZCAqcGFnZSkKPiA+ICB7Cj4gPiBAQCAtMTYxLDcgKzE2NCw3IEBAIHN0YXRpYyBpbnQgZjJmc19p
+bml0eGF0dHJzKHN0cnVjdCBpbm9kZSAqaW5vZGUsIGNvbnN0IHN0cnVjdCB4YXR0ciAqeGF0dHJf
+YXJyYXksCj4gPiAgICAgICAgIGludCBlcnIgPSAwOwo+ID4KPiA+ICAgICAgICAgZm9yICh4YXR0
+ciA9IHhhdHRyX2FycmF5OyB4YXR0ci0+bmFtZSAhPSBOVUxMOyB4YXR0cisrKSB7Cj4gPiAtICAg
+ICAgICAgICAgICAgZXJyID0gZjJmc19zZXR4YXR0cihpbm9kZSwgRjJGU19YQVRUUl9JTkRFWF9T
+RUNVUklUWSwKPiA+ICsgICAgICAgICAgICAgICBlcnIgPSBfX2YyZnNfc2V0eGF0dHIoaW5vZGUs
+IEYyRlNfWEFUVFJfSU5ERVhfU0VDVVJJVFksCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHhhdHRyLT5uYW1lLCB4YXR0ci0+dmFsdWUsCj4gPiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHhhdHRyLT52YWx1ZV9sZW4sIChzdHJ1Y3QgcGFnZSAqKXBhZ2UpOwo+ID4g
+ICAgICAgICAgICAgICAgIGlmIChlcnIgPCAwKQo+ID4gQEAgLTQ2OSwxNiArNDcyLDE1IEBAIGNs
+ZWFudXA6Cj4gPiAgICAgICAgIHJldHVybiBlcnJvcjsKPiA+ICB9Cj4gPgo+ID4gLWludCBmMmZz
+X3NldHhhdHRyKHN0cnVjdCBpbm9kZSAqaW5vZGUsIGludCBuYW1lX2luZGV4LCBjb25zdCBjaGFy
+ICpuYW1lLAo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgY29uc3Qgdm9pZCAqdmFsdWUsIHNp
+emVfdCB2YWx1ZV9sZW4sIHN0cnVjdCBwYWdlICppcGFnZSkKPiA+ICtzdGF0aWMgaW50IF9fZjJm
+c19zZXR4YXR0cihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBpbnQgbmFtZV9pbmRleCwKPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICAgIGNvbnN0IGNoYXIgKm5hbWUsIGNvbnN0IHZvaWQgKnZhbHVlLCBz
+aXplX3QgdmFsdWVfbGVuLAo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHBhZ2Ug
+KmlwYWdlKQo+ID4gIHsKPiA+IC0gICAgICAgc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpID0gRjJG
+U19TQihpbm9kZS0+aV9zYik7Cj4gPiAgICAgICAgIHN0cnVjdCBmMmZzX2lub2RlX2luZm8gKmZp
+ID0gRjJGU19JKGlub2RlKTsKPiA+ICAgICAgICAgc3RydWN0IGYyZnNfeGF0dHJfZW50cnkgKmhl
+cmUsICpsYXN0Owo+ID4gICAgICAgICB2b2lkICpiYXNlX2FkZHI7Cj4gPiAgICAgICAgIGludCBm
+b3VuZCwgbmV3c2l6ZTsKPiA+ICAgICAgICAgc2l6ZV90IG5hbWVfbGVuOwo+ID4gLSAgICAgICBp
+bnQgaWxvY2s7Cj4gPiAgICAgICAgIF9fdTMyIG5ld19oc2l6ZTsKPiA+ICAgICAgICAgaW50IGVy
+cm9yID0gLUVOT01FTTsKPiA+Cj4gPiBAQCAtNDkzLDEwICs0OTUsNiBAQCBpbnQgZjJmc19zZXR4
+YXR0cihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBpbnQgbmFtZV9pbmRleCwgY29uc3QgY2hhciAqbmFt
+ZSwKPiA+ICAgICAgICAgaWYgKG5hbWVfbGVuID4gRjJGU19OQU1FX0xFTiB8fCB2YWx1ZV9sZW4g
+PiBNQVhfVkFMVUVfTEVOKGlub2RlKSkKPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gLUVSQU5H
+RTsKPiA+Cj4gPiAtICAgICAgIGYyZnNfYmFsYW5jZV9mcyhzYmkpOwo+ID4gLQo+ID4gLSAgICAg
+ICBpbG9jayA9IG11dGV4X2xvY2tfb3Aoc2JpKTsKPiA+IC0KPiA+ICAgICAgICAgYmFzZV9hZGRy
+ID0gcmVhZF9hbGxfeGF0dHJzKGlub2RlLCBpcGFnZSk7Cj4gPiAgICAgICAgIGlmICghYmFzZV9h
+ZGRyKQo+ID4gICAgICAgICAgICAgICAgIGdvdG8gZXhpdDsKPiA+IEBAIC01NzgsNyArNTc2LDI0
+IEBAIGludCBmMmZzX3NldHhhdHRyKHN0cnVjdCBpbm9kZSAqaW5vZGUsIGludCBuYW1lX2luZGV4
+LCBjb25zdCBjaGFyICpuYW1lLAo+ID4gICAgICAgICBlbHNlCj4gPiAgICAgICAgICAgICAgICAg
+dXBkYXRlX2lub2RlX3BhZ2UoaW5vZGUpOwo+ID4gIGV4aXQ6Cj4gPiAtICAgICAgIG11dGV4X3Vu
+bG9ja19vcChzYmksIGlsb2NrKTsKPiA+ICAgICAgICAga3pmcmVlKGJhc2VfYWRkcik7Cj4gPiAg
+ICAgICAgIHJldHVybiBlcnJvcjsKPiA+ICB9Cj4gPiArCj4gPiAraW50IGYyZnNfc2V0eGF0dHIo
+c3RydWN0IGlub2RlICppbm9kZSwgaW50IG5hbWVfaW5kZXgsIGNvbnN0IGNoYXIgKm5hbWUsCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICBjb25zdCB2b2lkICp2YWx1ZSwgc2l6ZV90IHZhbHVl
+X2xlbiwgc3RydWN0IHBhZ2UgKmlwYWdlKQo+ID4gK3sKPiA+ICsgICAgICAgc3RydWN0IGYyZnNf
+c2JfaW5mbyAqc2JpID0gRjJGU19TQihpbm9kZS0+aV9zYik7Cj4gPiArICAgICAgIGludCBpbG9j
+azsKPiA+ICsgICAgICAgaW50IGVycjsKPiA+ICsKPiA+ICsgICAgICAgZjJmc19iYWxhbmNlX2Zz
+KHNiaSk7Cj4gPiArCj4gPiArICAgICAgIGlsb2NrID0gbXV0ZXhfbG9ja19vcChzYmkpOwo+ID4g
+Kwo+ID4gKyAgICAgICBlcnIgPSBfX2YyZnNfc2V0eGF0dHIoaW5vZGUsIG5hbWVfaW5kZXgsIG5h
+bWUsIHZhbHVlLCB2YWx1ZV9sZW4sIGlwYWdlKTsKPiA+ICsKPiA+ICsgICAgICAgbXV0ZXhfdW5s
+b2NrX29wKHNiaSwgaWxvY2spOwo+ID4gKwo+ID4gKyAgICAgICByZXR1cm4gZXJyOwo+ID4gK30K
+PiA+IC0tCj4gPiAxLjcuMTAuNAo+ID4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBs
+aXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1rZXJuZWwiIGluCj4gdGhlIGJv
+ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9y
+ZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwK
+PiBQbGVhc2UgcmVhZCB0aGUgRkFRIGF0ICBodHRwOi8vd3d3LnR1eC5vcmcvbGttbC8KCi0tIApK
+YWVnZXVrIEtpbQpTYW1zdW5nCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpPY3RvYmVyIFdlYmlu
+YXJzOiBDb2RlIGZvciBQZXJmb3JtYW5jZQpGcmVlIEludGVsIHdlYmluYXJzIGNhbiBoZWxwIHlv
+dSBhY2NlbGVyYXRlIGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNlLgpFeHBsb3JlIHRpcHMgZm9yIE1Q
+SSwgT3Blbk1QLCBhZHZhbmNlZCBwcm9maWxpbmcsIGFuZCBtb3JlLiBHZXQgdGhlIG1vc3QgZnJv
+bSAKdGhlIGxhdGVzdCBJbnRlbCBwcm9jZXNzb3JzIGFuZCBjb3Byb2Nlc3NvcnMuIFNlZSBhYnN0
+cmFjdHMgYW5kIHJlZ2lzdGVyID4KaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1w
+YWQvY2xrP2lkPTYwMTMzNDcxJml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
+aXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMu
+c291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
