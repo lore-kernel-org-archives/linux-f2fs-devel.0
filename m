@@ -1,32 +1,28 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH]f2fs: avoid congestion_wait when
- do_checkpoint for better performance
-Date: Mon, 07 Oct 2013 11:41:43 +0900
-Message-ID: <1381113703.4529.61.camel@kjgkr>
-References: <000201cebdc7$dec4bce0$9c4e36a0$%mark.zhong@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+Subject: [PATCH] f2fs: avoid unnecessary checkpoints
+Date: Tue, 08 Oct 2013 09:33:15 +0900
+Message-ID: <1381192395-30296-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VT0m0-0008Pe-AD
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VTLFJ-0000sX-RY
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Oct 2013 02:42:16 +0000
+	Tue, 08 Oct 2013 00:33:53 +0000
 Received: from mailout1.samsung.com ([203.254.224.24])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VT0ly-0005Gk-31 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Oct 2013 02:42:16 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	id 1VTLFH-0002c6-Rt for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 08 Oct 2013 00:33:53 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
 	by mailout1.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MUA0040025DCM70@mailout1.samsung.com> for
+	with ESMTP id <0MUB009ZQQW8GP90@mailout1.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Oct 2013 11:42:07 +0900 (KST)
-In-reply-to: <000201cebdc7$dec4bce0$9c4e36a0$%mark.zhong@samsung.com>
+	Tue, 08 Oct 2013 09:33:45 +0900 (KST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,79 +32,38 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: yuan zhong <yuan.mark.zhong@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, shu.tan@samsung.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGksCgpQbGVhc2UgZG8gY2hlY2twYXRjaC5wbCBiZWZvcmUgc2VuZGluZyBhIHBhdGNoLgpUaGFu
-a3MsCgoyMDEzLTA5LTMwICjsm5QpLCAxODoyOCArMDgwMCwgeXVhbiB6aG9uZzoKPiBQcmV2aW91
-c2x5LCAgZG9fY2hlY2twb2ludCgpIHdpbGwgY2FsbCBjb25nZXN0aW9uX3dhaXQoKSBmb3Igd2Fp
-dGluZyB0aGUgcGFnZXMgKHByZXZpb3VzIHN1Ym1pdHRlZCBub2RlL21ldGEvZGF0YSBwYWdlcykg
-dG8gYmUgd3JpdHRlbiBiYWNrLgo+IEJlY2F1c2UgY29uZ2VzdGlvbl93YWl0KCkgd2lsbCBzZXQg
-YSByZWd1bGFyIHBlcmlvZCAoZS5nLiBIWiAvIDUwICkgZm9yIHdhaXRpbmcuCj4gRm9yIHRoaXMg
-cmVhc29uLCB0aGVyZSBpcyBhIHNpdHVhdGlvbiB0aGF0IGFmdGVyIHRoZSBwYWdlcyBoYXZlIGJl
-ZW4gd3JpdHRlbiBiYWNrLCBidXQgdGhlIGNoZWNrcG9pbnQgdGhyZWFkIHN0aWxsIHdhaXQgZm9y
-IGNvbmdlc3Rpb25fd2FpdCB0byBleGl0Lgo+IFRoaXMgaXMgYSBwcm9ibGVtIGhlcmUsIGVzcGVj
-aWFsbHksIHdoZW4gc3luYyBhIGxhcmdlIG51bWJlciBvZiBzbWFsbCBmaWxlcyBvciBkaXJzLgo+
-IEluIG9yZGVyIHRvIGF2b2lkIHRoaXMsIGEgd2FpdF9saXN0IGlzIGludHJvZHVjZWQsIHRoZSBj
-aGVja3BvaW50IHRocmVhZCB3aWxsIGJlIGRyb3BwZWQgaW50byB0aGUgd2FpdF9saXN0IGlmIHRo
-ZSBwYWdlcyBoYXZlIG5vdCBiZWVuIHdyaXR0ZW4gYmFjaywgYW5kIHdpbGwgYmUgd2FrZWQgdXAg
-YnkgY29udHJhc3QuCj4gCj4gU2lnbmVkLW9mZi1ieTogWXVhbiBaaG9uZyA8eXVhbi5tYXJrLnpo
-b25nQHNhbXN1bmcuY29tPgo+IC0tLQo+ICBmcy9mMmZzL2NoZWNrcG9pbnQuYyB8ICAzICstLQo+
-ICBmcy9mMmZzL2YyZnMuaCAgICAgICB8IDE5ICsrKysrKysrKysrKysrKysrKysKPiAgZnMvZjJm
-cy9zZWdtZW50LmMgICAgfCAgMSArCj4gIGZzL2YyZnMvc3VwZXIuYyAgICAgIHwgIDEgKwo+ICA0
-IGZpbGVzIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4gCj4gZGlm
-ZiAtLWdpdCBhL2ZzL2YyZnMvY2hlY2twb2ludC5jIGIvZnMvZjJmcy9jaGVja3BvaW50LmMgaW5k
-ZXggYmIzMTIyMC4uY2Y2YjRhNSAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+
-ICsrKyBiL2ZzL2YyZnMvY2hlY2twb2ludC5jCj4gQEAgLTc1Niw4ICs3NTYsNyBAQCBzdGF0aWMg
-dm9pZCBkb19jaGVja3BvaW50KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgYm9vbCBpc191bW91
-bnQpCj4gIAlmMmZzX3B1dF9wYWdlKGNwX3BhZ2UsIDEpOwo+ICAKPiAgCS8qIHdhaXQgZm9yIHBy
-ZXZpb3VzIHN1Ym1pdHRlZCBub2RlL21ldGEgcGFnZXMgd3JpdGViYWNrICovCj4gLQl3aGlsZSAo
-Z2V0X3BhZ2VzKHNiaSwgRjJGU19XUklURUJBQ0spKQo+IC0JCWNvbmdlc3Rpb25fd2FpdChCTEtf
-UldfQVNZTkMsIEhaIC8gNTApOwo+ICsJZjJmc193cml0ZWJhY2tfd2FpdChzYmkpOwo+ICAKPiAg
-CWZpbGVtYXBfZmRhdGF3YWl0X3JhbmdlKHNiaS0+bm9kZV9pbm9kZS0+aV9tYXBwaW5nLCAwLCBM
-T05HX01BWCk7Cj4gIAlmaWxlbWFwX2ZkYXRhd2FpdF9yYW5nZShzYmktPm1ldGFfaW5vZGUtPmlf
-bWFwcGluZywgMCwgTE9OR19NQVgpOyBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9mMmZzLmggYi9mcy9m
-MmZzL2YyZnMuaCBpbmRleCA2MDhmMGRmLi5mOGI2MmNjIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMv
-ZjJmcy5oCj4gKysrIGIvZnMvZjJmcy9mMmZzLmgKPiBAQCAtMTgsNiArMTgsNyBAQAo+ICAjaW5j
-bHVkZSA8bGludXgvY3JjMzIuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L21hZ2ljLmg+Cj4gICNpbmNs
-dWRlIDxsaW51eC9rb2JqZWN0Lmg+Cj4gKyNpbmNsdWRlIDxsaW51eC93YWl0Lmg+Cj4gIAo+ICAv
-Kgo+ICAgKiBGb3IgbW91bnQgb3B0aW9ucwo+IEBAIC00MzAsNiArNDMxLDggQEAgc3RydWN0IGYy
-ZnNfc2JfaW5mbyB7Cj4gIAkvKiBGb3Igc3lzZnMgc3VwcHBvcnQgKi8KPiAgCXN0cnVjdCBrb2Jq
-ZWN0IHNfa29iajsKPiAgCXN0cnVjdCBjb21wbGV0aW9uIHNfa29ial91bnJlZ2lzdGVyOwo+ICsJ
-Cj4gKwl3YWl0X3F1ZXVlX2hlYWRfdCB3cml0ZWJhY2tfd3FoOwo+ICB9Owo+ICAKPiAgLyoKPiBA
-QCAtOTYxLDYgKzk2NCwyMiBAQCBzdGF0aWMgaW5saW5lIGludCBmMmZzX3JlYWRvbmx5KHN0cnVj
-dCBzdXBlcl9ibG9jayAqc2IpCj4gIAlyZXR1cm4gc2ItPnNfZmxhZ3MgJiBNU19SRE9OTFk7Cj4g
-IH0KPiAgCj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBmMmZzX3dyaXRlYmFja193YWl0KHN0cnVjdCBm
-MmZzX3NiX2luZm8gKnNiaSkgewo+ICsJREVGSU5FX1dBSVQod2FpdCk7Cj4gKwo+ICsJcHJlcGFy
-ZV90b193YWl0KCZzYmktPndyaXRlYmFja193cWgsICZ3YWl0LCBUQVNLX1VOSU5URVJSVVBUSUJM
-RSk7Cj4gKwlpZiAoZ2V0X3BhZ2VzKHNiaSwgRjJGU19XUklURUJBQ0spKQo+ICsJCWlvX3NjaGVk
-dWxlKCk7Cj4gKwlmaW5pc2hfd2FpdCgmc2JpLT53cml0ZWJhY2tfd3FoLCAmd2FpdCk7IH0KPiAr
-Cj4gK3N0YXRpYyBpbmxpbmUgdm9pZCBmMmZzX3dyaXRlYmFja193YWtlKHN0cnVjdCBmMmZzX3Ni
-X2luZm8gKnNiaSkgewo+ICsJaWYgKCFnZXRfcGFnZXMoc2JpLCBGMkZTX1dSSVRFQkFDSykpCj4g
-KwkJd2FrZV91cF9hbGwoJnNiaS0+d3JpdGViYWNrX3dxaCk7Cj4gK30KPiArCj4gIC8qCj4gICAq
-IGZpbGUuYwo+ICAgKi8KPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZz
-L3NlZ21lbnQuYyBpbmRleCAwOWFmOWM3Li43OTI5M2ZlIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMv
-c2VnbWVudC5jCj4gKysrIGIvZnMvZjJmcy9zZWdtZW50LmMKPiBAQCAtNTk3LDYgKzU5Nyw3IEBA
-IHN0YXRpYyB2b2lkIGYyZnNfZW5kX2lvX3dyaXRlKHN0cnVjdCBiaW8gKmJpbywgaW50IGVycikK
-PiAgCj4gIAlpZiAocC0+aXNfc3luYykKPiAgCQljb21wbGV0ZShwLT53YWl0KTsKPiArCWYyZnNf
-d3JpdGViYWNrX3dha2UocC0+c2JpKTsJCj4gIAlrZnJlZShwKTsKPiAgCWJpb19wdXQoYmlvKTsK
-PiAgfQo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL3N1cGVyLmMgYi9mcy9mMmZzL3N1cGVyLmMgaW5k
-ZXggMTNkMGEwZi4uYjMxZjY4NiAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL3N1cGVyLmMKPiArKysg
-Yi9mcy9mMmZzL3N1cGVyLmMKPiBAQCAtODE4LDYgKzgxOCw3IEBAIHN0YXRpYyBpbnQgZjJmc19m
-aWxsX3N1cGVyKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHZvaWQgKmRhdGEsIGludCBzaWxlbnQp
-Cj4gIAltdXRleF9pbml0KCZzYmktPmdjX211dGV4KTsKPiAgCW11dGV4X2luaXQoJnNiaS0+d3Jp
-dGVwYWdlcyk7Cj4gIAltdXRleF9pbml0KCZzYmktPmNwX211dGV4KTsKPiArCWluaXRfd2FpdHF1
-ZXVlX2hlYWQoJnNiaS0+d3JpdGViYWNrX3dxaCk7Cj4gIAlmb3IgKGkgPSAwOyBpIDwgTlJfR0xP
-QkFMX0xPQ0tTOyBpKyspCj4gIAkJbXV0ZXhfaW5pdCgmc2JpLT5mc19sb2NrW2ldKTsKPiAgCW11
-dGV4X2luaXQoJnNiaS0+bm9kZV93cml0ZSk7Cj4gCgotLSAKSmFlZ2V1ayBLaW0KU2Ftc3VuZwoK
-CgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KT2N0b2JlciBXZWJpbmFyczogQ29kZSBmb3IgUGVyZm9y
-bWFuY2UKRnJlZSBJbnRlbCB3ZWJpbmFycyBjYW4gaGVscCB5b3UgYWNjZWxlcmF0ZSBhcHBsaWNh
-dGlvbiBwZXJmb3JtYW5jZS4KRXhwbG9yZSB0aXBzIGZvciBNUEksIE9wZW5NUCwgYWR2YW5jZWQg
-cHJvZmlsaW5nLCBhbmQgbW9yZS4gR2V0IHRoZSBtb3N0IGZyb20gCnRoZSBsYXRlc3QgSW50ZWwg
-cHJvY2Vzc29ycyBhbmQgY29wcm9jZXNzb3JzLiBTZWUgYWJzdHJhY3RzIGFuZCByZWdpc3RlciA+
-Cmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD02MDEzNDc5MSZp
-dT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVs
-QGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0
-cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+During the f2fs_put_super procedure, we don't need to conduct checkpoint all
+the time, since we don't need to do that if superblock is clean.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/super.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index fde8e6a..539c009 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -372,7 +372,9 @@ static void f2fs_put_super(struct super_block *sb)
+ 	f2fs_destroy_stats(sbi);
+ 	stop_gc_thread(sbi);
+ 
+-	write_checkpoint(sbi, true);
++	/* We don't need to do checkpoint when it's clean */
++	if (sbi->s_dirty && get_pages(sbi, F2FS_DIRTY_NODES))
++		write_checkpoint(sbi, true);
+ 
+ 	iput(sbi->node_inode);
+ 	iput(sbi->meta_inode);
+-- 
+1.8.4.474.g128a96c
+
+
+------------------------------------------------------------------------------
+October Webinars: Code for Performance
+Free Intel webinars can help you accelerate application performance.
+Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
+the latest Intel processors and coprocessors. See abstracts and register >
+http://pubads.g.doubleclick.net/gampad/clk?id=60134071&iu=/4140/ostg.clktrk
