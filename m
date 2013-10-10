@@ -1,31 +1,28 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: f2fs using tons of cpu
-Date: Thu, 10 Oct 2013 09:28:40 +0900
-Message-ID: <1381364920.992.15.camel@kjgkr>
-References: <20131008112534.GA24963@belle.intranet.vanheusden.com>
-Reply-To: jaegeuk.kim@samsung.com
+Subject: [PATCH] f2fs: fix the starvation problem on cp_rwsem
+Date: Thu, 10 Oct 2013 14:50:25 +0900
+Message-ID: <1381384225-32126-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VU48T-0007P6-PR
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VU99L-00074s-AE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Oct 2013 00:29:49 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VU48O-00039B-Bm for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Oct 2013 00:29:49 +0000
+	Thu, 10 Oct 2013 05:51:03 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VU99J-0001gL-3D for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 10 Oct 2013 05:51:03 +0000
 Received: from epcpsbgr3.samsung.com
 	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
+	by mailout2.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MUF00GC1G0GSF50@mailout4.samsung.com> for
+	with ESMTP id <0MUF00684UWUY3A0@mailout2.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Oct 2013 09:29:06 +0900 (KST)
-In-reply-to: <20131008112534.GA24963@belle.intranet.vanheusden.com>
+	Thu, 10 Oct 2013 14:50:54 +0900 (KST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,68 +32,87 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: folkert <folkert@vanheusden.com>
-Cc: udovdh@xs4all.nl, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGksCgoyMDEzLTEwLTA4ICjtmZQpLCAxMzoyNSArMDIwMCwgZm9sa2VydDoKPiBIaSwKPiAKPiBG
-b3IgdGhlIGxhc3QgZmV3IGRheXMgZjJmcyBzdGFydGVkIHRvIHVzZSBsb2FkcyBvZiBjcHUgb24g
-b25lIG9mIG15Cj4gcmFzcGJlcnJ5IHBpIHN5c3RlbXM6Cj4gCj4gICBQSUQgVVNFUiAgICAgIFBS
-ICBOSSAgVklSVCAgUkVTICBTSFIgUyAgJUNQVSAlTUVNICAgIFRJTUUrICBDT01NQU5ECj4gIDI4
-MjIgcm9vdCAgICAgIDIwICAgMCAgICAgMCAgICAwICAgIDAgUiAgMzUuMyAgMC4wIDMyODozNC4w
-MSBmMmZzX2djLTI1NDowCj4gIDI4MjYgcm9vdCAgICAgIDIwICAgMCAgICAgMCAgICAwICAgIDAg
-UiAgMzUuMyAgMC4wIDMyNzo0MC4wNyBmbHVzaC0yNTQ6MAoKVGhlIGYyZnNfZ2MgaXMgYSBrZXJu
-ZWwgdGhyZWFkIGNvbmR1Y3Rpbmcgb24tbGluZSBkZWZyYWdlbWVudGF0aW9uLgpUaGUgcGVyaW9k
-IGJldHdlZW4gZWFjaCB0cmlnZ2VycyBpcyBkZXBlbmRhbnQgb24gdGhlIHN5c3RlbSBpZGxpbmcg
-dGltZSwKcmFuZ2luZyBmcm9tIDMwIHRvIDYwIHNlY3MgYnkgZGVmYXVsdC4KSW4gb3JkZXIgdG8g
-Y29udHJvbCB0aGVzZSB0aW1lcywgeW91IGNhbiB1c2Ugc3lzZnMgZW5hYmxlZCBieSB0aGUKZm9s
-bG93aW5nIHBhdGNoIHRoYXQgd2FzIG1lcmdlZCBpbnRvIDMuMTItcmMxLgoKY29tbWl0IGQyZGMw
-OTVmNDI4MGFkNWZkZWEzMzc2OWU4ZTExOWZkMTY2NDg0MjYgZjJmczogYWRkIHN5c2ZzIGVudHJp
-ZXMKdG8gc2VsZWN0IHRoZSBnYyBwb2xpY3kKCmNvbW1pdCBiNTlkMGJhZTZjYTMwYzQ5NmYyOTg4
-ODE2MTYyNThmOWNkZTBkOWM2IGYyZnM6IGFkZCBzeXNmcyBzdXBwb3J0CmZvciBjb250cm9sbGlu
-ZyB0aGUgZ2NfdGhyZWFkCgo+IFRoaXMgaXMgY29udGludW91cyBsb2FkLCB0aGUgd2hvbGUgZGF5
-LgoKUmlnaHQuIEl0IHJ1bnMgdW50aWwgdGhlcmUgaXMgbm8gZnJhZ21lbnRhdGlvbi4KCj4gVGhp
-cyBpcyB0byBhIFNTRCBjb25uZWN0ZWQgdmlhIFVTQjoKPiBCdXMgMDAxIERldmljZSAwMjU6IElE
-IDBjNDU6NzQwMSBNaWNyb2RpYQo+IFRoZSBTU0QgZG9lcyBub3Qgc3VwcG9ydCB0cmltICh0aGF0
-J3Mgd2h5IEkgcHV0IGYyZnMgb24gaXQpLgo+IAo+IEl0IGlzIGNvbnN0YW50bHkgcmVhZGluZyAo
-YW5kIG5vdCB3cml0aW5nKSBkYXRhIGZyb20gdGhlIFNTRCBpdCBpcyBvbjoKClRoZSBmMmZzX2dj
-IGp1c3QgbG9hZHMgYSBidW5jaCBvZiB2aWN0aW0gYmxvY2tzIGZyb20gdGhlIGRpc2sgdG8KaW4t
-bWVtb3J5IGNhY2hlIGZpcnN0LgpBZnRlcndhcmRzLCBpdCB3cml0ZXMgY2FjaGVkIGJsb2NrcyBi
-eSB0aGUgd3JpdGUtYmFjayBtZWNoYW5pc20gaW4gVkZTCmFjY29yZGluZyB0byB0aGUgc3lzdGVt
-IHN0YXR1cy4KCj4gCj4gZm9sa2VydEB2bnZuYXRpb24gfiAkIHZtc3RhdCAyCj4gcHJvY3MgLS0t
-LS0tLS0tLS1tZW1vcnktLS0tLS0tLS0tIC0tLXN3YXAtLSAtLS0tLWlvLS0tLSAtc3lzdGVtLS0g
-LS0tLWNwdS0tLS0KPiAgciAgYiAgIHN3cGQgICBmcmVlICAgYnVmZiAgY2FjaGUgICBzaSAgIHNv
-ICAgIGJpICAgIGJvICAgaW4gICBjcyB1cyBzeSBpZCB3YQo+ICAyICAwICAgICAgMCAgMjA3NDQg
-ICAgIDE2IDM3NTA1MiAgICAwICAgIDAgMzA1Nzc0ICAgICAwICA0MTMgIDE1NyAgMCAxMDAgIDAg
-IDAKPiAgMiAgMCAgICAgIDAgIDIwNzQ0ICAgICAxNiAzNzUwNTIgICAgMCAgICAwIDMwNDI3MiAg
-ICAgMCAgNDA5ICAxNTEgIDAgMTAwICAwICAwCj4gIDIgIDAgICAgICAwICAyMTUzNiAgICAgMTYg
-Mzc1MDUyICAgIDAgICAgMCAzMDE0NDQgICAgIDAgIDQxMCAgMTYzICAwIDEwMCAgMCAgMAo+ICAy
-ICAwICAgICAgMCAgMjE1MzYgICAgIDE2IDM3NTA1MiAgICAwICAgIDAgMzA1MDUyICAgICAwICA0
-MDggIDE1MCAgMCAxMDAgIDAgIDAKPiAgMiAgMCAgICAgIDAgIDIxNTM2ICAgICAxNiAzNzUwNTIg
-ICAgMCAgICAwIDMwMjk5NCAgICAgMCAgNDA3ICAxNTEgIDAgMTAwICAwICAwCj4gIDIgIDAgICAg
-ICAwICAyMTkzMiAgICAgMTYgMzc1MDUyICAgIDAgICAgMCAzMDM0MDggICAgIDAgIDQwNiAgMTUz
-ICAwIDEwMCAgMCAgMAo+ICAyICAwICAgICAgMCAgMjE5MzIgICAgIDE2IDM3NTA1MiAgICAwICAg
-IDAgMzAxNTgwICAgICAwICA0MTcgIDE1MiAgMSA5OSAgMCAgMAo+ICAyICAwICAgICAgMCAgMjE5
-MzIgICAgIDE2IDM3NTA1MiAgICAwICAgIDAgMzA0MTQyICAgICAwICA0MTEgIDE1MCAgMCAxMDAg
-IDAgIDAKPiAgMiAgMCAgICAgIDAgIDIxOTMyICAgICAxNiAzNzUwNTIgICAgMCAgICAwIDMwNTk0
-NCAgICAgMCAgNDA5ICAxNTIgIDAgMTAwICAwICAwCj4gIDIgIDAgICAgICAwICAyMTkzMiAgICAg
-MTYgMzc1MDUyICAgIDAgICAgMCAyOTk3MDAgICAgIDAgIDQxNCAgMTU2ICAwIDEwMCAgMCAgMAo+
-IAo+IEl0IGhhcyBsb3RzIG9mIGZyZWUgZGlza3NwYWNlIGxlZnQ6CgpZb3UnZCBiZXR0ZXIga2Vl
-cCB0cmFjayBvbiAvc3lzL2tlcm5lbC9kZWJ1Zy9mMmZzL3N0YXR1cywgYW5kIEkgdGhpbmsKeW91
-IGNhbiBmaW5kIG1hbnkgZGlydHkgc2VnbWVudHMgYWNyb3NzIHRoZSBwYXJ0aXRpb24uCkluIHRo
-ZSBzdGF0dXMgZmlsZSwgeW91IGNhbiBhbHNvIHNlZSB0aGUgZjJmc19nYyBiZWhhdmlvci4KClRo
-YW5rcywKCj4gCj4gZm9sa2VydEB2bnZuYXRpb24gfiAkIGRmIC1oIC9ob21lL2ZvbGtlcnQvYmFj
-a3Vwcwo+IEZpbGVzeXN0ZW0gICAgICAgICAgIFNpemUgIFVzZWQgQXZhaWwgVXNlJSBNb3VudGVk
-IG9uCj4gL2Rldi9tYXBwZXIvYmFja3VwcyAgMTE4RyAgIDkxRyAgIDI3RyAgNzglIC9ob21lL2Zv
-bGtlcnQvYmFja3Vwcwo+IAo+IEtlcm5lbDoKPiAKPiBmb2xrZXJ0QHZudm5hdGlvbiB+ICQgdW5h
-bWUgLXIKPiAzLjkuOCsKPiAKPiAKPiBGb2xrZXJ0IHZhbiBIZXVzZGVuCj4gCgotLSAKSmFlZ2V1
-ayBLaW0KU2Ftc3VuZwoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KT2N0b2JlciBXZWJpbmFyczog
-Q29kZSBmb3IgUGVyZm9ybWFuY2UKRnJlZSBJbnRlbCB3ZWJpbmFycyBjYW4gaGVscCB5b3UgYWNj
-ZWxlcmF0ZSBhcHBsaWNhdGlvbiBwZXJmb3JtYW5jZS4KRXhwbG9yZSB0aXBzIGZvciBNUEksIE9w
-ZW5NUCwgYWR2YW5jZWQgcHJvZmlsaW5nLCBhbmQgbW9yZS4gR2V0IHRoZSBtb3N0IGZyb20gCnRo
-ZSBsYXRlc3QgSW50ZWwgcHJvY2Vzc29ycyBhbmQgY29wcm9jZXNzb3JzLiBTZWUgYWJzdHJhY3Rz
-IGFuZCByZWdpc3RlciA+Cmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Ns
-az9pZD02MDEzNDA3MSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApM
-aW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJj
-ZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+This patch removes the logic previously introduced to address the starvation
+on cp_rwsem.
+
+One potential there-in bug is that we should cover the wait.list with spin_lock,
+but the previous code broke this rule.
+
+And, actually current rwsem handles this starvation issue reasonably, so that we
+didn't need to do this before neither.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/f2fs.h  | 13 -------------
+ fs/f2fs/super.c |  1 -
+ 2 files changed, 14 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a955a59..308967b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -18,8 +18,6 @@
+ #include <linux/crc32.h>
+ #include <linux/magic.h>
+ #include <linux/kobject.h>
+-#include <linux/wait.h>
+-#include <linux/sched.h>
+ 
+ /*
+  * For mount options
+@@ -360,7 +358,6 @@ struct f2fs_sb_info {
+ 	struct inode *meta_inode;		/* cache meta blocks */
+ 	struct mutex cp_mutex;			/* checkpoint procedure lock */
+ 	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
+-	wait_queue_head_t cp_wait;		/* checkpoint wait queue */
+ 	struct mutex node_write;		/* locking node writes */
+ 	struct mutex writepages;		/* mutex for writepages() */
+ 	int por_doing;				/* recovery is doing or not */
+@@ -516,13 +513,6 @@ static inline void clear_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
+ 
+ static inline void f2fs_lock_op(struct f2fs_sb_info *sbi)
+ {
+-	/*
+-	 * If the checkpoint thread is waiting for cp_rwsem, add cuurent task
+-	 * into wait list to avoid the checkpoint thread starvation
+-	 */
+-	while (!list_empty(&sbi->cp_rwsem.wait_list))
+-		wait_event_interruptible(sbi->cp_wait,
+-				list_empty(&sbi->cp_rwsem.wait_list));
+ 	down_read(&sbi->cp_rwsem);
+ }
+ 
+@@ -539,9 +529,6 @@ static inline void f2fs_lock_all(struct f2fs_sb_info *sbi)
+ static inline void f2fs_unlock_all(struct f2fs_sb_info *sbi)
+ {
+ 	up_write(&sbi->cp_rwsem);
+-
+-	/* wake up all tasks blocked by checkpoint */
+-	wake_up_all(&sbi->cp_wait);
+ }
+ 
+ /*
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 539c009..3b786c8 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -841,7 +841,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	spin_lock_init(&sbi->stat_lock);
+ 	init_rwsem(&sbi->bio_sem);
+ 	init_rwsem(&sbi->cp_rwsem);
+-	init_waitqueue_head(&sbi->cp_wait);
+ 	init_sb_info(sbi);
+ 
+ 	/* get an inode for meta space */
+-- 
+1.8.4.474.g128a96c
+
+
+------------------------------------------------------------------------------
+October Webinars: Code for Performance
+Free Intel webinars can help you accelerate application performance.
+Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
+the latest Intel processors and coprocessors. See abstracts and register >
+http://pubads.g.doubleclick.net/gampad/clk?id=60134071&iu=/4140/ostg.clktrk
