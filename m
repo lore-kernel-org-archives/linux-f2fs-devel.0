@@ -1,22 +1,26 @@
-From: Jan Altenberg <jan@linutronix.de>
-Subject: BUG_ON in recovery.c after powercut
-Date: Thu, 10 Oct 2013 16:23:28 +0200
-Message-ID: <1381415008.3138.32.camel@moestavern>
+From: Jin Xu <jinuxstyle@live.com>
+Subject: Re: [PATCH v2] f2fs: avoid congestion_wait when
+ do_checkpoint for better performance
+Date: Thu, 10 Oct 2013 23:54:26 +0000
+Message-ID: <BLU175-W378B020AC54C62046132AAB41E0@phx.gbl>
+References: <30722427.272521381231813403.JavaMail.weblogic@epml26>,
+	<5254D5B9.1040803@cn.fujitsu.com>
+	<BLU175-W48D340F1A4D0966D8895D0B41E0@phx.gbl>,
+	<52566149.1030702@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============1931481854933898389=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jan@linutronix.de>) id 1VUHQ6-0003jY-Ix
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jinuxstyle@live.com>) id 1VUQ3t-0002jO-7a
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Oct 2013 14:40:54 +0000
-Received: from www.linutronix.de ([62.245.132.108] helo=Galois.linutronix.de)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps
-	(TLSv1:AES256-SHA:256) (Exim 4.76) id 1VUHQ4-0006mg-DA
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Oct 2013 14:40:54 +0000
+	Thu, 10 Oct 2013 23:54:33 +0000
+Received: from blu0-omc3-s29.blu0.hotmail.com ([65.55.116.104])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VUQ3r-0005Lv-H6 for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 10 Oct 2013 23:54:33 +0000
+In-Reply-To: <52566149.1030702@cn.fujitsu.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,131 +30,505 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Cc: shu tan <shu.tan@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 
-Hi all,
+--===============1931481854933898389==
+Content-Type: multipart/alternative;
+	boundary="_0e85712b-06b3-4f0f-a816-d4da1b7d5bd3_"
 
-I've just triggered a BUG_ON, which looks similar to:
-http://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg00336.html
+--_0e85712b-06b3-4f0f-a816-d4da1b7d5bd3_
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 
-I'm running 3.11.4 on a BeagleBone Black. Unfortunately, I need a couple
-of patches on top of 3.11.4, because I need MMC support:
-https://github.com/beagleboard/kernel/tree/3.11
+> Date: Thu=2C 10 Oct 2013 16:11:53 +0800
+> From: guz.fnst@cn.fujitsu.com
+> To: jinuxstyle@live.com
+> CC: yuan.mark.zhong@samsung.com=3B jaegeuk.kim@samsung.com=3B linux-f2fs-=
+devel@lists.sourceforge.net=3B linux-kernel@vger.kernel.org=3B linux-fsdeve=
+l@vger.kernel.org=3B shu.tan@samsung.com
+> Subject: Re: [f2fs-dev] [PATCH v2] f2fs: avoid congestion_wait when do_ch=
+eckpoint for better performance
+>=20
+> Hi Jin=2C
+>=20
+> On 10/10/2013 04:09 PM=2C Jin Xu wrote:
+>=20
+> > Hi Gu=2C
+> >=20
+> > I have a comment below.
+> >=20
+> >> Date: Wed=2C 9 Oct 2013 12:04:09 +0800
+> >> From: guz.fnst@cn.fujitsu.com
+> >> To: yuan.mark.zhong@samsung.com
+> >> CC: jaegeuk.kim@samsung.com=3B linux-f2fs-devel@lists.sourceforge.net=
+=3B linux-kernel@vger.kernel.org=3B linux-fsdevel@vger.kernel.org=3B shu.ta=
+n@samsung.com
+> >> Subject: Re: [f2fs-dev] [PATCH v2] f2fs: avoid congestion_wait when do=
+_checkpoint for better performance
+> >>
+> >> Hi Yuan=2C
+> >> On 10/08/2013 07:30 PM=2C Yuan Zhong wrote:
+> >>
+> > ...
+> >>
+> >> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+> >> ---
+> >> fs/f2fs/checkpoint.c | 11 +++++++++--
+> >> fs/f2fs/f2fs.h | 1 +
+> >> fs/f2fs/segment.c | 4 ++++
+> >> 3 files changed=2C 14 insertions(+)=2C 2 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >> index d808827..2a5999d 100644
+> >> --- a/fs/f2fs/checkpoint.c
+> >> +++ b/fs/f2fs/checkpoint.c
+> >> @@ -757=2C8 +757=2C15 @@ static void do_checkpoint(struct f2fs_sb_info=
+ *sbi=2C bool is_umount)
+> >> f2fs_put_page(cp_page=2C 1)=3B
+> >>
+> >> /* wait for previous submitted node/meta pages writeback */
+> >> - while (get_pages(sbi=2C F2FS_WRITEBACK))
+> >> - congestion_wait(BLK_RW_ASYNC=2C HZ / 50)=3B
+> >> + sbi->cp_task =3D current=3B
+> >> + while (get_pages(sbi=2C F2FS_WRITEBACK)) {
+> >> + set_current_state(TASK_UNINTERRUPTIBLE)=3B
+> >> + if (!get_pages(sbi=2C F2FS_WRITEBACK))
+> >> + break=3B
+> >> + io_schedule()=3B
+> >> + }
+> >> + __set_current_state(TASK_RUNNING)=3B
+> >> + sbi->cp_task =3D NULL=3B
+> >>
+> >> filemap_fdatawait_range(sbi->node_inode->i_mapping=2C 0=2C LONG_MAX)=
+=3B
+> >> filemap_fdatawait_range(sbi->meta_inode->i_mapping=2C 0=2C LONG_MAX)=
+=3B
+> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >> index a955a59..408ace7 100644
+> >> --- a/fs/f2fs/f2fs.h
+> >> +++ b/fs/f2fs/f2fs.h
+> >> @@ -365=2C6 +365=2C7 @@ struct f2fs_sb_info {
+> >> struct mutex writepages=3B /* mutex for writepages() */
+> >> int por_doing=3B /* recovery is doing or not */
+> >> int on_build_free_nids=3B /* build_free_nids is doing */
+> >> + struct task_struct *cp_task=3B /* checkpoint task */
+> >>
+> >> /* for orphan inode management */
+> >> struct list_head orphan_inode_list=3B /* orphan inode list */
+> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> index bd79bbe..3b20359 100644
+> >> --- a/fs/f2fs/segment.c
+> >> +++ b/fs/f2fs/segment.c
+> >> @@ -597=2C6 +597=2C10 @@ static void f2fs_end_io_write(struct bio *bio=
+=2C int err)
+> >>
+> >> if (p->is_sync)
+> >> complete(p->wait)=3B
+> >> +
+> >> + if (!get_pages(p->sbi=2C F2FS_WRITEBACK) && p->sbi->cp_task)
+> >> + wake_up_process(p->sbi->cp_task)=3B
+> >=20
+> > There is a risk of dereferencing a NULL pointer because here simply com=
+paring the
+> > cp_task against NULL is not enough to avoid race in multi-thread enviro=
+nment.
+> > Another thread could have assigned it to NULL in the window between the=
+ comparison
+> > and waking up.
+>=20
+> Can not be that=2C checkpoint routine is always singleton and protected b=
+y cp_mutex and cp_rwsem.
+>=20
+The race could happen like this for example:On a SMP environment=2C thread =
+1 wakes up the checkpoint thread=2C thenthread 2 comes to the f2fs_end_io_w=
+rite=2C compared the cp_task as not NULL=2Cbut at the same time=2C the chec=
+kpoint thread just assigned the cp_task to NULL.When thread 2 gets to the w=
+ake_up_process=2C dereferencing to NULL pointerhappens.
+Jin
+> Thanks=2C
+> Gu=20
+>=20
+> >=20
+> > Regards=2C
+> > Jin
+> >> +
+> >> kfree(p)=3B
+> >> bio_put(bio)=3B
+> >> }
+> >> --
+> >> 1.7.7
+> >>
+> >> Regards=2C
+> >> Gu
+> >>
+> >> >
+> >> >
+> >> >>> This is a problem here=2C especially=2C when sync a large number o=
+f small files or dirs.
+> >> >>> In order to avoid this=2C a wait_list is introduced=2C
+> >> >>> the checkpoint thread will be dropped into the wait_list if the pa=
+ges have not been written back=2C
+> >> >>> and will be waked up by contrast.
+> >> >
+> >> >> Please pay some attention to the mail form=2C this mail is out of f=
+ormat in my mail client.
+> >> >
+> >> >> Regards=2C
+> >> >> Gu
+> >> >
+> >> > Regards=2C
+> >> > Yuan
+> >> >
+> >> >>>
+> >> >>> Signed-off-by: Yuan Zhong <yuan.mark.zhong@samsung.com>
+> >> >>> ---
+> >> >>> fs/f2fs/checkpoint.c | 3 +--
+> >> >>> fs/f2fs/f2fs.h | 19 +++++++++++++++++++
+> >> >>> fs/f2fs/segment.c | 1 +
+> >> >>> fs/f2fs/super.c | 1 +
+> >> >>> 4 files changed=2C 22 insertions(+)=2C 2 deletions(-)
+> >> >>>
+> >> >>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> >> >>> index ca39442..5d69ae0 100644
+> >> >>> --- a/fs/f2fs/checkpoint.c
+> >> >>> +++ b/fs/f2fs/checkpoint.c
+> >> >>> @@ -758=2C8 +758=2C7 @@ static void do_checkpoint(struct f2fs_sb_i=
+nfo *sbi=2C bool is_umount)
+> >> >>> f2fs_put_page(cp_page=2C 1)=3B
+> >> >>>
+> >> >>> /* wait for previous submitted node/meta pages writeback */
+> >> >>> - while (get_pages(sbi=2C F2FS_WRITEBACK))
+> >> >>> - congestion_wait(BLK_RW_ASYNC=2C HZ / 50)=3B
+> >> >>> + f2fs_writeback_wait(sbi)=3B
+> >> >>>
+> >> >>> filemap_fdatawait_range(sbi->node_inode->i_mapping=2C 0=2C LONG_MA=
+X)=3B
+> >> >>> filemap_fdatawait_range(sbi->meta_inode->i_mapping=2C 0=2C LONG_MA=
+X)=3B
+> >> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >> >>> index 7fd99d8..4b0d70e 100644
+> >> >>> --- a/fs/f2fs/f2fs.h
+> >> >>> +++ b/fs/f2fs/f2fs.h
+> >> >>> @@ -18=2C6 +18=2C8 @@
+> >> >>> #include <linux/crc32.h>
+> >> >>> #include <linux/magic.h>
+> >> >>> #include <linux/kobject.h>
+> >> >>> +#include <linux/wait.h>
+> >> >>> +#include <linux/sched.h>
+> >> >>>
+> >> >>> /*
+> >> >>> * For mount options
+> >> >>> @@ -368=2C6 +370=2C7 @@ struct f2fs_sb_info {
+> >> >>> struct mutex fs_lock[NR_GLOBAL_LOCKS]=3B /* blocking FS operations=
+ */
+> >> >>> struct mutex node_write=3B /* locking node writes */
+> >> >>> struct mutex writepages=3B /* mutex for writepages() */
+> >> >>> + wait_queue_head_t writeback_wqh=3B /* wait_queue for writeback *=
+/
+> >> >>> unsigned char next_lock_num=3B /* round-robin global locks */
+> >> >>> int por_doing=3B /* recovery is doing or not */
+> >> >>> int on_build_free_nids=3B /* build_free_nids is doing */
+> >> >>> @@ -961=2C6 +964=2C22 @@ static inline int f2fs_readonly(struct su=
+per_block *sb)
+> >> >>> return sb->s_flags & MS_RDONLY=3B
+> >> >>> }
+> >> >>>
+> >> >>> +static inline void f2fs_writeback_wait(struct f2fs_sb_info *sbi)
+> >> >>> +{
+> >> >>> + DEFINE_WAIT(wait)=3B
+> >> >>> +
+> >> >>> + prepare_to_wait(&sbi->writeback_wqh=2C &wait=2C TASK_UNINTERRUPT=
+IBLE)=3B
+> >> >>> + if (get_pages(sbi=2C F2FS_WRITEBACK))
+> >> >>> + io_schedule()=3B
+> >> >>> + finish_wait(&sbi->writeback_wqh=2C &wait)=3B
+> >> >>> +}
+> >> >>> +
+> >> >>> +static inline void f2fs_writeback_wake(struct f2fs_sb_info *sbi)
+> >> >>> +{
+> >> >>> + if (!get_pages(sbi=2C F2FS_WRITEBACK))
+> >> >>> + wake_up_all(&sbi->writeback_wqh)=3B
+> >> >>> +}
+> >> >>> +
+> >> >>> /*
+> >> >>> * file.c
+> >> >>> */
+> >> >>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> >>> index bd79bbe..0708aa9 100644
+> >> >>> --- a/fs/f2fs/segment.c
+> >> >>> +++ b/fs/f2fs/segment.c
+> >> >>> @@ -597=2C6 +597=2C7 @@ static void f2fs_end_io_write(struct bio *=
+bio=2C int err)
+> >> >>>
+> >> >>> if (p->is_sync)
+> >> >>> complete(p->wait)=3B
+> >> >>> + f2fs_writeback_wake(p->sbi)=3B
+> >> >>> kfree(p)=3B
+> >> >>> bio_put(bio)=3B
+> >> >>> }
+> >> >>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >> >>> index 094ccc6..3ac6d85 100644
+> >> >>> --- a/fs/f2fs/super.c
+> >> >>> +++ b/fs/f2fs/super.c
+> >> >>> @@ -835=2C6 +835=2C7 @@ static int f2fs_fill_super(struct super_bl=
+ock *sb=2C void *data=2C int silent)
+> >> >>> mutex_init(&sbi->gc_mutex)=3B
+> >> >>> mutex_init(&sbi->writepages)=3B
+> >> >>> mutex_init(&sbi->cp_mutex)=3B
+> >> >>> + init_waitqueue_head(&sbi->writeback_wqh)=3B
+> >> >>> for (i =3D 0=3B i < NR_GLOBAL_LOCKS=3B i++)
+> >> >>> mutex_init(&sbi->fs_lock[i])=3B
+> >> >>> mutex_init(&sbi->node_write)=3BN=8B=A7=B2=E6=ECr=B8=9By=FA=E8=9A=
+=D8b=B2X=AC=B6=C7=A7v=D8^=96)=DE=BA{.n=C7+=89=B7=A5=8A{=B1=91=EA=E7zX=A7=B6=
+=17=9B=A1=DC=A8}=A9=9E=B2=C6 z=DA&j:+v=89=A8=BE=07=AB=91=EA=E7zZ+=80=CA+zf=
+=A3=A2=B7h=9A=88=A7~=86=AD=86=DBi=FF=FB=E0z=B9=1E=AEw=A5=A2=B8?=99=A8=E8=AD=
+=DA&=A2)=DF=A2=1Bf=94=F9^j=C7=ABy=A7m=85=E1@A=ABa=B6=DA=7F=FF=0C0=B6=ECh=AE=
+=0F=E5=92i=7F
+> >>
+> >>
+> >> --
+> >> To unsubscribe from this list: send the line "unsubscribe linux-fsdeve=
+l" in
+> >> the body of a message to majordomo@vger.kernel.org
+> >> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" =
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ 		 	   		  =
 
-If I put a 2012.12 Angstrom image for the beagle on the eMMC and use it
-as a rootfilesystem, I'm triggering the following issue, when doing a
-powercut:
+--_0e85712b-06b3-4f0f-a816-d4da1b7d5bd3_
+Content-Type: text/html; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 
-[...]
-[    4.228477] F2FS-fs (mmcblk0p2): recover_inode and its dentry: ino = ca3d, name = system.journal, dir = ca24, err = 0
-[    4.242586] F2FS-fs (mmcblk0p2): recover_inode and its dentry: ino = ca3d, name = system.journal, dir = ca24, err = 0
-[    4.260272] F2FS-fs (mmcblk0p2): recover_inode and its dentry: ino = ca44, name = settings.UXHEXP, dir = a9df, err = 0
-[    4.276471] F2FS-fs (mmcblk0p2): recover_inode and its dentry: ino = ca5e, name = settings.8VMWXP, dir = a9e1, err = 0
-[    4.298343] F2FS-fs (mmcblk0p2): recover_data: ino = ca3d, recovered_data = 1 blocks, err = 0
-[    4.332907] ------------[ cut here ]------------
-[    4.337797] kernel BUG at /home/jan/work/beagle/linux-3.11/fs/f2fs/recovery.c:306!
-[    4.345775] Internal error: Oops - BUG: 0 [#1] SMP ARM
-[    4.351193] Modules linked in:
-[    4.354435] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.11.4 #10
-[    4.360768] task: de05b440 ti: de05c000 task.ti: de05c000
-[    4.366483] PC is at recover_fsync_data+0xc0c/0xc48
-[    4.371629] LR is at recover_fsync_data+0x8fc/0xc48
-[    4.376773] pc : [<c028e6a8>]    lr : [<c028e398>]    psr: 80000113
-[    4.376773] sp : de05dcf0  ip : 00000000  fp : 0008101d
-[    4.388867] r10: 2007fffb  r9 : de2ba000  r8 : 200803f5
-[    4.394373] r7 : 00000000  r6 : c134c4a0  r5 : de05dd6c  r4 : dd9d3438
-[    4.401252] r3 : fffffffb  r2 : c0f84000  r1 : 00000470  r0 : de425000
-[    4.408132] Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-[    4.415834] Control: 10c5387d  Table: 80004019  DAC: 00000015
-[    4.421889] Process swapper/0 (pid: 1, stack limit = 0xde05c240)
-[    4.428220] Stack: (0xde05dcf0 to 0xde05e000)
-[    4.432817] dce0:                                     00000001 00000000 00000000 c0092f34
-[    4.441440] dd00: 00000001 00000000 0005d9bd c134c4c0 0000005e 00000000 dd9c6508 00100100
-[    4.450063] dd20: 00200200 0000ca3d 00000000 dd9c6508 c134c4c0 c134c660 0000ca3a 000000d8
-[    4.458685] dd40: 00000000 00000000 de05c000 0000000f de42505c dd9aac98 00000002 0000ca3a
-[    4.467308] dd60: 0000ca3d ffffffff 00000000 dd9d3438 dd9d3418 00ca3dc8 00000000 00000000
-[    4.475930] dd80: dd9c6770 de2ba000 de2ba800 00000000 00000000 6e6790fc 00000000 00000000
-[    4.484553] dda0: de05c000 c0281ab0 00000000 00000000 c0d81400 dd9c44c8 00001000 dd803340
-[    4.493176] ddc0: 00000081 dd8033e4 00008001 de2ba800 00008001 c0115da0 dd803340 de05de08
-[    4.501798] dde0: 62636d6d 70306b6c 00000032 00000008 00000004 c010e398 000079ec c051532c
-[    4.510420] de00: 00000000 00008001 00000000 de2bbcc0 c07ef0ac 00000000 00000000 c027f188
-[    4.519042] de20: c0281530 c07973d8 00008001 c0116a9c de05c000 c012dfd4 de01b200 c07ef0ac
-[    4.527665] de40: de2bbcc0 00008001 00000000 00008001 c07dce38 c012e464 c07ef0ac 00000000
-[    4.536286] de60: de2bbcc0 de2bbd00 00000060 c01303b4 00000000 c0650a50 de2bbcc0 00008001
-[    4.544909] de80: de01bb10 dd9ad270 0000000a 00000000 0000000a c00f02e0 0000000a de059000
-[    4.553531] dea0: c0650a50 00000000 00008001 c0650a50 c134bd00 000000a5 00000000 c0130ad0
-[    4.562153] dec0: 00000000 00006180 00000000 de2bbd00 de2bbcc0 00000000 000000b3 de3e8000
-[    4.570776] dee0: 00008001 de3e8000 c0775f48 c0733f38 00000000 c0650a50 0b300002 ffffff9c
-[    4.579398] df00: 00000000 c0066a80 dd9c19a8 c0121244 de01bb10 dd9aec48 c0775f48 000000b3
-[    4.588020] df20: 000000b3 c0775f59 c0775f20 c081ae40 c07334d0 c07887b4 000000a5 c0734240
-[    4.596643] df40: 00000000 de05df24 de05b440 c0775f48 c081ae60 c0775f59 c0775f20 c07343c0
-[    4.605264] df60: c081ae40 c07334d0 c07887b4 c0775f40 00000007 c0733c54 00000007 00000007
-[    4.613886] df80: c07334d0 c1394fc0 00000000 c0500770 00000000 00000000 00000000 00000000
-[    4.622507] dfa0: 00000000 c0500778 00000000 c0013788 00000000 00000000 00000000 00000000
-[    4.631128] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    4.639748] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000 ffdf67fc f77ffdd4
-[    4.648384] [<c028e6a8>] (recover_fsync_data+0xc0c/0xc48) from [<c0281ab0>] (f2fs_fill_super+0x580/0x670)
-[    4.658487] [<c0281ab0>] (f2fs_fill_super+0x580/0x670) from [<c0115da0>] (mount_bdev+0x168/0x19c)
-[    4.667848] [<c0115da0>] (mount_bdev+0x168/0x19c) from [<c027f188>] (f2fs_mount+0x18/0x20)
-[    4.676565] [<c027f188>] (f2fs_mount+0x18/0x20) from [<c0116a9c>] (mount_fs+0x44/0x178)
-[    4.685009] [<c0116a9c>] (mount_fs+0x44/0x178) from [<c012e464>] (vfs_kern_mount+0x4c/0xc0)
-[    4.693819] [<c012e464>] (vfs_kern_mount+0x4c/0xc0) from [<c01303b4>] (do_mount+0x1c8/0x860)
-[    4.702718] [<c01303b4>] (do_mount+0x1c8/0x860) from [<c0130ad0>] (SyS_mount+0x84/0xb8)
-[    4.711168] [<c0130ad0>] (SyS_mount+0x84/0xb8) from [<c0733f38>] (mount_block_root+0x100/0x234)
-[    4.720343] [<c0733f38>] (mount_block_root+0x100/0x234) from [<c0734240>] (mount_root+0xe8/0x108)
-[    4.729700] [<c0734240>] (mount_root+0xe8/0x108) from [<c07343c0>] (prepare_namespace+0x160/0x1c4)
-[    4.739149] [<c07343c0>] (prepare_namespace+0x160/0x1c4) from [<c0733c54>] (kernel_init_freeable+0x1d0/0x21c)
-[    4.749616] [<c0733c54>] (kernel_init_freeable+0x1d0/0x21c) from [<c0500778>] (kernel_init+0x8/0xe4)
-[    4.759263] [<c0500778>] (kernel_init+0x8/0xe4) from [<c0013788>] (ret_from_fork+0x14/0x2c)
-[    4.768068] Code: e584c004 ebf9fb3e eafffed4 e7f001f2 (e7f001f2) 
-[    4.774505] ---[ end trace 6a3aa57fb472d1aa ]---
-[    4.779939] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-[...]
+<html>
+<head>
+<style><!--
+.hmmessage P
+{
+margin:0px=3B
+padding:0px
+}
+body.hmmessage
+{
+font-size: 12pt=3B
+font-family:Calibri
+}
+--></style></head>
+<body class=3D'hmmessage'><div dir=3D'ltr'><span style=3D"font-size: 12pt=
+=3B">&gt=3B Date: Thu=2C 10 Oct 2013 16:11:53 +0800</span><br><div>&gt=3B F=
+rom: guz.fnst@cn.fujitsu.com<br>&gt=3B To: jinuxstyle@live.com<br>&gt=3B CC=
+: yuan.mark.zhong@samsung.com=3B jaegeuk.kim@samsung.com=3B linux-f2fs-deve=
+l@lists.sourceforge.net=3B linux-kernel@vger.kernel.org=3B linux-fsdevel@vg=
+er.kernel.org=3B shu.tan@samsung.com<br>&gt=3B Subject: Re: [f2fs-dev] [PAT=
+CH v2] f2fs: avoid congestion_wait when do_checkpoint for better performanc=
+e<br>&gt=3B <br>&gt=3B Hi Jin=2C<br>&gt=3B <br>&gt=3B On 10/10/2013 04:09 P=
+M=2C Jin Xu wrote:<br>&gt=3B <br>&gt=3B &gt=3B Hi Gu=2C<br>&gt=3B &gt=3B <b=
+r>&gt=3B &gt=3B I have a comment below.<br>&gt=3B &gt=3B <br>&gt=3B &gt=3B&=
+gt=3B Date: Wed=2C 9 Oct 2013 12:04:09 +0800<br>&gt=3B &gt=3B&gt=3B From: g=
+uz.fnst@cn.fujitsu.com<br>&gt=3B &gt=3B&gt=3B To: yuan.mark.zhong@samsung.c=
+om<br>&gt=3B &gt=3B&gt=3B CC: jaegeuk.kim@samsung.com=3B linux-f2fs-devel@l=
+ists.sourceforge.net=3B linux-kernel@vger.kernel.org=3B linux-fsdevel@vger.=
+kernel.org=3B shu.tan@samsung.com<br>&gt=3B &gt=3B&gt=3B Subject: Re: [f2fs=
+-dev] [PATCH v2] f2fs: avoid congestion_wait when do_checkpoint for better =
+performance<br>&gt=3B &gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=3B Hi Yuan=2C<br>&gt=
+=3B &gt=3B&gt=3B On 10/08/2013 07:30 PM=2C Yuan Zhong wrote:<br>&gt=3B &gt=
+=3B&gt=3B<br>&gt=3B &gt=3B ...<br>&gt=3B &gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=
+=3B Signed-off-by: Gu Zheng &lt=3Bguz.fnst@cn.fujitsu.com&gt=3B<br>&gt=3B &=
+gt=3B&gt=3B ---<br>&gt=3B &gt=3B&gt=3B fs/f2fs/checkpoint.c | 11 +++++++++-=
+-<br>&gt=3B &gt=3B&gt=3B fs/f2fs/f2fs.h | 1 +<br>&gt=3B &gt=3B&gt=3B fs/f2f=
+s/segment.c | 4 ++++<br>&gt=3B &gt=3B&gt=3B 3 files changed=2C 14 insertion=
+s(+)=2C 2 deletions(-)<br>&gt=3B &gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=3B diff -=
+-git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c<br>&gt=3B &gt=3B&gt=3B i=
+ndex d808827..2a5999d 100644<br>&gt=3B &gt=3B&gt=3B --- a/fs/f2fs/checkpoin=
+t.c<br>&gt=3B &gt=3B&gt=3B +++ b/fs/f2fs/checkpoint.c<br>&gt=3B &gt=3B&gt=
+=3B @@ -757=2C8 +757=2C15 @@ static void do_checkpoint(struct f2fs_sb_info =
+*sbi=2C bool is_umount)<br>&gt=3B &gt=3B&gt=3B f2fs_put_page(cp_page=2C 1)=
+=3B<br>&gt=3B &gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=3B /* wait for previous subm=
+itted node/meta pages writeback */<br>&gt=3B &gt=3B&gt=3B - while (get_page=
+s(sbi=2C F2FS_WRITEBACK))<br>&gt=3B &gt=3B&gt=3B - congestion_wait(BLK_RW_A=
+SYNC=2C HZ / 50)=3B<br>&gt=3B &gt=3B&gt=3B + sbi-&gt=3Bcp_task =3D current=
+=3B<br>&gt=3B &gt=3B&gt=3B + while (get_pages(sbi=2C F2FS_WRITEBACK)) {<br>=
+&gt=3B &gt=3B&gt=3B + set_current_state(TASK_UNINTERRUPTIBLE)=3B<br>&gt=3B =
+&gt=3B&gt=3B + if (!get_pages(sbi=2C F2FS_WRITEBACK))<br>&gt=3B &gt=3B&gt=
+=3B + break=3B<br>&gt=3B &gt=3B&gt=3B + io_schedule()=3B<br>&gt=3B &gt=3B&g=
+t=3B + }<br>&gt=3B &gt=3B&gt=3B + __set_current_state(TASK_RUNNING)=3B<br>&=
+gt=3B &gt=3B&gt=3B + sbi-&gt=3Bcp_task =3D NULL=3B<br>&gt=3B &gt=3B&gt=3B<b=
+r>&gt=3B &gt=3B&gt=3B filemap_fdatawait_range(sbi-&gt=3Bnode_inode-&gt=3Bi_=
+mapping=2C 0=2C LONG_MAX)=3B<br>&gt=3B &gt=3B&gt=3B filemap_fdatawait_range=
+(sbi-&gt=3Bmeta_inode-&gt=3Bi_mapping=2C 0=2C LONG_MAX)=3B<br>&gt=3B &gt=3B=
+&gt=3B diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h<br>&gt=3B &gt=3B&gt=3B =
+index a955a59..408ace7 100644<br>&gt=3B &gt=3B&gt=3B --- a/fs/f2fs/f2fs.h<b=
+r>&gt=3B &gt=3B&gt=3B +++ b/fs/f2fs/f2fs.h<br>&gt=3B &gt=3B&gt=3B @@ -365=
+=2C6 +365=2C7 @@ struct f2fs_sb_info {<br>&gt=3B &gt=3B&gt=3B struct mutex =
+writepages=3B /* mutex for writepages() */<br>&gt=3B &gt=3B&gt=3B int por_d=
+oing=3B /* recovery is doing or not */<br>&gt=3B &gt=3B&gt=3B int on_build_=
+free_nids=3B /* build_free_nids is doing */<br>&gt=3B &gt=3B&gt=3B + struct=
+ task_struct *cp_task=3B /* checkpoint task */<br>&gt=3B &gt=3B&gt=3B<br>&g=
+t=3B &gt=3B&gt=3B /* for orphan inode management */<br>&gt=3B &gt=3B&gt=3B =
+struct list_head orphan_inode_list=3B /* orphan inode list */<br>&gt=3B &gt=
+=3B&gt=3B diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c<br>&gt=3B &gt=
+=3B&gt=3B index bd79bbe..3b20359 100644<br>&gt=3B &gt=3B&gt=3B --- a/fs/f2f=
+s/segment.c<br>&gt=3B &gt=3B&gt=3B +++ b/fs/f2fs/segment.c<br>&gt=3B &gt=3B=
+&gt=3B @@ -597=2C6 +597=2C10 @@ static void f2fs_end_io_write(struct bio *b=
+io=2C int err)<br>&gt=3B &gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=3B if (p-&gt=3Bis=
+_sync)<br>&gt=3B &gt=3B&gt=3B complete(p-&gt=3Bwait)=3B<br>&gt=3B &gt=3B&gt=
+=3B +<br>&gt=3B &gt=3B&gt=3B + if (!get_pages(p-&gt=3Bsbi=2C F2FS_WRITEBACK=
+) &amp=3B&amp=3B p-&gt=3Bsbi-&gt=3Bcp_task)<br>&gt=3B &gt=3B&gt=3B + wake_u=
+p_process(p-&gt=3Bsbi-&gt=3Bcp_task)=3B<br>&gt=3B &gt=3B <br>&gt=3B &gt=3B =
+There is a risk of dereferencing a NULL pointer because here simply compari=
+ng the<br>&gt=3B &gt=3B cp_task against NULL is not enough to avoid race in=
+ multi-thread environment.<br>&gt=3B &gt=3B Another thread could have assig=
+ned it to NULL in the window between the comparison<br>&gt=3B &gt=3B and wa=
+king up.<br>&gt=3B <br>&gt=3B Can not be that=2C checkpoint routine is alwa=
+ys singleton and protected by cp_mutex and cp_rwsem.<br>&gt=3B&nbsp=3B</div=
+><div><br></div><div>The race could happen like this for example:</div><div=
+>On a SMP environment=2C thread 1 wakes up the checkpoint thread=2C then</d=
+iv><div><span style=3D"font-size: 12pt=3B">thread 2 comes to the f2fs_end_i=
+o_write=2C compared the cp_task as not NULL=2C</span></div><div><span style=
+=3D"font-size: 12pt=3B">but at the same time=2C the checkpoint thread just =
+assigned the cp_task to NULL.</span></div><div><span style=3D"font-size: 12=
+pt=3B">When thread 2 gets to the wake_up_process=2C dereferencing to NULL p=
+ointer</span></div><div><span style=3D"font-size: 12pt=3B">happens.</span><=
+/div><div><br></div><div>Jin</div><div><br>&gt=3B Thanks=2C<br>&gt=3B Gu&nb=
+sp=3B<br>&gt=3B <br>&gt=3B &gt=3B <br>&gt=3B &gt=3B Regards=2C<br>&gt=3B &g=
+t=3B Jin<br>&gt=3B &gt=3B&gt=3B +<br>&gt=3B &gt=3B&gt=3B kfree(p)=3B<br>&gt=
+=3B &gt=3B&gt=3B bio_put(bio)=3B<br>&gt=3B &gt=3B&gt=3B }<br>&gt=3B &gt=3B&=
+gt=3B --<br>&gt=3B &gt=3B&gt=3B 1.7.7<br>&gt=3B &gt=3B&gt=3B<br>&gt=3B &gt=
+=3B&gt=3B Regards=2C<br>&gt=3B &gt=3B&gt=3B Gu<br>&gt=3B &gt=3B&gt=3B<br>&g=
+t=3B &gt=3B&gt=3B &gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B<br>&gt=3B &gt=3B&gt=
+=3B &gt=3B&gt=3B&gt=3B This is a problem here=2C especially=2C when sync a =
+large number of small files or dirs.<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=
+=3B In order to avoid this=2C a wait_list is introduced=2C<br>&gt=3B &gt=3B=
+&gt=3B &gt=3B&gt=3B&gt=3B the checkpoint thread will be dropped into the wa=
+it_list if the pages have not been written back=2C<br>&gt=3B &gt=3B&gt=3B &=
+gt=3B&gt=3B&gt=3B and will be waked up by contrast.<br>&gt=3B &gt=3B&gt=3B =
+&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B Please pay some attention to the=
+ mail form=2C this mail is out of format in my mail client.<br>&gt=3B &gt=
+=3B&gt=3B &gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B Regards=2C<br>&gt=3B &=
+gt=3B&gt=3B &gt=3B&gt=3B Gu<br>&gt=3B &gt=3B&gt=3B &gt=3B<br>&gt=3B &gt=3B&=
+gt=3B &gt=3B Regards=2C<br>&gt=3B &gt=3B&gt=3B &gt=3B Yuan<br>&gt=3B &gt=3B=
+&gt=3B &gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=
+=3B &gt=3B&gt=3B&gt=3B Signed-off-by: Yuan Zhong &lt=3Byuan.mark.zhong@sams=
+ung.com&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B ---<br>&gt=3B &gt=
+=3B&gt=3B &gt=3B&gt=3B&gt=3B fs/f2fs/checkpoint.c | 3 +--<br>&gt=3B &gt=3B&=
+gt=3B &gt=3B&gt=3B&gt=3B fs/f2fs/f2fs.h | 19 +++++++++++++++++++<br>&gt=3B =
+&gt=3B&gt=3B &gt=3B&gt=3B&gt=3B fs/f2fs/segment.c | 1 +<br>&gt=3B &gt=3B&gt=
+=3B &gt=3B&gt=3B&gt=3B fs/f2fs/super.c | 1 +<br>&gt=3B &gt=3B&gt=3B &gt=3B&=
+gt=3B&gt=3B 4 files changed=2C 22 insertions(+)=2C 2 deletions(-)<br>&gt=3B=
+ &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B =
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c<br>&gt=3B &gt=3B&g=
+t=3B &gt=3B&gt=3B&gt=3B index ca39442..5d69ae0 100644<br>&gt=3B &gt=3B&gt=
+=3B &gt=3B&gt=3B&gt=3B --- a/fs/f2fs/checkpoint.c<br>&gt=3B &gt=3B&gt=3B &g=
+t=3B&gt=3B&gt=3B +++ b/fs/f2fs/checkpoint.c<br>&gt=3B &gt=3B&gt=3B &gt=3B&g=
+t=3B&gt=3B @@ -758=2C8 +758=2C7 @@ static void do_checkpoint(struct f2fs_sb=
+_info *sbi=2C bool is_umount)<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B f2f=
+s_put_page(cp_page=2C 1)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B<br>&g=
+t=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B /* wait for previous submitted node/me=
+ta pages writeback */<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B - while (ge=
+t_pages(sbi=2C F2FS_WRITEBACK))<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B -=
+ congestion_wait(BLK_RW_ASYNC=2C HZ / 50)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&=
+gt=3B&gt=3B + f2fs_writeback_wait(sbi)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=
+=3B&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B filemap_fdatawait_range=
+(sbi-&gt=3Bnode_inode-&gt=3Bi_mapping=2C 0=2C LONG_MAX)=3B<br>&gt=3B &gt=3B=
+&gt=3B &gt=3B&gt=3B&gt=3B filemap_fdatawait_range(sbi-&gt=3Bmeta_inode-&gt=
+=3Bi_mapping=2C 0=2C LONG_MAX)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B=
+ diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h<br>&gt=3B &gt=3B&gt=3B &gt=3B=
+&gt=3B&gt=3B index 7fd99d8..4b0d70e 100644<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=
+=3B&gt=3B --- a/fs/f2fs/f2fs.h<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B ++=
++ b/fs/f2fs/f2fs.h<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B @@ -18=2C6 +18=
+=2C8 @@<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B #include &lt=3Blinux/crc3=
+2.h&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B #include &lt=3Blinux/ma=
+gic.h&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B #include &lt=3Blinux/=
+kobject.h&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +#include &lt=3Bl=
+inux/wait.h&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +#include &lt=
+=3Blinux/sched.h&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B<br>&gt=3B =
+&gt=3B&gt=3B &gt=3B&gt=3B&gt=3B /*<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=
+=3B * For mount options<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B @@ -368=
+=2C6 +370=2C7 @@ struct f2fs_sb_info {<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&=
+gt=3B struct mutex fs_lock[NR_GLOBAL_LOCKS]=3B /* blocking FS operations */=
+<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B struct mutex node_write=3B /* lo=
+cking node writes */<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B struct mutex=
+ writepages=3B /* mutex for writepages() */<br>&gt=3B &gt=3B&gt=3B &gt=3B&g=
+t=3B&gt=3B + wait_queue_head_t writeback_wqh=3B /* wait_queue for writeback=
+ */<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B unsigned char next_lock_num=
+=3B /* round-robin global locks */<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=
+=3B int por_doing=3B /* recovery is doing or not */<br>&gt=3B &gt=3B&gt=3B =
+&gt=3B&gt=3B&gt=3B int on_build_free_nids=3B /* build_free_nids is doing */=
+<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B @@ -961=2C6 +964=2C22 @@ static =
+inline int f2fs_readonly(struct super_block *sb)<br>&gt=3B &gt=3B&gt=3B &gt=
+=3B&gt=3B&gt=3B return sb-&gt=3Bs_flags &amp=3B MS_RDONLY=3B<br>&gt=3B &gt=
+=3B&gt=3B &gt=3B&gt=3B&gt=3B }<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B<br=
+>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +static inline void f2fs_writeback_=
+wait(struct f2fs_sb_info *sbi)<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +{=
+<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B + DEFINE_WAIT(wait)=3B<br>&gt=3B=
+ &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=
+=3B + prepare_to_wait(&amp=3Bsbi-&gt=3Bwriteback_wqh=2C &amp=3Bwait=2C TASK=
+_UNINTERRUPTIBLE)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B + if (get_pa=
+ges(sbi=2C F2FS_WRITEBACK))<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B + io_=
+schedule()=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B + finish_wait(&amp=
+=3Bsbi-&gt=3Bwriteback_wqh=2C &amp=3Bwait)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B=
+&gt=3B&gt=3B +}<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +<br>&gt=3B &gt=
+=3B&gt=3B &gt=3B&gt=3B&gt=3B +static inline void f2fs_writeback_wake(struct=
+ f2fs_sb_info *sbi)<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +{<br>&gt=3B =
+&gt=3B&gt=3B &gt=3B&gt=3B&gt=3B + if (!get_pages(sbi=2C F2FS_WRITEBACK))<br=
+>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B + wake_up_all(&amp=3Bsbi-&gt=3Bwrit=
+eback_wqh)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +}<br>&gt=3B &gt=3B=
+&gt=3B &gt=3B&gt=3B&gt=3B +<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B /*<br=
+>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B * file.c<br>&gt=3B &gt=3B&gt=3B &gt=
+=3B&gt=3B&gt=3B */<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B diff --git a/f=
+s/f2fs/segment.c b/fs/f2fs/segment.c<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=
+=3B index bd79bbe..0708aa9 100644<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B=
+ --- a/fs/f2fs/segment.c<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +++ b/fs=
+/f2fs/segment.c<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B @@ -597=2C6 +597=
+=2C7 @@ static void f2fs_end_io_write(struct bio *bio=2C int err)<br>&gt=3B=
+ &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B =
+if (p-&gt=3Bis_sync)<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B complete(p-&=
+gt=3Bwait)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B + f2fs_writeback_wa=
+ke(p-&gt=3Bsbi)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B kfree(p)=3B<br=
+>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B bio_put(bio)=3B<br>&gt=3B &gt=3B&gt=
+=3B &gt=3B&gt=3B&gt=3B }<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B diff --g=
+it a/fs/f2fs/super.c b/fs/f2fs/super.c<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&=
+gt=3B index 094ccc6..3ac6d85 100644<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=
+=3B --- a/fs/f2fs/super.c<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B +++ b/f=
+s/f2fs/super.c<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B @@ -835=2C6 +835=
+=2C7 @@ static int f2fs_fill_super(struct super_block *sb=2C void *data=2C =
+int silent)<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B mutex_init(&amp=3Bsbi=
+-&gt=3Bgc_mutex)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B mutex_init(&a=
+mp=3Bsbi-&gt=3Bwritepages)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B mut=
+ex_init(&amp=3Bsbi-&gt=3Bcp_mutex)=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&g=
+t=3B + init_waitqueue_head(&amp=3Bsbi-&gt=3Bwriteback_wqh)=3B<br>&gt=3B &gt=
+=3B&gt=3B &gt=3B&gt=3B&gt=3B for (i =3D 0=3B i &lt=3B NR_GLOBAL_LOCKS=3B i+=
++)<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B mutex_init(&amp=3Bsbi-&gt=3Bfs=
+_lock[i])=3B<br>&gt=3B &gt=3B&gt=3B &gt=3B&gt=3B&gt=3B mutex_init(&amp=3Bsb=
+i-&gt=3Bnode_write)=3BN=8B=A7=B2=E6=ECr=B8=9By=FA=E8=9A=D8b=B2X=AC=B6=C7=A7=
+v=D8^=96)=DE=BA{.n=C7+=89=B7=A5=8A{=B1=91=EA=E7zX=A7=B6=17=9B=A1=DC=A8}=A9=
+=9E=B2=C6 z=DA&amp=3Bj:+v=89=A8=BE=07=AB=91=EA=E7zZ+=80=CA+zf=A3=A2=B7h=9A=
+=88=A7~=86=AD=86=DBi=FF=FB=E0z=B9=1E=AEw=A5=A2=B8?=99=A8=E8=AD=DA&amp=3B=A2=
+)=DF=A2=1Bf=94=F9^j=C7=ABy=A7m=85=E1@A=ABa=B6=DA=7F=FF=0C0=B6=ECh=AE=0F=E5=
+=92i=7F<br>&gt=3B &gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=3B<br>&gt=3B &gt=3B&gt=
+=3B --<br>&gt=3B &gt=3B&gt=3B To unsubscribe from this list: send the line =
+"unsubscribe linux-fsdevel" in<br>&gt=3B &gt=3B&gt=3B the body of a message=
+ to majordomo@vger.kernel.org<br>&gt=3B &gt=3B&gt=3B More majordomo info at=
+ http://vger.kernel.org/majordomo-info.html<br>&gt=3B <br>&gt=3B <br>&gt=3B=
+ --<br>&gt=3B To unsubscribe from this list: send the line "unsubscribe lin=
+ux-fsdevel" in<br>&gt=3B the body of a message to majordomo@vger.kernel.org=
+<br>&gt=3B More majordomo info at  http://vger.kernel.org/majordomo-info.ht=
+ml<br></div> 		 	   		  </div></body>
+</html>=
 
-fsck.f2fs gives the following output on that partition:
-root@beaglebone:~# fsck.f2fs /dev/mmcblk1p2
-Info: sector size = 512
-Info: total sectors = 3598560 (in 512bytes)
-[is_valid_ssa_data_blk: 137] summary_entry.nid         [0x24]
-[is_valid_ssa_data_blk: 138] summary_entry.version     [0x0]
-[is_valid_ssa_data_blk: 139] summary_entry.ofs_in_node [0xce]
-[is_valid_ssa_data_blk: 141] parent nid                [0x268]
-[is_valid_ssa_data_blk: 142] version from nat          [0x0]
-[is_valid_ssa_data_blk: 143] idx in parent node        [0x0]
-[is_valid_ssa_data_blk: 145] Target data block addr    [0x5a04]
+--_0e85712b-06b3-4f0f-a816-d4da1b7d5bd3_--
 
-Assertion failed!
-[is_valid_ssa_data_blk: 146] 0
- --> Invalid data seg summary
 
-After a reboot, the system comes up, the filesystem is mounted and I
-just see: 
-[    4.221523] F2FS-fs (mmcblk0p2): Cannot recover all fsync data errno=-2
-
-The filesystem seems consistent and it works if I do a clean reboot. If
-I do a powercut again, it runs again into that BUG_ON.
-
-It's quite easy to reproduce on that system.
-     1. mkfs.f2fs on the eMMC partition
-     2. copy the Angstrom RFS to that partition
-     3. reboot and use that partition as a rootfilesystem
-     4. wait until the RFS is mounted and the system is up
-     5. -> POWERCUT
-
-Using that procedure it's 100% reproducable. Up to now, I wasn't able to
-isolate, what's really necessary to run into that problem. In my case,
-it just triggers with the Angstrom image, but I don't know why.
-I did a lot of stress testing from within an RFS on the SD-Card and the
-F2FS partition was just mounted to /mnt. I also did lots of testing with
-a very simple (busybox based) RFS. All of those tests were fine.
-
-Just let me know if you need more information, or if I should do some
-more testing.
-
-Cheers,
-	Jan
-
+--===============1931481854933898389==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 October Webinars: Code for Performance
@@ -158,3 +536,15 @@ Free Intel webinars can help you accelerate application performance.
 Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
 the latest Intel processors and coprocessors. See abstracts and register >
 http://pubads.g.doubleclick.net/gampad/clk?id=60134071&iu=/4140/ostg.clktrk
+--===============1931481854933898389==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============1931481854933898389==--
