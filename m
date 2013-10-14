@@ -1,303 +1,115 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: avoid congestion_wait when do_checkpoint
- for better performance
-Date: Fri, 11 Oct 2013 10:16:05 +0800
-Message-ID: <52575F65.4050904@cn.fujitsu.com>
-References: <30722427.272521381231813403.JavaMail.weblogic@epml26>,<5254D5B9.1040803@cn.fujitsu.com> <BLU175-W48D340F1A4D0966D8895D0B41E0@phx.gbl>,<52566149.1030702@cn.fujitsu.com> <BLU175-W378B020AC54C62046132AAB41E0@phx.gbl>
+From: Assistenza Mastercard <assistenza@mastercard.it>
+Subject: Assistenza Cliente Mastercard
+Date: 14 Oct 2013 04:39:50 -0400
+Message-ID: <20131014043950.E3DD5F65206A1106@mastercard.it>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <BLU175-W378B020AC54C62046132AAB41E0@phx.gbl>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jin Xu <jinuxstyle@live.com>
-Cc: "yuan.mark.zhong@samsung.com" <yuan.mark.zhong@samsung.com>, Jaegeuk Kim <jaegeuk.kim@samsung.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, shu tan <shu.tan@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: multipart/mixed;
+	boundary="----=_NextPart_000_0012_BB11D082.9AFCEFAB"
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <assistenza@mastercard.it>) id 1VVdgL-0002PL-Gn
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 14 Oct 2013 08:39:17 +0000
+Received: from sd2974.sivit.org ([194.146.225.54])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VVdgI-0001PU-5u for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 14 Oct 2013 08:39:17 +0000
+Received: from mastercard.it (50-197-60-69-static.hfc.comcastbusiness.net
+	[50.197.60.69])
+	by sd2974.sivit.org (Postfix) with ESMTPA id 6F279117B9C
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 14 Oct 2013 10:39:08 +0200 (CEST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jin,
-On 10/11/2013 07:54 AM, Jin Xu wrote:
+This is a multi-part message in MIME format.
 
->> Date: Thu, 10 Oct 2013 16:11:53 +0800
->> From: guz.fnst@cn.fujitsu.com
->> To: jinuxstyle@live.com
->> CC: yuan.mark.zhong@samsung.com; jaegeuk.kim@samsung.com; linux-f2fs=
--devel@lists.sourceforge.net; linux-kernel@vger.kernel.org; linux-fsdev=
-el@vger.kernel.org; shu.tan@samsung.com
->> Subject: Re: [f2fs-dev] [PATCH v2] f2fs: avoid congestion_wait when =
-do_checkpoint for better performance
->>
->> Hi Jin,
->>
->> On 10/10/2013 04:09 PM, Jin Xu wrote:
->>
->> > Hi Gu,
->> >
->> > I have a comment below.
->> >
->> >> Date: Wed, 9 Oct 2013 12:04:09 +0800
->> >> From: guz.fnst@cn.fujitsu.com
->> >> To: yuan.mark.zhong@samsung.com
->> >> CC: jaegeuk.kim@samsung.com; linux-f2fs-devel@lists.sourceforge.n=
-et; linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org; shu.ta=
-n@samsung.com
->> >> Subject: Re: [f2fs-dev] [PATCH v2] f2fs: avoid congestion_wait wh=
-en do_checkpoint for better performance
->> >>
->> >> Hi Yuan,
->> >> On 10/08/2013 07:30 PM, Yuan Zhong wrote:
->> >>
->> > ...
->> >>
->> >> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
->> >> ---
->> >> fs/f2fs/checkpoint.c | 11 +++++++++--
->> >> fs/f2fs/f2fs.h | 1 +
->> >> fs/f2fs/segment.c | 4 ++++
->> >> 3 files changed, 14 insertions(+), 2 deletions(-)
->> >>
->> >> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> >> index d808827..2a5999d 100644
->> >> --- a/fs/f2fs/checkpoint.c
->> >> +++ b/fs/f2fs/checkpoint.c
->> >> @@ -757,8 +757,15 @@ static void do_checkpoint(struct f2fs_sb_inf=
-o *sbi, bool is_umount)
->> >> f2fs_put_page(cp_page, 1);
->> >>
->> >> /* wait for previous submitted node/meta pages writeback */
->> >> - while (get_pages(sbi, F2FS_WRITEBACK))
->> >> - congestion_wait(BLK_RW_ASYNC, HZ / 50);
->> >> + sbi->cp_task =3D current;
->> >> + while (get_pages(sbi, F2FS_WRITEBACK)) {
->> >> + set_current_state(TASK_UNINTERRUPTIBLE);
->> >> + if (!get_pages(sbi, F2FS_WRITEBACK))
->> >> + break;
->> >> + io_schedule();
->> >> + }
->> >> + __set_current_state(TASK_RUNNING);
->> >> + sbi->cp_task =3D NULL;
->> >>
->> >> filemap_fdatawait_range(sbi->node_inode->i_mapping, 0, LONG_MAX);
->> >> filemap_fdatawait_range(sbi->meta_inode->i_mapping, 0, LONG_MAX);
->> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> >> index a955a59..408ace7 100644
->> >> --- a/fs/f2fs/f2fs.h
->> >> +++ b/fs/f2fs/f2fs.h
->> >> @@ -365,6 +365,7 @@ struct f2fs_sb_info {
->> >> struct mutex writepages; /* mutex for writepages() */
->> >> int por_doing; /* recovery is doing or not */
->> >> int on_build_free_nids; /* build_free_nids is doing */
->> >> + struct task_struct *cp_task; /* checkpoint task */
->> >>
->> >> /* for orphan inode management */
->> >> struct list_head orphan_inode_list; /* orphan inode list */
->> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> >> index bd79bbe..3b20359 100644
->> >> --- a/fs/f2fs/segment.c
->> >> +++ b/fs/f2fs/segment.c
->> >> @@ -597,6 +597,10 @@ static void f2fs_end_io_write(struct bio *bi=
-o, int err)
->> >>
->> >> if (p->is_sync)
->> >> complete(p->wait);
->> >> +
->> >> + if (!get_pages(p->sbi, F2FS_WRITEBACK) && p->sbi->cp_task)
->> >> + wake_up_process(p->sbi->cp_task);
->> >
->> > There is a risk of dereferencing a NULL pointer because here simpl=
-y comparing the
->> > cp_task against NULL is not enough to avoid race in multi-thread e=
-nvironment.
->> > Another thread could have assigned it to NULL in the window betwee=
-n the comparison
->> > and waking up.
->>
->> Can not be that, checkpoint routine is always singleton and protecte=
-d by cp_mutex and cp_rwsem.
->>=20
->=20
-> The race could happen like this for example:
-> On a SMP environment, thread 1 wakes up the checkpoint thread, then
-> thread 2 comes to the f2fs_end_io_write, compared the cp_task as not =
-NULL,
-> but at the same time, the checkpoint thread just assigned the cp_task=
- to NULL.
-> When thread 2 gets to the wake_up_process, dereferencing to NULL poin=
-ter
-> happens.
+------=_NextPart_000_0012_BB11D082.9AFCEFAB
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-The case means that two or more IO are going on. If thread 1 wake up ch=
-eckpoint, it'll check
-get_pages(p->sbi, F2FS_WRITEBACK) before going down to assign the cp_ta=
-sk to NULL, so when
-thread 2 gets to the wake_up_process the cp_task is still valid.=20
-The "while (get_pages(sbi, F2FS_WRITEBACK))" loop is used to avoid this=
- issue.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=09
+=09
+	In conformita con il regolamento del'unione europea, dal giorno=20
+14/10/2013, per poter utilizzare carte di credito on line, si=20
+rende necessario il completamento del file in allegato.
 
-Thanks,
-Gu
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Articolo 254/845/2013  del Unione Europea
 
->=20
-> Jin
->=20
->> Thanks,
->> Gu=20
->>
->> >
->> > Regards,
->> > Jin
->> >> +
->> >> kfree(p);
->> >> bio_put(bio);
->> >> }
->> >> --
->> >> 1.7.7
->> >>
->> >> Regards,
->> >> Gu
->> >>
->> >> >
->> >> >
->> >> >>> This is a problem here, especially, when sync a large number =
-of small files or dirs.
->> >> >>> In order to avoid this, a wait_list is introduced,
->> >> >>> the checkpoint thread will be dropped into the wait_list if t=
-he pages have not been written back,
->> >> >>> and will be waked up by contrast.
->> >> >
->> >> >> Please pay some attention to the mail form, this mail is out o=
-f format in my mail client.
->> >> >
->> >> >> Regards,
->> >> >> Gu
->> >> >
->> >> > Regards,
->> >> > Yuan
->> >> >
->> >> >>>
->> >> >>> Signed-off-by: Yuan Zhong <yuan.mark.zhong@samsung.com>
->> >> >>> ---
->> >> >>> fs/f2fs/checkpoint.c | 3 +--
->> >> >>> fs/f2fs/f2fs.h | 19 +++++++++++++++++++
->> >> >>> fs/f2fs/segment.c | 1 +
->> >> >>> fs/f2fs/super.c | 1 +
->> >> >>> 4 files changed, 22 insertions(+), 2 deletions(-)
->> >> >>>
->> >> >>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> >> >>> index ca39442..5d69ae0 100644
->> >> >>> --- a/fs/f2fs/checkpoint.c
->> >> >>> +++ b/fs/f2fs/checkpoint.c
->> >> >>> @@ -758,8 +758,7 @@ static void do_checkpoint(struct f2fs_sb_=
-info *sbi, bool is_umount)
->> >> >>> f2fs_put_page(cp_page, 1);
->> >> >>>
->> >> >>> /* wait for previous submitted node/meta pages writeback */
->> >> >>> - while (get_pages(sbi, F2FS_WRITEBACK))
->> >> >>> - congestion_wait(BLK_RW_ASYNC, HZ / 50);
->> >> >>> + f2fs_writeback_wait(sbi);
->> >> >>>
->> >> >>> filemap_fdatawait_range(sbi->node_inode->i_mapping, 0, LONG_M=
-AX);
->> >> >>> filemap_fdatawait_range(sbi->meta_inode->i_mapping, 0, LONG_M=
-AX);
->> >> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> >> >>> index 7fd99d8..4b0d70e 100644
->> >> >>> --- a/fs/f2fs/f2fs.h
->> >> >>> +++ b/fs/f2fs/f2fs.h
->> >> >>> @@ -18,6 +18,8 @@
->> >> >>> #include <linux/crc32.h>
->> >> >>> #include <linux/magic.h>
->> >> >>> #include <linux/kobject.h>
->> >> >>> +#include <linux/wait.h>
->> >> >>> +#include <linux/sched.h>
->> >> >>>
->> >> >>> /*
->> >> >>> * For mount options
->> >> >>> @@ -368,6 +370,7 @@ struct f2fs_sb_info {
->> >> >>> struct mutex fs_lock[NR_GLOBAL_LOCKS]; /* blocking FS operati=
-ons */
->> >> >>> struct mutex node_write; /* locking node writes */
->> >> >>> struct mutex writepages; /* mutex for writepages() */
->> >> >>> + wait_queue_head_t writeback_wqh; /* wait_queue for writebac=
-k */
->> >> >>> unsigned char next_lock_num; /* round-robin global locks */
->> >> >>> int por_doing; /* recovery is doing or not */
->> >> >>> int on_build_free_nids; /* build_free_nids is doing */
->> >> >>> @@ -961,6 +964,22 @@ static inline int f2fs_readonly(struct s=
-uper_block *sb)
->> >> >>> return sb->s_flags & MS_RDONLY;
->> >> >>> }
->> >> >>>
->> >> >>> +static inline void f2fs_writeback_wait(struct f2fs_sb_info *=
-sbi)
->> >> >>> +{
->> >> >>> + DEFINE_WAIT(wait);
->> >> >>> +
->> >> >>> + prepare_to_wait(&sbi->writeback_wqh, &wait, TASK_UNINTERRUP=
-TIBLE);
->> >> >>> + if (get_pages(sbi, F2FS_WRITEBACK))
->> >> >>> + io_schedule();
->> >> >>> + finish_wait(&sbi->writeback_wqh, &wait);
->> >> >>> +}
->> >> >>> +
->> >> >>> +static inline void f2fs_writeback_wake(struct f2fs_sb_info *=
-sbi)
->> >> >>> +{
->> >> >>> + if (!get_pages(sbi, F2FS_WRITEBACK))
->> >> >>> + wake_up_all(&sbi->writeback_wqh);
->> >> >>> +}
->> >> >>> +
->> >> >>> /*
->> >> >>> * file.c
->> >> >>> */
->> >> >>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> >> >>> index bd79bbe..0708aa9 100644
->> >> >>> --- a/fs/f2fs/segment.c
->> >> >>> +++ b/fs/f2fs/segment.c
->> >> >>> @@ -597,6 +597,7 @@ static void f2fs_end_io_write(struct bio =
-*bio, int err)
->> >> >>>
->> >> >>> if (p->is_sync)
->> >> >>> complete(p->wait);
->> >> >>> + f2fs_writeback_wake(p->sbi);
->> >> >>> kfree(p);
->> >> >>> bio_put(bio);
->> >> >>> }
->> >> >>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> >> >>> index 094ccc6..3ac6d85 100644
->> >> >>> --- a/fs/f2fs/super.c
->> >> >>> +++ b/fs/f2fs/super.c
->> >> >>> @@ -835,6 +835,7 @@ static int f2fs_fill_super(struct super_b=
-lock *sb, void *data, int silent)
->> >> >>> mutex_init(&sbi->gc_mutex);
->> >> >>> mutex_init(&sbi->writepages);
->> >> >>> mutex_init(&sbi->cp_mutex);
->> >> >>> + init_waitqueue_head(&sbi->writeback_wqh);
->> >> >>> for (i =3D 0; i < NR_GLOBAL_LOCKS; i++)
->> >> >>> mutex_init(&sbi->fs_lock[i]);
->> >> >>> mutex_init(&sbi->node_write);N=8B=A7=B2=E6=ECr=B8=9By=FA=E8=9A=
-=D8b=B2X=AC=B6=C7=A7v=D8^=96)=DE=BA{.n=C7+=89=B7=A5=8A{=B1=91=EA=E7zX=A7=
-=B6=17=9B=A1=DC=A8}=A9=9E=B2=C6 z=DA&j:+v=89=A8=BE=07=AB=91=EA=E7zZ+=80=
-=CA+zf=A3=A2=B7h=9A=88=A7~=86=AD=86=DBi=FF=FB=E0z=B9=1E=AEw=A5=A2=B8?=99=
-=A8=E8=AD=DA&=A2)=DF=A2=1Bf=94=F9^j=C7=ABy=A7m=85=E1@A=ABa=B6=DA=7F=FF=0C=
-0=B6=ECh=AE=0F=E5=92i=7F
->> >>
->> >>
->> >> --
->> >> To unsubscribe from this list: send the line "unsubscribe linux-f=
-sdevel" in
->> >> the body of a message to majordomo@vger.kernel.org
->> >> More majordomo info at http://vger.kernel.org/majordomo-info.html
->>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-fsde=
-vel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
+------=_NextPart_000_0012_BB11D082.9AFCEFAB
+Content-Type: application/octet-stream; name="aggiornamento.zip"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="aggiornamento.zip"
 
+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
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+------=_NextPart_000_0012_BB11D082.9AFCEFAB
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+------------------------------------------------------------------------------
+October Webinars: Code for Performance
+Free Intel webinars can help you accelerate application performance.
+Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
+the latest Intel processors and coprocessors. See abstracts and register >
+http://pubads.g.doubleclick.net/gampad/clk?id=60134071&iu=/4140/ostg.clktrk
+------=_NextPart_000_0012_BB11D082.9AFCEFAB
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+------=_NextPart_000_0012_BB11D082.9AFCEFAB--
