@@ -1,86 +1,132 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH] f2fs: avoid wait if IO end up when do_checkpoint for better
- performance
-Date: Mon, 14 Oct 2013 18:45:56 +0800
-Message-ID: <525BCB64.3060305@cn.fujitsu.com>
+Subject: [PATCH RESEND] f2fs: introduce function
+	read_raw_super_block()
+Date: Mon, 14 Oct 2013 18:47:11 +0800
+Message-ID: <525BCBAF.1010003@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VVflT-00059T-OI
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 14 Oct 2013 10:52:43 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VVflS-0006du-Cv for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 14 Oct 2013 10:52:43 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Kim <jaegeuk.kim@samsung.com>
-Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "yuan.mark.zhong@samsung.com" <yuan.mark.zhong@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-Previously, do_checkpoint() will call congestion_wait() for waiting the pages
-(previous submitted node/meta/data pages) to be written back.
-Because congestion_wait() will set a regular period (e.g. HZ / 50 ) for waiting, and
-no additional wake up mechanism was introduced if IO ends up before regular period costed.
-Yuan Zhong found there is a situation that after the pages have been written back, 
-but the checkpoint thread still wait for congestion_wait to exit.
+Introduce function read_raw_super_block() to hide reading raw super block and
+the retry routine if the first sb is invalid.
 
-So here we store checkpoint task into f2fs_sb when doing checkpoint, it'll wait for IO completes
-if there's IO going on, and in the end IO path, wake up checkpoint task when IO ends up.
-
-Thanks to Yuan Zhong's pre work about this problem.
-
-
-Reported-by: Yuan Zhong <yuan.mark.zhong@samsung.com>
 Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
- fs/f2fs/checkpoint.c |   11 +++++++++--
- fs/f2fs/f2fs.h       |    1 +
- fs/f2fs/segment.c    |    4 ++++
- 3 files changed, 14 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c |   54 +++++++++++++++++++++++++++++++++---------------------
+ 1 files changed, 33 insertions(+), 21 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index d808827..2a5999d 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -757,8 +757,15 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
- 	f2fs_put_page(cp_page, 1);
- 
- 	/* wait for previous submitted node/meta pages writeback */
--	while (get_pages(sbi, F2FS_WRITEBACK))
--		congestion_wait(BLK_RW_ASYNC, HZ / 50);
-+	sbi->cp_task = current;
-+	while (get_pages(sbi, F2FS_WRITEBACK)) {
-+		set_current_state(TASK_UNINTERRUPTIBLE);
-+		if (!get_pages(sbi, F2FS_WRITEBACK))
-+			break;
-+		io_schedule();
-+	}
-+	__set_current_state(TASK_RUNNING);
-+	sbi->cp_task = NULL;
- 
- 	filemap_fdatawait_range(sbi->node_inode->i_mapping, 0, LONG_MAX);
- 	filemap_fdatawait_range(sbi->meta_inode->i_mapping, 0, LONG_MAX);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 308967b..171c52f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -362,6 +362,7 @@ struct f2fs_sb_info {
- 	struct mutex writepages;		/* mutex for writepages() */
- 	int por_doing;				/* recovery is doing or not */
- 	int on_build_free_nids;			/* build_free_nids is doing */
-+	struct task_struct *cp_task;		/* checkpoint task */
- 
- 	/* for orphan inode management */
- 	struct list_head orphan_inode_list;	/* orphan inode list */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index bd79bbe..3b20359 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -597,6 +597,10 @@ static void f2fs_end_io_write(struct bio *bio, int err)
- 
- 	if (p->is_sync)
- 		complete(p->wait);
-+
-+	if (!get_pages(p->sbi, F2FS_WRITEBACK) && p->sbi->cp_task)
-+		wake_up_process(p->sbi->cp_task);
-+
- 	kfree(p);
- 	bio_put(bio);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3b786c8..5e913de 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -746,30 +746,46 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 		atomic_set(&sbi->nr_pages[i], 0);
  }
+ 
+-static int validate_superblock(struct super_block *sb,
+-		struct f2fs_super_block **raw_super,
+-		struct buffer_head **raw_super_buf, sector_t block)
++/* Read f2fs raw super block.
++ * Because we have two copies of super block, so read the first one at first,
++ * if the first one is invalid, move to read the second one.
++ */
++static int read_raw_super_block(struct super_block *sb,
++			struct f2fs_super_block **raw_super,
++			struct buffer_head **raw_super_buf)
+ {
+-	const char *super = (block == 0 ? "first" : "second");
++	int block = 0;
+ 
+-	/* read f2fs raw super block */
++retry:
+ 	*raw_super_buf = sb_bread(sb, block);
+ 	if (!*raw_super_buf) {
+-		f2fs_msg(sb, KERN_ERR, "unable to read %s superblock",
+-				super);
+-		return -EIO;
++		f2fs_msg(sb, KERN_ERR, "Unable to read %dth superblock",
++				block + 1);
++		if (block == 0) {
++			block++;
++			goto retry;
++		} else {
++			return -EIO;
++		}
+ 	}
+ 
+ 	*raw_super = (struct f2fs_super_block *)
+ 		((char *)(*raw_super_buf)->b_data + F2FS_SUPER_OFFSET);
+ 
+ 	/* sanity checking of raw super */
+-	if (!sanity_check_raw_super(sb, *raw_super))
+-		return 0;
++	if (sanity_check_raw_super(sb, *raw_super)) {
++		brelse(*raw_super_buf);
++		f2fs_msg(sb, KERN_ERR, "Can't find a valid F2FS filesystem "
++				"in %dth superblock", block + 1);
++		if(block == 0) {
++			block++;
++			goto retry;
++		} else {
++			return -EINVAL;
++		}
++	}
+ 
+-	f2fs_msg(sb, KERN_ERR, "Can't find a valid F2FS filesystem "
+-				"in %s superblock", super);
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+@@ -791,14 +807,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto free_sbi;
+ 	}
+ 
+-	err = validate_superblock(sb, &raw_super, &raw_super_buf, 0);
+-	if (err) {
+-		brelse(raw_super_buf);
+-		/* check secondary superblock when primary failed */
+-		err = validate_superblock(sb, &raw_super, &raw_super_buf, 1);
+-		if (err)
+-			goto free_sb_buf;
+-	}
++	err = read_raw_super_block(sb, &raw_super, &raw_super_buf);
++	if (err)
++		goto free_sbi;
++
+ 	sb->s_fs_info = sbi;
+ 	/* init some FS parameters */
+ 	sbi->active_logs = NR_CURSEG_TYPE;
 -- 
 1.7.7
+
+
+------------------------------------------------------------------------------
+October Webinars: Code for Performance
+Free Intel webinars can help you accelerate application performance.
+Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
+the latest Intel processors and coprocessors. See abstracts and register >
+http://pubads.g.doubleclick.net/gampad/clk?id=60134071&iu=/4140/ostg.clktrk
