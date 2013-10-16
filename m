@@ -1,31 +1,24 @@
-From: Jarkko Lavinen <j.lavinen@samsung.com>
+From: Jan Altenberg <jan@linutronix.de>
 Subject: Re: BUG_ON in recovery.c after powercut
-Date: Wed, 16 Oct 2013 19:20:44 +0300
-Message-ID: <20131016162043.GA10000@wsf-1107.seri.co.uk>
-References: <1381812859.992.26.camel@kjgkr>
+Date: Wed, 16 Oct 2013 22:47:43 +0200
+Message-ID: <1381956463.3106.8.camel@moestavern>
+References: <20131016162043.GA10000@wsf-1107.seri.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <j.lavinen@samsung.com>) id 1VWTqE-0007yH-Bv
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jan@linutronix.de>) id 1VWY0X-0006AE-0d
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Oct 2013 16:20:58 +0000
-Received: from mailout3.w1.samsung.com ([210.118.77.13])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VWTqC-0008Cy-4d for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Oct 2013 16:20:58 +0000
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
-	by mailout3.w1.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MUR00DDRS2DS4B0@mailout3.w1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Oct 2013 17:20:49 +0100 (BST)
-Content-disposition: inline
-In-reply-to: <1381812859.992.26.camel@kjgkr>
+	Wed, 16 Oct 2013 20:47:53 +0000
+Received: from www.linutronix.de ([62.245.132.108] helo=Galois.linutronix.de)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps
+	(TLSv1:AES256-SHA:256) (Exim 4.76) id 1VWY0V-0005Tv-2j
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 16 Oct 2013 20:47:52 +0000
+In-Reply-To: <20131016162043.GA10000@wsf-1107.seri.co.uk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,36 +28,37 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jan Altenberg <jan@linutronix.de>
+To: Jarkko Lavinen <j.lavinen@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-> If possible, can you test the below scenario with the latest f2fs?
+On Wed, 2013-10-16 at 19:20 +0300, Jarkko Lavinen wrote:
+> > If possible, can you test the below scenario with the latest f2fs?
+> 
+> I would be also interested in studying such image, so could you
+> please send it to me also?
 
-I would be also interested in studying such image, so could you
-please send it to me also?
+Ok, no problem at all. As already mentioned, I can put it on our
+webmachine. But the image is about 1 gig.
+If one of you guys is planning to attend LCE or ELCE in Edinburgh, just
+let me know! I can take that board with me!
 
-I am concerned or curious about F2FS tolerance against power
-cuts.
+I'm not sure if I can work on this topic before I leave for LCE, but I
+will continue testing and upload the image when I'm back to the office.
 
-In my previous life at Nokia we did once power cut testing for
-ext3 and ext4 file systems on eMMC. There was an AC switch which
-cut the power off at random times. Ext3 didn't survive the test,
-ext4 did.
+> I am concerned or curious about F2FS tolerance against power
+> cuts.
+> 
+> In my previous life at Nokia we did once power cut testing for
+> ext3 and ext4 file systems on eMMC. There was an AC switch which
+> cut the power off at random times. Ext3 didn't survive the test,
+> ext4 did.
 
-Test script was doing various operations in a logged manner so
-that data integrity could be verified and one could also see what
-operations had been done just before the power went off.
+That's what we did with F2FS. That triggered the issue described in my
+previous mail.
 
-Wit AC switch the voltage drops linearly and doesn't exactly
-match the case of losing battery abruptly. DC power switching or
-hard reseting the eMMC would be closer.
+Cheers,
+	Jan
 
-Perhaps using USB switch with external USB reader one could cut
-the power sharply from the reader and again simulate sharp power
-loss scenario giving no mercy for the FTL.
-
-Cheers
-Jarkko Lavinen
 
 ------------------------------------------------------------------------------
 October Webinars: Code for Performance
