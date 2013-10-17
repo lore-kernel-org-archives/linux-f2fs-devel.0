@@ -1,24 +1,31 @@
-From: Jan Altenberg <jan@linutronix.de>
-Subject: Re: BUG_ON in recovery.c after powercut
-Date: Wed, 16 Oct 2013 22:47:43 +0200
-Message-ID: <1381956463.3106.8.camel@moestavern>
-References: <20131016162043.GA10000@wsf-1107.seri.co.uk>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: f2fs tools for arm
+Date: Thu, 17 Oct 2013 15:32:10 +0900
+Message-ID: <1381991530.992.46.camel@kjgkr>
+References: <525EA51E.6040609@codeaurora.org>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jan@linutronix.de>) id 1VWY0X-0006AE-0d
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VWh8b-0006qL-Io
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Oct 2013 20:47:53 +0000
-Received: from www.linutronix.de ([62.245.132.108] helo=Galois.linutronix.de)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps
-	(TLSv1:AES256-SHA:256) (Exim 4.76) id 1VWY0V-0005Tv-2j
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Oct 2013 20:47:52 +0000
-In-Reply-To: <20131016162043.GA10000@wsf-1107.seri.co.uk>
+	Thu, 17 Oct 2013 06:32:49 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VWh8Z-0004NE-2V for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 17 Oct 2013 06:32:48 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MUS003VWVIFXJ20@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 17 Oct 2013 15:32:40 +0900 (KST)
+In-reply-to: <525EA51E.6040609@codeaurora.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,36 +35,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jarkko Lavinen <j.lavinen@samsung.com>
+To: Konstantin Dorfman <kdorfman@codeaurora.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, 2013-10-16 at 19:20 +0300, Jarkko Lavinen wrote:
-> > If possible, can you test the below scenario with the latest f2fs?
-> 
-> I would be also interested in studying such image, so could you
-> please send it to me also?
+Hi,
 
-Ok, no problem at all. As already mentioned, I can put it on our
-webmachine. But the image is about 1 gig.
-If one of you guys is planning to attend LCE or ELCE in Edinburgh, just
-let me know! I can take that board with me!
+This will help you.
 
-I'm not sure if I can work on this topic before I leave for LCE, but I
-will continue testing and upload the image when I'm back to the office.
+>From 050e8712a60c7d982a7be8c076fb72452364dae4 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Date: Thu, 17 Oct 2013 15:15:54 +0900
+Subject: [PATCH] README: add description how to cross-compile
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+linux-f2fs-devel@lists.sourceforge.net
 
-> I am concerned or curious about F2FS tolerance against power
-> cuts.
-> 
-> In my previous life at Nokia we did once power cut testing for
-> ext3 and ext4 file systems on eMMC. There was an AC switch which
-> cut the power off at random times. Ext3 didn't survive the test,
-> ext4 did.
+This patch adds description for the cross-compilation.
 
-That's what we did with F2FS. That triggered the issue described in my
-previous mail.
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ README | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Cheers,
-	Jan
+diff --git a/README b/README
+index cbb492e..bf374fb 100644
+--- a/README
++++ b/README
+@@ -25,6 +25,20 @@ How to compile
+  # ./configure
+  # make
+ 
++How to cross-compile (e.g., for ARM)
++------------------------------------
++
++ 1. Add the below line into mkfs/Makefile.am:
++ mkfs_f2fs_LDFLAGS = -all-static
++
++ 2. Add the below line into fsck/Makefile.am:
++ fsck_f2fs_LDFLAGS = -all-static
++
++ 3. then, do:
++ # LDFLAGS=--static ./configure \
++	--host=arm-none-linux-gnueabi --target=arm-none-linux-gnueabi
++ # make
++
+ How to run by default
+ ---------------------
+ 
+-- 
+1.8.4.474.g128a96c
+
+-- 
+Jaegeuk Kim
+Samsung
 
 
 ------------------------------------------------------------------------------
