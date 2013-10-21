@@ -1,22 +1,25 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH] f2fs: delete and free dirty dir freeing inode
- entry when sync dirty dir inodes
-Date: Mon, 21 Oct 2013 15:19:16 +0800
-Message-ID: <5264D574.6000105@cn.fujitsu.com>
+From: <torontogilian@gmail.com>
+Subject: =?utf-8?b?W1NQQU1dIEJhYyDQuNC90YJlcGVjedGO0YIga9C70Lg=?=
+	=?utf-8?b?0LXQvdGC0YFr0LhlINCxYdC30Ysg0LTQsNC90L3Ri3g/?=
+Date: Mon, 21 Oct 2013 13:32:19 +0400 (MSD)
+Message-ID: <20131021093219.4B1244733F7@mail.antimine.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============3613858814125127027=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VYAPY-0002KV-FM
+	(envelope-from <torontogilian@gmail.com>) id 1VYPuP-0003O1-57
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Oct 2013 08:00:24 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VYAPX-0002Z4-5e for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Oct 2013 08:00:24 +0000
+	Tue, 22 Oct 2013 00:33:17 +0000
+Received: from www.antimine.org ([87.245.152.27] helo=mail.antimine.org)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VYPuO-0000cM-Bn for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 22 Oct 2013 00:33:17 +0000
+Received: from mail.ru (unknown [178.137.162.227])
+	by mail.antimine.org (Postfix) with ESMTP id 4B1244733F7
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 21 Oct 2013 13:32:19 +0400 (MSD)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,48 +29,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kim <jaegeuk.kim@samsung.com>
-Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-In sync_dirty_dir_inodes(), remove_dirty_dir_inode() will be called
-in the callback of filemap_flush to delete and free dirty dir inode entry.
-But for the freeing inode entry, missed this step after sbumit data bio,
-and this may lead to a dead loop if these is freeing inode entry in
-dir_inode_list. So add the delete and free step to fix it.
+--===============3613858814125127027==
+Content-Type: text/html;
+	charset="windows-1251"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
----
- fs/f2fs/checkpoint.c |    9 +++++++++
- 1 files changed, 9 insertions(+), 0 deletions(-)
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META content=3D"text/html; charset=3Dutf-8" http-equiv=3DContent-Type>
+<META name=3DGENERATOR content=3D"MSHTML 8.00.7600.16385"></HEAD>
+<BODY><FONT color=3D#ed1c24 size=3D6>Bac =E8=ED=F2epecy=FE=F2 k=EB=E8=E5=ED=
+=F2=F1k=E8e =E1a=E7=FB=20
+=E4=E0=ED=ED=FBx?</FONT></BODY></HTML>
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 8d16071..f61838f 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -600,7 +600,16 @@ retry:
- 		 * wribacking dentry pages in the freeing inode.
- 		 */
- 		f2fs_submit_bio(sbi, DATA, true);
-+
-+		spin_lock(&sbi->dir_inode_lock);
-+		list_del(&entry->list);
-+#ifdef CONFIG_F2FS_STAT_FS
-+		sbi->n_dirty_dirs--;
-+#endif
-+		spin_unlock(&sbi->dir_inode_lock);
-+		kmem_cache_free(inode_entry_slab, entry);
- 	}
-+
- 	goto retry;
- }
- 
--- 
-1.7.7
 
+--===============3613858814125127027==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 October Webinars: Code for Performance
 Free Intel webinars can help you accelerate application performance.
 Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
 the latest Intel processors and coprocessors. See abstracts and register >
-http://pubads.g.doubleclick.net/gampad/clk?id=60135031&iu=/4140/ostg.clktrk
+http://pubads.g.doubleclick.net/gampad/clk?id=60135991&iu=/4140/ostg.clktrk
+--===============3613858814125127027==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============3613858814125127027==--
