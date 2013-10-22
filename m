@@ -1,198 +1,62 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH V2] f2fs: introduce f2fs_kmem_cache_alloc to hide
- the unfailed, kmem cache allocation
-Date: Tue, 22 Oct 2013 14:52:26 +0800
-Message-ID: <526620AA.60007@cn.fujitsu.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [f2fs-dev] [PATCH] f2fs: check all ones or zeros bitmap with integer
+ data type for better mount performance
+Date: Tue, 22 Oct 2013 17:28:18 +0800
+Message-ID: <000701cecf09$2b2a2280$817e6780$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=gb2312
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VYVv3-000441-2L
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 06:58:21 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VYVv0-0002VO-UR for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 06:58:21 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kim <jaegeuk.kim@samsung.com>
-Cc: fsdevel <linux-fsdevel@vger.kernel.org>, Gao feng <gaofeng@cn.fujitsu.com>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: ??? <jaegeuk.kim@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?gb2312?B?zLfmrQ==?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Introduce the unfailed version of kmem_cache_alloc named f2fs_kmem_cache_alloc
-to hide the retry routine and make the code a bit cleaner.
+Previously, check_block_count check valid_map with bit data type in common
+scenario that sit has all ones or zeros bitmap, it makes low mount
+performance.
+So let's check the special bitmap with integer data type instead of the bit
+one.
 
-v2:
-   Fix the wrong use of 'retry' tag pointed out by Gao feng.
-   Use more neat code to remove redundant tag suggested by Haicheng Li.
-
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Signed-off-by: Tan Shu <shu.tan@samsung.com>
+Signed-off-by: Yu Chao <chao2.yu@samsung.com>
 ---
- fs/f2fs/checkpoint.c |   26 +++++++-------------------
- fs/f2fs/f2fs.h       |   15 +++++++++++++++
- fs/f2fs/gc.c         |    8 ++------
- fs/f2fs/node.c       |   27 +++++++++++----------------
- 4 files changed, 35 insertions(+), 41 deletions(-)
+ fs/f2fs/segment.h |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 8d16071..6fb484c 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -226,12 +226,8 @@ void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
- 			break;
- 		orphan = NULL;
- 	}
--retry:
--	new = kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
--	if (!new) {
--		cond_resched();
--		goto retry;
--	}
-+
-+	new = f2fs_kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
- 	new->ino = ino;
- 
- 	/* add new_oentry into list which is sorted by inode number */
-@@ -484,12 +480,8 @@ void set_dirty_dir_page(struct inode *inode, struct page *page)
- 
- 	if (!S_ISDIR(inode->i_mode))
- 		return;
--retry:
--	new = kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
--	if (!new) {
--		cond_resched();
--		goto retry;
--	}
-+
-+	new = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
- 	new->inode = inode;
- 	INIT_LIST_HEAD(&new->list);
- 
-@@ -506,13 +498,9 @@ retry:
- void add_dirty_dir_inode(struct inode *inode)
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 7f94d78..d43ab9f 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -543,6 +543,7 @@ static inline void check_block_count(struct f2fs_sb_info
+*sbi,
  {
- 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
--	struct dir_inode_entry *new;
--retry:
--	new = kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
--	if (!new) {
--		cond_resched();
--		goto retry;
--	}
-+	struct dir_inode_entry *new =
-+			f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
-+
- 	new->inode = inode;
- 	INIT_LIST_HEAD(&new->list);
+ 	struct f2fs_sm_info *sm_info = SM_I(sbi);
+ 	unsigned int end_segno = sm_info->segment_count - 1;
++	int *valid_map = (int *)raw_sit->valid_map;
+ 	int valid_blocks = 0;
+ 	int i;
  
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 171c52f..2949275 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -18,6 +18,7 @@
- #include <linux/crc32.h>
- #include <linux/magic.h>
- #include <linux/kobject.h>
-+#include <linux/sched.h>
+@@ -552,6 +553,19 @@ static inline void check_block_count(struct
+f2fs_sb_info *sbi,
+ 	/* check boundary of a given segment number */
+ 	BUG_ON(segno > end_segno);
  
- /*
-  * For mount options
-@@ -787,6 +788,20 @@ static inline struct kmem_cache *f2fs_kmem_cache_create(const char *name,
- 	return kmem_cache_create(name, size, 0, SLAB_RECLAIM_ACCOUNT, ctor);
- }
- 
-+static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
-+						gfp_t flags)
-+{
-+	void *entry;
-+retry:
-+	entry = kmem_cache_alloc(cachep, flags);
-+	if (!entry) {
-+		cond_resched();
-+		goto retry;
++	/* check all ones or zeros valid_map */
++	if (GET_SIT_VBLOCKS(raw_sit) == 0) {
++		for (i = 0; i < SIT_VBLOCK_MAP_SIZE / sizeof(int); i++)
++			if (unlikely(valid_map[i] != 0))
++				BUG();
++		return;
++	} else if (GET_SIT_VBLOCKS(raw_sit) == sbi->blocks_per_seg) {
++		for (i = 0; i < SIT_VBLOCK_MAP_SIZE / sizeof(int); i++)
++			if (unlikely(valid_map[i] != -1))
++				BUG();
++		return;
 +	}
 +
-+	return entry;
-+}
-+
- #define RAW_IS_INODE(p)	((p)->footer.nid == (p)->footer.ino)
- 
- static inline bool IS_INODE(struct page *page)
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index fbad968..7914b92 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -361,12 +361,8 @@ static void add_gc_inode(struct inode *inode, struct list_head *ilist)
- 		iput(inode);
- 		return;
- 	}
--repeat:
--	new_ie = kmem_cache_alloc(winode_slab, GFP_NOFS);
--	if (!new_ie) {
--		cond_resched();
--		goto repeat;
--	}
-+
-+	new_ie = f2fs_kmem_cache_alloc(winode_slab, GFP_NOFS);
- 	new_ie->inode = inode;
- 	list_add_tail(&new_ie->list, ilist);
- }
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index ef80f79..4fa3fd5 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1296,23 +1296,18 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build)
- 	if (nid == 0)
- 		return 0;
- 
--	if (!build)
--		goto retry;
--
--	/* do not add allocated nids */
--	read_lock(&nm_i->nat_tree_lock);
--	ne = __lookup_nat_cache(nm_i, nid);
--	if (ne && nat_get_blkaddr(ne) != NULL_ADDR)
--		allocated = true;
--	read_unlock(&nm_i->nat_tree_lock);
--	if (allocated)
--		return 0;
--retry:
--	i = kmem_cache_alloc(free_nid_slab, GFP_NOFS);
--	if (!i) {
--		cond_resched();
--		goto retry;
-+	if (build) {
-+		/* do not add allocated nids */
-+		read_lock(&nm_i->nat_tree_lock);
-+		ne = __lookup_nat_cache(nm_i, nid);
-+		if (ne && nat_get_blkaddr(ne) != NULL_ADDR)
-+			allocated = true;
-+		read_unlock(&nm_i->nat_tree_lock);
-+		if (allocated)
-+			return 0;
- 	}
-+
-+	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
- 	i->nid = nid;
- 	i->state = NID_NEW;
- 
--- 
-1.7.7
-
-
-------------------------------------------------------------------------------
-October Webinars: Code for Performance
-Free Intel webinars can help you accelerate application performance.
-Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
-the latest Intel processors and coprocessors. See abstracts and register >
-http://pubads.g.doubleclick.net/gampad/clk?id=60135991&iu=/4140/ostg.clktrk
+ 	/* check bitmap with valid block count */
+ 	for (i = 0; i < sbi->blocks_per_seg; i++)
+ 		if (f2fs_test_bit(i, raw_sit->valid_map))
+---
