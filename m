@@ -1,27 +1,22 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH] f2fs: introduce f2fs_kmem_cache_alloc to
- hide the unfailed kmem cache allocation
-Date: Tue, 22 Oct 2013 14:26:58 +0800
-Message-ID: <52661AB2.8050501@cn.fujitsu.com>
-References: <5264D6C7.9000202@cn.fujitsu.com> <5265F5E6.3000604@cn.fujitsu.com>
-	<20131022051636.GJ21006@hli22-desktop>
-	<52660E62.9090409@cn.fujitsu.com>
-	<20131022061540.GL21006@hli22-desktop>
+Subject: [PATCH V2] f2fs: introduce f2fs_kmem_cache_alloc to hide
+ the unfailed, kmem cache allocation
+Date: Tue, 22 Oct 2013 14:52:26 +0800
+Message-ID: <526620AA.60007@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VYVWQ-0008UB-N2
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VYVv3-000441-2L
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 06:32:54 +0000
+	Tue, 22 Oct 2013 06:58:21 +0000
 Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VYVWP-0002mk-9w for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 06:32:54 +0000
-In-Reply-To: <20131022061540.GL21006@hli22-desktop>
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VYVv0-0002VO-UR for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 22 Oct 2013 06:58:21 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,86 +26,168 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Haicheng Li <haicheng.li@linux.intel.com>
+To: Kim <jaegeuk.kim@samsung.com>
 Cc: fsdevel <linux-fsdevel@vger.kernel.org>, Gao feng <gaofeng@cn.fujitsu.com>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-On 10/22/2013 02:15 PM, Haicheng Li wrote:
+Introduce the unfailed version of kmem_cache_alloc named f2fs_kmem_cache_alloc
+to hide the retry routine and make the code a bit cleaner.
 
-> On Tue, Oct 22, 2013 at 01:34:26PM +0800, Gu Zheng wrote:
->> On 10/22/2013 01:16 PM, Haicheng Li wrote:
->>
->>> On Tue, Oct 22, 2013 at 11:49:58AM +0800, Gao feng wrote:
->>>> On 10/21/2013 03:24 PM, Gu Zheng wrote:
->>>>> +static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
->>>>> +						gfp_t flags)
->>>>> +{
->>>>> +	void *entry = kmem_cache_alloc(cachep, flags);
->>>>> +retry:
->>>>
->>>> retry after kmem_cache_alloc?
->>>
->>> Good catch.
->>>
->>> Sorry for the carelessness in my previous review. 
->>> Besides this, I also found another issue as below:
->>>  
->>>> On Mon, Oct 21, 2013 at 03:24:55PM +0800, Gu Zheng wrote: 
->>>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c 
->>>>> index ef80f79..fe3cf8e 100644 
->>>>> --- a/fs/f2fs/node.c 
->>>>> +++ b/fs/f2fs/node.c 
->>>>> @@ -1308,11 +1308,7 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build) 
->>>>>     if (allocated) 
->>>>>             return 0; 
->>>>>  retry: 
->>> -retry?
->>
->> Can be removed here, this tag still used by front goto jumping. But it
->> seems that we need to use another suitable name rather than "retry".
-> 
-> how about like this?
-> ---
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index fe3cf8e..4fa3fd5 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1296,18 +1296,17 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build)
->  	if (nid == 0)
->  		return 0;
->  
-> -	if (!build)
-> -		goto retry;
-> +	if (build) {
-> +		/* do not add allocated nids */
-> +		read_lock(&nm_i->nat_tree_lock);
-> +		ne = __lookup_nat_cache(nm_i, nid);
-> +		if (ne && nat_get_blkaddr(ne) != NULL_ADDR)
-> +			allocated = true;
-> +		read_unlock(&nm_i->nat_tree_lock);
-> +		if (allocated)
-> +			return 0;
-> +	}
+v2:
+   Fix the wrong use of 'retry' tag pointed out by Gao feng.
+   Use more neat code to remove redundant tag suggested by Haicheng Li.
 
-Good, it's more neat, I'll take this, thanks.:)
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/checkpoint.c |   26 +++++++-------------------
+ fs/f2fs/f2fs.h       |   15 +++++++++++++++
+ fs/f2fs/gc.c         |    8 ++------
+ fs/f2fs/node.c       |   27 +++++++++++----------------
+ 4 files changed, 35 insertions(+), 41 deletions(-)
 
-Regards,
-Gu
-
->  
-> -	/* do not add allocated nids */
-> -	read_lock(&nm_i->nat_tree_lock);
-> -	ne = __lookup_nat_cache(nm_i, nid);
-> -	if (ne && nat_get_blkaddr(ne) != NULL_ADDR)
-> -		allocated = true;
-> -	read_unlock(&nm_i->nat_tree_lock);
-> -	if (allocated)
-> -		return 0;
-> -retry:
->  	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
->  	i->nid = nid;
->  	i->state = NID_NEW;
-> 
-
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 8d16071..6fb484c 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -226,12 +226,8 @@ void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ 			break;
+ 		orphan = NULL;
+ 	}
+-retry:
+-	new = kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
+-	if (!new) {
+-		cond_resched();
+-		goto retry;
+-	}
++
++	new = f2fs_kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
+ 	new->ino = ino;
+ 
+ 	/* add new_oentry into list which is sorted by inode number */
+@@ -484,12 +480,8 @@ void set_dirty_dir_page(struct inode *inode, struct page *page)
+ 
+ 	if (!S_ISDIR(inode->i_mode))
+ 		return;
+-retry:
+-	new = kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+-	if (!new) {
+-		cond_resched();
+-		goto retry;
+-	}
++
++	new = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+ 	new->inode = inode;
+ 	INIT_LIST_HEAD(&new->list);
+ 
+@@ -506,13 +498,9 @@ retry:
+ void add_dirty_dir_inode(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+-	struct dir_inode_entry *new;
+-retry:
+-	new = kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+-	if (!new) {
+-		cond_resched();
+-		goto retry;
+-	}
++	struct dir_inode_entry *new =
++			f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
++
+ 	new->inode = inode;
+ 	INIT_LIST_HEAD(&new->list);
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 171c52f..2949275 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -18,6 +18,7 @@
+ #include <linux/crc32.h>
+ #include <linux/magic.h>
+ #include <linux/kobject.h>
++#include <linux/sched.h>
+ 
+ /*
+  * For mount options
+@@ -787,6 +788,20 @@ static inline struct kmem_cache *f2fs_kmem_cache_create(const char *name,
+ 	return kmem_cache_create(name, size, 0, SLAB_RECLAIM_ACCOUNT, ctor);
+ }
+ 
++static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
++						gfp_t flags)
++{
++	void *entry;
++retry:
++	entry = kmem_cache_alloc(cachep, flags);
++	if (!entry) {
++		cond_resched();
++		goto retry;
++	}
++
++	return entry;
++}
++
+ #define RAW_IS_INODE(p)	((p)->footer.nid == (p)->footer.ino)
+ 
+ static inline bool IS_INODE(struct page *page)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index fbad968..7914b92 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -361,12 +361,8 @@ static void add_gc_inode(struct inode *inode, struct list_head *ilist)
+ 		iput(inode);
+ 		return;
+ 	}
+-repeat:
+-	new_ie = kmem_cache_alloc(winode_slab, GFP_NOFS);
+-	if (!new_ie) {
+-		cond_resched();
+-		goto repeat;
+-	}
++
++	new_ie = f2fs_kmem_cache_alloc(winode_slab, GFP_NOFS);
+ 	new_ie->inode = inode;
+ 	list_add_tail(&new_ie->list, ilist);
+ }
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index ef80f79..4fa3fd5 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1296,23 +1296,18 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build)
+ 	if (nid == 0)
+ 		return 0;
+ 
+-	if (!build)
+-		goto retry;
+-
+-	/* do not add allocated nids */
+-	read_lock(&nm_i->nat_tree_lock);
+-	ne = __lookup_nat_cache(nm_i, nid);
+-	if (ne && nat_get_blkaddr(ne) != NULL_ADDR)
+-		allocated = true;
+-	read_unlock(&nm_i->nat_tree_lock);
+-	if (allocated)
+-		return 0;
+-retry:
+-	i = kmem_cache_alloc(free_nid_slab, GFP_NOFS);
+-	if (!i) {
+-		cond_resched();
+-		goto retry;
++	if (build) {
++		/* do not add allocated nids */
++		read_lock(&nm_i->nat_tree_lock);
++		ne = __lookup_nat_cache(nm_i, nid);
++		if (ne && nat_get_blkaddr(ne) != NULL_ADDR)
++			allocated = true;
++		read_unlock(&nm_i->nat_tree_lock);
++		if (allocated)
++			return 0;
+ 	}
++
++	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
+ 	i->nid = nid;
+ 	i->state = NID_NEW;
+ 
+-- 
+1.7.7
 
 
 ------------------------------------------------------------------------------
