@@ -1,24 +1,25 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
 Subject: Re: [PATCH] f2fs: introduce f2fs_kmem_cache_alloc to
  hide the unfailed kmem cache allocation
-Date: Tue, 22 Oct 2013 13:30:34 +0800
-Message-ID: <52660D7A.9070007@cn.fujitsu.com>
+Date: Tue, 22 Oct 2013 13:34:26 +0800
+Message-ID: <52660E62.9090409@cn.fujitsu.com>
 References: <5264D6C7.9000202@cn.fujitsu.com> <5265F5E6.3000604@cn.fujitsu.com>
+	<20131022051636.GJ21006@hli22-desktop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VYUsH-0000vc-Q0
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VYUsW-0006uF-TL
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 05:51:25 +0000
+	Tue, 22 Oct 2013 05:51:40 +0000
 Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VYUsG-0000zl-8o for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 05:51:25 +0000
-In-Reply-To: <5265F5E6.3000604@cn.fujitsu.com>
+	id 1VYUsV-000106-Cm for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 22 Oct 2013 05:51:40 +0000
+In-Reply-To: <20131022051636.GJ21006@hli22-desktop>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,36 +29,44 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Gao feng <gaofeng@cn.fujitsu.com>
-Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+To: Haicheng Li <haicheng.li@linux.intel.com>
+Cc: fsdevel <linux-fsdevel@vger.kernel.org>, Gao feng <gaofeng@cn.fujitsu.com>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-On 10/22/2013 11:49 AM, Gao feng wrote:
+On 10/22/2013 01:16 PM, Haicheng Li wrote:
 
-> On 10/21/2013 03:24 PM, Gu Zheng wrote:
->> +static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
->> +						gfp_t flags)
->> +{
->> +	void *entry = kmem_cache_alloc(cachep, flags);
->> +retry:
+> On Tue, Oct 22, 2013 at 11:49:58AM +0800, Gao feng wrote:
+>> On 10/21/2013 03:24 PM, Gu Zheng wrote:
+>>> +static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
+>>> +						gfp_t flags)
+>>> +{
+>>> +	void *entry = kmem_cache_alloc(cachep, flags);
+>>> +retry:
+>>
+>> retry after kmem_cache_alloc?
 > 
-> retry after kmem_cache_alloc?
-
-Oh~, stupid mistake, thanks for your reminder.:)
-
+> Good catch.
 > 
->> +	if (!entry) {
->> +		cond_resched();
->> +		goto retry;
->> +	}
->> +
->> +	return entry;
->> +}
+> Sorry for the carelessness in my previous review. 
+> Besides this, I also found another issue as below:
+>  
+>> On Mon, Oct 21, 2013 at 03:24:55PM +0800, Gu Zheng wrote: 
+>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c 
+>>> index ef80f79..fe3cf8e 100644 
+>>> --- a/fs/f2fs/node.c 
+>>> +++ b/fs/f2fs/node.c 
+>>> @@ -1308,11 +1308,7 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build) 
+>>>     if (allocated) 
+>>>             return 0; 
+>>>  retry: 
+> -retry?
+
+Can be removed here, this tag still used by front goto jumping. But it
+seems that we need to use another suitable name rather than "retry".
+
+Regards,
+Gu
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+
 > 
 
 
