@@ -1,87 +1,193 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH] f2fs: check all ones or zeros bitmap with
- integer data type for better mount performance
-Date: Tue, 22 Oct 2013 21:23:32 +0900
-Message-ID: <1382444612.992.67.camel@kjgkr>
-References: <000701cecf09$2b2a2280$817e6780$@samsung.com>
+Subject: Re: [PATCH V2] f2fs: introduce f2fs_kmem_cache_alloc to hide the
+ unfailed, kmem cache allocation
+Date: Tue, 22 Oct 2013 21:30:05 +0900
+Message-ID: <1382445005.992.70.camel@kjgkr>
+References: <526620AA.60007@cn.fujitsu.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VYb0Q-0007R6-5D
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 12:24:14 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VYb0N-0004x4-SE for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 12:24:14 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MV200E47L3R86K0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 21:24:05 +0900 (KST)
-In-reply-to: <000701cecf09$2b2a2280$817e6780$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, =?UTF-8?Q?=E8=B0=AD=E5=A7=9D?= <shu.tan@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <526620AA.60007@cn.fujitsu.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Gao feng <gaofeng@cn.fujitsu.com>, Haicheng Li <haicheng.li@linux.intel.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgoyMDEzLTEwLTIyICjtmZQpLCAxNzoyOCArMDgwMCwgQ2hhbyBZdToKPiBQcmV2aW91c2x5
-LCBjaGVja19ibG9ja19jb3VudCBjaGVjayB2YWxpZF9tYXAgd2l0aCBiaXQgZGF0YSB0eXBlIGlu
-IGNvbW1vbgo+IHNjZW5hcmlvIHRoYXQgc2l0IGhhcyBhbGwgb25lcyBvciB6ZXJvcyBiaXRtYXAs
-IGl0IG1ha2VzIGxvdyBtb3VudAo+IHBlcmZvcm1hbmNlLgo+IFNvIGxldCdzIGNoZWNrIHRoZSBz
-cGVjaWFsIGJpdG1hcCB3aXRoIGludGVnZXIgZGF0YSB0eXBlIGluc3RlYWQgb2YgdGhlIGJpdAo+
-IG9uZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBUYW4gU2h1IDxzaHUudGFuQHNhbXN1bmcuY29tPgo+
-IFNpZ25lZC1vZmYtYnk6IFl1IENoYW8gPGNoYW8yLnl1QHNhbXN1bmcuY29tPgo+IC0tLQo+ICBm
-cy9mMmZzL3NlZ21lbnQuaCB8ICAgMTMgKysrKysrKysrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwg
-MTMgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL3NlZ21lbnQuaCBiL2Zz
-L2YyZnMvc2VnbWVudC5oCj4gaW5kZXggN2Y5NGQ3OC4uZDQzYWI5ZiAxMDA2NDQKPiAtLS0gYS9m
-cy9mMmZzL3NlZ21lbnQuaAo+ICsrKyBiL2ZzL2YyZnMvc2VnbWVudC5oCj4gQEAgLTU0Myw2ICs1
-NDMsNyBAQCBzdGF0aWMgaW5saW5lIHZvaWQgY2hlY2tfYmxvY2tfY291bnQoc3RydWN0IGYyZnNf
-c2JfaW5mbwo+ICpzYmksCj4gIHsKPiAgCXN0cnVjdCBmMmZzX3NtX2luZm8gKnNtX2luZm8gPSBT
-TV9JKHNiaSk7Cj4gIAl1bnNpZ25lZCBpbnQgZW5kX3NlZ25vID0gc21faW5mby0+c2VnbWVudF9j
-b3VudCAtIDE7Cj4gKwlpbnQgKnZhbGlkX21hcCA9IChpbnQgKilyYXdfc2l0LT52YWxpZF9tYXA7
-Cj4gIAlpbnQgdmFsaWRfYmxvY2tzID0gMDsKPiAgCWludCBpOwo+ICAKPiBAQCAtNTUyLDYgKzU1
-MywxOSBAQCBzdGF0aWMgaW5saW5lIHZvaWQgY2hlY2tfYmxvY2tfY291bnQoc3RydWN0Cj4gZjJm
-c19zYl9pbmZvICpzYmksCj4gIAkvKiBjaGVjayBib3VuZGFyeSBvZiBhIGdpdmVuIHNlZ21lbnQg
-bnVtYmVyICovCj4gIAlCVUdfT04oc2Vnbm8gPiBlbmRfc2Vnbm8pOwo+ICAKPiArCS8qIGNoZWNr
-IGFsbCBvbmVzIG9yIHplcm9zIHZhbGlkX21hcCAqLwo+ICsJaWYgKEdFVF9TSVRfVkJMT0NLUyhy
-YXdfc2l0KSA9PSAwKSB7Cj4gKwkJZm9yIChpID0gMDsgaSA8IFNJVF9WQkxPQ0tfTUFQX1NJWkUg
-LyBzaXplb2YoaW50KTsgaSsrKQoKV2UgY2Fubm90IGd1YXJhbnRlZSBhbGwgdGhlIHRpbWUgdGhh
-dCBTSVRfVkJMT0NLX01BUF9TSVpFIGlzIG11bHRpcGxlIG9mCnNpemVvZihpbnQpLgpIb3cgYWJv
-dXQgdXNpbmcgbWVtY21wKCkgd2l0aCBfX3U4PwoKPiArCQkJaWYgKHVubGlrZWx5KHZhbGlkX21h
-cFtpXSAhPSAwKSkKPiArCQkJCUJVRygpOwo+ICsJCXJldHVybjsKPiArCX0gZWxzZSBpZiAoR0VU
-X1NJVF9WQkxPQ0tTKHJhd19zaXQpID09IHNiaS0+YmxvY2tzX3Blcl9zZWcpIHsKPiArCQlmb3Ig
-KGkgPSAwOyBpIDwgU0lUX1ZCTE9DS19NQVBfU0laRSAvIHNpemVvZihpbnQpOyBpKyspCj4gKwkJ
-CWlmICh1bmxpa2VseSh2YWxpZF9tYXBbaV0gIT0gLTEpKQo+ICsJCQkJQlVHKCk7Cj4gKwkJcmV0
-dXJuOwo+ICsJfQo+ICsKPiAgCS8qIGNoZWNrIGJpdG1hcCB3aXRoIHZhbGlkIGJsb2NrIGNvdW50
-ICovCj4gIAlmb3IgKGkgPSAwOyBpIDwgc2JpLT5ibG9ja3NfcGVyX3NlZzsgaSsrKQo+ICAJCWlm
-IChmMmZzX3Rlc3RfYml0KGksIHJhd19zaXQtPnZhbGlkX21hcCkpCj4gLS0tCj4gCj4gLS0KPiBU
-byB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUg
-bGludXgtZnNkZXZlbCIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZn
-ZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5l
-bC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAoKLS0gCkphZWdldWsgS2ltClNhbXN1bmcKCgotLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0KT2N0b2JlciBXZWJpbmFyczogQ29kZSBmb3IgUGVyZm9ybWFuY2UK
-RnJlZSBJbnRlbCB3ZWJpbmFycyBjYW4gaGVscCB5b3UgYWNjZWxlcmF0ZSBhcHBsaWNhdGlvbiBw
-ZXJmb3JtYW5jZS4KRXhwbG9yZSB0aXBzIGZvciBNUEksIE9wZW5NUCwgYWR2YW5jZWQgcHJvZmls
-aW5nLCBhbmQgbW9yZS4gR2V0IHRoZSBtb3N0IGZyb20gCnRoZSBsYXRlc3QgSW50ZWwgcHJvY2Vz
-c29ycyBhbmQgY29wcm9jZXNzb3JzLiBTZWUgYWJzdHJhY3RzIGFuZCByZWdpc3RlciA+Cmh0dHA6
-Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD02MDEzNTk5MSZpdT0vNDE0
-MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3Rz
-LnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0
-aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi,
+
+Looks good to me.
+
+Thanks,
+
+2013-10-22 (=ED=99=94), 14:52 +0800, Gu Zheng:
+> Introduce the unfailed version of kmem_cache_alloc named f2fs_kmem_ca=
+che_alloc
+> to hide the retry routine and make the code a bit cleaner.
+>=20
+> v2:
+>    Fix the wrong use of 'retry' tag pointed out by Gao feng.
+>    Use more neat code to remove redundant tag suggested by Haicheng L=
+i.
+>=20
+> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+> ---
+>  fs/f2fs/checkpoint.c |   26 +++++++-------------------
+>  fs/f2fs/f2fs.h       |   15 +++++++++++++++
+>  fs/f2fs/gc.c         |    8 ++------
+>  fs/f2fs/node.c       |   27 +++++++++++----------------
+>  4 files changed, 35 insertions(+), 41 deletions(-)
+>=20
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 8d16071..6fb484c 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -226,12 +226,8 @@ void add_orphan_inode(struct f2fs_sb_info *sbi, =
+nid_t ino)
+>  			break;
+>  		orphan =3D NULL;
+>  	}
+> -retry:
+> -	new =3D kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
+> -	if (!new) {
+> -		cond_resched();
+> -		goto retry;
+> -	}
+> +
+> +	new =3D f2fs_kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
+>  	new->ino =3D ino;
+> =20
+>  	/* add new_oentry into list which is sorted by inode number */
+> @@ -484,12 +480,8 @@ void set_dirty_dir_page(struct inode *inode, str=
+uct page *page)
+> =20
+>  	if (!S_ISDIR(inode->i_mode))
+>  		return;
+> -retry:
+> -	new =3D kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+> -	if (!new) {
+> -		cond_resched();
+> -		goto retry;
+> -	}
+> +
+> +	new =3D f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+>  	new->inode =3D inode;
+>  	INIT_LIST_HEAD(&new->list);
+> =20
+> @@ -506,13 +498,9 @@ retry:
+>  void add_dirty_dir_inode(struct inode *inode)
+>  {
+>  	struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
+> -	struct dir_inode_entry *new;
+> -retry:
+> -	new =3D kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+> -	if (!new) {
+> -		cond_resched();
+> -		goto retry;
+> -	}
+> +	struct dir_inode_entry *new =3D
+> +			f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+> +
+>  	new->inode =3D inode;
+>  	INIT_LIST_HEAD(&new->list);
+> =20
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 171c52f..2949275 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -18,6 +18,7 @@
+>  #include <linux/crc32.h>
+>  #include <linux/magic.h>
+>  #include <linux/kobject.h>
+> +#include <linux/sched.h>
+> =20
+>  /*
+>   * For mount options
+> @@ -787,6 +788,20 @@ static inline struct kmem_cache *f2fs_kmem_cache=
+_create(const char *name,
+>  	return kmem_cache_create(name, size, 0, SLAB_RECLAIM_ACCOUNT, ctor)=
+;
+>  }
+> =20
+> +static inline void *f2fs_kmem_cache_alloc(struct kmem_cache *cachep,
+> +						gfp_t flags)
+> +{
+> +	void *entry;
+> +retry:
+> +	entry =3D kmem_cache_alloc(cachep, flags);
+> +	if (!entry) {
+> +		cond_resched();
+> +		goto retry;
+> +	}
+> +
+> +	return entry;
+> +}
+> +
+>  #define RAW_IS_INODE(p)	((p)->footer.nid =3D=3D (p)->footer.ino)
+> =20
+>  static inline bool IS_INODE(struct page *page)
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index fbad968..7914b92 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -361,12 +361,8 @@ static void add_gc_inode(struct inode *inode, st=
+ruct list_head *ilist)
+>  		iput(inode);
+>  		return;
+>  	}
+> -repeat:
+> -	new_ie =3D kmem_cache_alloc(winode_slab, GFP_NOFS);
+> -	if (!new_ie) {
+> -		cond_resched();
+> -		goto repeat;
+> -	}
+> +
+> +	new_ie =3D f2fs_kmem_cache_alloc(winode_slab, GFP_NOFS);
+>  	new_ie->inode =3D inode;
+>  	list_add_tail(&new_ie->list, ilist);
+>  }
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index ef80f79..4fa3fd5 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1296,23 +1296,18 @@ static int add_free_nid(struct f2fs_nm_info *=
+nm_i, nid_t nid, bool build)
+>  	if (nid =3D=3D 0)
+>  		return 0;
+> =20
+> -	if (!build)
+> -		goto retry;
+> -
+> -	/* do not add allocated nids */
+> -	read_lock(&nm_i->nat_tree_lock);
+> -	ne =3D __lookup_nat_cache(nm_i, nid);
+> -	if (ne && nat_get_blkaddr(ne) !=3D NULL_ADDR)
+> -		allocated =3D true;
+> -	read_unlock(&nm_i->nat_tree_lock);
+> -	if (allocated)
+> -		return 0;
+> -retry:
+> -	i =3D kmem_cache_alloc(free_nid_slab, GFP_NOFS);
+> -	if (!i) {
+> -		cond_resched();
+> -		goto retry;
+> +	if (build) {
+> +		/* do not add allocated nids */
+> +		read_lock(&nm_i->nat_tree_lock);
+> +		ne =3D __lookup_nat_cache(nm_i, nid);
+> +		if (ne && nat_get_blkaddr(ne) !=3D NULL_ADDR)
+> +			allocated =3D true;
+> +		read_unlock(&nm_i->nat_tree_lock);
+> +		if (allocated)
+> +			return 0;
+>  	}
+> +
+> +	i =3D f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
+>  	i->nid =3D nid;
+>  	i->state =3D NID_NEW;
+> =20
+
+--=20
+Jaegeuk Kim
+Samsung
