@@ -1,103 +1,69 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [Bug] Inaccessible, unerasable file
-Date: Wed, 23 Oct 2013 18:58:26 +0900
-Message-ID: <1382522306.992.84.camel@kjgkr>
-References: <CAPs1ukwgeqL1SFUGUPaM-aE=88dXS4GeaDDALG5WFLcoMvqg_g@mail.gmail.com>
-	<1382440189.992.62.camel@kjgkr>
-	<CAPs1ukz2EykkWP_H-U5UT_nuef5dpMRyTjHy4JCHKNoPLWKdpw@mail.gmail.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH] f2fs: delete and free dirty dir freeing inode entry when
+ sync dirty dir inodes
+Date: Wed, 23 Oct 2013 18:11:03 +0800
+Message-ID: <5267A0B7.7000202@cn.fujitsu.com>
+References: <5264D574.6000105@cn.fujitsu.com> <1382440544.992.64.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VYvDY-0002qJ-AX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Oct 2013 09:59:08 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VYvDW-0002N5-4c for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Oct 2013 09:59:08 +0000
-Received: from epcpsbgr5.samsung.com
-	(u145.gpu120.samsung.co.kr [203.254.230.145])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MV4004OQ91NKTL0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Oct 2013 18:58:59 +0900 (KST)
-In-reply-to: <CAPs1ukz2EykkWP_H-U5UT_nuef5dpMRyTjHy4JCHKNoPLWKdpw@mail.gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Max Muster <tastky@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1382440544.992.64.camel@kjgkr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgoyMDEzLTEwLTIyICjtmZQpLCAyMjo1MCArMDIwMCwgTWF4IE11c3RlcjoKPiBIaSwKPiAK
-PiBJIGRvbid0IHJlY2FsbCBhbnl0aGluZyBsaWtlIGEgYmxhY2tvdXQsIGJ1dCBzaW5jZSBJIGxp
-a2UgdG8gcnVuIG5ldwo+IHNvZnR3YXJlIHRoYXQncyBzdGlsbCBpbiBkZXZlbG9wbWVudCwgSSBo
-YXZlIGhhZCBhIGZhaXIgc2hhcmUgb2Ygc3lzdGVtCj4gY3Jhc2hlcy4KPiAKPiBBcyBmYXIgYXMg
-SSdtIGF3YXJlIHRoaXMgaXMgdGhlIG9ubHkgZmlsZSBvbiB0aGUgcGFydGl0aW9uIHRvIGV2ZXIK
-PiBiZWNvbWUgY29ycnVwdGVkIGF0IHRoZSBmaWxlIHN5c3RlbSBsZXZlbCwgdGhvdWdoLgo+IAo+
-IFRoZSByZXBvc2l0b3J5IHdhcyBhIHNpbXBsZSAoc2hhbGxvdykgZ2l0IGNsb25lIG9mIEdvb2ds
-ZSdzIGd5cCwKPiBhdmFpbGFibGUgaGVyZToKPiAKPiBodHRwczovL2Nocm9taXVtLmdvb2dsZXNv
-dXJjZS5jb20vZXh0ZXJuYWwvZ3lwLmdpdAo+IAoKQXMgSSB0ZXN0ZWQgdGhlIGFib3ZlIGdpdCwg
-dGhlcmUgd2FzIG5vIGZ1bmN0aW9uYWwgcHJvYmxlbSBvbiBmMmZzLgpTbywgY291bGQgeW91IGdp
-dmUgbWUgdGhlIGxvZyBvZiAiZnNjay5mMmZzIC1kIDMiPwpJdCBpcyB0aGUgYmVzdCB5b3UgY2Fu
-IGdpdmUgbWUgdGhlIGJyb2tlbiBpbWFnZSB0aG91Z2guClRoYW5rcywKCj4gU3VjaCBiZWluZyB0
-aGUgY2FzZSwgSSBoYXZlIG5vIG5lZWQgdG8gcmVzdG9yZSB0aGUgZmlsZSwgYnV0IGJlaW5nIGFi
-bGUKPiB0byBoYXZlIGl0IHByb3Blcmx5IGRlbGV0ZWQgd291bGQgYmUgbmljZS4KPiAKPiBZb3Vy
-cwo+IHRhc3RreQo+IAo+IE9uIDIyLjEwLjIwMTMgMTM6MDksIEphZWdldWsgS2ltIHdyb3RlOgo+
-ID4gSGksCj4gPgo+ID4gVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0Lgo+ID4KPiA+IDIwMTMtMTAt
-MTkgKO2GoCksIDE5OjM2ICswMjAwLCBNYXggTXVzdGVyOgo+ID4+IFRoZXJlJ3MgYSBicm9rZW4s
-IGllLiBpbmFjY2Vzc2libGUgYW5kIHVuZXJhc2FibGUgZmlsZSBvbiBteSBmMmZzCj4gPj4gcGFy
-dGl0aW9uICgybmQgcGFydGl0aW9uIHdpdGggMjFHQiBvbiBhIENvcnNhaXIgRmxhc2ggVm95YWdl
-ciBHVCBVU0IgMy4wCj4gPj4gMzJHQikuIGxzIHJlcG9ydHM6Cj4gPj4KPiA+PiAgID5jYW5ub3Qg
-YWNjZXNzIHNoYXJlZC5oOiBJbnB1dC9vdXRwdXQgZXJyb3IKPiA+PiAgID50b3RhbCAwCj4gPj4g
-ICA+LT8/Pz8/Pz8/PyA/ID8gPyA/ICAgICAgICAgICAgPyBzaGFyZWQuaAo+ID4+Cj4gPj4gVGhl
-IGZpbGUgaGFzIGJlZW4gb24gdGhlIHBhcnRpdGlvbiBmb3IgYSBjb3VwbGUgb2YgbW9udGhzIGFs
-cmVhZHkuIEkKPiA+PiBkaWRuJ3QgcmVwb3J0IHNvb25lciBhcyBJIGNvdWxkL2NhbiBtb3ZlIGl0
-cyBmb2xkZXIgKGJ1dCBub3QgdGhlIGZpbGUKPiA+PiBpdHNlbGYpIHdoZXJlIGl0IGRvZXNuJ3Qg
-YnVnIG1lIGFuZCBpdCBkb2Vzbid0IGFwcGVhciB0byBhZmZlY3QgYW55dGhpbmcKPiA+PiBlbHNl
-Lgo+ID4+Cj4gPj4gKEknbSBjdXJyZW50bHkgcnVubmluZyBMaW51eCB2My4xMi1yYzUgd2l0aCBw
-b3N0LTMuMTIgZjJmcyBwYXRjaGVzCj4gPj4gYXBwbGllZCBtYW51YWxseS4pCj4gPj4KPiA+PiBU
-aGUgcGFydGl0aW9uIGlzIHVzZWQgcHJpbWFyaWx5IHRvIHN0b3JlIHNvdXJjZSBjb2RlIGFuZCBh
-cyBjYWNoZSBmb3IKPiA+PiBjY2FjaGUuIEkgZG9uJ3QgcmVjYWxsIGV2ZXIgZmlkZGxpbmcgd2l0
-aCB0aGlzIGZpbGUgZGlyZWN0bHk7IGl0Cj4gPj4gcHJvYmFibHkgaGFwcGVuZWQgZHVyaW5nIHVw
-ZGF0aW5nIGl0cyByZXBvc2l0b3J5IG9yIGRlbGV0aW5nIGp1c3QgdGhhdC4KPiA+Pgo+ID4+IGYy
-ZnMtdG9vbHMncyBmc2NrIChjdXJyZW50IGdpdCAyYWQxZmNkODAwKSBkb2Vzbid0IGFwcGVhciB0
-byBkbyBhbnl0aGluZwo+ID4+IGFuZCBhYm9ydHMgYWZ0ZXIgc29tZSAzMCBzZWNvbmRzIHdpdGg6
-Cj4gPj4KPiA+PiAgID5JbmZvOiBzZWN0b3Igc2l6ZSA9IDUxMgo+ID4+ICAgPkluZm86IHRvdGFs
-IHNlY3RvcnMgPSA0MjEwNjg4MCAoaW4gNTEyYnl0ZXMpCj4gPj4gICA+W2ZzY2tfY2hrX25vZGVf
-YmxrOiAxOTVdIGJsb2NrIGFkZHIgWzB4YTQwYWU1OV0KPiA+PiAgID4KPiA+PiAgID5Bc3NlcnRp
-b24gZmFpbGVkIQo+ID4+ICAgPltmc2NrX2Noa19ub2RlX2JsazogMTk1XSBuaS5ibGtfYWRkciA8
-IEYyRlNfUkFXX1NVUEVSKHNiaSktPmJsb2NrX2NvdW50Cj4gPj4KPiA+PiBJZiB5b3Ugd291bGQg
-bGlrZSBtZSB0byBwb3N0IGZ1cnRoZXIgaW5mbywgcGxlYXNlIHRlbGwgbWUgd2hpY2g7IEkndmUK
-PiA+PiBnb3Qgbm8gaWRlYSBob3cgdG8gZnVydGhlciBkZWJ1ZyB0aGlzLgo+ID4KPiA+IFVtLCBJ
-J3ZlIG5ldmVyIHNlZW4gdGhpcyBraW5kIG9mIGVycm9yIHNvIGZhci4KPiA+ICBGcm9tIHRoZSBy
-ZXN1bHQgb2YgZnNjaywgaXQgc2VlbXMgdGhhdCB0aGUgaW5vZGUgb2Ygc2hhcmVkLmggd2FzIGxv
-c3QuCj4gPiBTbywgY3VycmVudGx5LCB0aGVyZSBpcyBubyB3YXkgdG8gcmVjb3ZlciB0aGF0IGlu
-b2RlIGFuZCBpdHMgZGF0YQo+ID4gc2ltcGx5Lgo+ID4gSXQgbWF5IG5lZWQgc2NhbiB0aGUgd2hv
-bGUgcGFydGl0aW9uIHRvIGZpbmQgdGhlIHN0YWxlIGlub2RlIGJsb2NrLgo+ID4KPiA+IFR3byBx
-dWVzdGlvbnMuCj4gPiAtIEhhdmUgeW91IGV4cGVyaWVuY2VkIGFueSBzdWRkZW4gcG93ZXItb2Zm
-IGJlZm9yZT8KPiA+IC0gQ2FuIEkgdGVzdCB3aXRoIHRoZSByZXBvc2l0b3J5IGhhdmluZyB0aGUg
-c2hhcmVkLmggdGhhdCB5b3UgdXNlZD8KPiA+ICAgIChJJ2QgbGlrZSB0byBkbyBhIHNpbXBsZSB0
-ZXN0IHN0b3JpbmcgdGhhdCByZXBvc2l0b3J5LikKPiA+Cj4gPiBUaGFua3MsCj4gPgoKLS0gCkph
-ZWdldWsgS2ltClNhbXN1bmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCk9jdG9iZXIgV2ViaW5h
-cnM6IENvZGUgZm9yIFBlcmZvcm1hbmNlCkZyZWUgSW50ZWwgd2ViaW5hcnMgY2FuIGhlbHAgeW91
-IGFjY2VsZXJhdGUgYXBwbGljYXRpb24gcGVyZm9ybWFuY2UuCkV4cGxvcmUgdGlwcyBmb3IgTVBJ
-LCBPcGVuTVAsIGFkdmFuY2VkIHByb2ZpbGluZywgYW5kIG1vcmUuIEdldCB0aGUgbW9zdCBmcm9t
-IAp0aGUgbGF0ZXN0IEludGVsIHByb2Nlc3NvcnMgYW5kIGNvcHJvY2Vzc29ycy4gU2VlIGFic3Ry
-YWN0cyBhbmQgcmVnaXN0ZXIgPgpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBh
-ZC9jbGs/aWQ9NjAxMzU5OTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Hi Kim,
+On 10/22/2013 07:15 PM, Jaegeuk Kim wrote:
+
+> 2013-10-21 (=EC=9B=94), 15:19 +0800, Gu Zheng:
+>> In sync_dirty_dir_inodes(), remove_dirty_dir_inode() will be called
+>> in the callback of filemap_flush to delete and free dirty dir inode =
+entry.
+>> But for the freeing inode entry, missed this step after sbumit data =
+bio,
+>> and this may lead to a dead loop if these is freeing inode entry in
+>> dir_inode_list. So add the delete and free step to fix it.
+>=20
+> Hi Gu,
+>=20
+> This dirty inode will be removed by f2fs_evict_inode() after submitti=
+ng
+> any pending bio, f2fs_submit_bio().
+
+Yeah, got it, thanks for your direction, please ignore this patch.
+
+Regards,
+Gu
+
+> Thanks,
+>=20
+>>
+>> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+>> ---
+>>  fs/f2fs/checkpoint.c |    9 +++++++++
+>>  1 files changed, 9 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index 8d16071..f61838f 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -600,7 +600,16 @@ retry:
+>>  		 * wribacking dentry pages in the freeing inode.
+>>  		 */
+>>  		f2fs_submit_bio(sbi, DATA, true);
+>> +
+>> +		spin_lock(&sbi->dir_inode_lock);
+>> +		list_del(&entry->list);
+>> +#ifdef CONFIG_F2FS_STAT_FS
+>> +		sbi->n_dirty_dirs--;
+>> +#endif
+>> +		spin_unlock(&sbi->dir_inode_lock);
+>> +		kmem_cache_free(inode_entry_slab, entry);
+>>  	}
+>> +
+>>  	goto retry;
+>>  }
+>> =20
+>=20
