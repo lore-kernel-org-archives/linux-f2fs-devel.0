@@ -1,166 +1,103 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH] f2fs: clean up several status-related operations
-Date: Wed, 23 Oct 2013 18:46:25 +0900
-Message-ID: <1382521585-27450-1-git-send-email-jaegeuk.kim@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Subject: Re: [Bug] Inaccessible, unerasable file
+Date: Wed, 23 Oct 2013 18:58:26 +0900
+Message-ID: <1382522306.992.84.camel@kjgkr>
+References: <CAPs1ukwgeqL1SFUGUPaM-aE=88dXS4GeaDDALG5WFLcoMvqg_g@mail.gmail.com>
+	<1382440189.992.62.camel@kjgkr>
+	<CAPs1ukz2EykkWP_H-U5UT_nuef5dpMRyTjHy4JCHKNoPLWKdpw@mail.gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VYvDY-0002qJ-AX
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 23 Oct 2013 09:59:08 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VYvDW-0002N5-4c for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 23 Oct 2013 09:59:08 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MV4004OQ91NKTL0@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 23 Oct 2013 18:58:59 +0900 (KST)
+In-reply-to: <CAPs1ukz2EykkWP_H-U5UT_nuef5dpMRyTjHy4JCHKNoPLWKdpw@mail.gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Max Muster <tastky@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This patch cleans up improper definitions that update some status information.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/checkpoint.c |  8 ++------
- fs/f2fs/data.c       | 12 +++---------
- fs/f2fs/f2fs.h       | 14 +++++++++++++-
- fs/f2fs/gc.c         |  4 +---
- fs/f2fs/segment.c    | 10 ++++------
- 5 files changed, 23 insertions(+), 25 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 6fb484c..b4a59cf 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -467,9 +467,7 @@ static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
- 			return -EEXIST;
- 	}
- 	list_add_tail(&new->list, head);
--#ifdef CONFIG_F2FS_STAT_FS
--	sbi->n_dirty_dirs++;
--#endif
-+	stat_inc_dirty_dir(sbi);
- 	return 0;
- }
- 
-@@ -531,9 +529,7 @@ void remove_dirty_dir_inode(struct inode *inode)
- 		if (entry->inode == inode) {
- 			list_del(&entry->list);
- 			kmem_cache_free(inode_entry_slab, entry);
--#ifdef CONFIG_F2FS_STAT_FS
--			sbi->n_dirty_dirs--;
--#endif
-+			stat_dec_dirty_dir(sbi);
- 			break;
- 		}
- 	}
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2535d3b..4d4718f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -68,9 +68,6 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
- 					struct buffer_head *bh_result)
- {
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
--#ifdef CONFIG_F2FS_STAT_FS
--	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
--#endif
- 	pgoff_t start_fofs, end_fofs;
- 	block_t start_blkaddr;
- 
-@@ -80,9 +77,8 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
- 		return 0;
- 	}
- 
--#ifdef CONFIG_F2FS_STAT_FS
--	sbi->total_hit_ext++;
--#endif
-+	stat_inc_hit_ext(inode->i_sb);
-+
- 	start_fofs = fi->ext.fofs;
- 	end_fofs = fi->ext.fofs + fi->ext.len - 1;
- 	start_blkaddr = fi->ext.blk_addr;
-@@ -100,9 +96,7 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
- 		else
- 			bh_result->b_size = UINT_MAX;
- 
--#ifdef CONFIG_F2FS_STAT_FS
--		sbi->read_hit_ext++;
--#endif
-+		stat_inc_hit_ext(inode->i_sb);
- 		read_unlock(&fi->ext.ext_lock);
- 		return 1;
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2949275..d1fc93c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1155,7 +1155,13 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
- 	return (struct f2fs_stat_info*)sbi->stat_info;
- }
- 
--#define stat_inc_call_count(si)	((si)->call_count++)
-+#define stat_inc_call_count(si)		((si)->call_count++)
-+#define stat_inc_bggc_count(sbi)	((sbi)->bg_gc++)
-+#define stat_inc_dirty_dir(sbi)		((sbi)->n_dirty_dirs++)
-+#define stat_dec_dirty_dir(sbi)		((sbi)->n_dirty_dirs--)
-+#define stat_inc_hit_ext(sb)		((F2FS_SB(sb))->total_hit_ext++)
-+#define stat_inc_alloc_type(sbi, curseg)				\
-+		((sbi)->segment_count[(curseg)->alloc_type]++)
- 
- #define stat_inc_seg_count(sbi, type)					\
- 	do {								\
-@@ -1184,12 +1190,18 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
- 		si->node_blks += (blks);				\
- 	} while (0)
- 
-+
- int f2fs_build_stats(struct f2fs_sb_info *);
- void f2fs_destroy_stats(struct f2fs_sb_info *);
- void __init f2fs_create_root_stats(void);
- void f2fs_destroy_root_stats(void);
- #else
- #define stat_inc_call_count(si)
-+#define stat_inc_bggc_count(si)
-+#define stat_inc_dirty_dir(sbi)
-+#define stat_dec_dirty_dir(sbi)
-+#define stat_inc_hit_ext(sb)
-+#define stat_inc_alloc_type(sbi, curseg)
- #define stat_inc_seg_count(si, type)
- #define stat_inc_tot_blk_count(si, blks)
- #define stat_inc_data_blk_count(si, blks)
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 7914b92..cb286d7 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -77,9 +77,7 @@ static int gc_thread_func(void *data)
- 		else
- 			wait_ms = increase_sleep_time(gc_th, wait_ms);
- 
--#ifdef CONFIG_F2FS_STAT_FS
--		sbi->bg_gc++;
--#endif
-+		stat_inc_bggc_count(sbi);
- 
- 		/* if return value is not zero, no victim was selected */
- 		if (f2fs_gc(sbi))
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8ac1619..c9c276e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -554,9 +554,8 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
- 		change_curseg(sbi, type, true);
- 	else
- 		new_curseg(sbi, type, false);
--#ifdef CONFIG_F2FS_STAT_FS
--	sbi->segment_count[curseg->alloc_type]++;
--#endif
-+
-+	stat_inc_alloc_type(sbi, curseg);
- }
- 
- void allocate_new_segments(struct f2fs_sb_info *sbi)
-@@ -811,9 +810,8 @@ static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
- 
- 	mutex_lock(&sit_i->sentry_lock);
- 	__refresh_next_blkoff(sbi, curseg);
--#ifdef CONFIG_F2FS_STAT_FS
--	sbi->block_count[curseg->alloc_type]++;
--#endif
-+
-+	stat_inc_alloc_type(sbi, curseg);
- 
- 	/*
- 	 * SIT information should be updated before segment allocation,
--- 
-1.8.4.474.g128a96c
+SGksCgoyMDEzLTEwLTIyICjtmZQpLCAyMjo1MCArMDIwMCwgTWF4IE11c3RlcjoKPiBIaSwKPiAK
+PiBJIGRvbid0IHJlY2FsbCBhbnl0aGluZyBsaWtlIGEgYmxhY2tvdXQsIGJ1dCBzaW5jZSBJIGxp
+a2UgdG8gcnVuIG5ldwo+IHNvZnR3YXJlIHRoYXQncyBzdGlsbCBpbiBkZXZlbG9wbWVudCwgSSBo
+YXZlIGhhZCBhIGZhaXIgc2hhcmUgb2Ygc3lzdGVtCj4gY3Jhc2hlcy4KPiAKPiBBcyBmYXIgYXMg
+SSdtIGF3YXJlIHRoaXMgaXMgdGhlIG9ubHkgZmlsZSBvbiB0aGUgcGFydGl0aW9uIHRvIGV2ZXIK
+PiBiZWNvbWUgY29ycnVwdGVkIGF0IHRoZSBmaWxlIHN5c3RlbSBsZXZlbCwgdGhvdWdoLgo+IAo+
+IFRoZSByZXBvc2l0b3J5IHdhcyBhIHNpbXBsZSAoc2hhbGxvdykgZ2l0IGNsb25lIG9mIEdvb2ds
+ZSdzIGd5cCwKPiBhdmFpbGFibGUgaGVyZToKPiAKPiBodHRwczovL2Nocm9taXVtLmdvb2dsZXNv
+dXJjZS5jb20vZXh0ZXJuYWwvZ3lwLmdpdAo+IAoKQXMgSSB0ZXN0ZWQgdGhlIGFib3ZlIGdpdCwg
+dGhlcmUgd2FzIG5vIGZ1bmN0aW9uYWwgcHJvYmxlbSBvbiBmMmZzLgpTbywgY291bGQgeW91IGdp
+dmUgbWUgdGhlIGxvZyBvZiAiZnNjay5mMmZzIC1kIDMiPwpJdCBpcyB0aGUgYmVzdCB5b3UgY2Fu
+IGdpdmUgbWUgdGhlIGJyb2tlbiBpbWFnZSB0aG91Z2guClRoYW5rcywKCj4gU3VjaCBiZWluZyB0
+aGUgY2FzZSwgSSBoYXZlIG5vIG5lZWQgdG8gcmVzdG9yZSB0aGUgZmlsZSwgYnV0IGJlaW5nIGFi
+bGUKPiB0byBoYXZlIGl0IHByb3Blcmx5IGRlbGV0ZWQgd291bGQgYmUgbmljZS4KPiAKPiBZb3Vy
+cwo+IHRhc3RreQo+IAo+IE9uIDIyLjEwLjIwMTMgMTM6MDksIEphZWdldWsgS2ltIHdyb3RlOgo+
+ID4gSGksCj4gPgo+ID4gVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0Lgo+ID4KPiA+IDIwMTMtMTAt
+MTkgKO2GoCksIDE5OjM2ICswMjAwLCBNYXggTXVzdGVyOgo+ID4+IFRoZXJlJ3MgYSBicm9rZW4s
+IGllLiBpbmFjY2Vzc2libGUgYW5kIHVuZXJhc2FibGUgZmlsZSBvbiBteSBmMmZzCj4gPj4gcGFy
+dGl0aW9uICgybmQgcGFydGl0aW9uIHdpdGggMjFHQiBvbiBhIENvcnNhaXIgRmxhc2ggVm95YWdl
+ciBHVCBVU0IgMy4wCj4gPj4gMzJHQikuIGxzIHJlcG9ydHM6Cj4gPj4KPiA+PiAgID5jYW5ub3Qg
+YWNjZXNzIHNoYXJlZC5oOiBJbnB1dC9vdXRwdXQgZXJyb3IKPiA+PiAgID50b3RhbCAwCj4gPj4g
+ICA+LT8/Pz8/Pz8/PyA/ID8gPyA/ICAgICAgICAgICAgPyBzaGFyZWQuaAo+ID4+Cj4gPj4gVGhl
+IGZpbGUgaGFzIGJlZW4gb24gdGhlIHBhcnRpdGlvbiBmb3IgYSBjb3VwbGUgb2YgbW9udGhzIGFs
+cmVhZHkuIEkKPiA+PiBkaWRuJ3QgcmVwb3J0IHNvb25lciBhcyBJIGNvdWxkL2NhbiBtb3ZlIGl0
+cyBmb2xkZXIgKGJ1dCBub3QgdGhlIGZpbGUKPiA+PiBpdHNlbGYpIHdoZXJlIGl0IGRvZXNuJ3Qg
+YnVnIG1lIGFuZCBpdCBkb2Vzbid0IGFwcGVhciB0byBhZmZlY3QgYW55dGhpbmcKPiA+PiBlbHNl
+Lgo+ID4+Cj4gPj4gKEknbSBjdXJyZW50bHkgcnVubmluZyBMaW51eCB2My4xMi1yYzUgd2l0aCBw
+b3N0LTMuMTIgZjJmcyBwYXRjaGVzCj4gPj4gYXBwbGllZCBtYW51YWxseS4pCj4gPj4KPiA+PiBU
+aGUgcGFydGl0aW9uIGlzIHVzZWQgcHJpbWFyaWx5IHRvIHN0b3JlIHNvdXJjZSBjb2RlIGFuZCBh
+cyBjYWNoZSBmb3IKPiA+PiBjY2FjaGUuIEkgZG9uJ3QgcmVjYWxsIGV2ZXIgZmlkZGxpbmcgd2l0
+aCB0aGlzIGZpbGUgZGlyZWN0bHk7IGl0Cj4gPj4gcHJvYmFibHkgaGFwcGVuZWQgZHVyaW5nIHVw
+ZGF0aW5nIGl0cyByZXBvc2l0b3J5IG9yIGRlbGV0aW5nIGp1c3QgdGhhdC4KPiA+Pgo+ID4+IGYy
+ZnMtdG9vbHMncyBmc2NrIChjdXJyZW50IGdpdCAyYWQxZmNkODAwKSBkb2Vzbid0IGFwcGVhciB0
+byBkbyBhbnl0aGluZwo+ID4+IGFuZCBhYm9ydHMgYWZ0ZXIgc29tZSAzMCBzZWNvbmRzIHdpdGg6
+Cj4gPj4KPiA+PiAgID5JbmZvOiBzZWN0b3Igc2l6ZSA9IDUxMgo+ID4+ICAgPkluZm86IHRvdGFs
+IHNlY3RvcnMgPSA0MjEwNjg4MCAoaW4gNTEyYnl0ZXMpCj4gPj4gICA+W2ZzY2tfY2hrX25vZGVf
+YmxrOiAxOTVdIGJsb2NrIGFkZHIgWzB4YTQwYWU1OV0KPiA+PiAgID4KPiA+PiAgID5Bc3NlcnRp
+b24gZmFpbGVkIQo+ID4+ICAgPltmc2NrX2Noa19ub2RlX2JsazogMTk1XSBuaS5ibGtfYWRkciA8
+IEYyRlNfUkFXX1NVUEVSKHNiaSktPmJsb2NrX2NvdW50Cj4gPj4KPiA+PiBJZiB5b3Ugd291bGQg
+bGlrZSBtZSB0byBwb3N0IGZ1cnRoZXIgaW5mbywgcGxlYXNlIHRlbGwgbWUgd2hpY2g7IEkndmUK
+PiA+PiBnb3Qgbm8gaWRlYSBob3cgdG8gZnVydGhlciBkZWJ1ZyB0aGlzLgo+ID4KPiA+IFVtLCBJ
+J3ZlIG5ldmVyIHNlZW4gdGhpcyBraW5kIG9mIGVycm9yIHNvIGZhci4KPiA+ICBGcm9tIHRoZSBy
+ZXN1bHQgb2YgZnNjaywgaXQgc2VlbXMgdGhhdCB0aGUgaW5vZGUgb2Ygc2hhcmVkLmggd2FzIGxv
+c3QuCj4gPiBTbywgY3VycmVudGx5LCB0aGVyZSBpcyBubyB3YXkgdG8gcmVjb3ZlciB0aGF0IGlu
+b2RlIGFuZCBpdHMgZGF0YQo+ID4gc2ltcGx5Lgo+ID4gSXQgbWF5IG5lZWQgc2NhbiB0aGUgd2hv
+bGUgcGFydGl0aW9uIHRvIGZpbmQgdGhlIHN0YWxlIGlub2RlIGJsb2NrLgo+ID4KPiA+IFR3byBx
+dWVzdGlvbnMuCj4gPiAtIEhhdmUgeW91IGV4cGVyaWVuY2VkIGFueSBzdWRkZW4gcG93ZXItb2Zm
+IGJlZm9yZT8KPiA+IC0gQ2FuIEkgdGVzdCB3aXRoIHRoZSByZXBvc2l0b3J5IGhhdmluZyB0aGUg
+c2hhcmVkLmggdGhhdCB5b3UgdXNlZD8KPiA+ICAgIChJJ2QgbGlrZSB0byBkbyBhIHNpbXBsZSB0
+ZXN0IHN0b3JpbmcgdGhhdCByZXBvc2l0b3J5LikKPiA+Cj4gPiBUaGFua3MsCj4gPgoKLS0gCkph
+ZWdldWsgS2ltClNhbXN1bmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCk9jdG9iZXIgV2ViaW5h
+cnM6IENvZGUgZm9yIFBlcmZvcm1hbmNlCkZyZWUgSW50ZWwgd2ViaW5hcnMgY2FuIGhlbHAgeW91
+IGFjY2VsZXJhdGUgYXBwbGljYXRpb24gcGVyZm9ybWFuY2UuCkV4cGxvcmUgdGlwcyBmb3IgTVBJ
+LCBPcGVuTVAsIGFkdmFuY2VkIHByb2ZpbGluZywgYW5kIG1vcmUuIEdldCB0aGUgbW9zdCBmcm9t
+IAp0aGUgbGF0ZXN0IEludGVsIHByb2Nlc3NvcnMgYW5kIGNvcHJvY2Vzc29ycy4gU2VlIGFic3Ry
+YWN0cyBhbmQgcmVnaXN0ZXIgPgpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBh
+ZC9jbGs/aWQ9NjAxMzU5OTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
+c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
+b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
