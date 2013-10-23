@@ -1,128 +1,109 @@
-From: Haicheng Li <haicheng.li@linux.intel.com>
-Subject: [PATCH] f2fs: use bool for booleans
-Date: Wed, 23 Oct 2013 12:39:32 +0800
-Message-ID: <1382503172-28030-1-git-send-email-haicheng.li@linux.intel.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Haicheng Li <haicheng.lee@gmail.com>, Haicheng Li <haicheng.li@linux.intel.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [PATCH] f2fs: check all ones or zeros bitmap with
+ integer data type for better mount performance
+Date: Wed, 23 Oct 2013 18:32:14 +0900
+Message-ID: <1382520734.992.78.camel@kjgkr>
+References: <000701cecf09$2b2a2280$817e6780$@samsung.com>
+	<1382444612.992.67.camel@kjgkr>
+	<000001cecf9f$7113b630$533b2290$@samsung.com>
+Reply-To: jaegeuk.kim@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VYuoD-0000eM-9D
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 23 Oct 2013 09:32:57 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VYuoB-0007UH-2l for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 23 Oct 2013 09:32:57 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MV400KR27UFUHO0@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 23 Oct 2013 18:32:48 +0900 (KST)
+In-reply-to: <000001cecf9f$7113b630$533b2290$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, =?UTF-8?Q?=27=E8=B0=AD=E5=A7=9D=27?= <shu.tan@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Signed-off-by: Haicheng Li <haicheng.li@linux.intel.com>
----
- fs/f2fs/checkpoint.c |    4 ++--
- fs/f2fs/f2fs.h       |    4 ++--
- fs/f2fs/node.c       |    4 ++--
- fs/f2fs/recovery.c   |    8 ++++----
- fs/f2fs/super.c      |    2 +-
- 5 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 8d16071..bd0aa9c 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -279,7 +279,7 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 	if (!is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG))
- 		return 0;
- 
--	sbi->por_doing = 1;
-+	sbi->por_doing = true;
- 	start_blk = __start_cp_addr(sbi) + 1;
- 	orphan_blkaddr = __start_sum_addr(sbi) - 1;
- 
-@@ -296,7 +296,7 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 	}
- 	/* clear Orphan Flag */
- 	clear_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG);
--	sbi->por_doing = 0;
-+	sbi->por_doing = false;
- 	return 0;
- }
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 171c52f..2b163f8 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -360,8 +360,8 @@ struct f2fs_sb_info {
- 	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
- 	struct mutex node_write;		/* locking node writes */
- 	struct mutex writepages;		/* mutex for writepages() */
--	int por_doing;				/* recovery is doing or not */
--	int on_build_free_nids;			/* build_free_nids is doing */
-+	bool por_doing;				/* recovery is doing or not */
-+	bool on_build_free_nids;		/* build_free_nids is doing */
- 	struct task_struct *cp_task;		/* checkpoint task */
- 
- 	/* for orphan inode management */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index ef80f79..f90485b 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1444,9 +1444,9 @@ retry:
- 
- 	/* Let's scan nat pages and its caches to get free nids */
- 	mutex_lock(&nm_i->build_lock);
--	sbi->on_build_free_nids = 1;
-+	sbi->on_build_free_nids = true;
- 	build_free_nids(sbi);
--	sbi->on_build_free_nids = 0;
-+	sbi->on_build_free_nids = false;
- 	mutex_unlock(&nm_i->build_lock);
- 	goto retry;
- }
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 353cf4f..b278c68 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -425,7 +425,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- {
- 	struct list_head inode_list;
- 	int err;
--	int need_writecp = 0;
-+	bool need_writecp = false;
- 
- 	fsync_entry_slab = f2fs_kmem_cache_create("f2fs_fsync_inode_entry",
- 			sizeof(struct fsync_inode_entry), NULL);
-@@ -435,7 +435,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- 	INIT_LIST_HEAD(&inode_list);
- 
- 	/* step #1: find fsynced inode numbers */
--	sbi->por_doing = 1;
-+	sbi->por_doing = true;
- 	err = find_fsync_dnodes(sbi, &inode_list);
- 	if (err)
- 		goto out;
-@@ -443,7 +443,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- 	if (list_empty(&inode_list))
- 		goto out;
- 
--	need_writecp = 1;
-+	need_writecp = true;
- 
- 	/* step #2: recover data */
- 	err = recover_data(sbi, &inode_list, CURSEG_WARM_NODE);
-@@ -451,7 +451,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- out:
- 	destroy_fsync_dnodes(&inode_list);
- 	kmem_cache_destroy(fsync_entry_slab);
--	sbi->por_doing = 0;
-+	sbi->por_doing = false;
- 	if (!err && need_writecp)
- 		write_checkpoint(sbi, false);
- 	return err;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 692f35f..9a09459 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -850,7 +850,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	mutex_init(&sbi->writepages);
- 	mutex_init(&sbi->cp_mutex);
- 	mutex_init(&sbi->node_write);
--	sbi->por_doing = 0;
-+	sbi->por_doing = false;
- 	spin_lock_init(&sbi->stat_lock);
- 	init_rwsem(&sbi->bio_sem);
- 	init_rwsem(&sbi->cp_rwsem);
--- 
-1.7.9.5
-
+SGksCgoyMDEzLTEwLTIzICjsiJgpLCAxMToyMyArMDgwMCwgQ2hhbyBZdToKPiBIaSwgS2ltOgo+
+IAo+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiA+IEZyb206IEphZWdldWsgS2ltIFtt
+YWlsdG86amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb21dCj4gPiBTZW50OiBUdWVzZGF5LCBPY3RvYmVy
+IDIyLCAyMDEzIDg6MjQgUE0KPiA+IFRvOiBDaGFvIFl1Cj4gPiBDYzogbGludXgtZjJmcy1kZXZl
+bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOwo+
+ID4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsg6LCt5aedCj4gPiBTdWJqZWN0OiBSZTog
+W2YyZnMtZGV2XSBbUEFUQ0hdIGYyZnM6IGNoZWNrIGFsbCBvbmVzIG9yIHplcm9zIGJpdG1hcCB3
+aXRoIGludGVnZXIKPiA+IGRhdGEgdHlwZSBmb3IgYmV0dGVyIG1vdW50IHBlcmZvcm1hbmNlCj4g
+PiAKPiA+IEhpLAo+ID4gCj4gPiAyMDEzLTEwLTIyICjtmZQpLCAxNzoyOCArMDgwMCwgQ2hhbyBZ
+dToKPiA+ID4gUHJldmlvdXNseSwgY2hlY2tfYmxvY2tfY291bnQgY2hlY2sgdmFsaWRfbWFwIHdp
+dGggYml0IGRhdGEgdHlwZSBpbgo+ID4gPiBjb21tb24gc2NlbmFyaW8gdGhhdCBzaXQgaGFzIGFs
+bCBvbmVzIG9yIHplcm9zIGJpdG1hcCwgaXQgbWFrZXMgbG93Cj4gPiA+IG1vdW50IHBlcmZvcm1h
+bmNlLgo+ID4gPiBTbyBsZXQncyBjaGVjayB0aGUgc3BlY2lhbCBiaXRtYXAgd2l0aCBpbnRlZ2Vy
+IGRhdGEgdHlwZSBpbnN0ZWFkIG9mCj4gPiA+IHRoZSBiaXQgb25lLgo+ID4gPgo+ID4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBUYW4gU2h1IDxzaHUudGFuQHNhbXN1bmcuY29tPgo+ID4gPiBTaWduZWQtb2Zm
+LWJ5OiBZdSBDaGFvIDxjaGFvMi55dUBzYW1zdW5nLmNvbT4KPiA+ID4gLS0tCj4gPiA+ICBmcy9m
+MmZzL3NlZ21lbnQuaCB8ICAgMTMgKysrKysrKysrKysrKwo+ID4gPiAgMSBmaWxlIGNoYW5nZWQs
+IDEzIGluc2VydGlvbnMoKykKPiA+ID4KPiA+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVu
+dC5oIGIvZnMvZjJmcy9zZWdtZW50LmggaW5kZXgKPiA+ID4gN2Y5NGQ3OC4uZDQzYWI5ZiAxMDA2
+NDQKPiA+ID4gLS0tIGEvZnMvZjJmcy9zZWdtZW50LmgKPiA+ID4gKysrIGIvZnMvZjJmcy9zZWdt
+ZW50LmgKPiA+ID4gQEAgLTU0Myw2ICs1NDMsNyBAQCBzdGF0aWMgaW5saW5lIHZvaWQgY2hlY2tf
+YmxvY2tfY291bnQoc3RydWN0Cj4gPiA+IGYyZnNfc2JfaW5mbyAqc2JpLCAgewo+ID4gPiAgCXN0
+cnVjdCBmMmZzX3NtX2luZm8gKnNtX2luZm8gPSBTTV9JKHNiaSk7Cj4gPiA+ICAJdW5zaWduZWQg
+aW50IGVuZF9zZWdubyA9IHNtX2luZm8tPnNlZ21lbnRfY291bnQgLSAxOwo+ID4gPiArCWludCAq
+dmFsaWRfbWFwID0gKGludCAqKXJhd19zaXQtPnZhbGlkX21hcDsKPiA+ID4gIAlpbnQgdmFsaWRf
+YmxvY2tzID0gMDsKPiA+ID4gIAlpbnQgaTsKPiA+ID4KPiA+ID4gQEAgLTU1Miw2ICs1NTMsMTkg
+QEAgc3RhdGljIGlubGluZSB2b2lkIGNoZWNrX2Jsb2NrX2NvdW50KHN0cnVjdAo+ID4gPiBmMmZz
+X3NiX2luZm8gKnNiaSwKPiA+ID4gIAkvKiBjaGVjayBib3VuZGFyeSBvZiBhIGdpdmVuIHNlZ21l
+bnQgbnVtYmVyICovCj4gPiA+ICAJQlVHX09OKHNlZ25vID4gZW5kX3NlZ25vKTsKPiA+ID4KPiA+
+ID4gKwkvKiBjaGVjayBhbGwgb25lcyBvciB6ZXJvcyB2YWxpZF9tYXAgKi8KPiA+ID4gKwlpZiAo
+R0VUX1NJVF9WQkxPQ0tTKHJhd19zaXQpID09IDApIHsKPiA+ID4gKwkJZm9yIChpID0gMDsgaSA8
+IFNJVF9WQkxPQ0tfTUFQX1NJWkUgLyBzaXplb2YoaW50KTsgaSsrKQo+ID4gCj4gPiBXZSBjYW5u
+b3QgZ3VhcmFudGVlIGFsbCB0aGUgdGltZSB0aGF0IFNJVF9WQkxPQ0tfTUFQX1NJWkUgaXMgbXVs
+dGlwbGUgb2YKPiA+IHNpemVvZihpbnQpLgo+IFdlbGwsIEl0J3MgcmVhbGx5IGxhcmdlIGNoYW5n
+ZXMgZm9yIGYyZnMgaWYgU0lUX1ZCTE9DS19NQVBfU0laRSB2YWx1ZSBpcyBiZWluZyBtb2RpZmll
+ZC4KCkJ1dCwgaXQgY2FuIGJlIGNoYW5nZWQuClBsZWFzZSBkbyBub3QgYWRkIGFueSB1bm5lY2Vz
+c2FyeSBhc3N1bXB0aW9uLgoKPiAKPiA+IEhvdyBhYm91dCB1c2luZyBtZW1jbXAoKSB3aXRoIF9f
+dTg/Cj4gRG8geW91IG1lYW4gdGhhdCB3ZSBjYW4gYWxsb2MgYWxsIHplcm9zIG9yIG9uZXMgbWVt
+b3J5IGluIFNJVF9WQkxPQ0tfTUFQX1NJWkUgc2l6ZSwKPiB0aGVuIG1lbWNtcCgpIGl0IHdpdGgg
+c2l0IGJpdG1hcCBieSBfX3U4PwoKWWFwLgpBaCwgYnV0IHRoZXJlIGlzIGFub3RoZXIgb25lLgpJ
+dCB3b3VsZCBiZSBiZXR0ZXIgdG8gdXNlIGZpbmRfbmV4dF9iaXRfbGUoKSBhbmQKZmluZF9uZXh0
+X3plcm9fYml0X2xlKCkuCkFueSBpZGVhPwoKPiAKPiA+IAo+ID4gPiArCQkJaWYgKHVubGlrZWx5
+KHZhbGlkX21hcFtpXSAhPSAwKSkKPiA+ID4gKwkJCQlCVUcoKTsKPiA+ID4gKwkJcmV0dXJuOwo+
+ID4gPiArCX0gZWxzZSBpZiAoR0VUX1NJVF9WQkxPQ0tTKHJhd19zaXQpID09IHNiaS0+YmxvY2tz
+X3Blcl9zZWcpIHsKPiA+ID4gKwkJZm9yIChpID0gMDsgaSA8IFNJVF9WQkxPQ0tfTUFQX1NJWkUg
+LyBzaXplb2YoaW50KTsgaSsrKQo+ID4gPiArCQkJaWYgKHVubGlrZWx5KHZhbGlkX21hcFtpXSAh
+PSAtMSkpCj4gPiA+ICsJCQkJQlVHKCk7Cj4gPiA+ICsJCXJldHVybjsKPiA+ID4gKwl9Cj4gPiA+
+ICsKPiA+ID4gIAkvKiBjaGVjayBiaXRtYXAgd2l0aCB2YWxpZCBibG9jayBjb3VudCAqLwo+ID4g
+PiAgCWZvciAoaSA9IDA7IGkgPCBzYmktPmJsb2Nrc19wZXJfc2VnOyBpKyspCj4gPiA+ICAJCWlm
+IChmMmZzX3Rlc3RfYml0KGksIHJhd19zaXQtPnZhbGlkX21hcCkpCj4gPiA+IC0tLQo+ID4gPgo+
+ID4gPiAtLQo+ID4gPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGlu
+ZSAidW5zdWJzY3JpYmUKPiA+ID4gbGludXgtZnNkZXZlbCIgaW4gdGhlIGJvZHkgb2YgYSBtZXNz
+YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiA+ID4gTW9yZSBtYWpvcmRvbW8gaW5m
+byBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gPiAKPiA+
+IC0tCj4gPiBKYWVnZXVrIEtpbQo+ID4gU2Ftc3VuZwo+IAoKLS0gCkphZWdldWsgS2ltClNhbXN1
+bmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCk9jdG9iZXIgV2ViaW5hcnM6IENvZGUgZm9yIFBl
+cmZvcm1hbmNlCkZyZWUgSW50ZWwgd2ViaW5hcnMgY2FuIGhlbHAgeW91IGFjY2VsZXJhdGUgYXBw
+bGljYXRpb24gcGVyZm9ybWFuY2UuCkV4cGxvcmUgdGlwcyBmb3IgTVBJLCBPcGVuTVAsIGFkdmFu
+Y2VkIHByb2ZpbGluZywgYW5kIG1vcmUuIEdldCB0aGUgbW9zdCBmcm9tIAp0aGUgbGF0ZXN0IElu
+dGVsIHByb2Nlc3NvcnMgYW5kIGNvcHJvY2Vzc29ycy4gU2VlIGFic3RyYWN0cyBhbmQgcmVnaXN0
+ZXIgPgpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9NjAxMzU5
+OTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1k
+ZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQv
+bGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
