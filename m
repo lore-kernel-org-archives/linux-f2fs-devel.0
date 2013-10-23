@@ -1,109 +1,128 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH] f2fs: check all ones or zeros bitmap with
- integer data type for better mount performance
-Date: Wed, 23 Oct 2013 11:23:52 +0800
-Message-ID: <000001cecf9f$7113b630$533b2290$@samsung.com>
-References: <000701cecf09$2b2a2280$817e6780$@samsung.com>
- <1382444612.992.67.camel@kjgkr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Haicheng Li <haicheng.li@linux.intel.com>
+Subject: [PATCH] f2fs: use bool for booleans
+Date: Wed, 23 Oct 2013 12:39:32 +0800
+Message-ID: <1382503172-28030-1-git-send-email-haicheng.li@linux.intel.com>
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1382444612.992.67.camel@kjgkr>
-Content-language: zh-cn
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?B?J+iwreWnnSc=?= <shu.tan@samsung.com>
+To: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Haicheng Li <haicheng.lee@gmail.com>, Haicheng Li <haicheng.li@linux.intel.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Kim:
+Signed-off-by: Haicheng Li <haicheng.li@linux.intel.com>
+---
+ fs/f2fs/checkpoint.c |    4 ++--
+ fs/f2fs/f2fs.h       |    4 ++--
+ fs/f2fs/node.c       |    4 ++--
+ fs/f2fs/recovery.c   |    8 ++++----
+ fs/f2fs/super.c      |    2 +-
+ 5 files changed, 11 insertions(+), 11 deletions(-)
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> Sent: Tuesday, October 22, 2013 8:24 PM
-> To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-fsdevel@vger.kernel=
-=2Eorg;
-> linux-kernel@vger.kernel.org; =E8=B0=AD=E5=A7=9D
-> Subject: Re: [f2fs-dev] [PATCH] f2fs: check all ones or zeros bitmap =
-with integer
-> data type for better mount performance
->=20
-> Hi,
->=20
-> 2013-10-22 (=ED=99=94), 17:28 +0800, Chao Yu:
-> > Previously, check_block_count check valid_map with bit data type in
-> > common scenario that sit has all ones or zeros bitmap, it makes low
-> > mount performance.
-> > So let's check the special bitmap with integer data type instead of
-> > the bit one.
-> >
-> > Signed-off-by: Tan Shu <shu.tan@samsung.com>
-> > Signed-off-by: Yu Chao <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/segment.h |   13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index
-> > 7f94d78..d43ab9f 100644
-> > --- a/fs/f2fs/segment.h
-> > +++ b/fs/f2fs/segment.h
-> > @@ -543,6 +543,7 @@ static inline void check_block_count(struct
-> > f2fs_sb_info *sbi,  {
-> >  	struct f2fs_sm_info *sm_info =3D SM_I(sbi);
-> >  	unsigned int end_segno =3D sm_info->segment_count - 1;
-> > +	int *valid_map =3D (int *)raw_sit->valid_map;
-> >  	int valid_blocks =3D 0;
-> >  	int i;
-> >
-> > @@ -552,6 +553,19 @@ static inline void check_block_count(struct
-> > f2fs_sb_info *sbi,
-> >  	/* check boundary of a given segment number */
-> >  	BUG_ON(segno > end_segno);
-> >
-> > +	/* check all ones or zeros valid_map */
-> > +	if (GET_SIT_VBLOCKS(raw_sit) =3D=3D 0) {
-> > +		for (i =3D 0; i < SIT_VBLOCK_MAP_SIZE / sizeof(int); i++)
->=20
-> We cannot guarantee all the time that SIT_VBLOCK_MAP_SIZE is multiple=
- of
-> sizeof(int).
-Well, It's really large changes for f2fs if SIT_VBLOCK_MAP_SIZE value i=
-s being modified.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 8d16071..bd0aa9c 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -279,7 +279,7 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	if (!is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG))
+ 		return 0;
+ 
+-	sbi->por_doing = 1;
++	sbi->por_doing = true;
+ 	start_blk = __start_cp_addr(sbi) + 1;
+ 	orphan_blkaddr = __start_sum_addr(sbi) - 1;
+ 
+@@ -296,7 +296,7 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	}
+ 	/* clear Orphan Flag */
+ 	clear_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG);
+-	sbi->por_doing = 0;
++	sbi->por_doing = false;
+ 	return 0;
+ }
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 171c52f..2b163f8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -360,8 +360,8 @@ struct f2fs_sb_info {
+ 	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
+ 	struct mutex node_write;		/* locking node writes */
+ 	struct mutex writepages;		/* mutex for writepages() */
+-	int por_doing;				/* recovery is doing or not */
+-	int on_build_free_nids;			/* build_free_nids is doing */
++	bool por_doing;				/* recovery is doing or not */
++	bool on_build_free_nids;		/* build_free_nids is doing */
+ 	struct task_struct *cp_task;		/* checkpoint task */
+ 
+ 	/* for orphan inode management */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index ef80f79..f90485b 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1444,9 +1444,9 @@ retry:
+ 
+ 	/* Let's scan nat pages and its caches to get free nids */
+ 	mutex_lock(&nm_i->build_lock);
+-	sbi->on_build_free_nids = 1;
++	sbi->on_build_free_nids = true;
+ 	build_free_nids(sbi);
+-	sbi->on_build_free_nids = 0;
++	sbi->on_build_free_nids = false;
+ 	mutex_unlock(&nm_i->build_lock);
+ 	goto retry;
+ }
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 353cf4f..b278c68 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -425,7 +425,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
+ {
+ 	struct list_head inode_list;
+ 	int err;
+-	int need_writecp = 0;
++	bool need_writecp = false;
+ 
+ 	fsync_entry_slab = f2fs_kmem_cache_create("f2fs_fsync_inode_entry",
+ 			sizeof(struct fsync_inode_entry), NULL);
+@@ -435,7 +435,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
+ 	INIT_LIST_HEAD(&inode_list);
+ 
+ 	/* step #1: find fsynced inode numbers */
+-	sbi->por_doing = 1;
++	sbi->por_doing = true;
+ 	err = find_fsync_dnodes(sbi, &inode_list);
+ 	if (err)
+ 		goto out;
+@@ -443,7 +443,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
+ 	if (list_empty(&inode_list))
+ 		goto out;
+ 
+-	need_writecp = 1;
++	need_writecp = true;
+ 
+ 	/* step #2: recover data */
+ 	err = recover_data(sbi, &inode_list, CURSEG_WARM_NODE);
+@@ -451,7 +451,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
+ out:
+ 	destroy_fsync_dnodes(&inode_list);
+ 	kmem_cache_destroy(fsync_entry_slab);
+-	sbi->por_doing = 0;
++	sbi->por_doing = false;
+ 	if (!err && need_writecp)
+ 		write_checkpoint(sbi, false);
+ 	return err;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 692f35f..9a09459 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -850,7 +850,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	mutex_init(&sbi->writepages);
+ 	mutex_init(&sbi->cp_mutex);
+ 	mutex_init(&sbi->node_write);
+-	sbi->por_doing = 0;
++	sbi->por_doing = false;
+ 	spin_lock_init(&sbi->stat_lock);
+ 	init_rwsem(&sbi->bio_sem);
+ 	init_rwsem(&sbi->cp_rwsem);
+-- 
+1.7.9.5
 
-> How about using memcmp() with __u8?
-Do you mean that we can alloc all zeros or ones memory in SIT_VBLOCK_MA=
-P_SIZE size,
-then memcmp() it with sit bitmap by __u8?
-
->=20
-> > +			if (unlikely(valid_map[i] !=3D 0))
-> > +				BUG();
-> > +		return;
-> > +	} else if (GET_SIT_VBLOCKS(raw_sit) =3D=3D sbi->blocks_per_seg) {
-> > +		for (i =3D 0; i < SIT_VBLOCK_MAP_SIZE / sizeof(int); i++)
-> > +			if (unlikely(valid_map[i] !=3D -1))
-> > +				BUG();
-> > +		return;
-> > +	}
-> > +
-> >  	/* check bitmap with valid block count */
-> >  	for (i =3D 0; i < sbi->blocks_per_seg; i++)
-> >  		if (f2fs_test_bit(i, raw_sit->valid_map))
-> > ---
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe
-> > linux-fsdevel" in the body of a message to majordomo@vger.kernel.or=
-g
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
-> --
-> Jaegeuk Kim
-> Samsung
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
