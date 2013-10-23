@@ -1,109 +1,166 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH] f2fs: check all ones or zeros bitmap with
- integer data type for better mount performance
-Date: Wed, 23 Oct 2013 18:32:14 +0900
-Message-ID: <1382520734.992.78.camel@kjgkr>
-References: <000701cecf09$2b2a2280$817e6780$@samsung.com>
-	<1382444612.992.67.camel@kjgkr>
-	<000001cecf9f$7113b630$533b2290$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VYuoD-0000eM-9D
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Oct 2013 09:32:57 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VYuoB-0007UH-2l for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Oct 2013 09:32:57 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MV400KR27UFUHO0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Oct 2013 18:32:48 +0900 (KST)
-In-reply-to: <000001cecf9f$7113b630$533b2290$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, =?UTF-8?Q?=27=E8=B0=AD=E5=A7=9D=27?= <shu.tan@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs: clean up several status-related operations
+Date: Wed, 23 Oct 2013 18:46:25 +0900
+Message-ID: <1382521585-27450-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgoyMDEzLTEwLTIzICjsiJgpLCAxMToyMyArMDgwMCwgQ2hhbyBZdToKPiBIaSwgS2ltOgo+
-IAo+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiA+IEZyb206IEphZWdldWsgS2ltIFtt
-YWlsdG86amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb21dCj4gPiBTZW50OiBUdWVzZGF5LCBPY3RvYmVy
-IDIyLCAyMDEzIDg6MjQgUE0KPiA+IFRvOiBDaGFvIFl1Cj4gPiBDYzogbGludXgtZjJmcy1kZXZl
-bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOwo+
-ID4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsg6LCt5aedCj4gPiBTdWJqZWN0OiBSZTog
-W2YyZnMtZGV2XSBbUEFUQ0hdIGYyZnM6IGNoZWNrIGFsbCBvbmVzIG9yIHplcm9zIGJpdG1hcCB3
-aXRoIGludGVnZXIKPiA+IGRhdGEgdHlwZSBmb3IgYmV0dGVyIG1vdW50IHBlcmZvcm1hbmNlCj4g
-PiAKPiA+IEhpLAo+ID4gCj4gPiAyMDEzLTEwLTIyICjtmZQpLCAxNzoyOCArMDgwMCwgQ2hhbyBZ
-dToKPiA+ID4gUHJldmlvdXNseSwgY2hlY2tfYmxvY2tfY291bnQgY2hlY2sgdmFsaWRfbWFwIHdp
-dGggYml0IGRhdGEgdHlwZSBpbgo+ID4gPiBjb21tb24gc2NlbmFyaW8gdGhhdCBzaXQgaGFzIGFs
-bCBvbmVzIG9yIHplcm9zIGJpdG1hcCwgaXQgbWFrZXMgbG93Cj4gPiA+IG1vdW50IHBlcmZvcm1h
-bmNlLgo+ID4gPiBTbyBsZXQncyBjaGVjayB0aGUgc3BlY2lhbCBiaXRtYXAgd2l0aCBpbnRlZ2Vy
-IGRhdGEgdHlwZSBpbnN0ZWFkIG9mCj4gPiA+IHRoZSBiaXQgb25lLgo+ID4gPgo+ID4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBUYW4gU2h1IDxzaHUudGFuQHNhbXN1bmcuY29tPgo+ID4gPiBTaWduZWQtb2Zm
-LWJ5OiBZdSBDaGFvIDxjaGFvMi55dUBzYW1zdW5nLmNvbT4KPiA+ID4gLS0tCj4gPiA+ICBmcy9m
-MmZzL3NlZ21lbnQuaCB8ICAgMTMgKysrKysrKysrKysrKwo+ID4gPiAgMSBmaWxlIGNoYW5nZWQs
-IDEzIGluc2VydGlvbnMoKykKPiA+ID4KPiA+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVu
-dC5oIGIvZnMvZjJmcy9zZWdtZW50LmggaW5kZXgKPiA+ID4gN2Y5NGQ3OC4uZDQzYWI5ZiAxMDA2
-NDQKPiA+ID4gLS0tIGEvZnMvZjJmcy9zZWdtZW50LmgKPiA+ID4gKysrIGIvZnMvZjJmcy9zZWdt
-ZW50LmgKPiA+ID4gQEAgLTU0Myw2ICs1NDMsNyBAQCBzdGF0aWMgaW5saW5lIHZvaWQgY2hlY2tf
-YmxvY2tfY291bnQoc3RydWN0Cj4gPiA+IGYyZnNfc2JfaW5mbyAqc2JpLCAgewo+ID4gPiAgCXN0
-cnVjdCBmMmZzX3NtX2luZm8gKnNtX2luZm8gPSBTTV9JKHNiaSk7Cj4gPiA+ICAJdW5zaWduZWQg
-aW50IGVuZF9zZWdubyA9IHNtX2luZm8tPnNlZ21lbnRfY291bnQgLSAxOwo+ID4gPiArCWludCAq
-dmFsaWRfbWFwID0gKGludCAqKXJhd19zaXQtPnZhbGlkX21hcDsKPiA+ID4gIAlpbnQgdmFsaWRf
-YmxvY2tzID0gMDsKPiA+ID4gIAlpbnQgaTsKPiA+ID4KPiA+ID4gQEAgLTU1Miw2ICs1NTMsMTkg
-QEAgc3RhdGljIGlubGluZSB2b2lkIGNoZWNrX2Jsb2NrX2NvdW50KHN0cnVjdAo+ID4gPiBmMmZz
-X3NiX2luZm8gKnNiaSwKPiA+ID4gIAkvKiBjaGVjayBib3VuZGFyeSBvZiBhIGdpdmVuIHNlZ21l
-bnQgbnVtYmVyICovCj4gPiA+ICAJQlVHX09OKHNlZ25vID4gZW5kX3NlZ25vKTsKPiA+ID4KPiA+
-ID4gKwkvKiBjaGVjayBhbGwgb25lcyBvciB6ZXJvcyB2YWxpZF9tYXAgKi8KPiA+ID4gKwlpZiAo
-R0VUX1NJVF9WQkxPQ0tTKHJhd19zaXQpID09IDApIHsKPiA+ID4gKwkJZm9yIChpID0gMDsgaSA8
-IFNJVF9WQkxPQ0tfTUFQX1NJWkUgLyBzaXplb2YoaW50KTsgaSsrKQo+ID4gCj4gPiBXZSBjYW5u
-b3QgZ3VhcmFudGVlIGFsbCB0aGUgdGltZSB0aGF0IFNJVF9WQkxPQ0tfTUFQX1NJWkUgaXMgbXVs
-dGlwbGUgb2YKPiA+IHNpemVvZihpbnQpLgo+IFdlbGwsIEl0J3MgcmVhbGx5IGxhcmdlIGNoYW5n
-ZXMgZm9yIGYyZnMgaWYgU0lUX1ZCTE9DS19NQVBfU0laRSB2YWx1ZSBpcyBiZWluZyBtb2RpZmll
-ZC4KCkJ1dCwgaXQgY2FuIGJlIGNoYW5nZWQuClBsZWFzZSBkbyBub3QgYWRkIGFueSB1bm5lY2Vz
-c2FyeSBhc3N1bXB0aW9uLgoKPiAKPiA+IEhvdyBhYm91dCB1c2luZyBtZW1jbXAoKSB3aXRoIF9f
-dTg/Cj4gRG8geW91IG1lYW4gdGhhdCB3ZSBjYW4gYWxsb2MgYWxsIHplcm9zIG9yIG9uZXMgbWVt
-b3J5IGluIFNJVF9WQkxPQ0tfTUFQX1NJWkUgc2l6ZSwKPiB0aGVuIG1lbWNtcCgpIGl0IHdpdGgg
-c2l0IGJpdG1hcCBieSBfX3U4PwoKWWFwLgpBaCwgYnV0IHRoZXJlIGlzIGFub3RoZXIgb25lLgpJ
-dCB3b3VsZCBiZSBiZXR0ZXIgdG8gdXNlIGZpbmRfbmV4dF9iaXRfbGUoKSBhbmQKZmluZF9uZXh0
-X3plcm9fYml0X2xlKCkuCkFueSBpZGVhPwoKPiAKPiA+IAo+ID4gPiArCQkJaWYgKHVubGlrZWx5
-KHZhbGlkX21hcFtpXSAhPSAwKSkKPiA+ID4gKwkJCQlCVUcoKTsKPiA+ID4gKwkJcmV0dXJuOwo+
-ID4gPiArCX0gZWxzZSBpZiAoR0VUX1NJVF9WQkxPQ0tTKHJhd19zaXQpID09IHNiaS0+YmxvY2tz
-X3Blcl9zZWcpIHsKPiA+ID4gKwkJZm9yIChpID0gMDsgaSA8IFNJVF9WQkxPQ0tfTUFQX1NJWkUg
-LyBzaXplb2YoaW50KTsgaSsrKQo+ID4gPiArCQkJaWYgKHVubGlrZWx5KHZhbGlkX21hcFtpXSAh
-PSAtMSkpCj4gPiA+ICsJCQkJQlVHKCk7Cj4gPiA+ICsJCXJldHVybjsKPiA+ID4gKwl9Cj4gPiA+
-ICsKPiA+ID4gIAkvKiBjaGVjayBiaXRtYXAgd2l0aCB2YWxpZCBibG9jayBjb3VudCAqLwo+ID4g
-PiAgCWZvciAoaSA9IDA7IGkgPCBzYmktPmJsb2Nrc19wZXJfc2VnOyBpKyspCj4gPiA+ICAJCWlm
-IChmMmZzX3Rlc3RfYml0KGksIHJhd19zaXQtPnZhbGlkX21hcCkpCj4gPiA+IC0tLQo+ID4gPgo+
-ID4gPiAtLQo+ID4gPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGlu
-ZSAidW5zdWJzY3JpYmUKPiA+ID4gbGludXgtZnNkZXZlbCIgaW4gdGhlIGJvZHkgb2YgYSBtZXNz
-YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiA+ID4gTW9yZSBtYWpvcmRvbW8gaW5m
-byBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gPiAKPiA+
-IC0tCj4gPiBKYWVnZXVrIEtpbQo+ID4gU2Ftc3VuZwo+IAoKLS0gCkphZWdldWsgS2ltClNhbXN1
-bmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCk9jdG9iZXIgV2ViaW5hcnM6IENvZGUgZm9yIFBl
-cmZvcm1hbmNlCkZyZWUgSW50ZWwgd2ViaW5hcnMgY2FuIGhlbHAgeW91IGFjY2VsZXJhdGUgYXBw
-bGljYXRpb24gcGVyZm9ybWFuY2UuCkV4cGxvcmUgdGlwcyBmb3IgTVBJLCBPcGVuTVAsIGFkdmFu
-Y2VkIHByb2ZpbGluZywgYW5kIG1vcmUuIEdldCB0aGUgbW9zdCBmcm9tIAp0aGUgbGF0ZXN0IElu
-dGVsIHByb2Nlc3NvcnMgYW5kIGNvcHJvY2Vzc29ycy4gU2VlIGFic3RyYWN0cyBhbmQgcmVnaXN0
-ZXIgPgpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9NjAxMzU5
-OTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1k
-ZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQv
-bGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+This patch cleans up improper definitions that update some status information.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/checkpoint.c |  8 ++------
+ fs/f2fs/data.c       | 12 +++---------
+ fs/f2fs/f2fs.h       | 14 +++++++++++++-
+ fs/f2fs/gc.c         |  4 +---
+ fs/f2fs/segment.c    | 10 ++++------
+ 5 files changed, 23 insertions(+), 25 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 6fb484c..b4a59cf 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -467,9 +467,7 @@ static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
+ 			return -EEXIST;
+ 	}
+ 	list_add_tail(&new->list, head);
+-#ifdef CONFIG_F2FS_STAT_FS
+-	sbi->n_dirty_dirs++;
+-#endif
++	stat_inc_dirty_dir(sbi);
+ 	return 0;
+ }
+ 
+@@ -531,9 +529,7 @@ void remove_dirty_dir_inode(struct inode *inode)
+ 		if (entry->inode == inode) {
+ 			list_del(&entry->list);
+ 			kmem_cache_free(inode_entry_slab, entry);
+-#ifdef CONFIG_F2FS_STAT_FS
+-			sbi->n_dirty_dirs--;
+-#endif
++			stat_dec_dirty_dir(sbi);
+ 			break;
+ 		}
+ 	}
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 2535d3b..4d4718f 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -68,9 +68,6 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 					struct buffer_head *bh_result)
+ {
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+-#ifdef CONFIG_F2FS_STAT_FS
+-	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+-#endif
+ 	pgoff_t start_fofs, end_fofs;
+ 	block_t start_blkaddr;
+ 
+@@ -80,9 +77,8 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 		return 0;
+ 	}
+ 
+-#ifdef CONFIG_F2FS_STAT_FS
+-	sbi->total_hit_ext++;
+-#endif
++	stat_inc_hit_ext(inode->i_sb);
++
+ 	start_fofs = fi->ext.fofs;
+ 	end_fofs = fi->ext.fofs + fi->ext.len - 1;
+ 	start_blkaddr = fi->ext.blk_addr;
+@@ -100,9 +96,7 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 		else
+ 			bh_result->b_size = UINT_MAX;
+ 
+-#ifdef CONFIG_F2FS_STAT_FS
+-		sbi->read_hit_ext++;
+-#endif
++		stat_inc_hit_ext(inode->i_sb);
+ 		read_unlock(&fi->ext.ext_lock);
+ 		return 1;
+ 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 2949275..d1fc93c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1155,7 +1155,13 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+ 	return (struct f2fs_stat_info*)sbi->stat_info;
+ }
+ 
+-#define stat_inc_call_count(si)	((si)->call_count++)
++#define stat_inc_call_count(si)		((si)->call_count++)
++#define stat_inc_bggc_count(sbi)	((sbi)->bg_gc++)
++#define stat_inc_dirty_dir(sbi)		((sbi)->n_dirty_dirs++)
++#define stat_dec_dirty_dir(sbi)		((sbi)->n_dirty_dirs--)
++#define stat_inc_hit_ext(sb)		((F2FS_SB(sb))->total_hit_ext++)
++#define stat_inc_alloc_type(sbi, curseg)				\
++		((sbi)->segment_count[(curseg)->alloc_type]++)
+ 
+ #define stat_inc_seg_count(sbi, type)					\
+ 	do {								\
+@@ -1184,12 +1190,18 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+ 		si->node_blks += (blks);				\
+ 	} while (0)
+ 
++
+ int f2fs_build_stats(struct f2fs_sb_info *);
+ void f2fs_destroy_stats(struct f2fs_sb_info *);
+ void __init f2fs_create_root_stats(void);
+ void f2fs_destroy_root_stats(void);
+ #else
+ #define stat_inc_call_count(si)
++#define stat_inc_bggc_count(si)
++#define stat_inc_dirty_dir(sbi)
++#define stat_dec_dirty_dir(sbi)
++#define stat_inc_hit_ext(sb)
++#define stat_inc_alloc_type(sbi, curseg)
+ #define stat_inc_seg_count(si, type)
+ #define stat_inc_tot_blk_count(si, blks)
+ #define stat_inc_data_blk_count(si, blks)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 7914b92..cb286d7 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -77,9 +77,7 @@ static int gc_thread_func(void *data)
+ 		else
+ 			wait_ms = increase_sleep_time(gc_th, wait_ms);
+ 
+-#ifdef CONFIG_F2FS_STAT_FS
+-		sbi->bg_gc++;
+-#endif
++		stat_inc_bggc_count(sbi);
+ 
+ 		/* if return value is not zero, no victim was selected */
+ 		if (f2fs_gc(sbi))
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8ac1619..c9c276e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -554,9 +554,8 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
+ 		change_curseg(sbi, type, true);
+ 	else
+ 		new_curseg(sbi, type, false);
+-#ifdef CONFIG_F2FS_STAT_FS
+-	sbi->segment_count[curseg->alloc_type]++;
+-#endif
++
++	stat_inc_alloc_type(sbi, curseg);
+ }
+ 
+ void allocate_new_segments(struct f2fs_sb_info *sbi)
+@@ -811,9 +810,8 @@ static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
+ 
+ 	mutex_lock(&sit_i->sentry_lock);
+ 	__refresh_next_blkoff(sbi, curseg);
+-#ifdef CONFIG_F2FS_STAT_FS
+-	sbi->block_count[curseg->alloc_type]++;
+-#endif
++
++	stat_inc_alloc_type(sbi, curseg);
+ 
+ 	/*
+ 	 * SIT information should be updated before segment allocation,
+-- 
+1.8.4.474.g128a96c
