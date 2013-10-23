@@ -1,91 +1,109 @@
-From: Max Muster <tastky@gmail.com>
-Subject: Re: [Bug] Inaccessible, unerasable file
-Date: Tue, 22 Oct 2013 22:50:41 +0200
-Message-ID: <CAPs1ukz2EykkWP_H-U5UT_nuef5dpMRyTjHy4JCHKNoPLWKdpw@mail.gmail.com>
-References: <CAPs1ukwgeqL1SFUGUPaM-aE=88dXS4GeaDDALG5WFLcoMvqg_g@mail.gmail.com>
-	<1382440189.992.62.camel@kjgkr>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: check all ones or zeros bitmap with
+ integer data type for better mount performance
+Date: Wed, 23 Oct 2013 11:23:52 +0800
+Message-ID: <000001cecf9f$7113b630$533b2290$@samsung.com>
+References: <000701cecf09$2b2a2280$817e6780$@samsung.com>
+ <1382444612.992.67.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tastky@gmail.com>) id 1VYiuf-0003w5-7u
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 20:50:49 +0000
-Received: from mail-la0-f43.google.com ([209.85.215.43])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VYiue-0006js-9A
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Oct 2013 20:50:49 +0000
-Received: by mail-la0-f43.google.com with SMTP id el20so4469064lab.16
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 22 Oct 2013 13:50:41 -0700 (PDT)
-In-Reply-To: <1382440189.992.62.camel@kjgkr>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1382444612.992.67.camel@kjgkr>
+Content-language: zh-cn
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: jaegeuk.kim@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?B?J+iwreWnnSc=?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgpJIGRvbid0IHJlY2FsbCBhbnl0aGluZyBsaWtlIGEgYmxhY2tvdXQsIGJ1dCBzaW5jZSBJ
-IGxpa2UgdG8gcnVuIG5ldwpzb2Z0d2FyZSB0aGF0J3Mgc3RpbGwgaW4gZGV2ZWxvcG1lbnQsIEkg
-aGF2ZSBoYWQgYSBmYWlyIHNoYXJlIG9mIHN5c3RlbQpjcmFzaGVzLgoKQXMgZmFyIGFzIEknbSBh
-d2FyZSB0aGlzIGlzIHRoZSBvbmx5IGZpbGUgb24gdGhlIHBhcnRpdGlvbiB0byBldmVyCmJlY29t
-ZSBjb3JydXB0ZWQgYXQgdGhlIGZpbGUgc3lzdGVtIGxldmVsLCB0aG91Z2guCgpUaGUgcmVwb3Np
-dG9yeSB3YXMgYSBzaW1wbGUgKHNoYWxsb3cpIGdpdCBjbG9uZSBvZiBHb29nbGUncyBneXAsCmF2
-YWlsYWJsZSBoZXJlOgoKaHR0cHM6Ly9jaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tL2V4dGVybmFs
-L2d5cC5naXQKClN1Y2ggYmVpbmcgdGhlIGNhc2UsIEkgaGF2ZSBubyBuZWVkIHRvIHJlc3RvcmUg
-dGhlIGZpbGUsIGJ1dCBiZWluZyBhYmxlCnRvIGhhdmUgaXQgcHJvcGVybHkgZGVsZXRlZCB3b3Vs
-ZCBiZSBuaWNlLgoKWW91cnMKdGFzdGt5CgpPbiAyMi4xMC4yMDEzIDEzOjA5LCBKYWVnZXVrIEtp
-bSB3cm90ZToKPiBIaSwKPgo+IFRoYW5rIHlvdSBmb3IgdGhlIHJlcG9ydC4KPgo+IDIwMTMtMTAt
-MTkgKO2GoCksIDE5OjM2ICswMjAwLCBNYXggTXVzdGVyOgo+PiBUaGVyZSdzIGEgYnJva2VuLCBp
-ZS4gaW5hY2Nlc3NpYmxlIGFuZCB1bmVyYXNhYmxlIGZpbGUgb24gbXkgZjJmcwo+PiBwYXJ0aXRp
-b24gKDJuZCBwYXJ0aXRpb24gd2l0aCAyMUdCIG9uIGEgQ29yc2FpciBGbGFzaCBWb3lhZ2VyIEdU
-IFVTQiAzLjAKPj4gMzJHQikuIGxzIHJlcG9ydHM6Cj4+Cj4+ICAgPmNhbm5vdCBhY2Nlc3Mgc2hh
-cmVkLmg6IElucHV0L291dHB1dCBlcnJvcgo+PiAgID50b3RhbCAwCj4+ICAgPi0/Pz8/Pz8/Pz8g
-PyA/ID8gPyAgICAgICAgICAgID8gc2hhcmVkLmgKPj4KPj4gVGhlIGZpbGUgaGFzIGJlZW4gb24g
-dGhlIHBhcnRpdGlvbiBmb3IgYSBjb3VwbGUgb2YgbW9udGhzIGFscmVhZHkuIEkKPj4gZGlkbid0
-IHJlcG9ydCBzb29uZXIgYXMgSSBjb3VsZC9jYW4gbW92ZSBpdHMgZm9sZGVyIChidXQgbm90IHRo
-ZSBmaWxlCj4+IGl0c2VsZikgd2hlcmUgaXQgZG9lc24ndCBidWcgbWUgYW5kIGl0IGRvZXNuJ3Qg
-YXBwZWFyIHRvIGFmZmVjdCBhbnl0aGluZwo+PiBlbHNlLgo+Pgo+PiAoSSdtIGN1cnJlbnRseSBy
-dW5uaW5nIExpbnV4IHYzLjEyLXJjNSB3aXRoIHBvc3QtMy4xMiBmMmZzIHBhdGNoZXMKPj4gYXBw
-bGllZCBtYW51YWxseS4pCj4+Cj4+IFRoZSBwYXJ0aXRpb24gaXMgdXNlZCBwcmltYXJpbHkgdG8g
-c3RvcmUgc291cmNlIGNvZGUgYW5kIGFzIGNhY2hlIGZvcgo+PiBjY2FjaGUuIEkgZG9uJ3QgcmVj
-YWxsIGV2ZXIgZmlkZGxpbmcgd2l0aCB0aGlzIGZpbGUgZGlyZWN0bHk7IGl0Cj4+IHByb2JhYmx5
-IGhhcHBlbmVkIGR1cmluZyB1cGRhdGluZyBpdHMgcmVwb3NpdG9yeSBvciBkZWxldGluZyBqdXN0
-IHRoYXQuCj4+Cj4+IGYyZnMtdG9vbHMncyBmc2NrIChjdXJyZW50IGdpdCAyYWQxZmNkODAwKSBk
-b2Vzbid0IGFwcGVhciB0byBkbyBhbnl0aGluZwo+PiBhbmQgYWJvcnRzIGFmdGVyIHNvbWUgMzAg
-c2Vjb25kcyB3aXRoOgo+Pgo+PiAgID5JbmZvOiBzZWN0b3Igc2l6ZSA9IDUxMgo+PiAgID5JbmZv
-OiB0b3RhbCBzZWN0b3JzID0gNDIxMDY4ODAgKGluIDUxMmJ5dGVzKQo+PiAgID5bZnNja19jaGtf
-bm9kZV9ibGs6IDE5NV0gYmxvY2sgYWRkciBbMHhhNDBhZTU5XQo+PiAgID4KPj4gICA+QXNzZXJ0
-aW9uIGZhaWxlZCEKPj4gICA+W2ZzY2tfY2hrX25vZGVfYmxrOiAxOTVdIG5pLmJsa19hZGRyIDwg
-RjJGU19SQVdfU1VQRVIoc2JpKS0+YmxvY2tfY291bnQKPj4KPj4gSWYgeW91IHdvdWxkIGxpa2Ug
-bWUgdG8gcG9zdCBmdXJ0aGVyIGluZm8sIHBsZWFzZSB0ZWxsIG1lIHdoaWNoOyBJJ3ZlCj4+IGdv
-dCBubyBpZGVhIGhvdyB0byBmdXJ0aGVyIGRlYnVnIHRoaXMuCj4KPiBVbSwgSSd2ZSBuZXZlciBz
-ZWVuIHRoaXMga2luZCBvZiBlcnJvciBzbyBmYXIuCj4gIEZyb20gdGhlIHJlc3VsdCBvZiBmc2Nr
-LCBpdCBzZWVtcyB0aGF0IHRoZSBpbm9kZSBvZiBzaGFyZWQuaCB3YXMgbG9zdC4KPiBTbywgY3Vy
-cmVudGx5LCB0aGVyZSBpcyBubyB3YXkgdG8gcmVjb3ZlciB0aGF0IGlub2RlIGFuZCBpdHMgZGF0
-YQo+IHNpbXBseS4KPiBJdCBtYXkgbmVlZCBzY2FuIHRoZSB3aG9sZSBwYXJ0aXRpb24gdG8gZmlu
-ZCB0aGUgc3RhbGUgaW5vZGUgYmxvY2suCj4KPiBUd28gcXVlc3Rpb25zLgo+IC0gSGF2ZSB5b3Ug
-ZXhwZXJpZW5jZWQgYW55IHN1ZGRlbiBwb3dlci1vZmYgYmVmb3JlPwo+IC0gQ2FuIEkgdGVzdCB3
-aXRoIHRoZSByZXBvc2l0b3J5IGhhdmluZyB0aGUgc2hhcmVkLmggdGhhdCB5b3UgdXNlZD8KPiAg
-ICAoSSdkIGxpa2UgdG8gZG8gYSBzaW1wbGUgdGVzdCBzdG9yaW5nIHRoYXQgcmVwb3NpdG9yeS4p
-Cj4KPiBUaGFua3MsCj4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpPY3RvYmVyIFdlYmluYXJzOiBD
-b2RlIGZvciBQZXJmb3JtYW5jZQpGcmVlIEludGVsIHdlYmluYXJzIGNhbiBoZWxwIHlvdSBhY2Nl
-bGVyYXRlIGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNlLgpFeHBsb3JlIHRpcHMgZm9yIE1QSSwgT3Bl
-bk1QLCBhZHZhbmNlZCBwcm9maWxpbmcsIGFuZCBtb3JlLiBHZXQgdGhlIG1vc3QgZnJvbSAKdGhl
-IGxhdGVzdCBJbnRlbCBwcm9jZXNzb3JzIGFuZCBjb3Byb2Nlc3NvcnMuIFNlZSBhYnN0cmFjdHMg
-YW5kIHJlZ2lzdGVyID4KaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xr
-P2lkPTYwMTM1OTkxJml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Ckxp
-bnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNl
-Zm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Hi, Kim:
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Tuesday, October 22, 2013 8:24 PM
+> To: Chao Yu
+> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-fsdevel@vger.kernel=
+=2Eorg;
+> linux-kernel@vger.kernel.org; =E8=B0=AD=E5=A7=9D
+> Subject: Re: [f2fs-dev] [PATCH] f2fs: check all ones or zeros bitmap =
+with integer
+> data type for better mount performance
+>=20
+> Hi,
+>=20
+> 2013-10-22 (=ED=99=94), 17:28 +0800, Chao Yu:
+> > Previously, check_block_count check valid_map with bit data type in
+> > common scenario that sit has all ones or zeros bitmap, it makes low
+> > mount performance.
+> > So let's check the special bitmap with integer data type instead of
+> > the bit one.
+> >
+> > Signed-off-by: Tan Shu <shu.tan@samsung.com>
+> > Signed-off-by: Yu Chao <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/segment.h |   13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >
+> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index
+> > 7f94d78..d43ab9f 100644
+> > --- a/fs/f2fs/segment.h
+> > +++ b/fs/f2fs/segment.h
+> > @@ -543,6 +543,7 @@ static inline void check_block_count(struct
+> > f2fs_sb_info *sbi,  {
+> >  	struct f2fs_sm_info *sm_info =3D SM_I(sbi);
+> >  	unsigned int end_segno =3D sm_info->segment_count - 1;
+> > +	int *valid_map =3D (int *)raw_sit->valid_map;
+> >  	int valid_blocks =3D 0;
+> >  	int i;
+> >
+> > @@ -552,6 +553,19 @@ static inline void check_block_count(struct
+> > f2fs_sb_info *sbi,
+> >  	/* check boundary of a given segment number */
+> >  	BUG_ON(segno > end_segno);
+> >
+> > +	/* check all ones or zeros valid_map */
+> > +	if (GET_SIT_VBLOCKS(raw_sit) =3D=3D 0) {
+> > +		for (i =3D 0; i < SIT_VBLOCK_MAP_SIZE / sizeof(int); i++)
+>=20
+> We cannot guarantee all the time that SIT_VBLOCK_MAP_SIZE is multiple=
+ of
+> sizeof(int).
+Well, It's really large changes for f2fs if SIT_VBLOCK_MAP_SIZE value i=
+s being modified.
+
+> How about using memcmp() with __u8?
+Do you mean that we can alloc all zeros or ones memory in SIT_VBLOCK_MA=
+P_SIZE size,
+then memcmp() it with sit bitmap by __u8?
+
+>=20
+> > +			if (unlikely(valid_map[i] !=3D 0))
+> > +				BUG();
+> > +		return;
+> > +	} else if (GET_SIT_VBLOCKS(raw_sit) =3D=3D sbi->blocks_per_seg) {
+> > +		for (i =3D 0; i < SIT_VBLOCK_MAP_SIZE / sizeof(int); i++)
+> > +			if (unlikely(valid_map[i] !=3D -1))
+> > +				BUG();
+> > +		return;
+> > +	}
+> > +
+> >  	/* check bitmap with valid block count */
+> >  	for (i =3D 0; i < sbi->blocks_per_seg; i++)
+> >  		if (f2fs_test_bit(i, raw_sit->valid_map))
+> > ---
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe
+> > linux-fsdevel" in the body of a message to majordomo@vger.kernel.or=
+g
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+> --
+> Jaegeuk Kim
+> Samsung
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
