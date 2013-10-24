@@ -1,178 +1,153 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH] f2fs: clean up several status-related operations
-Date: Wed, 23 Oct 2013 18:15:55 +0800
-Message-ID: <5267A1DB.8030301@cn.fujitsu.com>
-References: <1382521585-27450-1-git-send-email-jaegeuk.kim@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: check all ones or zeros bitmap with
+ integer data type for better mount performance
+Date: Thu, 24 Oct 2013 11:28:19 +0800
+Message-ID: <000101ced069$3d89fd40$b89df7c0$@samsung.com>
+References: <000701cecf09$2b2a2280$817e6780$@samsung.com>
+ <1382444612.992.67.camel@kjgkr> <000001cecf9f$7113b630$533b2290$@samsung.com>
+ <1382520734.992.78.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1382521585-27450-1-git-send-email-jaegeuk.kim@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1382520734.992.78.camel@kjgkr>
+Content-language: zh-cn
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?B?J+iwreWnnSc=?= <shu.tan@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 10/23/2013 05:46 PM, Jaegeuk Kim wrote:
+Hi Kim,
 
-> This patch cleans up improper definitions that update some status information.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Wednesday, October 23, 2013 5:32 PM
+> To: Chao Yu
+> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-fsdevel@vger.kernel=
+=2Eorg;
+> linux-kernel@vger.kernel.org; '=E8=B0=AD=E5=A7=9D'
+> Subject: RE: [f2fs-dev] [PATCH] f2fs: check all ones or zeros bitmap =
+with integer
+> data type for better mount performance
+>=20
+> Hi,
+>=20
+> 2013-10-23 (=EC=88=98), 11:23 +0800, Chao Yu:
+> > Hi, Kim:
+> >
+> > > -----Original Message-----
+> > > From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> > > Sent: Tuesday, October 22, 2013 8:24 PM
+> > > To: Chao Yu
+> > > Cc: linux-f2fs-devel@lists.sourceforge.net;
+> > > linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; =E8=B0=
+=AD=E5=A7=9D
+> > > Subject: Re: [f2fs-dev] [PATCH] f2fs: check all ones or zeros bit=
+map
+> > > with integer data type for better mount performance
+> > >
+> > > Hi,
+> > >
+> > > 2013-10-22 (=ED=99=94), 17:28 +0800, Chao Yu:
+> > > > Previously, check_block_count check valid_map with bit data typ=
+e
+> > > > in common scenario that sit has all ones or zeros bitmap, it ma=
+kes
+> > > > low mount performance.
+> > > > So let's check the special bitmap with integer data type instea=
+d
+> > > > of the bit one.
+> > > >
+> > > > Signed-off-by: Tan Shu <shu.tan@samsung.com>
+> > > > Signed-off-by: Yu Chao <chao2.yu@samsung.com>
+> > > > ---
+> > > >  fs/f2fs/segment.h |   13 +++++++++++++
+> > > >  1 file changed, 13 insertions(+)
+> > > >
+> > > > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index
+> > > > 7f94d78..d43ab9f 100644
+> > > > --- a/fs/f2fs/segment.h
+> > > > +++ b/fs/f2fs/segment.h
+> > > > @@ -543,6 +543,7 @@ static inline void check_block_count(struct
+> > > > f2fs_sb_info *sbi,  {
+> > > >  	struct f2fs_sm_info *sm_info =3D SM_I(sbi);
+> > > >  	unsigned int end_segno =3D sm_info->segment_count - 1;
+> > > > +	int *valid_map =3D (int *)raw_sit->valid_map;
+> > > >  	int valid_blocks =3D 0;
+> > > >  	int i;
+> > > >
+> > > > @@ -552,6 +553,19 @@ static inline void check_block_count(struc=
+t
+> > > > f2fs_sb_info *sbi,
+> > > >  	/* check boundary of a given segment number */
+> > > >  	BUG_ON(segno > end_segno);
+> > > >
+> > > > +	/* check all ones or zeros valid_map */
+> > > > +	if (GET_SIT_VBLOCKS(raw_sit) =3D=3D 0) {
+> > > > +		for (i =3D 0; i < SIT_VBLOCK_MAP_SIZE / sizeof(int); i++)
+> > >
+> > > We cannot guarantee all the time that SIT_VBLOCK_MAP_SIZE is
+> > > multiple of sizeof(int).
+> > Well, It's really large changes for f2fs if SIT_VBLOCK_MAP_SIZE val=
+ue is being
+> modified.
+>=20
+> But, it can be changed.
+> Please do not add any unnecessary assumption.
+Got it, sorry for the unmeaning assumption.
 
-Nice, it makes the code more neat.
+>=20
+> >
+> > > How about using memcmp() with __u8?
+> > Do you mean that we can alloc all zeros or ones memory in
+> > SIT_VBLOCK_MAP_SIZE size, then memcmp() it with sit bitmap by __u8?
+>=20
+> Yap.
+> Ah, but there is another one.
+> It would be better to use find_next_bit_le() and find_next_zero_bit_l=
+e().
+> Any idea?
+Good point.
+I try to use memcmp(bitmap, bitmap+1, size-1) and bitmap[0],=20
+But yours got better performance and readable.
+Thanks.
 
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+>=20
+> >
+> > >
+> > > > +			if (unlikely(valid_map[i] !=3D 0))
+> > > > +				BUG();
+> > > > +		return;
+> > > > +	} else if (GET_SIT_VBLOCKS(raw_sit) =3D=3D sbi->blocks_per_se=
+g) {
+> > > > +		for (i =3D 0; i < SIT_VBLOCK_MAP_SIZE / sizeof(int); i++)
+> > > > +			if (unlikely(valid_map[i] !=3D -1))
+> > > > +				BUG();
+> > > > +		return;
+> > > > +	}
+> > > > +
+> > > >  	/* check bitmap with valid block count */
+> > > >  	for (i =3D 0; i < sbi->blocks_per_seg; i++)
+> > > >  		if (f2fs_test_bit(i, raw_sit->valid_map))
+> > > > ---
+> > > >
+> > > > --
+> > > > To unsubscribe from this list: send the line "unsubscribe
+> > > > linux-fsdevel" in the body of a message to
+> > > > majordomo@vger.kernel.org More majordomo info at
+> > > > http://vger.kernel.org/majordomo-info.html
+> > >
+> > > --
+> > > Jaegeuk Kim
+> > > Samsung
+> >
+>=20
+> --
+> Jaegeuk Kim
+> Samsung
 
-Reviewed-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
-
-> ---
->  fs/f2fs/checkpoint.c |  8 ++------
->  fs/f2fs/data.c       | 12 +++---------
->  fs/f2fs/f2fs.h       | 14 +++++++++++++-
->  fs/f2fs/gc.c         |  4 +---
->  fs/f2fs/segment.c    | 10 ++++------
->  5 files changed, 23 insertions(+), 25 deletions(-)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 6fb484c..b4a59cf 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -467,9 +467,7 @@ static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
->  			return -EEXIST;
->  	}
->  	list_add_tail(&new->list, head);
-> -#ifdef CONFIG_F2FS_STAT_FS
-> -	sbi->n_dirty_dirs++;
-> -#endif
-> +	stat_inc_dirty_dir(sbi);
->  	return 0;
->  }
->  
-> @@ -531,9 +529,7 @@ void remove_dirty_dir_inode(struct inode *inode)
->  		if (entry->inode == inode) {
->  			list_del(&entry->list);
->  			kmem_cache_free(inode_entry_slab, entry);
-> -#ifdef CONFIG_F2FS_STAT_FS
-> -			sbi->n_dirty_dirs--;
-> -#endif
-> +			stat_dec_dirty_dir(sbi);
->  			break;
->  		}
->  	}
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 2535d3b..4d4718f 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -68,9 +68,6 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
->  					struct buffer_head *bh_result)
->  {
->  	struct f2fs_inode_info *fi = F2FS_I(inode);
-> -#ifdef CONFIG_F2FS_STAT_FS
-> -	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-> -#endif
->  	pgoff_t start_fofs, end_fofs;
->  	block_t start_blkaddr;
->  
-> @@ -80,9 +77,8 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
->  		return 0;
->  	}
->  
-> -#ifdef CONFIG_F2FS_STAT_FS
-> -	sbi->total_hit_ext++;
-> -#endif
-> +	stat_inc_hit_ext(inode->i_sb);
-> +
->  	start_fofs = fi->ext.fofs;
->  	end_fofs = fi->ext.fofs + fi->ext.len - 1;
->  	start_blkaddr = fi->ext.blk_addr;
-> @@ -100,9 +96,7 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
->  		else
->  			bh_result->b_size = UINT_MAX;
->  
-> -#ifdef CONFIG_F2FS_STAT_FS
-> -		sbi->read_hit_ext++;
-> -#endif
-> +		stat_inc_hit_ext(inode->i_sb);
->  		read_unlock(&fi->ext.ext_lock);
->  		return 1;
->  	}
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 2949275..d1fc93c 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1155,7 +1155,13 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
->  	return (struct f2fs_stat_info*)sbi->stat_info;
->  }
->  
-> -#define stat_inc_call_count(si)	((si)->call_count++)
-> +#define stat_inc_call_count(si)		((si)->call_count++)
-> +#define stat_inc_bggc_count(sbi)	((sbi)->bg_gc++)
-> +#define stat_inc_dirty_dir(sbi)		((sbi)->n_dirty_dirs++)
-> +#define stat_dec_dirty_dir(sbi)		((sbi)->n_dirty_dirs--)
-> +#define stat_inc_hit_ext(sb)		((F2FS_SB(sb))->total_hit_ext++)
-> +#define stat_inc_alloc_type(sbi, curseg)				\
-> +		((sbi)->segment_count[(curseg)->alloc_type]++)
->  
->  #define stat_inc_seg_count(sbi, type)					\
->  	do {								\
-> @@ -1184,12 +1190,18 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
->  		si->node_blks += (blks);				\
->  	} while (0)
->  
-> +
->  int f2fs_build_stats(struct f2fs_sb_info *);
->  void f2fs_destroy_stats(struct f2fs_sb_info *);
->  void __init f2fs_create_root_stats(void);
->  void f2fs_destroy_root_stats(void);
->  #else
->  #define stat_inc_call_count(si)
-> +#define stat_inc_bggc_count(si)
-> +#define stat_inc_dirty_dir(sbi)
-> +#define stat_dec_dirty_dir(sbi)
-> +#define stat_inc_hit_ext(sb)
-> +#define stat_inc_alloc_type(sbi, curseg)
->  #define stat_inc_seg_count(si, type)
->  #define stat_inc_tot_blk_count(si, blks)
->  #define stat_inc_data_blk_count(si, blks)
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 7914b92..cb286d7 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -77,9 +77,7 @@ static int gc_thread_func(void *data)
->  		else
->  			wait_ms = increase_sleep_time(gc_th, wait_ms);
->  
-> -#ifdef CONFIG_F2FS_STAT_FS
-> -		sbi->bg_gc++;
-> -#endif
-> +		stat_inc_bggc_count(sbi);
->  
->  		/* if return value is not zero, no victim was selected */
->  		if (f2fs_gc(sbi))
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 8ac1619..c9c276e 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -554,9 +554,8 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
->  		change_curseg(sbi, type, true);
->  	else
->  		new_curseg(sbi, type, false);
-> -#ifdef CONFIG_F2FS_STAT_FS
-> -	sbi->segment_count[curseg->alloc_type]++;
-> -#endif
-> +
-> +	stat_inc_alloc_type(sbi, curseg);
->  }
->  
->  void allocate_new_segments(struct f2fs_sb_info *sbi)
-> @@ -811,9 +810,8 @@ static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
->  
->  	mutex_lock(&sit_i->sentry_lock);
->  	__refresh_next_blkoff(sbi, curseg);
-> -#ifdef CONFIG_F2FS_STAT_FS
-> -	sbi->block_count[curseg->alloc_type]++;
-> -#endif
-> +
-> +	stat_inc_alloc_type(sbi, curseg);
->  
->  	/*
->  	 * SIT information should be updated before segment allocation,
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
