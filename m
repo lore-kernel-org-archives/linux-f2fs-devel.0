@@ -1,25 +1,28 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH V2] f2fs: check all ones or zeros bitmap with
- bitops for better mount performance
-Date: Mon, 28 Oct 2013 10:30:52 +0800
-Message-ID: <526DCC5C.30808@cn.fujitsu.com>
-References: <000401ced092$28087a90$78196fb0$@samsung.com>
-	<003501ced384$31fb7530$95f25f90$@samsung.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH] f2fs: remove unnecessary segment bitmap updates
+Date: Mon, 28 Oct 2013 14:06:47 +0900
+Message-ID: <1382936807-4778-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VachR-00077Q-3f
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vaf3K-0004OW-J3
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Oct 2013 02:37:01 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	Mon, 28 Oct 2013 05:07:46 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VachP-0001tG-64 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Oct 2013 02:37:01 +0000
-In-Reply-To: <003501ced384$31fb7530$95f25f90$@samsung.com>
+	id 1Vaf3I-0007e0-Eo for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Oct 2013 05:07:46 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MVD000E84WJRMN0@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Oct 2013 14:07:31 +0900 (KST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,72 +32,78 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: =?UTF-8?B?7J207LC966eM?= <cm224.lee@samsung.com>
-Cc: =?UTF-8?B?J+iwreWnnSc=?= <shu.tan@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-T24gMTAvMjgvMjAxMyAxMDoxOSBBTSwg7J207LC966eMIHdyb3RlOgoKPiBUbyBjaGVjayB3aGV0
-aGVyIGJpdG1hcCBhcmUgYWxsIHplcm9zIG9yIGFsbCBvbmVzLCBJIHRoaW5rIG1lbWNtcCBpcyBt
-b3JlIG5lYXQuCj4gQnV0IEkgZG9uJ3Qga25vdyBleGFjdGx5IHBlcmZvcm1hbmNlIGdhcCBiZXR3
-ZWVuIG1lbWNtcCBhbmQgZmluZF9uZXh0X2JpdC4KCkFjY29yZGluZyB0byBteSB1bmRlcnN0YW5k
-aW5nLAptZW1jbXA6IG9uZSBieSBvbmUgc2VhcmNoLApmaW5kX25leHRfYml0OiBiaW5hcnkgc2Vh
-cmNoLgoKUmVnYXJkcywKR3UKCj4gCj4gCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiBG
-cm9tOiBDaGFvIFl1IFttYWlsdG86Y2hhbzIueXVAc2Ftc3VuZy5jb21dIAo+IFNlbnQ6IFRodXJz
-ZGF5LCBPY3RvYmVyIDI0LCAyMDEzIDU6MjEgUE0KPiBUbzogamFlZ2V1ay5raW1Ac2Ftc3VuZy5j
-b20KPiBDYzogbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7ICfosK3lp50nOyBsaW51eC1r
-ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdl
-Lm5ldAo+IFN1YmplY3Q6IFtmMmZzLWRldl0gW1BBVENIIFYyXSBmMmZzOiBjaGVjayBhbGwgb25l
-cyBvciB6ZXJvcyBiaXRtYXAgd2l0aCBiaXRvcHMgZm9yIGJldHRlciBtb3VudCBwZXJmb3JtYW5j
-ZQo+IAo+IFByZXZpb3VzbHksIGNoZWNrX2Jsb2NrX2NvdW50IGNoZWNrIHZhbGlkX21hcCB3aXRo
-IGJpdCBkYXRhIHR5cGUgaW4gY29tbW9uIHNjZW5hcmlvIHRoYXQgc2l0IGhhcyBhbGwgb25lcyBv
-ciB6ZXJvcyBiaXRtYXAsIGl0IG1ha2VzIGxvdyBtb3VudCBwZXJmb3JtYW5jZS4KPiBTbyBsZXQn
-cyBjaGVjayB0aGUgc3BlY2lhbCBiaXRtYXAgd2l0aCBpbnRlZ2VyIGRhdGEgdHlwZSBpbnN0ZWFk
-IG9mIHRoZSBiaXQgb25lLgo+IAo+IHYyOgo+ICAgICB1c2UgZmluZF9uZXh0X2JpdF9sZS9maW5k
-X25leHRfemVyb19iaXRfbGUgZm9yIGJldHRlciBwZXJmb3JtYW5jZSBhbmQgcmVhZGFibGUgYXMg
-SmFlZ2V1ayBzdWdnZXN0ZWQuCj4gCj4gU3VnZ2VzdGVkLWJ5OiBKYWVnZXVrIEtpbSA8amFlZ2V1
-ay5raW1Ac2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9mZi1ieTogVGFuIFNodSA8c2h1LnRhbkBzYW1z
-dW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBZdSBDaGFvIDxjaGFvMi55dUBzYW1zdW5nLmNvbT4K
-PiAtLS0KPiAgZnMvZjJmcy9zZWdtZW50LmggfCAgIDE3ICsrKysrKysrKysrKysrKysrCj4gIDEg
-ZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMv
-c2VnbWVudC5oIGIvZnMvZjJmcy9zZWdtZW50LmggaW5kZXggN2Y5NGQ3OC4uZDI1YjZhZiAxMDA2
-NDQKPiAtLS0gYS9mcy9mMmZzL3NlZ21lbnQuaAo+ICsrKyBiL2ZzL2YyZnMvc2VnbWVudC5oCj4g
-QEAgLTU1Miw2ICs1NTIsMjMgQEAgc3RhdGljIGlubGluZSB2b2lkIGNoZWNrX2Jsb2NrX2NvdW50
-KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiAgCS8qIGNoZWNrIGJvdW5kYXJ5IG9mIGEgZ2l2
-ZW4gc2VnbWVudCBudW1iZXIgKi8KPiAgCUJVR19PTihzZWdubyA+IGVuZF9zZWdubyk7Cj4gIAo+
-ICsJLyogY2hlY2sgYWxsIG9uZXMgb3IgemVyb3MgdmFsaWRfbWFwICovCj4gKwlpZiAoR0VUX1NJ
-VF9WQkxPQ0tTKHJhd19zaXQpID09IDApIHsKPiArCQlpbnQgcG9zID0gZmluZF9uZXh0X2JpdF9s
-ZSgmcmF3X3NpdC0+dmFsaWRfbWFwLAo+ICsJCQkJCXNiaS0+YmxvY2tzX3Blcl9zZWcsCj4gKwkJ
-CQkJMCk7Cj4gKwkJaWYgKHBvcyAhPSBzYmktPmJsb2Nrc19wZXJfc2VnKQo+ICsJCQlCVUcoKTsK
-PiArCQlyZXR1cm47Cj4gKwl9IGVsc2UgaWYgKEdFVF9TSVRfVkJMT0NLUyhyYXdfc2l0KSA9PSBz
-YmktPmJsb2Nrc19wZXJfc2VnKSB7Cj4gKwkJaW50IHBvcyA9IGZpbmRfbmV4dF96ZXJvX2JpdF9s
-ZSgmcmF3X3NpdC0+dmFsaWRfbWFwLAo+ICsJCQkJCXNiaS0+YmxvY2tzX3Blcl9zZWcsCj4gKwkJ
-CQkJMCk7Cj4gKwkJaWYgKHBvcyAhPSBzYmktPmJsb2Nrc19wZXJfc2VnKQo+ICsJCQlCVUcoKTsK
-PiArCQlyZXR1cm47Cj4gKwl9Cj4gKwo+ICAJLyogY2hlY2sgYml0bWFwIHdpdGggdmFsaWQgYmxv
-Y2sgY291bnQgKi8KPiAgCWZvciAoaSA9IDA7IGkgPCBzYmktPmJsb2Nrc19wZXJfc2VnOyBpKysp
-Cj4gIAkJaWYgKGYyZnNfdGVzdF9iaXQoaSwgcmF3X3NpdC0+dmFsaWRfbWFwKSkKPiAtLQo+IDEu
-Ny45LjUKPiAKPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBPY3RvYmVyIFdlYmluYXJzOiBD
-b2RlIGZvciBQZXJmb3JtYW5jZQo+IEZyZWUgSW50ZWwgd2ViaW5hcnMgY2FuIGhlbHAgeW91IGFj
-Y2VsZXJhdGUgYXBwbGljYXRpb24gcGVyZm9ybWFuY2UuCj4gRXhwbG9yZSB0aXBzIGZvciBNUEks
-IE9wZW5NUCwgYWR2YW5jZWQgcHJvZmlsaW5nLCBhbmQgbW9yZS4gR2V0IHRoZSBtb3N0IGZyb20g
-Cj4gdGhlIGxhdGVzdCBJbnRlbCBwcm9jZXNzb3JzIGFuZCBjb3Byb2Nlc3NvcnMuIFNlZSBhYnN0
-cmFjdHMgYW5kIHJlZ2lzdGVyID4KPiBodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dh
-bXBhZC9jbGs/aWQ9NjAxMzU5OTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKPiBfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFp
-bGluZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRw
-czovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVs
-Cj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAi
-dW5zdWJzY3JpYmUgbGludXgta2VybmVsIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBt
-YWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDov
-L3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4gUGxlYXNlIHJlYWQgdGhlIEZB
-USBhdCAgaHR0cDovL3d3dy50dXgub3JnL2xrbWwvCj4gCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQpPY3RvYmVyIFdlYmluYXJzOiBDb2RlIGZvciBQZXJmb3JtYW5jZQpGcmVlIEludGVsIHdlYmlu
-YXJzIGNhbiBoZWxwIHlvdSBhY2NlbGVyYXRlIGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNlLgpFeHBs
-b3JlIHRpcHMgZm9yIE1QSSwgT3Blbk1QLCBhZHZhbmNlZCBwcm9maWxpbmcsIGFuZCBtb3JlLiBH
-ZXQgdGhlIG1vc3QgZnJvbSAKdGhlIGxhdGVzdCBJbnRlbCBwcm9jZXNzb3JzIGFuZCBjb3Byb2Nl
-c3NvcnMuIFNlZSBhYnN0cmFjdHMgYW5kIHJlZ2lzdGVyID4KaHR0cDovL3B1YmFkcy5nLmRvdWJs
-ZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTYwMTM1OTkxJml1PS80MTQwL29zdGcuY2xrdHJrCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMt
-ZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
-Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMt
-ZGV2ZWwK
+From: Changman Lee <cm224.lee@samsung.com>
+
+From: Changman Lee <cm224.lee@samsung.com>
+
+Only one dirty type is set in __locate_dirty_segment and we can know
+dirty type of segment. So we don't need to check other dirty types.
+
+Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/segment.c | 31 ++++++++-----------------------
+ 1 file changed, 8 insertions(+), 23 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 487af61..8f92c18 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -58,20 +58,10 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+ 
+ 	if (dirty_type == DIRTY) {
+ 		struct seg_entry *sentry = get_seg_entry(sbi, segno);
+-		enum dirty_type t = DIRTY_HOT_DATA;
++		enum dirty_type t = sentry->type;
+ 
+-		dirty_type = sentry->type;
+-
+-		if (!test_and_set_bit(segno, dirty_i->dirty_segmap[dirty_type]))
+-			dirty_i->nr_dirty[dirty_type]++;
+-
+-		/* Only one bitmap should be set */
+-		for (; t <= DIRTY_COLD_NODE; t++) {
+-			if (t == dirty_type)
+-				continue;
+-			if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
+-				dirty_i->nr_dirty[t]--;
+-		}
++		if (!test_and_set_bit(segno, dirty_i->dirty_segmap[t]))
++			dirty_i->nr_dirty[t]++;
+ 	}
+ }
+ 
+@@ -84,16 +74,11 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
+ 		dirty_i->nr_dirty[dirty_type]--;
+ 
+ 	if (dirty_type == DIRTY) {
+-		enum dirty_type t = DIRTY_HOT_DATA;
+-
+-		/* clear its dirty bitmap */
+-		for (; t <= DIRTY_COLD_NODE; t++) {
+-			if (test_and_clear_bit(segno,
+-						dirty_i->dirty_segmap[t])) {
+-				dirty_i->nr_dirty[t]--;
+-				break;
+-			}
+-		}
++		struct seg_entry *sentry = get_seg_entry(sbi, segno);
++		enum dirty_type t = sentry->type;
++
++		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
++			dirty_i->nr_dirty[t]--;
+ 
+ 		if (get_valid_blocks(sbi, segno, sbi->segs_per_sec) == 0)
+ 			clear_bit(GET_SECNO(sbi, segno),
+-- 
+1.8.4.474.g128a96c
+
+
+------------------------------------------------------------------------------
+October Webinars: Code for Performance
+Free Intel webinars can help you accelerate application performance.
+Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
+the latest Intel processors and coprocessors. See abstracts and register >
+http://pubads.g.doubleclick.net/gampad/clk?id=60135991&iu=/4140/ostg.clktrk
