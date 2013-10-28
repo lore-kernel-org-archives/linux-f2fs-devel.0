@@ -1,125 +1,141 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 1/2] f2fs: clean up acl flow for better
-	readability
-Date: Mon, 28 Oct 2013 14:07:25 +0900
-Message-ID: <1382936846-4860-1-git-send-email-jaegeuk.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vaf3o-0001bc-7G
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Oct 2013 05:08:16 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Vaf3m-00089D-LD for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Oct 2013 05:08:16 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MVD0088W4XK46P0@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Oct 2013 14:08:08 +0900 (KST)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH 2/2] f2fs: fix a deadlock during init_acl procedure
+Date: Mon, 28 Oct 2013 14:08:09 +0900
+Message-ID: <1382936889-4911-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch cleans up a couple of acl codes.
+The deadlock is found through the following scenario.
 
+sys_mkdir()
+ -> f2fs_add_link()
+  -> __f2fs_add_link()
+   -> init_inode_metadata()
+     : lock_page(inode);
+    -> f2fs_init_acl()
+     -> f2fs_set_acl()
+      -> f2fs_setxattr(..., NULL)
+       : This NULL page incurs a deadlock at update_inode_page().
+
+So, likewise f2fs_init_security(), this patch adds a parameter to transfer the
+locked inode page to f2fs_setxattr().
+
+Found by Linux File System Verification project (linuxtesting.org).
+
+Reported-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/acl.c | 25 +++++++++++++------------
- fs/f2fs/acl.h |  6 +++---
- 2 files changed, 16 insertions(+), 15 deletions(-)
+ fs/f2fs/acl.c | 15 ++++++++-------
+ fs/f2fs/acl.h |  5 +++--
+ fs/f2fs/dir.c |  2 +-
+ 3 files changed, 12 insertions(+), 10 deletions(-)
 
 diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index b7826ec..f1a6975 100644
+index f1a6975..d0fc287 100644
 --- a/fs/f2fs/acl.c
 +++ b/fs/f2fs/acl.c
-@@ -262,8 +262,8 @@ static int f2fs_set_acl(struct inode *inode, int type, struct posix_acl *acl)
+@@ -205,7 +205,8 @@ struct posix_acl *f2fs_get_acl(struct inode *inode, int type)
+ 	return acl;
+ }
  
- int f2fs_init_acl(struct inode *inode, struct inode *dir)
+-static int f2fs_set_acl(struct inode *inode, int type, struct posix_acl *acl)
++static int f2fs_set_acl(struct inode *inode, int type,
++			struct posix_acl *acl, struct page *ipage)
  {
--	struct posix_acl *acl = NULL;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+@@ -250,7 +251,7 @@ static int f2fs_set_acl(struct inode *inode, int type, struct posix_acl *acl)
+ 		}
+ 	}
+ 
+-	error = f2fs_setxattr(inode, name_index, "", value, size, NULL);
++	error = f2fs_setxattr(inode, name_index, "", value, size, ipage);
+ 
+ 	kfree(value);
+ 	if (!error)
+@@ -260,7 +261,7 @@ static int f2fs_set_acl(struct inode *inode, int type, struct posix_acl *acl)
+ 	return error;
+ }
+ 
+-int f2fs_init_acl(struct inode *inode, struct inode *dir)
++int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage)
+ {
  	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
-+	struct posix_acl *acl = NULL;
- 	int error = 0;
+ 	struct posix_acl *acl = NULL;
+@@ -280,7 +281,7 @@ int f2fs_init_acl(struct inode *inode, struct inode *dir)
+ 		goto cleanup;
  
- 	if (!S_ISLNK(inode->i_mode)) {
-@@ -276,19 +276,19 @@ int f2fs_init_acl(struct inode *inode, struct inode *dir)
- 			inode->i_mode &= ~current_umask();
+ 	if (S_ISDIR(inode->i_mode)) {
+-		error = f2fs_set_acl(inode, ACL_TYPE_DEFAULT, acl);
++		error = f2fs_set_acl(inode, ACL_TYPE_DEFAULT, acl, ipage);
+ 		if (error)
+ 			goto cleanup;
  	}
- 
--	if (test_opt(sbi, POSIX_ACL) && acl) {
-+	if (!test_opt(sbi, POSIX_ACL) || !acl)
-+		goto cleanup;
- 
--		if (S_ISDIR(inode->i_mode)) {
--			error = f2fs_set_acl(inode, ACL_TYPE_DEFAULT, acl);
--			if (error)
--				goto cleanup;
--		}
--		error = posix_acl_create(&acl, GFP_KERNEL, &inode->i_mode);
--		if (error < 0)
--			return error;
--		if (error > 0)
--			error = f2fs_set_acl(inode, ACL_TYPE_ACCESS, acl);
-+	if (S_ISDIR(inode->i_mode)) {
-+		error = f2fs_set_acl(inode, ACL_TYPE_DEFAULT, acl);
-+		if (error)
-+			goto cleanup;
- 	}
-+	error = posix_acl_create(&acl, GFP_KERNEL, &inode->i_mode);
-+	if (error < 0)
-+		return error;
-+	if (error > 0)
-+		error = f2fs_set_acl(inode, ACL_TYPE_ACCESS, acl);
+@@ -288,7 +289,7 @@ int f2fs_init_acl(struct inode *inode, struct inode *dir)
+ 	if (error < 0)
+ 		return error;
+ 	if (error > 0)
+-		error = f2fs_set_acl(inode, ACL_TYPE_ACCESS, acl);
++		error = f2fs_set_acl(inode, ACL_TYPE_ACCESS, acl, ipage);
  cleanup:
  	posix_acl_release(acl);
  	return error;
-@@ -313,6 +313,7 @@ int f2fs_acl_chmod(struct inode *inode)
- 	error = posix_acl_chmod(&acl, GFP_KERNEL, mode);
+@@ -314,7 +315,7 @@ int f2fs_acl_chmod(struct inode *inode)
  	if (error)
  		return error;
-+
- 	error = f2fs_set_acl(inode, ACL_TYPE_ACCESS, acl);
+ 
+-	error = f2fs_set_acl(inode, ACL_TYPE_ACCESS, acl);
++	error = f2fs_set_acl(inode, ACL_TYPE_ACCESS, acl, NULL);
  	posix_acl_release(acl);
  	return error;
+ }
+@@ -389,7 +390,7 @@ static int f2fs_xattr_set_acl(struct dentry *dentry, const char *name,
+ 		acl = NULL;
+ 	}
+ 
+-	error = f2fs_set_acl(inode, type, acl);
++	error = f2fs_set_acl(inode, type, acl, NULL);
+ 
+ release_and_out:
+ 	posix_acl_release(acl);
 diff --git a/fs/f2fs/acl.h b/fs/f2fs/acl.h
-index 80f4306..3839048 100644
+index 3839048..4963313 100644
 --- a/fs/f2fs/acl.h
 +++ b/fs/f2fs/acl.h
-@@ -36,9 +36,9 @@ struct f2fs_acl_header {
+@@ -38,7 +38,7 @@ struct f2fs_acl_header {
  
- #ifdef CONFIG_F2FS_FS_POSIX_ACL
- 
--extern struct posix_acl *f2fs_get_acl(struct inode *inode, int type);
--extern int f2fs_acl_chmod(struct inode *inode);
--extern int f2fs_init_acl(struct inode *inode, struct inode *dir);
-+extern struct posix_acl *f2fs_get_acl(struct inode *, int);
-+extern int f2fs_acl_chmod(struct inode *);
-+extern int f2fs_init_acl(struct inode *, struct inode *);
+ extern struct posix_acl *f2fs_get_acl(struct inode *, int);
+ extern int f2fs_acl_chmod(struct inode *);
+-extern int f2fs_init_acl(struct inode *, struct inode *);
++extern int f2fs_init_acl(struct inode *, struct inode *, struct page *);
  #else
  #define f2fs_check_acl	NULL
  #define f2fs_get_acl	NULL
+@@ -49,7 +49,8 @@ static inline int f2fs_acl_chmod(struct inode *inode)
+ 	return 0;
+ }
+ 
+-static inline int f2fs_init_acl(struct inode *inode, struct inode *dir)
++static inline int f2fs_init_acl(struct inode *inode, struct inode *dir,
++							struct page *page)
+ {
+ 	return 0;
+ }
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 384c6da..c9d53fc 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -346,7 +346,7 @@ static struct page *init_inode_metadata(struct inode *inode,
+ 				goto error;
+ 		}
+ 
+-		err = f2fs_init_acl(inode, dir);
++		err = f2fs_init_acl(inode, dir, page);
+ 		if (err)
+ 			goto error;
+ 
 -- 
 1.8.4.474.g128a96c
 
-
-------------------------------------------------------------------------------
-October Webinars: Code for Performance
-Free Intel webinars can help you accelerate application performance.
-Explore tips for MPI, OpenMP, advanced profiling, and more. Get the most from 
-the latest Intel processors and coprocessors. See abstracts and register >
-http://pubads.g.doubleclick.net/gampad/clk?id=60135991&iu=/4140/ostg.clktrk
