@@ -1,55 +1,133 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: [f2fs-dev] [PATCH] f2fs: change the method of calculating the number
- summary blocks
-Date: Mon, 28 Oct 2013 08:54:28 +0000 (GMT)
-Message-ID: <21040538.71861382950468176.JavaMail.weblogic@epv6ml09>
-Reply-To: fanofcode.li@samsung.com
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs:fix truncate_partial_nodes bug
+Date: Mon, 28 Oct 2013 19:21:44 +0900
+Message-ID: <1382955704.992.91.camel@kjgkr>
+References: <27929860.72301382948116848.JavaMail.weblogic@epml07>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <27929860.72301382948116848.JavaMail.weblogic@epml07>
+Sender: linux-kernel-owner@vger.kernel.org
+To: shifei10.ge@samsung.com
+Cc: ?? <shu.tan@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-IlRoZXJlIGlzIGEgSFRNTCBlcnJvciBpbiB0aGUgcHJldmlvdXMgZW1haWwsIHNvIEkgc2VuZCB0
-aGlzIG9uZS5JZiB5b3UgYWxyZWFkeSByZWNlaXZlZCB0aGlzIGJlZm9yZSwgcGxlYXNlIGlnbm9y
-ZSBpdC5Tb3JyeSBmb3IgdGhlIGluY29udmVuaWVuY2UiDQoNClRoaXMgcGF0Y2ggY2hhbmdlIHRo
-ZSBtZXRob2Qgb2YgY2FsY3VsYXRpbmcgdGhlIG51bWJlciBvZiBzdW1tYXJ5IGJsb2NrcyBpbiBm
-dW5jdGlvbiAgbnBhZ2VzX2Zvcl9zdW1tYXJ5X2ZsdXNoLg0KbnBhZ2VzX2Zvcl9zdW1tYXJ5X2Zs
-dXNoIHVzZXMgKFNVTU1BUllfU0laRSArIDEpIGFzIHRoZSBzaXplIG9mIGEgZjJmc19zdW1tYXJ5
-IHdoaWxlIHRoZSBhY3R1YWwgc2l6ZSBpcyBqdXN0IFNVTU1BUllfU0laRS4NCkFzIGEgcmVzdWx0
-LCBvY2Nhc2lvbmFsbHkgdGhlIHJldHVybiB2YWx1ZSBvZiBucGFnZXNfZm9yX3N1bW1hcnlfZmx1
-c2ggd2lsbCBiZSBiaWdnZXIgdGhhbiB0aGUgYWN0dWFsIG51bWJlciBieSBvbmUsIGFuZCB0aGUg
-Y2hlY2twb2ludCB3b24ndCBiZSB3cml0dGVuIGNvbnRpZ3VvdXNseSAgaW50byBkaXNrLg0KQmVz
-aWRlcywgc3RydWN0IGYyZnNfc3VtbWFyeSBjYW4ndCBiZSBzcGxpdCB0byB0d28gcGFnZXMsIHNv
-IGl0IGNvdWxkIHRha2UgbW9yZSBzcGFjZSB0aGFuIHRoZSBzdW0gb2YgaXRzIHNpemUsIHRoZSBj
-dXJyZW50IHZlcnNpb24gc2VlbXMgbm90IHRvIHRha2UgaXQgaW50byBhY2NvdW50Lg0KDQpTaWdu
-ZWQtb2ZmLWJ5OiBGYW4gTGkgPGZhbm9mY29kZS5saUBzYW1zdW5nLmNvbT4NCi0tLQ0KIGZzL2Yy
-ZnMvc2VnbWVudC5jIHwgICAxNCArKysrKystLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCA2IGlu
-c2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9mcy9mMmZzL3NlZ21l
-bnQuYyBiL2ZzL2YyZnMvc2VnbWVudC5jIGluZGV4IDQ4N2FmNjEuLmJhMjkzMGYgMTAwNjQ0DQot
-LS0gYS9mcy9mMmZzL3NlZ21lbnQuYw0KKysrIGIvZnMvZjJmcy9zZWdtZW50LmMNCkBAIC0yNzks
-OSArMjc5LDggQEAgc3RhdGljIHZvaWQgX19hZGRfc3VtX2VudHJ5KHN0cnVjdCBmMmZzX3NiX2lu
-Zm8gKnNiaSwgaW50IHR5cGUsDQogICovDQogaW50IG5wYWdlc19mb3Jfc3VtbWFyeV9mbHVzaChz
-dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpICB7DQotCWludCB0b3RhbF9zaXplX2J5dGVzID0gMDsN
-CiAJaW50IHZhbGlkX3N1bV9jb3VudCA9IDA7DQotCWludCBpLCBzdW1fc3BhY2U7DQorCWludCBp
-LCBzdW1faW5fcGFnZTsNCiANCiAJZm9yIChpID0gQ1VSU0VHX0hPVF9EQVRBOyBpIDw9IENVUlNF
-R19DT0xEX0RBVEE7IGkrKykgew0KIAkJaWYgKHNiaS0+Y2twdC0+YWxsb2NfdHlwZVtpXSA9PSBT
-U1IpDQpAQCAtMjkwLDEzICsyODksMTIgQEAgaW50IG5wYWdlc19mb3Jfc3VtbWFyeV9mbHVzaChz
-dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpDQogCQkJdmFsaWRfc3VtX2NvdW50ICs9IGN1cnNlZ19i
-bGtvZmYoc2JpLCBpKTsNCiAJfQ0KIA0KLQl0b3RhbF9zaXplX2J5dGVzID0gdmFsaWRfc3VtX2Nv
-dW50ICogKFNVTU1BUllfU0laRSArIDEpDQotCQkJKyBzaXplb2Yoc3RydWN0IG5hdF9qb3VybmFs
-KSArIDINCi0JCQkrIHNpemVvZihzdHJ1Y3Qgc2l0X2pvdXJuYWwpICsgMjsNCi0Jc3VtX3NwYWNl
-ID0gUEFHRV9DQUNIRV9TSVpFIC0gU1VNX0ZPT1RFUl9TSVpFOw0KLQlpZiAodG90YWxfc2l6ZV9i
-eXRlcyA8IHN1bV9zcGFjZSkNCisJc3VtX2luX3BhZ2UgPSAoUEFHRV9DQUNIRV9TSVpFIC0gMipT
-VU1fSk9VUk5BTF9TSVpFIC0gU1VNX0ZPT1RFUl9TSVpFKS8NCisJCQlTVU1NQVJZX1NJWkU7DQor
-CWlmICh2YWxpZF9zdW1fY291bnQgPD0gc3VtX2luX3BhZ2UpDQogCQlyZXR1cm4gMTsNCi0JZWxz
-ZSBpZiAodG90YWxfc2l6ZV9ieXRlcyA8IDIgKiBzdW1fc3BhY2UpDQorCWVsc2UgaWYgKHZhbGlk
-X3N1bV9jb3VudC1zdW1faW5fcGFnZSA8PQ0KKwkJCShQQUdFX0NBQ0hFX1NJWkUtU1VNX0ZPT1RF
-Ul9TSVpFKS9TVU1NQVJZX1NJWkUpDQogCQlyZXR1cm4gMjsNCiAJcmV0dXJuIDM7DQogfQ0KLS0N
-CjEuNy45LjUNCg==
+Hi,
+
+2013-10-28 (=EC=9B=94), 08:15 +0000, Shifei Ge:
+> truncate_partial_nodes puts pages incorrectly in two cases.note that =
+the value for argc 'depth' can only be 2 or 3(see truncate_inode_blocks=
+ --->truncate_partial_nodes ).
+> first case:err happened in the first 'for' loop
+> 	assume depth is 2,when err happened,pages[0] is invalid,so this page=
+ don't need to be put when func return,there is no problem.
+> 	but when depth is 3 ,pages isn't put correctly when pages[0] is vali=
+d and pages[1] is invalid.in this case,depth is set to 2(ref to statemn=
+t depth =3D i + 1) ,and then 'goto fail'.
+> 	in label 'fail', for (i =3D depth - 3; i >=3D 0; i--) cann't meet th=
+e condition because i=3D-1,so pages[0] cann't be put when func return.
+> second case:err happened in the second 'for' loop
+> 	now,we've got pages[0] with argc 'depth' is 2 ,or we've got pages[0]=
+ and pages[1] with depth is 3.when err happend,we need 'goto fail' to p=
+ut pages we've got.
+> 	when depth is 2,in label 'fail',for (i =3D depth - 3; i >=3D 0; i--)=
+ cann't meet the condition because i=3D-1,so pages[0] cann't be put.
+> 	when depth is 3,in label 'fail',for (i =3D depth - 3; i >=3D 0; i--)=
+ can only put pages[0],pages[1] also cann't be put.
+> notes 'depth' has been changed before first 'goto fail'(ref to statem=
+nt depth =3D i + 1),so pass this modified 'depth' to trace_f2fs_truncat=
+e_partial_nodes is also incorrectly.
+
+Please write a description not to exceed 80 columns.
+It's very hard to understand.
+
+>=20
+> From 9de8efa31759ce86a032f5ad092d337b686ede06 Mon Sep 17 00:00:00 200=
+1
+> Signed-off-by: Shifei Ge <shifei10.ge@samsung.com>
+> ---
+>  fs/f2fs/node.c |    6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 304d5ce..9986930 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -625,6 +625,7 @@ static int truncate_partial_nodes(struct dnode_of=
+_data *dn,
+>  	int err =3D 0;
+>  	int i;
+>  	int idx =3D depth - 2;
+> +	int dep =3D depth;
+
+I think we need to avoid using a local variable only for the use of
+tracepoints below.
+How about this?
+
+---
+ fs/f2fs/node.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 304d5ce..8578719 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -631,11 +631,10 @@ static int truncate_partial_nodes(struct
+dnode_of_data *dn,
+ 		return 0;
+=20
+ 	/* get indirect nodes in the path */
+-	for (i =3D 0; i < depth - 1; i++) {
++	for (i =3D 0; i < idx + 1; i++) {
+ 		/* refernece count'll be increased */
+ 		pages[i] =3D get_node_page(sbi, nid[i]);
+ 		if (IS_ERR(pages[i])) {
+-			depth =3D i + 1;
+ 			err =3D PTR_ERR(pages[i]);
+ 			goto fail;
+ 		}
+@@ -643,7 +642,7 @@ static int truncate_partial_nodes(struct
+dnode_of_data *dn,
+ 	}
+=20
+ 	/* free direct nodes linked to a partial indirect node */
+-	for (i =3D offset[depth - 1]; i < NIDS_PER_BLOCK; i++) {
++	for (i =3D offset[idx + 1]; i < NIDS_PER_BLOCK; i++) {
+ 		child_nid =3D get_nid(pages[idx], i, false);
+ 		if (!child_nid)
+ 			continue;
+@@ -654,7 +653,7 @@ static int truncate_partial_nodes(struct
+dnode_of_data *dn,
+ 		set_nid(pages[idx], i, 0, false);
+ 	}
+=20
+-	if (offset[depth - 1] =3D=3D 0) {
++	if (offset[idx + 1] =3D=3D 0) {
+ 		dn->node_page =3D pages[idx];
+ 		dn->nid =3D nid[idx];
+ 		truncate_node(dn);
+@@ -662,9 +661,10 @@ static int truncate_partial_nodes(struct
+dnode_of_data *dn,
+ 		f2fs_put_page(pages[idx], 1);
+ 	}
+ 	offset[idx]++;
+-	offset[depth - 1] =3D 0;
++	offset[idx + 1] =3D 0;
++	idx--;
+ fail:
+-	for (i =3D depth - 3; i >=3D 0; i--)
++	for (i =3D idx; i >=3D 0; i--)
+ 		f2fs_put_page(pages[i], 1);
+=20
+ 	trace_f2fs_truncate_partial_nodes(dn->inode, nid, depth, err);
+--=20
+1.8.4.474.g128a96c
 
 
+
+
+--=20
+Jaegeuk Kim
+Samsung
