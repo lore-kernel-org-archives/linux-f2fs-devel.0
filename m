@@ -1,126 +1,97 @@
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Subject: f2fs: deadlock in mkdir if ACL is enabled
-Date: Sun, 27 Oct 2013 07:23:38 +0400
-Message-ID: <526C873A.1040705@ispras.ru>
+From: =?utf-8?B?7J207LC966eM?= <cm224.lee@samsung.com>
+Subject: Re: [PATCH V2] f2fs: check all ones or zeros bitmap with
+ bitops for better mount performance
+Date: Mon, 28 Oct 2013 11:19:56 +0900
+Message-ID: <003501ced384$31fb7530$95f25f90$@samsung.com>
+References: <000401ced092$28087a90$78196fb0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cm224.lee@samsung.com>) id 1VacR4-0003kf-1S
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Oct 2013 02:20:06 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VacR1-0001yi-Kr for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Oct 2013 02:20:06 +0000
+Received: from epcpsbgr4.samsung.com
+	(u144.gpu120.samsung.co.kr [203.254.230.144])
+	by mailout2.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MVC00JZGX52VPE0@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Oct 2013 11:19:57 +0900 (KST)
+In-reply-to: <000401ced092$28087a90$78196fb0$@samsung.com>
+Content-language: ko
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Chao Yu' <chao2.yu@samsung.com>, jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, =?utf-8?B?J+iwreWnnSc=?= <shu.tan@samsung.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Dear Jaegeuk,
-
-Testing F2FS in the following configuration:
-CONFIG_F2FS_FS=m
-CONFIG_F2FS_STAT_FS=y
-CONFIG_F2FS_FS_XATTR=y
-CONFIG_F2FS_FS_POSIX_ACL=y
-CONFIG_F2FS_FS_SECURITY=y
-
-I have got a deadlock:
-
-[16921.437845] INFO: task fs-driver-tests:12695 blocked for more than 
-120 seconds.
-[16921.437899]       Tainted: G        W    3.12-rc6-284-generic #1
-[16921.437941] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
-disables this message.
-[16921.437980] fs-driver-tests D ffff88007dd3fb78     0 12695  12361 
-0x00000000
-[16921.438017]  ffff88007dd3fae8 0000000000000092 ffff880036c4bfa0 
-ffff88007dd3ffd8
-[16921.438049]  ffff88007dd3ffd8 ffff88007dd3ffd8 ffffffff81c104e0 
-ffff880036c4bfa0
-[16921.438078]  ffff880036c4bfa0 ffff880082a14858 0000000000000002 
-ffffffff8113f600
-[16921.438106] Call Trace:
-[16921.438156]  [<ffffffff8113f600>] ? __lock_page+0x70/0x70
-[16921.438196]  [<ffffffff8165e599>] schedule+0x29/0x70
-[16921.438229]  [<ffffffff8165e66f>] io_schedule+0x8f/0xd0
-[16921.438257]  [<ffffffff8113f60e>] sleep_on_page+0xe/0x20
-[16921.438281]  [<ffffffff8165a53d>] __wait_on_bit_lock+0x5d/0xc0
-[16921.438302]  [<ffffffff8113f5f7>] __lock_page+0x67/0x70
-[16921.438323]  [<ffffffff81077760>] ? wake_atomic_t_function+0x40/0x40
-[16921.438340]  [<ffffffff811402b1>] find_lock_page+0x61/0x90
-[16921.438355]  [<ffffffff8114040f>] find_or_create_page+0x3f/0xb0
-[16921.438375]  [<ffffffffa02b6979>] get_node_page+0x39/0x180 [f2fs]
-[16921.438398]  [<ffffffffa02aa723>] update_inode_page+0x23/0x70 [f2fs]
-[16921.438412]  [<ffffffffa02b6da8>] sync_inode_page+0xd8/0xe0 [f2fs]
-[16921.438425]  [<ffffffffa02b7068>] new_node_page+0x2b8/0x2e0 [f2fs]
-[16921.438438]  [<ffffffffa02c0c2c>] f2fs_setxattr+0x44c/0x650 [f2fs]
-[16921.438451]  [<ffffffffa02c1205>] f2fs_set_acl+0x235/0x350 [f2fs]
-[16921.438462]  [<ffffffffa02c179a>] ? f2fs_get_acl+0x8a/0xc0 [f2fs]
-[16921.438473]  [<ffffffffa02c19d0>] f2fs_init_acl+0x140/0x170 [f2fs]
-[16921.438483]  [<ffffffffa02a7a46>] __f2fs_add_link+0x276/0x720 [f2fs]
-[16921.438494]  [<ffffffffa02ab866>] f2fs_mkdir+0x116/0x1b0 [f2fs]
-[16921.438503]  [<ffffffff811ab744>] ? __inode_permission+0x64/0xe0
-[16921.438512]  [<ffffffff811aecf6>] vfs_mkdir+0xa6/0x130
-[16921.438521]  [<ffffffff811b0d2a>] SyS_mkdirat+0xaa/0xf0
-[16921.438530]  [<ffffffff811b0d89>] SyS_mkdir+0x19/0x20
-[16921.438540]  [<ffffffff81668e92>] system_call_fastpath+0x16/0x1b
-[16921.438545] 4 locks held by fs-driver-tests/12695:
-[16921.438550]  #0:  (sb_writers#11){.+.+.+}, at: [<ffffffff811c0504>] 
-mnt_want_write+0x24/0x50
-[16921.438559]  #1:  (&type->i_mutex_dir_key#3/1){+.+.+.}, at: 
-[<ffffffff811acec7>] kern_path_create+0x87/0x170
-[16921.438567]  #2:  (&sbi->fs_lock[i]){+.+.+.}, at: 
-[<ffffffffa02ab81c>] f2fs_mkdir+0xcc/0x1b0 [f2fs]
-[16921.438576]  #3:  (&sbi->fs_lock[i]){+.+.+.}, at: 
-[<ffffffffa02c08a4>] f2fs_setxattr+0xc4/0x650 [f2fs]
-
-Analysis shown the following problem:
-
-sys_mkdir() calls
-   -> f2fs_add_link()
-     -> __f2fs_add_link()
-       -> init_inode_metadata():
-static struct page *init_inode_metadata(struct inode *inode,
-         struct inode *dir, const struct qstr *name)
-{
-     struct page *page;
-     int err;
-
-     if (is_inode_flag_set(F2FS_I(inode), FI_NEW_INODE)) {
-         page = new_inode_page(inode, name); <--- NEW PAGE CAME LOCKED HERE
-         if (IS_ERR(page))
-             return page;
-
-         if (S_ISDIR(inode->i_mode)) {
-             err = make_empty_dir(inode, dir, page);
-             if (err)
-                 goto error;
-         }
-
-         err = f2fs_init_acl(inode, dir);
-         ...........
-         return page;
-         PAGE IS RETURNED FROM init_inode_metadata() LOCKED
-
-But
-f2fs_init_acl() calls
-   -> f2fs_set_acl(inode, ACL_TYPE_DEFAULT, acl);
-     -> f2fs_setxattr(inode, ...)
--> write_all_xattrs(inode, ...)
-         -> new_node_page(&dn, ...), where dn->inode = inode
-           -> sync_inode_page(dn)
-             -> update_inode_page(dn->inode):
-               -> get_node_page(sbi, inode->i_ino):
-struct page *get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid)
-{
-     struct address_space *mapping = sbi->node_inode->i_mapping;
-     struct page *page;
-     int err;
-repeat:
-     page = grab_cache_page(mapping, nid); <-- DEADLOCK: PAGE IS ALREADY 
-LOCKED
-
-
-Found by Linux File System Verification project (linuxtesting.org).
-
---
-Best regards,
-Alexey Khoroshilov
-Linux Verification Center, ISPRAS
-web: http://linuxtesting.org
+VG8gY2hlY2sgd2hldGhlciBiaXRtYXAgYXJlIGFsbCB6ZXJvcyBvciBhbGwgb25lcywgSSB0aGlu
+ayBtZW1jbXAgaXMgbW9yZSBuZWF0LgpCdXQgSSBkb24ndCBrbm93IGV4YWN0bHkgcGVyZm9ybWFu
+Y2UgZ2FwIGJldHdlZW4gbWVtY21wIGFuZCBmaW5kX25leHRfYml0LgoKCi0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tCkZyb206IENoYW8gWXUgW21haWx0bzpjaGFvMi55dUBzYW1zdW5nLmNvbV0g
+ClNlbnQ6IFRodXJzZGF5LCBPY3RvYmVyIDI0LCAyMDEzIDU6MjEgUE0KVG86IGphZWdldWsua2lt
+QHNhbXN1bmcuY29tCkNjOiBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsgJ+iwreWnnSc7
+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
+cmNlZm9yZ2UubmV0ClN1YmplY3Q6IFtmMmZzLWRldl0gW1BBVENIIFYyXSBmMmZzOiBjaGVjayBh
+bGwgb25lcyBvciB6ZXJvcyBiaXRtYXAgd2l0aCBiaXRvcHMgZm9yIGJldHRlciBtb3VudCBwZXJm
+b3JtYW5jZQoKUHJldmlvdXNseSwgY2hlY2tfYmxvY2tfY291bnQgY2hlY2sgdmFsaWRfbWFwIHdp
+dGggYml0IGRhdGEgdHlwZSBpbiBjb21tb24gc2NlbmFyaW8gdGhhdCBzaXQgaGFzIGFsbCBvbmVz
+IG9yIHplcm9zIGJpdG1hcCwgaXQgbWFrZXMgbG93IG1vdW50IHBlcmZvcm1hbmNlLgpTbyBsZXQn
+cyBjaGVjayB0aGUgc3BlY2lhbCBiaXRtYXAgd2l0aCBpbnRlZ2VyIGRhdGEgdHlwZSBpbnN0ZWFk
+IG9mIHRoZSBiaXQgb25lLgoKdjI6CiAgICB1c2UgZmluZF9uZXh0X2JpdF9sZS9maW5kX25leHRf
+emVyb19iaXRfbGUgZm9yIGJldHRlciBwZXJmb3JtYW5jZSBhbmQgcmVhZGFibGUgYXMgSmFlZ2V1
+ayBzdWdnZXN0ZWQuCgpTdWdnZXN0ZWQtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1z
+dW5nLmNvbT4KU2lnbmVkLW9mZi1ieTogVGFuIFNodSA8c2h1LnRhbkBzYW1zdW5nLmNvbT4KU2ln
+bmVkLW9mZi1ieTogWXUgQ2hhbyA8Y2hhbzIueXVAc2Ftc3VuZy5jb20+Ci0tLQogZnMvZjJmcy9z
+ZWdtZW50LmggfCAgIDE3ICsrKysrKysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTcgaW5z
+ZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5oIGIvZnMvZjJmcy9zZWdt
+ZW50LmggaW5kZXggN2Y5NGQ3OC4uZDI1YjZhZiAxMDA2NDQKLS0tIGEvZnMvZjJmcy9zZWdtZW50
+LmgKKysrIGIvZnMvZjJmcy9zZWdtZW50LmgKQEAgLTU1Miw2ICs1NTIsMjMgQEAgc3RhdGljIGlu
+bGluZSB2b2lkIGNoZWNrX2Jsb2NrX2NvdW50KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKIAkv
+KiBjaGVjayBib3VuZGFyeSBvZiBhIGdpdmVuIHNlZ21lbnQgbnVtYmVyICovCiAJQlVHX09OKHNl
+Z25vID4gZW5kX3NlZ25vKTsKIAorCS8qIGNoZWNrIGFsbCBvbmVzIG9yIHplcm9zIHZhbGlkX21h
+cCAqLworCWlmIChHRVRfU0lUX1ZCTE9DS1MocmF3X3NpdCkgPT0gMCkgeworCQlpbnQgcG9zID0g
+ZmluZF9uZXh0X2JpdF9sZSgmcmF3X3NpdC0+dmFsaWRfbWFwLAorCQkJCQlzYmktPmJsb2Nrc19w
+ZXJfc2VnLAorCQkJCQkwKTsKKwkJaWYgKHBvcyAhPSBzYmktPmJsb2Nrc19wZXJfc2VnKQorCQkJ
+QlVHKCk7CisJCXJldHVybjsKKwl9IGVsc2UgaWYgKEdFVF9TSVRfVkJMT0NLUyhyYXdfc2l0KSA9
+PSBzYmktPmJsb2Nrc19wZXJfc2VnKSB7CisJCWludCBwb3MgPSBmaW5kX25leHRfemVyb19iaXRf
+bGUoJnJhd19zaXQtPnZhbGlkX21hcCwKKwkJCQkJc2JpLT5ibG9ja3NfcGVyX3NlZywKKwkJCQkJ
+MCk7CisJCWlmIChwb3MgIT0gc2JpLT5ibG9ja3NfcGVyX3NlZykKKwkJCUJVRygpOworCQlyZXR1
+cm47CisJfQorCiAJLyogY2hlY2sgYml0bWFwIHdpdGggdmFsaWQgYmxvY2sgY291bnQgKi8KIAlm
+b3IgKGkgPSAwOyBpIDwgc2JpLT5ibG9ja3NfcGVyX3NlZzsgaSsrKQogCQlpZiAoZjJmc190ZXN0
+X2JpdChpLCByYXdfc2l0LT52YWxpZF9tYXApKQotLQoxLjcuOS41CgoKLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tCk9jdG9iZXIgV2ViaW5hcnM6IENvZGUgZm9yIFBlcmZvcm1hbmNlCkZyZWUgSW50ZWwg
+d2ViaW5hcnMgY2FuIGhlbHAgeW91IGFjY2VsZXJhdGUgYXBwbGljYXRpb24gcGVyZm9ybWFuY2Uu
+CkV4cGxvcmUgdGlwcyBmb3IgTVBJLCBPcGVuTVAsIGFkdmFuY2VkIHByb2ZpbGluZywgYW5kIG1v
+cmUuIEdldCB0aGUgbW9zdCBmcm9tIAp0aGUgbGF0ZXN0IEludGVsIHByb2Nlc3NvcnMgYW5kIGNv
+cHJvY2Vzc29ycy4gU2VlIGFic3RyYWN0cyBhbmQgcmVnaXN0ZXIgPgpodHRwOi8vcHViYWRzLmcu
+ZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9NjAxMzU5OTEmaXU9LzQxNDAvb3N0Zy5jbGt0
+cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgt
+ZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
+ZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
+ZjJmcy1kZXZlbAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpPY3RvYmVyIFdlYmluYXJzOiBDb2Rl
+IGZvciBQZXJmb3JtYW5jZQpGcmVlIEludGVsIHdlYmluYXJzIGNhbiBoZWxwIHlvdSBhY2NlbGVy
+YXRlIGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNlLgpFeHBsb3JlIHRpcHMgZm9yIE1QSSwgT3Blbk1Q
+LCBhZHZhbmNlZCBwcm9maWxpbmcsIGFuZCBtb3JlLiBHZXQgdGhlIG1vc3QgZnJvbSAKdGhlIGxh
+dGVzdCBJbnRlbCBwcm9jZXNzb3JzIGFuZCBjb3Byb2Nlc3NvcnMuIFNlZSBhYnN0cmFjdHMgYW5k
+IHJlZ2lzdGVyID4KaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lk
+PTYwMTM1OTkxJml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4
+LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9y
+Z2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
