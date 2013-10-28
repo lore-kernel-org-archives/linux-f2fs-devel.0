@@ -1,58 +1,87 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [f2fs-dev 5/5] f2fs: Handle inline data operations
-Date: Mon, 28 Oct 2013 21:44:55 +0900
-Message-ID: <1382964295.992.122.camel@kjgkr>
+From: Huajun Li <huajun.li.lee@gmail.com>
+Subject: Re: [f2fs-dev 3/5] f2fs: Add a new function: f2fs_reserve_block()
+Date: Tue, 29 Oct 2013 00:53:53 +0800
+Message-ID: <CA+v9cxYx35Q=PS4wB52JSWj75T9xg_VYp9PySujZNhPWxj9jAA@mail.gmail.com>
 References: <1382716919-23345-1-git-send-email-huajun.li.lee@gmail.com>
- <1382716919-23345-6-git-send-email-huajun.li.lee@gmail.com>
-Reply-To: jaegeuk.kim@samsung.com
+	<1382716919-23345-4-git-send-email-huajun.li.lee@gmail.com>
+	<1382962607.992.104.camel@kjgkr>
+	<1382963296.992.108.camel@kjgkr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1382716919-23345-6-git-send-email-huajun.li.lee@gmail.com>
+In-Reply-To: <1382963296.992.108.camel@kjgkr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Huajun Li <huajun.li.lee@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Huajun Li <huajun.li@intel.com>, Haicheng Li <haicheng.li@linux.intel.com>, Weihong Xu <weihong.xu@intel.com>
+To: "jaegeuk.kim" <jaegeuk.kim@samsung.com>
+Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Huajun Li <huajun.li@intel.com>, Haicheng Li <haicheng.li@linux.intel.com>, Weihong Xu <weihong.xu@intel.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+Hi Jaegeuk,
 
-2013-10-26 (=ED=86=A0), 00:01 +0800, Huajun Li:
-> From: Huajun Li <huajun.li@intel.com>
->=20
+Thanks for your kindly review and comments.
 
-[snip]
+On Mon, Oct 28, 2013 at 8:28 PM, Jaegeuk Kim <jaegeuk.kim@samsung.com> =
+wrote:
+> 2013-10-28 (=EC=9B=94), 21:16 +0900, Jaegeuk Kim:
+> Hi,
+>
+>>
+>> 2013-10-26 (=ED=86=A0), 00:01 +0800, Huajun Li:
+>> > From: Huajun Li <huajun.li@intel.com>
+>> >
+>> > Add the function f2fs_reserve_block() to easily reserve new blocks=
+=2E
+>> >
+>> > Signed-off-by: Huajun Li <huajun.li@intel.com>
+>> > Signed-off-by: Haicheng Li <haicheng.li@linux.intel.com>
+>> > Signed-off-by: Weihong Xu <weihong.xu@intel.com>
+>> > ---
+>> >  fs/f2fs/data.c |   29 ++++++++++++++++++-----------
+>> >  fs/f2fs/f2fs.h |    1 +
+>> >  2 files changed, 19 insertions(+), 11 deletions(-)
+>> >
+>> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> > index c8887d8..7b31911 100644
+>> > --- a/fs/f2fs/data.c
+>> > +++ b/fs/f2fs/data.c
+>> > @@ -64,6 +64,23 @@ int reserve_new_block(struct dnode_of_data *dn)
+>> >     return 0;
+>> >  }
+>> >
+>> > +int f2fs_reserve_block(struct inode *inode,
+>> > +                  struct dnode_of_data *dn, pgoff_t index)
+>>
+>
+> We don't need to get dnode_of_data from parameters, since it is
+> used by this function only.
 
-> =20
-> @@ -538,7 +553,7 @@ static int f2fs_write_data_page(struct page *page=
-,
->  	loff_t i_size =3D i_size_read(inode);
->  	const pgoff_t end_index =3D ((unsigned long long) i_size)
->  							>> PAGE_CACHE_SHIFT;
-> -	unsigned offset;
-> +	unsigned offset =3D 0;
->  	bool need_balance_fs =3D false;
->  	int err =3D 0;
-> =20
-> @@ -572,7 +587,14 @@ write:
->  		err =3D do_write_data_page(page);
->  	} else {
->  		f2fs_lock_op(sbi);
-> -		err =3D do_write_data_page(page);
-> +		if (test_opt(sbi, INLINE_DATA) && (i_size <=3D MAX_INLINE_DATA)) {
-> +			err =3D f2fs_write_inline_data(inode, page, offset);
-> +			ClearPageDirty(page);
+After calling f2fs_reserve_block(), we need dn.data_blkaddr to check
+whether it is NEW_ADDR. So IMO, it's nice to keep this parameter.
 
-Don't need to call ClearPageDirty(page).
-
-> +			f2fs_unlock_op(sbi);
-> +			goto out;
-> +		} else {
-> +			err =3D do_write_data_page(page);
-> +		}
->  		f2fs_unlock_op(sbi);
->  		need_balance_fs =3D true;
->  =09
---=20
-Jaegeuk Kim
-Samsung
+>
+>>
+>> > +{
+>> > +   int err;
+>
+> +        struct dnode_of_data dn;
+>
+>>
+>> > +
+>> > +   set_new_dnode(dn, inode, NULL, NULL, 0);
+>> > +   err =3D get_dnode_of_data(dn, index, ALLOC_NODE);
+>> > +   if (err)
+>> > +           return err;
+>> > +   if (dn->data_blkaddr =3D=3D NULL_ADDR)
+>> > +           err =3D reserve_new_block(dn);
+>> > +
+>> > +   f2fs_put_dnode(dn);
+>> > +
+>> > +   return err;
+>> > +}
+>> > +
+>>
+>
+> --
+> Jaegeuk Kim
+> Samsung
+>
