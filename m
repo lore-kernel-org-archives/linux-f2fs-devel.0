@@ -1,70 +1,102 @@
-From: "shifei10.ge" <shifei10.ge@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH] f2fs:fix truncate_partial_nodes bug
-Date: Tue, 29 Oct 2013 16:07:15 +0800
-Message-ID: <000b01ced47d$fe7034d0$fb509e70$%ge@samsung.com>
-References: <27929860.72301382948116848.JavaMail.weblogic@epml07>
- <1382955704.992.91.camel@kjgkr>
- <000101ced479$26555160$72fff420$%ge@samsung.com>
- <1383032597.14041.12.camel@kjgkr>
+From: Fan Li <fanofcode.li@samsung.com>
+Subject: [PATCH V2] f2fs: change the method of calculating the
+ number summary blocks
+Date: Tue, 29 Oct 2013 16:21:47 +0800
+Message-ID: <002701ced480$0ab1cd10$20156730$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1383032597.14041.12.camel@kjgkr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fanofcode.li@samsung.com>) id 1Vb4Zp-0002gV-Ps
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Oct 2013 08:23:01 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Vb4Zj-0007F3-6L for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Oct 2013 08:23:01 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout2.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0MVF003WM8LS3LD0@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Oct 2013 17:22:48 +0900 (KST)
 Content-language: en-us
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk.kim@samsung.com
-Cc: '??' <shu.tan@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+
+npages_for_summary_flush uses (SUMMARY_SIZE + 1) as the size of a
+f2fs_summary 
+while its actual size is  SUMMARY_SIZE. So the result sometimes is bigger
+than actual 
+number by one, which causes checkpoint can't be written into disk
+contiguously, 
+and sometimes summary blocks can't be compacted like they should.
+Besides, when writing summary blocks into pages, if remain space in a page
+isn't 
+big enough for one f2fs_summary, it will be left unused, current code seems
+not to 
+take it into account.
+
+Signed-off-by: Fan Li <fanofcode.li@samsung.com>
+---
+ fs/f2fs/segment.c |   14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c index 487af61..e40cdc4
+100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -279,9 +279,8 @@ static void __add_sum_entry(struct f2fs_sb_info *sbi,
+int type,
+  */
+ int npages_for_summary_flush(struct f2fs_sb_info *sbi)  {
+-	int total_size_bytes = 0;
+ 	int valid_sum_count = 0;
+-	int i, sum_space;
++	int i, sum_in_page;
+ 
+ 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
+ 		if (sbi->ckpt->alloc_type[i] == SSR)
+@@ -290,13 +289,12 @@ int npages_for_summary_flush(struct f2fs_sb_info *sbi)
+ 			valid_sum_count += curseg_blkoff(sbi, i);
+ 	}
+ 
+-	total_size_bytes = valid_sum_count * (SUMMARY_SIZE + 1)
+-			+ sizeof(struct nat_journal) + 2
+-			+ sizeof(struct sit_journal) + 2;
+-	sum_space = PAGE_CACHE_SIZE - SUM_FOOTER_SIZE;
+-	if (total_size_bytes < sum_space)
++	sum_in_page = (PAGE_CACHE_SIZE - 2 * SUM_JOURNAL_SIZE -
++			SUM_FOOTER_SIZE) / SUMMARY_SIZE;
++	if (valid_sum_count <= sum_in_page)
+ 		return 1;
+-	else if (total_size_bytes < 2 * sum_space)
++	else if ((valid_sum_count - sum_in_page) <=
++		(PAGE_CACHE_SIZE - SUM_FOOTER_SIZE) / SUMMARY_SIZE)
+ 		return 2;
+ 	return 3;
+ }
+--
+1.7.9.5
 
 
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> Sent: Tuesday, October 29, 2013 3:43 PM
-> To: shifei10.ge
-> Cc: '??'; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org=
-; linux-
-> f2fs-devel@lists.sourceforge.net
-> Subject: RE: [f2fs-dev] [PATCH] f2fs:fix truncate_partial_nodes bug
->=20
-> Hi,
->=20
-> 2013-10-29 (=ED=99=94), 15:32 +0800, shifei10.ge:
-> > Hi,I think we don't need to put the invalid page that get_node_page=
- returned.
-> > So I add " idx =3D i--" based on your version.Following is the patc=
-h:
-> >
-> > ---
-> >  fs/f2fs/node.c |   13 +++++++------
-> >  1 file changed, 7 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c index 304d5ce..fd5f721
-> > 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -631,19 +631,19 @@ static int truncate_partial_nodes(struct dnod=
-e_of_data
-> *dn,
-> >  		return 0;
-> >
-> >  	/* get indirect nodes in the path */
-> > -	for (i =3D 0; i < depth - 1; i++) {
-> > +	for (i =3D 0; i < idx + 1; i++) {
-> >  		/* refernece count'll be increased */
-> >  		pages[i] =3D get_node_page(sbi, nid[i]);
-> >  		if (IS_ERR(pages[i])) {
-> > -			depth =3D i + 1;
-> >  			err =3D PTR_ERR(pages[i]);
-> > +			idx =3D i--;
->=20
-> You meant (idx =3D i - 1)?
-> If so, idx =3D i--; is wrong.
-
-Yes=EF=BC=8Chere should be : idx =3D --i;
-
->=20
-> --
-> Jaegeuk Kim
-> Samsung
+------------------------------------------------------------------------------
+Android is increasing in popularity, but the open development platform that
+developers love is also attractive to malware creators. Download this white
+paper to learn more about secure code signing practices that can help keep
+Android apps secure.
+http://pubads.g.doubleclick.net/gampad/clk?id=65839951&iu=/4140/ostg.clktrk
