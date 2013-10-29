@@ -1,199 +1,102 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros bitmap
- with bitops for better mount performance
-Date: Tue, 29 Oct 2013 16:36:24 +0900
-Message-ID: <002a01ced479$925505e0$b6ff11a0$@samsung.com>
-References: <001f01ced473$4c5cc9c0$e5165d40$@samsung.com>
+From: Fan Li <fanofcode.li@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: change the method of calculating the
+ number summary blocks
+Date: Tue, 29 Oct 2013 15:41:27 +0800
+Message-ID: <001401ced47a$61fe2fb0$25fa8f10$@samsung.com>
+References: <21040538.71861382950468176.JavaMail.weblogic@epv6ml09>
+ <1382956476.992.94.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="----=_NextPart_000_002B_01CED4C5.023E3480"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <001f01ced473$4c5cc9c0$e5165d40$@samsung.com>
-Content-language: ko
+In-reply-to: <1382956476.992.94.camel@kjgkr>
+Content-language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Chao Yu' <chao2.yu@samsung.com>, jaegeuk.kim@samsung.com
+To: jaegeuk.kim@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This is a multipart message in MIME format.
+> Hi,
+>=20
+> 2013-10-28 (=EC=9B=94), 08:54 +0000, Fan Li:
+> > "There is a HTML error in the previous email, so I send this one.If=
+ you
+> already received this before, please ignore it.Sorry for the inconven=
+ience"
+> >
+> > This patch change the method of calculating the number of summary b=
+locks
+> in function  npages_for_summary_flush.
+> > npages_for_summary_flush uses (SUMMARY_SIZE + 1) as the size of a
+> f2fs_summary while the actual size is just SUMMARY_SIZE.
+> > As a result, occasionally the return value of npages_for_summary_fl=
+ush will
+> be bigger than the actual number by one, and the checkpoint won't be
+> written contiguously  into disk.
+> > Besides, struct f2fs_summary can't be split to two pages, so it cou=
+ld take
+> more space than the sum of its size, the current version seems not to=
+ take it
+> into account.
+> >
+>=20
+> Again. Please write a description not to exceed 80 columns.
+>=20
 
-------=_NextPart_000_002B_01CED4C5.023E3480
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Sorry, didn't know. here's the short version:
+npages_for_summary_flush uses (SUMMARY_SIZE + 1) as the size of a f2fs_=
+summary=20
+while its actual size is  SUMMARY_SIZE. So the result sometimes is bigg=
+er than=20
+actual number by one, which causes checkpoint can't be written into dis=
+k contiguously,
+and sometimes summary blocks can't be compacted like they should.
+Besides, when writing summary blocks into pages, if remain space in a p=
+age isn't=20
+big enough for one f2fs_summary, it will be left unused, current code s=
+eems=20
+not to take it into account.
 
-Review attached patch, please.
-
------Original Message-----
-From: Chao Yu [mailto:chao2.yu@samsung.com] 
-Sent: Tuesday, October 29, 2013 3:51 PM
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-linux-f2fs-devel@lists.sourceforge.net
-Subject: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros bitmap
-with bitops for better mount performance
-
-Previously, check_block_count check valid_map with bit data type in common
-scenario that sit has all ones or zeros bitmap, it makes low mount
-performance.
-So let's check the special bitmap with integer data type instead of the bit
-one.
-
-v1-->v2:
-    use find_next_{zero_}bit_le for better performance and readable as
-Jaegeuk suggested.
-	use neat logogram in comment as Gu Zheng suggested.
-	search continuous ones or zeros for better performance when checking
-mixed bitmap.
-
-Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Signed-off-by: Shu Tan <shu.tan@samsung.com>
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Fan Li <fanofcode.li@samsung.com>
 ---
- fs/f2fs/segment.h |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ fs/f2fs/segment.c |   14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index abe7094..a7abfa8
-100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -550,8 +550,9 @@ static inline void check_block_count(struct f2fs_sb_info
-*sbi,  {
- 	struct f2fs_sm_info *sm_info = SM_I(sbi);
- 	unsigned int end_segno = sm_info->segment_count - 1;
-+	bool is_valid  = test_bit_le(0, raw_sit->valid_map) ? true : false;
- 	int valid_blocks = 0;
--	int i;
-+	int cur_pos = 0, next_pos;
- 
- 	/* check segment usage */
- 	BUG_ON(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg); @@ -560,9
-+561,19 @@ static inline void check_block_count(struct f2fs_sb_info *sbi,
- 	BUG_ON(segno > end_segno);
- 
- 	/* check bitmap with valid block count */
--	for (i = 0; i < sbi->blocks_per_seg; i++)
--		if (f2fs_test_bit(i, raw_sit->valid_map))
--			valid_blocks++;
-+	do {
-+		if (is_valid) {
-+			next_pos =
-find_next_zero_bit_le(&raw_sit->valid_map,
-+					sbi->blocks_per_seg,
-+					cur_pos);
-+			valid_blocks += next_pos - cur_pos;
-+		} else
-+			next_pos = find_next_bit_le(&raw_sit->valid_map,
-+					sbi->blocks_per_seg,
-+					cur_pos);
-+		cur_pos = next_pos;
-+		is_valid = !is_valid;
-+	} while (cur_pos < sbi->blocks_per_seg);
- 	BUG_ON(GET_SIT_VBLOCKS(raw_sit) != valid_blocks);  }
- 
---
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 487af61..e40cdc4 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -279,9 +279,8 @@ static void __add_sum_entry(struct f2fs_sb_info *sb=
+i, int type,
+  */
+ int npages_for_summary_flush(struct f2fs_sb_info *sbi)
+ {
+-	int total_size_bytes =3D 0;
+ 	int valid_sum_count =3D 0;
+-	int i, sum_space;
++	int i, sum_in_page;
+=20
+ 	for (i =3D CURSEG_HOT_DATA; i <=3D CURSEG_COLD_DATA; i++) {
+ 		if (sbi->ckpt->alloc_type[i] =3D=3D SSR)
+@@ -290,13 +289,12 @@ int npages_for_summary_flush(struct f2fs_sb_info =
+*sbi)
+ 			valid_sum_count +=3D curseg_blkoff(sbi, i);
+ 	}
+=20
+-	total_size_bytes =3D valid_sum_count * (SUMMARY_SIZE + 1)
+-			+ sizeof(struct nat_journal) + 2
+-			+ sizeof(struct sit_journal) + 2;
+-	sum_space =3D PAGE_CACHE_SIZE - SUM_FOOTER_SIZE;
+-	if (total_size_bytes < sum_space)
++	sum_in_page =3D (PAGE_CACHE_SIZE - 2 * SUM_JOURNAL_SIZE -
++			SUM_FOOTER_SIZE) / SUMMARY_SIZE;
++	if (valid_sum_count <=3D sum_in_page)
+ 		return 1;
+-	else if (total_size_bytes < 2 * sum_space)
++	else if ((valid_sum_count - sum_in_page) <=3D
++		(PAGE_CACHE_SIZE - SUM_FOOTER_SIZE) / SUMMARY_SIZE)
+ 		return 2;
+ 	return 3;
+ }
+--=20
 1.7.9.5
-
-
-----------------------------------------------------------------------------
---
-Android is increasing in popularity, but the open development platform that
-developers love is also attractive to malware creators. Download this white
-paper to learn more about secure code signing practices that can help keep
-Android apps secure.
-http://pubads.g.doubleclick.net/gampad/clk?id=65839951&iu=/4140/ostg.clktrk
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------=_NextPart_000_002B_01CED4C5.023E3480
-Content-Type: application/octet-stream;
-	name="0001-f2fs-use-pre-calculated-value-to-get-sum-of-valid-bl.patch"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
-	filename="0001-f2fs-use-pre-calculated-value-to-get-sum-of-valid-bl.patch"
-
->From 05ca99b07e28e1fe970e0ed547b51f93a9c0b94c Mon Sep 17 00:00:00 2001=0A=
-From: Changman Lee <cm224.lee@samsung.com>=0A=
-Date: Tue, 29 Oct 2013 16:34:43 +0900=0A=
-Subject: [PATCH] f2fs: use pre-calculated value to get sum of valid =
-blocks=0A=
-=0A=
-Using pre-calculated value is more fast than looking into bitmap on=0A=
-runnnig time.=0A=
-=0A=
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>=0A=
----=0A=
- fs/f2fs/f2fs.h    |    1 +=0A=
- fs/f2fs/hash.c    |   24 ++++++++++++++++++++++++=0A=
- fs/f2fs/segment.h |    4 ++--=0A=
- 3 files changed, 27 insertions(+), 2 deletions(-)=0A=
-=0A=
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h=0A=
-index a61cc5f..288be6a 100644=0A=
---- a/fs/f2fs/f2fs.h=0A=
-+++ b/fs/f2fs/f2fs.h=0A=
-@@ -71,6 +71,7 @@ static inline bool f2fs_crc_valid(__u32 blk_crc, void =
-*buf, size_t buf_size)=0A=
- 	return f2fs_crc32(buf, buf_size) =3D=3D blk_crc;=0A=
- }=0A=
- =0A=
-+extern int bit_count_byte(unsigned char);=0A=
- /*=0A=
-  * For checkpoint manager=0A=
-  */=0A=
-diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c=0A=
-index 6eb8d26..2dd9b5a 100644=0A=
---- a/fs/f2fs/hash.c=0A=
-+++ b/fs/f2fs/hash.c=0A=
-@@ -99,3 +99,27 @@ f2fs_hash_t f2fs_dentry_hash(const char *name, size_t =
-len)=0A=
- 	f2fs_hash =3D cpu_to_le32(hash & ~F2FS_HASH_COL_BIT);=0A=
- 	return f2fs_hash;=0A=
- }=0A=
-+=0A=
-+static const int bits_in_byte[256] =3D {=0A=
-+	0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,=0A=
-+	1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,=0A=
-+	1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,=0A=
-+	2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,=0A=
-+	1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,=0A=
-+	2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,=0A=
-+	2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,=0A=
-+	3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,=0A=
-+	1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,=0A=
-+	2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,=0A=
-+	2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,=0A=
-+	3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,=0A=
-+	2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,=0A=
-+	3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,=0A=
-+	3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,=0A=
-+	4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8,=0A=
-+};=0A=
-+=0A=
-+int bit_count_byte(unsigned char n)=0A=
-+{=0A=
-+	return bits_in_byte[n];=0A=
-+}=0A=
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h=0A=
-index abe7094..d5aa4cc 100644=0A=
---- a/fs/f2fs/segment.h=0A=
-+++ b/fs/f2fs/segment.h=0A=
-@@ -561,8 +561,8 @@ static inline void check_block_count(struct =
-f2fs_sb_info *sbi,=0A=
- =0A=
- 	/* check bitmap with valid block count */=0A=
- 	for (i =3D 0; i < sbi->blocks_per_seg; i++)=0A=
--		if (f2fs_test_bit(i, raw_sit->valid_map))=0A=
--			valid_blocks++;=0A=
-+		valid_blocks +=3D bit_count_byte(raw_sit->valid_map[i]);=0A=
-+=0A=
- 	BUG_ON(GET_SIT_VBLOCKS(raw_sit) !=3D valid_blocks);=0A=
- }=0A=
- =0A=
--- =0A=
-1.7.10.4=0A=
-=0A=
-
-------=_NextPart_000_002B_01CED4C5.023E3480--
