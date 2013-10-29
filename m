@@ -1,128 +1,263 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros bitmap
- with bitops for better mount performance
-Date: Tue, 29 Oct 2013 18:51:59 +0800
-Message-ID: <002401ced495$01a50290$04ef07b0$@samsung.com>
-References: <001f01ced473$4c5cc9c0$e5165d40$@samsung.com>
- <002a01ced479$925505e0$b6ff11a0$@samsung.com>
+From: Huajun Li <huajun.li.lee@gmail.com>
+Subject: Re: [f2fs-dev 3/5] f2fs: Add a new function: f2fs_reserve_block()
+Date: Tue, 29 Oct 2013 23:27:33 +0800
+Message-ID: <CA+v9cxZ6gNxcX_uWHTmQ8rr8kCfxiMvPXembK8OQ3Ea4Y2PT5g@mail.gmail.com>
+References: <1382716919-23345-1-git-send-email-huajun.li.lee@gmail.com>
+	<1382716919-23345-4-git-send-email-huajun.li.lee@gmail.com>
+	<1382962607.992.104.camel@kjgkr>
+	<1382963296.992.108.camel@kjgkr>
+	<CA+v9cxYx35Q=PS4wB52JSWj75T9xg_VYp9PySujZNhPWxj9jAA@mail.gmail.com>
+	<1383008170.14041.0.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <002a01ced479$925505e0$b6ff11a0$@samsung.com>
-Content-language: zh-cn
+In-Reply-To: <1383008170.14041.0.camel@kjgkr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Changman Lee' <cm224.lee@samsung.com>, jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: "jaegeuk.kim" <jaegeuk.kim@samsung.com>
+Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Huajun Li <huajun.li@intel.com>, Haicheng Li <haicheng.li@linux.intel.com>, Weihong Xu <weihong.xu@intel.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Lee,
-
-> -----Original Message-----
-> From: Changman Lee [mailto:cm224.lee@samsung.com]
-> Sent: Tuesday, October 29, 2013 3:36 PM
-> To: 'Chao Yu'; jaegeuk.kim@samsung.com
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: RE: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros
-bitmap
-> with bitops for better mount performance
-> 
-> Review attached patch, please.
-
-Could we hide the pre calculated value by generating it in allocated memory
-by func,
-because the value will be no use after build_sit_entries();
-
-Regards
-Yu
-
-> 
-> -----Original Message-----
-> From: Chao Yu [mailto:chao2.yu@samsung.com]
-> Sent: Tuesday, October 29, 2013 3:51 PM
-> To: jaegeuk.kim@samsung.com
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros bitmap
-with
-> bitops for better mount performance
-> 
-> Previously, check_block_count check valid_map with bit data type in common
-> scenario that sit has all ones or zeros bitmap, it makes low mount
-> performance.
-> So let's check the special bitmap with integer data type instead of the
-bit one.
-> 
-> v1-->v2:
->     use find_next_{zero_}bit_le for better performance and readable as
-> Jaegeuk suggested.
-> 	use neat logogram in comment as Gu Zheng suggested.
-> 	search continuous ones or zeros for better performance when checking
-> mixed bitmap.
-> 
-> Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-> Signed-off-by: Shu Tan <shu.tan@samsung.com>
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> ---
->  fs/f2fs/segment.h |   19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index abe7094..a7abfa8
-> 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -550,8 +550,9 @@ static inline void check_block_count(struct
-> f2fs_sb_info *sbi,  {
->  	struct f2fs_sm_info *sm_info = SM_I(sbi);
->  	unsigned int end_segno = sm_info->segment_count - 1;
-> +	bool is_valid  = test_bit_le(0, raw_sit->valid_map) ? true : false;
->  	int valid_blocks = 0;
-> -	int i;
-> +	int cur_pos = 0, next_pos;
-> 
->  	/* check segment usage */
->  	BUG_ON(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg); @@ -560,9
-> +561,19 @@ static inline void check_block_count(struct f2fs_sb_info
-> +*sbi,
->  	BUG_ON(segno > end_segno);
-> 
->  	/* check bitmap with valid block count */
-> -	for (i = 0; i < sbi->blocks_per_seg; i++)
-> -		if (f2fs_test_bit(i, raw_sit->valid_map))
-> -			valid_blocks++;
-> +	do {
-> +		if (is_valid) {
-> +			next_pos =
-> find_next_zero_bit_le(&raw_sit->valid_map,
-> +					sbi->blocks_per_seg,
-> +					cur_pos);
-> +			valid_blocks += next_pos - cur_pos;
-> +		} else
-> +			next_pos = find_next_bit_le(&raw_sit->valid_map,
-> +					sbi->blocks_per_seg,
-> +					cur_pos);
-> +		cur_pos = next_pos;
-> +		is_valid = !is_valid;
-> +	} while (cur_pos < sbi->blocks_per_seg);
->  	BUG_ON(GET_SIT_VBLOCKS(raw_sit) != valid_blocks);  }
-> 
-> --
-> 1.7.9.5
-> 
-> 
+On Tue, Oct 29, 2013 at 8:56 AM, Jaegeuk Kim <jaegeuk.kim@samsung.com> =
+wrote:
+> Hi Huajun,
 >
-----------------------------------------------------------------------------
+> 2013-10-29 (=ED=99=94), 00:53 +0800, Huajun Li:
+>> Hi Jaegeuk,
+>>
+>> Thanks for your kindly review and comments.
+>>
+>> On Mon, Oct 28, 2013 at 8:28 PM, Jaegeuk Kim <jaegeuk.kim@samsung.co=
+m> wrote:
+>> > 2013-10-28 (=EC=9B=94), 21:16 +0900, Jaegeuk Kim:
+>> > Hi,
+>> >
+>> >>
+>> >> 2013-10-26 (=ED=86=A0), 00:01 +0800, Huajun Li:
+>> >> > From: Huajun Li <huajun.li@intel.com>
+>> >> >
+>> >> > Add the function f2fs_reserve_block() to easily reserve new blo=
+cks.
+>> >> >
+>> >> > Signed-off-by: Huajun Li <huajun.li@intel.com>
+>> >> > Signed-off-by: Haicheng Li <haicheng.li@linux.intel.com>
+>> >> > Signed-off-by: Weihong Xu <weihong.xu@intel.com>
+>> >> > ---
+>> >> >  fs/f2fs/data.c |   29 ++++++++++++++++++-----------
+>> >> >  fs/f2fs/f2fs.h |    1 +
+>> >> >  2 files changed, 19 insertions(+), 11 deletions(-)
+>> >> >
+>> >> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> >> > index c8887d8..7b31911 100644
+>> >> > --- a/fs/f2fs/data.c
+>> >> > +++ b/fs/f2fs/data.c
+>> >> > @@ -64,6 +64,23 @@ int reserve_new_block(struct dnode_of_data *=
+dn)
+>> >> >     return 0;
+>> >> >  }
+>> >> >
+>> >> > +int f2fs_reserve_block(struct inode *inode,
+>> >> > +                  struct dnode_of_data *dn, pgoff_t index)
+>> >>
+>> >
+>> > We don't need to get dnode_of_data from parameters, since it is
+>> > used by this function only.
+>>
+>> After calling f2fs_reserve_block(), we need dn.data_blkaddr to check
+>> whether it is NEW_ADDR. So IMO, it's nice to keep this parameter.
+>>
+>
+> Ah, got it.
+> BTW, I found another flows we can clean up wrt this issue.
+> How about this?
+>
+
+This can clean up more codes, thanks a lot.
+
+> ---
+>  fs/f2fs/data.c | 51 +++++++++++++++++++++++-------------------------=
+---
+>  fs/f2fs/f2fs.h |  1 +
+>  fs/f2fs/file.c | 39 ++++++---------------------------------
+>  3 files changed, 30 insertions(+), 61 deletions(-)
+>
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index c8887d8..b8c4f76d 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -64,6 +64,22 @@ int reserve_new_block(struct dnode_of_data *dn)
+>         return 0;
+>  }
+>
+> +int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index)
+> +{
+> +       bool need_put =3D dn->inode_page ? false : true;
+> +       int err;
+> +
+> +       err =3D get_dnode_of_data(dn, index, ALLOC_NODE);
+> +       if (err)
+> +               return err;
+> +       if (dn->data_blkaddr =3D=3D NULL_ADDR)
+> +               err =3D reserve_new_block(dn);
+> +
+> +       if (need_put)
+> +               f2fs_put_dnode(dn);
+> +       return err;
+> +}
+> +
+>  static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+>                                         struct buffer_head *bh_result=
+)
+>  {
+> @@ -300,19 +316,9 @@ struct page *get_new_data_page(struct inode *ino=
+de,
+>         int err;
+>
+>         set_new_dnode(&dn, inode, npage, npage, 0);
+> -       err =3D get_dnode_of_data(&dn, index, ALLOC_NODE);
+> +       err =3D f2fs_reserve_block(&dn, index);
+>         if (err)
+>                 return ERR_PTR(err);
+> -
+> -       if (dn.data_blkaddr =3D=3D NULL_ADDR) {
+> -               if (reserve_new_block(&dn)) {
+> -                       if (!npage)
+> -                               f2fs_put_dnode(&dn);
+> -                       return ERR_PTR(-ENOSPC);
+> -               }
+> -       }
+> -       if (!npage)
+> -               f2fs_put_dnode(&dn);
+>  repeat:
+>         page =3D grab_cache_page(mapping, index);
+>         if (!page)
+> @@ -644,21 +650,15 @@ repeat:
+>         *pagep =3D page;
+>
+>         f2fs_lock_op(sbi);
+> -
+>         set_new_dnode(&dn, inode, NULL, NULL, 0);
+> -       err =3D get_dnode_of_data(&dn, index, ALLOC_NODE);
+> -       if (err)
+> -               goto err;
+> -
+> -       if (dn.data_blkaddr =3D=3D NULL_ADDR)
+> -               err =3D reserve_new_block(&dn);
+> -
+> -       f2fs_put_dnode(&dn);
+> -       if (err)
+> -               goto err;
+> -
+> +       err =3D f2fs_reserve_block(&dn, index);
+>         f2fs_unlock_op(sbi);
+>
+> +       if (err) {
+> +               f2fs_put_page(page, 1);
+> +               return err;
+> +       }
+> +
+>         if ((len =3D=3D PAGE_CACHE_SIZE) || PageUptodate(page))
+>                 return 0;
+>
+> @@ -691,11 +691,6 @@ out:
+>         SetPageUptodate(page);
+>         clear_cold_data(page);
+>         return 0;
+> -
+> -err:
+> -       f2fs_unlock_op(sbi);
+> -       f2fs_put_page(page, 1);
+> -       return err;
+>  }
+>
+>  static int f2fs_write_end(struct file *file,
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index c9d394c..e77ca20 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1112,6 +1112,7 @@ void destroy_checkpoint_caches(void);
+>   * data.c
+>   */
+>  int reserve_new_block(struct dnode_of_data *);
+> +int f2fs_reserve_block(struct dnode_of_data *, pgoff_t);
+>  void update_extent_cache(block_t, struct dnode_of_data *);
+>  struct page *find_data_page(struct inode *, pgoff_t, bool);
+>  struct page *get_lock_data_page(struct inode *, pgoff_t);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 2d4190a..21ef0d1 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -33,7 +33,6 @@ static int f2fs_vm_page_mkwrite(struct vm_area_stru=
+ct
+> *vma,
+>         struct page *page =3D vmf->page;
+>         struct inode *inode =3D file_inode(vma->vm_file);
+>         struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
+> -       block_t old_blk_addr;
+>         struct dnode_of_data dn;
+>         int err;
+>
+> @@ -44,24 +43,10 @@ static int f2fs_vm_page_mkwrite(struct
+> vm_area_struct *vma,
+>         /* block allocation */
+>         f2fs_lock_op(sbi);
+>         set_new_dnode(&dn, inode, NULL, NULL, 0);
+> -       err =3D get_dnode_of_data(&dn, page->index, ALLOC_NODE);
+> -       if (err) {
+> -               f2fs_unlock_op(sbi);
+> -               goto out;
+> -       }
+> -
+> -       old_blk_addr =3D dn.data_blkaddr;
+> -
+> -       if (old_blk_addr =3D=3D NULL_ADDR) {
+> -               err =3D reserve_new_block(&dn);
+> -               if (err) {
+> -                       f2fs_put_dnode(&dn);
+> -                       f2fs_unlock_op(sbi);
+> -                       goto out;
+> -               }
+> -       }
+> -       f2fs_put_dnode(&dn);
+> +       err =3D f2fs_reserve_block(&dn, page->index);
+>         f2fs_unlock_op(sbi);
+> +       if (err)
+> +               goto out;
+>
+>         file_update_time(vma->vm_file);
+>         lock_page(page);
+> @@ -531,22 +516,10 @@ static int expand_inode_data(struct inode *inod=
+e,
+> loff_t offset,
+>
+>                 f2fs_lock_op(sbi);
+>                 set_new_dnode(&dn, inode, NULL, NULL, 0);
+> -               ret =3D get_dnode_of_data(&dn, index, ALLOC_NODE);
+> -               if (ret) {
+> -                       f2fs_unlock_op(sbi);
+> -                       break;
+> -               }
+> -
+> -               if (dn.data_blkaddr =3D=3D NULL_ADDR) {
+> -                       ret =3D reserve_new_block(&dn);
+> -                       if (ret) {
+> -                               f2fs_put_dnode(&dn);
+> -                               f2fs_unlock_op(sbi);
+> -                               break;
+> -                       }
+> -               }
+> -               f2fs_put_dnode(&dn);
+> +               ret =3D f2fs_reserve_block(&dn, index);
+>                 f2fs_unlock_op(sbi);
+> +               if (ret)
+> +                       break;
+>
+>                 if (pg_start =3D=3D pg_end)
+>                         new_size =3D offset + len;
 > --
-> Android is increasing in popularity, but the open development platform
-that
-> developers love is also attractive to malware creators. Download this
-white
-> paper to learn more about secure code signing practices that can help keep
-> Android apps secure.
-> http://pubads.g.doubleclick.net/gampad/clk?id=65839951&iu=/4140/ostg.clktr
-> k
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 1.8.4.474.g128a96c
+>
+> --
+> Jaegeuk Kim
+> Samsung
+>
