@@ -1,259 +1,173 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [f2fs-dev 3/5] f2fs: Add a new function: f2fs_reserve_block()
-Date: Tue, 29 Oct 2013 09:56:10 +0900
-Message-ID: <1383008170.14041.0.camel@kjgkr>
+Subject: Re: [f2fs-dev 4/5] f2fs: Key functions to handle inline
+	data
+Date: Tue, 29 Oct 2013 10:06:27 +0900
+Message-ID: <1383008787.14041.8.camel@kjgkr>
 References: <1382716919-23345-1-git-send-email-huajun.li.lee@gmail.com>
- <1382716919-23345-4-git-send-email-huajun.li.lee@gmail.com>
- <1382962607.992.104.camel@kjgkr> <1382963296.992.108.camel@kjgkr>
- <CA+v9cxYx35Q=PS4wB52JSWj75T9xg_VYp9PySujZNhPWxj9jAA@mail.gmail.com>
+	<1382716919-23345-5-git-send-email-huajun.li.lee@gmail.com>
+	<1382964198.992.121.camel@kjgkr>
+	<CA+v9cxZfy37vzC+s8rDtpM34JLh38BBMocoU74TYRc1gvFSZPw@mail.gmail.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <CA+v9cxYx35Q=PS4wB52JSWj75T9xg_VYp9PySujZNhPWxj9jAA@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vaxm6-0000t3-7r
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Oct 2013 01:07:14 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Vaxm3-0006Wd-Ug for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Oct 2013 01:07:14 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout2.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MVE00565OFTSOD0@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Oct 2013 10:07:05 +0900 (KST)
+In-reply-to: <CA+v9cxZfy37vzC+s8rDtpM34JLh38BBMocoU74TYRc1gvFSZPw@mail.gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Huajun Li <huajun.li.lee@gmail.com>
-Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Huajun Li <huajun.li@intel.com>, Haicheng Li <haicheng.li@linux.intel.com>, Weihong Xu <weihong.xu@intel.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Huajun Li <huajun.li@intel.com>, Weihong Xu <weihong.xu@intel.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-Hi Huajun,
-
-2013-10-29 (=ED=99=94), 00:53 +0800, Huajun Li:
-> Hi Jaegeuk,
->=20
-> Thanks for your kindly review and comments.
->=20
-> On Mon, Oct 28, 2013 at 8:28 PM, Jaegeuk Kim <jaegeuk.kim@samsung.com=
-> wrote:
-> > 2013-10-28 (=EC=9B=94), 21:16 +0900, Jaegeuk Kim:
-> > Hi,
-> >
-> >>
-> >> 2013-10-26 (=ED=86=A0), 00:01 +0800, Huajun Li:
-> >> > From: Huajun Li <huajun.li@intel.com>
-> >> >
-> >> > Add the function f2fs_reserve_block() to easily reserve new bloc=
-ks.
-> >> >
-> >> > Signed-off-by: Huajun Li <huajun.li@intel.com>
-> >> > Signed-off-by: Haicheng Li <haicheng.li@linux.intel.com>
-> >> > Signed-off-by: Weihong Xu <weihong.xu@intel.com>
-> >> > ---
-> >> >  fs/f2fs/data.c |   29 ++++++++++++++++++-----------
-> >> >  fs/f2fs/f2fs.h |    1 +
-> >> >  2 files changed, 19 insertions(+), 11 deletions(-)
-> >> >
-> >> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >> > index c8887d8..7b31911 100644
-> >> > --- a/fs/f2fs/data.c
-> >> > +++ b/fs/f2fs/data.c
-> >> > @@ -64,6 +64,23 @@ int reserve_new_block(struct dnode_of_data *d=
-n)
-> >> >     return 0;
-> >> >  }
-> >> >
-> >> > +int f2fs_reserve_block(struct inode *inode,
-> >> > +                  struct dnode_of_data *dn, pgoff_t index)
-> >>
-> >
-> > We don't need to get dnode_of_data from parameters, since it is
-> > used by this function only.
->=20
-> After calling f2fs_reserve_block(), we need dn.data_blkaddr to check
-> whether it is NEW_ADDR. So IMO, it's nice to keep this parameter.
->=20
-
-Ah, got it.
-BTW, I found another flows we can clean up wrt this issue.
-How about this?
-
----
- fs/f2fs/data.c | 51 +++++++++++++++++++++++---------------------------=
--
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/file.c | 39 ++++++---------------------------------
- 3 files changed, 30 insertions(+), 61 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index c8887d8..b8c4f76d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -64,6 +64,22 @@ int reserve_new_block(struct dnode_of_data *dn)
-        return 0;
- }
-=20
-+int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index)
-+{
-+       bool need_put =3D dn->inode_page ? false : true;
-+       int err;
-+
-+       err =3D get_dnode_of_data(dn, index, ALLOC_NODE);
-+       if (err)
-+               return err;
-+       if (dn->data_blkaddr =3D=3D NULL_ADDR)
-+               err =3D reserve_new_block(dn);
-+
-+       if (need_put)
-+               f2fs_put_dnode(dn);
-+       return err;
-+}
-+
- static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
-                                        struct buffer_head *bh_result)
- {
-@@ -300,19 +316,9 @@ struct page *get_new_data_page(struct inode *inode=
-,
-        int err;
-=20
-        set_new_dnode(&dn, inode, npage, npage, 0);
--       err =3D get_dnode_of_data(&dn, index, ALLOC_NODE);
-+       err =3D f2fs_reserve_block(&dn, index);
-        if (err)
-                return ERR_PTR(err);
--
--       if (dn.data_blkaddr =3D=3D NULL_ADDR) {
--               if (reserve_new_block(&dn)) {
--                       if (!npage)
--                               f2fs_put_dnode(&dn);
--                       return ERR_PTR(-ENOSPC);
--               }
--       }
--       if (!npage)
--               f2fs_put_dnode(&dn);
- repeat:
-        page =3D grab_cache_page(mapping, index);
-        if (!page)
-@@ -644,21 +650,15 @@ repeat:
-        *pagep =3D page;
-=20
-        f2fs_lock_op(sbi);
--
-        set_new_dnode(&dn, inode, NULL, NULL, 0);
--       err =3D get_dnode_of_data(&dn, index, ALLOC_NODE);
--       if (err)
--               goto err;
--
--       if (dn.data_blkaddr =3D=3D NULL_ADDR)
--               err =3D reserve_new_block(&dn);
--
--       f2fs_put_dnode(&dn);
--       if (err)
--               goto err;
--
-+       err =3D f2fs_reserve_block(&dn, index);
-        f2fs_unlock_op(sbi);
-=20
-+       if (err) {
-+               f2fs_put_page(page, 1);
-+               return err;
-+       }
-+
-        if ((len =3D=3D PAGE_CACHE_SIZE) || PageUptodate(page))
-                return 0;
-=20
-@@ -691,11 +691,6 @@ out:
-        SetPageUptodate(page);
-        clear_cold_data(page);
-        return 0;
--
--err:
--       f2fs_unlock_op(sbi);
--       f2fs_put_page(page, 1);
--       return err;
- }
-=20
- static int f2fs_write_end(struct file *file,
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c9d394c..e77ca20 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1112,6 +1112,7 @@ void destroy_checkpoint_caches(void);
-  * data.c
-  */
- int reserve_new_block(struct dnode_of_data *);
-+int f2fs_reserve_block(struct dnode_of_data *, pgoff_t);
- void update_extent_cache(block_t, struct dnode_of_data *);
- struct page *find_data_page(struct inode *, pgoff_t, bool);
- struct page *get_lock_data_page(struct inode *, pgoff_t);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 2d4190a..21ef0d1 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -33,7 +33,6 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct
-*vma,
-        struct page *page =3D vmf->page;
-        struct inode *inode =3D file_inode(vma->vm_file);
-        struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
--       block_t old_blk_addr;
-        struct dnode_of_data dn;
-        int err;
-=20
-@@ -44,24 +43,10 @@ static int f2fs_vm_page_mkwrite(struct
-vm_area_struct *vma,
-        /* block allocation */
-        f2fs_lock_op(sbi);
-        set_new_dnode(&dn, inode, NULL, NULL, 0);
--       err =3D get_dnode_of_data(&dn, page->index, ALLOC_NODE);
--       if (err) {
--               f2fs_unlock_op(sbi);
--               goto out;
--       }
--
--       old_blk_addr =3D dn.data_blkaddr;
--
--       if (old_blk_addr =3D=3D NULL_ADDR) {
--               err =3D reserve_new_block(&dn);
--               if (err) {
--                       f2fs_put_dnode(&dn);
--                       f2fs_unlock_op(sbi);
--                       goto out;
--               }
--       }
--       f2fs_put_dnode(&dn);
-+       err =3D f2fs_reserve_block(&dn, page->index);
-        f2fs_unlock_op(sbi);
-+       if (err)
-+               goto out;
-=20
-        file_update_time(vma->vm_file);
-        lock_page(page);
-@@ -531,22 +516,10 @@ static int expand_inode_data(struct inode *inode,
-loff_t offset,
-=20
-                f2fs_lock_op(sbi);
-                set_new_dnode(&dn, inode, NULL, NULL, 0);
--               ret =3D get_dnode_of_data(&dn, index, ALLOC_NODE);
--               if (ret) {
--                       f2fs_unlock_op(sbi);
--                       break;
--               }
--
--               if (dn.data_blkaddr =3D=3D NULL_ADDR) {
--                       ret =3D reserve_new_block(&dn);
--                       if (ret) {
--                               f2fs_put_dnode(&dn);
--                               f2fs_unlock_op(sbi);
--                               break;
--                       }
--               }
--               f2fs_put_dnode(&dn);
-+               ret =3D f2fs_reserve_block(&dn, index);
-                f2fs_unlock_op(sbi);
-+               if (ret)
-+                       break;
-=20
-                if (pg_start =3D=3D pg_end)
-                        new_size =3D offset + len;
---=20
-1.8.4.474.g128a96c
-
---=20
-Jaegeuk Kim
-Samsung
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGksCgoyMDEzLTEwLTI5ICjtmZQpLCAwMToyMCArMDgwMCwgSHVhanVuIExpOgo+IE9uIE1vbiwg
+T2N0IDI4LCAyMDEzIGF0IDg6NDMgUE0sIEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5n
+LmNvbT4gd3JvdGU6Cj4gPiBIaSwKPiA+Cj4gPiAyMDEzLTEwLTI2ICjthqApLCAwMDowMSArMDgw
+MCwgSHVhanVuIExpOgo+ID4+IEZyb206IEh1YWp1biBMaSA8aHVhanVuLmxpQGludGVsLmNvbT4K
+PiA+Pgo+ID4+IEZ1bmN0aW9ucyB0byBpbXBsZW1lbnQgaW5saW5lIGRhdGEgcmVhZC93cml0ZSwg
+YW5kIG1vdmUgaW5saW5lIGRhdGEgdG8KPiA+PiBub3JtYWwgZGF0YSBibG9jayB3aGVuIGZpbGUg
+c2l6ZSBleGNlZWRzIGlubGluZSBkYXRhIGxpbWl0YXRpb24uCj4gPj4KPiA+PiBTaWduZWQtb2Zm
+LWJ5OiBIdWFqdW4gTGkgPGh1YWp1bi5saUBpbnRlbC5jb20+Cj4gPj4gU2lnbmVkLW9mZi1ieTog
+SGFpY2hlbmcgTGkgPGhhaWNoZW5nLmxpQGxpbnV4LmludGVsLmNvbT4KPiA+PiBTaWduZWQtb2Zm
+LWJ5OiBXZWlob25nIFh1IDx3ZWlob25nLnh1QGludGVsLmNvbT4KPiA+PiAtLS0KPiA+PiAgZnMv
+ZjJmcy9NYWtlZmlsZSB8ICAgIDIgKy0KPiA+PiAgZnMvZjJmcy9mMmZzLmggICB8ICAgIDcgKysr
+Cj4gPj4gIGZzL2YyZnMvaW5saW5lLmMgfCAgMTQ0ICsrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ID4+ICAzIGZpbGVzIGNoYW5nZWQsIDE1MiBp
+bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBmcy9m
+MmZzL2lubGluZS5jCj4gPj4KPiA+Cj4gPiBbc25pcF0KPiA+Cj4gPj4gK3N0YXRpYyBpbnQgX19m
+MmZzX2NvbnZlcnRfaW5saW5lX2RhdGEoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IHBhZ2Ug
+KnBhZ2UpCj4gPj4gK3sKPiA+PiArICAgICBpbnQgZXJyOwo+ID4+ICsgICAgIHN0cnVjdCBwYWdl
+ICppcGFnZTsKPiA+PiArICAgICBzdHJ1Y3QgZG5vZGVfb2ZfZGF0YSBkbjsKPiA+PiArICAgICB2
+b2lkICpzcmNfYWRkciwgKmRzdF9hZGRyOwo+ID4+ICsgICAgIHN0cnVjdCBmMmZzX3NiX2luZm8g
+KnNiaSA9IEYyRlNfU0IoaW5vZGUtPmlfc2IpOwo+ID4+ICsKPiA+Cj4gPiBIZXJlLi4gIGYyZnNf
+bG9ja19vcChzYmkpOwo+ID4KPiA+PiArICAgICBpcGFnZSA9IGdldF9ub2RlX3BhZ2Uoc2JpLCBp
+bm9kZS0+aV9pbm8pOwo+ID4+ICsgICAgIGlmIChJU19FUlIoaXBhZ2UpKQo+ID4+ICsgICAgICAg
+ICAgICAgcmV0dXJuIFBUUl9FUlIoaXBhZ2UpOwo+ID4+ICsKPiA+Cj4gPiBOZWVkIHRvIG1vdmUg
+ZjJmc19sb2NrX29wIHByaW9yIHRvIGdldF9ub2RlX3BhZ2UuCj4gPgo+ID4+ICsgICAgIC8qIGlf
+YWRkclswXSBpcyBub3QgdXNlZCBmb3IgaW5saW5lIGRhdGEsCj4gPgo+ID4gQ29kaW5nIHN0eWxl
+Lgo+ID4gICAgICAgICAgLyoKPiA+ICAgICAgICAgICAqIC4uLgo+ID4gICAgICAgICAgICovCj4g
+Pgo+ID4+ICsgICAgICAqIHNvIHJlc2VydmluZyBuZXcgYmxvY2sgd2lsbCBub3QgZGVzdHJveSBp
+bmxpbmUgZGF0YSAqLwo+ID4+ICsgICAgIGVyciA9IGYyZnNfcmVzZXJ2ZV9ibG9jayhpbm9kZSwg
+JmRuLCAwKTsKPiA+PiArICAgICBpZiAoZXJyKSB7Cj4gPj4gKyAgICAgICAgICAgICBmMmZzX3B1
+dF9wYWdlKGlwYWdlLCAxKTsKPiA+PiArICAgICAgICAgICAgIGYyZnNfdW5sb2NrX29wKHNiaSk7
+Cj4gPj4gKyAgICAgICAgICAgICByZXR1cm4gZXJyOwo+ID4+ICsgICAgIH0KPiA+Cj4gPiBOZWVk
+IHRvIG1vdmUgdGhpcyB0b28uCj4gPgo+ID4+ICsKPiA+PiArICAgICBzcmNfYWRkciA9IGlubGlu
+ZV9kYXRhX2FkZHIoaXBhZ2UpOwo+ID4+ICsgICAgIGRzdF9hZGRyID0gcGFnZV9hZGRyZXNzKHBh
+Z2UpOwo+ID4+ICsgICAgIHplcm9fdXNlcl9zZWdtZW50KHBhZ2UsIDAsIFBBR0VfQ0FDSEVfU0la
+RSk7Cj4gPgo+ID4gKyBzcGFjZSBmb3IgcmVhZGFiaWxpdHkuCj4gPgo+ID4+ICsgICAgIC8qIENv
+cHkgdGhlIHdob2xlIGlubGluZSBkYXRhIGJsb2NrICovCj4gPj4gKyAgICAgbWVtY3B5KGRzdF9h
+ZGRyLCBzcmNfYWRkciwgTUFYX0lOTElORV9EQVRBKTsKPiA+PiArICAgICB6ZXJvX3VzZXJfc2Vn
+bWVudChpcGFnZSwgSU5MSU5FX0RBVEFfT0ZGU0VULAo+ID4+ICsgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBJTkxJTkVfREFUQV9PRkZTRVQgKyBNQVhfSU5MSU5FX0RBVEEpOwo+ID4+ICsg
+ICAgIGNsZWFyX2lub2RlX2ZsYWcoRjJGU19JKGlub2RlKSwgRklfSU5MSU5FX0RBVEEpOwo+ID4+
+ICsgICAgIHNldF9yYXdfaW5saW5lKEYyRlNfSShpbm9kZSksCj4gPj4gKyAgICAgICAgICAgICAg
+ICAgICAgIChzdHJ1Y3QgZjJmc19pbm9kZSAqKXBhZ2VfYWRkcmVzcyhpcGFnZSkpOwo+IAo+IFRo
+YW5rcyBmb3IgeW91ciBjb21tZW50cywgSSB3aWxsIHVwZGF0ZSB0aGVtIGFjY29yZGluZyB0byBh
+Ym92ZSBjb21tZW50cy4KPiAKPiA+Cj4gPiAgICAtLT4gc3luY19pbm9kZV9wYWdlKCk/Cj4gPgo+
+IElNTywgd2UganVzdCBoYW5kbGUgZmlsZSBkYXRhLCBzbyBkbyB3ZSBzdGlsbCBuZWVkIGNhbGwg
+c3luY19pbm9kZV9wYWdlKCkgPwoKSSB0aGluayBzeW5jX2lub2RlX3BhZ2UoKSBpcyBtb3JlIHN1
+aXRhYmxlLCBzaW5jZSB3ZSBuZWVkIHRvIHN5bmMKYmV0d2VlbiBpX3NpemUsIGlfYmxvY2tzIGFu
+ZCBpdHMgaV9mbGFnLCBpbmxpbmVfZGF0YSwgYXQgdGhpcyBtb21lbnQuCgo+IAo+ID4+ICsKPiA+
+PiArICAgICBzZXRfcGFnZV9kaXJ0eShpcGFnZSk7CgpOZWVkIHRvIGNvbnNpZGVyIHNraXBwaW5n
+IHNldF9wYWdlX2RpcnR5KGlwYWdlKS4KCj4gPj4gKyAgICAgZjJmc19wdXRfcGFnZShpcGFnZSwg
+MSk7Cj4gPj4gKyAgICAgc2V0X3BhZ2VfZGlydHkocGFnZSk7Cj4gPgo+ID4gSGVyZS4uLiBmMmZz
+X3VubG9ja19vcChzYmkpOwo+ID4KPiA+IEhlcmUsIHdlIG5lZWQgdG8gY29uc2lkZXIgZGF0YSBj
+b25zaXN0ZW5jeS4KPiA+IExldCdzIHRoaW5rIGFib3V0IHRoZSBiZWxvdyBzY2VuYXJpby4KPiA+
+IDEuIGlubGluZV9kYXRhIHdhcyB3cml0dGVuLgo+ID4gMi4gc3luY19mcyBpcyBkb25lLgo+ID4g
+My4gYWRkaXRpb25hbCBkYXRhIHdlcmUgd3JpdHRlbi4KPiA+ICAgOiB0aGlzIHRyaWdnZXJzIGYy
+ZnNfY29udmVydF9pbmxpbmVfZGF0YSgpLCBwcm9kdWNlcyBhIHBhZ2UsIGFuZCB0aGVuCj4gPiB1
+bnNldHMgdGhlIGlubGluZSBmbGFnLgo+ID4gNC4gY2hlY2twb2ludCB3YXMgZG9uZSB3aXRoIHVw
+ZGF0ZWQgaW5vZGUgcGFnZS4gTm90ZSB0aGF0LCBjaGVja3BvaW50Cj4gPiBkb2Vzbid0IGd1YXJh
+bnRlZSBhbnkgdXNlciBkYXRhLgo+ID4gNS4gc3VkZGVuIHBvd2VyLW9mZiBpcyBvY2N1cnJlZC4K
+PiA+ICAgLT4gT25jZSBwb3dlci1vZmYtcmVjb3ZlcnkgaXMgZG9uZSwgd2UgbG9vc2UgdGhlIGlu
+bGluZV9kYXRhIHdoaWNoIHdhcwo+ID4gd3JpdHRlbiBzdWNjZXNzZnVsbHkgYXQgc3RlcCAjMi4K
+PiA+Cj4gPiBTbywgSSB0aGluayB3ZSBuZWVkIHRvIGRvIGYyZnNfc3luY19maWxlKCkgcHJvY2Vk
+dXJlIGF0IHRoaXMgbW9tZW50Lgo+ID4gQW55IGlkZWE/Cj4gPgo+IAo+IFllcywgbmVlZCBjb25z
+aWRlciB0aGlzIGNhc2UgY2FyZWZ1bGx5LCB0aGFua3MgZm9yIHlvdXIgcmVtaW5kZXIuCj4gCj4g
+Q29uc2lkZXJpbmcgc3VkZGVuIHBvd2VyLW9mZiBtYXkgaGFwcGVuIGJlZm9yZSBmMmZzX3N5bmNf
+ZmlsZSgpIGlzCj4gY2FsbGVkLCBzbyBob3cgYWJvdXQgZm9sbG93aW5nIHNvbHV0aW9uczoKPiAg
+ICAgIC4uLgo+ICAgICAgLyogQ29weSB0aGUgd2hvbGUgaW5saW5lIGRhdGEgYmxvY2sgKi8KPiAg
+ICAgIG1lbWNweShkc3RfYWRkciwgc3JjX2FkZHIsIE1BWF9JTkxJTkVfREFUQSk7Cj4gCj4gICAg
+IGRvIGYyZnNfc3luY19maWxlKCkgcHJvY2VkdXJlICggT3IgIGRvIHdyaXRlX2RhdGFfcGFnZSgp
+IHByb2NlZHVyZSA/ICkKCllhLCBidXQgaXQgbWF5IHN0aWxsIGhhdmUgc29tZSBjb25kaXRpb25z
+IHRvIGRvIHRoaXMgb3Igbm90LgpPbmUgb2YgdGhlbSBpcyBjaGVja2luZyB3aGV0aGVyIHByZXZp
+b3VzIGlubGluZSBkYXRhIHNob3VsZCBiZSByZWNvdmVyZWQKb3Igbm90LCBmb3IgZXhhbXBsZS4K
+Cj4gCj4gICAgICB6ZXJvX3VzZXJfc2VnbWVudChpcGFnZSwgSU5MSU5FX0RBVEFfT0ZGU0VULCBJ
+TkxJTkVfREFUQV9PRkZTRVQgKwo+IE1BWF9JTkxJTkVfREFUQSk7Cj4gICAgICBjbGVhcl9pbm9k
+ZV9mbGFnKEYyRlNfSShpbm9kZSksIEZJX0lOTElORV9EQVRBKTsKPiAgICAgIHNldF9yYXdfaW5s
+aW5lKEYyRlNfSShpbm9kZSksIChzdHJ1Y3QgZjJmc19pbm9kZSAqKXBhZ2VfYWRkcmVzcyhpcGFn
+ZSkpOwo+ICAgICAgLi4uCj4gCj4gPj4gKwo+ID4+ICsgICAgIHJldHVybiAwOwo+ID4+ICt9Cj4g
+Pj4gKwo+ID4+ICtpbnQgZjJmc19jb252ZXJ0X2lubGluZV9kYXRhKHN0cnVjdCBpbm9kZSAqaW5v
+ZGUsCj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHBhZ2UgKnAsIHVuc2ln
+bmVkIGZsYWdzKQo+ID4+ICt7Cj4gPj4gKyAgICAgaW50IGVycjsKPiA+PiArICAgICBzdHJ1Y3Qg
+cGFnZSAqcGFnZTsKPiA+PiArCj4gPj4gKyAgICAgaWYgKHAgJiYgIXAtPmluZGV4KSB7Cj4gPj4g
+KyAgICAgICAgICAgICBwYWdlID0gcDsKPiA+PiArICAgICB9IGVsc2Ugewo+ID4+ICsgICAgICAg
+ICAgICAgcGFnZSA9IGdyYWJfY2FjaGVfcGFnZV93cml0ZV9iZWdpbihpbm9kZS0+aV9tYXBwaW5n
+LCAwLCBmbGFncyk7Cj4gPj4gKyAgICAgICAgICAgICBpZiAoSVNfRVJSKHBhZ2UpKQo+ID4+ICsg
+ICAgICAgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VSUihwYWdlKTsKPiA+PiArICAgICB9Cj4g
+Pj4gKwo+ID4+ICsgICAgIGVyciA9IF9fZjJmc19jb252ZXJ0X2lubGluZV9kYXRhKGlub2RlLCBw
+YWdlKTsKPiA+PiArCj4gPj4gKyAgICAgaWYgKHAgJiYgIXAtPmluZGV4KQo+ID4+ICsgICAgICAg
+ICAgICAgZjJmc19wdXRfcGFnZShwYWdlLCAxKTsKPiA+PiArCj4gPj4gKyAgICAgcmV0dXJuIGVy
+cjsKPiA+PiArfQo+ID4+ICsKPiA+PiAraW50IGYyZnNfd3JpdGVfaW5saW5lX2RhdGEoc3RydWN0
+IGlub2RlICppbm9kZSwKPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHBhZ2Ug
+KnBhZ2UsIHVuc2lnbmVkIHNpemUpCj4gPj4gK3sKPiA+PiArICAgICB2b2lkICpzcmNfYWRkciwg
+KmRzdF9hZGRyOwo+ID4+ICsgICAgIHN0cnVjdCBwYWdlICppcGFnZTsKPiA+PiArICAgICBzdHJ1
+Y3QgZG5vZGVfb2ZfZGF0YSBkbjsKPiA+PiArICAgICBpbnQgZXJyOwo+ID4+ICsKPiA+PiArICAg
+ICBzZXRfbmV3X2Rub2RlKCZkbiwgaW5vZGUsIE5VTEwsIE5VTEwsIDApOwo+ID4+ICsgICAgIGVy
+ciA9IGdldF9kbm9kZV9vZl9kYXRhKCZkbiwgMCwgTE9PS1VQX05PREUpOwo+ID4+ICsgICAgIGlm
+IChlcnIpCj4gPj4gKyAgICAgICAgICAgICByZXR1cm4gZXJyOwo+ID4+ICsgICAgIGlwYWdlID0g
+ZG4uaW5vZGVfcGFnZTsKPiA+PiArCj4gPj4gKyAgICAgc3JjX2FkZHIgPSBwYWdlX2FkZHJlc3Mo
+cGFnZSk7Cj4gPj4gKyAgICAgZHN0X2FkZHIgPSBpbmxpbmVfZGF0YV9hZGRyKGlwYWdlKTsKPiA+
+PiArCj4gPj4gKyAgICAgemVyb191c2VyX3NlZ21lbnQoaXBhZ2UsIElOTElORV9EQVRBX09GRlNF
+VCwKPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgSU5MSU5FX0RBVEFfT0ZGU0VU
+ICsgTUFYX0lOTElORV9EQVRBKTsKPiA+PiArICAgICBtZW1jcHkoZHN0X2FkZHIsIHNyY19hZGRy
+LCBzaXplKTsKPiA+PiArICAgICBpZiAoIWYyZnNfaGFzX2lubGluZV9kYXRhKGlub2RlKSkKPiA+
+PiArICAgICAgICAgICAgIHNldF9pbm9kZV9mbGFnKEYyRlNfSShpbm9kZSksIEZJX0lOTElORV9E
+QVRBKTsKPiA+PiArICAgICBzZXRfcmF3X2lubGluZShGMkZTX0koaW5vZGUpLAo+ID4+ICsgICAg
+ICAgICAgICAgICAgICAgICAoc3RydWN0IGYyZnNfaW5vZGUgKilwYWdlX2FkZHJlc3MoaXBhZ2Up
+KTsKPiA+PiArICAgICBzZXRfcGFnZV9kaXJ0eShpcGFnZSk7Cj4gPj4gKwo+ID4+ICsgICAgIGlm
+ICgoRjJGU19JKGlub2RlKS0+aV94YXR0cl9uaWQgJiYgaW5vZGUtPmlfYmxvY2tzID09IDIpIHx8
+Cj4gPj4gKyAgICAgICAgICAgICAoIUYyRlNfSShpbm9kZSktPmlfeGF0dHJfbmlkICYmIGlub2Rl
+LT5pX2Jsb2NrcyA9PSAxKSkgewo+ID4+ICsgICAgICAgICAgICAgZjJmc19wdXRfZG5vZGUoJmRu
+KTsKPiA+PiArICAgICAgICAgICAgIHJldHVybiAwOwo+ID4+ICsgICAgIH0KPiA+PiArCj4gPj4g
+KyAgICAgLyogUmVsZWFzZSB0aGUgZmlyc3QgZGF0YSBibG9jayBpZiBpdCBpcyBhbGxvY2F0ZWQg
+Ki8KPiA+PiArICAgICB0cnVuY2F0ZV9kYXRhX2Jsb2Nrc19yYW5nZSgmZG4sIDEpOwo+ID4+ICsg
+ICAgIGYyZnNfcHV0X2Rub2RlKCZkbik7Cj4gPj4gKwo+ID4+ICsgICAgIHJldHVybiAwOwo+ID4+
+ICt9Cj4gPgo+ID4gLS0KPiA+IEphZWdldWsgS2ltCj4gPiBTYW1zdW5nCj4gPgo+IC0tCj4gVG8g
+dW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxp
+bnV4LWZzZGV2ZWwiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2Vy
+Lmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwu
+b3JnL21ham9yZG9tby1pbmZvLmh0bWwKCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKCi0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQpBbmRyb2lkIGlzIGluY3JlYXNpbmcgaW4gcG9wdWxhcml0eSwgYnV0
+IHRoZSBvcGVuIGRldmVsb3BtZW50IHBsYXRmb3JtIHRoYXQKZGV2ZWxvcGVycyBsb3ZlIGlzIGFs
+c28gYXR0cmFjdGl2ZSB0byBtYWx3YXJlIGNyZWF0b3JzLiBEb3dubG9hZCB0aGlzIHdoaXRlCnBh
+cGVyIHRvIGxlYXJuIG1vcmUgYWJvdXQgc2VjdXJlIGNvZGUgc2lnbmluZyBwcmFjdGljZXMgdGhh
+dCBjYW4gaGVscCBrZWVwCkFuZHJvaWQgYXBwcyBzZWN1cmUuCmh0dHA6Ly9wdWJhZHMuZy5kb3Vi
+bGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD02NTgzOTk1MSZpdT0vNDE0MC9vc3RnLmNsa3Ryawpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
+LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
+dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
+LWRldmVsCg==
