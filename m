@@ -1,176 +1,168 @@
-From: Huajun Li <huajun.li.lee@gmail.com>
-Subject: Re: [f2fs-dev 4/5] f2fs: Key functions to handle inline
-	data
-Date: Tue, 29 Oct 2013 23:33:09 +0800
-Message-ID: <CA+v9cxYH-1MdaO+8UogXLok45siaDx4gz_0_3SieEgGAWdH0pw@mail.gmail.com>
-References: <1382716919-23345-1-git-send-email-huajun.li.lee@gmail.com>
-	<1382716919-23345-5-git-send-email-huajun.li.lee@gmail.com>
-	<1382964198.992.121.camel@kjgkr>
-	<CA+v9cxZfy37vzC+s8rDtpM34JLh38BBMocoU74TYRc1gvFSZPw@mail.gmail.com>
-	<1383008787.14041.8.camel@kjgkr>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros bitmap
+ with bitops for better mount performance
+Date: Wed, 30 Oct 2013 08:15:18 +0900
+Message-ID: <016701ced4fc$bb7afe10$3270fa30$@samsung.com>
+References: <001f01ced473$4c5cc9c0$e5165d40$@samsung.com>
+ <002a01ced479$925505e0$b6ff11a0$@samsung.com>
+ <002301ced48e$c615e010$5241a030$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <huajun.li.lee@gmail.com>) id 1VbBIC-0002v2-TL
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Oct 2013 15:33:16 +0000
-Received: from mail-ve0-f170.google.com ([209.85.128.170])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VbBIA-0004Db-Va
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Oct 2013 15:33:16 +0000
-Received: by mail-ve0-f170.google.com with SMTP id oy12so10803veb.15
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 29 Oct 2013 08:33:09 -0700 (PDT)
-In-Reply-To: <1383008787.14041.8.camel@kjgkr>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "jaegeuk.kim" <jaegeuk.kim@samsung.com>
-Cc: Huajun Li <huajun.li@intel.com>, Weihong Xu <weihong.xu@intel.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <002301ced48e$c615e010$5241a030$@samsung.com>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Chao Yu' <chao2.yu@samsung.com>, jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-WWVzLCB3aWxsIHRoaW5rIG92ZXIgdGhlc2UgY2FzZXMgY2FyZWZ1bGx5LCBhbmQgc2VuZCBvdXQg
-bmV3IHZlcnNpb24uIHRoYW5rcy4KCk9uIFR1ZSwgT2N0IDI5LCAyMDEzIGF0IDk6MDYgQU0sIEph
-ZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4gSGksCj4KPiAyMDEz
-LTEwLTI5ICjtmZQpLCAwMToyMCArMDgwMCwgSHVhanVuIExpOgo+PiBPbiBNb24sIE9jdCAyOCwg
-MjAxMyBhdCA4OjQzIFBNLCBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb20+IHdy
-b3RlOgo+PiA+IEhpLAo+PiA+Cj4+ID4gMjAxMy0xMC0yNiAo7YagKSwgMDA6MDEgKzA4MDAsIEh1
-YWp1biBMaToKPj4gPj4gRnJvbTogSHVhanVuIExpIDxodWFqdW4ubGlAaW50ZWwuY29tPgo+PiA+
-Pgo+PiA+PiBGdW5jdGlvbnMgdG8gaW1wbGVtZW50IGlubGluZSBkYXRhIHJlYWQvd3JpdGUsIGFu
-ZCBtb3ZlIGlubGluZSBkYXRhIHRvCj4+ID4+IG5vcm1hbCBkYXRhIGJsb2NrIHdoZW4gZmlsZSBz
-aXplIGV4Y2VlZHMgaW5saW5lIGRhdGEgbGltaXRhdGlvbi4KPj4gPj4KPj4gPj4gU2lnbmVkLW9m
-Zi1ieTogSHVhanVuIExpIDxodWFqdW4ubGlAaW50ZWwuY29tPgo+PiA+PiBTaWduZWQtb2ZmLWJ5
-OiBIYWljaGVuZyBMaSA8aGFpY2hlbmcubGlAbGludXguaW50ZWwuY29tPgo+PiA+PiBTaWduZWQt
-b2ZmLWJ5OiBXZWlob25nIFh1IDx3ZWlob25nLnh1QGludGVsLmNvbT4KPj4gPj4gLS0tCj4+ID4+
-ICBmcy9mMmZzL01ha2VmaWxlIHwgICAgMiArLQo+PiA+PiAgZnMvZjJmcy9mMmZzLmggICB8ICAg
-IDcgKysrCj4+ID4+ICBmcy9mMmZzL2lubGluZS5jIHwgIDE0NCArKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPj4gPj4gIDMgZmlsZXMgY2hhbmdl
-ZCwgMTUyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPj4gPj4gIGNyZWF0ZSBtb2RlIDEw
-MDY0NCBmcy9mMmZzL2lubGluZS5jCj4+ID4+Cj4+ID4KPj4gPiBbc25pcF0KPj4gPgo+PiA+PiAr
-c3RhdGljIGludCBfX2YyZnNfY29udmVydF9pbmxpbmVfZGF0YShzdHJ1Y3QgaW5vZGUgKmlub2Rl
-LCBzdHJ1Y3QgcGFnZSAqcGFnZSkKPj4gPj4gK3sKPj4gPj4gKyAgICAgaW50IGVycjsKPj4gPj4g
-KyAgICAgc3RydWN0IHBhZ2UgKmlwYWdlOwo+PiA+PiArICAgICBzdHJ1Y3QgZG5vZGVfb2ZfZGF0
-YSBkbjsKPj4gPj4gKyAgICAgdm9pZCAqc3JjX2FkZHIsICpkc3RfYWRkcjsKPj4gPj4gKyAgICAg
-c3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpID0gRjJGU19TQihpbm9kZS0+aV9zYik7Cj4+ID4+ICsK
-Pj4gPgo+PiA+IEhlcmUuLiAgZjJmc19sb2NrX29wKHNiaSk7Cj4+ID4KPj4gPj4gKyAgICAgaXBh
-Z2UgPSBnZXRfbm9kZV9wYWdlKHNiaSwgaW5vZGUtPmlfaW5vKTsKPj4gPj4gKyAgICAgaWYgKElT
-X0VSUihpcGFnZSkpCj4+ID4+ICsgICAgICAgICAgICAgcmV0dXJuIFBUUl9FUlIoaXBhZ2UpOwo+
-PiA+PiArCj4+ID4KPj4gPiBOZWVkIHRvIG1vdmUgZjJmc19sb2NrX29wIHByaW9yIHRvIGdldF9u
-b2RlX3BhZ2UuCj4+ID4KPj4gPj4gKyAgICAgLyogaV9hZGRyWzBdIGlzIG5vdCB1c2VkIGZvciBp
-bmxpbmUgZGF0YSwKPj4gPgo+PiA+IENvZGluZyBzdHlsZS4KPj4gPiAgICAgICAgICAvKgo+PiA+
-ICAgICAgICAgICAqIC4uLgo+PiA+ICAgICAgICAgICAqLwo+PiA+Cj4+ID4+ICsgICAgICAqIHNv
-IHJlc2VydmluZyBuZXcgYmxvY2sgd2lsbCBub3QgZGVzdHJveSBpbmxpbmUgZGF0YSAqLwo+PiA+
-PiArICAgICBlcnIgPSBmMmZzX3Jlc2VydmVfYmxvY2soaW5vZGUsICZkbiwgMCk7Cj4+ID4+ICsg
-ICAgIGlmIChlcnIpIHsKPj4gPj4gKyAgICAgICAgICAgICBmMmZzX3B1dF9wYWdlKGlwYWdlLCAx
-KTsKPj4gPj4gKyAgICAgICAgICAgICBmMmZzX3VubG9ja19vcChzYmkpOwo+PiA+PiArICAgICAg
-ICAgICAgIHJldHVybiBlcnI7Cj4+ID4+ICsgICAgIH0KPj4gPgo+PiA+IE5lZWQgdG8gbW92ZSB0
-aGlzIHRvby4KPj4gPgo+PiA+PiArCj4+ID4+ICsgICAgIHNyY19hZGRyID0gaW5saW5lX2RhdGFf
-YWRkcihpcGFnZSk7Cj4+ID4+ICsgICAgIGRzdF9hZGRyID0gcGFnZV9hZGRyZXNzKHBhZ2UpOwo+
-PiA+PiArICAgICB6ZXJvX3VzZXJfc2VnbWVudChwYWdlLCAwLCBQQUdFX0NBQ0hFX1NJWkUpOwo+
-PiA+Cj4+ID4gKyBzcGFjZSBmb3IgcmVhZGFiaWxpdHkuCj4+ID4KPj4gPj4gKyAgICAgLyogQ29w
-eSB0aGUgd2hvbGUgaW5saW5lIGRhdGEgYmxvY2sgKi8KPj4gPj4gKyAgICAgbWVtY3B5KGRzdF9h
-ZGRyLCBzcmNfYWRkciwgTUFYX0lOTElORV9EQVRBKTsKPj4gPj4gKyAgICAgemVyb191c2VyX3Nl
-Z21lbnQoaXBhZ2UsIElOTElORV9EQVRBX09GRlNFVCwKPj4gPj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIElOTElORV9EQVRBX09GRlNFVCArIE1BWF9JTkxJTkVfREFUQSk7Cj4+ID4+
-ICsgICAgIGNsZWFyX2lub2RlX2ZsYWcoRjJGU19JKGlub2RlKSwgRklfSU5MSU5FX0RBVEEpOwo+
-PiA+PiArICAgICBzZXRfcmF3X2lubGluZShGMkZTX0koaW5vZGUpLAo+PiA+PiArICAgICAgICAg
-ICAgICAgICAgICAgKHN0cnVjdCBmMmZzX2lub2RlICopcGFnZV9hZGRyZXNzKGlwYWdlKSk7Cj4+
-Cj4+IFRoYW5rcyBmb3IgeW91ciBjb21tZW50cywgSSB3aWxsIHVwZGF0ZSB0aGVtIGFjY29yZGlu
-ZyB0byBhYm92ZSBjb21tZW50cy4KPj4KPj4gPgo+PiA+ICAgIC0tPiBzeW5jX2lub2RlX3BhZ2Uo
-KT8KPj4gPgo+PiBJTU8sIHdlIGp1c3QgaGFuZGxlIGZpbGUgZGF0YSwgc28gZG8gd2Ugc3RpbGwg
-bmVlZCBjYWxsIHN5bmNfaW5vZGVfcGFnZSgpID8KPgo+IEkgdGhpbmsgc3luY19pbm9kZV9wYWdl
-KCkgaXMgbW9yZSBzdWl0YWJsZSwgc2luY2Ugd2UgbmVlZCB0byBzeW5jCj4gYmV0d2VlbiBpX3Np
-emUsIGlfYmxvY2tzIGFuZCBpdHMgaV9mbGFnLCBpbmxpbmVfZGF0YSwgYXQgdGhpcyBtb21lbnQu
-Cj4KPj4KPj4gPj4gKwo+PiA+PiArICAgICBzZXRfcGFnZV9kaXJ0eShpcGFnZSk7Cj4KPiBOZWVk
-IHRvIGNvbnNpZGVyIHNraXBwaW5nIHNldF9wYWdlX2RpcnR5KGlwYWdlKS4KPgo+PiA+PiArICAg
-ICBmMmZzX3B1dF9wYWdlKGlwYWdlLCAxKTsKPj4gPj4gKyAgICAgc2V0X3BhZ2VfZGlydHkocGFn
-ZSk7Cj4+ID4KPj4gPiBIZXJlLi4uIGYyZnNfdW5sb2NrX29wKHNiaSk7Cj4+ID4KPj4gPiBIZXJl
-LCB3ZSBuZWVkIHRvIGNvbnNpZGVyIGRhdGEgY29uc2lzdGVuY3kuCj4+ID4gTGV0J3MgdGhpbmsg
-YWJvdXQgdGhlIGJlbG93IHNjZW5hcmlvLgo+PiA+IDEuIGlubGluZV9kYXRhIHdhcyB3cml0dGVu
-Lgo+PiA+IDIuIHN5bmNfZnMgaXMgZG9uZS4KPj4gPiAzLiBhZGRpdGlvbmFsIGRhdGEgd2VyZSB3
-cml0dGVuLgo+PiA+ICAgOiB0aGlzIHRyaWdnZXJzIGYyZnNfY29udmVydF9pbmxpbmVfZGF0YSgp
-LCBwcm9kdWNlcyBhIHBhZ2UsIGFuZCB0aGVuCj4+ID4gdW5zZXRzIHRoZSBpbmxpbmUgZmxhZy4K
-Pj4gPiA0LiBjaGVja3BvaW50IHdhcyBkb25lIHdpdGggdXBkYXRlZCBpbm9kZSBwYWdlLiBOb3Rl
-IHRoYXQsIGNoZWNrcG9pbnQKPj4gPiBkb2Vzbid0IGd1YXJhbnRlZSBhbnkgdXNlciBkYXRhLgo+
-PiA+IDUuIHN1ZGRlbiBwb3dlci1vZmYgaXMgb2NjdXJyZWQuCj4+ID4gICAtPiBPbmNlIHBvd2Vy
-LW9mZi1yZWNvdmVyeSBpcyBkb25lLCB3ZSBsb29zZSB0aGUgaW5saW5lX2RhdGEgd2hpY2ggd2Fz
-Cj4+ID4gd3JpdHRlbiBzdWNjZXNzZnVsbHkgYXQgc3RlcCAjMi4KPj4gPgo+PiA+IFNvLCBJIHRo
-aW5rIHdlIG5lZWQgdG8gZG8gZjJmc19zeW5jX2ZpbGUoKSBwcm9jZWR1cmUgYXQgdGhpcyBtb21l
-bnQuCj4+ID4gQW55IGlkZWE/Cj4+ID4KPj4KPj4gWWVzLCBuZWVkIGNvbnNpZGVyIHRoaXMgY2Fz
-ZSBjYXJlZnVsbHksIHRoYW5rcyBmb3IgeW91ciByZW1pbmRlci4KPj4KPj4gQ29uc2lkZXJpbmcg
-c3VkZGVuIHBvd2VyLW9mZiBtYXkgaGFwcGVuIGJlZm9yZSBmMmZzX3N5bmNfZmlsZSgpIGlzCj4+
-IGNhbGxlZCwgc28gaG93IGFib3V0IGZvbGxvd2luZyBzb2x1dGlvbnM6Cj4+ICAgICAgLi4uCj4+
-ICAgICAgLyogQ29weSB0aGUgd2hvbGUgaW5saW5lIGRhdGEgYmxvY2sgKi8KPj4gICAgICBtZW1j
-cHkoZHN0X2FkZHIsIHNyY19hZGRyLCBNQVhfSU5MSU5FX0RBVEEpOwo+Pgo+PiAgICAgZG8gZjJm
-c19zeW5jX2ZpbGUoKSBwcm9jZWR1cmUgKCBPciAgZG8gd3JpdGVfZGF0YV9wYWdlKCkgcHJvY2Vk
-dXJlID8gKQo+Cj4gWWEsIGJ1dCBpdCBtYXkgc3RpbGwgaGF2ZSBzb21lIGNvbmRpdGlvbnMgdG8g
-ZG8gdGhpcyBvciBub3QuCj4gT25lIG9mIHRoZW0gaXMgY2hlY2tpbmcgd2hldGhlciBwcmV2aW91
-cyBpbmxpbmUgZGF0YSBzaG91bGQgYmUgcmVjb3ZlcmVkCj4gb3Igbm90LCBmb3IgZXhhbXBsZS4K
-Pgo+Pgo+PiAgICAgIHplcm9fdXNlcl9zZWdtZW50KGlwYWdlLCBJTkxJTkVfREFUQV9PRkZTRVQs
-IElOTElORV9EQVRBX09GRlNFVCArCj4+IE1BWF9JTkxJTkVfREFUQSk7Cj4+ICAgICAgY2xlYXJf
-aW5vZGVfZmxhZyhGMkZTX0koaW5vZGUpLCBGSV9JTkxJTkVfREFUQSk7Cj4+ICAgICAgc2V0X3Jh
-d19pbmxpbmUoRjJGU19JKGlub2RlKSwgKHN0cnVjdCBmMmZzX2lub2RlICopcGFnZV9hZGRyZXNz
-KGlwYWdlKSk7Cj4+ICAgICAgLi4uCj4+Cj4+ID4+ICsKPj4gPj4gKyAgICAgcmV0dXJuIDA7Cj4+
-ID4+ICt9Cj4+ID4+ICsKPj4gPj4gK2ludCBmMmZzX2NvbnZlcnRfaW5saW5lX2RhdGEoc3RydWN0
-IGlub2RlICppbm9kZSwKPj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHBh
-Z2UgKnAsIHVuc2lnbmVkIGZsYWdzKQo+PiA+PiArewo+PiA+PiArICAgICBpbnQgZXJyOwo+PiA+
-PiArICAgICBzdHJ1Y3QgcGFnZSAqcGFnZTsKPj4gPj4gKwo+PiA+PiArICAgICBpZiAocCAmJiAh
-cC0+aW5kZXgpIHsKPj4gPj4gKyAgICAgICAgICAgICBwYWdlID0gcDsKPj4gPj4gKyAgICAgfSBl
-bHNlIHsKPj4gPj4gKyAgICAgICAgICAgICBwYWdlID0gZ3JhYl9jYWNoZV9wYWdlX3dyaXRlX2Jl
-Z2luKGlub2RlLT5pX21hcHBpbmcsIDAsIGZsYWdzKTsKPj4gPj4gKyAgICAgICAgICAgICBpZiAo
-SVNfRVJSKHBhZ2UpKQo+PiA+PiArICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIFBUUl9FUlIo
-cGFnZSk7Cj4+ID4+ICsgICAgIH0KPj4gPj4gKwo+PiA+PiArICAgICBlcnIgPSBfX2YyZnNfY29u
-dmVydF9pbmxpbmVfZGF0YShpbm9kZSwgcGFnZSk7Cj4+ID4+ICsKPj4gPj4gKyAgICAgaWYgKHAg
-JiYgIXAtPmluZGV4KQo+PiA+PiArICAgICAgICAgICAgIGYyZnNfcHV0X3BhZ2UocGFnZSwgMSk7
-Cj4+ID4+ICsKPj4gPj4gKyAgICAgcmV0dXJuIGVycjsKPj4gPj4gK30KPj4gPj4gKwo+PiA+PiAr
-aW50IGYyZnNfd3JpdGVfaW5saW5lX2RhdGEoc3RydWN0IGlub2RlICppbm9kZSwKPj4gPj4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBwYWdlICpwYWdlLCB1bnNpZ25lZCBzaXplKQo+
-PiA+PiArewo+PiA+PiArICAgICB2b2lkICpzcmNfYWRkciwgKmRzdF9hZGRyOwo+PiA+PiArICAg
-ICBzdHJ1Y3QgcGFnZSAqaXBhZ2U7Cj4+ID4+ICsgICAgIHN0cnVjdCBkbm9kZV9vZl9kYXRhIGRu
-Owo+PiA+PiArICAgICBpbnQgZXJyOwo+PiA+PiArCj4+ID4+ICsgICAgIHNldF9uZXdfZG5vZGUo
-JmRuLCBpbm9kZSwgTlVMTCwgTlVMTCwgMCk7Cj4+ID4+ICsgICAgIGVyciA9IGdldF9kbm9kZV9v
-Zl9kYXRhKCZkbiwgMCwgTE9PS1VQX05PREUpOwo+PiA+PiArICAgICBpZiAoZXJyKQo+PiA+PiAr
-ICAgICAgICAgICAgIHJldHVybiBlcnI7Cj4+ID4+ICsgICAgIGlwYWdlID0gZG4uaW5vZGVfcGFn
-ZTsKPj4gPj4gKwo+PiA+PiArICAgICBzcmNfYWRkciA9IHBhZ2VfYWRkcmVzcyhwYWdlKTsKPj4g
-Pj4gKyAgICAgZHN0X2FkZHIgPSBpbmxpbmVfZGF0YV9hZGRyKGlwYWdlKTsKPj4gPj4gKwo+PiA+
-PiArICAgICB6ZXJvX3VzZXJfc2VnbWVudChpcGFnZSwgSU5MSU5FX0RBVEFfT0ZGU0VULAo+PiA+
-PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgSU5MSU5FX0RBVEFfT0ZGU0VUICsgTUFY
-X0lOTElORV9EQVRBKTsKPj4gPj4gKyAgICAgbWVtY3B5KGRzdF9hZGRyLCBzcmNfYWRkciwgc2l6
-ZSk7Cj4+ID4+ICsgICAgIGlmICghZjJmc19oYXNfaW5saW5lX2RhdGEoaW5vZGUpKQo+PiA+PiAr
-ICAgICAgICAgICAgIHNldF9pbm9kZV9mbGFnKEYyRlNfSShpbm9kZSksIEZJX0lOTElORV9EQVRB
-KTsKPj4gPj4gKyAgICAgc2V0X3Jhd19pbmxpbmUoRjJGU19JKGlub2RlKSwKPj4gPj4gKyAgICAg
-ICAgICAgICAgICAgICAgIChzdHJ1Y3QgZjJmc19pbm9kZSAqKXBhZ2VfYWRkcmVzcyhpcGFnZSkp
-Owo+PiA+PiArICAgICBzZXRfcGFnZV9kaXJ0eShpcGFnZSk7Cj4+ID4+ICsKPj4gPj4gKyAgICAg
-aWYgKChGMkZTX0koaW5vZGUpLT5pX3hhdHRyX25pZCAmJiBpbm9kZS0+aV9ibG9ja3MgPT0gMikg
-fHwKPj4gPj4gKyAgICAgICAgICAgICAoIUYyRlNfSShpbm9kZSktPmlfeGF0dHJfbmlkICYmIGlu
-b2RlLT5pX2Jsb2NrcyA9PSAxKSkgewo+PiA+PiArICAgICAgICAgICAgIGYyZnNfcHV0X2Rub2Rl
-KCZkbik7Cj4+ID4+ICsgICAgICAgICAgICAgcmV0dXJuIDA7Cj4+ID4+ICsgICAgIH0KPj4gPj4g
-Kwo+PiA+PiArICAgICAvKiBSZWxlYXNlIHRoZSBmaXJzdCBkYXRhIGJsb2NrIGlmIGl0IGlzIGFs
-bG9jYXRlZCAqLwo+PiA+PiArICAgICB0cnVuY2F0ZV9kYXRhX2Jsb2Nrc19yYW5nZSgmZG4sIDEp
-Owo+PiA+PiArICAgICBmMmZzX3B1dF9kbm9kZSgmZG4pOwo+PiA+PiArCj4+ID4+ICsgICAgIHJl
-dHVybiAwOwo+PiA+PiArfQo+PiA+Cj4+ID4gLS0KPj4gPiBKYWVnZXVrIEtpbQo+PiA+IFNhbXN1
-bmcKPj4gPgo+PiAtLQo+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUg
-bGluZSAidW5zdWJzY3JpYmUgbGludXgtZnNkZXZlbCIgaW4KPj4gdGhlIGJvZHkgb2YgYSBtZXNz
-YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBh
-dCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4KPiAtLQo+IEph
-ZWdldWsgS2ltCj4gU2Ftc3VuZwo+CgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQW5kcm9pZCBpcyBp
-bmNyZWFzaW5nIGluIHBvcHVsYXJpdHksIGJ1dCB0aGUgb3BlbiBkZXZlbG9wbWVudCBwbGF0Zm9y
-bSB0aGF0CmRldmVsb3BlcnMgbG92ZSBpcyBhbHNvIGF0dHJhY3RpdmUgdG8gbWFsd2FyZSBjcmVh
-dG9ycy4gRG93bmxvYWQgdGhpcyB3aGl0ZQpwYXBlciB0byBsZWFybiBtb3JlIGFib3V0IHNlY3Vy
-ZSBjb2RlIHNpZ25pbmcgcHJhY3RpY2VzIHRoYXQgY2FuIGhlbHAga2VlcApBbmRyb2lkIGFwcHMg
-c2VjdXJlLgpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9NjU4
-Mzk5NTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJm
-cy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5u
-ZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+
+Firstly,
+Thanks. You're right. And I don't know it would be optimized but considering
+pipeline.
+
+for ( i =0; i < SIT_VBLOCK_MAP_SIZE; i += 4) {
+    valid_blocks += bit_count_byte(raw_sit->valid_map[i];
+    valid_blocks += bit_count_byte(raw_sit->valid_map[i+1];
+    valid_blocks += bit_count_byte(raw_sit->valid_map[i+2];
+    valid_blocks += bit_count_byte(raw_sit->valid_map[i+3];
+}
+
+Secondly,
+I think also your patch is good in lots of case NOT aging for long time.
+
+-----Original Message-----
+From: Chao Yu [mailto:chao2.yu@samsung.com] 
+Sent: Tuesday, October 29, 2013 7:07 PM
+To: 'Changman Lee'; jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+linux-f2fs-devel@lists.sourceforge.net
+Subject: RE: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros
+bitmap with bitops for better mount performance
+
+Hi Lee,
+
+It's a good point.
+
+Firstly, In your patch:
+	/* check bitmap with valid block count */
+ 	for (i = 0; i < sbi->blocks_per_seg; i++)
+-		if (f2fs_test_bit(i, raw_sit->valid_map))
+-			valid_blocks++;
++		valid_blocks += bit_count_byte(raw_sit->valid_map[i]);
++
+ 	BUG_ON(GET_SIT_VBLOCKS(raw_sit) != valid_blocks);  }
+
+for (i = 0; i < sbi->blocks_per_seg; i++) should be replace with for (i = 0;
+i < SIT_VBLOCK_MAP_SIZE; i++)
+
+Secondly, I tested your patch and mine
+with SD and emmc with all zeros bitmap.
+It shows my patch takes litter time.
+Could you test and compare the performance of two patches.
+
+--
+1.7.10.4
+
+
+> -----Original Message-----
+> From: Changman Lee [mailto:cm224.lee@samsung.com]
+> Sent: Tuesday, October 29, 2013 3:36 PM
+> To: 'Chao Yu'; jaegeuk.kim@samsung.com
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: RE: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros
+bitmap
+> with bitops for better mount performance
+> 
+> Review attached patch, please.
+> 
+> -----Original Message-----
+> From: Chao Yu [mailto:chao2.yu@samsung.com]
+> Sent: Tuesday, October 29, 2013 3:51 PM
+> To: jaegeuk.kim@samsung.com
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros bitmap
+with
+> bitops for better mount performance
+> 
+> Previously, check_block_count check valid_map with bit data type in common
+> scenario that sit has all ones or zeros bitmap, it makes low mount
+> performance.
+> So let's check the special bitmap with integer data type instead of the
+bit one.
+> 
+> v1-->v2:
+>     use find_next_{zero_}bit_le for better performance and readable as
+> Jaegeuk suggested.
+> 	use neat logogram in comment as Gu Zheng suggested.
+> 	search continuous ones or zeros for better performance when checking
+> mixed bitmap.
+> 
+> Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+> Signed-off-by: Shu Tan <shu.tan@samsung.com>
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/segment.h |   19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index abe7094..a7abfa8
+> 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -550,8 +550,9 @@ static inline void check_block_count(struct
+> f2fs_sb_info *sbi,  {
+>  	struct f2fs_sm_info *sm_info = SM_I(sbi);
+>  	unsigned int end_segno = sm_info->segment_count - 1;
+> +	bool is_valid  = test_bit_le(0, raw_sit->valid_map) ? true : false;
+>  	int valid_blocks = 0;
+> -	int i;
+> +	int cur_pos = 0, next_pos;
+> 
+>  	/* check segment usage */
+>  	BUG_ON(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg); @@ -560,9
+> +561,19 @@ static inline void check_block_count(struct f2fs_sb_info
+> +*sbi,
+>  	BUG_ON(segno > end_segno);
+> 
+>  	/* check bitmap with valid block count */
+> -	for (i = 0; i < sbi->blocks_per_seg; i++)
+> -		if (f2fs_test_bit(i, raw_sit->valid_map))
+> -			valid_blocks++;
+> +	do {
+> +		if (is_valid) {
+> +			next_pos =
+> find_next_zero_bit_le(&raw_sit->valid_map,
+> +					sbi->blocks_per_seg,
+> +					cur_pos);
+> +			valid_blocks += next_pos - cur_pos;
+> +		} else
+> +			next_pos = find_next_bit_le(&raw_sit->valid_map,
+> +					sbi->blocks_per_seg,
+> +					cur_pos);
+> +		cur_pos = next_pos;
+> +		is_valid = !is_valid;
+> +	} while (cur_pos < sbi->blocks_per_seg);
+>  	BUG_ON(GET_SIT_VBLOCKS(raw_sit) != valid_blocks);  }
+> 
+> --
+> 1.7.9.5
+> 
+> 
+>
+----------------------------------------------------------------------------
+> --
+> Android is increasing in popularity, but the open development platform
+that
+> developers love is also attractive to malware creators. Download this
+white
+> paper to learn more about secure code signing practices that can help keep
+> Android apps secure.
+> http://pubads.g.doubleclick.net/gampad/clk?id=65839951&iu=/4140/ostg.clktr
+> k
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
