@@ -1,35 +1,24 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH V2 RESEND] f2fs: check all ones or zeros
- bitmap with bitops for better mount performance
-Date: Wed, 30 Oct 2013 09:05:59 +0800
-Message-ID: <000001ced50c$50d938a0$f28ba9e0$@samsung.com>
-References: <001f01ced473$4c5cc9c0$e5165d40$@samsung.com>
-	<002a01ced479$925505e0$b6ff11a0$@samsung.com>
-	<002401ced495$01a50290$04ef07b0$@samsung.com>
-	<016901ced4fe$1f0c3b00$5d24b100$@samsung.com>
+From: Zachary <zacharyw09264@gmail.com>
+Subject: F2FS Superblock Locations
+Date: Wed, 30 Oct 2013 21:06:14 -0400
+Message-ID: <CAECMkcPVofeNqT=9jYp5arM5_EikERojWdj+tEqKzecWh4nZRg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============6782795545298572766=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VbKFe-00067Q-82
+	(envelope-from <zacharyw09264@gmail.com>) id 1VbgiK-0002Er-KT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Oct 2013 01:07:14 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VbKFb-00071V-VX for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Oct 2013 01:07:14 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MVG00HMQJ3PLIB0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Oct 2013 10:07:05 +0900 (KST)
-In-reply-to: <016901ced4fe$1f0c3b00$5d24b100$@samsung.com>
-Content-language: zh-cn
+	Thu, 31 Oct 2013 01:06:20 +0000
+Received: from mail-oa0-f43.google.com ([209.85.219.43])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1VbgiK-0002AD-1w
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 31 Oct 2013 01:06:20 +0000
+Received: by mail-oa0-f43.google.com with SMTP id m1so2373386oag.2
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Wed, 30 Oct 2013 18:06:14 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,159 +28,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Changman Lee' <cm224.lee@samsung.com>, jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Lee,
+--===============6782795545298572766==
+Content-Type: multipart/alternative; boundary=047d7b5d47406b514d04e9ff0e97
 
-> -----Original Message-----
-> From: Changman Lee [mailto:cm224.lee@samsung.com]
-> Sent: Wednesday, October 30, 2013 7:25 AM
-> To: 'Chao Yu'; jaegeuk.kim@samsung.com
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: RE: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros bitmap with
-bitops for
-> better mount performance
-> 
-> 
-> As you know, if any data or function are used once, we can use some keywords
-> like __initdata for data and __init for function.
+--047d7b5d47406b514d04e9ff0e97
+Content-Type: text/plain; charset=ISO-8859-1
 
-Thanks for reminding me that.
-I just think of that generating tmp data by func could save memory use or keep program
-size small.
+Hello,
 
-Regards
-Yu
+Recently I was checking the file format for F2FS and noticed that the
+superblocks' location on the partition was both at the beginning.  This
+means that if a large portion of the partition is corrupted, then it is
+possible for both superblocks to be destroyed.  From my understanding of
+other filesystems, they prevent that by spreading out the superbolock
+backups across the partition so that it reduces the chances of all
+superblocks being destroyed.  Has this been noticed before or am I mistaken
+in some way?
 
-> 
-> 
-> -----Original Message-----
-> From: Chao Yu [mailto:chao2.yu@samsung.com]
-> Sent: Tuesday, October 29, 2013 7:52 PM
-> To: 'Changman Lee'; jaegeuk.kim@samsung.com
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: RE: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros
-> bitmap with bitops for better mount performance
-> 
-> Hi Lee,
-> 
-> > -----Original Message-----
-> > From: Changman Lee [mailto:cm224.lee@samsung.com]
-> > Sent: Tuesday, October 29, 2013 3:36 PM
-> > To: 'Chao Yu'; jaegeuk.kim@samsung.com
-> > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Subject: RE: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or
-> > zeros
-> bitmap
-> > with bitops for better mount performance
-> >
-> > Review attached patch, please.
-> 
-> Could we hide the pre calculated value by generating it in allocated memory
-> by func, because the value will be no use after build_sit_entries();
-> 
-> Regards
-> Yu
-> 
-> >
-> > -----Original Message-----
-> > From: Chao Yu [mailto:chao2.yu@samsung.com]
-> > Sent: Tuesday, October 29, 2013 3:51 PM
-> > To: jaegeuk.kim@samsung.com
-> > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Subject: [f2fs-dev] [PATCH V2 RESEND] f2fs: check all ones or zeros
-> > bitmap
-> with
-> > bitops for better mount performance
-> >
-> > Previously, check_block_count check valid_map with bit data type in
-> > common scenario that sit has all ones or zeros bitmap, it makes low
-> > mount performance.
-> > So let's check the special bitmap with integer data type instead of
-> > the
-> bit one.
-> >
-> > v1-->v2:
-> >     use find_next_{zero_}bit_le for better performance and readable as
-> > Jaegeuk suggested.
-> > 	use neat logogram in comment as Gu Zheng suggested.
-> > 	search continuous ones or zeros for better performance when checking
-> 
-> > mixed bitmap.
-> >
-> > Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-> > Signed-off-by: Shu Tan <shu.tan@samsung.com>
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/segment.h |   19 +++++++++++++++----
-> >  1 file changed, 15 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index
-> > abe7094..a7abfa8
-> > 100644
-> > --- a/fs/f2fs/segment.h
-> > +++ b/fs/f2fs/segment.h
-> > @@ -550,8 +550,9 @@ static inline void check_block_count(struct
-> > f2fs_sb_info *sbi,  {
-> >  	struct f2fs_sm_info *sm_info = SM_I(sbi);
-> >  	unsigned int end_segno = sm_info->segment_count - 1;
-> > +	bool is_valid  = test_bit_le(0, raw_sit->valid_map) ? true : false;
-> >  	int valid_blocks = 0;
-> > -	int i;
-> > +	int cur_pos = 0, next_pos;
-> >
-> >  	/* check segment usage */
-> >  	BUG_ON(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg); @@ -560,9
-> > +561,19 @@ static inline void check_block_count(struct f2fs_sb_info
-> > +*sbi,
-> >  	BUG_ON(segno > end_segno);
-> >
-> >  	/* check bitmap with valid block count */
-> > -	for (i = 0; i < sbi->blocks_per_seg; i++)
-> > -		if (f2fs_test_bit(i, raw_sit->valid_map))
-> > -			valid_blocks++;
-> > +	do {
-> > +		if (is_valid) {
-> > +			next_pos =
-> > find_next_zero_bit_le(&raw_sit->valid_map,
-> > +					sbi->blocks_per_seg,
-> > +					cur_pos);
-> > +			valid_blocks += next_pos - cur_pos;
-> > +		} else
-> > +			next_pos = find_next_bit_le(&raw_sit->valid_map,
-> > +					sbi->blocks_per_seg,
-> > +					cur_pos);
-> > +		cur_pos = next_pos;
-> > +		is_valid = !is_valid;
-> > +	} while (cur_pos < sbi->blocks_per_seg);
-> >  	BUG_ON(GET_SIT_VBLOCKS(raw_sit) != valid_blocks);  }
-> >
-> > --
-> > 1.7.9.5
-> >
-> >
-> >
-> ----------------------------------------------------------------------------
-> > --
-> > Android is increasing in popularity, but the open development platform
-> that
-> > developers love is also attractive to malware creators. Download this
-> white
-> > paper to learn more about secure code signing practices that can help
-> > keep Android apps secure.
-> > http://pubads.g.doubleclick.net/gampad/clk?id=65839951&iu=/4140/ostg.c
-> > lktr
-> > k
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Thank you,
+Zachary Winnerman
 
+--047d7b5d47406b514d04e9ff0e97
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hello,<br><br>Recently I was checking the file format for =
+F2FS and noticed that the superblocks&#39; location on the partition was bo=
+th at the beginning.=A0 This means that if a large portion of the partition=
+ is corrupted, then it is possible for both superblocks to be destroyed.=A0=
+ From my understanding of other filesystems, they prevent that by spreading=
+ out the superbolock backups across the partition so that it reduces the ch=
+ances of all superblocks being destroyed.=A0 Has this been noticed before o=
+r am I mistaken in some way?<br>
+<br>Thank you,<br>Zachary Winnerman<br></div>
+
+--047d7b5d47406b514d04e9ff0e97--
+
+
+--===============6782795545298572766==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Android is increasing in popularity, but the open development platform that
@@ -199,3 +79,15 @@ developers love is also attractive to malware creators. Download this white
 paper to learn more about secure code signing practices that can help keep
 Android apps secure.
 http://pubads.g.doubleclick.net/gampad/clk?id=65839951&iu=/4140/ostg.clktrk
+--===============6782795545298572766==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============6782795545298572766==--
