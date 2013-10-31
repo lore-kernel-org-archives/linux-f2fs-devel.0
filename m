@@ -1,89 +1,103 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: F2FS Superblock Locations
-Date: Thu, 31 Oct 2013 14:00:06 +0900
-Message-ID: <1383195606.14041.33.camel@kjgkr>
-References: <CAECMkcPVofeNqT=9jYp5arM5_EikERojWdj+tEqKzecWh4nZRg@mail.gmail.com>
-	<1383184550.14041.29.camel@kjgkr>
-	<CAECMkcNNSm3V0h9RHCZMpzPth_yhKaRap7_uoB55Hu6RWu_9Kw@mail.gmail.com>
-Reply-To: jaegeuk.kim@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VbkNK-00065s-J5
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 31 Oct 2013 05:00:54 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VbkNI-0004c2-AM for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 31 Oct 2013 05:00:54 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MVI002HSOK45TL0@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 31 Oct 2013 14:00:45 +0900 (KST)
-In-reply-to: <CAECMkcNNSm3V0h9RHCZMpzPth_yhKaRap7_uoB55Hu6RWu_9Kw@mail.gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Zachary <zacharyw09264@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs: avoid to wait all the node blocks during fsync
+Date: Thu, 31 Oct 2013 16:51:31 +0900
+Message-ID: <1383205891-25065-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-MjAxMy0xMC0zMCAo7IiYKSwgMjM6MzMgLTA0MDAsIFphY2hhcnk6Cj4gVGhpcyB3YXMgaW4gcmVm
-ZXJlbmNlIHRvIHNvZnR3YXJlIG1pc3Rha2VzIHRoYXQgbWlnaHQgd2lwZSBwb3J0aW9ucyBvZgo+
-IHRoZSBkaXNrIHJhdGhlciB0aGFuIGhhcmR3YXJlIGZhaWx1cmVzLCBpdCBjYW1lIHVwIGFmdGVy
-IEkgYWxtb3N0IGhhZAo+IG9uZSB0aG91Z2ggaXQgdHVybnMgb3V0IGl0cyBhbiB1bnJlbGF0ZWQg
-cHJvYmxlbS4KCklmIHRoaXMgaXMgZHVlIHRvIHRoZSBTVyBtaXN0YWtlcywgaXQgd291bGQgYmUg
-YmV0dGVyIHRvIHJld3JpdGUgdGhlCnN1cGVyYmxvY2sgb25seSBieSBta2ZzLmYyZnMsIHNpbmNl
-IHRoZSBzdXBlcmJsb2NrIGNvbnRhaW5zIGp1c3Qgc3RhdGljCmluZm9ybWF0aW9uIG9mIGl0cyBw
-YXJ0aXRpb24uCkkgY2FuIHNpbXBseSBhZGQgYW4gb3B0aW9uIHRvIGRvIHRoYXQgaW4gbWtmcy5m
-MmZzLgoKQnV0LCBpZiB0aGUgY2hlY2twb2ludCBpcyBjb3JydXB0ZWQsIHRoZXJlIGlzIG5vIHdh
-eSB0byByZWNvdmVyLgpUaGFua3MsCj4gCj4gT24gT2N0IDMwLCAyMDEzIDk6NTYgUE0sICJKYWVn
-ZXVrIEtpbSIgPGphZWdldWsua2ltQHNhbXN1bmcuY29tPgo+IHdyb3RlOgo+ICAgICAgICAgSGks
-Cj4gICAgICAgICAKPiAgICAgICAgIDIwMTMtMTAtMzAgKOyImCksIDIxOjA2IC0wNDAwLCBaYWNo
-YXJ5Ogo+ICAgICAgICAgPiBIZWxsbywKPiAgICAgICAgID4KPiAgICAgICAgID4gUmVjZW50bHkg
-SSB3YXMgY2hlY2tpbmcgdGhlIGZpbGUgZm9ybWF0IGZvciBGMkZTIGFuZCBub3RpY2VkCj4gICAg
-ICAgICB0aGF0IHRoZQo+ICAgICAgICAgPiBzdXBlcmJsb2NrcycgbG9jYXRpb24gb24gdGhlIHBh
-cnRpdGlvbiB3YXMgYm90aCBhdCB0aGUKPiAgICAgICAgIGJlZ2lubmluZy4KPiAgICAgICAgID4g
-VGhpcyBtZWFucyB0aGF0IGlmIGEgbGFyZ2UgcG9ydGlvbiBvZiB0aGUgcGFydGl0aW9uIGlzCj4g
-ICAgICAgICBjb3JydXB0ZWQsIHRoZW4KPiAgICAgICAgID4gaXQgaXMgcG9zc2libGUgZm9yIGJv
-dGggc3VwZXJibG9ja3MgdG8gYmUgZGVzdHJveWVkLiAgRnJvbQo+ICAgICAgICAgbXkKPiAgICAg
-ICAgID4gdW5kZXJzdGFuZGluZyBvZiBvdGhlciBmaWxlc3lzdGVtcywgdGhleSBwcmV2ZW50IHRo
-YXQgYnkKPiAgICAgICAgIHNwcmVhZGluZyBvdXQKPiAgICAgICAgID4gdGhlIHN1cGVyYm9sb2Nr
-IGJhY2t1cHMgYWNyb3NzIHRoZSBwYXJ0aXRpb24gc28gdGhhdCBpdAo+ICAgICAgICAgcmVkdWNl
-cyB0aGUKPiAgICAgICAgID4gY2hhbmNlcyBvZiBhbGwgc3VwZXJibG9ja3MgYmVpbmcgZGVzdHJv
-eWVkLiAgSGFzIHRoaXMgYmVlbgo+ICAgICAgICAgbm90aWNlZAo+ICAgICAgICAgPiBiZWZvcmUg
-b3IgYW0gSSBtaXN0YWtlbiBpbiBzb21lIHdheT8KPiAgICAgICAgIAo+ICAgICAgICAgSU1ITywg
-dHJhZGl0aW9uYWwgcm90YXRpb25hbCBkaXNrcyBsaWtlIEhERHMgbmVlZCBzdWNoIHRoZQo+ICAg
-ICAgICAgc3VwZXJibG9jawo+ICAgICAgICAgYmFja3Vwcy4KPiAgICAgICAgIAo+ICAgICAgICAg
-QnV0IGZvciB0aGUgc29saWQtc3RhdGUgZGlza3MgbGlrZSBTU0RzIGFuZCBlTU1DcywgSSBzdXNw
-ZWN0Cj4gICAgICAgICB0aGF0IHRoZQo+ICAgICAgICAgYmFja3VwcyBhcmUgbmVlZGVkIGluIHBy
-YWN0aWNhbCwgc2luY2UgaXRzIGZpcm13YXJlLCBGVEwsCj4gICAgICAgICBzcHJlYWRzIHRoZQo+
-ICAgICAgICAgZGF0YSBhY3Jvc3MgdGhlIHdob2xlIE5BTkQgYXJyYXlzIHRvIGF2b2lkIGNlbGwg
-ZXJyb3JzIChlLmcuLAo+ICAgICAgICAgd2Vhci1vdXQpLgo+ICAgICAgICAgU28gSSB0aGluayB0
-aGUgc3VwZXJibG9jayBpcyB2ZXJ5IG11Y2ggaGFyZCB0byBiZSBicm9rZW4KPiAgICAgICAgIGVz
-cGVjaWFsbHkgb24KPiAgICAgICAgIGZsYXNoIHN0b3JhZ2VzLgo+ICAgICAgICAgCj4gICAgICAg
-ICBUaGFuayB5b3UsCj4gICAgICAgICAKPiAgICAgICAgIAo+ICAgICAgICAgLS0KPiAgICAgICAg
-IEphZWdldWsgS2ltCj4gICAgICAgICBTYW1zdW5nCj4gICAgICAgICAKCi0tIApKYWVnZXVrIEtp
-bQpTYW1zdW5nCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpBbmRyb2lkIGlzIGluY3JlYXNpbmcg
-aW4gcG9wdWxhcml0eSwgYnV0IHRoZSBvcGVuIGRldmVsb3BtZW50IHBsYXRmb3JtIHRoYXQKZGV2
-ZWxvcGVycyBsb3ZlIGlzIGFsc28gYXR0cmFjdGl2ZSB0byBtYWx3YXJlIGNyZWF0b3JzLiBEb3du
-bG9hZCB0aGlzIHdoaXRlCnBhcGVyIHRvIGxlYXJuIG1vcmUgYWJvdXQgc2VjdXJlIGNvZGUgc2ln
-bmluZyBwcmFjdGljZXMgdGhhdCBjYW4gaGVscCBrZWVwCkFuZHJvaWQgYXBwcyBzZWN1cmUuCmh0
-dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD02NTgzOTk1MSZpdT0v
-NDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxp
-c3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9s
-aXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Previously, f2fs_sync_file() waits for all the node blocks to be written.
+But, we don't need to do that, but wait only the inode-related node blocks.
+
+This patch adds wait_on_node_pages_writeback() in which waits inode-related
+node blocks that are on writeback.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/file.c |  5 +++--
+ fs/f2fs/node.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 44 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6aaefdb..625eb4b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1026,6 +1026,7 @@ void get_node_info(struct f2fs_sb_info *, nid_t, struct node_info *);
+ int get_dnode_of_data(struct dnode_of_data *, pgoff_t, int);
+ int truncate_inode_blocks(struct inode *, pgoff_t);
+ int truncate_xattr_node(struct inode *, struct page *);
++int wait_on_node_pages_writeback(struct f2fs_sb_info *, nid_t);
+ int remove_inode_page(struct inode *);
+ struct page *new_inode_page(struct inode *, const struct qstr *);
+ struct page *new_node_page(struct dnode_of_data *, unsigned int, struct page *);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 58ed19a..7d714f4 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -189,8 +189,9 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 			if (ret)
+ 				goto out;
+ 		}
+-		filemap_fdatawait_range(sbi->node_inode->i_mapping,
+-							0, LONG_MAX);
++		ret = wait_on_node_pages_writeback(sbi, inode->i_ino);
++		if (ret)
++			goto out;
+ 		ret = blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
+ 	}
+ out:
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 8e331d5..b527ed4 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1148,6 +1148,46 @@ continue_unlock:
+ 	return nwritten;
+ }
+ 
++int wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
++{
++	struct address_space *mapping = sbi->node_inode->i_mapping;
++	pgoff_t index = 0, end = LONG_MAX;
++	struct pagevec pvec;
++	int nr_pages;
++	int ret2 = 0, ret = 0;
++
++	pagevec_init(&pvec, 0);
++	while ((index <= end) &&
++			(nr_pages = pagevec_lookup_tag(&pvec, mapping, &index,
++			PAGECACHE_TAG_WRITEBACK,
++			min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1)) != 0) {
++		unsigned i;
++
++		for (i = 0; i < nr_pages; i++) {
++			struct page *page = pvec.pages[i];
++
++			/* until radix tree lookup accepts end_index */
++			if (page->index > end)
++				continue;
++
++			if (ino && ino_of_node(page) == ino)
++				wait_on_page_writeback(page);
++			if (TestClearPageError(page))
++				ret = -EIO;
++		}
++		pagevec_release(&pvec);
++		cond_resched();
++	}
++
++	if (test_and_clear_bit(AS_ENOSPC, &mapping->flags))
++		ret2 = -ENOSPC;
++	if (test_and_clear_bit(AS_EIO, &mapping->flags))
++		ret2 = -EIO;
++	if (!ret)
++		ret = ret2;
++	return ret;
++}
++
+ static int f2fs_write_node_page(struct page *page,
+ 				struct writeback_control *wbc)
+ {
+-- 
+1.8.4.474.g128a96c
