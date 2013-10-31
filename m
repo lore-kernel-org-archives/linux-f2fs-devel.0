@@ -1,27 +1,33 @@
-From: Zachary <zacharyw09264@gmail.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 Subject: Re: F2FS Superblock Locations
-Date: Wed, 30 Oct 2013 23:33:58 -0400
-Message-ID: <CAECMkcNNSm3V0h9RHCZMpzPth_yhKaRap7_uoB55Hu6RWu_9Kw@mail.gmail.com>
+Date: Thu, 31 Oct 2013 14:00:06 +0900
+Message-ID: <1383195606.14041.33.camel@kjgkr>
 References: <CAECMkcPVofeNqT=9jYp5arM5_EikERojWdj+tEqKzecWh4nZRg@mail.gmail.com>
 	<1383184550.14041.29.camel@kjgkr>
+	<CAECMkcNNSm3V0h9RHCZMpzPth_yhKaRap7_uoB55Hu6RWu_9Kw@mail.gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============9067013802068211812=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zacharyw09264@gmail.com>) id 1Vbj1J-0007a1-Ej
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VbkNK-00065s-J5
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 31 Oct 2013 03:34:05 +0000
-Received: from mail-oa0-f51.google.com ([209.85.219.51])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1Vbj1I-0000I1-F8
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 31 Oct 2013 03:34:05 +0000
-Received: by mail-oa0-f51.google.com with SMTP id h1so2497751oag.10
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 30 Oct 2013 20:33:59 -0700 (PDT)
-In-Reply-To: <1383184550.14041.29.camel@kjgkr>
+	Thu, 31 Oct 2013 05:00:54 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VbkNI-0004c2-AM for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 31 Oct 2013 05:00:54 +0000
+Received: from epcpsbgr4.samsung.com
+	(u144.gpu120.samsung.co.kr [203.254.230.144])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MVI002HSOK45TL0@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 31 Oct 2013 14:00:45 +0900 (KST)
+In-reply-to: <CAECMkcNNSm3V0h9RHCZMpzPth_yhKaRap7_uoB55Hu6RWu_9Kw@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,127 +37,53 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
+To: Zachary <zacharyw09264@gmail.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
---===============9067013802068211812==
-Content-Type: multipart/alternative; boundary=089e01228000c64d0904ea011ebd
-
---089e01228000c64d0904ea011ebd
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-This was in reference to software mistakes that might wipe portions of the
-disk rather than hardware failures, it came up after I almost had one
-though it turns out its an unrelated problem.
-On Oct 30, 2013 9:56 PM, "Jaegeuk Kim" <jaegeuk.kim@samsung.com> wrote:
-
-> Hi,
->
-> 2013-10-30 (=EC=88=98), 21:06 -0400, Zachary:
-> > Hello,
-> >
-> > Recently I was checking the file format for F2FS and noticed that the
-> > superblocks' location on the partition was both at the beginning.
-> > This means that if a large portion of the partition is corrupted, then
-> > it is possible for both superblocks to be destroyed.  From my
-> > understanding of other filesystems, they prevent that by spreading out
-> > the superbolock backups across the partition so that it reduces the
-> > chances of all superblocks being destroyed.  Has this been noticed
-> > before or am I mistaken in some way?
->
-> IMHO, traditional rotational disks like HDDs need such the superblock
-> backups.
->
-> But for the solid-state disks like SSDs and eMMCs, I suspect that the
-> backups are needed in practical, since its firmware, FTL, spreads the
-> data across the whole NAND arrays to avoid cell errors (e.g., wear-out).
-> So I think the superblock is very much hard to be broken especially on
-> flash storages.
->
-> Thank you,
->
->
-> --
-> Jaegeuk Kim
-> Samsung
->
->
-
---089e01228000c64d0904ea011ebd
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<p dir=3D"ltr">This was in reference to software mistakes that might wipe p=
-ortions of the disk rather than hardware failures, it came up after I almos=
-t had one though it turns out its an unrelated problem.</p>
-<div class=3D"gmail_quote">On Oct 30, 2013 9:56 PM, &quot;Jaegeuk Kim&quot;=
- &lt;<a href=3D"mailto:jaegeuk.kim@samsung.com">jaegeuk.kim@samsung.com</a>=
-&gt; wrote:<br type=3D"attribution"><blockquote class=3D"gmail_quote" style=
-=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
-Hi,<br>
-<br>
-2013-10-30 (=EC=88=98), 21:06 -0400, Zachary:<br>
-&gt; Hello,<br>
-&gt;<br>
-&gt; Recently I was checking the file format for F2FS and noticed that the<=
-br>
-&gt; superblocks&#39; location on the partition was both at the beginning.<=
-br>
-&gt; This means that if a large portion of the partition is corrupted, then=
-<br>
-&gt; it is possible for both superblocks to be destroyed. =C2=A0From my<br>
-&gt; understanding of other filesystems, they prevent that by spreading out=
-<br>
-&gt; the superbolock backups across the partition so that it reduces the<br=
->
-&gt; chances of all superblocks being destroyed. =C2=A0Has this been notice=
-d<br>
-&gt; before or am I mistaken in some way?<br>
-<br>
-IMHO, traditional rotational disks like HDDs need such the superblock<br>
-backups.<br>
-<br>
-But for the solid-state disks like SSDs and eMMCs, I suspect that the<br>
-backups are needed in practical, since its firmware, FTL, spreads the<br>
-data across the whole NAND arrays to avoid cell errors (e.g., wear-out).<br=
->
-So I think the superblock is very much hard to be broken especially on<br>
-flash storages.<br>
-<br>
-Thank you,<br>
-<br>
-<br>
---<br>
-Jaegeuk Kim<br>
-Samsung<br>
-<br>
-</blockquote></div>
-
---089e01228000c64d0904ea011ebd--
-
-
---===============9067013802068211812==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-------------------------------------------------------------------------------
-Android is increasing in popularity, but the open development platform that
-developers love is also attractive to malware creators. Download this white
-paper to learn more about secure code signing practices that can help keep
-Android apps secure.
-http://pubads.g.doubleclick.net/gampad/clk?id=65839951&iu=/4140/ostg.clktrk
---===============9067013802068211812==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============9067013802068211812==--
+MjAxMy0xMC0zMCAo7IiYKSwgMjM6MzMgLTA0MDAsIFphY2hhcnk6Cj4gVGhpcyB3YXMgaW4gcmVm
+ZXJlbmNlIHRvIHNvZnR3YXJlIG1pc3Rha2VzIHRoYXQgbWlnaHQgd2lwZSBwb3J0aW9ucyBvZgo+
+IHRoZSBkaXNrIHJhdGhlciB0aGFuIGhhcmR3YXJlIGZhaWx1cmVzLCBpdCBjYW1lIHVwIGFmdGVy
+IEkgYWxtb3N0IGhhZAo+IG9uZSB0aG91Z2ggaXQgdHVybnMgb3V0IGl0cyBhbiB1bnJlbGF0ZWQg
+cHJvYmxlbS4KCklmIHRoaXMgaXMgZHVlIHRvIHRoZSBTVyBtaXN0YWtlcywgaXQgd291bGQgYmUg
+YmV0dGVyIHRvIHJld3JpdGUgdGhlCnN1cGVyYmxvY2sgb25seSBieSBta2ZzLmYyZnMsIHNpbmNl
+IHRoZSBzdXBlcmJsb2NrIGNvbnRhaW5zIGp1c3Qgc3RhdGljCmluZm9ybWF0aW9uIG9mIGl0cyBw
+YXJ0aXRpb24uCkkgY2FuIHNpbXBseSBhZGQgYW4gb3B0aW9uIHRvIGRvIHRoYXQgaW4gbWtmcy5m
+MmZzLgoKQnV0LCBpZiB0aGUgY2hlY2twb2ludCBpcyBjb3JydXB0ZWQsIHRoZXJlIGlzIG5vIHdh
+eSB0byByZWNvdmVyLgpUaGFua3MsCj4gCj4gT24gT2N0IDMwLCAyMDEzIDk6NTYgUE0sICJKYWVn
+ZXVrIEtpbSIgPGphZWdldWsua2ltQHNhbXN1bmcuY29tPgo+IHdyb3RlOgo+ICAgICAgICAgSGks
+Cj4gICAgICAgICAKPiAgICAgICAgIDIwMTMtMTAtMzAgKOyImCksIDIxOjA2IC0wNDAwLCBaYWNo
+YXJ5Ogo+ICAgICAgICAgPiBIZWxsbywKPiAgICAgICAgID4KPiAgICAgICAgID4gUmVjZW50bHkg
+SSB3YXMgY2hlY2tpbmcgdGhlIGZpbGUgZm9ybWF0IGZvciBGMkZTIGFuZCBub3RpY2VkCj4gICAg
+ICAgICB0aGF0IHRoZQo+ICAgICAgICAgPiBzdXBlcmJsb2NrcycgbG9jYXRpb24gb24gdGhlIHBh
+cnRpdGlvbiB3YXMgYm90aCBhdCB0aGUKPiAgICAgICAgIGJlZ2lubmluZy4KPiAgICAgICAgID4g
+VGhpcyBtZWFucyB0aGF0IGlmIGEgbGFyZ2UgcG9ydGlvbiBvZiB0aGUgcGFydGl0aW9uIGlzCj4g
+ICAgICAgICBjb3JydXB0ZWQsIHRoZW4KPiAgICAgICAgID4gaXQgaXMgcG9zc2libGUgZm9yIGJv
+dGggc3VwZXJibG9ja3MgdG8gYmUgZGVzdHJveWVkLiAgRnJvbQo+ICAgICAgICAgbXkKPiAgICAg
+ICAgID4gdW5kZXJzdGFuZGluZyBvZiBvdGhlciBmaWxlc3lzdGVtcywgdGhleSBwcmV2ZW50IHRo
+YXQgYnkKPiAgICAgICAgIHNwcmVhZGluZyBvdXQKPiAgICAgICAgID4gdGhlIHN1cGVyYm9sb2Nr
+IGJhY2t1cHMgYWNyb3NzIHRoZSBwYXJ0aXRpb24gc28gdGhhdCBpdAo+ICAgICAgICAgcmVkdWNl
+cyB0aGUKPiAgICAgICAgID4gY2hhbmNlcyBvZiBhbGwgc3VwZXJibG9ja3MgYmVpbmcgZGVzdHJv
+eWVkLiAgSGFzIHRoaXMgYmVlbgo+ICAgICAgICAgbm90aWNlZAo+ICAgICAgICAgPiBiZWZvcmUg
+b3IgYW0gSSBtaXN0YWtlbiBpbiBzb21lIHdheT8KPiAgICAgICAgIAo+ICAgICAgICAgSU1ITywg
+dHJhZGl0aW9uYWwgcm90YXRpb25hbCBkaXNrcyBsaWtlIEhERHMgbmVlZCBzdWNoIHRoZQo+ICAg
+ICAgICAgc3VwZXJibG9jawo+ICAgICAgICAgYmFja3Vwcy4KPiAgICAgICAgIAo+ICAgICAgICAg
+QnV0IGZvciB0aGUgc29saWQtc3RhdGUgZGlza3MgbGlrZSBTU0RzIGFuZCBlTU1DcywgSSBzdXNw
+ZWN0Cj4gICAgICAgICB0aGF0IHRoZQo+ICAgICAgICAgYmFja3VwcyBhcmUgbmVlZGVkIGluIHBy
+YWN0aWNhbCwgc2luY2UgaXRzIGZpcm13YXJlLCBGVEwsCj4gICAgICAgICBzcHJlYWRzIHRoZQo+
+ICAgICAgICAgZGF0YSBhY3Jvc3MgdGhlIHdob2xlIE5BTkQgYXJyYXlzIHRvIGF2b2lkIGNlbGwg
+ZXJyb3JzIChlLmcuLAo+ICAgICAgICAgd2Vhci1vdXQpLgo+ICAgICAgICAgU28gSSB0aGluayB0
+aGUgc3VwZXJibG9jayBpcyB2ZXJ5IG11Y2ggaGFyZCB0byBiZSBicm9rZW4KPiAgICAgICAgIGVz
+cGVjaWFsbHkgb24KPiAgICAgICAgIGZsYXNoIHN0b3JhZ2VzLgo+ICAgICAgICAgCj4gICAgICAg
+ICBUaGFuayB5b3UsCj4gICAgICAgICAKPiAgICAgICAgIAo+ICAgICAgICAgLS0KPiAgICAgICAg
+IEphZWdldWsgS2ltCj4gICAgICAgICBTYW1zdW5nCj4gICAgICAgICAKCi0tIApKYWVnZXVrIEtp
+bQpTYW1zdW5nCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpBbmRyb2lkIGlzIGluY3JlYXNpbmcg
+aW4gcG9wdWxhcml0eSwgYnV0IHRoZSBvcGVuIGRldmVsb3BtZW50IHBsYXRmb3JtIHRoYXQKZGV2
+ZWxvcGVycyBsb3ZlIGlzIGFsc28gYXR0cmFjdGl2ZSB0byBtYWx3YXJlIGNyZWF0b3JzLiBEb3du
+bG9hZCB0aGlzIHdoaXRlCnBhcGVyIHRvIGxlYXJuIG1vcmUgYWJvdXQgc2VjdXJlIGNvZGUgc2ln
+bmluZyBwcmFjdGljZXMgdGhhdCBjYW4gaGVscCBrZWVwCkFuZHJvaWQgYXBwcyBzZWN1cmUuCmh0
+dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD02NTgzOTk1MSZpdT0v
+NDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxp
+c3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9s
+aXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
