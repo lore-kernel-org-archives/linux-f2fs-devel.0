@@ -1,24 +1,29 @@
-From: Zachary <zacharyw09264@gmail.com>
-Subject: dentry Hash Method
-Date: Sun, 3 Nov 2013 02:47:28 -0500
-Message-ID: <CAECMkcMHVx6OrvHSQkURA7wej6vE4LEtDV=TkzkwhZse8GoiFQ@mail.gmail.com>
+From: Konstantin Dorfman <kdorfman@codeaurora.org>
+Subject: Porting f2fs tools to Android.
+Date: Sun, 03 Nov 2013 15:34:54 +0200
+Message-ID: <527650FE.4050303@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8239736365564089875=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zacharyw09264@gmail.com>) id 1VcsPI-0007VR-7S
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kdorfman@codeaurora.org>) id 1Vcxpa-00041R-4F
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Nov 2013 07:47:36 +0000
-Received: from mail-ob0-f171.google.com ([209.85.214.171])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VcsPG-0004KT-4B
+	Sun, 03 Nov 2013 13:35:06 +0000
+Received: from smtp.codeaurora.org ([198.145.11.231])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1VcxpY-0002Eo-I6
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Nov 2013 07:47:36 +0000
-Received: by mail-ob0-f171.google.com with SMTP id wn1so6101465obc.30
+	Sun, 03 Nov 2013 13:35:05 +0000
+Received: from [129.46.230.20] (unknown [185.23.60.4])
+	(using TLSv1 with cipher DHE-RSA-CAMELLIA256-SHA (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: kdorfman@smtp.codeaurora.org)
+	by smtp.codeaurora.org (Postfix) with ESMTPSA id A5ED813EEDE
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 03 Nov 2013 00:47:28 -0700 (PDT)
+	Sun,  3 Nov 2013 13:34:57 +0000 (UTC)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,43 +35,22 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
---===============8239736365564089875==
-Content-Type: multipart/alternative; boundary=001a11c2d6a0dea4eb04ea4102d2
-
---001a11c2d6a0dea4eb04ea4102d2
-Content-Type: text/plain; charset=ISO-8859-1
-
 Hello,
 
-I was looking at the source code for f2fs with regard to how dentries are
-created and I have a question about how the __le32 hash_code is
-calculated.  If I have a file like /etc/fstab, would the hash be
-f2fs_dentry_hash("/etc/fstab", 10) or f2fs_dentry_hash("fstab", 5) or
-something completely different?
+I'm working on [subj].
+Particularly porting mkfs.f2fs and fsck.f2fs to android build environment.
 
-Thank you,
+Do you know about similar effort?
+Anybody in this community is interested?
 
-Zach
+Thanks,
+Kostya
 
---001a11c2d6a0dea4eb04ea4102d2
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+-- 
+sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+hosted by The Linux Foundation
 
-<div dir=3D"ltr">Hello,<br><br>I was looking at the source code for f2fs wi=
-th regard to how dentries are created and I have a question about how the _=
-_le32 hash_code is calculated.=A0 If I have a file like /etc/fstab, would t=
-he hash be f2fs_dentry_hash(&quot;/etc/fstab&quot;, 10) or f2fs_dentry_hash=
-(&quot;fstab&quot;, 5) or something completely different?<br>
-<br>Thank you,<br><br>Zach<br></div>
-
---001a11c2d6a0dea4eb04ea4102d2--
-
-
---===============8239736365564089875==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Android is increasing in popularity, but the open development platform that
@@ -74,15 +58,3 @@ developers love is also attractive to malware creators. Download this white
 paper to learn more about secure code signing practices that can help keep
 Android apps secure.
 http://pubads.g.doubleclick.net/gampad/clk?id=65839951&iu=/4140/ostg.clktrk
---===============8239736365564089875==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============8239736365564089875==--
