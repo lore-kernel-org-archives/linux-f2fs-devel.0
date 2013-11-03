@@ -1,60 +1,100 @@
-From: Konstantin Dorfman <kdorfman@codeaurora.org>
-Subject: Porting f2fs tools to Android.
-Date: Sun, 03 Nov 2013 15:34:54 +0200
-Message-ID: <527650FE.4050303@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kdorfman@codeaurora.org>) id 1Vcxpa-00041R-4F
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Nov 2013 13:35:06 +0000
-Received: from smtp.codeaurora.org ([198.145.11.231])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1VcxpY-0002Eo-I6
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Nov 2013 13:35:05 +0000
-Received: from [129.46.230.20] (unknown [185.23.60.4])
-	(using TLSv1 with cipher DHE-RSA-CAMELLIA256-SHA (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: kdorfman@smtp.codeaurora.org)
-	by smtp.codeaurora.org (Postfix) with ESMTPSA id A5ED813EEDE
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun,  3 Nov 2013 13:34:57 +0000 (UTC)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+From: Huajun Li <huajun.li.lee@gmail.com>
+Subject: [PATCH 1/1] No need to do recovery if there is no available CP
+Date: Sun,  3 Nov 2013 23:08:21 +0800
+Message-ID: <1383491301-11460-1-git-send-email-huajun.li.lee@gmail.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, Huajun Li <huajun.li@intel.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello,
+From: Huajun Li <huajun.li@intel.com>
 
-I'm working on [subj].
-Particularly porting mkfs.f2fs and fsck.f2fs to android build environment.
+Normally we expect an empty partition after formatting by
+mkfs.f2fs. But in this case, when we format a dirty partition and mount
+it again. The former file will be recovered and available again! and
+kernel log shows a recovery procedure is evoked.
+This patch adds a new flag CP_EXIST_FLAG to indicate whether is a
+available CP, and do recovery only when this flag is set.
 
-Do you know about similar effort?
-Anybody in this community is interested?
+You can reproduce the bug by following script:
+===================================
+	TEST_DEV=/dev/sdb1
+	umount $TEST_DEV
+	mkfs.f2fs $TEST_DEV > /dev/null
+	mount -t f2fs $TEST_DEV /mnt
+	dmesg -c > /dev/null
 
-Thanks,
-Kostya
+	echo
+	echo "Small Vector Sync"
+	echo "abcdefghijklmnopqrstuvwxyz" > /mnt/small_vector_async
 
+	xfs_io -F -f -s -c "pread -v 0 1"\
+	    -c "pwrite -S 0x61 4090 1"\
+	    /mnt/small_vector_async
+
+	umount $TEST_DEV
+
+	mkfs.f2fs $TEST_DEV
+	#After we format a partition, there should be nothing but root in it.
+	#But in this case, when we format a used partition and mount it again,
+	#the former created file small_vector_async will be recover!
+
+	mount -t f2fs $TEST_DEV /mnt
+	#We expect nothing after mkfs, but in this case small_vector_async will
+	#be recovered when we mount the partition.
+
+	ls /mnt
+	dmesg
+
+
+Signed-off-by: Huajun Li <huajun.li@intel.com>
+Reported-and-tested-by: Weihong Xu <weihong.xu@intel.com>
+---
+ fs/f2fs/checkpoint.c    |    2 ++
+ fs/f2fs/super.c         |    3 ++-
+ include/linux/f2fs_fs.h |    1 +
+ 3 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index d430157..22b3972 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -767,6 +767,8 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+ 		clear_prefree_segments(sbi);
+ 		F2FS_RESET_SB_DIRT(sbi);
+ 	}
++	if (!is_set_ckpt_flags(ckpt, CP_EXIST_FLAG))
++		set_ckpt_flags(ckpt, CP_EXIST_FLAG);
+ }
+ 
+ /*
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index e42351c..963da7d 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -959,7 +959,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	}
+ 
+ 	/* recover fsynced data */
+-	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
++	if (!test_opt(sbi, DISABLE_ROLL_FORWARD) &&
++	    is_set_ckpt_flags(F2FS_CKPT(sbi), CP_EXIST_FLAG)) {
+ 		err = recover_fsync_data(sbi);
+ 		if (err)
+ 			f2fs_msg(sb, KERN_ERR,
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index bb942f6..6e48f22 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -80,6 +80,7 @@ struct f2fs_super_block {
+ /*
+  * For checkpoint
+  */
++#define CP_EXIST_FLAG		0x00000010
+ #define CP_ERROR_FLAG		0x00000008
+ #define CP_COMPACT_SUM_FLAG	0x00000004
+ #define CP_ORPHAN_PRESENT_FLAG	0x00000002
 -- 
-sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
+1.7.9.5
 
-
-------------------------------------------------------------------------------
-Android is increasing in popularity, but the open development platform that
-developers love is also attractive to malware creators. Download this white
-paper to learn more about secure code signing practices that can help keep
-Android apps secure.
-http://pubads.g.doubleclick.net/gampad/clk?id=65839951&iu=/4140/ostg.clktrk
