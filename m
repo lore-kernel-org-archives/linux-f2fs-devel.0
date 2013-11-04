@@ -1,100 +1,58 @@
-From: Huajun Li <huajun.li.lee@gmail.com>
-Subject: [PATCH 1/1] No need to do recovery if there is no available CP
-Date: Sun,  3 Nov 2013 23:08:21 +0800
-Message-ID: <1383491301-11460-1-git-send-email-huajun.li.lee@gmail.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, Huajun Li <huajun.li@intel.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: Porting f2fs tools to Android.
+Date: Mon, 04 Nov 2013 09:48:26 +0900
+Message-ID: <1383526106.14041.40.camel@kjgkr>
+References: <527650FE.4050303@codeaurora.org>
+Reply-To: jaegeuk.kim@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vd8M0-0006VD-1W
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 04 Nov 2013 00:49:16 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Vd8Ly-0004L7-BE for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 04 Nov 2013 00:49:15 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MVP00924RLNF090@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 04 Nov 2013 09:49:07 +0900 (KST)
+In-reply-to: <527650FE.4050303@codeaurora.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Konstantin Dorfman <kdorfman@codeaurora.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-From: Huajun Li <huajun.li@intel.com>
-
-Normally we expect an empty partition after formatting by
-mkfs.f2fs. But in this case, when we format a dirty partition and mount
-it again. The former file will be recovered and available again! and
-kernel log shows a recovery procedure is evoked.
-This patch adds a new flag CP_EXIST_FLAG to indicate whether is a
-available CP, and do recovery only when this flag is set.
-
-You can reproduce the bug by following script:
-===================================
-	TEST_DEV=/dev/sdb1
-	umount $TEST_DEV
-	mkfs.f2fs $TEST_DEV > /dev/null
-	mount -t f2fs $TEST_DEV /mnt
-	dmesg -c > /dev/null
-
-	echo
-	echo "Small Vector Sync"
-	echo "abcdefghijklmnopqrstuvwxyz" > /mnt/small_vector_async
-
-	xfs_io -F -f -s -c "pread -v 0 1"\
-	    -c "pwrite -S 0x61 4090 1"\
-	    /mnt/small_vector_async
-
-	umount $TEST_DEV
-
-	mkfs.f2fs $TEST_DEV
-	#After we format a partition, there should be nothing but root in it.
-	#But in this case, when we format a used partition and mount it again,
-	#the former created file small_vector_async will be recover!
-
-	mount -t f2fs $TEST_DEV /mnt
-	#We expect nothing after mkfs, but in this case small_vector_async will
-	#be recovered when we mount the partition.
-
-	ls /mnt
-	dmesg
-
-
-Signed-off-by: Huajun Li <huajun.li@intel.com>
-Reported-and-tested-by: Weihong Xu <weihong.xu@intel.com>
----
- fs/f2fs/checkpoint.c    |    2 ++
- fs/f2fs/super.c         |    3 ++-
- include/linux/f2fs_fs.h |    1 +
- 3 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index d430157..22b3972 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -767,6 +767,8 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
- 		clear_prefree_segments(sbi);
- 		F2FS_RESET_SB_DIRT(sbi);
- 	}
-+	if (!is_set_ckpt_flags(ckpt, CP_EXIST_FLAG))
-+		set_ckpt_flags(ckpt, CP_EXIST_FLAG);
- }
- 
- /*
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index e42351c..963da7d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -959,7 +959,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	}
- 
- 	/* recover fsynced data */
--	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
-+	if (!test_opt(sbi, DISABLE_ROLL_FORWARD) &&
-+	    is_set_ckpt_flags(F2FS_CKPT(sbi), CP_EXIST_FLAG)) {
- 		err = recover_fsync_data(sbi);
- 		if (err)
- 			f2fs_msg(sb, KERN_ERR,
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index bb942f6..6e48f22 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -80,6 +80,7 @@ struct f2fs_super_block {
- /*
-  * For checkpoint
-  */
-+#define CP_EXIST_FLAG		0x00000010
- #define CP_ERROR_FLAG		0x00000008
- #define CP_COMPACT_SUM_FLAG	0x00000004
- #define CP_ORPHAN_PRESENT_FLAG	0x00000002
--- 
-1.7.9.5
-
+SGksCgoyMDEzLTExLTAzICjsnbwpLCAxNTozNCArMDIwMCwgS29uc3RhbnRpbiBEb3JmbWFuOgo+
+IEhlbGxvLAo+IAo+IEknbSB3b3JraW5nIG9uIFtzdWJqXS4KPiBQYXJ0aWN1bGFybHkgcG9ydGlu
+ZyBta2ZzLmYyZnMgYW5kIGZzY2suZjJmcyB0byBhbmRyb2lkIGJ1aWxkIGVudmlyb25tZW50Lgo+
+IAo+IERvIHlvdSBrbm93IGFib3V0IHNpbWlsYXIgZWZmb3J0PwoKU28gZmFyLCBJIGNvdWxkbid0
+IGhhdmUgaGVhcmQgYWJvdXQgdGhhdC4KV2VsbCwgc29tZW9uZSB3aG8gYXJlIHdvcmtpbmcgb24g
+YW5kcm9pZCBtYXkgYmUgaW50ZXJlc3RlZCBpbiBzdWNoIHRoZQplZmZvcnQuClRoYW5rcyB0byB0
+aGUgaW50ZXJlc3QgaW4gZjJmcy4gOikKCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKCi0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQpBbmRyb2lkIGlzIGluY3JlYXNpbmcgaW4gcG9wdWxhcml0eSwgYnV0
+IHRoZSBvcGVuIGRldmVsb3BtZW50IHBsYXRmb3JtIHRoYXQKZGV2ZWxvcGVycyBsb3ZlIGlzIGFs
+c28gYXR0cmFjdGl2ZSB0byBtYWx3YXJlIGNyZWF0b3JzLiBEb3dubG9hZCB0aGlzIHdoaXRlCnBh
+cGVyIHRvIGxlYXJuIG1vcmUgYWJvdXQgc2VjdXJlIGNvZGUgc2lnbmluZyBwcmFjdGljZXMgdGhh
+dCBjYW4gaGVscCBrZWVwCkFuZHJvaWQgYXBwcyBzZWN1cmUuCmh0dHA6Ly9wdWJhZHMuZy5kb3Vi
+bGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD02NTgzOTk1MSZpdT0vNDE0MC9vc3RnLmNsa3Ryawpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
+LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
+dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
+LWRldmVsCg==
