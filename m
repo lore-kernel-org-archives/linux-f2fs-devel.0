@@ -1,90 +1,37 @@
-From: Huajun Li <huajun.li.lee@gmail.com>
-Subject: Re: [PATCH 1/1] No need to do recovery if there is no available CP
-Date: Tue, 5 Nov 2013 21:28:22 +0800
-Message-ID: <CA+v9cxYvHAyfE32sHe2Q-kvP8R_L-aeOa8SFxy2UuuWPxeLy6w@mail.gmail.com>
-References: <1383491301-11460-1-git-send-email-huajun.li.lee@gmail.com>
-	<1383528253.14041.53.camel@kjgkr>
-	<CA+v9cxZrDJ0GRLGyzsiPo1p1mPDZHvERnHqrKHSEKQ9+M+pMLg@mail.gmail.com>
-	<1383626886.14041.65.camel@kjgkr>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [f2fs-dev] [PATCH] f2fs: avoid to use a NULL point in
+ destroy_segment_manager
+Date: Wed, 06 Nov 2013 09:12:04 +0800
+Message-ID: <000001ceda8d$5b185bd0$11491370$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1383626886.14041.65.camel@kjgkr>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: "jaegeuk.kim" <jaegeuk.kim@samsung.com>
-Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Huajun Li <huajun.li@intel.com>
+Content-Type: text/plain; charset=gb2312
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: ??? <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?gb2312?B?zLfmrQ==?= <shu.tan@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+A NULL point should avoid to be used in destroy_segment_manager after allocating memory fail for f2fs_sm_info.
 
-Got it, and nice to fix it in mkfs.f2fs.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/segment.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
---Huajun
-On Tue, Nov 5, 2013 at 12:48 PM, Jaegeuk Kim <jaegeuk.kim@samsung.com> =
-wrote:
-> Hi Huajun,
->
-> 2013-11-04 (=EC=9B=94), 23:40 +0800, Huajun Li:
->> Hi Jaegeuk,
->>
->> On Mon, Nov 4, 2013 at 9:24 AM, Jaegeuk Kim <jaegeuk.kim@samsung.com=
-> wrote:
->> > 2013-11-03 (=EC=9D=BC), 23:08 +0800, Huajun Li:
->> >> From: Huajun Li <huajun.li@intel.com>
->> >>
->> >> Normally we expect an empty partition after formatting by
->> >> mkfs.f2fs. But in this case, when we format a dirty partition and=
- mount
->> >> it again. The former file will be recovered and available again! =
-and
->> >> kernel log shows a recovery procedure is evoked.
->> >> This patch adds a new flag CP_EXIST_FLAG to indicate whether is a
->> >> available CP, and do recovery only when this flag is set.
->> >
->> > IMO, mkfs.f2fs should do the right thing to avoid this.
->> > If storage does not support discard, mkfs.f2fs can simply address =
-the
->> > problem by writing one node block with zeros to prevent this.
->> >
->> Yes, mkfs.f2fs should do this definitely. :)
->>
->> > And, if you introduce a new flag, mkfs.f2fs should do the same thi=
-ng,
->> > which means that mkfs.f2fs also needs to set the CP_EXIST_FLAG.
->> > So then, it could not fix the bug.
->> >
->> > How do you think?
->>
->> IMO, mkfs.f2fs doesn't need to set CP_EXIST_FLAG. This flag indicate=
-s
->> there exists an available CP, so an new formatted partition don't ne=
-ed
->> set the flag since there is no CP on it yet.
->
->
-> Ah, what I concern is that mkfs.f2fs writes a valid CP so that it sho=
-uld
-> set the flag.
->
->
->> On the other hand, while mounting a partition, we need to do recover=
-y
->> only if there is CP on the partition. So this flag may be helpful,
->> right?
->
-> If there is no valid CP, f2fs never goes to recover path.
-> So, I doubt the necessity of that flag. :)
->
-> Thanks,
->
-> --
-> Jaegeuk Kim
-> Samsung
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 3d4d5fc..ff363e6
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1744,6 +1744,8 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+ void destroy_segment_manager(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_sm_info *sm_info = SM_I(sbi);
++	if (!sm_info)
++		return;
+ 	destroy_dirty_segmap(sbi);
+ 	destroy_curseg(sbi);
+ 	destroy_free_segmap(sbi);
+-- 
+1.7.9.5
