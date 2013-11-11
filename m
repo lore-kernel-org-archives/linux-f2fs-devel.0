@@ -1,99 +1,146 @@
-From: Huajun Li <huajun.li.lee@gmail.com>
-Subject: Re: [PATCH 1/1] No need to do recovery if there is no
-	available CP
-Date: Mon, 11 Nov 2013 14:06:56 +0800
-Message-ID: <CA+v9cxYA5rjGVHm0QnLCiR9pGqHdCQZP8qgwyzNy+E7iyePG_A@mail.gmail.com>
-References: <1383491301-11460-1-git-send-email-huajun.li.lee@gmail.com>
-	<1383528253.14041.53.camel@kjgkr>
-	<CA+v9cxZrDJ0GRLGyzsiPo1p1mPDZHvERnHqrKHSEKQ9+M+pMLg@mail.gmail.com>
-	<1383626886.14041.65.camel@kjgkr>
-	<CA+v9cxYvHAyfE32sHe2Q-kvP8R_L-aeOa8SFxy2UuuWPxeLy6w@mail.gmail.com>
-	<1384144389.14041.86.camel@kjgkr>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [GIT PULL] f2fs updates for v3.13
+Date: Mon, 11 Nov 2013 21:12:27 +0900
+Message-ID: <1384171947.14041.95.camel@kjgkr>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <huajun.li.lee@gmail.com>) id 1VfkeO-0001l0-1i
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 11 Nov 2013 06:07:04 +0000
-Received: from mail-vc0-f176.google.com ([209.85.220.176])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VfkeM-0005H7-2F
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 11 Nov 2013 06:07:04 +0000
-Received: by mail-vc0-f176.google.com with SMTP id ia6so2909247vcb.7
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 10 Nov 2013 22:06:56 -0800 (PST)
-In-Reply-To: <1384144389.14041.86.camel@kjgkr>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "jaegeuk.kim" <jaegeuk.kim@samsung.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Huajun Li <huajun.li@intel.com>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Linux Kernel, Mailing List" <linux-kernel@vger.kernel.org>, "Linux FS DEV, Mailing List" <linux-fsdevel@vger.kernel.org>, "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gTW9uLCBOb3YgMTEsIDIwMTMgYXQgMTI6MzMgUE0sIEphZWdldWsgS2ltIDxqYWVnZXVrLmtp
-bUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4gSGkgSHVhanVuLAo+Cj4gMjAxMy0xMS0wNSAo7ZmUKSwg
-MjE6MjggKzA4MDAsIEh1YWp1biBMaToKPj4gSGkgSmFlZ2V1aywKPj4KPj4gR290IGl0LCBhbmQg
-bmljZSB0byBmaXggaXQgaW4gbWtmcy5mMmZzLgo+Pgo+PiBUaGFua3MsCj4+IC0tSHVhanVuCj4+
-IE9uIFR1ZSwgTm92IDUsIDIwMTMgYXQgMTI6NDggUE0sIEphZWdldWsgS2ltIDxqYWVnZXVrLmtp
-bUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+ID4gSGkgSHVhanVuLAo+PiA+Cj4+ID4gMjAxMy0xMS0w
-NCAo7JuUKSwgMjM6NDAgKzA4MDAsIEh1YWp1biBMaToKPj4gPj4gSGkgSmFlZ2V1aywKPj4gPj4K
-Pj4gPj4gT24gTW9uLCBOb3YgNCwgMjAxMyBhdCA5OjI0IEFNLCBKYWVnZXVrIEtpbSA8amFlZ2V1
-ay5raW1Ac2Ftc3VuZy5jb20+IHdyb3RlOgo+PiA+PiA+IDIwMTMtMTEtMDMgKOydvCksIDIzOjA4
-ICswODAwLCBIdWFqdW4gTGk6Cj4+ID4+ID4+IEZyb206IEh1YWp1biBMaSA8aHVhanVuLmxpQGlu
-dGVsLmNvbT4KPj4gPj4gPj4KPj4gPj4gPj4gTm9ybWFsbHkgd2UgZXhwZWN0IGFuIGVtcHR5IHBh
-cnRpdGlvbiBhZnRlciBmb3JtYXR0aW5nIGJ5Cj4+ID4+ID4+IG1rZnMuZjJmcy4gQnV0IGluIHRo
-aXMgY2FzZSwgd2hlbiB3ZSBmb3JtYXQgYSBkaXJ0eSBwYXJ0aXRpb24gYW5kIG1vdW50Cj4+ID4+
-ID4+IGl0IGFnYWluLiBUaGUgZm9ybWVyIGZpbGUgd2lsbCBiZSByZWNvdmVyZWQgYW5kIGF2YWls
-YWJsZSBhZ2FpbiEgYW5kCj4+ID4+ID4+IGtlcm5lbCBsb2cgc2hvd3MgYSByZWNvdmVyeSBwcm9j
-ZWR1cmUgaXMgZXZva2VkLgo+PiA+PiA+PiBUaGlzIHBhdGNoIGFkZHMgYSBuZXcgZmxhZyBDUF9F
-WElTVF9GTEFHIHRvIGluZGljYXRlIHdoZXRoZXIgaXMgYQo+PiA+PiA+PiBhdmFpbGFibGUgQ1As
-IGFuZCBkbyByZWNvdmVyeSBvbmx5IHdoZW4gdGhpcyBmbGFnIGlzIHNldC4KPj4gPj4gPgo+PiA+
-PiA+IElNTywgbWtmcy5mMmZzIHNob3VsZCBkbyB0aGUgcmlnaHQgdGhpbmcgdG8gYXZvaWQgdGhp
-cy4KPj4gPj4gPiBJZiBzdG9yYWdlIGRvZXMgbm90IHN1cHBvcnQgZGlzY2FyZCwgbWtmcy5mMmZz
-IGNhbiBzaW1wbHkgYWRkcmVzcyB0aGUKPj4gPj4gPiBwcm9ibGVtIGJ5IHdyaXRpbmcgb25lIG5v
-ZGUgYmxvY2sgd2l0aCB6ZXJvcyB0byBwcmV2ZW50IHRoaXMuCj4+ID4+ID4KPgo+IFdSVCB0aGUg
-YmVsb3cgaXNzdWUsIEkgbWFkZSBhIHBhdGNoIGZvciBta2ZzLmYyZnMuCj4gSWYgcG9zc2libGUs
-IGNvdWxkIHlvdSB0ZXN0IGFuZCB3cml0ZSBhIHZhbGlkIHBhdGNoPwo+IFRoYW5rcywKPgpIaSBK
-YWVnZXVrLAoKVGVzdCB5b3VyIGZvbGxvd2luZyBmaXgganVzdCBub3cgb24gdGhlIHNhbWUgdGVz
-dCBtYWNoaW5lLCBpdCBjYW4gd29yayBmaW5lLgpUaGlzIGlzIG5ldyBpbXBsZW1lbnRhdGlvbiB0
-byBmaXggdGhlIGlzc3VlLCBtYXliZSB5b3UgY2FuCnN1Ym1pdC9pbnRlZ3JhdGUgeW91ciBwYXRj
-aCBkaXJlY3RseS4gICA7KQoKPiAtLS0KPiAgbWtmcy9mMmZzX2Zvcm1hdC5jIHwgNyArKysrKyst
-Cj4gIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPgo+IGRp
-ZmYgLS1naXQgYS9ta2ZzL2YyZnNfZm9ybWF0LmMgYi9ta2ZzL2YyZnNfZm9ybWF0LmMKPiBpbmRl
-eCA4MjM0YjAwLi4xOGRlZDc5IDEwMDY0NAo+IC0tLSBhL21rZnMvZjJmc19mb3JtYXQuYwo+ICsr
-KyBiL21rZnMvZjJmc19mb3JtYXQuYwo+IEBAIC03ODgsNyArNzg4LDEyIEBAIHN0YXRpYyBpbnQg
-ZjJmc193cml0ZV9yb290X2lub2RlKHZvaWQpCj4KPiAgICAgICAgIG1lbXNldChyYXdfbm9kZSwg
-MHhmZiwgc2l6ZW9mKHN0cnVjdCBmMmZzX25vZGUpKTsKPgo+IC0gICAgICAgbWFpbl9hcmVhX25v
-ZGVfc2VnX2Jsa19vZmZzZXQgKz0gRjJGU19CTEtTSVpFOwo+ICsgICAgICAgLyogYXZvaWQgcG93
-ZXItb2ZmLXJlY292ZXJ5IGJhc2VkIG9uIHJvbGwtZm9yd2FyZCBwb2xpY3kgKi8KPiArICAgICAg
-IG1haW5fYXJlYV9ub2RlX3NlZ19ibGtfb2Zmc2V0ID0gbGUzMl90b19jcHUoc3VwZXJfYmxvY2su
-bWFpbl9ibGthZGRyKTsKPiArICAgICAgIG1haW5fYXJlYV9ub2RlX3NlZ19ibGtfb2Zmc2V0ICs9
-IGNvbmZpZy5jdXJfc2VnW0NVUlNFR19XQVJNX05PREVdICoKPiArICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgY29uZmlnLmJsa3NfcGVyX3NlZzsKPiArICAgICAgICBtYWlu
-X2FyZWFfbm9kZV9zZWdfYmxrX29mZnNldCAqPSBibGtfc2l6ZV9ieXRlczsKPiArCj4gICAgICAg
-ICBpZiAoZGV2X3dyaXRlKHJhd19ub2RlLCBtYWluX2FyZWFfbm9kZV9zZWdfYmxrX29mZnNldCwg
-RjJGU19CTEtTSVpFKSkKPiB7Cj4gICAgICAgICAgICAgICAgIE1TRygxLCAiXHRFcnJvcjogV2hp
-bGUgd3JpdGluZyB0aGUgcmF3X25vZGUgdG8gZGlzayEhIVxuIik7Cj4gICAgICAgICAgICAgICAg
-IHJldHVybiAtMTsKPiAtLQo+IDEuOC40LjQ3NC5nMTI4YTk2Ywo+Cj4KPiAtLQo+IEphZWdldWsg
-S2ltCj4gU2Ftc3VuZwo+CgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KTm92ZW1iZXIgV2ViaW5hcnMg
-Zm9yIEMsIEMrKywgRm9ydHJhbiBEZXZlbG9wZXJzCkFjY2VsZXJhdGUgYXBwbGljYXRpb24gcGVy
-Zm9ybWFuY2Ugd2l0aCBzY2FsYWJsZSBwcm9ncmFtbWluZyBtb2RlbHMuIEV4cGxvcmUKdGVjaG5p
-cXVlcyBmb3IgdGhyZWFkaW5nLCBlcnJvciBjaGVja2luZywgcG9ydGluZywgYW5kIHR1bmluZy4g
-R2V0IHRoZSBtb3N0IApmcm9tIHRoZSBsYXRlc3QgSW50ZWwgcHJvY2Vzc29ycyBhbmQgY29wcm9j
-ZXNzb3JzLiBTZWUgYWJzdHJhY3RzIGFuZCByZWdpc3RlcgpodHRwOi8vcHViYWRzLmcuZG91Ymxl
-Y2xpY2submV0L2dhbXBhZC9jbGs/aWQ9NjAxMzYyMzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1k
-ZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQK
-aHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1k
-ZXZlbAo=
+Hi Linus,
+
+This is a pull request on f2fs updates for v3.13.
+
+In this round, a couple of patches were introduced to improve GC and
+checkpoint overheads.
+In addition, a sysfs entry and some tracepoints were added for users to
+maintain the f2fs filesystem.
+And there are a number of clean-ups and bug fixes.
+
+Thank you very much.
+
+The following changes since commit 4a10c2ac2f368583138b774ca41fac4207911983:
+
+  Linux 3.12-rc2 (2013-09-23 15:41:09 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-3.13
+
+for you to fetch changes up to 29e59c14ae5c21d25db1580d9651b5855d656a30:
+
+  f2fs: issue more large discard command (2013-11-11 09:36:32 +0900)
+
+----------------------------------------------------------------
+f2fs updates for v3.13
+
+This patch-set includes the following major enhancement patches.
+o add a sysfs to control reclaiming free segments
+o enhance the f2fs global lock procedures
+o enhance the victim selection flow
+o wait for selected node blocks during fsync
+o add some tracepoints
+o add a config to remove abundant BUG_ONs
+
+The other bug fixes are as follows.
+o fix deadlock on acl operations
+o fix some bugs with respect to orphan inodes
+
+And, there are a bunch of cleanups.
+
+----------------------------------------------------------------
+Changman Lee (3):
+      f2fs: remove unnecessary segment bitmap updates
+      f2fs: cleanup waiting routine for writeback pages in cp
+      f2fs: issue more large discard command
+
+Chao Yu (8):
+      f2fs: avoid allocating failure in bio_alloc
+      f2fs: remove unneeded write checkpoint in recover_fsync_data
+      f2fs: remove redundant set_page_dirty from write_compacted_summaries
+      f2fs: fix calculating incorrect free size when update xattr in __f2fs_setxattr
+      f2fs: check all ones or zeros bitmap with bitops for better mount performance
+      f2fs: remove unnecessary TestClearPageError when wait pages writeback
+      f2fs: avoid to use a NULL point in destroy_segment_manager
+      f2fs: fix memory leak after kobject init failed in fill_super
+
+Fan Li (1):
+      f2fs: change the method of calculating the number summary blocks
+
+Gu Zheng (4):
+      f2fs: use rw_sem instead of fs_lock(locks mutex)
+      f2fs: introduce function read_raw_super_block()
+      f2fs: avoid wait if IO end up when do_checkpoint for better performance
+      f2fs: introduce f2fs_kmem_cache_alloc to hide the unfailed, kmem cache allocation
+
+Haicheng Li (3):
+      f2fs: use true and false for boolean value
+      f2fs: no need to check other dirty_segmap when the seg has been found
+      f2fs: use bool for booleans
+
+Jaegeuk Kim (17):
+      f2fs: avoid unnecessary checkpoints
+      f2fs: fix writing incorrect orphan blocks
+      f2fs: fix to store and retrieve i_rdev correctly
+      f2fs: fix the starvation problem on cp_rwsem
+      f2fs: avoid to write during the recovery
+      f2fs: clean up several status-related operations
+      f2fs: reclaim prefree segments periodically
+      f2fs: introduce f2fs_balance_fs_bg for some background jobs
+      f2fs: add reclaiming control by sysfs
+      f2fs: add tracepoint for set_page_dirty
+      f2fs: add tracepoint for vm_page_mkwrite
+      f2fs: clean up acl flow for better readability
+      f2fs: fix a deadlock during init_acl procedure
+      f2fs: introduce CONFIG_F2FS_CHECK_FS for BUG_ON control
+      f2fs: add an option to avoid unnecessary BUG_ONs
+      f2fs: avoid to wait all the node blocks during fsync
+      f2fs: update f2fs document
+
+Jin Xu (1):
+      f2fs: optimize the victim searching loop slightly
+
+Kelly Anderson (1):
+      f2fs: handle remount options correctly
+
+Russ Knize (1):
+      f2fs: don't GC or take an fs_lock from f2fs_initxattrs()
+
+Russ W. Knize (2):
+      f2fs: don't let the orphan inode counter underflow
+      f2fs: account for orphan inodes during recovery
+
+Yu Chao (1):
+      f2fs: optimize fs_lock for better performance
+
+ Documentation/filesystems/f2fs.txt |   7 ++
+ fs/f2fs/Kconfig                    |   8 +++
+ fs/f2fs/acl.c                      |  36 +++++-----
+ fs/f2fs/acl.h                      |   9 +--
+ fs/f2fs/checkpoint.c               |  75 +++++++++----------
+ fs/f2fs/data.c                     |  29 ++++----
+ fs/f2fs/dir.c                      |   4 +-
+ fs/f2fs/f2fs.h                     | 117 ++++++++++++++++--------------
+ fs/f2fs/file.c                     |  45 ++++++------
+ fs/f2fs/gc.c                       |  31 ++++----
+ fs/f2fs/inode.c                    |  62 +++++++++-------
+ fs/f2fs/namei.c                    |  52 +++++++-------
+ fs/f2fs/node.c                     | 142 +++++++++++++++++++++++-------------
+ fs/f2fs/recovery.c                 |  45 +++++++-----
+ fs/f2fs/segment.c                  | 133 ++++++++++++++++++----------------
+ fs/f2fs/segment.h                  |  38 +++++++---
+ fs/f2fs/super.c                    | 143 ++++++++++++++++++++++++++-----------
+ fs/f2fs/xattr.c                    |  36 ++++++----
+ include/trace/events/f2fs.h        |  51 +++++++++++++
+ 19 files changed, 651 insertions(+), 412 deletions(-)
+
+
+-- 
+Jaegeuk Kim
+Samsung
+
