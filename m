@@ -1,98 +1,99 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 1/1] No need to do recovery if there is no available CP
-Date: Mon, 11 Nov 2013 13:33:09 +0900
-Message-ID: <1384144389.14041.86.camel@kjgkr>
+From: Huajun Li <huajun.li.lee@gmail.com>
+Subject: Re: [PATCH 1/1] No need to do recovery if there is no
+	available CP
+Date: Mon, 11 Nov 2013 14:06:56 +0800
+Message-ID: <CA+v9cxYA5rjGVHm0QnLCiR9pGqHdCQZP8qgwyzNy+E7iyePG_A@mail.gmail.com>
 References: <1383491301-11460-1-git-send-email-huajun.li.lee@gmail.com>
- <1383528253.14041.53.camel@kjgkr>
- <CA+v9cxZrDJ0GRLGyzsiPo1p1mPDZHvERnHqrKHSEKQ9+M+pMLg@mail.gmail.com>
- <1383626886.14041.65.camel@kjgkr>
- <CA+v9cxYvHAyfE32sHe2Q-kvP8R_L-aeOa8SFxy2UuuWPxeLy6w@mail.gmail.com>
-Reply-To: jaegeuk.kim@samsung.com
+	<1383528253.14041.53.camel@kjgkr>
+	<CA+v9cxZrDJ0GRLGyzsiPo1p1mPDZHvERnHqrKHSEKQ9+M+pMLg@mail.gmail.com>
+	<1383626886.14041.65.camel@kjgkr>
+	<CA+v9cxYvHAyfE32sHe2Q-kvP8R_L-aeOa8SFxy2UuuWPxeLy6w@mail.gmail.com>
+	<1384144389.14041.86.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <CA+v9cxYvHAyfE32sHe2Q-kvP8R_L-aeOa8SFxy2UuuWPxeLy6w@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Huajun Li <huajun.li.lee@gmail.com>
-Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Huajun Li <huajun.li@intel.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <huajun.li.lee@gmail.com>) id 1VfkeO-0001l0-1i
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 11 Nov 2013 06:07:04 +0000
+Received: from mail-vc0-f176.google.com ([209.85.220.176])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1VfkeM-0005H7-2F
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 11 Nov 2013 06:07:04 +0000
+Received: by mail-vc0-f176.google.com with SMTP id ia6so2909247vcb.7
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sun, 10 Nov 2013 22:06:56 -0800 (PST)
+In-Reply-To: <1384144389.14041.86.camel@kjgkr>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "jaegeuk.kim" <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Huajun Li <huajun.li@intel.com>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Huajun,
-
-2013-11-05 (=ED=99=94), 21:28 +0800, Huajun Li:
-> Hi Jaegeuk,
->=20
-> Got it, and nice to fix it in mkfs.f2fs.
->=20
-> Thanks,
-> --Huajun
-> On Tue, Nov 5, 2013 at 12:48 PM, Jaegeuk Kim <jaegeuk.kim@samsung.com=
-> wrote:
-> > Hi Huajun,
-> >
-> > 2013-11-04 (=EC=9B=94), 23:40 +0800, Huajun Li:
-> >> Hi Jaegeuk,
-> >>
-> >> On Mon, Nov 4, 2013 at 9:24 AM, Jaegeuk Kim <jaegeuk.kim@samsung.c=
-om> wrote:
-> >> > 2013-11-03 (=EC=9D=BC), 23:08 +0800, Huajun Li:
-> >> >> From: Huajun Li <huajun.li@intel.com>
-> >> >>
-> >> >> Normally we expect an empty partition after formatting by
-> >> >> mkfs.f2fs. But in this case, when we format a dirty partition a=
-nd mount
-> >> >> it again. The former file will be recovered and available again=
-! and
-> >> >> kernel log shows a recovery procedure is evoked.
-> >> >> This patch adds a new flag CP_EXIST_FLAG to indicate whether is=
- a
-> >> >> available CP, and do recovery only when this flag is set.
-> >> >
-> >> > IMO, mkfs.f2fs should do the right thing to avoid this.
-> >> > If storage does not support discard, mkfs.f2fs can simply addres=
-s the
-> >> > problem by writing one node block with zeros to prevent this.
-> >> >
-
-WRT the below issue, I made a patch for mkfs.f2fs.
-If possible, could you test and write a valid patch?
-Thanks,
-
----
- mkfs/f2fs_format.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 8234b00..18ded79 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -788,7 +788,12 @@ static int f2fs_write_root_inode(void)
-=20
- 	memset(raw_node, 0xff, sizeof(struct f2fs_node));
-=20
--	main_area_node_seg_blk_offset +=3D F2FS_BLKSIZE;
-+	/* avoid power-off-recovery based on roll-forward policy */
-+	main_area_node_seg_blk_offset =3D le32_to_cpu(super_block.main_blkadd=
-r);
-+	main_area_node_seg_blk_offset +=3D config.cur_seg[CURSEG_WARM_NODE] *
-+					config.blks_per_seg;
-+        main_area_node_seg_blk_offset *=3D blk_size_bytes;
-+
- 	if (dev_write(raw_node, main_area_node_seg_blk_offset, F2FS_BLKSIZE))
-{
- 		MSG(1, "\tError: While writing the raw_node to disk!!!\n");
- 		return -1;
---=20
-1.8.4.474.g128a96c
-
-
---=20
-Jaegeuk Kim
-Samsung
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gTW9uLCBOb3YgMTEsIDIwMTMgYXQgMTI6MzMgUE0sIEphZWdldWsgS2ltIDxqYWVnZXVrLmtp
+bUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4gSGkgSHVhanVuLAo+Cj4gMjAxMy0xMS0wNSAo7ZmUKSwg
+MjE6MjggKzA4MDAsIEh1YWp1biBMaToKPj4gSGkgSmFlZ2V1aywKPj4KPj4gR290IGl0LCBhbmQg
+bmljZSB0byBmaXggaXQgaW4gbWtmcy5mMmZzLgo+Pgo+PiBUaGFua3MsCj4+IC0tSHVhanVuCj4+
+IE9uIFR1ZSwgTm92IDUsIDIwMTMgYXQgMTI6NDggUE0sIEphZWdldWsgS2ltIDxqYWVnZXVrLmtp
+bUBzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+ID4gSGkgSHVhanVuLAo+PiA+Cj4+ID4gMjAxMy0xMS0w
+NCAo7JuUKSwgMjM6NDAgKzA4MDAsIEh1YWp1biBMaToKPj4gPj4gSGkgSmFlZ2V1aywKPj4gPj4K
+Pj4gPj4gT24gTW9uLCBOb3YgNCwgMjAxMyBhdCA5OjI0IEFNLCBKYWVnZXVrIEtpbSA8amFlZ2V1
+ay5raW1Ac2Ftc3VuZy5jb20+IHdyb3RlOgo+PiA+PiA+IDIwMTMtMTEtMDMgKOydvCksIDIzOjA4
+ICswODAwLCBIdWFqdW4gTGk6Cj4+ID4+ID4+IEZyb206IEh1YWp1biBMaSA8aHVhanVuLmxpQGlu
+dGVsLmNvbT4KPj4gPj4gPj4KPj4gPj4gPj4gTm9ybWFsbHkgd2UgZXhwZWN0IGFuIGVtcHR5IHBh
+cnRpdGlvbiBhZnRlciBmb3JtYXR0aW5nIGJ5Cj4+ID4+ID4+IG1rZnMuZjJmcy4gQnV0IGluIHRo
+aXMgY2FzZSwgd2hlbiB3ZSBmb3JtYXQgYSBkaXJ0eSBwYXJ0aXRpb24gYW5kIG1vdW50Cj4+ID4+
+ID4+IGl0IGFnYWluLiBUaGUgZm9ybWVyIGZpbGUgd2lsbCBiZSByZWNvdmVyZWQgYW5kIGF2YWls
+YWJsZSBhZ2FpbiEgYW5kCj4+ID4+ID4+IGtlcm5lbCBsb2cgc2hvd3MgYSByZWNvdmVyeSBwcm9j
+ZWR1cmUgaXMgZXZva2VkLgo+PiA+PiA+PiBUaGlzIHBhdGNoIGFkZHMgYSBuZXcgZmxhZyBDUF9F
+WElTVF9GTEFHIHRvIGluZGljYXRlIHdoZXRoZXIgaXMgYQo+PiA+PiA+PiBhdmFpbGFibGUgQ1As
+IGFuZCBkbyByZWNvdmVyeSBvbmx5IHdoZW4gdGhpcyBmbGFnIGlzIHNldC4KPj4gPj4gPgo+PiA+
+PiA+IElNTywgbWtmcy5mMmZzIHNob3VsZCBkbyB0aGUgcmlnaHQgdGhpbmcgdG8gYXZvaWQgdGhp
+cy4KPj4gPj4gPiBJZiBzdG9yYWdlIGRvZXMgbm90IHN1cHBvcnQgZGlzY2FyZCwgbWtmcy5mMmZz
+IGNhbiBzaW1wbHkgYWRkcmVzcyB0aGUKPj4gPj4gPiBwcm9ibGVtIGJ5IHdyaXRpbmcgb25lIG5v
+ZGUgYmxvY2sgd2l0aCB6ZXJvcyB0byBwcmV2ZW50IHRoaXMuCj4+ID4+ID4KPgo+IFdSVCB0aGUg
+YmVsb3cgaXNzdWUsIEkgbWFkZSBhIHBhdGNoIGZvciBta2ZzLmYyZnMuCj4gSWYgcG9zc2libGUs
+IGNvdWxkIHlvdSB0ZXN0IGFuZCB3cml0ZSBhIHZhbGlkIHBhdGNoPwo+IFRoYW5rcywKPgpIaSBK
+YWVnZXVrLAoKVGVzdCB5b3VyIGZvbGxvd2luZyBmaXgganVzdCBub3cgb24gdGhlIHNhbWUgdGVz
+dCBtYWNoaW5lLCBpdCBjYW4gd29yayBmaW5lLgpUaGlzIGlzIG5ldyBpbXBsZW1lbnRhdGlvbiB0
+byBmaXggdGhlIGlzc3VlLCBtYXliZSB5b3UgY2FuCnN1Ym1pdC9pbnRlZ3JhdGUgeW91ciBwYXRj
+aCBkaXJlY3RseS4gICA7KQoKPiAtLS0KPiAgbWtmcy9mMmZzX2Zvcm1hdC5jIHwgNyArKysrKyst
+Cj4gIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPgo+IGRp
+ZmYgLS1naXQgYS9ta2ZzL2YyZnNfZm9ybWF0LmMgYi9ta2ZzL2YyZnNfZm9ybWF0LmMKPiBpbmRl
+eCA4MjM0YjAwLi4xOGRlZDc5IDEwMDY0NAo+IC0tLSBhL21rZnMvZjJmc19mb3JtYXQuYwo+ICsr
+KyBiL21rZnMvZjJmc19mb3JtYXQuYwo+IEBAIC03ODgsNyArNzg4LDEyIEBAIHN0YXRpYyBpbnQg
+ZjJmc193cml0ZV9yb290X2lub2RlKHZvaWQpCj4KPiAgICAgICAgIG1lbXNldChyYXdfbm9kZSwg
+MHhmZiwgc2l6ZW9mKHN0cnVjdCBmMmZzX25vZGUpKTsKPgo+IC0gICAgICAgbWFpbl9hcmVhX25v
+ZGVfc2VnX2Jsa19vZmZzZXQgKz0gRjJGU19CTEtTSVpFOwo+ICsgICAgICAgLyogYXZvaWQgcG93
+ZXItb2ZmLXJlY292ZXJ5IGJhc2VkIG9uIHJvbGwtZm9yd2FyZCBwb2xpY3kgKi8KPiArICAgICAg
+IG1haW5fYXJlYV9ub2RlX3NlZ19ibGtfb2Zmc2V0ID0gbGUzMl90b19jcHUoc3VwZXJfYmxvY2su
+bWFpbl9ibGthZGRyKTsKPiArICAgICAgIG1haW5fYXJlYV9ub2RlX3NlZ19ibGtfb2Zmc2V0ICs9
+IGNvbmZpZy5jdXJfc2VnW0NVUlNFR19XQVJNX05PREVdICoKPiArICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgY29uZmlnLmJsa3NfcGVyX3NlZzsKPiArICAgICAgICBtYWlu
+X2FyZWFfbm9kZV9zZWdfYmxrX29mZnNldCAqPSBibGtfc2l6ZV9ieXRlczsKPiArCj4gICAgICAg
+ICBpZiAoZGV2X3dyaXRlKHJhd19ub2RlLCBtYWluX2FyZWFfbm9kZV9zZWdfYmxrX29mZnNldCwg
+RjJGU19CTEtTSVpFKSkKPiB7Cj4gICAgICAgICAgICAgICAgIE1TRygxLCAiXHRFcnJvcjogV2hp
+bGUgd3JpdGluZyB0aGUgcmF3X25vZGUgdG8gZGlzayEhIVxuIik7Cj4gICAgICAgICAgICAgICAg
+IHJldHVybiAtMTsKPiAtLQo+IDEuOC40LjQ3NC5nMTI4YTk2Ywo+Cj4KPiAtLQo+IEphZWdldWsg
+S2ltCj4gU2Ftc3VuZwo+CgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KTm92ZW1iZXIgV2ViaW5hcnMg
+Zm9yIEMsIEMrKywgRm9ydHJhbiBEZXZlbG9wZXJzCkFjY2VsZXJhdGUgYXBwbGljYXRpb24gcGVy
+Zm9ybWFuY2Ugd2l0aCBzY2FsYWJsZSBwcm9ncmFtbWluZyBtb2RlbHMuIEV4cGxvcmUKdGVjaG5p
+cXVlcyBmb3IgdGhyZWFkaW5nLCBlcnJvciBjaGVja2luZywgcG9ydGluZywgYW5kIHR1bmluZy4g
+R2V0IHRoZSBtb3N0IApmcm9tIHRoZSBsYXRlc3QgSW50ZWwgcHJvY2Vzc29ycyBhbmQgY29wcm9j
+ZXNzb3JzLiBTZWUgYWJzdHJhY3RzIGFuZCByZWdpc3RlcgpodHRwOi8vcHViYWRzLmcuZG91Ymxl
+Y2xpY2submV0L2dhbXBhZC9jbGs/aWQ9NjAxMzYyMzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1k
+ZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQK
+aHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1k
+ZXZlbAo=
