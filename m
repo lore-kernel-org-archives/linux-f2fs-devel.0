@@ -1,90 +1,98 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: F2FS performance drop than ext4
-Date: Mon, 11 Nov 2013 09:35:36 +0900
-Message-ID: <1384130136.14041.82.camel@kjgkr>
-References: <CACby0kmwCBK=UcvHSiNrzSBice-6tkagmqr3UwRVO1LfQObufg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] No need to do recovery if there is no available CP
+Date: Mon, 11 Nov 2013 13:33:09 +0900
+Message-ID: <1384144389.14041.86.camel@kjgkr>
+References: <1383491301-11460-1-git-send-email-huajun.li.lee@gmail.com>
+ <1383528253.14041.53.camel@kjgkr>
+ <CA+v9cxZrDJ0GRLGyzsiPo1p1mPDZHvERnHqrKHSEKQ9+M+pMLg@mail.gmail.com>
+ <1383626886.14041.65.camel@kjgkr>
+ <CA+v9cxYvHAyfE32sHe2Q-kvP8R_L-aeOa8SFxy2UuuWPxeLy6w@mail.gmail.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VffUT-0002hB-Rb
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 11 Nov 2013 00:36:29 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VffUR-0003Mz-KM for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 11 Nov 2013 00:36:29 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MW20049OPNQ9260@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 11 Nov 2013 09:36:20 +0900 (KST)
-In-reply-to: <CACby0kmwCBK=UcvHSiNrzSBice-6tkagmqr3UwRVO1LfQObufg@mail.gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: guorke <guorke@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <CA+v9cxYvHAyfE32sHe2Q-kvP8R_L-aeOa8SFxy2UuuWPxeLy6w@mail.gmail.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Huajun Li <huajun.li.lee@gmail.com>
+Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Huajun Li <huajun.li@intel.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgpBcyBJIGNoZWNrZWQgdGhlIGNvbW1pdCwgSSBzdXNwZWN0IHRoYXQgeW91IHR1cm5lZCBv
-bgpDT05GSUdfREVCVUdfTVVURVhFUyBpbiB5b3VyIC5jb25maWcuCkNvdWxkIHlvdSB0ZXN0IHdp
-dGhvdXQgdGhpcyBraW5kIG9mIGRlYnVnZ2luZyBjb25maWdzPwpCZWNhdXNlIGYyZnMgdXNlcyBt
-YW55IG11dGV4ZXMgd2hpY2ggcmVzdWx0cyBpbiBoaWdoIFNXIG92ZXJoZWFkLgpUaGFua3MsCgoy
-MDEzLTExLTA5ICjthqApLCAxMDozMSArMDgwMCwgZ3VvcmtlOgo+IERlYXIgYWxsLAo+IAo+IEkg
-dGVzdCBmMmZzIHBlcmZvcm1hY2UgdmlhIGFuZHJvYmVuY2ggd2l0aCBsb3Qgb2YgZjJmcyBjb21t
-aXRzLiAgQW5kIGkKPiBmb3VuZCB0aGF0LCBiZWZvcmUgY29tbWl0Cj4gYmZlMzU5NjVlY2RjNjAz
-ODMxNGQwMzQ1NmI5NGQ5YmE0NTFjMjg5ZCgyMDEzLzA1LzI4KSwgdGhlCj4gc2VxdWVudGlhbC9y
-YW5kb20gaW8gYW5kIHNxbGl0ZSBvcGVyYXRpb24gcGVyZm9ybWFuY2UgaXMgYmV0dGVyIHRoYW4K
-PiBleHQ0LiAgQWZ0ZXIgdGhpcyBjb21taXQsIHRoZSBpbyBwZXJmb3JtYW5jZSBkcm9wIHRvbyBt
-dWNoLCAgZXZlbiB0ZXN0Cj4gaXQgd2l0aCB0aGUgbGF0ZXN0IGNvbW1pdC4gICBBbmQgdGVzdCBy
-ZXN1bHQgc2hvd3MgaXQgc2xvd2VyIHRoYW4KPiBleHQ0KH4xNSUpLCBsaWtlIHNlcXVlbnRpYWwg
-cmVhZCxzcWxpdGUgaW5zZXJ0L3VwZGF0ZS9kZWxldGUKPiBvcGVyYXRpb24sYnV0IHJhbmRvbSB3
-cml0ZSBzdGlsbCBmYXN0ZXIgdGhhbiBleHQ0KH4yMDAlKS4gICAgCj4gRjJmcyBmcmVlemUgYWxs
-IGlvIG9wZXJhdGlvbnMgd2hlbiBkbyBhIGNoZWNrcG9pbnQsICBidXQgZXh0NCBubyB0aGlzCj4g
-ZGVzaWduLCAgdGhlIGNoZWNrcG9pbnQgZnJlZXplIG9wZXJhdGlvbiBibG9jayBvdGhlcnMgbWV0
-YXQgZGF0YQo+IHVwZGF0ZS4gICBpbiBhbmRyb2lkIHBob25lLCBtb3N0IGFwcGxpY2F0aW9uIHVz
-ZSBzcWxpdGUgLCB3aGljaCBpdAo+IGNhdXNlZCBsb3Qgb2YgZnN5bmMvZmRhdGFzeW5jLiBBbmQg
-dGhpcyBzeW5jIG9wZXJhdGlvbiB3b3VsZCBjYXVzZSBsb3QKPiBvZiBjaGVja3BvaW50IG9wZXJh
-dGlvbiAsIHRoYW4gaXQgY2F1c2VkIGRhdGFiYXNlIHBlcmZvbWFuY2UgZHJvcC4KPiBUaGVyZSdz
-IHNvbWUgb3B0aW1pemF0aW9uIGFib3V0IHdyaXRlY2hlY2twb2ludCBmcm9tIGZzX2xvY2ssIHRv
-Cj4gc2VtcGhvbmUuIGJ1dCBpdCBpcyB1c2VsZXNzLgo+IAo+IGFueSBzdWdnZXN0aW9uIGFib3V0
-IGl0ID8KPiAKPiBQcywgCj4gMS4gYW5kcm9iZW5jaCBpcyAgYSB0b29sIHdoaWNoIHVzZSB0byBt
-b25pdG9yIGFuZHJvaWQgcGhvbmUgaW8KPiBwZXJmb3JtYW5jZSwgIGl0IHVzZSBmc3luYy9mZGF0
-YXN5bmMgdG8gc2ltdWxhdGUgcmFuZG9tIGlvIGFuZCBzcWxpdGUKPiBkYXRhYmFzZSBvcGVyYXRp
-b24uCj4gMi4gRjJmcyB1c2UgZGVmYXVsdCBtb3VudCBvcHRpb24sIGV4dDQgdXNlCj4gcncsbm9h
-dGltZSxub2F1dG9fZGFfYWxsb2MsY29tbWl0PTEsZGF0YT1vcmRlcmVkLgo+IAo+IAo+IAo+IHRo
-YW5rcwo+IAo+IGdvdXJrZQo+IAo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IE5vdmVtYmVyIFdl
-YmluYXJzIGZvciBDLCBDKyssIEZvcnRyYW4gRGV2ZWxvcGVycwo+IEFjY2VsZXJhdGUgYXBwbGlj
-YXRpb24gcGVyZm9ybWFuY2Ugd2l0aCBzY2FsYWJsZSBwcm9ncmFtbWluZyBtb2RlbHMuIEV4cGxv
-cmUKPiB0ZWNobmlxdWVzIGZvciB0aHJlYWRpbmcsIGVycm9yIGNoZWNraW5nLCBwb3J0aW5nLCBh
-bmQgdHVuaW5nLiBHZXQgdGhlIG1vc3QgCj4gZnJvbSB0aGUgbGF0ZXN0IEludGVsIHByb2Nlc3Nv
-cnMgYW5kIGNvcHJvY2Vzc29ycy4gU2VlIGFic3RyYWN0cyBhbmQgcmVnaXN0ZXIKPiBodHRwOi8v
-cHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9NjAxMzYyMzEmaXU9LzQxNDAv
-b3N0Zy5jbGt0cmsKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXyBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdCBMaW51eC1mMmZzLWRldmVsQGxpc3Rz
-LnNvdXJjZWZvcmdlLm5ldCBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0
-aW5mby9saW51eC1mMmZzLWRldmVsCgotLSAKSmFlZ2V1ayBLaW0KU2Ftc3VuZwoKCgotLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0KTm92ZW1iZXIgV2ViaW5hcnMgZm9yIEMsIEMrKywgRm9ydHJhbiBEZXZl
-bG9wZXJzCkFjY2VsZXJhdGUgYXBwbGljYXRpb24gcGVyZm9ybWFuY2Ugd2l0aCBzY2FsYWJsZSBw
-cm9ncmFtbWluZyBtb2RlbHMuIEV4cGxvcmUKdGVjaG5pcXVlcyBmb3IgdGhyZWFkaW5nLCBlcnJv
-ciBjaGVja2luZywgcG9ydGluZywgYW5kIHR1bmluZy4gR2V0IHRoZSBtb3N0IApmcm9tIHRoZSBs
-YXRlc3QgSW50ZWwgcHJvY2Vzc29ycyBhbmQgY29wcm9jZXNzb3JzLiBTZWUgYWJzdHJhY3RzIGFu
-ZCByZWdpc3RlcgpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9
-NjAxMzYyMzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgt
-ZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3Jn
-ZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Hi Huajun,
+
+2013-11-05 (=ED=99=94), 21:28 +0800, Huajun Li:
+> Hi Jaegeuk,
+>=20
+> Got it, and nice to fix it in mkfs.f2fs.
+>=20
+> Thanks,
+> --Huajun
+> On Tue, Nov 5, 2013 at 12:48 PM, Jaegeuk Kim <jaegeuk.kim@samsung.com=
+> wrote:
+> > Hi Huajun,
+> >
+> > 2013-11-04 (=EC=9B=94), 23:40 +0800, Huajun Li:
+> >> Hi Jaegeuk,
+> >>
+> >> On Mon, Nov 4, 2013 at 9:24 AM, Jaegeuk Kim <jaegeuk.kim@samsung.c=
+om> wrote:
+> >> > 2013-11-03 (=EC=9D=BC), 23:08 +0800, Huajun Li:
+> >> >> From: Huajun Li <huajun.li@intel.com>
+> >> >>
+> >> >> Normally we expect an empty partition after formatting by
+> >> >> mkfs.f2fs. But in this case, when we format a dirty partition a=
+nd mount
+> >> >> it again. The former file will be recovered and available again=
+! and
+> >> >> kernel log shows a recovery procedure is evoked.
+> >> >> This patch adds a new flag CP_EXIST_FLAG to indicate whether is=
+ a
+> >> >> available CP, and do recovery only when this flag is set.
+> >> >
+> >> > IMO, mkfs.f2fs should do the right thing to avoid this.
+> >> > If storage does not support discard, mkfs.f2fs can simply addres=
+s the
+> >> > problem by writing one node block with zeros to prevent this.
+> >> >
+
+WRT the below issue, I made a patch for mkfs.f2fs.
+If possible, could you test and write a valid patch?
+Thanks,
+
+---
+ mkfs/f2fs_format.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 8234b00..18ded79 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -788,7 +788,12 @@ static int f2fs_write_root_inode(void)
+=20
+ 	memset(raw_node, 0xff, sizeof(struct f2fs_node));
+=20
+-	main_area_node_seg_blk_offset +=3D F2FS_BLKSIZE;
++	/* avoid power-off-recovery based on roll-forward policy */
++	main_area_node_seg_blk_offset =3D le32_to_cpu(super_block.main_blkadd=
+r);
++	main_area_node_seg_blk_offset +=3D config.cur_seg[CURSEG_WARM_NODE] *
++					config.blks_per_seg;
++        main_area_node_seg_blk_offset *=3D blk_size_bytes;
++
+ 	if (dev_write(raw_node, main_area_node_seg_blk_offset, F2FS_BLKSIZE))
+{
+ 		MSG(1, "\tError: While writing the raw_node to disk!!!\n");
+ 		return -1;
+--=20
+1.8.4.474.g128a96c
+
+
+--=20
+Jaegeuk Kim
+Samsung
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
