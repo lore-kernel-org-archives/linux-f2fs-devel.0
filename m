@@ -1,64 +1,84 @@
-From: Huajun Li <huajun.li.lee@gmail.com>
-Subject: [PATCH V2 6/6] f2fs: update f2fs Documentation
-Date: Sun, 10 Nov 2013 23:13:21 +0800
-Message-ID: <1384096401-25169-7-git-send-email-huajun.li.lee@gmail.com>
-References: <1384096401-25169-1-git-send-email-huajun.li.lee@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <huajun.li.lee@gmail.com>) id 1VfWnb-0006pj-8s
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 10 Nov 2013 15:19:39 +0000
-Received: from mga02.intel.com ([134.134.136.20])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VfWna-00024a-LB for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 10 Nov 2013 15:19:39 +0000
-In-Reply-To: <1384096401-25169-1-git-send-email-huajun.li.lee@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, Huajun Li <huajun.li@intel.com>, linux-kernel@vger.kernel.org
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: [PATCH v2] f2fs: issue more large discard command
+Date: Mon, 11 Nov 2013 09:24:37 +0900
+Message-ID: <1384129477-7845-1-git-send-email-cm224.lee@samsung.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Cc: Changman Lee <cm224.lee@samsung.com>, Jaegeuk Kim <jaegeuk.kim@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Huajun Li <huajun.li@intel.com>
+o Changes from v1
+  Use find_next(_zero)_bit suggested by jg.kim
 
-This patch describes the inline_data support in f2fs document.
+When f2fs issues discard command, if segment is contiguous,
+let's issue more large segment to gather adjacent segments.
 
-Signed-off-by: Huajun Li <huajun.li@intel.com>
+** blktrace **
+179,1    0     5859    42.619023770   971  C   D 131072 + 2097152 [0]
+179,1    0    33665   108.840475468   971  C   D 2228224 + 2494464 [0]
+179,1    0    33671   109.131616427   971  C   D 14909440 + 344064 [0]
+179,1    0    33677   109.137100677   971  C   D 15261696 + 4096 [0]
+
+Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- Documentation/filesystems/f2fs.txt |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/segment.c |   36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index a3fe811..9849372 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -120,6 +120,8 @@ active_logs=%u         Support configuring the number of active logs. In the
- disable_ext_identify   Disable the extension list configured by mkfs, so f2fs
-                        does not aware of cold files such as media files.
- inline_xattr           Enable the inline xattrs feature.
-+inline_data            Enable the inline data feature: New created small(<~3.4k)
-+                       files can be written into inode block.
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 3d4d5fc..8d329c3 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -139,27 +139,33 @@ static void set_prefree_as_free_segments(struct f2fs_sb_info *sbi)
+ void clear_prefree_segments(struct f2fs_sb_info *sbi)
+ {
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+-	unsigned int segno = -1;
++	unsigned long *prefree_map = dirty_i->dirty_segmap[PRE];
+ 	unsigned int total_segs = TOTAL_SEGS(sbi);
++	unsigned int start = 0, end = -1;
  
- ================================================================================
- DEBUGFS ENTRIES
+ 	mutex_lock(&dirty_i->seglist_lock);
++
+ 	while (1) {
+-		segno = find_next_bit(dirty_i->dirty_segmap[PRE], total_segs,
+-				segno + 1);
+-		if (segno >= total_segs)
++		int i;
++		start = find_next_bit(prefree_map, total_segs, end + 1);
++		if (start >= total_segs)
+ 			break;
++		end = find_next_zero_bit(prefree_map, total_segs, start + 1);
++
++		for (i = start; i < end; i++)
++			clear_bit(i, prefree_map);
++
++		dirty_i->nr_dirty[PRE] -= end - start;
++
++		if (!test_opt(sbi, DISCARD))
++			continue;
+ 
+-		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[PRE]))
+-			dirty_i->nr_dirty[PRE]--;
+-
+-		/* Let's use trim */
+-		if (test_opt(sbi, DISCARD))
+-			blkdev_issue_discard(sbi->sb->s_bdev,
+-					START_BLOCK(sbi, segno) <<
+-					sbi->log_sectors_per_block,
+-					1 << (sbi->log_sectors_per_block +
+-						sbi->log_blocks_per_seg),
+-					GFP_NOFS, 0);
++		blkdev_issue_discard(sbi->sb->s_bdev,
++				START_BLOCK(sbi, start) <<
++				sbi->log_sectors_per_block,
++				(1 << (sbi->log_sectors_per_block +
++				sbi->log_blocks_per_seg)) * (end - start),
++				GFP_NOFS, 0);
+ 	}
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ }
 -- 
-1.7.9.5
+1.7.10.4
 
-
-------------------------------------------------------------------------------
-November Webinars for C, C++, Fortran Developers
-Accelerate application performance with scalable programming models. Explore
-techniques for threading, error checking, porting, and tuning. Get the most 
-from the latest Intel processors and coprocessors. See abstracts and register
-http://pubads.g.doubleclick.net/gampad/clk?id=60136231&iu=/4140/ostg.clktrk
