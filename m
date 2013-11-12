@@ -1,146 +1,126 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [GIT PULL] f2fs updates for v3.13
-Date: Mon, 11 Nov 2013 21:12:27 +0900
-Message-ID: <1384171947.14041.95.camel@kjgkr>
-Reply-To: jaegeuk.kim@samsung.com
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH 1/2] f2fs: add a new function to support for
+ merging contiguous read
+Date: Tue, 12 Nov 2013 13:15:08 +0800
+Message-ID: <000001cedf66$46a9bb70$d3fd3250$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Linux Kernel, Mailing List" <linux-kernel@vger.kernel.org>, "Linux FS DEV, Mailing List" <linux-fsdevel@vger.kernel.org>, "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1Vg6Ki-0004DU-Sw
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 Nov 2013 05:16:12 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Vg6Kh-0002VL-B9 for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 Nov 2013 05:16:12 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0MW400EONXARZ0K0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 Nov 2013 14:16:04 +0900 (KST)
+Content-language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: ??? <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Linus,
+For better read performance, we add a new function to support for merging contiguous read as the one for write.
 
-This is a pull request on f2fs updates for v3.13.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c |   45 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h |    2 ++
+ 2 files changed, 47 insertions(+)
 
-In this round, a couple of patches were introduced to improve GC and
-checkpoint overheads.
-In addition, a sysfs entry and some tracepoints were added for users to
-maintain the f2fs filesystem.
-And there are a number of clean-ups and bug fixes.
-
-Thank you very much.
-
-The following changes since commit 4a10c2ac2f368583138b774ca41fac4207911983:
-
-  Linux 3.12-rc2 (2013-09-23 15:41:09 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-3.13
-
-for you to fetch changes up to 29e59c14ae5c21d25db1580d9651b5855d656a30:
-
-  f2fs: issue more large discard command (2013-11-11 09:36:32 +0900)
-
-----------------------------------------------------------------
-f2fs updates for v3.13
-
-This patch-set includes the following major enhancement patches.
-o add a sysfs to control reclaiming free segments
-o enhance the f2fs global lock procedures
-o enhance the victim selection flow
-o wait for selected node blocks during fsync
-o add some tracepoints
-o add a config to remove abundant BUG_ONs
-
-The other bug fixes are as follows.
-o fix deadlock on acl operations
-o fix some bugs with respect to orphan inodes
-
-And, there are a bunch of cleanups.
-
-----------------------------------------------------------------
-Changman Lee (3):
-      f2fs: remove unnecessary segment bitmap updates
-      f2fs: cleanup waiting routine for writeback pages in cp
-      f2fs: issue more large discard command
-
-Chao Yu (8):
-      f2fs: avoid allocating failure in bio_alloc
-      f2fs: remove unneeded write checkpoint in recover_fsync_data
-      f2fs: remove redundant set_page_dirty from write_compacted_summaries
-      f2fs: fix calculating incorrect free size when update xattr in __f2fs_setxattr
-      f2fs: check all ones or zeros bitmap with bitops for better mount performance
-      f2fs: remove unnecessary TestClearPageError when wait pages writeback
-      f2fs: avoid to use a NULL point in destroy_segment_manager
-      f2fs: fix memory leak after kobject init failed in fill_super
-
-Fan Li (1):
-      f2fs: change the method of calculating the number summary blocks
-
-Gu Zheng (4):
-      f2fs: use rw_sem instead of fs_lock(locks mutex)
-      f2fs: introduce function read_raw_super_block()
-      f2fs: avoid wait if IO end up when do_checkpoint for better performance
-      f2fs: introduce f2fs_kmem_cache_alloc to hide the unfailed, kmem cache allocation
-
-Haicheng Li (3):
-      f2fs: use true and false for boolean value
-      f2fs: no need to check other dirty_segmap when the seg has been found
-      f2fs: use bool for booleans
-
-Jaegeuk Kim (17):
-      f2fs: avoid unnecessary checkpoints
-      f2fs: fix writing incorrect orphan blocks
-      f2fs: fix to store and retrieve i_rdev correctly
-      f2fs: fix the starvation problem on cp_rwsem
-      f2fs: avoid to write during the recovery
-      f2fs: clean up several status-related operations
-      f2fs: reclaim prefree segments periodically
-      f2fs: introduce f2fs_balance_fs_bg for some background jobs
-      f2fs: add reclaiming control by sysfs
-      f2fs: add tracepoint for set_page_dirty
-      f2fs: add tracepoint for vm_page_mkwrite
-      f2fs: clean up acl flow for better readability
-      f2fs: fix a deadlock during init_acl procedure
-      f2fs: introduce CONFIG_F2FS_CHECK_FS for BUG_ON control
-      f2fs: add an option to avoid unnecessary BUG_ONs
-      f2fs: avoid to wait all the node blocks during fsync
-      f2fs: update f2fs document
-
-Jin Xu (1):
-      f2fs: optimize the victim searching loop slightly
-
-Kelly Anderson (1):
-      f2fs: handle remount options correctly
-
-Russ Knize (1):
-      f2fs: don't GC or take an fs_lock from f2fs_initxattrs()
-
-Russ W. Knize (2):
-      f2fs: don't let the orphan inode counter underflow
-      f2fs: account for orphan inodes during recovery
-
-Yu Chao (1):
-      f2fs: optimize fs_lock for better performance
-
- Documentation/filesystems/f2fs.txt |   7 ++
- fs/f2fs/Kconfig                    |   8 +++
- fs/f2fs/acl.c                      |  36 +++++-----
- fs/f2fs/acl.h                      |   9 +--
- fs/f2fs/checkpoint.c               |  75 +++++++++----------
- fs/f2fs/data.c                     |  29 ++++----
- fs/f2fs/dir.c                      |   4 +-
- fs/f2fs/f2fs.h                     | 117 ++++++++++++++++--------------
- fs/f2fs/file.c                     |  45 ++++++------
- fs/f2fs/gc.c                       |  31 ++++----
- fs/f2fs/inode.c                    |  62 +++++++++-------
- fs/f2fs/namei.c                    |  52 +++++++-------
- fs/f2fs/node.c                     | 142 +++++++++++++++++++++++-------------
- fs/f2fs/recovery.c                 |  45 +++++++-----
- fs/f2fs/segment.c                  | 133 ++++++++++++++++++----------------
- fs/f2fs/segment.h                  |  38 +++++++---
- fs/f2fs/super.c                    | 143 ++++++++++++++++++++++++++-----------
- fs/f2fs/xattr.c                    |  36 ++++++----
- include/trace/events/f2fs.h        |  51 +++++++++++++
- 19 files changed, 651 insertions(+), 412 deletions(-)
-
-
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index aa3438c..f30060b 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -404,6 +404,51 @@ int f2fs_readpage(struct f2fs_sb_info *sbi, struct page *page,
+ 	return 0;
+ }
+ 
++void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, int rw)
++{
++	down_read(&sbi->bio_sem);
++	if (sbi->read_bio) {
++		submit_bio(rw, sbi->read_bio);
++		sbi->read_bio = NULL;
++	}
++	up_read(&sbi->bio_sem);
++}
++
++void submit_read_page(struct f2fs_sb_info *sbi, struct page *page,
++					block_t blk_addr, int rw)
++{
++	struct block_device *bdev = sbi->sb->s_bdev;
++	int bio_blocks;
++
++	verify_block_addr(sbi, blk_addr);
++
++	down_read(&sbi->bio_sem);
++
++	if (sbi->read_bio && sbi->last_read_block != blk_addr - 1) {
++		submit_bio(rw, sbi->read_bio);
++		sbi->read_bio = NULL;
++	}
++
++alloc_new:
++	if (sbi->read_bio == NULL) {
++		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++		sbi->read_bio = f2fs_bio_alloc(bdev, bio_blocks);
++		sbi->read_bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
++		sbi->read_bio->bi_end_io = read_end_io;
++	}
++
++	if (bio_add_page(sbi->read_bio, page, PAGE_CACHE_SIZE, 0) <
++							PAGE_CACHE_SIZE) {
++		submit_bio(rw, sbi->read_bio);
++		sbi->read_bio = NULL;
++		goto alloc_new;
++	}
++
++	sbi->last_read_block = blk_addr;
++
++	up_read(&sbi->bio_sem);
++}
++
+ /*
+  * This function should be used by the data read flow only where it
+  * does not check the "create" flag that indicates block allocation.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 89dc750..0afdcec 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -359,6 +359,8 @@ struct f2fs_sb_info {
+ 
+ 	/* for segment-related operations */
+ 	struct f2fs_sm_info *sm_info;		/* segment manager */
++	struct bio *read_bio;			/* read bios to merge */
++	sector_t last_read_block;		/* last read block number */
+ 	struct bio *bio[NR_PAGE_TYPE];		/* bios to merge */
+ 	sector_t last_block_in_bio[NR_PAGE_TYPE];	/* last block number */
+ 	struct rw_semaphore bio_sem;		/* IO semaphore */
 -- 
-Jaegeuk Kim
-Samsung
+1.7.9.5
 
+
+------------------------------------------------------------------------------
+November Webinars for C, C++, Fortran Developers
+Accelerate application performance with scalable programming models. Explore
+techniques for threading, error checking, porting, and tuning. Get the most 
+from the latest Intel processors and coprocessors. See abstracts and register
+http://pubads.g.doubleclick.net/gampad/clk?id=60136231&iu=/4140/ostg.clktrk
