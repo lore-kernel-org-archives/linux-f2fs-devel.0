@@ -1,8 +1,8 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 3/5] f2fs: add a sysfs entry to control
-	max_discards
-Date: Fri, 15 Nov 2013 14:20:22 +0900
-Message-ID: <1384492824-32483-3-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 4/5] f2fs: introduce f2fs_issue_discard() to
+	clean up
+Date: Fri, 15 Nov 2013 14:20:23 +0900
+Message-ID: <1384492824-32483-4-git-send-email-jaegeuk.kim@samsung.com>
 References: <1384492824-32483-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VhBqX-0003Xu-3u
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VhBqY-0003Y9-HD
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Nov 2013 05:21:33 +0000
+	Fri, 15 Nov 2013 05:21:34 +0000
 Received: from mailout3.samsung.com ([203.254.224.33])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VhBqT-0005wy-Rh for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Nov 2013 05:21:33 +0000
+	id 1VhBqX-0005wy-NY for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 15 Nov 2013 05:21:34 +0000
 Received: from epcpsbgr4.samsung.com
 	(u144.gpu120.samsung.co.kr [203.254.230.144])
 	by mailout3.samsung.com (Oracle Communications Messaging Server
@@ -37,39 +37,60 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-If frequent small discards are issued to the device, the performance would
-be degraded significantly.
-So, this patch adds a sysfs entry to control the number of discards to be
-issued during a checkpoint procedure.
-
-By default, f2fs does not issue any small discards, which means max_discards
-is zero.
+This patch adds f2fs_issue_discard() to clean up blkdev_issue_discard() flows.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/segment.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index e9aa3f7..a022412 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -175,6 +175,7 @@ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_idle, gc_idle);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
-+F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, max_small_discards, max_discards);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 505a889..d021cf3 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -266,6 +266,16 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ }
  
- #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
- static struct attribute *f2fs_attrs[] = {
-@@ -183,6 +184,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(gc_no_gc_sleep_time),
- 	ATTR_LIST(gc_idle),
- 	ATTR_LIST(reclaim_segments),
-+	ATTR_LIST(max_small_discards),
- 	NULL,
- };
++static void f2fs_issue_discard(struct f2fs_sb_info *sbi,
++				block_t blkstart, block_t blklen)
++{
++	sector_t sector_addr = blkstart << sbi->log_sectors_per_block;
++	sector_t sector_len = blklen << sbi->log_sectors_per_block;
++
++	blkdev_issue_discard(sbi->sb->s_bdev, sector_addr, sector_len,
++							GFP_NOFS, 0);
++}
++
+ static void add_discard_addrs(struct f2fs_sb_info *sbi,
+ 			unsigned int segno, struct seg_entry *se)
+ {
+@@ -354,22 +364,15 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi)
+ 		if (!test_opt(sbi, DISCARD))
+ 			continue;
  
+-		blkdev_issue_discard(sbi->sb->s_bdev,
+-				START_BLOCK(sbi, start) <<
+-				sbi->log_sectors_per_block,
+-				(1 << (sbi->log_sectors_per_block +
+-				sbi->log_blocks_per_seg)) * (end - start),
+-				GFP_NOFS, 0);
++		f2fs_issue_discard(sbi, START_BLOCK(sbi, start),
++				(end - start) << sbi->log_blocks_per_seg);
+ 	}
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ 
+ 	/* send small discards */
+ 	list_for_each_safe(this, next, head) {
+ 		entry = list_entry(this, struct discard_entry, list);
+-		blkdev_issue_discard(sbi->sb->s_bdev,
+-				entry->blkaddr << sbi->log_sectors_per_block,
+-				(1 << sbi->log_sectors_per_block) * entry->len,
+-				GFP_NOFS, 0);
++		f2fs_issue_discard(sbi, entry->blkaddr, entry->len);
+ 		list_del(&entry->list);
+ 		SM_I(sbi)->nr_discards -= entry->len;
+ 		kmem_cache_free(discard_entry_slab, entry);
 -- 
 1.8.4.474.g128a96c
 
