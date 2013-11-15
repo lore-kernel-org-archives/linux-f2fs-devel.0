@@ -1,137 +1,157 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 1/5] f2fs: add a slab cache entry for small discards
-Date: Fri, 15 Nov 2013 14:20:20 +0900
-Message-ID: <1384492824-32483-1-git-send-email-jaegeuk.kim@samsung.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Subject: [PATCH 2/5] f2fs: add key functions for small discards
+Date: Fri, 15 Nov 2013 14:20:21 +0900
+Message-ID: <1384492824-32483-2-git-send-email-jaegeuk.kim@samsung.com>
+References: <1384492824-32483-1-git-send-email-jaegeuk.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VhBqT-0003XJ-MU
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 15 Nov 2013 05:21:29 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VhBqS-0005wy-Nj for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 15 Nov 2013 05:21:29 +0000
+Received: from epcpsbgr4.samsung.com
+	(u144.gpu120.samsung.co.kr [203.254.230.144])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MWA00FCWHJE4QO0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 15 Nov 2013 14:21:14 +0900 (KST)
+In-reply-to: <1384492824-32483-1-git-send-email-jaegeuk.kim@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds a slab cache entry for small discards.
+This patch adds key functions to activate the small discard feature.
 
-Each entry consists of:
+Note that this procedure is conducted during the checkpoint only.
 
-struct discard_entry {
-	struct list_head list;	/* list head */
-	block_t blkaddr;	/* block address to be discarded */
-	int len;		/* # of consecutive blocks of the discard */
-};
+In flush_sit_entries(), when a new dirty sit entry is flushed, f2fs calls
+add_discard_addrs() which searches candidates to be discarded.
+The candidates should be marked *invalidated* and also previous checkpoint
+recognizes it as *valid*.
+
+At the end of a checkpoint procedure, f2fs throws discards based on the
+discard entry list.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/f2fs.h    | 14 ++++++++++++++
- fs/f2fs/segment.c | 20 ++++++++++++++++++++
- fs/f2fs/super.c   |  7 ++++++-
- 3 files changed, 40 insertions(+), 1 deletion(-)
+ fs/f2fs/segment.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 89dc750..c73e3df 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -97,6 +97,13 @@ struct dir_inode_entry {
- 	struct inode *inode;	/* vfs inode pointer */
- };
- 
-+/* for the list of blockaddresses to be discarded */
-+struct discard_entry {
-+	struct list_head list;	/* list head */
-+	block_t blkaddr;	/* block address to be discarded */
-+	int len;		/* # of consecutive blocks of the discard */
-+};
-+
- /* for the list of fsync inodes, used only during recovery */
- struct fsync_inode_entry {
- 	struct list_head list;	/* list head */
-@@ -308,6 +315,11 @@ struct f2fs_sm_info {
- 
- 	/* a threshold to reclaim prefree segments */
- 	unsigned int rec_prefree_segments;
-+
-+	/* for small discard management */
-+	struct list_head discard_list;		/* 4KB discard list */
-+	int nr_discards;			/* # of discards in the list */
-+	int max_discards;			/* max. discards to be issued */
- };
- 
- /*
-@@ -1079,6 +1091,8 @@ int lookup_journal_in_cursum(struct f2fs_summary_block *,
- void flush_sit_entries(struct f2fs_sb_info *);
- int build_segment_manager(struct f2fs_sb_info *);
- void destroy_segment_manager(struct f2fs_sb_info *);
-+int __init create_segment_manager_caches(void);
-+void destroy_segment_manager_caches(void);
- 
- /*
-  * checkpoint.c
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 67f1e5b..823526e 100644
+index 823526e..505a889 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -22,6 +22,8 @@
+@@ -266,6 +266,47 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ }
  
- #define __reverse_ffz(x) __reverse_ffs(~(x))
- 
-+static struct kmem_cache *discard_entry_slab;
++static void add_discard_addrs(struct f2fs_sb_info *sbi,
++			unsigned int segno, struct seg_entry *se)
++{
++	struct list_head *head = &SM_I(sbi)->discard_list;
++	struct discard_entry *new;
++	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
++	int max_blocks = sbi->blocks_per_seg;
++	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
++	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
++	unsigned long dmap[entries];
++	unsigned int start = 0, end = -1;
++	int i;
++
++	if (!test_opt(sbi, DISCARD))
++		return;
++
++	/* zero block will be discarded through the prefree list */
++	if (!se->valid_blocks || se->valid_blocks == max_blocks)
++		return;
++
++	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
++	for (i = 0; i < entries; i++)
++		dmap[i] = (cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
++
++	while (SM_I(sbi)->nr_discards <= SM_I(sbi)->max_discards) {
++		start = __find_rev_next_bit(dmap, max_blocks, end + 1);
++		if (start >= max_blocks)
++			break;
++
++		end = __find_rev_next_zero_bit(dmap, max_blocks, start + 1);
++
++		new = f2fs_kmem_cache_alloc(discard_entry_slab, GFP_NOFS);
++		INIT_LIST_HEAD(&new->list);
++		new->blkaddr = START_BLOCK(sbi, segno) + start;
++		new->len = end - start;
++
++		list_add_tail(&new->list, head);
++		SM_I(sbi)->nr_discards += end - start;
++	}
++}
 +
  /*
-  * __reverse_ffs is copied from include/asm-generic/bitops/__ffs.h since
-  * MSB and LSB are reversed in a byte by f2fs_set_bit.
-@@ -1798,6 +1800,10 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
- 	sm_info->ssa_blkaddr = le32_to_cpu(raw_super->ssa_blkaddr);
- 	sm_info->rec_prefree_segments = DEF_RECLAIM_PREFREE_SEGMENTS;
+  * Should call clear_prefree_segments after checkpoint is done.
+  */
+@@ -288,6 +329,9 @@ static void set_prefree_as_free_segments(struct f2fs_sb_info *sbi)
  
-+	INIT_LIST_HEAD(&sm_info->discard_list);
-+	sm_info->nr_discards = 0;
-+	sm_info->max_discards = 0;
+ void clear_prefree_segments(struct f2fs_sb_info *sbi)
+ {
++	struct list_head *head = &(SM_I(sbi)->discard_list);
++	struct list_head *this, *next;
++	struct discard_entry *entry;
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+ 	unsigned long *prefree_map = dirty_i->dirty_segmap[PRE];
+ 	unsigned int total_segs = TOTAL_SEGS(sbi);
+@@ -318,6 +362,18 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi)
+ 				GFP_NOFS, 0);
+ 	}
+ 	mutex_unlock(&dirty_i->seglist_lock);
 +
- 	err = build_sit_info(sbi);
- 	if (err)
- 		return err;
-@@ -1913,3 +1919,17 @@ void destroy_segment_manager(struct f2fs_sb_info *sbi)
- 	sbi->sm_info = NULL;
- 	kfree(sm_info);
++	/* send small discards */
++	list_for_each_safe(this, next, head) {
++		entry = list_entry(this, struct discard_entry, list);
++		blkdev_issue_discard(sbi->sb->s_bdev,
++				entry->blkaddr << sbi->log_sectors_per_block,
++				(1 << sbi->log_sectors_per_block) * entry->len,
++				GFP_NOFS, 0);
++		list_del(&entry->list);
++		SM_I(sbi)->nr_discards -= entry->len;
++		kmem_cache_free(discard_entry_slab, entry);
++	}
  }
+ 
+ static void __mark_sit_entry_dirty(struct f2fs_sb_info *sbi, unsigned int segno)
+@@ -1469,6 +1525,10 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
+ 
+ 		sit_offset = SIT_ENTRY_OFFSET(sit_i, segno);
+ 
++		/* add discard candidates */
++		if (SM_I(sbi)->nr_discards < SM_I(sbi)->max_discards)
++			add_discard_addrs(sbi, segno, se);
 +
-+int __init create_segment_manager_caches(void)
-+{
-+	discard_entry_slab = f2fs_kmem_cache_create("discard_entry",
-+			sizeof(struct discard_entry), NULL);
-+	if (!discard_entry_slab)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+void destroy_segment_manager_caches(void)
-+{
-+	kmem_cache_destroy(discard_entry_slab);
-+}
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index bafff72..e9aa3f7 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1078,9 +1078,12 @@ static int __init init_f2fs_fs(void)
- 	err = create_node_manager_caches();
- 	if (err)
- 		goto free_inodecache;
--	err = create_gc_caches();
-+	err = create_segment_manager_caches();
- 	if (err)
- 		goto free_node_manager_caches;
-+	err = create_gc_caches();
-+	if (err)
-+		goto free_segment_manager_caches;
- 	err = create_checkpoint_caches();
- 	if (err)
- 		goto free_gc_caches;
-@@ -1102,6 +1105,8 @@ free_checkpoint_caches:
- 	destroy_checkpoint_caches();
- free_gc_caches:
- 	destroy_gc_caches();
-+free_segment_manager_caches:
-+	destroy_segment_manager_caches();
- free_node_manager_caches:
- 	destroy_node_manager_caches();
- free_inodecache:
+ 		if (flushed)
+ 			goto to_sit_page;
+ 
 -- 
 1.8.4.474.g128a96c
 
+
+------------------------------------------------------------------------------
+DreamFactory - Open Source REST & JSON Services for HTML5 & Native Apps
+OAuth, Users, Roles, SQL, NoSQL, BLOB Storage and External API Access
+Free app hosting. Or install the open source package on any LAMP server.
+Sign up and see examples for AngularJS, jQuery, Sencha Touch and Native!
+http://pubads.g.doubleclick.net/gampad/clk?id=63469471&iu=/4140/ostg.clktrk
