@@ -1,175 +1,52 @@
 From: Changman Lee <cm224.lee@samsung.com>
-Subject: [PATCH] f2fs: introduce f2fs_find_next(_zero)_bit
-Date: Fri, 15 Nov 2013 10:42:51 +0900
-Message-ID: <1384479771-11740-1-git-send-email-cm224.lee@samsung.com>
+Subject: [PATCH] f2fs: improve searching speed of __next_free_blkoff
+Date: Fri, 15 Nov 2013 13:21:16 +0900
+Message-ID: <1384489276-12228-1-git-send-email-cm224.lee@samsung.com>
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 To: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 Cc: Changman Lee <cm224.lee@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When f2fs_set_bit is used, in a byte MSB and LSB is reversed,
-in that case we can use f2fs_find_next_bit or f2fs_find_next_zero_bit.
+To find a zero bit using the result of OR operation between ckpt_valid_map
+and cur_valid_map is more fast than find a zero bit in each bitmap.
 
 Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 ---
- fs/f2fs/segment.c |  143 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 143 insertions(+)
+ fs/f2fs/segment.c |   20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index fa284d3..b2de887 100644
+index b2de887..8537b41 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -21,6 +21,149 @@
- #include <trace/events/f2fs.h>
+@@ -602,13 +602,19 @@ static void __next_free_blkoff(struct f2fs_sb_info *sbi,
+ 			struct curseg_info *seg, block_t start)
+ {
+ 	struct seg_entry *se = get_seg_entry(sbi, seg->segno);
+-	block_t ofs;
+-	for (ofs = start; ofs < sbi->blocks_per_seg; ofs++) {
+-		if (!f2fs_test_bit(ofs, se->ckpt_valid_map)
+-			&& !f2fs_test_bit(ofs, se->cur_valid_map))
+-			break;
+-	}
+-	seg->next_blkoff = ofs;
++	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
++	unsigned long target_map[entries];
++	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
++	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
++	int i, pos;
++
++	for (i = 0; i < entries; i++)
++		target_map[i] = ckpt_map[i] | cur_map[i];
++
++	pos = f2fs_find_next_zero_bit(target_map, sbi->blocks_per_seg,
++			start);
++
++	seg->next_blkoff = pos;
+ }
  
  /*
-+ * f2fs_ffs is copied from include/asm-generic/bitops/__ffs.h because
-+ * MSB and LSB is reversed in a byte by f2fs_set_bit.
-+ */
-+static inline unsigned long f2fs_ffs(unsigned long word)
-+{
-+	int num = 0;
-+
-+#if BITS_PER_LONG == 64
-+	if ((word & 0xffffffff) == 0) {
-+		num += 32;
-+		word >>= 32;
-+	}
-+#endif
-+	if ((word & 0xffff) == 0) {
-+		num += 16;
-+		word >>= 16;
-+	}
-+	if ((word & 0xff) == 0) {
-+		num += 8;
-+		word >>= 8;
-+	}
-+	if ((word & 0xf0) == 0)
-+		num += 4;
-+	else
-+		word >>= 4;
-+	if ((word & 0xc) == 0)
-+		num += 2;
-+	else
-+		word >>= 2;
-+	if ((word & 0x2) == 0)
-+		num += 1;
-+	return num;
-+}
-+
-+#define f2fs_ffz(x) f2fs_ffs(~(x))
-+
-+/*
-+ * f2fs_find_next(_zero)_bit is copied from lib/find_next_bit.c becasue
-+ * f2fs_set_bit makes MSB and LSB reversed in a byte.
-+ * Example:
-+ *                             LSB <--> MSB
-+ *   f2fs_set_bit(0, bitmap) => 0000 0001
-+ *   f2fs_set_bit(7, bitmap) => 1000 0000
-+ */
-+static unsigned long f2fs_find_next_bit(const unsigned long *addr,
-+		unsigned long size, unsigned long offset)
-+{
-+	const unsigned long *p = addr + BIT_WORD(offset);
-+	unsigned long result = offset & ~(BITS_PER_LONG - 1);
-+	unsigned long tmp;
-+	unsigned long mask, submask;
-+	unsigned long quot, rest;
-+
-+	if (offset >= size)
-+		return size;
-+	size -= result;
-+	offset %= BITS_PER_LONG;
-+	if (!offset)
-+		goto aligned;
-+	tmp = *(p++);
-+	quot = (offset >> 3) << 3;
-+	rest = offset & 0x7;
-+	mask = ~0UL << quot;
-+	submask = (unsigned char)(0xff << rest) >> rest;
-+	submask <<= quot;
-+	mask &= submask;
-+	tmp &= mask;
-+	if (size < BITS_PER_LONG)
-+		goto found_first;
-+	if (tmp)
-+		goto found_middle;
-+	size -= BITS_PER_LONG;
-+	result += BITS_PER_LONG;
-+aligned:
-+	while (size & ~(BITS_PER_LONG-1)) {
-+		tmp = *(p++);
-+		if (tmp)
-+			goto found_middle;
-+		result += BITS_PER_LONG;
-+		size -= BITS_PER_LONG;
-+	}
-+	if (!size)
-+		return result;
-+	tmp = *p;
-+
-+found_first:
-+	tmp &= (~0UL >> (BITS_PER_LONG - size));
-+	if (tmp == 0UL)		/* Are any bits set? */
-+		return result + size;   /* Nope. */
-+found_middle:
-+	return result + f2fs_ffs(tmp);
-+}
-+
-+static unsigned long f2fs_find_next_zero_bit(const unsigned long *addr,
-+		unsigned long size, unsigned long offset)
-+{
-+	const unsigned long *p = addr + BIT_WORD(offset);
-+	unsigned long result = offset & ~(BITS_PER_LONG - 1);
-+	unsigned long tmp;
-+	unsigned long mask, submask;
-+	unsigned long quot, rest;
-+
-+	if (offset >= size)
-+		return size;
-+	size -= result;
-+	offset %= BITS_PER_LONG;
-+	if (!offset)
-+		goto aligned;
-+	tmp = *(p++);
-+	quot = (offset >> 3) << 3;
-+	rest = offset & 0x7;
-+	mask = ~(~0UL << quot);
-+	submask = (unsigned char)~((unsigned char)(0xff << rest) >> rest);
-+	submask <<= quot;
-+	mask += submask;
-+	tmp |= mask;
-+	if (size < BITS_PER_LONG)
-+		goto found_first;
-+	if (~tmp)
-+		goto found_middle;
-+	size -= BITS_PER_LONG;
-+	result += BITS_PER_LONG;
-+aligned:
-+	while (size & ~(BITS_PER_LONG - 1)) {
-+		tmp = *(p++);
-+		if (~tmp)
-+			goto found_middle;
-+		result += BITS_PER_LONG;
-+		size -= BITS_PER_LONG;
-+	}
-+	if (!size)
-+		return result;
-+	tmp = *p;
-+
-+found_first:
-+	tmp |= ~0UL << size;
-+	if (tmp == ~0UL)        /* Are any bits zero? */
-+		return result + size;   /* Nope. */
-+found_middle:
-+	return result + f2fs_ffz(tmp);
-+}
-+
-+/*
-  * This function balances dirty node and dentry pages.
-  * In addition, it controls garbage collection.
-  */
 -- 
 1.7.10.4
 
