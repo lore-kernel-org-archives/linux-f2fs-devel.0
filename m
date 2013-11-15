@@ -1,30 +1,31 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 5/5] f2fs: add a tracepoint for f2fs_issue_discard
-Date: Fri, 15 Nov 2013 14:20:24 +0900
-Message-ID: <1384492824-32483-5-git-send-email-jaegeuk.kim@samsung.com>
-References: <1384492824-32483-1-git-send-email-jaegeuk.kim@samsung.com>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [PATCH] f2fs: introduce f2fs_find_next(_zero)_bit
+Date: Fri, 15 Nov 2013 14:19:59 +0900
+Message-ID: <5285AEFF.6090409@samsung.com>
+References: <1384479771-11740-1-git-send-email-cm224.lee@samsung.com>
+	<1384489880.14041.98.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VhBqZ-00077r-G7
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cm224.lee@samsung.com>) id 1VhBqi-0007Z3-H8
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Nov 2013 05:21:35 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
+	Fri, 15 Nov 2013 05:21:44 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VhBqY-0005wy-Mk for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Nov 2013 05:21:35 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
+	id 1VhBqg-0005xa-M8 for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 15 Nov 2013 05:21:44 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MWA00FCWHJE4QO0@mailout3.samsung.com> for
+	with ESMTP id <0MWA006M0HJURAI0@mailout1.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Nov 2013 14:21:14 +0900 (KST)
-In-reply-to: <1384492824-32483-1-git-send-email-jaegeuk.kim@samsung.com>
+	Fri, 15 Nov 2013 14:21:36 +0900 (KST)
+In-reply-to: <1384489880.14041.98.camel@kjgkr>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,69 +35,99 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds a tracepoint for f2fs_issue_discard.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/segment.c           |  1 +
- include/trace/events/f2fs.h | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index d021cf3..1f83999 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -274,6 +274,7 @@ static void f2fs_issue_discard(struct f2fs_sb_info *sbi,
- 
- 	blkdev_issue_discard(sbi->sb->s_bdev, sector_addr, sector_len,
- 							GFP_NOFS, 0);
-+	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
- }
- 
- static void add_discard_addrs(struct f2fs_sb_info *sbi,
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index e0dc355..47ee70d 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -727,6 +727,29 @@ TRACE_EVENT(f2fs_write_checkpoint,
- 		__entry->msg)
- );
- 
-+TRACE_EVENT(f2fs_issue_discard,
-+
-+	TP_PROTO(struct super_block *sb, block_t blkstart, block_t blklen),
-+
-+	TP_ARGS(sb, blkstart, blklen),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(block_t, blkstart)
-+		__field(block_t, blklen)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= sb->s_dev;
-+		__entry->blkstart = blkstart;
-+		__entry->blklen = blklen;
-+	),
-+
-+	TP_printk("dev = (%d,%d), blkstart = 0x%llx, blklen = 0x%llx",
-+		show_dev(__entry),
-+		(unsigned long long)__entry->blkstart,
-+		(unsigned long long)__entry->blklen)
-+);
- #endif /* _TRACE_F2FS_H */
- 
-  /* This part must be outside protection */
--- 
-1.8.4.474.g128a96c
-
-
-------------------------------------------------------------------------------
-DreamFactory - Open Source REST & JSON Services for HTML5 & Native Apps
-OAuth, Users, Roles, SQL, NoSQL, BLOB Storage and External API Access
-Free app hosting. Or install the open source package on any LAMP server.
-Sign up and see examples for AngularJS, jQuery, Sencha Touch and Native!
-http://pubads.g.doubleclick.net/gampad/clk?id=63469471&iu=/4140/ostg.clktrk
+SSBhZ3JlZS4gWW91ciBzdWdnZXN0aW9uIGlzIG1vcmUgZ29vZC4KVGhhbmtzIGZvciB5b3VyIHJl
+dmlldy4KCk9uIDIwMTPrhYQgMTHsm5QgMTXsnbwgMTM6MzEsIEphZWdldWsgS2ltIHdyb3RlOgoK
+PiBIaSwKPgo+IElNTywgaXQgd291bGQgYmUgYmV0dGVyIGdpdmUgbmFtZXMgbGlrZSBfX2ZpbmRf
+cmV2X25leHQoX3plcm8pX2JpdC4KPiBJZiB0aGVyZSBpcyBubyBvYmplY3Rpb24sIEknbGwgbW9k
+aWZ5IGFuZCBhcHBseSB0aGVtIGJ5IG15c2VsZi4KPiBUaGFua3MsIDopCj4KPiAyMDEzLTExLTE1
+ICjquIgpLCAxMDo0MiArMDkwMCwgQ2hhbmdtYW4gTGVlOgo+PiBXaGVuIGYyZnNfc2V0X2JpdCBp
+cyB1c2VkLCBpbiBhIGJ5dGUgTVNCIGFuZCBMU0IgaXMgcmV2ZXJzZWQsCj4+IGluIHRoYXQgY2Fz
+ZSB3ZSBjYW4gdXNlIGYyZnNfZmluZF9uZXh0X2JpdCBvciBmMmZzX2ZpbmRfbmV4dF96ZXJvX2Jp
+dC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQ2hhbmdtYW4gTGVlIDxjbTIyNC5sZWVAc2Ftc3VuZy5j
+b20+Cj4+IC0tLQo+PiAgIGZzL2YyZnMvc2VnbWVudC5jIHwgIDE0MyArKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+PiAgIDEgZmlsZSBjaGFuZ2Vk
+LCAxNDMgaW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMg
+Yi9mcy9mMmZzL3NlZ21lbnQuYwo+PiBpbmRleCBmYTI4NGQzLi5iMmRlODg3IDEwMDY0NAo+PiAt
+LS0gYS9mcy9mMmZzL3NlZ21lbnQuYwo+PiArKysgYi9mcy9mMmZzL3NlZ21lbnQuYwo+PiBAQCAt
+MjEsNiArMjEsMTQ5IEBACj4+ICAgI2luY2x1ZGUgPHRyYWNlL2V2ZW50cy9mMmZzLmg+Cj4+ICAg
+Cj4+ICAgLyoKPj4gKyAqIGYyZnNfZmZzIGlzIGNvcGllZCBmcm9tIGluY2x1ZGUvYXNtLWdlbmVy
+aWMvYml0b3BzL19fZmZzLmggYmVjYXVzZQo+PiArICogTVNCIGFuZCBMU0IgaXMgcmV2ZXJzZWQg
+aW4gYSBieXRlIGJ5IGYyZnNfc2V0X2JpdC4KPj4gKyAqLwo+PiArc3RhdGljIGlubGluZSB1bnNp
+Z25lZCBsb25nIGYyZnNfZmZzKHVuc2lnbmVkIGxvbmcgd29yZCkKPj4gK3sKPj4gKwlpbnQgbnVt
+ID0gMDsKPj4gKwo+PiArI2lmIEJJVFNfUEVSX0xPTkcgPT0gNjQKPj4gKwlpZiAoKHdvcmQgJiAw
+eGZmZmZmZmZmKSA9PSAwKSB7Cj4+ICsJCW51bSArPSAzMjsKPj4gKwkJd29yZCA+Pj0gMzI7Cj4+
+ICsJfQo+PiArI2VuZGlmCj4+ICsJaWYgKCh3b3JkICYgMHhmZmZmKSA9PSAwKSB7Cj4+ICsJCW51
+bSArPSAxNjsKPj4gKwkJd29yZCA+Pj0gMTY7Cj4+ICsJfQo+PiArCWlmICgod29yZCAmIDB4ZmYp
+ID09IDApIHsKPj4gKwkJbnVtICs9IDg7Cj4+ICsJCXdvcmQgPj49IDg7Cj4+ICsJfQo+PiArCWlm
+ICgod29yZCAmIDB4ZjApID09IDApCj4+ICsJCW51bSArPSA0Owo+PiArCWVsc2UKPj4gKwkJd29y
+ZCA+Pj0gNDsKPj4gKwlpZiAoKHdvcmQgJiAweGMpID09IDApCj4+ICsJCW51bSArPSAyOwo+PiAr
+CWVsc2UKPj4gKwkJd29yZCA+Pj0gMjsKPj4gKwlpZiAoKHdvcmQgJiAweDIpID09IDApCj4+ICsJ
+CW51bSArPSAxOwo+PiArCXJldHVybiBudW07Cj4+ICt9Cj4+ICsKPj4gKyNkZWZpbmUgZjJmc19m
+ZnooeCkgZjJmc19mZnMofih4KSkKPj4gKwo+PiArLyoKPj4gKyAqIGYyZnNfZmluZF9uZXh0KF96
+ZXJvKV9iaXQgaXMgY29waWVkIGZyb20gbGliL2ZpbmRfbmV4dF9iaXQuYyBiZWNhc3VlCj4+ICsg
+KiBmMmZzX3NldF9iaXQgbWFrZXMgTVNCIGFuZCBMU0IgcmV2ZXJzZWQgaW4gYSBieXRlLgo+PiAr
+ICogRXhhbXBsZToKPj4gKyAqICAgICAgICAgICAgICAgICAgICAgICAgICAgICBMU0IgPC0tPiBN
+U0IKPj4gKyAqICAgZjJmc19zZXRfYml0KDAsIGJpdG1hcCkgPT4gMDAwMCAwMDAxCj4+ICsgKiAg
+IGYyZnNfc2V0X2JpdCg3LCBiaXRtYXApID0+IDEwMDAgMDAwMAo+PiArICovCj4+ICtzdGF0aWMg
+dW5zaWduZWQgbG9uZyBmMmZzX2ZpbmRfbmV4dF9iaXQoY29uc3QgdW5zaWduZWQgbG9uZyAqYWRk
+ciwKPj4gKwkJdW5zaWduZWQgbG9uZyBzaXplLCB1bnNpZ25lZCBsb25nIG9mZnNldCkKPj4gK3sK
+Pj4gKwljb25zdCB1bnNpZ25lZCBsb25nICpwID0gYWRkciArIEJJVF9XT1JEKG9mZnNldCk7Cj4+
+ICsJdW5zaWduZWQgbG9uZyByZXN1bHQgPSBvZmZzZXQgJiB+KEJJVFNfUEVSX0xPTkcgLSAxKTsK
+Pj4gKwl1bnNpZ25lZCBsb25nIHRtcDsKPj4gKwl1bnNpZ25lZCBsb25nIG1hc2ssIHN1Ym1hc2s7
+Cj4+ICsJdW5zaWduZWQgbG9uZyBxdW90LCByZXN0Owo+PiArCj4+ICsJaWYgKG9mZnNldCA+PSBz
+aXplKQo+PiArCQlyZXR1cm4gc2l6ZTsKPj4gKwlzaXplIC09IHJlc3VsdDsKPj4gKwlvZmZzZXQg
+JT0gQklUU19QRVJfTE9ORzsKPj4gKwlpZiAoIW9mZnNldCkKPj4gKwkJZ290byBhbGlnbmVkOwo+
+PiArCXRtcCA9ICoocCsrKTsKPj4gKwlxdW90ID0gKG9mZnNldCA+PiAzKSA8PCAzOwo+PiArCXJl
+c3QgPSBvZmZzZXQgJiAweDc7Cj4+ICsJbWFzayA9IH4wVUwgPDwgcXVvdDsKPj4gKwlzdWJtYXNr
+ID0gKHVuc2lnbmVkIGNoYXIpKDB4ZmYgPDwgcmVzdCkgPj4gcmVzdDsKPj4gKwlzdWJtYXNrIDw8
+PSBxdW90Owo+PiArCW1hc2sgJj0gc3VibWFzazsKPj4gKwl0bXAgJj0gbWFzazsKPj4gKwlpZiAo
+c2l6ZSA8IEJJVFNfUEVSX0xPTkcpCj4+ICsJCWdvdG8gZm91bmRfZmlyc3Q7Cj4+ICsJaWYgKHRt
+cCkKPj4gKwkJZ290byBmb3VuZF9taWRkbGU7Cj4+ICsJc2l6ZSAtPSBCSVRTX1BFUl9MT05HOwo+
+PiArCXJlc3VsdCArPSBCSVRTX1BFUl9MT05HOwo+PiArYWxpZ25lZDoKPj4gKwl3aGlsZSAoc2l6
+ZSAmIH4oQklUU19QRVJfTE9ORy0xKSkgewo+PiArCQl0bXAgPSAqKHArKyk7Cj4+ICsJCWlmICh0
+bXApCj4+ICsJCQlnb3RvIGZvdW5kX21pZGRsZTsKPj4gKwkJcmVzdWx0ICs9IEJJVFNfUEVSX0xP
+Tkc7Cj4+ICsJCXNpemUgLT0gQklUU19QRVJfTE9ORzsKPj4gKwl9Cj4+ICsJaWYgKCFzaXplKQo+
+PiArCQlyZXR1cm4gcmVzdWx0Owo+PiArCXRtcCA9ICpwOwo+PiArCj4+ICtmb3VuZF9maXJzdDoK
+Pj4gKwl0bXAgJj0gKH4wVUwgPj4gKEJJVFNfUEVSX0xPTkcgLSBzaXplKSk7Cj4+ICsJaWYgKHRt
+cCA9PSAwVUwpCQkvKiBBcmUgYW55IGJpdHMgc2V0PyAqLwo+PiArCQlyZXR1cm4gcmVzdWx0ICsg
+c2l6ZTsgICAvKiBOb3BlLiAqLwo+PiArZm91bmRfbWlkZGxlOgo+PiArCXJldHVybiByZXN1bHQg
+KyBmMmZzX2Zmcyh0bXApOwo+PiArfQo+PiArCj4+ICtzdGF0aWMgdW5zaWduZWQgbG9uZyBmMmZz
+X2ZpbmRfbmV4dF96ZXJvX2JpdChjb25zdCB1bnNpZ25lZCBsb25nICphZGRyLAo+PiArCQl1bnNp
+Z25lZCBsb25nIHNpemUsIHVuc2lnbmVkIGxvbmcgb2Zmc2V0KQo+PiArewo+PiArCWNvbnN0IHVu
+c2lnbmVkIGxvbmcgKnAgPSBhZGRyICsgQklUX1dPUkQob2Zmc2V0KTsKPj4gKwl1bnNpZ25lZCBs
+b25nIHJlc3VsdCA9IG9mZnNldCAmIH4oQklUU19QRVJfTE9ORyAtIDEpOwo+PiArCXVuc2lnbmVk
+IGxvbmcgdG1wOwo+PiArCXVuc2lnbmVkIGxvbmcgbWFzaywgc3VibWFzazsKPj4gKwl1bnNpZ25l
+ZCBsb25nIHF1b3QsIHJlc3Q7Cj4+ICsKPj4gKwlpZiAob2Zmc2V0ID49IHNpemUpCj4+ICsJCXJl
+dHVybiBzaXplOwo+PiArCXNpemUgLT0gcmVzdWx0Owo+PiArCW9mZnNldCAlPSBCSVRTX1BFUl9M
+T05HOwo+PiArCWlmICghb2Zmc2V0KQo+PiArCQlnb3RvIGFsaWduZWQ7Cj4+ICsJdG1wID0gKihw
+KyspOwo+PiArCXF1b3QgPSAob2Zmc2V0ID4+IDMpIDw8IDM7Cj4+ICsJcmVzdCA9IG9mZnNldCAm
+IDB4NzsKPj4gKwltYXNrID0gfih+MFVMIDw8IHF1b3QpOwo+PiArCXN1Ym1hc2sgPSAodW5zaWdu
+ZWQgY2hhcil+KCh1bnNpZ25lZCBjaGFyKSgweGZmIDw8IHJlc3QpID4+IHJlc3QpOwo+PiArCXN1
+Ym1hc2sgPDw9IHF1b3Q7Cj4+ICsJbWFzayArPSBzdWJtYXNrOwo+PiArCXRtcCB8PSBtYXNrOwo+
+PiArCWlmIChzaXplIDwgQklUU19QRVJfTE9ORykKPj4gKwkJZ290byBmb3VuZF9maXJzdDsKPj4g
+KwlpZiAofnRtcCkKPj4gKwkJZ290byBmb3VuZF9taWRkbGU7Cj4+ICsJc2l6ZSAtPSBCSVRTX1BF
+Ul9MT05HOwo+PiArCXJlc3VsdCArPSBCSVRTX1BFUl9MT05HOwo+PiArYWxpZ25lZDoKPj4gKwl3
+aGlsZSAoc2l6ZSAmIH4oQklUU19QRVJfTE9ORyAtIDEpKSB7Cj4+ICsJCXRtcCA9ICoocCsrKTsK
+Pj4gKwkJaWYgKH50bXApCj4+ICsJCQlnb3RvIGZvdW5kX21pZGRsZTsKPj4gKwkJcmVzdWx0ICs9
+IEJJVFNfUEVSX0xPTkc7Cj4+ICsJCXNpemUgLT0gQklUU19QRVJfTE9ORzsKPj4gKwl9Cj4+ICsJ
+aWYgKCFzaXplKQo+PiArCQlyZXR1cm4gcmVzdWx0Owo+PiArCXRtcCA9ICpwOwo+PiArCj4+ICtm
+b3VuZF9maXJzdDoKPj4gKwl0bXAgfD0gfjBVTCA8PCBzaXplOwo+PiArCWlmICh0bXAgPT0gfjBV
+TCkgICAgICAgIC8qIEFyZSBhbnkgYml0cyB6ZXJvPyAqLwo+PiArCQlyZXR1cm4gcmVzdWx0ICsg
+c2l6ZTsgICAvKiBOb3BlLiAqLwo+PiArZm91bmRfbWlkZGxlOgo+PiArCXJldHVybiByZXN1bHQg
+KyBmMmZzX2Zmeih0bXApOwo+PiArfQo+PiArCj4+ICsvKgo+PiAgICAqIFRoaXMgZnVuY3Rpb24g
+YmFsYW5jZXMgZGlydHkgbm9kZSBhbmQgZGVudHJ5IHBhZ2VzLgo+PiAgICAqIEluIGFkZGl0aW9u
+LCBpdCBjb250cm9scyBnYXJiYWdlIGNvbGxlY3Rpb24uCj4+ICAgICovCgoKLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tCkRyZWFtRmFjdG9yeSAtIE9wZW4gU291cmNlIFJFU1QgJiBKU09OIFNlcnZpY2Vz
+IGZvciBIVE1MNSAmIE5hdGl2ZSBBcHBzCk9BdXRoLCBVc2VycywgUm9sZXMsIFNRTCwgTm9TUUws
+IEJMT0IgU3RvcmFnZSBhbmQgRXh0ZXJuYWwgQVBJIEFjY2VzcwpGcmVlIGFwcCBob3N0aW5nLiBP
+ciBpbnN0YWxsIHRoZSBvcGVuIHNvdXJjZSBwYWNrYWdlIG9uIGFueSBMQU1QIHNlcnZlci4KU2ln
+biB1cCBhbmQgc2VlIGV4YW1wbGVzIGZvciBBbmd1bGFySlMsIGpRdWVyeSwgU2VuY2hhIFRvdWNo
+IGFuZCBOYXRpdmUhCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9p
+ZD02MzQ2OTQ3MSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51
+eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZv
+cmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
