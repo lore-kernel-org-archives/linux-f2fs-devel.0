@@ -1,44 +1,91 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 2/2] f2fs: use sbi->wr_mutex for write bios
-Date: Mon, 18 Nov 2013 18:30:00 +0900
-Message-ID: <1384767000.26319.18.camel@kjgkr>
-References: <1384765922-24028-1-git-send-email-jaegeuk.kim@samsung.com>
- <1384765922-24028-2-git-send-email-jaegeuk.kim@samsung.com>
- <5289DC0C.30909@cn.fujitsu.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH V2 1/2] f2fs: add a new function to support
+ for merging contiguous read
+Date: Mon, 18 Nov 2013 18:10:30 +0800
+Message-ID: <5289E796.1030506@cn.fujitsu.com>
+References: <000001cee293$3b6e3030$b24a9090$@samsung.com>
+	<1384734560.26319.10.camel@kjgkr>
+	<000901cee3fe$edfa8660$c9ef9320$@samsung.com>
+	<1384765870.26319.16.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <5289DC0C.30909@cn.fujitsu.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1ViM6l-0001Ki-85
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 18 Nov 2013 10:31:07 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ViM6i-0007ms-Fm for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 18 Nov 2013 10:31:07 +0000
+In-Reply-To: <1384765870.26319.16.camel@kjgkr>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Gu,
-
-2013-11-18 (=EC=9B=94), 17:21 +0800, Gu Zheng:
-> Hi Kim,
-> On 11/18/2013 05:12 PM, Jaegeuk Kim wrote:
->=20
-> > This patch removes an unnecessary semaphore (i.e., sbi->bio_sem).
-> > There is no reason to use the semaphore when f2fs submits read and =
-write IOs.
-> > Instead, let's use a write mutex and cover the sbi->bio[] by the lo=
-ck.
->=20
-> My god, I just sent out an almost the same patch, do we have a telepa=
-thy?:)
-
-Wow, it seems so. :)
-
---=20
-Jaegeuk Kim
-Samsung
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gMTEvMTgvMjAxMyAwNToxMSBQTSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cgo+IEhpLAo+IAo+IDIw
+MTMtMTEtMTggKOyblCksIDA5OjM3ICswODAwLCBDaGFvIFl1Ogo+PiBIaSBLaW0sCj4+Cj4+PiAt
+LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+Pj4gRnJvbTogSmFlZ2V1ayBLaW0gW21haWx0bzpq
+YWVnZXVrLmtpbUBzYW1zdW5nLmNvbV0KPj4+IFNlbnQ6IE1vbmRheSwgTm92ZW1iZXIgMTgsIDIw
+MTMgODoyOSBBTQo+Pj4gVG86IENoYW8gWXUKPj4+IENjOiBsaW51eC1mc2RldmVsQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBs
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQ7IOiwreWnnQo+Pj4gU3ViamVjdDogUmU6IFtmMmZzLWRldl0g
+W1BBVENIIFYyIDEvMl0gZjJmczogYWRkIGEgbmV3IGZ1bmN0aW9uIHRvIHN1cHBvcnQgZm9yIG1l
+cmdpbmcgY29udGlndW91cyByZWFkCj4+Pgo+Pj4gSGkgQ2hhbywKPj4+Cj4+PiAyMDEzLTExLTE2
+ICjthqApLCAxNDoxNCArMDgwMCwgQ2hhbyBZdToKPj4+PiBGb3IgYmV0dGVyIHJlYWQgcGVyZm9y
+bWFuY2UsIHdlIGFkZCBhIG5ldyBmdW5jdGlvbiB0byBzdXBwb3J0IGZvciBtZXJnaW5nIGNvbnRp
+Z3VvdXMgcmVhZCBhcyB0aGUgb25lIGZvciB3cml0ZS4KPj4+Cj4+PiBQbGVhc2UgY29uc2lkZXIg
+ODAgY29sdW1ucyBmb3IgdGhlIGRlc2NyaXB0aW9uLgo+Pj4gSSBjYW5ub3QgZml4IHRoaXMgYXQg
+ZXZlcnkgdGltZSB0aG91Z2guIDooCj4+Cj4+IEdvdCBpdCwgc29ycnkgYWJvdXQgbXkgY2FyZWxl
+c3NuZXNzIGluIHByZXZpb3VzIHBhdGNoLgo+Pgo+Pj4KPj4+Pgo+Pj4+IHYxLS0+djI6Cj4+Pj4g
+IG8gYWRkIGRlY2xhcmF0aW9ucyBoZXJlIGFzIEd1IFpoZW5nIHN1Z2dlc3RlZC4KPj4+Pgo+Pj4+
+IFNpZ25lZC1vZmYtYnk6IENoYW8gWXUgPGNoYW8yLnl1QHNhbXN1bmcuY29tPgo+Pj4+IEFja2Vk
+LWJ5OiBHdSBaaGVuZyA8Z3V6LmZuc3RAY24uZnVqaXRzdS5jb20+Cj4+Pj4gLS0tCj4+Pj4gIGZz
+L2YyZnMvZGF0YS5jIHwgICA0NSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysKPj4+PiAgZnMvZjJmcy9mMmZzLmggfCAgICA0ICsrKysKPj4+PiAgMiBmaWxlcyBj
+aGFuZ2VkLCA0OSBpbnNlcnRpb25zKCspCj4+Pj4KPj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9k
+YXRhLmMgYi9mcy9mMmZzL2RhdGEuYwo+Pj4+IGluZGV4IGFhMzQzOGMuLjE4MTA3Y2IgMTAwNjQ0
+Cj4+Pj4gLS0tIGEvZnMvZjJmcy9kYXRhLmMKPj4+PiArKysgYi9mcy9mMmZzL2RhdGEuYwo+Pj4+
+IEBAIC00MDQsNiArNDA0LDUxIEBAIGludCBmMmZzX3JlYWRwYWdlKHN0cnVjdCBmMmZzX3NiX2lu
+Zm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsCj4+Pj4gIAlyZXR1cm4gMDsKPj4+PiAgfQo+Pj4+
+Cj4+Pj4gK3ZvaWQgZjJmc19zdWJtaXRfcmVhZF9iaW8oc3RydWN0IGYyZnNfc2JfaW5mbyAqc2Jp
+LCBpbnQgcncpCj4+Pj4gK3sKPj4+PiArCWRvd25fcmVhZCgmc2JpLT5iaW9fc2VtKTsKPj4+Cj4+
+PiBJcyB0aGVyZSBhbnkgcmVhc29uIHRvIHVzZSBkb3duX3JlYWQoKT8KPj4KPj4gSXNuJ3QgdGhh
+dCB3ZSB1c2UgYmlvX3NlbSB0byBsZXQgdy9yIG9yIHcvdyBzdWJtaXR0aW5nIGJlIG11dGV4Pwo+
+IAo+IEFzIEkgZXhhbWluZWQgdGhlIGJpb19zZW0sIEkgdGhpbmsgd2UgZG9uJ3QgbmVlZCB0byB1
+c2UgYSBzZW1hcGhvcmUgZm9yCj4gcmVhZCBhbmQgd3JpdGUgSU9zLgo+IEp1c3QgaXQgaXMgZW5v
+dWdoIHRvIHVzZSBhIG11dGV4IGZvciB3cml0ZXMgb25seS4KCkFncmVlLiBNdXRleCBpcyBtb3Jl
+IHN1aXRhYmxlIGhlcmUsIHdlIGp1c3Qgd2FudCB0byBwcm90ZWN0IHRoZSB3cml0ZSBiaW8KcmVs
+YXRlZCBmaWVsZHMgaW4gdGhlIHdyaXRlIHBhdGNoLCBubyByZWxhdGlvbnMgdG8gcmVhZC4KCj4g
+Cj4+Cj4+PiBJdCBzZWVtcyB0aGF0IHdlIG5lZWQgdG8gZGVjbGFyZSBzYmktPmJpb19yZWFkIGFu
+ZCBzYmktPmJpb193cml0ZQo+Pj4gaW5zdGVhZCBvZiBzYmktPmJpb19zZW0uCj4+PiBJbiBhZGRp
+dGlvbiB0byB0aGF0LCB3ZSBuZWVkIHRvIHVzZSBkb3duX3dyaXRlKCZzYmktPmJpb19yZWFkKSBo
+ZXJlLgo+Pgo+PiBJZiBzbywgaXQgbG9va3Mgc2ltaWxhciBiZXR3ZWVuIChzdHJ1Y3Qgcndfc2Vt
+YXBob3JlKSBzYmktPmJpb19yZWFkIAo+PiBhbmQgKHN0cnVjdCBiaW8gKikgc2JpLT5yZWFkX2Jp
+by4KPj4gSG93IGFib3V0IHVzaW5nIHJlYWRfYmlvX3NlbS9yYmlvX3NlbSB0byBkaWZmZXJlbnRp
+YXRlIAo+PiBmcm9tIHNiaS0+cmVhZF9iaW8/Cj4gCj4gSSB0aGluayBzYmktPndyaXRlX211dGV4
+IGFuZCBzYmktPnJlYWRfbXV0ZXggYXJlIG11Y2ggYmV0dGVyLgoKSXQncyBtb3JlIHJlYXNvbmFi
+bGUgYW5kIHJlYWRhYmxlLgoKVGhhbmtzLApHdQoKPiAKPiBDb3VsZCB5b3UgcmVmZXIgdGhlIGZv
+bGxvd2luZyBwYXRjaGVzPwo+IFRoYW5rcywKPiAKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkRy
+ZWFtRmFjdG9yeSAtIE9wZW4gU291cmNlIFJFU1QgJiBKU09OIFNlcnZpY2VzIGZvciBIVE1MNSAm
+IE5hdGl2ZSBBcHBzCk9BdXRoLCBVc2VycywgUm9sZXMsIFNRTCwgTm9TUUwsIEJMT0IgU3RvcmFn
+ZSBhbmQgRXh0ZXJuYWwgQVBJIEFjY2VzcwpGcmVlIGFwcCBob3N0aW5nLiBPciBpbnN0YWxsIHRo
+ZSBvcGVuIHNvdXJjZSBwYWNrYWdlIG9uIGFueSBMQU1QIHNlcnZlci4KU2lnbiB1cCBhbmQgc2Vl
+IGV4YW1wbGVzIGZvciBBbmd1bGFySlMsIGpRdWVyeSwgU2VuY2hhIFRvdWNoIGFuZCBOYXRpdmUh
+Cmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD02MzQ2OTQ3MSZp
+dT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVs
+QGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0
+cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
