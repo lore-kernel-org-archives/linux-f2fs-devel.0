@@ -1,91 +1,194 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH V2 1/2] f2fs: add a new function to support
- for merging contiguous read
-Date: Mon, 18 Nov 2013 18:10:30 +0800
-Message-ID: <5289E796.1030506@cn.fujitsu.com>
-References: <000001cee293$3b6e3030$b24a9090$@samsung.com>
-	<1384734560.26319.10.camel@kjgkr>
-	<000901cee3fe$edfa8660$c9ef9320$@samsung.com>
-	<1384765870.26319.16.camel@kjgkr>
+Subject: Re: [f2fs-dev] [PATCH V2 2/2] f2fs: read contiguous sit entry pages
+ by merging for mount performance
+Date: Mon, 18 Nov 2013 19:15:47 +0800
+Message-ID: <5289F6E3.3020607@cn.fujitsu.com>
+References: <000101cee293$4eae78d0$ec0b6a70$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1ViM6l-0001Ki-85
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 18 Nov 2013 10:31:07 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ViM6i-0007ms-Fm for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 18 Nov 2013 10:31:07 +0000
-In-Reply-To: <1384765870.26319.16.camel@kjgkr>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=GB2312
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <000101cee293$4eae78d0$ec0b6a70$@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: '???' <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?GB2312?B?zLfmrQ==?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-T24gMTEvMTgvMjAxMyAwNToxMSBQTSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cgo+IEhpLAo+IAo+IDIw
-MTMtMTEtMTggKOyblCksIDA5OjM3ICswODAwLCBDaGFvIFl1Ogo+PiBIaSBLaW0sCj4+Cj4+PiAt
-LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+Pj4gRnJvbTogSmFlZ2V1ayBLaW0gW21haWx0bzpq
-YWVnZXVrLmtpbUBzYW1zdW5nLmNvbV0KPj4+IFNlbnQ6IE1vbmRheSwgTm92ZW1iZXIgMTgsIDIw
-MTMgODoyOSBBTQo+Pj4gVG86IENoYW8gWXUKPj4+IENjOiBsaW51eC1mc2RldmVsQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBs
-aXN0cy5zb3VyY2Vmb3JnZS5uZXQ7IOiwreWnnQo+Pj4gU3ViamVjdDogUmU6IFtmMmZzLWRldl0g
-W1BBVENIIFYyIDEvMl0gZjJmczogYWRkIGEgbmV3IGZ1bmN0aW9uIHRvIHN1cHBvcnQgZm9yIG1l
-cmdpbmcgY29udGlndW91cyByZWFkCj4+Pgo+Pj4gSGkgQ2hhbywKPj4+Cj4+PiAyMDEzLTExLTE2
-ICjthqApLCAxNDoxNCArMDgwMCwgQ2hhbyBZdToKPj4+PiBGb3IgYmV0dGVyIHJlYWQgcGVyZm9y
-bWFuY2UsIHdlIGFkZCBhIG5ldyBmdW5jdGlvbiB0byBzdXBwb3J0IGZvciBtZXJnaW5nIGNvbnRp
-Z3VvdXMgcmVhZCBhcyB0aGUgb25lIGZvciB3cml0ZS4KPj4+Cj4+PiBQbGVhc2UgY29uc2lkZXIg
-ODAgY29sdW1ucyBmb3IgdGhlIGRlc2NyaXB0aW9uLgo+Pj4gSSBjYW5ub3QgZml4IHRoaXMgYXQg
-ZXZlcnkgdGltZSB0aG91Z2guIDooCj4+Cj4+IEdvdCBpdCwgc29ycnkgYWJvdXQgbXkgY2FyZWxl
-c3NuZXNzIGluIHByZXZpb3VzIHBhdGNoLgo+Pgo+Pj4KPj4+Pgo+Pj4+IHYxLS0+djI6Cj4+Pj4g
-IG8gYWRkIGRlY2xhcmF0aW9ucyBoZXJlIGFzIEd1IFpoZW5nIHN1Z2dlc3RlZC4KPj4+Pgo+Pj4+
-IFNpZ25lZC1vZmYtYnk6IENoYW8gWXUgPGNoYW8yLnl1QHNhbXN1bmcuY29tPgo+Pj4+IEFja2Vk
-LWJ5OiBHdSBaaGVuZyA8Z3V6LmZuc3RAY24uZnVqaXRzdS5jb20+Cj4+Pj4gLS0tCj4+Pj4gIGZz
-L2YyZnMvZGF0YS5jIHwgICA0NSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysKPj4+PiAgZnMvZjJmcy9mMmZzLmggfCAgICA0ICsrKysKPj4+PiAgMiBmaWxlcyBj
-aGFuZ2VkLCA0OSBpbnNlcnRpb25zKCspCj4+Pj4KPj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9k
-YXRhLmMgYi9mcy9mMmZzL2RhdGEuYwo+Pj4+IGluZGV4IGFhMzQzOGMuLjE4MTA3Y2IgMTAwNjQ0
-Cj4+Pj4gLS0tIGEvZnMvZjJmcy9kYXRhLmMKPj4+PiArKysgYi9mcy9mMmZzL2RhdGEuYwo+Pj4+
-IEBAIC00MDQsNiArNDA0LDUxIEBAIGludCBmMmZzX3JlYWRwYWdlKHN0cnVjdCBmMmZzX3NiX2lu
-Zm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsCj4+Pj4gIAlyZXR1cm4gMDsKPj4+PiAgfQo+Pj4+
-Cj4+Pj4gK3ZvaWQgZjJmc19zdWJtaXRfcmVhZF9iaW8oc3RydWN0IGYyZnNfc2JfaW5mbyAqc2Jp
-LCBpbnQgcncpCj4+Pj4gK3sKPj4+PiArCWRvd25fcmVhZCgmc2JpLT5iaW9fc2VtKTsKPj4+Cj4+
-PiBJcyB0aGVyZSBhbnkgcmVhc29uIHRvIHVzZSBkb3duX3JlYWQoKT8KPj4KPj4gSXNuJ3QgdGhh
-dCB3ZSB1c2UgYmlvX3NlbSB0byBsZXQgdy9yIG9yIHcvdyBzdWJtaXR0aW5nIGJlIG11dGV4Pwo+
-IAo+IEFzIEkgZXhhbWluZWQgdGhlIGJpb19zZW0sIEkgdGhpbmsgd2UgZG9uJ3QgbmVlZCB0byB1
-c2UgYSBzZW1hcGhvcmUgZm9yCj4gcmVhZCBhbmQgd3JpdGUgSU9zLgo+IEp1c3QgaXQgaXMgZW5v
-dWdoIHRvIHVzZSBhIG11dGV4IGZvciB3cml0ZXMgb25seS4KCkFncmVlLiBNdXRleCBpcyBtb3Jl
-IHN1aXRhYmxlIGhlcmUsIHdlIGp1c3Qgd2FudCB0byBwcm90ZWN0IHRoZSB3cml0ZSBiaW8KcmVs
-YXRlZCBmaWVsZHMgaW4gdGhlIHdyaXRlIHBhdGNoLCBubyByZWxhdGlvbnMgdG8gcmVhZC4KCj4g
-Cj4+Cj4+PiBJdCBzZWVtcyB0aGF0IHdlIG5lZWQgdG8gZGVjbGFyZSBzYmktPmJpb19yZWFkIGFu
-ZCBzYmktPmJpb193cml0ZQo+Pj4gaW5zdGVhZCBvZiBzYmktPmJpb19zZW0uCj4+PiBJbiBhZGRp
-dGlvbiB0byB0aGF0LCB3ZSBuZWVkIHRvIHVzZSBkb3duX3dyaXRlKCZzYmktPmJpb19yZWFkKSBo
-ZXJlLgo+Pgo+PiBJZiBzbywgaXQgbG9va3Mgc2ltaWxhciBiZXR3ZWVuIChzdHJ1Y3Qgcndfc2Vt
-YXBob3JlKSBzYmktPmJpb19yZWFkIAo+PiBhbmQgKHN0cnVjdCBiaW8gKikgc2JpLT5yZWFkX2Jp
-by4KPj4gSG93IGFib3V0IHVzaW5nIHJlYWRfYmlvX3NlbS9yYmlvX3NlbSB0byBkaWZmZXJlbnRp
-YXRlIAo+PiBmcm9tIHNiaS0+cmVhZF9iaW8/Cj4gCj4gSSB0aGluayBzYmktPndyaXRlX211dGV4
-IGFuZCBzYmktPnJlYWRfbXV0ZXggYXJlIG11Y2ggYmV0dGVyLgoKSXQncyBtb3JlIHJlYXNvbmFi
-bGUgYW5kIHJlYWRhYmxlLgoKVGhhbmtzLApHdQoKPiAKPiBDb3VsZCB5b3UgcmVmZXIgdGhlIGZv
-bGxvd2luZyBwYXRjaGVzPwo+IFRoYW5rcywKPiAKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkRy
-ZWFtRmFjdG9yeSAtIE9wZW4gU291cmNlIFJFU1QgJiBKU09OIFNlcnZpY2VzIGZvciBIVE1MNSAm
-IE5hdGl2ZSBBcHBzCk9BdXRoLCBVc2VycywgUm9sZXMsIFNRTCwgTm9TUUwsIEJMT0IgU3RvcmFn
-ZSBhbmQgRXh0ZXJuYWwgQVBJIEFjY2VzcwpGcmVlIGFwcCBob3N0aW5nLiBPciBpbnN0YWxsIHRo
-ZSBvcGVuIHNvdXJjZSBwYWNrYWdlIG9uIGFueSBMQU1QIHNlcnZlci4KU2lnbiB1cCBhbmQgc2Vl
-IGV4YW1wbGVzIGZvciBBbmd1bGFySlMsIGpRdWVyeSwgU2VuY2hhIFRvdWNoIGFuZCBOYXRpdmUh
-Cmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD02MzQ2OTQ3MSZp
-dT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVs
-QGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0
-cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi Yu,
+One more comment, please refer to inline.
+On 11/16/2013 02:15 PM, Chao Yu wrote:
+
+> Previously we read sit entries page one by one, this method lost the chance of reading contiguous page together.
+> So we read pages as contiguous as possible for better mount performance.
+> 
+> v1-->v2:
+>  o merge judgements/use 'Continue' or 'Break' instead of 'Goto' as Gu Zheng suggested.
+>  o add mark_page_accessed () before release page to delay VM reclaiming them.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/segment.c |  108 ++++++++++++++++++++++++++++++++++++++++-------------
+>  fs/f2fs/segment.h |    2 +
+>  2 files changed, 84 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index fa284d3..656fe40 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/blkdev.h>
+>  #include <linux/prefetch.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/swap.h>
+>  
+>  #include "f2fs.h"
+>  #include "segment.h"
+> @@ -1480,41 +1481,96 @@ static int build_curseg(struct f2fs_sb_info *sbi)
+>  	return restore_curseg_summaries(sbi);
+>  }
+>  
+> +static int ra_sit_pages(struct f2fs_sb_info *sbi, int start,
+> +					int nrpages, bool *is_order)
+> +{
+> +	struct address_space *mapping = sbi->meta_inode->i_mapping;
+> +	struct sit_info *sit_i = SIT_I(sbi);
+> +	struct page *page;
+> +	block_t blk_addr;
+> +	int blkno = start, readcnt = 0;
+> +	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+> +
+> +	for (; blkno < start + nrpages && blkno < sit_blk_cnt; blkno++) {
+> +
+> +		if ((!f2fs_test_bit(blkno, sit_i->sit_bitmap) ^ !*is_order)) {
+> +			*is_order = !*is_order;
+> +			break;
+> +		}
+> +
+> +		blk_addr = sit_i->sit_base_addr + blkno;
+> +		if (*is_order)
+> +			blk_addr += sit_i->sit_blocks;
+> +repeat:
+> +		page = grab_cache_page(mapping, blk_addr);
+> +		if (!page) {
+> +			cond_resched();
+> +			goto repeat;
+> +		}
+> +		if (PageUptodate(page)) {
+> +			mark_page_accessed(page);
+> +			f2fs_put_page(page, 1);
+> +			readcnt++;
+> +			continue;
+> +		}
+> +
+> +		submit_read_page(sbi, page, blk_addr, READ_SYNC);
+> +
+> +		mark_page_accessed(page);
+> +		f2fs_put_page(page, 0);
+> +		readcnt++;
+> +	}
+> +
+> +	f2fs_submit_read_bio(sbi, READ_SYNC);
+> +	return readcnt;
+> +}
+> +
+>  static void build_sit_entries(struct f2fs_sb_info *sbi)
+>  {
+>  	struct sit_info *sit_i = SIT_I(sbi);
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+>  	struct f2fs_summary_block *sum = curseg->sum_blk;
+> -	unsigned int start;
+> -
+> -	for (start = 0; start < TOTAL_SEGS(sbi); start++) {
+> -		struct seg_entry *se = &sit_i->sentries[start];
+> -		struct f2fs_sit_block *sit_blk;
+> -		struct f2fs_sit_entry sit;
+> -		struct page *page;
+> -		int i;
+> +	bool is_order = f2fs_test_bit(0, sit_i->sit_bitmap) ? true : false;
+> +	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+> +	unsigned int i, start, end;
+> +	unsigned int readed, start_blk = 0;
+>  
+> -		mutex_lock(&curseg->curseg_mutex);
+> -		for (i = 0; i < sits_in_cursum(sum); i++) {
+> -			if (le32_to_cpu(segno_in_journal(sum, i)) == start) {
+> -				sit = sit_in_journal(sum, i);
+> -				mutex_unlock(&curseg->curseg_mutex);
+> -				goto got_it;
+> +	do {
+
+How about using find_next_bit to get the suitable start_blk if the next blk
+is not ordered here? And it also can simplify the logic of ra_sit_pages().
+
+Thanks,
+Gu
+
+> +		readed = ra_sit_pages(sbi, start_blk, sit_blk_cnt, &is_order);
+> +
+> +		start = start_blk * sit_i->sents_per_block;
+> +		end = (start_blk + readed) * sit_i->sents_per_block;
+> +
+> +		for (; start < end && start < TOTAL_SEGS(sbi); start++) {
+> +			struct seg_entry *se = &sit_i->sentries[start];
+> +			struct f2fs_sit_block *sit_blk;
+> +			struct f2fs_sit_entry sit;
+> +			struct page *page;
+> +
+> +			mutex_lock(&curseg->curseg_mutex);
+> +			for (i = 0; i < sits_in_cursum(sum); i++) {
+> +				if (le32_to_cpu(segno_in_journal(sum, i)) == start) {
+> +					sit = sit_in_journal(sum, i);
+> +					mutex_unlock(&curseg->curseg_mutex);
+> +					goto got_it;
+> +				}
+>  			}
+> -		}
+> -		mutex_unlock(&curseg->curseg_mutex);
+> -		page = get_current_sit_page(sbi, start);
+> -		sit_blk = (struct f2fs_sit_block *)page_address(page);
+> -		sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
+> -		f2fs_put_page(page, 1);
+> +			mutex_unlock(&curseg->curseg_mutex);
+> +
+> +			page = get_current_sit_page(sbi, start);
+> +			sit_blk = (struct f2fs_sit_block *)page_address(page);
+> +			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
+> +			f2fs_put_page(page, 1);
+>  got_it:
+> -		check_block_count(sbi, start, &sit);
+> -		seg_info_from_raw_sit(se, &sit);
+> -		if (sbi->segs_per_sec > 1) {
+> -			struct sec_entry *e = get_sec_entry(sbi, start);
+> -			e->valid_blocks += se->valid_blocks;
+> +			check_block_count(sbi, start, &sit);
+> +			seg_info_from_raw_sit(se, &sit);
+> +			if (sbi->segs_per_sec > 1) {
+> +				struct sec_entry *e = get_sec_entry(sbi, start);
+> +				e->valid_blocks += se->valid_blocks;
+> +			}
+>  		}
+> -	}
+> +		start_blk += readed;
+
+
+
+
+> +	} while (start_blk < sit_blk_cnt);
+>  }
+>  
+>  static void init_free_segmap(struct f2fs_sb_info *sbi)
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 269f690..ad5b9f1 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -83,6 +83,8 @@
+>  	(segno / SIT_ENTRY_PER_BLOCK)
+>  #define	START_SEGNO(sit_i, segno)		\
+>  	(SIT_BLOCK_OFFSET(sit_i, segno) * SIT_ENTRY_PER_BLOCK)
+> +#define SIT_BLK_CNT(sbi)			\
+> +	((TOTAL_SEGS(sbi) + SIT_ENTRY_PER_BLOCK - 1) / SIT_ENTRY_PER_BLOCK)
+>  #define f2fs_bitmap_size(nr)			\
+>  	(BITS_TO_LONGS(nr) * sizeof(unsigned long))
+>  #define TOTAL_SEGS(sbi)	(SM_I(sbi)->main_segments)
+
+
