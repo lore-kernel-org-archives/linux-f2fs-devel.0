@@ -1,94 +1,90 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH V2 1/2] f2fs: add a new function to support
- for merging contiguous read
-Date: Mon, 18 Nov 2013 18:11:10 +0900
-Message-ID: <1384765870.26319.16.camel@kjgkr>
-References: <000001cee293$3b6e3030$b24a9090$@samsung.com>
-	<1384734560.26319.10.camel@kjgkr>
-	<000901cee3fe$edfa8660$c9ef9320$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1ViKsM-0007YZ-EQ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 18 Nov 2013 09:12:10 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ViKsI-000422-J2 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 18 Nov 2013 09:12:10 +0000
-Received: from epcpsbgr5.samsung.com
-	(u145.gpu120.samsung.co.kr [203.254.230.145])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MWG0030YC4YPF21@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 18 Nov 2013 18:12:00 +0900 (KST)
-In-reply-to: <000901cee3fe$edfa8660$c9ef9320$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH 1/2] f2fs: clean up the do_submit_bio flow
+Date: Mon, 18 Nov 2013 18:12:01 +0900
+Message-ID: <1384765922-24028-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgoyMDEzLTExLTE4ICjsm5QpLCAwOTozNyArMDgwMCwgQ2hhbyBZdToKPiBIaSBLaW0sCj4g
-Cj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+ID4gRnJvbTogSmFlZ2V1ayBLaW0gW21h
-aWx0bzpqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbV0KPiA+IFNlbnQ6IE1vbmRheSwgTm92ZW1iZXIg
-MTgsIDIwMTMgODoyOSBBTQo+ID4gVG86IENoYW8gWXUKPiA+IENjOiBsaW51eC1mc2RldmVsQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZjJmcy1k
-ZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7IOiwreWnnQo+ID4gU3ViamVjdDogUmU6IFtmMmZz
-LWRldl0gW1BBVENIIFYyIDEvMl0gZjJmczogYWRkIGEgbmV3IGZ1bmN0aW9uIHRvIHN1cHBvcnQg
-Zm9yIG1lcmdpbmcgY29udGlndW91cyByZWFkCj4gPiAKPiA+IEhpIENoYW8sCj4gPiAKPiA+IDIw
-MTMtMTEtMTYgKO2GoCksIDE0OjE0ICswODAwLCBDaGFvIFl1Ogo+ID4gPiBGb3IgYmV0dGVyIHJl
-YWQgcGVyZm9ybWFuY2UsIHdlIGFkZCBhIG5ldyBmdW5jdGlvbiB0byBzdXBwb3J0IGZvciBtZXJn
-aW5nIGNvbnRpZ3VvdXMgcmVhZCBhcyB0aGUgb25lIGZvciB3cml0ZS4KPiA+IAo+ID4gUGxlYXNl
-IGNvbnNpZGVyIDgwIGNvbHVtbnMgZm9yIHRoZSBkZXNjcmlwdGlvbi4KPiA+IEkgY2Fubm90IGZp
-eCB0aGlzIGF0IGV2ZXJ5IHRpbWUgdGhvdWdoLiA6KAo+IAo+IEdvdCBpdCwgc29ycnkgYWJvdXQg
-bXkgY2FyZWxlc3NuZXNzIGluIHByZXZpb3VzIHBhdGNoLgo+IAo+ID4gCj4gPiA+Cj4gPiA+IHYx
-LS0+djI6Cj4gPiA+ICBvIGFkZCBkZWNsYXJhdGlvbnMgaGVyZSBhcyBHdSBaaGVuZyBzdWdnZXN0
-ZWQuCj4gPiA+Cj4gPiA+IFNpZ25lZC1vZmYtYnk6IENoYW8gWXUgPGNoYW8yLnl1QHNhbXN1bmcu
-Y29tPgo+ID4gPiBBY2tlZC1ieTogR3UgWmhlbmcgPGd1ei5mbnN0QGNuLmZ1aml0c3UuY29tPgo+
-ID4gPiAtLS0KPiA+ID4gIGZzL2YyZnMvZGF0YS5jIHwgICA0NSArKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysKPiA+ID4gIGZzL2YyZnMvZjJmcy5oIHwgICAgNCAr
-KysrCj4gPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDQ5IGluc2VydGlvbnMoKykKPiA+ID4KPiA+ID4g
-ZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZGF0YS5jIGIvZnMvZjJmcy9kYXRhLmMKPiA+ID4gaW5kZXgg
-YWEzNDM4Yy4uMTgxMDdjYiAxMDA2NDQKPiA+ID4gLS0tIGEvZnMvZjJmcy9kYXRhLmMKPiA+ID4g
-KysrIGIvZnMvZjJmcy9kYXRhLmMKPiA+ID4gQEAgLTQwNCw2ICs0MDQsNTEgQEAgaW50IGYyZnNf
-cmVhZHBhZ2Uoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFnZSAqcGFnZSwKPiA+
-ID4gIAlyZXR1cm4gMDsKPiA+ID4gIH0KPiA+ID4KPiA+ID4gK3ZvaWQgZjJmc19zdWJtaXRfcmVh
-ZF9iaW8oc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgcncpCj4gPiA+ICt7Cj4gPiA+ICsJ
-ZG93bl9yZWFkKCZzYmktPmJpb19zZW0pOwo+ID4gCj4gPiBJcyB0aGVyZSBhbnkgcmVhc29uIHRv
-IHVzZSBkb3duX3JlYWQoKT8KPiAKPiBJc24ndCB0aGF0IHdlIHVzZSBiaW9fc2VtIHRvIGxldCB3
-L3Igb3Igdy93IHN1Ym1pdHRpbmcgYmUgbXV0ZXg/CgpBcyBJIGV4YW1pbmVkIHRoZSBiaW9fc2Vt
-LCBJIHRoaW5rIHdlIGRvbid0IG5lZWQgdG8gdXNlIGEgc2VtYXBob3JlIGZvcgpyZWFkIGFuZCB3
-cml0ZSBJT3MuCkp1c3QgaXQgaXMgZW5vdWdoIHRvIHVzZSBhIG11dGV4IGZvciB3cml0ZXMgb25s
-eS4KCj4gCj4gPiBJdCBzZWVtcyB0aGF0IHdlIG5lZWQgdG8gZGVjbGFyZSBzYmktPmJpb19yZWFk
-IGFuZCBzYmktPmJpb193cml0ZQo+ID4gaW5zdGVhZCBvZiBzYmktPmJpb19zZW0uCj4gPiBJbiBh
-ZGRpdGlvbiB0byB0aGF0LCB3ZSBuZWVkIHRvIHVzZSBkb3duX3dyaXRlKCZzYmktPmJpb19yZWFk
-KSBoZXJlLgo+IAo+IElmIHNvLCBpdCBsb29rcyBzaW1pbGFyIGJldHdlZW4gKHN0cnVjdCByd19z
-ZW1hcGhvcmUpIHNiaS0+YmlvX3JlYWQgCj4gYW5kIChzdHJ1Y3QgYmlvICopIHNiaS0+cmVhZF9i
-aW8uCj4gSG93IGFib3V0IHVzaW5nIHJlYWRfYmlvX3NlbS9yYmlvX3NlbSB0byBkaWZmZXJlbnRp
-YXRlIAo+IGZyb20gc2JpLT5yZWFkX2Jpbz8KCkkgdGhpbmsgc2JpLT53cml0ZV9tdXRleCBhbmQg
-c2JpLT5yZWFkX211dGV4IGFyZSBtdWNoIGJldHRlci4KCkNvdWxkIHlvdSByZWZlciB0aGUgZm9s
-bG93aW5nIHBhdGNoZXM/ClRoYW5rcywKCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKCi0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQpEcmVhbUZhY3RvcnkgLSBPcGVuIFNvdXJjZSBSRVNUICYgSlNPTiBT
-ZXJ2aWNlcyBmb3IgSFRNTDUgJiBOYXRpdmUgQXBwcwpPQXV0aCwgVXNlcnMsIFJvbGVzLCBTUUws
-IE5vU1FMLCBCTE9CIFN0b3JhZ2UgYW5kIEV4dGVybmFsIEFQSSBBY2Nlc3MKRnJlZSBhcHAgaG9z
-dGluZy4gT3IgaW5zdGFsbCB0aGUgb3BlbiBzb3VyY2UgcGFja2FnZSBvbiBhbnkgTEFNUCBzZXJ2
-ZXIuClNpZ24gdXAgYW5kIHNlZSBleGFtcGxlcyBmb3IgQW5ndWxhckpTLCBqUXVlcnksIFNlbmNo
-YSBUb3VjaCBhbmQgTmF0aXZlIQpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBh
-ZC9jbGs/aWQ9NjM0Njk0NzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+This patch introduces PAGE_TYPE_OF_BIO() and cleans up do_submit_bio() with it.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/f2fs.h    |  1 +
+ fs/f2fs/segment.c | 39 +++++++++++++++++++++------------------
+ 2 files changed, 22 insertions(+), 18 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index fe5c2fc..1c783fd 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -351,6 +351,7 @@ enum count_type {
+  *			with waiting the bio's completion
+  * ...			Only can be used with META.
+  */
++#define PAGE_TYPE_OF_BIO(type)	(type) > META ? META : (type)
+ enum page_type {
+ 	DATA,
+ 	NODE,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1f83999..dad5f1a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -837,32 +837,35 @@ static void do_submit_bio(struct f2fs_sb_info *sbi,
+ 				enum page_type type, bool sync)
+ {
+ 	int rw = sync ? WRITE_SYNC : WRITE;
+-	enum page_type btype = type > META ? META : type;
++	enum page_type btype = PAGE_TYPE_OF_BIO(type);
++	struct bio *bio = sbi->bio[btype];
++	struct bio_private *p;
++
++	if (!bio)
++		return;
++
++	sbi->bio[btype] = NULL;
+ 
+ 	if (type >= META_FLUSH)
+ 		rw = WRITE_FLUSH_FUA;
+-
+ 	if (btype == META)
+ 		rw |= REQ_META;
+ 
+-	if (sbi->bio[btype]) {
+-		struct bio_private *p = sbi->bio[btype]->bi_private;
+-		p->sbi = sbi;
+-		sbi->bio[btype]->bi_end_io = f2fs_end_io_write;
++	p = bio->bi_private;
++	p->sbi = sbi;
++	bio->bi_end_io = f2fs_end_io_write;
+ 
+-		trace_f2fs_do_submit_bio(sbi->sb, btype, sync, sbi->bio[btype]);
++	trace_f2fs_do_submit_bio(sbi->sb, btype, sync, bio);
+ 
+-		if (type == META_FLUSH) {
+-			DECLARE_COMPLETION_ONSTACK(wait);
+-			p->is_sync = true;
+-			p->wait = &wait;
+-			submit_bio(rw, sbi->bio[btype]);
+-			wait_for_completion(&wait);
+-		} else {
+-			p->is_sync = false;
+-			submit_bio(rw, sbi->bio[btype]);
+-		}
+-		sbi->bio[btype] = NULL;
++	if (type == META_FLUSH) {
++		DECLARE_COMPLETION_ONSTACK(wait);
++		p->is_sync = true;
++		p->wait = &wait;
++		submit_bio(rw, bio);
++		wait_for_completion(&wait);
++	} else {
++		p->is_sync = false;
++		submit_bio(rw, bio);
+ 	}
+ }
+ 
+-- 
+1.8.4.474.g128a96c
+
