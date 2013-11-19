@@ -1,194 +1,123 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [f2fs-dev] [PATCH V2 2/2] f2fs: read contiguous sit entry pages
- by merging for mount performance
-Date: Mon, 18 Nov 2013 19:15:47 +0800
-Message-ID: <5289F6E3.3020607@cn.fujitsu.com>
-References: <000101cee293$4eae78d0$ec0b6a70$@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: clean up the do_submit_bio flow
+Date: Tue, 19 Nov 2013 08:39:54 +0800
+Message-ID: <001001cee4c0$002595c0$0070c140$@samsung.com>
+References: <1384765922-24028-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=GB2312
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <000101cee293$4eae78d0$ec0b6a70$@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: '???' <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?GB2312?B?zLfmrQ==?= <shu.tan@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1384765922-24028-1-git-send-email-jaegeuk.kim@samsung.com>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yu,
-One more comment, please refer to inline.
-On 11/16/2013 02:15 PM, Chao Yu wrote:
+Hi
 
-> Previously we read sit entries page one by one, this method lost the chance of reading contiguous page together.
-> So we read pages as contiguous as possible for better mount performance.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Monday, November 18, 2013 5:12 PM
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] [PATCH 1/2] f2fs: clean up the do_submit_bio flow
 > 
-> v1-->v2:
->  o merge judgements/use 'Continue' or 'Break' instead of 'Goto' as Gu Zheng suggested.
->  o add mark_page_accessed () before release page to delay VM reclaiming them.
+> This patch introduces PAGE_TYPE_OF_BIO() and cleans up do_submit_bio() with
+it.
 > 
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 > ---
->  fs/f2fs/segment.c |  108 ++++++++++++++++++++++++++++++++++++++++-------------
->  fs/f2fs/segment.h |    2 +
->  2 files changed, 84 insertions(+), 26 deletions(-)
+>  fs/f2fs/f2fs.h    |  1 +
+>  fs/f2fs/segment.c | 39 +++++++++++++++++++++------------------
+>  2 files changed, 22 insertions(+), 18 deletions(-)
 > 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index fe5c2fc..1c783fd 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -351,6 +351,7 @@ enum count_type {
+>   *			with waiting the bio's completion
+>   * ...			Only can be used with META.
+>   */
+> +#define PAGE_TYPE_OF_BIO(type)	(type) > META ? META : (type)
+
+We'd better to add parentheses for macro to avoid style problem.:)
+
+#define PAGE_TYPE_OF_BIO(type)	((type) > META ? META : (type))
+
+>  enum page_type {
+>  	DATA,
+>  	NODE,
 > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index fa284d3..656fe40 100644
+> index 1f83999..dad5f1a 100644
 > --- a/fs/f2fs/segment.c
 > +++ b/fs/f2fs/segment.c
-> @@ -14,6 +14,7 @@
->  #include <linux/blkdev.h>
->  #include <linux/prefetch.h>
->  #include <linux/vmalloc.h>
-> +#include <linux/swap.h>
->  
->  #include "f2fs.h"
->  #include "segment.h"
-> @@ -1480,41 +1481,96 @@ static int build_curseg(struct f2fs_sb_info *sbi)
->  	return restore_curseg_summaries(sbi);
->  }
->  
-> +static int ra_sit_pages(struct f2fs_sb_info *sbi, int start,
-> +					int nrpages, bool *is_order)
-> +{
-> +	struct address_space *mapping = sbi->meta_inode->i_mapping;
-> +	struct sit_info *sit_i = SIT_I(sbi);
-> +	struct page *page;
-> +	block_t blk_addr;
-> +	int blkno = start, readcnt = 0;
-> +	int sit_blk_cnt = SIT_BLK_CNT(sbi);
-> +
-> +	for (; blkno < start + nrpages && blkno < sit_blk_cnt; blkno++) {
-> +
-> +		if ((!f2fs_test_bit(blkno, sit_i->sit_bitmap) ^ !*is_order)) {
-> +			*is_order = !*is_order;
-> +			break;
-> +		}
-> +
-> +		blk_addr = sit_i->sit_base_addr + blkno;
-> +		if (*is_order)
-> +			blk_addr += sit_i->sit_blocks;
-> +repeat:
-> +		page = grab_cache_page(mapping, blk_addr);
-> +		if (!page) {
-> +			cond_resched();
-> +			goto repeat;
-> +		}
-> +		if (PageUptodate(page)) {
-> +			mark_page_accessed(page);
-> +			f2fs_put_page(page, 1);
-> +			readcnt++;
-> +			continue;
-> +		}
-> +
-> +		submit_read_page(sbi, page, blk_addr, READ_SYNC);
-> +
-> +		mark_page_accessed(page);
-> +		f2fs_put_page(page, 0);
-> +		readcnt++;
-> +	}
-> +
-> +	f2fs_submit_read_bio(sbi, READ_SYNC);
-> +	return readcnt;
-> +}
-> +
->  static void build_sit_entries(struct f2fs_sb_info *sbi)
+> @@ -837,32 +837,35 @@ static void do_submit_bio(struct f2fs_sb_info *sbi,
+>  				enum page_type type, bool sync)
 >  {
->  	struct sit_info *sit_i = SIT_I(sbi);
->  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
->  	struct f2fs_summary_block *sum = curseg->sum_blk;
-> -	unsigned int start;
+>  	int rw = sync ? WRITE_SYNC : WRITE;
+> -	enum page_type btype = type > META ? META : type;
+> +	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+> +	struct bio *bio = sbi->bio[btype];
+> +	struct bio_private *p;
+> +
+> +	if (!bio)
+> +		return;
+> +
+> +	sbi->bio[btype] = NULL;
+> 
+>  	if (type >= META_FLUSH)
+>  		rw = WRITE_FLUSH_FUA;
 > -
-> -	for (start = 0; start < TOTAL_SEGS(sbi); start++) {
-> -		struct seg_entry *se = &sit_i->sentries[start];
-> -		struct f2fs_sit_block *sit_blk;
-> -		struct f2fs_sit_entry sit;
-> -		struct page *page;
-> -		int i;
-> +	bool is_order = f2fs_test_bit(0, sit_i->sit_bitmap) ? true : false;
-> +	int sit_blk_cnt = SIT_BLK_CNT(sbi);
-> +	unsigned int i, start, end;
-> +	unsigned int readed, start_blk = 0;
->  
-> -		mutex_lock(&curseg->curseg_mutex);
-> -		for (i = 0; i < sits_in_cursum(sum); i++) {
-> -			if (le32_to_cpu(segno_in_journal(sum, i)) == start) {
-> -				sit = sit_in_journal(sum, i);
-> -				mutex_unlock(&curseg->curseg_mutex);
-> -				goto got_it;
-> +	do {
-
-How about using find_next_bit to get the suitable start_blk if the next blk
-is not ordered here? And it also can simplify the logic of ra_sit_pages().
-
-Thanks,
-Gu
-
-> +		readed = ra_sit_pages(sbi, start_blk, sit_blk_cnt, &is_order);
-> +
-> +		start = start_blk * sit_i->sents_per_block;
-> +		end = (start_blk + readed) * sit_i->sents_per_block;
-> +
-> +		for (; start < end && start < TOTAL_SEGS(sbi); start++) {
-> +			struct seg_entry *se = &sit_i->sentries[start];
-> +			struct f2fs_sit_block *sit_blk;
-> +			struct f2fs_sit_entry sit;
-> +			struct page *page;
-> +
-> +			mutex_lock(&curseg->curseg_mutex);
-> +			for (i = 0; i < sits_in_cursum(sum); i++) {
-> +				if (le32_to_cpu(segno_in_journal(sum, i)) == start) {
-> +					sit = sit_in_journal(sum, i);
-> +					mutex_unlock(&curseg->curseg_mutex);
-> +					goto got_it;
-> +				}
->  			}
+>  	if (btype == META)
+>  		rw |= REQ_META;
+> 
+> -	if (sbi->bio[btype]) {
+> -		struct bio_private *p = sbi->bio[btype]->bi_private;
+> -		p->sbi = sbi;
+> -		sbi->bio[btype]->bi_end_io = f2fs_end_io_write;
+> +	p = bio->bi_private;
+> +	p->sbi = sbi;
+> +	bio->bi_end_io = f2fs_end_io_write;
+> 
+> -		trace_f2fs_do_submit_bio(sbi->sb, btype, sync, sbi->bio[btype]);
+> +	trace_f2fs_do_submit_bio(sbi->sb, btype, sync, bio);
+> 
+> -		if (type == META_FLUSH) {
+> -			DECLARE_COMPLETION_ONSTACK(wait);
+> -			p->is_sync = true;
+> -			p->wait = &wait;
+> -			submit_bio(rw, sbi->bio[btype]);
+> -			wait_for_completion(&wait);
+> -		} else {
+> -			p->is_sync = false;
+> -			submit_bio(rw, sbi->bio[btype]);
 > -		}
-> -		mutex_unlock(&curseg->curseg_mutex);
-> -		page = get_current_sit_page(sbi, start);
-> -		sit_blk = (struct f2fs_sit_block *)page_address(page);
-> -		sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
-> -		f2fs_put_page(page, 1);
-> +			mutex_unlock(&curseg->curseg_mutex);
-> +
-> +			page = get_current_sit_page(sbi, start);
-> +			sit_blk = (struct f2fs_sit_block *)page_address(page);
-> +			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
-> +			f2fs_put_page(page, 1);
->  got_it:
-> -		check_block_count(sbi, start, &sit);
-> -		seg_info_from_raw_sit(se, &sit);
-> -		if (sbi->segs_per_sec > 1) {
-> -			struct sec_entry *e = get_sec_entry(sbi, start);
-> -			e->valid_blocks += se->valid_blocks;
-> +			check_block_count(sbi, start, &sit);
-> +			seg_info_from_raw_sit(se, &sit);
-> +			if (sbi->segs_per_sec > 1) {
-> +				struct sec_entry *e = get_sec_entry(sbi, start);
-> +				e->valid_blocks += se->valid_blocks;
-> +			}
->  		}
-> -	}
-> +		start_blk += readed;
-
-
-
-
-> +	} while (start_blk < sit_blk_cnt);
+> -		sbi->bio[btype] = NULL;
+> +	if (type == META_FLUSH) {
+> +		DECLARE_COMPLETION_ONSTACK(wait);
+> +		p->is_sync = true;
+> +		p->wait = &wait;
+> +		submit_bio(rw, bio);
+> +		wait_for_completion(&wait);
+> +	} else {
+> +		p->is_sync = false;
+> +		submit_bio(rw, bio);
+>  	}
 >  }
->  
->  static void init_free_segmap(struct f2fs_sb_info *sbi)
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 269f690..ad5b9f1 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -83,6 +83,8 @@
->  	(segno / SIT_ENTRY_PER_BLOCK)
->  #define	START_SEGNO(sit_i, segno)		\
->  	(SIT_BLOCK_OFFSET(sit_i, segno) * SIT_ENTRY_PER_BLOCK)
-> +#define SIT_BLK_CNT(sbi)			\
-> +	((TOTAL_SEGS(sbi) + SIT_ENTRY_PER_BLOCK - 1) / SIT_ENTRY_PER_BLOCK)
->  #define f2fs_bitmap_size(nr)			\
->  	(BITS_TO_LONGS(nr) * sizeof(unsigned long))
->  #define TOTAL_SEGS(sbi)	(SM_I(sbi)->main_segments)
-
-
+> 
+> --
+> 1.8.4.474.g128a96c
+> 
+> 
+> ------------------------------------------------------------------------------
+> DreamFactory - Open Source REST & JSON Services for HTML5 & Native Apps
+> OAuth, Users, Roles, SQL, NoSQL, BLOB Storage and External API Access
+> Free app hosting. Or install the open source package on any LAMP server.
+> Sign up and see examples for AngularJS, jQuery, Sencha Touch and Native!
+> http://pubads.g.doubleclick.net/gampad/clk?id=63469471&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
