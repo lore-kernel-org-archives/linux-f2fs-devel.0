@@ -1,90 +1,119 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: clean up the do_submit_bio flow
-Date: Tue, 19 Nov 2013 15:33:14 +0900
-Message-ID: <1384842794.26319.32.camel@kjgkr>
-References: <1384765922-24028-1-git-send-email-jaegeuk.kim@samsung.com>
- <001401cee4e8$09cf01b0$1d6d0510$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <001401cee4e8$09cf01b0$1d6d0510$@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH 1/2] f2fs: disable the extent cache ops on high fragmented files
+Date: Tue, 19 Nov 2013 16:10:36 +0900
+Message-ID: <1384845037-7872-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+The f2fs manages an extent cache to search a number of consecutive data blocks
+very quickly.
 
-2013-11-19 (=ED=99=94), 13:25 +0800, Chao Yu:
-> Hi
->=20
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> > Sent: Monday, November 18, 2013 5:12 PM
-> > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; li=
-nux-f2fs-devel@lists.sourceforge.net
-> > Subject: [f2fs-dev] [PATCH 1/2] f2fs: clean up the do_submit_bio fl=
-ow
-> >=20
-> > This patch introduces PAGE_TYPE_OF_BIO() and cleans up do_submit_bi=
-o() with it.
-> >=20
-> > Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-> > ---
-> >  fs/f2fs/f2fs.h    |  1 +
-> >  fs/f2fs/segment.c | 39 +++++++++++++++++++++------------------
-> >  2 files changed, 22 insertions(+), 18 deletions(-)
-> >=20
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index fe5c2fc..1c783fd 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -351,6 +351,7 @@ enum count_type {
-> >   *			with waiting the bio's completion
-> >   * ...			Only can be used with META.
-> >   */
-> > +#define PAGE_TYPE_OF_BIO(type)	(type) > META ? META : (type)
+However it conducts unnecessary cache operations if the file is highly
+fragmented with no valid extent cache.
 
+In such the case, we don't need to handle the extent cache, but just can disable
+the cache facility.
 
-I'll add parenthesis as you suggested. Thanks.
+Nevertheless, this patch gives one more chance to enable the extent cache.
 
-> >  enum page_type {
-> >  	DATA,
-> >  	NODE,
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 1f83999..dad5f1a 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -837,32 +837,35 @@ static void do_submit_bio(struct f2fs_sb_info=
- *sbi,
-> >  				enum page_type type, bool sync)
-> >  {
-> >  	int rw =3D sync ? WRITE_SYNC : WRITE;
-> > -	enum page_type btype =3D type > META ? META : type;
-> > +	enum page_type btype =3D PAGE_TYPE_OF_BIO(type);
->=20
-> ->f2fs_submit_bio()
-> 	: enum page_type btype =3D PAGE_TYPE_OF_BIO(type);
-> 	->do_submit_bio()
-> 		: enum page_type btype =3D PAGE_TYPE_OF_BIO(type);
->=20
-> Could we remove PAGE_TYPE_OF_BIO or use f2fs_bug_on to instead
-> in do_submit_bio()? because it looks redundant , and also=20
-> submit_write_page() will not pass the type which is larger than META.
+For example,
+1. create a file
+2. write data sequentially which produces a large valid extent cache
+3. update some data, resulting in a fragmented extent
+4. if the fragmented extent is too small, then drop extent cache
+5. close the file
 
-The f2fs_submit_bio(type) calls do_submit_bio(type) in which the type i=
-s
-able to be META_FLUSH from sync_meta_pages().
-So, we need to do this. :)
+6. open the file again
+7. give another chance to make a new extent cache
+8. write data sequentially again which creates another big extent cache.
+...
 
---=20
-Jaegeuk Kim
-Samsung
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/data.c | 22 ++++++++++++++++++----
+ fs/f2fs/f2fs.h |  3 +++
+ 2 files changed, 21 insertions(+), 4 deletions(-)
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5920639..2e54522 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -71,6 +71,9 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 	pgoff_t start_fofs, end_fofs;
+ 	block_t start_blkaddr;
+ 
++	if (is_inode_flag_set(fi, FI_NO_EXTENT))
++		return 0;
++
+ 	read_lock(&fi->ext.ext_lock);
+ 	if (fi->ext.len == 0) {
+ 		read_unlock(&fi->ext.ext_lock);
+@@ -109,6 +112,7 @@ void update_extent_cache(block_t blk_addr, struct dnode_of_data *dn)
+ 	struct f2fs_inode_info *fi = F2FS_I(dn->inode);
+ 	pgoff_t fofs, start_fofs, end_fofs;
+ 	block_t start_blkaddr, end_blkaddr;
++	int need_update = true;
+ 
+ 	f2fs_bug_on(blk_addr == NEW_ADDR);
+ 	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
+@@ -117,6 +121,9 @@ void update_extent_cache(block_t blk_addr, struct dnode_of_data *dn)
+ 	/* Update the page address in the parent node */
+ 	__set_data_blkaddr(dn, blk_addr);
+ 
++	if (is_inode_flag_set(fi, FI_NO_EXTENT))
++		return;
++
+ 	write_lock(&fi->ext.ext_lock);
+ 
+ 	start_fofs = fi->ext.fofs;
+@@ -163,14 +170,21 @@ void update_extent_cache(block_t blk_addr, struct dnode_of_data *dn)
+ 					fofs - start_fofs + 1;
+ 			fi->ext.len -= fofs - start_fofs + 1;
+ 		}
+-		goto end_update;
++	} else {
++		need_update = false;
+ 	}
+-	write_unlock(&fi->ext.ext_lock);
+-	return;
+ 
++	/* Finally, if the extent is very fragmented, let's drop the cache. */
++	if (fi->ext.len < F2FS_MIN_EXTENT_LEN) {
++		fi->ext.len = 0;
++		set_inode_flag(fi, FI_NO_EXTENT);
++		need_update = true;
++	}
+ end_update:
+ 	write_unlock(&fi->ext.ext_lock);
+-	sync_inode_page(dn);
++	if (need_update)
++		sync_inode_page(dn);
++	return;
+ }
+ 
+ struct page *find_data_page(struct inode *inode, pgoff_t index, bool sync)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c2de549..e9038bb 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -169,6 +169,8 @@ enum {
+ #define F2FS_LINK_MAX		32000	/* maximum link count per file */
+ 
+ /* for in-memory extent cache entry */
++#define F2FS_MIN_EXTENT_LEN	16	/* minimum extent length */
++
+ struct extent_info {
+ 	rwlock_t ext_lock;	/* rwlock for consistency */
+ 	unsigned int fofs;	/* start offset in a file */
+@@ -889,6 +891,7 @@ enum {
+ 	FI_NO_ALLOC,		/* should not allocate any blocks */
+ 	FI_UPDATE_DIR,		/* should update inode block for consistency */
+ 	FI_DELAY_IPUT,		/* used for the recovery */
++	FI_NO_EXTENT,		/* not to use the extent cache */
+ 	FI_INLINE_XATTR,	/* used for inline xattr */
+ };
+ 
+-- 
+1.8.4.474.g128a96c
