@@ -1,22 +1,30 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH 4/5] f2fs: simplify write_orphan_inodes for
-	better readable
-Date: Tue, 19 Nov 2013 18:03:58 +0800
-Message-ID: <528B378E.2020109@cn.fujitsu.com>
+From: tast ky <tastky@gmail.com>
+Subject: Re: [Bug] Inaccessible, unerasable file
+Date: Tue, 19 Nov 2013 16:34:48 +0100
+Message-ID: <CAPs1ukxRQFZfJhLUvUsZcGdeWhHkT-CpvkQDVxCHYJr6Q9Hz0A@mail.gmail.com>
+References: <CAPs1ukwgeqL1SFUGUPaM-aE=88dXS4GeaDDALG5WFLcoMvqg_g@mail.gmail.com>
+	<1382440189.992.62.camel@kjgkr>
+	<CAPs1ukz2EykkWP_H-U5UT_nuef5dpMRyTjHy4JCHKNoPLWKdpw@mail.gmail.com>
+	<1382522306.992.84.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1ViiGG-0007Dp-U8
+	(envelope-from <tastky@gmail.com>) id 1VinKL-00066l-2c
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Nov 2013 10:10:24 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ViiGF-0006FL-W9 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Nov 2013 10:10:24 +0000
+	Tue, 19 Nov 2013 15:34:57 +0000
+Received: from mail-la0-f53.google.com ([209.85.215.53])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1VinKJ-00031B-8J
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 19 Nov 2013 15:34:57 +0000
+Received: by mail-la0-f53.google.com with SMTP id ea20so6156736lab.40
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 19 Nov 2013 07:34:48 -0800 (PST)
+In-Reply-To: <1382522306.992.84.camel@kjgkr>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,99 +34,85 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kim <jaegeuk.kim@samsung.com>
-Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk.kim@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Simplify write_orphan_inodes for better readable. Because we hold the
-orphan_inode_mutex, so it's safe to use list_for_each_entry instead of
-list_for_each_safe.
-
-
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
----
- fs/f2fs/checkpoint.c |   38 ++++++++++++++++++--------------------
- 1 files changed, 18 insertions(+), 20 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 5716e5e..f884589 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -300,12 +300,13 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 
- static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- {
--	struct list_head *head, *this, *next;
-+	struct list_head *head;
- 	struct f2fs_orphan_block *orphan_blk = NULL;
- 	struct page *page = NULL;
- 	unsigned int nentries = 0;
- 	unsigned short index = 1;
- 	unsigned short orphan_blocks;
-+	struct orphan_inode_entry *orphan = NULL;
- 
- 	orphan_blocks = (unsigned short)((sbi->n_orphans +
- 		(F2FS_ORPHANS_PER_BLOCK - 1)) / F2FS_ORPHANS_PER_BLOCK);
-@@ -314,12 +315,17 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- 	head = &sbi->orphan_inode_list;
- 
- 	/* loop for each orphan inode entry and write them in Jornal block */
--	list_for_each_safe(this, next, head) {
--		struct orphan_inode_entry *orphan;
-+	list_for_each_entry(orphan, head, list) {
-+		if (!page) {
-+			page = grab_meta_page(sbi, start_blk);
-+			orphan_blk =
-+				(struct f2fs_orphan_block *)page_address(page);
-+			memset(orphan_blk, 0, sizeof(*orphan_blk));
-+		}
- 
--		orphan = list_entry(this, struct orphan_inode_entry, list);
-+		orphan_blk->ino[nentries] = cpu_to_le32(orphan->ino);
- 
--		if (nentries == F2FS_ORPHANS_PER_BLOCK) {
-+		if (nentries++ == F2FS_ORPHANS_PER_BLOCK) {
- 			/*
- 			 * an orphan block is full of 1020 entries,
- 			 * then we need to flush current orphan blocks
-@@ -335,24 +341,16 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- 			nentries = 0;
- 			page = NULL;
- 		}
--		if (page)
--			goto page_exist;
-+	}
- 
--		page = grab_meta_page(sbi, start_blk);
--		orphan_blk = (struct f2fs_orphan_block *)page_address(page);
--		memset(orphan_blk, 0, sizeof(*orphan_blk));
--page_exist:
--		orphan_blk->ino[nentries++] = cpu_to_le32(orphan->ino);
-+	if (page) {
-+		orphan_blk->blk_addr = cpu_to_le16(index);
-+		orphan_blk->blk_count = cpu_to_le16(orphan_blocks);
-+		orphan_blk->entry_count = cpu_to_le32(nentries);
-+		set_page_dirty(page);
-+		f2fs_put_page(page, 1);
- 	}
--	if (!page)
--		goto end;
- 
--	orphan_blk->blk_addr = cpu_to_le16(index);
--	orphan_blk->blk_count = cpu_to_le16(orphan_blocks);
--	orphan_blk->entry_count = cpu_to_le32(nentries);
--	set_page_dirty(page);
--	f2fs_put_page(page, 1);
--end:
- 	mutex_unlock(&sbi->orphan_inode_mutex);
- }
- 
--- 
-1.7.7
-
-
-------------------------------------------------------------------------------
-Shape the Mobile Experience: Free Subscription
-Software experts and developers: Be at the forefront of tech innovation.
-Intel(R) Software Adrenaline delivers strategic insight and game-changing 
-conversations that shape the rapidly evolving mobile landscape. Sign up now. 
-http://pubads.g.doubleclick.net/gampad/clk?id=63431311&iu=/4140/ostg.clktrk
+SGVsbG8gYWdhaW4sCgphZnRlciBidXlpbmcgYSBuZXcgVVNCIHN0aWNrIGFuZCBtb3ZpbmcgZXZl
+cnl0aGluZyBidXQgdGhlIHBhcnRpdGlvbidzCmJyb2tlbiBmaWxlICYgZm9sZGVyIHRvIGl0LCBJ
+IGFtIG5vdyBhYmxlIHRvIHNlbmQgeW91IGFuIGltYWdlIGFmdGVyCmFsbC4KCkFsdGhvdWdoIHRo
+ZSAyMSBHQiBwYXJ0aXRpb24gd2FzIHN1cHBvc2VkIHRvIG9ubHkgY29udGFpbiB0aG9zZSB0d28K
+dGlueSBlbnRyaWVzLCBkZiBzdGlsbCByZXBvcnRlZCAxLjggR0IgYXMgaW4gdXNlLgoKSSBkaWQg
+ImRkIGlmPS9kZXYvemVybyBvZj1odWdlZmlsZTsgc3luYzsgcm0gaHVnZWZpbGU7IHN5bmMiIG9u
+IGl0IHRvCmJvb3N0IHRoZSBjb21wcmVzc2lvbiByYXRpbywgdGhlIGZpbGUgaXMgYXQgNDA2IE1p
+QiBjb21wcmVzc2VkLgoKVGhlIGltYWdlIHdhcyB0YWtlbiB3aXRoICJkZCBpZj0vZGV2L3NkZTIg
+YnM9NDA5NiBjb252PW5vdHJ1bmMgfCB4egotVDggLTkgLSA+IGYyZnNfYnVnZ2VkLnh6Ii4gUGxl
+YXNlIHRlbGwgbWUgaWYgdGhhdCB3YXMgY29ycmVjdCwKZXNwZWNpYWxseSBzaW5jZSBJIGludGVu
+ZCB0byBmb3JtYXQgdGhlIHN0aWNrIHNvb24uCgpBcyB0byB0aGUgYWN0dWFsIGRvd25sb2FkIGxp
+bmssIEkgd2lsbCBzZW5kIHlvdSB0aGF0IGluIGEgc2VwYXJhdGUKZW1haWwgYXMgSSBhbSBub3Qg
+Zm9uZCBvZiBoYXZpbmcgcG90ZW50aWFsbHkgcGVyc29uYWwgZGF0YSBvcGVuIG9uIHRoZQp3ZWIu
+CgpOQjogZnNjay5mMmYyIHN0aWxsIGZhaWxzIHdpdGggIltmc2NrX2Noa19ub2RlX2JsazogMTk4
+XSBuaS5ibGtfYWRkciA8CkYyRlNfUkFXX1NVUEVSKHNiaSktPmJsb2NrX2NvdW50Ii4KCk9uIFdl
+ZCwgT2N0IDIzLCAyMDEzIGF0IDExOjU4IEFNLCBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1Ac2Ft
+c3VuZy5jb20+IHdyb3RlOgo+IEhpLAo+Cj4gMjAxMy0xMC0yMiAo7ZmUKSwgMjI6NTAgKzAyMDAs
+IE1heCBNdXN0ZXI6Cj4+IEhpLAo+Pgo+PiBJIGRvbid0IHJlY2FsbCBhbnl0aGluZyBsaWtlIGEg
+YmxhY2tvdXQsIGJ1dCBzaW5jZSBJIGxpa2UgdG8gcnVuIG5ldwo+PiBzb2Z0d2FyZSB0aGF0J3Mg
+c3RpbGwgaW4gZGV2ZWxvcG1lbnQsIEkgaGF2ZSBoYWQgYSBmYWlyIHNoYXJlIG9mIHN5c3RlbQo+
+PiBjcmFzaGVzLgo+Pgo+PiBBcyBmYXIgYXMgSSdtIGF3YXJlIHRoaXMgaXMgdGhlIG9ubHkgZmls
+ZSBvbiB0aGUgcGFydGl0aW9uIHRvIGV2ZXIKPj4gYmVjb21lIGNvcnJ1cHRlZCBhdCB0aGUgZmls
+ZSBzeXN0ZW0gbGV2ZWwsIHRob3VnaC4KPj4KPj4gVGhlIHJlcG9zaXRvcnkgd2FzIGEgc2ltcGxl
+IChzaGFsbG93KSBnaXQgY2xvbmUgb2YgR29vZ2xlJ3MgZ3lwLAo+PiBhdmFpbGFibGUgaGVyZToK
+Pj4KPj4gaHR0cHM6Ly9jaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tL2V4dGVybmFsL2d5cC5naXQK
+Pj4KPgo+IEFzIEkgdGVzdGVkIHRoZSBhYm92ZSBnaXQsIHRoZXJlIHdhcyBubyBmdW5jdGlvbmFs
+IHByb2JsZW0gb24gZjJmcy4KPiBTbywgY291bGQgeW91IGdpdmUgbWUgdGhlIGxvZyBvZiAiZnNj
+ay5mMmZzIC1kIDMiPwo+IEl0IGlzIHRoZSBiZXN0IHlvdSBjYW4gZ2l2ZSBtZSB0aGUgYnJva2Vu
+IGltYWdlIHRob3VnaC4KPiBUaGFua3MsCj4KPj4gU3VjaCBiZWluZyB0aGUgY2FzZSwgSSBoYXZl
+IG5vIG5lZWQgdG8gcmVzdG9yZSB0aGUgZmlsZSwgYnV0IGJlaW5nIGFibGUKPj4gdG8gaGF2ZSBp
+dCBwcm9wZXJseSBkZWxldGVkIHdvdWxkIGJlIG5pY2UuCj4+Cj4+IFlvdXJzCj4+IHRhc3RreQo+
+Pgo+PiBPbiAyMi4xMC4yMDEzIDEzOjA5LCBKYWVnZXVrIEtpbSB3cm90ZToKPj4gPiBIaSwKPj4g
+Pgo+PiA+IFRoYW5rIHlvdSBmb3IgdGhlIHJlcG9ydC4KPj4gPgo+PiA+IDIwMTMtMTAtMTkgKO2G
+oCksIDE5OjM2ICswMjAwLCBNYXggTXVzdGVyOgo+PiA+PiBUaGVyZSdzIGEgYnJva2VuLCBpZS4g
+aW5hY2Nlc3NpYmxlIGFuZCB1bmVyYXNhYmxlIGZpbGUgb24gbXkgZjJmcwo+PiA+PiBwYXJ0aXRp
+b24gKDJuZCBwYXJ0aXRpb24gd2l0aCAyMUdCIG9uIGEgQ29yc2FpciBGbGFzaCBWb3lhZ2VyIEdU
+IFVTQiAzLjAKPj4gPj4gMzJHQikuIGxzIHJlcG9ydHM6Cj4+ID4+Cj4+ID4+ICAgPmNhbm5vdCBh
+Y2Nlc3Mgc2hhcmVkLmg6IElucHV0L291dHB1dCBlcnJvcgo+PiA+PiAgID50b3RhbCAwCj4+ID4+
+ICAgPi0/Pz8/Pz8/Pz8gPyA/ID8gPyAgICAgICAgICAgID8gc2hhcmVkLmgKPj4gPj4KPj4gPj4g
+VGhlIGZpbGUgaGFzIGJlZW4gb24gdGhlIHBhcnRpdGlvbiBmb3IgYSBjb3VwbGUgb2YgbW9udGhz
+IGFscmVhZHkuIEkKPj4gPj4gZGlkbid0IHJlcG9ydCBzb29uZXIgYXMgSSBjb3VsZC9jYW4gbW92
+ZSBpdHMgZm9sZGVyIChidXQgbm90IHRoZSBmaWxlCj4+ID4+IGl0c2VsZikgd2hlcmUgaXQgZG9l
+c24ndCBidWcgbWUgYW5kIGl0IGRvZXNuJ3QgYXBwZWFyIHRvIGFmZmVjdCBhbnl0aGluZwo+PiA+
+PiBlbHNlLgo+PiA+Pgo+PiA+PiAoSSdtIGN1cnJlbnRseSBydW5uaW5nIExpbnV4IHYzLjEyLXJj
+NSB3aXRoIHBvc3QtMy4xMiBmMmZzIHBhdGNoZXMKPj4gPj4gYXBwbGllZCBtYW51YWxseS4pCj4+
+ID4+Cj4+ID4+IFRoZSBwYXJ0aXRpb24gaXMgdXNlZCBwcmltYXJpbHkgdG8gc3RvcmUgc291cmNl
+IGNvZGUgYW5kIGFzIGNhY2hlIGZvcgo+PiA+PiBjY2FjaGUuIEkgZG9uJ3QgcmVjYWxsIGV2ZXIg
+ZmlkZGxpbmcgd2l0aCB0aGlzIGZpbGUgZGlyZWN0bHk7IGl0Cj4+ID4+IHByb2JhYmx5IGhhcHBl
+bmVkIGR1cmluZyB1cGRhdGluZyBpdHMgcmVwb3NpdG9yeSBvciBkZWxldGluZyBqdXN0IHRoYXQu
+Cj4+ID4+Cj4+ID4+IGYyZnMtdG9vbHMncyBmc2NrIChjdXJyZW50IGdpdCAyYWQxZmNkODAwKSBk
+b2Vzbid0IGFwcGVhciB0byBkbyBhbnl0aGluZwo+PiA+PiBhbmQgYWJvcnRzIGFmdGVyIHNvbWUg
+MzAgc2Vjb25kcyB3aXRoOgo+PiA+Pgo+PiA+PiAgID5JbmZvOiBzZWN0b3Igc2l6ZSA9IDUxMgo+
+PiA+PiAgID5JbmZvOiB0b3RhbCBzZWN0b3JzID0gNDIxMDY4ODAgKGluIDUxMmJ5dGVzKQo+PiA+
+PiAgID5bZnNja19jaGtfbm9kZV9ibGs6IDE5NV0gYmxvY2sgYWRkciBbMHhhNDBhZTU5XQo+PiA+
+PiAgID4KPj4gPj4gICA+QXNzZXJ0aW9uIGZhaWxlZCEKPj4gPj4gICA+W2ZzY2tfY2hrX25vZGVf
+YmxrOiAxOTVdIG5pLmJsa19hZGRyIDwgRjJGU19SQVdfU1VQRVIoc2JpKS0+YmxvY2tfY291bnQK
+Pj4gPj4KPj4gPj4gSWYgeW91IHdvdWxkIGxpa2UgbWUgdG8gcG9zdCBmdXJ0aGVyIGluZm8sIHBs
+ZWFzZSB0ZWxsIG1lIHdoaWNoOyBJJ3ZlCj4+ID4+IGdvdCBubyBpZGVhIGhvdyB0byBmdXJ0aGVy
+IGRlYnVnIHRoaXMuCj4+ID4KPj4gPiBVbSwgSSd2ZSBuZXZlciBzZWVuIHRoaXMga2luZCBvZiBl
+cnJvciBzbyBmYXIuCj4+ID4gIEZyb20gdGhlIHJlc3VsdCBvZiBmc2NrLCBpdCBzZWVtcyB0aGF0
+IHRoZSBpbm9kZSBvZiBzaGFyZWQuaCB3YXMgbG9zdC4KPj4gPiBTbywgY3VycmVudGx5LCB0aGVy
+ZSBpcyBubyB3YXkgdG8gcmVjb3ZlciB0aGF0IGlub2RlIGFuZCBpdHMgZGF0YQo+PiA+IHNpbXBs
+eS4KPj4gPiBJdCBtYXkgbmVlZCBzY2FuIHRoZSB3aG9sZSBwYXJ0aXRpb24gdG8gZmluZCB0aGUg
+c3RhbGUgaW5vZGUgYmxvY2suCj4+ID4KPj4gPiBUd28gcXVlc3Rpb25zLgo+PiA+IC0gSGF2ZSB5
+b3UgZXhwZXJpZW5jZWQgYW55IHN1ZGRlbiBwb3dlci1vZmYgYmVmb3JlPwo+PiA+IC0gQ2FuIEkg
+dGVzdCB3aXRoIHRoZSByZXBvc2l0b3J5IGhhdmluZyB0aGUgc2hhcmVkLmggdGhhdCB5b3UgdXNl
+ZD8KPj4gPiAgICAoSSdkIGxpa2UgdG8gZG8gYSBzaW1wbGUgdGVzdCBzdG9yaW5nIHRoYXQgcmVw
+b3NpdG9yeS4pCj4+ID4KPj4gPiBUaGFua3MsCj4+ID4KPgo+IC0tCj4gSmFlZ2V1ayBLaW0KPiBT
+YW1zdW5nCj4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTaGFwZSB0aGUgTW9iaWxlIEV4cGVyaWVu
+Y2U6IEZyZWUgU3Vic2NyaXB0aW9uClNvZnR3YXJlIGV4cGVydHMgYW5kIGRldmVsb3BlcnM6IEJl
+IGF0IHRoZSBmb3JlZnJvbnQgb2YgdGVjaCBpbm5vdmF0aW9uLgpJbnRlbChSKSBTb2Z0d2FyZSBB
+ZHJlbmFsaW5lIGRlbGl2ZXJzIHN0cmF0ZWdpYyBpbnNpZ2h0IGFuZCBnYW1lLWNoYW5naW5nIApj
+b252ZXJzYXRpb25zIHRoYXQgc2hhcGUgdGhlIHJhcGlkbHkgZXZvbHZpbmcgbW9iaWxlIGxhbmRz
+Y2FwZS4gU2lnbiB1cCBub3cuIApodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBh
+ZC9jbGs/aWQ9NjM0MzEzMTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
+c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
+b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
