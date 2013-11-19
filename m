@@ -1,108 +1,93 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH V2 1/2] f2fs: add a new function to support
- for merging contiguous read
-Date: Tue, 19 Nov 2013 09:41:54 +0800
-Message-ID: <001101cee4c8$a51286d0$ef379470$@samsung.com>
-References: <000001cee293$3b6e3030$b24a9090$@samsung.com>
-	<1384734560.26319.10.camel@kjgkr>
-	<000901cee3fe$edfa8660$c9ef9320$@samsung.com>
-	<1384765870.26319.16.camel@kjgkr>
+Subject: [f2fs-dev] [PATCH] f2fs: split sbi->write_mutex for DATA/NODE/META to
+ avoid unnecessary race
+Date: Tue, 19 Nov 2013 09:43:20 +0800
+Message-ID: <001201cee4c8$de450360$9acf0a20$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ViaLE-0003bC-GI
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Nov 2013 01:43:00 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ViaLA-0000j6-Nt for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Nov 2013 01:43:00 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MWH00624M2FBW90@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Nov 2013 10:42:45 +0900 (KST)
-In-reply-to: <1384765870.26319.16.camel@kjgkr>
+Content-Type: text/plain; charset=gb2312
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: ??? <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?gb2312?B?zLfmrQ==?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkKCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiBGcm9tOiBKYWVnZXVrIEtpbSBbbWFp
-bHRvOmphZWdldWsua2ltQHNhbXN1bmcuY29tXQo+IFNlbnQ6IE1vbmRheSwgTm92ZW1iZXIgMTgs
-IDIwMTMgNToxMSBQTQo+IFRvOiBDaGFvIFl1Cj4gQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOwo+IGxpbnV4LWYyZnMtZGV2ZWxA
-bGlzdHMuc291cmNlZm9yZ2UubmV0OyAn6LCt5aedJwo+IFN1YmplY3Q6IFJFOiBbZjJmcy1kZXZd
-IFtQQVRDSCBWMiAxLzJdIGYyZnM6IGFkZCBhIG5ldyBmdW5jdGlvbiB0byBzdXBwb3J0IGZvcgo+
-IG1lcmdpbmcgY29udGlndW91cyByZWFkCj4gCj4gSGksCj4gCj4gMjAxMy0xMS0xOCAo7JuUKSwg
-MDk6MzcgKzA4MDAsIENoYW8gWXU6Cj4gPiBIaSBLaW0sCj4gPgo+ID4gPiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQo+ID4gPiBGcm9tOiBKYWVnZXVrIEtpbSBbbWFpbHRvOmphZWdldWsua2lt
-QHNhbXN1bmcuY29tXQo+ID4gPiBTZW50OiBNb25kYXksIE5vdmVtYmVyIDE4LCAyMDEzIDg6Mjkg
-QU0KPiA+ID4gVG86IENoYW8gWXUKPiA+ID4gQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwu
-b3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOwo+IGxpbnV4LWYyZnMtZGV2ZWxAbGlz
-dHMuc291cmNlZm9yZ2UubmV0OyDosK3lp50KPiA+ID4gU3ViamVjdDogUmU6IFtmMmZzLWRldl0g
-W1BBVENIIFYyIDEvMl0gZjJmczogYWRkIGEgbmV3IGZ1bmN0aW9uIHRvIHN1cHBvcnQgZm9yCj4g
-bWVyZ2luZyBjb250aWd1b3VzIHJlYWQKPiA+ID4KPiA+ID4gSGkgQ2hhbywKPiA+ID4KPiA+ID4g
-MjAxMy0xMS0xNiAo7YagKSwgMTQ6MTQgKzA4MDAsIENoYW8gWXU6Cj4gPiA+ID4gRm9yIGJldHRl
-ciByZWFkIHBlcmZvcm1hbmNlLCB3ZSBhZGQgYSBuZXcgZnVuY3Rpb24gdG8gc3VwcG9ydCBmb3Ig
-bWVyZ2luZwo+IGNvbnRpZ3VvdXMgcmVhZCBhcyB0aGUgb25lIGZvciB3cml0ZS4KPiA+ID4KPiA+
-ID4gUGxlYXNlIGNvbnNpZGVyIDgwIGNvbHVtbnMgZm9yIHRoZSBkZXNjcmlwdGlvbi4KPiA+ID4g
-SSBjYW5ub3QgZml4IHRoaXMgYXQgZXZlcnkgdGltZSB0aG91Z2guIDooCj4gPgo+ID4gR290IGl0
-LCBzb3JyeSBhYm91dCBteSBjYXJlbGVzc25lc3MgaW4gcHJldmlvdXMgcGF0Y2guCj4gPgo+ID4g
-Pgo+ID4gPiA+Cj4gPiA+ID4gdjEtLT52MjoKPiA+ID4gPiAgbyBhZGQgZGVjbGFyYXRpb25zIGhl
-cmUgYXMgR3UgWmhlbmcgc3VnZ2VzdGVkLgo+ID4gPiA+Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTog
-Q2hhbyBZdSA8Y2hhbzIueXVAc2Ftc3VuZy5jb20+Cj4gPiA+ID4gQWNrZWQtYnk6IEd1IFpoZW5n
-IDxndXouZm5zdEBjbi5mdWppdHN1LmNvbT4KPiA+ID4gPiAtLS0KPiA+ID4gPiAgZnMvZjJmcy9k
-YXRhLmMgfCAgIDQ1Cj4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrCj4gPiA+ID4gIGZzL2YyZnMvZjJmcy5oIHwgICAgNCArKysrCj4gPiA+ID4gIDIgZmlsZXMg
-Y2hhbmdlZCwgNDkgaW5zZXJ0aW9ucygrKQo+ID4gPiA+Cj4gPiA+ID4gZGlmZiAtLWdpdCBhL2Zz
-L2YyZnMvZGF0YS5jIGIvZnMvZjJmcy9kYXRhLmMKPiA+ID4gPiBpbmRleCBhYTM0MzhjLi4xODEw
-N2NiIDEwMDY0NAo+ID4gPiA+IC0tLSBhL2ZzL2YyZnMvZGF0YS5jCj4gPiA+ID4gKysrIGIvZnMv
-ZjJmcy9kYXRhLmMKPiA+ID4gPiBAQCAtNDA0LDYgKzQwNCw1MSBAQCBpbnQgZjJmc19yZWFkcGFn
-ZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0cnVjdAo+IHBhZ2UgKnBhZ2UsCj4gPiA+ID4g
-IAlyZXR1cm4gMDsKPiA+ID4gPiAgfQo+ID4gPiA+Cj4gPiA+ID4gK3ZvaWQgZjJmc19zdWJtaXRf
-cmVhZF9iaW8oc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgcncpCj4gPiA+ID4gK3sKPiA+
-ID4gPiArCWRvd25fcmVhZCgmc2JpLT5iaW9fc2VtKTsKPiA+ID4KPiA+ID4gSXMgdGhlcmUgYW55
-IHJlYXNvbiB0byB1c2UgZG93bl9yZWFkKCk/Cj4gPgo+ID4gSXNuJ3QgdGhhdCB3ZSB1c2UgYmlv
-X3NlbSB0byBsZXQgdy9yIG9yIHcvdyBzdWJtaXR0aW5nIGJlIG11dGV4Pwo+IAo+IEFzIEkgZXhh
-bWluZWQgdGhlIGJpb19zZW0sIEkgdGhpbmsgd2UgZG9uJ3QgbmVlZCB0byB1c2UgYSBzZW1hcGhv
-cmUgZm9yCj4gcmVhZCBhbmQgd3JpdGUgSU9zLgo+IEp1c3QgaXQgaXMgZW5vdWdoIHRvIHVzZSBh
-IG11dGV4IGZvciB3cml0ZXMgb25seS4KCkFncmVlZCwgaXQgY291bGQgYWxzbyBpbXByb3ZlIGVm
-ZmljaWVuY3kgb2YgcmVhZC93cml0ZSByZXF1ZXN0IGNvbmN1cnJlbnQuCgo+IAo+ID4KPiA+ID4g
-SXQgc2VlbXMgdGhhdCB3ZSBuZWVkIHRvIGRlY2xhcmUgc2JpLT5iaW9fcmVhZCBhbmQgc2JpLT5i
-aW9fd3JpdGUKPiA+ID4gaW5zdGVhZCBvZiBzYmktPmJpb19zZW0uCj4gPiA+IEluIGFkZGl0aW9u
-IHRvIHRoYXQsIHdlIG5lZWQgdG8gdXNlIGRvd25fd3JpdGUoJnNiaS0+YmlvX3JlYWQpIGhlcmUu
-Cj4gPgo+ID4gSWYgc28sIGl0IGxvb2tzIHNpbWlsYXIgYmV0d2VlbiAoc3RydWN0IHJ3X3NlbWFw
-aG9yZSkgc2JpLT5iaW9fcmVhZAo+ID4gYW5kIChzdHJ1Y3QgYmlvICopIHNiaS0+cmVhZF9iaW8u
-Cj4gPiBIb3cgYWJvdXQgdXNpbmcgcmVhZF9iaW9fc2VtL3JiaW9fc2VtIHRvIGRpZmZlcmVudGlh
-dGUKPiA+IGZyb20gc2JpLT5yZWFkX2Jpbz8KPiAKPiBJIHRoaW5rIHNiaS0+d3JpdGVfbXV0ZXgg
-YW5kIHNiaS0+cmVhZF9tdXRleCBhcmUgbXVjaCBiZXR0ZXIuCj4gCj4gQ291bGQgeW91IHJlZmVy
-IHRoZSBmb2xsb3dpbmcgcGF0Y2hlcz8KCkl0J3MgYmV0dGVyLCBJIHdpbGwgcmVmZXIgeW91ciBw
-YXRjaC4KQW5kIGhvdyBhYm91dCB0aGlzIGZvbGxvd2luZyBwYXRjaCB0byByZWR1Y2UgcmFjZSBv
-ZiB3cml0ZV9tdXRleCAKYmV0d2VlbiBEQVRBL05PREUvTUVUQSB3cml0ZXI/Cgo+IFRoYW5rcywK
-PiAKPiAtLQo+IEphZWdldWsgS2ltCj4gU2Ftc3VuZwoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpT
-aGFwZSB0aGUgTW9iaWxlIEV4cGVyaWVuY2U6IEZyZWUgU3Vic2NyaXB0aW9uClNvZnR3YXJlIGV4
-cGVydHMgYW5kIGRldmVsb3BlcnM6IEJlIGF0IHRoZSBmb3JlZnJvbnQgb2YgdGVjaCBpbm5vdmF0
-aW9uLgpJbnRlbChSKSBTb2Z0d2FyZSBBZHJlbmFsaW5lIGRlbGl2ZXJzIHN0cmF0ZWdpYyBpbnNp
-Z2h0IGFuZCBnYW1lLWNoYW5naW5nIApjb252ZXJzYXRpb25zIHRoYXQgc2hhcGUgdGhlIHJhcGlk
-bHkgZXZvbHZpbmcgbW9iaWxlIGxhbmRzY2FwZS4gU2lnbiB1cCBub3cuIApodHRwOi8vcHViYWRz
-LmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9NjM0MzEzMTEmaXU9LzQxNDAvb3N0Zy5j
-bGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGlu
-dXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
-b3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGlu
-dXgtZjJmcy1kZXZlbAo=
+All DATA/NODE/META bio buffers in superblock is protected by 
+'sbi->write_mutex', but each bio buffer area is independent, So we 
+should split write_mutex to three for DATA/NODE/META.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/f2fs.h    |    2 +-
+ fs/f2fs/segment.c |    8 ++++----
+ fs/f2fs/super.c   |    4 +++-
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 2df1e61..1c67521 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -362,7 +362,7 @@ struct f2fs_sb_info {
+ 	struct f2fs_sm_info *sm_info;		/* segment manager */
+ 	struct bio *bio[NR_PAGE_TYPE];		/* bios to merge */
+ 	sector_t last_block_in_bio[NR_PAGE_TYPE];	/* last block number */
+-	struct mutex write_mutex;		/* mutex for writing IOs */
++	struct mutex write_mutex[NR_PAGE_TYPE];	/* mutex for writing IOs */
+ 
+ 	/* for checkpoint */
+ 	struct f2fs_checkpoint *ckpt;		/* raw checkpoint pointer */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 556965f..a36713ae 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -661,9 +661,9 @@ void f2fs_submit_bio(struct f2fs_sb_info *sbi, enum
+page_type type, bool sync)
+ 	if (!sbi->bio[btype])
+ 		return;
+ 
+-	mutex_lock(&sbi->write_mutex);
++	mutex_lock(&sbi->write_mutex[type]);
+ 	do_submit_bio(sbi, type, sync);
+-	mutex_unlock(&sbi->write_mutex);
++	mutex_unlock(&sbi->write_mutex[type]);
+ }
+ 
+ static void submit_write_page(struct f2fs_sb_info *sbi, struct page *page,
+@@ -674,7 +674,7 @@ static void submit_write_page(struct f2fs_sb_info *sbi,
+struct page *page,
+ 
+ 	verify_block_addr(sbi, blk_addr);
+ 
+-	mutex_lock(&sbi->write_mutex);
++	mutex_lock(&sbi->write_mutex[type]);
+ 
+ 	inc_page_count(sbi, F2FS_WRITEBACK);
+ 
+@@ -709,7 +709,7 @@ retry:
+ 
+ 	sbi->last_block_in_bio[type] = blk_addr;
+ 
+-	mutex_unlock(&sbi->write_mutex);
++	mutex_unlock(&sbi->write_mutex[type]);
+ 	trace_f2fs_submit_write_page(page, blk_addr, type);
+ }
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f56941c..6928c0a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -874,7 +874,9 @@ static int f2fs_fill_super(struct super_block *sb, void
+*data, int silent)
+ 	mutex_init(&sbi->node_write);
+ 	sbi->por_doing = false;
+ 	spin_lock_init(&sbi->stat_lock);
+-	mutex_init(&sbi->write_mutex);
++	mutex_init(&sbi->write_mutex[DATA]);
++	mutex_init(&sbi->write_mutex[NODE]);
++	mutex_init(&sbi->write_mutex[META]);
+ 	init_rwsem(&sbi->cp_rwsem);
+ 	init_waitqueue_head(&sbi->cp_wait);
+ 	init_sb_info(sbi);
+-- 
+1.7.9.5
