@@ -1,167 +1,125 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH V2 2/2] f2fs: read contiguous sit entry pages
- by merging for mount performance
-Date: Wed, 20 Nov 2013 13:37:32 +0800
-Message-ID: <001801cee5b2$ce8cdac0$6ba69040$@samsung.com>
-References: <000101cee293$4eae78d0$ec0b6a70$@samsung.com>
-	<5289F6E3.3020607@cn.fujitsu.com>
+Subject: [f2fs-dev] [PATCH V2 1/2 RESEND] f2fs: add a new function to support
+ for merging contiguous read
+Date: Wed, 20 Nov 2013 13:54:35 +0800
+Message-ID: <001901cee5b5$2e28a520$8a79ef60$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1Vj0VJ-0001fU-Cx
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Nov 2013 05:39:09 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Vj0VH-0005u9-0u for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Nov 2013 05:39:09 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MWJ0068SRO55T20@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Nov 2013 14:39:00 +0900 (KST)
-In-reply-to: <5289F6E3.3020607@cn.fujitsu.com>
+Content-Type: text/plain; charset=gb2312
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: ??? <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?gb2312?B?zLfmrQ==?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgR3UsCgo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4gRnJvbTogR3UgWmhlbmcgW21h
-aWx0bzpndXouZm5zdEBjbi5mdWppdHN1LmNvbV0KPiBTZW50OiBNb25kYXksIE5vdmVtYmVyIDE4
-LCAyMDEzIDc6MTYgUE0KPiBUbzogQ2hhbyBZdQo+IENjOiAnPz8/JzsgbGludXgtZnNkZXZlbEB2
-Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWYyZnMt
-ZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0OyDMt+atCj4gU3ViamVjdDogUmU6IFtmMmZzLWRl
-dl0gW1BBVENIIFYyIDIvMl0gZjJmczogcmVhZCBjb250aWd1b3VzIHNpdCBlbnRyeSBwYWdlcyBi
-eSBtZXJnaW5nIGZvciBtb3VudCBwZXJmb3JtYW5jZQo+IAo+IEhpIFl1LAo+IE9uZSBtb3JlIGNv
-bW1lbnQsIHBsZWFzZSByZWZlciB0byBpbmxpbmUuCj4gT24gMTEvMTYvMjAxMyAwMjoxNSBQTSwg
-Q2hhbyBZdSB3cm90ZToKPiAKPiA+IFByZXZpb3VzbHkgd2UgcmVhZCBzaXQgZW50cmllcyBwYWdl
-IG9uZSBieSBvbmUsIHRoaXMgbWV0aG9kIGxvc3QgdGhlIGNoYW5jZSBvZiByZWFkaW5nIGNvbnRp
-Z3VvdXMgcGFnZSB0b2dldGhlci4KPiA+IFNvIHdlIHJlYWQgcGFnZXMgYXMgY29udGlndW91cyBh
-cyBwb3NzaWJsZSBmb3IgYmV0dGVyIG1vdW50IHBlcmZvcm1hbmNlLgo+ID4KPiA+IHYxLS0+djI6
-Cj4gPiAgbyBtZXJnZSBqdWRnZW1lbnRzL3VzZSAnQ29udGludWUnIG9yICdCcmVhaycgaW5zdGVh
-ZCBvZiAnR290bycgYXMgR3UgWmhlbmcgc3VnZ2VzdGVkLgo+ID4gIG8gYWRkIG1hcmtfcGFnZV9h
-Y2Nlc3NlZCAoKSBiZWZvcmUgcmVsZWFzZSBwYWdlIHRvIGRlbGF5IFZNIHJlY2xhaW1pbmcgdGhl
-bS4KPiA+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBDaGFvIFl1IDxjaGFvMi55dUBzYW1zdW5nLmNvbT4K
-PiA+IC0tLQo+ID4gIGZzL2YyZnMvc2VnbWVudC5jIHwgIDEwOCArKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLQo+ID4gIGZzL2YyZnMvc2VnbWVudC5o
-IHwgICAgMiArCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA4NCBpbnNlcnRpb25zKCspLCAyNiBkZWxl
-dGlvbnMoLSkKPiA+Cj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZz
-L3NlZ21lbnQuYwo+ID4gaW5kZXggZmEyODRkMy4uNjU2ZmU0MCAxMDA2NDQKPiA+IC0tLSBhL2Zz
-L2YyZnMvc2VnbWVudC5jCj4gPiArKysgYi9mcy9mMmZzL3NlZ21lbnQuYwo+ID4gQEAgLTE0LDYg
-KzE0LDcgQEAKPiA+ICAjaW5jbHVkZSA8bGludXgvYmxrZGV2Lmg+Cj4gPiAgI2luY2x1ZGUgPGxp
-bnV4L3ByZWZldGNoLmg+Cj4gPiAgI2luY2x1ZGUgPGxpbnV4L3ZtYWxsb2MuaD4KPiA+ICsjaW5j
-bHVkZSA8bGludXgvc3dhcC5oPgo+ID4KPiA+ICAjaW5jbHVkZSAiZjJmcy5oIgo+ID4gICNpbmNs
-dWRlICJzZWdtZW50LmgiCj4gPiBAQCAtMTQ4MCw0MSArMTQ4MSw5NiBAQCBzdGF0aWMgaW50IGJ1
-aWxkX2N1cnNlZyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4gPiAgCXJldHVybiByZXN0b3Jl
-X2N1cnNlZ19zdW1tYXJpZXMoc2JpKTsKPiA+ICB9Cj4gPgo+ID4gK3N0YXRpYyBpbnQgcmFfc2l0
-X3BhZ2VzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgaW50IHN0YXJ0LAo+ID4gKwkJCQkJaW50
-IG5ycGFnZXMsIGJvb2wgKmlzX29yZGVyKQo+ID4gK3sKPiA+ICsJc3RydWN0IGFkZHJlc3Nfc3Bh
-Y2UgKm1hcHBpbmcgPSBzYmktPm1ldGFfaW5vZGUtPmlfbWFwcGluZzsKPiA+ICsJc3RydWN0IHNp
-dF9pbmZvICpzaXRfaSA9IFNJVF9JKHNiaSk7Cj4gPiArCXN0cnVjdCBwYWdlICpwYWdlOwo+ID4g
-KwlibG9ja190IGJsa19hZGRyOwo+ID4gKwlpbnQgYmxrbm8gPSBzdGFydCwgcmVhZGNudCA9IDA7
-Cj4gPiArCWludCBzaXRfYmxrX2NudCA9IFNJVF9CTEtfQ05UKHNiaSk7Cj4gPiArCj4gPiArCWZv
-ciAoOyBibGtubyA8IHN0YXJ0ICsgbnJwYWdlcyAmJiBibGtubyA8IHNpdF9ibGtfY250OyBibGtu
-bysrKSB7Cj4gPiArCj4gPiArCQlpZiAoKCFmMmZzX3Rlc3RfYml0KGJsa25vLCBzaXRfaS0+c2l0
-X2JpdG1hcCkgXiAhKmlzX29yZGVyKSkgewo+ID4gKwkJCSppc19vcmRlciA9ICEqaXNfb3JkZXI7
-Cj4gPiArCQkJYnJlYWs7Cj4gPiArCQl9Cj4gPiArCj4gPiArCQlibGtfYWRkciA9IHNpdF9pLT5z
-aXRfYmFzZV9hZGRyICsgYmxrbm87Cj4gPiArCQlpZiAoKmlzX29yZGVyKQo+ID4gKwkJCWJsa19h
-ZGRyICs9IHNpdF9pLT5zaXRfYmxvY2tzOwo+ID4gK3JlcGVhdDoKPiA+ICsJCXBhZ2UgPSBncmFi
-X2NhY2hlX3BhZ2UobWFwcGluZywgYmxrX2FkZHIpOwo+ID4gKwkJaWYgKCFwYWdlKSB7Cj4gPiAr
-CQkJY29uZF9yZXNjaGVkKCk7Cj4gPiArCQkJZ290byByZXBlYXQ7Cj4gPiArCQl9Cj4gPiArCQlp
-ZiAoUGFnZVVwdG9kYXRlKHBhZ2UpKSB7Cj4gPiArCQkJbWFya19wYWdlX2FjY2Vzc2VkKHBhZ2Up
-Owo+ID4gKwkJCWYyZnNfcHV0X3BhZ2UocGFnZSwgMSk7Cj4gPiArCQkJcmVhZGNudCsrOwo+ID4g
-KwkJCWNvbnRpbnVlOwo+ID4gKwkJfQo+ID4gKwo+ID4gKwkJc3VibWl0X3JlYWRfcGFnZShzYmks
-IHBhZ2UsIGJsa19hZGRyLCBSRUFEX1NZTkMpOwo+ID4gKwo+ID4gKwkJbWFya19wYWdlX2FjY2Vz
-c2VkKHBhZ2UpOwo+ID4gKwkJZjJmc19wdXRfcGFnZShwYWdlLCAwKTsKPiA+ICsJCXJlYWRjbnQr
-KzsKPiA+ICsJfQo+ID4gKwo+ID4gKwlmMmZzX3N1Ym1pdF9yZWFkX2JpbyhzYmksIFJFQURfU1lO
-Qyk7Cj4gPiArCXJldHVybiByZWFkY250Owo+ID4gK30KPiA+ICsKPiA+ICBzdGF0aWMgdm9pZCBi
-dWlsZF9zaXRfZW50cmllcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4gPiAgewo+ID4gIAlz
-dHJ1Y3Qgc2l0X2luZm8gKnNpdF9pID0gU0lUX0koc2JpKTsKPiA+ICAJc3RydWN0IGN1cnNlZ19p
-bmZvICpjdXJzZWcgPSBDVVJTRUdfSShzYmksIENVUlNFR19DT0xEX0RBVEEpOwo+ID4gIAlzdHJ1
-Y3QgZjJmc19zdW1tYXJ5X2Jsb2NrICpzdW0gPSBjdXJzZWctPnN1bV9ibGs7Cj4gPiAtCXVuc2ln
-bmVkIGludCBzdGFydDsKPiA+IC0KPiA+IC0JZm9yIChzdGFydCA9IDA7IHN0YXJ0IDwgVE9UQUxf
-U0VHUyhzYmkpOyBzdGFydCsrKSB7Cj4gPiAtCQlzdHJ1Y3Qgc2VnX2VudHJ5ICpzZSA9ICZzaXRf
-aS0+c2VudHJpZXNbc3RhcnRdOwo+ID4gLQkJc3RydWN0IGYyZnNfc2l0X2Jsb2NrICpzaXRfYmxr
-Owo+ID4gLQkJc3RydWN0IGYyZnNfc2l0X2VudHJ5IHNpdDsKPiA+IC0JCXN0cnVjdCBwYWdlICpw
-YWdlOwo+ID4gLQkJaW50IGk7Cj4gPiArCWJvb2wgaXNfb3JkZXIgPSBmMmZzX3Rlc3RfYml0KDAs
-IHNpdF9pLT5zaXRfYml0bWFwKSA/IHRydWUgOiBmYWxzZTsKPiA+ICsJaW50IHNpdF9ibGtfY250
-ID0gU0lUX0JMS19DTlQoc2JpKTsKPiA+ICsJdW5zaWduZWQgaW50IGksIHN0YXJ0LCBlbmQ7Cj4g
-PiArCXVuc2lnbmVkIGludCByZWFkZWQsIHN0YXJ0X2JsayA9IDA7Cj4gPgo+ID4gLQkJbXV0ZXhf
-bG9jaygmY3Vyc2VnLT5jdXJzZWdfbXV0ZXgpOwo+ID4gLQkJZm9yIChpID0gMDsgaSA8IHNpdHNf
-aW5fY3Vyc3VtKHN1bSk7IGkrKykgewo+ID4gLQkJCWlmIChsZTMyX3RvX2NwdShzZWdub19pbl9q
-b3VybmFsKHN1bSwgaSkpID09IHN0YXJ0KSB7Cj4gPiAtCQkJCXNpdCA9IHNpdF9pbl9qb3VybmFs
-KHN1bSwgaSk7Cj4gPiAtCQkJCW11dGV4X3VubG9jaygmY3Vyc2VnLT5jdXJzZWdfbXV0ZXgpOwo+
-ID4gLQkJCQlnb3RvIGdvdF9pdDsKPiA+ICsJZG8gewo+IAo+IEhvdyBhYm91dCB1c2luZyBmaW5k
-X25leHRfYml0IHRvIGdldCB0aGUgc3VpdGFibGUgc3RhcnRfYmxrIGlmIHRoZSBuZXh0IGJsawo+
-IGlzIG5vdCBvcmRlcmVkIGhlcmU/IEFuZCBpdCBhbHNvIGNhbiBzaW1wbGlmeSB0aGUgbG9naWMg
-b2YgcmFfc2l0X3BhZ2VzKCkuCgpUaGF0J3MgYSBnb29kIGlkZWEuCkJ1dCBJIHRob3VnaHQgdGhl
-cmUgbWF5YmUgZW5kaWFubmVzcyBwcm9ibGVtIGJldHdlZW4gdGVzdF9iaXQgYW5kIApmMmZzX3Rl
-c3RfYml0LCBzbyBmaW5kX25leHRfYml0IG1heSBnZXQgd3JvbmcgcmVzdWx0LiBBbSBJIHJpZ2h0
-PwoKVGhhbmtzLApZdQo+IAo+IFRoYW5rcywKPiBHdQo+IAo+ID4gKwkJcmVhZGVkID0gcmFfc2l0
-X3BhZ2VzKHNiaSwgc3RhcnRfYmxrLCBzaXRfYmxrX2NudCwgJmlzX29yZGVyKTsKPiA+ICsKPiA+
-ICsJCXN0YXJ0ID0gc3RhcnRfYmxrICogc2l0X2ktPnNlbnRzX3Blcl9ibG9jazsKPiA+ICsJCWVu
-ZCA9IChzdGFydF9ibGsgKyByZWFkZWQpICogc2l0X2ktPnNlbnRzX3Blcl9ibG9jazsKPiA+ICsK
-PiA+ICsJCWZvciAoOyBzdGFydCA8IGVuZCAmJiBzdGFydCA8IFRPVEFMX1NFR1Moc2JpKTsgc3Rh
-cnQrKykgewo+ID4gKwkJCXN0cnVjdCBzZWdfZW50cnkgKnNlID0gJnNpdF9pLT5zZW50cmllc1tz
-dGFydF07Cj4gPiArCQkJc3RydWN0IGYyZnNfc2l0X2Jsb2NrICpzaXRfYmxrOwo+ID4gKwkJCXN0
-cnVjdCBmMmZzX3NpdF9lbnRyeSBzaXQ7Cj4gPiArCQkJc3RydWN0IHBhZ2UgKnBhZ2U7Cj4gPiAr
-Cj4gPiArCQkJbXV0ZXhfbG9jaygmY3Vyc2VnLT5jdXJzZWdfbXV0ZXgpOwo+ID4gKwkJCWZvciAo
-aSA9IDA7IGkgPCBzaXRzX2luX2N1cnN1bShzdW0pOyBpKyspIHsKPiA+ICsJCQkJaWYgKGxlMzJf
-dG9fY3B1KHNlZ25vX2luX2pvdXJuYWwoc3VtLCBpKSkgPT0gc3RhcnQpIHsKPiA+ICsJCQkJCXNp
-dCA9IHNpdF9pbl9qb3VybmFsKHN1bSwgaSk7Cj4gPiArCQkJCQltdXRleF91bmxvY2soJmN1cnNl
-Zy0+Y3Vyc2VnX211dGV4KTsKPiA+ICsJCQkJCWdvdG8gZ290X2l0Owo+ID4gKwkJCQl9Cj4gPiAg
-CQkJfQo+ID4gLQkJfQo+ID4gLQkJbXV0ZXhfdW5sb2NrKCZjdXJzZWctPmN1cnNlZ19tdXRleCk7
-Cj4gPiAtCQlwYWdlID0gZ2V0X2N1cnJlbnRfc2l0X3BhZ2Uoc2JpLCBzdGFydCk7Cj4gPiAtCQlz
-aXRfYmxrID0gKHN0cnVjdCBmMmZzX3NpdF9ibG9jayAqKXBhZ2VfYWRkcmVzcyhwYWdlKTsKPiA+
-IC0JCXNpdCA9IHNpdF9ibGstPmVudHJpZXNbU0lUX0VOVFJZX09GRlNFVChzaXRfaSwgc3RhcnQp
-XTsKPiA+IC0JCWYyZnNfcHV0X3BhZ2UocGFnZSwgMSk7Cj4gPiArCQkJbXV0ZXhfdW5sb2NrKCZj
-dXJzZWctPmN1cnNlZ19tdXRleCk7Cj4gPiArCj4gPiArCQkJcGFnZSA9IGdldF9jdXJyZW50X3Np
-dF9wYWdlKHNiaSwgc3RhcnQpOwo+ID4gKwkJCXNpdF9ibGsgPSAoc3RydWN0IGYyZnNfc2l0X2Js
-b2NrICopcGFnZV9hZGRyZXNzKHBhZ2UpOwo+ID4gKwkJCXNpdCA9IHNpdF9ibGstPmVudHJpZXNb
-U0lUX0VOVFJZX09GRlNFVChzaXRfaSwgc3RhcnQpXTsKPiA+ICsJCQlmMmZzX3B1dF9wYWdlKHBh
-Z2UsIDEpOwo+ID4gIGdvdF9pdDoKPiA+IC0JCWNoZWNrX2Jsb2NrX2NvdW50KHNiaSwgc3RhcnQs
-ICZzaXQpOwo+ID4gLQkJc2VnX2luZm9fZnJvbV9yYXdfc2l0KHNlLCAmc2l0KTsKPiA+IC0JCWlm
-IChzYmktPnNlZ3NfcGVyX3NlYyA+IDEpIHsKPiA+IC0JCQlzdHJ1Y3Qgc2VjX2VudHJ5ICplID0g
-Z2V0X3NlY19lbnRyeShzYmksIHN0YXJ0KTsKPiA+IC0JCQllLT52YWxpZF9ibG9ja3MgKz0gc2Ut
-PnZhbGlkX2Jsb2NrczsKPiA+ICsJCQljaGVja19ibG9ja19jb3VudChzYmksIHN0YXJ0LCAmc2l0
-KTsKPiA+ICsJCQlzZWdfaW5mb19mcm9tX3Jhd19zaXQoc2UsICZzaXQpOwo+ID4gKwkJCWlmIChz
-YmktPnNlZ3NfcGVyX3NlYyA+IDEpIHsKPiA+ICsJCQkJc3RydWN0IHNlY19lbnRyeSAqZSA9IGdl
-dF9zZWNfZW50cnkoc2JpLCBzdGFydCk7Cj4gPiArCQkJCWUtPnZhbGlkX2Jsb2NrcyArPSBzZS0+
-dmFsaWRfYmxvY2tzOwo+ID4gKwkJCX0KPiA+ICAJCX0KPiA+IC0JfQo+ID4gKwkJc3RhcnRfYmxr
-ICs9IHJlYWRlZDsKPiAKPiAKPiAKPiAKPiA+ICsJfSB3aGlsZSAoc3RhcnRfYmxrIDwgc2l0X2Js
-a19jbnQpOwo+ID4gIH0KPiA+Cj4gPiAgc3RhdGljIHZvaWQgaW5pdF9mcmVlX3NlZ21hcChzdHJ1
-Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50Lmgg
-Yi9mcy9mMmZzL3NlZ21lbnQuaAo+ID4gaW5kZXggMjY5ZjY5MC4uYWQ1YjlmMSAxMDA2NDQKPiA+
-IC0tLSBhL2ZzL2YyZnMvc2VnbWVudC5oCj4gPiArKysgYi9mcy9mMmZzL3NlZ21lbnQuaAo+ID4g
-QEAgLTgzLDYgKzgzLDggQEAKPiA+ICAJKHNlZ25vIC8gU0lUX0VOVFJZX1BFUl9CTE9DSykKPiA+
-ICAjZGVmaW5lCVNUQVJUX1NFR05PKHNpdF9pLCBzZWdubykJCVwKPiA+ICAJKFNJVF9CTE9DS19P
-RkZTRVQoc2l0X2ksIHNlZ25vKSAqIFNJVF9FTlRSWV9QRVJfQkxPQ0spCj4gPiArI2RlZmluZSBT
-SVRfQkxLX0NOVChzYmkpCQkJXAo+ID4gKwkoKFRPVEFMX1NFR1Moc2JpKSArIFNJVF9FTlRSWV9Q
-RVJfQkxPQ0sgLSAxKSAvIFNJVF9FTlRSWV9QRVJfQkxPQ0spCj4gPiAgI2RlZmluZSBmMmZzX2Jp
-dG1hcF9zaXplKG5yKQkJCVwKPiA+ICAJKEJJVFNfVE9fTE9OR1MobnIpICogc2l6ZW9mKHVuc2ln
-bmVkIGxvbmcpKQo+ID4gICNkZWZpbmUgVE9UQUxfU0VHUyhzYmkpCShTTV9JKHNiaSktPm1haW5f
-c2VnbWVudHMpCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTaGFwZSB0aGUgTW9iaWxlIEV4cGVy
-aWVuY2U6IEZyZWUgU3Vic2NyaXB0aW9uClNvZnR3YXJlIGV4cGVydHMgYW5kIGRldmVsb3BlcnM6
-IEJlIGF0IHRoZSBmb3JlZnJvbnQgb2YgdGVjaCBpbm5vdmF0aW9uLgpJbnRlbChSKSBTb2Z0d2Fy
-ZSBBZHJlbmFsaW5lIGRlbGl2ZXJzIHN0cmF0ZWdpYyBpbnNpZ2h0IGFuZCBnYW1lLWNoYW5naW5n
-IApjb252ZXJzYXRpb25zIHRoYXQgc2hhcGUgdGhlIHJhcGlkbHkgZXZvbHZpbmcgbW9iaWxlIGxh
-bmRzY2FwZS4gU2lnbiB1cCBub3cuIApodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dh
-bXBhZC9jbGs/aWQ9NjM0MzEzMTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5n
-IGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0
-cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+For better read performance, we add a new function to support for merging contiguous read as the one for write.
+
+v1-->v2:
+ o add declarations here as Gu Zheng suggested.
+ o use new structure f2fs_bio_info introduced by Jaegeuk Kim.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Acked-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/data.c  |   50 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h  |    3 +++
+ fs/f2fs/super.c |    1 +
+ 3 files changed, 54 insertions(+)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index b4e4c7e..9cf3f6c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -400,6 +400,56 @@ int f2fs_readpage(struct f2fs_sb_info *sbi, struct page *page,
+ 	return 0;
+ }
+ 
++void f2fs_submit_read_bio(struct f2fs_sb_info *sbi, int rw)
++{
++	struct f2fs_bio_info *io = &sbi->read_io;
++
++	if (!io->bio)
++		return;
++
++	mutex_lock(&io->io_mutex);
++	if (io->bio) {
++		submit_bio(rw, io->bio);
++		io->bio = NULL;
++	}
++	mutex_unlock(&io->io_mutex);
++}
++
++void submit_read_page(struct f2fs_sb_info *sbi, struct page *page,
++					block_t blk_addr, int rw)
++{
++	struct block_device *bdev = sbi->sb->s_bdev;
++	struct f2fs_bio_info *io = &sbi->read_io;
++	int bio_blocks;
++
++	verify_block_addr(sbi, blk_addr);
++
++	mutex_lock(&io->io_mutex);
++
++	if (io->bio && io->last_block_in_bio != blk_addr - 1) {
++		submit_bio(rw, io->bio);
++		io->bio = NULL;
++	}
++alloc_new:
++	if (io->bio == NULL) {
++		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++		io->bio = f2fs_bio_alloc(bdev, bio_blocks);
++		io->bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
++		io->bio->bi_end_io = read_end_io;
++	}
++
++	if (bio_add_page(io->bio, page, PAGE_CACHE_SIZE, 0) <
++							PAGE_CACHE_SIZE) {
++		submit_bio(rw, io->bio);
++		io->bio = NULL;
++		goto alloc_new;
++	}
++
++	io->last_block_in_bio = blk_addr;
++
++	mutex_unlock(&io->io_mutex);
++}
++
+ /*
+  * This function should be used by the data read flow only where it
+  * does not check the "create" flag that indicates block allocation.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a54fac2..e2cb920 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -368,6 +368,7 @@ struct f2fs_sb_info {
+ 	struct f2fs_sm_info *sm_info;		/* segment manager */
+ 
+ 	/* for bio operations */
++	struct f2fs_bio_info read_io;			/* for read bios */
+ 	struct f2fs_bio_info write_io[NR_PAGE_TYPE];	/* for write bios */
+ 
+ 	/* for checkpoint */
+@@ -1118,6 +1119,8 @@ struct page *find_data_page(struct inode *, pgoff_t, bool);
+ struct page *get_lock_data_page(struct inode *, pgoff_t);
+ struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
+ int f2fs_readpage(struct f2fs_sb_info *, struct page *, block_t, int);
++void f2fs_submit_read_bio(struct f2fs_sb_info *, int);
++void submit_read_page(struct f2fs_sb_info *, struct page *, block_t, int);
+ int do_write_data_page(struct page *);
+ 
+ /*
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 344fb86..6d78fff 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -876,6 +876,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sbi->por_doing = false;
+ 	spin_lock_init(&sbi->stat_lock);
+ 
++	mutex_init(&sbi->read_io.io_mutex);
+ 	for (i = 0; i < NR_PAGE_TYPE; i++)
+ 		mutex_init(&sbi->write_io[i].io_mutex);
+ 
+-- 
+1.7.9.5
