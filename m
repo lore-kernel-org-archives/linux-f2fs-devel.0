@@ -1,24 +1,30 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH 5/5] f2fs: move the list_head initialization
- into the lock protection region
-Date: Wed, 20 Nov 2013 17:48:09 +0800
-Message-ID: <528C8559.6040909@cn.fujitsu.com>
-References: <528B3783.2040905@cn.fujitsu.com> <1384911101.26319.37.camel@kjgkr>
+From: Huajun Li <huajun.li.lee@gmail.com>
+Subject: Re: [PATCH V2 4/6] f2fs: Key functions to handle inline
+	data
+Date: Wed, 20 Nov 2013 20:51:12 +0800
+Message-ID: <CA+v9cxZTJrcYZVoqNcopU3sWwMn2zvde89YfMW=2pK=W1DJYtw@mail.gmail.com>
+References: <1384096401-25169-1-git-send-email-huajun.li.lee@gmail.com>
+	<1384096401-25169-5-git-send-email-huajun.li.lee@gmail.com>
+	<1384501749.14041.107.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1Vj4Ue-0002FX-Sr
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <huajun.li.lee@gmail.com>) id 1Vj7FZ-0005Pi-5g
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Nov 2013 09:54:44 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Vj4Uc-0005Ws-Vn for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Nov 2013 09:54:44 +0000
-In-Reply-To: <1384911101.26319.37.camel@kjgkr>
+	Wed, 20 Nov 2013 12:51:21 +0000
+Received: from mail-vc0-f181.google.com ([209.85.220.181])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1Vj7FW-0006HZ-Dk
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 20 Nov 2013 12:51:21 +0000
+Received: by mail-vc0-f181.google.com with SMTP id ks9so3155162vcb.40
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Wed, 20 Nov 2013 04:51:12 -0800 (PST)
+In-Reply-To: <1384501749.14041.107.camel@kjgkr>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,61 +34,140 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+To: "jaegeuk.kim" <jaegeuk.kim@samsung.com>
+Cc: Huajun Li <huajun.li@intel.com>, Weihong Xu <weihong.xu@intel.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-SGkgS2ltLApPbiAxMS8yMC8yMDEzIDA5OjMxIEFNLCBKYWVnZXVrIEtpbSB3cm90ZToKCj4gSGkg
-R3UsCj4gCj4gSU1PLCB0aGVyZSBpcyBubyByZWFzb24gdG8gY292ZXIgdGhlIGxpc3QgaGVhZGVy
-IGJ5IHRoZSBsb2NrLgo+IEluIGFueSBmbG93cywgc2JpIHNob3VsZCBoYXZlIHRoZSBoZWFkZXIg
-YWxsIHRoZSB0aW1lLgoKWWVzLCB5b3UncmUgcmlnaHQuCgo+IFdoYXQgaXMgeW91ciBvcGluaW9u
-PwoKTW92aW5nIHRoZSBsaXN0X2hlYWQgaW5pdGlhbGl6YXRpb24gaW50byB0aGUgbG9jayBwcm90
-ZWN0aW9uIHJlZ2lvbiwgc28KdGhhdCB3ZSBjYW4gaWdub3JlIHRoZSBsaXN0IGNoYW5nZSBkdXJp
-bmcgdGhlIGdhcChpbml0aWFsaXphdGlvbjwtLT51c2UpLgpBbmQgb24gdGhlIG90aGVyIHNpZGUs
-IGl0IGNhbiBrZWVwIHRoZSBjb2RlIHN0eWxlIHVuaWZvcm0gZm9yIGJldHRlcgptYWludGVuYW5j
-ZS4KClJlZ2FyZHMsCkd1Cgo+IAo+IFRoYW5rcywKPiAKPiAyMDEzLTExLTE5ICjtmZQpLCAxODow
-MyArMDgwMCwgR3UgWmhlbmc6Cj4+IFNpZ25lZC1vZmYtYnk6IEd1IFpoZW5nIDxndXouZm5zdEBj
-bi5mdWppdHN1LmNvbT4KPj4gLS0tCj4+ICBmcy9mMmZzL2NoZWNrcG9pbnQuYyB8ICAgMTUgKysr
-KysrKysrKy0tLS0tCj4+ICAxIGZpbGVzIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDUgZGVs
-ZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2NoZWNrcG9pbnQuYyBiL2ZzL2Yy
-ZnMvY2hlY2twb2ludC5jCj4+IGluZGV4IGY4ODQ1ODkuLjFkZTcwY2MgMTAwNjQ0Cj4+IC0tLSBh
-L2ZzL2YyZnMvY2hlY2twb2ludC5jCj4+ICsrKyBiL2ZzL2YyZnMvY2hlY2twb2ludC5jCj4+IEBA
-IC01MTEsOCArNTExLDggQEAgdm9pZCBhZGRfZGlydHlfZGlyX2lub2RlKHN0cnVjdCBpbm9kZSAq
-aW5vZGUpCj4+ICB2b2lkIHJlbW92ZV9kaXJ0eV9kaXJfaW5vZGUoc3RydWN0IGlub2RlICppbm9k
-ZSkKPj4gIHsKPj4gIAlzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkgPSBGMkZTX1NCKGlub2RlLT5p
-X3NiKTsKPj4gLQlzdHJ1Y3QgbGlzdF9oZWFkICpoZWFkID0gJnNiaS0+ZGlyX2lub2RlX2xpc3Q7
-Cj4+IC0Jc3RydWN0IGxpc3RfaGVhZCAqdGhpczsKPj4gKwo+PiArCXN0cnVjdCBsaXN0X2hlYWQg
-KnRoaXMsICpoZWFkOwo+PiAgCj4+ICAJaWYgKCFTX0lTRElSKGlub2RlLT5pX21vZGUpKQo+PiAg
-CQlyZXR1cm47Cj4+IEBAIC01MjMsNiArNTIzLDcgQEAgdm9pZCByZW1vdmVfZGlydHlfZGlyX2lu
-b2RlKHN0cnVjdCBpbm9kZSAqaW5vZGUpCj4+ICAJCXJldHVybjsKPj4gIAl9Cj4+ICAKPj4gKwlo
-ZWFkID0gJnNiaS0+ZGlyX2lub2RlX2xpc3Q7Cj4+ICAJbGlzdF9mb3JfZWFjaCh0aGlzLCBoZWFk
-KSB7Cj4+ICAJCXN0cnVjdCBkaXJfaW5vZGVfZW50cnkgKmVudHJ5Owo+PiAgCQllbnRyeSA9IGxp
-c3RfZW50cnkodGhpcywgc3RydWN0IGRpcl9pbm9kZV9lbnRyeSwgbGlzdCk7Cj4+IEBAIC01NDQs
-MTEgKzU0NSwxMyBAQCB2b2lkIHJlbW92ZV9kaXJ0eV9kaXJfaW5vZGUoc3RydWN0IGlub2RlICpp
-bm9kZSkKPj4gIAo+PiAgc3RydWN0IGlub2RlICpjaGVja19kaXJ0eV9kaXJfaW5vZGUoc3RydWN0
-IGYyZnNfc2JfaW5mbyAqc2JpLCBuaWRfdCBpbm8pCj4+ICB7Cj4+IC0Jc3RydWN0IGxpc3RfaGVh
-ZCAqaGVhZCA9ICZzYmktPmRpcl9pbm9kZV9saXN0Owo+PiAtCXN0cnVjdCBsaXN0X2hlYWQgKnRo
-aXM7Cj4+ICsKPj4gKwlzdHJ1Y3QgbGlzdF9oZWFkICp0aGlzLCAqaGVhZDsKPj4gIAlzdHJ1Y3Qg
-aW5vZGUgKmlub2RlID0gTlVMTDsKPj4gIAo+PiAgCXNwaW5fbG9jaygmc2JpLT5kaXJfaW5vZGVf
-bG9jayk7Cj4+ICsKPj4gKwloZWFkID0gJnNiaS0+ZGlyX2lub2RlX2xpc3Q7Cj4+ICAJbGlzdF9m
-b3JfZWFjaCh0aGlzLCBoZWFkKSB7Cj4+ICAJCXN0cnVjdCBkaXJfaW5vZGVfZW50cnkgKmVudHJ5
-Owo+PiAgCQllbnRyeSA9IGxpc3RfZW50cnkodGhpcywgc3RydWN0IGRpcl9pbm9kZV9lbnRyeSwg
-bGlzdCk7Cj4+IEBAIC01NjMsMTEgKzU2NiwxMyBAQCBzdHJ1Y3QgaW5vZGUgKmNoZWNrX2RpcnR5
-X2Rpcl9pbm9kZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIG5pZF90IGlubykKPj4gIAo+PiAg
-dm9pZCBzeW5jX2RpcnR5X2Rpcl9pbm9kZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+PiAg
-ewo+PiAtCXN0cnVjdCBsaXN0X2hlYWQgKmhlYWQgPSAmc2JpLT5kaXJfaW5vZGVfbGlzdDsKPj4g
-KwlzdHJ1Y3QgbGlzdF9oZWFkICpoZWFkOwo+PiAgCXN0cnVjdCBkaXJfaW5vZGVfZW50cnkgKmVu
-dHJ5Owo+PiAgCXN0cnVjdCBpbm9kZSAqaW5vZGU7Cj4+ICByZXRyeToKPj4gIAlzcGluX2xvY2so
-JnNiaS0+ZGlyX2lub2RlX2xvY2spOwo+PiArCj4+ICsJaGVhZCA9ICZzYmktPmRpcl9pbm9kZV9s
-aXN0Owo+PiAgCWlmIChsaXN0X2VtcHR5KGhlYWQpKSB7Cj4+ICAJCXNwaW5fdW5sb2NrKCZzYmkt
-PmRpcl9pbm9kZV9sb2NrKTsKPj4gIAkJcmV0dXJuOwo+IAoKCgotLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0KU2hhcGUgdGhlIE1vYmlsZSBFeHBlcmllbmNlOiBGcmVlIFN1YnNjcmlwdGlvbgpTb2Z0d2Fy
-ZSBleHBlcnRzIGFuZCBkZXZlbG9wZXJzOiBCZSBhdCB0aGUgZm9yZWZyb250IG9mIHRlY2ggaW5u
-b3ZhdGlvbi4KSW50ZWwoUikgU29mdHdhcmUgQWRyZW5hbGluZSBkZWxpdmVycyBzdHJhdGVnaWMg
-aW5zaWdodCBhbmQgZ2FtZS1jaGFuZ2luZyAKY29udmVyc2F0aW9ucyB0aGF0IHNoYXBlIHRoZSBy
-YXBpZGx5IGV2b2x2aW5nIG1vYmlsZSBsYW5kc2NhcGUuIFNpZ24gdXAgbm93LiAKaHR0cDovL3B1
-YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTYzNDMxMzExJml1PS80MTQwL29z
-dGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
-cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
-L2xpbnV4LWYyZnMtZGV2ZWwK
+On Fri, Nov 15, 2013 at 3:49 PM, Jaegeuk Kim <jaegeuk.kim@samsung.com> wrote:
+> Hi Huajun,
+>
+> [snip]
+>
+>> +static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
+>> +{
+>> +     int err;
+>> +     struct page *ipage;
+>> +     struct dnode_of_data dn;
+>> +     void *src_addr, *dst_addr;
+>> +     block_t old_blk_addr, new_blk_addr;
+>> +     struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+>> +
+>> +     f2fs_lock_op(sbi);
+>> +     ipage = get_node_page(sbi, inode->i_ino);
+>> +     if (IS_ERR(ipage))
+>> +             return PTR_ERR(ipage);
+>> +
+>> +     /*
+>> +      * i_addr[0] is not used for inline data,
+>> +      * so reserving new block will not destroy inline data
+>> +      */
+>> +     set_new_dnode(&dn, inode, ipage, ipage, 0);
+>> +     err = f2fs_reserve_block(&dn, 0);
+>> +     if (err) {
+>> +             f2fs_put_page(ipage, 1);
+>> +             f2fs_unlock_op(sbi);
+>> +             return err;
+>> +     }
+>> +
+>> +     src_addr = inline_data_addr(ipage);
+>> +     dst_addr = page_address(page);
+>> +     zero_user_segment(page, 0, PAGE_CACHE_SIZE);
+>> +
+>> +     /* Copy the whole inline data block */
+>> +     memcpy(dst_addr, src_addr, MAX_INLINE_DATA);
+>> +
+>> +     /* write data page to try to make data consistent */
+>> +     old_blk_addr = dn.data_blkaddr;
+>> +     set_page_writeback(page);
+>> +     write_data_page(inode, page, &dn,
+>> +                     old_blk_addr, &new_blk_addr);
+>> +     update_extent_cache(new_blk_addr, &dn);
+>> +     f2fs_wait_on_page_writeback(page, DATA, true);
+>> +
+>> +     /* clear inline data and flag after data writeback */
+>> +     zero_user_segment(ipage, INLINE_DATA_OFFSET,
+>> +                              INLINE_DATA_OFFSET + MAX_INLINE_DATA);
+>> +     clear_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
+>> +
+>> +     sync_inode_page(&dn);
+>> +     f2fs_put_page(ipage, 1);
+>
+> Again, it seems that you missed what I mentioned.
+> If we write the inlined data block only, we cannot recover the data
+> block after SPO.
+> In order to avoid that, we should write its dnode block too by
+> triggering sync_node_pages(ino) at this point as similar as fsync
+> routine.
+>
+> Thanks,
+>
+> --
+> Jaegeuk Kim
+> Samsung
+>
+
+Hi Jaegeuk,
+Previously, I refactored f2fs_sync_file() and tried to call it while
+converting inline data, but find it is easily dead lock, so just write
+data block here.
+Then, how about following enhancement to this patch ?  it only copies
+some codes to the end of  __f2fs_convert_inline_data(),  and keeps
+others same as before.
+
+-----------------------------------------------------------------------------
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index e9b33d7..6ceb2e6 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -10,6 +10,8 @@
+
+ #include <linux/fs.h>
+ #include <linux/f2fs_fs.h>
++#include <linux/writeback.h>
++#include <linux/blkdev.h>
+
+ #include "f2fs.h"
+
+@@ -71,6 +73,11 @@ static int __f2fs_convert_inline_data(struct inode
+*inode, struct page *page)
+     void *src_addr, *dst_addr;
+     block_t old_blk_addr, new_blk_addr;
+     struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
++    struct writeback_control wbc = {
++        .sync_mode = WB_SYNC_ALL,
++        .nr_to_write = LONG_MAX,
++        .for_reclaim = 0,
++    };
+
+     f2fs_lock_op(sbi);
+     ipage = get_node_page(sbi, inode->i_ino);
+@@ -108,9 +115,20 @@ static int __f2fs_convert_inline_data(struct
+inode *inode, struct page *page)
+     zero_user_segment(ipage, INLINE_DATA_OFFSET,
+                  INLINE_DATA_OFFSET + MAX_INLINE_DATA);
+     clear_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
+-
+     sync_inode_page(&dn);
+     f2fs_put_page(ipage, 1);
++
++    while (!sync_node_pages(sbi, inode->i_ino, &wbc)) {
++        mark_inode_dirty_sync(inode);
++        err = f2fs_write_inode(inode, NULL);
++        if (err)
++            goto out;
++    }
++    err = wait_on_node_pages_writeback(sbi, inode->i_ino);
++    if (err)
++        goto out;
++    err = blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
++
++out:
+     f2fs_unlock_op(sbi);
+
+     return err;
+
+------------------------------------------------------------------------------
+Shape the Mobile Experience: Free Subscription
+Software experts and developers: Be at the forefront of tech innovation.
+Intel(R) Software Adrenaline delivers strategic insight and game-changing 
+conversations that shape the rapidly evolving mobile landscape. Sign up now. 
+http://pubads.g.doubleclick.net/gampad/clk?id=63431311&iu=/4140/ostg.clktrk
