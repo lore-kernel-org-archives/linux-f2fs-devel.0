@@ -1,31 +1,33 @@
-From: tast ky <tastky@gmail.com>
-Subject: Re: [Bug] Inaccessible, unerasable file
-Date: Wed, 20 Nov 2013 20:52:38 +0100
-Message-ID: <CAPs1ukzwUnr52KtXfR3d+mg35XGo45D8SGyMKx=9qVifGU-XNQ@mail.gmail.com>
-References: <CAPs1ukwgeqL1SFUGUPaM-aE=88dXS4GeaDDALG5WFLcoMvqg_g@mail.gmail.com>
-	<1382440189.992.62.camel@kjgkr>
-	<CAPs1ukz2EykkWP_H-U5UT_nuef5dpMRyTjHy4JCHKNoPLWKdpw@mail.gmail.com>
-	<1382522306.992.84.camel@kjgkr>
-	<CAPs1ukxRQFZfJhLUvUsZcGdeWhHkT-CpvkQDVxCHYJr6Q9Hz0A@mail.gmail.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [PATCH 5/5] f2fs: move the list_head initialization
+ into the lock protection region
+Date: Thu, 21 Nov 2013 09:22:12 +0900
+Message-ID: <1384993332.26319.39.camel@kjgkr>
+References: <528B3783.2040905@cn.fujitsu.com> <1384911101.26319.37.camel@kjgkr>
+	<528C8559.6040909@cn.fujitsu.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tastky@gmail.com>) id 1VjDpO-0004u6-By
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VjI36-0001K6-CH
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Nov 2013 19:52:46 +0000
-Received: from mail-la0-f46.google.com ([209.85.215.46])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VjDpN-0005MC-7Q
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Nov 2013 19:52:46 +0000
-Received: by mail-la0-f46.google.com with SMTP id eh20so7764586lab.33
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 20 Nov 2013 11:52:38 -0800 (PST)
-In-Reply-To: <CAPs1ukxRQFZfJhLUvUsZcGdeWhHkT-CpvkQDVxCHYJr6Q9Hz0A@mail.gmail.com>
+	Thu, 21 Nov 2013 00:23:12 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VjI34-0001h7-4H for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 21 Nov 2013 00:23:12 +0000
+Received: from epcpsbgr4.samsung.com
+	(u144.gpu120.samsung.co.kr [203.254.230.144])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MWL00DNL7QEJJ90@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 21 Nov 2013 09:23:03 +0900 (KST)
+In-reply-to: <528C8559.6040909@cn.fujitsu.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,37 +37,69 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-If there are no further questions, I will format the stick this weekend.
-
-On Tue, Nov 19, 2013 at 4:34 PM, tast ky <tastky@gmail.com> wrote:
-> Hello again,
->
-> after buying a new USB stick and moving everything but the partition's
-> broken file & folder to it, I am now able to send you an image after
-> all.
->
-> Although the 21 GB partition was supposed to only contain those two
-> tiny entries, df still reported 1.8 GB as in use.
->
-> I did "dd if=/dev/zero of=hugefile; sync; rm hugefile; sync" on it to
-> boost the compression ratio, the file is at 406 MiB compressed.
->
-> The image was taken with "dd if=/dev/sde2 bs=4096 conv=notrunc | xz
-> -T8 -9 - > f2fs_bugged.xz". Please tell me if that was correct,
-> especially since I intend to format the stick soon.
->
-> As to the actual download link, I will send you that in a separate
-> email as I am not fond of having potentially personal data open on the
-> web.
->
-> NB: fsck.f2f2 still fails with "[fsck_chk_node_blk: 198] ni.blk_addr <
-> F2FS_RAW_SUPER(sbi)->block_count".
-
-------------------------------------------------------------------------------
-Shape the Mobile Experience: Free Subscription
-Software experts and developers: Be at the forefront of tech innovation.
-Intel(R) Software Adrenaline delivers strategic insight and game-changing 
-conversations that shape the rapidly evolving mobile landscape. Sign up now. 
-http://pubads.g.doubleclick.net/gampad/clk?id=63431311&iu=/4140/ostg.clktrk
+T2ssIGdvdCBpdC4KVGhhbmtzLCA6KQoKMjAxMy0xMS0yMCAo7IiYKSwgMTc6NDggKzA4MDAsIEd1
+IFpoZW5nOgo+IEhpIEtpbSwKPiBPbiAxMS8yMC8yMDEzIDA5OjMxIEFNLCBKYWVnZXVrIEtpbSB3
+cm90ZToKPiAKPiA+IEhpIEd1LAo+ID4gCj4gPiBJTU8sIHRoZXJlIGlzIG5vIHJlYXNvbiB0byBj
+b3ZlciB0aGUgbGlzdCBoZWFkZXIgYnkgdGhlIGxvY2suCj4gPiBJbiBhbnkgZmxvd3MsIHNiaSBz
+aG91bGQgaGF2ZSB0aGUgaGVhZGVyIGFsbCB0aGUgdGltZS4KPiAKPiBZZXMsIHlvdSdyZSByaWdo
+dC4KPiAKPiA+IFdoYXQgaXMgeW91ciBvcGluaW9uPwo+IAo+IE1vdmluZyB0aGUgbGlzdF9oZWFk
+IGluaXRpYWxpemF0aW9uIGludG8gdGhlIGxvY2sgcHJvdGVjdGlvbiByZWdpb24sIHNvCj4gdGhh
+dCB3ZSBjYW4gaWdub3JlIHRoZSBsaXN0IGNoYW5nZSBkdXJpbmcgdGhlIGdhcChpbml0aWFsaXph
+dGlvbjwtLT51c2UpLgo+IEFuZCBvbiB0aGUgb3RoZXIgc2lkZSwgaXQgY2FuIGtlZXAgdGhlIGNv
+ZGUgc3R5bGUgdW5pZm9ybSBmb3IgYmV0dGVyCj4gbWFpbnRlbmFuY2UuCj4gCj4gUmVnYXJkcywK
+PiBHdQo+IAo+ID4gCj4gPiBUaGFua3MsCj4gPiAKPiA+IDIwMTMtMTEtMTkgKO2ZlCksIDE4OjAz
+ICswODAwLCBHdSBaaGVuZzoKPiA+PiBTaWduZWQtb2ZmLWJ5OiBHdSBaaGVuZyA8Z3V6LmZuc3RA
+Y24uZnVqaXRzdS5jb20+Cj4gPj4gLS0tCj4gPj4gIGZzL2YyZnMvY2hlY2twb2ludC5jIHwgICAx
+NSArKysrKysrKysrLS0tLS0KPiA+PiAgMSBmaWxlcyBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCsp
+LCA1IGRlbGV0aW9ucygtKQo+ID4+Cj4gPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvY2hlY2twb2lu
+dC5jIGIvZnMvZjJmcy9jaGVja3BvaW50LmMKPiA+PiBpbmRleCBmODg0NTg5Li4xZGU3MGNjIDEw
+MDY0NAo+ID4+IC0tLSBhL2ZzL2YyZnMvY2hlY2twb2ludC5jCj4gPj4gKysrIGIvZnMvZjJmcy9j
+aGVja3BvaW50LmMKPiA+PiBAQCAtNTExLDggKzUxMSw4IEBAIHZvaWQgYWRkX2RpcnR5X2Rpcl9p
+bm9kZShzdHJ1Y3QgaW5vZGUgKmlub2RlKQo+ID4+ICB2b2lkIHJlbW92ZV9kaXJ0eV9kaXJfaW5v
+ZGUoc3RydWN0IGlub2RlICppbm9kZSkKPiA+PiAgewo+ID4+ICAJc3RydWN0IGYyZnNfc2JfaW5m
+byAqc2JpID0gRjJGU19TQihpbm9kZS0+aV9zYik7Cj4gPj4gLQlzdHJ1Y3QgbGlzdF9oZWFkICpo
+ZWFkID0gJnNiaS0+ZGlyX2lub2RlX2xpc3Q7Cj4gPj4gLQlzdHJ1Y3QgbGlzdF9oZWFkICp0aGlz
+Owo+ID4+ICsKPiA+PiArCXN0cnVjdCBsaXN0X2hlYWQgKnRoaXMsICpoZWFkOwo+ID4+ICAKPiA+
+PiAgCWlmICghU19JU0RJUihpbm9kZS0+aV9tb2RlKSkKPiA+PiAgCQlyZXR1cm47Cj4gPj4gQEAg
+LTUyMyw2ICs1MjMsNyBAQCB2b2lkIHJlbW92ZV9kaXJ0eV9kaXJfaW5vZGUoc3RydWN0IGlub2Rl
+ICppbm9kZSkKPiA+PiAgCQlyZXR1cm47Cj4gPj4gIAl9Cj4gPj4gIAo+ID4+ICsJaGVhZCA9ICZz
+YmktPmRpcl9pbm9kZV9saXN0Owo+ID4+ICAJbGlzdF9mb3JfZWFjaCh0aGlzLCBoZWFkKSB7Cj4g
+Pj4gIAkJc3RydWN0IGRpcl9pbm9kZV9lbnRyeSAqZW50cnk7Cj4gPj4gIAkJZW50cnkgPSBsaXN0
+X2VudHJ5KHRoaXMsIHN0cnVjdCBkaXJfaW5vZGVfZW50cnksIGxpc3QpOwo+ID4+IEBAIC01NDQs
+MTEgKzU0NSwxMyBAQCB2b2lkIHJlbW92ZV9kaXJ0eV9kaXJfaW5vZGUoc3RydWN0IGlub2RlICpp
+bm9kZSkKPiA+PiAgCj4gPj4gIHN0cnVjdCBpbm9kZSAqY2hlY2tfZGlydHlfZGlyX2lub2RlKHN0
+cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlkX3QgaW5vKQo+ID4+ICB7Cj4gPj4gLQlzdHJ1Y3Qg
+bGlzdF9oZWFkICpoZWFkID0gJnNiaS0+ZGlyX2lub2RlX2xpc3Q7Cj4gPj4gLQlzdHJ1Y3QgbGlz
+dF9oZWFkICp0aGlzOwo+ID4+ICsKPiA+PiArCXN0cnVjdCBsaXN0X2hlYWQgKnRoaXMsICpoZWFk
+Owo+ID4+ICAJc3RydWN0IGlub2RlICppbm9kZSA9IE5VTEw7Cj4gPj4gIAo+ID4+ICAJc3Bpbl9s
+b2NrKCZzYmktPmRpcl9pbm9kZV9sb2NrKTsKPiA+PiArCj4gPj4gKwloZWFkID0gJnNiaS0+ZGly
+X2lub2RlX2xpc3Q7Cj4gPj4gIAlsaXN0X2Zvcl9lYWNoKHRoaXMsIGhlYWQpIHsKPiA+PiAgCQlz
+dHJ1Y3QgZGlyX2lub2RlX2VudHJ5ICplbnRyeTsKPiA+PiAgCQllbnRyeSA9IGxpc3RfZW50cnko
+dGhpcywgc3RydWN0IGRpcl9pbm9kZV9lbnRyeSwgbGlzdCk7Cj4gPj4gQEAgLTU2MywxMSArNTY2
+LDEzIEBAIHN0cnVjdCBpbm9kZSAqY2hlY2tfZGlydHlfZGlyX2lub2RlKHN0cnVjdCBmMmZzX3Ni
+X2luZm8gKnNiaSwgbmlkX3QgaW5vKQo+ID4+ICAKPiA+PiAgdm9pZCBzeW5jX2RpcnR5X2Rpcl9p
+bm9kZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+ID4+ICB7Cj4gPj4gLQlzdHJ1Y3QgbGlz
+dF9oZWFkICpoZWFkID0gJnNiaS0+ZGlyX2lub2RlX2xpc3Q7Cj4gPj4gKwlzdHJ1Y3QgbGlzdF9o
+ZWFkICpoZWFkOwo+ID4+ICAJc3RydWN0IGRpcl9pbm9kZV9lbnRyeSAqZW50cnk7Cj4gPj4gIAlz
+dHJ1Y3QgaW5vZGUgKmlub2RlOwo+ID4+ICByZXRyeToKPiA+PiAgCXNwaW5fbG9jaygmc2JpLT5k
+aXJfaW5vZGVfbG9jayk7Cj4gPj4gKwo+ID4+ICsJaGVhZCA9ICZzYmktPmRpcl9pbm9kZV9saXN0
+Owo+ID4+ICAJaWYgKGxpc3RfZW1wdHkoaGVhZCkpIHsKPiA+PiAgCQlzcGluX3VubG9jaygmc2Jp
+LT5kaXJfaW5vZGVfbG9jayk7Cj4gPj4gIAkJcmV0dXJuOwo+ID4gCj4gCj4gCj4gLS0KPiBUbyB1
+bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGlu
+dXgtZnNkZXZlbCIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIu
+a2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5v
+cmcvbWFqb3Jkb21vLWluZm8uaHRtbAoKLS0gCkphZWdldWsgS2ltClNhbXN1bmcKCgotLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0KU2hhcGUgdGhlIE1vYmlsZSBFeHBlcmllbmNlOiBGcmVlIFN1YnNjcmlw
+dGlvbgpTb2Z0d2FyZSBleHBlcnRzIGFuZCBkZXZlbG9wZXJzOiBCZSBhdCB0aGUgZm9yZWZyb250
+IG9mIHRlY2ggaW5ub3ZhdGlvbi4KSW50ZWwoUikgU29mdHdhcmUgQWRyZW5hbGluZSBkZWxpdmVy
+cyBzdHJhdGVnaWMgaW5zaWdodCBhbmQgZ2FtZS1jaGFuZ2luZyAKY29udmVyc2F0aW9ucyB0aGF0
+IHNoYXBlIHRoZSByYXBpZGx5IGV2b2x2aW5nIG1vYmlsZSBsYW5kc2NhcGUuIFNpZ24gdXAgbm93
+LiAKaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTYzNDMxMzEx
+Jml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2
+ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
+c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
