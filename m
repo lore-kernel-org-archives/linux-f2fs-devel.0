@@ -1,95 +1,37 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH V2 2/2 RESEND] f2fs: read contiguous sit
- entry pages by merging for mount performance
-Date: Thu, 21 Nov 2013 13:45:32 +0900
-Message-ID: <1385009132.26319.71.camel@kjgkr>
-References: <001d01cee5bc$779c2fe0$66d48fa0$@samsung.com>
-	<1384997517.26319.60.camel@kjgkr>
-	<000001cee668$872ec6a0$958c53e0$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Haicheng Li <haicheng.li@linux.intel.com>
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: disable the extent cache ops on
+ high fragmented files
+Date: Thu, 21 Nov 2013 13:34:03 +0800
+Message-ID: <20131121053402.GA9143@hli22-desktop>
+References: <1384845037-7872-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VjM9x-00019X-Vv
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Nov 2013 04:46:34 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VjM9v-0006Pp-S5 for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Nov 2013 04:46:33 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MWL009U8JX3X4I0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Nov 2013 13:46:23 +0900 (KST)
-In-reply-to: <000001cee668$872ec6a0$958c53e0$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1384845037-7872-1-git-send-email-jaegeuk.kim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgoyMDEzLTExLTIxICjrqqkpLCAxMToxOCArMDgwMCwgQ2hhbyBZdToKPiBIaSwKPiAKPiA+
-IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4gPiBGcm9tOiBKYWVnZXVrIEtpbSBbbWFpbHRv
-OmphZWdldWsua2ltQHNhbXN1bmcuY29tXQo+ID4gU2VudDogVGh1cnNkYXksIE5vdmVtYmVyIDIx
-LCAyMDEzIDk6MzIgQU0KPiA+IFRvOiBDaGFvIFl1Cj4gPiBDYzogbGludXgtZnNkZXZlbEB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWYyZnMtZGV2
-ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0OyDosK3lp50KPiA+IFN1YmplY3Q6IFJlOiBbZjJmcy1k
-ZXZdIFtQQVRDSCBWMiAyLzIgUkVTRU5EXSBmMmZzOiByZWFkIGNvbnRpZ3VvdXMgc2l0IGVudHJ5
-IHBhZ2VzIGJ5IG1lcmdpbmcgZm9yIG1vdW50IHBlcmZvcm1hbmNlCj4gPiAKPiA+IEhpLAo+ID4g
-Cj4gPiBJdCBzZWVtcyB0aGF0IHJhX3NpdF9wYWdlcygpIGlzIHRvbyB0aWdodGx5IGNvdXBsZWQg
-d2l0aAo+ID4gYnVpbGRfc2l0X2VudHJpZXMoKS4KPiAKPiBUaGlzIGNvZGUgY291bGQgYmUgaW1w
-cm92ZWQuCj4gCj4gPiBJcyB0aGVyZSBhbm90aGVyIHdheSBub3QgdG8gdXNlICppc19vcmRlcj8K
-PiAKPiBQcmV2aW91c2x5IHRoZSBjb2RlIGlzIGxpa2UgdGhpczoKPiAgLWJ1aWxkX3NpdF9lbnRy
-aWVzKCkKPiAgbmV4dF9zZXRwOgo+IAlmb3Ioc3RhcnQgPSAwOyBzdGFydCA8IFRPVEFMX1NFR1Mo
-c2JpKTsgc3RhcnQrKykKPiAJCS8qc3RlcCMxIHJlYWRhaGVhZCBhbGwgc2l0IGVudHJpZXMgYmxv
-Y2tzKi8KPiAJCQlpZihzdGFydCAlIFNJVF9FTlRSWV9QRVJfQkxPQ0sgPT0gMCkgewo+IAkJCQli
-bGtfYWRkciA9IGN1cnJlbnRfc2l0X2FkZHIoc2JpLCBzdGFydCk7Cj4gCQkJCS8qIGdyYWIgYW5k
-IHN1Ym1pdF9yZWFkX3BhZ2UgKi8KPiAJCQl9Cj4gCQkJaWYoc3RhcnQgPT0gVE9UQUxfU0VHUyhz
-YmkpIC0gMSkKPiAJCQkJZjJmc19zdWJtaXRfcmVhZF9iaW8oKTsKPiAJCQljb250aW51ZTsKPiAJ
-CS8qc3RlcCMyIGZpbGwgc2l0IGVudHJpZXMgaW5mbyovCj4gCQkvKnN0ZXAjMyBjb3ZlciBzaXQg
-ZW50cmllcyB3aXRoIGpvdXJuYWwqLwo+IAo+IEJ1dCBJIHRoaW5rIGl0cyB3ZWFrbmVzcyBpcyB0
-aGF0IGl0IHdpbGwgY29zdCBsb3RzIG9mIG1lbW9yeSB0byByZWFkIAo+IGFoZWFkIGFsbCBzaXQg
-ZW50cnkgcGFnZXMgd2hlbiBmMmZzIG1vdW50LCBhbmQgYWxzbyBpdCdzIHNlcmlvdXMgd2FzdGUg
-Cj4gdGhhdCB3ZSByZWFkIHRoZW0gYWdhaW4gYWZ0ZXIgdGhlc2UgcGFnZXMgYXJlIHJlbGVhc2Vk
-IGJ5IFZNIHdoZW4gCj4gb3V0IG9mIG1lbW9yeS4KPiAKPiA+IAo+ID4gVGhlIHJhX3NpdF9wYWdl
-cygpIHRyaWVzIHRvIHJlYWQgY29uc2VjdXRpdmUgc2l0IHBhZ2VzIGFzIG1hbnkgYXMKPiA+IHBv
-c3NpYmxlLgo+ID4gU28gdGhlbiwgd2hhdCBhYm91dCBqdXN0IGNoZWNraW5nIHdoZXRoZXIgaXRz
-IGJsb2NrIGFkZHJlc3MgaXMKPiA+IGNvbnRpZ3VvdXMgb3Igbm90Pwo+ID4gCj4gPiBTb21ldGhp
-bmcgbGlrZSB0aGlzOgo+ID4gIC1yYV9zaXRfcGFnZXMoKQo+ID4gCWJsa25vID0gc3RhcnQ7Cj4g
-PiAJd2hpbGUgKGJsa25vIDwgc2l0X2ktPnNpdF9ibG9ja3MpIHsKPiA+IAkJYmxrX2FkZHIgPSBj
-dXJyZW50X3NpdF9hZGRyKHNiaSwgYmxrbm8pOwo+ID4gCQlpZiAoYmxrbm8gIT0gc3RhcnQgJiYg
-cHJldl9ibGtfYWRkciArIDEgIT0gYmxrX2FkZHIpCj4gPiAJCQlicmVhazsKPiA+IAo+ID4gCQkv
-KiBncmFiIGFuZCBzdWJtaXRfcmVhZF9wYWdlICovCj4gPiAKPiA+IAkJcHJldl9ibGtfYWRkciA9
-IGJsa19hZGRyOwo+ID4gCQlibGtubysrOwo+ID4gCX0KPiAKPiBBZ3JlZWQsIHRoaXMgbWV0aG9k
-IGNvdWxkIHJlbW92ZSAqb3JkZXIuCj4gU2hvdWxkbid0IHdlIGFkZCBucnBhZ2VzIGZvciByZWFk
-YWhlYWQgcG9saWN5IGFzIFZNPwoKQWhhLCBhZ3JlZWQuCldlIG5lZWQgbnJwYWdlcyB0byBhdm9p
-ZCB0b28gbWFueSByZWFkcyBvbiBzaXQgYmxvY2tzLgoKQnV0LCBzdGlsbCBpdCBuZWVkcyB0byBj
-aGFuZ2UgdGhlIG5ycGFnZXMgaW4gaXRzIGNhbGxlci4KSW4geW91ciBwYXRjaCwgaXQgd2FzIHNp
-dF9pLT5zaXRfYmxvY2tzIHRoYXQgaXMgdG90YWwgIyBvZiBzaXQgYmxvY2tzLgpJIHRoaW5rIDEy
-OCBvciAyNTYgaXMgcXVpdGUgcmVhc29uYWJsZSBudW1iZXIuCgpBbnl3YXksIGhvdyBhYm91dCBp
-bXBsZW1lbnRpbmcgcmFfc2l0X3BhZ2VzKCkgd2l0aCBhIGJsa19wbHVnIGxpa2V3aXNlCnJhX25v
-ZGVfcGFnZXMoKT8KCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKCi0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQpTaGFwZSB0aGUgTW9iaWxlIEV4cGVyaWVuY2U6IEZyZWUgU3Vic2NyaXB0aW9uClNvZnR3
-YXJlIGV4cGVydHMgYW5kIGRldmVsb3BlcnM6IEJlIGF0IHRoZSBmb3JlZnJvbnQgb2YgdGVjaCBp
-bm5vdmF0aW9uLgpJbnRlbChSKSBTb2Z0d2FyZSBBZHJlbmFsaW5lIGRlbGl2ZXJzIHN0cmF0ZWdp
-YyBpbnNpZ2h0IGFuZCBnYW1lLWNoYW5naW5nIApjb252ZXJzYXRpb25zIHRoYXQgc2hhcGUgdGhl
-IHJhcGlkbHkgZXZvbHZpbmcgbW9iaWxlIGxhbmRzY2FwZS4gU2lnbiB1cCBub3cuIApodHRwOi8v
-cHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9NjM0MzEzMTEmaXU9LzQxNDAv
-b3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5z
-b3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGlu
-Zm8vbGludXgtZjJmcy1kZXZlbAo=
+> Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+
+Function looks good to me. But some nitpicking below for code cleanup..
+
+> @@ -71,6 +71,9 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+return value could be boolean?
+>  	pgoff_t start_fofs, end_fofs;
+>  	block_t start_blkaddr;
+>  
+> +	if (is_inode_flag_set(fi, FI_NO_EXTENT))
+> +		return 0;
+> +
+>  	read_lock(&fi->ext.ext_lock);
+>  	if (fi->ext.len == 0) {
+>  		read_unlock(&fi->ext.ext_lock);
+> @@ -109,6 +112,7 @@ void update_extent_cache(block_t blk_addr, struct dnode_of_data *dn)
+>  	struct f2fs_inode_info *fi = F2FS_I(dn->inode);
+>  	pgoff_t fofs, start_fofs, end_fofs;
+>  	block_t start_blkaddr, end_blkaddr;
+> +	int need_update = true;
+bool?
