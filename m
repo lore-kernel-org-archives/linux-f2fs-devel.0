@@ -1,176 +1,80 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev] [PATCH V3 2/2] f2fs: read contiguous sit entry pages by
- merging for mount performance
-Date: Fri, 22 Nov 2013 09:09:59 +0800
-Message-ID: <000301cee71f$b0e54160$12afc420$@samsung.com>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [PATCH] f2fs: merge read IOs at ra_nat_pages()
+Date: Fri, 22 Nov 2013 12:41:19 +0900
+Message-ID: <1385091679.16054.5.camel@lcm>
+References: <1385026550-21055-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=gb2312
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: ??? <jaegeuk.kim@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?gb2312?B?zLfmrQ==?= <shu.tan@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cm224.lee@samsung.com>) id 1Vjhe7-0004je-Up
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 22 Nov 2013 03:43:08 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1Vjhe4-0002Dw-Is
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 22 Nov 2013 03:43:07 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MWN004XWBNK3I70@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 22 Nov 2013 12:42:56 +0900 (KST)
+In-reply-to: <1385026550-21055-1-git-send-email-jaegeuk.kim@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Previously we read sit entries page one by one, this method lost the chance 
-of reading contiguous page together. So we read pages as contiguous as 
-possible for better mount performance.
-
-change log:
- o merge judgements/use 'Continue' or 'Break' instead of 'Goto' as Gu Zheng 
-   suggested.
- o add mark_page_accessed() before release page to delay VM reclaiming.
- o remove '*order' for simplification of function as Jaegeuk Kim suggested.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/segment.c |  103 +++++++++++++++++++++++++++++++++++++++--------------
- fs/f2fs/segment.h |    2 ++
- 2 files changed, 78 insertions(+), 27 deletions(-)
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 8149eba..998e7d3 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -14,6 +14,7 @@
- #include <linux/blkdev.h>
- #include <linux/prefetch.h>
- #include <linux/vmalloc.h>
-+#include <linux/swap.h>
- 
- #include "f2fs.h"
- #include "segment.h"
-@@ -1488,41 +1489,89 @@ static int build_curseg(struct f2fs_sb_info *sbi)
- 	return restore_curseg_summaries(sbi);
- }
- 
-+static int ra_sit_pages(struct f2fs_sb_info *sbi, int start, int nrpages)
-+{
-+	struct address_space *mapping = sbi->meta_inode->i_mapping;
-+	struct page *page;
-+	block_t blk_addr, prev_blk_addr = 0;
-+	int sit_blk_cnt = SIT_BLK_CNT(sbi);
-+	int blkno = start;
-+
-+	for (; blkno < start + nrpages && blkno < sit_blk_cnt; blkno++) {
-+
-+		blk_addr = current_sit_addr(sbi, start * SIT_ENTRY_PER_BLOCK);
-+
-+		if (blkno != start && prev_blk_addr + 1 != blk_addr)
-+			break;
-+		prev_blk_addr = blk_addr;
-+repeat:
-+		page = grab_cache_page(mapping, blk_addr);
-+		if (!page) {
-+			cond_resched();
-+			goto repeat;
-+		}
-+		if (PageUptodate(page)) {
-+			mark_page_accessed(page);
-+			f2fs_put_page(page, 1);
-+			continue;
-+		}
-+
-+		submit_read_page(sbi, page, blk_addr, READ_SYNC);
-+
-+		mark_page_accessed(page);
-+		f2fs_put_page(page, 0);
-+	}
-+
-+	f2fs_submit_read_bio(sbi, READ_SYNC);
-+	return blkno - start;
-+}
-+
- static void build_sit_entries(struct f2fs_sb_info *sbi)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
- 	struct f2fs_summary_block *sum = curseg->sum_blk;
--	unsigned int start;
--
--	for (start = 0; start < TOTAL_SEGS(sbi); start++) {
--		struct seg_entry *se = &sit_i->sentries[start];
--		struct f2fs_sit_block *sit_blk;
--		struct f2fs_sit_entry sit;
--		struct page *page;
--		int i;
--
--		mutex_lock(&curseg->curseg_mutex);
--		for (i = 0; i < sits_in_cursum(sum); i++) {
--			if (le32_to_cpu(segno_in_journal(sum, i)) == start) {
--				sit = sit_in_journal(sum, i);
--				mutex_unlock(&curseg->curseg_mutex);
--				goto got_it;
-+	int sit_blk_cnt = SIT_BLK_CNT(sbi);
-+	unsigned int i, start, end;
-+	unsigned int readed, start_blk = 0;
-+	int nrpages = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
-+	
-+	do {
-+		readed = ra_sit_pages(sbi, start_blk, nrpages);
-+
-+		start = start_blk * sit_i->sents_per_block;
-+		end = (start_blk + readed) * sit_i->sents_per_block;
-+
-+		for (; start < end && start < TOTAL_SEGS(sbi); start++) {
-+			struct seg_entry *se = &sit_i->sentries[start];
-+			struct f2fs_sit_block *sit_blk;
-+			struct f2fs_sit_entry sit;
-+			struct page *page;
-+
-+			mutex_lock(&curseg->curseg_mutex);
-+			for (i = 0; i < sits_in_cursum(sum); i++) {
-+				if (le32_to_cpu(segno_in_journal(sum, i)) == start) {
-+					sit = sit_in_journal(sum, i);
-+					mutex_unlock(&curseg->curseg_mutex);
-+					goto got_it;
-+				}
- 			}
--		}
--		mutex_unlock(&curseg->curseg_mutex);
--		page = get_current_sit_page(sbi, start);
--		sit_blk = (struct f2fs_sit_block *)page_address(page);
--		sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
--		f2fs_put_page(page, 1);
-+			mutex_unlock(&curseg->curseg_mutex);
-+
-+			page = get_current_sit_page(sbi, start);
-+			sit_blk = (struct f2fs_sit_block *)page_address(page);
-+			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
-+			f2fs_put_page(page, 1);
- got_it:
--		check_block_count(sbi, start, &sit);
--		seg_info_from_raw_sit(se, &sit);
--		if (sbi->segs_per_sec > 1) {
--			struct sec_entry *e = get_sec_entry(sbi, start);
--			e->valid_blocks += se->valid_blocks;
-+			check_block_count(sbi, start, &sit);
-+			seg_info_from_raw_sit(se, &sit);
-+			if (sbi->segs_per_sec > 1) {
-+				struct sec_entry *e = get_sec_entry(sbi, start);
-+				e->valid_blocks += se->valid_blocks;
-+			}
- 		}
--	}
-+		start_blk += readed;
-+	} while (start_blk < sit_blk_cnt);
- }
- 
- static void init_free_segmap(struct f2fs_sb_info *sbi)
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 269f690..ad5b9f1 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -83,6 +83,8 @@
- 	(segno / SIT_ENTRY_PER_BLOCK)
- #define	START_SEGNO(sit_i, segno)		\
- 	(SIT_BLOCK_OFFSET(sit_i, segno) * SIT_ENTRY_PER_BLOCK)
-+#define SIT_BLK_CNT(sbi)			\
-+	((TOTAL_SEGS(sbi) + SIT_ENTRY_PER_BLOCK - 1) / SIT_ENTRY_PER_BLOCK)
- #define f2fs_bitmap_size(nr)			\
- 	(BITS_TO_LONGS(nr) * sizeof(unsigned long))
- #define TOTAL_SEGS(sbi)	(SM_I(sbi)->main_segments)
--- 
-1.7.9.5
-
+CkhvdyBhYm91dCBkb2luZyBtYXJrX3BhZ2VfYWNjZXNzZWQocGFnZSkgaW4gcmFfbmF0X3BhZ2Vz
+IGxpa2UKcmFfc2l0X3BhZ2VzIHRvIHByZXZlbnQgcmVhZGFoZWFkIHBhZ2VzIGFyZSByZWNsYWlt
+ZWQgYnkgVk0/CgpPbiDrqqksIDIwMTMtMTEtMjEgYXQgMTg6MzUgKzA5MDAsIEphZWdldWsgS2lt
+IHdyb3RlOgo+IFRoaXMgcGF0Y2ggY2hhbmdlcyB0aGUgcG9saWN5IG9mIHN1Ym1pdHRpbmcgcmVh
+ZCBiaW9zIGF0IHJhX25hdF9wYWdlcy4KPiAKPiBQcmV2aW91c2x5LCBmMmZzIHN1Ym1pdHMgc21h
+bGwgcmVhZCBiaW9zIHdpdGggYmxvY2sgcGx1Z2dpbmcuCj4gQnV0LCB3aXRoIHRoaXMgcGF0Y2gs
+IGYyZnMgaXRzZWxmIG1lcmdlcyByZWFkIGJpb3MgZmlyc3QgYW5kIHRoZW4gc3VibWl0cyBhCj4g
+bGFyZ2UgYmlvLCB3aGljaCBjYW4gcmVkdWNlIHRoZSBiaW8gaGFuZGxpbmcgb3ZlcmhlYWRzLgo+
+IAo+IFNpZ25lZC1vZmYtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4K
+PiAtLS0KPiAgZnMvZjJmcy9ub2RlLmMgfCA4ICsrLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAy
+IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMv
+bm9kZS5jIGIvZnMvZjJmcy9ub2RlLmMKPiBpbmRleCBiODQzYTViLi5jMDY4NzFmIDEwMDY0NAo+
+IC0tLSBhL2ZzL2YyZnMvbm9kZS5jCj4gKysrIGIvZnMvZjJmcy9ub2RlLmMKPiBAQCAtODksMTMg
+Kzg5LDEwIEBAIHN0YXRpYyB2b2lkIHJhX25hdF9wYWdlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpz
+YmksIGludCBuaWQpCj4gIHsKPiAgCXN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nID0gc2Jp
+LT5tZXRhX2lub2RlLT5pX21hcHBpbmc7Cj4gIAlzdHJ1Y3QgZjJmc19ubV9pbmZvICpubV9pID0g
+Tk1fSShzYmkpOwo+IC0Jc3RydWN0IGJsa19wbHVnIHBsdWc7Cj4gIAlzdHJ1Y3QgcGFnZSAqcGFn
+ZTsKPiAgCXBnb2ZmX3QgaW5kZXg7Cj4gIAlpbnQgaTsKPiAgCj4gLQlibGtfc3RhcnRfcGx1Zygm
+cGx1Zyk7Cj4gLQo+ICAJZm9yIChpID0gMDsgaSA8IEZSRUVfTklEX1BBR0VTOyBpKyssIG5pZCAr
+PSBOQVRfRU5UUllfUEVSX0JMT0NLKSB7Cj4gIAkJaWYgKG5pZCA+PSBubV9pLT5tYXhfbmlkKQo+
+ICAJCQluaWQgPSAwOwo+IEBAIC0xMDgsMTIgKzEwNSwxMSBAQCBzdGF0aWMgdm9pZCByYV9uYXRf
+cGFnZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgbmlkKQoKbWFya19wYWdlX2FjY2Vz
+c2VkKHBhZ2UpOwoKPiAgCQkJZjJmc19wdXRfcGFnZShwYWdlLCAxKTsKPiAgCQkJY29udGludWU7
+Cj4gIAkJfQo+IC0JCWlmIChmMmZzX3JlYWRwYWdlKHNiaSwgcGFnZSwgaW5kZXgsIFJFQUQpKQo+
+IC0JCQljb250aW51ZTsKPiArCQlzdWJtaXRfcmVhZF9wYWdlKHNiaSwgcGFnZSwgaW5kZXgsIFJF
+QURfU1lOQyk7Cj4gIAoKbWFya19wYWdlX2FjY2Vzc2VkKHBhZ2UpOwoKPiAgCQlmMmZzX3B1dF9w
+YWdlKHBhZ2UsIDApOwo+ICAJfQo+IC0JYmxrX2ZpbmlzaF9wbHVnKCZwbHVnKTsKPiArCWYyZnNf
+c3VibWl0X3JlYWRfYmlvKHNiaSwgUkVBRF9TWU5DKTsKPiAgfQo+ICAKPiAgc3RhdGljIHN0cnVj
+dCBuYXRfZW50cnkgKl9fbG9va3VwX25hdF9jYWNoZShzdHJ1Y3QgZjJmc19ubV9pbmZvICpubV9p
+LCBuaWRfdCBuKQoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KU2hhcGUgdGhlIE1vYmlsZSBFeHBl
+cmllbmNlOiBGcmVlIFN1YnNjcmlwdGlvbgpTb2Z0d2FyZSBleHBlcnRzIGFuZCBkZXZlbG9wZXJz
+OiBCZSBhdCB0aGUgZm9yZWZyb250IG9mIHRlY2ggaW5ub3ZhdGlvbi4KSW50ZWwoUikgU29mdHdh
+cmUgQWRyZW5hbGluZSBkZWxpdmVycyBzdHJhdGVnaWMgaW5zaWdodCBhbmQgZ2FtZS1jaGFuZ2lu
+ZyAKY29udmVyc2F0aW9ucyB0aGF0IHNoYXBlIHRoZSByYXBpZGx5IGV2b2x2aW5nIG1vYmlsZSBs
+YW5kc2NhcGUuIFNpZ24gdXAgbm93LiAKaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9n
+YW1wYWQvY2xrP2lkPTYzNDMxMzExJml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
+ZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
+dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
