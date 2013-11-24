@@ -1,33 +1,33 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 1/2] f2fs: adds a tracepoint for
-	submit_read_page
-Date: Sun, 24 Nov 2013 12:08:54 +0900
-Message-ID: <1385262534.26319.88.camel@kjgkr>
-References: <001e01cee5cc$3d118310$b7348930$@samsung.com>
+Subject: Re: [PATCH 2/2] f2fs: adds a tracepoint for
+ f2fs_submit_read_bio
+Date: Sun, 24 Nov 2013 12:51:24 +0900
+Message-ID: <1385265084.26319.90.camel@kjgkr>
+References: <001f01cee5cc$5d297450$177c5cf0$@samsung.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VkQ56-0002s2-Ci
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VkQkF-0005TJ-IO
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 24 Nov 2013 03:09:56 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VkQ54-0002b0-GS
+	Sun, 24 Nov 2013 03:52:27 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VkQkD-00084Z-7b
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 24 Nov 2013 03:09:56 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
+	Sun, 24 Nov 2013 03:52:27 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MWQ00GOLZGB6H50@mailout3.samsung.com> for
+	with ESMTP id <0MWR0066T1F5WD60@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 24 Nov 2013 12:09:47 +0900 (KST)
-In-reply-to: <001e01cee5cc$3d118310$b7348930$@samsung.com>
+	Sun, 24 Nov 2013 12:52:17 +0900 (KST)
+In-reply-to: <001f01cee5cc$5d297450$177c5cf0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -42,114 +42,155 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-deve
 
 Hi,
 
-We need to avoid redundancy as much as possible.
-So, how about this patch?
+Again, this tracepoint alos can be integrated with write_bios like this.
 
->From 7b4a4f1628a1a793942c7f675e6afecece64b659 Mon Sep 17 00:00:00 2001
+
+>From e0360910b24624e40d92eb2e1949914339b83881 Mon Sep 17 00:00:00 2001
 From: Chao Yu <chao2.yu@samsung.com>
-Date: Wed, 20 Nov 2013 16:40:10 +0800
-Subject: [PATCH] f2fs: adds a tracepoint for submit_read_page
+Date: Sun, 24 Nov 2013 12:36:42 +0900
+Subject: [PATCH] f2fs: adds a tracepoint for f2fs_submit_read_bio
 
-This patch adds a tracepoint for submit_read_page.
+This patch adds a tracepoint for f2fs_submit_read_bio.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-[Jaegeuk Kim: integrate tracepoints of f2fs_submit_read(_write)_page]
+[Jaegeuk Kim: integrate tracepoints of f2fs_submit_read(_write)_bio]
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/data.c              |  1 +
- fs/f2fs/segment.c           |  2 +-
- include/trace/events/f2fs.h | 25 +++++++++++++++++++++----
- 3 files changed, 23 insertions(+), 5 deletions(-)
+ fs/f2fs/data.c              |  2 ++
+ fs/f2fs/segment.c           |  5 +++--
+ include/trace/events/f2fs.h | 49
++++++++++++++++++++++++++++++----------------
+ 3 files changed, 37 insertions(+), 19 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ce3cbd9..cdb342e 100644
+index cdb342e..7117220 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -462,6 +462,7 @@ alloc_new:
- 	io->last_block_in_bio = blk_addr;
+@@ -421,6 +421,8 @@ void f2fs_submit_read_bio(struct f2fs_sb_info *sbi,
+int rw)
+ 	if (!io->bio)
+ 		return;
  
- 	mutex_unlock(&io->io_mutex);
-+	trace_f2fs_submit_read_page(page, rw, META, blk_addr);
- }
- 
- /*
++	trace_f2fs_submit_read_bio(sbi->sb, rw, META, io->bio);
++
+ 	mutex_lock(&io->io_mutex);
+ 	if (io->bio) {
+ 		submit_bio(rw, io->bio);
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9607cc4..264a5ff 100644
+index 264a5ff..3aad374 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -925,7 +925,7 @@ retry:
- 	io->last_block_in_bio = blk_addr;
+@@ -846,6 +846,9 @@ static void do_submit_bio(struct f2fs_sb_info *sbi,
  
- 	mutex_unlock(&io->io_mutex);
--	trace_f2fs_submit_write_page(page, blk_addr, type);
-+	trace_f2fs_submit_write_page(page, WRITE, type, blk_addr);
- }
+ 	if (type >= META_FLUSH)
+ 		rw = WRITE_FLUSH_FUA;
++
++	trace_f2fs_submit_write_bio(sbi->sb, rw, btype, io->bio);
++
+ 	if (btype == META)
+ 		rw |= REQ_META;
  
- void f2fs_wait_on_page_writeback(struct page *page,
+@@ -853,8 +856,6 @@ static void do_submit_bio(struct f2fs_sb_info *sbi,
+ 	p->sbi = sbi;
+ 	io->bio->bi_end_io = f2fs_end_io_write;
+ 
+-	trace_f2fs_do_submit_bio(sbi->sb, btype, sync, io->bio);
+-
+ 	if (type == META_FLUSH) {
+ 		DECLARE_COMPLETION_ONSTACK(wait);
+ 		p->is_sync = true;
 diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 47ee70d..73cc5f0 100644
+index 73cc5f0..1f59f5d 100644
 --- a/include/trace/events/f2fs.h
 +++ b/include/trace/events/f2fs.h
-@@ -674,15 +674,16 @@ DEFINE_EVENT(f2fs__page, f2fs_vm_page_mkwrite,
- 	TP_ARGS(page, type)
+@@ -18,13 +18,14 @@
+ 
+ #define show_bio_type(type)						\
+ 	__print_symbolic(type,						\
+-		{ READ, 	"READ" },				\
+-		{ READA, 	"READAHEAD" },				\
+-		{ READ_SYNC, 	"READ_SYNC" },				\
+-		{ WRITE, 	"WRITE" },				\
+-		{ WRITE_SYNC, 	"WRITE_SYNC" },				\
+-		{ WRITE_FLUSH,	"WRITE_FLUSH" },			\
+-		{ WRITE_FUA, 	"WRITE_FUA" })
++		{ READ, 		"READ" },			\
++		{ READA, 		"READAHEAD" },			\
++		{ READ_SYNC, 		"READ_SYNC" },			\
++		{ WRITE, 		"WRITE" },			\
++		{ WRITE_SYNC, 		"WRITE_SYNC" },			\
++		{ WRITE_FLUSH,		"WRITE_FLUSH" },		\
++		{ WRITE_FUA, 		"WRITE_FUA" },			\
++		{ WRITE_FLUSH_FUA,	"WRITE_FLUSH_FUA" })
+ 
+ #define show_data_type(type)						\
+ 	__print_symbolic(type,						\
+@@ -598,36 +599,50 @@ TRACE_EVENT(f2fs_reserve_new_block,
+ 		__entry->ofs_in_node)
  );
  
--TRACE_EVENT(f2fs_submit_write_page,
-+DECLARE_EVENT_CLASS(f2fs_io_page,
+-TRACE_EVENT(f2fs_do_submit_bio,
++DECLARE_EVENT_CLASS(f2fs__submit_bio,
  
--	TP_PROTO(struct page *page, block_t blk_addr, int type),
-+	TP_PROTO(struct page *page, int rw, int type, block_t blk_addr),
+-	TP_PROTO(struct super_block *sb, int btype, bool sync, struct bio
+*bio),
++	TP_PROTO(struct super_block *sb, int rw, int type, struct bio *bio),
  
--	TP_ARGS(page, blk_addr, type),
-+	TP_ARGS(page, rw, type, blk_addr),
+-	TP_ARGS(sb, btype, sync, bio),
++	TP_ARGS(sb, rw, type, bio),
  
  	TP_STRUCT__entry(
  		__field(dev_t,	dev)
- 		__field(ino_t,	ino)
-+		__field(int, rw)
- 		__field(int, type)
- 		__field(pgoff_t, index)
- 		__field(block_t, block)
-@@ -691,18 +692,34 @@ TRACE_EVENT(f2fs_submit_write_page,
- 	TP_fast_assign(
- 		__entry->dev	= page->mapping->host->i_sb->s_dev;
- 		__entry->ino	= page->mapping->host->i_ino;
-+		__entry->rw	= rw;
- 		__entry->type	= type;
- 		__entry->index	= page->index;
- 		__entry->block	= blk_addr;
+-		__field(int,	btype)
+-		__field(bool,	sync)
++		__field(int,	rw)
++		__field(int,	type)
+ 		__field(sector_t,	sector)
+ 		__field(unsigned int,	size)
  	),
  
--	TP_printk("dev = (%d,%d), ino = %lu, %s, index = %lu, blkaddr = 0x%
-llx",
-+	TP_printk("dev = (%d,%d), ino = %lu, %s, %s, index = %lu, blkaddr = 0x
-%llx",
- 		show_dev_ino(__entry),
+ 	TP_fast_assign(
+ 		__entry->dev		= sb->s_dev;
+-		__entry->btype		= btype;
+-		__entry->sync		= sync;
++		__entry->rw		= rw;
++		__entry->type		= type;
+ 		__entry->sector		= bio->bi_sector;
+ 		__entry->size		= bio->bi_size;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), type = %s, io = %s, sector = %lld, size = %
+u",
++	TP_printk("dev = (%d,%d), %s, %s, sector = %lld, size = %u",
+ 		show_dev(__entry),
+-		show_block_type(__entry->btype),
+-		__entry->sync ? "sync" : "no sync",
 +		show_bio_type(__entry->rw),
- 		show_block_type(__entry->type),
- 		(unsigned long)__entry->index,
- 		(unsigned long long)__entry->block)
++		show_block_type(__entry->type),
+ 		(unsigned long long)__entry->sector,
+ 		__entry->size)
  );
  
-+DEFINE_EVENT(f2fs_io_page, f2fs_submit_write_page,
++DEFINE_EVENT(f2fs__submit_bio, f2fs_submit_write_bio,
 +
-+	TP_PROTO(struct page *page, int rw, int type, block_t blk_addr),
++	TP_PROTO(struct super_block *sb, int rw, int type, struct bio *bio),
 +
-+	TP_ARGS(page, rw, type, blk_addr)
++	TP_ARGS(sb, rw, type, bio)
 +);
 +
-+DEFINE_EVENT(f2fs_io_page, f2fs_submit_read_page,
++DEFINE_EVENT(f2fs__submit_bio, f2fs_submit_read_bio,
 +
-+	TP_PROTO(struct page *page, int rw, int type, block_t blk_addr),
++	TP_PROTO(struct super_block *sb, int rw, int type, struct bio *bio),
 +
-+	TP_ARGS(page, rw, type, blk_addr)
++	TP_ARGS(sb, rw, type, bio)
 +);
 +
- TRACE_EVENT(f2fs_write_checkpoint,
+ DECLARE_EVENT_CLASS(f2fs__page,
  
- 	TP_PROTO(struct super_block *sb, bool is_umount, char *msg),
+ 	TP_PROTO(struct page *page, int type),
 -- 
 1.8.4.474.g128a96c
+
 
 
 -- 
