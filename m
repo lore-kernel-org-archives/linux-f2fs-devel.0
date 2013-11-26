@@ -1,21 +1,23 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH] f2fs: fix a potential out of range issue
-Date: Tue, 26 Nov 2013 16:44:16 +0800
-Message-ID: <52945F60.4070005@cn.fujitsu.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: f2fs: introduce f2fs_issue_discard() to clean up
+Date: Tue, 26 Nov 2013 17:53:16 +0300
+Message-ID: <20131126145315.GA27436@elgon.mountain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VlEMF-0004nH-8R
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <dan.carpenter@oracle.com>) id 1VlK14-0004a2-ER
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 26 Nov 2013 08:50:59 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VlEMD-0006YX-PZ for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 26 Nov 2013 08:50:59 +0000
+	Tue, 26 Nov 2013 14:53:30 +0000
+Received: from userp1040.oracle.com ([156.151.31.81])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1VlK13-0007nA-5H
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 26 Nov 2013 14:53:29 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,38 +27,35 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kim <jaegeuk.kim@samsung.com>
-Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk.kim@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Fix a potential out of range issue introduced by commit:
-22fb72225a
-f2fs: simplify write_orphan_inodes for better readable
+Hello Jaegeuk Kim,
 
+The patch 3fa7fb17dc9a: "f2fs: introduce f2fs_issue_discard() to clean
+up" from Nov 12, 2013, leads to the following static checker warning:
+	"fs/f2fs/segment.c:274 f2fs_issue_discard()
+	 warn: should 'blklen << sbi->log_sectors_per_block' be a 64 bit
+	 type?"
 
+fs/f2fs/segment.c
+   270  static void f2fs_issue_discard(struct f2fs_sb_info *sbi,
+   271                                  block_t blkstart, block_t blklen)
+   272  {
+   273          sector_t sector_addr = blkstart << sbi->log_sectors_per_block;
+   274          sector_t sector_len = blklen << sbi->log_sectors_per_block;
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
----
- fs/f2fs/checkpoint.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+block_t is a 32 bit type and sector_t is a 64 bit type.  The upper 32
+bits of the sector_t are not used because the shift will wrap.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 7fe69ff..3e62987 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -323,9 +323,9 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- 			memset(orphan_blk, 0, sizeof(*orphan_blk));
- 		}
- 
--		orphan_blk->ino[nentries] = cpu_to_le32(orphan->ino);
-+		orphan_blk->ino[nentries++] = cpu_to_le32(orphan->ino);
- 
--		if (nentries++ == F2FS_ORPHANS_PER_BLOCK) {
-+		if (nentries == F2FS_ORPHANS_PER_BLOCK) {
- 			/*
- 			 * an orphan block is full of 1020 entries,
- 			 * then we need to flush current orphan blocks
--- 
-1.7.7
+   275  
+   276          blkdev_issue_discard(sbi->sb->s_bdev, sector_addr, sector_len,
+   277                                                          GFP_NOFS, 0);
+   278          trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
+   279  }
+
+regards,
+dan carpenter
 
 
 ------------------------------------------------------------------------------
