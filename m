@@ -1,26 +1,33 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 Subject: Re: f2fs: introduce f2fs_issue_discard() to clean up
-Date: Wed, 27 Nov 2013 11:31:17 +0300
-Message-ID: <20131127083117.GT5443@mwanda>
+Date: Wed, 27 Nov 2013 18:04:57 +0900
+Message-ID: <1385543097.2417.35.camel@kjgkr>
 References: <20131126145315.GA27436@elgon.mountain>
-	<1385520381.2417.17.camel@kjgkr>
+	<1385520381.2417.17.camel@kjgkr> <20131127083117.GT5443@mwanda>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <dan.carpenter@oracle.com>) id 1VlaWx-0008Un-GQ
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vlb4N-0000rt-VE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 27 Nov 2013 08:31:31 +0000
-Received: from userp1040.oracle.com ([156.151.31.81])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1VlaWw-0007JP-Nd
+	Wed, 27 Nov 2013 09:06:04 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1Vlb4K-0003UJ-Eo
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 27 Nov 2013 08:31:31 +0000
-Content-Disposition: inline
-In-Reply-To: <1385520381.2417.17.camel@kjgkr>
+	Wed, 27 Nov 2013 09:06:03 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MWW001RZZXSNUA0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 27 Nov 2013 18:05:52 +0900 (KST)
+In-reply-to: <20131127083117.GT5443@mwanda>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,30 +37,74 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, Nov 27, 2013 at 11:46:21AM +0900, Jaegeuk Kim wrote:
-> Hi Dan,
-> 
-> Thank you for the report.
-> 
-> How about this?
-> Thanks,
-
-You've just disguised the bug instead of fixing it.  Later versions of
-this static checker will complain about the new code as well.  We're
-unlikely to support 18TB with f2fs so let's just leave the code as is
-with the original warning.
-
-regards,
-dan carpenter
-
-
-
-------------------------------------------------------------------------------
-Rapidly troubleshoot problems before they affect your business. Most IT 
-organizations don't have a clear picture of how application performance 
-affects their revenue. With AppDynamics, you get 100% visibility into your 
-Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
-http://pubads.g.doubleclick.net/gampad/clk?id=84349351&iu=/4140/ostg.clktrk
+SGksCgoyMDEzLTExLTI3ICjsiJgpLCAxMTozMSArMDMwMCwgRGFuIENhcnBlbnRlcjoKPiBPbiBX
+ZWQsIE5vdiAyNywgMjAxMyBhdCAxMTo0NjoyMUFNICswOTAwLCBKYWVnZXVrIEtpbSB3cm90ZToK
+PiA+IEhpIERhbiwKPiA+IAo+ID4gVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0Lgo+ID4gCj4gPiBI
+b3cgYWJvdXQgdGhpcz8KPiA+IFRoYW5rcywKPiAKPiBZb3UndmUganVzdCBkaXNndWlzZWQgdGhl
+IGJ1ZyBpbnN0ZWFkIG9mIGZpeGluZyBpdC4gIExhdGVyIHZlcnNpb25zIG9mCj4gdGhpcyBzdGF0
+aWMgY2hlY2tlciB3aWxsIGNvbXBsYWluIGFib3V0IHRoZSBuZXcgY29kZSBhcyB3ZWxsLiAgV2Un
+cmUKPiB1bmxpa2VseSB0byBzdXBwb3J0IDE4VEIgd2l0aCBmMmZzIHNvIGxldCdzIGp1c3QgbGVh
+dmUgdGhlIGNvZGUgYXMgaXMKPiB3aXRoIHRoZSBvcmlnaW5hbCB3YXJuaW5nLgoKT29wcy4gSSB3
+YXMgb3V0IG9mIG1pbmQgYXQgdGhhdCB0aW1lLgpJdCBzaG91bGQgYmUgZG9uZSBjYXN0aW5nIGZy
+b20gYmxvY2tfdCB0byBzZWN0b3JfdCBleHBsaWNpdGx5LCBzaW5jZSBpdApjYW4gYmUgYSBwcm9i
+bGVtIGFmdGVyIHRoZSB2b2x1bWUgc2l6ZSBiZWNvbWVzIG92ZXIgMlRCLCAyXigzMi0zKSAqIDRL
+Qi4KTGV0IG1lIGZpeCB0aGUgcG90ZW50aWFsIHByb2JsZW0gYXMgZm9sbG93cy4KVGhhbmtzLAoK
+RnJvbSBiMDdkNzhlOTY5M2RiZGIzYmI0NGJkZWNiMTkwNDQ0ZmFkZTg2YjM5IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb20+
+CkRhdGU6IFR1ZSwgMTIgTm92IDIwMTMgMTY6NTU6MTcgKzA5MDAKU3ViamVjdDogW1BBVENIXSBm
+MmZzOiBpbnRyb2R1Y2UgZjJmc19pc3N1ZV9kaXNjYXJkKCkgdG8gY2xlYW4gdXAKQ2M6IGxpbnV4
+LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnLAps
+aW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAoKQ2hhbmdlIGxvZyBmcm9tIHYx
+OgogbyBmaXggMzJiaXQgZHJvcHMgcmVwb3J0ZWQgYnkgRGFuIENhcnBlbnRlcgoKVGhpcyBwYXRj
+aCBhZGRzIGYyZnNfaXNzdWVfZGlzY2FyZCgpIHRvIGNsZWFuIHVwIGJsa2Rldl9pc3N1ZV9kaXNj
+YXJkKCkKZmxvd3MuCgpEYW4gY2FycGVudGVyIHJlcG9ydGVkOgoiYmxvY2tfdCBpcyBhIDMyIGJp
+dCB0eXBlIGFuZCBzZWN0b3JfdCBpcyBhIDY0IGJpdCB0eXBlLiAgVGhlIHVwcGVyIDMyCmJpdHMg
+b2YgdGhlIHNlY3Rvcl90IGFyZSBub3QgdXNlZCBiZWNhdXNlIHRoZSBzaGlmdCB3aWxsIHdyYXAu
+IgoKQnVnLVJlcG9ydGVkLWJ5OiBEYW4gQ2FycGVudGVyIDxkYW4uY2FycGVudGVyQG9yYWNsZS5j
+b20+ClNpZ25lZC1vZmYtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4K
+LS0tCiBmcy9mMmZzL3NlZ21lbnQuYyB8IDIxICsrKysrKysrKysrLS0tLS0tLS0tLQogMSBmaWxl
+IGNoYW5nZWQsIDExIGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBh
+L2ZzL2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50LmMKaW5kZXggNTA1YTg4OS4uYzUx
+ZmE0YiAxMDA2NDQKLS0tIGEvZnMvZjJmcy9zZWdtZW50LmMKKysrIGIvZnMvZjJmcy9zZWdtZW50
+LmMKQEAgLTI2Niw2ICsyNjYsMTQgQEAgc3RhdGljIHZvaWQgbG9jYXRlX2RpcnR5X3NlZ21lbnQo
+c3RydWN0CmYyZnNfc2JfaW5mbyAqc2JpLCB1bnNpZ25lZCBpbnQgc2Vnbm8pCiAJbXV0ZXhfdW5s
+b2NrKCZkaXJ0eV9pLT5zZWdsaXN0X2xvY2spOwogfQogCitzdGF0aWMgdm9pZCBmMmZzX2lzc3Vl
+X2Rpc2NhcmQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAorCQkJCWJsb2NrX3QgYmxrc3RhcnQs
+IGJsb2NrX3QgYmxrbGVuKQoreworCXNlY3Rvcl90IHN0YXJ0ID0gKChzZWN0b3JfdClibGtzdGFy
+dCkgPDwgc2JpLT5sb2dfc2VjdG9yc19wZXJfYmxvY2s7CisJc2VjdG9yX3QgbGVuID0gKChzZWN0
+b3JfdClibGtsZW4pIDw8IHNiaS0+bG9nX3NlY3RvcnNfcGVyX2Jsb2NrOworCWJsa2Rldl9pc3N1
+ZV9kaXNjYXJkKHNiaS0+c2ItPnNfYmRldiwgc3RhcnQsIGxlbiwgR0ZQX05PRlMsIDApOworfQor
+CiBzdGF0aWMgdm9pZCBhZGRfZGlzY2FyZF9hZGRycyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmks
+CiAJCQl1bnNpZ25lZCBpbnQgc2Vnbm8sIHN0cnVjdCBzZWdfZW50cnkgKnNlKQogewpAQCAtMzU0
+LDIyICszNjIsMTUgQEAgdm9pZCBjbGVhcl9wcmVmcmVlX3NlZ21lbnRzKHN0cnVjdCBmMmZzX3Ni
+X2luZm8KKnNiaSkKIAkJaWYgKCF0ZXN0X29wdChzYmksIERJU0NBUkQpKQogCQkJY29udGludWU7
+CiAKLQkJYmxrZGV2X2lzc3VlX2Rpc2NhcmQoc2JpLT5zYi0+c19iZGV2LAotCQkJCVNUQVJUX0JM
+T0NLKHNiaSwgc3RhcnQpIDw8Ci0JCQkJc2JpLT5sb2dfc2VjdG9yc19wZXJfYmxvY2ssCi0JCQkJ
+KDEgPDwgKHNiaS0+bG9nX3NlY3RvcnNfcGVyX2Jsb2NrICsKLQkJCQlzYmktPmxvZ19ibG9ja3Nf
+cGVyX3NlZykpICogKGVuZCAtIHN0YXJ0KSwKLQkJCQlHRlBfTk9GUywgMCk7CisJCWYyZnNfaXNz
+dWVfZGlzY2FyZChzYmksIFNUQVJUX0JMT0NLKHNiaSwgc3RhcnQpLAorCQkJCShlbmQgLSBzdGFy
+dCkgPDwgc2JpLT5sb2dfYmxvY2tzX3Blcl9zZWcpOwogCX0KIAltdXRleF91bmxvY2soJmRpcnR5
+X2ktPnNlZ2xpc3RfbG9jayk7CiAKIAkvKiBzZW5kIHNtYWxsIGRpc2NhcmRzICovCiAJbGlzdF9m
+b3JfZWFjaF9zYWZlKHRoaXMsIG5leHQsIGhlYWQpIHsKIAkJZW50cnkgPSBsaXN0X2VudHJ5KHRo
+aXMsIHN0cnVjdCBkaXNjYXJkX2VudHJ5LCBsaXN0KTsKLQkJYmxrZGV2X2lzc3VlX2Rpc2NhcmQo
+c2JpLT5zYi0+c19iZGV2LAotCQkJCWVudHJ5LT5ibGthZGRyIDw8IHNiaS0+bG9nX3NlY3RvcnNf
+cGVyX2Jsb2NrLAotCQkJCSgxIDw8IHNiaS0+bG9nX3NlY3RvcnNfcGVyX2Jsb2NrKSAqIGVudHJ5
+LT5sZW4sCi0JCQkJR0ZQX05PRlMsIDApOworCQlmMmZzX2lzc3VlX2Rpc2NhcmQoc2JpLCBlbnRy
+eS0+YmxrYWRkciwgZW50cnktPmxlbik7CiAJCWxpc3RfZGVsKCZlbnRyeS0+bGlzdCk7CiAJCVNN
+X0koc2JpKS0+bnJfZGlzY2FyZHMgLT0gZW50cnktPmxlbjsKIAkJa21lbV9jYWNoZV9mcmVlKGRp
+c2NhcmRfZW50cnlfc2xhYiwgZW50cnkpOwotLSAKMS44LjQuNDc0LmcxMjhhOTZjCgoKCi0tIApK
+YWVnZXVrIEtpbQpTYW1zdW5nCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpSYXBpZGx5IHRyb3Vi
+bGVzaG9vdCBwcm9ibGVtcyBiZWZvcmUgdGhleSBhZmZlY3QgeW91ciBidXNpbmVzcy4gTW9zdCBJ
+VCAKb3JnYW5pemF0aW9ucyBkb24ndCBoYXZlIGEgY2xlYXIgcGljdHVyZSBvZiBob3cgYXBwbGlj
+YXRpb24gcGVyZm9ybWFuY2UgCmFmZmVjdHMgdGhlaXIgcmV2ZW51ZS4gV2l0aCBBcHBEeW5hbWlj
+cywgeW91IGdldCAxMDAlIHZpc2liaWxpdHkgaW50byB5b3VyIApKYXZhLC5ORVQsICYgUEhQIGFw
+cGxpY2F0aW9uLiBTdGFydCB5b3VyIDE1LWRheSBGUkVFIFRSSUFMIG9mIEFwcER5bmFtaWNzIFBy
+byEKaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTg0MzQ5MzUx
+Jml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2
+ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
+c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
