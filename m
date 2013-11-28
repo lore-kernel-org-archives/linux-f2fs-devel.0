@@ -1,259 +1,206 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH] f2fs: readahead contiguous pages for
- restore_node_summary
-Date: Thu, 28 Nov 2013 12:33:28 +0900
-Message-ID: <1385609608.2417.38.camel@kjgkr>
-References: <000101cee757$6f3b4790$4db1d6b0$@samsung.com>
- <1385530195.2417.22.camel@kjgkr> <002f01ceeb46$8758b9a0$960a2ce0$@samsung.com>
- <1385540365.2417.28.camel@kjgkr> <003001ceebd9$07157380$15405a80$@samsung.com>
+Subject: Re: f2fs: introduce f2fs_issue_discard() to clean up
+Date: Thu, 28 Nov 2013 13:04:47 +0900
+Message-ID: <1385611487.2417.40.camel@kjgkr>
+References: <20131126145315.GA27436@elgon.mountain>
+	<1385520381.2417.17.camel@kjgkr> <20131127083117.GT5443@mwanda>
+	<1385543097.2417.35.camel@kjgkr> <20131127104130.GW5443@mwanda>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <003001ceebd9$07157380$15405a80$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?UTF-8?Q?=27=E8=B0=AD=E5=A7=9D=27?= <shu.tan@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VlsrZ-0002gs-0a
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 28 Nov 2013 04:06:01 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VlsrW-0004MK-KD
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 28 Nov 2013 04:06:00 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MWY00KPKGPIWO00@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 28 Nov 2013 13:05:42 +0900 (KST)
+In-reply-to: <20131127104130.GW5443@mwanda>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+Thank you Dan.
 
-2013-11-28 (=EB=AA=A9), 09:26 +0800, Chao Yu:
-> Hi Kim,
->=20
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> > Sent: Wednesday, November 27, 2013 4:19 PM
-> > To: Chao Yu
-> > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; li=
-nux-f2fs-devel@lists.sourceforge.net; '=E8=B0=AD=E5=A7=9D'
-> > Subject: RE: [f2fs-dev] [PATCH] f2fs: readahead contiguous pages fo=
-r restore_node_summary
-> >=20
-> > Hi,
-> >=20
-> > 2013-11-27 (=EC=88=98), 15:58 +0800, Chao Yu:
-> > > Hi Kim,
-> > >
-> > > > -----Original Message-----
-> > > > From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> > > > Sent: Wednesday, November 27, 2013 1:30 PM
-> > > > To: Chao Yu
-> > > > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org=
-; linux-f2fs-devel@lists.sourceforge.net; =E8=B0=AD=E5=A7=9D
-> > > > Subject: Re: [f2fs-dev] [PATCH] f2fs: readahead contiguous page=
-s for restore_node_summary
-> > > >
-> > > > Hi Chao,
-> > > >
-> > > > It seems that we already have a readahed function for node page=
-s,
-> > > > ra_node_page().
-> > > > So, we don't make a page list for this, but can use the node_in=
-ode's
-> > > > page cache.
-> > >
-> > > So you mean it's waste to release page list with updated data aft=
-er we
-> > > finish work in restore_node_summary, right?
-> >=20
-> > Right.
->=20
-> So how about add all pages of page list to node_inode's address space=
- by
-> add_to_page_cache_lru() with arg sum_entry->nid?
+I wrote two patches to address the warnings below.
+Thanks.
 
-I don't think it's proper way to use add_to_page_cache_lru() directly.
+>From 1745cd1e14eff75089a8d88fe07f07549e1f3946 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Date: Thu, 28 Nov 2013 12:44:05 +0900
+Subject: [PATCH 1/2] f2fs: bug fix on bit overflow from 32bits to 64bits
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+linux-f2fs-devel@lists.sourceforge.net
 
->=20
-> >=20
-> > >
-> > > >
-> > > > So how about writing ra_node_pages() which use the node_inode's=
- page
-> > > > cache?
-> > >
-> > > Hmm, so ra_node_pages is introduced for read node_inode's pages w=
-hich are
-> > > logical contiguously? and it also could take place of ra_node_pag=
-e?
-> >=20
-> > Ah. The ra_node_page() read a node page ahead for a given node id.
-> > So it doesn't match exactly between ra_node_page() and ra_node_page=
-s()
-> > that I suggested.
-> > So how about reading node pages and then caching some of them in th=
-e
-> > page cache, node_inode's address space?
->=20
-> Got it,
-> If we do not use the method above, we should search the NAT for nid n=
-umber
-> as the index of node_inode's page by the specified node page blkaddr,=
- that costs
-> a lot.
-> How do you think?
+This patch fixes some bit overflows by the shift operations.
 
-1. grab_cache_page(node_footer->nid);
-2. memcpy();
-3. SetPageUptodate();
-4. f2fs_put_page();
+Dan Carpenter reported potential bugs on bit overflows as follows.
 
-Thanks,
+fs/f2fs/segment.c:910 submit_write_page()
+	warn: should 'blk_addr << ((sbi)->log_blocksize - 9)' be a 64 bit type?
+fs/f2fs/checkpoint.c:429 get_valid_checkpoint()
+	warn: should '1 << ()' be a 64 bit type?
+fs/f2fs/data.c:408 f2fs_readpage()
+	warn: should 'blk_addr << ((sbi)->log_blocksize - 9)' be a 64 bit type?
+fs/f2fs/data.c:457 submit_read_page()
+	warn: should 'blk_addr << ((sbi)->log_blocksize - 9)' be a 64 bit type?
+fs/f2fs/data.c:525 get_data_block_ro()
+	warn: should 'i << blkbits' be a 64 bit type?
 
->=20
-> >=20
-> > Thanks,
-> >=20
-> > >
-> > >
-> > > >
-> > > > Thanks,
-> > > >
-> > > > 2013-11-22 (=EA=B8=88), 15:48 +0800, Chao Yu:
-> > > > > If cp has no CP_UMOUNT_FLAG, we will read all pages in whole =
-node segment
-> > > > > one by one, it makes low performance. So let's merge contiguo=
-us pages and
-> > > > > readahead for better performance.
-> > > > >
-> > > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > > > > ---
-> > > > >  fs/f2fs/node.c |   89 ++++++++++++++++++++++++++++++++++++++=
-+-----------------
-> > > > >  1 file changed, 63 insertions(+), 26 deletions(-)
-> > > > >
-> > > > > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > > > > index 4ac4150..81e704a 100644
-> > > > > --- a/fs/f2fs/node.c
-> > > > > +++ b/fs/f2fs/node.c
-> > > > > @@ -1572,47 +1572,84 @@ int recover_inode_page(struct f2fs_sb=
-_info *sbi, struct page *page)
-> > > > >  	return 0;
-> > > > >  }
-> > > > >
-> > > > > +/*
-> > > > > + * ra_sum_pages() merge contiguous pages into one bio and su=
-bmit.
-> > > > > + * these pre-readed pages are linked in pages list.
-> > > > > + */
-> > > > > +static int ra_sum_pages(struct f2fs_sb_info *sbi, struct lis=
-t_head *pages,
-> > > > > +				int start, int nrpages)
-> > > > > +{
-> > > > > +	struct page *page;
-> > > > > +	int page_idx =3D start;
-> > > > > +
-> > > > > +	for (; page_idx < start + nrpages; page_idx++) {
-> > > > > +		/* alloc temporal page for read node summary info*/
-> > > > > +		page =3D alloc_page(GFP_NOFS | __GFP_ZERO);
-> > > > > +		if (!page) {
-> > > > > +			struct page *tmp;
-> > > > > +			list_for_each_entry_safe(page, tmp, pages, lru) {
-> > > > > +				list_del(&page->lru);
-> > > > > +				unlock_page(page);
-> > > > > +				__free_pages(page, 0);
-> > > > > +			}
-> > > > > +			return -ENOMEM;
-> > > > > +		}
-> > > > > +
-> > > > > +		lock_page(page);
-> > > > > +		page->index =3D page_idx;
-> > > > > +		list_add_tail(&page->lru, pages);
-> > > > > +	}
-> > > > > +
-> > > > > +	list_for_each_entry(page, pages, lru)
-> > > > > +		submit_read_page(sbi, page, page->index, READ_SYNC);
-> > > > > +
-> > > > > +	f2fs_submit_read_bio(sbi, READ_SYNC);
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > >  int restore_node_summary(struct f2fs_sb_info *sbi,
-> > > > >  			unsigned int segno, struct f2fs_summary_block *sum)
-> > > > >  {
-> > > > >  	struct f2fs_node *rn;
-> > > > >  	struct f2fs_summary *sum_entry;
-> > > > > -	struct page *page;
-> > > > > +	struct page *page, *tmp;
-> > > > >  	block_t addr;
-> > > > > -	int i, last_offset;
-> > > > > -
-> > > > > -	/* alloc temporal page for read node */
-> > > > > -	page =3D alloc_page(GFP_NOFS | __GFP_ZERO);
-> > > > > -	if (!page)
-> > > > > -		return -ENOMEM;
-> > > > > -	lock_page(page);
-> > > > > +	int bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
-> > > > > +	int i, last_offset, nrpages, err =3D 0;
-> > > > > +	LIST_HEAD(page_list);
-> > > > >
-> > > > >  	/* scan the node segment */
-> > > > >  	last_offset =3D sbi->blocks_per_seg;
-> > > > >  	addr =3D START_BLOCK(sbi, segno);
-> > > > >  	sum_entry =3D &sum->entries[0];
-> > > > >
-> > > > > -	for (i =3D 0; i < last_offset; i++, sum_entry++) {
-> > > > > -		/*
-> > > > > -		 * In order to read next node page,
-> > > > > -		 * we must clear PageUptodate flag.
-> > > > > -		 */
-> > > > > -		ClearPageUptodate(page);
-> > > > > +	for (i =3D 0; i < last_offset; i +=3D nrpages, addr +=3D nr=
-pages) {
-> > > > >
-> > > > > -		if (f2fs_readpage(sbi, page, addr, READ_SYNC))
-> > > > > -			goto out;
-> > > > > +		nrpages =3D min(last_offset - i, bio_blocks);
-> > > > > +		/* read ahead node pages */
-> > > > > +		err =3D ra_sum_pages(sbi, &page_list, addr, nrpages);
-> > > > > +		if (err)
-> > > > > +			return err;
-> > > > >
-> > > > > -		lock_page(page);
-> > > > > -		rn =3D F2FS_NODE(page);
-> > > > > -		sum_entry->nid =3D rn->footer.nid;
-> > > > > -		sum_entry->version =3D 0;
-> > > > > -		sum_entry->ofs_in_node =3D 0;
-> > > > > -		addr++;
-> > > > > +		list_for_each_entry_safe(page, tmp, &page_list, lru) {
-> > > > > +
-> > > > > +			lock_page(page);
-> > > > > +			if(PageUptodate(page)) {
-> > > > > +				rn =3D F2FS_NODE(page);
-> > > > > +				sum_entry->nid =3D rn->footer.nid;
-> > > > > +				sum_entry->version =3D 0;
-> > > > > +				sum_entry->ofs_in_node =3D 0;
-> > > > > +				sum_entry++;
-> > > > > +			} else {
-> > > > > +				err =3D -EIO;
-> > > > > +			}
-> > > > > +
-> > > > > +			list_del(&page->lru);
-> > > > > +			unlock_page(page);
-> > > > > +			__free_pages(page, 0);
-> > > > > +		}
-> > > > >  	}
-> > > > > -	unlock_page(page);
-> > > > > -out:
-> > > > > -	__free_pages(page, 0);
-> > > > > -	return 0;
-> > > > > +	return err;
-> > > > >  }
-> > > > >
-> > > > >  static bool flush_nats_in_journal(struct f2fs_sb_info *sbi)
-> > > >
-> > > > --
-> > > > Jaegeuk Kim
-> > > > Samsung
-> > >
-> >=20
-> > --
-> > Jaegeuk Kim
-> > Samsung
->=20
+Bug-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/checkpoint.c | 3 ++-
+ fs/f2fs/data.c       | 2 +-
+ fs/f2fs/segment.c    | 4 ++--
+ fs/f2fs/segment.h    | 4 ++--
+ 4 files changed, 7 insertions(+), 6 deletions(-)
 
---=20
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 3e62987..21e7215 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -426,7 +426,8 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	cp1 = validate_checkpoint(sbi, cp_start_blk_no, &cp1_version);
+ 
+ 	/* The second checkpoint pack should start at the next segment */
+-	cp_start_blk_no += 1 << le32_to_cpu(fsb->log_blocks_per_seg);
++	cp_start_blk_no += ((unsigned long long)1) <<
++				le32_to_cpu(fsb->log_blocks_per_seg);
+ 	cp2 = validate_checkpoint(sbi, cp_start_blk_no, &cp2_version);
+ 
+ 	if (cp1 && cp2) {
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8e2937d..899d78c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -525,7 +525,7 @@ static int get_data_block_ro(struct inode *inode,
+sector_t iblock,
+ 				!= (dn.data_blkaddr + i)) || maxblocks == i)
+ 				break;
+ 		map_bh(bh_result, inode->i_sb, dn.data_blkaddr);
+-		bh_result->b_size = (i << blkbits);
++		bh_result->b_size = (((size_t)i) << blkbits);
+ 	}
+ 	f2fs_put_dnode(&dn);
+ 	trace_f2fs_get_data_block(inode, iblock, bh_result, 0);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1e837139..fc0a10c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -270,8 +270,8 @@ static void locate_dirty_segment(struct f2fs_sb_info
+*sbi, unsigned int segno)
+ static void f2fs_issue_discard(struct f2fs_sb_info *sbi,
+ 				block_t blkstart, block_t blklen)
+ {
+-	sector_t start = ((sector_t)blkstart) << sbi->log_sectors_per_block;
+-	sector_t len = ((sector_t)blklen) << sbi->log_sectors_per_block;
++	sector_t start = SECTOR_FROM_BLOCK(sbi, blkstart);
++	sector_t len = SECTOR_FROM_BLOCK(blklen);
+ 	blkdev_issue_discard(sbi->sb->s_bdev, start, len, GFP_NOFS, 0);
+ 	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
+ }
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index b84dd23..07887e1 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -86,9 +86,9 @@
+ #define TOTAL_SECS(sbi)	(sbi->total_sections)
+ 
+ #define SECTOR_FROM_BLOCK(sbi, blk_addr)				\
+-	(blk_addr << ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE))
++	(((sector_t)blk_addr) << (sbi)->log_sectors_per_block)
+ #define SECTOR_TO_BLOCK(sbi, sectors)					\
+-	(sectors >> ((sbi)->log_blocksize - F2FS_LOG_SECTOR_SIZE))
++	(sectors >> (sbi)->log_sectors_per_block)
+ #define MAX_BIO_BLOCKS(max_hw_blocks)					\
+ 	(min((int)max_hw_blocks, BIO_MAX_PAGES))
+ 
+-- 
+1.8.4.474.g128a96c
+
+>From 478cabf84b707e4bf857fc6f9d1233511faa4072 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Date: Thu, 28 Nov 2013 12:55:13 +0900
+Subject: [PATCH 2/2] f2fs: remove unnecessary condition checks
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+linux-f2fs-devel@lists.sourceforge.net
+
+This patch removes the unnecessary condition checks on:
+
+fs/f2fs/gc.c:667 do_garbage_collect() warn: 'sum_page' isn't an ERR_PTR
+fs/f2fs/f2fs.h:795 f2fs_put_page() warn: 'page' isn't an ERR_PTR
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/f2fs.h | 2 +-
+ fs/f2fs/gc.c   | 2 --
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3134259..ea8a05c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -793,7 +793,7 @@ static inline unsigned int valid_inode_count(struct
+f2fs_sb_info *sbi)
+ 
+ static inline void f2fs_put_page(struct page *page, int unlock)
+ {
+-	if (!page || IS_ERR(page))
++	if (!page)
+ 		return;
+ 
+ 	if (unlock) {
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index b7ad1ec..5fa54c1 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -664,8 +664,6 @@ static void do_garbage_collect(struct f2fs_sb_info
+*sbi, unsigned int segno,
+ 
+ 	/* read segment summary of victim */
+ 	sum_page = get_sum_page(sbi, segno);
+-	if (IS_ERR(sum_page))
+-		return;
+ 
+ 	blk_start_plug(&plug);
+ 
+-- 
+1.8.4.474.g128a96c
+
+
+
+
+-- 
 Jaegeuk Kim
 Samsung
+
+
+------------------------------------------------------------------------------
+Rapidly troubleshoot problems before they affect your business. Most IT 
+organizations don't have a clear picture of how application performance 
+affects their revenue. With AppDynamics, you get 100% visibility into your 
+Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
+http://pubads.g.doubleclick.net/gampad/clk?id=84349351&iu=/4140/ostg.clktrk
