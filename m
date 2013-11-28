@@ -1,35 +1,29 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 Subject: Re: f2fs: introduce f2fs_issue_discard() to clean up
-Date: Thu, 28 Nov 2013 18:24:41 +0900
-Message-ID: <1385630681.2417.41.camel@kjgkr>
+Date: Thu, 28 Nov 2013 12:45:03 +0300
+Message-ID: <20131128094503.GF5443@mwanda>
 References: <20131126145315.GA27436@elgon.mountain>
 	<1385520381.2417.17.camel@kjgkr> <20131127083117.GT5443@mwanda>
 	<1385543097.2417.35.camel@kjgkr> <20131127104130.GW5443@mwanda>
 	<1385611487.2417.40.camel@kjgkr> <20131128080852.GD5443@mwanda>
-Reply-To: jaegeuk.kim@samsung.com
+	<1385630681.2417.41.camel@kjgkr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vlxr5-0007gd-1o
+	(envelope-from <dan.carpenter@oracle.com>) id 1Vly9t-0003Aq-Io
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Nov 2013 09:25:51 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1Vlxr3-0006Zz-1D
+	Thu, 28 Nov 2013 09:45:17 +0000
+Received: from userp1040.oracle.com ([156.151.31.81])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1Vly9s-0003A7-Mr
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Nov 2013 09:25:51 +0000
-Received: from epcpsbgr1.samsung.com
-	(u141.gpu120.samsung.co.kr [203.254.230.141])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MWY00E19VIOS020@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Nov 2013 18:25:36 +0900 (KST)
-In-reply-to: <20131128080852.GD5443@mwanda>
+	Thu, 28 Nov 2013 09:45:17 +0000
+Content-Disposition: inline
+In-Reply-To: <1385630681.2417.41.camel@kjgkr>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,28 +33,31 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-MjAxMy0xMS0yOCAo66qpKSwgMTE6MDggKzAzMDAsIERhbiBDYXJwZW50ZXI6Cj4gT24gVGh1LCBO
-b3YgMjgsIDIwMTMgYXQgMDE6MDQ6NDdQTSArMDkwMCwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4gPiBk
-aWZmIC0tZ2l0IGEvZnMvZjJmcy9nYy5jIGIvZnMvZjJmcy9nYy5jCj4gPiBpbmRleCBiN2FkMWVj
-Li41ZmE1NGMxIDEwMDY0NAo+ID4gLS0tIGEvZnMvZjJmcy9nYy5jCj4gPiArKysgYi9mcy9mMmZz
-L2djLmMKPiA+IEBAIC02NjQsOCArNjY0LDYgQEAgc3RhdGljIHZvaWQgZG9fZ2FyYmFnZV9jb2xs
-ZWN0KHN0cnVjdCBmMmZzX3NiX2luZm8KPiA+ICpzYmksIHVuc2lnbmVkIGludCBzZWdubywKPiA+
-ICAKPiA+ICAJLyogcmVhZCBzZWdtZW50IHN1bW1hcnkgb2YgdmljdGltICovCj4gPiAgCXN1bV9w
-YWdlID0gZ2V0X3N1bV9wYWdlKHNiaSwgc2Vnbm8pOwo+ID4gLQlpZiAoSVNfRVJSKHN1bV9wYWdl
-KSkKPiA+IC0JCXJldHVybjsKPiAKPiBEaWRuJ3QgeW91IHdhbnQgdG8gY2hlY2sgZm9yIE5VTEwg
-aGVyZT8KCkl0IHdhcyBuZWVkbGVzcywgc2luY2UgZ2V0X3N1bV9wYWdlKCkgcmV0dXJucyBhbHdh
-eXMgdmFsaWQgcGFnZS4KCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKCi0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQpSYXBpZGx5IHRyb3VibGVzaG9vdCBwcm9ibGVtcyBiZWZvcmUgdGhleSBhZmZlY3Qg
-eW91ciBidXNpbmVzcy4gTW9zdCBJVCAKb3JnYW5pemF0aW9ucyBkb24ndCBoYXZlIGEgY2xlYXIg
-cGljdHVyZSBvZiBob3cgYXBwbGljYXRpb24gcGVyZm9ybWFuY2UgCmFmZmVjdHMgdGhlaXIgcmV2
-ZW51ZS4gV2l0aCBBcHBEeW5hbWljcywgeW91IGdldCAxMDAlIHZpc2liaWxpdHkgaW50byB5b3Vy
-IApKYXZhLC5ORVQsICYgUEhQIGFwcGxpY2F0aW9uLiBTdGFydCB5b3VyIDE1LWRheSBGUkVFIFRS
-SUFMIG9mIEFwcER5bmFtaWNzIFBybyEKaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9n
-YW1wYWQvY2xrP2lkPTg0MzQ5MzUxJml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
-ZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
-dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+T24gVGh1LCBOb3YgMjgsIDIwMTMgYXQgMDY6MjQ6NDFQTSArMDkwMCwgSmFlZ2V1ayBLaW0gd3Jv
+dGU6Cj4gMjAxMy0xMS0yOCAo66qpKSwgMTE6MDggKzAzMDAsIERhbiBDYXJwZW50ZXI6Cj4gPiBP
+biBUaHUsIE5vdiAyOCwgMjAxMyBhdCAwMTowNDo0N1BNICswOTAwLCBKYWVnZXVrIEtpbSB3cm90
+ZToKPiA+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZ2MuYyBiL2ZzL2YyZnMvZ2MuYwo+ID4gPiBp
+bmRleCBiN2FkMWVjLi41ZmE1NGMxIDEwMDY0NAo+ID4gPiAtLS0gYS9mcy9mMmZzL2djLmMKPiA+
+ID4gKysrIGIvZnMvZjJmcy9nYy5jCj4gPiA+IEBAIC02NjQsOCArNjY0LDYgQEAgc3RhdGljIHZv
+aWQgZG9fZ2FyYmFnZV9jb2xsZWN0KHN0cnVjdCBmMmZzX3NiX2luZm8KPiA+ID4gKnNiaSwgdW5z
+aWduZWQgaW50IHNlZ25vLAo+ID4gPiAgCj4gPiA+ICAJLyogcmVhZCBzZWdtZW50IHN1bW1hcnkg
+b2YgdmljdGltICovCj4gPiA+ICAJc3VtX3BhZ2UgPSBnZXRfc3VtX3BhZ2Uoc2JpLCBzZWdubyk7
+Cj4gPiA+IC0JaWYgKElTX0VSUihzdW1fcGFnZSkpCj4gPiA+IC0JCXJldHVybjsKPiA+IAo+ID4g
+RGlkbid0IHlvdSB3YW50IHRvIGNoZWNrIGZvciBOVUxMIGhlcmU/Cj4gCj4gSXQgd2FzIG5lZWRs
+ZXNzLCBzaW5jZSBnZXRfc3VtX3BhZ2UoKSByZXR1cm5zIGFsd2F5cyB2YWxpZCBwYWdlLgoKT2gg
+eWVhaC4gIEkgd2Fzbid0IGxvb2tpbmcgY2FyZWZ1bGx5LgoKcmVnYXJkcywKZGFuIGNhcnBlbnRl
+cgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClJhcGlkbHkgdHJvdWJsZXNob290IHByb2JsZW1zIGJl
+Zm9yZSB0aGV5IGFmZmVjdCB5b3VyIGJ1c2luZXNzLiBNb3N0IElUIApvcmdhbml6YXRpb25zIGRv
+bid0IGhhdmUgYSBjbGVhciBwaWN0dXJlIG9mIGhvdyBhcHBsaWNhdGlvbiBwZXJmb3JtYW5jZSAK
+YWZmZWN0cyB0aGVpciByZXZlbnVlLiBXaXRoIEFwcER5bmFtaWNzLCB5b3UgZ2V0IDEwMCUgdmlz
+aWJpbGl0eSBpbnRvIHlvdXIgCkphdmEsLk5FVCwgJiBQSFAgYXBwbGljYXRpb24uIFN0YXJ0IHlv
+dXIgMTUtZGF5IEZSRUUgVFJJQUwgb2YgQXBwRHluYW1pY3MgUHJvIQpodHRwOi8vcHViYWRzLmcu
+ZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9ODQzNDkzNTEmaXU9LzQxNDAvb3N0Zy5jbGt0
+cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgt
+ZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
+ZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
+ZjJmcy1kZXZlbAo=
