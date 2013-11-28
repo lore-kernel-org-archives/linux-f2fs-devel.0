@@ -1,169 +1,259 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: readahead contiguous pages for
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: readahead contiguous pages for
  restore_node_summary
-Date: Thu, 28 Nov 2013 09:26:45 +0800
-Message-ID: <003001ceebd9$07157380$15405a80$@samsung.com>
+Date: Thu, 28 Nov 2013 12:33:28 +0900
+Message-ID: <1385609608.2417.38.camel@kjgkr>
 References: <000101cee757$6f3b4790$4db1d6b0$@samsung.com>
-	<1385530195.2417.22.camel@kjgkr>
-	<002f01ceeb46$8758b9a0$960a2ce0$@samsung.com>
-	<1385540365.2417.28.camel@kjgkr>
+ <1385530195.2417.22.camel@kjgkr> <002f01ceeb46$8758b9a0$960a2ce0$@samsung.com>
+ <1385540365.2417.28.camel@kjgkr> <003001ceebd9$07157380$15405a80$@samsung.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VlqOY-0003AJ-1c
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Nov 2013 01:27:54 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VlqOV-00048o-Ia
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Nov 2013 01:27:53 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MWY00FS89E81C60@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Nov 2013 10:27:44 +0900 (KST)
-In-reply-to: <1385540365.2417.28.camel@kjgkr>
-Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <003001ceebd9$07157380$15405a80$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?UTF-8?Q?=27=E8=B0=AD=E5=A7=9D=27?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgS2ltLAoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IEphZWdldWsgS2lt
-IFttYWlsdG86amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb21dCj4gU2VudDogV2VkbmVzZGF5LCBOb3Zl
-bWJlciAyNywgMjAxMyA0OjE5IFBNCj4gVG86IENoYW8gWXUKPiBDYzogbGludXgtZnNkZXZlbEB2
-Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWYyZnMt
-ZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0OyAn6LCt5aedJwo+IFN1YmplY3Q6IFJFOiBbZjJm
-cy1kZXZdIFtQQVRDSF0gZjJmczogcmVhZGFoZWFkIGNvbnRpZ3VvdXMgcGFnZXMgZm9yIHJlc3Rv
-cmVfbm9kZV9zdW1tYXJ5Cj4gCj4gSGksCj4gCj4gMjAxMy0xMS0yNyAo7IiYKSwgMTU6NTggKzA4
-MDAsIENoYW8gWXU6Cj4gPiBIaSBLaW0sCj4gPgo+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
-LS0tLQo+ID4gPiBGcm9tOiBKYWVnZXVrIEtpbSBbbWFpbHRvOmphZWdldWsua2ltQHNhbXN1bmcu
-Y29tXQo+ID4gPiBTZW50OiBXZWRuZXNkYXksIE5vdmVtYmVyIDI3LCAyMDEzIDE6MzAgUE0KPiA+
-ID4gVG86IENoYW8gWXUKPiA+ID4gQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOyBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJj
-ZWZvcmdlLm5ldDsg6LCt5aedCj4gPiA+IFN1YmplY3Q6IFJlOiBbZjJmcy1kZXZdIFtQQVRDSF0g
-ZjJmczogcmVhZGFoZWFkIGNvbnRpZ3VvdXMgcGFnZXMgZm9yIHJlc3RvcmVfbm9kZV9zdW1tYXJ5
-Cj4gPiA+Cj4gPiA+IEhpIENoYW8sCj4gPiA+Cj4gPiA+IEl0IHNlZW1zIHRoYXQgd2UgYWxyZWFk
-eSBoYXZlIGEgcmVhZGFoZWQgZnVuY3Rpb24gZm9yIG5vZGUgcGFnZXMsCj4gPiA+IHJhX25vZGVf
-cGFnZSgpLgo+ID4gPiBTbywgd2UgZG9uJ3QgbWFrZSBhIHBhZ2UgbGlzdCBmb3IgdGhpcywgYnV0
-IGNhbiB1c2UgdGhlIG5vZGVfaW5vZGUncwo+ID4gPiBwYWdlIGNhY2hlLgo+ID4KPiA+IFNvIHlv
-dSBtZWFuIGl0J3Mgd2FzdGUgdG8gcmVsZWFzZSBwYWdlIGxpc3Qgd2l0aCB1cGRhdGVkIGRhdGEg
-YWZ0ZXIgd2UKPiA+IGZpbmlzaCB3b3JrIGluIHJlc3RvcmVfbm9kZV9zdW1tYXJ5LCByaWdodD8K
-PiAKPiBSaWdodC4KClNvIGhvdyBhYm91dCBhZGQgYWxsIHBhZ2VzIG9mIHBhZ2UgbGlzdCB0byBu
-b2RlX2lub2RlJ3MgYWRkcmVzcyBzcGFjZSBieQphZGRfdG9fcGFnZV9jYWNoZV9scnUoKSB3aXRo
-IGFyZyBzdW1fZW50cnktPm5pZD8KCj4gCj4gPgo+ID4gPgo+ID4gPiBTbyBob3cgYWJvdXQgd3Jp
-dGluZyByYV9ub2RlX3BhZ2VzKCkgd2hpY2ggdXNlIHRoZSBub2RlX2lub2RlJ3MgcGFnZQo+ID4g
-PiBjYWNoZT8KPiA+Cj4gPiBIbW0sIHNvIHJhX25vZGVfcGFnZXMgaXMgaW50cm9kdWNlZCBmb3Ig
-cmVhZCBub2RlX2lub2RlJ3MgcGFnZXMgd2hpY2ggYXJlCj4gPiBsb2dpY2FsIGNvbnRpZ3VvdXNs
-eT8gYW5kIGl0IGFsc28gY291bGQgdGFrZSBwbGFjZSBvZiByYV9ub2RlX3BhZ2U/Cj4gCj4gQWgu
-IFRoZSByYV9ub2RlX3BhZ2UoKSByZWFkIGEgbm9kZSBwYWdlIGFoZWFkIGZvciBhIGdpdmVuIG5v
-ZGUgaWQuCj4gU28gaXQgZG9lc24ndCBtYXRjaCBleGFjdGx5IGJldHdlZW4gcmFfbm9kZV9wYWdl
-KCkgYW5kIHJhX25vZGVfcGFnZXMoKQo+IHRoYXQgSSBzdWdnZXN0ZWQuCj4gU28gaG93IGFib3V0
-IHJlYWRpbmcgbm9kZSBwYWdlcyBhbmQgdGhlbiBjYWNoaW5nIHNvbWUgb2YgdGhlbSBpbiB0aGUK
-PiBwYWdlIGNhY2hlLCBub2RlX2lub2RlJ3MgYWRkcmVzcyBzcGFjZT8KCkdvdCBpdCwKSWYgd2Ug
-ZG8gbm90IHVzZSB0aGUgbWV0aG9kIGFib3ZlLCB3ZSBzaG91bGQgc2VhcmNoIHRoZSBOQVQgZm9y
-IG5pZCBudW1iZXIKYXMgdGhlIGluZGV4IG9mIG5vZGVfaW5vZGUncyBwYWdlIGJ5IHRoZSBzcGVj
-aWZpZWQgbm9kZSBwYWdlIGJsa2FkZHIsIHRoYXQgY29zdHMKYSBsb3QuCkhvdyBkbyB5b3UgdGhp
-bms/Cgo+IAo+IFRoYW5rcywKPiAKPiA+Cj4gPgo+ID4gPgo+ID4gPiBUaGFua3MsCj4gPiA+Cj4g
-PiA+IDIwMTMtMTEtMjIgKOq4iCksIDE1OjQ4ICswODAwLCBDaGFvIFl1Ogo+ID4gPiA+IElmIGNw
-IGhhcyBubyBDUF9VTU9VTlRfRkxBRywgd2Ugd2lsbCByZWFkIGFsbCBwYWdlcyBpbiB3aG9sZSBu
-b2RlIHNlZ21lbnQKPiA+ID4gPiBvbmUgYnkgb25lLCBpdCBtYWtlcyBsb3cgcGVyZm9ybWFuY2Uu
-IFNvIGxldCdzIG1lcmdlIGNvbnRpZ3VvdXMgcGFnZXMgYW5kCj4gPiA+ID4gcmVhZGFoZWFkIGZv
-ciBiZXR0ZXIgcGVyZm9ybWFuY2UuCj4gPiA+ID4KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBDaGFv
-IFl1IDxjaGFvMi55dUBzYW1zdW5nLmNvbT4KPiA+ID4gPiAtLS0KPiA+ID4gPiAgZnMvZjJmcy9u
-b2RlLmMgfCAgIDg5ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0t
-LS0tLS0tLS0tLS0tCj4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCA2MyBpbnNlcnRpb25zKCspLCAy
-NiBkZWxldGlvbnMoLSkKPiA+ID4gPgo+ID4gPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZzL25vZGUu
-YyBiL2ZzL2YyZnMvbm9kZS5jCj4gPiA+ID4gaW5kZXggNGFjNDE1MC4uODFlNzA0YSAxMDA2NDQK
-PiA+ID4gPiAtLS0gYS9mcy9mMmZzL25vZGUuYwo+ID4gPiA+ICsrKyBiL2ZzL2YyZnMvbm9kZS5j
-Cj4gPiA+ID4gQEAgLTE1NzIsNDcgKzE1NzIsODQgQEAgaW50IHJlY292ZXJfaW5vZGVfcGFnZShz
-dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0cnVjdCBwYWdlICpwYWdlKQo+ID4gPiA+ICAJcmV0
-dXJuIDA7Cj4gPiA+ID4gIH0KPiA+ID4gPgo+ID4gPiA+ICsvKgo+ID4gPiA+ICsgKiByYV9zdW1f
-cGFnZXMoKSBtZXJnZSBjb250aWd1b3VzIHBhZ2VzIGludG8gb25lIGJpbyBhbmQgc3VibWl0Lgo+
-ID4gPiA+ICsgKiB0aGVzZSBwcmUtcmVhZGVkIHBhZ2VzIGFyZSBsaW5rZWQgaW4gcGFnZXMgbGlz
-dC4KPiA+ID4gPiArICovCj4gPiA+ID4gK3N0YXRpYyBpbnQgcmFfc3VtX3BhZ2VzKHN0cnVjdCBm
-MmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IGxpc3RfaGVhZCAqcGFnZXMsCj4gPiA+ID4gKwkJCQlp
-bnQgc3RhcnQsIGludCBucnBhZ2VzKQo+ID4gPiA+ICt7Cj4gPiA+ID4gKwlzdHJ1Y3QgcGFnZSAq
-cGFnZTsKPiA+ID4gPiArCWludCBwYWdlX2lkeCA9IHN0YXJ0Owo+ID4gPiA+ICsKPiA+ID4gPiAr
-CWZvciAoOyBwYWdlX2lkeCA8IHN0YXJ0ICsgbnJwYWdlczsgcGFnZV9pZHgrKykgewo+ID4gPiA+
-ICsJCS8qIGFsbG9jIHRlbXBvcmFsIHBhZ2UgZm9yIHJlYWQgbm9kZSBzdW1tYXJ5IGluZm8qLwo+
-ID4gPiA+ICsJCXBhZ2UgPSBhbGxvY19wYWdlKEdGUF9OT0ZTIHwgX19HRlBfWkVSTyk7Cj4gPiA+
-ID4gKwkJaWYgKCFwYWdlKSB7Cj4gPiA+ID4gKwkJCXN0cnVjdCBwYWdlICp0bXA7Cj4gPiA+ID4g
-KwkJCWxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShwYWdlLCB0bXAsIHBhZ2VzLCBscnUpIHsKPiA+
-ID4gPiArCQkJCWxpc3RfZGVsKCZwYWdlLT5scnUpOwo+ID4gPiA+ICsJCQkJdW5sb2NrX3BhZ2Uo
-cGFnZSk7Cj4gPiA+ID4gKwkJCQlfX2ZyZWVfcGFnZXMocGFnZSwgMCk7Cj4gPiA+ID4gKwkJCX0K
-PiA+ID4gPiArCQkJcmV0dXJuIC1FTk9NRU07Cj4gPiA+ID4gKwkJfQo+ID4gPiA+ICsKPiA+ID4g
-PiArCQlsb2NrX3BhZ2UocGFnZSk7Cj4gPiA+ID4gKwkJcGFnZS0+aW5kZXggPSBwYWdlX2lkeDsK
-PiA+ID4gPiArCQlsaXN0X2FkZF90YWlsKCZwYWdlLT5scnUsIHBhZ2VzKTsKPiA+ID4gPiArCX0K
-PiA+ID4gPiArCj4gPiA+ID4gKwlsaXN0X2Zvcl9lYWNoX2VudHJ5KHBhZ2UsIHBhZ2VzLCBscnUp
-Cj4gPiA+ID4gKwkJc3VibWl0X3JlYWRfcGFnZShzYmksIHBhZ2UsIHBhZ2UtPmluZGV4LCBSRUFE
-X1NZTkMpOwo+ID4gPiA+ICsKPiA+ID4gPiArCWYyZnNfc3VibWl0X3JlYWRfYmlvKHNiaSwgUkVB
-RF9TWU5DKTsKPiA+ID4gPiArCXJldHVybiAwOwo+ID4gPiA+ICt9Cj4gPiA+ID4gKwo+ID4gPiA+
-ICBpbnQgcmVzdG9yZV9ub2RlX3N1bW1hcnkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ID4g
-PiA+ICAJCQl1bnNpZ25lZCBpbnQgc2Vnbm8sIHN0cnVjdCBmMmZzX3N1bW1hcnlfYmxvY2sgKnN1
-bSkKPiA+ID4gPiAgewo+ID4gPiA+ICAJc3RydWN0IGYyZnNfbm9kZSAqcm47Cj4gPiA+ID4gIAlz
-dHJ1Y3QgZjJmc19zdW1tYXJ5ICpzdW1fZW50cnk7Cj4gPiA+ID4gLQlzdHJ1Y3QgcGFnZSAqcGFn
-ZTsKPiA+ID4gPiArCXN0cnVjdCBwYWdlICpwYWdlLCAqdG1wOwo+ID4gPiA+ICAJYmxvY2tfdCBh
-ZGRyOwo+ID4gPiA+IC0JaW50IGksIGxhc3Rfb2Zmc2V0Owo+ID4gPiA+IC0KPiA+ID4gPiAtCS8q
-IGFsbG9jIHRlbXBvcmFsIHBhZ2UgZm9yIHJlYWQgbm9kZSAqLwo+ID4gPiA+IC0JcGFnZSA9IGFs
-bG9jX3BhZ2UoR0ZQX05PRlMgfCBfX0dGUF9aRVJPKTsKPiA+ID4gPiAtCWlmICghcGFnZSkKPiA+
-ID4gPiAtCQlyZXR1cm4gLUVOT01FTTsKPiA+ID4gPiAtCWxvY2tfcGFnZShwYWdlKTsKPiA+ID4g
-PiArCWludCBiaW9fYmxvY2tzID0gTUFYX0JJT19CTE9DS1MobWF4X2h3X2Jsb2NrcyhzYmkpKTsK
-PiA+ID4gPiArCWludCBpLCBsYXN0X29mZnNldCwgbnJwYWdlcywgZXJyID0gMDsKPiA+ID4gPiAr
-CUxJU1RfSEVBRChwYWdlX2xpc3QpOwo+ID4gPiA+Cj4gPiA+ID4gIAkvKiBzY2FuIHRoZSBub2Rl
-IHNlZ21lbnQgKi8KPiA+ID4gPiAgCWxhc3Rfb2Zmc2V0ID0gc2JpLT5ibG9ja3NfcGVyX3NlZzsK
-PiA+ID4gPiAgCWFkZHIgPSBTVEFSVF9CTE9DSyhzYmksIHNlZ25vKTsKPiA+ID4gPiAgCXN1bV9l
-bnRyeSA9ICZzdW0tPmVudHJpZXNbMF07Cj4gPiA+ID4KPiA+ID4gPiAtCWZvciAoaSA9IDA7IGkg
-PCBsYXN0X29mZnNldDsgaSsrLCBzdW1fZW50cnkrKykgewo+ID4gPiA+IC0JCS8qCj4gPiA+ID4g
-LQkJICogSW4gb3JkZXIgdG8gcmVhZCBuZXh0IG5vZGUgcGFnZSwKPiA+ID4gPiAtCQkgKiB3ZSBt
-dXN0IGNsZWFyIFBhZ2VVcHRvZGF0ZSBmbGFnLgo+ID4gPiA+IC0JCSAqLwo+ID4gPiA+IC0JCUNs
-ZWFyUGFnZVVwdG9kYXRlKHBhZ2UpOwo+ID4gPiA+ICsJZm9yIChpID0gMDsgaSA8IGxhc3Rfb2Zm
-c2V0OyBpICs9IG5ycGFnZXMsIGFkZHIgKz0gbnJwYWdlcykgewo+ID4gPiA+Cj4gPiA+ID4gLQkJ
-aWYgKGYyZnNfcmVhZHBhZ2Uoc2JpLCBwYWdlLCBhZGRyLCBSRUFEX1NZTkMpKQo+ID4gPiA+IC0J
-CQlnb3RvIG91dDsKPiA+ID4gPiArCQlucnBhZ2VzID0gbWluKGxhc3Rfb2Zmc2V0IC0gaSwgYmlv
-X2Jsb2Nrcyk7Cj4gPiA+ID4gKwkJLyogcmVhZCBhaGVhZCBub2RlIHBhZ2VzICovCj4gPiA+ID4g
-KwkJZXJyID0gcmFfc3VtX3BhZ2VzKHNiaSwgJnBhZ2VfbGlzdCwgYWRkciwgbnJwYWdlcyk7Cj4g
-PiA+ID4gKwkJaWYgKGVycikKPiA+ID4gPiArCQkJcmV0dXJuIGVycjsKPiA+ID4gPgo+ID4gPiA+
-IC0JCWxvY2tfcGFnZShwYWdlKTsKPiA+ID4gPiAtCQlybiA9IEYyRlNfTk9ERShwYWdlKTsKPiA+
-ID4gPiAtCQlzdW1fZW50cnktPm5pZCA9IHJuLT5mb290ZXIubmlkOwo+ID4gPiA+IC0JCXN1bV9l
-bnRyeS0+dmVyc2lvbiA9IDA7Cj4gPiA+ID4gLQkJc3VtX2VudHJ5LT5vZnNfaW5fbm9kZSA9IDA7
-Cj4gPiA+ID4gLQkJYWRkcisrOwo+ID4gPiA+ICsJCWxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShw
-YWdlLCB0bXAsICZwYWdlX2xpc3QsIGxydSkgewo+ID4gPiA+ICsKPiA+ID4gPiArCQkJbG9ja19w
-YWdlKHBhZ2UpOwo+ID4gPiA+ICsJCQlpZihQYWdlVXB0b2RhdGUocGFnZSkpIHsKPiA+ID4gPiAr
-CQkJCXJuID0gRjJGU19OT0RFKHBhZ2UpOwo+ID4gPiA+ICsJCQkJc3VtX2VudHJ5LT5uaWQgPSBy
-bi0+Zm9vdGVyLm5pZDsKPiA+ID4gPiArCQkJCXN1bV9lbnRyeS0+dmVyc2lvbiA9IDA7Cj4gPiA+
-ID4gKwkJCQlzdW1fZW50cnktPm9mc19pbl9ub2RlID0gMDsKPiA+ID4gPiArCQkJCXN1bV9lbnRy
-eSsrOwo+ID4gPiA+ICsJCQl9IGVsc2Ugewo+ID4gPiA+ICsJCQkJZXJyID0gLUVJTzsKPiA+ID4g
-PiArCQkJfQo+ID4gPiA+ICsKPiA+ID4gPiArCQkJbGlzdF9kZWwoJnBhZ2UtPmxydSk7Cj4gPiA+
-ID4gKwkJCXVubG9ja19wYWdlKHBhZ2UpOwo+ID4gPiA+ICsJCQlfX2ZyZWVfcGFnZXMocGFnZSwg
-MCk7Cj4gPiA+ID4gKwkJfQo+ID4gPiA+ICAJfQo+ID4gPiA+IC0JdW5sb2NrX3BhZ2UocGFnZSk7
-Cj4gPiA+ID4gLW91dDoKPiA+ID4gPiAtCV9fZnJlZV9wYWdlcyhwYWdlLCAwKTsKPiA+ID4gPiAt
-CXJldHVybiAwOwo+ID4gPiA+ICsJcmV0dXJuIGVycjsKPiA+ID4gPiAgfQo+ID4gPiA+Cj4gPiA+
-ID4gIHN0YXRpYyBib29sIGZsdXNoX25hdHNfaW5fam91cm5hbChzdHJ1Y3QgZjJmc19zYl9pbmZv
-ICpzYmkpCj4gPiA+Cj4gPiA+IC0tCj4gPiA+IEphZWdldWsgS2ltCj4gPiA+IFNhbXN1bmcKPiA+
-Cj4gCj4gLS0KPiBKYWVnZXVrIEtpbQo+IFNhbXN1bmcKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
-UmFwaWRseSB0cm91Ymxlc2hvb3QgcHJvYmxlbXMgYmVmb3JlIHRoZXkgYWZmZWN0IHlvdXIgYnVz
-aW5lc3MuIE1vc3QgSVQgCm9yZ2FuaXphdGlvbnMgZG9uJ3QgaGF2ZSBhIGNsZWFyIHBpY3R1cmUg
-b2YgaG93IGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNlIAphZmZlY3RzIHRoZWlyIHJldmVudWUuIFdp
-dGggQXBwRHluYW1pY3MsIHlvdSBnZXQgMTAwJSB2aXNpYmlsaXR5IGludG8geW91ciAKSmF2YSwu
-TkVULCAmIFBIUCBhcHBsaWNhdGlvbi4gU3RhcnQgeW91ciAxNS1kYXkgRlJFRSBUUklBTCBvZiBB
-cHBEeW5hbWljcyBQcm8hCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Ns
-az9pZD04NDM0OTM1MSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApM
-aW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJj
-ZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Hi,
+
+2013-11-28 (=EB=AA=A9), 09:26 +0800, Chao Yu:
+> Hi Kim,
+>=20
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> > Sent: Wednesday, November 27, 2013 4:19 PM
+> > To: Chao Yu
+> > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; li=
+nux-f2fs-devel@lists.sourceforge.net; '=E8=B0=AD=E5=A7=9D'
+> > Subject: RE: [f2fs-dev] [PATCH] f2fs: readahead contiguous pages fo=
+r restore_node_summary
+> >=20
+> > Hi,
+> >=20
+> > 2013-11-27 (=EC=88=98), 15:58 +0800, Chao Yu:
+> > > Hi Kim,
+> > >
+> > > > -----Original Message-----
+> > > > From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> > > > Sent: Wednesday, November 27, 2013 1:30 PM
+> > > > To: Chao Yu
+> > > > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org=
+; linux-f2fs-devel@lists.sourceforge.net; =E8=B0=AD=E5=A7=9D
+> > > > Subject: Re: [f2fs-dev] [PATCH] f2fs: readahead contiguous page=
+s for restore_node_summary
+> > > >
+> > > > Hi Chao,
+> > > >
+> > > > It seems that we already have a readahed function for node page=
+s,
+> > > > ra_node_page().
+> > > > So, we don't make a page list for this, but can use the node_in=
+ode's
+> > > > page cache.
+> > >
+> > > So you mean it's waste to release page list with updated data aft=
+er we
+> > > finish work in restore_node_summary, right?
+> >=20
+> > Right.
+>=20
+> So how about add all pages of page list to node_inode's address space=
+ by
+> add_to_page_cache_lru() with arg sum_entry->nid?
+
+I don't think it's proper way to use add_to_page_cache_lru() directly.
+
+>=20
+> >=20
+> > >
+> > > >
+> > > > So how about writing ra_node_pages() which use the node_inode's=
+ page
+> > > > cache?
+> > >
+> > > Hmm, so ra_node_pages is introduced for read node_inode's pages w=
+hich are
+> > > logical contiguously? and it also could take place of ra_node_pag=
+e?
+> >=20
+> > Ah. The ra_node_page() read a node page ahead for a given node id.
+> > So it doesn't match exactly between ra_node_page() and ra_node_page=
+s()
+> > that I suggested.
+> > So how about reading node pages and then caching some of them in th=
+e
+> > page cache, node_inode's address space?
+>=20
+> Got it,
+> If we do not use the method above, we should search the NAT for nid n=
+umber
+> as the index of node_inode's page by the specified node page blkaddr,=
+ that costs
+> a lot.
+> How do you think?
+
+1. grab_cache_page(node_footer->nid);
+2. memcpy();
+3. SetPageUptodate();
+4. f2fs_put_page();
+
+Thanks,
+
+>=20
+> >=20
+> > Thanks,
+> >=20
+> > >
+> > >
+> > > >
+> > > > Thanks,
+> > > >
+> > > > 2013-11-22 (=EA=B8=88), 15:48 +0800, Chao Yu:
+> > > > > If cp has no CP_UMOUNT_FLAG, we will read all pages in whole =
+node segment
+> > > > > one by one, it makes low performance. So let's merge contiguo=
+us pages and
+> > > > > readahead for better performance.
+> > > > >
+> > > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > > > ---
+> > > > >  fs/f2fs/node.c |   89 ++++++++++++++++++++++++++++++++++++++=
++-----------------
+> > > > >  1 file changed, 63 insertions(+), 26 deletions(-)
+> > > > >
+> > > > > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > > > > index 4ac4150..81e704a 100644
+> > > > > --- a/fs/f2fs/node.c
+> > > > > +++ b/fs/f2fs/node.c
+> > > > > @@ -1572,47 +1572,84 @@ int recover_inode_page(struct f2fs_sb=
+_info *sbi, struct page *page)
+> > > > >  	return 0;
+> > > > >  }
+> > > > >
+> > > > > +/*
+> > > > > + * ra_sum_pages() merge contiguous pages into one bio and su=
+bmit.
+> > > > > + * these pre-readed pages are linked in pages list.
+> > > > > + */
+> > > > > +static int ra_sum_pages(struct f2fs_sb_info *sbi, struct lis=
+t_head *pages,
+> > > > > +				int start, int nrpages)
+> > > > > +{
+> > > > > +	struct page *page;
+> > > > > +	int page_idx =3D start;
+> > > > > +
+> > > > > +	for (; page_idx < start + nrpages; page_idx++) {
+> > > > > +		/* alloc temporal page for read node summary info*/
+> > > > > +		page =3D alloc_page(GFP_NOFS | __GFP_ZERO);
+> > > > > +		if (!page) {
+> > > > > +			struct page *tmp;
+> > > > > +			list_for_each_entry_safe(page, tmp, pages, lru) {
+> > > > > +				list_del(&page->lru);
+> > > > > +				unlock_page(page);
+> > > > > +				__free_pages(page, 0);
+> > > > > +			}
+> > > > > +			return -ENOMEM;
+> > > > > +		}
+> > > > > +
+> > > > > +		lock_page(page);
+> > > > > +		page->index =3D page_idx;
+> > > > > +		list_add_tail(&page->lru, pages);
+> > > > > +	}
+> > > > > +
+> > > > > +	list_for_each_entry(page, pages, lru)
+> > > > > +		submit_read_page(sbi, page, page->index, READ_SYNC);
+> > > > > +
+> > > > > +	f2fs_submit_read_bio(sbi, READ_SYNC);
+> > > > > +	return 0;
+> > > > > +}
+> > > > > +
+> > > > >  int restore_node_summary(struct f2fs_sb_info *sbi,
+> > > > >  			unsigned int segno, struct f2fs_summary_block *sum)
+> > > > >  {
+> > > > >  	struct f2fs_node *rn;
+> > > > >  	struct f2fs_summary *sum_entry;
+> > > > > -	struct page *page;
+> > > > > +	struct page *page, *tmp;
+> > > > >  	block_t addr;
+> > > > > -	int i, last_offset;
+> > > > > -
+> > > > > -	/* alloc temporal page for read node */
+> > > > > -	page =3D alloc_page(GFP_NOFS | __GFP_ZERO);
+> > > > > -	if (!page)
+> > > > > -		return -ENOMEM;
+> > > > > -	lock_page(page);
+> > > > > +	int bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+> > > > > +	int i, last_offset, nrpages, err =3D 0;
+> > > > > +	LIST_HEAD(page_list);
+> > > > >
+> > > > >  	/* scan the node segment */
+> > > > >  	last_offset =3D sbi->blocks_per_seg;
+> > > > >  	addr =3D START_BLOCK(sbi, segno);
+> > > > >  	sum_entry =3D &sum->entries[0];
+> > > > >
+> > > > > -	for (i =3D 0; i < last_offset; i++, sum_entry++) {
+> > > > > -		/*
+> > > > > -		 * In order to read next node page,
+> > > > > -		 * we must clear PageUptodate flag.
+> > > > > -		 */
+> > > > > -		ClearPageUptodate(page);
+> > > > > +	for (i =3D 0; i < last_offset; i +=3D nrpages, addr +=3D nr=
+pages) {
+> > > > >
+> > > > > -		if (f2fs_readpage(sbi, page, addr, READ_SYNC))
+> > > > > -			goto out;
+> > > > > +		nrpages =3D min(last_offset - i, bio_blocks);
+> > > > > +		/* read ahead node pages */
+> > > > > +		err =3D ra_sum_pages(sbi, &page_list, addr, nrpages);
+> > > > > +		if (err)
+> > > > > +			return err;
+> > > > >
+> > > > > -		lock_page(page);
+> > > > > -		rn =3D F2FS_NODE(page);
+> > > > > -		sum_entry->nid =3D rn->footer.nid;
+> > > > > -		sum_entry->version =3D 0;
+> > > > > -		sum_entry->ofs_in_node =3D 0;
+> > > > > -		addr++;
+> > > > > +		list_for_each_entry_safe(page, tmp, &page_list, lru) {
+> > > > > +
+> > > > > +			lock_page(page);
+> > > > > +			if(PageUptodate(page)) {
+> > > > > +				rn =3D F2FS_NODE(page);
+> > > > > +				sum_entry->nid =3D rn->footer.nid;
+> > > > > +				sum_entry->version =3D 0;
+> > > > > +				sum_entry->ofs_in_node =3D 0;
+> > > > > +				sum_entry++;
+> > > > > +			} else {
+> > > > > +				err =3D -EIO;
+> > > > > +			}
+> > > > > +
+> > > > > +			list_del(&page->lru);
+> > > > > +			unlock_page(page);
+> > > > > +			__free_pages(page, 0);
+> > > > > +		}
+> > > > >  	}
+> > > > > -	unlock_page(page);
+> > > > > -out:
+> > > > > -	__free_pages(page, 0);
+> > > > > -	return 0;
+> > > > > +	return err;
+> > > > >  }
+> > > > >
+> > > > >  static bool flush_nats_in_journal(struct f2fs_sb_info *sbi)
+> > > >
+> > > > --
+> > > > Jaegeuk Kim
+> > > > Samsung
+> > >
+> >=20
+> > --
+> > Jaegeuk Kim
+> > Samsung
+>=20
+
+--=20
+Jaegeuk Kim
+Samsung
