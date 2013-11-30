@@ -1,59 +1,182 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH 2/5] f2fs: add unlikely macro for compiler
- optimization
-Date: Fri, 29 Nov 2013 19:14:17 +0900
-Message-ID: <1385720057.2417.46.camel@kjgkr>
-References: <003301ceec0d$77ddaef0$67990cd0$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+Subject: [PATCH] f2fs: remove the own bi_private allocation
+Date: Sat, 30 Nov 2013 10:48:05 +0900
+Message-ID: <1385776085-21163-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <003301ceec0d$77ddaef0$67990cd0$@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?UTF-8?Q?=E8=B0=AD=E5=A7=9D?= <shu.tan@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VmZgI-0002Z8-Gb
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 30 Nov 2013 01:49:14 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VmZgG-0004NM-Ev
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 30 Nov 2013 01:49:14 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout2.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MX1000FXZPTKMA0@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 30 Nov 2013 10:49:05 +0900 (KST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+Previously f2fs allocates its own bi_private data structure all the time even
+though we don't use it. But, can we remove this bi_private allocation?
 
-Could you make a patch to add *unlikely* as many as possible across the
-whole source files at once?
-It is wasteful to add it with a bunch of patches at multiple times.
+This patch removes such the additional bi_private allocation.
 
-And please write descriptions for all the patches even if nothing is
-special.
-In this case, why should we set *unlikely* for checking this condition?
+1. Retrieve f2fs_sb_info from its page->mapping->host->i_sb.
+ - This removes the usecases of bi_private in end_io.
 
-Thanks,
+2. Use bi_private only when we really need it.
+ - The bi_private is used only when the checkpoint procedure is conducted.
+ - When conducting the checkpoint, f2fs submits a META_FLUSH bio to wait its bio
+completion.
+ - Since we have no dependancies to remove bi_private now, let's just use
+ bi_private pointer as the completion pointer.
 
-2013-11-28 (=EB=AA=A9), 15:42 +0800, Chao Yu:
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> ---
->  fs/f2fs/node.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 0fe9a97..954155b 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1160,7 +1160,7 @@ int wait_on_node_pages_writeback(struct f2fs_sb=
-_info *sbi, nid_t ino)
->  			struct page *page =3D pvec.pages[i];
-> =20
->  			/* until radix tree lookup accepts end_index */
-> -			if (page->index > end)
-> +			if (unlikely(page->index > end))
->  				continue;
-> =20
->  			if (ino && ino_of_node(page) =3D=3D ino) {
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/segment.c | 43 ++++++++++++++++---------------------------
+ fs/f2fs/segment.h |  7 -------
+ 2 files changed, 16 insertions(+), 34 deletions(-)
 
---=20
-Jaegeuk Kim
-Samsung
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 0387863..0db4027 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -791,7 +791,7 @@ static void f2fs_end_io_write(struct bio *bio, int err)
+ {
+ 	const int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
+ 	struct bio_vec *bvec = bio->bi_io_vec + bio->bi_vcnt - 1;
+-	struct bio_private *p = bio->bi_private;
++	struct f2fs_sb_info *sbi = F2FS_SB(bvec->bv_page->mapping->host->i_sb);
+ 
+ 	do {
+ 		struct page *page = bvec->bv_page;
+@@ -802,21 +802,21 @@ static void f2fs_end_io_write(struct bio *bio, int err)
+ 			SetPageError(page);
+ 			if (page->mapping)
+ 				set_bit(AS_EIO, &page->mapping->flags);
+-			set_ckpt_flags(p->sbi->ckpt, CP_ERROR_FLAG);
+-			p->sbi->sb->s_flags |= MS_RDONLY;
++
++			set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
++			sbi->sb->s_flags |= MS_RDONLY;
+ 		}
+ 		end_page_writeback(page);
+-		dec_page_count(p->sbi, F2FS_WRITEBACK);
++		dec_page_count(sbi, F2FS_WRITEBACK);
+ 	} while (bvec >= bio->bi_io_vec);
+ 
+-	if (p->is_sync)
+-		complete(p->wait);
++	if (bio->bi_private)
++		complete(bio->bi_private);
+ 
+-	if (!get_pages(p->sbi, F2FS_WRITEBACK) &&
+-			!list_empty(&p->sbi->cp_wait.task_list))
+-		wake_up(&p->sbi->cp_wait);
++	if (!get_pages(sbi, F2FS_WRITEBACK) &&
++			!list_empty(&sbi->cp_wait.task_list))
++		wake_up(&sbi->cp_wait);
+ 
+-	kfree(p);
+ 	bio_put(bio);
+ }
+ 
+@@ -838,7 +838,6 @@ static void do_submit_bio(struct f2fs_sb_info *sbi,
+ 	int rw = sync ? WRITE_SYNC : WRITE;
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+ 	struct f2fs_bio_info *io = &sbi->write_io[btype];
+-	struct bio_private *p;
+ 
+ 	if (!io->bio)
+ 		return;
+@@ -851,18 +850,16 @@ static void do_submit_bio(struct f2fs_sb_info *sbi,
+ 
+ 	trace_f2fs_submit_write_bio(sbi->sb, rw, btype, io->bio);
+ 
+-	p = io->bio->bi_private;
+-	p->sbi = sbi;
+-	io->bio->bi_end_io = f2fs_end_io_write;
+-
++	/*
++	 * META_FLUSH is only from the checkpoint procedure, and we should wait
++	 * this metadata bio for FS consistency.
++	 */
+ 	if (type == META_FLUSH) {
+ 		DECLARE_COMPLETION_ONSTACK(wait);
+-		p->is_sync = true;
+-		p->wait = &wait;
++		io->bio->bi_private = &wait;
+ 		submit_bio(rw, io->bio);
+ 		wait_for_completion(&wait);
+ 	} else {
+-		p->is_sync = false;
+ 		submit_bio(rw, io->bio);
+ 	}
+ 	io->bio = NULL;
+@@ -897,18 +894,10 @@ static void submit_write_page(struct f2fs_sb_info *sbi, struct page *page,
+ 		do_submit_bio(sbi, type, false);
+ alloc_new:
+ 	if (io->bio == NULL) {
+-		struct bio_private *priv;
+-retry:
+-		priv = kmalloc(sizeof(struct bio_private), GFP_NOFS);
+-		if (!priv) {
+-			cond_resched();
+-			goto retry;
+-		}
+-
+ 		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+ 		io->bio = f2fs_bio_alloc(bdev, bio_blocks);
+ 		io->bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
+-		io->bio->bi_private = priv;
++		io->bio->bi_end_io = f2fs_end_io_write;
+ 		/*
+ 		 * The end_io will be assigned at the sumbission phase.
+ 		 * Until then, let bio_add_page() merge consecutive IOs as much
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 7fea2ee..26812fc 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -92,13 +92,6 @@
+ #define MAX_BIO_BLOCKS(max_hw_blocks)					\
+ 	(min((int)max_hw_blocks, BIO_MAX_PAGES))
+ 
+-/* during checkpoint, bio_private is used to synchronize the last bio */
+-struct bio_private {
+-	struct f2fs_sb_info *sbi;
+-	bool is_sync;
+-	struct completion *wait;
+-};
+-
+ /*
+  * indicate a block allocation direction: RIGHT and LEFT.
+  * RIGHT means allocating new sections towards the end of volume.
+-- 
+1.8.4.474.g128a96c
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+------------------------------------------------------------------------------
+Rapidly troubleshoot problems before they affect your business. Most IT 
+organizations don't have a clear picture of how application performance 
+affects their revenue. With AppDynamics, you get 100% visibility into your 
+Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
+http://pubads.g.doubleclick.net/gampad/clk?id=84349351&iu=/4140/ostg.clktrk
