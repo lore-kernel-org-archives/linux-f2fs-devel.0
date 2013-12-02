@@ -1,90 +1,103 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH] f2fs: remove the own bi_private allocation
-Date: Mon, 02 Dec 2013 17:14:54 +0900
-Message-ID: <1385972094.2417.104.camel@kjgkr>
-References: <1385776085-21163-1-git-send-email-jaegeuk.kim@samsung.com>
-	<000201ceef25$e145cec0$a3d16c40$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: refactor bio-related operations
+Date: Mon, 02 Dec 2013 17:24:12 +0900
+Message-ID: <1385972652.2417.111.camel@kjgkr>
+References: <1385792739-31405-1-git-send-email-jaegeuk.kim@samsung.com>
+ <000101ceef19$ae149b50$0a3dd1f0$@samsung.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VnOfk-0006tg-NL
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Dec 2013 08:16:04 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VnOfi-0007Fg-EG
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Dec 2013 08:16:04 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MX6003FJ6YGIPA0@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Dec 2013 17:15:52 +0900 (KST)
-In-reply-to: <000201ceef25$e145cec0$a3d16c40$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <000101ceef19$ae149b50$0a3dd1f0$@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, =?UTF-8?Q?=E8=B0=AD=E5=A7=9D?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-MjAxMy0xMi0wMiAo7JuUKSwgMTQ6MTQgKzA4MDAsIENoYW8gWXU6Cj4gSGkgS2ltLAo+IAo+ID4g
-LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiA+IEZyb206IEphZWdldWsgS2ltIFttYWlsdG86
-amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb21dCj4gPiBTZW50OiBTYXR1cmRheSwgTm92ZW1iZXIgMzAs
-IDIwMTMgOTo0OCBBTQo+ID4gQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOyBsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldAo+ID4gU3ViamVjdDogW2YyZnMtZGV2XSBbUEFUQ0hdIGYyZnM6IHJlbW92ZSB0aGUg
-b3duIGJpX3ByaXZhdGUgYWxsb2NhdGlvbgo+ID4gCj4gPiBQcmV2aW91c2x5IGYyZnMgYWxsb2Nh
-dGVzIGl0cyBvd24gYmlfcHJpdmF0ZSBkYXRhIHN0cnVjdHVyZSBhbGwgdGhlIHRpbWUgZXZlbgo+
-ID4gdGhvdWdoIHdlIGRvbid0IHVzZSBpdC4gQnV0LCBjYW4gd2UgcmVtb3ZlIHRoaXMgYmlfcHJp
-dmF0ZSBhbGxvY2F0aW9uPwo+ID4gCj4gPiBUaGlzIHBhdGNoIHJlbW92ZXMgc3VjaCB0aGUgYWRk
-aXRpb25hbCBiaV9wcml2YXRlIGFsbG9jYXRpb24uCj4gPiAKPiA+IDEuIFJldHJpZXZlIGYyZnNf
-c2JfaW5mbyBmcm9tIGl0cyBwYWdlLT5tYXBwaW5nLT5ob3N0LT5pX3NiLgo+ID4gIC0gVGhpcyBy
-ZW1vdmVzIHRoZSB1c2VjYXNlcyBvZiBiaV9wcml2YXRlIGluIGVuZF9pby4KPiA+IAo+ID4gMi4g
-VXNlIGJpX3ByaXZhdGUgb25seSB3aGVuIHdlIHJlYWxseSBuZWVkIGl0Lgo+ID4gIC0gVGhlIGJp
-X3ByaXZhdGUgaXMgdXNlZCBvbmx5IHdoZW4gdGhlIGNoZWNrcG9pbnQgcHJvY2VkdXJlIGlzIGNv
-bmR1Y3RlZC4KPiA+ICAtIFdoZW4gY29uZHVjdGluZyB0aGUgY2hlY2twb2ludCwgZjJmcyBzdWJt
-aXRzIGEgTUVUQV9GTFVTSCBiaW8gdG8gd2FpdCBpdHMgYmlvCj4gPiBjb21wbGV0aW9uLgo+ID4g
-IC0gU2luY2Ugd2UgaGF2ZSBubyBkZXBlbmRhbmNpZXMgdG8gcmVtb3ZlIGJpX3ByaXZhdGUgbm93
-LCBsZXQncyBqdXN0IHVzZQo+ID4gIGJpX3ByaXZhdGUgcG9pbnRlciBhcyB0aGUgY29tcGxldGlv
-biBwb2ludGVyLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBKYWVnZXVrIEtpbSA8amFlZ2V1ay5r
-aW1Ac2Ftc3VuZy5jb20+Cj4gPiAtLS0KPiA+ICBmcy9mMmZzL3NlZ21lbnQuYyB8IDQzICsrKysr
-KysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+ICBmcy9mMmZzL3NlZ21l
-bnQuaCB8ICA3IC0tLS0tLS0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKyks
-IDM0IGRlbGV0aW9ucygtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMg
-Yi9mcy9mMmZzL3NlZ21lbnQuYwo+ID4gaW5kZXggMDM4Nzg2My4uMGRiNDAyNyAxMDA2NDQKPiA+
-IC0tLSBhL2ZzL2YyZnMvc2VnbWVudC5jCj4gPiArKysgYi9mcy9mMmZzL3NlZ21lbnQuYwo+ID4g
-QEAgLTc5MSw3ICs3OTEsNyBAQCBzdGF0aWMgdm9pZCBmMmZzX2VuZF9pb193cml0ZShzdHJ1Y3Qg
-YmlvICpiaW8sIGludCBlcnIpCj4gPiAgewo+ID4gIAljb25zdCBpbnQgdXB0b2RhdGUgPSB0ZXN0
-X2JpdChCSU9fVVBUT0RBVEUsICZiaW8tPmJpX2ZsYWdzKTsKPiA+ICAJc3RydWN0IGJpb192ZWMg
-KmJ2ZWMgPSBiaW8tPmJpX2lvX3ZlYyArIGJpby0+YmlfdmNudCAtIDE7Cj4gPiAtCXN0cnVjdCBi
-aW9fcHJpdmF0ZSAqcCA9IGJpby0+YmlfcHJpdmF0ZTsKPiA+ICsJc3RydWN0IGYyZnNfc2JfaW5m
-byAqc2JpID0gRjJGU19TQihidmVjLT5idl9wYWdlLT5tYXBwaW5nLT5ob3N0LT5pX3NiKTsKPiAK
-PiBJJ20gbm90IHN1cmUgd2hldGhlciBidmVjLT5idl9wYWdlLT5tYXBwaW5nIHdpbGwgYmUgc2V0
-IHRvIE5VTEwgaW4gdGhlIGZsb3cKPiB3aGVyZSBtYXkgbm90IGNoZWNrIFdSSVRFQkFDSyBmbGFn
-IG9mIHBhZ2UuIElzIGl0IHBvc3NpYmxlPwoKVGhlIG1hcHBpbmcgc2hvdWxkIGJlIG5vdCBOVUxM
-IGNhdXNlIGl0IGlzIGEgd3JpdGViYWNraW5nIHBhZ2UuCk90aGVyd2lzZSwgaXQncyBhIGJ1Zy4K
-VGhhbmtzLAoKLS0gCkphZWdldWsgS2ltClNhbXN1bmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-ClJhcGlkbHkgdHJvdWJsZXNob290IHByb2JsZW1zIGJlZm9yZSB0aGV5IGFmZmVjdCB5b3VyIGJ1
-c2luZXNzLiBNb3N0IElUIApvcmdhbml6YXRpb25zIGRvbid0IGhhdmUgYSBjbGVhciBwaWN0dXJl
-IG9mIGhvdyBhcHBsaWNhdGlvbiBwZXJmb3JtYW5jZSAKYWZmZWN0cyB0aGVpciByZXZlbnVlLiBX
-aXRoIEFwcER5bmFtaWNzLCB5b3UgZ2V0IDEwMCUgdmlzaWJpbGl0eSBpbnRvIHlvdXIgCkphdmEs
-Lk5FVCwgJiBQSFAgYXBwbGljYXRpb24uIFN0YXJ0IHlvdXIgMTUtZGF5IEZSRUUgVFJJQUwgb2Yg
-QXBwRHluYW1pY3MgUHJvIQpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9j
-bGs/aWQ9ODQzNDkzNTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
-TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Hi,
+
+2013-12-02 (=EC=9B=94), 12:47 +0800, Chao Yu:
+> Hi,
+>=20
+> Some comments as following.
+>=20
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> > Sent: Saturday, November 30, 2013 2:26 PM
+> > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; li=
+nux-f2fs-devel@lists.sourceforge.net
+> > Subject: [f2fs-dev] [PATCH] f2fs: refactor bio-related operations
+> >=20
+>=20
+> [snip]
+>=20
+> > +void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *=
+page,
+> > +			block_t blk_addr, enum page_type type, int rw)
+> > +{
+> > +	enum page_type btype =3D PAGE_TYPE_OF_BIO(type);
+> > +	struct block_device *bdev =3D sbi->sb->s_bdev;
+> > +	struct f2fs_bio_info *io;
+> > +	int bio_blocks;
+> > +
+> > +	io =3D is_read_io(rw) ? &sbi->read_io : &sbi->write_io[btype];
+> > +
+> > +	verify_block_addr(sbi, blk_addr);
+> > +
+> > +	mutex_lock(&io->io_mutex);
+> > +
+> > +	if (!is_read_io(rw))
+> > +		inc_page_count(sbi, F2FS_WRITEBACK);
+> > +
+> > +	if (io->bio && io->last_block_in_bio !=3D blk_addr - 1)
+> > +		__submit_merged_bio(sbi, io, type, true, rw);
+> > +alloc_new:
+> > +	if (io->bio =3D=3D NULL) {
+> > +		bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+> > +		io->bio =3D __bio_alloc(bdev, bio_blocks);
+> > +		io->bio->bi_sector =3D SECTOR_FROM_BLOCK(sbi, blk_addr);
+> > +		io->bio->bi_end_io =3D is_read_io(rw) ? f2fs_read_end_io :
+> > +							f2fs_write_end_io;
+> > +		/*
+> > +		 * The end_io will be assigned at the sumbission phase.
+> > +		 * Until then, let bio_add_page() merge consecutive IOs as much
+> > +		 * as possible.
+> > +		 */
+> > +	}
+> > +
+> > +	if (bio_add_page(io->bio, page, PAGE_CACHE_SIZE, 0) <
+> > +							PAGE_CACHE_SIZE) {
+> > +		__submit_merged_bio(sbi, io, type, true, rw);
+> > +		io->bio =3D NULL;
+>=20
+> We should remove the redundant code " io->bio =3D NULL;" here,
+> because __submit_merged_bio does the same job.
+
+Agreed.
+
+>=20
+> [snip]
+>=20
+> >  /*
+> >   * data.c
+> >   */
+> > +void f2fs_submit_merged_bio(struct f2fs_sb_info *, enum page_type,=
+ bool, int);
+> > +int f2fs_submit_page_bio(struct f2fs_sb_info *, struct page *, blo=
+ck_t, int);
+>=20
+> Redundant to the following code.
+
+Ah, agreed.
+Thank you for the review. :)
+
+--=20
+Jaegeuk Kim
+Samsung
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
