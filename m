@@ -1,26 +1,26 @@
 From: Younger Liu <younger.liucn@gmail.com>
-Subject: [PATCH 0/2] f2fs: remove debufs dir if
-	debugfs_create_file() failed
-Date: Mon, 02 Dec 2013 21:16:08 +0800
-Message-ID: <529C8818.2090002@gmail.com>
+Subject: [PATCH 1/2] f2fs: A minor change for avoiding any
+ possible conflicts to the other fs
+Date: Mon, 02 Dec 2013 21:18:10 +0800
+Message-ID: <529C8892.8090102@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <younger.liucn@gmail.com>) id 1VnTMJ-00012g-HQ
+	(envelope-from <younger.liucn@gmail.com>) id 1VnTOH-0001Av-5V
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Dec 2013 13:16:19 +0000
-Received: from mail-pb0-f49.google.com ([209.85.160.49])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VnTMI-0004Yc-N8
+	Mon, 02 Dec 2013 13:18:21 +0000
+Received: from mail-pd0-f173.google.com ([209.85.192.173])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1VnTOG-0004Rp-1R
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Dec 2013 13:16:19 +0000
-Received: by mail-pb0-f49.google.com with SMTP id jt11so18639885pbb.8
+	Mon, 02 Dec 2013 13:18:21 +0000
+Received: by mail-pd0-f173.google.com with SMTP id p10so18097220pdj.32
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 02 Dec 2013 05:16:12 -0800 (PST)
+	Mon, 02 Dec 2013 05:18:14 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,51 +35,67 @@ Cc: fs-devel <linux-fsdevel@vger.kernel.org>, kernel <linux-kernel@vger.kernel.o
 
 From: Younger Liu <liuyiyang@hisense.com>
 
-When debugfs_create_file() failed in f2fs_create_root_stats(),
-debugfs_root should be removed.
+This minor change for the naming conventions of debugfs_root
+to avoid any possible conflicts to the other filesystem.
+
+This patch is based on the first patch
+"[PATCH 0/2] f2fs: remove debufs dir if debugfs_create_file() failed".
 
 Signed-off-by: Younger Liu <liuyiyang@hisense.com>
 Cc: Younger Liu <younger.liucn@gmail.com>
 Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/debug.c |   20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ fs/f2fs/debug.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index a84b0a8..d27b689 100644
+index d27b689..9e8d355 100644
 --- a/fs/f2fs/debug.c
 +++ b/fs/f2fs/debug.c
-@@ -340,10 +340,24 @@ void f2fs_destroy_stats(struct f2fs_sb_info *sbi)
+@@ -24,7 +24,7 @@
+ #include "gc.h"
  
- void __init f2fs_create_root_stats(void)
+ static LIST_HEAD(f2fs_stat_list);
+-static struct dentry *debugfs_root;
++static struct dentry *f2fs_debugfs_root;
+ static DEFINE_MUTEX(f2fs_stat_mutex);
+ 
+ static void update_general_status(struct f2fs_sb_info *sbi)
+@@ -342,19 +342,19 @@ void __init f2fs_create_root_stats(void)
  {
-+    struct dentry *file;
-+
-     debugfs_root = debugfs_create_dir("f2fs", NULL);
--    if (debugfs_root)
--        debugfs_create_file("status", S_IRUGO, debugfs_root,
--                     NULL, &stat_fops);
-+    if (!debugfs_root)
-+        goto bail;
-+
-+    file = debugfs_create_file("status", S_IRUGO,
-+            debugfs_root, NULL, &stat_fops);
-+    if (!file)
-+        goto free_debugfs_dir;
-+
-+    return;
-+
-+free_debugfs_dir:
-+    debugfs_remove(debugfs_root);
-+
-+bail:
-+    return;
- }
+     struct dentry *file;
+ 
+-    debugfs_root = debugfs_create_dir("f2fs", NULL);
+-    if (!debugfs_root)
++    f2fs_debugfs_root = debugfs_create_dir("f2fs", NULL);
++    if (!f2fs_debugfs_root)
+         goto bail;
+ 
+     file = debugfs_create_file("status", S_IRUGO,
+-            debugfs_root, NULL, &stat_fops);
++            f2fs_debugfs_root, NULL, &stat_fops);
+     if (!file)
+         goto free_debugfs_dir;
+ 
+     return;
+ 
+ free_debugfs_dir:
+-    debugfs_remove(debugfs_root);
++    debugfs_remove(f2fs_debugfs_root);
+ 
+ bail:
+     return;
+@@ -362,6 +362,6 @@ bail:
  
  void f2fs_destroy_root_stats(void)
+ {
+-    debugfs_remove_recursive(debugfs_root);
+-    debugfs_root = NULL;
++    debugfs_remove_recursive(f2fs_debugfs_root);
++    f2fs_debugfs_root = NULL;
+ }
 -- 
 1.7.9.5
-
 
 
 ------------------------------------------------------------------------------
