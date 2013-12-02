@@ -1,106 +1,134 @@
-From: Younger Liu <younger.liucn@gmail.com>
-Subject: [PATCH 1/2] f2fs: A minor change for avoiding any
- possible conflicts to the other fs
-Date: Mon, 02 Dec 2013 21:18:10 +0800
-Message-ID: <529C8892.8090102@gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 02/18] fs: add get_acl helper
+Date: Mon, 2 Dec 2013 21:14:34 +0100
+Message-ID: <20131202201434.GB12253@quack.suse.cz>
+References: <20131201115903.910559036@bombadil.infradead.org>
+	<20131201120653.841554822@bombadil.infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <younger.liucn@gmail.com>) id 1VnTOH-0001Av-5V
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Dec 2013 13:18:21 +0000
-Received: from mail-pd0-f173.google.com ([209.85.192.173])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VnTOG-0004Rp-1R
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Dec 2013 13:18:21 +0000
-Received: by mail-pd0-f173.google.com with SMTP id p10so18097220pdj.32
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 02 Dec 2013 05:18:14 -0800 (PST)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: fs-devel <linux-fsdevel@vger.kernel.org>, kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+Return-path: <xfs-bounces@oss.sgi.com>
+Content-Disposition: inline
+In-Reply-To: <20131201120653.841554822@bombadil.infradead.org>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: Christoph Hellwig <hch@infradead.org>
+Cc: xfs@oss.sgi.com, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Younger Liu <liuyiyang@hisense.com>
+On Sun 01-12-13 03:59:05, Christoph Hellwig wrote:
+> Factor out the code to get an ACL either from the inode or disk from
+> check_acl, so that it can be used elsewhere later on.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+  Looks good. You can add:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-This minor change for the naming conventions of debugfs_root
-to avoid any possible conflicts to the other filesystem.
+								Honza
 
-This patch is based on the first patch
-"[PATCH 0/2] f2fs: remove debufs dir if debugfs_create_file() failed".
-
-Signed-off-by: Younger Liu <liuyiyang@hisense.com>
-Cc: Younger Liu <younger.liucn@gmail.com>
-Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/debug.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index d27b689..9e8d355 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -24,7 +24,7 @@
- #include "gc.h"
- 
- static LIST_HEAD(f2fs_stat_list);
--static struct dentry *debugfs_root;
-+static struct dentry *f2fs_debugfs_root;
- static DEFINE_MUTEX(f2fs_stat_mutex);
- 
- static void update_general_status(struct f2fs_sb_info *sbi)
-@@ -342,19 +342,19 @@ void __init f2fs_create_root_stats(void)
- {
-     struct dentry *file;
- 
--    debugfs_root = debugfs_create_dir("f2fs", NULL);
--    if (!debugfs_root)
-+    f2fs_debugfs_root = debugfs_create_dir("f2fs", NULL);
-+    if (!f2fs_debugfs_root)
-         goto bail;
- 
-     file = debugfs_create_file("status", S_IRUGO,
--            debugfs_root, NULL, &stat_fops);
-+            f2fs_debugfs_root, NULL, &stat_fops);
-     if (!file)
-         goto free_debugfs_dir;
- 
-     return;
- 
- free_debugfs_dir:
--    debugfs_remove(debugfs_root);
-+    debugfs_remove(f2fs_debugfs_root);
- 
- bail:
-     return;
-@@ -362,6 +362,6 @@ bail:
- 
- void f2fs_destroy_root_stats(void)
- {
--    debugfs_remove_recursive(debugfs_root);
--    debugfs_root = NULL;
-+    debugfs_remove_recursive(f2fs_debugfs_root);
-+    f2fs_debugfs_root = NULL;
- }
+> ---
+>  fs/namei.c                |   24 +++---------------------
+>  fs/posix_acl.c            |   23 +++++++++++++++++++++++
+>  include/linux/posix_acl.h |    2 ++
+>  3 files changed, 28 insertions(+), 21 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index c53d3a9..8acd1e8 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -235,27 +235,9 @@ static int check_acl(struct inode *inode, int mask)
+>  	        return posix_acl_permission(inode, acl, mask & ~MAY_NOT_BLOCK);
+>  	}
+>  
+> -	acl = get_cached_acl(inode, ACL_TYPE_ACCESS);
+> -
+> -	/*
+> -	 * A filesystem can force a ACL callback by just never filling the
+> -	 * ACL cache. But normally you'd fill the cache either at inode
+> -	 * instantiation time, or on the first ->get_acl call.
+> -	 *
+> -	 * If the filesystem doesn't have a get_acl() function at all, we'll
+> -	 * just create the negative cache entry.
+> -	 */
+> -	if (acl == ACL_NOT_CACHED) {
+> -	        if (inode->i_op->get_acl) {
+> -			acl = inode->i_op->get_acl(inode, ACL_TYPE_ACCESS);
+> -			if (IS_ERR(acl))
+> -				return PTR_ERR(acl);
+> -		} else {
+> -		        set_cached_acl(inode, ACL_TYPE_ACCESS, NULL);
+> -		        return -EAGAIN;
+> -		}
+> -	}
+> -
+> +	acl = get_acl(inode, ACL_TYPE_ACCESS);
+> +	if (IS_ERR(acl))
+> +		return PTR_ERR(acl);
+>  	if (acl) {
+>  	        int error = posix_acl_permission(inode, acl, mask);
+>  	        posix_acl_release(acl);
+> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+> index 8bd2135..9dd03e0 100644
+> --- a/fs/posix_acl.c
+> +++ b/fs/posix_acl.c
+> @@ -418,3 +418,26 @@ posix_acl_chmod(struct posix_acl **acl, gfp_t gfp, umode_t mode)
+>  	return err;
+>  }
+>  EXPORT_SYMBOL(posix_acl_chmod);
+> +
+> +struct posix_acl *get_acl(struct inode *inode, int type)
+> +{
+> +	struct posix_acl *acl;
+> +
+> +	acl = get_cached_acl(inode, type);
+> +	if (acl != ACL_NOT_CACHED)
+> +		return acl;
+> +
+> +	/*
+> +	 * A filesystem can force a ACL callback by just never filling the
+> +	 * ACL cache. But normally you'd fill the cache either at inode
+> +	 * instantiation time, or on the first ->get_acl call.
+> +	 *
+> +	 * If the filesystem doesn't have a get_acl() function at all, we'll
+> +	 * just create the negative cache entry.
+> +	 */
+> +        if (!inode->i_op->get_acl) {
+> +	        set_cached_acl(inode, type, NULL);
+> +	        return ERR_PTR(-EAGAIN);
+> +	}
+> +	return inode->i_op->get_acl(inode, type);
+> +}
+> diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
+> index 7931efe..a8d9918 100644
+> --- a/include/linux/posix_acl.h
+> +++ b/include/linux/posix_acl.h
+> @@ -175,4 +175,6 @@ static inline void cache_no_acl(struct inode *inode)
+>  #endif
+>  }
+>  
+> +struct posix_acl *get_acl(struct inode *inode, int type);
+> +
+>  #endif  /* __LINUX_POSIX_ACL_H */
+> -- 
+> 1.7.10.4
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-ext4" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 -- 
-1.7.9.5
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
 
-
-------------------------------------------------------------------------------
-Rapidly troubleshoot problems before they affect your business. Most IT 
-organizations don't have a clear picture of how application performance 
-affects their revenue. With AppDynamics, you get 100% visibility into your 
-Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
-http://pubads.g.doubleclick.net/gampad/clk?id=84349351&iu=/4140/ostg.clktrk
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
