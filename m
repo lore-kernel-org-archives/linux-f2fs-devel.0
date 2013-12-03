@@ -1,100 +1,111 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 0/2] f2fs: remove debufs dir if
- debugfs_create_file() failed
-Date: Tue, 03 Dec 2013 13:49:05 +0800
-Message-ID: <001001ceefeb$86ebb3b0$94c31b10$@samsung.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [PATCH] f2fs: remove the own bi_private allocation
+Date: Tue, 03 Dec 2013 18:36:14 +0900
+Message-ID: <1386063374.2417.139.camel@kjgkr>
+References: <1385776085-21163-1-git-send-email-jaegeuk.kim@samsung.com>
+	<000201ceef25$e145cec0$a3d16c40$@samsung.com>
+	<1385972094.2417.104.camel@kjgkr>
+	<000301ceef3c$ecee00a0$c6ca01e0$@samsung.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=gb2312
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: liuyiyang@hisense.com
-Cc: 'fs-devel' <linux-fsdevel@vger.kernel.org>, 'kernel' <linux-kernel@vger.kernel.org>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>, 'Jaegeuk Kim' <jaegeuk.kim@samsung.com>, =?gb2312?B?zLfmrQ==?= <shu.tan@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VnmPz-0003Y6-B4
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 03 Dec 2013 09:37:23 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VnmPw-0008VL-U5
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 03 Dec 2013 09:37:23 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MX80042H5E1H300@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 03 Dec 2013 18:37:13 +0900 (KST)
+In-reply-to: <000301ceef3c$ecee00a0$c6ca01e0$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Liu,
-
-You're right, we should release it instead of holding the resource
-with no use. And here are some comments as following.
-
-BTW, your patch is out of format. You'd better not let remote
-terminal or editor to instead tab with blanks in the patch.
-
-Thanks,
-Yu
-
-> -----Original Message-----
-> From: Younger Liu [mailto:younger.liucn@gmail.com]
-> Sent: Monday, December 02, 2013 9:16 PM
-> To: Jaegeuk Kim
-> Cc: fs-devel; kernel; f2fs
-> Subject: [f2fs-dev] [PATCH 0/2] f2fs: remove debufs dir if debugfs_create_file() failed
-> 
-> From: Younger Liu <liuyiyang@hisense.com>
-> 
-> When debugfs_create_file() failed in f2fs_create_root_stats(),
-> debugfs_root should be removed.
-> 
-> Signed-off-by: Younger Liu <liuyiyang@hisense.com>
-> Cc: Younger Liu <younger.liucn@gmail.com>
-> Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-> ---
->  fs/f2fs/debug.c |   20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> index a84b0a8..d27b689 100644
-> --- a/fs/f2fs/debug.c
-> +++ b/fs/f2fs/debug.c
-> @@ -340,10 +340,24 @@ void f2fs_destroy_stats(struct f2fs_sb_info *sbi)
-> 
->  void __init f2fs_create_root_stats(void)
->  {
-> +    struct dentry *file;
-> +
->      debugfs_root = debugfs_create_dir("f2fs", NULL);
-> -    if (debugfs_root)
-> -        debugfs_create_file("status", S_IRUGO, debugfs_root,
-> -                     NULL, &stat_fops);
-> +    if (!debugfs_root)
-> +        goto bail;
-> +
-> +    file = debugfs_create_file("status", S_IRUGO,
-> +            debugfs_root, NULL, &stat_fops);
-> +    if (!file)
-> +        goto free_debugfs_dir;
-> +
-> +    return;
-> +
-> +free_debugfs_dir:
-> +    debugfs_remove(debugfs_root);
-
-debugfs_root = NULL;
-
-> +
-> +bail:
-> +    return;
->  }
-> 
->  void f2fs_destroy_root_stats(void)
-
-You should judge debugfs_root value in f2fs_destroy_root_stats
-to decide free or not.
-
-> --
-> 1.7.9.5
-> 
-> 
-> 
-> ------------------------------------------------------------------------------
-> Rapidly troubleshoot problems before they affect your business. Most IT
-> organizations don't have a clear picture of how application performance
-> affects their revenue. With AppDynamics, you get 100% visibility into your
-> Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
-> http://pubads.g.doubleclick.net/gampad/clk?id=84349351&iu=/4140/ostg.clktrk
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
+SXQgY2F1c2VzIE5VTEwgcG9pbnRlciBlcnJvciB3aXRob3V0IGYyZnNfYnVnX29uKCksIHNvIEkg
+ZG9uJ3QgdGhpbmsgd2UKbmVlZCB0byBhZGQgdGhpcy4KVGhhbmtzLAoKMjAxMy0xMi0wMiAo7JuU
+KSwgMTY6NTkgKzA4MDAsIENoYW8gWXU6Cj4gSGkgS2ltLAo+IAo+ID4gLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0KPiA+IEZyb206IEphZWdldWsgS2ltIFttYWlsdG86amFlZ2V1ay5raW1Ac2Ft
+c3VuZy5jb21dCj4gPiBTZW50OiBNb25kYXksIERlY2VtYmVyIDAyLCAyMDEzIDQ6MTUgUE0KPiA+
+IFRvOiBDaGFvIFl1Cj4gPiBDYzogbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4
+LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9y
+Z2UubmV0OyDosK3lp50KPiA+IFN1YmplY3Q6IFJFOiBbZjJmcy1kZXZdIFtQQVRDSF0gZjJmczog
+cmVtb3ZlIHRoZSBvd24gYmlfcHJpdmF0ZSBhbGxvY2F0aW9uCj4gPiAKPiA+IDIwMTMtMTItMDIg
+KOyblCksIDE0OjE0ICswODAwLCBDaGFvIFl1Ogo+ID4gPiBIaSBLaW0sCj4gPiA+Cj4gPiA+ID4g
+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0KPiA+ID4gPiBGcm9tOiBKYWVnZXVrIEtpbSBbbWFp
+bHRvOmphZWdldWsua2ltQHNhbXN1bmcuY29tXQo+ID4gPiA+IFNlbnQ6IFNhdHVyZGF5LCBOb3Zl
+bWJlciAzMCwgMjAxMyA5OjQ4IEFNCj4gPiA+ID4gQ2M6IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJu
+ZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1mMmZzLWRldmVsQGxp
+c3RzLnNvdXJjZWZvcmdlLm5ldAo+ID4gPiA+IFN1YmplY3Q6IFtmMmZzLWRldl0gW1BBVENIXSBm
+MmZzOiByZW1vdmUgdGhlIG93biBiaV9wcml2YXRlIGFsbG9jYXRpb24KPiA+ID4gPgo+ID4gPiA+
+IFByZXZpb3VzbHkgZjJmcyBhbGxvY2F0ZXMgaXRzIG93biBiaV9wcml2YXRlIGRhdGEgc3RydWN0
+dXJlIGFsbCB0aGUgdGltZSBldmVuCj4gPiA+ID4gdGhvdWdoIHdlIGRvbid0IHVzZSBpdC4gQnV0
+LCBjYW4gd2UgcmVtb3ZlIHRoaXMgYmlfcHJpdmF0ZSBhbGxvY2F0aW9uPwo+ID4gPiA+Cj4gPiA+
+ID4gVGhpcyBwYXRjaCByZW1vdmVzIHN1Y2ggdGhlIGFkZGl0aW9uYWwgYmlfcHJpdmF0ZSBhbGxv
+Y2F0aW9uLgo+ID4gPiA+Cj4gPiA+ID4gMS4gUmV0cmlldmUgZjJmc19zYl9pbmZvIGZyb20gaXRz
+IHBhZ2UtPm1hcHBpbmctPmhvc3QtPmlfc2IuCj4gPiA+ID4gIC0gVGhpcyByZW1vdmVzIHRoZSB1
+c2VjYXNlcyBvZiBiaV9wcml2YXRlIGluIGVuZF9pby4KPiA+ID4gPgo+ID4gPiA+IDIuIFVzZSBi
+aV9wcml2YXRlIG9ubHkgd2hlbiB3ZSByZWFsbHkgbmVlZCBpdC4KPiA+ID4gPiAgLSBUaGUgYmlf
+cHJpdmF0ZSBpcyB1c2VkIG9ubHkgd2hlbiB0aGUgY2hlY2twb2ludCBwcm9jZWR1cmUgaXMgY29u
+ZHVjdGVkLgo+ID4gPiA+ICAtIFdoZW4gY29uZHVjdGluZyB0aGUgY2hlY2twb2ludCwgZjJmcyBz
+dWJtaXRzIGEgTUVUQV9GTFVTSCBiaW8gdG8gd2FpdCBpdHMgYmlvCj4gPiA+ID4gY29tcGxldGlv
+bi4KPiA+ID4gPiAgLSBTaW5jZSB3ZSBoYXZlIG5vIGRlcGVuZGFuY2llcyB0byByZW1vdmUgYmlf
+cHJpdmF0ZSBub3csIGxldCdzIGp1c3QgdXNlCj4gPiA+ID4gIGJpX3ByaXZhdGUgcG9pbnRlciBh
+cyB0aGUgY29tcGxldGlvbiBwb2ludGVyLgo+ID4gPiA+Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTog
+SmFlZ2V1ayBLaW0gPGphZWdldWsua2ltQHNhbXN1bmcuY29tPgo+ID4gPiA+IC0tLQo+ID4gPiA+
+ICBmcy9mMmZzL3NlZ21lbnQuYyB8IDQzICsrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0KPiA+ID4gPiAgZnMvZjJmcy9zZWdtZW50LmggfCAgNyAtLS0tLS0tCj4gPiA+
+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTYgaW5zZXJ0aW9ucygrKSwgMzQgZGVsZXRpb25zKC0pCj4g
+PiA+ID4KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZzL3Nl
+Z21lbnQuYwo+ID4gPiA+IGluZGV4IDAzODc4NjMuLjBkYjQwMjcgMTAwNjQ0Cj4gPiA+ID4gLS0t
+IGEvZnMvZjJmcy9zZWdtZW50LmMKPiA+ID4gPiArKysgYi9mcy9mMmZzL3NlZ21lbnQuYwo+ID4g
+PiA+IEBAIC03OTEsNyArNzkxLDcgQEAgc3RhdGljIHZvaWQgZjJmc19lbmRfaW9fd3JpdGUoc3Ry
+dWN0IGJpbyAqYmlvLCBpbnQgZXJyKQo+ID4gPiA+ICB7Cj4gPiA+ID4gIAljb25zdCBpbnQgdXB0
+b2RhdGUgPSB0ZXN0X2JpdChCSU9fVVBUT0RBVEUsICZiaW8tPmJpX2ZsYWdzKTsKPiA+ID4gPiAg
+CXN0cnVjdCBiaW9fdmVjICpidmVjID0gYmlvLT5iaV9pb192ZWMgKyBiaW8tPmJpX3ZjbnQgLSAx
+Owo+ID4gPiA+IC0Jc3RydWN0IGJpb19wcml2YXRlICpwID0gYmlvLT5iaV9wcml2YXRlOwo+IAo+
+IAkJZjJmc19idWdfb24odW5saWtlbHkoIWJ2ZWMtPmJ2X3BhZ2UtPm1hcHBpbmcpKTsKPiAKPiA+
+ID4gPiArCXN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSA9IEYyRlNfU0IoYnZlYy0+YnZfcGFnZS0+
+bWFwcGluZy0+aG9zdC0+aV9zYik7Cj4gPiA+Cj4gPiA+IEknbSBub3Qgc3VyZSB3aGV0aGVyIGJ2
+ZWMtPmJ2X3BhZ2UtPm1hcHBpbmcgd2lsbCBiZSBzZXQgdG8gTlVMTCBpbiB0aGUgZmxvdwo+ID4g
+PiB3aGVyZSBtYXkgbm90IGNoZWNrIFdSSVRFQkFDSyBmbGFnIG9mIHBhZ2UuIElzIGl0IHBvc3Np
+YmxlPwo+ID4gCj4gPiBUaGUgbWFwcGluZyBzaG91bGQgYmUgbm90IE5VTEwgY2F1c2UgaXQgaXMg
+YSB3cml0ZWJhY2tpbmcgcGFnZS4KPiA+IE90aGVyd2lzZSwgaXQncyBhIGJ1Zy4KPiAKPiBJZiBz
+bywgc2hvdWxkIHdlIGFkZCBhZGRpdGlvbmFsIGNvZGUgYXMgYWJvdmU/Cj4gCj4gUmVnYXJkcywK
+PiBZdQo+IAo+ID4gVGhhbmtzLAo+ID4gCj4gPiAtLQo+ID4gSmFlZ2V1ayBLaW0KPiA+IFNhbXN1
+bmcKPiAKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5l
+ICJ1bnN1YnNjcmliZSBsaW51eC1mc2RldmVsIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0
+byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0
+cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCgotLSAKSmFlZ2V1ayBLaW0K
+U2Ftc3VuZwoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KUmFwaWRseSB0cm91Ymxlc2hvb3QgcHJv
+YmxlbXMgYmVmb3JlIHRoZXkgYWZmZWN0IHlvdXIgYnVzaW5lc3MuIE1vc3QgSVQgCm9yZ2FuaXph
+dGlvbnMgZG9uJ3QgaGF2ZSBhIGNsZWFyIHBpY3R1cmUgb2YgaG93IGFwcGxpY2F0aW9uIHBlcmZv
+cm1hbmNlIAphZmZlY3RzIHRoZWlyIHJldmVudWUuIFdpdGggQXBwRHluYW1pY3MsIHlvdSBnZXQg
+MTAwJSB2aXNpYmlsaXR5IGludG8geW91ciAKSmF2YSwuTkVULCAmIFBIUCBhcHBsaWNhdGlvbi4g
+U3RhcnQgeW91ciAxNS1kYXkgRlJFRSBUUklBTCBvZiBBcHBEeW5hbWljcyBQcm8hCmh0dHA6Ly9w
+dWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD04NDM0OTM1MSZpdT0vNDE0MC9v
+c3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNv
+dXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5m
+by9saW51eC1mMmZzLWRldmVsCg==
