@@ -1,112 +1,101 @@
-From: Younger Liu <younger.liucn@gmail.com>
-Subject: [PATCH V2 1/2] f2fs: A minor change for avoiding any
- possible conflicts to the other fs
-Date: Tue, 03 Dec 2013 21:09:29 +0800
-Message-ID: <529DD809.3040500@gmail.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH v2] f2fs: refactor bio-related operations
+Date: Wed, 04 Dec 2013 14:01:05 +0800
+Message-ID: <001101cef0b6$562766e0$027634a0$@samsung.com>
+References: <1385792739-31405-1-git-send-email-jaegeuk.kim@samsung.com>
+ <1385972847.2417.113.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=gb2312
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <younger.liucn@gmail.com>) id 1VnpjR-0001EO-5l
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 Dec 2013 13:09:41 +0000
-Received: from mail-pb0-f49.google.com ([209.85.160.49])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VnpjP-0001Lk-De
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 Dec 2013 13:09:41 +0000
-Received: by mail-pb0-f49.google.com with SMTP id jt11so20943544pbb.22
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 03 Dec 2013 05:09:33 -0800 (PST)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: fs-devel <linux-fsdevel@vger.kernel.org>, kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1385972847.2417.113.camel@kjgkr>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, =?gb2312?B?zLfmrQ==?= <shu.tan@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Younger Liu <liuyiyang@hisense.com>
+Hi,
 
-This minor change for the naming conventions of debugfs_root
-to avoid any possible conflicts to the other filesystem.
+Comment as following.
 
-This patch is based on the first patch:
-[PATCH V2 0/2] f2fs: remove debufs dir if debugfs_create_file() failed.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Monday, December 02, 2013 4:27 PM
+> To: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH v2] f2fs: refactor bio-related operations
+> 
+> Change log from v1:
+>  o remove redundant codes
+> 
+> >From a480dfc915490f4bca7275f6fbb44fa34aa00eaa Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+> Date: Sat, 30 Nov 2013 12:51:14 +0900
+> Subject: [PATCH] f2fs: refactor bio-related operations
+> Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+> 
+> This patch integrates redundant bio operations on read and write IOs.
+> 
+> 1. Move bio-related codes to the top of data.c.
+> 2. Replace f2fs_submit_bio with f2fs_submit_merged_bio, which handles read
+>    bios additionally.
+> 3. Introduce __submit_merged_bio to submit the merged bio.
+> 4. Change f2fs_readpage to f2fs_submit_page_bio.
+> 5. Introduce f2fs_submit_page_mbio to integrate previous submit_read_page and
+>    submit_write_page.
 
-Signed-off-by: Younger Liu <younger.liucn@gmail.com>
-Cc: Younger Liu <younger.liucn@gmail.com>
-Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/debug.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+[snip]
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index b51fb3c..61adbcb 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -24,7 +24,7 @@
- #include "gc.h"
+> +static void __submit_merged_bio(struct f2fs_sb_info *sbi,
+> +				struct f2fs_bio_info *io,
+> +				enum page_type type, bool sync, int rw)
+> +{
+> +	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+> +
+> +	if (!io->bio)
+> +		return;
+> +
+> +	if (btype == META)
+> +		rw |= REQ_META;
+> +
+> +	if (is_read_io(rw)) {
+> +		if (sync)
+> +			rw |= READ_SYNC;
+> +		submit_bio(rw, io->bio);
+> +		trace_f2fs_submit_read_bio(sbi->sb, rw, type, io->bio);
+> +		io->bio = NULL;
+> +		return;
+> +	}
+> +
+> +	if (sync)
+> +		rw |= WRITE_SYNC;
 
- static LIST_HEAD(f2fs_stat_list);
--static struct dentry *debugfs_root;
-+static struct dentry *f2fs_debugfs_root;
- static DEFINE_MUTEX(f2fs_stat_mutex);
+rw = WRITE_SYNC; ?
 
- static void update_general_status(struct f2fs_sb_info *sbi)
-@@ -342,11 +342,11 @@ void __init f2fs_create_root_stats(void)
- {
- 	struct dentry *file;
+> +	if (type >= META_FLUSH)
+> +		rw |= WRITE_FLUSH_FUA;
 
--	debugfs_root = debugfs_create_dir("f2fs", NULL);
--	if (!debugfs_root)
-+	f2fs_debugfs_root = debugfs_create_dir("f2fs", NULL);
-+	if (!f2fs_debugfs_root)
- 		goto bail;
+rw = WRITE_FLUSH_FUA; ?
 
--	file = debugfs_create_file("status", S_IRUGO, debugfs_root,
-+	file = debugfs_create_file("status", S_IRUGO, f2fs_debugfs_root,
- 			NULL, &stat_fops);
- 	if (!file)
- 		goto free_debugfs_dir;
-@@ -354,18 +354,18 @@ void __init f2fs_create_root_stats(void)
- 	return;
+> +
+> +	/*
+> +	 * META_FLUSH is only from the checkpoint procedure, and we should wait
+> +	 * this metadata bio for FS consistency.
+> +	 */
+> +	if (type == META_FLUSH) {
+> +		DECLARE_COMPLETION_ONSTACK(wait);
+> +		io->bio->bi_private = &wait;
+> +		submit_bio(rw, io->bio);
+> +		wait_for_completion(&wait);
+> +	} else {
+> +		submit_bio(rw, io->bio);
+> +	}
+> +	trace_f2fs_submit_write_bio(sbi->sb, rw, btype, io->bio);
+> +	io->bio = NULL;
+> +}
 
- free_debugfs_dir:
--	debugfs_remove(debugfs_root);
-+	debugfs_remove(f2fs_debugfs_root);
+[snip]
 
- bail:
--	debugfs_root = NULL;
-+	f2fs_debugfs_root = NULL;
- 	return;
- }
-
- void f2fs_destroy_root_stats(void)
- {
--	if (!debugfs_root)
-+	if (!f2fs_debugfs_root)
- 		return;
-
--	debugfs_remove_recursive(debugfs_root);
--	debugfs_root = NULL;
-+	debugfs_remove_recursive(f2fs_debugfs_root);
-+	f2fs_debugfs_root = NULL;
- }
--- 
-1.7.9.5
-
-
-------------------------------------------------------------------------------
-Rapidly troubleshoot problems before they affect your business. Most IT 
-organizations don't have a clear picture of how application performance 
-affects their revenue. With AppDynamics, you get 100% visibility into your 
-Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
-http://pubads.g.doubleclick.net/gampad/clk?id=84349351&iu=/4140/ostg.clktrk
+Thanks,
+Yu
