@@ -1,134 +1,98 @@
-From: Steven Whitehouse <swhiteho@redhat.com>
-Subject: Re: [Cluster-devel] [PATCH 16/18] gfs2: use generic posix ACL
-	infrastructure
-Date: Wed, 04 Dec 2013 12:12:37 +0000
-Message-ID: <1386159157.2711.11.camel@menhir>
-References: <20131201115903.910559036@bombadil.infradead.org>
-	<20131201120656.539995924@bombadil.infradead.org>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH 1/3] f2fs: use inner macro GFP_F2FS_ZERO for
+ simplification
+Date: Thu, 05 Dec 2013 09:54:00 +0800
+Message-ID: <001601cef15c$fd1a7d60$f74f7820$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-In-Reply-To: <20131201120656.539995924@bombadil.infradead.org>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Christoph Hellwig <hch@infradead.org>
-Cc: jfs-discussion@lists.sourceforge.net, linux-ext4@vger.kernel.org, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, xfs@oss.sgi.com, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1VoO9h-00086n-9t
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Dec 2013 01:55:05 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VoO9f-0002qh-Ah
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Dec 2013 01:55:05 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0MXB00EQC9BJ2E40@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Dec 2013 10:54:55 +0900 (KST)
+Content-language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: ??? <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+Use inner macro GFP_F2FS_ZERO to instead of GFP_NOFS | __GFP_ZERO for
+simplification of code.
 
-On Sun, 2013-12-01 at 03:59 -0800, Christoph Hellwig wrote:
-> plain text document attachment
-> (0016-gfs2-use-generic-posix-ACL-infrastructure.patch)
-> This contains some major refactoring for the create path so that
-> inodes are created with the right mode to start with instead of
-> fixing it up later.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/gfs2/acl.c   |  229 +++++++------------------------------------------------
->  fs/gfs2/acl.h   |    4 +-
->  fs/gfs2/inode.c |   33 ++++++--
->  fs/gfs2/xattr.c |    4 +-
->  4 files changed, 61 insertions(+), 209 deletions(-)
-> 
-Looks very good. I'd really like to be able to do something similar with
-the security xattrs, in terms of the refactoring that at inode creation
-to give the xattrs ahead of the inode allocation itself. That way it
-should be possible to allocate the xattr blocks at the same time as the
-inode, rather than as an after thought.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/node.c     |    2 +-
+ fs/f2fs/recovery.c |    2 +-
+ fs/f2fs/super.c    |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Some more comments below....
-
-> diff --git a/fs/gfs2/acl.c b/fs/gfs2/acl.c
-> index e82e4ac..e6c7a2c 100644
-> --- a/fs/gfs2/acl.c
-> +++ b/fs/gfs2/acl.c
-[snip]
-> -
-> -static int gfs2_xattr_system_set(struct dentry *dentry, const char *name,
-> -				 const void *value, size_t size, int flags,
-> -				 int xtype)
-> -{
-> -	struct inode *inode = dentry->d_inode;
-> -	struct gfs2_sbd *sdp = GFS2_SB(inode);
-> -	struct posix_acl *acl = NULL;
-> -	int error = 0, type;
-> -
-> -	if (!sdp->sd_args.ar_posix_acl)
-> -		return -EOPNOTSUPP;
-> -
-> -	type = gfs2_acl_type(name);
-> -	if (type < 0)
-> -		return type;
-> -	if (flags & XATTR_CREATE)
-> -		return -EINVAL;
-> -	if (type == ACL_TYPE_DEFAULT && !S_ISDIR(inode->i_mode))
-> -		return value ? -EACCES : 0;
-> -	if (!uid_eq(current_fsuid(), inode->i_uid) && !capable(CAP_FOWNER))
-> -		return -EPERM;
-> -	if (S_ISLNK(inode->i_mode))
-> -		return -EOPNOTSUPP;
-> -
-> -	if (!value)
-> -		goto set_acl;
->  
-> -	acl = posix_acl_from_xattr(&init_user_ns, value, size);
-> -	if (!acl) {
-> -		/*
-> -		 * acl_set_file(3) may request that we set default ACLs with
-> -		 * zero length -- defend (gracefully) against that here.
-> -		 */
-> -		goto out;
-> -	}
-> -	if (IS_ERR(acl)) {
-> -		error = PTR_ERR(acl);
-> -		goto out;
-> -	}
-> -
-> -	error = posix_acl_valid(acl);
-> -	if (error)
-> -		goto out_release;
-> -
-> -	error = -EINVAL;
->  	if (acl->a_count > GFS2_ACL_MAX_ENTRIES)
-> -		goto out_release;
-> +		return -EINVAL;
->  
->  	if (type == ACL_TYPE_ACCESS) {
->  		umode_t mode = inode->i_mode;
-> +
->  		error = posix_acl_equiv_mode(acl, &mode);
-> +		if (error < 0)
->  
-Andy Price has pointed out a missing "return error;" here
-
-> -		if (error <= 0) {
-> -			posix_acl_release(acl);
-> +		if (error == 0)
->  			acl = NULL;
->  
-> -			if (error < 0)
-> -				return error;
-> -		}
-> -
-
-Also, there seems to be a white space error in the xfs patch around line
-170 in fs/xfs/xfs_iops.c where there is an added "if (default_acl)" with
-a space before the tab,
-
-Steve.
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 0855168..099f06f 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1577,7 +1577,7 @@ static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
+ 
+ 	for (; page_idx < start + nrpages; page_idx++) {
+ 		/* alloc temporal page for read node summary info*/
+-		page = alloc_page(GFP_NOFS | __GFP_ZERO);
++		page = alloc_page(GFP_F2FS_ZERO);
+ 		if (!page) {
+ 			struct page *tmp;
+ 			list_for_each_entry_safe(page, tmp, pages, lru) {
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index c209b86..7dda1f28 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -377,7 +377,7 @@ static int recover_data(struct f2fs_sb_info *sbi,
+ 	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+ 
+ 	/* read node page */
+-	page = alloc_page(GFP_NOFS | __GFP_ZERO);
++	page = alloc_page(GFP_F2FS_ZERO);
+ 	if (!page)
+ 		return -ENOMEM;
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index dd55074..22b07c3 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -332,7 +332,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ {
+ 	struct f2fs_inode_info *fi;
+ 
+-	fi = kmem_cache_alloc(f2fs_inode_cachep, GFP_NOFS | __GFP_ZERO);
++	fi = kmem_cache_alloc(f2fs_inode_cachep, GFP_F2FS_ZERO);
+ 	if (!fi)
+ 		return NULL;
+ 
+-- 
+1.7.9.5
 
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+------------------------------------------------------------------------------
+Sponsored by Intel(R) XDK 
+Develop, test and display web and hybrid apps with a single code base.
+Download it for free now!
+http://pubads.g.doubleclick.net/gampad/clk?id=111408631&iu=/4140/ostg.clktrk
