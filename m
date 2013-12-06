@@ -1,202 +1,323 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 2/5 V2] f2fs: add unlikely() macro for
- compiler optimization
-Date: Fri, 06 Dec 2013 13:12:03 +0900
-Message-ID: <1386303123.2101.18.camel@kjgkr>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/5 V2] f2fs: add unlikely() macro for compiler
+ optimization
+Date: Fri, 06 Dec 2013 12:27:24 +0800
+Message-ID: <000201cef23b$9c0f1730$d42d4590$@samsung.com>
 References: <000001cef19a$a4bed330$ee3c7990$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+ <1386303123.2101.18.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vommu-0001LR-Uq
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Dec 2013 04:13:13 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1Vomms-00088o-KS
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Dec 2013 04:13:12 +0000
-Received: from epcpsbgr1.samsung.com
-	(u141.gpu120.samsung.co.kr [203.254.230.141])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MXD00K3RADQNYC0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Dec 2013 13:13:02 +0900 (KST)
-In-reply-to: <000001cef19a$a4bed330$ee3c7990$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1386303123.2101.18.camel@kjgkr>
+Content-language: zh-cn
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgpKdXN0IGluIGNhc2UsIGlmIHlvdSBhZ3JlZWQgdGhlIGZvbGxvd2luZyBjb21tZW50cywg
-SSdsbCBmaXggdGhvc2UgYW5kCm1lcmdlIHRoZSBwYXRjaCBieSBteXNlbGYuClRoYW5rcywKCjIw
-MTMtMTItMDUgKOuqqSksIDE3OjE1ICswODAwLCBDaGFvIFl1Ogo+IEFzIHdlIGtub3csIHNvbWUg
-b2Ygb3VyIGJyYW5jaCBjb25kaXRpb24gd2lsbCByYXJlbHkgYmUgdHJ1ZS4gU28gd2UgY291bGQg
-YWRkCj4gJ3VubGlrZWx5JyB0byBsZXQgY29tcGlsZXIgb3B0aW1pemUgdGhlc2UgY29kZSwgYnkg
-dGhpcyB3YXkgd2UgY291bGQgZHJvcAo+IHVubmVlZGVkICdqdW1wJyBhc3NlbWJsZSBjb2RlIHRv
-IGltcHJvdmUgcGVyZm9ybWFuY2UuCj4gCj4gY2hhbmdlIGxvZzoKPiAgbyBhZGQgKnVubGlrZWx5
-KiBhcyBtYW55IGFzIHBvc3NpYmxlIGFjcm9zcyB0aGUgd2hvbGUgc291cmNlIGZpbGVzIGF0IG9u
-Y2UKPiAgICBzdWdnZXN0ZWQgYnkgSmFlZ2V1ayBLaW0uCj4gCj4gU3VnZ2VzdGVkLWJ5OiBKYWVn
-ZXVrIEtpbSA8amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb20+Cj4gU2lnbmVkLW9mZi1ieTogQ2hhbyBZ
-dSA8Y2hhbzIueXVAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGZzL2YyZnMvY2hlY2twb2ludC5jIHwg
-ICAxMCArKysrKy0tLS0tCj4gIGZzL2YyZnMvZGF0YS5jICAgICAgIHwgICAgNCArKy0tCj4gIGZz
-L2YyZnMvZGlyLmMgICAgICAgIHwgICAgNCArKy0tCj4gIGZzL2YyZnMvZjJmcy5oICAgICAgIHwg
-ICAgOCArKysrLS0tLQo+ICBmcy9mMmZzL25vZGUuYyAgICAgICB8ICAgMTYgKysrKysrKystLS0t
-LS0tLQo+ICBmcy9mMmZzL3NlZ21lbnQuaCAgICB8ICAgIDIgKy0KPiAgNiBmaWxlcyBjaGFuZ2Vk
-LCAyMiBpbnNlcnRpb25zKCspLCAyMiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZnMv
-ZjJmcy9jaGVja3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+IGluZGV4IDM4ZjRhMjI0
-Li42NTgwODA4IDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvY2hlY2twb2ludC5jCj4gKysrIGIvZnMv
-ZjJmcy9jaGVja3BvaW50LmMKPiBAQCAtODIsOCArODIsOCBAQCBzdGF0aWMgaW50IGYyZnNfd3Jp
-dGVfbWV0YV9wYWdlKHN0cnVjdCBwYWdlICpwYWdlLAo+ICAJc3RydWN0IGYyZnNfc2JfaW5mbyAq
-c2JpID0gRjJGU19TQihpbm9kZS0+aV9zYik7Cj4gIAo+ICAJLyogU2hvdWxkIG5vdCB3cml0ZSBh
-bnkgbWV0YSBwYWdlcywgaWYgYW55IElPIGVycm9yIHdhcyBvY2N1cnJlZCAqLwo+IC0JaWYgKHdi
-Yy0+Zm9yX3JlY2xhaW0gfHwgc2JpLT5wb3JfZG9pbmcgfHwKPiAtCQkJaXNfc2V0X2NrcHRfZmxh
-Z3MoRjJGU19DS1BUKHNiaSksIENQX0VSUk9SX0ZMQUcpKSB7Cj4gKwlpZiAodW5saWtlbHkod2Jj
-LT5mb3JfcmVjbGFpbSB8fCBzYmktPnBvcl9kb2luZyB8fAo+ICsJCQlpc19zZXRfY2twdF9mbGFn
-cyhGMkZTX0NLUFQoc2JpKSwgQ1BfRVJST1JfRkxBRykpKSB7CgoJaWYgKHVubGlrZWx5KHNiaS0+
-cG9yX2RvaW5nIHx8IGlzX3NldF9ja3B0X2ZsYWdzKEYyRlNfQ0tQVChzYmkpLApDUF9FUlJPUl9G
-TEFHKSkpCgkJZ290byByZWRpcnR5X291dDsKCWlmICh3YmMtPmZvcl9yZWNsYWltKQoJCWdvdG8g
-cmVkaXJ0eV9vdXQ7CgpyZWRpcnR5X291dDoKPiAgCQlkZWNfcGFnZV9jb3VudChzYmksIEYyRlNf
-RElSVFlfTUVUQSk7Cj4gIAkJd2JjLT5wYWdlc19za2lwcGVkKys7Cj4gIAkJc2V0X3BhZ2VfZGly
-dHkocGFnZSk7Cj4gQEAgLTEzNyw3ICsxMzcsNyBAQCBsb25nIHN5bmNfbWV0YV9wYWdlcyhzdHJ1
-Y3QgZjJmc19zYl9pbmZvICpzYmksIGVudW0gcGFnZV90eXBlIHR5cGUsCj4gIAkJbnJfcGFnZXMg
-PSBwYWdldmVjX2xvb2t1cF90YWcoJnB2ZWMsIG1hcHBpbmcsICZpbmRleCwKPiAgCQkJCVBBR0VD
-QUNIRV9UQUdfRElSVFksCj4gIAkJCQltaW4oZW5kIC0gaW5kZXgsIChwZ29mZl90KVBBR0VWRUNf
-U0laRS0xKSArIDEpOwo+IC0JCWlmIChucl9wYWdlcyA9PSAwKQo+ICsJCWlmICh1bmxpa2VseShu
-cl9wYWdlcyA9PSAwKSkKPiAgCQkJYnJlYWs7Cj4gIAo+ICAJCWZvciAoaSA9IDA7IGkgPCBucl9w
-YWdlczsgaSsrKSB7Cj4gQEAgLTE1MCw3ICsxNTAsNyBAQCBsb25nIHN5bmNfbWV0YV9wYWdlcyhz
-dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGVudW0gcGFnZV90eXBlIHR5cGUsCj4gIAkJCQl1bmxv
-Y2tfcGFnZShwYWdlKTsKPiAgCQkJCWJyZWFrOwo+ICAJCQl9Cj4gLQkJCWlmIChud3JpdHRlbisr
-ID49IG5yX3RvX3dyaXRlKQo+ICsJCQlpZiAodW5saWtlbHkobndyaXR0ZW4rKyA+PSBucl90b193
-cml0ZSkpCgpud3JpdHRlbisrOwoKaWYgKHVubGlrZWx5KG53cml0dGVuID49IG5yX3RvX3dyaXRl
-KSkKCgo+ICAJCQkJYnJlYWs7Cj4gIAkJfQo+ICAJCXBhZ2V2ZWNfcmVsZWFzZSgmcHZlYyk7Cj4g
-QEAgLTIwMCw3ICsyMDAsNyBAQCBpbnQgYWNxdWlyZV9vcnBoYW5faW5vZGUoc3RydWN0IGYyZnNf
-c2JfaW5mbyAqc2JpKQo+ICAJbWF4X29ycGhhbnMgPSAoc2JpLT5ibG9ja3NfcGVyX3NlZyAtIDIg
-LSBOUl9DVVJTRUdfVFlQRSkKPiAgCQkJCSogRjJGU19PUlBIQU5TX1BFUl9CTE9DSzsKPiAgCW11
-dGV4X2xvY2soJnNiaS0+b3JwaGFuX2lub2RlX211dGV4KTsKPiAtCWlmIChzYmktPm5fb3JwaGFu
-cyA+PSBtYXhfb3JwaGFucykKPiArCWlmICh1bmxpa2VseShzYmktPm5fb3JwaGFucyA+PSBtYXhf
-b3JwaGFucykpCj4gIAkJZXJyID0gLUVOT1NQQzsKPiAgCWVsc2UKPiAgCQlzYmktPm5fb3JwaGFu
-cysrOwo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2RhdGEuYyBiL2ZzL2YyZnMvZGF0YS5jCj4gaW5k
-ZXggNGUyZmMwOS4uMmNlNWE5ZSAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL2RhdGEuYwo+ICsrKyBi
-L2ZzL2YyZnMvZGF0YS5jCj4gQEAgLTI1MSw3ICsyNTEsNyBAQCBpbnQgcmVzZXJ2ZV9uZXdfYmxv
-Y2soc3RydWN0IGRub2RlX29mX2RhdGEgKmRuKQo+ICAKPiAgCWlmIChpc19pbm9kZV9mbGFnX3Nl
-dChGMkZTX0koZG4tPmlub2RlKSwgRklfTk9fQUxMT0MpKQo+ICAJCXJldHVybiAtRVBFUk07Cj4g
-LQlpZiAoIWluY192YWxpZF9ibG9ja19jb3VudChzYmksIGRuLT5pbm9kZSwgMSkpCj4gKwlpZiAo
-dW5saWtlbHkoIWluY192YWxpZF9ibG9ja19jb3VudChzYmksIGRuLT5pbm9kZSwgMSkpKQo+ICAJ
-CXJldHVybiAtRU5PU1BDOwo+ICAKPiAgCXRyYWNlX2YyZnNfcmVzZXJ2ZV9uZXdfYmxvY2soZG4t
-Pmlub2RlLCBkbi0+bmlkLCBkbi0+b2ZzX2luX25vZGUpOwo+IEBAIC03MTEsNyArNzExLDcgQEAg
-c3RhdGljIGludCBmMmZzX3dyaXRlX2RhdGFfcGFnZShzdHJ1Y3QgcGFnZSAqcGFnZSwKPiAgCj4g
-IAl6ZXJvX3VzZXJfc2VnbWVudChwYWdlLCBvZmZzZXQsIFBBR0VfQ0FDSEVfU0laRSk7Cj4gIHdy
-aXRlOgo+IC0JaWYgKHNiaS0+cG9yX2RvaW5nKSB7Cj4gKwlpZiAodW5saWtlbHkoc2JpLT5wb3Jf
-ZG9pbmcpKSB7Cj4gIAkJZXJyID0gQU9QX1dSSVRFUEFHRV9BQ1RJVkFURTsKPiAgCQlnb3RvIHJl
-ZGlydHlfb3V0Owo+ICAJfQo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2Rpci5jIGIvZnMvZjJmcy9k
-aXIuYwo+IGluZGV4IDU5NGZjMWIuLjBjYzI2YmEgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9kaXIu
-Ywo+ICsrKyBiL2ZzL2YyZnMvZGlyLmMKPiBAQCAtMTkwLDcgKzE5MCw3IEBAIHN0cnVjdCBmMmZz
-X2Rpcl9lbnRyeSAqZjJmc19maW5kX2VudHJ5KHN0cnVjdCBpbm9kZSAqZGlyLAo+ICAJdW5zaWdu
-ZWQgaW50IG1heF9kZXB0aDsKPiAgCXVuc2lnbmVkIGludCBsZXZlbDsKPiAgCj4gLQlpZiAobmFt
-ZWxlbiA+IEYyRlNfTkFNRV9MRU4pCj4gKwlpZiAodW5saWtlbHkobmFtZWxlbiA+IEYyRlNfTkFN
-RV9MRU4pKQo+ICAJCXJldHVybiBOVUxMOwo+ICAKPiAgCWlmIChucGFnZXMgPT0gMCkKPiBAQCAt
-NDYxLDcgKzQ2MSw3IEBAIGludCBfX2YyZnNfYWRkX2xpbmsoc3RydWN0IGlub2RlICpkaXIsIGNv
-bnN0IHN0cnVjdCBxc3RyICpuYW1lLCBzdHJ1Y3QgaW5vZGUgKmluCj4gIAl9Cj4gIAo+ICBzdGFy
-dDoKPiAtCWlmIChjdXJyZW50X2RlcHRoID09IE1BWF9ESVJfSEFTSF9ERVBUSCkKPiArCWlmICh1
-bmxpa2VseShjdXJyZW50X2RlcHRoID09IE1BWF9ESVJfSEFTSF9ERVBUSCkpCj4gIAkJcmV0dXJu
-IC1FTk9TUEM7Cj4gIAo+ICAJLyogSW5jcmVhc2UgdGhlIGRlcHRoLCBpZiByZXF1aXJlZCAqLwo+
-IGRpZmYgLS1naXQgYS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMvZjJmcy5oCj4gaW5kZXggMTBl
-Y2EwMi4uZGNhMThiMyAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL2YyZnMuaAo+ICsrKyBiL2ZzL2Yy
-ZnMvZjJmcy5oCj4gQEAgLTU3NCw3ICs1NzQsNyBAQCBzdGF0aWMgaW5saW5lIHZvaWQgZjJmc191
-bmxvY2tfYWxsKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKPiAgc3RhdGljIGlubGluZSBpbnQg
-Y2hlY2tfbmlkX3JhbmdlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlkX3QgbmlkKQo+ICB7
-Cj4gIAlXQVJOX09OKChuaWQgPj0gTk1fSShzYmkpLT5tYXhfbmlkKSk7Cj4gLQlpZiAobmlkID49
-IE5NX0koc2JpKS0+bWF4X25pZCkKPiArCWlmICh1bmxpa2VseShuaWQgPj0gTk1fSShzYmkpLT5t
-YXhfbmlkKSkKPiAgCQlyZXR1cm4gLUVJTlZBTDsKPiAgCXJldHVybiAwOwo+ICB9Cj4gQEAgLTYw
-MCw3ICs2MDAsNyBAQCBzdGF0aWMgaW5saW5lIGJvb2wgaW5jX3ZhbGlkX2Jsb2NrX2NvdW50KHN0
-cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiAgCXNwaW5fbG9jaygmc2JpLT5zdGF0X2xvY2spOwo+
-ICAJdmFsaWRfYmxvY2tfY291bnQgPQo+ICAJCXNiaS0+dG90YWxfdmFsaWRfYmxvY2tfY291bnQg
-KyAoYmxvY2tfdCljb3VudDsKPiAtCWlmICh2YWxpZF9ibG9ja19jb3VudCA+IHNiaS0+dXNlcl9i
-bG9ja19jb3VudCkgewo+ICsJaWYgKHVubGlrZWx5KHZhbGlkX2Jsb2NrX2NvdW50ID4gc2JpLT51
-c2VyX2Jsb2NrX2NvdW50KSkgewo+ICAJCXNwaW5fdW5sb2NrKCZzYmktPnN0YXRfbG9jayk7Cj4g
-IAkJcmV0dXJuIGZhbHNlOwo+ICAJfQo+IEBAIC03MTksMTMgKzcxOSwxMyBAQCBzdGF0aWMgaW5s
-aW5lIGJvb2wgaW5jX3ZhbGlkX25vZGVfY291bnQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+
-ICAJc3Bpbl9sb2NrKCZzYmktPnN0YXRfbG9jayk7Cj4gIAo+ICAJdmFsaWRfYmxvY2tfY291bnQg
-PSBzYmktPnRvdGFsX3ZhbGlkX2Jsb2NrX2NvdW50ICsgMTsKPiAtCWlmICh2YWxpZF9ibG9ja19j
-b3VudCA+IHNiaS0+dXNlcl9ibG9ja19jb3VudCkgewo+ICsJaWYgKHVubGlrZWx5KHZhbGlkX2Js
-b2NrX2NvdW50ID4gc2JpLT51c2VyX2Jsb2NrX2NvdW50KSkgewo+ICAJCXNwaW5fdW5sb2NrKCZz
-YmktPnN0YXRfbG9jayk7Cj4gIAkJcmV0dXJuIGZhbHNlOwo+ICAJfQo+ICAKPiAgCXZhbGlkX25v
-ZGVfY291bnQgPSBzYmktPnRvdGFsX3ZhbGlkX25vZGVfY291bnQgKyAxOwo+IC0JaWYgKHZhbGlk
-X25vZGVfY291bnQgPiBzYmktPnRvdGFsX25vZGVfY291bnQpIHsKPiArCWlmICh1bmxpa2VseSh2
-YWxpZF9ub2RlX2NvdW50ID4gc2JpLT50b3RhbF9ub2RlX2NvdW50KSkgewo+ICAJCXNwaW5fdW5s
-b2NrKCZzYmktPnN0YXRfbG9jayk7Cj4gIAkJcmV0dXJuIGZhbHNlOwo+ICAJfQo+IGRpZmYgLS1n
-aXQgYS9mcy9mMmZzL25vZGUuYyBiL2ZzL2YyZnMvbm9kZS5jCj4gaW5kZXggNWUyNTg4Zi4uNDhj
-YmY3NiAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL25vZGUuYwo+ICsrKyBiL2ZzL2YyZnMvbm9kZS5j
-Cj4gQEAgLTk0LDcgKzk0LDcgQEAgc3RhdGljIHZvaWQgcmFfbmF0X3BhZ2VzKHN0cnVjdCBmMmZz
-X3NiX2luZm8gKnNiaSwgaW50IG5pZCkKPiAgCWludCBpOwo+ICAKPiAgCWZvciAoaSA9IDA7IGkg
-PCBGUkVFX05JRF9QQUdFUzsgaSsrLCBuaWQgKz0gTkFUX0VOVFJZX1BFUl9CTE9DSykgewo+IC0J
-CWlmIChuaWQgPj0gbm1faS0+bWF4X25pZCkKPiArCQlpZiAodW5saWtlbHkobmlkID49IG5tX2kt
-Pm1heF9uaWQpKQo+ICAJCQluaWQgPSAwOwo+ICAJCWluZGV4ID0gY3VycmVudF9uYXRfYWRkcihz
-YmksIG5pZCk7Cj4gIAo+IEBAIC0xMTYwLDcgKzExNjAsNyBAQCBpbnQgd2FpdF9vbl9ub2RlX3Bh
-Z2VzX3dyaXRlYmFjayhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIG5pZF90IGlubykKPiAgCQkJ
-c3RydWN0IHBhZ2UgKnBhZ2UgPSBwdmVjLnBhZ2VzW2ldOwo+ICAKPiAgCQkJLyogdW50aWwgcmFk
-aXggdHJlZSBsb29rdXAgYWNjZXB0cyBlbmRfaW5kZXggKi8KPiAtCQkJaWYgKHBhZ2UtPmluZGV4
-ID4gZW5kKQo+ICsJCQlpZiAodW5saWtlbHkocGFnZS0+aW5kZXggPiBlbmQpKQo+ICAJCQkJY29u
-dGludWU7Cj4gIAo+ICAJCQlpZiAoaW5vICYmIGlub19vZl9ub2RlKHBhZ2UpID09IGlubykgewo+
-IEBAIC0xMTkwLDcgKzExOTAsNyBAQCBzdGF0aWMgaW50IGYyZnNfd3JpdGVfbm9kZV9wYWdlKHN0
-cnVjdCBwYWdlICpwYWdlLAo+ICAJYmxvY2tfdCBuZXdfYWRkcjsKPiAgCXN0cnVjdCBub2RlX2lu
-Zm8gbmk7Cj4gIAo+IC0JaWYgKHNiaS0+cG9yX2RvaW5nKQo+ICsJaWYgKHVubGlrZWx5KHNiaS0+
-cG9yX2RvaW5nKSkKPiAgCQlnb3RvIHJlZGlydHlfb3V0Owo+ICAKPiAgCXdhaXRfb25fcGFnZV93
-cml0ZWJhY2socGFnZSk7Cj4gQEAgLTEzMjYsNyArMTMyNiw3IEBAIHN0YXRpYyBpbnQgYWRkX2Zy
-ZWVfbmlkKHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksIG5pZF90IG5pZCwgYm9vbCBidWlsZCkK
-PiAgCQlyZXR1cm4gLTE7Cj4gIAo+ICAJLyogMCBuaWQgc2hvdWxkIG5vdCBiZSB1c2VkICovCj4g
-LQlpZiAobmlkID09IDApCj4gKwlpZiAodW5saWtlbHkobmlkID09IDApKQo+ICAJCXJldHVybiAw
-Owo+ICAKPiAgCWlmIChidWlsZCkgewo+IEBAIC0xMzc5LDcgKzEzNzksNyBAQCBzdGF0aWMgdm9p
-ZCBzY2FuX25hdF9wYWdlKHN0cnVjdCBmMmZzX25tX2luZm8gKm5tX2ksCj4gIAo+ICAJZm9yICg7
-IGkgPCBOQVRfRU5UUllfUEVSX0JMT0NLOyBpKyssIHN0YXJ0X25pZCsrKSB7Cj4gIAo+IC0JCWlm
-IChzdGFydF9uaWQgPj0gbm1faS0+bWF4X25pZCkKPiArCQlpZiAodW5saWtlbHkoc3RhcnRfbmlk
-ID49IG5tX2ktPm1heF9uaWQpKQo+ICAJCQlicmVhazsKPiAgCj4gIAkJYmxrX2FkZHIgPSBsZTMy
-X3RvX2NwdShuYXRfYmxrLT5lbnRyaWVzW2ldLmJsb2NrX2FkZHIpOwo+IEBAIC0xNDEzLDcgKzE0
-MTMsNyBAQCBzdGF0aWMgdm9pZCBidWlsZF9mcmVlX25pZHMoc3RydWN0IGYyZnNfc2JfaW5mbyAq
-c2JpKQo+ICAJCWYyZnNfcHV0X3BhZ2UocGFnZSwgMSk7Cj4gIAo+ICAJCW5pZCArPSAoTkFUX0VO
-VFJZX1BFUl9CTE9DSyAtIChuaWQgJSBOQVRfRU5UUllfUEVSX0JMT0NLKSk7Cj4gLQkJaWYgKG5p
-ZCA+PSBubV9pLT5tYXhfbmlkKQo+ICsJCWlmICh1bmxpa2VseShuaWQgPj0gbm1faS0+bWF4X25p
-ZCkpCj4gIAkJCW5pZCA9IDA7Cj4gIAo+ICAJCWlmIChpKysgPT0gRlJFRV9OSURfUEFHRVMpCj4g
-QEAgLTE0NDcsNyArMTQ0Nyw3IEBAIGJvb2wgYWxsb2NfbmlkKHN0cnVjdCBmMmZzX3NiX2luZm8g
-KnNiaSwgbmlkX3QgKm5pZCkKPiAgCXN0cnVjdCBmcmVlX25pZCAqaSA9IE5VTEw7Cj4gIAlzdHJ1
-Y3QgbGlzdF9oZWFkICp0aGlzOwo+ICByZXRyeToKPiAtCWlmIChzYmktPnRvdGFsX3ZhbGlkX25v
-ZGVfY291bnQgKyAxID49IG5tX2ktPm1heF9uaWQpCj4gKwlpZiAodW5saWtlbHkoc2JpLT50b3Rh
-bF92YWxpZF9ub2RlX2NvdW50ICsgMSA+PSBubV9pLT5tYXhfbmlkKSkKPiAgCQlyZXR1cm4gZmFs
-c2U7Cj4gIAo+ICAJc3Bpbl9sb2NrKCZubV9pLT5mcmVlX25pZF9saXN0X2xvY2spOwo+IEBAIC0x
-NTU3LDcgKzE1NTcsNyBAQCBpbnQgcmVjb3Zlcl9pbm9kZV9wYWdlKHN0cnVjdCBmMmZzX3NiX2lu
-Zm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UpCj4gIAluZXdfbmkgPSBvbGRfbmk7Cj4gIAluZXdf
-bmkuaW5vID0gaW5vOwo+ICAKPiAtCWlmICghaW5jX3ZhbGlkX25vZGVfY291bnQoc2JpLCBOVUxM
-KSkKPiArCWlmICh1bmxpa2VseSghaW5jX3ZhbGlkX25vZGVfY291bnQoc2JpLCBOVUxMKSkpCj4g
-IAkJV0FSTl9PTigxKTsKPiAgCXNldF9ub2RlX2FkZHIoc2JpLCAmbmV3X25pLCBORVdfQUREUik7
-Cj4gIAlpbmNfdmFsaWRfaW5vZGVfY291bnQoc2JpKTsKPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9z
-ZWdtZW50LmggYi9mcy9mMmZzL3NlZ21lbnQuaAo+IGluZGV4IDI2ODEyZmMuLmVhNTYzNzYgMTAw
-NjQ0Cj4gLS0tIGEvZnMvZjJmcy9zZWdtZW50LmgKPiArKysgYi9mcy9mMmZzL3NlZ21lbnQuaAo+
-IEBAIC00NTcsNyArNDU3LDcgQEAgc3RhdGljIGlubGluZSBib29sIGhhc19ub3RfZW5vdWdoX2Zy
-ZWVfc2VjcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGludCBmcmVlZCkKPiAgCWludCBub2Rl
-X3NlY3MgPSBnZXRfYmxvY2t0eXBlX3NlY3Moc2JpLCBGMkZTX0RJUlRZX05PREVTKTsKPiAgCWlu
-dCBkZW50X3NlY3MgPSBnZXRfYmxvY2t0eXBlX3NlY3Moc2JpLCBGMkZTX0RJUlRZX0RFTlRTKTsK
-PiAgCj4gLQlpZiAoc2JpLT5wb3JfZG9pbmcpCj4gKwlpZiAodW5saWtlbHkoc2JpLT5wb3JfZG9p
-bmcpKQo+ICAJCXJldHVybiBmYWxzZTsKPiAgCj4gIAlyZXR1cm4gKChmcmVlX3NlY3Rpb25zKHNi
-aSkgKyBmcmVlZCkgPD0gKG5vZGVfc2VjcyArIDIgKiBkZW50X3NlY3MgKwoKLS0gCkphZWdldWsg
-S2ltClNhbXN1bmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClNwb25zb3JlZCBieSBJbnRlbChS
-KSBYREsgCkRldmVsb3AsIHRlc3QgYW5kIGRpc3BsYXkgd2ViIGFuZCBoeWJyaWQgYXBwcyB3aXRo
-IGEgc2luZ2xlIGNvZGUgYmFzZS4KRG93bmxvYWQgaXQgZm9yIGZyZWUgbm93IQpodHRwOi8vcHVi
-YWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9MTExNDA4NjMxJml1PS80MTQwL29z
-dGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
-cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
-L2xpbnV4LWYyZnMtZGV2ZWwK
+Hi,
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Friday, December 06, 2013 12:12 PM
+> To: Chao Yu
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; linu=
+x-f2fs-devel@lists.sourceforge.net; =E8=B0=AD=E5=A7=9D
+> Subject: Re: [f2fs-dev] [PATCH 2/5 V2] f2fs: add unlikely() macro for=
+ compiler optimization
+>=20
+> Hi,
+>=20
+> Just in case, if you agreed the following comments, I'll fix those an=
+d
+> merge the patch by myself.
+> Thanks,
+
+Agreed, thanks.
+
+>=20
+> 2013-12-05 (=EB=AA=A9), 17:15 +0800, Chao Yu:
+> > As we know, some of our branch condition will rarely be true. So we=
+ could add
+> > 'unlikely' to let compiler optimize these code, by this way we coul=
+d drop
+> > unneeded 'jump' assemble code to improve performance.
+> >
+> > change log:
+> >  o add *unlikely* as many as possible across the whole source files=
+ at once
+> >    suggested by Jaegeuk Kim.
+> >
+> > Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/checkpoint.c |   10 +++++-----
+> >  fs/f2fs/data.c       |    4 ++--
+> >  fs/f2fs/dir.c        |    4 ++--
+> >  fs/f2fs/f2fs.h       |    8 ++++----
+> >  fs/f2fs/node.c       |   16 ++++++++--------
+> >  fs/f2fs/segment.h    |    2 +-
+> >  6 files changed, 22 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index 38f4a224..6580808 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -82,8 +82,8 @@ static int f2fs_write_meta_page(struct page *page=
+,
+> >  	struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
+> >
+> >  	/* Should not write any meta pages, if any IO error was occurred =
+*/
+> > -	if (wbc->for_reclaim || sbi->por_doing ||
+> > -			is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ERROR_FLAG)) {
+> > +	if (unlikely(wbc->for_reclaim || sbi->por_doing ||
+> > +			is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ERROR_FLAG))) {
+>=20
+> 	if (unlikely(sbi->por_doing || is_set_ckpt_flags(F2FS_CKPT(sbi),
+> CP_ERROR_FLAG)))
+> 		goto redirty_out;
+> 	if (wbc->for_reclaim)
+> 		goto redirty_out;
+>=20
+> redirty_out:
+> >  		dec_page_count(sbi, F2FS_DIRTY_META);
+> >  		wbc->pages_skipped++;
+> >  		set_page_dirty(page);
+> > @@ -137,7 +137,7 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, =
+enum page_type type,
+> >  		nr_pages =3D pagevec_lookup_tag(&pvec, mapping, &index,
+> >  				PAGECACHE_TAG_DIRTY,
+> >  				min(end - index, (pgoff_t)PAGEVEC_SIZE-1) + 1);
+> > -		if (nr_pages =3D=3D 0)
+> > +		if (unlikely(nr_pages =3D=3D 0))
+> >  			break;
+> >
+> >  		for (i =3D 0; i < nr_pages; i++) {
+> > @@ -150,7 +150,7 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, =
+enum page_type type,
+> >  				unlock_page(page);
+> >  				break;
+> >  			}
+> > -			if (nwritten++ >=3D nr_to_write)
+> > +			if (unlikely(nwritten++ >=3D nr_to_write))
+>=20
+> nwritten++;
+>=20
+> if (unlikely(nwritten >=3D nr_to_write))
+>=20
+>=20
+> >  				break;
+> >  		}
+> >  		pagevec_release(&pvec);
+> > @@ -200,7 +200,7 @@ int acquire_orphan_inode(struct f2fs_sb_info *s=
+bi)
+> >  	max_orphans =3D (sbi->blocks_per_seg - 2 - NR_CURSEG_TYPE)
+> >  				* F2FS_ORPHANS_PER_BLOCK;
+> >  	mutex_lock(&sbi->orphan_inode_mutex);
+> > -	if (sbi->n_orphans >=3D max_orphans)
+> > +	if (unlikely(sbi->n_orphans >=3D max_orphans))
+> >  		err =3D -ENOSPC;
+> >  	else
+> >  		sbi->n_orphans++;
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 4e2fc09..2ce5a9e 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -251,7 +251,7 @@ int reserve_new_block(struct dnode_of_data *dn)
+> >
+> >  	if (is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC))
+> >  		return -EPERM;
+> > -	if (!inc_valid_block_count(sbi, dn->inode, 1))
+> > +	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
+> >  		return -ENOSPC;
+> >
+> >  	trace_f2fs_reserve_new_block(dn->inode, dn->nid, dn->ofs_in_node)=
+;
+> > @@ -711,7 +711,7 @@ static int f2fs_write_data_page(struct page *pa=
+ge,
+> >
+> >  	zero_user_segment(page, offset, PAGE_CACHE_SIZE);
+> >  write:
+> > -	if (sbi->por_doing) {
+> > +	if (unlikely(sbi->por_doing)) {
+> >  		err =3D AOP_WRITEPAGE_ACTIVATE;
+> >  		goto redirty_out;
+> >  	}
+> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > index 594fc1b..0cc26ba 100644
+> > --- a/fs/f2fs/dir.c
+> > +++ b/fs/f2fs/dir.c
+> > @@ -190,7 +190,7 @@ struct f2fs_dir_entry *f2fs_find_entry(struct i=
+node *dir,
+> >  	unsigned int max_depth;
+> >  	unsigned int level;
+> >
+> > -	if (namelen > F2FS_NAME_LEN)
+> > +	if (unlikely(namelen > F2FS_NAME_LEN))
+> >  		return NULL;
+> >
+> >  	if (npages =3D=3D 0)
+> > @@ -461,7 +461,7 @@ int __f2fs_add_link(struct inode *dir, const st=
+ruct qstr *name, struct inode *in
+> >  	}
+> >
+> >  start:
+> > -	if (current_depth =3D=3D MAX_DIR_HASH_DEPTH)
+> > +	if (unlikely(current_depth =3D=3D MAX_DIR_HASH_DEPTH))
+> >  		return -ENOSPC;
+> >
+> >  	/* Increase the depth, if required */
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 10eca02..dca18b3 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -574,7 +574,7 @@ static inline void f2fs_unlock_all(struct f2fs_=
+sb_info *sbi)
+> >  static inline int check_nid_range(struct f2fs_sb_info *sbi, nid_t =
+nid)
+> >  {
+> >  	WARN_ON((nid >=3D NM_I(sbi)->max_nid));
+> > -	if (nid >=3D NM_I(sbi)->max_nid)
+> > +	if (unlikely(nid >=3D NM_I(sbi)->max_nid))
+> >  		return -EINVAL;
+> >  	return 0;
+> >  }
+> > @@ -600,7 +600,7 @@ static inline bool inc_valid_block_count(struct=
+ f2fs_sb_info *sbi,
+> >  	spin_lock(&sbi->stat_lock);
+> >  	valid_block_count =3D
+> >  		sbi->total_valid_block_count + (block_t)count;
+> > -	if (valid_block_count > sbi->user_block_count) {
+> > +	if (unlikely(valid_block_count > sbi->user_block_count)) {
+> >  		spin_unlock(&sbi->stat_lock);
+> >  		return false;
+> >  	}
+> > @@ -719,13 +719,13 @@ static inline bool inc_valid_node_count(struc=
+t f2fs_sb_info *sbi,
+> >  	spin_lock(&sbi->stat_lock);
+> >
+> >  	valid_block_count =3D sbi->total_valid_block_count + 1;
+> > -	if (valid_block_count > sbi->user_block_count) {
+> > +	if (unlikely(valid_block_count > sbi->user_block_count)) {
+> >  		spin_unlock(&sbi->stat_lock);
+> >  		return false;
+> >  	}
+> >
+> >  	valid_node_count =3D sbi->total_valid_node_count + 1;
+> > -	if (valid_node_count > sbi->total_node_count) {
+> > +	if (unlikely(valid_node_count > sbi->total_node_count)) {
+> >  		spin_unlock(&sbi->stat_lock);
+> >  		return false;
+> >  	}
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index 5e2588f..48cbf76 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -94,7 +94,7 @@ static void ra_nat_pages(struct f2fs_sb_info *sbi=
+, int nid)
+> >  	int i;
+> >
+> >  	for (i =3D 0; i < FREE_NID_PAGES; i++, nid +=3D NAT_ENTRY_PER_BLO=
+CK) {
+> > -		if (nid >=3D nm_i->max_nid)
+> > +		if (unlikely(nid >=3D nm_i->max_nid))
+> >  			nid =3D 0;
+> >  		index =3D current_nat_addr(sbi, nid);
+> >
+> > @@ -1160,7 +1160,7 @@ int wait_on_node_pages_writeback(struct f2fs_=
+sb_info *sbi, nid_t ino)
+> >  			struct page *page =3D pvec.pages[i];
+> >
+> >  			/* until radix tree lookup accepts end_index */
+> > -			if (page->index > end)
+> > +			if (unlikely(page->index > end))
+> >  				continue;
+> >
+> >  			if (ino && ino_of_node(page) =3D=3D ino) {
+> > @@ -1190,7 +1190,7 @@ static int f2fs_write_node_page(struct page *=
+page,
+> >  	block_t new_addr;
+> >  	struct node_info ni;
+> >
+> > -	if (sbi->por_doing)
+> > +	if (unlikely(sbi->por_doing))
+> >  		goto redirty_out;
+> >
+> >  	wait_on_page_writeback(page);
+> > @@ -1326,7 +1326,7 @@ static int add_free_nid(struct f2fs_nm_info *=
+nm_i, nid_t nid, bool build)
+> >  		return -1;
+> >
+> >  	/* 0 nid should not be used */
+> > -	if (nid =3D=3D 0)
+> > +	if (unlikely(nid =3D=3D 0))
+> >  		return 0;
+> >
+> >  	if (build) {
+> > @@ -1379,7 +1379,7 @@ static void scan_nat_page(struct f2fs_nm_info=
+ *nm_i,
+> >
+> >  	for (; i < NAT_ENTRY_PER_BLOCK; i++, start_nid++) {
+> >
+> > -		if (start_nid >=3D nm_i->max_nid)
+> > +		if (unlikely(start_nid >=3D nm_i->max_nid))
+> >  			break;
+> >
+> >  		blk_addr =3D le32_to_cpu(nat_blk->entries[i].block_addr);
+> > @@ -1413,7 +1413,7 @@ static void build_free_nids(struct f2fs_sb_in=
+fo *sbi)
+> >  		f2fs_put_page(page, 1);
+> >
+> >  		nid +=3D (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
+> > -		if (nid >=3D nm_i->max_nid)
+> > +		if (unlikely(nid >=3D nm_i->max_nid))
+> >  			nid =3D 0;
+> >
+> >  		if (i++ =3D=3D FREE_NID_PAGES)
+> > @@ -1447,7 +1447,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_=
+t *nid)
+> >  	struct free_nid *i =3D NULL;
+> >  	struct list_head *this;
+> >  retry:
+> > -	if (sbi->total_valid_node_count + 1 >=3D nm_i->max_nid)
+> > +	if (unlikely(sbi->total_valid_node_count + 1 >=3D nm_i->max_nid))
+> >  		return false;
+> >
+> >  	spin_lock(&nm_i->free_nid_list_lock);
+> > @@ -1557,7 +1557,7 @@ int recover_inode_page(struct f2fs_sb_info *s=
+bi, struct page *page)
+> >  	new_ni =3D old_ni;
+> >  	new_ni.ino =3D ino;
+> >
+> > -	if (!inc_valid_node_count(sbi, NULL))
+> > +	if (unlikely(!inc_valid_node_count(sbi, NULL)))
+> >  		WARN_ON(1);
+> >  	set_node_addr(sbi, &new_ni, NEW_ADDR);
+> >  	inc_valid_inode_count(sbi);
+> > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> > index 26812fc..ea56376 100644
+> > --- a/fs/f2fs/segment.h
+> > +++ b/fs/f2fs/segment.h
+> > @@ -457,7 +457,7 @@ static inline bool has_not_enough_free_secs(str=
+uct f2fs_sb_info *sbi, int freed)
+> >  	int node_secs =3D get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+> >  	int dent_secs =3D get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+> >
+> > -	if (sbi->por_doing)
+> > +	if (unlikely(sbi->por_doing))
+> >  		return false;
+> >
+> >  	return ((free_sections(sbi) + freed) <=3D (node_secs + 2 * dent_s=
+ecs +
+>=20
+> --
+> Jaegeuk Kim
+> Samsung
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
