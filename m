@@ -1,57 +1,28 @@
-From: Andi Kleen <andi@firstfloor.org>
-Subject: Re: [PATCH] f2fs: add unlikely() macro for compiler more
-	aggressively
-Date: Fri, 06 Dec 2013 10:24:31 -0800
-Message-ID: <87siu5vnvk.fsf@tassilo.jf.intel.com>
-References: <1386310509-5864-1-git-send-email-jaegeuk.kim@samsung.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 00/18] Consolidate Posix ACL implementation
+Date: Fri, 6 Dec 2013 11:46:37 -0800
+Message-ID: <20131206194637.GA32122@infradead.org>
+References: <20131201115903.910559036@bombadil.infradead.org>
+ <279325185.39210.1386266234086.JavaMail.zimbra@linbit.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <andi@firstfloor.org>) id 1Vp04u-0007qE-MT
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Dec 2013 18:24:40 +0000
-Received: from mga01.intel.com ([192.55.52.88])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Vp04s-0007Lt-Uh for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Dec 2013 18:24:40 +0000
-In-Reply-To: <1386310509-5864-1-git-send-email-jaegeuk.kim@samsung.com>
-	(Jaegeuk Kim's message of "Fri, 06 Dec 2013 15:15:09 +0900")
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <279325185.39210.1386266234086.JavaMail.zimbra@linbit.com>
+Sender: reiserfs-devel-owner@vger.kernel.org
+To: Andreas Gruenbacher <andreas.gruenbacher@linbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com, linux-nfs@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Jaegeuk Kim <jaegeuk.kim@samsung.com> writes:
->  	struct page *page;
->  repeat:
->  	page = grab_cache_page(mapping, index);
-> -	if (!page) {
-> +	if (unlikely(!page)) {
+On Thu, Dec 05, 2013 at 06:57:14PM +0100, Andreas Gruenbacher wrote:
+> I see that get_acl and set_acl are being defined in some but not all symlink inode operations (for example, btrfs them while ext4 does not), and that posix_acl_xattr_set() doesn't check if set_acl is defined.  Symlinks cannot have ACLs, so set_acl should either never be defined for symlinks (and a NULL check is then needed in posix_acl_xattr_set()), or it is defined in all inode operations, and S_ISNLNK() check is needed in posix_acl_xattr_set().  That latter check should probably be added in any case to be on the safe side.
 
-This is completely pointless, gcc already considers any test for NULL
-unlikely.
+Yes, we should add the check.  We also in general should not have
+set_acl/get_acl on links and I'll look over it.
 
-In general i would advise against splattering unlikely all over your
-code, the benefits are very minimal and programers often get it wrong.
+> Patch 6 also declares posix_acl_prepare() but this function is never introduced; this must be a leftover from a previous version.
 
--Andi
+Indeed.
 
--- 
-ak@linux.intel.com -- Speaking for myself only
+Thanks for the review!
 
-------------------------------------------------------------------------------
-Sponsored by Intel(R) XDK 
-Develop, test and display web and hybrid apps with a single code base.
-Download it for free now!
-http://pubads.g.doubleclick.net/gampad/clk?id=111408631&iu=/4140/ostg.clktrk
