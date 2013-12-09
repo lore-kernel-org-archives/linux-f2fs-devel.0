@@ -1,95 +1,161 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 3/3 V2] f2fs: introduce
- f2fs_cache_node_page() to add page into node_inode cache
-Date: Mon, 09 Dec 2013 08:37:11 +0900
-Message-ID: <1386545831.2101.67.camel@kjgkr>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 3/3 V2] f2fs: introduce f2fs_cache_node_page()
+ to add page into node_inode cache
+Date: Mon, 09 Dec 2013 10:14:53 +0800
+Message-ID: <000901cef484$97536b10$c5fa4130$@samsung.com>
 References: <000501cef263$1c57e710$5507b530$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+ <1386545831.2101.67.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vpnva-0002DV-5A
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 08 Dec 2013 23:38:22 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VpnvY-0001kd-6B
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 08 Dec 2013 23:38:22 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MXI00BFUHNOH700@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Dec 2013 08:38:12 +0900 (KST)
-In-reply-to: <000501cef263$1c57e710$5507b530$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1386545831.2101.67.camel@kjgkr>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-MjAxMy0xMi0wNiAo6riIKSwgMTc6MTAgKzA4MDAsIENoYW8gWXU6Cj4gVGhpcyBwYXRjaCBpbnRy
-b2R1Y2VzIGYyZnNfY2FjaGVfbm9kZV9wYWdlKCksIGluIHRoaXMgZnVuY3Rpb24sIHBhZ2Ugd2hp
-Y2ggaXMKPiByZWFkZWQgYWhlYWQgd2lsbCBiZSBjb3B5IHRvIG5vZGVfaW5vZGUncyBtYXBwaW5n
-IGNhY2hlLgo+IEl0IHdpbGwgYXZvaWQgcmVyZWFkaW5nIHRoZXNlIG5vZGUgcGFnZXMuCj4gCj4g
-Y2hhbmdlIGxvZzoKPiAgbyBjaGVjayB2YWxpZGl0eSBvZiBncmFiYmVkIHBhZ2Ugc3VnZ2VzdGVk
-IGJ5IEphZWdldWsgS2ltLgo+IAo+IFN1Z2dlc3RlZC1ieTogSmFlZ2V1ayBLaW0gPGphZWdldWsu
-a2ltQHNhbXN1bmcuY29tPgo+IFNpZ25lZC1vZmYtYnk6IENoYW8gWXUgPGNoYW8yLnl1QHNhbXN1
-bmcuY29tPgo+IC0tLQo+ICBmcy9mMmZzL25vZGUuYyB8ICAgMzUgKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysKPiAgMSBmaWxlIGNoYW5nZWQsIDM1IGluc2VydGlvbnMoKykKPiAK
-PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmMgYi9mcy9mMmZzL25vZGUuYwo+IGluZGV4IDA5
-OWYwNmYuLjNmZjk4ZmEgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9ub2RlLmMKPiArKysgYi9mcy9m
-MmZzL25vZGUuYwo+IEBAIC0xNjAwLDYgKzE2MDAsMzkgQEAgc3RhdGljIGludCByYV9zdW1fcGFn
-ZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgbGlzdF9oZWFkICpwYWdlcywKPiAg
-CXJldHVybiAwOwo+ICB9Cj4gIAo+ICsvKgo+ICsgKiBmMmZzX2NhY2hlX25vZGVfcGFnZSgpIGNv
-cHkgdXBkYXRlZCBwYWdlIGRhdGEgdG8gbm9kZV9pbm9kZSBjYWNoZSBwYWdlLgo+ICsgKi8KPiAr
-dm9pZCBmMmZzX2NhY2hlX25vZGVfcGFnZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0cnVj
-dCBwYWdlICpwYWdlLAo+ICsJCQkJCQluaWRfdCBuaWQpCj4gK3sKPiArCXN0cnVjdCBhZGRyZXNz
-X3NwYWNlICptYXBwaW5nID0gc2JpLT5ub2RlX2lub2RlLT5pX21hcHBpbmc7Cj4gKwlzdHJ1Y3Qg
-cGFnZSAqbnBhZ2U7CgoKV2hhdCBJIG1lYW50IGZvciB0aGUgdmFsaWRpdHkgd2FzIHRvIGNoZWNr
-IHRoZSBibG9jayBhZGRyZXNzIHRvIGZpZ3VyZQpvdXQgdGhpcyBub2RlIHBhZ2UgaXMgdXAtdG8t
-ZGF0ZSBvciBub3QuCklPVywgc29tZXRoaW5nIGxpa2UgdGhpcy4KCiAgZ2V0X25vZGVfaW5mbyhz
-YmksIG5pZCwgJm5pKTsKIAogIGlmIChuaS5ibGtfYWRkciAhPSBjdXJyZW50IGJsb2NrIGFkZHJl
-c3MpKQogICAgZ290byBvdXQ7CgogIG5wYWdlID0gZ3JhYl9jYWNoZV9wYWdlKG1hcHBpbmcsIG5p
-ZCk7CiAgaWYgKHVubGlrZWx5KCFucGFnZSkpCiAgICByZXR1cm47CgogIGlmICh1bmxpa2VseShQ
-YWdlVXB0b2RhdGUobnBhZ2UpKSkgewogICAgZjJmc19wdXRfcGFnZShucGFnZSwgMSk7CiAgICBy
-ZXR1cm47CiAgfQogIG1lbWNweShwYWdlX2FkZHJlc3MobnBhZ2UpLCBwYWdlX2FkZHJlc3MocGFn
-ZSksIFBBR0VfQ0FDSEVfU0laRSk7CgogIFNldFBhZ2VVcHRvZGF0ZShucGFnZSk7CiAgZjJmc19w
-dXRfcGFnZShucGFnZSwgMSk7Cm91dDoKICByZXR1cm47CiAKPiArCj4gKwlucGFnZSA9IGZpbmRf
-Z2V0X3BhZ2UobWFwcGluZywgbmlkKTsKPiArCWlmICh1bmxpa2VseShucGFnZSAmJiBQYWdlVXB0
-b2RhdGUobnBhZ2UpKSkgewo+ICsJCWYyZnNfcHV0X3BhZ2UobnBhZ2UsIDApOwo+ICsJCXJldHVy
-bjsKPiArCX0KPiArCWYyZnNfcHV0X3BhZ2UobnBhZ2UsIDApOwo+ICsKPiArCW5wYWdlID0gZ3Jh
-Yl9jYWNoZV9wYWdlKG1hcHBpbmcsIG5pZCk7Cj4gKwlpZiAodW5saWtlbHkoIW5wYWdlKSkKPiAr
-CQlyZXR1cm47Cj4gKwo+ICsJaWYgKHVubGlrZWx5KFBhZ2VVcHRvZGF0ZShucGFnZSkpKSB7Cj4g
-KwkJZjJmc19wdXRfcGFnZShucGFnZSwgMSk7Cj4gKwkJcmV0dXJuOwo+ICsJfQo+ICsKPiArCW1l
-bWNweShwYWdlX2FkZHJlc3MobnBhZ2UpLCBwYWdlX2FkZHJlc3MocGFnZSksIFBBR0VfQ0FDSEVf
-U0laRSk7Cj4gKwo+ICsJU2V0UGFnZVVwdG9kYXRlKG5wYWdlKTsKPiArCWYyZnNfcHV0X3BhZ2Uo
-bnBhZ2UsIDEpOwo+ICsKPiArCXJldHVybjsKPiArfQo+ICsKPiAgaW50IHJlc3RvcmVfbm9kZV9z
-dW1tYXJ5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiAgCQkJdW5zaWduZWQgaW50IHNlZ25v
-LCBzdHJ1Y3QgZjJmc19zdW1tYXJ5X2Jsb2NrICpzdW0pCj4gIHsKPiBAQCAtMTYzMyw2ICsxNjY2
-LDggQEAgaW50IHJlc3RvcmVfbm9kZV9zdW1tYXJ5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwK
-PiAgCQkJCXN1bV9lbnRyeS0+dmVyc2lvbiA9IDA7Cj4gIAkJCQlzdW1fZW50cnktPm9mc19pbl9u
-b2RlID0gMDsKPiAgCQkJCXN1bV9lbnRyeSsrOwo+ICsJCQkJZjJmc19jYWNoZV9ub2RlX3BhZ2Uo
-c2JpLCBwYWdlLAo+ICsJCQkJCWxlMzJfdG9fY3B1KHJuLT5mb290ZXIubmlkKSk7Cj4gIAkJCX0g
-ZWxzZSB7Cj4gIAkJCQllcnIgPSAtRUlPOwo+ICAJCQl9CgotLSAKSmFlZ2V1ayBLaW0KU2Ftc3Vu
-ZwoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTcG9uc29yZWQgYnkgSW50ZWwoUikgWERLIApEZXZl
-bG9wLCB0ZXN0IGFuZCBkaXNwbGF5IHdlYiBhbmQgaHlicmlkIGFwcHMgd2l0aCBhIHNpbmdsZSBj
-b2RlIGJhc2UuCkRvd25sb2FkIGl0IGZvciBmcmVlIG5vdyEKaHR0cDovL3B1YmFkcy5nLmRvdWJs
-ZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTExMTQwODYzMSZpdT0vNDE0MC9vc3RnLmNsa3Ryawpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
-LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
-dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
-LWRldmVsCg==
+Hi,
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Monday, December 09, 2013 7:37 AM
+> To: Chao Yu
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; linu=
+x-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 3/3 V2] f2fs: introduce f2fs_cache_nod=
+e_page() to add page into node_inode cache
+>=20
+> 2013-12-06 (=EA=B8=88), 17:10 +0800, Chao Yu:
+> > This patch introduces f2fs_cache_node_page(), in this function, pag=
+e which is
+> > readed ahead will be copy to node_inode's mapping cache.
+> > It will avoid rereading these node pages.
+> >
+> > change log:
+> >  o check validity of grabbed page suggested by Jaegeuk Kim.
+> >
+> > Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/node.c |   35 +++++++++++++++++++++++++++++++++++
+> >  1 file changed, 35 insertions(+)
+> >
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index 099f06f..3ff98fa 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -1600,6 +1600,39 @@ static int ra_sum_pages(struct f2fs_sb_info =
+*sbi, struct list_head *pages,
+> >  	return 0;
+> >  }
+> >
+> > +/*
+> > + * f2fs_cache_node_page() copy updated page data to node_inode cac=
+he page.
+> > + */
+> > +void f2fs_cache_node_page(struct f2fs_sb_info *sbi, struct page *p=
+age,
+> > +						nid_t nid)
+> > +{
+> > +	struct address_space *mapping =3D sbi->node_inode->i_mapping;
+> > +	struct page *npage;
+>=20
+>=20
+> What I meant for the validity was to check the block address to figur=
+e
+> out this node page is up-to-date or not.
+> IOW, something like this.
+
+Yes, you're right.
+
+So, how about the this one?
+---
+ fs/f2fs/node.c |   39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 099f06f..3e7a336 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1600,13 +1600,46 @@ static int ra_sum_pages(struct f2fs_sb_info *sb=
+i, struct list_head *pages,
+ 	return 0;
+ }
+=20
++/*
++ * f2fs_cache_node_page() check validaty of input page by searching NA=
+T.
++ * Then, it will copy updated data of vaild page to node_inode cache.
++ */
++void f2fs_cache_node_page(struct f2fs_sb_info *sbi, struct page *page,
++						nid_t nid, block_t blkaddr)
++{
++	struct address_space *mapping =3D sbi->node_inode->i_mapping;
++	struct page *npage;
++	struct node_info ni;
++
++	get_node_info(sbi, nid, &ni);
++
++	if (ni.blk_addr !=3D blkaddr)
++		return;
++
++	npage =3D grab_cache_page(mapping, nid);
++	if (!npage)
++		return;
++
++	if (PageUptodate(npage)) {
++		f2fs_put_page(npage, 1);
++		return;
++	}
++
++	memcpy(page_address(npage), page_address(page), PAGE_CACHE_SIZE);
++
++	SetPageUptodate(npage);
++	f2fs_put_page(npage, 1);
++
++	return;
++}
++
+ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 			unsigned int segno, struct f2fs_summary_block *sum)
+ {
+ 	struct f2fs_node *rn;
+ 	struct f2fs_summary *sum_entry;
+ 	struct page *page, *tmp;
+-	block_t addr;
++	block_t addr, blkaddr;
+ 	int bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+ 	int i, last_offset, nrpages, err =3D 0;
+ 	LIST_HEAD(page_list);
+@@ -1624,6 +1657,7 @@ int restore_node_summary(struct f2fs_sb_info *sbi=
+,
+ 		if (err)
+ 			return err;
+=20
++		blkaddr =3D addr;
+ 		list_for_each_entry_safe(page, tmp, &page_list, lru) {
+=20
+ 			lock_page(page);
+@@ -1633,6 +1667,8 @@ int restore_node_summary(struct f2fs_sb_info *sbi=
+,
+ 				sum_entry->version =3D 0;
+ 				sum_entry->ofs_in_node =3D 0;
+ 				sum_entry++;
++				f2fs_cache_node_page(sbi, page,
++					le32_to_cpu(rn->footer.nid), blkaddr);
+ 			} else {
+ 				err =3D -EIO;
+ 			}
+@@ -1640,6 +1676,7 @@ int restore_node_summary(struct f2fs_sb_info *sbi=
+,
+ 			list_del(&page->lru);
+ 			unlock_page(page);
+ 			__free_pages(page, 0);
++			blkaddr++;
+ 		}
+ 	}
+ 	return err;
+--=20
+1.7.9.5
