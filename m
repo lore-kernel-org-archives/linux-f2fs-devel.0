@@ -1,30 +1,34 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: [PATCH]f2fs: merge pages with the same sync_mode flag
-Date: Mon, 09 Dec 2013 16:09:00 +0800
-Message-ID: <000001cef4b6$185fcd80$491f6880$@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH 3/3 V3] f2fs: introduce
+ f2fs_cache_node_page() to add page into node_inode cache
+Date: Mon, 09 Dec 2013 16:43:56 +0800
+Message-ID: <000b01cef4ba$eea9e890$cbfdb9b0$@samsung.com>
+References: <000a01cef4a0$9f2d64a0$dd882de0$@samsung.com>
+	<1386576057.2101.106.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fanofcode.li@samsung.com>) id 1VpvvE-0003sG-SX
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1VpwSe-0002vw-5j
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Dec 2013 08:10:32 +0000
+	Mon, 09 Dec 2013 08:45:04 +0000
 Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VpvvB-00007Q-6i
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VpwSc-000442-1j
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Dec 2013 08:10:32 +0000
+	Mon, 09 Dec 2013 08:45:04 +0000
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
 	by mailout1.samsung.com
 	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
 	(built Nov
-	17 2011)) with ESMTP id <0MXJ00C0N5D5OP80@mailout1.samsung.com> for
+	17 2011)) with ESMTP id <0MXJ00COR6YU6LC0@mailout1.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Dec 2013 17:10:17 +0900 (KST)
-Content-language: en-us
+	Mon, 09 Dec 2013 17:44:54 +0900 (KST)
+In-reply-to: <1386576057.2101.106.camel@kjgkr>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,255 +41,80 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk.kim@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Previously f2fs submits most of write requests using WRITE_SYNC, but f2fs_write_data_pages
-submits last write requests by sync_mode flags callers pass.
-
-This causes a performance problem since continuous pages with different sync flags
-can't be merged in cfq IO scheduler(thanks yu chao for pointing it out), and synchronous
-requests often take more time.
-
-This patch makes the following modifies to DATA writebacks:
-
-1. every page will be written back using the sync mode caller pass.
-2. only pages with the same sync mode can be merged in one bio request.
-
-These changes are restricted to DATA pages.Other types of writebacks are modified 
-To remain synchronous.
-
-In my test with tiotest, f2fs sequence write performance is improved by about 7%-10% ,
-and this patch has no obvious impact on other performance tests.
-
->From e942aa6336f650542f9e873404ca7c3c5e175a72 Mon Sep 17 00:00:00 2001
-From: Fan Li <fanofcode.li@samsung.com>
-Date: Mon, 9 Dec 2013 11:25:17 +0800
-Subject: [PATCH] merge pages with the same sync_mode flag
-
-
-Signed-off-by: Fan Li <fanofcode.li@samsung.com>
----
- fs/f2fs/data.c    |   18 ++++++++++--------
- fs/f2fs/f2fs.h    |    8 +++++---
- fs/f2fs/gc.c      |    6 +++++-
- fs/f2fs/segment.c |   27 +++++++++++++++++----------
- 4 files changed, 37 insertions(+), 22 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 4e2fc09..96f0a92 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -194,8 +194,9 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
- 	if (!is_read_io(rw))
- 		inc_page_count(sbi, F2FS_WRITEBACK);
- 
--	if (io->bio && io->last_block_in_bio != blk_addr - 1)
--		__submit_merged_bio(sbi, io, type, true, rw);
-+	if (io->bio && (io->last_block_in_bio != blk_addr - 1 ||
-+						io->rw_flag != rw))
-+		__submit_merged_bio(sbi, io, type, false, io->rw_flag);
- alloc_new:
- 	if (io->bio == NULL) {
- 		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
-@@ -203,6 +204,7 @@ alloc_new:
- 		io->bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
- 		io->bio->bi_end_io = is_read_io(rw) ? f2fs_read_end_io :
- 							f2fs_write_end_io;
-+		io->rw_flag = rw;
- 		/*
- 		 * The end_io will be assigned at the sumbission phase.
- 		 * Until then, let bio_add_page() merge consecutive IOs as much
-@@ -212,7 +214,7 @@ alloc_new:
- 
- 	if (bio_add_page(io->bio, page, PAGE_CACHE_SIZE, 0) <
- 							PAGE_CACHE_SIZE) {
--		__submit_merged_bio(sbi, io, type, true, rw);
-+		__submit_merged_bio(sbi, io, type, false, rw);
- 		goto alloc_new;
- 	}
- 
-@@ -642,7 +644,7 @@ static int f2fs_read_data_pages(struct file *file,
- 	return mpage_readpages(mapping, pages, nr_pages, get_data_block_ro);
- }
- 
--int do_write_data_page(struct page *page)
-+int do_write_data_page(struct page *page, struct writeback_control *wbc)
- {
- 	struct inode *inode = page->mapping->host;
- 	block_t old_blk_addr, new_blk_addr;
-@@ -670,10 +672,10 @@ int do_write_data_page(struct page *page)
- 			!is_cold_data(page) &&
- 			need_inplace_update(inode))) {
- 		rewrite_data_page(F2FS_SB(inode->i_sb), page,
--						old_blk_addr);
-+						old_blk_addr, wbc);
- 	} else {
- 		write_data_page(inode, page, &dn,
--				old_blk_addr, &new_blk_addr);
-+				old_blk_addr, &new_blk_addr, wbc);
- 		update_extent_cache(new_blk_addr, &dn);
- 	}
- out_writepage:
-@@ -720,10 +722,10 @@ write:
- 	if (S_ISDIR(inode->i_mode)) {
- 		dec_page_count(sbi, F2FS_DIRTY_DENTS);
- 		inode_dec_dirty_dents(inode);
--		err = do_write_data_page(page);
-+		err = do_write_data_page(page, wbc);
- 	} else {
- 		f2fs_lock_op(sbi);
--		err = do_write_data_page(page);
-+		err = do_write_data_page(page, wbc);
- 		f2fs_unlock_op(sbi);
- 		need_balance_fs = true;
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 10eca02..783f39d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -368,6 +368,7 @@ enum page_type {
- struct f2fs_bio_info {
- 	struct bio *bio;		/* bios to merge */
- 	sector_t last_block_in_bio;	/* last block number */
-+	int rw_flag;				/* rw flag for all pages */
- 	struct mutex io_mutex;		/* mutex for bio */
- };
- 
-@@ -1098,8 +1099,9 @@ void write_meta_page(struct f2fs_sb_info *, struct page *);
- void write_node_page(struct f2fs_sb_info *, struct page *, unsigned int,
- 					block_t, block_t *);
- void write_data_page(struct inode *, struct page *, struct dnode_of_data*,
--					block_t, block_t *);
--void rewrite_data_page(struct f2fs_sb_info *, struct page *, block_t);
-+			block_t, block_t *, struct writeback_control *);
-+void rewrite_data_page(struct f2fs_sb_info *, struct page *, block_t,
-+				struct writeback_control *);
- void recover_data_page(struct f2fs_sb_info *, struct page *,
- 				struct f2fs_summary *, block_t, block_t);
- void rewrite_node_page(struct f2fs_sb_info *, struct page *,
-@@ -1150,7 +1152,7 @@ void update_extent_cache(block_t, struct dnode_of_data *);
- struct page *find_data_page(struct inode *, pgoff_t, bool);
- struct page *get_lock_data_page(struct inode *, pgoff_t);
- struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
--int do_write_data_page(struct page *);
-+int do_write_data_page(struct page *, struct writeback_control *);
- 
- /*
-  * gc.c
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 2886aef..e94c34f 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -521,6 +521,10 @@ static int check_dnode(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 
- static void move_data_page(struct inode *inode, struct page *page, int gc_type)
- {
-+	struct writeback_control wbc = {
-+		.sync_mode = 1,
-+	};
-+
- 	if (gc_type == BG_GC) {
- 		if (PageWriteback(page))
- 			goto out;
-@@ -537,7 +541,7 @@ static void move_data_page(struct inode *inode, struct page *page, int gc_type)
- 			inode_dec_dirty_dents(inode);
- 		}
- 		set_cold_data(page);
--		do_write_data_page(page);
-+		do_write_data_page(page, &wbc);
- 		clear_cold_data(page);
- 	}
- out:
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index ca9adf5..e5dc411 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -856,12 +856,13 @@ static int __get_segment_type(struct page *page, enum page_type p_type)
- 
- static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
- 			block_t old_blkaddr, block_t *new_blkaddr,
--			struct f2fs_summary *sum, enum page_type p_type)
-+			struct f2fs_summary *sum, enum page_type p_type,
-+			struct writeback_control *wbc)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	struct curseg_info *curseg;
- 	unsigned int old_cursegno;
--	int type;
-+	int type, rw = WRITE;
- 
- 	type = __get_segment_type(page, p_type);
- 	curseg = CURSEG_I(sbi, type);
-@@ -900,7 +901,9 @@ static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
- 		fill_node_footer_blkaddr(page, NEXT_FREE_BLKADDR(sbi, curseg));
- 
- 	/* writeout dirty page into bdev */
--	f2fs_submit_page_mbio(sbi, page, *new_blkaddr, p_type, WRITE);
-+	if (wbc->sync_mode == WB_SYNC_ALL)
-+		rw |= WRITE_SYNC;
-+	f2fs_submit_page_mbio(sbi, page, *new_blkaddr, p_type, rw);
- 
- 	mutex_unlock(&curseg->curseg_mutex);
- }
-@@ -915,13 +918,16 @@ void write_node_page(struct f2fs_sb_info *sbi, struct page *page,
- 		unsigned int nid, block_t old_blkaddr, block_t *new_blkaddr)
- {
- 	struct f2fs_summary sum;
-+	struct writeback_control wbc = {
-+		.sync_mode = 1,
-+	};
- 	set_summary(&sum, nid, 0, 0);
--	do_write_page(sbi, page, old_blkaddr, new_blkaddr, &sum, NODE);
-+	do_write_page(sbi, page, old_blkaddr, new_blkaddr, &sum, NODE, &wbc);
- }
- 
- void write_data_page(struct inode *inode, struct page *page,
- 		struct dnode_of_data *dn, block_t old_blkaddr,
--		block_t *new_blkaddr)
-+		block_t *new_blkaddr, struct writeback_control *wbc)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
- 	struct f2fs_summary sum;
-@@ -932,13 +938,14 @@ void write_data_page(struct inode *inode, struct page *page,
- 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
- 
- 	do_write_page(sbi, page, old_blkaddr,
--			new_blkaddr, &sum, DATA);
-+			new_blkaddr, &sum, DATA, wbc);
- }
- 
- void rewrite_data_page(struct f2fs_sb_info *sbi, struct page *page,
--					block_t old_blk_addr)
-+			block_t old_blk_addr, struct writeback_control *wbc)
- {
--	f2fs_submit_page_mbio(sbi, page, old_blk_addr, DATA, WRITE);
-+	int rw = wbc->sync_mode == WB_SYNC_ALL ? WRITE_SYNC : WRITE;
-+	f2fs_submit_page_mbio(sbi, page, old_blk_addr, DATA, rw);
- }
- 
- void recover_data_page(struct f2fs_sb_info *sbi,
-@@ -1025,7 +1032,7 @@ void rewrite_node_page(struct f2fs_sb_info *sbi,
- 
- 	/* rewrite node page */
- 	set_page_writeback(page);
--	f2fs_submit_page_mbio(sbi, page, new_blkaddr, NODE, WRITE);
-+	f2fs_submit_page_mbio(sbi, page, new_blkaddr, NODE, WRITE_SYNC);
- 	f2fs_submit_merged_bio(sbi, NODE, true, WRITE);
- 	refresh_sit_entry(sbi, old_blkaddr, new_blkaddr);
- 
-@@ -1593,7 +1600,7 @@ repeat:
- 			continue;
- 		}
- 
--		f2fs_submit_page_mbio(sbi, page, blk_addr, META, READ);
-+		f2fs_submit_page_mbio(sbi, page, blk_addr, META, READ_SYNC);
- 
- 		mark_page_accessed(page);
- 		f2fs_put_page(page, 0);
--- 
-1.7.9.5
-
-
-------------------------------------------------------------------------------
-Sponsored by Intel(R) XDK 
-Develop, test and display web and hybrid apps with a single code base.
-Download it for free now!
-http://pubads.g.doubleclick.net/gampad/clk?id=111408631&iu=/4140/ostg.clktrk
+SGksCgo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4gRnJvbTogSmFlZ2V1ayBLaW0gW21h
+aWx0bzpqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbV0KPiBTZW50OiBNb25kYXksIERlY2VtYmVyIDA5
+LCAyMDEzIDQ6MDEgUE0KPiBUbzogQ2hhbyBZdQo+IENjOiBsaW51eC1mc2RldmVsQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBs
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XSBbUEFUQ0ggMy8z
+IFYzXSBmMmZzOiBpbnRyb2R1Y2UgZjJmc19jYWNoZV9ub2RlX3BhZ2UoKSB0byBhZGQgcGFnZSBp
+bnRvIG5vZGVfaW5vZGUgY2FjaGUKPiAKPiBIaSwKPiAKPiBTb3JyeSBmb3IgdGhlIG5vaXNlLgo+
+IE9uY2UgSSB0ZXN0ZWQgdGhpcyBwYXRjaCwgSSByZWNvZ25pemVkIHRoYXQgSSBtYWRlIGEgbWlz
+dGFrZToKPiAKPiBmMmZzX2ZpbGxfc3VwZXIoKQo+ICAxLiBidWlsZF9zZWdtZW50X21hbmFnZXIo
+KQo+ICAgICAtPiByZXN0b3JlX25vZGVfc3VtbWFyeSgpCj4gICAgICAgIC0+IE5VTEwgcG9pbnRl
+ciBleGNlcHRpb24sIGR1ZSB0byBubyBOQVQgY2FjaGUuCj4gIDIuIGJ1aWxkX25vZGVfbWFuYWdl
+cigpCj4gCj4gU28sIHdlIHNob3VsZCBub3QgY2FsbCBnZXRfbm9kZV9pbmZvKCkgcHJpb3IgdG8g
+YnVpbGRfbm9kZV9tYW5hZ2VyKCkuCj4gQW5kLCBpdCdzIG5vdCBlYXN5IHRvIGNoYW5nZSB0aGUg
+b3JkZXIgb2YgYnVpbGRfKl9tYW5hZ2VyIHNpbXBseS4KCk9oLCBzb3VuZCBiYWQuIEFuZCBzb3Jy
+eSBmb3IgbXkgY2FyZWxlc3NuZXNzLgpMZXQncyByZWNvbnNpZGVyIHRoaXMgcGF0Y2ggaW4gZGV0
+YWlscy4KCj4gCj4gTGV0J3MgY29uc2lkZXIgaW4gbW9yZSBkZXRhaWxzLgo+IFRoYW5rcywKPiAK
+PiAyMDEzLTEyLTA5ICjsm5QpLCAxMzozNSArMDgwMCwgQ2hhbyBZdToKPiA+IFRoaXMgcGF0Y2gg
+aW50cm9kdWNlcyBmMmZzX2NhY2hlX25vZGVfcGFnZSgpLCBpbiB0aGlzIGZ1bmN0aW9uLCBwYWdl
+IHdoaWNoIGlzCj4gPiByZWFkZWQgYWhlYWQgd2lsbCBiZSBjb3B5IHRvIG5vZGVfaW5vZGUncyBt
+YXBwaW5nIGNhY2hlLgo+ID4gSXQgd2lsbCBhdm9pZCByZXJlYWRpbmcgdGhlc2Ugbm9kZSBwYWdl
+cy4KPiA+Cj4gPiBjaGFuZ2UgbG9nOgo+ID4gIG8gY2hlY2sgdmFsaWRpdHkgb2YgcGFnZSBieSBz
+ZWFyY2hpbmcgTkFUIHN1Z2dlc3RlZCBieSBKYWVnZXVrIEtpbS4KPiA+ICBvIGFkZCAndW5saWtl
+bHknIGZvciBjb21waWxlciBvcHRpbWl6YXRpb24gc3VnZ2VzdGVkIGJ5IEphZWdldWsgS2ltLgo+
+ID4KPiA+IFN1Z2dlc3RlZC1ieTogSmFlZ2V1ayBLaW0gPGphZWdldWsua2ltQHNhbXN1bmcuY29t
+Pgo+ID4gU2lnbmVkLW9mZi1ieTogQ2hhbyBZdSA8Y2hhbzIueXVAc2Ftc3VuZy5jb20+Cj4gPiAt
+LS0KPiA+ICBmcy9mMmZzL25vZGUuYyB8ICAgMzkgKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKystCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDM4IGluc2VydGlvbnMoKyksIDEgZGVs
+ZXRpb24oLSkKPiA+Cj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmMgYi9mcy9mMmZzL25v
+ZGUuYwo+ID4gaW5kZXggMDk5ZjA2Zi4uNGM2ZGE5OCAxMDA2NDQKPiA+IC0tLSBhL2ZzL2YyZnMv
+bm9kZS5jCj4gPiArKysgYi9mcy9mMmZzL25vZGUuYwo+ID4gQEAgLTE2MDAsMTMgKzE2MDAsNDYg
+QEAgc3RhdGljIGludCByYV9zdW1fcGFnZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1
+Y3QgbGlzdF9oZWFkICpwYWdlcywKPiA+ICAJcmV0dXJuIDA7Cj4gPiAgfQo+ID4KPiA+ICsvKgo+
+ID4gKyAqIGYyZnNfY2FjaGVfbm9kZV9wYWdlKCkgY2hlY2sgdmFsaWRhdHkgb2YgaW5wdXQgcGFn
+ZSBieSBzZWFyY2hpbmcgTkFULgo+ID4gKyAqIFRoZW4sIGl0IHdpbGwgY29weSB1cGRhdGVkIGRh
+dGEgb2YgdmFpbGQgcGFnZSB0byBub2RlX2lub2RlIGNhY2hlLgo+ID4gKyAqLwo+ID4gK3ZvaWQg
+ZjJmc19jYWNoZV9ub2RlX3BhZ2Uoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFn
+ZSAqcGFnZSwKPiA+ICsJCQkJCQluaWRfdCBuaWQsIGJsb2NrX3QgYmxrYWRkcikKPiA+ICt7Cj4g
+PiArCXN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nID0gc2JpLT5ub2RlX2lub2RlLT5pX21h
+cHBpbmc7Cj4gPiArCXN0cnVjdCBwYWdlICpucGFnZTsKPiA+ICsJc3RydWN0IG5vZGVfaW5mbyBu
+aTsKPiA+ICsKPiA+ICsJZ2V0X25vZGVfaW5mbyhzYmksIG5pZCwgJm5pKTsKPiA+ICsKPiA+ICsJ
+aWYgKG5pLmJsa19hZGRyICE9IGJsa2FkZHIpCj4gPiArCQlyZXR1cm47Cj4gPiArCj4gPiArCW5w
+YWdlID0gZ3JhYl9jYWNoZV9wYWdlKG1hcHBpbmcsIG5pZCk7Cj4gPiArCWlmICh1bmxpa2VseSgh
+bnBhZ2UpKQo+ID4gKwkJcmV0dXJuOwo+ID4gKwo+ID4gKwlpZiAoUGFnZVVwdG9kYXRlKG5wYWdl
+KSkgewo+ID4gKwkJZjJmc19wdXRfcGFnZShucGFnZSwgMSk7Cj4gPiArCQlyZXR1cm47Cj4gPiAr
+CX0KPiA+ICsKPiA+ICsJbWVtY3B5KHBhZ2VfYWRkcmVzcyhucGFnZSksIHBhZ2VfYWRkcmVzcyhw
+YWdlKSwgUEFHRV9DQUNIRV9TSVpFKTsKPiA+ICsKPiA+ICsJU2V0UGFnZVVwdG9kYXRlKG5wYWdl
+KTsKPiA+ICsJZjJmc19wdXRfcGFnZShucGFnZSwgMSk7Cj4gPiArCj4gPiArCXJldHVybjsKPiA+
+ICt9Cj4gPiArCj4gPiAgaW50IHJlc3RvcmVfbm9kZV9zdW1tYXJ5KHN0cnVjdCBmMmZzX3NiX2lu
+Zm8gKnNiaSwKPiA+ICAJCQl1bnNpZ25lZCBpbnQgc2Vnbm8sIHN0cnVjdCBmMmZzX3N1bW1hcnlf
+YmxvY2sgKnN1bSkKPiA+ICB7Cj4gPiAgCXN0cnVjdCBmMmZzX25vZGUgKnJuOwo+ID4gIAlzdHJ1
+Y3QgZjJmc19zdW1tYXJ5ICpzdW1fZW50cnk7Cj4gPiAgCXN0cnVjdCBwYWdlICpwYWdlLCAqdG1w
+Owo+ID4gLQlibG9ja190IGFkZHI7Cj4gPiArCWJsb2NrX3QgYWRkciwgYmxrYWRkcjsKPiA+ICAJ
+aW50IGJpb19ibG9ja3MgPSBNQVhfQklPX0JMT0NLUyhtYXhfaHdfYmxvY2tzKHNiaSkpOwo+ID4g
+IAlpbnQgaSwgbGFzdF9vZmZzZXQsIG5ycGFnZXMsIGVyciA9IDA7Cj4gPiAgCUxJU1RfSEVBRChw
+YWdlX2xpc3QpOwo+ID4gQEAgLTE2MjQsNiArMTY1Nyw3IEBAIGludCByZXN0b3JlX25vZGVfc3Vt
+bWFyeShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gPiAgCQlpZiAoZXJyKQo+ID4gIAkJCXJl
+dHVybiBlcnI7Cj4gPgo+ID4gKwkJYmxrYWRkciA9IGFkZHI7Cj4gPiAgCQlsaXN0X2Zvcl9lYWNo
+X2VudHJ5X3NhZmUocGFnZSwgdG1wLCAmcGFnZV9saXN0LCBscnUpIHsKPiA+Cj4gPiAgCQkJbG9j
+a19wYWdlKHBhZ2UpOwo+ID4gQEAgLTE2MzMsNiArMTY2Nyw4IEBAIGludCByZXN0b3JlX25vZGVf
+c3VtbWFyeShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gPiAgCQkJCXN1bV9lbnRyeS0+dmVy
+c2lvbiA9IDA7Cj4gPiAgCQkJCXN1bV9lbnRyeS0+b2ZzX2luX25vZGUgPSAwOwo+ID4gIAkJCQlz
+dW1fZW50cnkrKzsKPiA+ICsJCQkJZjJmc19jYWNoZV9ub2RlX3BhZ2Uoc2JpLCBwYWdlLAo+ID4g
+KwkJCQkJbGUzMl90b19jcHUocm4tPmZvb3Rlci5uaWQpLCBibGthZGRyKTsKPiA+ICAJCQl9IGVs
+c2Ugewo+ID4gIAkJCQllcnIgPSAtRUlPOwo+ID4gIAkJCX0KPiA+IEBAIC0xNjQwLDYgKzE2NzYs
+NyBAQCBpbnQgcmVzdG9yZV9ub2RlX3N1bW1hcnkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+
+ID4gIAkJCWxpc3RfZGVsKCZwYWdlLT5scnUpOwo+ID4gIAkJCXVubG9ja19wYWdlKHBhZ2UpOwo+
+ID4gIAkJCV9fZnJlZV9wYWdlcyhwYWdlLCAwKTsKPiA+ICsJCQlibGthZGRyKys7Cj4gPiAgCQl9
+Cj4gPiAgCX0KPiA+ICAJcmV0dXJuIGVycjsKPiAKPiAtLQo+IEphZWdldWsgS2ltCj4gU2Ftc3Vu
+ZwoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTcG9uc29yZWQgYnkgSW50ZWwoUikgWERLIApEZXZl
+bG9wLCB0ZXN0IGFuZCBkaXNwbGF5IHdlYiBhbmQgaHlicmlkIGFwcHMgd2l0aCBhIHNpbmdsZSBj
+b2RlIGJhc2UuCkRvd25sb2FkIGl0IGZvciBmcmVlIG5vdyEKaHR0cDovL3B1YmFkcy5nLmRvdWJs
+ZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTExMTQwODYzMSZpdT0vNDE0MC9vc3RnLmNsa3Ryawpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
+LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
+dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
+LWRldmVsCg==
