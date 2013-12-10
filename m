@@ -1,120 +1,174 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 3/3 V3] f2fs: introduce
- f2fs_cache_node_page() to add page into node_inode cache
-Date: Mon, 09 Dec 2013 16:43:56 +0800
-Message-ID: <000b01cef4ba$eea9e890$cbfdb9b0$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 3/3 V3] f2fs: introduce f2fs_cache_node_page()
+ to add page into node_inode cache
+Date: Tue, 10 Dec 2013 09:51:50 +0800
+Message-ID: <000c01cef54a$80fef2a0$82fcd7e0$@samsung.com>
 References: <000a01cef4a0$9f2d64a0$dd882de0$@samsung.com>
-	<1386576057.2101.106.camel@kjgkr>
+ <1386576057.2101.106.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VpwSe-0002vw-5j
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Dec 2013 08:45:04 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VpwSc-000442-1j
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Dec 2013 08:45:04 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MXJ00COR6YU6LC0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Dec 2013 17:44:54 +0900 (KST)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 In-reply-to: <1386576057.2101.106.camel@kjgkr>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: jaegeuk.kim@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4gRnJvbTogSmFlZ2V1ayBLaW0gW21h
-aWx0bzpqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbV0KPiBTZW50OiBNb25kYXksIERlY2VtYmVyIDA5
-LCAyMDEzIDQ6MDEgUE0KPiBUbzogQ2hhbyBZdQo+IENjOiBsaW51eC1mc2RldmVsQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBs
-aXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XSBbUEFUQ0ggMy8z
-IFYzXSBmMmZzOiBpbnRyb2R1Y2UgZjJmc19jYWNoZV9ub2RlX3BhZ2UoKSB0byBhZGQgcGFnZSBp
-bnRvIG5vZGVfaW5vZGUgY2FjaGUKPiAKPiBIaSwKPiAKPiBTb3JyeSBmb3IgdGhlIG5vaXNlLgo+
-IE9uY2UgSSB0ZXN0ZWQgdGhpcyBwYXRjaCwgSSByZWNvZ25pemVkIHRoYXQgSSBtYWRlIGEgbWlz
-dGFrZToKPiAKPiBmMmZzX2ZpbGxfc3VwZXIoKQo+ICAxLiBidWlsZF9zZWdtZW50X21hbmFnZXIo
-KQo+ICAgICAtPiByZXN0b3JlX25vZGVfc3VtbWFyeSgpCj4gICAgICAgIC0+IE5VTEwgcG9pbnRl
-ciBleGNlcHRpb24sIGR1ZSB0byBubyBOQVQgY2FjaGUuCj4gIDIuIGJ1aWxkX25vZGVfbWFuYWdl
-cigpCj4gCj4gU28sIHdlIHNob3VsZCBub3QgY2FsbCBnZXRfbm9kZV9pbmZvKCkgcHJpb3IgdG8g
-YnVpbGRfbm9kZV9tYW5hZ2VyKCkuCj4gQW5kLCBpdCdzIG5vdCBlYXN5IHRvIGNoYW5nZSB0aGUg
-b3JkZXIgb2YgYnVpbGRfKl9tYW5hZ2VyIHNpbXBseS4KCk9oLCBzb3VuZCBiYWQuIEFuZCBzb3Jy
-eSBmb3IgbXkgY2FyZWxlc3NuZXNzLgpMZXQncyByZWNvbnNpZGVyIHRoaXMgcGF0Y2ggaW4gZGV0
-YWlscy4KCj4gCj4gTGV0J3MgY29uc2lkZXIgaW4gbW9yZSBkZXRhaWxzLgo+IFRoYW5rcywKPiAK
-PiAyMDEzLTEyLTA5ICjsm5QpLCAxMzozNSArMDgwMCwgQ2hhbyBZdToKPiA+IFRoaXMgcGF0Y2gg
-aW50cm9kdWNlcyBmMmZzX2NhY2hlX25vZGVfcGFnZSgpLCBpbiB0aGlzIGZ1bmN0aW9uLCBwYWdl
-IHdoaWNoIGlzCj4gPiByZWFkZWQgYWhlYWQgd2lsbCBiZSBjb3B5IHRvIG5vZGVfaW5vZGUncyBt
-YXBwaW5nIGNhY2hlLgo+ID4gSXQgd2lsbCBhdm9pZCByZXJlYWRpbmcgdGhlc2Ugbm9kZSBwYWdl
-cy4KPiA+Cj4gPiBjaGFuZ2UgbG9nOgo+ID4gIG8gY2hlY2sgdmFsaWRpdHkgb2YgcGFnZSBieSBz
-ZWFyY2hpbmcgTkFUIHN1Z2dlc3RlZCBieSBKYWVnZXVrIEtpbS4KPiA+ICBvIGFkZCAndW5saWtl
-bHknIGZvciBjb21waWxlciBvcHRpbWl6YXRpb24gc3VnZ2VzdGVkIGJ5IEphZWdldWsgS2ltLgo+
-ID4KPiA+IFN1Z2dlc3RlZC1ieTogSmFlZ2V1ayBLaW0gPGphZWdldWsua2ltQHNhbXN1bmcuY29t
-Pgo+ID4gU2lnbmVkLW9mZi1ieTogQ2hhbyBZdSA8Y2hhbzIueXVAc2Ftc3VuZy5jb20+Cj4gPiAt
-LS0KPiA+ICBmcy9mMmZzL25vZGUuYyB8ICAgMzkgKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKystCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDM4IGluc2VydGlvbnMoKyksIDEgZGVs
-ZXRpb24oLSkKPiA+Cj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmMgYi9mcy9mMmZzL25v
-ZGUuYwo+ID4gaW5kZXggMDk5ZjA2Zi4uNGM2ZGE5OCAxMDA2NDQKPiA+IC0tLSBhL2ZzL2YyZnMv
-bm9kZS5jCj4gPiArKysgYi9mcy9mMmZzL25vZGUuYwo+ID4gQEAgLTE2MDAsMTMgKzE2MDAsNDYg
-QEAgc3RhdGljIGludCByYV9zdW1fcGFnZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1
-Y3QgbGlzdF9oZWFkICpwYWdlcywKPiA+ICAJcmV0dXJuIDA7Cj4gPiAgfQo+ID4KPiA+ICsvKgo+
-ID4gKyAqIGYyZnNfY2FjaGVfbm9kZV9wYWdlKCkgY2hlY2sgdmFsaWRhdHkgb2YgaW5wdXQgcGFn
-ZSBieSBzZWFyY2hpbmcgTkFULgo+ID4gKyAqIFRoZW4sIGl0IHdpbGwgY29weSB1cGRhdGVkIGRh
-dGEgb2YgdmFpbGQgcGFnZSB0byBub2RlX2lub2RlIGNhY2hlLgo+ID4gKyAqLwo+ID4gK3ZvaWQg
-ZjJmc19jYWNoZV9ub2RlX3BhZ2Uoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFn
-ZSAqcGFnZSwKPiA+ICsJCQkJCQluaWRfdCBuaWQsIGJsb2NrX3QgYmxrYWRkcikKPiA+ICt7Cj4g
-PiArCXN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nID0gc2JpLT5ub2RlX2lub2RlLT5pX21h
-cHBpbmc7Cj4gPiArCXN0cnVjdCBwYWdlICpucGFnZTsKPiA+ICsJc3RydWN0IG5vZGVfaW5mbyBu
-aTsKPiA+ICsKPiA+ICsJZ2V0X25vZGVfaW5mbyhzYmksIG5pZCwgJm5pKTsKPiA+ICsKPiA+ICsJ
-aWYgKG5pLmJsa19hZGRyICE9IGJsa2FkZHIpCj4gPiArCQlyZXR1cm47Cj4gPiArCj4gPiArCW5w
-YWdlID0gZ3JhYl9jYWNoZV9wYWdlKG1hcHBpbmcsIG5pZCk7Cj4gPiArCWlmICh1bmxpa2VseSgh
-bnBhZ2UpKQo+ID4gKwkJcmV0dXJuOwo+ID4gKwo+ID4gKwlpZiAoUGFnZVVwdG9kYXRlKG5wYWdl
-KSkgewo+ID4gKwkJZjJmc19wdXRfcGFnZShucGFnZSwgMSk7Cj4gPiArCQlyZXR1cm47Cj4gPiAr
-CX0KPiA+ICsKPiA+ICsJbWVtY3B5KHBhZ2VfYWRkcmVzcyhucGFnZSksIHBhZ2VfYWRkcmVzcyhw
-YWdlKSwgUEFHRV9DQUNIRV9TSVpFKTsKPiA+ICsKPiA+ICsJU2V0UGFnZVVwdG9kYXRlKG5wYWdl
-KTsKPiA+ICsJZjJmc19wdXRfcGFnZShucGFnZSwgMSk7Cj4gPiArCj4gPiArCXJldHVybjsKPiA+
-ICt9Cj4gPiArCj4gPiAgaW50IHJlc3RvcmVfbm9kZV9zdW1tYXJ5KHN0cnVjdCBmMmZzX3NiX2lu
-Zm8gKnNiaSwKPiA+ICAJCQl1bnNpZ25lZCBpbnQgc2Vnbm8sIHN0cnVjdCBmMmZzX3N1bW1hcnlf
-YmxvY2sgKnN1bSkKPiA+ICB7Cj4gPiAgCXN0cnVjdCBmMmZzX25vZGUgKnJuOwo+ID4gIAlzdHJ1
-Y3QgZjJmc19zdW1tYXJ5ICpzdW1fZW50cnk7Cj4gPiAgCXN0cnVjdCBwYWdlICpwYWdlLCAqdG1w
-Owo+ID4gLQlibG9ja190IGFkZHI7Cj4gPiArCWJsb2NrX3QgYWRkciwgYmxrYWRkcjsKPiA+ICAJ
-aW50IGJpb19ibG9ja3MgPSBNQVhfQklPX0JMT0NLUyhtYXhfaHdfYmxvY2tzKHNiaSkpOwo+ID4g
-IAlpbnQgaSwgbGFzdF9vZmZzZXQsIG5ycGFnZXMsIGVyciA9IDA7Cj4gPiAgCUxJU1RfSEVBRChw
-YWdlX2xpc3QpOwo+ID4gQEAgLTE2MjQsNiArMTY1Nyw3IEBAIGludCByZXN0b3JlX25vZGVfc3Vt
-bWFyeShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gPiAgCQlpZiAoZXJyKQo+ID4gIAkJCXJl
-dHVybiBlcnI7Cj4gPgo+ID4gKwkJYmxrYWRkciA9IGFkZHI7Cj4gPiAgCQlsaXN0X2Zvcl9lYWNo
-X2VudHJ5X3NhZmUocGFnZSwgdG1wLCAmcGFnZV9saXN0LCBscnUpIHsKPiA+Cj4gPiAgCQkJbG9j
-a19wYWdlKHBhZ2UpOwo+ID4gQEAgLTE2MzMsNiArMTY2Nyw4IEBAIGludCByZXN0b3JlX25vZGVf
-c3VtbWFyeShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gPiAgCQkJCXN1bV9lbnRyeS0+dmVy
-c2lvbiA9IDA7Cj4gPiAgCQkJCXN1bV9lbnRyeS0+b2ZzX2luX25vZGUgPSAwOwo+ID4gIAkJCQlz
-dW1fZW50cnkrKzsKPiA+ICsJCQkJZjJmc19jYWNoZV9ub2RlX3BhZ2Uoc2JpLCBwYWdlLAo+ID4g
-KwkJCQkJbGUzMl90b19jcHUocm4tPmZvb3Rlci5uaWQpLCBibGthZGRyKTsKPiA+ICAJCQl9IGVs
-c2Ugewo+ID4gIAkJCQllcnIgPSAtRUlPOwo+ID4gIAkJCX0KPiA+IEBAIC0xNjQwLDYgKzE2NzYs
-NyBAQCBpbnQgcmVzdG9yZV9ub2RlX3N1bW1hcnkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+
-ID4gIAkJCWxpc3RfZGVsKCZwYWdlLT5scnUpOwo+ID4gIAkJCXVubG9ja19wYWdlKHBhZ2UpOwo+
-ID4gIAkJCV9fZnJlZV9wYWdlcyhwYWdlLCAwKTsKPiA+ICsJCQlibGthZGRyKys7Cj4gPiAgCQl9
-Cj4gPiAgCX0KPiA+ICAJcmV0dXJuIGVycjsKPiAKPiAtLQo+IEphZWdldWsgS2ltCj4gU2Ftc3Vu
-ZwoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTcG9uc29yZWQgYnkgSW50ZWwoUikgWERLIApEZXZl
-bG9wLCB0ZXN0IGFuZCBkaXNwbGF5IHdlYiBhbmQgaHlicmlkIGFwcHMgd2l0aCBhIHNpbmdsZSBj
-b2RlIGJhc2UuCkRvd25sb2FkIGl0IGZvciBmcmVlIG5vdyEKaHR0cDovL3B1YmFkcy5nLmRvdWJs
-ZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTExMTQwODYzMSZpdT0vNDE0MC9vc3RnLmNsa3Ryawpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZz
-LWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5l
-dApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
-LWRldmVsCg==
+Hi,
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Monday, December 09, 2013 4:01 PM
+> To: Chao Yu
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; linu=
+x-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 3/3 V3] f2fs: introduce f2fs_cache_nod=
+e_page() to add page into node_inode cache
+>=20
+> Hi,
+>=20
+> Sorry for the noise.
+> Once I tested this patch, I recognized that I made a mistake:
+>=20
+> f2fs_fill_super()
+>  1. build_segment_manager()
+>     -> restore_node_summary()
+>        -> NULL pointer exception, due to no NAT cache.
+>  2. build_node_manager()
+>=20
+> So, we should not call get_node_info() prior to build_node_manager().
+> And, it's not easy to change the order of build_*_manager simply.
+>=20
+> Let's consider in more details.
+
+Before we call restore_node_summary(), we have read HOT_DATA
+Summary. It means already we got the NAT cache in curseg.
+Although we could not call get_node_info() directly, we still could use
+NAT cache in HOT_DATA curseg.
+
+So how about using this cache to verify validity of page like this?
+
+f2fs_cache_node_page()
+	if(!looup_nat_curseg_cache())
+		return;
+	grab_cache_page();
+	memcpy();
+	SetPageUptodate();
+	f2fs_put_page();
+
+> Thanks,
+>=20
+> 2013-12-09 (=EC=9B=94), 13:35 +0800, Chao Yu:
+> > This patch introduces f2fs_cache_node_page(), in this function, pag=
+e which is
+> > readed ahead will be copy to node_inode's mapping cache.
+> > It will avoid rereading these node pages.
+> >
+> > change log:
+> >  o check validity of page by searching NAT suggested by Jaegeuk Kim=
+=2E
+> >  o add 'unlikely' for compiler optimization suggested by Jaegeuk Ki=
+m.
+> >
+> > Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/node.c |   39 ++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 38 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index 099f06f..4c6da98 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -1600,13 +1600,46 @@ static int ra_sum_pages(struct f2fs_sb_info=
+ *sbi, struct list_head *pages,
+> >  	return 0;
+> >  }
+> >
+> > +/*
+> > + * f2fs_cache_node_page() check validaty of input page by searchin=
+g NAT.
+> > + * Then, it will copy updated data of vaild page to node_inode cac=
+he.
+> > + */
+> > +void f2fs_cache_node_page(struct f2fs_sb_info *sbi, struct page *p=
+age,
+> > +						nid_t nid, block_t blkaddr)
+> > +{
+> > +	struct address_space *mapping =3D sbi->node_inode->i_mapping;
+> > +	struct page *npage;
+> > +	struct node_info ni;
+> > +
+> > +	get_node_info(sbi, nid, &ni);
+> > +
+> > +	if (ni.blk_addr !=3D blkaddr)
+> > +		return;
+> > +
+> > +	npage =3D grab_cache_page(mapping, nid);
+> > +	if (unlikely(!npage))
+> > +		return;
+> > +
+> > +	if (PageUptodate(npage)) {
+> > +		f2fs_put_page(npage, 1);
+> > +		return;
+> > +	}
+> > +
+> > +	memcpy(page_address(npage), page_address(page), PAGE_CACHE_SIZE);
+> > +
+> > +	SetPageUptodate(npage);
+> > +	f2fs_put_page(npage, 1);
+> > +
+> > +	return;
+> > +}
+> > +
+> >  int restore_node_summary(struct f2fs_sb_info *sbi,
+> >  			unsigned int segno, struct f2fs_summary_block *sum)
+> >  {
+> >  	struct f2fs_node *rn;
+> >  	struct f2fs_summary *sum_entry;
+> >  	struct page *page, *tmp;
+> > -	block_t addr;
+> > +	block_t addr, blkaddr;
+> >  	int bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+> >  	int i, last_offset, nrpages, err =3D 0;
+> >  	LIST_HEAD(page_list);
+> > @@ -1624,6 +1657,7 @@ int restore_node_summary(struct f2fs_sb_info =
+*sbi,
+> >  		if (err)
+> >  			return err;
+> >
+> > +		blkaddr =3D addr;
+> >  		list_for_each_entry_safe(page, tmp, &page_list, lru) {
+> >
+> >  			lock_page(page);
+> > @@ -1633,6 +1667,8 @@ int restore_node_summary(struct f2fs_sb_info =
+*sbi,
+> >  				sum_entry->version =3D 0;
+> >  				sum_entry->ofs_in_node =3D 0;
+> >  				sum_entry++;
+> > +				f2fs_cache_node_page(sbi, page,
+> > +					le32_to_cpu(rn->footer.nid), blkaddr);
+> >  			} else {
+> >  				err =3D -EIO;
+> >  			}
+> > @@ -1640,6 +1676,7 @@ int restore_node_summary(struct f2fs_sb_info =
+*sbi,
+> >  			list_del(&page->lru);
+> >  			unlock_page(page);
+> >  			__free_pages(page, 0);
+> > +			blkaddr++;
+> >  		}
+> >  	}
+> >  	return err;
+>=20
+> --
+> Jaegeuk Kim
+> Samsung
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
