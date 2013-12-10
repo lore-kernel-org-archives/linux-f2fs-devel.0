@@ -1,174 +1,285 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 3/3 V3] f2fs: introduce f2fs_cache_node_page()
- to add page into node_inode cache
-Date: Tue, 10 Dec 2013 09:51:50 +0800
-Message-ID: <000c01cef54a$80fef2a0$82fcd7e0$@samsung.com>
-References: <000a01cef4a0$9f2d64a0$dd882de0$@samsung.com>
- <1386576057.2101.106.camel@kjgkr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: [PATCH] f2fs: unify rw and sync parameter into rw
+Date: Tue, 10 Dec 2013 13:44:52 +0900
+Message-ID: <1386650692-11618-1-git-send-email-cm224.lee@samsung.com>
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1386576057.2101.106.camel@kjgkr>
-Content-language: zh-cn
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Cc: Changman Lee <cm224.lee@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+When we submit io, we can know whether the io is read or write and sync
+mode or not. So we can remove redundant sync parameter.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> Sent: Monday, December 09, 2013 4:01 PM
-> To: Chao Yu
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; linu=
-x-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 3/3 V3] f2fs: introduce f2fs_cache_nod=
-e_page() to add page into node_inode cache
->=20
-> Hi,
->=20
-> Sorry for the noise.
-> Once I tested this patch, I recognized that I made a mistake:
->=20
-> f2fs_fill_super()
->  1. build_segment_manager()
->     -> restore_node_summary()
->        -> NULL pointer exception, due to no NAT cache.
->  2. build_node_manager()
->=20
-> So, we should not call get_node_info() prior to build_node_manager().
-> And, it's not easy to change the order of build_*_manager simply.
->=20
-> Let's consider in more details.
+Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+---
+ fs/f2fs/checkpoint.c |   12 ++++++------
+ fs/f2fs/data.c       |   19 ++++++++-----------
+ fs/f2fs/f2fs.h       |    2 +-
+ fs/f2fs/gc.c         |    2 +-
+ fs/f2fs/node.c       |   15 ++++++++-------
+ fs/f2fs/segment.c    |   16 ++++++++--------
+ 6 files changed, 32 insertions(+), 34 deletions(-)
 
-Before we call restore_node_summary(), we have read HOT_DATA
-Summary. It means already we got the NAT cache in curseg.
-Although we could not call get_node_info() directly, we still could use
-NAT cache in HOT_DATA curseg.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 38f4a224..76b557c 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -158,8 +158,8 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
+ 	}
+ 
+ 	if (nwritten)
+-		f2fs_submit_merged_bio(sbi, type, nr_to_write == LONG_MAX,
+-								WRITE);
++		f2fs_submit_merged_bio(sbi, type,
++				(nr_to_write == LONG_MAX) ? WRITE_SYNC : WRITE);
+ 
+ 	return nwritten;
+ }
+@@ -592,7 +592,7 @@ retry:
+ 		 * We should submit bio, since it exists several
+ 		 * wribacking dentry pages in the freeing inode.
+ 		 */
+-		f2fs_submit_merged_bio(sbi, DATA, true, WRITE);
++		f2fs_submit_merged_bio(sbi, DATA, WRITE_SYNC);
+ 	}
+ 	goto retry;
+ }
+@@ -798,9 +798,9 @@ void write_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+ 
+ 	trace_f2fs_write_checkpoint(sbi->sb, is_umount, "finish block_ops");
+ 
+-	f2fs_submit_merged_bio(sbi, DATA, true, WRITE);
+-	f2fs_submit_merged_bio(sbi, NODE, true, WRITE);
+-	f2fs_submit_merged_bio(sbi, META, true, WRITE);
++	f2fs_submit_merged_bio(sbi, DATA, WRITE_SYNC);
++	f2fs_submit_merged_bio(sbi, NODE, WRITE_SYNC);
++	f2fs_submit_merged_bio(sbi, META, WRITE_SYNC);
+ 
+ 	/*
+ 	 * update checkpoint pack index
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 4e2fc09..470db6a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -95,7 +95,7 @@ static void f2fs_write_end_io(struct bio *bio, int err)
+ 
+ static void __submit_merged_bio(struct f2fs_sb_info *sbi,
+ 				struct f2fs_bio_info *io,
+-				enum page_type type, bool sync, int rw)
++				enum page_type type, int rw)
+ {
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+ 
+@@ -106,16 +106,12 @@ static void __submit_merged_bio(struct f2fs_sb_info *sbi,
+ 		rw |= REQ_META;
+ 
+ 	if (is_read_io(rw)) {
+-		if (sync)
+-			rw |= READ_SYNC;
+ 		submit_bio(rw, io->bio);
+ 		trace_f2fs_submit_read_bio(sbi->sb, rw, type, io->bio);
+ 		io->bio = NULL;
+ 		return;
+ 	}
+ 
+-	if (sync)
+-		rw |= WRITE_SYNC;
+ 	if (type >= META_FLUSH)
+ 		rw |= WRITE_FLUSH_FUA;
+ 
+@@ -136,7 +132,7 @@ static void __submit_merged_bio(struct f2fs_sb_info *sbi,
+ }
+ 
+ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
+-				enum page_type type, bool sync, int rw)
++				enum page_type type, int rw)
+ {
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+ 	struct f2fs_bio_info *io;
+@@ -144,7 +140,7 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
+ 	io = is_read_io(rw) ? &sbi->read_io : &sbi->write_io[btype];
+ 
+ 	mutex_lock(&io->io_mutex);
+-	__submit_merged_bio(sbi, io, type, sync, rw);
++	__submit_merged_bio(sbi, io, type, rw);
+ 	mutex_unlock(&io->io_mutex);
+ }
+ 
+@@ -195,7 +191,7 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
+ 		inc_page_count(sbi, F2FS_WRITEBACK);
+ 
+ 	if (io->bio && io->last_block_in_bio != blk_addr - 1)
+-		__submit_merged_bio(sbi, io, type, true, rw);
++		__submit_merged_bio(sbi, io, type, rw);
+ alloc_new:
+ 	if (io->bio == NULL) {
+ 		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+@@ -212,7 +208,7 @@ alloc_new:
+ 
+ 	if (bio_add_page(io->bio, page, PAGE_CACHE_SIZE, 0) <
+ 							PAGE_CACHE_SIZE) {
+-		__submit_merged_bio(sbi, io, type, true, rw);
++		__submit_merged_bio(sbi, io, type, rw);
+ 		goto alloc_new;
+ 	}
+ 
+@@ -733,7 +729,7 @@ write:
+ 		goto redirty_out;
+ 
+ 	if (wbc->for_reclaim)
+-		f2fs_submit_merged_bio(sbi, DATA, true, WRITE);
++		f2fs_submit_merged_bio(sbi, DATA, WRITE_SYNC);
+ 
+ 	clear_cold_data(page);
+ out:
+@@ -785,7 +781,8 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+ 	ret = write_cache_pages(mapping, wbc, __f2fs_writepage, mapping);
+ 	if (locked)
+ 		mutex_unlock(&sbi->writepages);
+-	f2fs_submit_merged_bio(sbi, DATA, wbc->sync_mode == WB_SYNC_ALL, WRITE);
++	f2fs_submit_merged_bio(sbi, DATA,
++			(wbc->sync_mode == WB_SYNC_ALL) ? WRITE_SYNC : WRITE);
+ 
+ 	remove_dirty_dir_inode(inode);
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 10eca02..3a82b57 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1140,7 +1140,7 @@ void destroy_checkpoint_caches(void);
+ /*
+  * data.c
+  */
+-void f2fs_submit_merged_bio(struct f2fs_sb_info *, enum page_type, bool, int);
++void f2fs_submit_merged_bio(struct f2fs_sb_info *, enum page_type, int);
+ int f2fs_submit_page_bio(struct f2fs_sb_info *, struct page *, block_t, int);
+ void f2fs_submit_page_mbio(struct f2fs_sb_info *, struct page *, block_t,
+ 							enum page_type, int);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 2886aef..6f5f303 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -631,7 +631,7 @@ next_iput:
+ 		goto next_step;
+ 
+ 	if (gc_type == FG_GC) {
+-		f2fs_submit_merged_bio(sbi, DATA, true, WRITE);
++		f2fs_submit_merged_bio(sbi, DATA, WRITE_SYNC);
+ 
+ 		/*
+ 		 * In the case of FG_GC, it'd be better to reclaim this victim
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 0855168..e597ecd 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -106,11 +106,11 @@ static void ra_nat_pages(struct f2fs_sb_info *sbi, int nid)
+ 			f2fs_put_page(page, 1);
+ 			continue;
+ 		}
+-		f2fs_submit_page_mbio(sbi, page, index, META, READ);
++		f2fs_submit_page_mbio(sbi, page, index, META, READ_SYNC);
+ 		mark_page_accessed(page);
+ 		f2fs_put_page(page, 0);
+ 	}
+-	f2fs_submit_merged_bio(sbi, META, true, READ);
++	f2fs_submit_merged_bio(sbi, META, READ_SYNC);
+ }
+ 
+ static struct nat_entry *__lookup_nat_cache(struct f2fs_nm_info *nm_i, nid_t n)
+@@ -1135,9 +1135,10 @@ continue_unlock:
+ 		goto next_step;
+ 	}
+ 
+-	if (wrote)
+-		f2fs_submit_merged_bio(sbi, NODE, wbc->sync_mode == WB_SYNC_ALL,
+-									WRITE);
++	if (wrote) {
++		int rw = (wbc->sync_mode == WB_SYNC_ALL) ? WRITE_SYNC : WRITE;
++		f2fs_submit_merged_bio(sbi, NODE, rw);
++	}
+ 	return nwritten;
+ }
+ 
+@@ -1594,9 +1595,9 @@ static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
+ 	}
+ 
+ 	list_for_each_entry(page, pages, lru)
+-		f2fs_submit_page_mbio(sbi, page, page->index, META, READ);
++		f2fs_submit_page_mbio(sbi, page, page->index, META, READ_SYNC);
+ 
+-	f2fs_submit_merged_bio(sbi, META, true, READ);
++	f2fs_submit_merged_bio(sbi, META, READ_SYNC);
+ 	return 0;
+ }
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index ca9adf5..462524c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -900,7 +900,7 @@ static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
+ 		fill_node_footer_blkaddr(page, NEXT_FREE_BLKADDR(sbi, curseg));
+ 
+ 	/* writeout dirty page into bdev */
+-	f2fs_submit_page_mbio(sbi, page, *new_blkaddr, p_type, WRITE);
++	f2fs_submit_page_mbio(sbi, page, *new_blkaddr, p_type, WRITE_SYNC);
+ 
+ 	mutex_unlock(&curseg->curseg_mutex);
+ }
+@@ -908,7 +908,7 @@ static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
+ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page)
+ {
+ 	set_page_writeback(page);
+-	f2fs_submit_page_mbio(sbi, page, page->index, META, WRITE);
++	f2fs_submit_page_mbio(sbi, page, page->index, META, WRITE_SYNC);
+ }
+ 
+ void write_node_page(struct f2fs_sb_info *sbi, struct page *page,
+@@ -938,7 +938,7 @@ void write_data_page(struct inode *inode, struct page *page,
+ void rewrite_data_page(struct f2fs_sb_info *sbi, struct page *page,
+ 					block_t old_blk_addr)
+ {
+-	f2fs_submit_page_mbio(sbi, page, old_blk_addr, DATA, WRITE);
++	f2fs_submit_page_mbio(sbi, page, old_blk_addr, DATA, WRITE_SYNC);
+ }
+ 
+ void recover_data_page(struct f2fs_sb_info *sbi,
+@@ -1025,8 +1025,8 @@ void rewrite_node_page(struct f2fs_sb_info *sbi,
+ 
+ 	/* rewrite node page */
+ 	set_page_writeback(page);
+-	f2fs_submit_page_mbio(sbi, page, new_blkaddr, NODE, WRITE);
+-	f2fs_submit_merged_bio(sbi, NODE, true, WRITE);
++	f2fs_submit_page_mbio(sbi, page, new_blkaddr, NODE, WRITE_SYNC);
++	f2fs_submit_merged_bio(sbi, NODE, WRITE_SYNC);
+ 	refresh_sit_entry(sbi, old_blkaddr, new_blkaddr);
+ 
+ 	locate_dirty_segment(sbi, old_cursegno);
+@@ -1041,7 +1041,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(page->mapping->host->i_sb);
+ 	if (PageWriteback(page)) {
+-		f2fs_submit_merged_bio(sbi, type, sync, WRITE);
++		f2fs_submit_merged_bio(sbi, type, sync ? WRITE_SYNC : WRITE);
+ 		wait_on_page_writeback(page);
+ 	}
+ }
+@@ -1593,13 +1593,13 @@ repeat:
+ 			continue;
+ 		}
+ 
+-		f2fs_submit_page_mbio(sbi, page, blk_addr, META, READ);
++		f2fs_submit_page_mbio(sbi, page, blk_addr, META, READ_SYNC);
+ 
+ 		mark_page_accessed(page);
+ 		f2fs_put_page(page, 0);
+ 	}
+ 
+-	f2fs_submit_merged_bio(sbi, META, true, READ);
++	f2fs_submit_merged_bio(sbi, META, READ_SYNC);
+ 	return blkno - start;
+ }
+ 
+-- 
+1.7.9.5
 
-So how about using this cache to verify validity of page like this?
-
-f2fs_cache_node_page()
-	if(!looup_nat_curseg_cache())
-		return;
-	grab_cache_page();
-	memcpy();
-	SetPageUptodate();
-	f2fs_put_page();
-
-> Thanks,
->=20
-> 2013-12-09 (=EC=9B=94), 13:35 +0800, Chao Yu:
-> > This patch introduces f2fs_cache_node_page(), in this function, pag=
-e which is
-> > readed ahead will be copy to node_inode's mapping cache.
-> > It will avoid rereading these node pages.
-> >
-> > change log:
-> >  o check validity of page by searching NAT suggested by Jaegeuk Kim=
-=2E
-> >  o add 'unlikely' for compiler optimization suggested by Jaegeuk Ki=
-m.
-> >
-> > Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/node.c |   39 ++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 38 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index 099f06f..4c6da98 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -1600,13 +1600,46 @@ static int ra_sum_pages(struct f2fs_sb_info=
- *sbi, struct list_head *pages,
-> >  	return 0;
-> >  }
-> >
-> > +/*
-> > + * f2fs_cache_node_page() check validaty of input page by searchin=
-g NAT.
-> > + * Then, it will copy updated data of vaild page to node_inode cac=
-he.
-> > + */
-> > +void f2fs_cache_node_page(struct f2fs_sb_info *sbi, struct page *p=
-age,
-> > +						nid_t nid, block_t blkaddr)
-> > +{
-> > +	struct address_space *mapping =3D sbi->node_inode->i_mapping;
-> > +	struct page *npage;
-> > +	struct node_info ni;
-> > +
-> > +	get_node_info(sbi, nid, &ni);
-> > +
-> > +	if (ni.blk_addr !=3D blkaddr)
-> > +		return;
-> > +
-> > +	npage =3D grab_cache_page(mapping, nid);
-> > +	if (unlikely(!npage))
-> > +		return;
-> > +
-> > +	if (PageUptodate(npage)) {
-> > +		f2fs_put_page(npage, 1);
-> > +		return;
-> > +	}
-> > +
-> > +	memcpy(page_address(npage), page_address(page), PAGE_CACHE_SIZE);
-> > +
-> > +	SetPageUptodate(npage);
-> > +	f2fs_put_page(npage, 1);
-> > +
-> > +	return;
-> > +}
-> > +
-> >  int restore_node_summary(struct f2fs_sb_info *sbi,
-> >  			unsigned int segno, struct f2fs_summary_block *sum)
-> >  {
-> >  	struct f2fs_node *rn;
-> >  	struct f2fs_summary *sum_entry;
-> >  	struct page *page, *tmp;
-> > -	block_t addr;
-> > +	block_t addr, blkaddr;
-> >  	int bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
-> >  	int i, last_offset, nrpages, err =3D 0;
-> >  	LIST_HEAD(page_list);
-> > @@ -1624,6 +1657,7 @@ int restore_node_summary(struct f2fs_sb_info =
-*sbi,
-> >  		if (err)
-> >  			return err;
-> >
-> > +		blkaddr =3D addr;
-> >  		list_for_each_entry_safe(page, tmp, &page_list, lru) {
-> >
-> >  			lock_page(page);
-> > @@ -1633,6 +1667,8 @@ int restore_node_summary(struct f2fs_sb_info =
-*sbi,
-> >  				sum_entry->version =3D 0;
-> >  				sum_entry->ofs_in_node =3D 0;
-> >  				sum_entry++;
-> > +				f2fs_cache_node_page(sbi, page,
-> > +					le32_to_cpu(rn->footer.nid), blkaddr);
-> >  			} else {
-> >  				err =3D -EIO;
-> >  			}
-> > @@ -1640,6 +1676,7 @@ int restore_node_summary(struct f2fs_sb_info =
-*sbi,
-> >  			list_del(&page->lru);
-> >  			unlock_page(page);
-> >  			__free_pages(page, 0);
-> > +			blkaddr++;
-> >  		}
-> >  	}
-> >  	return err;
->=20
-> --
-> Jaegeuk Kim
-> Samsung
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
