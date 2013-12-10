@@ -1,492 +1,148 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH v2] f2fs: add unlikely() macro for compiler more
- aggressively
-Date: Tue, 10 Dec 2013 17:03:00 +0900
-Message-ID: <1386662580.2101.149.camel@kjgkr>
-References: <1386310509-5864-1-git-send-email-jaegeuk.kim@samsung.com>
- <87siu5vnvk.fsf@tassilo.jf.intel.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH 3/3 V3] f2fs: introduce
+ f2fs_cache_node_page() to add page into node_inode cache
+Date: Tue, 10 Dec 2013 17:43:33 +0800
+Message-ID: <000d01cef58c$66be09c0$343a1d40$@samsung.com>
+References: <000a01cef4a0$9f2d64a0$dd882de0$@samsung.com>
+	<1386576057.2101.106.camel@kjgkr>
+	<000c01cef54a$80fef2a0$82fcd7e0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <87siu5vnvk.fsf@tassilo.jf.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andi Kleen <andi@firstfloor.org>
-Cc: "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>, "Linux FS DEV, Mailing List" <linux-fsdevel@vger.kernel.org>, "Linux Kernel, Mailing List" <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1VqJrm-0002K7-Ky
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 10 Dec 2013 09:44:34 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VqJrk-0003uY-3l
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 10 Dec 2013 09:44:34 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0MXL0073S4E06900@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 10 Dec 2013 18:44:24 +0900 (KST)
+In-reply-to: <000c01cef54a$80fef2a0$82fcd7e0$@samsung.com>
+Content-language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
->From d373d7084e4d132fa596fd5def1b9a9843e1410f Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Fri, 6 Dec 2013 15:00:58 +0900
-Subject: [PATCH] f2fs: add unlikely() macro for compiler more
-aggressively
-
-This patch adds unlikely() macro into the most of codes.
-The basic rule is to add that when:
-- checking unusual errors,
-- checking page mappings,
-- and the other unlikely conditions.
-
-Change log from v1:
- - Don't add unlikely for the NULL test and error test: advised by Andi
-Kleen.
-
-Cc: Chao Yu <chao2.yu@samsung.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/checkpoint.c | 10 +++++-----
- fs/f2fs/data.c       | 29 ++++++++++++++---------------
- fs/f2fs/file.c       |  9 ++++-----
- fs/f2fs/gc.c         |  3 +--
- fs/f2fs/node.c       | 28 ++++++++++++++--------------
- fs/f2fs/recovery.c   |  2 +-
- fs/f2fs/super.c      | 14 +++++++-------
- fs/f2fs/xattr.c      |  2 +-
- 8 files changed, 47 insertions(+), 50 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 6b21066..cf505eb 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -66,7 +66,7 @@ repeat:
- 		goto repeat;
- 
- 	lock_page(page);
--	if (page->mapping != mapping) {
-+	if (unlikely(page->mapping != mapping)) {
- 		f2fs_put_page(page, 1);
- 		goto repeat;
- 	}
-@@ -473,7 +473,7 @@ static int __add_dirty_inode(struct inode *inode,
-struct dir_inode_entry *new)
- 	list_for_each(this, head) {
- 		struct dir_inode_entry *entry;
- 		entry = list_entry(this, struct dir_inode_entry, list);
--		if (entry->inode == inode)
-+		if (unlikely(entry->inode == inode))
- 			return -EEXIST;
- 	}
- 	list_add_tail(&new->list, head);
-@@ -783,7 +783,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi,
-bool is_umount)
- 	/* Here, we only have one bio having CP pack */
- 	sync_meta_pages(sbi, META_FLUSH, LONG_MAX);
- 
--	if (!is_set_ckpt_flags(ckpt, CP_ERROR_FLAG)) {
-+	if (unlikely(!is_set_ckpt_flags(ckpt, CP_ERROR_FLAG))) {
- 		clear_prefree_segments(sbi);
- 		F2FS_RESET_SB_DIRT(sbi);
- 	}
-@@ -840,11 +840,11 @@ int __init create_checkpoint_caches(void)
- {
- 	orphan_entry_slab = f2fs_kmem_cache_create("f2fs_orphan_entry",
- 			sizeof(struct orphan_inode_entry), NULL);
--	if (unlikely(!orphan_entry_slab))
-+	if (!orphan_entry_slab)
- 		return -ENOMEM;
- 	inode_entry_slab = f2fs_kmem_cache_create("f2fs_dirty_dir_entry",
- 			sizeof(struct dir_inode_entry), NULL);
--	if (unlikely(!inode_entry_slab)) {
-+	if (!inode_entry_slab) {
- 		kmem_cache_destroy(orphan_entry_slab);
- 		return -ENOMEM;
- 	}
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2ce5a9e..5607393 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -49,11 +49,11 @@ static void f2fs_read_end_io(struct bio *bio, int
-err)
- 		if (--bvec >= bio->bi_io_vec)
- 			prefetchw(&bvec->bv_page->flags);
- 
--		if (uptodate) {
--			SetPageUptodate(page);
--		} else {
-+		if (unlikely(!uptodate)) {
- 			ClearPageUptodate(page);
- 			SetPageError(page);
-+		} else {
-+			SetPageUptodate(page);
- 		}
- 		unlock_page(page);
- 	} while (bvec >= bio->bi_io_vec);
-@@ -73,7 +73,7 @@ static void f2fs_write_end_io(struct bio *bio, int
-err)
- 		if (--bvec >= bio->bi_io_vec)
- 			prefetchw(&bvec->bv_page->flags);
- 
--		if (!uptodate) {
-+		if (unlikely(!uptodate)) {
- 			SetPageError(page);
- 			set_bit(AS_EIO, &page->mapping->flags);
- 			set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
-@@ -249,7 +249,7 @@ int reserve_new_block(struct dnode_of_data *dn)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(dn->inode->i_sb);
- 
--	if (is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC))
-+	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
- 		return -EPERM;
- 	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
- 		return -ENOSPC;
-@@ -424,7 +424,7 @@ struct page *find_data_page(struct inode *inode,
-pgoff_t index, bool sync)
- 		return ERR_PTR(-ENOENT);
- 
- 	/* By fallocate(), there is no cached page, but with NEW_ADDR */
--	if (dn.data_blkaddr == NEW_ADDR)
-+	if (unlikely(dn.data_blkaddr == NEW_ADDR))
- 		return ERR_PTR(-EINVAL);
- 
- 	page = grab_cache_page_write_begin(mapping, index, AOP_FLAG_NOFS);
-@@ -443,7 +443,7 @@ struct page *find_data_page(struct inode *inode,
-pgoff_t index, bool sync)
- 
- 	if (sync) {
- 		wait_on_page_locked(page);
--		if (!PageUptodate(page)) {
-+		if (unlikely(!PageUptodate(page))) {
- 			f2fs_put_page(page, 0);
- 			return ERR_PTR(-EIO);
- 		}
-@@ -477,7 +477,7 @@ repeat:
- 	}
- 	f2fs_put_dnode(&dn);
- 
--	if (dn.data_blkaddr == NULL_ADDR) {
-+	if (unlikely(dn.data_blkaddr == NULL_ADDR)) {
- 		f2fs_put_page(page, 1);
- 		return ERR_PTR(-ENOENT);
- 	}
-@@ -502,11 +502,11 @@ repeat:
- 		return ERR_PTR(err);
- 
- 	lock_page(page);
--	if (!PageUptodate(page)) {
-+	if (unlikely(!PageUptodate(page))) {
- 		f2fs_put_page(page, 1);
- 		return ERR_PTR(-EIO);
- 	}
--	if (page->mapping != mapping) {
-+	if (unlikely(page->mapping != mapping)) {
- 		f2fs_put_page(page, 1);
- 		goto repeat;
- 	}
-@@ -534,7 +534,6 @@ struct page *get_new_data_page(struct inode *inode,
- 	err = f2fs_reserve_block(&dn, index);
- 	if (err)
- 		return ERR_PTR(err);
--
- repeat:
- 	page = grab_cache_page(mapping, index);
- 	if (!page)
-@@ -552,11 +551,11 @@ repeat:
- 		if (err)
- 			return ERR_PTR(err);
- 		lock_page(page);
--		if (!PageUptodate(page)) {
-+		if (unlikely(!PageUptodate(page))) {
- 			f2fs_put_page(page, 1);
- 			return ERR_PTR(-EIO);
- 		}
--		if (page->mapping != mapping) {
-+		if (unlikely(page->mapping != mapping)) {
- 			f2fs_put_page(page, 1);
- 			goto repeat;
- 		}
-@@ -841,11 +840,11 @@ repeat:
- 		if (err)
- 			return err;
- 		lock_page(page);
--		if (!PageUptodate(page)) {
-+		if (unlikely(!PageUptodate(page))) {
- 			f2fs_put_page(page, 1);
- 			return -EIO;
- 		}
--		if (page->mapping != mapping) {
-+		if (unlikely(page->mapping != mapping)) {
- 			f2fs_put_page(page, 1);
- 			goto repeat;
- 		}
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 2b47adc..5accc96 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -50,9 +50,9 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct
-*vma,
- 
- 	file_update_time(vma->vm_file);
- 	lock_page(page);
--	if (page->mapping != inode->i_mapping ||
-+	if (unlikely(page->mapping != inode->i_mapping ||
- 			page_offset(page) > i_size_read(inode) ||
--			!PageUptodate(page)) {
-+			!PageUptodate(page))) {
- 		unlock_page(page);
- 		err = -EFAULT;
- 		goto out;
-@@ -120,7 +120,7 @@ int f2fs_sync_file(struct file *file, loff_t start,
-loff_t end, int datasync)
- 		.for_reclaim = 0,
- 	};
- 
--	if (f2fs_readonly(inode->i_sb))
-+	if (unlikely(f2fs_readonly(inode->i_sb)))
- 		return 0;
- 
- 	trace_f2fs_sync_file_enter(inode);
-@@ -241,7 +241,7 @@ static void truncate_partial_data_page(struct inode
-*inode, u64 from)
- 		return;
- 
- 	lock_page(page);
--	if (page->mapping != inode->i_mapping) {
-+	if (unlikely(page->mapping != inode->i_mapping)) {
- 		f2fs_put_page(page, 1);
- 		return;
- 	}
-@@ -516,7 +516,6 @@ static int expand_inode_data(struct inode *inode,
-loff_t offset,
- 		if (ret)
- 			break;
- 
--
- 		if (pg_start == pg_end)
- 			new_size = offset + len;
- 		else if (index == pg_start && off_start)
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 2886aef..29ceb9d 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -119,7 +119,6 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
- 		kfree(gc_th);
- 		sbi->gc_thread = NULL;
- 	}
--
- out:
- 	return err;
- }
-@@ -695,7 +694,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi)
- 
- 	INIT_LIST_HEAD(&ilist);
- gc_more:
--	if (!(sbi->sb->s_flags & MS_ACTIVE))
-+	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE)))
- 		goto stop;
- 
- 	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, nfree)) {
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 2e41636..6c6ef77 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -750,7 +750,7 @@ skip_partial:
- 		if (offset[1] == 0 &&
- 				rn->i.i_nid[offset[0] - NODE_DIR1_BLOCK]) {
- 			lock_page(page);
--			if (page->mapping != node_mapping) {
-+			if (unlikely(page->mapping != node_mapping)) {
- 				f2fs_put_page(page, 1);
- 				goto restart;
- 			}
-@@ -841,14 +841,14 @@ struct page *new_node_page(struct dnode_of_data
-*dn,
- 	struct page *page;
- 	int err;
- 
--	if (is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC))
-+	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
- 		return ERR_PTR(-EPERM);
- 
- 	page = grab_cache_page(mapping, dn->nid);
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
- 
--	if (!inc_valid_node_count(sbi, dn->inode)) {
-+	if (unlikely(!inc_valid_node_count(sbi, dn->inode))) {
- 		err = -ENOSPC;
- 		goto fail;
- 	}
-@@ -898,7 +898,7 @@ static int read_node_page(struct page *page, int rw)
- 
- 	get_node_info(sbi, page->index, &ni);
- 
--	if (ni.blk_addr == NULL_ADDR) {
-+	if (unlikely(ni.blk_addr == NULL_ADDR)) {
- 		f2fs_put_page(page, 1);
- 		return -ENOENT;
- 	}
-@@ -953,11 +953,11 @@ repeat:
- 		goto got_it;
- 
- 	lock_page(page);
--	if (!PageUptodate(page)) {
-+	if (unlikely(!PageUptodate(page))) {
- 		f2fs_put_page(page, 1);
- 		return ERR_PTR(-EIO);
- 	}
--	if (page->mapping != mapping) {
-+	if (unlikely(page->mapping != mapping)) {
- 		f2fs_put_page(page, 1);
- 		goto repeat;
- 	}
-@@ -1010,12 +1010,12 @@ repeat:
- 	blk_finish_plug(&plug);
- 
- 	lock_page(page);
--	if (page->mapping != mapping) {
-+	if (unlikely(page->mapping != mapping)) {
- 		f2fs_put_page(page, 1);
- 		goto repeat;
- 	}
- page_hit:
--	if (!PageUptodate(page)) {
-+	if (unlikely(!PageUptodate(page))) {
- 		f2fs_put_page(page, 1);
- 		return ERR_PTR(-EIO);
- 	}
-@@ -1173,9 +1173,9 @@ int wait_on_node_pages_writeback(struct
-f2fs_sb_info *sbi, nid_t ino)
- 		cond_resched();
- 	}
- 
--	if (test_and_clear_bit(AS_ENOSPC, &mapping->flags))
-+	if (unlikely(test_and_clear_bit(AS_ENOSPC, &mapping->flags)))
- 		ret2 = -ENOSPC;
--	if (test_and_clear_bit(AS_EIO, &mapping->flags))
-+	if (unlikely(test_and_clear_bit(AS_EIO, &mapping->flags)))
- 		ret2 = -EIO;
- 	if (!ret)
- 		ret = ret2;
-@@ -1202,7 +1202,7 @@ static int f2fs_write_node_page(struct page *page,
- 	get_node_info(sbi, nid, &ni);
- 
- 	/* This page is already truncated */
--	if (ni.blk_addr == NULL_ADDR) {
-+	if (unlikely(ni.blk_addr == NULL_ADDR)) {
- 		dec_page_count(sbi, F2FS_DIRTY_NODES);
- 		unlock_page(page);
- 		return 0;
-@@ -1627,14 +1627,14 @@ int restore_node_summary(struct f2fs_sb_info
-*sbi,
- 		list_for_each_entry_safe(page, tmp, &page_list, lru) {
- 
- 			lock_page(page);
--			if(PageUptodate(page)) {
-+			if (unlikely(!PageUptodate(page))) {
-+				err = -EIO;
-+			} else {
- 				rn = F2FS_NODE(page);
- 				sum_entry->nid = rn->footer.nid;
- 				sum_entry->version = 0;
- 				sum_entry->ofs_in_node = 0;
- 				sum_entry++;
--			} else {
--				err = -EIO;
- 			}
- 
- 			list_del(&page->lru);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index d075465..a3f4542 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -430,7 +430,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- 
- 	fsync_entry_slab = f2fs_kmem_cache_create("f2fs_fsync_inode_entry",
- 			sizeof(struct fsync_inode_entry), NULL);
--	if (unlikely(!fsync_entry_slab))
-+	if (!fsync_entry_slab)
- 		return -ENOMEM;
- 
- 	INIT_LIST_HEAD(&inode_list);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 22b07c3..68df44a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -626,7 +626,7 @@ static struct inode *f2fs_nfs_get_inode(struct
-super_block *sb,
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	struct inode *inode;
- 
--	if (ino < F2FS_ROOT_INO(sbi))
-+	if (unlikely(ino < F2FS_ROOT_INO(sbi)))
- 		return ERR_PTR(-ESTALE);
- 
- 	/*
-@@ -637,7 +637,7 @@ static struct inode *f2fs_nfs_get_inode(struct
-super_block *sb,
- 	inode = f2fs_iget(sb, ino);
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
--	if (generation && inode->i_generation != generation) {
-+	if (unlikely(generation && inode->i_generation != generation)) {
- 		/* we didn't find the right inode.. */
- 		iput(inode);
- 		return ERR_PTR(-ESTALE);
-@@ -740,10 +740,10 @@ static int sanity_check_ckpt(struct f2fs_sb_info
-*sbi)
- 	fsmeta += le32_to_cpu(ckpt->rsvd_segment_count);
- 	fsmeta += le32_to_cpu(raw_super->segment_count_ssa);
- 
--	if (fsmeta >= total)
-+	if (unlikely(fsmeta >= total))
- 		return 1;
- 
--	if (is_set_ckpt_flags(ckpt, CP_ERROR_FLAG)) {
-+	if (unlikely(is_set_ckpt_flags(ckpt, CP_ERROR_FLAG))) {
- 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
- 		return 1;
- 	}
-@@ -808,7 +808,7 @@ retry:
- 		brelse(*raw_super_buf);
- 		f2fs_msg(sb, KERN_ERR, "Can't find a valid F2FS filesystem "
- 				"in %dth superblock", block + 1);
--		if(block == 0) {
-+		if (block == 0) {
- 			block++;
- 			goto retry;
- 		} else {
-@@ -834,7 +834,7 @@ static int f2fs_fill_super(struct super_block *sb,
-void *data, int silent)
- 		return -ENOMEM;
- 
- 	/* set a block size */
--	if (!sb_set_blocksize(sb, F2FS_BLKSIZE)) {
-+	if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
- 		f2fs_msg(sb, KERN_ERR, "unable to set blocksize");
- 		goto free_sbi;
- 	}
-@@ -1066,7 +1066,7 @@ static int __init init_inodecache(void)
- {
- 	f2fs_inode_cachep = f2fs_kmem_cache_create("f2fs_inode_cache",
- 			sizeof(struct f2fs_inode_info), NULL);
--	if (f2fs_inode_cachep == NULL)
-+	if (!f2fs_inode_cachep)
- 		return -ENOMEM;
- 	return 0;
- }
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index aa7a3f1..b0fb8a2 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -522,7 +522,7 @@ static int __f2fs_setxattr(struct inode *inode, int
-name_index,
- 		if (found)
- 			free = free + ENTRY_SIZE(here);
- 
--		if (free < newsize) {
-+		if (unlikely(free < newsize)) {
- 			error = -ENOSPC;
- 			goto exit;
- 		}
--- 
-1.8.4.474.g128a96c
-
-
-
--- 
-Jaegeuk Kim
-Samsung
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IENoYW8gWXUgW21haWx0bzpjaGFv
+Mi55dUBzYW1zdW5nLmNvbV0KPiBTZW50OiBUdWVzZGF5LCBEZWNlbWJlciAxMCwgMjAxMyA5OjUy
+IEFNCj4gVG86IGphZWdldWsua2ltQHNhbXN1bmcuY29tCj4gQ2M6IGxpbnV4LWZzZGV2ZWxAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1mMmZzLWRl
+dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IFN1YmplY3Q6IFJlOiBbZjJmcy1kZXZdIFtQQVRD
+SCAzLzMgVjNdIGYyZnM6IGludHJvZHVjZSBmMmZzX2NhY2hlX25vZGVfcGFnZSgpIHRvIGFkZCBw
+YWdlIGludG8gbm9kZV9pbm9kZSBjYWNoZQo+IAo+IEhpLAo+IAo+ID4gLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0KPiA+IEZyb206IEphZWdldWsgS2ltIFttYWlsdG86amFlZ2V1ay5raW1Ac2Ft
+c3VuZy5jb21dCj4gPiBTZW50OiBNb25kYXksIERlY2VtYmVyIDA5LCAyMDEzIDQ6MDEgUE0KPiA+
+IFRvOiBDaGFvIFl1Cj4gPiBDYzogbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4
+LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9y
+Z2UubmV0Cj4gPiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XSBbUEFUQ0ggMy8zIFYzXSBmMmZzOiBp
+bnRyb2R1Y2UgZjJmc19jYWNoZV9ub2RlX3BhZ2UoKSB0byBhZGQgcGFnZSBpbnRvIG5vZGVfaW5v
+ZGUgY2FjaGUKPiA+Cj4gPiBIaSwKPiA+Cj4gPiBTb3JyeSBmb3IgdGhlIG5vaXNlLgo+ID4gT25j
+ZSBJIHRlc3RlZCB0aGlzIHBhdGNoLCBJIHJlY29nbml6ZWQgdGhhdCBJIG1hZGUgYSBtaXN0YWtl
+Ogo+ID4KPiA+IGYyZnNfZmlsbF9zdXBlcigpCj4gPiAgMS4gYnVpbGRfc2VnbWVudF9tYW5hZ2Vy
+KCkKPiA+ICAgICAtPiByZXN0b3JlX25vZGVfc3VtbWFyeSgpCj4gPiAgICAgICAgLT4gTlVMTCBw
+b2ludGVyIGV4Y2VwdGlvbiwgZHVlIHRvIG5vIE5BVCBjYWNoZS4KPiA+ICAyLiBidWlsZF9ub2Rl
+X21hbmFnZXIoKQo+ID4KPiA+IFNvLCB3ZSBzaG91bGQgbm90IGNhbGwgZ2V0X25vZGVfaW5mbygp
+IHByaW9yIHRvIGJ1aWxkX25vZGVfbWFuYWdlcigpLgo+ID4gQW5kLCBpdCdzIG5vdCBlYXN5IHRv
+IGNoYW5nZSB0aGUgb3JkZXIgb2YgYnVpbGRfKl9tYW5hZ2VyIHNpbXBseS4KPiA+Cj4gPiBMZXQn
+cyBjb25zaWRlciBpbiBtb3JlIGRldGFpbHMuCj4gCj4gQmVmb3JlIHdlIGNhbGwgcmVzdG9yZV9u
+b2RlX3N1bW1hcnkoKSwgd2UgaGF2ZSByZWFkIEhPVF9EQVRBCj4gU3VtbWFyeS4gSXQgbWVhbnMg
+YWxyZWFkeSB3ZSBnb3QgdGhlIE5BVCBjYWNoZSBpbiBjdXJzZWcuCj4gQWx0aG91Z2ggd2UgY291
+bGQgbm90IGNhbGwgZ2V0X25vZGVfaW5mbygpIGRpcmVjdGx5LCB3ZSBzdGlsbCBjb3VsZCB1c2UK
+PiBOQVQgY2FjaGUgaW4gSE9UX0RBVEEgY3Vyc2VnLgo+IAo+IFNvIGhvdyBhYm91dCB1c2luZyB0
+aGlzIGNhY2hlIHRvIHZlcmlmeSB2YWxpZGl0eSBvZiBwYWdlIGxpa2UgdGhpcz8KPiAKPiBmMmZz
+X2NhY2hlX25vZGVfcGFnZSgpCj4gCWlmKCFsb291cF9uYXRfY3Vyc2VnX2NhY2hlKCkpCj4gCQly
+ZXR1cm47CgpDb2RlIG9mIHZlcmlmaWNhdGlvbiBpcyBtaXNzZWQgaGVyZS4KaWYgKGN1cnNlZyBj
+YWNoZSBibGtfYWRkciAhPSBjdXJyZW50IGJsa2FkZHIpCglyZXR1cm47Cgo+IAlncmFiX2NhY2hl
+X3BhZ2UoKTsKPiAJbWVtY3B5KCk7Cj4gCVNldFBhZ2VVcHRvZGF0ZSgpOwo+IAlmMmZzX3B1dF9w
+YWdlKCk7Cj4gCj4gPiBUaGFua3MsCj4gPgo+ID4gMjAxMy0xMi0wOSAo7JuUKSwgMTM6MzUgKzA4
+MDAsIENoYW8gWXU6Cj4gPiA+IFRoaXMgcGF0Y2ggaW50cm9kdWNlcyBmMmZzX2NhY2hlX25vZGVf
+cGFnZSgpLCBpbiB0aGlzIGZ1bmN0aW9uLCBwYWdlIHdoaWNoIGlzCj4gPiA+IHJlYWRlZCBhaGVh
+ZCB3aWxsIGJlIGNvcHkgdG8gbm9kZV9pbm9kZSdzIG1hcHBpbmcgY2FjaGUuCj4gPiA+IEl0IHdp
+bGwgYXZvaWQgcmVyZWFkaW5nIHRoZXNlIG5vZGUgcGFnZXMuCj4gPiA+Cj4gPiA+IGNoYW5nZSBs
+b2c6Cj4gPiA+ICBvIGNoZWNrIHZhbGlkaXR5IG9mIHBhZ2UgYnkgc2VhcmNoaW5nIE5BVCBzdWdn
+ZXN0ZWQgYnkgSmFlZ2V1ayBLaW0uCj4gPiA+ICBvIGFkZCAndW5saWtlbHknIGZvciBjb21waWxl
+ciBvcHRpbWl6YXRpb24gc3VnZ2VzdGVkIGJ5IEphZWdldWsgS2ltLgo+ID4gPgo+ID4gPiBTdWdn
+ZXN0ZWQtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4KPiA+ID4gU2ln
+bmVkLW9mZi1ieTogQ2hhbyBZdSA8Y2hhbzIueXVAc2Ftc3VuZy5jb20+Cj4gPiA+IC0tLQo+ID4g
+PiAgZnMvZjJmcy9ub2RlLmMgfCAgIDM5ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrLQo+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDM4IGluc2VydGlvbnMoKyksIDEgZGVsZXRp
+b24oLSkKPiA+ID4KPiA+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9u
+b2RlLmMKPiA+ID4gaW5kZXggMDk5ZjA2Zi4uNGM2ZGE5OCAxMDA2NDQKPiA+ID4gLS0tIGEvZnMv
+ZjJmcy9ub2RlLmMKPiA+ID4gKysrIGIvZnMvZjJmcy9ub2RlLmMKPiA+ID4gQEAgLTE2MDAsMTMg
+KzE2MDAsNDYgQEAgc3RhdGljIGludCByYV9zdW1fcGFnZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAq
+c2JpLCBzdHJ1Y3QgbGlzdF9oZWFkICpwYWdlcywKPiA+ID4gIAlyZXR1cm4gMDsKPiA+ID4gIH0K
+PiA+ID4KPiA+ID4gKy8qCj4gPiA+ICsgKiBmMmZzX2NhY2hlX25vZGVfcGFnZSgpIGNoZWNrIHZh
+bGlkYXR5IG9mIGlucHV0IHBhZ2UgYnkgc2VhcmNoaW5nIE5BVC4KPiA+ID4gKyAqIFRoZW4sIGl0
+IHdpbGwgY29weSB1cGRhdGVkIGRhdGEgb2YgdmFpbGQgcGFnZSB0byBub2RlX2lub2RlIGNhY2hl
+Lgo+ID4gPiArICovCj4gPiA+ICt2b2lkIGYyZnNfY2FjaGVfbm9kZV9wYWdlKHN0cnVjdCBmMmZz
+X3NiX2luZm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsCj4gPiA+ICsJCQkJCQluaWRfdCBuaWQs
+IGJsb2NrX3QgYmxrYWRkcikKPiA+ID4gK3sKPiA+ID4gKwlzdHJ1Y3QgYWRkcmVzc19zcGFjZSAq
+bWFwcGluZyA9IHNiaS0+bm9kZV9pbm9kZS0+aV9tYXBwaW5nOwo+ID4gPiArCXN0cnVjdCBwYWdl
+ICpucGFnZTsKPiA+ID4gKwlzdHJ1Y3Qgbm9kZV9pbmZvIG5pOwo+ID4gPiArCj4gPiA+ICsJZ2V0
+X25vZGVfaW5mbyhzYmksIG5pZCwgJm5pKTsKPiA+ID4gKwo+ID4gPiArCWlmIChuaS5ibGtfYWRk
+ciAhPSBibGthZGRyKQo+ID4gPiArCQlyZXR1cm47Cj4gPiA+ICsKPiA+ID4gKwlucGFnZSA9IGdy
+YWJfY2FjaGVfcGFnZShtYXBwaW5nLCBuaWQpOwo+ID4gPiArCWlmICh1bmxpa2VseSghbnBhZ2Up
+KQo+ID4gPiArCQlyZXR1cm47Cj4gPiA+ICsKPiA+ID4gKwlpZiAoUGFnZVVwdG9kYXRlKG5wYWdl
+KSkgewo+ID4gPiArCQlmMmZzX3B1dF9wYWdlKG5wYWdlLCAxKTsKPiA+ID4gKwkJcmV0dXJuOwo+
+ID4gPiArCX0KPiA+ID4gKwo+ID4gPiArCW1lbWNweShwYWdlX2FkZHJlc3MobnBhZ2UpLCBwYWdl
+X2FkZHJlc3MocGFnZSksIFBBR0VfQ0FDSEVfU0laRSk7Cj4gPiA+ICsKPiA+ID4gKwlTZXRQYWdl
+VXB0b2RhdGUobnBhZ2UpOwo+ID4gPiArCWYyZnNfcHV0X3BhZ2UobnBhZ2UsIDEpOwo+ID4gPiAr
+Cj4gPiA+ICsJcmV0dXJuOwo+ID4gPiArfQo+ID4gPiArCj4gPiA+ICBpbnQgcmVzdG9yZV9ub2Rl
+X3N1bW1hcnkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ID4gPiAgCQkJdW5zaWduZWQgaW50
+IHNlZ25vLCBzdHJ1Y3QgZjJmc19zdW1tYXJ5X2Jsb2NrICpzdW0pCj4gPiA+ICB7Cj4gPiA+ICAJ
+c3RydWN0IGYyZnNfbm9kZSAqcm47Cj4gPiA+ICAJc3RydWN0IGYyZnNfc3VtbWFyeSAqc3VtX2Vu
+dHJ5Owo+ID4gPiAgCXN0cnVjdCBwYWdlICpwYWdlLCAqdG1wOwo+ID4gPiAtCWJsb2NrX3QgYWRk
+cjsKPiA+ID4gKwlibG9ja190IGFkZHIsIGJsa2FkZHI7Cj4gPiA+ICAJaW50IGJpb19ibG9ja3Mg
+PSBNQVhfQklPX0JMT0NLUyhtYXhfaHdfYmxvY2tzKHNiaSkpOwo+ID4gPiAgCWludCBpLCBsYXN0
+X29mZnNldCwgbnJwYWdlcywgZXJyID0gMDsKPiA+ID4gIAlMSVNUX0hFQUQocGFnZV9saXN0KTsK
+PiA+ID4gQEAgLTE2MjQsNiArMTY1Nyw3IEBAIGludCByZXN0b3JlX25vZGVfc3VtbWFyeShzdHJ1
+Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gPiA+ICAJCWlmIChlcnIpCj4gPiA+ICAJCQlyZXR1cm4g
+ZXJyOwo+ID4gPgo+ID4gPiArCQlibGthZGRyID0gYWRkcjsKPiA+ID4gIAkJbGlzdF9mb3JfZWFj
+aF9lbnRyeV9zYWZlKHBhZ2UsIHRtcCwgJnBhZ2VfbGlzdCwgbHJ1KSB7Cj4gPiA+Cj4gPiA+ICAJ
+CQlsb2NrX3BhZ2UocGFnZSk7Cj4gPiA+IEBAIC0xNjMzLDYgKzE2NjcsOCBAQCBpbnQgcmVzdG9y
+ZV9ub2RlX3N1bW1hcnkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ID4gPiAgCQkJCXN1bV9l
+bnRyeS0+dmVyc2lvbiA9IDA7Cj4gPiA+ICAJCQkJc3VtX2VudHJ5LT5vZnNfaW5fbm9kZSA9IDA7
+Cj4gPiA+ICAJCQkJc3VtX2VudHJ5Kys7Cj4gPiA+ICsJCQkJZjJmc19jYWNoZV9ub2RlX3BhZ2Uo
+c2JpLCBwYWdlLAo+ID4gPiArCQkJCQlsZTMyX3RvX2NwdShybi0+Zm9vdGVyLm5pZCksIGJsa2Fk
+ZHIpOwo+ID4gPiAgCQkJfSBlbHNlIHsKPiA+ID4gIAkJCQllcnIgPSAtRUlPOwo+ID4gPiAgCQkJ
+fQo+ID4gPiBAQCAtMTY0MCw2ICsxNjc2LDcgQEAgaW50IHJlc3RvcmVfbm9kZV9zdW1tYXJ5KHN0
+cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiA+ID4gIAkJCWxpc3RfZGVsKCZwYWdlLT5scnUpOwo+
+ID4gPiAgCQkJdW5sb2NrX3BhZ2UocGFnZSk7Cj4gPiA+ICAJCQlfX2ZyZWVfcGFnZXMocGFnZSwg
+MCk7Cj4gPiA+ICsJCQlibGthZGRyKys7Cj4gPiA+ICAJCX0KPiA+ID4gIAl9Cj4gPiA+ICAJcmV0
+dXJuIGVycjsKPiA+Cj4gPiAtLQo+ID4gSmFlZ2V1ayBLaW0KPiA+IFNhbXN1bmcKPiAKPiAKPiAt
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBTcG9uc29yZWQgYnkgSW50ZWwoUikgWERLCj4gRGV2ZWxv
+cCwgdGVzdCBhbmQgZGlzcGxheSB3ZWIgYW5kIGh5YnJpZCBhcHBzIHdpdGggYSBzaW5nbGUgY29k
+ZSBiYXNlLgo+IERvd25sb2FkIGl0IGZvciBmcmVlIG5vdyEKPiBodHRwOi8vcHViYWRzLmcuZG91
+YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9MTExNDA4NjMxJml1PS80MTQwL29zdGcuY2xrdHJr
+Cj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51
+eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNl
+Zm9yZ2UubmV0Cj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8v
+bGludXgtZjJmcy1kZXZlbAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTcG9uc29yZWQgYnkgSW50
+ZWwoUikgWERLIApEZXZlbG9wLCB0ZXN0IGFuZCBkaXNwbGF5IHdlYiBhbmQgaHlicmlkIGFwcHMg
+d2l0aCBhIHNpbmdsZSBjb2RlIGJhc2UuCkRvd25sb2FkIGl0IGZvciBmcmVlIG5vdyEKaHR0cDov
+L3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTExMTQwODYzMSZpdT0vNDE0
+MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3Rz
+LnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0
+aW5mby9saW51eC1mMmZzLWRldmVsCg==
