@@ -1,31 +1,32 @@
-From: =?ISO-8859-1?Q?S=E9rgio_Benjamim?= <sergio_br2@ig.com.br>
-Subject: libtool package is missing from README
-Date: Mon, 16 Dec 2013 00:29:25 +0100
-Message-ID: <52AE3B55.301@ig.com.br>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: libtool package is missing from README
+Date: Mon, 16 Dec 2013 12:35:16 +0900
+Message-ID: <1387164916.2101.208.camel@kjgkr>
+References: <52AE3B55.301@ig.com.br>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <sergio_br2@ig.com.br>) id 1VsLaZ-0003Mk-CL
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VsOz0-0005uU-8J
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 15 Dec 2013 23:59:11 +0000
-Received: from mail-wg0-f41.google.com ([74.125.82.41])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VsLaY-0003wt-FZ
+	Mon, 16 Dec 2013 03:36:38 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VsOyy-00036P-3d
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 15 Dec 2013 23:59:11 +0000
-Received: by mail-wg0-f41.google.com with SMTP id y10so1335585wgg.4
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 15 Dec 2013 15:59:03 -0800 (PST)
-Received: from [89.156.21.146] (89-156-21-146.rev.numericable.fr.
-	[89.156.21.146])
-	by mx.google.com with ESMTPSA id x4sm20472988wif.0.2013.12.15.15.29.26
-	for <linux-f2fs-devel@lists.sourceforge.net>
-	(version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
-	Sun, 15 Dec 2013 15:29:26 -0800 (PST)
+	Mon, 16 Dec 2013 03:36:38 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MXV00J9SRCLPY90@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 16 Dec 2013 12:36:21 +0900 (KST)
+In-reply-to: <52AE3B55.301@ig.com.br>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,25 +36,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: =?ISO-8859-1?Q?S=E9rgio?= Benjamim <sergio_br2@ig.com.br>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hello,
-
-I think libtool package is missing from README, in "Before compilation" =
-
-section.
-
-S=E9rgio Benjamim
-
----------------------------------------------------------------------------=
----
-Rapidly troubleshoot problems before they affect your business. Most IT =
-
-organizations don't have a clear picture of how application performance =
-
-affects their revenue. With AppDynamics, you get 100% visibility into your =
-
-Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics P=
-ro!
-http://pubads.g.doubleclick.net/gampad/clk?id=3D84349831&iu=3D/4140/ostg.cl=
-ktrk
+SGksCgpUaGFuayB5b3UgZm9yIHRoZSBzdWdnZXN0aW9uLgoKSSBtYWRlIGEgcGF0Y2ggYW5kIHRo
+ZW4gYXBwbGllZCBpdCB0byB0aGUgZ2l0IHRyZWUuCgpUaGFua3MsCgoKRnJvbSAxMWQxODdjZGZh
+MmRjZjUwNGFhMjViNWExYWFiNDIyOGYxOWYyMmZmIE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQpG
+cm9tOiBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb20+CkRhdGU6IE1vbiwgMTYg
+RGVjIDIwMTMgMTI6MzI6MzcgKzA5MDAKU3ViamVjdDogW1BBVENIXSBSRUFETUU6IGFkZCBsaWJ0
+b29sIGd1aWRlCgpUaGUgZjJmcy10b29scyBuZWVkcyBsaWJ0b29sIHBhY2thZ2UgdG8gY29tcGls
+ZSBzb3VyY2VzLgoKU3VnZ2VzdGVkLWJ5OiBTw6lyZ2lvIEJlbmphbWltIDxzZXJnaW9fYnIyQGln
+LmNvbS5icj4KU2lnbmVkLW9mZi1ieTogSmFlZ2V1ayBLaW0gPGphZWdldWsua2ltQHNhbXN1bmcu
+Y29tPgotLS0KIFJFQURNRSB8IDEgKwogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCgpk
+aWZmIC0tZ2l0IGEvUkVBRE1FIGIvUkVBRE1FCmluZGV4IGJmMzc0ZmIuLjIyMmNiYzMgMTAwNjQ0
+Ci0tLSBhL1JFQURNRQorKysgYi9SRUFETUUKQEAgLTExLDYgKzExLDcgQEAgWW91ciBzaG91bGQg
+aW5zdGFsbCB0aGUgZm9sbG93aW5nIHBhY2thZ2VzLgogIC0gbGlidXVpZC1kZXZlbCBvciB1dWlk
+LWRldgogIC0gcGtnLWNvbmZpZwogIC0gYXV0b2NvbmYKKyAtIGxpYnRvb2wKIAogSW5pdGlhbCBj
+b21waWxhdGlvbgogLS0tLS0tLS0tLS0tLS0tLS0tLQotLSAKMS44LjQuNDc0LmcxMjhhOTZjCgoK
+Ci0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpSYXBpZGx5
+IHRyb3VibGVzaG9vdCBwcm9ibGVtcyBiZWZvcmUgdGhleSBhZmZlY3QgeW91ciBidXNpbmVzcy4g
+TW9zdCBJVCAKb3JnYW5pemF0aW9ucyBkb24ndCBoYXZlIGEgY2xlYXIgcGljdHVyZSBvZiBob3cg
+YXBwbGljYXRpb24gcGVyZm9ybWFuY2UgCmFmZmVjdHMgdGhlaXIgcmV2ZW51ZS4gV2l0aCBBcHBE
+eW5hbWljcywgeW91IGdldCAxMDAlIHZpc2liaWxpdHkgaW50byB5b3VyIApKYXZhLC5ORVQsICYg
+UEhQIGFwcGxpY2F0aW9uLiBTdGFydCB5b3VyIDE1LWRheSBGUkVFIFRSSUFMIG9mIEFwcER5bmFt
+aWNzIFBybyEKaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTg0
+MzQ5ODMxJml1PS80MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYy
+ZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2Uu
+bmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
