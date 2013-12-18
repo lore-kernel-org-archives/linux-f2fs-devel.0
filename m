@@ -1,348 +1,204 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH] f2fs: introduce a new direct_IO write path
-Date: Wed, 18 Dec 2013 09:12:01 +0900
-Message-ID: <1387325521.2101.212.camel@kjgkr>
-References: <1387244992-7038-1-git-send-email-jaegeuk.kim@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH] f2fs: move all the bio initialization into
+	__bio_alloc
+Date: Wed, 18 Dec 2013 18:29:25 +0800
+Message-ID: <52B17905.7040708@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1387244992-7038-1-git-send-email-jaegeuk.kim@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VtEUh-0001JQ-VC
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 18 Dec 2013 10:36:47 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VtEUf-0001Yc-5z for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 18 Dec 2013 10:36:47 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Kim <jaegeuk.kim@samsung.com>
+Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-Change log from v1:
- o fix NOSPC error handling
+Move all the bio initialization into __bio_alloc, and some minor cleanups are
+also added.
 
->From b8511a74fe98b67247a9feeed58441e8f5ffd705 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Mon, 16 Dec 2013 19:04:05 +0900
-Subject: [PATCH] f2fs: introduce a new direct_IO write path
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-linux-f2fs-devel@lists.sourceforge.net
-
-Previously, f2fs doesn't support direct IOs with high performance, which
-throws
-every write requests via the buffered write path, resulting in highly
-performance degradation due to memory opeations like copy_from_user.
-
-This patch introduces a new direct IO path in which every write requests
-are
-processed by generic blockdev_direct_IO() with enhanced get_block
-function.
-
-The get_data_block() in f2fs handles:
-1. if original data blocks are allocates, then give them to blockdev.
-2. otherwise,
-  a. preallocate requested block addresses
-  b. do not use extent cache for better performance
-  c. give the block addresses to blockdev
-
-This policy induces that:
-- new allocated data are sequentially written to the disk
-- updated data are randomly written to the disk.
-- f2fs gives consistency on its file meta, not file data.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
- fs/f2fs/data.c    | 152
-++++++++++++++++++++++++++++++++++++++++--------------
- fs/f2fs/f2fs.h    |   2 +
- fs/f2fs/segment.c |  23 ++++++---
- 3 files changed, 129 insertions(+), 48 deletions(-)
+ fs/f2fs/data.c |   93 ++++++++++++++++++++++++++------------------------------
+ 1 files changed, 43 insertions(+), 50 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 15956fa..a0950bc 100644
+index 9bdacc6..da5c52d 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -570,74 +570,151 @@ repeat:
- 	return page;
+@@ -24,20 +24,6 @@
+ #include "segment.h"
+ #include <trace/events/f2fs.h>
+ 
+-/*
+- * Low-level block read/write IO operations.
+- */
+-static struct bio *__bio_alloc(struct block_device *bdev, int npages)
+-{
+-	struct bio *bio;
+-
+-	/* No failure on bio allocation */
+-	bio = bio_alloc(GFP_NOIO, npages);
+-	bio->bi_bdev = bdev;
+-	bio->bi_private = NULL;
+-	return bio;
+-}
+-
+ static void f2fs_read_end_io(struct bio *bio, int err)
+ {
+ 	const int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
+@@ -93,6 +79,25 @@ static void f2fs_write_end_io(struct bio *bio, int err)
+ 	bio_put(bio);
  }
  
-+static int __allocate_data_block(struct dnode_of_data *dn)
++/*
++ * Low-level block read/write IO operations.
++ */
++static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
++				int npages, int rw)
 +{
-+	struct f2fs_sb_info *sbi = F2FS_SB(dn->inode->i_sb);
-+	struct f2fs_summary sum;
-+	block_t new_blkaddr;
-+	struct node_info ni;
-+	int type;
++	struct bio *bio;
 +
-+	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
-+		return -EPERM;
-+	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
-+		return -ENOSPC;
++	/* No failure on bio allocation */
++	bio = bio_alloc(GFP_NOIO, npages);
 +
-+	__set_data_blkaddr(dn, NEW_ADDR);
-+	dn->data_blkaddr = NEW_ADDR;
++	bio->bi_bdev = sbi->sb->s_bdev;
++	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
++	bio->bi_end_io = rw ? f2fs_read_end_io : f2fs_write_end_io;
++	bio->bi_private = NULL;
 +
-+	get_node_info(sbi, dn->nid, &ni);
-+	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
-+
-+	type = CURSEG_WARM_DATA;
-+
-+	allocate_data_block(sbi, NULL, NULL_ADDR, &new_blkaddr, &sum, type);
-+
-+	/* direct IO doesn't use extent cache to maximize the performance */
-+	set_inode_flag(F2FS_I(dn->inode), FI_NO_EXTENT);
-+	update_extent_cache(new_blkaddr, dn);
-+	clear_inode_flag(F2FS_I(dn->inode), FI_NO_EXTENT);
-+
-+	dn->data_blkaddr = new_blkaddr;
-+	return 0;
++	return bio;
 +}
 +
- /*
-  * This function should be used by the data read flow only where it
-  * does not check the "create" flag that indicates block allocation.
-  * The reason for this special functionality is to exploit VFS
-readahead
-  * mechanism.
-  */
--static int get_data_block_ro(struct inode *inode, sector_t iblock,
-+static int get_data_block(struct inode *inode, sector_t iblock,
- 			struct buffer_head *bh_result, int create)
+ static void __submit_merged_bio(struct f2fs_bio_info *io)
  {
-+	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
- 	unsigned int blkbits = inode->i_sb->s_blocksize_bits;
- 	unsigned maxblocks = bh_result->b_size >> blkbits;
- 	struct dnode_of_data dn;
--	pgoff_t pgofs;
--	int err;
-+	int mode = create ? ALLOC_NODE : LOOKUP_NODE_RA;
-+	pgoff_t pgofs, end_offset;
-+	int err = 0, ofs = 1;
-+	bool allocated = false;
+ 	struct f2fs_io_info *fio = &io->fio;
+@@ -104,25 +109,26 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	rw = fio->rw | fio->rw_flag;
  
- 	/* Get the page offset from the block offset(iblock) */
- 	pgofs =	(pgoff_t)(iblock >> (PAGE_CACHE_SHIFT - blkbits));
- 
--	if (check_extent_cache(inode, pgofs, bh_result)) {
--		trace_f2fs_get_data_block(inode, iblock, bh_result, 0);
--		return 0;
+ 	if (is_read_io(rw)) {
+-		trace_f2fs_submit_read_bio(io->sbi->sb, rw, fio->type, io->bio);
+-		submit_bio(rw, io->bio);
+-		io->bio = NULL;
+-		return;
 -	}
-+	if (check_extent_cache(inode, pgofs, bh_result))
-+		goto out;
-+
-+	if (create)
-+		f2fs_lock_op(sbi);
- 
- 	/* When reading holes, we need its node page */
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
--	err = get_dnode_of_data(&dn, pgofs, LOOKUP_NODE_RA);
--	if (err) {
--		trace_f2fs_get_data_block(inode, iblock, bh_result, err);
--		return (err == -ENOENT) ? 0 : err;
-+	err = get_dnode_of_data(&dn, pgofs, mode);
-+	if (err || dn.data_blkaddr == NEW_ADDR) {
-+		if (err == -ENOENT)
-+			err = 0;
-+		goto unlock_out;
- 	}
- 
--	/* It does not support data allocation */
--	f2fs_bug_on(create);
+-	trace_f2fs_submit_write_bio(io->sbi->sb, rw, fio->type, io->bio);
 -
--	if (dn.data_blkaddr != NEW_ADDR && dn.data_blkaddr != NULL_ADDR) {
--		int i;
--		unsigned int end_offset;
--
-+	if (dn.data_blkaddr != NULL_ADDR) {
-+		map_bh(bh_result, inode->i_sb, dn.data_blkaddr);
-+	} else if (create) {
-+		err = __allocate_data_block(&dn);
-+		if (err)
-+			goto put_out;
-+		allocated = true;
-+		map_bh(bh_result, inode->i_sb, dn.data_blkaddr);
-+	} else {
-+		goto put_out;
-+	}
-+
-+	end_offset = IS_INODE(dn.node_page) ?
-+			ADDRS_PER_INODE(F2FS_I(inode)) : ADDRS_PER_BLOCK;
-+	bh_result->b_size = (((size_t)1) << blkbits);
-+	dn.ofs_in_node++;
-+	pgofs++;
-+
-+get_next:
-+	if (dn.ofs_in_node >= end_offset) {
-+		if (allocated)
-+			sync_inode_page(&dn);
-+		allocated = false;
-+		f2fs_put_dnode(&dn);
-+
-+		set_new_dnode(&dn, inode, NULL, NULL, 0);
-+		err = get_dnode_of_data(&dn, pgofs, mode);
-+		if (err || dn.data_blkaddr == NEW_ADDR) {
-+			if (err == -ENOENT)
-+				err = 0;
-+			goto unlock_out;
-+		}
- 		end_offset = IS_INODE(dn.node_page) ?
--				ADDRS_PER_INODE(F2FS_I(inode)) :
--				ADDRS_PER_BLOCK;
--
--		clear_buffer_new(bh_result);
-+			ADDRS_PER_INODE(F2FS_I(inode)) : ADDRS_PER_BLOCK;
-+	}
- 
-+	if (maxblocks > (bh_result->b_size >> blkbits)) {
-+		block_t blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
-+		if (blkaddr == NULL_ADDR && create) {
-+			err = __allocate_data_block(&dn);
-+			if (err)
-+				goto sync_out;
-+			allocated = true;
-+			blkaddr = dn.data_blkaddr;
-+		}
- 		/* Give more consecutive addresses for the read ahead */
--		for (i = 0; i < end_offset - dn.ofs_in_node; i++)
--			if (((datablock_addr(dn.node_page,
--							dn.ofs_in_node + i))
--				!= (dn.data_blkaddr + i)) || maxblocks == i)
--				break;
--		map_bh(bh_result, inode->i_sb, dn.data_blkaddr);
--		bh_result->b_size = (((size_t)i) << blkbits);
-+		if (blkaddr == (bh_result->b_blocknr + ofs)) {
-+			ofs++;
-+			dn.ofs_in_node++;
-+			pgofs++;
-+			bh_result->b_size += (((size_t)1) << blkbits);
-+			goto get_next;
+-	/*
+-	 * META_FLUSH is only from the checkpoint procedure, and we should wait
+-	 * this metadata bio for FS consistency.
+-	 */
+-	if (fio->type == META_FLUSH) {
+-		DECLARE_COMPLETION_ONSTACK(wait);
+-		io->bio->bi_private = &wait;
++		trace_f2fs_submit_read_bio(io->sbi->sb, rw,
++						fio->type, io->bio);
+ 		submit_bio(rw, io->bio);
+-		wait_for_completion(&wait);
+ 	} else {
+-		submit_bio(rw, io->bio);
++		trace_f2fs_submit_write_bio(io->sbi->sb, rw,
++						fio->type, io->bio);
++		/*
++		 * META_FLUSH is only from the checkpoint procedure, and we
++		 * should wait this metadata bio for FS consistency.
++		 */
++		if (fio->type == META_FLUSH) {
++			DECLARE_COMPLETION_ONSTACK(wait);
++			io->bio->bi_private = &wait;
++			submit_bio(rw, io->bio);
++			wait_for_completion(&wait);
++		} else {
++			submit_bio(rw, io->bio);
 +		}
  	}
-+sync_out:
-+	if (allocated)
-+		sync_inode_page(&dn);
-+put_out:
- 	f2fs_put_dnode(&dn);
--	trace_f2fs_get_data_block(inode, iblock, bh_result, 0);
--	return 0;
-+unlock_out:
-+	if (create)
-+		f2fs_unlock_op(sbi);
-+out:
-+	trace_f2fs_get_data_block(inode, iblock, bh_result, err);
-+	return err;
- }
- 
- static int f2fs_read_data_page(struct file *file, struct page *page)
- {
--	return mpage_readpage(page, get_data_block_ro);
-+	return mpage_readpage(page, get_data_block);
- }
- 
- static int f2fs_read_data_pages(struct file *file,
- 			struct address_space *mapping,
- 			struct list_head *pages, unsigned nr_pages)
- {
--	return mpage_readpages(mapping, pages, nr_pages, get_data_block_ro);
-+	return mpage_readpages(mapping, pages, nr_pages, get_data_block);
- }
- 
- int do_write_data_page(struct page *page, struct f2fs_io_info *fio)
-@@ -883,13 +960,8 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb
-*iocb,
- {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file->f_mapping->host;
--
--	if (rw == WRITE)
--		return 0;
--
--	/* Needs synchronization with the cleaner */
- 	return blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
--						  get_data_block_ro);
-+							get_data_block);
- }
- 
- static void f2fs_invalidate_data_page(struct page *page, unsigned int
-offset,
-@@ -928,7 +1000,7 @@ static int f2fs_set_data_page_dirty(struct page
-*page)
- 
- static sector_t f2fs_bmap(struct address_space *mapping, sector_t
-block)
- {
--	return generic_block_bmap(mapping, block, get_data_block_ro);
-+	return generic_block_bmap(mapping, block, get_data_block);
- }
- 
- const struct address_space_operations f2fs_dblock_aops = {
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1b05a62..8cbc5a6 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1115,6 +1115,8 @@ void recover_data_page(struct f2fs_sb_info *,
-struct page *,
- 				struct f2fs_summary *, block_t, block_t);
- void rewrite_node_page(struct f2fs_sb_info *, struct page *,
- 				struct f2fs_summary *, block_t, block_t);
-+void allocate_data_block(struct f2fs_sb_info *, struct page *,
-+		block_t, block_t *, struct f2fs_summary *, int);
- void f2fs_wait_on_page_writeback(struct page *, enum page_type, bool);
- void write_data_summaries(struct f2fs_sb_info *, block_t);
- void write_node_summaries(struct f2fs_sb_info *, block_t);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 5b890ce..9f8bdd0 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -854,16 +854,14 @@ static int __get_segment_type(struct page *page,
-enum page_type p_type)
- 	return __get_segment_type_6(page, p_type);
- }
- 
--static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
--			block_t old_blkaddr, block_t *new_blkaddr,
--			struct f2fs_summary *sum, struct f2fs_io_info *fio)
-+void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
-+		block_t old_blkaddr, block_t *new_blkaddr,
-+		struct f2fs_summary *sum, int type)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	struct curseg_info *curseg;
- 	unsigned int old_cursegno;
--	int type;
- 
--	type = __get_segment_type(page, fio->type);
- 	curseg = CURSEG_I(sbi, type);
- 
- 	mutex_lock(&curseg->curseg_mutex);
-@@ -896,13 +894,22 @@ static void do_write_page(struct f2fs_sb_info
-*sbi, struct page *page,
- 	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
- 	mutex_unlock(&sit_i->sentry_lock);
- 
--	if (fio->type == NODE)
-+	if (page && IS_NODESEG(type))
- 		fill_node_footer_blkaddr(page, NEXT_FREE_BLKADDR(sbi, curseg));
- 
-+	mutex_unlock(&curseg->curseg_mutex);
-+}
 +
-+static void do_write_page(struct f2fs_sb_info *sbi, struct page *page,
-+			block_t old_blkaddr, block_t *new_blkaddr,
-+			struct f2fs_summary *sum, struct f2fs_io_info *fio)
-+{
-+	int type = __get_segment_type(page, fio->type);
-+
-+	allocate_data_block(sbi, page, old_blkaddr, new_blkaddr, sum, type);
-+
- 	/* writeout dirty page into bdev */
- 	f2fs_submit_page_mbio(sbi, page, *new_blkaddr, fio);
--
--	mutex_unlock(&curseg->curseg_mutex);
+ 	io->bio = NULL;
  }
  
- void write_meta_page(struct f2fs_sb_info *sbi, struct page *page)
+@@ -152,17 +158,12 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
+ int f2fs_submit_page_bio(struct f2fs_sb_info *sbi, struct page *page,
+ 					block_t blk_addr, int rw)
+ {
+-	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct bio *bio;
+ 
+ 	trace_f2fs_submit_page_bio(page, blk_addr, rw);
+ 
+ 	/* Allocate a new bio */
+-	bio = __bio_alloc(bdev, 1);
+-
+-	/* Initialize the bio */
+-	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
+-	bio->bi_end_io = is_read_io(rw) ? f2fs_read_end_io : f2fs_write_end_io;
++	bio = __bio_alloc(sbi, blk_addr, 1, is_read_io(rw));
+ 
+ 	if (bio_add_page(bio, page, PAGE_CACHE_SIZE, 0) < PAGE_CACHE_SIZE) {
+ 		bio_put(bio);
+@@ -178,17 +179,16 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
+ 			block_t blk_addr, struct f2fs_io_info *fio)
+ {
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
+-	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct f2fs_bio_info *io;
+-	int bio_blocks;
++	int rw = is_read_io(fio->rw);
+ 
+-	io = is_read_io(fio->rw) ? &sbi->read_io : &sbi->write_io[btype];
++	io = rw ? &sbi->read_io : &sbi->write_io[btype];
+ 
+ 	verify_block_addr(sbi, blk_addr);
+ 
+ 	mutex_lock(&io->io_mutex);
+ 
+-	if (!is_read_io(fio->rw))
++	if (!rw)
+ 		inc_page_count(sbi, F2FS_WRITEBACK);
+ 
+ 	if (io->bio && (io->last_block_in_bio != blk_addr - 1 ||
+@@ -196,17 +196,10 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
+-		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+-		io->bio = __bio_alloc(bdev, bio_blocks);
+-		io->bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
+-		io->bio->bi_end_io = is_read_io(fio->rw) ? f2fs_read_end_io :
+-							f2fs_write_end_io;
++		int bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++
++		io->bio = __bio_alloc(sbi, blk_addr, bio_blocks, rw);
+ 		io->fio = *fio;
+-		/*
+-		 * The end_io will be assigned at the sumbission phase.
+-		 * Until then, let bio_add_page() merge consecutive IOs as much
+-		 * as possible.
+-		 */
+ 	}
+ 
+ 	if (bio_add_page(io->bio, page, PAGE_CACHE_SIZE, 0) <
 -- 
-1.8.4.474.g128a96c
+1.7.7
 
 
-
--- 
-Jaegeuk Kim
-Samsung
+------------------------------------------------------------------------------
+Rapidly troubleshoot problems before they affect your business. Most IT 
+organizations don't have a clear picture of how application performance 
+affects their revenue. With AppDynamics, you get 100% visibility into your 
+Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
+http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
