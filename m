@@ -1,26 +1,22 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH] f2fs: move all the bio initialization into
- __bio_alloc
-Date: Thu, 19 Dec 2013 17:22:18 +0800
-Message-ID: <52B2BACA.80600@cn.fujitsu.com>
-References: <52B17905.7040708@cn.fujitsu.com>
-	<000a01cefc59$0a9b4580$1fd1d080$@samsung.com>
-	<1387443585.2101.216.camel@kjgkr>
+Subject: [PATCH v2] f2fs: move all the bio initialization into
+	__bio_alloc
+Date: Thu, 19 Dec 2013 17:30:47 +0800
+Message-ID: <52B2BCC7.7060303@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VtZvH-0001bn-WD
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1Vta3P-0001Jd-HM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Dec 2013 09:29:40 +0000
+	Thu, 19 Dec 2013 09:38:03 +0000
 Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1VtZvE-0003n8-Qc for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Dec 2013 09:29:39 +0000
-In-Reply-To: <1387443585.2101.216.camel@kjgkr>
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Vta3N-00031V-DI for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 19 Dec 2013 09:38:03 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,37 +26,183 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: 'fsdevel' <linux-fsdevel@vger.kernel.org>, 'linux-kernel' <linux-kernel@vger.kernel.org>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>
+To: Kim <jaegeuk.kim@samsung.com>
+Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-SGkgS2ltLCBZdSwKVGhhbmtzIGZvciB5b3VyIHJldmlldyEKCk9uIDEyLzE5LzIwMTMgMDQ6NTkg
-UE0sIEphZWdldWsgS2ltIHdyb3RlOgoKPiBIaSBHdSwKPiAKPiBJIGFncmVlZCB3aXRoIENoYW8u
-Cj4gSXQgaXMgbW9yZSByZWFkYWJsZSB0byB1c2Ugc29tZXRoaW5nIGxpa2UgImlzX3JlYWQiIGlu
-c3RlYWQgb2YgInJ3Ii4KCkFncmVlLiBJJ2xsIGZvbGxvdyBpdC4KClJlZ2FyZHMsCkd1Cgo+IFRo
-YW5rcywKPiAKPiAyMDEzLTEyLTE5ICjrqqkpLCAwOToyMyArMDgwMCwgQ2hhbyBZdToKPj4gSGkg
-R3UsCj4+Cj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+Pj4gRnJvbTogR3UgWmhlbmcg
-W21haWx0bzpndXouZm5zdEBjbi5mdWppdHN1LmNvbV0KPj4+IFNlbnQ6IFdlZG5lc2RheSwgRGVj
-ZW1iZXIgMTgsIDIwMTMgNjoyOSBQTQo+Pj4gVG86IEtpbQo+Pj4gQ2M6IGZzZGV2ZWw7IGxpbnV4
-LWtlcm5lbDsgZjJmcwo+Pj4gU3ViamVjdDogW2YyZnMtZGV2XSBbUEFUQ0hdIGYyZnM6IG1vdmUg
-YWxsIHRoZSBiaW8gaW5pdGlhbGl6YXRpb24gaW50byBfX2Jpb19hbGxvYwo+Pj4KPj4+IE1vdmUg
-YWxsIHRoZSBiaW8gaW5pdGlhbGl6YXRpb24gaW50byBfX2Jpb19hbGxvYywgYW5kIHNvbWUgbWlu
-b3IgY2xlYW51cHMgYXJlCj4+PiBhbHNvIGFkZGVkLgo+Pgo+PiBMb29rcyBtb3JlIG5lYXQhCj4+
-Cj4+PiBAQCAtMTc4LDE3ICsxNzksMTYgQEAgdm9pZCBmMmZzX3N1Ym1pdF9wYWdlX21iaW8oc3Ry
-dWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFnZSAqcGFnZSwKPj4+ICAJCQlibG9ja190
-IGJsa19hZGRyLCBzdHJ1Y3QgZjJmc19pb19pbmZvICpmaW8pCj4+PiAgewo+Pj4gIAllbnVtIHBh
-Z2VfdHlwZSBidHlwZSA9IFBBR0VfVFlQRV9PRl9CSU8oZmlvLT50eXBlKTsKPj4+IC0Jc3RydWN0
-IGJsb2NrX2RldmljZSAqYmRldiA9IHNiaS0+c2ItPnNfYmRldjsKPj4+ICAJc3RydWN0IGYyZnNf
-YmlvX2luZm8gKmlvOwo+Pj4gLQlpbnQgYmlvX2Jsb2NrczsKPj4+ICsJaW50IHJ3ID0gaXNfcmVh
-ZF9pbyhmaW8tPnJ3KTsKPj4KPj4gTWF5YmUgaXQncyBtb3JlIG5lYXQgdG8gdXNlICdpc19yZWFk
-JyB0byBpbnN0ZWFkIG9mICdydycuCj4+Cj4+IFRoYW5rcwo+Pgo+IAoKCgotLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0KUmFwaWRseSB0cm91Ymxlc2hvb3QgcHJvYmxlbXMgYmVmb3JlIHRoZXkgYWZmZWN0
-IHlvdXIgYnVzaW5lc3MuIE1vc3QgSVQgCm9yZ2FuaXphdGlvbnMgZG9uJ3QgaGF2ZSBhIGNsZWFy
-IHBpY3R1cmUgb2YgaG93IGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNlIAphZmZlY3RzIHRoZWlyIHJl
-dmVudWUuIFdpdGggQXBwRHluYW1pY3MsIHlvdSBnZXQgMTAwJSB2aXNpYmlsaXR5IGludG8geW91
-ciAKSmF2YSwuTkVULCAmIFBIUCBhcHBsaWNhdGlvbi4gU3RhcnQgeW91ciAxNS1kYXkgRlJFRSBU
-UklBTCBvZiBBcHBEeW5hbWljcyBQcm8hCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQv
-Z2FtcGFkL2Nsaz9pZD04NDM0OTgzMSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxp
-bmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xp
-c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+Move all the bio initialization into __bio_alloc, and some minor cleanups are
+also added.
+
+v2:
+  Use 'is_read' rather than 'rw' as Yu Chao suggested.
+  Remove the needless initialization of bio->bi_private.
+
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/data.c |   92 +++++++++++++++++++++++++------------------------------
+ 1 files changed, 42 insertions(+), 50 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 9bdacc6..701e6fc 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -24,20 +24,6 @@
+ #include "segment.h"
+ #include <trace/events/f2fs.h>
+ 
+-/*
+- * Low-level block read/write IO operations.
+- */
+-static struct bio *__bio_alloc(struct block_device *bdev, int npages)
+-{
+-	struct bio *bio;
+-
+-	/* No failure on bio allocation */
+-	bio = bio_alloc(GFP_NOIO, npages);
+-	bio->bi_bdev = bdev;
+-	bio->bi_private = NULL;
+-	return bio;
+-}
+-
+ static void f2fs_read_end_io(struct bio *bio, int err)
+ {
+ 	const int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
+@@ -93,6 +79,24 @@ static void f2fs_write_end_io(struct bio *bio, int err)
+ 	bio_put(bio);
+ }
+ 
++/*
++ * Low-level block read/write IO operations.
++ */
++static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
++				int npages, int rw)
++{
++	struct bio *bio;
++
++	/* No failure on bio allocation */
++	bio = bio_alloc(GFP_NOIO, npages);
++
++	bio->bi_bdev = sbi->sb->s_bdev;
++	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
++	bio->bi_end_io = rw ? f2fs_read_end_io : f2fs_write_end_io;
++
++	return bio;
++}
++
+ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ {
+ 	struct f2fs_io_info *fio = &io->fio;
+@@ -104,25 +108,26 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	rw = fio->rw | fio->rw_flag;
+ 
+ 	if (is_read_io(rw)) {
+-		trace_f2fs_submit_read_bio(io->sbi->sb, rw, fio->type, io->bio);
++		trace_f2fs_submit_read_bio(io->sbi->sb, rw,
++						fio->type, io->bio);
+ 		submit_bio(rw, io->bio);
+-		io->bio = NULL;
+-		return;
+-	}
+-	trace_f2fs_submit_write_bio(io->sbi->sb, rw, fio->type, io->bio);
+-
+-	/*
+-	 * META_FLUSH is only from the checkpoint procedure, and we should wait
+-	 * this metadata bio for FS consistency.
+-	 */
+-	if (fio->type == META_FLUSH) {
+-		DECLARE_COMPLETION_ONSTACK(wait);
+-		io->bio->bi_private = &wait;
+-		submit_bio(rw, io->bio);
+-		wait_for_completion(&wait);
+ 	} else {
+-		submit_bio(rw, io->bio);
++		trace_f2fs_submit_write_bio(io->sbi->sb, rw,
++						fio->type, io->bio);
++		/*
++		 * META_FLUSH is only from the checkpoint procedure, and we
++		 * should wait this metadata bio for FS consistency.
++		 */
++		if (fio->type == META_FLUSH) {
++			DECLARE_COMPLETION_ONSTACK(wait);
++			io->bio->bi_private = &wait;
++			submit_bio(rw, io->bio);
++			wait_for_completion(&wait);
++		} else {
++			submit_bio(rw, io->bio);
++		}
+ 	}
++
+ 	io->bio = NULL;
+ }
+ 
+@@ -152,17 +157,12 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
+ int f2fs_submit_page_bio(struct f2fs_sb_info *sbi, struct page *page,
+ 					block_t blk_addr, int rw)
+ {
+-	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct bio *bio;
+ 
+ 	trace_f2fs_submit_page_bio(page, blk_addr, rw);
+ 
+ 	/* Allocate a new bio */
+-	bio = __bio_alloc(bdev, 1);
+-
+-	/* Initialize the bio */
+-	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
+-	bio->bi_end_io = is_read_io(rw) ? f2fs_read_end_io : f2fs_write_end_io;
++	bio = __bio_alloc(sbi, blk_addr, 1, is_read_io(rw));
+ 
+ 	if (bio_add_page(bio, page, PAGE_CACHE_SIZE, 0) < PAGE_CACHE_SIZE) {
+ 		bio_put(bio);
+@@ -178,17 +178,16 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
+ 			block_t blk_addr, struct f2fs_io_info *fio)
+ {
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
+-	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct f2fs_bio_info *io;
+-	int bio_blocks;
++	int is_read = is_read_io(fio->rw);
+ 
+-	io = is_read_io(fio->rw) ? &sbi->read_io : &sbi->write_io[btype];
++	io = is_read ? &sbi->read_io : &sbi->write_io[btype];
+ 
+ 	verify_block_addr(sbi, blk_addr);
+ 
+ 	mutex_lock(&io->io_mutex);
+ 
+-	if (!is_read_io(fio->rw))
++	if (!is_read)
+ 		inc_page_count(sbi, F2FS_WRITEBACK);
+ 
+ 	if (io->bio && (io->last_block_in_bio != blk_addr - 1 ||
+@@ -196,17 +195,10 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
+-		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+-		io->bio = __bio_alloc(bdev, bio_blocks);
+-		io->bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
+-		io->bio->bi_end_io = is_read_io(fio->rw) ? f2fs_read_end_io :
+-							f2fs_write_end_io;
++		int bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++
++		io->bio = __bio_alloc(sbi, blk_addr, bio_blocks, is_read);
+ 		io->fio = *fio;
+-		/*
+-		 * The end_io will be assigned at the sumbission phase.
+-		 * Until then, let bio_add_page() merge consecutive IOs as much
+-		 * as possible.
+-		 */
+ 	}
+ 
+ 	if (bio_add_page(io->bio, page, PAGE_CACHE_SIZE, 0) <
+-- 
+1.7.7
+
+
+
+------------------------------------------------------------------------------
+Rapidly troubleshoot problems before they affect your business. Most IT 
+organizations don't have a clear picture of how application performance 
+affects their revenue. With AppDynamics, you get 100% visibility into your 
+Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
+http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
