@@ -1,33 +1,33 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: introduce a new direct_IO write path
-Date: Fri, 20 Dec 2013 10:14:58 +0800
-Message-ID: <000b01cefd29$6c1e61e0$445b25a0$@samsung.com>
-References: <1387244992-7038-1-git-send-email-jaegeuk.kim@samsung.com>
-	<1387325521.2101.212.camel@kjgkr>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [PATCH v2] f2fs: move all the bio initialization
+ into __bio_alloc
+Date: Fri, 20 Dec 2013 18:02:03 +0900
+Message-ID: <1387530123.2101.220.camel@kjgkr>
+References: <52B2BCC7.7060303@cn.fujitsu.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VtpdI-0004pM-Dq
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VtvzL-0004VD-HZ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Dec 2013 02:16:08 +0000
+	Fri, 20 Dec 2013 09:03:19 +0000
 Received: from mailout3.samsung.com ([203.254.224.33])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VtpdG-0008Cd-Dk
+	(Exim 4.76) id 1VtvzJ-0001KH-58
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Dec 2013 02:16:08 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MY300MVI2AMTWD0@mailout3.samsung.com> for
+	Fri, 20 Dec 2013 09:03:19 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MY300F75L596L80@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Dec 2013 11:15:58 +0900 (KST)
-In-reply-to: <1387325521.2101.212.camel@kjgkr>
-Content-language: zh-cn
+	Fri, 20 Dec 2013 18:03:09 +0900 (KST)
+In-reply-to: <52B2BCC7.7060303@cn.fujitsu.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,111 +37,112 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Kim,
-
-One comment as following:
-
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> Sent: Wednesday, December 18, 2013 8:12 AM
-> To: linux-fsdevel@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH] f2fs: introduce a new direct_IO write path
-> 
-> Change log from v1:
->  o fix NOSPC error handling
-> 
-> >From b8511a74fe98b67247a9feeed58441e8f5ffd705 Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-> Date: Mon, 16 Dec 2013 19:04:05 +0900
-> Subject: [PATCH] f2fs: introduce a new direct_IO write path
-> Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-> linux-f2fs-devel@lists.sourceforge.net
-> 
-> Previously, f2fs doesn't support direct IOs with high performance, which
-> throws
-> every write requests via the buffered write path, resulting in highly
-> performance degradation due to memory opeations like copy_from_user.
-> 
-> This patch introduces a new direct IO path in which every write requests
-> are
-> processed by generic blockdev_direct_IO() with enhanced get_block
-> function.
-> 
-> The get_data_block() in f2fs handles:
-> 1. if original data blocks are allocates, then give them to blockdev.
-> 2. otherwise,
->   a. preallocate requested block addresses
->   b. do not use extent cache for better performance
->   c. give the block addresses to blockdev
-> 
-> This policy induces that:
-> - new allocated data are sequentially written to the disk
-> - updated data are randomly written to the disk.
-> - f2fs gives consistency on its file meta, not file data.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-> ---
->  fs/f2fs/data.c    | 152
-> ++++++++++++++++++++++++++++++++++++++++--------------
->  fs/f2fs/f2fs.h    |   2 +
->  fs/f2fs/segment.c |  23 ++++++---
->  3 files changed, 129 insertions(+), 48 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 15956fa..a0950bc 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -570,74 +570,151 @@ repeat:
->  	return page;
->  }
-> 
-> +static int __allocate_data_block(struct dnode_of_data *dn)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_SB(dn->inode->i_sb);
-> +	struct f2fs_summary sum;
-> +	block_t new_blkaddr;
-> +	struct node_info ni;
-> +	int type;
-> +
-> +	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
-> +		return -EPERM;
-> +	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
-> +		return -ENOSPC;
-> +
-> +	__set_data_blkaddr(dn, NEW_ADDR);
-> +	dn->data_blkaddr = NEW_ADDR;
-> +
-> +	get_node_info(sbi, dn->nid, &ni);
-> +	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
-> +
-> +	type = CURSEG_WARM_DATA;
-
-If so, our cold data will be written to WARM_DATA segment.
-How about check segment type here?
-
-> +
-> +	allocate_data_block(sbi, NULL, NULL_ADDR, &new_blkaddr, &sum, type);
-> +
-> +	/* direct IO doesn't use extent cache to maximize the performance */
-> +	set_inode_flag(F2FS_I(dn->inode), FI_NO_EXTENT);
-> +	update_extent_cache(new_blkaddr, dn);
-> +	clear_inode_flag(F2FS_I(dn->inode), FI_NO_EXTENT);
-> +
-> +	dn->data_blkaddr = new_blkaddr;
-> +	return 0;
-> +}
-> +
-
-[snip]
-
-
-------------------------------------------------------------------------------
-Rapidly troubleshoot problems before they affect your business. Most IT 
-organizations don't have a clear picture of how application performance 
-affects their revenue. With AppDynamics, you get 100% visibility into your 
-Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
-http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
+SGksCgoyMDEzLTEyLTE5ICjrqqkpLCAxNzozMCArMDgwMCwgR3UgWmhlbmc6Cj4gTW92ZSBhbGwg
+dGhlIGJpbyBpbml0aWFsaXphdGlvbiBpbnRvIF9fYmlvX2FsbG9jLCBhbmQgc29tZSBtaW5vciBj
+bGVhbnVwcyBhcmUKPiBhbHNvIGFkZGVkLgo+IAo+IHYyOgo+ICAgVXNlICdpc19yZWFkJyByYXRo
+ZXIgdGhhbiAncncnIGFzIFl1IENoYW8gc3VnZ2VzdGVkLgo+ICAgUmVtb3ZlIHRoZSBuZWVkbGVz
+cyBpbml0aWFsaXphdGlvbiBvZiBiaW8tPmJpX3ByaXZhdGUuCj4gCj4gU2lnbmVkLW9mZi1ieTog
+R3UgWmhlbmcgPGd1ei5mbnN0QGNuLmZ1aml0c3UuY29tPgo+IC0tLQo+ICBmcy9mMmZzL2RhdGEu
+YyB8ICAgOTIgKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLQo+ICAxIGZpbGVzIGNoYW5nZWQsIDQyIGluc2VydGlvbnMoKyksIDUwIGRlbGV0aW9u
+cygtKQo+IAo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2RhdGEuYyBiL2ZzL2YyZnMvZGF0YS5jCj4g
+aW5kZXggOWJkYWNjNi4uNzAxZTZmYyAxMDA2NDQKPiAtLS0gYS9mcy9mMmZzL2RhdGEuYwo+ICsr
+KyBiL2ZzL2YyZnMvZGF0YS5jCj4gQEAgLTI0LDIwICsyNCw2IEBACj4gICNpbmNsdWRlICJzZWdt
+ZW50LmgiCj4gICNpbmNsdWRlIDx0cmFjZS9ldmVudHMvZjJmcy5oPgo+ICAKPiAtLyoKPiAtICog
+TG93LWxldmVsIGJsb2NrIHJlYWQvd3JpdGUgSU8gb3BlcmF0aW9ucy4KPiAtICovCj4gLXN0YXRp
+YyBzdHJ1Y3QgYmlvICpfX2Jpb19hbGxvYyhzdHJ1Y3QgYmxvY2tfZGV2aWNlICpiZGV2LCBpbnQg
+bnBhZ2VzKQo+IC17Cj4gLQlzdHJ1Y3QgYmlvICpiaW87Cj4gLQo+IC0JLyogTm8gZmFpbHVyZSBv
+biBiaW8gYWxsb2NhdGlvbiAqLwo+IC0JYmlvID0gYmlvX2FsbG9jKEdGUF9OT0lPLCBucGFnZXMp
+Owo+IC0JYmlvLT5iaV9iZGV2ID0gYmRldjsKPiAtCWJpby0+YmlfcHJpdmF0ZSA9IE5VTEw7Cj4g
+LQlyZXR1cm4gYmlvOwo+IC19Cj4gLQo+ICBzdGF0aWMgdm9pZCBmMmZzX3JlYWRfZW5kX2lvKHN0
+cnVjdCBiaW8gKmJpbywgaW50IGVycikKPiAgewo+ICAJY29uc3QgaW50IHVwdG9kYXRlID0gdGVz
+dF9iaXQoQklPX1VQVE9EQVRFLCAmYmlvLT5iaV9mbGFncyk7Cj4gQEAgLTkzLDYgKzc5LDI0IEBA
+IHN0YXRpYyB2b2lkIGYyZnNfd3JpdGVfZW5kX2lvKHN0cnVjdCBiaW8gKmJpbywgaW50IGVycikK
+PiAgCWJpb19wdXQoYmlvKTsKPiAgfQo+ICAKPiArLyoKPiArICogTG93LWxldmVsIGJsb2NrIHJl
+YWQvd3JpdGUgSU8gb3BlcmF0aW9ucy4KPiArICovCj4gK3N0YXRpYyBzdHJ1Y3QgYmlvICpfX2Jp
+b19hbGxvYyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIGJsb2NrX3QgYmxrX2FkZHIsCj4gKwkJ
+CQlpbnQgbnBhZ2VzLCBpbnQgcncpCgoJCQkJCWJvb2wgaXNfcmVhZCkKCj4gK3sKPiArCXN0cnVj
+dCBiaW8gKmJpbzsKPiArCj4gKwkvKiBObyBmYWlsdXJlIG9uIGJpbyBhbGxvY2F0aW9uICovCj4g
+KwliaW8gPSBiaW9fYWxsb2MoR0ZQX05PSU8sIG5wYWdlcyk7Cj4gKwo+ICsJYmlvLT5iaV9iZGV2
+ID0gc2JpLT5zYi0+c19iZGV2Owo+ICsJYmlvLT5iaV9zZWN0b3IgPSBTRUNUT1JfRlJPTV9CTE9D
+SyhzYmksIGJsa19hZGRyKTsKPiArCWJpby0+YmlfZW5kX2lvID0gcncgPyBmMmZzX3JlYWRfZW5k
+X2lvIDogZjJmc193cml0ZV9lbmRfaW87CgoJCQkgIGlzX3JlYWQgPyAtLS0KCj4gKwo+ICsJcmV0
+dXJuIGJpbzsKPiArfQo+ICsKPiAgc3RhdGljIHZvaWQgX19zdWJtaXRfbWVyZ2VkX2JpbyhzdHJ1
+Y3QgZjJmc19iaW9faW5mbyAqaW8pCj4gIHsKPiAgCXN0cnVjdCBmMmZzX2lvX2luZm8gKmZpbyA9
+ICZpby0+ZmlvOwo+IEBAIC0xMDQsMjUgKzEwOCwyNiBAQCBzdGF0aWMgdm9pZCBfX3N1Ym1pdF9t
+ZXJnZWRfYmlvKHN0cnVjdCBmMmZzX2Jpb19pbmZvICppbykKPiAgCXJ3ID0gZmlvLT5ydyB8IGZp
+by0+cndfZmxhZzsKPiAgCj4gIAlpZiAoaXNfcmVhZF9pbyhydykpIHsKPiAtCQl0cmFjZV9mMmZz
+X3N1Ym1pdF9yZWFkX2Jpbyhpby0+c2JpLT5zYiwgcncsIGZpby0+dHlwZSwgaW8tPmJpbyk7Cj4g
+KwkJdHJhY2VfZjJmc19zdWJtaXRfcmVhZF9iaW8oaW8tPnNiaS0+c2IsIHJ3LAo+ICsJCQkJCQlm
+aW8tPnR5cGUsIGlvLT5iaW8pOwo+ICAJCXN1Ym1pdF9iaW8ocncsIGlvLT5iaW8pOwo+IC0JCWlv
+LT5iaW8gPSBOVUxMOwo+IC0JCXJldHVybjsKPiAtCX0KPiAtCXRyYWNlX2YyZnNfc3VibWl0X3dy
+aXRlX2Jpbyhpby0+c2JpLT5zYiwgcncsIGZpby0+dHlwZSwgaW8tPmJpbyk7Cj4gLQo+IC0JLyoK
+PiAtCSAqIE1FVEFfRkxVU0ggaXMgb25seSBmcm9tIHRoZSBjaGVja3BvaW50IHByb2NlZHVyZSwg
+YW5kIHdlIHNob3VsZCB3YWl0Cj4gLQkgKiB0aGlzIG1ldGFkYXRhIGJpbyBmb3IgRlMgY29uc2lz
+dGVuY3kuCj4gLQkgKi8KPiAtCWlmIChmaW8tPnR5cGUgPT0gTUVUQV9GTFVTSCkgewo+IC0JCURF
+Q0xBUkVfQ09NUExFVElPTl9PTlNUQUNLKHdhaXQpOwo+IC0JCWlvLT5iaW8tPmJpX3ByaXZhdGUg
+PSAmd2FpdDsKPiAtCQlzdWJtaXRfYmlvKHJ3LCBpby0+YmlvKTsKPiAtCQl3YWl0X2Zvcl9jb21w
+bGV0aW9uKCZ3YWl0KTsKPiAgCX0gZWxzZSB7Cj4gLQkJc3VibWl0X2JpbyhydywgaW8tPmJpbyk7
+Cj4gKwkJdHJhY2VfZjJmc19zdWJtaXRfd3JpdGVfYmlvKGlvLT5zYmktPnNiLCBydywKPiArCQkJ
+CQkJZmlvLT50eXBlLCBpby0+YmlvKTsKPiArCQkvKgo+ICsJCSAqIE1FVEFfRkxVU0ggaXMgb25s
+eSBmcm9tIHRoZSBjaGVja3BvaW50IHByb2NlZHVyZSwgYW5kIHdlCj4gKwkJICogc2hvdWxkIHdh
+aXQgdGhpcyBtZXRhZGF0YSBiaW8gZm9yIEZTIGNvbnNpc3RlbmN5Lgo+ICsJCSAqLwo+ICsJCWlm
+IChmaW8tPnR5cGUgPT0gTUVUQV9GTFVTSCkgewo+ICsJCQlERUNMQVJFX0NPTVBMRVRJT05fT05T
+VEFDSyh3YWl0KTsKPiArCQkJaW8tPmJpby0+YmlfcHJpdmF0ZSA9ICZ3YWl0Owo+ICsJCQlzdWJt
+aXRfYmlvKHJ3LCBpby0+YmlvKTsKPiArCQkJd2FpdF9mb3JfY29tcGxldGlvbigmd2FpdCk7Cj4g
+KwkJfSBlbHNlIHsKPiArCQkJc3VibWl0X2JpbyhydywgaW8tPmJpbyk7Cj4gKwkJfQo+ICAJfQo+
+ICsKPiAgCWlvLT5iaW8gPSBOVUxMOwo+ICB9Cj4gIAo+IEBAIC0xNTIsMTcgKzE1NywxMiBAQCB2
+b2lkIGYyZnNfc3VibWl0X21lcmdlZF9iaW8oc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ICBp
+bnQgZjJmc19zdWJtaXRfcGFnZV9iaW8oc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3Qg
+cGFnZSAqcGFnZSwKPiAgCQkJCQlibG9ja190IGJsa19hZGRyLCBpbnQgcncpCj4gIHsKPiAtCXN0
+cnVjdCBibG9ja19kZXZpY2UgKmJkZXYgPSBzYmktPnNiLT5zX2JkZXY7Cj4gIAlzdHJ1Y3QgYmlv
+ICpiaW87Cj4gIAo+ICAJdHJhY2VfZjJmc19zdWJtaXRfcGFnZV9iaW8ocGFnZSwgYmxrX2FkZHIs
+IHJ3KTsKPiAgCj4gIAkvKiBBbGxvY2F0ZSBhIG5ldyBiaW8gKi8KPiAtCWJpbyA9IF9fYmlvX2Fs
+bG9jKGJkZXYsIDEpOwo+IC0KPiAtCS8qIEluaXRpYWxpemUgdGhlIGJpbyAqLwo+IC0JYmlvLT5i
+aV9zZWN0b3IgPSBTRUNUT1JfRlJPTV9CTE9DSyhzYmksIGJsa19hZGRyKTsKPiAtCWJpby0+Ymlf
+ZW5kX2lvID0gaXNfcmVhZF9pbyhydykgPyBmMmZzX3JlYWRfZW5kX2lvIDogZjJmc193cml0ZV9l
+bmRfaW87Cj4gKwliaW8gPSBfX2Jpb19hbGxvYyhzYmksIGJsa19hZGRyLCAxLCBpc19yZWFkX2lv
+KHJ3KSk7Cj4gIAo+ICAJaWYgKGJpb19hZGRfcGFnZShiaW8sIHBhZ2UsIFBBR0VfQ0FDSEVfU0la
+RSwgMCkgPCBQQUdFX0NBQ0hFX1NJWkUpIHsKPiAgCQliaW9fcHV0KGJpbyk7Cj4gQEAgLTE3OCwx
+NyArMTc4LDE2IEBAIHZvaWQgZjJmc19zdWJtaXRfcGFnZV9tYmlvKHN0cnVjdCBmMmZzX3NiX2lu
+Zm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsCj4gIAkJCWJsb2NrX3QgYmxrX2FkZHIsIHN0cnVj
+dCBmMmZzX2lvX2luZm8gKmZpbykKPiAgewo+ICAJZW51bSBwYWdlX3R5cGUgYnR5cGUgPSBQQUdF
+X1RZUEVfT0ZfQklPKGZpby0+dHlwZSk7Cj4gLQlzdHJ1Y3QgYmxvY2tfZGV2aWNlICpiZGV2ID0g
+c2JpLT5zYi0+c19iZGV2Owo+ICAJc3RydWN0IGYyZnNfYmlvX2luZm8gKmlvOwo+IC0JaW50IGJp
+b19ibG9ja3M7Cj4gKwlpbnQgaXNfcmVhZCA9IGlzX3JlYWRfaW8oZmlvLT5ydyk7CgoJIGJvb2wg
+aXNfcmVhZCA9IGlzX3JlYWRfaW8oZmlvLT5ydyk7Cgo+ICAKPiAtCWlvID0gaXNfcmVhZF9pbyhm
+aW8tPnJ3KSA/ICZzYmktPnJlYWRfaW8gOiAmc2JpLT53cml0ZV9pb1tidHlwZV07Cj4gKwlpbyA9
+IGlzX3JlYWQgPyAmc2JpLT5yZWFkX2lvIDogJnNiaS0+d3JpdGVfaW9bYnR5cGVdOwo+ICAKPiAg
+CXZlcmlmeV9ibG9ja19hZGRyKHNiaSwgYmxrX2FkZHIpOwo+ICAKPiAgCW11dGV4X2xvY2soJmlv
+LT5pb19tdXRleCk7Cj4gIAo+IC0JaWYgKCFpc19yZWFkX2lvKGZpby0+cncpKQo+ICsJaWYgKCFp
+c19yZWFkKQo+ICAJCWluY19wYWdlX2NvdW50KHNiaSwgRjJGU19XUklURUJBQ0spOwo+ICAKPiAg
+CWlmIChpby0+YmlvICYmIChpby0+bGFzdF9ibG9ja19pbl9iaW8gIT0gYmxrX2FkZHIgLSAxIHx8
+Cj4gQEAgLTE5NiwxNyArMTk1LDEwIEBAIHZvaWQgZjJmc19zdWJtaXRfcGFnZV9tYmlvKHN0cnVj
+dCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsCj4gIAkJX19zdWJtaXRfbWVy
+Z2VkX2Jpbyhpbyk7Cj4gIGFsbG9jX25ldzoKPiAgCWlmIChpby0+YmlvID09IE5VTEwpIHsKPiAt
+CQliaW9fYmxvY2tzID0gTUFYX0JJT19CTE9DS1MobWF4X2h3X2Jsb2NrcyhzYmkpKTsKPiAtCQlp
+by0+YmlvID0gX19iaW9fYWxsb2MoYmRldiwgYmlvX2Jsb2Nrcyk7Cj4gLQkJaW8tPmJpby0+Ymlf
+c2VjdG9yID0gU0VDVE9SX0ZST01fQkxPQ0soc2JpLCBibGtfYWRkcik7Cj4gLQkJaW8tPmJpby0+
+YmlfZW5kX2lvID0gaXNfcmVhZF9pbyhmaW8tPnJ3KSA/IGYyZnNfcmVhZF9lbmRfaW8gOgo+IC0J
+CQkJCQkJZjJmc193cml0ZV9lbmRfaW87Cj4gKwkJaW50IGJpb19ibG9ja3MgPSBNQVhfQklPX0JM
+T0NLUyhtYXhfaHdfYmxvY2tzKHNiaSkpOwo+ICsKPiArCQlpby0+YmlvID0gX19iaW9fYWxsb2Mo
+c2JpLCBibGtfYWRkciwgYmlvX2Jsb2NrcywgaXNfcmVhZCk7Cj4gIAkJaW8tPmZpbyA9ICpmaW87
+Cj4gLQkJLyoKPiAtCQkgKiBUaGUgZW5kX2lvIHdpbGwgYmUgYXNzaWduZWQgYXQgdGhlIHN1bWJp
+c3Npb24gcGhhc2UuCj4gLQkJICogVW50aWwgdGhlbiwgbGV0IGJpb19hZGRfcGFnZSgpIG1lcmdl
+IGNvbnNlY3V0aXZlIElPcyBhcyBtdWNoCj4gLQkJICogYXMgcG9zc2libGUuCj4gLQkJICovCj4g
+IAl9Cj4gIAo+ICAJaWYgKGJpb19hZGRfcGFnZShpby0+YmlvLCBwYWdlLCBQQUdFX0NBQ0hFX1NJ
+WkUsIDApIDwKCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+ClJhcGlkbHkgdHJvdWJsZXNob290IHByb2JsZW1zIGJlZm9yZSB0aGV5IGFmZmVjdCB5b3VyIGJ1
+c2luZXNzLiBNb3N0IElUIApvcmdhbml6YXRpb25zIGRvbid0IGhhdmUgYSBjbGVhciBwaWN0dXJl
+IG9mIGhvdyBhcHBsaWNhdGlvbiBwZXJmb3JtYW5jZSAKYWZmZWN0cyB0aGVpciByZXZlbnVlLiBX
+aXRoIEFwcER5bmFtaWNzLCB5b3UgZ2V0IDEwMCUgdmlzaWJpbGl0eSBpbnRvIHlvdXIgCkphdmEs
+Lk5FVCwgJiBQSFAgYXBwbGljYXRpb24uIFN0YXJ0IHlvdXIgMTUtZGF5IEZSRUUgVFJJQUwgb2Yg
+QXBwRHluYW1pY3MgUHJvIQpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9j
+bGs/aWQ9ODQzNDk4MzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
+TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
