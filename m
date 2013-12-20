@@ -1,22 +1,33 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH v2] f2fs: move all the bio initialization into
-	__bio_alloc
-Date: Thu, 19 Dec 2013 17:30:47 +0800
-Message-ID: <52B2BCC7.7060303@cn.fujitsu.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH] f2fs: introduce a new direct_IO write path
+Date: Fri, 20 Dec 2013 10:14:58 +0800
+Message-ID: <000b01cefd29$6c1e61e0$445b25a0$@samsung.com>
+References: <1387244992-7038-1-git-send-email-jaegeuk.kim@samsung.com>
+	<1387325521.2101.212.camel@kjgkr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1Vta3P-0001Jd-HM
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1VtpdI-0004pM-Dq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Dec 2013 09:38:03 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Vta3N-00031V-DI for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Dec 2013 09:38:03 +0000
+	Fri, 20 Dec 2013 02:16:08 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VtpdG-0008Cd-Dk
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 Dec 2013 02:16:08 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0MY300MVI2AMTWD0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 Dec 2013 11:15:58 +0900 (KST)
+In-reply-to: <1387325521.2101.212.camel@kjgkr>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,178 +37,106 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kim <jaegeuk.kim@samsung.com>
-Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Move all the bio initialization into __bio_alloc, and some minor cleanups are
-also added.
+Hi Kim,
 
-v2:
-  Use 'is_read' rather than 'rw' as Yu Chao suggested.
-  Remove the needless initialization of bio->bi_private.
+One comment as following:
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
----
- fs/f2fs/data.c |   92 +++++++++++++++++++++++++------------------------------
- 1 files changed, 42 insertions(+), 50 deletions(-)
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Wednesday, December 18, 2013 8:12 AM
+> To: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH] f2fs: introduce a new direct_IO write path
+> 
+> Change log from v1:
+>  o fix NOSPC error handling
+> 
+> >From b8511a74fe98b67247a9feeed58441e8f5ffd705 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+> Date: Mon, 16 Dec 2013 19:04:05 +0900
+> Subject: [PATCH] f2fs: introduce a new direct_IO write path
+> Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+> linux-f2fs-devel@lists.sourceforge.net
+> 
+> Previously, f2fs doesn't support direct IOs with high performance, which
+> throws
+> every write requests via the buffered write path, resulting in highly
+> performance degradation due to memory opeations like copy_from_user.
+> 
+> This patch introduces a new direct IO path in which every write requests
+> are
+> processed by generic blockdev_direct_IO() with enhanced get_block
+> function.
+> 
+> The get_data_block() in f2fs handles:
+> 1. if original data blocks are allocates, then give them to blockdev.
+> 2. otherwise,
+>   a. preallocate requested block addresses
+>   b. do not use extent cache for better performance
+>   c. give the block addresses to blockdev
+> 
+> This policy induces that:
+> - new allocated data are sequentially written to the disk
+> - updated data are randomly written to the disk.
+> - f2fs gives consistency on its file meta, not file data.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+> ---
+>  fs/f2fs/data.c    | 152
+> ++++++++++++++++++++++++++++++++++++++++--------------
+>  fs/f2fs/f2fs.h    |   2 +
+>  fs/f2fs/segment.c |  23 ++++++---
+>  3 files changed, 129 insertions(+), 48 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 15956fa..a0950bc 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -570,74 +570,151 @@ repeat:
+>  	return page;
+>  }
+> 
+> +static int __allocate_data_block(struct dnode_of_data *dn)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_SB(dn->inode->i_sb);
+> +	struct f2fs_summary sum;
+> +	block_t new_blkaddr;
+> +	struct node_info ni;
+> +	int type;
+> +
+> +	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
+> +		return -EPERM;
+> +	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
+> +		return -ENOSPC;
+> +
+> +	__set_data_blkaddr(dn, NEW_ADDR);
+> +	dn->data_blkaddr = NEW_ADDR;
+> +
+> +	get_node_info(sbi, dn->nid, &ni);
+> +	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+> +
+> +	type = CURSEG_WARM_DATA;
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9bdacc6..701e6fc 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -24,20 +24,6 @@
- #include "segment.h"
- #include <trace/events/f2fs.h>
- 
--/*
-- * Low-level block read/write IO operations.
-- */
--static struct bio *__bio_alloc(struct block_device *bdev, int npages)
--{
--	struct bio *bio;
--
--	/* No failure on bio allocation */
--	bio = bio_alloc(GFP_NOIO, npages);
--	bio->bi_bdev = bdev;
--	bio->bi_private = NULL;
--	return bio;
--}
--
- static void f2fs_read_end_io(struct bio *bio, int err)
- {
- 	const int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
-@@ -93,6 +79,24 @@ static void f2fs_write_end_io(struct bio *bio, int err)
- 	bio_put(bio);
- }
- 
-+/*
-+ * Low-level block read/write IO operations.
-+ */
-+static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
-+				int npages, int rw)
-+{
-+	struct bio *bio;
-+
-+	/* No failure on bio allocation */
-+	bio = bio_alloc(GFP_NOIO, npages);
-+
-+	bio->bi_bdev = sbi->sb->s_bdev;
-+	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
-+	bio->bi_end_io = rw ? f2fs_read_end_io : f2fs_write_end_io;
-+
-+	return bio;
-+}
-+
- static void __submit_merged_bio(struct f2fs_bio_info *io)
- {
- 	struct f2fs_io_info *fio = &io->fio;
-@@ -104,25 +108,26 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
- 	rw = fio->rw | fio->rw_flag;
- 
- 	if (is_read_io(rw)) {
--		trace_f2fs_submit_read_bio(io->sbi->sb, rw, fio->type, io->bio);
-+		trace_f2fs_submit_read_bio(io->sbi->sb, rw,
-+						fio->type, io->bio);
- 		submit_bio(rw, io->bio);
--		io->bio = NULL;
--		return;
--	}
--	trace_f2fs_submit_write_bio(io->sbi->sb, rw, fio->type, io->bio);
--
--	/*
--	 * META_FLUSH is only from the checkpoint procedure, and we should wait
--	 * this metadata bio for FS consistency.
--	 */
--	if (fio->type == META_FLUSH) {
--		DECLARE_COMPLETION_ONSTACK(wait);
--		io->bio->bi_private = &wait;
--		submit_bio(rw, io->bio);
--		wait_for_completion(&wait);
- 	} else {
--		submit_bio(rw, io->bio);
-+		trace_f2fs_submit_write_bio(io->sbi->sb, rw,
-+						fio->type, io->bio);
-+		/*
-+		 * META_FLUSH is only from the checkpoint procedure, and we
-+		 * should wait this metadata bio for FS consistency.
-+		 */
-+		if (fio->type == META_FLUSH) {
-+			DECLARE_COMPLETION_ONSTACK(wait);
-+			io->bio->bi_private = &wait;
-+			submit_bio(rw, io->bio);
-+			wait_for_completion(&wait);
-+		} else {
-+			submit_bio(rw, io->bio);
-+		}
- 	}
-+
- 	io->bio = NULL;
- }
- 
-@@ -152,17 +157,12 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
- int f2fs_submit_page_bio(struct f2fs_sb_info *sbi, struct page *page,
- 					block_t blk_addr, int rw)
- {
--	struct block_device *bdev = sbi->sb->s_bdev;
- 	struct bio *bio;
- 
- 	trace_f2fs_submit_page_bio(page, blk_addr, rw);
- 
- 	/* Allocate a new bio */
--	bio = __bio_alloc(bdev, 1);
--
--	/* Initialize the bio */
--	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
--	bio->bi_end_io = is_read_io(rw) ? f2fs_read_end_io : f2fs_write_end_io;
-+	bio = __bio_alloc(sbi, blk_addr, 1, is_read_io(rw));
- 
- 	if (bio_add_page(bio, page, PAGE_CACHE_SIZE, 0) < PAGE_CACHE_SIZE) {
- 		bio_put(bio);
-@@ -178,17 +178,16 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
- 			block_t blk_addr, struct f2fs_io_info *fio)
- {
- 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
--	struct block_device *bdev = sbi->sb->s_bdev;
- 	struct f2fs_bio_info *io;
--	int bio_blocks;
-+	int is_read = is_read_io(fio->rw);
- 
--	io = is_read_io(fio->rw) ? &sbi->read_io : &sbi->write_io[btype];
-+	io = is_read ? &sbi->read_io : &sbi->write_io[btype];
- 
- 	verify_block_addr(sbi, blk_addr);
- 
- 	mutex_lock(&io->io_mutex);
- 
--	if (!is_read_io(fio->rw))
-+	if (!is_read)
- 		inc_page_count(sbi, F2FS_WRITEBACK);
- 
- 	if (io->bio && (io->last_block_in_bio != blk_addr - 1 ||
-@@ -196,17 +195,10 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
- 		__submit_merged_bio(io);
- alloc_new:
- 	if (io->bio == NULL) {
--		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
--		io->bio = __bio_alloc(bdev, bio_blocks);
--		io->bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
--		io->bio->bi_end_io = is_read_io(fio->rw) ? f2fs_read_end_io :
--							f2fs_write_end_io;
-+		int bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
-+
-+		io->bio = __bio_alloc(sbi, blk_addr, bio_blocks, is_read);
- 		io->fio = *fio;
--		/*
--		 * The end_io will be assigned at the sumbission phase.
--		 * Until then, let bio_add_page() merge consecutive IOs as much
--		 * as possible.
--		 */
- 	}
- 
- 	if (bio_add_page(io->bio, page, PAGE_CACHE_SIZE, 0) <
--- 
-1.7.7
+If so, our cold data will be written to WARM_DATA segment.
+How about check segment type here?
 
+> +
+> +	allocate_data_block(sbi, NULL, NULL_ADDR, &new_blkaddr, &sum, type);
+> +
+> +	/* direct IO doesn't use extent cache to maximize the performance */
+> +	set_inode_flag(F2FS_I(dn->inode), FI_NO_EXTENT);
+> +	update_extent_cache(new_blkaddr, dn);
+> +	clear_inode_flag(F2FS_I(dn->inode), FI_NO_EXTENT);
+> +
+> +	dn->data_blkaddr = new_blkaddr;
+> +	return 0;
+> +}
+> +
+
+[snip]
 
 
 ------------------------------------------------------------------------------
