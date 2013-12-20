@@ -1,22 +1,21 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH v3] f2fs: move all the bio initialization into
-	__bio_alloc
-Date: Fri, 20 Dec 2013 17:39:59 +0800
-Message-ID: <52B4106F.2050709@cn.fujitsu.com>
+Subject: [PATCH] f2fs: remove the rw_flag domain from f2fs_io_info
+Date: Fri, 20 Dec 2013 18:17:49 +0800
+Message-ID: <52B4194D.1010300@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1Vtwfs-0005u2-8N
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1VtxGX-0007Ji-BU
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Dec 2013 09:47:16 +0000
+	Fri, 20 Dec 2013 10:25:09 +0000
 Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Vtwfq-0007MM-CZ for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Dec 2013 09:47:16 +0000
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1VtxGV-0008Qj-A4 for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 Dec 2013 10:25:09 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,178 +28,137 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Kim <jaegeuk.kim@samsung.com>
 Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-Move all the bio initialization into __bio_alloc, and some minor cleanups are
-also added.
+When using the f2fs_io_info in the low level, we still need to merge the
+rw and rw_flag, so use the rw to hold all the io flags directly,
+and remove the rw_flag field.
 
-v3:
-  Use 'bool' rather than 'int' as Kim suggested.
-
-v2:
-  Use 'is_read' rather than 'rw' as Yu Chao suggested.
-  Remove the needless initialization of bio->bi_private.
+ps.It is based on the previous patch:
+f2fs: move all the bio initialization into __bio_alloc
 
 Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
- fs/f2fs/data.c |   92 +++++++++++++++++++++++++------------------------------
- 1 files changed, 42 insertions(+), 50 deletions(-)
+ fs/f2fs/data.c    |    3 +--
+ fs/f2fs/f2fs.h    |    5 ++---
+ fs/f2fs/gc.c      |    1 -
+ fs/f2fs/node.c    |    6 ++----
+ fs/f2fs/segment.c |    8 ++------
+ 5 files changed, 7 insertions(+), 16 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9bdacc6..94fa651 100644
+index 94fa651..439ed6c 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -24,20 +24,6 @@
- #include "segment.h"
- #include <trace/events/f2fs.h>
+@@ -105,7 +105,7 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	if (!io->bio)
+ 		return;
  
--/*
-- * Low-level block read/write IO operations.
-- */
--static struct bio *__bio_alloc(struct block_device *bdev, int npages)
--{
--	struct bio *bio;
--
--	/* No failure on bio allocation */
--	bio = bio_alloc(GFP_NOIO, npages);
--	bio->bi_bdev = bdev;
--	bio->bi_private = NULL;
--	return bio;
--}
--
- static void f2fs_read_end_io(struct bio *bio, int err)
- {
- 	const int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
-@@ -93,6 +79,24 @@ static void f2fs_write_end_io(struct bio *bio, int err)
- 	bio_put(bio);
- }
- 
-+/*
-+ * Low-level block read/write IO operations.
-+ */
-+static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
-+				int npages, bool is_read)
-+{
-+	struct bio *bio;
-+
-+	/* No failure on bio allocation */
-+	bio = bio_alloc(GFP_NOIO, npages);
-+
-+	bio->bi_bdev = sbi->sb->s_bdev;
-+	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
-+	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
-+
-+	return bio;
-+}
-+
- static void __submit_merged_bio(struct f2fs_bio_info *io)
- {
- 	struct f2fs_io_info *fio = &io->fio;
-@@ -104,25 +108,26 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
- 	rw = fio->rw | fio->rw_flag;
+-	rw = fio->rw | fio->rw_flag;
++	rw = fio->rw;
  
  	if (is_read_io(rw)) {
--		trace_f2fs_submit_read_bio(io->sbi->sb, rw, fio->type, io->bio);
-+		trace_f2fs_submit_read_bio(io->sbi->sb, rw,
-+						fio->type, io->bio);
- 		submit_bio(rw, io->bio);
--		io->bio = NULL;
--		return;
--	}
--	trace_f2fs_submit_write_bio(io->sbi->sb, rw, fio->type, io->bio);
--
--	/*
--	 * META_FLUSH is only from the checkpoint procedure, and we should wait
--	 * this metadata bio for FS consistency.
--	 */
--	if (fio->type == META_FLUSH) {
--		DECLARE_COMPLETION_ONSTACK(wait);
--		io->bio->bi_private = &wait;
--		submit_bio(rw, io->bio);
--		wait_for_completion(&wait);
- 	} else {
--		submit_bio(rw, io->bio);
-+		trace_f2fs_submit_write_bio(io->sbi->sb, rw,
-+						fio->type, io->bio);
-+		/*
-+		 * META_FLUSH is only from the checkpoint procedure, and we
-+		 * should wait this metadata bio for FS consistency.
-+		 */
-+		if (fio->type == META_FLUSH) {
-+			DECLARE_COMPLETION_ONSTACK(wait);
-+			io->bio->bi_private = &wait;
-+			submit_bio(rw, io->bio);
-+			wait_for_completion(&wait);
-+		} else {
-+			submit_bio(rw, io->bio);
-+		}
- 	}
-+
- 	io->bio = NULL;
- }
+ 		trace_f2fs_submit_read_bio(io->sbi->sb, rw,
+@@ -755,7 +755,6 @@ static int f2fs_write_data_page(struct page *page,
+ 	struct f2fs_io_info fio = {
+ 		.type = DATA,
+ 		.rw = (wbc->sync_mode == WB_SYNC_ALL) ? WRITE_SYNC: WRITE,
+-		.rw_flag = 0,
+ 	};
  
-@@ -152,17 +157,12 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
- int f2fs_submit_page_bio(struct f2fs_sb_info *sbi, struct page *page,
- 					block_t blk_addr, int rw)
+ 	if (page->index < end_index)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8cbc5a6..d03d2ab 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -368,9 +368,8 @@ enum page_type {
+ };
+ 
+ struct f2fs_io_info {
+-	enum page_type type;		/* contains DATA/NODE/META/META_FLUSH */
+-	int rw;				/* contains R/RS/W/WS */
+-	int rw_flag;			/* contains REQ_META/REQ_PRIO */
++	enum page_type type;	/* contains DATA/NODE/META/META_FLUSH */
++	int rw;			/* contains R/RS/W/WS with REQ_META/REQ_PRIO */
+ };
+ 
+ #define is_read_io(rw)	(((rw) & 1) == READ)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 69c18e3..599f546 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -523,7 +523,6 @@ static void move_data_page(struct inode *inode, struct page *page, int gc_type)
+ 	struct f2fs_io_info fio = {
+ 		.type = DATA,
+ 		.rw = WRITE_SYNC,
+-		.rw_flag = 0,
+ 	};
+ 
+ 	if (gc_type == BG_GC) {
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 3565caf..0af0a71 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -94,8 +94,7 @@ static void ra_nat_pages(struct f2fs_sb_info *sbi, int nid)
+ 	int i;
+ 	struct f2fs_io_info fio = {
+ 		.type = META,
+-		.rw = READ_SYNC,
+-		.rw_flag = REQ_META | REQ_PRIO
++		.rw = READ_SYNC | REQ_META | REQ_PRIO
+ 	};
+ 
+ 
+@@ -1581,8 +1580,7 @@ static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
+ 	int page_idx = start;
+ 	struct f2fs_io_info fio = {
+ 		.type = META,
+-		.rw = READ_SYNC,
+-		.rw_flag = REQ_META | REQ_PRIO
++		.rw = READ_SYNC | REQ_META | REQ_PRIO
+ 	};
+ 
+ 	for (; page_idx < start + nrpages; page_idx++) {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9f8bdd0..555ae76 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -916,8 +916,7 @@ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page)
  {
--	struct block_device *bdev = sbi->sb->s_bdev;
- 	struct bio *bio;
+ 	struct f2fs_io_info fio = {
+ 		.type = META,
+-		.rw = WRITE_SYNC,
+-		.rw_flag = REQ_META | REQ_PRIO
++		.rw = WRITE_SYNC | REQ_META | REQ_PRIO
+ 	};
  
- 	trace_f2fs_submit_page_bio(page, blk_addr, rw);
+ 	set_page_writeback(page);
+@@ -931,7 +930,6 @@ void write_node_page(struct f2fs_sb_info *sbi, struct page *page,
+ 	struct f2fs_io_info fio = {
+ 		.type = NODE,
+ 		.rw = WRITE_SYNC,
+-		.rw_flag = 0
+ 	};
  
- 	/* Allocate a new bio */
--	bio = __bio_alloc(bdev, 1);
--
--	/* Initialize the bio */
--	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
--	bio->bi_end_io = is_read_io(rw) ? f2fs_read_end_io : f2fs_write_end_io;
-+	bio = __bio_alloc(sbi, blk_addr, 1, is_read_io(rw));
+ 	set_summary(&sum, nid, 0, 0);
+@@ -1018,7 +1016,6 @@ void rewrite_node_page(struct f2fs_sb_info *sbi,
+ 	struct f2fs_io_info fio = {
+ 		.type = NODE,
+ 		.rw = WRITE_SYNC,
+-		.rw_flag = 0
+ 	};
  
- 	if (bio_add_page(bio, page, PAGE_CACHE_SIZE, 0) < PAGE_CACHE_SIZE) {
- 		bio_put(bio);
-@@ -178,17 +178,16 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
- 			block_t blk_addr, struct f2fs_io_info *fio)
- {
- 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
--	struct block_device *bdev = sbi->sb->s_bdev;
- 	struct f2fs_bio_info *io;
--	int bio_blocks;
-+	bool is_read = is_read_io(fio->rw);
+ 	curseg = CURSEG_I(sbi, type);
+@@ -1598,8 +1595,7 @@ static int ra_sit_pages(struct f2fs_sb_info *sbi, int start, int nrpages)
+ 	int blkno = start;
+ 	struct f2fs_io_info fio = {
+ 		.type = META,
+-		.rw = READ_SYNC,
+-		.rw_flag = REQ_META | REQ_PRIO
++		.rw = READ_SYNC | REQ_META | REQ_PRIO
+ 	};
  
--	io = is_read_io(fio->rw) ? &sbi->read_io : &sbi->write_io[btype];
-+	io = is_read ? &sbi->read_io : &sbi->write_io[btype];
- 
- 	verify_block_addr(sbi, blk_addr);
- 
- 	mutex_lock(&io->io_mutex);
- 
--	if (!is_read_io(fio->rw))
-+	if (!is_read)
- 		inc_page_count(sbi, F2FS_WRITEBACK);
- 
- 	if (io->bio && (io->last_block_in_bio != blk_addr - 1 ||
-@@ -196,17 +195,10 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
- 		__submit_merged_bio(io);
- alloc_new:
- 	if (io->bio == NULL) {
--		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
--		io->bio = __bio_alloc(bdev, bio_blocks);
--		io->bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
--		io->bio->bi_end_io = is_read_io(fio->rw) ? f2fs_read_end_io :
--							f2fs_write_end_io;
-+		int bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
-+
-+		io->bio = __bio_alloc(sbi, blk_addr, bio_blocks, is_read);
- 		io->fio = *fio;
--		/*
--		 * The end_io will be assigned at the sumbission phase.
--		 * Until then, let bio_add_page() merge consecutive IOs as much
--		 * as possible.
--		 */
- 	}
- 
- 	if (bio_add_page(io->bio, page, PAGE_CACHE_SIZE, 0) <
+ 	for (; blkno < start + nrpages && blkno < sit_blk_cnt; blkno++) {
 -- 
 1.7.7
-
 
 
 ------------------------------------------------------------------------------
