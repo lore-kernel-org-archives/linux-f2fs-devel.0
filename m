@@ -1,34 +1,22 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH] f2fs: introduce a new direct_IO write path
-Date: Fri, 20 Dec 2013 18:21:52 +0900
-Message-ID: <1387531312.2101.230.camel@kjgkr>
-References: <1387244992-7038-1-git-send-email-jaegeuk.kim@samsung.com>
-	<1387325521.2101.212.camel@kjgkr>
-	<000b01cefd29$6c1e61e0$445b25a0$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH v3] f2fs: move all the bio initialization into
+	__bio_alloc
+Date: Fri, 20 Dec 2013 17:39:59 +0800
+Message-ID: <52B4106F.2050709@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VtwIY-0000FW-9T
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1Vtwfs-0005u2-8N
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Dec 2013 09:23:10 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VtwIV-0005nO-SV
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Dec 2013 09:23:10 +0000
-Received: from epcpsbgr5.samsung.com
-	(u145.gpu120.samsung.co.kr [203.254.230.145])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MY300EFAM2CAXB0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Dec 2013 18:23:00 +0900 (KST)
-In-reply-to: <000b01cefd29$6c1e61e0$445b25a0$@samsung.com>
+	Fri, 20 Dec 2013 09:47:16 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Vtwfq-0007MM-CZ for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 Dec 2013 09:47:16 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,83 +26,186 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Kim <jaegeuk.kim@samsung.com>
+Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-SGksCgoyMDEzLTEyLTIwICjquIgpLCAxMDoxNCArMDgwMCwgQ2hhbyBZdToKPiBIaSBLaW0sCj4g
-Cj4gT25lIGNvbW1lbnQgYXMgZm9sbG93aW5nOgo+IAo+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdl
-LS0tLS0KPiA+IEZyb206IEphZWdldWsgS2ltIFttYWlsdG86amFlZ2V1ay5raW1Ac2Ftc3VuZy5j
-b21dCj4gPiBTZW50OiBXZWRuZXNkYXksIERlY2VtYmVyIDE4LCAyMDEzIDg6MTIgQU0KPiA+IFRv
-OiBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZwo+ID4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gPiBT
-dWJqZWN0OiBSZTogW2YyZnMtZGV2XSBbUEFUQ0hdIGYyZnM6IGludHJvZHVjZSBhIG5ldyBkaXJl
-Y3RfSU8gd3JpdGUgcGF0aAo+ID4gCj4gPiBDaGFuZ2UgbG9nIGZyb20gdjE6Cj4gPiAgbyBmaXgg
-Tk9TUEMgZXJyb3IgaGFuZGxpbmcKPiA+IAo+ID4gPkZyb20gYjg1MTFhNzRmZTk4YjY3MjQ3YTlm
-ZWVlZDU4NDQxZThmNWZmZDcwNSBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDEKPiA+IEZyb206IEph
-ZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4KPiA+IERhdGU6IE1vbiwgMTYgRGVj
-IDIwMTMgMTk6MDQ6MDUgKzA5MDAKPiA+IFN1YmplY3Q6IFtQQVRDSF0gZjJmczogaW50cm9kdWNl
-IGEgbmV3IGRpcmVjdF9JTyB3cml0ZSBwYXRoCj4gPiBDYzogbGludXgtZnNkZXZlbEB2Z2VyLmtl
-cm5lbC5vcmcsIGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcsCj4gPiBsaW51eC1mMmZzLWRl
-dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+ID4gCj4gPiBQcmV2aW91c2x5LCBmMmZzIGRvZXNu
-J3Qgc3VwcG9ydCBkaXJlY3QgSU9zIHdpdGggaGlnaCBwZXJmb3JtYW5jZSwgd2hpY2gKPiA+IHRo
-cm93cwo+ID4gZXZlcnkgd3JpdGUgcmVxdWVzdHMgdmlhIHRoZSBidWZmZXJlZCB3cml0ZSBwYXRo
-LCByZXN1bHRpbmcgaW4gaGlnaGx5Cj4gPiBwZXJmb3JtYW5jZSBkZWdyYWRhdGlvbiBkdWUgdG8g
-bWVtb3J5IG9wZWF0aW9ucyBsaWtlIGNvcHlfZnJvbV91c2VyLgo+ID4gCj4gPiBUaGlzIHBhdGNo
-IGludHJvZHVjZXMgYSBuZXcgZGlyZWN0IElPIHBhdGggaW4gd2hpY2ggZXZlcnkgd3JpdGUgcmVx
-dWVzdHMKPiA+IGFyZQo+ID4gcHJvY2Vzc2VkIGJ5IGdlbmVyaWMgYmxvY2tkZXZfZGlyZWN0X0lP
-KCkgd2l0aCBlbmhhbmNlZCBnZXRfYmxvY2sKPiA+IGZ1bmN0aW9uLgo+ID4gCj4gPiBUaGUgZ2V0
-X2RhdGFfYmxvY2soKSBpbiBmMmZzIGhhbmRsZXM6Cj4gPiAxLiBpZiBvcmlnaW5hbCBkYXRhIGJs
-b2NrcyBhcmUgYWxsb2NhdGVzLCB0aGVuIGdpdmUgdGhlbSB0byBibG9ja2Rldi4KPiA+IDIuIG90
-aGVyd2lzZSwKPiA+ICAgYS4gcHJlYWxsb2NhdGUgcmVxdWVzdGVkIGJsb2NrIGFkZHJlc3Nlcwo+
-ID4gICBiLiBkbyBub3QgdXNlIGV4dGVudCBjYWNoZSBmb3IgYmV0dGVyIHBlcmZvcm1hbmNlCj4g
-PiAgIGMuIGdpdmUgdGhlIGJsb2NrIGFkZHJlc3NlcyB0byBibG9ja2Rldgo+ID4gCj4gPiBUaGlz
-IHBvbGljeSBpbmR1Y2VzIHRoYXQ6Cj4gPiAtIG5ldyBhbGxvY2F0ZWQgZGF0YSBhcmUgc2VxdWVu
-dGlhbGx5IHdyaXR0ZW4gdG8gdGhlIGRpc2sKPiA+IC0gdXBkYXRlZCBkYXRhIGFyZSByYW5kb21s
-eSB3cml0dGVuIHRvIHRoZSBkaXNrLgo+ID4gLSBmMmZzIGdpdmVzIGNvbnNpc3RlbmN5IG9uIGl0
-cyBmaWxlIG1ldGEsIG5vdCBmaWxlIGRhdGEuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IEphZWdl
-dWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4KPiA+IC0tLQo+ID4gIGZzL2YyZnMvZGF0
-YS5jICAgIHwgMTUyCj4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-LS0tLS0tLS0tLS0tLS0KPiA+ICBmcy9mMmZzL2YyZnMuaCAgICB8ICAgMiArCj4gPiAgZnMvZjJm
-cy9zZWdtZW50LmMgfCAgMjMgKysrKysrLS0tCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCAxMjkgaW5z
-ZXJ0aW9ucygrKSwgNDggZGVsZXRpb25zKC0pCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZz
-L2RhdGEuYyBiL2ZzL2YyZnMvZGF0YS5jCj4gPiBpbmRleCAxNTk1NmZhLi5hMDk1MGJjIDEwMDY0
-NAo+ID4gLS0tIGEvZnMvZjJmcy9kYXRhLmMKPiA+ICsrKyBiL2ZzL2YyZnMvZGF0YS5jCj4gPiBA
-QCAtNTcwLDc0ICs1NzAsMTUxIEBAIHJlcGVhdDoKPiA+ICAJcmV0dXJuIHBhZ2U7Cj4gPiAgfQo+
-ID4gCj4gPiArc3RhdGljIGludCBfX2FsbG9jYXRlX2RhdGFfYmxvY2soc3RydWN0IGRub2RlX29m
-X2RhdGEgKmRuKQo+ID4gK3sKPiA+ICsJc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpID0gRjJGU19T
-Qihkbi0+aW5vZGUtPmlfc2IpOwo+ID4gKwlzdHJ1Y3QgZjJmc19zdW1tYXJ5IHN1bTsKPiA+ICsJ
-YmxvY2tfdCBuZXdfYmxrYWRkcjsKPiA+ICsJc3RydWN0IG5vZGVfaW5mbyBuaTsKPiA+ICsJaW50
-IHR5cGU7Cj4gPiArCj4gPiArCWlmICh1bmxpa2VseShpc19pbm9kZV9mbGFnX3NldChGMkZTX0ko
-ZG4tPmlub2RlKSwgRklfTk9fQUxMT0MpKSkKPiA+ICsJCXJldHVybiAtRVBFUk07Cj4gPiArCWlm
-ICh1bmxpa2VseSghaW5jX3ZhbGlkX2Jsb2NrX2NvdW50KHNiaSwgZG4tPmlub2RlLCAxKSkpCj4g
-PiArCQlyZXR1cm4gLUVOT1NQQzsKPiA+ICsKPiA+ICsJX19zZXRfZGF0YV9ibGthZGRyKGRuLCBO
-RVdfQUREUik7Cj4gPiArCWRuLT5kYXRhX2Jsa2FkZHIgPSBORVdfQUREUjsKPiA+ICsKPiA+ICsJ
-Z2V0X25vZGVfaW5mbyhzYmksIGRuLT5uaWQsICZuaSk7Cj4gPiArCXNldF9zdW1tYXJ5KCZzdW0s
-IGRuLT5uaWQsIGRuLT5vZnNfaW5fbm9kZSwgbmkudmVyc2lvbik7Cj4gPiArCj4gPiArCXR5cGUg
-PSBDVVJTRUdfV0FSTV9EQVRBOwo+IAo+IElmIHNvLCBvdXIgY29sZCBkYXRhIHdpbGwgYmUgd3Jp
-dHRlbiB0byBXQVJNX0RBVEEgc2VnbWVudC4KPiBIb3cgYWJvdXQgY2hlY2sgc2VnbWVudCB0eXBl
-IGhlcmU/CgpBY3R1YWxseSwgSSdtIG5vdCBzdXJlIHRoaXMga2luZCBvZiBkYXRhIHJlcXVlc3Rl
-ZCB0aHJvdWdoIGRpcmVjdCBJT3MKYXJlIGNvbGQgb3IgaG90IGRhdGEuCkJ1dCBJIGp1c3QgaW50
-ZW5kZWQgdG8gZ2F0aGVyIHN1Y2ggdGhlIGRpcmVjdCBJTydlZCBkYXRhIGludG8gb25lIHR5cGUK
-b2YgbG9nLCBub3Qgc2VwYXJhdGVseS4KU28sIEkgc2VsZWN0ZWQgV0FSTV9EQVRBIGJ5IHRoZSBm
-YWN0IHRoYXQgc3VjaCB0aGUgZGF0YSB3aWxsIGJlCmZyZXF1ZW50bHkgdXBkYXRlZCB0aHJvdWdo
-IGRpcmVjdCBJTyBlaXRoZXIuClRoYW5rcywKCj4gCj4gPiArCj4gPiArCWFsbG9jYXRlX2RhdGFf
-YmxvY2soc2JpLCBOVUxMLCBOVUxMX0FERFIsICZuZXdfYmxrYWRkciwgJnN1bSwgdHlwZSk7Cj4g
-PiArCj4gPiArCS8qIGRpcmVjdCBJTyBkb2Vzbid0IHVzZSBleHRlbnQgY2FjaGUgdG8gbWF4aW1p
-emUgdGhlIHBlcmZvcm1hbmNlICovCj4gPiArCXNldF9pbm9kZV9mbGFnKEYyRlNfSShkbi0+aW5v
-ZGUpLCBGSV9OT19FWFRFTlQpOwo+ID4gKwl1cGRhdGVfZXh0ZW50X2NhY2hlKG5ld19ibGthZGRy
-LCBkbik7Cj4gPiArCWNsZWFyX2lub2RlX2ZsYWcoRjJGU19JKGRuLT5pbm9kZSksIEZJX05PX0VY
-VEVOVCk7Cj4gPiArCj4gPiArCWRuLT5kYXRhX2Jsa2FkZHIgPSBuZXdfYmxrYWRkcjsKPiA+ICsJ
-cmV0dXJuIDA7Cj4gPiArfQo+ID4gKwo+IAo+IFtzbmlwXQo+IAoKLS0gCkphZWdldWsgS2ltClNh
-bXN1bmcKCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClJhcGlkbHkgdHJvdWJsZXNob290IHByb2Js
-ZW1zIGJlZm9yZSB0aGV5IGFmZmVjdCB5b3VyIGJ1c2luZXNzLiBNb3N0IElUIApvcmdhbml6YXRp
-b25zIGRvbid0IGhhdmUgYSBjbGVhciBwaWN0dXJlIG9mIGhvdyBhcHBsaWNhdGlvbiBwZXJmb3Jt
-YW5jZSAKYWZmZWN0cyB0aGVpciByZXZlbnVlLiBXaXRoIEFwcER5bmFtaWNzLCB5b3UgZ2V0IDEw
-MCUgdmlzaWJpbGl0eSBpbnRvIHlvdXIgCkphdmEsLk5FVCwgJiBQSFAgYXBwbGljYXRpb24uIFN0
-YXJ0IHlvdXIgMTUtZGF5IEZSRUUgVFJJQUwgb2YgQXBwRHluYW1pY3MgUHJvIQpodHRwOi8vcHVi
-YWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9ODQzNDk4MzEmaXU9LzQxNDAvb3N0
-Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-TGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8v
-bGludXgtZjJmcy1kZXZlbAo=
+Move all the bio initialization into __bio_alloc, and some minor cleanups are
+also added.
+
+v3:
+  Use 'bool' rather than 'int' as Kim suggested.
+
+v2:
+  Use 'is_read' rather than 'rw' as Yu Chao suggested.
+  Remove the needless initialization of bio->bi_private.
+
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/data.c |   92 +++++++++++++++++++++++++------------------------------
+ 1 files changed, 42 insertions(+), 50 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 9bdacc6..94fa651 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -24,20 +24,6 @@
+ #include "segment.h"
+ #include <trace/events/f2fs.h>
+ 
+-/*
+- * Low-level block read/write IO operations.
+- */
+-static struct bio *__bio_alloc(struct block_device *bdev, int npages)
+-{
+-	struct bio *bio;
+-
+-	/* No failure on bio allocation */
+-	bio = bio_alloc(GFP_NOIO, npages);
+-	bio->bi_bdev = bdev;
+-	bio->bi_private = NULL;
+-	return bio;
+-}
+-
+ static void f2fs_read_end_io(struct bio *bio, int err)
+ {
+ 	const int uptodate = test_bit(BIO_UPTODATE, &bio->bi_flags);
+@@ -93,6 +79,24 @@ static void f2fs_write_end_io(struct bio *bio, int err)
+ 	bio_put(bio);
+ }
+ 
++/*
++ * Low-level block read/write IO operations.
++ */
++static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
++				int npages, bool is_read)
++{
++	struct bio *bio;
++
++	/* No failure on bio allocation */
++	bio = bio_alloc(GFP_NOIO, npages);
++
++	bio->bi_bdev = sbi->sb->s_bdev;
++	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
++	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
++
++	return bio;
++}
++
+ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ {
+ 	struct f2fs_io_info *fio = &io->fio;
+@@ -104,25 +108,26 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	rw = fio->rw | fio->rw_flag;
+ 
+ 	if (is_read_io(rw)) {
+-		trace_f2fs_submit_read_bio(io->sbi->sb, rw, fio->type, io->bio);
++		trace_f2fs_submit_read_bio(io->sbi->sb, rw,
++						fio->type, io->bio);
+ 		submit_bio(rw, io->bio);
+-		io->bio = NULL;
+-		return;
+-	}
+-	trace_f2fs_submit_write_bio(io->sbi->sb, rw, fio->type, io->bio);
+-
+-	/*
+-	 * META_FLUSH is only from the checkpoint procedure, and we should wait
+-	 * this metadata bio for FS consistency.
+-	 */
+-	if (fio->type == META_FLUSH) {
+-		DECLARE_COMPLETION_ONSTACK(wait);
+-		io->bio->bi_private = &wait;
+-		submit_bio(rw, io->bio);
+-		wait_for_completion(&wait);
+ 	} else {
+-		submit_bio(rw, io->bio);
++		trace_f2fs_submit_write_bio(io->sbi->sb, rw,
++						fio->type, io->bio);
++		/*
++		 * META_FLUSH is only from the checkpoint procedure, and we
++		 * should wait this metadata bio for FS consistency.
++		 */
++		if (fio->type == META_FLUSH) {
++			DECLARE_COMPLETION_ONSTACK(wait);
++			io->bio->bi_private = &wait;
++			submit_bio(rw, io->bio);
++			wait_for_completion(&wait);
++		} else {
++			submit_bio(rw, io->bio);
++		}
+ 	}
++
+ 	io->bio = NULL;
+ }
+ 
+@@ -152,17 +157,12 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
+ int f2fs_submit_page_bio(struct f2fs_sb_info *sbi, struct page *page,
+ 					block_t blk_addr, int rw)
+ {
+-	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct bio *bio;
+ 
+ 	trace_f2fs_submit_page_bio(page, blk_addr, rw);
+ 
+ 	/* Allocate a new bio */
+-	bio = __bio_alloc(bdev, 1);
+-
+-	/* Initialize the bio */
+-	bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
+-	bio->bi_end_io = is_read_io(rw) ? f2fs_read_end_io : f2fs_write_end_io;
++	bio = __bio_alloc(sbi, blk_addr, 1, is_read_io(rw));
+ 
+ 	if (bio_add_page(bio, page, PAGE_CACHE_SIZE, 0) < PAGE_CACHE_SIZE) {
+ 		bio_put(bio);
+@@ -178,17 +178,16 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
+ 			block_t blk_addr, struct f2fs_io_info *fio)
+ {
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
+-	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct f2fs_bio_info *io;
+-	int bio_blocks;
++	bool is_read = is_read_io(fio->rw);
+ 
+-	io = is_read_io(fio->rw) ? &sbi->read_io : &sbi->write_io[btype];
++	io = is_read ? &sbi->read_io : &sbi->write_io[btype];
+ 
+ 	verify_block_addr(sbi, blk_addr);
+ 
+ 	mutex_lock(&io->io_mutex);
+ 
+-	if (!is_read_io(fio->rw))
++	if (!is_read)
+ 		inc_page_count(sbi, F2FS_WRITEBACK);
+ 
+ 	if (io->bio && (io->last_block_in_bio != blk_addr - 1 ||
+@@ -196,17 +195,10 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
+-		bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+-		io->bio = __bio_alloc(bdev, bio_blocks);
+-		io->bio->bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
+-		io->bio->bi_end_io = is_read_io(fio->rw) ? f2fs_read_end_io :
+-							f2fs_write_end_io;
++		int bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++
++		io->bio = __bio_alloc(sbi, blk_addr, bio_blocks, is_read);
+ 		io->fio = *fio;
+-		/*
+-		 * The end_io will be assigned at the sumbission phase.
+-		 * Until then, let bio_add_page() merge consecutive IOs as much
+-		 * as possible.
+-		 */
+ 	}
+ 
+ 	if (bio_add_page(io->bio, page, PAGE_CACHE_SIZE, 0) <
+-- 
+1.7.7
+
+
+
+------------------------------------------------------------------------------
+Rapidly troubleshoot problems before they affect your business. Most IT 
+organizations don't have a clear picture of how application performance 
+affects their revenue. With AppDynamics, you get 100% visibility into your 
+Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
+http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
