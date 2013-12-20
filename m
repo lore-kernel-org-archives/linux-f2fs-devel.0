@@ -1,553 +1,155 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH 13/21] ocfs2: use generic posix ACL
-	infrastructure
-Date: Fri, 20 Dec 2013 05:16:48 -0800
-Message-ID: <20131220132523.424551703@bombadil.infradead.org>
-References: <20131220131635.650823732@bombadil.infradead.org>
+From: John Grub <john.f.grub@gmail.com>
+Subject: [bug] writes hanging
+Date: Fri, 20 Dec 2013 12:29:15 -0800
+Message-ID: <CADbsYN1b-jC85e=N+yH=PJTxOWMNBnGaa6a0cVHEcJQfxtRYOw@mail.gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============4568864033505586075=="
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <john.f.grub@gmail.com>) id 1Vu6hc-0007Ua-1G
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 Dec 2013 20:29:44 +0000
+Received: from mail-gg0-f193.google.com ([209.85.161.193])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1Vu6ha-0006E1-5L
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 Dec 2013 20:29:43 +0000
+Received: by mail-gg0-f193.google.com with SMTP id i1so251817ggn.4
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 20 Dec 2013 12:29:36 -0800 (PST)
+Received: from mail-oa0-x230.google.com (mail-oa0-x230.google.com
+	[2607:f8b0:4003:c02::230]) by mx.google.com with ESMTPSA id
+	c44sm12744020yho.20.2013.12.20.12.29.36
+	for <linux-f2fs-devel@lists.sourceforge.net>
+	(version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+	Fri, 20 Dec 2013 12:29:36 -0800 (PST)
+Received: by mail-oa0-f48.google.com with SMTP id l6so3383148oag.7
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 20 Dec 2013 12:29:35 -0800 (PST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+
+--===============4568864033505586075==
+Content-Type: multipart/alternative; boundary=089e013c6fa0f4612d04edfd22d4
+
+--089e013c6fa0f4612d04edfd22d4
+Content-Type: text/plain; charset=ISO-8859-1
+
+Hello,
+
+I can't seem to write larger files on my f2fs mount.
+My hardware is an embedded arm platform with an 8GB eMMC nand flash
+chip: Golbalscale
+D2Plug <http://www.globalscaletechnologies.com/t-d2plugdetails.aspx>
+I have two of these pieces of hardware and I see this issue on both of
+them. There is no issue when I use ext4.
+I am running kernel version 3.13.0-rc4
+I've compiled  f2fs-tools from here
+http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git @
+11d187cdfa2dcf504aa25b5a1aab4228f19f22ff
+
+I've followed the installation and usage instructions in
+linux/Documentation/filesystems/f2fs.txt to format my 8GB eMMC nand flash
+as f2fs.
+
+I'm getting freezes when writing larger files to my f2fs partition. Here is
+an experiment I've done to show this.
+First create 3 test files of different sizes:
+# cat /dev/urandom | head -c 50k > /tmp/50k
+# cat /dev/urandom | head -c 100k > /tmp/100k
+# cat /dev/urandom | head -c 150k > /tmp/150k
+
+Test case #1: Repeatedly copy the same 50k file to j2fs:
+# cp /tmp/50k /mnt/j2fs/ <-- this copy always works fine
+# cp /tmp/50k /mnt/j2fs/ <-- this copy always works fine
+# cp /tmp/50k /mnt/j2fs/ <-- this copy always hangs forever
+For the failing copy, I've seen 4k, 8k and 12k copied correctly before it
+stops.
+
+Test case #2: Repeatedly copy the same 100k file to f2fs:
+# cp /tmp/100k /mnt/f2fs/ <-- this copy works fine
+# cp /tmp/100k /mnt/f2fs/ <-- this copy hangs forever
+For the failing copy, I've seen 4k, 8k and 12k copied correctly before it
+stops.
+
+Test case #3: Copy a 150k file to f2fs:
+# cp /tmp/150k /mnt/f2fs/
+This never completes and will hang forever if I don't kill it. It always
+seems to fail at 120k.
+
+Any help would be appreciated.
+
+Thanks,
+John Grub
+
+--089e013c6fa0f4612d04edfd22d4
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hello,<div><br><div>I can&#39;t seem to write larger files=
+ on my f2fs mount.</div><div>My hardware is an embedded arm platform with a=
+n 8GB eMMC nand flash chip: <a href=3D"http://www.globalscaletechnologies.c=
+om/t-d2plugdetails.aspx">Golbalscale D2Plug</a></div>
+
+<div>I have two of these pieces of hardware and I see this issue on both of=
+ them. There is no issue when I use ext4.</div><div>I am running kernel ver=
+sion 3.13.0-rc4</div>I&#39;ve compiled =A0f2fs-tools from here <a href=3D"h=
+ttp://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git">http://g=
+it.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git</a> @ 11d187cdfa=
+2dcf504aa25b5a1aab4228f19f22ff<div>
+
+<br></div><div>I&#39;ve followed the installation and usage instructions in=
+ linux/Documentation/filesystems/f2fs.txt to format my 8GB eMMC nand flash =
+as f2fs.</div><div><br></div><div>I&#39;m getting freezes when writing larg=
+er files to my f2fs partition. Here is an experiment I&#39;ve done to show =
+this.</div>
+
+<div>First create 3 test files of different sizes:</div><div># cat /dev/ura=
+ndom | head -c 50k &gt; /tmp/50k</div><div># cat /dev/urandom | head -c 100=
+k &gt; /tmp/100k<br></div><div># cat /dev/urandom | head -c 150k &gt; /tmp/=
+150k<br>
+
+</div><div><br></div><div>Test case #1: Repeatedly copy the same 50k file t=
+o j2fs:</div><div># cp /tmp/50k /mnt/j2fs/ &lt;-- this copy always works fi=
+ne</div><div># cp /tmp/50k /mnt/j2fs/ &lt;-- this copy always=A0works fine<=
+/div>
+
+<div># cp /tmp/50k /mnt/j2fs/ &lt;-- this copy always=A0hangs forever</div>=
+<div>For the failing copy, I&#39;ve seen 4k, 8k and 12k copied correctly be=
+fore it stops.</div><div><br></div><div><div>Test case #2: Repeatedly copy =
+the same 100k file to f2fs:</div>
+
+<div># cp /tmp/100k /mnt/f2fs/ &lt;-- this copy works fine</div><div># cp /=
+tmp/100k /mnt/f2fs/ &lt;-- this copy hangs forever<br></div></div><div>For =
+the failing copy, I&#39;ve seen 4k, 8k and 12k copied correctly before it s=
+tops.<br>
+
+</div><div><br></div><div><div><div>Test case #3: Copy a 150k file to f2fs:=
+</div><div># cp /tmp/150k /mnt/f2fs/<br></div></div><div>This never complet=
+es and will hang forever if I don&#39;t kill it. It always seems to fail at=
+ 120k.<br>
+
+</div></div><div><br></div><div>Any help would be appreciated.</div></div><=
+div><br></div><div>Thanks,</div><div>John Grub</div></div>
+
+--089e013c6fa0f4612d04edfd22d4--
+
+
+--===============4568864033505586075==
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <jfs-discussion-bounces@lists.sourceforge.net>
-Content-Disposition: inline;
-	filename=0013-ocfs2-use-generic-posix-ACL-infrastructure.patch
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>,
-	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=jfs-discussion>
-List-Post: <mailto:jfs-discussion@lists.sourceforge.net>
-List-Help: <mailto:jfs-discussion-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/jfs-discussion>,
-	<mailto:jfs-discussion-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: jfs-discussion-bounces@lists.sourceforge.net
-To: viro@zeniv.linux.org.uk
-Cc: Andreas Gruenbacher <andreas.gruenbacher@linbit.com>, xfs@oss.sgi.com, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, Joel Becker <jlbec@evilplan.org>, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
-
-This contains some major refactoring for the create path so that
-inodes are created with the right mode to start with instead of
-fixing it up later.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/ocfs2/acl.c          |  234 ++---------------------------------------------
- fs/ocfs2/acl.h          |   13 ++-
- fs/ocfs2/file.c         |    4 +-
- fs/ocfs2/namei.c        |   25 ++++-
- fs/ocfs2/refcounttree.c |   19 +++-
- fs/ocfs2/xattr.c        |   21 +++--
- fs/ocfs2/xattr.h        |    6 +-
- 7 files changed, 72 insertions(+), 250 deletions(-)
-
-diff --git a/fs/ocfs2/acl.c b/fs/ocfs2/acl.c
-index c0f9d2f..555f4cd 100644
---- a/fs/ocfs2/acl.c
-+++ b/fs/ocfs2/acl.c
-@@ -160,36 +160,6 @@ static struct posix_acl *ocfs2_get_acl_nolock(struct inode *inode,
- 	return acl;
- }
- 
--
--/*
-- * Get posix acl.
-- */
--static struct posix_acl *ocfs2_get_acl(struct inode *inode, int type)
--{
--	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
--	struct buffer_head *di_bh = NULL;
--	struct posix_acl *acl;
--	int ret;
--
--	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
--		return NULL;
--
--	ret = ocfs2_inode_lock(inode, &di_bh, 0);
--	if (ret < 0) {
--		mlog_errno(ret);
--		acl = ERR_PTR(ret);
--		return acl;
--	}
--
--	acl = ocfs2_get_acl_nolock(inode, type, di_bh);
--
--	ocfs2_inode_unlock(inode, 0);
--
--	brelse(di_bh);
--
--	return acl;
--}
--
- /*
-  * Helper function to set i_mode in memory and disk. Some call paths
-  * will not have di_bh or a journal handle to pass, in which case it
-@@ -250,7 +220,7 @@ out:
- /*
-  * Set the access or default ACL of an inode.
-  */
--static int ocfs2_set_acl(handle_t *handle,
-+int ocfs2_set_acl(handle_t *handle,
- 			 struct inode *inode,
- 			 struct buffer_head *di_bh,
- 			 int type,
-@@ -313,6 +283,11 @@ static int ocfs2_set_acl(handle_t *handle,
- 	return ret;
- }
- 
-+int ocfs2_iop_set_acl(struct inode *inode, struct posix_acl *acl, int type)
-+{
-+	return ocfs2_set_acl(NULL, inode, NULL, type, acl, NULL, NULL);
-+}
-+
- struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type)
- {
- 	struct ocfs2_super *osb;
-@@ -334,200 +309,3 @@ struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type)
- 
- 	return acl;
- }
--
--int ocfs2_acl_chmod(struct inode *inode)
--{
--	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
--	struct posix_acl *acl;
--	int ret;
--
--	if (S_ISLNK(inode->i_mode))
--		return -EOPNOTSUPP;
--
--	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
--		return 0;
--
--	acl = ocfs2_get_acl(inode, ACL_TYPE_ACCESS);
--	if (IS_ERR(acl) || !acl)
--		return PTR_ERR(acl);
--	ret = __posix_acl_chmod(&acl, GFP_KERNEL, inode->i_mode);
--	if (ret)
--		return ret;
--	ret = ocfs2_set_acl(NULL, inode, NULL, ACL_TYPE_ACCESS,
--			    acl, NULL, NULL);
--	posix_acl_release(acl);
--	return ret;
--}
--
--/*
-- * Initialize the ACLs of a new inode. If parent directory has default ACL,
-- * then clone to new inode. Called from ocfs2_mknod.
-- */
--int ocfs2_init_acl(handle_t *handle,
--		   struct inode *inode,
--		   struct inode *dir,
--		   struct buffer_head *di_bh,
--		   struct buffer_head *dir_bh,
--		   struct ocfs2_alloc_context *meta_ac,
--		   struct ocfs2_alloc_context *data_ac)
--{
--	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
--	struct posix_acl *acl = NULL;
--	int ret = 0, ret2;
--	umode_t mode;
--
--	if (!S_ISLNK(inode->i_mode)) {
--		if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
--			acl = ocfs2_get_acl_nolock(dir, ACL_TYPE_DEFAULT,
--						   dir_bh);
--			if (IS_ERR(acl))
--				return PTR_ERR(acl);
--		}
--		if (!acl) {
--			mode = inode->i_mode & ~current_umask();
--			ret = ocfs2_acl_set_mode(inode, di_bh, handle, mode);
--			if (ret) {
--				mlog_errno(ret);
--				goto cleanup;
--			}
--		}
--	}
--	if ((osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) && acl) {
--		if (S_ISDIR(inode->i_mode)) {
--			ret = ocfs2_set_acl(handle, inode, di_bh,
--					    ACL_TYPE_DEFAULT, acl,
--					    meta_ac, data_ac);
--			if (ret)
--				goto cleanup;
--		}
--		mode = inode->i_mode;
--		ret = __posix_acl_create(&acl, GFP_NOFS, &mode);
--		if (ret < 0)
--			return ret;
--
--		ret2 = ocfs2_acl_set_mode(inode, di_bh, handle, mode);
--		if (ret2) {
--			mlog_errno(ret2);
--			ret = ret2;
--			goto cleanup;
--		}
--		if (ret > 0) {
--			ret = ocfs2_set_acl(handle, inode,
--					    di_bh, ACL_TYPE_ACCESS,
--					    acl, meta_ac, data_ac);
--		}
--	}
--cleanup:
--	posix_acl_release(acl);
--	return ret;
--}
--
--static size_t ocfs2_xattr_list_acl_access(struct dentry *dentry,
--					  char *list,
--					  size_t list_len,
--					  const char *name,
--					  size_t name_len,
--					  int type)
--{
--	struct ocfs2_super *osb = OCFS2_SB(dentry->d_sb);
--	const size_t size = sizeof(POSIX_ACL_XATTR_ACCESS);
--
--	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
--		return 0;
--
--	if (list && size <= list_len)
--		memcpy(list, POSIX_ACL_XATTR_ACCESS, size);
--	return size;
--}
--
--static size_t ocfs2_xattr_list_acl_default(struct dentry *dentry,
--					   char *list,
--					   size_t list_len,
--					   const char *name,
--					   size_t name_len,
--					   int type)
--{
--	struct ocfs2_super *osb = OCFS2_SB(dentry->d_sb);
--	const size_t size = sizeof(POSIX_ACL_XATTR_DEFAULT);
--
--	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
--		return 0;
--
--	if (list && size <= list_len)
--		memcpy(list, POSIX_ACL_XATTR_DEFAULT, size);
--	return size;
--}
--
--static int ocfs2_xattr_get_acl(struct dentry *dentry, const char *name,
--		void *buffer, size_t size, int type)
--{
--	struct ocfs2_super *osb = OCFS2_SB(dentry->d_sb);
--	struct posix_acl *acl;
--	int ret;
--
--	if (strcmp(name, "") != 0)
--		return -EINVAL;
--	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
--		return -EOPNOTSUPP;
--
--	acl = ocfs2_get_acl(dentry->d_inode, type);
--	if (IS_ERR(acl))
--		return PTR_ERR(acl);
--	if (acl == NULL)
--		return -ENODATA;
--	ret = posix_acl_to_xattr(&init_user_ns, acl, buffer, size);
--	posix_acl_release(acl);
--
--	return ret;
--}
--
--static int ocfs2_xattr_set_acl(struct dentry *dentry, const char *name,
--		const void *value, size_t size, int flags, int type)
--{
--	struct inode *inode = dentry->d_inode;
--	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
--	struct posix_acl *acl;
--	int ret = 0;
--
--	if (strcmp(name, "") != 0)
--		return -EINVAL;
--	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
--		return -EOPNOTSUPP;
--
--	if (!inode_owner_or_capable(inode))
--		return -EPERM;
--
--	if (value) {
--		acl = posix_acl_from_xattr(&init_user_ns, value, size);
--		if (IS_ERR(acl))
--			return PTR_ERR(acl);
--		else if (acl) {
--			ret = posix_acl_valid(acl);
--			if (ret)
--				goto cleanup;
--		}
--	} else
--		acl = NULL;
--
--	ret = ocfs2_set_acl(NULL, inode, NULL, type, acl, NULL, NULL);
--
--cleanup:
--	posix_acl_release(acl);
--	return ret;
--}
--
--const struct xattr_handler ocfs2_xattr_acl_access_handler = {
--	.prefix	= POSIX_ACL_XATTR_ACCESS,
--	.flags	= ACL_TYPE_ACCESS,
--	.list	= ocfs2_xattr_list_acl_access,
--	.get	= ocfs2_xattr_get_acl,
--	.set	= ocfs2_xattr_set_acl,
--};
--
--const struct xattr_handler ocfs2_xattr_acl_default_handler = {
--	.prefix	= POSIX_ACL_XATTR_DEFAULT,
--	.flags	= ACL_TYPE_DEFAULT,
--	.list	= ocfs2_xattr_list_acl_default,
--	.get	= ocfs2_xattr_get_acl,
--	.set	= ocfs2_xattr_set_acl,
--};
-diff --git a/fs/ocfs2/acl.h b/fs/ocfs2/acl.h
-index 071fbd38..3fce68d 100644
---- a/fs/ocfs2/acl.h
-+++ b/fs/ocfs2/acl.h
-@@ -27,10 +27,13 @@ struct ocfs2_acl_entry {
- };
- 
- struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type);
--extern int ocfs2_acl_chmod(struct inode *);
--extern int ocfs2_init_acl(handle_t *, struct inode *, struct inode *,
--			  struct buffer_head *, struct buffer_head *,
--			  struct ocfs2_alloc_context *,
--			  struct ocfs2_alloc_context *);
-+int ocfs2_iop_set_acl(struct inode *inode, struct posix_acl *acl, int type);
-+int ocfs2_set_acl(handle_t *handle,
-+			 struct inode *inode,
-+			 struct buffer_head *di_bh,
-+			 int type,
-+			 struct posix_acl *acl,
-+			 struct ocfs2_alloc_context *meta_ac,
-+			 struct ocfs2_alloc_context *data_ac);
- 
- #endif /* OCFS2_ACL_H */
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index 6fff128..014a38e 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -1236,7 +1236,7 @@ bail:
- 		dqput(transfer_to[qtype]);
- 
- 	if (!status && attr->ia_valid & ATTR_MODE) {
--		status = ocfs2_acl_chmod(inode);
-+		status = posix_acl_chmod(inode, inode->i_mode);
- 		if (status < 0)
- 			mlog_errno(status);
- 	}
-@@ -2661,6 +2661,7 @@ const struct inode_operations ocfs2_file_iops = {
- 	.removexattr	= generic_removexattr,
- 	.fiemap		= ocfs2_fiemap,
- 	.get_acl	= ocfs2_iop_get_acl,
-+	.set_acl	= ocfs2_iop_set_acl,
- };
- 
- const struct inode_operations ocfs2_special_file_iops = {
-@@ -2668,6 +2669,7 @@ const struct inode_operations ocfs2_special_file_iops = {
- 	.getattr	= ocfs2_getattr,
- 	.permission	= ocfs2_permission,
- 	.get_acl	= ocfs2_iop_get_acl,
-+	.set_acl	= ocfs2_iop_set_acl,
- };
- 
- /*
-diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-index 4f791f6..c975eed 100644
---- a/fs/ocfs2/namei.c
-+++ b/fs/ocfs2/namei.c
-@@ -230,6 +230,7 @@ static int ocfs2_mknod(struct inode *dir,
- 	struct ocfs2_dir_lookup_result lookup = { NULL, };
- 	sigset_t oldset;
- 	int did_block_signals = 0;
-+	struct posix_acl *default_acl = NULL, *acl = NULL;
- 
- 	trace_ocfs2_mknod(dir, dentry, dentry->d_name.len, dentry->d_name.name,
- 			  (unsigned long long)OCFS2_I(dir)->ip_blkno,
-@@ -331,6 +332,12 @@ static int ocfs2_mknod(struct inode *dir,
- 		goto leave;
- 	}
- 
-+	status = posix_acl_create(dir, &mode, &default_acl, &acl);
-+	if (status) {
-+		mlog_errno(status);
-+		goto leave;
-+	}
-+
- 	handle = ocfs2_start_trans(osb, ocfs2_mknod_credits(osb->sb,
- 							    S_ISDIR(mode),
- 							    xattr_credits));
-@@ -379,8 +386,17 @@ static int ocfs2_mknod(struct inode *dir,
- 		inc_nlink(dir);
- 	}
- 
--	status = ocfs2_init_acl(handle, inode, dir, new_fe_bh, parent_fe_bh,
--				meta_ac, data_ac);
-+	if (default_acl) {
-+		status = ocfs2_set_acl(handle, inode, new_fe_bh,
-+				       ACL_TYPE_DEFAULT, default_acl,
-+				       meta_ac, data_ac);
-+	}
-+	if (!status && acl) {
-+		status = ocfs2_set_acl(handle, inode, new_fe_bh,
-+				       ACL_TYPE_ACCESS, acl,
-+				       meta_ac, data_ac);
-+	}
-+
- 	if (status < 0) {
- 		mlog_errno(status);
- 		goto leave;
-@@ -419,6 +435,10 @@ static int ocfs2_mknod(struct inode *dir,
- 	d_instantiate(dentry, inode);
- 	status = 0;
- leave:
-+	if (default_acl)
-+		posix_acl_release(default_acl);
-+	if (acl)
-+		posix_acl_release(acl);
- 	if (status < 0 && did_quota_inode)
- 		dquot_free_inode(inode);
- 	if (handle)
-@@ -2504,4 +2524,5 @@ const struct inode_operations ocfs2_dir_iops = {
- 	.removexattr	= generic_removexattr,
- 	.fiemap         = ocfs2_fiemap,
- 	.get_acl	= ocfs2_iop_get_acl,
-+	.set_acl	= ocfs2_iop_set_acl,
- };
-diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-index 55767e1..6ba4bcb 100644
---- a/fs/ocfs2/refcounttree.c
-+++ b/fs/ocfs2/refcounttree.c
-@@ -46,6 +46,7 @@
- #include <linux/quotaops.h>
- #include <linux/namei.h>
- #include <linux/mount.h>
-+#include <linux/posix_acl.h>
- 
- struct ocfs2_cow_context {
- 	struct inode *inode;
-@@ -4268,11 +4269,20 @@ static int ocfs2_reflink(struct dentry *old_dentry, struct inode *dir,
- 	struct inode *inode = old_dentry->d_inode;
- 	struct buffer_head *old_bh = NULL;
- 	struct inode *new_orphan_inode = NULL;
-+	struct posix_acl *default_acl, *acl;
-+	umode_t mode;
- 
- 	if (!ocfs2_refcount_tree(OCFS2_SB(inode->i_sb)))
- 		return -EOPNOTSUPP;
- 
--	error = ocfs2_create_inode_in_orphan(dir, inode->i_mode,
-+	mode = inode->i_mode;
-+	error = posix_acl_create(dir, &mode, &default_acl, &acl);
-+	if (error) {
-+		mlog_errno(error);
-+		goto out;
-+	}
-+
-+	error = ocfs2_create_inode_in_orphan(dir, mode,
- 					     &new_orphan_inode);
- 	if (error) {
- 		mlog_errno(error);
-@@ -4303,11 +4313,16 @@ static int ocfs2_reflink(struct dentry *old_dentry, struct inode *dir,
- 	/* If the security isn't preserved, we need to re-initialize them. */
- 	if (!preserve) {
- 		error = ocfs2_init_security_and_acl(dir, new_orphan_inode,
--						    &new_dentry->d_name);
-+						    &new_dentry->d_name,
-+						    default_acl, acl);
- 		if (error)
- 			mlog_errno(error);
- 	}
- out:
-+	if (default_acl)
-+		posix_acl_release(default_acl);
-+	if (acl)
-+		posix_acl_release(acl);
- 	if (!error) {
- 		error = ocfs2_mv_orphaned_inode_to_new(dir, new_orphan_inode,
- 						       new_dentry);
-diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-index f0a1326..185fa3b7 100644
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -99,8 +99,8 @@ static struct ocfs2_xattr_def_value_root def_xv = {
- 
- const struct xattr_handler *ocfs2_xattr_handlers[] = {
- 	&ocfs2_xattr_user_handler,
--	&ocfs2_xattr_acl_access_handler,
--	&ocfs2_xattr_acl_default_handler,
-+	&posix_acl_access_xattr_handler,
-+	&posix_acl_default_xattr_handler,
- 	&ocfs2_xattr_trusted_handler,
- 	&ocfs2_xattr_security_handler,
- 	NULL
-@@ -109,9 +109,9 @@ const struct xattr_handler *ocfs2_xattr_handlers[] = {
- static const struct xattr_handler *ocfs2_xattr_handler_map[OCFS2_XATTR_MAX] = {
- 	[OCFS2_XATTR_INDEX_USER]	= &ocfs2_xattr_user_handler,
- 	[OCFS2_XATTR_INDEX_POSIX_ACL_ACCESS]
--					= &ocfs2_xattr_acl_access_handler,
-+					= &posix_acl_access_xattr_handler,
- 	[OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT]
--					= &ocfs2_xattr_acl_default_handler,
-+					= &posix_acl_default_xattr_handler,
- 	[OCFS2_XATTR_INDEX_TRUSTED]	= &ocfs2_xattr_trusted_handler,
- 	[OCFS2_XATTR_INDEX_SECURITY]	= &ocfs2_xattr_security_handler,
- };
-@@ -7190,10 +7190,12 @@ out:
-  */
- int ocfs2_init_security_and_acl(struct inode *dir,
- 				struct inode *inode,
--				const struct qstr *qstr)
-+				const struct qstr *qstr,
-+				struct posix_acl *default_acl,
-+				struct posix_acl *acl)
- {
--	int ret = 0;
- 	struct buffer_head *dir_bh = NULL;
-+	int ret = 0;
- 
- 	ret = ocfs2_init_security_get(inode, dir, qstr, NULL);
- 	if (ret) {
-@@ -7207,9 +7209,10 @@ int ocfs2_init_security_and_acl(struct inode *dir,
- 		goto leave;
- 	}
- 
--	ret = ocfs2_init_acl(NULL, inode, dir, NULL, dir_bh, NULL, NULL);
--	if (ret)
--		mlog_errno(ret);
-+	if (!ret && default_acl)
-+		ret = ocfs2_iop_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
-+	if (!ret && acl)
-+		ret = ocfs2_iop_set_acl(inode, acl, ACL_TYPE_ACCESS);
- 
- 	ocfs2_inode_unlock(dir, 0);
- 	brelse(dir_bh);
-diff --git a/fs/ocfs2/xattr.h b/fs/ocfs2/xattr.h
-index 19f134e..f10d5b9 100644
---- a/fs/ocfs2/xattr.h
-+++ b/fs/ocfs2/xattr.h
-@@ -40,8 +40,6 @@ struct ocfs2_security_xattr_info {
- extern const struct xattr_handler ocfs2_xattr_user_handler;
- extern const struct xattr_handler ocfs2_xattr_trusted_handler;
- extern const struct xattr_handler ocfs2_xattr_security_handler;
--extern const struct xattr_handler ocfs2_xattr_acl_access_handler;
--extern const struct xattr_handler ocfs2_xattr_acl_default_handler;
- extern const struct xattr_handler *ocfs2_xattr_handlers[];
- 
- ssize_t ocfs2_listxattr(struct dentry *, char *, size_t);
-@@ -96,5 +94,7 @@ int ocfs2_reflink_xattrs(struct inode *old_inode,
- 			 bool preserve_security);
- int ocfs2_init_security_and_acl(struct inode *dir,
- 				struct inode *inode,
--				const struct qstr *qstr);
-+				const struct qstr *qstr,
-+				struct posix_acl *default_acl,
-+				struct posix_acl *acl);
- #endif /* OCFS2_XATTR_H */
--- 
-1.7.10.4
-
-
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Rapidly troubleshoot problems before they affect your business. Most IT 
@@ -555,3 +157,15 @@ organizations don't have a clear picture of how application performance
 affects their revenue. With AppDynamics, you get 100% visibility into your 
 Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
 http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
+--===============4568864033505586075==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============4568864033505586075==--
