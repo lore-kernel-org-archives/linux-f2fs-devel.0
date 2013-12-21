@@ -1,210 +1,195 @@
-From: Vyacheslav Dubeyko <slava@dubeyko.com>
-Subject: Re: [PATCH 21/21] hfsplus: remove can_set_xattr
-Date: Sat, 21 Dec 2013 20:07:51 +0300
-Message-ID: <636E01BC-12FD-452B-8B1C-320B6EADAEFD@dubeyko.com>
-References: <20131220131635.650823732@bombadil.infradead.org>
-	<20131220132524.900291394@bombadil.infradead.org>
-Mime-Version: 1.0 (Apple Message framework v1085)
+From: John Grub <john.f.grub@gmail.com>
+Subject: Re: [bug] writes hanging
+Date: Sat, 21 Dec 2013 12:15:24 -0800
+Message-ID: <CADbsYN3vxdOMGjQ_iO_yvfkowfFwSrLjeY=XnGnKr-0iV0ad9Q@mail.gmail.com>
+References: <CADbsYN1b-jC85e=N+yH=PJTxOWMNBnGaa6a0cVHEcJQfxtRYOw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============8968928037118015835=="
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <john.f.grub@gmail.com>) id 1VuSxk-0004N6-7n
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 21 Dec 2013 20:15:52 +0000
+Received: from mail-yh0-f68.google.com ([209.85.213.68])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1VuSxj-0007Lp-9d
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 21 Dec 2013 20:15:52 +0000
+Received: by mail-yh0-f68.google.com with SMTP id a41so389788yho.11
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sat, 21 Dec 2013 12:15:46 -0800 (PST)
+Received: from mail-oa0-x231.google.com (mail-oa0-x231.google.com
+	[2607:f8b0:4003:c02::231])
+	by mx.google.com with ESMTPSA id 48sm17797023yhq.11.2013.12.21.12.15.45
+	for <linux-f2fs-devel@lists.sourceforge.net>
+	(version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+	Sat, 21 Dec 2013 12:15:45 -0800 (PST)
+Received: by mail-oa0-f49.google.com with SMTP id i4so4274634oah.36
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sat, 21 Dec 2013 12:15:44 -0800 (PST)
+In-Reply-To: <CADbsYN1b-jC85e=N+yH=PJTxOWMNBnGaa6a0cVHEcJQfxtRYOw@mail.gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+
+--===============8968928037118015835==
+Content-Type: multipart/alternative; boundary=f46d0444712745262804ee110f09
+
+--f46d0444712745262804ee110f09
+Content-Type: text/plain; charset=ISO-8859-1
+
+Note: this is on a M8G2FA Samsung flash chip.
+
+
+On Fri, Dec 20, 2013 at 12:29 PM, John Grub <john.f.grub@gmail.com> wrote:
+
+> Hello,
+>
+> I can't seem to write larger files on my f2fs mount.
+> My hardware is an embedded arm platform with an 8GB eMMC nand flash chip: Golbalscale
+> D2Plug <http://www.globalscaletechnologies.com/t-d2plugdetails.aspx>
+> I have two of these pieces of hardware and I see this issue on both of
+> them. There is no issue when I use ext4.
+> I am running kernel version 3.13.0-rc4
+> I've compiled  f2fs-tools from here
+> http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git @
+> 11d187cdfa2dcf504aa25b5a1aab4228f19f22ff
+>
+> I've followed the installation and usage instructions in
+> linux/Documentation/filesystems/f2fs.txt to format my 8GB eMMC nand flash
+> as f2fs.
+>
+> I'm getting freezes when writing larger files to my f2fs partition. Here
+> is an experiment I've done to show this.
+> First create 3 test files of different sizes:
+> # cat /dev/urandom | head -c 50k > /tmp/50k
+> # cat /dev/urandom | head -c 100k > /tmp/100k
+> # cat /dev/urandom | head -c 150k > /tmp/150k
+>
+> Test case #1: Repeatedly copy the same 50k file to j2fs:
+> # cp /tmp/50k /mnt/j2fs/ <-- this copy always works fine
+> # cp /tmp/50k /mnt/j2fs/ <-- this copy always works fine
+> # cp /tmp/50k /mnt/j2fs/ <-- this copy always hangs forever
+> For the failing copy, I've seen 4k, 8k and 12k copied correctly before it
+> stops.
+>
+> Test case #2: Repeatedly copy the same 100k file to f2fs:
+> # cp /tmp/100k /mnt/f2fs/ <-- this copy works fine
+> # cp /tmp/100k /mnt/f2fs/ <-- this copy hangs forever
+> For the failing copy, I've seen 4k, 8k and 12k copied correctly before it
+> stops.
+>
+> Test case #3: Copy a 150k file to f2fs:
+> # cp /tmp/150k /mnt/f2fs/
+> This never completes and will hang forever if I don't kill it. It always
+> seems to fail at 120k.
+>
+> Any help would be appreciated.
+>
+> Thanks,
+> John Grub
+>
+
+--f46d0444712745262804ee110f09
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Note: this is on a M8G2FA Samsung flash chip.<br></div><di=
+v class=3D"gmail_extra"><br><br><div class=3D"gmail_quote">On Fri, Dec 20, =
+2013 at 12:29 PM, John Grub <span dir=3D"ltr">&lt;<a href=3D"mailto:john.f.=
+grub@gmail.com" target=3D"_blank">john.f.grub@gmail.com</a>&gt;</span> wrot=
+e:<br>
+
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex"><div dir=3D"ltr">Hello,<div><br><div>I can&#=
+39;t seem to write larger files on my f2fs mount.</div><div>My hardware is =
+an embedded arm platform with an 8GB eMMC nand flash chip: <a href=3D"http:=
+//www.globalscaletechnologies.com/t-d2plugdetails.aspx" target=3D"_blank">G=
+olbalscale D2Plug</a></div>
+
+
+<div>I have two of these pieces of hardware and I see this issue on both of=
+ them. There is no issue when I use ext4.</div><div>I am running kernel ver=
+sion 3.13.0-rc4</div>I&#39;ve compiled =A0f2fs-tools from here <a href=3D"h=
+ttp://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git" target=
+=3D"_blank">http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.=
+git</a> @ 11d187cdfa2dcf504aa25b5a1aab4228f19f22ff<div>
+
+
+<br></div><div>I&#39;ve followed the installation and usage instructions in=
+ linux/Documentation/filesystems/f2fs.txt to format my 8GB eMMC nand flash =
+as f2fs.</div><div><br></div><div>I&#39;m getting freezes when writing larg=
+er files to my f2fs partition. Here is an experiment I&#39;ve done to show =
+this.</div>
+
+
+<div>First create 3 test files of different sizes:</div><div># cat /dev/ura=
+ndom | head -c 50k &gt; /tmp/50k</div><div># cat /dev/urandom | head -c 100=
+k &gt; /tmp/100k<br></div><div># cat /dev/urandom | head -c 150k &gt; /tmp/=
+150k<br>
+
+
+</div><div><br></div><div>Test case #1: Repeatedly copy the same 50k file t=
+o j2fs:</div><div># cp /tmp/50k /mnt/j2fs/ &lt;-- this copy always works fi=
+ne</div><div># cp /tmp/50k /mnt/j2fs/ &lt;-- this copy always=A0works fine<=
+/div>
+
+
+<div># cp /tmp/50k /mnt/j2fs/ &lt;-- this copy always=A0hangs forever</div>=
+<div>For the failing copy, I&#39;ve seen 4k, 8k and 12k copied correctly be=
+fore it stops.</div><div><br></div><div><div>Test case #2: Repeatedly copy =
+the same 100k file to f2fs:</div>
+
+
+<div># cp /tmp/100k /mnt/f2fs/ &lt;-- this copy works fine</div><div># cp /=
+tmp/100k /mnt/f2fs/ &lt;-- this copy hangs forever<br></div></div><div>For =
+the failing copy, I&#39;ve seen 4k, 8k and 12k copied correctly before it s=
+tops.<br>
+
+
+</div><div><br></div><div><div><div>Test case #3: Copy a 150k file to f2fs:=
+</div><div># cp /tmp/150k /mnt/f2fs/<br></div></div><div>This never complet=
+es and will hang forever if I don&#39;t kill it. It always seems to fail at=
+ 120k.<br>
+
+
+</div></div><div><br></div><div>Any help would be appreciated.</div></div><=
+div><br></div><div>Thanks,</div><div>John Grub</div></div>
+</blockquote></div><br></div>
+
+--f46d0444712745262804ee110f09--
+
+
+--===============8968928037118015835==
 Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-In-Reply-To: <20131220132524.900291394@bombadil.infradead.org>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Andreas Gruenbacher <andreas.gruenbacher@linbit.com>, xfs@oss.sgi.com, Mark Fasheh <mfasheh@suse.com>, reiserfs-devel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-mtd@lists.infradead.org, viro@zeniv.linux.org.uk, jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, linux-btrfs@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Disposition: inline
 
-
-On Dec 20, 2013, at 4:16 PM, Christoph Hellwig wrote:
-
-> When using the per-superblock xattr handlers permission checking is
-> done by the generic code.  hfsplus just needs to check for the magic
-> osx attribute not to leak into protected namespaces.
-> 
-> Also given that the code was obviously copied from JFS the proper
-> attribution was missing.
-> 
-
-I don't think that this code changing is correct. Current modification
-breaks logic. Please, see my comments below.
-
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
-> fs/hfsplus/xattr.c |   87 ++--------------------------------------------------
-> 1 file changed, 3 insertions(+), 84 deletions(-)
-> 
-> diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-> index bf88baa..0b4a5c9 100644
-> --- a/fs/hfsplus/xattr.c
-> +++ b/fs/hfsplus/xattr.c
-> @@ -52,82 +52,6 @@ static inline int is_known_namespace(const char *name)
-> 	return true;
-> }
-> 
-> -static int can_set_system_xattr(struct inode *inode, const char *name,
-> -				const void *value, size_t size)
-
-I agree that it makes sense to remove this code if permission checking
-is done by generic code.
-
-> -{
-> -#ifdef CONFIG_HFSPLUS_FS_POSIX_ACL
-> -	struct posix_acl *acl;
-> -	int err;
-> -
-> -	if (!inode_owner_or_capable(inode))
-> -		return -EPERM;
-> -
-> -	/*
-> -	 * POSIX_ACL_XATTR_ACCESS is tied to i_mode
-> -	 */
-> -	if (strcmp(name, POSIX_ACL_XATTR_ACCESS) == 0) {
-> -		acl = posix_acl_from_xattr(&init_user_ns, value, size);
-> -		if (IS_ERR(acl))
-> -			return PTR_ERR(acl);
-> -		if (acl) {
-> -			err = posix_acl_equiv_mode(acl, &inode->i_mode);
-> -			posix_acl_release(acl);
-> -			if (err < 0)
-> -				return err;
-> -			mark_inode_dirty(inode);
-> -		}
-> -		/*
-> -		 * We're changing the ACL.  Get rid of the cached one
-> -		 */
-> -		forget_cached_acl(inode, ACL_TYPE_ACCESS);
-> -
-> -		return 0;
-> -	} else if (strcmp(name, POSIX_ACL_XATTR_DEFAULT) == 0) {
-> -		acl = posix_acl_from_xattr(&init_user_ns, value, size);
-> -		if (IS_ERR(acl))
-> -			return PTR_ERR(acl);
-> -		posix_acl_release(acl);
-> -
-> -		/*
-> -		 * We're changing the default ACL.  Get rid of the cached one
-> -		 */
-> -		forget_cached_acl(inode, ACL_TYPE_DEFAULT);
-> -
-> -		return 0;
-> -	}
-> -#endif /* CONFIG_HFSPLUS_FS_POSIX_ACL */
-> -	return -EOPNOTSUPP;
-> -}
-> -
-> -static int can_set_xattr(struct inode *inode, const char *name,
-> -				const void *value, size_t value_len)
-
-This function works for all handlers. So, I don't think that it makes sense
-to delete it.
-
-> -{
-> -	if (!strncmp(name, XATTR_SYSTEM_PREFIX, XATTR_SYSTEM_PREFIX_LEN))
-> -		return can_set_system_xattr(inode, name, value, value_len);
-> -
-
-I agree that it needs to remove this check for XATTR_SYSTEM_PREFIX case.
-
-> -	if (!strncmp(name, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN)) {
-> -		/*
-> -		 * This makes sure that we aren't trying to set an
-> -		 * attribute in a different namespace by prefixing it
-> -		 * with "osx."
-> -		 */
-> -		if (is_known_namespace(name + XATTR_MAC_OSX_PREFIX_LEN))
-> -			return -EOPNOTSUPP;
-
-I think that this check is important. It forbids such combinations as "osx.system.*" or
-"osx.trusted.*", for example. Because "osx.*" is virtual namespace for xattrs that
-it can be under Mac OS X. If you want to set xattr from "system.*" namespace, for example,
-then you need to use another handler. And such namespace should be without
-addition of "osx." prefix.
-
-> -
-> -		return 0;
-> -	}
-> -
-> -	/*
-> -	 * Don't allow setting an attribute in an unknown namespace.
-> -	 */
-> -	if (strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) &&
-> -	    strncmp(name, XATTR_SECURITY_PREFIX, XATTR_SECURITY_PREFIX_LEN) &&
-> -	    strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-> -		return -EOPNOTSUPP;
-> -
-> -	return 0;
-> -}
-> -
-> static void hfsplus_init_header_node(struct inode *attr_file,
-> 					u32 clump_size,
-> 					char *buf, u16 node_size)
-> @@ -350,10 +274,6 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
-> 				HFSPLUS_IS_RSRC(inode))
-> 		return -EOPNOTSUPP;
-> 
-> -	err = can_set_xattr(inode, name, value, size);
-
-The __hfsplus_setxattr() is common method for all handlers. So, removing
-this call means that we don't check validity of namespace. I don't think
-that such modification is a right way.
-
-> -	if (err)
-> -		return err;
-> -
-> 	if (strncmp(name, XATTR_MAC_OSX_PREFIX,
-> 				XATTR_MAC_OSX_PREFIX_LEN) == 0)
-> 		name += XATTR_MAC_OSX_PREFIX_LEN;
-> @@ -841,10 +761,6 @@ int hfsplus_removexattr(struct dentry *dentry, const char *name)
-> 	if (!HFSPLUS_SB(inode->i_sb)->attr_tree)
-> 		return -EOPNOTSUPP;
-> 
-> -	err = can_set_xattr(inode, name, NULL, 0);
-
-Ditto. Moreover, it is used namely hfsplus_removexattr() and not
-__hfsplus_setxattr() for removing xattrs in hfsplus driver. So, removing
-this check is not good way.
-
-> -	if (err)
-> -		return err;
-> -
-> 	if (strncmp(name, XATTR_MAC_OSX_PREFIX,
-> 				XATTR_MAC_OSX_PREFIX_LEN) == 0)
-> 		name += XATTR_MAC_OSX_PREFIX_LEN;
-> @@ -941,6 +857,9 @@ static int hfsplus_osx_setxattr(struct dentry *dentry, const char *name,
-> 	if (len > HFSPLUS_ATTR_MAX_STRLEN)
-> 		return -EOPNOTSUPP;
-> 
-> +	if (is_known_namespace(name))
-> +		return -EOPNOTSUPP;
-
-If common check in __hfsplus_setxattr() will be on the same place then
-this addition doesn't make sense.
-
-Thanks,
-Vyacheslav Dubeyko.
-
-> +
-> 	strcpy(xattr_name, XATTR_MAC_OSX_PREFIX);
-> 	strcpy(xattr_name + XATTR_MAC_OSX_PREFIX_LEN, name);
-> 
-> -- 
-> 1.7.10.4
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+------------------------------------------------------------------------------
+Rapidly troubleshoot problems before they affect your business. Most IT 
+organizations don't have a clear picture of how application performance 
+affects their revenue. With AppDynamics, you get 100% visibility into your 
+Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
+http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
+--===============8968928037118015835==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 _______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============8968928037118015835==--
