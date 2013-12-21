@@ -1,94 +1,136 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/3] f2fs: check filename length in recover_dentry
-Date: Sat, 21 Dec 2013 18:01:24 +0800
-Message-ID: <000001cefe33$b62a0f40$227e2dc0$@samsung.com>
+Subject: [f2fs-dev] [PATCH 2/3] f2fs: update several comments
+Date: Sat, 21 Dec 2013 18:02:14 +0800
+Message-ID: <000101cefe33$c7e0aaa0$57a1ffe0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VuJNy-0005V0-Ut
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 21 Dec 2013 10:02:18 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VuJNx-0006yA-1V
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 21 Dec 2013 10:02:18 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MY5007H0IJLNA90@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 21 Dec 2013 19:02:09 +0900 (KST)
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: ??? <jaegeuk.kim@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In current flow, we will get Null return value of f2fs_find_entry in
-recover_dentry when name.len is bigger than F2FS_NAME_LEN, and then we
-still add this inode into its dir entry.
-To avoid this situation, we must check filename length before we use it.
-
-Another point is that we could remove the code of checking filename length
-In f2fs_find_entry, because f2fs_lookup will be called previously to ensure of
-validity of filename length.
+Update several comments:
+1. use f2fs_{un}lock_op install of mutex_{un}lock_op.
+2. update comment of get_data_block().
+3. update description of node offset.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/dir.c      |    3 ---
- fs/f2fs/recovery.c |    5 +++++
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c |   14 ++++++++------
+ fs/f2fs/dir.c  |    4 ++--
+ fs/f2fs/f2fs.h |    2 +-
+ fs/f2fs/node.c |    8 ++++----
+ fs/f2fs/node.h |    8 +++++++-
+ 5 files changed, 22 insertions(+), 14 deletions(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a0950bc..bdc6093 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -516,8 +516,8 @@ repeat:
+  * Caller ensures that this data page is never allocated.
+  * A new zero-filled data page is allocated in the page cache.
+  *
+- * Also, caller should grab and release a mutex by calling mutex_lock_op() and
+- * mutex_unlock_op().
++ * Also, caller should grab and release a rwsem by calling f2fs_lock_op() and
++ * f2fs_unlock_op().
+  * Note that, npage is set only by make_empty_dir.
+  */
+ struct page *get_new_data_page(struct inode *inode,
+@@ -603,10 +603,12 @@ static int __allocate_data_block(struct dnode_of_data *dn)
+ }
+ 
+ /*
+- * This function should be used by the data read flow only where it
+- * does not check the "create" flag that indicates block allocation.
+- * The reason for this special functionality is to exploit VFS readahead
+- * mechanism.
++ * get_data_block() now supported readahead/bmap/rw direct_IO with mapped bh.
++ * If original data blocks are allocated, then give them to blockdev.
++ * Otherwise,
++ *     a. preallocate requested block addresses
++ *     b. do not use extent cache for better performance
++ *     c. give the block addresses to blockdev
+  */
+ static int get_data_block(struct inode *inode, sector_t iblock,
+ 			struct buffer_head *bh_result, int create)
 diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 0cc26ba..3f3b661 100644
+index 3f3b661..9781400 100644
 --- a/fs/f2fs/dir.c
 +++ b/fs/f2fs/dir.c
-@@ -190,9 +190,6 @@ struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
- 	unsigned int max_depth;
- 	unsigned int level;
+@@ -429,8 +429,8 @@ next:
+ }
  
--	if (unlikely(namelen > F2FS_NAME_LEN))
--		return NULL;
--
- 	if (npages == 0)
- 		return NULL;
+ /*
+- * Caller should grab and release a mutex by calling mutex_lock_op() and
+- * mutex_unlock_op().
++ * Caller should grab and release a rwsem by calling f2fs_lock_op() and
++ * f2fs_unlock_op().
+  */
+ int __f2fs_add_link(struct inode *dir, const struct qstr *name, struct inode *inode)
+ {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8cbc5a6..97080f1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -165,7 +165,7 @@ enum {
+ 	LOOKUP_NODE,			/* look up a node without readahead */
+ 	LOOKUP_NODE_RA,			/*
+ 					 * look up a node with readahead called
+-					 * by get_datablock_ro.
++					 * by get_data_block.
+ 					 */
+ };
  
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index a3f4542..fdd175b 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -62,6 +62,11 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 3565caf..768bd96 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -394,8 +394,8 @@ got:
  
- 	name.len = le32_to_cpu(raw_inode->i_namelen);
- 	name.name = raw_inode->i_name;
-+
-+	if (unlikely(name.len > F2FS_NAME_LEN)) {
-+		err = -ENAMETOOLONG;
-+		goto out;
-+	}
- retry:
- 	de = f2fs_find_entry(dir, &name, &page);
- 	if (de && inode->i_ino == le32_to_cpu(de->ino))
+ /*
+  * Caller should call f2fs_put_dnode(dn).
+- * Also, it should grab and release a mutex by calling mutex_lock_op() and
+- * mutex_unlock_op() only if ro is not set RDONLY_NODE.
++ * Also, it should grab and release a rwsem by calling f2fs_lock_op() and
++ * f2fs_unlock_op() only if ro is not set RDONLY_NODE.
+  * In the case of RDONLY_NODE, we don't need to care about mutex.
+  */
+ int get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
+@@ -803,8 +803,8 @@ int truncate_xattr_node(struct inode *inode, struct page *page)
+ }
+ 
+ /*
+- * Caller should grab and release a mutex by calling mutex_lock_op() and
+- * mutex_unlock_op().
++ * Caller should grab and release a rwsem by calling f2fs_lock_op() and
++ * f2fs_unlock_op().
+  */
+ void remove_inode_page(struct inode *inode)
+ {
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 3496bb3..c4c7988 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -224,7 +224,13 @@ static inline block_t next_blkaddr_of_node(struct page *node_page)
+  *    |            `- direct node (5 + N => 5 + 2N - 1)
+  *    `- double indirect node (5 + 2N)
+  *                 `- indirect node (6 + 2N)
+- *                       `- direct node (x(N + 1))
++ *                       `- direct node
++ *                 ......
++ *                 `- indirect node ((6 + 2N) + x(N + 1))
++ *                       `- direct node
++ *                 ......
++ *                 `- indirect node ((6 + 2N) + (N - 1)(N + 1))
++ *                       `- direct node
+  */
+ static inline bool IS_DNODE(struct page *node_page)
+ {
 -- 
 1.7.9.5
 
-
-------------------------------------------------------------------------------
-Rapidly troubleshoot problems before they affect your business. Most IT 
-organizations don't have a clear picture of how application performance 
-affects their revenue. With AppDynamics, you get 100% visibility into your 
-Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
-http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
