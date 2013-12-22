@@ -1,278 +1,84 @@
-From: John Grub <john.f.grub@gmail.com>
-Subject: Re: [bug] writes hanging
-Date: Sat, 21 Dec 2013 14:18:37 -0800
-Message-ID: <CADbsYN3kS3F+k93xXQ1ccrunPGXU=e3OXwbFxsK-i44gFaB0uQ@mail.gmail.com>
-References: <CADbsYN1b-jC85e=N+yH=PJTxOWMNBnGaa6a0cVHEcJQfxtRYOw@mail.gmail.com>
-	<CADbsYN3vxdOMGjQ_iO_yvfkowfFwSrLjeY=XnGnKr-0iV0ad9Q@mail.gmail.com>
-	<CAGC=Z9Qk4StsjgKbY_PZ7y_3zDoowGx5FKCWTrHc2m6KZOq7Wg@mail.gmail.com>
+From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [PATCH 21/21] hfsplus: remove can_set_xattr
+Date: Sun, 22 Dec 2013 11:28:18 -0800
+Message-ID: <20131222192818.GA32565@infradead.org>
+References: <20131220131635.650823732@bombadil.infradead.org>
+ <20131220132524.900291394@bombadil.infradead.org>
+ <636E01BC-12FD-452B-8B1C-320B6EADAEFD@dubeyko.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6651605191460461306=="
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <john.f.grub@gmail.com>) id 1VuUse-0007zA-VO
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 21 Dec 2013 22:18:45 +0000
-Received: from mail-yh0-f51.google.com ([209.85.213.51])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1VuUsd-0008Sz-TX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 21 Dec 2013 22:18:44 +0000
-Received: by mail-yh0-f51.google.com with SMTP id c41so938933yho.10
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 21 Dec 2013 14:18:38 -0800 (PST)
-Received: from mail-oa0-x22e.google.com (mail-oa0-x22e.google.com
-	[2607:f8b0:4003:c02::22e])
-	by mx.google.com with ESMTPSA id g25sm18231471yhg.6.2013.12.21.14.18.38
-	for <linux-f2fs-devel@lists.sourceforge.net>
-	(version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
-	Sat, 21 Dec 2013 14:18:38 -0800 (PST)
-Received: by mail-oa0-f46.google.com with SMTP id o6so4372707oag.33
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 21 Dec 2013 14:18:37 -0800 (PST)
-In-Reply-To: <CAGC=Z9Qk4StsjgKbY_PZ7y_3zDoowGx5FKCWTrHc2m6KZOq7Wg@mail.gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chris Fries <ccfries@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
-
---===============6651605191460461306==
-Content-Type: multipart/alternative; boundary=047d7b33d8bebce47d04ee12c6c9
-
---047d7b33d8bebce47d04ee12c6c9
-Content-Type: text/plain; charset=ISO-8859-1
-
-Nothing in the kernel log. Disabling discard when formatting the partition
-doesn't help.
-On Dec 21, 2013 1:06 PM, "Chris Fries" <ccfries@gmail.com> wrote:
-
-> Anything show up in the kernel log from the block device?  You might try
-> turning off discard, see if that helps.
-> On Dec 21, 2013 2:16 PM, "John Grub" <john.f.grub@gmail.com> wrote:
->
->> Note: this is on a M8G2FA Samsung flash chip.
->>
->>
->> On Fri, Dec 20, 2013 at 12:29 PM, John Grub <john.f.grub@gmail.com>wrote:
->>
->>> Hello,
->>>
->>> I can't seem to write larger files on my f2fs mount.
->>> My hardware is an embedded arm platform with an 8GB eMMC nand flash
->>> chip: Golbalscale D2Plug<http://www.globalscaletechnologies.com/t-d2plugdetails.aspx>
->>> I have two of these pieces of hardware and I see this issue on both of
->>> them. There is no issue when I use ext4.
->>> I am running kernel version 3.13.0-rc4
->>> I've compiled  f2fs-tools from here
->>> http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git @
->>> 11d187cdfa2dcf504aa25b5a1aab4228f19f22ff
->>>
->>> I've followed the installation and usage instructions in
->>> linux/Documentation/filesystems/f2fs.txt to format my 8GB eMMC nand flash
->>> as f2fs.
->>>
->>> I'm getting freezes when writing larger files to my f2fs partition. Here
->>> is an experiment I've done to show this.
->>> First create 3 test files of different sizes:
->>> # cat /dev/urandom | head -c 50k > /tmp/50k
->>> # cat /dev/urandom | head -c 100k > /tmp/100k
->>> # cat /dev/urandom | head -c 150k > /tmp/150k
->>>
->>> Test case #1: Repeatedly copy the same 50k file to j2fs:
->>> # cp /tmp/50k /mnt/j2fs/ <-- this copy always works fine
->>> # cp /tmp/50k /mnt/j2fs/ <-- this copy always works fine
->>> # cp /tmp/50k /mnt/j2fs/ <-- this copy always hangs forever
->>> For the failing copy, I've seen 4k, 8k and 12k copied correctly before
->>> it stops.
->>>
->>> Test case #2: Repeatedly copy the same 100k file to f2fs:
->>> # cp /tmp/100k /mnt/f2fs/ <-- this copy works fine
->>> # cp /tmp/100k /mnt/f2fs/ <-- this copy hangs forever
->>> For the failing copy, I've seen 4k, 8k and 12k copied correctly before
->>> it stops.
->>>
->>> Test case #3: Copy a 150k file to f2fs:
->>> # cp /tmp/150k /mnt/f2fs/
->>> This never completes and will hang forever if I don't kill it. It always
->>> seems to fail at 120k.
->>>
->>> Any help would be appreciated.
->>>
->>> Thanks,
->>> John Grub
->>>
->>
->>
->>
->> ------------------------------------------------------------------------------
->> Rapidly troubleshoot problems before they affect your business. Most IT
->> organizations don't have a clear picture of how application performance
->> affects their revenue. With AppDynamics, you get 100% visibility into your
->> Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics
->> Pro!
->>
->> http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>
->>
-
---047d7b33d8bebce47d04ee12c6c9
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<p dir=3D"ltr">Nothing in the kernel log. Disabling discard when formatting=
- the partition doesn&#39;t help.</p>
-<div class=3D"gmail_quote">On Dec 21, 2013 1:06 PM, &quot;Chris Fries&quot;=
- &lt;<a href=3D"mailto:ccfries@gmail.com">ccfries@gmail.com</a>&gt; wrote:<=
-br type=3D"attribution"><blockquote class=3D"gmail_quote" style=3D"margin:0=
- 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
-<p dir=3D"ltr">Anything show up in the kernel log from the block device?=A0=
- You might try turning off discard, see if that helps.</p>
-<div class=3D"gmail_quote">On Dec 21, 2013 2:16 PM, &quot;John Grub&quot; &=
-lt;<a href=3D"mailto:john.f.grub@gmail.com" target=3D"_blank">john.f.grub@g=
-mail.com</a>&gt; wrote:<br type=3D"attribution"><blockquote class=3D"gmail_=
-quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1=
-ex">
-
-<div dir=3D"ltr">Note: this is on a M8G2FA Samsung flash chip.<br></div><di=
-v class=3D"gmail_extra"><br><br><div class=3D"gmail_quote">On Fri, Dec 20, =
-2013 at 12:29 PM, John Grub <span dir=3D"ltr">&lt;<a href=3D"mailto:john.f.=
-grub@gmail.com" target=3D"_blank">john.f.grub@gmail.com</a>&gt;</span> wrot=
-e:<br>
-
-
-
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex"><div dir=3D"ltr">Hello,<div><br><div>I can&#=
-39;t seem to write larger files on my f2fs mount.</div><div>My hardware is =
-an embedded arm platform with an 8GB eMMC nand flash chip: <a href=3D"http:=
-//www.globalscaletechnologies.com/t-d2plugdetails.aspx" target=3D"_blank">G=
-olbalscale D2Plug</a></div>
-
-
-
-
-<div>I have two of these pieces of hardware and I see this issue on both of=
- them. There is no issue when I use ext4.</div><div>I am running kernel ver=
-sion 3.13.0-rc4</div>I&#39;ve compiled =A0f2fs-tools from here <a href=3D"h=
-ttp://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git" target=
-=3D"_blank">http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.=
-git</a> @ 11d187cdfa2dcf504aa25b5a1aab4228f19f22ff<div>
-
-
-
-
-<br></div><div>I&#39;ve followed the installation and usage instructions in=
- linux/Documentation/filesystems/f2fs.txt to format my 8GB eMMC nand flash =
-as f2fs.</div><div><br></div><div>I&#39;m getting freezes when writing larg=
-er files to my f2fs partition. Here is an experiment I&#39;ve done to show =
-this.</div>
-
-
-
-
-<div>First create 3 test files of different sizes:</div><div># cat /dev/ura=
-ndom | head -c 50k &gt; /tmp/50k</div><div># cat /dev/urandom | head -c 100=
-k &gt; /tmp/100k<br></div><div># cat /dev/urandom | head -c 150k &gt; /tmp/=
-150k<br>
-
-
-
-
-</div><div><br></div><div>Test case #1: Repeatedly copy the same 50k file t=
-o j2fs:</div><div># cp /tmp/50k /mnt/j2fs/ &lt;-- this copy always works fi=
-ne</div><div># cp /tmp/50k /mnt/j2fs/ &lt;-- this copy always=A0works fine<=
-/div>
-
-
-
-
-<div># cp /tmp/50k /mnt/j2fs/ &lt;-- this copy always=A0hangs forever</div>=
-<div>For the failing copy, I&#39;ve seen 4k, 8k and 12k copied correctly be=
-fore it stops.</div><div><br></div><div><div>Test case #2: Repeatedly copy =
-the same 100k file to f2fs:</div>
-
-
-
-
-<div># cp /tmp/100k /mnt/f2fs/ &lt;-- this copy works fine</div><div># cp /=
-tmp/100k /mnt/f2fs/ &lt;-- this copy hangs forever<br></div></div><div>For =
-the failing copy, I&#39;ve seen 4k, 8k and 12k copied correctly before it s=
-tops.<br>
-
-
-
-
-</div><div><br></div><div><div><div>Test case #3: Copy a 150k file to f2fs:=
-</div><div># cp /tmp/150k /mnt/f2fs/<br></div></div><div>This never complet=
-es and will hang forever if I don&#39;t kill it. It always seems to fail at=
- 120k.<br>
-
-
-
-
-</div></div><div><br></div><div>Any help would be appreciated.</div></div><=
-div><br></div><div>Thanks,</div><div>John Grub</div></div>
-</blockquote></div><br></div>
-<br>-----------------------------------------------------------------------=
--------<br>
-Rapidly troubleshoot problems before they affect your business. Most IT<br>
-organizations don&#39;t have a clear picture of how application performance=
-<br>
-affects their revenue. With AppDynamics, you get 100% visibility into your<=
-br>
-Java,.NET, &amp; PHP application. Start your 15-day FREE TRIAL of AppDynami=
-cs Pro!<br>
-<a href=3D"http://pubads.g.doubleclick.net/gampad/clk?id=3D84349831&amp;iu=
-=3D/4140/ostg.clktrk" target=3D"_blank">http://pubads.g.doubleclick.net/gam=
-pad/clk?id=3D84349831&amp;iu=3D/4140/ostg.clktrk</a><br>___________________=
-____________________________<br>
-
-
-Linux-f2fs-devel mailing list<br>
-<a href=3D"mailto:Linux-f2fs-devel@lists.sourceforge.net" target=3D"_blank"=
->Linux-f2fs-devel@lists.sourceforge.net</a><br>
-<a href=3D"https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel" t=
-arget=3D"_blank">https://lists.sourceforge.net/lists/listinfo/linux-f2fs-de=
-vel</a><br>
-<br></blockquote></div>
-</blockquote></div>
-
---047d7b33d8bebce47d04ee12c6c9--
-
-
---===============6651605191460461306==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
+In-Reply-To: <636E01BC-12FD-452B-8B1C-320B6EADAEFD-yeENwD64cLxBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vyacheslav Dubeyko <slava-yeENwD64cLxBDgjK7y7TUQ@public.gmane.org>
+Cc: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>, Joel Becker <jlbec-aKy9MeLSZ9dg9hUCZPvPmw@public.gmane.org>, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xfs-VZNHf3L845pBDgjK7y7TUQ@public.gmane.org, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andreas Gruenbacher <andreas.gruenbacher-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-------------------------------------------------------------------------------
-Rapidly troubleshoot problems before they affect your business. Most IT 
-organizations don't have a clear picture of how application performance 
-affects their revenue. With AppDynamics, you get 100% visibility into your 
-Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
-http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
---===============6651605191460461306==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+On Sat, Dec 21, 2013 at 08:07:51PM +0300, Vyacheslav Dubeyko wrote:
+> > -static int can_set_xattr(struct inode *inode, const char *name,
+> > -				const void *value, size_t value_len)
+> 
+> This function works for all handlers. So, I don't think that it makes sense
+> to delete it.
 
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+It "works" in a minimal sense that it won't crash or actively cause
+harm.  But it also is useless except for the check that we can abuse
+the osx namespace to set an attribute in another namespace, which we
+still do in the proper way after my patch.
 
---===============6651605191460461306==--
+> > -	if (!strncmp(name, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN)) {
+> > -		/*
+> > -		 * This makes sure that we aren't trying to set an
+> > -		 * attribute in a different namespace by prefixing it
+> > -		 * with "osx."
+> > -		 */
+> > -		if (is_known_namespace(name + XATTR_MAC_OSX_PREFIX_LEN))
+> > -			return -EOPNOTSUPP;
+> 
+> I think that this check is important. It forbids such combinations as "osx.system.*" or
+> "osx.trusted.*", for example. Because "osx.*" is virtual namespace for xattrs that
+> it can be under Mac OS X. If you want to set xattr from "system.*" namespace, for example,
+> then you need to use another handler. And such namespace should be without
+> addition of "osx." prefix.
+
+Right, and we keep exactly the check, just in a different place.
+
+> The __hfsplus_setxattr() is common method for all handlers. So, removing
+> this call means that we don't check validity of namespace. I don't think
+> that such modification is a right way.
+
+The generic code already checks for the validity of the namespace for
+you. xattr_resolve_name in fs/xattr.c makes sure only attributes for a
+namespace that the filesystem registered can be set or modified.
+
+> > @@ -841,10 +761,6 @@ int hfsplus_removexattr(struct dentry *dentry, const char *name)
+> > 	if (!HFSPLUS_SB(inode->i_sb)->attr_tree)
+> > 		return -EOPNOTSUPP;
+> > 
+> > -	err = can_set_xattr(inode, name, NULL, 0);
+> 
+> Ditto. Moreover, it is used namely hfsplus_removexattr() and not
+> __hfsplus_setxattr() for removing xattrs in hfsplus driver. So, removing
+> this check is not good way.
+
+Oh, I just noticed that hfsplus does not use the xattr handlers for
+removing, while it does for getting and setting xattrs.  That's a really
+bad a confusing design, and we'll indeed need to fix that as well.
+
+> > 	if (len > HFSPLUS_ATTR_MAX_STRLEN)
+> > 		return -EOPNOTSUPP;
+> > 
+> > +	if (is_known_namespace(name))
+> > +		return -EOPNOTSUPP;
+> 
+> If common check in __hfsplus_setxattr() will be on the same place then
+> this addition doesn't make sense.
+
+Having both does indeed not make sense, but this is the better place to
+have it.
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
