@@ -1,84 +1,100 @@
-From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH 21/21] hfsplus: remove can_set_xattr
-Date: Sun, 22 Dec 2013 11:28:18 -0800
-Message-ID: <20131222192818.GA32565@infradead.org>
-References: <20131220131635.650823732@bombadil.infradead.org>
- <20131220132524.900291394@bombadil.infradead.org>
- <636E01BC-12FD-452B-8B1C-320B6EADAEFD@dubeyko.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [bug] writes hanging
+Date: Mon, 23 Dec 2013 10:13:57 +0900
+Message-ID: <1387761237.2101.284.camel@kjgkr>
+References: <CADbsYN1b-jC85e=N+yH=PJTxOWMNBnGaa6a0cVHEcJQfxtRYOw@mail.gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <636E01BC-12FD-452B-8B1C-320B6EADAEFD-yeENwD64cLxBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vyacheslav Dubeyko <slava-yeENwD64cLxBDgjK7y7TUQ@public.gmane.org>
-Cc: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>, Joel Becker <jlbec-aKy9MeLSZ9dg9hUCZPvPmw@public.gmane.org>, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xfs-VZNHf3L845pBDgjK7y7TUQ@public.gmane.org, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andreas Gruenbacher <andreas.gruenbacher-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vuu70-0001px-SH
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 23 Dec 2013 01:15:14 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1Vuu6y-0006kR-P1
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 23 Dec 2013 01:15:14 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MY8000DMJH5RB90@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 23 Dec 2013 10:15:05 +0900 (KST)
+In-reply-to: <CADbsYN1b-jC85e=N+yH=PJTxOWMNBnGaa6a0cVHEcJQfxtRYOw@mail.gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: John Grub <john.f.grub@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Sat, Dec 21, 2013 at 08:07:51PM +0300, Vyacheslav Dubeyko wrote:
-> > -static int can_set_xattr(struct inode *inode, const char *name,
-> > -				const void *value, size_t value_len)
-> 
-> This function works for all handlers. So, I don't think that it makes sense
-> to delete it.
-
-It "works" in a minimal sense that it won't crash or actively cause
-harm.  But it also is useless except for the check that we can abuse
-the osx namespace to set an attribute in another namespace, which we
-still do in the proper way after my patch.
-
-> > -	if (!strncmp(name, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN)) {
-> > -		/*
-> > -		 * This makes sure that we aren't trying to set an
-> > -		 * attribute in a different namespace by prefixing it
-> > -		 * with "osx."
-> > -		 */
-> > -		if (is_known_namespace(name + XATTR_MAC_OSX_PREFIX_LEN))
-> > -			return -EOPNOTSUPP;
-> 
-> I think that this check is important. It forbids such combinations as "osx.system.*" or
-> "osx.trusted.*", for example. Because "osx.*" is virtual namespace for xattrs that
-> it can be under Mac OS X. If you want to set xattr from "system.*" namespace, for example,
-> then you need to use another handler. And such namespace should be without
-> addition of "osx." prefix.
-
-Right, and we keep exactly the check, just in a different place.
-
-> The __hfsplus_setxattr() is common method for all handlers. So, removing
-> this call means that we don't check validity of namespace. I don't think
-> that such modification is a right way.
-
-The generic code already checks for the validity of the namespace for
-you. xattr_resolve_name in fs/xattr.c makes sure only attributes for a
-namespace that the filesystem registered can be set or modified.
-
-> > @@ -841,10 +761,6 @@ int hfsplus_removexattr(struct dentry *dentry, const char *name)
-> > 	if (!HFSPLUS_SB(inode->i_sb)->attr_tree)
-> > 		return -EOPNOTSUPP;
-> > 
-> > -	err = can_set_xattr(inode, name, NULL, 0);
-> 
-> Ditto. Moreover, it is used namely hfsplus_removexattr() and not
-> __hfsplus_setxattr() for removing xattrs in hfsplus driver. So, removing
-> this check is not good way.
-
-Oh, I just noticed that hfsplus does not use the xattr handlers for
-removing, while it does for getting and setting xattrs.  That's a really
-bad a confusing design, and we'll indeed need to fix that as well.
-
-> > 	if (len > HFSPLUS_ATTR_MAX_STRLEN)
-> > 		return -EOPNOTSUPP;
-> > 
-> > +	if (is_known_namespace(name))
-> > +		return -EOPNOTSUPP;
-> 
-> If common check in __hfsplus_setxattr() will be on the same place then
-> this addition doesn't make sense.
-
-Having both does indeed not make sense, but this is the better place to
-have it.
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGksCgpJIGNvdWxkbid0IGdldCBhbnkgZXJyb3Igd2hlbiByZXBsYXlpbmcgeW91ciBzY2VuYXJp
+byBvbiBteSBhcm0gYm9hcmQuClNvLCBjb3VsZCB5b3Ugc2VuZCB0aGUgYmFja3RyYWNlIG9mIGFu
+eSBoYW5nZWQgcHJvY2Vzcz8KCiMgY2F0IC9wcm9jL1twaWRdL3N0YWNrCgpUaGFua3MsCgoyMDEz
+LTEyLTIwICjquIgpLCAxMjoyOSAtMDgwMCwgSm9obiBHcnViOgo+IEhlbGxvLAo+IAo+IEkgY2Fu
+J3Qgc2VlbSB0byB3cml0ZSBsYXJnZXIgZmlsZXMgb24gbXkgZjJmcyBtb3VudC4KPiBNeSBoYXJk
+d2FyZSBpcyBhbiBlbWJlZGRlZCBhcm0gcGxhdGZvcm0gd2l0aCBhbiA4R0IgZU1NQyBuYW5kIGZs
+YXNoCj4gY2hpcDogR29sYmFsc2NhbGUgRDJQbHVnCj4gSSBoYXZlIHR3byBvZiB0aGVzZSBwaWVj
+ZXMgb2YgaGFyZHdhcmUgYW5kIEkgc2VlIHRoaXMgaXNzdWUgb24gYm90aCBvZgo+IHRoZW0uIFRo
+ZXJlIGlzIG5vIGlzc3VlIHdoZW4gSSB1c2UgZXh0NC4KPiBJIGFtIHJ1bm5pbmcga2VybmVsIHZl
+cnNpb24gMy4xMy4wLXJjNAo+IEkndmUgY29tcGlsZWQgIGYyZnMtdG9vbHMgZnJvbSBoZXJlCj4g
+aHR0cDovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgva2VybmVsL2dpdC9qYWVnZXVrL2YyZnMt
+dG9vbHMuZ2l0IEAKPiAxMWQxODdjZGZhMmRjZjUwNGFhMjViNWExYWFiNDIyOGYxOWYyMmZmCj4g
+Cj4gCj4gSSd2ZSBmb2xsb3dlZCB0aGUgaW5zdGFsbGF0aW9uIGFuZCB1c2FnZSBpbnN0cnVjdGlv
+bnMgaW4KPiBsaW51eC9Eb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL2YyZnMudHh0IHRvIGZvcm1h
+dCBteSA4R0IgZU1NQyBuYW5kCj4gZmxhc2ggYXMgZjJmcy4KPiAKPiAKPiBJJ20gZ2V0dGluZyBm
+cmVlemVzIHdoZW4gd3JpdGluZyBsYXJnZXIgZmlsZXMgdG8gbXkgZjJmcyBwYXJ0aXRpb24uCj4g
+SGVyZSBpcyBhbiBleHBlcmltZW50IEkndmUgZG9uZSB0byBzaG93IHRoaXMuCj4gRmlyc3QgY3Jl
+YXRlIDMgdGVzdCBmaWxlcyBvZiBkaWZmZXJlbnQgc2l6ZXM6Cj4gIyBjYXQgL2Rldi91cmFuZG9t
+IHwgaGVhZCAtYyA1MGsgPiAvdG1wLzUwawo+ICMgY2F0IC9kZXYvdXJhbmRvbSB8IGhlYWQgLWMg
+MTAwayA+IC90bXAvMTAwawo+IAo+ICMgY2F0IC9kZXYvdXJhbmRvbSB8IGhlYWQgLWMgMTUwayA+
+IC90bXAvMTUwawo+IAo+IAo+IAo+IFRlc3QgY2FzZSAjMTogUmVwZWF0ZWRseSBjb3B5IHRoZSBz
+YW1lIDUwayBmaWxlIHRvIGoyZnM6Cj4gIyBjcCAvdG1wLzUwayAvbW50L2oyZnMvIDwtLSB0aGlz
+IGNvcHkgYWx3YXlzIHdvcmtzIGZpbmUKPiAjIGNwIC90bXAvNTBrIC9tbnQvajJmcy8gPC0tIHRo
+aXMgY29weSBhbHdheXMgd29ya3MgZmluZQo+ICMgY3AgL3RtcC81MGsgL21udC9qMmZzLyA8LS0g
+dGhpcyBjb3B5IGFsd2F5cyBoYW5ncyBmb3JldmVyCj4gRm9yIHRoZSBmYWlsaW5nIGNvcHksIEkn
+dmUgc2VlbiA0aywgOGsgYW5kIDEyayBjb3BpZWQgY29ycmVjdGx5IGJlZm9yZQo+IGl0IHN0b3Bz
+Lgo+IAo+IAo+IFRlc3QgY2FzZSAjMjogUmVwZWF0ZWRseSBjb3B5IHRoZSBzYW1lIDEwMGsgZmls
+ZSB0byBmMmZzOgo+ICMgY3AgL3RtcC8xMDBrIC9tbnQvZjJmcy8gPC0tIHRoaXMgY29weSB3b3Jr
+cyBmaW5lCj4gIyBjcCAvdG1wLzEwMGsgL21udC9mMmZzLyA8LS0gdGhpcyBjb3B5IGhhbmdzIGZv
+cmV2ZXIKPiAKPiBGb3IgdGhlIGZhaWxpbmcgY29weSwgSSd2ZSBzZWVuIDRrLCA4ayBhbmQgMTJr
+IGNvcGllZCBjb3JyZWN0bHkgYmVmb3JlCj4gaXQgc3RvcHMuCj4gCj4gCj4gCj4gVGVzdCBjYXNl
+ICMzOiBDb3B5IGEgMTUwayBmaWxlIHRvIGYyZnM6Cj4gIyBjcCAvdG1wLzE1MGsgL21udC9mMmZz
+Lwo+IAo+IFRoaXMgbmV2ZXIgY29tcGxldGVzIGFuZCB3aWxsIGhhbmcgZm9yZXZlciBpZiBJIGRv
+bid0IGtpbGwgaXQuIEl0Cj4gYWx3YXlzIHNlZW1zIHRvIGZhaWwgYXQgMTIway4KPiAKPiAKPiAK
+PiBBbnkgaGVscCB3b3VsZCBiZSBhcHByZWNpYXRlZC4KPiAKPiAKPiBUaGFua3MsCj4gSm9obiBH
+cnViCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gUmFwaWRseSB0cm91Ymxlc2hvb3QgcHJvYmxl
+bXMgYmVmb3JlIHRoZXkgYWZmZWN0IHlvdXIgYnVzaW5lc3MuIE1vc3QgSVQgCj4gb3JnYW5pemF0
+aW9ucyBkb24ndCBoYXZlIGEgY2xlYXIgcGljdHVyZSBvZiBob3cgYXBwbGljYXRpb24gcGVyZm9y
+bWFuY2UgCj4gYWZmZWN0cyB0aGVpciByZXZlbnVlLiBXaXRoIEFwcER5bmFtaWNzLCB5b3UgZ2V0
+IDEwMCUgdmlzaWJpbGl0eSBpbnRvIHlvdXIgCj4gSmF2YSwuTkVULCAmIFBIUCBhcHBsaWNhdGlv
+bi4gU3RhcnQgeW91ciAxNS1kYXkgRlJFRSBUUklBTCBvZiBBcHBEeW5hbWljcyBQcm8hCj4gaHR0
+cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTg0MzQ5ODMxJml1PS80
+MTQwL29zdGcuY2xrdHJrCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QgTGludXgtZjJmcy1kZXZlbEBs
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQgaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMv
+bGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoKLS0gCkphZWdldWsgS2ltClNhbXN1bmcKCgoKLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tClJhcGlkbHkgdHJvdWJsZXNob290IHByb2JsZW1zIGJlZm9yZSB0
+aGV5IGFmZmVjdCB5b3VyIGJ1c2luZXNzLiBNb3N0IElUIApvcmdhbml6YXRpb25zIGRvbid0IGhh
+dmUgYSBjbGVhciBwaWN0dXJlIG9mIGhvdyBhcHBsaWNhdGlvbiBwZXJmb3JtYW5jZSAKYWZmZWN0
+cyB0aGVpciByZXZlbnVlLiBXaXRoIEFwcER5bmFtaWNzLCB5b3UgZ2V0IDEwMCUgdmlzaWJpbGl0
+eSBpbnRvIHlvdXIgCkphdmEsLk5FVCwgJiBQSFAgYXBwbGljYXRpb24uIFN0YXJ0IHlvdXIgMTUt
+ZGF5IEZSRUUgVFJJQUwgb2YgQXBwRHluYW1pY3MgUHJvIQpodHRwOi8vcHViYWRzLmcuZG91Ymxl
+Y2xpY2submV0L2dhbXBhZC9jbGs/aWQ9ODQzNDk4MzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1k
+ZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQK
+aHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1k
+ZXZlbAo=
