@@ -1,228 +1,86 @@
-From: Vyacheslav Dubeyko <slava@dubeyko.com>
-Subject: Re: [PATCH 21/21] hfsplus: remove can_set_xattr
-Date: Tue, 24 Dec 2013 10:41:44 +0400
-Message-ID: <1387867304.3974.21.camel@slavad-ubuntu>
-References: <20131220131635.650823732@bombadil.infradead.org>
-	 <20131220132524.900291394@bombadil.infradead.org>
-	 <636E01BC-12FD-452B-8B1C-320B6EADAEFD@dubeyko.com>
-	 <20131222192818.GA32565@infradead.org>
-	 <1387780809.3991.21.camel@slavad-ubuntu>
-	 <20131223143706.GA8235@infradead.org>
-Reply-To: slava@dubeyko.com
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [PATCH 1/3 V2] f2fs: check filename length in
+ recover_dentry
+Date: Thu, 26 Dec 2013 07:55:29 +0900
+Message-ID: <1388012129.2101.302.camel@kjgkr>
+References: <002201ceff8c$efbd2da0$cf3788e0$@samsung.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <20131223143706.GA8235@infradead.org>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, jfs-discussion@lists.sourceforge.net, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, Andreas Gruenbacher <andreas.gruenbacher@linbit.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1VvxNg-0008FP-Rj
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 25 Dec 2013 22:56:48 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1VvxNf-0000k0-0c
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 25 Dec 2013 22:56:48 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MYD004HHX2EG280@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 26 Dec 2013 07:56:38 +0900 (KST)
+In-reply-to: <002201ceff8c$efbd2da0$cf3788e0$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, 2013-12-23 at 06:37 -0800, Christoph Hellwig wrote:
-> On Mon, Dec 23, 2013 at 10:40:09AM +0400, Vyacheslav Dubeyko wrote:
-> > Maybe I missed something, but I can see that this check is removed only.
-> > Could you point out the code in your patch that it checks and forbids
-> > such combination as "osx.security.*", "osx.trusted.*" and so on?
-> 
-> @@ -941,6 +857,9 @@ static int hfsplus_osx_setxattr(struct dentry
-> *dentry, const char *name,
->         if (len > HFSPLUS_ATTR_MAX_STRLEN)
-> 		return -EOPNOTSUPP;
-> 
-> +       if (is_known_namespace(name))
-> +               return -EOPNOTSUPP;
-> +
-> 
-
-Yes, now I've realized your approach. You are right. It's my
-misunderstanding. So, comments are really necessary for describing the
-goal of this check. Thank you for adding it in the last version of
-reworked patch.
-
-> 
-> > So, if it needs to use xattr handler only for removing then it needs to
-> > make some refactoring of using __hfsplus_setxattr() and
-> > hfsplus_removexattr() or merging these two functions into one. And I
-> > think that merging is better idea.
-> 
-> I've not done the full merge, but below is an updated patch to make
-> sure hfsplus uses the handlers for the remove case, and making sure
-> the adding/striping of the prefix for the osv handlers is more
-> transparent:
-> 
-
-As far as I can judge, changing from hfsplus_removexattr() to
-generic_removexattr() is made correctly.
-
-> diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-> index 9ee6298..bdec665 100644
-> --- a/fs/hfsplus/dir.c
-> +++ b/fs/hfsplus/dir.c
-> @@ -529,7 +529,7 @@ const struct inode_operations hfsplus_dir_inode_operations = {
->  	.setxattr		= generic_setxattr,
->  	.getxattr		= generic_getxattr,
->  	.listxattr		= hfsplus_listxattr,
-> -	.removexattr		= hfsplus_removexattr,
-> +	.removexattr		= generic_removexattr,
->  #ifdef CONFIG_HFSPLUS_FS_POSIX_ACL
->  	.get_acl		= hfsplus_get_posix_acl,
->  	.set_acl		= hfsplus_set_posix_acl,
-> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-> index 2e10993..83c9166 100644
-> --- a/fs/hfsplus/inode.c
-> +++ b/fs/hfsplus/inode.c
-> @@ -390,7 +390,7 @@ static const struct inode_operations hfsplus_file_inode_operations = {
->  	.setxattr	= generic_setxattr,
->  	.getxattr	= generic_getxattr,
->  	.listxattr	= hfsplus_listxattr,
-> -	.removexattr	= hfsplus_removexattr,
-> +	.removexattr	= generic_removexattr,
->  #ifdef CONFIG_HFSPLUS_FS_POSIX_ACL
->  	.get_acl	= hfsplus_get_posix_acl,
->  	.set_acl	= hfsplus_set_posix_acl,
-> diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
-> index bf88baa..c838b84 100644
-> --- a/fs/hfsplus/xattr.c
-> +++ b/fs/hfsplus/xattr.c
-> @@ -11,6 +11,8 @@
->  #include "xattr.h"
->  #include "acl.h"
->  
-> +static int hfsplus_removexattr(struct inode *inode, const char *name);
-> +
->  const struct xattr_handler *hfsplus_xattr_handlers[] = {
->  	&hfsplus_xattr_osx_handler,
->  	&hfsplus_xattr_user_handler,
-> @@ -52,82 +54,6 @@ static inline int is_known_namespace(const char *name)
->  	return true;
->  }
->  
-> -static int can_set_system_xattr(struct inode *inode, const char *name,
-> -				const void *value, size_t size)
-> -{
-> -#ifdef CONFIG_HFSPLUS_FS_POSIX_ACL
-> -	struct posix_acl *acl;
-> -	int err;
-> -
-> -	if (!inode_owner_or_capable(inode))
-> -		return -EPERM;
-> -
-> -	/*
-> -	 * POSIX_ACL_XATTR_ACCESS is tied to i_mode
-> -	 */
-> -	if (strcmp(name, POSIX_ACL_XATTR_ACCESS) == 0) {
-> -		acl = posix_acl_from_xattr(&init_user_ns, value, size);
-> -		if (IS_ERR(acl))
-> -			return PTR_ERR(acl);
-> -		if (acl) {
-> -			err = posix_acl_equiv_mode(acl, &inode->i_mode);
-> -			posix_acl_release(acl);
-> -			if (err < 0)
-> -				return err;
-> -			mark_inode_dirty(inode);
-> -		}
-> -		/*
-> -		 * We're changing the ACL.  Get rid of the cached one
-> -		 */
-> -		forget_cached_acl(inode, ACL_TYPE_ACCESS);
-> -
-> -		return 0;
-> -	} else if (strcmp(name, POSIX_ACL_XATTR_DEFAULT) == 0) {
-> -		acl = posix_acl_from_xattr(&init_user_ns, value, size);
-> -		if (IS_ERR(acl))
-> -			return PTR_ERR(acl);
-> -		posix_acl_release(acl);
-> -
-> -		/*
-> -		 * We're changing the default ACL.  Get rid of the cached one
-> -		 */
-> -		forget_cached_acl(inode, ACL_TYPE_DEFAULT);
-> -
-> -		return 0;
-> -	}
-> -#endif /* CONFIG_HFSPLUS_FS_POSIX_ACL */
-> -	return -EOPNOTSUPP;
-> -}
-> -
-> -static int can_set_xattr(struct inode *inode, const char *name,
-> -				const void *value, size_t value_len)
-> -{
-> -	if (!strncmp(name, XATTR_SYSTEM_PREFIX, XATTR_SYSTEM_PREFIX_LEN))
-> -		return can_set_system_xattr(inode, name, value, value_len);
-> -
-> -	if (!strncmp(name, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN)) {
-> -		/*
-> -		 * This makes sure that we aren't trying to set an
-> -		 * attribute in a different namespace by prefixing it
-> -		 * with "osx."
-> -		 */
-> -		if (is_known_namespace(name + XATTR_MAC_OSX_PREFIX_LEN))
-> -			return -EOPNOTSUPP;
-> -
-> -		return 0;
-> -	}
-> -
-> -	/*
-> -	 * Don't allow setting an attribute in an unknown namespace.
-> -	 */
-> -	if (strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN) &&
-> -	    strncmp(name, XATTR_SECURITY_PREFIX, XATTR_SECURITY_PREFIX_LEN) &&
-> -	    strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-> -		return -EOPNOTSUPP;
-> -
-> -	return 0;
-> -}
-> -
->  static void hfsplus_init_header_node(struct inode *attr_file,
->  					u32 clump_size,
->  					char *buf, u16 node_size)
-> @@ -350,18 +276,8 @@ int __hfsplus_setxattr(struct inode *inode, const char *name,
->  				HFSPLUS_IS_RSRC(inode))
->  		return -EOPNOTSUPP;
->  
-> -	err = can_set_xattr(inode, name, value, size);
-> -	if (err)
-> -		return err;
-> -
-> -	if (strncmp(name, XATTR_MAC_OSX_PREFIX,
-> -				XATTR_MAC_OSX_PREFIX_LEN) == 0)
-> -		name += XATTR_MAC_OSX_PREFIX_LEN;
-
-Removing this skipping of virtual "osx." prefix means that you save it
-on volume. But such action means volume corruption really. Because HFS+
-volume hasn't such prefixes for xattrs in AttributesFile. Usually,
-special xattrs has prefix "com.apple.*" but others haven't any prefix
-and can be named as you want. So, I think that it is not correct
-modification.
-
-> -
-> -	if (value == NULL) {
-> -		value = "";
-> -		size = 0;
-> -	}
-> +	if (value == NULL)
-> +		return hfsplus_removexattr(inode, name);
->  
->  	err = hfs_find_init(HFSPLUS_SB(inode->i_sb)->cat_tree, &cat_fd);
->  	if (err) {
-> @@ -577,18 +493,6 @@ ssize_t __hfsplus_getxattr(struct inode *inode, const char *name,
->  				HFSPLUS_IS_RSRC(inode))
->  		return -EOPNOTSUPP;
->  
-> -	if (strncmp(name, XATTR_MAC_OSX_PREFIX,
-> -				XATTR_MAC_OSX_PREFIX_LEN) == 0) {
-> -		/* skip "osx." prefix */
-> -		name += XATTR_MAC_OSX_PREFIX_LEN;
-
-Ditto. This skipping is made because virtual prefix was added by user or
-on listxattr phase. But we should use for searching on a volume the name
-without "osx." prefix. Otherwise, how do you get
-"com.apple.system.Security" xattr from volume, for example? You will
-search "osx.com.apple.system.Security" that doesn't exist on HFS+
-volume.
-
-Thanks,
-Vyacheslav Dubeyko.
-
-
+SGksCgoyMDEzLTEyLTIzICjsm5QpLCAxMToxMiArMDgwMCwgQ2hhbyBZdToKPiBJbiBjdXJyZW50
+IGZsb3csIHdlIHdpbGwgZ2V0IE51bGwgcmV0dXJuIHZhbHVlIG9mIGYyZnNfZmluZF9lbnRyeSBp
+bgo+IHJlY292ZXJfZGVudHJ5IHdoZW4gbmFtZS5sZW4gaXMgYmlnZ2VyIHRoYW4gRjJGU19OQU1F
+X0xFTiwgYW5kIHRoZW4gd2UKPiBzdGlsbCBhZGQgdGhpcyBpbm9kZSBpbnRvIGl0cyBkaXIgZW50
+cnkuCj4gVG8gYXZvaWQgdGhpcyBzaXR1YXRpb24sIHdlIG11c3QgY2hlY2sgZmlsZW5hbWUgbGVu
+Z3RoIGJlZm9yZSB3ZSB1c2UgaXQuCj4gCj4gQW5vdGhlciBwb2ludCBpcyB0aGF0IHdlIGNvdWxk
+IHJlbW92ZSB0aGUgY29kZSBvZiBjaGVja2luZyBmaWxlbmFtZSBsZW5ndGgKPiBJbiBmMmZzX2Zp
+bmRfZW50cnksIGJlY2F1c2UgZjJmc19sb29rdXAgd2lsbCBiZSBjYWxsZWQgcHJldmlvdXNseSB0
+byBlbnN1cmUgb2YKPiB2YWxpZGl0eSBvZiBmaWxlbmFtZSBsZW5ndGguCgpUaGUgZjJmc19maW5k
+X2VudHJ5IGlzIGNhbGxlZCBieSBmMmZzX3VubGluayBhbmQgZjJmc19yZW5hbWUgdG9vLgpTbywg
+eW91IGNhbid0IHJlbW92ZSB0aGlzLCBpbnN0ZWFkIGl0J2QgYmUgYmV0dGVyIHJlbW92ZSBpdCBm
+cm9tCmYyZnNfbG9va3VwLgpUaGFua3MsCgo+IAo+IFYyOgo+ICBvIGFkZCBXQVJOX09OKCkgYXMg
+SmFlZ2V1ayBLaW0gc3VnZ2VzdGVkLgo+IAo+IFNpZ25lZC1vZmYtYnk6IENoYW8gWXUgPGNoYW8y
+Lnl1QHNhbXN1bmcuY29tPgo+IC0tLQo+ICBmcy9mMmZzL2Rpci5jICAgICAgfCAgICAzIC0tLQo+
+ICBmcy9mMmZzL3JlY292ZXJ5LmMgfCAgICA2ICsrKysrKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDYg
+aW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9k
+aXIuYyBiL2ZzL2YyZnMvZGlyLmMKPiBpbmRleCAwN2FkODUwLi5mMGI0NjMwIDEwMDY0NAo+IC0t
+LSBhL2ZzL2YyZnMvZGlyLmMKPiArKysgYi9mcy9mMmZzL2Rpci5jCj4gQEAgLTE5MCw5ICsxOTAs
+NiBAQCBzdHJ1Y3QgZjJmc19kaXJfZW50cnkgKmYyZnNfZmluZF9lbnRyeShzdHJ1Y3QgaW5vZGUg
+KmRpciwKPiAgCXVuc2lnbmVkIGludCBtYXhfZGVwdGg7Cj4gIAl1bnNpZ25lZCBpbnQgbGV2ZWw7
+Cj4gIAo+IC0JaWYgKHVubGlrZWx5KG5hbWVsZW4gPiBGMkZTX05BTUVfTEVOKSkKPiAtCQlyZXR1
+cm4gTlVMTDsKPiAtCj4gIAlpZiAobnBhZ2VzID09IDApCj4gIAkJcmV0dXJuIE5VTEw7Cj4gIAo+
+IGRpZmYgLS1naXQgYS9mcy9mMmZzL3JlY292ZXJ5LmMgYi9mcy9mMmZzL3JlY292ZXJ5LmMKPiBp
+bmRleCBhM2Y0NTQyLi40ZDQxMWEyIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvcmVjb3ZlcnkuYwo+
+ICsrKyBiL2ZzL2YyZnMvcmVjb3ZlcnkuYwo+IEBAIC02Miw2ICs2MiwxMiBAQCBzdGF0aWMgaW50
+IHJlY292ZXJfZGVudHJ5KHN0cnVjdCBwYWdlICppcGFnZSwgc3RydWN0IGlub2RlICppbm9kZSkK
+PiAgCj4gIAluYW1lLmxlbiA9IGxlMzJfdG9fY3B1KHJhd19pbm9kZS0+aV9uYW1lbGVuKTsKPiAg
+CW5hbWUubmFtZSA9IHJhd19pbm9kZS0+aV9uYW1lOwo+ICsKPiArCWlmICh1bmxpa2VseShuYW1l
+LmxlbiA+IEYyRlNfTkFNRV9MRU4pKSB7Cj4gKwkJV0FSTl9PTigxKTsKPiArCQllcnIgPSAtRU5B
+TUVUT09MT05HOwo+ICsJCWdvdG8gb3V0Owo+ICsJfQo+ICByZXRyeToKPiAgCWRlID0gZjJmc19m
+aW5kX2VudHJ5KGRpciwgJm5hbWUsICZwYWdlKTsKPiAgCWlmIChkZSAmJiBpbm9kZS0+aV9pbm8g
+PT0gbGUzMl90b19jcHUoZGUtPmlubykpCgotLSAKSmFlZ2V1ayBLaW0KU2Ftc3VuZwoKCgotLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0KUmFwaWRseSB0cm91Ymxlc2hvb3QgcHJvYmxlbXMgYmVmb3JlIHRo
+ZXkgYWZmZWN0IHlvdXIgYnVzaW5lc3MuIE1vc3QgSVQgCm9yZ2FuaXphdGlvbnMgZG9uJ3QgaGF2
+ZSBhIGNsZWFyIHBpY3R1cmUgb2YgaG93IGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNlIAphZmZlY3Rz
+IHRoZWlyIHJldmVudWUuIFdpdGggQXBwRHluYW1pY3MsIHlvdSBnZXQgMTAwJSB2aXNpYmlsaXR5
+IGludG8geW91ciAKSmF2YSwuTkVULCAmIFBIUCBhcHBsaWNhdGlvbi4gU3RhcnQgeW91ciAxNS1k
+YXkgRlJFRSBUUklBTCBvZiBBcHBEeW5hbWljcyBQcm8hCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVj
+bGljay5uZXQvZ2FtcGFkL2Nsaz9pZD04NDM0OTgzMSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
+dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
+dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
+dmVsCg==
