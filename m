@@ -1,83 +1,83 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH] f2fs: convert max_orphans to a field of f2fs_sb_info
-Date: Thu, 26 Dec 2013 18:24:19 +0800
-Message-ID: <52BC03D3.2040002@cn.fujitsu.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kim <jaegeuk.kim@samsung.com>
-Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH] f2fs: check the blocksize before calling generic_direct_IO path
+Date: Thu, 26 Dec 2013 20:27:31 +0900
+Message-ID: <1388057251-2640-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Previously, we need to calculate the max orphan num when we try to acquire an
-orphan inode, but it's a stable value since the super block was inited. So
-converting it to a field of f2fs_sb_info and use it directly when needed seems
-a better choose.
+The f2fs supports 4KB block size. If user requests dwrite with under 4KB data,
+it allocates a new 4KB data block.
+However, f2fs doesn't add zero data into the untouched data area inside the
+newly allocated data block.
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+This incurs an error during the xfstest #263 test as follow.
+
+263 12s ... [failed, exit status 1] - output mismatch (see 263.out.bad)
+	--- 263.out	2013-03-09 03:37:15.043967603 +0900
+	+++ 263.out.bad	2013-12-27 04:20:39.230203114 +0900
+	@@ -1,3 +1,976 @@
+	QA output created by 263
+	fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z
+	-fsx -N 10000 -o 128000 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z
+	+fsx -N 10000 -o 8192 -l 500000 -r PSIZE -t BSIZE -w BSIZE -Z
+	+truncating to largest ever: 0x12a00
+	+truncating to largest ever: 0x75400
+	+fallocating to largest ever: 0x79cbf
+	...
+	(Run 'diff -u 263.out 263.out.bad' to see the entire diff)
+	Ran: 263
+	Failures: 263
+	Failed 1 of 1 tests
+
+It turns out that, when the test tries to write 2KB data with dio, the new dio
+path allocates 4KB data block without filling zero data inside the remained 2KB
+area. Finally, the output file contains a garbage data for that region.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/checkpoint.c |   20 ++++++++++----------
- fs/f2fs/f2fs.h       |    1 +
- 2 files changed, 11 insertions(+), 10 deletions(-)
+ fs/f2fs/data.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 2fc3b6b..0d78bbe 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -194,23 +194,15 @@ const struct address_space_operations f2fs_meta_aops = {
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 991e368..e0965b4 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -953,11 +953,33 @@ static int f2fs_write_end(struct file *file,
+ 	return copied;
+ }
  
- int acquire_orphan_inode(struct f2fs_sb_info *sbi)
- {
--	unsigned int max_orphans;
- 	int err = 0;
- 
--	/*
--	 * considering 512 blocks in a segment 8 blocks are needed for cp
--	 * and log segment summaries. Remaining blocks are used to keep
--	 * orphan entries with the limitation one reserved segment
--	 * for cp pack we can have max 1020*504 orphan entries
--	 */
--	max_orphans = (sbi->blocks_per_seg - 2 - NR_CURSEG_TYPE)
--				* F2FS_ORPHANS_PER_BLOCK;
- 	mutex_lock(&sbi->orphan_inode_mutex);
--	if (unlikely(sbi->n_orphans >= max_orphans))
-+	if (unlikely(sbi->n_orphans >= sbi->max_orphans))
- 		err = -ENOSPC;
- 	else
- 		sbi->n_orphans++;
- 	mutex_unlock(&sbi->orphan_inode_mutex);
++static int check_direct_IO(struct inode *inode, int rw,
++		const struct iovec *iov, loff_t offset, unsigned long nr_segs)
++{
++	unsigned blocksize_mask = inode->i_sb->s_blocksize - 1;
++	int i;
 +
- 	return err;
++	if (rw == READ)
++		return 0;
++
++	if (offset & blocksize_mask)
++		return -EINVAL;
++
++	for (i = 0; i < nr_segs; i++)
++		if (iov[i].iov_len & blocksize_mask)
++			return -EINVAL;
++	return 0;
++}
++
+ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
+ 		const struct iovec *iov, loff_t offset, unsigned long nr_segs)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = file->f_mapping->host;
++
++	if (check_direct_IO(inode, rw, iov, offset, nr_segs))
++		return 0;
++
+ 	return blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
+ 							get_data_block);
  }
- 
-@@ -834,6 +826,14 @@ void init_orphan_info(struct f2fs_sb_info *sbi)
- 	mutex_init(&sbi->orphan_inode_mutex);
- 	INIT_LIST_HEAD(&sbi->orphan_inode_list);
- 	sbi->n_orphans = 0;
-+	/*
-+	 * considering 512 blocks in a segment 8 blocks are needed for cp
-+	 * and log segment summaries. Remaining blocks are used to keep
-+	 * orphan entries with the limitation one reserved segment
-+	 * for cp pack we can have max 1020*504 orphan entries
-+	 */
-+	sbi->max_orphans = (sbi->blocks_per_seg - 2 - NR_CURSEG_TYPE)
-+				* F2FS_ORPHANS_PER_BLOCK;
- }
- 
- int __init create_checkpoint_caches(void)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1a06f0a..36211cb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -414,6 +414,7 @@ struct f2fs_sb_info {
- 	struct list_head orphan_inode_list;	/* orphan inode list */
- 	struct mutex orphan_inode_mutex;	/* for orphan inode list */
- 	unsigned int n_orphans;			/* # of orphan inodes */
-+	unsigned int max_orphans;		/* max orphan inodes */
- 
- 	/* for directory inode management */
- 	struct list_head dir_inode_list;	/* dir inode list */
 -- 
-1.7.7
+1.8.4.474.g128a96c
+
