@@ -1,119 +1,97 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 1/3 V2] f2fs: check filename length in
- recover_dentry
-Date: Thu, 26 Dec 2013 10:53:39 +0800
-Message-ID: <000001cf01e5$c9e8a7c0$5db9f740$@samsung.com>
-References: <002201ceff8c$efbd2da0$cf3788e0$@samsung.com>
- <1388012129.2101.302.camel@kjgkr>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH 2/2] f2fs: should put the dnode when NEW_ADDR is
+	detected
+Date: Thu, 26 Dec 2013 17:17:21 +0900
+Message-ID: <1388045841-32165-2-git-send-email-jaegeuk.kim@samsung.com>
+References: <1388045841-32165-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1388012129.2101.302.camel@kjgkr>
-Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1Vw69V-0000YW-2T
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 26 Dec 2013 08:18:45 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1Vw69S-0005Ag-If
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 26 Dec 2013 08:18:45 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout2.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MYE009G4N2XMB40@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 26 Dec 2013 17:18:33 +0900 (KST)
+In-reply-to: <1388045841-32165-1-git-send-email-jaegeuk.kim@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+When get_dnode_of_data() in get_data_block() returns a successful dnode, we
+should put the dnode.
+But, previously, if its data block address is equal to NEW_ADDR, we didn't do
+that, resulting in a deadlock condition.
+So, this patch splits original error conditions with this case, and then calls
+f2fs_put_dnode before finishing the function.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> Sent: Thursday, December 26, 2013 6:55 AM
-> To: Chao Yu
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; linu=
-x-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 1/3 V2] f2fs: check filename length in=
- recover_dentry
->=20
-> Hi,
->=20
-> 2013-12-23 (=EC=9B=94), 11:12 +0800, Chao Yu:
-> > In current flow, we will get Null return value of f2fs_find_entry i=
-n
-> > recover_dentry when name.len is bigger than F2FS_NAME_LEN, and then=
- we
-> > still add this inode into its dir entry.
-> > To avoid this situation, we must check filename length before we us=
-e it.
-> >
-> > Another point is that we could remove the code of checking filename=
- length
-> > In f2fs_find_entry, because f2fs_lookup will be called previously t=
-o ensure of
-> > validity of filename length.
->=20
-> The f2fs_find_entry is called by f2fs_unlink and f2fs_rename too.
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/data.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-As I check code and test, f2fs_unlink and f2fs_rename is protected by
-f2fs_lookup well.
-Oldfile/newfile/deletedfile name length is check previously in f2fs_loo=
-kup.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 0879d2a..991e368 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -626,11 +626,13 @@ static int get_data_block(struct inode *inode, sector_t iblock,
+ 	/* When reading holes, we need its node page */
+ 	set_new_dnode(&dn, inode, NULL, NULL, 0);
+ 	err = get_dnode_of_data(&dn, pgofs, mode);
+-	if (err || dn.data_blkaddr == NEW_ADDR) {
++	if (err) {
+ 		if (err == -ENOENT)
+ 			err = 0;
+ 		goto unlock_out;
+ 	}
++	if (dn.data_blkaddr == NEW_ADDR)
++		goto put_out;
+ 
+ 	if (dn.data_blkaddr != NULL_ADDR) {
+ 		map_bh(bh_result, inode->i_sb, dn.data_blkaddr);
+@@ -659,11 +661,14 @@ get_next:
+ 
+ 		set_new_dnode(&dn, inode, NULL, NULL, 0);
+ 		err = get_dnode_of_data(&dn, pgofs, mode);
+-		if (err || dn.data_blkaddr == NEW_ADDR) {
++		if (err) {
+ 			if (err == -ENOENT)
+ 				err = 0;
+ 			goto unlock_out;
+ 		}
++		if (dn.data_blkaddr == NEW_ADDR)
++			goto put_out;
++
+ 		end_offset = IS_INODE(dn.node_page) ?
+ 			ADDRS_PER_INODE(F2FS_I(inode)) : ADDRS_PER_BLOCK;
+ 	}
+-- 
+1.8.4.474.g128a96c
 
-> So, you can't remove this, instead it'd be better remove it from
-> f2fs_lookup.
 
-I think verification of filename length could not be removed from looku=
-p.
-Ever you remove it, we could create file in f2fs device with filename l=
-ength
-that vfs not supported.
-In my test, kernel seems not be stable after that kind of file created =
-in f2fs.
-
-> Thanks,
->=20
-> >
-> > V2:
-> >  o add WARN_ON() as Jaegeuk Kim suggested.
-> >
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/dir.c      |    3 ---
-> >  fs/f2fs/recovery.c |    6 ++++++
-> >  2 files changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> > index 07ad850..f0b4630 100644
-> > --- a/fs/f2fs/dir.c
-> > +++ b/fs/f2fs/dir.c
-> > @@ -190,9 +190,6 @@ struct f2fs_dir_entry *f2fs_find_entry(struct i=
-node *dir,
-> >  	unsigned int max_depth;
-> >  	unsigned int level;
-> >
-> > -	if (unlikely(namelen > F2FS_NAME_LEN))
-> > -		return NULL;
-> > -
-> >  	if (npages =3D=3D 0)
-> >  		return NULL;
-> >
-> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> > index a3f4542..4d411a2 100644
-> > --- a/fs/f2fs/recovery.c
-> > +++ b/fs/f2fs/recovery.c
-> > @@ -62,6 +62,12 @@ static int recover_dentry(struct page *ipage, st=
-ruct inode *inode)
-> >
-> >  	name.len =3D le32_to_cpu(raw_inode->i_namelen);
-> >  	name.name =3D raw_inode->i_name;
-> > +
-> > +	if (unlikely(name.len > F2FS_NAME_LEN)) {
-> > +		WARN_ON(1);
-> > +		err =3D -ENAMETOOLONG;
-> > +		goto out;
-> > +	}
-> >  retry:
-> >  	de =3D f2fs_find_entry(dir, &name, &page);
-> >  	if (de && inode->i_ino =3D=3D le32_to_cpu(de->ino))
->=20
-> --
-> Jaegeuk Kim
-> Samsung
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+------------------------------------------------------------------------------
+Rapidly troubleshoot problems before they affect your business. Most IT 
+organizations don't have a clear picture of how application performance 
+affects their revenue. With AppDynamics, you get 100% visibility into your 
+Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
+http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
