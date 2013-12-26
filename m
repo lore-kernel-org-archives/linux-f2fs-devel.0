@@ -1,86 +1,119 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 1/3 V2] f2fs: check filename length in
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 1/3 V2] f2fs: check filename length in
  recover_dentry
-Date: Thu, 26 Dec 2013 07:55:29 +0900
-Message-ID: <1388012129.2101.302.camel@kjgkr>
+Date: Thu, 26 Dec 2013 10:53:39 +0800
+Message-ID: <000001cf01e5$c9e8a7c0$5db9f740$@samsung.com>
 References: <002201ceff8c$efbd2da0$cf3788e0$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+ <1388012129.2101.302.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1VvxNg-0008FP-Rj
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 25 Dec 2013 22:56:48 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VvxNf-0000k0-0c
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 25 Dec 2013 22:56:48 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MYD004HHX2EG280@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 26 Dec 2013 07:56:38 +0900 (KST)
-In-reply-to: <002201ceff8c$efbd2da0$cf3788e0$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1388012129.2101.302.camel@kjgkr>
+Content-language: zh-cn
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: jaegeuk.kim@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgoyMDEzLTEyLTIzICjsm5QpLCAxMToxMiArMDgwMCwgQ2hhbyBZdToKPiBJbiBjdXJyZW50
-IGZsb3csIHdlIHdpbGwgZ2V0IE51bGwgcmV0dXJuIHZhbHVlIG9mIGYyZnNfZmluZF9lbnRyeSBp
-bgo+IHJlY292ZXJfZGVudHJ5IHdoZW4gbmFtZS5sZW4gaXMgYmlnZ2VyIHRoYW4gRjJGU19OQU1F
-X0xFTiwgYW5kIHRoZW4gd2UKPiBzdGlsbCBhZGQgdGhpcyBpbm9kZSBpbnRvIGl0cyBkaXIgZW50
-cnkuCj4gVG8gYXZvaWQgdGhpcyBzaXR1YXRpb24sIHdlIG11c3QgY2hlY2sgZmlsZW5hbWUgbGVu
-Z3RoIGJlZm9yZSB3ZSB1c2UgaXQuCj4gCj4gQW5vdGhlciBwb2ludCBpcyB0aGF0IHdlIGNvdWxk
-IHJlbW92ZSB0aGUgY29kZSBvZiBjaGVja2luZyBmaWxlbmFtZSBsZW5ndGgKPiBJbiBmMmZzX2Zp
-bmRfZW50cnksIGJlY2F1c2UgZjJmc19sb29rdXAgd2lsbCBiZSBjYWxsZWQgcHJldmlvdXNseSB0
-byBlbnN1cmUgb2YKPiB2YWxpZGl0eSBvZiBmaWxlbmFtZSBsZW5ndGguCgpUaGUgZjJmc19maW5k
-X2VudHJ5IGlzIGNhbGxlZCBieSBmMmZzX3VubGluayBhbmQgZjJmc19yZW5hbWUgdG9vLgpTbywg
-eW91IGNhbid0IHJlbW92ZSB0aGlzLCBpbnN0ZWFkIGl0J2QgYmUgYmV0dGVyIHJlbW92ZSBpdCBm
-cm9tCmYyZnNfbG9va3VwLgpUaGFua3MsCgo+IAo+IFYyOgo+ICBvIGFkZCBXQVJOX09OKCkgYXMg
-SmFlZ2V1ayBLaW0gc3VnZ2VzdGVkLgo+IAo+IFNpZ25lZC1vZmYtYnk6IENoYW8gWXUgPGNoYW8y
-Lnl1QHNhbXN1bmcuY29tPgo+IC0tLQo+ICBmcy9mMmZzL2Rpci5jICAgICAgfCAgICAzIC0tLQo+
-ICBmcy9mMmZzL3JlY292ZXJ5LmMgfCAgICA2ICsrKysrKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDYg
-aW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9k
-aXIuYyBiL2ZzL2YyZnMvZGlyLmMKPiBpbmRleCAwN2FkODUwLi5mMGI0NjMwIDEwMDY0NAo+IC0t
-LSBhL2ZzL2YyZnMvZGlyLmMKPiArKysgYi9mcy9mMmZzL2Rpci5jCj4gQEAgLTE5MCw5ICsxOTAs
-NiBAQCBzdHJ1Y3QgZjJmc19kaXJfZW50cnkgKmYyZnNfZmluZF9lbnRyeShzdHJ1Y3QgaW5vZGUg
-KmRpciwKPiAgCXVuc2lnbmVkIGludCBtYXhfZGVwdGg7Cj4gIAl1bnNpZ25lZCBpbnQgbGV2ZWw7
-Cj4gIAo+IC0JaWYgKHVubGlrZWx5KG5hbWVsZW4gPiBGMkZTX05BTUVfTEVOKSkKPiAtCQlyZXR1
-cm4gTlVMTDsKPiAtCj4gIAlpZiAobnBhZ2VzID09IDApCj4gIAkJcmV0dXJuIE5VTEw7Cj4gIAo+
-IGRpZmYgLS1naXQgYS9mcy9mMmZzL3JlY292ZXJ5LmMgYi9mcy9mMmZzL3JlY292ZXJ5LmMKPiBp
-bmRleCBhM2Y0NTQyLi40ZDQxMWEyIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvcmVjb3ZlcnkuYwo+
-ICsrKyBiL2ZzL2YyZnMvcmVjb3ZlcnkuYwo+IEBAIC02Miw2ICs2MiwxMiBAQCBzdGF0aWMgaW50
-IHJlY292ZXJfZGVudHJ5KHN0cnVjdCBwYWdlICppcGFnZSwgc3RydWN0IGlub2RlICppbm9kZSkK
-PiAgCj4gIAluYW1lLmxlbiA9IGxlMzJfdG9fY3B1KHJhd19pbm9kZS0+aV9uYW1lbGVuKTsKPiAg
-CW5hbWUubmFtZSA9IHJhd19pbm9kZS0+aV9uYW1lOwo+ICsKPiArCWlmICh1bmxpa2VseShuYW1l
-LmxlbiA+IEYyRlNfTkFNRV9MRU4pKSB7Cj4gKwkJV0FSTl9PTigxKTsKPiArCQllcnIgPSAtRU5B
-TUVUT09MT05HOwo+ICsJCWdvdG8gb3V0Owo+ICsJfQo+ICByZXRyeToKPiAgCWRlID0gZjJmc19m
-aW5kX2VudHJ5KGRpciwgJm5hbWUsICZwYWdlKTsKPiAgCWlmIChkZSAmJiBpbm9kZS0+aV9pbm8g
-PT0gbGUzMl90b19jcHUoZGUtPmlubykpCgotLSAKSmFlZ2V1ayBLaW0KU2Ftc3VuZwoKCgotLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0KUmFwaWRseSB0cm91Ymxlc2hvb3QgcHJvYmxlbXMgYmVmb3JlIHRo
-ZXkgYWZmZWN0IHlvdXIgYnVzaW5lc3MuIE1vc3QgSVQgCm9yZ2FuaXphdGlvbnMgZG9uJ3QgaGF2
-ZSBhIGNsZWFyIHBpY3R1cmUgb2YgaG93IGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNlIAphZmZlY3Rz
-IHRoZWlyIHJldmVudWUuIFdpdGggQXBwRHluYW1pY3MsIHlvdSBnZXQgMTAwJSB2aXNpYmlsaXR5
-IGludG8geW91ciAKSmF2YSwuTkVULCAmIFBIUCBhcHBsaWNhdGlvbi4gU3RhcnQgeW91ciAxNS1k
-YXkgRlJFRSBUUklBTCBvZiBBcHBEeW5hbWljcyBQcm8hCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVj
-bGljay5uZXQvZ2FtcGFkL2Nsaz9pZD04NDM0OTgzMSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
-dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
-dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
-dmVsCg==
+Hi,
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Thursday, December 26, 2013 6:55 AM
+> To: Chao Yu
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; linu=
+x-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 1/3 V2] f2fs: check filename length in=
+ recover_dentry
+>=20
+> Hi,
+>=20
+> 2013-12-23 (=EC=9B=94), 11:12 +0800, Chao Yu:
+> > In current flow, we will get Null return value of f2fs_find_entry i=
+n
+> > recover_dentry when name.len is bigger than F2FS_NAME_LEN, and then=
+ we
+> > still add this inode into its dir entry.
+> > To avoid this situation, we must check filename length before we us=
+e it.
+> >
+> > Another point is that we could remove the code of checking filename=
+ length
+> > In f2fs_find_entry, because f2fs_lookup will be called previously t=
+o ensure of
+> > validity of filename length.
+>=20
+> The f2fs_find_entry is called by f2fs_unlink and f2fs_rename too.
+
+As I check code and test, f2fs_unlink and f2fs_rename is protected by
+f2fs_lookup well.
+Oldfile/newfile/deletedfile name length is check previously in f2fs_loo=
+kup.
+
+> So, you can't remove this, instead it'd be better remove it from
+> f2fs_lookup.
+
+I think verification of filename length could not be removed from looku=
+p.
+Ever you remove it, we could create file in f2fs device with filename l=
+ength
+that vfs not supported.
+In my test, kernel seems not be stable after that kind of file created =
+in f2fs.
+
+> Thanks,
+>=20
+> >
+> > V2:
+> >  o add WARN_ON() as Jaegeuk Kim suggested.
+> >
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/dir.c      |    3 ---
+> >  fs/f2fs/recovery.c |    6 ++++++
+> >  2 files changed, 6 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > index 07ad850..f0b4630 100644
+> > --- a/fs/f2fs/dir.c
+> > +++ b/fs/f2fs/dir.c
+> > @@ -190,9 +190,6 @@ struct f2fs_dir_entry *f2fs_find_entry(struct i=
+node *dir,
+> >  	unsigned int max_depth;
+> >  	unsigned int level;
+> >
+> > -	if (unlikely(namelen > F2FS_NAME_LEN))
+> > -		return NULL;
+> > -
+> >  	if (npages =3D=3D 0)
+> >  		return NULL;
+> >
+> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > index a3f4542..4d411a2 100644
+> > --- a/fs/f2fs/recovery.c
+> > +++ b/fs/f2fs/recovery.c
+> > @@ -62,6 +62,12 @@ static int recover_dentry(struct page *ipage, st=
+ruct inode *inode)
+> >
+> >  	name.len =3D le32_to_cpu(raw_inode->i_namelen);
+> >  	name.name =3D raw_inode->i_name;
+> > +
+> > +	if (unlikely(name.len > F2FS_NAME_LEN)) {
+> > +		WARN_ON(1);
+> > +		err =3D -ENAMETOOLONG;
+> > +		goto out;
+> > +	}
+> >  retry:
+> >  	de =3D f2fs_find_entry(dir, &name, &page);
+> >  	if (de && inode->i_ino =3D=3D le32_to_cpu(de->ino))
+>=20
+> --
+> Jaegeuk Kim
+> Samsung
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
