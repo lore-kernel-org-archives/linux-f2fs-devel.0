@@ -1,96 +1,94 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH V2] f2fs: avoid to read inline data except first
-	page
-Date: Mon, 30 Dec 2013 18:36:23 +0800
-Message-ID: <000701cf054b$1db23ca0$5916b5e0$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/6] f2fs: convert inline_data for punch_hole
+Date: Tue, 31 Dec 2013 14:08:24 +0800
+Message-ID: <000001cf05ee$d8bd8c90$8a38a5b0$@samsung.com>
+References: <1388116820-15038-1-git-send-email-jaegeuk.kim@samsung.com>
+ <1388116820-15038-2-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1VxaE9-0004Zs-5k
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 30 Dec 2013 10:37:41 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1VxaE7-000679-9T
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 30 Dec 2013 10:37:41 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0MYM00LG58676750@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 30 Dec 2013 19:37:19 +0900 (KST)
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1388116820-15038-2-git-send-email-jaegeuk.kim@samsung.com>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: '???' <jaegeuk.kim@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk.kim@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Here is a case which could read inline page data not from first page.
+Hi,
 
-1. write inline data
-2. lseek to offset 4096
-3. read 4096 bytes from offset 4096
-	(read_inline_data read inline data page to non-first page,
-	And previously VFS has add this page to page cache)
-4. ftruncate offset 8192
-5. read 4096 bytes from offset 4096
-	(we meet this updated page with inline data in cache)
+One comment as following.
 
-So we should leave this page with inited data and uptodate flag
-for this case.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
+> Sent: Friday, December 27, 2013 12:00 PM
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] [PATCH 2/6] f2fs: convert inline_data for punch_hole
+> 
+> In the punch_hole(), let's convert inline_data all the time for simplicity and
+> to avoid potential deadlock conditions.
+> It is pretty much not a big deal to do this.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 
-Change log from v1:
- o fix a deadlock bug
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/inline.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+> ---
+>  fs/f2fs/file.c | 22 +++-------------------
+>  1 file changed, 3 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 7ef2d6a..f64a1c8 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -462,25 +462,9 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>  	loff_t off_start, off_end;
+>  	int ret = 0;
+> 
+> -	if (f2fs_has_inline_data(inode)) {
+> -		struct page *page;
+> -		unsigned flags = AOP_FLAG_NOFS;
+> -		page = grab_cache_page_write_begin(inode->i_mapping, 0, flags);
+> -		if (IS_ERR(page))
+> -			return PTR_ERR(page);
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 5d121d7..69a923e 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -39,6 +39,11 @@ int f2fs_read_inline_data(struct inode *inode, struct page *page)
- 	struct page *ipage;
- 	void *src_addr, *dst_addr;
- 
-+	if (page->index) {
-+		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
-+		goto out;
-+	}
-+
- 	ipage = get_node_page(sbi, inode->i_ino);
- 	if (IS_ERR(ipage))
- 		return PTR_ERR(ipage);
-@@ -52,6 +57,7 @@ int f2fs_read_inline_data(struct inode *inode, struct page *page)
- 	kunmap(page);
- 	f2fs_put_page(ipage, 1);
- 
-+out:
- 	SetPageUptodate(page);
- 	unlock_page(page);
- 
--- 
-1.7.9.5
+We use following code because grab_cache_page_write_begin only use
+NULL value as its error number.
 
+	if (!page)
+		return -ENOMEM;
 
-------------------------------------------------------------------------------
-Rapidly troubleshoot problems before they affect your business. Most IT 
-organizations don't have a clear picture of how application performance 
-affects their revenue. With AppDynamics, you get 100% visibility into your 
-Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
-http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
+> -		if (offset + len > MAX_INLINE_DATA) {
+> -			ret = f2fs_convert_inline_data(inode, page, flags);
+> -			f2fs_put_page(page, 1);
+> -			if (ret)
+> -				return ret;
+> -		} else {
+> -			zero_user_segment(page, offset, offset + len);
+> -			SetPageUptodate(page);
+> -			set_page_dirty(page);
+> -			f2fs_put_page(page, 1);
+> -			return ret;
+> -		}
+> -	}
+> +	ret = f2fs_convert_inline_data(inode, NULL, AOP_FLAG_NOFS);
+> +	if (ret)
+> +		return ret;
+> 
+>  	pg_start = ((unsigned long long) offset) >> PAGE_CACHE_SHIFT;
+>  	pg_end = ((unsigned long long) offset + len) >> PAGE_CACHE_SHIFT;
+> --
+> 1.8.4.474.g128a96c
+> 
+> 
+> ------------------------------------------------------------------------------
+> Rapidly troubleshoot problems before they affect your business. Most IT
+> organizations don't have a clear picture of how application performance
+> affects their revenue. With AppDynamics, you get 100% visibility into your
+> Java,.NET, & PHP application. Start your 15-day FREE TRIAL of AppDynamics Pro!
+> http://pubads.g.doubleclick.net/gampad/clk?id=84349831&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
