@@ -1,75 +1,108 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 2/6] f2fs: convert inline_data for punch_hole
-Date: Mon, 06 Jan 2014 16:41:53 +0900
-Message-ID: <1388994113.2101.312.camel@kjgkr>
-References: <1388116820-15038-1-git-send-email-jaegeuk.kim@samsung.com>
- <1388116820-15038-2-git-send-email-jaegeuk.kim@samsung.com>
- <000001cf05ee$d8bd8c90$8a38a5b0$@samsung.com>
+Subject: Re: assertion failed
+Date: Tue, 07 Jan 2014 10:01:58 +0900
+Message-ID: <1389056518.3035.2.camel@kjgkr>
+References: <20140102145632.GI8406@belle.intranet.vanheusden.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <000001cf05ee$d8bd8c90$8a38a5b0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1W0L4l-0001Nq-JZ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 07 Jan 2014 01:03:23 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1W0L4j-0002oH-A6
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 07 Jan 2014 01:03:23 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MZ000AHGAXDBO80@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 07 Jan 2014 10:03:13 +0900 (KST)
+In-reply-to: <20140102145632.GI8406@belle.intranet.vanheusden.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: folkert <folkert@vanheusden.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
-
-2013-12-31 (=ED=99=94), 14:08 +0800, Chao Yu:
-> Hi,
->=20
-> One comment as following.
->=20
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> > Sent: Friday, December 27, 2013 12:00 PM
-> > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; li=
-nux-f2fs-devel@lists.sourceforge.net
-> > Subject: [f2fs-dev] [PATCH 2/6] f2fs: convert inline_data for punch=
-_hole
-> >=20
-> > In the punch_hole(), let's convert inline_data all the time for sim=
-plicity and
-> > to avoid potential deadlock conditions.
-> > It is pretty much not a big deal to do this.
-> >=20
-> > Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
->=20
-> Reviewed-by: Chao Yu <chao2.yu@samsung.com>
->=20
-> > ---
-> >  fs/f2fs/file.c | 22 +++-------------------
-> >  1 file changed, 3 insertions(+), 19 deletions(-)
-> >=20
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 7ef2d6a..f64a1c8 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -462,25 +462,9 @@ static int punch_hole(struct inode *inode, lof=
-f_t offset, loff_t len)
-> >  	loff_t off_start, off_end;
-> >  	int ret =3D 0;
-> >=20
-> > -	if (f2fs_has_inline_data(inode)) {
-> > -		struct page *page;
-> > -		unsigned flags =3D AOP_FLAG_NOFS;
-> > -		page =3D grab_cache_page_write_begin(inode->i_mapping, 0, flags)=
-;
-> > -		if (IS_ERR(page))
-> > -			return PTR_ERR(page);
->=20
-> We use following code because grab_cache_page_write_begin only use
-> NULL value as its error number.
-
-Right. :)
-Applied to the following patch:
-f2fs: refactor f2fs_convert_inline_data.
-
-Thanks,
-
---=20
-Jaegeuk Kim
-Samsung
+SGksCgpUaGFuayB5b3UgZm9yIHRoZSByZXBvcnQuCkNvdWxkIHlvdSBwdWxsIHRoZSBsYXN0ZXN0
+IGYyZnMtdG9vbHMgYW5kIHRoZW4gdGVzdCB0aGlzIGFnYWluPwpUaGFua3MsCgoyMDE0LTAxLTAy
+ICjrqqkpLCAxNTo1NiArMDEwMCwgZm9sa2VydDoKPiBIaSwKPiAKPiBXaGlsZSBydW5uaW5nIGZz
+Y2suZjJmcyBJIGdldCBhbiBhc3NlcnRpb24uIFRoaXMgaXMgd2l0aCB0aGUgZjJmcyBmcm9tCj4g
+Z2l0IGZyb20gaGFsZiBhbiBob3VyIGFnbzoKPiAKPiArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rCj4gfCBDaGVja3BvaW50ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfAo+ICstLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsKPiBjaGVja3BvaW50X3Zl
+ciAgICAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICA0YTcgOiAxMTkxXQo+IHVzZXJfYmxv
+Y2tfY291bnQgICAgICAgICAgICAgICAgICAgICAgICBbMHggMWJjY2UwMCA6IDI5MTUwNzIwXQo+
+IHZhbGlkX2Jsb2NrX2NvdW50ICAgICAgICAgICAgICAgICAgICAgICBbMHggMTk3NjllMiA6IDI2
+NzAwMjU4XQo+IHJzdmRfc2VnbWVudF9jb3VudCAgICAgICAgICAgICAgICAgICAgICBbMHggICAg
+ICAzMCA6IDQ4XQo+IG92ZXJwcm92X3NlZ21lbnRfY291bnQgICAgICAgICAgICAgICAgICBbMHgg
+ICAgIGJlNCA6IDMwNDRdCj4gZnJlZV9zZWdtZW50X2NvdW50ICAgICAgICAgICAgICAgICAgICAg
+IFsweCAgICAxZTdmIDogNzgwN10KPiBhbGxvY190eXBlW0NVUlNFR19IT1RfTk9ERV0gICAgICAg
+ICAgICAgWzB4ICAgICAgIDAgOiAwXQo+IGFsbG9jX3R5cGVbQ1VSU0VHX1dBUk1fTk9ERV0gICAg
+ICAgICAgICBbMHggICAgICAgMCA6IDBdCj4gYWxsb2NfdHlwZVtDVVJTRUdfQ09MRF9OT0RFXSAg
+ICAgICAgICAgIFsweCAgICAgICAwIDogMF0KPiBjdXJfbm9kZV9zZWdub1swXSAgICAgICAgICAg
+ICAgICAgICAgICAgWzB4ICAgIGRmOTkgOiA1NzI0MV0KPiBjdXJfbm9kZV9zZWdub1sxXSAgICAg
+ICAgICAgICAgICAgICAgICAgWzB4ICAgIGRmOTEgOiA1NzIzM10KPiBjdXJfbm9kZV9zZWdub1sy
+XSAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgIGQ1NjUgOiA1NDYyOV0KPiBjdXJfbm9kZV9i
+bGtvZmZbMF0gICAgICAgICAgICAgICAgICAgICAgWzB4ICAgICAxYTQgOiA0MjBdCj4gY3VyX25v
+ZGVfYmxrb2ZmWzFdICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgMWE1IDogNDIxXQo+IGN1
+cl9ub2RlX2Jsa29mZlsyXSAgICAgICAgICAgICAgICAgICAgICBbMHggICAgICAgNyA6IDddCj4g
+YWxsb2NfdHlwZVtDVVJTRUdfSE9UX0RBVEFdICAgICAgICAgICAgIFsweCAgICAgICAwIDogMF0K
+PiBhbGxvY190eXBlW0NVUlNFR19XQVJNX0RBVEFdICAgICAgICAgICAgWzB4ICAgICAgIDAgOiAw
+XQo+IGFsbG9jX3R5cGVbQ1VSU0VHX0NPTERfREFUQV0gICAgICAgICAgICBbMHggICAgICAgMCA6
+IDBdCj4gY3VyX2RhdGFfc2Vnbm9bMF0gICAgICAgICAgICAgICAgICAgICAgIFsweCAgICBkZmVm
+IDogNTczMjddCj4gY3VyX2RhdGFfc2Vnbm9bMV0gICAgICAgICAgICAgICAgICAgICAgIFsweCAg
+ICBhNTMxIDogNDIyODldCj4gY3VyX2RhdGFfc2Vnbm9bMl0gICAgICAgICAgICAgICAgICAgICAg
+IFsweCAgICBhNzBkIDogNDI3NjVdCj4gY3VyX2RhdGFfYmxrb2ZmWzBdICAgICAgICAgICAgICAg
+ICAgICAgIFsweCAgICAgIDYzIDogOTldCj4gY3VyX2RhdGFfYmxrb2ZmWzFdICAgICAgICAgICAg
+ICAgICAgICAgIFsweCAgICAgMTNhIDogMzE0XQo+IGN1cl9kYXRhX2Jsa29mZlsyXSAgICAgICAg
+ICAgICAgICAgICAgICBbMHggICAgICBjMyA6IDE5NV0KPiBja3B0X2ZsYWdzICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgWzB4ICAgICAgIDUgOiA1XQo+IGNwX3BhY2tfdG90YWxfYmxvY2tf
+Y291bnQgICAgICAgICAgICAgICBbMHggICAgICAgNyA6IDddCj4gY3BfcGFja19zdGFydF9zdW0g
+ICAgICAgICAgICAgICAgICAgICAgIFsweCAgICAgICAxIDogMV0KPiB2YWxpZF9ub2RlX2NvdW50
+ICAgICAgICAgICAgICAgICAgICAgICAgWzB4ICAgZTM1OWYgOiA5MzEyMzFdCj4gdmFsaWRfaW5v
+ZGVfY291bnQgICAgICAgICAgICAgICAgICAgICAgIFsweCAgIGRlNzdjIDogOTExMjI4XQo+IG5l
+eHRfZnJlZV9uaWQgICAgICAgICAgICAgICAgICAgICAgICAgICBbMHggIDExZjE2YyA6IDExNzU5
+MTZdCj4gc2l0X3Zlcl9iaXRtYXBfYnl0ZXNpemUgICAgICAgICAgICAgICAgIFsweCAgICAgIGMw
+IDogMTkyXQo+IG5hdF92ZXJfYml0bWFwX2J5dGVzaXplICAgICAgICAgICAgICAgICBbMHggICAg
+IGU4MCA6IDM3MTJdCj4gY2hlY2tzdW1fb2Zmc2V0ICAgICAgICAgICAgICAgICAgICAgICAgIFsw
+eCAgICAgZmZjIDogNDA5Ml0KPiBlbGFwc2VkX3RpbWUgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgWzB4ICA3ZjViNmEgOiA4MzQ2NDc0XQo+IHNpdF9uYXRfdmVyc2lvbl9iaXRtYXBbMF0gICAg
+ICAgICAgICAgICBbMHggICAgICA0MCA6IDY0XQo+IAo+IAo+IFtidWlsZF9uYXRfYXJlYV9iaXRt
+YXA6MTAzMV0gdmFsaWQgbmF0IGVudHJpZXMgKGJsb2NrX2FkZHIgIT0gMHgwKSBbMHgKPiBlNTIw
+ZiA6IDkzODUxMV0KPiBbYnVpbGRfc2l0X2FyZWFfYml0bWFwOiA5MzddIEJsb2NrcyBbMHgxOTc2
+OWUyXSBGcmVlIFNlZ3MgWzB4MWU3Zl0KPiBbZnNja19jaGtfZGVudHJ5X2JsazogNTQ3XSBbICA0
+XSBEZW50cnkgQmxvY2sgWzB4MWEzOTgwYV0gRG9uZSA6Cj4gZGVudHJpZXM6MyBpbiAyMTQgc2xv
+dHMgKGxlbjoyNTUpCj4gCj4gW2ZzY2tfY2hrX2lub2RlX2JsazogMzc3XSBEaXJlY3RvcnkgSW5v
+ZGU6IGlubzogZDMgbmFtZTogc2FuZHJhIGRlcHRoOiAxCj4gY2hpbGQgZmlsZXM6IDMKPiAKPiAK
+PiBBc3NlcnRpb24gZmFpbGVkIQo+IFtmc2NrX2Noa19kZW50cnlfYmxrOiA1MDldIGxlMzJfdG9f
+Y3B1KGRlX2Jsay0+ZGVudHJ5W2ldLmhhc2hfY29kZSkgPT0KPiBoYXNoX2NvZGUKPiAKPiAKPiAK
+PiBGb2xrZXJ0IHZhbiBIZXVzZGVuCj4gCgotLSAKSmFlZ2V1ayBLaW0KU2Ftc3VuZwoKCgotLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0KUmFwaWRseSB0cm91Ymxlc2hvb3QgcHJvYmxlbXMgYmVmb3JlIHRo
+ZXkgYWZmZWN0IHlvdXIgYnVzaW5lc3MuIE1vc3QgSVQgCm9yZ2FuaXphdGlvbnMgZG9uJ3QgaGF2
+ZSBhIGNsZWFyIHBpY3R1cmUgb2YgaG93IGFwcGxpY2F0aW9uIHBlcmZvcm1hbmNlIAphZmZlY3Rz
+IHRoZWlyIHJldmVudWUuIFdpdGggQXBwRHluYW1pY3MsIHlvdSBnZXQgMTAwJSB2aXNpYmlsaXR5
+IGludG8geW91ciAKSmF2YSwuTkVULCAmIFBIUCBhcHBsaWNhdGlvbi4gU3RhcnQgeW91ciAxNS1k
+YXkgRlJFRSBUUklBTCBvZiBBcHBEeW5hbWljcyBQcm8hCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVj
+bGljay5uZXQvZ2FtcGFkL2Nsaz9pZD04NDM0OTgzMSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
+dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
+dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
+dmVsCg==
