@@ -1,30 +1,121 @@
-From: Christoph Hellwig <hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH 00/21] Consolidate Posix ACL implementation V3
-Date: Tue, 7 Jan 2014 07:53:24 -0800
-Message-ID: <20140107155324.GA24113@infradead.org>
-References: <20131220131635.650823732@bombadil.infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131220131635.650823732-PfSpb0PWhxZc2C7mugBRk2EX/6BAtgUQ@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org
-Cc: linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>, Joel Becker <jlbec-aKy9MeLSZ9dg9hUCZPvPmw@public.gmane.org>, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xfs-VZNHf3L845pBDgjK7y7TUQ@public.gmane.org, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andreas Gruenbacher <andreas.gruenbacher-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH 1/2] f2fs: improve write performance under frequent fsync calls
+Date: Wed, 08 Jan 2014 14:45:01 +0900
+Message-ID: <1389159902-25491-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, Dec 20, 2013 at 05:16:35AM -0800, Christoph Hellwig wrote:
-> This series consolidates the various cut'n'pasted Posix ACL implementations
-> into a single common one based on the ->get_acl method Linus added a while
-> ago and a new ->set_acl counterpart.
-> 
-> This remove ~1800 lines of code and provides a single place to implement
-> various nasty little gems of the semantics.
+When considering a bunch of data writes with very frequent fsync calls, we
+are able to think the following performance regression.
 
-Any more comments?  Al, what's the best way to make sure this doesn't
-miss 3.14?
+N: Node IO, D: Data IO, IO scheduler: cfq
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Issue    pending IOs
+	 D1 D2 D3 D4
+ D1         D2 D3 D4 N1
+ D2            D3 D4 N1 N2
+ N1            D3 D4 N2 D1
+ --> N1 can be selected by cfq becase of the same priority of N and D.
+     Then D3 and D4 would be delayed, resuling in performance degradation.
+
+So, when processing the fsync call, it'd better give higher priority to data IOs
+than node IOs by assigning WRITE and WRITE_SYNC respectively.
+This patch improves the random wirte performance with frequent fsync calls by up
+to 10%.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/f2fs.h    | 4 ++--
+ fs/f2fs/file.c    | 2 +-
+ fs/f2fs/node.c    | 7 ++++++-
+ fs/f2fs/segment.c | 8 ++------
+ 4 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 07a7ae0..b69f190 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1118,8 +1118,8 @@ int npages_for_summary_flush(struct f2fs_sb_info *);
+ void allocate_new_segments(struct f2fs_sb_info *);
+ struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
+ void write_meta_page(struct f2fs_sb_info *, struct page *);
+-void write_node_page(struct f2fs_sb_info *, struct page *, unsigned int,
+-					block_t, block_t *);
++void write_node_page(struct f2fs_sb_info *, struct page *,
++		struct f2fs_io_info *, unsigned int, block_t, block_t *);
+ void write_data_page(struct page *, struct dnode_of_data *, block_t *,
+ 					struct f2fs_io_info *);
+ void rewrite_data_page(struct page *, block_t, struct f2fs_io_info *);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c77ad4d..14511b0 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -115,7 +115,7 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 	int ret = 0;
+ 	bool need_cp = false;
+ 	struct writeback_control wbc = {
+-		.sync_mode = WB_SYNC_ALL,
++		.sync_mode = WB_SYNC_NONE,
+ 		.nr_to_write = LONG_MAX,
+ 		.for_reclaim = 0,
+ 	};
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 0230326..b8c9301 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1194,6 +1194,10 @@ static int f2fs_write_node_page(struct page *page,
+ 	nid_t nid;
+ 	block_t new_addr;
+ 	struct node_info ni;
++	struct f2fs_io_info fio = {
++		.type = NODE,
++		.rw = (wbc->sync_mode == WB_SYNC_ALL) ? WRITE_SYNC: WRITE,
++	};
+ 
+ 	if (unlikely(sbi->por_doing))
+ 		goto redirty_out;
+@@ -1218,7 +1222,7 @@ static int f2fs_write_node_page(struct page *page,
+ 
+ 	mutex_lock(&sbi->node_write);
+ 	set_page_writeback(page);
+-	write_node_page(sbi, page, nid, ni.blk_addr, &new_addr);
++	write_node_page(sbi, page, &fio, nid, ni.blk_addr, &new_addr);
+ 	set_node_addr(sbi, &ni, new_addr);
+ 	dec_page_count(sbi, F2FS_DIRTY_NODES);
+ 	mutex_unlock(&sbi->node_write);
+@@ -1253,6 +1257,7 @@ static int f2fs_write_node_pages(struct address_space *mapping,
+ 
+ 	/* if mounting is failed, skip writing node pages */
+ 	wbc->nr_to_write = 3 * max_hw_blocks(sbi);
++	wbc->sync_mode = WB_SYNC_NONE;
+ 	sync_node_pages(sbi, 0, wbc);
+ 	wbc->nr_to_write = nr_to_write - (3 * max_hw_blocks(sbi) -
+ 						wbc->nr_to_write);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 555ae76..5f84639 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -924,16 +924,12 @@ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page)
+ }
+ 
+ void write_node_page(struct f2fs_sb_info *sbi, struct page *page,
++		struct f2fs_io_info *fio,
+ 		unsigned int nid, block_t old_blkaddr, block_t *new_blkaddr)
+ {
+ 	struct f2fs_summary sum;
+-	struct f2fs_io_info fio = {
+-		.type = NODE,
+-		.rw = WRITE_SYNC,
+-	};
+-
+ 	set_summary(&sum, nid, 0, 0);
+-	do_write_page(sbi, page, old_blkaddr, new_blkaddr, &sum, &fio);
++	do_write_page(sbi, page, old_blkaddr, new_blkaddr, &sum, fio);
+ }
+ 
+ void write_data_page(struct page *page, struct dnode_of_data *dn,
+-- 
+1.8.4.474.g128a96c
+
