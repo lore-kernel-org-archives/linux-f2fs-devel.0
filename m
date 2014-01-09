@@ -1,57 +1,92 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [patch] f2fs: checking for IS_ERR() instead of NULL
-Date: Thu, 09 Jan 2014 18:56:27 +0900
-Message-ID: <1389261387.3035.7.camel@kjgkr>
-References: <20140109052825.GB1265@elgon.mountain>
-Reply-To: jaegeuk.kim@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-reply-to: <20140109052825.GB1265@elgon.mountain>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, kernel-janitors@vger.kernel.org
+Subject: [PATCH] f2fs: update documents and a MAINTAINERS entry
+Date: Thu, 09 Jan 2014 21:03:06 +0900
+Message-ID: <1389268986-20014-1-git-send-email-jaegeuk.kim@samsung.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Thank you for the patch.
-This was already fixed in the original patch with an issue trigger by
-Chao Yu before.
-I rebased it before, so that it seems you need to pull the f2fs again.
-Thanks,
+This patch adds missing some description of sysfs entries in
+ - Documentation/ABI/testing/sysfs-fs-f2fs
+ - Documentation/filesystems/f2fs.txt.
 
-2014-01-09 (=EB=AA=A9), 08:28 +0300, Dan Carpenter:
-> grab_cache_page_write_begin() returns NULL on error, it doesn't retur=
-n
-> error pointers.
->=20
-> Fixes: e18c65b2ac91 ('f2fs: key functions to handle inline data')
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 69a923e38f0c..e0d800a1d79f 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -131,8 +131,8 @@ int f2fs_convert_inline_data(struct inode *inode,=
- pgoff_t to_size)
->  		return 0;
-> =20
->  	page =3D grab_cache_page_write_begin(inode->i_mapping, 0, AOP_FLAG_=
-NOFS);
-> -	if (IS_ERR(page))
-> -		return PTR_ERR(page);
-> +	if (!page)
-> +		return -ENOMEM;
-> =20
->  	err =3D __f2fs_convert_inline_data(inode, page);
->  	f2fs_put_page(page, 1);
+And it adds a maintained document entry of F2FS in MAINTAINERS.
 
---=20
-Jaegeuk Kim
-Samsung
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs | 31 +++++++++++++++++++++++++++++++
+ Documentation/filesystems/f2fs.txt      |  5 +++++
+ MAINTAINERS                             |  1 +
+ 3 files changed, 37 insertions(+)
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janito=
-rs" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 31942ef..32b0809 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -24,3 +24,34 @@ Date:		July 2013
+ Contact:	"Namjae Jeon" <namjae.jeon@samsung.com>
+ Description:
+ 		 Controls the victim selection policy for garbage collection.
++
++What:		/sys/fs/f2fs/<disk>/reclaim_segments
++Date:		October 2013
++Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
++Description:
++		 Controls the issue rate of segment discard commands.
++
++What:		/sys/fs/f2fs/<disk>/ipu_policy
++Date:		November 2013
++Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
++Description:
++		 Controls the in-place-update policy.
++
++What:		/sys/fs/f2fs/<disk>/min_ipu_util
++Date:		November 2013
++Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
++Description:
++		 Controls the FS utilization condition for the in-place-update
++		 policies.
++
++What:		/sys/fs/f2fs/<disk>/max_small_discards
++Date:		November 2013
++Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
++Description:
++		 Controls the issue rate of small discard commands.
++
++What:		/sys/fs/f2fs/<disk>/max_victim_search
++Date:		January 2014
++Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
++Description:
++		 Controls the number of trials to find a victim segment.
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 998e698..b8d2849 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -190,6 +190,11 @@ Files in /sys/fs/f2fs/<devname>
+                               of the filesystem utilization, and used by
+                               F2FS_IPU_UTIL and F2FS_IPU_SSR_UTIL policies.
+ 
++ max_victim_search	      This parameter controls the number of trials to
++			      find a victim segment when conducting SSR and
++			      cleaning operations. The default value is 4096
++			      which covers 8GB block address range.
++
+ ================================================================================
+ USAGE
+ ================================================================================
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d5e4ff3..bd58e8e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3629,6 +3629,7 @@ W:	http://en.wikipedia.org/wiki/F2FS
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+ S:	Maintained
+ F:	Documentation/filesystems/f2fs.txt
++F:	Documentation/ABI/testing/sysfs-fs-f2fs
+ F:	fs/f2fs/
+ F:	include/linux/f2fs_fs.h
+ 
+-- 
+1.8.4.474.g128a96c
+
