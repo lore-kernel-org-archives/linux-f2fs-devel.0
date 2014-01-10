@@ -1,22 +1,22 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH 1/3] f2fs: move grabing orphan pages out of
+Subject: [PATCH 2/3] f2fs: move alloc new orphan node out of lock
  protection region
-Date: Fri, 10 Jan 2014 18:09:02 +0800
-Message-ID: <52CFC6BE.7020609@cn.fujitsu.com>
+Date: Fri, 10 Jan 2014 18:09:08 +0800
+Message-ID: <52CFC6C4.7030309@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1W1Z8n-0006Qs-1C
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1W1Z8o-0007j6-Ef
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Jan 2014 10:16:37 +0000
+	Fri, 10 Jan 2014 10:16:38 +0000
 Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1W1Z8l-0001Eb-3e for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Jan 2014 10:16:36 +0000
+	id 1W1Z8n-0001Eb-Kn for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 10 Jan 2014 10:16:38 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,8 +29,7 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Kim <jaegeuk.kim@samsung.com>
 Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-Move grabing orphan block page out of protection region, and grab all
-the orphan block pages ahead.
+Move alloc new orphan node out of lock protection region.
 
 Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
@@ -38,41 +37,45 @@ Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
  1 files changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 0d78bbe..af92c74 100644
+index af92c74..007f64c 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -303,22 +303,25 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- {
- 	struct list_head *head;
- 	struct f2fs_orphan_block *orphan_blk = NULL;
--	struct page *page = NULL;
- 	unsigned int nentries = 0;
--	unsigned short index = 1;
--	unsigned short orphan_blocks;
-+	unsigned short index;
-+	unsigned short orphan_blocks = (unsigned short)((sbi->n_orphans +
-+		(F2FS_ORPHANS_PER_BLOCK - 1)) / F2FS_ORPHANS_PER_BLOCK);
-+	struct page *page = NULL;
-+	struct page *pages[orphan_blocks];
- 	struct orphan_inode_entry *orphan = NULL;
+@@ -219,26 +219,29 @@ void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ 	struct list_head *head, *this;
+ 	struct orphan_inode_entry *new = NULL, *orphan = NULL;
  
--	orphan_blocks = (unsigned short)((sbi->n_orphans +
--		(F2FS_ORPHANS_PER_BLOCK - 1)) / F2FS_ORPHANS_PER_BLOCK);
-+	for (index = 0; index < orphan_blocks; index++)
-+		pages[index] = grab_meta_page(sbi, start_blk + index);
- 
-+	index = 1;
++	new = f2fs_kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
++	new->ino = ino;
++
  	mutex_lock(&sbi->orphan_inode_mutex);
  	head = &sbi->orphan_inode_list;
+ 	list_for_each(this, head) {
+ 		orphan = list_entry(this, struct orphan_inode_entry, list);
+-		if (orphan->ino == ino)
+-			goto out;
++		if (orphan->ino == ino) {
++			mutex_unlock(&sbi->orphan_inode_mutex);
++			kmem_cache_free(orphan_entry_slab, new);
++			return;
++		}
++
+ 		if (orphan->ino > ino)
+ 			break;
+ 		orphan = NULL;
+ 	}
  
- 	/* loop for each orphan inode entry and write them in Jornal block */
- 	list_for_each_entry(orphan, head, list) {
- 		if (!page) {
--			page = grab_meta_page(sbi, start_blk);
-+			page = pages[index - 1];
- 			orphan_blk =
- 				(struct f2fs_orphan_block *)page_address(page);
- 			memset(orphan_blk, 0, sizeof(*orphan_blk));
+-	new = f2fs_kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
+-	new->ino = ino;
+-
+ 	/* add new_oentry into list which is sorted by inode number */
+ 	if (orphan)
+ 		list_add(&new->list, this->prev);
+ 	else
+ 		list_add_tail(&new->list, head);
+-out:
+ 	mutex_unlock(&sbi->orphan_inode_mutex);
+ }
+ 
 -- 
 1.7.7
 
