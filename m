@@ -1,32 +1,23 @@
-From: angela57132@googlemail.com
-Subject: Re: LOCAL MAP OPTIMIZATION FOR : mail-archive.com (Less
- Than $99/Month)
-Date: Mon, 20 Jan 2014 22:09:51 +0530
-Message-ID: <52dd5156.88a3420a.5414.ffffbc9d@mx.google.com>
-Reply-To: LORI76557@gmail.com
+From: Editor IJTEMT<noreply@ijtemt.org>
+Subject: [SPAM] Call For Papers. Kindly impart in your
+	University/Organization/College/Colleagues/Academia/Circle
+Date: 20 Jan 2014 16:59:41 +0000
+Message-ID: <20140120165939.5372EF4556F8B838@ijtemt.org>
+Reply-To: noreply@ijtemt.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============6782487699825070339=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <angela57132@googlemail.com>) id 1W5HtG-0007Ya-7g
+	(envelope-from <noreply@ijtemt.org>) id 1W5ICe-0000Dg-DE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Jan 2014 16:39:58 +0000
-Received: from mail-pd0-f196.google.com ([209.85.192.196])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1W5HtF-0001ew-A8
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Jan 2014 16:39:58 +0000
-Received: by mail-pd0-f196.google.com with SMTP id y10so2411125pdj.7
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 20 Jan 2014 08:39:51 -0800 (PST)
-Received: from localhost.localdomain ([124.253.33.120])
-	by mx.google.com with ESMTPSA id yi8sm7571742pab.16.2014.01.20.08.39.48
-	for <linux-f2fs-devel@lists.sourceforge.net>
-	(version=TLSv1 cipher=RC4-SHA bits=128/128);
-	Mon, 20 Jan 2014 08:39:50 -0800 (PST)
+	Mon, 20 Jan 2014 17:00:00 +0000
+Received: from ec2-54-254-162-181.ap-southeast-1.compute.amazonaws.com
+	([54.254.162.181] helo=ijtemt.org)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1W5ICZ-0000nR-4E for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 20 Jan 2014 17:00:00 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,60 +29,146 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-Good Morning Sir / Mam
+--===============6782487699825070339==
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Is your business ranking in local maps shown on PAGE 1 of google ? With new
-google policies they have specifically asked local business owners to
-optimize their website for local maps rather than JUST organics. Do you know
-the reason why you are not ranked well on google MAPs or why there is drop
-in your website rankings? Prime reason for bad rankings for a busniess is
-lack of local presence and local citations ie getting your business listed
-on directories like YELP, MANTA & Many more. These websites not just give
-your business a push but also help you Maintain a good Online Reputation.
+<BODY scroll=3Dauto><P align=3Dcenter><FONT color=3Dblue><STRONG><FONT colo=
+r=3Dred>INTERNATIONAL JOURNAL OF TRENDS IN ECONOMICS MANAGEMENT &amp; TECHN=
+OLOGY </FONT><BR>IJTEMT invites you to submit your research paper for publi=
+shing in Volume III, Issue I (JANUARY 2014). <BR><U>CALL FOR PAPERS VOLUME =
+III, ISSUE I</U> </STRONG></FONT></P>
+<P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http://goo.gl/K1=
+SsW1">www.ijtemt.org</A></FONT></STRONG></P><STRONG><FONT color=3D#0000ff><=
+/FONT></STRONG>
+<P align=3Dleft>INDEXED IN: <A href=3D"http://goo.gl/K1SsW1" target=3D_blan=
+k>Google Scholar</A>, <A href=3D"http://goo.gl/K1SsW1" target=3D_blank>.doc=
+stoc</A>, <A href=3D"http://goo.gl/K1SsW1" target=3D_blank>slideshare</A>, =
+<A href=3D"http://goo.gl/K1SsW1" target=3D_blank>Scribd</A>, <A href=3D"htt=
+p://goo.gl/K1SsW1" target=3D_blank>J-Gate</A>, <A href=3D"http://goo.gl/K1S=
+sW1" target=3D_blank>Academia.edu</A>, <A href=3D"http://goo.gl/K1SsW1" tar=
+get=3D_blank>Directory of Open Journals</A>, <A href=3D"http://goo.gl/K1SsW=
+1" target=3D_blank>Bielefeld Academic Search Engine</A>, <A href=3D"http://=
+goo.gl/K1SsW1" target=3D_blank>ulrichsweb.com(TM) -- The Global Source for =
+Periodicals</A></P>
+<P align=3Dleft><BR><STRONG><FONT color=3Dblue>About IJTEMT</FONT></STRONG>=
+</P><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http://goo.g=
+l/K1SsW1">www.ijtemt.org</A></FONT></STRONG></P>
+<P align=3Djustify><FONT color=3Dpurple>International Journal of Trends in =
+Economics Management and Technology (IJTEMT) in an International Academic J=
+ournal e-published bimonthly in India and open to the world. <BR>In this pr=
+esent interdisciplinary era, here at IJTEMT, a group of intellectual came t=
+ogether to find a common platform for three major components of any economy=
+ i.e., Economics, Management and Technology. Here we provide a forum to bri=
+dge the gap between the brushed-up professional in their respective fields =
+and the new researcher which will results in better understanding and fruit=
+ful outcomes.<BR>The focus of this journal is to publish paper on economics=
+ management and technology. Submitted papers are reviewed by a full double =
+=E2=80=93 blind manner by the technical committee of the journal. The audie=
+nce for the journal is professionals from related fields, academicians and =
+new students &amp; research scholars.<BR>All submitted articles should repo=
+rt original, previously unpublished research results, experimental or theor=
+etical, and will be peer-reviewed. Articles submitted to the journal should=
+ meet these criteria and must not be under consideration for publication el=
+sewhere. Manuscripts should follow the style of the journal and are subject=
+ to both review and editing.<BR></FONT>&nbsp;</P>
+<P align=3Dleft><BR><STRONG><FONT color=3Dblue>Why Select IJTEMT Journal</F=
+ONT></STRONG> </P><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=
+=3D"http://goo.gl/K1SsW1">www.ijtemt.org</A></FONT></STRONG></P>
+<P align=3Djustify><FONT color=3Dpurple>IJTEMT Provides E-Certificates to A=
+uthor's&nbsp;if Needed.IJTEMT is Globally Approved International Journal ha=
+ving Strong Editorial Board.<BR>This is Online Open Journal .Author's can D=
+ownload Paper from Library of Journal at any Time from Anywhere.IJTEMT is a=
+ Association of Eminent Scientist, Researchers and Experienced Members of M=
+ore than 20 Countries.IJTEMT Publishes High Quality Papers which are Peer R=
+eviewed by International/National Reviewers. Author's Query can be solved w=
+ithin 18 Hours.</FONT></P>
+<P align=3Dleft><FONT color=3Dpurple><STRONG><FONT color=3Dblue>Subject Cat=
+egory:</FONT></STRONG> ECONOMICS, MANAGEMENT &amp; TECHNOLOGY. </FONT></P><=
+FONT color=3D#800080></FONT>
+<P align=3Dleft><BR><FONT color=3Dblue><STRONG>Important Dates:</STRONG></F=
+ONT></P>
+<P align=3Dleft><FONT color=3Dblue><STRONG>Paper Submission:&nbsp;<FONT col=
+or=3Dpurple>22nd JANUARY 2014</FONT></STRONG></FONT></P><P align=3Dcenter><=
+STRONG><FONT color=3D#0000ff><A href=3D"http://goo.gl/K1SsW1">www.ijtemt.or=
+g</A></FONT></STRONG></P>
+<P align=3Dleft><FONT color=3Dblue><STRONG>Review Results (Acceptance/Rejec=
+tion) Notification: <FONT color=3Dpurple>Within two weeks after submitting =
+manuscript.</FONT></STRONG></FONT><FONT color=3Dpurple> </FONT><BR>&nbsp;<B=
+R>&nbsp;<BR><STRONG><FONT color=3Dblue>Guidelines for submission and Review=
+ Process:</FONT></STRONG></P><P align=3Dcenter><STRONG><FONT color=3D#0000f=
+f><A href=3D"http://goo.gl/K1SsW1">www.ijtemt.org</A></FONT></STRONG></P>
+<P align=3Djustify><FONT color=3Dpurple>IJTEMT welcomes author submission o=
+f papers concerning any branch of the economics, management and technology =
+and their applications in business, industry and other subjects relevant. <=
+BR>The review process goes through following phases which can take time fro=
+m ten days to two months:<BR>a.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; Each manuscript will be initially evaluated by the editorial board / e=
+ditor, who may make use of appropriate software to examine the originality =
+of the contents of the manuscript.<BR>b.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp; The manuscripts passed through screening at above noted level=
+ will be forwarded to two referees for blind peer review, each of whom will=
+ make a recommendation to publish the article in its present form/edit/reje=
+ct. During this period referees shall treat the contents of papers under re=
+view as privileged information.<BR>c.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; The reviewers' recommendations determine whether a paper will be=
+ accepted / accepted subject to change / subject to resubmission with signi=
+ficant changes / rejected.<BR>d.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp; For papers which require changes, the same reviewers will be used to =
+ensure that the quality of the revised paper is acceptable.<BR>e.&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; All papers are refereed, and the Edi=
+tor-in-Chief reserves the right to refuse any typescript, whether on invita=
+tion or otherwise, and to make suggestions and/or modifications before publ=
+ication.</FONT><BR>&nbsp;</P>
+<P align=3Djustify><BR><STRONG><FONT color=3Dblue>Submission of Paper will =
+takes place in two phases:</FONT></STRONG><P align=3Dcenter><STRONG><FONT c=
+olor=3D#0000ff><A href=3D"http://goo.gl/K1SsW1">www.ijtemt.org</A></FONT></=
+STRONG></P><BR><FONT color=3Dpurple>a.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp; Initial Paper Submission: <BR>Prospective author (s) is/are enc=
+ouraged to submit their manuscript including charts, tables, figures and ap=
+pendixes in .pdf and .doc (both) format to e-mail: </FONT><A href=3D"mailto=
+:submit@ijtemt.org"><FONT color=3Dpurple>submit@ijtemt.org</FONT></A><FONT =
+color=3Dpurple>. <BR>All submitted articles should report original, previou=
+sly unpublished research results, experimental or theoretical. Articles sub=
+mitted to the IJIMT should meet these criteria and must not be under consid=
+eration for publication elsewhere.<BR>b.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp; Camera Ready Paper Submission:On the acceptance of the paper =
+after completion of the review process the author (s) is/are has to submit =
+camera ready full text paper in .doc and .pdf (both) format to e-mail: </FO=
+NT><A href=3D"mailto:submitfinal@ijtemt.org"><FONT color=3Dpurple>submitfin=
+al@ijtemt.org</FONT></A><FONT color=3Dpurple> along with the corresponding =
+signed copy of copyright transfer form and scanned copy of payment slip. </=
+FONT><BR>&nbsp;</P>
+<P align=3Djustify><BR><FONT color=3Dblue><STRONG>Publication fees</STRONG>=
+ </FONT><BR><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http=
+://goo.gl/K1SsW1">www.ijtemt.org</A></FONT></STRONG></P>
+<FONT color=3Dpurple>Each accepted paper will be charged, for publication a=
+nd paper handling,  60 USD per paper (for a maximum of 8 pages, above which=
+ 1 USD will be charged for every additional page) which is to be paid as pe=
+r the instructions mentioned in the letter of acceptance of the manuscript =
+submitted. </FONT><BR>&nbsp;</P>
+<P align=3Djustify>-S.Lal<BR><STRONG><FONT color=3Dblue>Editor Internationa=
+l Journal of Trends in Economics Management &amp; Technology&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp; <BR>Website: </FONT></STRONG><A href=3D"http://goo.gl/K1SsW1">=
+<STRONG><FONT color=3Dblue>www.ijtemt.org</FONT></STRONG></A><STRONG><FONT =
+color=3Dblue>&nbsp; Email: </FONT></STRONG><A href=3D"mailto:editor@ijtemt.=
+org"><STRONG><FONT color=3Dblue>editor@ijtemt.org</FONT></STRONG></A><STRON=
+G><FONT color=3Dblue>, </FONT></STRONG><A href=3D"mailto:coedtech@ijtemt.or=
+g"><STRONG><FONT color=3Dblue>coedtech@ijtemt.org</FONT></STRONG></A><STRON=
+G><FONT color=3Dblue>,&nbsp; </FONT></STRONG><A href=3D"mailto:contact@ijte=
+mt.org"><STRONG><FONT color=3Dblue>contact@ijtemt.org</FONT></STRONG></A><S=
+TRONG><FONT color=3Dblue>. Paper Submission Email: </FONT></STRONG><A href=
+=3D"mailto:submit@ijtemt.org"><STRONG><FONT color=3Dblue>submit@ijtemt.org<=
+/FONT></STRONG></A><STRONG><FONT color=3Dblue>.</FONT></STRONG></P>
 
-Why you need to optimize your website for local MAP Listings ?
 
-- MAP listings get 10 times more clicks than organic listings
-- Increased conversions because of real reviews posted on your Google Plus
-Page
-- Every year there is 30% increase in searches for local keywords
-- Increases legitimacy of a Business
-
-We will help you get your website ranked well on google for the related
-keywords in your niche. We specialize in LOCAL SEARCH ENGINE OPTIMIZATION
-increasing visibility for small businesses by ranking them for
-geographically-related keywords. Say for eg-: you want to search a plumber
-in your city, You will be typing in keywords like Plumbers + City Or
-Plumbers + IN + City. We make sure your website comes in google MAP listings
-shown on page 1 for each such keyword.
-
-Now Google believes in - BE ORIGINAL, HAVE ORIGINAL AND GIVE ORIGINAL which
-means that google wants to end up that frustrating experience of users who
-are searching for Service Or Product and seeing the results that are not
-even close to what they are looking for. Google only wants to give their
-user original and relevant results. This makes it even more important that
-we showcase our business in the best possible way and make sure our website
-in valued high by google.
-
-We at TheLOCALIST will make google feel the importance of your business by
-following their guidelines thus ranking your website higher in serach
-results. We are presently offering LOCAL OPTIMIZATION to more than 400
-websites and they all rank page 1 for all possible keywords !!! Each month
-your website is submitted to more than 50 citations and social presence is
-controlled by posting videos and blogs all over the web.
-
-Email us back with your website & phone number so we can discuss this
-further with you. Our Packages start from as low as 99$/month.
-
-
-Thanks For Taking Time To Read Our Email
-
-Polly Martin
-Local SEO Manager ( THE Localist )
-Address : 24 ST Suite 32 Downtown Provo Utah
-
--------------------
-NOT INTERESTED ? REPLY WITH NOT INTERESTED IN THE SUBJECT LINE 
+--===============6782487699825070339==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 CenturyLink Cloud: The Leader in Enterprise Cloud Services.
@@ -99,3 +176,15 @@ Learn Why More Businesses Are Choosing CenturyLink Cloud For
 Critical Workloads, Development Environments & Everything In Between.
 Get a Quote or Start a Free Trial Today. 
 http://pubads.g.doubleclick.net/gampad/clk?id=119420431&iu=/4140/ostg.clktrk
+--===============6782487699825070339==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============6782487699825070339==--
