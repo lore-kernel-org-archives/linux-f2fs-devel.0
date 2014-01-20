@@ -1,190 +1,132 @@
-From: Editor IJTEMT<noreply@ijtemt.org>
-Subject: [SPAM] Call For Papers. Kindly impart in your
-	University/Organization/College/Colleagues/Academia/Circle
-Date: 19 Jan 2014 19:51:23 +0000
-Message-ID: <20140119195120.A047EBA81D5CA318@ijtemt.org>
-Reply-To: noreply@ijtemt.org
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH 1/2] f2fs: add help function META_MAPPING
+Date: Mon, 20 Jan 2014 18:37:04 +0800
+Message-ID: <52DCFC50.5060807@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3487068192081487268=="
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <noreply@ijtemt.org>) id 1W4yPE-0001FH-D9
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 19 Jan 2014 19:51:40 +0000
-Received: from ec2-54-254-162-181.ap-southeast-1.compute.amazonaws.com
-	([54.254.162.181] helo=ijtemt.org)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1W4yP9-0000Sc-7B for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 19 Jan 2014 19:51:40 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-
---===============3487068192081487268==
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<BODY scroll=3Dauto><P align=3Dcenter><FONT color=3Dblue><STRONG><FONT colo=
-r=3Dred>INTERNATIONAL JOURNAL OF TRENDS IN ECONOMICS MANAGEMENT &amp; TECHN=
-OLOGY </FONT><BR>IJTEMT invites you to submit your research paper for publi=
-shing in Volume III, Issue I (JANUARY 2014). <BR><U>CALL FOR PAPERS VOLUME =
-III, ISSUE I</U> </STRONG></FONT></P>
-<P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http://goo.gl/K1=
-SsW1">www.ijtemt.org</A></FONT></STRONG></P><STRONG><FONT color=3D#0000ff><=
-/FONT></STRONG>
-<P align=3Dleft>INDEXED IN: <A href=3D"http://goo.gl/K1SsW1" target=3D_blan=
-k>Google Scholar</A>, <A href=3D"http://goo.gl/K1SsW1" target=3D_blank>.doc=
-stoc</A>, <A href=3D"http://goo.gl/K1SsW1" target=3D_blank>slideshare</A>, =
-<A href=3D"http://goo.gl/K1SsW1" target=3D_blank>Scribd</A>, <A href=3D"htt=
-p://goo.gl/K1SsW1" target=3D_blank>J-Gate</A>, <A href=3D"http://goo.gl/K1S=
-sW1" target=3D_blank>Academia.edu</A>, <A href=3D"http://goo.gl/K1SsW1" tar=
-get=3D_blank>Directory of Open Journals</A>, <A href=3D"http://goo.gl/K1SsW=
-1" target=3D_blank>Bielefeld Academic Search Engine</A>, <A href=3D"http://=
-goo.gl/K1SsW1" target=3D_blank>ulrichsweb.com(TM) -- The Global Source for =
-Periodicals</A></P>
-<P align=3Dleft><BR><STRONG><FONT color=3Dblue>About IJTEMT</FONT></STRONG>=
-</P><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http://goo.g=
-l/K1SsW1">www.ijtemt.org</A></FONT></STRONG></P>
-<P align=3Djustify><FONT color=3Dpurple>International Journal of Trends in =
-Economics Management and Technology (IJTEMT) in an International Academic J=
-ournal e-published bimonthly in India and open to the world. <BR>In this pr=
-esent interdisciplinary era, here at IJTEMT, a group of intellectual came t=
-ogether to find a common platform for three major components of any economy=
- i.e., Economics, Management and Technology. Here we provide a forum to bri=
-dge the gap between the brushed-up professional in their respective fields =
-and the new researcher which will results in better understanding and fruit=
-ful outcomes.<BR>The focus of this journal is to publish paper on economics=
- management and technology. Submitted papers are reviewed by a full double =
-=E2=80=93 blind manner by the technical committee of the journal. The audie=
-nce for the journal is professionals from related fields, academicians and =
-new students &amp; research scholars.<BR>All submitted articles should repo=
-rt original, previously unpublished research results, experimental or theor=
-etical, and will be peer-reviewed. Articles submitted to the journal should=
- meet these criteria and must not be under consideration for publication el=
-sewhere. Manuscripts should follow the style of the journal and are subject=
- to both review and editing.<BR></FONT>&nbsp;</P>
-<P align=3Dleft><BR><STRONG><FONT color=3Dblue>Why Select IJTEMT Journal</F=
-ONT></STRONG> </P><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=
-=3D"http://goo.gl/K1SsW1">www.ijtemt.org</A></FONT></STRONG></P>
-<P align=3Djustify><FONT color=3Dpurple>IJTEMT Provides E-Certificates to A=
-uthor's&nbsp;if Needed.IJTEMT is Globally Approved International Journal ha=
-ving Strong Editorial Board.<BR>This is Online Open Journal .Author's can D=
-ownload Paper from Library of Journal at any Time from Anywhere.IJTEMT is a=
- Association of Eminent Scientist, Researchers and Experienced Members of M=
-ore than 20 Countries.IJTEMT Publishes High Quality Papers which are Peer R=
-eviewed by International/National Reviewers. Author's Query can be solved w=
-ithin 18 Hours.</FONT></P>
-<P align=3Dleft><FONT color=3Dpurple><STRONG><FONT color=3Dblue>Subject Cat=
-egory:</FONT></STRONG> ECONOMICS, MANAGEMENT &amp; TECHNOLOGY. </FONT></P><=
-FONT color=3D#800080></FONT>
-<P align=3Dleft><BR><FONT color=3Dblue><STRONG>Important Dates:</STRONG></F=
-ONT></P>
-<P align=3Dleft><FONT color=3Dblue><STRONG>Paper Submission:&nbsp;<FONT col=
-or=3Dpurple>22nd JANUARY 2014</FONT></STRONG></FONT></P><P align=3Dcenter><=
-STRONG><FONT color=3D#0000ff><A href=3D"http://goo.gl/K1SsW1">www.ijtemt.or=
-g</A></FONT></STRONG></P>
-<P align=3Dleft><FONT color=3Dblue><STRONG>Review Results (Acceptance/Rejec=
-tion) Notification: <FONT color=3Dpurple>Within two weeks after submitting =
-manuscript.</FONT></STRONG></FONT><FONT color=3Dpurple> </FONT><BR>&nbsp;<B=
-R>&nbsp;<BR><STRONG><FONT color=3Dblue>Guidelines for submission and Review=
- Process:</FONT></STRONG></P><P align=3Dcenter><STRONG><FONT color=3D#0000f=
-f><A href=3D"http://goo.gl/K1SsW1">www.ijtemt.org</A></FONT></STRONG></P>
-<P align=3Djustify><FONT color=3Dpurple>IJTEMT welcomes author submission o=
-f papers concerning any branch of the economics, management and technology =
-and their applications in business, industry and other subjects relevant. <=
-BR>The review process goes through following phases which can take time fro=
-m ten days to two months:<BR>a.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp; Each manuscript will be initially evaluated by the editorial board / e=
-ditor, who may make use of appropriate software to examine the originality =
-of the contents of the manuscript.<BR>b.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp; The manuscripts passed through screening at above noted level=
- will be forwarded to two referees for blind peer review, each of whom will=
- make a recommendation to publish the article in its present form/edit/reje=
-ct. During this period referees shall treat the contents of papers under re=
-view as privileged information.<BR>c.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; The reviewers' recommendations determine whether a paper will be=
- accepted / accepted subject to change / subject to resubmission with signi=
-ficant changes / rejected.<BR>d.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; For papers which require changes, the same reviewers will be used to =
-ensure that the quality of the revised paper is acceptable.<BR>e.&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; All papers are refereed, and the Edi=
-tor-in-Chief reserves the right to refuse any typescript, whether on invita=
-tion or otherwise, and to make suggestions and/or modifications before publ=
-ication.</FONT><BR>&nbsp;</P>
-<P align=3Djustify><BR><STRONG><FONT color=3Dblue>Submission of Paper will =
-takes place in two phases:</FONT></STRONG><P align=3Dcenter><STRONG><FONT c=
-olor=3D#0000ff><A href=3D"http://goo.gl/K1SsW1">www.ijtemt.org</A></FONT></=
-STRONG></P><BR><FONT color=3Dpurple>a.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp; Initial Paper Submission: <BR>Prospective author (s) is/are enc=
-ouraged to submit their manuscript including charts, tables, figures and ap=
-pendixes in .pdf and .doc (both) format to e-mail: </FONT><A href=3D"mailto=
-:submit@ijtemt.org"><FONT color=3Dpurple>submit@ijtemt.org</FONT></A><FONT =
-color=3Dpurple>. <BR>All submitted articles should report original, previou=
-sly unpublished research results, experimental or theoretical. Articles sub=
-mitted to the IJIMT should meet these criteria and must not be under consid=
-eration for publication elsewhere.<BR>b.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp; Camera Ready Paper Submission:On the acceptance of the paper =
-after completion of the review process the author (s) is/are has to submit =
-camera ready full text paper in .doc and .pdf (both) format to e-mail: </FO=
-NT><A href=3D"mailto:submitfinal@ijtemt.org"><FONT color=3Dpurple>submitfin=
-al@ijtemt.org</FONT></A><FONT color=3Dpurple> along with the corresponding =
-signed copy of copyright transfer form and scanned copy of payment slip. </=
-FONT><BR>&nbsp;</P>
-<P align=3Djustify><BR><FONT color=3Dblue><STRONG>Publication fees</STRONG>=
- </FONT><BR><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http=
-://goo.gl/K1SsW1">www.ijtemt.org</A></FONT></STRONG></P>
-<FONT color=3Dpurple>Each accepted paper will be charged, for publication a=
-nd paper handling,  60 USD per paper (for a maximum of 8 pages, above which=
- 1 USD will be charged for every additional page) which is to be paid as pe=
-r the instructions mentioned in the letter of acceptance of the manuscript =
-submitted. </FONT><BR>&nbsp;</P>
-<P align=3Djustify>-S.Lal<BR><STRONG><FONT color=3Dblue>Editor Internationa=
-l Journal of Trends in Economics Management &amp; Technology&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp; <BR>Website: </FONT></STRONG><A href=3D"http://goo.gl/K1SsW1">=
-<STRONG><FONT color=3Dblue>www.ijtemt.org</FONT></STRONG></A><STRONG><FONT =
-color=3Dblue>&nbsp; Email: </FONT></STRONG><A href=3D"mailto:editor@ijtemt.=
-org"><STRONG><FONT color=3Dblue>editor@ijtemt.org</FONT></STRONG></A><STRON=
-G><FONT color=3Dblue>, </FONT></STRONG><A href=3D"mailto:coedtech@ijtemt.or=
-g"><STRONG><FONT color=3Dblue>coedtech@ijtemt.org</FONT></STRONG></A><STRON=
-G><FONT color=3Dblue>,&nbsp; </FONT></STRONG><A href=3D"mailto:contact@ijte=
-mt.org"><STRONG><FONT color=3Dblue>contact@ijtemt.org</FONT></STRONG></A><S=
-TRONG><FONT color=3Dblue>. Paper Submission Email: </FONT></STRONG><A href=
-=3D"mailto:submit@ijtemt.org"><STRONG><FONT color=3Dblue>submit@ijtemt.org<=
-/FONT></STRONG></A><STRONG><FONT color=3Dblue>.</FONT></STRONG></P>
-
-
---===============3487068192081487268==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Kim <jaegeuk.kim@samsung.com>
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-------------------------------------------------------------------------------
-CenturyLink Cloud: The Leader in Enterprise Cloud Services.
-Learn Why More Businesses Are Choosing CenturyLink Cloud For
-Critical Workloads, Development Environments & Everything In Between.
-Get a Quote or Start a Free Trial Today.
-http://pubads.g.doubleclick.net/gampad/clk?id=119420431&iu=/4140/ostg.clktrk
---===============3487068192081487268==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Introduce help function META_MAPPING() to get the cache meta blocks'
+address space.
 
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/checkpoint.c |    8 ++++----
+ fs/f2fs/debug.c      |    4 ++--
+ fs/f2fs/f2fs.h       |    5 +++++
+ fs/f2fs/node.c       |    2 +-
+ fs/f2fs/segment.c    |    2 +-
+ 5 files changed, 13 insertions(+), 8 deletions(-)
 
---===============3487068192081487268==--
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 4de0345..f9d4f7d 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -30,7 +30,7 @@ static struct kmem_cache *inode_entry_slab;
+  */
+ struct page *grab_meta_page(struct f2fs_sb_info *sbi, pgoff_t index)
+ {
+-	struct address_space *mapping = sbi->meta_inode->i_mapping;
++	struct address_space *mapping = META_MAPPING(sbi);
+ 	struct page *page = NULL;
+ repeat:
+ 	page = grab_cache_page(mapping, index);
+@@ -50,7 +50,7 @@ repeat:
+  */
+ struct page *get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index)
+ {
+-	struct address_space *mapping = sbi->meta_inode->i_mapping;
++	struct address_space *mapping = META_MAPPING(sbi);
+ 	struct page *page;
+ repeat:
+ 	page = grab_cache_page(mapping, index);
+@@ -128,7 +128,7 @@ static int f2fs_write_meta_pages(struct address_space *mapping,
+ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
+ 						long nr_to_write)
+ {
+-	struct address_space *mapping = sbi->meta_inode->i_mapping;
++	struct address_space *mapping = META_MAPPING(sbi);
+ 	pgoff_t index = 0, end = LONG_MAX;
+ 	struct pagevec pvec;
+ 	long nwritten = 0;
+@@ -771,7 +771,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+ 	wait_on_all_pages_writeback(sbi);
+ 
+ 	filemap_fdatawait_range(sbi->node_inode->i_mapping, 0, LONG_MAX);
+-	filemap_fdatawait_range(sbi->meta_inode->i_mapping, 0, LONG_MAX);
++	filemap_fdatawait_range(META_MAPPING(sbi), 0, LONG_MAX);
+ 
+ 	/* update user_block_counts */
+ 	sbi->last_valid_block_count = sbi->total_valid_block_count;
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 63cb7e2..8bdc365 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -53,7 +53,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 	si->prefree_count = prefree_segments(sbi);
+ 	si->dirty_count = dirty_segments(sbi);
+ 	si->node_pages = sbi->node_inode->i_mapping->nrpages;
+-	si->meta_pages = sbi->meta_inode->i_mapping->nrpages;
++	si->meta_pages = META_MAPPING(sbi)->nrpages;
+ 	si->nats = NM_I(sbi)->nat_cnt;
+ 	si->sits = SIT_I(sbi)->dirty_sentries;
+ 	si->fnids = NM_I(sbi)->fcnt;
+@@ -168,7 +168,7 @@ get_cache:
+ 	si->cache_mem += NM_I(sbi)->nat_cnt;
+ 	npages = sbi->node_inode->i_mapping->nrpages;
+ 	si->cache_mem += npages << PAGE_CACHE_SHIFT;
+-	npages = sbi->meta_inode->i_mapping->nrpages;
++	npages = META_MAPPING(sbi)->nrpages;
+ 	si->cache_mem += npages << PAGE_CACHE_SHIFT;
+ 	si->cache_mem += sbi->n_orphans * sizeof(struct orphan_inode_entry);
+ 	si->cache_mem += sbi->n_dirty_dirs * sizeof(struct dir_inode_entry);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5ab3981..117e30f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -533,6 +533,11 @@ static inline struct dirty_seglist_info *DIRTY_I(struct f2fs_sb_info *sbi)
+ 	return (struct dirty_seglist_info *)(SM_I(sbi)->dirty_info);
+ }
+ 
++static inline struct address_space *META_MAPPING(struct f2fs_sb_info *sbi)
++{
++	return sbi->meta_inode->i_mapping;
++}
++
+ static inline void F2FS_SET_SB_DIRT(struct f2fs_sb_info *sbi)
+ {
+ 	sbi->s_dirty = 1;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 226a05a..527bd12 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -87,7 +87,7 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+  */
+ static void ra_nat_pages(struct f2fs_sb_info *sbi, int nid)
+ {
+-	struct address_space *mapping = sbi->meta_inode->i_mapping;
++	struct address_space *mapping = META_MAPPING(sbi);
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct page *page;
+ 	pgoff_t index;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index e82423fb..7caac5f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1585,7 +1585,7 @@ static int build_curseg(struct f2fs_sb_info *sbi)
+ 
+ static int ra_sit_pages(struct f2fs_sb_info *sbi, int start, int nrpages)
+ {
+-	struct address_space *mapping = sbi->meta_inode->i_mapping;
++	struct address_space *mapping = META_MAPPING(sbi);
+ 	struct page *page;
+ 	block_t blk_addr, prev_blk_addr = 0;
+ 	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+-- 
+1.7.7
+
