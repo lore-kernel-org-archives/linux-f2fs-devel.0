@@ -1,23 +1,23 @@
 From: Editor IJTEMT<noreply@ijtemt.org>
 Subject: [SPAM] Call For Papers. Kindly impart in your
 	University/Organization/College/Colleagues/Academia/Circle
-Date: 20 Jan 2014 16:59:41 +0000
-Message-ID: <20140120165939.5372EF4556F8B838@ijtemt.org>
+Date: 20 Jan 2014 16:59:53 +0000
+Message-ID: <20140120165948.8B4D451BB651E112@ijtemt.org>
 Reply-To: noreply@ijtemt.org
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6782487699825070339=="
+Content-Type: multipart/mixed; boundary="===============5624194820046632434=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <noreply@ijtemt.org>) id 1W5ICe-0000Dg-DE
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <noreply@ijtemt.org>) id 1W5ICv-0000Ab-Uc
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Jan 2014 17:00:00 +0000
+	Mon, 20 Jan 2014 17:00:18 +0000
 Received: from ec2-54-254-162-181.ap-southeast-1.compute.amazonaws.com
 	([54.254.162.181] helo=ijtemt.org)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1W5ICZ-0000nR-4E for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Jan 2014 17:00:00 +0000
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1W5ICo-0005Ha-G8 for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 20 Jan 2014 17:00:17 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,7 +29,7 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
---===============6782487699825070339==
+--===============5624194820046632434==
 Content-Type: text/html;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
@@ -164,7 +164,7 @@ TRONG><FONT color=3Dblue>. Paper Submission Email: </FONT></STRONG><A href=
 /FONT></STRONG></A><STRONG><FONT color=3Dblue>.</FONT></STRONG></P>
 
 
---===============6782487699825070339==
+--===============5624194820046632434==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -176,7 +176,7 @@ Learn Why More Businesses Are Choosing CenturyLink Cloud For
 Critical Workloads, Development Environments & Everything In Between.
 Get a Quote or Start a Free Trial Today. 
 http://pubads.g.doubleclick.net/gampad/clk?id=119420431&iu=/4140/ostg.clktrk
---===============6782487699825070339==
+--===============5624194820046632434==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -187,4 +187,4 @@ Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
---===============6782487699825070339==--
+--===============5624194820046632434==--
