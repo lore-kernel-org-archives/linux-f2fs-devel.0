@@ -1,26 +1,33 @@
-From: Tom Li <biergaizi@members.fsf.org>
-Subject: Mount a f2fs file system after the power cut cause
-	kernel oops
-Date: Thu, 23 Jan 2014 05:28:04 +0800
-Message-ID: <CAB6YEzWo9jhXLDL2JRs4cy9tHtiH1v9RzAhHLyRHyvA4MGPMPw@mail.gmail.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: Mount a f2fs file system after the power cut cause
+ kernel oops
+Date: Thu, 23 Jan 2014 08:02:08 +0900
+Message-ID: <1390431728.25542.2.camel@kjgkr>
+References: <CAB6YEzWo9jhXLDL2JRs4cy9tHtiH1v9RzAhHLyRHyvA4MGPMPw@mail.gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <biergaizi2009@gmail.com>) id 1W65Lc-0002Y3-IB
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1W66pj-0008M6-Jx
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 22 Jan 2014 21:28:32 +0000
-Received: from mail-pd0-f182.google.com ([209.85.192.182])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1W65Lb-0002QE-8M
+	Wed, 22 Jan 2014 23:03:43 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1W66pf-0004i3-JE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 22 Jan 2014 21:28:32 +0000
-Received: by mail-pd0-f182.google.com with SMTP id v10so902015pde.13
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 22 Jan 2014 13:28:25 -0800 (PST)
+	Wed, 22 Jan 2014 23:03:43 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MZT0078JS1T6J70@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 23 Jan 2014 08:03:29 +0900 (KST)
+In-reply-to: <CAB6YEzWo9jhXLDL2JRs4cy9tHtiH1v9RzAhHLyRHyvA4MGPMPw@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,95 +37,103 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Tom Li <biergaizi@members.fsf.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hello,
-
-    After a power cut, I can not mount my F2FS filesystem. It cause a
-Kernel Panic on booting. I dump the image of the partition and tried
-to run fsck.f2fs, the output is:
-
-Info: sector size = 512
-Info: total sectors = 13264896 (in 512bytes)
-
-    [FSCK] Unreachable nat entries                        [Ok..] [0x0]
-    [FSCK] SIT valid block bitmap checking                [Ok..]
-    [FSCK] Hard link checking for regular file            [Ok..] [0x3da]
-    [FSCK] valid_block_count matching with CP             [Ok..] [0x3ef7c]
-    [FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0x13a04]
-    [FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0x13a04]
-    [FSCK] valid_inode_count matched with CP              [Ok..] [0xa2ee]
-
-Done.
-
-    Then I tried to mount it. But it cause a Kernel Oops on my Linux 3.12.7.
-
-[  523.391639] ------------[ cut here ]------------
-[  523.391640] kernel BUG at fs/f2fs/recovery.c:309!
-[  523.391641] invalid opcode: 0000 [#2] PREEMPT SMP
-[  523.391653] Modules linked in: rfcomm btusb ath9k_htc ath9k_common
-ath9k_hw ath mac80211 cfg80211 hid_logitech_dj hid_generic zfs(PO)
-nvidia(PO) zunicode(PO) bnep bluetooth rfkill usb_storage
-snd_hda_codec_realtek zavl(PO) zcommon(PO) znvpair(PO) spl(O)
-zlib_deflate r8169 xhci_hcd mii ehci_pci thermal processor fan
-snd_hda_intel snd_hda_codec snd_pcm snd_page_alloc snd_timer snd
-ehci_hcd thermal_sys soundcore psmouse button pcspkr coretemp hwmon
-vboxnetadp(O) vboxnetflt(O) vboxdrv(O)
-[  523.391655] CPU: 3 PID: 5511 Comm: mount Tainted: P      D    O
-3.12.7-e-nvidia #1
-[  523.391656] Hardware name: System manufacturer System Product
-Name/P8P67, BIOS 3602 11/01/2012
-[  523.391656] task: ffff880214dab480 ti: ffff8800c4dd2000 task.ti:
-ffff8800c4dd2000
-[  523.391661] RIP: 0010:[<ffffffff81211176>]  [<ffffffff81211176>]
-recover_fsync_data+0xdd6/0xde0
-[  523.391661] RSP: 0018:ffff8800c4dd3cf0  EFLAGS: 00010297
-[  523.391662] RAX: ffff8801fd124000 RBX: ffff880201cbc000 RCX: 000000000008101d
-[  523.391662] RDX: 000000001fffffff RSI: ffff880000000000 RDI: ffffea0007f44900
-[  523.391663] RBP: 000000002007fffb R08: ffff8802154c1690 R09: ffff88011e45f308
-[  523.391663] R10: 0000160000000000 R11: 0000000000000000 R12: ffff8802014f5000
-[  523.391664] R13: ffff880208b34cc8 R14: ffff8800c4dd3d60 R15: 00000000000132aa
-[  523.391664] FS:  00007f2aa819b780(0000) GS:ffff88021ecc0000(0000)
-knlGS:0000000000000000
-[  523.391665] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  523.391665] CR2: 00000036ae6385d0 CR3: 00000000ca934000 CR4: 00000000000407e0
-[  523.391666] Stack:
-[  523.391667]  ffffea0008053d00 ffff880000000000 ffff880208b34c00
-ffff8802014f5168
-[  523.391668]  0000000008b34c00 ffffffff200803f5 ffffea000000007a
-ffff880201dcc4c0
-[  523.391669]  ffffea0008053d40 000000000017c1ad 0000000000000007
-ffff880201cbc000
-[  523.391669] Call Trace:
-[  523.391672]  [<ffffffff81203820>] ? f2fs_remount+0x100/0x100
-[  523.391673]  [<ffffffff81203ecb>] ? f2fs_fill_super+0x6ab/0x750
-[  523.391674]  [<ffffffff8113ecf2>] ? mount_bdev+0x192/0x1d0
-[  523.391676]  [<ffffffff8113f63c>] ? mount_fs+0xc/0xb0
-[  523.391677]  [<ffffffff81157cd5>] ? vfs_kern_mount+0x55/0xe0
-[  523.391679]  [<ffffffff8115a0c1>] ? do_mount+0x1c1/0x9e0
-[  523.391681]  [<ffffffff811054b8>] ? memdup_user+0x38/0x70
-[  523.391682]  [<ffffffff8115a95c>] ? SyS_mount+0x7c/0xc0
-[  523.391683]  [<ffffffff81468e9b>] ? tracesys+0xdd/0xe2
-[  523.391692] Code: e9 47 f7 ff ff 45 31 c9 e9 e9 f5 ff ff 4c 89 e7
-e8 90 f7 ed ff e9 ff f2 ff ff 0f 0b 48 8b 7c 24 40 e8 7f f7 ed ff e9
-c2 f7 ff ff <0f> 0b 0f 1f 84 00 00 00 00 00 80 3e 00 48 8b 47 30 75 17
-0f b6
-[  523.391693] RIP  [<ffffffff81211176>] recover_fsync_data+0xdd6/0xde0
-[  523.391694]  RSP <ffff8800c4dd3cf0>
-[  523.391695] ---[ end trace f1ea9d9255c3139d ]---
-
-    The partition doesn't contain any useful data, please don't worry
-about it. I hope you can figure out the issue soon.
-
-    Also, I can provide the image of the corrupted partition if needed.
-
-Thanks,
-
-Tom Li.
-
-------------------------------------------------------------------------------
-CenturyLink Cloud: The Leader in Enterprise Cloud Services.
-Learn Why More Businesses Are Choosing CenturyLink Cloud For
-Critical Workloads, Development Environments & Everything In Between.
-Get a Quote or Start a Free Trial Today. 
-http://pubads.g.doubleclick.net/gampad/clk?id=119420431&iu=/4140/ostg.clktrk
+SGksCgpUaGFuayB5b3UgZm9yIHRoZSByZXBvcnQuCklmIHBvc3NpYmxlLCBjb3VsZCB5b3Ugc2hh
+cmUgdGhlIGNvcnJ1cHRlZCBpbWFnZSB0byB1cz8KCjIwMTQtMDEtMjMgKOuqqSksIDA1OjI4ICsw
+ODAwLCBUb20gTGk6Cj4gSGVsbG8sCj4gCj4gICAgIEFmdGVyIGEgcG93ZXIgY3V0LCBJIGNhbiBu
+b3QgbW91bnQgbXkgRjJGUyBmaWxlc3lzdGVtLiBJdCBjYXVzZSBhCj4gS2VybmVsIFBhbmljIG9u
+IGJvb3RpbmcuIEkgZHVtcCB0aGUgaW1hZ2Ugb2YgdGhlIHBhcnRpdGlvbiBhbmQgdHJpZWQKPiB0
+byBydW4gZnNjay5mMmZzLCB0aGUgb3V0cHV0IGlzOgo+IAo+IEluZm86IHNlY3RvciBzaXplID0g
+NTEyCj4gSW5mbzogdG90YWwgc2VjdG9ycyA9IDEzMjY0ODk2IChpbiA1MTJieXRlcykKPiAKPiAg
+ICAgW0ZTQ0tdIFVucmVhY2hhYmxlIG5hdCBlbnRyaWVzICAgICAgICAgICAgICAgICAgICAgICAg
+W09rLi5dIFsweDBdCj4gICAgIFtGU0NLXSBTSVQgdmFsaWQgYmxvY2sgYml0bWFwIGNoZWNraW5n
+ICAgICAgICAgICAgICAgIFtPay4uXQo+ICAgICBbRlNDS10gSGFyZCBsaW5rIGNoZWNraW5nIGZv
+ciByZWd1bGFyIGZpbGUgICAgICAgICAgICBbT2suLl0gWzB4M2RhXQo+ICAgICBbRlNDS10gdmFs
+aWRfYmxvY2tfY291bnQgbWF0Y2hpbmcgd2l0aCBDUCAgICAgICAgICAgICBbT2suLl0gWzB4M2Vm
+N2NdCj4gICAgIFtGU0NLXSB2YWxpZF9ub2RlX2NvdW50IG1hdGNpbmcgd2l0aCBDUCAoZGUgbG9v
+a3VwKSAgIFtPay4uXSBbMHgxM2EwNF0KPiAgICAgW0ZTQ0tdIHZhbGlkX25vZGVfY291bnQgbWF0
+Y2luZyB3aXRoIENQIChuYXQgbG9va3VwKSAgW09rLi5dIFsweDEzYTA0XQo+ICAgICBbRlNDS10g
+dmFsaWRfaW5vZGVfY291bnQgbWF0Y2hlZCB3aXRoIENQICAgICAgICAgICAgICBbT2suLl0gWzB4
+YTJlZV0KPiAKPiBEb25lLgo+IAo+ICAgICBUaGVuIEkgdHJpZWQgdG8gbW91bnQgaXQuIEJ1dCBp
+dCBjYXVzZSBhIEtlcm5lbCBPb3BzIG9uIG15IExpbnV4IDMuMTIuNy4KPiAKPiBbICA1MjMuMzkx
+NjM5XSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KPiBbICA1MjMuMzkxNjQw
+XSBrZXJuZWwgQlVHIGF0IGZzL2YyZnMvcmVjb3ZlcnkuYzozMDkhCj4gWyAgNTIzLjM5MTY0MV0g
+aW52YWxpZCBvcGNvZGU6IDAwMDAgWyMyXSBQUkVFTVBUIFNNUAo+IFsgIDUyMy4zOTE2NTNdIE1v
+ZHVsZXMgbGlua2VkIGluOiByZmNvbW0gYnR1c2IgYXRoOWtfaHRjIGF0aDlrX2NvbW1vbgo+IGF0
+aDlrX2h3IGF0aCBtYWM4MDIxMSBjZmc4MDIxMSBoaWRfbG9naXRlY2hfZGogaGlkX2dlbmVyaWMg
+emZzKFBPKQo+IG52aWRpYShQTykgenVuaWNvZGUoUE8pIGJuZXAgYmx1ZXRvb3RoIHJma2lsbCB1
+c2Jfc3RvcmFnZQo+IHNuZF9oZGFfY29kZWNfcmVhbHRlayB6YXZsKFBPKSB6Y29tbW9uKFBPKSB6
+bnZwYWlyKFBPKSBzcGwoTykKPiB6bGliX2RlZmxhdGUgcjgxNjkgeGhjaV9oY2QgbWlpIGVoY2lf
+cGNpIHRoZXJtYWwgcHJvY2Vzc29yIGZhbgo+IHNuZF9oZGFfaW50ZWwgc25kX2hkYV9jb2RlYyBz
+bmRfcGNtIHNuZF9wYWdlX2FsbG9jIHNuZF90aW1lciBzbmQKPiBlaGNpX2hjZCB0aGVybWFsX3N5
+cyBzb3VuZGNvcmUgcHNtb3VzZSBidXR0b24gcGNzcGtyIGNvcmV0ZW1wIGh3bW9uCj4gdmJveG5l
+dGFkcChPKSB2Ym94bmV0Zmx0KE8pIHZib3hkcnYoTykKPiBbICA1MjMuMzkxNjU1XSBDUFU6IDMg
+UElEOiA1NTExIENvbW06IG1vdW50IFRhaW50ZWQ6IFAgICAgICBEICAgIE8KPiAzLjEyLjctZS1u
+dmlkaWEgIzEKPiBbICA1MjMuMzkxNjU2XSBIYXJkd2FyZSBuYW1lOiBTeXN0ZW0gbWFudWZhY3R1
+cmVyIFN5c3RlbSBQcm9kdWN0Cj4gTmFtZS9QOFA2NywgQklPUyAzNjAyIDExLzAxLzIwMTIKPiBb
+ICA1MjMuMzkxNjU2XSB0YXNrOiBmZmZmODgwMjE0ZGFiNDgwIHRpOiBmZmZmODgwMGM0ZGQyMDAw
+IHRhc2sudGk6Cj4gZmZmZjg4MDBjNGRkMjAwMAo+IFsgIDUyMy4zOTE2NjFdIFJJUDogMDAxMDpb
+PGZmZmZmZmZmODEyMTExNzY+XSAgWzxmZmZmZmZmZjgxMjExMTc2Pl0KPiByZWNvdmVyX2ZzeW5j
+X2RhdGErMHhkZDYvMHhkZTAKPiBbICA1MjMuMzkxNjYxXSBSU1A6IDAwMTg6ZmZmZjg4MDBjNGRk
+M2NmMCAgRUZMQUdTOiAwMDAxMDI5Nwo+IFsgIDUyMy4zOTE2NjJdIFJBWDogZmZmZjg4MDFmZDEy
+NDAwMCBSQlg6IGZmZmY4ODAyMDFjYmMwMDAgUkNYOiAwMDAwMDAwMDAwMDgxMDFkCj4gWyAgNTIz
+LjM5MTY2Ml0gUkRYOiAwMDAwMDAwMDFmZmZmZmZmIFJTSTogZmZmZjg4MDAwMDAwMDAwMCBSREk6
+IGZmZmZlYTAwMDdmNDQ5MDAKPiBbICA1MjMuMzkxNjYzXSBSQlA6IDAwMDAwMDAwMjAwN2ZmZmIg
+UjA4OiBmZmZmODgwMjE1NGMxNjkwIFIwOTogZmZmZjg4MDExZTQ1ZjMwOAo+IFsgIDUyMy4zOTE2
+NjNdIFIxMDogMDAwMDE2MDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiBmZmZm
+ODgwMjAxNGY1MDAwCj4gWyAgNTIzLjM5MTY2NF0gUjEzOiBmZmZmODgwMjA4YjM0Y2M4IFIxNDog
+ZmZmZjg4MDBjNGRkM2Q2MCBSMTU6IDAwMDAwMDAwMDAwMTMyYWEKPiBbICA1MjMuMzkxNjY0XSBG
+UzogIDAwMDA3ZjJhYTgxOWI3ODAoMDAwMCkgR1M6ZmZmZjg4MDIxZWNjMDAwMCgwMDAwKQo+IGtu
+bEdTOjAwMDAwMDAwMDAwMDAwMDAKPiBbICA1MjMuMzkxNjY1XSBDUzogIDAwMTAgRFM6IDAwMDAg
+RVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzCj4gWyAgNTIzLjM5MTY2NV0gQ1IyOiAwMDAw
+MDAzNmFlNjM4NWQwIENSMzogMDAwMDAwMDBjYTkzNDAwMCBDUjQ6IDAwMDAwMDAwMDAwNDA3ZTAK
+PiBbICA1MjMuMzkxNjY2XSBTdGFjazoKPiBbICA1MjMuMzkxNjY3XSAgZmZmZmVhMDAwODA1M2Qw
+MCBmZmZmODgwMDAwMDAwMDAwIGZmZmY4ODAyMDhiMzRjMDAKPiBmZmZmODgwMjAxNGY1MTY4Cj4g
+WyAgNTIzLjM5MTY2OF0gIDAwMDAwMDAwMDhiMzRjMDAgZmZmZmZmZmYyMDA4MDNmNSBmZmZmZWEw
+MDAwMDAwMDdhCj4gZmZmZjg4MDIwMWRjYzRjMAo+IFsgIDUyMy4zOTE2NjldICBmZmZmZWEwMDA4
+MDUzZDQwIDAwMDAwMDAwMDAxN2MxYWQgMDAwMDAwMDAwMDAwMDAwNwo+IGZmZmY4ODAyMDFjYmMw
+MDAKPiBbICA1MjMuMzkxNjY5XSBDYWxsIFRyYWNlOgo+IFsgIDUyMy4zOTE2NzJdICBbPGZmZmZm
+ZmZmODEyMDM4MjA+XSA/IGYyZnNfcmVtb3VudCsweDEwMC8weDEwMAo+IFsgIDUyMy4zOTE2NzNd
+ICBbPGZmZmZmZmZmODEyMDNlY2I+XSA/IGYyZnNfZmlsbF9zdXBlcisweDZhYi8weDc1MAo+IFsg
+IDUyMy4zOTE2NzRdICBbPGZmZmZmZmZmODExM2VjZjI+XSA/IG1vdW50X2JkZXYrMHgxOTIvMHgx
+ZDAKPiBbICA1MjMuMzkxNjc2XSAgWzxmZmZmZmZmZjgxMTNmNjNjPl0gPyBtb3VudF9mcysweGMv
+MHhiMAo+IFsgIDUyMy4zOTE2NzddICBbPGZmZmZmZmZmODExNTdjZDU+XSA/IHZmc19rZXJuX21v
+dW50KzB4NTUvMHhlMAo+IFsgIDUyMy4zOTE2NzldICBbPGZmZmZmZmZmODExNWEwYzE+XSA/IGRv
+X21vdW50KzB4MWMxLzB4OWUwCj4gWyAgNTIzLjM5MTY4MV0gIFs8ZmZmZmZmZmY4MTEwNTRiOD5d
+ID8gbWVtZHVwX3VzZXIrMHgzOC8weDcwCj4gWyAgNTIzLjM5MTY4Ml0gIFs8ZmZmZmZmZmY4MTE1
+YTk1Yz5dID8gU3lTX21vdW50KzB4N2MvMHhjMAo+IFsgIDUyMy4zOTE2ODNdICBbPGZmZmZmZmZm
+ODE0NjhlOWI+XSA/IHRyYWNlc3lzKzB4ZGQvMHhlMgo+IFsgIDUyMy4zOTE2OTJdIENvZGU6IGU5
+IDQ3IGY3IGZmIGZmIDQ1IDMxIGM5IGU5IGU5IGY1IGZmIGZmIDRjIDg5IGU3Cj4gZTggOTAgZjcg
+ZWQgZmYgZTkgZmYgZjIgZmYgZmYgMGYgMGIgNDggOGIgN2MgMjQgNDAgZTggN2YgZjcgZWQgZmYg
+ZTkKPiBjMiBmNyBmZiBmZiA8MGY+IDBiIDBmIDFmIDg0IDAwIDAwIDAwIDAwIDAwIDgwIDNlIDAw
+IDQ4IDhiIDQ3IDMwIDc1IDE3Cj4gMGYgYjYKPiBbICA1MjMuMzkxNjkzXSBSSVAgIFs8ZmZmZmZm
+ZmY4MTIxMTE3Nj5dIHJlY292ZXJfZnN5bmNfZGF0YSsweGRkNi8weGRlMAo+IFsgIDUyMy4zOTE2
+OTRdICBSU1AgPGZmZmY4ODAwYzRkZDNjZjA+Cj4gWyAgNTIzLjM5MTY5NV0gLS0tWyBlbmQgdHJh
+Y2UgZjFlYTlkOTI1NWMzMTM5ZCBdLS0tCj4gCj4gICAgIFRoZSBwYXJ0aXRpb24gZG9lc24ndCBj
+b250YWluIGFueSB1c2VmdWwgZGF0YSwgcGxlYXNlIGRvbid0IHdvcnJ5Cj4gYWJvdXQgaXQuIEkg
+aG9wZSB5b3UgY2FuIGZpZ3VyZSBvdXQgdGhlIGlzc3VlIHNvb24uCj4gCj4gICAgIEFsc28sIEkg
+Y2FuIHByb3ZpZGUgdGhlIGltYWdlIG9mIHRoZSBjb3JydXB0ZWQgcGFydGl0aW9uIGlmIG5lZWRl
+ZC4KPiAKPiBUaGFua3MsCj4gCj4gVG9tIExpLgo+IAo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+
+IENlbnR1cnlMaW5rIENsb3VkOiBUaGUgTGVhZGVyIGluIEVudGVycHJpc2UgQ2xvdWQgU2Vydmlj
+ZXMuCj4gTGVhcm4gV2h5IE1vcmUgQnVzaW5lc3NlcyBBcmUgQ2hvb3NpbmcgQ2VudHVyeUxpbmsg
+Q2xvdWQgRm9yCj4gQ3JpdGljYWwgV29ya2xvYWRzLCBEZXZlbG9wbWVudCBFbnZpcm9ubWVudHMg
+JiBFdmVyeXRoaW5nIEluIEJldHdlZW4uCj4gR2V0IGEgUXVvdGUgb3IgU3RhcnQgYSBGcmVlIFRy
+aWFsIFRvZGF5LiAKPiBodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/
+aWQ9MTE5NDIwNDMxJml1PS80MTQwL29zdGcuY2xrdHJrCj4gX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
+dAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0cHM6Ly9saXN0
+cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoKLS0gCkph
+ZWdldWsgS2ltClNhbXN1bmcKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2VudHVyeUxpbmsgQ2xv
+dWQ6IFRoZSBMZWFkZXIgaW4gRW50ZXJwcmlzZSBDbG91ZCBTZXJ2aWNlcy4KTGVhcm4gV2h5IE1v
+cmUgQnVzaW5lc3NlcyBBcmUgQ2hvb3NpbmcgQ2VudHVyeUxpbmsgQ2xvdWQgRm9yCkNyaXRpY2Fs
+IFdvcmtsb2FkcywgRGV2ZWxvcG1lbnQgRW52aXJvbm1lbnRzICYgRXZlcnl0aGluZyBJbiBCZXR3
+ZWVuLgpHZXQgYSBRdW90ZSBvciBTdGFydCBhIEZyZWUgVHJpYWwgVG9kYXkuIApodHRwOi8vcHVi
+YWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9MTE5NDIwNDMxJml1PS80MTQwL29z
+dGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
+cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
+L2xpbnV4LWYyZnMtZGV2ZWwK
