@@ -1,25 +1,33 @@
-From: Clemens Eisserer <linuxhippy@gmail.com>
-Subject: A lot of data written by cleaner for specific workload
-Date: Thu, 23 Jan 2014 13:42:23 +0100
-Message-ID: <CAFvQSYSRv-SVs+n3rC6tugw1KSOgViEzkBVhbqzum0zjo+gP7Q@mail.gmail.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: A lot of data written by cleaner for specific
+	workload
+Date: Fri, 24 Jan 2014 08:41:50 +0900
+Message-ID: <1390520510.25542.34.camel@kjgkr>
+References: <CAFvQSYSRv-SVs+n3rC6tugw1KSOgViEzkBVhbqzum0zjo+gP7Q@mail.gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <linuxhippy@gmail.com>) id 1W6Jc5-0007Ut-RH
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1W6Tvh-0005yN-Ss
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Jan 2014 12:42:29 +0000
-Received: from mail-vc0-f176.google.com ([209.85.220.176])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1W6Jc5-0007O1-3q
+	Thu, 23 Jan 2014 23:43:25 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1W6Tve-0003b4-1K
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Jan 2014 12:42:29 +0000
-Received: by mail-vc0-f176.google.com with SMTP id la4so1010409vcb.35
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Thu, 23 Jan 2014 04:42:23 -0800 (PST)
+	Thu, 23 Jan 2014 23:43:25 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0MZV007RVOK0XU90@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 24 Jan 2014 08:43:12 +0900 (KST)
+In-reply-to: <CAFvQSYSRv-SVs+n3rC6tugw1KSOgViEzkBVhbqzum0zjo+gP7Q@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,48 +37,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Clemens Eisserer <linuxhippy@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
-
-I hope it is ok to write this question to the developer mailing list,
-I didn't find any user-related one.
-
-I am using f2fs on my raspberry pi (linux-3.10.23) to store sensor
-values every 10s in a postgresql database (a workload that killed a
-32gb microSD card formatted with ext4 within 4 days, it developed bad
-blocks where the journal was located).
-With f2fs I noticed the cleaner is writing a lot, often as much as
-80-90% of the total data written:
-
-Iotop accumulated results for a few minutes are:
-
-                              READ:       WRITE
-01313 be/4 root         35.19 M     70.12 M  0.00 %  0.09 % [f2fs_gc-8:0]
-01863 be/4 root          0.00 B   1240.00 K  0.00 %  0.02 % [kworker/u2:1]
-02290 be/4 root          0.00 B   1100.00 K  0.00 %  0.42 % java
--Djava.util.logging.config.file=/root/apache~7/temp
-org.apache.catalina.startup.Bootstrap start
-02289 be/4 root          0.00 B   1092.00 K  0.00 %  0.41 % java -jar
-/root/WPO.jar
-12346 be/4 root          0.00 B   1052.00 K  0.00 %  0.02 % [kworker/u2:0]
-02147 be/4 postgres   0.00 B    768.00 K  0.00 %  0.00 % postgres: wal
-writer process
-02529 be/4 root          0.00 B    532.00 K  0.00 %  0.08 % [kworker/u2:2]
-02146 be/4 postgres   8.00 K    464.00 K  0.00 %  0.00 % postgres:
-writer process
-02447 be/4 root          8.00 K    384.00 K  0.00 %  0.01 % java
--Djava.util.logging.config.file=/root/apache~7/temp
-org.apache.catalina.startup.Bootstrap start
-rest < 100 KB
-
-Is this to be expected for this kind of workload?
-
-Thank you in advance, Clemens
-
-------------------------------------------------------------------------------
-CenturyLink Cloud: The Leader in Enterprise Cloud Services.
-Learn Why More Businesses Are Choosing CenturyLink Cloud For
-Critical Workloads, Development Environments & Everything In Between.
-Get a Quote or Start a Free Trial Today. 
-http://pubads.g.doubleclick.net/gampad/clk?id=119420431&iu=/4140/ostg.clktrk
+SGksCgoyMDE0LTAxLTIzICjrqqkpLCAxMzo0MiArMDEwMCwgQ2xlbWVucyBFaXNzZXJlcjoKPiBI
+aSwKPiAKPiBJIGhvcGUgaXQgaXMgb2sgdG8gd3JpdGUgdGhpcyBxdWVzdGlvbiB0byB0aGUgZGV2
+ZWxvcGVyIG1haWxpbmcgbGlzdCwKPiBJIGRpZG4ndCBmaW5kIGFueSB1c2VyLXJlbGF0ZWQgb25l
+Lgo+IAo+IEkgYW0gdXNpbmcgZjJmcyBvbiBteSByYXNwYmVycnkgcGkgKGxpbnV4LTMuMTAuMjMp
+IHRvIHN0b3JlIHNlbnNvcgo+IHZhbHVlcyBldmVyeSAxMHMgaW4gYSBwb3N0Z3Jlc3FsIGRhdGFi
+YXNlIChhIHdvcmtsb2FkIHRoYXQga2lsbGVkIGEKPiAzMmdiIG1pY3JvU0QgY2FyZCBmb3JtYXR0
+ZWQgd2l0aCBleHQ0IHdpdGhpbiA0IGRheXMsIGl0IGRldmVsb3BlZCBiYWQKPiBibG9ja3Mgd2hl
+cmUgdGhlIGpvdXJuYWwgd2FzIGxvY2F0ZWQpLgo+IFdpdGggZjJmcyBJIG5vdGljZWQgdGhlIGNs
+ZWFuZXIgaXMgd3JpdGluZyBhIGxvdCwgb2Z0ZW4gYXMgbXVjaCBhcwo+IDgwLTkwJSBvZiB0aGUg
+dG90YWwgZGF0YSB3cml0dGVuOgo+IAo+IElvdG9wIGFjY3VtdWxhdGVkIHJlc3VsdHMgZm9yIGEg
+ZmV3IG1pbnV0ZXMgYXJlOgo+IAo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFJFQUQ6
+ICAgICAgIFdSSVRFCj4gMDEzMTMgYmUvNCByb290ICAgICAgICAgMzUuMTkgTSAgICAgNzAuMTIg
+TSAgMC4wMCAlICAwLjA5ICUgW2YyZnNfZ2MtODowXQoKVGhlIGYyZnNfZ2MgY2FuIGJlIGNvbnRy
+b2xsZWQgYnkgdXNlciB0aHJvdWdoIGEgc3lzZnMgZW50cnkuClNvLCBjb3VsZCB5b3UgbG9vayBh
+dCB0aGUgYW1vdW50IG9mIHdyaXR0ZW4gZGF0YSBieSB2YXJ5aW5nIHRoZSBnYwppbnRlcnZhbD8K
+CmNhdCAvc3lzL2ZzL2YyZnMvJGRldi9nY19taW5fc2xlZXBfdGltZQozMDAwMApjYXQgL3N5cy9m
+cy9mMmZzLyRkZXYvZ2NfbWF4X3NsZWVwX3RpbWUKNjAwMDAKClRoZXNlIHZhbHVlcyBhcmUgcmVw
+cmVzZW50ZWQgaW4gbWlsbGlzZWNvbmRzLgpJZiB5b3UgZG9uJ3Qgd2FudCB0byB3cml0ZSBkYXRh
+IGFzIG11Y2ggYXMgcG9zc2liZSBhbmQgZG9uJ3QgbmVlZCBhIGhpZ2gKcGVyZm9ybWFuY2UgYXMg
+dGhlIHBhcnRpdGlvbiBiZWNvbWVzIGZ1bGwsIHlvdSBjYW4ganVzdCBncm93IHRoZQppbnRlcnZh
+bCB0aW1lcy4KVGhlIG90aGVyIHdheSBpcyB0aGF0IHlvdSBjYW4ganVzdCBhZGQgYSBtb3VudCBv
+cHRpb24sICItbwpiYWNrZ3JvdW5kX2djPW9mZiIsIHdoaWNoIHR1cm5zIG9mZiB0aGUgZjJmc19n
+Yy4KClRoYW5rcywKCj4gMDE4NjMgYmUvNCByb290ICAgICAgICAgIDAuMDAgQiAgIDEyNDAuMDAg
+SyAgMC4wMCAlICAwLjAyICUgW2t3b3JrZXIvdTI6MV0KPiAwMjI5MCBiZS80IHJvb3QgICAgICAg
+ICAgMC4wMCBCICAgMTEwMC4wMCBLICAwLjAwICUgIDAuNDIgJSBqYXZhCj4gLURqYXZhLnV0aWwu
+bG9nZ2luZy5jb25maWcuZmlsZT0vcm9vdC9hcGFjaGV+Ny90ZW1wCj4gb3JnLmFwYWNoZS5jYXRh
+bGluYS5zdGFydHVwLkJvb3RzdHJhcCBzdGFydAo+IDAyMjg5IGJlLzQgcm9vdCAgICAgICAgICAw
+LjAwIEIgICAxMDkyLjAwIEsgIDAuMDAgJSAgMC40MSAlIGphdmEgLWphcgo+IC9yb290L1dQTy5q
+YXIKPiAxMjM0NiBiZS80IHJvb3QgICAgICAgICAgMC4wMCBCICAgMTA1Mi4wMCBLICAwLjAwICUg
+IDAuMDIgJSBba3dvcmtlci91MjowXQo+IDAyMTQ3IGJlLzQgcG9zdGdyZXMgICAwLjAwIEIgICAg
+NzY4LjAwIEsgIDAuMDAgJSAgMC4wMCAlIHBvc3RncmVzOiB3YWwKPiB3cml0ZXIgcHJvY2Vzcwo+
+IDAyNTI5IGJlLzQgcm9vdCAgICAgICAgICAwLjAwIEIgICAgNTMyLjAwIEsgIDAuMDAgJSAgMC4w
+OCAlIFtrd29ya2VyL3UyOjJdCj4gMDIxNDYgYmUvNCBwb3N0Z3JlcyAgIDguMDAgSyAgICA0NjQu
+MDAgSyAgMC4wMCAlICAwLjAwICUgcG9zdGdyZXM6Cj4gd3JpdGVyIHByb2Nlc3MKPiAwMjQ0NyBi
+ZS80IHJvb3QgICAgICAgICAgOC4wMCBLICAgIDM4NC4wMCBLICAwLjAwICUgIDAuMDEgJSBqYXZh
+Cj4gLURqYXZhLnV0aWwubG9nZ2luZy5jb25maWcuZmlsZT0vcm9vdC9hcGFjaGV+Ny90ZW1wCj4g
+b3JnLmFwYWNoZS5jYXRhbGluYS5zdGFydHVwLkJvb3RzdHJhcCBzdGFydAo+IHJlc3QgPCAxMDAg
+S0IKPiAKPiBJcyB0aGlzIHRvIGJlIGV4cGVjdGVkIGZvciB0aGlzIGtpbmQgb2Ygd29ya2xvYWQ/
+Cj4gCj4gVGhhbmsgeW91IGluIGFkdmFuY2UsIENsZW1lbnMKPiAKPiAtLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0KPiBDZW50dXJ5TGluayBDbG91ZDogVGhlIExlYWRlciBpbiBFbnRlcnByaXNlIENsb3Vk
+IFNlcnZpY2VzLgo+IExlYXJuIFdoeSBNb3JlIEJ1c2luZXNzZXMgQXJlIENob29zaW5nIENlbnR1
+cnlMaW5rIENsb3VkIEZvcgo+IENyaXRpY2FsIFdvcmtsb2FkcywgRGV2ZWxvcG1lbnQgRW52aXJv
+bm1lbnRzICYgRXZlcnl0aGluZyBJbiBCZXR3ZWVuLgo+IEdldCBhIFF1b3RlIG9yIFN0YXJ0IGEg
+RnJlZSBUcmlhbCBUb2RheS4gCj4gaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1w
+YWQvY2xrP2lkPTExOTQyMDQzMSZpdT0vNDE0MC9vc3RnLmNsa3Ryawo+IF9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWls
+aW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBz
+Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Ci0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNlbnR1cnlM
+aW5rIENsb3VkOiBUaGUgTGVhZGVyIGluIEVudGVycHJpc2UgQ2xvdWQgU2VydmljZXMuCkxlYXJu
+IFdoeSBNb3JlIEJ1c2luZXNzZXMgQXJlIENob29zaW5nIENlbnR1cnlMaW5rIENsb3VkIEZvcgpD
+cml0aWNhbCBXb3JrbG9hZHMsIERldmVsb3BtZW50IEVudmlyb25tZW50cyAmIEV2ZXJ5dGhpbmcg
+SW4gQmV0d2Vlbi4KR2V0IGEgUXVvdGUgb3IgU3RhcnQgYSBGcmVlIFRyaWFsIFRvZGF5LiAKaHR0
+cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTExOTQyMDQzMSZpdT0v
+NDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxp
+c3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9s
+aXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
