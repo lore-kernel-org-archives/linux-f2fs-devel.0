@@ -1,33 +1,30 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: Mount a f2fs file system after the power cut cause
- kernel oops
-Date: Thu, 23 Jan 2014 08:02:08 +0900
-Message-ID: <1390431728.25542.2.camel@kjgkr>
-References: <CAB6YEzWo9jhXLDL2JRs4cy9tHtiH1v9RzAhHLyRHyvA4MGPMPw@mail.gmail.com>
-Reply-To: jaegeuk.kim@samsung.com
+Subject: [PATCH] f2fs: drop obsolete node page when it is
+	truncated
+Date: Thu, 23 Jan 2014 09:16:27 +0900
+Message-ID: <1390436188-3237-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1W66pj-0008M6-Jx
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1W67zd-0007Kf-NF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 22 Jan 2014 23:03:43 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1W66pf-0004i3-JE
+	Thu, 23 Jan 2014 00:18:01 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1W67zb-0003jk-Mm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 22 Jan 2014 23:03:43 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
+	Thu, 23 Jan 2014 00:18:01 +0000
+Received: from epcpsbgr4.samsung.com
+	(u144.gpu120.samsung.co.kr [203.254.230.144])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MZT0078JS1T6J70@mailout3.samsung.com> for
+	with ESMTP id <0MZT00DMBVHRIE70@mailout1.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Jan 2014 08:03:29 +0900 (KST)
-In-reply-to: <CAB6YEzWo9jhXLDL2JRs4cy9tHtiH1v9RzAhHLyRHyvA4MGPMPw@mail.gmail.com>
+	Thu, 23 Jan 2014 09:17:51 +0900 (KST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,103 +34,38 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Tom Li <biergaizi@members.fsf.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGksCgpUaGFuayB5b3UgZm9yIHRoZSByZXBvcnQuCklmIHBvc3NpYmxlLCBjb3VsZCB5b3Ugc2hh
-cmUgdGhlIGNvcnJ1cHRlZCBpbWFnZSB0byB1cz8KCjIwMTQtMDEtMjMgKOuqqSksIDA1OjI4ICsw
-ODAwLCBUb20gTGk6Cj4gSGVsbG8sCj4gCj4gICAgIEFmdGVyIGEgcG93ZXIgY3V0LCBJIGNhbiBu
-b3QgbW91bnQgbXkgRjJGUyBmaWxlc3lzdGVtLiBJdCBjYXVzZSBhCj4gS2VybmVsIFBhbmljIG9u
-IGJvb3RpbmcuIEkgZHVtcCB0aGUgaW1hZ2Ugb2YgdGhlIHBhcnRpdGlvbiBhbmQgdHJpZWQKPiB0
-byBydW4gZnNjay5mMmZzLCB0aGUgb3V0cHV0IGlzOgo+IAo+IEluZm86IHNlY3RvciBzaXplID0g
-NTEyCj4gSW5mbzogdG90YWwgc2VjdG9ycyA9IDEzMjY0ODk2IChpbiA1MTJieXRlcykKPiAKPiAg
-ICAgW0ZTQ0tdIFVucmVhY2hhYmxlIG5hdCBlbnRyaWVzICAgICAgICAgICAgICAgICAgICAgICAg
-W09rLi5dIFsweDBdCj4gICAgIFtGU0NLXSBTSVQgdmFsaWQgYmxvY2sgYml0bWFwIGNoZWNraW5n
-ICAgICAgICAgICAgICAgIFtPay4uXQo+ICAgICBbRlNDS10gSGFyZCBsaW5rIGNoZWNraW5nIGZv
-ciByZWd1bGFyIGZpbGUgICAgICAgICAgICBbT2suLl0gWzB4M2RhXQo+ICAgICBbRlNDS10gdmFs
-aWRfYmxvY2tfY291bnQgbWF0Y2hpbmcgd2l0aCBDUCAgICAgICAgICAgICBbT2suLl0gWzB4M2Vm
-N2NdCj4gICAgIFtGU0NLXSB2YWxpZF9ub2RlX2NvdW50IG1hdGNpbmcgd2l0aCBDUCAoZGUgbG9v
-a3VwKSAgIFtPay4uXSBbMHgxM2EwNF0KPiAgICAgW0ZTQ0tdIHZhbGlkX25vZGVfY291bnQgbWF0
-Y2luZyB3aXRoIENQIChuYXQgbG9va3VwKSAgW09rLi5dIFsweDEzYTA0XQo+ICAgICBbRlNDS10g
-dmFsaWRfaW5vZGVfY291bnQgbWF0Y2hlZCB3aXRoIENQICAgICAgICAgICAgICBbT2suLl0gWzB4
-YTJlZV0KPiAKPiBEb25lLgo+IAo+ICAgICBUaGVuIEkgdHJpZWQgdG8gbW91bnQgaXQuIEJ1dCBp
-dCBjYXVzZSBhIEtlcm5lbCBPb3BzIG9uIG15IExpbnV4IDMuMTIuNy4KPiAKPiBbICA1MjMuMzkx
-NjM5XSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KPiBbICA1MjMuMzkxNjQw
-XSBrZXJuZWwgQlVHIGF0IGZzL2YyZnMvcmVjb3ZlcnkuYzozMDkhCj4gWyAgNTIzLjM5MTY0MV0g
-aW52YWxpZCBvcGNvZGU6IDAwMDAgWyMyXSBQUkVFTVBUIFNNUAo+IFsgIDUyMy4zOTE2NTNdIE1v
-ZHVsZXMgbGlua2VkIGluOiByZmNvbW0gYnR1c2IgYXRoOWtfaHRjIGF0aDlrX2NvbW1vbgo+IGF0
-aDlrX2h3IGF0aCBtYWM4MDIxMSBjZmc4MDIxMSBoaWRfbG9naXRlY2hfZGogaGlkX2dlbmVyaWMg
-emZzKFBPKQo+IG52aWRpYShQTykgenVuaWNvZGUoUE8pIGJuZXAgYmx1ZXRvb3RoIHJma2lsbCB1
-c2Jfc3RvcmFnZQo+IHNuZF9oZGFfY29kZWNfcmVhbHRlayB6YXZsKFBPKSB6Y29tbW9uKFBPKSB6
-bnZwYWlyKFBPKSBzcGwoTykKPiB6bGliX2RlZmxhdGUgcjgxNjkgeGhjaV9oY2QgbWlpIGVoY2lf
-cGNpIHRoZXJtYWwgcHJvY2Vzc29yIGZhbgo+IHNuZF9oZGFfaW50ZWwgc25kX2hkYV9jb2RlYyBz
-bmRfcGNtIHNuZF9wYWdlX2FsbG9jIHNuZF90aW1lciBzbmQKPiBlaGNpX2hjZCB0aGVybWFsX3N5
-cyBzb3VuZGNvcmUgcHNtb3VzZSBidXR0b24gcGNzcGtyIGNvcmV0ZW1wIGh3bW9uCj4gdmJveG5l
-dGFkcChPKSB2Ym94bmV0Zmx0KE8pIHZib3hkcnYoTykKPiBbICA1MjMuMzkxNjU1XSBDUFU6IDMg
-UElEOiA1NTExIENvbW06IG1vdW50IFRhaW50ZWQ6IFAgICAgICBEICAgIE8KPiAzLjEyLjctZS1u
-dmlkaWEgIzEKPiBbICA1MjMuMzkxNjU2XSBIYXJkd2FyZSBuYW1lOiBTeXN0ZW0gbWFudWZhY3R1
-cmVyIFN5c3RlbSBQcm9kdWN0Cj4gTmFtZS9QOFA2NywgQklPUyAzNjAyIDExLzAxLzIwMTIKPiBb
-ICA1MjMuMzkxNjU2XSB0YXNrOiBmZmZmODgwMjE0ZGFiNDgwIHRpOiBmZmZmODgwMGM0ZGQyMDAw
-IHRhc2sudGk6Cj4gZmZmZjg4MDBjNGRkMjAwMAo+IFsgIDUyMy4zOTE2NjFdIFJJUDogMDAxMDpb
-PGZmZmZmZmZmODEyMTExNzY+XSAgWzxmZmZmZmZmZjgxMjExMTc2Pl0KPiByZWNvdmVyX2ZzeW5j
-X2RhdGErMHhkZDYvMHhkZTAKPiBbICA1MjMuMzkxNjYxXSBSU1A6IDAwMTg6ZmZmZjg4MDBjNGRk
-M2NmMCAgRUZMQUdTOiAwMDAxMDI5Nwo+IFsgIDUyMy4zOTE2NjJdIFJBWDogZmZmZjg4MDFmZDEy
-NDAwMCBSQlg6IGZmZmY4ODAyMDFjYmMwMDAgUkNYOiAwMDAwMDAwMDAwMDgxMDFkCj4gWyAgNTIz
-LjM5MTY2Ml0gUkRYOiAwMDAwMDAwMDFmZmZmZmZmIFJTSTogZmZmZjg4MDAwMDAwMDAwMCBSREk6
-IGZmZmZlYTAwMDdmNDQ5MDAKPiBbICA1MjMuMzkxNjYzXSBSQlA6IDAwMDAwMDAwMjAwN2ZmZmIg
-UjA4OiBmZmZmODgwMjE1NGMxNjkwIFIwOTogZmZmZjg4MDExZTQ1ZjMwOAo+IFsgIDUyMy4zOTE2
-NjNdIFIxMDogMDAwMDE2MDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiBmZmZm
-ODgwMjAxNGY1MDAwCj4gWyAgNTIzLjM5MTY2NF0gUjEzOiBmZmZmODgwMjA4YjM0Y2M4IFIxNDog
-ZmZmZjg4MDBjNGRkM2Q2MCBSMTU6IDAwMDAwMDAwMDAwMTMyYWEKPiBbICA1MjMuMzkxNjY0XSBG
-UzogIDAwMDA3ZjJhYTgxOWI3ODAoMDAwMCkgR1M6ZmZmZjg4MDIxZWNjMDAwMCgwMDAwKQo+IGtu
-bEdTOjAwMDAwMDAwMDAwMDAwMDAKPiBbICA1MjMuMzkxNjY1XSBDUzogIDAwMTAgRFM6IDAwMDAg
-RVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzCj4gWyAgNTIzLjM5MTY2NV0gQ1IyOiAwMDAw
-MDAzNmFlNjM4NWQwIENSMzogMDAwMDAwMDBjYTkzNDAwMCBDUjQ6IDAwMDAwMDAwMDAwNDA3ZTAK
-PiBbICA1MjMuMzkxNjY2XSBTdGFjazoKPiBbICA1MjMuMzkxNjY3XSAgZmZmZmVhMDAwODA1M2Qw
-MCBmZmZmODgwMDAwMDAwMDAwIGZmZmY4ODAyMDhiMzRjMDAKPiBmZmZmODgwMjAxNGY1MTY4Cj4g
-WyAgNTIzLjM5MTY2OF0gIDAwMDAwMDAwMDhiMzRjMDAgZmZmZmZmZmYyMDA4MDNmNSBmZmZmZWEw
-MDAwMDAwMDdhCj4gZmZmZjg4MDIwMWRjYzRjMAo+IFsgIDUyMy4zOTE2NjldICBmZmZmZWEwMDA4
-MDUzZDQwIDAwMDAwMDAwMDAxN2MxYWQgMDAwMDAwMDAwMDAwMDAwNwo+IGZmZmY4ODAyMDFjYmMw
-MDAKPiBbICA1MjMuMzkxNjY5XSBDYWxsIFRyYWNlOgo+IFsgIDUyMy4zOTE2NzJdICBbPGZmZmZm
-ZmZmODEyMDM4MjA+XSA/IGYyZnNfcmVtb3VudCsweDEwMC8weDEwMAo+IFsgIDUyMy4zOTE2NzNd
-ICBbPGZmZmZmZmZmODEyMDNlY2I+XSA/IGYyZnNfZmlsbF9zdXBlcisweDZhYi8weDc1MAo+IFsg
-IDUyMy4zOTE2NzRdICBbPGZmZmZmZmZmODExM2VjZjI+XSA/IG1vdW50X2JkZXYrMHgxOTIvMHgx
-ZDAKPiBbICA1MjMuMzkxNjc2XSAgWzxmZmZmZmZmZjgxMTNmNjNjPl0gPyBtb3VudF9mcysweGMv
-MHhiMAo+IFsgIDUyMy4zOTE2NzddICBbPGZmZmZmZmZmODExNTdjZDU+XSA/IHZmc19rZXJuX21v
-dW50KzB4NTUvMHhlMAo+IFsgIDUyMy4zOTE2NzldICBbPGZmZmZmZmZmODExNWEwYzE+XSA/IGRv
-X21vdW50KzB4MWMxLzB4OWUwCj4gWyAgNTIzLjM5MTY4MV0gIFs8ZmZmZmZmZmY4MTEwNTRiOD5d
-ID8gbWVtZHVwX3VzZXIrMHgzOC8weDcwCj4gWyAgNTIzLjM5MTY4Ml0gIFs8ZmZmZmZmZmY4MTE1
-YTk1Yz5dID8gU3lTX21vdW50KzB4N2MvMHhjMAo+IFsgIDUyMy4zOTE2ODNdICBbPGZmZmZmZmZm
-ODE0NjhlOWI+XSA/IHRyYWNlc3lzKzB4ZGQvMHhlMgo+IFsgIDUyMy4zOTE2OTJdIENvZGU6IGU5
-IDQ3IGY3IGZmIGZmIDQ1IDMxIGM5IGU5IGU5IGY1IGZmIGZmIDRjIDg5IGU3Cj4gZTggOTAgZjcg
-ZWQgZmYgZTkgZmYgZjIgZmYgZmYgMGYgMGIgNDggOGIgN2MgMjQgNDAgZTggN2YgZjcgZWQgZmYg
-ZTkKPiBjMiBmNyBmZiBmZiA8MGY+IDBiIDBmIDFmIDg0IDAwIDAwIDAwIDAwIDAwIDgwIDNlIDAw
-IDQ4IDhiIDQ3IDMwIDc1IDE3Cj4gMGYgYjYKPiBbICA1MjMuMzkxNjkzXSBSSVAgIFs8ZmZmZmZm
-ZmY4MTIxMTE3Nj5dIHJlY292ZXJfZnN5bmNfZGF0YSsweGRkNi8weGRlMAo+IFsgIDUyMy4zOTE2
-OTRdICBSU1AgPGZmZmY4ODAwYzRkZDNjZjA+Cj4gWyAgNTIzLjM5MTY5NV0gLS0tWyBlbmQgdHJh
-Y2UgZjFlYTlkOTI1NWMzMTM5ZCBdLS0tCj4gCj4gICAgIFRoZSBwYXJ0aXRpb24gZG9lc24ndCBj
-b250YWluIGFueSB1c2VmdWwgZGF0YSwgcGxlYXNlIGRvbid0IHdvcnJ5Cj4gYWJvdXQgaXQuIEkg
-aG9wZSB5b3UgY2FuIGZpZ3VyZSBvdXQgdGhlIGlzc3VlIHNvb24uCj4gCj4gICAgIEFsc28sIEkg
-Y2FuIHByb3ZpZGUgdGhlIGltYWdlIG9mIHRoZSBjb3JydXB0ZWQgcGFydGl0aW9uIGlmIG5lZWRl
-ZC4KPiAKPiBUaGFua3MsCj4gCj4gVG9tIExpLgo+IAo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+
-IENlbnR1cnlMaW5rIENsb3VkOiBUaGUgTGVhZGVyIGluIEVudGVycHJpc2UgQ2xvdWQgU2Vydmlj
-ZXMuCj4gTGVhcm4gV2h5IE1vcmUgQnVzaW5lc3NlcyBBcmUgQ2hvb3NpbmcgQ2VudHVyeUxpbmsg
-Q2xvdWQgRm9yCj4gQ3JpdGljYWwgV29ya2xvYWRzLCBEZXZlbG9wbWVudCBFbnZpcm9ubWVudHMg
-JiBFdmVyeXRoaW5nIEluIEJldHdlZW4uCj4gR2V0IGEgUXVvdGUgb3IgU3RhcnQgYSBGcmVlIFRy
-aWFsIFRvZGF5LiAKPiBodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/
-aWQ9MTE5NDIwNDMxJml1PS80MTQwL29zdGcuY2xrdHJrCj4gX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlz
-dAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0cHM6Ly9saXN0
-cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoKLS0gCkph
-ZWdldWsgS2ltClNhbXN1bmcKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2VudHVyeUxpbmsgQ2xv
-dWQ6IFRoZSBMZWFkZXIgaW4gRW50ZXJwcmlzZSBDbG91ZCBTZXJ2aWNlcy4KTGVhcm4gV2h5IE1v
-cmUgQnVzaW5lc3NlcyBBcmUgQ2hvb3NpbmcgQ2VudHVyeUxpbmsgQ2xvdWQgRm9yCkNyaXRpY2Fs
-IFdvcmtsb2FkcywgRGV2ZWxvcG1lbnQgRW52aXJvbm1lbnRzICYgRXZlcnl0aGluZyBJbiBCZXR3
-ZWVuLgpHZXQgYSBRdW90ZSBvciBTdGFydCBhIEZyZWUgVHJpYWwgVG9kYXkuIApodHRwOi8vcHVi
-YWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9MTE5NDIwNDMxJml1PS80MTQwL29z
-dGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
-cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
-L2xpbnV4LWYyZnMtZGV2ZWwK
+If a node page is trucated, we'd better drop the page in the node_inode's page
+cache for better memory footprint.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/node.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index bbfc655..b0649b7 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -518,6 +518,10 @@ invalidate:
+ 	F2FS_SET_SB_DIRT(sbi);
+ 
+ 	f2fs_put_page(dn->node_page, 1);
++
++	invalidate_mapping_pages(NODE_MAPPING(sbi),
++			dn->node_page->index, dn->node_page->index);
++
+ 	dn->node_page = NULL;
+ 	trace_f2fs_truncate_node(dn->inode, dn->nid, ni.blk_addr);
+ }
+-- 
+1.8.4.474.g128a96c
+
+
+------------------------------------------------------------------------------
+CenturyLink Cloud: The Leader in Enterprise Cloud Services.
+Learn Why More Businesses Are Choosing CenturyLink Cloud For
+Critical Workloads, Development Environments & Everything In Between.
+Get a Quote or Start a Free Trial Today. 
+http://pubads.g.doubleclick.net/gampad/clk?id=119420431&iu=/4140/ostg.clktrk
