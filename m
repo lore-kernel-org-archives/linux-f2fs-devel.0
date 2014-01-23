@@ -1,170 +1,217 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 1/2 v2] f2fs: call mark_inode_dirty to flush
-	dirty pages
-Date: Thu, 23 Jan 2014 09:18:17 +0900
-Message-ID: <1390436297.25542.4.camel@kjgkr>
-References: <1390298075-21458-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [GIT PULL] f2fs updates for v3.14
+Date: Thu, 23 Jan 2014 10:55:13 +0900
+Message-ID: <1390442113.25542.11.camel@kjgkr>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1W681M-0003Rd-60
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Jan 2014 00:19:48 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1W681K-0003nt-DW
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Jan 2014 00:19:48 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0MZT008KAVKR56B0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Jan 2014 09:19:39 +0900 (KST)
-In-reply-to: <1390298075-21458-1-git-send-email-jaegeuk.kim@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>, "Linux FS DEV, Mailing List" <linux-fsdevel@vger.kernel.org>, "Linux Kernel, Mailing List" <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Chang log from v1:
- o check and add mark_inode_dirty across the whole paths
+Hi Linus,
 
->From a18ff063406dd6aec41fda598eabe2691007a30d Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Tue, 21 Jan 2014 13:32:12 +0900
-Subject: [PATCH 1/2] f2fs: call mark_inode_dirty to flush dirty pages
+This is a pull request on f2fs updates for v3.14.
 
-If a dentry page is updated, we should call mark_inode_dirty to add the
-inode
-into the dirty list, so that its dentry pages are flushed to the disk.
-Otherwise, the inode can be evicted without flush.
+In this round, a couple of sysfs entries were introduced to tune the
+f2fs at runtime.
+In addition, f2fs starts to support inline_data and improves the
+read/write performance in some workloads by refactoring bio-related
+flows.
+This patch-set also includes a number of clean-ups and several bug
+fixes.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/data.c  | 4 +++-
- fs/f2fs/dir.c   | 6 ++----
- fs/f2fs/namei.c | 3 +++
- 3 files changed, 8 insertions(+), 5 deletions(-)
+Thank you very much.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f5fac16..0ae5587 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -249,6 +249,7 @@ int reserve_new_block(struct dnode_of_data *dn)
- 
- 	__set_data_blkaddr(dn, NEW_ADDR);
- 	dn->data_blkaddr = NEW_ADDR;
-+	mark_inode_dirty(dn->inode);
- 	sync_inode_page(dn);
- 	return 0;
- }
-@@ -564,7 +565,6 @@ repeat:
- 		i_size_write(inode, ((index + 1) << PAGE_CACHE_SHIFT));
- 		/* Only the directory inode sets new_i_size */
- 		set_inode_flag(F2FS_I(inode), FI_UPDATE_DIR);
--		mark_inode_dirty_sync(inode);
- 	}
- 	return page;
- 
-@@ -1060,6 +1060,8 @@ static int f2fs_set_data_page_dirty(struct page
-*page)
- 	trace_f2fs_set_page_dirty(page, DATA);
- 
- 	SetPageUptodate(page);
-+	mark_inode_dirty(inode);
-+
- 	if (!PageDirty(page)) {
- 		__set_page_dirty_nobuffers(page);
- 		set_dirty_dir_page(inode, page);
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index cd055b6..b2b77cc 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -388,6 +388,8 @@ static void update_parent_metadata(struct inode
-*dir, struct inode *inode,
- 		clear_inode_flag(F2FS_I(inode), FI_NEW_INODE);
- 	}
- 	dir->i_mtime = dir->i_ctime = CURRENT_TIME;
-+	mark_inode_dirty(dir);
-+
- 	if (F2FS_I(dir)->i_current_depth != current_depth) {
- 		F2FS_I(dir)->i_current_depth = current_depth;
- 		set_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
-@@ -395,8 +397,6 @@ static void update_parent_metadata(struct inode
-*dir, struct inode *inode,
- 
- 	if (is_inode_flag_set(F2FS_I(dir), FI_UPDATE_DIR))
- 		update_inode_page(dir);
--	else
--		mark_inode_dirty(dir);
- 
- 	if (is_inode_flag_set(F2FS_I(inode), FI_INC_LINK))
- 		clear_inode_flag(F2FS_I(inode), FI_INC_LINK);
-@@ -553,8 +553,6 @@ void f2fs_delete_entry(struct f2fs_dir_entry
-*dentry, struct page *page,
- 	if (inode && S_ISDIR(inode->i_mode)) {
- 		drop_nlink(dir);
- 		update_inode_page(dir);
--	} else {
--		mark_inode_dirty(dir);
- 	}
- 
- 	if (inode) {
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index a68838d..3d32f29 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -430,6 +430,7 @@ static int f2fs_rename(struct inode *old_dir, struct
-dentry *old_dentry,
- 		if (old_dir_entry)
- 			drop_nlink(new_inode);
- 		drop_nlink(new_inode);
-+		mark_inode_dirty(new_inode);
- 
- 		if (!new_inode->i_nlink)
- 			add_orphan_inode(sbi, new_inode->i_ino);
-@@ -459,11 +460,13 @@ static int f2fs_rename(struct inode *old_dir,
-struct dentry *old_dentry,
- 			f2fs_set_link(old_inode, old_dir_entry,
- 						old_dir_page, new_dir);
- 			F2FS_I(old_inode)->i_pino = new_dir->i_ino;
-+			update_inode_page(old_inode);
- 		} else {
- 			kunmap(old_dir_page);
- 			f2fs_put_page(old_dir_page, 0);
- 		}
- 		drop_nlink(old_dir);
-+		mark_inode_dirty(old_dir);
- 		update_inode_page(old_dir);
- 	}
- 
--- 
-1.8.4.474.g128a96c
+The following changes since commit
+413541dd66d51f791a0b169d9b9014e4f56be13c:
 
+  Linux 3.13-rc5 (2013-12-22 13:08:32 -0800)
 
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+tags/for-f2fs-3.14
+
+for you to fetch changes up to bf39c00a9a7f3cdb5ce7d6695d9f044daf8f0b53:
+
+  f2fs: drop obsolete node page when it is truncated (2014-01-23
+08:04:21 +0900)
+
+----------------------------------------------------------------
+f2fs updates for v3.14
+
+This patch-set includes the following major enhancement patches.
+o support inline_data
+o refactor bio operations such as merge operations and rw type
+assignment
+o enhance the direct IO path
+o enhance bio operations
+o truncate a node page when it becomes obsolete
+o add sysfs entries: small_discards, max_victim_search, and
+in-place-update
+o add a sysfs entry to control max_victim_search
+
+The other bug fixes are as follows.
+o fix a bug in truncate_partial_nodes
+o avoid warnings during sparse and build process
+o fix error handling flows
+o fix potential bit overflows
+
+And, there are a bunch of cleanups.
+
+----------------------------------------------------------------
+Changman Lee (7):
+      f2fs: introduce __find_rev_next(_zero)_bit
+      f2fs: improve searching speed of __next_free_blkoff
+      f2fs: simplify IS_DATASEG and IS_NODESEG macro
+      f2fs: send REQ_META or REQ_PRIO when reading meta area
+      f2fs: missing kmem_cache_destroy for discard_entry
+      f2fs: add delimiter to seperate name and value in debug phrase
+      f2fs: missing REQ_META and REQ_PRIO when
+sync_meta_pages(META_FLUSH)
+
+Chao Yu (20):
+      f2fs: use f2fs_put_page to release page for uniform style
+      f2fs: add a new function to support for merging contiguous read
+      f2fs: adds a tracepoint for submit_read_page
+      f2fs: adds a tracepoint for f2fs_submit_read_bio
+      f2fs: read contiguous sit entry pages by merging for mount
+performance
+      f2fs: remove unneeded code in punch_hole
+      f2fs: avoid to calculate incorrect max orphan number
+      f2fs: correct type of wait in struct bio_private
+      f2fs: use true and false for boolean variable
+      f2fs: check return value of f2fs_readpage in find_data_page
+      f2fs: convert recover_orphan_inodes to void
+      f2fs: readahead contiguous pages for restore_node_summary
+      f2fs: use inner macro GFP_F2FS_ZERO for simplification
+      f2fs: avoid unneeded page release for correct _count of page
+      f2fs: add unlikely() macro for compiler optimization
+      f2fs: update several comments
+      f2fs: avoid to set wrong pino of inode when rename dir
+      f2fs: check filename length in recover_dentry
+      f2fs: avoid to left uninitialized data in page when read inline
+data
+      f2fs: avoid to read inline data except first page
+
+Chris Fries (1):
+      f2fs: clean checkpatch warnings
+
+Fan Li (1):
+      f2fs: merge pages with the same sync_mode flag
+
+Gu Zheng (14):
+      f2fs: convert remove_inode_page to void
+      f2fs: convert dev_valid_block_count to void
+      f2fs: convert inc/dec_valid_node_count to inc/dec one count
+      f2fs: simplify write_orphan_inodes for better readable
+      f2fs: move the list_head initialization into the lock protection
+region
+      f2fs: fix a potential out of range issue
+      f2fs: move all the bio initialization into __bio_alloc
+      f2fs: remove the rw_flag domain from f2fs_io_info
+      f2fs: convert max_orphans to a field of f2fs_sb_info
+      f2fs: move grabing orphan pages out of protection region
+      f2fs: move alloc new orphan node out of lock protection region
+      f2fs: use spinlock rather than mutex for better speed
+      f2fs: add help function META_MAPPING
+      f2fs: remove the orphan block page array
+
+Huajun Li (6):
+      f2fs: add a new function: f2fs_reserve_block()
+      f2fs: add flags and helpers to support inline data
+      f2fs: add a new mount option: inline_data
+      f2fs: key functions to handle inline data
+      f2fs: handle inline data operations
+      f2fs: update f2fs Documentation
+
+Jaegeuk Kim (42):
+      f2fs: add a slab cache entry for small discards
+      f2fs: add key functions for small discards
+      f2fs: add a sysfs entry to control max_discards
+      f2fs: introduce f2fs_issue_discard() to clean up
+      f2fs: add a tracepoint for f2fs_issue_discard
+      f2fs: clean up the do_submit_bio flow
+      f2fs: use sbi->write_mutex for write bios
+      f2fs: disable the extent cache ops on high fragmented files
+      f2fs: introduce a bio array for per-page write bios
+      f2fs: merge read IOs at ra_nat_pages()
+      f2fs: avoid lock debugging overhead
+      f2fs: add detailed information of bio types in the tracepoints
+      f2fs: remove unnecessary return value
+      f2fs: bug fix on bit overflow from 32bits to 64bits
+      f2fs: remove unnecessary condition checks
+      f2fs: remove the own bi_private allocation
+      f2fs: refactor bio-related operations
+      f2fs: add unlikely() macro for compiler more aggressively
+      f2fs: refactor bio->rw handling
+      f2fs: fix the location of tracepoint
+      f2fs: introduce sysfs entry to control in-place-update policy
+      f2fs: introduce a new direct_IO write path
+      f2fs: write dirty meta pages collectively
+      f2fs: add description about small_discards in document
+      f2fs: introduce F2FS_INODE macro to get f2fs_inode
+      f2fs: should put the dnode when NEW_ADDR is detected
+      f2fs: check the blocksize before calling generic_direct_IO path
+      f2fs: don't need to get f2fs_lock_op for the inline_data test
+      f2fs: convert inline_data for punch_hole
+      f2fs: call f2fs_put_page at the error case
+      f2fs: refactor f2fs_convert_inline_data
+      f2fs: add the number of inline_data files to status info
+      f2fs: add inline_data recovery routine
+      f2fs: handle errors correctly during f2fs_reserve_block
+      f2fs: improve write performance under frequent fsync calls
+      f2fs: add a sysfs entry to control max_victim_search
+      f2fs: update documents and a MAINTAINERS entry
+      f2fs: avoid f2fs_balance_fs call during pageout
+      f2fs: call mark_inode_dirty to flush dirty pages
+      f2fs: move a branch for code redability
+      f2fs: introduce NODE_MAPPING for code consistency
+      f2fs: drop obsolete node page when it is truncated
+
+Younger Liu (2):
+      f2fs: remove debufs dir if debugfs_create_file() failed
+      f2fs: replace the debugfs_root with f2fs_debugfs_root
+
+Yuan Zhong (1):
+      f2fs: remove the needless parameter of f2fs_wait_on_page_writeback
+
+shifei10.ge (1):
+      f2fs: fix truncate_partial_nodes bug
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |  31 ++
+ Documentation/filesystems/f2fs.txt      |  24 ++
+ MAINTAINERS                             |   1 +
+ fs/f2fs/Makefile                        |   2 +-
+ fs/f2fs/checkpoint.c                    | 195 +++++-----
+ fs/f2fs/data.c                          | 621
+++++++++++++++++++++++++--------
+ fs/f2fs/debug.c                         |  53 ++-
+ fs/f2fs/dir.c                           |  47 +--
+ fs/f2fs/f2fs.h                          | 195 +++++++---
+ fs/f2fs/file.c                          |  84 ++---
+ fs/f2fs/gc.c                            |  22 +-
+ fs/f2fs/gc.h                            |   2 +-
+ fs/f2fs/inline.c                        | 222 ++++++++++++
+ fs/f2fs/inode.c                         |  23 +-
+ fs/f2fs/namei.c                         |   5 +
+ fs/f2fs/node.c                          | 272 ++++++++------
+ fs/f2fs/node.h                          |   8 +-
+ fs/f2fs/recovery.c                      |  49 ++-
+ fs/f2fs/segment.c                       | 584
++++++++++++++++++++-----------
+ fs/f2fs/segment.h                       |  81 +++--
+ fs/f2fs/super.c                         |  72 +++-
+ fs/f2fs/xattr.c                         |   2 +-
+ include/linux/f2fs_fs.h                 |   7 +
+ include/trace/events/f2fs.h             | 107 ++++--
+ 24 files changed, 1884 insertions(+), 825 deletions(-)
+ create mode 100644 fs/f2fs/inline.c
 
 -- 
 Jaegeuk Kim
 Samsung
-
-
-------------------------------------------------------------------------------
-CenturyLink Cloud: The Leader in Enterprise Cloud Services.
-Learn Why More Businesses Are Choosing CenturyLink Cloud For
-Critical Workloads, Development Environments & Everything In Between.
-Get a Quote or Start a Free Trial Today. 
-http://pubads.g.doubleclick.net/gampad/clk?id=119420431&iu=/4140/ostg.clktrk
