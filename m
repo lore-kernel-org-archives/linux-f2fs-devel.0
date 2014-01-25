@@ -1,29 +1,30 @@
 From: Clemens Eisserer <linuxhippy@gmail.com>
 Subject: Re: A lot of data written by cleaner for specific
 	workload
-Date: Fri, 24 Jan 2014 23:07:38 +0100
-Message-ID: <CAFvQSYS88P3P-BiqzWE_QjLmuUQ_xScEGKrUdsnymi6jrVPK3A@mail.gmail.com>
+Date: Sat, 25 Jan 2014 22:40:36 +0100
+Message-ID: <CAFvQSYQFhkvtBgGvfW6+L=efoqwbuktWVoGcYV+LQO+sDeE6PA@mail.gmail.com>
 References: <CAFvQSYSRv-SVs+n3rC6tugw1KSOgViEzkBVhbqzum0zjo+gP7Q@mail.gmail.com>
 	<1390520510.25542.34.camel@kjgkr>
+	<CAFvQSYS88P3P-BiqzWE_QjLmuUQ_xScEGKrUdsnymi6jrVPK3A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <linuxhippy@gmail.com>) id 1W6ouf-00057Z-7s
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <linuxhippy@gmail.com>) id 1W7Ay2-0004V6-Kc
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 24 Jan 2014 22:07:45 +0000
-Received: from mail-ve0-f176.google.com ([209.85.128.176])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1W6oue-0001E3-HN
+	Sat, 25 Jan 2014 21:40:42 +0000
+Received: from mail-vc0-f175.google.com ([209.85.220.175])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1W7Ay1-0001Ju-Un
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 24 Jan 2014 22:07:45 +0000
-Received: by mail-ve0-f176.google.com with SMTP id oz11so2281060veb.21
+	Sat, 25 Jan 2014 21:40:42 +0000
+Received: by mail-vc0-f175.google.com with SMTP id ij19so2588374vcb.20
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 24 Jan 2014 14:07:39 -0800 (PST)
-In-Reply-To: <1390520510.25542.34.camel@kjgkr>
+	Sat, 25 Jan 2014 13:40:36 -0800 (PST)
+In-Reply-To: <CAFvQSYS88P3P-BiqzWE_QjLmuUQ_xScEGKrUdsnymi6jrVPK3A@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,31 +36,14 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+Hi again and sorry for the traffic,
 
-Thanks a lot for your reply.
+I tried to mount with background_gc=off, but in this case f2fs complains:
+> [  145.052343] F2FS-fs (mmcblk0p3): Unrecognized mount option "background_gc=off" or missing value
 
-> The f2fs_gc can be controlled by user through a sysfs entry.
-> So, could you look at the amount of written data by varying the gc
-> interval?
->
-> cat /sys/fs/f2fs/$dev/gc_min_sleep_time
-> 30000
-> cat /sys/fs/f2fs/$dev/gc_max_sleep_time
-> 60000
->
-> These values are represented in milliseconds.
-> If you don't want to write data as much as possibe and don't need a high
-> performance as the partition becomes full, you can just grow the
-> interval times.
-> The other way is that you can just add a mount option, "-o
-> background_gc=off", which turns off the f2fs_gc.
+Also, there is no f2fs entry in /sys/fs :/
 
-I'll try turning off the background-gc, as I can't find the
-sysfs-knobs in my system.
-
-What I still wonder is, how the cleaner can write twice the data it
-reads (as in the above example).
+I guess my kernel (3.10.24+) is too old...
 
 Regards, Clemens
 
