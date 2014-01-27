@@ -1,21 +1,35 @@
-From: "Chen, Simon A" <simon.a.chen@intel.com>
-Subject: unsubscribe linux-f2fs
-Date: Sun, 26 Jan 2014 01:43:46 +0000
-Message-ID: <85D6621F6D979F44863980E8187432EE01ED2605@SHSMSX104.ccr.corp.intel.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: A lot of data written by cleaner for specific
+	workload
+Date: Mon, 27 Jan 2014 14:06:11 +0900
+Message-ID: <1390799171.25542.50.camel@kjgkr>
+References: <CAFvQSYSRv-SVs+n3rC6tugw1KSOgViEzkBVhbqzum0zjo+gP7Q@mail.gmail.com>
+	<1390520510.25542.34.camel@kjgkr>
+	<CAFvQSYS88P3P-BiqzWE_QjLmuUQ_xScEGKrUdsnymi6jrVPK3A@mail.gmail.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4423235737229752061=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <simon.a.chen@intel.com>) id 1W7ElQ-0007zD-FE
-	for Linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 26 Jan 2014 01:43:56 +0000
-Received: from mga03.intel.com ([143.182.124.21])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1W7ElP-0004kL-Ez for Linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 26 Jan 2014 01:43:56 +0000
-Content-Language: en-US
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1W7eQF-0006z7-2j
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 Jan 2014 05:07:47 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1W7eQD-0006AN-2B
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 Jan 2014 05:07:47 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N0100FVGNKO3H40@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 Jan 2014 14:07:36 +0900 (KST)
+In-reply-to: <CAFvQSYS88P3P-BiqzWE_QjLmuUQ_xScEGKrUdsnymi6jrVPK3A@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,121 +39,47 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Linux-f2fs-devel@lists.sourceforge.net" <Linux-f2fs-devel@lists.sourceforge.net>
+To: Clemens Eisserer <linuxhippy@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
---===============4423235737229752061==
-Content-Language: en-US
-Content-Type: multipart/alternative;
-	boundary="_000_85D6621F6D979F44863980E8187432EE01ED2605SHSMSX104ccrcor_"
-
---_000_85D6621F6D979F44863980E8187432EE01ED2605SHSMSX104ccrcor_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-Thanks!
-
--Thanks!
-Simon
-
-
---_000_85D6621F6D979F44863980E8187432EE01ED2605SHSMSX104ccrcor_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<meta name=3D"Generator" content=3D"Microsoft Word 14 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:\5B8B\4F53;
-	panose-1:2 1 6 0 3 1 1 1 1 1;}
-@font-face
-	{font-family:\5B8B\4F53;
-	panose-1:2 1 6 0 3 1 1 1 1 1;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:"\@\5B8B\4F53";
-	panose-1:2 1 6 0 3 1 1 1 1 1;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	margin-bottom:.0001pt;
-	text-align:justify;
-	text-justify:inter-ideograph;
-	font-size:10.5pt;
-	font-family:"Calibri","sans-serif";}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:blue;
-	text-decoration:underline;}
-a:visited, span.MsoHyperlinkFollowed
-	{mso-style-priority:99;
-	color:purple;
-	text-decoration:underline;}
-span.EmailStyle17
-	{mso-style-type:personal-compose;
-	font-family:"Calibri","sans-serif";
-	color:windowtext;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-family:"Calibri","sans-serif";}
-/* Page Definitions */
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 90.0pt 72.0pt 90.0pt;}
-div.WordSection1
-	{page:WordSection1;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"ZH-CN" link=3D"blue" vlink=3D"purple" style=3D"text-justify-t=
-rim:punctuation">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Thanks!<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">-Thanks!<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Simon<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-</div>
-</body>
-</html>
-
---_000_85D6621F6D979F44863980E8187432EE01ED2605SHSMSX104ccrcor_--
-
-
---===============4423235737229752061==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-------------------------------------------------------------------------------
-CenturyLink Cloud: The Leader in Enterprise Cloud Services.
-Learn Why More Businesses Are Choosing CenturyLink Cloud For
-Critical Workloads, Development Environments & Everything In Between.
-Get a Quote or Start a Free Trial Today.
-http://pubads.g.doubleclick.net/gampad/clk?id=119420431&iu=/4140/ostg.clktrk
---===============4423235737229752061==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============4423235737229752061==--
+SGksCgoyMDE0LTAxLTI0ICjquIgpLCAyMzowNyArMDEwMCwgQ2xlbWVucyBFaXNzZXJlcjoKPiBI
+aSBKYWVnZXVrLAo+IAo+IFRoYW5rcyBhIGxvdCBmb3IgeW91ciByZXBseS4KPiAKPiA+IFRoZSBm
+MmZzX2djIGNhbiBiZSBjb250cm9sbGVkIGJ5IHVzZXIgdGhyb3VnaCBhIHN5c2ZzIGVudHJ5Lgo+
+ID4gU28sIGNvdWxkIHlvdSBsb29rIGF0IHRoZSBhbW91bnQgb2Ygd3JpdHRlbiBkYXRhIGJ5IHZh
+cnlpbmcgdGhlIGdjCj4gPiBpbnRlcnZhbD8KPiA+Cj4gPiBjYXQgL3N5cy9mcy9mMmZzLyRkZXYv
+Z2NfbWluX3NsZWVwX3RpbWUKPiA+IDMwMDAwCj4gPiBjYXQgL3N5cy9mcy9mMmZzLyRkZXYvZ2Nf
+bWF4X3NsZWVwX3RpbWUKPiA+IDYwMDAwCj4gPgo+ID4gVGhlc2UgdmFsdWVzIGFyZSByZXByZXNl
+bnRlZCBpbiBtaWxsaXNlY29uZHMuCj4gPiBJZiB5b3UgZG9uJ3Qgd2FudCB0byB3cml0ZSBkYXRh
+IGFzIG11Y2ggYXMgcG9zc2liZSBhbmQgZG9uJ3QgbmVlZCBhIGhpZ2gKPiA+IHBlcmZvcm1hbmNl
+IGFzIHRoZSBwYXJ0aXRpb24gYmVjb21lcyBmdWxsLCB5b3UgY2FuIGp1c3QgZ3JvdyB0aGUKPiA+
+IGludGVydmFsIHRpbWVzLgo+ID4gVGhlIG90aGVyIHdheSBpcyB0aGF0IHlvdSBjYW4ganVzdCBh
+ZGQgYSBtb3VudCBvcHRpb24sICItbwo+ID4gYmFja2dyb3VuZF9nYz1vZmYiLCB3aGljaCB0dXJu
+cyBvZmYgdGhlIGYyZnNfZ2MuCj4gCj4gSSdsbCB0cnkgdHVybmluZyBvZmYgdGhlIGJhY2tncm91
+bmQtZ2MsIGFzIEkgY2FuJ3QgZmluZCB0aGUKPiBzeXNmcy1rbm9icyBpbiBteSBzeXN0ZW0uCj4g
+Cj4gV2hhdCBJIHN0aWxsIHdvbmRlciBpcywgaG93IHRoZSBjbGVhbmVyIGNhbiB3cml0ZSB0d2lj
+ZSB0aGUgZGF0YSBpdAo+IHJlYWRzIChhcyBpbiB0aGUgYWJvdmUgZXhhbXBsZSkuCgpJZiBhIGRh
+dGEgaXMgc2VsZWN0ZWQgdG8gYmUgbW92ZWQsIGl0cyBub2RlIGJsb2NrLCBhbiBpbmRleCBibG9j
+aywKc2hvdWxkIGJlIHJlYWQgdG9vLgpTbywgSSB0aGluayBpdCBjYW4gYmUgZG91YmxlLgoKSSB0
+aGluayB0aGUgbW91bnQgb3B0aW9uIHdvdWxkIGJlICJiYWNrZ3JvdW5kX2djX29mZiIgaW4gdjMu
+MTAuClRoYW5rcywKCj4gCj4gUmVnYXJkcywgQ2xlbWVucwo+IAo+IC0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQo+IENlbnR1cnlMaW5rIENsb3VkOiBUaGUgTGVhZGVyIGluIEVudGVycHJpc2UgQ2xvdWQg
+U2VydmljZXMuCj4gTGVhcm4gV2h5IE1vcmUgQnVzaW5lc3NlcyBBcmUgQ2hvb3NpbmcgQ2VudHVy
+eUxpbmsgQ2xvdWQgRm9yCj4gQ3JpdGljYWwgV29ya2xvYWRzLCBEZXZlbG9wbWVudCBFbnZpcm9u
+bWVudHMgJiBFdmVyeXRoaW5nIEluIEJldHdlZW4uCj4gR2V0IGEgUXVvdGUgb3IgU3RhcnQgYSBG
+cmVlIFRyaWFsIFRvZGF5LiAKPiBodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBh
+ZC9jbGs/aWQ9MTE5NDIwNDMxJml1PS80MTQwL29zdGcuY2xrdHJrCj4gX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZzLWRldmVsIG1haWxp
+bmcgbGlzdAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0cHM6
+Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoK
+LS0gCkphZWdldWsgS2ltClNhbXN1bmcKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2VudHVyeUxp
+bmsgQ2xvdWQ6IFRoZSBMZWFkZXIgaW4gRW50ZXJwcmlzZSBDbG91ZCBTZXJ2aWNlcy4KTGVhcm4g
+V2h5IE1vcmUgQnVzaW5lc3NlcyBBcmUgQ2hvb3NpbmcgQ2VudHVyeUxpbmsgQ2xvdWQgRm9yCkNy
+aXRpY2FsIFdvcmtsb2FkcywgRGV2ZWxvcG1lbnQgRW52aXJvbm1lbnRzICYgRXZlcnl0aGluZyBJ
+biBCZXR3ZWVuLgpHZXQgYSBRdW90ZSBvciBTdGFydCBhIEZyZWUgVHJpYWwgVG9kYXkuIApodHRw
+Oi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9MTE5NDIwNDMxJml1PS80
+MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlz
+dHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xp
+c3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
