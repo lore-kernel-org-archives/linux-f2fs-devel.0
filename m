@@ -1,30 +1,31 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 1/4] f2fs: update_inode_page should be done all
-	the time
-Date: Tue, 28 Jan 2014 14:54:04 +0900
-Message-ID: <1390888447-5258-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 4/4] f2fs: fix a build warning
+Date: Tue, 28 Jan 2014 14:54:07 +0900
+Message-ID: <1390888447-5258-4-git-send-email-jaegeuk.kim@samsung.com>
+References: <1390888447-5258-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1W81eD-0003zn-Op
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1W81eD-0001Wm-Pk
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Tue, 28 Jan 2014 05:55:45 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
+Received: from mailout2.samsung.com ([203.254.224.25])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1W81eB-0006vz-OG
+	(Exim 4.76) id 1W81eB-0006w0-NF
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Tue, 28 Jan 2014 05:55:45 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout2.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N0300EK1KGL9PC0@mailout4.samsung.com> for
+	with ESMTP id <0N03009POKGMX110@mailout2.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 Jan 2014 14:55:33 +0900 (KST)
+	Tue, 28 Jan 2014 14:55:34 +0900 (KST)
+In-reply-to: <1390888447-5258-1-git-send-email-jaegeuk.kim@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,119 +37,49 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-In order to make fs consistency, update_inode_page should not be failed all
-the time. Otherwise, it is possible to lose some metadata in the inode like
-a link count.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/data.c  |  3 +--
- fs/f2fs/f2fs.h  |  8 +++++++-
- fs/f2fs/inode.c | 20 ++++++++++++--------
- 3 files changed, 20 insertions(+), 11 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0ae5587..6827359 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -62,8 +62,7 @@ static void f2fs_write_end_io(struct bio *bio, int err)
- 		if (unlikely(!uptodate)) {
- 			SetPageError(page);
- 			set_bit(AS_EIO, &page->mapping->flags);
--			set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
--			sbi->sb->s_flags |= MS_RDONLY;
-+			f2fs_stop_checkpoint(sbi);
- 		}
- 		end_page_writeback(page);
- 		dec_page_count(sbi, F2FS_WRITEBACK);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index af51a0b..42903c3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1023,6 +1023,12 @@ static inline int f2fs_readonly(struct super_block *sb)
- 	return sb->s_flags & MS_RDONLY;
- }
- 
-+static inline void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi)
-+{
-+	set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
-+	sbi->sb->s_flags |= MS_RDONLY;
-+}
-+
- /*
-  * file.c
-  */
-@@ -1044,7 +1050,7 @@ void f2fs_set_inode_flags(struct inode *);
- struct inode *f2fs_iget(struct super_block *, unsigned long);
- int try_to_free_nats(struct f2fs_sb_info *, int);
- void update_inode(struct inode *, struct page *);
--int update_inode_page(struct inode *);
-+void update_inode_page(struct inode *);
- int f2fs_write_inode(struct inode *, struct writeback_control *);
- void f2fs_evict_inode(struct inode *);
- 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 4d67ed7..1a4ba27 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -212,24 +212,28 @@ void update_inode(struct inode *inode, struct page *node_page)
- 	clear_inode_flag(F2FS_I(inode), FI_DIRTY_INODE);
- }
- 
--int update_inode_page(struct inode *inode)
-+void update_inode_page(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
- 	struct page *node_page;
--
-+retry:
- 	node_page = get_node_page(sbi, inode->i_ino);
--	if (IS_ERR(node_page))
--		return PTR_ERR(node_page);
-+	if (IS_ERR(node_page)) {
-+		if (PTR_ERR(node_page) == -ENOMEM) {
-+			cond_resched();
-+			goto retry;
-+		} else {
-+			f2fs_stop_checkpoint(sbi);
-+		}
-+	}
- 
- 	update_inode(inode, node_page);
- 	f2fs_put_page(node_page, 1);
--	return 0;
- }
- 
- int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
--	int ret;
- 
- 	if (inode->i_ino == F2FS_NODE_INO(sbi) ||
- 			inode->i_ino == F2FS_META_INO(sbi))
-@@ -243,13 +247,13 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 	 * during the urgent cleaning time when runing out of free sections.
- 	 */
- 	f2fs_lock_op(sbi);
--	ret = update_inode_page(inode);
-+	update_inode_page(inode);
- 	f2fs_unlock_op(sbi);
- 
- 	if (wbc)
- 		f2fs_balance_fs(sbi);
- 
--	return ret;
-+	return 0;
- }
- 
- /*
--- 
-1.8.4.474.g128a96c
-
-
-------------------------------------------------------------------------------
-WatchGuard Dimension instantly turns raw network data into actionable 
-security intelligence. It gives you real-time visual feedback on key
-security issues and trends.  Skip the complicated setup - simply import
-a virtual appliance and go from zero to informed in seconds.
-http://pubads.g.doubleclick.net/gampad/clk?id=123612991&iu=/4140/ostg.clktrk
+VGhpcyBwYXRjaCBtb2RpZmllcyBmbG93IGEgbGl0dGxlIGJpdCB0byBhdm9pZCB0aGUgZm9sbG93
+aW5nIGJ1aWxkIHdhcm5pbmdzLgoKc3JjL2ZzL2YyZnMvcmVjb3ZlcnkuYzogSW4gZnVuY3Rpb24g
+4oCYY2hlY2tfaW5kZXhfaW5fcHJldl9ub2Rlc+KAmToKc3JjL2ZzL2YyZnMvcmVjb3ZlcnkuYzoy
+ODg6NTE6IHdhcm5pbmc6IOKAmHN1bS48VTUzOTA+LjxVNTJmOD4ub2ZzX2luX25vZGXigJkgbWF5
+CgliZSB1c2VkIHVuaW5pdGlhbGl6ZWQgaW4gdGhpcyBmdW5jdGlvbiBbLVdtYXliZS11bmluaXRp
+YWxpemVkXQpzcmMvZnMvZjJmcy9yZWNvdmVyeS5jOjI2MDoyMzogd2FybmluZzog4oCYc3VtLm5p
+ZOKAmSBtYXkgYmUgdXNlZCB1bmluaXRpYWxpemVkCglpbiB0aGlzIGZ1bmN0aW9uIFstV21heWJl
+LXVuaW5pdGlhbGl6ZWRdCgpTaWduZWQtb2ZmLWJ5OiBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1A
+c2Ftc3VuZy5jb20+Ci0tLQogZnMvZjJmcy9yZWNvdmVyeS5jIHwgMTkgKysrKysrKystLS0tLS0t
+LS0tLQogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pCgpk
+aWZmIC0tZ2l0IGEvZnMvZjJmcy9yZWNvdmVyeS5jIGIvZnMvZjJmcy9yZWNvdmVyeS5jCmluZGV4
+IGYxYjBiODkuLmNkYzRiZGQgMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvcmVjb3ZlcnkuYworKysgYi9m
+cy9mMmZzL3JlY292ZXJ5LmMKQEAgLTIyMCwxMSArMjIwLDExIEBAIHN0YXRpYyBpbnQgY2hlY2tf
+aW5kZXhfaW5fcHJldl9ub2RlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCiAJdW5zaWduZWQg
+aW50IHNlZ25vID0gR0VUX1NFR05PKHNiaSwgYmxrYWRkcik7CiAJdW5zaWduZWQgc2hvcnQgYmxr
+b2ZmID0gR0VUX1NFR09GRl9GUk9NX1NFRzAoc2JpLCBibGthZGRyKSAmCiAJCQkJCShzYmktPmJs
+b2Nrc19wZXJfc2VnIC0gMSk7CisJc3RydWN0IGYyZnNfc3VtbWFyeV9ibG9jayAqc3VtX25vZGU7
+CiAJc3RydWN0IGYyZnNfc3VtbWFyeSBzdW07CisJc3RydWN0IHBhZ2UgKnN1bV9wYWdlLCAqbm9k
+ZV9wYWdlOwogCW5pZF90IGlubywgbmlkOwotCXZvaWQgKmthZGRyOwogCXN0cnVjdCBpbm9kZSAq
+aW5vZGU7Ci0Jc3RydWN0IHBhZ2UgKm5vZGVfcGFnZTsKIAl1bnNpZ25lZCBpbnQgb2Zmc2V0Owog
+CWJsb2NrX3QgYmlkeDsKIAlpbnQgaTsKQEAgLTIzOCwxOCArMjM4LDE1IEBAIHN0YXRpYyBpbnQg
+Y2hlY2tfaW5kZXhfaW5fcHJldl9ub2RlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCiAJCXN0
+cnVjdCBjdXJzZWdfaW5mbyAqY3Vyc2VnID0gQ1VSU0VHX0koc2JpLCBpKTsKIAkJaWYgKGN1cnNl
+Zy0+c2Vnbm8gPT0gc2Vnbm8pIHsKIAkJCXN1bSA9IGN1cnNlZy0+c3VtX2Jsay0+ZW50cmllc1ti
+bGtvZmZdOwotCQkJYnJlYWs7CisJCQlnb3RvIGdvdF9pdDsKIAkJfQogCX0KLQlpZiAoaSA+IENV
+UlNFR19DT0xEX0RBVEEpIHsKLQkJc3RydWN0IHBhZ2UgKnN1bV9wYWdlID0gZ2V0X3N1bV9wYWdl
+KHNiaSwgc2Vnbm8pOwotCQlzdHJ1Y3QgZjJmc19zdW1tYXJ5X2Jsb2NrICpzdW1fbm9kZTsKLQkJ
+a2FkZHIgPSBwYWdlX2FkZHJlc3Moc3VtX3BhZ2UpOwotCQlzdW1fbm9kZSA9IChzdHJ1Y3QgZjJm
+c19zdW1tYXJ5X2Jsb2NrICopa2FkZHI7Ci0JCXN1bSA9IHN1bV9ub2RlLT5lbnRyaWVzW2Jsa29m
+Zl07Ci0JCWYyZnNfcHV0X3BhZ2Uoc3VtX3BhZ2UsIDEpOwotCX0KIAorCXN1bV9wYWdlID0gZ2V0
+X3N1bV9wYWdlKHNiaSwgc2Vnbm8pOworCXN1bV9ub2RlID0gKHN0cnVjdCBmMmZzX3N1bW1hcnlf
+YmxvY2sgKilwYWdlX2FkZHJlc3Moc3VtX3BhZ2UpOworCXN1bSA9IHN1bV9ub2RlLT5lbnRyaWVz
+W2Jsa29mZl07CisJZjJmc19wdXRfcGFnZShzdW1fcGFnZSwgMSk7Citnb3RfaXQ6CiAJLyogVXNl
+IHRoZSBsb2NrZWQgZG5vZGUgcGFnZSBhbmQgaW5vZGUgKi8KIAluaWQgPSBsZTMyX3RvX2NwdShz
+dW0ubmlkKTsKIAlpZiAoZG4tPmlub2RlLT5pX2lubyA9PSBuaWQpIHsKLS0gCjEuOC40LjQ3NC5n
+MTI4YTk2YwoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KV2F0Y2hHdWFyZCBEaW1lbnNpb24gaW5z
+dGFudGx5IHR1cm5zIHJhdyBuZXR3b3JrIGRhdGEgaW50byBhY3Rpb25hYmxlIApzZWN1cml0eSBp
+bnRlbGxpZ2VuY2UuIEl0IGdpdmVzIHlvdSByZWFsLXRpbWUgdmlzdWFsIGZlZWRiYWNrIG9uIGtl
+eQpzZWN1cml0eSBpc3N1ZXMgYW5kIHRyZW5kcy4gIFNraXAgdGhlIGNvbXBsaWNhdGVkIHNldHVw
+IC0gc2ltcGx5IGltcG9ydAphIHZpcnR1YWwgYXBwbGlhbmNlIGFuZCBnbyBmcm9tIHplcm8gdG8g
+aW5mb3JtZWQgaW4gc2Vjb25kcy4KaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1w
+YWQvY2xrP2lkPTEyMzYxMjk5MSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcg
+bGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3Rz
+LnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
