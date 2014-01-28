@@ -1,28 +1,29 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 4/4] f2fs: fix a build warning
-Date: Tue, 28 Jan 2014 14:54:07 +0900
-Message-ID: <1390888447-5258-4-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 2/4] f2fs: handle dirty segments inside
+	refresh_sit_entry
+Date: Tue, 28 Jan 2014 14:54:05 +0900
+Message-ID: <1390888447-5258-2-git-send-email-jaegeuk.kim@samsung.com>
 References: <1390888447-5258-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1W81eD-0001Wm-Pk
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1W81eE-00040D-Vq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 Jan 2014 05:55:45 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1W81eB-0006w0-NF
+	Tue, 28 Jan 2014 05:55:47 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1W81eD-0005f5-3R
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 Jan 2014 05:55:45 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
+	Tue, 28 Jan 2014 05:55:46 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N03009POKGMX110@mailout2.samsung.com> for
+	with ESMTP id <0N0300AADKGM6790@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
 	Tue, 28 Jan 2014 14:55:34 +0900 (KST)
 In-reply-to: <1390888447-5258-1-git-send-email-jaegeuk.kim@samsung.com>
@@ -37,49 +38,91 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-VGhpcyBwYXRjaCBtb2RpZmllcyBmbG93IGEgbGl0dGxlIGJpdCB0byBhdm9pZCB0aGUgZm9sbG93
-aW5nIGJ1aWxkIHdhcm5pbmdzLgoKc3JjL2ZzL2YyZnMvcmVjb3ZlcnkuYzogSW4gZnVuY3Rpb24g
-4oCYY2hlY2tfaW5kZXhfaW5fcHJldl9ub2Rlc+KAmToKc3JjL2ZzL2YyZnMvcmVjb3ZlcnkuYzoy
-ODg6NTE6IHdhcm5pbmc6IOKAmHN1bS48VTUzOTA+LjxVNTJmOD4ub2ZzX2luX25vZGXigJkgbWF5
-CgliZSB1c2VkIHVuaW5pdGlhbGl6ZWQgaW4gdGhpcyBmdW5jdGlvbiBbLVdtYXliZS11bmluaXRp
-YWxpemVkXQpzcmMvZnMvZjJmcy9yZWNvdmVyeS5jOjI2MDoyMzogd2FybmluZzog4oCYc3VtLm5p
-ZOKAmSBtYXkgYmUgdXNlZCB1bmluaXRpYWxpemVkCglpbiB0aGlzIGZ1bmN0aW9uIFstV21heWJl
-LXVuaW5pdGlhbGl6ZWRdCgpTaWduZWQtb2ZmLWJ5OiBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1A
-c2Ftc3VuZy5jb20+Ci0tLQogZnMvZjJmcy9yZWNvdmVyeS5jIHwgMTkgKysrKysrKystLS0tLS0t
-LS0tLQogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pCgpk
-aWZmIC0tZ2l0IGEvZnMvZjJmcy9yZWNvdmVyeS5jIGIvZnMvZjJmcy9yZWNvdmVyeS5jCmluZGV4
-IGYxYjBiODkuLmNkYzRiZGQgMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvcmVjb3ZlcnkuYworKysgYi9m
-cy9mMmZzL3JlY292ZXJ5LmMKQEAgLTIyMCwxMSArMjIwLDExIEBAIHN0YXRpYyBpbnQgY2hlY2tf
-aW5kZXhfaW5fcHJldl9ub2RlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCiAJdW5zaWduZWQg
-aW50IHNlZ25vID0gR0VUX1NFR05PKHNiaSwgYmxrYWRkcik7CiAJdW5zaWduZWQgc2hvcnQgYmxr
-b2ZmID0gR0VUX1NFR09GRl9GUk9NX1NFRzAoc2JpLCBibGthZGRyKSAmCiAJCQkJCShzYmktPmJs
-b2Nrc19wZXJfc2VnIC0gMSk7CisJc3RydWN0IGYyZnNfc3VtbWFyeV9ibG9jayAqc3VtX25vZGU7
-CiAJc3RydWN0IGYyZnNfc3VtbWFyeSBzdW07CisJc3RydWN0IHBhZ2UgKnN1bV9wYWdlLCAqbm9k
-ZV9wYWdlOwogCW5pZF90IGlubywgbmlkOwotCXZvaWQgKmthZGRyOwogCXN0cnVjdCBpbm9kZSAq
-aW5vZGU7Ci0Jc3RydWN0IHBhZ2UgKm5vZGVfcGFnZTsKIAl1bnNpZ25lZCBpbnQgb2Zmc2V0Owog
-CWJsb2NrX3QgYmlkeDsKIAlpbnQgaTsKQEAgLTIzOCwxOCArMjM4LDE1IEBAIHN0YXRpYyBpbnQg
-Y2hlY2tfaW5kZXhfaW5fcHJldl9ub2RlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCiAJCXN0
-cnVjdCBjdXJzZWdfaW5mbyAqY3Vyc2VnID0gQ1VSU0VHX0koc2JpLCBpKTsKIAkJaWYgKGN1cnNl
-Zy0+c2Vnbm8gPT0gc2Vnbm8pIHsKIAkJCXN1bSA9IGN1cnNlZy0+c3VtX2Jsay0+ZW50cmllc1ti
-bGtvZmZdOwotCQkJYnJlYWs7CisJCQlnb3RvIGdvdF9pdDsKIAkJfQogCX0KLQlpZiAoaSA+IENV
-UlNFR19DT0xEX0RBVEEpIHsKLQkJc3RydWN0IHBhZ2UgKnN1bV9wYWdlID0gZ2V0X3N1bV9wYWdl
-KHNiaSwgc2Vnbm8pOwotCQlzdHJ1Y3QgZjJmc19zdW1tYXJ5X2Jsb2NrICpzdW1fbm9kZTsKLQkJ
-a2FkZHIgPSBwYWdlX2FkZHJlc3Moc3VtX3BhZ2UpOwotCQlzdW1fbm9kZSA9IChzdHJ1Y3QgZjJm
-c19zdW1tYXJ5X2Jsb2NrICopa2FkZHI7Ci0JCXN1bSA9IHN1bV9ub2RlLT5lbnRyaWVzW2Jsa29m
-Zl07Ci0JCWYyZnNfcHV0X3BhZ2Uoc3VtX3BhZ2UsIDEpOwotCX0KIAorCXN1bV9wYWdlID0gZ2V0
-X3N1bV9wYWdlKHNiaSwgc2Vnbm8pOworCXN1bV9ub2RlID0gKHN0cnVjdCBmMmZzX3N1bW1hcnlf
-YmxvY2sgKilwYWdlX2FkZHJlc3Moc3VtX3BhZ2UpOworCXN1bSA9IHN1bV9ub2RlLT5lbnRyaWVz
-W2Jsa29mZl07CisJZjJmc19wdXRfcGFnZShzdW1fcGFnZSwgMSk7Citnb3RfaXQ6CiAJLyogVXNl
-IHRoZSBsb2NrZWQgZG5vZGUgcGFnZSBhbmQgaW5vZGUgKi8KIAluaWQgPSBsZTMyX3RvX2NwdShz
-dW0ubmlkKTsKIAlpZiAoZG4tPmlub2RlLT5pX2lubyA9PSBuaWQpIHsKLS0gCjEuOC40LjQ3NC5n
-MTI4YTk2YwoKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KV2F0Y2hHdWFyZCBEaW1lbnNpb24gaW5z
-dGFudGx5IHR1cm5zIHJhdyBuZXR3b3JrIGRhdGEgaW50byBhY3Rpb25hYmxlIApzZWN1cml0eSBp
-bnRlbGxpZ2VuY2UuIEl0IGdpdmVzIHlvdSByZWFsLXRpbWUgdmlzdWFsIGZlZWRiYWNrIG9uIGtl
-eQpzZWN1cml0eSBpc3N1ZXMgYW5kIHRyZW5kcy4gIFNraXAgdGhlIGNvbXBsaWNhdGVkIHNldHVw
-IC0gc2ltcGx5IGltcG9ydAphIHZpcnR1YWwgYXBwbGlhbmNlIGFuZCBnbyBmcm9tIHplcm8gdG8g
-aW5mb3JtZWQgaW4gc2Vjb25kcy4KaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1w
-YWQvY2xrP2lkPTEyMzYxMjk5MSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcg
-bGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3Rz
-LnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+This patch cleans up the refresh_sit_entry to handle locate_dirty_segments.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/f2fs.h    |  1 +
+ fs/f2fs/segment.c | 19 ++++++++-----------
+ 2 files changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 42903c3..6e9515d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1132,6 +1132,7 @@ void destroy_node_manager_caches(void);
+ void f2fs_balance_fs(struct f2fs_sb_info *);
+ void f2fs_balance_fs_bg(struct f2fs_sb_info *);
+ void invalidate_blocks(struct f2fs_sb_info *, block_t);
++void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
+ void clear_prefree_segments(struct f2fs_sb_info *);
+ int npages_for_summary_flush(struct f2fs_sb_info *);
+ void allocate_new_segments(struct f2fs_sb_info *);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7caac5f..89aa503 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -434,12 +434,14 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 		get_sec_entry(sbi, segno)->valid_blocks += del;
+ }
+ 
+-static void refresh_sit_entry(struct f2fs_sb_info *sbi,
+-			block_t old_blkaddr, block_t new_blkaddr)
++void refresh_sit_entry(struct f2fs_sb_info *sbi, block_t old, block_t new)
+ {
+-	update_sit_entry(sbi, new_blkaddr, 1);
+-	if (GET_SEGNO(sbi, old_blkaddr) != NULL_SEGNO)
+-		update_sit_entry(sbi, old_blkaddr, -1);
++	update_sit_entry(sbi, new, 1);
++	if (GET_SEGNO(sbi, old) != NULL_SEGNO)
++		update_sit_entry(sbi, old, -1);
++
++	locate_dirty_segment(sbi, GET_SEGNO(sbi, old));
++	locate_dirty_segment(sbi, GET_SEGNO(sbi, new));
+ }
+ 
+ void invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+@@ -886,12 +888,11 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 	 * since SSR needs latest valid block information.
+ 	 */
+ 	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
++	locate_dirty_segment(sbi, old_cursegno);
+ 
+ 	if (!__has_curseg_space(sbi, type))
+ 		sit_i->s_ops->allocate_segment(sbi, type, false);
+ 
+-	locate_dirty_segment(sbi, old_cursegno);
+-	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+ 	mutex_unlock(&sit_i->sentry_lock);
+ 
+ 	if (page && IS_NODESEG(type))
+@@ -992,9 +993,7 @@ void recover_data_page(struct f2fs_sb_info *sbi,
+ 	__add_sum_entry(sbi, type, sum);
+ 
+ 	refresh_sit_entry(sbi, old_blkaddr, new_blkaddr);
+-
+ 	locate_dirty_segment(sbi, old_cursegno);
+-	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+ 
+ 	mutex_unlock(&sit_i->sentry_lock);
+ 	mutex_unlock(&curseg->curseg_mutex);
+@@ -1045,9 +1044,7 @@ void rewrite_node_page(struct f2fs_sb_info *sbi,
+ 	f2fs_submit_page_mbio(sbi, page, new_blkaddr, &fio);
+ 	f2fs_submit_merged_bio(sbi, NODE, WRITE);
+ 	refresh_sit_entry(sbi, old_blkaddr, new_blkaddr);
+-
+ 	locate_dirty_segment(sbi, old_cursegno);
+-	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+ 
+ 	mutex_unlock(&sit_i->sentry_lock);
+ 	mutex_unlock(&curseg->curseg_mutex);
+-- 
+1.8.4.474.g128a96c
+
+
+------------------------------------------------------------------------------
+WatchGuard Dimension instantly turns raw network data into actionable 
+security intelligence. It gives you real-time visual feedback on key
+security issues and trends.  Skip the complicated setup - simply import
+a virtual appliance and go from zero to informed in seconds.
+http://pubads.g.doubleclick.net/gampad/clk?id=123612991&iu=/4140/ostg.clktrk
