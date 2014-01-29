@@ -1,87 +1,163 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH] f2fs: use inode mutex to keep atomicity of
- f2fs_falloc
-Date: Tue, 28 Jan 2014 16:51:13 +0800
-Message-ID: <000001cf1c06$3ac9a9f0$b05cfdd0$@samsung.com>
-References: <000101cf1bd0$d1f6be70$75e43b50$@samsung.com>
- <1390888811.25542.54.camel@kjgkr>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: [PATCH] f2fstat: add option to select partition to see
+	status
+Date: Wed, 29 Jan 2014 13:36:54 +0900
+Message-ID: <1390970214-20404-1-git-send-email-cm224.lee@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1390888811.25542.54.camel@kjgkr>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cm224.lee@samsung.com>) id 1W8MrH-0006Yd-Df
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 29 Jan 2014 04:34:39 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1W8MrF-0005h6-4M
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 29 Jan 2014 04:34:39 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N0500C8YBDDA780@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 29 Jan 2014 13:34:25 +0900 (KST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+If there are some partitions, this may select a partition to see its
+status. If no selection, you will see first section of status.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> Sent: Tuesday, January 28, 2014 2:00 PM
-> To: Chao Yu
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH] f2fs: use inode mutex to keep atomici=
-ty of f2fs_falloc
->=20
-> Hi,
->=20
-> 2014-01-28 (=ED=99=94), 10:29 +0800, Chao Yu:
-> > Previously without protection of inode mutex, f2fs_falloc and other=
- data
-> > correlated operations will interfere with each other.
->=20
-> Could you explain a little bit more what kind of scenarios wrt this?
+e.g.) f2fstat -p /dev/sda3
 
-1. Without protection of i_mutex, status(e.g. i_size) of inode could be=
- changed
-by other operation(e.g. vfs_write()/vfs_truncate()) when we fallocate a=
- file, it
-may cause us walk into wrong branch code after we check these status of=
- inode,
-and vice versa.
-2. i_size_write()/inode_newsize_ok() is called in f2fs_fallocate(), usu=
-ally we
-use i_mutex to protect these functions.
+Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+---
+ tools/f2fstat.c |   25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
 
->=20
->=20
-> > So let's use inode mutex to keep atomicity of f2fs_falloc.
-> >
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/file.c |    5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 85e91ca..ece380f 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -559,6 +559,8 @@ static long f2fs_fallocate(struct file *file, i=
-nt mode,
-> >  	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
-> >  		return -EOPNOTSUPP;
-> >
-> > +	mutex_lock(&inode->i_mutex);
-> > +
-> >  	if (mode & FALLOC_FL_PUNCH_HOLE)
-> >  		ret =3D punch_hole(inode, offset, len);
-> >  	else
-> > @@ -568,6 +570,9 @@ static long f2fs_fallocate(struct file *file, i=
-nt mode,
-> >  		inode->i_mtime =3D inode->i_ctime =3D CURRENT_TIME;
-> >  		mark_inode_dirty(inode);
-> >  	}
-> > +
-> > +	mutex_unlock(&inode->i_mutex);
-> > +
-> >  	trace_f2fs_fallocate(inode, mode, offset, len, ret);
-> >  	return ret;
-> >  }
->=20
-> --
-> Jaegeuk Kim
-> Samsung
+diff --git a/tools/f2fstat.c b/tools/f2fstat.c
+index e26e174..b4f22ae 100644
+--- a/tools/f2fstat.c
++++ b/tools/f2fstat.c
+@@ -3,6 +3,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <fcntl.h>
++#include <libgen.h>
+ 
+ #ifdef DEBUG
+ #define dbg(fmt, args...)	printf(fmt, __VA_ARGS__);
+@@ -47,6 +48,7 @@ unsigned long lfs_blks;
+ struct options {
+ 	int delay;
+ 	int interval;
++	char partname[32];
+ };
+ 
+ struct mm_table {
+@@ -69,7 +71,7 @@ again:
+ 	}
+ }
+ 
+-void f2fstat(void)
++void f2fstat(struct options *opt)
+ {
+ 	int fd;
+ 	int ret;
+@@ -79,6 +81,7 @@ void f2fstat(void)
+ 	struct mm_table *found;
+ 	int f2fstat_table_cnt;
+ 	char *head, *tail;
++	int found_cnt = 0;
+ 
+ 	static struct mm_table f2fstat_table[] = {
+ 		{ "  - Data",		&used_data_blks },
+@@ -114,6 +117,13 @@ void f2fstat(void)
+ 	buf[ret] = '\0';
+ 
+ 	head = buf;
++
++	if (opt->partname[0] != '\0') {
++		head = strstr(buf, opt->partname);
++		if (head == NULL)
++			exit(EXIT_FAILURE);
++	}
++
+ 	for (;;) {
+ 		remove_newline(&head);
+ 		tail = strchr(head, ':');
+@@ -137,6 +147,8 @@ void f2fstat(void)
+ 			goto nextline;
+ 
+ 		*(found->val) = strtoul(head, &tail, 10);
++		if (++found_cnt == f2fstat_table_cnt)
++			break;
+ nextline:
+ 		tail = strchr(head, '\n');
+ 		if (!tail)
+@@ -151,14 +163,15 @@ void usage(void)
+ {
+ 	printf("Usage: f2fstat [option]\n"
+ 			"    -d    delay (secs)\n"
+-			"    -i    interval of head info\n");
++			"    -i    interval of head info\n"
++			"    -p    partition name (e.g. /dev/sda3)\n");
+ 	exit(EXIT_FAILURE);
+ }
+ 
+ void parse_option(int argc, char *argv[], struct options *opt)
+ {
+ 	char option;
+-	const char *option_string = "d:i:h";
++	const char *option_string = "d:i:p:h";
+ 
+ 	while ((option = getopt(argc, argv, option_string)) != EOF) {
+ 		switch (option) {
+@@ -168,6 +181,9 @@ void parse_option(int argc, char *argv[], struct options *opt)
+ 		case 'i':
+ 			opt->interval = atoi(optarg);
+ 			break;
++		case 'p':
++			strcpy(opt->partname, basename(optarg));
++			break;
+ 		default:
+ 			usage();
+ 			break;
+@@ -188,6 +204,7 @@ int main(int argc, char *argv[])
+ 	struct options opt = {
+ 		.delay = 1,
+ 		.interval = 20,
++		.partname = { 0, },
+ 	};
+ 
+ 	parse_option(argc, argv, &opt);
+@@ -200,7 +217,7 @@ int main(int argc, char *argv[])
+ 			head_interval = opt.interval;
+ 		}
+ 
+-		f2fstat();
++		f2fstat(&opt);
+ 
+ 		printf(format, util, used_node_blks, used_data_blks,
+ 				free_segs, valid_segs, dirty_segs, prefree_segs,
+-- 
+1.7.10.4
+
+
+------------------------------------------------------------------------------
+WatchGuard Dimension instantly turns raw network data into actionable 
+security intelligence. It gives you real-time visual feedback on key
+security issues and trends.  Skip the complicated setup - simply import
+a virtual appliance and go from zero to informed in seconds.
+http://pubads.g.doubleclick.net/gampad/clk?id=123612991&iu=/4140/ostg.clktrk
