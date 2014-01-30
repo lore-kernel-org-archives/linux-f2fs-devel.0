@@ -1,30 +1,26 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: [PATCH] f2fstat: add option to select partition to see
-	status
-Date: Wed, 29 Jan 2014 13:36:54 +0900
-Message-ID: <1390970214-20404-1-git-send-email-cm224.lee@samsung.com>
+From: Num 1 CCcam <cc@num1email.tk>
+Subject: New Offer!!
+Date: Thu, 30 Jan 2014 06:53:10 +0400
+Message-ID: <6b9f575bdf0c8216b28cac83efa619e1@num1mail6.tk>
+Reply-To: Num 1 CCcam <cc@num1email.tk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============8839138191643819949=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cm224.lee@samsung.com>) id 1W8MrH-0006Yd-Df
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cc@num1email.tk>) id 1W8hkk-0005Yq-GF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 29 Jan 2014 04:34:39 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1W8MrF-0005h6-4M
+	Thu, 30 Jan 2014 02:53:18 +0000
+Received: from [198.20.111.55] (helo=num1mail6.tk)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1W8hkj-0005bY-Bn
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 29 Jan 2014 04:34:39 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N0500C8YBDDA780@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 29 Jan 2014 13:34:25 +0900 (KST)
+	Thu, 30 Jan 2014 02:53:18 +0000
+Received: from mail6 by cpanel.num1dns.tk with local (Exim 4.82)
+	(envelope-from <cc@num1email.tk>) id 1W8hkc-0001J8-F2
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 29 Jan 2014 21:53:10 -0500
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,124 +32,57 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-If there are some partitions, this may select a partition to see its
-status. If no selection, you will see first section of status.
+--===============8839138191643819949==
+Content-Type: multipart/alternative;
+	boundary="b1_6b9f575bdf0c8216b28cac83efa619e1"
+Content-Transfer-Encoding: 8bit
 
-e.g.) f2fstat -p /dev/sda3
+--b1_6b9f575bdf0c8216b28cac83efa619e1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>
----
- tools/f2fstat.c |   25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+Happy New Year
+ 
+Good news! We celebrate the arrival of 2014,  35% discount for all services from 1 month to 1 year in Premium CCcam Account apply !
+ 
+Discount Code: Christmas
+ 
+Click Here to order
+ 
+Note! This offer is for 10 days from date 30/01/2014 to 10/02/2014!
+ 
+We wish you a good year"Num 1 CCcam" 
+ 
 
-diff --git a/tools/f2fstat.c b/tools/f2fstat.c
-index e26e174..b4f22ae 100644
---- a/tools/f2fstat.c
-+++ b/tools/f2fstat.c
-@@ -3,6 +3,7 @@
- #include <stdlib.h>
- #include <string.h>
- #include <fcntl.h>
-+#include <libgen.h>
- 
- #ifdef DEBUG
- #define dbg(fmt, args...)	printf(fmt, __VA_ARGS__);
-@@ -47,6 +48,7 @@ unsigned long lfs_blks;
- struct options {
- 	int delay;
- 	int interval;
-+	char partname[32];
- };
- 
- struct mm_table {
-@@ -69,7 +71,7 @@ again:
- 	}
- }
- 
--void f2fstat(void)
-+void f2fstat(struct options *opt)
- {
- 	int fd;
- 	int ret;
-@@ -79,6 +81,7 @@ void f2fstat(void)
- 	struct mm_table *found;
- 	int f2fstat_table_cnt;
- 	char *head, *tail;
-+	int found_cnt = 0;
- 
- 	static struct mm_table f2fstat_table[] = {
- 		{ "  - Data",		&used_data_blks },
-@@ -114,6 +117,13 @@ void f2fstat(void)
- 	buf[ret] = '\0';
- 
- 	head = buf;
-+
-+	if (opt->partname[0] != '\0') {
-+		head = strstr(buf, opt->partname);
-+		if (head == NULL)
-+			exit(EXIT_FAILURE);
-+	}
-+
- 	for (;;) {
- 		remove_newline(&head);
- 		tail = strchr(head, ':');
-@@ -137,6 +147,8 @@ void f2fstat(void)
- 			goto nextline;
- 
- 		*(found->val) = strtoul(head, &tail, 10);
-+		if (++found_cnt == f2fstat_table_cnt)
-+			break;
- nextline:
- 		tail = strchr(head, '\n');
- 		if (!tail)
-@@ -151,14 +163,15 @@ void usage(void)
- {
- 	printf("Usage: f2fstat [option]\n"
- 			"    -d    delay (secs)\n"
--			"    -i    interval of head info\n");
-+			"    -i    interval of head info\n"
-+			"    -p    partition name (e.g. /dev/sda3)\n");
- 	exit(EXIT_FAILURE);
- }
- 
- void parse_option(int argc, char *argv[], struct options *opt)
- {
- 	char option;
--	const char *option_string = "d:i:h";
-+	const char *option_string = "d:i:p:h";
- 
- 	while ((option = getopt(argc, argv, option_string)) != EOF) {
- 		switch (option) {
-@@ -168,6 +181,9 @@ void parse_option(int argc, char *argv[], struct options *opt)
- 		case 'i':
- 			opt->interval = atoi(optarg);
- 			break;
-+		case 'p':
-+			strcpy(opt->partname, basename(optarg));
-+			break;
- 		default:
- 			usage();
- 			break;
-@@ -188,6 +204,7 @@ int main(int argc, char *argv[])
- 	struct options opt = {
- 		.delay = 1,
- 		.interval = 20,
-+		.partname = { 0, },
- 	};
- 
- 	parse_option(argc, argv, &opt);
-@@ -200,7 +217,7 @@ int main(int argc, char *argv[])
- 			head_interval = opt.interval;
- 		}
- 
--		f2fstat();
-+		f2fstat(&opt);
- 
- 		printf(format, util, used_node_blks, used_data_blks,
- 				free_segs, valid_segs, dirty_segs, prefree_segs,
--- 
-1.7.10.4
 
+--b1_6b9f575bdf0c8216b28cac83efa619e1
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+<p id="yui_3_13_0_ym1_1_1389986914978_1630" style="text-align: center;"><span id="yui_3_13_0_ym1_1_1389986914978_1629" style="font-size: xx-large; color: #3366ff;">Happy New Year</span></p>
+<p id="yui_3_13_0_ym1_1_1389986914978_1872" style="text-align: center;"> </p>
+<p id="yui_3_13_0_ym1_1_1389986914978_1883" style="text-align: center;"><span id="yui_3_13_0_ym1_1_1389986914978_1882" style="font-size: x-large;"><span id="yui_3_13_0_ym1_1_1389986914978_2059" style="color: #ff6600;">Good news</span>! We celebrate the arrival of <span style="color: #993366;">2014</span>,  <span id="yui_3_13_0_ym1_1_1389986914978_2015" style="color: #ff0000;">35%</span> discount for all services from 1 month to 1 year in Premium CCcam Account apply !</span></p>
+<p id="yui_3_13_0_ym1_1_1389986914978_2063" style="text-align: center;"> </p>
+<p id="yui_3_13_0_ym1_1_1389986914978_2060" style="text-align: center;"><span id="yui_3_13_0_ym1_1_1389986914978_2062" style="font-size: xx-large; font-family: tahoma, arial, helvetica, sans-serif;">Discount Code: <span id="yui_3_13_0_ym1_1_1389986914978_2065" style="color: #ff6600;">Christmas</span></span></p>
+<p id="yui_3_13_0_ym1_1_1389986914978_2066" style="text-align: center;"> </p>
+<p id="yui_3_13_0_ym1_1_1389986914978_2071" style="text-align: center;"><span style="font-size: x-large;"><a id="yui_3_13_0_ym1_1_1389986914978_2070" href="http://num1cccam.com/christmas.html" rel="nofollow" target="_blank">Click Here to order<br><br></a></span></p>
+<p id="yui_3_13_0_ym1_1_1389986914978_2072" style="text-align: center;"> </p>
+<p id="yui_3_13_0_ym1_1_1389986914978_2075" style="text-align: center;"><span id="yui_3_13_0_ym1_1_1389986914978_2074" style="font-size: x-large;"><span style="color: #ff6600;">Note</span>! This offer is for 10 days from date <span id="yui_3_13_0_ym1_1_1389986914978_2073" style="color: #0000ff;">30/01/2014</span> to <span style="color: #ff0000;">10/02/2014</span>!</span></p>
+<p id="yui_3_13_0_ym1_1_1389986914978_2076" style="text-align: center;"> </p>
+<p id="yui_3_13_0_ym1_1_1389986914978_2078" style="text-align: center;"><span id="yui_3_13_0_ym1_1_1389986914978_2077" style="font-size: x-large;">We wish you a good year<br><br><br><span style="font-size: large;">"Num <span style="font-size: x-large;">1</span> CCcam" </span></span></p>
+<p id="yui_3_13_0_ym1_1_1389986914978_2079" style="text-align: center;"> </p>
+
+
+
+--b1_6b9f575bdf0c8216b28cac83efa619e1--
+
+
+
+--===============8839138191643819949==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 WatchGuard Dimension instantly turns raw network data into actionable 
@@ -161,3 +90,15 @@ security intelligence. It gives you real-time visual feedback on key
 security issues and trends.  Skip the complicated setup - simply import
 a virtual appliance and go from zero to informed in seconds.
 http://pubads.g.doubleclick.net/gampad/clk?id=123612991&iu=/4140/ostg.clktrk
+--===============8839138191643819949==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============8839138191643819949==--
