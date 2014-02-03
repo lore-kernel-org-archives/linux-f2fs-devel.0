@@ -1,79 +1,85 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH] f2fs: remove the ugly pointer conversion
-Date: Mon, 03 Feb 2014 15:04:25 +0900
-Message-ID: <1391407465-8377-1-git-send-email-jaegeuk.kim@samsung.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Sex IN City <Admin@birxxl.com>
+Subject: Beautiful sexy girl
+Date: Mon, 3 Feb 2014 22:56:54 +0400
+Message-ID: <3569e6e20ea396aa2dc513d5c4320f28@tikik.powercccam.org>
+Reply-To: Sex IN City <Admin@birxxl.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============8815512115745295250=="
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <Admin@birxxl.com>) id 1WAOhZ-0006Rn-P4
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 03 Feb 2014 18:57:01 +0000
+Received: from a2s80.a2hosting.com ([75.98.175.69])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1WAOhY-0005sC-Tp
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 03 Feb 2014 18:57:01 +0000
+Received: from powerccc by a2s80.a2hosting.com with local (Exim 4.80.1)
+	(envelope-from <Admin@birxxl.com>) id 1WAOhS-0048OG-PG
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 03 Feb 2014 13:56:55 -0500
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-This patch modifies the use of bi_private to remove pointer chasing for sbi.
-Previously, we had a bi_private structure, but it needs memory allocation.
-So this patch uses bi_private by the sbi pointer and adds a completion pointer
-into the sbi.
-This can achieve no memory allocation and nice use of the bi_private.
+--===============8815512115745295250==
+Content-Type: multipart/alternative;
+	boundary="b1_3569e6e20ea396aa2dc513d5c4320f28"
+Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/data.c | 11 +++++++----
- fs/f2fs/f2fs.h |  1 +
- 2 files changed, 8 insertions(+), 4 deletions(-)
+--b1_3569e6e20ea396aa2dc513d5c4320f28
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 20c3c64..d175ae3 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -45,7 +45,7 @@ static void f2fs_read_end_io(struct bio *bio, int err)
- 
- static void f2fs_write_end_io(struct bio *bio, int err)
- {
--	struct f2fs_sb_info *sbi = F2FS_SB(bio->bi_io_vec->bv_page->mapping->host->i_sb);
-+	struct f2fs_sb_info *sbi = bio->bi_private;
- 	struct bio_vec *bvec;
- 	int i;
- 
-@@ -61,8 +61,10 @@ static void f2fs_write_end_io(struct bio *bio, int err)
- 		dec_page_count(sbi, F2FS_WRITEBACK);
- 	}
- 
--	if (bio->bi_private)
--		complete(bio->bi_private);
-+	if (sbi->wait_io) {
-+		complete(sbi->wait_io);
-+		sbi->wait_io = NULL;
-+	}
- 
- 	if (!get_pages(sbi, F2FS_WRITEBACK) &&
- 			!list_empty(&sbi->cp_wait.task_list))
-@@ -85,6 +87,7 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
- 	bio->bi_bdev = sbi->sb->s_bdev;
- 	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
- 	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
-+	bio->bi_private = sbi;
- 
- 	return bio;
- }
-@@ -112,7 +115,7 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
- 		 */
- 		if (fio->type == META_FLUSH) {
- 			DECLARE_COMPLETION_ONSTACK(wait);
--			io->bio->bi_private = &wait;
-+			io->sbi->wait_io = &wait;
- 			submit_bio(rw, io->bio);
- 			wait_for_completion(&wait);
- 		} else {
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 55288d2..aeff132 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -398,6 +398,7 @@ struct f2fs_sb_info {
- 	/* for bio operations */
- 	struct f2fs_bio_info read_io;			/* for read bios */
- 	struct f2fs_bio_info write_io[NR_PAGE_TYPE];	/* for write bios */
-+	struct completion *wait_io;		/* for completion bios */
- 
- 	/* for checkpoint */
- 	struct f2fs_checkpoint *ckpt;		/* raw checkpoint pointer */
--- 
-1.8.4.474.g128a96c
+Beautiful sexy girls for you to enjoy Link
 
+ 
+
+
+--b1_3569e6e20ea396aa2dc513d5c4320f28
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+<p><br>Beautiful sexy girls for you to enjoy <a href="http://tikik.powercccam.org/?redirect=birxxl.com&task=d9d4f495e875a2e075a1a4a6e1b9770f&mail=75d5e6f">Link</a><br><br><br></p>
+<hr style="width: 100%;" width="100%">
+<p><img src="http://birxxl.com/wp-content/uploads/2014/01/77r8l2vlaa38xf0bp3kn.jpg" alt=""> </p><img src='http://tikik.powercccam.org/statistics/img.php?task=d9d4f495e875a2e075a1a4a6e1b9770f&mail=75d5e6f' height='1' width='0'>
+
+
+
+--b1_3569e6e20ea396aa2dc513d5c4320f28--
+
+
+
+--===============8815512115745295250==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+------------------------------------------------------------------------------
+Managing the Performance of Cloud-Based Applications
+Take advantage of what the Cloud has to offer - Avoid Common Pitfalls.
+Read the Whitepaper.
+http://pubads.g.doubleclick.net/gampad/clk?id=121051231&iu=/4140/ostg.clktrk
+--===============8815512115745295250==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============8815512115745295250==--
