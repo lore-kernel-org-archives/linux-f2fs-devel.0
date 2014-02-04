@@ -1,26 +1,30 @@
-From: Sex IN City <Admin@birxxl.com>
-Subject: Beautiful sexy girl
-Date: Mon, 3 Feb 2014 22:56:54 +0400
-Message-ID: <3569e6e20ea396aa2dc513d5c4320f28@tikik.powercccam.org>
-Reply-To: Sex IN City <Admin@birxxl.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH 1/2] f2fs: fix the potential mismatch between
+ dir's i_size and i_blocks
+Date: Tue, 04 Feb 2014 13:46:43 +0900
+Message-ID: <1391489204-19695-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8815512115745295250=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <Admin@birxxl.com>) id 1WAOhZ-0006Rn-P4
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WAXvs-0005Io-9i
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 03 Feb 2014 18:57:01 +0000
-Received: from a2s80.a2hosting.com ([75.98.175.69])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1WAOhY-0005sC-Tp
+	Tue, 04 Feb 2014 04:48:24 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WAXvq-0006F8-Aa
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 03 Feb 2014 18:57:01 +0000
-Received: from powerccc by a2s80.a2hosting.com with local (Exim 4.80.1)
-	(envelope-from <Admin@birxxl.com>) id 1WAOhS-0048OG-PG
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 03 Feb 2014 13:56:55 -0500
+	Tue, 04 Feb 2014 04:48:24 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout2.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N0G00E5PG0EZ800@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 04 Feb 2014 13:48:14 +0900 (KST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,56 +34,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
---===============8815512115745295250==
-Content-Type: multipart/alternative;
-	boundary="b1_3569e6e20ea396aa2dc513d5c4320f28"
-Content-Transfer-Encoding: 8bit
+This is the erroneous scenario.
 
---b1_3569e6e20ea396aa2dc513d5c4320f28
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+                             i_size    on-disk i_size    i_blocks
+__f2fs_add_link()             4096           4096           2
+ get_new_data_page            8192           4096           3
+ -ENOSPC = init_inode_metadata
+ checkpoint                     -            4096           3
+ POR and reboot
 
-Beautiful sexy girls for you to enjoy Link
+__f2fs_add_link()             4096           4096           3
+ page = get_new_data_page (page->index = 1 by NEW_ADDR)
+ add a dentry to the page successfully
 
- 
+f2fs_rmdir()
+ f2fs_empty_dir()             4096           4096           3
+ f2fs_unlink() goes, since there is no valid dentry due to i_size = 4096.
+ But, still there is one dentry in page->index = 1.
 
+So this patch moves the code to write dir->i_size into on-disk i_size in order
+to sync dir's i_size, on-disk i_size, and its i_blocks.
 
---b1_3569e6e20ea396aa2dc513d5c4320f28
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/dir.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-<p><br>Beautiful sexy girls for you to enjoy <a href="http://tikik.powercccam.org/?redirect=birxxl.com&task=d9d4f495e875a2e075a1a4a6e1b9770f&mail=75d5e6f">Link</a><br><br><br></p>
-<hr style="width: 100%;" width="100%">
-<p><img src="http://birxxl.com/wp-content/uploads/2014/01/77r8l2vlaa38xf0bp3kn.jpg" alt=""> </p><img src='http://tikik.powercccam.org/statistics/img.php?task=d9d4f495e875a2e075a1a4a6e1b9770f&mail=75d5e6f' height='1' width='0'>
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 2b7c255..bfcb4ae 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -395,9 +395,6 @@ static void update_parent_metadata(struct inode *dir, struct inode *inode,
+ 		set_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
+ 	}
+ 
+-	if (is_inode_flag_set(F2FS_I(dir), FI_UPDATE_DIR))
+-		update_inode_page(dir);
+-
+ 	if (is_inode_flag_set(F2FS_I(inode), FI_INC_LINK))
+ 		clear_inode_flag(F2FS_I(inode), FI_INC_LINK);
+ }
+@@ -511,7 +508,10 @@ add_dentry:
+ 
+ 	update_parent_metadata(dir, inode, current_depth);
+ fail:
+-	clear_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
++	if (is_inode_flag_set(F2FS_I(dir), FI_UPDATE_DIR)) {
++		update_inode_page(dir);
++		clear_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
++	}
+ 	kunmap(dentry_page);
+ 	f2fs_put_page(dentry_page, 1);
+ 	return err;
+-- 
+1.8.4.474.g128a96c
 
-
-
---b1_3569e6e20ea396aa2dc513d5c4320f28--
-
-
-
---===============8815512115745295250==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Managing the Performance of Cloud-Based Applications
 Take advantage of what the Cloud has to offer - Avoid Common Pitfalls.
 Read the Whitepaper.
 http://pubads.g.doubleclick.net/gampad/clk?id=121051231&iu=/4140/ostg.clktrk
---===============8815512115745295250==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============8815512115745295250==--
