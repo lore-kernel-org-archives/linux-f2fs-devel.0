@@ -1,20 +1,32 @@
-From: "Kent Poole" <exhvsgtu@messe-freiburg.de>
-Subject: [SPAM] Preparing For Tomorrow's Major Market Moves Today
-	With Peter C. Advisor/Broker 949-302-9652 or 323-498-5160
-Date: Tue, 04 Feb 2014 23:07:47 +0000
-Message-ID: <E1WAp5n-000101-IH@sfs-ml-4.v29.ch3.sourceforge.com>
-Content-Type: multipart/mixed; boundary="===============8174764717900616895=="
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH 2/2] f2fs: fix f2fs_write_meta_page at no
+	checkpoint status
+Date: Wed, 05 Feb 2014 14:36:35 +0900
+Message-ID: <1391578595-854-2-git-send-email-jaegeuk.kim@samsung.com>
+References: <1391578595-854-1-git-send-email-jaegeuk.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <exhvsgtu@messe-freiburg.de>) id 1WAp5k-0000zg-Kg
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WAvBg-0004kW-9w
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 04 Feb 2014 23:07:44 +0000
-Received: from [42.51.143.163] (helo=mx215.bullstore.gs)
-	by sog-mx-4.v43.ch3.sourceforge.com with smtp (Exim 4.76)
-	id 1WAp5h-0003vR-47 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 04 Feb 2014 23:07:44 +0000
+	Wed, 05 Feb 2014 05:38:16 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WAvBe-0004LU-OJ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 05 Feb 2014 05:38:16 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N0I00L9TCZIQI10@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 05 Feb 2014 14:38:06 +0900 (KST)
+In-reply-to: <1391578595-854-1-git-send-email-jaegeuk.kim@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -24,711 +36,92 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
---===============8174764717900616895==
-Content-Type: text/html;
-Content-Transfer-Encoding: quoted-printable
+If f2fs entered errorneous checkpoint status, it should skip writing meta
+pages instead of redirtying the pages out.
+Otherwise, it cannot unmount the partition even though f2fs is under read-only
+status.
 
-<body bgcolor=3D"#00002E">
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/checkpoint.c | 29 +++++++++++++++++++++--------
+ fs/f2fs/gc.c         |  2 ++
+ 2 files changed, 23 insertions(+), 8 deletions(-)
 
-<table class=3D"MsoNormalTable" style=3D"width:572.6pt;background:#EFFBFF;=
-border-collapse:collapse;margin-left:7.1pt;margin-right:7.1pt" align=3D"le=
-ft" bgcolor=3D"#EFFBFF" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" w=
-idth=3D"763">
-  <tbody>
-    <tr style=3D"height:9.3in" height=3D"893">
-      <td style=3D"width:572.6pt;border:double windowtext 6.75pt;border-to=
-p:double windowtext 9.0pt;padding:11.25pt 11.25pt 11.25pt 11.25pt;height:9=
-3in" height=3D"893" width=3D"763">
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:0in;margin-righ=
-t:0in;margin-bottom:12.0pt;margin-left:.2in;text-align:center;mso-element:=
-frame;mso-element-frame-hspace:9.35pt;mso-element-wrap:around;mso-element-=
-anchor-vertical:paragraph;mso-element-anchor-horizontal:column;mso-height-=
-rule:exactly" align=3D"center"><font color=3D"black" face=3D"Times New Rom=
-an" size=3D"3"><span style=3D"font-size:12.0pt;color:black"><img id=3D"_x0=
-000_i1025" src=3D"http://zjjhling.zj01.0755lvshi.net/peterc/10002/image001=
-png" alt=3D"wp3 logo.png" width=3D"502" height=3D"88"><br>
-        </span></font><b><font color=3D"black" face=3D"Calibri" size=3D"2"=
-><span style=3D"font-size:10.0pt;font-family:&quot;Calibri&quot;,&quot;san=
-s-serif&quot;;color:black;font-weight:bold"><a href=3D"http://petercatrani=
-s.wordpress.com/">Commentaries</a> 
-        &nbsp;<a href=3D"http://www.straitsfinancial.com/en/home" target=3D=
-"_blank">Straits  
-        Financial</a> &nbsp;<a href=3D"http://www.clover.ky/About_Us.html"=
->Clover(Non  
-        US)</a>&nbsp; <a href=3D"http://petercatranis.wordpress.com/2014/0=
-1/11/online-review-links-peter-catranis/" target=3D"_blank">Online  
-        review links</a> &nbsp;&nbsp;<a href=3D"http://petercatranis.wordp=
-ress.com/2013/10/01/4-career-history/">Catranis  
-        career history</a> &nbsp;&nbsp;</span></font></b><font face=3D"Cal=
-ibri" size=3D"2"><span style=3D"font-size:10.0pt;font-family:&quot;Calibri=
-&quot;,&quot;sans-serif&quot;"><a href=3D"https://portal.straitsfinancial.=
-com/user/Register.aspx" target=3D"_blank"><b><span style=3D"font-weight:bo=
-ld">Open  
-        an account</span></b></a><font color=3D"black"><span style=3D"colo=
-r:black">  
-        &nbsp; &nbsp;&nbsp;</span></font></span></font><b><font color=3D"b=
-lack" face=3D"Calibri" size=3D"2"><span style=3D"font-size:11.0pt;font-fam=
-ily:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:black;font-weight:bol=
-d"><br> 
-        </span></font></b><a href=3D"http://petercatranis.wordpress.com/" =
-target=3D"_blank"><font color=3D"black" face=3D"Calibri"><span style=3D"fo=
-nt-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:black;text-deco=
-ration:none"><img id=3D"_x0000_i1026" src=3D"http://zjjhling.zj01.0755lvsh=
-i.net/peterc/10002/image002.png" alt=3D"Firefox_Screenshot_2013-12-09T21-5=
-1-41952Z.png" border=3D"0" width=3D"26" height=3D"23"></span></font></a><f=
-ont color=3D"black" face=3D"Calibri"><span style=3D"font-family:&quot;Cali=
-bri&quot;,&quot;sans-serif&quot;;color:black">&nbsp;&nbsp;&nbsp;</span></f=
-ont><a href=3D"https://plus.google.com/118213516833968255989/posts" target=
-=3D"_blank"><b><font color=3D"black" face=3D"Calibri"><span style=3D"font-=
-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:black;font-weight:=
-bold;text-decoration:none"><img id=3D"_x0000_i1027" src=3D"http://zjjhling=
-zj01.0755lvshi.net/peterc/10002/image003.jpg" alt=3D"Google+" border=3D"0=
-" width=3D"24" height=3D"24"></span></font></b></a><font color=3D"black" f=
-ace=3D"Calibri"><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-=
-serif&quot;;color:black">&nbsp;&nbsp;&nbsp;</span></font><a href=3D"https:=
-//twitter.com/petercatranis" target=3D"_blank"><font color=3D"black" face=3D=
-"Calibri"><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&=
-quot;;color:black;text-decoration:none"><img id=3D"_x0000_i1028" src=3D"ht=
-tp://zjjhling.zj01.0755lvshi.net/peterc/10002/image004.jpg" alt=3D"Twitter=
-" border=3D"0" width=3D"23" height=3D"23"></span></font></a><font color=3D=
-"black" face=3D"Calibri"><span style=3D"font-family:&quot;Calibri&quot;,&q=
-uot;sans-serif&quot;;color:black">&nbsp;&nbsp;&nbsp;&nbsp;</span></font><a=
- href=3D"https://www.facebook.com/peter.catranis.7" target=3D"_blank"><fon=
-t color=3D"black" face=3D"Calibri"><span style=3D"font-family:&quot;Calibr=
-i&quot;,&quot;sans-serif&quot;;color:black;text-decoration:none"><img id=3D=
-"_x0000_i1029" src=3D"http://zjjhling.zj01.0755lvshi.net/peterc/10002/imag=
-e005.jpg" alt=3D"Facebook" border=3D"0" width=3D"25" height=3D"25"></span>=
-</font></a><font color=3D"black" face=3D"Calibri"><span style=3D"font-fami=
-ly:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:black">&nbsp;&nbsp;&nb=
-sp;</span></font><a href=3D"http://www.linkedin.com/home?trk=3Dnav_respons=
-ive_tab_home" target=3D"_blank"><font color=3D"black" face=3D"Calibri"><sp=
-an style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:b=
-lack;text-decoration:none"><img id=3D"_x0000_i1030" src=3D"http://zjjhling=
-zj01.0755lvshi.net/peterc/10002/image006.jpg" alt=3D"LinkedIn" border=3D"=
-0" width=3D"23" height=3D"23"></span></font></a><font color=3D"black" face=
-=3D"Calibri"><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-ser=
-if&quot;;color:black">&nbsp;&nbsp;&nbsp;</span></font><a href=3D"http://pe=
-tercatranis.tumblr.com/" target=3D"_blank"><font color=3D"black" face=3D"C=
-alibri"><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&qu=
-ot;;color:black;text-decoration:none"><img id=3D"_x0000_i1031" src=3D"http=
-://zjjhling.zj01.0755lvshi.net/peterc/10002/image007.png" alt=3D"Firefox_S=
-creenshot_2014-01-11T16-20-36.912Z.png" border=3D"0" width=3D"18" height=3D=
-"23"></span></font></a><o:p> 
-        &nbsp;<br>
-        </o:p><span style=3D"color: black"><span style=3D"font-weight: bol=
-d; color: black"><b><font face=3D"Tahoma" size=3D"3" color=3D"#FF0000">If =
-
-        you want to&nbsp; be removed from </font> </b></span><b><span styl=
-e=3D"font-weight: bold; color: black"><font face=3D"Tahoma" size=3D"3" col=
-or=3D"#FF0000">our 
-        newsletter please</font><font color=3D"#FF00FF" face=3D"Tahoma" si=
-ze=3D"3"> </font> </span>      
-        <font color=3D"#FF00FF" face=3D"Tahoma" size=3D"3">      
-                        <a href=3D"http://zjjhling.zj01.0755lvshi.net/pete=
-rc/unsubscribe/unsubscribe.php?email=3Dlinux-f2fs-devel@lists.sourceforge.=
-net">Click 
-                        here</a></font></b></span>
-        </p>
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.2in"><strong><b><font face=3D"Calibri" size=3D=
-"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&quot;,&quot;=
-sans-serif&quot;">Preparing  
-        For Tomorrow=A1=AFs Major Market Moves Today<font color=3D"black">=
-<span style=3D"color:black">  
-        With Peter C. Advisor/Broker</span></font></span></font></b></stro=
-ng><b><font color=3D"black" face=3D"Calibri"><span style=3D"font-family:&q=
-uot;Calibri&quot;,&quot;sans-serif&quot;;color:black;font-weight:bold"><br=
-> 
-        <br> 
-        </span></font></b><strong><b><font face=3D"Calibri"><span style=3D=
-"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;">Top  
-        <font color=3D"black"><span style=3D"color:black">8</span></font> =
-</span></font></b></strong><b><font color=3D"black" face=3D"Calibri"><span=
- style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:bla=
-ck;font-weight:bold">Reports  
-        </span></font></b><font color=3D"black" face=3D"Calibri"><span sty=
-le=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:black">=
-(by  
-        search)<b><span style=3D"font-weight:bold"><br> 
-        </span></b></span></font><b><font color=3D"black" face=3D"Calibri"=
- size=3D"1"><span style=3D"font-size:3.0pt;font-family:&quot;Calibri&quot;=
-,&quot;sans-serif&quot;;color:black;font-weight:bold"><br> 
-        <br> 
-        </span></font><font color=3D"black" face=3D"Calibri"><span style=3D=
-"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:black;font-w=
-eight:bold">1)  
-        <a href=3D"http://petercatranis.wordpress.com/2014/01/14/all-at-th=
-e-fed-expect-the-fed-funds-rate-at-2-00-by-the-end-of-2016/">Where  
-        the federal Reserve Wants Interest Rates and When (Bloomberg)</a><=
-br> 
-        2) <a href=3D"http://petercatranis.wordpress.com/2014/01/24/this-r=
-eport-translates-capturing-the-move-higher-in-short-term-u-s-interest-rate=
-s-into-net-profit-or-loss/">Translating  
-        Trading Interest Rates Higher Into Net Profit Or loss</a><br> 
-        3) <a href=3D"http://petercatranis.wordpress.com/2014/01/21/what-i=
--believe-is-a-better-way-to-trade-precious-metals/">A  
-        Better Way of Trading Precious Metals Using Defined Risk Strategy<=
-/a></span></font></b><font color=3D"black"><span style=3D"color:black"><br=
-> 
-        </span></font><b><font color=3D"black" face=3D"Calibri"><span styl=
-e=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:black;fo=
-nt-weight:bold">4)  
-        <a href=3D"http://petercatranis.wordpress.com/2014/01/21/capturing=
--the-interest-rate-differential-between-u-s-interest-rates-at-0-37-and-aus=
-tralian-dollar-deposit-rates-of-2-81/">Capturing  
-        Interest Rate Differentials Between the U.S. 0.33% and Australian =
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 293d048..8f5dff1 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -81,17 +81,18 @@ static int f2fs_write_meta_page(struct page *page,
+ 	struct inode *inode = page->mapping->host;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
  
-        Dollars 2.81%</a><br> 
-        5) <a href=3D"http://petercatranis.wordpress.com/2013/09/30/20-fed=
--funds-from-the-current-0-10-back-to-0-1750/?preview=3Dtrue&amp;preview_id=
-=3D2051&amp;preview_nonce=3Db9b5cfc7bb&amp;post_format=3Dimage">Trading  
-        the Fed=A1=AFs Defined Range In Short Term Interest Rates</a><br> =
-
-        6) <a href=3D"http://petercatranis.wordpress.com/2014/01/23/compar=
-ing-chinas-economic-fundamentals-to-the-u-s/">A  
-        Quick Look at Economic Numbers China Versus the United States</a><=
-br> 
-        7) <a href=3D"http://petercatranis.wordpress.com/2014/01/21/pimcos=
--el-erian-resigns-my-thoughts/">Pimco=A1=AFs  
-        El-Erian Resigns - My Thoughts</a><br> 
-        8) Email <a href=3D"mailto:pc@Treasuires.com">pc@Treasuires.com</a=
->  
-        Performance Rankings and Profiles for 1,000 advisors<br> 
-        <br> 
-        Latest News and Opinions </span></font></b><font color=3D"black" f=
-ace=3D"Calibri"><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-=
-serif&quot;;color:black">(by  
-        search)<b><span style=3D"font-weight:bold"><o:p> 
-        </o:p> 
-        </span></b></span></font></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.45in;text-indent:-.25in;mso-list:l1 level1 l=
-fo2"><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span style=3D"m=
-so-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-serif; colo=
-r: black; font-weight: bold">1)<font face=3D"Times New Roman" size=3D"1"><=
-span style=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black;font-weight:bold"><a href=3D"http://petercatranis.wordpress.com/c=
-ategory/interest-rates/">Interest  
-        Rates</a><o:p> 
-        </o:p> 
-        </span></font></b></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.45in;text-indent:-.25in;mso-list:l1 level1 l=
-fo2"><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span style=3D"m=
-so-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-serif; colo=
-r: black; font-weight: bold">2)<font face=3D"Times New Roman" size=3D"1"><=
-span style=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black;font-weight:bold"><a href=3D"http://petercatranis.wordpress.com/c=
-ategory/currencies/">Currencies</a><o:p> 
-        </o:p> 
-        </span></font></b></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.45in;text-indent:-.25in;mso-list:l1 level1 l=
-fo2"><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span style=3D"m=
-so-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-serif; colo=
-r: black; font-weight: bold">3)<font face=3D"Times New Roman" size=3D"1"><=
-span style=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black;font-weight:bold"><a href=3D"http://petercatranis.wordpress.com/c=
-ategory/energy/">Energy</a><o:p> 
-        </o:p> 
-        </span></font></b></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.45in;text-indent:-.25in;mso-list:l1 level1 l=
-fo2"><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span style=3D"m=
-so-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-serif; colo=
-r: black; font-weight: bold">4)<font face=3D"Times New Roman" size=3D"1"><=
-span style=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black;font-weight:bold"><a href=3D"http://petercatranis.wordpress.com/c=
-ategory/metals/">Metals</a><o:p> 
-        </o:p> 
-        </span></font></b></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.45in;text-indent:-.25in;mso-list:l1 level1 l=
-fo2"><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span style=3D"m=
-so-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-serif; colo=
-r: black; font-weight: bold">5)<font face=3D"Times New Roman" size=3D"1"><=
-span style=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black;font-weight:bold"><a href=3D"http://petercatranis.wordpress.com/c=
-ategory/stock-indices/">Stock  
-        Indices</a><o:p> 
-        </o:p> 
-        </span></font></b></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.45in;text-indent:-.25in;mso-list:l1 level1 l=
-fo2"><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span style=3D"m=
-so-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-serif; colo=
-r: black; font-weight: bold">6)<font face=3D"Times New Roman" size=3D"1"><=
-span style=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black;font-weight:bold"><a href=3D"http://petercatranis.wordpress.com/c=
-ategory/federal-reserve/">Federal  
-        Reserve</a><o:p> 
-        </o:p> 
-        </span></font></b></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.45in;text-indent:-.25in;mso-list:l1 level1 l=
-fo2"><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span style=3D"m=
-so-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-serif; colo=
-r: black; font-weight: bold">7)<font face=3D"Times New Roman" size=3D"1"><=
-span style=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black;font-weight:bold"><a href=3D"http://petercatranis.wordpress.com/c=
-ategory/fed-tapering-coments/">Fed  
-        Tapering</a><o:p> 
-        </o:p> 
-        </span></font></b></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.45in;text-indent:-.25in;mso-list:l1 level1 l=
-fo2"><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span style=3D"m=
-so-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-serif; colo=
-r: black; font-weight: bold">8)<font face=3D"Times New Roman" size=3D"1"><=
-span style=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black;font-weight:bold"><a href=3D"http://petercatranis.wordpress.com/c=
-ategory/china/">Asia</a><o:p> 
-        </o:p> 
-        </span></font></b></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin=
--bottom-alt:auto;margin-left:.45in;text-indent:-.25in;mso-list:l1 level1 l=
-fo2"><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span style=3D"m=
-so-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-serif; colo=
-r: black; font-weight: bold">9)<font face=3D"Times New Roman" size=3D"1"><=
-span style=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black;font-weight:bold"><a href=3D"http://petercatranis.wordpress.com/?=
-s=3DEUROPE">Europe</a><o:p> 
-        </o:p> 
-        </span></font></b></p> 
-        <p class=3D"MsoNormal"><strong><b><font color=3D"black" face=3D"Ca=
-libri" size=3D"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibr=
-i&quot;,&quot;sans-serif&quot;;color:black">&nbsp;&nbsp;&nbsp;&nbsp;  
-        </span></font><font face=3D"Calibri"><span style=3D"font-family:&q=
-uot;Calibri&quot;,&quot;sans-serif&quot;">Brokerage  
-        Services, Clearing and Regulatory Links</span></font><o:p> 
-        </o:p> 
-        </b></strong></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">1)<font face=3D"Times New Roman" size=3D"1"><span sty=
-le=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;  
-        </span></font></span></font><font face=3D"Calibri"><span style=3D"=
-font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;"><a href=3D"http://=
-www.straitsfinancial.com/en/home" target=3D"_blank">U.S.  
-        Brokerage Services</a><font color=3D"black"><span style=3D"color:b=
-lack"><o:p> 
-        </o:p> 
-        </span></font></span></font></b></strong></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">2)<font face=3D"Times New Roman" size=3D"1"><span sty=
-le=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;  
-        </span></font></span></font><font face=3D"Calibri"><span style=3D"=
-font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;"><a href=3D"http://=
-petercatranis.wordpress.com/2013/10/01/5-clearing-and-exchange-members/" t=
-arget=3D"_blank">Clearing  
-        and Exchange Members</a><font color=3D"black"><span style=3D"color=
-:black"><o:p> 
-        </o:p> 
-        </span></font></span></font></b></strong></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">3)<font face=3D"Times New Roman" size=3D"1"><span sty=
-le=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;  
-        </span></font></span></font><font face=3D"Calibri"><span style=3D"=
-font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;"><a href=3D"http://=
-petercatranis.wordpress.com/2013/10/01/6-how-funds-are-protected/" target=3D=
-"_blank">How  
-        deposits are protected plus or minus trading activity</a><font col=
-or=3D"black"><span style=3D"color:black"><o:p> 
-        </o:p> 
-        </span></font></span></font></b></strong></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">4)<font face=3D"Times New Roman" size=3D"1"><span sty=
-le=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;  
-        </span></font></span></font></b></strong><b><font face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;fon=
-t-weight:bold"><a href=3D"https://portal.straitsfinancial.com/user/Registe=
-r.aspx" target=3D"_blank">To  
-        open an account online (for broker please enter Catranis 624)</a><=
-strong><font color=3D"black" face=3D"Calibri"><span style=3D"font-family:&=
-quot;Calibri&quot;,&quot;sans-serif&quot;;color:black"><o:p> 
-        </o:p> 
-        </span></font></strong></span></font></b></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">5)<font face=3D"Times New Roman" size=3D"1"><span sty=
-le=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;  
-        </span></font></span></font><font face=3D"Calibri"><span style=3D"=
-font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;"><a href=3D"http://=
-petercatranis.wordpress.com/2013/10/01/4-career-history/" target=3D"_blank=
-">Career  
-        History for Peter Catranis</a><font color=3D"black"><span style=3D=
-"color:black"><o:p> 
-        </o:p> 
-        </span></font></span></font></b></strong></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">6)<font face=3D"Times New Roman" size=3D"1"><span sty=
-le=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;  
-        </span></font></span></font><font face=3D"Calibri"><span style=3D"=
-font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;"><a href=3D"http://=
-www.nfa.futures.org/basicnet/Details.aspx?entityid=3DoTkfmYaZFro=
-%3d&rn=3DY" target=3D"_blank">Catranis/Primary  
-        Assets Regulatory and Compliance Record</a><font color=3D"black"><=
-span style=3D"color:black"><o:p> 
-        </o:p> 
-        </span></font></span></font></b></strong></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">7)<font face=3D"Times New Roman" size=3D"1"><span sty=
-le=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;  
-        </span></font></span></font></b></strong><b><font face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;fon=
-t-weight:bold"><a href=3D"http://cta.websolbarchart.com/index.php?page=3Dd=
-efault&section=3DAll%20Markets" target=3D"_blank">Markets  
-        and sectors traded</a><strong><font color=3D"black" face=3D"Calibr=
-i"><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;c=
-olor:black"><o:p> 
-        </o:p> 
-        </span></font></strong></span></font></b></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">8)<font face=3D"Times New Roman" size=3D"1"><span sty=
-le=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;  
-        </span></font></span></font><font color=3D"black" face=3D"Calibri"=
-><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;col=
-or:black"><a href=3D"http://petercatranis.wordpress.com/2014/01/11/online-=
-review-links-peter-catranis/">Online  
-        Review links</a><o:p> 
-        </o:p> 
-        </span></font></b></strong></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">9)<font face=3D"Times New Roman" size=3D"1"><span sty=
-le=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;  
-        </span></font></span></font><font face=3D"Calibri"><span style=3D"=
-font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;"><a href=3D"http://=
-www.atlasratings.com/" target=3D"_blank">Atlas&nbsp;rankings&nbsp;</a><fon=
-t color=3D"black"><span style=3D"color:black"><o:p> 
-        </o:p> 
-        </span></font></span></font></b></strong></p> 
-        <p style=3D"margin-left:.45in;text-indent:-.25in;mso-list:l0 level=
-1 lfo4"><strong><b><font color=3D"black" face=3D"Calibri" size=3D"3"><span=
- style=3D"mso-list: Ignore; font-size: 12.0pt; font-family: Calibri, sans-=
-serif; color: black">10)<font face=3D"Times New Roman" size=3D"1"><span st=
-yle=3D"font:7.0pt &quot;Times New Roman&quot;">&nbsp;  
-        </span></font></span></font><font face=3D"Calibri"><span style=3D"=
-font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;"><a href=3D"http://=
-www.clover.ky/About_Us.html">Non  
-        US Brokerage Services</a><font color=3D"black"><span style=3D"colo=
-r:black"><o:p> 
-        </o:p> 
-        </span></font></span></font></b></strong></p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;margin-rig=
-ht:.2in;mso-margin-bottom-alt:auto;margin-left:.1in"><b><font face=3D"Cali=
-bri" size=3D"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&=
-quot;,&quot;sans-serif&quot;;font-weight:bold">Regards,</span></font></b><=
-font face=3D"Calibri"><span style=3D"font-family:&quot;Calibri&quot;,&quot=
-;sans-serif&quot;"><br> 
-        <b><span style=3D"font-weight:bold">Peter G. Catranis<br> 
-        Derivatives Trading Advisor<br> 
-        Primary Assets Management</span></b><br> 
-        <b><font color=3D"black"><span style=3D"color:black;font-weight:bo=
-ld">Direct</span></font>  
-        949-302-9652</b><br> 
-        Skype Peter.Catranis<br> 
-        Cane Garden Bay, Tortola<br> 
-        British Virgin Islands<br> 
-        PB 3252, VG1110</span></font><o:p> 
-        &nbsp;<br>
-        </o:p><span style=3D"color: black"><font face=3D"Tahoma" size=3D"3=
-"><b><font color=3D"#FF0000">Please            
-        do not reply to&nbsp; this email address because this email addres=
-s are            
-        not monitored,</font></b>  <b><font color=3D"#FF0000"><span style=3D=
-"font-weight: bold; color: black">For more           
-        information please contact</span></font><font color=3D"black"><spa=
-n style=3D"font-weight: bold; color: black">&nbsp;</span></font></b><font =
-color=3D"black"><b><span style=3D"font-weight: bold; color: black">       =
-
-          <a target=3D"_blank" href=3D"mailto:peterc22001@gmail.com">peter=
-c22001@gmail.com</a></span></b>        
-          &nbsp;<span style=3D"font-weight: bold; color: black"><b>If you =
-want to&nbsp; 
-        be removed from </b></span><b><span style=3D"font-weight: bold; co=
-lor: black">our            
-        newsletter please </span>       
-                        <a href=3D"http://zjjhling.zj01.0755lvshi.net/pete=
-rc/unsubscribe/unsubscribe.php?email=3Dlinux-f2fs-devel@lists.sourceforge.=
-net">Click            
-        here</a></b></font></font></span> 
-        </p> 
-        <div style=3D"margin-top:5.0pt;margin-right:.2in;margin-bottom:5.0=
-pt"> 
-          <div class=3D"MsoNormal" style=3D"text-align:center" align=3D"ce=
-nter"> 
-            <b><font color=3D"black" face=3D"Calibri" size=3D"3"><span sty=
-le=3D"font-size:12.0pt;font-family:&quot;Calibri&quot;,&quot;sans-serif&qu=
-ot;;color:black;font-weight:bold"> 
-            <hr align=3D"center" size=3D"2" width=3D"100%"> 
-            </span></font></b> 
-          </div> 
-        </div> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;margin-rig=
-ht:.2in;mso-margin-bottom-alt:auto;margin-left:.1in;text-align:center" ali=
-gn=3D"center"><b><font face=3D"Calibri" size=3D"3"><span style=3D"font-siz=
-e:12.0pt;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;font-weigh=
-t:bold">RISK  
-        DISCLOSURE STATEMENT</span></font></b><o:p> 
-        </o:p> 
-        </p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;margin-rig=
-ht:.2in;mso-margin-bottom-alt:auto;margin-left:.1in"><b><font face=3D"Cali=
-bri" size=3D"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&=
-quot;,&quot;sans-serif&quot;;font-weight:bold">PAST  
-        RESULTS ARE NOT NECESSARILY INDICATIVE OF FUTURE RESULTS. EXAMPLES=
- OF  
-        HISTORIC PRICE MOVES OR EXTREME MARKET CONDITIONS ARE NOT MEANT TO=
- IMPLY  
-        THAT SUCH MOVES OR CONDITIONS ARE COMMON OCCURRENCES OR ARE LIKELY=
- TO  
-        OCCUR.</span></font></b><o:p> 
-        </o:p> 
-        </p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;margin-rig=
-ht:.2in;mso-margin-bottom-alt:auto;margin-left:.1in"><b><font face=3D"Cali=
-bri" size=3D"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&=
-quot;,&quot;sans-serif&quot;;font-weight:bold">HYPOTHETICAL  
-        PERFORMANCE RESULTS HAVE MANY INHERENT LIMITATIONS, SOME OF WHICH =
-ARE  
-        DESCRIBED BELOW. NO REPRESENTATION IS BEING MADE THAT ANY ACCOUNT =
-WILL  
-        OR IS LIKELY TO ACHIEVE PROFITS OR LOSSES SIMILAR TO THOSE SHOWN I=
-N  
-        FACT, THERE ARE FREQUENTLY SHARP DIFFERENCES BETWEEN HYPOTHETICAL =
+-	/* Should not write any meta pages, if any IO error was occurred */
+-	if (unlikely(sbi->por_doing ||
+-			is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ERROR_FLAG)))
++	if (unlikely(sbi->por_doing))
+ 		goto redirty_out;
+-
+ 	if (wbc->for_reclaim)
+ 		goto redirty_out;
  
-        PERFORMANCE RESULTS AND THE ACTUAL RESULTS SUBSEQUENTLY ACHIEVED B=
-Y ANY  
-        PARTICULAR TRADING PROGRAM. ONE OF THE LIMITATIONS OF HYPOTHETICAL=
-  
-        PERFORMANCE RESULTS IS THAT THEY ARE GENERALLY PREPARED WITH THE B=
-ENEFIT  
-        OF HINDSIGHT.</span></font></b><o:p> 
-        </o:p> 
-        </p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;margin-rig=
-ht:.2in;mso-margin-bottom-alt:auto;margin-left:.1in"><b><font face=3D"Cali=
-bri" size=3D"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&=
-quot;,&quot;sans-serif&quot;;font-weight:bold">IN  
-        ADDITION, HYPOTHETICAL TRADING DOES NOT INVOLVE FINANCIAL RISK, AN=
-D NO  
-        HYPOTHETICAL TRADING RECORD CAN COMPLETELY ACCOUNT FOR THE IMPACT =
-OF  
-        FINANCIAL RISK IN ACTUAL TRADING. FOR EXAMPLE, THE ABILITY TO WITH=
-STAND  
-        LOSSES OR TO ADHERE TO A PARTICULAR TRADING PROGRAM IN SPITE OF TR=
-ADING  
-        LOSSES ARE MATERIAL POINTS WHICH CAN ALSO ADVERSELY AFFECT ACTUAL =
+-	wait_on_page_writeback(page);
++	/* Should not write any meta pages, if any IO error was occurred */
++	if (unlikely(is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ERROR_FLAG)))
++		goto no_write;
  
-        TRADING RESULTS. THERE ARE NUMEROUS OTHER FACTORS RELATED TO THE M=
-ARKETS  
-        IN GENERAL OR TO THE IMPLEMENTATION OF ANY SPECIFIC TRADE PROGRAM =
-WHICH  
-        CANNOT BE FULLY ACCOUNTED FOR IN THE PREPARATION OF THE HYPOTHETIC=
-AL  
-        PERFORMANCE RESULTS AND ALL OF WHICH CAN ADVERSELY AFFECT ACTUAL T=
-RADING  
-        RESULTS.</span></font></b><o:p> 
-        </o:p> 
-        </p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;margin-rig=
-ht:.2in;mso-margin-bottom-alt:auto;margin-left:.1in"><b><font face=3D"Cali=
-bri" size=3D"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&=
-quot;,&quot;sans-serif&quot;;font-weight:bold">BID/ASK  
-        SPREADS, BROKERAGE COMMISSION, CLEARING, EXCHANGE AND REGULATORY F=
-EES  
-        WILL HAVE AN ADVERSE IMPACT ON THE NET OVERALL PERFORMANCE OF YOUR=
-  
-        ACCOUNT. PRIOR TO MAKING A DECISION TO PARTICIPATE IN ANY INVESTME=
-NT  
-        MAKE SURE YOU FULLY UNDERSTAND THE FEES ASSOCIATED WITH TRADING.</=
-span></font></b><o:p> 
-        </o:p> 
-        </p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;margin-rig=
-ht:.2in;mso-margin-bottom-alt:auto;margin-left:.1in"><b><font face=3D"Cali=
-bri" size=3D"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&=
-quot;,&quot;sans-serif&quot;;font-weight:bold">THE  
-        INFORMATION PROVIDED IN THIS REPORT CONTAINS RESEARCH, MARKET COMM=
-ENTARY  
-        AND TRADE RECOMMENDATIONS. YOU MAY BE SOLICITED FOR AN ACCOUNT BY =
++	wait_on_page_writeback(page);
+ 	write_meta_page(sbi, page);
++no_write:
+ 	dec_page_count(sbi, F2FS_DIRTY_META);
+ 	unlock_page(page);
+ 	return 0;
+@@ -148,10 +149,22 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
  
-        PRIMARY ASSETS MANAGEMENT OR ONE OF ITS REPRESENTATIVES OR EMPLOYE=
-ES. IT  
-        SHOULD BE KNOWN THAT THE REPRESENTATIVES OF PRIMARY ASSETS MANAGEM=
-ENT  
-        MAY TRADE FUTURES AND OPTIONS FOR THEIR OWN ACCOUNTS OR THOSE OF O=
-THERS.  
-        DUE TO VARIOUS FACTORS (SUCH AS MARGIN REQUIREMENTS, RISK FACTORS,=
-  
-        TRADING OBJECTIVES, TRADING INSTRUCTIONS, TRADING STRATEGIES, AND =
-OTHER  
-        FACTORS) SUCH TRADING MAY RESULT IN THE LIQUIDATION OR INITIATION =
-OF  
-        FUTURES OR OPTIONS POSITIONS THAT DIFFER FROM THE OPINIONS AND  
-        RECOMMENDATIONS FOUND IN THIS REPORT.</span></font></b><o:p> 
-        </o:p> 
-        </p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;margin-rig=
-ht:.2in;mso-margin-bottom-alt:auto;margin-left:.1in"><b><font face=3D"Cali=
-bri" size=3D"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&=
-quot;,&quot;sans-serif&quot;;font-weight:bold">PAST  
-        PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE PERFORMANCE. T=
-HE  
-        RISK OF LOSS IN TRADING FUTURES CONTRACTS OR COMMODITY OPTIONS CAN=
- BE  
-        SUBSTANTIAL, AND THEREFORE INVESTORS SHOULD UNDERSTAND THE RISKS  =
-
-        INVOLVED IN TAKING LEVERAGED POSITIONS AND MUST ASSUME RESPONSIBIL=
-ITY  
-        FOR THE RISKS ASSOCIATED WITH SUCH INVESTMENTS AND FOR THEIR RESUL=
-TS.</span></font></b><o:p> 
-        </o:p> 
-        </p> 
-        <p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;margin-rig=
-ht:.2in;mso-margin-bottom-alt:auto;margin-left:.1in"><b><font face=3D"Cali=
-bri" size=3D"3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&=
-quot;,&quot;sans-serif&quot;;font-weight:bold">YOU  
-        SHOULD CAREFULLY CONSIDER WHETHER SUCH TRADING IS SUITABLE FOR YOU=
- IN  
-        LIGHT OF YOUR CIRCUMSTANCES AND FINANCIAL RESOURCES. YOU SHOULD RE=
-AD THE  
-        &quot;RISK DISCLOSURE&quot; WEBPAGE ACCESSED AT THE TOP OF THE HOM=
-EPAGE.  
-        PRIMARY ASSETS MANAGEMENT IS NOT AFFILIATED WITH NOR DOES IT ENDOR=
-SE ANY  
-        TRADING SYSTEM, NEWSLETTER OR OTHER SIMILAR SERVICE.</span></font>=
-</b><o:p> 
-        </o:p> 
-        </p> 
-        <p style=3D"margin-left:.1in"><b><font face=3D"Calibri" size=3D"3"=
-><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&quot;,&quot;san=
-s-serif&quot;;font-weight:bold">PRIMARY  
-        ASSETS MANAGEMENT DOES NOT GUARANTEE OR VERIFY ANY PERFORMANCE CLA=
-IMS  
-        MADE BY SUCH SYSTEMS OR SERVICES. THIS MATERIAL IS CONVEYED AS A  =
-
-        SOLICITATION FOR ENTERING INTO A FUTURES AND OPTIONS TRANSACTION</=
-span></font></b>  
-        <o:p> 
-        &nbsp;<br>
-        </o:p><span style=3D"color: black"><font face=3D"Tahoma" size=3D"3=
-"><b><font color=3D"#FF0000">Please            
-        do not reply to&nbsp; this email address because this email addres=
-s are            
-        not monitored,</font></b>  <b><font color=3D"#FF0000"><span style=3D=
-"font-weight: bold; color: black">For more           
-        information please contact</span></font><font color=3D"black"><spa=
-n style=3D"font-weight: bold; color: black">&nbsp;</span></font></b><font =
-color=3D"black"><b><span style=3D"font-weight: bold; color: black">       =
-
-          <a target=3D"_blank" href=3D"mailto:peterc22001@gmail.com">peter=
-c22001@gmail.com</a></span></b>        
-          &nbsp;<span style=3D"font-weight: bold; color: black"><b>If you =
-want to&nbsp; 
-        be removed from </b></span><b><span style=3D"font-weight: bold; co=
-lor: black">our            
-        newsletter please </span>       
-                        <a href=3D"http://zjjhling.zj01.0755lvshi.net/pete=
-rc/unsubscribe/unsubscribe.php?email=3Dlinux-f2fs-devel@lists.sourceforge.=
-net">Click            
-        here</a></b></font></font></span> 
-        </p> 
-      </td> 
-    </tr> 
-  </tbody> 
-</table> 
-<p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin-bottom-=
-alt:auto;margin-left:.2in"><font color=3D"black" face=3D"Calibri" size=3D"=
-3"><span style=3D"font-size:12.0pt;font-family:&quot;Calibri&quot;,&quot;s=
-ans-serif&quot;;color:black">&nbsp;&nbsp;</span></font><o:p> 
-</o:p> 
-</p> 
-<p class=3D"MsoNormal" style=3D"mso-margin-top-alt:auto;mso-margin-bottom-=
-alt:auto;margin-left:.2in"><font face=3D"Calibri" size=3D"3"><span style=3D=
-"font-size:12.0pt;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;">=
-&nbsp;</span></font></p> 
+ 		for (i = 0; i < nr_pages; i++) {
+ 			struct page *page = pvec.pages[i];
++
+ 			lock_page(page);
+-			f2fs_bug_on(page->mapping != mapping);
+-			f2fs_bug_on(!PageDirty(page));
+-			clear_page_dirty_for_io(page);
++
++			if (unlikely(page->mapping != mapping)) {
++continue_unlock:
++				unlock_page(page);
++				continue;
++			}
++			if (!PageDirty(page)) {
++				/* someone wrote it for us */
++				goto continue_unlock;
++			}
++
++			if (!clear_page_dirty_for_io(page))
++				goto continue_unlock;
++
+ 			if (f2fs_write_meta_page(page, &wbc)) {
+ 				unlock_page(page);
+ 				break;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index ea0371e..b0f5762 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -701,6 +701,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi)
+ gc_more:
+ 	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE)))
+ 		goto stop;
++	if (unlikely(is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ERROR_FLAG)))
++		goto stop;
  
-</body> 
+ 	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, nfree)) {
+ 		gc_type = FG_GC;
+-- 
+1.8.4.474.g128a96c
 
-
-
-
-
---===============8174764717900616895==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Managing the Performance of Cloud-Based Applications
 Take advantage of what the Cloud has to offer - Avoid Common Pitfalls.
 Read the Whitepaper.
 http://pubads.g.doubleclick.net/gampad/clk?id=121051231&iu=/4140/ostg.clktrk
---===============8174764717900616895==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============8174764717900616895==--
