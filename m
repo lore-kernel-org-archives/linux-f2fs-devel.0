@@ -1,29 +1,24 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: [PATCH] f2fstat: add memory information used by f2fs
-Date: Thu, 06 Feb 2014 16:37:53 +0900
-Message-ID: <1391672273-22862-1-git-send-email-cm224.lee@samsung.com>
+From: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Subject: Re: f2fs: f2fs unmount hangs if f2fs_init_acl() fails
+ during mkdir syscall
+Date: Thu, 06 Feb 2014 16:17:43 +0400
+Message-ID: <52F37D67.208@ispras.ru>
+References: <52F320FC.50803@ispras.ru> <1391666564.25542.78.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cm224.lee@samsung.com>) id 1WBJYq-0000ta-Kc
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <tsyvarev@ispras.ru>) id 1WBNtx-00064t-MF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 06 Feb 2014 07:39:48 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WBJYo-0007LY-AW
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 06 Feb 2014 07:39:48 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N0K0095SDA27R40@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 06 Feb 2014 16:39:38 +0900 (KST)
+	Thu, 06 Feb 2014 12:17:53 +0000
+Received: from smtp.ispras.ru ([83.149.199.79])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WBNtv-0003Z7-Bp for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 06 Feb 2014 12:17:53 +0000
+In-Reply-To: <1391666564.25542.78.camel@kjgkr>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,155 +28,83 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds memory information used by f2fs.
-
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>
----
- tools/f2fstat.c |   69 +++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 44 insertions(+), 25 deletions(-)
-
-diff --git a/tools/f2fstat.c b/tools/f2fstat.c
-index b4f22ae..8ece660 100644
---- a/tools/f2fstat.c
-+++ b/tools/f2fstat.c
-@@ -16,6 +16,9 @@
-  */
- #define F2FS_STATUS	"/sys/kernel/debug/f2fs/status"
- 
-+#define KEY_NODE	0x00000001
-+#define KEY_META	0x00000010
-+
- unsigned long util;
- unsigned long used_node_blks;
- unsigned long used_data_blks;
-@@ -33,9 +36,9 @@ unsigned long gc_node_blks;
- 
- //unsigned long extent_hit_ratio;
- 
--unsigned long dirty_node;
-+unsigned long dirty_node, node_kb;
- unsigned long dirty_dents;
--unsigned long dirty_meta;
-+unsigned long dirty_meta, meta_kb;
- unsigned long nat_caches;
- unsigned long dirty_sit;
- 
-@@ -43,7 +46,7 @@ unsigned long free_nids;
- 
- unsigned long ssr_blks;
- unsigned long lfs_blks;
--
-+unsigned long memory_kb;
- 
- struct options {
- 	int delay;
-@@ -54,6 +57,7 @@ struct options {
- struct mm_table {
- 	const char *name;
- 	unsigned long *val;
-+	int flag;
- };
- 
- static int compare_mm_table(const void *a, const void *b)
-@@ -84,21 +88,22 @@ void f2fstat(struct options *opt)
- 	int found_cnt = 0;
- 
- 	static struct mm_table f2fstat_table[] = {
--		{ "  - Data",		&used_data_blks },
--		{ "  - Dirty",		&dirty_segs },
--		{ "  - Free",		&free_segs },
--		{ "  - NATs",		&nat_caches },
--		{ "  - Node",		&used_node_blks },
--		{ "  - Prefree",	&prefree_segs },
--		{ "  - SITs",		&dirty_sit },
--		{ "  - Valid",		&valid_segs },
--		{ "  - dents",		&dirty_dents },
--		{ "  - meta",		&dirty_meta },
--		{ "  - nodes",		&dirty_node },
--		{ "GC calls",		&gc },
--		{ "LFS",		&lfs_blks },
--		{ "SSR",		&ssr_blks },
--		{ "Utilization",	&util },
-+		{ "  - Data",		&used_data_blks,	0 },
-+		{ "  - Dirty",		&dirty_segs,		0 },
-+		{ "  - Free",		&free_segs,		0 },
-+		{ "  - NATs",		&nat_caches,		0 },
-+		{ "  - Node",		&used_node_blks,	0 },
-+		{ "  - Prefree",	&prefree_segs,		0 },
-+		{ "  - SITs",		&dirty_sit,		0 },
-+		{ "  - Valid",		&valid_segs,		0 },
-+		{ "  - dents",		&dirty_dents,		0 },
-+		{ "  - meta",		&dirty_meta,		KEY_META },
-+		{ "  - nodes",		&dirty_node,		KEY_NODE },
-+		{ "GC calls",		&gc,			0 },
-+		{ "LFS",		&lfs_blks,		0 },
-+		{ "Memory",		&memory_kb,		0 },
-+		{ "SSR",		&ssr_blks,		0 },
-+		{ "Utilization",	&util,			0 },
- 	};
- 
- 	f2fstat_table_cnt = sizeof(f2fstat_table)/sizeof(struct mm_table);
-@@ -147,6 +152,20 @@ void f2fstat(struct options *opt)
- 			goto nextline;
- 
- 		*(found->val) = strtoul(head, &tail, 10);
-+		if (found->flag) {
-+			int npages;
-+			tail = strstr(head, "in");
-+			head = tail + 2;
-+			npages = strtoul(head, &tail, 10);
-+			switch (found->flag & (KEY_NODE | KEY_META)) {
-+			case KEY_NODE:
-+				node_kb = npages * 4;
-+				break;
-+			case KEY_META:
-+				meta_kb = npages * 4;
-+				break;
-+			}
-+		}
- 		if (++found_cnt == f2fstat_table_cnt)
- 			break;
- nextline:
-@@ -193,13 +212,13 @@ void parse_option(int argc, char *argv[], struct options *opt)
- 
- void print_head(void)
- {
--	printf("---utilization--- -----------main area-------- ---balancing async-- -gc- ---alloc---\n");
--	printf("util  node   data   free  valid  dirty prefree node  dent meta sit   gc    ssr    lfs\n");
-+	fprintf(stderr, "---utilization--- -----------main area-------- ---balancing async-- -gc- ---alloc--- -----memory-----\n");
-+	fprintf(stderr, "util  node   data   free  valid  dirty prefree node  dent meta sit   gc    ssr    lfs  total  node  meta\n");
- }
- 
- int main(int argc, char *argv[])
- {
--	char format[] = "%3ld %6ld %6ld %6ld %6ld %6ld %6ld %5ld %5ld %3ld %3ld %5ld %6ld %6ld\n";
-+	char format[] = "%3ld %6ld %6ld %6ld %6ld %6ld %6ld %5ld %5ld %3ld %3ld %5ld %6ld %6ld %6ld %6ld %6ld\n";
- 	int head_interval;
- 	struct options opt = {
- 		.delay = 1,
-@@ -219,10 +238,10 @@ int main(int argc, char *argv[])
- 
- 		f2fstat(&opt);
- 
--		printf(format, util, used_node_blks, used_data_blks,
--				free_segs, valid_segs, dirty_segs, prefree_segs,
--				dirty_node, dirty_dents, dirty_meta, dirty_sit,
--				gc, ssr_blks, lfs_blks);
-+		fprintf(stderr, format, util, used_node_blks, used_data_blks,
-+			free_segs, valid_segs, dirty_segs, prefree_segs,
-+			dirty_node, dirty_dents, dirty_meta, dirty_sit,
-+			gc, ssr_blks, lfs_blks, memory_kb, node_kb, meta_kb);
- 
- 		sleep(opt.delay);
- 	}
--- 
-1.7.10.4
-
-
-------------------------------------------------------------------------------
-Managing the Performance of Cloud-Based Applications
-Take advantage of what the Cloud has to offer - Avoid Common Pitfalls.
-Read the Whitepaper.
-http://pubads.g.doubleclick.net/gampad/clk?id=121051231&iu=/4140/ostg.clktrk
+SGksCgowNi4wMi4yMDE0IDEwOjAyLCBKYWVnZXVrIEtpbSDQv9C40YjQtdGCOgo+IEhpLAo+Cj4g
+VGhhbmsgeW91IGZvciB0aGUgdGVzdCBhbmQgdmFsdWFibGUgcmVwb3J0Lgo+Cj4gVGhpcyBidWcg
+d2FzIGZpeGVkIHJlY2VudGx5IGJ5Ogo+Cj4gY29tbWl0IDAzZGVhMzEyOWQ1NThiZjUyOTNhNmU5
+ZjEyNzc3MTc2NjE5YWM4NzYKPiBBdXRob3I6IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1z
+dW5nLmNvbT4KPiBEYXRlOiAgIFdlZCBGZWIgNSAxMToxNjozOSAyMDE0ICswOTAwCj4KPiAgICAg
+IGYyZnM6IGZpeCB0byB0cnVuY2F0ZSBkZW50cnkgcGFnZXMgaW4gdGhlIGVycm9yIGNhc2UKTm93
+IHJlbW92ZV9pbm9kZV9wYWdlKCkgc3VjY2VlZCwgYnV0IGFub3RoZXIgYXNzZXJ0aW9uIGZhaWxl
+ZCAodGVzdGVkIG9uIApyZXZpc2lvbiBlOTY0NzUxYyk6CgpbIDEyNzIuNzQ3MDExXSBrZXJuZWwg
+QlVHIGF0IGZzL2YyZnMvaW5vZGUuYzoyNzQhClsgMTI3Mi43NDcwMTFdIGludmFsaWQgb3Bjb2Rl
+OiAwMDAwIFsjMV0gU01QClsgMTI3Mi43NDcwMTFdIE1vZHVsZXMgbGlua2VkIGluOiBmMmZzIGtl
+ZHJfZnNpbV9pbmRpY2F0b3JfY29tbW9uKE9GKSAKa2Vkcl9mc2ltX2luZGljYXRvcl9jYXBhYmxl
+KE9GKQprZWRyX2ZzaW1faW5kaWNhdG9yX2ttYWxsb2MoT0YpIGtlZHJfZnNpbV92bW0oT0YpIGtl
+ZHJfZnNpbV9tZW1fdXRpbChPRikgCmtlZHJfZnNpbV9jYXBhYmxlKE9GKQprZWRyX2ZzaW1fdWFj
+Y2VzcyhPRikga2Vkcl9mc2ltX2NtbShPRikga2Vkcl9mYXVsdF9zaW11bGF0aW9uKE9GKSAKa2Vk
+cihPRikgZnVzZSBuZl9jb25udHJhY2tfbmV0Ymlvc19ucwpuZl9jb25udHJhY2tfYnJvYWRjYXN0
+IGlwdF9NQVNRVUVSQURFIGlwNnRfUkVKRUNUIHh0X2Nvbm50cmFjayAKZWJ0YWJsZV9uYXQgZWJ0
+YWJsZV9icm91dGUgYnJpZGdlIHN0cApsbGMgZWJ0YWJsZV9maWx0ZXIgZWJ0YWJsZXMgaXA2dGFi
+bGVfbmF0IG5mX2Nvbm50cmFja19pcHY2IApuZl9kZWZyYWdfaXB2NiBuZl9uYXRfaXB2NiBpcDZ0
+YWJsZV9tYW5nbGUKaXA2dGFibGVfc2VjdXJpdHkgaXA2dGFibGVfcmF3IGlwNnRhYmxlX2ZpbHRl
+ciBpcDZfdGFibGVzIGlwdGFibGVfbmF0IApuZl9jb25udHJhY2tfaXB2NCBuZl9kZWZyYWdfaXB2
+NApuZl9uYXRfaXB2NCBuZl9uYXQgbmZfY29ubnRyYWNrIGlwdGFibGVfbWFuZ2xlIGlwdGFibGVf
+c2VjdXJpdHkgCmlwdGFibGVfcmF3IHBhcnBvcnRfcGMgaTJjX3BpaXg0IGUxMDAwCmkyY19jb3Jl
+IG1pY3JvY29kZSBwYXJwb3J0IGF0YV9nZW5lcmljIHBhdGFfYWNwaSBbbGFzdCB1bmxvYWRlZDog
+a2Vkcl0KWyAxMjcyLjc0NzAxMV0gQ1BVOiAwIFBJRDogMTQ2MTMgQ29tbTogZnMtZHJpdmVyLXRl
+c3RzIFRhaW50ZWQ6IEdGICAgICAgIApXICBPIDMuMTQuMC1yYzFmcyAjMQpbIDEyNzIuNzQ3MDEx
+XSBIYXJkd2FyZSBuYW1lOiBpbm5vdGVrIEdtYkggVmlydHVhbEJveC9WaXJ0dWFsQm94LCBCSU9T
+IApWaXJ0dWFsQm94IDEyLzAxLzIwMDYKWyAxMjcyLjc0NzAxMV0gdGFzazogZmZmZjg4MDAxZTkz
+OTE5MCB0aTogZmZmZjg4MDAwZDdlYzAwMCB0YXNrLnRpOiAKZmZmZjg4MDAwZDdlYzAwMApbIDEy
+NzIuNzQ3MDExXSBSSVA6IDAwMTA6WzxmZmZmZmZmZmEwMWM3NGE4Pl0gWzxmZmZmZmZmZmEwMWM3
+NGE4Pl0gCmYyZnNfZXZpY3RfaW5vZGUrMHgxNzgvMHgxODAgW2YyZnNdClsgMTI3Mi43NDcwMTFd
+IFJTUDogMDAxODpmZmZmODgwMDBkN2VkZTUwICBFRkxBR1M6IDAwMDEwMjAyClsgMTI3Mi43NDcw
+MTFdIFJBWDogMDAwMDAwMDAwMDAwMDAwMSBSQlg6IGZmZmY4ODAwMDQ3NWNjMzAgUkNYOiAKZmZm
+Zjg4MDAxZTkzOThhMApbIDEyNzIuNzQ3MDExXSBSRFg6IDAwMDAwMDAwMDAwMDAwMDIgUlNJOiAw
+MDAwMDAwMDAwMDAwMDAwIFJESTogCmZmZmY4ODAwMDQ3NWNlMTAKWyAxMjcyLjc0NzAxMV0gUkJQ
+OiBmZmZmODgwMDBkN2VkZTY4IFIwODogMDAwMDAwMDBmZmZmZmZmZiBSMDk6IAowMDAwMDAwMDAw
+MDAwMDAwClsgMTI3Mi43NDcwMTFdIFIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAw
+MDAwMDAwMDEgUjEyOiAKZmZmZjg4MDAwNDc1Y2MzMApbIDEyNzIuNzQ3MDExXSBSMTM6IGZmZmY4
+ODAwMGYxNDc4MDAgUjE0OiBmZmZmZmZmZmEwMWU3MDgwIFIxNTogCmZmZmY4ODAwMGYxNDdiODAK
+WyAxMjcyLjc0NzAxMV0gRlM6ICAwMDAwN2YxNzk1NDI0NzQwKDAwMDApIEdTOmZmZmY4ODAwM2Zj
+MDAwMDAoMDAwMCkgCmtubEdTOjAwMDAwMDAwMDAwMDAwMDAKWyAxMjcyLjc0NzAxMV0gQ1M6ICAw
+MDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzYgpbIDEyNzIuNzQ3MDEx
+XSBDUjI6IDAwMDA3ZmMzM2JmYTkwMDAgQ1IzOiAwMDAwMDAwMDBmMTRlMDAwIENSNDogCjAwMDAw
+MDAwMDAwMDA2ZjAKWyAxMjcyLjc0NzAxMV0gU3RhY2s6ClsgMTI3Mi43NDcwMTFdICBmZmZmODgw
+MDA0NzVjYzMwIGZmZmY4ODAwMDQ3NWNkYzggZmZmZmZmZmZhMDFlNzA4MCAKZmZmZjg4MDAwZDdl
+ZGU5MApbIDEyNzIuNzQ3MDExXSAgZmZmZmZmZmY4MTFmZGUwMyBmZmZmODgwMDA0NzVjYzMwIGZm
+ZmY4ODAwMDQ3NWNjYjggCmZmZmY4ODAwMGYxNDcwMDAKWyAxMjcyLjc0NzAxMV0gIGZmZmY4ODAw
+MGQ3ZWRlYzAgZmZmZmZmZmY4MTFmZTYxNSBmZmZmODgwMDA0NzVjYzMwIApmZmZmODgwMDBmMTQ3
+ODAwClsgMTI3Mi43NDcwMTFdIENhbGwgVHJhY2U6ClsgMTI3Mi43NDcwMTFdICBbPGZmZmZmZmZm
+ODExZmRlMDM+XSBldmljdCsweGEzLzB4MWEwClsgMTI3Mi43NDcwMTFdICBbPGZmZmZmZmZmODEx
+ZmU2MTU+XSBpcHV0KzB4ZjUvMHgxODAKWyAxMjcyLjc0NzAxMV0gIFs8ZmZmZmZmZmZhMDFjN2Y2
+Mz5dIGYyZnNfbWtkaXIrMHhmMy8weDE1MCBbZjJmc10KWyAxMjcyLjc0NzAxMV0gIFs8ZmZmZmZm
+ZmY4MTFmMmE3Nz5dIHZmc19ta2RpcisweGI3LzB4MTYwClsgMTI3Mi43NDcwMTFdICBbPGZmZmZm
+ZmZmODExZjM2YmY+XSBTeVNfbWtkaXIrMHg1Zi8weGMwClsgMTI3Mi43NDcwMTFdICBbPGZmZmZm
+ZmZmODE2ODA3Njk+XSBzeXN0ZW1fY2FsbF9mYXN0cGF0aCsweDE2LzB4MWIKWyAxMjcyLjc0NzAx
+MV0gQ29kZTogMDEgZTEgNGMgODkgZTcgZTggMzkgNTkgMDMgZTEgNWIgNDEgNWMgNDEgNWQgNWQg
+YzMgCjMxIGMwIDQ5IDgzIGJjIDI0IGM4IDAwIDAwIDAwIDAxIDBmIDk3IGMwCmViIDhmIDRjIDg5
+IGU3IGU4IGZhIGVjIGZmIGZmIGViIDg5IDwwZj4gMGIgNjYgMGYgMWYgNDQgMDAgMDAgMGYgMWYg
+NDQgCjAwIDAwIDU1IDQ4IGM3IGMwIGRjIGZmIGZmIGZmClsgMTI3Mi43NDcwMTFdIFJJUCAgWzxm
+ZmZmZmZmZmEwMWM3NGE4Pl0gZjJmc19ldmljdF9pbm9kZSsweDE3OC8weDE4MCBbZjJmc10KWyAx
+MjcyLjc0NzAxMV0gIFJTUCA8ZmZmZjg4MDAwZDdlZGU1MD4KCkZhaWxlZCBhc3NlcnRpb24gY2xh
+aW1zIHRoYXQgZGlydHkgZGVudHJpZXMgY291bnRlciBzaG91bGQgYmUgemVybyB3aGVuIAppbm9k
+ZSBpcyBkZWxldGVkLgpUaGlzIGNvdW50ZXIgaXMgaW5jcmVtZW50ZWQgYnkKbWtkaXIoKS0+CiAg
+IGYyZnNfYWRkX2xpbmsoKS0+CiAgICAgaW5pdF9pbm9kZV9tZXRhZGF0YSgpLT4KICAgICAgIG1h
+a2VfZW1wdHlfZGlyKCktPgogICAgICAgICBzZXRfcGFnZV9kaXJ0eSgpOwoKYnV0IG5vIG9uZSBk
+ZWNyZW1lbnQgaXQuCk1heSBiZSwgdGhpcyBzaG91bGQgYmUgZG9uZSBhbG9uZyB3aXRoIHRydW5j
+YXRpbmcgZGlyZWN0b3J5IGlub2RlIGluIAplcnJvci1wYXRoIG9mIGluaXRfaW5vZGVfbWV0YWRh
+dGEoKSA/CgoKLS0KQmVzdCByZWdhcmRzLApBbmRyZXkgVHN5dmFyZXYKTGludXggVmVyaWZpY2F0
+aW9uIENlbnRlciwgSVNQUkFTCndlYjogaHR0cDovL2xpbnV4dGVzdGluZy5vcmcKCgotLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0KTWFuYWdpbmcgdGhlIFBlcmZvcm1hbmNlIG9mIENsb3VkLUJhc2VkIEFw
+cGxpY2F0aW9ucwpUYWtlIGFkdmFudGFnZSBvZiB3aGF0IHRoZSBDbG91ZCBoYXMgdG8gb2ZmZXIg
+LSBBdm9pZCBDb21tb24gUGl0ZmFsbHMuClJlYWQgdGhlIFdoaXRlcGFwZXIuCmh0dHA6Ly9wdWJh
+ZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD0xMjEwNTEyMzEmaXU9LzQxNDAvb3N0
+Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+TGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8v
+bGludXgtZjJmcy1kZXZlbAo=
