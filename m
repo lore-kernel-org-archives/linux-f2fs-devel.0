@@ -1,110 +1,152 @@
-From: Andrey Tsyvarev <tsyvarev@ispras.ru>
-Subject: Re: f2fs: f2fs unmount hangs if f2fs_init_acl() fails
- during mkdir syscall
-Date: Thu, 06 Feb 2014 16:17:43 +0400
-Message-ID: <52F37D67.208@ispras.ru>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: f2fs: f2fs unmount hangs if f2fs_init_acl() fails during mkdir
+ syscall
+Date: Fri, 07 Feb 2014 09:49:45 +0900
+Message-ID: <1391734185.25542.80.camel@kjgkr>
 References: <52F320FC.50803@ispras.ru> <1391666564.25542.78.camel@kjgkr>
+ <52F37D67.208@ispras.ru>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tsyvarev@ispras.ru>) id 1WBNtx-00064t-MF
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 06 Feb 2014 12:17:53 +0000
-Received: from smtp.ispras.ru ([83.149.199.79])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WBNtv-0003Z7-Bp for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 06 Feb 2014 12:17:53 +0000
-In-Reply-To: <1391666564.25542.78.camel@kjgkr>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <52F37D67.208@ispras.ru>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgowNi4wMi4yMDE0IDEwOjAyLCBKYWVnZXVrIEtpbSDQv9C40YjQtdGCOgo+IEhpLAo+Cj4g
-VGhhbmsgeW91IGZvciB0aGUgdGVzdCBhbmQgdmFsdWFibGUgcmVwb3J0Lgo+Cj4gVGhpcyBidWcg
-d2FzIGZpeGVkIHJlY2VudGx5IGJ5Ogo+Cj4gY29tbWl0IDAzZGVhMzEyOWQ1NThiZjUyOTNhNmU5
-ZjEyNzc3MTc2NjE5YWM4NzYKPiBBdXRob3I6IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1z
-dW5nLmNvbT4KPiBEYXRlOiAgIFdlZCBGZWIgNSAxMToxNjozOSAyMDE0ICswOTAwCj4KPiAgICAg
-IGYyZnM6IGZpeCB0byB0cnVuY2F0ZSBkZW50cnkgcGFnZXMgaW4gdGhlIGVycm9yIGNhc2UKTm93
-IHJlbW92ZV9pbm9kZV9wYWdlKCkgc3VjY2VlZCwgYnV0IGFub3RoZXIgYXNzZXJ0aW9uIGZhaWxl
-ZCAodGVzdGVkIG9uIApyZXZpc2lvbiBlOTY0NzUxYyk6CgpbIDEyNzIuNzQ3MDExXSBrZXJuZWwg
-QlVHIGF0IGZzL2YyZnMvaW5vZGUuYzoyNzQhClsgMTI3Mi43NDcwMTFdIGludmFsaWQgb3Bjb2Rl
-OiAwMDAwIFsjMV0gU01QClsgMTI3Mi43NDcwMTFdIE1vZHVsZXMgbGlua2VkIGluOiBmMmZzIGtl
-ZHJfZnNpbV9pbmRpY2F0b3JfY29tbW9uKE9GKSAKa2Vkcl9mc2ltX2luZGljYXRvcl9jYXBhYmxl
-KE9GKQprZWRyX2ZzaW1faW5kaWNhdG9yX2ttYWxsb2MoT0YpIGtlZHJfZnNpbV92bW0oT0YpIGtl
-ZHJfZnNpbV9tZW1fdXRpbChPRikgCmtlZHJfZnNpbV9jYXBhYmxlKE9GKQprZWRyX2ZzaW1fdWFj
-Y2VzcyhPRikga2Vkcl9mc2ltX2NtbShPRikga2Vkcl9mYXVsdF9zaW11bGF0aW9uKE9GKSAKa2Vk
-cihPRikgZnVzZSBuZl9jb25udHJhY2tfbmV0Ymlvc19ucwpuZl9jb25udHJhY2tfYnJvYWRjYXN0
-IGlwdF9NQVNRVUVSQURFIGlwNnRfUkVKRUNUIHh0X2Nvbm50cmFjayAKZWJ0YWJsZV9uYXQgZWJ0
-YWJsZV9icm91dGUgYnJpZGdlIHN0cApsbGMgZWJ0YWJsZV9maWx0ZXIgZWJ0YWJsZXMgaXA2dGFi
-bGVfbmF0IG5mX2Nvbm50cmFja19pcHY2IApuZl9kZWZyYWdfaXB2NiBuZl9uYXRfaXB2NiBpcDZ0
-YWJsZV9tYW5nbGUKaXA2dGFibGVfc2VjdXJpdHkgaXA2dGFibGVfcmF3IGlwNnRhYmxlX2ZpbHRl
-ciBpcDZfdGFibGVzIGlwdGFibGVfbmF0IApuZl9jb25udHJhY2tfaXB2NCBuZl9kZWZyYWdfaXB2
-NApuZl9uYXRfaXB2NCBuZl9uYXQgbmZfY29ubnRyYWNrIGlwdGFibGVfbWFuZ2xlIGlwdGFibGVf
-c2VjdXJpdHkgCmlwdGFibGVfcmF3IHBhcnBvcnRfcGMgaTJjX3BpaXg0IGUxMDAwCmkyY19jb3Jl
-IG1pY3JvY29kZSBwYXJwb3J0IGF0YV9nZW5lcmljIHBhdGFfYWNwaSBbbGFzdCB1bmxvYWRlZDog
-a2Vkcl0KWyAxMjcyLjc0NzAxMV0gQ1BVOiAwIFBJRDogMTQ2MTMgQ29tbTogZnMtZHJpdmVyLXRl
-c3RzIFRhaW50ZWQ6IEdGICAgICAgIApXICBPIDMuMTQuMC1yYzFmcyAjMQpbIDEyNzIuNzQ3MDEx
-XSBIYXJkd2FyZSBuYW1lOiBpbm5vdGVrIEdtYkggVmlydHVhbEJveC9WaXJ0dWFsQm94LCBCSU9T
-IApWaXJ0dWFsQm94IDEyLzAxLzIwMDYKWyAxMjcyLjc0NzAxMV0gdGFzazogZmZmZjg4MDAxZTkz
-OTE5MCB0aTogZmZmZjg4MDAwZDdlYzAwMCB0YXNrLnRpOiAKZmZmZjg4MDAwZDdlYzAwMApbIDEy
-NzIuNzQ3MDExXSBSSVA6IDAwMTA6WzxmZmZmZmZmZmEwMWM3NGE4Pl0gWzxmZmZmZmZmZmEwMWM3
-NGE4Pl0gCmYyZnNfZXZpY3RfaW5vZGUrMHgxNzgvMHgxODAgW2YyZnNdClsgMTI3Mi43NDcwMTFd
-IFJTUDogMDAxODpmZmZmODgwMDBkN2VkZTUwICBFRkxBR1M6IDAwMDEwMjAyClsgMTI3Mi43NDcw
-MTFdIFJBWDogMDAwMDAwMDAwMDAwMDAwMSBSQlg6IGZmZmY4ODAwMDQ3NWNjMzAgUkNYOiAKZmZm
-Zjg4MDAxZTkzOThhMApbIDEyNzIuNzQ3MDExXSBSRFg6IDAwMDAwMDAwMDAwMDAwMDIgUlNJOiAw
-MDAwMDAwMDAwMDAwMDAwIFJESTogCmZmZmY4ODAwMDQ3NWNlMTAKWyAxMjcyLjc0NzAxMV0gUkJQ
-OiBmZmZmODgwMDBkN2VkZTY4IFIwODogMDAwMDAwMDBmZmZmZmZmZiBSMDk6IAowMDAwMDAwMDAw
-MDAwMDAwClsgMTI3Mi43NDcwMTFdIFIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAw
-MDAwMDAwMDEgUjEyOiAKZmZmZjg4MDAwNDc1Y2MzMApbIDEyNzIuNzQ3MDExXSBSMTM6IGZmZmY4
-ODAwMGYxNDc4MDAgUjE0OiBmZmZmZmZmZmEwMWU3MDgwIFIxNTogCmZmZmY4ODAwMGYxNDdiODAK
-WyAxMjcyLjc0NzAxMV0gRlM6ICAwMDAwN2YxNzk1NDI0NzQwKDAwMDApIEdTOmZmZmY4ODAwM2Zj
-MDAwMDAoMDAwMCkgCmtubEdTOjAwMDAwMDAwMDAwMDAwMDAKWyAxMjcyLjc0NzAxMV0gQ1M6ICAw
-MDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzYgpbIDEyNzIuNzQ3MDEx
-XSBDUjI6IDAwMDA3ZmMzM2JmYTkwMDAgQ1IzOiAwMDAwMDAwMDBmMTRlMDAwIENSNDogCjAwMDAw
-MDAwMDAwMDA2ZjAKWyAxMjcyLjc0NzAxMV0gU3RhY2s6ClsgMTI3Mi43NDcwMTFdICBmZmZmODgw
-MDA0NzVjYzMwIGZmZmY4ODAwMDQ3NWNkYzggZmZmZmZmZmZhMDFlNzA4MCAKZmZmZjg4MDAwZDdl
-ZGU5MApbIDEyNzIuNzQ3MDExXSAgZmZmZmZmZmY4MTFmZGUwMyBmZmZmODgwMDA0NzVjYzMwIGZm
-ZmY4ODAwMDQ3NWNjYjggCmZmZmY4ODAwMGYxNDcwMDAKWyAxMjcyLjc0NzAxMV0gIGZmZmY4ODAw
-MGQ3ZWRlYzAgZmZmZmZmZmY4MTFmZTYxNSBmZmZmODgwMDA0NzVjYzMwIApmZmZmODgwMDBmMTQ3
-ODAwClsgMTI3Mi43NDcwMTFdIENhbGwgVHJhY2U6ClsgMTI3Mi43NDcwMTFdICBbPGZmZmZmZmZm
-ODExZmRlMDM+XSBldmljdCsweGEzLzB4MWEwClsgMTI3Mi43NDcwMTFdICBbPGZmZmZmZmZmODEx
-ZmU2MTU+XSBpcHV0KzB4ZjUvMHgxODAKWyAxMjcyLjc0NzAxMV0gIFs8ZmZmZmZmZmZhMDFjN2Y2
-Mz5dIGYyZnNfbWtkaXIrMHhmMy8weDE1MCBbZjJmc10KWyAxMjcyLjc0NzAxMV0gIFs8ZmZmZmZm
-ZmY4MTFmMmE3Nz5dIHZmc19ta2RpcisweGI3LzB4MTYwClsgMTI3Mi43NDcwMTFdICBbPGZmZmZm
-ZmZmODExZjM2YmY+XSBTeVNfbWtkaXIrMHg1Zi8weGMwClsgMTI3Mi43NDcwMTFdICBbPGZmZmZm
-ZmZmODE2ODA3Njk+XSBzeXN0ZW1fY2FsbF9mYXN0cGF0aCsweDE2LzB4MWIKWyAxMjcyLjc0NzAx
-MV0gQ29kZTogMDEgZTEgNGMgODkgZTcgZTggMzkgNTkgMDMgZTEgNWIgNDEgNWMgNDEgNWQgNWQg
-YzMgCjMxIGMwIDQ5IDgzIGJjIDI0IGM4IDAwIDAwIDAwIDAxIDBmIDk3IGMwCmViIDhmIDRjIDg5
-IGU3IGU4IGZhIGVjIGZmIGZmIGViIDg5IDwwZj4gMGIgNjYgMGYgMWYgNDQgMDAgMDAgMGYgMWYg
-NDQgCjAwIDAwIDU1IDQ4IGM3IGMwIGRjIGZmIGZmIGZmClsgMTI3Mi43NDcwMTFdIFJJUCAgWzxm
-ZmZmZmZmZmEwMWM3NGE4Pl0gZjJmc19ldmljdF9pbm9kZSsweDE3OC8weDE4MCBbZjJmc10KWyAx
-MjcyLjc0NzAxMV0gIFJTUCA8ZmZmZjg4MDAwZDdlZGU1MD4KCkZhaWxlZCBhc3NlcnRpb24gY2xh
-aW1zIHRoYXQgZGlydHkgZGVudHJpZXMgY291bnRlciBzaG91bGQgYmUgemVybyB3aGVuIAppbm9k
-ZSBpcyBkZWxldGVkLgpUaGlzIGNvdW50ZXIgaXMgaW5jcmVtZW50ZWQgYnkKbWtkaXIoKS0+CiAg
-IGYyZnNfYWRkX2xpbmsoKS0+CiAgICAgaW5pdF9pbm9kZV9tZXRhZGF0YSgpLT4KICAgICAgIG1h
-a2VfZW1wdHlfZGlyKCktPgogICAgICAgICBzZXRfcGFnZV9kaXJ0eSgpOwoKYnV0IG5vIG9uZSBk
-ZWNyZW1lbnQgaXQuCk1heSBiZSwgdGhpcyBzaG91bGQgYmUgZG9uZSBhbG9uZyB3aXRoIHRydW5j
-YXRpbmcgZGlyZWN0b3J5IGlub2RlIGluIAplcnJvci1wYXRoIG9mIGluaXRfaW5vZGVfbWV0YWRh
-dGEoKSA/CgoKLS0KQmVzdCByZWdhcmRzLApBbmRyZXkgVHN5dmFyZXYKTGludXggVmVyaWZpY2F0
-aW9uIENlbnRlciwgSVNQUkFTCndlYjogaHR0cDovL2xpbnV4dGVzdGluZy5vcmcKCgotLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0KTWFuYWdpbmcgdGhlIFBlcmZvcm1hbmNlIG9mIENsb3VkLUJhc2VkIEFw
-cGxpY2F0aW9ucwpUYWtlIGFkdmFudGFnZSBvZiB3aGF0IHRoZSBDbG91ZCBoYXMgdG8gb2ZmZXIg
-LSBBdm9pZCBDb21tb24gUGl0ZmFsbHMuClJlYWQgdGhlIFdoaXRlcGFwZXIuCmh0dHA6Ly9wdWJh
-ZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD0xMjEwNTEyMzEmaXU9LzQxNDAvb3N0
-Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-TGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
-Y2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8v
-bGludXgtZjJmcy1kZXZlbAo=
+Hi,
+
+2014-02-06 (=EB=AA=A9), 16:17 +0400, Andrey Tsyvarev:
+> Hi,
+>=20
+> 06.02.2014 10:02, Jaegeuk Kim =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Hi,
+> >
+> > Thank you for the test and valuable report.
+> >
+> > This bug was fixed recently by:
+> >
+> > commit 03dea3129d558bf5293a6e9f12777176619ac876
+> > Author: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+> > Date:   Wed Feb 5 11:16:39 2014 +0900
+> >
+> >      f2fs: fix to truncate dentry pages in the error case
+> Now remove_inode_page() succeed, but another assertion failed (tested=
+ on=20
+> revision e964751c):
+>=20
+> [ 1272.747011] kernel BUG at fs/f2fs/inode.c:274!
+> [ 1272.747011] invalid opcode: 0000 [#1] SMP
+> [ 1272.747011] Modules linked in: f2fs kedr_fsim_indicator_common(OF)=
+=20
+> kedr_fsim_indicator_capable(OF)
+> kedr_fsim_indicator_kmalloc(OF) kedr_fsim_vmm(OF) kedr_fsim_mem_util(=
+OF)=20
+> kedr_fsim_capable(OF)
+> kedr_fsim_uaccess(OF) kedr_fsim_cmm(OF) kedr_fault_simulation(OF)=20
+> kedr(OF) fuse nf_conntrack_netbios_ns
+> nf_conntrack_broadcast ipt_MASQUERADE ip6t_REJECT xt_conntrack=20
+> ebtable_nat ebtable_broute bridge stp
+> llc ebtable_filter ebtables ip6table_nat nf_conntrack_ipv6=20
+> nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle
+> ip6table_security ip6table_raw ip6table_filter ip6_tables iptable_nat=
+=20
+> nf_conntrack_ipv4 nf_defrag_ipv4
+> nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle iptable_security=20
+> iptable_raw parport_pc i2c_piix4 e1000
+> i2c_core microcode parport ata_generic pata_acpi [last unloaded: kedr=
+]
+> [ 1272.747011] CPU: 0 PID: 14613 Comm: fs-driver-tests Tainted: GF   =
+   =20
+> W  O 3.14.0-rc1fs #1
+> [ 1272.747011] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIO=
+S=20
+> VirtualBox 12/01/2006
+> [ 1272.747011] task: ffff88001e939190 ti: ffff88000d7ec000 task.ti:=20
+> ffff88000d7ec000
+> [ 1272.747011] RIP: 0010:[<ffffffffa01c74a8>] [<ffffffffa01c74a8>]=20
+> f2fs_evict_inode+0x178/0x180 [f2fs]
+> [ 1272.747011] RSP: 0018:ffff88000d7ede50  EFLAGS: 00010202
+> [ 1272.747011] RAX: 0000000000000001 RBX: ffff88000475cc30 RCX:=20
+> ffff88001e9398a0
+> [ 1272.747011] RDX: 0000000000000002 RSI: 0000000000000000 RDI:=20
+> ffff88000475ce10
+> [ 1272.747011] RBP: ffff88000d7ede68 R08: 00000000ffffffff R09:=20
+> 0000000000000000
+> [ 1272.747011] R10: 0000000000000000 R11: 0000000000000001 R12:=20
+> ffff88000475cc30
+> [ 1272.747011] R13: ffff88000f147800 R14: ffffffffa01e7080 R15:=20
+> ffff88000f147b80
+> [ 1272.747011] FS:  00007f1795424740(0000) GS:ffff88003fc00000(0000)=20
+> knlGS:0000000000000000
+> [ 1272.747011] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+> [ 1272.747011] CR2: 00007fc33bfa9000 CR3: 000000000f14e000 CR4:=20
+> 00000000000006f0
+> [ 1272.747011] Stack:
+> [ 1272.747011]  ffff88000475cc30 ffff88000475cdc8 ffffffffa01e7080=20
+> ffff88000d7ede90
+> [ 1272.747011]  ffffffff811fde03 ffff88000475cc30 ffff88000475ccb8=20
+> ffff88000f147000
+> [ 1272.747011]  ffff88000d7edec0 ffffffff811fe615 ffff88000475cc30=20
+> ffff88000f147800
+> [ 1272.747011] Call Trace:
+> [ 1272.747011]  [<ffffffff811fde03>] evict+0xa3/0x1a0
+> [ 1272.747011]  [<ffffffff811fe615>] iput+0xf5/0x180
+> [ 1272.747011]  [<ffffffffa01c7f63>] f2fs_mkdir+0xf3/0x150 [f2fs]
+> [ 1272.747011]  [<ffffffff811f2a77>] vfs_mkdir+0xb7/0x160
+> [ 1272.747011]  [<ffffffff811f36bf>] SyS_mkdir+0x5f/0xc0
+> [ 1272.747011]  [<ffffffff81680769>] system_call_fastpath+0x16/0x1b
+> [ 1272.747011] Code: 01 e1 4c 89 e7 e8 39 59 03 e1 5b 41 5c 41 5d 5d =
+c3=20
+> 31 c0 49 83 bc 24 c8 00 00 00 01 0f 97 c0
+> eb 8f 4c 89 e7 e8 fa ec ff ff eb 89 <0f> 0b 66 0f 1f 44 00 00 0f 1f 4=
+4=20
+> 00 00 55 48 c7 c0 dc ff ff ff
+> [ 1272.747011] RIP  [<ffffffffa01c74a8>] f2fs_evict_inode+0x178/0x180=
+ [f2fs]
+> [ 1272.747011]  RSP <ffff88000d7ede50>
+>=20
+> Failed assertion claims that dirty dentries counter should be zero wh=
+en=20
+> inode is deleted.
+> This counter is incremented by
+> mkdir()->
+>    f2fs_add_link()->
+>      init_inode_metadata()->
+>        make_empty_dir()->
+>          set_page_dirty();
+>=20
+> but no one decrement it.
+> May be, this should be done along with truncating directory inode in=20
+> error-path of init_inode_metadata() ?
+
+It's weird, since original intention was that pages should be
+invalidated by:
+f2fs_evict_inode
+ - truncate_inode_pages
+   - f2fs_invalidate_page
+      - decrement dirty_dents
+
+I'll see what happened a little bit more.
+Thanks,
+
+>=20
+>=20
+> --
+> Best regards,
+> Andrey Tsyvarev
+> Linux Verification Center, ISPRAS
+> web: http://linuxtesting.org
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+
+--=20
+Jaegeuk Kim
+Samsung
