@@ -1,211 +1,274 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: introduce ra_meta_pages to readahead
+Subject: [f2fs-dev] [PATCH V2] f2fs: introduce ra_meta_pages to readahead
  CP/NAT/SIT pages
-Date: Fri, 07 Feb 2014 16:01:15 +0800
-Message-ID: <002101cf23da$ee92e240$cbb8a6c0$@samsung.com>
-References: <000001cf1bd0$bec85020$3c58f060$@samsung.com>
-	<1391756297.25542.89.camel@kjgkr>
+Date: Fri, 07 Feb 2014 16:11:53 +0800
+Message-ID: <002201cf23dc$5e118ee0$1a34aca0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1WBgOX-0001xA-5f
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Feb 2014 08:02:41 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WBgOT-0008FE-Cg
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Feb 2014 08:02:41 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N0M00DUF903EK40@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Feb 2014 17:02:27 +0900 (KST)
-In-reply-to: <1391756297.25542.89.camel@kjgkr>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
+Sender: linux-kernel-owner@vger.kernel.org
+To: ??? <jaegeuk.kim@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgS2ltLAoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IEphZWdldWsgS2lt
-IFttYWlsdG86amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb21dCj4gU2VudDogRnJpZGF5LCBGZWJydWFy
-eSAwNywgMjAxNCAyOjU4IFBNCj4gVG86IENoYW8gWXUKPiBDYzogbGludXgtZnNkZXZlbEB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7Cj4gbGludXgtZjJmcy1k
-ZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XSBbUEFU
-Q0hdIGYyZnM6IGludHJvZHVjZSByYV9tZXRhX3BhZ2VzIHRvIHJlYWRhaGVhZCBDUC9OQVQvU0lU
-IHBhZ2VzCj4gCj4gSGkgQ2hhbywKPiAKPiBTb3JyeSBmb3IgdGhlIGRlbGF5Lgo+IFdoZW4gSSB0
-ZXN0ZWQgdGhpcyBwYXRjaCwgYSBkZWFkbG9jayB3YXMgb2NjdXJyZWQsIHNvIEkgY291bGRuJ3Qg
-YWZmb3JkCj4gdG8gbG9vayBpbnNpZGUgaW4gbW9yZSBkZXRhaWwuCj4gV2hlbiBJIHNlZSBhZ2Fp
-biwgdGhlcmUgaXMgYSBidWcgd3J0IGJsa25vLgo+IFBsZWFzZSBzZWUgYmVsb3cuCgpZb3UncmUg
-cmlnaHQsIGFuZCB5b3VyIGNvZGUgY291bGQgZml4IHRoaXMgZGVhZGxvb3AgYnVnLgpUaGFua3Mg
-Zm9yIHRoZSB0ZXN0IGFuZCByZXZpZXcuIDopCkkgd2lsbCBzZW5kIHBhdGNoIHYyIGxhdGVyLgoK
-PiAKPiAyMDE0LTAxLTI4ICjtmZQpLCAxMDoyOCArMDgwMCwgQ2hhbyBZdToKPiA+IFRoaXMgcGF0
-Y2ggaGVscCB1cyB0byBjbGVhbnVwIHRoZSByZWFkYWhlYWQgY29kZSBieSBtZXJnaW5nIHJhX3tz
-aXQsbmF0fV9wYWdlcwo+ID4gZnVuY3Rpb24gaW50byByYV9tZXRhX3BhZ2VzLgo+ID4gQWRkaXRp
-b25hbGx5IHRoZSBuZXcgZnVuY3Rpb24gaXMgdXNlZCB0byByZWFkYWhlYWQgY3AgYmxvY2sgaW4K
-PiA+IHJlY292ZXJfb3JwaGFuX2lub2Rlcy4KPiA+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBDaGFvIFl1
-IDxjaGFvMi55dUBzYW1zdW5nLmNvbT4KPiA+IC0tLQo+ID4gIGZzL2YyZnMvY2hlY2twb2ludC5j
-IHwgICA3OCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Kwo+ID4gIGZzL2YyZnMvZjJmcy5oICAgICAgIHwgICAxMCArKysrKysrCj4gPiAgZnMvZjJmcy9u
-b2RlLmMgICAgICAgfCAgIDM4ICstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gIGZzL2YyZnMv
-c2VnbWVudC5jICAgIHwgICA0MyArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiAgNCBm
-aWxlcyBjaGFuZ2VkLCA5MCBpbnNlcnRpb25zKCspLCA3OSBkZWxldGlvbnMoLSkKPiA+Cj4gPiBk
-aWZmIC0tZ2l0IGEvZnMvZjJmcy9jaGVja3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+
-ID4gaW5kZXggMjkzZDA0OC4uYTE5ODZjMyAxMDA2NDQKPiA+IC0tLSBhL2ZzL2YyZnMvY2hlY2tw
-b2ludC5jCj4gPiArKysgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+ID4gQEAgLTc1LDYgKzc1LDgy
-IEBAIG91dDoKPiA+ICAJcmV0dXJuIHBhZ2U7Cj4gPiAgfQo+ID4KPiA+ICtpbmxpbmUgaW50IGdl
-dF9tYXhfbWV0YV9ibGtzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgaW50IHR5cGUpCj4gPiAr
-ewo+ID4gKwlzd2l0Y2ggKHR5cGUpIHsKPiA+ICsJY2FzZSBNRVRBX05BVDoKPiA+ICsJCXJldHVy
-biBOTV9JKHNiaSktPm1heF9uaWQgLyBOQVRfRU5UUllfUEVSX0JMT0NLOwo+ID4gKwljYXNlIE1F
-VEFfU0lUOgo+ID4gKwkJcmV0dXJuIFNJVF9CTEtfQ05UKHNiaSk7Cj4gPiArCWNhc2UgTUVUQV9D
-UDoKPiA+ICsJCXJldHVybiAwOwo+ID4gKwlkZWZhdWx0Ogo+ID4gKwkJQlVHKCk7Cj4gPiArCX0K
-PiA+ICt9Cj4gPiArCj4gPiArLyoKPiA+ICsgKiBSZWFkYWhlYWQgQ1AvTkFUL1NJVCBwYWdlcwo+
-ID4gKyAqLwo+ID4gK2ludCByYV9tZXRhX3BhZ2VzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwg
-aW50IHN0YXJ0LCBpbnQgbnJwYWdlcywgaW50IHR5cGUpCj4gPiArewo+ID4gKwlzdHJ1Y3QgYWRk
-cmVzc19zcGFjZSAqbWFwcGluZyA9IHNiaS0+bWV0YV9pbm9kZS0+aV9tYXBwaW5nOwo+IAo+IAlX
-ZSBkb24ndCBuZWVkIHRvIGRvIHRoaXMuIEluc3RlYWQsIHdlIGNhbiB1c2UgTUVUQV9NQVBQSU5H
-KHNiaSkgYmVsb3cuCj4gCj4gPiArCXN0cnVjdCBwYWdlICpwYWdlOwo+ID4gKwlibG9ja190IGJs
-a19hZGRyLCBwcmV2X2Jsa19hZGRyID0gMDsKPiA+ICsJaW50IGJsa25vID0gc3RhcnQ7Cj4gPiAr
-CWludCBtYXhfYmxrcyA9IGdldF9tYXhfbWV0YV9ibGtzKHNiaSwgdHlwZSk7Cj4gCj4gCWJsb2Nr
-X3QgcHJldl9ibGtfYWRkciA9IDA7Cj4gCXN0cnVjdCBwYWdlICpwYWdlOwo+IAlpbnQgYmxrbm8g
-PSBzdGFydDsKPiAJaW50IG1heF9ibGtzID0gZ2V0X21heF9tZXRhX2Jsa3Moc2JpLCB0eXBlKTsK
-PiAKPiA+ICsJc3RydWN0IGYyZnNfaW9faW5mbyBmaW8gPSB7Cj4gPiArCQkudHlwZSA9IE1FVEEs
-Cj4gPiArCQkucncgPSBSRUFEX1NZTkMgfCBSRVFfTUVUQSB8IFJFUV9QUklPCj4gPiArCX07Cj4g
-PiArCj4gPiArCWZvciAoYmxrbm8gPSBzdGFydDsgYmxrbm8gPCBzdGFydCArIG5ycGFnZXM7IGJs
-a25vKyspIHsKPiAKPiAJZm9yICg7IG5ycGFnZXMtLSA+IDA7IGJsa25vKyspIHsKPiAJCWJsb2Nr
-X3QgYmxrX2FkZHI7Cj4gCj4gIC0tPiBJbiB0aGUgY2FzZSBvZiBNRVRBX05BVCwgYmxrbm8gYmVj
-b21lcyAwIGlmIGl0IGhpdHMgbWF4X2Jsa3MuCj4gICAgICBTbywgd2Ugc2hvdWxkIG5vdCB1c2Ug
-KmJsa25vIDwgc3RhcnQgKyBucnBhZ2VzKi4KPiAKPiA+ICsKPiA+ICsJCXN3aXRjaCAodHlwZSkg
-ewo+ID4gKwkJY2FzZSBNRVRBX05BVDoKPiA+ICsJCQkvKiBnZXQgbmF0IGJsb2NrIGFkZHIgKi8K
-PiA+ICsJCQlpZiAodW5saWtlbHkoYmxrbm8gPj0gbWF4X2Jsa3MpKQo+ID4gKwkJCQlibGtubyA9
-IDA7Cj4gPiArCQkJYmxrX2FkZHIgPSBjdXJyZW50X25hdF9hZGRyKHNiaSwKPiA+ICsJCQkJCWJs
-a25vICogTkFUX0VOVFJZX1BFUl9CTE9DSyk7Cj4gPiArCQkJYnJlYWs7Cj4gPiArCQljYXNlIE1F
-VEFfU0lUOgo+ID4gKwkJCS8qIGdldCBzaXQgYmxvY2sgYWRkciAqLwo+ID4gKwkJCWlmICh1bmxp
-a2VseShibGtubyA+PSBtYXhfYmxrcykpCj4gPiArCQkJCWdvdG8gb3V0Owo+ID4gKwkJCWJsa19h
-ZGRyID0gY3VycmVudF9zaXRfYWRkcihzYmksCj4gPiArCQkJCQlibGtubyAqIFNJVF9FTlRSWV9Q
-RVJfQkxPQ0spOwo+ID4gKwkJCWlmIChibGtubyAhPSBzdGFydCAmJiBwcmV2X2Jsa19hZGRyICsg
-MSAhPSBibGtfYWRkcikKPiA+ICsJCQkJZ290byBvdXQ7Cj4gPiArCQkJcHJldl9ibGtfYWRkciA9
-IGJsa19hZGRyOwo+ID4gKwkJCWJyZWFrOwo+ID4gKwkJY2FzZSBNRVRBX0NQOgo+ID4gKwkJCS8q
-IGdldCBjcCBibG9jayBhZGRyICovCj4gPiArCQkJYmxrX2FkZHIgPSBibGtubzsKPiA+ICsJCQli
-cmVhazsKPiA+ICsJCWRlZmF1bHQ6Cj4gPiArCQkJQlVHKCk7Cj4gPiArCQl9Cj4gPiArCj4gPiAr
-CQlwYWdlID0gZ3JhYl9jYWNoZV9wYWdlKG1hcHBpbmcsIGJsa19hZGRyKTsKPiAKPiAJCXBhZ2Ug
-PSBncmFiX2NhY2hlX3BhZ2UoTUVUQV9NQVBQSU5HKHNiaSksIGJsa19hZGRyKTsKPiAKPiA+ICsJ
-CWlmICghcGFnZSkKPiA+ICsJCQljb250aW51ZTsKPiA+ICsJCWlmIChQYWdlVXB0b2RhdGUocGFn
-ZSkpIHsKPiA+ICsJCQltYXJrX3BhZ2VfYWNjZXNzZWQocGFnZSk7Cj4gPiArCQkJZjJmc19wdXRf
-cGFnZShwYWdlLCAxKTsKPiA+ICsJCQljb250aW51ZTsKPiA+ICsJCX0KPiA+ICsKPiA+ICsJCWYy
-ZnNfc3VibWl0X3BhZ2VfbWJpbyhzYmksIHBhZ2UsIGJsa19hZGRyLCAmZmlvKTsKPiA+ICsJCW1h
-cmtfcGFnZV9hY2Nlc3NlZChwYWdlKTsKPiA+ICsJCWYyZnNfcHV0X3BhZ2UocGFnZSwgMCk7Cj4g
-PiArCX0KPiA+ICtvdXQ6Cj4gPiArCWYyZnNfc3VibWl0X21lcmdlZF9iaW8oc2JpLCBNRVRBLCBS
-RUFEKTsKPiA+ICsJcmV0dXJuIGJsa25vIC0gc3RhcnQ7Cj4gPiArfQo+ID4gKwo+ID4gIHN0YXRp
-YyBpbnQgZjJmc193cml0ZV9tZXRhX3BhZ2Uoc3RydWN0IHBhZ2UgKnBhZ2UsCj4gPiAgCQkJCXN0
-cnVjdCB3cml0ZWJhY2tfY29udHJvbCAqd2JjKQo+ID4gIHsKPiA+IEBAIC0yODUsNiArMzYxLDgg
-QEAgdm9pZCByZWNvdmVyX29ycGhhbl9pbm9kZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+
-ID4gIAlzdGFydF9ibGsgPSBfX3N0YXJ0X2NwX2FkZHIoc2JpKSArIDE7Cj4gPiAgCW9ycGhhbl9i
-bGthZGRyID0gX19zdGFydF9zdW1fYWRkcihzYmkpIC0gMTsKPiA+Cj4gPiArCXJhX21ldGFfcGFn
-ZXMoc2JpLCBzdGFydF9ibGssIG9ycGhhbl9ibGthZGRyLCBNRVRBX0NQKTsKPiA+ICsKPiA+ICAJ
-Zm9yIChpID0gMDsgaSA8IG9ycGhhbl9ibGthZGRyOyBpKyspIHsKPiA+ICAJCXN0cnVjdCBwYWdl
-ICpwYWdlID0gZ2V0X21ldGFfcGFnZShzYmksIHN0YXJ0X2JsayArIGkpOwo+ID4gIAkJc3RydWN0
-IGYyZnNfb3JwaGFuX2Jsb2NrICpvcnBoYW5fYmxrOwo+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMv
-ZjJmcy5oIGIvZnMvZjJmcy9mMmZzLmgKPiA+IGluZGV4IGFmNTFhMGIuLjY5ZmZjMWIgMTAwNjQ0
-Cj4gPiAtLS0gYS9mcy9mMmZzL2YyZnMuaAo+ID4gKysrIGIvZnMvZjJmcy9mMmZzLmgKPiA+IEBA
-IC04OCw2ICs4OCwxNSBAQCBlbnVtIHsKPiA+ICAJU0lUX0JJVE1BUAo+ID4gIH07Cj4gPgo+ID4g
-Ky8qCj4gPiArICogRm9yIENQL05BVC9TSVQgcmVhZGFoZWFkCj4gPiArICovCj4gPiArZW51bSB7
-Cj4gPiArCU1FVEFfQ1AsCj4gPiArCU1FVEFfTkFULAo+ID4gKwlNRVRBX1NJVAo+ID4gK307Cj4g
-PiArCj4gPiAgLyogZm9yIHRoZSBsaXN0IG9mIG9ycGhhbiBpbm9kZXMgKi8KPiA+ICBzdHJ1Y3Qg
-b3JwaGFuX2lub2RlX2VudHJ5IHsKPiA+ICAJc3RydWN0IGxpc3RfaGVhZCBsaXN0OwkvKiBsaXN0
-IGhlYWQgKi8KPiA+IEBAIC0xMTU4LDYgKzExNjcsNyBAQCB2b2lkIGRlc3Ryb3lfc2VnbWVudF9t
-YW5hZ2VyX2NhY2hlcyh2b2lkKTsKPiA+ICAgKi8KPiA+ICBzdHJ1Y3QgcGFnZSAqZ3JhYl9tZXRh
-X3BhZ2Uoc3RydWN0IGYyZnNfc2JfaW5mbyAqLCBwZ29mZl90KTsKPiA+ICBzdHJ1Y3QgcGFnZSAq
-Z2V0X21ldGFfcGFnZShzdHJ1Y3QgZjJmc19zYl9pbmZvICosIHBnb2ZmX3QpOwo+ID4gK2ludCBy
-YV9tZXRhX3BhZ2VzKHN0cnVjdCBmMmZzX3NiX2luZm8gKiwgaW50LCBpbnQsIGludCk7Cj4gPiAg
-bG9uZyBzeW5jX21ldGFfcGFnZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqLCBlbnVtIHBhZ2VfdHlw
-ZSwgbG9uZyk7Cj4gPiAgaW50IGFjcXVpcmVfb3JwaGFuX2lub2RlKHN0cnVjdCBmMmZzX3NiX2lu
-Zm8gKik7Cj4gPiAgdm9pZCByZWxlYXNlX29ycGhhbl9pbm9kZShzdHJ1Y3QgZjJmc19zYl9pbmZv
-ICopOwo+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9ub2RlLmMKPiA+
-IGluZGV4IGIwNjQ5YjcuLjJmN2FlNmYgMTAwNjQ0Cj4gPiAtLS0gYS9mcy9mMmZzL25vZGUuYwo+
-ID4gKysrIGIvZnMvZjJmcy9ub2RlLmMKPiA+IEBAIC04Miw0MiArODIsNiBAQCBzdGF0aWMgc3Ry
-dWN0IHBhZ2UgKmdldF9uZXh0X25hdF9wYWdlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlk
-X3QgbmlkKQo+ID4gIAlyZXR1cm4gZHN0X3BhZ2U7Cj4gPiAgfQo+ID4KPiA+IC0vKgo+ID4gLSAq
-IFJlYWRhaGVhZCBOQVQgcGFnZXMKPiA+IC0gKi8KPiA+IC1zdGF0aWMgdm9pZCByYV9uYXRfcGFn
-ZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgbmlkKQo+ID4gLXsKPiA+IC0Jc3RydWN0
-IGFkZHJlc3Nfc3BhY2UgKm1hcHBpbmcgPSBNRVRBX01BUFBJTkcoc2JpKTsKPiA+IC0Jc3RydWN0
-IGYyZnNfbm1faW5mbyAqbm1faSA9IE5NX0koc2JpKTsKPiA+IC0Jc3RydWN0IHBhZ2UgKnBhZ2U7
-Cj4gPiAtCXBnb2ZmX3QgaW5kZXg7Cj4gPiAtCWludCBpOwo+ID4gLQlzdHJ1Y3QgZjJmc19pb19p
-bmZvIGZpbyA9IHsKPiA+IC0JCS50eXBlID0gTUVUQSwKPiA+IC0JCS5ydyA9IFJFQURfU1lOQyB8
-IFJFUV9NRVRBIHwgUkVRX1BSSU8KPiA+IC0JfTsKPiA+IC0KPiA+IC0KPiA+IC0JZm9yIChpID0g
-MDsgaSA8IEZSRUVfTklEX1BBR0VTOyBpKyssIG5pZCArPSBOQVRfRU5UUllfUEVSX0JMT0NLKSB7
-Cj4gPiAtCQlpZiAodW5saWtlbHkobmlkID49IG5tX2ktPm1heF9uaWQpKQo+ID4gLQkJCW5pZCA9
-IDA7Cj4gPiAtCQlpbmRleCA9IGN1cnJlbnRfbmF0X2FkZHIoc2JpLCBuaWQpOwo+ID4gLQo+ID4g
-LQkJcGFnZSA9IGdyYWJfY2FjaGVfcGFnZShtYXBwaW5nLCBpbmRleCk7Cj4gPiAtCQlpZiAoIXBh
-Z2UpCj4gPiAtCQkJY29udGludWU7Cj4gPiAtCQlpZiAoUGFnZVVwdG9kYXRlKHBhZ2UpKSB7Cj4g
-PiAtCQkJbWFya19wYWdlX2FjY2Vzc2VkKHBhZ2UpOwo+ID4gLQkJCWYyZnNfcHV0X3BhZ2UocGFn
-ZSwgMSk7Cj4gPiAtCQkJY29udGludWU7Cj4gPiAtCQl9Cj4gPiAtCQlmMmZzX3N1Ym1pdF9wYWdl
-X21iaW8oc2JpLCBwYWdlLCBpbmRleCwgJmZpbyk7Cj4gPiAtCQltYXJrX3BhZ2VfYWNjZXNzZWQo
-cGFnZSk7Cj4gPiAtCQlmMmZzX3B1dF9wYWdlKHBhZ2UsIDApOwo+ID4gLQl9Cj4gPiAtCWYyZnNf
-c3VibWl0X21lcmdlZF9iaW8oc2JpLCBNRVRBLCBSRUFEKTsKPiA+IC19Cj4gPiAtCj4gPiAgc3Rh
-dGljIHN0cnVjdCBuYXRfZW50cnkgKl9fbG9va3VwX25hdF9jYWNoZShzdHJ1Y3QgZjJmc19ubV9p
-bmZvICpubV9pLCBuaWRfdCBuKQo+ID4gIHsKPiA+ICAJcmV0dXJuIHJhZGl4X3RyZWVfbG9va3Vw
-KCZubV9pLT5uYXRfcm9vdCwgbik7Cj4gPiBAQCAtMTQxMyw3ICsxMzc3LDcgQEAgc3RhdGljIHZv
-aWQgYnVpbGRfZnJlZV9uaWRzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKPiA+ICAJCXJldHVy
-bjsKPiA+Cj4gPiAgCS8qIHJlYWRhaGVhZCBuYXQgcGFnZXMgdG8gYmUgc2Nhbm5lZCAqLwo+ID4g
-LQlyYV9uYXRfcGFnZXMoc2JpLCBuaWQpOwo+ID4gKwlyYV9tZXRhX3BhZ2VzKHNiaSwgTkFUX0JM
-T0NLX09GRlNFVChuaWQpLCBGUkVFX05JRF9QQUdFUywgTUVUQV9OQVQpOwo+ID4KPiA+ICAJd2hp
-bGUgKDEpIHsKPiA+ICAJCXN0cnVjdCBwYWdlICpwYWdlID0gZ2V0X2N1cnJlbnRfbmF0X3BhZ2Uo
-c2JpLCBuaWQpOwo+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9z
-ZWdtZW50LmMKPiA+IGluZGV4IDdjYWFjNWYuLjRjMmIzNWIgMTAwNjQ0Cj4gPiAtLS0gYS9mcy9m
-MmZzL3NlZ21lbnQuYwo+ID4gKysrIGIvZnMvZjJmcy9zZWdtZW50LmMKPiA+IEBAIC0xNTgzLDQ3
-ICsxNTgzLDYgQEAgc3RhdGljIGludCBidWlsZF9jdXJzZWcoc3RydWN0IGYyZnNfc2JfaW5mbyAq
-c2JpKQo+ID4gIAlyZXR1cm4gcmVzdG9yZV9jdXJzZWdfc3VtbWFyaWVzKHNiaSk7Cj4gPiAgfQo+
-ID4KPiA+IC1zdGF0aWMgaW50IHJhX3NpdF9wYWdlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmks
-IGludCBzdGFydCwgaW50IG5ycGFnZXMpCj4gPiAtewo+ID4gLQlzdHJ1Y3QgYWRkcmVzc19zcGFj
-ZSAqbWFwcGluZyA9IE1FVEFfTUFQUElORyhzYmkpOwo+ID4gLQlzdHJ1Y3QgcGFnZSAqcGFnZTsK
-PiA+IC0JYmxvY2tfdCBibGtfYWRkciwgcHJldl9ibGtfYWRkciA9IDA7Cj4gPiAtCWludCBzaXRf
-YmxrX2NudCA9IFNJVF9CTEtfQ05UKHNiaSk7Cj4gPiAtCWludCBibGtubyA9IHN0YXJ0Owo+ID4g
-LQlzdHJ1Y3QgZjJmc19pb19pbmZvIGZpbyA9IHsKPiA+IC0JCS50eXBlID0gTUVUQSwKPiA+IC0J
-CS5ydyA9IFJFQURfU1lOQyB8IFJFUV9NRVRBIHwgUkVRX1BSSU8KPiA+IC0JfTsKPiA+IC0KPiA+
-IC0JZm9yICg7IGJsa25vIDwgc3RhcnQgKyBucnBhZ2VzICYmIGJsa25vIDwgc2l0X2Jsa19jbnQ7
-IGJsa25vKyspIHsKPiA+IC0KPiA+IC0JCWJsa19hZGRyID0gY3VycmVudF9zaXRfYWRkcihzYmks
-IGJsa25vICogU0lUX0VOVFJZX1BFUl9CTE9DSyk7Cj4gPiAtCj4gPiAtCQlpZiAoYmxrbm8gIT0g
-c3RhcnQgJiYgcHJldl9ibGtfYWRkciArIDEgIT0gYmxrX2FkZHIpCj4gPiAtCQkJYnJlYWs7Cj4g
-PiAtCQlwcmV2X2Jsa19hZGRyID0gYmxrX2FkZHI7Cj4gPiAtcmVwZWF0Ogo+ID4gLQkJcGFnZSA9
-IGdyYWJfY2FjaGVfcGFnZShtYXBwaW5nLCBibGtfYWRkcik7Cj4gPiAtCQlpZiAoIXBhZ2UpIHsK
-PiA+IC0JCQljb25kX3Jlc2NoZWQoKTsKPiA+IC0JCQlnb3RvIHJlcGVhdDsKPiA+IC0JCX0KPiA+
-IC0JCWlmIChQYWdlVXB0b2RhdGUocGFnZSkpIHsKPiA+IC0JCQltYXJrX3BhZ2VfYWNjZXNzZWQo
-cGFnZSk7Cj4gPiAtCQkJZjJmc19wdXRfcGFnZShwYWdlLCAxKTsKPiA+IC0JCQljb250aW51ZTsK
-PiA+IC0JCX0KPiA+IC0KPiA+IC0JCWYyZnNfc3VibWl0X3BhZ2VfbWJpbyhzYmksIHBhZ2UsIGJs
-a19hZGRyLCAmZmlvKTsKPiA+IC0KPiA+IC0JCW1hcmtfcGFnZV9hY2Nlc3NlZChwYWdlKTsKPiA+
-IC0JCWYyZnNfcHV0X3BhZ2UocGFnZSwgMCk7Cj4gPiAtCX0KPiA+IC0KPiA+IC0JZjJmc19zdWJt
-aXRfbWVyZ2VkX2JpbyhzYmksIE1FVEEsIFJFQUQpOwo+ID4gLQlyZXR1cm4gYmxrbm8gLSBzdGFy
-dDsKPiA+IC19Cj4gPiAtCj4gPiAgc3RhdGljIHZvaWQgYnVpbGRfc2l0X2VudHJpZXMoc3RydWN0
-IGYyZnNfc2JfaW5mbyAqc2JpKQo+ID4gIHsKPiA+ICAJc3RydWN0IHNpdF9pbmZvICpzaXRfaSA9
-IFNJVF9JKHNiaSk7Cj4gPiBAQCAtMTYzNSw3ICsxNTk0LDcgQEAgc3RhdGljIHZvaWQgYnVpbGRf
-c2l0X2VudHJpZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQo+ID4gIAlpbnQgbnJwYWdlcyA9
-IE1BWF9CSU9fQkxPQ0tTKG1heF9od19ibG9ja3Moc2JpKSk7Cj4gPgo+ID4gIAlkbyB7Cj4gPiAt
-CQlyZWFkZWQgPSByYV9zaXRfcGFnZXMoc2JpLCBzdGFydF9ibGssIG5ycGFnZXMpOwo+ID4gKwkJ
-cmVhZGVkID0gcmFfbWV0YV9wYWdlcyhzYmksIHN0YXJ0X2JsaywgbnJwYWdlcywgTUVUQV9TSVQp
-Owo+ID4KPiA+ICAJCXN0YXJ0ID0gc3RhcnRfYmxrICogc2l0X2ktPnNlbnRzX3Blcl9ibG9jazsK
-PiA+ICAJCWVuZCA9IChzdGFydF9ibGsgKyByZWFkZWQpICogc2l0X2ktPnNlbnRzX3Blcl9ibG9j
-azsKPiAKPiAtLQo+IEphZWdldWsgS2ltCj4gU2Ftc3VuZwoKCi0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQpNYW5hZ2luZyB0aGUgUGVyZm9ybWFuY2Ugb2YgQ2xvdWQtQmFzZWQgQXBwbGljYXRpb25zClRh
-a2UgYWR2YW50YWdlIG9mIHdoYXQgdGhlIENsb3VkIGhhcyB0byBvZmZlciAtIEF2b2lkIENvbW1v
-biBQaXRmYWxscy4KUmVhZCB0aGUgV2hpdGVwYXBlci4KaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNs
-aWNrLm5ldC9nYW1wYWQvY2xrP2lkPTEyMTA1MTIzMSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRl
-dmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApo
-dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
-dmVsCg==
+This patch help us to cleanup the readahead code by merging ra_{sit,nat}_pages
+function into ra_meta_pages.
+Additionally the new function is used to readahead cp block in
+recover_orphan_inodes.
+
+Change log from v1:
+ o fix a deadloop bug pointed by Jaegeuk Kim.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/checkpoint.c |   78 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h       |   10 +++++++
+ fs/f2fs/node.c       |   38 +-----------------------
+ fs/f2fs/segment.c    |   43 +---------------------------
+ 4 files changed, 90 insertions(+), 79 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 8f5dff1..5f7f905 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -75,6 +75,82 @@ out:
+ 	return page;
+ }
+ 
++inline int get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
++{
++	switch (type) {
++	case META_NAT:
++		return NM_I(sbi)->max_nid / NAT_ENTRY_PER_BLOCK;
++	case META_SIT:
++		return SIT_BLK_CNT(sbi);
++	case META_CP:
++		return 0;
++	default:
++		BUG();
++	}
++}
++
++/*
++ * Readahead CP/NAT/SIT pages
++ */
++int ra_meta_pages(struct f2fs_sb_info *sbi, int start, int nrpages, int type)
++{
++	block_t prev_blk_addr = 0;
++	struct page *page;
++	int blkno = start;
++	int max_blks = get_max_meta_blks(sbi, type);
++
++	struct f2fs_io_info fio = {
++		.type = META,
++		.rw = READ_SYNC | REQ_META | REQ_PRIO
++	};
++
++	for (; nrpages-- > 0; blkno++) {
++		block_t blk_addr;
++
++		switch (type) {
++		case META_NAT:
++			/* get nat block addr */
++			if (unlikely(blkno >= max_blks))
++				blkno = 0;
++			blk_addr = current_nat_addr(sbi,
++					blkno * NAT_ENTRY_PER_BLOCK);
++			break;
++		case META_SIT:
++			/* get sit block addr */
++			if (unlikely(blkno >= max_blks))
++				goto out;
++			blk_addr = current_sit_addr(sbi,
++					blkno * SIT_ENTRY_PER_BLOCK);
++			if (blkno != start && prev_blk_addr + 1 != blk_addr)
++				goto out;
++			prev_blk_addr = blk_addr;
++			break;
++		case META_CP:
++			/* get cp block addr */
++			blk_addr = blkno;
++			break;
++		default:
++			BUG();
++		}
++
++		page = grab_cache_page(META_MAPPING(sbi), blk_addr);
++		if (!page)
++			continue;
++		if (PageUptodate(page)) {
++			mark_page_accessed(page);
++			f2fs_put_page(page, 1);
++			continue;
++		}
++
++		f2fs_submit_page_mbio(sbi, page, blk_addr, &fio);
++		mark_page_accessed(page);
++		f2fs_put_page(page, 0);
++	}
++out:
++	f2fs_submit_merged_bio(sbi, META, READ);
++	return blkno - start;
++}
++
+ static int f2fs_write_meta_page(struct page *page,
+ 				struct writeback_control *wbc)
+ {
+@@ -298,6 +374,8 @@ void recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	start_blk = __start_cp_addr(sbi) + 1;
+ 	orphan_blkaddr = __start_sum_addr(sbi) - 1;
+ 
++	ra_meta_pages(sbi, start_blk, orphan_blkaddr, META_CP);
++
+ 	for (i = 0; i < orphan_blkaddr; i++) {
+ 		struct page *page = get_meta_page(sbi, start_blk + i);
+ 		struct f2fs_orphan_block *orphan_blk;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index aeff132..15109f5 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -88,6 +88,15 @@ enum {
+ 	SIT_BITMAP
+ };
+ 
++/*
++ * For CP/NAT/SIT readahead
++ */
++enum {
++	META_CP,
++	META_NAT,
++	META_SIT
++};
++
+ /* for the list of orphan inodes */
+ struct orphan_inode_entry {
+ 	struct list_head list;	/* list head */
+@@ -1171,6 +1180,7 @@ void destroy_segment_manager_caches(void);
+  */
+ struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);
+ struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);
++int ra_meta_pages(struct f2fs_sb_info *, int, int, int);
+ long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
+ int acquire_orphan_inode(struct f2fs_sb_info *);
+ void release_orphan_inode(struct f2fs_sb_info *);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 82f4753..7689f91 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -82,42 +82,6 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+ 	return dst_page;
+ }
+ 
+-/*
+- * Readahead NAT pages
+- */
+-static void ra_nat_pages(struct f2fs_sb_info *sbi, int nid)
+-{
+-	struct address_space *mapping = META_MAPPING(sbi);
+-	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct page *page;
+-	pgoff_t index;
+-	int i;
+-	struct f2fs_io_info fio = {
+-		.type = META,
+-		.rw = READ_SYNC | REQ_META | REQ_PRIO
+-	};
+-
+-
+-	for (i = 0; i < FREE_NID_PAGES; i++, nid += NAT_ENTRY_PER_BLOCK) {
+-		if (unlikely(nid >= nm_i->max_nid))
+-			nid = 0;
+-		index = current_nat_addr(sbi, nid);
+-
+-		page = grab_cache_page(mapping, index);
+-		if (!page)
+-			continue;
+-		if (PageUptodate(page)) {
+-			mark_page_accessed(page);
+-			f2fs_put_page(page, 1);
+-			continue;
+-		}
+-		f2fs_submit_page_mbio(sbi, page, index, &fio);
+-		mark_page_accessed(page);
+-		f2fs_put_page(page, 0);
+-	}
+-	f2fs_submit_merged_bio(sbi, META, READ);
+-}
+-
+ static struct nat_entry *__lookup_nat_cache(struct f2fs_nm_info *nm_i, nid_t n)
+ {
+ 	return radix_tree_lookup(&nm_i->nat_root, n);
+@@ -1413,7 +1377,7 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
+ 		return;
+ 
+ 	/* readahead nat pages to be scanned */
+-	ra_nat_pages(sbi, nid);
++	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES, META_NAT);
+ 
+ 	while (1) {
+ 		struct page *page = get_current_nat_page(sbi, nid);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index e87946a..fbb41ba 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1576,47 +1576,6 @@ static int build_curseg(struct f2fs_sb_info *sbi)
+ 	return restore_curseg_summaries(sbi);
+ }
+ 
+-static int ra_sit_pages(struct f2fs_sb_info *sbi, int start, int nrpages)
+-{
+-	struct address_space *mapping = META_MAPPING(sbi);
+-	struct page *page;
+-	block_t blk_addr, prev_blk_addr = 0;
+-	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+-	int blkno = start;
+-	struct f2fs_io_info fio = {
+-		.type = META,
+-		.rw = READ_SYNC | REQ_META | REQ_PRIO
+-	};
+-
+-	for (; blkno < start + nrpages && blkno < sit_blk_cnt; blkno++) {
+-
+-		blk_addr = current_sit_addr(sbi, blkno * SIT_ENTRY_PER_BLOCK);
+-
+-		if (blkno != start && prev_blk_addr + 1 != blk_addr)
+-			break;
+-		prev_blk_addr = blk_addr;
+-repeat:
+-		page = grab_cache_page(mapping, blk_addr);
+-		if (!page) {
+-			cond_resched();
+-			goto repeat;
+-		}
+-		if (PageUptodate(page)) {
+-			mark_page_accessed(page);
+-			f2fs_put_page(page, 1);
+-			continue;
+-		}
+-
+-		f2fs_submit_page_mbio(sbi, page, blk_addr, &fio);
+-
+-		mark_page_accessed(page);
+-		f2fs_put_page(page, 0);
+-	}
+-
+-	f2fs_submit_merged_bio(sbi, META, READ);
+-	return blkno - start;
+-}
+-
+ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ {
+ 	struct sit_info *sit_i = SIT_I(sbi);
+@@ -1628,7 +1587,7 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ 	int nrpages = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+ 
+ 	do {
+-		readed = ra_sit_pages(sbi, start_blk, nrpages);
++		readed = ra_meta_pages(sbi, start_blk, nrpages, META_SIT);
+ 
+ 		start = start_blk * sit_i->sents_per_block;
+ 		end = (start_blk + readed) * sit_i->sents_per_block;
+-- 
+1.7.9.5
