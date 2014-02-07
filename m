@@ -1,29 +1,33 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH] f2fs: clean up redundant function call
-Date: Fri, 07 Feb 2014 14:44:37 +0900
-Message-ID: <1391751877-21388-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: Re: [PATCH] f2fs: introduce ra_meta_pages to readahead
+ CP/NAT/SIT pages
+Date: Fri, 07 Feb 2014 15:58:17 +0900
+Message-ID: <1391756297.25542.89.camel@kjgkr>
+References: <000001cf1bd0$bec85020$3c58f060$@samsung.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WBeGh-000462-Ps
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WBfPn-0007gV-R0
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Feb 2014 05:46:27 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WBeGf-0005LW-Lh
+	Fri, 07 Feb 2014 06:59:55 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WBfPl-00068d-A3
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Feb 2014 05:46:27 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
+	Fri, 07 Feb 2014 06:59:55 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N0M006MK2OX8Y30@mailout1.samsung.com> for
+	with ESMTP id <0N0M006DR63MFL70@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Feb 2014 14:46:09 +0900 (KST)
+	Fri, 07 Feb 2014 15:59:46 +0900 (KST)
+In-reply-to: <000001cf1bd0$bec85020$3c58f060$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,148 +37,156 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch integrates inode_[inc|dec]_dirty_dents with inc_page_count to remove
-redundant calls.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/checkpoint.c |  1 -
- fs/f2fs/data.c       | 11 ++---------
- fs/f2fs/dir.c        |  4 ++--
- fs/f2fs/f2fs.h       |  5 +++++
- fs/f2fs/gc.c         |  7 +------
- 5 files changed, 10 insertions(+), 18 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 8f5dff1..427dd55 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -508,7 +508,6 @@ void set_dirty_dir_page(struct inode *inode, struct page *page)
- 	if (__add_dirty_inode(inode, new))
- 		kmem_cache_free(inode_entry_slab, new);
- 
--	inc_page_count(sbi, F2FS_DIRTY_DENTS);
- 	inode_inc_dirty_dents(inode);
- 	SetPagePrivate(page);
- 	spin_unlock(&sbi->dir_inode_lock);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d175ae3..b401be7 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -799,10 +799,7 @@ static int f2fs_write_data_page(struct page *page,
- 	 */
- 	offset = i_size & (PAGE_CACHE_SIZE - 1);
- 	if ((page->index >= end_index + 1) || !offset) {
--		if (S_ISDIR(inode->i_mode)) {
--			dec_page_count(sbi, F2FS_DIRTY_DENTS);
--			inode_dec_dirty_dents(inode);
--		}
-+		inode_dec_dirty_dents(inode);
- 		goto out;
- 	}
- 
-@@ -815,7 +812,6 @@ write:
- 
- 	/* Dentry blocks are controlled by checkpoint */
- 	if (S_ISDIR(inode->i_mode)) {
--		dec_page_count(sbi, F2FS_DIRTY_DENTS);
- 		inode_dec_dirty_dents(inode);
- 		err = do_write_data_page(page, &fio);
- 	} else {
-@@ -1033,11 +1029,8 @@ static void f2fs_invalidate_data_page(struct page *page, unsigned int offset,
- 				      unsigned int length)
- {
- 	struct inode *inode = page->mapping->host;
--	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
--	if (S_ISDIR(inode->i_mode) && PageDirty(page)) {
--		dec_page_count(sbi, F2FS_DIRTY_DENTS);
-+	if (PageDirty(page))
- 		inode_dec_dirty_dents(inode);
--	}
- 	ClearPagePrivate(page);
- }
- 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 92ce1db..e095a4f 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -531,7 +531,6 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	unsigned int bit_pos;
- 	struct address_space *mapping = page->mapping;
- 	struct inode *dir = mapping->host;
--	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
- 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
- 	void *kaddr = page_address(page);
- 	int i;
-@@ -554,6 +553,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	dir->i_ctime = dir->i_mtime = CURRENT_TIME;
- 
- 	if (inode) {
-+		struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
-+
- 		if (S_ISDIR(inode->i_mode)) {
- 			drop_nlink(dir);
- 			update_inode_page(dir);
-@@ -576,7 +577,6 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 		truncate_hole(dir, page->index, page->index + 1);
- 		clear_page_dirty_for_io(page);
- 		ClearPageUptodate(page);
--		dec_page_count(sbi, F2FS_DIRTY_DENTS);
- 		inode_dec_dirty_dents(dir);
- 	}
- 	f2fs_put_page(page, 1);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index aeff132..4841d12 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -662,6 +662,7 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
- 
- static inline void inode_inc_dirty_dents(struct inode *inode)
- {
-+	inc_page_count(F2FS_SB(inode->i_sb), F2FS_DIRTY_DENTS);
- 	atomic_inc(&F2FS_I(inode)->dirty_dents);
- }
- 
-@@ -672,6 +673,10 @@ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
- 
- static inline void inode_dec_dirty_dents(struct inode *inode)
- {
-+	if (!S_ISDIR(inode->i_mode))
-+		return;
-+
-+	dec_page_count(F2FS_SB(inode->i_sb), F2FS_DIRTY_DENTS);
- 	atomic_dec(&F2FS_I(inode)->dirty_dents);
- }
- 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index b0f5762..b161db4 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -531,15 +531,10 @@ static void move_data_page(struct inode *inode, struct page *page, int gc_type)
- 		set_page_dirty(page);
- 		set_cold_data(page);
- 	} else {
--		struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
--
- 		f2fs_wait_on_page_writeback(page, DATA);
- 
--		if (clear_page_dirty_for_io(page) &&
--			S_ISDIR(inode->i_mode)) {
--			dec_page_count(sbi, F2FS_DIRTY_DENTS);
-+		if (clear_page_dirty_for_io(page))
- 			inode_dec_dirty_dents(inode);
--		}
- 		set_cold_data(page);
- 		do_write_data_page(page, &fio);
- 		clear_cold_data(page);
--- 
-1.8.4.474.g128a96c
-
-
-------------------------------------------------------------------------------
-Managing the Performance of Cloud-Based Applications
-Take advantage of what the Cloud has to offer - Avoid Common Pitfalls.
-Read the Whitepaper.
-http://pubads.g.doubleclick.net/gampad/clk?id=121051231&iu=/4140/ostg.clktrk
+SGkgQ2hhbywKClNvcnJ5IGZvciB0aGUgZGVsYXkuCldoZW4gSSB0ZXN0ZWQgdGhpcyBwYXRjaCwg
+YSBkZWFkbG9jayB3YXMgb2NjdXJyZWQsIHNvIEkgY291bGRuJ3QgYWZmb3JkCnRvIGxvb2sgaW5z
+aWRlIGluIG1vcmUgZGV0YWlsLgpXaGVuIEkgc2VlIGFnYWluLCB0aGVyZSBpcyBhIGJ1ZyB3cnQg
+Ymxrbm8uClBsZWFzZSBzZWUgYmVsb3cuCgoyMDE0LTAxLTI4ICjtmZQpLCAxMDoyOCArMDgwMCwg
+Q2hhbyBZdToKPiBUaGlzIHBhdGNoIGhlbHAgdXMgdG8gY2xlYW51cCB0aGUgcmVhZGFoZWFkIGNv
+ZGUgYnkgbWVyZ2luZyByYV97c2l0LG5hdH1fcGFnZXMKPiBmdW5jdGlvbiBpbnRvIHJhX21ldGFf
+cGFnZXMuCj4gQWRkaXRpb25hbGx5IHRoZSBuZXcgZnVuY3Rpb24gaXMgdXNlZCB0byByZWFkYWhl
+YWQgY3AgYmxvY2sgaW4KPiByZWNvdmVyX29ycGhhbl9pbm9kZXMuCj4gCj4gU2lnbmVkLW9mZi1i
+eTogQ2hhbyBZdSA8Y2hhbzIueXVAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGZzL2YyZnMvY2hlY2tw
+b2ludC5jIHwgICA3OCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKwo+ICBmcy9mMmZzL2YyZnMuaCAgICAgICB8ICAgMTAgKysrKysrKwo+ICBmcy9mMmZz
+L25vZGUuYyAgICAgICB8ICAgMzggKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gIGZzL2YyZnMv
+c2VnbWVudC5jICAgIHwgICA0MyArLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gIDQgZmls
+ZXMgY2hhbmdlZCwgOTAgaW5zZXJ0aW9ucygrKSwgNzkgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAt
+LWdpdCBhL2ZzL2YyZnMvY2hlY2twb2ludC5jIGIvZnMvZjJmcy9jaGVja3BvaW50LmMKPiBpbmRl
+eCAyOTNkMDQ4Li5hMTk4NmMzIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvY2hlY2twb2ludC5jCj4g
+KysrIGIvZnMvZjJmcy9jaGVja3BvaW50LmMKPiBAQCAtNzUsNiArNzUsODIgQEAgb3V0Ogo+ICAJ
+cmV0dXJuIHBhZ2U7Cj4gIH0KPiAgCj4gK2lubGluZSBpbnQgZ2V0X21heF9tZXRhX2Jsa3Moc3Ry
+dWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQgdHlwZSkKPiArewo+ICsJc3dpdGNoICh0eXBlKSB7
+Cj4gKwljYXNlIE1FVEFfTkFUOgo+ICsJCXJldHVybiBOTV9JKHNiaSktPm1heF9uaWQgLyBOQVRf
+RU5UUllfUEVSX0JMT0NLOwo+ICsJY2FzZSBNRVRBX1NJVDoKPiArCQlyZXR1cm4gU0lUX0JMS19D
+TlQoc2JpKTsKPiArCWNhc2UgTUVUQV9DUDoKPiArCQlyZXR1cm4gMDsKPiArCWRlZmF1bHQ6Cj4g
+KwkJQlVHKCk7Cj4gKwl9Cj4gK30KPiArCj4gKy8qCj4gKyAqIFJlYWRhaGVhZCBDUC9OQVQvU0lU
+IHBhZ2VzCj4gKyAqLwo+ICtpbnQgcmFfbWV0YV9wYWdlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpz
+YmksIGludCBzdGFydCwgaW50IG5ycGFnZXMsIGludCB0eXBlKQo+ICt7Cj4gKwlzdHJ1Y3QgYWRk
+cmVzc19zcGFjZSAqbWFwcGluZyA9IHNiaS0+bWV0YV9pbm9kZS0+aV9tYXBwaW5nOwoKCVdlIGRv
+bid0IG5lZWQgdG8gZG8gdGhpcy4gSW5zdGVhZCwgd2UgY2FuIHVzZSBNRVRBX01BUFBJTkcoc2Jp
+KSBiZWxvdy4KCj4gKwlzdHJ1Y3QgcGFnZSAqcGFnZTsKPiArCWJsb2NrX3QgYmxrX2FkZHIsIHBy
+ZXZfYmxrX2FkZHIgPSAwOwo+ICsJaW50IGJsa25vID0gc3RhcnQ7Cj4gKwlpbnQgbWF4X2Jsa3Mg
+PSBnZXRfbWF4X21ldGFfYmxrcyhzYmksIHR5cGUpOwoKCWJsb2NrX3QgcHJldl9ibGtfYWRkciA9
+IDA7CglzdHJ1Y3QgcGFnZSAqcGFnZTsKCWludCBibGtubyA9IHN0YXJ0OwoJaW50IG1heF9ibGtz
+ID0gZ2V0X21heF9tZXRhX2Jsa3Moc2JpLCB0eXBlKTsKCj4gKwlzdHJ1Y3QgZjJmc19pb19pbmZv
+IGZpbyA9IHsKPiArCQkudHlwZSA9IE1FVEEsCj4gKwkJLnJ3ID0gUkVBRF9TWU5DIHwgUkVRX01F
+VEEgfCBSRVFfUFJJTwo+ICsJfTsKPiArCj4gKwlmb3IgKGJsa25vID0gc3RhcnQ7IGJsa25vIDwg
+c3RhcnQgKyBucnBhZ2VzOyBibGtubysrKSB7CgoJZm9yICg7IG5ycGFnZXMtLSA+IDA7IGJsa25v
+KyspIHsKCQlibG9ja190IGJsa19hZGRyOwoKIC0tPiBJbiB0aGUgY2FzZSBvZiBNRVRBX05BVCwg
+Ymxrbm8gYmVjb21lcyAwIGlmIGl0IGhpdHMgbWF4X2Jsa3MuCiAgICAgU28sIHdlIHNob3VsZCBu
+b3QgdXNlICpibGtubyA8IHN0YXJ0ICsgbnJwYWdlcyouCgo+ICsKPiArCQlzd2l0Y2ggKHR5cGUp
+IHsKPiArCQljYXNlIE1FVEFfTkFUOgo+ICsJCQkvKiBnZXQgbmF0IGJsb2NrIGFkZHIgKi8KPiAr
+CQkJaWYgKHVubGlrZWx5KGJsa25vID49IG1heF9ibGtzKSkKPiArCQkJCWJsa25vID0gMDsKPiAr
+CQkJYmxrX2FkZHIgPSBjdXJyZW50X25hdF9hZGRyKHNiaSwKPiArCQkJCQlibGtubyAqIE5BVF9F
+TlRSWV9QRVJfQkxPQ0spOwo+ICsJCQlicmVhazsKPiArCQljYXNlIE1FVEFfU0lUOgo+ICsJCQkv
+KiBnZXQgc2l0IGJsb2NrIGFkZHIgKi8KPiArCQkJaWYgKHVubGlrZWx5KGJsa25vID49IG1heF9i
+bGtzKSkKPiArCQkJCWdvdG8gb3V0Owo+ICsJCQlibGtfYWRkciA9IGN1cnJlbnRfc2l0X2FkZHIo
+c2JpLAo+ICsJCQkJCWJsa25vICogU0lUX0VOVFJZX1BFUl9CTE9DSyk7Cj4gKwkJCWlmIChibGtu
+byAhPSBzdGFydCAmJiBwcmV2X2Jsa19hZGRyICsgMSAhPSBibGtfYWRkcikKPiArCQkJCWdvdG8g
+b3V0Owo+ICsJCQlwcmV2X2Jsa19hZGRyID0gYmxrX2FkZHI7Cj4gKwkJCWJyZWFrOwo+ICsJCWNh
+c2UgTUVUQV9DUDoKPiArCQkJLyogZ2V0IGNwIGJsb2NrIGFkZHIgKi8KPiArCQkJYmxrX2FkZHIg
+PSBibGtubzsKPiArCQkJYnJlYWs7Cj4gKwkJZGVmYXVsdDoKPiArCQkJQlVHKCk7Cj4gKwkJfQo+
+ICsKPiArCQlwYWdlID0gZ3JhYl9jYWNoZV9wYWdlKG1hcHBpbmcsIGJsa19hZGRyKTsKCgkJcGFn
+ZSA9IGdyYWJfY2FjaGVfcGFnZShNRVRBX01BUFBJTkcoc2JpKSwgYmxrX2FkZHIpOwoKPiArCQlp
+ZiAoIXBhZ2UpCj4gKwkJCWNvbnRpbnVlOwo+ICsJCWlmIChQYWdlVXB0b2RhdGUocGFnZSkpIHsK
+PiArCQkJbWFya19wYWdlX2FjY2Vzc2VkKHBhZ2UpOwo+ICsJCQlmMmZzX3B1dF9wYWdlKHBhZ2Us
+IDEpOwo+ICsJCQljb250aW51ZTsKPiArCQl9Cj4gKwo+ICsJCWYyZnNfc3VibWl0X3BhZ2VfbWJp
+byhzYmksIHBhZ2UsIGJsa19hZGRyLCAmZmlvKTsKPiArCQltYXJrX3BhZ2VfYWNjZXNzZWQocGFn
+ZSk7Cj4gKwkJZjJmc19wdXRfcGFnZShwYWdlLCAwKTsKPiArCX0KPiArb3V0Ogo+ICsJZjJmc19z
+dWJtaXRfbWVyZ2VkX2JpbyhzYmksIE1FVEEsIFJFQUQpOwo+ICsJcmV0dXJuIGJsa25vIC0gc3Rh
+cnQ7Cj4gK30KPiArCj4gIHN0YXRpYyBpbnQgZjJmc193cml0ZV9tZXRhX3BhZ2Uoc3RydWN0IHBh
+Z2UgKnBhZ2UsCj4gIAkJCQlzdHJ1Y3Qgd3JpdGViYWNrX2NvbnRyb2wgKndiYykKPiAgewo+IEBA
+IC0yODUsNiArMzYxLDggQEAgdm9pZCByZWNvdmVyX29ycGhhbl9pbm9kZXMoc3RydWN0IGYyZnNf
+c2JfaW5mbyAqc2JpKQo+ICAJc3RhcnRfYmxrID0gX19zdGFydF9jcF9hZGRyKHNiaSkgKyAxOwo+
+ICAJb3JwaGFuX2Jsa2FkZHIgPSBfX3N0YXJ0X3N1bV9hZGRyKHNiaSkgLSAxOwo+ICAKPiArCXJh
+X21ldGFfcGFnZXMoc2JpLCBzdGFydF9ibGssIG9ycGhhbl9ibGthZGRyLCBNRVRBX0NQKTsKPiAr
+Cj4gIAlmb3IgKGkgPSAwOyBpIDwgb3JwaGFuX2Jsa2FkZHI7IGkrKykgewo+ICAJCXN0cnVjdCBw
+YWdlICpwYWdlID0gZ2V0X21ldGFfcGFnZShzYmksIHN0YXJ0X2JsayArIGkpOwo+ICAJCXN0cnVj
+dCBmMmZzX29ycGhhbl9ibG9jayAqb3JwaGFuX2JsazsKPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9m
+MmZzLmggYi9mcy9mMmZzL2YyZnMuaAo+IGluZGV4IGFmNTFhMGIuLjY5ZmZjMWIgMTAwNjQ0Cj4g
+LS0tIGEvZnMvZjJmcy9mMmZzLmgKPiArKysgYi9mcy9mMmZzL2YyZnMuaAo+IEBAIC04OCw2ICs4
+OCwxNSBAQCBlbnVtIHsKPiAgCVNJVF9CSVRNQVAKPiAgfTsKPiAgCj4gKy8qCj4gKyAqIEZvciBD
+UC9OQVQvU0lUIHJlYWRhaGVhZAo+ICsgKi8KPiArZW51bSB7Cj4gKwlNRVRBX0NQLAo+ICsJTUVU
+QV9OQVQsCj4gKwlNRVRBX1NJVAo+ICt9Owo+ICsKPiAgLyogZm9yIHRoZSBsaXN0IG9mIG9ycGhh
+biBpbm9kZXMgKi8KPiAgc3RydWN0IG9ycGhhbl9pbm9kZV9lbnRyeSB7Cj4gIAlzdHJ1Y3QgbGlz
+dF9oZWFkIGxpc3Q7CS8qIGxpc3QgaGVhZCAqLwo+IEBAIC0xMTU4LDYgKzExNjcsNyBAQCB2b2lk
+IGRlc3Ryb3lfc2VnbWVudF9tYW5hZ2VyX2NhY2hlcyh2b2lkKTsKPiAgICovCj4gIHN0cnVjdCBw
+YWdlICpncmFiX21ldGFfcGFnZShzdHJ1Y3QgZjJmc19zYl9pbmZvICosIHBnb2ZmX3QpOwo+ICBz
+dHJ1Y3QgcGFnZSAqZ2V0X21ldGFfcGFnZShzdHJ1Y3QgZjJmc19zYl9pbmZvICosIHBnb2ZmX3Qp
+Owo+ICtpbnQgcmFfbWV0YV9wYWdlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICosIGludCwgaW50LCBp
+bnQpOwo+ICBsb25nIHN5bmNfbWV0YV9wYWdlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICosIGVudW0g
+cGFnZV90eXBlLCBsb25nKTsKPiAgaW50IGFjcXVpcmVfb3JwaGFuX2lub2RlKHN0cnVjdCBmMmZz
+X3NiX2luZm8gKik7Cj4gIHZvaWQgcmVsZWFzZV9vcnBoYW5faW5vZGUoc3RydWN0IGYyZnNfc2Jf
+aW5mbyAqKTsKPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmMgYi9mcy9mMmZzL25vZGUuYwo+
+IGluZGV4IGIwNjQ5YjcuLjJmN2FlNmYgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9ub2RlLmMKPiAr
+KysgYi9mcy9mMmZzL25vZGUuYwo+IEBAIC04Miw0MiArODIsNiBAQCBzdGF0aWMgc3RydWN0IHBh
+Z2UgKmdldF9uZXh0X25hdF9wYWdlKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgbmlkX3Qgbmlk
+KQo+ICAJcmV0dXJuIGRzdF9wYWdlOwo+ICB9Cj4gIAo+IC0vKgo+IC0gKiBSZWFkYWhlYWQgTkFU
+IHBhZ2VzCj4gLSAqLwo+IC1zdGF0aWMgdm9pZCByYV9uYXRfcGFnZXMoc3RydWN0IGYyZnNfc2Jf
+aW5mbyAqc2JpLCBpbnQgbmlkKQo+IC17Cj4gLQlzdHJ1Y3QgYWRkcmVzc19zcGFjZSAqbWFwcGlu
+ZyA9IE1FVEFfTUFQUElORyhzYmkpOwo+IC0Jc3RydWN0IGYyZnNfbm1faW5mbyAqbm1faSA9IE5N
+X0koc2JpKTsKPiAtCXN0cnVjdCBwYWdlICpwYWdlOwo+IC0JcGdvZmZfdCBpbmRleDsKPiAtCWlu
+dCBpOwo+IC0Jc3RydWN0IGYyZnNfaW9faW5mbyBmaW8gPSB7Cj4gLQkJLnR5cGUgPSBNRVRBLAo+
+IC0JCS5ydyA9IFJFQURfU1lOQyB8IFJFUV9NRVRBIHwgUkVRX1BSSU8KPiAtCX07Cj4gLQo+IC0K
+PiAtCWZvciAoaSA9IDA7IGkgPCBGUkVFX05JRF9QQUdFUzsgaSsrLCBuaWQgKz0gTkFUX0VOVFJZ
+X1BFUl9CTE9DSykgewo+IC0JCWlmICh1bmxpa2VseShuaWQgPj0gbm1faS0+bWF4X25pZCkpCj4g
+LQkJCW5pZCA9IDA7Cj4gLQkJaW5kZXggPSBjdXJyZW50X25hdF9hZGRyKHNiaSwgbmlkKTsKPiAt
+Cj4gLQkJcGFnZSA9IGdyYWJfY2FjaGVfcGFnZShtYXBwaW5nLCBpbmRleCk7Cj4gLQkJaWYgKCFw
+YWdlKQo+IC0JCQljb250aW51ZTsKPiAtCQlpZiAoUGFnZVVwdG9kYXRlKHBhZ2UpKSB7Cj4gLQkJ
+CW1hcmtfcGFnZV9hY2Nlc3NlZChwYWdlKTsKPiAtCQkJZjJmc19wdXRfcGFnZShwYWdlLCAxKTsK
+PiAtCQkJY29udGludWU7Cj4gLQkJfQo+IC0JCWYyZnNfc3VibWl0X3BhZ2VfbWJpbyhzYmksIHBh
+Z2UsIGluZGV4LCAmZmlvKTsKPiAtCQltYXJrX3BhZ2VfYWNjZXNzZWQocGFnZSk7Cj4gLQkJZjJm
+c19wdXRfcGFnZShwYWdlLCAwKTsKPiAtCX0KPiAtCWYyZnNfc3VibWl0X21lcmdlZF9iaW8oc2Jp
+LCBNRVRBLCBSRUFEKTsKPiAtfQo+IC0KPiAgc3RhdGljIHN0cnVjdCBuYXRfZW50cnkgKl9fbG9v
+a3VwX25hdF9jYWNoZShzdHJ1Y3QgZjJmc19ubV9pbmZvICpubV9pLCBuaWRfdCBuKQo+ICB7Cj4g
+IAlyZXR1cm4gcmFkaXhfdHJlZV9sb29rdXAoJm5tX2ktPm5hdF9yb290LCBuKTsKPiBAQCAtMTQx
+Myw3ICsxMzc3LDcgQEAgc3RhdGljIHZvaWQgYnVpbGRfZnJlZV9uaWRzKHN0cnVjdCBmMmZzX3Ni
+X2luZm8gKnNiaSkKPiAgCQlyZXR1cm47Cj4gIAo+ICAJLyogcmVhZGFoZWFkIG5hdCBwYWdlcyB0
+byBiZSBzY2FubmVkICovCj4gLQlyYV9uYXRfcGFnZXMoc2JpLCBuaWQpOwo+ICsJcmFfbWV0YV9w
+YWdlcyhzYmksIE5BVF9CTE9DS19PRkZTRVQobmlkKSwgRlJFRV9OSURfUEFHRVMsIE1FVEFfTkFU
+KTsKPiAgCj4gIAl3aGlsZSAoMSkgewo+ICAJCXN0cnVjdCBwYWdlICpwYWdlID0gZ2V0X2N1cnJl
+bnRfbmF0X3BhZ2Uoc2JpLCBuaWQpOwo+IGRpZmYgLS1naXQgYS9mcy9mMmZzL3NlZ21lbnQuYyBi
+L2ZzL2YyZnMvc2VnbWVudC5jCj4gaW5kZXggN2NhYWM1Zi4uNGMyYjM1YiAxMDA2NDQKPiAtLS0g
+YS9mcy9mMmZzL3NlZ21lbnQuYwo+ICsrKyBiL2ZzL2YyZnMvc2VnbWVudC5jCj4gQEAgLTE1ODMs
+NDcgKzE1ODMsNiBAQCBzdGF0aWMgaW50IGJ1aWxkX2N1cnNlZyhzdHJ1Y3QgZjJmc19zYl9pbmZv
+ICpzYmkpCj4gIAlyZXR1cm4gcmVzdG9yZV9jdXJzZWdfc3VtbWFyaWVzKHNiaSk7Cj4gIH0KPiAg
+Cj4gLXN0YXRpYyBpbnQgcmFfc2l0X3BhZ2VzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgaW50
+IHN0YXJ0LCBpbnQgbnJwYWdlcykKPiAtewo+IC0Jc3RydWN0IGFkZHJlc3Nfc3BhY2UgKm1hcHBp
+bmcgPSBNRVRBX01BUFBJTkcoc2JpKTsKPiAtCXN0cnVjdCBwYWdlICpwYWdlOwo+IC0JYmxvY2tf
+dCBibGtfYWRkciwgcHJldl9ibGtfYWRkciA9IDA7Cj4gLQlpbnQgc2l0X2Jsa19jbnQgPSBTSVRf
+QkxLX0NOVChzYmkpOwo+IC0JaW50IGJsa25vID0gc3RhcnQ7Cj4gLQlzdHJ1Y3QgZjJmc19pb19p
+bmZvIGZpbyA9IHsKPiAtCQkudHlwZSA9IE1FVEEsCj4gLQkJLnJ3ID0gUkVBRF9TWU5DIHwgUkVR
+X01FVEEgfCBSRVFfUFJJTwo+IC0JfTsKPiAtCj4gLQlmb3IgKDsgYmxrbm8gPCBzdGFydCArIG5y
+cGFnZXMgJiYgYmxrbm8gPCBzaXRfYmxrX2NudDsgYmxrbm8rKykgewo+IC0KPiAtCQlibGtfYWRk
+ciA9IGN1cnJlbnRfc2l0X2FkZHIoc2JpLCBibGtubyAqIFNJVF9FTlRSWV9QRVJfQkxPQ0spOwo+
+IC0KPiAtCQlpZiAoYmxrbm8gIT0gc3RhcnQgJiYgcHJldl9ibGtfYWRkciArIDEgIT0gYmxrX2Fk
+ZHIpCj4gLQkJCWJyZWFrOwo+IC0JCXByZXZfYmxrX2FkZHIgPSBibGtfYWRkcjsKPiAtcmVwZWF0
+Ogo+IC0JCXBhZ2UgPSBncmFiX2NhY2hlX3BhZ2UobWFwcGluZywgYmxrX2FkZHIpOwo+IC0JCWlm
+ICghcGFnZSkgewo+IC0JCQljb25kX3Jlc2NoZWQoKTsKPiAtCQkJZ290byByZXBlYXQ7Cj4gLQkJ
+fQo+IC0JCWlmIChQYWdlVXB0b2RhdGUocGFnZSkpIHsKPiAtCQkJbWFya19wYWdlX2FjY2Vzc2Vk
+KHBhZ2UpOwo+IC0JCQlmMmZzX3B1dF9wYWdlKHBhZ2UsIDEpOwo+IC0JCQljb250aW51ZTsKPiAt
+CQl9Cj4gLQo+IC0JCWYyZnNfc3VibWl0X3BhZ2VfbWJpbyhzYmksIHBhZ2UsIGJsa19hZGRyLCAm
+ZmlvKTsKPiAtCj4gLQkJbWFya19wYWdlX2FjY2Vzc2VkKHBhZ2UpOwo+IC0JCWYyZnNfcHV0X3Bh
+Z2UocGFnZSwgMCk7Cj4gLQl9Cj4gLQo+IC0JZjJmc19zdWJtaXRfbWVyZ2VkX2JpbyhzYmksIE1F
+VEEsIFJFQUQpOwo+IC0JcmV0dXJuIGJsa25vIC0gc3RhcnQ7Cj4gLX0KPiAtCj4gIHN0YXRpYyB2
+b2lkIGJ1aWxkX3NpdF9lbnRyaWVzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKPiAgewo+ICAJ
+c3RydWN0IHNpdF9pbmZvICpzaXRfaSA9IFNJVF9JKHNiaSk7Cj4gQEAgLTE2MzUsNyArMTU5NCw3
+IEBAIHN0YXRpYyB2b2lkIGJ1aWxkX3NpdF9lbnRyaWVzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNi
+aSkKPiAgCWludCBucnBhZ2VzID0gTUFYX0JJT19CTE9DS1MobWF4X2h3X2Jsb2NrcyhzYmkpKTsK
+PiAgCj4gIAlkbyB7Cj4gLQkJcmVhZGVkID0gcmFfc2l0X3BhZ2VzKHNiaSwgc3RhcnRfYmxrLCBu
+cnBhZ2VzKTsKPiArCQlyZWFkZWQgPSByYV9tZXRhX3BhZ2VzKHNiaSwgc3RhcnRfYmxrLCBucnBh
+Z2VzLCBNRVRBX1NJVCk7Cj4gIAo+ICAJCXN0YXJ0ID0gc3RhcnRfYmxrICogc2l0X2ktPnNlbnRz
+X3Blcl9ibG9jazsKPiAgCQllbmQgPSAoc3RhcnRfYmxrICsgcmVhZGVkKSAqIHNpdF9pLT5zZW50
+c19wZXJfYmxvY2s7CgotLSAKSmFlZ2V1ayBLaW0KU2Ftc3VuZwoKCgotLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0KTWFuYWdpbmcgdGhlIFBlcmZvcm1hbmNlIG9mIENsb3VkLUJhc2VkIEFwcGxpY2F0aW9u
+cwpUYWtlIGFkdmFudGFnZSBvZiB3aGF0IHRoZSBDbG91ZCBoYXMgdG8gb2ZmZXIgLSBBdm9pZCBD
+b21tb24gUGl0ZmFsbHMuClJlYWQgdGhlIFdoaXRlcGFwZXIuCmh0dHA6Ly9wdWJhZHMuZy5kb3Vi
+bGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD0xMjEwNTEyMzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJm
+cy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5u
+ZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJm
+cy1kZXZlbAo=
