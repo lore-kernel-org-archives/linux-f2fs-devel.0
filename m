@@ -1,152 +1,135 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: f2fs: f2fs unmount hangs if f2fs_init_acl() fails during mkdir
- syscall
-Date: Fri, 07 Feb 2014 09:49:45 +0900
-Message-ID: <1391734185.25542.80.camel@kjgkr>
+Subject: Re: f2fs: f2fs unmount hangs if f2fs_init_acl() fails
+ during mkdir syscall
+Date: Fri, 07 Feb 2014 14:12:13 +0900
+Message-ID: <1391749933.25542.83.camel@kjgkr>
 References: <52F320FC.50803@ispras.ru> <1391666564.25542.78.camel@kjgkr>
- <52F37D67.208@ispras.ru>
+	<52F37D67.208@ispras.ru> <1391734185.25542.80.camel@kjgkr>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <52F37D67.208@ispras.ru>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WBdl9-000415-7b
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 07 Feb 2014 05:13:51 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WBdl7-0004wY-8O
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 07 Feb 2014 05:13:51 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N0M009VX16T8H70@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 07 Feb 2014 14:13:41 +0900 (KST)
+In-reply-to: <1391734185.25542.80.camel@kjgkr>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Andrey Tsyvarev <tsyvarev@ispras.ru>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
 Hi,
 
-2014-02-06 (=EB=AA=A9), 16:17 +0400, Andrey Tsyvarev:
-> Hi,
->=20
-> 06.02.2014 10:02, Jaegeuk Kim =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Hi,
-> >
-> > Thank you for the test and valuable report.
-> >
-> > This bug was fixed recently by:
-> >
-> > commit 03dea3129d558bf5293a6e9f12777176619ac876
-> > Author: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-> > Date:   Wed Feb 5 11:16:39 2014 +0900
-> >
-> >      f2fs: fix to truncate dentry pages in the error case
-> Now remove_inode_page() succeed, but another assertion failed (tested=
- on=20
-> revision e964751c):
->=20
-> [ 1272.747011] kernel BUG at fs/f2fs/inode.c:274!
-> [ 1272.747011] invalid opcode: 0000 [#1] SMP
-> [ 1272.747011] Modules linked in: f2fs kedr_fsim_indicator_common(OF)=
-=20
-> kedr_fsim_indicator_capable(OF)
-> kedr_fsim_indicator_kmalloc(OF) kedr_fsim_vmm(OF) kedr_fsim_mem_util(=
-OF)=20
-> kedr_fsim_capable(OF)
-> kedr_fsim_uaccess(OF) kedr_fsim_cmm(OF) kedr_fault_simulation(OF)=20
-> kedr(OF) fuse nf_conntrack_netbios_ns
-> nf_conntrack_broadcast ipt_MASQUERADE ip6t_REJECT xt_conntrack=20
-> ebtable_nat ebtable_broute bridge stp
-> llc ebtable_filter ebtables ip6table_nat nf_conntrack_ipv6=20
-> nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle
-> ip6table_security ip6table_raw ip6table_filter ip6_tables iptable_nat=
-=20
-> nf_conntrack_ipv4 nf_defrag_ipv4
-> nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle iptable_security=20
-> iptable_raw parport_pc i2c_piix4 e1000
-> i2c_core microcode parport ata_generic pata_acpi [last unloaded: kedr=
-]
-> [ 1272.747011] CPU: 0 PID: 14613 Comm: fs-driver-tests Tainted: GF   =
-   =20
-> W  O 3.14.0-rc1fs #1
-> [ 1272.747011] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIO=
-S=20
-> VirtualBox 12/01/2006
-> [ 1272.747011] task: ffff88001e939190 ti: ffff88000d7ec000 task.ti:=20
-> ffff88000d7ec000
-> [ 1272.747011] RIP: 0010:[<ffffffffa01c74a8>] [<ffffffffa01c74a8>]=20
-> f2fs_evict_inode+0x178/0x180 [f2fs]
-> [ 1272.747011] RSP: 0018:ffff88000d7ede50  EFLAGS: 00010202
-> [ 1272.747011] RAX: 0000000000000001 RBX: ffff88000475cc30 RCX:=20
-> ffff88001e9398a0
-> [ 1272.747011] RDX: 0000000000000002 RSI: 0000000000000000 RDI:=20
-> ffff88000475ce10
-> [ 1272.747011] RBP: ffff88000d7ede68 R08: 00000000ffffffff R09:=20
-> 0000000000000000
-> [ 1272.747011] R10: 0000000000000000 R11: 0000000000000001 R12:=20
-> ffff88000475cc30
-> [ 1272.747011] R13: ffff88000f147800 R14: ffffffffa01e7080 R15:=20
-> ffff88000f147b80
-> [ 1272.747011] FS:  00007f1795424740(0000) GS:ffff88003fc00000(0000)=20
-> knlGS:0000000000000000
-> [ 1272.747011] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-> [ 1272.747011] CR2: 00007fc33bfa9000 CR3: 000000000f14e000 CR4:=20
-> 00000000000006f0
-> [ 1272.747011] Stack:
-> [ 1272.747011]  ffff88000475cc30 ffff88000475cdc8 ffffffffa01e7080=20
-> ffff88000d7ede90
-> [ 1272.747011]  ffffffff811fde03 ffff88000475cc30 ffff88000475ccb8=20
-> ffff88000f147000
-> [ 1272.747011]  ffff88000d7edec0 ffffffff811fe615 ffff88000475cc30=20
-> ffff88000f147800
-> [ 1272.747011] Call Trace:
-> [ 1272.747011]  [<ffffffff811fde03>] evict+0xa3/0x1a0
-> [ 1272.747011]  [<ffffffff811fe615>] iput+0xf5/0x180
-> [ 1272.747011]  [<ffffffffa01c7f63>] f2fs_mkdir+0xf3/0x150 [f2fs]
-> [ 1272.747011]  [<ffffffff811f2a77>] vfs_mkdir+0xb7/0x160
-> [ 1272.747011]  [<ffffffff811f36bf>] SyS_mkdir+0x5f/0xc0
-> [ 1272.747011]  [<ffffffff81680769>] system_call_fastpath+0x16/0x1b
-> [ 1272.747011] Code: 01 e1 4c 89 e7 e8 39 59 03 e1 5b 41 5c 41 5d 5d =
-c3=20
-> 31 c0 49 83 bc 24 c8 00 00 00 01 0f 97 c0
-> eb 8f 4c 89 e7 e8 fa ec ff ff eb 89 <0f> 0b 66 0f 1f 44 00 00 0f 1f 4=
-4=20
-> 00 00 55 48 c7 c0 dc ff ff ff
-> [ 1272.747011] RIP  [<ffffffffa01c74a8>] f2fs_evict_inode+0x178/0x180=
- [f2fs]
-> [ 1272.747011]  RSP <ffff88000d7ede50>
->=20
-> Failed assertion claims that dirty dentries counter should be zero wh=
-en=20
-> inode is deleted.
-> This counter is incremented by
-> mkdir()->
->    f2fs_add_link()->
->      init_inode_metadata()->
->        make_empty_dir()->
->          set_page_dirty();
->=20
-> but no one decrement it.
-> May be, this should be done along with truncating directory inode in=20
-> error-path of init_inode_metadata() ?
+It turns out that make_bad_inode prior to iput sets i_mode to a regular
+file, so that f2fs_evict_inode -> truncate_inode_pages ->
+f2fs_invalidate_data_page doesn't decrement dirty_dents.
+This patch should resolve the bug.
+Thank you :)
 
-It's weird, since original intention was that pages should be
-invalidated by:
-f2fs_evict_inode
- - truncate_inode_pages
-   - f2fs_invalidate_page
-      - decrement dirty_dents
+----
+When a new directory is allocated, if an error is occurred, we should
+truncate
+preallocated dentry pages too.
 
-I'll see what happened a little bit more.
-Thanks,
+This bug was reported by Andrey Tsyvarev after a while as follows.
 
->=20
->=20
-> --
-> Best regards,
-> Andrey Tsyvarev
-> Linux Verification Center, ISPRAS
-> web: http://linuxtesting.org
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+mkdir()->
+ f2fs_add_link()->
+  init_inode_metadata()->
+    f2fs_init_acl()->
+      f2fs_get_acl()->
+        f2fs_getxattr()->
+          read_all_xattrs() fails.
 
---=20
+Also there was a BUG_ON triggered after the fault in
+mkdir()->
+ f2fs_add_link()->
+   init_inode_metadata()->
+    remove_inode_page() ->
+      f2fs_bug_on(inode->i_blocks != 0 && inode->i_blocks != 1);
+
+But, previous patch wasn't perfect to resolve that bug, so the following
+bug
+report was also submitted.
+
+kernel BUG at fs/f2fs/inode.c:274!
+Call Trace:
+ [<ffffffff811fde03>] evict+0xa3/0x1a0
+ [<ffffffff811fe615>] iput+0xf5/0x180
+ [<ffffffffa01c7f63>] f2fs_mkdir+0xf3/0x150 [f2fs]
+ [<ffffffff811f2a77>] vfs_mkdir+0xb7/0x160
+ [<ffffffff811f36bf>] SyS_mkdir+0x5f/0xc0
+ [<ffffffff81680769>] system_call_fastpath+0x16/0x1b
+
+Finally, this patch resolves all the issues like below.
+
+If an error is occurred after make_empty_dir(),
+ 1. truncate_inode_pages()
+   The make_bad_inode() prior to iput() will change i_mode to S_IFREG,
+which
+   means that f2fs will not decrement fi->dirty_dents during
+f2fs_evict_inode.
+   But, by calling it here, we can do that.
+
+ 2. truncate_blocks()
+   Preallocated dentry pages are trucated here to sync i_blocks.
+
+Reported-by: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/dir.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index bfcb4ae..92ce1db 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -372,6 +372,9 @@ static struct page *init_inode_metadata(struct inode
+*inode,
+ 
+ put_error:
+ 	f2fs_put_page(page, 1);
++	/* once the failed inode becomes a bad inode, i_mode is S_IFREG */
++	truncate_inode_pages(&inode->i_data, 0);
++	truncate_blocks(inode, 0);
+ error:
+ 	remove_inode_page(inode);
+ 	return ERR_PTR(err);
+-- 
+1.8.4.474.g128a96c
+
+
+
+-- 
 Jaegeuk Kim
 Samsung
+
+
+------------------------------------------------------------------------------
+Managing the Performance of Cloud-Based Applications
+Take advantage of what the Cloud has to offer - Avoid Common Pitfalls.
+Read the Whitepaper.
+http://pubads.g.doubleclick.net/gampad/clk?id=121051231&iu=/4140/ostg.clktrk
