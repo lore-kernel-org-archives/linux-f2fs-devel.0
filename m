@@ -1,274 +1,138 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev] [PATCH V2] f2fs: introduce ra_meta_pages to readahead
- CP/NAT/SIT pages
-Date: Fri, 07 Feb 2014 16:11:53 +0800
-Message-ID: <002201cf23dc$5e118ee0$1a34aca0$@samsung.com>
+From: "Apple Notice" <email@alertapple.com>
+Subject: [SPAM] Update your account
+Date: Mon, 10 Feb 2014 23:36:11 +0100
+Message-ID: <WIN-BM32F09BK4CRKTo00021463@WIN-BM32F09BK4C>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="===============6184202261301331262=="
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <email@alertapple.com>) id 1WCzUL-0001iY-RW
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 10 Feb 2014 22:38:05 +0000
+Received: from [109.169.84.149] (helo=WIN-BM32F09BK4C)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WCzUK-0006or-S8 for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 10 Feb 2014 22:38:05 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+
+This is a multi-part message in MIME format.
+
+--===============6184202261301331262==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0000_01C6527E.AE8904D0"
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0000_01C6527E.AE8904D0
+Content-Type: text/plain;
+ charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+   
+
+
+  Dear Client , 
+We inform you that your iTunes ID happens to expire in less than 48 H.
+
+It is imperative to conduct an audit of your information is present, otherwise your ID will be destroyed.
+Just click the link below and log in with your iTunes ID and password.
+Check Now >
+This is an automatically generated message. Thank you not to answer. If you need help, please visit the iTunes Store site.
+
+Sincerely,
+The iTunes Customer Support
+ 
+
+
+ 
+------=_NextPart_000_0000_01C6527E.AE8904D0
+Content-Type: text/html;
+ charset="utf-8"
+
+<div>
+  <table width="100%" height="493" border="0">
+    <tr>
+      <td width="24%" height="489">&nbsp;</td>
+      <td width="51%"><table width="100%" height="487" border="0">
+        <tr>
+          <td height="46"><table width="100%" height="27" border="0" bgcolor="#909090">
+            <tr>
+              <td height="23"><table width="100%" height="35" border="0">
+                <tr>
+                  <td width="93%">&nbsp;</td>
+                  <td width="7%">&nbsp;</td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+          
+        <tr>
+          <td height="435"><img src="http://im39.gulfup.com/6sOjv.png" width="739" height="187" 
+           >
+            <table width="100%" height="414" border="0" bgcolor="#dedede">
+            <tr>
+              <td height="410"><table width="100%" border="0">
+                <tr>
+                  <td width="9%" height="397">&nbsp;</td>
+                  <td width="82%"><p><b><font face="tahoma" size="2" color="#5a5a5a">Dear Client ,</font></b>                    </p>
+                    <p>We inform you that your iTunes ID happens to expire in less than 48 H.<br>
+                      <br>
+It is imperative to conduct an audit of your information is present, otherwise your ID will be destroyed.<br>
+Just click the link below and log in with your iTunes ID and password.</p>
+                    <p><a href="http://albaha-sh.cc/up/admin/update.php"><font face="tahoma" size="2" color="#0187a8">Check Now &gt; </font></a></p>
+                  
+                    <p><span style="LINE-HEIGHT: 1.25em; FONT-FAMILY: Lucida Grande, Lucida Sans, Lucida Sans Unicode, Arial, Helvetica, Verdana, sans-serif; COLOR: #333333; FONT-SIZE: 12px" 
+                       >This is an automatically generated message. Thank you not to answer. If you need help, please visit the iTunes Store site.<br>
+                        <br>
+Sincerely,<br>
+The iTunes Customer Support</span><font face="tahoma" size="2" color="#5a5a5a"><br></font></p>
+                  <td width="9%">&nbsp;</td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></tr>
+        
+      </table></td>
+      <td width="25%">&nbsp;</td>
+    </tr>
+  </table>
+</div>
+------=_NextPart_000_0000_01C6527E.AE8904D0--
+
+
+--===============6184202261301331262==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: ??? <jaegeuk.kim@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Disposition: inline
 
-This patch help us to cleanup the readahead code by merging ra_{sit,nat}_pages
-function into ra_meta_pages.
-Additionally the new function is used to readahead cp block in
-recover_orphan_inodes.
+------------------------------------------------------------------------------
+Android apps run on BlackBerry 10
+Introducing the new BlackBerry 10.2.1 Runtime for Android apps.
+Now with support for Jelly Bean, Bluetooth, Mapview and more.
+Get your Android app in front of a whole new audience.  Start now.
+http://pubads.g.doubleclick.net/gampad/clk?id=124407151&iu=/4140/ostg.clktrk
+--===============6184202261301331262==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Change log from v1:
- o fix a deadloop bug pointed by Jaegeuk Kim.
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/checkpoint.c |   78 ++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/f2fs.h       |   10 +++++++
- fs/f2fs/node.c       |   38 +-----------------------
- fs/f2fs/segment.c    |   43 +---------------------------
- 4 files changed, 90 insertions(+), 79 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 8f5dff1..5f7f905 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -75,6 +75,82 @@ out:
- 	return page;
- }
- 
-+inline int get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
-+{
-+	switch (type) {
-+	case META_NAT:
-+		return NM_I(sbi)->max_nid / NAT_ENTRY_PER_BLOCK;
-+	case META_SIT:
-+		return SIT_BLK_CNT(sbi);
-+	case META_CP:
-+		return 0;
-+	default:
-+		BUG();
-+	}
-+}
-+
-+/*
-+ * Readahead CP/NAT/SIT pages
-+ */
-+int ra_meta_pages(struct f2fs_sb_info *sbi, int start, int nrpages, int type)
-+{
-+	block_t prev_blk_addr = 0;
-+	struct page *page;
-+	int blkno = start;
-+	int max_blks = get_max_meta_blks(sbi, type);
-+
-+	struct f2fs_io_info fio = {
-+		.type = META,
-+		.rw = READ_SYNC | REQ_META | REQ_PRIO
-+	};
-+
-+	for (; nrpages-- > 0; blkno++) {
-+		block_t blk_addr;
-+
-+		switch (type) {
-+		case META_NAT:
-+			/* get nat block addr */
-+			if (unlikely(blkno >= max_blks))
-+				blkno = 0;
-+			blk_addr = current_nat_addr(sbi,
-+					blkno * NAT_ENTRY_PER_BLOCK);
-+			break;
-+		case META_SIT:
-+			/* get sit block addr */
-+			if (unlikely(blkno >= max_blks))
-+				goto out;
-+			blk_addr = current_sit_addr(sbi,
-+					blkno * SIT_ENTRY_PER_BLOCK);
-+			if (blkno != start && prev_blk_addr + 1 != blk_addr)
-+				goto out;
-+			prev_blk_addr = blk_addr;
-+			break;
-+		case META_CP:
-+			/* get cp block addr */
-+			blk_addr = blkno;
-+			break;
-+		default:
-+			BUG();
-+		}
-+
-+		page = grab_cache_page(META_MAPPING(sbi), blk_addr);
-+		if (!page)
-+			continue;
-+		if (PageUptodate(page)) {
-+			mark_page_accessed(page);
-+			f2fs_put_page(page, 1);
-+			continue;
-+		}
-+
-+		f2fs_submit_page_mbio(sbi, page, blk_addr, &fio);
-+		mark_page_accessed(page);
-+		f2fs_put_page(page, 0);
-+	}
-+out:
-+	f2fs_submit_merged_bio(sbi, META, READ);
-+	return blkno - start;
-+}
-+
- static int f2fs_write_meta_page(struct page *page,
- 				struct writeback_control *wbc)
- {
-@@ -298,6 +374,8 @@ void recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 	start_blk = __start_cp_addr(sbi) + 1;
- 	orphan_blkaddr = __start_sum_addr(sbi) - 1;
- 
-+	ra_meta_pages(sbi, start_blk, orphan_blkaddr, META_CP);
-+
- 	for (i = 0; i < orphan_blkaddr; i++) {
- 		struct page *page = get_meta_page(sbi, start_blk + i);
- 		struct f2fs_orphan_block *orphan_blk;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index aeff132..15109f5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -88,6 +88,15 @@ enum {
- 	SIT_BITMAP
- };
- 
-+/*
-+ * For CP/NAT/SIT readahead
-+ */
-+enum {
-+	META_CP,
-+	META_NAT,
-+	META_SIT
-+};
-+
- /* for the list of orphan inodes */
- struct orphan_inode_entry {
- 	struct list_head list;	/* list head */
-@@ -1171,6 +1180,7 @@ void destroy_segment_manager_caches(void);
-  */
- struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);
- struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);
-+int ra_meta_pages(struct f2fs_sb_info *, int, int, int);
- long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
- int acquire_orphan_inode(struct f2fs_sb_info *);
- void release_orphan_inode(struct f2fs_sb_info *);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 82f4753..7689f91 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -82,42 +82,6 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
- 	return dst_page;
- }
- 
--/*
-- * Readahead NAT pages
-- */
--static void ra_nat_pages(struct f2fs_sb_info *sbi, int nid)
--{
--	struct address_space *mapping = META_MAPPING(sbi);
--	struct f2fs_nm_info *nm_i = NM_I(sbi);
--	struct page *page;
--	pgoff_t index;
--	int i;
--	struct f2fs_io_info fio = {
--		.type = META,
--		.rw = READ_SYNC | REQ_META | REQ_PRIO
--	};
--
--
--	for (i = 0; i < FREE_NID_PAGES; i++, nid += NAT_ENTRY_PER_BLOCK) {
--		if (unlikely(nid >= nm_i->max_nid))
--			nid = 0;
--		index = current_nat_addr(sbi, nid);
--
--		page = grab_cache_page(mapping, index);
--		if (!page)
--			continue;
--		if (PageUptodate(page)) {
--			mark_page_accessed(page);
--			f2fs_put_page(page, 1);
--			continue;
--		}
--		f2fs_submit_page_mbio(sbi, page, index, &fio);
--		mark_page_accessed(page);
--		f2fs_put_page(page, 0);
--	}
--	f2fs_submit_merged_bio(sbi, META, READ);
--}
--
- static struct nat_entry *__lookup_nat_cache(struct f2fs_nm_info *nm_i, nid_t n)
- {
- 	return radix_tree_lookup(&nm_i->nat_root, n);
-@@ -1413,7 +1377,7 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
- 		return;
- 
- 	/* readahead nat pages to be scanned */
--	ra_nat_pages(sbi, nid);
-+	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES, META_NAT);
- 
- 	while (1) {
- 		struct page *page = get_current_nat_page(sbi, nid);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index e87946a..fbb41ba 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1576,47 +1576,6 @@ static int build_curseg(struct f2fs_sb_info *sbi)
- 	return restore_curseg_summaries(sbi);
- }
- 
--static int ra_sit_pages(struct f2fs_sb_info *sbi, int start, int nrpages)
--{
--	struct address_space *mapping = META_MAPPING(sbi);
--	struct page *page;
--	block_t blk_addr, prev_blk_addr = 0;
--	int sit_blk_cnt = SIT_BLK_CNT(sbi);
--	int blkno = start;
--	struct f2fs_io_info fio = {
--		.type = META,
--		.rw = READ_SYNC | REQ_META | REQ_PRIO
--	};
--
--	for (; blkno < start + nrpages && blkno < sit_blk_cnt; blkno++) {
--
--		blk_addr = current_sit_addr(sbi, blkno * SIT_ENTRY_PER_BLOCK);
--
--		if (blkno != start && prev_blk_addr + 1 != blk_addr)
--			break;
--		prev_blk_addr = blk_addr;
--repeat:
--		page = grab_cache_page(mapping, blk_addr);
--		if (!page) {
--			cond_resched();
--			goto repeat;
--		}
--		if (PageUptodate(page)) {
--			mark_page_accessed(page);
--			f2fs_put_page(page, 1);
--			continue;
--		}
--
--		f2fs_submit_page_mbio(sbi, page, blk_addr, &fio);
--
--		mark_page_accessed(page);
--		f2fs_put_page(page, 0);
--	}
--
--	f2fs_submit_merged_bio(sbi, META, READ);
--	return blkno - start;
--}
--
- static void build_sit_entries(struct f2fs_sb_info *sbi)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
-@@ -1628,7 +1587,7 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
- 	int nrpages = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
- 
- 	do {
--		readed = ra_sit_pages(sbi, start_blk, nrpages);
-+		readed = ra_meta_pages(sbi, start_blk, nrpages, META_SIT);
- 
- 		start = start_blk * sit_i->sents_per_block;
- 		end = (start_blk + readed) * sit_i->sents_per_block;
--- 
-1.7.9.5
+--===============6184202261301331262==--
