@@ -1,20 +1,26 @@
-From: "Apple Notice" <email@alertapple.com>
-Subject: [SPAM] Update your account
-Date: Mon, 10 Feb 2014 23:36:11 +0100
-Message-ID: <WIN-BM32F09BK4CRKTo00021463@WIN-BM32F09BK4C>
+From: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Subject: Re: f2fs: f2fs unmount hangs if f2fs_init_acl() fails
+ during mkdir syscall
+Date: Tue, 11 Feb 2014 12:29:57 +0400
+Message-ID: <52F9DF85.7040402@ispras.ru>
+References: <52F320FC.50803@ispras.ru> <1391666564.25542.78.camel@kjgkr>
+	<52F37D67.208@ispras.ru> <1391734185.25542.80.camel@kjgkr>
+	<1391749933.25542.83.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6184202261301331262=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <email@alertapple.com>) id 1WCzUL-0001iY-RW
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <tsyvarev@ispras.ru>) id 1WD8jL-0002bv-43
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 10 Feb 2014 22:38:05 +0000
-Received: from [109.169.84.149] (helo=WIN-BM32F09BK4C)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WCzUK-0006or-S8 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 10 Feb 2014 22:38:05 +0000
+	Tue, 11 Feb 2014 08:30:11 +0000
+Received: from smtp.ispras.ru ([83.149.199.79])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WD8jE-0001gl-Ed for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 11 Feb 2014 08:30:11 +0000
+In-Reply-To: <1391749933.25542.83.camel@kjgkr>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -24,99 +30,113 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk.kim@samsung.com
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-This is a multi-part message in MIME format.
+Hi,
 
---===============6184202261301331262==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0000_01C6527E.AE8904D0"
+> It turns out that make_bad_inode prior to iput sets i_mode to a regular
+> file, so that f2fs_evict_inode -> truncate_inode_pages ->
+> f2fs_invalidate_data_page doesn't decrement dirty_dents.
+>
+It seems that remove_dirty_dir_inode() call should also be added to the 
+error-path of
+init_inode_metadata, because its functionality is also based on 
+inode->i_mode field
+which is changed by make_bad_inode().
 
-This is a multi-part message in MIME format.
+Otherwise memory leak is reported when f2fs module is unloaded:
 
-------=_NextPart_000_0000_01C6527E.AE8904D0
-Content-Type: text/plain;
- charset="utf-8"
-Content-Transfer-Encoding: 8bit
+[  231.378192] BUG f2fs_dirty_dir_entry (Tainted: GF          O): 
+Objects remaining in f2fs_dirty_dir_entry on kmem_cache_close()
+[  231.378193] 
+-----------------------------------------------------------------------------
 
-   
-
-
-  Dear Client , 
-We inform you that your iTunes ID happens to expire in less than 48 H.
-
-It is imperative to conduct an audit of your information is present, otherwise your ID will be destroyed.
-Just click the link below and log in with your iTunes ID and password.
-Check Now >
-This is an automatically generated message. Thank you not to answer. If you need help, please visit the iTunes Store site.
-
-Sincerely,
-The iTunes Customer Support
- 
-
-
- 
-------=_NextPart_000_0000_01C6527E.AE8904D0
-Content-Type: text/html;
- charset="utf-8"
-
-<div>
-  <table width="100%" height="493" border="0">
-    <tr>
-      <td width="24%" height="489">&nbsp;</td>
-      <td width="51%"><table width="100%" height="487" border="0">
-        <tr>
-          <td height="46"><table width="100%" height="27" border="0" bgcolor="#909090">
-            <tr>
-              <td height="23"><table width="100%" height="35" border="0">
-                <tr>
-                  <td width="93%">&nbsp;</td>
-                  <td width="7%">&nbsp;</td>
-                  </tr>
-                </table></td>
-              </tr>
-            </table></td>
-          </tr>
-          
-        <tr>
-          <td height="435"><img src="http://im39.gulfup.com/6sOjv.png" width="739" height="187" 
-           >
-            <table width="100%" height="414" border="0" bgcolor="#dedede">
-            <tr>
-              <td height="410"><table width="100%" border="0">
-                <tr>
-                  <td width="9%" height="397">&nbsp;</td>
-                  <td width="82%"><p><b><font face="tahoma" size="2" color="#5a5a5a">Dear Client ,</font></b>                    </p>
-                    <p>We inform you that your iTunes ID happens to expire in less than 48 H.<br>
-                      <br>
-It is imperative to conduct an audit of your information is present, otherwise your ID will be destroyed.<br>
-Just click the link below and log in with your iTunes ID and password.</p>
-                    <p><a href="http://albaha-sh.cc/up/admin/update.php"><font face="tahoma" size="2" color="#0187a8">Check Now &gt; </font></a></p>
-                  
-                    <p><span style="LINE-HEIGHT: 1.25em; FONT-FAMILY: Lucida Grande, Lucida Sans, Lucida Sans Unicode, Arial, Helvetica, Verdana, sans-serif; COLOR: #333333; FONT-SIZE: 12px" 
-                       >This is an automatically generated message. Thank you not to answer. If you need help, please visit the iTunes Store site.<br>
-                        <br>
-Sincerely,<br>
-The iTunes Customer Support</span><font face="tahoma" size="2" color="#5a5a5a"><br></font></p>
-                  <td width="9%">&nbsp;</td>
-                  </tr>
-                </table></td>
-              </tr>
-            </table></tr>
-        
-      </table></td>
-      <td width="25%">&nbsp;</td>
-    </tr>
-  </table>
-</div>
-------=_NextPart_000_0000_01C6527E.AE8904D0--
+[  231.378194] Disabling lock debugging due to kernel taint
+[  231.378195] INFO: Slab 0xffffea0000437200 objects=102 used=1 
+fp=0xffff880010dc8fc8 flags=0x3fffc000000080
+[  231.378197] CPU: 0 PID: 2605 Comm: rmmod Tainted: GF   B      O 
+3.14.0-rc1fs #4
+[  231.378198] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS 
+VirtualBox 12/01/2006
+[  231.378199]  ffff88000e5e3200 ffff88000cc9bd40 ffffffff8166fd7e 
+ffffea0000437200
+[  231.378202]  ffff88000cc9be28 ffffffff811c3fdf ffff88003fc10066 
+ffffffff0cc9bda0
+[  231.378203]  ffffffff00000020 ffff88000cc9be38 ffff88000cc9bde0 
+656a624f00000296
+[  231.378205] Call Trace:
+[  231.378210]  [<ffffffff8166fd7e>] dump_stack+0x45/0x56
+[  231.378213]  [<ffffffff811c3fdf>] slab_err+0xaf/0xc0
+[  231.378215]  [<ffffffff811c84a3>] ? kmem_cache_close+0x133/0x340
+[  231.378216]  [<ffffffff811c6b55>] ? __kmalloc+0x1f5/0x250
+[  231.378218]  [<ffffffff811c84c3>] kmem_cache_close+0x153/0x340
+[  231.378221]  [<ffffffff81193417>] ? kmem_cache_destroy+0x27/0xf0
+[  231.378223]  [<ffffffff811c86c4>] __kmem_cache_shutdown+0x14/0x80
+[  231.378224]  [<ffffffff81193431>] kmem_cache_destroy+0x41/0xf0
+[  231.378229]  [<ffffffffa01eab91>] destroy_checkpoint_caches+0x21/0x30 
+[f2fs]
+[  231.378232]  [<ffffffffa01facda>] exit_f2fs_fs+0x28/0x34e [f2fs]
+[  231.378235]  [<ffffffff810ffe32>] SyS_delete_module+0x152/0x1f0
+[  231.378237]  [<ffffffff8111d85c>] ? __audit_syscall_entry+0x9c/0xf0
+[  231.378239]  [<ffffffff81680729>] system_call_fastpath+0x16/0x1b
+[  231.378242] INFO: Object 0xffff880010dc8000 @offset=0
+[  231.378245] kmem_cache_destroy f2fs_dirty_dir_entry: Slab cache still 
+has objects
+[  231.378247] CPU: 0 PID: 2605 Comm: rmmod Tainted: GF   B      O 
+3.14.0-rc1fs #4
+[  231.378247] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS 
+VirtualBox 12/01/2006
+[  231.378248]  ffff88000e5e3268 ffff88000cc9beb8 ffffffff8166fd7e 
+ffff88000e5e3200
+[  231.378250]  ffff88000cc9bed8 ffffffff811934cf 0000000000000000 
+ffffffffa0204f60
+[  231.378251]  ffff88000cc9bee8 ffffffffa01eab91 ffff88000cc9bef8 
+ffffffffa01facda
+[  231.378253] Call Trace:
+[  231.378255]  [<ffffffff8166fd7e>] dump_stack+0x45/0x56
+[  231.378256]  [<ffffffff811934cf>] kmem_cache_destroy+0xdf/0xf0
+[  231.378259]  [<ffffffffa01eab91>] destroy_checkpoint_caches+0x21/0x30 
+[f2fs]
+[  231.378262]  [<ffffffffa01facda>] exit_f2fs_fs+0x28/0x34e [f2fs]
+[  231.378263]  [<ffffffff810ffe32>] SyS_delete_module+0x152/0x1f0
+[  231.378265]  [<ffffffff8111d85c>] ? __audit_syscall_entry+0x9c/0xf0
+[  231.378266]  [<ffffffff81680729>] system_call_fastpath+0x16/0x1b
 
 
---===============6184202261301331262==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Stack of allocation (obtained with KEDR, which is also used for fault 
+simulation):
+
+[  231.414875] [leak_check] Address: 0xffff880010dc8000, size: 24; stack 
+trace of the allocation:
+[  231.414886] [leak_check] [<ffffffffa01e9d72>] 
+set_dirty_dir_page+0x62/0xe0 [f2fs]
+[  231.414893] [leak_check] [<ffffffffa01ec9be>] 
+f2fs_set_data_page_dirty+0x4e/0x90 [f2fs]
+[  231.414898] [leak_check] [<ffffffff8117b02a>] set_page_dirty+0x3a/0x60
+[  231.414904] [leak_check] [<ffffffffa01dfeb2>] 
+__f2fs_add_link+0x732/0x7d0 [f2fs]
+[  231.414909] [leak_check] [<ffffffffa01e2f1b>] f2fs_mkdir+0xbb/0x150 
+[f2fs]
+[  231.414914] [leak_check] [<ffffffff811f2a37>] vfs_mkdir+0xb7/0x160
+[  231.414918] [leak_check] [<ffffffff811f367f>] SyS_mkdir+0x5f/0xc0
+[  231.414923] [leak_check] [<ffffffff81680729>] 
+system_call_fastpath+0x16/0x1b
+[  231.414931] [leak_check] [<ffffffffffffffff>] 0xffffffffffffffff
+
+
+P.S. It was required to add 'slub_debug' kernel options for make SLUB 
+output correct cache name,
+otherwise cache "f2fs_dirty_dir_entry" was merged into "free_nid" one. 
+It was surprise for me,
+that's why patch investigation took so long time.
+
+-- 
+Best regards,
+Andrey Tsyvarev
+Linux Verification Center, ISPRAS
+web:http://linuxtesting.org
+
 
 ------------------------------------------------------------------------------
 Android apps run on BlackBerry 10
@@ -124,15 +144,3 @@ Introducing the new BlackBerry 10.2.1 Runtime for Android apps.
 Now with support for Jelly Bean, Bluetooth, Mapview and more.
 Get your Android app in front of a whole new audience.  Start now.
 http://pubads.g.doubleclick.net/gampad/clk?id=124407151&iu=/4140/ostg.clktrk
---===============6184202261301331262==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============6184202261301331262==--
