@@ -1,26 +1,21 @@
-From: Andrey Tsyvarev <tsyvarev@ispras.ru>
-Subject: Re: f2fs: f2fs unmount hangs if f2fs_init_acl() fails
- during mkdir syscall
-Date: Tue, 11 Feb 2014 12:29:57 +0400
-Message-ID: <52F9DF85.7040402@ispras.ru>
-References: <52F320FC.50803@ispras.ru> <1391666564.25542.78.camel@kjgkr>
-	<52F37D67.208@ispras.ru> <1391734185.25542.80.camel@kjgkr>
-	<1391749933.25542.83.camel@kjgkr>
+From: "Eddy Manrique" <eddy@edman.tv>
+Subject: contact
+Date: Tue, 11 Feb 2014 15:10:41 -0300
+Message-ID: <80CAE46530424161B1949F3DC0C8B5FC__37652.521642349$1392142270$gmane$org@dnsxx>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============5852648139267994417=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tsyvarev@ispras.ru>) id 1WD8jL-0002bv-43
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 11 Feb 2014 08:30:11 +0000
-Received: from smtp.ispras.ru ([83.149.199.79])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WD8jE-0001gl-Ed for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 11 Feb 2014 08:30:11 +0000
-In-Reply-To: <1391749933.25542.83.camel@kjgkr>
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <263038576@e6.listasautomaticas.com.ar>)
+	id 1WDHnR-0002Wj-RH for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 11 Feb 2014 18:11:01 +0000
+Received: from ene.listasautomaticas.com.ar ([74.117.56.103])
+	by sog-mx-4.v43.ch3.sourceforge.com with smtp (Exim 4.76)
+	id 1WDHnP-0002ao-Qi for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 11 Feb 2014 18:11:01 +0000
+Content-Class: urn:content-classes:message
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,113 +25,161 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+This is a multi-part message in MIME format.
 
-> It turns out that make_bad_inode prior to iput sets i_mode to a regular
-> file, so that f2fs_evict_inode -> truncate_inode_pages ->
-> f2fs_invalidate_data_page doesn't decrement dirty_dents.
->
-It seems that remove_dirty_dir_inode() call should also be added to the 
-error-path of
-init_inode_metadata, because its functionality is also based on 
-inode->i_mode field
-which is changed by make_bad_inode().
+--===============5852648139267994417==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0140_01CF2739.940E7BB0"
+Content-Class: urn:content-classes:message
 
-Otherwise memory leak is reported when f2fs module is unloaded:
+This is a multi-part message in MIME format.
 
-[  231.378192] BUG f2fs_dirty_dir_entry (Tainted: GF          O): 
-Objects remaining in f2fs_dirty_dir_entry on kmem_cache_close()
-[  231.378193] 
------------------------------------------------------------------------------
+------=_NextPart_000_0140_01CF2739.940E7BB0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 
-[  231.378194] Disabling lock debugging due to kernel taint
-[  231.378195] INFO: Slab 0xffffea0000437200 objects=102 used=1 
-fp=0xffff880010dc8fc8 flags=0x3fffc000000080
-[  231.378197] CPU: 0 PID: 2605 Comm: rmmod Tainted: GF   B      O 
-3.14.0-rc1fs #4
-[  231.378198] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS 
-VirtualBox 12/01/2006
-[  231.378199]  ffff88000e5e3200 ffff88000cc9bd40 ffffffff8166fd7e 
-ffffea0000437200
-[  231.378202]  ffff88000cc9be28 ffffffff811c3fdf ffff88003fc10066 
-ffffffff0cc9bda0
-[  231.378203]  ffffffff00000020 ffff88000cc9be38 ffff88000cc9bde0 
-656a624f00000296
-[  231.378205] Call Trace:
-[  231.378210]  [<ffffffff8166fd7e>] dump_stack+0x45/0x56
-[  231.378213]  [<ffffffff811c3fdf>] slab_err+0xaf/0xc0
-[  231.378215]  [<ffffffff811c84a3>] ? kmem_cache_close+0x133/0x340
-[  231.378216]  [<ffffffff811c6b55>] ? __kmalloc+0x1f5/0x250
-[  231.378218]  [<ffffffff811c84c3>] kmem_cache_close+0x153/0x340
-[  231.378221]  [<ffffffff81193417>] ? kmem_cache_destroy+0x27/0xf0
-[  231.378223]  [<ffffffff811c86c4>] __kmem_cache_shutdown+0x14/0x80
-[  231.378224]  [<ffffffff81193431>] kmem_cache_destroy+0x41/0xf0
-[  231.378229]  [<ffffffffa01eab91>] destroy_checkpoint_caches+0x21/0x30 
-[f2fs]
-[  231.378232]  [<ffffffffa01facda>] exit_f2fs_fs+0x28/0x34e [f2fs]
-[  231.378235]  [<ffffffff810ffe32>] SyS_delete_module+0x152/0x1f0
-[  231.378237]  [<ffffffff8111d85c>] ? __audit_syscall_entry+0x9c/0xf0
-[  231.378239]  [<ffffffff81680729>] system_call_fastpath+0x16/0x1b
-[  231.378242] INFO: Object 0xffff880010dc8000 @offset=0
-[  231.378245] kmem_cache_destroy f2fs_dirty_dir_entry: Slab cache still 
-has objects
-[  231.378247] CPU: 0 PID: 2605 Comm: rmmod Tainted: GF   B      O 
-3.14.0-rc1fs #4
-[  231.378247] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS 
-VirtualBox 12/01/2006
-[  231.378248]  ffff88000e5e3268 ffff88000cc9beb8 ffffffff8166fd7e 
-ffff88000e5e3200
-[  231.378250]  ffff88000cc9bed8 ffffffff811934cf 0000000000000000 
-ffffffffa0204f60
-[  231.378251]  ffff88000cc9bee8 ffffffffa01eab91 ffff88000cc9bef8 
-ffffffffa01facda
-[  231.378253] Call Trace:
-[  231.378255]  [<ffffffff8166fd7e>] dump_stack+0x45/0x56
-[  231.378256]  [<ffffffff811934cf>] kmem_cache_destroy+0xdf/0xf0
-[  231.378259]  [<ffffffffa01eab91>] destroy_checkpoint_caches+0x21/0x30 
-[f2fs]
-[  231.378262]  [<ffffffffa01facda>] exit_f2fs_fs+0x28/0x34e [f2fs]
-[  231.378263]  [<ffffffff810ffe32>] SyS_delete_module+0x152/0x1f0
-[  231.378265]  [<ffffffff8111d85c>] ? __audit_syscall_entry+0x9c/0xf0
-[  231.378266]  [<ffffffff81680729>] system_call_fastpath+0x16/0x1b
+If I have sent this to the wrong e-mail address could you please forward
+it to the appropriate person? Thank you!
+
+Managing Director 
+I'm a freelance producer and motion graphics designer specializing in
+online/ web videos. 
+
+See by yourself at my Video Portfolio:  www.edman.tv/portfolio
+<http://www.fullmailing.com/login/class/link.php?id=test&url=aHR0cDovL3d
+3dy5lZG1hbi50di9wb3J0Zm9saW8=> 
+
+Placing video on your website and social networks will improve search
+engine ranking results on Google and YouTube.
+
+You can also use my videos for Trade Shows, email marketing and even
+national TV.
+
+Rate card available upon request. 
+
+Best Regards,
+
+ED MANRIQUE
+VIDEO + MOTION GRAPHICS + ANIMATION
+www.edman.tv | CELL 305.432.2760
+
+If you wish to be removed please reply with "OPT-OUT" in the subject
+<http://web.mailseguros.com.ar/remover.asp?il=edmantv1> 
 
 
-Stack of allocation (obtained with KEDR, which is also used for fault 
-simulation):
+------=_NextPart_000_0140_01CF2739.940E7BB0
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-[  231.414875] [leak_check] Address: 0xffff880010dc8000, size: 24; stack 
-trace of the allocation:
-[  231.414886] [leak_check] [<ffffffffa01e9d72>] 
-set_dirty_dir_page+0x62/0xe0 [f2fs]
-[  231.414893] [leak_check] [<ffffffffa01ec9be>] 
-f2fs_set_data_page_dirty+0x4e/0x90 [f2fs]
-[  231.414898] [leak_check] [<ffffffff8117b02a>] set_page_dirty+0x3a/0x60
-[  231.414904] [leak_check] [<ffffffffa01dfeb2>] 
-__f2fs_add_link+0x732/0x7d0 [f2fs]
-[  231.414909] [leak_check] [<ffffffffa01e2f1b>] f2fs_mkdir+0xbb/0x150 
-[f2fs]
-[  231.414914] [leak_check] [<ffffffff811f2a37>] vfs_mkdir+0xb7/0x160
-[  231.414918] [leak_check] [<ffffffff811f367f>] SyS_mkdir+0x5f/0xc0
-[  231.414923] [leak_check] [<ffffffff81680729>] 
-system_call_fastpath+0x16/0x1b
-[  231.414931] [leak_check] [<ffffffffffffffff>] 0xffffffffffffffff
+<BODY><HTML><p>
+	<em><span =
+style=3D"font-size:7.5pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;;
+color:black">If I have sent this to the wrong e-mail address could you =
+please forward it to the appropriate person? Thank =
+you!</span></em><o:p></o:p></p>
+<u1:p></u1:p>
+<p>
+	<strong><span =
+style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;;
+color:black">Managing Director</span></strong><span =
+style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;;
+color:black">&nbsp;</span><br />
+	<span =
+style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;"><span _mce_style=3D"font-family: 'times new roman', =
+times;">I&rsquo;m a freelance producer and motion graphics designer =
+specializing in online/ web videos.&nbsp;</span></span><span =
+_mce_style=3D"font-family: 'times new roman', =
+times;"><o:p></o:p></span></p>
+<u1:p></u1:p>
+<p>
+	<span =
+style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;;color:black"><span _mce_style=3D"font-family: 'times new roman', =
+times;">See by yourself at my Video Portfolio: &nbsp;<a =
+_mce_href=3D"http://www.fullmailing.com/login/class/link.php?id=3Dtest&am=
+p;url=3DaHR0cDovL3d3dy5lZG1hbi50di9wb3J0Zm9saW8=3D" =
+href=3D"http://www.fullmailing.com/login/class/link.php?id=3Dtest&amp;url=
+=3DaHR0cDovL3d3dy5lZG1hbi50di9wb3J0Zm9saW8=3D" =
+target=3D"_blank"><strong>www.edman.tv/portfolio</strong></a></span></spa=
+n><span _mce_style=3D"font-family: 'times new roman', =
+times;"><u1:p></u1:p></span><o:p></o:p></p>
+<p>
+	<span =
+style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;;color:black">Placing video on your website and social networks will =
+improve search engine ranking results on Google and YouTube.</span><span =
+_mce_style=3D"font-family: 'times new roman', =
+times;"><u1:p></u1:p></span><o:p></o:p></p>
+<p>
+	<span =
+style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;;color:black">You can also use my videos for Trade Shows, email =
+marketing and even national TV.</span><span _mce_style=3D"font-family: =
+'times new roman', times;"><u1:p></u1:p></span><o:p></o:p></p>
+<p>
+	<span =
+style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;;color:black">Rate card available upon request.&nbsp;</span><span =
+_mce_style=3D"font-family: 'times new roman', =
+times;"><u1:p></u1:p></span><o:p></o:p></p>
+<p>
+	<span =
+style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;;color:black">Best Regards,</span><o:p></o:p></p>
+<u1:p></u1:p>
+<p>
+	<span =
+style=3D"font-size:9.0pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;;color:red"><span _mce_style=3D"font-family: arial, helvetica, =
+sans-serif; font-size: x-small;"><span _mce_style=3D"color: #ff0000;">ED =
+MANRIQUE</span></span><br />
+	<span style=3D"font-size: 9pt;"><span style=3D"color:#333333"><span =
+_mce_style=3D"color: #333333;">VIDEO + MOTION GRAPHICS + =
+ANIMATION</span></span><br />
+	<span style=3D"color:blue"><span _mce_style=3D"color: #0000ff;"><a =
+href=3D"http://www.edman.tv">www.edman.tv</a></span></span><span =
+style=3D"color:black">&nbsp;</span><span style=3D"color:#333333">| CELL =
+305.432.2760</span></span></span><span _mce_style=3D"font-family: arial, =
+helvetica, sans-serif; font-size: =
+x-small;"><u1:p></u1:p><o:p></o:p></span></p>
+<p>
+	<u2:p></u2:p><span =
+style=3D"font-size:7.5pt;font-family:&quot;Arial&quot;,&quot;sans-serif&q=
+uot;">If you wish to be removed please reply =
+with&nbsp;<strong>&quot;OPT-OUT&quot;</strong>&nbsp;in the&nbsp;<a =
+href=3D"http://web.mailseguros.com.ar/remover.asp?il=3Dedmantv1">subject<=
+/a></span><u3:p></u3:p><u1:p></u1:p><o:p></o:p></p>
+
+<DIV align=3Dcenter><FONT face=3DArial size=3D1><STRONG><A=20
+href=3D"http://web.enviodemails.com/remover.asp?il=3Dedmantv1&amp;email=3D)*0*!">Click aqu=ED =
+para Removerse=20
+de forma&nbsp;Autom=E1tica y Permanente</A><BR><BR>
+El presente E-Mail ha sido=20
+enviado a trav=E9s del Sistema </STRONG></FONT><A=20
+href=3D"http://www.EnvioDeMails.com"><FONT face=3DArial=20
+size=3D1>www . <STRONG>E n v i o D e M a i l s</STRONG> . com</FONT></A><BR><STRONG><FON=
+T=20
+face=3DArial size=3D1>La forma m=E1s sencilla de enviar miles de E-Mail =
+en cuesti=F3n de=20
+minutos de forma segura y eficaz</FONT></STRONG></DIV>
+</BODY></HTML>
+------=_NextPart_000_0140_01CF2739.940E7BB0--
 
 
-P.S. It was required to add 'slub_debug' kernel options for make SLUB 
-output correct cache name,
-otherwise cache "f2fs_dirty_dir_entry" was merged into "free_nid" one. 
-It was surprise for me,
-that's why patch investigation took so long time.
 
--- 
-Best regards,
-Andrey Tsyvarev
-Linux Verification Center, ISPRAS
-web:http://linuxtesting.org
-
+--===============5852648139267994417==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Android apps run on BlackBerry 10
@@ -144,3 +187,15 @@ Introducing the new BlackBerry 10.2.1 Runtime for Android apps.
 Now with support for Jelly Bean, Bluetooth, Mapview and more.
 Get your Android app in front of a whole new audience.  Start now.
 http://pubads.g.doubleclick.net/gampad/clk?id=124407151&iu=/4140/ostg.clktrk
+--===============5852648139267994417==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============5852648139267994417==--
