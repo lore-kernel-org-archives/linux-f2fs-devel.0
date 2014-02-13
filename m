@@ -1,27 +1,27 @@
-From: Andrey Tsyvarev <tsyvarev@ispras.ru>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
 Subject: Re: f2fs: f2fs unmount hangs if f2fs_init_acl() fails
  during mkdir syscall
-Date: Thu, 13 Feb 2014 13:40:37 +0400
-Message-ID: <52FC9315.2090707@ispras.ru>
+Date: Thu, 13 Feb 2014 17:48:00 +0800
+Message-ID: <52FC94D0.2050705@cn.fujitsu.com>
 References: <52F320FC.50803@ispras.ru> <1391666564.25542.78.camel@kjgkr>
 	<52F37D67.208@ispras.ru> <1391734185.25542.80.camel@kjgkr>
 	<1391749933.25542.83.camel@kjgkr> <52F9DF85.7040402@ispras.ru>
-	<52FC832F.6000103@cn.fujitsu.com>
+	<52FC832F.6000103@cn.fujitsu.com> <52FC9315.2090707@ispras.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tsyvarev@ispras.ru>) id 1WDsml-0000Jb-1J
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1WDt1y-0003JH-JC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Feb 2014 09:40:47 +0000
-Received: from smtp.ispras.ru ([83.149.199.79])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WDsmj-0005oK-2L for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Feb 2014 09:40:46 +0000
-In-Reply-To: <52FC832F.6000103@cn.fujitsu.com>
+	Thu, 13 Feb 2014 09:56:30 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WDt1x-0008Rm-2G for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 13 Feb 2014 09:56:30 +0000
+In-Reply-To: <52FC9315.2090707@ispras.ru>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,36 +31,37 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Gu Zheng <guz.fnst@cn.fujitsu.com>
+To: Andrey Tsyvarev <tsyvarev@ispras.ru>
 Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
 Hi,
+On 02/13/2014 05:40 PM, Andrey Tsyvarev wrote:
 
-> BTW, have you tested the case that added remove_dirty_dir_inode() into the fail path
-> of init_inode_metadata?
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index e095a4f..d5a2c9e 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -375,6 +375,7 @@ put_error:
->          /* once the failed inode becomes a bad inode, i_mode is S_IFREG */
->          truncate_inode_pages(&inode->i_data, 0);
->          truncate_blocks(inode, 0);
-> +       remove_dirty_dir_inode(inode);
->   error:
->          remove_inode_page(inode);
->          return ERR_PTR(err);
-Yes, i have tested that case. Fail in init_inode_metadata has been 
-processed correctly. Thanks.
+> Hi,
+> 
+>> BTW, have you tested the case that added remove_dirty_dir_inode() into the fail path
+>> of init_inode_metadata?
+>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+>> index e095a4f..d5a2c9e 100644
+>> --- a/fs/f2fs/dir.c
+>> +++ b/fs/f2fs/dir.c
+>> @@ -375,6 +375,7 @@ put_error:
+>>          /* once the failed inode becomes a bad inode, i_mode is S_IFREG */
+>>          truncate_inode_pages(&inode->i_data, 0);
+>>          truncate_blocks(inode, 0);
+>> +       remove_dirty_dir_inode(inode);
+>>   error:
+>>          remove_inode_page(inode);
+>>          return ERR_PTR(err);
+> Yes, i have tested that case. Fail in init_inode_metadata has been processed correctly. Thanks.
 
--- 
-Best regards,
+If no other regressions, maybe you can send out the fix patch about this issue.:)
 
-Andrey Tsyvarev
+Thanks,
+Gu
 
-Linux Verification Center, ISPRAS
+> 
 
-web:http://linuxtesting.org
 
 
 ------------------------------------------------------------------------------
