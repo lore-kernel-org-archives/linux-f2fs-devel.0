@@ -1,31 +1,26 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: [PATCH 2/2] f2fstat: add nat caches and free nids
-Date: Thu, 13 Feb 2014 15:13:23 +0900
-Message-ID: <1392272003-12324-2-git-send-email-cm224.lee@samsung.com>
-References: <1392272003-12324-1-git-send-email-cm224.lee@samsung.com>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: Re: f2fs: f2fs unmount hangs if f2fs_init_acl() fails
+ during mkdir syscall
+Date: Thu, 13 Feb 2014 16:32:47 +0800
+Message-ID: <52FC832F.6000103@cn.fujitsu.com>
+References: <52F320FC.50803@ispras.ru> <1391666564.25542.78.camel@kjgkr>
+	<52F37D67.208@ispras.ru> <1391734185.25542.80.camel@kjgkr>
+	<1391749933.25542.83.camel@kjgkr> <52F9DF85.7040402@ispras.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cm224.lee@samsung.com>) id 1WDpZt-0000Mf-DH
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1WDrrE-0003oE-Pt
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Feb 2014 06:15:17 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WDpZq-0002Il-GX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Feb 2014 06:15:17 +0000
-Received: from epcpsbgr1.samsung.com
-	(u141.gpu120.samsung.co.kr [203.254.230.141])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N0X002K5817QTC0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Feb 2014 15:15:07 +0900 (KST)
-In-reply-to: <1392272003-12324-1-git-send-email-cm224.lee@samsung.com>
+	Thu, 13 Feb 2014 08:41:20 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WDrrC-0006nD-J8 for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 13 Feb 2014 08:41:20 +0000
+In-Reply-To: <52F9DF85.7040402@ispras.ru>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,55 +30,107 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-This patch shows nat caches and free nids using f2fs.
+Hi Andrey,
+On 02/11/2014 04:29 PM, Andrey Tsyvarev wrote:
 
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>
----
- tools/f2fstat.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+> Hi,
+> 
+>> It turns out that make_bad_inode prior to iput sets i_mode to a regular
+>> file, so that f2fs_evict_inode -> truncate_inode_pages ->
+>> f2fs_invalidate_data_page doesn't decrement dirty_dents.
+>>
+> It seems that remove_dirty_dir_inode() call should also be added to the error-path of
+> init_inode_metadata, because its functionality is also based on inode->i_mode field
+> which is changed by make_bad_inode().
 
-diff --git a/tools/f2fstat.c b/tools/f2fstat.c
-index 73ad457..c9c1d30 100644
---- a/tools/f2fstat.c
-+++ b/tools/f2fstat.c
-@@ -97,6 +97,7 @@ void f2fstat(struct options *opt)
- 		{ "  - SITs",		&dirty_sit,		0 },
- 		{ "  - Valid",		&valid_segs,		0 },
- 		{ "  - dents",		&dirty_dents,		0 },
-+		{ "  - free_nids",	&free_nids,		0 },
- 		{ "  - meta",		&dirty_meta,		KEY_META },
- 		{ "  - nodes",		&dirty_node,		KEY_NODE },
- 		{ "CP calls",		&cp,			0 },
-@@ -213,13 +214,13 @@ void parse_option(int argc, char *argv[], struct options *opt)
- 
- void print_head(void)
- {
--	fprintf(stderr, "---utilization--- -----------main area-------- ---balancing async-- -gc- ---alloc--- -----memory-----\n");
--	fprintf(stderr, "util  node   data   free  valid  dirty prefree node  dent meta sit  cp   gc    ssr    lfs  total  node  meta\n");
-+	fprintf(stderr, "---utilization--- -----------main area-------- ---------balancing async------- ---gc--- ---alloc--- -----memory-----\n");
-+	fprintf(stderr, "util  node   data   free  valid  dirty prefree node  dent meta  sit   nat fnid  cp   gc    ssr    lfs  total  node  meta\n");
- }
- 
- int main(int argc, char *argv[])
- {
--	char format[] = "%3ld %6ld %6ld %6ld %6ld %6ld %6ld %5ld %5ld %3ld %3ld %3ld %5ld %6ld %6ld %6ld %6ld %6ld\n";
-+	char format[] = "%3ld %6ld %6ld %6ld %6ld %6ld %6ld %5ld %5ld %3ld %5ld %5ld %3ld %3ld %3ld %6ld %6ld %6ld %6ld %6ld\n";
- 	int head_interval;
- 	struct options opt = {
- 		.delay = 1,
-@@ -241,7 +242,7 @@ int main(int argc, char *argv[])
- 
- 		fprintf(stderr, format, util, used_node_blks, used_data_blks,
- 			free_segs, valid_segs, dirty_segs, prefree_segs,
--			dirty_node, dirty_dents, dirty_meta, dirty_sit,
-+			dirty_node, dirty_dents, dirty_meta, dirty_sit, nat_caches, free_nids,
- 			cp, gc, ssr_blks, lfs_blks, memory_kb, node_kb, meta_kb);
- 
- 		sleep(opt.delay);
--- 
-1.7.10.4
+It seems that your opinion is correct. remove_dirty_dir_inode() will not clean up the 
+dir_inode_entry because make_bad_inode() sets i_mode to S_IFREG in the fail path of
+init_inode_metadata, and it leads to the following "memory leak".
+
+BTW, have you tested the case that added remove_dirty_dir_inode() into the fail path
+of init_inode_metadata?
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index e095a4f..d5a2c9e 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -375,6 +375,7 @@ put_error:
+        /* once the failed inode becomes a bad inode, i_mode is S_IFREG */
+        truncate_inode_pages(&inode->i_data, 0);
+        truncate_blocks(inode, 0);
++       remove_dirty_dir_inode(inode);
+ error:
+        remove_inode_page(inode);
+        return ERR_PTR(err);
+
+Regards,
+Gu
+
+> 
+> Otherwise memory leak is reported when f2fs module is unloaded:
+> 
+> [  231.378192] BUG f2fs_dirty_dir_entry (Tainted: GF          O): Objects remaining in f2fs_dirty_dir_entry on kmem_cache_close()
+> [  231.378193] -----------------------------------------------------------------------------
+> 
+> [  231.378194] Disabling lock debugging due to kernel taint
+> [  231.378195] INFO: Slab 0xffffea0000437200 objects=102 used=1 fp=0xffff880010dc8fc8 flags=0x3fffc000000080
+> [  231.378197] CPU: 0 PID: 2605 Comm: rmmod Tainted: GF   B      O 3.14.0-rc1fs #4
+> [  231.378198] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+> [  231.378199]  ffff88000e5e3200 ffff88000cc9bd40 ffffffff8166fd7e ffffea0000437200
+> [  231.378202]  ffff88000cc9be28 ffffffff811c3fdf ffff88003fc10066 ffffffff0cc9bda0
+> [  231.378203]  ffffffff00000020 ffff88000cc9be38 ffff88000cc9bde0 656a624f00000296
+> [  231.378205] Call Trace:
+> [  231.378210]  [<ffffffff8166fd7e>] dump_stack+0x45/0x56
+> [  231.378213]  [<ffffffff811c3fdf>] slab_err+0xaf/0xc0
+> [  231.378215]  [<ffffffff811c84a3>] ? kmem_cache_close+0x133/0x340
+> [  231.378216]  [<ffffffff811c6b55>] ? __kmalloc+0x1f5/0x250
+> [  231.378218]  [<ffffffff811c84c3>] kmem_cache_close+0x153/0x340
+> [  231.378221]  [<ffffffff81193417>] ? kmem_cache_destroy+0x27/0xf0
+> [  231.378223]  [<ffffffff811c86c4>] __kmem_cache_shutdown+0x14/0x80
+> [  231.378224]  [<ffffffff81193431>] kmem_cache_destroy+0x41/0xf0
+> [  231.378229]  [<ffffffffa01eab91>] destroy_checkpoint_caches+0x21/0x30 [f2fs]
+> [  231.378232]  [<ffffffffa01facda>] exit_f2fs_fs+0x28/0x34e [f2fs]
+> [  231.378235]  [<ffffffff810ffe32>] SyS_delete_module+0x152/0x1f0
+> [  231.378237]  [<ffffffff8111d85c>] ? __audit_syscall_entry+0x9c/0xf0
+> [  231.378239]  [<ffffffff81680729>] system_call_fastpath+0x16/0x1b
+> [  231.378242] INFO: Object 0xffff880010dc8000 @offset=0
+> [  231.378245] kmem_cache_destroy f2fs_dirty_dir_entry: Slab cache still has objects
+> [  231.378247] CPU: 0 PID: 2605 Comm: rmmod Tainted: GF   B      O 3.14.0-rc1fs #4
+> [  231.378247] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+> [  231.378248]  ffff88000e5e3268 ffff88000cc9beb8 ffffffff8166fd7e ffff88000e5e3200
+> [  231.378250]  ffff88000cc9bed8 ffffffff811934cf 0000000000000000 ffffffffa0204f60
+> [  231.378251]  ffff88000cc9bee8 ffffffffa01eab91 ffff88000cc9bef8 ffffffffa01facda
+> [  231.378253] Call Trace:
+> [  231.378255]  [<ffffffff8166fd7e>] dump_stack+0x45/0x56
+> [  231.378256]  [<ffffffff811934cf>] kmem_cache_destroy+0xdf/0xf0
+> [  231.378259]  [<ffffffffa01eab91>] destroy_checkpoint_caches+0x21/0x30 [f2fs]
+> [  231.378262]  [<ffffffffa01facda>] exit_f2fs_fs+0x28/0x34e [f2fs]
+> [  231.378263]  [<ffffffff810ffe32>] SyS_delete_module+0x152/0x1f0
+> [  231.378265]  [<ffffffff8111d85c>] ? __audit_syscall_entry+0x9c/0xf0
+> [  231.378266]  [<ffffffff81680729>] system_call_fastpath+0x16/0x1b
+> 
+> 
+> Stack of allocation (obtained with KEDR, which is also used for fault simulation):
+> 
+> [  231.414875] [leak_check] Address: 0xffff880010dc8000, size: 24; stack trace of the allocation:
+> [  231.414886] [leak_check] [<ffffffffa01e9d72>] set_dirty_dir_page+0x62/0xe0 [f2fs]
+> [  231.414893] [leak_check] [<ffffffffa01ec9be>] f2fs_set_data_page_dirty+0x4e/0x90 [f2fs]
+> [  231.414898] [leak_check] [<ffffffff8117b02a>] set_page_dirty+0x3a/0x60
+> [  231.414904] [leak_check] [<ffffffffa01dfeb2>] __f2fs_add_link+0x732/0x7d0 [f2fs]
+> [  231.414909] [leak_check] [<ffffffffa01e2f1b>] f2fs_mkdir+0xbb/0x150 [f2fs]
+> [  231.414914] [leak_check] [<ffffffff811f2a37>] vfs_mkdir+0xb7/0x160
+> [  231.414918] [leak_check] [<ffffffff811f367f>] SyS_mkdir+0x5f/0xc0
+> [  231.414923] [leak_check] [<ffffffff81680729>] system_call_fastpath+0x16/0x1b
+> [  231.414931] [leak_check] [<ffffffffffffffff>] 0xffffffffffffffff
+> 
+> 
+> P.S. It was required to add 'slub_debug' kernel options for make SLUB output correct cache name,
+> otherwise cache "f2fs_dirty_dir_entry" was merged into "free_nid" one. It was surprise for me,
+> that's why patch investigation took so long time.
+> 
+
 
 
 ------------------------------------------------------------------------------
