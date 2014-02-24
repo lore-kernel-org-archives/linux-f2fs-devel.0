@@ -1,8 +1,8 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 2/2] f2fs: implement a lock-free stat_show
-Date: Mon, 24 Feb 2014 16:18:04 +0900
-Message-ID: <1393226284-22447-2-git-send-email-jaegeuk.kim@samsung.com>
-References: <1393226284-22447-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 1/2] f2fs: introduce a radix_tree for the
+	free_nid list
+Date: Mon, 24 Feb 2014 16:18:03 +0900
+Message-ID: <1393226284-22447-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,22 +10,21 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WHppR-0003Hs-NP
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WHppP-0003HR-Bg
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Feb 2014 07:19:53 +0000
+	Mon, 24 Feb 2014 07:19:51 +0000
 Received: from mailout1.samsung.com ([203.254.224.24])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WHppP-00019q-Hf
+	(Exim 4.76) id 1WHppL-00019q-No
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Feb 2014 07:19:53 +0000
-Received: from epcpsbgr1.samsung.com
-	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	Mon, 24 Feb 2014 07:19:51 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
 	by mailout1.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N1H00HI8OCSCU30@mailout1.samsung.com> for
+	with ESMTP id <0N1H00GDZOCSX740@mailout1.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
 	Mon, 24 Feb 2014 16:19:40 +0900 (KST)
-In-reply-to: <1393226284-22447-1-git-send-email-jaegeuk.kim@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,136 +36,132 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-The stat_show is just to show the current status of f2fs.
-So, we can remove all the there-in locks.
+This patch introduces a radix tree for the list of free_nids, which enhances
+the performance on free nid management.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/debug.c   |  3 ---
- fs/f2fs/f2fs.h    | 18 +++---------------
- fs/f2fs/segment.h | 27 +++------------------------
- 3 files changed, 6 insertions(+), 42 deletions(-)
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/node.c | 36 +++++++++++++++++-------------------
+ 2 files changed, 18 insertions(+), 19 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 46a12e4..b7111c4 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -86,7 +86,6 @@ static void update_sit_info(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_stat_info *si = F2FS_STAT(sbi);
- 	unsigned int blks_per_sec, hblks_per_sec, total_vblocks, bimodal, dist;
--	struct sit_info *sit_i = SIT_I(sbi);
- 	unsigned int segno, vblocks;
- 	int ndirty = 0;
- 
-@@ -94,7 +93,6 @@ static void update_sit_info(struct f2fs_sb_info *sbi)
- 	total_vblocks = 0;
- 	blks_per_sec = sbi->segs_per_sec * (1 << sbi->log_blocks_per_seg);
- 	hblks_per_sec = blks_per_sec / 2;
--	mutex_lock(&sit_i->sentry_lock);
- 	for (segno = 0; segno < TOTAL_SEGS(sbi); segno += sbi->segs_per_sec) {
- 		vblocks = get_valid_blocks(sbi, segno, sbi->segs_per_sec);
- 		dist = abs(vblocks - hblks_per_sec);
-@@ -105,7 +103,6 @@ static void update_sit_info(struct f2fs_sb_info *sbi)
- 			ndirty++;
- 		}
- 	}
--	mutex_unlock(&sit_i->sentry_lock);
- 	dist = TOTAL_SECS(sbi) * hblks_per_sec * hblks_per_sec / 100;
- 	si->bimodal = bimodal / dist;
- 	if (si->dirty_count)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 11fd8be..4beedcc 100644
+index c56e67b..11fd8be 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -704,11 +704,7 @@ static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
+@@ -247,6 +247,7 @@ struct f2fs_nm_info {
+ 	struct list_head dirty_nat_entries; /* cached nat entry list (dirty) */
  
- static inline block_t valid_user_blocks(struct f2fs_sb_info *sbi)
+ 	/* free node ids management */
++	struct radix_tree_root free_nid_root;/* root of the free_nid cache */
+ 	struct list_head free_nid_list;	/* a list for free nids */
+ 	spinlock_t free_nid_list_lock;	/* protect free nid list */
+ 	unsigned int fcnt;		/* the number of free node id */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 431bcb4..1f9cf21 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1269,21 +1269,17 @@ const struct address_space_operations f2fs_node_aops = {
+ 	.releasepage	= f2fs_release_node_page,
+ };
+ 
+-static struct free_nid *__lookup_free_nid_list(nid_t n, struct list_head *head)
++static struct free_nid *__lookup_free_nid_list(struct f2fs_nm_info *nm_i,
++						nid_t n)
  {
--	block_t ret;
--	spin_lock(&sbi->stat_lock);
--	ret = sbi->total_valid_block_count;
--	spin_unlock(&sbi->stat_lock);
--	return ret;
-+	return sbi->total_valid_block_count;
+-	struct list_head *this;
+-	struct free_nid *i;
+-	list_for_each(this, head) {
+-		i = list_entry(this, struct free_nid, list);
+-		if (i->nid == n)
+-			return i;
+-	}
+-	return NULL;
++	return radix_tree_lookup(&nm_i->free_nid_root, n);
  }
  
- static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
-@@ -804,11 +800,7 @@ static inline void dec_valid_node_count(struct f2fs_sb_info *sbi,
- 
- static inline unsigned int valid_node_count(struct f2fs_sb_info *sbi)
+-static void __del_from_free_nid_list(struct free_nid *i)
++static void __del_from_free_nid_list(struct f2fs_nm_info *nm_i,
++						struct free_nid *i)
  {
--	unsigned int ret;
--	spin_lock(&sbi->stat_lock);
--	ret = sbi->total_valid_node_count;
--	spin_unlock(&sbi->stat_lock);
--	return ret;
-+	return sbi->total_valid_node_count;
+ 	list_del(&i->list);
++	radix_tree_delete(&nm_i->free_nid_root, i->nid);
+ 	kmem_cache_free(free_nid_slab, i);
  }
  
- static inline void inc_valid_inode_count(struct f2fs_sb_info *sbi)
-@@ -829,11 +821,7 @@ static inline void dec_valid_inode_count(struct f2fs_sb_info *sbi)
+@@ -1304,7 +1300,8 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build)
+ 		/* do not add allocated nids */
+ 		read_lock(&nm_i->nat_tree_lock);
+ 		ne = __lookup_nat_cache(nm_i, nid);
+-		if (ne && nat_get_blkaddr(ne) != NULL_ADDR)
++		if (ne &&
++			(!ne->checkpointed || nat_get_blkaddr(ne) != NULL_ADDR))
+ 			allocated = true;
+ 		read_unlock(&nm_i->nat_tree_lock);
+ 		if (allocated)
+@@ -1316,7 +1313,7 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build)
+ 	i->state = NID_NEW;
  
- static inline unsigned int valid_inode_count(struct f2fs_sb_info *sbi)
+ 	spin_lock(&nm_i->free_nid_list_lock);
+-	if (__lookup_free_nid_list(nid, &nm_i->free_nid_list)) {
++	if (radix_tree_insert(&nm_i->free_nid_root, i->nid, i)) {
+ 		spin_unlock(&nm_i->free_nid_list_lock);
+ 		kmem_cache_free(free_nid_slab, i);
+ 		return 0;
+@@ -1331,9 +1328,9 @@ static void remove_free_nid(struct f2fs_nm_info *nm_i, nid_t nid)
  {
--	unsigned int ret;
--	spin_lock(&sbi->stat_lock);
--	ret = sbi->total_valid_inode_count;
--	spin_unlock(&sbi->stat_lock);
--	return ret;
-+	return sbi->total_valid_inode_count;
+ 	struct free_nid *i;
+ 	spin_lock(&nm_i->free_nid_list_lock);
+-	i = __lookup_free_nid_list(nid, &nm_i->free_nid_list);
++	i = __lookup_free_nid_list(nm_i, nid);
+ 	if (i && i->state == NID_NEW) {
+-		__del_from_free_nid_list(i);
++		__del_from_free_nid_list(nm_i, i);
+ 		nm_i->fcnt--;
+ 	}
+ 	spin_unlock(&nm_i->free_nid_list_lock);
+@@ -1457,9 +1454,9 @@ void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid)
+ 	struct free_nid *i;
+ 
+ 	spin_lock(&nm_i->free_nid_list_lock);
+-	i = __lookup_free_nid_list(nid, &nm_i->free_nid_list);
++	i = __lookup_free_nid_list(nm_i, nid);
+ 	f2fs_bug_on(!i || i->state != NID_ALLOC);
+-	__del_from_free_nid_list(i);
++	__del_from_free_nid_list(nm_i, i);
+ 	spin_unlock(&nm_i->free_nid_list_lock);
  }
  
- static inline void f2fs_put_page(struct page *page, int unlock)
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 4024546..c3d5e36 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -380,26 +380,12 @@ static inline void get_sit_bitmap(struct f2fs_sb_info *sbi,
+@@ -1475,10 +1472,10 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
+ 		return;
  
- static inline block_t written_block_count(struct f2fs_sb_info *sbi)
- {
--	struct sit_info *sit_i = SIT_I(sbi);
--	block_t vblocks;
--
--	mutex_lock(&sit_i->sentry_lock);
--	vblocks = sit_i->written_valid_blocks;
--	mutex_unlock(&sit_i->sentry_lock);
--
--	return vblocks;
-+	return SIT_I(sbi)->written_valid_blocks;
- }
+ 	spin_lock(&nm_i->free_nid_list_lock);
+-	i = __lookup_free_nid_list(nid, &nm_i->free_nid_list);
++	i = __lookup_free_nid_list(nm_i, nid);
+ 	f2fs_bug_on(!i || i->state != NID_ALLOC);
+ 	if (nm_i->fcnt > 2 * MAX_FREE_NIDS) {
+-		__del_from_free_nid_list(i);
++		__del_from_free_nid_list(nm_i, i);
+ 	} else {
+ 		i->state = NID_NEW;
+ 		nm_i->fcnt++;
+@@ -1812,6 +1809,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+ 	nm_i->fcnt = 0;
+ 	nm_i->nat_cnt = 0;
  
- static inline unsigned int free_segments(struct f2fs_sb_info *sbi)
- {
--	struct free_segmap_info *free_i = FREE_I(sbi);
--	unsigned int free_segs;
--
--	read_lock(&free_i->segmap_lock);
--	free_segs = free_i->free_segments;
--	read_unlock(&free_i->segmap_lock);
--
--	return free_segs;
-+	return FREE_I(sbi)->free_segments;
- }
- 
- static inline int reserved_segments(struct f2fs_sb_info *sbi)
-@@ -409,14 +395,7 @@ static inline int reserved_segments(struct f2fs_sb_info *sbi)
- 
- static inline unsigned int free_sections(struct f2fs_sb_info *sbi)
- {
--	struct free_segmap_info *free_i = FREE_I(sbi);
--	unsigned int free_secs;
--
--	read_lock(&free_i->segmap_lock);
--	free_secs = free_i->free_sections;
--	read_unlock(&free_i->segmap_lock);
--
--	return free_secs;
-+	return FREE_I(sbi)->free_sections;
- }
- 
- static inline unsigned int prefree_segments(struct f2fs_sb_info *sbi)
++	INIT_RADIX_TREE(&nm_i->free_nid_root, GFP_ATOMIC);
+ 	INIT_LIST_HEAD(&nm_i->free_nid_list);
+ 	INIT_RADIX_TREE(&nm_i->nat_root, GFP_ATOMIC);
+ 	INIT_LIST_HEAD(&nm_i->nat_entries);
+@@ -1865,7 +1863,7 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
+ 	spin_lock(&nm_i->free_nid_list_lock);
+ 	list_for_each_entry_safe(i, next_i, &nm_i->free_nid_list, list) {
+ 		f2fs_bug_on(i->state == NID_ALLOC);
+-		__del_from_free_nid_list(i);
++		__del_from_free_nid_list(nm_i, i);
+ 		nm_i->fcnt--;
+ 	}
+ 	f2fs_bug_on(nm_i->fcnt);
 -- 
 1.8.4.474.g128a96c
 
