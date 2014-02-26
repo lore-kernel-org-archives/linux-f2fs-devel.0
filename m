@@ -1,30 +1,21 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 1/2] f2fs: introduce a radix_tree for the
-	free_nid list
-Date: Mon, 24 Feb 2014 16:18:03 +0900
-Message-ID: <1393226284-22447-1-git-send-email-jaegeuk.kim@samsung.com>
+From: Apple <Service@home-id.apple>
+Subject: [SPAM] We inform you that your account is about to
+	expire in less than 48 hours
+Date: Wed, 26 Feb 2014 23:21:42 +0400 (MSK)
+Message-ID: <20140226192329.02A631EF461@debian-6-64-isplite.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============2486115786877642471=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WHppP-0003HR-Bg
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <webmaster@aleksandrdepas.ru>) id 1WIlFa-0005MK-Mo
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Feb 2014 07:19:51 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WHppL-00019q-No
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Feb 2014 07:19:51 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N1H00GDZOCSX740@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Feb 2014 16:19:40 +0900 (KST)
+	Wed, 26 Feb 2014 20:38:42 +0000
+Received: from [159.253.19.254] (helo=debian-6-64-isplite.ru)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WIlFZ-0006mk-HB for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 26 Feb 2014 20:38:42 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,137 +25,130 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-This patch introduces a radix tree for the list of free_nids, which enhances
-the performance on free nid management.
+--===============2486115786877642471==
+Content-type: text/html; charset=iso-8859-1
 
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/node.c | 36 +++++++++++++++++-------------------
- 2 files changed, 18 insertions(+), 19 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c56e67b..11fd8be 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -247,6 +247,7 @@ struct f2fs_nm_info {
- 	struct list_head dirty_nat_entries; /* cached nat entry list (dirty) */
- 
- 	/* free node ids management */
-+	struct radix_tree_root free_nid_root;/* root of the free_nid cache */
- 	struct list_head free_nid_list;	/* a list for free nids */
- 	spinlock_t free_nid_list_lock;	/* protect free nid list */
- 	unsigned int fcnt;		/* the number of free node id */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 431bcb4..1f9cf21 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1269,21 +1269,17 @@ const struct address_space_operations f2fs_node_aops = {
- 	.releasepage	= f2fs_release_node_page,
- };
- 
--static struct free_nid *__lookup_free_nid_list(nid_t n, struct list_head *head)
-+static struct free_nid *__lookup_free_nid_list(struct f2fs_nm_info *nm_i,
-+						nid_t n)
- {
--	struct list_head *this;
--	struct free_nid *i;
--	list_for_each(this, head) {
--		i = list_entry(this, struct free_nid, list);
--		if (i->nid == n)
--			return i;
--	}
--	return NULL;
-+	return radix_tree_lookup(&nm_i->free_nid_root, n);
- }
- 
--static void __del_from_free_nid_list(struct free_nid *i)
-+static void __del_from_free_nid_list(struct f2fs_nm_info *nm_i,
-+						struct free_nid *i)
- {
- 	list_del(&i->list);
-+	radix_tree_delete(&nm_i->free_nid_root, i->nid);
- 	kmem_cache_free(free_nid_slab, i);
- }
- 
-@@ -1304,7 +1300,8 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build)
- 		/* do not add allocated nids */
- 		read_lock(&nm_i->nat_tree_lock);
- 		ne = __lookup_nat_cache(nm_i, nid);
--		if (ne && nat_get_blkaddr(ne) != NULL_ADDR)
-+		if (ne &&
-+			(!ne->checkpointed || nat_get_blkaddr(ne) != NULL_ADDR))
- 			allocated = true;
- 		read_unlock(&nm_i->nat_tree_lock);
- 		if (allocated)
-@@ -1316,7 +1313,7 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build)
- 	i->state = NID_NEW;
- 
- 	spin_lock(&nm_i->free_nid_list_lock);
--	if (__lookup_free_nid_list(nid, &nm_i->free_nid_list)) {
-+	if (radix_tree_insert(&nm_i->free_nid_root, i->nid, i)) {
- 		spin_unlock(&nm_i->free_nid_list_lock);
- 		kmem_cache_free(free_nid_slab, i);
- 		return 0;
-@@ -1331,9 +1328,9 @@ static void remove_free_nid(struct f2fs_nm_info *nm_i, nid_t nid)
- {
- 	struct free_nid *i;
- 	spin_lock(&nm_i->free_nid_list_lock);
--	i = __lookup_free_nid_list(nid, &nm_i->free_nid_list);
-+	i = __lookup_free_nid_list(nm_i, nid);
- 	if (i && i->state == NID_NEW) {
--		__del_from_free_nid_list(i);
-+		__del_from_free_nid_list(nm_i, i);
- 		nm_i->fcnt--;
- 	}
- 	spin_unlock(&nm_i->free_nid_list_lock);
-@@ -1457,9 +1454,9 @@ void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid)
- 	struct free_nid *i;
- 
- 	spin_lock(&nm_i->free_nid_list_lock);
--	i = __lookup_free_nid_list(nid, &nm_i->free_nid_list);
-+	i = __lookup_free_nid_list(nm_i, nid);
- 	f2fs_bug_on(!i || i->state != NID_ALLOC);
--	__del_from_free_nid_list(i);
-+	__del_from_free_nid_list(nm_i, i);
- 	spin_unlock(&nm_i->free_nid_list_lock);
- }
- 
-@@ -1475,10 +1472,10 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
- 		return;
- 
- 	spin_lock(&nm_i->free_nid_list_lock);
--	i = __lookup_free_nid_list(nid, &nm_i->free_nid_list);
-+	i = __lookup_free_nid_list(nm_i, nid);
- 	f2fs_bug_on(!i || i->state != NID_ALLOC);
- 	if (nm_i->fcnt > 2 * MAX_FREE_NIDS) {
--		__del_from_free_nid_list(i);
-+		__del_from_free_nid_list(nm_i, i);
- 	} else {
- 		i->state = NID_NEW;
- 		nm_i->fcnt++;
-@@ -1812,6 +1809,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	nm_i->fcnt = 0;
- 	nm_i->nat_cnt = 0;
- 
-+	INIT_RADIX_TREE(&nm_i->free_nid_root, GFP_ATOMIC);
- 	INIT_LIST_HEAD(&nm_i->free_nid_list);
- 	INIT_RADIX_TREE(&nm_i->nat_root, GFP_ATOMIC);
- 	INIT_LIST_HEAD(&nm_i->nat_entries);
-@@ -1865,7 +1863,7 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
- 	spin_lock(&nm_i->free_nid_list_lock);
- 	list_for_each_entry_safe(i, next_i, &nm_i->free_nid_list, list) {
- 		f2fs_bug_on(i->state == NID_ALLOC);
--		__del_from_free_nid_list(i);
-+		__del_from_free_nid_list(nm_i, i);
- 		nm_i->fcnt--;
- 	}
- 	f2fs_bug_on(nm_i->fcnt);
--- 
-1.8.4.474.g128a96c
+<html>
 
+	<head>
+
+		<title>HTML Online Editor Sample</title>
+
+	</head>
+
+	<body>
+
+		<table align="center" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2151" style="padding: 0px; font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 13px; margin: 0px auto;" width="648">
+
+			<tbody id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2150" style="width: 648px;">
+
+				<tr id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2149">
+
+					<td id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2148" style="border-spacing: 2px;">
+
+						<img alt="" border="0" height="122" id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2147" src="http://images.apple.com/dm/misc/notification1/top.gif" style="border: 0px; display: block; margin: 0px;" width="648" /></td>
+
+				</tr>
+
+			</tbody>
+
+		</table>
+
+		<table align="center" border="0" cellpadding="0" cellspacing="0" id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2160" style="padding: 0px; font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 13px; margin: 0px auto; background-color: rgb(241, 241, 241);" width="630">
+
+			<tbody id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2159" style="width: 630px;">
+
+				<tr id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2158">
+
+					<td id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2157" style="border-spacing: 2px;">
+
+						<table align="center" border="0" cellpadding="0" cellspacing="0" id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2156" style="padding: 0px; margin: 0px auto;" width="490">
+
+							<tbody id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2155" style="width: 490px;">
+
+								<tr id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2154">
+
+									<td align="left" id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2153" style="border-spacing: 2px; padding: 0px 0px 22px;" width="490">
+
+										<div id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2152" style="font-family: 'Lucida Grande', 'Lucida Sans', 'Lucida Sans Unicode', Arial, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); font-size: 12px; line-height: 1.25em;">
+
+											<span id="yiv8615150193yui_3_13_0_ym1_1_1391069170056_2051" style="font-weight: bold;">Dear (e) client (e),</span><br />
+
+											<br />
+
+											We inform you that your account is about to expire in less than 48 hours, it is imperative to conduct an audit of your information for now, otherwise your account will be destroyed. Just click the link below and craft a session using your Apple ID and password. .<br />
+
+											<br />
+
+											<a class="yiv8615150193aapl-link" href="http://fbimagecontest.com/cg/ds/fi/id/update-apple/APPLE/" rel="nofollow" style="text-decoration: none; margin: 0px; padding: 0px; background-color: rgba(0, 0, 0, 0); color: rgb(0, 136, 204); outline: none; background-position: initial initial; background-repeat: initial initial;" target="_blank">Check now></a><br />
+
+											<br />
+
+											<b id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2161">why this electronic courier you he was sent ? The sending of this email applies when the expiration date of your account expires. For more information, see Questions and Answers. thank you,Assistance to Apple customers .</b><br />
+
+											<br />
+
+											 </div>
+
+									</td>
+
+								</tr>
+
+							</tbody>
+
+						</table>
+
+					</td>
+
+				</tr>
+
+				<tr id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2163">
+
+					<td id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2162" style="border-spacing: 2px; padding-top: 101px;">
+
+						<img alt="" border="0" height="21" id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2164" src="http://images.apple.com/dm/misc/notification1/btm.gif" style="border: 0px; display: block; margin: 0px;" width="630" /></td>
+
+				</tr>
+
+			</tbody>
+
+		</table>
+
+		<p id="yui_3_13_0_ym1_1_1391155387809_2232" style="padding: 0px; margin: 0px; font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 13px; background-color: rgb(255, 255, 255);">
+
+			 </p>
+
+		<table align="center" border="0" cellpadding="0" cellspacing="0" id="yiv8615150193aapl-footer" style="padding: 0px; font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 13px; background-color: rgb(255, 255, 255); margin: 0px auto;" width="490">
+
+			<tbody id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2169" style="width: 490px;">
+
+				<tr id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2168">
+
+					<td id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2167" style="border-spacing: 2px; padding: 10px 20px 10px 0px;">
+
+						<div id="yiv8615150193yui_3_13_0_ym1_1_1390552280437_2166" style="font-family: Geneva, Verdana, Arial, Helvetica, sans-serif; font-size: 9px; line-height: 1.34em; color: rgb(153, 153, 153);">
+
+							                                                  copyright 2014 <a rel="nofollow" style="text-decoration: underline; margin: 0px; padding: 0px; background-color: rgba(0, 0, 0, 0); color: rgb(25, 106, 212); outline: none; background-position: initial initial; background-repeat: initial initial;">Apple</a> Inc.</div>
+
+					</td>
+
+				</tr>
+
+			</tbody>
+
+		</table></body>
+
+</html>
+
+
+--===============2486115786877642471==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Flow-based real-time traffic analytics software. Cisco certified tool.
@@ -172,3 +156,15 @@ Monitor traffic, SLAs, QoS, Medianet, WAAS etc. with NetFlow Analyzer
 Customize your own dashboards, set traffic alerts and generate reports.
 Network behavioral analysis & security monitoring. All-in-one tool.
 http://pubads.g.doubleclick.net/gampad/clk?id=126839071&iu=/4140/ostg.clktrk
+--===============2486115786877642471==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============2486115786877642471==--
