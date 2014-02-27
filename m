@@ -1,30 +1,26 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: use existing macro to clean up some codes
-Date: Thu, 27 Feb 2014 19:52:21 +0800
-Message-ID: <001301cf33b2$81e816a0$85b843e0$@samsung.com>
+From: Alex <hbx7d@yandex.com>
+Subject: Regression in kernel 3.14.0-rc1
+Date: Thu, 27 Feb 2014 19:02:44 +0400
+Message-ID: <174911393513364@web17j.yandex.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1WIzWr-0004XV-Jn
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <hbx7d@yandex.com>) id 1WJ2il-0007AI-2S
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 27 Feb 2014 11:53:29 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WIzWp-0000U1-L0
+	Thu, 27 Feb 2014 15:17:59 +0000
+Received: from forward15.mail.yandex.net ([95.108.130.119])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1WJ2ij-0002PD-JV
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 27 Feb 2014 11:53:29 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N1N006D4L0WE3B0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 27 Feb 2014 20:53:20 +0900 (KST)
-Content-language: zh-cn
+	Thu, 27 Feb 2014 15:17:59 +0000
+Received: from web17j.yandex.ru (web17j.yandex.ru [5.45.198.58])
+	by forward15.mail.yandex.net (Yandex) with ESMTP id 6DFAA9E1F09
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Thu, 27 Feb 2014 19:02:45 +0400 (MSK)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,58 +30,13 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: ??? <jaegeuk.kim@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-This patch use existing macro F2FS_INODE/NEXT_FREE_BLKADDR to clean up some
-codes.
+Hello,
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/f2fs.h     |    6 ++----
- fs/f2fs/recovery.c |    2 +-
- 2 files changed, 3 insertions(+), 5 deletions(-)
+After reading phoronix's f2fs benchmarks http://www.phoronix.com/scan.php?page=article&item=linux_314_ssdfs&num=2 (3rd picture) did kernel bisect and it resulted in this commit https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/commit/?id=fb5566da .
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cc0b27f..459078b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -996,8 +996,7 @@ static inline unsigned int addrs_per_inode(struct f2fs_inode_info *fi)
- 
- static inline void *inline_xattr_addr(struct page *page)
- {
--	struct f2fs_inode *ri;
--	ri = (struct f2fs_inode *)page_address(page);
-+	struct f2fs_inode *ri = F2FS_INODE(page);
- 	return (void *)&(ri->i_addr[DEF_ADDRS_PER_INODE -
- 					F2FS_INLINE_XATTR_ADDRS]);
- }
-@@ -1017,8 +1016,7 @@ static inline int f2fs_has_inline_data(struct inode *inode)
- 
- static inline void *inline_data_addr(struct page *page)
- {
--	struct f2fs_inode *ri;
--	ri = (struct f2fs_inode *)page_address(page);
-+	struct f2fs_inode *ri = F2FS_INODE(page);
- 	return (void *)&(ri->i_addr[1]);
- }
- 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 72adbbf..aef7768 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -136,7 +136,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
- 
- 	/* get node pages in the current segment */
- 	curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
--	blkaddr = START_BLOCK(sbi, curseg->segno) + curseg->next_blkoff;
-+	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
- 
- 	/* read node page */
- 	page = alloc_page(GFP_F2FS_ZERO);
--- 
-1.7.9.5
-
+PS Tried the latest tree from f2fs dev branch with the same results https://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=695fd1ed .
 
 ------------------------------------------------------------------------------
 Flow-based real-time traffic analytics software. Cisco certified tool.
