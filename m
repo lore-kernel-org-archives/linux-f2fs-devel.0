@@ -1,30 +1,24 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: fix dirty page accounting when redirty
-Date: Fri, 28 Feb 2014 10:12:05 +0800
-Message-ID: <000001cf342a$95864830$c092d890$@samsung.com>
+From: Alex <hbx7d@yandex.com>
+Subject: Re: Regression in kernel 3.14.0-rc1
+Date: Fri, 28 Feb 2014 17:52:35 +0400
+Message-ID: <33861393595555@web8h.yandex.ru>
+References: <174911393513364@web17j.yandex.ru> <1393551734.4705.92.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1WJCwm-0001mg-P0
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <hbx7d@yandex.com>) id 1WJOFN-0004fK-8k
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Feb 2014 02:13:08 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WJCwk-0008FS-UM
+	Fri, 28 Feb 2014 14:17:05 +0000
+Received: from forward5h.mail.yandex.net ([84.201.186.23])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1WJOFL-0008S6-20
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Feb 2014 02:13:08 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N1O00NKQOTL1B20@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Feb 2014 11:12:57 +0900 (KST)
-Content-language: zh-cn
+	Fri, 28 Feb 2014 14:17:05 +0000
+In-Reply-To: <1393551734.4705.92.camel@kjgkr>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,75 +28,60 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: ??? <jaegeuk.kim@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: "jaegeuk.kim@samsung.com" <jaegeuk.kim@samsung.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-We should de-account dirty counters for page when redirty in ->writepage().
-
-Wu Fengguang described in 'commit 971767caf632190f77a40b4011c19948232eed75':
-"writeback: fix dirtied pages accounting on redirty
-De-account the accumulative dirty counters on page redirty.
-
-Page redirties (very common in ext4) will introduce mismatch between
-counters (a) and (b)
-
-a) NR_DIRTIED, BDI_DIRTIED, tsk->nr_dirtied
-b) NR_WRITTEN, BDI_WRITTEN
-
-This will introduce systematic errors in balanced_rate and result in
-dirty page position errors (ie. the dirty pages are no longer balanced
-around the global/bdi setpoints)."
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/checkpoint.c |    1 +
- fs/f2fs/data.c       |    1 +
- fs/f2fs/node.c       |    1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index c8516ee..f069249 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -178,6 +178,7 @@ no_write:
- redirty_out:
- 	dec_page_count(sbi, F2FS_DIRTY_META);
- 	wbc->pages_skipped++;
-+	account_page_redirty(page);
- 	set_page_dirty(page);
- 	return AOP_WRITEPAGE_ACTIVATE;
- }
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 93d80ea..101b4cd 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -839,6 +839,7 @@ out:
- 
- redirty_out:
- 	wbc->pages_skipped++;
-+	account_page_redirty(page);
- 	set_page_dirty(page);
- 	return AOP_WRITEPAGE_ACTIVATE;
- }
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 1f9cf21..8c14110 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1193,6 +1193,7 @@ static int f2fs_write_node_page(struct page *page,
- redirty_out:
- 	dec_page_count(sbi, F2FS_DIRTY_NODES);
- 	wbc->pages_skipped++;
-+	account_page_redirty(page);
- 	set_page_dirty(page);
- 	return AOP_WRITEPAGE_ACTIVATE;
- }
--- 
-1.7.9.5
-
-
-------------------------------------------------------------------------------
-Flow-based real-time traffic analytics software. Cisco certified tool.
-Monitor traffic, SLAs, QoS, Medianet, WAAS etc. with NetFlow Analyzer
-Customize your own dashboards, set traffic alerts and generate reports.
-Network behavioral analysis & security monitoring. All-in-one tool.
-http://pubads.g.doubleclick.net/gampad/clk?id=126839071&iu=/4140/ostg.clktrk
+SGksCgpEYmVuY2ggY29uZmlnOiBkYmVuY2ggLUQgL21udC90ZXN0IC10IDMwIDYgLWMgLi9jbGll
+bnQudHh0CgpOdW1iZXJzOgoxLiAzNTVNQi9zICAgICAgIGV4dDQKMi4gMjI1TUIvcyAgICAgICBq
+dXN0IHRoZSBsYXRlc3QgZjJmcyBmcm9tIGRldiBicmFuY2ggKDljZjNjMzgpCjMuIDUyNU1CL3Mg
+ICAgICAgZnMvZjJmcy9maWxlLmMgY2hhbmdlZAo0LiAyMjVNQi9zICAgICAgIGZzL2YyZnMvbm9k
+ZS5jIGNoYW5nZWQKNS4gNTIyTUIvcyAgICAgICBib3RoIGZzL2YyZnMvZmlsZS5jIGFuZCBmcy9m
+MmZzL25vZGUuYyBjaGFuZ2VkCgoyOC4wMi4yMDE0LCAwNTo0MywgIkphZWdldWsgS2ltIiA8amFl
+Z2V1ay5raW1Ac2Ftc3VuZy5jb20+Ogo+IEhpLAo+Cj4gVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0
+Lgo+Cj4gVW5mb3J0dW5hdGVseSwgd2hlbiBJIG1lYXN1cmVkIGRiZW5jaCBpbiBteSBsYXRlc3Qg
+a2VybmVsLCB0aGVyZSB3YXMgbm8KPiByZWdyZXNzaW9uIHdydCB0aGUgcGF0Y2ggdGhhdCB5b3Ug
+Zm91bmQuCj4KPiBLZXJuZWw6IDMuMTQtcmMzIHdpdGggbGF0ZXN0IGYyZnMgc291cmNlIGNvZGVz
+Cj4gSFc6IEludGVsIGk1Cj4gT1M6IFVidW50dSAxMi4xMCB4NjQKPiBUZXN0OiBkYmVuY2ggLUQg
+L21udC90ZXN0IC10IDYgNiAtYyAuL2NsaWVudC50eHQKPgo+IFRoZSByZXN1bHRzIHNob3dlZDoK
+PiAtIGV4dDQgOiAyMDMgTUIvcwo+IC0gZjJmcyA6IDMxOCBNQi9zCj4KPiBTbywgY291bGQgeW91
+IHNoYXJlIHRoZSBleGFjdCBjb25maWd1cmF0aW9uIG9mIHlvdXIgZGJlbmNoPwo+IEFuZCwgaWYg
+cG9zc2libGUsIGNvdWxkIHlvdSBzaGFyZSB0aGUgbnVtYmVycyBvZiB0aGUgZm9sbG93aW5nIHRl
+c3RzIGluCj4geW91ciBlbnZpcm9ubWVudD8KPgo+IDEuIGV4dDQKPiAyLiB0aGUgbGF0ZXN0IGYy
+ZnMgZnJvbSBkZXYgYnJhbmNoCj4gMy4gbW9kaWZpZWQgZjJmcyBmcm9tIHRoZSBsYXRlc3QgZjJm
+cwo+IMKgOiBmcy9mMmZzL2ZpbGUuYwo+IMKgwqAxMTggwqDCoMKgwqDCoC5zeW5jX21vZGUgPSBX
+Ql9TWU5DX0FMTDsKPgo+IDQuIG1vZGlmaWVkIGYyZnMgZnJvbSB0aGUgbGF0ZXN0IGYyZnMKPiDC
+oDogZnMvZjJmcy9ub2RlLmMKPiDCoMKgMTIyMSDCoMKgwqDCoHdiYy0+c3luY19tb2RlID0gV0Jf
+U1lOQ19BTEw7Cj4KPiA1LiBtb2RpZmllZCBmMmZzIHdpdGggIzMgYW5kICM0IGNoYW5nZXMgdG9n
+ZXRoZXIKPgo+IFRoYW5rIHlvdSB2ZXJ5IG11Y2guIDopCj4KPiAyMDE0LTAyLTI3ICjrqqkpLCAx
+OTowMiArMDQwMCwgQWxleDoKPgo+PiDCoEhlbGxvLAo+Pgo+PiDCoEFmdGVyIHJlYWRpbmcgcGhv
+cm9uaXgncyBmMmZzIGJlbmNobWFya3MgaHR0cDovL3d3dy5waG9yb25peC5jb20vc2Nhbi5waHA/
+cGFnZT1hcnRpY2xlJml0ZW09bGludXhfMzE0X3NzZGZzJm51bT0yICgzcmQgcGljdHVyZSkgZGlk
+IGtlcm5lbCBiaXNlY3QgYW5kIGl0IHJlc3VsdGVkIGluIHRoaXMgY29tbWl0IGh0dHBzOi8vZ2l0
+Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L3N0YWJsZS9saW51eC1zdGFibGUuZ2l0
+L2NvbW1pdC8/aWQ9ZmI1NTY2ZGEgLgo+Pgo+PiDCoFBTIFRyaWVkIHRoZSBsYXRlc3QgdHJlZSBm
+cm9tIGYyZnMgZGV2IGJyYW5jaCB3aXRoIHRoZSBzYW1lIHJlc3VsdHMgaHR0cHM6Ly9naXQua2Vy
+bmVsLm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvamFlZ2V1ay9mMmZzLmdpdC9jb21taXQvP2g9
+ZGV2JmlkPTY5NWZkMWVkIC4KPj4KPj4gwqAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPj4gwqBGbG93
+LWJhc2VkIHJlYWwtdGltZSB0cmFmZmljIGFuYWx5dGljcyBzb2Z0d2FyZS4gQ2lzY28gY2VydGlm
+aWVkIHRvb2wuCj4+IMKgTW9uaXRvciB0cmFmZmljLCBTTEFzLCBRb1MsIE1lZGlhbmV0LCBXQUFT
+IGV0Yy4gd2l0aCBOZXRGbG93IEFuYWx5emVyCj4+IMKgQ3VzdG9taXplIHlvdXIgb3duIGRhc2hi
+b2FyZHMsIHNldCB0cmFmZmljIGFsZXJ0cyBhbmQgZ2VuZXJhdGUgcmVwb3J0cy4KPj4gwqBOZXR3
+b3JrIGJlaGF2aW9yYWwgYW5hbHlzaXMgJiBzZWN1cml0eSBtb25pdG9yaW5nLiBBbGwtaW4tb25l
+IHRvb2wuCj4+IMKgaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lk
+PTEyNjgzOTA3MSZpdT0vNDE0MC9vc3RnLmNsa3Ryawo+PiDCoF9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+IMKgTGludXgtZjJmcy1kZXZlbCBtYWlsaW5n
+IGxpc3QKPj4gwqBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+PiDCoGh0
+dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2
+ZWwKPgo+IC0tCj4gSmFlZ2V1ayBLaW0KPiBTYW1zdW5nCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+Rmxvdy1iYXNlZCByZWFsLXRpbWUgdHJhZmZpYyBhbmFseXRpY3Mgc29mdHdhcmUuIENpc2NvIGNl
+cnRpZmllZCB0b29sLgpNb25pdG9yIHRyYWZmaWMsIFNMQXMsIFFvUywgTWVkaWFuZXQsIFdBQVMg
+ZXRjLiB3aXRoIE5ldEZsb3cgQW5hbHl6ZXIKQ3VzdG9taXplIHlvdXIgb3duIGRhc2hib2FyZHMs
+IHNldCB0cmFmZmljIGFsZXJ0cyBhbmQgZ2VuZXJhdGUgcmVwb3J0cy4KTmV0d29yayBiZWhhdmlv
+cmFsIGFuYWx5c2lzICYgc2VjdXJpdHkgbW9uaXRvcmluZy4gQWxsLWluLW9uZSB0b29sLgpodHRw
+Oi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9MTI2ODM5MDcxJml1PS80
+MTQwL29zdGcuY2xrdHJrCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlz
+dHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xp
+c3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
