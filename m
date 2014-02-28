@@ -1,25 +1,32 @@
-From: "=?gb2312?B?06Lm2r3M0/0=?=" <liu-to@lrjy.lnlzpg.net>
-Subject: =?gb2312?b?wu3Jz9eisuGjrMO/yNXD4rfRytW78dOi0++xprXk?=
-Date: Fri, 28 Feb 2014 00:27:48 +0800
-Message-ID: <8c502a5f3f8abb5a.2jpirow7@lrjy.lnlzpg.net>
-Reply-To: =?gb2312?B?06Lm2r3M0/0=?= <liu-to@lrjy.lnlzpg.net>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: Regression in kernel 3.14.0-rc1
+Date: Fri, 28 Feb 2014 10:42:14 +0900
+Message-ID: <1393551734.4705.92.camel@kjgkr>
+References: <174911393513364@web17j.yandex.ru>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4796896569916484886=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cat-to3@lrjy.lnlzpg.net>) id 1WJ4Hs-0003bA-0L
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WJCUh-0008Sk-88
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 27 Feb 2014 16:58:20 +0000
-Received: from [42.51.0.68] (helo=lrjy.lnlzpg.net)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1WJ4Hl-0002SF-OO
+	Fri, 28 Feb 2014 01:44:07 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WJCUd-0000PQ-FI
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 27 Feb 2014 16:58:19 +0000
-Received: from CLOUD ([127.0.0.1]) (authenticated user cat-to3@lrjy.lnlzpg.net)
-	by lrjy.lnlzpg.net for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Feb 2014 00:27:48 +0800
+	Fri, 28 Feb 2014 01:44:07 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N1O00H2WNH11I90@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 28 Feb 2014 10:43:49 +0900 (KST)
+In-reply-to: <174911393513364@web17j.yandex.ru>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,91 +36,51 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Alex <hbx7d@yandex.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This message is in MIME format with multi-part. Since your mail reader does
-not understand this format, some or all of this message may not be legible.
-
---===============4796896569916484886==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_531_3419_75754441.01972216"
-
-This message is in MIME format with multi-part. Since your mail reader does
-not understand this format, some or all of this message may not be legible.
-
-------=_NextPart_531_3419_75754441.01972216
-Content-Type: text/plain; charset=gb2312
-Content-Transfer-Encoding: quoted-printable
-
-=C8=E7=D0=E8=CD=CB=B6=A9=C7=EB=B5=E3=BB=F7=B4=CB=B4=A6
-
-------=_NextPart_531_3419_75754441.01972216
-Content-Type: text/html; charset=gb2312
-Content-Transfer-Encoding: quoted-printable
-
-<HTML><HEAD>
-<STYLE=20type=3Dtext/css>
-<!--
-.STYLE2=20{font-size:=2012px}
--->
-</STYLE>
-</HEAD>
-<BODY>
-<TABLE=20cellSpacing=3D0=20cellPadding=3D0=20width=3D651=20align=3Dcenter=
-=20border=3D0>
-
-<TR>
-<TD><A=20href=3D"http://tracking.nesox.com/tracking/?id=3DdT1saW51eC1mMmZz=
-LWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCZtc2c9MDAwMS44YzUwMmE1ZjNmOGFiYjVhLjJ=
-qcGlyb3c3QGxyankubG5senBnLm5ldCZ1cmw9aHR0cDovL2VmLmh1aXlvdWtlLmNvbS9pbmRleC=
-UzRm1lZGlhJTNEZWRtMjI3"=20target=3D_blank><IMG=20height=3D370=20src=3D"http=
-://tp.cshjjz.com/tcl/yfyy/ysxnf_01.jpg"=20width=3D651=20border=3D0></A></TD=
-></TR>
-<TR>
-<TD><A=20href=3D"http://tracking.nesox.com/tracking/?id=3DdT1saW51eC1mMmZz=
-LWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCZtc2c9MDAwMS44YzUwMmE1ZjNmOGFiYjVhLjJ=
-qcGlyb3c3QGxyankubG5senBnLm5ldCZ1cmw9aHR0cDovL2VmLmh1aXlvdWtlLmNvbS9pbmRleC=
-UzRm1lZGlhJTNEZWRtMjI3"=20target=3D_blank><IMG=20height=3D272=20src=3D"http=
-://tp.cshjjz.com/tcl/yfyy/ysxnf_02.jpg"=20width=3D651=20border=3D0></A></TD=
-></TR>
-<TR>
-<TD=20align=3Dmiddle=20height=3D25><SPAN=20class=3DSTYLE2>=C8=E7=D0=E8=CD=
-=CB=B6=A9=C7=EB<A=20href=3D"http://tracking.nesox.com/tracking/?id=3DdT1saW=
-51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCZtc2c9MDAwMS44YzUwMmE1ZjNmO=
-GFiYjVhLjJqcGlyb3c3QGxyankubG5senBnLm5ldCZ1cmw9aHR0cDovL3RkLm91bmFpZXJncy5j=
-b20vdW5zdWJzY3JpYmUvcmV0dXJuLmFzcCUzRmVtYWlsJTNEeW91cmVtYWls"=20target=3D_b=
-lank>=B5=E3=BB=F7=B4=CB=B4=A6</A></SPAN></TD></TR></TABLE>
-
-<img=20width=3D"1"=20height=3D"1"=20src=3D"http://tracking.nesox.com/track=
-ing/?id=3DdT1saW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldCZtc2c9MDAwM=
-S44YzUwMmE1ZjNmOGFiYjVhLjJqcGlyb3c3QGxyankubG5senBnLm5ldA">
-</BODY></HTML>
-
-------=_NextPart_531_3419_75754441.01972216--
-
-
-
---===============4796896569916484886==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-------------------------------------------------------------------------------
-Flow-based real-time traffic analytics software. Cisco certified tool.
-Monitor traffic, SLAs, QoS, Medianet, WAAS etc. with NetFlow Analyzer
-Customize your own dashboards, set traffic alerts and generate reports.
-Network behavioral analysis & security monitoring. All-in-one tool.
-http://pubads.g.doubleclick.net/gampad/clk?id=126839071&iu=/4140/ostg.clktrk
---===============4796896569916484886==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============4796896569916484886==--
+SGksCgpUaGFuayB5b3UgZm9yIHRoZSByZXBvcnQuCgpVbmZvcnR1bmF0ZWx5LCB3aGVuIEkgbWVh
+c3VyZWQgZGJlbmNoIGluIG15IGxhdGVzdCBrZXJuZWwsIHRoZXJlIHdhcyBubwpyZWdyZXNzaW9u
+IHdydCB0aGUgcGF0Y2ggdGhhdCB5b3UgZm91bmQuCgpLZXJuZWw6IDMuMTQtcmMzIHdpdGggbGF0
+ZXN0IGYyZnMgc291cmNlIGNvZGVzCkhXOiBJbnRlbCBpNQpPUzogVWJ1bnR1IDEyLjEwIHg2NApU
+ZXN0OiBkYmVuY2ggLUQgL21udC90ZXN0IC10IDYgNiAtYyAuL2NsaWVudC50eHQKClRoZSByZXN1
+bHRzIHNob3dlZDoKLSBleHQ0IDogMjAzIE1CL3MKLSBmMmZzIDogMzE4IE1CL3MKClNvLCBjb3Vs
+ZCB5b3Ugc2hhcmUgdGhlIGV4YWN0IGNvbmZpZ3VyYXRpb24gb2YgeW91ciBkYmVuY2g/CkFuZCwg
+aWYgcG9zc2libGUsIGNvdWxkIHlvdSBzaGFyZSB0aGUgbnVtYmVycyBvZiB0aGUgZm9sbG93aW5n
+IHRlc3RzIGluCnlvdXIgZW52aXJvbm1lbnQ/CgoxLiBleHQ0CjIuIHRoZSBsYXRlc3QgZjJmcyBm
+cm9tIGRldiBicmFuY2gKMy4gbW9kaWZpZWQgZjJmcyBmcm9tIHRoZSBsYXRlc3QgZjJmcwogOiBm
+cy9mMmZzL2ZpbGUuYwogIDExOCAgICAgIC5zeW5jX21vZGUgPSBXQl9TWU5DX0FMTDsKCjQuIG1v
+ZGlmaWVkIGYyZnMgZnJvbSB0aGUgbGF0ZXN0IGYyZnMKIDogZnMvZjJmcy9ub2RlLmMKICAxMjIx
+ICAgICB3YmMtPnN5bmNfbW9kZSA9IFdCX1NZTkNfQUxMOwoKNS4gbW9kaWZpZWQgZjJmcyB3aXRo
+ICMzIGFuZCAjNCBjaGFuZ2VzIHRvZ2V0aGVyCgpUaGFuayB5b3UgdmVyeSBtdWNoLiA6KQogCjIw
+MTQtMDItMjcgKOuqqSksIDE5OjAyICswNDAwLCBBbGV4Ogo+IEhlbGxvLAo+IAo+IEFmdGVyIHJl
+YWRpbmcgcGhvcm9uaXgncyBmMmZzIGJlbmNobWFya3MgaHR0cDovL3d3dy5waG9yb25peC5jb20v
+c2Nhbi5waHA/cGFnZT1hcnRpY2xlJml0ZW09bGludXhfMzE0X3NzZGZzJm51bT0yICgzcmQgcGlj
+dHVyZSkgZGlkIGtlcm5lbCBiaXNlY3QgYW5kIGl0IHJlc3VsdGVkIGluIHRoaXMgY29tbWl0IGh0
+dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L3N0YWJsZS9saW51eC1z
+dGFibGUuZ2l0L2NvbW1pdC8/aWQ9ZmI1NTY2ZGEgLgo+IAo+IFBTIFRyaWVkIHRoZSBsYXRlc3Qg
+dHJlZSBmcm9tIGYyZnMgZGV2IGJyYW5jaCB3aXRoIHRoZSBzYW1lIHJlc3VsdHMgaHR0cHM6Ly9n
+aXQua2VybmVsLm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvamFlZ2V1ay9mMmZzLmdpdC9jb21t
+aXQvP2g9ZGV2JmlkPTY5NWZkMWVkIC4KPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiBGbG93
+LWJhc2VkIHJlYWwtdGltZSB0cmFmZmljIGFuYWx5dGljcyBzb2Z0d2FyZS4gQ2lzY28gY2VydGlm
+aWVkIHRvb2wuCj4gTW9uaXRvciB0cmFmZmljLCBTTEFzLCBRb1MsIE1lZGlhbmV0LCBXQUFTIGV0
+Yy4gd2l0aCBOZXRGbG93IEFuYWx5emVyCj4gQ3VzdG9taXplIHlvdXIgb3duIGRhc2hib2FyZHMs
+IHNldCB0cmFmZmljIGFsZXJ0cyBhbmQgZ2VuZXJhdGUgcmVwb3J0cy4KPiBOZXR3b3JrIGJlaGF2
+aW9yYWwgYW5hbHlzaXMgJiBzZWN1cml0eSBtb25pdG9yaW5nLiBBbGwtaW4tb25lIHRvb2wuCj4g
+aHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQvY2xrP2lkPTEyNjgzOTA3MSZp
+dT0vNDE0MC9vc3RnLmNsa3Ryawo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZz
+LWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2Uu
+bmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCi0tIApKYWVnZXVrIEtpbQpTYW1z
+dW5nCgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpGbG93LWJhc2VkIHJlYWwtdGltZSB0cmFmZmlj
+IGFuYWx5dGljcyBzb2Z0d2FyZS4gQ2lzY28gY2VydGlmaWVkIHRvb2wuCk1vbml0b3IgdHJhZmZp
+YywgU0xBcywgUW9TLCBNZWRpYW5ldCwgV0FBUyBldGMuIHdpdGggTmV0RmxvdyBBbmFseXplcgpD
+dXN0b21pemUgeW91ciBvd24gZGFzaGJvYXJkcywgc2V0IHRyYWZmaWMgYWxlcnRzIGFuZCBnZW5l
+cmF0ZSByZXBvcnRzLgpOZXR3b3JrIGJlaGF2aW9yYWwgYW5hbHlzaXMgJiBzZWN1cml0eSBtb25p
+dG9yaW5nLiBBbGwtaW4tb25lIHRvb2wuCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQv
+Z2FtcGFkL2Nsaz9pZD0xMjY4MzkwNzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWls
+aW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9s
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
