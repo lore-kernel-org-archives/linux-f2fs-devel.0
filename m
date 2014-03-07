@@ -1,22 +1,21 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH 5/5] f2fs: add a wait queue to avoid unnecessary,
-	build_free_nid
-Date: Fri, 07 Mar 2014 18:43:39 +0800
-Message-ID: <5319A2DB.8040705@cn.fujitsu.com>
+Subject: [PATCH 4/5] f2fs: optimize restore_node_summary slightly
+Date: Fri, 07 Mar 2014 18:43:36 +0800
+Message-ID: <5319A2D8.70409@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1WLsOA-00030l-6S
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1WLsO9-0001Mj-Up
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Mar 2014 10:52:26 +0000
+	Fri, 07 Mar 2014 10:52:25 +0000
 Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WLsO9-0006r8-7f for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Mar 2014 10:52:26 +0000
+	id 1WLsO8-0006r5-Rq for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 07 Mar 2014 10:52:25 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,91 +28,120 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Kim <jaegeuk.kim@samsung.com>
 Cc: linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-Previously, when we try to alloc free nid while the build free nid
-is going, the allocer will be run into the flow that waiting for
-"nm_i->build_lock", see following:
-	/* We should not use stale free nids created by build_free_nids */
----->	if (nm_i->fcnt && !on_build_free_nids(nm_i)) {
-		f2fs_bug_on(list_empty(&nm_i->free_nid_list));
-		list_for_each(this, &nm_i->free_nid_list) {
-			i = list_entry(this, struct free_nid, list);
-			if (i->state == NID_NEW)
-				break;
-		}
+Previously, we ra_sum_pages to pre-read contiguous pages as more
+as possible, and if we fail to alloc more pages, an ENOMEM error
+will be reported upstream, even though we have alloced some pages
+yet. In fact, we can use the available pages to do the job partly,
+and continue the rest in the following circle. Only reporting ENOMEM
+upstream if we really can not alloc any available page.
 
-		f2fs_bug_on(i->state != NID_NEW);
-		*nid = i->nid;
-		i->state = NID_ALLOC;
-		nm_i->fcnt--;
-		spin_unlock(&nm_i->free_nid_list_lock);
-		return true;
-	}
-	spin_unlock(&nm_i->free_nid_list_lock);
-
-	/* Let's scan nat pages and its caches to get free nids */
----->	mutex_lock(&nm_i->build_lock);
-	build_free_nids(sbi);
-	mutex_unlock(&nm_i->build_lock);
-and this will cause another unnecessary building free nid if the current
-building free nid job is done.
-So here we introduce a wait_queue to avoid this issue.
+And another fix is ignoring dealing with the following pages if an
+EIO occurs when reading page from page_list.
 
 Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
- fs/f2fs/f2fs.h |    1 +
- fs/f2fs/node.c |   10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletions(-)
+ fs/f2fs/node.c    |   44 ++++++++++++++++++++------------------------
+ fs/f2fs/segment.c |    7 +++++--
+ 2 files changed, 25 insertions(+), 26 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f845e92..7ae193e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -256,6 +256,7 @@ struct f2fs_nm_info {
- 	spinlock_t free_nid_list_lock;	/* protect free nid list */
- 	unsigned int fcnt;		/* the number of free node id */
- 	struct mutex build_lock;	/* lock for build free nids */
-+	wait_queue_head_t build_wq;	/* wait queue for build free nids */
- 
- 	/* for checkpoint */
- 	char *nat_bitmap;		/* NAT bitmap pointer */
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 4b7861d..ab44711 100644
+index 8787469..4b7861d 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1422,7 +1422,13 @@ retry:
- 	spin_lock(&nm_i->free_nid_list_lock);
+@@ -1588,15 +1588,8 @@ static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
+ 	for (; page_idx < start + nrpages; page_idx++) {
+ 		/* alloc temporal page for read node summary info*/
+ 		page = alloc_page(GFP_F2FS_ZERO);
+-		if (!page) {
+-			struct page *tmp;
+-			list_for_each_entry_safe(page, tmp, pages, lru) {
+-				list_del(&page->lru);
+-				unlock_page(page);
+-				__free_pages(page, 0);
+-			}
+-			return -ENOMEM;
+-		}
++		if (!page)
++			break;
  
- 	/* We should not use stale free nids created by build_free_nids */
--	if (nm_i->fcnt && !on_build_free_nids(nm_i)) {
-+	if (on_build_free_nids(nm_i)) {
-+		spin_unlock(&nm_i->free_nid_list_lock);
-+		wait_event(nm_i->build_wq, !on_build_free_nids(nm_i));
-+		goto retry;
-+	}
+ 		lock_page(page);
+ 		page->index = page_idx;
+@@ -1607,7 +1600,8 @@ static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
+ 		f2fs_submit_page_mbio(sbi, page, page->index, &fio);
+ 
+ 	f2fs_submit_merged_bio(sbi, META, READ);
+-	return 0;
 +
-+	if (nm_i->fcnt) {
- 		f2fs_bug_on(list_empty(&nm_i->free_nid_list));
- 		list_for_each(this, &nm_i->free_nid_list) {
- 			i = list_entry(this, struct free_nid, list);
-@@ -1443,6 +1449,7 @@ retry:
- 	mutex_lock(&nm_i->build_lock);
- 	build_free_nids(sbi);
- 	mutex_unlock(&nm_i->build_lock);
-+	wake_up_all(&nm_i->build_wq);
- 	goto retry;
++	return page_idx - start;
  }
  
-@@ -1813,6 +1820,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	INIT_LIST_HEAD(&nm_i->dirty_nat_entries);
+ int restore_node_summary(struct f2fs_sb_info *sbi,
+@@ -1630,28 +1624,30 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 		nrpages = min(last_offset - i, bio_blocks);
  
- 	mutex_init(&nm_i->build_lock);
-+	init_waitqueue_head(&nm_i->build_wq);
- 	spin_lock_init(&nm_i->free_nid_list_lock);
- 	rwlock_init(&nm_i->nat_tree_lock);
+ 		/* read ahead node pages */
+-		err = ra_sum_pages(sbi, &page_list, addr, nrpages);
+-		if (err)
+-			return err;
++		nrpages = ra_sum_pages(sbi, &page_list, addr, nrpages);
++		if (!nrpages)
++			return -ENOMEM;
  
+ 		list_for_each_entry_safe(page, tmp, &page_list, lru) {
+-
+-			lock_page(page);
+-			if (unlikely(!PageUptodate(page))) {
+-				err = -EIO;
+-			} else {
+-				rn = F2FS_NODE(page);
+-				sum_entry->nid = rn->footer.nid;
+-				sum_entry->version = 0;
+-				sum_entry->ofs_in_node = 0;
+-				sum_entry++;
++			if (!err) {
++				lock_page(page);
++				if (unlikely(!PageUptodate(page))) {
++					err = -EIO;
++				} else {
++					rn = F2FS_NODE(page);
++					sum_entry->nid = rn->footer.nid;
++					sum_entry->version = 0;
++					sum_entry->ofs_in_node = 0;
++					sum_entry++;
++				}
++				unlock_page(page);
+ 			}
+ 
+ 			list_del(&page->lru);
+-			unlock_page(page);
+ 			__free_pages(page, 0);
+ 		}
+ 	}
++
+ 	return err;
+ }
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 199c964..b3f8431 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1160,9 +1160,12 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ 				ns->ofs_in_node = 0;
+ 			}
+ 		} else {
+-			if (restore_node_summary(sbi, segno, sum)) {
++			int err;
++
++			err = restore_node_summary(sbi, segno, sum);
++			if (err) {
+ 				f2fs_put_page(new, 1);
+-				return -EINVAL;
++				return err;
+ 			}
+ 		}
+ 	}
 -- 
 1.7.7
-
 
 
 ------------------------------------------------------------------------------
