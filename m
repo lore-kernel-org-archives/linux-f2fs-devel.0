@@ -1,21 +1,33 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH 4/5] f2fs: optimize restore_node_summary slightly
-Date: Fri, 07 Mar 2014 18:43:36 +0800
-Message-ID: <5319A2D8.70409@cn.fujitsu.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH 1/5] f2fs: update start nid only once each
+	circle
+Date: Sat, 08 Mar 2014 19:46:35 +0800
+Message-ID: <001301cf3ac4$3220b8c0$96622a40$@samsung.com>
+References: <5319A2CC.3090206@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1WLsO9-0001Mj-Up
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1WMFjE-0000oD-4w
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Mar 2014 10:52:25 +0000
-Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WLsO8-0006r5-Rq for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Mar 2014 10:52:25 +0000
+	Sat, 08 Mar 2014 11:47:44 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WMFjB-00085s-SW
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Mar 2014 11:47:44 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N24007DW8RAYV50@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Mar 2014 20:47:34 +0900 (KST)
+In-reply-to: <5319A2CC.3090206@cn.fujitsu.com>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,123 +37,68 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kim <jaegeuk.kim@samsung.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
+To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>, 'Kim' <jaegeuk.kim@samsung.com>
+Cc: 'linux-kernel' <linux-kernel@vger.kernel.org>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>
 
-Previously, we ra_sum_pages to pre-read contiguous pages as more
-as possible, and if we fail to alloc more pages, an ENOMEM error
-will be reported upstream, even though we have alloced some pages
-yet. In fact, we can use the available pages to do the job partly,
-and continue the rest in the following circle. Only reporting ENOMEM
-upstream if we really can not alloc any available page.
+Hi Gu,
 
-And another fix is ignoring dealing with the following pages if an
-EIO occurs when reading page from page_list.
+> -----Original Message-----
+> From: Gu Zheng [mailto:guz.fnst@cn.fujitsu.com]
+> Sent: Friday, March 07, 2014 6:43 PM
+> To: Kim
+> Cc: linux-kernel; f2fs
+> Subject: [f2fs-dev] [PATCH 1/5] f2fs: update start nid only once each circle
+> 
+> 
+> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
----
- fs/f2fs/node.c    |   44 ++++++++++++++++++++------------------------
- fs/f2fs/segment.c |    7 +++++--
- 2 files changed, 25 insertions(+), 26 deletions(-)
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 8787469..4b7861d 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1588,15 +1588,8 @@ static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
- 	for (; page_idx < start + nrpages; page_idx++) {
- 		/* alloc temporal page for read node summary info*/
- 		page = alloc_page(GFP_F2FS_ZERO);
--		if (!page) {
--			struct page *tmp;
--			list_for_each_entry_safe(page, tmp, pages, lru) {
--				list_del(&page->lru);
--				unlock_page(page);
--				__free_pages(page, 0);
--			}
--			return -ENOMEM;
--		}
-+		if (!page)
-+			break;
- 
- 		lock_page(page);
- 		page->index = page_idx;
-@@ -1607,7 +1600,8 @@ static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
- 		f2fs_submit_page_mbio(sbi, page, page->index, &fio);
- 
- 	f2fs_submit_merged_bio(sbi, META, READ);
--	return 0;
-+
-+	return page_idx - start;
- }
- 
- int restore_node_summary(struct f2fs_sb_info *sbi,
-@@ -1630,28 +1624,30 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
- 		nrpages = min(last_offset - i, bio_blocks);
- 
- 		/* read ahead node pages */
--		err = ra_sum_pages(sbi, &page_list, addr, nrpages);
--		if (err)
--			return err;
-+		nrpages = ra_sum_pages(sbi, &page_list, addr, nrpages);
-+		if (!nrpages)
-+			return -ENOMEM;
- 
- 		list_for_each_entry_safe(page, tmp, &page_list, lru) {
--
--			lock_page(page);
--			if (unlikely(!PageUptodate(page))) {
--				err = -EIO;
--			} else {
--				rn = F2FS_NODE(page);
--				sum_entry->nid = rn->footer.nid;
--				sum_entry->version = 0;
--				sum_entry->ofs_in_node = 0;
--				sum_entry++;
-+			if (!err) {
-+				lock_page(page);
-+				if (unlikely(!PageUptodate(page))) {
-+					err = -EIO;
-+				} else {
-+					rn = F2FS_NODE(page);
-+					sum_entry->nid = rn->footer.nid;
-+					sum_entry->version = 0;
-+					sum_entry->ofs_in_node = 0;
-+					sum_entry++;
-+				}
-+				unlock_page(page);
- 			}
- 
- 			list_del(&page->lru);
--			unlock_page(page);
- 			__free_pages(page, 0);
- 		}
- 	}
-+
- 	return err;
- }
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 199c964..b3f8431 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1160,9 +1160,12 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 				ns->ofs_in_node = 0;
- 			}
- 		} else {
--			if (restore_node_summary(sbi, segno, sum)) {
-+			int err;
-+
-+			err = restore_node_summary(sbi, segno, sum);
-+			if (err) {
- 				f2fs_put_page(new, 1);
--				return -EINVAL;
-+				return err;
- 			}
- 		}
- 	}
--- 
-1.7.7
+> ---
+>  fs/f2fs/node.c |    6 +++++-
+>  1 files changed, 5 insertions(+), 1 deletions(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 8c14110..9653096 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1875,11 +1875,15 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
+>  	while ((found = __gang_lookup_nat_cache(nm_i,
+>  					nid, NATVEC_SIZE, natvec))) {
+>  		unsigned idx;
+> +
+> +		nid = nat_get_nid(natvec[found - 1]) + 1;
+> +
+>  		for (idx = 0; idx < found; idx++) {
+>  			struct nat_entry *e = natvec[idx];
+
+Could we replace argument 'e' with 'natvec[idx]'? then we could remove 'e' and
+brace here.
+
+Thanks.
+
+> -			nid = nat_get_nid(e) + 1;
+> +
+>  			__del_from_nat_cache(nm_i, e);
+>  		}
+> +
+>  	}
+>  	f2fs_bug_on(nm_i->nat_cnt);
+>  	write_unlock(&nm_i->nat_tree_lock);
+> --
+> 1.7.7
+> 
+> 
+> ------------------------------------------------------------------------------
+> Subversion Kills Productivity. Get off Subversion & Make the Move to Perforce.
+> With Perforce, you get hassle-free workflows. Merge that actually works.
+> Faster operations. Version large binaries.  Built-in WAN optimization and the
+> freedom to use Git, Perforce or both. Make the move to Perforce.
+> http://pubads.g.doubleclick.net/gampad/clk?id=122218951&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 ------------------------------------------------------------------------------
