@@ -1,112 +1,105 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH 1/5] f2fs: update start nid only once each circle
-Date: Mon, 10 Mar 2014 11:26:11 +0900
-Message-ID: <1394418371.3870.87.camel@kjgkr>
-References: <5319A2CC.3090206@cn.fujitsu.com>
- <001301cf3ac4$3220b8c0$96622a40$@samsung.com> <531D161C.8080001@cn.fujitsu.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH 5/5] f2fs: add a wait queue to avoid
+ unnecessary, build_free_nid
+Date: Mon, 10 Mar 2014 13:09:48 +0900
+Message-ID: <1394424588.5043.1.camel@lcm>
+References: <5319A2DB.8040705@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <531D161C.8080001@cn.fujitsu.com>
+In-reply-to: <5319A2DB.8040705@cn.fujitsu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Cc: Chao Yu <chao2.yu@samsung.com>, 'linux-kernel' <linux-kernel@vger.kernel.org>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>
+Cc: Kim <jaegeuk.kim@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi all,
+On =EA=B8=88, 2014-03-07 at 18:43 +0800, Gu Zheng wrote:
+> Previously, when we try to alloc free nid while the build free nid
+> is going, the allocer will be run into the flow that waiting for
+> "nm_i->build_lock", see following:
+> 	/* We should not use stale free nids created by build_free_nids */
+> ---->	if (nm_i->fcnt && !on_build_free_nids(nm_i)) {
+> 		f2fs_bug_on(list_empty(&nm_i->free_nid_list));
+> 		list_for_each(this, &nm_i->free_nid_list) {
+> 			i =3D list_entry(this, struct free_nid, list);
+> 			if (i->state =3D=3D NID_NEW)
+> 				break;
+> 		}
+>=20
+> 		f2fs_bug_on(i->state !=3D NID_NEW);
+> 		*nid =3D i->nid;
+> 		i->state =3D NID_ALLOC;
+> 		nm_i->fcnt--;
+> 		spin_unlock(&nm_i->free_nid_list_lock);
+> 		return true;
+> 	}
+> 	spin_unlock(&nm_i->free_nid_list_lock);
+>=20
+> 	/* Let's scan nat pages and its caches to get free nids */
+> ---->	mutex_lock(&nm_i->build_lock);
+> 	build_free_nids(sbi);
+> 	mutex_unlock(&nm_i->build_lock);
+> and this will cause another unnecessary building free nid if the curr=
+ent
+> building free nid job is done.
+> So here we introduce a wait_queue to avoid this issue.
+>=20
+> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+> ---
+>  fs/f2fs/f2fs.h |    1 +
+>  fs/f2fs/node.c |   10 +++++++++-
+>  2 files changed, 10 insertions(+), 1 deletions(-)
+>=20
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index f845e92..7ae193e 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -256,6 +256,7 @@ struct f2fs_nm_info {
+>  	spinlock_t free_nid_list_lock;	/* protect free nid list */
+>  	unsigned int fcnt;		/* the number of free node id */
+>  	struct mutex build_lock;	/* lock for build free nids */
+> +	wait_queue_head_t build_wq;	/* wait queue for build free nids */
+> =20
+>  	/* for checkpoint */
+>  	char *nat_bitmap;		/* NAT bitmap pointer */
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 4b7861d..ab44711 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1422,7 +1422,13 @@ retry:
+>  	spin_lock(&nm_i->free_nid_list_lock);
+> =20
+>  	/* We should not use stale free nids created by build_free_nids */
+> -	if (nm_i->fcnt && !on_build_free_nids(nm_i)) {
+> +	if (on_build_free_nids(nm_i)) {
+> +		spin_unlock(&nm_i->free_nid_list_lock);
+> +		wait_event(nm_i->build_wq, !on_build_free_nids(nm_i));
+> +		goto retry;
+> +	}
+> +
 
-I'll handle them all by myself.
-Thank you for the contribution. :)
+It would be better moving spin_lock(free_nid_list_lock) here after
+removing above spin_unlock().
 
-2014-03-10 (=EC=9B=94), 09:32 +0800, Gu Zheng:
-> On 03/08/2014 07:46 PM, Chao Yu wrote:
->=20
-> > Hi Gu,
-> >=20
-> >> -----Original Message-----
-> >> From: Gu Zheng [mailto:guz.fnst@cn.fujitsu.com]
-> >> Sent: Friday, March 07, 2014 6:43 PM
-> >> To: Kim
-> >> Cc: linux-kernel; f2fs
-> >> Subject: [f2fs-dev] [PATCH 1/5] f2fs: update start nid only once e=
-ach circle
-> >>
-> >>
-> >> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
-> >=20
-> > Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-> >=20
-> >> ---
-> >>  fs/f2fs/node.c |    6 +++++-
-> >>  1 files changed, 5 insertions(+), 1 deletions(-)
-> >>
-> >> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> >> index 8c14110..9653096 100644
-> >> --- a/fs/f2fs/node.c
-> >> +++ b/fs/f2fs/node.c
-> >> @@ -1875,11 +1875,15 @@ void destroy_node_manager(struct f2fs_sb_i=
-nfo *sbi)
-> >>  	while ((found =3D __gang_lookup_nat_cache(nm_i,
-> >>  					nid, NATVEC_SIZE, natvec))) {
-> >>  		unsigned idx;
-> >> +
-> >> +		nid =3D nat_get_nid(natvec[found - 1]) + 1;
-> >> +
-> >>  		for (idx =3D 0; idx < found; idx++) {
-> >>  			struct nat_entry *e =3D natvec[idx];
-> >=20
-> > Could we replace argument 'e' with 'natvec[idx]'? then we could rem=
-ove 'e' and
-> > brace here.
->=20
-> Agree. More neat with this cleanup.
->=20
-> Regards,
-> Gu
->=20
-> >=20
-> > Thanks.
-> >=20
-> >> -			nid =3D nat_get_nid(e) + 1;
-> >> +
-> >>  			__del_from_nat_cache(nm_i, e);
-> >>  		}
-> >> +
-> >>  	}
-> >>  	f2fs_bug_on(nm_i->nat_cnt);
-> >>  	write_unlock(&nm_i->nat_tree_lock);
-> >> --
-> >> 1.7.7
-> >>
-> >>
-> >> ------------------------------------------------------------------=
-------------
-> >> Subversion Kills Productivity. Get off Subversion & Make the Move =
-to Perforce.
-> >> With Perforce, you get hassle-free workflows. Merge that actually =
-works.
-> >> Faster operations. Version large binaries.  Built-in WAN optimizat=
-ion and the
-> >> freedom to use Git, Perforce or both. Make the move to Perforce.
-> >> http://pubads.g.doubleclick.net/gampad/clk?id=3D122218951&iu=3D/41=
-40/ostg.clktrk
-> >> _______________________________________________
-> >> Linux-f2fs-devel mailing list
-> >> Linux-f2fs-devel@lists.sourceforge.net
-> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >=20
-> >=20
->=20
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-
---=20
-Jaegeuk Kim
-Samsung
+> +	if (nm_i->fcnt) {
+>  		f2fs_bug_on(list_empty(&nm_i->free_nid_list));
+>  		list_for_each(this, &nm_i->free_nid_list) {
+>  			i =3D list_entry(this, struct free_nid, list);
+> @@ -1443,6 +1449,7 @@ retry:
+>  	mutex_lock(&nm_i->build_lock);
+>  	build_free_nids(sbi);
+>  	mutex_unlock(&nm_i->build_lock);
+> +	wake_up_all(&nm_i->build_wq);
+>  	goto retry;
+>  }
+> =20
+> @@ -1813,6 +1820,7 @@ static int init_node_manager(struct f2fs_sb_inf=
+o *sbi)
+>  	INIT_LIST_HEAD(&nm_i->dirty_nat_entries);
+> =20
+>  	mutex_init(&nm_i->build_lock);
+> +	init_waitqueue_head(&nm_i->build_wq);
+>  	spin_lock_init(&nm_i->free_nid_list_lock);
+>  	rwlock_init(&nm_i->nat_tree_lock);
+> =20
