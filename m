@@ -1,35 +1,26 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 4/5] f2fs: optimize restore_node_summary
-	slightly
-Date: Mon, 10 Mar 2014 14:12:19 +0800
-Message-ID: <000a01cf3c27$cb269c10$6173d430$@samsung.com>
-References: <5319A2D8.70409@cn.fujitsu.com> <1394426742.3870.89.camel@kjgkr>
-	<000901cf3c1f$9611b7b0$c2352710$@samsung.com>
-	<1394429876.3870.97.camel@kjgkr>
+From: Kownacka Aleksandra <kownacka.aleksandra@najlepszekursy.co.pl>
+Subject: =?utf-8?q?Uwaga_-_zosta=C5=82y_ostatnie_3_dni?=
+Date: Mon, 10 Mar 2014 08:01:42 +0100
+Message-ID: <a1ee8041cf35383f9506b589b39cf72d@176.31.191.94>
+Reply-To: kownacka.aleksandra.edu@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============2438163800540317907=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1WMtSb-0007gm-AZ
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <www-data@vps49067.ovh.net>) id 1WMuDd-0004wO-DP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 10 Mar 2014 06:13:13 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WMtSY-0001JK-Uh
+	Mon, 10 Mar 2014 07:01:49 +0000
+Received: from 94.ip-176-31-191.eu ([176.31.191.94] helo=vps49067.ovh.net)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1WMuDc-0002Y2-3o
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 10 Mar 2014 06:13:13 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N2700ENLILR8Y40@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 10 Mar 2014 15:13:03 +0900 (KST)
-In-reply-to: <1394429876.3870.97.camel@kjgkr>
-Content-language: zh-cn
+	Mon, 10 Mar 2014 07:01:49 +0000
+Received: from vps49067.ovh.net (localhost.localdomain [127.0.0.1])
+	by vps49067.ovh.net (8.14.4/8.14.4/Debian-4) with ESMTP id
+	s2A71gDk004865 for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 10 Mar 2014 08:01:42 +0100
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,128 +30,141 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>, 'linux-kernel' <linux-kernel@vger.kernel.org>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-SGksCgo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4gRnJvbTogSmFlZ2V1ayBLaW0gW21h
-aWx0bzpqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbV0KPiBTZW50OiBNb25kYXksIE1hcmNoIDEwLCAy
-MDE0IDE6MzggUE0KPiBUbzogQ2hhbyBZdQo+IENjOiAnR3UgWmhlbmcnOyAnbGludXgta2VybmVs
-JzsgJ2YyZnMnCj4gU3ViamVjdDogUkU6IFtmMmZzLWRldl0gW1BBVENIIDQvNV0gZjJmczogb3B0
-aW1pemUgcmVzdG9yZV9ub2RlX3N1bW1hcnkgc2xpZ2h0bHkKPiAKPiBIaSwKPiAKPiAyMDE0LTAz
-LTEwICjsm5QpLCAxMzoxMyArMDgwMCwgQ2hhbyBZdToKPiA+IEhpIEd1LCBLaW06Cj4gPgo+ID4g
-T25lIG1vcmUgY29tbWVudC4KPiA+Cj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4g
-PiA+IEZyb206IEphZWdldWsgS2ltIFttYWlsdG86amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb21dCj4g
-PiA+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMTAsIDIwMTQgMTI6NDYgUE0KPiA+ID4gVG86IEd1IFpo
-ZW5nCj4gPiA+IENjOiBsaW51eC1rZXJuZWw7IGYyZnMKPiA+ID4gU3ViamVjdDogUmU6IFtmMmZz
-LWRldl0gW1BBVENIIDQvNV0gZjJmczogb3B0aW1pemUgcmVzdG9yZV9ub2RlX3N1bW1hcnkgc2xp
-Z2h0bHkKPiA+ID4KPiA+ID4gSGkgR3UsCj4gPiA+Cj4gPiA+IDIwMTQtMDMtMDcgKOq4iCksIDE4
-OjQzICswODAwLCBHdSBaaGVuZzoKPiA+ID4gPiBQcmV2aW91c2x5LCB3ZSByYV9zdW1fcGFnZXMg
-dG8gcHJlLXJlYWQgY29udGlndW91cyBwYWdlcyBhcyBtb3JlCj4gPiA+ID4gYXMgcG9zc2libGUs
-IGFuZCBpZiB3ZSBmYWlsIHRvIGFsbG9jIG1vcmUgcGFnZXMsIGFuIEVOT01FTSBlcnJvcgo+ID4g
-PiA+IHdpbGwgYmUgcmVwb3J0ZWQgdXBzdHJlYW0sIGV2ZW4gdGhvdWdoIHdlIGhhdmUgYWxsb2Nl
-ZCBzb21lIHBhZ2VzCj4gPiA+ID4geWV0LiBJbiBmYWN0LCB3ZSBjYW4gdXNlIHRoZSBhdmFpbGFi
-bGUgcGFnZXMgdG8gZG8gdGhlIGpvYiBwYXJ0bHksCj4gPiA+ID4gYW5kIGNvbnRpbnVlIHRoZSBy
-ZXN0IGluIHRoZSBmb2xsb3dpbmcgY2lyY2xlLiBPbmx5IHJlcG9ydGluZyBFTk9NRU0KPiA+ID4g
-PiB1cHN0cmVhbSBpZiB3ZSByZWFsbHkgY2FuIG5vdCBhbGxvYyBhbnkgYXZhaWxhYmxlIHBhZ2Uu
-Cj4gPiA+ID4KPiA+ID4gPiBBbmQgYW5vdGhlciBmaXggaXMgaWdub3JpbmcgZGVhbGluZyB3aXRo
-IHRoZSBmb2xsb3dpbmcgcGFnZXMgaWYgYW4KPiA+ID4gPiBFSU8gb2NjdXJzIHdoZW4gcmVhZGlu
-ZyBwYWdlIGZyb20gcGFnZV9saXN0Lgo+ID4gPiA+Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogR3Ug
-WmhlbmcgPGd1ei5mbnN0QGNuLmZ1aml0c3UuY29tPgo+ID4KPiA+IFJldmlld2VkLWJ5OiBDaGFv
-IFl1IDxjaGFvMi55dUBzYW1zdW5nLmNvbT4KPiA+Cj4gPiA+ID4gLS0tCj4gPiA+ID4gIGZzL2Yy
-ZnMvbm9kZS5jICAgIHwgICA0NCArKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQo+ID4gPiA+ICBmcy9mMmZzL3NlZ21lbnQuYyB8ICAgIDcgKysrKystLQo+ID4gPiA+
-ICAyIGZpbGVzIGNoYW5nZWQsIDI1IGluc2VydGlvbnMoKyksIDI2IGRlbGV0aW9ucygtKQo+ID4g
-PiA+Cj4gPiA+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9ub2RlLmMK
-PiA+ID4gPiBpbmRleCA4Nzg3NDY5Li40Yjc4NjFkIDEwMDY0NAo+ID4gPiA+IC0tLSBhL2ZzL2Yy
-ZnMvbm9kZS5jCj4gPiA+ID4gKysrIGIvZnMvZjJmcy9ub2RlLmMKPiA+ID4gPiBAQCAtMTU4OCwx
-NSArMTU4OCw4IEBAIHN0YXRpYyBpbnQgcmFfc3VtX3BhZ2VzKHN0cnVjdCBmMmZzX3NiX2luZm8g
-KnNiaSwgc3RydWN0IGxpc3RfaGVhZAo+ID4gPiAqcGFnZXMsCj4gPiA+ID4gIAlmb3IgKDsgcGFn
-ZV9pZHggPCBzdGFydCArIG5ycGFnZXM7IHBhZ2VfaWR4KyspIHsKPiA+ID4gPiAgCQkvKiBhbGxv
-YyB0ZW1wb3JhbCBwYWdlIGZvciByZWFkIG5vZGUgc3VtbWFyeSBpbmZvKi8KPiA+ID4gPiAgCQlw
-YWdlID0gYWxsb2NfcGFnZShHRlBfRjJGU19aRVJPKTsKPiA+ID4gPiAtCQlpZiAoIXBhZ2UpIHsK
-PiA+ID4gPiAtCQkJc3RydWN0IHBhZ2UgKnRtcDsKPiA+ID4gPiAtCQkJbGlzdF9mb3JfZWFjaF9l
-bnRyeV9zYWZlKHBhZ2UsIHRtcCwgcGFnZXMsIGxydSkgewo+ID4gPiA+IC0JCQkJbGlzdF9kZWwo
-JnBhZ2UtPmxydSk7Cj4gPiA+ID4gLQkJCQl1bmxvY2tfcGFnZShwYWdlKTsKPiA+ID4gPiAtCQkJ
-CV9fZnJlZV9wYWdlcyhwYWdlLCAwKTsKPiA+ID4gPiAtCQkJfQo+ID4gPiA+IC0JCQlyZXR1cm4g
-LUVOT01FTTsKPiA+ID4gPiAtCQl9Cj4gPiA+ID4gKwkJaWYgKCFwYWdlKQo+ID4gPiA+ICsJCQli
-cmVhazsKPiA+ID4gPgo+ID4gPiA+ICAJCWxvY2tfcGFnZShwYWdlKTsKPiA+ID4gPiAgCQlwYWdl
-LT5pbmRleCA9IHBhZ2VfaWR4Owo+ID4gPiA+IEBAIC0xNjA3LDcgKzE2MDAsOCBAQCBzdGF0aWMg
-aW50IHJhX3N1bV9wYWdlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0cnVjdCBsaXN0X2hl
-YWQKPiA+ID4gKnBhZ2VzLAo+ID4gPiA+ICAJCWYyZnNfc3VibWl0X3BhZ2VfbWJpbyhzYmksIHBh
-Z2UsIHBhZ2UtPmluZGV4LCAmZmlvKTsKPiA+ID4gPgo+ID4gPiA+ICAJZjJmc19zdWJtaXRfbWVy
-Z2VkX2JpbyhzYmksIE1FVEEsIFJFQUQpOwo+ID4gPiA+IC0JcmV0dXJuIDA7Cj4gPiA+ID4gKwo+
-ID4gPiA+ICsJcmV0dXJuIHBhZ2VfaWR4IC0gc3RhcnQ7Cj4gPiA+ID4gIH0KPiA+ID4gPgo+ID4g
-PiA+ICBpbnQgcmVzdG9yZV9ub2RlX3N1bW1hcnkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+
-ID4gPiA+IEBAIC0xNjMwLDI4ICsxNjI0LDMwIEBAIGludCByZXN0b3JlX25vZGVfc3VtbWFyeShz
-dHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gPiA+ID4gIAkJbnJwYWdlcyA9IG1pbihsYXN0X29m
-ZnNldCAtIGksIGJpb19ibG9ja3MpOwo+ID4gPiA+Cj4gPiA+ID4gIAkJLyogcmVhZCBhaGVhZCBu
-b2RlIHBhZ2VzICovCj4gPiA+ID4gLQkJZXJyID0gcmFfc3VtX3BhZ2VzKHNiaSwgJnBhZ2VfbGlz
-dCwgYWRkciwgbnJwYWdlcyk7Cj4gPiA+ID4gLQkJaWYgKGVycikKPiA+ID4gPiAtCQkJcmV0dXJu
-IGVycjsKPiA+ID4gPiArCQlucnBhZ2VzID0gcmFfc3VtX3BhZ2VzKHNiaSwgJnBhZ2VfbGlzdCwg
-YWRkciwgbnJwYWdlcyk7Cj4gPiA+ID4gKwkJaWYgKCFucnBhZ2VzKQo+ID4gPiA+ICsJCQlyZXR1
-cm4gLUVOT01FTTsKPiA+ID4gPgo+ID4gPiA+ICAJCWxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShw
-YWdlLCB0bXAsICZwYWdlX2xpc3QsIGxydSkgewo+ID4gPiA+IC0KPiA+ID4KPiA+ID4gSGVyZSB3
-ZSBjYW4ganVzdCBhZGQ6Cj4gPiA+IAkJCWlmIChlcnIpCj4gPiA+IAkJCQlnb3RvIHNraXA7Cj4g
-PiA+IAkJCWxvY2tfcGFnZSgpOwo+ID4gPiAJCQkuLi4KPiA+ID4gCQkJdW5sb2NrX3BhZ2UoKTsK
-PiA+ID4gCQlza2lwOgo+ID4gPiAJCQlsaXN0X2RlbCgpOwo+ID4gPiAJCQlfX2ZyZWVfcGFnZXMo
-KTsKPiA+ID4KPiA+ID4gSU1PLCBpdCdzIG1vcmUgbmVhdCwgc28gaWYgeW91IGhhdmUgYW55IG9i
-amVjdGlvbiwgbGV0IG1lIGtub3cuCj4gPiA+IE90aGVyd2lzZSwgSSdsbCBoYW5kbGUgdGhpcyBi
-eSBteXNlbGYuIDopCj4gPiA+IFRoYW5rcywKPiA+ID4KPiA+ID4gPiAtCQkJbG9ja19wYWdlKHBh
-Z2UpOwo+ID4gPiA+IC0JCQlpZiAodW5saWtlbHkoIVBhZ2VVcHRvZGF0ZShwYWdlKSkpIHsKPiA+
-ID4gPiAtCQkJCWVyciA9IC1FSU87Cj4gPiA+ID4gLQkJCX0gZWxzZSB7Cj4gPiA+ID4gLQkJCQly
-biA9IEYyRlNfTk9ERShwYWdlKTsKPiA+ID4gPiAtCQkJCXN1bV9lbnRyeS0+bmlkID0gcm4tPmZv
-b3Rlci5uaWQ7Cj4gPiA+ID4gLQkJCQlzdW1fZW50cnktPnZlcnNpb24gPSAwOwo+ID4gPiA+IC0J
-CQkJc3VtX2VudHJ5LT5vZnNfaW5fbm9kZSA9IDA7Cj4gPiA+ID4gLQkJCQlzdW1fZW50cnkrKzsK
-PiA+ID4gPiArCQkJaWYgKCFlcnIpIHsKPiA+Cj4gPiBJZiB3ZSBza2lwIGhlcmUsIG5leHQgcm91
-bmQgd2Ugd2lsbCBmaWxsIHRoZXNlIHN1bW1hcnkgcGFnZSBlbnRyaWVzIHdpdGgKPiA+IHdyb25n
-IGluZm8gYmVjYXVzZSB3ZSBza2lwIHRoZSBjb2RlICdzdW1fZW50cnkrKzsnLgo+IAo+IFRoZXJl
-IGlzIG5vIG5leHQgcm91bmQuIE9uY2UgZXJyID0gLUVJTywgdGhlcmUncyBubyByb3V0ZSB0byBt
-YWtlIGVyciA9Cj4gMC4KCkFoLCB5b3UncmUgcmlnaHQuIE9ubHkgb2xkIGNvZGUgaGFzIHRoaXMg
-cHJvYmxlbSwgdGhpcyBuZXcgcGF0Y2ggY2FuIGZpeCBpdCB3ZWxsLgpUaGFua3MgZm9yIHRoZSBt
-ZW50aW9uLiA6KQoKVGhhbmtzLgoKPiAKPiA+Cj4gPiA+ID4gKwkJCQlsb2NrX3BhZ2UocGFnZSk7
-Cj4gPiA+ID4gKwkJCQlpZiAodW5saWtlbHkoIVBhZ2VVcHRvZGF0ZShwYWdlKSkpIHsKPiA+ID4g
-PiArCQkJCQllcnIgPSAtRUlPOwo+ID4gPiA+ICsJCQkJfSBlbHNlIHsKPiA+ID4gPiArCQkJCQly
-biA9IEYyRlNfTk9ERShwYWdlKTsKPiA+ID4gPiArCQkJCQlzdW1fZW50cnktPm5pZCA9IHJuLT5m
-b290ZXIubmlkOwo+ID4gPiA+ICsJCQkJCXN1bV9lbnRyeS0+dmVyc2lvbiA9IDA7Cj4gPiA+ID4g
-KwkJCQkJc3VtX2VudHJ5LT5vZnNfaW5fbm9kZSA9IDA7Cj4gPiA+ID4gKwkJCQkJc3VtX2VudHJ5
-Kys7Cj4gPiA+ID4gKwkJCQl9Cj4gPiA+ID4gKwkJCQl1bmxvY2tfcGFnZShwYWdlKTsKPiA+ID4g
-PiAgCQkJfQo+ID4gPiA+Cj4gPiA+ID4gIAkJCWxpc3RfZGVsKCZwYWdlLT5scnUpOwo+ID4gPiA+
-IC0JCQl1bmxvY2tfcGFnZShwYWdlKTsKPiA+ID4gPiAgCQkJX19mcmVlX3BhZ2VzKHBhZ2UsIDAp
-Owo+ID4gPiA+ICAJCX0KPiA+Cj4gPiBNYXliZSB3ZSBzaG91bGQgYWRkIGNvZGUgaGVyZS4KPiA+
-IAkJCWlmIChlcnIpCj4gPiAJCQkJcmV0dXJuIGVycjsKPiAKPiBUaGlzIGNhbiByZWR1Y2UgdW5u
-ZWNlc3NhcnkgbG9vcCBleGVjdXRpb25zLgo+IEknbGwgYWRkIHRoaXMuCj4gVGhhbmtzLAo+IAo+
-ID4KPiA+ID4gPiAgCX0KPiA+ID4gPiArCj4gPiA+ID4gIAlyZXR1cm4gZXJyOwo+ID4gPiA+ICB9
-Cj4gPiA+ID4KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZz
-L3NlZ21lbnQuYwo+ID4gPiA+IGluZGV4IDE5OWM5NjQuLmIzZjg0MzEgMTAwNjQ0Cj4gPiA+ID4g
-LS0tIGEvZnMvZjJmcy9zZWdtZW50LmMKPiA+ID4gPiArKysgYi9mcy9mMmZzL3NlZ21lbnQuYwo+
-ID4gPiA+IEBAIC0xMTYwLDkgKzExNjAsMTIgQEAgc3RhdGljIGludCByZWFkX25vcm1hbF9zdW1t
-YXJpZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBpbnQKPiB0eXBlKQo+ID4gPiA+ICAJCQkJ
-bnMtPm9mc19pbl9ub2RlID0gMDsKPiA+ID4gPiAgCQkJfQo+ID4gPiA+ICAJCX0gZWxzZSB7Cj4g
-PiA+ID4gLQkJCWlmIChyZXN0b3JlX25vZGVfc3VtbWFyeShzYmksIHNlZ25vLCBzdW0pKSB7Cj4g
-PiA+ID4gKwkJCWludCBlcnI7Cj4gPiA+ID4gKwo+ID4gPiA+ICsJCQllcnIgPSByZXN0b3JlX25v
-ZGVfc3VtbWFyeShzYmksIHNlZ25vLCBzdW0pOwo+ID4gPiA+ICsJCQlpZiAoZXJyKSB7Cj4gPiA+
-ID4gIAkJCQlmMmZzX3B1dF9wYWdlKG5ldywgMSk7Cj4gPiA+ID4gLQkJCQlyZXR1cm4gLUVJTlZB
-TDsKPiA+ID4gPiArCQkJCXJldHVybiBlcnI7Cj4gPiA+ID4gIAkJCX0KPiA+ID4gPiAgCQl9Cj4g
-PiA+ID4gIAl9Cj4gPiA+Cj4gPiA+IC0tCj4gPiA+IEphZWdldWsgS2ltCj4gPiA+IFNhbXN1bmcK
-PiA+ID4KPiA+ID4KPiA+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiA+IExlYXJuIEdyYXBo
-IERhdGFiYXNlcyAtIERvd25sb2FkIEZSRUUgTydSZWlsbHkgQm9vawo+ID4gPiAiR3JhcGggRGF0
-YWJhc2VzIiBpcyB0aGUgZGVmaW5pdGl2ZSBuZXcgZ3VpZGUgdG8gZ3JhcGggZGF0YWJhc2VzIGFu
-ZCB0aGVpcgo+ID4gPiBhcHBsaWNhdGlvbnMuIFdyaXR0ZW4gYnkgdGhyZWUgYWNjbGFpbWVkIGxl
-YWRlcnMgaW4gdGhlIGZpZWxkLAo+ID4gPiB0aGlzIGZpcnN0IGVkaXRpb24gaXMgbm93IGF2YWls
-YWJsZS4gRG93bmxvYWQgeW91ciBmcmVlIGJvb2sgdG9kYXkhCj4gPiA+IGh0dHA6Ly9wLnNmLm5l
-dC9zZnUvMTM1MzRfTmVvVGVjaAo+ID4gPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwo+ID4gPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdAo+ID4g
-PiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+ID4gPiBodHRwczovL2xp
-c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCj4gPgo+
-IAo+IC0tCj4gSmFlZ2V1ayBLaW0KPiBTYW1zdW5nCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkxl
-YXJuIEdyYXBoIERhdGFiYXNlcyAtIERvd25sb2FkIEZSRUUgTydSZWlsbHkgQm9vawoiR3JhcGgg
-RGF0YWJhc2VzIiBpcyB0aGUgZGVmaW5pdGl2ZSBuZXcgZ3VpZGUgdG8gZ3JhcGggZGF0YWJhc2Vz
-IGFuZCB0aGVpcgphcHBsaWNhdGlvbnMuIFdyaXR0ZW4gYnkgdGhyZWUgYWNjbGFpbWVkIGxlYWRl
-cnMgaW4gdGhlIGZpZWxkLAp0aGlzIGZpcnN0IGVkaXRpb24gaXMgbm93IGF2YWlsYWJsZS4gRG93
-bmxvYWQgeW91ciBmcmVlIGJvb2sgdG9kYXkhCmh0dHA6Ly9wLnNmLm5ldC9zZnUvMTM1MzRfTmVv
-VGVjaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
-eC1mMmZzLWRldmVsCg==
+--===============2438163800540317907==
+Content-Type: multipart/alternative;
+	boundary="b1_a1ee8041cf35383f9506b589b39cf72d"
+
+--b1_a1ee8041cf35383f9506b589b39cf72d
+Content-Type: text/plain; charset = "UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by vps49067.ovh.net id
+	s2A71gDk004865
+
+Informujemy, =C5=BCe w dniach 08-12.03.2014 odb=C4=99dzie si=C4=99
+nab=C3=B3r na kurs j=C4=99zyka angielskiego.
+
+
+Jest to IV edycja projektu "Ka=C5=BCdy Doros=C5=82y Polak M=C3=B3wi po
+angielsku"
+
+Kod upowa=C5=BCniaj=C4=85cy do 61% zni=C5=BCki na szkolenie: E1403
+
+Liczba miejsc ograniczona, decyduje kolejn=C5=9B=C4=87 zg=C5=82osze=C5=84.
+
+Zaj=C4=99cia:
+
+- Angielski dla pocz=C4=85tkuj=C4=85cych (A1/A2),
+- Angielski dla =C5=9Brednio-zaawansowanych (B1)
+
+Zaj=C4=99cia trwaj=C4=85 12 miesi=C4=99cy.
+Wszyscy studenci obj=C4=99ci s=C4=85 opiek=C4=85 metodyczn=C4=85.
+
+Szko=C5=82a J=C4=99zykowa Dobra Zuza jest plac=C3=B3wk=C4=85 kszta=C5=82c=
+enia
+ustawicznego wpisan=C4=85 do ewidencji szk=C3=B3=C5=82 i plac=C3=B3wek
+niepublicznych prowadzonej przez m. st. Warszawa pod numerem
+1052 K.
+
+Za=C5=9Bwiadczenia o uko=C5=84czeniu kursu wydawane s=C4=85 na podstawie
+=C2=A718 ust. 2 rozporz=C4=85dzenia Ministra Edukacji Narodowej z
+dnia 11 stycznia 2012 r. w sprawie kszta=C5=82cenia ustawicznego
+w formach pozaszkolnych (Dz. U. poz. 186, z p=C3=B3=C5=BAniejszymi
+zmianami).
+
+Na zaj=C4=99cia mo=C5=BCna zapisywa=C4=87 si=C4=99 indywidualnie lub
+grupowo.
+
+Istnieje mo=C5=BCliwo=C5=9B=C4=87 otrzymania faktury.
+
+Szczeg=C3=B3=C5=82owe informacje o naborze dost=C4=99pne s=C4=85 na stron=
+ie:
+
+
+
+http://www.najlepszekursy.co.pl
+
+
+
+
+Dodatkowych informacji udziela sekretariat szko=C5=82y pod
+numerem:
+
++48 22 379 65 67 (w godzinach od 8:00 do 17:00)
+
+
+
+
+
+
+Zrezygnuj z otrzymywania wiadom=C5=9Bci:
+http://www.najlepszekursy.co.pl/mailing/unsubscribe.php?email=3Dlinux-f2f=
+s-devel@lists.sourceforge.net
+
+
+--b1_a1ee8041cf35383f9506b589b39cf72d
+Content-Type: text/html; charset = "UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by vps49067.ovh.net id
+	s2A71gDk004865
+
+<html><head><meta http-equiv=3D"content-type" content=3D"text/html; chars=
+et=3Dutf-8"></head><body><p>Informujemy, =C5=BCe w dniach 08-12.03.2014 r=
+. odb=C4=99dzie si=C4=99 nab=C3=B3r na kurs j=C4=99zyka angielskiego. <br=
+> <br> <br>Jest to IV edycja projektu &quot;Ka=C5=BCdy Doros=C5=82y Polak=
+ M=C3=B3wi po angielsku&quot; <br> <br> Kod upowa=C5=BCniaj=C4=85cy do 61=
+% zni=C5=BCki na szkolenie: <b>E1403</b> <br> <br> Liczba miejsc ogranicz=
+ona, decyduje kolejn=C5=9B=C4=87 zg=C5=82osze=C5=84. <br> <br> Zaj=C4=99c=
+ia: <br> <br> - Angielski dla pocz=C4=85tkuj=C4=85cych (A1/A2), <br> - An=
+gielski dla =C5=9Brednio-zaawansowanych (B1) <br> <br> Zaj=C4=99cia trwaj=
+=C4=85 12 miesi=C4=99cy. <br> Wszyscy studenci obj=C4=99ci s=C4=85 opiek=C4=
+=85 metodyczn=C4=85. <br> <br> Szko=C5=82a J=C4=99zykowa Dobra Zuza jest =
+plac=C3=B3wk=C4=85 kszta=C5=82cenia ustawicznego wpisan=C4=85 do ewidencj=
+i szk=C3=B3=C5=82 i plac=C3=B3wek niepublicznych prowadzonej przez m. st.=
+ Warszawa pod numerem 1052 K. <br>
+<br> Za=C5=9Bwiadczenia o uko=C5=84czeniu kursu wydawane s=C4=85 na podst=
+awie &sect;18 ust. 2 rozporz=C4=85dzenia Ministra Edukacji Narodowej z dn=
+ia 11 stycznia 2012 r. w sprawie kszta=C5=82cenia ustawicznego w formach =
+pozaszkolnych (Dz. U. poz. 186, z p=C3=B3=C5=BAniejszymi zmianami). <br> =
+<br> Na zaj=C4=99cia mo=C5=BCna zapisywa=C4=87 si=C4=99 indywidualnie lub=
+ grupowo. <br> <br> Istnieje mo=C5=BCliwo=C5=9B=C4=87 otrzymania faktury.=
+ <br> <br> Szczeg=C3=B3=C5=82owe informacje o naborze dost=C4=99pne s=C4=85=
+ na stronie: <br> <br> <a href=3D"http://www.najlepszekursy.co.pl">www.na=
+jlepszekursy.co.pl</a> <br> <br> Dodatkowych informacji udziela sekretari=
+at szko=C5=82y pod numerem: <br> <br> +48 22 379 65 67 (w godzinach od 8:=
+00 do 17:00) <br> <br> <br> <br> <br> <br> <br> <a href=3D"http://www.naj=
+lepszekursy.co.pl/mailing/unsubscribe.php?email=3Dlinux-f2fs-devel@lists.=
+sourceforge.net">Zrezygnuj z otrzymywania wiadom=C5=9Bci</a></p></body></=
+html>
+
+
+
+--b1_a1ee8041cf35383f9506b589b39cf72d--
+
+
+
+--===============2438163800540317907==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+------------------------------------------------------------------------------
+Learn Graph Databases - Download FREE O'Reilly Book
+"Graph Databases" is the definitive new guide to graph databases and their
+applications. Written by three acclaimed leaders in the field,
+this first edition is now available. Download your free book today!
+http://p.sf.net/sfu/13534_NeoTech
+--===============2438163800540317907==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============2438163800540317907==--
