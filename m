@@ -1,121 +1,141 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 5/5] f2fs: add a wait queue to avoid unnecessary,
- build_free_nid
-Date: Mon, 10 Mar 2014 13:50:24 +0900
-Message-ID: <1394427024.3870.94.camel@kjgkr>
-References: <5319A2DB.8040705@cn.fujitsu.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH 4/5] f2fs: optimize
+	restore_node_summary	slightly
+Date: Mon, 10 Mar 2014 13:13:30 +0800
+Message-ID: <000901cf3c1f$9611b7b0$c2352710$@samsung.com>
+References: <5319A2D8.70409@cn.fujitsu.com> <1394426742.3870.89.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <5319A2DB.8040705@cn.fujitsu.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1WMsXl-0001oi-Qz
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 10 Mar 2014 05:14:29 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WMsXj-0006C5-Gm
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 10 Mar 2014 05:14:29 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout2.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N270038PFVTIV90@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 10 Mar 2014 14:14:17 +0900 (KST)
+In-reply-to: <1394426742.3870.89.camel@kjgkr>
+Content-language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>, jaegeuk.kim@samsung.com
+Cc: 'linux-kernel' <linux-kernel@vger.kernel.org>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Gu,
-
-2014-03-07 (=EA=B8=88), 18:43 +0800, Gu Zheng:
-> Previously, when we try to alloc free nid while the build free nid
-> is going, the allocer will be run into the flow that waiting for
-> "nm_i->build_lock", see following:
-> 	/* We should not use stale free nids created by build_free_nids */
-> ---->	if (nm_i->fcnt && !on_build_free_nids(nm_i)) {
-> 		f2fs_bug_on(list_empty(&nm_i->free_nid_list));
-> 		list_for_each(this, &nm_i->free_nid_list) {
-> 			i =3D list_entry(this, struct free_nid, list);
-> 			if (i->state =3D=3D NID_NEW)
-> 				break;
-> 		}
->=20
-> 		f2fs_bug_on(i->state !=3D NID_NEW);
-> 		*nid =3D i->nid;
-> 		i->state =3D NID_ALLOC;
-> 		nm_i->fcnt--;
-> 		spin_unlock(&nm_i->free_nid_list_lock);
-> 		return true;
-> 	}
-> 	spin_unlock(&nm_i->free_nid_list_lock);
->=20
-> 	/* Let's scan nat pages and its caches to get free nids */
-> ---->	mutex_lock(&nm_i->build_lock);
-> 	build_free_nids(sbi);
-> 	mutex_unlock(&nm_i->build_lock);
-> and this will cause another unnecessary building free nid if the curr=
-ent
-> building free nid job is done.
-
-Could you support any performance number for this?
-Since, IMO, the contended building processes will be released right awa=
-y
-because of the following condition check inside build_free_nids().
-
-if (nm_i->fcnt > NAT_ENTRY_PER_BLOCK)
-	return;
-
-So, I don't think this gives us any high latency.
-Can the wakeup_all() become another overhead all the time?
-Thanks,
-
-> So here we introduce a wait_queue to avoid this issue.
->=20
-> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
-> ---
->  fs/f2fs/f2fs.h |    1 +
->  fs/f2fs/node.c |   10 +++++++++-
->  2 files changed, 10 insertions(+), 1 deletions(-)
->=20
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index f845e92..7ae193e 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -256,6 +256,7 @@ struct f2fs_nm_info {
->  	spinlock_t free_nid_list_lock;	/* protect free nid list */
->  	unsigned int fcnt;		/* the number of free node id */
->  	struct mutex build_lock;	/* lock for build free nids */
-> +	wait_queue_head_t build_wq;	/* wait queue for build free nids */
-> =20
->  	/* for checkpoint */
->  	char *nat_bitmap;		/* NAT bitmap pointer */
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 4b7861d..ab44711 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1422,7 +1422,13 @@ retry:
->  	spin_lock(&nm_i->free_nid_list_lock);
-> =20
->  	/* We should not use stale free nids created by build_free_nids */
-> -	if (nm_i->fcnt && !on_build_free_nids(nm_i)) {
-> +	if (on_build_free_nids(nm_i)) {
-> +		spin_unlock(&nm_i->free_nid_list_lock);
-> +		wait_event(nm_i->build_wq, !on_build_free_nids(nm_i));
-> +		goto retry;
-> +	}
-> +
-> +	if (nm_i->fcnt) {
->  		f2fs_bug_on(list_empty(&nm_i->free_nid_list));
->  		list_for_each(this, &nm_i->free_nid_list) {
->  			i =3D list_entry(this, struct free_nid, list);
-> @@ -1443,6 +1449,7 @@ retry:
->  	mutex_lock(&nm_i->build_lock);
->  	build_free_nids(sbi);
->  	mutex_unlock(&nm_i->build_lock);
-> +	wake_up_all(&nm_i->build_wq);
->  	goto retry;
->  }
-> =20
-> @@ -1813,6 +1820,7 @@ static int init_node_manager(struct f2fs_sb_inf=
-o *sbi)
->  	INIT_LIST_HEAD(&nm_i->dirty_nat_entries);
-> =20
->  	mutex_init(&nm_i->build_lock);
-> +	init_waitqueue_head(&nm_i->build_wq);
->  	spin_lock_init(&nm_i->free_nid_list_lock);
->  	rwlock_init(&nm_i->nat_tree_lock);
-> =20
-
---=20
-Jaegeuk Kim
-Samsung
+SGkgR3UsIEtpbToKCk9uZSBtb3JlIGNvbW1lbnQuCgo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0t
+LS0tCj4gRnJvbTogSmFlZ2V1ayBLaW0gW21haWx0bzpqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbV0K
+PiBTZW50OiBNb25kYXksIE1hcmNoIDEwLCAyMDE0IDEyOjQ2IFBNCj4gVG86IEd1IFpoZW5nCj4g
+Q2M6IGxpbnV4LWtlcm5lbDsgZjJmcwo+IFN1YmplY3Q6IFJlOiBbZjJmcy1kZXZdIFtQQVRDSCA0
+LzVdIGYyZnM6IG9wdGltaXplIHJlc3RvcmVfbm9kZV9zdW1tYXJ5IHNsaWdodGx5Cj4gCj4gSGkg
+R3UsCj4gCj4gMjAxNC0wMy0wNyAo6riIKSwgMTg6NDMgKzA4MDAsIEd1IFpoZW5nOgo+ID4gUHJl
+dmlvdXNseSwgd2UgcmFfc3VtX3BhZ2VzIHRvIHByZS1yZWFkIGNvbnRpZ3VvdXMgcGFnZXMgYXMg
+bW9yZQo+ID4gYXMgcG9zc2libGUsIGFuZCBpZiB3ZSBmYWlsIHRvIGFsbG9jIG1vcmUgcGFnZXMs
+IGFuIEVOT01FTSBlcnJvcgo+ID4gd2lsbCBiZSByZXBvcnRlZCB1cHN0cmVhbSwgZXZlbiB0aG91
+Z2ggd2UgaGF2ZSBhbGxvY2VkIHNvbWUgcGFnZXMKPiA+IHlldC4gSW4gZmFjdCwgd2UgY2FuIHVz
+ZSB0aGUgYXZhaWxhYmxlIHBhZ2VzIHRvIGRvIHRoZSBqb2IgcGFydGx5LAo+ID4gYW5kIGNvbnRp
+bnVlIHRoZSByZXN0IGluIHRoZSBmb2xsb3dpbmcgY2lyY2xlLiBPbmx5IHJlcG9ydGluZyBFTk9N
+RU0KPiA+IHVwc3RyZWFtIGlmIHdlIHJlYWxseSBjYW4gbm90IGFsbG9jIGFueSBhdmFpbGFibGUg
+cGFnZS4KPiA+Cj4gPiBBbmQgYW5vdGhlciBmaXggaXMgaWdub3JpbmcgZGVhbGluZyB3aXRoIHRo
+ZSBmb2xsb3dpbmcgcGFnZXMgaWYgYW4KPiA+IEVJTyBvY2N1cnMgd2hlbiByZWFkaW5nIHBhZ2Ug
+ZnJvbSBwYWdlX2xpc3QuCj4gPgo+ID4gU2lnbmVkLW9mZi1ieTogR3UgWmhlbmcgPGd1ei5mbnN0
+QGNuLmZ1aml0c3UuY29tPgoKUmV2aWV3ZWQtYnk6IENoYW8gWXUgPGNoYW8yLnl1QHNhbXN1bmcu
+Y29tPgoKPiA+IC0tLQo+ID4gIGZzL2YyZnMvbm9kZS5jICAgIHwgICA0NCArKysrKysrKysrKysr
+KysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gIGZzL2YyZnMvc2VnbWVudC5jIHwg
+ICAgNyArKysrKy0tCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAyNSBpbnNlcnRpb25zKCspLCAyNiBk
+ZWxldGlvbnMoLSkKPiA+Cj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9ub2RlLmMgYi9mcy9mMmZz
+L25vZGUuYwo+ID4gaW5kZXggODc4NzQ2OS4uNGI3ODYxZCAxMDA2NDQKPiA+IC0tLSBhL2ZzL2Yy
+ZnMvbm9kZS5jCj4gPiArKysgYi9mcy9mMmZzL25vZGUuYwo+ID4gQEAgLTE1ODgsMTUgKzE1ODgs
+OCBAQCBzdGF0aWMgaW50IHJhX3N1bV9wYWdlcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0
+cnVjdCBsaXN0X2hlYWQKPiAqcGFnZXMsCj4gPiAgCWZvciAoOyBwYWdlX2lkeCA8IHN0YXJ0ICsg
+bnJwYWdlczsgcGFnZV9pZHgrKykgewo+ID4gIAkJLyogYWxsb2MgdGVtcG9yYWwgcGFnZSBmb3Ig
+cmVhZCBub2RlIHN1bW1hcnkgaW5mbyovCj4gPiAgCQlwYWdlID0gYWxsb2NfcGFnZShHRlBfRjJG
+U19aRVJPKTsKPiA+IC0JCWlmICghcGFnZSkgewo+ID4gLQkJCXN0cnVjdCBwYWdlICp0bXA7Cj4g
+PiAtCQkJbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlKHBhZ2UsIHRtcCwgcGFnZXMsIGxydSkgewo+
+ID4gLQkJCQlsaXN0X2RlbCgmcGFnZS0+bHJ1KTsKPiA+IC0JCQkJdW5sb2NrX3BhZ2UocGFnZSk7
+Cj4gPiAtCQkJCV9fZnJlZV9wYWdlcyhwYWdlLCAwKTsKPiA+IC0JCQl9Cj4gPiAtCQkJcmV0dXJu
+IC1FTk9NRU07Cj4gPiAtCQl9Cj4gPiArCQlpZiAoIXBhZ2UpCj4gPiArCQkJYnJlYWs7Cj4gPgo+
+ID4gIAkJbG9ja19wYWdlKHBhZ2UpOwo+ID4gIAkJcGFnZS0+aW5kZXggPSBwYWdlX2lkeDsKPiA+
+IEBAIC0xNjA3LDcgKzE2MDAsOCBAQCBzdGF0aWMgaW50IHJhX3N1bV9wYWdlcyhzdHJ1Y3QgZjJm
+c19zYl9pbmZvICpzYmksIHN0cnVjdCBsaXN0X2hlYWQKPiAqcGFnZXMsCj4gPiAgCQlmMmZzX3N1
+Ym1pdF9wYWdlX21iaW8oc2JpLCBwYWdlLCBwYWdlLT5pbmRleCwgJmZpbyk7Cj4gPgo+ID4gIAlm
+MmZzX3N1Ym1pdF9tZXJnZWRfYmlvKHNiaSwgTUVUQSwgUkVBRCk7Cj4gPiAtCXJldHVybiAwOwo+
+ID4gKwo+ID4gKwlyZXR1cm4gcGFnZV9pZHggLSBzdGFydDsKPiA+ICB9Cj4gPgo+ID4gIGludCBy
+ZXN0b3JlX25vZGVfc3VtbWFyeShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gPiBAQCAtMTYz
+MCwyOCArMTYyNCwzMCBAQCBpbnQgcmVzdG9yZV9ub2RlX3N1bW1hcnkoc3RydWN0IGYyZnNfc2Jf
+aW5mbyAqc2JpLAo+ID4gIAkJbnJwYWdlcyA9IG1pbihsYXN0X29mZnNldCAtIGksIGJpb19ibG9j
+a3MpOwo+ID4KPiA+ICAJCS8qIHJlYWQgYWhlYWQgbm9kZSBwYWdlcyAqLwo+ID4gLQkJZXJyID0g
+cmFfc3VtX3BhZ2VzKHNiaSwgJnBhZ2VfbGlzdCwgYWRkciwgbnJwYWdlcyk7Cj4gPiAtCQlpZiAo
+ZXJyKQo+ID4gLQkJCXJldHVybiBlcnI7Cj4gPiArCQlucnBhZ2VzID0gcmFfc3VtX3BhZ2VzKHNi
+aSwgJnBhZ2VfbGlzdCwgYWRkciwgbnJwYWdlcyk7Cj4gPiArCQlpZiAoIW5ycGFnZXMpCj4gPiAr
+CQkJcmV0dXJuIC1FTk9NRU07Cj4gPgo+ID4gIAkJbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlKHBh
+Z2UsIHRtcCwgJnBhZ2VfbGlzdCwgbHJ1KSB7Cj4gPiAtCj4gCj4gSGVyZSB3ZSBjYW4ganVzdCBh
+ZGQ6Cj4gCQkJaWYgKGVycikKPiAJCQkJZ290byBza2lwOwo+IAkJCWxvY2tfcGFnZSgpOwo+IAkJ
+CS4uLgo+IAkJCXVubG9ja19wYWdlKCk7Cj4gCQlza2lwOgo+IAkJCWxpc3RfZGVsKCk7Cj4gCQkJ
+X19mcmVlX3BhZ2VzKCk7Cj4gCj4gSU1PLCBpdCdzIG1vcmUgbmVhdCwgc28gaWYgeW91IGhhdmUg
+YW55IG9iamVjdGlvbiwgbGV0IG1lIGtub3cuCj4gT3RoZXJ3aXNlLCBJJ2xsIGhhbmRsZSB0aGlz
+IGJ5IG15c2VsZi4gOikKPiBUaGFua3MsCj4gCj4gPiAtCQkJbG9ja19wYWdlKHBhZ2UpOwo+ID4g
+LQkJCWlmICh1bmxpa2VseSghUGFnZVVwdG9kYXRlKHBhZ2UpKSkgewo+ID4gLQkJCQllcnIgPSAt
+RUlPOwo+ID4gLQkJCX0gZWxzZSB7Cj4gPiAtCQkJCXJuID0gRjJGU19OT0RFKHBhZ2UpOwo+ID4g
+LQkJCQlzdW1fZW50cnktPm5pZCA9IHJuLT5mb290ZXIubmlkOwo+ID4gLQkJCQlzdW1fZW50cnkt
+PnZlcnNpb24gPSAwOwo+ID4gLQkJCQlzdW1fZW50cnktPm9mc19pbl9ub2RlID0gMDsKPiA+IC0J
+CQkJc3VtX2VudHJ5Kys7Cj4gPiArCQkJaWYgKCFlcnIpIHsKCklmIHdlIHNraXAgaGVyZSwgbmV4
+dCByb3VuZCB3ZSB3aWxsIGZpbGwgdGhlc2Ugc3VtbWFyeSBwYWdlIGVudHJpZXMgd2l0aAp3cm9u
+ZyBpbmZvIGJlY2F1c2Ugd2Ugc2tpcCB0aGUgY29kZSAnc3VtX2VudHJ5Kys7Jy4KCj4gPiArCQkJ
+CWxvY2tfcGFnZShwYWdlKTsKPiA+ICsJCQkJaWYgKHVubGlrZWx5KCFQYWdlVXB0b2RhdGUocGFn
+ZSkpKSB7Cj4gPiArCQkJCQllcnIgPSAtRUlPOwo+ID4gKwkJCQl9IGVsc2Ugewo+ID4gKwkJCQkJ
+cm4gPSBGMkZTX05PREUocGFnZSk7Cj4gPiArCQkJCQlzdW1fZW50cnktPm5pZCA9IHJuLT5mb290
+ZXIubmlkOwo+ID4gKwkJCQkJc3VtX2VudHJ5LT52ZXJzaW9uID0gMDsKPiA+ICsJCQkJCXN1bV9l
+bnRyeS0+b2ZzX2luX25vZGUgPSAwOwo+ID4gKwkJCQkJc3VtX2VudHJ5Kys7Cj4gPiArCQkJCX0K
+PiA+ICsJCQkJdW5sb2NrX3BhZ2UocGFnZSk7Cj4gPiAgCQkJfQo+ID4KPiA+ICAJCQlsaXN0X2Rl
+bCgmcGFnZS0+bHJ1KTsKPiA+IC0JCQl1bmxvY2tfcGFnZShwYWdlKTsKPiA+ICAJCQlfX2ZyZWVf
+cGFnZXMocGFnZSwgMCk7Cj4gPiAgCQl9CgpNYXliZSB3ZSBzaG91bGQgYWRkIGNvZGUgaGVyZS4K
+CQkJaWYgKGVycikKCQkJCXJldHVybiBlcnI7Cgo+ID4gIAl9Cj4gPiArCj4gPiAgCXJldHVybiBl
+cnI7Cj4gPiAgfQo+ID4KPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZzL3NlZ21lbnQuYyBiL2ZzL2Yy
+ZnMvc2VnbWVudC5jCj4gPiBpbmRleCAxOTljOTY0Li5iM2Y4NDMxIDEwMDY0NAo+ID4gLS0tIGEv
+ZnMvZjJmcy9zZWdtZW50LmMKPiA+ICsrKyBiL2ZzL2YyZnMvc2VnbWVudC5jCj4gPiBAQCAtMTE2
+MCw5ICsxMTYwLDEyIEBAIHN0YXRpYyBpbnQgcmVhZF9ub3JtYWxfc3VtbWFyaWVzKHN0cnVjdCBm
+MmZzX3NiX2luZm8gKnNiaSwgaW50IHR5cGUpCj4gPiAgCQkJCW5zLT5vZnNfaW5fbm9kZSA9IDA7
+Cj4gPiAgCQkJfQo+ID4gIAkJfSBlbHNlIHsKPiA+IC0JCQlpZiAocmVzdG9yZV9ub2RlX3N1bW1h
+cnkoc2JpLCBzZWdubywgc3VtKSkgewo+ID4gKwkJCWludCBlcnI7Cj4gPiArCj4gPiArCQkJZXJy
+ID0gcmVzdG9yZV9ub2RlX3N1bW1hcnkoc2JpLCBzZWdubywgc3VtKTsKPiA+ICsJCQlpZiAoZXJy
+KSB7Cj4gPiAgCQkJCWYyZnNfcHV0X3BhZ2UobmV3LCAxKTsKPiA+IC0JCQkJcmV0dXJuIC1FSU5W
+QUw7Cj4gPiArCQkJCXJldHVybiBlcnI7Cj4gPiAgCQkJfQo+ID4gIAkJfQo+ID4gIAl9Cj4gCj4g
+LS0KPiBKYWVnZXVrIEtpbQo+IFNhbXN1bmcKPiAKPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+PiBMZWFybiBHcmFwaCBEYXRhYmFzZXMgLSBEb3dubG9hZCBGUkVFIE8nUmVpbGx5IEJvb2sKPiAi
+R3JhcGggRGF0YWJhc2VzIiBpcyB0aGUgZGVmaW5pdGl2ZSBuZXcgZ3VpZGUgdG8gZ3JhcGggZGF0
+YWJhc2VzIGFuZCB0aGVpcgo+IGFwcGxpY2F0aW9ucy4gV3JpdHRlbiBieSB0aHJlZSBhY2NsYWlt
+ZWQgbGVhZGVycyBpbiB0aGUgZmllbGQsCj4gdGhpcyBmaXJzdCBlZGl0aW9uIGlzIG5vdyBhdmFp
+bGFibGUuIERvd25sb2FkIHlvdXIgZnJlZSBib29rIHRvZGF5IQo+IGh0dHA6Ly9wLnNmLm5ldC9z
+ZnUvMTM1MzRfTmVvVGVjaAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZzLWRl
+dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0
+L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+TGVhcm4gR3JhcGggRGF0YWJhc2VzIC0gRG93bmxvYWQgRlJFRSBPJ1JlaWxseSBCb29rCiJHcmFw
+aCBEYXRhYmFzZXMiIGlzIHRoZSBkZWZpbml0aXZlIG5ldyBndWlkZSB0byBncmFwaCBkYXRhYmFz
+ZXMgYW5kIHRoZWlyCmFwcGxpY2F0aW9ucy4gV3JpdHRlbiBieSB0aHJlZSBhY2NsYWltZWQgbGVh
+ZGVycyBpbiB0aGUgZmllbGQsCnRoaXMgZmlyc3QgZWRpdGlvbiBpcyBub3cgYXZhaWxhYmxlLiBE
+b3dubG9hZCB5b3VyIGZyZWUgYm9vayB0b2RheSEKaHR0cDovL3Auc2YubmV0L3NmdS8xMzUzNF9O
+ZW9UZWNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxp
+bnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNl
+Zm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xp
+bnV4LWYyZnMtZGV2ZWwK
