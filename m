@@ -1,32 +1,29 @@
 From: Changman Lee <cm224.lee@samsung.com>
-Subject: [PATCH 2/2] f2fs: call set_dirty_dir_page if inode is
-	directory.
-Date: Wed, 12 Mar 2014 11:27:13 +0900
-Message-ID: <1394591233-14080-2-git-send-email-cm224.lee@samsung.com>
-References: <1394591233-14080-1-git-send-email-cm224.lee@samsung.com>
+Subject: [PATCH 1/2] f2fs: remove unused PagePrivate
+Date: Wed, 12 Mar 2014 11:27:12 +0900
+Message-ID: <1394591233-14080-1-git-send-email-cm224.lee@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cm224.lee@samsung.com>) id 1WNYul-0006sM-WC
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 12 Mar 2014 02:29:04 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WNYuk-0002uR-1Q
+	(envelope-from <cm224.lee@samsung.com>) id 1WNYul-0006sF-3Y
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Wed, 12 Mar 2014 02:29:03 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WNYui-0002Ae-UK
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 12 Mar 2014 02:29:03 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N2A004QZXK5RQA0@mailout1.samsung.com> for
+	with ESMTP id <0N2A00MCKXK44TA0@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 12 Mar 2014 11:28:53 +0900 (KST)
-In-reply-to: <1394591233-14080-1-git-send-email-cm224.lee@samsung.com>
+	Wed, 12 Mar 2014 11:28:52 +0900 (KST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,43 +35,70 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 
-It's more legible and efficient to call set_dirty_dir_page only if
-inode->i_mode is directory before calling it.
+In f2fs, pagecache page doesn't contain filesystem specific data, so
+it's redundant. Let's remove it.
 
 Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 ---
- fs/f2fs/checkpoint.c |    3 ---
- fs/f2fs/data.c       |    3 ++-
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ fs/f2fs/checkpoint.c |    1 -
+ fs/f2fs/data.c       |    2 --
+ fs/f2fs/node.c       |    3 ---
+ 3 files changed, 6 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 1e03ca5..cc61962 100644
+index 911b6f9..1e03ca5 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -578,9 +578,6 @@ void set_dirty_dir_page(struct inode *inode, struct page *page)
- 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
- 	struct dir_inode_entry *new;
+@@ -590,7 +590,6 @@ void set_dirty_dir_page(struct inode *inode, struct page *page)
+ 		kmem_cache_free(inode_entry_slab, new);
  
--	if (!S_ISDIR(inode->i_mode))
--		return;
--
- 	new = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
- 	new->inode = inode;
- 	INIT_LIST_HEAD(&new->list);
+ 	inode_inc_dirty_dents(inode);
+-	SetPagePrivate(page);
+ 	spin_unlock(&sbi->dir_inode_lock);
+ }
+ 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index acd0159..ecfa674 100644
+index 101b4cd..acd0159 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1043,7 +1043,8 @@ static int f2fs_set_data_page_dirty(struct page *page)
+@@ -1024,12 +1024,10 @@ static void f2fs_invalidate_data_page(struct page *page, unsigned int offset,
+ 	struct inode *inode = page->mapping->host;
+ 	if (PageDirty(page))
+ 		inode_dec_dirty_dents(inode);
+-	ClearPagePrivate(page);
+ }
  
+ static int f2fs_release_data_page(struct page *page, gfp_t wait)
+ {
+-	ClearPagePrivate(page);
+ 	return 1;
+ }
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index e72b258..88e51c6 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1237,7 +1237,6 @@ static int f2fs_set_node_page_dirty(struct page *page)
  	if (!PageDirty(page)) {
  		__set_page_dirty_nobuffers(page);
--		set_dirty_dir_page(inode, page);
-+		if (S_ISDIR(inode->i_mode))
-+			set_dirty_dir_page(inode, page);
+ 		inc_page_count(sbi, F2FS_DIRTY_NODES);
+-		SetPagePrivate(page);
  		return 1;
  	}
  	return 0;
+@@ -1250,12 +1249,10 @@ static void f2fs_invalidate_node_page(struct page *page, unsigned int offset,
+ 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+ 	if (PageDirty(page))
+ 		dec_page_count(sbi, F2FS_DIRTY_NODES);
+-	ClearPagePrivate(page);
+ }
+ 
+ static int f2fs_release_node_page(struct page *page, gfp_t wait)
+ {
+-	ClearPagePrivate(page);
+ 	return 1;
+ }
+ 
 -- 
 1.7.10.4
 
