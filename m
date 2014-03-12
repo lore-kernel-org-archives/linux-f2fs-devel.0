@@ -1,132 +1,68 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [PATCH 2/2 v2] f2fs: call set_dirty_dir_page if inode is directory.
-Date: Wed, 12 Mar 2014 12:36:58 +0900
-Message-ID: <1394595418.14427.1.camel@lcm>
-References: <1394591233-14080-1-git-send-email-cm224.lee@samsung.com>
- <1394591233-14080-2-git-send-email-cm224.lee@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [f2fs-dev] [PATCH] f2fs: introduce f2fs_has_inline_xattr for better
+ readability
+Date: Wed, 12 Mar 2014 15:59:03 +0800
+Message-ID: <001501cf3dc9$0ca56340$25f029c0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1394591233-14080-2-git-send-email-cm224.lee@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: ??? <jaegeuk.kim@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-It's trivial patch. I think it's more clear but you might feel messy.
-No matter what you choose, I don't care.
+This patch introduces a help function f2fs_has_inline_xattr for better
+readability.
 
-o Changes from v1
- move checking if inode is dir in remove_dirty_dir_inode into upper,
-too.
-
--- >8 --
-
->From bfc47691321d08b27880d98448058df578725356 Mon Sep 17 00:00:00 2001
-From: Changman Lee <cm224.lee@samsung.com>
-Date: Tue, 11 Mar 2014 22:18:18 -0400
-Subject: [PATCH] f2fs: call set/remove_dirty_dir_page if inode is
-directory.
-
-It's more legible and efficient to call set/remove_dirty_dir_page only
-if inode->i_mode is directory before calling it.
-
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/checkpoint.c |    7 -------
- fs/f2fs/data.c       |    6 ++++--
- fs/f2fs/dir.c        |    3 ++-
- fs/f2fs/inode.c      |    6 ++++--
- 4 files changed, 10 insertions(+), 12 deletions(-)
+ fs/f2fs/f2fs.h |    9 +++++++--
+ fs/f2fs/node.c |    2 +-
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 1e03ca5..c6d8a55 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -578,9 +578,6 @@ void set_dirty_dir_page(struct inode *inode, struct
-page *page)
- 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
- 	struct dir_inode_entry *new;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f845e92..1f87a04 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -991,9 +991,14 @@ static inline void set_raw_inline(struct f2fs_inode_info *fi,
+ 		ri->i_inline |= F2FS_INLINE_DATA;
+ }
  
--	if (!S_ISDIR(inode->i_mode))
--		return;
--
- 	new = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
- 	new->inode = inode;
- 	INIT_LIST_HEAD(&new->list);
-@@ -611,12 +608,8 @@ void add_dirty_dir_inode(struct inode *inode)
- void remove_dirty_dir_inode(struct inode *inode)
++static inline int f2fs_has_inline_xattr(struct inode *inode)
++{
++	return is_inode_flag_set(F2FS_I(inode), FI_INLINE_XATTR);
++}
++
+ static inline unsigned int addrs_per_inode(struct f2fs_inode_info *fi)
  {
- 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
--
- 	struct list_head *this, *head;
+-	if (is_inode_flag_set(fi, FI_INLINE_XATTR))
++	if (f2fs_has_inline_xattr(&fi->vfs_inode))
+ 		return DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS;
+ 	return DEF_ADDRS_PER_INODE;
+ }
+@@ -1007,7 +1012,7 @@ static inline void *inline_xattr_addr(struct page *page)
  
--	if (!S_ISDIR(inode->i_mode))
--		return;
--
- 	spin_lock(&sbi->dir_inode_lock);
- 	if (atomic_read(&F2FS_I(inode)->dirty_dents)) {
- 		spin_unlock(&sbi->dir_inode_lock);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index acd0159..6a05df0 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -884,7 +884,8 @@ static int f2fs_write_data_pages(struct
-address_space *mapping,
+ static inline int inline_xattr_size(struct inode *inode)
+ {
+-	if (is_inode_flag_set(F2FS_I(inode), FI_INLINE_XATTR))
++	if (f2fs_has_inline_xattr(inode))
+ 		return F2FS_INLINE_XATTR_ADDRS << 2;
+ 	else
+ 		return 0;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index e72b258..c618fad 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1501,7 +1501,7 @@ void recover_inline_xattr(struct inode *inode, struct page *page)
+ 	struct page *ipage;
+ 	struct f2fs_inode *ri;
  
- 	f2fs_submit_merged_bio(sbi, DATA, WRITE);
+-	if (!is_inode_flag_set(F2FS_I(inode), FI_INLINE_XATTR))
++	if (!f2fs_has_inline_xattr(inode))
+ 		return;
  
--	remove_dirty_dir_inode(inode);
-+	if (S_ISDIR(inode->i_mode))
-+		remove_dirty_dir_inode(inode);
- 
- 	wbc->nr_to_write -= excess_nrtw;
- 	return ret;
-@@ -1043,7 +1044,8 @@ static int f2fs_set_data_page_dirty(struct page
-*page)
- 
- 	if (!PageDirty(page)) {
- 		__set_page_dirty_nobuffers(page);
--		set_dirty_dir_page(inode, page);
-+		if (S_ISDIR(inode->i_mode))
-+			set_dirty_dir_page(inode, page);
- 		return 1;
- 	}
- 	return 0;
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index f3a80ce..e97ab2e 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -380,7 +380,8 @@ put_error:
- 	/* once the failed inode becomes a bad inode, i_mode is S_IFREG */
- 	truncate_inode_pages(&inode->i_data, 0);
- 	truncate_blocks(inode, 0);
--	remove_dirty_dir_inode(inode);
-+	if (S_ISDIR(inode->i_mode))
-+		remove_dirty_dir_inode(inode);
- error:
- 	remove_inode_page(inode);
- 	return ERR_PTR(err);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index d518e37..76aef0e 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -273,8 +273,10 @@ void f2fs_evict_inode(struct inode *inode)
- 			inode->i_ino == F2FS_META_INO(sbi))
- 		goto no_delete;
- 
--	f2fs_bug_on(atomic_read(&F2FS_I(inode)->dirty_dents));
--	remove_dirty_dir_inode(inode);
-+	if (S_ISDIR(inode->i_mode)) {
-+		f2fs_bug_on(atomic_read(&F2FS_I(inode)->dirty_dents));
-+		remove_dirty_dir_inode(inode);
-+	}
- 
- 	if (inode->i_nlink || is_bad_inode(inode))
- 		goto no_delete;
+ 	if (!IS_INODE(page))
 -- 
-1.7.10.4
-
-
-
+1.7.9.5
