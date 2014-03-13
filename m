@@ -1,38 +1,109 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev] [PATCH] f2fs: check upper bound of ino value in
- f2fs_nfs_get_inode
-Date: Wed, 12 Mar 2014 17:08:36 +0800
-Message-ID: <001601cf3dd2$c17795a0$4466c0e0$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 3/5] f2fs: format segment_info's show for better
+	legibility
+Date: Thu, 13 Mar 2014 17:13:38 +0800
+Message-ID: <001801cf3e9c$ac3330d0$04999270$@samsung.com>
+References: <5319A2D5.6060201@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <5319A2D5.6060201@cn.fujitsu.com>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: ??? <jaegeuk.kim@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>, 'Kim' <jaegeuk.kim@samsung.com>
+Cc: 'linux-kernel' <linux-kernel@vger.kernel.org>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Upper bound checking of ino should be added to f2fs_nfs_get_inode, so unneeded
-process before do_read_inode in f2fs_iget could be avoided when ino is invalid.
+Hi Gu,
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/super.c |    2 ++
- 1 file changed, 2 insertions(+)
+> -----Original Message-----
+> From: Gu Zheng [mailto:guz.fnst@cn.fujitsu.com]
+> Sent: Friday, March 07, 2014 6:44 PM
+> To: Kim
+> Cc: linux-kernel; f2fs
+> Subject: [f2fs-dev] [PATCH 3/5] f2fs: format segment_info's show for better legibility
+> 
+> The original segment_info's show is a bit out-of-format:
+> 
+> [root@guz Demoes]# cat /proc/fs/f2fs/loop0/segment_info
+> 0 0 0 0 0 0 0 0 0 0 0
+> 0 0 0 0 0 0 0 0 0 0
+> 0 0 0 0 0 0 0 0 0 0
+> ......
+> 0 0 0 0 0 0 0 0 0 0
+> 0 0 1 0 0 1 [root@guz Demoes]#
+> 
+> so we fix it here for better legibility.
+> [root@guz Demoes]# cat /proc/fs/f2fs/loop0/segment_info
+> 0 0 0 0 0 0 0 0 0 0
+> 0 0 0 0 0 0 0 0 0 0
+> 0 0 0 0 0 0 0 0 0 0
+> ......
+> 0 0 0 0 0 0 0 0 0 0
+> 0 0 1 0 0 1
+> [root@guz Demoes]#
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 6e4851c..3a51d7a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -644,6 +644,8 @@ static struct inode *f2fs_nfs_get_inode(struct super_block *sb,
- 
- 	if (unlikely(ino < F2FS_ROOT_INO(sbi)))
- 		return ERR_PTR(-ESTALE);
-+	if (unlikely(ino >= NM_I(sbi)->max_nid))
-+		return ERR_PTR(-ESTALE);
- 
- 	/*
- 	 * f2fs_iget isn't quite right if the inode is currently unallocated!
--- 
-1.7.9.5
+Here is one case, this looks not legible.
+
+0 0 0 0 0 0 0 0 0 0
+1 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 509 512 512 512
+512 512 512 512 512 512 512 512 512 512
+512 512 512 512 331 278 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 512 512 512
+512 512 512 512 512 512 512 512 512 512
+0 512 512 512 512 512 512 1 0 512
+
+So how about modifying code as following?
+
+> 
+> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+
+> ---
+>  fs/f2fs/super.c |    7 ++++---
+>  1 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 72df734..6e4851c 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -546,11 +546,12 @@ static int segment_info_seq_show(struct seq_file *seq, void *offset)
+> 
+>  	for (i = 0; i < total_segs; i++) {
+>  		seq_printf(seq, "%u", get_valid_blocks(sbi, i, 1));
+
+		seq_printf(seq, "%-3u ", get_valid_blocks(sbi, i, 1));
+
+> -		if (i != 0 && (i % 10) == 0)
+> -			seq_puts(seq, "\n");
+> +		if ((i % 10) == 9 || i == (total_segs - 1))
+> +			seq_putc(seq, '\n');
+>  		else
+> -			seq_puts(seq, " ");
+> +			seq_putc(seq, ' ');
+>  	}
+> +
+>  	return 0;
+>  }
+> 
+> --
+> 1.7.7
+> 
+> 
+> ------------------------------------------------------------------------------
+> Subversion Kills Productivity. Get off Subversion & Make the Move to Perforce.
+> With Perforce, you get hassle-free workflows. Merge that actually works.
+> Faster operations. Version large binaries.  Built-in WAN optimization and the
+> freedom to use Git, Perforce or both. Make the move to Perforce.
+> http://pubads.g.doubleclick.net/gampad/clk?id=122218951&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
