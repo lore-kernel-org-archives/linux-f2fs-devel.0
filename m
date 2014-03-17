@@ -1,30 +1,30 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: print type for each segment in
- segment_info's show
-Date: Mon, 17 Mar 2014 10:31:06 +0800
-Message-ID: <000001cf4189$14d1c310$3e754930$@samsung.com>
+Subject: [PATCH 1/2] f2fs: introduce f2fs_has_xattr_block for
+ better readability
+Date: Mon, 17 Mar 2014 16:35:06 +0800
+Message-ID: <000001cf41bb$f0754220$d15fc660$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1WPNLb-0006dw-EE
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1WPT1z-0005Mw-L6
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Mar 2014 02:32:15 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WPNLZ-0004Nz-Ci
+	Mon, 17 Mar 2014 08:36:23 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WPT1s-0004AO-Np
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Mar 2014 02:32:15 +0000
+	Mon, 17 Mar 2014 08:36:23 +0000
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
+	by mailout2.samsung.com
 	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
 	(built Nov
-	17 2011)) with ESMTP id <0N2K0074G71F5CB0@mailout3.samsung.com> for
+	17 2011)) with ESMTP id <0N2K00M9WNW6KG40@mailout2.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Mar 2014 11:32:03 +0900 (KST)
+	Mon, 17 Mar 2014 17:36:06 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -38,65 +38,67 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: ??? <jaegeuk.kim@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-The original segment_info's show looks out-of-format:
-cat /proc/fs/f2fs/loop0/segment_info
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 512
-512 512 512 512 512 512 512 0 0 512
-348 0 263 0 0 512 0 0 512 512
-512 512 0 512 512 512 512 512 512 512
-512 512 511 328 512 512 512 512 512 512
-512 512 512 512 512 512 512 0 0 175
-
-Let's fix this and show type for each segment.
-cat /proc/fs/f2fs/loop0/segment_info
-format: segment_type|valid_blocks
-segment_type(0:HD, 1:WD, 2:CD, 3:HN, 4:WN, 5:CN)
-0    2|0   1|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0
-10   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0
-20   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0
-30   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0
-40   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0   0|0
-50   3|0   3|0   3|0   3|0   3|0   3|0   3|0   0|0   3|0   3|0
-60   3|0   3|0   3|0   3|0   3|0   3|0   3|0   3|0   3|0   3|512
-70   3|512 3|512 3|512 3|512 3|512 3|512 3|512 3|0   3|0   3|512
-80   3|0   3|0   3|0   3|0   3|0   3|512 3|0   3|0   3|512 3|512
-90   3|512 0|512 3|274 0|512 0|512 0|512 0|512 0|512 0|512 3|512
-100  3|512 0|512 3|511 0|328 3|512 0|512 0|512 3|512 0|512 0|512
-110  0|512 0|512 0|512 0|512 0|512 0|512 0|512 5|0   4|0   3|512
+This patch introduces a help function f2fs_has_xattr_block for better
+readability.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/super.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ fs/f2fs/f2fs.h |    5 +++++
+ fs/f2fs/node.c |    4 ++--
+ fs/f2fs/node.h |    2 +-
+ 3 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3a51d7a..057a3ef 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -544,8 +544,16 @@ static int segment_info_seq_show(struct seq_file *seq, void *offset)
- 			le32_to_cpu(sbi->raw_super->segment_count_main);
- 	int i;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1f87a04..292cc3c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -637,6 +637,11 @@ static inline int F2FS_HAS_BLOCKS(struct inode *inode)
+ 		return inode->i_blocks > F2FS_DEFAULT_ALLOCATED_BLOCKS;
+ }
  
-+	seq_puts(seq, "format: segment_type|valid_blocks\n"
-+		"segment_type(0:HD, 1:WD, 2:CD, 3:HN, 4:WN, 5:CN)\n");
++static inline bool f2fs_has_xattr_block(unsigned int ofs)
++{
++	return ofs == XATTR_NODE_OFFSET;
++}
 +
- 	for (i = 0; i < total_segs; i++) {
--		seq_printf(seq, "%u", get_valid_blocks(sbi, i, 1));
-+		struct seg_entry *se = get_seg_entry(sbi, i);
-+
-+		if ((i % 10) == 0)
-+			seq_printf(seq, "%-5d", i);
-+		seq_printf(seq, "%d|%-3u", se->type,
-+					get_valid_blocks(sbi, i, 1));
- 		if ((i % 10) == 9 || i == (total_segs - 1))
- 			seq_putc(seq, '\n');
- 		else
+ static inline bool inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 				 struct inode *inode, blkcnt_t count)
+ {
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index c618fad..3e36240 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -836,7 +836,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
+ 	SetPageUptodate(page);
+ 	set_page_dirty(page);
+ 
+-	if (ofs == XATTR_NODE_OFFSET)
++	if (f2fs_has_xattr_block(ofs))
+ 		F2FS_I(dn->inode)->i_xattr_nid = dn->nid;
+ 
+ 	dn->node_page = page;
+@@ -1533,7 +1533,7 @@ bool recover_xattr_data(struct inode *inode, struct page *page, block_t blkaddr)
+ 
+ 	recover_inline_xattr(inode, page);
+ 
+-	if (ofs_of_node(page) != XATTR_NODE_OFFSET)
++	if (!f2fs_has_xattr_block(ofs_of_node(page)))
+ 		return false;
+ 
+ 	/* 1: invalidate the previous xattr nid */
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 4dea719..ee6d286 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -242,7 +242,7 @@ static inline bool IS_DNODE(struct page *node_page)
+ {
+ 	unsigned int ofs = ofs_of_node(node_page);
+ 
+-	if (ofs == XATTR_NODE_OFFSET)
++	if (f2fs_has_xattr_block(ofs))
+ 		return false;
+ 
+ 	if (ofs == 3 || ofs == 4 + NIDS_PER_BLOCK ||
 -- 
 1.7.9.5
 
