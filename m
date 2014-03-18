@@ -1,71 +1,77 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH] f2fs: fix incorrect parsing with option string
-Date: Tue, 18 Mar 2014 08:59:08 +0800
-Message-ID: <000001cf4245$5f848250$1e8d86f0$@samsung.com>
-References: <000301cf41c5$10f247b0$32d6d710$@samsung.com>
- <1395102807.3870.156.camel@kjgkr>
+Subject: [PATCH v2] f2fs: fix incorrect parsing with option string
+Date: Tue, 18 Mar 2014 09:07:59 +0800
+Message-ID: <000101cf4246$a047aeb0$e0d70c10$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1395102807.3870.156.camel@kjgkr>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1WPiWj-0007NA-F3
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 18 Mar 2014 01:09:09 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WPiWh-0004Vs-Kv
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 18 Mar 2014 01:09:09 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout2.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N2L00LM6XUSL850@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 18 Mar 2014 10:08:52 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: ??? <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+Previously 'background_gc={on***,off***}' is being parsed as correct option,
+with this patch we cloud fix the trivial bug in mount process.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> Sent: Tuesday, March 18, 2014 8:33 AM
-> To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-fsdevel@vger.kernel=
-=2Eorg;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [f2fs-dev] [PATCH] f2fs: fix incorrect parsing with opti=
-on string
->=20
-> Hi,
->=20
-> 2014-03-17 (=EC=9B=94), 17:40 +0800, Chao Yu:
-> > Previously 'background_gc=3D{on***,off***}' is being parsed as corr=
-ect option,
-> > with this patch we cloud fix the trivial bug in mount process.
-> >
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/super.c |    4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 057a3ef..6597290 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -258,9 +258,9 @@ static int parse_options(struct super_block *sb=
-, char *options)
-> >
-> >  			if (!name)
-> >  				return -ENOMEM;
-> > -			if (!strncmp(name, "on", 2))
-> > +			if (!strncmp(name, "on", strlen(name)))
->=20
-> What about 'background_gc=3Do'?
-> Need to check strlen(name) =3D=3D 2...
+Change log from v1:
+ o need to check length of parameter suggested by Jaegeuk Kim.
 
-Oh, you're right. I will fix it and send v2 patch.
-Thanks for your review. :)
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/super.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Thanks,
->=20
-> >  				set_opt(sbi, BG_GC);
-> > -			else if (!strncmp(name, "off", 3))
-> > +			else if (!strncmp(name, "off", strlen(name)))
-> >  				clear_opt(sbi, BG_GC);
-> >  			else {
-> >  				kfree(name);
->=20
-> --
-> Jaegeuk Kim
-> Samsung
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 057a3ef..dbe402b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -258,9 +258,9 @@ static int parse_options(struct super_block *sb, char *options)
+ 
+ 			if (!name)
+ 				return -ENOMEM;
+-			if (!strncmp(name, "on", 2))
++			if (strlen(name) == 2 && !strncmp(name, "on", 2))
+ 				set_opt(sbi, BG_GC);
+-			else if (!strncmp(name, "off", 3))
++			else if (strlen(name) == 3 && !strncmp(name, "off", 3))
+ 				clear_opt(sbi, BG_GC);
+ 			else {
+ 				kfree(name);
+-- 
+1.7.9.5
+
+
+
+------------------------------------------------------------------------------
+Learn Graph Databases - Download FREE O'Reilly Book
+"Graph Databases" is the definitive new guide to graph databases and their
+applications. Written by three acclaimed leaders in the field,
+this first edition is now available. Download your free book today!
+http://p.sf.net/sfu/13534_NeoTech
