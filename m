@@ -1,26 +1,22 @@
-From: "WIPEX NONWOVEN" <info@spunlace-nonwovens.com>
-Subject: [SPAM] Re:Cleanroom Wipers, Lint Free Wipes,
-	Sontara Replace Wipes
-Date: Thu, 20 Mar 2014 03:31:48 +0800
-Message-ID: <20140320033156341210@mail004.com>
-Reply-To: info@spunlace-nonwovens.com
+From: callforpapers@onlinejournal.com
+Subject: Call For Papers. Kindly impart in your
+	University/Organization/College/Colleagues/Academia/Circle
+Date: 20 Mar 2014 04:15:01 +0530
+Message-ID: <20140320041501.43F05B900C3D2792@onlinejournal.com>
+Reply-To: callforpapers@onlinejournal.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7957559773144405864=="
+Content-Type: multipart/mixed; boundary="===============4634040105934282482=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cj020@mail004.com>) id 1WQMDl-0004Yo-NT
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <callforpapers@onlinejournal.com>) id 1WQPF9-0000gX-Tb
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Mar 2014 19:32:13 +0000
-Received: from [112.123.169.26] (helo=mail004.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WQMDk-0008Ei-BV for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Mar 2014 19:32:13 +0000
-Received: from mc by mail004.com (MDaemon PRO v10.1.1)
-	with ESMTP id md50017424218.msg
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Thu, 20 Mar 2014 03:34:51 +0800
+	Wed, 19 Mar 2014 22:45:51 +0000
+Received: from [117.222.202.213] (helo=onlinejournal.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WQPEp-0004ez-6R for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 19 Mar 2014 22:45:51 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,89 +28,143 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-This is a multi-part message in MIME format.
-
---===============7957559773144405864==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_0160_0102D40C.13B2E770"
-
-This is a multi-part message in MIME format.
-
-------=_NextPart_000_0160_0102D40C.13B2E770
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-
-NA0KRGVhciBTaXIsDQogIEhvdyBhcmUgeW91IGRvaW5nPzY2DQogIFdJUEVYIE5vbndvdmVuIENv
-LixMdGQgaXMgYSBwcm9mZXNzaW9uYWwgZmFjdG9yeSBvZiAgQ2xlYW5yb29tIFdpcGVycyxMaW50
-IEZyZWUgV2lwZXMsU29udGFyYSBSZXBsYWNlIFdpcGVzIGluIENoaW5hLiBXZSBhcmUgcHJvZmVz
-c2lvbmFsIHByb2R1Y2VyIHdobyBoYXZlIHdpcGVycyB3aGljaCBjYW4gcmVwbGFjZSBLaW1iZXJs
-eSBDbGFyaydzIFd5cGFsbCAsRHVwb250J3MgU29udGFyYSxHZW9yZ2lhIFBhY2lmaWMncyBCcmF3
-bnksQ2hpY29wZWUncyBQcm8tU2VyaWVzLFV0aWxpdHksRHVyb3dpcGVzLFNvZnQgQ2xvdGgsQWxs
-IERheSxDYXNjYWRlcydzIFByZXN0byBXaXBlLExpa2UgUmFncyxNREkncyBTdXBlciBSYWcsQXRs
-YW50aWMgTWlsbHMnSW5kdXN0cmlhbCxBbGwgUHVycG9zZSxTQ0EncyBNdWx0aSBNYXgsSG9zcGVj
-bydzIERlbHV4ZSxldGMgLiBJZiB5b3Ugd291bGQgbGlrZSB0byBrbm93IG1vcmUgYWJvdXQgb3Vy
-IHByb2R1Y3RzLHBscyBraW5kbHkgbGV0IHVzIGtub3cueA0KICBGb3IgbW9yZSBpbmZvcm1hdGlv
-bixwbHMgYnJvd3NlIG91ciB3ZWJzaXRlIHd3dy53aXBleG5vbndvdmVuLmNvbSANCkludml0YXRp
-b246DQpJU1NBL0lOVEVSQ0xFQU4gQU1TVEVSREFNIA0KQW1zdGVyZGFtIFJBSSBDb252ZW50aW9u
-IENlbnRyZSwgQW1zdGVyZGFtLCBOZXRoZXJsYW5kcyANCkJvb3RoIE5PLjowOS40MTggLE1heSA2
-LTksIDIwMTQNCldlbGNvbWUgdG8gdmlzaXQgb3VyIGJvb3RoISANClJlZ2FyZHMsDQpGcmFuaw0K
-V0lQRVggTk9OV09WRU5TIENPLixMVEQg
-
-------=_NextPart_000_0160_0102D40C.13B2E770
+--===============4634040105934282482==
 Content-Type: text/html;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
-L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0
-Zi04IiBodHRwLWVxdWl2PUNvbnRlbnQtVHlwZT4NCjxNRVRBIG5hbWU9R0VORVJBVE9SIGNvbnRl
-bnQ9Ik1TSFRNTCA5LjAwLjgxMTIuMTY1NDAiPjwvSEVBRD4NCjxCT0RZPg0KPFA+PEZPTlQgc3R5
-bGU9IkJBQ0tHUk9VTkQtQ09MT1I6IHdoaXRlIiBjb2xvcj13aGl0ZT40PC9GT05UPjwvUD4NCjxQ
-PkRlYXIgU2lyLDxCUj4mbmJzcDsgSG93IGFyZSB5b3UgZG9pbmc8Rk9OVCANCmNvbG9yPXdoaXRl
-Pj82NjxCUj48L0ZPTlQ+Jm5ic3A7PEZPTlQgY29sb3I9Ymx1ZT48U1RST05HPiBXSVBFWCANCk5v
-bndvdmVuIENvLixMdGQ8L1NUUk9ORz48L0ZPTlQ+Jm5ic3A7aXMgYSBwcm9mZXNzaW9uYWwgZmFj
-dG9yeSBvZjxTVFJPTkc+Jm5ic3A7IA0KQ2xlYW5yb29tIFdpcGVycyxMaW50IEZyZWUgV2lwZXMs
-U29udGFyYSBSZXBsYWNlIFdpcGU8L1NUUk9ORz5zIGluIA0KQ2hpbmEuJm5ic3A7V2UgYXJlIHBy
-b2Zlc3Npb25hbCBwcm9kdWNlciB3aG8gaGF2ZSB3aXBlcnMgd2hpY2ggY2FuIHJlcGxhY2UgPEZP
-TlQgDQpjb2xvcj1ibGFjaz48U1RST05HPktpbWJlcmx5IENsYXJrJ3MgV3lwYWxsICxEdXBvbnQn
-cyBTb250YXJhLEdlb3JnaWEgUGFjaWZpYydzIA0KQnJhd255LENoaWNvcGVlJ3MgUHJvLVNlcmll
-cyxVdGlsaXR5LER1cm93aXBlczwvU1RST05HPixTb2Z0IENsb3RoLEFsbCANCkRheSw8U1RST05H
-PkNhc2NhZGVzPC9TVFJPTkc+J3MgUHJlc3RvIFdpcGUsTGlrZSBSYWdzLDxTVFJPTkc+TURJPC9T
-VFJPTkc+J3MgDQpTdXBlciBSYWcsPFNUUk9ORz5BdGxhbnRpYyBNaWxsczwvU1RST05HPidJbmR1
-c3RyaWFsLEFsbCANClB1cnBvc2UsPFNUUk9ORz5TQ0E8L1NUUk9ORz4ncyBNdWx0aSBNYXgsSG9z
-cGVjbydzIA0KRGVsdXhlLGV0YyZuYnNwOy4mbmJzcDs8L0ZPTlQ+SWYgeW91IHdvdWxkIGxpa2Ug
-dG8ga25vdyBtb3JlIGFib3V0IG91ciANCnByb2R1Y3RzLHBscyBraW5kbHkmbmJzcDtsZXQgdXMg
-a25vdzxGT05UIA0KY29sb3I9d2hpdGU+Lng8L0ZPTlQ+PEJSPiZuYnNwOyBGb3IgbW9yZSBpbmZv
-cm1hdGlvbixwbHMgYnJvd3NlIG91ciANCndlYnNpdGUmbmJzcDs8QSBocmVmPSJodHRwOi8vd3d3
-LndpcGV4bm9ud292ZW4uY29tIj53d3cud2lwZXhub253b3Zlbi5jb208L0E+IA0KPEJSPjxGT05U
-IGNvbG9yPWJsdWU+PFNUUk9ORz5JbnZpdGF0aW9uOjxCUj48L1NUUk9ORz48L0ZPTlQ+PFNQQU4g
-DQpzdHlsZT0iRk9OVC1TSVpFOiAxMHB0Ij48Rk9OVCBzdHlsZT0iRk9OVC1TSVpFOiAxMC41cHQ7
-IEZPTlQtV0VJR0hUOiBub3JtYWwiIA0KY29sb3I9Ymx1ZSBzaXplPTE+PEVNPklTU0EvSU5URVJD
-TEVBTiBBTVNURVJEQU0gPC9FTT48L0ZPTlQ+PC9TUEFOPjwvUD4NCjxQPjxTUEFOIHN0eWxlPSJG
-T05ULVNJWkU6IDEwcHQiPjwvU1BBTj48Rk9OVCBjb2xvcj1ibHVlPjxTUEFOIA0Kc3R5bGU9IkZP
-TlQtU0laRTogMTBwdCI+PEZPTlQgc3R5bGU9IkZPTlQtU0laRTogMTAuNXB0OyBGT05ULVdFSUdI
-VDogbm9ybWFsIiANCnNpemU9MT48U1BBTiBjbGFzcz1oZWFkZXItYmx1ZT5BbXN0ZXJkYW0gUkFJ
-IENvbnZlbnRpb24gQ2VudHJlLCBBbXN0ZXJkYW0sIA0KTmV0aGVybGFuZHM8L1NQQU4+PC9GT05U
-PjwvU1BBTj4gPC9GT05UPjwvUD4NCjxESVYgc3R5bGU9IkZPTlQtRkFNSUxZOiBDYWxpYnJpOyBD
-T0xPUjogIzAwMDBmZjsgRk9OVC1TSVpFOiAxNHB0Ij4NCjxESVYgc3R5bGU9IkZPTlQtRkFNSUxZ
-OiBDYWxpYnJpOyBDT0xPUjogIzAwMDBmZjsgRk9OVC1TSVpFOiAxNHB0Ij48U1BBTiANCnN0eWxl
-PSJGT05ULVNJWkU6IDEwcHQiPjxGT05UIHN0eWxlPSJGT05ULVNJWkU6IDEwLjVwdDsgRk9OVC1X
-RUlHSFQ6IG5vcm1hbCIgDQpjb2xvcj1ibHVlIHNpemU9MT48RU0+Qm9vdGggTk8uOjA5LjQxOCAs
-PC9FTT48L0ZPTlQ+PC9TUEFOPjxTUEFOIA0Kc3R5bGU9IkZPTlQtU0laRTogMTBwdCI+PEZPTlQg
-c3R5bGU9IkZPTlQtU0laRTogMTAuNXB0OyBGT05ULVdFSUdIVDogbm9ybWFsIiANCnNpemU9MT48
-Rk9OVCBjb2xvcj1ibHVlPjxTUEFOIGNsYXNzPWhlYWRlci1ibHVlPk1heSA2LTksIA0KMjAxNDxC
-Uj48L1NQQU4+PEVNPldlbGNvbWUgdG8gdmlzaXQgb3VyIGJvb3RoITwvRU0+PC9GT05UPjwvRk9O
-VD48L1NQQU4+IA0KPEJSPlJlZ2FyZHMsPEJSPkZyYW5rPEJSPjxGT05UIGNvbG9yPWJsYWNrPldJ
-UEVYIE5PTldPVkVOUyBDTy4sTFREPC9GT05UPiANCjxCUj48L0RJVj48L0RJVj48L0JPRFk+PC9I
-VE1MPg0K
+<BODY scroll=3Dauto><P align=3Dcenter><FONT color=3Dblue><STRONG><FONT colo=
+r=3Dred>INTERNATIONAL JOURNAL OF TRENDS IN ECONOMICS MANAGEMENT &amp; TECHN=
+OLOGY </FONT><BR>
+IJTEMT invites you to submit your research paper for publishing in Volume I=
+II, Issue II (MARCH 2014). <BR><U>CALL FOR PAPERS VOLUME III, ISSUE II</U> =
+</STRONG></FONT></P>
+<P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http://bit.ly/1h=
+8J551">www.ijtemt.org</A></FONT></STRONG></P><STRONG><FONT color=3D#0000ff>=
+</FONT></STRONG>
+<P align=3Dleft>INDEXED IN: <A href=3D"http://bit.ly/1h8J551" target=3D_bla=
+nk>Google Scholar</A>, <A href=3D"http://bit.ly/1h8J551" target=3D_blank>.d=
+ocstoc</A>, <A href=3D"http://bit.ly/1h8J551" target=3D_blank>slideshare</A=
+>, <A href=3D"http://bit.ly/1h8J551" target=3D_blank>Scribd</A>, <A href=3D=
+"http://bit.ly/1h8J551" target=3D_blank>J-Gate</A>, <A href=3D"http://bit.l=
+y/1h8J551" target=3D_blank>Academia.edu</A>, <A href=3D"http://bit.ly/1h8J5=
+51" target=3D_blank>Directory of Open Journals</A>, <A href=3D"http://bit.l=
+y/1h8J551" target=3D_blank>Bielefeld Academic Search Engine</A>, <A href=3D=
+"http://bit.ly/1h8J551" target=3D_blank>ulrichsweb.com(TM) -- The Global So=
+urce for Periodicals</A></P>
+<P align=3Dleft><BR><STRONG><FONT color=3Dblue>About IJTEMT</FONT></STRONG>=
+</P><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http://bit.l=
+y/1h8J551">www.ijtemt.org</A></FONT></STRONG></P>
+<P align=3Djustify><FONT color=3Dpurple>International Journal of Trends in =
+Economics Management and Technology (IJTEMT) in an International Academic J=
+ournal e-published bimonthly in India and open to the world. <BR>In this pr=
+esent interdisciplinary era, here at IJTEMT, a group of intellectual came t=
+ogether to find a common platform for three major components of any economy=
+ i.e., Economics, Management and Technology. Here we provide a forum to bri=
+dge the gap between the brushed-up professional in their respective fields =
+and the new researcher which will results in better understanding and fruit=
+ful outcomes.<BR>The focus of this journal is to publish paper on economics=
+ management and technology. Submitted papers are reviewed by a full double =
+=E2=80=93 blind manner by the technical committee of the journal. The audie=
+nce for the journal is professionals from related fields, academicians and =
+new students &amp; research scholars.<BR>All submitted articles should repo=
+rt original, previously unpublished research results, experimental or theor=
+etical, and will be peer-reviewed. Articles submitted to the journal should=
+ meet these criteria and must not be under consideration for publication el=
+sewhere. Manuscripts should follow the style of the journal and are subject=
+ to both review and editing.<BR></FONT>&nbsp;</P>
+<P align=3Dleft><BR><STRONG><FONT color=3Dblue>Why Select IJTEMT Journal</F=
+ONT></STRONG> </P><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=
+=3D"http://bit.ly/1h8J551">www.ijtemt.org</A></FONT></STRONG></P>
+<P align=3Djustify><FONT color=3Dpurple>IJTEMT Provides E-Certificates to A=
+uthor's&nbsp;if Needed.IJTEMT is Globally Approved International Journal ha=
+ving Strong Editorial Board.<BR>This is Online Open Journal .Author's can D=
+ownload Paper from Library of Journal at any Time from Anywhere.IJTEMT is a=
+ Association of Eminent Scientist, Researchers and Experienced Members of M=
+ore than 20 Countries.IJTEMT Publishes High Quality Papers which are Peer R=
+eviewed by International/National Reviewers. Author's Query can be solved w=
+ithin 18 Hours.</FONT></P>
+<P align=3Dleft><FONT color=3Dpurple><STRONG><FONT color=3Dblue>Subject Cat=
+egory:</FONT></STRONG> ECONOMICS, MANAGEMENT &amp; TECHNOLOGY. </FONT></P><=
+FONT color=3D#800080></FONT>
+<P align=3Dleft><BR><FONT color=3Dblue><STRONG>Important Dates:</STRONG></F=
+ONT></P>
+<P align=3Dleft><FONT color=3Dblue><STRONG>Paper Submission:&nbsp;<FONT col=
+or=3Dpurple>20th MARCH 2014</FONT></STRONG></FONT></P><P align=3Dcenter><ST=
+RONG><FONT color=3D#0000ff><A href=3D"http://bit.ly/1h8J551">www.ijtemt.org=
+</A></FONT></STRONG></P>
+<P align=3Dleft><FONT color=3Dblue><STRONG>Review Results (Acceptance/Rejec=
+tion) Notification: <FONT color=3Dpurple>Within two weeks after submitting =
+manuscript.</FONT></STRONG></FONT><FONT color=3Dpurple> </FONT><BR>&nbsp;<B=
+R>&nbsp;<BR><STRONG><FONT color=3Dblue>Guidelines for submission and Review=
+ Process:</FONT></STRONG></P><P align=3Dcenter><STRONG><FONT color=3D#0000f=
+f><A href=3D"http://bit.ly/1h8J551">www.ijtemt.org</A></FONT></STRONG></P>
+<P align=3Djustify><FONT color=3Dpurple>IJTEMT welcomes author submission o=
+f papers concerning any branch of the economics, management and technology =
+and their applications in business, industry and other subjects relevant. <=
+BR>The review process goes through following phases which can take time fro=
+m ten days to two months:<BR>a.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp; Each manuscript will be initially evaluated by the editorial board / e=
+ditor, who may make use of appropriate software to examine the originality =
+of the contents of the manuscript.<BR>b.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp; The manuscripts passed through screening at above noted level=
+ will be forwarded to two referees for blind peer review, each of whom will=
+ make a recommendation to publish the article in its present form/edit/reje=
+ct. During this period referees shall treat the contents of papers under re=
+view as privileged information.<BR>c.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; The reviewers' recommendations determine whether a paper will be=
+ accepted / accepted subject to change / subject to resubmission with signi=
+ficant changes / rejected.<BR>d.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp; For papers which require changes, the same reviewers will be used to =
+ensure that the quality of the revised paper is acceptable.<BR>e.&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; All papers are refereed, and the Edi=
+tor-in-Chief reserves the right to refuse any typescript, whether on invita=
+tion or otherwise, and to make suggestions and/or modifications before publ=
+ication.</FONT><BR>&nbsp;</P>
+<P align=3Djustify><BR><STRONG><FONT color=3Dblue>Submission of Paper will =
+takes place in two phases:</FONT></STRONG><P align=3Dcenter><STRONG><FONT c=
+olor=3D#0000ff><A href=3D"http://bit.ly/1h8J551">www.ijtemt.org</A></FONT><=
+/STRONG></P><BR><FONT color=3Dpurple>a.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp; Initial Paper Submission: <BR>Prospective author (s) is/are en=
+couraged to submit their manuscript including charts, tables, figures and a=
+ppendixes in .pdf and .doc (both) format to e-mail: </FONT><A href=3D"mailt=
+o:submit@ijtemt.org"><FONT color=3Dpurple>submit@ijtemt.org</FONT></A><FONT=
+ color=3Dpurple>. <BR>All submitted articles should report original, previo=
+usly unpublished research results, experimental or theoretical. Articles su=
+bmitted to the IJIMT should meet these criteria and must not be under consi=
+deration for publication elsewhere.<BR>b.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp; Camera Ready Paper Submission:On the acceptance of the paper=
+ after completion of the review process the author (s) is/are has to submit=
+ camera ready full text paper in .doc and .pdf (both) format to e-mail: </F=
+ONT><A href=3D"mailto:submitfinal@ijtemt.org"><FONT color=3Dpurple>submitfi=
+nal@ijtemt.org</FONT></A><FONT color=3Dpurple> along with the corresponding=
+ signed copy of copyright transfer form and scanned copy of payment slip. <=
+/FONT><BR>&nbsp;</P>
+<P align=3Djustify><BR><FONT color=3Dblue><STRONG>Publication fees</STRONG>=
+ </FONT><BR><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http=
+://bit.ly/1h8J551">www.ijtemt.org</A></FONT></STRONG></P>
+<FONT color=3Dpurple>Each accepted paper will be charged, for publication a=
+nd paper handling,  60 USD per paper (for a maximum of 8 pages, above which=
+ 1 USD will be charged for every additional page) which is to be paid as pe=
+r the instructions mentioned in the letter of acceptance of the manuscript =
+submitted. </FONT><BR>&nbsp;</P>
+<P align=3Djustify>-S.Lal<BR><STRONG><FONT color=3Dblue>Editor Internationa=
+l Journal of Trends in Economics Management &amp; Technology&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp; <BR>Website: </FONT></STRONG><A href=3D"http://bit.ly/1h8J551"=
+><STRONG><FONT color=3Dblue>www.ijtemt.org</FONT></STRONG></A><STRONG><FONT=
+ color=3Dblue>&nbsp; Email: </FONT></STRONG><A href=3D"mailto:editor@ijtemt=
+=2Eorg"><STRONG><FONT color=3Dblue>editor@ijtemt.org</FONT></STRONG></A><ST=
+RONG><FONT color=3Dblue>, </FONT></STRONG><A href=3D"mailto:coedtech@ijtemt=
+=2Eorg"><STRONG><FONT color=3Dblue>coedtech@ijtemt.org</FONT></STRONG></A><=
+STRONG><FONT color=3Dblue>,&nbsp; </FONT></STRONG><A href=3D"mailto:contact=
+@ijtemt.org"><STRONG><FONT color=3Dblue>contact@ijtemt.org</FONT></STRONG><=
+/A><STRONG><FONT color=3Dblue>. Paper Submission Email: </FONT></STRONG><A =
+href=3D"mailto:submit@ijtemt.org"><STRONG><FONT color=3Dblue>submit@ijtemt.=
+org</FONT></STRONG></A><STRONG><FONT color=3Dblue>.</FONT></STRONG></P>
 
-------=_NextPart_000_0160_0102D40C.13B2E770--
 
-
-
-
---===============7957559773144405864==
+--===============4634040105934282482==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -126,7 +176,7 @@ Learn Graph Databases - Download FREE O'Reilly Book
 applications. Written by three acclaimed leaders in the field,
 this first edition is now available. Download your free book today!
 http://p.sf.net/sfu/13534_NeoTech
---===============7957559773144405864==
+--===============4634040105934282482==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -137,4 +187,4 @@ Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
---===============7957559773144405864==--
+--===============4634040105934282482==--
