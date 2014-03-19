@@ -1,32 +1,26 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 2/5] f2fs: throttle the memory footprint with a
-	sysfs entry
-Date: Wed, 19 Mar 2014 17:02:06 +0900
-Message-ID: <1395216129-13656-2-git-send-email-jaegeuk.kim@samsung.com>
-References: <1395216129-13656-1-git-send-email-jaegeuk.kim@samsung.com>
+From: "WIPEX NONWOVEN" <info@spunlace-nonwovens.com>
+Subject: [SPAM] Re:Cleanroom Wipers, Lint Free Wipes,
+	Sontara Replace Wipes
+Date: Thu, 20 Mar 2014 03:31:48 +0800
+Message-ID: <20140320033156341210@mail004.com>
+Reply-To: info@spunlace-nonwovens.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============7957559773144405864=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WQBTv-0000Pi-KL
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cj020@mail004.com>) id 1WQMDl-0004Yo-NT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Mar 2014 08:04:11 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WQBTt-0001O6-GZ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Mar 2014 08:04:11 +0000
-Received: from epcpsbgr2.samsung.com
-	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N2O003Z9BQMQ960@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Mar 2014 17:03:58 +0900 (KST)
-In-reply-to: <1395216129-13656-1-git-send-email-jaegeuk.kim@samsung.com>
+	Wed, 19 Mar 2014 19:32:13 +0000
+Received: from [112.123.169.26] (helo=mail004.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WQMDk-0008Ei-BV for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 19 Mar 2014 19:32:13 +0000
+Received: from mc by mail004.com (MDaemon PRO v10.1.1)
+	with ESMTP id md50017424218.msg
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Thu, 20 Mar 2014 03:34:51 +0800
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,209 +30,95 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-This patch introduces ram_thresh, a sysfs entry, which controls the memory
-footprint used by the free nid list and the nat cache.
+This is a multi-part message in MIME format.
 
-Previously, the free nid list was controlled by MAX_FREE_NIDS, while the nat
-cache was managed by NM_WOUT_THRESHOLD.
-However, this approach cannot be applied dynamically according to the system.
+--===============7957559773144405864==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0160_0102D40C.13B2E770"
 
-So, this patch adds ram_thresh that users can specify the threshold, which is
-in order of 1 / 1024.
-For example, if the total ram size is 4GB and the value is set to 10 by default,
-f2fs tries to control the number of free nids and nat caches not to consume over
-10 * (4GB / 1024) = 10MB.
+This is a multi-part message in MIME format.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++++++
- Documentation/filesystems/f2fs.txt      |  4 ++++
- fs/f2fs/f2fs.h                          |  1 +
- fs/f2fs/node.c                          | 23 ++++++++++++++++++++---
- fs/f2fs/node.h                          | 11 ++++++++---
- fs/f2fs/super.c                         |  5 +++++
- 6 files changed, 44 insertions(+), 6 deletions(-)
+------=_NextPart_000_0160_0102D40C.13B2E770
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 32b0809..4ac2c25 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -55,3 +55,9 @@ Date:		January 2014
- Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
- Description:
- 		 Controls the number of trials to find a victim segment.
-+
-+What:		/sys/fs/f2fs/<disk>/ram_thresh
-+Date:		March 2014
-+Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
-+Description:
-+		 Controls the memory footprint used by f2fs.
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 803784e..f415b9f 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -202,6 +202,10 @@ Files in /sys/fs/f2fs/<devname>
- 			      Otherwise, it needs to decrease this value to
- 			      reduce the space overhead. The default value is 0.
- 
-+ ram_thresh                   This parameter controls the memory footprint used
-+			      by free nids and cached nat entries. By default,
-+			      10 is set, which indicates 10 MB / 1 GB RAM.
-+
- ================================================================================
- USAGE
- ================================================================================
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 59fac1a..05c6524 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -242,6 +242,7 @@ struct f2fs_nm_info {
- 	block_t nat_blkaddr;		/* base disk address of NAT */
- 	nid_t max_nid;			/* maximum possible node ids */
- 	nid_t next_scan_nid;		/* the next nid to be scanned */
-+	unsigned int ram_thresh;	/* control the memory footprint */
- 
- 	/* NAT cache management */
- 	struct radix_tree_root nat_root;/* root of the nat entry cache */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 04450a5..9cf524d 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -26,6 +26,22 @@
- static struct kmem_cache *nat_entry_slab;
- static struct kmem_cache *free_nid_slab;
- 
-+static inline bool available_free_memory(struct f2fs_nm_info *nm_i, int type)
-+{
-+	struct sysinfo val;
-+	unsigned long mem_size = 0;
-+
-+	si_meminfo(&val);
-+	if (type == FREE_NIDS)
-+		mem_size = nm_i->fcnt * sizeof(struct free_nid);
-+	else if (type == NAT_ENTRIES)
-+		mem_size += nm_i->nat_cnt * sizeof(struct nat_entry);
-+	mem_size >>= 12;
-+
-+	/* give 50:50 memory for free nids and nat caches respectively */
-+	return (mem_size < ((val.totalram * nm_i->ram_thresh) >> 11));
-+}
-+
- static void clear_node_page_dirty(struct page *page)
- {
- 	struct address_space *mapping = page->mapping;
-@@ -208,7 +224,7 @@ int try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 
--	if (nm_i->nat_cnt <= NM_WOUT_THRESHOLD || nr_shrink <= 0)
-+	if (available_free_memory(nm_i, NAT_ENTRIES) || nr_shrink <= 0)
- 		return 0;
- 
- 	write_lock(&nm_i->nat_tree_lock);
-@@ -1286,7 +1302,7 @@ static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool build)
- 	struct nat_entry *ne;
- 	bool allocated = false;
- 
--	if (nm_i->fcnt > 2 * MAX_FREE_NIDS)
-+	if (!available_free_memory(nm_i, FREE_NIDS))
- 		return -1;
- 
- 	/* 0 nid should not be used */
-@@ -1471,7 +1487,7 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
- 	spin_lock(&nm_i->free_nid_list_lock);
- 	i = __lookup_free_nid_list(nm_i, nid);
- 	f2fs_bug_on(!i || i->state != NID_ALLOC);
--	if (nm_i->fcnt > 2 * MAX_FREE_NIDS) {
-+	if (!available_free_memory(nm_i, FREE_NIDS)) {
- 		__del_from_free_nid_list(nm_i, i);
- 	} else {
- 		i->state = NID_NEW;
-@@ -1834,6 +1850,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks - 3;
- 	nm_i->fcnt = 0;
- 	nm_i->nat_cnt = 0;
-+	nm_i->ram_thresh = DEF_RAM_THRESHOLD;
- 
- 	INIT_RADIX_TREE(&nm_i->free_nid_root, GFP_ATOMIC);
- 	INIT_LIST_HEAD(&nm_i->free_nid_list);
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index ee6d286..c972154 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -17,15 +17,15 @@
- /* # of pages to perform readahead before building free nids */
- #define FREE_NID_PAGES 4
- 
--/* maximum # of free node ids to produce during build_free_nids */
--#define MAX_FREE_NIDS (NAT_ENTRY_PER_BLOCK * FREE_NID_PAGES)
--
- /* maximum readahead size for node during getting data blocks */
- #define MAX_RA_NODE		128
- 
- /* maximum cached nat entries to manage memory footprint */
- #define NM_WOUT_THRESHOLD	(64 * NAT_ENTRY_PER_BLOCK)
- 
-+/* control the memory footprint threshold (10MB per 1GB ram) */
-+#define DEF_RAM_THRESHOLD	10
-+
- /* vector size for gang look-up from nat cache that consists of radix tree */
- #define NATVEC_SIZE	64
- 
-@@ -77,6 +77,11 @@ static inline void node_info_from_raw_nat(struct node_info *ni,
- 	ni->version = raw_ne->version;
- }
- 
-+enum nid_type {
-+	FREE_NIDS,	/* indicates the free nid list */
-+	NAT_ENTRIES	/* indicates the cached nat entry */
-+};
-+
- /*
-  * For free nid mangement
-  */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index dbe402b..34c47b2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -74,6 +74,7 @@ static match_table_t f2fs_tokens = {
- enum {
- 	GC_THREAD,	/* struct f2fs_gc_thread */
- 	SM_INFO,	/* struct f2fs_sm_info */
-+	NM_INFO,	/* struct f2fs_nm_info */
- 	F2FS_SBI,	/* struct f2fs_sb_info */
- };
- 
-@@ -92,6 +93,8 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
- 		return (unsigned char *)sbi->gc_thread;
- 	else if (struct_type == SM_INFO)
- 		return (unsigned char *)SM_I(sbi);
-+	else if (struct_type == NM_INFO)
-+		return (unsigned char *)NM_I(sbi);
- 	else if (struct_type == F2FS_SBI)
- 		return (unsigned char *)sbi;
- 	return NULL;
-@@ -183,6 +186,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, max_small_discards, max_discards);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
-+F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search, max_victim_search);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
- 
-@@ -198,6 +202,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(min_ipu_util),
- 	ATTR_LIST(max_victim_search),
- 	ATTR_LIST(dir_level),
-+	ATTR_LIST(ram_thresh),
- 	NULL,
- };
- 
--- 
-1.8.4.474.g128a96c
+NA0KRGVhciBTaXIsDQogIEhvdyBhcmUgeW91IGRvaW5nPzY2DQogIFdJUEVYIE5vbndvdmVuIENv
+LixMdGQgaXMgYSBwcm9mZXNzaW9uYWwgZmFjdG9yeSBvZiAgQ2xlYW5yb29tIFdpcGVycyxMaW50
+IEZyZWUgV2lwZXMsU29udGFyYSBSZXBsYWNlIFdpcGVzIGluIENoaW5hLiBXZSBhcmUgcHJvZmVz
+c2lvbmFsIHByb2R1Y2VyIHdobyBoYXZlIHdpcGVycyB3aGljaCBjYW4gcmVwbGFjZSBLaW1iZXJs
+eSBDbGFyaydzIFd5cGFsbCAsRHVwb250J3MgU29udGFyYSxHZW9yZ2lhIFBhY2lmaWMncyBCcmF3
+bnksQ2hpY29wZWUncyBQcm8tU2VyaWVzLFV0aWxpdHksRHVyb3dpcGVzLFNvZnQgQ2xvdGgsQWxs
+IERheSxDYXNjYWRlcydzIFByZXN0byBXaXBlLExpa2UgUmFncyxNREkncyBTdXBlciBSYWcsQXRs
+YW50aWMgTWlsbHMnSW5kdXN0cmlhbCxBbGwgUHVycG9zZSxTQ0EncyBNdWx0aSBNYXgsSG9zcGVj
+bydzIERlbHV4ZSxldGMgLiBJZiB5b3Ugd291bGQgbGlrZSB0byBrbm93IG1vcmUgYWJvdXQgb3Vy
+IHByb2R1Y3RzLHBscyBraW5kbHkgbGV0IHVzIGtub3cueA0KICBGb3IgbW9yZSBpbmZvcm1hdGlv
+bixwbHMgYnJvd3NlIG91ciB3ZWJzaXRlIHd3dy53aXBleG5vbndvdmVuLmNvbSANCkludml0YXRp
+b246DQpJU1NBL0lOVEVSQ0xFQU4gQU1TVEVSREFNIA0KQW1zdGVyZGFtIFJBSSBDb252ZW50aW9u
+IENlbnRyZSwgQW1zdGVyZGFtLCBOZXRoZXJsYW5kcyANCkJvb3RoIE5PLjowOS40MTggLE1heSA2
+LTksIDIwMTQNCldlbGNvbWUgdG8gdmlzaXQgb3VyIGJvb3RoISANClJlZ2FyZHMsDQpGcmFuaw0K
+V0lQRVggTk9OV09WRU5TIENPLixMVEQg
 
+------=_NextPart_000_0160_0102D40C.13B2E770
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+
+PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
+L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0
+Zi04IiBodHRwLWVxdWl2PUNvbnRlbnQtVHlwZT4NCjxNRVRBIG5hbWU9R0VORVJBVE9SIGNvbnRl
+bnQ9Ik1TSFRNTCA5LjAwLjgxMTIuMTY1NDAiPjwvSEVBRD4NCjxCT0RZPg0KPFA+PEZPTlQgc3R5
+bGU9IkJBQ0tHUk9VTkQtQ09MT1I6IHdoaXRlIiBjb2xvcj13aGl0ZT40PC9GT05UPjwvUD4NCjxQ
+PkRlYXIgU2lyLDxCUj4mbmJzcDsgSG93IGFyZSB5b3UgZG9pbmc8Rk9OVCANCmNvbG9yPXdoaXRl
+Pj82NjxCUj48L0ZPTlQ+Jm5ic3A7PEZPTlQgY29sb3I9Ymx1ZT48U1RST05HPiBXSVBFWCANCk5v
+bndvdmVuIENvLixMdGQ8L1NUUk9ORz48L0ZPTlQ+Jm5ic3A7aXMgYSBwcm9mZXNzaW9uYWwgZmFj
+dG9yeSBvZjxTVFJPTkc+Jm5ic3A7IA0KQ2xlYW5yb29tIFdpcGVycyxMaW50IEZyZWUgV2lwZXMs
+U29udGFyYSBSZXBsYWNlIFdpcGU8L1NUUk9ORz5zIGluIA0KQ2hpbmEuJm5ic3A7V2UgYXJlIHBy
+b2Zlc3Npb25hbCBwcm9kdWNlciB3aG8gaGF2ZSB3aXBlcnMgd2hpY2ggY2FuIHJlcGxhY2UgPEZP
+TlQgDQpjb2xvcj1ibGFjaz48U1RST05HPktpbWJlcmx5IENsYXJrJ3MgV3lwYWxsICxEdXBvbnQn
+cyBTb250YXJhLEdlb3JnaWEgUGFjaWZpYydzIA0KQnJhd255LENoaWNvcGVlJ3MgUHJvLVNlcmll
+cyxVdGlsaXR5LER1cm93aXBlczwvU1RST05HPixTb2Z0IENsb3RoLEFsbCANCkRheSw8U1RST05H
+PkNhc2NhZGVzPC9TVFJPTkc+J3MgUHJlc3RvIFdpcGUsTGlrZSBSYWdzLDxTVFJPTkc+TURJPC9T
+VFJPTkc+J3MgDQpTdXBlciBSYWcsPFNUUk9ORz5BdGxhbnRpYyBNaWxsczwvU1RST05HPidJbmR1
+c3RyaWFsLEFsbCANClB1cnBvc2UsPFNUUk9ORz5TQ0E8L1NUUk9ORz4ncyBNdWx0aSBNYXgsSG9z
+cGVjbydzIA0KRGVsdXhlLGV0YyZuYnNwOy4mbmJzcDs8L0ZPTlQ+SWYgeW91IHdvdWxkIGxpa2Ug
+dG8ga25vdyBtb3JlIGFib3V0IG91ciANCnByb2R1Y3RzLHBscyBraW5kbHkmbmJzcDtsZXQgdXMg
+a25vdzxGT05UIA0KY29sb3I9d2hpdGU+Lng8L0ZPTlQ+PEJSPiZuYnNwOyBGb3IgbW9yZSBpbmZv
+cm1hdGlvbixwbHMgYnJvd3NlIG91ciANCndlYnNpdGUmbmJzcDs8QSBocmVmPSJodHRwOi8vd3d3
+LndpcGV4bm9ud292ZW4uY29tIj53d3cud2lwZXhub253b3Zlbi5jb208L0E+IA0KPEJSPjxGT05U
+IGNvbG9yPWJsdWU+PFNUUk9ORz5JbnZpdGF0aW9uOjxCUj48L1NUUk9ORz48L0ZPTlQ+PFNQQU4g
+DQpzdHlsZT0iRk9OVC1TSVpFOiAxMHB0Ij48Rk9OVCBzdHlsZT0iRk9OVC1TSVpFOiAxMC41cHQ7
+IEZPTlQtV0VJR0hUOiBub3JtYWwiIA0KY29sb3I9Ymx1ZSBzaXplPTE+PEVNPklTU0EvSU5URVJD
+TEVBTiBBTVNURVJEQU0gPC9FTT48L0ZPTlQ+PC9TUEFOPjwvUD4NCjxQPjxTUEFOIHN0eWxlPSJG
+T05ULVNJWkU6IDEwcHQiPjwvU1BBTj48Rk9OVCBjb2xvcj1ibHVlPjxTUEFOIA0Kc3R5bGU9IkZP
+TlQtU0laRTogMTBwdCI+PEZPTlQgc3R5bGU9IkZPTlQtU0laRTogMTAuNXB0OyBGT05ULVdFSUdI
+VDogbm9ybWFsIiANCnNpemU9MT48U1BBTiBjbGFzcz1oZWFkZXItYmx1ZT5BbXN0ZXJkYW0gUkFJ
+IENvbnZlbnRpb24gQ2VudHJlLCBBbXN0ZXJkYW0sIA0KTmV0aGVybGFuZHM8L1NQQU4+PC9GT05U
+PjwvU1BBTj4gPC9GT05UPjwvUD4NCjxESVYgc3R5bGU9IkZPTlQtRkFNSUxZOiBDYWxpYnJpOyBD
+T0xPUjogIzAwMDBmZjsgRk9OVC1TSVpFOiAxNHB0Ij4NCjxESVYgc3R5bGU9IkZPTlQtRkFNSUxZ
+OiBDYWxpYnJpOyBDT0xPUjogIzAwMDBmZjsgRk9OVC1TSVpFOiAxNHB0Ij48U1BBTiANCnN0eWxl
+PSJGT05ULVNJWkU6IDEwcHQiPjxGT05UIHN0eWxlPSJGT05ULVNJWkU6IDEwLjVwdDsgRk9OVC1X
+RUlHSFQ6IG5vcm1hbCIgDQpjb2xvcj1ibHVlIHNpemU9MT48RU0+Qm9vdGggTk8uOjA5LjQxOCAs
+PC9FTT48L0ZPTlQ+PC9TUEFOPjxTUEFOIA0Kc3R5bGU9IkZPTlQtU0laRTogMTBwdCI+PEZPTlQg
+c3R5bGU9IkZPTlQtU0laRTogMTAuNXB0OyBGT05ULVdFSUdIVDogbm9ybWFsIiANCnNpemU9MT48
+Rk9OVCBjb2xvcj1ibHVlPjxTUEFOIGNsYXNzPWhlYWRlci1ibHVlPk1heSA2LTksIA0KMjAxNDxC
+Uj48L1NQQU4+PEVNPldlbGNvbWUgdG8gdmlzaXQgb3VyIGJvb3RoITwvRU0+PC9GT05UPjwvRk9O
+VD48L1NQQU4+IA0KPEJSPlJlZ2FyZHMsPEJSPkZyYW5rPEJSPjxGT05UIGNvbG9yPWJsYWNrPldJ
+UEVYIE5PTldPVkVOUyBDTy4sTFREPC9GT05UPiANCjxCUj48L0RJVj48L0RJVj48L0JPRFk+PC9I
+VE1MPg0K
+
+------=_NextPart_000_0160_0102D40C.13B2E770--
+
+
+
+
+--===============7957559773144405864==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Learn Graph Databases - Download FREE O'Reilly Book
@@ -246,3 +126,15 @@ Learn Graph Databases - Download FREE O'Reilly Book
 applications. Written by three acclaimed leaders in the field,
 this first edition is now available. Download your free book today!
 http://p.sf.net/sfu/13534_NeoTech
+--===============7957559773144405864==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============7957559773144405864==--
