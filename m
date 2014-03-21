@@ -1,32 +1,30 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 2/3] f2fs: skip unnecessary node writes during
-	fsync
-Date: Fri, 21 Mar 2014 11:01:14 +0900
-Message-ID: <1395367275-1674-2-git-send-email-jaegeuk.kim@samsung.com>
-References: <1395367275-1674-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 1/3] f2fs: introduce fi->i_sem to protect fi's
+	info
+Date: Fri, 21 Mar 2014 11:01:13 +0900
+Message-ID: <1395367275-1674-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WQonn-0000H3-Vw
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WQonu-0003Mf-1k
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 21 Mar 2014 02:03:20 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WQonk-0002vi-1k
+	Fri, 21 Mar 2014 02:03:26 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WQons-0007lG-Gh
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 21 Mar 2014 02:03:19 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
+	Fri, 21 Mar 2014 02:03:26 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N2R00C2HKD6AEC0@mailout3.samsung.com> for
+	with ESMTP id <0N2R009ZVKD6KE90@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
 	Fri, 21 Mar 2014 11:03:06 +0900 (KST)
-In-reply-to: <1395367275-1674-1-git-send-email-jaegeuk.kim@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,175 +36,190 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-If multiple redundant fsync calls are triggered, we don't need to write its
-node pages with fsync mark continuously.
-
-So, this patch adds FI_NEED_FSYNC to track whether the latest node block is
-written with the fsync mark or not.
-If the mark was set, a new fsync doesn't need to write a node block.
-Otherwise, we should do a new node block with the mark for roll-forward
-recovery.
+This patch introduces fi->i_sem to protect fi's info that includes xattr_ver,
+pino, i_nlink.
+This enables to remove i_mutex during f2fs_sync_file, resulting in performance
+improvement when a number of fsync calls are triggered from many concurrent
+threads.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/file.c |  2 ++
- fs/f2fs/node.c | 37 ++++++++++++++++++++++++++++---------
- fs/f2fs/node.h |  1 +
- 4 files changed, 32 insertions(+), 9 deletions(-)
+ fs/f2fs/dir.c   |  6 ++++++
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/file.c  | 14 ++++++++++----
+ fs/f2fs/namei.c |  7 +++++++
+ fs/f2fs/super.c |  1 +
+ fs/f2fs/xattr.c |  3 +++
+ 6 files changed, 28 insertions(+), 4 deletions(-)
 
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 7c9b17c..972fd0e 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -493,6 +493,7 @@ start:
+ add_dentry:
+ 	f2fs_wait_on_page_writeback(dentry_page, DATA);
+ 
++	down_write(&F2FS_I(inode)->i_sem);
+ 	page = init_inode_metadata(inode, dir, name);
+ 	if (IS_ERR(page)) {
+ 		err = PTR_ERR(page);
+@@ -515,6 +516,8 @@ add_dentry:
+ 
+ 	update_parent_metadata(dir, inode, current_depth);
+ fail:
++	up_write(&F2FS_I(inode)->i_sem);
++
+ 	if (is_inode_flag_set(F2FS_I(dir), FI_UPDATE_DIR)) {
+ 		update_inode_page(dir);
+ 		clear_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
+@@ -559,6 +562,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	if (inode) {
+ 		struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
+ 
++		down_write(&F2FS_I(inode)->i_sem);
++
+ 		if (S_ISDIR(inode->i_mode)) {
+ 			drop_nlink(dir);
+ 			update_inode_page(dir);
+@@ -569,6 +574,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 			drop_nlink(inode);
+ 			i_size_write(inode, 0);
+ 		}
++		up_write(&F2FS_I(inode)->i_sem);
+ 		update_inode_page(inode);
+ 
+ 		if (inode->i_nlink == 0)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 469779a..f83433e 100644
+index 05c6524..469779a 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1126,6 +1126,7 @@ struct dnode_of_data;
- struct node_info;
+@@ -210,6 +210,7 @@ struct f2fs_inode_info {
  
- int is_checkpointed_node(struct f2fs_sb_info *, nid_t);
-+bool fsync_mark_done(struct f2fs_sb_info *, nid_t);
- void get_node_info(struct f2fs_sb_info *, nid_t, struct node_info *);
- int get_dnode_of_data(struct dnode_of_data *, pgoff_t, int);
- int truncate_inode_blocks(struct inode *, pgoff_t);
+ 	/* Use below internally in f2fs*/
+ 	unsigned long flags;		/* use to pass per-file flags */
++	struct rw_semaphore i_sem;	/* protect fi info */
+ 	atomic_t dirty_dents;		/* # of dirty dentry pages */
+ 	f2fs_hash_t chash;		/* hash value of given file name */
+ 	unsigned int clevel;		/* maximum level of given file name */
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a9474cd..6ba2668 100644
+index e755ee5..a9474cd 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -176,6 +176,8 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 	} else {
- 		/* if there is no written node page, write its inode page */
- 		while (!sync_node_pages(sbi, inode->i_ino, &wbc)) {
-+			if (fsync_mark_done(sbi, inode->i_ino))
-+				goto out;
+@@ -111,6 +111,7 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
+ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ {
+ 	struct inode *inode = file->f_mapping->host;
++	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+ 	int ret = 0;
+ 	bool need_cp = false;
+@@ -133,7 +134,7 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 	/* guarantee free sections for fsync */
+ 	f2fs_balance_fs(sbi);
+ 
+-	mutex_lock(&inode->i_mutex);
++	down_read(&fi->i_sem);
+ 
+ 	/*
+ 	 * Both of fdatasync() and fsync() are able to be recovered from
+@@ -150,21 +151,27 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 	else if (F2FS_I(inode)->xattr_ver == cur_cp_version(F2FS_CKPT(sbi)))
+ 		need_cp = true;
+ 
++	up_read(&fi->i_sem);
++
+ 	if (need_cp) {
+ 		nid_t pino;
+ 
+-		F2FS_I(inode)->xattr_ver = 0;
+-
+ 		/* all the dirty node pages should be flushed for POR */
+ 		ret = f2fs_sync_fs(inode->i_sb, 1);
++
++		down_write(&fi->i_sem);
++		F2FS_I(inode)->xattr_ver = 0;
+ 		if (file_wrong_pino(inode) && inode->i_nlink == 1 &&
+ 					get_parent_ino(inode, &pino)) {
+ 			F2FS_I(inode)->i_pino = pino;
+ 			file_got_pino(inode);
++			up_write(&fi->i_sem);
  			mark_inode_dirty_sync(inode);
  			ret = f2fs_write_inode(inode, NULL);
  			if (ret)
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index daf644c..eced8d7 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -133,6 +133,20 @@ int is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid)
- 	return is_cp;
+ 				goto out;
++		} else {
++			up_write(&fi->i_sem);
+ 		}
+ 	} else {
+ 		/* if there is no written node page, write its inode page */
+@@ -180,7 +187,6 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 		ret = blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
+ 	}
+ out:
+-	mutex_unlock(&inode->i_mutex);
+ 	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
+ 	return ret;
  }
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 397d459..0cea874 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -424,12 +424,17 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		}
  
-+bool fsync_mark_done(struct f2fs_sb_info *sbi, nid_t nid)
-+{
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	struct nat_entry *e;
-+	bool fsync_done = false;
+ 		f2fs_set_link(new_dir, new_entry, new_page, old_inode);
++		down_write(&F2FS_I(old_inode)->i_sem);
+ 		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
++		up_write(&F2FS_I(old_inode)->i_sem);
+ 
+ 		new_inode->i_ctime = CURRENT_TIME;
++		down_write(&F2FS_I(new_inode)->i_sem);
+ 		if (old_dir_entry)
+ 			drop_nlink(new_inode);
+ 		drop_nlink(new_inode);
++		up_write(&F2FS_I(new_inode)->i_sem);
 +
-+	read_lock(&nm_i->nat_tree_lock);
-+	e = __lookup_nat_cache(nm_i, nid);
-+	if (e)
-+		fsync_done = e->fsync_done;
-+	read_unlock(&nm_i->nat_tree_lock);
-+	return fsync_done;
-+}
-+
- static struct nat_entry *grab_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid)
- {
- 	struct nat_entry *new;
-@@ -173,7 +187,7 @@ retry:
- }
+ 		mark_inode_dirty(new_inode);
  
- static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
--			block_t new_blkaddr)
-+			block_t new_blkaddr, bool fsync_done)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct nat_entry *e;
-@@ -217,6 +231,11 @@ retry:
- 	/* change address */
- 	nat_set_blkaddr(e, new_blkaddr);
- 	__set_nat_cache_dirty(nm_i, e);
-+
-+	/* update fsync_mark if its inode nat entry is still alive */
-+	e = __lookup_nat_cache(nm_i, ni->ino);
-+	if (e)
-+		e->fsync_done = fsync_done;
- 	write_unlock(&nm_i->nat_tree_lock);
- }
+ 		if (!new_inode->i_nlink)
+@@ -459,7 +464,9 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		if (old_dir != new_dir) {
+ 			f2fs_set_link(old_inode, old_dir_entry,
+ 						old_dir_page, new_dir);
++			down_write(&F2FS_I(old_inode)->i_sem);
+ 			F2FS_I(old_inode)->i_pino = new_dir->i_ino;
++			up_write(&F2FS_I(old_inode)->i_sem);
+ 			update_inode_page(old_inode);
+ 		} else {
+ 			kunmap(old_dir_page);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 34c47b2..89ea046 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -360,6 +360,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	fi->i_current_depth = 1;
+ 	fi->i_advise = 0;
+ 	rwlock_init(&fi->ext.ext_lock);
++	init_rwsem(&fi->i_sem);
  
-@@ -483,7 +502,7 @@ static void truncate_node(struct dnode_of_data *dn)
- 	/* Deallocate node address */
- 	invalidate_blocks(sbi, ni.blk_addr);
- 	dec_valid_node_count(sbi, dn->inode);
--	set_node_addr(sbi, &ni, NULL_ADDR);
-+	set_node_addr(sbi, &ni, NULL_ADDR, false);
+ 	set_inode_flag(fi, FI_NEW_INODE);
  
- 	if (dn->nid == dn->inode->i_ino) {
- 		remove_orphan_inode(sbi, dn->nid);
-@@ -846,7 +865,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
- 	f2fs_bug_on(old_ni.blk_addr != NULL_ADDR);
- 	new_ni = old_ni;
- 	new_ni.ino = dn->inode->i_ino;
--	set_node_addr(sbi, &new_ni, NEW_ADDR);
-+	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 89d0422..8419130 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -590,7 +590,10 @@ int f2fs_setxattr(struct inode *inode, int name_index, const char *name,
+ 	f2fs_balance_fs(sbi);
  
- 	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
- 	set_cold_node(dn->inode, page);
-@@ -1202,7 +1221,7 @@ static int f2fs_write_node_page(struct page *page,
- 	mutex_lock(&sbi->node_write);
- 	set_page_writeback(page);
- 	write_node_page(sbi, page, &fio, nid, ni.blk_addr, &new_addr);
--	set_node_addr(sbi, &ni, new_addr);
-+	set_node_addr(sbi, &ni, new_addr, is_fsync_dnode(page));
- 	dec_page_count(sbi, F2FS_DIRTY_NODES);
- 	mutex_unlock(&sbi->node_write);
- 	unlock_page(page);
-@@ -1503,7 +1522,7 @@ void recover_node_page(struct f2fs_sb_info *sbi, struct page *page,
- 		block_t new_blkaddr)
- {
- 	rewrite_node_page(sbi, page, sum, ni->blk_addr, new_blkaddr);
--	set_node_addr(sbi, ni, new_blkaddr);
-+	set_node_addr(sbi, ni, new_blkaddr, false);
- 	clear_node_page_dirty(page);
- }
+ 	f2fs_lock_op(sbi);
++	/* protect xattr_ver */
++	down_write(&F2FS_I(inode)->i_sem);
+ 	err = __f2fs_setxattr(inode, name_index, name, value, value_len, ipage);
++	up_write(&F2FS_I(inode)->i_sem);
+ 	f2fs_unlock_op(sbi);
  
-@@ -1559,7 +1578,7 @@ bool recover_xattr_data(struct inode *inode, struct page *page, block_t blkaddr)
- 	f2fs_bug_on(ni.blk_addr == NULL_ADDR);
- 	invalidate_blocks(sbi, ni.blk_addr);
- 	dec_valid_node_count(sbi, inode);
--	set_node_addr(sbi, &ni, NULL_ADDR);
-+	set_node_addr(sbi, &ni, NULL_ADDR, false);
- 
- recover_xnid:
- 	/* 2: allocate new xattr nid */
-@@ -1569,12 +1588,12 @@ recover_xnid:
- 	remove_free_nid(NM_I(sbi), new_xnid);
- 	get_node_info(sbi, new_xnid, &ni);
- 	ni.ino = inode->i_ino;
--	set_node_addr(sbi, &ni, NEW_ADDR);
-+	set_node_addr(sbi, &ni, NEW_ADDR, false);
- 	F2FS_I(inode)->i_xattr_nid = new_xnid;
- 
- 	/* 3: update xattr blkaddr */
- 	refresh_sit_entry(sbi, NEW_ADDR, blkaddr);
--	set_node_addr(sbi, &ni, blkaddr);
-+	set_node_addr(sbi, &ni, blkaddr, false);
- 
- 	update_inode_page(inode);
- 	return true;
-@@ -1612,7 +1631,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 
- 	if (unlikely(!inc_valid_node_count(sbi, NULL)))
- 		WARN_ON(1);
--	set_node_addr(sbi, &new_ni, NEW_ADDR);
-+	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
- 	inc_valid_inode_count(sbi);
- 	f2fs_put_page(ipage, 1);
- 	return 0;
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index c2015b7..5decc1a 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -42,6 +42,7 @@ struct node_info {
- struct nat_entry {
- 	struct list_head list;	/* for clean or dirty nat list */
- 	bool checkpointed;	/* whether it is checkpointed or not */
-+	bool fsync_done;	/* whether the latest node has fsync mark */
- 	struct node_info ni;	/* in-memory node information */
- };
- 
+ 	return err;
 -- 
 1.8.4.474.g128a96c
 
