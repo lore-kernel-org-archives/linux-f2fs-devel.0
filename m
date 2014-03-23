@@ -1,40 +1,62 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev] [PATCH 2/2] f2fs: avoid unneeded lookup when xattr name
- length is too long
-Date: Sat, 22 Mar 2014 14:59:45 +0800
-Message-ID: <000d01cf459c$68d4e070$3a7ea150$@samsung.com>
+From: folkert <folkert@vanheusden.com>
+Subject: assertion failed
+Date: Sun, 23 Mar 2014 15:22:35 +0100
+Message-ID: <20140323142235.GL18912@belle.intranet.vanheusden.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: ??? <jaegeuk.kim@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <folkert@vanheusden.com>) id 1WRjIS-0002ON-N0
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 23 Mar 2014 14:22:44 +0000
+Received: from keetweej.vanheusden.com ([80.101.105.103])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1WRjIQ-0004EG-Ii
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 23 Mar 2014 14:22:44 +0000
+Received: from belle.intranet.vanheusden.com (unknown [192.168.64.100])
+	by keetweej.vanheusden.com (Postfix) with ESMTP id 9788015F98A
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sun, 23 Mar 2014 15:22:35 +0100 (CET)
+Content-Disposition: inline
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-In f2fs_setxattr we have limit this attribute name length, so we should also
-check it in f2fs_getxattr to avoid useless lookup caused by invalid name length.
+Hi,
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/xattr.c |    2 ++
- 1 file changed, 2 insertions(+)
+Got an assertion failed in fsck.f2fs:
 
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 0121e45..503c245 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -407,6 +407,8 @@ int f2fs_getxattr(struct inode *inode, int name_index, const char *name,
- 	if (name == NULL)
- 		return -EINVAL;
- 	name_len = strlen(name);
-+	if (name_len > F2FS_NAME_LEN)
-+		return -ERANGE;
- 
- 	base_addr = read_all_xattrs(inode, NULL);
- 	if (!base_addr)
+Info: sector size = 512
+Info: total sectors = 7503872 (in 512bytes)
+
+Assertion failed!
+[fsck_chk_node_blk: 209] nid == le32_to_cpu(node_blk->footer.nid)
+ --> nid[0x5] blk_addr[0xc1d35] footer.nid[0x0]
+
+
+Folkert van Heusden
+
 -- 
-1.7.9.5
+Multi tail barnamaj mowahib li mora9abat attasjilat wa nataij awamir
+al 7asoub. damj, talwin, mora9abat attarchi7 wa ila akhirih.
+http://www.vanheusden.com/multitail/
+----------------------------------------------------------------------
+Phone: +31-6-41278122, PGP-key: 1F28D8AE, www.vanheusden.com
 
-
+------------------------------------------------------------------------------
+Learn Graph Databases - Download FREE O'Reilly Book
+"Graph Databases" is the definitive new guide to graph databases and their
+applications. Written by three acclaimed leaders in the field,
+this first edition is now available. Download your free book today!
+http://p.sf.net/sfu/13534_NeoTech
