@@ -1,31 +1,24 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: fix error path when fail to read inline
-	data
-Date: Sat, 29 Mar 2014 15:30:40 +0800
-Message-ID: <000101cf4b20$e4765270$ad62f750$@samsung.com>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH 2/2] f2fs: use list_for_each_entry{_safe} for
+ simplyfying code
+Date: Mon, 31 Mar 2014 18:07:03 +0800
+Message-ID: <53393E47.5070600@cn.fujitsu.com>
+References: <000001cf4aff$baaf99e0$300ecda0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1WTnjv-00027F-KE
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1WUZGa-0005Rt-Ns
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 29 Mar 2014 07:31:39 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WTnjt-0004au-PP
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 29 Mar 2014 07:31:39 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N3600N8GSWI1U20@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 29 Mar 2014 16:31:30 +0900 (KST)
-Content-language: zh-cn
+	Mon, 31 Mar 2014 10:16:32 +0000
+Received: from [222.73.24.84] (helo=song.cn.fujitsu.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WUZGY-0007eP-B3 for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 31 Mar 2014 10:16:32 +0000
+In-Reply-To: <000001cf4aff$baaf99e0$300ecda0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,65 +28,236 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: ??? <jaegeuk.kim@samsung.com>
+To: Chao Yu <chao2.yu@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-We should unlock page in ->readpage() path and also should unlock & release page
-in error path of ->write_begin() to avoid deadlock or memory leak.
-So let's add release code to fix the problem when we fail to read inline data.
+Hi Yu,
+On 03/29/2014 11:33 AM, Chao Yu wrote:
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/data.c   |   14 ++++++++++----
- fs/f2fs/inline.c |    4 +++-
- 2 files changed, 13 insertions(+), 5 deletions(-)
+> This patch use list_for_each_entry{_safe} instead of list_for_each{_safe} for
+> simplfying code.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/checkpoint.c |   37 ++++++++++++++-----------------------
+>  fs/f2fs/node.c       |   16 ++++++----------
+>  fs/f2fs/recovery.c   |    6 ++----
+>  fs/f2fs/segment.c    |    6 ++----
+>  4 files changed, 24 insertions(+), 41 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index d877f46..4aa521a 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -308,16 +308,15 @@ void release_orphan_inode(struct f2fs_sb_info *sbi)
+>  
+>  void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+>  {
+> -	struct list_head *head, *this;
+> -	struct orphan_inode_entry *new = NULL, *orphan = NULL;
+> +	struct list_head *head;
+> +	struct orphan_inode_entry *new, *orphan;
+>  
+>  	new = f2fs_kmem_cache_alloc(orphan_entry_slab, GFP_ATOMIC);
+>  	new->ino = ino;
+>  
+>  	spin_lock(&sbi->orphan_inode_lock);
+>  	head = &sbi->orphan_inode_list;
+> -	list_for_each(this, head) {
+> -		orphan = list_entry(this, struct orphan_inode_entry, list);
+> +	list_for_each_entry(orphan, head, list) {
+>  		if (orphan->ino == ino) {
+>  			spin_unlock(&sbi->orphan_inode_lock);
+>  			kmem_cache_free(orphan_entry_slab, new);
+> @@ -326,14 +325,10 @@ void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+>  
+>  		if (orphan->ino > ino)
+>  			break;
+> -		orphan = NULL;
+>  	}
+>  
+> -	/* add new_oentry into list which is sorted by inode number */
+> -	if (orphan)
+> -		list_add(&new->list, this->prev);
+> -	else
+> -		list_add_tail(&new->list, head);
+> +	/* add new orphan entry into list which is sorted by inode number */
+> +	list_add_tail(&new->list, &orphan->list);
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 598bfa6..45abd60 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -942,13 +942,19 @@ inline_data:
- 	if (dn.data_blkaddr == NEW_ADDR) {
- 		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
- 	} else {
--		if (f2fs_has_inline_data(inode))
-+		if (f2fs_has_inline_data(inode)) {
- 			err = f2fs_read_inline_data(inode, page);
--		else
-+			if (err) {
-+				page_cache_release(page);
-+				return err;
-+			}
-+		} else {
- 			err = f2fs_submit_page_bio(sbi, page, dn.data_blkaddr,
- 							READ_SYNC);
--		if (err)
--			return err;
-+			if (err)
-+				return err;
-+		}
-+
- 		lock_page(page);
- 		if (unlikely(!PageUptodate(page))) {
- 			f2fs_put_page(page, 1);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 31ee5b1..383db1f 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -45,8 +45,10 @@ int f2fs_read_inline_data(struct inode *inode, struct page *page)
- 	}
- 
- 	ipage = get_node_page(sbi, inode->i_ino);
--	if (IS_ERR(ipage))
-+	if (IS_ERR(ipage)) {
-+		unlock_page(page);
- 		return PTR_ERR(ipage);
-+	}
- 
- 	zero_user_segment(page, MAX_INLINE_DATA, PAGE_CACHE_SIZE);
- 
--- 
-1.7.9.5
+It seems that the logic can not be changed here, otherwise the orphan list will not be in order if
+the new ino is bigger than all the in-list ones.
+E.g.
+ino:5
+1-->2-->3-->4
+==>
+1-->2-->3-->5-->4
+
+Regards,
+Gu
+
+>  	spin_unlock(&sbi->orphan_inode_lock);
+>  }
+>  
+> @@ -561,14 +556,12 @@ static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+>  	struct list_head *head = &sbi->dir_inode_list;
+> -	struct list_head *this;
+> +	struct dir_inode_entry *entry;
+>  
+> -	list_for_each(this, head) {
+> -		struct dir_inode_entry *entry;
+> -		entry = list_entry(this, struct dir_inode_entry, list);
+> +	list_for_each_entry(entry, head, list)
+>  		if (unlikely(entry->inode == inode))
+>  			return -EEXIST;
+> -	}
+> +
+>  	list_add_tail(&new->list, head);
+>  	stat_inc_dirty_dir(sbi);
+>  	return 0;
+> @@ -618,7 +611,8 @@ void add_dirty_dir_inode(struct inode *inode)
+>  void remove_dirty_dir_inode(struct inode *inode)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+> -	struct list_head *this, *head;
+> +	struct list_head *head;
+> +	struct dir_inode_entry *entry;
+>  
+>  	if (!S_ISDIR(inode->i_mode))
+>  		return;
+> @@ -630,9 +624,7 @@ void remove_dirty_dir_inode(struct inode *inode)
+>  	}
+>  
+>  	head = &sbi->dir_inode_list;
+> -	list_for_each(this, head) {
+> -		struct dir_inode_entry *entry;
+> -		entry = list_entry(this, struct dir_inode_entry, list);
+> +	list_for_each_entry(entry, head, list) {
+>  		if (entry->inode == inode) {
+>  			list_del(&entry->list);
+>  			stat_dec_dirty_dir(sbi);
+> @@ -654,15 +646,14 @@ done:
+>  struct inode *check_dirty_dir_inode(struct f2fs_sb_info *sbi, nid_t ino)
+>  {
+>  
+> -	struct list_head *this, *head;
+> +	struct list_head *head;
+>  	struct inode *inode = NULL;
+> +	struct dir_inode_entry *entry;
+>  
+>  	spin_lock(&sbi->dir_inode_lock);
+>  
+>  	head = &sbi->dir_inode_list;
+> -	list_for_each(this, head) {
+> -		struct dir_inode_entry *entry;
+> -		entry = list_entry(this, struct dir_inode_entry, list);
+> +	list_for_each_entry(entry, head, list) {
+>  		if (entry->inode->i_ino == ino) {
+>  			inode = entry->inode;
+>  			break;
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 0021056..afda3d3 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1452,7 +1452,6 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+>  {
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>  	struct free_nid *i = NULL;
+> -	struct list_head *this;
+>  retry:
+>  	if (unlikely(sbi->total_valid_node_count + 1 >= nm_i->max_nid))
+>  		return false;
+> @@ -1462,11 +1461,9 @@ retry:
+>  	/* We should not use stale free nids created by build_free_nids */
+>  	if (nm_i->fcnt && !on_build_free_nids(nm_i)) {
+>  		f2fs_bug_on(list_empty(&nm_i->free_nid_list));
+> -		list_for_each(this, &nm_i->free_nid_list) {
+> -			i = list_entry(this, struct free_nid, list);
+> +		list_for_each_entry(i, &nm_i->free_nid_list, list)
+>  			if (i->state == NID_NEW)
+>  				break;
+> -		}
+>  
+>  		f2fs_bug_on(i->state != NID_NEW);
+>  		*nid = i->nid;
+> @@ -1781,7 +1778,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+>  	struct f2fs_summary_block *sum = curseg->sum_blk;
+> -	struct list_head *cur, *n;
+> +	struct nat_entry *ne, *cur;
+>  	struct page *page = NULL;
+>  	struct f2fs_nat_block *nat_blk = NULL;
+>  	nid_t start_nid = 0, end_nid = 0;
+> @@ -1793,18 +1790,17 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+>  		mutex_lock(&curseg->curseg_mutex);
+>  
+>  	/* 1) flush dirty nat caches */
+> -	list_for_each_safe(cur, n, &nm_i->dirty_nat_entries) {
+> -		struct nat_entry *ne;
+> +	list_for_each_entry_safe(ne, cur, &nm_i->dirty_nat_entries, list) {
+>  		nid_t nid;
+>  		struct f2fs_nat_entry raw_ne;
+>  		int offset = -1;
+>  		block_t new_blkaddr;
+>  
+> -		ne = list_entry(cur, struct nat_entry, list);
+> -		nid = nat_get_nid(ne);
+> -
+>  		if (nat_get_blkaddr(ne) == NEW_ADDR)
+>  			continue;
+> +
+> +		nid = nat_get_nid(ne);
+> +
+>  		if (flushed)
+>  			goto to_nat_page;
+>  
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index bbef4ed..b1ae89f 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -27,14 +27,12 @@ bool space_for_roll_forward(struct f2fs_sb_info *sbi)
+>  static struct fsync_inode_entry *get_fsync_inode(struct list_head *head,
+>  								nid_t ino)
+>  {
+> -	struct list_head *this;
+>  	struct fsync_inode_entry *entry;
+>  
+> -	list_for_each(this, head) {
+> -		entry = list_entry(this, struct fsync_inode_entry, list);
+> +	list_for_each_entry(entry, head, list)
+>  		if (entry->inode->i_ino == ino)
+>  			return entry;
+> -	}
+> +
+>  	return NULL;
+>  }
+>  
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 570ab9a..cb49e63 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -340,8 +340,7 @@ static void set_prefree_as_free_segments(struct f2fs_sb_info *sbi)
+>  void clear_prefree_segments(struct f2fs_sb_info *sbi)
+>  {
+>  	struct list_head *head = &(SM_I(sbi)->discard_list);
+> -	struct list_head *this, *next;
+> -	struct discard_entry *entry;
+> +	struct discard_entry *entry, *this;
+>  	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+>  	unsigned long *prefree_map = dirty_i->dirty_segmap[PRE];
+>  	unsigned int total_segs = TOTAL_SEGS(sbi);
+> @@ -370,8 +369,7 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi)
+>  	mutex_unlock(&dirty_i->seglist_lock);
+>  
+>  	/* send small discards */
+> -	list_for_each_safe(this, next, head) {
+> -		entry = list_entry(this, struct discard_entry, list);
+> +	list_for_each_entry_safe(entry, this, head, list) {
+>  		f2fs_issue_discard(sbi, entry->blkaddr, entry->len);
+>  		list_del(&entry->list);
+>  		SM_I(sbi)->nr_discards -= entry->len;
 
 
 
