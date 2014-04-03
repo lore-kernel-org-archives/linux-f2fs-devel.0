@@ -1,84 +1,49 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH v2] f2fs: introduce f2fs_issue_flush to avoid redundant
- flush issue
-Date: Thu, 03 Apr 2014 19:14:01 +0900
-Message-ID: <1396520041.12401.6.camel@kjgkr>
-References: <1396506261-13341-1-git-send-email-jaegeuk.kim@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] f2fs: introduce f2fs_issue_flush to avoid redundant flush issue
+Date: Thu, 03 Apr 2014 15:24:21 +0900
+Message-ID: <1396506261-13341-1-git-send-email-jaegeuk.kim@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1396506261-13341-1-git-send-email-jaegeuk.kim@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-change log from v1:
- o do not create a flush thread, if the option is not set
-
->From deb512157c4bcae079197eb55590e3e764cedc7f Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Wed, 2 Apr 2014 15:34:36 +0900
-Subject: [PATCH] f2fs: introduce f2fs_issue_flush to avoid redundant
-flush
- issue
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-linux-f2fs-devel@lists.sourceforge.net
-
-Some storage devices show relatively high latencies to complete
-cache_flush
-commands, even though their normal IO speed is prettry much high. In
-such
-the case, it needs to merge cache_flush commands as much as possible to
-avoid
+Some storage devices show relatively high latencies to complete cache_flush
+commands, even though their normal IO speed is prettry much high. In such
+the case, it needs to merge cache_flush commands as much as possible to avoid
 issuing them redundantly.
-So, this patch introduces a mount option, "-o flush_merge", to mitigate
-such
+So, this patch introduces a mount option, "-o flush_merge", to mitigate such
 the overhead.
 
-If this option is enabled by user, F2FS merges the cache_flush commands
-and then
-issues just one cache_flush on behalf of them. Once the single command
-is
+If this option is enabled by user, F2FS merges the cache_flush commands and then
+issues just one cache_flush on behalf of them. Once the single command is
 finished, F2FS sends a completion signal to all the pending threads.
 
-Note that, this option can be used under a workload consisting of very
-intensive
-concurrent fsync calls, while the storage handles cache_flush commands
-slowly.
+Note that, this option can be used under a workload consisting of very intensive
+concurrent fsync calls, while the storage handles cache_flush commands slowly.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
  Documentation/filesystems/f2fs.txt |  4 ++
  fs/f2fs/f2fs.h                     | 16 +++++++
  fs/f2fs/file.c                     |  2 +-
- fs/f2fs/segment.c                  | 89
-++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/segment.c                  | 87 ++++++++++++++++++++++++++++++++++++++
  fs/f2fs/super.c                    |  7 +++
- 5 files changed, 117 insertions(+), 1 deletion(-)
+ 5 files changed, 115 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/f2fs.txt
-b/Documentation/filesystems/f2fs.txt
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
 index 2f6d021..25311e11 100644
 --- a/Documentation/filesystems/f2fs.txt
 +++ b/Documentation/filesystems/f2fs.txt
-@@ -122,6 +122,10 @@ disable_ext_identify   Disable the extension list
-configured by mkfs, so f2fs
+@@ -122,6 +122,10 @@ disable_ext_identify   Disable the extension list configured by mkfs, so f2fs
  inline_xattr           Enable the inline xattrs feature.
- inline_data            Enable the inline data feature: New created
-small(<~3.4k)
+ inline_data            Enable the inline data feature: New created small(<~3.4k)
                         files can be written into inode block.
-+flush_merge	       Merge concurrent cache_flush commands as much as
-possible
-+                       to eliminate redundant command issues. If the
-underlying
++flush_merge	       Merge concurrent cache_flush commands as much as possible
++                       to eliminate redundant command issues. If the underlying
 +		       device handles the cache_flush command relatively slowly,
 +		       recommend to enable this option.
  
-
-================================================================================
+ ================================================================================
  DEBUGFS ENTRIES
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
 index 1e3d869..2ecac83 100644
@@ -90,10 +55,8 @@ index 1e3d869..2ecac83 100644
  #define F2FS_MOUNT_INLINE_DATA		0x00000100
 +#define F2FS_MOUNT_FLUSH_MERGE		0x00000200
  
- #define clear_opt(sbi, option)	(sbi->mount_opt.opt &=
-~F2FS_MOUNT_##option)
- #define set_opt(sbi, option)	(sbi->mount_opt.opt |=
-F2FS_MOUNT_##option)
+ #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
+ #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
 @@ -316,6 +317,12 @@ enum {
  	NO_CHECK_TYPE
  };
@@ -134,8 +97,7 @@ diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
 index 6ba2668..302d552 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -186,7 +186,7 @@ int f2fs_sync_file(struct file *file, loff_t start,
-loff_t end, int datasync)
+@@ -186,7 +186,7 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
  		ret = wait_on_node_pages_writeback(sbi, inode->i_ino);
  		if (ret)
  			goto out;
@@ -145,7 +107,7 @@ loff_t end, int datasync)
  out:
  	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index f799c6a..4ad3431 100644
+index f799c6a..2993624 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
 @@ -13,6 +13,7 @@
@@ -163,8 +125,7 @@ index f799c6a..4ad3431 100644
 +static struct kmem_cache *flush_cmd_slab;
  
  /*
-  * __reverse_ffs is copied from include/asm-generic/bitops/__ffs.h
-since
+  * __reverse_ffs is copied from include/asm-generic/bitops/__ffs.h since
 @@ -195,6 +197,73 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
  		f2fs_sync_fs(sbi->sb, true);
  }
@@ -201,8 +162,7 @@ since
 +	if (kthread_should_stop())
 +		return 0;
 +
-+	wait_event_interruptible(*q, kthread_should_stop() ||
-sm_i->issue_list);
++	wait_event_interruptible(*q, kthread_should_stop() || sm_i->issue_list);
 +	goto repeat;
 +}
 +
@@ -237,12 +197,10 @@ sm_i->issue_list);
 +	return ret;
 +}
 +
- static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned
-int segno,
+ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
  		enum dirty_type dirty_type)
  {
-@@ -1763,6 +1832,7 @@ int build_segment_manager(struct f2fs_sb_info
-*sbi)
+@@ -1763,6 +1832,7 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
  {
  	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
@@ -250,35 +208,31 @@ int segno,
  	struct f2fs_sm_info *sm_info;
  	int err;
  
-@@ -1790,6 +1860,16 @@ int build_segment_manager(struct f2fs_sb_info
-*sbi)
+@@ -1790,6 +1860,15 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
  	sm_info->nr_discards = 0;
  	sm_info->max_discards = 0;
  
-+	if (test_opt(sbi, FLUSH_MERGE)) {
-+		spin_lock_init(&sm_info->issue_lock);
-+		init_waitqueue_head(&sm_info->flush_wait_queue);
++	spin_lock_init(&sm_info->issue_lock);
 +
-+		sm_info->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
-+				"f2fs_flush-%u:%u", MAJOR(dev), MINOR(dev));
-+		if (IS_ERR(sm_info->f2fs_issue_flush))
-+			return PTR_ERR(sm_info->f2fs_issue_flush);
-+	}
++	sm_info->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
++			"f2fs_issue_flush-%u:%u", MAJOR(dev), MINOR(dev));
++	if (IS_ERR(sm_info->f2fs_issue_flush))
++		return PTR_ERR(sm_info->f2fs_issue_flush);
++
++	init_waitqueue_head(&sm_info->flush_wait_queue);
 +
  	err = build_sit_info(sbi);
  	if (err)
  		return err;
-@@ -1898,6 +1978,8 @@ void destroy_segment_manager(struct f2fs_sb_info
-*sbi)
+@@ -1898,6 +1977,7 @@ void destroy_segment_manager(struct f2fs_sb_info *sbi)
  	struct f2fs_sm_info *sm_info = SM_I(sbi);
  	if (!sm_info)
  		return;
-+	if (sm_info->f2fs_issue_flush)
-+		kthread_stop(sm_info->f2fs_issue_flush);
++	kthread_stop(sm_info->f2fs_issue_flush);
  	destroy_dirty_segmap(sbi);
  	destroy_curseg(sbi);
  	destroy_free_segmap(sbi);
-@@ -1912,10 +1994,17 @@ int __init create_segment_manager_caches(void)
+@@ -1912,10 +1992,17 @@ int __init create_segment_manager_caches(void)
  			sizeof(struct discard_entry));
  	if (!discard_entry_slab)
  		return -ENOMEM;
@@ -316,8 +270,7 @@ index 9598340..d31b767 100644
  	{Opt_err, NULL},
  };
  
-@@ -334,6 +336,9 @@ static int parse_options(struct super_block *sb,
-char *options)
+@@ -334,6 +336,9 @@ static int parse_options(struct super_block *sb, char *options)
  		case Opt_inline_data:
  			set_opt(sbi, INLINE_DATA);
  			break;
@@ -327,8 +280,7 @@ char *options)
  		default:
  			f2fs_msg(sb, KERN_ERR,
  				"Unrecognized mount option \"%s\" or missing value",
-@@ -537,6 +542,8 @@ static int f2fs_show_options(struct seq_file *seq,
-struct dentry *root)
+@@ -537,6 +542,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
  		seq_puts(seq, ",disable_ext_identify");
  	if (test_opt(sbi, INLINE_DATA))
  		seq_puts(seq, ",inline_data");
@@ -339,9 +291,3 @@ struct dentry *root)
  	return 0;
 -- 
 1.8.4.474.g128a96c
-
-
-
--- 
-Jaegeuk Kim
-Samsung
