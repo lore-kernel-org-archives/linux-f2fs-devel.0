@@ -1,239 +1,347 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: avoid free slab cache under spinlock
-Date: Wed, 02 Apr 2014 08:52:29 +0800
-Message-ID: <000d01cf4e0d$fe278d20$fa76a760$@samsung.com>
-References: <000001cf4aff$295d4cd0$7c17e670$@samsung.com>
- <1396353865.12401.2.camel@kjgkr>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [PATCH v2] f2fs: introduce f2fs_issue_flush to avoid redundant
+ flush issue
+Date: Thu, 03 Apr 2014 19:14:01 +0900
+Message-ID: <1396520041.12401.6.camel@kjgkr>
+References: <1396506261-13341-1-git-send-email-jaegeuk.kim@samsung.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1396353865.12401.2.camel@kjgkr>
-Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: jaegeuk.kim@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1396506261-13341-1-git-send-email-jaegeuk.kim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Kim,
+change log from v1:
+ o do not create a flush thread, if the option is not set
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk.kim@samsung.com]
-> Sent: Tuesday, April 01, 2014 8:04 PM
-> To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-fsdevel@vger.kernel=
-=2Eorg;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: avoid free slab cache under=
- spinlock
->=20
-> Hi Chao,
->=20
-> One minor thing as below.
->=20
-> 2014-03-29 (=ED=86=A0), 11:29 +0800, Chao Yu:
-> > Move kmem_cache_free out of spinlock protection region for better p=
-erformance.
-> >
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/checkpoint.c |   27 +++++++++++++++++----------
-> >  fs/f2fs/node.c       |   15 ++++++++++++++-
-> >  2 files changed, 31 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index a80be51..d877f46 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -347,10 +347,11 @@ void remove_orphan_inode(struct f2fs_sb_info =
-*sbi, nid_t ino)
-> >  	list_for_each_entry(orphan, head, list) {
-> >  		if (orphan->ino =3D=3D ino) {
-> >  			list_del(&orphan->list);
-> > -			kmem_cache_free(orphan_entry_slab, orphan);
-> >  			f2fs_bug_on(sbi->n_orphans =3D=3D 0);
-> >  			sbi->n_orphans--;
-> > -			break;
-> > +			spin_unlock(&sbi->orphan_inode_lock);
-> > +			kmem_cache_free(orphan_entry_slab, orphan);
-> > +			return;
-> >  		}
-> >  	}
-> >  	spin_unlock(&sbi->orphan_inode_lock);
-> > @@ -577,6 +578,7 @@ void set_dirty_dir_page(struct inode *inode, st=
-ruct page *page)
-> >  {
-> >  	struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
-> >  	struct dir_inode_entry *new;
-> > +	int ret =3D 0;
-> >
-> >  	if (!S_ISDIR(inode->i_mode))
-> >  		return;
-> > @@ -586,12 +588,13 @@ void set_dirty_dir_page(struct inode *inode, =
-struct page *page)
-> >  	INIT_LIST_HEAD(&new->list);
-> >
-> >  	spin_lock(&sbi->dir_inode_lock);
-> > -	if (__add_dirty_inode(inode, new))
-> > -		kmem_cache_free(inode_entry_slab, new);
-> > -
-> > +	ret =3D __add_dirty_inode(inode, new);
-> >  	inode_inc_dirty_dents(inode);
-> >  	SetPagePrivate(page);
-> >  	spin_unlock(&sbi->dir_inode_lock);
-> > +
-> > +	if (ret)
-> > +		kmem_cache_free(inode_entry_slab, new);
-> >  }
-> >
-> >  void add_dirty_dir_inode(struct inode *inode)
-> > @@ -599,20 +602,22 @@ void add_dirty_dir_inode(struct inode *inode)
-> >  	struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
-> >  	struct dir_inode_entry *new =3D
-> >  			f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
-> > +	int ret =3D 0;
-> >
-> >  	new->inode =3D inode;
-> >  	INIT_LIST_HEAD(&new->list);
-> >
-> >  	spin_lock(&sbi->dir_inode_lock);
-> > -	if (__add_dirty_inode(inode, new))
-> > -		kmem_cache_free(inode_entry_slab, new);
-> > +	ret =3D __add_dirty_inode(inode, new);
-> >  	spin_unlock(&sbi->dir_inode_lock);
-> > +
-> > +	if (ret)
-> > +		kmem_cache_free(inode_entry_slab, new);
-> >  }
-> >
-> >  void remove_dirty_dir_inode(struct inode *inode)
-> >  {
-> >  	struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
-> > -
-> >  	struct list_head *this, *head;
-> >
-> >  	if (!S_ISDIR(inode->i_mode))
-> > @@ -630,13 +635,15 @@ void remove_dirty_dir_inode(struct inode *ino=
-de)
-> >  		entry =3D list_entry(this, struct dir_inode_entry, list);
-> >  		if (entry->inode =3D=3D inode) {
-> >  			list_del(&entry->list);
-> > -			kmem_cache_free(inode_entry_slab, entry);
-> >  			stat_dec_dirty_dir(sbi);
-> > -			break;
-> > +			spin_unlock(&sbi->dir_inode_lock);
-> > +			kmem_cache_free(inode_entry_slab, entry);
-> > +			goto done;
-> >  		}
-> >  	}
-> >  	spin_unlock(&sbi->dir_inode_lock);
-> >
-> > +done:
-> >  	/* Only from the recovery routine */
-> >  	if (is_inode_flag_set(F2FS_I(inode), FI_DELAY_IPUT)) {
-> >  		clear_inode_flag(F2FS_I(inode), FI_DELAY_IPUT);
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index eced8d7..0021056 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -1314,7 +1314,6 @@ static void __del_from_free_nid_list(struct f=
-2fs_nm_info *nm_i,
-> >  {
-> >  	list_del(&i->list);
-> >  	radix_tree_delete(&nm_i->free_nid_root, i->nid);
-> > -	kmem_cache_free(free_nid_slab, i);
-> >  }
-> >
-> >  static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool=
- build)
-> > @@ -1361,13 +1360,19 @@ static int add_free_nid(struct f2fs_nm_info=
- *nm_i, nid_t nid, bool
-> build)
-> >  static void remove_free_nid(struct f2fs_nm_info *nm_i, nid_t nid)
-> >  {
-> >  	struct free_nid *i;
-> > +	bool need_free =3D false;
-> > +
-> >  	spin_lock(&nm_i->free_nid_list_lock);
-> >  	i =3D __lookup_free_nid_list(nm_i, nid);
-> >  	if (i && i->state =3D=3D NID_NEW) {
-> >  		__del_from_free_nid_list(nm_i, i);
-> >  		nm_i->fcnt--;
-> > +		need_free =3D true;
-> >  	}
-> >  	spin_unlock(&nm_i->free_nid_list_lock);
-> > +
-> > +	if (need_free)
-> > +		kmem_cache_free(free_nid_slab, i);
-> >  }
-> >
-> >  static void scan_nat_page(struct f2fs_nm_info *nm_i,
-> > @@ -1492,6 +1497,8 @@ void alloc_nid_done(struct f2fs_sb_info *sbi,=
- nid_t nid)
-> >  	f2fs_bug_on(!i || i->state !=3D NID_ALLOC);
-> >  	__del_from_free_nid_list(nm_i, i);
-> >  	spin_unlock(&nm_i->free_nid_list_lock);
-> > +
-> > +	kmem_cache_free(free_nid_slab, i);
-> >  }
-> >
-> >  /*
-> > @@ -1501,6 +1508,7 @@ void alloc_nid_failed(struct f2fs_sb_info *sb=
-i, nid_t nid)
-> >  {
-> >  	struct f2fs_nm_info *nm_i =3D NM_I(sbi);
-> >  	struct free_nid *i;
-> > +	bool need_free =3D false;
-> >
-> >  	if (!nid)
-> >  		return;
-> > @@ -1510,11 +1518,15 @@ void alloc_nid_failed(struct f2fs_sb_info *=
-sbi, nid_t nid)
-> >  	f2fs_bug_on(!i || i->state !=3D NID_ALLOC);
-> >  	if (!available_free_memory(nm_i, FREE_NIDS)) {
-> >  		__del_from_free_nid_list(nm_i, i);
-> > +		need_free =3D true;
-> >  	} else {
-> >  		i->state =3D NID_NEW;
-> >  		nm_i->fcnt++;
-> >  	}
-> >  	spin_unlock(&nm_i->free_nid_list_lock);
-> > +
-> > +	if (need_free)
-> > +		kmem_cache_free(free_nid_slab, i);
-> >  }
-> >
-> >  void recover_node_page(struct f2fs_sb_info *sbi, struct page *page=
-,
-> > @@ -1926,6 +1938,7 @@ void destroy_node_manager(struct f2fs_sb_info=
- *sbi)
-> >  		f2fs_bug_on(i->state =3D=3D NID_ALLOC);
-> >  		__del_from_free_nid_list(nm_i, i);
-> >  		nm_i->fcnt--;
-> > +		kmem_cache_free(free_nid_slab, i);
->=20
-> It seems that we need to do this too.
->=20
->                spin_unlock(&nm_i->free_nid_list_lock);
->                kmem_cache_free(free_nid_slab, i);
->                spin_lock(&nm_i->free_nid_list_lock);
->=20
-> Right?
+>From deb512157c4bcae079197eb55590e3e764cedc7f Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Date: Wed, 2 Apr 2014 15:34:36 +0900
+Subject: [PATCH] f2fs: introduce f2fs_issue_flush to avoid redundant
+flush
+ issue
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+linux-f2fs-devel@lists.sourceforge.net
 
-You're right, I will send patch v2.
-Thanks for your review.
+Some storage devices show relatively high latencies to complete
+cache_flush
+commands, even though their normal IO speed is prettry much high. In
+such
+the case, it needs to merge cache_flush commands as much as possible to
+avoid
+issuing them redundantly.
+So, this patch introduces a mount option, "-o flush_merge", to mitigate
+such
+the overhead.
 
->=20
-> >  	}
-> >  	f2fs_bug_on(nm_i->fcnt);
-> >  	spin_unlock(&nm_i->free_nid_list_lock);
->=20
-> --
-> Jaegeuk Kim
-> Samsung
+If this option is enabled by user, F2FS merges the cache_flush commands
+and then
+issues just one cache_flush on behalf of them. Once the single command
+is
+finished, F2FS sends a completion signal to all the pending threads.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Note that, this option can be used under a workload consisting of very
+intensive
+concurrent fsync calls, while the storage handles cache_flush commands
+slowly.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ Documentation/filesystems/f2fs.txt |  4 ++
+ fs/f2fs/f2fs.h                     | 16 +++++++
+ fs/f2fs/file.c                     |  2 +-
+ fs/f2fs/segment.c                  | 89
+++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/super.c                    |  7 +++
+ 5 files changed, 117 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/filesystems/f2fs.txt
+b/Documentation/filesystems/f2fs.txt
+index 2f6d021..25311e11 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -122,6 +122,10 @@ disable_ext_identify   Disable the extension list
+configured by mkfs, so f2fs
+ inline_xattr           Enable the inline xattrs feature.
+ inline_data            Enable the inline data feature: New created
+small(<~3.4k)
+                        files can be written into inode block.
++flush_merge	       Merge concurrent cache_flush commands as much as
+possible
++                       to eliminate redundant command issues. If the
+underlying
++		       device handles the cache_flush command relatively slowly,
++		       recommend to enable this option.
+ 
+
+================================================================================
+ DEBUGFS ENTRIES
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1e3d869..2ecac83 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -40,6 +40,7 @@
+ #define F2FS_MOUNT_DISABLE_EXT_IDENTIFY	0x00000040
+ #define F2FS_MOUNT_INLINE_XATTR		0x00000080
+ #define F2FS_MOUNT_INLINE_DATA		0x00000100
++#define F2FS_MOUNT_FLUSH_MERGE		0x00000200
+ 
+ #define clear_opt(sbi, option)	(sbi->mount_opt.opt &=
+~F2FS_MOUNT_##option)
+ #define set_opt(sbi, option)	(sbi->mount_opt.opt |=
+F2FS_MOUNT_##option)
+@@ -316,6 +317,12 @@ enum {
+ 	NO_CHECK_TYPE
+ };
+ 
++struct flush_cmd {
++	struct flush_cmd *next;
++	struct completion wait;
++	int ret;
++};
++
+ struct f2fs_sm_info {
+ 	struct sit_info *sit_info;		/* whole segment information */
+ 	struct free_segmap_info *free_info;	/* free segment information */
+@@ -344,6 +351,14 @@ struct f2fs_sm_info {
+ 
+ 	unsigned int ipu_policy;	/* in-place-update policy */
+ 	unsigned int min_ipu_util;	/* in-place-update threshold */
++
++	/* for flush command control */
++	struct task_struct *f2fs_issue_flush;	/* flush thread */
++	wait_queue_head_t flush_wait_queue;	/* waiting queue for wake-up */
++	struct flush_cmd *issue_list;		/* list for command issue */
++	struct flush_cmd *dispatch_list;	/* list for command dispatch */
++	spinlock_t issue_lock;			/* for issue list lock */
++	struct flush_cmd *issue_tail;		/* list tail of issue list */
+ };
+ 
+ /*
+@@ -1160,6 +1175,7 @@ void destroy_node_manager_caches(void);
+  */
+ void f2fs_balance_fs(struct f2fs_sb_info *);
+ void f2fs_balance_fs_bg(struct f2fs_sb_info *);
++int f2fs_issue_flush(struct f2fs_sb_info *);
+ void invalidate_blocks(struct f2fs_sb_info *, block_t);
+ void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
+ void clear_prefree_segments(struct f2fs_sb_info *);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6ba2668..302d552 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -186,7 +186,7 @@ int f2fs_sync_file(struct file *file, loff_t start,
+loff_t end, int datasync)
+ 		ret = wait_on_node_pages_writeback(sbi, inode->i_ino);
+ 		if (ret)
+ 			goto out;
+-		ret = blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
++		ret = f2fs_issue_flush(F2FS_SB(inode->i_sb));
+ 	}
+ out:
+ 	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index f799c6a..4ad3431 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -13,6 +13,7 @@
+ #include <linux/bio.h>
+ #include <linux/blkdev.h>
+ #include <linux/prefetch.h>
++#include <linux/kthread.h>
+ #include <linux/vmalloc.h>
+ #include <linux/swap.h>
+ 
+@@ -24,6 +25,7 @@
+ #define __reverse_ffz(x) __reverse_ffs(~(x))
+ 
+ static struct kmem_cache *discard_entry_slab;
++static struct kmem_cache *flush_cmd_slab;
+ 
+ /*
+  * __reverse_ffs is copied from include/asm-generic/bitops/__ffs.h
+since
+@@ -195,6 +197,73 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 		f2fs_sync_fs(sbi->sb, true);
+ }
+ 
++static int issue_flush_thread(void *data)
++{
++	struct f2fs_sb_info *sbi = data;
++	struct f2fs_sm_info *sm_i = SM_I(sbi);
++	wait_queue_head_t *q = &sm_i->flush_wait_queue;
++repeat:
++	spin_lock(&sm_i->issue_lock);
++	if (sm_i->issue_list) {
++		sm_i->dispatch_list = sm_i->issue_list;
++		sm_i->issue_list = sm_i->issue_tail = NULL;
++	}
++	spin_unlock(&sm_i->issue_lock);
++
++	if (sm_i->dispatch_list) {
++		struct bio *bio = bio_alloc(GFP_NOIO, 0);
++		struct flush_cmd *cmd, *next;
++		int ret;
++
++		bio->bi_bdev = sbi->sb->s_bdev;
++		ret = submit_bio_wait(WRITE_FLUSH, bio);
++
++		for (cmd = sm_i->dispatch_list; cmd; cmd = next) {
++			cmd->ret = ret;
++			next = cmd->next;
++			complete(&cmd->wait);
++		}
++		sm_i->dispatch_list = NULL;
++	}
++
++	if (kthread_should_stop())
++		return 0;
++
++	wait_event_interruptible(*q, kthread_should_stop() ||
+sm_i->issue_list);
++	goto repeat;
++}
++
++int f2fs_issue_flush(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_sm_info *sm_i = SM_I(sbi);
++	struct flush_cmd *cmd;
++	int ret;
++
++	if (!test_opt(sbi, FLUSH_MERGE))
++		return blkdev_issue_flush(sbi->sb->s_bdev, GFP_KERNEL, NULL);
++
++	cmd = f2fs_kmem_cache_alloc(flush_cmd_slab, GFP_ATOMIC);
++	cmd->next = NULL;
++	cmd->ret = 0;
++	init_completion(&cmd->wait);
++
++	spin_lock(&sm_i->issue_lock);
++	if (sm_i->issue_list)
++		sm_i->issue_tail->next = cmd;
++	else
++		sm_i->issue_list = cmd;
++	sm_i->issue_tail = cmd;
++	spin_unlock(&sm_i->issue_lock);
++
++	if (!sm_i->dispatch_list)
++		wake_up(&sm_i->flush_wait_queue);
++
++	wait_for_completion(&cmd->wait);
++	ret = cmd->ret;
++	kmem_cache_free(flush_cmd_slab, cmd);
++	return ret;
++}
++
+ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned
+int segno,
+ 		enum dirty_type dirty_type)
+ {
+@@ -1763,6 +1832,7 @@ int build_segment_manager(struct f2fs_sb_info
+*sbi)
+ {
+ 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
++	dev_t dev = sbi->sb->s_bdev->bd_dev;
+ 	struct f2fs_sm_info *sm_info;
+ 	int err;
+ 
+@@ -1790,6 +1860,16 @@ int build_segment_manager(struct f2fs_sb_info
+*sbi)
+ 	sm_info->nr_discards = 0;
+ 	sm_info->max_discards = 0;
+ 
++	if (test_opt(sbi, FLUSH_MERGE)) {
++		spin_lock_init(&sm_info->issue_lock);
++		init_waitqueue_head(&sm_info->flush_wait_queue);
++
++		sm_info->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
++				"f2fs_flush-%u:%u", MAJOR(dev), MINOR(dev));
++		if (IS_ERR(sm_info->f2fs_issue_flush))
++			return PTR_ERR(sm_info->f2fs_issue_flush);
++	}
++
+ 	err = build_sit_info(sbi);
+ 	if (err)
+ 		return err;
+@@ -1898,6 +1978,8 @@ void destroy_segment_manager(struct f2fs_sb_info
+*sbi)
+ 	struct f2fs_sm_info *sm_info = SM_I(sbi);
+ 	if (!sm_info)
+ 		return;
++	if (sm_info->f2fs_issue_flush)
++		kthread_stop(sm_info->f2fs_issue_flush);
+ 	destroy_dirty_segmap(sbi);
+ 	destroy_curseg(sbi);
+ 	destroy_free_segmap(sbi);
+@@ -1912,10 +1994,17 @@ int __init create_segment_manager_caches(void)
+ 			sizeof(struct discard_entry));
+ 	if (!discard_entry_slab)
+ 		return -ENOMEM;
++	flush_cmd_slab = f2fs_kmem_cache_create("flush_command",
++			sizeof(struct flush_cmd));
++	if (!flush_cmd_slab) {
++		kmem_cache_destroy(discard_entry_slab);
++		return -ENOMEM;
++	}
+ 	return 0;
+ }
+ 
+ void destroy_segment_manager_caches(void)
+ {
+ 	kmem_cache_destroy(discard_entry_slab);
++	kmem_cache_destroy(flush_cmd_slab);
+ }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 9598340..d31b767 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -51,6 +51,7 @@ enum {
+ 	Opt_disable_ext_identify,
+ 	Opt_inline_xattr,
+ 	Opt_inline_data,
++	Opt_flush_merge,
+ 	Opt_err,
+ };
+ 
+@@ -67,6 +68,7 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_disable_ext_identify, "disable_ext_identify"},
+ 	{Opt_inline_xattr, "inline_xattr"},
+ 	{Opt_inline_data, "inline_data"},
++	{Opt_flush_merge, "flush_merge"},
+ 	{Opt_err, NULL},
+ };
+ 
+@@ -334,6 +336,9 @@ static int parse_options(struct super_block *sb,
+char *options)
+ 		case Opt_inline_data:
+ 			set_opt(sbi, INLINE_DATA);
+ 			break;
++		case Opt_flush_merge:
++			set_opt(sbi, FLUSH_MERGE);
++			break;
+ 		default:
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Unrecognized mount option \"%s\" or missing value",
+@@ -537,6 +542,8 @@ static int f2fs_show_options(struct seq_file *seq,
+struct dentry *root)
+ 		seq_puts(seq, ",disable_ext_identify");
+ 	if (test_opt(sbi, INLINE_DATA))
+ 		seq_puts(seq, ",inline_data");
++	if (test_opt(sbi, FLUSH_MERGE))
++		seq_puts(seq, ",flush_merge");
+ 	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
+ 
+ 	return 0;
+-- 
+1.8.4.474.g128a96c
+
+
+
+-- 
+Jaegeuk Kim
+Samsung
