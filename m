@@ -1,78 +1,161 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: f2fs: kernel BUG at fs/f2fs/segment.h:543
-Date: Mon, 07 Apr 2014 12:40:28 +0900
-Message-ID: <1396842028.24638.4.camel@kjgkr>
-References: <53401D4A.1020203@oracle.com> <1396833642.12401.12.camel@kjgkr>
-	<5342058E.4090500@oracle.com>
+Subject: [GIT PULL] f2fs updates for v3.15
+Date: Mon, 07 Apr 2014 13:19:34 +0900
+Message-ID: <1396844374.24638.9.camel@kjgkr>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WX0SA-0004Tr-47
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Apr 2014 03:42:34 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WX0S8-0008QH-4l
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Apr 2014 03:42:34 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N3N00LGY6AODEA0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Apr 2014 12:42:24 +0900 (KST)
-In-reply-to: <5342058E.4090500@oracle.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Sasha Levin <sasha.levin@oracle.com>
-Cc: Dave Jones <davej@redhat.com>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>, "Linux FS DEV, Mailing List" <linux-fsdevel@vger.kernel.org>, "Linux Kernel, Mailing List" <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-MjAxNC0wNC0wNiAo7J28KSwgMjE6NTUgLTA0MDAsIFNhc2hhIExldmluOgo+IE9uIDA0LzA2LzIw
-MTQgMDk6MjAgUE0sIEphZWdldWsgS2ltIHdyb3RlOgo+ID4gSGksCj4gPiAKPiA+IFRoYW5rIHlv
-dSBmb3IgdGhlIHJlcG9ydC4KPiA+IAo+ID4gSWYgcG9zc2libGUsIGNvdWxkIHlvdSBzaGFyZSBm
-c2NrLmYyZnMgb3IgZHVtcC5mMmZzIG9uIHRoZSBjb3JydXB0ZWQKPiA+IHBhcnRpdGlvbj8KPiA+
-IAo+ID4gT3RoZXJ3aXNlLCBob3cgYWJvdXQgdGhpcz8KPiA+ICMgZmRpc2sgL2Rldi9zZHgKPiA+
-PiA+IHAKPiAKPiBIZXkgSmFlZ2V1aywKPiAKPiBVbmZvcnR1bmF0ZWx5IGl0IHdhcyBhIHRlbXBv
-cmFyeSBmaWxlc3lzdGVtIGluc2lkZSB0aGUgZnV6emVyIHRoYXQgaGFzCj4gZ29uZSBhd2F5IGFz
-IHNvb24gYXMgdGhlIGtlcm5lbCBkaWVkLCBzbyBJIGRvbid0IGhhdmUgYWNjZXNzIHRvIGl0LgoK
-R290IGl0LgpUaGVuLCBqdXN0IGZvciBzdXJlLCBpZiBpdCBpcyByZXByb2R1Y2libGUsIGNvdWxk
-IHlvdSB0ZXN0IGYyZnMgd2l0aCB0aGUKZm9sbG93aW5nIHBhdGNoPwpUaGFua3MsCgpGcm9tIDg0
-ZjgwYTEyNjQ1OGVlZWFhM2M0ZWJjZWNmYjY5MDhmN2QyMmIyMTQgTW9uIFNlcCAxNyAwMDowMDow
-MCAyMDAxCkZyb206IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4KRGF0ZTog
-TW9uLCA3IEFwciAyMDE0IDEyOjM3OjM5ICswOTAwClN1YmplY3Q6IFtQQVRDSF0gdGVzdAoKU2ln
-bmVkLW9mZi1ieTogSmFlZ2V1ayBLaW0gPGphZWdldWsua2ltQHNhbXN1bmcuY29tPgotLS0KIGZz
-L2YyZnMvc2VnbWVudC5oIHwgNSArKysrKwogMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygr
-KQoKZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5oIGIvZnMvZjJmcy9zZWdtZW50LmgKaW5k
-ZXggNzA5MTIwNC4uZDljZjA2ZSAxMDA2NDQKLS0tIGEvZnMvZjJmcy9zZWdtZW50LmgKKysrIGIv
-ZnMvZjJmcy9zZWdtZW50LmgKQEAgLTU0MCw2ICs1NDAsMTEgQEAgc3RhdGljIGlubGluZSB2b2lk
-IHZlcmlmeV9ibG9ja19hZGRyKHN0cnVjdApmMmZzX3NiX2luZm8gKnNiaSwgYmxvY2tfdCBibGtf
-YWRkcikKIAlibG9ja190IHRvdGFsX2Jsa3MgPSBzbV9pbmZvLT5zZWdtZW50X2NvdW50IDw8CnNi
-aS0+bG9nX2Jsb2Nrc19wZXJfc2VnOwogCWJsb2NrX3Qgc3RhcnRfYWRkciA9IHNtX2luZm8tPnNl
-ZzBfYmxrYWRkcjsKIAlibG9ja190IGVuZF9hZGRyID0gc3RhcnRfYWRkciArIHRvdGFsX2Jsa3Mg
-LSAxOworCWlmIChibGtfYWRkciA8IHN0YXJ0X2FkZHIpIHsKKwkJZjJmc19tc2coc2JpLT5zYiwg
-S0VSTl9FUlIsCisJCQkiYmxrX2FkZHI6ICVsZCwgc3RhcnQ6ICVsZCwgZW5kOiAlbGQiLAorCQkJ
-YmxrX2FkZHIsIHN0YXJ0X2FkZHIsIGVuZF9hZGRyKTsKKwl9CiAJQlVHX09OKGJsa19hZGRyIDwg
-c3RhcnRfYWRkcik7CiAJQlVHX09OKGJsa19hZGRyID4gZW5kX2FkZHIpOwogfQotLSAKMS44LjQu
-NDc0LmcxMjhhOTZjCgoKLS0gCkphZWdldWsgS2ltClNhbXN1bmcKCgoKLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tClB1dCBCYWQgRGV2ZWxvcGVycyB0byBTaGFtZQpEb21pbmF0ZSBEZXZlbG9wbWVudCB3
-aXRoIEplbmtpbnMgQ29udGludW91cyBJbnRlZ3JhdGlvbgpDb250aW51b3VzbHkgQXV0b21hdGUg
-QnVpbGQsIFRlc3QgJiBEZXBsb3ltZW50IApTdGFydCBhIG5ldyBwcm9qZWN0IG5vdy4gVHJ5IEpl
-bmtpbnMgaW4gdGhlIGNsb3VkLgpodHRwOi8vcC5zZi5uZXQvc2Z1LzEzNjAwX0Nsb3VkYmVlc19B
-UFIKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgt
-ZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3Jn
-ZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgt
-ZjJmcy1kZXZlbAo=
+Hi Linus,
+
+This is a pull request on f2fs updates for v3.15.
+
+In this round, a couple of sysfs entries were introduced to tune the
+f2fs at runtime. In addition, f2fs starts to support large directory and
+f2fs_issue_flush thread to improve the performance under some server
+workloads.
+Most of the other patches are related to bug fixes and clean-ups.
+
+Thank you very much.
+
+The following changes since commit
+6d0abeca3242a88cab8232e4acd7e2bf088f3bc2:
+
+  Linux 3.14-rc3 (2014-02-16 13:30:25 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+tags/for-f2fs-3.15
+
+for you to fetch changes up to 48b230a583965d33c32b4e3c29a1e5e15d7e55de:
+
+  f2fs: fix wrong statistics of inline data (2014-04-07 12:40:58 +0900)
+
+----------------------------------------------------------------
+f2fs updates for v3.15
+
+This patch-set includes the following major enhancement patches.
+ o introduce large directory support
+ o introduce f2fs_issue_flush to merge redundant flush commands
+ o merge write IOs as much as possible aligned to the segment
+ o add sysfs entries to tune the f2fs configuration
+ o use radix_tree for the free_nid_list to reduce in-memory operations
+ o remove costly bit operations in f2fs_find_entry
+ o enhance the readahead flow for CP/NAT/SIT/SSA blocks
+
+The other bug fixes are as follows.
+ o recover xattr node blocks correctly after sudden-power-cut
+ o fix to calculate the maximum number of node ids
+ o enhance to handle many error cases
+
+And, there are a bunch of cleanups.
+
+----------------------------------------------------------------
+Changman Lee (1):
+      f2fs: show counts of checkpoint in status
+
+Chao Yu (18):
+      f2fs: use inode mutex to keep atomicity of f2fs_falloc
+      f2fs: introduce ra_meta_pages to readahead CP/NAT/SIT pages
+      f2fs: readahead contiguous SSA blocks for f2fs_gc
+      f2fs: use existing macro to clean up some codes
+      f2fs: fix dirty page accounting when redirty
+      f2fs: recover inline xattr data in roll-forward process
+      f2fs: introduce f2fs_has_inline_xattr for better readability
+      f2fs: check upper bound of ino value in f2fs_nfs_get_inode
+      f2fs: print type for each segment in segment_info's show
+      f2fs: introduce f2fs_has_xattr_block for better readability
+      f2fs: avoid to return incorrect errno of read_normal_summaries
+      f2fs: fix incorrect parsing with option string
+      f2fs: avoid unnecessary bio submit when wait page writeback
+      f2fs: avoid unneeded lookup when xattr name length is too long
+      f2fs: avoid free slab cache under spinlock
+      f2fs: use list_for_each_entry{_safe} for simplyfying code
+      f2fs: fix error path when fail to read inline data
+      f2fs: fix wrong statistics of inline data
+
+Gu Zheng (5):
+      f2fs: introduce help macro on_build_free_nids()
+      f2fs: update start nid only once each circle
+      f2fs: remove the unused ctor argument of f2fs_kmem_cache_create()
+      f2fs: format segment_info's show for better legibility
+      f2fs: optimize restore_node_summary slightly
+
+Jaegeuk Kim (37):
+      f2fs: update_inode_page should be done all the time
+      f2fs: handle dirty segments inside refresh_sit_entry
+      f2fs: fix to recover xattr node block
+      f2fs: remove the ugly pointer conversion
+      f2fs: fix the potential mismatch between dir's i_size and i_blocks
+      f2fs: clean up with a macro
+      f2fs: fix a build warning
+      f2fs: fix to truncate dentry pages in the error case
+      f2fs: fix f2fs_write_meta_page at no checkpoint status
+      f2fs: clean up redundant function call
+      f2fs: fix the calculation of max_nids
+      f2fs: fix not to write data pages on the page reclaiming path
+      f2fs: fix to do build_stat prior to the recovery procedure
+      f2fs: fix to mark the checkpointed nat entry correctly
+      f2fs: introduce a radix_tree for the free_nid list
+      f2fs: implement a lock-free stat_show
+      f2fs: remove costly bit operations for f2fs_find_entry
+      f2fs: introduce large directory support
+      f2fs: add an sysfs entry to control the directory level
+      f2fs: fix to write node pages with WRITE_SYNC
+      f2fs: fix wrong kernel coding style
+      f2fs: introduce get_dirty_dents for readability
+      f2fs: avoid small data writes by skipping writepages
+      f2fs: increase pages_skipped when skipping writepages
+      f2fs: introduce nr_pages_to_write for segment alignment
+      f2fs: call f2fs_wait_on_page_writeback instead of native function
+      f2fs: avoid to drop nat entries due to the negative nr_shrink
+      f2fs: throttle the memory footprint with a sysfs entry
+      f2fs: remove unnecessary threshold
+      f2fs: add missing documentation for dir_level
+      f2fs: change reclaim rate in percentage
+      f2fs: introduce fi->i_sem to protect fi's info
+      f2fs: skip unnecessary node writes during fsync
+      f2fs: avoid RECLAIM_FS-ON-W warning
+      f2fs: return -EIO when node id is not matched
+      f2fs: fix to cover io->bio with io_rwsem
+      f2fs: introduce f2fs_issue_flush to avoid redundant flush issue
+
+ZhangZhen (1):
+      f2fs: check the acl's validity before setting
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |  12 ++
+ Documentation/filesystems/f2fs.txt      |  29 ++-
+ fs/f2fs/acl.c                           |   8 +-
+ fs/f2fs/checkpoint.c                    | 208 ++++++++++++++------
+ fs/f2fs/data.c                          | 106 +++++-----
+ fs/f2fs/debug.c                         |  12 +-
+ fs/f2fs/dir.c                           |  85 ++++----
+ fs/f2fs/f2fs.h                          | 105 +++++++---
+ fs/f2fs/file.c                          |  31 ++-
+ fs/f2fs/gc.c                            |  16 +-
+ fs/f2fs/inline.c                        |   4 +-
+ fs/f2fs/inode.c                         |  27 ++-
+ fs/f2fs/namei.c                         |   9 +
+ fs/f2fs/node.c                          | 334
++++++++++++++++++++-------------
+ fs/f2fs/node.h                          |  25 ++-
+ fs/f2fs/recovery.c                      |  37 ++--
+ fs/f2fs/segment.c                       | 222 ++++++++++++++-------
+ fs/f2fs/segment.h                       |  75 ++++---
+ fs/f2fs/super.c                         |  97 ++++++----
+ fs/f2fs/xattr.c                         |   7 +-
+ include/linux/f2fs_fs.h                 |   2 +-
+ 21 files changed, 939 insertions(+), 512 deletions(-)
+
+
+-- 
+Jaegeuk Kim
+Samsung
+
