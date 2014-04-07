@@ -1,22 +1,32 @@
-From: Sasha Levin <sasha.levin@oracle.com>
-Subject: f2fs: kernel BUG at fs/f2fs/segment.h:543
-Date: Sat, 05 Apr 2014 11:12:10 -0400
-Message-ID: <53401D4A.1020203@oracle.com>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: f2fs: kernel BUG at fs/f2fs/segment.h:543
+Date: Mon, 07 Apr 2014 10:20:42 +0900
+Message-ID: <1396833642.12401.12.camel@kjgkr>
+References: <53401D4A.1020203@oracle.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <sasha.levin@oracle.com>) id 1WWSGb-0002VX-Pe
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WWyGu-0000iN-9t
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 05 Apr 2014 15:12:21 +0000
-Received: from aserp1040.oracle.com ([141.146.126.69])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1WWSGZ-0002Qg-Jn
+	Mon, 07 Apr 2014 01:22:48 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WWyGs-0002jK-1v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 05 Apr 2014 15:12:21 +0000
+	Mon, 07 Apr 2014 01:22:48 +0000
+Received: from epcpsbgr4.samsung.com
+	(u144.gpu120.samsung.co.kr [203.254.230.144])
+	by mailout3.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N3M00FGFZTQCR60@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 07 Apr 2014 10:22:38 +0900 (KST)
+In-reply-to: <53401D4A.1020203@oracle.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,64 +36,84 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
+To: Sasha Levin <sasha.levin@oracle.com>
 Cc: Dave Jones <davej@redhat.com>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Hi all,
-
-While fuzzing with trinity inside a KVM tools guest running the latest
--next kernel I've stumbled on the following:
-
-[ 1789.220942] kernel BUG at fs/f2fs/segment.h:543!
-[ 1789.220942] invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
-[ 1789.220942] Dumping ftrace buffer:
-[ 1789.220942]    (ftrace buffer empty)
-[ 1789.220942] Modules linked in:
-[ 1789.220942] CPU: 0 PID: 28161 Comm: trinity-c0 Not tainted 3.14.0-next-20140403-sasha-00019-g7474aa9-dirty #376
-[ 1789.220942] task: ffff88032a598000 ti: ffff880329c3e000 task.ti: ffff880329c3e000
-[ 1789.220942] RIP: f2fs_submit_page_mbio (fs/f2fs/segment.h:543 fs/f2fs/data.c:181)
-[ 1789.220942] RSP: 0018:ffff880329c3fc08  EFLAGS: 00010287
-[ 1789.220942] RAX: 000000000000ffff RBX: ffff88012ac66a00 RCX: 0000000000000009
-[ 1789.220942] RDX: 0000000000000200 RSI: ffffea0001dd92c0 RDI: ffff88012ac667b0
-[ 1789.220942] RBP: ffff880329c3fc58 R08: 00000000000ba28e R09: ffff88032a598d98
-[ 1789.220942] R10: 0000000000000000 R11: 0000000000000000 R12: ffffea0001dd92c0
-[ 1789.220942] R13: ffff88012ac667b0 R14: 0000000000000000 R15: ffff880329c3fc70
-[ 1789.220942] FS:  00007f3599003700(0000) GS:ffff88007dc00000(0000) knlGS:0000000000000000
-[ 1789.220942] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-[ 1789.220942] CR2: 00007faf4246a018 CR3: 0000000329b6f000 CR4: 00000000000006b0
-[ 1789.220942] DR0: 0000000000696000 DR1: 0000000000696000 DR2: 0000000000000000
-[ 1789.261947] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-[ 1789.261947] Stack:
-[ 1789.261947]  ffff88032a598000 ffff880d2a478278 0000000000000006 0000000000000082
-[ 1789.261947]  ffffffffaa289475 ffffea0001dd92c0 ffff88012ac667b0 ffff880329c3fd30
-[ 1789.261947]  0000000000000000 ffffea0001dd92c0 ffff880329c3fc88 ffffffffaa9da033
-[ 1789.278327] Call Trace:
-[ 1789.278327] ? clear_page_dirty_for_io (arch/x86/include/asm/paravirt.h:809 include/linux/backing-dev.h:176 mm/page-writeback.c:2355)
-[ 1789.278327] write_meta_page (fs/f2fs/segment.c:922)
-[ 1789.278327] f2fs_write_meta_page (arch/x86/include/asm/atomic.h:103 fs/f2fs/f2fs.h:692 fs/f2fs/checkpoint.c:172)
-[ 1789.288220] trinity-c32: vm86 mode not supported on 64 bit kernel
-[ 1789.278327] sync_meta_pages (fs/f2fs/checkpoint.c:247)
-[ 1789.278327] ? get_parent_ip (kernel/sched/core.c:2472)
-[ 1789.278327] ? preempt_count_sub (kernel/sched/core.c:2527)
-[ 1789.278327] ? _raw_spin_unlock_irqrestore (arch/x86/include/asm/preempt.h:98 include/linux/spinlock_api_smp.h:161 kernel/locking/spinlock.c:191)
-[ 1789.278327] write_checkpoint (fs/f2fs/checkpoint.c:875 fs/f2fs/checkpoint.c:913)
-[ 1789.310911] waiting module removal not supported: please upgrade
-[ 1789.278327] ? SyS_tee (fs/sync.c:77)
-[ 1789.278327] ? mutex_lock_nested (arch/x86/include/asm/paravirt.h:809 kernel/locking/mutex.c:569 kernel/locking/mutex.c:587)
-[ 1789.278327] ? get_parent_ip (kernel/sched/core.c:2472)
-[ 1789.278327] ? bit_waitqueue (kernel/sched/wait.c:291)
-[ 1789.278327] ? SyS_tee (fs/sync.c:77)
-[ 1789.278327] f2fs_sync_fs (fs/f2fs/super.c:456)
-[ 1789.278327] sync_fs_one_sb (fs/sync.c:80)
-[ 1789.278327] iterate_supers (fs/super.c:512)
-[ 1789.278327] sys_sync (fs/sync.c:110)
-[ 1789.278327] tracesys (arch/x86/kernel/entry_64.S:749)
-[ 1789.278327] Code: 48 c1 e0 04 48 8d 9c 07 f0 00 00 00 49 8b 45 38 41 8b 8d d0 06 00 00 8b 50 78 8b 80 84 00 00 00 d3 e0 41 39 d6 8d 44 02 ff 73 09 <0f> 0b 0f 1f 80 00 00 00 00 41 39 c6 76 03 0f 0b 90 48 8d 43 20
-[ 1789.278327] RIP f2fs_submit_page_mbio (fs/f2fs/segment.h:543 fs/f2fs/data.c:181)
-[ 1789.278327]  RSP <ffff880329c3fc08>
-
-
-Thanks,
-Sasha
-
-------------------------------------------------------------------------------
+SGksCgpUaGFuayB5b3UgZm9yIHRoZSByZXBvcnQuCgpJZiBwb3NzaWJsZSwgY291bGQgeW91IHNo
+YXJlIGZzY2suZjJmcyBvciBkdW1wLmYyZnMgb24gdGhlIGNvcnJ1cHRlZApwYXJ0aXRpb24/CgpP
+dGhlcndpc2UsIGhvdyBhYm91dCB0aGlzPwojIGZkaXNrIC9kZXYvc2R4Cj4gcAoKVGhhbmsgeW91
+LAoKMjAxNC0wNC0wNSAo7YagKSwgMTE6MTIgLTA0MDAsIFNhc2hhIExldmluOgo+IEhpIGFsbCwK
+PiAKPiBXaGlsZSBmdXp6aW5nIHdpdGggdHJpbml0eSBpbnNpZGUgYSBLVk0gdG9vbHMgZ3Vlc3Qg
+cnVubmluZyB0aGUgbGF0ZXN0Cj4gLW5leHQga2VybmVsIEkndmUgc3R1bWJsZWQgb24gdGhlIGZv
+bGxvd2luZzoKPiAKPiBbIDE3ODkuMjIwOTQyXSBrZXJuZWwgQlVHIGF0IGZzL2YyZnMvc2VnbWVu
+dC5oOjU0MyEKPiBbIDE3ODkuMjIwOTQyXSBpbnZhbGlkIG9wY29kZTogMDAwMCBbIzFdIFBSRUVN
+UFQgU01QIERFQlVHX1BBR0VBTExPQwo+IFsgMTc4OS4yMjA5NDJdIER1bXBpbmcgZnRyYWNlIGJ1
+ZmZlcjoKPiBbIDE3ODkuMjIwOTQyXSAgICAoZnRyYWNlIGJ1ZmZlciBlbXB0eSkKPiBbIDE3ODku
+MjIwOTQyXSBNb2R1bGVzIGxpbmtlZCBpbjoKPiBbIDE3ODkuMjIwOTQyXSBDUFU6IDAgUElEOiAy
+ODE2MSBDb21tOiB0cmluaXR5LWMwIE5vdCB0YWludGVkIDMuMTQuMC1uZXh0LTIwMTQwNDAzLXNh
+c2hhLTAwMDE5LWc3NDc0YWE5LWRpcnR5ICMzNzYKPiBbIDE3ODkuMjIwOTQyXSB0YXNrOiBmZmZm
+ODgwMzJhNTk4MDAwIHRpOiBmZmZmODgwMzI5YzNlMDAwIHRhc2sudGk6IGZmZmY4ODAzMjljM2Uw
+MDAKPiBbIDE3ODkuMjIwOTQyXSBSSVA6IGYyZnNfc3VibWl0X3BhZ2VfbWJpbyAoZnMvZjJmcy9z
+ZWdtZW50Lmg6NTQzIGZzL2YyZnMvZGF0YS5jOjE4MSkKPiBbIDE3ODkuMjIwOTQyXSBSU1A6IDAw
+MTg6ZmZmZjg4MDMyOWMzZmMwOCAgRUZMQUdTOiAwMDAxMDI4Nwo+IFsgMTc4OS4yMjA5NDJdIFJB
+WDogMDAwMDAwMDAwMDAwZmZmZiBSQlg6IGZmZmY4ODAxMmFjNjZhMDAgUkNYOiAwMDAwMDAwMDAw
+MDAwMDA5Cj4gWyAxNzg5LjIyMDk0Ml0gUkRYOiAwMDAwMDAwMDAwMDAwMjAwIFJTSTogZmZmZmVh
+MDAwMWRkOTJjMCBSREk6IGZmZmY4ODAxMmFjNjY3YjAKPiBbIDE3ODkuMjIwOTQyXSBSQlA6IGZm
+ZmY4ODAzMjljM2ZjNTggUjA4OiAwMDAwMDAwMDAwMGJhMjhlIFIwOTogZmZmZjg4MDMyYTU5OGQ5
+OAo+IFsgMTc4OS4yMjA5NDJdIFIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAw
+MDAwMDAgUjEyOiBmZmZmZWEwMDAxZGQ5MmMwCj4gWyAxNzg5LjIyMDk0Ml0gUjEzOiBmZmZmODgw
+MTJhYzY2N2IwIFIxNDogMDAwMDAwMDAwMDAwMDAwMCBSMTU6IGZmZmY4ODAzMjljM2ZjNzAKPiBb
+IDE3ODkuMjIwOTQyXSBGUzogIDAwMDA3ZjM1OTkwMDM3MDAoMDAwMCkgR1M6ZmZmZjg4MDA3ZGMw
+MDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwCj4gWyAxNzg5LjIyMDk0Ml0gQ1M6ICAw
+MDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzYgo+IFsgMTc4OS4yMjA5
+NDJdIENSMjogMDAwMDdmYWY0MjQ2YTAxOCBDUjM6IDAwMDAwMDAzMjliNmYwMDAgQ1I0OiAwMDAw
+MDAwMDAwMDAwNmIwCj4gWyAxNzg5LjIyMDk0Ml0gRFIwOiAwMDAwMDAwMDAwNjk2MDAwIERSMTog
+MDAwMDAwMDAwMDY5NjAwMCBEUjI6IDAwMDAwMDAwMDAwMDAwMDAKPiBbIDE3ODkuMjYxOTQ3XSBE
+UjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmYwZmYwIERSNzogMDAwMDAwMDAw
+MDAwMDYwMAo+IFsgMTc4OS4yNjE5NDddIFN0YWNrOgo+IFsgMTc4OS4yNjE5NDddICBmZmZmODgw
+MzJhNTk4MDAwIGZmZmY4ODBkMmE0NzgyNzggMDAwMDAwMDAwMDAwMDAwNiAwMDAwMDAwMDAwMDAw
+MDgyCj4gWyAxNzg5LjI2MTk0N10gIGZmZmZmZmZmYWEyODk0NzUgZmZmZmVhMDAwMWRkOTJjMCBm
+ZmZmODgwMTJhYzY2N2IwIGZmZmY4ODAzMjljM2ZkMzAKPiBbIDE3ODkuMjYxOTQ3XSAgMDAwMDAw
+MDAwMDAwMDAwMCBmZmZmZWEwMDAxZGQ5MmMwIGZmZmY4ODAzMjljM2ZjODggZmZmZmZmZmZhYTlk
+YTAzMwo+IFsgMTc4OS4yNzgzMjddIENhbGwgVHJhY2U6Cj4gWyAxNzg5LjI3ODMyN10gPyBjbGVh
+cl9wYWdlX2RpcnR5X2Zvcl9pbyAoYXJjaC94ODYvaW5jbHVkZS9hc20vcGFyYXZpcnQuaDo4MDkg
+aW5jbHVkZS9saW51eC9iYWNraW5nLWRldi5oOjE3NiBtbS9wYWdlLXdyaXRlYmFjay5jOjIzNTUp
+Cj4gWyAxNzg5LjI3ODMyN10gd3JpdGVfbWV0YV9wYWdlIChmcy9mMmZzL3NlZ21lbnQuYzo5MjIp
+Cj4gWyAxNzg5LjI3ODMyN10gZjJmc193cml0ZV9tZXRhX3BhZ2UgKGFyY2gveDg2L2luY2x1ZGUv
+YXNtL2F0b21pYy5oOjEwMyBmcy9mMmZzL2YyZnMuaDo2OTIgZnMvZjJmcy9jaGVja3BvaW50LmM6
+MTcyKQo+IFsgMTc4OS4yODgyMjBdIHRyaW5pdHktYzMyOiB2bTg2IG1vZGUgbm90IHN1cHBvcnRl
+ZCBvbiA2NCBiaXQga2VybmVsCj4gWyAxNzg5LjI3ODMyN10gc3luY19tZXRhX3BhZ2VzIChmcy9m
+MmZzL2NoZWNrcG9pbnQuYzoyNDcpCj4gWyAxNzg5LjI3ODMyN10gPyBnZXRfcGFyZW50X2lwIChr
+ZXJuZWwvc2NoZWQvY29yZS5jOjI0NzIpCj4gWyAxNzg5LjI3ODMyN10gPyBwcmVlbXB0X2NvdW50
+X3N1YiAoa2VybmVsL3NjaGVkL2NvcmUuYzoyNTI3KQo+IFsgMTc4OS4yNzgzMjddID8gX3Jhd19z
+cGluX3VubG9ja19pcnFyZXN0b3JlIChhcmNoL3g4Ni9pbmNsdWRlL2FzbS9wcmVlbXB0Lmg6OTgg
+aW5jbHVkZS9saW51eC9zcGlubG9ja19hcGlfc21wLmg6MTYxIGtlcm5lbC9sb2NraW5nL3NwaW5s
+b2NrLmM6MTkxKQo+IFsgMTc4OS4yNzgzMjddIHdyaXRlX2NoZWNrcG9pbnQgKGZzL2YyZnMvY2hl
+Y2twb2ludC5jOjg3NSBmcy9mMmZzL2NoZWNrcG9pbnQuYzo5MTMpCj4gWyAxNzg5LjMxMDkxMV0g
+d2FpdGluZyBtb2R1bGUgcmVtb3ZhbCBub3Qgc3VwcG9ydGVkOiBwbGVhc2UgdXBncmFkZQo+IFsg
+MTc4OS4yNzgzMjddID8gU3lTX3RlZSAoZnMvc3luYy5jOjc3KQo+IFsgMTc4OS4yNzgzMjddID8g
+bXV0ZXhfbG9ja19uZXN0ZWQgKGFyY2gveDg2L2luY2x1ZGUvYXNtL3BhcmF2aXJ0Lmg6ODA5IGtl
+cm5lbC9sb2NraW5nL211dGV4LmM6NTY5IGtlcm5lbC9sb2NraW5nL211dGV4LmM6NTg3KQo+IFsg
+MTc4OS4yNzgzMjddID8gZ2V0X3BhcmVudF9pcCAoa2VybmVsL3NjaGVkL2NvcmUuYzoyNDcyKQo+
+IFsgMTc4OS4yNzgzMjddID8gYml0X3dhaXRxdWV1ZSAoa2VybmVsL3NjaGVkL3dhaXQuYzoyOTEp
+Cj4gWyAxNzg5LjI3ODMyN10gPyBTeVNfdGVlIChmcy9zeW5jLmM6NzcpCj4gWyAxNzg5LjI3ODMy
+N10gZjJmc19zeW5jX2ZzIChmcy9mMmZzL3N1cGVyLmM6NDU2KQo+IFsgMTc4OS4yNzgzMjddIHN5
+bmNfZnNfb25lX3NiIChmcy9zeW5jLmM6ODApCj4gWyAxNzg5LjI3ODMyN10gaXRlcmF0ZV9zdXBl
+cnMgKGZzL3N1cGVyLmM6NTEyKQo+IFsgMTc4OS4yNzgzMjddIHN5c19zeW5jIChmcy9zeW5jLmM6
+MTEwKQo+IFsgMTc4OS4yNzgzMjddIHRyYWNlc3lzIChhcmNoL3g4Ni9rZXJuZWwvZW50cnlfNjQu
+Uzo3NDkpCj4gWyAxNzg5LjI3ODMyN10gQ29kZTogNDggYzEgZTAgMDQgNDggOGQgOWMgMDcgZjAg
+MDAgMDAgMDAgNDkgOGIgNDUgMzggNDEgOGIgOGQgZDAgMDYgMDAgMDAgOGIgNTAgNzggOGIgODAg
+ODQgMDAgMDAgMDAgZDMgZTAgNDEgMzkgZDYgOGQgNDQgMDIgZmYgNzMgMDkgPDBmPiAwYiAwZiAx
+ZiA4MCAwMCAwMCAwMCAwMCA0MSAzOSBjNiA3NiAwMyAwZiAwYiA5MCA0OCA4ZCA0MyAyMAo+IFsg
+MTc4OS4yNzgzMjddIFJJUCBmMmZzX3N1Ym1pdF9wYWdlX21iaW8gKGZzL2YyZnMvc2VnbWVudC5o
+OjU0MyBmcy9mMmZzL2RhdGEuYzoxODEpCj4gWyAxNzg5LjI3ODMyN10gIFJTUCA8ZmZmZjg4MDMy
+OWMzZmMwOD4KPiAKPiAKPiBUaGFua3MsCj4gU2FzaGEKCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5n
+CgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClB1dCBCYWQgRGV2ZWxvcGVycyB0byBTaGFtZQpEb21p
+bmF0ZSBEZXZlbG9wbWVudCB3aXRoIEplbmtpbnMgQ29udGludW91cyBJbnRlZ3JhdGlvbgpDb250
+aW51b3VzbHkgQXV0b21hdGUgQnVpbGQsIFRlc3QgJiBEZXBsb3ltZW50IApTdGFydCBhIG5ldyBw
+cm9qZWN0IG5vdy4gVHJ5IEplbmtpbnMgaW4gdGhlIGNsb3VkLgpodHRwOi8vcC5zZi5uZXQvc2Z1
+LzEzNjAwX0Nsb3VkYmVlc19BUFIKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
+bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
+dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
