@@ -1,161 +1,136 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [GIT PULL] f2fs updates for v3.15
-Date: Mon, 07 Apr 2014 13:19:34 +0900
-Message-ID: <1396844374.24638.9.camel@kjgkr>
-Reply-To: jaegeuk.kim@samsung.com
+From: Chao Yu <yuchaochina@hotmail.com>
+Subject: Re: f2fs: kernel BUG at fs/f2fs/segment.h:543
+Date: Wed, 9 Apr 2014 23:51:09 +0800
+Message-ID: <COL402-EAS13359D6EB23C18DA0BBE9DAAB6A0@phx.gbl>
+References: <53401D4A.1020203@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>, "Linux FS DEV, Mailing List" <linux-fsdevel@vger.kernel.org>, "Linux Kernel, Mailing List" <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchaochina@hotmail.com>) id 1WXumY-0007rM-4d
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 09 Apr 2014 15:51:22 +0000
+Received: from col0-omc1-s4.col0.hotmail.com ([65.55.34.14])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WXumW-0002yM-R6 for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 09 Apr 2014 15:51:22 +0000
+In-Reply-To: <53401D4A.1020203@oracle.com>
+Content-Language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Sasha Levin' <sasha.levin@oracle.com>, jaegeuk.kim@samsung.com
+Cc: 'Dave Jones' <davej@redhat.com>, 'LKML' <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Linus,
+Hi Levin,
 
-This is a pull request on f2fs updates for v3.15.
+Could you share dump code info like following one which can be generated
+by 'objdump -Dl f2fs.ko > obj'.
+It may help us to get a clue for this problem.
 
-In this round, a couple of sysfs entries were introduced to tune the
-f2fs at runtime. In addition, f2fs starts to support large directory and
-f2fs_issue_flush thread to improve the performance under some server
-workloads.
-Most of the other patches are related to bug fixes and clean-ups.
+verify_block_addr()
+segment.h:543 (discriminator 3)
+    2f35:       39 55 ec                cmp    %edx,-0x14(%ebp)
+segment.h:542 (discriminator 3)
+    2f38:       8d 44 02 ff             lea    -0x1(%edx,%eax,1),%eax
+segment.h:543 (discriminator 3)
+    2f3c:       0f 82 dc 01 00 00       jb     311e <f2fs_submit_page_mbio+0x22e>
+segment.h:544
+    2f42:       39 45 ec                cmp    %eax,-0x14(%ebp)
+    2f45:       0f 87 d1 01 00 00       ja     311c <f2fs_submit_page_mbio+0x22c>
 
-Thank you very much.
+Thank you
 
-The following changes since commit
-6d0abeca3242a88cab8232e4acd7e2bf088f3bc2:
+> -----Original Message-----
+> From: Sasha Levin [mailto:sasha.levin@oracle.com]
+> Sent: Saturday, April 05, 2014 11:12 PM
+> To: jaegeuk.kim@samsung.com; jaegeuk.kim@samsung.com
+> Cc: Dave Jones; LKML; linux-f2fs-devel@lists.sourceforge.net; Dave Jones; LKML;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] f2fs: kernel BUG at fs/f2fs/segment.h:543
+> 
+> Hi all,
+> 
+> While fuzzing with trinity inside a KVM tools guest running the latest
+> -next kernel I've stumbled on the following:
+> 
+> [ 1789.220942] kernel BUG at fs/f2fs/segment.h:543!
+> [ 1789.220942] invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
+> [ 1789.220942] Dumping ftrace buffer:
+> [ 1789.220942]    (ftrace buffer empty)
+> [ 1789.220942] Modules linked in:
+> [ 1789.220942] CPU: 0 PID: 28161 Comm: trinity-c0 Not tainted
+> 3.14.0-next-20140403-sasha-00019-g7474aa9-dirty #376
+> [ 1789.220942] task: ffff88032a598000 ti: ffff880329c3e000 task.ti: ffff880329c3e000
+> [ 1789.220942] RIP: f2fs_submit_page_mbio (fs/f2fs/segment.h:543 fs/f2fs/data.c:181)
+> [ 1789.220942] RSP: 0018:ffff880329c3fc08  EFLAGS: 00010287
+> [ 1789.220942] RAX: 000000000000ffff RBX: ffff88012ac66a00 RCX: 0000000000000009
+> [ 1789.220942] RDX: 0000000000000200 RSI: ffffea0001dd92c0 RDI: ffff88012ac667b0
+> [ 1789.220942] RBP: ffff880329c3fc58 R08: 00000000000ba28e R09: ffff88032a598d98
+> [ 1789.220942] R10: 0000000000000000 R11: 0000000000000000 R12: ffffea0001dd92c0
+> [ 1789.220942] R13: ffff88012ac667b0 R14: 0000000000000000 R15: ffff880329c3fc70
+> [ 1789.220942] FS:  00007f3599003700(0000) GS:ffff88007dc00000(0000) knlGS:0000000000000000
+> [ 1789.220942] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+> [ 1789.220942] CR2: 00007faf4246a018 CR3: 0000000329b6f000 CR4: 00000000000006b0
+> [ 1789.220942] DR0: 0000000000696000 DR1: 0000000000696000 DR2: 0000000000000000
+> [ 1789.261947] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
+> [ 1789.261947] Stack:
+> [ 1789.261947]  ffff88032a598000 ffff880d2a478278 0000000000000006 0000000000000082
+> [ 1789.261947]  ffffffffaa289475 ffffea0001dd92c0 ffff88012ac667b0 ffff880329c3fd30
+> [ 1789.261947]  0000000000000000 ffffea0001dd92c0 ffff880329c3fc88 ffffffffaa9da033
+> [ 1789.278327] Call Trace:
+> [ 1789.278327] ? clear_page_dirty_for_io (arch/x86/include/asm/paravirt.h:809
+> include/linux/backing-dev.h:176 mm/page-writeback.c:2355)
+> [ 1789.278327] write_meta_page (fs/f2fs/segment.c:922)
+> [ 1789.278327] f2fs_write_meta_page (arch/x86/include/asm/atomic.h:103 fs/f2fs/f2fs.h:692
+> fs/f2fs/checkpoint.c:172)
+> [ 1789.288220] trinity-c32: vm86 mode not supported on 64 bit kernel
+> [ 1789.278327] sync_meta_pages (fs/f2fs/checkpoint.c:247)
+> [ 1789.278327] ? get_parent_ip (kernel/sched/core.c:2472)
+> [ 1789.278327] ? preempt_count_sub (kernel/sched/core.c:2527)
+> [ 1789.278327] ? _raw_spin_unlock_irqrestore (arch/x86/include/asm/preempt.h:98
+> include/linux/spinlock_api_smp.h:161 kernel/locking/spinlock.c:191)
+> [ 1789.278327] write_checkpoint (fs/f2fs/checkpoint.c:875 fs/f2fs/checkpoint.c:913)
+> [ 1789.310911] waiting module removal not supported: please upgrade
+> [ 1789.278327] ? SyS_tee (fs/sync.c:77)
+> [ 1789.278327] ? mutex_lock_nested (arch/x86/include/asm/paravirt.h:809 kernel/locking/mutex.c:569
+> kernel/locking/mutex.c:587)
+> [ 1789.278327] ? get_parent_ip (kernel/sched/core.c:2472)
+> [ 1789.278327] ? bit_waitqueue (kernel/sched/wait.c:291)
+> [ 1789.278327] ? SyS_tee (fs/sync.c:77)
+> [ 1789.278327] f2fs_sync_fs (fs/f2fs/super.c:456)
+> [ 1789.278327] sync_fs_one_sb (fs/sync.c:80)
+> [ 1789.278327] iterate_supers (fs/super.c:512)
+> [ 1789.278327] sys_sync (fs/sync.c:110)
+> [ 1789.278327] tracesys (arch/x86/kernel/entry_64.S:749)
+> [ 1789.278327] Code: 48 c1 e0 04 48 8d 9c 07 f0 00 00 00 49 8b 45 38 41 8b 8d d0 06 00 00 8b 50 78 8b 80
+> 84 00 00 00 d3 e0 41 39 d6 8d 44 02 ff 73 09 <0f> 0b 0f 1f 80 00 00 00 00 41 39 c6 76 03 0f 0b 90 48 8d
+> 43 20
+> [ 1789.278327] RIP f2fs_submit_page_mbio (fs/f2fs/segment.h:543 fs/f2fs/data.c:181)
+> [ 1789.278327]  RSP <ffff880329c3fc08>
+> 
+> 
+> Thanks,
+> Sasha
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
-  Linux 3.14-rc3 (2014-02-16 13:30:25 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
-tags/for-f2fs-3.15
-
-for you to fetch changes up to 48b230a583965d33c32b4e3c29a1e5e15d7e55de:
-
-  f2fs: fix wrong statistics of inline data (2014-04-07 12:40:58 +0900)
-
-----------------------------------------------------------------
-f2fs updates for v3.15
-
-This patch-set includes the following major enhancement patches.
- o introduce large directory support
- o introduce f2fs_issue_flush to merge redundant flush commands
- o merge write IOs as much as possible aligned to the segment
- o add sysfs entries to tune the f2fs configuration
- o use radix_tree for the free_nid_list to reduce in-memory operations
- o remove costly bit operations in f2fs_find_entry
- o enhance the readahead flow for CP/NAT/SIT/SSA blocks
-
-The other bug fixes are as follows.
- o recover xattr node blocks correctly after sudden-power-cut
- o fix to calculate the maximum number of node ids
- o enhance to handle many error cases
-
-And, there are a bunch of cleanups.
-
-----------------------------------------------------------------
-Changman Lee (1):
-      f2fs: show counts of checkpoint in status
-
-Chao Yu (18):
-      f2fs: use inode mutex to keep atomicity of f2fs_falloc
-      f2fs: introduce ra_meta_pages to readahead CP/NAT/SIT pages
-      f2fs: readahead contiguous SSA blocks for f2fs_gc
-      f2fs: use existing macro to clean up some codes
-      f2fs: fix dirty page accounting when redirty
-      f2fs: recover inline xattr data in roll-forward process
-      f2fs: introduce f2fs_has_inline_xattr for better readability
-      f2fs: check upper bound of ino value in f2fs_nfs_get_inode
-      f2fs: print type for each segment in segment_info's show
-      f2fs: introduce f2fs_has_xattr_block for better readability
-      f2fs: avoid to return incorrect errno of read_normal_summaries
-      f2fs: fix incorrect parsing with option string
-      f2fs: avoid unnecessary bio submit when wait page writeback
-      f2fs: avoid unneeded lookup when xattr name length is too long
-      f2fs: avoid free slab cache under spinlock
-      f2fs: use list_for_each_entry{_safe} for simplyfying code
-      f2fs: fix error path when fail to read inline data
-      f2fs: fix wrong statistics of inline data
-
-Gu Zheng (5):
-      f2fs: introduce help macro on_build_free_nids()
-      f2fs: update start nid only once each circle
-      f2fs: remove the unused ctor argument of f2fs_kmem_cache_create()
-      f2fs: format segment_info's show for better legibility
-      f2fs: optimize restore_node_summary slightly
-
-Jaegeuk Kim (37):
-      f2fs: update_inode_page should be done all the time
-      f2fs: handle dirty segments inside refresh_sit_entry
-      f2fs: fix to recover xattr node block
-      f2fs: remove the ugly pointer conversion
-      f2fs: fix the potential mismatch between dir's i_size and i_blocks
-      f2fs: clean up with a macro
-      f2fs: fix a build warning
-      f2fs: fix to truncate dentry pages in the error case
-      f2fs: fix f2fs_write_meta_page at no checkpoint status
-      f2fs: clean up redundant function call
-      f2fs: fix the calculation of max_nids
-      f2fs: fix not to write data pages on the page reclaiming path
-      f2fs: fix to do build_stat prior to the recovery procedure
-      f2fs: fix to mark the checkpointed nat entry correctly
-      f2fs: introduce a radix_tree for the free_nid list
-      f2fs: implement a lock-free stat_show
-      f2fs: remove costly bit operations for f2fs_find_entry
-      f2fs: introduce large directory support
-      f2fs: add an sysfs entry to control the directory level
-      f2fs: fix to write node pages with WRITE_SYNC
-      f2fs: fix wrong kernel coding style
-      f2fs: introduce get_dirty_dents for readability
-      f2fs: avoid small data writes by skipping writepages
-      f2fs: increase pages_skipped when skipping writepages
-      f2fs: introduce nr_pages_to_write for segment alignment
-      f2fs: call f2fs_wait_on_page_writeback instead of native function
-      f2fs: avoid to drop nat entries due to the negative nr_shrink
-      f2fs: throttle the memory footprint with a sysfs entry
-      f2fs: remove unnecessary threshold
-      f2fs: add missing documentation for dir_level
-      f2fs: change reclaim rate in percentage
-      f2fs: introduce fi->i_sem to protect fi's info
-      f2fs: skip unnecessary node writes during fsync
-      f2fs: avoid RECLAIM_FS-ON-W warning
-      f2fs: return -EIO when node id is not matched
-      f2fs: fix to cover io->bio with io_rwsem
-      f2fs: introduce f2fs_issue_flush to avoid redundant flush issue
-
-ZhangZhen (1):
-      f2fs: check the acl's validity before setting
-
- Documentation/ABI/testing/sysfs-fs-f2fs |  12 ++
- Documentation/filesystems/f2fs.txt      |  29 ++-
- fs/f2fs/acl.c                           |   8 +-
- fs/f2fs/checkpoint.c                    | 208 ++++++++++++++------
- fs/f2fs/data.c                          | 106 +++++-----
- fs/f2fs/debug.c                         |  12 +-
- fs/f2fs/dir.c                           |  85 ++++----
- fs/f2fs/f2fs.h                          | 105 +++++++---
- fs/f2fs/file.c                          |  31 ++-
- fs/f2fs/gc.c                            |  16 +-
- fs/f2fs/inline.c                        |   4 +-
- fs/f2fs/inode.c                         |  27 ++-
- fs/f2fs/namei.c                         |   9 +
- fs/f2fs/node.c                          | 334
-+++++++++++++++++++-------------
- fs/f2fs/node.h                          |  25 ++-
- fs/f2fs/recovery.c                      |  37 ++--
- fs/f2fs/segment.c                       | 222 ++++++++++++++-------
- fs/f2fs/segment.h                       |  75 ++++---
- fs/f2fs/super.c                         |  97 ++++++----
- fs/f2fs/xattr.c                         |   7 +-
- include/linux/f2fs_fs.h                 |   2 +-
- 21 files changed, 939 insertions(+), 512 deletions(-)
-
-
--- 
-Jaegeuk Kim
-Samsung
-
+------------------------------------------------------------------------------
+Put Bad Developers to Shame
+Dominate Development with Jenkins Continuous Integration
+Continuously Automate Build, Test & Deployment 
+Start a new project now. Try Jenkins in the cloud.
+http://p.sf.net/sfu/13600_Cloudbees
