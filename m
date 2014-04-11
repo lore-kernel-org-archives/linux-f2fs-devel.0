@@ -1,186 +1,51 @@
-From: SDR/SZX Starry Shi<starryshi@sdr-logistics.com>
-Subject: [SPAM] 2014-4-11 Shipping Forwarder From China//SDR
-Date: Fri, 11 Apr 2014 11:52:42 +0800
-Message-ID: <201404111152429532481@sdrshipping.net>
-Reply-To: starryshi@sdr-logistics.com
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH 1/7] f2fs: put the bio when issue_flush completed
+Date: Fri, 11 Apr 2014 17:49:35 +0800
+Message-ID: <5347BAAF.9030004@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4300733541203766349=="
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guangdong@sdrshipping.net>) id 1WYSWr-0006o5-K3
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 11 Apr 2014 03:53:25 +0000
-Received: from [119.139.233.168] (helo=logisticshiping.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with smtp (Exim 4.76)
-	id 1WYSWn-0005d0-2I for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 11 Apr 2014 03:53:25 +0000
-Received: from ipxel ([119.139.233.168])
-	(envelope-sender <guangdong@sdrshipping.net>)
-	by 192.168.1.168 with ESMTP
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 11 Apr 2014 11:53:08 +0800
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-
-This is a multi-part message in MIME format.
-
---===============4300733541203766349==
-Content-Type: multipart/alternative;
-	boundary="----=puaf560_1332_55598339.2621921"
-
-This is a multi-part message in MIME format.
-
-------=puaf560_1332_55598339.2621921
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-UmVzcGVjdGVkU2lyLigxMTo1Mjo0MikgV2VTRFJJTlRFUk5BVElPTkFMTE9HSVNUSUNTaXNhbGVh
-ZGluZ2ZyZWlnaHRmb3J3YXJkZXJpblNIRU5aSEVOLENISU5BYW5kd2VoYW5kbGVhbGxpbm9yb3V0
-ZnJvbW91cmNvdW50cnlhbmR3ZXByb3ZpZGVhbGx0aGVsb2dpc3RpY3NzZXJ2aWNlc3Rvb3VyY3Vz
-dG9tZXJsaWtlRnJlaWdodGZvcndhcmRlcixkb2N1bWVudGF0aW9uLGxhbmRjYXJnbyxBaXJjYXJn
-b2F0cmVhc29uYWJsZXJhdGVzLiBXZWhhdmV0aGVsb2dpc3RpY3NzZXJ2aWNlc2luSGVhdnlQcm9q
-ZWN0c2FuZHdvcmtpbm9uZXdpbmRvdyZhbXA7ZG9vcnRvZG9vcnNlcnZpY2VzLkl0d291bGRiZW91
-cnBsZWFzdXJldG9sZXR5b3Vrbm93dGhlZGV0YWlsc2Fib3V0dXMuIFdlY2Fub2ZmZXI6U2hpcHBp
-bmdBZ2VuY3lQcmUtU2hpcG1lbnRJbnNwZWN0aW9uU3VwcGx5Q2hhaW5NYW5hZ2VtZW50Q29udGFp
-bmVyY2FyZ29oYW5kbGluZ1NlYS1SYWlsTXVsdGltb2RhbFRyYW5zcG9ydEN1c3RvbWNsZWFyaW5n
-JmFtcDtDYXJnb0luc3BlY3Rpb25ib25kZWR3YXJlaG91c2VzZXJ2aWNlc0ZyZWlnaHRmb3J3YXJk
-aW5nKHNlYS9haXIvY291cmllcilEaXNwYXRjaHRoZWxhc3RtaWxlaW5hbGxQUkNPZmZlcmV4cG9y
-dCZhbXA7aW1wb3J0bGlzZW5jZVdhcmVob3VzaW5nVHJ1Y2tpbmdTcGVjaWFsaXN0OiBTRFJJTlRF
-Uk5BVElPTkFMTE9HSVNUSUNTaXNzcGVjaWFsaXN0aW5GQ0wvTENMIGFuZGFpciBzaGlwbWVudCxz
-aGlwYWdlbmN5LHByb2plY3RzaGlwbWVudCxOVk9DQ2NvbnNvbGlkYXRpb24sY3VzdG9tc2NsZWFy
-YW5jZSxUcnVja2luZ3RyYW5zcG9ydGF0aW9uLEZyZWlnaHRmb3J3YXJkaW5nYnlzZWEvYWlyLiBQ
-bGVhc2VsZXRtZWtub3dpZnlvdXJlcXVpcmVhbnltb3JlaW5mb3JtYXRpb25hYm91dHVzLHZpc2l0
-b3Vyd2ViOnd3dy5zZHItbG9naXN0aWNzLmNvbSxJd2lsbGJlcGxlYXNlZHRvZ2l2ZXlvdWFsbGlu
-Zm9ybWF0aW9uLlRydXN0dGhhdHlvdXdpbGxsZXR1c2NoYW5jZXRvcHJvdmVob3d3ZWFyZS4gVGhh
-bmtpbmd5b3VhbmRyZW1haW4uICBCZXN0UmVnYXJkcyBTdGFycnlTaGkoTXIuKS9NYW5hZ2luZ0Rp
-cmVjdG9yLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tU0RSSU5URVJOQVRJT05BTExPR0lT
-VElDUyhTSEVOWkhFTilMSU1JVEVEUm9vbTEwMDUsVGlhbkh1aUJ1aWxkaW5nLFlvdVNvbmdSb2Fk
-LExvbmdIdWEsQmFvJ2FuRGlzdHJpY3QsU2hlblpoZW4sR3VhbmdEb25nLENoaW5hVGVsOis4Njc1
-NTI1ODYzNjAwKGV4dC44MDAyKSBGYXg6Kzg2NzU1MjIzODQ1ODBNb2JpbGU6Kzg2MTM4Mjg4MjA2
-NTggU2t5cGU6c3RhcnJ5XzEwMDEgRS1tYWlsOnN0YXJyeXNoaUBzZHItbG9naXN0aWNzLmNvbSBX
-ZWJzaXRlOnd3dy5zZHItbG9naXN0aWNzLmNvbSBUaGVpbmZvcm1hdGlvbmNvbnRhaW5lZGludGhp
-c21lc3NhZ2Vpc3ByaXZpbGVnZWQsY29uZmlkZW50aWFsYW5kcHJvdGVjdGVkZnJvbWRpc2Nsb3N1
-cmUuSWZ5b3VhcmVub3R0aGVpbnRlbmRlZHJlY2lwaWVudCx5b3VhcmVoZXJlYnlub3RpZmllZHRo
-YXRhbnl1bmF1dGhvcmlzZWRkaXNjbG9zdXJlLGNvcHlpbmdvcmRpc3RyaWJ1dGlvbm9mcmF0ZXNv
-cmluZm9ybWF0aW9uaXNzdHJpY3RseXByb2hpYml0ZWRhbmR3aWxscmVzdWx0aW5pbW1lZGlhdGV3
-aXRoZHJhd25vZm9mZmVyLg==
-
-------=puaf560_1332_55598339.2621921
-Content-Type: text/html;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PGh0bWw+DQogIDxoZWFkPg0KICAgIDx0aXRsZT48L3RpdGxlPg0KICAgIDxtZXRhIGNvbnRlbnQ9
-InRleHQvaHRtbDsgY2hhcnNldD13aW5kb3dzLTkzNiIgaHR0cC1lcXVpdj0iQ29udGVudC1UeXBl
-IiAvPg0KICA8L2hlYWQ+DQogIDxib2R5Pg0KICAgIDxkaXY+PGZvbnQgc2l6ZT0iNCI+UmVzcGVj
-dGVkIFNpci4oMTE6NTI6NDIpPC9mb250PjwvZGl2Pg0KICAgIDxkaXY+Jm5ic3A7PC9kaXY+DQog
-ICAgPGRpdj5XZSBTRFIgSU5URVJOQVRJT05BTCBMT0dJU1RJQ1MgaXMgYSBsZWFkaW5nIGZyZWln
-aHQgZm9yd2FyZGVyIGluIFNIRU5aSEVOLENISU5BIGFuZCB3ZSBoYW5kbGUgYWxsIGluIG9yIG91
-dCBmcm9tIG91ciBjb3VudHJ5IGFuZCB3ZSBwcm92aWRlIGFsbCB0aGUgbG9naXN0aWNzIHNlcnZp
-Y2VzIHRvIG91ciBjdXN0b21lciBsaWtlIEZyZWlnaHQgZm9yd2FyZGVyLCBkb2N1bWVudGF0aW9u
-LCBsYW5kIGNhcmdvLCBBaXIgY2FyZ28gYXQgcmVhc29uYWJsZSByYXRlcy4gPC9kaXY+DQogICAg
-PGRpdj4mbmJzcDs8L2Rpdj4NCiAgICA8ZGl2PldlIGhhdmUgdGhlIGxvZ2lzdGljcyBzZXJ2aWNl
-cyBpbiBIZWF2eSBQcm9qZWN0cyBhbmQgd29yayBpbiBvbmUgd2luZG93ICZhbXA7IGRvb3IgdG8g
-ZG9vciBzZXJ2aWNlcy4gSXQgd291bGQgYmUgb3VyIHBsZWFzdXJlIHRvIGxldCB5b3Uga25vdyB0
-aGUgZGV0YWlscyBhYm91dCB1cy4gPC9kaXY+DQogICAgPGRpdj4mbmJzcDs8L2Rpdj4NCiAgICA8
-ZGl2Pg0KICAgICAgPGRpdj5XZSBjYW4gb2ZmZXI6IDwvZGl2Pg0KICAgICAgPHVsPg0KICAgICAg
-ICA8bGk+U2hpcHBpbmcgQWdlbmN5IDwvbGk+DQogICAgICAgIDxsaT5QcmUtU2hpcG1lbnQgSW5z
-cGVjdGlvbiA8L2xpPg0KICAgICAgICA8bGk+U3VwcGx5IENoYWluIE1hbmFnZW1lbnQgPC9saT4N
-CiAgICAgICAgPGxpPkNvbnRhaW5lciBjYXJnbyBoYW5kbGluZyA8L2xpPg0KICAgICAgICA8bGk+
-U2VhLVJhaWwgTXVsdGltb2RhbCBUcmFuc3BvcnQgPC9saT4NCiAgICAgICAgPGxpPkN1c3RvbSBj
-bGVhcmluZyAmYW1wOyBDYXJnbyBJbnNwZWN0aW9uIDwvbGk+DQogICAgICAgIDxsaT5ib25kZWQg
-d2FyZWhvdXNlIHNlcnZpY2VzIDwvbGk+DQogICAgICAgIDxsaT5GcmVpZ2h0IGZvcndhcmRpbmco
-c2VhL2Fpci9jb3VyaWVyKSA8L2xpPg0KICAgICAgICA8bGk+RGlzcGF0Y2ggdGhlIGxhc3QgbWls
-ZSBpbiBhbGwgUFJDIDwvbGk+DQogICAgICAgIDxsaT5PZmZlciBleHBvcnQgJmFtcDsgaW1wb3J0
-IGxpc2VuY2UgPC9saT4NCiAgICAgICAgPGxpPldhcmVob3VzaW5nIDwvbGk+DQogICAgICAgIDxs
-aT5UcnVja2luZyA8L2xpPg0KICAgICAgPC91bD4NCiAgICAgIDxkaXY+U3BlY2lhbGlzdDogPC9k
-aXY+DQogICAgICA8ZGl2PiZuYnNwOzwvZGl2Pg0KICAgICAgPGRpdj5TRFIgSU5URVJOQVRJT05B
-TCBMT0dJU1RJQ1MgaXMgc3BlY2lhbGlzdCBpbiBGQ0wvTENMJm5ic3A7YW5kIGFpciZuYnNwO3No
-aXBtZW50LCBzaGlwIGFnZW5jeSwgcHJvamVjdCBzaGlwbWVudCwgTlZPQ0MgY29uc29saWRhdGlv
-biwgY3VzdG9tcyBjbGVhcmFuY2UsVHJ1Y2tpbmcgdHJhbnNwb3J0YXRpb24sIEZyZWlnaHQgZm9y
-d2FyZGluZyBieSBzZWEgL2Fpci4gPC9kaXY+DQogICAgICA8ZGl2PiZuYnNwOzwvZGl2Pg0KICAg
-ICAgPGRpdj5QbGVhc2UgbGV0IG1lIGtub3cgaWYgeW91IHJlcXVpcmUgYW55IG1vcmUgaW5mb3Jt
-YXRpb24gYWJvdXQgdXMsIHZpc2l0IG91ciB3ZWI6IDxhIGhyZWY9Imh0dHA6Ly93d3cuc2RyLWxv
-Z2lzdGljcy5jb20vIj53d3cuc2RyLWxvZ2lzdGljcy5jb208L2E+ICwgSSB3aWxsIGJlIHBsZWFz
-ZWQgdG8gZ2l2ZSB5b3UgYWxsIGluZm9ybWF0aW9uLjwvZGl2Pg0KICAgICAgPGRpdj5UcnVzdCB0
-aGF0IHlvdSB3aWxsIGxldCB1cyBjaGFuY2UgdG8gcHJvdmUgaG93IHdlIGFyZS4gPC9kaXY+DQog
-ICAgICA8ZGl2PiZuYnNwOzwvZGl2Pg0KICAgIDwvZGl2Pg0KICAgIDxkaXY+VGhhbmtpbmcgeW91
-IGFuZCByZW1haW4uIDwvZGl2Pg0KICAgIDxkaXY+Jm5ic3A7PC9kaXY+DQogICAgPGRpdj4mbmJz
-cDs8L2Rpdj4NCiAgICA8ZGl2Pg0KICAgICAgPGRpdj4NCiAgICAgICAgPGRpdj48Zm9udCBzaXpl
-PSIyIj5CZXN0IFJlZ2FyZHM8L2ZvbnQ+PC9kaXY+DQogICAgICAgIDxkaXY+PGZvbnQgc2l6ZT0i
-MiI+Jm5ic3A7PC9mb250Pjxmb250IHNpemU9IjIiPjxiciAvPlN0YXJyeSBTaGkoTXIuKSAvIE1h
-bmFnaW5nIERpcmVjdG9yPGJyIC8+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPGJyIC8+
-U0RSIElOVEVSTkFUSU9OQUwgTE9HSVNUSUNTIChTSEVOWkhFTikgTElNSVRFRDxiciAvPlJvb20g
-MTAwNSxUaWFuSHVpIEJ1aWxkaW5nLFlvdVNvbmcgUm9hZCxMb25nSHVhLEJhbydhbiBEaXN0cmlj
-dCxTaGVuWmhlbixHdWFuZ0RvbmcsQ2hpbmE8YnIgLz5UZWw6ICs4NiA3NTUgMjU4NjM2MDAgKGV4
-dC44MDAyKSAmbmJzcDsgRmF4OiArODYgNzU1IDIyMzg0NTgwPGJyIC8+TW9iaWxlOiArODYgMTM4
-IDI4ODIgMDY1OCAmbmJzcDsgU2t5cGU6IHN0YXJyeV8xMDAxJm5ic3A7PGJyIC8+RS1tYWlsOiA8
-YSBocmVmPSJodHRwOi8vbWFpbC5zZHItbG9naXN0aWNzLmNvbS9qeTMvY29tcG9zZS9tYWluLmpz
-cD9zaWQ9REF1cHRtRXpRSkFBR2RVb0xSenpqSndSUHluck1FcGQmdG89c3RhcnJ5c2hpJTQwc2Ry
-LWxvZ2lzdGljcy5jb20iIHRhcmdldD0iX3BhcmVudCI+c3RhcnJ5c2hpQHNkci1sb2dpc3RpY3Mu
-Y29tPC9hPiAmbmJzcDsgV2Vic2l0ZTogPGEgaHJlZj0iaHR0cDovL3d3dy5zZHItbG9naXN0aWNz
-LmNvbS8iIHRhcmdldD0iX2JsYW5rIj53d3cuc2RyLWxvZ2lzdGljcy5jb208L2E+PC9mb250Pjwv
-ZGl2Pg0KICAgICAgICA8ZGl2Pg0KICAgICAgICAgIDxkaXY+DQogICAgICAgICAgICA8ZGl2Pg0K
-ICAgICAgICAgICAgICA8ZGl2Pg0KICAgICAgICAgICAgICAgIDxkaXY+DQogICAgICAgICAgICAg
-ICAgICA8ZGl2Pg0KICAgICAgICAgICAgICAgICAgICA8ZGl2Pg0KICAgICAgICAgICAgICAgICAg
-ICAgIDxkaXY+DQogICAgICAgICAgICAgICAgICAgICAgICA8ZGl2Pg0KICAgICAgICAgICAgICAg
-ICAgICAgICAgICA8ZGl2Pg0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXY+DQogICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2Pg0KICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICA8ZGl2Pg0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXY+Jm5i
-c3A7PC9kaXY+DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2Pg0KICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgPC9kaXY+DQogICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgPC9kaXY+DQogICAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2Pg0KICAgICAgICAgICAg
-ICAgICAgICAgICAgPC9kaXY+DQogICAgICAgICAgICAgICAgICAgICAgPC9kaXY+DQogICAgICAg
-ICAgICAgICAgICAgIDwvZGl2Pg0KICAgICAgICAgICAgICAgICAgPC9kaXY+DQogICAgICAgICAg
-ICAgICAgPC9kaXY+DQogICAgICAgICAgICAgIDwvZGl2Pg0KICAgICAgICAgICAgPC9kaXY+DQog
-ICAgICAgICAgPC9kaXY+DQogICAgICAgIDwvZGl2PjxiciAvPg0KICAgICAgICA8ZGl2Pg0KICAg
-ICAgICAgIDxkaXYgaWQ9ImFuZ2xlX2NvbnRlbnQiPg0KICAgICAgICAgICAgPHAgc3R5bGU9Im1h
-cmdpbi1ib3R0b206IDEycHQiPjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTogJ1RpbWVzIE5ldyBS
-b21hbicsJ3NlcmlmJzsgY29sb3I6IGJsYWNrOyBmb250LXNpemU6IDcuNXB0Ij48Zm9udCBzaXpl
-PSIxIj5UaGUgaW5mb3JtYXRpb24gY29udGFpbmVkIGluIHRoaXMgbWVzc2FnZSBpcyBwcml2aWxl
-Z2VkLCBjb25maWRlbnRpYWwgYW5kIHByb3RlY3RlZCBmcm9tIGRpc2Nsb3N1cmUuIElmIHlvdSBh
-cmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsIHlvdSBhcmUgaGVyZWJ5IG5vdGlmaWVkIHRo
-YXQgYW55IHVuYXV0aG9yaXNlZCBkaXNjbG9zdXJlLCBjb3B5aW5nIG9yIGRpc3RyaWJ1dGlvbiBv
-ZiByYXRlcyBvciBpbmZvcm1hdGlvbiBpcyBzdHJpY3RseSBwcm9oaWJpdGVkIGFuZCB3aWxsIHJl
-c3VsdCBpbiBpbW1lZGlhdGUgd2l0aGRyYXduIG9mIG9mZmVyLjwvZm9udD48L3NwYW4+PC9wPg0K
-ICAgICAgICAgIDwvZGl2Pg0KICAgICAgICA8L2Rpdj4NCiAgICAgIDwvZGl2Pg0KICAgIDwvZGl2
-Pg0KICA8L2JvZHk+DQo8L2h0bWw+
-
-------=puaf560_1332_55598339.2621921--
-
-
---===============4300733541203766349==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kim <jaegeuk.kim@samsung.com>
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-------------------------------------------------------------------------------
-Put Bad Developers to Shame
-Dominate Development with Jenkins Continuous Integration
-Continuously Automate Build, Test & Deployment 
-Start a new project now. Try Jenkins in the cloud.
-http://p.sf.net/sfu/13600_Cloudbees
---===============4300733541203766349==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Put the bio when the flush cmd issued, it also can fix the following
+kmemleak:
+unreferenced object 0xffff8800270c73c0 (size 200):
+  comm "f2fs_flush-7:0", pid 27161, jiffies 4312127988 (age 988.503s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 40 07 81 19 01 88 ff ff  ........@.......
+    01 00 00 00 00 00 00 f0 11 14 00 00 00 00 00 00  ................
+  backtrace:
+    [<ffffffff81559866>] kmemleak_alloc+0x72/0x96
+    [<ffffffff81156f7e>] slab_post_alloc_hook+0x28/0x2a
+    [<ffffffff811595b1>] kmem_cache_alloc+0xec/0x157
+    [<ffffffff8111924d>] mempool_alloc_slab+0x15/0x17
+    [<ffffffff81119513>] mempool_alloc+0x71/0x138
+    [<ffffffff81193548>] bio_alloc_bioset+0x93/0x18c
+    [<ffffffffa040f857>] issue_flush_thread+0x8d/0x145 [f2fs]
+    [<ffffffff8107ac16>] kthread+0xba/0xc2
+    [<ffffffff81571b2c>] ret_from_fork+0x7c/0xb0
+    [<ffffffffffffffff>] 0xffffffffffffffff
 
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/segment.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
---===============4300733541203766349==--
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 085f548..524b7ed 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -226,6 +226,7 @@ repeat:
+ 			next = cmd->next;
+ 			complete(&cmd->wait);
+ 		}
++		bio_put(bio);
+ 		sm_i->dispatch_list = NULL;
+ 	}
+ 
+-- 
+1.7.7
