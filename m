@@ -1,33 +1,33 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 1/7] f2fs: put the bio when issue_flush
-	completed
-Date: Mon, 14 Apr 2014 10:36:15 +0900
-Message-ID: <1397439375.24638.20.camel@kjgkr>
-References: <5347BAAF.9030004@cn.fujitsu.com>
+Subject: Re: [PATCH 0/7] f2fs: some fix and cleanup about
+	flush_merge
+Date: Mon, 14 Apr 2014 10:44:15 +0900
+Message-ID: <1397439855.24638.24.camel@kjgkr>
+References: <5347BAA5.6070104@cn.fujitsu.com> <534B374C.8030009@cn.fujitsu.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WZVqr-0005lg-0N
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WZVyc-00065w-R4
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 14 Apr 2014 01:38:25 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WZVqo-0004Kr-R6
+	Mon, 14 Apr 2014 01:46:26 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WZVya-0005i7-Ib
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 14 Apr 2014 01:38:24 +0000
-Received: from epcpsbgr5.samsung.com
-	(u145.gpu120.samsung.co.kr [203.254.230.145])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
+	Mon, 14 Apr 2014 01:46:26 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N3Z0007LZ7RBW70@mailout3.samsung.com> for
+	with ESMTP id <0N3Z00IQ6ZL2EI90@mailout1.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 14 Apr 2014 10:38:15 +0900 (KST)
-In-reply-to: <5347BAAF.9030004@cn.fujitsu.com>
+	Mon, 14 Apr 2014 10:46:15 +0900 (KST)
+In-reply-to: <534B374C.8030009@cn.fujitsu.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -40,39 +40,39 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Gu Zheng <guz.fnst@cn.fujitsu.com>
 Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-SGkgR3UsCk1lcmdlZC4KdGhhbmsgeW91LiA6KQoKMjAxNC0wNC0xMSAo6riIKSwgMTc6NDkgKzA4
-MDAsIEd1IFpoZW5nOgo+IFB1dCB0aGUgYmlvIHdoZW4gdGhlIGZsdXNoIGNtZCBpc3N1ZWQsIGl0
-IGFsc28gY2FuIGZpeCB0aGUgZm9sbG93aW5nCj4ga21lbWxlYWs6Cj4gdW5yZWZlcmVuY2VkIG9i
-amVjdCAweGZmZmY4ODAwMjcwYzczYzAgKHNpemUgMjAwKToKPiAgIGNvbW0gImYyZnNfZmx1c2gt
-NzowIiwgcGlkIDI3MTYxLCBqaWZmaWVzIDQzMTIxMjc5ODggKGFnZSA5ODguNTAzcykKPiAgIGhl
-eCBkdW1wIChmaXJzdCAzMiBieXRlcyk6Cj4gICAgIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDQw
-IDA3IDgxIDE5IDAxIDg4IGZmIGZmICAuLi4uLi4uLkAuLi4uLi4uCj4gICAgIDAxIDAwIDAwIDAw
-IDAwIDAwIDAwIGYwIDExIDE0IDAwIDAwIDAwIDAwIDAwIDAwICAuLi4uLi4uLi4uLi4uLi4uCj4g
-ICBiYWNrdHJhY2U6Cj4gICAgIFs8ZmZmZmZmZmY4MTU1OTg2Nj5dIGttZW1sZWFrX2FsbG9jKzB4
-NzIvMHg5Ngo+ICAgICBbPGZmZmZmZmZmODExNTZmN2U+XSBzbGFiX3Bvc3RfYWxsb2NfaG9vaysw
-eDI4LzB4MmEKPiAgICAgWzxmZmZmZmZmZjgxMTU5NWIxPl0ga21lbV9jYWNoZV9hbGxvYysweGVj
-LzB4MTU3Cj4gICAgIFs8ZmZmZmZmZmY4MTExOTI0ZD5dIG1lbXBvb2xfYWxsb2Nfc2xhYisweDE1
-LzB4MTcKPiAgICAgWzxmZmZmZmZmZjgxMTE5NTEzPl0gbWVtcG9vbF9hbGxvYysweDcxLzB4MTM4
-Cj4gICAgIFs8ZmZmZmZmZmY4MTE5MzU0OD5dIGJpb19hbGxvY19iaW9zZXQrMHg5My8weDE4Ywo+
-ICAgICBbPGZmZmZmZmZmYTA0MGY4NTc+XSBpc3N1ZV9mbHVzaF90aHJlYWQrMHg4ZC8weDE0NSBb
-ZjJmc10KPiAgICAgWzxmZmZmZmZmZjgxMDdhYzE2Pl0ga3RocmVhZCsweGJhLzB4YzIKPiAgICAg
-WzxmZmZmZmZmZjgxNTcxYjJjPl0gcmV0X2Zyb21fZm9yaysweDdjLzB4YjAKPiAgICAgWzxmZmZm
-ZmZmZmZmZmZmZmZmPl0gMHhmZmZmZmZmZmZmZmZmZmZmCj4gCj4gU2lnbmVkLW9mZi1ieTogR3Ug
-WmhlbmcgPGd1ei5mbnN0QGNuLmZ1aml0c3UuY29tPgo+IC0tLQo+ICBmcy9mMmZzL3NlZ21lbnQu
-YyB8ICAgIDEgKwo+ICAxIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlv
-bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZzL3NlZ21l
-bnQuYwo+IGluZGV4IDA4NWY1NDguLjUyNGI3ZWQgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9zZWdt
-ZW50LmMKPiArKysgYi9mcy9mMmZzL3NlZ21lbnQuYwo+IEBAIC0yMjYsNiArMjI2LDcgQEAgcmVw
-ZWF0Ogo+ICAJCQluZXh0ID0gY21kLT5uZXh0Owo+ICAJCQljb21wbGV0ZSgmY21kLT53YWl0KTsK
-PiAgCQl9Cj4gKwkJYmlvX3B1dChiaW8pOwo+ICAJCXNtX2ktPmRpc3BhdGNoX2xpc3QgPSBOVUxM
-Owo+ICAJfQo+ICAKCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKLS0tLS0tLS0tLS0tLS0tLS0t
+SGkgR3UsCgpJIGp1c3Qgc3RhcnRlZCB0byByZXZpZXcgdGhlIHBhdGNoZXMgYW5kIG1lcmdlIHRo
+ZW0gaW5kaXZpZHVhbGx5IHRob3VnaC4KU2luY2UgSSd2ZSBiZWVuIGludGVybmFsbHkgZG9pbmcg
+aW4gbXkgbG9jYWwgdHJlZSwgc28gdGhhdCBzaG91bGQgYmUgbm8KcHJvYmxlbS4gSSdsbCByb2xs
+IGJhY2sgdG8gdGhlIGxhdGVzdCBwb2ludC4KQW55d2F5LCB0aGFuayB5b3UgZm9yIHlvdXIgd29y
+ay4gOikKCjIwMTQtMDQtMTQgKOyblCksIDA5OjE4ICswODAwLCBHdSBaaGVuZzoKPiBIaSBBbGws
+Cj4gVGhlcmUgc2VlbXMgdG8gYmUgYSBtaXN0YWtlIGluICJbUEFUQ0ggMi83XWYyZnM6IHJlbW92
+ZSB0aGUgdW51c2VmdWwgImlzc3VlX3RhaWwiIGxpc3QiLAo+IGFuZCB0aGUgd2hvbGUgcGF0Y2hz
+ZXQgbmVlZHMgdG8gYmUgcmV3b3JrZWQuIFNvIHBsZWFzZSBpZ25vcmUgdGhpcyBvbmUuCj4gU29y
+cnkgZm9yIHRoZSBub2lzZS4KPiAKPiBSZWdhcmRzLAo+IEd1Cj4gT24gMDQvMTEvMjAxNCAwNTo0
+OSBQTSwgR3UgWmhlbmcgd3JvdGU6Cj4gCj4gPiBHdSBaaGVuZyAoNyk6Cj4gPiAgIGYyZnM6IHB1
+dCB0aGUgYmlvIHdoZW4gaXNzdWVfZmx1c2ggY29tcGxldGVkCj4gPiAgIGYyZnM6IHJlbW92ZSB0
+aGUgdW51c2VmdWwgImlzc3VlX3RhaWwiIGxpc3QKPiA+ICAgZjJmczogdXNlIF9fR0ZQX1pFUk8g
+dG8gYXZvaWQgYXBwZW5kaW5nIHNldC1OVUxMCj4gPiAgIGYyZnM6IGVuYWJsZSBmbHVzaF9tZXJn
+ZSBvbmx5IGluIGYyZnMgaXMgbm90IHJlYWQtb25seQo+ID4gICBmMmZzOiBhZGQgdGhlIGZsdXNo
+X21lcmdlIGhhbmRsZSBpbiB0aGUgcmVtb3VudCBmbG93Cj4gPiAgIGYyZnM6IGludHJvZHVjZSBz
+dHJ1Y3QgZmx1c2hfY21kX2NvbnRyb2wgdG8gd3JhcCB0aGUgZmx1c2hfbWVyZ2UKPiA+ICAgICBm
+aWVsZHMKPiA+ICAgZjJmczogaW50cm9kdWNlIGhlbHAgZnVuY3Rpb24ge2NyZWF0ZSxkZXN0cm95
+fV9mbHVzaF9jbWRfY29udHJvbAo+ID4gCj4gPiAgZnMvZjJmcy9mMmZzLmggICAgfCAgIDE3ICsr
+KysrKy0tLQo+ID4gIGZzL2YyZnMvc2VnbWVudC5jIHwgIDEwMiArKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tCj4gPiAgZnMvZjJmcy9zdXBlci5jICAg
+fCAgIDMyICsrKysrKysrKysrKysrLS0KPiA+ICAzIGZpbGVzIGNoYW5nZWQsIDEwNyBpbnNlcnRp
+b25zKCspLCA0NCBkZWxldGlvbnMoLSkKPiA+IAo+IAo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUg
+ZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LWZzZGV2ZWwi
+IGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcK
+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9t
+by1pbmZvLmh0bWwKCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKCi0tLS0tLS0tLS0tLS0tLS0t
 LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tCkxlYXJuIEdyYXBoIERhdGFiYXNlcyAtIERvd25sb2FkIEZSRUUgTydSZWlsbHkgQm9vawoi
-R3JhcGggRGF0YWJhc2VzIiBpcyB0aGUgZGVmaW5pdGl2ZSBuZXcgZ3VpZGUgdG8gZ3JhcGggZGF0
-YWJhc2VzIGFuZCB0aGVpcgphcHBsaWNhdGlvbnMuIFdyaXR0ZW4gYnkgdGhyZWUgYWNjbGFpbWVk
-IGxlYWRlcnMgaW4gdGhlIGZpZWxkLAp0aGlzIGZpcnN0IGVkaXRpb24gaXMgbm93IGF2YWlsYWJs
-ZS4gRG93bmxvYWQgeW91ciBmcmVlIGJvb2sgdG9kYXkhCmh0dHA6Ly9wLnNmLm5ldC9zZnUvTmVv
-VGVjaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
-eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
-eC1mMmZzLWRldmVsCg==
+LS0tLQpMZWFybiBHcmFwaCBEYXRhYmFzZXMgLSBEb3dubG9hZCBGUkVFIE8nUmVpbGx5IEJvb2sK
+IkdyYXBoIERhdGFiYXNlcyIgaXMgdGhlIGRlZmluaXRpdmUgbmV3IGd1aWRlIHRvIGdyYXBoIGRh
+dGFiYXNlcyBhbmQgdGhlaXIKYXBwbGljYXRpb25zLiBXcml0dGVuIGJ5IHRocmVlIGFjY2xhaW1l
+ZCBsZWFkZXJzIGluIHRoZSBmaWVsZCwKdGhpcyBmaXJzdCBlZGl0aW9uIGlzIG5vdyBhdmFpbGFi
+bGUuIERvd25sb2FkIHlvdXIgZnJlZSBib29rIHRvZGF5IQpodHRwOi8vcC5zZi5uZXQvc2Z1L05l
+b1RlY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGlu
+dXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
+b3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGlu
+dXgtZjJmcy1kZXZlbAo=
