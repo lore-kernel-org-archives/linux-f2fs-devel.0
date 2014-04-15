@@ -1,32 +1,33 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 3/3] f2fs: flush dirty directory pages when
- scattered pages are gathered
-Date: Tue, 15 Apr 2014 19:57:03 +0900
-Message-ID: <1397559423-27411-3-git-send-email-jaegeuk.kim@samsung.com>
-References: <1397559423-27411-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: Re: f2fs: BUG_ON() is triggered when mount valid f2fs
+	filesystem
+Date: Tue, 15 Apr 2014 20:04:24 +0900
+Message-ID: <1397559864.7727.5.camel@kjgkr>
+References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Wa15D-0005YS-0U
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1Wa1CG-0005r1-WB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Apr 2014 10:59:19 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1Wa15B-0001mu-5Q
+	Tue, 15 Apr 2014 11:06:37 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1Wa1CE-0007xx-Hh
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Apr 2014 10:59:18 +0000
+	Tue, 15 Apr 2014 11:06:36 +0000
 Received: from epcpsbgr2.samsung.com
 	(u142.gpu120.samsung.co.kr [203.254.230.142])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
+	by mailout4.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N4200L6DJUJ83A0@mailout3.samsung.com> for
+	with ESMTP id <0N4200L2LK6PEK50@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Apr 2014 19:59:07 +0900 (KST)
-In-reply-to: <1397559423-27411-1-git-send-email-jaegeuk.kim@samsung.com>
+	Tue, 15 Apr 2014 20:06:25 +0900 (KST)
+In-reply-to: <534BC29B.3020408@ispras.ru>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,100 +37,141 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-f2fs-devel@lists.sourceforge.net
 
-If a lot of directory inodes have the small number of dentry pages in each
-page cache, there is no chance to flush them periodically.
-This patch proposes the average number of dirty dentry pages for the threshold.
+Hi,
 
+Thank you for the report.
+I retrieved the fault image and found out that previous garbage data
+wreak such the wrong behaviors.
+So, I wrote the following patch that fills one zero-block at the
+checkpoint procedure.
+If the underlying device supports discard, I expect that it mostly
+doesn't incur any performance regression significantly.
+
+Could you test this patch?
+
+>From 60588ceb7277aae2a79e7f67f5217d1256720d78 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Date: Tue, 15 Apr 2014 13:57:55 +0900
+Subject: [PATCH] f2fs: avoid to conduct roll-forward due to the remained
+ garbage blocks
+
+The f2fs always scans the next chain of direct node blocks.
+But some garbage blocks are able to be remained due to no discard
+support or
+SSR triggers.
+This occasionally wreaks recovering wrong inodes that were used or
+BUG_ONs
+due to reallocating node ids as follows.
+
+When mount this f2fs image:
+http://linuxtesting.org/downloads/f2fs_fault_image.zip
+BUG_ON is triggered in f2fs driver (messages below are generated on
+kernel 3.13.2; for other kernels output is similar):
+
+kernel BUG at fs/f2fs/node.c:215!
+ Call Trace:
+ [<ffffffffa032ebad>] recover_inode_page+0x1fd/0x3e0 [f2fs]
+ [<ffffffff811446e7>] ? __lock_page+0x67/0x70
+ [<ffffffff81089990>] ? autoremove_wake_function+0x50/0x50
+ [<ffffffffa0337788>] recover_fsync_data+0x1398/0x15d0 [f2fs]
+ [<ffffffff812b9e5c>] ? selinux_d_instantiate+0x1c/0x20
+ [<ffffffff811cb20b>] ? d_instantiate+0x5b/0x80
+ [<ffffffffa0321044>] f2fs_fill_super+0xb04/0xbf0 [f2fs]
+ [<ffffffff811b861e>] ? mount_bdev+0x7e/0x210
+ [<ffffffff811b8769>] mount_bdev+0x1c9/0x210
+ [<ffffffffa0320540>] ? validate_superblock+0x210/0x210 [f2fs]
+ [<ffffffffa031cf8d>] f2fs_mount+0x1d/0x30 [f2fs]
+ [<ffffffff811b9497>] mount_fs+0x47/0x1c0
+ [<ffffffff81166e00>] ? __alloc_percpu+0x10/0x20
+ [<ffffffff811d4032>] vfs_kern_mount+0x72/0x110
+ [<ffffffff811d6763>] do_mount+0x493/0x910
+ [<ffffffff811615cb>] ? strndup_user+0x5b/0x80
+ [<ffffffff811d6c70>] SyS_mount+0x90/0xe0
+ [<ffffffff8166f8d9>] system_call_fastpath+0x16/0x1b
+
+Found by Linux File System Verification project (linuxtesting.org).
+
+Reported-by: Andrey Tsyvarev <tsyvarev@ispras.ru>
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/checkpoint.c |  2 ++
+ fs/f2fs/checkpoint.c |  6 ++++++
  fs/f2fs/f2fs.h       |  1 +
- fs/f2fs/segment.h    | 16 +++++++++-------
- fs/f2fs/super.c      |  1 +
- 4 files changed, 13 insertions(+), 7 deletions(-)
+ fs/f2fs/segment.c    | 17 +++++++++++++++--
+ 3 files changed, 22 insertions(+), 2 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 5133aec..d57d93f 100644
+index 4aa521a..890e23d 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -562,6 +562,7 @@ static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
- 	set_inode_flag(F2FS_I(inode), FI_DIRTY_DIR);
- 	F2FS_I(inode)->dirty_dir = new;
- 	list_add_tail(&new->list, &sbi->dir_inode_list);
-+	atomic_inc(&sbi->dirty_dir_inodes);
- 	stat_inc_dirty_dir(sbi);
- 	return 0;
- }
-@@ -626,6 +627,7 @@ void remove_dirty_dir_inode(struct inode *inode)
- 	list_del(&entry->list);
- 	F2FS_I(inode)->dirty_dir = NULL;
- 	clear_inode_flag(F2FS_I(inode), FI_DIRTY_DIR);
-+	atomic_dec(&sbi->dirty_dir_inodes);
- 	stat_dec_dirty_dir(sbi);
- 	spin_unlock(&sbi->dir_inode_lock);
- 	kmem_cache_free(inode_entry_slab, entry);
+@@ -762,6 +762,12 @@ static void do_checkpoint(struct f2fs_sb_info *sbi,
+bool is_umount)
+ 	void *kaddr;
+ 	int i;
+ 
++	/*
++	 * This avoids to conduct wrong roll-forward operations and uses
++	 * metapages, so should be called prior to sync_meta_pages below.
++	 */
++	discard_next_dnode(sbi);
++
+ 	/* Flush all the NAT/SIT pages */
+ 	while (get_pages(sbi, F2FS_DIRTY_META))
+ 		sync_meta_pages(sbi, META, LONG_MAX);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d3180f8..e708d02 100644
+index 2ecac83..2c5a5da 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -450,6 +450,7 @@ struct f2fs_sb_info {
- 
- 	/* for directory inode management */
- 	struct list_head dir_inode_list;	/* dir inode list */
-+	atomic_t dirty_dir_inodes;		/* # of dirty inodes */
- 	spinlock_t dir_inode_lock;		/* for dir inode list lock */
- 
- 	/* basic file system units */
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 7091204..8eb23a0 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -668,20 +668,22 @@ static inline unsigned int max_hw_blocks(struct f2fs_sb_info *sbi)
- /*
-  * It is very important to gather dirty pages and write at once, so that we can
-  * submit a big bio without interfering other data writes.
-- * By default, 512 pages for directory data,
-+ * By default, avg. dirty pages for directory data,
-  * 512 pages (2MB) * 3 for three types of nodes, and
-  * max_bio_blocks for meta are set.
-  */
- static inline int nr_pages_to_skip(struct f2fs_sb_info *sbi, int type)
- {
--	if (type == DATA)
--		return sbi->blocks_per_seg;
--	else if (type == NODE)
-+	if (type == DATA) {
-+		unsigned int dirty = atomic_read(&sbi->dirty_dir_inodes);
-+		if (dirty > sbi->blocks_per_seg * sbi->blocks_per_seg)
-+			return div_u64(get_pages(sbi, F2FS_DIRTY_DENTS), dirty);
-+	} else if (type == NODE) {
- 		return 3 * sbi->blocks_per_seg;
--	else if (type == META)
-+	} else if (type == META) {
- 		return MAX_BIO_BLOCKS(max_hw_blocks(sbi));
--	else
--		return 0;
-+	}
-+	return sbi->blocks_per_seg;
+@@ -1179,6 +1179,7 @@ int f2fs_issue_flush(struct f2fs_sb_info *);
+ void invalidate_blocks(struct f2fs_sb_info *, block_t);
+ void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
+ void clear_prefree_segments(struct f2fs_sb_info *);
++void discard_next_dnode(struct f2fs_sb_info *);
+ int npages_for_summary_flush(struct f2fs_sb_info *);
+ void allocate_new_segments(struct f2fs_sb_info *);
+ struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1e264e7..9993f94 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -335,13 +335,26 @@ static void locate_dirty_segment(struct
+f2fs_sb_info *sbi, unsigned int segno)
+ 	mutex_unlock(&dirty_i->seglist_lock);
  }
  
- /*
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5e20d2a..eabf8df 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -973,6 +973,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	sbi->last_valid_block_count = sbi->total_valid_block_count;
- 	sbi->alloc_valid_block_count = 0;
- 	INIT_LIST_HEAD(&sbi->dir_inode_list);
-+	atomic_set(&sbi->dirty_dir_inodes, 0);
- 	spin_lock_init(&sbi->dir_inode_lock);
+-static void f2fs_issue_discard(struct f2fs_sb_info *sbi,
++static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
+ 				block_t blkstart, block_t blklen)
+ {
+ 	sector_t start = SECTOR_FROM_BLOCK(sbi, blkstart);
+ 	sector_t len = SECTOR_FROM_BLOCK(sbi, blklen);
+-	blkdev_issue_discard(sbi->sb->s_bdev, start, len, GFP_NOFS, 0);
+ 	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
++	return blkdev_issue_discard(sbi->sb->s_bdev, start, len, GFP_NOFS, 0);
++}
++
++void discard_next_dnode(struct f2fs_sb_info *sbi)
++{
++	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
++	block_t blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
++
++	if (f2fs_issue_discard(sbi, blkaddr, 1)) {
++		struct page *page = grab_meta_page(sbi, blkaddr);
++		/* zero-filled page */
++		set_page_dirty(page);
++		f2fs_put_page(page, 1);
++	}
+ }
  
- 	init_orphan_info(sbi);
+ static void add_discard_addrs(struct f2fs_sb_info *sbi,
 -- 
 1.8.4.474.g128a96c
+
+-- 
+Jaegeuk Kim
+Samsung
 
 
 ------------------------------------------------------------------------------
