@@ -1,229 +1,137 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 3/3] f2fs: flush dirty directory pages when scattered pages
- are gathered
-Date: Wed, 16 Apr 2014 14:13:11 +0900
-Message-ID: <1397625191.7727.11.camel@kjgkr>
-References: <1397559423-27411-1-git-send-email-jaegeuk.kim@samsung.com>
- <1397559423-27411-3-git-send-email-jaegeuk.kim@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Subject: Re: f2fs: BUG_ON() is triggered when mount valid f2fs
+	filesystem
+Date: Wed, 16 Apr 2014 13:11:40 +0400
+Message-ID: <534E494C.7050909@ispras.ru>
+References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru>
+	<1397559864.7727.5.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1397559423-27411-3-git-send-email-jaegeuk.kim@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <tsyvarev@ispras.ru>) id 1WaLsR-0005l9-1b
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 16 Apr 2014 09:11:31 +0000
+Received: from smtp.ispras.ru ([83.149.199.79])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WaLsO-00041R-UW for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 16 Apr 2014 09:11:31 +0000
+In-Reply-To: <1397559864.7727.5.camel@kjgkr>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-f2fs-devel@lists.sourceforge.net
 
-Hi all,
-
-Please ignore this, since it turns out that is doesn't solve the
-problem.
-Instead, please consider the following patch.
-
->From ac9ad0b1de42dc311323b9c3b8f431f4b097b43b Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Wed, 16 Apr 2014 10:47:06 +0900
-Subject: [PATCH] f2fs: adjust free mem size to flush dentry blocks
-
-If so many dirty dentry blocks are cached, not reached to the flush
-condition,
-we should fall into livelock in balance_dirty_pages.
-So, let's consider the mem size for the condition.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/data.c |  3 ++-
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/node.c | 44 ++++++++++++++++++++++++++------------------
- fs/f2fs/node.h |  5 +++--
- 4 files changed, 32 insertions(+), 21 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b5cd6d1..6b89b25 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -863,7 +863,8 @@ static int f2fs_write_data_pages(struct
-address_space *mapping,
- 		return 0;
- 
- 	if (S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_NONE &&
--			get_dirty_dents(inode) < nr_pages_to_skip(sbi, DATA))
-+			get_dirty_dents(inode) < nr_pages_to_skip(sbi, DATA) &&
-+			available_free_memory(sbi, DIRTY_DENTS))
- 		goto skip_write;
- 
- 	diff = nr_pages_to_write(sbi, DATA, wbc);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2c5a5da..afca412 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1140,6 +1140,7 @@ f2fs_hash_t f2fs_dentry_hash(const char *,
-size_t);
- struct dnode_of_data;
- struct node_info;
- 
-+bool available_free_memory(struct f2fs_sb_info *, int);
- int is_checkpointed_node(struct f2fs_sb_info *, nid_t);
- bool fsync_mark_done(struct f2fs_sb_info *, nid_t);
- void get_node_info(struct f2fs_sb_info *, nid_t, struct node_info *);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f760793..d08671b 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -26,20 +26,26 @@
- static struct kmem_cache *nat_entry_slab;
- static struct kmem_cache *free_nid_slab;
- 
--static inline bool available_free_memory(struct f2fs_nm_info *nm_i, int
-type)
-+bool available_free_memory(struct f2fs_sb_info *sbi, int type)
- {
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct sysinfo val;
- 	unsigned long mem_size = 0;
-+	bool res = false;
- 
- 	si_meminfo(&val);
--	if (type == FREE_NIDS)
--		mem_size = nm_i->fcnt * sizeof(struct free_nid);
--	else if (type == NAT_ENTRIES)
--		mem_size += nm_i->nat_cnt * sizeof(struct nat_entry);
--	mem_size >>= 12;
--
--	/* give 50:50 memory for free nids and nat caches respectively */
--	return (mem_size < ((val.totalram * nm_i->ram_thresh) >> 11));
-+	/* give 25%, 25%, 50% memory for each components respectively */
-+	if (type == FREE_NIDS) {
-+		mem_size = (nm_i->fcnt * sizeof(struct free_nid)) >> 12;
-+		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 2);
-+	} else if (type == NAT_ENTRIES) {
-+		mem_size = (nm_i->nat_cnt * sizeof(struct nat_entry)) >> 12;
-+		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 2);
-+	} else if (type == DIRTY_DENTS) {
-+		mem_size = get_pages(sbi, F2FS_DIRTY_DENTS);
-+		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 1);
-+	}
-+	return res;
- }
- 
- static void clear_node_page_dirty(struct page *page)
-@@ -243,7 +249,7 @@ int try_to_free_nats(struct f2fs_sb_info *sbi, int
-nr_shrink)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 
--	if (available_free_memory(nm_i, NAT_ENTRIES))
-+	if (available_free_memory(sbi, NAT_ENTRIES))
- 		return 0;
- 
- 	write_lock(&nm_i->nat_tree_lock);
-@@ -1312,13 +1318,14 @@ static void __del_from_free_nid_list(struct
-f2fs_nm_info *nm_i,
- 	radix_tree_delete(&nm_i->free_nid_root, i->nid);
- }
- 
--static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool
-build)
-+static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool
-build)
- {
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct free_nid *i;
- 	struct nat_entry *ne;
- 	bool allocated = false;
- 
--	if (!available_free_memory(nm_i, FREE_NIDS))
-+	if (!available_free_memory(sbi, FREE_NIDS))
- 		return -1;
- 
- 	/* 0 nid should not be used */
-@@ -1371,9 +1378,10 @@ static void remove_free_nid(struct f2fs_nm_info
-*nm_i, nid_t nid)
- 		kmem_cache_free(free_nid_slab, i);
- }
- 
--static void scan_nat_page(struct f2fs_nm_info *nm_i,
-+static void scan_nat_page(struct f2fs_sb_info *sbi,
- 			struct page *nat_page, nid_t start_nid)
- {
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct f2fs_nat_block *nat_blk = page_address(nat_page);
- 	block_t blk_addr;
- 	int i;
-@@ -1388,7 +1396,7 @@ static void scan_nat_page(struct f2fs_nm_info
-*nm_i,
- 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
- 		f2fs_bug_on(blk_addr == NEW_ADDR);
- 		if (blk_addr == NULL_ADDR) {
--			if (add_free_nid(nm_i, start_nid, true) < 0)
-+			if (add_free_nid(sbi, start_nid, true) < 0)
- 				break;
- 		}
- 	}
-@@ -1412,7 +1420,7 @@ static void build_free_nids(struct f2fs_sb_info
-*sbi)
- 	while (1) {
- 		struct page *page = get_current_nat_page(sbi, nid);
- 
--		scan_nat_page(nm_i, page, nid);
-+		scan_nat_page(sbi, page, nid);
- 		f2fs_put_page(page, 1);
- 
- 		nid += (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
-@@ -1432,7 +1440,7 @@ static void build_free_nids(struct f2fs_sb_info
-*sbi)
- 		block_t addr = le32_to_cpu(nat_in_journal(sum, i).block_addr);
- 		nid = le32_to_cpu(nid_in_journal(sum, i));
- 		if (addr == NULL_ADDR)
--			add_free_nid(nm_i, nid, true);
-+			add_free_nid(sbi, nid, true);
- 		else
- 			remove_free_nid(nm_i, nid);
- 	}
-@@ -1509,7 +1517,7 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi,
-nid_t nid)
- 	spin_lock(&nm_i->free_nid_list_lock);
- 	i = __lookup_free_nid_list(nm_i, nid);
- 	f2fs_bug_on(!i || i->state != NID_ALLOC);
--	if (!available_free_memory(nm_i, FREE_NIDS)) {
-+	if (!available_free_memory(sbi, FREE_NIDS)) {
- 		__del_from_free_nid_list(nm_i, i);
- 		need_free = true;
- 	} else {
-@@ -1840,7 +1848,7 @@ flush_now:
- 		}
- 
- 		if (nat_get_blkaddr(ne) == NULL_ADDR &&
--				add_free_nid(NM_I(sbi), nid, false) <= 0) {
-+				add_free_nid(sbi, nid, false) <= 0) {
- 			write_lock(&nm_i->nat_tree_lock);
- 			__del_from_nat_cache(nm_i, ne);
- 			write_unlock(&nm_i->nat_tree_lock);
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 5decc1a..b517077 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -75,9 +75,10 @@ static inline void node_info_from_raw_nat(struct
-node_info *ni,
- 	ni->version = raw_ne->version;
- }
- 
--enum nid_type {
-+enum mem_type {
- 	FREE_NIDS,	/* indicates the free nid list */
--	NAT_ENTRIES	/* indicates the cached nat entry */
-+	NAT_ENTRIES,	/* indicates the cached nat entry */
-+	DIRTY_DENTS	/* indicates dirty dentry pages */
- };
- 
- /*
--- 
-1.8.4.474.g128a96c
-
-
--- 
-Jaegeuk Kim
-Samsung
-
+SGksCgpXaXRoIHRoaXMgcGF0Y2ggbW91bnRpbmcgb2YgdGhlIGltYWdlIGNvbnRpbnVlcyB0byBm
+YWlsICh3aXRoIHNpbWlsYXIgCkJVR19PTikuCkJ1dCB3aGVuIGltYWdlIGlzIGZvcm1hdHRlZCBh
+Z2FpbiAoYW5kIHN0ZXBzIG1lbnRpb25lZCBpbiB0aGUgcHJldmlvdXMgCm1lc3NhZ2UgYXJlIHBl
+cmZvcm1lZCksCm1vdW50aW5nIG9mIGl0IGlzIG5vdyBzdWNjZWVkLgoKSXMgdGhpcyBpcyBhIHRy
+dWUgcHVycG9zZSBvZiB0aGUgcGF0Y2g/CgoxNS4wNC4yMDE0IDE1OjA0LCBKYWVnZXVrIEtpbSDQ
+v9C40YjQtdGCOgo+IEhpLAo+Cj4gVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0Lgo+IEkgcmV0cmll
+dmVkIHRoZSBmYXVsdCBpbWFnZSBhbmQgZm91bmQgb3V0IHRoYXQgcHJldmlvdXMgZ2FyYmFnZSBk
+YXRhCj4gd3JlYWsgc3VjaCB0aGUgd3JvbmcgYmVoYXZpb3JzLgo+IFNvLCBJIHdyb3RlIHRoZSBm
+b2xsb3dpbmcgcGF0Y2ggdGhhdCBmaWxscyBvbmUgemVyby1ibG9jayBhdCB0aGUKPiBjaGVja3Bv
+aW50IHByb2NlZHVyZS4KPiBJZiB0aGUgdW5kZXJseWluZyBkZXZpY2Ugc3VwcG9ydHMgZGlzY2Fy
+ZCwgSSBleHBlY3QgdGhhdCBpdCBtb3N0bHkKPiBkb2Vzbid0IGluY3VyIGFueSBwZXJmb3JtYW5j
+ZSByZWdyZXNzaW9uIHNpZ25pZmljYW50bHkuCj4KPiBDb3VsZCB5b3UgdGVzdCB0aGlzIHBhdGNo
+Pwo+Cj4gPkZyb20gNjA1ODhjZWI3Mjc3YWFlMmE3OWU3ZjY3ZjUyMTdkMTI1NjcyMGQ3OCBNb24g
+U2VwIDE3IDAwOjAwOjAwIDIwMDEKPiBGcm9tOiBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1Ac2Ft
+c3VuZy5jb20+Cj4gRGF0ZTogVHVlLCAxNSBBcHIgMjAxNCAxMzo1Nzo1NSArMDkwMAo+IFN1Ympl
+Y3Q6IFtQQVRDSF0gZjJmczogYXZvaWQgdG8gY29uZHVjdCByb2xsLWZvcndhcmQgZHVlIHRvIHRo
+ZSByZW1haW5lZAo+ICAgZ2FyYmFnZSBibG9ja3MKPgo+IFRoZSBmMmZzIGFsd2F5cyBzY2FucyB0
+aGUgbmV4dCBjaGFpbiBvZiBkaXJlY3Qgbm9kZSBibG9ja3MuCj4gQnV0IHNvbWUgZ2FyYmFnZSBi
+bG9ja3MgYXJlIGFibGUgdG8gYmUgcmVtYWluZWQgZHVlIHRvIG5vIGRpc2NhcmQKPiBzdXBwb3J0
+IG9yCj4gU1NSIHRyaWdnZXJzLgo+IFRoaXMgb2NjYXNpb25hbGx5IHdyZWFrcyByZWNvdmVyaW5n
+IHdyb25nIGlub2RlcyB0aGF0IHdlcmUgdXNlZCBvcgo+IEJVR19PTnMKPiBkdWUgdG8gcmVhbGxv
+Y2F0aW5nIG5vZGUgaWRzIGFzIGZvbGxvd3MuCj4KPiBXaGVuIG1vdW50IHRoaXMgZjJmcyBpbWFn
+ZToKPiBodHRwOi8vbGludXh0ZXN0aW5nLm9yZy9kb3dubG9hZHMvZjJmc19mYXVsdF9pbWFnZS56
+aXAKPiBCVUdfT04gaXMgdHJpZ2dlcmVkIGluIGYyZnMgZHJpdmVyIChtZXNzYWdlcyBiZWxvdyBh
+cmUgZ2VuZXJhdGVkIG9uCj4ga2VybmVsIDMuMTMuMjsgZm9yIG90aGVyIGtlcm5lbHMgb3V0cHV0
+IGlzIHNpbWlsYXIpOgo+Cj4ga2VybmVsIEJVRyBhdCBmcy9mMmZzL25vZGUuYzoyMTUhCj4gICBD
+YWxsIFRyYWNlOgo+ICAgWzxmZmZmZmZmZmEwMzJlYmFkPl0gcmVjb3Zlcl9pbm9kZV9wYWdlKzB4
+MWZkLzB4M2UwIFtmMmZzXQo+ICAgWzxmZmZmZmZmZjgxMTQ0NmU3Pl0gPyBfX2xvY2tfcGFnZSsw
+eDY3LzB4NzAKPiAgIFs8ZmZmZmZmZmY4MTA4OTk5MD5dID8gYXV0b3JlbW92ZV93YWtlX2Z1bmN0
+aW9uKzB4NTAvMHg1MAo+ICAgWzxmZmZmZmZmZmEwMzM3Nzg4Pl0gcmVjb3Zlcl9mc3luY19kYXRh
+KzB4MTM5OC8weDE1ZDAgW2YyZnNdCj4gICBbPGZmZmZmZmZmODEyYjllNWM+XSA/IHNlbGludXhf
+ZF9pbnN0YW50aWF0ZSsweDFjLzB4MjAKPiAgIFs8ZmZmZmZmZmY4MTFjYjIwYj5dID8gZF9pbnN0
+YW50aWF0ZSsweDViLzB4ODAKPiAgIFs8ZmZmZmZmZmZhMDMyMTA0ND5dIGYyZnNfZmlsbF9zdXBl
+cisweGIwNC8weGJmMCBbZjJmc10KPiAgIFs8ZmZmZmZmZmY4MTFiODYxZT5dID8gbW91bnRfYmRl
+disweDdlLzB4MjEwCj4gICBbPGZmZmZmZmZmODExYjg3Njk+XSBtb3VudF9iZGV2KzB4MWM5LzB4
+MjEwCj4gICBbPGZmZmZmZmZmYTAzMjA1NDA+XSA/IHZhbGlkYXRlX3N1cGVyYmxvY2srMHgyMTAv
+MHgyMTAgW2YyZnNdCj4gICBbPGZmZmZmZmZmYTAzMWNmOGQ+XSBmMmZzX21vdW50KzB4MWQvMHgz
+MCBbZjJmc10KPiAgIFs8ZmZmZmZmZmY4MTFiOTQ5Nz5dIG1vdW50X2ZzKzB4NDcvMHgxYzAKPiAg
+IFs8ZmZmZmZmZmY4MTE2NmUwMD5dID8gX19hbGxvY19wZXJjcHUrMHgxMC8weDIwCj4gICBbPGZm
+ZmZmZmZmODExZDQwMzI+XSB2ZnNfa2Vybl9tb3VudCsweDcyLzB4MTEwCj4gICBbPGZmZmZmZmZm
+ODExZDY3NjM+XSBkb19tb3VudCsweDQ5My8weDkxMAo+ICAgWzxmZmZmZmZmZjgxMTYxNWNiPl0g
+PyBzdHJuZHVwX3VzZXIrMHg1Yi8weDgwCj4gICBbPGZmZmZmZmZmODExZDZjNzA+XSBTeVNfbW91
+bnQrMHg5MC8weGUwCj4gICBbPGZmZmZmZmZmODE2NmY4ZDk+XSBzeXN0ZW1fY2FsbF9mYXN0cGF0
+aCsweDE2LzB4MWIKPgo+IEZvdW5kIGJ5IExpbnV4IEZpbGUgU3lzdGVtIFZlcmlmaWNhdGlvbiBw
+cm9qZWN0IChsaW51eHRlc3Rpbmcub3JnKS4KPgo+IFJlcG9ydGVkLWJ5OiBBbmRyZXkgVHN5dmFy
+ZXYgPHRzeXZhcmV2QGlzcHJhcy5ydT4KPiBTaWduZWQtb2ZmLWJ5OiBKYWVnZXVrIEtpbSA8amFl
+Z2V1ay5raW1Ac2Ftc3VuZy5jb20+Cj4gLS0tCj4gICBmcy9mMmZzL2NoZWNrcG9pbnQuYyB8ICA2
+ICsrKysrKwo+ICAgZnMvZjJmcy9mMmZzLmggICAgICAgfCAgMSArCj4gICBmcy9mMmZzL3NlZ21l
+bnQuYyAgICB8IDE3ICsrKysrKysrKysrKysrKy0tCj4gICAzIGZpbGVzIGNoYW5nZWQsIDIyIGlu
+c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9jaGVj
+a3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+IGluZGV4IDRhYTUyMWEuLjg5MGUyM2Qg
+MTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9jaGVja3BvaW50LmMKPiArKysgYi9mcy9mMmZzL2NoZWNr
+cG9pbnQuYwo+IEBAIC03NjIsNiArNzYyLDEyIEBAIHN0YXRpYyB2b2lkIGRvX2NoZWNrcG9pbnQo
+c3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+IGJvb2wgaXNfdW1vdW50KQo+ICAgCXZvaWQgKmth
+ZGRyOwo+ICAgCWludCBpOwo+ICAgCj4gKwkvKgo+ICsJICogVGhpcyBhdm9pZHMgdG8gY29uZHVj
+dCB3cm9uZyByb2xsLWZvcndhcmQgb3BlcmF0aW9ucyBhbmQgdXNlcwo+ICsJICogbWV0YXBhZ2Vz
+LCBzbyBzaG91bGQgYmUgY2FsbGVkIHByaW9yIHRvIHN5bmNfbWV0YV9wYWdlcyBiZWxvdy4KPiAr
+CSAqLwo+ICsJZGlzY2FyZF9uZXh0X2Rub2RlKHNiaSk7Cj4gKwo+ICAgCS8qIEZsdXNoIGFsbCB0
+aGUgTkFUL1NJVCBwYWdlcyAqLwo+ICAgCXdoaWxlIChnZXRfcGFnZXMoc2JpLCBGMkZTX0RJUlRZ
+X01FVEEpKQo+ICAgCQlzeW5jX21ldGFfcGFnZXMoc2JpLCBNRVRBLCBMT05HX01BWCk7Cj4gZGlm
+ZiAtLWdpdCBhL2ZzL2YyZnMvZjJmcy5oIGIvZnMvZjJmcy9mMmZzLmgKPiBpbmRleCAyZWNhYzgz
+Li4yYzVhNWRhIDEwMDY0NAo+IC0tLSBhL2ZzL2YyZnMvZjJmcy5oCj4gKysrIGIvZnMvZjJmcy9m
+MmZzLmgKPiBAQCAtMTE3OSw2ICsxMTc5LDcgQEAgaW50IGYyZnNfaXNzdWVfZmx1c2goc3RydWN0
+IGYyZnNfc2JfaW5mbyAqKTsKPiAgIHZvaWQgaW52YWxpZGF0ZV9ibG9ja3Moc3RydWN0IGYyZnNf
+c2JfaW5mbyAqLCBibG9ja190KTsKPiAgIHZvaWQgcmVmcmVzaF9zaXRfZW50cnkoc3RydWN0IGYy
+ZnNfc2JfaW5mbyAqLCBibG9ja190LCBibG9ja190KTsKPiAgIHZvaWQgY2xlYXJfcHJlZnJlZV9z
+ZWdtZW50cyhzdHJ1Y3QgZjJmc19zYl9pbmZvICopOwo+ICt2b2lkIGRpc2NhcmRfbmV4dF9kbm9k
+ZShzdHJ1Y3QgZjJmc19zYl9pbmZvICopOwo+ICAgaW50IG5wYWdlc19mb3Jfc3VtbWFyeV9mbHVz
+aChzdHJ1Y3QgZjJmc19zYl9pbmZvICopOwo+ICAgdm9pZCBhbGxvY2F0ZV9uZXdfc2VnbWVudHMo
+c3RydWN0IGYyZnNfc2JfaW5mbyAqKTsKPiAgIHN0cnVjdCBwYWdlICpnZXRfc3VtX3BhZ2Uoc3Ry
+dWN0IGYyZnNfc2JfaW5mbyAqLCB1bnNpZ25lZCBpbnQpOwo+IGRpZmYgLS1naXQgYS9mcy9mMmZz
+L3NlZ21lbnQuYyBiL2ZzL2YyZnMvc2VnbWVudC5jCj4gaW5kZXggMWUyNjRlNy4uOTk5M2Y5NCAx
+MDA2NDQKPiAtLS0gYS9mcy9mMmZzL3NlZ21lbnQuYwo+ICsrKyBiL2ZzL2YyZnMvc2VnbWVudC5j
+Cj4gQEAgLTMzNSwxMyArMzM1LDI2IEBAIHN0YXRpYyB2b2lkIGxvY2F0ZV9kaXJ0eV9zZWdtZW50
+KHN0cnVjdAo+IGYyZnNfc2JfaW5mbyAqc2JpLCB1bnNpZ25lZCBpbnQgc2Vnbm8pCj4gICAJbXV0
+ZXhfdW5sb2NrKCZkaXJ0eV9pLT5zZWdsaXN0X2xvY2spOwo+ICAgfQo+ICAgCj4gLXN0YXRpYyB2
+b2lkIGYyZnNfaXNzdWVfZGlzY2FyZChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4gK3N0YXRp
+YyBpbnQgZjJmc19pc3N1ZV9kaXNjYXJkKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiAgIAkJ
+CQlibG9ja190IGJsa3N0YXJ0LCBibG9ja190IGJsa2xlbikKPiAgIHsKPiAgIAlzZWN0b3JfdCBz
+dGFydCA9IFNFQ1RPUl9GUk9NX0JMT0NLKHNiaSwgYmxrc3RhcnQpOwo+ICAgCXNlY3Rvcl90IGxl
+biA9IFNFQ1RPUl9GUk9NX0JMT0NLKHNiaSwgYmxrbGVuKTsKPiAtCWJsa2Rldl9pc3N1ZV9kaXNj
+YXJkKHNiaS0+c2ItPnNfYmRldiwgc3RhcnQsIGxlbiwgR0ZQX05PRlMsIDApOwo+ICAgCXRyYWNl
+X2YyZnNfaXNzdWVfZGlzY2FyZChzYmktPnNiLCBibGtzdGFydCwgYmxrbGVuKTsKPiArCXJldHVy
+biBibGtkZXZfaXNzdWVfZGlzY2FyZChzYmktPnNiLT5zX2JkZXYsIHN0YXJ0LCBsZW4sIEdGUF9O
+T0ZTLCAwKTsKPiArfQo+ICsKPiArdm9pZCBkaXNjYXJkX25leHRfZG5vZGUoc3RydWN0IGYyZnNf
+c2JfaW5mbyAqc2JpKQo+ICt7Cj4gKwlzdHJ1Y3QgY3Vyc2VnX2luZm8gKmN1cnNlZyA9IENVUlNF
+R19JKHNiaSwgQ1VSU0VHX1dBUk1fTk9ERSk7Cj4gKwlibG9ja190IGJsa2FkZHIgPSBORVhUX0ZS
+RUVfQkxLQUREUihzYmksIGN1cnNlZyk7Cj4gKwo+ICsJaWYgKGYyZnNfaXNzdWVfZGlzY2FyZChz
+YmksIGJsa2FkZHIsIDEpKSB7Cj4gKwkJc3RydWN0IHBhZ2UgKnBhZ2UgPSBncmFiX21ldGFfcGFn
+ZShzYmksIGJsa2FkZHIpOwo+ICsJCS8qIHplcm8tZmlsbGVkIHBhZ2UgKi8KPiArCQlzZXRfcGFn
+ZV9kaXJ0eShwYWdlKTsKPiArCQlmMmZzX3B1dF9wYWdlKHBhZ2UsIDEpOwo+ICsJfQo+ICAgfQo+
+ICAgCj4gICBzdGF0aWMgdm9pZCBhZGRfZGlzY2FyZF9hZGRycyhzdHJ1Y3QgZjJmc19zYl9pbmZv
+ICpzYmksCgotLSAKQW5kcmV5IFRzeXZhcmV2ICA8dHN5dmFyZXZAaXNwcmFzLnJ1PgoKCi0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQpMZWFybiBHcmFwaCBEYXRhYmFzZXMgLSBEb3dubG9hZCBGUkVFIE8n
+UmVpbGx5IEJvb2sKIkdyYXBoIERhdGFiYXNlcyIgaXMgdGhlIGRlZmluaXRpdmUgbmV3IGd1aWRl
+IHRvIGdyYXBoIGRhdGFiYXNlcyBhbmQgdGhlaXIKYXBwbGljYXRpb25zLiBXcml0dGVuIGJ5IHRo
+cmVlIGFjY2xhaW1lZCBsZWFkZXJzIGluIHRoZSBmaWVsZCwKdGhpcyBmaXJzdCBlZGl0aW9uIGlz
+IG5vdyBhdmFpbGFibGUuIERvd25sb2FkIHlvdXIgZnJlZSBib29rIHRvZGF5IQpodHRwOi8vcC5z
+Zi5uZXQvc2Z1L05lb1RlY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBs
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMv
+bGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
