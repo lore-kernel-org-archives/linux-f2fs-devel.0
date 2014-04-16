@@ -1,142 +1,224 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH 2/3 v2] f2fs: fix to decrease the number of
- dirty dentry page
-Date: Wed, 16 Apr 2014 14:10:52 +0900
-Message-ID: <1397625052.7727.8.camel@kjgkr>
+Subject: Re: [PATCH 3/3] f2fs: flush dirty directory pages when scattered pages
+ are gathered
+Date: Wed, 16 Apr 2014 14:13:11 +0900
+Message-ID: <1397625191.7727.11.camel@kjgkr>
 References: <1397559423-27411-1-git-send-email-jaegeuk.kim@samsung.com>
-	<1397559423-27411-2-git-send-email-jaegeuk.kim@samsung.com>
+ <1397559423-27411-3-git-send-email-jaegeuk.kim@samsung.com>
 Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WaI9f-0008Ol-B3
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Apr 2014 05:13:03 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WaI9d-0003mo-CZ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Apr 2014 05:13:03 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N4300LFOYHHV4A0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Apr 2014 14:12:53 +0900 (KST)
-In-reply-to: <1397559423-27411-2-git-send-email-jaegeuk.kim@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1397559423-27411-3-git-send-email-jaegeuk.kim@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Change log from v1:
- o change the patch, which includes this bug fix
+Hi all,
 
->From 0f3b8427b40b9ace829ba0b16336d5cd67589022 Mon Sep 17 00:00:00 2001
+Please ignore this, since it turns out that is doesn't solve the
+problem.
+Instead, please consider the following patch.
+
+>From ac9ad0b1de42dc311323b9c3b8f431f4b097b43b Mon Sep 17 00:00:00 2001
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Tue, 15 Apr 2014 16:04:15 +0900
-Subject: [PATCH] f2fs: call redirty_page_for_writepage
+Date: Wed, 16 Apr 2014 10:47:06 +0900
+Subject: [PATCH] f2fs: adjust free mem size to flush dentry blocks
 
-This patch replace some general codes with redirty_page_for_writepage,
-which
-can be enabled after consideration on additional procedure like counting
-dirty
-pages appropriately.
+If so many dirty dentry blocks are cached, not reached to the flush
+condition,
+we should fall into livelock in balance_dirty_pages.
+So, let's consider the mem size for the condition.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/checkpoint.c |  5 +----
- fs/f2fs/data.c       | 10 +++-------
- fs/f2fs/node.c       |  5 +----
- 3 files changed, 5 insertions(+), 15 deletions(-)
+ fs/f2fs/data.c |  3 ++-
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/node.c | 44 ++++++++++++++++++++++++++------------------
+ fs/f2fs/node.h |  5 +++--
+ 4 files changed, 32 insertions(+), 21 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 890e23d..2902f7d 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -174,10 +174,7 @@ no_write:
- 	return 0;
- 
- redirty_out:
--	dec_page_count(sbi, F2FS_DIRTY_META);
--	wbc->pages_skipped++;
--	account_page_redirty(page);
--	set_page_dirty(page);
-+	redirty_page_for_writepage(wbc, page);
- 	return AOP_WRITEPAGE_ACTIVATE;
- }
- 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 45abd60..b5cd6d1 100644
+index b5cd6d1..6b89b25 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -798,10 +798,8 @@ static int f2fs_write_data_page(struct page *page,
- 	 * this page does not have to be written to disk.
- 	 */
- 	offset = i_size & (PAGE_CACHE_SIZE - 1);
--	if ((page->index >= end_index + 1) || !offset) {
--		inode_dec_dirty_dents(inode);
-+	if ((page->index >= end_index + 1) || !offset)
- 		goto out;
--	}
+@@ -863,7 +863,8 @@ static int f2fs_write_data_pages(struct
+address_space *mapping,
+ 		return 0;
  
- 	zero_user_segment(page, offset, PAGE_CACHE_SIZE);
- write:
-@@ -810,7 +808,6 @@ write:
+ 	if (S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_NONE &&
+-			get_dirty_dents(inode) < nr_pages_to_skip(sbi, DATA))
++			get_dirty_dents(inode) < nr_pages_to_skip(sbi, DATA) &&
++			available_free_memory(sbi, DIRTY_DENTS))
+ 		goto skip_write;
  
- 	/* Dentry blocks are controlled by checkpoint */
- 	if (S_ISDIR(inode->i_mode)) {
--		inode_dec_dirty_dents(inode);
- 		err = do_write_data_page(page, &fio);
- 		goto done;
- 	}
-@@ -832,15 +829,14 @@ done:
+ 	diff = nr_pages_to_write(sbi, DATA, wbc);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 2c5a5da..afca412 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1140,6 +1140,7 @@ f2fs_hash_t f2fs_dentry_hash(const char *,
+size_t);
+ struct dnode_of_data;
+ struct node_info;
  
- 	clear_cold_data(page);
- out:
-+	inode_dec_dirty_dents(inode);
- 	unlock_page(page);
- 	if (need_balance_fs)
- 		f2fs_balance_fs(sbi);
- 	return 0;
- 
- redirty_out:
--	wbc->pages_skipped++;
--	account_page_redirty(page);
--	set_page_dirty(page);
-+	redirty_page_for_writepage(wbc, page);
- 	return AOP_WRITEPAGE_ACTIVATE;
- }
- 
++bool available_free_memory(struct f2fs_sb_info *, int);
+ int is_checkpointed_node(struct f2fs_sb_info *, nid_t);
+ bool fsync_mark_done(struct f2fs_sb_info *, nid_t);
+ void get_node_info(struct f2fs_sb_info *, nid_t, struct node_info *);
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index a161e95..f760793 100644
+index f760793..d08671b 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1227,10 +1227,7 @@ static int f2fs_write_node_page(struct page
-*page,
- 	return 0;
+@@ -26,20 +26,26 @@
+ static struct kmem_cache *nat_entry_slab;
+ static struct kmem_cache *free_nid_slab;
  
- redirty_out:
--	dec_page_count(sbi, F2FS_DIRTY_NODES);
--	wbc->pages_skipped++;
--	account_page_redirty(page);
--	set_page_dirty(page);
-+	redirty_page_for_writepage(wbc, page);
- 	return AOP_WRITEPAGE_ACTIVATE;
+-static inline bool available_free_memory(struct f2fs_nm_info *nm_i, int
+type)
++bool available_free_memory(struct f2fs_sb_info *sbi, int type)
+ {
++	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct sysinfo val;
+ 	unsigned long mem_size = 0;
++	bool res = false;
+ 
+ 	si_meminfo(&val);
+-	if (type == FREE_NIDS)
+-		mem_size = nm_i->fcnt * sizeof(struct free_nid);
+-	else if (type == NAT_ENTRIES)
+-		mem_size += nm_i->nat_cnt * sizeof(struct nat_entry);
+-	mem_size >>= 12;
+-
+-	/* give 50:50 memory for free nids and nat caches respectively */
+-	return (mem_size < ((val.totalram * nm_i->ram_thresh) >> 11));
++	/* give 25%, 25%, 50% memory for each components respectively */
++	if (type == FREE_NIDS) {
++		mem_size = (nm_i->fcnt * sizeof(struct free_nid)) >> 12;
++		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 2);
++	} else if (type == NAT_ENTRIES) {
++		mem_size = (nm_i->nat_cnt * sizeof(struct nat_entry)) >> 12;
++		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 2);
++	} else if (type == DIRTY_DENTS) {
++		mem_size = get_pages(sbi, F2FS_DIRTY_DENTS);
++		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 1);
++	}
++	return res;
  }
  
+ static void clear_node_page_dirty(struct page *page)
+@@ -243,7 +249,7 @@ int try_to_free_nats(struct f2fs_sb_info *sbi, int
+nr_shrink)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 
+-	if (available_free_memory(nm_i, NAT_ENTRIES))
++	if (available_free_memory(sbi, NAT_ENTRIES))
+ 		return 0;
+ 
+ 	write_lock(&nm_i->nat_tree_lock);
+@@ -1312,13 +1318,14 @@ static void __del_from_free_nid_list(struct
+f2fs_nm_info *nm_i,
+ 	radix_tree_delete(&nm_i->free_nid_root, i->nid);
+ }
+ 
+-static int add_free_nid(struct f2fs_nm_info *nm_i, nid_t nid, bool
+build)
++static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool
+build)
+ {
++	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct free_nid *i;
+ 	struct nat_entry *ne;
+ 	bool allocated = false;
+ 
+-	if (!available_free_memory(nm_i, FREE_NIDS))
++	if (!available_free_memory(sbi, FREE_NIDS))
+ 		return -1;
+ 
+ 	/* 0 nid should not be used */
+@@ -1371,9 +1378,10 @@ static void remove_free_nid(struct f2fs_nm_info
+*nm_i, nid_t nid)
+ 		kmem_cache_free(free_nid_slab, i);
+ }
+ 
+-static void scan_nat_page(struct f2fs_nm_info *nm_i,
++static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 			struct page *nat_page, nid_t start_nid)
+ {
++	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct f2fs_nat_block *nat_blk = page_address(nat_page);
+ 	block_t blk_addr;
+ 	int i;
+@@ -1388,7 +1396,7 @@ static void scan_nat_page(struct f2fs_nm_info
+*nm_i,
+ 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
+ 		f2fs_bug_on(blk_addr == NEW_ADDR);
+ 		if (blk_addr == NULL_ADDR) {
+-			if (add_free_nid(nm_i, start_nid, true) < 0)
++			if (add_free_nid(sbi, start_nid, true) < 0)
+ 				break;
+ 		}
+ 	}
+@@ -1412,7 +1420,7 @@ static void build_free_nids(struct f2fs_sb_info
+*sbi)
+ 	while (1) {
+ 		struct page *page = get_current_nat_page(sbi, nid);
+ 
+-		scan_nat_page(nm_i, page, nid);
++		scan_nat_page(sbi, page, nid);
+ 		f2fs_put_page(page, 1);
+ 
+ 		nid += (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
+@@ -1432,7 +1440,7 @@ static void build_free_nids(struct f2fs_sb_info
+*sbi)
+ 		block_t addr = le32_to_cpu(nat_in_journal(sum, i).block_addr);
+ 		nid = le32_to_cpu(nid_in_journal(sum, i));
+ 		if (addr == NULL_ADDR)
+-			add_free_nid(nm_i, nid, true);
++			add_free_nid(sbi, nid, true);
+ 		else
+ 			remove_free_nid(nm_i, nid);
+ 	}
+@@ -1509,7 +1517,7 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi,
+nid_t nid)
+ 	spin_lock(&nm_i->free_nid_list_lock);
+ 	i = __lookup_free_nid_list(nm_i, nid);
+ 	f2fs_bug_on(!i || i->state != NID_ALLOC);
+-	if (!available_free_memory(nm_i, FREE_NIDS)) {
++	if (!available_free_memory(sbi, FREE_NIDS)) {
+ 		__del_from_free_nid_list(nm_i, i);
+ 		need_free = true;
+ 	} else {
+@@ -1840,7 +1848,7 @@ flush_now:
+ 		}
+ 
+ 		if (nat_get_blkaddr(ne) == NULL_ADDR &&
+-				add_free_nid(NM_I(sbi), nid, false) <= 0) {
++				add_free_nid(sbi, nid, false) <= 0) {
+ 			write_lock(&nm_i->nat_tree_lock);
+ 			__del_from_nat_cache(nm_i, ne);
+ 			write_unlock(&nm_i->nat_tree_lock);
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 5decc1a..b517077 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -75,9 +75,10 @@ static inline void node_info_from_raw_nat(struct
+node_info *ni,
+ 	ni->version = raw_ne->version;
+ }
+ 
+-enum nid_type {
++enum mem_type {
+ 	FREE_NIDS,	/* indicates the free nid list */
+-	NAT_ENTRIES	/* indicates the cached nat entry */
++	NAT_ENTRIES,	/* indicates the cached nat entry */
++	DIRTY_DENTS	/* indicates dirty dentry pages */
+ };
+ 
+ /*
 -- 
 1.8.4.474.g128a96c
 
@@ -145,10 +227,3 @@ index a161e95..f760793 100644
 Jaegeuk Kim
 Samsung
 
-
-------------------------------------------------------------------------------
-Learn Graph Databases - Download FREE O'Reilly Book
-"Graph Databases" is the definitive new guide to graph databases and their
-applications. Written by three acclaimed leaders in the field,
-this first edition is now available. Download your free book today!
-http://p.sf.net/sfu/NeoTech
