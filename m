@@ -1,30 +1,34 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH] f2fs: fix to unlock f2fs_lock at the omitted
-	error case
-Date: Thu, 17 Apr 2014 08:27:46 +0900
-Message-ID: <1397690866-25379-1-git-send-email-jaegeuk.kim@samsung.com>
+Subject: Re: f2fs: BUG_ON() is triggered when mount valid f2fs
+	filesystem
+Date: Thu, 17 Apr 2014 08:35:37 +0900
+Message-ID: <1397691337.7727.18.camel@kjgkr>
+References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru>
+	<1397559864.7727.5.camel@kjgkr> <534E494C.7050909@ispras.ru>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WaZHE-0007bn-3I
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WaZOn-0006fc-MC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Apr 2014 23:30:00 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WaZHB-0003tD-S1
+	Wed, 16 Apr 2014 23:37:49 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WaZOl-0000Uz-DF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Apr 2014 23:30:00 +0000
-Received: from epcpsbgr5.samsung.com
-	(u145.gpu120.samsung.co.kr [203.254.230.145])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
+	Wed, 16 Apr 2014 23:37:49 +0000
+Received: from epcpsbgr2.samsung.com
+	(u142.gpu120.samsung.co.kr [203.254.230.142])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N4500AAQD9PD580@mailout2.samsung.com> for
+	with ESMTP id <0N4500N6ZDMQ3C20@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Apr 2014 08:29:49 +0900 (KST)
+	Thu, 17 Apr 2014 08:37:38 +0900 (KST)
+In-reply-to: <534E494C.7050909@ispras.ru>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,60 +38,120 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-f2fs-devel@lists.sourceforge.net
 
-If it occurs an error, we should call f2fs_unlock_op.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/inline.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 383db1f..3258c7c 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -81,8 +81,10 @@ static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
- 
- 	f2fs_lock_op(sbi);
- 	ipage = get_node_page(sbi, inode->i_ino);
--	if (IS_ERR(ipage))
--		return PTR_ERR(ipage);
-+	if (IS_ERR(ipage)) {
-+		err = PTR_ERR(ipage);
-+		goto out;
-+	}
- 
- 	/*
- 	 * i_addr[0] is not used for inline data,
-@@ -90,10 +92,8 @@ static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
- 	 */
- 	set_new_dnode(&dn, inode, ipage, NULL, 0);
- 	err = f2fs_reserve_block(&dn, 0);
--	if (err) {
--		f2fs_unlock_op(sbi);
--		return err;
--	}
-+	if (err)
-+		goto out;
- 
- 	zero_user_segment(page, MAX_INLINE_DATA, PAGE_CACHE_SIZE);
- 
-@@ -118,6 +118,7 @@ static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
- 
- 	sync_inode_page(&dn);
- 	f2fs_put_dnode(&dn);
-+out:
- 	f2fs_unlock_op(sbi);
- 	return err;
- }
--- 
-1.8.4.474.g128a96c
-
-
-------------------------------------------------------------------------------
-Learn Graph Databases - Download FREE O'Reilly Book
-"Graph Databases" is the definitive new guide to graph databases and their
-applications. Written by three acclaimed leaders in the field,
-this first edition is now available. Download your free book today!
-http://p.sf.net/sfu/NeoTech
+SGksCgoyMDE0LTA0LTE2ICjsiJgpLCAxMzoxMSArMDQwMCwgQW5kcmV5IFRzeXZhcmV2Ogo+IEhp
+LAo+IAo+IFdpdGggdGhpcyBwYXRjaCBtb3VudGluZyBvZiB0aGUgaW1hZ2UgY29udGludWVzIHRv
+IGZhaWwgKHdpdGggc2ltaWxhciAKPiBCVUdfT04pLgo+IEJ1dCB3aGVuIGltYWdlIGlzIGZvcm1h
+dHRlZCBhZ2FpbiAoYW5kIHN0ZXBzIG1lbnRpb25lZCBpbiB0aGUgcHJldmlvdXMgCj4gbWVzc2Fn
+ZSBhcmUgcGVyZm9ybWVkKSwKPiBtb3VudGluZyBvZiBpdCBpcyBub3cgc3VjY2VlZC4KPiAKPiBJ
+cyB0aGlzIGlzIGEgdHJ1ZSBwdXJwb3NlIG9mIHRoZSBwYXRjaD8KCkluZGVlZC4gVGhlIHBhdGNo
+IHNvbHZlcyB0aGVyZS1pbiByb290IGNhdXNlLgpCdXQsIGlmIHlvdSdyZSB0cnlpbmcgdG8gdXNl
+IHRoZSBmYWlsZWQgaW1hZ2UgYWdhaW4sIHNpbXBseSB5b3UgY2FuIHNraXAKdGhlIGVycm9ybmVv
+dXMgcGFydCBieToKCiMgbW91bnQgLi4uIC1vIGRpc2FibGVfcm9sbF9mb3J3YXJkIC4uLgoKT25j
+ZSBzeW5jIG9yIHVtb3VudCB3aGF0ZXZlciBjaGVja3BvaW50IGlzIGRvbmUgYWZ0ZXIgdGhhdCwg
+dGhlIGltYWdlCndpbGwgYmUgbW91bnRlZCB3aXRob3V0ICJkaXNhYmxlX3JvbGxfZm9yd2FyZCIu
+CgpUaGFua3MsCgo+IAo+IDE1LjA0LjIwMTQgMTU6MDQsIEphZWdldWsgS2ltINC/0LjRiNC10YI6
+Cj4gPiBIaSwKPiA+Cj4gPiBUaGFuayB5b3UgZm9yIHRoZSByZXBvcnQuCj4gPiBJIHJldHJpZXZl
+ZCB0aGUgZmF1bHQgaW1hZ2UgYW5kIGZvdW5kIG91dCB0aGF0IHByZXZpb3VzIGdhcmJhZ2UgZGF0
+YQo+ID4gd3JlYWsgc3VjaCB0aGUgd3JvbmcgYmVoYXZpb3JzLgo+ID4gU28sIEkgd3JvdGUgdGhl
+IGZvbGxvd2luZyBwYXRjaCB0aGF0IGZpbGxzIG9uZSB6ZXJvLWJsb2NrIGF0IHRoZQo+ID4gY2hl
+Y2twb2ludCBwcm9jZWR1cmUuCj4gPiBJZiB0aGUgdW5kZXJseWluZyBkZXZpY2Ugc3VwcG9ydHMg
+ZGlzY2FyZCwgSSBleHBlY3QgdGhhdCBpdCBtb3N0bHkKPiA+IGRvZXNuJ3QgaW5jdXIgYW55IHBl
+cmZvcm1hbmNlIHJlZ3Jlc3Npb24gc2lnbmlmaWNhbnRseS4KPiA+Cj4gPiBDb3VsZCB5b3UgdGVz
+dCB0aGlzIHBhdGNoPwo+ID4KPiA+ID5Gcm9tIDYwNTg4Y2ViNzI3N2FhZTJhNzllN2Y2N2Y1MjE3
+ZDEyNTY3MjBkNzggTW9uIFNlcCAxNyAwMDowMDowMCAyMDAxCj4gPiBGcm9tOiBKYWVnZXVrIEtp
+bSA8amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb20+Cj4gPiBEYXRlOiBUdWUsIDE1IEFwciAyMDE0IDEz
+OjU3OjU1ICswOTAwCj4gPiBTdWJqZWN0OiBbUEFUQ0hdIGYyZnM6IGF2b2lkIHRvIGNvbmR1Y3Qg
+cm9sbC1mb3J3YXJkIGR1ZSB0byB0aGUgcmVtYWluZWQKPiA+ICAgZ2FyYmFnZSBibG9ja3MKPiA+
+Cj4gPiBUaGUgZjJmcyBhbHdheXMgc2NhbnMgdGhlIG5leHQgY2hhaW4gb2YgZGlyZWN0IG5vZGUg
+YmxvY2tzLgo+ID4gQnV0IHNvbWUgZ2FyYmFnZSBibG9ja3MgYXJlIGFibGUgdG8gYmUgcmVtYWlu
+ZWQgZHVlIHRvIG5vIGRpc2NhcmQKPiA+IHN1cHBvcnQgb3IKPiA+IFNTUiB0cmlnZ2Vycy4KPiA+
+IFRoaXMgb2NjYXNpb25hbGx5IHdyZWFrcyByZWNvdmVyaW5nIHdyb25nIGlub2RlcyB0aGF0IHdl
+cmUgdXNlZCBvcgo+ID4gQlVHX09Ocwo+ID4gZHVlIHRvIHJlYWxsb2NhdGluZyBub2RlIGlkcyBh
+cyBmb2xsb3dzLgo+ID4KPiA+IFdoZW4gbW91bnQgdGhpcyBmMmZzIGltYWdlOgo+ID4gaHR0cDov
+L2xpbnV4dGVzdGluZy5vcmcvZG93bmxvYWRzL2YyZnNfZmF1bHRfaW1hZ2UuemlwCj4gPiBCVUdf
+T04gaXMgdHJpZ2dlcmVkIGluIGYyZnMgZHJpdmVyIChtZXNzYWdlcyBiZWxvdyBhcmUgZ2VuZXJh
+dGVkIG9uCj4gPiBrZXJuZWwgMy4xMy4yOyBmb3Igb3RoZXIga2VybmVscyBvdXRwdXQgaXMgc2lt
+aWxhcik6Cj4gPgo+ID4ga2VybmVsIEJVRyBhdCBmcy9mMmZzL25vZGUuYzoyMTUhCj4gPiAgIENh
+bGwgVHJhY2U6Cj4gPiAgIFs8ZmZmZmZmZmZhMDMyZWJhZD5dIHJlY292ZXJfaW5vZGVfcGFnZSsw
+eDFmZC8weDNlMCBbZjJmc10KPiA+ICAgWzxmZmZmZmZmZjgxMTQ0NmU3Pl0gPyBfX2xvY2tfcGFn
+ZSsweDY3LzB4NzAKPiA+ICAgWzxmZmZmZmZmZjgxMDg5OTkwPl0gPyBhdXRvcmVtb3ZlX3dha2Vf
+ZnVuY3Rpb24rMHg1MC8weDUwCj4gPiAgIFs8ZmZmZmZmZmZhMDMzNzc4OD5dIHJlY292ZXJfZnN5
+bmNfZGF0YSsweDEzOTgvMHgxNWQwIFtmMmZzXQo+ID4gICBbPGZmZmZmZmZmODEyYjllNWM+XSA/
+IHNlbGludXhfZF9pbnN0YW50aWF0ZSsweDFjLzB4MjAKPiA+ICAgWzxmZmZmZmZmZjgxMWNiMjBi
+Pl0gPyBkX2luc3RhbnRpYXRlKzB4NWIvMHg4MAo+ID4gICBbPGZmZmZmZmZmYTAzMjEwNDQ+XSBm
+MmZzX2ZpbGxfc3VwZXIrMHhiMDQvMHhiZjAgW2YyZnNdCj4gPiAgIFs8ZmZmZmZmZmY4MTFiODYx
+ZT5dID8gbW91bnRfYmRldisweDdlLzB4MjEwCj4gPiAgIFs8ZmZmZmZmZmY4MTFiODc2OT5dIG1v
+dW50X2JkZXYrMHgxYzkvMHgyMTAKPiA+ICAgWzxmZmZmZmZmZmEwMzIwNTQwPl0gPyB2YWxpZGF0
+ZV9zdXBlcmJsb2NrKzB4MjEwLzB4MjEwIFtmMmZzXQo+ID4gICBbPGZmZmZmZmZmYTAzMWNmOGQ+
+XSBmMmZzX21vdW50KzB4MWQvMHgzMCBbZjJmc10KPiA+ICAgWzxmZmZmZmZmZjgxMWI5NDk3Pl0g
+bW91bnRfZnMrMHg0Ny8weDFjMAo+ID4gICBbPGZmZmZmZmZmODExNjZlMDA+XSA/IF9fYWxsb2Nf
+cGVyY3B1KzB4MTAvMHgyMAo+ID4gICBbPGZmZmZmZmZmODExZDQwMzI+XSB2ZnNfa2Vybl9tb3Vu
+dCsweDcyLzB4MTEwCj4gPiAgIFs8ZmZmZmZmZmY4MTFkNjc2Mz5dIGRvX21vdW50KzB4NDkzLzB4
+OTEwCj4gPiAgIFs8ZmZmZmZmZmY4MTE2MTVjYj5dID8gc3RybmR1cF91c2VyKzB4NWIvMHg4MAo+
+ID4gICBbPGZmZmZmZmZmODExZDZjNzA+XSBTeVNfbW91bnQrMHg5MC8weGUwCj4gPiAgIFs8ZmZm
+ZmZmZmY4MTY2ZjhkOT5dIHN5c3RlbV9jYWxsX2Zhc3RwYXRoKzB4MTYvMHgxYgo+ID4KPiA+IEZv
+dW5kIGJ5IExpbnV4IEZpbGUgU3lzdGVtIFZlcmlmaWNhdGlvbiBwcm9qZWN0IChsaW51eHRlc3Rp
+bmcub3JnKS4KPiA+Cj4gPiBSZXBvcnRlZC1ieTogQW5kcmV5IFRzeXZhcmV2IDx0c3l2YXJldkBp
+c3ByYXMucnU+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBKYWVnZXVrIEtpbSA8amFlZ2V1ay5raW1Ac2Ft
+c3VuZy5jb20+Cj4gPiAtLS0KPiA+ICAgZnMvZjJmcy9jaGVja3BvaW50LmMgfCAgNiArKysrKysK
+PiA+ICAgZnMvZjJmcy9mMmZzLmggICAgICAgfCAgMSArCj4gPiAgIGZzL2YyZnMvc2VnbWVudC5j
+ICAgIHwgMTcgKysrKysrKysrKysrKysrLS0KPiA+ICAgMyBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNl
+cnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+ID4KPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2No
+ZWNrcG9pbnQuYyBiL2ZzL2YyZnMvY2hlY2twb2ludC5jCj4gPiBpbmRleCA0YWE1MjFhLi44OTBl
+MjNkIDEwMDY0NAo+ID4gLS0tIGEvZnMvZjJmcy9jaGVja3BvaW50LmMKPiA+ICsrKyBiL2ZzL2Yy
+ZnMvY2hlY2twb2ludC5jCj4gPiBAQCAtNzYyLDYgKzc2MiwxMiBAQCBzdGF0aWMgdm9pZCBkb19j
+aGVja3BvaW50KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPiA+IGJvb2wgaXNfdW1vdW50KQo+
+ID4gICAJdm9pZCAqa2FkZHI7Cj4gPiAgIAlpbnQgaTsKPiA+ICAgCj4gPiArCS8qCj4gPiArCSAq
+IFRoaXMgYXZvaWRzIHRvIGNvbmR1Y3Qgd3Jvbmcgcm9sbC1mb3J3YXJkIG9wZXJhdGlvbnMgYW5k
+IHVzZXMKPiA+ICsJICogbWV0YXBhZ2VzLCBzbyBzaG91bGQgYmUgY2FsbGVkIHByaW9yIHRvIHN5
+bmNfbWV0YV9wYWdlcyBiZWxvdy4KPiA+ICsJICovCj4gPiArCWRpc2NhcmRfbmV4dF9kbm9kZShz
+YmkpOwo+ID4gKwo+ID4gICAJLyogRmx1c2ggYWxsIHRoZSBOQVQvU0lUIHBhZ2VzICovCj4gPiAg
+IAl3aGlsZSAoZ2V0X3BhZ2VzKHNiaSwgRjJGU19ESVJUWV9NRVRBKSkKPiA+ICAgCQlzeW5jX21l
+dGFfcGFnZXMoc2JpLCBNRVRBLCBMT05HX01BWCk7Cj4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9m
+MmZzLmggYi9mcy9mMmZzL2YyZnMuaAo+ID4gaW5kZXggMmVjYWM4My4uMmM1YTVkYSAxMDA2NDQK
+PiA+IC0tLSBhL2ZzL2YyZnMvZjJmcy5oCj4gPiArKysgYi9mcy9mMmZzL2YyZnMuaAo+ID4gQEAg
+LTExNzksNiArMTE3OSw3IEBAIGludCBmMmZzX2lzc3VlX2ZsdXNoKHN0cnVjdCBmMmZzX3NiX2lu
+Zm8gKik7Cj4gPiAgIHZvaWQgaW52YWxpZGF0ZV9ibG9ja3Moc3RydWN0IGYyZnNfc2JfaW5mbyAq
+LCBibG9ja190KTsKPiA+ICAgdm9pZCByZWZyZXNoX3NpdF9lbnRyeShzdHJ1Y3QgZjJmc19zYl9p
+bmZvICosIGJsb2NrX3QsIGJsb2NrX3QpOwo+ID4gICB2b2lkIGNsZWFyX3ByZWZyZWVfc2VnbWVu
+dHMoc3RydWN0IGYyZnNfc2JfaW5mbyAqKTsKPiA+ICt2b2lkIGRpc2NhcmRfbmV4dF9kbm9kZShz
+dHJ1Y3QgZjJmc19zYl9pbmZvICopOwo+ID4gICBpbnQgbnBhZ2VzX2Zvcl9zdW1tYXJ5X2ZsdXNo
+KHN0cnVjdCBmMmZzX3NiX2luZm8gKik7Cj4gPiAgIHZvaWQgYWxsb2NhdGVfbmV3X3NlZ21lbnRz
+KHN0cnVjdCBmMmZzX3NiX2luZm8gKik7Cj4gPiAgIHN0cnVjdCBwYWdlICpnZXRfc3VtX3BhZ2Uo
+c3RydWN0IGYyZnNfc2JfaW5mbyAqLCB1bnNpZ25lZCBpbnQpOwo+ID4gZGlmZiAtLWdpdCBhL2Zz
+L2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50LmMKPiA+IGluZGV4IDFlMjY0ZTcuLjk5
+OTNmOTQgMTAwNjQ0Cj4gPiAtLS0gYS9mcy9mMmZzL3NlZ21lbnQuYwo+ID4gKysrIGIvZnMvZjJm
+cy9zZWdtZW50LmMKPiA+IEBAIC0zMzUsMTMgKzMzNSwyNiBAQCBzdGF0aWMgdm9pZCBsb2NhdGVf
+ZGlydHlfc2VnbWVudChzdHJ1Y3QKPiA+IGYyZnNfc2JfaW5mbyAqc2JpLCB1bnNpZ25lZCBpbnQg
+c2Vnbm8pCj4gPiAgIAltdXRleF91bmxvY2soJmRpcnR5X2ktPnNlZ2xpc3RfbG9jayk7Cj4gPiAg
+IH0KPiA+ICAgCj4gPiAtc3RhdGljIHZvaWQgZjJmc19pc3N1ZV9kaXNjYXJkKHN0cnVjdCBmMmZz
+X3NiX2luZm8gKnNiaSwKPiA+ICtzdGF0aWMgaW50IGYyZnNfaXNzdWVfZGlzY2FyZChzdHJ1Y3Qg
+ZjJmc19zYl9pbmZvICpzYmksCj4gPiAgIAkJCQlibG9ja190IGJsa3N0YXJ0LCBibG9ja190IGJs
+a2xlbikKPiA+ICAgewo+ID4gICAJc2VjdG9yX3Qgc3RhcnQgPSBTRUNUT1JfRlJPTV9CTE9DSyhz
+YmksIGJsa3N0YXJ0KTsKPiA+ICAgCXNlY3Rvcl90IGxlbiA9IFNFQ1RPUl9GUk9NX0JMT0NLKHNi
+aSwgYmxrbGVuKTsKPiA+IC0JYmxrZGV2X2lzc3VlX2Rpc2NhcmQoc2JpLT5zYi0+c19iZGV2LCBz
+dGFydCwgbGVuLCBHRlBfTk9GUywgMCk7Cj4gPiAgIAl0cmFjZV9mMmZzX2lzc3VlX2Rpc2NhcmQo
+c2JpLT5zYiwgYmxrc3RhcnQsIGJsa2xlbik7Cj4gPiArCXJldHVybiBibGtkZXZfaXNzdWVfZGlz
+Y2FyZChzYmktPnNiLT5zX2JkZXYsIHN0YXJ0LCBsZW4sIEdGUF9OT0ZTLCAwKTsKPiA+ICt9Cj4g
+PiArCj4gPiArdm9pZCBkaXNjYXJkX25leHRfZG5vZGUoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2Jp
+KQo+ID4gK3sKPiA+ICsJc3RydWN0IGN1cnNlZ19pbmZvICpjdXJzZWcgPSBDVVJTRUdfSShzYmks
+IENVUlNFR19XQVJNX05PREUpOwo+ID4gKwlibG9ja190IGJsa2FkZHIgPSBORVhUX0ZSRUVfQkxL
+QUREUihzYmksIGN1cnNlZyk7Cj4gPiArCj4gPiArCWlmIChmMmZzX2lzc3VlX2Rpc2NhcmQoc2Jp
+LCBibGthZGRyLCAxKSkgewo+ID4gKwkJc3RydWN0IHBhZ2UgKnBhZ2UgPSBncmFiX21ldGFfcGFn
+ZShzYmksIGJsa2FkZHIpOwo+ID4gKwkJLyogemVyby1maWxsZWQgcGFnZSAqLwo+ID4gKwkJc2V0
+X3BhZ2VfZGlydHkocGFnZSk7Cj4gPiArCQlmMmZzX3B1dF9wYWdlKHBhZ2UsIDEpOwo+ID4gKwl9
+Cj4gPiAgIH0KPiA+ICAgCj4gPiAgIHN0YXRpYyB2b2lkIGFkZF9kaXNjYXJkX2FkZHJzKHN0cnVj
+dCBmMmZzX3NiX2luZm8gKnNiaSwKPiAKCi0tIApKYWVnZXVrIEtpbQpTYW1zdW5nCgoKLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tCkxlYXJuIEdyYXBoIERhdGFiYXNlcyAtIERvd25sb2FkIEZSRUUgTydS
+ZWlsbHkgQm9vawoiR3JhcGggRGF0YWJhc2VzIiBpcyB0aGUgZGVmaW5pdGl2ZSBuZXcgZ3VpZGUg
+dG8gZ3JhcGggZGF0YWJhc2VzIGFuZCB0aGVpcgphcHBsaWNhdGlvbnMuIFdyaXR0ZW4gYnkgdGhy
+ZWUgYWNjbGFpbWVkIGxlYWRlcnMgaW4gdGhlIGZpZWxkLAp0aGlzIGZpcnN0IGVkaXRpb24gaXMg
+bm93IGF2YWlsYWJsZS4gRG93bmxvYWQgeW91ciBmcmVlIGJvb2sgdG9kYXkhCmh0dHA6Ly9wLnNm
+Lm5ldC9zZnUvTmVvVGVjaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxp
+c3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9s
+aXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
