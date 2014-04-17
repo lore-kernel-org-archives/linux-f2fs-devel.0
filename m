@@ -1,26 +1,31 @@
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Subject: Re: f2fs: BUG_ON() is triggered when mount valid f2fs
-	filesystem
-Date: Wed, 16 Apr 2014 18:11:14 -0700
-Message-ID: <534F2A32.9030405@ispras.ru>
-References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru>
-	<1397559864.7727.5.camel@kjgkr> <534E494C.7050909@ispras.ru>
-	<1397691337.7727.18.camel@kjgkr>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH] f2fs: introduce raw_nat_from_node_info() to
+ simplfy codes
+Date: Thu, 17 Apr 2014 10:51:05 +0800
+Message-ID: <000a01cf59e8$03a910d0$0afb3270$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <khoroshilov@ispras.ru>) id 1WaarQ-0003MZ-Ec
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1WacQv-00052h-Rf
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Apr 2014 01:11:28 +0000
-Received: from mail.ispras.ru ([83.149.199.45])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WaarM-0002k0-QT for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Apr 2014 01:11:28 +0000
-In-Reply-To: <1397691337.7727.18.camel@kjgkr>
+	Thu, 17 Apr 2014 02:52:13 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WacQt-0005JR-P0
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 17 Apr 2014 02:52:13 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N4500EIQMMRA280@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 17 Apr 2014 11:52:03 +0900 (KST)
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,123 +35,92 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com, Andrey Tsyvarev <tsyvarev@ispras.ru>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: ??? <jaegeuk.kim@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGksCgpCdXQgd291bGQgbm90IGFiaWxpdHkgdG8gdHJpZ2dlciBCVUdfT04gYnkgbW91bnRpbmcg
-YSBjcmFmdGVkIGltYWdlCmNvbnNpZGVyZWQgYXMgYW4gaXNzdWUgaGF2aW5nIHNlY3VyaXR5IGlt
-cGxpY2F0aW9ucz8KClJlZ2FyZHMsCkFsZXhleQoKCk9uIDE2LjA0LjIwMTQgMTY6MzUsIEphZWdl
-dWsgS2ltIHdyb3RlOgo+IEhpLAo+Cj4gMjAxNC0wNC0xNiAo7IiYKSwgMTM6MTEgKzA0MDAsIEFu
-ZHJleSBUc3l2YXJldjoKPj4gSGksCj4+Cj4+IFdpdGggdGhpcyBwYXRjaCBtb3VudGluZyBvZiB0
-aGUgaW1hZ2UgY29udGludWVzIHRvIGZhaWwgKHdpdGggc2ltaWxhciAKPj4gQlVHX09OKS4KPj4g
-QnV0IHdoZW4gaW1hZ2UgaXMgZm9ybWF0dGVkIGFnYWluIChhbmQgc3RlcHMgbWVudGlvbmVkIGlu
-IHRoZSBwcmV2aW91cyAKPj4gbWVzc2FnZSBhcmUgcGVyZm9ybWVkKSwKPj4gbW91bnRpbmcgb2Yg
-aXQgaXMgbm93IHN1Y2NlZWQuCj4+Cj4+IElzIHRoaXMgaXMgYSB0cnVlIHB1cnBvc2Ugb2YgdGhl
-IHBhdGNoPwo+IEluZGVlZC4gVGhlIHBhdGNoIHNvbHZlcyB0aGVyZS1pbiByb290IGNhdXNlLgo+
-IEJ1dCwgaWYgeW91J3JlIHRyeWluZyB0byB1c2UgdGhlIGZhaWxlZCBpbWFnZSBhZ2Fpbiwgc2lt
-cGx5IHlvdSBjYW4gc2tpcAo+IHRoZSBlcnJvcm5lb3VzIHBhcnQgYnk6Cj4KPiAjIG1vdW50IC4u
-LiAtbyBkaXNhYmxlX3JvbGxfZm9yd2FyZCAuLi4KPgo+IE9uY2Ugc3luYyBvciB1bW91bnQgd2hh
-dGV2ZXIgY2hlY2twb2ludCBpcyBkb25lIGFmdGVyIHRoYXQsIHRoZSBpbWFnZQo+IHdpbGwgYmUg
-bW91bnRlZCB3aXRob3V0ICJkaXNhYmxlX3JvbGxfZm9yd2FyZCIuCj4KPiBUaGFua3MsCj4KPj4g
-MTUuMDQuMjAxNCAxNTowNCwgSmFlZ2V1ayBLaW0g0L/QuNGI0LXRgjoKPj4+IEhpLAo+Pj4KPj4+
-IFRoYW5rIHlvdSBmb3IgdGhlIHJlcG9ydC4KPj4+IEkgcmV0cmlldmVkIHRoZSBmYXVsdCBpbWFn
-ZSBhbmQgZm91bmQgb3V0IHRoYXQgcHJldmlvdXMgZ2FyYmFnZSBkYXRhCj4+PiB3cmVhayBzdWNo
-IHRoZSB3cm9uZyBiZWhhdmlvcnMuCj4+PiBTbywgSSB3cm90ZSB0aGUgZm9sbG93aW5nIHBhdGNo
-IHRoYXQgZmlsbHMgb25lIHplcm8tYmxvY2sgYXQgdGhlCj4+PiBjaGVja3BvaW50IHByb2NlZHVy
-ZS4KPj4+IElmIHRoZSB1bmRlcmx5aW5nIGRldmljZSBzdXBwb3J0cyBkaXNjYXJkLCBJIGV4cGVj
-dCB0aGF0IGl0IG1vc3RseQo+Pj4gZG9lc24ndCBpbmN1ciBhbnkgcGVyZm9ybWFuY2UgcmVncmVz
-c2lvbiBzaWduaWZpY2FudGx5Lgo+Pj4KPj4+IENvdWxkIHlvdSB0ZXN0IHRoaXMgcGF0Y2g/Cj4+
-Pgo+Pj4gPkZyb20gNjA1ODhjZWI3Mjc3YWFlMmE3OWU3ZjY3ZjUyMTdkMTI1NjcyMGQ3OCBNb24g
-U2VwIDE3IDAwOjAwOjAwIDIwMDEKPj4+IEZyb206IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBz
-YW1zdW5nLmNvbT4KPj4+IERhdGU6IFR1ZSwgMTUgQXByIDIwMTQgMTM6NTc6NTUgKzA5MDAKPj4+
-IFN1YmplY3Q6IFtQQVRDSF0gZjJmczogYXZvaWQgdG8gY29uZHVjdCByb2xsLWZvcndhcmQgZHVl
-IHRvIHRoZSByZW1haW5lZAo+Pj4gICBnYXJiYWdlIGJsb2Nrcwo+Pj4KPj4+IFRoZSBmMmZzIGFs
-d2F5cyBzY2FucyB0aGUgbmV4dCBjaGFpbiBvZiBkaXJlY3Qgbm9kZSBibG9ja3MuCj4+PiBCdXQg
-c29tZSBnYXJiYWdlIGJsb2NrcyBhcmUgYWJsZSB0byBiZSByZW1haW5lZCBkdWUgdG8gbm8gZGlz
-Y2FyZAo+Pj4gc3VwcG9ydCBvcgo+Pj4gU1NSIHRyaWdnZXJzLgo+Pj4gVGhpcyBvY2Nhc2lvbmFs
-bHkgd3JlYWtzIHJlY292ZXJpbmcgd3JvbmcgaW5vZGVzIHRoYXQgd2VyZSB1c2VkIG9yCj4+PiBC
-VUdfT05zCj4+PiBkdWUgdG8gcmVhbGxvY2F0aW5nIG5vZGUgaWRzIGFzIGZvbGxvd3MuCj4+Pgo+
-Pj4gV2hlbiBtb3VudCB0aGlzIGYyZnMgaW1hZ2U6Cj4+PiBodHRwOi8vbGludXh0ZXN0aW5nLm9y
-Zy9kb3dubG9hZHMvZjJmc19mYXVsdF9pbWFnZS56aXAKPj4+IEJVR19PTiBpcyB0cmlnZ2VyZWQg
-aW4gZjJmcyBkcml2ZXIgKG1lc3NhZ2VzIGJlbG93IGFyZSBnZW5lcmF0ZWQgb24KPj4+IGtlcm5l
-bCAzLjEzLjI7IGZvciBvdGhlciBrZXJuZWxzIG91dHB1dCBpcyBzaW1pbGFyKToKPj4+Cj4+PiBr
-ZXJuZWwgQlVHIGF0IGZzL2YyZnMvbm9kZS5jOjIxNSEKPj4+ICAgQ2FsbCBUcmFjZToKPj4+ICAg
-WzxmZmZmZmZmZmEwMzJlYmFkPl0gcmVjb3Zlcl9pbm9kZV9wYWdlKzB4MWZkLzB4M2UwIFtmMmZz
-XQo+Pj4gICBbPGZmZmZmZmZmODExNDQ2ZTc+XSA/IF9fbG9ja19wYWdlKzB4NjcvMHg3MAo+Pj4g
-ICBbPGZmZmZmZmZmODEwODk5OTA+XSA/IGF1dG9yZW1vdmVfd2FrZV9mdW5jdGlvbisweDUwLzB4
-NTAKPj4+ICAgWzxmZmZmZmZmZmEwMzM3Nzg4Pl0gcmVjb3Zlcl9mc3luY19kYXRhKzB4MTM5OC8w
-eDE1ZDAgW2YyZnNdCj4+PiAgIFs8ZmZmZmZmZmY4MTJiOWU1Yz5dID8gc2VsaW51eF9kX2luc3Rh
-bnRpYXRlKzB4MWMvMHgyMAo+Pj4gICBbPGZmZmZmZmZmODExY2IyMGI+XSA/IGRfaW5zdGFudGlh
-dGUrMHg1Yi8weDgwCj4+PiAgIFs8ZmZmZmZmZmZhMDMyMTA0ND5dIGYyZnNfZmlsbF9zdXBlcisw
-eGIwNC8weGJmMCBbZjJmc10KPj4+ICAgWzxmZmZmZmZmZjgxMWI4NjFlPl0gPyBtb3VudF9iZGV2
-KzB4N2UvMHgyMTAKPj4+ICAgWzxmZmZmZmZmZjgxMWI4NzY5Pl0gbW91bnRfYmRldisweDFjOS8w
-eDIxMAo+Pj4gICBbPGZmZmZmZmZmYTAzMjA1NDA+XSA/IHZhbGlkYXRlX3N1cGVyYmxvY2srMHgy
-MTAvMHgyMTAgW2YyZnNdCj4+PiAgIFs8ZmZmZmZmZmZhMDMxY2Y4ZD5dIGYyZnNfbW91bnQrMHgx
-ZC8weDMwIFtmMmZzXQo+Pj4gICBbPGZmZmZmZmZmODExYjk0OTc+XSBtb3VudF9mcysweDQ3LzB4
-MWMwCj4+PiAgIFs8ZmZmZmZmZmY4MTE2NmUwMD5dID8gX19hbGxvY19wZXJjcHUrMHgxMC8weDIw
-Cj4+PiAgIFs8ZmZmZmZmZmY4MTFkNDAzMj5dIHZmc19rZXJuX21vdW50KzB4NzIvMHgxMTAKPj4+
-ICAgWzxmZmZmZmZmZjgxMWQ2NzYzPl0gZG9fbW91bnQrMHg0OTMvMHg5MTAKPj4+ICAgWzxmZmZm
-ZmZmZjgxMTYxNWNiPl0gPyBzdHJuZHVwX3VzZXIrMHg1Yi8weDgwCj4+PiAgIFs8ZmZmZmZmZmY4
-MTFkNmM3MD5dIFN5U19tb3VudCsweDkwLzB4ZTAKPj4+ICAgWzxmZmZmZmZmZjgxNjZmOGQ5Pl0g
-c3lzdGVtX2NhbGxfZmFzdHBhdGgrMHgxNi8weDFiCj4+Pgo+Pj4gRm91bmQgYnkgTGludXggRmls
-ZSBTeXN0ZW0gVmVyaWZpY2F0aW9uIHByb2plY3QgKGxpbnV4dGVzdGluZy5vcmcpLgo+Pj4KPj4+
-IFJlcG9ydGVkLWJ5OiBBbmRyZXkgVHN5dmFyZXYgPHRzeXZhcmV2QGlzcHJhcy5ydT4KPj4+IFNp
-Z25lZC1vZmYtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4KPj4+IC0t
-LQo+Pj4gICBmcy9mMmZzL2NoZWNrcG9pbnQuYyB8ICA2ICsrKysrKwo+Pj4gICBmcy9mMmZzL2Yy
-ZnMuaCAgICAgICB8ICAxICsKPj4+ICAgZnMvZjJmcy9zZWdtZW50LmMgICAgfCAxNyArKysrKysr
-KysrKysrKystLQo+Pj4gICAzIGZpbGVzIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDIgZGVs
-ZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvY2hlY2twb2ludC5jIGIvZnMv
-ZjJmcy9jaGVja3BvaW50LmMKPj4+IGluZGV4IDRhYTUyMWEuLjg5MGUyM2QgMTAwNjQ0Cj4+PiAt
-LS0gYS9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+Pj4gKysrIGIvZnMvZjJmcy9jaGVja3BvaW50LmMK
-Pj4+IEBAIC03NjIsNiArNzYyLDEyIEBAIHN0YXRpYyB2b2lkIGRvX2NoZWNrcG9pbnQoc3RydWN0
-IGYyZnNfc2JfaW5mbyAqc2JpLAo+Pj4gYm9vbCBpc191bW91bnQpCj4+PiAgIAl2b2lkICprYWRk
-cjsKPj4+ICAgCWludCBpOwo+Pj4gICAKPj4+ICsJLyoKPj4+ICsJICogVGhpcyBhdm9pZHMgdG8g
-Y29uZHVjdCB3cm9uZyByb2xsLWZvcndhcmQgb3BlcmF0aW9ucyBhbmQgdXNlcwo+Pj4gKwkgKiBt
-ZXRhcGFnZXMsIHNvIHNob3VsZCBiZSBjYWxsZWQgcHJpb3IgdG8gc3luY19tZXRhX3BhZ2VzIGJl
-bG93Lgo+Pj4gKwkgKi8KPj4+ICsJZGlzY2FyZF9uZXh0X2Rub2RlKHNiaSk7Cj4+PiArCj4+PiAg
-IAkvKiBGbHVzaCBhbGwgdGhlIE5BVC9TSVQgcGFnZXMgKi8KPj4+ICAgCXdoaWxlIChnZXRfcGFn
-ZXMoc2JpLCBGMkZTX0RJUlRZX01FVEEpKQo+Pj4gICAJCXN5bmNfbWV0YV9wYWdlcyhzYmksIE1F
-VEEsIExPTkdfTUFYKTsKPj4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMv
-ZjJmcy5oCj4+PiBpbmRleCAyZWNhYzgzLi4yYzVhNWRhIDEwMDY0NAo+Pj4gLS0tIGEvZnMvZjJm
-cy9mMmZzLmgKPj4+ICsrKyBiL2ZzL2YyZnMvZjJmcy5oCj4+PiBAQCAtMTE3OSw2ICsxMTc5LDcg
-QEAgaW50IGYyZnNfaXNzdWVfZmx1c2goc3RydWN0IGYyZnNfc2JfaW5mbyAqKTsKPj4+ICAgdm9p
-ZCBpbnZhbGlkYXRlX2Jsb2NrcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICosIGJsb2NrX3QpOwo+Pj4g
-ICB2b2lkIHJlZnJlc2hfc2l0X2VudHJ5KHN0cnVjdCBmMmZzX3NiX2luZm8gKiwgYmxvY2tfdCwg
-YmxvY2tfdCk7Cj4+PiAgIHZvaWQgY2xlYXJfcHJlZnJlZV9zZWdtZW50cyhzdHJ1Y3QgZjJmc19z
-Yl9pbmZvICopOwo+Pj4gK3ZvaWQgZGlzY2FyZF9uZXh0X2Rub2RlKHN0cnVjdCBmMmZzX3NiX2lu
-Zm8gKik7Cj4+PiAgIGludCBucGFnZXNfZm9yX3N1bW1hcnlfZmx1c2goc3RydWN0IGYyZnNfc2Jf
-aW5mbyAqKTsKPj4+ICAgdm9pZCBhbGxvY2F0ZV9uZXdfc2VnbWVudHMoc3RydWN0IGYyZnNfc2Jf
-aW5mbyAqKTsKPj4+ICAgc3RydWN0IHBhZ2UgKmdldF9zdW1fcGFnZShzdHJ1Y3QgZjJmc19zYl9p
-bmZvICosIHVuc2lnbmVkIGludCk7Cj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMg
-Yi9mcy9mMmZzL3NlZ21lbnQuYwo+Pj4gaW5kZXggMWUyNjRlNy4uOTk5M2Y5NCAxMDA2NDQKPj4+
-IC0tLSBhL2ZzL2YyZnMvc2VnbWVudC5jCj4+PiArKysgYi9mcy9mMmZzL3NlZ21lbnQuYwo+Pj4g
-QEAgLTMzNSwxMyArMzM1LDI2IEBAIHN0YXRpYyB2b2lkIGxvY2F0ZV9kaXJ0eV9zZWdtZW50KHN0
-cnVjdAo+Pj4gZjJmc19zYl9pbmZvICpzYmksIHVuc2lnbmVkIGludCBzZWdubykKPj4+ICAgCW11
-dGV4X3VubG9jaygmZGlydHlfaS0+c2VnbGlzdF9sb2NrKTsKPj4+ICAgfQo+Pj4gICAKPj4+IC1z
-dGF0aWMgdm9pZCBmMmZzX2lzc3VlX2Rpc2NhcmQoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+
-Pj4gK3N0YXRpYyBpbnQgZjJmc19pc3N1ZV9kaXNjYXJkKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNi
-aSwKPj4+ICAgCQkJCWJsb2NrX3QgYmxrc3RhcnQsIGJsb2NrX3QgYmxrbGVuKQo+Pj4gICB7Cj4+
-PiAgIAlzZWN0b3JfdCBzdGFydCA9IFNFQ1RPUl9GUk9NX0JMT0NLKHNiaSwgYmxrc3RhcnQpOwo+
-Pj4gICAJc2VjdG9yX3QgbGVuID0gU0VDVE9SX0ZST01fQkxPQ0soc2JpLCBibGtsZW4pOwo+Pj4g
-LQlibGtkZXZfaXNzdWVfZGlzY2FyZChzYmktPnNiLT5zX2JkZXYsIHN0YXJ0LCBsZW4sIEdGUF9O
-T0ZTLCAwKTsKPj4+ICAgCXRyYWNlX2YyZnNfaXNzdWVfZGlzY2FyZChzYmktPnNiLCBibGtzdGFy
-dCwgYmxrbGVuKTsKPj4+ICsJcmV0dXJuIGJsa2Rldl9pc3N1ZV9kaXNjYXJkKHNiaS0+c2ItPnNf
-YmRldiwgc3RhcnQsIGxlbiwgR0ZQX05PRlMsIDApOwo+Pj4gK30KPj4+ICsKPj4+ICt2b2lkIGRp
-c2NhcmRfbmV4dF9kbm9kZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+PiArewo+Pj4gKwlz
-dHJ1Y3QgY3Vyc2VnX2luZm8gKmN1cnNlZyA9IENVUlNFR19JKHNiaSwgQ1VSU0VHX1dBUk1fTk9E
-RSk7Cj4+PiArCWJsb2NrX3QgYmxrYWRkciA9IE5FWFRfRlJFRV9CTEtBRERSKHNiaSwgY3Vyc2Vn
-KTsKPj4+ICsKPj4+ICsJaWYgKGYyZnNfaXNzdWVfZGlzY2FyZChzYmksIGJsa2FkZHIsIDEpKSB7
-Cj4+PiArCQlzdHJ1Y3QgcGFnZSAqcGFnZSA9IGdyYWJfbWV0YV9wYWdlKHNiaSwgYmxrYWRkcik7
-Cj4+PiArCQkvKiB6ZXJvLWZpbGxlZCBwYWdlICovCj4+PiArCQlzZXRfcGFnZV9kaXJ0eShwYWdl
-KTsKPj4+ICsJCWYyZnNfcHV0X3BhZ2UocGFnZSwgMSk7Cj4+PiArCX0KPj4+ICAgfQo+Pj4gICAK
-Pj4+ICAgc3RhdGljIHZvaWQgYWRkX2Rpc2NhcmRfYWRkcnMoc3RydWN0IGYyZnNfc2JfaW5mbyAq
-c2JpLAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpMZWFybiBHcmFwaCBEYXRhYmFzZXMgLSBEb3du
-bG9hZCBGUkVFIE8nUmVpbGx5IEJvb2sKIkdyYXBoIERhdGFiYXNlcyIgaXMgdGhlIGRlZmluaXRp
-dmUgbmV3IGd1aWRlIHRvIGdyYXBoIGRhdGFiYXNlcyBhbmQgdGhlaXIKYXBwbGljYXRpb25zLiBX
-cml0dGVuIGJ5IHRocmVlIGFjY2xhaW1lZCBsZWFkZXJzIGluIHRoZSBmaWVsZCwKdGhpcyBmaXJz
-dCBlZGl0aW9uIGlzIG5vdyBhdmFpbGFibGUuIERvd25sb2FkIHlvdXIgZnJlZSBib29rIHRvZGF5
-IQpodHRwOi8vcC5zZi5uZXQvc2Z1L05lb1RlY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgt
-ZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3Jn
-ZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+This patch introduce raw_nat_from_node_info() to simplfy some codes, and also
+use exist function node_info_from_raw_nat() to do the same job.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/node.c |   15 +++------------
+ fs/f2fs/node.h |    8 ++++++++
+ 2 files changed, 11 insertions(+), 12 deletions(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index f760793..84f9b7b 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -179,9 +179,7 @@ retry:
+ 			write_unlock(&nm_i->nat_tree_lock);
+ 			goto retry;
+ 		}
+-		nat_set_blkaddr(e, le32_to_cpu(ne->block_addr));
+-		nat_set_ino(e, le32_to_cpu(ne->ino));
+-		nat_set_version(e, ne->version);
++		node_info_from_raw_nat(&e->ni, ne);
+ 	}
+ 	write_unlock(&nm_i->nat_tree_lock);
+ }
+@@ -1755,9 +1753,7 @@ retry:
+ 			write_unlock(&nm_i->nat_tree_lock);
+ 			goto retry;
+ 		}
+-		nat_set_blkaddr(ne, le32_to_cpu(raw_ne.block_addr));
+-		nat_set_ino(ne, le32_to_cpu(raw_ne.ino));
+-		nat_set_version(ne, raw_ne.version);
++		node_info_from_raw_nat(&ne->ni, &raw_ne);
+ 		__set_nat_cache_dirty(nm_i, ne);
+ 		write_unlock(&nm_i->nat_tree_lock);
+ 	}
+@@ -1790,7 +1786,6 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+ 		nid_t nid;
+ 		struct f2fs_nat_entry raw_ne;
+ 		int offset = -1;
+-		block_t new_blkaddr;
+ 
+ 		if (nat_get_blkaddr(ne) == NEW_ADDR)
+ 			continue;
+@@ -1826,11 +1821,7 @@ to_nat_page:
+ 		f2fs_bug_on(!nat_blk);
+ 		raw_ne = nat_blk->entries[nid - start_nid];
+ flush_now:
+-		new_blkaddr = nat_get_blkaddr(ne);
+-
+-		raw_ne.ino = cpu_to_le32(nat_get_ino(ne));
+-		raw_ne.block_addr = cpu_to_le32(new_blkaddr);
+-		raw_ne.version = nat_get_version(ne);
++		raw_nat_from_node_info(&raw_ne, &ne->ni);
+ 
+ 		if (offset < 0) {
+ 			nat_blk->entries[nid - start_nid] = raw_ne;
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 5decc1a..41bb65b 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -75,6 +75,14 @@ static inline void node_info_from_raw_nat(struct node_info *ni,
+ 	ni->version = raw_ne->version;
+ }
+ 
++static inline void raw_nat_from_node_info(struct f2fs_nat_entry *raw_ne,
++						struct node_info *ni)
++{
++	raw_ne->ino = cpu_to_le32(ni->ino);
++	raw_ne->block_addr = cpu_to_le32(ni->blk_addr);
++	raw_ne->version = ni->version;
++}
++
+ enum nid_type {
+ 	FREE_NIDS,	/* indicates the free nid list */
+ 	NAT_ENTRIES	/* indicates the cached nat entry */
+-- 
+1.7.9.5
+
+
+
+------------------------------------------------------------------------------
+Learn Graph Databases - Download FREE O'Reilly Book
+"Graph Databases" is the definitive new guide to graph databases and their
+applications. Written by three acclaimed leaders in the field,
+this first edition is now available. Download your free book today!
+http://p.sf.net/sfu/NeoTech
