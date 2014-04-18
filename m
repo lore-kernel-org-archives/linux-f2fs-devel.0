@@ -1,34 +1,27 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [PATCH] f2fs: fix to enable readahead last NAT block
-Date: Fri, 18 Apr 2014 14:58:31 +0900
-Message-ID: <1397800711.7727.34.camel@kjgkr>
-References: <000101cf5a1e$5c051770$140f4650$@samsung.com>
-	<1397787344.7727.32.camel@kjgkr>
-	<000901cf5ab4$d64171a0$82c454e0$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Subject: Re: f2fs: BUG_ON() is triggered when mount valid f2fs
+	filesystem
+Date: Thu, 17 Apr 2014 23:04:26 -0700
+Message-ID: <5350C06A.4090807@ispras.ru>
+References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru>
+	<1397559864.7727.5.camel@kjgkr> <534E494C.7050909@ispras.ru>
+	<1397691337.7727.18.camel@kjgkr> <534F2A32.9030405@ispras.ru>
+	<1397720720.7727.28.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Wb1qw-0003vH-7c
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <khoroshilov@ispras.ru>) id 1Wb1ui-0002Do-7m
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Apr 2014 06:00:46 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1Wb1qs-00050K-Nw
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Apr 2014 06:00:46 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout2.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N4700J3WQ0YT960@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Apr 2014 15:00:34 +0900 (KST)
-In-reply-to: <000901cf5ab4$d64171a0$82c454e0$@samsung.com>
+	Fri, 18 Apr 2014 06:04:40 +0000
+Received: from mail.ispras.ru ([83.149.199.45])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Wb1ue-0007Hc-Ig for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 18 Apr 2014 06:04:40 +0000
+In-Reply-To: <1397720720.7727.28.camel@kjgkr>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,85 +31,142 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: Andrey Tsyvarev <tsyvarev@ispras.ru>, linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Got it.
-The patch is like this.
-Thanks,
-
->From 5f7a3bcf0df10bbb47a6e4409cc92ba8e6090674 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Fri, 18 Apr 2014 11:14:37 +0900
-Subject: [PATCH] f2fs: add available_nids to fix handling max_nid
-correctly
-
-This patch introduces available_nids for alloc_nids() and fixes max_nid
-for
-build_free_nids() and scan_nat_pages().
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/f2fs.h | 1 +
- fs/f2fs/node.c | 6 ++++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 55152de..556d06b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -244,6 +244,7 @@ static inline void set_raw_extent(struct extent_info
-*ext,
- struct f2fs_nm_info {
- 	block_t nat_blkaddr;		/* base disk address of NAT */
- 	nid_t max_nid;			/* maximum possible node ids */
-+	nid_t available_nids;		/* maximum available node ids */
- 	nid_t next_scan_nid;		/* the next nid to be scanned */
- 	unsigned int ram_thresh;	/* control the memory footprint */
- 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 837f5fd..6ebdba1 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1447,7 +1447,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t
-*nid)
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct free_nid *i = NULL;
- retry:
--	if (unlikely(sbi->total_valid_node_count + 1 >= nm_i->max_nid))
-+	if (unlikely(sbi->total_valid_node_count + 1 > nm_i->available_nids))
- 		return false;
- 
- 	spin_lock(&nm_i->free_nid_list_lock);
-@@ -1859,8 +1859,10 @@ static int init_node_manager(struct f2fs_sb_info
-*sbi)
- 	nat_segs = le32_to_cpu(sb_raw->segment_count_nat) >> 1;
- 	nat_blocks = nat_segs << le32_to_cpu(sb_raw->log_blocks_per_seg);
- 
-+	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks;
-+
- 	/* not used nids: 0, node, meta, (and root counted as valid node) */
--	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks - 3;
-+	nm_i->available_nids = nm_i->max_nid - 3;
- 	nm_i->fcnt = 0;
- 	nm_i->nat_cnt = 0;
- 	nm_i->ram_thresh = DEF_RAM_THRESHOLD;
--- 
-1.8.4.474.g128a96c
-
-
-
-
--- 
-Jaegeuk Kim
-Samsung
-
-
-------------------------------------------------------------------------------
-Learn Graph Databases - Download FREE O'Reilly Book
-"Graph Databases" is the definitive new guide to graph databases and their
-applications. Written by three acclaimed leaders in the field,
-this first edition is now available. Download your free book today!
-http://p.sf.net/sfu/NeoTech
+T24gMTcuMDQuMjAxNCAwMDo0NSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4gSGksCj4KPiAyMDE0LTA0
+LTE2ICjsiJgpLCAxODoxMSAtMDcwMCwgQWxleGV5IEtob3Jvc2hpbG92Ogo+PiBIaSwKPj4KPj4g
+QnV0IHdvdWxkIG5vdCBhYmlsaXR5IHRvIHRyaWdnZXIgQlVHX09OIGJ5IG1vdW50aW5nIGEgY3Jh
+ZnRlZCBpbWFnZQo+PiBjb25zaWRlcmVkIGFzIGFuIGlzc3VlIGhhdmluZyBzZWN1cml0eSBpbXBs
+aWNhdGlvbnM/Cj4gU29ycnksIEkgY2FuJ3QgY29tZSB1cCB3aXRoIHlvdS4KPiBDb3VsZCB5b3Ug
+cGxlYXNlIGV4cGxhaW4gd2h5IHRoaXMgY2FuIGJlIHJlbGF0ZWQgdG8gdGhlIHNlY3VyaXR5IGhv
+bGU/Cj4gRGlkIHlvdSBtZWFuIGl0IG5lZWRzIHRvIGF2b2lkIHN1Y2ggdGhlIEJVR19PTnMgaWYg
+dGhlIGltYWdlIGhhcwo+IG9ic29sZXRlIGRhdGEgYmVpbmcgdXNlZCBiZWZvcmU/CkFuIGFiaWxp
+dHkgdG8gdHJpZ2dlciBhIEJVR19PTiBhc3NlcnQgYnkgbW91bnRpbmcgYSBjcmFmdGVkIGltYWdl
+IGlzCnVzdWFsbHkgY29uc2lkZXJlZCBhcyBhIGxvY2FsIGRlbmlhbCBvZiBzZXJ2aWNlIFsxLTNd
+LiBBcyBmYXIgYXMgSQp1bmRlcnN0YW5kLCB0aGUgcmVhc29uIGlzIHRoYXQgc29tZSBrZXJuZWwg
+ZGF0YSBtYXkgYmVjb21lIGluY29uc2lzdGVudAp0aGF0IGNhbiBsZWFkIHRvIGZ1cnRoZXIgcHJv
+YmxlbXMuCgpbMV0gaHR0cDovL2N2ZS5taXRyZS5vcmcvY2dpLWJpbi9jdmVuYW1lLmNnaT9uYW1l
+PUNWRS0yMDExLTMzNTMKWzJdIGh0dHA6Ly93d3cub3BlbndhbGwuY29tL2xpc3RzL29zcy1zZWN1
+cml0eS8yMDExLzA2LzI0LzQKWzNdIGh0dHA6Ly9jdmUubWl0cmUub3JnL2NnaS1iaW4vY3ZlbmFt
+ZS5jZ2k/bmFtZT1DVkUtMjAxMS0yOTI4CmV0Yy4KCi0tCkFsZXhleQoKCj4gT24gMTYuMDQuMjAx
+NCAxNjozNSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4+PiBIaSwKPj4+Cj4+PiAyMDE0LTA0LTE2ICjs
+iJgpLCAxMzoxMSArMDQwMCwgQW5kcmV5IFRzeXZhcmV2Ogo+Pj4+IEhpLAo+Pj4+Cj4+Pj4gV2l0
+aCB0aGlzIHBhdGNoIG1vdW50aW5nIG9mIHRoZSBpbWFnZSBjb250aW51ZXMgdG8gZmFpbCAod2l0
+aCBzaW1pbGFyIAo+Pj4+IEJVR19PTikuCj4+Pj4gQnV0IHdoZW4gaW1hZ2UgaXMgZm9ybWF0dGVk
+IGFnYWluIChhbmQgc3RlcHMgbWVudGlvbmVkIGluIHRoZSBwcmV2aW91cyAKPj4+PiBtZXNzYWdl
+IGFyZSBwZXJmb3JtZWQpLAo+Pj4+IG1vdW50aW5nIG9mIGl0IGlzIG5vdyBzdWNjZWVkLgo+Pj4+
+Cj4+Pj4gSXMgdGhpcyBpcyBhIHRydWUgcHVycG9zZSBvZiB0aGUgcGF0Y2g/Cj4+PiBJbmRlZWQu
+IFRoZSBwYXRjaCBzb2x2ZXMgdGhlcmUtaW4gcm9vdCBjYXVzZS4KPj4+IEJ1dCwgaWYgeW91J3Jl
+IHRyeWluZyB0byB1c2UgdGhlIGZhaWxlZCBpbWFnZSBhZ2Fpbiwgc2ltcGx5IHlvdSBjYW4gc2tp
+cAo+Pj4gdGhlIGVycm9ybmVvdXMgcGFydCBieToKPj4+Cj4+PiAjIG1vdW50IC4uLiAtbyBkaXNh
+YmxlX3JvbGxfZm9yd2FyZCAuLi4KPj4+Cj4+PiBPbmNlIHN5bmMgb3IgdW1vdW50IHdoYXRldmVy
+IGNoZWNrcG9pbnQgaXMgZG9uZSBhZnRlciB0aGF0LCB0aGUgaW1hZ2UKPj4+IHdpbGwgYmUgbW91
+bnRlZCB3aXRob3V0ICJkaXNhYmxlX3JvbGxfZm9yd2FyZCIuCj4+Pgo+Pj4gVGhhbmtzLAo+Pj4K
+Pj4+PiAxNS4wNC4yMDE0IDE1OjA0LCBKYWVnZXVrIEtpbSDQv9C40YjQtdGCOgo+Pj4+PiBIaSwK
+Pj4+Pj4KPj4+Pj4gVGhhbmsgeW91IGZvciB0aGUgcmVwb3J0Lgo+Pj4+PiBJIHJldHJpZXZlZCB0
+aGUgZmF1bHQgaW1hZ2UgYW5kIGZvdW5kIG91dCB0aGF0IHByZXZpb3VzIGdhcmJhZ2UgZGF0YQo+
+Pj4+PiB3cmVhayBzdWNoIHRoZSB3cm9uZyBiZWhhdmlvcnMuCj4+Pj4+IFNvLCBJIHdyb3RlIHRo
+ZSBmb2xsb3dpbmcgcGF0Y2ggdGhhdCBmaWxscyBvbmUgemVyby1ibG9jayBhdCB0aGUKPj4+Pj4g
+Y2hlY2twb2ludCBwcm9jZWR1cmUuCj4+Pj4+IElmIHRoZSB1bmRlcmx5aW5nIGRldmljZSBzdXBw
+b3J0cyBkaXNjYXJkLCBJIGV4cGVjdCB0aGF0IGl0IG1vc3RseQo+Pj4+PiBkb2Vzbid0IGluY3Vy
+IGFueSBwZXJmb3JtYW5jZSByZWdyZXNzaW9uIHNpZ25pZmljYW50bHkuCj4+Pj4+Cj4+Pj4+IENv
+dWxkIHlvdSB0ZXN0IHRoaXMgcGF0Y2g/Cj4+Pj4+Cj4+Pj4+ID5Gcm9tIDYwNTg4Y2ViNzI3N2Fh
+ZTJhNzllN2Y2N2Y1MjE3ZDEyNTY3MjBkNzggTW9uIFNlcCAxNyAwMDowMDowMCAyMDAxCj4+Pj4+
+IEZyb206IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4KPj4+Pj4gRGF0ZTog
+VHVlLCAxNSBBcHIgMjAxNCAxMzo1Nzo1NSArMDkwMAo+Pj4+PiBTdWJqZWN0OiBbUEFUQ0hdIGYy
+ZnM6IGF2b2lkIHRvIGNvbmR1Y3Qgcm9sbC1mb3J3YXJkIGR1ZSB0byB0aGUgcmVtYWluZWQKPj4+
+Pj4gICBnYXJiYWdlIGJsb2Nrcwo+Pj4+Pgo+Pj4+PiBUaGUgZjJmcyBhbHdheXMgc2NhbnMgdGhl
+IG5leHQgY2hhaW4gb2YgZGlyZWN0IG5vZGUgYmxvY2tzLgo+Pj4+PiBCdXQgc29tZSBnYXJiYWdl
+IGJsb2NrcyBhcmUgYWJsZSB0byBiZSByZW1haW5lZCBkdWUgdG8gbm8gZGlzY2FyZAo+Pj4+PiBz
+dXBwb3J0IG9yCj4+Pj4+IFNTUiB0cmlnZ2Vycy4KPj4+Pj4gVGhpcyBvY2Nhc2lvbmFsbHkgd3Jl
+YWtzIHJlY292ZXJpbmcgd3JvbmcgaW5vZGVzIHRoYXQgd2VyZSB1c2VkIG9yCj4+Pj4+IEJVR19P
+TnMKPj4+Pj4gZHVlIHRvIHJlYWxsb2NhdGluZyBub2RlIGlkcyBhcyBmb2xsb3dzLgo+Pj4+Pgo+
+Pj4+PiBXaGVuIG1vdW50IHRoaXMgZjJmcyBpbWFnZToKPj4+Pj4gaHR0cDovL2xpbnV4dGVzdGlu
+Zy5vcmcvZG93bmxvYWRzL2YyZnNfZmF1bHRfaW1hZ2UuemlwCj4+Pj4+IEJVR19PTiBpcyB0cmln
+Z2VyZWQgaW4gZjJmcyBkcml2ZXIgKG1lc3NhZ2VzIGJlbG93IGFyZSBnZW5lcmF0ZWQgb24KPj4+
+Pj4ga2VybmVsIDMuMTMuMjsgZm9yIG90aGVyIGtlcm5lbHMgb3V0cHV0IGlzIHNpbWlsYXIpOgo+
+Pj4+Pgo+Pj4+PiBrZXJuZWwgQlVHIGF0IGZzL2YyZnMvbm9kZS5jOjIxNSEKPj4+Pj4gICBDYWxs
+IFRyYWNlOgo+Pj4+PiAgIFs8ZmZmZmZmZmZhMDMyZWJhZD5dIHJlY292ZXJfaW5vZGVfcGFnZSsw
+eDFmZC8weDNlMCBbZjJmc10KPj4+Pj4gICBbPGZmZmZmZmZmODExNDQ2ZTc+XSA/IF9fbG9ja19w
+YWdlKzB4NjcvMHg3MAo+Pj4+PiAgIFs8ZmZmZmZmZmY4MTA4OTk5MD5dID8gYXV0b3JlbW92ZV93
+YWtlX2Z1bmN0aW9uKzB4NTAvMHg1MAo+Pj4+PiAgIFs8ZmZmZmZmZmZhMDMzNzc4OD5dIHJlY292
+ZXJfZnN5bmNfZGF0YSsweDEzOTgvMHgxNWQwIFtmMmZzXQo+Pj4+PiAgIFs8ZmZmZmZmZmY4MTJi
+OWU1Yz5dID8gc2VsaW51eF9kX2luc3RhbnRpYXRlKzB4MWMvMHgyMAo+Pj4+PiAgIFs8ZmZmZmZm
+ZmY4MTFjYjIwYj5dID8gZF9pbnN0YW50aWF0ZSsweDViLzB4ODAKPj4+Pj4gICBbPGZmZmZmZmZm
+YTAzMjEwNDQ+XSBmMmZzX2ZpbGxfc3VwZXIrMHhiMDQvMHhiZjAgW2YyZnNdCj4+Pj4+ICAgWzxm
+ZmZmZmZmZjgxMWI4NjFlPl0gPyBtb3VudF9iZGV2KzB4N2UvMHgyMTAKPj4+Pj4gICBbPGZmZmZm
+ZmZmODExYjg3Njk+XSBtb3VudF9iZGV2KzB4MWM5LzB4MjEwCj4+Pj4+ICAgWzxmZmZmZmZmZmEw
+MzIwNTQwPl0gPyB2YWxpZGF0ZV9zdXBlcmJsb2NrKzB4MjEwLzB4MjEwIFtmMmZzXQo+Pj4+PiAg
+IFs8ZmZmZmZmZmZhMDMxY2Y4ZD5dIGYyZnNfbW91bnQrMHgxZC8weDMwIFtmMmZzXQo+Pj4+PiAg
+IFs8ZmZmZmZmZmY4MTFiOTQ5Nz5dIG1vdW50X2ZzKzB4NDcvMHgxYzAKPj4+Pj4gICBbPGZmZmZm
+ZmZmODExNjZlMDA+XSA/IF9fYWxsb2NfcGVyY3B1KzB4MTAvMHgyMAo+Pj4+PiAgIFs8ZmZmZmZm
+ZmY4MTFkNDAzMj5dIHZmc19rZXJuX21vdW50KzB4NzIvMHgxMTAKPj4+Pj4gICBbPGZmZmZmZmZm
+ODExZDY3NjM+XSBkb19tb3VudCsweDQ5My8weDkxMAo+Pj4+PiAgIFs8ZmZmZmZmZmY4MTE2MTVj
+Yj5dID8gc3RybmR1cF91c2VyKzB4NWIvMHg4MAo+Pj4+PiAgIFs8ZmZmZmZmZmY4MTFkNmM3MD5d
+IFN5U19tb3VudCsweDkwLzB4ZTAKPj4+Pj4gICBbPGZmZmZmZmZmODE2NmY4ZDk+XSBzeXN0ZW1f
+Y2FsbF9mYXN0cGF0aCsweDE2LzB4MWIKPj4+Pj4KPj4+Pj4gRm91bmQgYnkgTGludXggRmlsZSBT
+eXN0ZW0gVmVyaWZpY2F0aW9uIHByb2plY3QgKGxpbnV4dGVzdGluZy5vcmcpLgo+Pj4+Pgo+Pj4+
+PiBSZXBvcnRlZC1ieTogQW5kcmV5IFRzeXZhcmV2IDx0c3l2YXJldkBpc3ByYXMucnU+Cj4+Pj4+
+IFNpZ25lZC1vZmYtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrLmtpbUBzYW1zdW5nLmNvbT4KPj4+
+Pj4gLS0tCj4+Pj4+ICAgZnMvZjJmcy9jaGVja3BvaW50LmMgfCAgNiArKysrKysKPj4+Pj4gICBm
+cy9mMmZzL2YyZnMuaCAgICAgICB8ICAxICsKPj4+Pj4gICBmcy9mMmZzL3NlZ21lbnQuYyAgICB8
+IDE3ICsrKysrKysrKysrKysrKy0tCj4+Pj4+ICAgMyBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNlcnRp
+b25zKCspLCAyIGRlbGV0aW9ucygtKQo+Pj4+Pgo+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9j
+aGVja3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+Pj4+PiBpbmRleCA0YWE1MjFhLi44
+OTBlMjNkIDEwMDY0NAo+Pj4+PiAtLS0gYS9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+Pj4+PiArKysg
+Yi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+Pj4+PiBAQCAtNzYyLDYgKzc2MiwxMiBAQCBzdGF0aWMg
+dm9pZCBkb19jaGVja3BvaW50KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwKPj4+Pj4gYm9vbCBp
+c191bW91bnQpCj4+Pj4+ICAgCXZvaWQgKmthZGRyOwo+Pj4+PiAgIAlpbnQgaTsKPj4+Pj4gICAK
+Pj4+Pj4gKwkvKgo+Pj4+PiArCSAqIFRoaXMgYXZvaWRzIHRvIGNvbmR1Y3Qgd3Jvbmcgcm9sbC1m
+b3J3YXJkIG9wZXJhdGlvbnMgYW5kIHVzZXMKPj4+Pj4gKwkgKiBtZXRhcGFnZXMsIHNvIHNob3Vs
+ZCBiZSBjYWxsZWQgcHJpb3IgdG8gc3luY19tZXRhX3BhZ2VzIGJlbG93Lgo+Pj4+PiArCSAqLwo+
+Pj4+PiArCWRpc2NhcmRfbmV4dF9kbm9kZShzYmkpOwo+Pj4+PiArCj4+Pj4+ICAgCS8qIEZsdXNo
+IGFsbCB0aGUgTkFUL1NJVCBwYWdlcyAqLwo+Pj4+PiAgIAl3aGlsZSAoZ2V0X3BhZ2VzKHNiaSwg
+RjJGU19ESVJUWV9NRVRBKSkKPj4+Pj4gICAJCXN5bmNfbWV0YV9wYWdlcyhzYmksIE1FVEEsIExP
+TkdfTUFYKTsKPj4+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZjJmcy5oIGIvZnMvZjJmcy9mMmZz
+LmgKPj4+Pj4gaW5kZXggMmVjYWM4My4uMmM1YTVkYSAxMDA2NDQKPj4+Pj4gLS0tIGEvZnMvZjJm
+cy9mMmZzLmgKPj4+Pj4gKysrIGIvZnMvZjJmcy9mMmZzLmgKPj4+Pj4gQEAgLTExNzksNiArMTE3
+OSw3IEBAIGludCBmMmZzX2lzc3VlX2ZsdXNoKHN0cnVjdCBmMmZzX3NiX2luZm8gKik7Cj4+Pj4+
+ICAgdm9pZCBpbnZhbGlkYXRlX2Jsb2NrcyhzdHJ1Y3QgZjJmc19zYl9pbmZvICosIGJsb2NrX3Qp
+Owo+Pj4+PiAgIHZvaWQgcmVmcmVzaF9zaXRfZW50cnkoc3RydWN0IGYyZnNfc2JfaW5mbyAqLCBi
+bG9ja190LCBibG9ja190KTsKPj4+Pj4gICB2b2lkIGNsZWFyX3ByZWZyZWVfc2VnbWVudHMoc3Ry
+dWN0IGYyZnNfc2JfaW5mbyAqKTsKPj4+Pj4gK3ZvaWQgZGlzY2FyZF9uZXh0X2Rub2RlKHN0cnVj
+dCBmMmZzX3NiX2luZm8gKik7Cj4+Pj4+ICAgaW50IG5wYWdlc19mb3Jfc3VtbWFyeV9mbHVzaChz
+dHJ1Y3QgZjJmc19zYl9pbmZvICopOwo+Pj4+PiAgIHZvaWQgYWxsb2NhdGVfbmV3X3NlZ21lbnRz
+KHN0cnVjdCBmMmZzX3NiX2luZm8gKik7Cj4+Pj4+ICAgc3RydWN0IHBhZ2UgKmdldF9zdW1fcGFn
+ZShzdHJ1Y3QgZjJmc19zYl9pbmZvICosIHVuc2lnbmVkIGludCk7Cj4+Pj4+IGRpZmYgLS1naXQg
+YS9mcy9mMmZzL3NlZ21lbnQuYyBiL2ZzL2YyZnMvc2VnbWVudC5jCj4+Pj4+IGluZGV4IDFlMjY0
+ZTcuLjk5OTNmOTQgMTAwNjQ0Cj4+Pj4+IC0tLSBhL2ZzL2YyZnMvc2VnbWVudC5jCj4+Pj4+ICsr
+KyBiL2ZzL2YyZnMvc2VnbWVudC5jCj4+Pj4+IEBAIC0zMzUsMTMgKzMzNSwyNiBAQCBzdGF0aWMg
+dm9pZCBsb2NhdGVfZGlydHlfc2VnbWVudChzdHJ1Y3QKPj4+Pj4gZjJmc19zYl9pbmZvICpzYmks
+IHVuc2lnbmVkIGludCBzZWdubykKPj4+Pj4gICAJbXV0ZXhfdW5sb2NrKCZkaXJ0eV9pLT5zZWds
+aXN0X2xvY2spOwo+Pj4+PiAgIH0KPj4+Pj4gICAKPj4+Pj4gLXN0YXRpYyB2b2lkIGYyZnNfaXNz
+dWVfZGlzY2FyZChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4+Pj4+ICtzdGF0aWMgaW50IGYy
+ZnNfaXNzdWVfZGlzY2FyZChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4+Pj4+ICAgCQkJCWJs
+b2NrX3QgYmxrc3RhcnQsIGJsb2NrX3QgYmxrbGVuKQo+Pj4+PiAgIHsKPj4+Pj4gICAJc2VjdG9y
+X3Qgc3RhcnQgPSBTRUNUT1JfRlJPTV9CTE9DSyhzYmksIGJsa3N0YXJ0KTsKPj4+Pj4gICAJc2Vj
+dG9yX3QgbGVuID0gU0VDVE9SX0ZST01fQkxPQ0soc2JpLCBibGtsZW4pOwo+Pj4+PiAtCWJsa2Rl
+dl9pc3N1ZV9kaXNjYXJkKHNiaS0+c2ItPnNfYmRldiwgc3RhcnQsIGxlbiwgR0ZQX05PRlMsIDAp
+Owo+Pj4+PiAgIAl0cmFjZV9mMmZzX2lzc3VlX2Rpc2NhcmQoc2JpLT5zYiwgYmxrc3RhcnQsIGJs
+a2xlbik7Cj4+Pj4+ICsJcmV0dXJuIGJsa2Rldl9pc3N1ZV9kaXNjYXJkKHNiaS0+c2ItPnNfYmRl
+diwgc3RhcnQsIGxlbiwgR0ZQX05PRlMsIDApOwo+Pj4+PiArfQo+Pj4+PiArCj4+Pj4+ICt2b2lk
+IGRpc2NhcmRfbmV4dF9kbm9kZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCj4+Pj4+ICt7Cj4+
+Pj4+ICsJc3RydWN0IGN1cnNlZ19pbmZvICpjdXJzZWcgPSBDVVJTRUdfSShzYmksIENVUlNFR19X
+QVJNX05PREUpOwo+Pj4+PiArCWJsb2NrX3QgYmxrYWRkciA9IE5FWFRfRlJFRV9CTEtBRERSKHNi
+aSwgY3Vyc2VnKTsKPj4+Pj4gKwo+Pj4+PiArCWlmIChmMmZzX2lzc3VlX2Rpc2NhcmQoc2JpLCBi
+bGthZGRyLCAxKSkgewo+Pj4+PiArCQlzdHJ1Y3QgcGFnZSAqcGFnZSA9IGdyYWJfbWV0YV9wYWdl
+KHNiaSwgYmxrYWRkcik7Cj4+Pj4+ICsJCS8qIHplcm8tZmlsbGVkIHBhZ2UgKi8KPj4+Pj4gKwkJ
+c2V0X3BhZ2VfZGlydHkocGFnZSk7Cj4+Pj4+ICsJCWYyZnNfcHV0X3BhZ2UocGFnZSwgMSk7Cj4+
+Pj4+ICsJfQo+Pj4+PiAgIH0KPj4+Pj4gICAKPj4+Pj4gICBzdGF0aWMgdm9pZCBhZGRfZGlzY2Fy
+ZF9hZGRycyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksCj4+CgoKLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tCkxlYXJuIEdyYXBoIERhdGFiYXNlcyAtIERvd25sb2FkIEZSRUUgTydSZWlsbHkgQm9vawoi
+R3JhcGggRGF0YWJhc2VzIiBpcyB0aGUgZGVmaW5pdGl2ZSBuZXcgZ3VpZGUgdG8gZ3JhcGggZGF0
+YWJhc2VzIGFuZCB0aGVpcgphcHBsaWNhdGlvbnMuIFdyaXR0ZW4gYnkgdGhyZWUgYWNjbGFpbWVk
+IGxlYWRlcnMgaW4gdGhlIGZpZWxkLAp0aGlzIGZpcnN0IGVkaXRpb24gaXMgbm93IGF2YWlsYWJs
+ZS4gRG93bmxvYWQgeW91ciBmcmVlIGJvb2sgdG9kYXkhCmh0dHA6Ly9wLnNmLm5ldC9zZnUvTmVv
+VGVjaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51
+eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
+cmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51
+eC1mMmZzLWRldmVsCg==
