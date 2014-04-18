@@ -1,228 +1,73 @@
-From: "azv" <sale01@anbanana.com>
-Subject: 4361{RAND_NUMBER_0}Good news from Banana Co.in China
-Date: Fri, 18 Apr 2014 02:32:45 +0800
-Message-ID: <20140418023258343013@e.xnsun.com>
-Reply-To: sale01@anbanana.com
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to enable readahead last NAT block
+Date: Fri, 18 Apr 2014 11:15:44 +0900
+Message-ID: <1397787344.7727.32.camel@kjgkr>
+References: <000101cf5a1e$5c051770$140f4650$@samsung.com>
+Reply-To: jaegeuk.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8439428089245147720=="
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <vgtnzp@e.xnsun.com>) id 1War7e-0003sI-U6
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Apr 2014 18:33:18 +0000
-Received: from [172.246.160.42] (helo=e.xnsun.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1War7d-0002T9-OZ for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Apr 2014 18:33:18 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-
-This is a multi-part message in MIME format.
-
---===============8439428089245147720==
-Content-Type: multipart/alternative;
-	boundary="=====003_Dragon238528734327_====="
-
-This is a multi-part message in MIME format.
-
---=====003_Dragon238528734327_=====
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-
-NTE1Mjg1NQ0KQXR0ZW46IHB1cmNoYXNlIG1hbmFnZXINCiANCiANCkRlYXIgcHVyY2hhc2UgbWFu
-YWdlcu+8jA0KIA0KIA0KSGF2ZSBhIG5pY2UgZGF5IQ0KIA0KSSB3b3VsZCBsaWtlIHRvIGludHJv
-ZHVjZSBteXNlbGYuIEkgYW0gQW5uZSBHdW8gZnJvbSBTaGVuemhlbiBCYW5hbmEgRWxlY3Ryb25p
-Y3MgQ28uIGluIENoaW5hLiAgDQogDQpJIGhvcGUgd2UgY291bGQgaGF2ZSBhIGNoYW5jZSB0byB3
-b3JrIHRvZ2V0aGVyIGluIHRoZSBuZWFyIGZ1dHVyZS4gSWYgeW91IGhhdmUgdGltZSwgeW91IGFy
-ZSB3ZWxjb21lIHRvIHZpc2l0IG91ciB3ZWJzaXRlIGF0IHd3dy5hbmJhbmFuYS5jb20gd2hpY2gg
-aW5jbHVkZXMgb3VyIGNvbXBhbnkgcHJvZmlsZXMsIGhpc3RvcnkgYW5kIHNvbWV0aGluZyBuZXcg
-ZGVzaWducy4gV2UgbG9vayBmb3J3YXJkIHRvIHJlY2VpdmluZyB5b3VyIGVucXVpcmllcyBzb29u
-Lg0KIA0Ke1JBTkRfTlVNQkVSXzB9DQoNCllvdXJzIGZhaXRoZnVsbHksMzYwODY1DQpBbm5lIEd1
-byAgDQo3MzIwMzE2DQpCYW5hbmEgRWxlY3Ryb25pY3MgQ28uIA0KVGVsOiArODYgKDApNzU1IDg5
-MzkgNjgyMQ0KRmF4OiArODYgKDApNzU1IDg5NTggODEyNQ0KV2Vic2l0ZTogIHd3dy5hbmJhbmFu
-YS5jb20NCmh0dHA6Ly9jbjE1MDE1MDgwMjUuZW4uYWxpYmFiYS5jb20NCk9mZmljZSBhZGRyZXNz
-OiAxODAxIywgQ2FuZ3NvbmcgQmxkZywgTm9ydGguIFRhaXJhbiA3dGggUmQsIEZ1dGlhbiwgU2hl
-bnpoZW4NCkZhY3RvcnkgQWRkcmVzczogNUYuIEIgQmxvY2ssIEhlbm1pemh1IEluZHVzdHJ5IFBh
-cmssIFFpYW5qaW5nIDJuZCByb2FkLCBYaXhpYW5nLCBTaGVuemhlbiANCjcwDQo5NTY5NDczMA==
-
---=====003_Dragon238528734327_=====
-Content-Type: text/html;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-
-PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
-L0VOIj4NCjxIVE1MIHhtbG5zOm8gPSAidXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6
-b2ZmaWNlIj48SEVBRD4NCjxNRVRBIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD11dGYtOCIg
-aHR0cC1lcXVpdj1Db250ZW50LVR5cGU+DQo8TUVUQSBuYW1lPUdFTkVSQVRPUiBjb250ZW50PSJN
-U0hUTUwgOC4wMC42MDAxLjIzNTIwIj48L0hFQUQ+DQo8Qk9EWT48Rk9OVCA8ZGl2Pg0KPERJVj4N
-CjxESVY+DQo8RElWPg0KPERJVj4NCjxESVY+DQo8RElWPg0KPFAgc3R5bGU9Ik1BUkdJTjogMGNt
-IDBjbSAwcHQ7IEJBQ0tHUk9VTkQ6IHdoaXRlIiBjbGFzcz1lY3htc29ub3JtYWw+PFNQQU4gDQpz
-dHlsZT0iRk9OVC1GQU1JTFk6ICdBcmlhbCcsJ3NhbnMtc2VyaWYnOyBDT0xPUjogYmxhY2siIGxh
-bmc9RU4tVVM+PEZPTlQgDQpjb2xvcj13aGl0ZT4xNDk5PC9GT05UPjwvU1BBTj48L1A+DQo8UCBz
-dHlsZT0iTUFSR0lOOiAwY20gMGNtIDBwdDsgQkFDS0dST1VORDogd2hpdGUiIGNsYXNzPWVjeG1z
-b25vcm1hbD48U1BBTiANCnN0eWxlPSJGT05ULUZBTUlMWTogJ1NlZ29lIFVJJywnc2Fucy1zZXJp
-Zic7IENPTE9SOiBibGFjazsgRk9OVC1TSVpFOiAxMC41cHQiIA0KbGFuZz1FTi1VUz48Rk9OVCBj
-b2xvcj1ibGFjaz48bzpwPjwvbzpwPjwvRk9OVD48L1NQQU4+PC9QPjxTUEFOIA0Kc3R5bGU9IkZP
-TlQtRkFNSUxZOiAnQXJpYWwnLCdzYW5zLXNlcmlmJzsgQ09MT1I6ICMzNDM0MzQ7IEZPTlQtU0la
-RTogMTJwdDsgbXNvLWZhcmVhc3QtZm9udC1mYW1pbHk6IOWui+S9kzsgbXNvLWZvbnQta2Vybmlu
-ZzogMHB0IiANCmxhbmc9RU4tVVM+PEZPTlQgc3R5bGU9IkJBQ0tHUk9VTkQtQ09MT1I6ICNmZmZm
-ZmYiIGNvbG9yPWJsYWNrIA0KZmFjZT0iVGltZXMgTmV3IFJvbWFuIj4NCjxQIHN0eWxlPSJNQVJH
-SU46IDBjbSAwY20gMHB0OyBCQUNLR1JPVU5EOiB3aGl0ZSIgY2xhc3M9ZWN4bXNvbm9ybWFsPjxT
-UEFOIA0Kc3R5bGU9IkZPTlQtRkFNSUxZOiAnQXJpYWwnLCdzYW5zLXNlcmlmJzsgQ09MT1I6IGJs
-YWNrIiBsYW5nPUVOLVVTPkF0dGVuOiANCnB1cmNoYXNlIG1hbmFnZXI8L1NQQU4+PFNQQU4gDQpz
-dHlsZT0iRk9OVC1GQU1JTFk6ICdTZWdvZSBVSScsJ3NhbnMtc2VyaWYnOyBDT0xPUjogYmxhY2s7
-IEZPTlQtU0laRTogMTAuNXB0IiANCmxhbmc9RU4tVVM+PG86cD48L286cD48L1NQQU4+PC9QPg0K
-PFAgc3R5bGU9Ik1BUkdJTjogMGNtIDBjbSAwcHQ7IEJBQ0tHUk9VTkQ6IHdoaXRlIiBjbGFzcz1l
-Y3htc29ub3JtYWw+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6ICdTZWdvZSBVSScsJ3NhbnMt
-c2VyaWYnOyBDT0xPUjogYmxhY2s7IEZPTlQtU0laRTogMTAuNXB0IiANCmxhbmc9RU4tVVM+Jm5i
-c3A7PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9Ik1BUkdJTjogMGNtIDBjbSAwcHQ7
-IEJBQ0tHUk9VTkQ6IHdoaXRlIiBjbGFzcz1lY3htc29ub3JtYWw+PFNQQU4gDQpzdHlsZT0iRk9O
-VC1GQU1JTFk6ICdTZWdvZSBVSScsJ3NhbnMtc2VyaWYnOyBDT0xPUjogYmxhY2s7IEZPTlQtU0la
-RTogMTAuNXB0IiANCmxhbmc9RU4tVVM+Jm5ic3A7PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAg
-c3R5bGU9Ik1BUkdJTjogMGNtIDBjbSAwcHQ7IEJBQ0tHUk9VTkQ6IHdoaXRlIiBjbGFzcz1lY3ht
-c29ub3JtYWw+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6ICdBcmlhbCcsJ3NhbnMtc2VyaWYn
-OyBDT0xPUjogYmxhY2siIGxhbmc9RU4tVVM+RGVhciBwdXJjaGFzZSANCm1hbmFnZXI8L1NQQU4+
-PEZPTlQgZmFjZT3lrovkvZM+PFNQQU4gDQpzdHlsZT0iQ09MT1I6IGJsYWNrOyBtc28tYmlkaS1m
-b250LWZhbWlseTogJ1NlZ29lIFVJJyI+77yMPC9TUEFOPjxTUEFOIA0Kc3R5bGU9IkZPTlQtRkFN
-SUxZOiAnU2Vnb2UgVUknLCdzYW5zLXNlcmlmJzsgQ09MT1I6IGJsYWNrOyBGT05ULVNJWkU6IDEw
-LjVwdCIgDQpsYW5nPUVOLVVTPjxvOnA+PC9vOnA+PC9TUEFOPjwvRk9OVD48L1A+DQo8UCBzdHls
-ZT0iTUFSR0lOOiAwY20gMGNtIDBwdDsgQkFDS0dST1VORDogd2hpdGUiIGNsYXNzPWVjeG1zb25v
-cm1hbD48U1BBTiANCnN0eWxlPSJGT05ULUZBTUlMWTogJ0FyaWFsJywnc2Fucy1zZXJpZic7IENP
-TE9SOiBibGFjayIgDQpsYW5nPUVOLVVTPiZuYnNwOzwvU1BBTj48U1BBTiANCnN0eWxlPSJGT05U
-LUZBTUlMWTogJ1NlZ29lIFVJJywnc2Fucy1zZXJpZic7IENPTE9SOiBibGFjazsgRk9OVC1TSVpF
-OiAxMC41cHQiIA0KbGFuZz1FTi1VUz48bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0i
-TUFSR0lOOiAwY20gMGNtIDBwdDsgQkFDS0dST1VORDogd2hpdGUiIGNsYXNzPWVjeG1zb25vcm1h
-bD48U1BBTiANCnN0eWxlPSJGT05ULUZBTUlMWTogJ1NlZ29lIFVJJywnc2Fucy1zZXJpZic7IENP
-TE9SOiBibGFjazsgRk9OVC1TSVpFOiAxMC41cHQiIA0KbGFuZz1FTi1VUz4mbmJzcDs8bzpwPjwv
-bzpwPjwvU1BBTj48L1A+DQo8UCBzdHlsZT0iTUFSR0lOOiAwY20gMGNtIDBwdDsgQkFDS0dST1VO
-RDogd2hpdGUiIGNsYXNzPWVjeG1zb25vcm1hbD48U1BBTiANCnN0eWxlPSJGT05ULUZBTUlMWTog
-J0FyaWFsJywnc2Fucy1zZXJpZic7IENPTE9SOiBibGFjayIgbGFuZz1FTi1VUz5IYXZlIGEgbmlj
-ZSANCmRheSE8L1NQQU4+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6ICdTZWdvZSBVSScsJ3Nh
-bnMtc2VyaWYnOyBDT0xPUjogYmxhY2s7IEZPTlQtU0laRTogMTAuNXB0IiANCmxhbmc9RU4tVVM+
-PG86cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9Ik1BUkdJTjogMGNtIDBjbSAwcHQ7IEJB
-Q0tHUk9VTkQ6IHdoaXRlIiBjbGFzcz1lY3htc29ub3JtYWw+PFNQQU4gDQpzdHlsZT0iRk9OVC1G
-QU1JTFk6ICdBcmlhbCcsJ3NhbnMtc2VyaWYnOyBDT0xPUjogYmxhY2siIA0KbGFuZz1FTi1VUz4m
-bmJzcDs8L1NQQU4+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6ICdTZWdvZSBVSScsJ3NhbnMt
-c2VyaWYnOyBDT0xPUjogYmxhY2s7IEZPTlQtU0laRTogMTAuNXB0IiANCmxhbmc9RU4tVVM+PG86
-cD48L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9Ik1BUkdJTjogMGNtIDBjbSAwcHQ7IEJBQ0tH
-Uk9VTkQ6IHdoaXRlIiBjbGFzcz1lY3htc29ub3JtYWw+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1J
-TFk6ICdBcmlhbCcsJ3NhbnMtc2VyaWYnOyBDT0xPUjogYmxhY2siIGxhbmc9RU4tVVM+SSB3b3Vs
-ZCBsaWtlIA0KdG8gaW50cm9kdWNlIG15c2VsZi4gSSBhbSBBbm5lIEd1byBmcm9tIFNoZW56aGVu
-IEJhbmFuYSBFbGVjdHJvbmljcyBDby4gaW4gDQpDaGluYS4mbmJzcDs8L1NQQU4+PFNQQU4gc3R5
-bGU9IkZPTlQtRkFNSUxZOiAnQXJpYWwnLCdzYW5zLXNlcmlmJzsgQ09MT1I6IGJsYWNrIiANCmxh
-bmc9RU4tVVM+Jm5ic3A7PC9TUEFOPjxTUEFOIA0Kc3R5bGU9IkZPTlQtRkFNSUxZOiAnU2Vnb2Ug
-VUknLCdzYW5zLXNlcmlmJzsgQ09MT1I6IGJsYWNrOyBGT05ULVNJWkU6IDEwLjVwdCIgDQpsYW5n
-PUVOLVVTPjxvOnA+PC9vOnA+PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJNQVJHSU46IDBjbSAwY20g
-MHB0OyBCQUNLR1JPVU5EOiB3aGl0ZSIgY2xhc3M9ZWN4bXNvbm9ybWFsPjxTUEFOIA0Kc3R5bGU9
-IkZPTlQtRkFNSUxZOiAnQXJpYWwnLCdzYW5zLXNlcmlmJzsgQ09MT1I6IGJsYWNrIiBsYW5nPUVO
-LVVTPjwvU1BBTj48U1BBTiANCnN0eWxlPSJGT05ULUZBTUlMWTogJ0FyaWFsJywnc2Fucy1zZXJp
-Zic7IENPTE9SOiBibGFjayIgDQpsYW5nPUVOLVVTPiZuYnNwOzwvU1BBTj48U1BBTiANCnN0eWxl
-PSJGT05ULUZBTUlMWTogJ1NlZ29lIFVJJywnc2Fucy1zZXJpZic7IENPTE9SOiBibGFjazsgRk9O
-VC1TSVpFOiAxMC41cHQiIA0KbGFuZz1FTi1VUz48bzpwPjwvbzpwPjwvU1BBTj48L1A+DQo8UCBz
-dHlsZT0iTUFSR0lOOiAwY20gMGNtIDBwdDsgQkFDS0dST1VORDogd2hpdGUiIGNsYXNzPWVjeG1z
-b25vcm1hbD48U1BBTiANCnN0eWxlPSJGT05ULUZBTUlMWTogJ0FyaWFsJywnc2Fucy1zZXJpZic7
-IENPTE9SOiBibGFjayIgbGFuZz1FTi1VUz5JIGhvcGUgd2UgDQpjb3VsZCBoYXZlIGEgY2hhbmNl
-IHRvIHdvcmsgdG9nZXRoZXIgaW4gdGhlIG5lYXIgZnV0dXJlLiBJZiB5b3UgaGF2ZSB0aW1lLCB5
-b3UgDQphcmUgd2VsY29tZSB0byB2aXNpdCBvdXIgd2Vic2l0ZSBhdCA8L1NQQU4+PFNQQU4gbGFu
-Zz1FTi1VUz48QSANCmhyZWY9Imh0dHA6Ly93d3cuYW5iYW5hbmEuY29tLyIgdGFyZ2V0PV9ibGFu
-az48U1BBTiANCnN0eWxlPSJGT05ULUZBTUlMWTogJ0FyaWFsJywnc2Fucy1zZXJpZiciPnd3dy5h
-bmJhbmFuYS5jb208L1NQQU4+PC9BPjwvU1BBTj48U1BBTiANCnN0eWxlPSJGT05ULUZBTUlMWTog
-J0FyaWFsJywnc2Fucy1zZXJpZic7IENPTE9SOiBibGFjayIgbGFuZz1FTi1VUz4gd2hpY2ggDQpp
-bmNsdWRlcyBvdXIgY29tcGFueSBwcm9maWxlcywgaGlzdG9yeSBhbmQgc29tZXRoaW5nIG5ldyBk
-ZXNpZ25zLiBXZSBsb29rIA0KZm9yd2FyZCB0byByZWNlaXZpbmcgeW91ciBlbnF1aXJpZXMgc29v
-bi48L1NQQU4+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6ICdTZWdvZSBVSScsJ3NhbnMtc2Vy
-aWYnOyBDT0xPUjogYmxhY2s7IEZPTlQtU0laRTogMTAuNXB0IiANCmxhbmc9RU4tVVM+PG86cD48
-L286cD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9Ik1BUkdJTjogMGNtIDBjbSAwcHQ7IEJBQ0tHUk9V
-TkQ6IHdoaXRlIiBjbGFzcz1lY3htc29ub3JtYWw+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6
-ICdBcmlhbCcsJ3NhbnMtc2VyaWYnOyBDT0xPUjogYmxhY2siIA0KbGFuZz1FTi1VUz4mbmJzcDs8
-L1NQQU4+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6ICdTZWdvZSBVSScsJ3NhbnMtc2VyaWYn
-OyBDT0xPUjogYmxhY2s7IEZPTlQtU0laRTogMTAuNXB0IiANCmxhbmc9RU4tVVM+PG86cD48L286
-cD48L1NQQU4+PC9QPjwvRk9OVD48L1NQQU4+DQo8UCBzdHlsZT0iTUFSR0lOOiAwY20gMGNtIDBw
-dDsgQkFDS0dST1VORDogd2hpdGUiIGNsYXNzPWVjeG1zb25vcm1hbD48Rk9OVCANCmNvbG9yPWJs
-YWNrPjxTUEFOIHN0eWxlPSJGT05ULUZBTUlMWTogJ0FyaWFsJywnc2Fucy1zZXJpZic7IENPTE9S
-OiBibGFjayIgDQpsYW5nPUVOLVVTPjxGT05UIGNvbG9yPXdoaXRlPntSQU5EX05VTUJFUl8wfTwv
-Rk9OVD48L1NQQU4+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6ICdTZWdvZSBVSScsJ3NhbnMt
-c2VyaWYnOyBDT0xPUjogYmxhY2s7IEZPTlQtU0laRTogMTAuNXB0IiANCmxhbmc9RU4tVVM+PG86
-cD48L286cD48L1NQQU4+PC9GT05UPjwvUD4NCjxQIHN0eWxlPSJNQVJHSU46IDBjbSAwY20gMHB0
-OyBCQUNLR1JPVU5EOiB3aGl0ZSIgY2xhc3M9ZWN4bXNvbm9ybWFsPjxGT05UIA0KY29sb3I9Ymxh
-Y2s+PFNQQU4gc3R5bGU9IkZPTlQtRkFNSUxZOiAnQXJpYWwnLCdzYW5zLXNlcmlmJzsgQ09MT1I6
-IGJsYWNrIiANCmxhbmc9RU4tVVM+PC9TUEFOPjwvRk9OVD4mbmJzcDs8L1A+DQo8UCBzdHlsZT0i
-TUFSR0lOOiAwY20gMGNtIDBwdDsgQkFDS0dST1VORDogd2hpdGUiIGNsYXNzPWVjeG1zb25vcm1h
-bD48Rk9OVCANCmNvbG9yPWJsYWNrPjxTUEFOIHN0eWxlPSJGT05ULUZBTUlMWTogJ0FyaWFsJywn
-c2Fucy1zZXJpZic7IENPTE9SOiBibGFjayIgDQpsYW5nPUVOLVVTPllvdXJzIGZhaXRoZnVsbHk8
-Rk9OVCANCmNvbG9yPXdoaXRlPiwxNDc5MTIyNjwvRk9OVD48L1NQQU4+PFNQQU4gDQpzdHlsZT0i
-Rk9OVC1GQU1JTFk6ICdTZWdvZSBVSScsJ3NhbnMtc2VyaWYnOyBDT0xPUjogYmxhY2s7IEZPTlQt
-U0laRTogMTAuNXB0IiANCmxhbmc9RU4tVVM+PG86cD48L286cD48L1NQQU4+PC9GT05UPjwvUD4N
-CjxQIHN0eWxlPSJNQVJHSU46IDBjbSAwY20gMHB0OyBCQUNLR1JPVU5EOiB3aGl0ZSIgY2xhc3M9
-ZWN4bXNvbm9ybWFsPjxGT05UIA0KY29sb3I9YmxhY2s+PFNQQU4gc3R5bGU9IkZPTlQtRkFNSUxZ
-OiAnQXJpYWwnLCdzYW5zLXNlcmlmJzsgQ09MT1I6IGJsYWNrIiANCmxhbmc9RU4tVVM+QW5uZSBH
-dW8gJm5ic3A7PC9TUEFOPjxTUEFOIA0Kc3R5bGU9IkZPTlQtRkFNSUxZOiAnU2Vnb2UgVUknLCdz
-YW5zLXNlcmlmJzsgQ09MT1I6IGJsYWNrOyBGT05ULVNJWkU6IDEwLjVwdCIgDQpsYW5nPUVOLVVT
-PjxvOnA+PC9vOnA+PC9TUEFOPjwvRk9OVD48L1A+DQo8UCBzdHlsZT0iTUFSR0lOOiAwY20gMGNt
-IDBwdDsgQkFDS0dST1VORDogd2hpdGUiIGNsYXNzPWVjeG1zb25vcm1hbD48U1BBTiANCnN0eWxl
-PSJGT05ULUZBTUlMWTogJ0FyaWFsJywnc2Fucy1zZXJpZic7IENPTE9SOiBibGFjayIgbGFuZz1F
-Ti1VUz48Rk9OVCANCmNvbG9yPXdoaXRlPjg1MTU8L0ZPTlQ+PC9TUEFOPjwvUD4NCjxQIHN0eWxl
-PSJNQVJHSU46IDBjbSAwY20gMHB0OyBCQUNLR1JPVU5EOiB3aGl0ZSIgY2xhc3M9ZWN4bXNvbm9y
-bWFsPjxGT05UIA0KY29sb3I9YmxhY2s+PFNQQU4gc3R5bGU9IkZPTlQtRkFNSUxZOiAnQXJpYWwn
-LCdzYW5zLXNlcmlmJzsgQ09MT1I6IGJsYWNrIiANCmxhbmc9RU4tVVM+QmFuYW5hJm5ic3A7RWxl
-Y3Ryb25pY3MmbmJzcDtDby48L1NQQU4+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6ICdTZWdv
-ZSBVSScsJ3NhbnMtc2VyaWYnOyBDT0xPUjogYmxhY2s7IEZPTlQtU0laRTogMTAuNXB0OyBtc28t
-bm8tcHJvb2Y6IHllcyIgDQpsYW5nPUVOLVVTPiA8L1NQQU4+PC9GT05UPjxTUEFOIA0Kc3R5bGU9
-IkZPTlQtRkFNSUxZOiAnQXJpYWwnLCdzYW5zLXNlcmlmJzsgQ09MT1I6IGJsYWNrIiBsYW5nPUVO
-LVVTPjxCUj48Rk9OVCANCmNvbG9yPWJsYWNrPlRlbDombmJzcDsrODYmbmJzcDsoMCk3NTUmbmJz
-cDs4OTM5Jm5ic3A7NjgyMTxCUj5GYXg6Jm5ic3A7Kzg2Jm5ic3A7KDApNzU1Jm5ic3A7ODk1OCZu
-YnNwOzgxMjU8QlI+V2Vic2l0ZTombmJzcDsgDQp3d3cuYW5iYW5hbmEuY29tPEJSPmh0dHA6Ly9j
-bjE1MDE1MDgwMjUuZW4uYWxpYmFiYS5jb208QlI+T2ZmaWNlJm5ic3A7YWRkcmVzczombmJzcDsx
-ODAxIywmbmJzcDtDYW5nc29uZyZuYnNwO0JsZGcsJm5ic3A7Tm9ydGguJm5ic3A7VGFpcmFuJm5i
-c3A7N3RoJm5ic3A7UmQsJm5ic3A7RnV0aWFuLCZuYnNwO1NoZW56aGVuPEJSPkZhY3RvcnkmbmJz
-cDtBZGRyZXNzOiZuYnNwOzVGLiZuYnNwO0ImbmJzcDtCbG9jaywmbmJzcDtIZW5taXpodSZuYnNw
-O0luZHVzdHJ5Jm5ic3A7UGFyaywmbmJzcDtRaWFuamluZyZuYnNwOzJuZCZuYnNwO3JvYWQsJm5i
-c3A7WGl4aWFuZywmbmJzcDtTaGVuemhlbiANCjwvRk9OVD48L1NQQU4+PC9QPg0KPFAgc3R5bGU9
-Ik1BUkdJTjogMGNtIDBjbSAwcHQ7IEJBQ0tHUk9VTkQ6IHdoaXRlIiBjbGFzcz1lY3htc29ub3Jt
-YWw+PFNQQU4gDQpzdHlsZT0iRk9OVC1GQU1JTFk6ICdBcmlhbCcsJ3NhbnMtc2VyaWYnOyBDT0xP
-UjogYmxhY2siIGxhbmc9RU4tVVM+PEZPTlQgDQpjb2xvcj13aGl0ZT4yODA3OTE3NDI8L0ZPTlQ+
-PC9TUEFOPjwvUD4NCjxQIHN0eWxlPSJNQVJHSU46IDBjbSAwY20gMHB0OyBCQUNLR1JPVU5EOiB3
-aGl0ZSIgY2xhc3M9ZWN4bXNvbm9ybWFsPjxTUEFOIA0Kc3R5bGU9IkZPTlQtRkFNSUxZOiAnQXJp
-YWwnLCdzYW5zLXNlcmlmJzsgQ09MT1I6IGJsYWNrIiBsYW5nPUVOLVVTPjwvU1BBTj48Rk9OVCAN
-CmNvbG9yPXdoaXRlPjg4ODczNTwvRk9OVD48L1A+PC9ESVY+PC9ESVY+PC9ESVY+PC9ESVY+PC9E
-SVY+PC9ESVY+PC9GT05UPjwvQk9EWT48L0hUTUw+DQo=
-
---=====003_Dragon238528734327_=====--
-
-
-
---===============8439428089245147720==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <000101cf5a1e$5c051770$140f4650$@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-------------------------------------------------------------------------------
-Learn Graph Databases - Download FREE O'Reilly Book
-"Graph Databases" is the definitive new guide to graph databases and their
-applications. Written by three acclaimed leaders in the field,
-this first edition is now available. Download your free book today!
-http://p.sf.net/sfu/NeoTech
---===============8439428089245147720==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Hi Chao,
 
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+How about this?
 
---===============8439428089245147720==--
+---
+ fs/f2fs/f2fs.h | 1 +
+ fs/f2fs/node.c | 6 ++++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 55152de..556d06b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -244,6 +244,7 @@ static inline void set_raw_extent(struct extent_info
+*ext,
+ struct f2fs_nm_info {
+ 	block_t nat_blkaddr;		/* base disk address of NAT */
+ 	nid_t max_nid;			/* maximum possible node ids */
++	nid_t available_nids;		/* maximum available node ids */
+ 	nid_t next_scan_nid;		/* the next nid to be scanned */
+ 	unsigned int ram_thresh;	/* control the memory footprint */
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 837f5fd..5fb484c 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1447,7 +1447,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t
+*nid)
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct free_nid *i = NULL;
+ retry:
+-	if (unlikely(sbi->total_valid_node_count + 1 >= nm_i->max_nid))
++	if (unlikely(sbi->total_valid_node_count + 1 >= nm_i->available_nids))
+ 		return false;
+ 
+ 	spin_lock(&nm_i->free_nid_list_lock);
+@@ -1859,8 +1859,10 @@ static int init_node_manager(struct f2fs_sb_info
+*sbi)
+ 	nat_segs = le32_to_cpu(sb_raw->segment_count_nat) >> 1;
+ 	nat_blocks = nat_segs << le32_to_cpu(sb_raw->log_blocks_per_seg);
+ 
++	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks;
++
+ 	/* not used nids: 0, node, meta, (and root counted as valid node) */
+-	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks - 3;
++	nm_i->available_nids = nm_i->max_nid - 3;
+ 	nm_i->fcnt = 0;
+ 	nm_i->nat_cnt = 0;
+ 	nm_i->ram_thresh = DEF_RAM_THRESHOLD;
+-- 
+1.8.4.474.g128a96c
+
+
+-- 
+Jaegeuk Kim
+Samsung
+
