@@ -1,122 +1,245 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: f2fs: BUG_ON() is triggered when mount valid f2fs
-	filesystem
-Date: Fri, 18 Apr 2014 15:35:04 +0900
-Message-ID: <1397802904.4283.1.camel@kjgkr>
-References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru>
-	<1397559864.7727.5.camel@kjgkr> <534E494C.7050909@ispras.ru>
-	<1397691337.7727.18.camel@kjgkr> <534F2A32.9030405@ispras.ru>
-	<1397720720.7727.28.camel@kjgkr> <5350C06A.4090807@ispras.ru>
-Reply-To: jaegeuk.kim@samsung.com
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: Re: f2fs: BUG_ON() is triggered when mount valid f2fs filesystem
+Date: Fri, 18 Apr 2014 14:40:25 +0800
+Message-ID: <5350C8D9.3090208@cn.fujitsu.com>
+References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru> <1397559864.7727.5.camel@kjgkr> <534E494C.7050909@ispras.ru> <1397691337.7727.18.camel@kjgkr> <534F2A32.9030405@ispras.ru> <1397720720.7727.28.camel@kjgkr> <5350C06A.4090807@ispras.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1Wb2QI-0008Bu-C3
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Apr 2014 06:37:18 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1Wb2QE-0008MN-Uc
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Apr 2014 06:37:18 +0000
-Received: from epcpsbgr3.samsung.com
-	(u143.gpu120.samsung.co.kr [203.254.230.143])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N4700B24RPVCJ40@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Apr 2014 15:37:07 +0900 (KST)
-In-reply-to: <5350C06A.4090807@ispras.ru>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5350C06A.4090807@ispras.ru>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Andrey Tsyvarev <tsyvarev@ispras.ru>, linux-kernel <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk.kim@samsung.com, Andrey Tsyvarev <tsyvarev@ispras.ru>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Thank you for the explanation.
-The following patch will resolve the issue.
-Thanks,
+Hi Alexey, Kim,
+On 04/18/2014 02:04 PM, Alexey Khoroshilov wrote:
 
->From 2048e7458c982f4297da9d3366ab29224ae2e8b0 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date: Fri, 18 Apr 2014 15:21:04 +0900
-Subject: [PATCH] f2fs: avoid BUG_ON when mouting corrupted image having
- garbage blocks
+> On 17.04.2014 00:45, Jaegeuk Kim wrote:
+>> Hi,
+>>
+>> 2014-04-16 (=EC=88=98), 18:11 -0700, Alexey Khoroshilov:
+>>> Hi,
+>>>
+>>> But would not ability to trigger BUG_ON by mounting a crafted image
+>>> considered as an issue having security implications?
+>> Sorry, I can't come up with you.
+>> Could you please explain why this can be related to the security hol=
+e?
+>> Did you mean it needs to avoid such the BUG_ONs if the image has
+>> obsolete data being used before?
+> An ability to trigger a BUG_ON assert by mounting a crafted image is
+> usually considered as a local denial of service [1-3]. As far as I
+> understand, the reason is that some kernel data may become inconsiste=
+nt
+> that can lead to further problems.
 
-If the disk has some garbage blocks, F2FS is able to face with BUG_ON
-when
-recovering direct node blocks.
-This patch detects the error case and avoids that prior to reaching
-BUG_ON.
+I think I caught the key point if I do not miss-read it.
+Alexey's misgiving is that users can mount a crafted or malicious
+image to trigger a BUG_ON, and results in the server panic, especially =
+the
+normal user can do this via fuse,user_namespace...
+So it seems a leak that the user only mounts an invalid image, but resu=
+lts
+in denial of service.
+The following 3 cases also show this point.
+So the right way may be return the suitable *ERROR* to the user rather =
+than
+trigger BUG_ON.
 
-Alexey Khoroshilov addressed the potential security issues as follows.
-"An ability to trigger a BUG_ON assert by mounting a crafted image is
-usually considered as a local denial of service [1-3]. As far as I
-understand, the reason is that some kernel data may become inconsistent
-that can lead to further problems.
+Regards,
+Gu
 
-[1] http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-3353
-[2] http://www.openwall.com/lists/oss-security/2011/06/24/4
-[3] http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2011-2928
-etc."
-
-Reported-by: Andrey Tsyvarev <tsyvarev@ispras.ru>
-Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
----
- fs/f2fs/node.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 6ebdba1..64755f4 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1609,6 +1609,11 @@ int recover_inode_page(struct f2fs_sb_info *sbi,
-struct page *page)
- 	struct node_info old_ni, new_ni;
- 	struct page *ipage;
- 
-+	get_node_info(sbi, ino, &old_ni);
-+
-+	if (unlikely(old_ni.blk_addr != NULL_ADDR))
-+		return -EINVAL;
-+
- 	ipage = grab_cache_page(NODE_MAPPING(sbi), ino);
- 	if (!ipage)
- 		return -ENOMEM;
-@@ -1616,7 +1621,6 @@ int recover_inode_page(struct f2fs_sb_info *sbi,
-struct page *page)
- 	/* Should not use this inode  from free nid list */
- 	remove_free_nid(NM_I(sbi), ino);
- 
--	get_node_info(sbi, ino, &old_ni);
- 	SetPageUptodate(ipage);
- 	fill_node_footer(ipage, ino, ino, 0, true);
- 
--- 
-1.8.4.474.g128a96c
-
-
-
-
--- 
-Jaegeuk Kim
-Samsung
-
-
-------------------------------------------------------------------------------
-Learn Graph Databases - Download FREE O'Reilly Book
-"Graph Databases" is the definitive new guide to graph databases and their
-applications. Written by three acclaimed leaders in the field,
-this first edition is now available. Download your free book today!
-http://p.sf.net/sfu/NeoTech
+>=20
+> [1] http://cve.mitre.org/cgi-bin/cvename.cgi?name=3DCVE-2011-3353
+> [2] http://www.openwall.com/lists/oss-security/2011/06/24/4
+> [3] http://cve.mitre.org/cgi-bin/cvename.cgi?name=3DCVE-2011-2928
+> etc.
+>=20
+> --
+> Alexey
+>=20
+>=20
+>> On 16.04.2014 16:35, Jaegeuk Kim wrote:
+>>>> Hi,
+>>>>
+>>>> 2014-04-16 (=EC=88=98), 13:11 +0400, Andrey Tsyvarev:
+>>>>> Hi,
+>>>>>
+>>>>> With this patch mounting of the image continues to fail (with sim=
+ilar=20
+>>>>> BUG_ON).
+>>>>> But when image is formatted again (and steps mentioned in the pre=
+vious=20
+>>>>> message are performed),
+>>>>> mounting of it is now succeed.
+>>>>>
+>>>>> Is this is a true purpose of the patch?
+>>>> Indeed. The patch solves there-in root cause.
+>>>> But, if you're trying to use the failed image again, simply you ca=
+n skip
+>>>> the errorneous part by:
+>>>>
+>>>> # mount ... -o disable_roll_forward ...
+>>>>
+>>>> Once sync or umount whatever checkpoint is done after that, the im=
+age
+>>>> will be mounted without "disable_roll_forward".
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> 15.04.2014 15:04, Jaegeuk Kim =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>>> Hi,
+>>>>>>
+>>>>>> Thank you for the report.
+>>>>>> I retrieved the fault image and found out that previous garbage =
+data
+>>>>>> wreak such the wrong behaviors.
+>>>>>> So, I wrote the following patch that fills one zero-block at the
+>>>>>> checkpoint procedure.
+>>>>>> If the underlying device supports discard, I expect that it most=
+ly
+>>>>>> doesn't incur any performance regression significantly.
+>>>>>>
+>>>>>> Could you test this patch?
+>>>>>>
+>>>>>> >From 60588ceb7277aae2a79e7f67f5217d1256720d78 Mon Sep 17 00:00:=
+00 2001
+>>>>>> From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+>>>>>> Date: Tue, 15 Apr 2014 13:57:55 +0900
+>>>>>> Subject: [PATCH] f2fs: avoid to conduct roll-forward due to the =
+remained
+>>>>>>   garbage blocks
+>>>>>>
+>>>>>> The f2fs always scans the next chain of direct node blocks.
+>>>>>> But some garbage blocks are able to be remained due to no discar=
+d
+>>>>>> support or
+>>>>>> SSR triggers.
+>>>>>> This occasionally wreaks recovering wrong inodes that were used =
+or
+>>>>>> BUG_ONs
+>>>>>> due to reallocating node ids as follows.
+>>>>>>
+>>>>>> When mount this f2fs image:
+>>>>>> http://linuxtesting.org/downloads/f2fs_fault_image.zip
+>>>>>> BUG_ON is triggered in f2fs driver (messages below are generated=
+ on
+>>>>>> kernel 3.13.2; for other kernels output is similar):
+>>>>>>
+>>>>>> kernel BUG at fs/f2fs/node.c:215!
+>>>>>>   Call Trace:
+>>>>>>   [<ffffffffa032ebad>] recover_inode_page+0x1fd/0x3e0 [f2fs]
+>>>>>>   [<ffffffff811446e7>] ? __lock_page+0x67/0x70
+>>>>>>   [<ffffffff81089990>] ? autoremove_wake_function+0x50/0x50
+>>>>>>   [<ffffffffa0337788>] recover_fsync_data+0x1398/0x15d0 [f2fs]
+>>>>>>   [<ffffffff812b9e5c>] ? selinux_d_instantiate+0x1c/0x20
+>>>>>>   [<ffffffff811cb20b>] ? d_instantiate+0x5b/0x80
+>>>>>>   [<ffffffffa0321044>] f2fs_fill_super+0xb04/0xbf0 [f2fs]
+>>>>>>   [<ffffffff811b861e>] ? mount_bdev+0x7e/0x210
+>>>>>>   [<ffffffff811b8769>] mount_bdev+0x1c9/0x210
+>>>>>>   [<ffffffffa0320540>] ? validate_superblock+0x210/0x210 [f2fs]
+>>>>>>   [<ffffffffa031cf8d>] f2fs_mount+0x1d/0x30 [f2fs]
+>>>>>>   [<ffffffff811b9497>] mount_fs+0x47/0x1c0
+>>>>>>   [<ffffffff81166e00>] ? __alloc_percpu+0x10/0x20
+>>>>>>   [<ffffffff811d4032>] vfs_kern_mount+0x72/0x110
+>>>>>>   [<ffffffff811d6763>] do_mount+0x493/0x910
+>>>>>>   [<ffffffff811615cb>] ? strndup_user+0x5b/0x80
+>>>>>>   [<ffffffff811d6c70>] SyS_mount+0x90/0xe0
+>>>>>>   [<ffffffff8166f8d9>] system_call_fastpath+0x16/0x1b
+>>>>>>
+>>>>>> Found by Linux File System Verification project (linuxtesting.or=
+g).
+>>>>>>
+>>>>>> Reported-by: Andrey Tsyvarev <tsyvarev@ispras.ru>
+>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+>>>>>> ---
+>>>>>>   fs/f2fs/checkpoint.c |  6 ++++++
+>>>>>>   fs/f2fs/f2fs.h       |  1 +
+>>>>>>   fs/f2fs/segment.c    | 17 +++++++++++++++--
+>>>>>>   3 files changed, 22 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>>>>> index 4aa521a..890e23d 100644
+>>>>>> --- a/fs/f2fs/checkpoint.c
+>>>>>> +++ b/fs/f2fs/checkpoint.c
+>>>>>> @@ -762,6 +762,12 @@ static void do_checkpoint(struct f2fs_sb_in=
+fo *sbi,
+>>>>>> bool is_umount)
+>>>>>>   	void *kaddr;
+>>>>>>   	int i;
+>>>>>>  =20
+>>>>>> +	/*
+>>>>>> +	 * This avoids to conduct wrong roll-forward operations and us=
+es
+>>>>>> +	 * metapages, so should be called prior to sync_meta_pages bel=
+ow.
+>>>>>> +	 */
+>>>>>> +	discard_next_dnode(sbi);
+>>>>>> +
+>>>>>>   	/* Flush all the NAT/SIT pages */
+>>>>>>   	while (get_pages(sbi, F2FS_DIRTY_META))
+>>>>>>   		sync_meta_pages(sbi, META, LONG_MAX);
+>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>>> index 2ecac83..2c5a5da 100644
+>>>>>> --- a/fs/f2fs/f2fs.h
+>>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>>> @@ -1179,6 +1179,7 @@ int f2fs_issue_flush(struct f2fs_sb_info *=
+);
+>>>>>>   void invalidate_blocks(struct f2fs_sb_info *, block_t);
+>>>>>>   void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t=
+);
+>>>>>>   void clear_prefree_segments(struct f2fs_sb_info *);
+>>>>>> +void discard_next_dnode(struct f2fs_sb_info *);
+>>>>>>   int npages_for_summary_flush(struct f2fs_sb_info *);
+>>>>>>   void allocate_new_segments(struct f2fs_sb_info *);
+>>>>>>   struct page *get_sum_page(struct f2fs_sb_info *, unsigned int)=
+;
+>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>>> index 1e264e7..9993f94 100644
+>>>>>> --- a/fs/f2fs/segment.c
+>>>>>> +++ b/fs/f2fs/segment.c
+>>>>>> @@ -335,13 +335,26 @@ static void locate_dirty_segment(struct
+>>>>>> f2fs_sb_info *sbi, unsigned int segno)
+>>>>>>   	mutex_unlock(&dirty_i->seglist_lock);
+>>>>>>   }
+>>>>>>  =20
+>>>>>> -static void f2fs_issue_discard(struct f2fs_sb_info *sbi,
+>>>>>> +static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
+>>>>>>   				block_t blkstart, block_t blklen)
+>>>>>>   {
+>>>>>>   	sector_t start =3D SECTOR_FROM_BLOCK(sbi, blkstart);
+>>>>>>   	sector_t len =3D SECTOR_FROM_BLOCK(sbi, blklen);
+>>>>>> -	blkdev_issue_discard(sbi->sb->s_bdev, start, len, GFP_NOFS, 0)=
+;
+>>>>>>   	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
+>>>>>> +	return blkdev_issue_discard(sbi->sb->s_bdev, start, len, GFP_N=
+OFS, 0);
+>>>>>> +}
+>>>>>> +
+>>>>>> +void discard_next_dnode(struct f2fs_sb_info *sbi)
+>>>>>> +{
+>>>>>> +	struct curseg_info *curseg =3D CURSEG_I(sbi, CURSEG_WARM_NODE)=
+;
+>>>>>> +	block_t blkaddr =3D NEXT_FREE_BLKADDR(sbi, curseg);
+>>>>>> +
+>>>>>> +	if (f2fs_issue_discard(sbi, blkaddr, 1)) {
+>>>>>> +		struct page *page =3D grab_meta_page(sbi, blkaddr);
+>>>>>> +		/* zero-filled page */
+>>>>>> +		set_page_dirty(page);
+>>>>>> +		f2fs_put_page(page, 1);
+>>>>>> +	}
+>>>>>>   }
+>>>>>>  =20
+>>>>>>   static void add_discard_addrs(struct f2fs_sb_info *sbi,
+>>>
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> .
+>=20
