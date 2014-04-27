@@ -1,30 +1,22 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: introduce help macro ADDRS_PER_PAGE()
-Date: Sat, 26 Apr 2014 19:59:52 +0800
-Message-ID: <004901cf6147$21bed300$653c7900$@samsung.com>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH 1/2] f2fs: introduce struct flush_cmd_control to
+ wrap the flush_merge fields
+Date: Sun, 27 Apr 2014 14:21:21 +0800
+Message-ID: <535CA1E1.5060707@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1We1Hh-00089B-Mh
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1WeIcQ-0002Wv-KR
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Apr 2014 12:00:45 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1We1Hf-0005DA-MJ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Apr 2014 12:00:45 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N4N00CIX00ZQJB0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Apr 2014 21:00:35 +0900 (KST)
-Content-language: zh-cn
+	Sun, 27 Apr 2014 06:31:18 +0000
+Received: from [59.151.112.132] (helo=heian.cn.fujitsu.com)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WeIcO-0003T1-5m for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 27 Apr 2014 06:31:18 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,93 +26,245 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: ??? <jaegeuk.kim@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Kim <jaegeuk.kim@samsung.com>
+Cc: fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>
 
-Introduce help macro ADDRS_PER_PAGE() to get the number of address pointers in
-direct node or inode.
+Split the flush_merge fields from sm_i, and use the new struct flush_cmd_control
+to wrap it, so that we can igonre these fileds if flush_merge is disable, and
+it alse can the structs more neat.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
- fs/f2fs/data.c          |    6 ++----
- fs/f2fs/file.c          |    5 +----
- fs/f2fs/recovery.c      |    5 +----
- include/linux/f2fs_fs.h |    3 +++
- 4 files changed, 7 insertions(+), 12 deletions(-)
+ fs/f2fs/f2fs.h    |   17 ++++++++----
+ fs/f2fs/segment.c |   69 ++++++++++++++++++++++++++++++++--------------------
+ fs/f2fs/super.c   |   42 +++++++++++++++++--------------
+ 3 files changed, 76 insertions(+), 52 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 150c12a..6daef54 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -652,8 +652,7 @@ static int get_data_block(struct inode *inode, sector_t iblock,
- 		goto put_out;
- 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 97da71d..fa0ec81 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -325,6 +325,15 @@ struct flush_cmd {
+ 	int ret;
+ };
  
--	end_offset = IS_INODE(dn.node_page) ?
--			ADDRS_PER_INODE(F2FS_I(inode)) : ADDRS_PER_BLOCK;
-+	end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
- 	bh_result->b_size = (((size_t)1) << blkbits);
- 	dn.ofs_in_node++;
- 	pgofs++;
-@@ -675,8 +674,7 @@ get_next:
- 		if (dn.data_blkaddr == NEW_ADDR)
- 			goto put_out;
- 
--		end_offset = IS_INODE(dn.node_page) ?
--			ADDRS_PER_INODE(F2FS_I(inode)) : ADDRS_PER_BLOCK;
-+		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
- 	}
- 
- 	if (maxblocks > (bh_result->b_size >> blkbits)) {
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 60e7d54..bb365c9 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -288,10 +288,7 @@ int truncate_blocks(struct inode *inode, u64 from)
- 		return err;
- 	}
- 
--	if (IS_INODE(dn.node_page))
--		count = ADDRS_PER_INODE(F2FS_I(inode));
--	else
--		count = ADDRS_PER_BLOCK;
-+	count = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
- 
- 	count -= dn.ofs_in_node;
- 	f2fs_bug_on(count < 0);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 9eb6487..be1e3e8 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -301,10 +301,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 		goto out;
- 
- 	start = start_bidx_of_node(ofs_of_node(page), fi);
--	if (IS_INODE(page))
--		end = start + ADDRS_PER_INODE(fi);
--	else
--		end = start + ADDRS_PER_BLOCK;
-+	end = start + ADDRS_PER_PAGE(page, fi);
- 
- 	f2fs_lock_op(sbi);
- 
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index df53e17..8c03f71 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -146,6 +146,9 @@ struct f2fs_extent {
- #define ADDRS_PER_BLOCK		1018	/* Address Pointers in a Direct Block */
- #define NIDS_PER_BLOCK		1018	/* Node IDs in an Indirect Block */
- 
-+#define ADDRS_PER_PAGE(page, fi)	\
-+	(IS_INODE(page) ? ADDRS_PER_INODE(fi) : ADDRS_PER_BLOCK)
++struct flush_cmd_control {
++	struct task_struct *f2fs_issue_flush;	/* flush thread */
++	wait_queue_head_t flush_wait_queue;	/* waiting queue for wake-up */
++	struct flush_cmd *issue_list;		/* list for command issue */
++	struct flush_cmd *dispatch_list;	/* list for command dispatch */
++	spinlock_t issue_lock;			/* for issue list lock */
++	struct flush_cmd *issue_tail;		/* list tail of issue list */
++};
 +
- #define	NODE_DIR1_BLOCK		(DEF_ADDRS_PER_INODE + 1)
- #define	NODE_DIR2_BLOCK		(DEF_ADDRS_PER_INODE + 2)
- #define	NODE_IND1_BLOCK		(DEF_ADDRS_PER_INODE + 3)
+ struct f2fs_sm_info {
+ 	struct sit_info *sit_info;		/* whole segment information */
+ 	struct free_segmap_info *free_info;	/* free segment information */
+@@ -355,12 +364,8 @@ struct f2fs_sm_info {
+ 	unsigned int min_ipu_util;	/* in-place-update threshold */
+ 
+ 	/* for flush command control */
+-	struct task_struct *f2fs_issue_flush;	/* flush thread */
+-	wait_queue_head_t flush_wait_queue;	/* waiting queue for wake-up */
+-	struct flush_cmd *issue_list;		/* list for command issue */
+-	struct flush_cmd *dispatch_list;	/* list for command dispatch */
+-	spinlock_t issue_lock;			/* for issue list lock */
+-	struct flush_cmd *issue_tail;		/* list tail of issue list */
++	struct flush_cmd_control *cmd_control_info;
++
+ };
+ 
+ /*
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index f6816e1..86979d7d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -200,20 +200,20 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ int issue_flush_thread(void *data)
+ {
+ 	struct f2fs_sb_info *sbi = data;
+-	struct f2fs_sm_info *sm_i = SM_I(sbi);
+-	wait_queue_head_t *q = &sm_i->flush_wait_queue;
++	struct flush_cmd_control *fcc = SM_I(sbi)->cmd_control_info;
++	wait_queue_head_t *q = &fcc->flush_wait_queue;
+ repeat:
+ 	if (kthread_should_stop())
+ 		return 0;
+ 
+-	spin_lock(&sm_i->issue_lock);
+-	if (sm_i->issue_list) {
+-		sm_i->dispatch_list = sm_i->issue_list;
+-		sm_i->issue_list = sm_i->issue_tail = NULL;
++	spin_lock(&fcc->issue_lock);
++	if (fcc->issue_list) {
++		fcc->dispatch_list = fcc->issue_list;
++		fcc->issue_list = fcc->issue_tail = NULL;
+ 	}
+-	spin_unlock(&sm_i->issue_lock);
++	spin_unlock(&fcc->issue_lock);
+ 
+-	if (sm_i->dispatch_list) {
++	if (fcc->dispatch_list) {
+ 		struct bio *bio = bio_alloc(GFP_NOIO, 0);
+ 		struct flush_cmd *cmd, *next;
+ 		int ret;
+@@ -221,22 +221,23 @@ repeat:
+ 		bio->bi_bdev = sbi->sb->s_bdev;
+ 		ret = submit_bio_wait(WRITE_FLUSH, bio);
+ 
+-		for (cmd = sm_i->dispatch_list; cmd; cmd = next) {
++		for (cmd = fcc->dispatch_list; cmd; cmd = next) {
+ 			cmd->ret = ret;
+ 			next = cmd->next;
+ 			complete(&cmd->wait);
+ 		}
+ 		bio_put(bio);
+-		sm_i->dispatch_list = NULL;
++		fcc->dispatch_list = NULL;
+ 	}
+ 
+-	wait_event_interruptible(*q, kthread_should_stop() || sm_i->issue_list);
++	wait_event_interruptible(*q,
++			kthread_should_stop() || fcc->issue_list);
+ 	goto repeat;
+ }
+ 
+ int f2fs_issue_flush(struct f2fs_sb_info *sbi)
+ {
+-	struct f2fs_sm_info *sm_i = SM_I(sbi);
++	struct flush_cmd_control *fcc = SM_I(sbi)->cmd_control_info;
+ 	struct flush_cmd *cmd;
+ 	int ret;
+ 
+@@ -246,16 +247,16 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi)
+ 	cmd = f2fs_kmem_cache_alloc(flush_cmd_slab, GFP_ATOMIC | __GFP_ZERO);
+ 	init_completion(&cmd->wait);
+ 
+-	spin_lock(&sm_i->issue_lock);
+-	if (sm_i->issue_list)
+-		sm_i->issue_tail->next = cmd;
++	spin_lock(&fcc->issue_lock);
++	if (fcc->issue_list)
++		fcc->issue_tail->next = cmd;
+ 	else
+-		sm_i->issue_list = cmd;
+-	sm_i->issue_tail = cmd;
+-	spin_unlock(&sm_i->issue_lock);
++		fcc->issue_list = cmd;
++	fcc->issue_tail = cmd;
++	spin_unlock(&fcc->issue_lock);
+ 
+-	if (!sm_i->dispatch_list)
+-		wake_up(&sm_i->flush_wait_queue);
++	if (!fcc->dispatch_list)
++		wake_up(&fcc->flush_wait_queue);
+ 
+ 	wait_for_completion(&cmd->wait);
+ 	ret = cmd->ret;
+@@ -1873,12 +1874,22 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
+ 	sm_info->max_discards = 0;
+ 
+ 	if (test_opt(sbi, FLUSH_MERGE) && !f2fs_readonly(sbi->sb)) {
+-		spin_lock_init(&sm_info->issue_lock);
+-		init_waitqueue_head(&sm_info->flush_wait_queue);
+-		sm_info->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
++		struct flush_cmd_control *fcc =
++			kzalloc(sizeof(struct flush_cmd_control), GFP_KERNEL);
++
++		if (!fcc)
++			return -ENOMEM;
++		spin_lock_init(&fcc->issue_lock);
++		init_waitqueue_head(&fcc->flush_wait_queue);
++
++		fcc->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
+ 				"f2fs_flush-%u:%u", MAJOR(dev), MINOR(dev));
+-		if (IS_ERR(sm_info->f2fs_issue_flush))
+-			return PTR_ERR(sm_info->f2fs_issue_flush);
++		if (IS_ERR(fcc->f2fs_issue_flush)) {
++			err = PTR_ERR(fcc->f2fs_issue_flush);
++			kfree(fcc);
++			return err;
++		}
++		sm_info->cmd_control_info = fcc;
+ 	}
+ 
+ 	err = build_sit_info(sbi);
+@@ -1987,10 +1998,14 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+ void destroy_segment_manager(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_sm_info *sm_info = SM_I(sbi);
++	struct flush_cmd_control *fcc;
++
+ 	if (!sm_info)
+ 		return;
+-	if (sm_info->f2fs_issue_flush)
+-		kthread_stop(sm_info->f2fs_issue_flush);
++	fcc = sm_info->cmd_control_info;
++	if (fcc && fcc->f2fs_issue_flush)
++		kthread_stop(fcc->f2fs_issue_flush);
++	kfree(fcc);
+ 	destroy_dirty_segmap(sbi);
+ 	destroy_curseg(sbi);
+ 	destroy_free_segmap(sbi);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index bea642a..98832ef 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -641,29 +641,33 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	 * or if flush_merge is not passed in mount option.
+ 	 */
+ 	if ((*flags & MS_RDONLY) || !test_opt(sbi, FLUSH_MERGE)) {
+-		struct f2fs_sm_info *sm_info = sbi->sm_info;
++		struct flush_cmd_control *fcc =
++					sbi->sm_info->cmd_control_info;
+ 
+-		if (sm_info->f2fs_issue_flush)
+-			kthread_stop(sm_info->f2fs_issue_flush);
+-		sm_info->issue_list = sm_info->dispatch_list = NULL;
+-		sm_info->f2fs_issue_flush = NULL;
+-	} else if (test_opt(sbi, FLUSH_MERGE)) {
+-		struct f2fs_sm_info *sm_info = sbi->sm_info;
++		if (fcc && fcc->f2fs_issue_flush)
++			kthread_stop(fcc->f2fs_issue_flush);
++		kfree(fcc);
++		sbi->sm_info->cmd_control_info = NULL;
++	} else if (test_opt(sbi, FLUSH_MERGE) &&
++					!sbi->sm_info->cmd_control_info) {
++		dev_t dev = sbi->sb->s_bdev->bd_dev;
++		struct flush_cmd_control *fcc =
++			kzalloc(sizeof(struct flush_cmd_control), GFP_KERNEL);
+ 
+-		if (!sm_info->f2fs_issue_flush) {
+-			dev_t dev = sbi->sb->s_bdev->bd_dev;
+-
+-			spin_lock_init(&sm_info->issue_lock);
+-			init_waitqueue_head(&sm_info->flush_wait_queue);
+-			sm_info->f2fs_issue_flush =
+-				kthread_run(issue_flush_thread, sbi,
++		if (!fcc) {
++			err = -ENOMEM;
++			goto restore_gc;
++		}
++		spin_lock_init(&fcc->issue_lock);
++		init_waitqueue_head(&fcc->flush_wait_queue);
++		fcc->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
+ 				"f2fs_flush-%u:%u", MAJOR(dev), MINOR(dev));
+-			if (IS_ERR(sm_info->f2fs_issue_flush)) {
+-				err = PTR_ERR(sm_info->f2fs_issue_flush);
+-				sm_info->f2fs_issue_flush = NULL;
+-				goto restore_gc;
+-			}
++		if (IS_ERR(fcc->f2fs_issue_flush)) {
++			err = PTR_ERR(fcc->f2fs_issue_flush);
++			kfree(fcc);
++			goto restore_gc;
+ 		}
++		sbi->sm_info->cmd_control_info = fcc;
+ 	}
+ skip:
+ 	/* Update the POSIXACL Flag */
 -- 
-1.7.9.5
-
+1.7.7
 
 
 ------------------------------------------------------------------------------
