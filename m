@@ -1,113 +1,115 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: Re: [f2fs-dev][PATCH 3/3 v3] f2fs: fix to truncate inline data in
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH 3/3 v3] f2fs: fix to truncate inline data in
  inode page when setattr
-Date: Tue, 29 Apr 2014 15:16:14 +0900
-Message-ID: <1398752174.13268.4.camel@kjgkr>
+Date: Tue, 29 Apr 2014 15:53:44 +0800
+Message-ID: <001901cf6380$43643c80$ca2cb580$@samsung.com>
 References: <001801cf6370$e0553040$a0ff90c0$@samsung.com>
-Reply-To: jaegeuk.kim@samsung.com
+	<1398752174.13268.4.camel@kjgkr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <001801cf6370$e0553040$a0ff90c0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1Wf2sH-0002h0-Mg
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Apr 2014 07:54:45 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1Wf2sF-0000z0-N6
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Apr 2014 07:54:45 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N4S00DB98MZJQA0@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Apr 2014 16:54:35 +0900 (KST)
+In-reply-to: <1398752174.13268.4.camel@kjgkr>
+Content-language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
-
-2014-04-29 (=ED=99=94), 14:03 +0800, Chao Yu:
-> Previous we do not truncate inline data in inode page when setattr, s=
-o following
-> case could still read the inline data which has already truncated:
->=20
-> 1.write inline data
-> 2.ftruncate size to 0
-> 3.ftruncate size to max inline data size
-> 4.read from offset 0
->=20
-> This patch introduces truncate_inline_data() to fix this problem.
->=20
-> change log from v1:
->  o fix a bug and do not truncate first page data after truncate inlin=
-e data.
-> change log from v2:
->  o wait to writeback for inode page if it was already submitted.
->=20
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> ---
->  fs/f2fs/f2fs.h   |    1 +
->  fs/f2fs/file.c   |    3 +++
->  fs/f2fs/inline.c |   19 +++++++++++++++++++
->  3 files changed, 23 insertions(+)
->=20
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 2b67679..676a2c6 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1410,5 +1410,6 @@ bool f2fs_may_inline(struct inode *);
->  int f2fs_read_inline_data(struct inode *, struct page *);
->  int f2fs_convert_inline_data(struct inode *, pgoff_t);
->  int f2fs_write_inline_data(struct inode *, struct page *, unsigned i=
-nt);
-> +void truncate_inline_data(struct inode *, u64);
->  int recover_inline_data(struct inode *, struct page *);
->  #endif
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index b9f4fbf..d97e5c4 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -369,6 +369,9 @@ static void truncate_partial_data_page(struct ino=
-de *inode, u64 from)
->  	unsigned offset =3D from & (PAGE_CACHE_SIZE - 1);
->  	struct page *page;
-> =20
-> +	if (f2fs_has_inline_data(inode))
-> +		return truncate_inline_data(inode, from);
-> +
->  	if (!offset)
->  		return;
-> =20
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 3258c7c..6a13997 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -176,6 +176,25 @@ int f2fs_write_inline_data(struct inode *inode,
->  	return 0;
->  }
-> =20
-> +void truncate_inline_data(struct inode *inode, u64 from)
-> +{
-> +	struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
-> +	struct page *ipage;
-> +
-> +	if (from >=3D MAX_INLINE_DATA)
-> +		return;
-> +
-> +	ipage =3D get_node_page(sbi, inode->i_ino);
-> +	if (IS_ERR(ipage))
-> +		return;
-> +
-> +	f2fs_wait_on_page_writeback(ipage, NODE);
-
-The get_node_page() triggers,
- grab_cache_page_write_begin()
-  -> wait_for_stable_page()
-     -> wait_on_page_writeback().
-
-Any bugs in there?
-
-> +	zero_user_segment(ipage, INLINE_DATA_OFFSET + from,
-> +				INLINE_DATA_OFFSET + MAX_INLINE_DATA);
-> +	set_page_dirty(ipage);
-> +	f2fs_put_page(ipage, 1);
-> +}
-> +
->  int recover_inline_data(struct inode *inode, struct page *npage)
->  {
->  	struct f2fs_sb_info *sbi =3D F2FS_SB(inode->i_sb);
-
---=20
-Jaegeuk Kim
-Samsung
+SGkgS2ltLAoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IEphZWdldWsgS2lt
+IFttYWlsdG86amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb21dCj4gU2VudDogVHVlc2RheSwgQXByaWwg
+MjksIDIwMTQgMjoxNiBQTQo+IFRvOiBDaGFvIFl1Cj4gQ2M6IGxpbnV4LWYyZnMtZGV2ZWxAbGlz
+dHMuc291cmNlZm9yZ2UubmV0OyBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsKPiBsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCj4gU3ViamVjdDogUmU6IFtmMmZzLWRldl1bUEFUQ0gg
+My8zIHYzXSBmMmZzOiBmaXggdG8gdHJ1bmNhdGUgaW5saW5lIGRhdGEgaW4gaW5vZGUgcGFnZSB3
+aGVuIHNldGF0dHIKPiAKPiBIaSwKPiAKPiAyMDE0LTA0LTI5ICjtmZQpLCAxNDowMyArMDgwMCwg
+Q2hhbyBZdToKPiA+IFByZXZpb3VzIHdlIGRvIG5vdCB0cnVuY2F0ZSBpbmxpbmUgZGF0YSBpbiBp
+bm9kZSBwYWdlIHdoZW4gc2V0YXR0ciwgc28gZm9sbG93aW5nCj4gPiBjYXNlIGNvdWxkIHN0aWxs
+IHJlYWQgdGhlIGlubGluZSBkYXRhIHdoaWNoIGhhcyBhbHJlYWR5IHRydW5jYXRlZDoKPiA+Cj4g
+PiAxLndyaXRlIGlubGluZSBkYXRhCj4gPiAyLmZ0cnVuY2F0ZSBzaXplIHRvIDAKPiA+IDMuZnRy
+dW5jYXRlIHNpemUgdG8gbWF4IGlubGluZSBkYXRhIHNpemUKPiA+IDQucmVhZCBmcm9tIG9mZnNl
+dCAwCj4gPgo+ID4gVGhpcyBwYXRjaCBpbnRyb2R1Y2VzIHRydW5jYXRlX2lubGluZV9kYXRhKCkg
+dG8gZml4IHRoaXMgcHJvYmxlbS4KPiA+Cj4gPiBjaGFuZ2UgbG9nIGZyb20gdjE6Cj4gPiAgbyBm
+aXggYSBidWcgYW5kIGRvIG5vdCB0cnVuY2F0ZSBmaXJzdCBwYWdlIGRhdGEgYWZ0ZXIgdHJ1bmNh
+dGUgaW5saW5lIGRhdGEuCj4gPiBjaGFuZ2UgbG9nIGZyb20gdjI6Cj4gPiAgbyB3YWl0IHRvIHdy
+aXRlYmFjayBmb3IgaW5vZGUgcGFnZSBpZiBpdCB3YXMgYWxyZWFkeSBzdWJtaXR0ZWQuCj4gPgo+
+ID4gU2lnbmVkLW9mZi1ieTogQ2hhbyBZdSA8Y2hhbzIueXVAc2Ftc3VuZy5jb20+Cj4gPiAtLS0K
+PiA+ICBmcy9mMmZzL2YyZnMuaCAgIHwgICAgMSArCj4gPiAgZnMvZjJmcy9maWxlLmMgICB8ICAg
+IDMgKysrCj4gPiAgZnMvZjJmcy9pbmxpbmUuYyB8ICAgMTkgKysrKysrKysrKysrKysrKysrKwo+
+ID4gIDMgZmlsZXMgY2hhbmdlZCwgMjMgaW5zZXJ0aW9ucygrKQo+ID4KPiA+IGRpZmYgLS1naXQg
+YS9mcy9mMmZzL2YyZnMuaCBiL2ZzL2YyZnMvZjJmcy5oCj4gPiBpbmRleCAyYjY3Njc5Li42NzZh
+MmM2IDEwMDY0NAo+ID4gLS0tIGEvZnMvZjJmcy9mMmZzLmgKPiA+ICsrKyBiL2ZzL2YyZnMvZjJm
+cy5oCj4gPiBAQCAtMTQxMCw1ICsxNDEwLDYgQEAgYm9vbCBmMmZzX21heV9pbmxpbmUoc3RydWN0
+IGlub2RlICopOwo+ID4gIGludCBmMmZzX3JlYWRfaW5saW5lX2RhdGEoc3RydWN0IGlub2RlICos
+IHN0cnVjdCBwYWdlICopOwo+ID4gIGludCBmMmZzX2NvbnZlcnRfaW5saW5lX2RhdGEoc3RydWN0
+IGlub2RlICosIHBnb2ZmX3QpOwo+ID4gIGludCBmMmZzX3dyaXRlX2lubGluZV9kYXRhKHN0cnVj
+dCBpbm9kZSAqLCBzdHJ1Y3QgcGFnZSAqLCB1bnNpZ25lZCBpbnQpOwo+ID4gK3ZvaWQgdHJ1bmNh
+dGVfaW5saW5lX2RhdGEoc3RydWN0IGlub2RlICosIHU2NCk7Cj4gPiAgaW50IHJlY292ZXJfaW5s
+aW5lX2RhdGEoc3RydWN0IGlub2RlICosIHN0cnVjdCBwYWdlICopOwo+ID4gICNlbmRpZgo+ID4g
+ZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZmlsZS5jIGIvZnMvZjJmcy9maWxlLmMKPiA+IGluZGV4IGI5
+ZjRmYmYuLmQ5N2U1YzQgMTAwNjQ0Cj4gPiAtLS0gYS9mcy9mMmZzL2ZpbGUuYwo+ID4gKysrIGIv
+ZnMvZjJmcy9maWxlLmMKPiA+IEBAIC0zNjksNiArMzY5LDkgQEAgc3RhdGljIHZvaWQgdHJ1bmNh
+dGVfcGFydGlhbF9kYXRhX3BhZ2Uoc3RydWN0IGlub2RlICppbm9kZSwgdTY0IGZyb20pCj4gPiAg
+CXVuc2lnbmVkIG9mZnNldCA9IGZyb20gJiAoUEFHRV9DQUNIRV9TSVpFIC0gMSk7Cj4gPiAgCXN0
+cnVjdCBwYWdlICpwYWdlOwo+ID4KPiA+ICsJaWYgKGYyZnNfaGFzX2lubGluZV9kYXRhKGlub2Rl
+KSkKPiA+ICsJCXJldHVybiB0cnVuY2F0ZV9pbmxpbmVfZGF0YShpbm9kZSwgZnJvbSk7Cj4gPiAr
+Cj4gPiAgCWlmICghb2Zmc2V0KQo+ID4gIAkJcmV0dXJuOwo+ID4KPiA+IGRpZmYgLS1naXQgYS9m
+cy9mMmZzL2lubGluZS5jIGIvZnMvZjJmcy9pbmxpbmUuYwo+ID4gaW5kZXggMzI1OGM3Yy4uNmEx
+Mzk5NyAxMDA2NDQKPiA+IC0tLSBhL2ZzL2YyZnMvaW5saW5lLmMKPiA+ICsrKyBiL2ZzL2YyZnMv
+aW5saW5lLmMKPiA+IEBAIC0xNzYsNiArMTc2LDI1IEBAIGludCBmMmZzX3dyaXRlX2lubGluZV9k
+YXRhKHN0cnVjdCBpbm9kZSAqaW5vZGUsCj4gPiAgCXJldHVybiAwOwo+ID4gIH0KPiA+Cj4gPiAr
+dm9pZCB0cnVuY2F0ZV9pbmxpbmVfZGF0YShzdHJ1Y3QgaW5vZGUgKmlub2RlLCB1NjQgZnJvbSkK
+PiA+ICt7Cj4gPiArCXN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSA9IEYyRlNfU0IoaW5vZGUtPmlf
+c2IpOwo+ID4gKwlzdHJ1Y3QgcGFnZSAqaXBhZ2U7Cj4gPiArCj4gPiArCWlmIChmcm9tID49IE1B
+WF9JTkxJTkVfREFUQSkKPiA+ICsJCXJldHVybjsKPiA+ICsKPiA+ICsJaXBhZ2UgPSBnZXRfbm9k
+ZV9wYWdlKHNiaSwgaW5vZGUtPmlfaW5vKTsKPiA+ICsJaWYgKElTX0VSUihpcGFnZSkpCj4gPiAr
+CQlyZXR1cm47Cj4gPiArCj4gPiArCWYyZnNfd2FpdF9vbl9wYWdlX3dyaXRlYmFjayhpcGFnZSwg
+Tk9ERSk7Cj4gCj4gVGhlIGdldF9ub2RlX3BhZ2UoKSB0cmlnZ2VycywKPiAgZ3JhYl9jYWNoZV9w
+YWdlX3dyaXRlX2JlZ2luKCkKPiAgIC0+IHdhaXRfZm9yX3N0YWJsZV9wYWdlKCkKPiAgICAgIC0+
+IHdhaXRfb25fcGFnZV93cml0ZWJhY2soKS4KCk9oLCBpdCdzIG15IG1pc3Rha2UgZm9yIHRoaXMg
+bWlzc2luZywgdGhhbmtzIGZvciB0aGUgbWVudGlvbi46KQoKPiAKPiBBbnkgYnVncyBpbiB0aGVy
+ZT8KCklmIHdlIHdhaXQgaW4gZ3JhYl9jYWNoZV9wYWdlX3dyaXRlX2JlZ2luKCksIG1heWJlIHdl
+IHdpbGwgZmFjZSBsb25nIHRpbWUgZGVsYXkKb3IgcG90ZW50aWFsIGRlYWRsb2NrIGNhdXNlZCBi
+eSBmMmZzIGJpbyBjYWNoZS4gU28gaG93IGFib3V0IHVzZQpncmFiX2NhY2hlX3BhZ2UgJiBmMmZz
+X3dhaXRfb25fcGFnZV93cml0ZWJhY2sgdG8gYXZvaWQgdGhpcz8KCj4gCj4gPiArCXplcm9fdXNl
+cl9zZWdtZW50KGlwYWdlLCBJTkxJTkVfREFUQV9PRkZTRVQgKyBmcm9tLAo+ID4gKwkJCQlJTkxJ
+TkVfREFUQV9PRkZTRVQgKyBNQVhfSU5MSU5FX0RBVEEpOwo+ID4gKwlzZXRfcGFnZV9kaXJ0eShp
+cGFnZSk7Cj4gPiArCWYyZnNfcHV0X3BhZ2UoaXBhZ2UsIDEpOwo+ID4gK30KPiA+ICsKPiA+ICBp
+bnQgcmVjb3Zlcl9pbmxpbmVfZGF0YShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgcGFnZSAq
+bnBhZ2UpCj4gPiAgewo+ID4gIAlzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkgPSBGMkZTX1NCKGlu
+b2RlLT5pX3NiKTsKPiAKPiAtLQo+IEphZWdldWsgS2ltCj4gU2Ftc3VuZwoKCi0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQoiQWNjZWxlcmF0ZSBEZXYgQ3ljbGVzIHdpdGggQXV0b21hdGVkIENyb3NzLUJy
+b3dzZXIgVGVzdGluZyAtIEZvciBGUkVFCkluc3RhbnRseSBydW4geW91ciBTZWxlbml1bSB0ZXN0
+cyBhY3Jvc3MgMzAwKyBicm93c2VyL09TIGNvbWJvcy4gIEdldCAKdW5wYXJhbGxlbGVkIHNjYWxh
+YmlsaXR5IGZyb20gdGhlIGJlc3QgU2VsZW5pdW0gdGVzdGluZyBwbGF0Zm9ybSBhdmFpbGFibGUu
+ClNpbXBsZSB0byB1c2UuIE5vdGhpbmcgdG8gaW5zdGFsbC4gR2V0IHN0YXJ0ZWQgbm93IGZvciBm
+cmVlLiIKaHR0cDovL3Auc2YubmV0L3NmdS9TYXVjZUxhYnMKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
+TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
