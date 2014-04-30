@@ -1,36 +1,30 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 3/3 v3] f2fs: fix to truncate inline data in
- inode page when setattr
-Date: Tue, 29 Apr 2014 16:12:27 +0800
-Message-ID: <001a01cf6382$dcf18db0$96d4a910$@samsung.com>
-References: <001801cf6370$e0553040$a0ff90c0$@samsung.com>
-	<1398752174.13268.4.camel@kjgkr>
-	<001901cf6380$43643c80$ca2cb580$@samsung.com>
-	<1398758534.13268.8.camel@kjgkr>
+From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Subject: [PATCH 1/4] f2fs: split grab_cache_page and
+ wait_on_page_writeback for node pages
+Date: Wed, 30 Apr 2014 11:33:40 +0900
+Message-ID: <1398825223-23062-1-git-send-email-jaegeuk.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1Wf3AI-0008CZ-Lk
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WfKNR-0000iS-5o
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Apr 2014 08:13:22 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1Wf3AG-0006by-DS
+	Wed, 30 Apr 2014 02:36:05 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WfKNP-0007KD-0m
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Apr 2014 08:13:22 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N4S00F3Y9I0WEA0@mailout2.samsung.com> for
+	Wed, 30 Apr 2014 02:36:05 +0000
+Received: from epcpsbgr4.samsung.com
+	(u144.gpu120.samsung.co.kr [203.254.230.144])
+	by mailout4.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N4T00JG6OJVQ980@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Apr 2014 17:13:12 +0900 (KST)
-In-reply-to: <1398758534.13268.8.camel@kjgkr>
-Content-language: zh-cn
+	Wed, 30 Apr 2014 11:35:55 +0900 (KST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -40,101 +34,163 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGkgS2ltLAoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IEphZWdldWsgS2lt
-IFttYWlsdG86amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb21dCj4gU2VudDogVHVlc2RheSwgQXByaWwg
-MjksIDIwMTQgNDowMiBQTQo+IFRvOiBDaGFvIFl1Cj4gQ2M6IGxpbnV4LWYyZnMtZGV2ZWxAbGlz
-dHMuc291cmNlZm9yZ2UubmV0OyBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsKPiBsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCj4gU3ViamVjdDogUkU6IFtmMmZzLWRldl1bUEFUQ0gg
-My8zIHYzXSBmMmZzOiBmaXggdG8gdHJ1bmNhdGUgaW5saW5lIGRhdGEgaW4gaW5vZGUgcGFnZSB3
-aGVuIHNldGF0dHIKPiAKPiBIaSwKPiAKPiAyMDE0LTA0LTI5ICjtmZQpLCAxNTo1MyArMDgwMCwg
-Q2hhbyBZdToKPiA+IEhpIEtpbSwKPiA+Cj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0t
-Cj4gPiA+IEZyb206IEphZWdldWsgS2ltIFttYWlsdG86amFlZ2V1ay5raW1Ac2Ftc3VuZy5jb21d
-Cj4gPiA+IFNlbnQ6IFR1ZXNkYXksIEFwcmlsIDI5LCAyMDE0IDI6MTYgUE0KPiA+ID4gVG86IENo
-YW8gWXUKPiA+ID4gQ2M6IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0OyBs
-aW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsKPiA+ID4gbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZwo+ID4gPiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XVtQQVRDSCAzLzMgdjNdIGYyZnM6
-IGZpeCB0byB0cnVuY2F0ZSBpbmxpbmUgZGF0YSBpbiBpbm9kZSBwYWdlIHdoZW4KPiBzZXRhdHRy
-Cj4gPiA+Cj4gPiA+IEhpLAo+ID4gPgo+ID4gPiAyMDE0LTA0LTI5ICjtmZQpLCAxNDowMyArMDgw
-MCwgQ2hhbyBZdToKPiA+ID4gPiBQcmV2aW91cyB3ZSBkbyBub3QgdHJ1bmNhdGUgaW5saW5lIGRh
-dGEgaW4gaW5vZGUgcGFnZSB3aGVuIHNldGF0dHIsIHNvIGZvbGxvd2luZwo+ID4gPiA+IGNhc2Ug
-Y291bGQgc3RpbGwgcmVhZCB0aGUgaW5saW5lIGRhdGEgd2hpY2ggaGFzIGFscmVhZHkgdHJ1bmNh
-dGVkOgo+ID4gPiA+Cj4gPiA+ID4gMS53cml0ZSBpbmxpbmUgZGF0YQo+ID4gPiA+IDIuZnRydW5j
-YXRlIHNpemUgdG8gMAo+ID4gPiA+IDMuZnRydW5jYXRlIHNpemUgdG8gbWF4IGlubGluZSBkYXRh
-IHNpemUKPiA+ID4gPiA0LnJlYWQgZnJvbSBvZmZzZXQgMAo+ID4gPiA+Cj4gPiA+ID4gVGhpcyBw
-YXRjaCBpbnRyb2R1Y2VzIHRydW5jYXRlX2lubGluZV9kYXRhKCkgdG8gZml4IHRoaXMgcHJvYmxl
-bS4KPiA+ID4gPgo+ID4gPiA+IGNoYW5nZSBsb2cgZnJvbSB2MToKPiA+ID4gPiAgbyBmaXggYSBi
-dWcgYW5kIGRvIG5vdCB0cnVuY2F0ZSBmaXJzdCBwYWdlIGRhdGEgYWZ0ZXIgdHJ1bmNhdGUgaW5s
-aW5lIGRhdGEuCj4gPiA+ID4gY2hhbmdlIGxvZyBmcm9tIHYyOgo+ID4gPiA+ICBvIHdhaXQgdG8g
-d3JpdGViYWNrIGZvciBpbm9kZSBwYWdlIGlmIGl0IHdhcyBhbHJlYWR5IHN1Ym1pdHRlZC4KPiA+
-ID4gPgo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IENoYW8gWXUgPGNoYW8yLnl1QHNhbXN1bmcuY29t
-Pgo+ID4gPiA+IC0tLQo+ID4gPiA+ICBmcy9mMmZzL2YyZnMuaCAgIHwgICAgMSArCj4gPiA+ID4g
-IGZzL2YyZnMvZmlsZS5jICAgfCAgICAzICsrKwo+ID4gPiA+ICBmcy9mMmZzL2lubGluZS5jIHwg
-ICAxOSArKysrKysrKysrKysrKysrKysrCj4gPiA+ID4gIDMgZmlsZXMgY2hhbmdlZCwgMjMgaW5z
-ZXJ0aW9ucygrKQo+ID4gPiA+Cj4gPiA+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZjJmcy5oIGIv
-ZnMvZjJmcy9mMmZzLmgKPiA+ID4gPiBpbmRleCAyYjY3Njc5Li42NzZhMmM2IDEwMDY0NAo+ID4g
-PiA+IC0tLSBhL2ZzL2YyZnMvZjJmcy5oCj4gPiA+ID4gKysrIGIvZnMvZjJmcy9mMmZzLmgKPiA+
-ID4gPiBAQCAtMTQxMCw1ICsxNDEwLDYgQEAgYm9vbCBmMmZzX21heV9pbmxpbmUoc3RydWN0IGlu
-b2RlICopOwo+ID4gPiA+ICBpbnQgZjJmc19yZWFkX2lubGluZV9kYXRhKHN0cnVjdCBpbm9kZSAq
-LCBzdHJ1Y3QgcGFnZSAqKTsKPiA+ID4gPiAgaW50IGYyZnNfY29udmVydF9pbmxpbmVfZGF0YShz
-dHJ1Y3QgaW5vZGUgKiwgcGdvZmZfdCk7Cj4gPiA+ID4gIGludCBmMmZzX3dyaXRlX2lubGluZV9k
-YXRhKHN0cnVjdCBpbm9kZSAqLCBzdHJ1Y3QgcGFnZSAqLCB1bnNpZ25lZCBpbnQpOwo+ID4gPiA+
-ICt2b2lkIHRydW5jYXRlX2lubGluZV9kYXRhKHN0cnVjdCBpbm9kZSAqLCB1NjQpOwo+ID4gPiA+
-ICBpbnQgcmVjb3Zlcl9pbmxpbmVfZGF0YShzdHJ1Y3QgaW5vZGUgKiwgc3RydWN0IHBhZ2UgKik7
-Cj4gPiA+ID4gICNlbmRpZgo+ID4gPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2ZpbGUuYyBiL2Zz
-L2YyZnMvZmlsZS5jCj4gPiA+ID4gaW5kZXggYjlmNGZiZi4uZDk3ZTVjNCAxMDA2NDQKPiA+ID4g
-PiAtLS0gYS9mcy9mMmZzL2ZpbGUuYwo+ID4gPiA+ICsrKyBiL2ZzL2YyZnMvZmlsZS5jCj4gPiA+
-ID4gQEAgLTM2OSw2ICszNjksOSBAQCBzdGF0aWMgdm9pZCB0cnVuY2F0ZV9wYXJ0aWFsX2RhdGFf
-cGFnZShzdHJ1Y3QgaW5vZGUgKmlub2RlLCB1NjQgZnJvbSkKPiA+ID4gPiAgCXVuc2lnbmVkIG9m
-ZnNldCA9IGZyb20gJiAoUEFHRV9DQUNIRV9TSVpFIC0gMSk7Cj4gPiA+ID4gIAlzdHJ1Y3QgcGFn
-ZSAqcGFnZTsKPiA+ID4gPgo+ID4gPiA+ICsJaWYgKGYyZnNfaGFzX2lubGluZV9kYXRhKGlub2Rl
-KSkKPiA+ID4gPiArCQlyZXR1cm4gdHJ1bmNhdGVfaW5saW5lX2RhdGEoaW5vZGUsIGZyb20pOwo+
-ID4gPiA+ICsKPiA+ID4gPiAgCWlmICghb2Zmc2V0KQo+ID4gPiA+ICAJCXJldHVybjsKPiA+ID4g
-Pgo+ID4gPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZzL2lubGluZS5jIGIvZnMvZjJmcy9pbmxpbmUu
-Ywo+ID4gPiA+IGluZGV4IDMyNThjN2MuLjZhMTM5OTcgMTAwNjQ0Cj4gPiA+ID4gLS0tIGEvZnMv
-ZjJmcy9pbmxpbmUuYwo+ID4gPiA+ICsrKyBiL2ZzL2YyZnMvaW5saW5lLmMKPiA+ID4gPiBAQCAt
-MTc2LDYgKzE3NiwyNSBAQCBpbnQgZjJmc193cml0ZV9pbmxpbmVfZGF0YShzdHJ1Y3QgaW5vZGUg
-Kmlub2RlLAo+ID4gPiA+ICAJcmV0dXJuIDA7Cj4gPiA+ID4gIH0KPiA+ID4gPgo+ID4gPiA+ICt2
-b2lkIHRydW5jYXRlX2lubGluZV9kYXRhKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHU2NCBmcm9tKQo+
-ID4gPiA+ICt7Cj4gPiA+ID4gKwlzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkgPSBGMkZTX1NCKGlu
-b2RlLT5pX3NiKTsKPiA+ID4gPiArCXN0cnVjdCBwYWdlICppcGFnZTsKPiA+ID4gPiArCj4gPiA+
-ID4gKwlpZiAoZnJvbSA+PSBNQVhfSU5MSU5FX0RBVEEpCj4gPiA+ID4gKwkJcmV0dXJuOwo+ID4g
-PiA+ICsKPiA+ID4gPiArCWlwYWdlID0gZ2V0X25vZGVfcGFnZShzYmksIGlub2RlLT5pX2lubyk7
-Cj4gPiA+ID4gKwlpZiAoSVNfRVJSKGlwYWdlKSkKPiA+ID4gPiArCQlyZXR1cm47Cj4gPiA+ID4g
-Kwo+ID4gPiA+ICsJZjJmc193YWl0X29uX3BhZ2Vfd3JpdGViYWNrKGlwYWdlLCBOT0RFKTsKPiA+
-ID4KPiA+ID4gVGhlIGdldF9ub2RlX3BhZ2UoKSB0cmlnZ2VycywKPiA+ID4gIGdyYWJfY2FjaGVf
-cGFnZV93cml0ZV9iZWdpbigpCj4gPiA+ICAgLT4gd2FpdF9mb3Jfc3RhYmxlX3BhZ2UoKQo+ID4g
-PiAgICAgIC0+IHdhaXRfb25fcGFnZV93cml0ZWJhY2soKS4KPiA+Cj4gPiBPaCwgaXQncyBteSBt
-aXN0YWtlIGZvciB0aGlzIG1pc3NpbmcsIHRoYW5rcyBmb3IgdGhlIG1lbnRpb24uOikKPiA+Cj4g
-PiA+Cj4gPiA+IEFueSBidWdzIGluIHRoZXJlPwo+ID4KPiA+IElmIHdlIHdhaXQgaW4gZ3JhYl9j
-YWNoZV9wYWdlX3dyaXRlX2JlZ2luKCksIG1heWJlIHdlIHdpbGwgZmFjZSBsb25nIHRpbWUgZGVs
-YXkKPiA+IG9yIHBvdGVudGlhbCBkZWFkbG9jayBjYXVzZWQgYnkgZjJmcyBiaW8gY2FjaGUuIFNv
-IGhvdyBhYm91dCB1c2UKPiA+IGdyYWJfY2FjaGVfcGFnZSAmIGYyZnNfd2FpdF9vbl9wYWdlX3dy
-aXRlYmFjayB0byBhdm9pZCB0aGlzPwo+IAo+IE5pY2UgY2F0Y2guIDopCj4gSU1PLCBpdCdkIGJl
-dHRlciBtZXJnZSB5b3VyIHYyLCBhbmQgbGV0IG1lIGludmVzdGlnYXRlIGFsbCB0aGUgcGF0aHMg
-dG8KPiBhdm9pZCB0aGF0Lgo+IElzIGl0IG9rYXk/CgpJdCdzIG9rYXksIGFuZCB0aGFua3MgZm9y
-IHlvdXIgcmV2aWV3LiA6KQpSZWdhcmRzLgoKPiAKPiA+Cj4gPiA+Cj4gPiA+ID4gKwl6ZXJvX3Vz
-ZXJfc2VnbWVudChpcGFnZSwgSU5MSU5FX0RBVEFfT0ZGU0VUICsgZnJvbSwKPiA+ID4gPiArCQkJ
-CUlOTElORV9EQVRBX09GRlNFVCArIE1BWF9JTkxJTkVfREFUQSk7Cj4gPiA+ID4gKwlzZXRfcGFn
-ZV9kaXJ0eShpcGFnZSk7Cj4gPiA+ID4gKwlmMmZzX3B1dF9wYWdlKGlwYWdlLCAxKTsKPiA+ID4g
-PiArfQo+ID4gPiA+ICsKPiA+ID4gPiAgaW50IHJlY292ZXJfaW5saW5lX2RhdGEoc3RydWN0IGlu
-b2RlICppbm9kZSwgc3RydWN0IHBhZ2UgKm5wYWdlKQo+ID4gPiA+ICB7Cj4gPiA+ID4gIAlzdHJ1
-Y3QgZjJmc19zYl9pbmZvICpzYmkgPSBGMkZTX1NCKGlub2RlLT5pX3NiKTsKPiA+ID4KPiA+ID4g
-LS0KPiA+ID4gSmFlZ2V1ayBLaW0KPiA+ID4gU2Ftc3VuZwo+ID4KPiA+IC0tCj4gPiBUbyB1bnN1
-YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgt
-a2VybmVsIiBpbgo+ID4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtl
-cm5lbC5vcmcKPiA+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5v
-cmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+ID4gUGxlYXNlIHJlYWQgdGhlIEZBUSBhdCAgaHR0cDov
-L3d3dy50dXgub3JnL2xrbWwvCj4gCj4gLS0KPiBKYWVnZXVrIEtpbQo+IFNhbXN1bmcKCgotLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0KIkFjY2VsZXJhdGUgRGV2IEN5Y2xlcyB3aXRoIEF1dG9tYXRlZCBD
-cm9zcy1Ccm93c2VyIFRlc3RpbmcgLSBGb3IgRlJFRQpJbnN0YW50bHkgcnVuIHlvdXIgU2VsZW5p
-dW0gdGVzdHMgYWNyb3NzIDMwMCsgYnJvd3Nlci9PUyBjb21ib3MuICBHZXQgCnVucGFyYWxsZWxl
-ZCBzY2FsYWJpbGl0eSBmcm9tIHRoZSBiZXN0IFNlbGVuaXVtIHRlc3RpbmcgcGxhdGZvcm0gYXZh
-aWxhYmxlLgpTaW1wbGUgdG8gdXNlLiBOb3RoaW5nIHRvIGluc3RhbGwuIEdldCBzdGFydGVkIG5v
-dyBmb3IgZnJlZS4iCmh0dHA6Ly9wLnNmLm5ldC9zZnUvU2F1Y2VMYWJzCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
-ZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlz
-dHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+This patch splits grab_cache_page_write_begin into grab_cache_page and
+wait_on_page_writeback for node pages.
+
+This patch intends to enhance the latency to get node pages by alleviating
+unnecessary wait_on_page_writeback.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+---
+ fs/f2fs/dir.c    | 2 ++
+ fs/f2fs/inline.c | 6 ++++++
+ fs/f2fs/node.c   | 8 ++++----
+ fs/f2fs/node.h   | 2 +-
+ fs/f2fs/xattr.c  | 3 +++
+ 5 files changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 3581c2b..c3f1485 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -268,6 +268,8 @@ static void init_dent_inode(const struct qstr *name, struct page *ipage)
+ {
+ 	struct f2fs_inode *ri;
+ 
++	f2fs_wait_on_page_writeback(ipage, NODE);
++
+ 	/* copy name info. to this inode page */
+ 	ri = F2FS_INODE(ipage);
+ 	ri->i_namelen = cpu_to_le32(name->len);
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index d215dbb..8bf34f0 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -156,6 +156,7 @@ int f2fs_write_inline_data(struct inode *inode,
+ 		return err;
+ 	ipage = dn.inode_page;
+ 
++	f2fs_wait_on_page_writeback(ipage, NODE);
+ 	zero_user_segment(ipage, INLINE_DATA_OFFSET,
+ 				 INLINE_DATA_OFFSET + MAX_INLINE_DATA);
+ 	src_addr = kmap(page);
+@@ -188,6 +189,8 @@ void truncate_inline_data(struct inode *inode, u64 from)
+ 	if (IS_ERR(ipage))
+ 		return;
+ 
++	f2fs_wait_on_page_writeback(ipage, NODE);
++
+ 	zero_user_segment(ipage, INLINE_DATA_OFFSET + from,
+ 				INLINE_DATA_OFFSET + MAX_INLINE_DATA);
+ 	set_page_dirty(ipage);
+@@ -218,6 +221,8 @@ process_inline:
+ 		ipage = get_node_page(sbi, inode->i_ino);
+ 		f2fs_bug_on(IS_ERR(ipage));
+ 
++		f2fs_wait_on_page_writeback(ipage, NODE);
++
+ 		src_addr = inline_data_addr(npage);
+ 		dst_addr = inline_data_addr(ipage);
+ 		memcpy(dst_addr, src_addr, MAX_INLINE_DATA);
+@@ -229,6 +234,7 @@ process_inline:
+ 	if (f2fs_has_inline_data(inode)) {
+ 		ipage = get_node_page(sbi, inode->i_ino);
+ 		f2fs_bug_on(IS_ERR(ipage));
++		f2fs_wait_on_page_writeback(ipage, NODE);
+ 		zero_user_segment(ipage, INLINE_DATA_OFFSET,
+ 				 INLINE_DATA_OFFSET + MAX_INLINE_DATA);
+ 		clear_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 2803ef6..059aaf5 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -853,8 +853,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
+ 	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
+ 		return ERR_PTR(-EPERM);
+ 
+-	page = grab_cache_page_write_begin(NODE_MAPPING(sbi),
+-					dn->nid, AOP_FLAG_NOFS);
++	page = grab_cache_page(NODE_MAPPING(sbi), dn->nid);
+ 	if (!page)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -871,6 +870,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
+ 	new_ni.ino = dn->inode->i_ino;
+ 	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
+ 
++	f2fs_wait_on_page_writeback(page, NODE);
+ 	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
+ 	set_cold_node(dn->inode, page);
+ 	SetPageUptodate(page);
+@@ -950,8 +950,7 @@ struct page *get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid)
+ 	struct page *page;
+ 	int err;
+ repeat:
+-	page = grab_cache_page_write_begin(NODE_MAPPING(sbi),
+-					nid, AOP_FLAG_NOFS);
++	page = grab_cache_page(NODE_MAPPING(sbi), nid);
+ 	if (!page)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1562,6 +1561,7 @@ static void recover_inline_xattr(struct inode *inode, struct page *page)
+ 	src_addr = inline_xattr_addr(page);
+ 	inline_size = inline_xattr_size(inode);
+ 
++	f2fs_wait_on_page_writeback(ipage, NODE);
+ 	memcpy(dst_addr, src_addr, inline_size);
+ 
+ 	update_inode(inode, ipage);
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index a076c88..4ee29d5 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -272,7 +272,7 @@ static inline void set_nid(struct page *p, int off, nid_t nid, bool i)
+ {
+ 	struct f2fs_node *rn = F2FS_NODE(p);
+ 
+-	wait_on_page_writeback(p);
++	f2fs_wait_on_page_writeback(p, NODE);
+ 
+ 	if (i)
+ 		rn->i.i_nid[off - NODE_DIR1_BLOCK] = cpu_to_le32(nid);
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 6073f9f..1f546b4 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -349,6 +349,7 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+ 
+ 		if (ipage) {
+ 			inline_addr = inline_xattr_addr(ipage);
++			f2fs_wait_on_page_writeback(ipage, NODE);
+ 		} else {
+ 			page = get_node_page(sbi, inode->i_ino);
+ 			if (IS_ERR(page)) {
+@@ -356,6 +357,7 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+ 				return PTR_ERR(page);
+ 			}
+ 			inline_addr = inline_xattr_addr(page);
++			f2fs_wait_on_page_writeback(page, NODE);
+ 		}
+ 		memcpy(inline_addr, txattr_addr, inline_size);
+ 		f2fs_put_page(page, 1);
+@@ -376,6 +378,7 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+ 			return PTR_ERR(xpage);
+ 		}
+ 		f2fs_bug_on(new_nid);
++		f2fs_wait_on_page_writeback(xpage, NODE);
+ 	} else {
+ 		struct dnode_of_data dn;
+ 		set_new_dnode(&dn, inode, NULL, NULL, new_nid);
+-- 
+1.8.4.474.g128a96c
+
+
+------------------------------------------------------------------------------
+"Accelerate Dev Cycles with Automated Cross-Browser Testing - For FREE
+Instantly run your Selenium tests across 300+ browser/OS combos.  Get 
+unparalleled scalability from the best Selenium testing platform available.
+Simple to use. Nothing to install. Get started now for free."
+http://p.sf.net/sfu/SauceLabs
