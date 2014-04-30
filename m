@@ -1,66 +1,94 @@
 From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH 2/4] f2fs: avoid grab_cache_page_write_begin for data pages
-Date: Wed, 30 Apr 2014 11:33:41 +0900
-Message-ID: <1398825223-23062-2-git-send-email-jaegeuk.kim@samsung.com>
+Subject: [PATCH 4/4] f2fs: decrease the lock granularity during
+	write_begin
+Date: Wed, 30 Apr 2014 11:33:43 +0900
+Message-ID: <1398825223-23062-4-git-send-email-jaegeuk.kim@samsung.com>
 References: <1398825223-23062-1-git-send-email-jaegeuk.kim@samsung.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@samsung.com>) id 1WfKNU-0007bn-5m
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Apr 2014 02:36:08 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WfKNS-00062A-Ba
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Apr 2014 02:36:08 +0000
+Received: from epcpsbgr1.samsung.com
+	(u141.gpu120.samsung.co.kr [203.254.230.141])
+	by mailout2.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N4T00LCFOJY3OD0@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Apr 2014 11:35:58 +0900 (KST)
 In-reply-to: <1398825223-23062-1-git-send-email-jaegeuk.kim@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Chao Yu <chao2.yu@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-We don't need to wait on page writeback for these cases.
+This patch reduces the lock granularity during write_begin.
+When the system is under memory pressure, it would be better to reduce
+the locking time for the data pages.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 ---
- fs/f2fs/data.c   | 4 ++--
- fs/f2fs/inline.c | 3 ++-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 273fe16..91ff104 100644
+index 91ff104..a7bb98f 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -417,7 +417,7 @@ struct page *find_data_page(struct inode *inode, pgoff_t index, bool sync)
- 	if (unlikely(dn.data_blkaddr == NEW_ADDR))
- 		return ERR_PTR(-EINVAL);
- 
--	page = grab_cache_page_write_begin(mapping, index, AOP_FLAG_NOFS);
-+	page = grab_cache_page(mapping, index);
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -455,7 +455,7 @@ struct page *get_lock_data_page(struct inode *inode, pgoff_t index)
- 	int err;
- 
- repeat:
--	page = grab_cache_page_write_begin(mapping, index, AOP_FLAG_NOFS);
-+	page = grab_cache_page(mapping, index);
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
- 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 8bf34f0..1bba522 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -95,6 +95,7 @@ static int __f2fs_convert_inline_data(struct inode *inode, struct page *page)
- 	if (err)
- 		goto out;
- 
-+	f2fs_wait_on_page_writeback(page, DATA);
- 	zero_user_segment(page, MAX_INLINE_DATA, PAGE_CACHE_SIZE);
- 
- 	/* Copy the whole inline data block */
-@@ -133,7 +134,7 @@ int f2fs_convert_inline_data(struct inode *inode, pgoff_t to_size)
- 	else if (to_size <= MAX_INLINE_DATA)
- 		return 0;
- 
--	page = grab_cache_page_write_begin(inode->i_mapping, 0, AOP_FLAG_NOFS);
-+	page = grab_cache_page(inode->i_mapping, 0);
+@@ -909,6 +909,10 @@ repeat:
+ 	page = grab_cache_page_write_begin(mapping, index, flags);
  	if (!page)
  		return -ENOMEM;
++
++	/* to avoid latency during memory pressure */
++	unlock_page(page);
++
+ 	*pagep = page;
+ 
+ 	if (f2fs_has_inline_data(inode) && (pos + len) <= MAX_INLINE_DATA)
+@@ -920,10 +924,18 @@ repeat:
+ 	f2fs_unlock_op(sbi);
+ 
+ 	if (err) {
+-		f2fs_put_page(page, 1);
++		f2fs_put_page(page, 0);
+ 		return err;
+ 	}
+ inline_data:
++	lock_page(page);
++	if (unlikely(page->mapping != mapping)) {
++		f2fs_put_page(page, 1);
++		goto repeat;
++	}
++
++	f2fs_wait_on_page_writeback(page, DATA);
++
+ 	if ((len == PAGE_CACHE_SIZE) || PageUptodate(page))
+ 		return 0;
  
 -- 
 1.8.4.474.g128a96c
 
+
+------------------------------------------------------------------------------
+"Accelerate Dev Cycles with Automated Cross-Browser Testing - For FREE
+Instantly run your Selenium tests across 300+ browser/OS combos.  Get 
+unparalleled scalability from the best Selenium testing platform available.
+Simple to use. Nothing to install. Get started now for free."
+http://p.sf.net/sfu/SauceLabs
