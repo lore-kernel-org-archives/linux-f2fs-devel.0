@@ -1,30 +1,24 @@
-From: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Subject: [PATCH] f2fs: deactivate inode page if the inode is
-	evicted
-Date: Wed, 30 Apr 2014 15:19:36 +0900
-Message-ID: <1398838776-24672-1-git-send-email-jaegeuk.kim@samsung.com>
+From: Zhang Zhen <zhenzhang.zhang@huawei.com>
+Subject: [PATCH] f2fs: avoid uneeded check of xattr name
+Date: Sun, 4 May 2014 16:13:08 +0800
+Message-ID: <5365F694.1050304@huawei.com>
+References: <1399174618-2382-1-git-send-email-zhenzhang.zhang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@samsung.com>) id 1WfNu4-0005YM-T7
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zhenzhang.zhang@huawei.com>) id 1WgrY8-00042m-AF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Apr 2014 06:22:00 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WfNu0-0002Xf-1s
+	Sun, 04 May 2014 08:13:28 +0000
+Received: from szxga01-in.huawei.com ([119.145.14.64])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1WgrY5-00028W-7Y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Apr 2014 06:22:00 +0000
-Received: from epcpsbgr5.samsung.com
-	(u145.gpu120.samsung.co.kr [203.254.230.145])
-	by mailout4.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N4T00MOIZ0C6V20@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Apr 2014 15:21:48 +0900 (KST)
+	Sun, 04 May 2014 08:13:28 +0000
+In-Reply-To: <1399174618-2382-1-git-send-email-zhenzhang.zhang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,28 +28,48 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk.kim@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-If the inode page is clean during its inode eviction, it'd better drop the page
-to reduce further memory pressure.
+In all the callers of f2fs_set(get)xattr(),
+the xattr name can not be NULL.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Signed-off-by: Zhang Zhen <zhenzhang.zhang@huawei.com>
 ---
- fs/f2fs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/xattr.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index f7a6553..adc622c 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -295,4 +295,5 @@ void f2fs_evict_inode(struct inode *inode)
- 	sb_end_intwrite(inode->i_sb);
- no_delete:
- 	clear_inode(inode);
-+	invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino, inode->i_ino);
- }
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 503c245..f382e24 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -404,8 +404,6 @@ int f2fs_getxattr(struct inode *inode, int name_index, const char *name,
+ 	int error = 0;
+ 	size_t value_len, name_len;
+
+-	if (name == NULL)
+-		return -EINVAL;
+ 	name_len = strlen(name);
+ 	if (name_len > F2FS_NAME_LEN)
+ 		return -ERANGE;
+@@ -487,9 +485,6 @@ static int __f2fs_setxattr(struct inode *inode, int name_index,
+ 	__u32 new_hsize;
+ 	int error = -ENOMEM;
+
+-	if (name == NULL)
+-		return -EINVAL;
+-
+ 	if (value == NULL)
+ 		value_len = 0;
+
 -- 
-1.8.4.474.g128a96c
+1.8.1.2
+
+
+.
+
+
+
 
 
 ------------------------------------------------------------------------------
