@@ -1,76 +1,80 @@
-From: Zhang Zhen <zhenzhang.zhang@huawei.com>
-Subject: [PATCH] f2fs: fix checkpatch warning
-Date: Sun, 4 May 2014 16:37:06 +0800
-Message-ID: <5365FC32.6060000@huawei.com>
-References: <1399192546-3850-1-git-send-email-zhenzhang.zhang@huawei.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [f2fs-dev][PATCH 1/6] f2fs: add a tracepoint for f2fs_write_begin
+Date: Tue, 06 May 2014 16:46:04 +0800
+Message-ID: <004301cf6907$bdd25740$397705c0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhenzhang.zhang@huawei.com>) id 1WgrvN-0007TH-Vy
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 04 May 2014 08:37:30 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1WgrvL-0000Ds-OT
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 04 May 2014 08:37:29 +0000
-In-Reply-To: <1399192546-3850-1-git-send-email-zhenzhang.zhang@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-fix the following checkpatch warning:
-WARNING: do {} while (0) macros should not be semicolon terminated
+This patch adds a tracepoint for f2fs_write_begin to trace write op of user.
 
-Signed-off-by: Zhang Zhen <zhenzhang.zhang@huawei.com>
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/node.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/data.c              |    2 ++
+ include/trace/events/f2fs.h |   30 ++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 5decc1a..dbd65a7e0 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -59,12 +59,12 @@ struct nat_entry {
- 	do {								\
- 		ne->checkpointed = false;				\
- 		list_move_tail(&ne->list, &nm_i->dirty_nat_entries);	\
--	} while (0);
-+	} while (0)
- #define __clear_nat_cache_dirty(nm_i, ne)				\
- 	do {								\
- 		ne->checkpointed = true;				\
- 		list_move_tail(&ne->list, &nm_i->nat_entries);		\
--	} while (0);
-+	} while (0)
- #define inc_node_version(version)	(++version)
-
- static inline void node_info_from_raw_nat(struct node_info *ni,
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a7bb98f..cde0d69 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -900,6 +900,8 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 	struct dnode_of_data dn;
+ 	int err = 0;
+ 
++	trace_f2fs_write_begin(inode, pos, len, flags);
++
+ 	f2fs_balance_fs(sbi);
+ repeat:
+ 	err = f2fs_convert_inline_data(inode, pos + len);
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 67f38fa..1e9375a 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -659,6 +659,36 @@ DEFINE_EVENT_CONDITION(f2fs__submit_bio, f2fs_submit_read_bio,
+ 	TP_CONDITION(bio)
+ );
+ 
++TRACE_EVENT(f2fs_write_begin,
++
++	TP_PROTO(struct inode *inode, loff_t pos, unsigned int len,
++				unsigned int flags),
++
++	TP_ARGS(inode, pos, len, flags),
++
++	TP_STRUCT__entry(
++		__field(dev_t,	dev)
++		__field(ino_t,	ino)
++		__field(loff_t,	pos)
++		__field(unsigned int, len)
++		__field(unsigned int, flags)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->ino	= inode->i_ino;
++		__entry->pos	= pos;
++		__entry->len	= len;
++		__entry->flags	= flags;
++	),
++
++	TP_printk("dev = (%d,%d), ino = %lu, pos = %llu, len = %u, flags = %u",
++		show_dev_ino(__entry),
++		(unsigned long long)__entry->pos,
++		__entry->len,
++		__entry->flags)
++);
++
+ DECLARE_EVENT_CLASS(f2fs__page,
+ 
+ 	TP_PROTO(struct page *page, int type),
 -- 
-1.8.1.2
+1.7.9.5
 
 
-.
-
-
-
-
-
-------------------------------------------------------------------------------
-"Accelerate Dev Cycles with Automated Cross-Browser Testing - For FREE
-Instantly run your Selenium tests across 300+ browser/OS combos.  Get 
-unparalleled scalability from the best Selenium testing platform available.
-Simple to use. Nothing to install. Get started now for free."
-http://p.sf.net/sfu/SauceLabs
