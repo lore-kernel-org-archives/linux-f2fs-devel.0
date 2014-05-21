@@ -1,217 +1,195 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: avoid crash when trace
- f2fs_submit_page_mbio event in ra_sum_pages
-Date: Wed, 21 May 2014 12:36:46 +0900
-Message-ID: <1400643406.12240.6.camel@kjgkr>
-References: <005801cf70e7$66cb0090$346101b0$@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: large volume support
+Date: Wed, 21 May 2014 13:33:11 +0900
+Message-ID: <1400646791.12919.4.camel@kjgkr>
+References: <1399877976-2643-1-git-send-email-cm224.lee@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7822761335341164627=="
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1WmxKu-0006DL-68
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 21 May 2014 03:37:00 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WmxKs-0003Lx-Nd for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 21 May 2014 03:37:00 +0000
-In-Reply-To: <005801cf70e7$66cb0090$346101b0$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-UbicCnF1Ps0vqlbJuhCe"
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <1399877976-2643-1-git-send-email-cm224.lee@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 
---===============7822761335341164627==
-Content-Type: multipart/signed; micalg="pgp-sha1";
-	protocol="application/pgp-signature";
-	boundary="=-KRDYOVaXrfDKNEFiWIQU"
-
-
---=-KRDYOVaXrfDKNEFiWIQU
+--=-UbicCnF1Ps0vqlbJuhCe
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chao,
+Hi Changman,
 
-2014-05-16 (=EA=B8=88), 17:14 +0800, Chao Yu:
-> Previously we allocate pages with no mapping in ra_sum_pages(), so we may
-> encounter a crash in event trace of f2fs_submit_page_mbio where we access
-> mapping data of the page.
+2014-05-12 (=EC=9B=94), 15:59 +0900, Changman Lee:
+> f2fs's cp has one page which consists of struct f2fs_checkpoint and
+> version bitmap of sit and nat. To support lots of segments, we need more
+> blocks for sit bitmap. So let's arrange sit bitmap as following:
+> +-----------------+------------+
+> | f2fs_checkpoint | sit bitmap |
+> | + nat bitmap    |            |
+> +-----------------+------------+
+> 0                 4k        N blocks
 >=20
-> We'd better allocate pages in bd_inode mapping and invalidate these pages=
- after
-> we restore data from pages. It could avoid crash in above scenario.
->=20
-> Call Trace:
->  [<f1031630>] ? ftrace_raw_event_f2fs_write_checkpoint+0x80/0x80 [f2fs]
->  [<f10377bb>] f2fs_submit_page_mbio+0x1cb/0x200 [f2fs]
->  [<f103c5da>] restore_node_summary+0x13a/0x280 [f2fs]
->  [<f103e22d>] build_curseg+0x2bd/0x620 [f2fs]
->  [<f104043b>] build_segment_manager+0x1cb/0x920 [f2fs]
->  [<f1032c85>] f2fs_fill_super+0x535/0x8e0 [f2fs]
->  [<c115b66a>] mount_bdev+0x16a/0x1a0
->  [<f102f63f>] f2fs_mount+0x1f/0x30 [f2fs]
->  [<c115c096>] mount_fs+0x36/0x170
->  [<c1173635>] vfs_kern_mount+0x55/0xe0
->  [<c1175388>] do_mount+0x1e8/0x900
->  [<c1175d72>] SyS_mount+0x82/0xc0
->  [<c16059cc>] sysenter_do_call+0x12/0x22
->=20
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 > ---
->  fs/f2fs/node.c |   49 ++++++++++++++++++++++++++++---------------------
->  1 file changed, 28 insertions(+), 21 deletions(-)
+>  fs/f2fs/checkpoint.c    |   47 +++++++++++++++++++++++++++++++++++++++++=
++++---
+>  fs/f2fs/f2fs.h          |   13 +++++++++++--
+>  include/linux/f2fs_fs.h |    2 ++
+>  3 files changed, 57 insertions(+), 5 deletions(-)
 >=20
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 3d60d3d..b5cd814 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1658,13 +1658,16 @@ int recover_inode_page(struct f2fs_sb_info *sbi, =
-struct page *page)
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index fe968c7..f418243 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -544,6 +544,32 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+>  	cp_block =3D (struct f2fs_checkpoint *)page_address(cur_page);
+>  	memcpy(sbi->ckpt, cp_block, blk_size);
 > =20
->  /*
->   * ra_sum_pages() merge contiguous pages into one bio and submit.
-> - * these pre-readed pages are linked in pages list.
-> + * these pre-readed pages are alloced in bd_inode's mapping tree.
->   */
-> -static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *page=
-s,
-> +static int ra_sum_pages(struct f2fs_sb_info *sbi, struct page **pages,
->  				int start, int nrpages)
+> +	if (is_set_ckpt_flags(sbi->ckpt, CP_LARGE_VOL_FLAG)) {
+> +		int i, cp_blks;
+> +		block_t cp_blk_no;
+> +
+> +		cp_blk_no =3D le32_to_cpu(fsb->cp_blkaddr);
+> +		if (cur_page =3D=3D cp2)
+> +			cp_blk_no +=3D 1 << le32_to_cpu(fsb->log_blocks_per_seg);
+> +
+> +		cp_blks =3D 1 + F2FS_BLK_ALIGN(cp_block->sit_ver_bitmap_bytesize);
+
+Should covert le32_to_cpu(cp_block->sit_ver_bitmap_bytesize).
+
+> +
+> +		kfree(sbi->ckpt);
+> +		sbi->ckpt =3D kzalloc(cp_blks * blk_size, GFP_KERNEL);
+
+Why does it have to reallocate this and not to handle -ENOMEM correctly?
+
+> +
+> +		memcpy(sbi->ckpt, cp_block, blk_size);
+> +
+> +		for (i =3D 1; i < cp_blks; i++) {
+> +			void *sit_bitmap_ptr;
+> +			unsigned char *ckpt =3D (unsigned char *)sbi->ckpt;
+> +
+> +			cur_page =3D get_meta_page(sbi, cp_blk_no + i);
+> +			sit_bitmap_ptr =3D page_address(cur_page);
+> +			memcpy(ckpt + i * blk_size, sit_bitmap_ptr, blk_size);
+> +			f2fs_put_page(cur_page, 1);
+> +		}
+> +	}
+> +
+>  	f2fs_put_page(cp1, 1);
+>  	f2fs_put_page(cp2, 1);
+>  	return 0;
+> @@ -736,6 +762,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, b=
+ool is_umount)
+>  	__u32 crc32 =3D 0;
+>  	void *kaddr;
+>  	int i;
+> +	int sit_bitmap_blks =3D 0;
+> =20
+>  	/*
+>  	 * This avoids to conduct wrong roll-forward operations and uses
+> @@ -786,16 +813,21 @@ static void do_checkpoint(struct f2fs_sb_info *sbi,=
+ bool is_umount)
+> =20
+>  	orphan_blocks =3D (sbi->n_orphans + F2FS_ORPHANS_PER_BLOCK - 1)
+>  					/ F2FS_ORPHANS_PER_BLOCK;
+> -	ckpt->cp_pack_start_sum =3D cpu_to_le32(1 + orphan_blocks);
+> +	if (is_set_ckpt_flags(ckpt, CP_LARGE_VOL_FLAG))
+> +		sit_bitmap_blks =3D F2FS_BLK_ALIGN(ckpt->sit_ver_bitmap_bytesize);
+> +	ckpt->cp_pack_start_sum =3D cpu_to_le32(1 + sit_bitmap_blks +
+> +			orphan_blocks);
+> =20
+>  	if (is_umount) {
+>  		set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
+>  		ckpt->cp_pack_total_block_count =3D cpu_to_le32(2 +
+> -			data_sum_blocks + orphan_blocks + NR_CURSEG_NODE_TYPE);
+> +				sit_bitmap_blks + data_sum_blocks +
+> +				orphan_blocks + NR_CURSEG_NODE_TYPE);
+>  	} else {
+>  		clear_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
+>  		ckpt->cp_pack_total_block_count =3D cpu_to_le32(2 +
+> -			data_sum_blocks + orphan_blocks);
+> +				sit_bitmap_blks + data_sum_blocks +
+> +				orphan_blocks);
+>  	}
+> =20
+>  	if (sbi->n_orphans)
+> @@ -821,6 +853,15 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, =
+bool is_umount)
+>  	set_page_dirty(cp_page);
+>  	f2fs_put_page(cp_page, 1);
+> =20
+> +	for (i =3D 1; i < 1 + sit_bitmap_blks; i++) {
+> +		cp_page =3D grab_meta_page(sbi, start_blk++);
+> +		kaddr =3D page_address(cp_page);
+> +		memcpy(kaddr, (char *)ckpt + i * F2FS_BLKSIZE,
+> +				(1 << sbi->log_blocksize));
+> +		set_page_dirty(cp_page);
+> +		f2fs_put_page(cp_page, 1);
+> +	}
+> +
+>  	if (sbi->n_orphans) {
+>  		write_orphan_inodes(sbi, start_blk);
+>  		start_blk +=3D orphan_blocks;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 676a2c6..9e147ae 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -764,9 +764,18 @@ static inline unsigned long __bitmap_size(struct f2f=
+s_sb_info *sbi, int flag)
+>  static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
 >  {
->  	struct page *page;
-> +	struct inode *inode =3D sbi->sb->s_bdev->bd_inode;
-> +	struct address_space *mapping =3D inode->i_mapping;
->  	int page_idx =3D start;
-> +	int alloced, readed;
->  	struct f2fs_io_info fio =3D {
->  		.type =3D META,
->  		.rw =3D READ_SYNC | REQ_META | REQ_PRIO
-> @@ -1672,21 +1675,23 @@ static int ra_sum_pages(struct f2fs_sb_info *sbi,=
- struct list_head *pages,
-> =20
->  	for (; page_idx < start + nrpages; page_idx++) {
->  		/* alloc temporal page for read node summary info*/
-> -		page =3D alloc_page(GFP_F2FS_ZERO);
-> +		page =3D grab_cache_page(mapping, page_idx);
->  		if (!page)
->  			break;
-> -
-> -		lock_page(page);
-> -		page->index =3D page_idx;
-> -		list_add_tail(&page->lru, pages);
-> +		page_cache_release(page);
+>  	struct f2fs_checkpoint *ckpt =3D F2FS_CKPT(sbi);
+> -	int offset =3D (flag =3D=3D NAT_BITMAP) ?
+> +	int offset;
+> +
+> +	if (ckpt->ckpt_flags & CP_LARGE_VOL_FLAG) {
 
-IMO, we don't need to do like this.
-Instead,
-	for() {
-		page =3D grab_cache_page();
-		if (!page)
-			break;
-		page[page_idx] =3D page;
-		f2fs_submit_page_mbio(sbi, page, &fio);
-	}
-	f2fs_submit_merged_bio(sbi, META, READ);
-	return page_idx - start;
-
-Afterwards, in restore_node_summry(),
-	lock_page() will wait the end_io for read.
-	...
-	f2fs_put_page(pages[index], 1);
+Should call is_set_ckpt_flag(ckpt, CP_LARGE_VOL_FLAG) to avoid endian
+conversion issue.
 
 Thanks,
 
->  	}
-> =20
-> -	list_for_each_entry(page, pages, lru)
-> -		f2fs_submit_page_mbio(sbi, page, page->index, &fio);
-> +	alloced =3D page_idx - start;
-> +	readed =3D find_get_pages_contig(mapping, start, alloced, pages);
-> +	BUG_ON(alloced !=3D readed);
-> +
-> +	for (page_idx =3D 0; page_idx < readed; page_idx++)
-> +		f2fs_submit_page_mbio(sbi, pages[page_idx],
-> +					pages[page_idx]->index, &fio);
-> =20
->  	f2fs_submit_merged_bio(sbi, META, READ);
-> =20
-> -	return page_idx - start;
-> +	return readed;
+> +		if (flag =3D=3D NAT_BITMAP)
+> +			return &ckpt->sit_nat_version_bitmap;
+> +		else
+> +			return ((unsigned char *)ckpt + F2FS_BLKSIZE);
+> +	} else {
+> +		offset =3D (flag =3D=3D NAT_BITMAP) ?
+>  			le32_to_cpu(ckpt->sit_ver_bitmap_bytesize) : 0;
+> -	return &ckpt->sit_nat_version_bitmap + offset;
+> +		return &ckpt->sit_nat_version_bitmap + offset;
+> +	}
 >  }
 > =20
->  int restore_node_summary(struct f2fs_sb_info *sbi,
-> @@ -1694,11 +1699,11 @@ int restore_node_summary(struct f2fs_sb_info *sbi=
-,
->  {
->  	struct f2fs_node *rn;
->  	struct f2fs_summary *sum_entry;
-> -	struct page *page, *tmp;
-> +	struct inode *inode =3D sbi->sb->s_bdev->bd_inode;
->  	block_t addr;
->  	int bio_blocks =3D MAX_BIO_BLOCKS(max_hw_blocks(sbi));
-> -	int i, last_offset, nrpages, err =3D 0;
-> -	LIST_HEAD(page_list);
-> +	struct page *pages[bio_blocks];
-> +	int i, index, last_offset, nrpages, err =3D 0;
+>  static inline block_t __start_cp_addr(struct f2fs_sb_info *sbi)
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index 8c03f71..0f0b788 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -19,6 +19,7 @@
+>  #define F2FS_LOG_SECTORS_PER_BLOCK	3	/* 4KB: F2FS_BLKSIZE */
+>  #define F2FS_BLKSIZE			4096	/* support only 4KB block */
+>  #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
+> +#define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
 > =20
->  	/* scan the node segment */
->  	last_offset =3D sbi->blocks_per_seg;
-> @@ -1709,29 +1714,31 @@ int restore_node_summary(struct f2fs_sb_info *sbi=
-,
->  		nrpages =3D min(last_offset - i, bio_blocks);
-> =20
->  		/* read ahead node pages */
-> -		nrpages =3D ra_sum_pages(sbi, &page_list, addr, nrpages);
-> +		nrpages =3D ra_sum_pages(sbi, pages, addr, nrpages);
->  		if (!nrpages)
->  			return -ENOMEM;
-> =20
-> -		list_for_each_entry_safe(page, tmp, &page_list, lru) {
-> +		for (index =3D 0; index < nrpages; index++) {
->  			if (err)
->  				goto skip;
-> =20
-> -			lock_page(page);
-> -			if (unlikely(!PageUptodate(page))) {
-> +			lock_page(pages[index]);
-> +			if (unlikely(!PageUptodate(pages[index]))) {
->  				err =3D -EIO;
->  			} else {
-> -				rn =3D F2FS_NODE(page);
-> +				rn =3D F2FS_NODE(pages[index]);
->  				sum_entry->nid =3D rn->footer.nid;
->  				sum_entry->version =3D 0;
->  				sum_entry->ofs_in_node =3D 0;
->  				sum_entry++;
->  			}
-> -			unlock_page(page);
-> +			unlock_page(pages[index]);
->  skip:
-> -			list_del(&page->lru);
-> -			__free_pages(page, 0);
-> +			page_cache_release(pages[index]);
->  		}
-> +
-> +		invalidate_mapping_pages(inode->i_mapping, addr,
-> +							addr + nrpages);
->  	}
->  	return err;
->  }
+>  #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
+>  #define NEW_ADDR		((block_t)-1)	/* used as block_t addresses */
+> @@ -80,6 +81,7 @@ struct f2fs_super_block {
+>  /*
+>   * For checkpoint
+>   */
+> +#define CP_LARGE_VOL_FLAG	0x00000010
+>  #define CP_ERROR_FLAG		0x00000008
+>  #define CP_COMPACT_SUM_FLAG	0x00000004
+>  #define CP_ORPHAN_PRESENT_FLAG	0x00000002
 
 --=20
 Jaegeuk Kim
 
---=-KRDYOVaXrfDKNEFiWIQU
+--=-UbicCnF1Ps0vqlbJuhCe
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
@@ -219,46 +197,20 @@ Content-Transfer-Encoding: 7bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAABAgAGBQJTfB9OAAoJEEAUqH6CSFDSPu8P/iPyD5Oaye5bMapVkyaHnGQ7
-NwoJXgwaz2Bc5Y6SBkNB2gv5Ubx2gGV32NIqiRgVRQOj7LESUNT128/ZVvgbMOgk
-M3Y2n340YhyZJDK39psHxhRvhbe6AblCn3cSiyrDOchKYbeIRaE1od2AGKHoYgbZ
-aQLaX1MucaV4bNBqII4VXolHykLaYofcJENCfZjE+CLFiO9dCtztjwvqO8RTXRkS
-Y8zEeSnU0FY2iFAYvVcriVYOiQJ9LSo6Hb+PonwHEschtZjIgJFKlqvjBjJzCeHo
-GEmEOQmZgwzUuSZ6wnqpsb5qoiVyN1uS2vE4jIJvP2i8lve1o/0WfhK0RCcaXrCw
-TVJi5OyGS1bQc0YWR+gMG/7aijuh3vy7l5gWsNkM/nY+eWxFFXTi59BWIYzwQVHb
-j9RIbEbVqCwxpaQW2vvPIyrG1XlLXss/E+bg9sUow5sKeuYKIN8PhYjCGBYS6QIB
-MCZvHg0WWQGnirT1TgTBAp2vrkPnO2GLM3soUIPzuGV+KWbbGgQ5WjIYlwglXgxC
-YkTpovdvBg353VCmh3QqAbsnxzIg9utA7KTHhiREsVSjKtJ1AFV7E3pCy0EW24Qz
-Vbr7IsiMg+27RRAc+oRxhL1Jyz/y0Lh0+RL/jLdtDm7CFqIZ/upvzZ4tfdLRz+sX
-q1TjpQbPEeB31eQbOqyv
-=VsdX
+iQIcBAABAgAGBQJTfCyHAAoJEEAUqH6CSFDSeKsP/jYZv0OkVLBQKRsFo9pfaBgJ
+iNLOJcZQ8wPuLHssrhWststfHML7DNobX4frAvOwuA7hLT02lpUHcH40FwuySw7u
+M5yNTThhqpisscHA4kgjqWSmRr9tXmrpnrKSy/s21Q6xFwMCMBz/z0BPjsc+/r6j
+GC0bsb/xxsnW6GhE4vrQkTHygvea3TbGhUNyulWWYHhvSfKqBwAPs0LLSxpWGsC6
+lCf/RSGSa9SK2Thw6sxEg91ajrzsS4eigRZNgSU3R5InMXRXcFaqBCSidS2ID5wv
+ZdAhkwBZ2RGhJIjoh9bHvqSBtQMGyVH8QE6L9J9w/nxjDdRQKvhonTFi0eOi53Ob
+cjArSNryqaNbVz9GSZeT26XEbF012RE4kC4n26ki4VkoSEg8HmxcX2K2n3w39phl
+9M/GC8mYZEQCKKUcHOkyJ5oporLOV6v3r/ra+iRbQeDnYoNw4GUg93azIfW+uEy+
+NEwkRjEI3CvSWn+e3wXZSw685+mv1ZMVe634wyLXQEdH7ox1u4jrSV0wTaXBeran
+1339mwwTESwf5mHhF6yuxILR9NozH8/vE3QskcLxrFWnPcs1aPkuGJrG8mXrix12
+jdWeNUK5+EfvaFPSNyCSNd4P6MlUAKGBrDRY6ZJ8JZugs1L/kx4++59R0cHIKI5r
+kqswk4f6m94YkWxTdYDt
+=H9dT
 -----END PGP SIGNATURE-----
 
---=-KRDYOVaXrfDKNEFiWIQU--
+--=-UbicCnF1Ps0vqlbJuhCe--
 
-
-
---===============7822761335341164627==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-------------------------------------------------------------------------------
-"Accelerate Dev Cycles with Automated Cross-Browser Testing - For FREE
-Instantly run your Selenium tests across 300+ browser/OS combos.
-Get unparalleled scalability from the best Selenium testing platform available
-Simple to use. Nothing to install. Get started now for free."
-http://p.sf.net/sfu/SauceLabs
---===============7822761335341164627==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============7822761335341164627==--
