@@ -1,219 +1,210 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: [PATCH V3] f2fs: large volume support
-Date: Thu, 22 May 2014 17:31:25 +0900
-Message-ID: <1400747485.11512.8.camel@lcm>
-References: <1399877976-2643-1-git-send-email-cm224.lee@samsung.com>
- <1400646791.12919.4.camel@kjgkr> <1400654795.8373.6.camel@lcm>
+From: "Ann-sales02@print-doer.vicp.cc" <Ann-sales02@print-doer.vicp.cc>
+Subject: [SPAM] Re: linux-f2fs-devel ,
+	Lower the marketing cost in office
+Date: Thu, 22 May 2014 11:13:06 +0800
+Message-ID: <E1WneGV-0003Uj-AS@sfs-ml-3.v29.ch3.sourceforge.com>
+Reply-To: Ann@oversea-print.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/mixed; boundary="===============2842143295797276862=="
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <Ann-sales02@print-doer.vicp.cc>) id 1WneGT-0003Ue-W8
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 23 May 2014 01:27:18 +0000
+Received: from [110.85.75.251] (helo=print-china.oicp.net)
+	by sog-mx-1.v43.ch3.sourceforge.com with smtp (Exim 4.76)
+	id 1WneGR-00020P-Jt for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 23 May 2014 01:27:17 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+
+--===============2842143295797276862==
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML xmlns:o = "urn:schemas-microsoft-com:office:office"><HEAD>
+<META http-equiv=content-type content="text/html; charset=UTF-8">
+<META content="MSHTML 6.00.2900.6512" name=GENERATOR></HEAD>
+<BODY>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-WEIGHT: normal; FONT-SIZE: 14pt; COLOR: rgb(102,102,102); FONT-STYLE: normal; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-WEIGHT: normal; FONT-SIZE: 14pt; COLOR: rgb(102,102,102); FONT-STYLE: normal; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Good&nbsp;day&nbsp;Sir/Madam</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">,</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Have&nbsp;you&nbsp;received&nbsp;my&nbsp;mail&nbsp;i&nbsp;sent&nbsp;to&nbsp;you&nbsp;last&nbsp;week(as&nbsp;below)?</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">“&nbsp;&nbsp;</P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Dear&nbsp;,</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Are&nbsp;you&nbsp;looking&nbsp;for&nbsp;a&nbsp;cooperative&nbsp;partner&nbsp;for&nbsp;your&nbsp;printing&nbsp;demands?&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">What&nbsp;we&nbsp;provide&nbsp;is&nbsp;excellent&nbsp;printing&nbsp;service,&nbsp;and&nbsp;high&nbsp;quality&nbsp;products,&nbsp;like&nbsp;business&nbsp;cards,&nbsp;catalogue,&nbsp;magazines,&nbsp;paper&nbsp;bags,&nbsp;boxes,&nbsp;stickers,&nbsp;etc.</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">More&nbsp;info&nbsp;includes&nbsp;company&nbsp;website,contact&nbsp;details&nbsp;and&nbsp;other&nbsp;catalogue&nbsp;will&nbsp;be&nbsp;sent&nbsp;to&nbsp;you&nbsp;if&nbsp;you&nbsp;are&nbsp;interested.&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Kind&nbsp;regards,</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Ann 
+&nbsp;&nbsp;Sales&nbsp;Specialist&nbsp;&nbsp;&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">SHARP&nbsp;BASE&nbsp;CO.,LTD&nbsp;CHINA&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 
+style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt">&nbsp;&nbsp;”</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Now&nbsp;our&nbsp;company&nbsp;is&nbsp;doing&nbsp;a&nbsp;simple&nbsp;investigation&nbsp;for&nbsp;our&nbsp;overseas&nbsp;customers&nbsp;in&nbsp;order&nbsp;to&nbsp;improve&nbsp;us&nbsp;and&nbsp;to&nbsp;offer&nbsp;you&nbsp;a&nbsp;better&nbsp;service&nbsp;as&nbsp;well.&nbsp;Could&nbsp;you&nbsp;please&nbsp;be&nbsp;patient&nbsp;to&nbsp;give&nbsp;us&nbsp;a&nbsp;simple&nbsp;answer&nbsp;for&nbsp;the&nbsp;following&nbsp;questions?</SPAN><SPAN 
+style="FONT-WEIGHT: normal; FONT-SIZE: 14pt; COLOR: rgb(102,102,102); FONT-STYLE: normal; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 
+style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt; mso-list: l0 level1 lfo1"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;"><SPAN 
+style="mso-list: Ignore">1)<SPAN>&nbsp;</SPAN></SPAN></SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Do&nbsp;you&nbsp;engage&nbsp;in&nbsp;paper&nbsp;products?</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><BR></SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">2)&nbsp;Do&nbsp;you&nbsp;import&nbsp;printing&nbsp;Products?</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><BR></SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">3)&nbsp;Where&nbsp;you&nbsp;like&nbsp;to&nbsp;import,&nbsp;from&nbsp;China&nbsp;or&nbsp;anywhere&nbsp;else?</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><BR></SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">4)&nbsp;Which&nbsp;factor&nbsp;you&nbsp;think&nbsp;is&nbsp;the&nbsp;most&nbsp;important&nbsp;one&nbsp;that&nbsp;make&nbsp;you&nbsp;a&nbsp;decision,&nbsp;the&nbsp;price,&nbsp;the&nbsp;quality,&nbsp;the&nbsp;delivery&nbsp;date&nbsp;or&nbsp;our&nbsp;service?&nbsp;And&nbsp;why?</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Hope&nbsp;to&nbsp;hear&nbsp;from&nbsp;you.</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Thank&nbsp;you&nbsp;in&nbsp;advance.</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Kind&nbsp;regards,</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">Ann</SPAN><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P><!--EndFragment--></o:p></SPAN>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt; TEXT-ALIGN: left"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt; TEXT-ALIGN: left"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt; TEXT-ALIGN: left"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt; TEXT-ALIGN: left"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt; TEXT-ALIGN: left"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;">&nbsp;</SPAN><SPAN 
+style="FONT-SIZE: 12pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p></o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P>
+<P class=p0 style="MARGIN-TOP: 0pt; MARGIN-BOTTOM: 0pt"><SPAN 
+style="FONT-SIZE: 14pt; FONT-FAMILY: &#39;Arial&#39;; mso-spacerun: &#39;yes&#39;"><o:p>&nbsp;</o:p></SPAN></P><!--EndFragment--></BODY></HTML>
+
+
+
+
+--===============2842143295797276862==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1400654795.8373.6.camel@lcm>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Disposition: inline
 
+------------------------------------------------------------------------------
+"Accelerate Dev Cycles with Automated Cross-Browser Testing - For FREE
+Instantly run your Selenium tests across 300+ browser/OS combos.
+Get unparalleled scalability from the best Selenium testing platform available
+Simple to use. Nothing to install. Get started now for free."
+http://p.sf.net/sfu/SauceLabs
+--===============2842143295797276862==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Changes from V2
- o fix conversion like le32_to_cpu
- o use is_set_ckpt_flags instead of bit operation
- o check return value after memory allocation
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
-Changes from V1
- o fix orphan node blkaddr for large volume
-
-Jaegeuk,
-What is your opinion about reallocation of sbi->ckpt ? If you have any
-idea, let me know.
-Thanks.
-
---> 8 --
-
->From 5a821fcec79fb9570a26104238b3c2391f6160ae Mon Sep 17 00:00:00 2001
-From: Changman Lee <cm224.lee@samsung.com>
-Date: Mon, 12 May 2014 12:27:43 +0900
-Subject: [PATCH] f2fs: large volume support
-
-f2fs's cp has one page which consists of struct f2fs_checkpoint and
-version bitmap of sit and nat. To support lots of segments, we need more
-blocks for sit bitmap. So let's arrange sit bitmap as following:
-+-----------------+------------+
-| f2fs_checkpoint | sit bitmap |
-| + nat bitmap    |            |
-+-----------------+------------+
-0                 4k        N blocks
-
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>
----
- fs/f2fs/checkpoint.c    |   59
-+++++++++++++++++++++++++++++++++++++++++++----
- fs/f2fs/f2fs.h          |   13 +++++++++--
- include/linux/f2fs_fs.h |    2 ++
- 3 files changed, 68 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index fe968c7..cf2d1a7 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -366,12 +366,18 @@ static void recover_orphan_inode(struct
-f2fs_sb_info *sbi, nid_t ino)
- void recover_orphan_inodes(struct f2fs_sb_info *sbi)
- {
- 	block_t start_blk, orphan_blkaddr, i, j;
-+	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 
- 	if (!is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG))
- 		return;
- 
- 	sbi->por_doing = true;
--	start_blk = __start_cp_addr(sbi) + 1;
-+
-+	if (is_set_ckpt_flags(ckpt, CP_LARGE_VOL_FLAG))
-+		start_blk = __start_cp_addr(sbi) + F2FS_BLK_ALIGN(
-+				le32_to_cpu(ckpt->sit_ver_bitmap_bytesize));
-+	else
-+		start_blk = __start_cp_addr(sbi) + 1;
- 	orphan_blkaddr = __start_sum_addr(sbi) - 1;
- 
- 	ra_meta_pages(sbi, start_blk, orphan_blkaddr, META_CP);
-@@ -544,6 +550,35 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 	cp_block = (struct f2fs_checkpoint *)page_address(cur_page);
- 	memcpy(sbi->ckpt, cp_block, blk_size);
- 
-+	if (is_set_ckpt_flags(sbi->ckpt, CP_LARGE_VOL_FLAG)) {
-+		int i, cp_blks;
-+		block_t cp_blk_no;
-+
-+		cp_blk_no = le32_to_cpu(fsb->cp_blkaddr);
-+		if (cur_page == cp2)
-+			cp_blk_no += 1 << le32_to_cpu(fsb->log_blocks_per_seg);
-+
-+		cp_blks = 1 + F2FS_BLK_ALIGN(
-+				le32_to_cpu(cp_block->sit_ver_bitmap_bytesize));
-+
-+		kfree(sbi->ckpt);
-+		sbi->ckpt = kzalloc(cp_blks * blk_size, GFP_KERNEL);
-+		if (!sbi->ckpt)
-+			return -ENOMEM;
-+
-+		memcpy(sbi->ckpt, cp_block, blk_size);
-+
-+		for (i = 1; i < cp_blks; i++) {
-+			void *sit_bitmap_ptr;
-+			unsigned char *ckpt = (unsigned char *)sbi->ckpt;
-+
-+			cur_page = get_meta_page(sbi, cp_blk_no + i);
-+			sit_bitmap_ptr = page_address(cur_page);
-+			memcpy(ckpt + i * blk_size, sit_bitmap_ptr, blk_size);
-+			f2fs_put_page(cur_page, 1);
-+		}
-+	}
-+
- 	f2fs_put_page(cp1, 1);
- 	f2fs_put_page(cp2, 1);
- 	return 0;
-@@ -736,6 +771,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi,
-bool is_umount)
- 	__u32 crc32 = 0;
- 	void *kaddr;
- 	int i;
-+	int sit_bitmap_blks = 0;
- 
- 	/*
- 	 * This avoids to conduct wrong roll-forward operations and uses
-@@ -786,16 +822,22 @@ static void do_checkpoint(struct f2fs_sb_info
-*sbi, bool is_umount)
- 
- 	orphan_blocks = (sbi->n_orphans + F2FS_ORPHANS_PER_BLOCK - 1)
- 					/ F2FS_ORPHANS_PER_BLOCK;
--	ckpt->cp_pack_start_sum = cpu_to_le32(1 + orphan_blocks);
-+	if (is_set_ckpt_flags(ckpt, CP_LARGE_VOL_FLAG))
-+		sit_bitmap_blks = F2FS_BLK_ALIGN(
-+				le32_to_cpu(ckpt->sit_ver_bitmap_bytesize));
-+	ckpt->cp_pack_start_sum = cpu_to_le32(1 + sit_bitmap_blks +
-+			orphan_blocks);
- 
- 	if (is_umount) {
- 		set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
- 		ckpt->cp_pack_total_block_count = cpu_to_le32(2 +
--			data_sum_blocks + orphan_blocks + NR_CURSEG_NODE_TYPE);
-+				sit_bitmap_blks + data_sum_blocks +
-+				orphan_blocks + NR_CURSEG_NODE_TYPE);
- 	} else {
- 		clear_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
- 		ckpt->cp_pack_total_block_count = cpu_to_le32(2 +
--			data_sum_blocks + orphan_blocks);
-+				sit_bitmap_blks + data_sum_blocks +
-+				orphan_blocks);
- 	}
- 
- 	if (sbi->n_orphans)
-@@ -821,6 +863,15 @@ static void do_checkpoint(struct f2fs_sb_info *sbi,
-bool is_umount)
- 	set_page_dirty(cp_page);
- 	f2fs_put_page(cp_page, 1);
- 
-+	for (i = 1; i < 1 + sit_bitmap_blks; i++) {
-+		cp_page = grab_meta_page(sbi, start_blk++);
-+		kaddr = page_address(cp_page);
-+		memcpy(kaddr, (char *)ckpt + i * F2FS_BLKSIZE,
-+				(1 << sbi->log_blocksize));
-+		set_page_dirty(cp_page);
-+		f2fs_put_page(cp_page, 1);
-+	}
-+
- 	if (sbi->n_orphans) {
- 		write_orphan_inodes(sbi, start_blk);
- 		start_blk += orphan_blocks;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 676a2c6..3aec601 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -764,9 +764,18 @@ static inline unsigned long __bitmap_size(struct
-f2fs_sb_info *sbi, int flag)
- static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
--	int offset = (flag == NAT_BITMAP) ?
-+	int offset;
-+
-+	if (is_set_ckpt_flags(ckpt, CP_LARGE_VOL_FLAG)) {
-+		if (flag == NAT_BITMAP)
-+			return &ckpt->sit_nat_version_bitmap;
-+		else
-+			return ((unsigned char *)ckpt + F2FS_BLKSIZE);
-+	} else {
-+		offset = (flag == NAT_BITMAP) ?
- 			le32_to_cpu(ckpt->sit_ver_bitmap_bytesize) : 0;
--	return &ckpt->sit_nat_version_bitmap + offset;
-+		return &ckpt->sit_nat_version_bitmap + offset;
-+	}
- }
- 
- static inline block_t __start_cp_addr(struct f2fs_sb_info *sbi)
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 8c03f71..0f0b788 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -19,6 +19,7 @@
- #define F2FS_LOG_SECTORS_PER_BLOCK	3	/* 4KB: F2FS_BLKSIZE */
- #define F2FS_BLKSIZE			4096	/* support only 4KB block */
- #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
-+#define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
- 
- #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
- #define NEW_ADDR		((block_t)-1)	/* used as block_t addresses */
-@@ -80,6 +81,7 @@ struct f2fs_super_block {
- /*
-  * For checkpoint
-  */
-+#define CP_LARGE_VOL_FLAG	0x00000010
- #define CP_ERROR_FLAG		0x00000008
- #define CP_COMPACT_SUM_FLAG	0x00000004
- #define CP_ORPHAN_PRESENT_FLAG	0x00000002
--- 
-1.7.10.4
-
-
-
+--===============2842143295797276862==--
