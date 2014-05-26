@@ -1,35 +1,38 @@
 From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [PATCH] f2fs: avoid crash when trace
- f2fs_submit_page_mbio event in ra_sum_pages
-Date: Mon, 26 May 2014 16:46:24 +0900
-Message-ID: <20140526074624.GA28081@cm224.lee>
-References: <005801cf70e7$66cb0090$346101b0$@samsung.com>
-	<1400643406.12240.6.camel@kjgkr> <20140523051413.GB26933@cm224.lee>
-	<00cc01cf78ab$87d88b10$9789a130$@samsung.com>
+Subject: [PATCH 1/2 V3] mkfs.f2fs: large volume support
+Date: Tue, 27 May 2014 08:38:52 +0900
+Message-ID: <20140526233852.GA30978@cm224.lee>
+References: <1399877875-2561-1-git-send-email-cm224.lee@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cm224.lee@samsung.com>) id 1Wopdb-0006Fr-B3
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cm224.lee@samsung.com>) id 1Wp4VI-00087f-Vc
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 26 May 2014 07:48:03 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WopdY-0000py-Mf
+	Mon, 26 May 2014 23:40:28 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1Wp4VG-0002XN-Ln
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 26 May 2014 07:48:03 +0000
+	Mon, 26 May 2014 23:40:28 +0000
 Received: from epcpsbgr5.samsung.com
 	(u145.gpu120.samsung.co.kr [203.254.230.145])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
+	by mailout4.samsung.com (Oracle Communications Messaging Server
 	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N6600JQK8BQU100@mailout1.samsung.com> for
+	with ESMTP id <0N6700C1QGF7NK70@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 26 May 2014 16:47:50 +0900 (KST)
-In-reply-to: <00cc01cf78ab$87d88b10$9789a130$@samsung.com>
+	Tue, 27 May 2014 08:40:19 +0900 (KST)
+Received: from localhost ([12.36.79.189])
+	by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	(7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTPA id <0N6700BQPGF6T920@mmp2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 27 May 2014 08:40:18 +0900 (KST)
 Content-disposition: inline
+In-reply-to: <1399877875-2561-1-git-send-email-cm224.lee@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,153 +42,224 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-T24gTW9uLCBNYXkgMjYsIDIwMTQgYXQgMDI6MjY6MjRQTSArMDgwMCwgQ2hhbyBZdSB3cm90ZToK
-PiBIaSBjaGFuZ21hbiwKPiAKPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4gPiBGcm9t
-OiBDaGFuZ21hbiBMZWUgW21haWx0bzpjbTIyNC5sZWVAc2Ftc3VuZy5jb21dCj4gPiBTZW50OiBG
-cmlkYXksIE1heSAyMywgMjAxNCAxOjE0IFBNCj4gPiBUbzogSmFlZ2V1ayBLaW0KPiA+IENjOiBD
-aGFvIFl1OyBsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIu
-a2VybmVsLm9yZzsKPiA+IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4g
-PiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XSBbUEFUQ0hdIGYyZnM6IGF2b2lkIGNyYXNoIHdoZW4g
-dHJhY2UgZjJmc19zdWJtaXRfcGFnZV9tYmlvIGV2ZW50IGluCj4gPiByYV9zdW1fcGFnZXMKPiA+
-IAo+ID4gT24gV2VkLCBNYXkgMjEsIDIwMTQgYXQgMTI6MzY6NDZQTSArMDkwMCwgSmFlZ2V1ayBL
-aW0gd3JvdGU6Cj4gPiA+IEhpIENoYW8sCj4gPiA+Cj4gPiA+IDIwMTQtMDUtMTYgKOq4iCksIDE3
-OjE0ICswODAwLCBDaGFvIFl1Ogo+ID4gPiA+IFByZXZpb3VzbHkgd2UgYWxsb2NhdGUgcGFnZXMg
-d2l0aCBubyBtYXBwaW5nIGluIHJhX3N1bV9wYWdlcygpLCBzbyB3ZSBtYXkKPiA+ID4gPiBlbmNv
-dW50ZXIgYSBjcmFzaCBpbiBldmVudCB0cmFjZSBvZiBmMmZzX3N1Ym1pdF9wYWdlX21iaW8gd2hl
-cmUgd2UgYWNjZXNzCj4gPiA+ID4gbWFwcGluZyBkYXRhIG9mIHRoZSBwYWdlLgo+ID4gPiA+Cj4g
-PiA+ID4gV2UnZCBiZXR0ZXIgYWxsb2NhdGUgcGFnZXMgaW4gYmRfaW5vZGUgbWFwcGluZyBhbmQg
-aW52YWxpZGF0ZSB0aGVzZSBwYWdlcyBhZnRlcgo+ID4gPiA+IHdlIHJlc3RvcmUgZGF0YSBmcm9t
-IHBhZ2VzLiBJdCBjb3VsZCBhdm9pZCBjcmFzaCBpbiBhYm92ZSBzY2VuYXJpby4KPiA+ID4gPgo+
-ID4gPiA+IENhbGwgVHJhY2U6Cj4gPiA+ID4gIFs8ZjEwMzE2MzA+XSA/IGZ0cmFjZV9yYXdfZXZl
-bnRfZjJmc193cml0ZV9jaGVja3BvaW50KzB4ODAvMHg4MCBbZjJmc10KPiA+ID4gPiAgWzxmMTAz
-NzdiYj5dIGYyZnNfc3VibWl0X3BhZ2VfbWJpbysweDFjYi8weDIwMCBbZjJmc10KPiA+ID4gPiAg
-WzxmMTAzYzVkYT5dIHJlc3RvcmVfbm9kZV9zdW1tYXJ5KzB4MTNhLzB4MjgwIFtmMmZzXQo+ID4g
-PiA+ICBbPGYxMDNlMjJkPl0gYnVpbGRfY3Vyc2VnKzB4MmJkLzB4NjIwIFtmMmZzXQo+ID4gPiA+
-ICBbPGYxMDQwNDNiPl0gYnVpbGRfc2VnbWVudF9tYW5hZ2VyKzB4MWNiLzB4OTIwIFtmMmZzXQo+
-ID4gPiA+ICBbPGYxMDMyYzg1Pl0gZjJmc19maWxsX3N1cGVyKzB4NTM1LzB4OGUwIFtmMmZzXQo+
-ID4gPiA+ICBbPGMxMTViNjZhPl0gbW91bnRfYmRldisweDE2YS8weDFhMAo+ID4gPiA+ICBbPGYx
-MDJmNjNmPl0gZjJmc19tb3VudCsweDFmLzB4MzAgW2YyZnNdCj4gPiA+ID4gIFs8YzExNWMwOTY+
-XSBtb3VudF9mcysweDM2LzB4MTcwCj4gPiA+ID4gIFs8YzExNzM2MzU+XSB2ZnNfa2Vybl9tb3Vu
-dCsweDU1LzB4ZTAKPiA+ID4gPiAgWzxjMTE3NTM4OD5dIGRvX21vdW50KzB4MWU4LzB4OTAwCj4g
-PiA+ID4gIFs8YzExNzVkNzI+XSBTeVNfbW91bnQrMHg4Mi8weGMwCj4gPiA+ID4gIFs8YzE2MDU5
-Y2M+XSBzeXNlbnRlcl9kb19jYWxsKzB4MTIvMHgyMgo+ID4gPiA+Cj4gPiA+ID4gU2lnbmVkLW9m
-Zi1ieTogQ2hhbyBZdSA8Y2hhbzIueXVAc2Ftc3VuZy5jb20+Cj4gPiA+ID4gLS0tCj4gPiA+ID4g
-IGZzL2YyZnMvbm9kZS5jIHwgICA0OSArKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tCj4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCsp
-LCAyMSBkZWxldGlvbnMoLSkKPiA+ID4gPgo+ID4gPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZzL25v
-ZGUuYyBiL2ZzL2YyZnMvbm9kZS5jCj4gPiA+ID4gaW5kZXggM2Q2MGQzZC4uYjVjZDgxNCAxMDA2
-NDQKPiA+ID4gPiAtLS0gYS9mcy9mMmZzL25vZGUuYwo+ID4gPiA+ICsrKyBiL2ZzL2YyZnMvbm9k
-ZS5jCj4gPiA+ID4gQEAgLTE2NTgsMTMgKzE2NTgsMTYgQEAgaW50IHJlY292ZXJfaW5vZGVfcGFn
-ZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksIHN0cnVjdCBwYWdlICpwYWdlKQo+ID4gPiA+Cj4g
-PiA+ID4gIC8qCj4gPiA+ID4gICAqIHJhX3N1bV9wYWdlcygpIG1lcmdlIGNvbnRpZ3VvdXMgcGFn
-ZXMgaW50byBvbmUgYmlvIGFuZCBzdWJtaXQuCj4gPiA+ID4gLSAqIHRoZXNlIHByZS1yZWFkZWQg
-cGFnZXMgYXJlIGxpbmtlZCBpbiBwYWdlcyBsaXN0Lgo+ID4gPiA+ICsgKiB0aGVzZSBwcmUtcmVh
-ZGVkIHBhZ2VzIGFyZSBhbGxvY2VkIGluIGJkX2lub2RlJ3MgbWFwcGluZyB0cmVlLgo+ID4gPiA+
-ICAgKi8KPiA+ID4gPiAtc3RhdGljIGludCByYV9zdW1fcGFnZXMoc3RydWN0IGYyZnNfc2JfaW5m
-byAqc2JpLCBzdHJ1Y3QgbGlzdF9oZWFkICpwYWdlcywKPiA+ID4gPiArc3RhdGljIGludCByYV9z
-dW1fcGFnZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFnZSAqKnBhZ2VzLAo+
-ID4gPiA+ICAJCQkJaW50IHN0YXJ0LCBpbnQgbnJwYWdlcykKPiA+ID4gPiAgewo+ID4gPiA+ICAJ
-c3RydWN0IHBhZ2UgKnBhZ2U7Cj4gPiA+ID4gKwlzdHJ1Y3QgaW5vZGUgKmlub2RlID0gc2JpLT5z
-Yi0+c19iZGV2LT5iZF9pbm9kZTsKPiA+IAo+ID4gSG93IGFib3V0IHVzZSBzYmktPm1ldGFfaW5v
-ZGUgaW5zdGVhZCBvZiBiZF9pbm9kZSwgdGhlbiB3ZSBjYW4gZG8KPiA+IGNhY2hpbmcgc3VtbWFy
-eSBwYWdlcyBmb3IgZnVydGhlciBpL28uCj4gCj4gSW4gbXkgdW5kZXJzdGFuZGluZywgSW4gcmFf
-c3VtX3BhZ2VzKCkgd2UgcmVhZGFoZWFkIG5vZGUgcGFnZXMgaW4gTk9ERSBzZWdtZW50LAo+IHRo
-ZW4gd2UgY291bGQgcGFkZGluZyBjdXJyZW50IHN1bW1hcnkgY2FjaGluZyB3aXRoIG5pZCBvZiBu
-b2RlIHBhZ2UncyBmb290ZXIuCj4gU28gd2Ugc2hvdWxkIG5vdCBjYWNoZSB0aGlzIHJlYWRhaGVh
-ZGVkIHBhZ2VzIGluIG1ldGFfaW5vZGUncyBtYXBwaW5nLgo+IERvIEkgbWlzcyBzb21ldGhpbmc/
-Cj4gCj4gUmVnYXJkcwo+IAoKU29ycnksIHlvdSdyZSByaWdodC4gRm9yZ2V0IGFib3V0IGNhY2hp
-bmcuIEkndmUgY29uZnVzZWQgcmFfc3VtX3BhZ2VzIHdpdGggc3VtbWFyeSBzZWdtZW50cy4KCj4g
-PiAKPiA+ID4gPiArCXN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nID0gaW5vZGUtPmlfbWFw
-cGluZzsKPiA+ID4gPiAgCWludCBwYWdlX2lkeCA9IHN0YXJ0Owo+ID4gPiA+ICsJaW50IGFsbG9j
-ZWQsIHJlYWRlZDsKPiA+ID4gPiAgCXN0cnVjdCBmMmZzX2lvX2luZm8gZmlvID0gewo+ID4gPiA+
-ICAJCS50eXBlID0gTUVUQSwKPiA+ID4gPiAgCQkucncgPSBSRUFEX1NZTkMgfCBSRVFfTUVUQSB8
-IFJFUV9QUklPCj4gPiA+ID4gQEAgLTE2NzIsMjEgKzE2NzUsMjMgQEAgc3RhdGljIGludCByYV9z
-dW1fcGFnZXMoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgbGlzdF9oZWFkCj4gPiAq
-cGFnZXMsCj4gPiA+ID4KPiA+ID4gPiAgCWZvciAoOyBwYWdlX2lkeCA8IHN0YXJ0ICsgbnJwYWdl
-czsgcGFnZV9pZHgrKykgewo+ID4gPiA+ICAJCS8qIGFsbG9jIHRlbXBvcmFsIHBhZ2UgZm9yIHJl
-YWQgbm9kZSBzdW1tYXJ5IGluZm8qLwo+ID4gPiA+IC0JCXBhZ2UgPSBhbGxvY19wYWdlKEdGUF9G
-MkZTX1pFUk8pOwo+ID4gPiA+ICsJCXBhZ2UgPSBncmFiX2NhY2hlX3BhZ2UobWFwcGluZywgcGFn
-ZV9pZHgpOwo+ID4gPiA+ICAJCWlmICghcGFnZSkKPiA+ID4gPiAgCQkJYnJlYWs7Cj4gPiA+ID4g
-LQo+ID4gPiA+IC0JCWxvY2tfcGFnZShwYWdlKTsKPiA+ID4gPiAtCQlwYWdlLT5pbmRleCA9IHBh
-Z2VfaWR4Owo+ID4gPiA+IC0JCWxpc3RfYWRkX3RhaWwoJnBhZ2UtPmxydSwgcGFnZXMpOwo+ID4g
-PiA+ICsJCXBhZ2VfY2FjaGVfcmVsZWFzZShwYWdlKTsKPiA+ID4KPiA+ID4gSU1PLCB3ZSBkb24n
-dCBuZWVkIHRvIGRvIGxpa2UgdGhpcy4KPiA+ID4gSW5zdGVhZCwKPiA+ID4gCWZvcigpIHsKPiA+
-ID4gCQlwYWdlID0gZ3JhYl9jYWNoZV9wYWdlKCk7Cj4gPiA+IAkJaWYgKCFwYWdlKQo+ID4gPiAJ
-CQlicmVhazsKPiA+ID4gCQlwYWdlW3BhZ2VfaWR4XSA9IHBhZ2U7Cj4gPiA+IAkJZjJmc19zdWJt
-aXRfcGFnZV9tYmlvKHNiaSwgcGFnZSwgJmZpbyk7Cj4gPiA+IAl9Cj4gPiA+IAlmMmZzX3N1Ym1p
-dF9tZXJnZWRfYmlvKHNiaSwgTUVUQSwgUkVBRCk7Cj4gPiA+IAlyZXR1cm4gcGFnZV9pZHggLSBz
-dGFydDsKPiA+ID4KPiA+ID4gQWZ0ZXJ3YXJkcywgaW4gcmVzdG9yZV9ub2RlX3N1bW1yeSgpLAo+
-ID4gPiAJbG9ja19wYWdlKCkgd2lsbCB3YWl0IHRoZSBlbmRfaW8gZm9yIHJlYWQuCj4gPiA+IAku
-Li4KPiA+ID4gCWYyZnNfcHV0X3BhZ2UocGFnZXNbaW5kZXhdLCAxKTsKPiA+ID4KPiA+ID4gVGhh
-bmtzLAo+ID4gPgo+ID4gPiA+ICAJfQo+ID4gPiA+Cj4gPiA+ID4gLQlsaXN0X2Zvcl9lYWNoX2Vu
-dHJ5KHBhZ2UsIHBhZ2VzLCBscnUpCj4gPiA+ID4gLQkJZjJmc19zdWJtaXRfcGFnZV9tYmlvKHNi
-aSwgcGFnZSwgcGFnZS0+aW5kZXgsICZmaW8pOwo+ID4gPiA+ICsJYWxsb2NlZCA9IHBhZ2VfaWR4
-IC0gc3RhcnQ7Cj4gPiA+ID4gKwlyZWFkZWQgPSBmaW5kX2dldF9wYWdlc19jb250aWcobWFwcGlu
-Zywgc3RhcnQsIGFsbG9jZWQsIHBhZ2VzKTsKPiA+ID4gPiArCUJVR19PTihhbGxvY2VkICE9IHJl
-YWRlZCk7Cj4gPiA+ID4gKwo+ID4gPiA+ICsJZm9yIChwYWdlX2lkeCA9IDA7IHBhZ2VfaWR4IDwg
-cmVhZGVkOyBwYWdlX2lkeCsrKQo+ID4gPiA+ICsJCWYyZnNfc3VibWl0X3BhZ2VfbWJpbyhzYmks
-IHBhZ2VzW3BhZ2VfaWR4XSwKPiA+ID4gPiArCQkJCQlwYWdlc1twYWdlX2lkeF0tPmluZGV4LCAm
-ZmlvKTsKPiA+ID4gPgo+ID4gPiA+ICAJZjJmc19zdWJtaXRfbWVyZ2VkX2JpbyhzYmksIE1FVEEs
-IFJFQUQpOwo+ID4gPiA+Cj4gPiA+ID4gLQlyZXR1cm4gcGFnZV9pZHggLSBzdGFydDsKPiA+ID4g
-PiArCXJldHVybiByZWFkZWQ7Cj4gPiA+ID4gIH0KPiA+ID4gPgo+ID4gPiA+ICBpbnQgcmVzdG9y
-ZV9ub2RlX3N1bW1hcnkoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLAo+ID4gPiA+IEBAIC0xNjk0
-LDExICsxNjk5LDExIEBAIGludCByZXN0b3JlX25vZGVfc3VtbWFyeShzdHJ1Y3QgZjJmc19zYl9p
-bmZvICpzYmksCj4gPiA+ID4gIHsKPiA+ID4gPiAgCXN0cnVjdCBmMmZzX25vZGUgKnJuOwo+ID4g
-PiA+ICAJc3RydWN0IGYyZnNfc3VtbWFyeSAqc3VtX2VudHJ5Owo+ID4gPiA+IC0Jc3RydWN0IHBh
-Z2UgKnBhZ2UsICp0bXA7Cj4gPiA+ID4gKwlzdHJ1Y3QgaW5vZGUgKmlub2RlID0gc2JpLT5zYi0+
-c19iZGV2LT5iZF9pbm9kZTsKPiA+ID4gPiAgCWJsb2NrX3QgYWRkcjsKPiA+ID4gPiAgCWludCBi
-aW9fYmxvY2tzID0gTUFYX0JJT19CTE9DS1MobWF4X2h3X2Jsb2NrcyhzYmkpKTsKPiA+ID4gPiAt
-CWludCBpLCBsYXN0X29mZnNldCwgbnJwYWdlcywgZXJyID0gMDsKPiA+ID4gPiAtCUxJU1RfSEVB
-RChwYWdlX2xpc3QpOwo+ID4gPiA+ICsJc3RydWN0IHBhZ2UgKnBhZ2VzW2Jpb19ibG9ja3NdOwo+
-ID4gPiA+ICsJaW50IGksIGluZGV4LCBsYXN0X29mZnNldCwgbnJwYWdlcywgZXJyID0gMDsKPiA+
-ID4gPgo+ID4gPiA+ICAJLyogc2NhbiB0aGUgbm9kZSBzZWdtZW50ICovCj4gPiA+ID4gIAlsYXN0
-X29mZnNldCA9IHNiaS0+YmxvY2tzX3Blcl9zZWc7Cj4gPiA+ID4gQEAgLTE3MDksMjkgKzE3MTQs
-MzEgQEAgaW50IHJlc3RvcmVfbm9kZV9zdW1tYXJ5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwK
-PiA+ID4gPiAgCQlucnBhZ2VzID0gbWluKGxhc3Rfb2Zmc2V0IC0gaSwgYmlvX2Jsb2Nrcyk7Cj4g
-PiA+ID4KPiA+ID4gPiAgCQkvKiByZWFkIGFoZWFkIG5vZGUgcGFnZXMgKi8KPiA+ID4gPiAtCQlu
-cnBhZ2VzID0gcmFfc3VtX3BhZ2VzKHNiaSwgJnBhZ2VfbGlzdCwgYWRkciwgbnJwYWdlcyk7Cj4g
-PiA+ID4gKwkJbnJwYWdlcyA9IHJhX3N1bV9wYWdlcyhzYmksIHBhZ2VzLCBhZGRyLCBucnBhZ2Vz
-KTsKPiA+ID4gPiAgCQlpZiAoIW5ycGFnZXMpCj4gPiA+ID4gIAkJCXJldHVybiAtRU5PTUVNOwo+
-ID4gPiA+Cj4gPiA+ID4gLQkJbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlKHBhZ2UsIHRtcCwgJnBh
-Z2VfbGlzdCwgbHJ1KSB7Cj4gPiA+ID4gKwkJZm9yIChpbmRleCA9IDA7IGluZGV4IDwgbnJwYWdl
-czsgaW5kZXgrKykgewo+ID4gPiA+ICAJCQlpZiAoZXJyKQo+ID4gPiA+ICAJCQkJZ290byBza2lw
-Owo+ID4gPiA+Cj4gPiA+ID4gLQkJCWxvY2tfcGFnZShwYWdlKTsKPiA+ID4gPiAtCQkJaWYgKHVu
-bGlrZWx5KCFQYWdlVXB0b2RhdGUocGFnZSkpKSB7Cj4gPiA+ID4gKwkJCWxvY2tfcGFnZShwYWdl
-c1tpbmRleF0pOwo+ID4gPiA+ICsJCQlpZiAodW5saWtlbHkoIVBhZ2VVcHRvZGF0ZShwYWdlc1tp
-bmRleF0pKSkgewo+ID4gPiA+ICAJCQkJZXJyID0gLUVJTzsKPiA+ID4gPiAgCQkJfSBlbHNlIHsK
-PiA+ID4gPiAtCQkJCXJuID0gRjJGU19OT0RFKHBhZ2UpOwo+ID4gPiA+ICsJCQkJcm4gPSBGMkZT
-X05PREUocGFnZXNbaW5kZXhdKTsKPiA+ID4gPiAgCQkJCXN1bV9lbnRyeS0+bmlkID0gcm4tPmZv
-b3Rlci5uaWQ7Cj4gPiA+ID4gIAkJCQlzdW1fZW50cnktPnZlcnNpb24gPSAwOwo+ID4gPiA+ICAJ
-CQkJc3VtX2VudHJ5LT5vZnNfaW5fbm9kZSA9IDA7Cj4gPiA+ID4gIAkJCQlzdW1fZW50cnkrKzsK
-PiA+ID4gPiAgCQkJfQo+ID4gPiA+IC0JCQl1bmxvY2tfcGFnZShwYWdlKTsKPiA+ID4gPiArCQkJ
-dW5sb2NrX3BhZ2UocGFnZXNbaW5kZXhdKTsKPiA+ID4gPiAgc2tpcDoKPiA+ID4gPiAtCQkJbGlz
-dF9kZWwoJnBhZ2UtPmxydSk7Cj4gPiA+ID4gLQkJCV9fZnJlZV9wYWdlcyhwYWdlLCAwKTsKPiA+
-ID4gPiArCQkJcGFnZV9jYWNoZV9yZWxlYXNlKHBhZ2VzW2luZGV4XSk7Cj4gPiA+ID4gIAkJfQo+
-ID4gPiA+ICsKPiA+ID4gPiArCQlpbnZhbGlkYXRlX21hcHBpbmdfcGFnZXMoaW5vZGUtPmlfbWFw
-cGluZywgYWRkciwKPiA+ID4gPiArCQkJCQkJCWFkZHIgKyBucnBhZ2VzKTsKPiA+ID4gPiAgCX0K
-PiA+ID4gPiAgCXJldHVybiBlcnI7Cj4gPiA+ID4gIH0KPiA+ID4KPiA+ID4gLS0KPiA+ID4gSmFl
-Z2V1ayBLaW0KPiA+IAo+ID4gCj4gPiAKPiA+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiA+
-ICJBY2NlbGVyYXRlIERldiBDeWNsZXMgd2l0aCBBdXRvbWF0ZWQgQ3Jvc3MtQnJvd3NlciBUZXN0
-aW5nIC0gRm9yIEZSRUUKPiA+ID4gSW5zdGFudGx5IHJ1biB5b3VyIFNlbGVuaXVtIHRlc3RzIGFj
-cm9zcyAzMDArIGJyb3dzZXIvT1MgY29tYm9zLgo+ID4gPiBHZXQgdW5wYXJhbGxlbGVkIHNjYWxh
-YmlsaXR5IGZyb20gdGhlIGJlc3QgU2VsZW5pdW0gdGVzdGluZyBwbGF0Zm9ybSBhdmFpbGFibGUK
-PiA+ID4gU2ltcGxlIHRvIHVzZS4gTm90aGluZyB0byBpbnN0YWxsLiBHZXQgc3RhcnRlZCBub3cg
-Zm9yIGZyZWUuIgo+ID4gPiBodHRwOi8vcC5zZi5uZXQvc2Z1L1NhdWNlTGFicwo+ID4gCj4gPiA+
-IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gPiA+IExp
-bnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gPiA+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
-c291cmNlZm9yZ2UubmV0Cj4gPiA+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3Rz
-L2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVGhlIGJl
-c3QgcG9zc2libGUgc2VhcmNoIHRlY2hub2xvZ2llcyBhcmUgbm93IGFmZm9yZGFibGUgZm9yIGFs
-bCBjb21wYW5pZXMuCkRvd25sb2FkIHlvdXIgRlJFRSBvcGVuIHNvdXJjZSBFbnRlcnByaXNlIFNl
-YXJjaCBFbmdpbmUgdG9kYXkhCk91ciBleHBlcnRzIHdpbGwgYXNzaXN0IHlvdSBpbiBpdHMgaW5z
-dGFsbGF0aW9uIGZvciAkNTkvbW8sIG5vIGNvbW1pdG1lbnQuClRlc3QgaXQgZm9yIEZSRUUgb24g
-b3VyIENsb3VkIHBsYXRmb3JtIGFueXRpbWUhCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5u
-ZXQvZ2FtcGFkL2Nsaz9pZD0xNDUzMjgxOTEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+
+Changes from V2
+ o remove CP_LARGE_VOL_LFLAG instead, use cp_payload in superblock
+ because disk size is determined at format
+
+Changes from V1
+ o fix orphan node blkaddr
+
+-- >8 --
+
+>From 7e5e66699bb383e4fa7ce970e1cc8e10eb0a5c6f Mon Sep 17 00:00:00 2001
+From: root <root@f2fs-00.(none)>
+Date: Mon, 12 May 2014 22:01:38 +0900
+Subject: [PATCH 1/2] mkfs.f2fs: large volume support
+
+This patch supports large volume over about 3TB.
+
+Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+---
+ include/f2fs_fs.h  |    9 +++++++
+ mkfs/f2fs_format.c |   68 +++++++++++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 66 insertions(+), 11 deletions(-)
+
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 94d8dc3..3003f7f 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -223,6 +223,7 @@ enum {
+ #define F2FS_LOG_SECTORS_PER_BLOCK	3	/* 4KB: F2FS_BLKSIZE */
+ #define F2FS_BLKSIZE			4096	/* support only 4KB block */
+ #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
++#define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
+ 
+ #define NULL_ADDR		0x0U
+ #define NEW_ADDR		-1U
+@@ -279,6 +280,7 @@ struct f2fs_super_block {
+ 	__le16 volume_name[512];	/* volume name */
+ 	__le32 extension_count;		/* # of extensions below */
+ 	__u8 extension_list[F2FS_MAX_EXTENSION][8];	/* extension array */
++	__le32 cp_payload;
+ } __attribute__((packed));
+ 
+ /*
+@@ -457,6 +459,13 @@ struct f2fs_nat_block {
+ #define SIT_ENTRY_PER_BLOCK (PAGE_CACHE_SIZE / sizeof(struct f2fs_sit_entry))
+ 
+ /*
++ * F2FS uses 4 bytes to represent block address. As a result, supported size of
++ * disk is 16 TB and it equals to 16 * 1024 * 1024 / 2 segments.
++ */
++#define F2FS_MAX_SEGMENT       ((16 * 1024 * 1024) / 2)
++#define MAX_SIT_BITMAP_SIZE    ((F2FS_MAX_SEGMENT / SIT_ENTRY_PER_BLOCK) / 8)
++
++/*
+  * Note that f2fs_sit_entry->vblocks has the following bit-field information.
+  * [15:10] : allocation type such as CURSEG_XXXX_TYPE
+  * [9:0] : valid block count
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index cdbf74a..58550a2 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -102,7 +102,8 @@ static int f2fs_prepare_super_block(void)
+ 	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+ 	u_int32_t total_valid_blks_available;
+ 	u_int64_t zone_align_start_offset, diff, total_meta_segments;
+-	u_int32_t sit_bitmap_size, max_nat_bitmap_size, max_nat_segments;
++	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
++	u_int32_t max_nat_bitmap_size, max_nat_segments;
+ 	u_int32_t total_zones;
+ 
+ 	super_block.magic = cpu_to_le32(F2FS_SUPER_MAGIC);
+@@ -217,8 +218,25 @@ static int f2fs_prepare_super_block(void)
+ 	 */
+ 	sit_bitmap_size = ((le32_to_cpu(super_block.segment_count_sit) / 2) <<
+ 				log_blks_per_seg) / 8;
+-	max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 -
+-			sit_bitmap_size;
++
++	if (sit_bitmap_size > MAX_SIT_BITMAP_SIZE)
++		max_sit_bitmap_size = MAX_SIT_BITMAP_SIZE;
++	else
++		max_sit_bitmap_size = sit_bitmap_size;
++
++	/*
++	 * It should be reserved minimum 1 segment for nat.
++	 * When sit is too large, we should expand cp area. It requires more pages for cp.
++	 */
++	if (max_sit_bitmap_size >
++			(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 65)) {
++		max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
++		super_block.cp_payload = F2FS_BLK_ALIGN(max_sit_bitmap_size);
++	} else {
++		max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - max_sit_bitmap_size;
++		super_block.cp_payload = 0;
++	}
++
+ 	max_nat_segments = (max_nat_bitmap_size * 8) >> log_blks_per_seg;
+ 
+ 	if (le32_to_cpu(super_block.segment_count_nat) > max_nat_segments)
+@@ -434,6 +452,7 @@ static int f2fs_write_check_point_pack(void)
+ 	u_int64_t cp_seg_blk_offset = 0;
+ 	u_int32_t crc = 0;
+ 	int i;
++	char *cp_payload = NULL;
+ 
+ 	ckp = calloc(F2FS_BLKSIZE, 1);
+ 	if (ckp == NULL) {
+@@ -447,6 +466,12 @@ static int f2fs_write_check_point_pack(void)
+ 		return -1;
+ 	}
+ 
++	cp_payload = calloc(F2FS_BLKSIZE, 1);
++	if (cp_payload == NULL) {
++		MSG(1, "\tError: Calloc Failed for cp_payload!!!\n");
++		return -1;
++	}
++
+ 	/* 1. cp page 1 of checkpoint pack 1 */
+ 	ckp->checkpoint_ver = cpu_to_le64(1);
+ 	ckp->cur_node_segno[0] =
+@@ -485,9 +510,11 @@ static int f2fs_write_check_point_pack(void)
+ 			((le32_to_cpu(ckp->free_segment_count) + 6 -
+ 			le32_to_cpu(ckp->overprov_segment_count)) *
+ 			 config.blks_per_seg));
+-	ckp->cp_pack_total_block_count = cpu_to_le32(8);
++	ckp->cp_pack_total_block_count =
++		cpu_to_le32(8 + le32_to_cpu(super_block.cp_payload));
+ 	ckp->ckpt_flags = cpu_to_le32(CP_UMOUNT_FLAG);
+-	ckp->cp_pack_start_sum = cpu_to_le32(1);
++	ckp->cp_pack_start_sum = cpu_to_le32(1 +
++			le32_to_cpu(super_block.cp_payload));
+ 	ckp->valid_node_count = cpu_to_le32(1);
+ 	ckp->valid_inode_count = cpu_to_le32(1);
+ 	ckp->next_free_nid = cpu_to_le32(0xc00000);
+@@ -511,11 +538,20 @@ static int f2fs_write_check_point_pack(void)
+ 	cp_seg_blk_offset *= blk_size_bytes;
+ 
+ 	DBG(1, "\tWriting main segments, ckp at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
+-	if (dev_write(ckp, cp_seg_blk_offset, F2FS_BLKSIZE)) {
++	if (dev_write(ckp, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the ckp to disk!!!\n");
+ 		return -1;
+ 	}
+ 
++	for (i = 0; i < le32_to_cpu(super_block.cp_payload); i++) {
++		cp_seg_blk_offset += blk_size_bytes;
++		if (dev_fill(cp_payload, cp_seg_blk_offset, blk_size_bytes)) {
++			MSG(1, "\tError: While zeroing out the sit bitmap area \
++					on disk!!!\n");
++			return -1;
++		}
++	}
++
+ 	/* 2. Prepare and write Segment summary for data blocks */
+ 	memset(sum, 0, sizeof(struct f2fs_summary_block));
+ 	SET_SUM_TYPE((&sum->footer), SUM_TYPE_DATA);
+@@ -525,7 +561,7 @@ static int f2fs_write_check_point_pack(void)
+ 
+ 	cp_seg_blk_offset += blk_size_bytes;
+ 	DBG(1, "\tWriting segment summary for data, ckp at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
+-	if (dev_write(sum, cp_seg_blk_offset, F2FS_BLKSIZE)) {
++	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
+ 		return -1;
+ 	}
+@@ -609,7 +645,7 @@ static int f2fs_write_check_point_pack(void)
+ 	/* 8. cp page2 */
+ 	cp_seg_blk_offset += blk_size_bytes;
+ 	DBG(1, "\tWriting cp page2, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
+-	if (dev_write(ckp, cp_seg_blk_offset, F2FS_BLKSIZE)) {
++	if (dev_write(ckp, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the ckp to disk!!!\n");
+ 		return -1;
+ 	}
+@@ -626,21 +662,31 @@ static int f2fs_write_check_point_pack(void)
+ 				config.blks_per_seg) *
+ 				blk_size_bytes;
+ 	DBG(1, "\tWriting cp page 1 of checkpoint pack 2, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
+-	if (dev_write(ckp, cp_seg_blk_offset, F2FS_BLKSIZE)) {
++	if (dev_write(ckp, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the ckp to disk!!!\n");
+ 		return -1;
+ 	}
+ 
++	for (i = 0; i < le32_to_cpu(super_block.cp_payload); i++) {
++		cp_seg_blk_offset += blk_size_bytes;
++		if (dev_fill(cp_payload, cp_seg_blk_offset, blk_size_bytes)) {
++			MSG(1, "\tError: While zeroing out the sit bitmap area \
++					on disk!!!\n");
++			return -1;
++		}
++	}
++
+ 	/* 10. cp page 2 of check point pack 2 */
+-	cp_seg_blk_offset += blk_size_bytes * (le32_to_cpu(ckp->cp_pack_total_block_count) - 1);
++	cp_seg_blk_offset += blk_size_bytes * (le32_to_cpu(ckp->cp_pack_total_block_count) - le32_to_cpu(super_block.cp_payload) - 1);
+ 	DBG(1, "\tWriting cp page 2 of checkpoint pack 2, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
+-	if (dev_write(ckp, cp_seg_blk_offset, F2FS_BLKSIZE)) {
++	if (dev_write(ckp, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the ckp to disk!!!\n");
+ 		return -1;
+ 	}
+ 
+ 	free(sum) ;
+ 	free(ckp) ;
++	free(cp_payload);
+ 	return	0;
+ }
+ 
+-- 
+1.7.10.4
+
+
+------------------------------------------------------------------------------
+The best possible search technologies are now affordable for all companies.
+Download your FREE open source Enterprise Search Engine today!
+Our experts will assist you in its installation for $59/mo, no commitment.
+Test it for FREE on our Cloud platform anytime!
+http://pubads.g.doubleclick.net/gampad/clk?id=145328191&iu=/4140/ostg.clktrk
