@@ -1,199 +1,156 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH V3] f2fs: large volume support
-Date: Tue, 27 May 2014 08:49:45 +0900
-Message-ID: <20140526234945.GC30978@cm224.lee>
-References: <1399877976-2643-1-git-send-email-cm224.lee@samsung.com>
- <1400646791.12919.4.camel@kjgkr> <1400654795.8373.6.camel@lcm>
- <1400747485.11512.8.camel@lcm>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [f2fs-dev] [PATCH v2] f2fs: avoid crash when trace
+ f2fs_submit_page_mbio event in ra_sum_pages
+Date: Tue, 27 May 2014 08:41:07 +0800
+Message-ID: <00f501cf7944$7e8a65d0$7b9f3170$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <1400747485.11512.8.camel@lcm>
+Content-language: zh-cn
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Changes from V3
- o remove CP_LARGE_VOL_FLAG instead, use cp_payload in superblock
-   because disk size is determined at format
+Previously we allocate pages with no mapping in ra_sum_pages(), so we may
+encounter a crash in event trace of f2fs_submit_page_mbio where we access
+mapping data of the page.
 
-Changes from V2
- o fix conversion like le32_to_cpu
- o use is_set_ckpt_flags instead of bit operation
- o check return value after memory allocation
+We'd better allocate pages in bd_inode mapping and invalidate these pages after
+we restore data from pages. It could avoid crash in above scenario.
 
 Changes from V1
- o fix orphan node blkaddr for large volume
+ o remove redundant code in ra_sum_pages() suggested by Jaegeuk Kim.
 
--- >8 --
+Call Trace:
+ [<f1031630>] ? ftrace_raw_event_f2fs_write_checkpoint+0x80/0x80 [f2fs]
+ [<f10377bb>] f2fs_submit_page_mbio+0x1cb/0x200 [f2fs]
+ [<f103c5da>] restore_node_summary+0x13a/0x280 [f2fs]
+ [<f103e22d>] build_curseg+0x2bd/0x620 [f2fs]
+ [<f104043b>] build_segment_manager+0x1cb/0x920 [f2fs]
+ [<f1032c85>] f2fs_fill_super+0x535/0x8e0 [f2fs]
+ [<c115b66a>] mount_bdev+0x16a/0x1a0
+ [<f102f63f>] f2fs_mount+0x1f/0x30 [f2fs]
+ [<c115c096>] mount_fs+0x36/0x170
+ [<c1173635>] vfs_kern_mount+0x55/0xe0
+ [<c1175388>] do_mount+0x1e8/0x900
+ [<c1175d72>] SyS_mount+0x82/0xc0
+ [<c16059cc>] sysenter_do_call+0x12/0x22
 
->From b1610f32c472cb11f025e0997b7633d5c45b87e9 Mon Sep 17 00:00:00 2001
-From: Changman Lee <cm224.lee@samsung.com>
-Date: Mon, 12 May 2014 12:27:43 +0900
-Subject: [PATCH] f2fs: large volume support
-
-f2fs's cp has one page which consists of struct f2fs_checkpoint and
-version bitmap of sit and nat. To support lots of segments, we need more
-blocks for sit bitmap. So let's arrange sit bitmap as following:
-+-----------------+------------+
-| f2fs_checkpoint | sit bitmap |
-| + nat bitmap    |            |
-+-----------------+------------+
-0                 4k        N blocks
-
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/checkpoint.c    |   45 ++++++++++++++++++++++++++++++++++++++++-----
- fs/f2fs/f2fs.h          |   13 +++++++++++--
- include/linux/f2fs_fs.h |    2 ++
- 3 files changed, 53 insertions(+), 7 deletions(-)
+ fs/f2fs/node.c |   52 ++++++++++++++++++++++++----------------------------
+ 1 file changed, 24 insertions(+), 28 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index fe968c7..c559946 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -371,7 +371,9 @@ void recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 		return;
- 
- 	sbi->por_doing = true;
--	start_blk = __start_cp_addr(sbi) + 1;
-+
-+	start_blk = __start_cp_addr(sbi) + 1 +
-+		le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
- 	orphan_blkaddr = __start_sum_addr(sbi) - 1;
- 
- 	ra_meta_pages(sbi, start_blk, orphan_blkaddr, META_CP);
-@@ -512,8 +514,9 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 	unsigned long blk_size = sbi->blocksize;
- 	unsigned long long cp1_version = 0, cp2_version = 0;
- 	unsigned long long cp_start_blk_no;
-+	unsigned int cp_blks = 1 + le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
- 
--	sbi->ckpt = kzalloc(blk_size, GFP_KERNEL);
-+	sbi->ckpt = kzalloc(cp_blks * blk_size, GFP_KERNEL);
- 	if (!sbi->ckpt)
- 		return -ENOMEM;
- 	/*
-@@ -544,6 +547,25 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 	cp_block = (struct f2fs_checkpoint *)page_address(cur_page);
- 	memcpy(sbi->ckpt, cp_block, blk_size);
- 
-+	if (cp_blks > 1) {
-+		int i;
-+		block_t cp_blk_no;
-+
-+		cp_blk_no = le32_to_cpu(fsb->cp_blkaddr);
-+		if (cur_page == cp2)
-+			cp_blk_no += 1 << le32_to_cpu(fsb->log_blocks_per_seg);
-+
-+		for (i = 1; i < cp_blks; i++) {
-+			void *sit_bitmap_ptr;
-+			unsigned char *ckpt = (unsigned char *)sbi->ckpt;
-+
-+			cur_page = get_meta_page(sbi, cp_blk_no + i);
-+			sit_bitmap_ptr = page_address(cur_page);
-+			memcpy(ckpt + i * blk_size, sit_bitmap_ptr, blk_size);
-+			f2fs_put_page(cur_page, 1);
-+		}
-+	}
-+
- 	f2fs_put_page(cp1, 1);
- 	f2fs_put_page(cp2, 1);
- 	return 0;
-@@ -736,6 +758,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
- 	__u32 crc32 = 0;
- 	void *kaddr;
- 	int i;
-+	int cp_payload_blks = le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
- 
- 	/*
- 	 * This avoids to conduct wrong roll-forward operations and uses
-@@ -786,16 +809,19 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
- 
- 	orphan_blocks = (sbi->n_orphans + F2FS_ORPHANS_PER_BLOCK - 1)
- 					/ F2FS_ORPHANS_PER_BLOCK;
--	ckpt->cp_pack_start_sum = cpu_to_le32(1 + orphan_blocks);
-+	ckpt->cp_pack_start_sum = cpu_to_le32(1 + cp_payload_blks +
-+			orphan_blocks);
- 
- 	if (is_umount) {
- 		set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
- 		ckpt->cp_pack_total_block_count = cpu_to_le32(2 +
--			data_sum_blocks + orphan_blocks + NR_CURSEG_NODE_TYPE);
-+				cp_payload_blks + data_sum_blocks +
-+				orphan_blocks + NR_CURSEG_NODE_TYPE);
- 	} else {
- 		clear_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
- 		ckpt->cp_pack_total_block_count = cpu_to_le32(2 +
--			data_sum_blocks + orphan_blocks);
-+				cp_payload_blks + data_sum_blocks +
-+				orphan_blocks);
- 	}
- 
- 	if (sbi->n_orphans)
-@@ -821,6 +847,15 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
- 	set_page_dirty(cp_page);
- 	f2fs_put_page(cp_page, 1);
- 
-+	for (i = 1; i < 1 + cp_payload_blks; i++) {
-+		cp_page = grab_meta_page(sbi, start_blk++);
-+		kaddr = page_address(cp_page);
-+		memcpy(kaddr, (char *)ckpt + i * F2FS_BLKSIZE,
-+				(1 << sbi->log_blocksize));
-+		set_page_dirty(cp_page);
-+		f2fs_put_page(cp_page, 1);
-+	}
-+
- 	if (sbi->n_orphans) {
- 		write_orphan_inodes(sbi, start_blk);
- 		start_blk += orphan_blocks;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 676a2c6..9684b1f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -764,9 +764,18 @@ static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
- static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
--	int offset = (flag == NAT_BITMAP) ?
-+	int offset;
-+
-+	if (le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload) > 0) {
-+		if (flag == NAT_BITMAP)
-+			return &ckpt->sit_nat_version_bitmap;
-+		else
-+			return ((unsigned char *)ckpt + F2FS_BLKSIZE);
-+	} else {
-+		offset = (flag == NAT_BITMAP) ?
- 			le32_to_cpu(ckpt->sit_ver_bitmap_bytesize) : 0;
--	return &ckpt->sit_nat_version_bitmap + offset;
-+		return &ckpt->sit_nat_version_bitmap + offset;
-+	}
- }
- 
- static inline block_t __start_cp_addr(struct f2fs_sb_info *sbi)
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 8c03f71..23ba0b5 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -19,6 +19,7 @@
- #define F2FS_LOG_SECTORS_PER_BLOCK	3	/* 4KB: F2FS_BLKSIZE */
- #define F2FS_BLKSIZE			4096	/* support only 4KB block */
- #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
-+#define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
- 
- #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
- #define NEW_ADDR		((block_t)-1)	/* used as block_t addresses */
-@@ -75,6 +76,7 @@ struct f2fs_super_block {
- 	__le16 volume_name[512];	/* volume name */
- 	__le32 extension_count;		/* # of extensions below */
- 	__u8 extension_list[F2FS_MAX_EXTENSION][8];	/* extension array */
-+	__le32 cp_payload;
- } __packed;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 3d60d3d..02a59e9 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1658,35 +1658,29 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
  
  /*
+  * ra_sum_pages() merge contiguous pages into one bio and submit.
+- * these pre-readed pages are linked in pages list.
++ * these pre-readed pages are alloced in bd_inode's mapping tree.
+  */
+-static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
++static int ra_sum_pages(struct f2fs_sb_info *sbi, struct page **pages,
+ 				int start, int nrpages)
+ {
+-	struct page *page;
+-	int page_idx = start;
++	struct inode *inode = sbi->sb->s_bdev->bd_inode;
++	struct address_space *mapping = inode->i_mapping;
++	int i, page_idx = start;
+ 	struct f2fs_io_info fio = {
+ 		.type = META,
+ 		.rw = READ_SYNC | REQ_META | REQ_PRIO
+ 	};
+ 
+-	for (; page_idx < start + nrpages; page_idx++) {
+-		/* alloc temporal page for read node summary info*/
+-		page = alloc_page(GFP_F2FS_ZERO);
+-		if (!page)
++	for (i = 0; page_idx < start + nrpages; page_idx++, i++) {
++		/* alloc page in bd_inode for reading node summary info */
++		pages[i] = grab_cache_page(mapping, page_idx);
++		if (!pages[i])
+ 			break;
+-
+-		lock_page(page);
+-		page->index = page_idx;
+-		list_add_tail(&page->lru, pages);
++		f2fs_submit_page_mbio(sbi, pages[i], page_idx, &fio);
+ 	}
+ 
+-	list_for_each_entry(page, pages, lru)
+-		f2fs_submit_page_mbio(sbi, page, page->index, &fio);
+-
+ 	f2fs_submit_merged_bio(sbi, META, READ);
+-
+-	return page_idx - start;
++	return i;
+ }
+ 
+ int restore_node_summary(struct f2fs_sb_info *sbi,
+@@ -1694,11 +1688,11 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ {
+ 	struct f2fs_node *rn;
+ 	struct f2fs_summary *sum_entry;
+-	struct page *page, *tmp;
++	struct inode *inode = sbi->sb->s_bdev->bd_inode;
+ 	block_t addr;
+ 	int bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
+-	int i, last_offset, nrpages, err = 0;
+-	LIST_HEAD(page_list);
++	struct page *pages[bio_blocks];
++	int i, idx, last_offset, nrpages, err = 0;
+ 
+ 	/* scan the node segment */
+ 	last_offset = sbi->blocks_per_seg;
+@@ -1709,29 +1703,31 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 		nrpages = min(last_offset - i, bio_blocks);
+ 
+ 		/* read ahead node pages */
+-		nrpages = ra_sum_pages(sbi, &page_list, addr, nrpages);
++		nrpages = ra_sum_pages(sbi, pages, addr, nrpages);
+ 		if (!nrpages)
+ 			return -ENOMEM;
+ 
+-		list_for_each_entry_safe(page, tmp, &page_list, lru) {
++		for (idx = 0; idx < nrpages; idx++) {
+ 			if (err)
+ 				goto skip;
+ 
+-			lock_page(page);
+-			if (unlikely(!PageUptodate(page))) {
++			lock_page(pages[idx]);
++			if (unlikely(!PageUptodate(pages[idx]))) {
+ 				err = -EIO;
+ 			} else {
+-				rn = F2FS_NODE(page);
++				rn = F2FS_NODE(pages[idx]);
+ 				sum_entry->nid = rn->footer.nid;
+ 				sum_entry->version = 0;
+ 				sum_entry->ofs_in_node = 0;
+ 				sum_entry++;
+ 			}
+-			unlock_page(page);
++			unlock_page(pages[idx]);
+ skip:
+-			list_del(&page->lru);
+-			__free_pages(page, 0);
++			page_cache_release(pages[idx]);
+ 		}
++
++		invalidate_mapping_pages(inode->i_mapping, addr,
++							addr + nrpages);
+ 	}
+ 	return err;
+ }
 -- 
-1.7.10.4
+1.7.9.5
+
 
