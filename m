@@ -1,156 +1,95 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev] [PATCH v2] f2fs: avoid crash when trace
- f2fs_submit_page_mbio event in ra_sum_pages
-Date: Tue, 27 May 2014 08:41:07 +0800
-Message-ID: <00f501cf7944$7e8a65d0$7b9f3170$@samsung.com>
+Subject: [PATCH] f2fs: avoid overflow when large directory
+ feathure is enabled
+Date: Tue, 27 May 2014 09:06:52 +0800
+Message-ID: <00f601cf7948$1263a480$372aed80$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1Wp5rw-000268-SA
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 27 May 2014 01:07:56 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1Wp5ru-00064e-Qb
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 27 May 2014 01:07:56 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N6700JEEKGZO380@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 27 May 2014 10:07:47 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Previously we allocate pages with no mapping in ra_sum_pages(), so we may
-encounter a crash in event trace of f2fs_submit_page_mbio where we access
-mapping data of the page.
+When large directory feathure is enable, We have one case which could cause
+overflow in dir_buckets() as following:
+special case: level + dir_level >= 32 and level < MAX_DIR_HASH_DEPTH / 2.
 
-We'd better allocate pages in bd_inode mapping and invalidate these pages after
-we restore data from pages. It could avoid crash in above scenario.
+Here we define MAX_DIR_BUCKETS to limit the return value when the condition
+could trigger potential overflow.
 
-Changes from V1
- o remove redundant code in ra_sum_pages() suggested by Jaegeuk Kim.
-
-Call Trace:
- [<f1031630>] ? ftrace_raw_event_f2fs_write_checkpoint+0x80/0x80 [f2fs]
- [<f10377bb>] f2fs_submit_page_mbio+0x1cb/0x200 [f2fs]
- [<f103c5da>] restore_node_summary+0x13a/0x280 [f2fs]
- [<f103e22d>] build_curseg+0x2bd/0x620 [f2fs]
- [<f104043b>] build_segment_manager+0x1cb/0x920 [f2fs]
- [<f1032c85>] f2fs_fill_super+0x535/0x8e0 [f2fs]
- [<c115b66a>] mount_bdev+0x16a/0x1a0
- [<f102f63f>] f2fs_mount+0x1f/0x30 [f2fs]
- [<c115c096>] mount_fs+0x36/0x170
- [<c1173635>] vfs_kern_mount+0x55/0xe0
- [<c1175388>] do_mount+0x1e8/0x900
- [<c1175d72>] SyS_mount+0x82/0xc0
- [<c16059cc>] sysenter_do_call+0x12/0x22
-
-Suggested-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/node.c |   52 ++++++++++++++++++++++++----------------------------
- 1 file changed, 24 insertions(+), 28 deletions(-)
+ fs/f2fs/dir.c           |    4 ++--
+ include/linux/f2fs_fs.h |    3 +++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 3d60d3d..02a59e9 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1658,35 +1658,29 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index c3f1485..966acb0 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -23,10 +23,10 @@ static unsigned long dir_blocks(struct inode *inode)
  
- /*
-  * ra_sum_pages() merge contiguous pages into one bio and submit.
-- * these pre-readed pages are linked in pages list.
-+ * these pre-readed pages are alloced in bd_inode's mapping tree.
-  */
--static int ra_sum_pages(struct f2fs_sb_info *sbi, struct list_head *pages,
-+static int ra_sum_pages(struct f2fs_sb_info *sbi, struct page **pages,
- 				int start, int nrpages)
+ static unsigned int dir_buckets(unsigned int level, int dir_level)
  {
--	struct page *page;
--	int page_idx = start;
-+	struct inode *inode = sbi->sb->s_bdev->bd_inode;
-+	struct address_space *mapping = inode->i_mapping;
-+	int i, page_idx = start;
- 	struct f2fs_io_info fio = {
- 		.type = META,
- 		.rw = READ_SYNC | REQ_META | REQ_PRIO
- 	};
- 
--	for (; page_idx < start + nrpages; page_idx++) {
--		/* alloc temporal page for read node summary info*/
--		page = alloc_page(GFP_F2FS_ZERO);
--		if (!page)
-+	for (i = 0; page_idx < start + nrpages; page_idx++, i++) {
-+		/* alloc page in bd_inode for reading node summary info */
-+		pages[i] = grab_cache_page(mapping, page_idx);
-+		if (!pages[i])
- 			break;
--
--		lock_page(page);
--		page->index = page_idx;
--		list_add_tail(&page->lru, pages);
-+		f2fs_submit_page_mbio(sbi, pages[i], page_idx, &fio);
- 	}
- 
--	list_for_each_entry(page, pages, lru)
--		f2fs_submit_page_mbio(sbi, page, page->index, &fio);
--
- 	f2fs_submit_merged_bio(sbi, META, READ);
--
--	return page_idx - start;
-+	return i;
+-	if (level < MAX_DIR_HASH_DEPTH / 2)
++	if (level + dir_level < MAX_DIR_HASH_DEPTH / 2)
+ 		return 1 << (level + dir_level);
+ 	else
+-		return 1 << ((MAX_DIR_HASH_DEPTH / 2 + dir_level) - 1);
++		return MAX_DIR_BUCKETS;
  }
  
- int restore_node_summary(struct f2fs_sb_info *sbi,
-@@ -1694,11 +1688,11 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
- {
- 	struct f2fs_node *rn;
- 	struct f2fs_summary *sum_entry;
--	struct page *page, *tmp;
-+	struct inode *inode = sbi->sb->s_bdev->bd_inode;
- 	block_t addr;
- 	int bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
--	int i, last_offset, nrpages, err = 0;
--	LIST_HEAD(page_list);
-+	struct page *pages[bio_blocks];
-+	int i, idx, last_offset, nrpages, err = 0;
+ static unsigned int bucket_blocks(unsigned int level)
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 8c03f71..ba6f312 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -394,6 +394,9 @@ typedef __le32	f2fs_hash_t;
+ /* MAX level for dir lookup */
+ #define MAX_DIR_HASH_DEPTH	63
  
- 	/* scan the node segment */
- 	last_offset = sbi->blocks_per_seg;
-@@ -1709,29 +1703,31 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
- 		nrpages = min(last_offset - i, bio_blocks);
- 
- 		/* read ahead node pages */
--		nrpages = ra_sum_pages(sbi, &page_list, addr, nrpages);
-+		nrpages = ra_sum_pages(sbi, pages, addr, nrpages);
- 		if (!nrpages)
- 			return -ENOMEM;
- 
--		list_for_each_entry_safe(page, tmp, &page_list, lru) {
-+		for (idx = 0; idx < nrpages; idx++) {
- 			if (err)
- 				goto skip;
- 
--			lock_page(page);
--			if (unlikely(!PageUptodate(page))) {
-+			lock_page(pages[idx]);
-+			if (unlikely(!PageUptodate(pages[idx]))) {
- 				err = -EIO;
- 			} else {
--				rn = F2FS_NODE(page);
-+				rn = F2FS_NODE(pages[idx]);
- 				sum_entry->nid = rn->footer.nid;
- 				sum_entry->version = 0;
- 				sum_entry->ofs_in_node = 0;
- 				sum_entry++;
- 			}
--			unlock_page(page);
-+			unlock_page(pages[idx]);
- skip:
--			list_del(&page->lru);
--			__free_pages(page, 0);
-+			page_cache_release(pages[idx]);
- 		}
++/* MAX buckets in one level of dir */
++#define MAX_DIR_BUCKETS		(1 << ((MAX_DIR_HASH_DEPTH / 2) - 1))
 +
-+		invalidate_mapping_pages(inode->i_mapping, addr,
-+							addr + nrpages);
- 	}
- 	return err;
- }
+ #define SIZE_OF_DIR_ENTRY	11	/* by byte */
+ #define SIZE_OF_DENTRY_BITMAP	((NR_DENTRY_IN_BLOCK + BITS_PER_BYTE - 1) / \
+ 					BITS_PER_BYTE)
 -- 
-1.7.9.5
+1.7.10.4
 
 
+
+------------------------------------------------------------------------------
+The best possible search technologies are now affordable for all companies.
+Download your FREE open source Enterprise Search Engine today!
+Our experts will assist you in its installation for $59/mo, no commitment.
+Test it for FREE on our Cloud platform anytime!
+http://pubads.g.doubleclick.net/gampad/clk?id=145328191&iu=/4140/ostg.clktrk
