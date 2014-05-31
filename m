@@ -1,49 +1,63 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [RFC 29/32] f2fs: convert to struct inode_time
-Date: Fri, 30 May 2014 22:01:53 +0200
-Message-ID: <1401480116-1973111-30-git-send-email-arnd@arndb.de>
+From: Vyacheslav Dubeyko <slava@dubeyko.com>
+Subject: Re: [RFC 00/32] making inode time stamps y2038 ready
+Date: Sat, 31 May 2014 18:30:49 +0400
+Message-ID: <1401546649.2413.6.camel@slavad-CELSIUS-H720>
 References: <1401480116-1973111-1-git-send-email-arnd@arndb.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-btrfs-owner@vger.kernel.org>
 In-Reply-To: <1401480116-1973111-1-git-send-email-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org, joseph@codesourcery.com, john.stultz@linaro.org, hch@infradead.org, tglx@linutronix.de, geert@linux-m68k.org, lftan@altera.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Jaegeuk Kim <jaegeuk.kim@samsung.com>, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, joseph@codesourcery.com, john.stultz@linaro.org, hch@infradead.org, tglx@linutronix.de, geert@linux-m68k.org, lftan@altera.com, hpa@zytor.com, linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, coda@cs.cmu.edu, codalist@coda.cs.cmu.edu, fuse-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-scsi@vger.kernel.org, logfs@logfs.org, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, samba-technical@lists.samba.org, xfs@oss.sgi.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-f2fs uses unsigned 40-bit seconds for inode timestamps, which will work
-basically forever, but the VFS uses struct timespec for timestamps,
-which is only good until 2038 on 32-bit CPUs.
+Hi Arnd,
 
-This gets us one small step closer to lifting the VFS limit by using
-struct inode_time in f2fs.
+On Fri, 2014-05-30 at 22:01 +0200, Arnd Bergmann wrote:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
----
- fs/f2fs/file.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+[snip]
+> 
+> Arnd Bergmann (32):
+>   fs: introduce new 'struct inode_time'
+>   uapi: add struct __kernel_timespec{32,64}
+>   fs: introduce sys_utimens64at
+>   fs: introduce sys_newfstat64/sys_newfstatat64
+>   arch: hook up new stat and utimes syscalls
+>   isofs: fix timestamps beyond 2027
+>   fs/nfs: convert to struct inode_time
+>   fs/ceph: convert to 'struct inode_time'
+>   fs/pstore: convert to struct inode_time
+>   fs/coda: convert to struct inode_time
+>   xfs: convert to struct inode_time
+>   btrfs: convert to struct inode_time
+>   ext3: convert to struct inode_time
+>   ext4: convert to struct inode_time
+>   cifs: convert to struct inode_time
+>   ntfs: convert to struct inode_time
+>   ubifs: convert to struct inode_time
+>   ocfs2: convert to struct inode_time
+>   fs/fat: convert to struct inode_time
+>   afs: convert to struct inode_time
+>   udf: convert to struct inode_time
+>   fs: convert simple fs to inode_time
+>   logfs: convert to struct inode_time
+>   hfs, hfsplus: convert to struct inode_time
+>   gfs2: convert to struct inode_time
+>   reiserfs: convert to struct inode_time
+>   jffs2: convert to struct inode_time
+>   adfs: convert to struct inode_time
+>   f2fs: convert to struct inode_time
+>   fuse: convert to struct inode_time
+>   scsi: fnic: use current_kernel_time() for timestamp
+>   fs: use new inode_time definition unconditionally
+> 
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 37d0e1f..6ff6e5b 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -474,13 +474,13 @@ static void __setattr_copy(struct inode *inode, const struct iattr *attr)
- 	if (ia_valid & ATTR_GID)
- 		inode->i_gid = attr->ia_gid;
- 	if (ia_valid & ATTR_ATIME)
--		inode->i_atime = timespec_trunc(attr->ia_atime,
-+		inode->i_atime = inode_time_trunc(attr->ia_atime,
- 						inode->i_sb->s_time_gran);
- 	if (ia_valid & ATTR_MTIME)
--		inode->i_mtime = timespec_trunc(attr->ia_mtime,
-+		inode->i_mtime = inode_time_trunc(attr->ia_mtime,
- 						inode->i_sb->s_time_gran);
- 	if (ia_valid & ATTR_CTIME)
--		inode->i_ctime = timespec_trunc(attr->ia_ctime,
-+		inode->i_ctime = inode_time_trunc(attr->ia_ctime,
- 						inode->i_sb->s_time_gran);
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
--- 
-1.8.3.2
+By the way, what about NILFS2? Is NILFS2 ready for suggested approach
+without any changes?
+
+Thanks,
+Vyacheslav Dubeyko.
+
+
