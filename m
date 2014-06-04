@@ -1,174 +1,63 @@
-From: callforpapers@conferencealert.com
-Subject: [SPAM] Call For Papers. Kindly impart in your
-	University/Organization/College/Colleagues/Academia/Circle
-Date: 04 Jun 2014 06:02:33 +0530
-Message-ID: <20140604060232.3BD52B7AF1B33DFA@conferencealert.com>
-Reply-To: callforpapers@conferencealert.com
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [RFC 00/32] making inode time stamps y2038 ready
+Date: Wed, 4 Jun 2014 17:03:47 +0200
+Message-ID: <201406041703.47592.arnd@arndb.de>
+References: <1401480116-1973111-1-git-send-email-arnd@arndb.de>
+	<5011138.W0gbOc20Qp@wuerfel> <20140603213802.GH14410@dastard>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5746138430988667998=="
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <callforpapers@conferencealert.com>)
-	id 1Wrz8h-0008Qn-Pp for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 Jun 2014 00:33:11 +0000
-Received: from [117.222.205.244] (helo=conferencealert.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Wrz8U-00031u-KB for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 Jun 2014 00:33:11 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-
---===============5746138430988667998==
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<BODY scroll=3Dauto><P align=3Dcenter><FONT color=3Dblue><STRONG><FONT colo=
-r=3Dred>INTERNATIONAL JOURNAL OF TRENDS IN ECONOMICS MANAGEMENT &amp; TECHN=
-OLOGY </FONT><BR>
-IJTEMT invites you to submit your research paper for publishing in Volume I=
-II, Issue III (JUNE 2014). <BR><U>CALL FOR PAPERS VOLUME III, ISSUE III</U>=
- </STRONG></FONT></P>
-<P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http://bit.do/oa=
-qB">www.ijtemt.org</A></FONT></STRONG></P><STRONG><FONT color=3D#0000ff></F=
-ONT></STRONG>
-<P align=3Dleft>INDEXED IN: <A href=3D"http://bit.do/oaqB" target=3D_blank>=
-Google Scholar</A>, <A href=3D"http://bit.do/oaqB" target=3D_blank>.docstoc=
-</A>, <A href=3D"http://bit.do/oaqB" target=3D_blank>slideshare</A>, <A hre=
-f=3D"http://bit.do/oaqB" target=3D_blank>Scribd</A>, <A href=3D"http://bit.=
-do/oaqB" target=3D_blank>J-Gate</A>, <A href=3D"http://bit.do/oaqB" target=
-=3D_blank>Academia.edu</A>, <A href=3D"http://bit.do/oaqB" target=3D_blank>=
-Directory of Open Journals</A>, <A href=3D"http://bit.do/oaqB" target=3D_bl=
-ank>Bielefeld Academic Search Engine</A>, <A href=3D"http://bit.do/oaqB" ta=
-rget=3D_blank>ulrichsweb.com(TM) -- The Global Source for Periodicals</A></=
-P>
-<P align=3Dleft><BR><STRONG><FONT color=3Dblue>About IJTEMT</FONT></STRONG>=
-</P><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http://bit.d=
-o/oaqB">www.ijtemt.org</A></FONT></STRONG></P>
-<P align=3Djustify><FONT color=3Dpurple>International Journal of Trends in =
-Economics Management and Technology (IJTEMT) in an International Academic J=
-ournal e-published bimonthly in India and open to the world. <BR>In this pr=
-esent interdisciplinary era, here at IJTEMT, a group of intellectual came t=
-ogether to find a common platform for three major components of any economy=
- i.e., Economics, Management and Technology. Here we provide a forum to bri=
-dge the gap between the brushed-up professional in their respective fields =
-and the new researcher which will results in better understanding and fruit=
-ful outcomes.<BR>The focus of this journal is to publish paper on economics=
- management and technology. Submitted papers are reviewed by a full double =
-=E2=80=93 blind manner by the technical committee of the journal. The audie=
-nce for the journal is professionals from related fields, academicians and =
-new students &amp; research scholars.<BR>All submitted articles should repo=
-rt original, previously unpublished research results, experimental or theor=
-etical, and will be peer-reviewed. Articles submitted to the journal should=
- meet these criteria and must not be under consideration for publication el=
-sewhere. Manuscripts should follow the style of the journal and are subject=
- to both review and editing.<BR></FONT>&nbsp;</P>
-<P align=3Dleft><BR><STRONG><FONT color=3Dblue>Why Select IJTEMT Journal</F=
-ONT></STRONG> </P><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=
-=3D"http://bit.do/oaqB">www.ijtemt.org</A></FONT></STRONG></P>
-<P align=3Djustify><FONT color=3Dpurple>IJTEMT Provides E-Certificates to A=
-uthor's&nbsp;if Needed.IJTEMT is Globally Approved International Journal ha=
-ving Strong Editorial Board.<BR>This is Online Open Journal .Author's can D=
-ownload Paper from Library of Journal at any Time from Anywhere.IJTEMT is a=
- Association of Eminent Scientist, Researchers and Experienced Members of M=
-ore than 20 Countries.IJTEMT Publishes High Quality Papers which are Peer R=
-eviewed by International/National Reviewers. Author's Query can be solved w=
-ithin 18 Hours.</FONT></P>
-<P align=3Dleft><FONT color=3Dpurple><STRONG><FONT color=3Dblue>Subject Cat=
-egory:</FONT></STRONG> ECONOMICS, MANAGEMENT &amp; TECHNOLOGY. </FONT></P><=
-FONT color=3D#800080></FONT>
-<P align=3Dleft><BR><FONT color=3Dblue><STRONG>Important Dates:</STRONG></F=
-ONT></P>
-<P align=3Dleft><FONT color=3Dblue><STRONG>Paper Submission:&nbsp;<FONT col=
-or=3Dpurple>10th JUNE 2014</FONT></STRONG></FONT></P><P align=3Dcenter><STR=
-ONG><FONT color=3D#0000ff><A href=3D"http://bit.do/oaqB">www.ijtemt.org</A>=
-</FONT></STRONG></P>
-<P align=3Dleft><FONT color=3Dblue><STRONG>Review Results (Acceptance/Rejec=
-tion) Notification: <FONT color=3Dpurple>Within two weeks after submitting =
-manuscript.</FONT></STRONG></FONT><FONT color=3Dpurple> </FONT><BR>&nbsp;<B=
-R>&nbsp;<BR><STRONG><FONT color=3Dblue>Guidelines for submission and Review=
- Process:</FONT></STRONG></P><P align=3Dcenter><STRONG><FONT color=3D#0000f=
-f><A href=3D"http://bit.do/oaqB">www.ijtemt.org</A></FONT></STRONG></P>
-<P align=3Djustify><FONT color=3Dpurple>IJTEMT welcomes author submission o=
-f papers concerning any branch of the economics, management and technology =
-and their applications in business, industry and other subjects relevant. <=
-BR>The review process goes through following phases which can take time fro=
-m ten days to two months:<BR>a.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp; Each manuscript will be initially evaluated by the editorial board / e=
-ditor, who may make use of appropriate software to examine the originality =
-of the contents of the manuscript.<BR>b.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp; The manuscripts passed through screening at above noted level=
- will be forwarded to two referees for blind peer review, each of whom will=
- make a recommendation to publish the article in its present form/edit/reje=
-ct. During this period referees shall treat the contents of papers under re=
-view as privileged information.<BR>c.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; The reviewers' recommendations determine whether a paper will be=
- accepted / accepted subject to change / subject to resubmission with signi=
-ficant changes / rejected.<BR>d.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; For papers which require changes, the same reviewers will be used to =
-ensure that the quality of the revised paper is acceptable.<BR>e.&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; All papers are refereed, and the Edi=
-tor-in-Chief reserves the right to refuse any typescript, whether on invita=
-tion or otherwise, and to make suggestions and/or modifications before publ=
-ication.</FONT><BR>&nbsp;</P>
-<P align=3Djustify><BR><STRONG><FONT color=3Dblue>Submission of Paper will =
-takes place in two phases:</FONT></STRONG><P align=3Dcenter><STRONG><FONT c=
-olor=3D#0000ff><A href=3D"http://bit.do/oaqB">www.ijtemt.org</A></FONT></ST=
-RONG></P><BR><FONT color=3Dpurple>a.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp; Initial Paper Submission: <BR>Prospective author (s) is/are encou=
-raged to submit their manuscript including charts, tables, figures and appe=
-ndixes in .pdf and .doc (both) format to e-mail: </FONT><A href=3D"mailto:s=
-ubmit@ijtemt.org"><FONT color=3Dpurple>submit@ijtemt.org</FONT></A><FONT co=
-lor=3Dpurple>. <BR>All submitted articles should report original, previousl=
-y unpublished research results, experimental or theoretical. Articles submi=
-tted to the IJTEMT should meet these criteria and must not be under conside=
-ration for publication elsewhere.<BR>b.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp; Camera Ready Paper Submission:On the acceptance of the paper a=
-fter completion of the review process the author (s) is/are has to submit c=
-amera ready full text paper in .doc and .pdf (both) format to e-mail: </FON=
-T><A href=3D"mailto:submitfinal@ijtemt.org"><FONT color=3Dpurple>submitfina=
-l@ijtemt.org</FONT></A><FONT color=3Dpurple> along with the corresponding s=
-igned copy of copyright transfer form and scanned copy of payment slip. </F=
-ONT><BR>&nbsp;</P>
-<P align=3Djustify><BR><FONT color=3Dblue><STRONG>Publication fees</STRONG>=
- </FONT><BR><P align=3Dcenter><STRONG><FONT color=3D#0000ff><A href=3D"http=
-://bit.do/oaqB">www.ijtemt.org</A></FONT></STRONG></P>
-<FONT color=3Dpurple>Each accepted paper will be charged, for publication a=
-nd paper handling,  100 USD per paper (for a maximum of 8 pages, above whic=
-h 1 USD will be charged for every additional page) which is to be paid as p=
-er the instructions mentioned in the letter of acceptance of the manuscript=
- submitted. </FONT><BR>&nbsp;</P>
-<P align=3Djustify>-S.Lal<BR><STRONG><FONT color=3Dblue>Editor Internationa=
-l Journal of Trends in Economics Management &amp; Technology&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp; <BR>Website: </FONT></STRONG><A href=3D"http://bit.do/oaqB"><S=
-TRONG><FONT color=3Dblue>www.ijtemt.org</FONT></STRONG></A><STRONG><FONT co=
-lor=3Dblue>&nbsp; Email: </FONT></STRONG><A href=3D"mailto:editor@ijtemt.or=
-g"><STRONG><FONT color=3Dblue>editor@ijtemt.org</FONT></STRONG></A><STRONG>=
-<FONT color=3Dblue>, </FONT></STRONG><A href=3D"mailto:coedtech@ijtemt.org"=
-><STRONG><FONT color=3Dblue>coedtech@ijtemt.org</FONT></STRONG></A><STRONG>=
-<FONT color=3Dblue>,&nbsp; </FONT></STRONG><A href=3D"mailto:contact@ijtemt=
-=2Eorg"><STRONG><FONT color=3Dblue>contact@ijtemt.org</FONT></STRONG></A><S=
-TRONG><FONT color=3Dblue>. Paper Submission Email: </FONT></STRONG><A href=
-=3D"mailto:submit@ijtemt.org"><STRONG><FONT color=3Dblue>submit@ijtemt.org<=
-/FONT></STRONG></A><STRONG><FONT color=3Dblue>.</FONT></STRONG></P>
-
-
---===============5746138430988667998==
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <fuse-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <20140603213802.GH14410@dastard>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/fuse-devel>,
+	<mailto:fuse-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=fuse-devel>
+List-Post: <mailto:fuse-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:fuse-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/fuse-devel>,
+	<mailto:fuse-devel-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: fuse-devel-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Dave Chinner <david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org>
+Cc: hch-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>, logfs-PCqxUs/MD9bYtjvyW6yDsg@public.gmane.org, linux-afs-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "Joseph S. Myers" <joseph-qD8j1LwMmJjtCj0u4l0SBw@public.gmane.org>, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, coda-ETDLCGt7PQU3uPMLIKxrzw@public.gmane.org, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, codalist-ySnCqBnJi5yMVn35/9/JlcWGCVk0P7UB@public.gmane.org, fuse-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xfs-VZNHf3L845pBDgjK7y7TUQ@public.gmane.org, john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ntfs-dev-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, samba-technical-w/Ol4Ecudpl8XjKLYN78aQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+On Tuesday 03 June 2014, Dave Chinner wrote:
+> On Tue, Jun 03, 2014 at 04:22:19PM +0200, Arnd Bergmann wrote:
+> > On Monday 02 June 2014 14:57:26 H. Peter Anvin wrote:
+> > > On 06/02/2014 12:55 PM, Arnd Bergmann wrote:
+> > The possible uses I can see for non-ktime_t types in the kernel are:
+> > * inodes need 96 bit timestamps to represent the full range of values
+> >   that can be stored in a file system, you made a convincing argument
+> >   for that. Almost everything else can fit into 64 bit on a 32-bit
+> >   kernel, in theory also on a 64-bit kernel if we want that.
+> 
+> Just ot be pedantic, inodes don't need 96 bit timestamps - some
+> filesystems can *support up to* 96 bit timestamps. If the kernel
+> only supports 64 bit timestamps and that's all the kernel can
+> represent, then the upper bits of the 96 bit on-disk inode
+> timestamps simply remain zero.
+
+I meant the reverse: since we have file systems that can store
+96-bit timestamps when using 64-bit kernels, we need to extend
+32-bit kernels to have the same internal representation so we
+can actually read those file systems correctly.
+
+> If you move the filesystem between kernels with different time
+> ranges, then the filesystem needs to be able to tell the kernel what
+> it's supported range is.  This is where having the VFS limit the
+> range of supported timestamps is important: the limit is the
+> min(kernel range, filesystem range). This allows the filesystems
+> to be indepenent of the kernel time representation, and the kernel
+> to be independent of the physical filesystem time encoding....
+
+I agree it makes sense to let the kernel know about the limits
+of the file system it accesses, but for the reverse, we're probably
+better off just making the kernel representation large enough (i.e.
+96 bits) so it can work with any known file system. We need another
+check at the user space boundary to turn that into a value that the
+user can understand, but that's another problem.
+
+	Arnd
 
 ------------------------------------------------------------------------------
 Learn Graph Databases - Download FREE O'Reilly Book
@@ -176,15 +65,3 @@ Learn Graph Databases - Download FREE O'Reilly Book
 applications. Written by three acclaimed leaders in the field, 
 this first edition is now available. Download your free book today!
 http://p.sf.net/sfu/NeoTech
---===============5746138430988667998==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============5746138430988667998==--
