@@ -1,25 +1,21 @@
-From: netcomdesign <netcomdesign@miosend.com>
-Subject: Toutes Vos maquettes print et web au meilleur prix
-Date: Fri,  6 Jun 2014 15:14:29 GMT
-Message-ID: <20140605100200-0.1.u7.2q2wn.0.iboif4oa1k@miosend.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/3] f2fs: fix to recover data written by dio
+Date: Sun,  8 Jun 2014 01:44:30 +0900
+Message-ID: <1402159472-61137-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <netcomdesign@miosend.com>) id 1Wsvrx-0003fd-G7
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1WtJjr-0003WZ-Dl
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Jun 2014 15:15:49 +0000
-Received: from u17700006.onlinehome-server.com ([74.208.226.130]
-	helo=default-domain.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Wsvrw-0000JG-OL for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Jun 2014 15:15:49 +0000
-Received: by u17700006.onlinehome-server.com for
-	<linux-f2fs-devel@lists.sourceforge.net>;
-	Fri,  6 Jun 2014 15:14:29 GMT
+	Sat, 07 Jun 2014 16:45:03 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WtJjq-0004Lf-Ak for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 07 Jun 2014 16:45:03 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,30 +25,77 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-TWFkYW1lLCBNb25zaWV1ciwKTm90cmUgc29jacOpdMOpIHLDqWFsaXNlIGRlcyBtYXF1ZXR0ZXMg
-ZGUgZmx5ZXJzLCBhZmZpY2hlcywgY2FydGVzIHBvc3RhbGVzLCBiw6JjaGVzLCBQTFYsIGFpbnNp
-IHF1ZSBsZSBkZXNpZ24gZGUgdm90cmUgc2l0ZSBpbnRlcm5ldC4KTm9zIHByaXggZMOpbWFycmVu
-dCDDoCAzMCDigqwgbGEgbWFxdWV0dGUuIApDb25zdWx0ZXogcXVlbHF1ZXMgdW5lcyBkZSAgbm9z
-IHLDqWFsaXNhdGlvbnMgOiB3d3cubmV0Y29tZGVzaWduLmZyCgpOb3VzIHZvdXMgcHJvcG9zb25z
-IMOpZ2FsZW1lbnQgZGVzIHRhcmlmcyBpbWJhdHRhYmxlcyBzdXIgbGVzIGltcHJlc3Npb25zIGV0
-IGxhIHLDqWFsaXNhdGlvbiBkZSB2b3Mgc2l0ZXMuCgpBcHBlbGV6LW5vdXMgYXUgMDk4MTI5NDE3
-MApPdSBERU1BTkRFWiBVTiBERVZJUyDDoCBjb250YWN0QG5ldGNvbWRlc2lnbi5mcgoKQSBCSUVO
-VE9UCkFtw6lsaWUgRG91cmllegoKCgoKRGFucyBsZSByZXNwZWN0IGRlIGxhIExvaSBuwrAgMjAw
-NC01NzUgZHUgMjEganVpbiAyMDA0IHBhcnVlIGF1IEpPIG7CsCAxNDMgZHUgMjIganVpbiAyMDA0
-LCBub3VzIGludml0b25zIHRvdXRlcyBwZXJzb25uZXMgbmUgc291aGFpdGFudCBwbHVzIHJlY2V2
-b2lyIGRlIGNvdXJyaWVsIGRlIG5vdHJlIHBhcnQgw6AgdXRpbGlzZXIgbGUgbGllbiBzdWl2YW50
-IDoKaHR0cDovL3B1YmxpZXJiLmNvbTo4MDgwL3IuaHRtbD91aWQ9MS51Ny4ycTJ3bi4zNGkuYmdr
-MGljMTR6ciAKRW4gY2FzIGRlIG1hdXZhaXMgZm9uY3Rpb25uZW1lbnQgZHUgbGllbiBkZSBkw6lz
-YWJvbm5lbWVudCwgZW52b3llciB1biBtYWlsIMOgIHdlYm1hc3RlckBwdWJsaWVyYi5jb20KCi0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQpMZWFybiBHcmFwaCBEYXRhYmFzZXMgLSBEb3dubG9hZCBGUkVF
-IE8nUmVpbGx5IEJvb2sKIkdyYXBoIERhdGFiYXNlcyIgaXMgdGhlIGRlZmluaXRpdmUgbmV3IGd1
-aWRlIHRvIGdyYXBoIGRhdGFiYXNlcyBhbmQgdGhlaXIgCmFwcGxpY2F0aW9ucy4gV3JpdHRlbiBi
-eSB0aHJlZSBhY2NsYWltZWQgbGVhZGVycyBpbiB0aGUgZmllbGQsIAp0aGlzIGZpcnN0IGVkaXRp
-b24gaXMgbm93IGF2YWlsYWJsZS4gRG93bmxvYWQgeW91ciBmcmVlIGJvb2sgdG9kYXkhCmh0dHA6
-Ly9wLnNmLm5ldC9zZnUvTmVvVGVjaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRl
-dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9s
-aXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+If data are overwritten through dio, previous f2fs doesn't remain the fsync mark
+due to no additional node writes.
+
+Note that this patch should resolve the xfstests:311.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c |  3 +++
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/node.c | 12 ++++++++++++
+ 3 files changed, 16 insertions(+)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8c250a5..39fe7d7 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1041,6 +1041,9 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
+ 	if (check_direct_IO(inode, rw, iov, offset, nr_segs))
+ 		return 0;
+ 
++	/* clear fsync mark to recover these blocks */
++	fsync_mark_clear(F2FS_SB(inode->i_sb), inode->i_ino);
++
+ 	return blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
+ 							get_data_block);
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9684b1f..f628c3c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1168,6 +1168,7 @@ struct node_info;
+ bool available_free_memory(struct f2fs_sb_info *, int);
+ int is_checkpointed_node(struct f2fs_sb_info *, nid_t);
+ bool fsync_mark_done(struct f2fs_sb_info *, nid_t);
++void fsync_mark_clear(struct f2fs_sb_info *, nid_t);
+ void get_node_info(struct f2fs_sb_info *, nid_t, struct node_info *);
+ int get_dnode_of_data(struct dnode_of_data *, pgoff_t, int);
+ int truncate_inode_blocks(struct inode *, pgoff_t);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 02a59e9..a0a1f25 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -153,6 +153,18 @@ bool fsync_mark_done(struct f2fs_sb_info *sbi, nid_t nid)
+ 	return fsync_done;
+ }
+ 
++void fsync_mark_clear(struct f2fs_sb_info *sbi, nid_t nid)
++{
++	struct f2fs_nm_info *nm_i = NM_I(sbi);
++	struct nat_entry *e;
++
++	write_lock(&nm_i->nat_tree_lock);
++	e = __lookup_nat_cache(nm_i, nid);
++	if (e)
++		e->fsync_done = false;
++	write_unlock(&nm_i->nat_tree_lock);
++}
++
+ static struct nat_entry *grab_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid)
+ {
+ 	struct nat_entry *new;
+-- 
+1.8.5.2 (Apple Git-48)
+
+
+------------------------------------------------------------------------------
+Learn Graph Databases - Download FREE O'Reilly Book
+"Graph Databases" is the definitive new guide to graph databases and their 
+applications. Written by three acclaimed leaders in the field, 
+this first edition is now available. Download your free book today!
+http://p.sf.net/sfu/NeoTech
