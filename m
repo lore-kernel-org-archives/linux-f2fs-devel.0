@@ -1,90 +1,147 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: support f2fs_fiemap
-Date: Tue, 10 Jun 2014 01:23:07 +0900
-Message-ID: <1402330987-65438-1-git-send-email-jaegeuk@kernel.org>
+Subject: [GIT PULL] f2fs updates for v3.16
+Date: Tue, 10 Jun 2014 01:49:23 +0900
+Message-ID: <20140609164923.GA65800@jmac.local>
+Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Wu2Lv-0002p4-TT
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Jun 2014 16:23:19 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Wu2Lu-00074A-Uc for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Jun 2014 16:23:19 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Linux FS DEV, Mailing List" <linux-fsdevel@vger.kernel.org>, "Linux Kernel, Mailing List" <linux-kernel@vger.kernel.org>, "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch links f2fs_fiemap with generic function with get_block.
+Hi Linus,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/data.c | 6 ++++++
- fs/f2fs/f2fs.h | 1 +
- fs/f2fs/file.c | 1 +
- 3 files changed, 8 insertions(+)
+This is a pull request on f2fs updates for v3.16.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 39fe7d7..c1fb6dd 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -708,6 +708,12 @@ out:
- 	return err;
- }
- 
-+int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-+		u64 start, u64 len)
-+{
-+	return generic_block_fiemap(inode, fieinfo, start, len, get_data_block);
-+}
-+
- static int f2fs_read_data_page(struct file *file, struct page *page)
- {
- 	struct inode *inode = page->mapping->host;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f628c3c..e51c732 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1271,6 +1271,7 @@ struct page *find_data_page(struct inode *, pgoff_t, bool);
- struct page *get_lock_data_page(struct inode *, pgoff_t);
- struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
- int do_write_data_page(struct page *, struct f2fs_io_info *);
-+int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
- 
- /*
-  * gc.c
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 78110da..9c49c59 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -540,6 +540,7 @@ const struct inode_operations f2fs_file_inode_operations = {
- 	.listxattr	= f2fs_listxattr,
- 	.removexattr	= generic_removexattr,
- #endif
-+	.fiemap		= f2fs_fiemap,
- };
- 
- static void fill_zero(struct inode *inode, pgoff_t index,
+In this round, there is no special interesting feature, but we've investigated
+a couple of tuning points with respect to the I/O flow.
+Several major bug fixes and a bunch of clean-ups also have been made.
+
+Thank you very much.
+
+The following changes since commit 38583f095c5a8138ae2a1c9173d0fd8a9f10e8aa:
+
+  Merge branch 'akpm' (incoming from Andrew) (2014-05-06 13:07:41 -0700)
+
+are available in the git repository at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-3.16
+
+for you to fetch changes up to 9ab701349247368f9d57a993b95a5bb05bb37e10:
+
+  f2fs: support f2fs_fiemap (2014-06-08 08:56:49 +0900)
+
+----------------------------------------------------------------
+f2fs updates for v3.16
+
+This patch-set includes the following major enhancement patches.
+ o enhance wait_on_page_writeback
+ o support SEEK_DATA and SEEK_HOLE
+ o enhance readahead flows
+ o enhance IO flushes
+ o support fiemap
+ o add some tracepoints
+
+The other bug fixes are as follows.
+ o fix to support a large volume > 2TB correctly
+ o recovery bug fix with respect to the fallocated space
+ o fix recursive lock on xattr operations
+ o fix some erroneous cases on the remount flow
+
+And, there are a bunch of cleanups.
+
+----------------------------------------------------------------
+Changman Lee (1):
+      f2fs: large volume support
+
+Chao Yu (16):
+      f2fs: introduce raw_nat_from_node_info() to simplfy codes
+      f2fs: handle inline data independently in f2fs_bmap
+      f2fs: introduce help macro ADDRS_PER_PAGE()
+      f2fs: introduce f2fs_seek_block to support SEEK_{DATA, HOLE} in llseek
+      f2fs: set errno when f2fs_iget failed in recover_dentry
+      f2fs: readahead multi pages of directory for performance
+      f2fs: fix to truncate inline data in inode page when setattr
+      f2fs: add a tracepoint for f2fs_write_begin
+      f2fs: add a tracepoint for f2fs_write_end
+      f2fs: add a tracepoint for f2fs_write_{meta,node,data}_page
+      f2fs: add a tracepoint for f2fs_write_{meta,node,data}_pages
+      f2fs: add a tracepoint for f2fs_read_data_page
+      f2fs: avoid to use slab memory in f2fs_issue_flush for efficiency
+      f2fs: use inode_init_owner() to simplify codes
+      f2fs: avoid overflow when large directory feathure is enabled
+      f2fs: avoid crash when trace f2fs_submit_page_mbio event in ra_sum_pages
+
+Fabian Frederick (1):
+      f2fs: add static to get_max_meta_blks
+
+Gu Zheng (6):
+      f2fs: put the bio when issue_flush completed
+      f2fs: use __GFP_ZERO to avoid appending set-NULL
+      f2fs: enable flush_merge only in f2fs is not read-only
+      f2fs: add the flush_merge handle in the remount flow
+      f2fs: introduce struct flush_cmd_control to wrap the flush_merge fields
+      f2fs: introduce help function {create,destroy}_flush_cmd_control
+
+Jaegeuk Kim (25):
+      f2fs: avoid to conduct roll-forward due to the remained garbage blocks
+      f2fs: call redirty_page_for_writepage
+      f2fs: fix to unlock f2fs_lock at the omitted error case
+      f2fs: remove costly dirty_dir_inode operations
+      f2fs: add available_nids to fix handling max_nid correctly
+      f2fs: avoid BUG_ON when mouting corrupted image having garbage blocks
+      f2fs: adjust free mem size to flush dentry blocks
+      f2fs: clean up long variable names
+      f2fs: pass flags field to setxattr functions
+      f2fs: return errors right after checking them
+      f2fs: submit bio at the reclaim path
+      f2fs: return i_size if the hole is outside of i_size
+      f2fs: consider fallocated space for SEEK_DATA
+      f2fs: split grab_cache_page and wait_on_page_writeback for node pages
+      f2fs: avoid grab_cache_page_write_begin for data pages
+      f2fs: no need to wait on page writebck to meta pages
+      f2fs: decrease the lock granularity during write_begin
+      f2fs: deactivate inode page if the inode is evicted
+      MAINTAINERS: change the email address for f2fs
+      MAINTAINERS: add a co-maintainer from samsung for F2FS
+      f2fs: fix recursive lock by f2fs_setxattr
+      f2fs: fix to recover data written by dio
+      f2fs: recover fallocated space
+      f2fs: avoid not to call remove_dirty_inode
+      f2fs: support f2fs_fiemap
+
+Jingoo Han (1):
+      f2fs: make recover_inline_xattr() static
+
+Zhang Zhen (2):
+      f2fs: atomically set inode->i_flags in f2fs_set_inode_flags()
+      f2fs: fix checkpatch warning
+
+ Documentation/filesystems/f2fs.txt |   8 +-
+ MAINTAINERS                        |   3 +-
+ fs/f2fs/acl.c                      |   2 +-
+ fs/f2fs/checkpoint.c               | 118 ++++++++++++++++------------
+ fs/f2fs/data.c                     |  63 +++++++++++----
+ fs/f2fs/dir.c                      |  12 ++-
+ fs/f2fs/f2fs.h                     |  49 +++++++++---
+ fs/f2fs/file.c                     | 139 +++++++++++++++++++++++++++++++--
+ fs/f2fs/inline.c                   |  40 ++++++++--
+ fs/f2fs/inode.c                    |  18 +++--
+ fs/f2fs/namei.c                    |  11 +--
+ fs/f2fs/node.c                     | 154 ++++++++++++++++++++-----------------
+ fs/f2fs/node.h                     |  19 +++--
+ fs/f2fs/recovery.c                 |  35 +++++----
+ fs/f2fs/segment.c                  | 134 ++++++++++++++++++++------------
+ fs/f2fs/super.c                    |  32 +++++++-
+ fs/f2fs/xattr.c                    | 110 ++++++++++++++------------
+ fs/f2fs/xattr.h                    |   8 +-
+ include/linux/f2fs_fs.h            |   8 ++
+ include/trace/events/f2fs.h        | 146 ++++++++++++++++++++++++++++++++++-
+ 20 files changed, 797 insertions(+), 312 deletions(-)
+
 -- 
-1.8.5.2 (Apple Git-48)
-
-
-------------------------------------------------------------------------------
-HPCC Systems Open Source Big Data Platform from LexisNexis Risk Solutions
-Find What Matters Most in Your Big Data with HPCC Systems
-Open Source. Fast. Scalable. Simple. Ideal for Dirty Data.
-Leverages Graph Analysis for Fast Processing & Easy Data Exploration
-http://www.hpccsystems.com
+Jaegeuk Kim
