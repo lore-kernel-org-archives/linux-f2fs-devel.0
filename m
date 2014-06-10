@@ -1,147 +1,62 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] f2fs updates for v3.16
-Date: Tue, 10 Jun 2014 01:49:23 +0900
-Message-ID: <20140609164923.GA65800@jmac.local>
-Reply-To: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC 00/32] making inode time stamps y2038 ready
+Date: Tue, 10 Jun 2014 11:54:14 +0200
+Message-ID: <10173877.4plnjUiyX8@wuerfel>
+References: <1401480116-1973111-1-git-send-email-arnd@arndb.de>
+	<8770583.6XeZxCxOY8@wuerfel> <538FB570.8000502@zytor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Linux FS DEV, Mailing List" <linux-fsdevel@vger.kernel.org>, "Linux Kernel, Mailing List" <linux-kernel@vger.kernel.org>, "Linux F2FS DEV, Mailing List" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <cluster-devel-bounces@redhat.com>
+In-Reply-To: <538FB570.8000502@zytor.com>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/cluster-devel>
+List-Post: <mailto:cluster-devel@redhat.com>
+List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
+Sender: cluster-devel-bounces@redhat.com
+Errors-To: cluster-devel-bounces@redhat.com
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Dave Chinner <david@fromorbit.com>, linux-mtd@lists.infradead.org, linux-f2fs-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org, "Joseph S. Myers" <joseph@codesourcery.com>, linux-arch@vger.kernel.org, linux-cifs@vger.kernel.org, linux-scsi@vger.kernel.org, linux-afs@lists.infradead.org, cluster-devel@redhat.com, coda@cs.cmu.edu, geert@linux-m68k.org, linux-ext4@vger.kernel.org, codalist@telemann.coda.cs.cmu.edu, fuse-devel@lists.sourceforge.net, reiserfs-devel@vger.kernel.org, xfs@oss.sgi.com, john.stultz@linaro.org, tglx@linutronix.de, linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, logfs@logfs.org, linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Linus,
+On Wednesday 04 June 2014 17:10:24 H. Peter Anvin wrote:
+> On 06/04/2014 12:24 PM, Arnd Bergmann wrote:
+> > 
+> > For other timekeeping stuff in the kernel, I agree that using some
+> > 64-bit representation (nanoseconds, 32/32 unsigned seconds/nanoseconds,
+> > ...) has advantages, that's exactly the point I was making earlier
+> > against simply extending the internal time_t/timespec to 64-bit
+> > seconds for everything.
+> > 
+> 
+> How much of a performance issue is it to make time_t 64 bits, and for
+> the bits there are, how hard are they to fix?
 
-This is a pull request on f2fs updates for v3.16.
+Probably very little overhead for most uses, it's more the regression
+potential in the less common parts of the kernel I'm worried about.
 
-In this round, there is no special interesting feature, but we've investigated
-a couple of tuning points with respect to the I/O flow.
-Several major bug fixes and a bunch of clean-ups also have been made.
+There is a significant but not overwhelming number of uses of the
+main problematic types in the kernel:
 
-Thank you very much.
+arnd@wuerfel:~/arm-soc$ git grep -wl time_t | wc
+    188     188    5566
+arnd@wuerfel:~/arm-soc$ git grep -wl timeval | wc
+    320     320   10353
+arnd@wuerfel:~/arm-soc$ git grep -wl timespec | wc
+    406     406   10886
 
-The following changes since commit 38583f095c5a8138ae2a1c9173d0fd8a9f10e8aa:
+I believe we have to audit all of them anyway if we want to change
+the kernel to less problematic types and introduce new user
+interfaces.
 
-  Merge branch 'akpm' (incoming from Andrew) (2014-05-06 13:07:41 -0700)
+IMHO this work is helped if we change the uses to a new type
+as we find the problems. This lets us do the work one subsystem
+at a time and avoid accidental ABI changes. I don't care much what
+type that will be, and having a 96-bit type will certainly work
+well in a lot of cases, but I don't see a strong reason to use
+that over other types, especially when they can be more efficient.
 
-are available in the git repository at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-3.16
-
-for you to fetch changes up to 9ab701349247368f9d57a993b95a5bb05bb37e10:
-
-  f2fs: support f2fs_fiemap (2014-06-08 08:56:49 +0900)
-
-----------------------------------------------------------------
-f2fs updates for v3.16
-
-This patch-set includes the following major enhancement patches.
- o enhance wait_on_page_writeback
- o support SEEK_DATA and SEEK_HOLE
- o enhance readahead flows
- o enhance IO flushes
- o support fiemap
- o add some tracepoints
-
-The other bug fixes are as follows.
- o fix to support a large volume > 2TB correctly
- o recovery bug fix with respect to the fallocated space
- o fix recursive lock on xattr operations
- o fix some erroneous cases on the remount flow
-
-And, there are a bunch of cleanups.
-
-----------------------------------------------------------------
-Changman Lee (1):
-      f2fs: large volume support
-
-Chao Yu (16):
-      f2fs: introduce raw_nat_from_node_info() to simplfy codes
-      f2fs: handle inline data independently in f2fs_bmap
-      f2fs: introduce help macro ADDRS_PER_PAGE()
-      f2fs: introduce f2fs_seek_block to support SEEK_{DATA, HOLE} in llseek
-      f2fs: set errno when f2fs_iget failed in recover_dentry
-      f2fs: readahead multi pages of directory for performance
-      f2fs: fix to truncate inline data in inode page when setattr
-      f2fs: add a tracepoint for f2fs_write_begin
-      f2fs: add a tracepoint for f2fs_write_end
-      f2fs: add a tracepoint for f2fs_write_{meta,node,data}_page
-      f2fs: add a tracepoint for f2fs_write_{meta,node,data}_pages
-      f2fs: add a tracepoint for f2fs_read_data_page
-      f2fs: avoid to use slab memory in f2fs_issue_flush for efficiency
-      f2fs: use inode_init_owner() to simplify codes
-      f2fs: avoid overflow when large directory feathure is enabled
-      f2fs: avoid crash when trace f2fs_submit_page_mbio event in ra_sum_pages
-
-Fabian Frederick (1):
-      f2fs: add static to get_max_meta_blks
-
-Gu Zheng (6):
-      f2fs: put the bio when issue_flush completed
-      f2fs: use __GFP_ZERO to avoid appending set-NULL
-      f2fs: enable flush_merge only in f2fs is not read-only
-      f2fs: add the flush_merge handle in the remount flow
-      f2fs: introduce struct flush_cmd_control to wrap the flush_merge fields
-      f2fs: introduce help function {create,destroy}_flush_cmd_control
-
-Jaegeuk Kim (25):
-      f2fs: avoid to conduct roll-forward due to the remained garbage blocks
-      f2fs: call redirty_page_for_writepage
-      f2fs: fix to unlock f2fs_lock at the omitted error case
-      f2fs: remove costly dirty_dir_inode operations
-      f2fs: add available_nids to fix handling max_nid correctly
-      f2fs: avoid BUG_ON when mouting corrupted image having garbage blocks
-      f2fs: adjust free mem size to flush dentry blocks
-      f2fs: clean up long variable names
-      f2fs: pass flags field to setxattr functions
-      f2fs: return errors right after checking them
-      f2fs: submit bio at the reclaim path
-      f2fs: return i_size if the hole is outside of i_size
-      f2fs: consider fallocated space for SEEK_DATA
-      f2fs: split grab_cache_page and wait_on_page_writeback for node pages
-      f2fs: avoid grab_cache_page_write_begin for data pages
-      f2fs: no need to wait on page writebck to meta pages
-      f2fs: decrease the lock granularity during write_begin
-      f2fs: deactivate inode page if the inode is evicted
-      MAINTAINERS: change the email address for f2fs
-      MAINTAINERS: add a co-maintainer from samsung for F2FS
-      f2fs: fix recursive lock by f2fs_setxattr
-      f2fs: fix to recover data written by dio
-      f2fs: recover fallocated space
-      f2fs: avoid not to call remove_dirty_inode
-      f2fs: support f2fs_fiemap
-
-Jingoo Han (1):
-      f2fs: make recover_inline_xattr() static
-
-Zhang Zhen (2):
-      f2fs: atomically set inode->i_flags in f2fs_set_inode_flags()
-      f2fs: fix checkpatch warning
-
- Documentation/filesystems/f2fs.txt |   8 +-
- MAINTAINERS                        |   3 +-
- fs/f2fs/acl.c                      |   2 +-
- fs/f2fs/checkpoint.c               | 118 ++++++++++++++++------------
- fs/f2fs/data.c                     |  63 +++++++++++----
- fs/f2fs/dir.c                      |  12 ++-
- fs/f2fs/f2fs.h                     |  49 +++++++++---
- fs/f2fs/file.c                     | 139 +++++++++++++++++++++++++++++++--
- fs/f2fs/inline.c                   |  40 ++++++++--
- fs/f2fs/inode.c                    |  18 +++--
- fs/f2fs/namei.c                    |  11 +--
- fs/f2fs/node.c                     | 154 ++++++++++++++++++++-----------------
- fs/f2fs/node.h                     |  19 +++--
- fs/f2fs/recovery.c                 |  35 +++++----
- fs/f2fs/segment.c                  | 134 ++++++++++++++++++++------------
- fs/f2fs/super.c                    |  32 +++++++-
- fs/f2fs/xattr.c                    | 110 ++++++++++++++------------
- fs/f2fs/xattr.h                    |   8 +-
- include/linux/f2fs_fs.h            |   8 ++
- include/trace/events/f2fs.h        | 146 ++++++++++++++++++++++++++++++++++-
- 20 files changed, 797 insertions(+), 312 deletions(-)
-
--- 
-Jaegeuk Kim
+	Arnd
