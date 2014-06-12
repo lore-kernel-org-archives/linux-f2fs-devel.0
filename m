@@ -1,31 +1,25 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 3/3] f2fs: avoid to truncate non-updated page
- partially
-Date: Thu, 12 Jun 2014 13:31:50 +0800
-Message-ID: <000201cf85ff$c0715040$4153f0c0$@samsung.com>
+From: Dabogen(M)<dabogen@gmail.com>
+Subject: [SPAM] New Product : LED top view ribbon ---June 12,
+	2014(2)
+Date: Thu, 12 Jun 2014 19:06:31 +0800
+Message-ID: <201406121906313123966@szdabogen.net>
+Reply-To: dabogen@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============8285006347911007093=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1WuxdG-0003wn-Lh
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <china@szdabogen.net>) id 1Wv2qD-0004tk-LH
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Jun 2014 05:33:02 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WuxdD-0005sK-65
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Jun 2014 05:33:02 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N7100EMGJEPRK30@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Jun 2014 14:32:49 +0900 (KST)
-Content-language: zh-cn
+	Thu, 12 Jun 2014 11:06:45 +0000
+Received: from [58.251.190.41] (helo=ledlightingtech.net)
+	by sog-mx-2.v43.ch3.sourceforge.com with smtp (Exim 4.76)
+	id 1Wv2qA-0008Lz-AT for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 12 Jun 2014 11:06:45 +0000
+Received: from ijaszef ([127.0.0.1]) (envelope-sender <china@szdabogen.net>)
+	by 127.0.0.1 with ESMTP for <linux-f2fs-devel@lists.sourceforge.net>;
+	Thu, 12 Jun 2014 19:06:31 +0800
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,48 +29,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
-After we call find_data_page in truncate_partial_data_page, we could not
-guarantee this page is updated or not as error may occurred in lower layer.
+This is a multi-part message in MIME format.
 
-We'd better check status of the page to avoid this no updated page be
-writebacked to device.
+--===============8285006347911007093==
+Content-Type: multipart/alternative;
+	boundary="----=gwdfo301_8562_357915541.027932"
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/file.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+This is a multi-part message in MIME format.
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 9c49c59..fc569ca 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -380,13 +380,15 @@ static void truncate_partial_data_page(struct inode *inode, u64 from)
- 		return;
- 
- 	lock_page(page);
--	if (unlikely(page->mapping != inode->i_mapping)) {
--		f2fs_put_page(page, 1);
--		return;
--	}
-+	if (unlikely(!PageUptodate(page) ||
-+			page->mapping != inode->i_mapping))
-+		goto out;
-+
- 	f2fs_wait_on_page_writeback(page, DATA);
- 	zero_user(page, offset, PAGE_CACHE_SIZE - offset);
- 	set_page_dirty(page);
-+
-+out:
- 	f2fs_put_page(page, 1);
- }
- 
--- 
-1.7.9.5
+------=gwdfo301_8562_357915541.027932
+Content-Type: multipart/alternative;
+	boundary="----=dtn100_10091_421832016.41122"
+
+------=dtn100_10091_421832016.41122
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
 
+------=dtn100_10091_421832016.41122
+Content-Type: text/html;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+DQo8cD4NCjx0YWJsZSBjZWxsc3BhY2luZz0iMCIgY2VsbHBhZGRpbmc9IjAiIHdpZHRoPSI2OTUi
+IGFsaWduPSJjZW50ZXIiIGJvcmRlcj0iMCI+DQo8dHI+DQo8dGJvZHk+DQo8dHI+DQo8dGQ+PGlt
+ZyBoZWlnaHQ9IjIwOCIgYWx0PSIiIHNyYz0iaHR0cDovLzE5OS43MS4yMTUuNzEvbWFpbC8xNDAz
+LzM5XzAxLmpwZyIgd2lkdGg9IjY5NSIvPjwvdGQ+DQo8L3RyPg0KPHRyPg0KPHRkPjxpbWcgaGVp
+Z2h0PSIyOTIiIGFsdD0iIiBzcmM9Imh0dHA6Ly8xOTkuNzEuMjE1LjcxL21haWwvMTQwMy8zOV8w
+Mi5qcGciIHdpZHRoPSI2OTUiIC8+PC90ZD4NCjwvdHI+DQo8dHI+DQo8dGQ+PGltZyBoZWlnaHQ9
+IjIyOSIgYWx0PSIiIHNyYz0iaHR0cDovLzE5OS43MS4yMTUuNzEvbWFpbC8xNDAzLzM5XzAzLmpw
+ZyIgd2lkdGg9IjY5NSIgLz48L3RkPg0KPC90cj4NCjx0cj4NCjx0ZD48aW1nIGhlaWdodD0iMjIw
+IiBhbHQ9IiIgc3JjPSJodHRwOi8vMTk5LjcxLjIxNS43MS9tYWlsLzE0MDMvMzlfMDQuanBnIiB3
+aWR0aD0iNjk1IiAvPjwvdGQ+DQo8L3RyPg0KPHRyPg0KPHRkPjxpbWcgaGVpZ2h0PSIxNzQiIGFs
+dD0iIiBzcmM9Imh0dHA6Ly8xOTkuNzEuMjE1LjcxL21haWwvMTQwMy8zOV8wNS5qcGciIHdpZHRo
+PSI2OTUiIC8+PC90ZD4NCjwvdHI+DQoNCiANCg0KPC90Ym9keT4NCjwvdGFibGU+DQo8L3A+DQoN
+Cg==
+
+------=dtn100_10091_421832016.41122--
+
+
+------=gwdfo301_8562_357915541.027932--
+
+--===============8285006347911007093==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 HPCC Systems Open Source Big Data Platform from LexisNexis Risk Solutions
@@ -84,3 +85,15 @@ Find What Matters Most in Your Big Data with HPCC Systems
 Open Source. Fast. Scalable. Simple. Ideal for Dirty Data.
 Leverages Graph Analysis for Fast Processing & Easy Data Exploration
 http://p.sf.net/sfu/hpccsystems
+--===============8285006347911007093==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============8285006347911007093==--
