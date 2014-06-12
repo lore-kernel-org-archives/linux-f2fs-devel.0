@@ -1,26 +1,31 @@
-From: JP Abgrall <jpa@google.com>
-Subject: [PATCH] mkfs: support passing in the number of sectors
-	to use
-Date: Wed, 11 Jun 2014 21:55:38 -0700
-Message-ID: <1402548938-3141-1-git-send-email-jpa@google.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH 1/3] f2fs: check lower bound nid value in
+ check_nid_range
+Date: Thu, 12 Jun 2014 13:23:41 +0800
+Message-ID: <000001cf85fe$9e63ed10$db2bc730$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jpa@google.com>) id 1WuxUa-0006qR-EA
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1WuxVO-0007iF-Ke
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Jun 2014 05:24:04 +0000
-Received: from mail-pb0-f73.google.com ([209.85.160.73])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1WuxUY-0005dn-OQ
+	Thu, 12 Jun 2014 05:24:54 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WuxVL-00042D-4i
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Jun 2014 05:24:04 +0000
-Received: by mail-pb0-f73.google.com with SMTP id ma3so41583pbc.0
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 11 Jun 2014 22:23:57 -0700 (PDT)
+	Thu, 12 Jun 2014 05:24:54 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N7100701J17IB00@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 12 Jun 2014 14:24:43 +0900 (KST)
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,97 +35,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Adds the optional sectors count:
-  mkfs.f2fs [options] device [sectors]
+This patch add lower bound verification for nid in check_nid_range, so nids
+reserved like 0, node, meta passed by caller could be checked there.
 
-Change-Id: I3ac83121576574bda074140ffa60195a2bc9947b
+And then check_nid_range could be used in f2fs_nfs_get_inode for simplifying
+code.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- lib/libf2fs.c           |  7 +++++++
- mkfs/f2fs_format_main.c | 13 ++++++++++---
- 2 files changed, 17 insertions(+), 3 deletions(-)
+ fs/f2fs/f2fs.h  |    3 ++-
+ fs/f2fs/inode.c |    1 +
+ fs/f2fs/super.c |    4 +---
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index c1e0b0e..7df275c 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -354,6 +354,7 @@ int f2fs_crc_valid(u_int32_t blk_crc, void *buf, int len)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7ef7acd..58df97e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -641,7 +641,8 @@ static inline void f2fs_unlock_all(struct f2fs_sb_info *sbi)
   */
- void f2fs_init_configuration(struct f2fs_configuration *c)
+ static inline int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
  {
-+	c->total_sectors = 0;
- 	c->sector_size = DEFAULT_SECTOR_SIZE;
- 	c->sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
- 	c->blks_per_seg = DEFAULT_BLOCKS_PER_SEGMENT;
-@@ -430,6 +431,7 @@ int f2fs_get_device_info(struct f2fs_configuration *c)
- 	uint32_t sector_size;
- 	struct stat stat_buf;
- 	struct hd_geometry geom;
-+	u_int64_t wanted_total_sectors = c->total_sectors;
- 
- 	fd = open(c->device_name, O_RDWR);
- 	if (fd < 0) {
-@@ -472,7 +474,12 @@ int f2fs_get_device_info(struct f2fs_configuration *c)
- 		MSG(0, "\tError: Volume type is not supported!!!\n");
- 		return -1;
- 	}
-+	if (wanted_total_sectors && wanted_total_sectors < c->total_sectors) {
-+		MSG(0, "Info: total device sectors = %"PRIu64" (in 512bytes)\n",
-+					c->total_sectors);
-+		c->total_sectors = wanted_total_sectors;
- 
-+	}
- 	MSG(0, "Info: sector size = %u\n", c->sector_size);
- 	MSG(0, "Info: total sectors = %"PRIu64" (in 512bytes)\n",
- 					c->total_sectors);
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index cee640a..2b6c195 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -26,7 +26,7 @@ extern struct f2fs_configuration config;
- 
- static void mkfs_usage()
- {
--	MSG(0, "\nUsage: mkfs.f2fs [options] device\n");
-+	MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
- 	MSG(0, "[options]:\n");
- 	MSG(0, "  -a heap-based allocation [default:1]\n");
- 	MSG(0, "  -d debug level [default:0]\n");
-@@ -36,6 +36,7 @@ static void mkfs_usage()
- 	MSG(0, "  -s # of segments per section [default:1]\n");
- 	MSG(0, "  -z # of sections per zone [default:1]\n");
- 	MSG(0, "  -t 0: nodiscard, 1: discard [default:1]\n");
-+	MSG(0, "sectors: number of sectors. [default: determined by device size]\n");
- 	exit(1);
- }
- 
-@@ -93,15 +94,21 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		}
+-	WARN_ON((nid >= NM_I(sbi)->max_nid));
++	if (unlikely(nid < F2FS_ROOT_INO(sbi)))
++		return -EINVAL;
+ 	if (unlikely(nid >= NM_I(sbi)->max_nid))
+ 		return -EINVAL;
+ 	return 0;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index adc622c..2cf6962 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -78,6 +78,7 @@ static int do_read_inode(struct inode *inode)
+ 	if (check_nid_range(sbi, inode->i_ino)) {
+ 		f2fs_msg(inode->i_sb, KERN_ERR, "bad inode number: %lu",
+ 			 (unsigned long) inode->i_ino);
++		WARN_ON(1);
+ 		return -EINVAL;
  	}
  
--	if ((optind + 1) != argc) {
-+	if (optind >= argc) {
- 		MSG(0, "\tError: Device not specified\n");
- 		mkfs_usage();
- 	}
-+	config.device_name = argv[optind];
-+
-+	if ((optind + 1) < argc) {
-+		/* We have a sector count. */
-+		config.total_sectors = atoll(argv[optind+1]);
-+		MSG(0, "\ttotal_sectors=%lu (%s bytes)\n", config.total_sectors, argv[optind+1]);
-+	}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index b2b1863..8f96d93 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -689,9 +689,7 @@ static struct inode *f2fs_nfs_get_inode(struct super_block *sb,
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+ 	struct inode *inode;
  
- 	config.reserved_segments  =
- 			(2 * (100 / config.overprovision + 1) + 6)
- 			* config.segs_per_sec;
--	config.device_name = argv[optind];
- }
+-	if (unlikely(ino < F2FS_ROOT_INO(sbi)))
+-		return ERR_PTR(-ESTALE);
+-	if (unlikely(ino >= NM_I(sbi)->max_nid))
++	if (check_nid_range(sbi, ino))
+ 		return ERR_PTR(-ESTALE);
  
- int main(int argc, char *argv[])
+ 	/*
 -- 
-2.0.0.526.g5318336
+1.7.9.5
+
 
 
 ------------------------------------------------------------------------------
