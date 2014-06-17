@@ -1,31 +1,27 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2] f2fs: refactor flush_nat_entries codes for
- reducing NAT writes
-Date: Tue, 17 Jun 2014 11:23:22 +0800
-Message-ID: <002401cf89db$a25c8810$e7159830$@samsung.com>
+From: "=?utf-8?B?0J7QntCeINCg0KPQodCh0J3QkNCR0JDQktCi0J7QkdCg0J7QmtCV0KA=?="
+	<info@origotrading.ru>
+Subject: =?utf-8?b?W1NQQU1dIOKYhSDQn9GA0LjQstC10LfQuCDRgdCy0L4=?=
+	=?utf-8?b?0Lkg0LPRgNGD0Lcg0YEg0YPQtNC+0LLQvtC70YzRgdGC0LLQuNC10Lwh?=
+Date: Tue, 17 Jun 2014 13:52:12 +0300
+Message-ID: <E1WwrH9-0000j3-UE@sfs-ml-4.v29.ch3.sourceforge.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============5515929637663108376=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1Wwk0j-00064Y-BY
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <info@origotrading.ru>) id 1WwrH9-0000iy-5s
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 17 Jun 2014 03:24:37 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1Wwk0g-0002wj-M8
+	Tue, 17 Jun 2014 11:10:03 +0000
+Received: from vps-1034948.srv.pa.infobox.ru ([109.120.161.221])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1WwrH5-000869-Fb
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 17 Jun 2014 03:24:37 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N7A0064IMSQ9J50@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 17 Jun 2014 12:24:26 +0900 (KST)
-Content-language: zh-cn
+	Tue, 17 Jun 2014 11:10:03 +0000
+Received: from mm-2-231-209-82.static.mgts.by (unknown [82.209.231.2])
+	by vps-1034948.srv.pa.infobox.ru (Postfix) with ESMTPSA id 96187E0A0E66
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 17 Jun 2014 14:52:22 +0400 (MSK)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,468 +31,541 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-
-Although building NAT journal in cursum reduce the read/write work for NAT
-block, but previous design leave us lower performance when write checkpoint
-frequently for these cases:
-1. if journal in cursum has already full, it's a bit of waste that we flush all
-   nat entries to page for persistence, but not to cache any entries.
-2. if journal in cursum is not full, we fill nat entries to journal util
-   journal is full, then flush the left dirty entries to disk without merge
-   journaled entries, so these journaled entries may be flushed to disk at next
-   checkpoint but lost chance to flushed last time.
-
-In this patch we merge dirty entries located in same NAT block to nat entry set,
-and linked all set to list, sorted ascending order by entries' count of set.
-Later we flush entries in sparse set into journal as many as we can, and then
-flush merged entries to disk.
-
-In my testing environment, it shows this patch can help to reduce NAT block
-writes.
-
-1. virtual machine + hard disk:
-fsstress -p 20 -n 200 -l 5
-		node num	cp count	nodes/cp
-based		4599.6		1803.0		2.551
-patched		2714.6		1829.6		1.483
-
-2. virtual machine + 32g micro SD card:
-fsstress -p 20 -n 200 -l 1 -w -f chown=0 -f creat=4 -f dwrite=0
--f fdatasync=4 -f fsync=4 -f link=0 -f mkdir=4 -f mknod=4 -f rename=5
--f rmdir=5 -f symlink=0 -f truncate=4 -f unlink=5 -f write=0 -S
-
-		node num	cp count	nodes/cp
-based		84.5		43.7		1.933
-patched		49.2		40.0		1.23
-
-change log from v1:
- o use list_for_each_entry_safe in add_nat_entry() to avoid potential deadloop.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/f2fs.h  |    4 +
- fs/f2fs/node.c  |  254 +++++++++++++++++++++++++++++++++++++------------------
- fs/f2fs/node.h  |    7 ++
- fs/f2fs/super.c |    8 +-
- 4 files changed, 192 insertions(+), 81 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 58df97e..4d717dc 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -256,6 +256,8 @@ struct f2fs_nm_info {
- 	unsigned int nat_cnt;		/* the # of cached nat entries */
- 	struct list_head nat_entries;	/* cached nat entry list (clean) */
- 	struct list_head dirty_nat_entries; /* cached nat entry list (dirty) */
-+	struct list_head nat_entry_set;	/* nat entry set list */
-+	unsigned int dirty_nat_cnt;	/* total num of nat entries in set */
- 
- 	/* free node ids management */
- 	struct radix_tree_root free_nid_root;/* root of the free_nid cache */
-@@ -1194,6 +1196,8 @@ int build_node_manager(struct f2fs_sb_info *);
- void destroy_node_manager(struct f2fs_sb_info *);
- int __init create_node_manager_caches(void);
- void destroy_node_manager_caches(void);
-+int __init create_nat_set_caches(void);
-+void destroy_nat_set_caches(void);
- 
- /*
-  * segment.c
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 9dfb9a0..347c0c1 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -25,6 +25,7 @@
- 
- static struct kmem_cache *nat_entry_slab;
- static struct kmem_cache *free_nid_slab;
-+static struct kmem_cache *nat_entry_set_slab;
- 
- bool available_free_memory(struct f2fs_sb_info *sbi, int type)
- {
-@@ -88,12 +89,8 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
- 
- 	/* get current nat block page with lock */
- 	src_page = get_meta_page(sbi, src_off);
--
--	/* Dirty src_page means that it is already the new target NAT page. */
--	if (PageDirty(src_page))
--		return src_page;
--
- 	dst_page = grab_meta_page(sbi, dst_off);
-+	f2fs_bug_on(PageDirty(src_page));
- 
- 	src_addr = page_address(src_page);
- 	dst_addr = page_address(dst_page);
-@@ -1742,7 +1739,90 @@ skip:
- 	return err;
- }
- 
--static bool flush_nats_in_journal(struct f2fs_sb_info *sbi)
-+static struct nat_entry_set *grab_nat_entry_set(void)
-+{
-+	struct nat_entry_set *nes =
-+			f2fs_kmem_cache_alloc(nat_entry_set_slab, GFP_NOFS);
-+
-+	nes->entry_cnt = 0;
-+	INIT_LIST_HEAD(&nes->set_list);
-+	INIT_LIST_HEAD(&nes->entry_list);
-+	return nes;
-+}
-+
-+static void release_nat_entry_set(struct nat_entry_set *nes,
-+						struct f2fs_nm_info *nm_i)
-+{
-+	f2fs_bug_on(!list_empty(nes->entry_list));
-+
-+	nm_i->dirty_nat_cnt -= nes->entry_cnt;
-+	list_del(&nes->set_list);
-+	kmem_cache_free(nat_entry_set_slab, nes);
-+}
-+
-+static void adjust_nat_entry_set(struct nat_entry_set *nes,
-+						struct list_head *head)
-+{
-+	struct nat_entry_set *next = nes;
-+
-+	if (list_is_last(&nes->set_list, head))
-+		return;
-+
-+	list_for_each_entry_continue(next, head, set_list)
-+		if (nes->entry_cnt <= next->entry_cnt)
-+			break;
-+
-+	list_move_tail(&nes->set_list, &next->set_list);
-+}
-+
-+static void add_nat_entry(struct nat_entry *ne, struct list_head *head)
-+{
-+	struct nat_entry_set *nes, *tmp;
-+	nid_t start_nid = START_NID(ne->ni.nid);
-+
-+	list_for_each_entry_safe(nes, tmp, head, set_list) {
-+		if (nes->start_nid == start_nid) {
-+			list_move_tail(&ne->list, &nes->entry_list);
-+			nes->entry_cnt++;
-+			adjust_nat_entry_set(nes, head);
-+			return;
-+		}
-+	}
-+
-+	nes = grab_nat_entry_set();
-+
-+	nes->start_nid = START_NID(ne->ni.nid);
-+	list_move_tail(&ne->list, &nes->entry_list);
-+	nes->entry_cnt++;
-+	list_add_tail(&nes->set_list, head);
-+}
-+
-+static void merge_nats_in_set(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	struct list_head *dirty_list = &nm_i->dirty_nat_entries;
-+	struct list_head *set_list = &nm_i->nat_entry_set;
-+	struct nat_entry *ne, *tmp;
-+
-+	write_lock(&nm_i->nat_tree_lock);
-+	list_for_each_entry_safe(ne, tmp, dirty_list, list) {
-+		if (nat_get_blkaddr(ne) == NEW_ADDR)
-+			continue;
-+		add_nat_entry(ne, set_list);
-+		nm_i->dirty_nat_cnt++;
-+	}
-+	write_unlock(&nm_i->nat_tree_lock);
-+}
-+
-+static bool __has_cursum_space(struct f2fs_summary_block *sum, int size)
-+{
-+	if (nats_in_cursum(sum) + size <= NAT_JOURNAL_ENTRIES)
-+		return true;
-+	else
-+		return false;
-+}
-+
-+static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-@@ -1750,12 +1830,6 @@ static bool flush_nats_in_journal(struct f2fs_sb_info *sbi)
- 	int i;
- 
- 	mutex_lock(&curseg->curseg_mutex);
--
--	if (nats_in_cursum(sum) < NAT_JOURNAL_ENTRIES) {
--		mutex_unlock(&curseg->curseg_mutex);
--		return false;
--	}
--
- 	for (i = 0; i < nats_in_cursum(sum); i++) {
- 		struct nat_entry *ne;
- 		struct f2fs_nat_entry raw_ne;
-@@ -1765,23 +1839,21 @@ static bool flush_nats_in_journal(struct f2fs_sb_info *sbi)
- retry:
- 		write_lock(&nm_i->nat_tree_lock);
- 		ne = __lookup_nat_cache(nm_i, nid);
--		if (ne) {
--			__set_nat_cache_dirty(nm_i, ne);
--			write_unlock(&nm_i->nat_tree_lock);
--			continue;
--		}
-+		if (ne)
-+			goto found;
-+
- 		ne = grab_nat_entry(nm_i, nid);
- 		if (!ne) {
- 			write_unlock(&nm_i->nat_tree_lock);
- 			goto retry;
- 		}
- 		node_info_from_raw_nat(&ne->ni, &raw_ne);
-+found:
- 		__set_nat_cache_dirty(nm_i, ne);
- 		write_unlock(&nm_i->nat_tree_lock);
- 	}
- 	update_nats_in_cursum(sum, -i);
- 	mutex_unlock(&curseg->curseg_mutex);
--	return true;
- }
- 
- /*
-@@ -1792,80 +1864,87 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
- 	struct f2fs_summary_block *sum = curseg->sum_blk;
--	struct nat_entry *ne, *cur;
--	struct page *page = NULL;
--	struct f2fs_nat_block *nat_blk = NULL;
--	nid_t start_nid = 0, end_nid = 0;
--	bool flushed;
--
--	flushed = flush_nats_in_journal(sbi);
--
--	if (!flushed)
--		mutex_lock(&curseg->curseg_mutex);
--
--	/* 1) flush dirty nat caches */
--	list_for_each_entry_safe(ne, cur, &nm_i->dirty_nat_entries, list) {
--		nid_t nid;
--		struct f2fs_nat_entry raw_ne;
--		int offset = -1;
--
--		if (nat_get_blkaddr(ne) == NEW_ADDR)
--			continue;
-+	struct nat_entry_set *nes, *tmp;
-+	struct list_head *head = &nm_i->nat_entry_set;
-+	bool to_journal = true;
- 
--		nid = nat_get_nid(ne);
-+	/* merge nat entries of dirty list to nat entry set temporarily */
-+	merge_nats_in_set(sbi);
- 
--		if (flushed)
--			goto to_nat_page;
-+	if (!__has_cursum_space(sum, nm_i->dirty_nat_cnt)) {
-+		/*
-+		 * if there are no enough space in journal to store dirty nat
-+		 * entries, remove all entries from journal and merge them
-+		 * into nat entry set.
-+		 */
-+		remove_nats_in_journal(sbi);
-+		merge_nats_in_set(sbi);
-+	}
- 
--		/* if there is room for nat enries in curseg->sumpage */
--		offset = lookup_journal_in_cursum(sum, NAT_JOURNAL, nid, 1);
--		if (offset >= 0) {
--			raw_ne = nat_in_journal(sum, offset);
--			goto flush_now;
--		}
--to_nat_page:
--		if (!page || (start_nid > nid || nid > end_nid)) {
--			if (page) {
--				f2fs_put_page(page, 1);
--				page = NULL;
--			}
--			start_nid = START_NID(nid);
--			end_nid = start_nid + NAT_ENTRY_PER_BLOCK - 1;
-+	if (!nm_i->dirty_nat_cnt)
-+		return;
- 
--			/*
--			 * get nat block with dirty flag, increased reference
--			 * count, mapped and lock
--			 */
-+	/*
-+	 * there are two steps to flush nat entries:
-+	 * #1, flush nat entries to journal in current hot data summary block.
-+	 * #2, flush nat entries to nat page.
-+	 */
-+	list_for_each_entry_safe(nes, tmp, head, set_list) {
-+		struct f2fs_nat_block *nat_blk;
-+		struct nat_entry *ne, *cur;
-+		struct page *page;
-+		nid_t start_nid = nes->start_nid;
-+
-+		if (to_journal && !__has_cursum_space(sum, nes->entry_cnt))
-+			to_journal = false;
-+
-+		if (to_journal) {
-+			mutex_lock(&curseg->curseg_mutex);
-+		} else {
- 			page = get_next_nat_page(sbi, start_nid);
- 			nat_blk = page_address(page);
-+			f2fs_bug_on(!nat_blk);
- 		}
- 
--		f2fs_bug_on(!nat_blk);
--		raw_ne = nat_blk->entries[nid - start_nid];
--flush_now:
--		raw_nat_from_node_info(&raw_ne, &ne->ni);
--
--		if (offset < 0) {
--			nat_blk->entries[nid - start_nid] = raw_ne;
--		} else {
--			nat_in_journal(sum, offset) = raw_ne;
--			nid_in_journal(sum, offset) = cpu_to_le32(nid);
--		}
-+		/* flush dirty nats in nat entry set */
-+		list_for_each_entry_safe(ne, cur, &nes->entry_list, list) {
-+			struct f2fs_nat_entry *raw_ne;
-+			nid_t nid = nat_get_nid(ne);
-+			int offset;
-+
-+			if (to_journal) {
-+				offset = lookup_journal_in_cursum(sum,
-+							NAT_JOURNAL, nid, 1);
-+				f2fs_bug_on(offset < 0);
-+				raw_ne = &nat_in_journal(sum, offset);
-+				nid_in_journal(sum, offset) = cpu_to_le32(nid);
-+			} else {
-+				raw_ne = &nat_blk->entries[nid - start_nid];
-+			}
-+			raw_nat_from_node_info(raw_ne, &ne->ni);
- 
--		if (nat_get_blkaddr(ne) == NULL_ADDR &&
-+			if (nat_get_blkaddr(ne) == NULL_ADDR &&
- 				add_free_nid(sbi, nid, false) <= 0) {
--			write_lock(&nm_i->nat_tree_lock);
--			__del_from_nat_cache(nm_i, ne);
--			write_unlock(&nm_i->nat_tree_lock);
--		} else {
--			write_lock(&nm_i->nat_tree_lock);
--			__clear_nat_cache_dirty(nm_i, ne);
--			write_unlock(&nm_i->nat_tree_lock);
-+				write_lock(&nm_i->nat_tree_lock);
-+				__del_from_nat_cache(nm_i, ne);
-+				write_unlock(&nm_i->nat_tree_lock);
-+			} else {
-+				write_lock(&nm_i->nat_tree_lock);
-+				__clear_nat_cache_dirty(nm_i, ne);
-+				write_unlock(&nm_i->nat_tree_lock);
-+			}
- 		}
-+
-+		if (to_journal)
-+			mutex_unlock(&curseg->curseg_mutex);
-+		else
-+			f2fs_put_page(page, 1);
-+
-+		release_nat_entry_set(nes, nm_i);
- 	}
--	if (!flushed)
--		mutex_unlock(&curseg->curseg_mutex);
--	f2fs_put_page(page, 1);
-+
-+	f2fs_bug_on(!list_empty(head));
-+	f2fs_bug_on(nm_i->dirty_nat_cnt);
- }
- 
- static int init_node_manager(struct f2fs_sb_info *sbi)
-@@ -1894,6 +1973,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	INIT_RADIX_TREE(&nm_i->nat_root, GFP_ATOMIC);
- 	INIT_LIST_HEAD(&nm_i->nat_entries);
- 	INIT_LIST_HEAD(&nm_i->dirty_nat_entries);
-+	INIT_LIST_HEAD(&nm_i->nat_entry_set);
- 
- 	mutex_init(&nm_i->build_lock);
- 	spin_lock_init(&nm_i->free_nid_list_lock);
-@@ -1990,3 +2070,17 @@ void destroy_node_manager_caches(void)
- 	kmem_cache_destroy(free_nid_slab);
- 	kmem_cache_destroy(nat_entry_slab);
- }
-+
-+int __init create_nat_set_caches(void)
-+{
-+	nat_entry_set_slab = f2fs_kmem_cache_create("f2fs_nat_entry_set",
-+					sizeof(struct nat_entry_set));
-+	if (!nat_entry_set_slab)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+void destroy_nat_set_caches(void)
-+{
-+	kmem_cache_destroy(nat_entry_set_slab);
-+}
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 7281112..8a116a4 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -89,6 +89,13 @@ enum mem_type {
- 	DIRTY_DENTS	/* indicates dirty dentry pages */
- };
- 
-+struct nat_entry_set {
-+	struct list_head set_list;	/* link with all nat sets */
-+	struct list_head entry_list;	/* link with dirty nat entries */
-+	nid_t start_nid;		/* start nid of nats in set */
-+	unsigned int entry_cnt;		/* the # of nat entries in set */
-+};
-+
- /*
-  * For free nid mangement
-  */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8f96d93..c2ab776 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1172,10 +1172,13 @@ static int __init init_f2fs_fs(void)
- 	err = create_checkpoint_caches();
- 	if (err)
- 		goto free_gc_caches;
-+	err = create_nat_set_caches();
-+	if (err)
-+		goto free_checkpoint_caches;
- 	f2fs_kset = kset_create_and_add("f2fs", NULL, fs_kobj);
- 	if (!f2fs_kset) {
- 		err = -ENOMEM;
--		goto free_checkpoint_caches;
-+		goto free_nat_set_caches;
- 	}
- 	err = register_filesystem(&f2fs_fs_type);
- 	if (err)
-@@ -1186,6 +1189,8 @@ static int __init init_f2fs_fs(void)
- 
- free_kset:
- 	kset_unregister(f2fs_kset);
-+free_nat_set_caches:
-+	destroy_nat_set_caches();
- free_checkpoint_caches:
- 	destroy_checkpoint_caches();
- free_gc_caches:
-@@ -1205,6 +1210,7 @@ static void __exit exit_f2fs_fs(void)
- 	remove_proc_entry("fs/f2fs", NULL);
- 	f2fs_destroy_root_stats();
- 	unregister_filesystem(&f2fs_fs_type);
-+	destroy_nat_set_caches();
- 	destroy_checkpoint_caches();
- 	destroy_gc_caches();
- 	destroy_segment_manager_caches();
--- 
-1.7.9.5
+To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
 
+This is a multi-part message in MIME format
+
+--===============5515929637663108376==
+Content-Type: multipart/alternative;
+	boundary="kR3j2SAClaOacLaXv46setaPYpJ8v=_qqN"
+
+
+This is a multi-part message in MIME format
+
+--kR3j2SAClaOacLaXv46setaPYpJ8v=_qqN
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+=EF=BB=BF=D0=A1=D0=BF=D0=B5=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D0=BE=D0=
+=B5 =D0=BF=D1=80=D0=B5=D0=B4=D0=BB=D0=BE=D0=B6=D0=B5=D0=BD=D0=B8=D0=B5=
+
+
+
+
+
+
+
+=20
+=D0=92=D1=8B =D0=B4=D0=BE=D0=BF=D0=BE=D0=BB=D0=BD=D0=B8=D1=82=D0=B5=D0=
+=BB=D1=8C=D0=BD=D0=BE =D0=BF=D0=BE=D0=BB=D1=83=D1=87=D0=B0=D0=B5=D1=82=
+=D0=B5 20 000 =D1=80=D1=83=D0=B1=D0=BB=D0=B5=D0=B9 =D0=B7=D0=B0 2 =D0=BF=
+=D0=B5=D1=80=D0=B5=D0=B2=D0=BE=D0=B7=D0=BA=D0=B8 =D0=B8=D0=B7 =D0=95=D0=
+=B2=D1=80=D0=BE=D0=BF=D1=8B
+
+=20
+
+
+
+=20
+=D0=A7=D1=82=D0=BE =D0=B4=D0=BB=D1=8F =D1=8D=D1=82=D0=BE=D0=B3=D0=BE =D0=
+=BD=D1=83=D0=B6=D0=BD=D0=BE? - =D0=B5=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=
+=BC=D0=BE=D0=B6=D0=B5=D1=82=D0=B5 =D0=BF=D0=BB=D0=B0=D0=BD=D0=B8=D1=80=
+=D0=BE=D0=B2=D0=B0=D1=82=D1=8C =D1=81=D0=B2=D0=BE=D0=B8 =D0=BE=D1=82=D0=
+=B3=D1=80=D1=83=D0=B7=D0=BA=D0=B8, =D0=B4=D0=B0=D0=B2=D0=B0=D1=8F =D0=BF=
+=D1=80=D0=B5=D0=B4=D0=B2=D0=B0=D1=80=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=
+=D1=83=D1=8E =D0=B7=D0=B0=D1=8F=D0=B2=D0=BA=D1=83 =D0=B7=D0=B0 =D0=BF=D1=
+=8F=D1=82=D1=8C =D1=80=D0=B0=D0=B1=D0=BE=D1=87=D0=B8=D1=85 =D0=B4=D0=BD=
+=D0=B5=D0=B9, =D0=B4=D0=BB=D1=8F =D0=92=D0=B0=D1=81 =D0=B4=D0=B5=D0=B9=
+=D1=81=D1=82=D0=B2=D1=83=D0=B5=D1=82 =D1=81=D0=B8=D1=81=D1=82=D0=B5=D0=
+=BC=D0=B0 =D0=BD=D0=B0=D0=BA=D0=BE=D0=BF=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=
+=D0=BD=D0=BE=D0=B9 =D1=81=D0=BA=D0=B8=D0=B4=D0=BA=D0=B8, =D1=84=D0=BE=D1=
+=80=D0=BC=D0=B0 =D0=B2=D0=BE=D0=B7=D0=B2=D1=80=D0=B0=D1=82=D0=B0 =D0=BB=
+=D1=8E=D0=B1=D0=B0=D1=8F - =D0=BB=D0=B8=D0=B1=D0=BE =D0=B4=D0=B5=D0=BD=
+=D1=8C=D0=B3=D0=B8 =D0=B2=D0=BE=D0=B7=D0=B2=D1=80=D0=B0=D1=89=D0=B0=D1=
+=8E=D1=82=D1=81=D1=8F, =D0=BB=D0=B8=D0=B1=D0=BE =D0=92=D1=8B =D0=B8=D1=
+=81=D0=BF=D0=BE=D0=BB=D1=8C=D0=B7=D1=83=D0=B5=D1=82=D0=B5 =D0=B8=D1=85=
+ =D0=B2 =D1=81=D1=87=D0=B5=D1=82 =D0=B1=D1=83=D0=B4=D1=83=D1=89=D0=B5=D0=
+=B9 =D0=BF=D0=B5=D1=80=D0=B5=D0=B2=D0=BE=D0=B7=D0=BA=D0=B8.
+
+=D0=90 =D0=B5=D1=81=D0=BB=D0=B8 =D0=92=D0=B0=D1=88=D0=B0 =D0=BF=D0=BE=D1=
+=82=D1=80=D0=B5=D0=B1=D0=BD=D0=BE=D1=81=D1=82=D1=8C =D1=81=D0=BE=D1=81=
+=D1=82=D0=B0=D0=B2=D0=BB=D1=8F=D0=B5=D1=82 =D0=BF=D0=BE=D1=80=D1=8F=D0=
+=B4=D0=BA=D0=B0 3-4 =D0=BF=D0=B5=D1=80=D0=B5=D0=B2=D0=BE=D0=B7=D0=BE=D0=
+=BA =D0=B2 =D0=BC=D0=B5=D1=81=D1=8F=D1=86 - =D1=8D=D0=BA=D0=BE=D0=BD=D0=
+=BE=D0=BC=D0=B8=D1=8F =D0=B2=D1=81=D0=B5=D0=B3=D0=BE =D0=BB=D0=B8=D1=88=
+=D1=8C =D0=B7=D0=B0 3 =D0=BC=D0=B5=D1=81=D1=8F=D1=86=D0=B0 =D1=81=D0=BE=
+=D1=81=D1=82=D0=B0=D0=B2=D0=B8=D1=82 120 000 =D1=80=D1=83=D0=B1=D0=BB=D0=
+=B5=D0=B9 - =D0=BD=D0=B5 =D0=BF=D0=BB=D0=BE=D1=85=D0=BE, =D0=BF=D1=80=D0=
+=B0=D0=B2=D0=B4=D0=B0 =D0=BB=D0=B8?
+
+
+
+
+
+
+
+
+
+=D0=94=D0=9B=D0=AF =D0=92=D0=90=D0=A8=D0=95=D0=93=D0=9E =D0=94=D0=A3=D0=
+=A8=D0=95=D0=92=D0=9D=D0=9E=D0=93=D0=9E =D0=A0=D0=90=D0=92=D0=9D=D0=9E=
+=D0=92=D0=95=D0=A1=D0=98=D0=AF
+
+
+
+
+
+
+=20
+
+
+
+
+
+=D0=9E=D0=A2=D0=97=D0=AB=D0=92=D0=AB =D0=9D=D0=90=D0=A8=D0=98=D0=A5 =D0=
+=9A=D0=9B=D0=98=D0=95=D0=9D=D0=A2=D0=9E=D0=92=20
+
+=20
+                http://m.vk.com/ars0504
+
+=20
+=D0=A1=D0=B0=D0=BC=D0=BE=D0=B5 =D0=B3=D0=BB=D0=B0=D0=B2=D0=BD=D0=BE=D0=
+=B5 =D1=87=D1=82=D0=BE =D0=BC=D0=BD=D0=B5 =D0=BD=D1=80=D0=B0=D0=B2=D0=B8=
+=D1=82=D1=81=D1=8F =D0=B2 =D1=80=D0=B0=D0=B1=D0=BE=D1=82=D0=B5 =D1=81 =
+=D0=BA=D0=BE=D0=BC=D0=BF=D0=B0=D0=BD=D0=B8=D0=B5=D0=B9 =D0=9E=D0=A0=D0=
+=98=D0=93=D0=9E =D0=A2=D0=A0=D0=AD=D0=94=D0=98=D0=9D=D0=93 =D1=8D=D1=82=
+=D0=BE =D1=82=D0=BE =D1=87=D1=82=D0=BE =D0=BC=D0=B5=D0=BD=D0=B5=D0=B4=D0=
+=B6=D0=B5=D1=80=D1=8B =D0=BA=D0=BE=D0=BC=D0=BF=D0=B0=D0=BD=D0=B8=D0=B8=
+ =D0=B2=D1=81=D0=B5=D0=B3=D0=B4=D0=B0 =D0=BD=D0=B0 =D1=81=D0=B2=D1=8F=D0=
+=B7=D0=B8! =D0=A3 =D0=BC=D0=B5=D0=BD=D1=8F =D0=BD=D0=B5=D1=82 =D0=BF=D1=
+=80=D0=BE=D0=B1=D0=BB=D0=B5=D0=BC =D0=B4=D0=BE=D0=B7=D0=B2=D0=BE=D0=BD=
+=D0=B8=D1=82=D1=8C=D1=81=D1=8F =D0=B4=D0=BE =D0=BC=D0=BE=D0=B5=D0=B3=D0=
+=BE =D0=BC=D0=B5=D0=BD=D0=B5=D0=B4=D0=B6=D0=B5=D1=80=D0=B0 =D0=B2 =D0=BB=
+=D1=8E=D0=B1=D0=BE=D0=B5 =D0=B2=D1=80=D0=B5=D0=BC=D1=8F =D1=81=D1=83=D1=
+=82=D0=BE=D0=BA.=20
+
+=D0=93=D0=B8=D0=B1=D0=BA=D0=BE=D1=81=D1=82=D1=8C. =D0=AF =D1=83=D0=B2=D0=
+=B5=D1=80=D0=B5=D0=BD=D0=B0, =D1=87=D1=82=D0=BE =D0=B2=D1=81=D0=B5 =D0=
+=B1=D1=83=D0=B4=D0=B5=D1=82 =D1=81=D0=B4=D0=B5=D0=BB=D0=B0=D0=BD=D0=BE=
+ =D0=B2 =D1=81=D0=BE=D0=BE=D1=82=D0=B2=D0=B5=D1=82=D1=81=D1=82=D0=B2=D0=
+=B8=D0=B8 =D1=81 =D0=BC=D0=BE=D0=B8=D0=BC=D0=B8 =D0=B7=D0=B0=D0=BF=D1=80=
+=D0=BE=D1=81=D0=B0=D0=BC=D0=B8 =D0=B8 =D0=BF=D0=BE=D0=B6=D0=B5=D0=BB=D0=
+=B0=D0=BD=D0=B8=D1=8F=D0=BC=D0=B8 =D0=B4=D0=B0=D0=B6=D0=B5 =D0=B5=D1=81=
+=D0=BB=D0=B8 =D0=BE=D0=BD=D0=B8 =D0=B8=D0=BD=D0=BE=D0=B3=D0=B4=D0=B0 =D0=
+=BC=D0=B5=D0=BD=D1=8F=D1=8E=D1=82=D1=81=D1=8F =D0=B2 =D1=85=D0=BE=D0=B4=
+=D0=B5 =D0=B4=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D0=BA=D0=B8.
+=D0=96=D0=B5=D0=BB=D0=B0=D0=BD=D0=B8=D0=B5 =D0=BA=D0=BB=D0=B8=D0=B5=D0=
+=BD=D1=82=D0=B0 - =D0=B2=D1=81=D0=B5=D0=B3=D0=B4=D0=B0 =D0=B2 =D0=BF=D1=
+=80=D0=B8=D0=BE=D1=80=D0=B8=D1=82=D0=B5=D1=82=D0=B5 =D0=B4=D0=BB=D1=8F=
+ =D0=BA=D0=BE=D0=BC=D0=BF=D0=B0=D0=BD=D0=B8=D0=B8, =D0=BD=D0=B0 =D0=BC=
+=D0=BE=D0=B9 =D0=B2=D0=B7=D0=B3=D0=BB=D1=8F=D0=B4.
+
+=D0=A7=D0=B5=D1=81=D1=82=D0=BD=D0=BE=D1=81=D1=82=D1=8C. =D0=9F=D1=80=D0=
+=B8 =D1=84=D0=BE=D1=80=D1=81-=D0=BC=D0=B0=D0=B6=D0=BE=D1=80=D0=BD=D1=8B=
+=D1=85 =D0=BE=D0=B1=D1=81=D1=82=D0=BE=D1=8F=D1=82=D0=B5=D0=BB=D1=8C=D1=
+=81=D1=82=D0=B2=D0=B0=D1=85 =D1=8F =D0=B2=D1=81=D0=B5=D0=B3=D0=B4=D0=B0=
+ =D0=BF=D0=BE=D0=BB=D1=83=D1=87=D0=B0=D1=8E =D0=BF=D1=80=D0=B0=D0=B2=D0=
+=B4=D0=B8=D0=B2=D1=83=D1=8E =D0=B8=D0=BD=D1=84=D0=BE=D1=80=D0=BC=D0=B0=
+=D1=86=D0=B8=D1=8E =D0=BE =D1=82=D0=B5=D0=BA=D1=83=D1=89=D0=B5=D0=B9 =D1=
+=81=D0=B8=D1=82=D1=83=D0=B0=D1=86=D0=B8=D0=B8.
+=20
+
+
+=D0=9D=D0=B0=D1=82=D0=B0=D0=BB=D1=8C=D1=8F =D0=90=D1=80=D1=81=D1=8E=D1=
+=85=D0=B8=D0=BD=D0=B0,
+=D0=BA=D0=BE=D0=BC=D0=BF=D0=B0=D0=BD=D0=B8=D1=8F =C2=AB=D0=9F=D0=BE=D1=
+=81=D1=82=D0=B0=D0=BA=C2=BB, =D0=B3. =D0=9A=D0=B0=D0=BB=D1=83=D0=B3=D0=
+=B0
+
+
+
+
+                           http://www.linkedin.com/pub/=D0=B5=D0=B2=D0=
+=B3=D0=B5=D0=BD=D0=B8=D0=B9-=D1=84=D1=80=D0=BE=D0=BB=D0=BE=D0=B2/82/a1=
+b/339
+
+=20
+=D0=9F=D0=BE=D0=BA=D0=B0=D0=B7=D0=B0=D1=82=D0=B5=D0=BB=D1=8F=D0=BC=D0=B8=
+ =D0=BC=D0=BE=D0=B5=D0=B9 =D1=80=D0=B0=D0=B1=D0=BE=D1=82=D1=8B =D1=81 =
+=D1=82=D1=80=D0=B0=D0=BD=D1=81=D0=BF=D0=BE=D1=80=D1=82=D0=BD=D0=BE=D0=B9=
+ =D0=BA=D0=BE=D0=BC=D0=BF=D0=B0=D0=BD=D0=B8=D0=B5=D0=B9 =D0=9E=D0=A0=D0=
+=98=D0=93=D0=9E =D0=A2=D0=A0=D0=AD=D0=94=D0=98=D0=9D=D0=93, =D0=B2 =D0=
+=BF=D0=BE=D1=80=D1=8F=D0=B4=D0=BA=D0=B5 =D1=83=D0=BC=D0=B5=D0=BD=D1=8C=
+=D1=88=D0=B5=D0=BD=D0=B8=D1=8F =D0=BF=D1=80=D0=B8=D0=BE=D1=80=D0=B8=D1=
+=82=D0=B5=D1=82=D0=B0, =D1=8F=D0=B2=D0=BB=D1=8F=D1=8E=D1=82=D1=81=D1=8F=
+:
+
+=D0=9A=D0=BE=D0=BD=D0=BA=D1=83=D1=80=D0=B5=D0=BD=D1=82=D0=BD=D0=BE-=D1=
+=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BD=D0=B0=D1=8F =D1=81=D1=82=D0=B0=
+=D0=B2=D0=BA=D0=B0, =D0=BB=D0=BE=D1=8F=D0=BB=D1=8C=D0=BD=D0=BE=D1=81=D1=
+=82=D1=8C;=20
+=D0=A1=D1=80=D0=BE=D0=BA =D0=B4=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D0=BA=D0=
+=B8 =D0=91=D0=B5=D0=BB=D1=8C=D0=B3=D0=B8=D1=8F - =D0=A2=D0=B2=D0=B5=D1=
+=80=D1=8C - 5,5 =D1=82=D1=80=D0=B0=D0=BD=D0=B7=D0=B8=D1=82=D0=BD=D1=8B=
+=D1=85 =D1=81=D1=83=D1=82=D0=BE=D0=BA;=20
+=D0=92=D0=BE=D0=B7=D0=BC=D0=BE=D0=B6=D0=BD=D0=BE=D1=81=D1=82=D1=8C =D1=
+=81=D1=80=D0=BE=D1=87=D0=BD=D0=BE=D0=B3=D0=BE =D0=B7=D0=B0=D0=BA=D0=B0=
+=D0=B7=D0=B0 =D0=BC=D0=B0=D1=88=D0=B8=D0=BD=D1=8B =D0=B7=D0=B0 =D0=B4=D0=
+=B5=D0=BD=D1=8C =D0=B8 =D0=B4=D0=B2=D0=B0;=20
+=D0=95=D0=B6=D0=B5=D0=B4=D0=BD=D0=B5=D0=B2=D0=BD=D0=BE=D0=B5 =D0=BF=D0=
+=BE=D0=BD=D0=B8=D0=BC=D0=B0=D0=BD=D0=B8=D0=B5 =D0=BC=D0=B5=D1=81=D1=82=
+=D0=BE=D0=BD=D0=B0=D1=85=D0=BE=D0=B6=D0=B4=D0=B5=D0=BD=D0=B8=D1=8F =D0=
+=BC=D0=B0=D1=88=D0=B8=D0=BD=D1=8B;=20
+=D0=A1=D0=B2=D0=BE=D0=B5=D0=B2=D1=80=D0=B5=D0=BC=D0=B5=D0=BD=D0=BD=D0=BE=
+=D0=B5 =D0=BF=D1=80=D0=B5=D0=B4=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D0=BB=D0=
+=B5=D0=BD=D0=B8=D0=B5 =D0=B4=D0=BE=D0=BA=D1=83=D0=BC=D0=B5=D0=BD=D1=82=
+=D0=BE=D0=B2: =D0=A1=D0=9C=D0=A0, =D1=81=D1=87=D0=B5=D1=82=D0=B0 =D0=B7=
+=D0=B0 =D0=A2=D0=AD=D0=A3, =D0=B0=D0=BA=D1=82=D0=B0 =D0=B2=D1=8B=D0=BF=
+=D0=BE=D0=BB=D0=BD=D0=B5=D0=BD=D0=BD=D1=8B=D1=85 =D1=80=D0=B0=D0=B1=D0=
+=BE=D1=82.=20
+
+=D0=95=D0=B2=D0=B3=D0=B5=D0=BD=D0=B8=D0=B9 =D0=A4=D1=80=D0=BE=D0=BB=D0=
+=BE=D0=B2,
+=D0=BA=D0=BE=D0=BC=D0=BF=D0=B0=D0=BD=D0=B8=D1=8F =C2=AB=D0=92=D0=B5=D1=
+=80=D0=B3=D0=BE=D0=BA=D0=B0=D0=BD=C2=BB, =D0=B3. =D0=A2=D0=B2=D0=B5=D1=
+=80=D1=8C
+
+
+
+
+
+
+
+
+=20
+
+
+
+
+
+
+
+=20
+=D0=9E=D0=9E=D0=9E "=D0=A0=D1=83=D1=81=D1=81=D0=BD=D0=B0=D0=B1=D0=B0=D0=
+=B2=D1=82=D0=BE=D0=B1=D1=80=D0=BE=D0=BA=D0=B5=D1=80"
+
+
+
+=D0=B3. =D0=A1=D0=BC=D0=BE=D0=BB=D0=B5=D0=BD=D1=81=D0=BA, =D0=A0=D0=BE=
+=D1=81=D0=BB=D0=B0=D0=B2=D0=BB=D1=8C=D1=81=D0=BA=D0=BE=D0=B5 =D1=88=D0=
+=BE=D1=81=D1=81=D0=B5 7 =D0=BA=D0=BC, =D1=82=D0=B5=D1=80. =D0=90=D0=A2=
+=D0=9F 2,   +7 499 638 38 96
+=20
+
+
+=D0=A1 =D1=83=D0=B2=D0=B0=D0=B6=D0=B5=D0=BD=D0=B8=D0=B5=D0=BC,
+=D0=94=D0=BC=D0=B8=D1=82=D1=80=D0=B8=D0=B9 =D0=90=D0=BD=D1=82=D0=BE=D0=
+=BD=D0=BE=D0=B2
+17.06.2014, 13:52:11
+=D0=9E=D1=82=D0=BF=D0=B8=D1=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=
+=82 =D1=80=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8
+
+
+--kR3j2SAClaOacLaXv46setaPYpJ8v=_qqN
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+=EF=BB=BF<HTML><HEAD><TITLE></TITLE>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3DUTF-8"=
+>
+<META content=3D"width =3D device-width" name=3Dviewport></HEAD>
+<BODY>
+<DIV style=3D"PADDING-RIGHT: 90px; PADDING-LEFT: 90px; PADDING-BOTTOM:=
+ 62px; MARGIN: 0px auto; PADDING-TOP: 62px; FONT-FAMILY: Tahoma; MAX-W=
+IDTH: 778px">
+<DIV>
+<DIV style=3D"TEXT-ALIGN: center">
+<DIV><FONT color=3D#000000><SPAN style=3D"FONT-SIZE: 20px"><B>=D0=A1=D0=
+=BF=D0=B5=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D0=BE=D0=B5 =D0=BF=D1=80=
+=D0=B5=D0=B4=D0=BB=D0=BE=D0=B6=D0=B5=D0=BD=D0=B8=D0=B5</B></SPAN></FON=
+T></DIV><BR><BR><BR>
+<HR>
+
+<P>&nbsp;</P></DIV>
+<DIV style=3D"TEXT-ALIGN: center"><STRONG style=3D"FONT-SIZE: 30px; CO=
+LOR: rgb(255,0,0)">=D0=92=D1=8B =D0=B4=D0=BE=D0=BF=D0=BE=D0=BB=D0=BD=D0=
+=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE =D0=BF=D0=BE=D0=BB=D1=83=D1=87=
+=D0=B0=D0=B5=D1=82=D0=B5&nbsp;<SPAN style=3D"FONT-SIZE: 36px">20 000&n=
+bsp;</SPAN>=D1=80=D1=83=D0=B1=D0=BB=D0=B5=D0=B9 =D0=B7=D0=B0 2 =D0=BF=D0=
+=B5=D1=80=D0=B5=D0=B2=D0=BE=D0=B7=D0=BA=D0=B8 =D0=B8=D0=B7 =D0=95=D0=B2=
+=D1=80=D0=BE=D0=BF=D1=8B</STRONG><BR><BR>&nbsp;</DIV>
+<DIV style=3D"TEXT-ALIGN: center"><BR><IMG height=3D196 alt=3D"" src=3D=
+"http://smartresponder.ru/user/files/716130/1453293175/__FS__=D0=9F=D1=
+=8F=D1=82=D0=B8=D1=82=D1=8B=D1=81=D1=8F=D1=87=D0=BD=D1=8B=D0=B5-1.jpg"=
+ width=3D300><BR><BR>&nbsp;</DIV></DIV>
+<DIV style=3D"MARGIN-TOP: 23px">
+<DIV style=3D"PADDING-BOTTOM: 6px">
+<DIV style=3D"PADDING-RIGHT: 12px; PADDING-LEFT: 12px; PADDING-BOTTOM:=
+ 0px; PADDING-TOP: 14px; TEXT-ALIGN: center"><SPAN style=3D"FONT-SIZE:=
+ 13px; COLOR: rgb(0,0,128)"><SPAN style=3D"FONT-FAMILY: arial,helvetic=
+a,sans-serif"><SPAN style=3D"FONT-SIZE: 20px"><STRONG>=D0=A7=D1=82=D0=BE=
+ =D0=B4=D0=BB=D1=8F =D1=8D=D1=82=D0=BE=D0=B3=D0=BE =D0=BD=D1=83=D0=B6=D0=
+=BD=D0=BE?&nbsp;</STRONG>- =D0=B5=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=BC=
+=D0=BE=D0=B6=D0=B5=D1=82=D0=B5 =D0=BF=D0=BB=D0=B0=D0=BD=D0=B8=D1=80=D0=
+=BE=D0=B2=D0=B0=D1=82=D1=8C =D1=81=D0=B2=D0=BE=D0=B8 =D0=BE=D1=82=D0=B3=
+=D1=80=D1=83=D0=B7=D0=BA=D0=B8, =D0=B4=D0=B0=D0=B2=D0=B0=D1=8F =D0=BF=D1=
+=80=D0=B5=D0=B4=D0=B2=D0=B0=D1=80=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D1=
+=83=D1=8E <STRONG>=D0=B7=D0=B0=D1=8F=D0=B2=D0=BA=D1=83 =D0=B7=D0=B0 =D0=
+=BF=D1=8F=D1=82=D1=8C =D1=80=D0=B0=D0=B1=D0=BE=D1=87=D0=B8=D1=85 =D0=B4=
+=D0=BD=D0=B5=D0=B9</STRONG>, =D0=B4=D0=BB=D1=8F =D0=92=D0=B0=D1=81 =D0=
+=B4=D0=B5=D0=B9=D1=81=D1=82=D0=B2=D1=83=D0=B5=D1=82 =D1=81=D0=B8=D1=81=
+=D1=82=D0=B5=D0=BC=D0=B0 =D0=BD=D0=B0=D0=BA=D0=BE=D0=BF=D0=B8=D1=82=D0=
+=B5=D0=BB=D1=8C=D0=BD=D0=BE=D0=B9 =D1=81=D0=BA=D0=B8=D0=B4=D0=BA=D0=B8=
+, <STRONG>=D1=84=D0=BE=D1=80=D0=BC=D0=B0 =D0=B2=D0=BE=D0=B7=D0=B2=D1=80=
+=D0=B0=D1=82=D0=B0 =D0=BB=D1=8E=D0=B1=D0=B0=D1=8F</STRONG> - =D0=BB=D0=
+=B8=D0=B1=D0=BE =D0=B4=D0=B5=D0=BD=D1=8C=D0=B3=D0=B8 =D0=B2=D0=BE=D0=B7=
+=D0=B2=D1=80=D0=B0=D1=89=D0=B0=D1=8E=D1=82=D1=81=D1=8F, =D0=BB=D0=B8=D0=
+=B1=D0=BE =D0=92=D1=8B =D0=B8=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=D0=B7=D1=83=
+=D0=B5=D1=82=D0=B5 =D0=B8=D1=85 =D0=B2 =D1=81=D1=87=D0=B5=D1=82 =D0=B1=
+=D1=83=D0=B4=D1=83=D1=89=D0=B5=D0=B9 =D0=BF=D0=B5=D1=80=D0=B5=D0=B2=D0=
+=BE=D0=B7=D0=BA=D0=B8.<BR><BR>=D0=90 =D0=B5=D1=81=D0=BB=D0=B8 =D0=92=D0=
+=B0=D1=88=D0=B0 =D0=BF=D0=BE=D1=82=D1=80=D0=B5=D0=B1=D0=BD=D0=BE=D1=81=
+=D1=82=D1=8C =D1=81=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D0=BB=D1=8F=D0=B5=D1=
+=82 =D0=BF=D0=BE=D1=80=D1=8F=D0=B4=D0=BA=D0=B0 3-4 =D0=BF=D0=B5=D1=80=D0=
+=B5=D0=B2=D0=BE=D0=B7=D0=BE=D0=BA =D0=B2 =D0=BC=D0=B5=D1=81=D1=8F=D1=86=
+ - =D1=8D=D0=BA=D0=BE=D0=BD=D0=BE=D0=BC=D0=B8=D1=8F =D0=B2=D1=81=D0=B5=
+=D0=B3=D0=BE =D0=BB=D0=B8=D1=88=D1=8C =D0=B7=D0=B0 3 =D0=BC=D0=B5=D1=81=
+=D1=8F=D1=86=D0=B0 =D1=81=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D0=B8=D1=82 <S=
+PAN style=3D"FONT-SIZE: 22px"><STRONG>120 000 =D1=80=D1=83=D0=B1=D0=BB=
+=D0=B5=D0=B9</STRONG></SPAN> - =D0=BD=D0=B5 =D0=BF=D0=BB=D0=BE=D1=85=D0=
+=BE, =D0=BF=D1=80=D0=B0=D0=B2=D0=B4=D0=B0 =D0=BB=D0=B8?</SPAN></SPAN><=
+/SPAN><BR><BR><BR><BR><BR>
+<HR style=3D"FONT-SIZE: 13px; COLOR: rgb(99,99,99)">
+
+<P><BR><BR><FONT color=3D#000080><SPAN style=3D"FONT-SIZE: 22px"><B>=D0=
+=94=D0=9B=D0=AF =D0=92=D0=90=D0=A8=D0=95=D0=93=D0=9E =D0=94=D0=A3=D0=A8=
+=D0=95=D0=92=D0=9D=D0=9E=D0=93=D0=9E =D0=A0=D0=90=D0=92=D0=9D=D0=9E=D0=
+=92=D0=95=D0=A1=D0=98=D0=AF</B></SPAN></FONT><BR><BR><BR><FONT color=3D=
+#636363 size=3D2><IMG height=3D380 alt=3D"" src=3D"http://smartrespond=
+er.ru/user/files/717285/1536669835/__FS__=D0=9D=D0=B0=D1=88=D0=B8-=D0=BA=
+=D0=BB=D0=B8=D0=B5=D0=BD=D1=82=D1=8B.jpg" width=3D750></FONT><BR><BR><=
+BR><BR>&nbsp;</P>
+<HR>
+
+<P><BR><BR><SPAN style=3D"FONT-SIZE: 13px; COLOR: rgb(0,0,128)"><STRON=
+G><SPAN style=3D"FONT-SIZE: 22px">=D0=9E=D0=A2=D0=97=D0=AB=D0=92=D0=AB=
+ =D0=9D=D0=90=D0=A8=D0=98=D0=A5 =D0=9A=D0=9B=D0=98=D0=95=D0=9D=D0=A2=D0=
+=9E=D0=92&nbsp;</SPAN></STRONG></SPAN><BR><BR>&nbsp;</P>
+<TABLE style=3D"FONT-SIZE: 13px; COLOR: rgb(99,99,99)" cellSpacing=3D1=
+ cellPadding=3D1 border=3D0>
+<TBODY>
+<TR>
+<TD><IMG height=3D136 alt=3D"" src=3D"http://smartresponder.ru/user/fi=
+les/717372/1124347669/__FS__=D0=9D=D0=B0=D1=82=D0=B0=D0=BB=D1=8C=D1=8F=
+-=D0=9F=D0=BE=D1=81=D1=82=D0=B0=D0=BA.jpg" width=3D160></TD>
+<TD><SPAN style=3D"FONT-SIZE: 14px"><EM><SPAN style=3D"COLOR: #696969"=
+>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</SPAN><=
+A href=3D"http://etrstat.com/utr64.php?j=3DeyJ1IjoiRUQwM0UyMThEOTAyRUM=
+3MDFCMzAzREQ1N0Y4MjBEQzciLCJpIjoid3d3Lm9yaWdvdHJhZGluZy5ydSIsInIiOiJnI=
+iwidCI6ImtvaHhiUnlBeWFScnRQdGtIa29hSmFEYWd4c0V0eWdzdXREaHRKIiwibCI6Imh=
+0dHAlM0ElMkYlMkZtLnZrLmNvbSUyRmFyczA1MDQiLCJ2IjoiOC42Ni4wLjE1NCJ9&r=3D=
+0.910097503336146"><SPAN style=3D"COLOR: #696969">http://m.vk.com/ars0=
+504</SPAN></A></EM></SPAN></TD></TR></TBODY></TABLE><!-- /////////////=
+//////////// =D0=A1=D0=90=D0=9C =D0=94=D0=9E=D0=91=D0=90=D0=92=D0=98=D0=
+=9B \\\\\\\\\\\\\\\\\\\\\\\--></DIV>
+<DIV style=3D"PADDING-RIGHT: 12px; PADDING-LEFT: 12px; FONT-SIZE: 18px=
+; PADDING-BOTTOM: 5px; COLOR: rgb(0,0,0); PADDING-TOP: 4px; BACKGROUND=
+-COLOR: #dadada; TEXT-ALIGN: left">&nbsp;</DIV>
+<DIV style=3D"PADDING-RIGHT: 12px; PADDING-LEFT: 12px; FONT-SIZE: 18px=
+; PADDING-BOTTOM: 5px; COLOR: rgb(0,0,0); PADDING-TOP: 4px; BACKGROUND=
+-COLOR: rgb(218,218,218); TEXT-ALIGN: left">=D0=A1=D0=B0=D0=BC=D0=BE=D0=
+=B5 =D0=B3=D0=BB=D0=B0=D0=B2=D0=BD=D0=BE=D0=B5 =D1=87=D1=82=D0=BE =D0=BC=
+=D0=BD=D0=B5 =D0=BD=D1=80=D0=B0=D0=B2=D0=B8=D1=82=D1=81=D1=8F =D0=B2 =D1=
+=80=D0=B0=D0=B1=D0=BE=D1=82=D0=B5 =D1=81 =D0=BA=D0=BE=D0=BC=D0=BF=D0=B0=
+=D0=BD=D0=B8=D0=B5=D0=B9 =D0=9E=D0=A0=D0=98=D0=93=D0=9E =D0=A2=D0=A0=D0=
+=AD=D0=94=D0=98=D0=9D=D0=93 =D1=8D=D1=82=D0=BE =D1=82=D0=BE =D1=87=D1=82=
+=D0=BE =D0=BC=D0=B5=D0=BD=D0=B5=D0=B4=D0=B6=D0=B5=D1=80=D1=8B =D0=BA=D0=
+=BE=D0=BC=D0=BF=D0=B0=D0=BD=D0=B8=D0=B8 =D0=B2=D1=81=D0=B5=D0=B3=D0=B4=
+=D0=B0 =D0=BD=D0=B0 =D1=81=D0=B2=D1=8F=D0=B7=D0=B8! =D0=A3 =D0=BC=D0=B5=
+=D0=BD=D1=8F =D0=BD=D0=B5=D1=82 =D0=BF=D1=80=D0=BE=D0=B1=D0=BB=D0=B5=D0=
+=BC =D0=B4=D0=BE=D0=B7=D0=B2=D0=BE=D0=BD=D0=B8=D1=82=D1=8C=D1=81=D1=8F=
+ =D0=B4=D0=BE =D0=BC=D0=BE=D0=B5=D0=B3=D0=BE =D0=BC=D0=B5=D0=BD=D0=B5=D0=
+=B4=D0=B6=D0=B5=D1=80=D0=B0 =D0=B2 =D0=BB=D1=8E=D0=B1=D0=BE=D0=B5 =D0=B2=
+=D1=80=D0=B5=D0=BC=D1=8F =D1=81=D1=83=D1=82=D0=BE=D0=BA. <BR><BR>=D0=93=
+=D0=B8=D0=B1=D0=BA=D0=BE=D1=81=D1=82=D1=8C. =D0=AF =D1=83=D0=B2=D0=B5=D1=
+=80=D0=B5=D0=BD=D0=B0, =D1=87=D1=82=D0=BE =D0=B2=D1=81=D0=B5 =D0=B1=D1=
+=83=D0=B4=D0=B5=D1=82 =D1=81=D0=B4=D0=B5=D0=BB=D0=B0=D0=BD=D0=BE =D0=B2=
+ =D1=81=D0=BE=D0=BE=D1=82=D0=B2=D0=B5=D1=82=D1=81=D1=82=D0=B2=D0=B8=D0=
+=B8 =D1=81 =D0=BC=D0=BE=D0=B8=D0=BC=D0=B8 =D0=B7=D0=B0=D0=BF=D1=80=D0=BE=
+=D1=81=D0=B0=D0=BC=D0=B8 =D0=B8 =D0=BF=D0=BE=D0=B6=D0=B5=D0=BB=D0=B0=D0=
+=BD=D0=B8=D1=8F=D0=BC=D0=B8 =D0=B4=D0=B0=D0=B6=D0=B5 =D0=B5=D1=81=D0=BB=
+=D0=B8 =D0=BE=D0=BD=D0=B8 =D0=B8=D0=BD=D0=BE=D0=B3=D0=B4=D0=B0 =D0=BC=D0=
+=B5=D0=BD=D1=8F=D1=8E=D1=82=D1=81=D1=8F =D0=B2 =D1=85=D0=BE=D0=B4=D0=B5=
+ =D0=B4=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D0=BA=D0=B8.<BR>=D0=96=D0=B5=D0=BB=
+=D0=B0=D0=BD=D0=B8=D0=B5 =D0=BA=D0=BB=D0=B8=D0=B5=D0=BD=D1=82=D0=B0 - =
+=D0=B2=D1=81=D0=B5=D0=B3=D0=B4=D0=B0 =D0=B2 =D0=BF=D1=80=D0=B8=D0=BE=D1=
+=80=D0=B8=D1=82=D0=B5=D1=82=D0=B5 =D0=B4=D0=BB=D1=8F =D0=BA=D0=BE=D0=BC=
+=D0=BF=D0=B0=D0=BD=D0=B8=D0=B8, =D0=BD=D0=B0 =D0=BC=D0=BE=D0=B9 =D0=B2=
+=D0=B7=D0=B3=D0=BB=D1=8F=D0=B4.<BR><BR>=D0=A7=D0=B5=D1=81=D1=82=D0=BD=D0=
+=BE=D1=81=D1=82=D1=8C. =D0=9F=D1=80=D0=B8 =D1=84=D0=BE=D1=80=D1=81-=D0=
+=BC=D0=B0=D0=B6=D0=BE=D1=80=D0=BD=D1=8B=D1=85 =D0=BE=D0=B1=D1=81=D1=82=
+=D0=BE=D1=8F=D1=82=D0=B5=D0=BB=D1=8C=D1=81=D1=82=D0=B2=D0=B0=D1=85 =D1=
+=8F =D0=B2=D1=81=D0=B5=D0=B3=D0=B4=D0=B0 =D0=BF=D0=BE=D0=BB=D1=83=D1=87=
+=D0=B0=D1=8E =D0=BF=D1=80=D0=B0=D0=B2=D0=B4=D0=B8=D0=B2=D1=83=D1=8E =D0=
+=B8=D0=BD=D1=84=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BE =D1=82=
+=D0=B5=D0=BA=D1=83=D1=89=D0=B5=D0=B9 =D1=81=D0=B8=D1=82=D1=83=D0=B0=D1=
+=86=D0=B8=D0=B8.<BR>&nbsp;</DIV>
+<DIV><BR>
+<DIV style=3D"TEXT-ALIGN: right"><EM style=3D"COLOR: rgb(128,128,128);=
+ TEXT-ALIGN: right"><SPAN style=3D"FONT-SIZE: 14px">=D0=9D=D0=B0=D1=82=
+=D0=B0=D0=BB=D1=8C=D1=8F =D0=90=D1=80=D1=81=D1=8E=D1=85=D0=B8=D0=BD=D0=
+=B0,</SPAN></EM></DIV>
+<DIV style=3D"TEXT-ALIGN: right"><SPAN style=3D"COLOR: #808080"><EM><S=
+PAN style=3D"FONT-SIZE: 14px">=D0=BA=D0=BE=D0=BC=D0=BF=D0=B0=D0=BD=D0=B8=
+=D1=8F =C2=AB=D0=9F=D0=BE=D1=81=D1=82=D0=B0=D0=BA=C2=BB, =D0=B3. =D0=9A=
+=D0=B0=D0=BB=D1=83=D0=B3=D0=B0</SPAN></EM></SPAN></DIV><BR><BR><BR><BR=
+>
+<TABLE cellSpacing=3D1 cellPadding=3D1 border=3D0>
+<TBODY>
+<TR>
+<TD><IMG height=3D136 alt=3D"" src=3D"http://smartresponder.ru/user/fi=
+les/717387/242200498/__FS__=D0=95=D0=B2=D0=B3=D0=B5=D0=BD=D0=B8=D0=B9 =
+=D1=84=D1=80=D0=BE=D0=BB=D0=BE=D0=B2.jpg" width=3D136></TD>
+<TD>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nb=
+sp; &nbsp; &nbsp; &nbsp; &nbsp;<A href=3D"http://etrstat.com/utr64.php=
+?j=3DeyJ1IjoiRUQwM0UyMThEOTAyRUM3MDFCMzAzREQ1N0Y4MjBEQzciLCJpIjoid3d3L=
+m9yaWdvdHJhZGluZy5ydSIsInIiOiJnIiwidCI6ImtvaHhiUnlBeWFScnRQdGtIa29hSmF=
+EYWd4c0V0eWdzdXREaHRKIiwibCI6Imh0dHAlM0ElMkYlMkZ3d3cubGlua2VkaW4uY29tJ=
+TJGcHViJTJGJUQwJUI1JUQwJUIyJUQwJUIzJUQwJUI1JUQwJUJEJUQwJUI4JUQwJUI5LSV=
+EMSU4NCVEMSU4MCVEMCVCRSVEMCVCQiVEMCVCRSVEMCVCMiUyRjgyJTJGYTFiJTJGMzM5I=
+iwidiI6IjguNjYuMC4xNTQifQ=3D=3D&r=3D0.921399353537709"><SPAN style=3D"=
+COLOR: #696969"><EM><SPAN style=3D"FONT-SIZE: 14px">http://www.linkedi=
+n.com/pub/=D0=B5=D0=B2=D0=B3=D0=B5=D0=BD=D0=B8=D0=B9-=D1=84=D1=80=D0=BE=
+=D0=BB=D0=BE=D0=B2/82/a1b/339</SPAN></EM></SPAN></A></TD></TR></TBODY>=
+</TABLE>
+<DIV style=3D"PADDING-RIGHT: 12px; PADDING-LEFT: 12px; FONT-SIZE: 18px=
+; PADDING-BOTTOM: 5px; COLOR: rgb(0,0,0); PADDING-TOP: 4px; BACKGROUND=
+-COLOR: #dadada; TEXT-ALIGN: left">&nbsp;</DIV>
+<DIV style=3D"PADDING-RIGHT: 12px; PADDING-LEFT: 12px; FONT-SIZE: 18px=
+; PADDING-BOTTOM: 5px; COLOR: rgb(0,0,0); PADDING-TOP: 4px; BACKGROUND=
+-COLOR: rgb(218,218,218); TEXT-ALIGN: left">=D0=9F=D0=BE=D0=BA=D0=B0=D0=
+=B7=D0=B0=D1=82=D0=B5=D0=BB=D1=8F=D0=BC=D0=B8 =D0=BC=D0=BE=D0=B5=D0=B9=
+ =D1=80=D0=B0=D0=B1=D0=BE=D1=82=D1=8B =D1=81 =D1=82=D1=80=D0=B0=D0=BD=D1=
+=81=D0=BF=D0=BE=D1=80=D1=82=D0=BD=D0=BE=D0=B9 =D0=BA=D0=BE=D0=BC=D0=BF=
+=D0=B0=D0=BD=D0=B8=D0=B5=D0=B9 =D0=9E=D0=A0=D0=98=D0=93=D0=9E =D0=A2=D0=
+=A0=D0=AD=D0=94=D0=98=D0=9D=D0=93, =D0=B2 =D0=BF=D0=BE=D1=80=D1=8F=D0=B4=
+=D0=BA=D0=B5 =D1=83=D0=BC=D0=B5=D0=BD=D1=8C=D1=88=D0=B5=D0=BD=D0=B8=D1=
+=8F =D0=BF=D1=80=D0=B8=D0=BE=D1=80=D0=B8=D1=82=D0=B5=D1=82=D0=B0, =D1=8F=
+=D0=B2=D0=BB=D1=8F=D1=8E=D1=82=D1=81=D1=8F:<BR>
+<DIV>
+<UL>
+<LI>=D0=9A=D0=BE=D0=BD=D0=BA=D1=83=D1=80=D0=B5=D0=BD=D1=82=D0=BD=D0=BE=
+-=D1=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BD=D0=B0=D1=8F =D1=81=D1=82=D0=
+=B0=D0=B2=D0=BA=D0=B0, =D0=BB=D0=BE=D1=8F=D0=BB=D1=8C=D0=BD=D0=BE=D1=81=
+=D1=82=D1=8C; </LI></UL>
+<UL>
+<LI>=D0=A1=D1=80=D0=BE=D0=BA =D0=B4=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D0=BA=
+=D0=B8 =D0=91=D0=B5=D0=BB=D1=8C=D0=B3=D0=B8=D1=8F - =D0=A2=D0=B2=D0=B5=
+=D1=80=D1=8C - 5,5 =D1=82=D1=80=D0=B0=D0=BD=D0=B7=D0=B8=D1=82=D0=BD=D1=
+=8B=D1=85 =D1=81=D1=83=D1=82=D0=BE=D0=BA; </LI></UL></DIV>
+<DIV>
+<UL>
+<LI>=D0=92=D0=BE=D0=B7=D0=BC=D0=BE=D0=B6=D0=BD=D0=BE=D1=81=D1=82=D1=8C=
+ =D1=81=D1=80=D0=BE=D1=87=D0=BD=D0=BE=D0=B3=D0=BE =D0=B7=D0=B0=D0=BA=D0=
+=B0=D0=B7=D0=B0 =D0=BC=D0=B0=D1=88=D0=B8=D0=BD=D1=8B =D0=B7=D0=B0 =D0=B4=
+=D0=B5=D0=BD=D1=8C =D0=B8 =D0=B4=D0=B2=D0=B0; </LI></UL>
+<UL>
+<LI>=D0=95=D0=B6=D0=B5=D0=B4=D0=BD=D0=B5=D0=B2=D0=BD=D0=BE=D0=B5 =D0=BF=
+=D0=BE=D0=BD=D0=B8=D0=BC=D0=B0=D0=BD=D0=B8=D0=B5 =D0=BC=D0=B5=D1=81=D1=
+=82=D0=BE=D0=BD=D0=B0=D1=85=D0=BE=D0=B6=D0=B4=D0=B5=D0=BD=D0=B8=D1=8F =
+=D0=BC=D0=B0=D1=88=D0=B8=D0=BD=D1=8B; </LI></UL>
+<UL>
+<LI>=D0=A1=D0=B2=D0=BE=D0=B5=D0=B2=D1=80=D0=B5=D0=BC=D0=B5=D0=BD=D0=BD=
+=D0=BE=D0=B5 =D0=BF=D1=80=D0=B5=D0=B4=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D0=
+=BB=D0=B5=D0=BD=D0=B8=D0=B5 =D0=B4=D0=BE=D0=BA=D1=83=D0=BC=D0=B5=D0=BD=
+=D1=82=D0=BE=D0=B2: =D0=A1=D0=9C=D0=A0, =D1=81=D1=87=D0=B5=D1=82=D0=B0=
+ =D0=B7=D0=B0 =D0=A2=D0=AD=D0=A3, =D0=B0=D0=BA=D1=82=D0=B0 =D0=B2=D1=8B=
+=D0=BF=D0=BE=D0=BB=D0=BD=D0=B5=D0=BD=D0=BD=D1=8B=D1=85 =D1=80=D0=B0=D0=
+=B1=D0=BE=D1=82. </LI></UL></DIV></DIV>
+<DIV style=3D"TEXT-ALIGN: right"><BR><EM><SPAN style=3D"COLOR: #808080=
+"><SPAN style=3D"FONT-SIZE: 14px">=D0=95=D0=B2=D0=B3=D0=B5=D0=BD=D0=B8=
+=D0=B9 =D0=A4=D1=80=D0=BE=D0=BB=D0=BE=D0=B2,<BR>=D0=BA=D0=BE=D0=BC=D0=BF=
+=D0=B0=D0=BD=D0=B8=D1=8F =C2=AB=D0=92=D0=B5=D1=80=D0=B3=D0=BE=D0=BA=D0=
+=B0=D0=BD=C2=BB, =D0=B3. =D0=A2=D0=B2=D0=B5=D1=80=D1=8C</SPAN></SPAN><=
+/EM></DIV>
+<DIV><BR>
+<P><BR><BR><BR><BR><BR><BR>&nbsp;</P>
+<P style=3D"TEXT-ALIGN: center"><A href=3D"http://etrstat.com/utr64.ph=
+p?j=3DeyJ1IjoiRUQwM0UyMThEOTAyRUM3MDFCMzAzREQ1N0Y4MjBEQzciLCJpIjoid3d3=
+Lm9yaWdvdHJhZGluZy5ydSIsInIiOiJnIiwidCI6ImtvaHhiUnlBeWFScnRQdGtIa29hSm=
+FEYWd4c0V0eWdzdXREaHRKIiwibCI6Imh0dHAlM0ElMkYlMkZvcmlnb3RyYWRpbmcucnUl=
+MkZodG1sJTJGb3JkZXIuaHRtbCIsInYiOiI4LjY2LjAuMTU0In0=3D&r=3D0.970719092=
+292711"><IMG height=3D62 alt=3D"" src=3D"http://smartresponder.ru/user=
+/files/717468/1208320531/__FS__1_0041_Button.png" width=3D300></A></P>=
+
+<P><BR><BR><BR><BR><BR><BR>&nbsp;</P></DIV>
+<DIV style=3D"TEXT-ALIGN: center"><SPAN style=3D"COLOR: rgb(0,0,0)">=D0=
+=9E=D0=9E=D0=9E "=D0=A0=D1=83=D1=81=D1=81=D0=BD=D0=B0=D0=B1=D0=B0=D0=B2=
+=D1=82=D0=BE=D0=B1=D1=80=D0=BE=D0=BA=D0=B5=D1=80"</SPAN></DIV>
+<HR>
+
+<DIV style=3D"TEXT-ALIGN: center"><SPAN style=3D"FONT-SIZE: 12px; COLO=
+R: rgb(34,34,34)">=D0=B3. =D0=A1=D0=BC=D0=BE=D0=BB=D0=B5=D0=BD=D1=81=D0=
+=BA, =D0=A0=D0=BE=D1=81=D0=BB=D0=B0=D0=B2=D0=BB=D1=8C=D1=81=D0=BA=D0=BE=
+=D0=B5 =D1=88=D0=BE=D1=81=D1=81=D0=B5 7 =D0=BA=D0=BC, =D1=82=D0=B5=D1=80=
+=2E =D0=90=D0=A2=D0=9F 2, &nbsp; +7 499 638 38 96</SPAN><BR>&nbsp;</DI=
+V></DIV></DIV>
+<DIV id=3Dsocial_buttons1 style=3D"DISPLAY: inline-block; FLOAT: right=
+; TEXT-ALIGN: center"><A href=3D"http://etrstat.com/utr64.php?j=3DeyJ1=
+IjoiRUQwM0UyMThEOTAyRUM3MDFCMzAzREQ1N0Y4MjBEQzciLCJpIjoid3d3Lm9yaWdvdH=
+JhZGluZy5ydSIsInIiOiJnIiwidCI6ImtvaHhiUnlBeWFScnRQdGtIa29hSmFEYWd4c0V0=
+eWdzdXREaHRKIiwibCI6Imh0dHBzJTNBJTJGJTJGd3d3LmZhY2Vib29rLmNvbSUyRm9yaW=
+dvLnRyYWRpbmclM0ZyZWYlM0R0bl90bm1uIiwidiI6IjguNjYuMC4xNTQifQ=3D=3D&r=3D=
+0.858372177928686" target=3D_blank><IMG src=3D"https://smartresponder.=
+ru/files/html_templates/mail_8/images/facebook.png"></A><A style=3D"MA=
+RGIN-LEFT: 6px" href=3D"http://etrstat.com/utr64.php?j=3DeyJ1IjoiRUQwM=
+0UyMThEOTAyRUM3MDFCMzAzREQ1N0Y4MjBEQzciLCJpIjoid3d3Lm9yaWdvdHJhZGluZy5=
+ydSIsInIiOiJnIiwidCI6ImtvaHhiUnlBeWFScnRQdGtIa29hSmFEYWd4c0V0eWdzdXREa=
+HRKIiwibCI6Imh0dHAlM0ElMkYlMkZ2ay5jb20lMkZjbHViNTY2MjMxMzciLCJ2IjoiOC4=
+2Ni4wLjE1NCJ9&r=3D0.136919331038371" target=3D_blank><IMG style=3D"MAR=
+GIN-TOP: 4px; VERTICAL-ALIGN: top" src=3D"https://smartresponder.ru/fi=
+les/html_templates/mail_8/images/vk.png"></A></DIV></DIV></DIV><BR>
+<P><FONT face=3DTahoma>=D0=A1 =D1=83=D0=B2=D0=B0=D0=B6=D0=B5=D0=BD=D0=B8=
+=D0=B5=D0=BC,<BR>=D0=94=D0=BC=D0=B8=D1=82=D1=80=D0=B8=D0=B9 =D0=90=D0=BD=
+=D1=82=D0=BE=D0=BD=D0=BE=D0=B2<BR>17.06.2014, 13:52:11</FONT></P>
+<P align=3Dleft><A id=3DlinkUnsub href=3D"mailto:unsubscribe.origo@gma=
+il.com?subject=3DUnsubscribe"><FONT face=3DTahoma color=3D#0000ff size=
+=3D1>=D0=9E=D1=82=D0=BF=D0=B8=D1=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=
+=D1=82 =D1=80=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8</FONT></A></P>=
+<!-- Yandex.Metrika counter -->
+<SCRIPT src=3D"//www.google-analytics.com/analytics.js" async=3D"1"></=
+SCRIPT>
+
+<SCRIPT src=3D"http://mc.yandex.ru/metrika/watch.js" type=3Dtext/javas=
+cript async=3D"true"></SCRIPT>
+
+<SCRIPT type=3Dtext/javascript>
+(function (d, w, c)     (w[c] =3D w[c] )(document, window, "yandex_met=
+rika_callbacks");
+</SCRIPT>
+
+<SCRIPT>
+  (function(i,s,o,g,r,a,m)  m=3Ds.getElementsByTagName(o)[0];a.async=3D=
+1;a.src=3Dg;m.parentNode.insertBefore(a,m))(window,document,'script','=
+//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-46034075-1', 'origotrading.ru');
+  ga('send', 'pageview');
+
+</SCRIPT>
+<img src=3D"http://etrstat.com/utr64.php?j=3DeyJ1IjoiRUQwM0UyMThEOTAyR=
+UM3MDFCMzAzREQ1N0Y4MjBEQzciLCJpIjoid3d3Lm9yaWdvdHJhZGluZy5ydSIsInIiOiJ=
+vIiwidCI6ImtvaHhiUnlBeWFScnRQdGtIa29hSmFEYWd4c0V0eWdzdXREaHRKIiwidiI6I=
+jguNjYuMC4xNTQifQ=3D=3D&r=3D0.156112549360842.gif" width=3D2 height=3D=
+1></BODY></HTML>
+
+
+--kR3j2SAClaOacLaXv46setaPYpJ8v=_qqN--
+
+
+
+--===============5515929637663108376==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 HPCC Systems Open Source Big Data Platform from LexisNexis Risk Solutions
@@ -504,3 +573,15 @@ Find What Matters Most in Your Big Data with HPCC Systems
 Open Source. Fast. Scalable. Simple. Ideal for Dirty Data.
 Leverages Graph Analysis for Fast Processing & Easy Data Exploration
 http://p.sf.net/sfu/hpccsystems
+--===============5515929637663108376==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============5515929637663108376==--
