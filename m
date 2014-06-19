@@ -1,21 +1,24 @@
-From: Brian Chadwick <brianchad@westnet.com.au>
-Subject: SELinux context not working
-Date: Thu, 19 Jun 2014 20:32:43 +1000
-Message-ID: <53A2BC4B.9040203@westnet.com.au>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: SELinux context not working
+Date: Thu, 19 Jun 2014 04:27:33 -0700
+Message-ID: <20140619112733.GA18343@jmac.lan>
+References: <53A2BC4B.9040203@westnet.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <brianchad@westnet.com.au>) id 1WxZeI-00078a-Kr
+	(envelope-from <jaegeuk@kernel.org>) id 1WxaVK-0000Xu-10
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Jun 2014 10:32:54 +0000
-Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.224])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WxZeG-0000k9-KD for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Jun 2014 10:32:54 +0000
+	Thu, 19 Jun 2014 11:27:42 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WxaVI-0002nZ-8h for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 19 Jun 2014 11:27:42 +0000
+Content-Disposition: inline
+In-Reply-To: <53A2BC4B.9040203@westnet.com.au>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,42 +28,41 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Brian Chadwick <brianchad@westnet.com.au>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi
-
-I cant get file contexts to work with F2FS. I have tried a variety of =
-
-kernels up to the latest 3.16rc1 with the Security Labels option =
-
-selected in the config. I am using the latest git of f2fs-tools.
-
-But when I try to set a security context I get the following:
-
-chcon: failed to change context of =91/mnt/f2fs/sig=92 to =
-
-=91system_u:--reference=3D/home/brian/sig:unlabeled_t:s0=92: Operation not =
-
-supported
-
-cp -a also seems unable to set the correct context.
-
-Is there a bug or am I missing something?
-
-mount details are:
-
-/dev/sda6 on /mnt/f2fs type f2fs =
-
-(rw,relatime,background_gc=3Don,user_xattr,acl,active_logs=3D6)
-
-Kind regards
-
-Brian Chadwick
-
----------------------------------------------------------------------------=
----
-HPCC Systems Open Source Big Data Platform from LexisNexis Risk Solutions
-Find What Matters Most in Your Big Data with HPCC Systems
-Open Source. Fast. Scalable. Simple. Ideal for Dirty Data.
-Leverages Graph Analysis for Fast Processing & Easy Data Exploration
-http://p.sf.net/sfu/hpccsystems
+SGksCgpPbiBUaHUsIEp1biAxOSwgMjAxNCBhdCAwODozMjo0M1BNICsxMDAwLCBCcmlhbiBDaGFk
+d2ljayB3cm90ZToKPiBIaQo+IAo+IEkgY2FudCBnZXQgZmlsZSBjb250ZXh0cyB0byB3b3JrIHdp
+dGggRjJGUy4gSSBoYXZlIHRyaWVkIGEgdmFyaWV0eSBvZiAKPiBrZXJuZWxzIHVwIHRvIHRoZSBs
+YXRlc3QgMy4xNnJjMSB3aXRoIHRoZSBTZWN1cml0eSBMYWJlbHMgb3B0aW9uIAo+IHNlbGVjdGVk
+IGluIHRoZSBjb25maWcuIEkgYW0gdXNpbmcgdGhlIGxhdGVzdCBnaXQgb2YgZjJmcy10b29scy4K
+PiAKPiBCdXQgd2hlbiBJIHRyeSB0byBzZXQgYSBzZWN1cml0eSBjb250ZXh0IEkgZ2V0IHRoZSBm
+b2xsb3dpbmc6Cj4gCj4gY2hjb246IGZhaWxlZCB0byBjaGFuZ2UgY29udGV4dCBvZiDigJgvbW50
+L2YyZnMvc2ln4oCZIHRvIAo+IOKAmHN5c3RlbV91Oi0tcmVmZXJlbmNlPS9ob21lL2JyaWFuL3Np
+Zzp1bmxhYmVsZWRfdDpzMOKAmTogT3BlcmF0aW9uIG5vdCAKPiBzdXBwb3J0ZWQKPiAKPiBjcCAt
+YSBhbHNvIHNlZW1zIHVuYWJsZSB0byBzZXQgdGhlIGNvcnJlY3QgY29udGV4dC4KPiAKPiBJcyB0
+aGVyZSBhIGJ1ZyBvciBhbSBJIG1pc3Npbmcgc29tZXRoaW5nPwo+IAo+IG1vdW50IGRldGFpbHMg
+YXJlOgo+IAo+IC9kZXYvc2RhNiBvbiAvbW50L2YyZnMgdHlwZSBmMmZzIAo+IChydyxyZWxhdGlt
+ZSxiYWNrZ3JvdW5kX2djPW9uLHVzZXJfeGF0dHIsYWNsLGFjdGl2ZV9sb2dzPTYpCgpJTU8sIHlv
+dSBtaXNzZWQgLW8gc2VjbGFiZWwuCgpUaGFua3MsCgo+IAo+IEtpbmQgcmVnYXJkcwo+IAo+IEJy
+aWFuIENoYWR3aWNrCj4gCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gSFBDQyBTeXN0ZW1zIE9w
+ZW4gU291cmNlIEJpZyBEYXRhIFBsYXRmb3JtIGZyb20gTGV4aXNOZXhpcyBSaXNrIFNvbHV0aW9u
+cwo+IEZpbmQgV2hhdCBNYXR0ZXJzIE1vc3QgaW4gWW91ciBCaWcgRGF0YSB3aXRoIEhQQ0MgU3lz
+dGVtcwo+IE9wZW4gU291cmNlLiBGYXN0LiBTY2FsYWJsZS4gU2ltcGxlLiBJZGVhbCBmb3IgRGly
+dHkgRGF0YS4KPiBMZXZlcmFnZXMgR3JhcGggQW5hbHlzaXMgZm9yIEZhc3QgUHJvY2Vzc2luZyAm
+IEVhc3kgRGF0YSBFeHBsb3JhdGlvbgo+IGh0dHA6Ly9wLnNmLm5ldC9zZnUvaHBjY3N5c3RlbXMK
+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4
+LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
+b3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9s
+aW51eC1mMmZzLWRldmVsCgotLSAKSmFlZ2V1ayBLaW0KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpI
+UENDIFN5c3RlbXMgT3BlbiBTb3VyY2UgQmlnIERhdGEgUGxhdGZvcm0gZnJvbSBMZXhpc05leGlz
+IFJpc2sgU29sdXRpb25zCkZpbmQgV2hhdCBNYXR0ZXJzIE1vc3QgaW4gWW91ciBCaWcgRGF0YSB3
+aXRoIEhQQ0MgU3lzdGVtcwpPcGVuIFNvdXJjZS4gRmFzdC4gU2NhbGFibGUuIFNpbXBsZS4gSWRl
+YWwgZm9yIERpcnR5IERhdGEuCkxldmVyYWdlcyBHcmFwaCBBbmFseXNpcyBmb3IgRmFzdCBQcm9j
+ZXNzaW5nICYgRWFzeSBEYXRhIEV4cGxvcmF0aW9uCmh0dHA6Ly9wLnNmLm5ldC9zZnUvaHBjY3N5
+c3RlbXMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGlu
+dXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
+b3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGlu
+dXgtZjJmcy1kZXZlbAo=
