@@ -1,27 +1,31 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: SELinux context not working
-Date: Thu, 19 Jun 2014 23:21:22 -0700
-Message-ID: <20140620062122.GA20968@jmac.lan>
-References: <53A2BC4B.9040203@westnet.com.au> <20140619112733.GA18343@jmac.lan>
-	<53A2D41E.1080807@westnet.com.au> <20140619153319.GA19292@jmac.lan>
-	<53A3879A.8030104@westnet.com.au> <20140620050044.GA20622@jmac.lan>
-	<53A3C385.8070902@westnet.com.au>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH v2 RESEND] f2fs: refactor flush_nat_entries codes
+ for reducing NAT writes
+Date: Fri, 20 Jun 2014 17:41:58 +0800
+Message-ID: <003a01cf8c6b$ff39a170$fdace450$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1WxsCa-0002Uq-Bu
+	(envelope-from <chao2.yu@samsung.com>) id 1WxvLh-0007ix-8J
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Jun 2014 06:21:32 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1WxsCX-0006kr-TR for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 20 Jun 2014 06:21:31 +0000
-Content-Disposition: inline
-In-Reply-To: <53A3C385.8070902@westnet.com.au>
+	Fri, 20 Jun 2014 09:43:09 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1WxvLe-0004r2-HU
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 Jun 2014 09:43:09 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N7G00A9TOBMY890@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 Jun 2014 18:42:58 +0900 (KST)
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,69 +35,455 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Brian Chadwick <brianchad@westnet.com.au>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-T24gRnJpLCBKdW4gMjAsIDIwMTQgYXQgMDM6MTU6NDlQTSArMTAwMCwgQnJpYW4gQ2hhZHdpY2sg
-d3JvdGU6Cj4gT24gMjAvMDYvMTQgMTU6MDAsIEphZWdldWsgS2ltIHdyb3RlOgo+ID5IaSwKPiA+
-Cj4gPk9uIEZyaSwgSnVuIDIwLCAyMDE0IGF0IDExOjAwOjEwQU0gKzEwMDAsIEJyaWFuIENoYWR3
-aWNrIHdyb3RlOgo+ID4+T24gMjAvMDYvMTQgMDE6MzMsIEphZWdldWsgS2ltIHdyb3RlOgo+ID4+
-PkhpLAo+ID4+Pgo+ID4+Pk9uIFRodSwgSnVuIDE5LCAyMDE0IGF0IDEwOjE0OjIyUE0gKzEwMDAs
-IEJyaWFuIENoYWR3aWNrIHdyb3RlOgo+ID4+Pj5IaSBhZ2Fpbgo+ID4+Pj4KPiA+Pj4+SSB0cmll
-ZCBtb3VudGluZyB3aXRoIHNlY2xhYmVsIHNwZWNpZmljYWxseSBzdGF0ZWQsIGkuZS46Cj4gPj4+
-Pgo+ID4+Pj5tb3VudCAtdCBmMmZzIC1vCj4gPj4+PnJ3LHJlbGF0aW1lLGJhY2tncm91bmRfZ2M9
-b24sc2VjbGFiZWwsdXNlcl94YXR0cixhY2wsYWN0aXZlX2xvZ3M9Ngo+ID4+Pj4KPiA+Pj4+VGhl
-IGRyaXZlIG1vdW50cyBzdWNjZXNzZnVsbHkgYnV0IHNlY2xhYmVsIGlzIG5vdCBsaXN0ZWQgYXMg
-YSBtb3VudAo+ID4+Pj5vcHRpb24gd2hlbiBJICB1c2UgdGhlIG1vdW50IGNvbW1hbmQgdG8gbGlz
-dCBtb3VudGVkIGRldmljZXMgYW5kCj4gPj4+Pm9uY2UgYWdhaW4gZmlsZSBjb250ZXh0cyBkb24n
-dCB3b3JrLgo+ID4+Pj4KPiA+Pj4+SSBhbSB1c2luZyB0aGUgbGF0ZXN0IHV0aWwtbGludXggLi4g
-aWUgMi4yNC4yCj4gPj4+Pgo+ID4+Pj5BbnkgY2x1ZXM/Cj4gPj4+SWYgc28sIEkgc3VzcGVjdCB5
-b3VyIHNlcG9saWN5Lgo+ID4+PkNvdWxkIHlvdSBnaXZlIG1lIHRoZSBmb2xsb3dpbmcgcmVzdWx0
-cz8KPiA+Pj4KPiA+Pj4jIGRtZXNnIHwgZ3JlcCBTRUxpbnV4Cj4gPj4+Cj4gPj4+VGhhbmtzLAo+
-ID4+dGhlIHBlcnRpbmVudCByZXN1bHQgaXM6Cj4gPj4KPiA+PlsxMjE5Mi45NzIyNzFdIFNFTGlu
-dXg6IGluaXRpYWxpemVkIChkZXYgc2RhNiwgdHlwZSBmMmZzKSwgbm90Cj4gPj5jb25maWd1cmVk
-IGZvciBsYWJlbGluZwo+ID4+Cj4gPj5XaGF0IGRvIEkgbmVlZCB0byBhZGQgdG8gU0VMaW51eD8K
-PiA+SnVzdCBmb3Igc3VyZSwgeW91IG5lZWQgdG8gY2hlY2sgdGhlIEpQJ3MgcmVmZXJlbmNlLgo+
-ID4KPiA+VGhhbmtzLAo+IAo+IFdoYXQgaXMgdGhlIEpQJ3MgcmVmZXJlbmNlPwoKQXMgSlAgcmVw
-bGllZCB0byB5b3UsIHRoZSBsaW5rIHdhcwoKICBodHRwczovL2FuZHJvaWQtcmV2aWV3Lmdvb2ds
-ZXNvdXJjZS5jb20vIy9jLzk2NTkzLwoKVGhhbmtzLAoKPiAKPiBUaGFua3MKPiAKPiA+Cj4gPj4K
-PiA+Pj4+VGhhbmtzCj4gPj4+Pgo+ID4+Pj5Ccmlhbgo+ID4+Pj4KPiA+Pj4+T24gMTkvMDYvMTQg
-MjE6MjcsIEphZWdldWsgS2ltIHdyb3RlOgo+ID4+Pj4+SGksCj4gPj4+Pj4KPiA+Pj4+Pk9uIFRo
-dSwgSnVuIDE5LCAyMDE0IGF0IDA4OjMyOjQzUE0gKzEwMDAsIEJyaWFuIENoYWR3aWNrIHdyb3Rl
-Ogo+ID4+Pj4+PkhpCj4gPj4+Pj4+Cj4gPj4+Pj4+SSBjYW50IGdldCBmaWxlIGNvbnRleHRzIHRv
-IHdvcmsgd2l0aCBGMkZTLiBJIGhhdmUgdHJpZWQgYSB2YXJpZXR5IG9mCj4gPj4+Pj4+a2VybmVs
-cyB1cCB0byB0aGUgbGF0ZXN0IDMuMTZyYzEgd2l0aCB0aGUgU2VjdXJpdHkgTGFiZWxzIG9wdGlv
-bgo+ID4+Pj4+PnNlbGVjdGVkIGluIHRoZSBjb25maWcuIEkgYW0gdXNpbmcgdGhlIGxhdGVzdCBn
-aXQgb2YgZjJmcy10b29scy4KPiA+Pj4+Pj4KPiA+Pj4+Pj5CdXQgd2hlbiBJIHRyeSB0byBzZXQg
-YSBzZWN1cml0eSBjb250ZXh0IEkgZ2V0IHRoZSBmb2xsb3dpbmc6Cj4gPj4+Pj4+Cj4gPj4+Pj4+
-Y2hjb246IGZhaWxlZCB0byBjaGFuZ2UgY29udGV4dCBvZiDigJgvbW50L2YyZnMvc2ln4oCZIHRv
-Cj4gPj4+Pj4+4oCYc3lzdGVtX3U6LS1yZWZlcmVuY2U9L2hvbWUvYnJpYW4vc2lnOnVubGFiZWxl
-ZF90OnMw4oCZOiBPcGVyYXRpb24gbm90Cj4gPj4+Pj4+c3VwcG9ydGVkCj4gPj4+Pj4+Cj4gPj4+
-Pj4+Y3AgLWEgYWxzbyBzZWVtcyB1bmFibGUgdG8gc2V0IHRoZSBjb3JyZWN0IGNvbnRleHQuCj4g
-Pj4+Pj4+Cj4gPj4+Pj4+SXMgdGhlcmUgYSBidWcgb3IgYW0gSSBtaXNzaW5nIHNvbWV0aGluZz8K
-PiA+Pj4+Pj4KPiA+Pj4+Pj5tb3VudCBkZXRhaWxzIGFyZToKPiA+Pj4+Pj4KPiA+Pj4+Pj4vZGV2
-L3NkYTYgb24gL21udC9mMmZzIHR5cGUgZjJmcwo+ID4+Pj4+PihydyxyZWxhdGltZSxiYWNrZ3Jv
-dW5kX2djPW9uLHVzZXJfeGF0dHIsYWNsLGFjdGl2ZV9sb2dzPTYpCj4gPj4+Pj5JTU8sIHlvdSBt
-aXNzZWQgLW8gc2VjbGFiZWwuCj4gPj4+Pj4KPiA+Pj4+PlRoYW5rcywKPiA+Pj4+Pgo+ID4+Pj4+
-PktpbmQgcmVnYXJkcwo+ID4+Pj4+Pgo+ID4+Pj4+PkJyaWFuIENoYWR3aWNrCj4gPj4+Pj4+Cj4g
-Pj4+Pj4+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPj4+Pj4+SFBDQyBTeXN0ZW1zIE9wZW4gU291
-cmNlIEJpZyBEYXRhIFBsYXRmb3JtIGZyb20gTGV4aXNOZXhpcyBSaXNrIFNvbHV0aW9ucwo+ID4+
-Pj4+PkZpbmQgV2hhdCBNYXR0ZXJzIE1vc3QgaW4gWW91ciBCaWcgRGF0YSB3aXRoIEhQQ0MgU3lz
-dGVtcwo+ID4+Pj4+Pk9wZW4gU291cmNlLiBGYXN0LiBTY2FsYWJsZS4gU2ltcGxlLiBJZGVhbCBm
-b3IgRGlydHkgRGF0YS4KPiA+Pj4+Pj5MZXZlcmFnZXMgR3JhcGggQW5hbHlzaXMgZm9yIEZhc3Qg
-UHJvY2Vzc2luZyAmIEVhc3kgRGF0YSBFeHBsb3JhdGlvbgo+ID4+Pj4+Pmh0dHA6Ly9wLnNmLm5l
-dC9zZnUvaHBjY3N5c3RlbXMKPiA+Pj4+Pj5fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwo+ID4+Pj4+PkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4g
-Pj4+Pj4+TGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiA+Pj4+Pj5odHRw
-czovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVs
-CgotLSAKSmFlZ2V1ayBLaW0KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpIUENDIFN5c3RlbXMgT3Bl
-biBTb3VyY2UgQmlnIERhdGEgUGxhdGZvcm0gZnJvbSBMZXhpc05leGlzIFJpc2sgU29sdXRpb25z
-CkZpbmQgV2hhdCBNYXR0ZXJzIE1vc3QgaW4gWW91ciBCaWcgRGF0YSB3aXRoIEhQQ0MgU3lzdGVt
-cwpPcGVuIFNvdXJjZS4gRmFzdC4gU2NhbGFibGUuIFNpbXBsZS4gSWRlYWwgZm9yIERpcnR5IERh
-dGEuCkxldmVyYWdlcyBHcmFwaCBBbmFseXNpcyBmb3IgRmFzdCBQcm9jZXNzaW5nICYgRWFzeSBE
-YXRhIEV4cGxvcmF0aW9uCmh0dHA6Ly9wLnNmLm5ldC9zZnUvaHBjY3N5c3RlbXMKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBt
-YWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Although building NAT journal in cursum reduce the read/write work for NAT
+block, but previous design leave us lower performance when write checkpoint
+frequently for these cases:
+1. if journal in cursum has already full, it's a bit of waste that we flush all
+   nat entries to page for persistence, but not to cache any entries.
+2. if journal in cursum is not full, we fill nat entries to journal util
+   journal is full, then flush the left dirty entries to disk without merge
+   journaled entries, so these journaled entries may be flushed to disk at next
+   checkpoint but lost chance to flushed last time.
+
+In this patch we merge dirty entries located in same NAT block to nat entry set,
+and linked all set to list, sorted ascending order by entries' count of set.
+Later we flush entries in sparse set into journal as many as we can, and then
+flush merged entries to disk. In this way we can not only gain in performance,
+but also save lifetime of flash device.
+
+In my testing environment, it shows this patch can help to reduce NAT block
+writes obviously. In hard disk test case: cost time of fsstress is stablely
+reduced by about 5%.
+
+1. virtual machine + hard disk:
+fsstress -p 20 -n 200 -l 5
+		node num	cp count	nodes/cp
+based		4599.6		1803.0		2.551
+patched		2714.6		1829.6		1.483
+
+2. virtual machine + 32g micro SD card:
+fsstress -p 20 -n 200 -l 1 -w -f chown=0 -f creat=4 -f dwrite=0
+-f fdatasync=4 -f fsync=4 -f link=0 -f mkdir=4 -f mknod=4 -f rename=5
+-f rmdir=5 -f symlink=0 -f truncate=4 -f unlink=5 -f write=0 -S
+
+		node num	cp count	nodes/cp
+based		84.5		43.7		1.933
+patched		49.2		40.0		1.23
+
+Our latency of merging op shows not bad when handling extreme case like:
+merging a great number of dirty nats:
+latency(ns)	dirty nat count
+3089219		24922
+5129423		27422
+4000250		24523
+
+change log from v1:
+ o fix wrong logic in add_nat_entry when grab a new nat entry set.
+ o swith to create slab cache in create_node_manager_caches.
+ o use GFP_ATOMIC instead of GFP_NOFS to avoid potential long latency.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/f2fs.h |    2 +
+ fs/f2fs/node.c |  261 ++++++++++++++++++++++++++++++++++++++------------------
+ fs/f2fs/node.h |    7 ++
+ 3 files changed, 185 insertions(+), 85 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 58df97e..a55f67d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -256,6 +256,8 @@ struct f2fs_nm_info {
+ 	unsigned int nat_cnt;		/* the # of cached nat entries */
+ 	struct list_head nat_entries;	/* cached nat entry list (clean) */
+ 	struct list_head dirty_nat_entries; /* cached nat entry list (dirty) */
++	struct list_head nat_entry_set;	/* nat entry set list */
++	unsigned int dirty_nat_cnt;	/* total num of nat entries in set */
+ 
+ 	/* free node ids management */
+ 	struct radix_tree_root free_nid_root;/* root of the free_nid cache */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 9dfb9a0..86bde75 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -25,6 +25,7 @@
+ 
+ static struct kmem_cache *nat_entry_slab;
+ static struct kmem_cache *free_nid_slab;
++static struct kmem_cache *nat_entry_set_slab;
+ 
+ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
+ {
+@@ -88,12 +89,8 @@ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+ 
+ 	/* get current nat block page with lock */
+ 	src_page = get_meta_page(sbi, src_off);
+-
+-	/* Dirty src_page means that it is already the new target NAT page. */
+-	if (PageDirty(src_page))
+-		return src_page;
+-
+ 	dst_page = grab_meta_page(sbi, dst_off);
++	f2fs_bug_on(PageDirty(src_page));
+ 
+ 	src_addr = page_address(src_page);
+ 	dst_addr = page_address(dst_page);
+@@ -1742,7 +1739,90 @@ skip:
+ 	return err;
+ }
+ 
+-static bool flush_nats_in_journal(struct f2fs_sb_info *sbi)
++static struct nat_entry_set *grab_nat_entry_set(void)
++{
++	struct nat_entry_set *nes =
++			f2fs_kmem_cache_alloc(nat_entry_set_slab, GFP_ATOMIC);
++
++	nes->entry_cnt = 0;
++	INIT_LIST_HEAD(&nes->set_list);
++	INIT_LIST_HEAD(&nes->entry_list);
++	return nes;
++}
++
++static void release_nat_entry_set(struct nat_entry_set *nes,
++						struct f2fs_nm_info *nm_i)
++{
++	f2fs_bug_on(!list_empty(&nes->entry_list));
++
++	nm_i->dirty_nat_cnt -= nes->entry_cnt;
++	list_del(&nes->set_list);
++	kmem_cache_free(nat_entry_set_slab, nes);
++}
++
++static void adjust_nat_entry_set(struct nat_entry_set *nes,
++						struct list_head *head)
++{
++	struct nat_entry_set *next = nes;
++
++	if (list_is_last(&nes->set_list, head))
++		return;
++
++	list_for_each_entry_continue(next, head, set_list)
++		if (nes->entry_cnt <= next->entry_cnt)
++			break;
++
++	list_move_tail(&nes->set_list, &next->set_list);
++}
++
++static void add_nat_entry(struct nat_entry *ne, struct list_head *head)
++{
++	struct nat_entry_set *nes;
++	nid_t start_nid = START_NID(ne->ni.nid);
++
++	list_for_each_entry(nes, head, set_list) {
++		if (nes->start_nid == start_nid) {
++			list_move_tail(&ne->list, &nes->entry_list);
++			nes->entry_cnt++;
++			adjust_nat_entry_set(nes, head);
++			return;
++		}
++	}
++
++	nes = grab_nat_entry_set();
++
++	nes->start_nid = start_nid;
++	list_move_tail(&ne->list, &nes->entry_list);
++	nes->entry_cnt++;
++	list_add(&nes->set_list, head);
++}
++
++static void merge_nats_in_set(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_nm_info *nm_i = NM_I(sbi);
++	struct list_head *dirty_list = &nm_i->dirty_nat_entries;
++	struct list_head *set_list = &nm_i->nat_entry_set;
++	struct nat_entry *ne, *tmp;
++
++	write_lock(&nm_i->nat_tree_lock);
++	list_for_each_entry_safe(ne, tmp, dirty_list, list) {
++		if (nat_get_blkaddr(ne) == NEW_ADDR)
++			continue;
++		add_nat_entry(ne, set_list);
++		nm_i->dirty_nat_cnt++;
++	}
++	write_unlock(&nm_i->nat_tree_lock);
++}
++
++static bool __has_cursum_space(struct f2fs_summary_block *sum, int size)
++{
++	if (nats_in_cursum(sum) + size <= NAT_JOURNAL_ENTRIES)
++		return true;
++	else
++		return false;
++}
++
++static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+@@ -1750,12 +1830,6 @@ static bool flush_nats_in_journal(struct f2fs_sb_info *sbi)
+ 	int i;
+ 
+ 	mutex_lock(&curseg->curseg_mutex);
+-
+-	if (nats_in_cursum(sum) < NAT_JOURNAL_ENTRIES) {
+-		mutex_unlock(&curseg->curseg_mutex);
+-		return false;
+-	}
+-
+ 	for (i = 0; i < nats_in_cursum(sum); i++) {
+ 		struct nat_entry *ne;
+ 		struct f2fs_nat_entry raw_ne;
+@@ -1765,23 +1839,21 @@ static bool flush_nats_in_journal(struct f2fs_sb_info *sbi)
+ retry:
+ 		write_lock(&nm_i->nat_tree_lock);
+ 		ne = __lookup_nat_cache(nm_i, nid);
+-		if (ne) {
+-			__set_nat_cache_dirty(nm_i, ne);
+-			write_unlock(&nm_i->nat_tree_lock);
+-			continue;
+-		}
++		if (ne)
++			goto found;
++
+ 		ne = grab_nat_entry(nm_i, nid);
+ 		if (!ne) {
+ 			write_unlock(&nm_i->nat_tree_lock);
+ 			goto retry;
+ 		}
+ 		node_info_from_raw_nat(&ne->ni, &raw_ne);
++found:
+ 		__set_nat_cache_dirty(nm_i, ne);
+ 		write_unlock(&nm_i->nat_tree_lock);
+ 	}
+ 	update_nats_in_cursum(sum, -i);
+ 	mutex_unlock(&curseg->curseg_mutex);
+-	return true;
+ }
+ 
+ /*
+@@ -1792,80 +1864,87 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+ 	struct f2fs_summary_block *sum = curseg->sum_blk;
+-	struct nat_entry *ne, *cur;
+-	struct page *page = NULL;
+-	struct f2fs_nat_block *nat_blk = NULL;
+-	nid_t start_nid = 0, end_nid = 0;
+-	bool flushed;
+-
+-	flushed = flush_nats_in_journal(sbi);
+-
+-	if (!flushed)
+-		mutex_lock(&curseg->curseg_mutex);
+-
+-	/* 1) flush dirty nat caches */
+-	list_for_each_entry_safe(ne, cur, &nm_i->dirty_nat_entries, list) {
+-		nid_t nid;
+-		struct f2fs_nat_entry raw_ne;
+-		int offset = -1;
+-
+-		if (nat_get_blkaddr(ne) == NEW_ADDR)
+-			continue;
++	struct nat_entry_set *nes, *tmp;
++	struct list_head *head = &nm_i->nat_entry_set;
++	bool to_journal = true;
+ 
+-		nid = nat_get_nid(ne);
++	/* merge nat entries of dirty list to nat entry set temporarily */
++	merge_nats_in_set(sbi);
+ 
+-		if (flushed)
+-			goto to_nat_page;
++	if (!__has_cursum_space(sum, nm_i->dirty_nat_cnt)) {
++		/*
++		 * if there are no enough space in journal to store dirty nat
++		 * entries, remove all entries from journal and merge them
++		 * into nat entry set.
++		 */
++		remove_nats_in_journal(sbi);
++		merge_nats_in_set(sbi);
++	}
+ 
+-		/* if there is room for nat enries in curseg->sumpage */
+-		offset = lookup_journal_in_cursum(sum, NAT_JOURNAL, nid, 1);
+-		if (offset >= 0) {
+-			raw_ne = nat_in_journal(sum, offset);
+-			goto flush_now;
+-		}
+-to_nat_page:
+-		if (!page || (start_nid > nid || nid > end_nid)) {
+-			if (page) {
+-				f2fs_put_page(page, 1);
+-				page = NULL;
+-			}
+-			start_nid = START_NID(nid);
+-			end_nid = start_nid + NAT_ENTRY_PER_BLOCK - 1;
++	if (!nm_i->dirty_nat_cnt)
++		return;
+ 
+-			/*
+-			 * get nat block with dirty flag, increased reference
+-			 * count, mapped and lock
+-			 */
++	/*
++	 * there are two steps to flush nat entries:
++	 * #1, flush nat entries to journal in current hot data summary block.
++	 * #2, flush nat entries to nat page.
++	 */
++	list_for_each_entry_safe(nes, tmp, head, set_list) {
++		struct f2fs_nat_block *nat_blk;
++		struct nat_entry *ne, *cur;
++		struct page *page;
++		nid_t start_nid = nes->start_nid;
++
++		if (to_journal && !__has_cursum_space(sum, nes->entry_cnt))
++			to_journal = false;
++
++		if (to_journal) {
++			mutex_lock(&curseg->curseg_mutex);
++		} else {
+ 			page = get_next_nat_page(sbi, start_nid);
+ 			nat_blk = page_address(page);
++			f2fs_bug_on(!nat_blk);
+ 		}
+ 
+-		f2fs_bug_on(!nat_blk);
+-		raw_ne = nat_blk->entries[nid - start_nid];
+-flush_now:
+-		raw_nat_from_node_info(&raw_ne, &ne->ni);
+-
+-		if (offset < 0) {
+-			nat_blk->entries[nid - start_nid] = raw_ne;
+-		} else {
+-			nat_in_journal(sum, offset) = raw_ne;
+-			nid_in_journal(sum, offset) = cpu_to_le32(nid);
+-		}
++		/* flush dirty nats in nat entry set */
++		list_for_each_entry_safe(ne, cur, &nes->entry_list, list) {
++			struct f2fs_nat_entry *raw_ne;
++			nid_t nid = nat_get_nid(ne);
++			int offset;
++
++			if (to_journal) {
++				offset = lookup_journal_in_cursum(sum,
++							NAT_JOURNAL, nid, 1);
++				f2fs_bug_on(offset < 0);
++				raw_ne = &nat_in_journal(sum, offset);
++				nid_in_journal(sum, offset) = cpu_to_le32(nid);
++			} else {
++				raw_ne = &nat_blk->entries[nid - start_nid];
++			}
++			raw_nat_from_node_info(raw_ne, &ne->ni);
+ 
+-		if (nat_get_blkaddr(ne) == NULL_ADDR &&
++			if (nat_get_blkaddr(ne) == NULL_ADDR &&
+ 				add_free_nid(sbi, nid, false) <= 0) {
+-			write_lock(&nm_i->nat_tree_lock);
+-			__del_from_nat_cache(nm_i, ne);
+-			write_unlock(&nm_i->nat_tree_lock);
+-		} else {
+-			write_lock(&nm_i->nat_tree_lock);
+-			__clear_nat_cache_dirty(nm_i, ne);
+-			write_unlock(&nm_i->nat_tree_lock);
++				write_lock(&nm_i->nat_tree_lock);
++				__del_from_nat_cache(nm_i, ne);
++				write_unlock(&nm_i->nat_tree_lock);
++			} else {
++				write_lock(&nm_i->nat_tree_lock);
++				__clear_nat_cache_dirty(nm_i, ne);
++				write_unlock(&nm_i->nat_tree_lock);
++			}
+ 		}
++
++		if (to_journal)
++			mutex_unlock(&curseg->curseg_mutex);
++		else
++			f2fs_put_page(page, 1);
++
++		release_nat_entry_set(nes, nm_i);
+ 	}
+-	if (!flushed)
+-		mutex_unlock(&curseg->curseg_mutex);
+-	f2fs_put_page(page, 1);
++
++	f2fs_bug_on(!list_empty(head));
++	f2fs_bug_on(nm_i->dirty_nat_cnt);
+ }
+ 
+ static int init_node_manager(struct f2fs_sb_info *sbi)
+@@ -1894,6 +1973,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+ 	INIT_RADIX_TREE(&nm_i->nat_root, GFP_ATOMIC);
+ 	INIT_LIST_HEAD(&nm_i->nat_entries);
+ 	INIT_LIST_HEAD(&nm_i->dirty_nat_entries);
++	INIT_LIST_HEAD(&nm_i->nat_entry_set);
+ 
+ 	mutex_init(&nm_i->build_lock);
+ 	spin_lock_init(&nm_i->free_nid_list_lock);
+@@ -1974,19 +2054,30 @@ int __init create_node_manager_caches(void)
+ 	nat_entry_slab = f2fs_kmem_cache_create("nat_entry",
+ 			sizeof(struct nat_entry));
+ 	if (!nat_entry_slab)
+-		return -ENOMEM;
++		goto fail;
+ 
+ 	free_nid_slab = f2fs_kmem_cache_create("free_nid",
+ 			sizeof(struct free_nid));
+-	if (!free_nid_slab) {
+-		kmem_cache_destroy(nat_entry_slab);
+-		return -ENOMEM;
+-	}
++	if (!free_nid_slab)
++		goto destory_nat_entry;
++
++	nat_entry_set_slab = f2fs_kmem_cache_create("nat_entry_set",
++			sizeof(struct nat_entry_set));
++	if (!nat_entry_set_slab)
++		goto destory_free_nid;
+ 	return 0;
++
++destory_free_nid:
++	kmem_cache_destroy(free_nid_slab);
++destory_nat_entry:
++	kmem_cache_destroy(nat_entry_slab);
++fail:
++	return -ENOMEM;
+ }
+ 
+ void destroy_node_manager_caches(void)
+ {
++	kmem_cache_destroy(nat_entry_set_slab);
+ 	kmem_cache_destroy(free_nid_slab);
+ 	kmem_cache_destroy(nat_entry_slab);
+ }
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 7281112..8a116a4 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -89,6 +89,13 @@ enum mem_type {
+ 	DIRTY_DENTS	/* indicates dirty dentry pages */
+ };
+ 
++struct nat_entry_set {
++	struct list_head set_list;	/* link with all nat sets */
++	struct list_head entry_list;	/* link with dirty nat entries */
++	nid_t start_nid;		/* start nid of nats in set */
++	unsigned int entry_cnt;		/* the # of nat entries in set */
++};
++
+ /*
+  * For free nid mangement
+  */
+-- 
+1.7.9.5
+
+
+
+------------------------------------------------------------------------------
+HPCC Systems Open Source Big Data Platform from LexisNexis Risk Solutions
+Find What Matters Most in Your Big Data with HPCC Systems
+Open Source. Fast. Scalable. Simple. Ideal for Dirty Data.
+Leverages Graph Analysis for Fast Processing & Easy Data Exploration
+http://p.sf.net/sfu/hpccsystems
