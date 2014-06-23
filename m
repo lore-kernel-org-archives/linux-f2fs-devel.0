@@ -1,166 +1,257 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2 v2] f2fs: introduce f2fs_do_tmpfile for code
- consistency
-Date: Tue, 24 Jun 2014 06:18:45 +0900
-Message-ID: <20140623211845.GA2707@jmac.local>
-References: <1403485976-29398-1-git-send-email-jaegeuk@kernel.org>
- <000401cf8e91$2b93c3a0$82bb4ae0$@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH v2 RESEND] f2fs: refactor flush_nat_entries
+ codes for reducing NAT writes
+Date: Tue, 24 Jun 2014 06:40:53 +0900
+Message-ID: <20140623214053.GA3088@jmac.local>
+References: <003a01cf8c6b$ff39a170$fdace450$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <000401cf8e91$2b93c3a0$82bb4ae0$@samsung.com>
+In-Reply-To: <003a01cf8c6b$ff39a170$fdace450$@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Changman Lee <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Change log from v1:
- o avoid mark_inode_dirty(dir), suggested by Chao Yu
+Hi Chao,
 
->From f28528b0d835d7f2168e9a729016f68350be0308 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri, 20 Jun 2014 21:37:02 -0700
-Subject: [PATCH v2] f2fs: introduce f2fs_do_tmpfile for code consistency
+Thank you for the patch. :)
+Just one minor suggestion.
 
-This patch adds f2fs_do_tmpfile to eliminate the redundant init_inode_metadata
-flow.
-Throught this, we can provide the consistent lock usage, e.g., fi->i_sem,  and
-this will enable better debugging stuffs.
+[snip]
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/dir.c   | 27 ++++++++++++++++++++++++---
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/namei.c | 30 ++++++++----------------------
- 3 files changed, 33 insertions(+), 25 deletions(-)
+>  /*
+> @@ -1792,80 +1864,87 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+>  	struct f2fs_summary_block *sum = curseg->sum_blk;
+> -	struct nat_entry *ne, *cur;
+> -	struct page *page = NULL;
+> -	struct f2fs_nat_block *nat_blk = NULL;
+> -	nid_t start_nid = 0, end_nid = 0;
+> -	bool flushed;
+> -
+> -	flushed = flush_nats_in_journal(sbi);
+> -
+> -	if (!flushed)
+> -		mutex_lock(&curseg->curseg_mutex);
+> -
+> -	/* 1) flush dirty nat caches */
+> -	list_for_each_entry_safe(ne, cur, &nm_i->dirty_nat_entries, list) {
+> -		nid_t nid;
+> -		struct f2fs_nat_entry raw_ne;
+> -		int offset = -1;
+> -
+> -		if (nat_get_blkaddr(ne) == NEW_ADDR)
+> -			continue;
+> +	struct nat_entry_set *nes, *tmp;
+> +	struct list_head *head = &nm_i->nat_entry_set;
+> +	bool to_journal = true;
+>  
+> -		nid = nat_get_nid(ne);
+> +	/* merge nat entries of dirty list to nat entry set temporarily */
+> +	merge_nats_in_set(sbi);
+>  
+> -		if (flushed)
+> -			goto to_nat_page;
+> +	if (!__has_cursum_space(sum, nm_i->dirty_nat_cnt)) {
+> +		/*
+> +		 * if there are no enough space in journal to store dirty nat
+> +		 * entries, remove all entries from journal and merge them
+> +		 * into nat entry set.
+> +		 */
+> +		remove_nats_in_journal(sbi);
+> +		merge_nats_in_set(sbi);
+> +	}
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 09760d5..0ac9e2e92 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -337,8 +337,7 @@ static struct page *init_inode_metadata(struct inode *inode,
- 	struct page *page;
- 	int err;
- 
--	if (is_inode_flag_set(F2FS_I(inode), FI_NEW_INODE) &&
--			inode->i_nlink) {
-+	if (is_inode_flag_set(F2FS_I(inode), FI_NEW_INODE)) {
- 		page = new_inode_page(inode, name);
- 		if (IS_ERR(page))
- 			return page;
-@@ -364,7 +363,8 @@ static struct page *init_inode_metadata(struct inode *inode,
- 		set_cold_node(inode, page);
- 	}
- 
--	init_dent_inode(name, page);
-+	if (name)
-+		init_dent_inode(name, page);
- 
- 	/*
- 	 * This file should be checkpointed during fsync.
-@@ -537,6 +537,27 @@ fail:
- 	return err;
- }
- 
-+int f2fs_do_tmpfile(struct inode *inode, struct inode *dir)
-+{
-+	struct page *page;
-+	int err = 0;
-+
-+	down_write(&F2FS_I(inode)->i_sem);
-+	page = init_inode_metadata(inode, dir, NULL);
-+	if (IS_ERR(page)) {
-+		err = PTR_ERR(page);
-+		goto fail;
-+	}
-+	/* we don't need to mark_inode_dirty now */
-+	update_inode(inode, page);
-+	f2fs_put_page(page, 1);
-+
-+	clear_inode_flag(F2FS_I(inode), FI_NEW_INODE);
-+fail:
-+	up_write(&F2FS_I(inode)->i_sem);
-+	return err;
-+}
-+
- /*
-  * It only removes the dentry from the dentry page,corresponding name
-  * entry in name page does not need to be touched during deletion.
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 58df97e..ca421a8 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1136,6 +1136,7 @@ void f2fs_set_link(struct inode *, struct f2fs_dir_entry *,
- int update_dent_inode(struct inode *, const struct qstr *);
- int __f2fs_add_link(struct inode *, const struct qstr *, struct inode *);
- void f2fs_delete_entry(struct f2fs_dir_entry *, struct page *, struct inode *);
-+int f2fs_do_tmpfile(struct inode *, struct inode *);
- int f2fs_make_empty(struct inode *, struct inode *);
- bool f2fs_empty_dir(struct inode *);
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 0d55517..9de4ab3 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -494,7 +494,6 @@ static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	struct super_block *sb = dir->i_sb;
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	struct inode *inode;
--	struct page *page;
- 	int err;
- 
- 	inode = f2fs_new_inode(dir, mode);
-@@ -509,38 +508,25 @@ static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	err = acquire_orphan_inode(sbi);
- 	if (err)
- 		goto out;
-+
-+	err = f2fs_do_tmpfile(inode, dir);
-+	if (err)
-+		goto release_out;
-+
- 	/*
- 	 * add this non-linked tmpfile to orphan list, in this way we could
- 	 * remove all unused data of tmpfile after abnormal power-off.
- 	 */
- 	add_orphan_inode(sbi, inode->i_ino);
--
--	page = new_inode_page(inode, NULL);
--	if (IS_ERR(page)) {
--		err = PTR_ERR(page);
--		goto remove_out;
--	}
--
--	err = f2fs_init_acl(inode, dir, page);
--	if (err)
--		goto unlock_out;
--
--	err = f2fs_init_security(inode, dir, NULL, page);
--	if (err)
--		goto unlock_out;
--
--	f2fs_put_page(page, 1);
- 	f2fs_unlock_op(sbi);
- 
- 	alloc_nid_done(sbi, inode->i_ino);
--	mark_inode_dirty(inode);
- 	d_tmpfile(dentry, inode);
- 	unlock_new_inode(inode);
- 	return 0;
--unlock_out:
--	f2fs_put_page(page, 1);
--remove_out:
--	remove_orphan_inode(sbi, inode->i_ino);
-+
-+release_out:
-+	release_orphan_inode(sbi);
- out:
- 	f2fs_unlock_op(sbi);
- 	clear_nlink(inode);
--- 
-1.8.5.2 (Apple Git-48)
+How about this?
 
+	/*
+	 * if there are no enough space in journal to store dirty nat
+	 * entries, remove all entries from journal and merge them
+	 * into nat entry set.
+	 */
+	if (!__has_cursum_space(sum, nm_i->dirty_nat_cnt))
+		remove_nats_in_journal(sbi);
+		
+	/* merge nat entries of dirty list to nat entry set temporarily */
+	merge_nats_in_set(sbi);
+
+Thanks,
+
+>  
+> -		/* if there is room for nat enries in curseg->sumpage */
+> -		offset = lookup_journal_in_cursum(sum, NAT_JOURNAL, nid, 1);
+> -		if (offset >= 0) {
+> -			raw_ne = nat_in_journal(sum, offset);
+> -			goto flush_now;
+> -		}
+> -to_nat_page:
+> -		if (!page || (start_nid > nid || nid > end_nid)) {
+> -			if (page) {
+> -				f2fs_put_page(page, 1);
+> -				page = NULL;
+> -			}
+> -			start_nid = START_NID(nid);
+> -			end_nid = start_nid + NAT_ENTRY_PER_BLOCK - 1;
+> +	if (!nm_i->dirty_nat_cnt)
+> +		return;
+>  
+> -			/*
+> -			 * get nat block with dirty flag, increased reference
+> -			 * count, mapped and lock
+> -			 */
+> +	/*
+> +	 * there are two steps to flush nat entries:
+> +	 * #1, flush nat entries to journal in current hot data summary block.
+> +	 * #2, flush nat entries to nat page.
+> +	 */
+> +	list_for_each_entry_safe(nes, tmp, head, set_list) {
+> +		struct f2fs_nat_block *nat_blk;
+> +		struct nat_entry *ne, *cur;
+> +		struct page *page;
+> +		nid_t start_nid = nes->start_nid;
+> +
+> +		if (to_journal && !__has_cursum_space(sum, nes->entry_cnt))
+> +			to_journal = false;
+> +
+> +		if (to_journal) {
+> +			mutex_lock(&curseg->curseg_mutex);
+> +		} else {
+>  			page = get_next_nat_page(sbi, start_nid);
+>  			nat_blk = page_address(page);
+> +			f2fs_bug_on(!nat_blk);
+>  		}
+>  
+> -		f2fs_bug_on(!nat_blk);
+> -		raw_ne = nat_blk->entries[nid - start_nid];
+> -flush_now:
+> -		raw_nat_from_node_info(&raw_ne, &ne->ni);
+> -
+> -		if (offset < 0) {
+> -			nat_blk->entries[nid - start_nid] = raw_ne;
+> -		} else {
+> -			nat_in_journal(sum, offset) = raw_ne;
+> -			nid_in_journal(sum, offset) = cpu_to_le32(nid);
+> -		}
+> +		/* flush dirty nats in nat entry set */
+> +		list_for_each_entry_safe(ne, cur, &nes->entry_list, list) {
+> +			struct f2fs_nat_entry *raw_ne;
+> +			nid_t nid = nat_get_nid(ne);
+> +			int offset;
+> +
+> +			if (to_journal) {
+> +				offset = lookup_journal_in_cursum(sum,
+> +							NAT_JOURNAL, nid, 1);
+> +				f2fs_bug_on(offset < 0);
+> +				raw_ne = &nat_in_journal(sum, offset);
+> +				nid_in_journal(sum, offset) = cpu_to_le32(nid);
+> +			} else {
+> +				raw_ne = &nat_blk->entries[nid - start_nid];
+> +			}
+> +			raw_nat_from_node_info(raw_ne, &ne->ni);
+>  
+> -		if (nat_get_blkaddr(ne) == NULL_ADDR &&
+> +			if (nat_get_blkaddr(ne) == NULL_ADDR &&
+>  				add_free_nid(sbi, nid, false) <= 0) {
+> -			write_lock(&nm_i->nat_tree_lock);
+> -			__del_from_nat_cache(nm_i, ne);
+> -			write_unlock(&nm_i->nat_tree_lock);
+> -		} else {
+> -			write_lock(&nm_i->nat_tree_lock);
+> -			__clear_nat_cache_dirty(nm_i, ne);
+> -			write_unlock(&nm_i->nat_tree_lock);
+> +				write_lock(&nm_i->nat_tree_lock);
+> +				__del_from_nat_cache(nm_i, ne);
+> +				write_unlock(&nm_i->nat_tree_lock);
+> +			} else {
+> +				write_lock(&nm_i->nat_tree_lock);
+> +				__clear_nat_cache_dirty(nm_i, ne);
+> +				write_unlock(&nm_i->nat_tree_lock);
+> +			}
+>  		}
+> +
+> +		if (to_journal)
+> +			mutex_unlock(&curseg->curseg_mutex);
+> +		else
+> +			f2fs_put_page(page, 1);
+> +
+> +		release_nat_entry_set(nes, nm_i);
+>  	}
+> -	if (!flushed)
+> -		mutex_unlock(&curseg->curseg_mutex);
+> -	f2fs_put_page(page, 1);
+> +
+> +	f2fs_bug_on(!list_empty(head));
+> +	f2fs_bug_on(nm_i->dirty_nat_cnt);
+>  }
+>  
+>  static int init_node_manager(struct f2fs_sb_info *sbi)
+> @@ -1894,6 +1973,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+>  	INIT_RADIX_TREE(&nm_i->nat_root, GFP_ATOMIC);
+>  	INIT_LIST_HEAD(&nm_i->nat_entries);
+>  	INIT_LIST_HEAD(&nm_i->dirty_nat_entries);
+> +	INIT_LIST_HEAD(&nm_i->nat_entry_set);
+>  
+>  	mutex_init(&nm_i->build_lock);
+>  	spin_lock_init(&nm_i->free_nid_list_lock);
+> @@ -1974,19 +2054,30 @@ int __init create_node_manager_caches(void)
+>  	nat_entry_slab = f2fs_kmem_cache_create("nat_entry",
+>  			sizeof(struct nat_entry));
+>  	if (!nat_entry_slab)
+> -		return -ENOMEM;
+> +		goto fail;
+>  
+>  	free_nid_slab = f2fs_kmem_cache_create("free_nid",
+>  			sizeof(struct free_nid));
+> -	if (!free_nid_slab) {
+> -		kmem_cache_destroy(nat_entry_slab);
+> -		return -ENOMEM;
+> -	}
+> +	if (!free_nid_slab)
+> +		goto destory_nat_entry;
+> +
+> +	nat_entry_set_slab = f2fs_kmem_cache_create("nat_entry_set",
+> +			sizeof(struct nat_entry_set));
+> +	if (!nat_entry_set_slab)
+> +		goto destory_free_nid;
+>  	return 0;
+> +
+> +destory_free_nid:
+> +	kmem_cache_destroy(free_nid_slab);
+> +destory_nat_entry:
+> +	kmem_cache_destroy(nat_entry_slab);
+> +fail:
+> +	return -ENOMEM;
+>  }
+>  
+>  void destroy_node_manager_caches(void)
+>  {
+> +	kmem_cache_destroy(nat_entry_set_slab);
+>  	kmem_cache_destroy(free_nid_slab);
+>  	kmem_cache_destroy(nat_entry_slab);
+>  }
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index 7281112..8a116a4 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -89,6 +89,13 @@ enum mem_type {
+>  	DIRTY_DENTS	/* indicates dirty dentry pages */
+>  };
+>  
+> +struct nat_entry_set {
+> +	struct list_head set_list;	/* link with all nat sets */
+> +	struct list_head entry_list;	/* link with dirty nat entries */
+> +	nid_t start_nid;		/* start nid of nats in set */
+> +	unsigned int entry_cnt;		/* the # of nat entries in set */
+> +};
+> +
+>  /*
+>   * For free nid mangement
+>   */
+> -- 
+> 1.7.9.5
 
 -- 
 Jaegeuk Kim
