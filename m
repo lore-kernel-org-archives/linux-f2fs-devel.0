@@ -1,112 +1,148 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: SELinux context not working
-Date: Sun, 22 Jun 2014 20:20:14 +0900
-Message-ID: <20140622112014.GA25549@jmac.local>
-References: <53A2BC4B.9040203@westnet.com.au> <20140619112733.GA18343@jmac.lan>
-	<53A2D41E.1080807@westnet.com.au> <20140619153319.GA19292@jmac.lan>
-	<53A3879A.8030104@westnet.com.au> <20140620050044.GA20622@jmac.lan>
-	<53A3C385.8070902@westnet.com.au> <20140620062122.GA20968@jmac.lan>
-	<53A42E13.6080309@westnet.com.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Wyfp0-0004eJ-33
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 22 Jun 2014 11:20:30 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Wyfow-0003TM-GY for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 22 Jun 2014 11:20:29 +0000
-Content-Disposition: inline
-In-Reply-To: <53A42E13.6080309@westnet.com.au>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Brian Chadwick <brianchad@westnet.com.au>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH 1/2] f2fs: introduce f2fs_do_tmpfile for code consistency
+Date: Mon, 23 Jun 2014 10:12:55 +0900
+Message-ID: <1403485976-29398-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao2.yu@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgpPbiBGcmksIEp1biAyMCwgMjAxNCBhdCAxMDo1MDoyN1BNICsxMDAwLCBCcmlhbiBDaGFk
-d2ljayB3cm90ZToKPiBPbiAyMC8wNi8xNCAxNjoyMSwgSmFlZ2V1ayBLaW0gd3JvdGU6Cj4gPk9u
-IEZyaSwgSnVuIDIwLCAyMDE0IGF0IDAzOjE1OjQ5UE0gKzEwMDAsIEJyaWFuIENoYWR3aWNrIHdy
-b3RlOgo+ID4+T24gMjAvMDYvMTQgMTU6MDAsIEphZWdldWsgS2ltIHdyb3RlOgo+ID4+PkhpLAo+
-ID4+Pgo+ID4+Pk9uIEZyaSwgSnVuIDIwLCAyMDE0IGF0IDExOjAwOjEwQU0gKzEwMDAsIEJyaWFu
-IENoYWR3aWNrIHdyb3RlOgo+ID4+Pj5PbiAyMC8wNi8xNCAwMTozMywgSmFlZ2V1ayBLaW0gd3Jv
-dGU6Cj4gPj4+Pj5IaSwKPiA+Pj4+Pgo+ID4+Pj4+T24gVGh1LCBKdW4gMTksIDIwMTQgYXQgMTA6
-MTQ6MjJQTSArMTAwMCwgQnJpYW4gQ2hhZHdpY2sgd3JvdGU6Cj4gPj4+Pj4+SGkgYWdhaW4KPiA+
-Pj4+Pj4KPiA+Pj4+Pj5JIHRyaWVkIG1vdW50aW5nIHdpdGggc2VjbGFiZWwgc3BlY2lmaWNhbGx5
-IHN0YXRlZCwgaS5lLjoKPiA+Pj4+Pj4KPiA+Pj4+Pj5tb3VudCAtdCBmMmZzIC1vCj4gPj4+Pj4+
-cncscmVsYXRpbWUsYmFja2dyb3VuZF9nYz1vbixzZWNsYWJlbCx1c2VyX3hhdHRyLGFjbCxhY3Rp
-dmVfbG9ncz02Cj4gPj4+Pj4+Cj4gPj4+Pj4+VGhlIGRyaXZlIG1vdW50cyBzdWNjZXNzZnVsbHkg
-YnV0IHNlY2xhYmVsIGlzIG5vdCBsaXN0ZWQgYXMgYSBtb3VudAo+ID4+Pj4+Pm9wdGlvbiB3aGVu
-IEkgIHVzZSB0aGUgbW91bnQgY29tbWFuZCB0byBsaXN0IG1vdW50ZWQgZGV2aWNlcyBhbmQKPiA+
-Pj4+Pj5vbmNlIGFnYWluIGZpbGUgY29udGV4dHMgZG9uJ3Qgd29yay4KPiA+Pj4+Pj4KPiA+Pj4+
-Pj5JIGFtIHVzaW5nIHRoZSBsYXRlc3QgdXRpbC1saW51eCAuLiBpZSAyLjI0LjIKPiA+Pj4+Pj4K
-PiA+Pj4+Pj5BbnkgY2x1ZXM/Cj4gPj4+Pj5JZiBzbywgSSBzdXNwZWN0IHlvdXIgc2Vwb2xpY3ku
-Cj4gPj4+Pj5Db3VsZCB5b3UgZ2l2ZSBtZSB0aGUgZm9sbG93aW5nIHJlc3VsdHM/Cj4gPj4+Pj4K
-PiA+Pj4+PiMgZG1lc2cgfCBncmVwIFNFTGludXgKPiA+Pj4+Pgo+ID4+Pj4+VGhhbmtzLAo+ID4+
-Pj50aGUgcGVydGluZW50IHJlc3VsdCBpczoKPiA+Pj4+Cj4gPj4+PlsxMjE5Mi45NzIyNzFdIFNF
-TGludXg6IGluaXRpYWxpemVkIChkZXYgc2RhNiwgdHlwZSBmMmZzKSwgbm90Cj4gPj4+PmNvbmZp
-Z3VyZWQgZm9yIGxhYmVsaW5nCj4gPj4+Pgo+ID4+Pj5XaGF0IGRvIEkgbmVlZCB0byBhZGQgdG8g
-U0VMaW51eD8KPiA+Pj5KdXN0IGZvciBzdXJlLCB5b3UgbmVlZCB0byBjaGVjayB0aGUgSlAncyBy
-ZWZlcmVuY2UuCj4gPj4+Cj4gPj4+VGhhbmtzLAo+ID4+V2hhdCBpcyB0aGUgSlAncyByZWZlcmVu
-Y2U/Cj4gPkFzIEpQIHJlcGxpZWQgdG8geW91LCB0aGUgbGluayB3YXMKPiA+Cj4gPiAgIGh0dHBz
-Oi8vYW5kcm9pZC1yZXZpZXcuZ29vZ2xlc291cmNlLmNvbS8jL2MvOTY1OTMvCj4gdGhhdCBsaW5r
-IG1lbnRpb25zICJvY29udGV4dCIgLi4uIGkgaGF2ZSBubyBpZGVhIHdoYXQgdGhhdCBpcyAuLiBp
-Cj4gaGF2ZSBnb29nbGVkIHRvIG5vIGF2YWlsCgpZb3UgbmVlZCB0byB1c2UgYSBtb3VudCBvcHRp
-b24gZm9yIHNlbGlueCBjb250ZXh0LgplLmcuLCAtbyBjb250ZXh0PXN5c3RlbV91Om9iamVjdF9y
-OnZhcl9sb2dfdAoKVGhpcyBpcyBiZWNhdXNlIHRoZSBkZWZhdWx0IHNlcG9saWN5IGRvZXNuJ3Qg
-aW5jbHVkZSBmMmZzIGFzIHRoZWlyIGZzY29udGV4dC4KClJlZjogaHR0cDovL3d3dy5yZWRoYXQu
-Y29tL2YvcGRmL3doaXRlcGFwZXJzL0ZpbGVzeXN0ZW1fTGFiZWxpbmdfU0VMaW51eC5wZGYKClRo
-YW5rcywKCj4gCj4gdGhhbmtzCj4gCj4gCj4gPgo+ID5UaGFua3MsCj4gPgo+ID4+VGhhbmtzCj4g
-Pj4KPiA+Pj4+Pj5UaGFua3MKPiA+Pj4+Pj4KPiA+Pj4+Pj5Ccmlhbgo+ID4+Pj4+Pgo+ID4+Pj4+
-Pk9uIDE5LzA2LzE0IDIxOjI3LCBKYWVnZXVrIEtpbSB3cm90ZToKPiA+Pj4+Pj4+SGksCj4gPj4+
-Pj4+Pgo+ID4+Pj4+Pj5PbiBUaHUsIEp1biAxOSwgMjAxNCBhdCAwODozMjo0M1BNICsxMDAwLCBC
-cmlhbiBDaGFkd2ljayB3cm90ZToKPiA+Pj4+Pj4+PkhpCj4gPj4+Pj4+Pj4KPiA+Pj4+Pj4+Pkkg
-Y2FudCBnZXQgZmlsZSBjb250ZXh0cyB0byB3b3JrIHdpdGggRjJGUy4gSSBoYXZlIHRyaWVkIGEg
-dmFyaWV0eSBvZgo+ID4+Pj4+Pj4+a2VybmVscyB1cCB0byB0aGUgbGF0ZXN0IDMuMTZyYzEgd2l0
-aCB0aGUgU2VjdXJpdHkgTGFiZWxzIG9wdGlvbgo+ID4+Pj4+Pj4+c2VsZWN0ZWQgaW4gdGhlIGNv
-bmZpZy4gSSBhbSB1c2luZyB0aGUgbGF0ZXN0IGdpdCBvZiBmMmZzLXRvb2xzLgo+ID4+Pj4+Pj4+
-Cj4gPj4+Pj4+Pj5CdXQgd2hlbiBJIHRyeSB0byBzZXQgYSBzZWN1cml0eSBjb250ZXh0IEkgZ2V0
-IHRoZSBmb2xsb3dpbmc6Cj4gPj4+Pj4+Pj4KPiA+Pj4+Pj4+PmNoY29uOiBmYWlsZWQgdG8gY2hh
-bmdlIGNvbnRleHQgb2Yg4oCYL21udC9mMmZzL3NpZ+KAmSB0bwo+ID4+Pj4+Pj4+4oCYc3lzdGVt
-X3U6LS1yZWZlcmVuY2U9L2hvbWUvYnJpYW4vc2lnOnVubGFiZWxlZF90OnMw4oCZOiBPcGVyYXRp
-b24gbm90Cj4gPj4+Pj4+Pj5zdXBwb3J0ZWQKPiA+Pj4+Pj4+Pgo+ID4+Pj4+Pj4+Y3AgLWEgYWxz
-byBzZWVtcyB1bmFibGUgdG8gc2V0IHRoZSBjb3JyZWN0IGNvbnRleHQuCj4gPj4+Pj4+Pj4KPiA+
-Pj4+Pj4+PklzIHRoZXJlIGEgYnVnIG9yIGFtIEkgbWlzc2luZyBzb21ldGhpbmc/Cj4gPj4+Pj4+
-Pj4KPiA+Pj4+Pj4+Pm1vdW50IGRldGFpbHMgYXJlOgo+ID4+Pj4+Pj4+Cj4gPj4+Pj4+Pj4vZGV2
-L3NkYTYgb24gL21udC9mMmZzIHR5cGUgZjJmcwo+ID4+Pj4+Pj4+KHJ3LHJlbGF0aW1lLGJhY2tn
-cm91bmRfZ2M9b24sdXNlcl94YXR0cixhY2wsYWN0aXZlX2xvZ3M9NikKPiA+Pj4+Pj4+SU1PLCB5
-b3UgbWlzc2VkIC1vIHNlY2xhYmVsLgo+ID4+Pj4+Pj4KPiA+Pj4+Pj4+VGhhbmtzLAo+ID4+Pj4+
-Pj4KPiA+Pj4+Pj4+PktpbmQgcmVnYXJkcwo+ID4+Pj4+Pj4+Cj4gPj4+Pj4+Pj5CcmlhbiBDaGFk
-d2ljawo+ID4+Pj4+Pj4+Cj4gPj4+Pj4+Pj4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+Pj4+Pj4+
-PkhQQ0MgU3lzdGVtcyBPcGVuIFNvdXJjZSBCaWcgRGF0YSBQbGF0Zm9ybSBmcm9tIExleGlzTmV4
-aXMgUmlzayBTb2x1dGlvbnMKPiA+Pj4+Pj4+PkZpbmQgV2hhdCBNYXR0ZXJzIE1vc3QgaW4gWW91
-ciBCaWcgRGF0YSB3aXRoIEhQQ0MgU3lzdGVtcwo+ID4+Pj4+Pj4+T3BlbiBTb3VyY2UuIEZhc3Qu
-IFNjYWxhYmxlLiBTaW1wbGUuIElkZWFsIGZvciBEaXJ0eSBEYXRhLgo+ID4+Pj4+Pj4+TGV2ZXJh
-Z2VzIEdyYXBoIEFuYWx5c2lzIGZvciBGYXN0IFByb2Nlc3NpbmcgJiBFYXN5IERhdGEgRXhwbG9y
-YXRpb24KPiA+Pj4+Pj4+Pmh0dHA6Ly9wLnNmLm5ldC9zZnUvaHBjY3N5c3RlbXMKPiA+Pj4+Pj4+
-Pl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gPj4+Pj4+
-Pj5MaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdAo+ID4+Pj4+Pj4+TGludXgtZjJmcy1kZXZl
-bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiA+Pj4+Pj4+Pmh0dHBzOi8vbGlzdHMuc291cmNlZm9y
-Z2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCi0tIApKYWVnZXVrIEtpbQoK
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tCkhQQ0MgU3lzdGVtcyBPcGVuIFNvdXJjZSBCaWcgRGF0YSBQ
-bGF0Zm9ybSBmcm9tIExleGlzTmV4aXMgUmlzayBTb2x1dGlvbnMKRmluZCBXaGF0IE1hdHRlcnMg
-TW9zdCBpbiBZb3VyIEJpZyBEYXRhIHdpdGggSFBDQyBTeXN0ZW1zCk9wZW4gU291cmNlLiBGYXN0
-LiBTY2FsYWJsZS4gU2ltcGxlLiBJZGVhbCBmb3IgRGlydHkgRGF0YS4KTGV2ZXJhZ2VzIEdyYXBo
-IEFuYWx5c2lzIGZvciBGYXN0IFByb2Nlc3NpbmcgJiBFYXN5IERhdGEgRXhwbG9yYXRpb24KaHR0
-cDovL3Auc2YubmV0L3NmdS9ocGNjc3lzdGVtcwpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1m
-MmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdl
-Lm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+This patch adds f2fs_do_tmpfile to eliminate the redundant init_inode_metadata
+flow.
+Throught this, we can provide the consistent lock usage, e.g., fi->i_sem,  and
+this will enable better debugging stuffs.
+
+Cc: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/dir.c   | 27 ++++++++++++++++++++++++---
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/namei.c | 30 ++++++++----------------------
+ 3 files changed, 33 insertions(+), 25 deletions(-)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 09760d5..fe6aaca 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -337,8 +337,7 @@ static struct page *init_inode_metadata(struct inode *inode,
+ 	struct page *page;
+ 	int err;
+ 
+-	if (is_inode_flag_set(F2FS_I(inode), FI_NEW_INODE) &&
+-			inode->i_nlink) {
++	if (is_inode_flag_set(F2FS_I(inode), FI_NEW_INODE)) {
+ 		page = new_inode_page(inode, name);
+ 		if (IS_ERR(page))
+ 			return page;
+@@ -364,7 +363,8 @@ static struct page *init_inode_metadata(struct inode *inode,
+ 		set_cold_node(inode, page);
+ 	}
+ 
+-	init_dent_inode(name, page);
++	if (name)
++		init_dent_inode(name, page);
+ 
+ 	/*
+ 	 * This file should be checkpointed during fsync.
+@@ -537,6 +537,27 @@ fail:
+ 	return err;
+ }
+ 
++int f2fs_do_tmpfile(struct inode *inode, struct inode *dir)
++{
++	struct page *page;
++	int err = 0;
++
++	down_write(&F2FS_I(inode)->i_sem);
++	page = init_inode_metadata(inode, dir, NULL);
++	if (IS_ERR(page)) {
++		err = PTR_ERR(page);
++		goto fail;
++	}
++	/* we don't need to mark_inode_dirty now */
++	update_inode(inode, page);
++	f2fs_put_page(page, 1);
++
++	update_parent_metadata(dir, inode, F2FS_I(dir)->i_current_depth);
++fail:
++	up_write(&F2FS_I(inode)->i_sem);
++	return err;
++}
++
+ /*
+  * It only removes the dentry from the dentry page,corresponding name
+  * entry in name page does not need to be touched during deletion.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 58df97e..ca421a8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1136,6 +1136,7 @@ void f2fs_set_link(struct inode *, struct f2fs_dir_entry *,
+ int update_dent_inode(struct inode *, const struct qstr *);
+ int __f2fs_add_link(struct inode *, const struct qstr *, struct inode *);
+ void f2fs_delete_entry(struct f2fs_dir_entry *, struct page *, struct inode *);
++int f2fs_do_tmpfile(struct inode *, struct inode *);
+ int f2fs_make_empty(struct inode *, struct inode *);
+ bool f2fs_empty_dir(struct inode *);
+ 
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 0d55517..9de4ab3 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -494,7 +494,6 @@ static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	struct super_block *sb = dir->i_sb;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+ 	struct inode *inode;
+-	struct page *page;
+ 	int err;
+ 
+ 	inode = f2fs_new_inode(dir, mode);
+@@ -509,38 +508,25 @@ static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	err = acquire_orphan_inode(sbi);
+ 	if (err)
+ 		goto out;
++
++	err = f2fs_do_tmpfile(inode, dir);
++	if (err)
++		goto release_out;
++
+ 	/*
+ 	 * add this non-linked tmpfile to orphan list, in this way we could
+ 	 * remove all unused data of tmpfile after abnormal power-off.
+ 	 */
+ 	add_orphan_inode(sbi, inode->i_ino);
+-
+-	page = new_inode_page(inode, NULL);
+-	if (IS_ERR(page)) {
+-		err = PTR_ERR(page);
+-		goto remove_out;
+-	}
+-
+-	err = f2fs_init_acl(inode, dir, page);
+-	if (err)
+-		goto unlock_out;
+-
+-	err = f2fs_init_security(inode, dir, NULL, page);
+-	if (err)
+-		goto unlock_out;
+-
+-	f2fs_put_page(page, 1);
+ 	f2fs_unlock_op(sbi);
+ 
+ 	alloc_nid_done(sbi, inode->i_ino);
+-	mark_inode_dirty(inode);
+ 	d_tmpfile(dentry, inode);
+ 	unlock_new_inode(inode);
+ 	return 0;
+-unlock_out:
+-	f2fs_put_page(page, 1);
+-remove_out:
+-	remove_orphan_inode(sbi, inode->i_ino);
++
++release_out:
++	release_orphan_inode(sbi);
+ out:
+ 	f2fs_unlock_op(sbi);
+ 	clear_nlink(inode);
+-- 
+1.8.5.2 (Apple Git-48)
