@@ -1,30 +1,25 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: fix error path in init_inode_metadata
-Date: Tue, 24 Jun 2014 10:34:00 +0800
-Message-ID: <001401cf8f54$dedfafa0$9c9f0ee0$@samsung.com>
+From: "WIPEX NONWOVEN" <info@spunlace-nonwovens.com>
+Subject: Re: Disposable Nonwoven Wipes,Sontara,Wypall Wipers
+Date: Tue, 24 Jun 2014 13:18:24 +0800
+Message-ID: <20140624131832432642@mail001.com>
+Reply-To: info@spunlace-nonwovens.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============6023899428687587119=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1WzGZa-00045N-HD
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cj022@mail001.com>) id 1WzJ8R-0002nc-EO
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Jun 2014 02:35:02 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1WzGZV-0003tw-Ae
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Jun 2014 02:35:00 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N7N00F4VJ61MN70@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Jun 2014 11:34:50 +0900 (KST)
-Content-language: zh-cn
+	Tue, 24 Jun 2014 05:19:11 +0000
+Received: from [61.176.223.23] (helo=mail.mail001.com)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1WzJ8N-0008Mj-Jm for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 24 Jun 2014 05:19:11 +0000
+Received: from wzakttyr by mail.mail001.com (MDaemon PRO v10.1.1)
+	with ESMTP id md50006248035.msg
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 24 Jun 2014 13:18:34 +0800
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,49 +29,63 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-If we fail in this path:
-->init_inode_metadata
-  ->make_empty_dir
-    ->get_new_data_page
-      ->grab_cache_page return -ENOMEM
+This is a multi-part message in MIME format.
 
-We will bug on in error path of init_inode_metadata when call remove_inode_page
-because i_block = 2 (one inode block will be released later & one dentry block).
+--===============6023899428687587119==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0101_01679682.17606EC0"
 
-We should release the dentry block in init_inode_metadata to avoid this BUG_ON,
-and avoid leak of dentry block resource, because we never have second chance to
-release that block in ->evict_inode as in upper error path we make this inode
-'bad'.
+This is a multi-part message in MIME format.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/dir.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+------=_NextPart_000_0101_01679682.17606EC0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 09760d5..3677f41 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -384,11 +384,11 @@ static struct page *init_inode_metadata(struct inode *inode,
- 
- put_error:
- 	f2fs_put_page(page, 1);
-+error:
- 	/* once the failed inode becomes a bad inode, i_mode is S_IFREG */
- 	truncate_inode_pages(&inode->i_data, 0);
- 	truncate_blocks(inode, 0);
- 	remove_dirty_dir_inode(inode);
--error:
- 	remove_inode_page(inode);
- 	return ERR_PTR(err);
- }
--- 
-1.7.9.5
+SGkgZnJpZW5kLA0KSG93IGFyZSB5b3UgZG9pbmc/DQpXZSBhcmUgYSBwcm9mZXNzaW9uYWwgZmFj
+dG9yeSBvZiAgIEluZHVzdHJpYWwgV2lwZXMsRGlzcG9zYWJsZSBXaXBlcyxDbGVhbnJvb20gV2lw
+ZXMsRm9vZCBTZXJ2aWNlIFdpcGVzIGluIENoaW5hIC5UaGV5IGFyZSB2ZXJ5IHBvcHVsYXIgaW4g
+eW91ciBtYXJrZXQuSWYgeW91IHdvdWxkIGxpa2UgdG8ga25vdyBtb3JlIGFib3V0IG91ciBwcm9k
+dWN0cyxwbHMgc2VuZCB1cyB5b3VyIG5lZWQgdG8gaW5mb0BzcHVubGFjZS1ub253b3ZlbnMuY29t
+IGRpcmVjdGx5Lg0KRm9yIG1vcmUgaW5mb3JtYXRpb24scGxzIGJyb3dzZSBvdXIgQWxpYmFiYSBH
+b2xkZW4gU3VwcGxpZXIgd2Vic2l0ZSBodHRwOi8vd2lwZXguZW4uYWxpYmFiYS5jb20vDQpSZWdh
+cmRzLA0KV0lQRVggU2FsZXMgVGVhbQ0KV0lQRVggTk9OV09WRU5TIA==
+
+------=_NextPart_000_0101_01679682.17606EC0
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+
+PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
+L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0
+Zi04IiBodHRwLWVxdWl2PUNvbnRlbnQtVHlwZT4NCjxNRVRBIG5hbWU9R0VORVJBVE9SIGNvbnRl
+bnQ9Ik1TSFRNTCA5LjAwLjgxMTIuMTY1NTUiPjwvSEVBRD4NCjxCT0RZPkhpIGZyaWVuZCw8QlI+
+SG93IGFyZSB5b3UgZG9pbmc/PEJSPldlIGFyZSBhIHByb2Zlc3Npb25hbCBmYWN0b3J5IA0Kb2Ym
+bmJzcDsmbmJzcDsgPFNUUk9ORz48Rk9OVCBjb2xvcj1yZWQ+SW5kdXN0cmlhbCBXaXBlcyxEaXNw
+b3NhYmxlIA0KV2lwZXMsQ2xlYW5yb29tIFdpcGVzLEZvb2QgU2VydmljZSBXaXBlczwvRk9OVD4g
+PC9TVFJPTkc+aW4gQ2hpbmEgLjxGT05UIA0Kc3R5bGU9IkJBQ0tHUk9VTkQtQ09MT1I6IHdoaXRl
+Ij5UaGV5IGFyZSB2ZXJ5IHBvcHVsYXIgaW4geW91ciBtYXJrZXQuPEZPTlQgDQpjb2xvcj1ibGFj
+az5JZiB5b3Ugd291bGQgbGlrZTwvRk9OVD48L0ZPTlQ+PEZPTlQgY29sb3I9YmxhY2s+IHRvIGtu
+b3cgbW9yZSBhYm91dCANCm91ciBwcm9kdWN0czwvRk9OVD4scGxzIHNlbmQgdXMgeW91ciBuZWVk
+IHRvIDxBIA0KaHJlZj0ibWFpbHRvOmluZm9Ac3B1bmxhY2Utbm9ud292ZW5zLmNvbSI+aW5mb0Bz
+cHVubGFjZS1ub253b3ZlbnMuY29tPC9BPiANCmRpcmVjdGx5LjxCUj5Gb3IgbW9yZSBpbmZvcm1h
+dGlvbixwbHMgYnJvd3NlIG91ciA8Rk9OVCBjb2xvcj1yZWQ+QWxpYmFiYSBHb2xkZW4gDQpTdXBw
+bGllcjwvRk9OVD4gd2Vic2l0ZSA8QSANCmhyZWY9Imh0dHA6Ly93aXBleC5lbi5hbGliYWJhLmNv
+bS8iPmh0dHA6Ly93aXBleC5lbi5hbGliYWJhLmNvbS88L0E+PEJSPlJlZ2FyZHMsPEJSPldJUEVY
+IA0KU2FsZXMgVGVhbTxCUj5XSVBFWCBOT05XT1ZFTlMgPC9CT0RZPjwvSFRNTD4NCg==
+
+------=_NextPart_000_0101_01679682.17606EC0--
 
 
+
+
+--===============6023899428687587119==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Open source business process management suite built on Java and Eclipse
@@ -84,3 +93,15 @@ Turn processes into business applications with Bonita BPM Community Edition
 Quickly connect people, data, and systems into organized workflows
 Winner of BOSSIE, CODIE, OW2 and Gartner awards
 http://p.sf.net/sfu/Bonitasoft
+--===============6023899428687587119==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============6023899428687587119==--
