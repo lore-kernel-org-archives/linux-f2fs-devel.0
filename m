@@ -1,83 +1,43 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/2] f2fs: reduce region of f2fs_lock_op covered for better
- concurrency
-Date: Tue, 24 Jun 2014 14:16:24 +0800
-Message-ID: <001701cf8f73$f8abe6a0$ea03b3e0$@samsung.com>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH 1/4] f2fs: remove the redundant validation check of acl
+Date: Tue, 24 Jun 2014 18:18:14 +0800
+Message-ID: <53A95066.3090401@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, =?UTF-8?B?7J207LC966eM?= <cm224.lee@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In our rename process, region of f2fs_lock_op covered is too big as some of the
-code like f2fs_empty_dir/f2fs_find_entry are not needed to protect by this lock.
+>From the userspace side, VFS layer does the check; and from the
+kernel side(xx_init_acl), the acl is get/cloned from the parent dir's,
+which is credible. So remove the redundant validation check of acl
+here.
 
-So in the extreme case like doing checkpoint when we rename old inode to exist
-inode in a large directory could cause lower concurrency.
-
-Let's reduce the region of f2fs_lock_op to fix this.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
- fs/f2fs/namei.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/f2fs/acl.c |    6 ------
+ 1 files changed, 0 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index f17e34c..143799d 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -394,8 +394,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			goto out_old;
- 	}
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index dbe2141..83b9b5a 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -203,12 +203,6 @@ static int __f2fs_set_acl(struct inode *inode, int type,
+ 	size_t size = 0;
+ 	int error;
  
--	f2fs_lock_op(sbi);
+-	if (acl) {
+-		error = posix_acl_valid(acl);
+-		if (error < 0)
+-			return error;
+-	}
 -
- 	if (new_inode) {
- 
- 		err = -ENOTEMPTY;
-@@ -408,6 +406,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		if (!new_entry)
- 			goto out_dir;
- 
-+		f2fs_lock_op(sbi);
-+
- 		err = acquire_orphan_inode(sbi);
- 		if (err)
- 			goto put_out_dir;
-@@ -439,9 +439,13 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		update_inode_page(old_inode);
- 		update_inode_page(new_inode);
- 	} else {
-+		f2fs_lock_op(sbi);
-+
- 		err = f2fs_add_link(new_dentry, old_inode);
--		if (err)
-+		if (err) {
-+			f2fs_unlock_op(sbi);
- 			goto out_dir;
-+		}
- 
- 		if (old_dir_entry) {
- 			inc_nlink(new_dir);
-@@ -475,6 +479,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	return 0;
- 
- put_out_dir:
-+	f2fs_unlock_op(sbi);
- 	kunmap(new_page);
- 	f2fs_put_page(new_page, 0);
- out_dir:
-@@ -482,7 +487,6 @@ out_dir:
- 		kunmap(old_dir_page);
- 		f2fs_put_page(old_dir_page, 0);
- 	}
--	f2fs_unlock_op(sbi);
- out_old:
- 	kunmap(old_page);
- 	f2fs_put_page(old_page, 0);
+ 	switch (type) {
+ 	case ACL_TYPE_ACCESS:
+ 		name_index = F2FS_XATTR_INDEX_POSIX_ACL_ACCESS;
 -- 
-1.7.9.5
+1.7.7
+
