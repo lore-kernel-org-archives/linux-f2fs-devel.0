@@ -1,78 +1,102 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: cp hangs with large source tree
-Date: Wed, 25 Jun 2014 16:43:43 +0900
-Message-ID: <20140625074342.GA8262@jmac.local>
-References: <53AA6005.2030405@westnet.com.au>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH V2 2/4] f2fs: remove the needless point-cast
+Date: Fri, 27 Jun 2014 17:57:04 +0800
+Message-ID: <53AD3FF0.6080909@cn.fujitsu.com>
+References: <53A950BB.2030703@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Wzhs4-0007iA-3I
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 25 Jun 2014 07:43:56 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Wzhs2-0000vq-DE for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 25 Jun 2014 07:43:56 +0000
-Content-Disposition: inline
-In-Reply-To: <53AA6005.2030405@westnet.com.au>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Brian Chadwick <brianchad@westnet.com.au>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <53A950BB.2030703@cn.fujitsu.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, =?UTF-8?B?7J207LC966eM?= <cm224.lee@samsung.com>, =?UTF-8?B?5L+e6LaF?= <chao2.yu@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Brian,
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+v2: fix the same issue in f2fs_delete_entry suggested by Yu Chao.
+---
+---
+ fs/f2fs/dir.c |   19 ++++++++-----------
+ 1 files changed, 8 insertions(+), 11 deletions(-)
 
-Could you share your partition and DRAM sizes?
-
-In addition, when cp hangs, could you share its process backtrace?
-# cat /proc/[pid]/stack
-
-Thanks,
-
-On Wed, Jun 25, 2014 at 03:37:09PM +1000, Brian Chadwick wrote:
-> Hi,
-> 
-> Kernel 3.15.0 ... I tried copying a large tree full of many small files 
-> (kernel source) onto a drive formatted with F2FS. The copy seems to 
-> proceed normally, but when all files appear to be copied, cp seems to 
-> hang and does not seem to terminate properly. Its waiting for something 
-> I assume. This also happens with 3.16.0-rc{1,2}. cp responds to Ctrl-C 
-> and terminates, and the files appear to be there on the F2FS partition.
-> 
-> It works as expected with Kernel 3.14.8
-> 
-> Any clues?
-> 
-> Brian
-> 
-> ------------------------------------------------------------------------------
-> Open source business process management suite built on Java and Eclipse
-> Turn processes into business applications with Bonita BPM Community Edition
-> Quickly connect people, data, and systems into organized workflows
-> Winner of BOSSIE, CODIE, OW2 and Gartner awards
-> http://p.sf.net/sfu/Bonitasoft
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 087b03d..bcbfbc4 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -298,14 +298,13 @@ static int make_empty_dir(struct inode *inode,
+ 	struct page *dentry_page;
+ 	struct f2fs_dentry_block *dentry_blk;
+ 	struct f2fs_dir_entry *de;
+-	void *kaddr;
+ 
+ 	dentry_page = get_new_data_page(inode, page, 0, true);
+ 	if (IS_ERR(dentry_page))
+ 		return PTR_ERR(dentry_page);
+ 
+-	kaddr = kmap_atomic(dentry_page);
+-	dentry_blk = (struct f2fs_dentry_block *)kaddr;
++
++	dentry_blk = kmap_atomic(dentry_page);
+ 
+ 	de = &dentry_blk->dentry[0];
+ 	de->name_len = cpu_to_le16(1);
+@@ -323,7 +322,7 @@ static int make_empty_dir(struct inode *inode,
+ 
+ 	test_and_set_bit_le(0, &dentry_blk->dentry_bitmap);
+ 	test_and_set_bit_le(1, &dentry_blk->dentry_bitmap);
+-	kunmap_atomic(kaddr);
++	kunmap_atomic(dentry_blk);
+ 
+ 	set_page_dirty(dentry_page);
+ 	f2fs_put_page(dentry_page, 1);
+@@ -570,14 +569,13 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	struct address_space *mapping = page->mapping;
+ 	struct inode *dir = mapping->host;
+ 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
+-	void *kaddr = page_address(page);
+ 	int i;
+ 
+ 	lock_page(page);
+ 	f2fs_wait_on_page_writeback(page, DATA);
+ 
+-	dentry_blk = (struct f2fs_dentry_block *)kaddr;
+-	bit_pos = dentry - (struct f2fs_dir_entry *)dentry_blk->dentry;
++	dentry_blk = page_address(page);
++	bit_pos = dentry - dentry_blk->dentry;
+ 	for (i = 0; i < slots; i++)
+ 		test_and_clear_bit_le(bit_pos + i, &dentry_blk->dentry_bitmap);
+ 
+@@ -632,7 +630,6 @@ bool f2fs_empty_dir(struct inode *dir)
+ 	unsigned long nblock = dir_blocks(dir);
+ 
+ 	for (bidx = 0; bidx < nblock; bidx++) {
+-		void *kaddr;
+ 		dentry_page = get_lock_data_page(dir, bidx);
+ 		if (IS_ERR(dentry_page)) {
+ 			if (PTR_ERR(dentry_page) == -ENOENT)
+@@ -641,8 +638,8 @@ bool f2fs_empty_dir(struct inode *dir)
+ 				return false;
+ 		}
+ 
+-		kaddr = kmap_atomic(dentry_page);
+-		dentry_blk = (struct f2fs_dentry_block *)kaddr;
++
++		dentry_blk = kmap_atomic(dentry_page);
+ 		if (bidx == 0)
+ 			bit_pos = 2;
+ 		else
+@@ -650,7 +647,7 @@ bool f2fs_empty_dir(struct inode *dir)
+ 		bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
+ 						NR_DENTRY_IN_BLOCK,
+ 						bit_pos);
+-		kunmap_atomic(kaddr);
++		kunmap_atomic(dentry_blk);
+ 
+ 		f2fs_put_page(dentry_page, 1);
+ 
 -- 
-Jaegeuk Kim
+1.7.7
 
-------------------------------------------------------------------------------
-Open source business process management suite built on Java and Eclipse
-Turn processes into business applications with Bonita BPM Community Edition
-Quickly connect people, data, and systems into organized workflows
-Winner of BOSSIE, CODIE, OW2 and Gartner awards
-http://p.sf.net/sfu/Bonitasoft
+
