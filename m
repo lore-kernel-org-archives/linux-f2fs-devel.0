@@ -1,99 +1,49 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH V2 3/4] f2fs: use find_next_bit_le rather than test_bit_le
- in find_in_block
-Date: Fri, 27 Jun 2014 17:58:26 +0800
-Message-ID: <53AD4042.3040608@cn.fujitsu.com>
-References: <53A950F9.907@cn.fujitsu.com>
+From: Brian Chadwick <brianchad@westnet.com.au>
+Subject: fstrim fails on F2FS device
+Date: Sat, 28 Jun 2014 16:43:38 +1000
+Message-ID: <53AE641A.8050308@westnet.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <53A950F9.907@cn.fujitsu.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, =?UTF-8?B?7J207LC966eM?= <cm224.lee@samsung.com>, =?UTF-8?B?5L+e6LaF?= <chao2.yu@samsung.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <brianchad@westnet.com.au>) id 1X0mMo-0006xL-D0
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 28 Jun 2014 06:44:06 +0000
+Received: from icp-osb-irony-out4.external.iinet.net.au ([203.59.1.220])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1X0mMm-0001ap-4U for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 28 Jun 2014 06:44:06 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Use find_next_bit_le rather than test_bit_le to improve search speed
-lightly.
+Hi there
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+running fstrim on a F2FS partition gives the following output:
 
----
-v2: cleanup the needless code suggested by Yu Chao
----
----
- fs/f2fs/dir.c |   43 ++++++++++++++++++++-----------------------
- 1 files changed, 20 insertions(+), 23 deletions(-)
+fstrim: /home: discard operation not supported.
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index bcbfbc4..39bea6c 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -93,42 +93,39 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
- 			const char *name, size_t namelen, int *max_slots,
- 			f2fs_hash_t namehash, struct page **res_page)
- {
--	struct f2fs_dir_entry *de;
--	unsigned long bit_pos = 0;
-+	unsigned long bit_pos = 0, bit_start = 0;
- 	struct f2fs_dentry_block *dentry_blk = kmap(dentry_page);
- 	const void *dentry_bits = &dentry_blk->dentry_bitmap;
--	int max_len = 0;
- 
--	while (bit_pos < NR_DENTRY_IN_BLOCK) {
--		if (!test_bit_le(bit_pos, dentry_bits)) {
--			if (bit_pos == 0)
--				max_len = 1;
--			else if (!test_bit_le(bit_pos - 1, dentry_bits))
--				max_len++;
--			bit_pos++;
--			continue;
--		}
-+	while (bit_start < NR_DENTRY_IN_BLOCK) {
-+		struct f2fs_dir_entry *de;
-+		int max_len;
-+
-+		bit_pos = find_next_bit_le(dentry_bits,
-+					NR_DENTRY_IN_BLOCK, bit_start);
-+
-+		max_len = bit_pos - bit_start;
-+		if (max_len > *max_slots)
-+			*max_slots = max_len;
-+
-+		if (bit_pos >= NR_DENTRY_IN_BLOCK)
-+			break;
-+
- 		de = &dentry_blk->dentry[bit_pos];
- 		if (early_match_name(name, namelen, namehash, de)) {
- 			if (!memcmp(dentry_blk->filename[bit_pos],
- 							name, namelen)) {
- 				*res_page = dentry_page;
--				goto found;
-+				return de;
- 			}
- 		}
--		if (max_len > *max_slots) {
--			*max_slots = max_len;
--			max_len = 0;
--		}
--		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-+
-+		bit_start = bit_pos
-+				+ GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
- 	}
- 
--	de = NULL;
- 	kunmap(dentry_page);
--found:
--	if (max_len > *max_slots)
--		*max_slots = max_len;
--	return de;
-+	return NULL;
- }
- 
- static struct f2fs_dir_entry *find_in_level(struct inode *dir,
--- 
-1.7.7
+kernel 3.16.0-rc2
 
+Is this normal?
 
+Cheers
+
+Brian
+
+------------------------------------------------------------------------------
+Open source business process management suite built on Java and Eclipse
+Turn processes into business applications with Bonita BPM Community Edition
+Quickly connect people, data, and systems into organized workflows
+Winner of BOSSIE, CODIE, OW2 and Gartner awards
+http://p.sf.net/sfu/Bonitasoft
