@@ -1,76 +1,111 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: check bdi->dirty_exceeded when trying to skip data
- writes
-Date: Wed, 2 Jul 2014 02:31:26 -0700
-Message-ID: <20140702093126.GA25404@jmac.local>
-References: <1403956718-17575-1-git-send-email-jaegeuk@kernel.org>
- <20140701225420.6cc94fb5.akpm@linux-foundation.org>
+Subject: Re: [PATCH 3/4] f2fs: use find_next_bit_le rather than test_bit_le
+ in, find_in_block
+Date: Wed, 2 Jul 2014 03:30:59 -0700
+Message-ID: <20140702103059.GA26619@jmac.local>
+References: <53A950F9.907@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20140701225420.6cc94fb5.akpm@linux-foundation.org>
+In-Reply-To: <53A950F9.907@cn.fujitsu.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, =?utf-8?B?7J207LC966eM?= <cm224.lee@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Jul 01, 2014 at 10:54:20PM -0700, Andrew Morton wrote:
-> On Sat, 28 Jun 2014 20:58:38 +0900 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+Thanks Changman for reminding this. :)
+
+If there are a lot of ones in the bit stream, find_next_bit_le would cause some
+overhead to translate the bits.
+
+However, it would be effective to use find_next_bit_le if the bit stream looks
+like 0000000001.
+
+Well, IMO the former case would be a little bit more common.
+
+Gu,
+Can you provide some performance numbers wrt this?
+
+On Tue, Jun 24, 2014 at 06:20:41PM +0800, Gu Zheng wrote:
+> Use find_next_bit_le rather than test_bit_le to improve search speed
+> lightly.
 > 
-> > If we don't check the current backing device status, balance_dirty_pages can
-> > fall into infinite pausing routine.
-> > 
-> > This can be occurred when a lot of directories make a small number of dirty
-> > dentry pages including files.
-> > 
-> > ...
-> >
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -43,6 +43,8 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
-> >  		mem_size = (nm_i->nat_cnt * sizeof(struct nat_entry)) >> 12;
-> >  		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 2);
-> >  	} else if (type == DIRTY_DENTS) {
-> > +		if (sbi->sb->s_bdi->dirty_exceeded)
-> > +			return false;
-> >  		mem_size = get_pages(sbi, F2FS_DIRTY_DENTS);
-> >  		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 1);
-> >  	}
+> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+> ---
+>  fs/f2fs/dir.c |   43 +++++++++++++++++++++----------------------
+>  1 files changed, 21 insertions(+), 22 deletions(-)
 > 
-> err, filesystems should not be playing around with this.
-> 
-> Perhaps VFS changes are needed.  Please tell us much much more about
-> what is going on here.
-
-The f2fs has a feature which throttles IOs to merge bios in the fs level as much
-as possible by bypassing writepages in some cases.
-
-One of the cases is related to the dentry pages.
-If a direcotry has a small number of dirty dentry pages and there is an amount
-of free memory, f2fs skips writepages.
-
-The code in f2fs_write_data_pages is:
-
-	if (S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_NONE &&
-			get_dirty_dents(inode) < nr_pages_to_skip(sbi, DATA) &&
-			available_free_memory(sbi, DIRTY_DENTS))
-		goto skip_write;
-
-However, if many many directories have been created and all of each directories
-has a small number of dirty pages in a very short time, it makes an effect on
-balance_dirty_pages.
-
-In such the case, balance_dirty_pages waits for decreasing dirty pages but f2fs
-starts to skip flushing the dirty pages continuously.
-So, this patch adds a condition to avoid that behavior by checking bdi's
-dirty_exceeded.
-
-So, any recommendation instead of this kinda workaround?
-
-IMHO, how about setting wbc->sync_mode with WB_SYNC_ALL when detecting the case?
-
-Thanks,
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 3edd561..ba510fb 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -93,42 +93,41 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
+>  			const char *name, size_t namelen, int *max_slots,
+>  			f2fs_hash_t namehash, struct page **res_page)
+>  {
+> -	struct f2fs_dir_entry *de;
+> -	unsigned long bit_pos = 0;
+> +	unsigned long bit_pos = 0, bit_start = 0;
+>  	struct f2fs_dentry_block *dentry_blk = kmap(dentry_page);
+>  	const void *dentry_bits = &dentry_blk->dentry_bitmap;
+> -	int max_len = 0;
+>  
+> -	while (bit_pos < NR_DENTRY_IN_BLOCK) {
+> -		if (!test_bit_le(bit_pos, dentry_bits)) {
+> -			if (bit_pos == 0)
+> -				max_len = 1;
+> -			else if (!test_bit_le(bit_pos - 1, dentry_bits))
+> -				max_len++;
+> -			bit_pos++;
+> -			continue;
+> +	while (bit_start < NR_DENTRY_IN_BLOCK) {
+> +		struct f2fs_dir_entry *de;
+> +		int max_len = 0;
+> +
+> +		bit_pos = find_next_bit_le(dentry_bits,
+> +					NR_DENTRY_IN_BLOCK, bit_start);
+> +
+> +		max_len = bit_pos - bit_start;
+> +		if (max_len > *max_slots) {
+> +			*max_slots = max_len;
+> +			max_len = 0;
+>  		}
+> +
+> +		if (bit_pos >= NR_DENTRY_IN_BLOCK)
+> +			break;
+> +
+>  		de = &dentry_blk->dentry[bit_pos];
+>  		if (early_match_name(name, namelen, namehash, de)) {
+>  			if (!memcmp(dentry_blk->filename[bit_pos],
+>  							name, namelen)) {
+>  				*res_page = dentry_page;
+> -				goto found;
+> +				return de;
+>  			}
+>  		}
+> -		if (max_len > *max_slots) {
+> -			*max_slots = max_len;
+> -			max_len = 0;
+> -		}
+> -		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+> +
+> +		bit_start = bit_pos
+> +				+ GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+>  	}
+>  
+> -	de = NULL;
+>  	kunmap(dentry_page);
+> -found:
+> -	if (max_len > *max_slots)
+> -		*max_slots = max_len;
+> -	return de;
+> +	return NULL;
+>  }
+>  
+>  static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+> -- 
+> 1.7.7
 
 -- 
 Jaegeuk Kim
