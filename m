@@ -1,78 +1,77 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: do checkpoint for the renamed inode
-Date: Wed,  2 Jul 2014 03:34:30 -0700
-Message-ID: <1404297270-26809-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] f2fs: check bdi->dirty_exceeded when trying
+ to skip data writes
+Date: Wed, 2 Jul 2014 12:12:45 -0700
+Message-ID: <20140702121245.b940538a410975ca91b40cfc@linux-foundation.org>
+References: <1403956718-17575-1-git-send-email-jaegeuk@kernel.org>
+	<20140701225420.6cc94fb5.akpm@linux-foundation.org>
+	<20140702093126.GA25404@jmac.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <akpm@linux-foundation.org>) id 1X2Pxd-0004rE-BJ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Jul 2014 19:12:53 +0000
+Received: from mail.linuxfoundation.org ([140.211.169.12])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1X2Pxb-0001p4-Kl for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Jul 2014 19:12:53 +0000
+In-Reply-To: <20140702093126.GA25404@jmac.local>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-If an inode is renamed, it should be registered as file_lost_pino to conduct
-checkpoint at f2fs_sync_file.
-Otherwise, the inode cannot be recovered due to no dent_mark in the following
-scenario.
+On Wed, 2 Jul 2014 02:31:26 -0700 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
 
-Note that, this scenario is from xfstests/322.
+> > > --- a/fs/f2fs/node.c
+> > > +++ b/fs/f2fs/node.c
+> > > @@ -43,6 +43,8 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
+> > >  		mem_size = (nm_i->nat_cnt * sizeof(struct nat_entry)) >> 12;
+> > >  		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 2);
+> > >  	} else if (type == DIRTY_DENTS) {
+> > > +		if (sbi->sb->s_bdi->dirty_exceeded)
+> > > +			return false;
+> > >  		mem_size = get_pages(sbi, F2FS_DIRTY_DENTS);
+> > >  		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 1);
+> > >  	}
+> > 
+> > err, filesystems should not be playing around with this.
+> > 
+> > Perhaps VFS changes are needed.  Please tell us much much more about
+> > what is going on here.
+> 
+> The f2fs has a feature which throttles IOs to merge bios in the fs level as much
+> as possible by bypassing writepages in some cases.
 
-1. create "a"
-2. fsync "a"
-3. rename "a" to "b"
-4. fsync "b"
-5. Sudden power-cut
+OK, I just looked at fs/f2fs/data.c.  AFAICT it has basically
+bypassed/reimplemented/worked around the VFS.
 
-After recovery is done, "b" should be seen.
-However, the result shows "a", since the recovery procedure does not enter
-recover_dentry due to no dent_mark.
+That may be good or it may be bad.  Maybe it indicates shortcomings in
+the VFS, maybe it doesn't.  Presumably there were good reasons for this
+design but I am unable to determine what they were, because the code is
+undocumented.  No description of what it is trying to achieve or how or
+why.  It's just a great blob of C statements.
 
-The reason is like below.
-- The nid of "a" is checkpointed during #2, f2fs_sync_file.
-- The inode page for "b" produced by #3 is written without dent_mark by
-sync_node_pages.
+This is all rather a shame, because perhaps there were opportunities
+here to improve the core VFS.
 
-So, this patch fixes this bug by assinging file_lost_pino to the "a"'s inode.
-If the pino is lost, f2fs_sync_file conducts checkpoint, and then recovers
-the latest pino and its dentry information for further recovery.
+Oh well, I think I'll pretend I never saw it.  Good luck!
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/namei.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 96f1dd1..1b3cae0 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -411,9 +411,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		}
- 
- 		f2fs_set_link(new_dir, new_entry, new_page, old_inode);
--		down_write(&F2FS_I(old_inode)->i_sem);
--		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
--		up_write(&F2FS_I(old_inode)->i_sem);
- 
- 		new_inode->i_ctime = CURRENT_TIME;
- 		down_write(&F2FS_I(new_inode)->i_sem);
-@@ -446,6 +443,10 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		}
- 	}
- 
-+	down_write(&F2FS_I(old_inode)->i_sem);
-+	file_lost_pino(old_inode);
-+	up_write(&F2FS_I(old_inode)->i_sem);
-+
- 	old_inode->i_ctime = CURRENT_TIME;
- 	mark_inode_dirty(old_inode);
- 
-@@ -455,9 +456,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		if (old_dir != new_dir) {
- 			f2fs_set_link(old_inode, old_dir_entry,
- 						old_dir_page, new_dir);
--			down_write(&F2FS_I(old_inode)->i_sem);
--			F2FS_I(old_inode)->i_pino = new_dir->i_ino;
--			up_write(&F2FS_I(old_inode)->i_sem);
- 			update_inode_page(old_inode);
- 		} else {
- 			kunmap(old_dir_page);
--- 
-1.8.5.2 (Apple Git-48)
+------------------------------------------------------------------------------
+Open source business process management suite built on Java and Eclipse
+Turn processes into business applications with Bonita BPM Community Edition
+Quickly connect people, data, and systems into organized workflows
+Winner of BOSSIE, CODIE, OW2 and Gartner awards
+http://p.sf.net/sfu/Bonitasoft
