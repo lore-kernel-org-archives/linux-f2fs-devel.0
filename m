@@ -1,77 +1,123 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] f2fs: check bdi->dirty_exceeded when trying
- to skip data writes
-Date: Wed, 2 Jul 2014 12:12:45 -0700
-Message-ID: <20140702121245.b940538a410975ca91b40cfc@linux-foundation.org>
-References: <1403956718-17575-1-git-send-email-jaegeuk@kernel.org>
-	<20140701225420.6cc94fb5.akpm@linux-foundation.org>
-	<20140702093126.GA25404@jmac.local>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH 3/4] f2fs: use find_next_bit_le rather than test_bit_le
+ in, find_in_block
+Date: Thu, 3 Jul 2014 09:05:21 +0800
+Message-ID: <53B4AC51.3040508@cn.fujitsu.com>
+References: <53A950F9.907@cn.fujitsu.com> <20140702074903.GA7854@cm224.lee>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <akpm@linux-foundation.org>) id 1X2Pxd-0004rE-BJ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Jul 2014 19:12:53 +0000
-Received: from mail.linuxfoundation.org ([140.211.169.12])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1X2Pxb-0001p4-Kl for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Jul 2014 19:12:53 +0000
-In-Reply-To: <20140702093126.GA25404@jmac.local>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20140702074903.GA7854@cm224.lee>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Changman Lee <cm224.lee@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, 2 Jul 2014 02:31:26 -0700 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+Hi Changman,
+On 07/02/2014 03:49 PM, Changman Lee wrote:
 
-> > > --- a/fs/f2fs/node.c
-> > > +++ b/fs/f2fs/node.c
-> > > @@ -43,6 +43,8 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
-> > >  		mem_size = (nm_i->nat_cnt * sizeof(struct nat_entry)) >> 12;
-> > >  		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 2);
-> > >  	} else if (type == DIRTY_DENTS) {
-> > > +		if (sbi->sb->s_bdi->dirty_exceeded)
-> > > +			return false;
-> > >  		mem_size = get_pages(sbi, F2FS_DIRTY_DENTS);
-> > >  		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 1);
-> > >  	}
-> > 
-> > err, filesystems should not be playing around with this.
-> > 
-> > Perhaps VFS changes are needed.  Please tell us much much more about
-> > what is going on here.
+> Hi, Gu
 > 
-> The f2fs has a feature which throttles IOs to merge bios in the fs level as much
-> as possible by bypassing writepages in some cases.
+> Unfortunately, find_next_bit isn't always better than test_bit.
+> Refer to commit 5d0c667121bfc8be76d1580f485bddbe73465d1a
+> 
+> I remember that
+> Perviously, Jaegeuk had changed find_next_bit to test_bit because
+> find_next_bit spent much cpu time in the case of there is lot of dentries like a postmark.
 
-OK, I just looked at fs/f2fs/data.c.  AFAICT it has basically
-bypassed/reimplemented/worked around the VFS.
+Ah~, there was such a discussion before. But I think whether we can get
+benefit from this depends on the condition of the bit-map.
+I'll follow Jaegeuk's suggestion to get more effective data about this,
+maybe it it can dispel our qualm.
 
-That may be good or it may be bad.  Maybe it indicates shortcomings in
-the VFS, maybe it doesn't.  Presumably there were good reasons for this
-design but I am unable to determine what they were, because the code is
-undocumented.  No description of what it is trying to achieve or how or
-why.  It's just a great blob of C statements.
+> Sorry, I should have reported this quickly.
 
-This is all rather a shame, because perhaps there were opportunities
-here to improve the core VFS.
+It's not late.:)
 
-Oh well, I think I'll pretend I never saw it.  Good luck!
+Thanks,
+Gu
 
-------------------------------------------------------------------------------
-Open source business process management suite built on Java and Eclipse
-Turn processes into business applications with Bonita BPM Community Edition
-Quickly connect people, data, and systems into organized workflows
-Winner of BOSSIE, CODIE, OW2 and Gartner awards
-http://p.sf.net/sfu/Bonitasoft
+> 
+> On Tue, Jun 24, 2014 at 06:20:41PM +0800, Gu Zheng wrote:
+>> Use find_next_bit_le rather than test_bit_le to improve search speed
+>> lightly.
+>>
+>> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+>> ---
+>>  fs/f2fs/dir.c |   43 +++++++++++++++++++++----------------------
+>>  1 files changed, 21 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+>> index 3edd561..ba510fb 100644
+>> --- a/fs/f2fs/dir.c
+>> +++ b/fs/f2fs/dir.c
+>> @@ -93,42 +93,41 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
+>>  			const char *name, size_t namelen, int *max_slots,
+>>  			f2fs_hash_t namehash, struct page **res_page)
+>>  {
+>> -	struct f2fs_dir_entry *de;
+>> -	unsigned long bit_pos = 0;
+>> +	unsigned long bit_pos = 0, bit_start = 0;
+>>  	struct f2fs_dentry_block *dentry_blk = kmap(dentry_page);
+>>  	const void *dentry_bits = &dentry_blk->dentry_bitmap;
+>> -	int max_len = 0;
+>>  
+>> -	while (bit_pos < NR_DENTRY_IN_BLOCK) {
+>> -		if (!test_bit_le(bit_pos, dentry_bits)) {
+>> -			if (bit_pos == 0)
+>> -				max_len = 1;
+>> -			else if (!test_bit_le(bit_pos - 1, dentry_bits))
+>> -				max_len++;
+>> -			bit_pos++;
+>> -			continue;
+>> +	while (bit_start < NR_DENTRY_IN_BLOCK) {
+>> +		struct f2fs_dir_entry *de;
+>> +		int max_len = 0;
+>> +
+>> +		bit_pos = find_next_bit_le(dentry_bits,
+>> +					NR_DENTRY_IN_BLOCK, bit_start);
+>> +
+>> +		max_len = bit_pos - bit_start;
+>> +		if (max_len > *max_slots) {
+>> +			*max_slots = max_len;
+>> +			max_len = 0;
+>>  		}
+>> +
+>> +		if (bit_pos >= NR_DENTRY_IN_BLOCK)
+>> +			break;
+>> +
+>>  		de = &dentry_blk->dentry[bit_pos];
+>>  		if (early_match_name(name, namelen, namehash, de)) {
+>>  			if (!memcmp(dentry_blk->filename[bit_pos],
+>>  							name, namelen)) {
+>>  				*res_page = dentry_page;
+>> -				goto found;
+>> +				return de;
+>>  			}
+>>  		}
+>> -		if (max_len > *max_slots) {
+>> -			*max_slots = max_len;
+>> -			max_len = 0;
+>> -		}
+>> -		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+>> +
+>> +		bit_start = bit_pos
+>> +				+ GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+>>  	}
+>>  
+>> -	de = NULL;
+>>  	kunmap(dentry_page);
+>> -found:
+>> -	if (max_len > *max_slots)
+>> -		*max_slots = max_len;
+>> -	return de;
+>> +	return NULL;
+>>  }
+>>  
+>>  static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+>> -- 
+>> 1.7.7
+> 
+
+
