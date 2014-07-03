@@ -1,39 +1,39 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
 Subject: Re: [PATCH 3/4] f2fs: use find_next_bit_le rather than test_bit_le
  in, find_in_block
-Date: Thu, 3 Jul 2014 09:05:21 +0800
-Message-ID: <53B4AC51.3040508@cn.fujitsu.com>
-References: <53A950F9.907@cn.fujitsu.com> <20140702074903.GA7854@cm224.lee>
+Date: Thu, 3 Jul 2014 09:13:23 +0800
+Message-ID: <53B4AE33.4070406@cn.fujitsu.com>
+References: <53A950F9.907@cn.fujitsu.com> <20140702103059.GA26619@jmac.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20140702074903.GA7854@cm224.lee>
+In-Reply-To: <20140702103059.GA26619@jmac.local>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: f2fs <linux-f2fs-devel@lists.sourceforge.net>, fsdevel <linux-fsdevel@vger.kernel.org>, =?UTF-8?B?7J207LC966eM?= <cm224.lee@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Changman,
-On 07/02/2014 03:49 PM, Changman Lee wrote:
+Hi Jaegeuk,
+On 07/02/2014 06:30 PM, Jaegeuk Kim wrote:
 
-> Hi, Gu
+> Thanks Changman for reminding this. :)
 > 
-> Unfortunately, find_next_bit isn't always better than test_bit.
-> Refer to commit 5d0c667121bfc8be76d1580f485bddbe73465d1a
+> If there are a lot of ones in the bit stream, find_next_bit_le would cause some
+> overhead to translate the bits.
 > 
-> I remember that
-> Perviously, Jaegeuk had changed find_next_bit to test_bit because
-> find_next_bit spent much cpu time in the case of there is lot of dentries like a postmark.
+> However, it would be effective to use find_next_bit_le if the bit stream looks
+> like 0000000001.
 
-Ah~, there was such a discussion before. But I think whether we can get
-benefit from this depends on the condition of the bit-map.
-I'll follow Jaegeuk's suggestion to get more effective data about this,
-maybe it it can dispel our qualm.
+Agree.
 
-> Sorry, I should have reported this quickly.
+> 
+> Well, IMO the former case would be a little bit more common.
+> 
+> Gu,
+> Can you provide some performance numbers wrt this?
 
-It's not late.:)
+OK. I'll do it.:)
 
 Thanks,
 Gu
