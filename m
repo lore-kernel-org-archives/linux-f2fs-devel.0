@@ -1,414 +1,92 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [PATCH 3/4] f2fs: use find_next_bit_le rather than test_bit_le in,
- find_in_block
-Date: Mon, 07 Jul 2014 10:45:00 +0900
-Message-ID: <20140707014500.GA31954@cm224.lee>
-References: <53A950F9.907@cn.fujitsu.com> <20140702103059.GA26619@jmac.local>
- <53B52CEA.8080407@cn.fujitsu.com> <20140704053619.GA32528@jmac.local>
- <001301cf9750$5e897bc0$1b9c7340$@samsung.com>
- <53B65FF9.9030204@cn.fujitsu.com> <20140705062535.GA35486@jmac.local>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH] f2fs: avoid to access NULL pointer in
+	issue_flush_thread
+Date: Mon, 7 Jul 2014 09:58:45 +0800
+Message-ID: <53B9FED5.80009@cn.fujitsu.com>
+References: <006001cf9984$6b07f490$4117ddb0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <20140705062535.GA35486@jmac.local>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Gu Zheng <guz.fnst@cn.fujitsu.com>, Chao Yu <chao2.yu@samsung.com>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>, 'fsdevel' <linux-fsdevel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1X3yOA-0000Lk-Kr
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 07 Jul 2014 02:10:42 +0000
+Received: from [59.151.112.132] (helo=heian.cn.fujitsu.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1X3yO8-0008Mi-Mp for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 07 Jul 2014 02:10:42 +0000
+In-Reply-To: <006001cf9984$6b07f490$4117ddb0$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hello,
+Hi Yu,
+Thanks for your catch.
 
-On Fri, Jul 04, 2014 at 11:25:35PM -0700, Jaegeuk Kim wrote:
-> To Changman,
->=20
-> Just for sure, can you reproduce this issue in the x86 machine with p=
-roper
-> benchmarks? (i.e., test_bit_le vs. find_next_bit_le)
+Regards,
+Gu
+On 07/07/2014 09:39 AM, Chao Yu wrote:
 
-It shows quite a different result of bit_mod_test between server and de=
-sktop.
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=75861
+> 
+> Denis 2014-05-10 11:28:59 UTC reported:
+> "F2FS-fs (mmcblk0p28): mounting..
+>  Unable to handle kernel NULL pointer dereference at virtual address 00000018
+>  ...
+>  [<c0a2f678>] (_raw_spin_lock+0x3c/0x70) from [<c03a0330>] (issue_flush_thread+0x50/0x17c)
+>  [<c03a0330>] (issue_flush_thread+0x50/0x17c) from [<c01b4064>] (kthread+0x98/0xa4)
+>  [<c01b4064>] (kthread+0x98/0xa4) from [<c0108060>] (kernel_thread_exit+0x0/0x8)"
+> 
+> This patch assign cmd_control_info in sm_info before issue_flush_thread is being
+> created, so this make sure that issue flush thread will have no chance to access
+> invalid info in fcc.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 
-CPU i5 x86_64 Ubuntu Server - 3.16.0-rc3
+Reviewed-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 
-[266627.204776] find_next_bit_le    test_bit_le
-[266627.205319]     1832                1774
-[266627.206223]     1292                1746
-[266627.207092]     1205                1746
-[266627.207876]      914                1746
-[266627.208710]     1082                1746
-[266627.209506]      956                1746
-[266627.210175]      523                1746
+> ---
+>  fs/f2fs/segment.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index bb5980d..a4f8375 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -272,14 +272,15 @@ int create_flush_cmd_control(struct f2fs_sb_info *sbi)
+>  		return -ENOMEM;
+>  	spin_lock_init(&fcc->issue_lock);
+>  	init_waitqueue_head(&fcc->flush_wait_queue);
+> +	sbi->sm_info->cmd_control_info = fcc;
+>  	fcc->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
+>  				"f2fs_flush-%u:%u", MAJOR(dev), MINOR(dev));
+>  	if (IS_ERR(fcc->f2fs_issue_flush)) {
+>  		err = PTR_ERR(fcc->f2fs_issue_flush);
+>  		kfree(fcc);
+> +		sbi->sm_info->cmd_control_info = NULL;
+>  		return err;
+>  	}
+> -	sbi->sm_info->cmd_control_info = fcc;
+>  
+>  	return err;
+>  }
 
-[266627.211839]     3907                1746
-[266627.212898]     1850                1746
-[266627.214046]     2153                1746
-[266627.215118]     1894                1746
 
 
-CPU i7 x86_64 Mint Desktop - 3.13.0-24-generic
-
-[432284.422356] find_next_bit_le    test_bit_le
-[432284.423470]     3771                3878
-[432284.425400]     2671                3696
-[432284.427221]     2492                3760
-[432284.428908]     1971                3696
-[432284.430640]     2191                3730
-[432284.432323]     1986                3696
-[432284.433741]     1123                3698
-
-[432284.437269]     8299                3696
-[432284.439487]     3842                3696
-[432284.441850]     4334                3696
-[432284.444080]     3885                3696
-
->=20
-> To all,
->=20
-> I cautiously suspect that the performances might be different when pr=
-ocessing
-> f2fs_find_entry, since L1/L2 cache misses due to the intermediate rou=
-tines like
-> matching strings can make some effect on it.
->=20
-> But, IMO, it is still worth to investigate this issue and contemplate=
- how to
-> detect all ones or not.
->=20
-> Ah, one solution may be using 2 bytes from the reserved space, total =
-3, to
-> indicate how many valid dentries are stored in the dentry block.
->=20
-> Any ideas?
-
-Agree. In the case of one bits is over than half, test_bit is better
-than find_next_bit. So we can decide whether using test_bit or
-find_next_bit depending on count of one bits.
-
-When just comparing test_bit and find_next_bit, I think test_bit is mor=
-e effective
-in f2fs because let's think about f2fs's dentry management policy.
-One dentry bucket is filled then next dentry bucket is filled from
-lower to higher level. If empty slots of lower level exist, they are us=
-ed first.
-So, I guess that one bits are getting more than zero bits as time goes =
-by.
-
-Thanks,
-
->=20
-> Thanks,
->=20
-> On Fri, Jul 04, 2014 at 04:04:09PM +0800, Gu Zheng wrote:
-> > Hi Yu,
-> > Thanks.
-> > On 07/04/2014 02:21 PM, Chao Yu wrote:
-> >=20
-> > > Hi Jaegeuk, Gu, Changman
-> > >=20
-> > >> -----Original Message-----
-> > >> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > >> Sent: Friday, July 04, 2014 1:36 PM
-> > >> To: Gu Zheng
-> > >> Cc: f2fs; fsdevel; =EC=9D=B4=EC=B0=BD=EB=A7=8C; =E4=BF=9E
-> > >> Subject: Re: [PATCH 3/4] f2fs: use find_next_bit_le rather than =
-test_bit_le in, find_in_block
-> > >>
-> > >> Well, how about testing with many ones in the bit streams?
-> > >> Thanks,
-> > >>
-> > >> On Thu, Jul 03, 2014 at 06:14:02PM +0800, Gu Zheng wrote:
-> > >>> Hi Jaegeuk, Changman
-> > >>>
-> > >>> Just a simple test, not very sure it can address
-> > >>> our qualm.
-> > >>>
-> > >>> Bitmap size:216(the same as f2fs dentry_bits).
-> > >>> CPU: Intel i5 x86_64.
-> > >>>
-> > >>> Time counting based on tsc(the less the fast).
-> > >>> [Index of 1]	find_next_bit_le	test_bit_le
-> > >>> 0		20			117
-> > >>> 1		20			114
-> > >>> 2		20			113
-> > >>> 3		20			139
-> > >>> 4		22			121
-> > >>> 5		22			118
-> > >>> 6		22			115
-> > >>> 8		22			112
-> > >>> 9		22			106
-> > >>> 10		22			105
-> > >>> 11		22			100
-> > >>> 16		22			98
-> > >>> 48		22			97
-> > >>> 80		27			95
-> > >>> 104		27			92
-> > >>> 136		32			95
-> > >>> 160		32			92
-> > >>> 184		32			90
-> > >>> 200		27			87
-> > >>> 208		35			84
-> > >>>
-> > >>> According to the result, find_next_bit_le is always
-> > >>> better than test_bit_le, though there may be some
-> > >>> noise, but I think the result is clear.
-> > >>> Hope it can help us.:)
-> > >>> ps.The sample is attached too.
-> > >>>
-> > >>> Thanks,
-> > >>> Gu
-> > >=20
-> > > I hope this could provide some help for this patch.
-> > >=20
-> > > I modify Gu's code like this, and add few test case:
-> > >=20
-> > > static void test_bit_search_speed(void)
-> > > {
-> > > 	unsigned long flags;
-> > > 	uint64_t tsc_s_b1, tsc_s_e1, tsc_s_b2, tsc_s_e2;
-> > > 	int i, j, pos;
-> > > 	const void *bit_addr;
-> > >=20
-> > > 	local_irq_save(flags);
-> > > 	preempt_disable();
-> > > =09
-> > > 	printk("find_next_bit	test_bit_le\n");
-> > >=20
-> > > 	for (i =3D 0; i < 24; i++) {
-> > >=20
-> > > 		bit_addr =3D &bitmaps[i];
-> > >=20
-> > > 		tsc_s_b1 =3D rdtsc();
-> > >=20
-> > > 		for (j =3D 0, pos =3D 0; j < 1000; j++, pos =3D 0)
-> > > 			while (pos < 216)
-> > > 				pos =3D find_next_bit_le(bit_addr, 216, pos) + 1;
-> > >=20
-> > > 		mb();
-> > > 		tsc_s_e1 =3D rdtsc();
-> > > 		tsc_s_e1 -=3D tsc_s_b1;
-> > > 		do_div(tsc_s_e1, 1000);
-> > >=20
-> > > 		tsc_s_b2 =3D rdtsc();
-> > >=20
-> > > 		for (j =3D 0, pos =3D 0; j < 1000; j++, pos =3D 0)
-> > > 			while (pos < 216)
-> > > 				test_bit_le(pos++, bit_addr);
-> > >=20
-> > > 		mb();
-> > > 		tsc_s_e2 =3D rdtsc();
-> > > 		tsc_s_e2 -=3D tsc_s_b2;
-> > > 		do_div(tsc_s_e2, 1000);
-> > >=20
-> > > 		printk("%-16llu %-16llu\n", tsc_s_e1, tsc_s_e2);
-> > > 	}
-> > >=20
-> > > 	preempt_enable();
-> > > 	local_irq_restore(flags);
-> > > }
-> > > case: 11111111 11111111
-> > > 		{255, 255, 255, 255, 255, 255, 255,
-> > > 		 255, 255, 255, 255, 255, 255, 255,
-> > > 		 255, 255, 255, 255, 255, 255, 255,
-> > > 		 255, 255, 255, 255, 255, 255},
-> > > case: 10101010 10101010
-> > > 		{170, 170, 170, 170, 170, 170, 170,
-> > > 		 170, 170, 170, 170, 170, 170, 170,
-> > > 		 170, 170, 170, 170, 170, 170, 170,
-> > > 		 170, 170, 170, 170, 170, 170},
-> > > case: 11111111 00000000
-> > > 		{255, 0, 255, 0, 255, 0, 255,
-> > > 		 0, 255, 0, 255, 0, 255, 0,
-> > > 		 255, 0, 255, 0, 255, 0, 255,
-> > > 		 0, 255, 0, 255, 0, 255},
-> > > case: 00001111 00001111
-> > > 		 {15, 15, 15, 15, 15, 15, 15,
-> > > 		 15, 15, 15, 15, 15, 15, 15,
-> > > 		 15, 15, 15, 15, 15, 15, 15,
-> > > 		 15, 15, 15, 15, 15, 15}
-> > >=20
-> > > and here are test result in my env. (Ubuntu vm, 768MB, i3-3220)
-> > > It seems find_next_bit works not so bad as I thought.
-> > >=20
-> > > find_next_bit    test_bit_le
-> > > 73               4209
-> > > 62               1271
-> > > 69               1585
-> > > 50               2031
-> > > 67               2255
-> > > 82               2261
-> > > 52               4007
-> > > 79               2159
-> > > 50               2043
-> > > 55               2215
-> > > 53               2393
-> > > 72               3784
-> > > 76               1879
-> > > 61               2562
-> > > 70               2702
-> > > 62               2489
-> > > 56               2307
-> > > 54               2063
-> > > 51               2258
-> > > 69               2712
-> > > 4133             3989  -- case: 11111111 11111111
-> > > 2370             3024  -- case: 10101010 10101010
-> > > 2608             2413  -- case: 11111111 00000000
-> > > 2457             2506  -- case: 00001111 00001111
-> >=20
-> > The time cost of test_bit_le shakes violently, it should be
-> > very smooth according to the test case, maybe it has relation
-> > to your vm env.
-> >=20
-> > To Jaegeuk,
-> > Following test result is walking a bitmap via find_next_bit_le
-> > and test_bit_le.
-> > (Front 7 are random bitmaps, last four are cases from Yu, see
-> > attached sample for detail):
-> >=20
-> > find_next_bit_le    test_bit_le
-> >=20
-> >      3615                3492=20
-> >      2640                3492=20
-> >      2431                3492=20
-> >      1957                3494=20
-> >      2160                3492=20
-> >      1933                3495=20
-> >      1096                3492=20
-> >=20
-> >      8078                3492=20
-> >      3732                3492=20
-> >      4237                3493=20
-> >      3824                3492
-> >=20
-> > Thanks,
-> > Gu=20
-> >=20
-> > >=20
-> > > .
-> > >=20
-> >=20
-> >=20
->=20
-> > #include <linux/module.h>
-> >=20
-> > __u8 bitmaps[11][27] =3D {
-> > 		{1, 123, 2, 3, 127, 200, 100,
-> > 		 123, 23, 13, 78, 42, 123, 50,
-> > 		 123, 56, 198, 0, 58, 22, 19,
-> > 		 123, 23, 13, 78, 42, 123},
-> > 		{2, 0, 0, 0, 0, 0, 0,
-> > 		 123, 23, 13, 78, 42, 123, 50,
-> > 		 123, 56, 198, 0, 58, 22, 19,
-> > 		 23, 123, 2, 34, 123, 12},
-> > 		{4, 0, 0, 0, 0, 0, 0,
-> > 		 123, 56, 198, 0, 58, 22, 19,
-> > 		 123, 23, 13, 78, 42, 123,
-> > 		 0, 0, 0, 34, 45, 29},
-> > 		{8, 0, 0, 0, 0, 0, 0,
-> > 		 1, 123, 2, 3, 127, 200, 100,
-> > 		 123, 23, 13, 78, 42, 123, 50,
-> > 		 0, 0, 0, 0, 0, 0},
-> > 		{16, 0, 0, 0, 0, 0, 0,
-> > 		 8, 78, 0, 0, 23, 0, 213,
-> > 		 0, 12, 0, 45, 0, 109, 111,
-> > 		 231, 11, 11, 88, 77, 99},
-> > 		{32, 0, 0, 0, 0, 0, 0,
-> > 		 8, 78, 0, 0, 23, 0, 213,
-> > 		 0, 12, 0, 45, 0, 109, 111,
-> > 		 231, 11, 11, 88, 77, 99},
-> > 		{64, 0, 0, 0, 0, 0, 0,
-> > 		 8, 78, 0, 0, 23, 0, 213,
-> > 		 0, 12, 0, 45, 0, 109, 111,
-> > 		 0, 0, 0, 0, 0, 0},
-> > 		{255, 255, 255, 255, 255, 255, 255,
-> > 		 255, 255, 255, 255, 255, 255, 255,
-> > 		 255, 255, 255, 255, 255, 255, 255,
-> > 		 255, 255, 255, 255, 255, 255},
-> > 		{170, 170, 170, 170, 170, 170, 170,
-> > 		 170, 170, 170, 170, 170, 170, 170,
-> > 		 170, 170, 170, 170, 170, 170, 170,
-> > 		 170, 170, 170, 170, 170, 170},
-> > 		{255, 0, 255, 0, 255, 0, 255,
-> > 		 0, 255, 0, 255, 0, 255, 0,
-> > 		 255, 0, 255, 0, 255, 0, 255,
-> > 		 0, 255, 0, 255, 0, 255},
-> > 		 {15, 15, 15, 15, 15, 15, 15,
-> > 		 15, 15, 15, 15, 15, 15, 15,
-> > 		 15, 15, 15, 15, 15, 15, 15,
-> > 		 15, 15, 15, 15, 15, 15}
-> > 		};
-> >=20
-> > uint64_t rdtsc(void) {
-> > uint32_t lo, hi;
-> > __asm__ __volatile__ ("rdtsc" : "=3Da" (lo), "=3Dd" (hi));
-> > return (uint64_t)hi << 32 | lo;
-> > }
-> >=20
-> > static void test_bit_search_speed(void)
-> > {
-> > 	unsigned long flags;
-> > 	uint64_t tsc_s, tsc_diff;
-> > 	int i, j, pos;
-> > 	const void *bit_addr;
-> >=20
-> > 	local_irq_save(flags);
-> > 	preempt_disable();
-> >=20
-> > 	printk("find_next_bit_le    test_bit_le\n");
-> >=20
-> > 	for (i =3D 0; i < 11; i++) {
-> > 		bit_addr =3D &bitmaps[i];
-> >=20
-> > 		pos =3D 0;
-> > 		tsc_s =3D rdtsc();
-> >=20
-> > 		for (j =3D 0; j < 1000; j++, pos =3D 0)
-> > 			while (pos < 216)
-> > 				pos =3D find_next_bit_le(bit_addr, 216, pos) + 1;
-> > 		mb();
-> > 		tsc_diff =3D (rdtsc() - tsc_s)/1000;
-> >=20
-> > 		printk("%8llu", tsc_diff);
-> >=20
-> > 		pos =3D 0;
-> > 		tsc_s =3D rdtsc();
-> >=20
-> > 		for (j =3D 0; j < 1000; j++, pos =3D 0)
-> > 			while (pos < 216)
-> > 				test_bit_le(pos++, bit_addr);
-> >=20
-> > 		mb();
-> > 		tsc_diff =3D (rdtsc() - tsc_s)/1000;
-> >=20
-> > 		printk("%20llu \n", tsc_diff);
-> > 	}
-> >=20
-> > 	preempt_enable();
-> > 	local_irq_restore(flags);
-> > }
-> >=20
-> > static int __init start_test(void) {
-> > 	test_bit_search_speed();
-> > 	return 0;
-> > }
-> >=20
-> > static void __exit exit_test(void) {
-> >=20
-> > }
-> >=20
-> > module_init(start_test);
-> > module_exit(exit_test);
-> >=20
-> > MODULE_LICENSE("GPL");
-> > MODULE_AUTHOR("Gu Zheng");
->=20
->=20
-> --=20
-> Jaegeuk Kim
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+------------------------------------------------------------------------------
+Open source business process management suite built on Java and Eclipse
+Turn processes into business applications with Bonita BPM Community Edition
+Quickly connect people, data, and systems into organized workflows
+Winner of BOSSIE, CODIE, OW2 and Gartner awards
+http://p.sf.net/sfu/Bonitasoft
