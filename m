@@ -1,26 +1,34 @@
-From: "WIPEX NONWOVEN" <info@spunlace-nonwovens.com>
-Subject: Re: Disposable Wipes to replace Sontara, Wypall,
-	TORK Wipers
-Date: Fri, 4 Jul 2014 20:30:12 +0800
-Message-ID: <20140704203020674455@mail003.com>
-Reply-To: info@spunlace-nonwovens.com
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH 1/2] f2fs: check name_len of dir entry to
+ prevent from deadloop
+Date: Mon, 07 Jul 2014 09:24:05 +0800
+Message-ID: <005f01cf9982$4b8920f0$e29b62d0$@samsung.com>
+References: <000001cf95b5$eac71ad0$c0555070$@samsung.com>
+	<20140705064313.GA35795@jmac.local>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1681940250242497556=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cj019@mail003.com>) id 1X32dV-0005aZ-Ua
+	(envelope-from <chao2.yu@samsung.com>) id 1X3xgK-0002AL-EN
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 04 Jul 2014 12:30:41 +0000
-Received: from [61.176.221.6] (helo=mail003.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1X32dS-0006AH-Vh for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 04 Jul 2014 12:30:41 +0000
-Received: from ckrxedivr by mail003.com (MDaemon PRO v10.1.1)
-	with ESMTP id md50042598263.msg
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 04 Jul 2014 20:30:28 +0800
+	Mon, 07 Jul 2014 01:25:24 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1X3xgG-0000FS-Pz
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 07 Jul 2014 01:25:24 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N8B0018AIM1ED70@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 07 Jul 2014 10:25:13 +0900 (KST)
+In-reply-to: <20140705064313.GA35795@jmac.local>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,61 +38,80 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This is a multi-part message in MIME format.
+Hi Jaegeuk,
 
---===============1681940250242497556==
-Content-Type: multipart/alternative;
-	boundary="----=_NextPart_000_05E9_0104C7AB.12B41BB0"
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Saturday, July 05, 2014 2:43 PM
+> To: Chao Yu
+> Cc: Changman Lee; linux-f2fs-devel@lists.sourceforge.net; linux-fsdevel@vger.kernel.org;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [f2fs-dev][PATCH 1/2] f2fs: check name_len of dir entry to prevent from deadloop
+> 
+> Hi Chao,
+> 
+> On Wed, Jul 02, 2014 at 01:23:47PM +0800, Chao Yu wrote:
+> > We assume that modification of some special application could result in zeroed
+> > name_len, or it is consciously made by somebody. We will deadloop in
+> > find_in_block when name_len of dir entry is zero.
+> 
+> Could you explain this a little bit more?
+> I'm not sure how it can happen.
 
-This is a multi-part message in MIME format.
+IMO,
+On one hand, programs like mkfs/fsck/img2simg and f2fs could directly operate
+the raw device, so bugs of these software may be triggered to generate the
+corrupt data such as zeroed name_len.
+On the other hand, it' could be treated as a potential security problem, because
+user could crafted such a malicious image include zeroed name_len for hacking purpose.
+Once such special image is being mounted, deadloop could be triggered, finally will
+result in effecting on linux system's running.
 
-------=_NextPart_000_05E9_0104C7AB.12B41BB0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+Thanks,
+Yu
 
-SGkgZnJpZW5kLA0KSG93IGFyZSB5b3UgZG9pbmc/DQpXZSBhcmUgYSBwcm9mZXNzaW9uYWwgZmFj
-dG9yeSBvZiAgIEluZHVzdHJpYWwgV2lwZXMsRGlzcG9zYWJsZSBXaXBlcyxDbGVhbnJvb20gV2lw
-ZXMsRm9vZCBTZXJ2aWNlIFdpcGVzIGluIENoaW5hIC5UaGV5IGFyZSB2ZXJ5IHBvcHVsYXIgaW4g
-eW91ciBtYXJrZXQuRm9yIG1vcmUgaW5mb3JtYXRpb24scGxzIHNlbmQgdXMgeW91ciBuZWVkIHRv
-IGluZm9Ac3B1bmxhY2Utbm9ud292ZW5zLmNvbSBkaXJlY3RseSxvciBwbHMgYnJvd3NlIG91ciBB
-bGliYWJhIEdvbGRlbiBTdXBwbGllciB3ZWJzaXRlIGh0dHA6Ly93aXBleC5lbi5hbGliYWJhLmNv
-bS8NClJlZ2FyZHMsDQpXSVBFWCBTYWxlcyBUZWFtIA==
+> I think the zeroed name_len would cause some problems in f2fs_add_link.
+> 
+> Thanks,
+> 
+> >
+> > This patch is added for preventing deadloop in above scenario.
+> >
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/dir.c |   10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > index be8c7af..4316ec5 100644
+> > --- a/fs/f2fs/dir.c
+> > +++ b/fs/f2fs/dir.c
+> > @@ -121,6 +121,16 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
+> >  			}
+> >  		}
+> >
+> > +		/* check name_len to prevent from deadloop here */
+> > +		if (unlikely(de->name_len == 0)) {
+> > +			struct inode *inode = dentry_page->mapping->host;
+> > +
+> > +			f2fs_msg(inode->i_sb, KERN_ERR,
+> > +				"zero-length dir entry, ino = %lu, name = %s",
+> > +				(unsigned long)inode->i_ino, name->name);
+> > +			break;
+> > +		}
+> > +
+> >  		bit_start = bit_pos
+> >  				+ GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+> >  	}
+> > --
+> > 1.7.9.5
+> 
+> --
+> Jaegeuk Kim
 
-------=_NextPart_000_05E9_0104C7AB.12B41BB0
-Content-Type: text/html;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-
-PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
-L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0
-Zi04IiBodHRwLWVxdWl2PUNvbnRlbnQtVHlwZT4NCjxNRVRBIG5hbWU9R0VORVJBVE9SIGNvbnRl
-bnQ9Ik1TSFRNTCA5LjAwLjgxMTIuMTY1NTUiPjwvSEVBRD4NCjxCT0RZPkhpIGZyaWVuZCw8QlI+
-SG93IGFyZSB5b3UgZG9pbmc/PEJSPldlIGFyZSBhIHByb2Zlc3Npb25hbCBmYWN0b3J5IA0Kb2Ym
-bmJzcDsmbmJzcDsgPFNUUk9ORz48Rk9OVCBjb2xvcj1yZWQ+SW5kdXN0cmlhbCBXaXBlcyxEaXNw
-b3NhYmxlIA0KV2lwZXMsQ2xlYW5yb29tIFdpcGVzLEZvb2QgU2VydmljZSBXaXBlczwvRk9OVD4g
-PC9TVFJPTkc+aW4gQ2hpbmEgLjxGT05UIA0Kc3R5bGU9IkJBQ0tHUk9VTkQtQ09MT1I6IHdoaXRl
-Ij5UaGV5IGFyZSB2ZXJ5IHBvcHVsYXIgaW4geW91ciBtYXJrZXQuPEZPTlQgDQpjb2xvcj1ibGFj
-az5Gb3IgbW9yZSBpbmZvcm1hdGlvbiw8L0ZPTlQ+PC9GT05UPnBscyBzZW5kIHVzIHlvdXIgbmVl
-ZCB0byA8QSANCmhyZWY9Im1haWx0bzppbmZvQHNwdW5sYWNlLW5vbndvdmVucy5jb20iPmluZm9A
-c3B1bmxhY2Utbm9ud292ZW5zLmNvbTwvQT4gDQpkaXJlY3RseSxvciBwbHMgYnJvd3NlIG91ciA8
-Rk9OVCBjb2xvcj1yZWQ+QWxpYmFiYSBHb2xkZW4gU3VwcGxpZXI8L0ZPTlQ+IA0Kd2Vic2l0ZSA8
-QSANCmhyZWY9Imh0dHA6Ly93aXBleC5lbi5hbGliYWJhLmNvbS8iPmh0dHA6Ly93aXBleC5lbi5h
-bGliYWJhLmNvbS88L0E+PEJSPlJlZ2FyZHMsPEJSPldJUEVYIA0KU2FsZXMgVGVhbSA8L0JPRFk+
-PC9IVE1MPg0K
-
-------=_NextPart_000_05E9_0104C7AB.12B41BB0--
-
-
-
-
---===============1681940250242497556==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Open source business process management suite built on Java and Eclipse
@@ -92,15 +119,3 @@ Turn processes into business applications with Bonita BPM Community Edition
 Quickly connect people, data, and systems into organized workflows
 Winner of BOSSIE, CODIE, OW2 and Gartner awards
 http://p.sf.net/sfu/Bonitasoft
---===============1681940250242497556==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============1681940250242497556==--
