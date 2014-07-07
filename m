@@ -1,92 +1,106 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH] f2fs: avoid to access NULL pointer in
-	issue_flush_thread
-Date: Mon, 7 Jul 2014 09:58:45 +0800
-Message-ID: <53B9FED5.80009@cn.fujitsu.com>
-References: <006001cf9984$6b07f490$4117ddb0$@samsung.com>
+Subject: Re: [PATCH 3/4] f2fs: use find_next_bit_le rather than test_bit_le
+ in, find_in_block
+Date: Mon, 7 Jul 2014 10:13:53 +0800
+Message-ID: <53BA0261.9070101@cn.fujitsu.com>
+References: <53A950F9.907@cn.fujitsu.com> <20140702103059.GA26619@jmac.local> <53B52CEA.8080407@cn.fujitsu.com> <20140704053619.GA32528@jmac.local> <001301cf9750$5e897bc0$1b9c7340$@samsung.com> <53B65FF9.9030204@cn.fujitsu.com> <20140705062535.GA35486@jmac.local> <20140707014500.GA31954@cm224.lee>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1X3yOA-0000Lk-Kr
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Jul 2014 02:10:42 +0000
-Received: from [59.151.112.132] (helo=heian.cn.fujitsu.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1X3yO8-0008Mi-Mp for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Jul 2014 02:10:42 +0000
-In-Reply-To: <006001cf9984$6b07f490$4117ddb0$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20140707014500.GA31954@cm224.lee>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Changman Lee <cm224.lee@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao2.yu@samsung.com>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>, 'fsdevel' <linux-fsdevel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yu,
-Thanks for your catch.
+Hi Changman,
+On 07/07/2014 09:45 AM, Changman Lee wrote:
 
-Regards,
+> Hello,
+> 
+> On Fri, Jul 04, 2014 at 11:25:35PM -0700, Jaegeuk Kim wrote:
+>> To Changman,
+>>
+>> Just for sure, can you reproduce this issue in the x86 machine with proper
+>> benchmarks? (i.e., test_bit_le vs. find_next_bit_le)
+> 
+> It shows quite a different result of bit_mod_test between server and desktop.
+
+It is possible. And the trend of the result is correct, so I think it is credible.
+
+> 
+> CPU i5 x86_64 Ubuntu Server - 3.16.0-rc3
+> 
+> [266627.204776] find_next_bit_le    test_bit_le
+> [266627.205319]     1832                1774
+> [266627.206223]     1292                1746
+> [266627.207092]     1205                1746
+> [266627.207876]      914                1746
+> [266627.208710]     1082                1746
+> [266627.209506]      956                1746
+> [266627.210175]      523                1746
+> 
+> [266627.211839]     3907                1746
+> [266627.212898]     1850                1746
+> [266627.214046]     2153                1746
+> [266627.215118]     1894                1746
+> 
+> 
+> CPU i7 x86_64 Mint Desktop - 3.13.0-24-generic
+> 
+> [432284.422356] find_next_bit_le    test_bit_le
+> [432284.423470]     3771                3878
+> [432284.425400]     2671                3696
+> [432284.427221]     2492                3760
+> [432284.428908]     1971                3696
+> [432284.430640]     2191                3730
+> [432284.432323]     1986                3696
+> [432284.433741]     1123                3698
+> 
+> [432284.437269]     8299                3696
+> [432284.439487]     3842                3696
+> [432284.441850]     4334                3696
+> [432284.444080]     3885                3696
+> 
+>>
+>> To all,
+>>
+>> I cautiously suspect that the performances might be different when processing
+>> f2fs_find_entry, since L1/L2 cache misses due to the intermediate routines like
+>> matching strings can make some effect on it.
+>>
+>> But, IMO, it is still worth to investigate this issue and contemplate how to
+>> detect all ones or not.
+>>
+>> Ah, one solution may be using 2 bytes from the reserved space, total 3, to
+>> indicate how many valid dentries are stored in the dentry block.
+>>
+>> Any ideas?
+> 
+> Agree. In the case of one bits is over than half, test_bit is better
+> than find_next_bit. So we can decide whether using test_bit or
+> find_next_bit depending on count of one bits.
+> 
+> When just comparing test_bit and find_next_bit, I think test_bit is more effective
+> in f2fs because let's think about f2fs's dentry management policy.
+> One dentry bucket is filled then next dentry bucket is filled from
+> lower to higher level. If empty slots of lower level exist, they are used first.
+> So, I guess that one bits are getting more than zero bits as time goes by.
+
+Partly agree.
+IMO, what we seriously care about is *find a suitable slot*, not counting the
+bitmap, we can gain more benefit from find_next_bit rather than test_bit, not only
+the efficiency, but also the readability.
+
+Thanks,
 Gu
-On 07/07/2014 09:39 AM, Chao Yu wrote:
 
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=75861
 > 
-> Denis 2014-05-10 11:28:59 UTC reported:
-> "F2FS-fs (mmcblk0p28): mounting..
->  Unable to handle kernel NULL pointer dereference at virtual address 00000018
->  ...
->  [<c0a2f678>] (_raw_spin_lock+0x3c/0x70) from [<c03a0330>] (issue_flush_thread+0x50/0x17c)
->  [<c03a0330>] (issue_flush_thread+0x50/0x17c) from [<c01b4064>] (kthread+0x98/0xa4)
->  [<c01b4064>] (kthread+0x98/0xa4) from [<c0108060>] (kernel_thread_exit+0x0/0x8)"
+> Thanks,
 > 
-> This patch assign cmd_control_info in sm_info before issue_flush_thread is being
-> created, so this make sure that issue flush thread will have no chance to access
-> invalid info in fcc.
-> 
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-
-Reviewed-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
-
-> ---
->  fs/f2fs/segment.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index bb5980d..a4f8375 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -272,14 +272,15 @@ int create_flush_cmd_control(struct f2fs_sb_info *sbi)
->  		return -ENOMEM;
->  	spin_lock_init(&fcc->issue_lock);
->  	init_waitqueue_head(&fcc->flush_wait_queue);
-> +	sbi->sm_info->cmd_control_info = fcc;
->  	fcc->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
->  				"f2fs_flush-%u:%u", MAJOR(dev), MINOR(dev));
->  	if (IS_ERR(fcc->f2fs_issue_flush)) {
->  		err = PTR_ERR(fcc->f2fs_issue_flush);
->  		kfree(fcc);
-> +		sbi->sm_info->cmd_control_info = NULL;
->  		return err;
->  	}
-> -	sbi->sm_info->cmd_control_info = fcc;
->  
->  	return err;
->  }
+>>
+>> Thanks,
+>>
 
 
-
-------------------------------------------------------------------------------
-Open source business process management suite built on Java and Eclipse
-Turn processes into business applications with Bonita BPM Community Edition
-Quickly connect people, data, and systems into organized workflows
-Winner of BOSSIE, CODIE, OW2 and Gartner awards
-http://p.sf.net/sfu/Bonitasoft
