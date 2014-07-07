@@ -1,106 +1,110 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH 3/4] f2fs: use find_next_bit_le rather than test_bit_le
- in, find_in_block
-Date: Mon, 7 Jul 2014 10:13:53 +0800
-Message-ID: <53BA0261.9070101@cn.fujitsu.com>
-References: <53A950F9.907@cn.fujitsu.com> <20140702103059.GA26619@jmac.local> <53B52CEA.8080407@cn.fujitsu.com> <20140704053619.GA32528@jmac.local> <001301cf9750$5e897bc0$1b9c7340$@samsung.com> <53B65FF9.9030204@cn.fujitsu.com> <20140705062535.GA35486@jmac.local> <20140707014500.GA31954@cm224.lee>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: do checkpoint for the renamed inode
+Date: Mon, 07 Jul 2014 11:17:35 +0800
+Message-ID: <006101cf9992$2a077340$7e1659c0$@samsung.com>
+References: <1404297270-26809-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20140707014500.GA31954@cm224.lee>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao2.yu@samsung.com>, 'f2fs' <linux-f2fs-devel@lists.sourceforge.net>, 'fsdevel' <linux-fsdevel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1404297270-26809-1-git-send-email-jaegeuk@kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Changman,
-On 07/07/2014 09:45 AM, Changman Lee wrote:
+Hi Jaegeuk,
 
-> Hello,
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Wednesday, July 02, 2014 6:35 PM
+> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Cc: Jaegeuk Kim
+> Subject: [f2fs-dev] [PATCH] f2fs: do checkpoint for the renamed inode
 > 
-> On Fri, Jul 04, 2014 at 11:25:35PM -0700, Jaegeuk Kim wrote:
->> To Changman,
->>
->> Just for sure, can you reproduce this issue in the x86 machine with proper
->> benchmarks? (i.e., test_bit_le vs. find_next_bit_le)
+> If an inode is renamed, it should be registered as file_lost_pino to conduct
+> checkpoint at f2fs_sync_file.
+> Otherwise, the inode cannot be recovered due to no dent_mark in the following
+> scenario.
 > 
-> It shows quite a different result of bit_mod_test between server and desktop.
+> Note that, this scenario is from xfstests/322.
+> 
+> 1. create "a"
+> 2. fsync "a"
+> 3. rename "a" to "b"
+> 4. fsync "b"
+> 5. Sudden power-cut
+> 
+> After recovery is done, "b" should be seen.
+> However, the result shows "a", since the recovery procedure does not enter
+> recover_dentry due to no dent_mark.
 
-It is possible. And the trend of the result is correct, so I think it is credible.
-
-> 
-> CPU i5 x86_64 Ubuntu Server - 3.16.0-rc3
-> 
-> [266627.204776] find_next_bit_le    test_bit_le
-> [266627.205319]     1832                1774
-> [266627.206223]     1292                1746
-> [266627.207092]     1205                1746
-> [266627.207876]      914                1746
-> [266627.208710]     1082                1746
-> [266627.209506]      956                1746
-> [266627.210175]      523                1746
-> 
-> [266627.211839]     3907                1746
-> [266627.212898]     1850                1746
-> [266627.214046]     2153                1746
-> [266627.215118]     1894                1746
-> 
-> 
-> CPU i7 x86_64 Mint Desktop - 3.13.0-24-generic
-> 
-> [432284.422356] find_next_bit_le    test_bit_le
-> [432284.423470]     3771                3878
-> [432284.425400]     2671                3696
-> [432284.427221]     2492                3760
-> [432284.428908]     1971                3696
-> [432284.430640]     2191                3730
-> [432284.432323]     1986                3696
-> [432284.433741]     1123                3698
-> 
-> [432284.437269]     8299                3696
-> [432284.439487]     3842                3696
-> [432284.441850]     4334                3696
-> [432284.444080]     3885                3696
-> 
->>
->> To all,
->>
->> I cautiously suspect that the performances might be different when processing
->> f2fs_find_entry, since L1/L2 cache misses due to the intermediate routines like
->> matching strings can make some effect on it.
->>
->> But, IMO, it is still worth to investigate this issue and contemplate how to
->> detect all ones or not.
->>
->> Ah, one solution may be using 2 bytes from the reserved space, total 3, to
->> indicate how many valid dentries are stored in the dentry block.
->>
->> Any ideas?
-> 
-> Agree. In the case of one bits is over than half, test_bit is better
-> than find_next_bit. So we can decide whether using test_bit or
-> find_next_bit depending on count of one bits.
-> 
-> When just comparing test_bit and find_next_bit, I think test_bit is more effective
-> in f2fs because let's think about f2fs's dentry management policy.
-> One dentry bucket is filled then next dentry bucket is filled from
-> lower to higher level. If empty slots of lower level exist, they are used first.
-> So, I guess that one bits are getting more than zero bits as time goes by.
-
-Partly agree.
-IMO, what we seriously care about is *find a suitable slot*, not counting the
-bitmap, we can gain more benefit from find_next_bit rather than test_bit, not only
-the efficiency, but also the readability.
-
-Thanks,
-Gu
+As we know CP is expensive, how about modifying checkpointed value directly
+in nat cache at step #3? So "b" could be fsynced with dent_mark at step #4.
 
 > 
-> Thanks,
+> The reason is like below.
+> - The nid of "a" is checkpointed during #2, f2fs_sync_file.
+> - The inode page for "b" produced by #3 is written without dent_mark by
+> sync_node_pages.
 > 
->>
->> Thanks,
->>
-
-
+> So, this patch fixes this bug by assinging file_lost_pino to the "a"'s inode.
+> If the pino is lost, f2fs_sync_file conducts checkpoint, and then recovers
+> the latest pino and its dentry information for further recovery.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/namei.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 96f1dd1..1b3cae0 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -411,9 +411,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  		}
+> 
+>  		f2fs_set_link(new_dir, new_entry, new_page, old_inode);
+> -		down_write(&F2FS_I(old_inode)->i_sem);
+> -		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
+> -		up_write(&F2FS_I(old_inode)->i_sem);
+> 
+>  		new_inode->i_ctime = CURRENT_TIME;
+>  		down_write(&F2FS_I(new_inode)->i_sem);
+> @@ -446,6 +443,10 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  		}
+>  	}
+> 
+> +	down_write(&F2FS_I(old_inode)->i_sem);
+> +	file_lost_pino(old_inode);
+> +	up_write(&F2FS_I(old_inode)->i_sem);
+> +
+>  	old_inode->i_ctime = CURRENT_TIME;
+>  	mark_inode_dirty(old_inode);
+> 
+> @@ -455,9 +456,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  		if (old_dir != new_dir) {
+>  			f2fs_set_link(old_inode, old_dir_entry,
+>  						old_dir_page, new_dir);
+> -			down_write(&F2FS_I(old_inode)->i_sem);
+> -			F2FS_I(old_inode)->i_pino = new_dir->i_ino;
+> -			up_write(&F2FS_I(old_inode)->i_sem);
+>  			update_inode_page(old_inode);
+>  		} else {
+>  			kunmap(old_dir_page);
+> --
+> 1.8.5.2 (Apple Git-48)
+> 
+> 
+> ------------------------------------------------------------------------------
+> Open source business process management suite built on Java and Eclipse
+> Turn processes into business applications with Bonita BPM Community Edition
+> Quickly connect people, data, and systems into organized workflows
+> Winner of BOSSIE, CODIE, OW2 and Gartner awards
+> http://p.sf.net/sfu/Bonitasoft
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
