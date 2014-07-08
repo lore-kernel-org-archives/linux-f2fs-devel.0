@@ -1,24 +1,24 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Huang Ying <ying.huang@intel.com>
 Subject: Re: f2fs: Add f2fs_balance_fs for direct IO
-Date: Tue, 8 Jul 2014 00:58:43 -0700
-Message-ID: <20140708075843.GA59558@jmac>
+Date: Tue, 08 Jul 2014 16:16:52 +0800
+Message-ID: <1404807412.13519.46.camel@yhuang-dev>
 References: <1404711988-18264-1-git-send-email-ying.huang@intel.com>
+	<20140708075843.GA59558@jmac>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1X4QIf-0001FG-Ls
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <ying.huang@intel.com>) id 1X4QaC-0006Bd-Mz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 08 Jul 2014 07:58:53 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1X4QId-0007OT-W9 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 08 Jul 2014 07:58:53 +0000
-Content-Disposition: inline
-In-Reply-To: <1404711988-18264-1-git-send-email-ying.huang@intel.com>
+	Tue, 08 Jul 2014 08:17:00 +0000
+Received: from mga01.intel.com ([192.55.52.88])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1X4QaB-0007lJ-Rg for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 08 Jul 2014 08:17:00 +0000
+In-Reply-To: <20140708075843.GA59558@jmac>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,53 +28,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Huang Ying <ying.huang@intel.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Huang,
+Hi, Jaegeuk,
 
-It occurs a merge conflict.
-Please check the patch.
-
-Anyway, IMO, it needs to place f2fs_balance_fs somewhere in get_data_block.
-
-Thanks,
-
-On Mon, Jul 07, 2014 at 01:46:28PM +0800, Huang Ying wrote:
-> Otherwise, if a large amount of direct IO writes were done, the
-> segment allocation may be failed because no enough segments are gced.
+On Tue, 2014-07-08 at 00:58 -0700, Jaegeuk Kim wrote:
+> Hi Huang,
 > 
-> Signed-off-by: Huang, Ying <ying.huang@intel.com>
-> ---
->  fs/f2fs/data.c |    6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1038,6 +1038,7 @@ static ssize_t f2fs_direct_IO(int rw, st
->  {
->  	struct file *file = iocb->ki_filp;
->  	struct inode *inode = file->f_mapping->host;
-> +	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
->  
->  	/* Let buffer I/O handle the inline data case. */
->  	if (f2fs_has_inline_data(inode))
-> @@ -1046,8 +1047,11 @@ static ssize_t f2fs_direct_IO(int rw, st
->  	if (check_direct_IO(inode, rw, iter, offset))
->  		return 0;
->  
-> +	if (rw == WRITE)
-> +		f2fs_balance_fs(sbi);
-> +
->  	/* clear fsync mark to recover these blocks */
-> -	fsync_mark_clear(F2FS_SB(inode->i_sb), inode->i_ino);
-> +	fsync_mark_clear(sbi, inode->i_ino);
->  
->  	return blockdev_direct_IO(rw, iocb, inode, iter, offset,
->  				  get_data_block);
+> It occurs a merge conflict.
+> Please check the patch.
 
--- 
-Jaegeuk Kim
+Sorry, my fault.  I think I need to base my patch on f2fs tree instead
+of latest Linus' tree?
+
+> Anyway, IMO, it needs to place f2fs_balance_fs somewhere in get_data_block.
+
+Yes.  I think so too.  So you prefer to add f2fs_balance_fs in both
+f2fs_direct_IO and get_data_block, or just add f2fs_blance_fs in
+get_data_block only?
+
+Best Regards,
+Huang, Ying
+
+> Thanks,
+> 
+> On Mon, Jul 07, 2014 at 01:46:28PM +0800, Huang Ying wrote:
+> > Otherwise, if a large amount of direct IO writes were done, the
+> > segment allocation may be failed because no enough segments are gced.
+> > 
+> > Signed-off-by: Huang, Ying <ying.huang@intel.com>
+> > ---
+> >  fs/f2fs/data.c |    6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -1038,6 +1038,7 @@ static ssize_t f2fs_direct_IO(int rw, st
+> >  {
+> >  	struct file *file = iocb->ki_filp;
+> >  	struct inode *inode = file->f_mapping->host;
+> > +	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+> >  
+> >  	/* Let buffer I/O handle the inline data case. */
+> >  	if (f2fs_has_inline_data(inode))
+> > @@ -1046,8 +1047,11 @@ static ssize_t f2fs_direct_IO(int rw, st
+> >  	if (check_direct_IO(inode, rw, iter, offset))
+> >  		return 0;
+> >  
+> > +	if (rw == WRITE)
+> > +		f2fs_balance_fs(sbi);
+> > +
+> >  	/* clear fsync mark to recover these blocks */
+> > -	fsync_mark_clear(F2FS_SB(inode->i_sb), inode->i_ino);
+> > +	fsync_mark_clear(sbi, inode->i_ino);
+> >  
+> >  	return blockdev_direct_IO(rw, iocb, inode, iter, offset,
+> >  				  get_data_block);
+> 
+
+
 
 ------------------------------------------------------------------------------
 Open source business process management suite built on Java and Eclipse
