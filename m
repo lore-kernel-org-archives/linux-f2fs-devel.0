@@ -1,11 +1,9 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: check name_len of dir entry to
- prevent from deadloop
-Date: Mon, 7 Jul 2014 22:56:13 -0700
-Message-ID: <20140708055613.GA37622@jmac.local>
-References: <000001cf95b5$eac71ad0$c0555070$@samsung.com>
-	<20140705064313.GA35795@jmac.local>
-	<005f01cf9982$4b8920f0$e29b62d0$@samsung.com>
+Subject: Re: [PATCH] f2fs: do checkpoint for the renamed inode
+Date: Mon, 7 Jul 2014 23:36:52 -0700
+Message-ID: <20140708063652.GB37622@jmac.local>
+References: <1404297270-26809-1-git-send-email-jaegeuk@kernel.org>
+	<006101cf9992$2a077340$7e1659c0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -13,15 +11,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1X4OO7-0000AL-5M
+	(envelope-from <jaegeuk@kernel.org>) id 1X4P1T-0001Qj-5a
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 08 Jul 2014 05:56:23 +0000
+	Tue, 08 Jul 2014 06:37:03 +0000
 Received: from mail.kernel.org ([198.145.19.201])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1X4OO6-00024r-47 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 08 Jul 2014 05:56:23 +0000
+	id 1X4P1R-0003CE-WD for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 08 Jul 2014 06:37:03 +0000
 Content-Disposition: inline
-In-Reply-To: <005f01cf9982$4b8920f0$e29b62d0$@samsung.com>
+In-Reply-To: <006101cf9992$2a077340$7e1659c0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,96 +32,112 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <chao2.yu@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Jul 07, 2014 at 09:24:05AM +0800, Chao Yu wrote:
+On Mon, Jul 07, 2014 at 11:17:35AM +0800, Chao Yu wrote:
 > Hi Jaegeuk,
 > 
 > > -----Original Message-----
 > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Saturday, July 05, 2014 2:43 PM
-> > To: Chao Yu
-> > Cc: Changman Lee; linux-f2fs-devel@lists.sourceforge.net; linux-fsdevel@vger.kernel.org;
-> > linux-kernel@vger.kernel.org
-> > Subject: Re: [f2fs-dev][PATCH 1/2] f2fs: check name_len of dir entry to prevent from deadloop
+> > Sent: Wednesday, July 02, 2014 6:35 PM
+> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > linux-f2fs-devel@lists.sourceforge.net
+> > Cc: Jaegeuk Kim
+> > Subject: [f2fs-dev] [PATCH] f2fs: do checkpoint for the renamed inode
 > > 
-> > Hi Chao,
+> > If an inode is renamed, it should be registered as file_lost_pino to conduct
+> > checkpoint at f2fs_sync_file.
+> > Otherwise, the inode cannot be recovered due to no dent_mark in the following
+> > scenario.
 > > 
-> > On Wed, Jul 02, 2014 at 01:23:47PM +0800, Chao Yu wrote:
-> > > We assume that modification of some special application could result in zeroed
-> > > name_len, or it is consciously made by somebody. We will deadloop in
-> > > find_in_block when name_len of dir entry is zero.
+> > Note that, this scenario is from xfstests/322.
 > > 
-> > Could you explain this a little bit more?
-> > I'm not sure how it can happen.
+> > 1. create "a"
+> > 2. fsync "a"
+> > 3. rename "a" to "b"
+> > 4. fsync "b"
+> > 5. Sudden power-cut
+> > 
+> > After recovery is done, "b" should be seen.
+> > However, the result shows "a", since the recovery procedure does not enter
+> > recover_dentry due to no dent_mark.
 > 
-> IMO,
-> On one hand, programs like mkfs/fsck/img2simg and f2fs could directly operate
-> the raw device, so bugs of these software may be triggered to generate the
-> corrupt data such as zeroed name_len.
+> As we know CP is expensive, how about modifying checkpointed value directly
+> in nat cache at step #3? So "b" could be fsynced with dent_mark at step #4.
 
-Well...
-If such the programs try to corrupt the f2fs image crucially, the bug should be
-fixed inside the programs, not from the workaround through f2fs.
+Yes, I also thought about that.
+But, when handling the nat cache, one of my concerns was the lock granularity.
+Basically each nat cache entry should be covered by its node page lock, so it
+is a little bit complicate to do something easily in f2fs_rename.
 
-As I mentioned, even though f2fs avoids such the dead loop whatever at that
-moment, it will be operating with inconsistent file system status, resulting
-in system crash in the near furture finally.
-
-Why should we avoid this specific case only?
-It seems that it is a kinda intentional user-made case.
-Is it really normal?
-
-> On the other hand, it' could be treated as a potential security problem, because
-> user could crafted such a malicious image include zeroed name_len for hacking purpose.
-
-If user can try to do something like that, why do they write zeroed name_len only?
-To crash the system, they can do everything.
+So, this patch was to fix the bug with a naive approach.
+And we can write additional patch to enhance this too.
 
 Thanks,
 
-> Once such special image is being mounted, deadloop could be triggered, finally will
-> result in effecting on linux system's running.
 > 
-> Thanks,
-> Yu
-> 
-> > I think the zeroed name_len would cause some problems in f2fs_add_link.
 > > 
-> > Thanks,
+> > The reason is like below.
+> > - The nid of "a" is checkpointed during #2, f2fs_sync_file.
+> > - The inode page for "b" produced by #3 is written without dent_mark by
+> > sync_node_pages.
 > > 
-> > >
-> > > This patch is added for preventing deadloop in above scenario.
-> > >
-> > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > > ---
-> > >  fs/f2fs/dir.c |   10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> > > index be8c7af..4316ec5 100644
-> > > --- a/fs/f2fs/dir.c
-> > > +++ b/fs/f2fs/dir.c
-> > > @@ -121,6 +121,16 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
-> > >  			}
-> > >  		}
-> > >
-> > > +		/* check name_len to prevent from deadloop here */
-> > > +		if (unlikely(de->name_len == 0)) {
-> > > +			struct inode *inode = dentry_page->mapping->host;
-> > > +
-> > > +			f2fs_msg(inode->i_sb, KERN_ERR,
-> > > +				"zero-length dir entry, ino = %lu, name = %s",
-> > > +				(unsigned long)inode->i_ino, name->name);
-> > > +			break;
-> > > +		}
-> > > +
-> > >  		bit_start = bit_pos
-> > >  				+ GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-> > >  	}
-> > > --
-> > > 1.7.9.5
+> > So, this patch fixes this bug by assinging file_lost_pino to the "a"'s inode.
+> > If the pino is lost, f2fs_sync_file conducts checkpoint, and then recovers
+> > the latest pino and its dentry information for further recovery.
 > > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/namei.c | 10 ++++------
+> >  1 file changed, 4 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> > index 96f1dd1..1b3cae0 100644
+> > --- a/fs/f2fs/namei.c
+> > +++ b/fs/f2fs/namei.c
+> > @@ -411,9 +411,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  		}
+> > 
+> >  		f2fs_set_link(new_dir, new_entry, new_page, old_inode);
+> > -		down_write(&F2FS_I(old_inode)->i_sem);
+> > -		F2FS_I(old_inode)->i_pino = new_dir->i_ino;
+> > -		up_write(&F2FS_I(old_inode)->i_sem);
+> > 
+> >  		new_inode->i_ctime = CURRENT_TIME;
+> >  		down_write(&F2FS_I(new_inode)->i_sem);
+> > @@ -446,6 +443,10 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  		}
+> >  	}
+> > 
+> > +	down_write(&F2FS_I(old_inode)->i_sem);
+> > +	file_lost_pino(old_inode);
+> > +	up_write(&F2FS_I(old_inode)->i_sem);
+> > +
+> >  	old_inode->i_ctime = CURRENT_TIME;
+> >  	mark_inode_dirty(old_inode);
+> > 
+> > @@ -455,9 +456,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  		if (old_dir != new_dir) {
+> >  			f2fs_set_link(old_inode, old_dir_entry,
+> >  						old_dir_page, new_dir);
+> > -			down_write(&F2FS_I(old_inode)->i_sem);
+> > -			F2FS_I(old_inode)->i_pino = new_dir->i_ino;
+> > -			up_write(&F2FS_I(old_inode)->i_sem);
+> >  			update_inode_page(old_inode);
+> >  		} else {
+> >  			kunmap(old_dir_page);
 > > --
-> > Jaegeuk Kim
+> > 1.8.5.2 (Apple Git-48)
+> > 
+> > 
+> > ------------------------------------------------------------------------------
+> > Open source business process management suite built on Java and Eclipse
+> > Turn processes into business applications with Bonita BPM Community Edition
+> > Quickly connect people, data, and systems into organized workflows
+> > Winner of BOSSIE, CODIE, OW2 and Gartner awards
+> > http://p.sf.net/sfu/Bonitasoft
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 -- 
 Jaegeuk Kim
