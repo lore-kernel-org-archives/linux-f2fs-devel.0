@@ -1,114 +1,166 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: f2fs: Add f2fs_balance_fs for direct IO
-Date: Wed, 9 Jul 2014 06:26:35 -0700
-Message-ID: <20140709132635.GA4926@jmac>
-References: <1404711988-18264-1-git-send-email-ying.huang@intel.com>
-	<20140708075843.GA59558@jmac>
-	<1404807412.13519.46.camel@yhuang-dev>
+Subject: Re: [f2fs-dev][PATCH 1/2] f2fs: check name_len of dir entry to
+ prevent from deadloop
+Date: Wed, 9 Jul 2014 06:47:41 -0700
+Message-ID: <20140709134741.GB4926@jmac>
+References: <000001cf95b5$eac71ad0$c0555070$@samsung.com>
+ <20140705064313.GA35795@jmac.local>
+ <005f01cf9982$4b8920f0$e29b62d0$@samsung.com>
+ <20140708055613.GA37622@jmac.local>
+ <006201cf9b21$afe7e4f0$0fb7aed0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1X4rtY-0005Gc-Qr
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Jul 2014 13:26:48 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1X4rtX-0001Mb-60 for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Jul 2014 13:26:48 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1404807412.13519.46.camel@yhuang-dev>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Huang Ying <ying.huang@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <006201cf9b21$afe7e4f0$0fb7aed0$@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Jul 08, 2014 at 04:16:52PM +0800, Huang Ying wrote:
-> Hi, Jaegeuk,
+Hi Chao,
+
+On Wed, Jul 09, 2014 at 10:57:43AM +0800, Chao Yu wrote:
+> Hi,
 > 
-> On Tue, 2014-07-08 at 00:58 -0700, Jaegeuk Kim wrote:
-> > Hi Huang,
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Tuesday, July 08, 2014 1:56 PM
+> > To: Chao Yu
+> > Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-fsdevel@vger.kernel.org;
+> > linux-kernel@vger.kernel.org
+> > Subject: Re: [f2fs-dev][PATCH 1/2] f2fs: check name_len of dir entry to prevent from deadloop
 > > 
-> > It occurs a merge conflict.
-> > Please check the patch.
+> > On Mon, Jul 07, 2014 at 09:24:05AM +0800, Chao Yu wrote:
+> > > Hi Jaegeuk,
+> > >
+> > > > -----Original Message-----
+> > > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > > Sent: Saturday, July 05, 2014 2:43 PM
+> > > > To: Chao Yu
+> > > > Cc: Changman Lee; linux-f2fs-devel@lists.sourceforge.net; linux-fsdevel@vger.kernel.org;
+> > > > linux-kernel@vger.kernel.org
+> > > > Subject: Re: [f2fs-dev][PATCH 1/2] f2fs: check name_len of dir entry to prevent from deadloop
+> > > >
+> > > > Hi Chao,
+> > > >
+> > > > On Wed, Jul 02, 2014 at 01:23:47PM +0800, Chao Yu wrote:
+> > > > > We assume that modification of some special application could result in zeroed
+> > > > > name_len, or it is consciously made by somebody. We will deadloop in
+> > > > > find_in_block when name_len of dir entry is zero.
+> > > >
+> > > > Could you explain this a little bit more?
+> > > > I'm not sure how it can happen.
+> > >
+> > > IMO,
+> > > On one hand, programs like mkfs/fsck/img2simg and f2fs could directly operate
+> > > the raw device, so bugs of these software may be triggered to generate the
+> > > corrupt data such as zeroed name_len.
+> > 
+> > Well...
+> > If such the programs try to corrupt the f2fs image crucially, the bug should be
+> > fixed inside the programs, not from the workaround through f2fs.
 > 
-> Sorry, my fault.  I think I need to base my patch on f2fs tree instead
-> of latest Linus' tree?
-
-My apologies.
-As Chao said, it was due to the other patch.
-I'll merge them soon.
-
+> IMO, software should have ability of self fault-tolerant, but not depend on correctness
+> of other related software. And I will hope there are no more other software which could
+> directly operate the raw device, to provide us such corrupted data as input.
 > 
-> > Anyway, IMO, it needs to place f2fs_balance_fs somewhere in get_data_block.
-> 
-> Yes.  I think so too.  So you prefer to add f2fs_balance_fs in both
-> f2fs_direct_IO and get_data_block, or just add f2fs_blance_fs in
-> get_data_block only?
+> How about swifting to BUG_ON here?
 
-I think it should be placed on get_data_block only.
-But, at a glance, we need to figure out some conditions when it should be
-called.
-Since we don't or shouldn't call that in the look-up paths (e.g., read).
+Well, IMO, it would be good to add f2fs_bug_on() here with a specific comment.
+
+In the current phase of f2fs, it is more important to investigate the file
+system bugs, rather than workarounds for any corrupted images.
+And, definitely it needs to stop the kernel if any corrupted image was mounted,
+so that we can figure out where the bugs are occurred.
 
 Thanks,
 
 > 
-> Best Regards,
-> Huang, Ying
+> > 
+> > As I mentioned, even though f2fs avoids such the dead loop whatever at that
+> > moment, it will be operating with inconsistent file system status, resulting
+> > in system crash in the near furture finally.
 > 
+> Agreed, we should avoid this. Previous solution with "break" is not suitable here.
+> Thanks for you reminder.
+> 
+> > 
+> > Why should we avoid this specific case only?
+> 
+> Hmm... I just found this case could cause some issue when I review Gu's last patch.
+> As I check, several error cases of find_data_page in find_in_level could also cause
+> inconsistent status of fs as you said.
+> 
+> > It seems that it is a kinda intentional user-made case.
+> > Is it really normal?
+> 
+> It's really rare.
+> 
+> > 
+> > > On the other hand, it' could be treated as a potential security problem, because
+> > > user could crafted such a malicious image include zeroed name_len for hacking purpose.
+> > 
+> > If user can try to do something like that, why do they write zeroed name_len only?
+> > To crash the system, they can do everything.
+> 
+> If they have the whole right to access the system, certainly they do not have to do such
+> thing. I just assume that they only have the right to upload the crafted image, then use
+> social engineering in next "do mount" step. Or it's no need to worry about this?
+> 
+> Thanks,
+> Yu
+> 
+> > 
 > > Thanks,
 > > 
-> > On Mon, Jul 07, 2014 at 01:46:28PM +0800, Huang Ying wrote:
-> > > Otherwise, if a large amount of direct IO writes were done, the
-> > > segment allocation may be failed because no enough segments are gced.
-> > > 
-> > > Signed-off-by: Huang, Ying <ying.huang@intel.com>
-> > > ---
-> > >  fs/f2fs/data.c |    6 +++++-
-> > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > > 
-> > > --- a/fs/f2fs/data.c
-> > > +++ b/fs/f2fs/data.c
-> > > @@ -1038,6 +1038,7 @@ static ssize_t f2fs_direct_IO(int rw, st
-> > >  {
-> > >  	struct file *file = iocb->ki_filp;
-> > >  	struct inode *inode = file->f_mapping->host;
-> > > +	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-> > >  
-> > >  	/* Let buffer I/O handle the inline data case. */
-> > >  	if (f2fs_has_inline_data(inode))
-> > > @@ -1046,8 +1047,11 @@ static ssize_t f2fs_direct_IO(int rw, st
-> > >  	if (check_direct_IO(inode, rw, iter, offset))
-> > >  		return 0;
-> > >  
-> > > +	if (rw == WRITE)
-> > > +		f2fs_balance_fs(sbi);
-> > > +
-> > >  	/* clear fsync mark to recover these blocks */
-> > > -	fsync_mark_clear(F2FS_SB(inode->i_sb), inode->i_ino);
-> > > +	fsync_mark_clear(sbi, inode->i_ino);
-> > >  
-> > >  	return blockdev_direct_IO(rw, iocb, inode, iter, offset,
-> > >  				  get_data_block);
+> > > Once such special image is being mounted, deadloop could be triggered, finally will
+> > > result in effecting on linux system's running.
+> > >
+> > > Thanks,
+> > > Yu
+> > >
+> > > > I think the zeroed name_len would cause some problems in f2fs_add_link.
+> > > >
+> > > > Thanks,
+> > > >
+> > > > >
+> > > > > This patch is added for preventing deadloop in above scenario.
+> > > > >
+> > > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > > > ---
+> > > > >  fs/f2fs/dir.c |   10 ++++++++++
+> > > > >  1 file changed, 10 insertions(+)
+> > > > >
+> > > > > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > > > > index be8c7af..4316ec5 100644
+> > > > > --- a/fs/f2fs/dir.c
+> > > > > +++ b/fs/f2fs/dir.c
+> > > > > @@ -121,6 +121,16 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
+> > > > >  			}
+> > > > >  		}
+> > > > >
+> > > > > +		/* check name_len to prevent from deadloop here */
+> > > > > +		if (unlikely(de->name_len == 0)) {
+> > > > > +			struct inode *inode = dentry_page->mapping->host;
+> > > > > +
+> > > > > +			f2fs_msg(inode->i_sb, KERN_ERR,
+> > > > > +				"zero-length dir entry, ino = %lu, name = %s",
+> > > > > +				(unsigned long)inode->i_ino, name->name);
+> > > > > +			break;
+> > > > > +		}
+> > > > > +
+> > > > >  		bit_start = bit_pos
+> > > > >  				+ GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+> > > > >  	}
+> > > > > --
+> > > > > 1.7.9.5
+> > > >
+> > > > --
+> > > > Jaegeuk Kim
 > > 
+> > --
+> > Jaegeuk Kim
 
 -- 
 Jaegeuk Kim
-
-------------------------------------------------------------------------------
-Open source business process management suite built on Java and Eclipse
-Turn processes into business applications with Bonita BPM Community Edition
-Quickly connect people, data, and systems into organized workflows
-Winner of BOSSIE, CODIE, OW2 and Gartner awards
-http://p.sf.net/sfu/Bonitasoft
