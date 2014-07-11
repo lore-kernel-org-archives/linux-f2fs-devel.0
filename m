@@ -1,41 +1,24 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH 1/2] f2fs: cleanup the needless return of
-	f2fs_create_root_stats
-Date: Fri, 11 Jul 2014 18:35:43 +0800
-Message-ID: <1405074944-18283-1-git-send-email-guz.fnst@cn.fujitsu.com>
-References: <N>
+From: =?UTF-8?Q?Petar_Koreti=C4=87?= <petar.koretic@gmail.com>
+Subject: [f2fs.fsck] status report show fails
+Date: Fri, 11 Jul 2014 23:18:10 +0200
+Message-ID: <CAOWmdGMyHzm2exVPKi7Gd1EZc9vKtVQV8W92=2H=nR6HCH7Tew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============5397395203638662697=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz@guz>) id 1X5Ybe-00061P-NT
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <petar.koretic@gmail.com>) id 1X5iCw-0003pg-KC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 11 Jul 2014 11:03:10 +0000
-Received: from fgwmail8.fujitsu.co.jp ([192.51.44.38])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1X5Ybd-0000Fg-8c
+	Fri, 11 Jul 2014 21:18:18 +0000
+Received: from mail-lb0-f177.google.com ([209.85.217.177])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1X5iCv-0007Pq-PW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 11 Jul 2014 11:03:10 +0000
-Received: from fgwmail5.fujitsu.co.jp (fgwmail5.fujitsu.co.jp [192.51.44.35])
-	by fgwmail8.fujitsu.co.jp (Postfix) with ESMTP id 20C9015040AE
+	Fri, 11 Jul 2014 21:18:18 +0000
+Received: by mail-lb0-f177.google.com with SMTP id u10so1298242lbd.36
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 11 Jul 2014 19:48:51 +0900 (JST)
-Received: from kw-mxoi1.gw.nic.fujitsu.com (unknown [10.0.237.133])
-	by fgwmail5.fujitsu.co.jp (Postfix) with ESMTP id 616F23EE1D0
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 11 Jul 2014 19:48:44 +0900 (JST)
-Received: from s4.gw.fujitsu.co.jp (s4.gw.nic.fujitsu.com [10.0.50.94])
-	by kw-mxoi1.gw.nic.fujitsu.com (Postfix) with ESMTP id 6FA52AC0AF6
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 11 Jul 2014 19:48:43 +0900 (JST)
-Received: from s01.gw.fujitsu.co.jp (s01.gw.nic.fujitsu.com [133.161.11.16])
-	by s4.gw.fujitsu.co.jp (Postfix) with ESMTP id 198911DB8032
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 11 Jul 2014 19:48:43 +0900 (JST)
-In-Reply-To: <N>
+	Fri, 11 Jul 2014 14:18:11 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -45,52 +28,84 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: Gu Zheng <guz.fnst@cn.fujitsu.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
----
- fs/f2fs/debug.c |   17 +++++------------
- 1 files changed, 5 insertions(+), 12 deletions(-)
+--===============5397395203638662697==
+Content-Type: multipart/alternative; boundary=001a11c3353681dec004fdf17a0d
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index b52c12c..3f99266 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -345,21 +345,14 @@ void __init f2fs_create_root_stats(void)
- 
- 	f2fs_debugfs_root = debugfs_create_dir("f2fs", NULL);
- 	if (!f2fs_debugfs_root)
--		goto bail;
-+		return;
- 
- 	file = debugfs_create_file("status", S_IRUGO, f2fs_debugfs_root,
- 			NULL, &stat_fops);
--	if (!file)
--		goto free_debugfs_dir;
--
--	return;
--
--free_debugfs_dir:
--	debugfs_remove(f2fs_debugfs_root);
--
--bail:
--	f2fs_debugfs_root = NULL;
--	return;
-+	if (!file) {
-+		debugfs_remove(f2fs_debugfs_root);
-+		f2fs_debugfs_root = NULL;
-+	}
- }
- 
- void f2fs_destroy_root_stats(void)
--- 
-1.7.7
+--001a11c3353681dec004fdf17a0d
+Content-Type: text/plain; charset=UTF-8
 
+Hi guys.
+
+I've been using f2fs on my primary SSD disk and laptop from April 17, 2013.
+
+I really didn't have any problems but lately I've started to see some.
+For example, data is not being saved or after reboot old data is loaded.
+I haven't really taken a deeper look into it yet but that's not directly
+why I'm posting.
+
+Today I finally run fsck. In the output I got all fails except:
+---------------------------------------------------------------------
+[FSCK] Hard link checking for regular file
+---------------------------------------------------------------------
+which was the only one with '[Ok...]' status.
+
+As far as I know and can see from git logs fsck
+doesn't yet have ability to fix problems.
+
+Just to mention currently I have it mounted with:
+rw,relatime,discard,background_gc=off,noacl,nouser_xattr
+
+So what are these fails telling me and what
+are my options?
+
+Thanks,
+Petar
+
+--001a11c3353681dec004fdf17a0d
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi guys.<div><br></div><div>I&#39;ve been using f2fs on my=
+ primary SSD disk and laptop from April 17, 2013.</div><div><br></div><div>=
+I really didn&#39;t have any problems but lately I&#39;ve started to see so=
+me.</div>
+<div>For example, data is not being saved or after reboot old data is loade=
+d.</div><div>I haven&#39;t really taken a deeper look into it yet but that&=
+#39;s not directly why I&#39;m posting.</div><div><br></div><div>Today I fi=
+nally run fsck. In the output I got all fails except:</div>
+<div>---------------------------------------------------------------------<=
+/div><div>[FSCK] Hard link checking for regular file</div><div>------------=
+---------------------------------------------------------</div><div>which w=
+as the only one with &#39;[Ok...]&#39; status.</div>
+<div><br></div><div>As far as I know and can see from git logs fsck</div><d=
+iv>doesn&#39;t yet have ability to fix problems.</div><div><br></div><div>J=
+ust to mention currently I have it mounted with:</div><div>rw,relatime,disc=
+ard,background_gc=3Doff,noacl,nouser_xattr</div>
+<div><br></div><div>So what are these fails telling me and what</div><div>a=
+re my options?</div><div><br></div><div>Thanks,</div><div>Petar</div></div>
+
+--001a11c3353681dec004fdf17a0d--
+
+
+--===============5397395203638662697==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
-Open source business process management suite built on Java and Eclipse
-Turn processes into business applications with Bonita BPM Community Edition
-Quickly connect people, data, and systems into organized workflows
-Winner of BOSSIE, CODIE, OW2 and Gartner awards
-http://p.sf.net/sfu/Bonitasoft
+
+--===============5397395203638662697==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============5397395203638662697==--
