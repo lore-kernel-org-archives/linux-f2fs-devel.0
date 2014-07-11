@@ -1,25 +1,41 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2 V4] mkfs.f2fs: large volume support
-Date: Thu, 10 Jul 2014 16:34:26 -0700
-Message-ID: <20140710232357.GA1732@jmac.local>
-References: <1399877875-2561-1-git-send-email-cm224.lee@samsung.com>
-	<20140526233852.GA30978@cm224.lee> <20140710063952.GA20138@lcm>
+From: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Subject: [PATCH 2/2] f2fs: remove the unused stat_lock
+Date: Fri, 11 Jul 2014 18:35:44 +0800
+Message-ID: <1405074944-18283-2-git-send-email-guz.fnst@cn.fujitsu.com>
+References: <N>
+ <1405074944-18283-1-git-send-email-guz.fnst@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1X5Ns8-0006Cv-6E
+	(envelope-from <guz@guz>) id 1X5YbQ-0001lK-3Q
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Jul 2014 23:35:28 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1X5Ns6-000235-EK for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Jul 2014 23:35:28 +0000
-Content-Disposition: inline
-In-Reply-To: <20140710063952.GA20138@lcm>
+	Fri, 11 Jul 2014 11:02:56 +0000
+Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1X5YbO-0000F2-HI
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 11 Jul 2014 11:02:56 +0000
+Received: from fgwmail5.fujitsu.co.jp (fgwmail5.fujitsu.co.jp [192.51.44.35])
+	by fgwmail7.fujitsu.co.jp (Postfix) with ESMTP id 7A257150373F
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 11 Jul 2014 19:49:51 +0900 (JST)
+Received: from kw-mxq.gw.nic.fujitsu.com (unknown [10.0.237.131])
+	by fgwmail5.fujitsu.co.jp (Postfix) with ESMTP id D5AB53EE1DD
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 11 Jul 2014 19:49:44 +0900 (JST)
+Received: from s4.gw.fujitsu.co.jp (s4.gw.nic.fujitsu.com [10.0.50.94])
+	by kw-mxq.gw.nic.fujitsu.com (Postfix) with ESMTP id DE4AEAC0ABA
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 11 Jul 2014 19:49:43 +0900 (JST)
+Received: from s00.gw.fujitsu.co.jp (s00.gw.nic.fujitsu.com [133.161.11.15])
+	by s4.gw.fujitsu.co.jp (Postfix) with ESMTP id 908481DB8032
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 11 Jul 2014 19:49:43 +0900 (JST)
+In-Reply-To: <1405074944-18283-1-git-send-email-guz.fnst@cn.fujitsu.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,290 +45,29 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: Gu Zheng <guz.fnst@cn.fujitsu.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Thank you for reminding this.
-Merged.
-Thanks,
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+---
+ fs/f2fs/f2fs.h |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-On Thu, Jul 10, 2014 at 03:40:18PM +0900, Changman Lee wrote:
-> Hi, Jaegeuk
-> 
-> Long time ago, I sent 3 patches for large volume support for mkfs, fsck
-> and kernel. But you've missed one patch of mkfs. So I resend the patch
-> resovled conflict with current git tree.
-> 
-> Changes from V3
->  o remove cp_payload in f2fs_super_block
-> 
-> Changes from V2
->  o remove CP_LARGE_VOL_LFLAG instead, use cp_payload in superblock
->   because disk size is determined at format
-> 
-> Changes from V1
->  o fix orphan node blkaddr
-> 
-> 
-> Regards,
-> Changman Lee
-> 
-> -- >8 --
-> 
-> >From b7d46c6aaf786d28f82c0fe5d116b561c03b4cb2 Mon Sep 17 00:00:00 2001
-> From: Changman Lee <cm224.lee@samsung.com>
-> Date: Thu, 10 Jul 2014 15:26:04 +0900
-> Subject: [PATCH] mkfs.f2fs: large volume support
-> 
-> This patch supports large volume over about 3TB.
-> 
-> Signed-off-by: Changman Lee <cm224.lee@samsung.com>
-> ---
->  include/f2fs_fs.h  |  8 ++++++
->  mkfs/f2fs_format.c | 79 +++++++++++++++++++++++++++++++++++++++++++-----------
->  2 files changed, 71 insertions(+), 16 deletions(-)
-> 
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index 53b8cb9..80ce918 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -221,6 +221,7 @@ enum {
->  #define F2FS_LOG_SECTORS_PER_BLOCK	3	/* 4KB: F2FS_BLKSIZE */
->  #define F2FS_BLKSIZE			4096	/* support only 4KB block */
->  #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
-> +#define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
->  
->  #define NULL_ADDR		0x0U
->  #define NEW_ADDR		-1U
-> @@ -456,6 +457,13 @@ struct f2fs_nat_block {
->  #define SIT_ENTRY_PER_BLOCK (PAGE_CACHE_SIZE / sizeof(struct f2fs_sit_entry))
->  
->  /*
-> + * F2FS uses 4 bytes to represent block address. As a result, supported size of
-> + * disk is 16 TB and it equals to 16 * 1024 * 1024 / 2 segments.
-> + */
-> +#define F2FS_MAX_SEGMENT       ((16 * 1024 * 1024) / 2)
-> +#define MAX_SIT_BITMAP_SIZE    ((F2FS_MAX_SEGMENT / SIT_ENTRY_PER_BLOCK) / 8)
-> +
-> +/*
->   * Note that f2fs_sit_entry->vblocks has the following bit-field information.
->   * [15:10] : allocation type such as CURSEG_XXXX_TYPE
->   * [9:0] : valid block count
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 1568545..a62a8fe 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -101,7 +101,8 @@ static int f2fs_prepare_super_block(void)
->  	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
->  	u_int32_t total_valid_blks_available;
->  	u_int64_t zone_align_start_offset, diff, total_meta_segments;
-> -	u_int32_t sit_bitmap_size, max_nat_bitmap_size, max_nat_segments;
-> +	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
-> +	u_int32_t max_nat_bitmap_size, max_nat_segments;
->  	u_int32_t total_zones;
->  
->  	super_block.magic = cpu_to_le32(F2FS_SUPER_MAGIC);
-> @@ -197,8 +198,26 @@ static int f2fs_prepare_super_block(void)
->  	 */
->  	sit_bitmap_size = ((le32_to_cpu(super_block.segment_count_sit) / 2) <<
->  				log_blks_per_seg) / 8;
-> -	max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 -
-> -			sit_bitmap_size;
-> +
-> +	if (sit_bitmap_size > MAX_SIT_BITMAP_SIZE)
-> +		max_sit_bitmap_size = MAX_SIT_BITMAP_SIZE;
-> +	else
-> +		max_sit_bitmap_size = sit_bitmap_size;
-> +
-> +	/*
-> +	 * It should be reserved minimum 1 segment for nat.
-> +	 * When sit is too large, we should expand cp area. It requires more pages for cp.
-> +	 */
-> +	if (max_sit_bitmap_size >
-> +			(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 65)) {
-> +		max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
-> +		super_block.cp_payload = F2FS_BLK_ALIGN(max_sit_bitmap_size);
-> +	} else {
-> +		max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1
-> +			- max_sit_bitmap_size;
-> +		super_block.cp_payload = 0;
-> +	}
-> +
->  	max_nat_segments = (max_nat_bitmap_size * 8) >> log_blks_per_seg;
->  
->  	if (le32_to_cpu(super_block.segment_count_nat) > max_nat_segments)
-> @@ -414,6 +433,7 @@ static int f2fs_write_check_point_pack(void)
->  	u_int64_t cp_seg_blk_offset = 0;
->  	u_int32_t crc = 0;
->  	int i;
-> +	char *cp_payload = NULL;
->  
->  	ckp = calloc(F2FS_BLKSIZE, 1);
->  	if (ckp == NULL) {
-> @@ -427,6 +447,12 @@ static int f2fs_write_check_point_pack(void)
->  		return -1;
->  	}
->  
-> +	cp_payload = calloc(F2FS_BLKSIZE, 1);
-> +	if (cp_payload == NULL) {
-> +		MSG(1, "\tError: Calloc Failed for cp_payload!!!\n");
-> +		return -1;
-> +	}
-> +
->  	/* 1. cp page 1 of checkpoint pack 1 */
->  	ckp->checkpoint_ver = cpu_to_le64(1);
->  	ckp->cur_node_segno[0] =
-> @@ -465,9 +491,10 @@ static int f2fs_write_check_point_pack(void)
->  			((le32_to_cpu(ckp->free_segment_count) + 6 -
->  			le32_to_cpu(ckp->overprov_segment_count)) *
->  			 config.blks_per_seg));
-> -	ckp->cp_pack_total_block_count = cpu_to_le32(8);
-> +	ckp->cp_pack_total_block_count =
-> +		cpu_to_le32(8 + le32_to_cpu(super_block.cp_payload));
->  	ckp->ckpt_flags = cpu_to_le32(CP_UMOUNT_FLAG);
-> -	ckp->cp_pack_start_sum = cpu_to_le32(1);
-> +	ckp->cp_pack_start_sum = cpu_to_le32(1 + le32_to_cpu(super_block.cp_payload));
->  	ckp->valid_node_count = cpu_to_le32(1);
->  	ckp->valid_inode_count = cpu_to_le32(1);
->  	ckp->next_free_nid = cpu_to_le32(
-> @@ -491,11 +518,20 @@ static int f2fs_write_check_point_pack(void)
->  	cp_seg_blk_offset *= blk_size_bytes;
->  
->  	DBG(1, "\tWriting main segments, ckp at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(ckp, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(ckp, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the ckp to disk!!!\n");
->  		return -1;
->  	}
->  
-> +	for (i = 0; i < le32_to_cpu(super_block.cp_payload); i++) {
-> +		cp_seg_blk_offset += blk_size_bytes;
-> +		if (dev_fill(cp_payload, cp_seg_blk_offset, blk_size_bytes)) {
-> +			MSG(1, "\tError: While zeroing out the sit bitmap area \
-> +					on disk!!!\n");
-> +			return -1;
-> +		}
-> +	}
-> +
->  	/* 2. Prepare and write Segment summary for data blocks */
->  	memset(sum, 0, sizeof(struct f2fs_summary_block));
->  	SET_SUM_TYPE((&sum->footer), SUM_TYPE_DATA);
-> @@ -505,7 +541,7 @@ static int f2fs_write_check_point_pack(void)
->  
->  	cp_seg_blk_offset += blk_size_bytes;
->  	DBG(1, "\tWriting segment summary for data, ckp at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(sum, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
->  		return -1;
->  	}
-> @@ -516,7 +552,7 @@ static int f2fs_write_check_point_pack(void)
->  
->  	cp_seg_blk_offset += blk_size_bytes;
->  	DBG(1, "\tWriting segment summary, ckp at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(sum, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
->  		return -1;
->  	}
-> @@ -546,7 +582,7 @@ static int f2fs_write_check_point_pack(void)
->  
->  	cp_seg_blk_offset += blk_size_bytes;
->  	DBG(1, "\tWriting data sit for root, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(sum, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
->  		return -1;
->  	}
-> @@ -560,7 +596,7 @@ static int f2fs_write_check_point_pack(void)
->  
->  	cp_seg_blk_offset += blk_size_bytes;
->  	DBG(1, "\tWriting Segment summary for node blocks, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(sum, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
->  		return -1;
->  	}
-> @@ -571,7 +607,7 @@ static int f2fs_write_check_point_pack(void)
->  
->  	cp_seg_blk_offset += blk_size_bytes;
->  	DBG(1, "\tWriting Segment summary for data block (1/2), at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(sum, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
->  		return -1;
->  	}
-> @@ -581,7 +617,7 @@ static int f2fs_write_check_point_pack(void)
->  	SET_SUM_TYPE((&sum->footer), SUM_TYPE_NODE);
->  	cp_seg_blk_offset += blk_size_bytes;
->  	DBG(1, "\tWriting Segment summary for data block (2/2), at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(sum, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
->  		return -1;
->  	}
-> @@ -589,7 +625,7 @@ static int f2fs_write_check_point_pack(void)
->  	/* 8. cp page2 */
->  	cp_seg_blk_offset += blk_size_bytes;
->  	DBG(1, "\tWriting cp page2, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(ckp, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(ckp, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the ckp to disk!!!\n");
->  		return -1;
->  	}
-> @@ -606,21 +642,32 @@ static int f2fs_write_check_point_pack(void)
->  				config.blks_per_seg) *
->  				blk_size_bytes;
->  	DBG(1, "\tWriting cp page 1 of checkpoint pack 2, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(ckp, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(ckp, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the ckp to disk!!!\n");
->  		return -1;
->  	}
->  
-> +	for (i = 0; i < le32_to_cpu(super_block.cp_payload); i++) {
-> +		cp_seg_blk_offset += blk_size_bytes;
-> +		if (dev_fill(cp_payload, cp_seg_blk_offset, blk_size_bytes)) {
-> +			MSG(1, "\tError: While zeroing out the sit bitmap area \
-> +					on disk!!!\n");
-> +			return -1;
-> +		}
-> +	}
-> +
->  	/* 10. cp page 2 of check point pack 2 */
-> -	cp_seg_blk_offset += blk_size_bytes * (le32_to_cpu(ckp->cp_pack_total_block_count) - 1);
-> +	cp_seg_blk_offset += blk_size_bytes * (le32_to_cpu(ckp->cp_pack_total_block_count)
-> +			- le32_to_cpu(super_block.cp_payload) - 1);
->  	DBG(1, "\tWriting cp page 2 of checkpoint pack 2, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
-> -	if (dev_write(ckp, cp_seg_blk_offset, F2FS_BLKSIZE)) {
-> +	if (dev_write(ckp, cp_seg_blk_offset, blk_size_bytes)) {
->  		MSG(1, "\tError: While writing the ckp to disk!!!\n");
->  		return -1;
->  	}
->  
->  	free(sum) ;
->  	free(ckp) ;
-> +	free(cp_payload);
->  	return	0;
->  }
->  
-> -- 
-> 1.9.1
-> 
-> 
-> ------------------------------------------------------------------------------
-> Open source business process management suite built on Java and Eclipse
-> Turn processes into business applications with Bonita BPM Community Edition
-> Quickly connect people, data, and systems into organized workflows
-> Winner of BOSSIE, CODIE, OW2 and Gartner awards
-> http://p.sf.net/sfu/Bonitasoft
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ae3b4ac..8f507d4 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1298,7 +1298,6 @@ bool space_for_roll_forward(struct f2fs_sb_info *);
+ struct f2fs_stat_info {
+ 	struct list_head stat_list;
+ 	struct f2fs_sb_info *sbi;
+-	struct mutex stat_lock;
+ 	int all_area_segs, sit_area_segs, nat_area_segs, ssa_area_segs;
+ 	int main_area_segs, main_area_sections, main_area_zones;
+ 	int hit_ext, total_ext;
 -- 
-Jaegeuk Kim
+1.7.7
+
 
 ------------------------------------------------------------------------------
 Open source business process management suite built on Java and Eclipse
