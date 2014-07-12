@@ -1,111 +1,210 @@
-From: =?UTF-8?Q?Petar_Koreti=C4=87?= <petar.koretic@gmail.com>
-Subject: [f2fs.fsck] status report show fails
-Date: Fri, 11 Jul 2014 23:18:10 +0200
-Message-ID: <CAOWmdGMyHzm2exVPKi7Gd1EZc9vKtVQV8W92=2H=nR6HCH7Tew@mail.gmail.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [f2fs-dev][PATCH] f2fs: support ->rename2()
+Date: Sat, 12 Jul 2014 19:13:54 +0800
+Message-ID: <000c01cf9dc2$7855d120$69017360$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5397395203638662697=="
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <petar.koretic@gmail.com>) id 1X5iCw-0003pg-KC
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 11 Jul 2014 21:18:18 +0000
-Received: from mail-lb0-f177.google.com ([209.85.217.177])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1X5iCv-0007Pq-PW
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 11 Jul 2014 21:18:18 +0000
-Received: by mail-lb0-f177.google.com with SMTP id u10so1298242lbd.36
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 11 Jul 2014 14:18:11 -0700 (PDT)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-
---===============5397395203638662697==
-Content-Type: multipart/alternative; boundary=001a11c3353681dec004fdf17a0d
-
---001a11c3353681dec004fdf17a0d
-Content-Type: text/plain; charset=UTF-8
-
-Hi guys.
-
-I've been using f2fs on my primary SSD disk and laptop from April 17, 2013.
-
-I really didn't have any problems but lately I've started to see some.
-For example, data is not being saved or after reboot old data is loaded.
-I haven't really taken a deeper look into it yet but that's not directly
-why I'm posting.
-
-Today I finally run fsck. In the output I got all fails except:
----------------------------------------------------------------------
-[FSCK] Hard link checking for regular file
----------------------------------------------------------------------
-which was the only one with '[Ok...]' status.
-
-As far as I know and can see from git logs fsck
-doesn't yet have ability to fix problems.
-
-Just to mention currently I have it mounted with:
-rw,relatime,discard,background_gc=off,noacl,nouser_xattr
-
-So what are these fails telling me and what
-are my options?
-
-Thanks,
-Petar
-
---001a11c3353681dec004fdf17a0d
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Hi guys.<div><br></div><div>I&#39;ve been using f2fs on my=
- primary SSD disk and laptop from April 17, 2013.</div><div><br></div><div>=
-I really didn&#39;t have any problems but lately I&#39;ve started to see so=
-me.</div>
-<div>For example, data is not being saved or after reboot old data is loade=
-d.</div><div>I haven&#39;t really taken a deeper look into it yet but that&=
-#39;s not directly why I&#39;m posting.</div><div><br></div><div>Today I fi=
-nally run fsck. In the output I got all fails except:</div>
-<div>---------------------------------------------------------------------<=
-/div><div>[FSCK] Hard link checking for regular file</div><div>------------=
----------------------------------------------------------</div><div>which w=
-as the only one with &#39;[Ok...]&#39; status.</div>
-<div><br></div><div>As far as I know and can see from git logs fsck</div><d=
-iv>doesn&#39;t yet have ability to fix problems.</div><div><br></div><div>J=
-ust to mention currently I have it mounted with:</div><div>rw,relatime,disc=
-ard,background_gc=3Doff,noacl,nouser_xattr</div>
-<div><br></div><div>So what are these fails telling me and what</div><div>a=
-re my options?</div><div><br></div><div>Thanks,</div><div>Petar</div></div>
-
---001a11c3353681dec004fdf17a0d--
-
-
---===============5397395203638662697==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-------------------------------------------------------------------------------
+Now new interface ->rename2() is added to VFS, here are related description:
+https://lkml.org/lkml/2014/2/7/873
+https://lkml.org/lkml/2014/2/7/758
 
---===============5397395203638662697==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+This patch adds function f2fs_rename2() to support ->rename2() including
+handling both RENAME_EXCHANGE and RENAME_NOREPLACE flag.
 
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/namei.c | 164 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 164 insertions(+)
 
---===============5397395203638662697==--
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 1b3cae0..27b0377 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -485,6 +485,169 @@ out:
+ 	return err;
+ }
+ 
++static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
++			     struct inode *new_dir, struct dentry *new_dentry)
++{
++	struct super_block *sb = old_dir->i_sb;
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++	struct inode *old_inode = old_dentry->d_inode;
++	struct inode *new_inode = new_dentry->d_inode;
++	struct page *old_dir_page, *new_dir_page;
++	struct page *old_page, *new_page;
++	struct f2fs_dir_entry *old_dir_entry = NULL, *new_dir_entry = NULL;
++	struct f2fs_dir_entry *old_entry, *new_entry;
++	int old_nlink = 0, new_nlink = 0;
++	int err = -ENOENT;
++
++	f2fs_balance_fs(sbi);
++
++	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
++	if (!old_entry)
++		goto out;
++
++	new_entry = f2fs_find_entry(new_dir, &new_dentry->d_name, &new_page);
++	if (!new_entry)
++		goto out_old;
++
++	/* prepare for updating ".." directory entry info later */
++	if (old_dir != new_dir) {
++		if (S_ISDIR(old_inode->i_mode)) {
++			err = -EIO;
++			old_dir_entry = f2fs_parent_dir(old_inode,
++							&old_dir_page);
++			if (!old_dir_entry)
++				goto out_new;
++		}
++
++		if (S_ISDIR(new_inode->i_mode)) {
++			err = -EIO;
++			new_dir_entry = f2fs_parent_dir(new_inode,
++							&new_dir_page);
++			if (!new_dir_entry)
++				goto out_old_dir;
++		}
++	}
++
++	/*
++	 * If cross rename between file and directory those are not
++	 * in the same directory, we will inc nlink of file's parent
++	 * later, so we should check upper boundary of its nlink.
++	 */
++	if ((!old_dir_entry || !new_dir_entry) &&
++				old_dir_entry != new_dir_entry) {
++		old_nlink = old_dir_entry ? -1 : 1;
++		new_nlink = -old_nlink;
++		err = -EMLINK;
++		if ((old_nlink > 0 && old_inode->i_nlink >= F2FS_LINK_MAX) ||
++			(new_nlink > 0 && new_inode->i_nlink >= F2FS_LINK_MAX))
++			goto out_new_dir;
++	}
++
++	f2fs_lock_op(sbi);
++
++	err = update_dent_inode(old_inode, &new_dentry->d_name);
++	if (err)
++		goto out_unlock;
++
++	err = update_dent_inode(new_inode, &old_dentry->d_name);
++	if (err)
++		goto out_undo;
++
++	/* update ".." directory entry info of old dentry */
++	if (old_dir_entry)
++		f2fs_set_link(old_inode, old_dir_entry, old_dir_page, new_dir);
++
++	/* update ".." directory entry info of new dentry */
++	if (new_dir_entry)
++		f2fs_set_link(new_inode, new_dir_entry, new_dir_page, old_dir);
++
++	/* update directory entry info of old dir inode */
++	f2fs_set_link(old_dir, old_entry, old_page, new_inode);
++
++	down_write(&F2FS_I(old_inode)->i_sem);
++	file_lost_pino(old_inode);
++	up_write(&F2FS_I(old_inode)->i_sem);
++
++	update_inode_page(old_inode);
++
++	old_dir->i_ctime = CURRENT_TIME;
++	if (old_nlink) {
++		down_write(&F2FS_I(old_dir)->i_sem);
++		if (old_nlink < 0)
++			drop_nlink(old_dir);
++		else
++			inc_nlink(old_dir);
++		up_write(&F2FS_I(old_dir)->i_sem);
++	}
++	mark_inode_dirty(old_dir);
++	update_inode_page(old_dir);
++
++	/* update directory entry info of new dir inode */
++	f2fs_set_link(new_dir, new_entry, new_page, old_inode);
++
++	down_write(&F2FS_I(new_inode)->i_sem);
++	file_lost_pino(new_inode);
++	up_write(&F2FS_I(new_inode)->i_sem);
++
++	update_inode_page(new_inode);
++
++	new_dir->i_ctime = CURRENT_TIME;
++	if (new_nlink) {
++		down_write(&F2FS_I(new_dir)->i_sem);
++		if (new_nlink < 0)
++			drop_nlink(new_dir);
++		else
++			inc_nlink(new_dir);
++		up_write(&F2FS_I(new_dir)->i_sem);
++	}
++	mark_inode_dirty(new_dir);
++	update_inode_page(new_dir);
++
++	f2fs_unlock_op(sbi);
++	return 0;
++out_undo:
++	/* Still we may fail to recover name info of f2fs_inode here */
++	update_dent_inode(old_inode, &old_dentry->d_name);
++out_unlock:
++	f2fs_unlock_op(sbi);
++out_new_dir:
++	if (new_dir_entry) {
++		kunmap(new_dir_page);
++		f2fs_put_page(new_dir_page, 0);
++	}
++out_old_dir:
++	if (old_dir_entry) {
++		kunmap(old_dir_page);
++		f2fs_put_page(old_dir_page, 0);
++	}
++out_new:
++	kunmap(new_page);
++	f2fs_put_page(new_page, 0);
++out_old:
++	kunmap(old_page);
++	f2fs_put_page(old_page, 0);
++out:
++	return err;
++}
++
++static int f2fs_rename2(struct inode *old_dir, struct dentry *old_dentry,
++			struct inode *new_dir, struct dentry *new_dentry,
++			unsigned int flags)
++{
++	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
++		return -EINVAL;
++
++	if (flags & RENAME_EXCHANGE) {
++		return f2fs_cross_rename(old_dir, old_dentry,
++					 new_dir, new_dentry);
++	}
++	/*
++	 * VFS has already handled the new dentry existence case,
++	 * here, we just deal with "RENAME_NOREPLACE" as regular rename.
++	 */
++	return f2fs_rename(old_dir, old_dentry, new_dir, new_dentry);
++}
++
+ static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
+@@ -542,6 +705,7 @@ const struct inode_operations f2fs_dir_inode_operations = {
+ 	.rmdir		= f2fs_rmdir,
+ 	.mknod		= f2fs_mknod,
+ 	.rename		= f2fs_rename,
++	.rename2	= f2fs_rename2,
+ 	.tmpfile	= f2fs_tmpfile,
+ 	.getattr	= f2fs_getattr,
+ 	.setattr	= f2fs_setattr,
+-- 
+2.0.1.474.g72c7794
