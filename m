@@ -1,24 +1,22 @@
-From: Andrey Tsyvarev <tsyvarev@ispras.ru>
-Subject: Re: f2fs: Possible use-after-free when umount filesystem
-Date: Tue, 22 Jul 2014 14:04:18 +0400
-Message-ID: <53CE3722.60307@ispras.ru>
-References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru>
-	<53CCF1EC.30008@ispras.ru> <53CDC9AF.2050605@cn.fujitsu.com>
+From: Sankalp Bose <sankalp@tuxera.com>
+Subject: [PATCH] mkfs.f2fs: Fix name conflict for BLKDISCARD
+Date: Wed, 23 Jul 2014 03:28:14 +0300
+Message-ID: <1406075294-10599-1-git-send-email-sankalp@tuxera.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tsyvarev@ispras.ru>) id 1X9Wv9-0003S4-Uu
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <sankalp@tuxera.com>) id 1X9kcj-0006Ts-IX
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Jul 2014 10:03:43 +0000
-Received: from smtp.ispras.ru ([83.149.199.79])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1X9Wv8-0000uv-55 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Jul 2014 10:03:43 +0000
-In-Reply-To: <53CDC9AF.2050605@cn.fujitsu.com>
+	Wed, 23 Jul 2014 00:41:37 +0000
+Received: from nbl-ex10-fe02.nebula.fi ([188.117.32.122] helo=ex10.nebula.fi)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps
+	(TLSv1:AES128-SHA:128) (Exim 4.76) id 1X9kch-00048N-I8
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 23 Jul 2014 00:41:37 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,51 +26,73 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-f2fs-devel@lists.sourceforge.net
+To: sankalp@tuxera.com, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Gu,
+The compile time option BLKDISCARD conflicts with ioctl code
+for discard. This causes discard to fail with "Info: This
+device doesn't support TRIM". Rename compile time option
+to WITH_BLKDISCARD.
 
->> Investigation shows, that f2fs_evict_inode, when called for 'meta_inode', uses invalidate_mapping_pages() for 'node_inode'.
->> But 'node_inode' is deleted before 'meta_inode' in f2fs_put_super via iput().
->>
->> It seems that in common usage scenario this use-after-free is benign, because 'node_inode' remains partially valid data even after kmem_cache_free().
->> But things may change if, while 'meta_inode' is evicted in one f2fs filesystem, another (mounted) f2fs filesystem requests inode from cache, and formely
->> 'node_inode' of the first filesystem is returned.
-> The analysis seems reasonable. Have you tried to swap the reclaim order of node_inde
-> and meta_inode?
->
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 870fe19..e114418 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -430,8 +430,8 @@ static void f2fs_put_super(struct super_block *sb)
->          if (sbi->s_dirty && get_pages(sbi, F2FS_DIRTY_NODES))
->                  write_checkpoint(sbi, true);
->   
-> -       iput(sbi->node_inode);
->          iput(sbi->meta_inode);
-> +       iput(sbi->node_inode);
->   
->          /* destroy f2fs internal modules */
->          destroy_node_manager(sbi);
->
-> Thanks,
-> Gu
+Signed-off-by: Sankalp Bose <sankalp@tuxera.com>
+---
+ configure.ac             | 2 +-
+ mkfs/Makefile.am         | 2 +-
+ mkfs/f2fs_format_utils.c | 7 ++++++-
+ 3 files changed, 8 insertions(+), 3 deletions(-)
 
-With reclaim order of node_inode and meta_inode swapped, use-after-free 
-error disappears.
-
-But shouldn't initialization order of these inodes be swapped too?
-As meta_inode uses node_inode, it seems logical that it should be 
-initialized after it.
-
+diff --git a/configure.ac b/configure.ac
+index c2dafb0..0111e72 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -56,7 +56,7 @@ AC_PATH_PROG([LDCONFIG], [ldconfig],
+ PKG_CHECK_MODULES([libuuid], [uuid])
+ 
+ # Checks for header files.
+-AC_CHECK_HEADERS([fcntl.h mntent.h stdlib.h string.h \
++AC_CHECK_HEADERS([linux/fs.h fcntl.h mntent.h stdlib.h string.h \
+ 		sys/ioctl.h sys/mount.h unistd.h])
+ 
+ # Checks for typedefs, structures, and compiler characteristics.
+diff --git a/mkfs/Makefile.am b/mkfs/Makefile.am
+index ff136a7..fa48699 100644
+--- a/mkfs/Makefile.am
++++ b/mkfs/Makefile.am
+@@ -1,7 +1,7 @@
+ ## Makefile.am
+ 
+ AM_CPPFLAGS = ${libuuid_CFLAGS} -I$(top_srcdir)/include
+-AM_CFLAGS = -Wall -DBLKDISCARD
++AM_CFLAGS = -Wall -DWITH_BLKDISCARD
+ sbin_PROGRAMS = mkfs.f2fs
+ mkfs_f2fs_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c
+ mkfs_f2fs_LDADD = ${libuuid_LIBS} $(top_builddir)/lib/libf2fs.la
+diff --git a/mkfs/f2fs_format_utils.c b/mkfs/f2fs_format_utils.c
+index 8f7e094..1e629ed 100644
+--- a/mkfs/f2fs_format_utils.c
++++ b/mkfs/f2fs_format_utils.c
+@@ -15,6 +15,11 @@
+ 
+ #include "f2fs_fs.h"
+ 
++#ifdef HAVE_LINUX_FS_H
++#include <linux/fs.h>
++#endif
++
++
+ int f2fs_trim_device()
+ {
+ 	unsigned long long range[2];
+@@ -31,7 +36,7 @@ int f2fs_trim_device()
+ 		return -1;
+ 	}
+ 
+-#if defined(BLKDISCARD)
++#if defined(WITH_BLKDISCARD) && defined(BLKDISCARD)
+ 	MSG(0, "Info: Discarding device\n");
+ 	if (S_ISREG(stat_buf.st_mode))
+ 		return 0;
 -- 
-Best regards,
-
-Andrey Tsyvarev
-Linux Verification Center, ISPRAS
-web:http://linuxtesting.org
+2.0.1
 
 
 ------------------------------------------------------------------------------
