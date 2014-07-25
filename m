@@ -1,145 +1,135 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: f2fs: Possible use-after-free when umount filesystem
-Date: Fri, 25 Jul 2014 11:22:20 +0800
-Message-ID: <002a01cfa7b7$d79edc40$86dc94c0$@samsung.com>
-References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru>
-	<53CCF1EC.30008@ispras.ru> <53CDC9AF.2050605@cn.fujitsu.com>
-	<53CE3722.60307@ispras.ru>
-	<000001cfa61b$c693b350$53bb19f0$@samsung.com>
-	<53CF2E61.3000601@cn.fujitsu.com> <53D0DC8C.7050406@ispras.ru>
+Subject: [f2fs-dev][PATCH 1/2] f2fs: avoid use invalid mapping of node_inode
+ when evict meta inode
+Date: Fri, 25 Jul 2014 12:00:57 +0800
+Message-ID: <002b01cfa7bd$32774ad0$9765e070$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XAW76-0000GT-A7
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Jul 2014 03:24:08 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XAW73-0007qS-Or
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Jul 2014 03:24:08 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N99006SH03PU070@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Jul 2014 12:23:50 +0900 (KST)
-In-reply-to: <53D0DC8C.7050406@ispras.ru>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Andrey Tsyvarev' <tsyvarev@ispras.ru>, 'Gu Zheng' <guz.fnst@cn.fujitsu.com>
-Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'linux-kernel' <linux-kernel@vger.kernel.org>, 'Alexey Khoroshilov' <khoroshilov@ispras.ru>, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: tsyvarev@ispras.ru, Gu Zheng <guz.fnst@cn.fujitsu.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgpUbyBBbmRyZXk6ClRoYW5rcyBmb3IgeW91ciB0ZXN0IG9uIHRoaXMgcGF0Y2ghCgpUbyBH
-dToKSWYgeW91IGRvIG5vdCBvYmplY3QsIGxldCBtZSBtYWtlIGFuZCByZXNlbmQgYSBwYXRjaCBi
-YXNlIG9uIHRoZSBvbmUgd2hpY2gKc2tpcCBpbnZhbGlkYXRpbmcgcGFnZXMuCgpSZWdhcmRzLApZ
-dQoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IEFuZHJleSBUc3l2YXJldiBb
-bWFpbHRvOnRzeXZhcmV2QGlzcHJhcy5ydV0KPiBTZW50OiBUaHVyc2RheSwgSnVseSAyNCwgMjAx
-NCA2OjE1IFBNCj4gVG86IEd1IFpoZW5nOyBDaGFvIFl1Cj4gQ2M6ICdKYWVnZXVrIEtpbSc7ICds
-aW51eC1rZXJuZWwnOyAnQWxleGV5IEtob3Jvc2hpbG92JzsKPiBsaW51eC1mMmZzLWRldmVsQGxp
-c3RzLnNvdXJjZWZvcmdlLm5ldAo+IFN1YmplY3Q6IFJlOiBbZjJmcy1kZXZdIGYyZnM6IFBvc3Np
-YmxlIHVzZS1hZnRlci1mcmVlIHdoZW4gdW1vdW50IGZpbGVzeXN0ZW0KPiAKPiBIaSwKPiAKPiBX
-aXRoIHBhdGNoIHNraXBwaW5nIGludmFsaWRhdGluZyBwYWdlcyBmb3Igbm9kZV9pbm9kZSBhbmQg
-bWV0YV9pbm9kZQo+IHVzZS1hZnRlci1mcmVlIGVycm9yIGRpc2FwcGVhcnMgdG9vLgo+IAo+IDIz
-LjA3LjIwMTQgNzozOSwgR3UgWmhlbmcg0L/QuNGI0LXRgjoKPiA+IEhpLAo+ID4gT24gMDcvMjMv
-MjAxNCAxMDoxMiBBTSwgQ2hhbyBZdSB3cm90ZToKPiA+Cj4gPj4gSGkgQW5kcmV5IEd1LAo+ID4+
-Cj4gPj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4gPj4+IEZyb206IEFuZHJleSBUc3l2
-YXJldiBbbWFpbHRvOnRzeXZhcmV2QGlzcHJhcy5ydV0KPiA+Pj4gU2VudDogVHVlc2RheSwgSnVs
-eSAyMiwgMjAxNCA2OjA0IFBNCj4gPj4+IFRvOiBHdSBaaGVuZwo+ID4+PiBDYzogSmFlZ2V1ayBL
-aW07IGxpbnV4LWtlcm5lbDsgQWxleGV5IEtob3Jvc2hpbG92OyBsaW51eC1mMmZzLWRldmVsQGxp
-c3RzLnNvdXJjZWZvcmdlLm5ldAo+ID4+PiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XSBmMmZzOiBQ
-b3NzaWJsZSB1c2UtYWZ0ZXItZnJlZSB3aGVuIHVtb3VudCBmaWxlc3lzdGVtCj4gPj4+Cj4gPj4+
-IEhpIEd1LAo+ID4+Pgo+ID4+Pj4+IEludmVzdGlnYXRpb24gc2hvd3MsIHRoYXQgZjJmc19ldmlj
-dF9pbm9kZSwgd2hlbiBjYWxsZWQgZm9yICdtZXRhX2lub2RlJywgdXNlcwo+ID4+PiBpbnZhbGlk
-YXRlX21hcHBpbmdfcGFnZXMoKSBmb3IgJ25vZGVfaW5vZGUnLgo+ID4+Pj4+IEJ1dCAnbm9kZV9p
-bm9kZScgaXMgZGVsZXRlZCBiZWZvcmUgJ21ldGFfaW5vZGUnIGluIGYyZnNfcHV0X3N1cGVyIHZp
-YSBpcHV0KCkuCj4gPj4+Pj4KPiA+Pj4+PiBJdCBzZWVtcyB0aGF0IGluIGNvbW1vbiB1c2FnZSBz
-Y2VuYXJpbyB0aGlzIHVzZS1hZnRlci1mcmVlIGlzIGJlbmlnbiwgYmVjYXVzZSAnbm9kZV9pbm9k
-ZScKPiA+Pj4gcmVtYWlucyBwYXJ0aWFsbHkgdmFsaWQgZGF0YSBldmVuIGFmdGVyIGttZW1fY2Fj
-aGVfZnJlZSgpLgo+ID4+Pj4+IEJ1dCB0aGluZ3MgbWF5IGNoYW5nZSBpZiwgd2hpbGUgJ21ldGFf
-aW5vZGUnIGlzIGV2aWN0ZWQgaW4gb25lIGYyZnMgZmlsZXN5c3RlbSwgYW5vdGhlcgo+IChtb3Vu
-dGVkKQo+ID4+PiBmMmZzIGZpbGVzeXN0ZW0gcmVxdWVzdHMgaW5vZGUgZnJvbSBjYWNoZSwgYW5k
-IGZvcm1lbHkKPiA+Pj4+PiAnbm9kZV9pbm9kZScgb2YgdGhlIGZpcnN0IGZpbGVzeXN0ZW0gaXMg
-cmV0dXJuZWQuCj4gPj4+PiBUaGUgYW5hbHlzaXMgc2VlbXMgcmVhc29uYWJsZS4gSGF2ZSB5b3Ug
-dHJpZWQgdG8gc3dhcCB0aGUgcmVjbGFpbSBvcmRlciBvZiBub2RlX2luZGUKPiA+Pj4+IGFuZCBt
-ZXRhX2lub2RlPwo+ID4+Pj4KPiA+Pj4+IGRpZmYgLS1naXQgYS9mcy9mMmZzL3N1cGVyLmMgYi9m
-cy9mMmZzL3N1cGVyLmMKPiA+Pj4+IGluZGV4IDg3MGZlMTkuLmUxMTQ0MTggMTAwNjQ0Cj4gPj4+
-PiAtLS0gYS9mcy9mMmZzL3N1cGVyLmMKPiA+Pj4+ICsrKyBiL2ZzL2YyZnMvc3VwZXIuYwo+ID4+
-Pj4gQEAgLTQzMCw4ICs0MzAsOCBAQCBzdGF0aWMgdm9pZCBmMmZzX3B1dF9zdXBlcihzdHJ1Y3Qg
-c3VwZXJfYmxvY2sgKnNiKQo+ID4+Pj4gICAgICAgICAgIGlmIChzYmktPnNfZGlydHkgJiYgZ2V0
-X3BhZ2VzKHNiaSwgRjJGU19ESVJUWV9OT0RFUykpCj4gPj4+PiAgICAgICAgICAgICAgICAgICB3
-cml0ZV9jaGVja3BvaW50KHNiaSwgdHJ1ZSk7Cj4gPj4+Pgo+ID4+Pj4gLSAgICAgICBpcHV0KHNi
-aS0+bm9kZV9pbm9kZSk7Cj4gPj4+PiAgICAgICAgICAgaXB1dChzYmktPm1ldGFfaW5vZGUpOwo+
-ID4+Pj4gKyAgICAgICBpcHV0KHNiaS0+bm9kZV9pbm9kZSk7Cj4gPj4+Pgo+ID4+Pj4gICAgICAg
-ICAgIC8qIGRlc3Ryb3kgZjJmcyBpbnRlcm5hbCBtb2R1bGVzICovCj4gPj4+PiAgICAgICAgICAg
-ZGVzdHJveV9ub2RlX21hbmFnZXIoc2JpKTsKPiA+Pj4+Cj4gPj4+PiBUaGFua3MsCj4gPj4+PiBH
-dQo+ID4+PiBXaXRoIHJlY2xhaW0gb3JkZXIgb2Ygbm9kZV9pbm9kZSBhbmQgbWV0YV9pbm9kZSBz
-d2FwcGVkLCB1c2UtYWZ0ZXItZnJlZQo+ID4+PiBlcnJvciBkaXNhcHBlYXJzLgo+ID4+Pgo+ID4+
-PiBCdXQgc2hvdWxkbid0IGluaXRpYWxpemF0aW9uIG9yZGVyIG9mIHRoZXNlIGlub2RlcyBiZSBz
-d2FwcGVkIHRvbz8KPiA+Pj4gQXMgbWV0YV9pbm9kZSB1c2VzIG5vZGVfaW5vZGUsIGl0IHNlZW1z
-IGxvZ2ljYWwgdGhhdCBpdCBzaG91bGQgYmUKPiA+Pj4gaW5pdGlhbGl6ZWQgYWZ0ZXIgaXQuCj4g
-PiBUaGUgaW5pdGlhbGl6YXRpb24gb3JkZXIgZG9zZSBub3QgYWZmZWN0IGFueXRoaW5nLCBzbyBz
-d2FwcGluZyB0aGUgb3JkZXIgZG9zZSBub3QKPiA+IG1ha2UgbW9yZSBzZW5zZSBoZXJlLgo+ID4K
-PiA+PiBJTU8sIGl0J3Mgbm90IGVhc3kgdG8gZXhjaGFuZ2Ugb3JkZXIgb2YgaW5pdGlhbGl6YXRp
-b24gYmV0d2VlbiBtZXRhX2lub2RlIGFuZAo+ID4+IG5vZGVfaW5vZGUsIGJlY2F1c2Ugd2Ugc2hv
-dWxkIHVzZSBtZXRhX2lub2RlIGluIGdldF92YWxpZF9jaGVja3BvaW50IGZvciB2YWxpZAo+ID4+
-IGNwIGZpcnN0IGZvciB1c3VhbCB2ZXJpZmljYXRpb24sIHRoZW4gaW5pdCBub2RlX2lub2RlLgo+
-ID4gWWVhaCwgYnV0IEkgdGhpbmsganVzdCBtb3Zpbmcgbm9kZV9pbm9kZSdzIGluaXRpYWxpemF0
-aW9uIHRvIHRoZSBmcm9udCBvZiBtZXRhX2lub2RlCj4gPiBkb3NlIG5vdCBicmVhayBhbnl0aGlu
-Zy4KPiA+Cj4gPj4gQXMgSSBjaGVja2VkLCBuaWRzIGZvciBib3RoIG1ldGFfaW5vZGUgYW5kIG5v
-ZGVfaW5vZGUgYXJlIHJlc2VydmF0aW9uLCBzbyBpdCdzIG5vdAo+ID4+IG5lY2Vzc2FyeSBmb3Ig
-dXMgdG8gaW52YWxpZGF0ZSBwYWdlcyB3aGljaCB3aWxsIG5ldmVyIGFsbG9jZWQuCj4gPj4KPiA+
-PiBIb3cgYWJvdXQgc2tpcHBpbmcgaXQgYXMgZm9sbG93aW5nPwo+ID4gSXQgc2VlbXMgdGhlIHJp
-Z2h0IHdheSB0byBmaXggdGhpcyBpc3N1ZS4KPiA+Cj4gPiBUbyBBbmRyZXk6Cj4gPiBDb3VsZCB5
-b3UgcGxlYXNlIHRyeSB0aGlzIG9uZT8KPiA+Cj4gPiBUaGFua3MsCj4gPiBHdQo+ID4KPiA+PiBk
-aWZmIC0tZ2l0IGEvZnMvZjJmcy9pbm9kZS5jIGIvZnMvZjJmcy9pbm9kZS5jCj4gPj4gaW5kZXgg
-MmNmNjk2Mi4uY2FmYmEzYyAxMDA2NDQKPiA+PiAtLS0gYS9mcy9mMmZzL2lub2RlLmMKPiA+PiAr
-KysgYi9mcy9mMmZzL2lub2RlLmMKPiA+PiBAQCAtMjczLDcgKzI3Myw3IEBAIHZvaWQgZjJmc19l
-dmljdF9pbm9kZShzdHJ1Y3QgaW5vZGUgKmlub2RlKQo+ID4+Cj4gPj4gICAJaWYgKGlub2RlLT5p
-X2lubyA9PSBGMkZTX05PREVfSU5PKHNiaSkgfHwKPiA+PiAgIAkJCWlub2RlLT5pX2lubyA9PSBG
-MkZTX01FVEFfSU5PKHNiaSkpCj4gPj4gLQkJZ290byBub19kZWxldGU7Cj4gPj4gKwkJZ290byBv
-dXRfY2xlYXI7Cj4gPj4KPiA+PiAgIAlmMmZzX2J1Z19vbihnZXRfZGlydHlfZGVudHMoaW5vZGUp
-KTsKPiA+PiAgIAlyZW1vdmVfZGlydHlfZGlyX2lub2RlKGlub2RlKTsKPiA+PiBAQCAtMjk1LDYg
-KzI5NSw3IEBAIHZvaWQgZjJmc19ldmljdF9pbm9kZShzdHJ1Y3QgaW5vZGUgKmlub2RlKQo+ID4+
-Cj4gPj4gICAJc2JfZW5kX2ludHdyaXRlKGlub2RlLT5pX3NiKTsKPiA+PiAgIG5vX2RlbGV0ZToK
-PiA+PiAtCWNsZWFyX2lub2RlKGlub2RlKTsKPiA+PiAgIAlpbnZhbGlkYXRlX21hcHBpbmdfcGFn
-ZXMoTk9ERV9NQVBQSU5HKHNiaSksIGlub2RlLT5pX2lubywgaW5vZGUtPmlfaW5vKTsKPiA+PiAr
-b3V0X2NsZWFyOgo+ID4+ICsJY2xlYXJfaW5vZGUoaW5vZGUpOwo+ID4+ICAgfQo+ID4+Cj4gPj4+
-IC0tCj4gPj4+IEJlc3QgcmVnYXJkcywKPiA+Pj4KPiA+Pj4gQW5kcmV5IFRzeXZhcmV2Cj4gPj4+
-IExpbnV4IFZlcmlmaWNhdGlvbiBDZW50ZXIsIElTUFJBUwo+ID4+PiB3ZWI6aHR0cDovL2xpbnV4
-dGVzdGluZy5vcmcKPiA+Pj4KPiA+Pj4KPiA+Pj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPj4+
-IFdhbnQgZmFzdCBhbmQgZWFzeSBhY2Nlc3MgdG8gYWxsIHRoZSBjb2RlIGluIHlvdXIgZW50ZXJw
-cmlzZT8gSW5kZXggYW5kCj4gPj4+IHNlYXJjaCB1cCB0byAyMDAsMDAwIGxpbmVzIG9mIGNvZGUg
-d2l0aCBhIGZyZWUgY29weSBvZiBCbGFjayBEdWNrCj4gPj4+IENvZGUgU2lnaHQgLSB0aGUgc2Ft
-ZSBzb2Z0d2FyZSB0aGF0IHBvd2VycyB0aGUgd29ybGQncyBsYXJnZXN0IGNvZGUKPiA+Pj4gc2Vh
-cmNoIG9uIE9obG9oLCB0aGUgQmxhY2sgRHVjayBPcGVuIEh1YiEgVHJ5IGl0IG5vdy4KPiA+Pj4g
-aHR0cDovL3Auc2YubmV0L3NmdS9iZHMKPiA+Pj4gX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KPiA+Pj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QK
-PiA+Pj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiA+Pj4gaHR0cHM6
-Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo+
-ID4+IC4KPiA+Pgo+ID4KPiA+Cj4gCj4gLS0KPiBCZXN0IHJlZ2FyZHMsCj4gCj4gQW5kcmV5IFRz
-eXZhcmV2Cj4gTGludXggVmVyaWZpY2F0aW9uIENlbnRlciwgSVNQUkFTCj4gd2ViOmh0dHA6Ly9s
-aW51eHRlc3Rpbmcub3JnCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCldhbnQgZmFzdCBhbmQgZWFz
-eSBhY2Nlc3MgdG8gYWxsIHRoZSBjb2RlIGluIHlvdXIgZW50ZXJwcmlzZT8gSW5kZXggYW5kCnNl
-YXJjaCB1cCB0byAyMDAsMDAwIGxpbmVzIG9mIGNvZGUgd2l0aCBhIGZyZWUgY29weSBvZiBCbGFj
-ayBEdWNrCkNvZGUgU2lnaHQgLSB0aGUgc2FtZSBzb2Z0d2FyZSB0aGF0IHBvd2VycyB0aGUgd29y
-bGQncyBsYXJnZXN0IGNvZGUKc2VhcmNoIG9uIE9obG9oLCB0aGUgQmxhY2sgRHVjayBPcGVuIEh1
-YiEgVHJ5IGl0IG5vdy4KaHR0cDovL3Auc2YubmV0L3NmdS9iZHMKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
-c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
-b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Andrey Tsyvarev reported:
+"Using memory error detector reveals the following use-after-free error 
+in 3.15.0:
+
+AddressSanitizer: heap-use-after-free in f2fs_evict_inode
+Read of size 8 by thread T22279:
+  [<ffffffffa02d8702>] f2fs_evict_inode+0x102/0x2e0 [f2fs] 
+  [<ffffffff812359af>] evict+0x15f/0x290 
+  [<     inlined    >] iput+0x196/0x280 iput_final 
+  [<ffffffff812369a6>] iput+0x196/0x280 
+  [<ffffffffa02dc416>] f2fs_put_super+0xd6/0x170 [f2fs] 
+  [<ffffffff81210095>] generic_shutdown_super+0xc5/0x1b0 
+  [<ffffffff812105fd>] kill_block_super+0x4d/0xb0 
+  [<ffffffff81210a86>] deactivate_locked_super+0x66/0x80 
+  [<ffffffff81211c98>] deactivate_super+0x68/0x80 
+  [<ffffffff8123cc88>] mntput_no_expire+0x198/0x250 
+  [<     inlined    >] SyS_umount+0xe9/0x1a0 SYSC_umount 
+  [<ffffffff8123f1c9>] SyS_umount+0xe9/0x1a0 
+  [<ffffffff81cc8df9>] system_call_fastpath+0x16/0x1b 
+
+Freed by thread T3:
+  [<ffffffffa02dc337>] f2fs_i_callback+0x27/0x30 [f2fs] 
+  [<     inlined    >] rcu_process_callbacks+0x2d6/0x930 __rcu_reclaim 
+  [<     inlined    >] rcu_process_callbacks+0x2d6/0x930 rcu_do_batch 
+  [<     inlined    >] rcu_process_callbacks+0x2d6/0x930 invoke_rcu_callbacks 
+  [<     inlined    >] rcu_process_callbacks+0x2d6/0x930 __rcu_process_callbacks
+  [<ffffffff810fd266>] rcu_process_callbacks+0x2d6/0x930 
+  [<ffffffff8107cce2>] __do_softirq+0x142/0x380 
+  [<ffffffff8107cf50>] run_ksoftirqd+0x30/0x50 
+  [<ffffffff810b2a87>] smpboot_thread_fn+0x197/0x280 
+  [<ffffffff810a8238>] kthread+0x148/0x160 
+  [<ffffffff81cc8d4c>] ret_from_fork+0x7c/0xb0 
+
+Allocated by thread T22276:
+  [<ffffffffa02dc7dd>] f2fs_alloc_inode+0x2d/0x170 [f2fs] 
+  [<ffffffff81235e2a>] iget_locked+0x10a/0x230 
+  [<ffffffffa02d7495>] f2fs_iget+0x35/0xa80 [f2fs] 
+  [<ffffffffa02e2393>] f2fs_fill_super+0xb53/0xff0 [f2fs] 
+  [<ffffffff81211bce>] mount_bdev+0x1de/0x240 
+  [<ffffffffa02dbce0>] f2fs_mount+0x10/0x20 [f2fs] 
+  [<ffffffff81212a85>] mount_fs+0x55/0x220 
+  [<ffffffff8123c026>] vfs_kern_mount+0x66/0x200 
+  [<     inlined    >] do_mount+0x2b4/0x1120 do_new_mount 
+  [<ffffffff812400d4>] do_mount+0x2b4/0x1120 
+  [<     inlined    >] SyS_mount+0xb2/0x110 SYSC_mount 
+  [<ffffffff812414a2>] SyS_mount+0xb2/0x110 
+  [<ffffffff81cc8df9>] system_call_fastpath+0x16/0x1b 
+
+The buggy address ffff8800587866c8 is located 48 bytes inside
+  of 680-byte region [ffff880058786698, ffff880058786940)
+
+Memory state around the buggy address:
+  ffff880058786100: ffffffff ffffffff ffffffff ffffffff
+  ffff880058786200: ffffffff ffffffff ffffffrr rrrrrrrr
+  ffff880058786300: rrrrrrrr rrffffff ffffffff ffffffff
+  ffff880058786400: ffffffff ffffffff ffffffff ffffffff
+  ffff880058786500: ffffffff ffffffff ffffffff fffffffr
+ >ffff880058786600: rrrrrrrr rrrrrrrr rrrfffff ffffffff
+                                                ^
+  ffff880058786700: ffffffff ffffffff ffffffff ffffffff
+  ffff880058786800: ffffffff ffffffff ffffffff ffffffff
+  ffff880058786900: ffffffff rrrrrrrr rrrrrrrr rrrr....
+  ffff880058786a00: ........ ........ ........ ........
+  ffff880058786b00: ........ ........ ........ ........
+Legend:
+  f - 8 freed bytes
+  r - 8 redzone bytes
+  . - 8 allocated bytes
+  x=1..7 - x allocated bytes + (8-x) redzone bytes
+
+Investigation shows, that f2fs_evict_inode, when called for 
+'meta_inode', uses invalidate_mapping_pages() for 'node_inode'.
+But 'node_inode' is deleted before 'meta_inode' in f2fs_put_super via 
+iput().
+
+It seems that in common usage scenario this use-after-free is benign, 
+because 'node_inode' remains partially valid data even after 
+kmem_cache_free().
+But things may change if, while 'meta_inode' is evicted in one f2fs 
+filesystem, another (mounted) f2fs filesystem requests inode from cache, 
+and formely
+'node_inode' of the first filesystem is returned."
+
+Nids for both meta_inode and node_inode are reservation, so it's not necessary
+for us to invalidate pages which will never be allocated.
+To fix this issue, let's skipping needlessly invalidating pages for
+{meta,node}_inode in f2fs_evict_inode.
+
+Reported-by: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Tested-by: Andrey Tsyvarev <tsyvarev@ispras.ru>
+Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/inode.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 2cf6962..cafba3c 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -273,7 +273,7 @@ void f2fs_evict_inode(struct inode *inode)
+ 
+ 	if (inode->i_ino == F2FS_NODE_INO(sbi) ||
+ 			inode->i_ino == F2FS_META_INO(sbi))
+-		goto no_delete;
++		goto out_clear;
+ 
+ 	f2fs_bug_on(get_dirty_dents(inode));
+ 	remove_dirty_dir_inode(inode);
+@@ -295,6 +295,7 @@ void f2fs_evict_inode(struct inode *inode)
+ 
+ 	sb_end_intwrite(inode->i_sb);
+ no_delete:
+-	clear_inode(inode);
+ 	invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino, inode->i_ino);
++out_clear:
++	clear_inode(inode);
+ }
+-- 
+2.0.1.474.g72c7794
