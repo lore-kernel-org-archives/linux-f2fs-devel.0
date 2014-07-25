@@ -1,135 +1,74 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev][PATCH 1/2] f2fs: avoid use invalid mapping of node_inode
- when evict meta inode
-Date: Fri, 25 Jul 2014 12:00:57 +0800
-Message-ID: <002b01cfa7bd$32774ad0$9765e070$@samsung.com>
+Subject: [PATCH 2/2] f2fs: fix to put root inode in error path of
+ fill_super
+Date: Fri, 25 Jul 2014 12:55:09 +0800
+Message-ID: <003b01cfa7c4$b7408040$25c180c0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XAXY5-0003OR-06
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 25 Jul 2014 04:56:05 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XAXY2-0000C5-Tf
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 25 Jul 2014 04:56:04 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N99009IM4D6IDC0@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 25 Jul 2014 13:55:54 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: tsyvarev@ispras.ru, Gu Zheng <guz.fnst@cn.fujitsu.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Andrey Tsyvarev reported:
-"Using memory error detector reveals the following use-after-free error 
-in 3.15.0:
+We should put root inode correctly in error path of fill_super, otherwise we
+may encounter a leak case of inode resource.
 
-AddressSanitizer: heap-use-after-free in f2fs_evict_inode
-Read of size 8 by thread T22279:
-  [<ffffffffa02d8702>] f2fs_evict_inode+0x102/0x2e0 [f2fs] 
-  [<ffffffff812359af>] evict+0x15f/0x290 
-  [<     inlined    >] iput+0x196/0x280 iput_final 
-  [<ffffffff812369a6>] iput+0x196/0x280 
-  [<ffffffffa02dc416>] f2fs_put_super+0xd6/0x170 [f2fs] 
-  [<ffffffff81210095>] generic_shutdown_super+0xc5/0x1b0 
-  [<ffffffff812105fd>] kill_block_super+0x4d/0xb0 
-  [<ffffffff81210a86>] deactivate_locked_super+0x66/0x80 
-  [<ffffffff81211c98>] deactivate_super+0x68/0x80 
-  [<ffffffff8123cc88>] mntput_no_expire+0x198/0x250 
-  [<     inlined    >] SyS_umount+0xe9/0x1a0 SYSC_umount 
-  [<ffffffff8123f1c9>] SyS_umount+0xe9/0x1a0 
-  [<ffffffff81cc8df9>] system_call_fastpath+0x16/0x1b 
-
-Freed by thread T3:
-  [<ffffffffa02dc337>] f2fs_i_callback+0x27/0x30 [f2fs] 
-  [<     inlined    >] rcu_process_callbacks+0x2d6/0x930 __rcu_reclaim 
-  [<     inlined    >] rcu_process_callbacks+0x2d6/0x930 rcu_do_batch 
-  [<     inlined    >] rcu_process_callbacks+0x2d6/0x930 invoke_rcu_callbacks 
-  [<     inlined    >] rcu_process_callbacks+0x2d6/0x930 __rcu_process_callbacks
-  [<ffffffff810fd266>] rcu_process_callbacks+0x2d6/0x930 
-  [<ffffffff8107cce2>] __do_softirq+0x142/0x380 
-  [<ffffffff8107cf50>] run_ksoftirqd+0x30/0x50 
-  [<ffffffff810b2a87>] smpboot_thread_fn+0x197/0x280 
-  [<ffffffff810a8238>] kthread+0x148/0x160 
-  [<ffffffff81cc8d4c>] ret_from_fork+0x7c/0xb0 
-
-Allocated by thread T22276:
-  [<ffffffffa02dc7dd>] f2fs_alloc_inode+0x2d/0x170 [f2fs] 
-  [<ffffffff81235e2a>] iget_locked+0x10a/0x230 
-  [<ffffffffa02d7495>] f2fs_iget+0x35/0xa80 [f2fs] 
-  [<ffffffffa02e2393>] f2fs_fill_super+0xb53/0xff0 [f2fs] 
-  [<ffffffff81211bce>] mount_bdev+0x1de/0x240 
-  [<ffffffffa02dbce0>] f2fs_mount+0x10/0x20 [f2fs] 
-  [<ffffffff81212a85>] mount_fs+0x55/0x220 
-  [<ffffffff8123c026>] vfs_kern_mount+0x66/0x200 
-  [<     inlined    >] do_mount+0x2b4/0x1120 do_new_mount 
-  [<ffffffff812400d4>] do_mount+0x2b4/0x1120 
-  [<     inlined    >] SyS_mount+0xb2/0x110 SYSC_mount 
-  [<ffffffff812414a2>] SyS_mount+0xb2/0x110 
-  [<ffffffff81cc8df9>] system_call_fastpath+0x16/0x1b 
-
-The buggy address ffff8800587866c8 is located 48 bytes inside
-  of 680-byte region [ffff880058786698, ffff880058786940)
-
-Memory state around the buggy address:
-  ffff880058786100: ffffffff ffffffff ffffffff ffffffff
-  ffff880058786200: ffffffff ffffffff ffffffrr rrrrrrrr
-  ffff880058786300: rrrrrrrr rrffffff ffffffff ffffffff
-  ffff880058786400: ffffffff ffffffff ffffffff ffffffff
-  ffff880058786500: ffffffff ffffffff ffffffff fffffffr
- >ffff880058786600: rrrrrrrr rrrrrrrr rrrfffff ffffffff
-                                                ^
-  ffff880058786700: ffffffff ffffffff ffffffff ffffffff
-  ffff880058786800: ffffffff ffffffff ffffffff ffffffff
-  ffff880058786900: ffffffff rrrrrrrr rrrrrrrr rrrr....
-  ffff880058786a00: ........ ........ ........ ........
-  ffff880058786b00: ........ ........ ........ ........
-Legend:
-  f - 8 freed bytes
-  r - 8 redzone bytes
-  . - 8 allocated bytes
-  x=1..7 - x allocated bytes + (8-x) redzone bytes
-
-Investigation shows, that f2fs_evict_inode, when called for 
-'meta_inode', uses invalidate_mapping_pages() for 'node_inode'.
-But 'node_inode' is deleted before 'meta_inode' in f2fs_put_super via 
-iput().
-
-It seems that in common usage scenario this use-after-free is benign, 
-because 'node_inode' remains partially valid data even after 
-kmem_cache_free().
-But things may change if, while 'meta_inode' is evicted in one f2fs 
-filesystem, another (mounted) f2fs filesystem requests inode from cache, 
-and formely
-'node_inode' of the first filesystem is returned."
-
-Nids for both meta_inode and node_inode are reservation, so it's not necessary
-for us to invalidate pages which will never be allocated.
-To fix this issue, let's skipping needlessly invalidating pages for
-{meta,node}_inode in f2fs_evict_inode.
-
-Reported-by: Andrey Tsyvarev <tsyvarev@ispras.ru>
-Tested-by: Andrey Tsyvarev <tsyvarev@ispras.ru>
-Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/inode.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 2cf6962..cafba3c 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -273,7 +273,7 @@ void f2fs_evict_inode(struct inode *inode)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 870fe19..34649aa 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1033,8 +1033,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto free_node_inode;
+ 	}
+ 	if (!S_ISDIR(root->i_mode) || !root->i_blocks || !root->i_size) {
++		iput(root);
+ 		err = -EINVAL;
+-		goto free_root_inode;
++		goto free_node_inode;
+ 	}
  
- 	if (inode->i_ino == F2FS_NODE_INO(sbi) ||
- 			inode->i_ino == F2FS_META_INO(sbi))
--		goto no_delete;
-+		goto out_clear;
- 
- 	f2fs_bug_on(get_dirty_dents(inode));
- 	remove_dirty_dir_inode(inode);
-@@ -295,6 +295,7 @@ void f2fs_evict_inode(struct inode *inode)
- 
- 	sb_end_intwrite(inode->i_sb);
- no_delete:
--	clear_inode(inode);
- 	invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino, inode->i_ino);
-+out_clear:
-+	clear_inode(inode);
- }
+ 	sb->s_root = d_make_root(root); /* allocate root dentry */
 -- 
 2.0.1.474.g72c7794
+
+
+
+------------------------------------------------------------------------------
+Want fast and easy access to all the code in your enterprise? Index and
+search up to 200,000 lines of code with a free copy of Black Duck
+Code Sight - the same software that powers the world's largest code
+search on Ohloh, the Black Duck Open Hub! Try it now.
+http://p.sf.net/sfu/bds
