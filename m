@@ -1,33 +1,21 @@
-From: Jaegeuk Kim <jaegeuk.kim@gmail.com>
-Subject: Re: f2fs: Possible use-after-free when umount filesystem
-Date: Fri, 25 Jul 2014 08:37:56 -0700
-Message-ID: <CAOtxgycWh5tqpfQ0bBnHS-g1iSKYf3-M+jf4O5R4Z5=sUPkh7Q@mail.gmail.com>
-References: <52F320FC.50803@ispras.ru> <534BC29B.3020408@ispras.ru>
-	<53CCF1EC.30008@ispras.ru> <53CDC9AF.2050605@cn.fujitsu.com>
-	<53CE3722.60307@ispras.ru>
-	<000001cfa61b$c693b350$53bb19f0$@samsung.com>
-	<53CF2E61.3000601@cn.fujitsu.com> <53D0DC8C.7050406@ispras.ru>
-	<002a01cfa7b7$d79edc40$86dc94c0$@samsung.com>
-	<53D1EFD3.3070905@cn.fujitsu.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 01/11] f2fs: add nobarrier mount option
+Date: Fri, 25 Jul 2014 15:47:15 -0700
+Message-ID: <1406328445-63707-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk.kim@gmail.com>) id 1XAhZM-0008SL-O3
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XAoGr-0000NN-GR
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Jul 2014 15:38:04 +0000
-Received: from mail-pd0-f178.google.com ([209.85.192.178])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1XAhZK-0007EI-PG
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Jul 2014 15:38:04 +0000
-Received: by mail-pd0-f178.google.com with SMTP id w10so5818799pde.23
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 25 Jul 2014 08:37:56 -0700 (PDT)
-In-Reply-To: <53D1EFD3.3070905@cn.fujitsu.com>
+	Fri, 25 Jul 2014 22:47:25 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XAoGq-00039Z-BC for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 25 Jul 2014 22:47:25 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,114 +25,109 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Cc: Andrey Tsyvarev <tsyvarev@ispras.ru>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, Jaegeuk Kim <jaegeuk@kernel.org>, Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-VGhhbmsgeW91IGd1eXMuCkkgbWVyZ2VkIHR3byBwYXRjaGVzLiA6KQoKLS0KSmFlZ2V1ayBLaW0K
-CjIwMTQtMDctMjQgMjI6NDkgR01ULTA3OjAwIEd1IFpoZW5nIDxndXouZm5zdEBjbi5mdWppdHN1
-LmNvbT46Cj4gT24gMDcvMjUvMjAxNCAxMToyMiBBTSwgQ2hhbyBZdSB3cm90ZToKPgo+PiBIaSwK
-Pj4KPj4gVG8gQW5kcmV5Ogo+PiBUaGFua3MgZm9yIHlvdXIgdGVzdCBvbiB0aGlzIHBhdGNoIQo+
-Pgo+PiBUbyBHdToKPj4gSWYgeW91IGRvIG5vdCBvYmplY3QsIGxldCBtZSBtYWtlIGFuZCByZXNl
-bmQgYSBwYXRjaCBiYXNlIG9uIHRoZSBvbmUgd2hpY2gKPj4gc2tpcCBpbnZhbGlkYXRpbmcgcGFn
-ZXMuCj4KPiBQbGVhc2UgZ28gYWhlYWQuOikKPgo+IFRoYW5rcywKPiBHdQo+Cj4+Cj4+IFJlZ2Fy
-ZHMsCj4+IFl1Cj4+Cj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+Pj4gRnJvbTogQW5k
-cmV5IFRzeXZhcmV2IFttYWlsdG86dHN5dmFyZXZAaXNwcmFzLnJ1XQo+Pj4gU2VudDogVGh1cnNk
-YXksIEp1bHkgMjQsIDIwMTQgNjoxNSBQTQo+Pj4gVG86IEd1IFpoZW5nOyBDaGFvIFl1Cj4+PiBD
-YzogJ0phZWdldWsgS2ltJzsgJ2xpbnV4LWtlcm5lbCc7ICdBbGV4ZXkgS2hvcm9zaGlsb3YnOwo+
-Pj4gbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPj4+IFN1YmplY3Q6IFJl
-OiBbZjJmcy1kZXZdIGYyZnM6IFBvc3NpYmxlIHVzZS1hZnRlci1mcmVlIHdoZW4gdW1vdW50IGZp
-bGVzeXN0ZW0KPj4+Cj4+PiBIaSwKPj4+Cj4+PiBXaXRoIHBhdGNoIHNraXBwaW5nIGludmFsaWRh
-dGluZyBwYWdlcyBmb3Igbm9kZV9pbm9kZSBhbmQgbWV0YV9pbm9kZQo+Pj4gdXNlLWFmdGVyLWZy
-ZWUgZXJyb3IgZGlzYXBwZWFycyB0b28uCj4+Pgo+Pj4gMjMuMDcuMjAxNCA3OjM5LCBHdSBaaGVu
-ZyDQv9C40YjQtdGCOgo+Pj4+IEhpLAo+Pj4+IE9uIDA3LzIzLzIwMTQgMTA6MTIgQU0sIENoYW8g
-WXUgd3JvdGU6Cj4+Pj4KPj4+Pj4gSGkgQW5kcmV5IEd1LAo+Pj4+Pgo+Pj4+Pj4gLS0tLS1Pcmln
-aW5hbCBNZXNzYWdlLS0tLS0KPj4+Pj4+IEZyb206IEFuZHJleSBUc3l2YXJldiBbbWFpbHRvOnRz
-eXZhcmV2QGlzcHJhcy5ydV0KPj4+Pj4+IFNlbnQ6IFR1ZXNkYXksIEp1bHkgMjIsIDIwMTQgNjow
-NCBQTQo+Pj4+Pj4gVG86IEd1IFpoZW5nCj4+Pj4+PiBDYzogSmFlZ2V1ayBLaW07IGxpbnV4LWtl
-cm5lbDsgQWxleGV5IEtob3Jvc2hpbG92OyBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZv
-cmdlLm5ldAo+Pj4+Pj4gU3ViamVjdDogUmU6IFtmMmZzLWRldl0gZjJmczogUG9zc2libGUgdXNl
-LWFmdGVyLWZyZWUgd2hlbiB1bW91bnQgZmlsZXN5c3RlbQo+Pj4+Pj4KPj4+Pj4+IEhpIEd1LAo+
-Pj4+Pj4KPj4+Pj4+Pj4gSW52ZXN0aWdhdGlvbiBzaG93cywgdGhhdCBmMmZzX2V2aWN0X2lub2Rl
-LCB3aGVuIGNhbGxlZCBmb3IgJ21ldGFfaW5vZGUnLCB1c2VzCj4+Pj4+PiBpbnZhbGlkYXRlX21h
-cHBpbmdfcGFnZXMoKSBmb3IgJ25vZGVfaW5vZGUnLgo+Pj4+Pj4+PiBCdXQgJ25vZGVfaW5vZGUn
-IGlzIGRlbGV0ZWQgYmVmb3JlICdtZXRhX2lub2RlJyBpbiBmMmZzX3B1dF9zdXBlciB2aWEgaXB1
-dCgpLgo+Pj4+Pj4+Pgo+Pj4+Pj4+PiBJdCBzZWVtcyB0aGF0IGluIGNvbW1vbiB1c2FnZSBzY2Vu
-YXJpbyB0aGlzIHVzZS1hZnRlci1mcmVlIGlzIGJlbmlnbiwgYmVjYXVzZSAnbm9kZV9pbm9kZScK
-Pj4+Pj4+IHJlbWFpbnMgcGFydGlhbGx5IHZhbGlkIGRhdGEgZXZlbiBhZnRlciBrbWVtX2NhY2hl
-X2ZyZWUoKS4KPj4+Pj4+Pj4gQnV0IHRoaW5ncyBtYXkgY2hhbmdlIGlmLCB3aGlsZSAnbWV0YV9p
-bm9kZScgaXMgZXZpY3RlZCBpbiBvbmUgZjJmcyBmaWxlc3lzdGVtLCBhbm90aGVyCj4+PiAobW91
-bnRlZCkKPj4+Pj4+IGYyZnMgZmlsZXN5c3RlbSByZXF1ZXN0cyBpbm9kZSBmcm9tIGNhY2hlLCBh
-bmQgZm9ybWVseQo+Pj4+Pj4+PiAnbm9kZV9pbm9kZScgb2YgdGhlIGZpcnN0IGZpbGVzeXN0ZW0g
-aXMgcmV0dXJuZWQuCj4+Pj4+Pj4gVGhlIGFuYWx5c2lzIHNlZW1zIHJlYXNvbmFibGUuIEhhdmUg
-eW91IHRyaWVkIHRvIHN3YXAgdGhlIHJlY2xhaW0gb3JkZXIgb2Ygbm9kZV9pbmRlCj4+Pj4+Pj4g
-YW5kIG1ldGFfaW5vZGU/Cj4+Pj4+Pj4KPj4+Pj4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zdXBl
-ci5jIGIvZnMvZjJmcy9zdXBlci5jCj4+Pj4+Pj4gaW5kZXggODcwZmUxOS4uZTExNDQxOCAxMDA2
-NDQKPj4+Pj4+PiAtLS0gYS9mcy9mMmZzL3N1cGVyLmMKPj4+Pj4+PiArKysgYi9mcy9mMmZzL3N1
-cGVyLmMKPj4+Pj4+PiBAQCAtNDMwLDggKzQzMCw4IEBAIHN0YXRpYyB2b2lkIGYyZnNfcHV0X3N1
-cGVyKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IpCj4+Pj4+Pj4gICAgICAgICAgIGlmIChzYmktPnNf
-ZGlydHkgJiYgZ2V0X3BhZ2VzKHNiaSwgRjJGU19ESVJUWV9OT0RFUykpCj4+Pj4+Pj4gICAgICAg
-ICAgICAgICAgICAgd3JpdGVfY2hlY2twb2ludChzYmksIHRydWUpOwo+Pj4+Pj4+Cj4+Pj4+Pj4g
-LSAgICAgICBpcHV0KHNiaS0+bm9kZV9pbm9kZSk7Cj4+Pj4+Pj4gICAgICAgICAgIGlwdXQoc2Jp
-LT5tZXRhX2lub2RlKTsKPj4+Pj4+PiArICAgICAgIGlwdXQoc2JpLT5ub2RlX2lub2RlKTsKPj4+
-Pj4+Pgo+Pj4+Pj4+ICAgICAgICAgICAvKiBkZXN0cm95IGYyZnMgaW50ZXJuYWwgbW9kdWxlcyAq
-Lwo+Pj4+Pj4+ICAgICAgICAgICBkZXN0cm95X25vZGVfbWFuYWdlcihzYmkpOwo+Pj4+Pj4+Cj4+
-Pj4+Pj4gVGhhbmtzLAo+Pj4+Pj4+IEd1Cj4+Pj4+PiBXaXRoIHJlY2xhaW0gb3JkZXIgb2Ygbm9k
-ZV9pbm9kZSBhbmQgbWV0YV9pbm9kZSBzd2FwcGVkLCB1c2UtYWZ0ZXItZnJlZQo+Pj4+Pj4gZXJy
-b3IgZGlzYXBwZWFycy4KPj4+Pj4+Cj4+Pj4+PiBCdXQgc2hvdWxkbid0IGluaXRpYWxpemF0aW9u
-IG9yZGVyIG9mIHRoZXNlIGlub2RlcyBiZSBzd2FwcGVkIHRvbz8KPj4+Pj4+IEFzIG1ldGFfaW5v
-ZGUgdXNlcyBub2RlX2lub2RlLCBpdCBzZWVtcyBsb2dpY2FsIHRoYXQgaXQgc2hvdWxkIGJlCj4+
-Pj4+PiBpbml0aWFsaXplZCBhZnRlciBpdC4KPj4+PiBUaGUgaW5pdGlhbGl6YXRpb24gb3JkZXIg
-ZG9zZSBub3QgYWZmZWN0IGFueXRoaW5nLCBzbyBzd2FwcGluZyB0aGUgb3JkZXIgZG9zZSBub3QK
-Pj4+PiBtYWtlIG1vcmUgc2Vuc2UgaGVyZS4KPj4+Pgo+Pj4+PiBJTU8sIGl0J3Mgbm90IGVhc3kg
-dG8gZXhjaGFuZ2Ugb3JkZXIgb2YgaW5pdGlhbGl6YXRpb24gYmV0d2VlbiBtZXRhX2lub2RlIGFu
-ZAo+Pj4+PiBub2RlX2lub2RlLCBiZWNhdXNlIHdlIHNob3VsZCB1c2UgbWV0YV9pbm9kZSBpbiBn
-ZXRfdmFsaWRfY2hlY2twb2ludCBmb3IgdmFsaWQKPj4+Pj4gY3AgZmlyc3QgZm9yIHVzdWFsIHZl
-cmlmaWNhdGlvbiwgdGhlbiBpbml0IG5vZGVfaW5vZGUuCj4+Pj4gWWVhaCwgYnV0IEkgdGhpbmsg
-anVzdCBtb3Zpbmcgbm9kZV9pbm9kZSdzIGluaXRpYWxpemF0aW9uIHRvIHRoZSBmcm9udCBvZiBt
-ZXRhX2lub2RlCj4+Pj4gZG9zZSBub3QgYnJlYWsgYW55dGhpbmcuCj4+Pj4KPj4+Pj4gQXMgSSBj
-aGVja2VkLCBuaWRzIGZvciBib3RoIG1ldGFfaW5vZGUgYW5kIG5vZGVfaW5vZGUgYXJlIHJlc2Vy
-dmF0aW9uLCBzbyBpdCdzIG5vdAo+Pj4+PiBuZWNlc3NhcnkgZm9yIHVzIHRvIGludmFsaWRhdGUg
-cGFnZXMgd2hpY2ggd2lsbCBuZXZlciBhbGxvY2VkLgo+Pj4+Pgo+Pj4+PiBIb3cgYWJvdXQgc2tp
-cHBpbmcgaXQgYXMgZm9sbG93aW5nPwo+Pj4+IEl0IHNlZW1zIHRoZSByaWdodCB3YXkgdG8gZml4
-IHRoaXMgaXNzdWUuCj4+Pj4KPj4+PiBUbyBBbmRyZXk6Cj4+Pj4gQ291bGQgeW91IHBsZWFzZSB0
-cnkgdGhpcyBvbmU/Cj4+Pj4KPj4+PiBUaGFua3MsCj4+Pj4gR3UKPj4+Pgo+Pj4+PiBkaWZmIC0t
-Z2l0IGEvZnMvZjJmcy9pbm9kZS5jIGIvZnMvZjJmcy9pbm9kZS5jCj4+Pj4+IGluZGV4IDJjZjY5
-NjIuLmNhZmJhM2MgMTAwNjQ0Cj4+Pj4+IC0tLSBhL2ZzL2YyZnMvaW5vZGUuYwo+Pj4+PiArKysg
-Yi9mcy9mMmZzL2lub2RlLmMKPj4+Pj4gQEAgLTI3Myw3ICsyNzMsNyBAQCB2b2lkIGYyZnNfZXZp
-Y3RfaW5vZGUoc3RydWN0IGlub2RlICppbm9kZSkKPj4+Pj4KPj4+Pj4gICAgaWYgKGlub2RlLT5p
-X2lubyA9PSBGMkZTX05PREVfSU5PKHNiaSkgfHwKPj4+Pj4gICAgICAgICAgICAgICAgICAgIGlu
-b2RlLT5pX2lubyA9PSBGMkZTX01FVEFfSU5PKHNiaSkpCj4+Pj4+IC0gICAgICAgICAgZ290byBu
-b19kZWxldGU7Cj4+Pj4+ICsgICAgICAgICAgZ290byBvdXRfY2xlYXI7Cj4+Pj4+Cj4+Pj4+ICAg
-IGYyZnNfYnVnX29uKGdldF9kaXJ0eV9kZW50cyhpbm9kZSkpOwo+Pj4+PiAgICByZW1vdmVfZGly
-dHlfZGlyX2lub2RlKGlub2RlKTsKPj4+Pj4gQEAgLTI5NSw2ICsyOTUsNyBAQCB2b2lkIGYyZnNf
-ZXZpY3RfaW5vZGUoc3RydWN0IGlub2RlICppbm9kZSkKPj4+Pj4KPj4+Pj4gICAgc2JfZW5kX2lu
-dHdyaXRlKGlub2RlLT5pX3NiKTsKPj4+Pj4gICBub19kZWxldGU6Cj4+Pj4+IC0gIGNsZWFyX2lu
-b2RlKGlub2RlKTsKPj4+Pj4gICAgaW52YWxpZGF0ZV9tYXBwaW5nX3BhZ2VzKE5PREVfTUFQUElO
-RyhzYmkpLCBpbm9kZS0+aV9pbm8sIGlub2RlLT5pX2lubyk7Cj4+Pj4+ICtvdXRfY2xlYXI6Cj4+
-Pj4+ICsgIGNsZWFyX2lub2RlKGlub2RlKTsKPj4+Pj4gICB9Cj4+Pj4+Cj4+Pj4+PiAtLQo+Pj4+
-Pj4gQmVzdCByZWdhcmRzLAo+Pj4+Pj4KPj4+Pj4+IEFuZHJleSBUc3l2YXJldgo+Pj4+Pj4gTGlu
-dXggVmVyaWZpY2F0aW9uIENlbnRlciwgSVNQUkFTCj4+Pj4+PiB3ZWI6aHR0cDovL2xpbnV4dGVz
-dGluZy5vcmcKPj4+Pj4+Cj4+Pj4+Pgo+Pj4+Pj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4+Pj4+
-PiBXYW50IGZhc3QgYW5kIGVhc3kgYWNjZXNzIHRvIGFsbCB0aGUgY29kZSBpbiB5b3VyIGVudGVy
-cHJpc2U/IEluZGV4IGFuZAo+Pj4+Pj4gc2VhcmNoIHVwIHRvIDIwMCwwMDAgbGluZXMgb2YgY29k
-ZSB3aXRoIGEgZnJlZSBjb3B5IG9mIEJsYWNrIER1Y2sKPj4+Pj4+IENvZGUgU2lnaHQgLSB0aGUg
-c2FtZSBzb2Z0d2FyZSB0aGF0IHBvd2VycyB0aGUgd29ybGQncyBsYXJnZXN0IGNvZGUKPj4+Pj4+
-IHNlYXJjaCBvbiBPaGxvaCwgdGhlIEJsYWNrIER1Y2sgT3BlbiBIdWIhIFRyeSBpdCBub3cuCj4+
-Pj4+PiBodHRwOi8vcC5zZi5uZXQvc2Z1L2Jkcwo+Pj4+Pj4gX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KPj4+Pj4+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGlu
-ZyBsaXN0Cj4+Pj4+PiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+Pj4+
-Pj4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJm
-cy1kZXZlbAo+Pj4+PiAuCj4+Pj4+Cj4+Pj4KPj4+Pgo+Pj4KPj4+IC0tCj4+PiBCZXN0IHJlZ2Fy
-ZHMsCj4+Pgo+Pj4gQW5kcmV5IFRzeXZhcmV2Cj4+PiBMaW51eCBWZXJpZmljYXRpb24gQ2VudGVy
-LCBJU1BSQVMKPj4+IHdlYjpodHRwOi8vbGludXh0ZXN0aW5nLm9yZwo+Pgo+PiAuCj4+Cj4KPgoK
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tCldhbnQgZmFzdCBhbmQgZWFzeSBhY2Nlc3MgdG8gYWxsIHRo
-ZSBjb2RlIGluIHlvdXIgZW50ZXJwcmlzZT8gSW5kZXggYW5kCnNlYXJjaCB1cCB0byAyMDAsMDAw
-IGxpbmVzIG9mIGNvZGUgd2l0aCBhIGZyZWUgY29weSBvZiBCbGFjayBEdWNrCkNvZGUgU2lnaHQg
-LSB0aGUgc2FtZSBzb2Z0d2FyZSB0aGF0IHBvd2VycyB0aGUgd29ybGQncyBsYXJnZXN0IGNvZGUK
-c2VhcmNoIG9uIE9obG9oLCB0aGUgQmxhY2sgRHVjayBPcGVuIEh1YiEgVHJ5IGl0IG5vdy4KaHR0
-cDovL3Auc2YubmV0L3NmdS9iZHMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
-bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
-dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+This patch adds a mount option, nobarrier, in f2fs.
+The assumption in here is that file system keeps the IO ordering, but
+doesn't care about cache flushes inside the storages.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c    | 5 ++++-
+ fs/f2fs/f2fs.h    | 1 +
+ fs/f2fs/segment.c | 3 +++
+ fs/f2fs/super.c   | 7 +++++++
+ 4 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index c77c667..482313d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -139,7 +139,10 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
+ 	/* change META to META_FLUSH in the checkpoint procedure */
+ 	if (type >= META_FLUSH) {
+ 		io->fio.type = META_FLUSH;
+-		io->fio.rw = WRITE_FLUSH_FUA | REQ_META | REQ_PRIO;
++		if (test_opt(sbi, NOBARRIER))
++			io->fio.rw = WRITE_FLUSH | REQ_META | REQ_PRIO;
++		else
++			io->fio.rw = WRITE_FLUSH_FUA | REQ_META | REQ_PRIO;
+ 	}
+ 	__submit_merged_bio(io);
+ 	up_write(&io->io_rwsem);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8f507d4..e999eec 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -41,6 +41,7 @@
+ #define F2FS_MOUNT_INLINE_XATTR		0x00000080
+ #define F2FS_MOUNT_INLINE_DATA		0x00000100
+ #define F2FS_MOUNT_FLUSH_MERGE		0x00000200
++#define F2FS_MOUNT_NOBARRIER		0x00000400
+ 
+ #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
+ #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 8a6e57d..9fce0f47 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -239,6 +239,9 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi)
+ 	struct flush_cmd_control *fcc = SM_I(sbi)->cmd_control_info;
+ 	struct flush_cmd cmd;
+ 
++	if (test_opt(sbi, NOBARRIER))
++		return 0;
++
+ 	if (!test_opt(sbi, FLUSH_MERGE))
+ 		return blkdev_issue_flush(sbi->sb->s_bdev, GFP_KERNEL, NULL);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 34649aa..eec89a2 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -52,6 +52,7 @@ enum {
+ 	Opt_inline_xattr,
+ 	Opt_inline_data,
+ 	Opt_flush_merge,
++	Opt_nobarrier,
+ 	Opt_err,
+ };
+ 
+@@ -69,6 +70,7 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_inline_xattr, "inline_xattr"},
+ 	{Opt_inline_data, "inline_data"},
+ 	{Opt_flush_merge, "flush_merge"},
++	{Opt_nobarrier, "nobarrier"},
+ 	{Opt_err, NULL},
+ };
+ 
+@@ -339,6 +341,9 @@ static int parse_options(struct super_block *sb, char *options)
+ 		case Opt_flush_merge:
+ 			set_opt(sbi, FLUSH_MERGE);
+ 			break;
++		case Opt_nobarrier:
++			set_opt(sbi, NOBARRIER);
++			break;
+ 		default:
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Unrecognized mount option \"%s\" or missing value",
+@@ -544,6 +549,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 		seq_puts(seq, ",inline_data");
+ 	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, FLUSH_MERGE))
+ 		seq_puts(seq, ",flush_merge");
++	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, NOBARRIER))
++		seq_puts(seq, ",nobarrier");
+ 	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
+ 
+ 	return 0;
+-- 
+1.8.5.2 (Apple Git-48)
+
+
+------------------------------------------------------------------------------
+Want fast and easy access to all the code in your enterprise? Index and
+search up to 200,000 lines of code with a free copy of Black Duck
+Code Sight - the same software that powers the world's largest code
+search on Ohloh, the Black Duck Open Hub! Try it now.
+http://p.sf.net/sfu/bds
