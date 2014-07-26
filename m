@@ -1,24 +1,26 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 11/11] f2fs: avoid retrying wrong recovery
-	routine when error was occurred
-Date: Fri, 25 Jul 2014 15:47:25 -0700
-Message-ID: <1406328445-63707-11-git-send-email-jaegeuk@kernel.org>
-References: <1406328445-63707-1-git-send-email-jaegeuk@kernel.org>
+From: huang ying <huang.ying.caritas@gmail.com>
+Subject: Re: [PATCH v2] f2fs: Add f2fs_balance_fs for direct IO
+Date: Sat, 26 Jul 2014 16:03:34 +0800
+Message-ID: <CAC=cRTOz6ec7fd4gdWy5iRHkvSJj6BXvOJdXq02NVhpyRudzMQ@mail.gmail.com>
+References: <1405167000-23477-1-git-send-email-ying.huang@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============7034812795873030921=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XAoJ4-0001K3-4v
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <huang.ying.caritas@gmail.com>) id 1XAwxA-0006Ep-RF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Jul 2014 22:49:42 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XAoJ3-0003Ce-8t for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Jul 2014 22:49:42 +0000
-In-Reply-To: <1406328445-63707-1-git-send-email-jaegeuk@kernel.org>
+	Sat, 26 Jul 2014 08:03:40 +0000
+Received: from mail-qg0-f51.google.com ([209.85.192.51])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1XAwxA-0007z2-55
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 26 Jul 2014 08:03:40 +0000
+Received: by mail-qg0-f51.google.com with SMTP id a108so6108283qge.24
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sat, 26 Jul 2014 01:03:34 -0700 (PDT)
+In-Reply-To: <1405167000-23477-1-git-send-email-ying.huang@intel.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,120 +30,35 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Huang Ying <ying.huang@intel.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-This patch eliminates the propagation of recovery errors to the next mount.
+--===============7034812795873030921==
+Content-Type: multipart/alternative; boundary=001a11c1288a63b5ff04ff14206c
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/checkpoint.c |  3 ++-
- fs/f2fs/f2fs.h       |  2 +-
- fs/f2fs/recovery.c   | 20 +++++++++++++++++++-
- fs/f2fs/segment.c    |  5 +----
- 4 files changed, 23 insertions(+), 7 deletions(-)
+--001a11c1288a63b5ff04ff14206c
+Content-Type: text/plain; charset=UTF-8
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 36b0d47..765cc51 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -795,6 +795,7 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
- static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-+	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
- 	nid_t last_nid = 0;
- 	block_t start_blk;
- 	struct page *cp_page;
-@@ -808,7 +809,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
- 	 * This avoids to conduct wrong roll-forward operations and uses
- 	 * metapages, so should be called prior to sync_meta_pages below.
- 	 */
--	discard_next_dnode(sbi);
-+	discard_next_dnode(sbi, NEXT_FREE_BLKADDR(sbi, curseg));
- 
- 	/* Flush all the NAT/SIT pages */
- 	while (get_pages(sbi, F2FS_DIRTY_META))
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 475f97c..14b9f74 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1225,7 +1225,7 @@ void destroy_flush_cmd_control(struct f2fs_sb_info *);
- void invalidate_blocks(struct f2fs_sb_info *, block_t);
- void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
- void clear_prefree_segments(struct f2fs_sb_info *);
--void discard_next_dnode(struct f2fs_sb_info *);
-+void discard_next_dnode(struct f2fs_sb_info *, block_t);
- int npages_for_summary_flush(struct f2fs_sb_info *);
- void allocate_new_segments(struct f2fs_sb_info *);
- struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 90d7e80..8ef78f1 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -434,7 +434,9 @@ next:
- 
- int recover_fsync_data(struct f2fs_sb_info *sbi)
- {
-+	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
- 	struct list_head inode_list;
-+	block_t blkaddr;
- 	int err;
- 
- 	fsync_entry_slab = f2fs_kmem_cache_create("f2fs_fsync_inode_entry",
-@@ -446,6 +448,9 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- 
- 	/* step #1: find fsynced inode numbers */
- 	sbi->por_doing = true;
-+
-+	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
-+
- 	err = find_fsync_dnodes(sbi, &inode_list);
- 	if (err)
- 		goto out;
-@@ -459,8 +464,21 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- out:
- 	destroy_fsync_dnodes(&inode_list);
- 	kmem_cache_destroy(fsync_entry_slab);
-+
-+	if (err) {
-+		truncate_inode_pages_final(NODE_MAPPING(sbi));
-+		truncate_inode_pages_final(META_MAPPING(sbi));
-+	}
-+
- 	sbi->por_doing = false;
--	if (!err)
-+	if (!err) {
- 		write_checkpoint(sbi, false);
-+	} else {
-+		discard_next_dnode(sbi, blkaddr);
-+
-+		/* Flush all the NAT/SIT pages */
-+		while (get_pages(sbi, F2FS_DIRTY_META))
-+			sync_meta_pages(sbi, META, LONG_MAX);
-+	}
- 	return err;
- }
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9fce0f47..e016b97 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -379,11 +379,8 @@ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
- 	return blkdev_issue_discard(sbi->sb->s_bdev, start, len, GFP_NOFS, 0);
- }
- 
--void discard_next_dnode(struct f2fs_sb_info *sbi)
-+void discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
- {
--	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
--	block_t blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
--
- 	if (f2fs_issue_discard(sbi, blkaddr, 1)) {
- 		struct page *page = grab_meta_page(sbi, blkaddr);
- 		/* zero-filled page */
--- 
-1.8.5.2 (Apple Git-48)
+Hi, Jaegeuk,
 
+Do you have time to take a look at this patch?
+
+Best Regards,
+Huang, Ying
+
+--001a11c1288a63b5ff04ff14206c
+Content-Type: text/html; charset=UTF-8
+
+<div dir="ltr"><div>Hi, Jaegeuk,<br><br></div>Do you have time to take a look at this patch?<br><br>Best Regards,<br>Huang, Ying<br><br></div>
+
+--001a11c1288a63b5ff04ff14206c--
+
+
+--===============7034812795873030921==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Want fast and easy access to all the code in your enterprise? Index and
@@ -149,3 +66,15 @@ search up to 200,000 lines of code with a free copy of Black Duck
 Code Sight - the same software that powers the world's largest code
 search on Ohloh, the Black Duck Open Hub! Try it now.
 http://p.sf.net/sfu/bds
+--===============7034812795873030921==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============7034812795873030921==--
