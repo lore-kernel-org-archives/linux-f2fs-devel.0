@@ -1,33 +1,32 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] Remove an unnecessary line
-	in	allocate_data_block.
-Date: Mon, 28 Jul 2014 13:35:37 +0800
-Message-ID: <003c01cfaa25$dc91ac80$95b50580$@samsung.com>
-References: <5225212.3741406502181304.JavaMail.weblogic@epv6ml08>
+From: Dongho Sim <dh.sim@samsung.com>
+Subject: Re: [PATCH] Remove an unnecessary line in
+ allocate_data_block.
+Date: Mon, 28 Jul 2014 05:51:37 +0000 (GMT)
+Message-ID: <20756702.18601406526696888.JavaMail.weblogic@epml10>
+Reply-To: dh.sim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XBdbs-00065H-Sk
+	(envelope-from <dh.sim@samsung.com>) id 1XBdqd-0006TK-Mh
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Jul 2014 05:36:32 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XBdbq-0001X2-ML
+	Mon, 28 Jul 2014 05:51:47 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XBdqb-0003Dn-8o
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Jul 2014 05:36:32 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N9E00MCLQ8MWU40@mailout3.samsung.com> for
+	Mon, 28 Jul 2014 05:51:47 +0000
+Received: from epcpsbgr5.samsung.com
+	(u145.gpu120.samsung.co.kr [203.254.230.145])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N9E00EYHQY1DW50@mailout1.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Jul 2014 14:36:22 +0900 (KST)
-In-reply-to: <5225212.3741406502181304.JavaMail.weblogic@epv6ml08>
-Content-language: zh-cn
+	Mon, 28 Jul 2014 14:51:37 +0900 (KST)
+MIME-version: 1.0
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,64 +36,65 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: dh.sim@samsung.com
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: =?utf-8?Q?=E4=BF=9E=E8=B6=85?= <chao2.yu@samsung.com>
+Cc: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Dongho,
-
-> -----Original Message-----
-> From: Dongho Sim [mailto:dh.sim@samsung.com]
-> Sent: Monday, July 28, 2014 7:03 AM
-> To: jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH] Remove an unnecessary line in allocate_data_block.
-> 
-> Hi. There was an unnecessary line in function, allocate_data_block.
-> It is already done in
->    refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
-> 
-> Thanks.
-
-Agreed,
-How about removing old_cursegno too as it's no longer used in allocate_data_block?
-
-Thanks,
-Yu
-
-> 
-> Signed-off-by: Dongho Sim <dh.sim@samsung.com>
-> ---
->  fs/f2fs/segment.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 8a6e57d..a3c7aae 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1001,7 +1001,6 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
->  	 * since SSR needs latest valid block information.
->  	 */
->  	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
-> -	locate_dirty_segment(sbi, old_cursegno);
-> 
->  	mutex_unlock(&sit_i->sentry_lock);
-> 
-> --
-> 1.9.1
-> ------------------------------------------------------------------------------
-> Want fast and easy access to all the code in your enterprise? Index and
-> search up to 200,000 lines of code with a free copy of Black Duck
-> Code Sight - the same software that powers the world's largest code
-> search on Ohloh, the Black Duck Open Hub! Try it now.
-> http://p.sf.net/sfu/bds
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-
-------------------------------------------------------------------------------
-Infragistics Professional
-Build stunning WinForms apps today!
-Reboot your WinForms applications with our WinForms controls. 
-Build a bridge from your legacy apps to the future.
-http://pubads.g.doubleclick.net/gampad/clk?id=153845071&iu=/4140/ostg.clktrk
+WWVzLCB0aGVyZSB3YXMgYW5vdGhlciBvbmUuDQpUaGFua3MgQ2hhbywgOi0pDQoNClNpZ25lZC1v
+ZmYtYnk6IERvbmdobyBTaW0gPGRoLnNpbUBzYW1zdW5nLmNvbT4NCi0tLQ0KIGZzL2YyZnMvc2Vn
+bWVudC5jIHwgMiAtLQ0KIDEgZmlsZSBjaGFuZ2VkLCAyIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0t
+Z2l0IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZzL3NlZ21lbnQuYw0KaW5kZXggOGE2ZTU3
+ZC4uM2FiNzc0OSAxMDA2NDQNCi0tLSBhL2ZzL2YyZnMvc2VnbWVudC5jDQorKysgYi9mcy9mMmZz
+L3NlZ21lbnQuYw0KQEAgLTk4MCw3ICs5ODAsNiBAQCB2b2lkIGFsbG9jYXRlX2RhdGFfYmxvY2so
+c3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFnZSAqcGFnZSwNCiAJbXV0ZXhfbG9j
+aygmY3Vyc2VnLT5jdXJzZWdfbXV0ZXgpOw0KIA0KIAkqbmV3X2Jsa2FkZHIgPSBORVhUX0ZSRUVf
+QkxLQUREUihzYmksIGN1cnNlZyk7DQotCW9sZF9jdXJzZWdubyA9IGN1cnNlZy0+c2Vnbm87DQog
+DQogCS8qDQogCSAqIF9fYWRkX3N1bV9lbnRyeSBzaG91bGQgYmUgcmVzaWRlZCB1bmRlciB0aGUg
+Y3Vyc2VnX211dGV4DQpAQCAtMTAwMSw3ICsxMDAwLDYgQEAgdm9pZCBhbGxvY2F0ZV9kYXRhX2Js
+b2NrKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsDQogCSAqIHNp
+bmNlIFNTUiBuZWVkcyBsYXRlc3QgdmFsaWQgYmxvY2sgaW5mb3JtYXRpb24uDQogCSAqLw0KIAly
+ZWZyZXNoX3NpdF9lbnRyeShzYmksIG9sZF9ibGthZGRyLCAqbmV3X2Jsa2FkZHIpOw0KLQlsb2Nh
+dGVfZGlydHlfc2VnbWVudChzYmksIG9sZF9jdXJzZWdubyk7DQogDQogCW11dGV4X3VubG9jaygm
+c2l0X2ktPnNlbnRyeV9sb2NrKTsNCiANCi0tIA0KMS45LjENCg0KLS0tLS0tLSBPcmlnaW5hbCBN
+ZXNzYWdlIC0tLS0tLS0NClNlbmRlciA6IOS/nui2hTxjaGFvMi55dUBzYW1zdW5nLmNvbT4g5bel
+56iL5biIL1NSQy1OYW5qaW5nLU1vYmlsZSBTb2x1dGlvbiBMYWIv7IK87ISx7KCE7J6QDQpEYXRl
+IDogMjAxNC0wNy0yOCAxNDozNSAoR01UKzA5OjAwKQ0KVGl0bGUgOiBSRTogW2YyZnMtZGV2XSBb
+UEFUQ0hdIFJlbW92ZSBhbiB1bm5lY2Vzc2FyeSBsaW5lIGluIGFsbG9jYXRlX2RhdGFfYmxvY2su
+DQoNCkhpIERvbmdobywNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBE
+b25naG8gU2ltIFttYWlsdG86ZGguc2ltQHNhbXN1bmcuY29tXQ0KPiBTZW50OiBNb25kYXksIEp1
+bHkgMjgsIDIwMTQgNzowMyBBTQ0KPiBUbzogamFlZ2V1a0BrZXJuZWwub3JnOyBsaW51eC1mMmZz
+LWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldA0KPiBTdWJqZWN0OiBbZjJmcy1kZXZdIFtQQVRD
+SF0gUmVtb3ZlIGFuIHVubmVjZXNzYXJ5IGxpbmUgaW4gYWxsb2NhdGVfZGF0YV9ibG9jay4NCj4g
+DQo+IEhpLiBUaGVyZSB3YXMgYW4gdW5uZWNlc3NhcnkgbGluZSBpbiBmdW5jdGlvbiwgYWxsb2Nh
+dGVfZGF0YV9ibG9jay4NCj4gSXQgaXMgYWxyZWFkeSBkb25lIGluDQo+ICAgIHJlZnJlc2hfc2l0
+X2VudHJ5KHNiaSwgb2xkX2Jsa2FkZHIsICpuZXdfYmxrYWRkcik7DQo+IA0KPiBUaGFua3MuDQoN
+CkFncmVlZCwNCkhvdyBhYm91dCByZW1vdmluZyBvbGRfY3Vyc2Vnbm8gdG9vIGFzIGl0J3Mgbm8g
+bG9uZ2VyIHVzZWQgaW4gYWxsb2NhdGVfZGF0YV9ibG9jaz8NCg0KVGhhbmtzLA0KWXUNCg0KPiAN
+Cj4gU2lnbmVkLW9mZi1ieTogRG9uZ2hvIFNpbSANCj4gLS0tDQo+ICBmcy9mMmZzL3NlZ21lbnQu
+YyB8IDEgLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1n
+aXQgYS9mcy9mMmZzL3NlZ21lbnQuYyBiL2ZzL2YyZnMvc2VnbWVudC5jDQo+IGluZGV4IDhhNmU1
+N2QuLmEzYzdhYWUgMTAwNjQ0DQo+IC0tLSBhL2ZzL2YyZnMvc2VnbWVudC5jDQo+ICsrKyBiL2Zz
+L2YyZnMvc2VnbWVudC5jDQo+IEBAIC0xMDAxLDcgKzEwMDEsNiBAQCB2b2lkIGFsbG9jYXRlX2Rh
+dGFfYmxvY2soc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFnZSAqcGFnZSwNCj4g
+ICAqIHNpbmNlIFNTUiBuZWVkcyBsYXRlc3QgdmFsaWQgYmxvY2sgaW5mb3JtYXRpb24uDQo+ICAg
+Ki8NCj4gICByZWZyZXNoX3NpdF9lbnRyeShzYmksIG9sZF9ibGthZGRyLCAqbmV3X2Jsa2FkZHIp
+Ow0KPiAtIGxvY2F0ZV9kaXJ0eV9zZWdtZW50KHNiaSwgb2xkX2N1cnNlZ25vKTsNCj4gDQo+ICAg
+bXV0ZXhfdW5sb2NrKCZzaXRfaS0+c2VudHJ5X2xvY2spOw0KPiANCj4gLS0NCj4gMS45LjENCj4g
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IFdhbnQgZmFzdCBhbmQgZWFzeSBhY2Nlc3MgdG8gYWxs
+IHRoZSBjb2RlIGluIHlvdXIgZW50ZXJwcmlzZT8gSW5kZXggYW5kDQo+IHNlYXJjaCB1cCB0byAy
+MDAsMDAwIGxpbmVzIG9mIGNvZGUgd2l0aCBhIGZyZWUgY29weSBvZiBCbGFjayBEdWNrDQo+IENv
+ZGUgU2lnaHQgLSB0aGUgc2FtZSBzb2Z0d2FyZSB0aGF0IHBvd2VycyB0aGUgd29ybGQncyBsYXJn
+ZXN0IGNvZGUNCj4gc2VhcmNoIG9uIE9obG9oLCB0aGUgQmxhY2sgRHVjayBPcGVuIEh1YiEgVHJ5
+IGl0IG5vdy4NCj4gaHR0cDovL3Auc2YubmV0L3NmdS9iZHMNCj4gX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5n
+IGxpc3QNCj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj4gaHR0cHM6
+Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAot
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0KSW5mcmFnaXN0aWNzIFByb2Zlc3Npb25hbApCdWlsZCBzdHVu
+bmluZyBXaW5Gb3JtcyBhcHBzIHRvZGF5IQpSZWJvb3QgeW91ciBXaW5Gb3JtcyBhcHBsaWNhdGlv
+bnMgd2l0aCBvdXIgV2luRm9ybXMgY29udHJvbHMuIApCdWlsZCBhIGJyaWRnZSBmcm9tIHlvdXIg
+bGVnYWN5IGFwcHMgdG8gdGhlIGZ1dHVyZS4KaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5l
+dC9nYW1wYWQvY2xrP2lkPTE1Mzg0NTA3MSZpdT0vNDE0MC9vc3RnLmNsa3RyawpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
+aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
+L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
