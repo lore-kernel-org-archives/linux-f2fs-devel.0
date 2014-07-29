@@ -1,25 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 01/11] f2fs: add nobarrier mount option
-Date: Tue, 29 Jul 2014 05:22:55 -0700
-Message-ID: <20140729122255.GC84378@jaegeuk-mac02>
+Subject: Re: [PATCH 04/11] f2fs: use radix_tree for ino management
+Date: Tue, 29 Jul 2014 05:34:04 -0700
+Message-ID: <20140729123404.GD84378@jaegeuk-mac02>
 References: <1406328445-63707-1-git-send-email-jaegeuk@kernel.org>
-	<007d01cfab20$4d5cbc20$e8163460$@samsung.com>
+	<1406328445-63707-4-git-send-email-jaegeuk@kernel.org>
+	<008001cfab20$d5e6ce50$81b46af0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XC6QY-0006FT-9O
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XC6bG-00080N-KU
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Jul 2014 12:22:46 +0000
+	Tue, 29 Jul 2014 12:33:50 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XC6QW-0001YB-GW for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Jul 2014 12:22:46 +0000
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XC6bF-0000R9-61 for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Jul 2014 12:33:50 +0000
 Content-Disposition: inline
-In-Reply-To: <007d01cfab20$4d5cbc20$e8163460$@samsung.com>
+In-Reply-To: <008001cfab20$d5e6ce50$81b46af0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,10 +33,14 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <chao2.yu@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chao,
+Got it.
+Fixed that.
+Thanks,
 
-On Tue, Jul 29, 2014 at 07:28:16PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
+On Tue, Jul 29, 2014 at 07:32:08PM +0800, Chao Yu wrote:
+> Hi,
+> 
+> One comment as following.
 > 
 > > -----Original Message-----
 > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
@@ -43,113 +48,121 @@ On Tue, Jul 29, 2014 at 07:28:16PM +0800, Chao Yu wrote:
 > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > > linux-f2fs-devel@lists.sourceforge.net
 > > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH 01/11] f2fs: add nobarrier mount option
+> > Subject: [f2fs-dev] [PATCH 04/11] f2fs: use radix_tree for ino management
 > > 
-> > This patch adds a mount option, nobarrier, in f2fs.
-> > The assumption in here is that file system keeps the IO ordering, but
-> > doesn't care about cache flushes inside the storages.
-> 
-> Looks good to me.
-> But it's better to add some description in f2fs document.
-
-Good catch. :)
-I'll add that.
-Thanks,
-
-> 
+> > For better ino management, this patch replaces the data structure from list
+> > to radix tree.
 > > 
 > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > 
 > Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 > 
 > > ---
-> >  fs/f2fs/data.c    | 5 ++++-
-> >  fs/f2fs/f2fs.h    | 1 +
-> >  fs/f2fs/segment.c | 3 +++
-> >  fs/f2fs/super.c   | 7 +++++++
-> >  4 files changed, 15 insertions(+), 1 deletion(-)
+> >  fs/f2fs/checkpoint.c | 48 ++++++++++++++++++++++++++----------------------
+> >  fs/f2fs/f2fs.h       |  1 +
+> >  2 files changed, 27 insertions(+), 22 deletions(-)
 > > 
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index c77c667..482313d 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -139,7 +139,10 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
-> >  	/* change META to META_FLUSH in the checkpoint procedure */
-> >  	if (type >= META_FLUSH) {
-> >  		io->fio.type = META_FLUSH;
-> > -		io->fio.rw = WRITE_FLUSH_FUA | REQ_META | REQ_PRIO;
-> > +		if (test_opt(sbi, NOBARRIER))
-> > +			io->fio.rw = WRITE_FLUSH | REQ_META | REQ_PRIO;
-> > +		else
-> > +			io->fio.rw = WRITE_FLUSH_FUA | REQ_META | REQ_PRIO;
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index f93d154..d35094a 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -284,24 +284,26 @@ const struct address_space_operations f2fs_meta_aops = {
+> > 
+> >  static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+> >  {
+> > -	struct ino_entry *new, *e;
+> > -
+> > -	new = f2fs_kmem_cache_alloc(ino_entry_slab, GFP_ATOMIC);
+> > -	new->ino = ino;
+> > -
+> > +	struct ino_entry *e;
+> > +retry:
+> >  	spin_lock(&sbi->ino_lock[type]);
+> > -	list_for_each_entry(e, &sbi->ino_list[type], list) {
+> > -		if (e->ino == ino) {
+> > +
+> > +	e = radix_tree_lookup(&sbi->ino_root[type], ino);
+> > +	if (!e) {
+> > +		e = kmem_cache_alloc(ino_entry_slab, GFP_ATOMIC);
+> > +		if (!e) {
+> >  			spin_unlock(&sbi->ino_lock[type]);
+> > -			kmem_cache_free(ino_entry_slab, new);
+> > -			return;
+> > +			goto retry;
+> >  		}
+> > -		if (e->ino > ino)
+> > -			break;
+> > -	}
+> > +		if (radix_tree_insert(&sbi->ino_root[type], ino, e)) {
+> > +			spin_unlock(&sbi->ino_lock[type]);
+> 
+> we should add kmem_cache_free(ino_entry_slab, e) here to avoid memory leak.
+> 
+> > +			goto retry;
+> > +		}
+> > +		memset(e, 0, sizeof(struct ino_entry));
+> > +		e->ino = ino;
+> > 
+> > -	/* add new entry into list which is sorted by inode number */
+> > -	list_add_tail(&new->list, &e->list);
+> > +		list_add_tail(&e->list, &sbi->ino_list[type]);
+> > +	}
+> >  	spin_unlock(&sbi->ino_lock[type]);
+> >  }
+> > 
+> > @@ -310,14 +312,15 @@ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int
+> > type)
+> >  	struct ino_entry *e;
+> > 
+> >  	spin_lock(&sbi->ino_lock[type]);
+> > -	list_for_each_entry(e, &sbi->ino_list[type], list) {
+> > -		if (e->ino == ino) {
+> > -			list_del(&e->list);
+> > +	e = radix_tree_lookup(&sbi->ino_root[type], ino);
+> > +	if (e) {
+> > +		list_del(&e->list);
+> > +		radix_tree_delete(&sbi->ino_root[type], ino);
+> > +		if (type == ORPHAN_INO)
+> >  			sbi->n_orphans--;
+> > -			spin_unlock(&sbi->ino_lock[type]);
+> > -			kmem_cache_free(ino_entry_slab, e);
+> > -			return;
+> > -		}
+> > +		spin_unlock(&sbi->ino_lock[type]);
+> > +		kmem_cache_free(ino_entry_slab, e);
+> > +		return;
 > >  	}
-> >  	__submit_merged_bio(io);
-> >  	up_write(&io->io_rwsem);
+> >  	spin_unlock(&sbi->ino_lock[type]);
+> >  }
+> > @@ -346,7 +349,7 @@ void release_orphan_inode(struct f2fs_sb_info *sbi)
+> > 
+> >  void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+> >  {
+> > -	/* add new orphan entry into list which is sorted by inode number */
+> > +	/* add new orphan ino entry into list */
+> >  	__add_ino_entry(sbi, ino, ORPHAN_INO);
+> >  }
+> > 
+> > @@ -943,6 +946,7 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
+> >  	int i;
+> > 
+> >  	for (i = 0; i < MAX_INO_ENTRY; i++) {
+> > +		INIT_RADIX_TREE(&sbi->ino_root[i], GFP_ATOMIC);
+> >  		spin_lock_init(&sbi->ino_lock[i]);
+> >  		INIT_LIST_HEAD(&sbi->ino_list[i]);
+> >  	}
 > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 8f507d4..e999eec 100644
+> > index b6fa6ec..4454caa 100644
 > > --- a/fs/f2fs/f2fs.h
 > > +++ b/fs/f2fs/f2fs.h
-> > @@ -41,6 +41,7 @@
-> >  #define F2FS_MOUNT_INLINE_XATTR		0x00000080
-> >  #define F2FS_MOUNT_INLINE_DATA		0x00000100
-> >  #define F2FS_MOUNT_FLUSH_MERGE		0x00000200
-> > +#define F2FS_MOUNT_NOBARRIER		0x00000400
+> > @@ -456,6 +456,7 @@ struct f2fs_sb_info {
+> >  	wait_queue_head_t cp_wait;
 > > 
-> >  #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
-> >  #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 8a6e57d..9fce0f47 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -239,6 +239,9 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi)
-> >  	struct flush_cmd_control *fcc = SM_I(sbi)->cmd_control_info;
-> >  	struct flush_cmd cmd;
+> >  	/* for inode management */
+> > +	struct radix_tree_root ino_root[MAX_INO_ENTRY];	/* ino entry array */
+> >  	spinlock_t ino_lock[MAX_INO_ENTRY];		/* for ino entry lock */
+> >  	struct list_head ino_list[MAX_INO_ENTRY];	/* inode list head */
 > > 
-> > +	if (test_opt(sbi, NOBARRIER))
-> > +		return 0;
-> > +
-> >  	if (!test_opt(sbi, FLUSH_MERGE))
-> >  		return blkdev_issue_flush(sbi->sb->s_bdev, GFP_KERNEL, NULL);
-> > 
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 34649aa..eec89a2 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -52,6 +52,7 @@ enum {
-> >  	Opt_inline_xattr,
-> >  	Opt_inline_data,
-> >  	Opt_flush_merge,
-> > +	Opt_nobarrier,
-> >  	Opt_err,
-> >  };
-> > 
-> > @@ -69,6 +70,7 @@ static match_table_t f2fs_tokens = {
-> >  	{Opt_inline_xattr, "inline_xattr"},
-> >  	{Opt_inline_data, "inline_data"},
-> >  	{Opt_flush_merge, "flush_merge"},
-> > +	{Opt_nobarrier, "nobarrier"},
-> >  	{Opt_err, NULL},
-> >  };
-> > 
-> > @@ -339,6 +341,9 @@ static int parse_options(struct super_block *sb, char *options)
-> >  		case Opt_flush_merge:
-> >  			set_opt(sbi, FLUSH_MERGE);
-> >  			break;
-> > +		case Opt_nobarrier:
-> > +			set_opt(sbi, NOBARRIER);
-> > +			break;
-> >  		default:
-> >  			f2fs_msg(sb, KERN_ERR,
-> >  				"Unrecognized mount option \"%s\" or missing value",
-> > @@ -544,6 +549,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
-> >  		seq_puts(seq, ",inline_data");
-> >  	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, FLUSH_MERGE))
-> >  		seq_puts(seq, ",flush_merge");
-> > +	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, NOBARRIER))
-> > +		seq_puts(seq, ",nobarrier");
-> >  	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
-> > 
-> >  	return 0;
 > > --
 > > 1.8.5.2 (Apple Git-48)
 > > 
