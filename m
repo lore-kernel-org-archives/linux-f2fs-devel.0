@@ -1,26 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 04/11] f2fs: use radix_tree for ino management
-Date: Tue, 29 Jul 2014 05:34:04 -0700
-Message-ID: <20140729123404.GD84378@jaegeuk-mac02>
+Subject: Re: [PATCH 06/11] f2fs: skip unnecessary data writes
+ during fsync
+Date: Tue, 29 Jul 2014 05:43:17 -0700
+Message-ID: <20140729124317.GE84378@jaegeuk-mac02>
 References: <1406328445-63707-1-git-send-email-jaegeuk@kernel.org>
-	<1406328445-63707-4-git-send-email-jaegeuk@kernel.org>
-	<008001cfab20$d5e6ce50$81b46af0$@samsung.com>
+	<1406328445-63707-6-git-send-email-jaegeuk@kernel.org>
+	<008201cfab21$e5c57ff0$b1507fd0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XC6bG-00080N-KU
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XC6kA-0000dX-DV
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Jul 2014 12:33:50 +0000
+	Tue, 29 Jul 2014 12:43:02 +0000
 Received: from mail.kernel.org ([198.145.19.201])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XC6bF-0000R9-61 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Jul 2014 12:33:50 +0000
+	id 1XC6k9-0000m7-CK for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Jul 2014 12:43:02 +0000
 Content-Disposition: inline
-In-Reply-To: <008001cfab20$d5e6ce50$81b46af0$@samsung.com>
+In-Reply-To: <008201cfab21$e5c57ff0$b1507fd0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,14 +34,8 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <chao2.yu@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Got it.
-Fixed that.
-Thanks,
-
-On Tue, Jul 29, 2014 at 07:32:08PM +0800, Chao Yu wrote:
+On Tue, Jul 29, 2014 at 07:39:45PM +0800, Chao Yu wrote:
 > Hi,
-> 
-> One comment as following.
 > 
 > > -----Original Message-----
 > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
@@ -48,121 +43,64 @@ On Tue, Jul 29, 2014 at 07:32:08PM +0800, Chao Yu wrote:
 > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > > linux-f2fs-devel@lists.sourceforge.net
 > > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH 04/11] f2fs: use radix_tree for ino management
+> > Subject: [f2fs-dev] [PATCH 06/11] f2fs: skip unnecessary data writes during fsync
 > > 
-> > For better ino management, this patch replaces the data structure from list
-> > to radix tree.
+> > This patch intends to improve the fsync performance by skipping remaining the
+> > recovery information, only when there is no data that we should recover.
 > > 
 > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> 
-> Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-> 
 > > ---
-> >  fs/f2fs/checkpoint.c | 48 ++++++++++++++++++++++++++----------------------
-> >  fs/f2fs/f2fs.h       |  1 +
-> >  2 files changed, 27 insertions(+), 22 deletions(-)
+> >  fs/f2fs/file.c | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
 > > 
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index f93d154..d35094a 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -284,24 +284,26 @@ const struct address_space_operations f2fs_meta_aops = {
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 7c652b3..121689a 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -133,6 +133,17 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int
+> > datasync)
+> >  		return ret;
+> >  	}
 > > 
-> >  static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
-> >  {
-> > -	struct ino_entry *new, *e;
-> > -
-> > -	new = f2fs_kmem_cache_alloc(ino_entry_slab, GFP_ATOMIC);
-> > -	new->ino = ino;
-> > -
-> > +	struct ino_entry *e;
-> > +retry:
-> >  	spin_lock(&sbi->ino_lock[type]);
-> > -	list_for_each_entry(e, &sbi->ino_list[type], list) {
-> > -		if (e->ino == ino) {
-> > +
-> > +	e = radix_tree_lookup(&sbi->ino_root[type], ino);
-> > +	if (!e) {
-> > +		e = kmem_cache_alloc(ino_entry_slab, GFP_ATOMIC);
-> > +		if (!e) {
-> >  			spin_unlock(&sbi->ino_lock[type]);
-> > -			kmem_cache_free(ino_entry_slab, new);
-> > -			return;
-> > +			goto retry;
-> >  		}
-> > -		if (e->ino > ino)
-> > -			break;
-> > -	}
-> > +		if (radix_tree_insert(&sbi->ino_root[type], ino, e)) {
-> > +			spin_unlock(&sbi->ino_lock[type]);
+> > +	/*
+> > +	 * if there is no written data, don't waste time to write recovery info.
+> > +	 */
+> > +	if (!is_inode_flag_set(fi, FI_APPEND_WRITE) &&
+> > +		!exist_written_data(sbi, inode->i_ino, APPEND_INO)) {
+> > +		if (is_inode_flag_set(fi, FI_UPDATE_WRITE) &&
+> > +			exist_written_data(sbi, inode->i_ino, UPDATE_INO))
 > 
-> we should add kmem_cache_free(ino_entry_slab, e) here to avoid memory leak.
+> Should we shift this to is_inode_flag_set(fi, FI_UPDATE_WRITE) ||
+> exist_written_data(sbi, inode->i_ino, UPDATE_INO) ?
+
+Hehe, I found that and was going to submit new patch. :)
+Small changes are not a big deal, so I'll test and then push them into the tree.
+The for-next tree can be rebased all the time, so if you have any suggestion,
+let me know.
+
+Thanks,
+
 > 
-> > +			goto retry;
-> > +		}
-> > +		memset(e, 0, sizeof(struct ino_entry));
-> > +		e->ino = ino;
-> > 
-> > -	/* add new entry into list which is sorted by inode number */
-> > -	list_add_tail(&new->list, &e->list);
-> > +		list_add_tail(&e->list, &sbi->ino_list[type]);
+> > +			goto flush_out;
+> > +		goto out;
 > > +	}
-> >  	spin_unlock(&sbi->ino_lock[type]);
-> >  }
+> > +
+> >  	/* guarantee free sections for fsync */
+> >  	f2fs_balance_fs(sbi);
 > > 
-> > @@ -310,14 +312,15 @@ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int
-> > type)
-> >  	struct ino_entry *e;
-> > 
-> >  	spin_lock(&sbi->ino_lock[type]);
-> > -	list_for_each_entry(e, &sbi->ino_list[type], list) {
-> > -		if (e->ino == ino) {
-> > -			list_del(&e->list);
-> > +	e = radix_tree_lookup(&sbi->ino_root[type], ino);
-> > +	if (e) {
-> > +		list_del(&e->list);
-> > +		radix_tree_delete(&sbi->ino_root[type], ino);
-> > +		if (type == ORPHAN_INO)
-> >  			sbi->n_orphans--;
-> > -			spin_unlock(&sbi->ino_lock[type]);
-> > -			kmem_cache_free(ino_entry_slab, e);
-> > -			return;
-> > -		}
-> > +		spin_unlock(&sbi->ino_lock[type]);
-> > +		kmem_cache_free(ino_entry_slab, e);
-> > +		return;
+> > @@ -188,6 +199,11 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int
+> > datasync)
+> >  		ret = wait_on_node_pages_writeback(sbi, inode->i_ino);
+> >  		if (ret)
+> >  			goto out;
+> > +
+> > +		/* once recovery info is written, don't need to tack this */
+> > +		remove_dirty_inode(sbi, inode->i_ino, APPEND_INO);
+> > +flush_out:
+> > +		remove_dirty_inode(sbi, inode->i_ino, UPDATE_INO);
+> >  		ret = f2fs_issue_flush(F2FS_SB(inode->i_sb));
 > >  	}
-> >  	spin_unlock(&sbi->ino_lock[type]);
-> >  }
-> > @@ -346,7 +349,7 @@ void release_orphan_inode(struct f2fs_sb_info *sbi)
-> > 
-> >  void add_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
-> >  {
-> > -	/* add new orphan entry into list which is sorted by inode number */
-> > +	/* add new orphan ino entry into list */
-> >  	__add_ino_entry(sbi, ino, ORPHAN_INO);
-> >  }
-> > 
-> > @@ -943,6 +946,7 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
-> >  	int i;
-> > 
-> >  	for (i = 0; i < MAX_INO_ENTRY; i++) {
-> > +		INIT_RADIX_TREE(&sbi->ino_root[i], GFP_ATOMIC);
-> >  		spin_lock_init(&sbi->ino_lock[i]);
-> >  		INIT_LIST_HEAD(&sbi->ino_list[i]);
-> >  	}
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index b6fa6ec..4454caa 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -456,6 +456,7 @@ struct f2fs_sb_info {
-> >  	wait_queue_head_t cp_wait;
-> > 
-> >  	/* for inode management */
-> > +	struct radix_tree_root ino_root[MAX_INO_ENTRY];	/* ino entry array */
-> >  	spinlock_t ino_lock[MAX_INO_ENTRY];		/* for ino entry lock */
-> >  	struct list_head ino_list[MAX_INO_ENTRY];	/* inode list head */
-> > 
+> >  out:
 > > --
 > > 1.8.5.2 (Apple Git-48)
 > > 
