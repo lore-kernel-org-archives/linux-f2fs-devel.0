@@ -1,26 +1,32 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 08/11] f2fs: fix wrong condition for unlikely
-Date: Tue, 29 Jul 2014 20:18:20 -0700
-Message-ID: <20140730031820.GC99885@jaegeuk-mac02>
-References: <1406328445-63707-1-git-send-email-jaegeuk@kernel.org>
-	<1406328445-63707-8-git-send-email-jaegeuk@kernel.org>
-	<009901cfab97$f2981be0$d7c853a0$@samsung.com>
+From: Dongho Sim <dh.sim@samsung.com>
+Subject: [PATCH v2] Remove an unnecessary line in
+	allocate_data_block.
+Date: Wed, 30 Jul 2014 03:54:50 +0000 (GMT)
+Message-ID: <10988262.79501406692489974.JavaMail.weblogic@epml07>
+Reply-To: dh.sim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XCKP6-0004YY-H4
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <dh.sim@samsung.com>) id 1XCKyi-00064S-DI
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Jul 2014 03:18:12 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XCKP5-0003Ol-Gv for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Jul 2014 03:18:12 +0000
-Content-Disposition: inline
-In-Reply-To: <009901cfab97$f2981be0$d7c853a0$@samsung.com>
+	Wed, 30 Jul 2014 03:55:00 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XCKyg-0000W7-AD
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Jul 2014 03:55:00 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0N9I008KZAVESR80@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Jul 2014 12:54:50 +0900 (KST)
+MIME-version: 1.0
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,77 +36,41 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On Wed, Jul 30, 2014 at 09:44:43AM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Saturday, July 26, 2014 6:47 AM
-> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH 08/11] f2fs: fix wrong condition for unlikely
-> > 
-> > This patch fixes the wrongly used unlikely condition.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/checkpoint.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index 42a16c1..36b0d47 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -932,7 +932,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
-> >  	/* Here, we only have one bio having CP pack */
-> >  	sync_meta_pages(sbi, META_FLUSH, LONG_MAX);
-> > 
-> > -	if (unlikely(!is_set_ckpt_flags(ckpt, CP_ERROR_FLAG))) {
-> > +	if (!is_set_ckpt_flags(ckpt, CP_ERROR_FLAG)) {
-> 
-> Maybe use likely(!is_set_ckpt_flags(ckpt, CP_ERROR_FLAG)) or
-> 
-> if (unlikely(is_set_ckpt_flags(ckpt, CP_ERROR_FLAG)))
-> 	return;
-> 
-> is more appropriate. How do you think?
-
-Currently I'd like to put this without any likely or unlikely.
-Best thing is to measure some performance how this would make effect on.
-Until then, it'd be better to do without it, since apparently this should
-not be unlikely.
-
-How about you?
-Can we compare both of them explicitly?
-
-Thanks,
-
-> 
-> >  		clear_prefree_segments(sbi);
-> >  		release_dirty_inode(sbi);
-> >  		F2FS_RESET_SB_DIRT(sbi);
-> > --
-> > 1.8.5.2 (Apple Git-48)
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > Want fast and easy access to all the code in your enterprise? Index and
-> > search up to 200,000 lines of code with a free copy of Black Duck
-> > Code Sight - the same software that powers the world's largest code
-> > search on Ohloh, the Black Duck Open Hub! Try it now.
-> > http://p.sf.net/sfu/bds
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
-Infragistics Professional
-Build stunning WinForms apps today!
-Reboot your WinForms applications with our WinForms controls. 
-Build a bridge from your legacy apps to the future.
-http://pubads.g.doubleclick.net/gampad/clk?id=153845071&iu=/4140/ostg.clktrk
+SGkuIFRoZXJlIHdhcyBhbiB1bm5lY2Vzc2FyeSBsaW5lIGluIGZ1bmN0aW9uLCBhbGxvY2F0ZV9k
+YXRhX2Jsb2NrLg0KDQpJbiB0aGlzIGZ1bmN0aW9uLCB3ZSBhbHJlYWR5IGNob29zZWQgb2xkIGN1
+cnNlZyhZKSBhbmQgdGhlbiB3ZSBhbHdheXMgYWxsb2NhdGUgbmV3IGFkZHJlc3Mo4oiIWSkgZnJv
+bSBpdC4NCkFmdGVyIHRoYXQgd2UgY2FsbCByZWZyZXNoX3NpdF9lbnRyeShzYmksIG9sZF9ibGth
+ZGRyLCAqbmV3X2Jsa2FkZHIpLg0KSW4gdGhhdCBmdW5jdGlvbiwgd2UgY2FsbCBsb2NhdGVkX2Rp
+cnR5X3NlZ21lbnQgd2l0aCBvbGQgc2VnKFgpIGFuZCBvbGQgY3Vyc2VnKFkpLg0KDQpTbywgYmVj
+YXVzZSB3ZSd2ZSBkb25lIGFib3V0IG9sZCBjdXJzZWcoWSksIA0KY2FsbGluZyBsb2NhdGVfZGly
+dHlfc2VnbWVudChzYmksIG9sZF9jdXJzZWdubykgYWdhaW4gaXMgcmVkdW5kYW50Lg0KDQpUaGFu
+a3MuIDotKQ0KDQoNClNpZ25lZC1vZmYtYnk6IERvbmdobyBTaW0gPGRoLnNpbUBzYW1zdW5nLmNv
+bT4NCi0tLQ0KIGZzL2YyZnMvc2VnbWVudC5jIHwgMyAtLS0NCiAxIGZpbGUgY2hhbmdlZCwgMyBk
+ZWxldGlvbnMoLSkNCmRpZmYgLS1naXQgYS9mcy9mMmZzL3NlZ21lbnQuYyBiL2ZzL2YyZnMvc2Vn
+bWVudC5jDQppbmRleCA4YTZlNTdkLi43YWY0YThkIDEwMDY0NA0KLS0tIGEvZnMvZjJmcy9zZWdt
+ZW50LmMNCisrKyBiL2ZzL2YyZnMvc2VnbWVudC5jDQpAQCAtOTczLDE0ICs5NzMsMTIgQEAgdm9p
+ZCBhbGxvY2F0ZV9kYXRhX2Jsb2NrKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IHBh
+Z2UgKnBhZ2UsDQogew0KICBzdHJ1Y3Qgc2l0X2luZm8gKnNpdF9pID0gU0lUX0koc2JpKTsNCiAg
+c3RydWN0IGN1cnNlZ19pbmZvICpjdXJzZWc7DQotIHVuc2lnbmVkIGludCBvbGRfY3Vyc2Vnbm87
+DQogDQogIGN1cnNlZyA9IENVUlNFR19JKHNiaSwgdHlwZSk7DQogDQogIG11dGV4X2xvY2soJmN1
+cnNlZy0+Y3Vyc2VnX211dGV4KTsNCiANCiAgKm5ld19ibGthZGRyID0gTkVYVF9GUkVFX0JMS0FE
+RFIoc2JpLCBjdXJzZWcpOw0KLSBvbGRfY3Vyc2Vnbm8gPSBjdXJzZWctPnNlZ25vOw0KIA0KICAv
+Kg0KICAgKiBfX2FkZF9zdW1fZW50cnkgc2hvdWxkIGJlIHJlc2lkZWQgdW5kZXIgdGhlIGN1cnNl
+Z19tdXRleA0KQEAgLTEwMDEsNyArOTk5LDYgQEAgdm9pZCBhbGxvY2F0ZV9kYXRhX2Jsb2NrKHN0
+cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsDQogICAqIHNpbmNlIFNT
+UiBuZWVkcyBsYXRlc3QgdmFsaWQgYmxvY2sgaW5mb3JtYXRpb24uDQogICAqLw0KICByZWZyZXNo
+X3NpdF9lbnRyeShzYmksIG9sZF9ibGthZGRyLCAqbmV3X2Jsa2FkZHIpOw0KLSBsb2NhdGVfZGly
+dHlfc2VnbWVudChzYmksIG9sZF9jdXJzZWdubyk7DQogDQogIG11dGV4X3VubG9jaygmc2l0X2kt
+PnNlbnRyeV9sb2NrKTsNCiANCi0tIA0KMS45LjEKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkluZnJh
+Z2lzdGljcyBQcm9mZXNzaW9uYWwKQnVpbGQgc3R1bm5pbmcgV2luRm9ybXMgYXBwcyB0b2RheSEK
+UmVib290IHlvdXIgV2luRm9ybXMgYXBwbGljYXRpb25zIHdpdGggb3VyIFdpbkZvcm1zIGNvbnRy
+b2xzLiAKQnVpbGQgYSBicmlkZ2UgZnJvbSB5b3VyIGxlZ2FjeSBhcHBzIHRvIHRoZSBmdXR1cmUu
+Cmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQvZ2FtcGFkL2Nsaz9pZD0xNTM4NDUwNzEm
+aXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
+bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
+dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
