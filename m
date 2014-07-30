@@ -1,136 +1,106 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 08/11] f2fs: fix wrong condition for unlikely
-Date: Wed, 30 Jul 2014 20:58:37 +0800
-Message-ID: <00f401cfabf6$14f52b70$3edf8250$@samsung.com>
-References: <1406328445-63707-1-git-send-email-jaegeuk@kernel.org>
-	<1406328445-63707-8-git-send-email-jaegeuk@kernel.org>
-	<009901cfab97$f2981be0$d7c853a0$@samsung.com>
-	<20140730031820.GC99885@jaegeuk-mac02>
+Subject: RE: [f2fs-dev] [PATCH v2] f2fs: remove redundant lines in
+	allocate_data_block
+Date: Wed, 30 Jul 2014 20:59:36 +0800
+Message-ID: <00f501cfabf6$439f94b0$cadebe10$@samsung.com>
+References: <31343962.57441406703161454.JavaMail.weblogic@epml04>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XCTTe-0007Kt-7n
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Jul 2014 12:59:30 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XCTTb-00034B-Ra
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Jul 2014 12:59:30 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0N9J00JFX02WWXC0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Jul 2014 21:59:20 +0900 (KST)
-In-reply-to: <20140730031820.GC99885@jaegeuk-mac02>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <31343962.57441406703161454.JavaMail.weblogic@epml04>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: dh.sim@samsung.com, jaegeuk@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-
-Hi,
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 > -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, July 30, 2014 11:18 AM
-> To: Chao Yu
-> Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> From: Dongho Sim [mailto:dh.sim@samsung.com]
+> Sent: Wednesday, July 30, 2014 2:53 PM
+> To: jaegeuk@kernel.org
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 08/11] f2fs: fix wrong condition for unlikely
+> Subject: [f2fs-dev] [PATCH v2] f2fs: remove redundant lines in allocate_data_block
 > 
-> On Wed, Jul 30, 2014 at 09:44:43AM +0800, Chao Yu wrote:
-> > Hi Jaegeuk,
-> >
-> > > -----Original Message-----
-> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > Sent: Saturday, July 26, 2014 6:47 AM
-> > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > > linux-f2fs-devel@lists.sourceforge.net
-> > > Cc: Jaegeuk Kim
-> > > Subject: [f2fs-dev] [PATCH 08/11] f2fs: fix wrong condition for unlikely
-> > >
-> > > This patch fixes the wrongly used unlikely condition.
-> > >
-> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> There are redundant lines in allocate_data_block.
+> 
+> In this function, we call refresh_sit_entry with old seg and old curseg.
+> After that, we call locate_dirty_segment with old curseg.
+> 
+> But, the new address is always allocated from old curseg and
+> we call locate_dirty_segment with old curseg in refresh_sit_entry.
+> So, we do not need to call locate_dirty_segment with old curseg again.
+> 
+> We've discussed like below:
+> 
+> Jaegeuk said:
+>  "When considering SSR, we need to take care of the following scenario.
+>   - old segno : X
+>   - new address : Z
+>   - old curseg : Y
+>   This means, a new block is supposed to be written to Z from X.
+>   And Z is newly allocated in the same path from Y.
+> 
+>   In that case, we should trigger locate_dirty_segment for Y, since
+>   it was a current_segment and can be dirty owing to SSR.
+>   But that was not included in the dirty list."
+> 
+> Changman said:
+>  "We already choosed old curseg(Y) and then we allocate new address(Z) from old
+>   curseg(Y). After that we call refresh_sit_entry(old address, new address).
+>   In the funcation, we call locate_dirty_segment with old seg and old curseg.
+>   So calling locate_dirty_segment after refresh_sit_entry again is redundant."
+> 
+> Jaegeuk said:
+>  "Right. The new address is always allocated from old_curseg."
+> 
+> Signed-off-by: Dongho Sim <dh.sim@samsung.com>
 
 Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
-> > > ---
-> > >  fs/f2fs/checkpoint.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > > index 42a16c1..36b0d47 100644
-> > > --- a/fs/f2fs/checkpoint.c
-> > > +++ b/fs/f2fs/checkpoint.c
-> > > @@ -932,7 +932,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
-> > >  	/* Here, we only have one bio having CP pack */
-> > >  	sync_meta_pages(sbi, META_FLUSH, LONG_MAX);
-> > >
-> > > -	if (unlikely(!is_set_ckpt_flags(ckpt, CP_ERROR_FLAG))) {
-> > > +	if (!is_set_ckpt_flags(ckpt, CP_ERROR_FLAG)) {
-> >
-> > Maybe use likely(!is_set_ckpt_flags(ckpt, CP_ERROR_FLAG)) or
-> >
-> > if (unlikely(is_set_ckpt_flags(ckpt, CP_ERROR_FLAG)))
-> > 	return;
-> >
-> > is more appropriate. How do you think?
+> ---
+>  fs/f2fs/segment.c | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> Currently I'd like to put this without any likely or unlikely.
-> Best thing is to measure some performance how this would make effect on.
-
-I think we could get little improvement of performance if we use likely or unlikely
-here. So if you'd like leave it without pre-judgment, it will be ok.
-Let's just leave it as it was. :)
-
-Thanks,
-
-> Until then, it'd be better to do without it, since apparently this should
-> not be unlikely.
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 8a6e57d..7af4a8d 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -973,14 +973,12 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+>  {
+>  	struct sit_info *sit_i = SIT_I(sbi);
+>  	struct curseg_info *curseg;
+> -	unsigned int old_cursegno;
 > 
-> How about you?
-> Can we compare both of them explicitly?
+>  	curseg = CURSEG_I(sbi, type);
 > 
-> Thanks,
+>  	mutex_lock(&curseg->curseg_mutex);
 > 
-> >
-> > >  		clear_prefree_segments(sbi);
-> > >  		release_dirty_inode(sbi);
-> > >  		F2FS_RESET_SB_DIRT(sbi);
-> > > --
-> > > 1.8.5.2 (Apple Git-48)
-> > >
-> > >
-> > > ------------------------------------------------------------------------------
-> > > Want fast and easy access to all the code in your enterprise? Index and
-> > > search up to 200,000 lines of code with a free copy of Black Duck
-> > > Code Sight - the same software that powers the world's largest code
-> > > search on Ohloh, the Black Duck Open Hub! Try it now.
-> > > http://p.sf.net/sfu/bds
-> > > _______________________________________________
-> > > Linux-f2fs-devel mailing list
-> > > Linux-f2fs-devel@lists.sourceforge.net
-> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>  	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+> -	old_cursegno = curseg->segno;
+> 
+>  	/*
+>  	 * __add_sum_entry should be resided under the curseg_mutex
+> @@ -1001,7 +999,6 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+>  	 * since SSR needs latest valid block information.
+>  	 */
+>  	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
+> -	locate_dirty_segment(sbi, old_cursegno);
+> 
+>  	mutex_unlock(&sit_i->sentry_lock);
+> 
+> --
+> 1.9.1
+> 
+> ------------------------------------------------------------------------------
+> Infragistics Professional
+> Build stunning WinForms apps today!
+> Reboot your WinForms applications with our WinForms controls.
+> Build a bridge from your legacy apps to the future.
+> http://pubads.g.doubleclick.net/gampad/clk?id=153845071&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
-
-------------------------------------------------------------------------------
-Infragistics Professional
-Build stunning WinForms apps today!
-Reboot your WinForms applications with our WinForms controls. 
-Build a bridge from your legacy apps to the future.
-http://pubads.g.doubleclick.net/gampad/clk?id=153845071&iu=/4140/ostg.clktrk
