@@ -1,104 +1,132 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH v2] f2fs: remove redundant lines in
-	allocate_data_block
-Date: Wed, 30 Jul 2014 20:59:36 +0800
-Message-ID: <00f501cfabf6$439f94b0$cadebe10$@samsung.com>
-References: <31343962.57441406703161454.JavaMail.weblogic@epml04>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: reduce competition among node page writes
+Date: Wed, 30 Jul 2014 21:07:49 +0800
+Message-ID: <00f601cfabf7$691af580$3b50e080$@samsung.com>
+References: <003901cf96ad$dbd17680$93746380$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <31343962.57441406703161454.JavaMail.weblogic@epml04>
+In-reply-to: <003901cf96ad$dbd17680$93746380$@samsung.com>
 Content-language: zh-cn
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: dh.sim@samsung.com, jaegeuk@kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Changman Lee' <cm224.lee@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Hi Jaegeuk Changman,
+
 > -----Original Message-----
-> From: Dongho Sim [mailto:dh.sim@samsung.com]
-> Sent: Wednesday, July 30, 2014 2:53 PM
-> To: jaegeuk@kernel.org
+> From: Chao Yu [mailto:chao2.yu@samsung.com]
+> Sent: Thursday, July 03, 2014 6:59 PM
+> To: Jaegeuk Kim; Changman Lee
 > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH v2] f2fs: remove redundant lines in allocate_data_block
+> Subject: [f2fs-dev] [PATCH] f2fs: reduce competition among node page writes
 > 
-> There are redundant lines in allocate_data_block.
-> 
-> In this function, we call refresh_sit_entry with old seg and old curseg.
-> After that, we call locate_dirty_segment with old curseg.
-> 
-> But, the new address is always allocated from old curseg and
-> we call locate_dirty_segment with old curseg in refresh_sit_entry.
-> So, we do not need to call locate_dirty_segment with old curseg again.
-> 
-> We've discussed like below:
-> 
-> Jaegeuk said:
->  "When considering SSR, we need to take care of the following scenario.
->   - old segno : X
->   - new address : Z
->   - old curseg : Y
->   This means, a new block is supposed to be written to Z from X.
->   And Z is newly allocated in the same path from Y.
-> 
->   In that case, we should trigger locate_dirty_segment for Y, since
->   it was a current_segment and can be dirty owing to SSR.
->   But that was not included in the dirty list."
-> 
-> Changman said:
->  "We already choosed old curseg(Y) and then we allocate new address(Z) from old
->   curseg(Y). After that we call refresh_sit_entry(old address, new address).
->   In the funcation, we call locate_dirty_segment with old seg and old curseg.
->   So calling locate_dirty_segment after refresh_sit_entry again is redundant."
-> 
-> Jaegeuk said:
->  "Right. The new address is always allocated from old_curseg."
-> 
-> Signed-off-by: Dongho Sim <dh.sim@samsung.com>
+> We do not need to block on ->node_write among different node page writers e.g.
+> fsync/flush, unless we have a node page writer from write_checkpoint.
+> So it's better use rw_semaphore instead of mutex type for ->node_write to
+> promote performance.
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+If you could have time to help explaining the problem of this patch, I will be
+appreciated for that.
 
+Another question is what is ->writepages in sbi used for? I'm not quite clear.
+
+Thanks,
+
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 > ---
->  fs/f2fs/segment.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  fs/f2fs/checkpoint.c |    6 +++---
+>  fs/f2fs/f2fs.h       |    2 +-
+>  fs/f2fs/node.c       |    4 ++--
+>  fs/f2fs/super.c      |    2 +-
+>  4 files changed, 7 insertions(+), 7 deletions(-)
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 8a6e57d..7af4a8d 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -973,14 +973,12 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
->  {
->  	struct sit_info *sit_i = SIT_I(sbi);
->  	struct curseg_info *curseg;
-> -	unsigned int old_cursegno;
-> 
->  	curseg = CURSEG_I(sbi, type);
-> 
->  	mutex_lock(&curseg->curseg_mutex);
-> 
->  	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
-> -	old_cursegno = curseg->segno;
-> 
->  	/*
->  	 * __add_sum_entry should be resided under the curseg_mutex
-> @@ -1001,7 +999,6 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
->  	 * since SSR needs latest valid block information.
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 0b4710c..eec406b 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -714,10 +714,10 @@ retry_flush_dents:
+>  	 * until finishing nat/sit flush.
 >  	 */
->  	refresh_sit_entry(sbi, old_blkaddr, *new_blkaddr);
-> -	locate_dirty_segment(sbi, old_cursegno);
+>  retry_flush_nodes:
+> -	mutex_lock(&sbi->node_write);
+> +	down_write(&sbi->node_write);
 > 
->  	mutex_unlock(&sit_i->sentry_lock);
+>  	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
+> -		mutex_unlock(&sbi->node_write);
+> +		up_write(&sbi->node_write);
+>  		sync_node_pages(sbi, 0, &wbc);
+>  		goto retry_flush_nodes;
+>  	}
+> @@ -726,7 +726,7 @@ retry_flush_nodes:
+> 
+>  static void unblock_operations(struct f2fs_sb_info *sbi)
+>  {
+> -	mutex_unlock(&sbi->node_write);
+> +	up_write(&sbi->node_write);
+>  	f2fs_unlock_all(sbi);
+>  }
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index ae3b4ac..ca30b5a 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -444,7 +444,7 @@ struct f2fs_sb_info {
+>  	struct inode *meta_inode;		/* cache meta blocks */
+>  	struct mutex cp_mutex;			/* checkpoint procedure lock */
+>  	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
+> -	struct mutex node_write;		/* locking node writes */
+> +	struct rw_semaphore node_write;		/* locking node writes */
+>  	struct mutex writepages;		/* mutex for writepages() */
+>  	bool por_doing;				/* recovery is doing or not */
+>  	wait_queue_head_t cp_wait;
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index a90f51d..7b5b5de 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1231,12 +1231,12 @@ static int f2fs_write_node_page(struct page *page,
+>  	if (wbc->for_reclaim)
+>  		goto redirty_out;
+> 
+> -	mutex_lock(&sbi->node_write);
+> +	down_read(&sbi->node_write);
+>  	set_page_writeback(page);
+>  	write_node_page(sbi, page, &fio, nid, ni.blk_addr, &new_addr);
+>  	set_node_addr(sbi, &ni, new_addr, is_fsync_dnode(page));
+>  	dec_page_count(sbi, F2FS_DIRTY_NODES);
+> -	mutex_unlock(&sbi->node_write);
+> +	up_read(&sbi->node_write);
+>  	unlock_page(page);
+>  	return 0;
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 8f96d93..bed9413 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -947,7 +947,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	mutex_init(&sbi->gc_mutex);
+>  	mutex_init(&sbi->writepages);
+>  	mutex_init(&sbi->cp_mutex);
+> -	mutex_init(&sbi->node_write);
+> +	init_rwsem(&sbi->node_write);
+>  	sbi->por_doing = false;
+>  	spin_lock_init(&sbi->stat_lock);
 > 
 > --
-> 1.9.1
+> 1.7.9.5
+> 
+> 
 > 
 > ------------------------------------------------------------------------------
-> Infragistics Professional
-> Build stunning WinForms apps today!
-> Reboot your WinForms applications with our WinForms controls.
-> Build a bridge from your legacy apps to the future.
-> http://pubads.g.doubleclick.net/gampad/clk?id=153845071&iu=/4140/ostg.clktrk
+> Open source business process management suite built on Java and Eclipse
+> Turn processes into business applications with Bonita BPM Community Edition
+> Quickly connect people, data, and systems into organized workflows
+> Winner of BOSSIE, CODIE, OW2 and Gartner awards
+> http://p.sf.net/sfu/Bonitasoft
 > _______________________________________________
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
