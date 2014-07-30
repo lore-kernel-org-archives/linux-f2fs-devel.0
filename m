@@ -1,57 +1,152 @@
-From: Dongho Sim <dh.sim@samsung.com>
-Subject: [PATCH v2] f2fs: remove redundant lines in allocate_data_block
-Date: Wed, 30 Jul 2014 06:52:42 +0000 (GMT)
-Message-ID: <31343962.57441406703161454.JavaMail.weblogic@epml04>
-Reply-To: dh.sim@samsung.com
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH 06/11] f2fs: skip unnecessary data writes
+ during fsync
+Date: Wed, 30 Jul 2014 19:58:11 +0800
+Message-ID: <00e501cfabed$a5a5a950$f0f0fbf0$@samsung.com>
+References: <1406328445-63707-1-git-send-email-jaegeuk@kernel.org>
+	<1406328445-63707-6-git-send-email-jaegeuk@kernel.org>
+	<008201cfab21$e5c57ff0$b1507fd0$@samsung.com>
+	<20140729124317.GE84378@jaegeuk-mac02>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XCSXI-0007YL-0F
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Jul 2014 11:59:12 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XCSXF-0004hu-Og
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Jul 2014 11:59:11 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0N9I00GGFXAEGZ90@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Jul 2014 20:59:02 +0900 (KST)
+In-reply-to: <20140729124317.GE84378@jaegeuk-mac02>
+Content-language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-VGhlcmUgYXJlIHJlZHVuZGFudCBsaW5lcyBpbiBhbGxvY2F0ZV9kYXRhX2Jsb2NrLg0KDQpJbiB0
-aGlzIGZ1bmN0aW9uLCB3ZSBjYWxsIHJlZnJlc2hfc2l0X2VudHJ5IHdpdGggb2xkIHNlZyBhbmQg
-b2xkIGN1cnNlZy4NCkFmdGVyIHRoYXQsIHdlIGNhbGwgbG9jYXRlX2RpcnR5X3NlZ21lbnQgd2l0
-aCBvbGQgY3Vyc2VnLg0KDQpCdXQsIHRoZSBuZXcgYWRkcmVzcyBpcyBhbHdheXMgYWxsb2NhdGVk
-IGZyb20gb2xkIGN1cnNlZyBhbmQNCndlIGNhbGwgbG9jYXRlX2RpcnR5X3NlZ21lbnQgd2l0aCBv
-bGQgY3Vyc2VnIGluIHJlZnJlc2hfc2l0X2VudHJ5Lg0KU28sIHdlIGRvIG5vdCBuZWVkIHRvIGNh
-bGwgbG9jYXRlX2RpcnR5X3NlZ21lbnQgd2l0aCBvbGQgY3Vyc2VnIGFnYWluLg0KDQpXZSd2ZSBk
-aXNjdXNzZWQgbGlrZSBiZWxvdzoNCg0KSmFlZ2V1ayBzYWlkOg0KICJXaGVuIGNvbnNpZGVyaW5n
-IFNTUiwgd2UgbmVlZCB0byB0YWtlIGNhcmUgb2YgdGhlIGZvbGxvd2luZyBzY2VuYXJpby4NCiAg
-LSBvbGQgc2Vnbm8gOiBYDQogIC0gbmV3IGFkZHJlc3MgOiBaDQogIC0gb2xkIGN1cnNlZyA6IFkN
-CiAgVGhpcyBtZWFucywgYSBuZXcgYmxvY2sgaXMgc3VwcG9zZWQgdG8gYmUgd3JpdHRlbiB0byBa
-IGZyb20gWC4NCiAgQW5kIFogaXMgbmV3bHkgYWxsb2NhdGVkIGluIHRoZSBzYW1lIHBhdGggZnJv
-bSBZLg0KDQogIEluIHRoYXQgY2FzZSwgd2Ugc2hvdWxkIHRyaWdnZXIgbG9jYXRlX2RpcnR5X3Nl
-Z21lbnQgZm9yIFksIHNpbmNlDQogIGl0IHdhcyBhIGN1cnJlbnRfc2VnbWVudCBhbmQgY2FuIGJl
-IGRpcnR5IG93aW5nIHRvIFNTUi4NCiAgQnV0IHRoYXQgd2FzIG5vdCBpbmNsdWRlZCBpbiB0aGUg
-ZGlydHkgbGlzdC4iDQoNCkNoYW5nbWFuIHNhaWQ6DQogIldlIGFscmVhZHkgY2hvb3NlZCBvbGQg
-Y3Vyc2VnKFkpIGFuZCB0aGVuIHdlIGFsbG9jYXRlIG5ldyBhZGRyZXNzKFopIGZyb20gb2xkDQog
-IGN1cnNlZyhZKS4gQWZ0ZXIgdGhhdCB3ZSBjYWxsIHJlZnJlc2hfc2l0X2VudHJ5KG9sZCBhZGRy
-ZXNzLCBuZXcgYWRkcmVzcykuDQogIEluIHRoZSBmdW5jYXRpb24sIHdlIGNhbGwgbG9jYXRlX2Rp
-cnR5X3NlZ21lbnQgd2l0aCBvbGQgc2VnIGFuZCBvbGQgY3Vyc2VnLg0KICBTbyBjYWxsaW5nIGxv
-Y2F0ZV9kaXJ0eV9zZWdtZW50IGFmdGVyIHJlZnJlc2hfc2l0X2VudHJ5IGFnYWluIGlzIHJlZHVu
-ZGFudC4iDQoNCkphZWdldWsgc2FpZDoNCiAiUmlnaHQuIFRoZSBuZXcgYWRkcmVzcyBpcyBhbHdh
-eXMgYWxsb2NhdGVkIGZyb20gb2xkX2N1cnNlZy4iDQoNClNpZ25lZC1vZmYtYnk6IERvbmdobyBT
-aW0gPGRoLnNpbUBzYW1zdW5nLmNvbT4NCi0tLQ0KIGZzL2YyZnMvc2VnbWVudC5jIHwgMyAtLS0N
-CiAxIGZpbGUgY2hhbmdlZCwgMyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2ZzL2YyZnMv
-c2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50LmMNCmluZGV4IDhhNmU1N2QuLjdhZjRhOGQgMTAw
-NjQ0DQotLS0gYS9mcy9mMmZzL3NlZ21lbnQuYw0KKysrIGIvZnMvZjJmcy9zZWdtZW50LmMNCkBA
-IC05NzMsMTQgKzk3MywxMiBAQCB2b2lkIGFsbG9jYXRlX2RhdGFfYmxvY2soc3RydWN0IGYyZnNf
-c2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFnZSAqcGFnZSwNCiB7DQogCXN0cnVjdCBzaXRfaW5mbyAq
-c2l0X2kgPSBTSVRfSShzYmkpOw0KIAlzdHJ1Y3QgY3Vyc2VnX2luZm8gKmN1cnNlZzsNCi0JdW5z
-aWduZWQgaW50IG9sZF9jdXJzZWdubzsNCiANCiAJY3Vyc2VnID0gQ1VSU0VHX0koc2JpLCB0eXBl
-KTsNCiANCiAJbXV0ZXhfbG9jaygmY3Vyc2VnLT5jdXJzZWdfbXV0ZXgpOw0KIA0KIAkqbmV3X2Js
-a2FkZHIgPSBORVhUX0ZSRUVfQkxLQUREUihzYmksIGN1cnNlZyk7DQotCW9sZF9jdXJzZWdubyA9
-IGN1cnNlZy0+c2Vnbm87DQogDQogCS8qDQogCSAqIF9fYWRkX3N1bV9lbnRyeSBzaG91bGQgYmUg
-cmVzaWRlZCB1bmRlciB0aGUgY3Vyc2VnX211dGV4DQpAQCAtMTAwMSw3ICs5OTksNiBAQCB2b2lk
-IGFsbG9jYXRlX2RhdGFfYmxvY2soc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFn
-ZSAqcGFnZSwNCiAJICogc2luY2UgU1NSIG5lZWRzIGxhdGVzdCB2YWxpZCBibG9jayBpbmZvcm1h
-dGlvbi4NCiAJICovDQogCXJlZnJlc2hfc2l0X2VudHJ5KHNiaSwgb2xkX2Jsa2FkZHIsICpuZXdf
-YmxrYWRkcik7DQotCWxvY2F0ZV9kaXJ0eV9zZWdtZW50KHNiaSwgb2xkX2N1cnNlZ25vKTsNCiAN
-CiAJbXV0ZXhfdW5sb2NrKCZzaXRfaS0+c2VudHJ5X2xvY2spOw0KIA0KLS0gDQoxLjkuMQ0KDQo=
+Hi,
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Tuesday, July 29, 2014 8:43 PM
+> To: Chao Yu
+> Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 06/11] f2fs: skip unnecessary data writes during fsync
+> 
+> On Tue, Jul 29, 2014 at 07:39:45PM +0800, Chao Yu wrote:
+> > Hi,
+> >
+> > > -----Original Message-----
+> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > Sent: Saturday, July 26, 2014 6:47 AM
+> > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > > linux-f2fs-devel@lists.sourceforge.net
+> > > Cc: Jaegeuk Kim
+> > > Subject: [f2fs-dev] [PATCH 06/11] f2fs: skip unnecessary data writes during fsync
+> > >
+> > > This patch intends to improve the fsync performance by skipping remaining the
+> > > recovery information, only when there is no data that we should recover.
+> > >
+> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+
+> > > ---
+> > >  fs/f2fs/file.c | 16 ++++++++++++++++
+> > >  1 file changed, 16 insertions(+)
+> > >
+> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > index 7c652b3..121689a 100644
+> > > --- a/fs/f2fs/file.c
+> > > +++ b/fs/f2fs/file.c
+> > > @@ -133,6 +133,17 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int
+> > > datasync)
+> > >  		return ret;
+> > >  	}
+> > >
+> > > +	/*
+> > > +	 * if there is no written data, don't waste time to write recovery info.
+> > > +	 */
+> > > +	if (!is_inode_flag_set(fi, FI_APPEND_WRITE) &&
+> > > +		!exist_written_data(sbi, inode->i_ino, APPEND_INO)) {
+> > > +		if (is_inode_flag_set(fi, FI_UPDATE_WRITE) &&
+> > > +			exist_written_data(sbi, inode->i_ino, UPDATE_INO))
+> >
+> > Should we shift this to is_inode_flag_set(fi, FI_UPDATE_WRITE) ||
+> > exist_written_data(sbi, inode->i_ino, UPDATE_INO) ?
+> 
+> Hehe, I found that and was going to submit new patch. :)
+> Small changes are not a big deal, so I'll test and then push them into the tree.
+> The for-next tree can be rebased all the time, so if you have any suggestion,
+> let me know.
+
+It's OK, I will. :)
+
+Thanks
+
+> 
+> Thanks,
+> 
+> >
+> > > +			goto flush_out;
+> > > +		goto out;
+> > > +	}
+> > > +
+> > >  	/* guarantee free sections for fsync */
+> > >  	f2fs_balance_fs(sbi);
+> > >
+> > > @@ -188,6 +199,11 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int
+> > > datasync)
+> > >  		ret = wait_on_node_pages_writeback(sbi, inode->i_ino);
+> > >  		if (ret)
+> > >  			goto out;
+> > > +
+> > > +		/* once recovery info is written, don't need to tack this */
+> > > +		remove_dirty_inode(sbi, inode->i_ino, APPEND_INO);
+> > > +flush_out:
+> > > +		remove_dirty_inode(sbi, inode->i_ino, UPDATE_INO);
+> > >  		ret = f2fs_issue_flush(F2FS_SB(inode->i_sb));
+> > >  	}
+> > >  out:
+> > > --
+> > > 1.8.5.2 (Apple Git-48)
+> > >
+> > >
+> > > ------------------------------------------------------------------------------
+> > > Want fast and easy access to all the code in your enterprise? Index and
+> > > search up to 200,000 lines of code with a free copy of Black Duck
+> > > Code Sight - the same software that powers the world's largest code
+> > > search on Ohloh, the Black Duck Open Hub! Try it now.
+> > > http://p.sf.net/sfu/bds
+> > > _______________________________________________
+> > > Linux-f2fs-devel mailing list
+> > > Linux-f2fs-devel@lists.sourceforge.net
+> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
+------------------------------------------------------------------------------
+Infragistics Professional
+Build stunning WinForms apps today!
+Reboot your WinForms applications with our WinForms controls. 
+Build a bridge from your legacy apps to the future.
+http://pubads.g.doubleclick.net/gampad/clk?id=153845071&iu=/4140/ostg.clktrk
