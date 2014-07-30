@@ -1,34 +1,28 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [PATCH] Remove an unnecessary line in
- allocate_data_block.
-Date: Wed, 30 Jul 2014 09:24:50 +0900
-Message-ID: <20140730002450.GC442@lcm>
-References: <13032184.29481406536465612.JavaMail.weblogic@epv6ml10>
-	<20140729132448.GC86905@jaegeuk-mac02>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 07/11] f2fs: enable in-place-update for
+ fdatasync
+Date: Tue, 29 Jul 2014 18:08:21 -0700
+Message-ID: <20140730010821.GA98706@jaegeuk-mac02>
+References: <1406328445-63707-1-git-send-email-jaegeuk@kernel.org>
+	<1406328445-63707-7-git-send-email-jaegeuk@kernel.org>
+	<20140729004111.GA442@lcm> <20140729122215.GB84378@jaegeuk-mac02>
+	<20140729235455.GB442@lcm>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <cm224.lee@samsung.com>) id 1XCHiw-0007UV-0Y
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XCIPr-0001Gl-Hq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Jul 2014 00:26:30 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XCHit-0002vS-EU
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Jul 2014 00:26:29 +0000
-Received: from epcpsbgr4.samsung.com
-	(u144.gpu120.samsung.co.kr [203.254.230.144])
-	by mailout3.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0N9I0080H17VC730@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Jul 2014 09:26:19 +0900 (KST)
-In-reply-to: <20140729132448.GC86905@jaegeuk-mac02>
-Content-disposition: inline
+	Wed, 30 Jul 2014 01:10:51 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XCIPq-0003Zx-4Y for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Jul 2014 01:10:51 +0000
+Content-Disposition: inline
+In-Reply-To: <20140729235455.GB442@lcm>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,142 +32,134 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Changman Lee <cm224.lee@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-T24gVHVlLCBKdWwgMjksIDIwMTQgYXQgMDY6MjQ6NDhBTSAtMDcwMCwgSmFlZ2V1ayBLaW0gd3Jv
-dGU6Cj4gSGkgRG9uZ2hvLAo+IAo+IEF0IGZpcnN0LCBwbGVhc2Ugd3JpdGUgYSBwYXRjaCB1bmRl
-ciB0aGUgY29ycmVjdCBydWxlLgo+IChlLmcuLCBkZXNjcmlwdGlvbikKPiAKPiBBYm91dCB0aGlz
-IGNoYW5nZSwgaXQncyBuZWdhdGl2ZS4KPiBXaGVuIGNvbnNpZGVyaW5nIFNTUiwgd2UgbmVlZCB0
-byB0YWtlIGNhcmUgb2YgdGhlIGZvbGxvd2luZyBzY2VuYXJpby4KPiAtIG9sZCBzZWdubyA6IFgK
-PiAtIG5ldyBhZGRyZXNzIDogWgo+IC0gb2xkIGN1cnNlZyA6IFkKPiBUaGlzIG1lYW5zLCBhIG5l
-dyBibG9jayBpcyBzdXBwb3NlZCB0byBiZSB3cml0dGVuIHRvIFogZnJvbSBYLgo+IEFuZCBaIGlz
-IG5ld2x5IGFsbG9jYXRlZCBpbiB0aGUgc2FtZSBwYXRoIGZyb20gWS4KPiAKPiBJbiB0aGF0IGNh
-c2UsIHdlIHNob3VsZCB0cmlnZ2VyIGxvY2F0ZV9kaXJ0eV9zZWdtZW50IGZvciBZLCBzaW5jZQo+
-IGl0IHdhcyBhIGN1cnJlbnRfc2VnbWVudCBhbmQgY2FuIGJlIGRpcnR5IG93aW5nIHRvIFNTUi4K
-PiBCdXQgdGhhdCB3YXMgbm90IGluY2x1ZGVkIGluIHRoZSBkaXJ0eSBsaXN0Lgo+IAo+IFRoYW5r
-cywKPiAKCldlIGFscmVhZHkgY2hvb3NlZCBvbGQgY3Vyc2VnKFkpIGFuZCB0aGVuIHdlIGFsbG9j
-YXRlIG5ldyBhZGRyZXNzKFopIGZyb20gb2xkCmN1cnNlZyhZKS4gQWZ0ZXIgdGhhdCB3ZSBjYWxs
-IHJlZnJlc2hfc2l0X2VudHJ5KG9sZCBhZGRyZXNzLCBuZXcgYWRkcmVzcykuCkluIHRoZSBmdW5j
-YXRpb24sIHdlIGNhbGwgbG9jYXRlX2RpcnR5X3NlZ21lbnQgd2l0aCBvbGQgc2VnIGFuZCBvbGQg
-Y3Vyc2VnLgpTbyBjYWxsaW5nIGxvY2F0ZV9kaXJ0eV9zZWdtZW50IGFmdGVyIHJlZnJlc2hfc2l0
-X2VudHJ5IGFnYWluIGlzIHJlZHVuZGFudC4KClRoYW5rcywKCj4gT24gTW9uLCBKdWwgMjgsIDIw
-MTQgYXQgMDg6MzQ6MjVBTSArMDAwMCwgRG9uZ2hvIFNpbSB3cm90ZToKPiA+IEhpLCBDaGFvLgo+
-ID4gSXQncyBteSBtaXN0YWtlLgo+ID4gCj4gPiBUaGFua3MgOi0pCj4gPiAKPiA+IFNpZ25lZC1v
-ZmYtYnk6IERvbmdobyBTaW0gPGRoLnNpbUBzYW1zdW5nLmNvbT4KPiA+IC0tLQo+ID4gIGZzL2Yy
-ZnMvc2VnbWVudC5jIHwgMyAtLS0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMyBkZWxldGlvbnMoLSkK
-PiA+IAo+ID4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50
-LmMKPiA+IGluZGV4IDhhNmU1N2QuLjdhZjRhOGQgMTAwNjQ0Cj4gPiAtLS0gYS9mcy9mMmZzL3Nl
-Z21lbnQuYwo+ID4gKysrIGIvZnMvZjJmcy9zZWdtZW50LmMKPiA+IEBAIC05NzMsMTQgKzk3Mywx
-MiBAQCB2b2lkIGFsbG9jYXRlX2RhdGFfYmxvY2soc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBz
-dHJ1Y3QgcGFnZSAqcGFnZSwKPiA+ICB7Cj4gPiAgCXN0cnVjdCBzaXRfaW5mbyAqc2l0X2kgPSBT
-SVRfSShzYmkpOwo+ID4gIAlzdHJ1Y3QgY3Vyc2VnX2luZm8gKmN1cnNlZzsKPiA+IC0JdW5zaWdu
-ZWQgaW50IG9sZF9jdXJzZWdubzsKPiA+ICAKPiA+ICAJY3Vyc2VnID0gQ1VSU0VHX0koc2JpLCB0
-eXBlKTsKPiA+ICAKPiA+ICAJbXV0ZXhfbG9jaygmY3Vyc2VnLT5jdXJzZWdfbXV0ZXgpOwo+ID4g
-IAo+ID4gIAkqbmV3X2Jsa2FkZHIgPSBORVhUX0ZSRUVfQkxLQUREUihzYmksIGN1cnNlZyk7Cj4g
-PiAtCW9sZF9jdXJzZWdubyA9IGN1cnNlZy0+c2Vnbm87Cj4gPiAgCj4gPiAgCS8qCj4gPiAgCSAq
-IF9fYWRkX3N1bV9lbnRyeSBzaG91bGQgYmUgcmVzaWRlZCB1bmRlciB0aGUgY3Vyc2VnX211dGV4
-Cj4gPiBAQCAtMTAwMSw3ICs5OTksNiBAQCB2b2lkIGFsbG9jYXRlX2RhdGFfYmxvY2soc3RydWN0
-IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFnZSAqcGFnZSwKPiA+ICAJICogc2luY2UgU1NS
-IG5lZWRzIGxhdGVzdCB2YWxpZCBibG9jayBpbmZvcm1hdGlvbi4KPiA+ICAJICovCj4gPiAgCXJl
-ZnJlc2hfc2l0X2VudHJ5KHNiaSwgb2xkX2Jsa2FkZHIsICpuZXdfYmxrYWRkcik7Cj4gPiAtCWxv
-Y2F0ZV9kaXJ0eV9zZWdtZW50KHNiaSwgb2xkX2N1cnNlZ25vKTsKPiA+ICAKPiA+ICAJbXV0ZXhf
-dW5sb2NrKCZzaXRfaS0+c2VudHJ5X2xvY2spOwo+ID4gIAo+ID4gLS0gCj4gPiAxLjkuMQo+ID4g
-Cj4gPiAtLS0tLS0tIE9yaWdpbmFsIE1lc3NhZ2UgLS0tLS0tLQo+ID4gU2VuZGVyIDogP+i2hTxj
-aGFvMi55dUBzYW1zdW5nLmNvbT4g5bel56iLPy9TUkMtTmFuamluZy1Nb2JpbGUgU29sdXRpb24g
-TGFiL+yCvOyEseyghOyekAo+ID4gRGF0ZSA6IDIwMTQtMDctMjggMTY6MjEgKEdNVCswOTowMCkK
-PiA+IFRpdGxlIDogUmU6IFtmMmZzLWRldl0gW1BBVENIXSBSZW1vdmUgYW4gdW5uZWNlc3Nhcnkg
-bGluZSBpbiBhbGxvY2F0ZV9kYXRhX2Jsb2NrLgo+ID4gCj4gPiBIaSBEb25naG8sCj4gPiAKPiA+
-ID4gLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLQo+ID4gPiAKPiA+ID4gRnJvbe+8miAiRG9u
-Z2hvIFNpbSIgCj4gPiA+IFNlbnTvvJogTW9uZGF5LCBKdWx5IDI4LCAyMDE0IDE6NTEgUE0KPiA+
-ID4gVG/vvJogIkNoYW8gWXUiIAo+ID4gPiBDY++8miBqYWVnZXVrQGtlcm5lbC5vcmcsIGxpbnV4
-LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gPiA+IFN1YmplY3TvvJogUmU6IFtm
-MmZzLWRldl0gW1BBVENIXSBSZW1vdmUgYW4gdW5uZWNlc3NhcnkgbGluZSBpbiBhbGxvY2F0ZV9k
-YXRhX2Jsb2NrLgo+ID4gPiAKPiA+ID4gWWVzLCB0aGVyZSB3YXMgYW5vdGhlciBvbmUuCj4gPiA+
-IFRoYW5rcyBDaGFvLCA6LSkKPiA+ID4gCj4gPiA+IFNpZ25lZC1vZmYtYnk6IERvbmdobyBTaW0g
-Cj4gPiA+IC0tLQo+ID4gPiAgZnMvZjJmcy9zZWdtZW50LmMgfCAyIC0tCj4gPiA+ICAxIGZpbGUg
-Y2hhbmdlZCwgMiBkZWxldGlvbnMoLSkKPiA+ID4gCj4gPiA+IGRpZmYgLS1naXQgYS9mcy9mMmZz
-L3NlZ21lbnQuYyBiL2ZzL2YyZnMvc2VnbWVudC5jCj4gPiA+IGluZGV4IDhhNmU1N2QuLjNhYjc3
-NDkgMTAwNjQ0Cj4gPiA+IC0tLSBhL2ZzL2YyZnMvc2VnbWVudC5jCj4gPiA+ICsrKyBiL2ZzL2Yy
-ZnMvc2VnbWVudC5jCj4gPiA+IEBAIC05ODAsNyArOTgwLDYgQEAgdm9pZCBhbGxvY2F0ZV9kYXRh
-X2Jsb2NrKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsCj4gPiA+
-ICAgICAgICAgbXV0ZXhfbG9jaygmY3Vyc2VnLT5jdXJzZWdfbXV0ZXgpOwo+ID4gPiAKPiA+ID4g
-ICAgICAgICAqbmV3X2Jsa2FkZHIgPSBORVhUX0ZSRUVfQkxLQUREUihzYmksIGN1cnNlZyk7Cj4g
-PiA+IC0gICAgICAgb2xkX2N1cnNlZ25vID0gY3Vyc2VnLT5zZWdubzsKPiA+IAo+ID4gVGhlIGRl
-ZmluaXRpb24gb2Ygb2xkX2N1cnNlZ25vIGFsc28gc2hvdWxkIGJlIHJlbW92ZWQuCj4gPiAKPiA+
-IFRoYW5rcywKPiA+IFl1Cj4gPiAKPiA+ID4gCj4gPiA+ICAgICAgICAgLyoKPiA+ID4gICAgICAg
-ICAgKiBfX2FkZF9zdW1fZW50cnkgc2hvdWxkIGJlIHJlc2lkZWQgdW5kZXIgdGhlIGN1cnNlZ19t
-dXRleAo+ID4gPiBAQCAtMTAwMSw3ICsxMDAwLDYgQEAgdm9pZCBhbGxvY2F0ZV9kYXRhX2Jsb2Nr
-KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSwgc3RydWN0IHBhZ2UgKnBhZ2UsCj4gPiA+ICAgICAg
-ICAgICogc2luY2UgU1NSIG5lZWRzIGxhdGVzdCB2YWxpZCBibG9jayBpbmZvcm1hdGlvbi4KPiA+
-ID4gICAgICAgICAgKi8KPiA+ID4gICAgICAgICByZWZyZXNoX3NpdF9lbnRyeShzYmksIG9sZF9i
-bGthZGRyLCAqbmV3X2Jsa2FkZHIpOwo+ID4gPiAtICAgICAgIGxvY2F0ZV9kaXJ0eV9zZWdtZW50
-KHNiaSwgb2xkX2N1cnNlZ25vKTsKPiA+ID4gCj4gPiA+ICAgICAgICAgbXV0ZXhfdW5sb2NrKCZz
-aXRfaS0+c2VudHJ5X2xvY2spOwo+ID4gPiAKPiA+ID4gLS0KPiA+ID4gMS45LjEKPiA+ID4gCj4g
-PiA+IC0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tCj4gPiA+IFNlbmRlciA6IENoYW8g
-WXUgCj4gPiA+IERhdGUgOiAyMDE0LTA3LTI4IDE0OjM1IChHTVQrMDk6MDApCj4gPiA+IFRpdGxl
-IDogUkU6IFtmMmZzLWRldl0gW1BBVENIXSBSZW1vdmUgYW4gdW5uZWNlc3NhcnkgbGluZSBpbiBh
-bGxvY2F0ZV9kYXRhX2Jsb2NrLgo+ID4gPiAKPiA+ID4gSGkgRG9uZ2hvLAo+ID4gPiAKPiA+ID4g
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+ID4gPiA+IEZyb206IERvbmdobyBTaW0gW21h
-aWx0bzpkaC5zaW1Ac2Ftc3VuZy5jb21dCj4gPiA+ID4gU2VudDogTW9uZGF5LCBKdWx5IDI4LCAy
-MDE0IDc6MDMgQU0KPiA+ID4gPiBUbzogamFlZ2V1a0BrZXJuZWwub3JnOyBsaW51eC1mMmZzLWRl
-dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+ID4gPiA+IFN1YmplY3Q6IFtmMmZzLWRldl0gW1BB
-VENIXSBSZW1vdmUgYW4gdW5uZWNlc3NhcnkgbGluZSBpbiBhbGxvY2F0ZV9kYXRhX2Jsb2NrLgo+
-ID4gPiA+Cj4gPiA+ID4gSGkuIFRoZXJlIHdhcyBhbiB1bm5lY2Vzc2FyeSBsaW5lIGluIGZ1bmN0
-aW9uLCBhbGxvY2F0ZV9kYXRhX2Jsb2NrLgo+ID4gPiA+IEl0IGlzIGFscmVhZHkgZG9uZSBpbgo+
-ID4gPiA+ICAgIHJlZnJlc2hfc2l0X2VudHJ5KHNiaSwgb2xkX2Jsa2FkZHIsICpuZXdfYmxrYWRk
-cik7Cj4gPiA+ID4KPiA+ID4gPiBUaGFua3MuCj4gPiA+IAo+ID4gPiBBZ3JlZWQsCj4gPiA+IEhv
-dyBhYm91dCByZW1vdmluZyBvbGRfY3Vyc2Vnbm8gdG9vIGFzIGl0J3Mgbm8gbG9uZ2VyIHVzZWQg
-aW4gYWxsb2NhdGVfZGF0YV9ibG9jaz8KPiA+ID4gCj4gPiA+IFRoYW5rcywKPiA+ID4gWXUKPiA+
-ID4gCj4gPiA+ID4KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBEb25naG8gU2ltCj4gPiA+ID4gLS0t
-Cj4gPiA+ID4gIGZzL2YyZnMvc2VnbWVudC5jIHwgMSAtCj4gPiA+ID4gIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGRlbGV0aW9uKC0pCj4gPiA+ID4KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdt
-ZW50LmMgYi9mcy9mMmZzL3NlZ21lbnQuYwo+ID4gPiA+IGluZGV4IDhhNmU1N2QuLmEzYzdhYWUg
-MTAwNjQ0Cj4gPiA+ID4gLS0tIGEvZnMvZjJmcy9zZWdtZW50LmMKPiA+ID4gPiArKysgYi9mcy9m
-MmZzL3NlZ21lbnQuYwo+ID4gPiA+IEBAIC0xMDAxLDcgKzEwMDEsNiBAQCB2b2lkIGFsbG9jYXRl
-X2RhdGFfYmxvY2soc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLCBzdHJ1Y3QgcGFnZSAqcGFnZSwK
-PiA+ID4gPiAgICogc2luY2UgU1NSIG5lZWRzIGxhdGVzdCB2YWxpZCBibG9jayBpbmZvcm1hdGlv
-bi4KPiA+ID4gPiAgICovCj4gPiA+ID4gICByZWZyZXNoX3NpdF9lbnRyeShzYmksIG9sZF9ibGth
-ZGRyLCAqbmV3X2Jsa2FkZHIpOwo+ID4gPiA+IC0gbG9jYXRlX2RpcnR5X3NlZ21lbnQoc2JpLCBv
-bGRfY3Vyc2Vnbm8pOwo+ID4gPiA+Cj4gPiA+ID4gICBtdXRleF91bmxvY2soJnNpdF9pLT5zZW50
-cnlfbG9jayk7Cj4gPiA+ID4KPiA+ID4gPiAtLQo+ID4gPiA+IDEuOS4xCj4gPiA+ID4gLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tCj4gPiA+ID4gV2FudCBmYXN0IGFuZCBlYXN5IGFjY2VzcyB0byBhbGwg
-dGhlIGNvZGUgaW4geW91ciBlbnRlcnByaXNlPyBJbmRleCBhbmQKPiA+ID4gPiBzZWFyY2ggdXAg
-dG8gMjAwLDAwMCBsaW5lcyBvZiBjb2RlIHdpdGggYSBmcmVlIGNvcHkgb2YgQmxhY2sgRHVjawo+
-ID4gPiA+IENvZGUgU2lnaHQgLSB0aGUgc2FtZSBzb2Z0d2FyZSB0aGF0IHBvd2VycyB0aGUgd29y
-bGQncyBsYXJnZXN0IGNvZGUKPiA+ID4gPiBzZWFyY2ggb24gT2hsb2gsIHRoZSBCbGFjayBEdWNr
-IE9wZW4gSHViISBUcnkgaXQgbm93Lgo+ID4gPiA+IGh0dHA6Ly9wLnNmLm5ldC9zZnUvYmRzCj4g
-PiA+ID4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiA+
-ID4gPiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdAo+ID4gPiA+IExpbnV4LWYyZnMtZGV2
-ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gPiA+ID4gaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3Jn
-ZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo+ID4gPiAtLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0KPiA+ID4gSW5mcmFnaXN0aWNzIFByb2Zlc3Npb25hbAo+ID4gPiBCdWlsZCBzdHVu
-bmluZyBXaW5Gb3JtcyBhcHBzIHRvZGF5IQo+ID4gPiBSZWJvb3QgeW91ciBXaW5Gb3JtcyBhcHBs
-aWNhdGlvbnMgd2l0aCBvdXIgV2luRm9ybXMgY29udHJvbHMuCj4gPiA+IEJ1aWxkIGEgYnJpZGdl
-IGZyb20geW91ciBsZWdhY3kgYXBwcyB0byB0aGUgZnV0dXJlLgo+ID4gPiBodHRwOi8vcHViYWRz
-LmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9MTUzODQ1MDcxJml1PS80MTQwL29zdGcu
-Y2xrdHJrCj4gPiA+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCj4gPiA+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gPiA+IExpbnV4LWYyZnMt
-ZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gPiA+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9y
-Z2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKPiAKPiAtLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0KPiBJbmZyYWdpc3RpY3MgUHJvZmVzc2lvbmFsCj4gQnVpbGQgc3R1bm5pbmcgV2lu
-Rm9ybXMgYXBwcyB0b2RheSEKPiBSZWJvb3QgeW91ciBXaW5Gb3JtcyBhcHBsaWNhdGlvbnMgd2l0
-aCBvdXIgV2luRm9ybXMgY29udHJvbHMuIAo+IEJ1aWxkIGEgYnJpZGdlIGZyb20geW91ciBsZWdh
-Y3kgYXBwcyB0byB0aGUgZnV0dXJlLgo+IGh0dHA6Ly9wdWJhZHMuZy5kb3VibGVjbGljay5uZXQv
-Z2FtcGFkL2Nsaz9pZD0xNTM4NDUwNzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKPiBfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwg
-bWFpbGluZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBo
-dHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRl
-dmVsCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkluZnJhZ2lzdGljcyBQcm9mZXNzaW9uYWwKQnVp
-bGQgc3R1bm5pbmcgV2luRm9ybXMgYXBwcyB0b2RheSEKUmVib290IHlvdXIgV2luRm9ybXMgYXBw
-bGljYXRpb25zIHdpdGggb3VyIFdpbkZvcm1zIGNvbnRyb2xzLiAKQnVpbGQgYSBicmlkZ2UgZnJv
-bSB5b3VyIGxlZ2FjeSBhcHBzIHRvIHRoZSBmdXR1cmUuCmh0dHA6Ly9wdWJhZHMuZy5kb3VibGVj
-bGljay5uZXQvZ2FtcGFkL2Nsaz9pZD0xNTM4NDUwNzEmaXU9LzQxNDAvb3N0Zy5jbGt0cmsKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1k
-ZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQK
-aHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1k
-ZXZlbAo=
+On Wed, Jul 30, 2014 at 08:54:55AM +0900, Changman Lee wrote:
+> On Tue, Jul 29, 2014 at 05:22:15AM -0700, Jaegeuk Kim wrote:
+> > Hi Changman,
+> > 
+> > On Tue, Jul 29, 2014 at 09:41:11AM +0900, Changman Lee wrote:
+> > > Hi Jaegeuk,
+> > > 
+> > > On Fri, Jul 25, 2014 at 03:47:21PM -0700, Jaegeuk Kim wrote:
+> > > > This patch enforces in-place-updates only when fdatasync is requested.
+> > > > If we adopt this in-place-updates for the fdatasync, we can skip to write the
+> > > > recovery information.
+> > > 
+> > > But, as you know, random write occurs when changing into in-place-updates.
+> > > It will degrade write performance. Is there any case in-place-updates is
+> > > better, except recovery or high utilization?
+> > 
+> > As I described, you can easily imagine, if users requested small amount of data
+> > writes with fdatasync, we should do data writes + node writes.
+> > But, if we can do in-place-update, we don't need to write node blocks.
+> > Surely it triggers random writes, however, the amount of data is preety small
+> > and the device handles them very fast by its inside cache, so that it can
+> > enhance the performance.
+> > 
+> > Thanks,
+> 
+> Partially agree. Sometimes, I see that SSR shows lower performance than
+> IPU. One of the reasons might be node writes.
+
+What did you mean? That's why I consider IPU eagarly instead of SSR and LFS
+under the very strict cases.
+
+> Anyway, if so, we should know total dirty pages for fdatasync and it's very
+> tunable according to a random write performance of device.
+
+Agreed. We can do that either by comparing the number of dirty pages,
+additional data/node writes, and cost of checkpoint at the same time.
+And there is another thing is that we need to consider the number of
+waiting time for end_io.
+I'll look into this at some time.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> > 
+> > > 
+> > > Thanks
+> > > 
+> > > > 
+> > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > > ---
+> > > >  fs/f2fs/f2fs.h    | 1 +
+> > > >  fs/f2fs/file.c    | 7 +++++++
+> > > >  fs/f2fs/segment.h | 4 ++++
+> > > >  3 files changed, 12 insertions(+)
+> > > > 
+> > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > > index ab36025..8f8685e 100644
+> > > > --- a/fs/f2fs/f2fs.h
+> > > > +++ b/fs/f2fs/f2fs.h
+> > > > @@ -998,6 +998,7 @@ enum {
+> > > >  	FI_INLINE_DATA,		/* used for inline data*/
+> > > >  	FI_APPEND_WRITE,	/* inode has appended data */
+> > > >  	FI_UPDATE_WRITE,	/* inode has in-place-update data */
+> > > > +	FI_NEED_IPU,		/* used fo ipu for fdatasync */
+> > > >  };
+> > > >  
+> > > >  static inline void set_inode_flag(struct f2fs_inode_info *fi, int flag)
+> > > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > > index 121689a..e339856 100644
+> > > > --- a/fs/f2fs/file.c
+> > > > +++ b/fs/f2fs/file.c
+> > > > @@ -127,11 +127,18 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+> > > >  		return 0;
+> > > >  
+> > > >  	trace_f2fs_sync_file_enter(inode);
+> > > > +
+> > > > +	/* if fdatasync is triggered, let's do in-place-update */
+> > > > +	if (datasync)
+> > > > +		set_inode_flag(fi, FI_NEED_IPU);
+> > > > +
+> > > >  	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
+> > > >  	if (ret) {
+> > > >  		trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
+> > > >  		return ret;
+> > > >  	}
+> > > > +	if (datasync)
+> > > > +		clear_inode_flag(fi, FI_NEED_IPU);
+> > > >  
+> > > >  	/*
+> > > >  	 * if there is no written data, don't waste time to write recovery info.
+> > > > diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> > > > index ee5c75e..55973f7 100644
+> > > > --- a/fs/f2fs/segment.h
+> > > > +++ b/fs/f2fs/segment.h
+> > > > @@ -486,6 +486,10 @@ static inline bool need_inplace_update(struct inode *inode)
+> > > >  	if (S_ISDIR(inode->i_mode))
+> > > >  		return false;
+> > > >  
+> > > > +	/* this is only set during fdatasync */
+> > > > +	if (is_inode_flag_set(F2FS_I(inode), FI_NEED_IPU))
+> > > > +		return true;
+> > > > +
+> > > >  	switch (SM_I(sbi)->ipu_policy) {
+> > > >  	case F2FS_IPU_FORCE:
+> > > >  		return true;
+> > > > -- 
+> > > > 1.8.5.2 (Apple Git-48)
+> > > > 
+> > > > 
+> > > > ------------------------------------------------------------------------------
+> > > > Want fast and easy access to all the code in your enterprise? Index and
+> > > > search up to 200,000 lines of code with a free copy of Black Duck
+> > > > Code Sight - the same software that powers the world's largest code
+> > > > search on Ohloh, the Black Duck Open Hub! Try it now.
+> > > > http://p.sf.net/sfu/bds
+> > > > _______________________________________________
+> > > > Linux-f2fs-devel mailing list
+> > > > Linux-f2fs-devel@lists.sourceforge.net
+> > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+------------------------------------------------------------------------------
+Infragistics Professional
+Build stunning WinForms apps today!
+Reboot your WinForms applications with our WinForms controls. 
+Build a bridge from your legacy apps to the future.
+http://pubads.g.doubleclick.net/gampad/clk?id=153845071&iu=/4140/ostg.clktrk
