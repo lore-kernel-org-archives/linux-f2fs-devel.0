@@ -1,30 +1,36 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/2] f2fs: add f2fs_balance_fs for
-	expand_inode_data
-Date: Mon, 04 Aug 2014 10:11:17 +0800
-Message-ID: <001f01cfaf89$85b07c70$91117550$@samsung.com>
+Subject: Re: [PATCH] f2fs: reduce competition among node page
+	writes
+Date: Mon, 04 Aug 2014 10:30:23 +0800
+Message-ID: <002001cfaf8c$27f873f0$77e95bd0$@samsung.com>
+References: <003901cf96ad$dbd17680$93746380$@samsung.com>
+	<00f601cfabf7$691af580$3b50e080$@samsung.com>
+	<20140731020708.GB24081@lcm>
+	<016201cfac80$d6e336c0$84a9a440$@samsung.com>
+	<20140731064514.GA11415@jaegeuk-mac02>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XE7lF-0004yM-QT
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XE83X-00048X-8e
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 04 Aug 2014 02:12:29 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XE7lE-0000ej-6n
+	Mon, 04 Aug 2014 02:31:23 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XE83U-0002UB-Am
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 04 Aug 2014 02:12:29 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
+	Mon, 04 Aug 2014 02:31:23 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout3.samsung.com
 	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
 	(built Nov
-	17 2011)) with ESMTP id <0N9R006CPFGKOV60@mailout1.samsung.com> for
+	17 2011)) with ESMTP id <0N9R00898GC055C0@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 04 Aug 2014 11:12:20 +0900 (KST)
+	Mon, 04 Aug 2014 11:31:12 +0900 (KST)
+In-reply-to: <20140731064514.GA11415@jaegeuk-mac02>
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -35,33 +41,207 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds f2fs_balance_fs in expand_inode_data to avoid allocation failure
-with segment.
+Hi Jaegeuk,
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/file.c | 2 ++
- 1 file changed, 2 insertions(+)
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Thursday, July 31, 2014 2:45 PM
+> To: Chao Yu
+> Cc: 'Changman Lee'; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH] f2fs: reduce competition among node page writes
+> 
+> On Thu, Jul 31, 2014 at 01:31:46PM +0800, Chao Yu wrote:
+> > Hi Changman,
+> >
+> > > -----Original Message-----
+> > > From: Changman Lee [mailto:cm224.lee@samsung.com]
+> > > Sent: Thursday, July 31, 2014 10:07 AM
+> > > To: Chao Yu
+> > > Cc: 'Jaegeuk Kim'; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > linux-f2fs-devel@lists.sourceforge.net
+> > > Subject: Re: [f2fs-dev] [PATCH] f2fs: reduce competition among node page writes
+> > >
+> > > Hi Chao,
+> > >
+> > > On Wed, Jul 30, 2014 at 09:07:49PM +0800, Chao Yu wrote:
+> > > > Hi Jaegeuk Changman,
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Chao Yu [mailto:chao2.yu@samsung.com]
+> > > > > Sent: Thursday, July 03, 2014 6:59 PM
+> > > > > To: Jaegeuk Kim; Changman Lee
+> > > > > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > > > linux-f2fs-devel@lists.sourceforge.net
+> > > > > Subject: [f2fs-dev] [PATCH] f2fs: reduce competition among node page writes
+> > > > >
+> > > > > We do not need to block on ->node_write among different node page writers e.g.
+> > > > > fsync/flush, unless we have a node page writer from write_checkpoint.
+> > > > > So it's better use rw_semaphore instead of mutex type for ->node_write to
+> > > > > promote performance.
+> > > >
+> > > > If you could have time to help explaining the problem of this patch, I will be
+> > > > appreciated for that.
+> > >
+> > > I have no clue. Except checkpoint, I don't know why need to block to
+> > > write node page.
+> > > Do you have any problem when you test with this patch?
+> >
+> > I don't have.
+> > I send this patch about one month ago, but got no respond.
+> > So I want to ask if any problem in this patch or forget to look at this patch?
+> >
+> > To Jaegeuk:
+> > Any idea about this patch?
+> 
+> Oh, I forgot to send an email for this.
+> At that time, when I looked at a glance, I thought that it was not clear why
+> this should be merged.
+> 
+> But, when I contemplate again, it seems that several fsync threads could produce
+> multiple node writers, resulting in some mutex contention.
+> Just for sure, can you verify that?
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 9550135..5d3b779 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -671,6 +671,8 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
- 	loff_t off_start, off_end;
- 	int ret = 0;
- 
-+	f2fs_balance_fs(sbi);
-+
- 	ret = inode_newsize_ok(inode, (len + offset));
- 	if (ret)
- 		return ret;
--- 
-2.0.0.421.g786a89d
+Yes, node sync in cp could encounter competition of the same op in fsync/flush/gc
+thread. Here we use rwlock to increase concurrent of these thread hence we could
+gain better performance of checkpoint.
 
+Thanks,
+Yu
+
+> 
+> Nevertheless, I think there would be no problem to merge this patch now.
+> Merged.
+> 
+> >
+> > >
+> > > >
+> > > > Another question is what is ->writepages in sbi used for? I'm not quite clear.
+> > > >
+> > >
+> > > I remember it is for writing data pages per thread as much as possible.
+> > > When multi-threads write some files simultaneously, multi-threads contended with
+> > > each other to allocate a block. So block allocation was interleaved
+> > > across threads. It makes fragmentation of file.
+> 
+> Good. :)
+> 
+> >
+> > Thank you for the explanation! :)
+> > I think what you say is reasonable.
+> >
+> > Previously I tested without this lock, although I found that the blocks written
+> > _almost_ were continuous in each '->writepages()'. Still I think we can gain more
+> > from readahead continuous block when using this lock, rather than remove it for
+> > promoting concurrent of writers.
+> >
+> > Thanks,
+> > Yu
+> >
+> > >
+> > > Thanks,
+> > >
+> > > > Thanks,
+> > > >
+> > > > >
+> > > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > > > ---
+> > > > >  fs/f2fs/checkpoint.c |    6 +++---
+> > > > >  fs/f2fs/f2fs.h       |    2 +-
+> > > > >  fs/f2fs/node.c       |    4 ++--
+> > > > >  fs/f2fs/super.c      |    2 +-
+> > > > >  4 files changed, 7 insertions(+), 7 deletions(-)
+> > > > >
+> > > > > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > > > > index 0b4710c..eec406b 100644
+> > > > > --- a/fs/f2fs/checkpoint.c
+> > > > > +++ b/fs/f2fs/checkpoint.c
+> > > > > @@ -714,10 +714,10 @@ retry_flush_dents:
+> > > > >  	 * until finishing nat/sit flush.
+> > > > >  	 */
+> > > > >  retry_flush_nodes:
+> > > > > -	mutex_lock(&sbi->node_write);
+> > > > > +	down_write(&sbi->node_write);
+> > > > >
+> > > > >  	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
+> > > > > -		mutex_unlock(&sbi->node_write);
+> > > > > +		up_write(&sbi->node_write);
+> > > > >  		sync_node_pages(sbi, 0, &wbc);
+> > > > >  		goto retry_flush_nodes;
+> > > > >  	}
+> > > > > @@ -726,7 +726,7 @@ retry_flush_nodes:
+> > > > >
+> > > > >  static void unblock_operations(struct f2fs_sb_info *sbi)
+> > > > >  {
+> > > > > -	mutex_unlock(&sbi->node_write);
+> > > > > +	up_write(&sbi->node_write);
+> > > > >  	f2fs_unlock_all(sbi);
+> > > > >  }
+> > > > >
+> > > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > > > index ae3b4ac..ca30b5a 100644
+> > > > > --- a/fs/f2fs/f2fs.h
+> > > > > +++ b/fs/f2fs/f2fs.h
+> > > > > @@ -444,7 +444,7 @@ struct f2fs_sb_info {
+> > > > >  	struct inode *meta_inode;		/* cache meta blocks */
+> > > > >  	struct mutex cp_mutex;			/* checkpoint procedure lock */
+> > > > >  	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
+> > > > > -	struct mutex node_write;		/* locking node writes */
+> > > > > +	struct rw_semaphore node_write;		/* locking node writes */
+> > > > >  	struct mutex writepages;		/* mutex for writepages() */
+> > > > >  	bool por_doing;				/* recovery is doing or not */
+> > > > >  	wait_queue_head_t cp_wait;
+> > > > > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > > > > index a90f51d..7b5b5de 100644
+> > > > > --- a/fs/f2fs/node.c
+> > > > > +++ b/fs/f2fs/node.c
+> > > > > @@ -1231,12 +1231,12 @@ static int f2fs_write_node_page(struct page *page,
+> > > > >  	if (wbc->for_reclaim)
+> > > > >  		goto redirty_out;
+> > > > >
+> > > > > -	mutex_lock(&sbi->node_write);
+> > > > > +	down_read(&sbi->node_write);
+> > > > >  	set_page_writeback(page);
+> > > > >  	write_node_page(sbi, page, &fio, nid, ni.blk_addr, &new_addr);
+> > > > >  	set_node_addr(sbi, &ni, new_addr, is_fsync_dnode(page));
+> > > > >  	dec_page_count(sbi, F2FS_DIRTY_NODES);
+> > > > > -	mutex_unlock(&sbi->node_write);
+> > > > > +	up_read(&sbi->node_write);
+> > > > >  	unlock_page(page);
+> > > > >  	return 0;
+> > > > >
+> > > > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > > > index 8f96d93..bed9413 100644
+> > > > > --- a/fs/f2fs/super.c
+> > > > > +++ b/fs/f2fs/super.c
+> > > > > @@ -947,7 +947,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int
+> silent)
+> > > > >  	mutex_init(&sbi->gc_mutex);
+> > > > >  	mutex_init(&sbi->writepages);
+> > > > >  	mutex_init(&sbi->cp_mutex);
+> > > > > -	mutex_init(&sbi->node_write);
+> > > > > +	init_rwsem(&sbi->node_write);
+> > > > >  	sbi->por_doing = false;
+> > > > >  	spin_lock_init(&sbi->stat_lock);
+> > > > >
+> > > > > --
+> > > > > 1.7.9.5
+> > > > >
+> > > > >
+> > > > >
+> > > > > ------------------------------------------------------------------------------
+> > > > > Open source business process management suite built on Java and Eclipse
+> > > > > Turn processes into business applications with Bonita BPM Community Edition
+> > > > > Quickly connect people, data, and systems into organized workflows
+> > > > > Winner of BOSSIE, CODIE, OW2 and Gartner awards
+> > > > > http://p.sf.net/sfu/Bonitasoft
+> > > > > _______________________________________________
+> > > > > Linux-f2fs-devel mailing list
+> > > > > Linux-f2fs-devel@lists.sourceforge.net
+> > > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 ------------------------------------------------------------------------------
