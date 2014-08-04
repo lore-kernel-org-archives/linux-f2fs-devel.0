@@ -1,30 +1,30 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/2 v2] f2fs: invalidate xattr node page when
- evict inode
-Date: Mon, 04 Aug 2014 09:54:58 +0800
-Message-ID: <001d01cfaf87$3664dfa0$a32e9ee0$@samsung.com>
+Subject: [PATCH 1/2] f2fs: use for_each_set_bit to simplify the
+	code
+Date: Mon, 04 Aug 2014 10:10:07 +0800
+Message-ID: <001e01cfaf89$54164640$fc42d2c0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XE7VH-0004EP-PY
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XE7jw-0004wg-3g
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 04 Aug 2014 01:55:59 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XE7VF-0001ar-47
+	Mon, 04 Aug 2014 02:11:08 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XE7jt-0000c4-Bs
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 04 Aug 2014 01:55:59 +0000
+	Mon, 04 Aug 2014 02:11:07 +0000
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
+	by mailout3.samsung.com
 	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
 	(built Nov
-	17 2011)) with ESMTP id <0N9R0058XEP0S3A0@mailout4.samsung.com> for
+	17 2011)) with ESMTP id <0N9R008UZFE95590@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 04 Aug 2014 10:55:48 +0900 (KST)
+	Mon, 04 Aug 2014 11:10:57 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -38,42 +38,84 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-When inode is evicted, all the page cache belong to this inode should be
-released including the xattr node page. But previously we didn't do this, this
-patch fixed this issue.
-
-v2:
- o reposition invalidate_mapping_pages() to the right place suggested by
-Jaegeuk Kim.
+This patch uses for_each_set_bit to simplify some codes in f2fs.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/inode.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/gc.c      |  7 ++-----
+ fs/f2fs/segment.c | 13 ++++---------
+ 2 files changed, 6 insertions(+), 14 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 0e69aa9..2c39999 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -267,6 +267,7 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
- void f2fs_evict_inode(struct inode *inode)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index b90dbe5..d7947d9 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -186,7 +186,6 @@ static unsigned int get_max_cost(struct f2fs_sb_info *sbi,
+ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
  {
- 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-+	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+-	unsigned int hint = 0;
+ 	unsigned int secno;
  
- 	trace_f2fs_evict_inode(inode);
- 	truncate_inode_pages_final(&inode->i_data);
-@@ -296,6 +297,8 @@ void f2fs_evict_inode(struct inode *inode)
- 	sb_end_intwrite(inode->i_sb);
- no_delete:
- 	invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino, inode->i_ino);
-+	if (xnid)
-+		invalidate_mapping_pages(NODE_MAPPING(sbi), xnid, xnid);
- 	if (is_inode_flag_set(F2FS_I(inode), FI_APPEND_WRITE))
- 		add_dirty_inode(sbi, inode->i_ino, APPEND_INO);
- 	if (is_inode_flag_set(F2FS_I(inode), FI_UPDATE_WRITE))
+ 	/*
+@@ -194,11 +193,9 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+ 	 * selected by background GC before.
+ 	 * Those segments guarantee they have small valid blocks.
+ 	 */
+-next:
+-	secno = find_next_bit(dirty_i->victim_secmap, TOTAL_SECS(sbi), hint++);
+-	if (secno < TOTAL_SECS(sbi)) {
++	for_each_set_bit(secno, dirty_i->victim_secmap, TOTAL_SECS(sbi)) {
+ 		if (sec_usage_check(sbi, secno))
+-			goto next;
++			continue;
+ 		clear_bit(secno, dirty_i->victim_secmap);
+ 		return secno * sbi->segs_per_sec;
+ 	}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index c3b76d0..0dfeeba 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -439,17 +439,12 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi,
+ static void set_prefree_as_free_segments(struct f2fs_sb_info *sbi)
+ {
+ 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+-	unsigned int segno = -1;
++	unsigned int segno;
+ 	unsigned int total_segs = TOTAL_SEGS(sbi);
+ 
+ 	mutex_lock(&dirty_i->seglist_lock);
+-	while (1) {
+-		segno = find_next_bit(dirty_i->dirty_segmap[PRE], total_segs,
+-				segno + 1);
+-		if (segno >= total_segs)
+-			break;
++	for_each_set_bit(segno, dirty_i->dirty_segmap[PRE], total_segs)
+ 		__set_test_and_free(sbi, segno);
+-	}
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ }
+ 
+@@ -1531,7 +1526,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
+ 	struct page *page = NULL;
+ 	struct f2fs_sit_block *raw_sit = NULL;
+ 	unsigned int start = 0, end = 0;
+-	unsigned int segno = -1;
++	unsigned int segno;
+ 	bool flushed;
+ 
+ 	mutex_lock(&curseg->curseg_mutex);
+@@ -1543,7 +1538,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
+ 	 */
+ 	flushed = flush_sits_in_journal(sbi);
+ 
+-	while ((segno = find_next_bit(bitmap, nsegs, segno + 1)) < nsegs) {
++	for_each_set_bit(segno, bitmap, nsegs) {
+ 		struct seg_entry *se = get_seg_entry(sbi, segno);
+ 		int sit_offset, offset;
+ 
 -- 
-2.0.1.474.g72c7794
+2.0.0.421.g786a89d
 
 
 
