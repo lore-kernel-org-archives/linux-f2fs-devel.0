@@ -1,63 +1,66 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 11/13] f2fs: unlock_page when node page is
-	redirtied out
-Date: Tue, 12 Aug 2014 12:49:25 -0700
-Message-ID: <1407872967-26423-11-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 12/13] f2fs: check s_dirty under cp_mutex
+Date: Tue, 12 Aug 2014 12:49:26 -0700
+Message-ID: <1407872967-26423-12-git-send-email-jaegeuk@kernel.org>
 References: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XHI4o-0007RI-T3
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Aug 2014 19:49:46 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XHI4m-0003Tt-M4 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Aug 2014 19:49:46 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch fixes missing unlock_page when a node page is redirtied out.
+It needs to check s_dirty under cp_mutex, since s_dirty is reset under that
+mutex.
+And previous condition was not correct, since we can omit doing checkpoint
+when checkpoint was done followed by all the node pages were written back.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/node.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/f2fs/checkpoint.c | 8 ++++++--
+ fs/f2fs/super.c      | 3 ---
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index c80e3d5..9f126f8 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1129,8 +1129,11 @@ continue_unlock:
- 				set_fsync_mark(page, 0);
- 				set_dentry_mark(page, 0);
- 			}
--			NODE_MAPPING(sbi)->a_ops->writepage(page, wbc);
--			wrote++;
-+
-+			if (NODE_MAPPING(sbi)->a_ops->writepage(page, wbc))
-+				unlock_page(page);
-+			else
-+				wrote++;
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 1161d2a..d074e27 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -952,6 +952,10 @@ void write_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+ 	trace_f2fs_write_checkpoint(sbi->sb, is_umount, "start block_ops");
  
- 			if (--wbc->nr_to_write == 0)
- 				break;
+ 	mutex_lock(&sbi->cp_mutex);
++
++	if (!sbi->s_dirty)
++		goto out;
++
+ 	block_operations(sbi);
+ 
+ 	trace_f2fs_write_checkpoint(sbi->sb, is_umount, "finish block_ops");
+@@ -976,9 +980,9 @@ void write_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+ 	do_checkpoint(sbi, is_umount);
+ 
+ 	unblock_operations(sbi);
+-	mutex_unlock(&sbi->cp_mutex);
+-
+ 	stat_inc_cp_count(sbi->stat_info);
++out:
++	mutex_unlock(&sbi->cp_mutex);
+ 	trace_f2fs_write_checkpoint(sbi->sb, is_umount, "finish checkpoint");
+ }
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 7e4b631..c4f90cd 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -457,9 +457,6 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
+ 
+ 	trace_f2fs_sync_fs(sb, sync);
+ 
+-	if (!sbi->s_dirty && !get_pages(sbi, F2FS_DIRTY_NODES))
+-		return 0;
+-
+ 	if (sync) {
+ 		mutex_lock(&sbi->gc_mutex);
+ 		write_checkpoint(sbi, false);
 -- 
 1.8.5.2 (Apple Git-48)
-
-
-------------------------------------------------------------------------------
