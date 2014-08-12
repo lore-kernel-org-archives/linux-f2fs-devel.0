@@ -1,22 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 04/13] f2fs: clear FI_INC_LINK during the recovery
-Date: Tue, 12 Aug 2014 12:49:18 -0700
-Message-ID: <1407872967-26423-4-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 03/13] f2fs: fix the initial inode page for
+	recovery
+Date: Tue, 12 Aug 2014 12:49:17 -0700
+Message-ID: <1407872967-26423-3-git-send-email-jaegeuk@kernel.org>
 References: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XHI4X-0003fE-6C
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XHI4Z-0007Oz-3k
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Aug 2014 19:49:29 +0000
+	Tue, 12 Aug 2014 19:49:31 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XHI4V-00009C-VX for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Aug 2014 19:49:29 +0000
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XHI4T-0007Lw-RR for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 Aug 2014 19:49:31 +0000
 In-Reply-To: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,34 +31,34 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If an inode are fsynced multiple times with fsync & dent marks, this inode will
-set FI_INC_LINK at find_fsync_dnodes during the recovery.
-But, in recover_inode, recover_dentry doesn't clear that flag when multiple hits
-were occurred.
-
-So this patch removes the flag for the further consistency.
+If a new inode page is needed for recover_dentry, we should assing i_inline
+as zero.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/recovery.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/f2fs/node.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index fe1c6d9..cfb2aa9 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -62,8 +62,10 @@ static int recover_dentry(struct page *ipage, struct inode *inode)
- 	}
- retry:
- 	de = f2fs_find_entry(dir, &name, &page);
--	if (de && inode->i_ino == le32_to_cpu(de->ino))
-+	if (de && inode->i_ino == le32_to_cpu(de->ino)) {
-+		clear_inode_flag(F2FS_I(inode), FI_INC_LINK);
- 		goto out_unmap_put;
-+	}
- 	if (de) {
- 		einode = f2fs_iget(inode->i_sb, le32_to_cpu(de->ino));
- 		if (IS_ERR(einode)) {
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 1f33299..093d799 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1651,6 +1651,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ 	dst->i_blocks = cpu_to_le64(1);
+ 	dst->i_links = cpu_to_le32(1);
+ 	dst->i_xattr_nid = 0;
++	dst->i_inline = src->i_inline & F2FS_INLINE_XATTR;
+ 
+ 	new_ni = old_ni;
+ 	new_ni.ino = ino;
+@@ -1659,6 +1660,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ 		WARN_ON(1);
+ 	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
+ 	inc_valid_inode_count(sbi);
++	set_page_dirty(ipage);
+ 	f2fs_put_page(ipage, 1);
+ 	return 0;
+ }
 -- 
 1.8.5.2 (Apple Git-48)
 
