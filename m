@@ -1,88 +1,88 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 10/13] f2fs: introduce f2fs_cp_error for readability
-Date: Tue, 12 Aug 2014 12:49:24 -0700
-Message-ID: <1407872967-26423-10-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 09/13] f2fs: give a chance to mount again when
+	encountering errors
+Date: Tue, 12 Aug 2014 12:49:23 -0700
+Message-ID: <1407872967-26423-9-git-send-email-jaegeuk@kernel.org>
 References: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XHI4k-00042n-6g
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 Aug 2014 19:49:42 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XHI4i-0001c4-Cv for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 Aug 2014 19:49:42 +0000
 In-Reply-To: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds f2fs_cp_error for readability.
+This patch gives another chance to try mount process when we encounter an error.
+This makes an effect on the roll-forward recovery failures as well.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 4 ++--
- fs/f2fs/f2fs.h       | 5 +++++
- fs/f2fs/gc.c         | 2 +-
- fs/f2fs/super.c      | 2 +-
- 4 files changed, 9 insertions(+), 4 deletions(-)
+ fs/f2fs/super.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 7e1c13b..1161d2a 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -162,7 +162,7 @@ static int f2fs_write_meta_page(struct page *page,
- 		goto redirty_out;
- 
- 	/* Should not write any meta pages, if any IO error was occurred */
--	if (unlikely(is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ERROR_FLAG)))
-+	if (unlikely(f2fs_cp_error(sbi)))
- 		goto no_write;
- 
- 	f2fs_wait_on_page_writeback(page, META);
-@@ -934,7 +934,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
- 	/* Here, we only have one bio having CP pack */
- 	sync_meta_pages(sbi, META_FLUSH, LONG_MAX);
- 
--	if (!is_set_ckpt_flags(ckpt, CP_ERROR_FLAG)) {
-+	if (!f2fs_cp_error(sbi)) {
- 		clear_prefree_segments(sbi);
- 		release_dirty_inode(sbi);
- 		F2FS_RESET_SB_DIRT(sbi);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cc5ead1..46ceb88 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1096,6 +1096,11 @@ static inline int f2fs_readonly(struct super_block *sb)
- 	return sb->s_flags & MS_RDONLY;
- }
- 
-+static inline bool f2fs_cp_error(struct f2fs_sb_info *sbi)
-+{
-+	return is_set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
-+}
-+
- static inline void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi)
- {
- 	set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 87c50c5..e8507b1 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -693,7 +693,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi)
- gc_more:
- 	if (unlikely(!(sbi->sb->s_flags & MS_ACTIVE)))
- 		goto stop;
--	if (unlikely(is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ERROR_FLAG)))
-+	if (unlikely(f2fs_cp_error(sbi)))
- 		goto stop;
- 
- 	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, nfree)) {
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 2856020..7e4b631 100644
+index 60e3554..2856020 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -812,7 +812,7 @@ static int sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	if (unlikely(fsmeta >= total))
- 		return 1;
+@@ -899,8 +899,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	struct buffer_head *raw_super_buf;
+ 	struct inode *root;
+ 	long err = -EINVAL;
++	bool retry = true;
+ 	int i;
  
--	if (unlikely(is_set_ckpt_flags(ckpt, CP_ERROR_FLAG))) {
-+	if (unlikely(f2fs_cp_error(sbi))) {
- 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
- 		return 1;
++try_onemore:
+ 	/* allocate memory for f2fs-specific super block info */
+ 	sbi = kzalloc(sizeof(struct f2fs_sb_info), GFP_KERNEL);
+ 	if (!sbi)
+@@ -1080,9 +1082,11 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* recover fsynced data */
+ 	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
+ 		err = recover_fsync_data(sbi);
+-		if (err)
++		if (err) {
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Cannot recover all fsync data errno=%ld", err);
++			goto free_kobj;
++		}
  	}
+ 
+ 	/*
+@@ -1123,6 +1127,13 @@ free_sb_buf:
+ 	brelse(raw_super_buf);
+ free_sbi:
+ 	kfree(sbi);
++
++	/* give only one another chance */
++	if (retry) {
++		retry = !retry;
++		shrink_dcache_sb(sb);
++		goto try_onemore;
++	}
+ 	return err;
+ }
+ 
 -- 
 1.8.5.2 (Apple Git-48)
+
+
+------------------------------------------------------------------------------
