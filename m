@@ -1,45 +1,21 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 06/13] f2fs: fix to recover inline_xattr/data
- and	blocks
-Date: Wed, 13 Aug 2014 18:20:44 +0800
-Message-ID: <009e01cfb6e0$58a98d30$09fca790$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 08/13] f2fs: do checkpoint at f2fs_put_super
+Date: Thu, 14 Aug 2014 10:57:10 +0800
+Message-ID: <000401cfb76b$a3957b20$eac07160$@samsung.com>
 References: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
-	<1407872967-26423-6-git-send-email-jaegeuk@kernel.org>
+ <1407872967-26423-8-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XHVgy-0003Tw-W7
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 13 Aug 2014 10:22:05 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XHVgw-0007Vw-Oq
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 13 Aug 2014 10:22:04 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0NA8003C7Q3V53A0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 13 Aug 2014 19:21:31 +0900 (KST)
-In-reply-to: <1407872967-26423-6-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1407872967-26423-8-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
@@ -47,102 +23,57 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-deve
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 06/13] f2fs: fix to recover inline_xattr/data and blocks
+> Subject: [f2fs-dev] [PATCH 08/13] f2fs: do checkpoint at f2fs_put_super
 > 
-> This patch fixes not to skip xattr recovery and inline xattr/data recovery
-> order.
+> The generic_shutdown_super calls sync_filesystem, evict_inode, and then
+> f2fs_put_super. In f2fs_evict_inode, we remain some dirty inode information
+> so we should release them at f2fs_put_super.
+> 
+> But normally, it's more reasonable to set its superblock as dirty when
+> evict_inode is called.
+
+After applying this patch, when we mount and then umount f2fs image without
+modification, we will write checkpoint in f2fs_put_super even though we have
+no more dirty data to sync, it's not needed.
+
+"some dirty inode information" you mentioned is inode information in ->ino_root of
+sbi, right?
+
+Regards,
+Yu
+
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-
 > ---
->  fs/f2fs/f2fs.h     |  2 +-
->  fs/f2fs/node.c     |  9 +--------
->  fs/f2fs/recovery.c | 13 +++++++++----
->  3 files changed, 11 insertions(+), 13 deletions(-)
+>  fs/f2fs/inode.c | 1 +
+>  fs/f2fs/super.c | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 2e4aa3a..cc5ead1 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1205,7 +1205,7 @@ void alloc_nid_failed(struct f2fs_sb_info *, nid_t);
->  void recover_node_page(struct f2fs_sb_info *, struct page *,
->  		struct f2fs_summary *, struct node_info *, block_t);
->  void recover_inline_xattr(struct inode *, struct page *);
-> -bool recover_xattr_data(struct inode *, struct page *, block_t);
-> +void recover_xattr_data(struct inode *, struct page *, block_t);
->  int recover_inode_page(struct f2fs_sb_info *, struct page *);
->  int restore_node_summary(struct f2fs_sb_info *, unsigned int,
->  				struct f2fs_summary_block *);
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 151045f..c80e3d5 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1557,9 +1557,6 @@ void recover_inline_xattr(struct inode *inode, struct page *page)
->  	struct page *ipage;
->  	struct f2fs_inode *ri;
-> 
-> -	if (!IS_INODE(page))
-> -		return;
-> -
->  	ipage = get_node_page(sbi, inode->i_ino);
->  	f2fs_bug_on(IS_ERR(ipage));
-> 
-> @@ -1580,16 +1577,13 @@ update_inode:
->  	f2fs_put_page(ipage, 1);
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 2c39999..eeaf5aa 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -303,6 +303,7 @@ no_delete:
+>  		add_dirty_inode(sbi, inode->i_ino, APPEND_INO);
+>  	if (is_inode_flag_set(F2FS_I(inode), FI_UPDATE_WRITE))
+>  		add_dirty_inode(sbi, inode->i_ino, UPDATE_INO);
+> +	F2FS_SET_SB_DIRT(sbi);
+>  out_clear:
+>  	clear_inode(inode);
 >  }
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 633315a..60e3554 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -432,7 +432,7 @@ static void f2fs_put_super(struct super_block *sb)
+>  	stop_gc_thread(sbi);
 > 
-> -bool recover_xattr_data(struct inode *inode, struct page *page, block_t blkaddr)
-> +void recover_xattr_data(struct inode *inode, struct page *page, block_t blkaddr)
->  {
->  	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
->  	nid_t prev_xnid = F2FS_I(inode)->i_xattr_nid;
->  	nid_t new_xnid = nid_of_node(page);
->  	struct node_info ni;
+>  	/* We don't need to do checkpoint when it's clean */
+> -	if (sbi->s_dirty && get_pages(sbi, F2FS_DIRTY_NODES))
+> +	if (sbi->s_dirty)
+>  		write_checkpoint(sbi, true);
 > 
-> -	if (!f2fs_has_xattr_block(ofs_of_node(page)))
-> -		return false;
-> -
->  	/* 1: invalidate the previous xattr nid */
->  	if (!prev_xnid)
->  		goto recover_xnid;
-> @@ -1617,7 +1611,6 @@ recover_xnid:
->  	set_node_addr(sbi, &ni, blkaddr, false);
-> 
->  	update_inode_page(inode);
-> -	return true;
->  }
-> 
->  int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index cfb2aa9..d7b67b8 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -302,14 +302,19 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
->  	struct node_info ni;
->  	int err = 0, recovered = 0;
-> 
-> -	recover_inline_xattr(inode, page);
-> -
-> -	if (recover_inline_data(inode, page))
-> +	/* step 1: recover xattr */
-> +	if (IS_INODE(page)) {
-> +		recover_inline_xattr(inode, page);
-> +	} else if (f2fs_has_xattr_block(ofs_of_node(page))) {
-> +		recover_xattr_data(inode, page, blkaddr);
->  		goto out;
-> +	}
-> 
-> -	if (recover_xattr_data(inode, page, blkaddr))
-> +	/* step 2: recover inline data */
-> +	if (recover_inline_data(inode, page))
->  		goto out;
-> 
-> +	/* step 3: recover data indices */
->  	start = start_bidx_of_node(ofs_of_node(page), fi);
->  	end = start + ADDRS_PER_PAGE(page, fi);
-> 
+>  	iput(sbi->node_inode);
 > --
 > 1.8.5.2 (Apple Git-48)
 > 
@@ -152,6 +83,3 @@ Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-
-------------------------------------------------------------------------------
