@@ -1,34 +1,33 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 08/13 v2] f2fs: do checkpoint
-	at	f2fs_put_super
-Date: Tue, 19 Aug 2014 14:41:44 +0800
-Message-ID: <002e01cfbb78$bf297ab0$3d7c7010$@samsung.com>
-References: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
-	<1407872967-26423-8-git-send-email-jaegeuk@kernel.org>
-	<20140815215818.GB53769@jaegeuk-mac02.mot.com>
+Subject: Re: [PATCH 3/4] f2fs: avoid double lock in
+	truncate_blocks
+Date: Tue, 19 Aug 2014 16:04:11 +0800
+Message-ID: <003401cfbb84$441c5b60$cc551220$@samsung.com>
+References: <1408140229-54949-1-git-send-email-jaegeuk@kernel.org>
+	<1408140229-54949-3-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XJd7w-0008N1-7Z
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XJePl-00053H-1f
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Aug 2014 06:42:40 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XJd7u-0002uW-6o
+	Tue, 19 Aug 2014 08:05:09 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XJePi-0004Ad-Ff
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Aug 2014 06:42:40 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
+	Tue, 19 Aug 2014 08:05:09 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout3.samsung.com
 	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
 	(built Nov
-	17 2011)) with ESMTP id <0NAJ00K06JYU7UD0@mailout4.samsung.com> for
+	17 2011)) with ESMTP id <0NAJ000O7NS9JB80@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Aug 2014 15:42:30 +0900 (KST)
-In-reply-to: <20140815215818.GB53769@jaegeuk-mac02.mot.com>
+	Tue, 19 Aug 2014 17:04:57 +0900 (KST)
+In-reply-to: <1408140229-54949-3-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -46,63 +45,150 @@ Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Saturday, August 16, 2014 5:58 AM
+> Sent: Saturday, August 16, 2014 6:04 AM
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 08/13 v2] f2fs: do checkpoint at f2fs_put_super
+> Cc: Jaegeuk Kim
+> Subject: [f2fs-dev] [PATCH 3/4] f2fs: avoid double lock in truncate_blocks
 > 
-> Change log from v1:
->  o relocate F2FS_SET_SB_DIRT to avoid unnecessary checkpoints
+> The init_inode_metadata calls truncate_blocks when error is occurred.
+> The callers holds f2fs_lock_op, so we should not call it again in
+> truncate_blocks.
 
-In umount, we will encounter memory leak as we may skip releasing dirty inode
-when IO error occurred in cp. Why not just invoking release_dirty_inode directly
-in f2fs_put_super?
+Nice catch! Your solution is a good way to fix this issue.
+
+Previously, in create inode path, I found there are some redundant codes between
+init_inode_metadata and evict_inode, including:
+	truncate_inode_pages(&inode->i_data, 0);
+	truncate_blocks(inode, 0);
+	remove_dirty_dir_inode(inode);
+	remove_inode_page(inode); 
+
+So I think there is another way to fix this issue by removing error path handling
+codes in init_inode_metadata, not making the inode bad to left garbage clean work in
+evict_inode. In this way we can avoid adding additional argument for all different
+callers.
+
+How do you think?
 
 Thanks,
 Yu
 
 > 
-> The generic_shutdown_super calls sync_filesystem, evict_inode, and then
-> f2fs_put_super. In f2fs_evict_inode, we remain some dirty inode information
-> so we should release them at f2fs_put_super.
-> 
-> But normally, it's more reasonable to set its superblock as dirty when
-> evict_inode is called.
-> 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/checkpoint.c | 1 +
->  fs/f2fs/super.c      | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
+>  fs/f2fs/data.c   |  2 +-
+>  fs/f2fs/dir.c    |  2 +-
+>  fs/f2fs/f2fs.h   |  2 +-
+>  fs/f2fs/file.c   | 13 ++++++++-----
+>  fs/f2fs/inline.c |  2 +-
+>  5 files changed, 12 insertions(+), 9 deletions(-)
 > 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 7e1c13b..01e1796 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -330,6 +330,7 @@ void add_dirty_inode(struct f2fs_sb_info *sbi, nid_t ino, int type)
->  {
->  	/* add new dirty ino entry into list */
->  	__add_ino_entry(sbi, ino, type);
-> +	F2FS_SET_SB_DIRT(sbi);
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 68834e2..14cc3e8 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -935,7 +935,7 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t to)
+> 
+>  	if (to > inode->i_size) {
+>  		truncate_pagecache(inode, inode->i_size);
+> -		truncate_blocks(inode, inode->i_size);
+> +		truncate_blocks(inode, inode->i_size, true);
+>  	}
 >  }
 > 
->  void remove_dirty_inode(struct f2fs_sb_info *sbi, nid_t ino, int type)
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 633315a..60e3554 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -432,7 +432,7 @@ static void f2fs_put_super(struct super_block *sb)
->  	stop_gc_thread(sbi);
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index a69bbfa..155fb05 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -391,7 +391,7 @@ put_error:
+>  error:
+>  	/* once the failed inode becomes a bad inode, i_mode is S_IFREG */
+>  	truncate_inode_pages(&inode->i_data, 0);
+> -	truncate_blocks(inode, 0);
+> +	truncate_blocks(inode, 0, false);
+>  	remove_dirty_dir_inode(inode);
+>  	remove_inode_page(inode);
+>  	return ERR_PTR(err);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 2723b2d..7f976c1 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1122,7 +1122,7 @@ static inline void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi)
+>   */
+>  int f2fs_sync_file(struct file *, loff_t, loff_t, int);
+>  void truncate_data_blocks(struct dnode_of_data *);
+> -int truncate_blocks(struct inode *, u64);
+> +int truncate_blocks(struct inode *, u64, bool);
+>  void f2fs_truncate(struct inode *);
+>  int f2fs_getattr(struct vfsmount *, struct dentry *, struct kstat *);
+>  int f2fs_setattr(struct dentry *, struct iattr *);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index ecbdf6a..a8e97f8 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -422,7 +422,7 @@ out:
+>  	f2fs_put_page(page, 1);
+>  }
 > 
->  	/* We don't need to do checkpoint when it's clean */
-> -	if (sbi->s_dirty && get_pages(sbi, F2FS_DIRTY_NODES))
-> +	if (sbi->s_dirty)
->  		write_checkpoint(sbi, true);
+> -int truncate_blocks(struct inode *inode, u64 from)
+> +int truncate_blocks(struct inode *inode, u64 from, bool lock)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+>  	unsigned int blocksize = inode->i_sb->s_blocksize;
+> @@ -438,14 +438,16 @@ int truncate_blocks(struct inode *inode, u64 from)
+>  	free_from = (pgoff_t)
+>  			((from + blocksize - 1) >> (sbi->log_blocksize));
 > 
->  	iput(sbi->node_inode);
+> -	f2fs_lock_op(sbi);
+> +	if (lock)
+> +		f2fs_lock_op(sbi);
+> 
+>  	set_new_dnode(&dn, inode, NULL, NULL, 0);
+>  	err = get_dnode_of_data(&dn, free_from, LOOKUP_NODE);
+>  	if (err) {
+>  		if (err == -ENOENT)
+>  			goto free_next;
+> -		f2fs_unlock_op(sbi);
+> +		if (lock)
+> +			f2fs_unlock_op(sbi);
+>  		trace_f2fs_truncate_blocks_exit(inode, err);
+>  		return err;
+>  	}
+> @@ -463,7 +465,8 @@ int truncate_blocks(struct inode *inode, u64 from)
+>  	f2fs_put_dnode(&dn);
+>  free_next:
+>  	err = truncate_inode_blocks(inode, free_from);
+> -	f2fs_unlock_op(sbi);
+> +	if (lock)
+> +		f2fs_unlock_op(sbi);
+>  done:
+>  	/* lastly zero out the first data page */
+>  	truncate_partial_data_page(inode, from);
+> @@ -480,7 +483,7 @@ void f2fs_truncate(struct inode *inode)
+> 
+>  	trace_f2fs_truncate(inode);
+> 
+> -	if (!truncate_blocks(inode, i_size_read(inode))) {
+> +	if (!truncate_blocks(inode, i_size_read(inode), true)) {
+>  		inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+>  		mark_inode_dirty(inode);
+>  	}
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index 520758b..4d1f39f 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -247,7 +247,7 @@ process_inline:
+>  		update_inode(inode, ipage);
+>  		f2fs_put_page(ipage, 1);
+>  	} else if (ri && (ri->i_inline & F2FS_INLINE_DATA)) {
+> -		truncate_blocks(inode, 0);
+> +		truncate_blocks(inode, 0, false);
+>  		set_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
+>  		goto process_inline;
+>  	}
 > --
 > 1.8.5.2 (Apple Git-48)
-> 
 > 
 > 
 > ------------------------------------------------------------------------------
