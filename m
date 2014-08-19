@@ -1,28 +1,21 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 08/13 v2] f2fs: do checkpoint
-	at	f2fs_put_super
-Date: Tue, 19 Aug 2014 09:11:30 -0700
-Message-ID: <20140819160708.GA68318@jaegeuk-mac02.mot.com>
-References: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
-	<1407872967-26423-8-git-send-email-jaegeuk@kernel.org>
-	<20140815215818.GB53769@jaegeuk-mac02.mot.com>
-	<002e01cfbb78$bf297ab0$3d7c7010$@samsung.com>
+From: =?ks_c_5601-1987?B?TUhEQ2FibGU=?= <info@mil-c-17.co.kr>
+Subject: [SPAM] Low Density PTFE Microwave Coxial Cable ( Low
+	Loss Microwave Cable )
+Date: Tue, 19 Aug 2014 22:39:31 +0900
+Message-ID: <20140819223982.SM08008@mil-c-17.co.kr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============8117369522249010549=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XJm0c-0000ld-FC
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <info@mil-c-17.co.kr>) id 1XJm2x-0002Hi-0U
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Aug 2014 16:11:42 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XJm0b-00005P-BS for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Aug 2014 16:11:42 +0000
-Content-Disposition: inline
-In-Reply-To: <002e01cfbb78$bf297ab0$3d7c7010$@samsung.com>
+	Tue, 19 Aug 2014 16:14:07 +0000
+Received: from [112.148.238.45] (helo=mil-c-17.co.kr)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XJm2u-0006LI-Pb for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 19 Aug 2014 16:14:06 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,89 +25,98 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: =?ks_c_5601-1987?B?bGludXgtZjJmcy1kZXZlbA==?= <linux-f2fs-devel@lists.sourceforge.net>
 
-On Tue, Aug 19, 2014 at 02:41:44PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Saturday, August 16, 2014 5:58 AM
-> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Subject: Re: [f2fs-dev] [PATCH 08/13 v2] f2fs: do checkpoint at f2fs_put_super
-> > 
-> > Change log from v1:
-> >  o relocate F2FS_SET_SB_DIRT to avoid unnecessary checkpoints
-> 
-> In umount, we will encounter memory leak as we may skip releasing dirty inode
-> when IO error occurred in cp. Why not just invoking release_dirty_inode directly
-> in f2fs_put_super?
+--===============8117369522249010549==
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_0888_E9606D0.184F60A0"
 
-Correct. The release_dirty_inode call will be added to handle -EIO through the
-following patch.
+------=_NextPart_000_0888_E9606D0.184F60A0
+Content-Type: text/plain;
+	charset="ks_c_5601-1987"
+Content-Transfer-Encoding: base64
 
-Ok, so I need to drop this patch and rewrite another patch to make the issue
-clear.
-Actually the patch will include:
--	if (sbi->s_dirty && get_pages(sbi, F2FS_DIRTY_NODES))
-+	if (sbi->s_dirty)
 
-Thanks,
+DQoNCg0KTG93IERlbnNpdHkgUFRGRSBDb3JlDQpMb3NzIExvc3MgTWljcm93YXZlIENvYXhpYWwg
+Q2FibGUNCg0KQmFzZWQgb24gTG93ICBEZW5zaXR5IEV4dHJ1c2lvbiBQVEZFIENvcmUgYW5kIDE5
+IFN0cmFuZGVkICBTaWx2ZXIgUGxhdGVkIENvcHBlciBDZW50ZXIgQ29uZHVjdG9yDQpTaWx2ZXIg
+UGxhdGVkIENvcHBlciBTcGlyYWwgU3RyaXAgU2hpZWxkIGFuZCBSb3VuZCBTaWx2ZXIgUGxhdGVk
+IENvcHBlciBCcmFpZA0KRkVQIEphY2tldA0KDQogDQoNCkRvd25sb2FkIERhdGEgU2hlZXQNCg0K
+DQoNCnd3dy5NSUwtQy0xNy5jb20=
 
-> 
-> Thanks,
-> Yu
-> 
-> > 
-> > The generic_shutdown_super calls sync_filesystem, evict_inode, and then
-> > f2fs_put_super. In f2fs_evict_inode, we remain some dirty inode information
-> > so we should release them at f2fs_put_super.
-> > 
-> > But normally, it's more reasonable to set its superblock as dirty when
-> > evict_inode is called.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/checkpoint.c | 1 +
-> >  fs/f2fs/super.c      | 2 +-
-> >  2 files changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index 7e1c13b..01e1796 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -330,6 +330,7 @@ void add_dirty_inode(struct f2fs_sb_info *sbi, nid_t ino, int type)
-> >  {
-> >  	/* add new dirty ino entry into list */
-> >  	__add_ino_entry(sbi, ino, type);
-> > +	F2FS_SET_SB_DIRT(sbi);
-> >  }
-> > 
-> >  void remove_dirty_inode(struct f2fs_sb_info *sbi, nid_t ino, int type)
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 633315a..60e3554 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -432,7 +432,7 @@ static void f2fs_put_super(struct super_block *sb)
-> >  	stop_gc_thread(sbi);
-> > 
-> >  	/* We don't need to do checkpoint when it's clean */
-> > -	if (sbi->s_dirty && get_pages(sbi, F2FS_DIRTY_NODES))
-> > +	if (sbi->s_dirty)
-> >  		write_checkpoint(sbi, true);
-> > 
-> >  	iput(sbi->node_inode);
-> > --
-> > 1.8.5.2 (Apple Git-48)
-> > 
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+------=_NextPart_000_0888_E9606D0.184F60A0
+Content-Type: text/html;
+	charset="ks_c_5601-1987"
+Content-Transfer-Encoding: base64
+
+PGh0bWw+DQoNCjxoZWFkPg0KPG1ldGEgaHR0cC1lcXVpdj0iY29udGVudC10eXBlIiBjb250ZW50
+PSJ0ZXh0L2h0bWw7IGNoYXJzZXQ9ZXVjLWtyIj4NCjx0aXRsZT5Mb3cgTG9zcyBNaWNyb3dhdmUg
+Q29heGlhbCBDYWJsZTwvdGl0bGU+DQo8YmFzZSBocmVmPSJodHRwOi8vd3d3Lm1pbC1jLTE3LmNv
+bS9saW5rX3BhZ2VzLyI+DQo8bWV0YSBuYW1lPSJnZW5lcmF0b3IiIGNvbnRlbnQ9Ik5hbW8gV2Vi
+RWRpdG9yIj4NCjwvaGVhZD4NCg0KPGJvZHkgYmdjb2xvcj0id2hpdGUiIHRleHQ9ImJsYWNrIiBs
+aW5rPSJibHVlIiB2bGluaz0icHVycGxlIiBhbGluaz0icmVkIj4NCjxociB3aWR0aD0iNjgwIj4N
+CjxwIGFsaWduPSJjZW50ZXIiPiZuYnNwOzwvcD4NCjxwIGFsaWduPSJjZW50ZXIiPjxpPjxiPjxm
+b250IGZhY2U9IlRpbWVzIE5ldyBSb21hbiI+PHNwYW4gc3R5bGU9IkZPTlQtU0laRTogMThwdCI+
+PGEgaHJlZj0iaHR0cDovL3d3dy5taWwtYy0xNy5jb20vbG93bG9zc2NhYmxlLmh0bWwiPkxvdyBE
+ZW5zaXR5IFBURkUgQ29yZTwvYT48L3NwYW4+PC9mb250PjwvYj48L2k+PC9wPg0KPHAgYWxpZ249
+ImNlbnRlciI+PGk+PGI+PGZvbnQgZmFjZT0iVGltZXMgTmV3IFJvbWFuIj48c3BhbiBzdHlsZT0i
+Rk9OVC1TSVpFOiAxOHB0Ij48YSBocmVmPSJodHRwOi8vd3d3Lm1pbC1jLTE3LmNvbS9sb3dsb3Nz
+Y2FibGUuaHRtbCI+TG9zcyBMb3NzIE1pY3Jvd2F2ZSBDb2F4aWFsIENhYmxlPC9hPjwvc3Bhbj48
+L2ZvbnQ+PC9iPjwvaT48L3A+DQo8cCBhbGlnbj0iY2VudGVyIj48aT48Yj48Zm9udCBmYWNlPSJU
+aW1lcyBOZXcgUm9tYW4iPjwvZm9udD48L2I+PC9pPiZuYnNwOzwvcD4NCjxwIGFsaWduPSJjZW50
+ZXIiPjxpPjxiPjxmb250IHNpemU9IjMiIGZhY2U9IlRpbWVzIE5ldyBSb21hbiI+QmFzZWQgb24g
+TG93ICZuYnNwO0RlbnNpdHkgRXh0cnVzaW9uJm5ic3A7UFRGRSBDb3JlIDwvZm9udD48L2I+PC9p
+PjxpPjxiPjxmb250IHNpemU9IjMiIGZhY2U9IlRpbWVzIE5ldyBSb21hbiI+YW5kJm5ic3A7MTkg
+U3RyYW5kZWQgJm5ic3A7U2lsdmVyIFBsYXRlZCBDb3BwZXIgQ2VudGVyIENvbmR1Y3RvcjwvZm9u
+dD48L2I+PC9pPjwvcD4NCjxwIGFsaWduPSJjZW50ZXIiPjxpPjxiPjxmb250IHNpemU9IjMiIGZh
+Y2U9IlRpbWVzIE5ldyBSb21hbiI+U2lsdmVyIFBsYXRlZCBDb3BwZXImbmJzcDtTcGlyYWwgU3Ry
+aXAgU2hpZWxkIGFuZCBSb3VuZCBTaWx2ZXIgUGxhdGVkIENvcHBlciBCcmFpZDwvZm9udD48L2I+
+PC9pPjwvcD4NCjxwIGFsaWduPSJjZW50ZXIiPjxpPjxiPjxmb250IHNpemU9IjMiIGZhY2U9IlRp
+bWVzIE5ldyBSb21hbiI+RkVQIEphY2tldDwvZm9udD48L2I+PC9pPjwvcD4NCjxwIGFsaWduPSJj
+ZW50ZXIiIHN0eWxlPSJNQVJHSU4tQk9UVE9NOiAwcHg7IE1BUkdJTi1UT1A6IDBweDsgTElORS1I
+RUlHSFQ6IDUwJSI+Jm5ic3A7PC9wPg0KPHAgYWxpZ249ImNlbnRlciI+PGI+PGk+PGZvbnQgZmFj
+ZT0iQXJpYWwiPjxzcGFuIHN0eWxlPSJGT05ULVNJWkU6IDE0cHQiPiZuYnNwOzwvc3Bhbj48L2Zv
+bnQ+PC9pPjwvYj48YSBocmVmPSJodHRwOi8vc3RvcmVzLmViYXkuY29tL21pbC1jLTE3Ij48SU1H
+IGJvcmRlcj0wIHNyYyAgPSIuLi8oIExpbmtfSW1hZ2VzICkvZWJheV9pY29uX0VWU1BfQS5wbmci
+IHdpZHRoPTMwMCBoZWlnaHQ9NTYgPjwvYT48L3A+DQo8cCBhbGlnbj0iY2VudGVyIiBzdHlsZT0i
+TUFSR0lOLUJPVFRPTTogMHB4OyBNQVJHSU4tVE9QOiAwcHg7IExJTkUtSEVJR0hUOiAwJSI+Jm5i
+c3A7PC9wPg0KPHAgYWxpZ249ImNlbnRlciI+PGI+PGk+PGZvbnQgZmFjZT0iQXJpYWwiPjxzcGFu
+IHN0eWxlPSJGT05ULVNJWkU6IDE0cHQiPjxhIGhyZWY9Imh0dHA6Ly93d3cubWlsLWMtMTcuY29t
+L2xpbmtfaW5mby9sbGMtbXVhMjEwc3RfZHMucGRmIj5Eb3dubG9hZCBEYXRhIFNoZWV0PC9hPjwv
+c3Bhbj48L2ZvbnQ+PC9pPjwvYj48L3A+DQo8cCBhbGlnbj0iY2VudGVyIj4mbmJzcDs8L3A+DQo8
+cCBhbGlnbj0iY2VudGVyIj48YSBocmVmPSJodHRwOi8vd3d3Lm1pbC1jLTE3LmNvbS9sb3dsb3Nz
+Y2FibGUuaHRtbCI+PGltZyBzcmM9Imh0dHA6Ly93d3cubWlsLWMtMTcuY29tL2xpbmtfaW1hZ2Vz
+L2xsYy1tdWEyMTBzdF9iaWxkd20uanBnIiBib3JkZXI9IjAiIHdpZHRoPSI1MDAiIGhlaWdodD0i
+NTAwIj48L2E+PC9wPg0KPHAgYWxpZ249ImNlbnRlciI+Jm5ic3A7PC9wPg0KPHAgYWxpZ249ImNl
+bnRlciI+PGEgaHJlZj0iaHR0cDovL3d3dy5taWwtYy0xNy5jb20iPjxmb250IGZhY2U9IkFyaWFs
+Ij48c3BhbiBzdHlsZT0iRk9OVC1TSVpFOiAxNHB0Ij53d3cuTUlMLUMtMTcuY29tPC9zcGFuPjwv
+Zm9udD48L2E+PC9wPg0KPHAgYWxpZ249ImNlbnRlciI+Jm5ic3A7PC9wPg0KPGhyIHdpZHRoPSI2
+ODAiPg0KPHAgYWxpZ249ImNlbnRlciI+Jm5ic3A7PC9wPg0KPC9ib2R5Pg0KDQo8L2h0bWw+
+
+
+------=_NextPart_000_0888_E9606D0.184F60A0--
+
+
+
+
+--===============8117369522249010549==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
+
+--===============8117369522249010549==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============8117369522249010549==--
