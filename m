@@ -1,22 +1,28 @@
-From: "Joy" <Joy@supply-oversea.com>
-Subject: [SPAM] Attn: linux-f2fs-devel---Export kinds of office
-	print supplies
-Date: Mon, 18 Aug 2014 12:41:11 +0800
-Message-ID: <20140818124122870872@product-template.eicp.net>
-Reply-To: Joy@supply-oversea.com
+From: "=?utf-8?B?0KLQtdC70LXQv9C+0YDRgiDQk9C10YDQvNCw0L3QuNGPIQ==?="
+	<info@teleport-germany.ru>
+Subject: =?utf-8?b?INCU0L7RgdGC0LDQstC60LAg0LPRgNGD0LfQvtCyINC4?=
+ =?utf-8?b?0Lcg0JPQtdGA0LzQsNC90LjQuCE=?=
+Date: Tue, 19 Aug 2014 09:27:52 +0300
+Message-ID: <147ecf1ca64.27e1.ae21c@ismtpd-015.ams1.sendgrid.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5895685045534937020=="
+Content-Type: multipart/mixed; boundary="===============6934266566010605272=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <sales02@product-template.eicp.net>)
-	id 1XJad1-0003lH-2k for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Aug 2014 04:02:41 +0000
-Received: from [140.237.12.238] (helo=product-booklet.oicp.net)
-	by sog-mx-4.v43.ch3.sourceforge.com with smtp (Exim 4.76)
-	id 1XJacw-0000wn-Dt for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Aug 2014 04:02:34 +0000
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from
+	<bounces+799816-7b64-linux-f2fs-devel=lists.sourceforge.net@sendgrid.info>)
+	id 1XJcsB-0001ju-KB for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 19 Aug 2014 06:26:23 +0000
+Received: from o3.bn.sendgrid.net ([198.21.6.101])
+	by sog-mx-3.v43.ch3.sourceforge.com with smtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1XJcs9-00072V-Sy
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 19 Aug 2014 06:26:23 +0000
+Received: from mm-176-147-124-178.static.mgts.by (unknown [10.68.181.194])
+	by ismtpd-015.ams1.sendgrid.net (SG) with ESMTP id
+	147ecf1ca64.27e1.ae21c for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 19 Aug 2014 06:26:14 +0000 (GMT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,60 +32,103 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
-This is a multi-part message in MIME format.
 
---===============5895685045534937020==
+This is a multi-part message in MIME format
+--===============6934266566010605272==
+Content-Type: multipart/related; boundary="lrjncowltUdLOLhdf=_xaRjX3j6Y1aW0nh"
+
+
+This is a multi-part message in MIME format
+--lrjncowltUdLOLhdf=_xaRjX3j6Y1aW0nh
 Content-Type: multipart/alternative;
-	boundary="=====003_Dragon472435026072_====="
+	boundary="X35DNGaLlTy74iial5JUTk=_dBJbIKjKUk"
 
-This is a multi-part message in MIME format.
+--X35DNGaLlTy74iial5JUTk=_dBJbIKjKUk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
---=====003_Dragon472435026072_=====
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+=EF=BB=BF=20
 
-SGkgdGhlcmUsDQpUaGlzIGlzIEpveSBmcm9tIENoaW5hLiBKdXN0IHdvbmRlcmluZyBpZiB5b3Ug
-YXJlIGludGVyZXN0ZWQgaW4gcHJpbnRpbmcgeW91ciBtYWdhemluZSBpbiBDaGluYS4NCk91ciBt
-YWluIGJ1c2luZXNzIGlzIHRoZSBwcmludGluZyBvZiBib29rcywgY2F0YWxvZ3VlcywgYnJvY2h1
-cmVzLCBtYWdhemluZXMsIGZseWVycywgc3RpY2t5IG1lbW8gcGFkcywgcGFwZXIvcGxhc3RpYyBi
-YWcgYW5kIGFueSBvdGhlciBwcm9kdWN0cy4gDQpQbGVhc2UgbGV0IG1lIGtub3cgaWYgeW91IGFy
-ZSBpbnRlcmVzdGVkLiBXZSBzaGFsbCBiZSBnbGFkIHRvIGdpdmUgeW91IG91ciBxdW90YXRpb25z
-IHVwb24gcmVjZWlwdCBvZiB5b3VyIGRldGFpbGVkIHJlcXVpcmVtZW50cy4gDQpUaGFuayB5b3Ug
-Zm9yIHlvdXIgdGltZS4NCkpveSAgICAgICAgICANCmktbG92ZXByaW50IENvLixMdGQNCkVtYWls
-IDogSm95KGF0KXN1cHBseS1vdmVyc2VhLmNvbQ==
-
---=====003_Dragon472435026072_=====
-Content-Type: text/html;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-
-PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
-L0VOIj4NCjxIVE1MIHhtbG5zOm8gPSAidXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6
-b2ZmaWNlIj48SEVBRD4NCjxNRVRBIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD11dGYtOCIg
-aHR0cC1lcXVpdj1Db250ZW50LVR5cGU+DQo8TUVUQSBuYW1lPUdFTkVSQVRPUiBjb250ZW50PSJN
-U0hUTUwgMTAuMDAuOTIwMC4xNjYxOCI+PC9IRUFEPg0KPEJPRFk+DQo8UD48Rk9OVCBzaXplPTQ+
-SGkgdGhlcmUsPC9GT05UPjwvUD4NCjxQPjxGT05UIHNpemU9ND5UaGlzIGlzIEpveSBmcm9tIENo
-aW5hLiBKdXN0IHdvbmRlcmluZyBpZiB5b3UgYXJlIGludGVyZXN0ZWQgaW4gcHJpbnRpbmcgeW91
-ciBtYWdhemluZSBpbiBDaGluYS48L0ZPTlQ+PC9QPg0KPFA+PEZPTlQgc2l6ZT00Pk91ciBtYWlu
-IGJ1c2luZXNzIGlzIHRoZSBwcmludGluZyBvZiBib29rcywgY2F0YWxvZ3VlcywgYnJvY2h1cmVz
-LCBtYWdhemluZXMsIGZseWVycywgc3RpY2t5IG1lbW8gcGFkcywgcGFwZXIvcGxhc3RpYyBiYWcg
-YW5kIGFueSBvdGhlciBwcm9kdWN0cy4gPC9GT05UPjwvUD4NCjxQPjxGT05UIHNpemU9ND5QbGVh
-c2UgbGV0IG1lIGtub3cgaWYgeW91IGFyZSBpbnRlcmVzdGVkLiBXZSBzaGFsbCBiZSBnbGFkIHRv
-IGdpdmUgeW91IG91ciBxdW90YXRpb25zIHVwb24gcmVjZWlwdCBvZiB5b3VyIGRldGFpbGVkIHJl
-cXVpcmVtZW50cy4gPC9GT05UPjwvUD4NCjxQPjxGT05UIHNpemU9ND5UaGFuayB5b3UgZm9yIHlv
-dXIgdGltZS48L0ZPTlQ+PC9QPg0KPFA+PEZPTlQgc2l6ZT00PkpveSAgICAgICAgICA8L0ZPTlQ+
-PC9QPg0KPFA+PFNUUk9ORz48RU0+PEZPTlQgc2l6ZT01PmktbG92ZXByaW50IENvLixMdGQ8L0ZP
-TlQ+PC9FTT48L1NUUk9ORz48L1A+DQo8UD48Rk9OVCBzaXplPTQ+RW1haWwgOiBKb3koYXQpc3Vw
-cGx5LW92ZXJzZWEuY29tPEJSPjwvRk9OVD48L1A+PC9CT0RZPjwvSFRNTD4NCg==
-
---=====003_Dragon472435026072_=====--
+=D0=A1 =D1=83=D0=B2=D0=B0=D0=B6=D0=B5=D0=BD=D0=B8=D0=B5=D0=BC,
+=D0=AE=D0=BB=D0=B8=D1=8F =D0=91=D0=BE=D0=BD=D0=B4=D0=BE=D0=B2=D0=B0
+19.08.2014, 9:27:52
+=D0=9E=D1=82=D0=BF=D0=B8=D1=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =
+=D1=80=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8
+=20
 
 
+--X35DNGaLlTy74iial5JUTk=_dBJbIKjKUk
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
---===============5895685045534937020==
+=EF=BB=BF<HTML><HEAD>
+<STYLE>UNKNOWN=20
+</STYLE>
+</HEAD>
+<BODY>
+<TABLE style=3D"BORDER-COLLAPSE: collapse" cellSpacing=3D0 cellPadding=3D0 =
+width=3D800 align=3Dcenter>
+<TBODY>
+<TR>
+<TD style=3D"WIDTH: 100%"><A href=3D"https://u799816.ct.sendgrid.net/wf/cli=
+ck?upn=3DHLEGqpWjDtYBKpf91hQDn3b17PNaRSCmbF0oRZIpr7rylW-2FSbkcAwYEZRkw3ROIk=
+_oDb6ny51mUB6FExYn3rQhkT2mx5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NRT6Iee=
+Z6BM9hoL5PiHkG-2Fc3IT1HKKQd4eliMnh0KVO3JpkxVPaj3FSmjJc872zLpYM7VV0iWV3RlToG=
+b-2B-2BxmM4-2BTgf0aGniEeb-2Fm4dUHDsDEI9MsEZ0jj6wfV7he3XT9oSxTon60RNQmfDWl-2=
+BAA6DGeqj-2BfCqAEWmyl8ia2qGLY-3D" target=3D_blank><IMG src=3D"http://www.te=
+leport-germany.ru/epochta/img/bg2700.jpg"> </A></TD></TR></TBODY></TABLE>
+<P align=3Dright><FONT face=3DTahoma size=3D2>=D0=A1 =D1=83=D0=B2=D0=B0=D0=
+=B6=D0=B5=D0=BD=D0=B8=D0=B5=D0=BC,<BR>=D0=AE=D0=BB=D0=B8=D1=8F =D0=91=D0=BE=
+=D0=BD=D0=B4=D0=BE=D0=B2=D0=B0<BR>19.08.2014, 9:27:52</FONT></P>
+<P align=3Dright><A id=3DlinkUnsub href=3D"mailto:unsubscribe.teleport@gmai=
+l.com?subject=3DUnsubscribe"><FONT face=3DTahoma color=3D#ff8000 size=3D1>=
+=D0=9E=D1=82=D0=BF=D0=B8=D1=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =
+=D1=80=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8</FONT></A></P>
+<P align=3Dleft>&nbsp;</P><!-- Yandex.Metrika counter -->
+<SCRIPT src=3D"//www.google-analytics.com/analytics.js" async=3D"1"></SCRIP=
+T>
+
+<SCRIPT src=3D"http://mc.yandex.ru/metrika/watch.js" type=3Dtext/javascript=
+ async=3D"true"></SCRIPT>
+
+<SCRIPT type=3Dtext/javascript>
+(function (d, w, c) )(document, window, "yandex_metrika_callbacks");
+</SCRIPT>
+<NOSCRIPT></NOSCRIPT><!-- /Yandex.Metrika counter -->
+<SCRIPT>
+  (function(i,s,o,g,r,a,m)function(),i[r].l=3D1*new Date();a=3Ds.createElem=
+ent(o),)(window,document,'script','//www.google-analytics.com/analytics.js'=
+,'ga');
+
+  ga('create', 'UA-46039730-1', 'teleport-germany.ru');
+  ga('send', 'pageview');
+
+</SCRIPT>
+
+<img src=3D"https://u799816.ct.sendgrid.net/wf/open?upn=3DoDb6ny51mUB6FExYn=
+3rQhkT2mx5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NRT6IeeZ6BM9hoL5PiHkG-2Fe=
+qN5hS6-2BGrpB01Zx7DPWD6hxnuoJ9BiUcdQd-2F7u-2FJ76LVNea3oIxJnwwxbxdIlgDfMCKpn=
+fUahjBviwkclrQLfyR39vf4u5ZbjV05PIRndHOgxolgGGgFZL-2FFbighmDuFV0cRuTUAM1UbWo=
+8g7Co08-3D" alt=3D"" width=3D"1" height=3D"1" border=3D"0" style=3D"height:=
+1px !important;width:1px !important;border-width:0 !important;margin-top:0 =
+!important;margin-bottom:0 !important;margin-right:0 !important;margin-left=
+:0 !important;padding-top:0 !important;padding-bottom:0 !important;padding-=
+right:0 !important;padding-left:0 !important;"/>
+</BODY></HTML>
+
+
+
+--X35DNGaLlTy74iial5JUTk=_dBJbIKjKUk--
+
+--lrjncowltUdLOLhdf=_xaRjX3j6Y1aW0nh--
+
+
+
+--===============6934266566010605272==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -87,7 +136,7 @@ Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 
---===============5895685045534937020==
+--===============6934266566010605272==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -98,4 +147,4 @@ Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
---===============5895685045534937020==--
+--===============6934266566010605272==--
