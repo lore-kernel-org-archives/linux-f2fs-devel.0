@@ -1,49 +1,102 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: trigger release_dirty_inode in
-	f2fs_put_super
-Date: Wed, 20 Aug 2014 17:33:58 +0800
-Message-ID: <007a01cfbc5a$035849f0$0a08ddd0$@samsung.com>
-References: <1408467177-69746-1-git-send-email-jaegeuk@kernel.org>
- <1408467177-69746-2-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH 13/13] f2fs: handle EIO not to break
+	fs	consistency
+Date: Wed, 20 Aug 2014 18:35:18 +0800
+Message-ID: <007f01cfbc62$8aeb3140$a0c193c0$@samsung.com>
+References: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
+	<1407872967-26423-13-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1408467177-69746-2-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XK3Fr-0008N8-Gi
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 20 Aug 2014 10:36:35 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XK3Fo-00064F-Rf
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 20 Aug 2014 10:36:35 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NAL00H8OPG5OQ00@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 20 Aug 2014 19:36:05 +0900 (KST)
+In-reply-to: <1407872967-26423-13-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+
+Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, August 20, 2014 12:53 AM
+> Sent: Wednesday, August 13, 2014 3:49 AM
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 2/2] f2fs: trigger release_dirty_inode in f2fs_put_super
+> Subject: [f2fs-dev] [PATCH 13/13] f2fs: handle EIO not to break fs consistency
 > 
-> The generic_shutdown_super calls sync_filesystem, evict_inode, and then
-> f2fs_put_super. In f2fs_evict_inode, we remain some dirty inode information
-> so we should release them at f2fs_put_super.
+> There are two rules when EIO is occurred.
+> 1. don't write any checkpoint data to preserve the previous checkpoint
+> 2. don't lose the cached data/node/meta pages
+> 
+> So, at first, this patch adds set_page_dirty in f2fs_write_end_io's failure.
+> Then, writing checkpoint/dentry/node blocks is not allowed.
+
+do_checkpoint()
+	/* wait for previous submitted node/meta pages writeback */
+	wait_on_all_pages_writeback(sbi);
+
+	if (unlikely(f2fs_cp_error(sbi)))
+		return;
+add here to prevent unneeded syncing for meta/node pages.
+
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
-Looks good to me now, add this please:
-
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-
 > ---
->  fs/f2fs/checkpoint.c | 2 +-
->  fs/f2fs/super.c      | 3 +++
->  2 files changed, 4 insertions(+), 1 deletion(-)
+>  fs/f2fs/checkpoint.c | 47 +++++++++++++++++++++++++++++++++--------------
+>  fs/f2fs/data.c       | 10 +++++++++-
+>  fs/f2fs/f2fs.h       |  1 +
+>  fs/f2fs/node.c       |  2 ++
+>  fs/f2fs/super.c      |  3 +++
+>  5 files changed, 48 insertions(+), 15 deletions(-)
 > 
 > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 7e1c13b..f14af91 100644
+> index d074e27..b365c64 100644
 > --- a/fs/f2fs/checkpoint.c
 > +++ b/fs/f2fs/checkpoint.c
-> @@ -348,7 +348,7 @@ bool exist_written_data(struct f2fs_sb_info *sbi, nid_t ino, int mode)
+> @@ -160,14 +160,11 @@ static int f2fs_write_meta_page(struct page *page,
+>  		goto redirty_out;
+>  	if (wbc->for_reclaim)
+>  		goto redirty_out;
+> -
+> -	/* Should not write any meta pages, if any IO error was occurred */
+>  	if (unlikely(f2fs_cp_error(sbi)))
+> -		goto no_write;
+> +		goto redirty_out;
+> 
+>  	f2fs_wait_on_page_writeback(page, META);
+>  	write_meta_page(sbi, page);
+> -no_write:
+>  	dec_page_count(sbi, F2FS_DIRTY_META);
+>  	unlock_page(page);
+>  	return 0;
+> @@ -348,7 +345,7 @@ bool exist_written_data(struct f2fs_sb_info *sbi, nid_t ino, int mode)
 >  	return e ? true : false;
 >  }
 > 
@@ -52,15 +105,176 @@ Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 >  {
 >  	struct ino_entry *e, *tmp;
 >  	int i;
+> @@ -737,7 +734,7 @@ retry:
+>  /*
+>   * Freeze all the FS-operations for checkpoint.
+>   */
+> -static void block_operations(struct f2fs_sb_info *sbi)
+> +static int block_operations(struct f2fs_sb_info *sbi)
+>  {
+>  	struct writeback_control wbc = {
+>  		.sync_mode = WB_SYNC_ALL,
+> @@ -745,6 +742,7 @@ static void block_operations(struct f2fs_sb_info *sbi)
+>  		.for_reclaim = 0,
+>  	};
+>  	struct blk_plug plug;
+> +	int err = 0;
+> 
+>  	blk_start_plug(&plug);
+> 
+> @@ -754,6 +752,10 @@ retry_flush_dents:
+>  	if (get_pages(sbi, F2FS_DIRTY_DENTS)) {
+>  		f2fs_unlock_all(sbi);
+>  		sync_dirty_dir_inodes(sbi);
+> +		if (unlikely(f2fs_cp_error(sbi))) {
+> +			err = -EIO;
+> +			goto out;
+> +		}
+>  		goto retry_flush_dents;
+>  	}
+> 
+> @@ -767,9 +769,16 @@ retry_flush_nodes:
+>  	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
+>  		up_write(&sbi->node_write);
+>  		sync_node_pages(sbi, 0, &wbc);
+> +		if (unlikely(f2fs_cp_error(sbi))) {
+> +			f2fs_unlock_all(sbi);
+> +			err = -EIO;
+> +			goto out;
+> +		}
+>  		goto retry_flush_nodes;
+>  	}
+> +out:
+>  	blk_finish_plug(&plug);
+> +	return err;
+>  }
+> 
+>  static void unblock_operations(struct f2fs_sb_info *sbi)
+> @@ -813,8 +822,11 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+>  	discard_next_dnode(sbi, NEXT_FREE_BLKADDR(sbi, curseg));
+> 
+>  	/* Flush all the NAT/SIT pages */
+> -	while (get_pages(sbi, F2FS_DIRTY_META))
+> +	while (get_pages(sbi, F2FS_DIRTY_META)) {
+>  		sync_meta_pages(sbi, META, LONG_MAX);
+> +		if (unlikely(f2fs_cp_error(sbi)))
+> +			return;
+> +	}
+> 
+>  	next_free_nid(sbi, &last_nid);
+> 
+> @@ -931,14 +943,19 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+>  	sbi->last_valid_block_count = sbi->total_valid_block_count;
+>  	sbi->alloc_valid_block_count = 0;
+> 
+> +	if (unlikely(f2fs_cp_error(sbi)))
+> +		return;
+> +
+>  	/* Here, we only have one bio having CP pack */
+>  	sync_meta_pages(sbi, META_FLUSH, LONG_MAX);
+> 
+> -	if (!f2fs_cp_error(sbi)) {
+> -		clear_prefree_segments(sbi);
+> -		release_dirty_inode(sbi);
+> -		F2FS_RESET_SB_DIRT(sbi);
+> -	}
+> +	release_dirty_inode(sbi);
+> +
+> +	if (unlikely(f2fs_cp_error(sbi)))
+> +		return;
+> +
+> +	clear_prefree_segments(sbi);
+> +	F2FS_RESET_SB_DIRT(sbi);
+>  }
+> 
+>  /*
+> @@ -955,8 +972,10 @@ void write_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+> 
+>  	if (!sbi->s_dirty)
+>  		goto out;
+> -
+> -	block_operations(sbi);
+> +	if (unlikely(f2fs_cp_error(sbi)))
+> +		goto out;
+> +	if (block_operations(sbi))
+> +		goto out;
+> 
+>  	trace_f2fs_write_checkpoint(sbi->sb, is_umount, "finish block_ops");
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index ac3ccc2..68834e2 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -53,7 +53,7 @@ static void f2fs_write_end_io(struct bio *bio, int err)
+>  		struct page *page = bvec->bv_page;
+> 
+>  		if (unlikely(err)) {
+> -			SetPageError(page);
+> +			set_page_dirty(page);
+>  			set_bit(AS_EIO, &page->mapping->flags);
+>  			f2fs_stop_checkpoint(sbi);
+>  		}
+> @@ -836,10 +836,18 @@ write:
+> 
+>  	/* Dentry blocks are controlled by checkpoint */
+>  	if (S_ISDIR(inode->i_mode)) {
+> +		if (unlikely(f2fs_cp_error(sbi)))
+> +			goto redirty_out;
+>  		err = do_write_data_page(page, &fio);
+>  		goto done;
+>  	}
+> 
+> +	if (unlikely(f2fs_cp_error(sbi))) {
+> +		SetPageError(page);
+> +		unlock_page(page);
+> +		return 0;
+
+Without redirtying it, we may lose cached page here which against the
+second rule.
+
+Thanks,
+Yu
+
+
+> +	}
+> +
+>  	if (!wbc->for_reclaim)
+>  		need_balance_fs = true;
+>  	else if (has_not_enough_free_secs(sbi, 0))
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 46ceb88..2d009ae 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1267,6 +1267,7 @@ int ra_meta_pages(struct f2fs_sb_info *, int, int, int);
+>  long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
+>  void add_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
+>  void remove_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
+> +void release_dirty_inode(struct f2fs_sb_info *);
+>  bool exist_written_data(struct f2fs_sb_info *, nid_t, int);
+>  int acquire_orphan_inode(struct f2fs_sb_info *);
+>  void release_orphan_inode(struct f2fs_sb_info *);
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 9f126f8..d2f7842 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1215,6 +1215,8 @@ static int f2fs_write_node_page(struct page *page,
+> 
+>  	if (unlikely(sbi->por_doing))
+>  		goto redirty_out;
+> +	if (unlikely(f2fs_cp_error(sbi)))
+> +		goto redirty_out;
+> 
+>  	f2fs_wait_on_page_writeback(page, NODE);
+> 
 > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 60e3554..7a54779 100644
+> index c4f90cd..c999d67 100644
 > --- a/fs/f2fs/super.c
 > +++ b/fs/f2fs/super.c
 > @@ -435,6 +435,9 @@ static void f2fs_put_super(struct super_block *sb)
 >  	if (sbi->s_dirty)
 >  		write_checkpoint(sbi, true);
 > 
-> +	/* normally superblock is clean, so we need to release this */
+> +	/* EIO will skip do checkpoint, so here we need to release this */
 > +	release_dirty_inode(sbi);
 > +
 >  	iput(sbi->node_inode);
@@ -76,3 +290,8 @@ Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
+
+------------------------------------------------------------------------------
+Slashdot TV.  
+Video for Nerds.  Stuff that matters.
+http://tv.slashdot.org/
