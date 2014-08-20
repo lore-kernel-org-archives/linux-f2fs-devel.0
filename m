@@ -1,23 +1,36 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] fsck.f2fs: show inode numbers
-Date: Tue, 19 Aug 2014 15:21:12 -0700
-Message-ID: <1408486872-78010-2-git-send-email-jaegeuk@kernel.org>
-References: <1408486872-78010-1-git-send-email-jaegeuk@kernel.org>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH 3/4] f2fs: avoid double lock in
+	truncate_blocks
+Date: Wed, 20 Aug 2014 10:07:04 +0800
+Message-ID: <005e01cfbc1b$8be08600$a3a19200$@samsung.com>
+References: <1408140229-54949-1-git-send-email-jaegeuk@kernel.org>
+	<1408140229-54949-3-git-send-email-jaegeuk@kernel.org>
+	<003401cfbb84$441c5b60$cc551220$@samsung.com>
+	<20140819165808.GA69881@jaegeuk-mac02>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XJrmc-0006XD-M0
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XJvJj-0000qn-Az
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Aug 2014 22:21:38 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XJrmb-0002Y1-L8 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Aug 2014 22:21:38 +0000
-In-Reply-To: <1408486872-78010-1-git-send-email-jaegeuk@kernel.org>
+	Wed, 20 Aug 2014 02:08:03 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XJvJg-00019o-Up
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 20 Aug 2014 02:08:03 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NAL00L0F1X3RL50@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 20 Aug 2014 11:07:51 +0900 (KST)
+In-reply-to: <20140819165808.GA69881@jaegeuk-mac02>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,44 +40,196 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-fsck.f2fs -d 1 [dev]
- : shows inode informations
-fsck.f2fs -d -1 [dev]
- : shows directory tree with inode number
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Wednesday, August 20, 2014 12:58 AM
+> To: Chao Yu
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 3/4] f2fs: avoid double lock in truncate_blocks
+> 
+> On Tue, Aug 19, 2014 at 04:04:11PM +0800, Chao Yu wrote:
+> > Hi Jaegeuk,
+> >
+> > > -----Original Message-----
+> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > Sent: Saturday, August 16, 2014 6:04 AM
+> > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > > linux-f2fs-devel@lists.sourceforge.net
+> > > Cc: Jaegeuk Kim
+> > > Subject: [f2fs-dev] [PATCH 3/4] f2fs: avoid double lock in truncate_blocks
+> > >
+> > > The init_inode_metadata calls truncate_blocks when error is occurred.
+> > > The callers holds f2fs_lock_op, so we should not call it again in
+> > > truncate_blocks.
+> >
+> > Nice catch! Your solution is a good way to fix this issue.
+> >
+> > Previously, in create inode path, I found there are some redundant codes between
+> > init_inode_metadata and evict_inode, including:
+> > 	truncate_inode_pages(&inode->i_data, 0);
+> > 	truncate_blocks(inode, 0);
+> > 	remove_dirty_dir_inode(inode);
+> > 	remove_inode_page(inode);
+> >
+> > So I think there is another way to fix this issue by removing error path handling
+> > codes in init_inode_metadata, not making the inode bad to left garbage clean work in
+> > evict_inode. In this way we can avoid adding additional argument for all different
+> > callers.
+> 
+> Well, possible.
+> But we need to take a closer look at the race condition on the inode cache.
+> What can happen if this bad inode is reassigned to the other thread?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/fsck.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+I don't get it. As I know, in evict(), we call ->evict_inode before
+remove_inode_hash(), so before all clean work was done we will not reassign
+this hashed uncleaned inode to other thread.
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 0f48918..2d8dffb 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -506,7 +506,8 @@ static void print_dentry(__u32 depth, __u8 *name,
- 
- 	for (i = 1; i < depth; i++)
- 		printf("%c   ", tree_mark[i]);
--	printf("%c-- %s\n", last_de ? '`' : '|', name);
-+	printf("%c-- %s 0x%x\n", last_de ? '`' : '|',
-+				name, le32_to_cpu(de_blk->dentry[idx].ino));
- }
- 
- int fsck_chk_dentry_blk(struct f2fs_sb_info *sbi,
-@@ -561,7 +562,7 @@ int fsck_chk_dentry_blk(struct f2fs_sb_info *sbi,
- 			}
- 		}
- 
--		DBG(2, "[%3u] - no[0x%x] name[%s] len[0x%x] ino[0x%x] type[0x%x]\n",
-+		DBG(1, "[%3u] - no[0x%x] name[%s] len[0x%x] ino[0x%x] type[0x%x]\n",
- 				fsck->dentry_depth, i, name, name_len,
- 				le32_to_cpu(de_blk->dentry[i].ino),
- 				de_blk->dentry[i].file_type);
--- 
-1.8.5.2 (Apple Git-48)
+Am I missing anything?
+
+Regards,
+Yu
+
+> 
+> >
+> > How do you think?
+> >
+> > Thanks,
+> > Yu
+> >
+> > >
+> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > ---
+> > >  fs/f2fs/data.c   |  2 +-
+> > >  fs/f2fs/dir.c    |  2 +-
+> > >  fs/f2fs/f2fs.h   |  2 +-
+> > >  fs/f2fs/file.c   | 13 ++++++++-----
+> > >  fs/f2fs/inline.c |  2 +-
+> > >  5 files changed, 12 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > index 68834e2..14cc3e8 100644
+> > > --- a/fs/f2fs/data.c
+> > > +++ b/fs/f2fs/data.c
+> > > @@ -935,7 +935,7 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t
+> to)
+> > >
+> > >  	if (to > inode->i_size) {
+> > >  		truncate_pagecache(inode, inode->i_size);
+> > > -		truncate_blocks(inode, inode->i_size);
+> > > +		truncate_blocks(inode, inode->i_size, true);
+> > >  	}
+> > >  }
+> > >
+> > > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > > index a69bbfa..155fb05 100644
+> > > --- a/fs/f2fs/dir.c
+> > > +++ b/fs/f2fs/dir.c
+> > > @@ -391,7 +391,7 @@ put_error:
+> > >  error:
+> > >  	/* once the failed inode becomes a bad inode, i_mode is S_IFREG */
+> > >  	truncate_inode_pages(&inode->i_data, 0);
+> > > -	truncate_blocks(inode, 0);
+> > > +	truncate_blocks(inode, 0, false);
+> > >  	remove_dirty_dir_inode(inode);
+> > >  	remove_inode_page(inode);
+> > >  	return ERR_PTR(err);
+> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > index 2723b2d..7f976c1 100644
+> > > --- a/fs/f2fs/f2fs.h
+> > > +++ b/fs/f2fs/f2fs.h
+> > > @@ -1122,7 +1122,7 @@ static inline void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi)
+> > >   */
+> > >  int f2fs_sync_file(struct file *, loff_t, loff_t, int);
+> > >  void truncate_data_blocks(struct dnode_of_data *);
+> > > -int truncate_blocks(struct inode *, u64);
+> > > +int truncate_blocks(struct inode *, u64, bool);
+> > >  void f2fs_truncate(struct inode *);
+> > >  int f2fs_getattr(struct vfsmount *, struct dentry *, struct kstat *);
+> > >  int f2fs_setattr(struct dentry *, struct iattr *);
+> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > index ecbdf6a..a8e97f8 100644
+> > > --- a/fs/f2fs/file.c
+> > > +++ b/fs/f2fs/file.c
+> > > @@ -422,7 +422,7 @@ out:
+> > >  	f2fs_put_page(page, 1);
+> > >  }
+> > >
+> > > -int truncate_blocks(struct inode *inode, u64 from)
+> > > +int truncate_blocks(struct inode *inode, u64 from, bool lock)
+> > >  {
+> > >  	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+> > >  	unsigned int blocksize = inode->i_sb->s_blocksize;
+> > > @@ -438,14 +438,16 @@ int truncate_blocks(struct inode *inode, u64 from)
+> > >  	free_from = (pgoff_t)
+> > >  			((from + blocksize - 1) >> (sbi->log_blocksize));
+> > >
+> > > -	f2fs_lock_op(sbi);
+> > > +	if (lock)
+> > > +		f2fs_lock_op(sbi);
+> > >
+> > >  	set_new_dnode(&dn, inode, NULL, NULL, 0);
+> > >  	err = get_dnode_of_data(&dn, free_from, LOOKUP_NODE);
+> > >  	if (err) {
+> > >  		if (err == -ENOENT)
+> > >  			goto free_next;
+> > > -		f2fs_unlock_op(sbi);
+> > > +		if (lock)
+> > > +			f2fs_unlock_op(sbi);
+> > >  		trace_f2fs_truncate_blocks_exit(inode, err);
+> > >  		return err;
+> > >  	}
+> > > @@ -463,7 +465,8 @@ int truncate_blocks(struct inode *inode, u64 from)
+> > >  	f2fs_put_dnode(&dn);
+> > >  free_next:
+> > >  	err = truncate_inode_blocks(inode, free_from);
+> > > -	f2fs_unlock_op(sbi);
+> > > +	if (lock)
+> > > +		f2fs_unlock_op(sbi);
+> > >  done:
+> > >  	/* lastly zero out the first data page */
+> > >  	truncate_partial_data_page(inode, from);
+> > > @@ -480,7 +483,7 @@ void f2fs_truncate(struct inode *inode)
+> > >
+> > >  	trace_f2fs_truncate(inode);
+> > >
+> > > -	if (!truncate_blocks(inode, i_size_read(inode))) {
+> > > +	if (!truncate_blocks(inode, i_size_read(inode), true)) {
+> > >  		inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+> > >  		mark_inode_dirty(inode);
+> > >  	}
+> > > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> > > index 520758b..4d1f39f 100644
+> > > --- a/fs/f2fs/inline.c
+> > > +++ b/fs/f2fs/inline.c
+> > > @@ -247,7 +247,7 @@ process_inline:
+> > >  		update_inode(inode, ipage);
+> > >  		f2fs_put_page(ipage, 1);
+> > >  	} else if (ri && (ri->i_inline & F2FS_INLINE_DATA)) {
+> > > -		truncate_blocks(inode, 0);
+> > > +		truncate_blocks(inode, 0, false);
+> > >  		set_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
+> > >  		goto process_inline;
+> > >  	}
+> > > --
+> > > 1.8.5.2 (Apple Git-48)
+> > >
+> > >
+> > > ------------------------------------------------------------------------------
+> > > _______________________________________________
+> > > Linux-f2fs-devel mailing list
+> > > Linux-f2fs-devel@lists.sourceforge.net
+> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >
+> >
+> > ------------------------------------------------------------------------------
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 ------------------------------------------------------------------------------
