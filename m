@@ -1,33 +1,30 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 13/13] f2fs: handle EIO not to break
-	fs	consistency
-Date: Wed, 20 Aug 2014 18:35:18 +0800
-Message-ID: <007f01cfbc62$8aeb3140$a0c193c0$@samsung.com>
-References: <1407872967-26423-1-git-send-email-jaegeuk@kernel.org>
-	<1407872967-26423-13-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/3] f2fs: fix incorrect calculation with
+ total/free inode num
+Date: Wed, 20 Aug 2014 18:36:46 +0800
+Message-ID: <008001cfbc62$bb9959c0$32cc0d40$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XK3Fr-0008N8-Gi
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XK3H4-0004ah-My
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Aug 2014 10:36:35 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
+	Wed, 20 Aug 2014 10:37:50 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XK3Fo-00064F-Rf
+	(Exim 4.76) id 1XK3H2-00066H-JN
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Aug 2014 10:36:35 +0000
+	Wed, 20 Aug 2014 10:37:50 +0000
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
+	by mailout3.samsung.com
 	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
 	(built Nov
-	17 2011)) with ESMTP id <0NAL00H8OPG5OQ00@mailout1.samsung.com> for
+	17 2011)) with ESMTP id <0NAL0080IPIFP000@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 20 Aug 2014 19:36:05 +0900 (KST)
-In-reply-to: <1407872967-26423-13-git-send-email-jaegeuk@kernel.org>
+	Wed, 20 Aug 2014 19:37:27 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -38,257 +35,69 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+Theoretically, our total inodes number is the same as total node number, but
+there are three node ids are reserved in f2fs, they are 0, 1 (node nid), and 2
+(meta nid), and they should never be used by user, so our total/free inode
+number calculated in ->statfs is wrong.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, August 13, 2014 3:49 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 13/13] f2fs: handle EIO not to break fs consistency
-> 
-> There are two rules when EIO is occurred.
-> 1. don't write any checkpoint data to preserve the previous checkpoint
-> 2. don't lose the cached data/node/meta pages
-> 
-> So, at first, this patch adds set_page_dirty in f2fs_write_end_io's failure.
-> Then, writing checkpoint/dentry/node blocks is not allowed.
+This patch indroduces F2FS_RESERVED_NODE_NUM and then fixes this issue by
+recalculating total/free inode number with the macro.
 
-do_checkpoint()
-	/* wait for previous submitted node/meta pages writeback */
-	wait_on_all_pages_writeback(sbi);
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/node.c          | 2 +-
+ fs/f2fs/super.c         | 4 ++--
+ include/linux/f2fs_fs.h | 3 +++
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-	if (unlikely(f2fs_cp_error(sbi)))
-		return;
-add here to prevent unneeded syncing for meta/node pages.
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index d3d90d2..b21a04d 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1967,7 +1967,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+ 	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks;
+ 
+ 	/* not used nids: 0, node, meta, (and root counted as valid node) */
+-	nm_i->available_nids = nm_i->max_nid - 3;
++	nm_i->available_nids = nm_i->max_nid - F2FS_RESERVED_NODE_NUM;
+ 	nm_i->fcnt = 0;
+ 	nm_i->nat_cnt = 0;
+ 	nm_i->ram_thresh = DEF_RAM_THRESHOLD;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 657582f..85d0ae3 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -505,8 +505,8 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	buf->f_bfree = buf->f_blocks - valid_user_blocks(sbi) - ovp_count;
+ 	buf->f_bavail = user_block_count - valid_user_blocks(sbi);
+ 
+-	buf->f_files = sbi->total_node_count;
+-	buf->f_ffree = sbi->total_node_count - valid_inode_count(sbi);
++	buf->f_files = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
++	buf->f_ffree = buf->f_files - valid_inode_count(sbi);
+ 
+ 	buf->f_namelen = F2FS_NAME_LEN;
+ 	buf->f_fsid.val[0] = (u32)id;
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 6ff0b0b..0ed77f3 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -24,6 +24,9 @@
+ #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
+ #define NEW_ADDR		((block_t)-1)	/* used as block_t addresses */
+ 
++/* 0, 1(node nid), 2(meta nid) are reserved node id */
++#define F2FS_RESERVED_NODE_NUM		3
++
+ #define F2FS_ROOT_INO(sbi)	(sbi->root_ino_num)
+ #define F2FS_NODE_INO(sbi)	(sbi->node_ino_num)
+ #define F2FS_META_INO(sbi)	(sbi->meta_ino_num)
+-- 
+2.0.1.474.g72c7794
 
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/checkpoint.c | 47 +++++++++++++++++++++++++++++++++--------------
->  fs/f2fs/data.c       | 10 +++++++++-
->  fs/f2fs/f2fs.h       |  1 +
->  fs/f2fs/node.c       |  2 ++
->  fs/f2fs/super.c      |  3 +++
->  5 files changed, 48 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index d074e27..b365c64 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -160,14 +160,11 @@ static int f2fs_write_meta_page(struct page *page,
->  		goto redirty_out;
->  	if (wbc->for_reclaim)
->  		goto redirty_out;
-> -
-> -	/* Should not write any meta pages, if any IO error was occurred */
->  	if (unlikely(f2fs_cp_error(sbi)))
-> -		goto no_write;
-> +		goto redirty_out;
-> 
->  	f2fs_wait_on_page_writeback(page, META);
->  	write_meta_page(sbi, page);
-> -no_write:
->  	dec_page_count(sbi, F2FS_DIRTY_META);
->  	unlock_page(page);
->  	return 0;
-> @@ -348,7 +345,7 @@ bool exist_written_data(struct f2fs_sb_info *sbi, nid_t ino, int mode)
->  	return e ? true : false;
->  }
-> 
-> -static void release_dirty_inode(struct f2fs_sb_info *sbi)
-> +void release_dirty_inode(struct f2fs_sb_info *sbi)
->  {
->  	struct ino_entry *e, *tmp;
->  	int i;
-> @@ -737,7 +734,7 @@ retry:
->  /*
->   * Freeze all the FS-operations for checkpoint.
->   */
-> -static void block_operations(struct f2fs_sb_info *sbi)
-> +static int block_operations(struct f2fs_sb_info *sbi)
->  {
->  	struct writeback_control wbc = {
->  		.sync_mode = WB_SYNC_ALL,
-> @@ -745,6 +742,7 @@ static void block_operations(struct f2fs_sb_info *sbi)
->  		.for_reclaim = 0,
->  	};
->  	struct blk_plug plug;
-> +	int err = 0;
-> 
->  	blk_start_plug(&plug);
-> 
-> @@ -754,6 +752,10 @@ retry_flush_dents:
->  	if (get_pages(sbi, F2FS_DIRTY_DENTS)) {
->  		f2fs_unlock_all(sbi);
->  		sync_dirty_dir_inodes(sbi);
-> +		if (unlikely(f2fs_cp_error(sbi))) {
-> +			err = -EIO;
-> +			goto out;
-> +		}
->  		goto retry_flush_dents;
->  	}
-> 
-> @@ -767,9 +769,16 @@ retry_flush_nodes:
->  	if (get_pages(sbi, F2FS_DIRTY_NODES)) {
->  		up_write(&sbi->node_write);
->  		sync_node_pages(sbi, 0, &wbc);
-> +		if (unlikely(f2fs_cp_error(sbi))) {
-> +			f2fs_unlock_all(sbi);
-> +			err = -EIO;
-> +			goto out;
-> +		}
->  		goto retry_flush_nodes;
->  	}
-> +out:
->  	blk_finish_plug(&plug);
-> +	return err;
->  }
-> 
->  static void unblock_operations(struct f2fs_sb_info *sbi)
-> @@ -813,8 +822,11 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
->  	discard_next_dnode(sbi, NEXT_FREE_BLKADDR(sbi, curseg));
-> 
->  	/* Flush all the NAT/SIT pages */
-> -	while (get_pages(sbi, F2FS_DIRTY_META))
-> +	while (get_pages(sbi, F2FS_DIRTY_META)) {
->  		sync_meta_pages(sbi, META, LONG_MAX);
-> +		if (unlikely(f2fs_cp_error(sbi)))
-> +			return;
-> +	}
-> 
->  	next_free_nid(sbi, &last_nid);
-> 
-> @@ -931,14 +943,19 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
->  	sbi->last_valid_block_count = sbi->total_valid_block_count;
->  	sbi->alloc_valid_block_count = 0;
-> 
-> +	if (unlikely(f2fs_cp_error(sbi)))
-> +		return;
-> +
->  	/* Here, we only have one bio having CP pack */
->  	sync_meta_pages(sbi, META_FLUSH, LONG_MAX);
-> 
-> -	if (!f2fs_cp_error(sbi)) {
-> -		clear_prefree_segments(sbi);
-> -		release_dirty_inode(sbi);
-> -		F2FS_RESET_SB_DIRT(sbi);
-> -	}
-> +	release_dirty_inode(sbi);
-> +
-> +	if (unlikely(f2fs_cp_error(sbi)))
-> +		return;
-> +
-> +	clear_prefree_segments(sbi);
-> +	F2FS_RESET_SB_DIRT(sbi);
->  }
-> 
->  /*
-> @@ -955,8 +972,10 @@ void write_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
-> 
->  	if (!sbi->s_dirty)
->  		goto out;
-> -
-> -	block_operations(sbi);
-> +	if (unlikely(f2fs_cp_error(sbi)))
-> +		goto out;
-> +	if (block_operations(sbi))
-> +		goto out;
-> 
->  	trace_f2fs_write_checkpoint(sbi->sb, is_umount, "finish block_ops");
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index ac3ccc2..68834e2 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -53,7 +53,7 @@ static void f2fs_write_end_io(struct bio *bio, int err)
->  		struct page *page = bvec->bv_page;
-> 
->  		if (unlikely(err)) {
-> -			SetPageError(page);
-> +			set_page_dirty(page);
->  			set_bit(AS_EIO, &page->mapping->flags);
->  			f2fs_stop_checkpoint(sbi);
->  		}
-> @@ -836,10 +836,18 @@ write:
-> 
->  	/* Dentry blocks are controlled by checkpoint */
->  	if (S_ISDIR(inode->i_mode)) {
-> +		if (unlikely(f2fs_cp_error(sbi)))
-> +			goto redirty_out;
->  		err = do_write_data_page(page, &fio);
->  		goto done;
->  	}
-> 
-> +	if (unlikely(f2fs_cp_error(sbi))) {
-> +		SetPageError(page);
-> +		unlock_page(page);
-> +		return 0;
-
-Without redirtying it, we may lose cached page here which against the
-second rule.
-
-Thanks,
-Yu
-
-
-> +	}
-> +
->  	if (!wbc->for_reclaim)
->  		need_balance_fs = true;
->  	else if (has_not_enough_free_secs(sbi, 0))
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 46ceb88..2d009ae 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1267,6 +1267,7 @@ int ra_meta_pages(struct f2fs_sb_info *, int, int, int);
->  long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
->  void add_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
->  void remove_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
-> +void release_dirty_inode(struct f2fs_sb_info *);
->  bool exist_written_data(struct f2fs_sb_info *, nid_t, int);
->  int acquire_orphan_inode(struct f2fs_sb_info *);
->  void release_orphan_inode(struct f2fs_sb_info *);
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 9f126f8..d2f7842 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1215,6 +1215,8 @@ static int f2fs_write_node_page(struct page *page,
-> 
->  	if (unlikely(sbi->por_doing))
->  		goto redirty_out;
-> +	if (unlikely(f2fs_cp_error(sbi)))
-> +		goto redirty_out;
-> 
->  	f2fs_wait_on_page_writeback(page, NODE);
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index c4f90cd..c999d67 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -435,6 +435,9 @@ static void f2fs_put_super(struct super_block *sb)
->  	if (sbi->s_dirty)
->  		write_checkpoint(sbi, true);
-> 
-> +	/* EIO will skip do checkpoint, so here we need to release this */
-> +	release_dirty_inode(sbi);
-> +
->  	iput(sbi->node_inode);
->  	iput(sbi->meta_inode);
-> 
-> --
-> 1.8.5.2 (Apple Git-48)
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 ------------------------------------------------------------------------------
