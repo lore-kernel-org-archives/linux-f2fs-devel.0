@@ -1,21 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: remove rename and use rename2
-Date: Thu, 21 Aug 2014 13:46:39 -0700
-Message-ID: <1408653999-86902-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH 3/3] f2fs: use macro for code readability
+Date: Thu, 21 Aug 2014 13:50:13 -0700
+Message-ID: <20140821205013.GC85961@jaegeuk-mac02.mot-mobility.com>
+References: <008201cfbc63$0042b670$00c82350$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XKZFu-00047C-84
+	(envelope-from <jaegeuk@kernel.org>) id 1XKZJN-0004O8-EW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Aug 2014 20:46:46 +0000
+	Thu, 21 Aug 2014 20:50:21 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XKZFs-000149-EG for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Aug 2014 20:46:45 +0000
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XKZJL-0001iV-Sm for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 21 Aug 2014 20:50:21 +0000
+Content-Disposition: inline
+In-Reply-To: <008201cfbc63$0042b670$00c82350$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,37 +28,160 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Refer the following patch.
+On Wed, Aug 20, 2014 at 06:38:40PM +0800, Chao Yu wrote:
+> This patch introduces DEF_NIDS_PER_INODE/GET_ORPHAN_BLOCKS/F2FS_CP_PARK_NUM macro
 
-commit 7177a9c4b509eb357cc450256bc3cf39f1a1e639
-Author: Miklos Szeredi <mszeredi@suse.cz>
-Date:   Wed Jul 23 15:15:30 2014 +0200
+F2FS_CP_PACKS?
 
-    fs: call rename2 if exists
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/namei.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index eb407d2..6b53ce9 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -704,7 +704,6 @@ const struct inode_operations f2fs_dir_inode_operations = {
- 	.mkdir		= f2fs_mkdir,
- 	.rmdir		= f2fs_rmdir,
- 	.mknod		= f2fs_mknod,
--	.rename		= f2fs_rename,
- 	.rename2	= f2fs_rename2,
- 	.tmpfile	= f2fs_tmpfile,
- 	.getattr	= f2fs_getattr,
--- 
-1.8.5.2 (Apple Git-48)
-
+> instead of numbers in code for readability.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/checkpoint.c    | 21 ++++++++++-----------
+>  include/linux/f2fs_fs.h | 13 ++++++++++---
+>  2 files changed, 20 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 6aeed5b..b0b6079 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -446,8 +446,8 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
+>  	struct f2fs_orphan_block *orphan_blk = NULL;
+>  	unsigned int nentries = 0;
+>  	unsigned short index;
+> -	unsigned short orphan_blocks = (unsigned short)((sbi->n_orphans +
+> -		(F2FS_ORPHANS_PER_BLOCK - 1)) / F2FS_ORPHANS_PER_BLOCK);
+> +	unsigned short orphan_blocks =
+> +			(unsigned short)GET_ORPHAN_BLOCKS(sbi->n_orphans);
+>  	struct page *page = NULL;
+>  	struct ino_entry *orphan = NULL;
+>  
+> @@ -825,7 +825,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+>  	ckpt->elapsed_time = cpu_to_le64(get_mtime(sbi));
+>  	ckpt->valid_block_count = cpu_to_le64(valid_user_blocks(sbi));
+>  	ckpt->free_segment_count = cpu_to_le32(free_segments(sbi));
+> -	for (i = 0; i < 3; i++) {
+> +	for (i = 0; i < NR_CURSEG_NODE_TYPE; i++) {
+>  		ckpt->cur_node_segno[i] =
+>  			cpu_to_le32(curseg_segno(sbi, i + CURSEG_HOT_NODE));
+>  		ckpt->cur_node_blkoff[i] =
+> @@ -833,7 +833,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+>  		ckpt->alloc_type[i + CURSEG_HOT_NODE] =
+>  				curseg_alloc_type(sbi, i + CURSEG_HOT_NODE);
+>  	}
+> -	for (i = 0; i < 3; i++) {
+> +	for (i = 0; i < NR_CURSEG_DATA_TYPE; i++) {
+>  		ckpt->cur_data_segno[i] =
+>  			cpu_to_le32(curseg_segno(sbi, i + CURSEG_HOT_DATA));
+>  		ckpt->cur_data_blkoff[i] =
+> @@ -848,24 +848,23 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, bool is_umount)
+>  
+>  	/* 2 cp  + n data seg summary + orphan inode blocks */
+>  	data_sum_blocks = npages_for_summary_flush(sbi);
+> -	if (data_sum_blocks < 3)
+> +	if (data_sum_blocks < NR_CURSEG_DATA_TYPE)
+>  		set_ckpt_flags(ckpt, CP_COMPACT_SUM_FLAG);
+>  	else
+>  		clear_ckpt_flags(ckpt, CP_COMPACT_SUM_FLAG);
+>  
+> -	orphan_blocks = (sbi->n_orphans + F2FS_ORPHANS_PER_BLOCK - 1)
+> -					/ F2FS_ORPHANS_PER_BLOCK;
+> +	orphan_blocks = GET_ORPHAN_BLOCKS(sbi->n_orphans);
+>  	ckpt->cp_pack_start_sum = cpu_to_le32(1 + cp_payload_blks +
+>  			orphan_blocks);
+>  
+>  	if (is_umount) {
+>  		set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
+> -		ckpt->cp_pack_total_block_count = cpu_to_le32(2 +
+> +		ckpt->cp_pack_total_block_count = cpu_to_le32(F2FS_CP_PARK_NUM +
+>  				cp_payload_blks + data_sum_blocks +
+>  				orphan_blocks + NR_CURSEG_NODE_TYPE);
+>  	} else {
+>  		clear_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
+> -		ckpt->cp_pack_total_block_count = cpu_to_le32(2 +
+> +		ckpt->cp_pack_total_block_count = cpu_to_le32(F2FS_CP_PARK_NUM +
+>  				cp_payload_blks + data_sum_blocks +
+>  				orphan_blocks);
+>  	}
+> @@ -999,8 +998,8 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
+>  	 * for cp pack we can have max 1020*504 orphan entries
+>  	 */
+>  	sbi->n_orphans = 0;
+> -	sbi->max_orphans = (sbi->blocks_per_seg - 2 - NR_CURSEG_TYPE)
+> -				* F2FS_ORPHANS_PER_BLOCK;
+> +	sbi->max_orphans = (sbi->blocks_per_seg - F2FS_CP_PARK_NUM -
+> +			NR_CURSEG_TYPE) * F2FS_ORPHANS_PER_BLOCK;
+>  }
+>  
+>  int __init create_checkpoint_caches(void)
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index 0ed77f3..f3cca5b 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -90,6 +90,8 @@ struct f2fs_super_block {
+>  #define CP_ORPHAN_PRESENT_FLAG	0x00000002
+>  #define CP_UMOUNT_FLAG		0x00000001
+>  
+> +#define F2FS_CP_PARK_NUM	2	/* # of checkpoint packs */
+> +
+>  struct f2fs_checkpoint {
+>  	__le64 checkpoint_ver;		/* checkpoint block version number */
+>  	__le64 user_block_count;	/* # of user blocks */
+> @@ -126,6 +128,9 @@ struct f2fs_checkpoint {
+>   */
+>  #define F2FS_ORPHANS_PER_BLOCK	1020
+>  
+> +#define GET_ORPHAN_BLOCKS(n)	((n + F2FS_ORPHANS_PER_BLOCK - 1) / \
+> +					F2FS_ORPHANS_PER_BLOCK)
+> +
+>  struct f2fs_orphan_block {
+>  	__le32 ino[F2FS_ORPHANS_PER_BLOCK];	/* inode numbers */
+>  	__le32 reserved;	/* reserved */
+> @@ -147,6 +152,7 @@ struct f2fs_extent {
+>  #define F2FS_NAME_LEN		255
+>  #define F2FS_INLINE_XATTR_ADDRS	50	/* 200 bytes for inline xattrs */
+>  #define DEF_ADDRS_PER_INODE	923	/* Address Pointers in an Inode */
+> +#define DEF_NIDS_PER_INODE	5	/* Node IDs in an Inode */
+>  #define ADDRS_PER_INODE(fi)	addrs_per_inode(fi)
+>  #define ADDRS_PER_BLOCK		1018	/* Address Pointers in a Direct Block */
+>  #define NIDS_PER_BLOCK		1018	/* Node IDs in an Indirect Block */
+> @@ -166,8 +172,9 @@ struct f2fs_extent {
+>  #define MAX_INLINE_DATA		(sizeof(__le32) * (DEF_ADDRS_PER_INODE - \
+>  						F2FS_INLINE_XATTR_ADDRS - 1))
+>  
+> -#define INLINE_DATA_OFFSET	(PAGE_CACHE_SIZE - sizeof(struct node_footer) \
+> -			- sizeof(__le32) * (DEF_ADDRS_PER_INODE + 5 - 1))
+> +#define INLINE_DATA_OFFSET	(PAGE_CACHE_SIZE - sizeof(struct node_footer) -\
+> +				sizeof(__le32) * (DEF_ADDRS_PER_INODE + \
+> +				DEF_NIDS_PER_INODE - 1))
+>  
+>  struct f2fs_inode {
+>  	__le16 i_mode;			/* file mode */
+> @@ -197,7 +204,7 @@ struct f2fs_inode {
+>  
+>  	__le32 i_addr[DEF_ADDRS_PER_INODE];	/* Pointers to data blocks */
+>  
+> -	__le32 i_nid[5];		/* direct(2), indirect(2),
+> +	__le32 i_nid[DEF_NIDS_PER_INODE];	/* direct(2), indirect(2),
+>  						double_indirect(1) node id */
+>  } __packed;
+>  
+> -- 
+> 2.0.1.474.g72c7794
+> 
+> 
+> 
+> ------------------------------------------------------------------------------
+> Slashdot TV.  
+> Video for Nerds.  Stuff that matters.
+> http://tv.slashdot.org/
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
 Slashdot TV.  
