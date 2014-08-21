@@ -1,30 +1,29 @@
-From: "=?utf-8?B?0J7QntCeINCg0KPQodCh0J3QkNCR0JDQktCi0J7QkdCg0J7QmtCV0KA=?="
-	<info@origotrans.ru>
-Subject: =?utf-8?b?IOKYhSDQodC+0LrRgNCw0YLQuNC70LjRgdGMINGB0YA=?=
- =?utf-8?b?0L7QutC4INC00L7RgdGC0LDQstC60Lgg0LjQtyDQldCy0YDQvtC/0Ysg0LIg?=
- =?utf-8?b?0KbQtdC90YLRgNCw0LvRjNC90YPRjiDRh9Cw0YHRgtGMINCg0L7RgdGB0Lg=?=
- =?utf-8?b?0Lg=?=
-Date: Thu, 21 Aug 2014 09:21:49 +0300
-Message-ID: <147f738fffc.7ef4.796dd@ismtpd-024.ams1.sendgrid.net>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 3/4] f2fs: avoid double lock in
+	truncate_blocks
+Date: Thu, 21 Aug 2014 09:45:06 -0700
+Message-ID: <20140821164506.GA83828@jaegeuk-mac02>
+References: <1408140229-54949-1-git-send-email-jaegeuk@kernel.org>
+	<1408140229-54949-3-git-send-email-jaegeuk@kernel.org>
+	<003401cfbb84$441c5b60$cc551220$@samsung.com>
+	<20140819165808.GA69881@jaegeuk-mac02>
+	<005e01cfbc1b$8be08600$a3a19200$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4310676014895517529=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from
-	<bounces+799816-7b64-linux-f2fs-devel=lists.sourceforge.net@sendgrid.info>)
-	id 1XKLjT-0000Rb-CC for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Aug 2014 06:20:23 +0000
-Received: from o3.bn.sendgrid.net ([198.21.6.101])
-	by sog-mx-3.v43.ch3.sourceforge.com with smtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1XKLjR-0003Lq-BG
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XKVaJ-0007F4-8X
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Aug 2014 06:20:23 +0000
-Received: from mm-176-147-124-178.static.mgts.by (unknown [10.68.181.196])
-	by ismtpd-024.ams1.sendgrid.net (SG) with ESMTP id
-	147f738fffc.7ef4.796dd for <linux-f2fs-devel@lists.sourceforge.net>;
-	Thu, 21 Aug 2014 06:20:13 +0000 (GMT)
+	Thu, 21 Aug 2014 16:51:35 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XKVaH-00005j-E9 for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 21 Aug 2014 16:51:35 +0000
+Content-Disposition: inline
+In-Reply-To: <005e01cfbc1b$8be08600$a3a19200$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,144 +33,204 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
+On Wed, Aug 20, 2014 at 10:07:04AM +0800, Chao Yu wrote:
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Wednesday, August 20, 2014 12:58 AM
+> > To: Chao Yu
+> > Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > linux-f2fs-devel@lists.sourceforge.net
+> > Subject: Re: [f2fs-dev] [PATCH 3/4] f2fs: avoid double lock in truncate_blocks
+> > 
+> > On Tue, Aug 19, 2014 at 04:04:11PM +0800, Chao Yu wrote:
+> > > Hi Jaegeuk,
+> > >
+> > > > -----Original Message-----
+> > > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > > Sent: Saturday, August 16, 2014 6:04 AM
+> > > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > > > linux-f2fs-devel@lists.sourceforge.net
+> > > > Cc: Jaegeuk Kim
+> > > > Subject: [f2fs-dev] [PATCH 3/4] f2fs: avoid double lock in truncate_blocks
+> > > >
+> > > > The init_inode_metadata calls truncate_blocks when error is occurred.
+> > > > The callers holds f2fs_lock_op, so we should not call it again in
+> > > > truncate_blocks.
+> > >
+> > > Nice catch! Your solution is a good way to fix this issue.
+> > >
+> > > Previously, in create inode path, I found there are some redundant codes between
+> > > init_inode_metadata and evict_inode, including:
+> > > 	truncate_inode_pages(&inode->i_data, 0);
+> > > 	truncate_blocks(inode, 0);
+> > > 	remove_dirty_dir_inode(inode);
+> > > 	remove_inode_page(inode);
+> > >
+> > > So I think there is another way to fix this issue by removing error path handling
+> > > codes in init_inode_metadata, not making the inode bad to left garbage clean work in
+> > > evict_inode. In this way we can avoid adding additional argument for all different
+> > > callers.
+> > 
+> > Well, possible.
+> > But we need to take a closer look at the race condition on the inode cache.
+> > What can happen if this bad inode is reassigned to the other thread?
+> 
+> I don't get it. As I know, in evict(), we call ->evict_inode before
+> remove_inode_hash(), so before all clean work was done we will not reassign
+> this hashed uncleaned inode to other thread.
+> 
+> Am I missing anything?
 
-This is a multi-part message in MIME format
---===============4310676014895517529==
-Content-Type: multipart/related; boundary="fw4LeWZmZLbk5yb7kuGNUZA5UJNwiP=_Vj"
+What I meant was it may happen between init_inode_metadata and iput.
 
+Thanks,
 
-This is a multi-part message in MIME format
---fw4LeWZmZLbk5yb7kuGNUZA5UJNwiP=_Vj
-Content-Type: multipart/alternative;
-	boundary="CRWG1WXn6hmR4x6nCYV849Qb64XVnf=_mh"
-
---CRWG1WXn6hmR4x6nCYV849Qb64XVnf=_mh
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-=EF=BB=BF- =D0=A1=D1=80=D1=8B=D0=B2=D0=B0=D1=8E=D1=82 =D1=81=D1=80=D0=BE=D0=
-=BA=D0=B8 =D0=B4=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D0=BA=D0=B8?
-- =D0=9D=D0=B5=D0=BE=D0=B1=D1=85=D0=BE=D0=B4=D0=B8=D0=BC=D0=BE =D1=87=D1=82=
-=D0=BE-=D1=82=D0=BE =D0=BD=D0=B5=D0=B7=D0=BD=D0=B0=D1=87=D0=B8=D1=82=D0=B5=
-=D0=BB=D1=8C=D0=BD=D0=BE =D0=BF=D0=BE=D0=BC=D0=B5=D0=BD=D1=8F=D1=82=D1=8C =
-=D0=B2 =D0=BF=D1=83=D1=82=D0=B8, =D0=B0 =D0=92=D0=B0=D0=BC =D0=B2=D1=8B=D1=
-=81=D1=82=D0=B0=D0=B2=D0=BB=D1=8F=D1=8E=D1=82 =D0=BE=D0=B3=D1=80=D0=BE=D0=
-=BC=D0=BD=D1=8B=D0=B9 =D1=81=D1=87=D0=B5=D1=82?
-- =D0=A1=D1=87=D0=B8=D1=82=D0=B0=D0=B5=D1=82=D0=B5, =D1=87=D1=82=D0=BE =D1=
-=81=D1=82=D0=B0=D0=B2=D0=BA=D0=B8 =D0=B7=D0=B0=D0=B2=D1=8B=D1=88=D0=B5=D0=
-=BD=D1=8B?
-- =D0=A1=D0=BC=D0=B5=D0=BD=D0=B8=D1=82=D1=8C =D0=BF=D0=B5=D1=80=D0=B5=D0=B2=
-=D0=BE=D0=B7=D1=87=D0=B8=D0=BA=D0=B0 =D0=BD=D0=B5 =D1=85=D0=B2=D0=B0=D1=82=
-=D0=B0=D0=B5=D1=82 =D0=B4=D1=83=D1=85=D0=B0?
-=D0=92=D1=8B=D0=B1=D0=BE=D1=80 =D0=B7=D0=B0 =D0=92=D0=B0=D0=BC=D0=B8 >>
-=D0=A1 =D1=83=D0=B2=D0=B0=D0=B6=D0=B5=D0=BD=D0=B8=D0=B5=D0=BC,
-=D0=A1=D0=B5=D1=80=D0=B3=D0=B5=D0=B9 =D0=9A=D1=80=D0=B0=D0=B2=D1=87=D1=83=
-=D0=BA
-21.08.2014, 9:21:49
-=D0=9E=D1=82=D0=BF=D0=B8=D1=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =
-=D1=80=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8
-
-
---CRWG1WXn6hmR4x6nCYV849Qb64XVnf=_mh
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-
-=EF=BB=BF<HTML><HEAD></HEAD>
-<BODY>
-<P><FONT face=3DTahoma color=3D#0000ff size=3D5>- =D0=A1=D1=80=D1=8B=D0=B2=
-=D0=B0=D1=8E=D1=82 =D1=81=D1=80=D0=BE=D0=BA=D0=B8 =D0=B4=D0=BE=D1=81=D1=82=
-=D0=B0=D0=B2=D0=BA=D0=B8?</FONT></P>
-<P><FONT face=3DTahoma color=3D#0000ff size=3D5>- =D0=9D=D0=B5=D0=BE=D0=B1=
-=D1=85=D0=BE=D0=B4=D0=B8=D0=BC=D0=BE =D1=87=D1=82=D0=BE-=D1=82=D0=BE =D0=BD=
-=D0=B5=D0=B7=D0=BD=D0=B0=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE =
-=D0=BF=D0=BE=D0=BC=D0=B5=D0=BD=D1=8F=D1=82=D1=8C =D0=B2 =D0=BF=D1=83=D1=82=
-=D0=B8, =D0=B0 =D0=92=D0=B0=D0=BC =D0=B2=D1=8B=D1=81=D1=82=D0=B0=D0=B2=D0=
-=BB=D1=8F=D1=8E=D1=82 =D0=BE=D0=B3=D1=80=D0=BE=D0=BC=D0=BD=D1=8B=D0=B9 =D1=
-=81=D1=87=D0=B5=D1=82?</FONT></P>
-<P><FONT face=3DTahoma color=3D#0000ff size=3D5>- =D0=A1=D1=87=D0=B8=D1=82=
-=D0=B0=D0=B5=D1=82=D0=B5, =D1=87=D1=82=D0=BE =D1=81=D1=82=D0=B0=D0=B2=D0=BA=
-=D0=B8 =D0=B7=D0=B0=D0=B2=D1=8B=D1=88=D0=B5=D0=BD=D1=8B?</FONT></P>
-<P><FONT face=3DTahoma color=3D#0000ff size=3D5>- =D0=A1=D0=BC=D0=B5=D0=BD=
-=D0=B8=D1=82=D1=8C =D0=BF=D0=B5=D1=80=D0=B5=D0=B2=D0=BE=D0=B7=D1=87=D0=B8=
-=D0=BA=D0=B0 =D0=BD=D0=B5 =D1=85=D0=B2=D0=B0=D1=82=D0=B0=D0=B5=D1=82 =D0=B4=
-=D1=83=D1=85=D0=B0?</FONT></P>
-<P><A href=3D"https://u799816.ct.sendgrid.net/wf/click?upn=3Dgq-2FoKXa28Vpq=
-0g8R85WzSir7-2BHZkQneLm9lCs-2BAb6y4-3D_oDb6ny51mUB6FExYn3rQhkT2mx5NS-2FpMzK=
-rauQhS9QZg4NTuDN93-2BoCglr66k74NGfprfxeTvh7Rv0BAB4Dlc7075eI5t4juFsSDuAsOyPd=
-Oy8j7ThKcB28IjVhH2dL481seaEo6P3Oj53bPhcBa2d8XIbrHYU-2BFOaWJ2PZinoASLuxo4tNq=
-JguFJIBBU8nPt8YvZ182X-2B3wYTh-2BOw94Vyotjs0H2vkq6nkKFMFSfBU-3D"><FONT face=
-=3DTahoma color=3D#ff0000 size=3D5>=D0=92=D1=8B=D0=B1=D0=BE=D1=80 =D0=B7=D0=
-=B0 =D0=92=D0=B0=D0=BC=D0=B8 &gt;&gt;</FONT></A></P>
-<P align=3Dleft><FONT face=3DTahoma>=D0=A1 =D1=83=D0=B2=D0=B0=D0=B6=D0=B5=
-=D0=BD=D0=B8=D0=B5=D0=BC,<BR>=D0=A1=D0=B5=D1=80=D0=B3=D0=B5=D0=B9 =D0=9A=D1=
-=80=D0=B0=D0=B2=D1=87=D1=83=D0=BA<BR>21.08.2014, 9:21:49</FONT></P>
-<P align=3Dleft><A id=3DlinkUnsub href=3D"mailto:unsubscribe@origotrans.ru?=
-subject=3DUnsubscribe"><FONT face=3DTahoma color=3D#0000ff size=3D1>=D0=9E=
-=D1=82=D0=BF=D0=B8=D1=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =D1=80=
-=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8</FONT></A></P><!-- Yandex.Metrik=
-a counter -->
-<SCRIPT src=3D"//www.google-analytics.com/analytics.js" async=3D"1"></SCRIP=
-T>
-
-<SCRIPT src=3D"http://mc.yandex.ru/metrika/watch.js" type=3Dtext/javascript=
- async=3D"true"></SCRIPT>
-
-<SCRIPT type=3Dtext/javascript>
-(function (d, w, c)         f =3D function ()  n.parentNode.insertBefore(s,=
- n); ;)(document, window, "yandex_metrika_callbacks");
-</SCRIPT>
-<NOSCRIPT></NOSCRIPT><!-- /Yandex.Metrika counter -->
-<SCRIPT>
-  (function(i,s,o,g,r,a,m))(window,document,'script','//www.google-analytic=
-s.com/analytics.js','ga');
-
-  ga('create', 'UA-47973454-1', 'origotrans.ru');
-  ga('send', 'pageview');
-
-</SCRIPT>
-
-<img src=3D"https://u799816.ct.sendgrid.net/wf/open?upn=3DoDb6ny51mUB6FExYn=
-3rQhkT2mx5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NGfprfxeTvh7Rv0BAB4Dlc2oW=
-bmQL-2Bf5TdbpLxB4sxyJ7Jt-2FyeIWkWpGC3M3qKgvVP7a2qizw-2Bjc2V55Qmv1Ro8eeBpGRU=
-eWwJsdI7Bk7g6MVOQwi5EC-2BurW-2F8d0tkU6Ea-2BUPMj2e8fOPBdnJ9-2B-2FgxKeNOa0W2p=
-ohKfBt9kjzYWM-3D" alt=3D"" width=3D"1" height=3D"1" border=3D"0" style=3D"h=
-eight:1px !important;width:1px !important;border-width:0 !important;margin-=
-top:0 !important;margin-bottom:0 !important;margin-right:0 !important;margi=
-n-left:0 !important;padding-top:0 !important;padding-bottom:0 !important;pa=
-dding-right:0 !important;padding-left:0 !important;"/>
-</BODY></HTML>
-
-
-
---CRWG1WXn6hmR4x6nCYV849Qb64XVnf=_mh--
-
---fw4LeWZmZLbk5yb7kuGNUZA5UJNwiP=_Vj--
-
-
-
---===============4310676014895517529==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+> 
+> Regards,
+> Yu
+> 
+> > 
+> > >
+> > > How do you think?
+> > >
+> > > Thanks,
+> > > Yu
+> > >
+> > > >
+> > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > > ---
+> > > >  fs/f2fs/data.c   |  2 +-
+> > > >  fs/f2fs/dir.c    |  2 +-
+> > > >  fs/f2fs/f2fs.h   |  2 +-
+> > > >  fs/f2fs/file.c   | 13 ++++++++-----
+> > > >  fs/f2fs/inline.c |  2 +-
+> > > >  5 files changed, 12 insertions(+), 9 deletions(-)
+> > > >
+> > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > > index 68834e2..14cc3e8 100644
+> > > > --- a/fs/f2fs/data.c
+> > > > +++ b/fs/f2fs/data.c
+> > > > @@ -935,7 +935,7 @@ static void f2fs_write_failed(struct address_space *mapping, loff_t
+> > to)
+> > > >
+> > > >  	if (to > inode->i_size) {
+> > > >  		truncate_pagecache(inode, inode->i_size);
+> > > > -		truncate_blocks(inode, inode->i_size);
+> > > > +		truncate_blocks(inode, inode->i_size, true);
+> > > >  	}
+> > > >  }
+> > > >
+> > > > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > > > index a69bbfa..155fb05 100644
+> > > > --- a/fs/f2fs/dir.c
+> > > > +++ b/fs/f2fs/dir.c
+> > > > @@ -391,7 +391,7 @@ put_error:
+> > > >  error:
+> > > >  	/* once the failed inode becomes a bad inode, i_mode is S_IFREG */
+> > > >  	truncate_inode_pages(&inode->i_data, 0);
+> > > > -	truncate_blocks(inode, 0);
+> > > > +	truncate_blocks(inode, 0, false);
+> > > >  	remove_dirty_dir_inode(inode);
+> > > >  	remove_inode_page(inode);
+> > > >  	return ERR_PTR(err);
+> > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > > index 2723b2d..7f976c1 100644
+> > > > --- a/fs/f2fs/f2fs.h
+> > > > +++ b/fs/f2fs/f2fs.h
+> > > > @@ -1122,7 +1122,7 @@ static inline void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi)
+> > > >   */
+> > > >  int f2fs_sync_file(struct file *, loff_t, loff_t, int);
+> > > >  void truncate_data_blocks(struct dnode_of_data *);
+> > > > -int truncate_blocks(struct inode *, u64);
+> > > > +int truncate_blocks(struct inode *, u64, bool);
+> > > >  void f2fs_truncate(struct inode *);
+> > > >  int f2fs_getattr(struct vfsmount *, struct dentry *, struct kstat *);
+> > > >  int f2fs_setattr(struct dentry *, struct iattr *);
+> > > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > > index ecbdf6a..a8e97f8 100644
+> > > > --- a/fs/f2fs/file.c
+> > > > +++ b/fs/f2fs/file.c
+> > > > @@ -422,7 +422,7 @@ out:
+> > > >  	f2fs_put_page(page, 1);
+> > > >  }
+> > > >
+> > > > -int truncate_blocks(struct inode *inode, u64 from)
+> > > > +int truncate_blocks(struct inode *inode, u64 from, bool lock)
+> > > >  {
+> > > >  	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
+> > > >  	unsigned int blocksize = inode->i_sb->s_blocksize;
+> > > > @@ -438,14 +438,16 @@ int truncate_blocks(struct inode *inode, u64 from)
+> > > >  	free_from = (pgoff_t)
+> > > >  			((from + blocksize - 1) >> (sbi->log_blocksize));
+> > > >
+> > > > -	f2fs_lock_op(sbi);
+> > > > +	if (lock)
+> > > > +		f2fs_lock_op(sbi);
+> > > >
+> > > >  	set_new_dnode(&dn, inode, NULL, NULL, 0);
+> > > >  	err = get_dnode_of_data(&dn, free_from, LOOKUP_NODE);
+> > > >  	if (err) {
+> > > >  		if (err == -ENOENT)
+> > > >  			goto free_next;
+> > > > -		f2fs_unlock_op(sbi);
+> > > > +		if (lock)
+> > > > +			f2fs_unlock_op(sbi);
+> > > >  		trace_f2fs_truncate_blocks_exit(inode, err);
+> > > >  		return err;
+> > > >  	}
+> > > > @@ -463,7 +465,8 @@ int truncate_blocks(struct inode *inode, u64 from)
+> > > >  	f2fs_put_dnode(&dn);
+> > > >  free_next:
+> > > >  	err = truncate_inode_blocks(inode, free_from);
+> > > > -	f2fs_unlock_op(sbi);
+> > > > +	if (lock)
+> > > > +		f2fs_unlock_op(sbi);
+> > > >  done:
+> > > >  	/* lastly zero out the first data page */
+> > > >  	truncate_partial_data_page(inode, from);
+> > > > @@ -480,7 +483,7 @@ void f2fs_truncate(struct inode *inode)
+> > > >
+> > > >  	trace_f2fs_truncate(inode);
+> > > >
+> > > > -	if (!truncate_blocks(inode, i_size_read(inode))) {
+> > > > +	if (!truncate_blocks(inode, i_size_read(inode), true)) {
+> > > >  		inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+> > > >  		mark_inode_dirty(inode);
+> > > >  	}
+> > > > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> > > > index 520758b..4d1f39f 100644
+> > > > --- a/fs/f2fs/inline.c
+> > > > +++ b/fs/f2fs/inline.c
+> > > > @@ -247,7 +247,7 @@ process_inline:
+> > > >  		update_inode(inode, ipage);
+> > > >  		f2fs_put_page(ipage, 1);
+> > > >  	} else if (ri && (ri->i_inline & F2FS_INLINE_DATA)) {
+> > > > -		truncate_blocks(inode, 0);
+> > > > +		truncate_blocks(inode, 0, false);
+> > > >  		set_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
+> > > >  		goto process_inline;
+> > > >  	}
+> > > > --
+> > > > 1.8.5.2 (Apple Git-48)
+> > > >
+> > > >
+> > > > ------------------------------------------------------------------------------
+> > > > _______________________________________________
+> > > > Linux-f2fs-devel mailing list
+> > > > Linux-f2fs-devel@lists.sourceforge.net
+> > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > >
+> > >
+> > > ------------------------------------------------------------------------------
+> > > _______________________________________________
+> > > Linux-f2fs-devel mailing list
+> > > Linux-f2fs-devel@lists.sourceforge.net
+> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
 Slashdot TV.  
 Video for Nerds.  Stuff that matters.
 http://tv.slashdot.org/
---===============4310676014895517529==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============4310676014895517529==--
