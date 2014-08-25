@@ -1,22 +1,22 @@
-From: "Miss Mary" <Mary@oversea-supply.com>
-Subject: [SPAM] Attn: linux-f2fs-devel---Picture albums &#x26;
-	labels and other printing
-Date: Sun, 24 Aug 2014 08:32:19 +0800
-Message-ID: <20140824083229405352@winter-letter.eicp.net>
-Reply-To: Mary@oversea-supply.com
+From: "Amy" <Amy@oversea-supply.com>
+Subject: [SPAM] Attn: linux-f2fs-devel---Provide album printing /
+	other list
+Date: Mon, 25 Aug 2014 15:57:05 +0800
+Message-ID: <20140825155711216726@rubber-cards.eicp.net>
+Reply-To: Amy@oversea-supply.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4492747471730341330=="
+Content-Type: multipart/mixed; boundary="===============6060151734072065425=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <print02@winter-letter.eicp.net>) id 1XLofp-0002dO-9c
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <print03@rubber-cards.eicp.net>) id 1XLpOa-0007y5-2N
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 25 Aug 2014 07:26:41 +0000
-Received: from [27.153.209.133] (helo=winter-bag.vicp.cc)
-	by sog-mx-4.v43.ch3.sourceforge.com with smtp (Exim 4.76)
-	id 1XLofn-0004OX-G1 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 25 Aug 2014 07:26:41 +0000
+	Mon, 25 Aug 2014 08:12:56 +0000
+Received: from [175.42.84.189] (helo=rubber-book.vicp.cc)
+	by sog-mx-3.v43.ch3.sourceforge.com with smtp (Exim 4.76)
+	id 1XLpOX-0000S9-LC for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 25 Aug 2014 08:12:55 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,54 +30,49 @@ To: linux-f2fs-devel@lists.sourceforge.net
 
 This is a multi-part message in MIME format.
 
---===============4492747471730341330==
+--===============6060151734072065425==
 Content-Type: multipart/alternative;
-	boundary="=====003_Dragon824488352425_====="
+	boundary="=====003_Dragon341316354836_====="
 
 This is a multi-part message in MIME format.
 
---=====003_Dragon824488352425_=====
+--=====003_Dragon341316354836_=====
 Content-Type: text/plain;
 	charset="utf-8"
 Content-Transfer-Encoding: base64
 
-SGkgdGhlcmUsDQpJIGFtIE1hcnkgZnJvbSBhIHByaW50aW5nIGNvbXBhbnkgaW4gQ2hpbmENCldl
-IGhhdmUgcmVmcmVzaGVkIG91ciBvbmxpbmUgY2F0YWxvZyBhdCBmYWN0b3J5LW92ZXJzZWEuY29t
-LCBhbmQgbm93IGl0IGNvdmVycyB0aGUgbGF0ZXN0IHByaW50aW5nIHByb2R1Y3RzIGFuZCBxdW90
-YXRpb24gbGlzdC4gICANCk91ciBjb21wYW55IHN1cHBsaWVzIHByb2R1Y3RzIGxpa2UgbWVtbyBw
-YWRzLCBzdGlja2VycywgYm94ZXMsIGJhZ3MgYW5kIGFueSBvdGhlciBwcmludGluZyBpdGVtcy4g
-DQpJZiB5b3UgbmVlZCBmdXJ0aGVyIG1vcmUgaW5mbywgcGxlYXNlIGNvbnRhY3QgbWUuDQoNCk1h
-cnkgICAgICAgDQppLWxvdmVwcmludCBDby4sTHRkDQpFbWFpbCA6IE1hcnkoYXQpb3ZlcnNlYS1z
-dXBwbHkuY29t
+SGVsbG8gIGxpbnV4LWYyZnMtZGV2ZWwsDQpJLWxvdmVwcmludCBDby4sTHRkIGhlcmUuDQpBbGwg
+b3VyIHByb2R1Y3RzIGFyZSBjdXN0b21pemVkLCBzdWNoIGFzIEJvb2tzLCBtYWdhemluZXMsIGNh
+dGFsb2d1ZSwgYnJvY2h1cmUsIGxlYWZsZXRzLCBldGMuDQpXZSB3aWxsIHRyeSBvdXIgYmVzdCB0
+byBzYXRpc2Z5IHlvdSB1cG9uIHJlY2VpcHQgb2YgeW91ciByZXBseS4gDQoNCkFteQ0KRW1haWwg
+OiBBbXkoYXQpb3ZlcnNlYS1zdXBwbHkuY29tDQpXZWJzaXRlOnd3dy5vdmVyc2VhLXN1cHBseS5j
+b20=
 
---=====003_Dragon824488352425_=====
+--=====003_Dragon341316354836_=====
 Content-Type: text/html;
 	charset="utf-8"
 Content-Transfer-Encoding: base64
 
 PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
-L0VOIj4NCjxIVE1MIHhtbG5zOm8gPSAidXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6
-b2ZmaWNlIj48SEVBRD4NCjxNRVRBIGNvbnRlbnQ9InRleHQvaHRtbDsgY2hhcnNldD11dGYtOCIg
-aHR0cC1lcXVpdj1Db250ZW50LVR5cGU+DQo8TUVUQSBuYW1lPUdFTkVSQVRPUiBjb250ZW50PSJN
-U0hUTUwgOC4wMC43NjAxLjE4MTU2Ij48L0hFQUQ+DQo8Qk9EWT4NCjxQPjxGT05UIHNpemU9ND5I
-aSB0aGVyZSw8L0ZPTlQ+PC9QPg0KPFA+PEZPTlQgc2l6ZT00PkkgYW0gTWFyeSBmcm9tIGEgcHJp
-bnRpbmcgY29tcGFueSBpbiBDaGluYTwvRk9OVD48L1A+DQo8UD48Rk9OVCBzaXplPTQ+V2UgaGF2
-ZSByZWZyZXNoZWQgb3VyIG9ubGluZSBjYXRhbG9nIGF0IGZhY3Rvcnktb3ZlcnNlYS5jb20sIGFu
-ZCBub3cgaXQgY292ZXJzIHRoZSBsYXRlc3QgcHJpbnRpbmcgcHJvZHVjdHMgYW5kIHF1b3RhdGlv
-biBsaXN0LiAgIDwvRk9OVD48L1A+DQo8UD48Rk9OVCBzaXplPTQ+T3VyIGNvbXBhbnkgc3VwcGxp
-ZXMgcHJvZHVjdHMgbGlrZSBtZW1vIHBhZHMsIHN0aWNrZXJzLCBib3hlcywgYmFncyBhbmQgYW55
-IG90aGVyIHByaW50aW5nIGl0ZW1zLiA8L0ZPTlQ+PC9QPg0KPFA+PEZPTlQgc2l6ZT00PklmIHlv
-dSBuZWVkIGZ1cnRoZXIgbW9yZSBpbmZvLCBwbGVhc2UgY29udGFjdCBtZS48L0ZPTlQ+PC9QPg0K
-PFA+PEZPTlQgc2l6ZT00PjwvRk9OVD48L1A+DQo8UD48Rk9OVCBzaXplPTQ+TWFyeSAgICAgICA8
-L0ZPTlQ+PC9QPg0KPFA+PEZPTlQgc2l6ZT01PjxTVFJPTkc+aS1sb3ZlcHJpbnQgQ28uLEx0ZDwv
-U1RST05HPjwvRk9OVD48L1A+DQo8UD48Rk9OVCBzaXplPTQ+RW1haWwgOiBNYXJ5KGF0KW92ZXJz
-ZWEtc3VwcGx5LmNvbTwvRk9OVD48L1A+PC9CT0RZPjwvSFRNTD4NCg==
+L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0
+Zi04IiBodHRwLWVxdWl2PUNvbnRlbnQtVHlwZT4NCjxNRVRBIG5hbWU9R0VORVJBVE9SIGNvbnRl
+bnQ9Ik1TSFRNTCA4LjAwLjc2MDEuMTgxNTYiPjwvSEVBRD4NCjxCT0RZPg0KPFA+PEZPTlQgc2l6
+ZT00PkhlbGxvJm5ic3A7IGxpbnV4LWYyZnMtZGV2ZWwsPC9GT05UPjwvUD4NCjxQPjxGT05UIHNp
+emU9ND5JLWxvdmVwcmludCBDby4sTHRkIGhlcmUuPC9GT05UPjwvUD4NCjxQPjxGT05UIHNpemU9
+ND5BbGwgb3VyIHByb2R1Y3RzIGFyZSBjdXN0b21pemVkLCBzdWNoIGFzIEJvb2tzLCBtYWdhemlu
+ZXMsIGNhdGFsb2d1ZSwgYnJvY2h1cmUsIGxlYWZsZXRzLCBldGMuPC9GT05UPjwvUD4NCjxQPjxG
+T05UIHNpemU9ND5XZSB3aWxsIHRyeSBvdXIgYmVzdCB0byBzYXRpc2Z5IHlvdSB1cG9uIHJlY2Vp
+cHQgb2YgeW91ciByZXBseS4gPC9GT05UPjwvUD4NCjxQPjxGT05UIHNpemU9ND48L0ZPTlQ+PC9Q
+Pg0KPFA+PEZPTlQgc2l6ZT00PkFteTwvRk9OVD48L1A+DQo8UD48Rk9OVCBzaXplPTQ+RW1haWwg
+OiBBbXkoYXQpb3ZlcnNlYS1zdXBwbHkuY29tPC9GT05UPjwvUD4NCjxQPjxGT05UIHNpemU9ND5X
+ZWJzaXRlOnd3dy5vdmVyc2VhLXN1cHBseS5jb208QlI+PC9GT05UPjwvUD48L0JPRFk+PC9IVE1M
+Pg0K
 
---=====003_Dragon824488352425_=====--
+--=====003_Dragon341316354836_=====--
 
 
 
---===============4492747471730341330==
+--===============6060151734072065425==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -87,7 +82,7 @@ Content-Disposition: inline
 Slashdot TV.  
 Video for Nerds.  Stuff that matters.
 http://tv.slashdot.org/
---===============4492747471730341330==
+--===============6060151734072065425==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -98,4 +93,4 @@ Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
---===============4492747471730341330==--
+--===============6060151734072065425==--
