@@ -1,23 +1,21 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] f2fs: simplify by using a literal
-Date: Thu, 28 Aug 2014 16:13:21 +0300
-Message-ID: <20140828131320.GA24477@mwanda>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: fix wrong casting for dentry name
+Date: Fri, 29 Aug 2014 09:55:52 -0700
+Message-ID: <1409331352-36388-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <dan.carpenter@oracle.com>) id 1XMzXR-0006jh-4P
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XNPT2-0004sX-FC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Aug 2014 13:14:53 +0000
-Received: from userp1040.oracle.com ([156.151.31.81])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1XMzXP-0000DL-UH
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Aug 2014 13:14:52 +0000
-Content-Disposition: inline
+	Fri, 29 Aug 2014 16:56:04 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XNPT1-0003SQ-Fp for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 29 Aug 2014 16:56:04 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,27 +25,46 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-We can make the code a bit simpler because we know that "!retry" is
-zero.
+The dentry name type is unsigned char *.
+If we don't match this type, some character codes can be changed by signed bit.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/hash.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 0f61f5a..41bdf51 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1133,7 +1133,7 @@ free_sbi:
+diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
+index 948d17bf..a844fcf 100644
+--- a/fs/f2fs/hash.c
++++ b/fs/f2fs/hash.c
+@@ -42,7 +42,8 @@ static void TEA_transform(unsigned int buf[4], unsigned int const in[])
+ 	buf[1] += b1;
+ }
  
- 	/* give only one another chance */
- 	if (retry) {
--		retry = !retry;
-+		retry = 0;
- 		shrink_dcache_sb(sb);
- 		goto try_onemore;
- 	}
+-static void str2hashbuf(const char *msg, size_t len, unsigned int *buf, int num)
++static void str2hashbuf(const unsigned char *msg, size_t len,
++				unsigned int *buf, int num)
+ {
+ 	unsigned pad, val;
+ 	int i;
+@@ -73,9 +74,9 @@ f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info)
+ {
+ 	__u32 hash;
+ 	f2fs_hash_t f2fs_hash;
+-	const char *p;
++	const unsigned char *p;
+ 	__u32 in[8], buf[4];
+-	const char *name = name_info->name;
++	const unsigned char *name = name_info->name;
+ 	size_t len = name_info->len;
+ 
+ 	if ((len <= 2) && (name[0] == '.') &&
+-- 
+1.8.5.2 (Apple Git-48)
+
 
 ------------------------------------------------------------------------------
 Slashdot TV.  
