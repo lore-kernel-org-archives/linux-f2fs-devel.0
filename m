@@ -1,23 +1,31 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 16/17] fsck.f2fs: check next block is free or not
-Date: Fri, 29 Aug 2014 17:29:03 -0700
-Message-ID: <1409358544-54740-16-git-send-email-jaegeuk@kernel.org>
-References: <1409358544-54740-1-git-send-email-jaegeuk@kernel.org>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH v2] f2fs: reposition unlock_new_inode to prevent
+ accessing invalid inode
+Date: Sat, 30 Aug 2014 09:52:34 +0800
+Message-ID: <000901cfc3f5$2baaee60$8300cb20$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XNWYS-0007NQ-3V
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XNXr7-0007xn-Hh
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 30 Aug 2014 00:30:08 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XNWYQ-00026X-W8 for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 30 Aug 2014 00:30:08 +0000
-In-Reply-To: <1409358544-54740-1-git-send-email-jaegeuk@kernel.org>
+	Sat, 30 Aug 2014 01:53:29 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XNXr5-00041s-17
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 30 Aug 2014 01:53:29 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout2.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NB300DMQJWV3720@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 30 Aug 2014 10:53:19 +0900 (KST)
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,231 +35,118 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-If block allocation is made to the next block offset, we should drop that
-block.
+As the race condition on the inode cache, following scenario can appear:
+[Thread a]				[Thread b]
+					->f2fs_mkdir
+					  ->f2fs_add_link
+					    ->__f2fs_add_link
+					      ->init_inode_metadata failed here
+->gc_thread_func
+  ->f2fs_gc
+    ->do_garbage_collect
+      ->gc_data_segment
+        ->f2fs_iget
+          ->iget_locked
+            ->wait_on_inode
+					  ->unlock_new_inode
+        ->move_data_page
+					  ->make_bad_inode
+					  ->iput
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+When we fail in create/symlink/mkdir/mknod/tmpfile, the new allocated inode
+should be set as bad to avoid being accessed by other thread. But in above
+scenario, it allows f2fs to access the invalid inode before this inode was set
+as bad.
+This patch fix the potential problem, and this issue was found by code review.
+
+change log from v1:
+ o Add condition judgment in gc_data_segment() suggested by Changman Lee.
+ o use iget_failed to simplify code.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fsck/f2fs.h  | 19 +++++++++++++++++--
- fsck/fsck.c  | 27 +++++++++++++++++++++++++++
- fsck/mount.c | 46 +++++++++++++++++++++-------------------------
- 3 files changed, 65 insertions(+), 27 deletions(-)
+ fs/f2fs/gc.c    |  2 +-
+ fs/f2fs/namei.c | 20 +++++---------------
+ 2 files changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index 8c31981..f674ede 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -266,10 +266,15 @@ static inline block_t __start_sum_addr(struct f2fs_sb_info *sbi)
- #define GET_SEGNO_FROM_SEG0(sbi, blk_addr)				\
- 	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) >> sbi->log_blocks_per_seg)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index e8507b1..943a31d 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -593,7 +593,7 @@ next_step:
  
--#define FREE_I_START_SEGNO(sbi)		GET_SEGNO_FROM_SEG0(sbi, SM_I(sbi)->main_blkaddr)
-+#define GET_BLKOFF_FROM_SEG0(sbi, blk_addr)				\
-+	(GET_SEGOFF_FROM_SEG0(sbi, blk_addr) & (sbi->blocks_per_seg - 1))
-+
-+#define FREE_I_START_SEGNO(sbi)						\
-+	GET_SEGNO_FROM_SEG0(sbi, SM_I(sbi)->main_blkaddr)
- #define GET_R2L_SEGNO(sbi, segno)	(segno + FREE_I_START_SEGNO(sbi))
+ 		if (phase == 2) {
+ 			inode = f2fs_iget(sb, dni.ino);
+-			if (IS_ERR(inode))
++			if (IS_ERR(inode) || is_bad_inode(inode))
+ 				continue;
  
--#define START_BLOCK(sbi, segno)	(SM_I(sbi)->main_blkaddr + (segno << sbi->log_blocks_per_seg))
-+#define START_BLOCK(sbi, segno)	(SM_I(sbi)->main_blkaddr +		\
-+	(segno << sbi->log_blocks_per_seg))
- 
- static inline struct curseg_info *CURSEG_I(struct f2fs_sb_info *sbi, int type)
- {
-@@ -311,6 +316,8 @@ static inline bool IS_VALID_NID(struct f2fs_sb_info *sbi, u32 nid)
- 
- static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
- {
-+	int i;
-+
- 	if (addr >= F2FS_RAW_SUPER(sbi)->block_count ||
- 				addr < SM_I(sbi)->main_blkaddr) {
- 		DBG(0, "block addr [0x%x]\n", addr);
-@@ -318,6 +325,14 @@ static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
- 		ASSERT(addr >= SM_I(sbi)->main_blkaddr);
- 		return 0;
- 	}
-+
-+	for (i = 0; i < NO_CHECK_TYPE; i++) {
-+		struct curseg_info *curseg = CURSEG_I(sbi, i);
-+
-+		if (START_BLOCK(sbi, curseg->segno) +
-+					curseg->next_blkoff == addr)
-+			return 0;
-+	}
- 	return 1;
+ 			start_bidx = start_bidx_of_node(nofs, F2FS_I(inode));
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 6b53ce9..ee103fd 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -134,9 +134,7 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	return 0;
+ out:
+ 	clear_nlink(inode);
+-	unlock_new_inode(inode);
+-	make_bad_inode(inode);
+-	iput(inode);
++	iget_failed(inode);
+ 	alloc_nid_failed(sbi, ino);
+ 	return err;
  }
- 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 8df489d..560b541 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -843,6 +843,24 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
- 	ASSERT(ret >= 0);
+@@ -267,9 +265,7 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	return err;
+ out:
+ 	clear_nlink(inode);
+-	unlock_new_inode(inode);
+-	make_bad_inode(inode);
+-	iput(inode);
++	iget_failed(inode);
+ 	alloc_nid_failed(sbi, inode->i_ino);
+ 	return err;
  }
- 
-+int check_curseg_offset(struct f2fs_sb_info *sbi)
-+{
-+	int i;
-+
-+	for (i = 0; i < NO_CHECK_TYPE; i++) {
-+		struct curseg_info *curseg = CURSEG_I(sbi, i);
-+		struct seg_entry *se;
-+
-+		se = get_seg_entry(sbi, curseg->segno);
-+		if (f2fs_test_bit(curseg->next_blkoff,
-+				(const char *)se->cur_valid_map) == 1) {
-+			ASSERT_MSG("Next block offset is not free, type:%d", i);
-+			return -EINVAL;
-+		}
-+	}
-+	return 0;
-+}
-+
- int fsck_verify(struct f2fs_sb_info *sbi)
- {
- 	unsigned int i = 0;
-@@ -944,6 +962,15 @@ int fsck_verify(struct f2fs_sb_info *sbi)
- 		config.bug_on = 1;
- 	}
- 
-+	printf("[FSCK] next block offset is free                     ");
-+	if (check_curseg_offset(sbi) == 0) {
-+		printf(" [Ok..]\n");
-+	} else {
-+		printf(" [Fail]\n");
-+		ret = EXIT_ERR_CODE;
-+		config.bug_on = 1;
-+	}
-+
- 	printf("[FSCK] other corrupted bugs                          ");
- 	if (config.bug_on == 0) {
- 		printf(" [Ok..]\n");
-diff --git a/fsck/mount.c b/fsck/mount.c
-index a41320f..2bbd3c5 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -505,11 +505,6 @@ void reset_curseg(struct f2fs_sb_info *sbi, int type)
- 	struct summary_footer *sum_footer;
- 	struct seg_entry *se;
- 
--	curseg->segno = curseg->next_segno;
--	curseg->zone = GET_ZONENO_FROM_SEGNO(sbi, curseg->segno);
--	curseg->next_blkoff = 0;
--	curseg->next_segno = NULL_SEGNO;
--
- 	sum_footer = &(curseg->sum_blk->footer);
- 	memset(sum_footer, 0, sizeof(struct summary_footer));
- 	if (IS_DATASEG(type))
-@@ -522,7 +517,6 @@ void reset_curseg(struct f2fs_sb_info *sbi, int type)
- 
- static void read_compacted_summaries(struct f2fs_sb_info *sbi)
- {
--	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	struct curseg_info *curseg;
- 	unsigned int i, j, offset;
- 	block_t start;
-@@ -545,18 +539,14 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
- 	offset = 2 * SUM_JOURNAL_SIZE;
- 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
- 		unsigned short blk_off;
--		unsigned int segno;
-+		struct curseg_info *curseg = CURSEG_I(sbi, i);
- 
--		curseg = CURSEG_I(sbi, i);
--		segno = le32_to_cpu(ckpt->cur_data_segno[i]);
--		blk_off = le16_to_cpu(ckpt->cur_data_blkoff[i]);
--		curseg->next_segno = segno;
- 		reset_curseg(sbi, i);
--		curseg->alloc_type = ckpt->alloc_type[i];
--		curseg->next_blkoff = blk_off;
- 
- 		if (curseg->alloc_type == SSR)
- 			blk_off = sbi->blocks_per_seg;
-+		else
-+			blk_off = curseg->next_blkoff;
- 
- 		for (j = 0; j < blk_off; j++) {
- 			struct f2fs_summary *s;
-@@ -605,16 +595,12 @@ static void read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	struct f2fs_summary_block *sum_blk;
- 	struct curseg_info *curseg;
--	unsigned short blk_off;
- 	unsigned int segno = 0;
- 	block_t blk_addr = 0;
- 	int ret;
- 
- 	if (IS_DATASEG(type)) {
- 		segno = le32_to_cpu(ckpt->cur_data_segno[type]);
--		blk_off = le16_to_cpu(ckpt->cur_data_blkoff[type -
--							CURSEG_HOT_DATA]);
--
- 		if (is_set_ckpt_flags(ckpt, CP_UMOUNT_FLAG))
- 			blk_addr = sum_blk_addr(sbi, NR_CURSEG_TYPE, type);
- 		else
-@@ -622,9 +608,6 @@ static void read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 	} else {
- 		segno = le32_to_cpu(ckpt->cur_node_segno[type -
- 							CURSEG_HOT_NODE]);
--		blk_off = le16_to_cpu(ckpt->cur_node_blkoff[type -
--							CURSEG_HOT_NODE]);
--
- 		if (is_set_ckpt_flags(ckpt, CP_UMOUNT_FLAG))
- 			blk_addr = sum_blk_addr(sbi, NR_CURSEG_NODE_TYPE,
- 							type - CURSEG_HOT_NODE);
-@@ -641,10 +624,7 @@ static void read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 
- 	curseg = CURSEG_I(sbi, type);
- 	memcpy(curseg->sum_blk, sum_blk, PAGE_CACHE_SIZE);
--	curseg->next_segno = segno;
- 	reset_curseg(sbi, type);
--	curseg->alloc_type = ckpt->alloc_type[type];
--	curseg->next_blkoff = blk_off;
- 	free(sum_blk);
+@@ -308,9 +304,7 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ out_fail:
+ 	clear_inode_flag(F2FS_I(inode), FI_INC_LINK);
+ 	clear_nlink(inode);
+-	unlock_new_inode(inode);
+-	make_bad_inode(inode);
+-	iput(inode);
++	iget_failed(inode);
+ 	alloc_nid_failed(sbi, inode->i_ino);
+ 	return err;
  }
- 
-@@ -663,7 +643,10 @@ static void restore_curseg_summaries(struct f2fs_sb_info *sbi)
- 
- static void build_curseg(struct f2fs_sb_info *sbi)
- {
-+	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	struct curseg_info *array;
-+	unsigned short blk_off;
-+	unsigned int segno;
- 	int i;
- 
- 	array = malloc(sizeof(*array) * NR_CURSEG_TYPE);
-@@ -674,8 +657,21 @@ static void build_curseg(struct f2fs_sb_info *sbi)
- 	for (i = 0; i < NR_CURSEG_TYPE; i++) {
- 		array[i].sum_blk = malloc(PAGE_CACHE_SIZE);
- 		ASSERT(array[i].sum_blk);
--		array[i].segno = NULL_SEGNO;
--		array[i].next_blkoff = 0;
-+		if (i <= CURSEG_COLD_DATA) {
-+			blk_off = le16_to_cpu(ckpt->cur_data_blkoff[i]);
-+			segno = le32_to_cpu(ckpt->cur_data_segno[i]);
-+		}
-+		if (i > CURSEG_COLD_DATA) {
-+			blk_off = le16_to_cpu(ckpt->cur_node_blkoff[i -
-+							CURSEG_HOT_NODE]);
-+			segno = le32_to_cpu(ckpt->cur_node_segno[i -
-+							CURSEG_HOT_NODE]);
-+		}
-+		array[i].segno = segno;
-+		array[i].zone = GET_ZONENO_FROM_SEGNO(sbi, segno);
-+		array[i].next_segno = NULL_SEGNO;
-+		array[i].next_blkoff = blk_off;
-+		array[i].alloc_type = ckpt->alloc_type[i];
- 	}
- 	restore_curseg_summaries(sbi);
+@@ -354,9 +348,7 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
+ 	return 0;
+ out:
+ 	clear_nlink(inode);
+-	unlock_new_inode(inode);
+-	make_bad_inode(inode);
+-	iput(inode);
++	iget_failed(inode);
+ 	alloc_nid_failed(sbi, inode->i_ino);
+ 	return err;
+ }
+@@ -688,9 +680,7 @@ release_out:
+ out:
+ 	f2fs_unlock_op(sbi);
+ 	clear_nlink(inode);
+-	unlock_new_inode(inode);
+-	make_bad_inode(inode);
+-	iput(inode);
++	iget_failed(inode);
+ 	alloc_nid_failed(sbi, inode->i_ino);
+ 	return err;
  }
 -- 
-1.8.5.2 (Apple Git-48)
+2.0.1.474.g72c7794
+
 
 
 ------------------------------------------------------------------------------
