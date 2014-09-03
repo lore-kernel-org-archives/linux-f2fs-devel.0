@@ -1,22 +1,24 @@
-From: "Fiona" <Fiona@oversea-supply.com>
-Subject: [SPAM] Attn: linux-f2fs-devel---Rock bottom price in
-	print marketing
-Date: Tue, 2 Sep 2014 13:20:59 +0800
-Message-ID: <20140902132109466886@green-cup.eicp.net>
-Reply-To: Fiona@oversea-supply.com
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs.fsck] status report show fails
+Date: Tue, 2 Sep 2014 21:28:07 -0700
+Message-ID: <20140903042807.GA72472@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <CAOWmdGMyHzm2exVPKi7Gd1EZc9vKtVQV8W92=2H=nR6HCH7Tew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1893366748443752459=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <Fiona@green-cup.eicp.net>) id 1XOxAP-0000vA-5b
+	(envelope-from <jaegeuk@kernel.org>) id 1XP2B6-0001js-N8
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 02 Sep 2014 23:07:13 +0000
-Received: from [112.111.188.89] (helo=green-book.oicp.net)
-	by sog-mx-1.v43.ch3.sourceforge.com with smtp (Exim 4.76)
-	id 1XOxAN-0000He-5p for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 02 Sep 2014 23:07:13 +0000
+	Wed, 03 Sep 2014 04:28:16 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XP2B4-0005V4-Lj for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 03 Sep 2014 04:28:16 +0000
+Content-Disposition: inline
+In-Reply-To: <CAOWmdGMyHzm2exVPKi7Gd1EZc9vKtVQV8W92=2H=nR6HCH7Tew@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,76 +28,36 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Petar =?utf-8?Q?Koreti=C4=87?= <petar.koretic@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This is a multi-part message in MIME format.
-
---===============1893366748443752459==
-Content-Type: multipart/alternative;
-	boundary="=====003_Dragon733076655730_====="
-
-This is a multi-part message in MIME format.
-
---=====003_Dragon733076655730_=====
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-
-SGVsbG8sDQpJIGFtIEZpb25hIGZyb20gYSB2ZXJ5IGdvb2QgcmVwdXRhdGlvbiBwcmludGluZyBj
-b21wYW55IGluIENoaW5hLiANCldlIHdvdWxkIGxpa2UgdG8gaW50cm9kdWNlIG91ciBwcm9kdWN0
-cyB0byB5b3UgdG8gc2VlayBhIG11dHVhbCBiZW5lZml0ZWQgYnVzaW5lc3MgcmVsYXRpb25zaGlw
-IGluIHRoaXMgeWVhci4gDQpXZSBzdXBwbHkgY2F0YWxvZ3VlLCBtYWdhemluZXMsIGJvb2tzLCBw
-aG90byBib29rcywgYm9va2xldHMgYW5kIG90aGVyIHBhcGVyIHByb2R1Y3RzLg0KSWYgeW91IG5l
-ZWQgZnVydGhlciBtb3JlIGluZm8sIHBsZWFzZSBjb250YWN0IG1lLg0KRmFpdGhmdWxseSB5b3Vy
-cywNCkZpb25hICAgICAgICAgIA0KaS1sb3ZlcHJpbnQgQ28uLEx0ZA0KRW1haWwgOiBGaW9uYShh
-dClvdmVyc2VhLXN1cHBseS5jb20=
-
---=====003_Dragon733076655730_=====
-Content-Type: text/html;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-
-PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
-L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0
-Zi04IiBodHRwLWVxdWl2PUNvbnRlbnQtVHlwZT4NCjxNRVRBIG5hbWU9R0VORVJBVE9SIGNvbnRl
-bnQ9Ik1TSFRNTCA4LjAwLjc2MDEuMTgxNTYiPjwvSEVBRD4NCjxCT0RZPg0KPFA+PEZPTlQgc2l6
-ZT00PkhlbGxvLDwvRk9OVD48L1A+DQo8UD48Rk9OVCBzaXplPTQ+SSBhbSBGaW9uYSBmcm9tIGEg
-dmVyeSBnb29kIHJlcHV0YXRpb24gcHJpbnRpbmcgY29tcGFueSBpbiBDaGluYS4gPC9GT05UPjwv
-UD4NCjxQPjxGT05UIHNpemU9ND5XZSB3b3VsZCBsaWtlIHRvIGludHJvZHVjZSBvdXIgcHJvZHVj
-dHMgdG8geW91IHRvIHNlZWsgYSBtdXR1YWwgYmVuZWZpdGVkIGJ1c2luZXNzIHJlbGF0aW9uc2hp
-cCBpbiB0aGlzIHllYXIuIDwvRk9OVD48L1A+DQo8UD48Rk9OVCBzaXplPTQ+V2Ugc3VwcGx5IGNh
-dGFsb2d1ZSwgbWFnYXppbmVzLCBib29rcywgcGhvdG8gYm9va3MsIGJvb2tsZXRzIGFuZCBvdGhl
-ciBwYXBlciBwcm9kdWN0cy48L0ZPTlQ+PC9QPg0KPFA+PEZPTlQgc2l6ZT00PklmIHlvdSBuZWVk
-IGZ1cnRoZXIgbW9yZSBpbmZvLCBwbGVhc2UgY29udGFjdCBtZS48L0ZPTlQ+PC9QPg0KPFA+PEZP
-TlQgc2l6ZT00PkZhaXRoZnVsbHkgeW91cnMsPC9GT05UPjwvUD4NCjxQPjxGT05UIHNpemU9ND5G
-aW9uYSAgICAgICAgICA8L0ZPTlQ+PC9QPg0KPFA+PEZPTlQgc2l6ZT01PjxTVFJPTkc+PEVNPmkt
-bG92ZXByaW50IENvLixMdGQ8L0VNPjwvU1RST05HPjwvRk9OVD48L1A+DQo8UD48Rk9OVCBzaXpl
-PTQ+RW1haWwgOiBGaW9uYShhdClvdmVyc2VhLXN1cHBseS5jb208L0ZPTlQ+PC9QPjwvQk9EWT48
-L0hUTUw+DQo=
-
---=====003_Dragon733076655730_=====--
-
-
-
---===============1893366748443752459==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-------------------------------------------------------------------------------
-Slashdot TV.  
-Video for Nerds.  Stuff that matters.
-http://tv.slashdot.org/
---===============1893366748443752459==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============1893366748443752459==--
+SGksCgpKdXN0IGZvciBub3RlLCBJIGltcGxlbWVudGVkIGZzY2suZjJmcyB3aGljaCBmaXhlcyBh
+bnkgZjJmcyBjb3JydXB0aW9uLgoKVGhhbmtzLAoKT24gRnJpLCBKdWwgMTEsIDIwMTQgYXQgMTE6
+MTg6MTBQTSArMDIwMCwgUGV0YXIgS29yZXRpxIcgd3JvdGU6Cj4gSGkgZ3V5cy4KPiAKPiBJJ3Zl
+IGJlZW4gdXNpbmcgZjJmcyBvbiBteSBwcmltYXJ5IFNTRCBkaXNrIGFuZCBsYXB0b3AgZnJvbSBB
+cHJpbCAxNywgMjAxMy4KPiAKPiBJIHJlYWxseSBkaWRuJ3QgaGF2ZSBhbnkgcHJvYmxlbXMgYnV0
+IGxhdGVseSBJJ3ZlIHN0YXJ0ZWQgdG8gc2VlIHNvbWUuCj4gRm9yIGV4YW1wbGUsIGRhdGEgaXMg
+bm90IGJlaW5nIHNhdmVkIG9yIGFmdGVyIHJlYm9vdCBvbGQgZGF0YSBpcyBsb2FkZWQuCj4gSSBo
+YXZlbid0IHJlYWxseSB0YWtlbiBhIGRlZXBlciBsb29rIGludG8gaXQgeWV0IGJ1dCB0aGF0J3Mg
+bm90IGRpcmVjdGx5Cj4gd2h5IEknbSBwb3N0aW5nLgo+IAo+IFRvZGF5IEkgZmluYWxseSBydW4g
+ZnNjay4gSW4gdGhlIG91dHB1dCBJIGdvdCBhbGwgZmFpbHMgZXhjZXB0Ogo+IC0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQo+IFtGU0NLXSBIYXJkIGxpbmsgY2hlY2tpbmcgZm9yIHJlZ3VsYXIgZmlsZQo+IC0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQo+IHdoaWNoIHdhcyB0aGUgb25seSBvbmUgd2l0aCAnW09rLi4uXScgc3RhdHVzLgo+IAo+
+IEFzIGZhciBhcyBJIGtub3cgYW5kIGNhbiBzZWUgZnJvbSBnaXQgbG9ncyBmc2NrCj4gZG9lc24n
+dCB5ZXQgaGF2ZSBhYmlsaXR5IHRvIGZpeCBwcm9ibGVtcy4KPiAKPiBKdXN0IHRvIG1lbnRpb24g
+Y3VycmVudGx5IEkgaGF2ZSBpdCBtb3VudGVkIHdpdGg6Cj4gcncscmVsYXRpbWUsZGlzY2FyZCxi
+YWNrZ3JvdW5kX2djPW9mZixub2FjbCxub3VzZXJfeGF0dHIKPiAKPiBTbyB3aGF0IGFyZSB0aGVz
+ZSBmYWlscyB0ZWxsaW5nIG1lIGFuZCB3aGF0Cj4gYXJlIG15IG9wdGlvbnM/Cj4gCj4gVGhhbmtz
+LAo+IFBldGFyCgo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQoKPiBfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
+aXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczovL2xp
+c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCgoKLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tClNsYXNoZG90IFRWLiAgClZpZGVvIGZvciBOZXJkcy4gIFN0dWZm
+IHRoYXQgbWF0dGVycy4KaHR0cDovL3R2LnNsYXNoZG90Lm9yZy8KX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxp
+c3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5z
+b3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
