@@ -1,23 +1,28 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] fsck.f2fs: add auto_fix feature
-Date: Tue,  2 Sep 2014 22:03:28 -0700
-Message-ID: <1409720608-73045-2-git-send-email-jaegeuk@kernel.org>
-References: <1409720608-73045-1-git-send-email-jaegeuk@kernel.org>
+From: "=?utf-8?B?0KLQtdC70LXQv9C+0YDRgiDQk9C10YDQvNCw0L3QuNGPIQ==?="
+	<info@teleport-germany.ru>
+Subject: =?utf-8?b?INCU0L7RgdGC0LDQstC60LAg0LPRgNGD0LfQvtCyINC4?=
+ =?utf-8?b?0Lcg0JPQtdGA0LzQsNC90LjQuCE=?=
+Date: Wed, 3 Sep 2014 09:13:12 +0300
+Message-ID: <1483a255724.4148.93ef4@ismtpd-009.ams1.sendgrid.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============4642170580855260984=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XP2jK-0005TA-1j
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from
+	<bounces+799816-7b64-linux-f2fs-devel=lists.sourceforge.net@sendgrid.info>)
+	id 1XP3ot-0005ES-Jq for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 03 Sep 2014 06:13:27 +0000
+Received: from o3.bn.sendgrid.net ([198.21.6.101])
+	by sog-mx-1.v43.ch3.sourceforge.com with smtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1XP3or-0004nr-Ud
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 03 Sep 2014 05:03:38 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XP2jJ-0006Sr-5M for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 03 Sep 2014 05:03:38 +0000
-In-Reply-To: <1409720608-73045-1-git-send-email-jaegeuk@kernel.org>
+	Wed, 03 Sep 2014 06:13:27 +0000
+Received: from mm-176-147-124-178.static.mgts.by (unknown [10.68.181.196])
+	by ismtpd-009.ams1.sendgrid.net (SG) with ESMTP id
+	1483a255724.4148.93ef4 for <linux-f2fs-devel@lists.sourceforge.net>;
+	Wed, 03 Sep 2014 06:13:18 +0000 (GMT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,170 +32,122 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
-This patch adds an auto_fix feature which fixes inconsistency of f2fs images.
 
-E.g.,
+This is a multi-part message in MIME format
+--===============4642170580855260984==
+Content-Type: multipart/alternative;
+	boundary="mbcDfGoZ3I8IHWq5lR=_pcynnjRij64qUC"
 
-With this option, -a, fsck.f2fs tries to fix inconsistency only if its valid
-checkpoint has CP_FSCK_FLAG, written by previous bug_on cases.
 
-So, normally it does fix nothing, so that there is no performance regression.
-But, if a sort of corruption was reported by the f2fs module, this tries to
-fix potential corrupted partition.
+This is a multi-part message in MIME format
+--mbcDfGoZ3I8IHWq5lR=_pcynnjRij64qUC
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/main.c       | 26 ++++++++++++++++----------
- fsck/mount.c      | 14 +++++++++++++-
- include/f2fs_fs.h |  2 ++
- 3 files changed, 31 insertions(+), 11 deletions(-)
+=EF=BB=BF=20
 
-diff --git a/fsck/main.c b/fsck/main.c
-index 7e3bb49..e20eac2 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -40,23 +40,27 @@ void f2fs_parse_options(int argc, char *argv[])
- 	char *prog = basename(argv[0]);
- 
- 	if (!strcmp("fsck.f2fs", prog)) {
--		const char *option_string = "d:tf";
-+		const char *option_string = "ad:ft";
- 
- 		config.func = FSCK;
- 		while ((option = getopt(argc, argv, option_string)) != EOF) {
- 			switch (option) {
-+			case 'a':
-+				config.auto_fix = 1;
-+				MSG(0, "Info: Fix the reported corruption.\n");
-+				break;
- 			case 'd':
- 				config.dbg_lv = atoi(optarg);
- 				MSG(0, "Info: Debug level = %d\n",
- 							config.dbg_lv);
- 				break;
--			case 't':
--				config.dbg_lv = -1;
--				break;
- 			case 'f':
- 				config.fix_on = 1;
- 				MSG(0, "Info: Force to fix corruption\n");
- 				break;
-+			case 't':
-+				config.dbg_lv = -1;
-+				break;
- 			default:
- 				MSG(0, "\tError: Unknown option %c\n", option);
- 				fsck_usage();
-@@ -135,8 +139,6 @@ static void do_fsck(struct f2fs_sb_info *sbi)
- {
- 	u32 blk_cnt;
- 
--	config.bug_on = 0;
--
- 	fsck_init(sbi);
- 
- 	fsck_chk_orphan_node(sbi);
-@@ -192,7 +194,12 @@ fsck_again:
- 	gfsck.sbi.fsck = &gfsck;
- 	sbi = &gfsck.sbi;
- 
--	if (f2fs_do_mount(sbi) < 0)
-+	ret = f2fs_do_mount(sbi);
-+	if (ret == 1) {
-+		free(sbi->ckpt);
-+		free(sbi->raw_super);
-+		goto out;
-+	} else if (ret < 0)
- 		return -1;
- 
- 	switch (config.func) {
-@@ -205,9 +212,9 @@ fsck_again:
- 	}
- 
- 	f2fs_do_umount(sbi);
--
-+out:
- 	if (config.func == FSCK && config.bug_on) {
--		if (config.fix_on == 0) {
-+		if (config.fix_on == 0 && !config.auto_fix) {
- 			char ans[255] = {0};
- retry:
- 			printf("Do you want to fix this partition? [Y/N] ");
-@@ -226,7 +233,6 @@ retry:
- 		if (config.fix_cnt > 0 && config.fix_cnt < 4)
- 			goto fsck_again;
- 	}
--
- 	f2fs_finalize_device(&config);
- 
- 	printf("\nDone.\n");
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 2bbd3c5..5a12bb1 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1183,6 +1183,7 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
- int f2fs_do_mount(struct f2fs_sb_info *sbi)
- {
- 	int ret;
-+
- 	sbi->active_logs = NR_CURSEG_TYPE;
- 	ret = validate_super_block(sbi, 0);
- 	if (ret) {
-@@ -1208,6 +1209,17 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
- 
- 	print_ckpt_info(sbi);
- 
-+	if (config.auto_fix) {
-+		u32 flag = le32_to_cpu(sbi->ckpt->ckpt_flags);
-+
-+		if (flag & CP_FSCK_FLAG)
-+			config.fix_cnt = 1;
-+		else
-+			return 1;
-+	}
-+
-+	config.bug_on = 0;
-+
- 	sbi->total_valid_node_count = le32_to_cpu(sbi->ckpt->valid_node_count);
- 	sbi->total_valid_inode_count =
- 			le32_to_cpu(sbi->ckpt->valid_inode_count);
-@@ -1227,7 +1239,7 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
- 		return -1;
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- void f2fs_do_umount(struct f2fs_sb_info *sbi)
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 7242690..6467791 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -185,6 +185,7 @@ struct f2fs_configuration {
- 	int fix_on;
- 	int fix_cnt;
- 	int bug_on;
-+	int auto_fix;
- } __attribute__((packed));
- 
- #ifdef CONFIG_64BIT
-@@ -290,6 +291,7 @@ struct f2fs_super_block {
- /*
-  * For checkpoint
-  */
-+#define CP_FSCK_FLAG		0x00000010
- #define CP_ERROR_FLAG		0x00000008
- #define CP_COMPACT_SUM_FLAG	0x00000004
- #define CP_ORPHAN_PRESENT_FLAG	0x00000002
--- 
-1.8.5.2 (Apple Git-48)
+=D0=A1 =D1=83=D0=B2=D0=B0=D0=B6=D0=B5=D0=BD=D0=B8=D0=B5=D0=BC,
+=D0=9D=D0=B8=D0=BA=D0=B8=D1=82=D0=B0 =D0=9A=D0=B0=D0=B7=D0=B0=D0=BD=D1=86=
+=D0=B5=D0=B2
+03.09.2014, 9:13:12
+=D0=9E=D1=82=D0=BF=D0=B8=D1=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =
+=D1=80=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8
+=20
 
+
+--mbcDfGoZ3I8IHWq5lR=_pcynnjRij64qUC
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+=EF=BB=BF<HTML><HEAD>
+<STYLE>UNKNOWN=20
+</STYLE>
+</HEAD>
+<BODY>
+<TABLE style=3D"BORDER-COLLAPSE: collapse" cellSpacing=3D0 cellPadding=3D0 =
+width=3D800 align=3Dcenter>
+<TBODY>
+<TR>
+<TD style=3D"WIDTH: 100%"><A href=3D"https://u799816.ct.sendgrid.net/wf/cli=
+ck?upn=3DHLEGqpWjDtYBKpf91hQDn3b17PNaRSCmbF0oRZIpr7rylW-2FSbkcAwYEZRkw3ROIk=
+_oDb6ny51mUB6FExYn3rQhkT2mx5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NalxwKf=
+gIwtQNXyzG13kAmtSqEknW0zWalIjOEXYEiWCkzULEmcRQfXf9Lc1PT81IxECLmakv5eQThsw5i=
+a0jDewvVPMzMsfAMZ86oYA413-2FCSSxIBkWYzkDyM9bwpItpKHcDEb4MHiEmQul-2FYOfHGhiA=
+vtASlmJTN-2ByMvFG1eCA-3D" target=3D_blank><IMG src=3D"http://www.teleport-g=
+ermany.ru/epochta/img/bg2500.jpg"> </A></TD></TR></TBODY></TABLE>
+<P align=3Dright><FONT face=3DTahoma size=3D2>=D0=A1 =D1=83=D0=B2=D0=B0=D0=
+=B6=D0=B5=D0=BD=D0=B8=D0=B5=D0=BC,<BR>=D0=9D=D0=B8=D0=BA=D0=B8=D1=82=D0=B0 =
+=D0=9A=D0=B0=D0=B7=D0=B0=D0=BD=D1=86=D0=B5=D0=B2<BR>03.09.2014, 9:13:12</FO=
+NT></P>
+<P align=3Dright><A id=3DlinkUnsub href=3D"mailto:unsubscribe.teleport@gmai=
+l.com?subject=3DUnsubscribe"><FONT face=3DTahoma color=3D#ff8000 size=3D1>=
+=D0=9E=D1=82=D0=BF=D0=B8=D1=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =
+=D1=80=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8</FONT></A></P>
+<P align=3Dleft>&nbsp;</P><!-- Yandex.Metrika counter -->
+<SCRIPT src=3D"//www.google-analytics.com/analytics.js" async=3D"1"></SCRIP=
+T>
+
+<SCRIPT src=3D"http://mc.yandex.ru/metrika/watch.js" type=3Dtext/javascript=
+ async=3D"true"></SCRIPT>
+
+<SCRIPT src=3D"www.google-analytics.com/analytics.js" async=3D"1"></SCRIPT>
+
+<SCRIPT src=3D"http://mc.yandex.ru/metrika/watch.js" type=3Dtext/javascript=
+ async=3D"true"></SCRIPT>
+
+<SCRIPT type=3Dtext/javascript>
+(function (d, w, c) )(document, window, "yandex_metrika_callbacks");
+</SCRIPT>
+<NOSCRIPT></NOSCRIPT><!-- /Yandex.Metrika counter -->
+<SCRIPT>
+  (function(i,s,o,g,r,a,m))(window,document,'script','//www.google-analytic=
+s.com/analytics.js','ga');
+
+  ga('create', 'UA-46039730-1', 'teleport-germany.ru');
+  ga('send', 'pageview');
+
+</SCRIPT>
+
+<img src=3D"https://u799816.ct.sendgrid.net/wf/open?upn=3DoDb6ny51mUB6FExYn=
+3rQhkT2mx5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NalxwKfgIwtQNXyzG13kAmltE=
+nLiLmrDS-2BtDF2X13GuX6EnJEtWBVVH51OKnm4LwBk7M1cuuHYXjXc3Zh0CA1vbf2nLtFuN-2B=
+tObBiLZDCmsdXa9Q-2BU7jwV0bDnyxPTQ9ZNjtdgfGwbaPPg2vBvMq2fg5i-2FZKeMhKw9MR4OJ=
+Dgm4o-3D" alt=3D"" width=3D"1" height=3D"1" border=3D"0" style=3D"height:1p=
+x !important;width:1px !important;border-width:0 !important;margin-top:0 !i=
+mportant;margin-bottom:0 !important;margin-right:0 !important;margin-left:0=
+ !important;padding-top:0 !important;padding-bottom:0 !important;padding-ri=
+ght:0 !important;padding-left:0 !important;"/>
+</BODY></HTML>
+
+
+
+--mbcDfGoZ3I8IHWq5lR=_pcynnjRij64qUC--
+
+
+
+--===============4642170580855260984==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Slashdot TV.  
 Video for Nerds.  Stuff that matters.
 http://tv.slashdot.org/
+--===============4642170580855260984==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============4642170580855260984==--
