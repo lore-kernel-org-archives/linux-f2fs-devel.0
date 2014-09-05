@@ -1,27 +1,33 @@
-From: "LBR Transportas" <info@lbr.lt>
-Subject: =?utf-8?b?INCh0YLQsNCy0LrQuCDQvdCwINGB0LXQvdGC0Y/QsdGA?=
- =?utf-8?b?0Ywg0JXQstGA0L7Qv9CwIC0g0KDQpA==?=
-Date: Thu, 4 Sep 2014 09:15:11 +0300
-Message-ID: <1483f4d8916.6ff8.242309@ismtpd-011.ams1.sendgrid.net>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH] f2fs: use lock-less list(llist) to simplify
+	the	flush cmd management
+Date: Fri, 05 Sep 2014 15:07:01 +0800
+Message-ID: <002101cfc8d8$1963b650$4c2b22f0$@samsung.com>
+References: <1409735782-7831-1-git-send-email-guz.fnst@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6206146180313174064=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from
-	<bounces+799816-7b64-linux-f2fs-devel=lists.sourceforge.net@sendgrid.info>)
-	id 1XPQdQ-0003N3-7y for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Sep 2014 06:35:08 +0000
-Received: from o4.bn.sendgrid.net ([198.21.0.135])
-	by sog-mx-4.v43.ch3.sourceforge.com with smtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1XPQdO-00077M-Mc
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XPnck-0005fj-Ow
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Sep 2014 06:35:08 +0000
-Received: from mm-176-147-124-178.static.mgts.by (unknown [10.68.181.196])
-	by ismtpd-011.ams1.sendgrid.net (SG) with ESMTP id
-	1483f4d8916.6ff8.242309 for <linux-f2fs-devel@lists.sourceforge.net>;
-	Thu, 04 Sep 2014 06:15:19 +0000 (GMT)
+	Fri, 05 Sep 2014 07:07:58 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XPnci-0001sD-9c
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 05 Sep 2014 07:07:58 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NBF00I4G2H0MD00@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 05 Sep 2014 16:07:48 +0900 (KST)
+In-reply-to: <1409735782-7831-1-git-send-email-guz.fnst@cn.fujitsu.com>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,196 +37,163 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+To: 'Gu Zheng' <guz.fnst@cn.fujitsu.com>, jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
+Hi Gu,
 
-This is a multi-part message in MIME format
---===============6206146180313174064==
-Content-Type: multipart/alternative;
-	boundary="KEzddUeYJ8yEuJ7zae7MCcZSp2=_mDM7fd"
+> -----Original Message-----
+> From: Gu Zheng [mailto:guz.fnst@cn.fujitsu.com]
+> Sent: Wednesday, September 03, 2014 5:16 PM
+> To: jaegeuk@kernel.org
+> Cc: Gu Zheng; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] [PATCH] f2fs: use lock-less list(llist) to simplify the flush cmd management
+> 
+> We use flush cmd control to collect many flush cmds, and flush them
+> together. In this case, we use two list to manage the flush cmds
+> (collect and dispatch), and one spin lock is used to protect this.
+> In fact, the lock-less list(llist) is very suitable to this case,
+> and we use simplify this routine.
 
+Good catch for finding this scenario with llist!
 
-This is a multi-part message in MIME format
---KEzddUeYJ8yEuJ7zae7MCcZSp2=_mDM7fd
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+> 
+> Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
+> ---
+>  fs/f2fs/f2fs.h    |    7 +++----
+>  fs/f2fs/segment.c |   31 +++++++++----------------------
+>  2 files changed, 12 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index e921242..1dd861c 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -334,16 +334,15 @@ enum {
+>  struct flush_cmd {
+>  	struct flush_cmd *next;
 
-=EF=BB=BF=20=20
-=20
-=20
-=20
-=20
-=20
-=20
-=D0=A1 =D1=83=D0=B2=D0=B0=D0=B6=D0=B5=D0=BD=D0=B8=D0=B5=D0=BC,
-=D0=9C=D0=B0=D0=BA=D1=81=D0=B8=D0=BC =D0=90=D1=80=D0=B3=D0=BE=D0=BD=D0=BE=
-=D0=B2
-04.09.2014, 9:15:11
-=D0=9E=D1=82=D0=BF=D0=B8=D1=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =
-=D1=80=D0=B0=D1=81=D1=81=D1=8B=D0=BB=D0=BA=D0=B8
+No needed here, we can remove it.
 
+>  	struct completion wait;
+> +	struct llist_node llnode;
+>  	int ret;
+>  };
+> 
+>  struct flush_cmd_control {
+>  	struct task_struct *f2fs_issue_flush;	/* flush thread */
+>  	wait_queue_head_t flush_wait_queue;	/* waiting queue for wake-up */
+> -	struct flush_cmd *issue_list;		/* list for command issue */
+> -	struct flush_cmd *dispatch_list;	/* list for command dispatch */
+> -	spinlock_t issue_lock;			/* for issue list lock */
+> -	struct flush_cmd *issue_tail;		/* list tail of issue list */
+> +	struct llist_head issue_list;		/* list for command issue */
+> +	struct llist_node *dispatch_list;	/* list for command dispatch */
+>  };
+> 
+>  struct f2fs_sm_info {
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 0aa337c..2db1f95 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -205,24 +205,19 @@ repeat:
+>  	if (kthread_should_stop())
+>  		return 0;
+> 
+> -	spin_lock(&fcc->issue_lock);
+> -	if (fcc->issue_list) {
+> -		fcc->dispatch_list = fcc->issue_list;
+> -		fcc->issue_list = fcc->issue_tail = NULL;
+> -	}
+> -	spin_unlock(&fcc->issue_lock);
+> -
+> -	if (fcc->dispatch_list) {
+> +	if (!llist_empty(&fcc->issue_list)) {
+>  		struct bio *bio = bio_alloc(GFP_NOIO, 0);
+> -		struct flush_cmd *cmd, *next;
+> +		struct flush_cmd *cmd;
+>  		int ret;
+> 
+> +		fcc->dispatch_list = llist_del_all(&fcc->issue_list);
+> +		fcc->dispatch_list = llist_reverse_order(fcc->dispatch_list);
+> +
+>  		bio->bi_bdev = sbi->sb->s_bdev;
+>  		ret = submit_bio_wait(WRITE_FLUSH, bio);
+> 
+> -		for (cmd = fcc->dispatch_list; cmd; cmd = next) {
+> +		llist_for_each_entry(cmd, fcc->dispatch_list, llnode) {
 
---KEzddUeYJ8yEuJ7zae7MCcZSp2=_mDM7fd
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Please use llist_for_each_entry_safe, Otherwise we might encounter oops as below:
 
-=EF=BB=BF<HTML lang=3Dru dir=3Dltr><HEAD><TITLE></TITLE>
-<META charset=3Dutf-8>
-<META http-equiv=3DImageToolbar content=3DFalse>
-<META content=3Dwidth=3D960 name=3Dviewport><LINK href=3D"http://lbr.lt/epo=
-chta/rassylka01/favicon.ico" type=3Dimage/vnd.microsoft.icon rel=3Dicon><LI=
-NK media=3Dscreen,print href=3D"http://lbr.lt/epochta/rassylka01/style/rese=
-t.css" type=3Dtext/css rel=3Dstylesheet><LINK media=3Dprint href=3D"http://=
-lbr.lt/epochta/rassylka01/style/print.css" type=3Dtext/css rel=3Dstylesheet=
-><LINK media=3Dscreen,print href=3D"http://lbr.lt/epochta/rassylka01/style/=
-style.css" type=3Dtext/css rel=3Dstylesheet><LINK media=3Dscreen href=3D"ht=
-tp://lbr.lt/epochta/rassylka01/style/template.css" type=3Dtext/css rel=3Dst=
-ylesheet><LINK media=3Dscreen href=3D"http://lbr.lt/epochta/rassylka01/styl=
-e/menu.css" type=3Dtext/css rel=3Dstylesheet><LINK media=3Dscreen href=3D"h=
-ttp://lbr.lt/epochta/rassylka01/style/ie.css" type=3Dtext/css rel=3Dstylesh=
-eet><LINK media=3Dscreen href=3D"http://lbr.lt/epochta/rassylka01/pcss/inde=
-x.css" type=3Dtext/css rel=3Dstylesheet></HEAD>
-<BODY>
-<DIV id=3DimHeaderBg></DIV>
-<DIV id=3DimFooterBg></DIV>
-<DIV id=3DimPage><A class=3DimHidden title=3D"" href=3D"https://u799816.ct.=
-sendgrid.net/wf/click?upn=3DjbpTXr8gs8sgK2o41arS713bXKN6zkd9L95dbzFMK-2BV3q=
-Digl3HFfKQk1iTwYXIbEItWH3ODrCczQRVqOVvqoA-3D-3D_oDb6ny51mUB6FExYn3rQhkT2mx5=
-NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NYBPoxHwcpAtzbH31UXLj9Gi76OTHXhC1Rx=
-Fco5Do40zwfUpRBDrxN3o9SxyakKFPjqhCyhS1eopAp1BKd-2BE2ktDv2LXu04-2FL4fa0DwEKE=
-ZVIKH4OGXsrYD-2FfZT9V6U4LAyOezeXtiA9XfxzjGGkqFJLDCBT19nyywLPPUfkAsDs-3D"></=
-A><A id=3DimGoToMenu></A>
-<P class=3DimHidden></P>
-<DIV id=3DimContent><A id=3DimGoToCont></A>
-<DIV style=3D"FLOAT: left; WIDTH: 947px">
-<DIV class=3D"imGrid[0, 0]" id=3DimCell_9>
-<DIV id=3DimCellStyleGraphics_9></DIV>
-<DIV id=3DimCellStyle_9>
-<P align=3Dcenter><A href=3D"https://u799816.ct.sendgrid.net/wf/click?upn=
-=3DjbpTXr8gs8sgK2o41arS7362GXOlrEuNepsc2wxGHA8-3D_oDb6ny51mUB6FExYn3rQhkT2m=
-x5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NYBPoxHwcpAtzbH31UXLj9JCLifZYJbcf=
-O8qNzMKqCsDudf5bzlVyloxAGnNWGX9t6DbPqdeJdnUUVXBtx-2FU5bceOiWJnIgosXO5McojjY=
-OQ-2Fq0oalSgTBn9jB19crgGTyoHRbrbbPsQPJ4vyqgxxYl29OskQfHlhYBlpJq44zWM-3D" ta=
-rget=3D_blank><IMG id=3DimObjectImage_9 title=3D"" height=3D106 alt=3D"" sr=
-c=3D"http://lbr.lt/epochta/img/logo.png" width=3D820></A></P></DIV></DIV></=
-DIV>
-<DIV style=3D"FLOAT: left; WIDTH: 947px">
-<DIV class=3D"imGrid[1, 1]" id=3DimCell_8>
-<DIV id=3DimCellStyleGraphics_8></DIV>
-<DIV id=3DimCellStyle_8>
-<P align=3Dcenter><A href=3D"https://u799816.ct.sendgrid.net/wf/click?upn=
-=3DjbpTXr8gs8sgK2o41arS7362GXOlrEuNepsc2wxGHA8-3D_oDb6ny51mUB6FExYn3rQhkT2m=
-x5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NYBPoxHwcpAtzbH31UXLj9E5o1BnkeOle=
-7ukGQTrd0wWV6i-2FJynXolpnq8BXM832KWNYfo9Hj0IvSazEV2Ji9dQDCEnneiApQvnwNxLlGT=
-58u9DWEuON6zpSzdm9Q5JZG5TPC0-2FPSU3UWWUGF5o6fret3K-2FIypPoT7dkQw2liXrE-3D" =
-target=3D_blank><IMG id=3DimObjectImage_8 title=3D"" height=3D240 alt=3D"" =
-src=3D"http://lbr.lt/epochta/img/rates.png" width=3D807></A></P></DIV></DIV=
-></DIV>
-<DIV style=3D"FLOAT: left; WIDTH: 947px">
-<DIV style=3D"FLOAT: left; WIDTH: 189px">
-<DIV style=3D"HEIGHT: 383px"></DIV></DIV>
-<DIV style=3D"FLOAT: left; WIDTH: 568px">
-<DIV class=3D"imGrid[2, 2]" id=3DimCell_6>
-<DIV id=3DimCellStyleGraphics_6></DIV>
-<DIV id=3DimCellStyle_6>
-<P align=3Dcenter><A href=3D"https://u799816.ct.sendgrid.net/wf/click?upn=
-=3DjbpTXr8gs8sgK2o41arS7362GXOlrEuNepsc2wxGHA8-3D_oDb6ny51mUB6FExYn3rQhkT2m=
-x5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NYBPoxHwcpAtzbH31UXLj9K2dzK-2Bhhi=
-sRb6ZRnIHA0pcAqCWSTaTUS22WS-2Fht2KwHp0CnBXzSL4SMkke4fR4G0WaWEpyPsWdsg0oD-2F=
-lz1CZHKiWIcKw98g3zo7PrBkXGeqS664vo2OC0gNOukep5oDA8gEATX2InWiiM9B7bAvCc-3D" =
-target=3D_blank><IMG id=3DimObjectImage_6 title=3D"" height=3D371 alt=3D"" =
-src=3D"http://lbr.lt/epochta/img/euro.png" width=3D556></A></P></DIV></DIV>=
-</DIV>
-<DIV style=3D"FLOAT: left; WIDTH: 190px">
-<DIV style=3D"HEIGHT: 383px"></DIV></DIV></DIV>
-<DIV style=3D"FLOAT: left; WIDTH: 947px">
-<DIV style=3D"FLOAT: left; WIDTH: 189px">
-<DIV style=3D"HEIGHT: 72px"></DIV></DIV>
-<DIV style=3D"FLOAT: left; WIDTH: 140px">
-<DIV style=3D"HEIGHT: 72px"></DIV></DIV>
-<DIV style=3D"FLOAT: left; WIDTH: 284px">
-<DIV class=3D"imGrid[3, 3]" id=3DimCell_7>
-<DIV id=3DimCellStyleGraphics_7></DIV>
-<DIV id=3DimCellStyle_7><A href=3D"https://u799816.ct.sendgrid.net/wf/click=
-?upn=3DjbpTXr8gs8sgK2o41arS7362GXOlrEuNepsc2wxGHA8-3D_oDb6ny51mUB6FExYn3rQh=
-kT2mx5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NYBPoxHwcpAtzbH31UXLj9Grr422j=
-7eQCANIM7sRMDGi6ipBedX-2FVeW7c77lIJiPOn5s-2FWQ0FUIBOsr0B4zOteshB-2F0aKlo0Bq=
-iwrFqP5EFHrVXZ7-2FEppgheEU7YLSX2mRvZ-2BGY15eXZSyLD5QOPOLb6FYvKfk4vmhVNFKJl-=
-2FmVw-3D" target=3D_blank><IMG id=3DimObjectImage_7 title=3D"" height=3D60 =
-alt=3D"" src=3D"http://lbr.lt/epochta/img/bonus.png" width=3D272></A> </DIV=
-></DIV></DIV>
-<P align=3Dright>&nbsp;</P>
-<P align=3Dright>&nbsp;</P>
-<P align=3Dright>&nbsp;</P>
-<P align=3Dleft>&nbsp;</P>
-<P align=3Dleft>&nbsp;</P>
-<P align=3Dright>&nbsp;</P>
-<P align=3Dright>&nbsp;</P>
-<P align=3Dright>=D0=A1 =D1=83=D0=B2=D0=B0=D0=B6=D0=B5=D0=BD=D0=B8=D0=B5=D0=
-=BC,<BR>=D0=9C=D0=B0=D0=BA=D1=81=D0=B8=D0=BC =D0=90=D1=80=D0=B3=D0=BE=D0=BD=
-=D0=BE=D0=B2<BR>04.09.2014, 9:15:11</P>
-<P align=3Dright><A id=3DlinkUnsub href=3D"mailto:unsubscribe@lbr.lt?subjec=
-t=3DUnsubscribe"><FONT color=3D#808080 size=3D1>=D0=9E=D1=82=D0=BF=D0=B8=D1=
-=81=D0=B0=D1=82=D1=8C=D1=81=D1=8F =D0=BE=D1=82 =D1=80=D0=B0=D1=81=D1=81=D1=
-=8B=D0=BB=D0=BA=D0=B8</FONT></A></P></DIV><!-- Yandex.Metrika counter -->
-<SCRIPT src=3D"//www.google-analytics.com/analytics.js" async=3D"1"></SCRIP=
-T>
+[18727.381582] Call Trace:
+[18727.381613]  [<c107c0bf>] __wake_up_locked+0x1f/0x30
+[18727.381626]  [<c107c886>] complete+0x36/0x50
+[18727.381645]  [<f0a01313>] issue_flush_thread+0x93/0x140 [f2fs]
+[18727.381658]  [<c107c530>] ? add_wait_queue+0x50/0x50
+[18727.381672]  [<f0a01280>] ? add_sit_entry+0xc0/0xc0 [f2fs]
+[18727.381687]  [<c105fabb>] kthread+0x9b/0xb0
+[18727.381701]  [<c159ad81>] ret_from_kernel_thread+0x21/0x30
+[18727.381714]  [<c105fa20>] ? flush_kthread_worker+0x80/0x80
 
-<SCRIPT src=3D"http://mc.yandex.ru/metrika/watch.js" type=3Dtext/javascript=
- async=3D"true"></SCRIPT>
+Thanks,
+Yu
 
-<SCRIPT type=3Dtext/javascript>
-(function (d, w, c) )(document, window, "yandex_metrika_callbacks");
-</SCRIPT>
-<NOSCRIPT></NOSCRIPT><!-- /Yandex.Metrika counter -->
-<SCRIPT>
-  (function(i,s,o,g,r,a,m)  )(window,document,'script','//www.google-analyt=
-ics.com/analytics.js','ga');
+>  			cmd->ret = ret;
+> -			next = cmd->next;
+>  			complete(&cmd->wait);
+>  		}
+>  		bio_put(bio);
+> @@ -230,7 +225,7 @@ repeat:
+>  	}
+> 
+>  	wait_event_interruptible(*q,
+> -			kthread_should_stop() || fcc->issue_list);
+> +		kthread_should_stop() || !llist_empty(&fcc->issue_list));
+>  	goto repeat;
+>  }
+> 
+> @@ -249,17 +244,10 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi)
+>  		return blkdev_issue_flush(sbi->sb->s_bdev, GFP_KERNEL, NULL);
+> 
+>  	init_completion(&cmd.wait);
+> -	cmd.next = NULL;
+> 
+> -	spin_lock(&fcc->issue_lock);
+> -	if (fcc->issue_list)
+> -		fcc->issue_tail->next = &cmd;
+> -	else
+> -		fcc->issue_list = &cmd;
+> -	fcc->issue_tail = &cmd;
+> -	spin_unlock(&fcc->issue_lock);
+> +	llist_add(&cmd.llnode, &fcc->issue_list);
+> 
+> -	if (!fcc->dispatch_list)
+> +	if (fcc->dispatch_list == NULL)
+>  		wake_up(&fcc->flush_wait_queue);
+> 
+>  	wait_for_completion(&cmd.wait);
+> @@ -276,7 +264,6 @@ int create_flush_cmd_control(struct f2fs_sb_info *sbi)
+>  	fcc = kzalloc(sizeof(struct flush_cmd_control), GFP_KERNEL);
+>  	if (!fcc)
+>  		return -ENOMEM;
+> -	spin_lock_init(&fcc->issue_lock);
+>  	init_waitqueue_head(&fcc->flush_wait_queue);
+>  	SM_I(sbi)->cmd_control_info = fcc;
+>  	fcc->f2fs_issue_flush = kthread_run(issue_flush_thread, sbi,
+> --
+> 1.7.7
+> 
+> 
+> ------------------------------------------------------------------------------
+> Slashdot TV.
+> Video for Nerds.  Stuff that matters.
+> http://tv.slashdot.org/
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
-  ga('create', 'UA-46687231-1', 'lbr.lt');
-  ga('send', 'pageview');
-
-</SCRIPT>
-</DIV></DIV>
-<DIV></DIV>
-<img src=3D"https://u799816.ct.sendgrid.net/wf/open?upn=3DoDb6ny51mUB6FExYn=
-3rQhkT2mx5NS-2FpMzKrauQhS9QZg4NTuDN93-2BoCglr66k74NYBPoxHwcpAtzbH31UXLj9CkK=
-QFOtKuei4W0qL20Zvsyji4a4XPNevVwu8K0g9c-2B6ivFkaWWU8VTxdZOKTFnlveoTclXj2ssYK=
-nUPOgyzg6Grm8LK9EMCb-2FHoU5vucldpW3CME-2FuTbE0gWDADp132zGSQb2sGFB61bMnnG-2F=
-GkZuY-3D" alt=3D"" width=3D"1" height=3D"1" border=3D"0" style=3D"height:1p=
-x !important;width:1px !important;border-width:0 !important;margin-top:0 !i=
-mportant;margin-bottom:0 !important;margin-right:0 !important;margin-left:0=
- !important;padding-top:0 !important;padding-bottom:0 !important;padding-ri=
-ght:0 !important;padding-left:0 !important;"/>
-</BODY></HTML>
-
-
-
---KEzddUeYJ8yEuJ7zae7MCcZSp2=_mDM7fd--
-
-
-
---===============6206146180313174064==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 Slashdot TV.  
 Video for Nerds.  Stuff that matters.
 http://tv.slashdot.org/
---===============6206146180313174064==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-f2fs-devel mailing list
-Linux-f2fs-devel@lists.sourceforge.net
-https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
---===============6206146180313174064==--
