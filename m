@@ -1,22 +1,29 @@
-From: Huang Ying <ying.huang@intel.com>
-Subject: [PATCH] f2fs: Fix recover when nid of non-inode dnode <
-	nid of inode
-Date: Mon,  8 Sep 2014 19:38:26 +0800
-Message-ID: <1410176306-1689-1-git-send-email-ying.huang@intel.com>
+From: Tommi Rantala <tt.rantala@gmail.com>
+Subject: Re: f2fs get_dnode_of_data oops
+Date: Mon, 8 Sep 2014 18:39:17 +0300
+Message-ID: <CA+ydwtrbsUD81u6FWysDvqNy942KOF9y=mAhxPfRQP8RG0sZuQ@mail.gmail.com>
+References: <CA+ydwtrB-rJB1fURO+CC1J-=VZ16g9Un47cMSMAZsTFPNg2s+g@mail.gmail.com>
+	<CA+ydwtrtyb5wQXCmyBigqufVz10UkKS76hVOY8mKc4FOyYmECw@mail.gmail.com>
+	<20140908042056.GA13863@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ying.huang@intel.com>) id 1XQxHN-0004Yo-UJ
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <tt.rantala@gmail.com>) id 1XR12L-0002Ec-8I
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 08 Sep 2014 11:38:42 +0000
-Received: from mga02.intel.com ([134.134.136.20])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XQxHN-0005gw-2G for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 08 Sep 2014 11:38:41 +0000
+	Mon, 08 Sep 2014 15:39:25 +0000
+Received: from mail-we0-f179.google.com ([74.125.82.179])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1XR12K-00039b-5U
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 08 Sep 2014 15:39:25 +0000
+Received: by mail-we0-f179.google.com with SMTP id u56so1646153wes.24
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 08 Sep 2014 08:39:17 -0700 (PDT)
+In-Reply-To: <20140908042056.GA13863@jaegeuk-mac02.hsd1.ca.comcast.net>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,52 +33,94 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: Huang Ying <ying.huang@intel.com>, huang.ying.caritas@gmail.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Dave Jones <davej@redhat.com>, trinity@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-For fsync, if the nid of a non-inode dnode < nid of inode and the
-inode is not checkpointed.  The non-inode dnode may be written before
-inode.  So in find_fsync_dnodes, f2fs_iget will fail, cause the
-recovery fail.
+2014-09-08 7:20 GMT+03:00 Jaegeuk Kim <jaegeuk@kernel.org>:
+> Hi,
+>
+> Thank you for the report.
+> Could you share a little bit more information about the file accessing
+> f2fs_llseek?
+> E.g., file size, file offset, file allocation information, or dump of that file.
 
-Usually, inode will be allocated before non-inode dnode, so the nid of
-inode < nid of non-inode dnode.  But it is possible for the reverse.
-For example, because of alloc_nid_failed.
+Hi,
 
-This is fixed via ignoring non-inode dnode before inode dnode in
-find_fsync_dnodes.
+I can reproduce the bug with the following.
+-17595150933902 is just something I saw trinity passing to lseek().
 
-The patch was tested via allocating nid reversely via a debugging
-patch, that is, from big number to small number.
+#define _GNU_SOURCE
 
-Signed-off-by: Huang, Ying <ying.huang@intel.com>
----
- fs/f2fs/recovery.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -172,8 +172,8 @@ static int find_fsync_dnodes(struct f2fs
- 			if (IS_INODE(page) && is_dent_dnode(page))
- 				set_inode_flag(F2FS_I(entry->inode),
- 							FI_INC_LINK);
--		} else {
--			if (IS_INODE(page) && is_dent_dnode(page)) {
-+		} else if (IS_INODE(page)) {
-+			if (is_dent_dnode(page)) {
- 				err = recover_inode_page(sbi, page);
- 				if (err)
- 					break;
-@@ -193,7 +193,8 @@ static int find_fsync_dnodes(struct f2fs
- 				break;
- 			}
- 			list_add_tail(&entry->list, head);
--		}
-+		} else
-+			goto next;
- 		entry->blkaddr = blkaddr;
- 
- 		err = recover_inode(entry->inode, page);
+int main(int argc, char **argv)
+{
+        int fd;
+
+        if (argc < 2) {
+                printf("give filename\n");
+                return 1;
+        }
+
+        fd = open(argv[1], O_RDONLY);
+        if (fd < 0) {
+                perror("open");
+                return 1;
+        }
+
+        lseek(fd, -17595150933902LL, SEEK_DATA);
+
+        return 0;
+}
+
+{ttrantal@arkki ~}> touch /f2fs/x ; ./a.out /f2fs/x
+[   73.437182] BUG: unable to handle kernel paging request at ffff88043368e340
+[   73.438035] IP: [<ffffffff817792d9>] get_dnode_of_data+0x3a9/0x440
+[   73.438035] PGD 4595067 PUD 0
+[   73.438035] Oops: 0000 [#1] SMP DEBUG_PAGEALLOC
+[   73.438035] CPU: 0 PID: 2933 Comm: a.out Not tainted 3.17.0-rc4+ #37
+[   73.438035] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
+[   73.438035] task: ffff88003755cac0 ti: ffff880022734000 task.ti:
+ffff880022734000
+[   73.438035] RIP: 0010:[<ffffffff817792d9>]  [<ffffffff817792d9>]
+get_dnode_of_data+0x3a9/0x440
+[   73.438035] RSP: 0018:ffff880022737e08  EFLAGS: 00010246
+[   73.438035] RAX: ffff880033951000 RBX: 000000000000010b RCX: 00000000fff4f476
+[   73.438035] RDX: ffff880033951168 RSI: 000000111932488f RDI: ffff880022737ef0
+[   73.438035] RBP: ffff880022737eb8 R08: 0000000000000148 R09: 0000000000000000
+[   73.438035] R10: 0000000000008b86 R11: 0000000000000001 R12: fffffffefff4f476
+[   73.438035] R13: 0000000000000000 R14: ffffea0000ce5440 R15: ffff880021c28000
+[   73.438035] FS:  00007fefc2f08700(0000) GS:ffff88003fa00000(0000)
+knlGS:0000000000000000
+[   73.438035] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+[   73.438035] CR2: ffff88043368e340 CR3: 0000000032d6b000 CR4: 00000000000006f0
+[   73.438035] Stack:
+[   73.438035]  ffff880022737ef0 ffffffff81228d7c ffff88003d9fe7b0
+ffff880022737eb8
+[   73.438035]  ffffffff81763164 00000002ffffffff 0000000000000000
+00000000fff4f476
+[   73.438035]  0000000000000246 ffffffff00000000 ffffffff8259bd47
+ffffffff0000010b
+[   73.438035] Call Trace:
+[   73.438035]  [<ffffffff81228d7c>] ? pagevec_lookup_tag+0x1c/0x30
+[   73.438035]  [<ffffffff81763164>] ? __get_first_dirty_index+0x44/0x90
+[   73.438035]  [<ffffffff8259bd47>] ? _raw_spin_unlock_irq+0x27/0x40
+[   73.438035]  [<ffffffff81189e75>] ? trace_hardirqs_on_caller+0x185/0x220
+[   73.438035]  [<ffffffff817636b7>] f2fs_llseek+0xf7/0x420
+[   73.438035]  [<ffffffff8127e735>] SyS_lseek+0x65/0xa0
+[   73.438035]  [<ffffffff8259caa9>] system_call_fastpath+0x16/0x1b
+[   73.438035] Code: ba 00 00 00 00 00 88 ff ff 48 c1 f8 06 48 c1 e0
+0c 48 01 d0 8b 98 ec 0f 00 00 39 98 e8 0f 00 00 48 8d 90 68 01 00 00
+48 0f 45 d0 <8b> 04 8a 89 47 24 31 c0 eb 75 41 bc e4 ff ff ff 4d 85 f6
+74 19
+[   73.438035] RIP  [<ffffffff817792d9>] get_dnode_of_data+0x3a9/0x440
+[   73.438035]  RSP <ffff880022737e08>
+[   73.438035] CR2: ffff88043368e340
+[   73.438035] ---[ end trace e94f7065a7961f54 ]---
 
 ------------------------------------------------------------------------------
 Want excitement?
