@@ -1,27 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH -v2] f2fs: Remove lock from check_valid_map
-Date: Mon, 8 Sep 2014 22:13:03 -0700
-Message-ID: <20140909051303.GB24581@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <1410059104-9060-1-git-send-email-ying.huang@intel.com>
-	<1410061110-31081-1-git-send-email-ying.huang@intel.com>
-	<20140908035024.GA13009@jaegeuk-mac02.hsd1.ca.comcast.net>
-	<CAC=cRTOdvOp=zBT986SqGXC2+iRxGzSgKdFYzTQjbAamYsGVsg@mail.gmail.com>
+Subject: Re: [PATCH] f2fs: Fix recover when nid of non-inode
+ dnode < nid of inode
+Date: Mon, 8 Sep 2014 22:23:56 -0700
+Message-ID: <20140909052356.GA25590@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <1410176306-1689-1-git-send-email-ying.huang@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XRDjt-00016E-DF
+	(envelope-from <jaegeuk@kernel.org>) id 1XRDuQ-0001P4-3Q
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 09 Sep 2014 05:13:13 +0000
+	Tue, 09 Sep 2014 05:24:06 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XRDjr-0002dK-8h for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 09 Sep 2014 05:13:13 +0000
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XRDuN-0003SR-Sm for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 09 Sep 2014 05:24:06 +0000
 Content-Disposition: inline
-In-Reply-To: <CAC=cRTOdvOp=zBT986SqGXC2+iRxGzSgKdFYzTQjbAamYsGVsg@mail.gmail.com>
+In-Reply-To: <1410176306-1689-1-git-send-email-ying.huang@intel.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,78 +29,61 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: huang ying <huang.ying.caritas@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>, Huang Ying <ying.huang@intel.com>
+To: Huang Ying <ying.huang@intel.com>
+Cc: huang.ying.caritas@gmail.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hi Huang,
 
-On Mon, Sep 08, 2014 at 03:36:35PM +0800, huang ying wrote:
-> Hi, Jaegeuk,
+On Mon, Sep 08, 2014 at 07:38:26PM +0800, Huang Ying wrote:
+> For fsync, if the nid of a non-inode dnode < nid of inode and the
+> inode is not checkpointed.  The non-inode dnode may be written before
+> inode.  So in find_fsync_dnodes, f2fs_iget will fail, cause the
+> recovery fail.
 > 
-> On Mon, Sep 8, 2014 at 11:50 AM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> Usually, inode will be allocated before non-inode dnode, so the nid of
+> inode < nid of non-inode dnode.  But it is possible for the reverse.
+> For example, because of alloc_nid_failed.
 > 
-> > Hi,
-> >
-> > On Sun, Sep 07, 2014 at 11:38:30AM +0800, Huang Ying wrote:
-> > > Only one bit is read in check_valid_map, holding a lock to do that
-> > > doesn't help anything except decreasing performance.
-> > >
-> > > Signed-off-by: Huang, Ying <ying.huang@intel.com>
-> > > ---
-> > >
-> > > v2: Fixed a build warning.
-> > >
-> > > ---
-> > >  fs/f2fs/gc.c |    3 ---
-> > >  1 file changed, 3 deletions(-)
-> > >
-> > > --- a/fs/f2fs/gc.c
-> > > +++ b/fs/f2fs/gc.c
-> > > @@ -378,14 +378,11 @@ static void put_gc_inode(struct list_hea
-> > >  static int check_valid_map(struct f2fs_sb_info *sbi,
-> > >                               unsigned int segno, int offset)
-> > >  {
-> > > -     struct sit_info *sit_i = SIT_I(sbi);
-> > >       struct seg_entry *sentry;
-> > >       int ret;
-> > >
-> > > -     mutex_lock(&sit_i->sentry_lock);
-> > >       sentry = get_seg_entry(sbi, segno);
-> > >       ret = f2fs_test_bit(offset, sentry->cur_valid_map);
-> > > -     mutex_unlock(&sit_i->sentry_lock);
-> > >       return ret;
-> >
-> > The f2fs_test_bit is not atomic, so I'm not sure this is a good approach.
-> > How about introducing rw_semaphore?
-> >
+> This is fixed via ignoring non-inode dnode before inode dnode in
+> find_fsync_dnodes.
 > 
-> IMO, f2fs_test_bit just read a global variable (a byte in cur_valid_map),
-> then check its value. The byte may be changed in another CPU concurrently.
-> But even protected with a mutex, it can be changed in another CPU
-> immediately after mutex_unlock.  So mutex does not help  here.  Here we
-> just read a global variable, not read/modify/write, so, we don't need
-> atomic too.
-
-Hmm. This is a pretty hard corner case to allow the mutex removal under the
-following assumption.
-
-1. All the sit entries are cached in a global array, which means that it never
-happens that any sit entry pointers are changed.
-
-2. I agree that f2fs_gc tries to conduct the cleaning with best effort, and
-it triggers again when it detects there is something to do more.
-So, check_valid_bitmap doesn't need to make a precise decision.
-
-But, what I concern is the consistent policy to use such the mutex.
-If we break the rule, it becomes harder to debug potential bugs.
-
-Anyway, have you been facing with such the lock contention?
-
-Thanks,
-
+> The patch was tested via allocating nid reversely via a debugging
+> patch, that is, from big number to small number.
 > 
-> Best Regards,
-> Huang, Ying
+> Signed-off-by: Huang, Ying <ying.huang@intel.com>
+> ---
+>  fs/f2fs/recovery.c |    7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -172,8 +172,8 @@ static int find_fsync_dnodes(struct f2fs
+>  			if (IS_INODE(page) && is_dent_dnode(page))
+>  				set_inode_flag(F2FS_I(entry->inode),
+>  							FI_INC_LINK);
+> -		} else {
+> -			if (IS_INODE(page) && is_dent_dnode(page)) {
+
+If this is not inode block, we should add this inode to recover its data blocks.
+Rather than this tweak, if iget is failed, we'd better go to next instead of
+break.
+Can you test that?
+
+> +		} else if (IS_INODE(page)) {
+> +			if (is_dent_dnode(page)) {
+>  				err = recover_inode_page(sbi, page);
+>  				if (err)
+>  					break;
+> @@ -193,7 +193,8 @@ static int find_fsync_dnodes(struct f2fs
+>  				break;
+>  			}
+>  			list_add_tail(&entry->list, head);
+> -		}
+> +		} else
+> +			goto next;
+>  		entry->blkaddr = blkaddr;
+>  
+>  		err = recover_inode(entry->inode, page);
 
 ------------------------------------------------------------------------------
 Want excitement?
