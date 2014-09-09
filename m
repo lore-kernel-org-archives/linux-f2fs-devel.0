@@ -1,118 +1,89 @@
-From: Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH -v2] f2fs: Remove lock from check_valid_map
-Date: Tue, 09 Sep 2014 16:04:07 +0800
-Message-ID: <1410249847.732.395.camel@yhuang-dev>
-References: <1410059104-9060-1-git-send-email-ying.huang@intel.com>
-	 <1410061110-31081-1-git-send-email-ying.huang@intel.com>
-	 <20140908035024.GA13009@jaegeuk-mac02.hsd1.ca.comcast.net>
-	 <CAC=cRTOdvOp=zBT986SqGXC2+iRxGzSgKdFYzTQjbAamYsGVsg@mail.gmail.com>
-	 <20140909051303.GB24581@jaegeuk-mac02.hsd1.ca.comcast.net>
-	 <1410241426.732.378.camel@yhuang-dev>
-	 <20140909074102.GA493@jaegeuk-mac02.hsd1.ca.comcast.net>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] f2fs get_dnode_of_data oops
+Date: Tue, 09 Sep 2014 16:10:00 +0800
+Message-ID: <003301cfcc05$95bfc6f0$c13f54d0$@samsung.com>
+References: <CA+ydwtrB-rJB1fURO+CC1J-=VZ16g9Un47cMSMAZsTFPNg2s+g@mail.gmail.com>
+ <CA+ydwtrtyb5wQXCmyBigqufVz10UkKS76hVOY8mKc4FOyYmECw@mail.gmail.com>
+ <20140908042056.GA13863@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <CA+ydwtrbsUD81u6FWysDvqNy942KOF9y=mAhxPfRQP8RG0sZuQ@mail.gmail.com>
+ <20140909044157.GA24581@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140909074102.GA493@jaegeuk-mac02.hsd1.ca.comcast.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: huang ying <huang.ying.caritas@gmail.com>, Changman Lee <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>
+Return-path: <trinity-owner@vger.kernel.org>
+In-reply-to: <20140909044157.GA24581@jaegeuk-mac02.hsd1.ca.comcast.net>
+Content-language: zh-cn
+Sender: trinity-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Tommi Rantala' <tt.rantala@gmail.com>
+Cc: 'Dave Jones' <davej@redhat.com>, trinity@vger.kernel.org, 'LKML' <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, 2014-09-09 at 00:41 -0700, Jaegeuk Kim wrote:
-> On Tue, Sep 09, 2014 at 01:43:46PM +0800, Huang Ying wrote:
-> > On Mon, 2014-09-08 at 22:13 -0700, Jaegeuk Kim wrote:
-> > > Hi Huang,
-> > > 
-> > > On Mon, Sep 08, 2014 at 03:36:35PM +0800, huang ying wrote:
-> > > > Hi, Jaegeuk,
-> > > > 
-> > > > On Mon, Sep 8, 2014 at 11:50 AM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> > > > 
-> > > > > Hi,
-> > > > >
-> > > > > On Sun, Sep 07, 2014 at 11:38:30AM +0800, Huang Ying wrote:
-> > > > > > Only one bit is read in check_valid_map, holding a lock to do that
-> > > > > > doesn't help anything except decreasing performance.
-> > > > > >
-> > > > > > Signed-off-by: Huang, Ying <ying.huang@intel.com>
-> > > > > > ---
-> > > > > >
-> > > > > > v2: Fixed a build warning.
-> > > > > >
-> > > > > > ---
-> > > > > >  fs/f2fs/gc.c |    3 ---
-> > > > > >  1 file changed, 3 deletions(-)
-> > > > > >
-> > > > > > --- a/fs/f2fs/gc.c
-> > > > > > +++ b/fs/f2fs/gc.c
-> > > > > > @@ -378,14 +378,11 @@ static void put_gc_inode(struct list_hea
-> > > > > >  static int check_valid_map(struct f2fs_sb_info *sbi,
-> > > > > >                               unsigned int segno, int offset)
-> > > > > >  {
-> > > > > > -     struct sit_info *sit_i = SIT_I(sbi);
-> > > > > >       struct seg_entry *sentry;
-> > > > > >       int ret;
-> > > > > >
-> > > > > > -     mutex_lock(&sit_i->sentry_lock);
-> > > > > >       sentry = get_seg_entry(sbi, segno);
-> > > > > >       ret = f2fs_test_bit(offset, sentry->cur_valid_map);
-> > > > > > -     mutex_unlock(&sit_i->sentry_lock);
-> > > > > >       return ret;
-> > > > >
-> > > > > The f2fs_test_bit is not atomic, so I'm not sure this is a good approach.
-> > > > > How about introducing rw_semaphore?
-> > > > >
-> > > > 
-> > > > IMO, f2fs_test_bit just read a global variable (a byte in cur_valid_map),
-> > > > then check its value. The byte may be changed in another CPU concurrently.
-> > > > But even protected with a mutex, it can be changed in another CPU
-> > > > immediately after mutex_unlock.  So mutex does not help  here.  Here we
-> > > > just read a global variable, not read/modify/write, so, we don't need
-> > > > atomic too.
-> > > 
-> > > Hmm. This is a pretty hard corner case to allow the mutex removal under the
-> > > following assumption.
-> > > 
-> > > 1. All the sit entries are cached in a global array, which means that it never
-> > > happens that any sit entry pointers are changed.
-> > > 
-> > > 2. I agree that f2fs_gc tries to conduct the cleaning with best effort, and
-> > > it triggers again when it detects there is something to do more.
-> > > So, check_valid_bitmap doesn't need to make a precise decision.
-> > > 
-> > > But, what I concern is the consistent policy to use such the mutex.
-> > > If we break the rule, it becomes harder to debug potential bugs.
-> > 
-> > Yes.  We definitely need a rule.  But I suggest to make a small tweak to
-> > the rule.
+Hi Jaegeuk,
+
+Looks good to me!
+
+One nitpick, how about judging this condition before we lock ->i_mutex to
+avoid unneeded lock contention and invoking of i_size_read()?
+
+Thanks,
+Yu
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Tuesday, September 09, 2014 12:42 PM
+> To: Tommi Rantala
+> Cc: Dave Jones; trinity@vger.kernel.org; LKML; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] f2fs get_dnode_of_data oops
 > 
-> I don't think there is enough reason that we should take a small tweak while
-> breaking the locking policy. It's related to neither performance issue nor a
-> bug case.
-
-I don't want to break the locking rule.  I just propose a suggestion to
-tweak the rule itself a little.  To make something like "If we just read
-one variable with fixed address, we need not to use a lock to protect
-that." to be part of the rule.
-
-But if you think it is better to use a lock here.  That is not a problem
-for me.
-
-Best Regards,
-Huang, Ying
-
-> Even if f2fs suffers from lock contention here, I think we need to bet on
-> rw_semaphore to satisfy the rule and performance at the same time.
+> Hi Tommi,
 > 
-> Thanks,
+> This patch should resolve this bug.
+> Thanks a lot. :)
 > 
-> > If we just read one variable with fixed address, we need not
-> > to use a mutex to protect that.
-> > 
-> > > Anyway, have you been facing with such the lock contention?
-> > 
-> > No, I just review the code and thinks the mutex is not necessary.
-> > 
-> > Best Regards,
-> > Huang, Ying
+> >From ee24677b9917583f50f16b6f59771439f91b890c Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Mon, 8 Sep 2014 10:59:43 -0700
+> Subject: [PATCH] f2fs: fix negative value for lseek offset
+> 
+> If application throws negative value of lseek with SEEK_DATA|SEEK_HOLE,
+> previous f2fs went into BUG_ON in get_dnode_of_data, which was reported
+> by Tommi Rantala.
+> 
+> He could make a simple code to detect this having:
+> 	lseek(fd, -17595150933902LL, SEEK_DATA);
+> 
+> This patch should resolve that bug.
+> 
+> Reported-by: Tommi Rentala <tt.rantala@gmail.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/file.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 9f0ea3d..c9a1295 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -281,7 +281,7 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+>  	mutex_lock(&inode->i_mutex);
+> 
+>  	isize = i_size_read(inode);
+> -	if (offset >= isize)
+> +	if (offset >= isize || offset < 0)
+>  		goto fail;
+> 
+>  	/* handle inline data case */
+> --
+> 1.8.5.2 (Apple Git-48)
+> 
+> 
+> ------------------------------------------------------------------------------
+> Want excitement?
+> Manually upgrade your production database.
+> When you want reliability, choose Perforce.
+> Perforce version control. Predictably reliable.
+> http://pubads.g.doubleclick.net/gampad/clk?id=157508191&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
