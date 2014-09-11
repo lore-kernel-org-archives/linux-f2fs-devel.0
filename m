@@ -1,8 +1,8 @@
-From: Chao Yu <chao2.yu@samsung.com>
+From: Huang Ying <ying.huang@intel.com>
 Subject: Re: [PATCH] f2fs: Fix recover when nid of non-inode
  dnode < nid of inode
-Date: Thu, 11 Sep 2014 18:47:02 +0800
-Message-ID: <003601cfcdad$d64a8d00$82dfa700$@samsung.com>
+Date: Thu, 11 Sep 2014 20:25:17 +0800
+Message-ID: <1410438317.16054.8.camel@yhuang-mobile.sh.intel.com>
 References: <1410176306-1689-1-git-send-email-ying.huang@intel.com>
 	<20140909052356.GA25590@jaegeuk-mac02.hsd1.ca.comcast.net>
 	<1410241170.732.373.camel@yhuang-dev>
@@ -15,26 +15,17 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XS1v6-00075x-9p
+	(envelope-from <ying.huang@intel.com>) id 1XS3RM-0001ui-Va
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 11 Sep 2014 10:48:08 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XS1v3-0000RZ-CX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 11 Sep 2014 10:48:08 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0NBQ00GU7GNXXA80@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 11 Sep 2014 19:47:57 +0900 (KST)
-In-reply-to: <20140911053716.GA24315@jaegeuk-mac02.hsd1.ca.comcast.net>
-Content-language: zh-cn
+	Thu, 11 Sep 2014 12:25:33 +0000
+Received: from mga01.intel.com ([192.55.52.88])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XS3RL-00078m-1s for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 11 Sep 2014 12:25:32 +0000
+In-Reply-To: <20140911053716.GA24315@jaegeuk-mac02.hsd1.ca.comcast.net>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -44,19 +35,14 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'huang ying' <huang.ying.caritas@gmail.com>
-Cc: 'Huang Ying' <ying.huang@intel.com>, 'LKML' <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: huang ying <huang.ying.caritas@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Thursday, September 11, 2014 1:37 PM
-> To: huang ying
-> Cc: linux-f2fs-devel@lists.sourceforge.net; LKML; Huang Ying
-> Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix recover when nid of non-inode dnode < nid of inode
-> 
+
+On Wed, 2014-09-10 at 22:37 -0700, Jaegeuk Kim wrote:
 > On Wed, Sep 10, 2014 at 07:08:32PM +0800, huang ying wrote:
 > > On Wed, Sep 10, 2014 at 3:21 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> >
+> > 
 > > > On Tue, Sep 09, 2014 at 07:31:49PM +0800, huang ying wrote:
 > > > > On Tue, Sep 9, 2014 at 3:09 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
 > > > >
@@ -180,7 +166,7 @@ Cc: 'Huang Ying' <ying.huang@intel.com>, 'LKML' <linux-kernel@vger.kernel.org>, 
 > > > 3. inode(x) | CP | dnode(F) | inode(x)
 > > > -> Impossible, but recover latest dnode(F)
 > > >
-> >
+> > 
 > > I think this is possible.  If f2fs_sync_file runs concurrently with
 > > writeback. f2fs_sync_file written dnode(F), then writeback written inode(x).
 > 
@@ -198,16 +184,33 @@ Cc: 'Huang Ying' <ying.huang@intel.com>, 'LKML' <linux-kernel@vger.kernel.org>, 
 > 			goto out;
 > 	}
 > 	...
-> 
-> >
-> >
+
+Is the following situation possible?
+
+f2fs_sync_file				<writeback>
+  sync_node_pages			  f2fs_write_node_pages
+    write dnode(F)			    sync_node_pages
+					      write inode(x) /* clear PAGECACHE_TAG_DIRTY */
+
+
+That is, f2fs_sync_file run parallel with <writeback>.  The
+sync_node_pages above will return 1, because dnode(F) is written.
+inode(x) is written by <writeback> path.  And because
+PAGECACHE_TAG_DIRTY is cleared, it is possible that sync_node_pages
+called by f2fs_sync_file does not write inode(F).
+
+Best Regards,
+Huang, Ying
+
+> > 
+> > 
 > > > 4. inode(x) | CP | dnode(F) | inode(F)
 > > > -> No problem.
 > > >
 > > > 5. CP | inode(x) | dnode(F)
 > > > -> Impossible. Write inode(DF) with dnode(F) by f2fs_sync_file.
 > > >
-> >
+> > 
 > > I think this is possible.  If inode(x) is written by writeback and then
 > > dnode(F) is written by f2fs_sync_file.
 > 
@@ -215,8 +218,8 @@ Cc: 'Huang Ying' <ying.huang@intel.com>, 'LKML' <linux-kernel@vger.kernel.org>, 
 > Again, CP | inode(x) | dnode(F) | inode(DF) should be shown.
 > This is fixed by the below updated patch.
 > 
-> >
-> >
+> > 
+> > 
 > > > 6. CP | inode(DF) | dnode(F)
 > > > -> No problem.
 > > >
@@ -227,13 +230,13 @@ Cc: 'Huang Ying' <ying.huang@intel.com>, 'LKML' <linux-kernel@vger.kernel.org>, 
 > > > -> If f2fs_iget fails, then goto next. But, this is an impossible scenario.
 > > >    Drop this dnode(F).
 > > >
-> >
+> > 
 > > I think this is possible.  as 3.
 > 
 > ditto.
 > 
-> >
-> >
+> > 
+> > 
 > > > So, this patch adds some missing points such as #1, #5, #7, and #8.
 > > >
 > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
@@ -258,15 +261,15 @@ Cc: 'Huang Ying' <ying.huang@intel.com>, 'LKML' <linux-kernel@vger.kernel.org>, 
 > > > +                */
 > > > +               if (fsync_mark_done(sbi, inode->i_ino) &&
 > > >
-> >
+> > 
 > > How can this happen?  We have not called sync_node_pages(sbi, inode->i_ino,
 > > &wbc).  Where is the fsync mark set?
-> >
-> >
+> > 
+> > 
 > > > +                       !is_checkpointed_node(sbi, F2FS_I(inode)->i_pino))
 > > > {
 > > >
-> >
+> > 
 > > if !is_checkpointed_node(sbi, F2FS_I(inode)->i_pino), we need to do
 > > checkpoint.  Right?
 > 
@@ -274,7 +277,7 @@ Cc: 'Huang Ying' <ying.huang@intel.com>, 'LKML' <linux-kernel@vger.kernel.org>, 
 > Please, refer the following patch.
 > Thanks,
 > 
-> >From 2e70059dd680830c030f59813d4e9837cb65ecb1 Mon Sep 17 00:00:00 2001
+> From 2e70059dd680830c030f59813d4e9837cb65ecb1 Mon Sep 17 00:00:00 2001
 > From: Jaegeuk Kim <jaegeuk@kernel.org>
 > Date: Wed, 10 Sep 2014 00:16:34 -0700
 > Subject: [PATCH 1/2] f2fs: fix roll-forward missing scenarios
@@ -320,8 +323,7 @@ Cc: 'Huang Ying' <ying.huang@intel.com>, 'LKML' <linux-kernel@vger.kernel.org>, 
 > index e7681c3..e2a2f38 100644
 > --- a/fs/f2fs/file.c
 > +++ b/fs/f2fs/file.c
-> @@ -206,6 +206,16 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int
-> datasync)
+> @@ -206,6 +206,16 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 >  			up_write(&fi->i_sem);
 >  		}
 >  	} else {
@@ -334,21 +336,6 @@ Cc: 'Huang Ying' <ying.huang@intel.com>, 'LKML' <linux-kernel@vger.kernel.org>, 
 > +			mark_inode_dirty_sync(inode);
 > +			f2fs_write_inode(inode, NULL);
 > +		}
-
-This un-checkpointed non-fsynced inode page might be writeback by
-kswapd/bdi-flusher here. Then CP | inode(x) | dnode(F) occur.
-
-So how about modifying as below:
-
-		while (!sync_node_pages(sbi, inode->i_ino, &wbc) ||
-			(!fsync_mark_done(sbi, inode->i_ino) &&
-			!is_checkpointed_node(sbi, inode->i_ino))) {
-
-to guarantee the inode(DF) is be written out to disk?
-
-Thanks,
-Yu
-
 > +
 >  		/* if there is no written node page, write its inode page */
 >  		while (!sync_node_pages(sbi, ino, &wbc)) {
@@ -360,7 +347,7 @@ Yu
 > @@ -14,6 +14,36 @@
 >  #include "node.h"
 >  #include "segment.h"
-> 
+>  
 > +/*
 > + * Roll forward recovery scenarios.
 > + *
@@ -392,12 +379,12 @@ Yu
 > + *    But it will fail due to no inode(DF).
 > + */
 >  static struct kmem_cache *fsync_entry_slab;
-> 
+>  
 >  bool space_for_roll_forward(struct f2fs_sb_info *sbi)
 > @@ -110,27 +140,32 @@ out:
 >  	return err;
 >  }
-> 
+>  
 > -static int recover_inode(struct inode *inode, struct page *node_page)
 > +static void __recover_inode(struct inode *inode, struct page *page)
 >  {
@@ -413,12 +400,12 @@ Yu
 > +	inode->i_ctime.tv_nsec = le32_to_cpu(raw->i_ctime_nsec);
 > +	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
 > +}
-> 
+>  
 > +static int recover_inode(struct inode *inode, struct page *node_page)
 > +{
 >  	if (!IS_INODE(node_page))
 >  		return 0;
-> 
+>  
 > -	inode->i_mode = le16_to_cpu(raw_inode->i_mode);
 > -	i_size_write(inode, le64_to_cpu(raw_inode->i_size));
 > -	inode->i_atime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
@@ -428,21 +415,20 @@ Yu
 > -	inode->i_ctime.tv_nsec = le32_to_cpu(raw_inode->i_ctime_nsec);
 > -	inode->i_mtime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
 > +	__recover_inode(inode, node_page);
-> 
+>  
 >  	if (is_dent_dnode(node_page))
 >  		return recover_dentry(node_page, inode);
-> 
+>  
 >  	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode: ino = %x, name = %s",
 > -			ino_of_node(node_page), raw_inode->i_name);
 > +			ino_of_node(node_page), F2FS_INODE(node_page)->i_name);
 >  	return 0;
 >  }
-> 
-> @@ -186,10 +221,16 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head
-> *head)
+>  
+> @@ -186,10 +221,16 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
 >  				break;
 >  			}
-> 
+>  
 > +			/*
 > +			 * CP | dnode(F) | inode(DF)
 > +			 * For this case, we should not give up now.
@@ -467,23 +453,11 @@ Yu
 > +		 */
 > +		if (IS_INODE(page))
 > +			__recover_inode(entry->inode, page);
-> 
+>  
 >  		err = do_recover_data(sbi, entry->inode, page, blkaddr);
 >  		if (err)
-> --
-> 1.8.5.2 (Apple Git-48)
-> 
-> 
-> ------------------------------------------------------------------------------
-> Want excitement?
-> Manually upgrade your production database.
-> When you want reliability, choose Perforce
-> Perforce version control. Predictably reliable.
-> http://pubads.g.doubleclick.net/gampad/clk?id=157508191&iu=/4140/ostg.clktrk
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+
 
 
 ------------------------------------------------------------------------------
