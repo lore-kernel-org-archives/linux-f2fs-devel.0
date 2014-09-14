@@ -1,241 +1,269 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 07/10] f2fs: use meta_inode cache to improve roll-forward speed
-Date: Sun, 14 Sep 2014 15:14:21 -0700
-Message-ID: <1410732864-53069-7-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 03/10] f2fs: expand counting dirty pages in the
+	inode page cache
+Date: Sun, 14 Sep 2014 15:14:17 -0700
+Message-ID: <1410732864-53069-3-git-send-email-jaegeuk@kernel.org>
 References: <1410732864-53069-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XTI42-0001CB-2X
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 14 Sep 2014 22:14:34 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XTI40-00039T-SI for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 14 Sep 2014 22:14:34 +0000
 In-Reply-To: <1410732864-53069-1-git-send-email-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Previously, all the dnode pages should be read during the roll-forward recovery.
-Even worsely, whole the chain was traversed twice.
-This patch removes that redundant and costly read operations by using page cache
-of meta_inode and readahead function as well.
+Previously f2fs only counts dirty dentry pages, but there is no reason not to
+expand the scope.
+
+This patch changes the names on the management of dirty pages and to count
+dirty pages in each inode info as well.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 11 ++++++++--
- fs/f2fs/f2fs.h       |  5 +++--
- fs/f2fs/recovery.c   | 59 +++++++++++++++++++++++++---------------------------
- fs/f2fs/segment.h    |  5 +++--
- 4 files changed, 43 insertions(+), 37 deletions(-)
+ fs/f2fs/checkpoint.c | 10 ++++++----
+ fs/f2fs/data.c       | 10 +++++-----
+ fs/f2fs/dir.c        |  2 +-
+ fs/f2fs/f2fs.h       | 24 ++++++++++++------------
+ fs/f2fs/gc.c         |  2 +-
+ fs/f2fs/inode.c      |  2 +-
+ fs/f2fs/super.c      |  2 +-
+ 7 files changed, 27 insertions(+), 25 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 7262d99..d1ed889 100644
+index 935a56e..7262d99 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -82,6 +82,8 @@ static inline int get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
- 	case META_SSA:
- 	case META_CP:
- 		return 0;
-+	case META_POR:
-+		return SM_I(sbi)->main_blkaddr + sbi->user_block_count;
- 	default:
- 		BUG();
- 	}
-@@ -90,11 +92,11 @@ static inline int get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
- /*
-  * Readahead CP/NAT/SIT/SSA pages
-  */
--int ra_meta_pages(struct f2fs_sb_info *sbi, int start, int nrpages, int type)
-+int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type)
- {
- 	block_t prev_blk_addr = 0;
- 	struct page *page;
--	int blkno = start;
-+	block_t blkno = start;
- 	int max_blks = get_max_meta_blks(sbi, type);
- 
- 	struct f2fs_io_info fio = {
-@@ -128,6 +130,11 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, int start, int nrpages, int type)
- 			/* get ssa/cp block addr */
- 			blk_addr = blkno;
- 			break;
-+		case META_POR:
-+			if (unlikely(blkno >= max_blks))
-+				goto out;
-+			blk_addr = blkno;
-+			break;
- 		default:
- 			BUG();
- 		}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4f84d2a..48d7d46 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -103,7 +103,8 @@ enum {
- 	META_CP,
- 	META_NAT,
- 	META_SIT,
--	META_SSA
-+	META_SSA,
-+	META_POR,
- };
- 
- /* for the list of ino */
-@@ -1291,7 +1292,7 @@ void destroy_segment_manager_caches(void);
-  */
- struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);
- struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);
--int ra_meta_pages(struct f2fs_sb_info *, int, int, int);
-+int ra_meta_pages(struct f2fs_sb_info *, block_t, int, int);
- long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
- void add_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
- void remove_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 3736728..6f7fbfa 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -173,7 +173,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
- {
- 	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
- 	struct curseg_info *curseg;
--	struct page *page;
-+	struct page *page = NULL;
- 	block_t blkaddr;
- 	int err = 0;
- 
-@@ -181,20 +181,19 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
- 	curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
- 	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
- 
--	/* read node page */
--	page = alloc_page(GFP_F2FS_ZERO);
--	if (!page)
--		return -ENOMEM;
--	lock_page(page);
--
- 	while (1) {
- 		struct fsync_inode_entry *entry;
- 
--		err = f2fs_submit_page_bio(sbi, page, blkaddr, READ_SYNC);
--		if (err)
--			return err;
-+		if (blkaddr < SM_I(sbi)->main_blkaddr ||
-+					blkaddr > TOTAL_BLKS(sbi))
-+			break;
- 
--		lock_page(page);
-+		page = get_meta_page(sbi, blkaddr);
-+		if (IS_ERR(page))
-+			return PTR_ERR(page);
-+
-+		ra_meta_pages(sbi, next_blkaddr_of_node(page),
-+				MAX_BIO_BLOCKS(max_hw_blocks(sbi)), META_POR);
- 
- 		if (cp_ver != cpver_of_node(page))
- 			break;
-@@ -243,11 +242,9 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
- next:
- 		/* check next segment */
- 		blkaddr = next_blkaddr_of_node(page);
-+		f2fs_put_page(page, 1);
- 	}
--
--	unlock_page(page);
--	__free_pages(page, 0);
--
-+	f2fs_put_page(page, 1);
- 	return err;
+@@ -627,14 +627,16 @@ static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
+ 	return 0;
  }
  
-@@ -427,7 +424,7 @@ static int recover_data(struct f2fs_sb_info *sbi,
+-void set_dirty_dir_page(struct inode *inode, struct page *page)
++void update_dirty_page(struct inode *inode, struct page *page)
  {
- 	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
- 	struct curseg_info *curseg;
--	struct page *page;
-+	struct page *page = NULL;
- 	int err = 0;
- 	block_t blkaddr;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct dir_inode_entry *new;
+ 	int ret = 0;
  
-@@ -435,21 +432,19 @@ static int recover_data(struct f2fs_sb_info *sbi,
- 	curseg = CURSEG_I(sbi, type);
- 	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+-	if (!S_ISDIR(inode->i_mode))
++	if (!S_ISDIR(inode->i_mode)) {
++		inode_inc_dirty_pages(inode);
+ 		return;
++	}
  
--	/* read node page */
--	page = alloc_page(GFP_F2FS_ZERO);
--	if (!page)
--		return -ENOMEM;
--
--	lock_page(page);
--
- 	while (1) {
- 		struct fsync_inode_entry *entry;
+ 	new = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+ 	new->inode = inode;
+@@ -642,7 +644,7 @@ void set_dirty_dir_page(struct inode *inode, struct page *page)
  
--		err = f2fs_submit_page_bio(sbi, page, blkaddr, READ_SYNC);
--		if (err)
--			return err;
-+		if (blkaddr < SM_I(sbi)->main_blkaddr ||
-+					blkaddr > TOTAL_BLKS(sbi))
-+			break;
+ 	spin_lock(&sbi->dir_inode_lock);
+ 	ret = __add_dirty_inode(inode, new);
+-	inode_inc_dirty_dents(inode);
++	inode_inc_dirty_pages(inode);
+ 	SetPagePrivate(page);
+ 	spin_unlock(&sbi->dir_inode_lock);
  
--		lock_page(page);
-+		page = get_meta_page(sbi, blkaddr);
-+		if (IS_ERR(page))
-+			return PTR_ERR(page);
-+
-+		ra_meta_pages(sbi, next_blkaddr_of_node(page),
-+				MAX_BIO_BLOCKS(max_hw_blocks(sbi)), META_POR);
+@@ -677,7 +679,7 @@ void remove_dirty_dir_inode(struct inode *inode)
+ 		return;
  
- 		if (cp_ver != cpver_of_node(page))
- 			break;
-@@ -477,11 +472,9 @@ static int recover_data(struct f2fs_sb_info *sbi,
- next:
- 		/* check next segment */
- 		blkaddr = next_blkaddr_of_node(page);
-+		f2fs_put_page(page, 1);
+ 	spin_lock(&sbi->dir_inode_lock);
+-	if (get_dirty_dents(inode) ||
++	if (get_dirty_pages(inode) ||
+ 			!is_inode_flag_set(F2FS_I(inode), FI_DIRTY_DIR)) {
+ 		spin_unlock(&sbi->dir_inode_lock);
+ 		return;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 64d8550..6637741 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -863,7 +863,7 @@ done:
+ 
+ 	clear_cold_data(page);
+ out:
+-	inode_dec_dirty_dents(inode);
++	inode_dec_dirty_pages(inode);
+ 	unlock_page(page);
+ 	if (need_balance_fs)
+ 		f2fs_balance_fs(sbi);
+@@ -901,7 +901,7 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+ 		return 0;
+ 
+ 	if (S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_NONE &&
+-			get_dirty_dents(inode) < nr_pages_to_skip(sbi, DATA) &&
++			get_dirty_pages(inode) < nr_pages_to_skip(sbi, DATA) &&
+ 			available_free_memory(sbi, DIRTY_DENTS))
+ 		goto skip_write;
+ 
+@@ -923,7 +923,7 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+ 	return ret;
+ 
+ skip_write:
+-	wbc->pages_skipped += get_dirty_dents(inode);
++	wbc->pages_skipped += get_dirty_pages(inode);
+ 	return 0;
+ }
+ 
+@@ -1108,7 +1108,7 @@ static void f2fs_invalidate_data_page(struct page *page, unsigned int offset,
+ {
+ 	struct inode *inode = page->mapping->host;
+ 	if (PageDirty(page))
+-		inode_dec_dirty_dents(inode);
++		inode_dec_dirty_pages(inode);
+ 	ClearPagePrivate(page);
+ }
+ 
+@@ -1130,7 +1130,7 @@ static int f2fs_set_data_page_dirty(struct page *page)
+ 
+ 	if (!PageDirty(page)) {
+ 		__set_page_dirty_nobuffers(page);
+-		set_dirty_dir_page(inode, page);
++		update_dirty_page(inode, page);
+ 		return 1;
  	}
--
--	unlock_page(page);
--	__free_pages(page, 0);
--
-+	f2fs_put_page(page, 1);
- 	if (!err)
- 		allocate_new_segments(sbi);
- 	return err;
-@@ -527,6 +520,10 @@ out:
- 	destroy_fsync_dnodes(&inode_list);
- 	kmem_cache_destroy(fsync_entry_slab);
+ 	return 0;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index f1ceeb2..b54f871 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -618,7 +618,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 		truncate_hole(dir, page->index, page->index + 1);
+ 		clear_page_dirty_for_io(page);
+ 		ClearPageUptodate(page);
+-		inode_dec_dirty_dents(dir);
++		inode_dec_dirty_pages(dir);
+ 	}
+ 	f2fs_put_page(page, 1);
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1def9ee..2756c16 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -237,7 +237,7 @@ struct f2fs_inode_info {
+ 	/* Use below internally in f2fs*/
+ 	unsigned long flags;		/* use to pass per-file flags */
+ 	struct rw_semaphore i_sem;	/* protect fi info */
+-	atomic_t dirty_dents;		/* # of dirty dentry pages */
++	atomic_t dirty_pages;		/* # of dirty pages */
+ 	f2fs_hash_t chash;		/* hash value of given file name */
+ 	unsigned int clevel;		/* maximum level of given file name */
+ 	nid_t i_xattr_nid;		/* node id that contains xattrs */
+@@ -747,10 +747,11 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+ 	F2FS_SET_SB_DIRT(sbi);
+ }
  
-+	/* truncate meta pages to be used by the recovery */
-+	truncate_inode_pages_range(META_MAPPING(sbi),
-+		SM_I(sbi)->main_blkaddr << PAGE_CACHE_SHIFT, -1);
-+
- 	if (err) {
- 		truncate_inode_pages_final(NODE_MAPPING(sbi));
- 		truncate_inode_pages_final(META_MAPPING(sbi));
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 013aed2..c6f37f2 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -87,6 +87,7 @@
- 	(BITS_TO_LONGS(nr) * sizeof(unsigned long))
- #define TOTAL_SEGS(sbi)	(SM_I(sbi)->main_segments)
- #define TOTAL_SECS(sbi)	(sbi->total_sections)
-+#define TOTAL_BLKS(sbi)	(SM_I(sbi)->segment_count << sbi->log_blocks_per_seg)
- 
- #define SECTOR_FROM_BLOCK(sbi, blk_addr)				\
- 	(((sector_t)blk_addr) << (sbi)->log_sectors_per_block)
-@@ -553,7 +554,7 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
- static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+-static inline void inode_inc_dirty_dents(struct inode *inode)
++static inline void inode_inc_dirty_pages(struct inode *inode)
  {
- 	struct f2fs_sm_info *sm_info = SM_I(sbi);
--	block_t total_blks = sm_info->segment_count << sbi->log_blocks_per_seg;
-+	block_t total_blks = TOTAL_BLKS(sbi);
- 	block_t start_addr = sm_info->seg0_blkaddr;
- 	block_t end_addr = start_addr + total_blks - 1;
- 	BUG_ON(blk_addr < start_addr);
-@@ -606,7 +607,7 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
- static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
- {
- 	struct f2fs_sm_info *sm_info = SM_I(sbi);
--	block_t total_blks = sm_info->segment_count << sbi->log_blocks_per_seg;
-+	block_t total_blks = TOTAL_BLKS(sbi);
- 	block_t start_addr = sm_info->seg0_blkaddr;
- 	block_t end_addr = start_addr + total_blks - 1;
+-	inc_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DENTS);
+-	atomic_inc(&F2FS_I(inode)->dirty_dents);
++	atomic_inc(&F2FS_I(inode)->dirty_pages);
++	if (S_ISDIR(inode->i_mode))
++		inc_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DENTS);
+ }
  
+ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
+@@ -758,13 +759,12 @@ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
+ 	atomic_dec(&sbi->nr_pages[count_type]);
+ }
+ 
+-static inline void inode_dec_dirty_dents(struct inode *inode)
++static inline void inode_dec_dirty_pages(struct inode *inode)
+ {
+-	if (!S_ISDIR(inode->i_mode))
+-		return;
++	atomic_dec(&F2FS_I(inode)->dirty_pages);
+ 
+-	dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DENTS);
+-	atomic_dec(&F2FS_I(inode)->dirty_dents);
++	if (S_ISDIR(inode->i_mode))
++		dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DENTS);
+ }
+ 
+ static inline int get_pages(struct f2fs_sb_info *sbi, int count_type)
+@@ -772,9 +772,9 @@ static inline int get_pages(struct f2fs_sb_info *sbi, int count_type)
+ 	return atomic_read(&sbi->nr_pages[count_type]);
+ }
+ 
+-static inline int get_dirty_dents(struct inode *inode)
++static inline int get_dirty_pages(struct inode *inode)
+ {
+-	return atomic_read(&F2FS_I(inode)->dirty_dents);
++	return atomic_read(&F2FS_I(inode)->dirty_pages);
+ }
+ 
+ static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
+@@ -1302,7 +1302,7 @@ void add_orphan_inode(struct f2fs_sb_info *, nid_t);
+ void remove_orphan_inode(struct f2fs_sb_info *, nid_t);
+ void recover_orphan_inodes(struct f2fs_sb_info *);
+ int get_valid_checkpoint(struct f2fs_sb_info *);
+-void set_dirty_dir_page(struct inode *, struct page *);
++void update_dirty_page(struct inode *, struct page *);
+ void add_dirty_dir_inode(struct inode *);
+ void remove_dirty_dir_inode(struct inode *);
+ void sync_dirty_dir_inodes(struct f2fs_sb_info *);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 075ea1e..dca7818 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -537,7 +537,7 @@ static void move_data_page(struct inode *inode, struct page *page, int gc_type)
+ 		f2fs_wait_on_page_writeback(page, DATA);
+ 
+ 		if (clear_page_dirty_for_io(page))
+-			inode_dec_dirty_dents(inode);
++			inode_dec_dirty_pages(inode);
+ 		set_cold_data(page);
+ 		do_write_data_page(page, &fio);
+ 		clear_cold_data(page);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 95c0bc2..ff95547 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -276,7 +276,7 @@ void f2fs_evict_inode(struct inode *inode)
+ 			inode->i_ino == F2FS_META_INO(sbi))
+ 		goto out_clear;
+ 
+-	f2fs_bug_on(sbi, get_dirty_dents(inode));
++	f2fs_bug_on(sbi, get_dirty_pages(inode));
+ 	remove_dirty_dir_inode(inode);
+ 
+ 	if (inode->i_nlink || is_bad_inode(inode))
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3275e73..b5af9be 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -366,7 +366,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 
+ 	/* Initialize f2fs-specific inode info */
+ 	fi->vfs_inode.i_version = 1;
+-	atomic_set(&fi->dirty_dents, 0);
++	atomic_set(&fi->dirty_pages, 0);
+ 	fi->i_current_depth = 1;
+ 	fi->i_advise = 0;
+ 	rwlock_init(&fi->ext.ext_lock);
 -- 
 1.8.5.2 (Apple Git-48)
+
+
+------------------------------------------------------------------------------
+Want excitement?
+Manually upgrade your production database.
+When you want reliability, choose Perforce
+Perforce version control. Predictably reliable.
+http://pubads.g.doubleclick.net/gampad/clk?id=157508191&iu=/4140/ostg.clktrk
