@@ -1,10 +1,9 @@
-From: Huang Ying <ying.huang@intel.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: [PATCH] f2fs: Fix recover when nid of non-inode
  dnode < nid of inode
-Date: Sat, 13 Sep 2014 22:23:18 +0800
-Message-ID: <1410618198.24326.8.camel@yhuang-mobile.sh.intel.com>
-References: <1410176306-1689-1-git-send-email-ying.huang@intel.com>
-	<20140909052356.GA25590@jaegeuk-mac02.hsd1.ca.comcast.net>
+Date: Sun, 14 Sep 2014 00:38:03 -0700
+Message-ID: <20140914073803.GA51401@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <20140909052356.GA25590@jaegeuk-mac02.hsd1.ca.comcast.net>
 	<1410241170.732.373.camel@yhuang-dev>
 	<20140909070811.GA26657@jaegeuk-mac02.mot-mobility.com>
 	<CAC=cRTMA9AqmHjQqK3=5pAs8yqi25Rzmz8MaZ8=oTDaxHAXU+A@mail.gmail.com>
@@ -21,13 +20,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ying.huang@intel.com>) id 1XSoEf-0005Co-1R
+	(envelope-from <jaegeuk@kernel.org>) id 1XT4Nv-0001e8-Mu
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 13 Sep 2014 14:23:33 +0000
-Received: from mga01.intel.com ([192.55.52.88])
+	Sun, 14 Sep 2014 07:38:11 +0000
+Received: from mail.kernel.org ([198.145.19.201])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XSoEd-0001Q8-7L for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 13 Sep 2014 14:23:33 +0000
+	id 1XT4Nt-0001NN-C4 for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 14 Sep 2014 07:38:11 +0000
+Content-Disposition: inline
 In-Reply-To: <1410507288.7276.8.camel@yhuang-dev>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -38,10 +38,10 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Huang Ying <ying.huang@intel.com>
 Cc: huang ying <huang.ying.caritas@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, 2014-09-12 at 15:34 +0800, Huang Ying wrote:
+On Fri, Sep 12, 2014 at 03:34:48PM +0800, Huang Ying wrote:
 > On Thu, 2014-09-11 at 22:13 -0700, Jaegeuk Kim wrote:
 > > On Thu, Sep 11, 2014 at 08:25:17PM +0800, Huang Ying wrote:
 > > > 
@@ -273,6 +273,10 @@ On Fri, 2014-09-12 at 15:34 +0800, Huang Ying wrote:
 > Is it acceptable that we turn this to:
 > 
 > inode(x) | CPU | inode (x) | dnode (F) | inode(F)
+
+Why do we have to do writing additonal one block unnecessarily?
+We got inode(x) for the recovery.
+
 > 
 > > +		 * inode(x) | CP | dnode(F) | inode(x)
 > > +		 *  -> inode(x) | CP | dnode(F) | inode(x) | inode(F)
@@ -320,144 +324,126 @@ On Fri, 2014-09-12 at 15:34 +0800, Huang Ying wrote:
 > 
 > It appears that in f2fs_sync_file, what we need is just whether inode
 > page has fsync mark or not.
-
-Oh, I see.  The e->fsync_done indicates whether latest node of the inode
-has fsync_mark.  That can be used to deal with:
-
-CP | inode(DF) | dnode(x)
-
-But I still think it is possible to make e->fsync_done simple via
-introduce another simple e->node_fsync_done to indicate whether the node
-itself has fsync_mark.  What do you think about the solution in the
-below patch?  Just build tested.
-
-IMHO, it is easier to be understand.  And in effect, it is almost same,
-because it is hard to distinguish between
-
-CP | inode(x) | dnode(F)
-
-and
-
-inode(x) | CP | inode(x) | dnode(F)
-
-in your solution too.
-
-Best Regards,
-Huang, Ying
-
------------------------------------------------------>
----
- fs/f2fs/f2fs.h     |    1 +
- fs/f2fs/file.c     |   26 ++++++++++++++++++++++----
- fs/f2fs/node.c     |   17 ++++++++++++++++-
- fs/f2fs/node.h     |    4 +++-
- fs/f2fs/recovery.c |    2 ++
- 5 files changed, 44 insertions(+), 6 deletions(-)
-
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -207,10 +207,28 @@ int f2fs_sync_file(struct file *file, lo
- 			up_write(&fi->i_sem);
- 		}
- 	} else {
--		/* if there is no written node page, write its inode page */
--		while (!sync_node_pages(sbi, inode->i_ino, &wbc)) {
--			if (fsync_mark_done(sbi, inode->i_ino))
--				goto out;
-+		for (;;) {
-+			sync_node_pages(sbi, inode->i_ino, &wbc);
-+			/*
-+			 * inode(x) | CP | dnode(F)
-+			 * -> ok
-+			 * inode(x) | CP | inode(x) | dnode(x)
-+			 * -> inode(x) | CP | inode(x) | dnode(x) | inode(F)
-+			 * inode(x) | CP | inode(x) | dnode(F)
-+			 * -> inode(x) | CP | inode(x) | dnode(F) | inode(F)
-+			 * CP | inode(x) | dnode(x)
-+			 * -> CP | inode(x) | dnode(x) | inode(DF)
-+			 * CP | inode(x) | dnode(F)
-+			 * -> CP | inode(x) | dnode(F) | inode(DF)
-+			 * CP | dnode(F) | inode(x)
-+			 * -> CP | dnode(F) | inode(x) | inode(DF)
-+			 */
-+			if ((is_checkpointed_node(sbi, inode->i_ino) &&
-+			     fsync_mark_done(sbi, inode->i_ino)) ||
-+			    (!is_checkpointed_node(sbi, inode->i_ino) &&
-+			     node_fsync_mark_done(sbi, inode->i_ino) &&
-+			     fsync_mark_done(sbi, inode->i_ino)))
-+				break;
- 			mark_inode_dirty_sync(inode);
- 			ret = f2fs_write_inode(inode, NULL);
- 			if (ret)
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -137,6 +137,20 @@ int is_checkpointed_node(struct f2fs_sb_
- 	return is_cp;
- }
- 
-+bool node_fsync_mark_done(struct f2fs_sb_info *sbi, nid_t nid)
-+{
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	struct nat_entry *e;
-+	bool node_fsync_done = false;
-+
-+	read_lock(&nm_i->nat_tree_lock);
-+	e = __lookup_nat_cache(nm_i, nid);
-+	if (e)
-+		node_fsync_done = e->node_fsync_done;
-+	read_unlock(&nm_i->nat_tree_lock);
-+	return node_fsync_done;
-+}
-+
- bool fsync_mark_done(struct f2fs_sb_info *sbi, nid_t nid)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
-@@ -246,7 +260,8 @@ retry:
- 	nat_set_blkaddr(e, new_blkaddr);
- 	__set_nat_cache_dirty(nm_i, e);
- 
--	/* update fsync_mark if its inode nat entry is still alive */
-+	e->node_fsync_done = fsync_done;
-+	/* update fsync_done if its inode nat entry is still alive */
- 	e = __lookup_nat_cache(nm_i, ni->ino);
- 	if (e)
- 		e->fsync_done = fsync_done;
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -42,7 +42,9 @@ struct node_info {
- struct nat_entry {
- 	struct list_head list;	/* for clean or dirty nat list */
- 	bool checkpointed;	/* whether it is checkpointed or not */
--	bool fsync_done;	/* whether the latest node has fsync mark */
-+	bool node_fsync_done;	/* whether the node has fsync mark */
-+	bool fsync_done;	/* whether the latest node of the
-+				 * inode has fsync mark */
- 	struct node_info ni;	/* in-memory node information */
- };
- 
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -190,6 +190,8 @@ static int find_fsync_dnodes(struct f2fs
- 			if (IS_ERR(entry->inode)) {
- 				err = PTR_ERR(entry->inode);
- 				kmem_cache_free(fsync_entry_slab, entry);
-+				if (err == -ENOENT)
-+					goto next;
- 				break;
- 			}
- 			list_add_tail(&entry->list, head);
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1220,6 +1220,7 @@ struct node_info;
- 
- bool available_free_memory(struct f2fs_sb_info *, int);
- int is_checkpointed_node(struct f2fs_sb_info *, nid_t);
-+bool node_fsync_mark_done(struct f2fs_sb_info *, nid_t);
- bool fsync_mark_done(struct f2fs_sb_info *, nid_t);
- void fsync_mark_clear(struct f2fs_sb_info *, nid_t);
- void get_node_info(struct f2fs_sb_info *, nid_t, struct node_info *);
-
-
+> 
+> Best Regards,
+> Huang, Ying
+>  
+> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > index 6c5a74a..3736728 100644
+> > --- a/fs/f2fs/recovery.c
+> > +++ b/fs/f2fs/recovery.c
+> > @@ -14,6 +14,36 @@
+> >  #include "node.h"
+> >  #include "segment.h"
+> >  
+> > +/*
+> > + * Roll forward recovery scenarios.
+> > + *
+> > + * [Term] F: fsync_mark, D: dentry_mark
+> > + *
+> > + * 1. inode(x) | CP | inode(x) | dnode(F)
+> > + * -> Update the latest inode(x).
+> > + *
+> > + * 2. inode(x) | CP | inode(F) | dnode(F)
+> > + * -> No problem.
+> > + *
+> > + * 3. inode(x) | CP | dnode(F) | inode(x)
+> > + * -> Recover to the latest dnode(F), and drop the last inode(x)
+> > + *
+> > + * 4. inode(x) | CP | dnode(F) | inode(F)
+> > + * -> No problem.
+> > + *
+> > + * 5. CP | inode(x) | dnode(F)
+> > + * -> The inode(DF) was missing. Should drop this dnode(F).
+> > + *
+> > + * 6. CP | inode(DF) | dnode(F)
+> > + * -> No problem.
+> > + *
+> > + * 7. CP | dnode(F) | inode(DF)
+> > + * -> If f2fs_iget fails, then goto next to find inode(DF).
+> > + *
+> > + * 8. CP | dnode(F) | inode(x)
+> > + * -> If f2fs_iget fails, then goto next to find inode(DF).
+> > + *    But it will fail due to no inode(DF).
+> > + */
+> >  static struct kmem_cache *fsync_entry_slab;
+> >  
+> >  bool space_for_roll_forward(struct f2fs_sb_info *sbi)
+> > @@ -110,27 +140,32 @@ out:
+> >  	return err;
+> >  }
+> >  
+> > -static int recover_inode(struct inode *inode, struct page *node_page)
+> > +static void __recover_inode(struct inode *inode, struct page *page)
+> >  {
+> > -	struct f2fs_inode *raw_inode = F2FS_INODE(node_page);
+> > +	struct f2fs_inode *raw = F2FS_INODE(page);
+> > +
+> > +	inode->i_mode = le16_to_cpu(raw->i_mode);
+> > +	i_size_write(inode, le64_to_cpu(raw->i_size));
+> > +	inode->i_atime.tv_sec = le64_to_cpu(raw->i_mtime);
+> > +	inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
+> > +	inode->i_mtime.tv_sec = le64_to_cpu(raw->i_mtime);
+> > +	inode->i_atime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+> > +	inode->i_ctime.tv_nsec = le32_to_cpu(raw->i_ctime_nsec);
+> > +	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+> > +}
+> >  
+> > +static int recover_inode(struct inode *inode, struct page *node_page)
+> > +{
+> >  	if (!IS_INODE(node_page))
+> >  		return 0;
+> >  
+> > -	inode->i_mode = le16_to_cpu(raw_inode->i_mode);
+> > -	i_size_write(inode, le64_to_cpu(raw_inode->i_size));
+> > -	inode->i_atime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
+> > -	inode->i_ctime.tv_sec = le64_to_cpu(raw_inode->i_ctime);
+> > -	inode->i_mtime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
+> > -	inode->i_atime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
+> > -	inode->i_ctime.tv_nsec = le32_to_cpu(raw_inode->i_ctime_nsec);
+> > -	inode->i_mtime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
+> > +	__recover_inode(inode, node_page);
+> >  
+> >  	if (is_dent_dnode(node_page))
+> >  		return recover_dentry(node_page, inode);
+> >  
+> >  	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode: ino = %x, name = %s",
+> > -			ino_of_node(node_page), raw_inode->i_name);
+> > +			ino_of_node(node_page), F2FS_INODE(node_page)->i_name);
+> >  	return 0;
+> >  }
+> >  
+> > @@ -186,10 +221,16 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+> >  				break;
+> >  			}
+> >  
+> > +			/*
+> > +			 * CP | dnode(F) | inode(DF)
+> > +			 * For this case, we should not give up now.
+> > +			 */
+> >  			entry->inode = f2fs_iget(sbi->sb, ino_of_node(page));
+> >  			if (IS_ERR(entry->inode)) {
+> >  				err = PTR_ERR(entry->inode);
+> >  				kmem_cache_free(fsync_entry_slab, entry);
+> > +				if (err == -ENOENT)
+> > +					goto next;
+> >  				break;
+> >  			}
+> >  			list_add_tail(&entry->list, head);
+> > @@ -416,6 +457,13 @@ static int recover_data(struct f2fs_sb_info *sbi,
+> >  		entry = get_fsync_inode(head, ino_of_node(page));
+> >  		if (!entry)
+> >  			goto next;
+> > +		/*
+> > +		 * inode(x) | CP | inode(x) | dnode(F)
+> > +		 * In this case, we can lose the latest inode(x).
+> > +		 * So, call __recover_inode for the inode update.
+> > +		 */
+> > +		if (IS_INODE(page))
+> > +			__recover_inode(entry->inode, page);
+> >  
+> >  		err = do_recover_data(sbi, entry->inode, page, blkaddr);
+> >  		if (err)
 
 ------------------------------------------------------------------------------
 Want excitement?
