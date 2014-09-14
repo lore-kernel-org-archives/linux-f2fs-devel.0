@@ -1,69 +1,241 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 01/10] f2fs: fix negative value for lseek offset
-Date: Sun, 14 Sep 2014 15:14:15 -0700
-Message-ID: <1410732864-53069-1-git-send-email-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XTI3z-0008Th-4G
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 14 Sep 2014 22:14:31 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XTI3x-0001vp-Sd for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 14 Sep 2014 22:14:31 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Subject: [PATCH 07/10] f2fs: use meta_inode cache to improve roll-forward speed
+Date: Sun, 14 Sep 2014 15:14:21 -0700
+Message-ID: <1410732864-53069-7-git-send-email-jaegeuk@kernel.org>
+References: <1410732864-53069-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1410732864-53069-1-git-send-email-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If application throws negative value of lseek with SEEK_DATA|SEEK_HOLE,
-previous f2fs went into BUG_ON in get_dnode_of_data, which was reported
-by Tommi Rantala.
+Previously, all the dnode pages should be read during the roll-forward recovery.
+Even worsely, whole the chain was traversed twice.
+This patch removes that redundant and costly read operations by using page cache
+of meta_inode and readahead function as well.
 
-He could make a simple code to detect this having:
-	lseek(fd, -17595150933902LL, SEEK_DATA);
-
-This patch should resolve that bug.
-
-Reported-by: Tommi Rentala <tt.rantala@gmail.com>
-[Jaegeuk Kim: relocate the condition as suggested by Chao]
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/checkpoint.c | 11 ++++++++--
+ fs/f2fs/f2fs.h       |  5 +++--
+ fs/f2fs/recovery.c   | 59 +++++++++++++++++++++++++---------------------------
+ fs/f2fs/segment.h    |  5 +++--
+ 4 files changed, 43 insertions(+), 37 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 9f0ea3d..5cde363 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -353,6 +353,8 @@ static loff_t f2fs_llseek(struct file *file, loff_t offset, int whence)
- 						maxbytes, i_size_read(inode));
- 	case SEEK_DATA:
- 	case SEEK_HOLE:
-+		if (offset < 0)
-+			return -ENXIO;
- 		return f2fs_seek_block(file, offset, whence);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 7262d99..d1ed889 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -82,6 +82,8 @@ static inline int get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
+ 	case META_SSA:
+ 	case META_CP:
+ 		return 0;
++	case META_POR:
++		return SM_I(sbi)->main_blkaddr + sbi->user_block_count;
+ 	default:
+ 		BUG();
  	}
+@@ -90,11 +92,11 @@ static inline int get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
+ /*
+  * Readahead CP/NAT/SIT/SSA pages
+  */
+-int ra_meta_pages(struct f2fs_sb_info *sbi, int start, int nrpages, int type)
++int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type)
+ {
+ 	block_t prev_blk_addr = 0;
+ 	struct page *page;
+-	int blkno = start;
++	block_t blkno = start;
+ 	int max_blks = get_max_meta_blks(sbi, type);
+ 
+ 	struct f2fs_io_info fio = {
+@@ -128,6 +130,11 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, int start, int nrpages, int type)
+ 			/* get ssa/cp block addr */
+ 			blk_addr = blkno;
+ 			break;
++		case META_POR:
++			if (unlikely(blkno >= max_blks))
++				goto out;
++			blk_addr = blkno;
++			break;
+ 		default:
+ 			BUG();
+ 		}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 4f84d2a..48d7d46 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -103,7 +103,8 @@ enum {
+ 	META_CP,
+ 	META_NAT,
+ 	META_SIT,
+-	META_SSA
++	META_SSA,
++	META_POR,
+ };
+ 
+ /* for the list of ino */
+@@ -1291,7 +1292,7 @@ void destroy_segment_manager_caches(void);
+  */
+ struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);
+ struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);
+-int ra_meta_pages(struct f2fs_sb_info *, int, int, int);
++int ra_meta_pages(struct f2fs_sb_info *, block_t, int, int);
+ long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
+ void add_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
+ void remove_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 3736728..6f7fbfa 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -173,7 +173,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ {
+ 	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
+ 	struct curseg_info *curseg;
+-	struct page *page;
++	struct page *page = NULL;
+ 	block_t blkaddr;
+ 	int err = 0;
+ 
+@@ -181,20 +181,19 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ 	curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
+ 	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+ 
+-	/* read node page */
+-	page = alloc_page(GFP_F2FS_ZERO);
+-	if (!page)
+-		return -ENOMEM;
+-	lock_page(page);
+-
+ 	while (1) {
+ 		struct fsync_inode_entry *entry;
+ 
+-		err = f2fs_submit_page_bio(sbi, page, blkaddr, READ_SYNC);
+-		if (err)
+-			return err;
++		if (blkaddr < SM_I(sbi)->main_blkaddr ||
++					blkaddr > TOTAL_BLKS(sbi))
++			break;
+ 
+-		lock_page(page);
++		page = get_meta_page(sbi, blkaddr);
++		if (IS_ERR(page))
++			return PTR_ERR(page);
++
++		ra_meta_pages(sbi, next_blkaddr_of_node(page),
++				MAX_BIO_BLOCKS(max_hw_blocks(sbi)), META_POR);
+ 
+ 		if (cp_ver != cpver_of_node(page))
+ 			break;
+@@ -243,11 +242,9 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ next:
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
++		f2fs_put_page(page, 1);
+ 	}
+-
+-	unlock_page(page);
+-	__free_pages(page, 0);
+-
++	f2fs_put_page(page, 1);
+ 	return err;
+ }
+ 
+@@ -427,7 +424,7 @@ static int recover_data(struct f2fs_sb_info *sbi,
+ {
+ 	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
+ 	struct curseg_info *curseg;
+-	struct page *page;
++	struct page *page = NULL;
+ 	int err = 0;
+ 	block_t blkaddr;
+ 
+@@ -435,21 +432,19 @@ static int recover_data(struct f2fs_sb_info *sbi,
+ 	curseg = CURSEG_I(sbi, type);
+ 	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+ 
+-	/* read node page */
+-	page = alloc_page(GFP_F2FS_ZERO);
+-	if (!page)
+-		return -ENOMEM;
+-
+-	lock_page(page);
+-
+ 	while (1) {
+ 		struct fsync_inode_entry *entry;
+ 
+-		err = f2fs_submit_page_bio(sbi, page, blkaddr, READ_SYNC);
+-		if (err)
+-			return err;
++		if (blkaddr < SM_I(sbi)->main_blkaddr ||
++					blkaddr > TOTAL_BLKS(sbi))
++			break;
+ 
+-		lock_page(page);
++		page = get_meta_page(sbi, blkaddr);
++		if (IS_ERR(page))
++			return PTR_ERR(page);
++
++		ra_meta_pages(sbi, next_blkaddr_of_node(page),
++				MAX_BIO_BLOCKS(max_hw_blocks(sbi)), META_POR);
+ 
+ 		if (cp_ver != cpver_of_node(page))
+ 			break;
+@@ -477,11 +472,9 @@ static int recover_data(struct f2fs_sb_info *sbi,
+ next:
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
++		f2fs_put_page(page, 1);
+ 	}
+-
+-	unlock_page(page);
+-	__free_pages(page, 0);
+-
++	f2fs_put_page(page, 1);
+ 	if (!err)
+ 		allocate_new_segments(sbi);
+ 	return err;
+@@ -527,6 +520,10 @@ out:
+ 	destroy_fsync_dnodes(&inode_list);
+ 	kmem_cache_destroy(fsync_entry_slab);
+ 
++	/* truncate meta pages to be used by the recovery */
++	truncate_inode_pages_range(META_MAPPING(sbi),
++		SM_I(sbi)->main_blkaddr << PAGE_CACHE_SHIFT, -1);
++
+ 	if (err) {
+ 		truncate_inode_pages_final(NODE_MAPPING(sbi));
+ 		truncate_inode_pages_final(META_MAPPING(sbi));
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 013aed2..c6f37f2 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -87,6 +87,7 @@
+ 	(BITS_TO_LONGS(nr) * sizeof(unsigned long))
+ #define TOTAL_SEGS(sbi)	(SM_I(sbi)->main_segments)
+ #define TOTAL_SECS(sbi)	(sbi->total_sections)
++#define TOTAL_BLKS(sbi)	(SM_I(sbi)->segment_count << sbi->log_blocks_per_seg)
+ 
+ #define SECTOR_FROM_BLOCK(sbi, blk_addr)				\
+ 	(((sector_t)blk_addr) << (sbi)->log_sectors_per_block)
+@@ -553,7 +554,7 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+ static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+ {
+ 	struct f2fs_sm_info *sm_info = SM_I(sbi);
+-	block_t total_blks = sm_info->segment_count << sbi->log_blocks_per_seg;
++	block_t total_blks = TOTAL_BLKS(sbi);
+ 	block_t start_addr = sm_info->seg0_blkaddr;
+ 	block_t end_addr = start_addr + total_blks - 1;
+ 	BUG_ON(blk_addr < start_addr);
+@@ -606,7 +607,7 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+ static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+ {
+ 	struct f2fs_sm_info *sm_info = SM_I(sbi);
+-	block_t total_blks = sm_info->segment_count << sbi->log_blocks_per_seg;
++	block_t total_blks = TOTAL_BLKS(sbi);
+ 	block_t start_addr = sm_info->seg0_blkaddr;
+ 	block_t end_addr = start_addr + total_blks - 1;
  
 -- 
 1.8.5.2 (Apple Git-48)
-
-
-------------------------------------------------------------------------------
-Want excitement?
-Manually upgrade your production database.
-When you want reliability, choose Perforce
-Perforce version control. Predictably reliable.
-http://pubads.g.doubleclick.net/gampad/clk?id=157508191&iu=/4140/ostg.clktrk
