@@ -1,22 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 05/10] f2fs: fix roll-forward missing scenarios
-Date: Sun, 14 Sep 2014 15:14:19 -0700
-Message-ID: <1410732864-53069-5-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 08/10] f2fs: remove redundant operation during
+	roll-forward recovery
+Date: Sun, 14 Sep 2014 15:14:22 -0700
+Message-ID: <1410732864-53069-8-git-send-email-jaegeuk@kernel.org>
 References: <1410732864-53069-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XTI45-0008U9-2l
+	(envelope-from <jaegeuk@kernel.org>) id 1XTI49-0008Ub-21
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 14 Sep 2014 22:14:37 +0000
+	Sun, 14 Sep 2014 22:14:41 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XTI43-0007Jz-Ru for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 14 Sep 2014 22:14:37 +0000
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XTI48-0003GB-1K for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 14 Sep 2014 22:14:40 +0000
 In-Reply-To: <1410732864-53069-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,219 +31,125 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-We can summarize the roll forward recovery scenarios as follows.
-
-[Term] F: fsync_mark, D: dentry_mark
-
-1. inode(x) | CP | inode(x) | dnode(F)
--> Update the latest inode(x).
-
-2. inode(x) | CP | inode(F) | dnode(F)
--> No problem.
-
-3. inode(x) | CP | dnode(F) | inode(x)
--> Recover to the latest dnode(F), and drop the last inode(x)
-
-4. inode(x) | CP | dnode(F) | inode(F)
--> No problem.
-
-5. CP | inode(x) | dnode(F)
--> The inode(DF) was missing. Should drop this dnode(F).
-
-6. CP | inode(DF) | dnode(F)
--> No problem.
-
-7. CP | dnode(F) | inode(DF)
--> If f2fs_iget fails, then goto next to find inode(DF).
-
-8. CP | dnode(F) | inode(x)
--> If f2fs_iget fails, then goto next to find inode(DF).
-   But it will fail due to no inode(DF).
-
-So, this patch adds some missing points such as #1, #5, #7, and #8.
+If same data is updated multiple times, we don't need to redo whole the
+operations.
+Let's just update the lastest one.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c     | 20 ++++++++++++----
- fs/f2fs/node.c     | 11 ++++++++-
- fs/f2fs/recovery.c | 70 +++++++++++++++++++++++++++++++++++++++++++++---------
- 3 files changed, 85 insertions(+), 16 deletions(-)
+ fs/f2fs/f2fs.h     |  4 +++-
+ fs/f2fs/recovery.c | 41 +++++++++++++++++------------------------
+ 2 files changed, 20 insertions(+), 25 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index af06e22..c814cd2 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -207,15 +207,27 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 			up_write(&fi->i_sem);
- 		}
- 	} else {
--		/* if there is no written node page, write its inode page */
--		while (!sync_node_pages(sbi, ino, &wbc)) {
--			if (fsync_mark_done(sbi, ino))
--				goto out;
-+sync_nodes:
-+		sync_node_pages(sbi, ino, &wbc);
-+
-+		/*
-+		 * inode(x) | CP | inode(x) | dnode(F)
-+		 *  -> ok
-+		 * inode(x) | CP | dnode(F) | inode(x)
-+		 *  -> inode(x) | CP | dnode(F) | inode(x) | inode(F)
-+		 * CP | inode(x) | dnode(F)
-+		 *  -> CP | inode(x) | dnode(F) | inode(DF)
-+		 * CP | dnode(F) | inode(x)
-+		 *  -> CP | dnode(F) | inode(x) | inode(DF)
-+		 */
-+		if (!fsync_mark_done(sbi, ino)) {
- 			mark_inode_dirty_sync(inode);
- 			ret = f2fs_write_inode(inode, NULL);
- 			if (ret)
- 				goto out;
-+			goto sync_nodes;
- 		}
-+
- 		ret = wait_on_node_pages_writeback(sbi, ino);
- 		if (ret)
- 			goto out;
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b32eb56..653aa71 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -248,8 +248,17 @@ retry:
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 48d7d46..74dde99 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -137,7 +137,9 @@ struct discard_entry {
+ struct fsync_inode_entry {
+ 	struct list_head list;	/* list head */
+ 	struct inode *inode;	/* vfs inode pointer */
+-	block_t blkaddr;	/* block address locating the last inode */
++	block_t blkaddr;	/* block address locating the last fsync */
++	block_t last_dentry;	/* block address locating the last dentry */
++	block_t last_inode;	/* block address locating the last inode */
+ };
  
- 	/* update fsync_mark if its inode nat entry is still alive */
- 	e = __lookup_nat_cache(nm_i, ni->ino);
--	if (e)
-+	if (e) {
-+		/*
-+		 * CP | inode(x) | dnode(F)
-+		 *  -> CP | inode(x) | dnode(F) | inode(DF)
-+		 */
-+		if (!e->checkpointed && !e->fsync_done &&
-+				ni->ino != ni->nid && fsync_done)
-+			goto skip;
- 		e->fsync_done = fsync_done;
-+	}
-+skip:
- 	write_unlock(&nm_i->nat_tree_lock);
- }
- 
+ #define nats_in_cursum(sum)		(le16_to_cpu(sum->n_nats))
 diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 6c5a74a..3736728 100644
+index 6f7fbfa..95d9dc9 100644
 --- a/fs/f2fs/recovery.c
 +++ b/fs/f2fs/recovery.c
-@@ -14,6 +14,36 @@
- #include "node.h"
- #include "segment.h"
+@@ -66,7 +66,7 @@ static struct fsync_inode_entry *get_fsync_inode(struct list_head *head,
+ 	return NULL;
+ }
  
-+/*
-+ * Roll forward recovery scenarios.
-+ *
-+ * [Term] F: fsync_mark, D: dentry_mark
-+ *
-+ * 1. inode(x) | CP | inode(x) | dnode(F)
-+ * -> Update the latest inode(x).
-+ *
-+ * 2. inode(x) | CP | inode(F) | dnode(F)
-+ * -> No problem.
-+ *
-+ * 3. inode(x) | CP | dnode(F) | inode(x)
-+ * -> Recover to the latest dnode(F), and drop the last inode(x)
-+ *
-+ * 4. inode(x) | CP | dnode(F) | inode(F)
-+ * -> No problem.
-+ *
-+ * 5. CP | inode(x) | dnode(F)
-+ * -> The inode(DF) was missing. Should drop this dnode(F).
-+ *
-+ * 6. CP | inode(DF) | dnode(F)
-+ * -> No problem.
-+ *
-+ * 7. CP | dnode(F) | inode(DF)
-+ * -> If f2fs_iget fails, then goto next to find inode(DF).
-+ *
-+ * 8. CP | dnode(F) | inode(x)
-+ * -> If f2fs_iget fails, then goto next to find inode(DF).
-+ *    But it will fail due to no inode(DF).
-+ */
- static struct kmem_cache *fsync_entry_slab;
- 
- bool space_for_roll_forward(struct f2fs_sb_info *sbi)
-@@ -110,27 +140,32 @@ out:
+-static int recover_dentry(struct page *ipage, struct inode *inode)
++static int recover_dentry(struct inode *inode, struct page *ipage)
+ {
+ 	struct f2fs_inode *raw_inode = F2FS_INODE(ipage);
+ 	nid_t pino = le32_to_cpu(raw_inode->i_pino);
+@@ -140,7 +140,7 @@ out:
  	return err;
  }
  
--static int recover_inode(struct inode *inode, struct page *node_page)
-+static void __recover_inode(struct inode *inode, struct page *page)
+-static void __recover_inode(struct inode *inode, struct page *page)
++static void recover_inode(struct inode *inode, struct page *page)
  {
--	struct f2fs_inode *raw_inode = F2FS_INODE(node_page);
-+	struct f2fs_inode *raw = F2FS_INODE(page);
-+
-+	inode->i_mode = le16_to_cpu(raw->i_mode);
-+	i_size_write(inode, le64_to_cpu(raw->i_size));
-+	inode->i_atime.tv_sec = le64_to_cpu(raw->i_mtime);
-+	inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
-+	inode->i_mtime.tv_sec = le64_to_cpu(raw->i_mtime);
-+	inode->i_atime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
-+	inode->i_ctime.tv_nsec = le32_to_cpu(raw->i_ctime_nsec);
-+	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
-+}
+ 	struct f2fs_inode *raw = F2FS_INODE(page);
  
-+static int recover_inode(struct inode *inode, struct page *node_page)
-+{
- 	if (!IS_INODE(node_page))
- 		return 0;
- 
--	inode->i_mode = le16_to_cpu(raw_inode->i_mode);
--	i_size_write(inode, le64_to_cpu(raw_inode->i_size));
--	inode->i_atime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
--	inode->i_ctime.tv_sec = le64_to_cpu(raw_inode->i_ctime);
--	inode->i_mtime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
--	inode->i_atime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
--	inode->i_ctime.tv_nsec = le32_to_cpu(raw_inode->i_ctime_nsec);
--	inode->i_mtime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
-+	__recover_inode(inode, node_page);
- 
- 	if (is_dent_dnode(node_page))
- 		return recover_dentry(node_page, inode);
+@@ -152,21 +152,9 @@ static void __recover_inode(struct inode *inode, struct page *page)
+ 	inode->i_atime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+ 	inode->i_ctime.tv_nsec = le32_to_cpu(raw->i_ctime_nsec);
+ 	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+-}
+-
+-static int recover_inode(struct inode *inode, struct page *node_page)
+-{
+-	if (!IS_INODE(node_page))
+-		return 0;
+-
+-	__recover_inode(inode, node_page);
+-
+-	if (is_dent_dnode(node_page))
+-		return recover_dentry(node_page, inode);
  
  	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode: ino = %x, name = %s",
--			ino_of_node(node_page), raw_inode->i_name);
-+			ino_of_node(node_page), F2FS_INODE(node_page)->i_name);
- 	return 0;
+-			ino_of_node(node_page), F2FS_INODE(node_page)->i_name);
+-	return 0;
++			ino_of_node(page), F2FS_INODE(page)->i_name);
  }
  
-@@ -186,10 +221,16 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
- 				break;
+ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+@@ -214,12 +202,11 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
  			}
  
-+			/*
-+			 * CP | dnode(F) | inode(DF)
-+			 * For this case, we should not give up now.
-+			 */
- 			entry->inode = f2fs_iget(sbi->sb, ino_of_node(page));
- 			if (IS_ERR(entry->inode)) {
- 				err = PTR_ERR(entry->inode);
- 				kmem_cache_free(fsync_entry_slab, entry);
-+				if (err == -ENOENT)
-+					goto next;
+ 			/* add this fsync inode to the list */
+-			entry = kmem_cache_alloc(fsync_entry_slab, GFP_NOFS);
++			entry = kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+ 			if (!entry) {
+ 				err = -ENOMEM;
  				break;
  			}
- 			list_add_tail(&entry->list, head);
-@@ -416,6 +457,13 @@ static int recover_data(struct f2fs_sb_info *sbi,
- 		entry = get_fsync_inode(head, ino_of_node(page));
- 		if (!entry)
- 			goto next;
-+		/*
-+		 * inode(x) | CP | inode(x) | dnode(F)
-+		 * In this case, we can lose the latest inode(x).
-+		 * So, call __recover_inode for the inode update.
-+		 */
-+		if (IS_INODE(page))
-+			__recover_inode(entry->inode, page);
+-
+ 			/*
+ 			 * CP | dnode(F) | inode(DF)
+ 			 * For this case, we should not give up now.
+@@ -236,9 +223,11 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ 		}
+ 		entry->blkaddr = blkaddr;
  
+-		err = recover_inode(entry->inode, page);
+-		if (err && err != -ENOENT)
+-			break;
++		if (IS_INODE(page)) {
++			entry->last_inode = blkaddr;
++			if (is_dent_dnode(page))
++				entry->last_dentry = blkaddr;
++		}
+ next:
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
+@@ -455,11 +444,15 @@ static int recover_data(struct f2fs_sb_info *sbi,
+ 		/*
+ 		 * inode(x) | CP | inode(x) | dnode(F)
+ 		 * In this case, we can lose the latest inode(x).
+-		 * So, call __recover_inode for the inode update.
++		 * So, call recover_inode for the inode update.
+ 		 */
+-		if (IS_INODE(page))
+-			__recover_inode(entry->inode, page);
+-
++		if (entry->last_inode == blkaddr)
++			recover_inode(entry->inode, page);
++		if (entry->last_dentry == blkaddr) {
++			err = recover_dentry(entry->inode, page);
++			if (err)
++				break;
++		}
  		err = do_recover_data(sbi, entry->inode, page, blkaddr);
  		if (err)
+ 			break;
 -- 
 1.8.5.2 (Apple Git-48)
 
