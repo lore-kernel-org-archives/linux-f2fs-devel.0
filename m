@@ -1,29 +1,30 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/5] f2fs: support large sector size
-Date: Mon, 15 Sep 2014 18:01:10 +0800
-Message-ID: <002d01cfd0cc$16ec1470$44c43d50$@samsung.com>
+Subject: [PATCH 2/5] f2fs: fix to truncate blocks past EOF in
+ ->setattr
+Date: Mon, 15 Sep 2014 18:02:09 +0800
+Message-ID: <002e01cfd0cc$3a47bf00$aed73d00$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XTT6o-0008Cs-GQ
+	(envelope-from <chao2.yu@samsung.com>) id 1XTT7l-0008Ek-PI
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Sep 2014 10:02:10 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XTT6m-0004XA-1c
+	Mon, 15 Sep 2014 10:03:09 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XTT7i-0005qJ-QX
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Sep 2014 10:02:10 +0000
+	Mon, 15 Sep 2014 10:03:09 +0000
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
+	by mailout1.samsung.com
 	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
 	(built Nov
-	17 2011)) with ESMTP id <0NBX00AL0T7BIU40@mailout2.samsung.com> for
+	17 2011)) with ESMTP id <0NBX005VZT8Z5F10@mailout1.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Sep 2014 19:01:59 +0900 (KST)
+	Mon, 15 Sep 2014 19:02:59 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -37,129 +38,49 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Block size in f2fs is 4096 bytes, so theoretically, f2fs can support 4096 bytes
-sector device at maximum. But now f2fs only support 512 bytes size sector, so
-block device such as zRAM which uses page cache as its block storage space will
-not be mounted successfully as mismatch between sector size of zRAM and sector
-size of f2fs supported.
+By using FALLOC_FL_KEEP_SIZE in ->fallocate of f2fs, we can fallocate block past
+EOF without changing i_size of inode. These blocks past EOF will not be
+truncated in ->setattr as we truncate them only when change the file size.
 
-In this patch we support large sector size in f2fs, so block device with sector
-size of 512/1024/2048/4096 bytes can be supported in f2fs.
+We should give a chance to truncate blocks out of filesize in setattr().
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c          |  2 +-
- fs/f2fs/segment.c       |  4 ++--
- fs/f2fs/segment.h       | 10 +++++-----
- fs/f2fs/super.c         | 20 ++++++++++++++------
- include/linux/f2fs_fs.h |  5 +++--
- 5 files changed, 25 insertions(+), 16 deletions(-)
+ fs/f2fs/file.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 64d8550..abc0cf1 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -85,7 +85,7 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
- 	bio = bio_alloc(GFP_NOIO, npages);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c9a1295..7b34101 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -547,15 +547,22 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 	if (err)
+ 		return err;
  
- 	bio->bi_bdev = sbi->sb->s_bdev;
--	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(sbi, blk_addr);
-+	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blk_addr);
- 	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
- 	bio->bi_private = sbi;
+-	if ((attr->ia_valid & ATTR_SIZE) &&
+-			attr->ia_size != i_size_read(inode)) {
++	if (attr->ia_valid & ATTR_SIZE) {
+ 		err = f2fs_convert_inline_data(inode, attr->ia_size, NULL);
+ 		if (err)
+ 			return err;
  
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index e158d63..e921438 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -370,8 +370,8 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
- static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
- 				block_t blkstart, block_t blklen)
- {
--	sector_t start = SECTOR_FROM_BLOCK(sbi, blkstart);
--	sector_t len = SECTOR_FROM_BLOCK(sbi, blklen);
-+	sector_t start = SECTOR_FROM_BLOCK(blkstart);
-+	sector_t len = SECTOR_FROM_BLOCK(blklen);
- 	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
- 	return blkdev_issue_discard(sbi->sb->s_bdev, start, len, GFP_NOFS, 0);
- }
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index bed0dc9..06f7309 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -88,10 +88,10 @@
- #define TOTAL_SEGS(sbi)	(SM_I(sbi)->main_segments)
- #define TOTAL_SECS(sbi)	(sbi->total_sections)
- 
--#define SECTOR_FROM_BLOCK(sbi, blk_addr)				\
--	(((sector_t)blk_addr) << (sbi)->log_sectors_per_block)
--#define SECTOR_TO_BLOCK(sbi, sectors)					\
--	(sectors >> (sbi)->log_sectors_per_block)
-+#define SECTOR_FROM_BLOCK(blk_addr)				\
-+	(((sector_t)blk_addr) << F2FS_LOG_SECTORS_PER_BLOCK)
-+#define SECTOR_TO_BLOCK(sectors)				\
-+	(sectors >> F2FS_LOG_SECTORS_PER_BLOCK)
- #define MAX_BIO_BLOCKS(max_hw_blocks)					\
- 	(min((int)max_hw_blocks, BIO_MAX_PAGES))
- 
-@@ -704,7 +704,7 @@ static inline unsigned int max_hw_blocks(struct f2fs_sb_info *sbi)
- {
- 	struct block_device *bdev = sbi->sb->s_bdev;
- 	struct request_queue *q = bdev_get_queue(bdev);
--	return SECTOR_TO_BLOCK(sbi, queue_max_sectors(q));
-+	return SECTOR_TO_BLOCK(queue_max_sectors(q));
- }
- 
- /*
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3275e73..54444bb 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -786,14 +786,22 @@ static int sanity_check_raw_super(struct super_block *sb,
- 		return 1;
+-		truncate_setsize(inode, attr->ia_size);
+-		f2fs_truncate(inode);
+-		f2fs_balance_fs(F2FS_I_SB(inode));
++		if (attr->ia_size != i_size_read(inode)) {
++			truncate_setsize(inode, attr->ia_size);
++			f2fs_truncate(inode);
++			f2fs_balance_fs(F2FS_I_SB(inode));
++		} else {
++			/*
++			 * giving a chance to truncate blocks past EOF which
++			 * are fallocated with FALLOC_FL_KEEP_SIZE.
++			 */
++			f2fs_truncate(inode);
++		}
  	}
  
--	if (le32_to_cpu(raw_super->log_sectorsize) !=
--					F2FS_LOG_SECTOR_SIZE) {
--		f2fs_msg(sb, KERN_INFO, "Invalid log sectorsize");
-+	/* Currently, support 512/1024/2048/4096 bytes sector size */
-+	if (le32_to_cpu(raw_super->log_sectorsize) >
-+				F2FS_MAX_LOG_SECTOR_SIZE ||
-+		le32_to_cpu(raw_super->log_sectorsize) <
-+				F2FS_MIN_LOG_SECTOR_SIZE) {
-+		f2fs_msg(sb, KERN_INFO, "Invalid log sectorsize (%u)",
-+			le32_to_cpu(raw_super->log_sectorsize));
- 		return 1;
- 	}
--	if (le32_to_cpu(raw_super->log_sectors_per_block) !=
--					F2FS_LOG_SECTORS_PER_BLOCK) {
--		f2fs_msg(sb, KERN_INFO, "Invalid log sectors per block");
-+	if (le32_to_cpu(raw_super->log_sectors_per_block) +
-+		le32_to_cpu(raw_super->log_sectorsize) !=
-+			F2FS_MAX_LOG_SECTOR_SIZE) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Invalid log sectors per block(%u) log sectorsize(%u)",
-+			le32_to_cpu(raw_super->log_sectors_per_block),
-+			le32_to_cpu(raw_super->log_sectorsize));
- 		return 1;
- 	}
- 	return 0;
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 9ca1ff3..860313a 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -15,8 +15,9 @@
- #include <linux/types.h>
- 
- #define F2FS_SUPER_OFFSET		1024	/* byte-size offset */
--#define F2FS_LOG_SECTOR_SIZE		9	/* 9 bits for 512 byte */
--#define F2FS_LOG_SECTORS_PER_BLOCK	3	/* 4KB: F2FS_BLKSIZE */
-+#define F2FS_MIN_LOG_SECTOR_SIZE	9	/* 9 bits for 512 bytes */
-+#define F2FS_MAX_LOG_SECTOR_SIZE	12	/* 12 bits for 4096 bytes */
-+#define F2FS_LOG_SECTORS_PER_BLOCK	3	/* log number for sector/blk */
- #define F2FS_BLKSIZE			4096	/* support only 4KB block */
- #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
- #define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
+ 	__setattr_copy(inode, attr);
 -- 
 2.0.1.474.g72c7794
 
