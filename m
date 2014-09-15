@@ -1,30 +1,29 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/5] f2fs: fix to truncate blocks past EOF in
- ->setattr
-Date: Mon, 15 Sep 2014 18:02:09 +0800
-Message-ID: <002e01cfd0cc$3a47bf00$aed73d00$@samsung.com>
+Subject: [PATCH 3/5] f2fs: skip punching hole in special condition
+Date: Mon, 15 Sep 2014 18:03:32 +0800
+Message-ID: <002f01cfd0cc$6a4c3a00$3ee4ae00$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XTT7l-0008Ek-PI
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XTT92-00056i-E6
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Sep 2014 10:03:09 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XTT7i-0005qJ-QX
+	Mon, 15 Sep 2014 10:04:28 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XTT91-0006Oh-5o
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Sep 2014 10:03:09 +0000
+	Mon, 15 Sep 2014 10:04:28 +0000
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
+	by mailout3.samsung.com
 	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
 	(built Nov
-	17 2011)) with ESMTP id <0NBX005VZT8Z5F10@mailout1.samsung.com> for
+	17 2011)) with ESMTP id <0NBX00BWUTB797A0@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Sep 2014 19:02:59 +0900 (KST)
+	Mon, 15 Sep 2014 19:04:19 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -38,49 +37,35 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-By using FALLOC_FL_KEEP_SIZE in ->fallocate of f2fs, we can fallocate block past
-EOF without changing i_size of inode. These blocks past EOF will not be
-truncated in ->setattr as we truncate them only when change the file size.
+Now punching hole in directory is not supported in f2fs, so let's limit file
+type in punch_hole().
 
-We should give a chance to truncate blocks out of filesize in setattr().
+In addition, in punch_hole if offset is exceed file size, we should skip
+punching hole.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/file.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ fs/f2fs/file.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c9a1295..7b34101 100644
+index 7b34101..ecf94e1 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -547,15 +547,22 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 	if (err)
- 		return err;
+@@ -645,6 +645,13 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 	loff_t off_start, off_end;
+ 	int ret = 0;
  
--	if ((attr->ia_valid & ATTR_SIZE) &&
--			attr->ia_size != i_size_read(inode)) {
-+	if (attr->ia_valid & ATTR_SIZE) {
- 		err = f2fs_convert_inline_data(inode, attr->ia_size, NULL);
- 		if (err)
- 			return err;
- 
--		truncate_setsize(inode, attr->ia_size);
--		f2fs_truncate(inode);
--		f2fs_balance_fs(F2FS_I_SB(inode));
-+		if (attr->ia_size != i_size_read(inode)) {
-+			truncate_setsize(inode, attr->ia_size);
-+			f2fs_truncate(inode);
-+			f2fs_balance_fs(F2FS_I_SB(inode));
-+		} else {
-+			/*
-+			 * giving a chance to truncate blocks past EOF which
-+			 * are fallocated with FALLOC_FL_KEEP_SIZE.
-+			 */
-+			f2fs_truncate(inode);
-+		}
- 	}
- 
- 	__setattr_copy(inode, attr);
++	if (!S_ISREG(inode->i_mode))
++		return -EOPNOTSUPP;
++
++	/* skip punching hole beyond i_size */
++	if (offset >= inode->i_size)
++		return ret;
++
+ 	ret = f2fs_convert_inline_data(inode, MAX_INLINE_DATA + 1, NULL);
+ 	if (ret)
+ 		return ret;
 -- 
 2.0.1.474.g72c7794
 
