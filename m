@@ -1,8 +1,8 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 5/5] f2fs: fix to search whole dirty segmap when
- get_victim
-Date: Mon, 15 Sep 2014 18:05:44 +0800
-Message-ID: <003101cfd0cc$c0335890$409a09b0$@samsung.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: f2fs: use meta_inode cache to improve roll-forward
+	speed
+Date: Mon, 15 Sep 2014 22:37:58 +0300
+Message-ID: <20140915193758.GA19290@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,22 +10,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1XTTBM-0005BB-OB
+	(envelope-from <dan.carpenter@oracle.com>) id 1XTc6N-0007Wy-26
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Sep 2014 10:06:52 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1XTTBL-0006Yp-9m
+	Mon, 15 Sep 2014 19:38:19 +0000
+Received: from userp1040.oracle.com ([156.151.31.81])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1XTc6M-00028T-98
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Sep 2014 10:06:52 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0NBX00F4QTF8WN00@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Sep 2014 19:06:44 +0900 (KST)
-Content-language: zh-cn
+	Mon, 15 Sep 2014 19:38:18 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,47 +28,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-In ->get_victim we get max_search value from dirty_i->nr_dirty without
-protection of seglist_lock, after that, nr_dirty can be increased/decreased
-before we hold seglist_lock lock.
-Then in main loop we attempt to traverse all dirty section one time to find
-victim section, but it's not accurate to use max_search as the total loop count,
-because we might lose checking several sections or check sections redundantly
-for the case of nr_dirty are increased or decreased previously.
+Hello Jaegeuk Kim,
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/gc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The patch 17ef549eef6e: "f2fs: use meta_inode cache to improve
+roll-forward speed" from Sep 11, 2014, leads to the following static
+checker warning:
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 075ea1e..4481edc 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -263,14 +263,14 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 	unsigned int secno, max_cost;
- 	int nsearched = 0;
- 
-+	mutex_lock(&dirty_i->seglist_lock);
-+
- 	p.alloc_mode = alloc_mode;
- 	select_policy(sbi, gc_type, type, &p);
- 
- 	p.min_segno = NULL_SEGNO;
- 	p.min_cost = max_cost = get_max_cost(sbi, &p);
- 
--	mutex_lock(&dirty_i->seglist_lock);
--
- 	if (p.alloc_mode == LFS && gc_type == FG_GC) {
- 		p.min_segno = check_bg_victims(sbi);
- 		if (p.min_segno != NULL_SEGNO)
--- 
-2.0.1.474.g72c7794
+	fs/f2fs/recovery.c:180 find_fsync_dnodes()
+	warn: 'page' isn't an ERR_PTR
 
+fs/f2fs/recovery.c
+   178  
+   179                  page = get_meta_page(sbi, blkaddr);
+   180                  if (IS_ERR(page))
+                            ^^^^^^^^^^^
+Is get_meta_page() supposed to return an ERR_PTR()?  The comment says
+"We guarantee no failure on the returned page."
 
+   181                          return PTR_ERR(page);
+   182  
+
+Also:
+fs/f2fs/recovery.c:446 recover_data() warn: 'page' isn't an ERR_PTR
+
+regards,
+dan carpenter
 
 ------------------------------------------------------------------------------
 Want excitement?
