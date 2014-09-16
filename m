@@ -1,26 +1,22 @@
-From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH 4/5] f2fs: fix to clean previous mount option
- when remount_fs
-Date: Tue, 16 Sep 2014 11:46:11 +0800
-Message-ID: <5417B283.10702@cn.fujitsu.com>
-References: <003001cfd0cc$96f9e8e0$c4edbaa0$@samsung.com>
-	<54179768.2010708@cn.fujitsu.com>
-	<00a001cfd15b$30bdadc0$92390940$@samsung.com>
+From: "Tina" <348738@2013-20130227YO.net>
+Subject: [SPAM] Re: PU sandwich panel
+Date: Tue, 16 Sep 2014 13:15:04 +0800
+Message-ID: <E1XTl6Z-0001w1-U1@sfs-ml-4.v29.ch3.sourceforge.com>
+Reply-To: cnswe_08@163.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz.fnst@cn.fujitsu.com>) id 1XTjvo-0002Rf-1O
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <348738@2013-20130227YO.net>) id 1XTl6Y-0001vq-Hg
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 16 Sep 2014 03:59:56 +0000
-Received: from [59.151.112.132] (helo=heian.cn.fujitsu.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XTjvm-0002G8-1E for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 16 Sep 2014 03:59:56 +0000
-In-Reply-To: <00a001cfd15b$30bdadc0$92390940$@samsung.com>
+	Tue, 16 Sep 2014 05:15:06 +0000
+Received: from [221.203.31.19] (helo=PC-201212121215)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XTl6W-0002bJ-RY for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 16 Sep 2014 05:15:06 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,89 +26,38 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On 09/16/2014 11:05 AM, Chao Yu wrote:
+Dear Sir, 
+   Greetings from Liaoning Sunway Mechanical & Electrical Technology Co., Ltd.(SWE for short) in China. 
+   Our factory is able to manufacture rock wool board, polyurethane sandwich panel, cold storage panel, etc.
 
-> Hi Gu,
-> 
->> -----Original Message-----
->> From: Gu Zheng [mailto:guz.fnst@cn.fujitsu.com]
->> Sent: Tuesday, September 16, 2014 9:51 AM
->> To: Chao Yu
->> Cc: Jaegeuk Kim; Changman Lee; linux-f2fs-devel@lists.sourceforge.net;
->> linux-kernel@vger.kernel.org
->> Subject: Re: [f2fs-dev][PATCH 4/5] f2fs: fix to clean previous mount option when remount_fs
->>
->> Hi Yu,
->> On 09/15/2014 06:04 PM, Chao Yu wrote:
->>
->>> In manual of mount, we descript remount as below:
->>>
->>> "mount -o remount,rw /dev/foo /dir
->>> After  this call all old mount options are replaced and arbitrary stuff from
->>> fstab is ignored, except the loop= option which is internally generated and
->>> maintained by the mount command."
->>>
->>> Previously f2fs do not clear up old mount options when remount_fs, so we have no
->>> chance of disabling previous option (e.g. flush_merge). Fix it.
->>
->> Please don't.
->> "Remount" should just change what you specified and keep others unchanged.
-> 
-> Actually, there are two kinds of different 'remount', they are all specified in
-> manual of mount.
-> 1) mount -o remount,rw /dev/foo /dir
-> 2) mount -o remount,rw  /dir
+    Why we are better?
+    1.SWE totally has three production lines with capacity 9,000 tons/month; 
+    2.SWE adopts the advanced equipments as below:
+       A.Fully Continuous SAIP Production Line from Italy;
+       B.Germany WEGOMA Profile Machining Center;
+       C.Japan SIASUN Welding Robort(the accuracy can reach to 0.05-0.1mm);
+       D.Swiss Imported Laser Cutting Machine;
+       E.CNC Bending Machine.
+    3.With good sealing & heat-insulating effect;
+    4.The fireproof grade can reach to A -level;
+    5.SWE has already passed CE, ISO, A1 and AS/NZ Certificate.
 
-Thanks for your reminder, I confused them.
+    If interested, feel free to contact!
+    Wishing cooperate!
 
-Regards,
-Gu
+    B. Regards,
 
-> 
-> I think 'remount' in your description is the second kind, being different from the
-> first kind in description of this patch, for the second kind remount, 'mount' command
-> can keep old options by loading them from mtab/fstab then merge them with new
-> specified options.
-> 
-> Thanks,
-> Yu
-> 
->> The problem here is that we need to provide mount opts for disable/enable
->> some features, but we missed it. So the right way is adding these opts if
->> we really need them.
->>
->> Thanks,
->> Gu
->>
->>>
->>> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
->>> ---
->>>  fs/f2fs/super.c | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index 54444bb..90fcbe0 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -616,6 +616,9 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>>  	org_mount_opt = sbi->mount_opt;
->>>  	active_logs = sbi->active_logs;
->>>
->>> +	sbi->mount_opt.opt = 0;
->>> +	sbi->active_logs = NR_CURSEG_TYPE;
->>> +
->>>  	/* parse mount options */
->>>  	err = parse_options(sb, data);
->>>  	if (err)
-> 
-> 
-> .
-> 
+    Tina
+   
+    (Note: Pls only reply to this email directly, not copy to others!)
 
-
+    Web: www.cnswe.com.cn
+    Email: cnswe_08@163.com 
+    Tel:+86 0412 2981181
+    Mob: +86 15841207207
+    Skype: cnswe_tina1
 
 ------------------------------------------------------------------------------
 Want excitement?
