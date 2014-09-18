@@ -1,73 +1,115 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/3] f2fs: use more free segments until SSR is
-	activated
-Date: Wed, 17 Sep 2014 22:53:57 -0700
-Message-ID: <1411019637-2381-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/3] f2fs: change the ipu_policy option to enable combinations
+Date: Wed, 17 Sep 2014 22:53:56 -0700
+Message-ID: <1411019637-2381-2-git-send-email-jaegeuk@kernel.org>
 References: <1411019637-2381-1-git-send-email-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XUUfQ-0003FL-EV
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 18 Sep 2014 05:54:08 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XUUfP-0004TH-LO for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 18 Sep 2014 05:54:08 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1411019637-2381-1-git-send-email-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Previously, f2fs activates SSR if the # of free segments reaches to the # of
-overprovisioned segments.
-In this case, SSR starts to use dirty segments only, so that the overprovisoned
-space cannot be selected for new data.
-This means that we have no chance to utilizae the overprovisioned space at all.
+This patch changes the ipu_policy setting to use any combination of orthogonal policies.
 
-This patch fixes that by allowing LFS allocations until the # of free segments
-reaches to the last threshold, reserved space.
-
+Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ Documentation/filesystems/f2fs.txt |  6 +++---
+ fs/f2fs/segment.c                  |  2 +-
+ fs/f2fs/segment.h                  | 39 ++++++++++++++++----------------------
+ 3 files changed, 20 insertions(+), 27 deletions(-)
 
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index d010da8..2cca5a2 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -192,9 +192,9 @@ Files in /sys/fs/f2fs/<devname>
+ 
+  ipu_policy                   This parameter controls the policy of in-place
+                               updates in f2fs. There are five policies:
+-                               0: F2FS_IPU_FORCE, 1: F2FS_IPU_SSR,
+-                               2: F2FS_IPU_UTIL,  3: F2FS_IPU_SSR_UTIL,
+-                               4: F2FS_IPU_FSYNC, 5: F2FS_IPU_DISABLE.
++                               0x01: F2FS_IPU_FORCE, 0x02: F2FS_IPU_SSR,
++                               0x04: F2FS_IPU_UTIL,  0x08: F2FS_IPU_SSR_UTIL,
++                               0x10: F2FS_IPU_FSYNC.
+ 
+  min_ipu_util                 This parameter controls the threshold to trigger
+                               in-place-updates. The number indicates percentage
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 24b768a..3125a3d 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1928,7 +1928,7 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
+ 	sm_info->ssa_blkaddr = le32_to_cpu(raw_super->ssa_blkaddr);
+ 	sm_info->rec_prefree_segments = sm_info->main_segments *
+ 					DEF_RECLAIM_PREFREE_SEGMENTS / 100;
+-	sm_info->ipu_policy = F2FS_IPU_FSYNC;
++	sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+ 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+ 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
+ 
 diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index d317b61..a0e9207 100644
+index 032c090..d317b61 100644
 --- a/fs/f2fs/segment.h
 +++ b/fs/f2fs/segment.h
-@@ -437,8 +437,9 @@ static inline int reserved_sections(struct f2fs_sb_info *sbi)
+@@ -487,40 +487,33 @@ enum {
+ 	F2FS_IPU_UTIL,
+ 	F2FS_IPU_SSR_UTIL,
+ 	F2FS_IPU_FSYNC,
+-	F2FS_IPU_DISABLE,
+ };
  
- static inline bool need_SSR(struct f2fs_sb_info *sbi)
+ static inline bool need_inplace_update(struct inode *inode)
  {
--	return (prefree_segments(sbi) / sbi->segs_per_sec)
--			+ free_sections(sbi) < overprovision_sections(sbi);
-+	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
-+	return (prefree_segments(sbi) / sbi->segs_per_sec) +
-+		free_sections(sbi) < (reserved_sections(sbi) + node_secs);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	unsigned int policy = SM_I(sbi)->ipu_policy;
+ 
+ 	/* IPU can be done only for the user data */
+ 	if (S_ISDIR(inode->i_mode))
+ 		return false;
+ 
+-	switch (SM_I(sbi)->ipu_policy) {
+-	case F2FS_IPU_FORCE:
++	if (policy & (0x1 << F2FS_IPU_FORCE))
+ 		return true;
+-	case F2FS_IPU_SSR:
+-		if (need_SSR(sbi))
+-			return true;
+-		break;
+-	case F2FS_IPU_UTIL:
+-		if (utilization(sbi) > SM_I(sbi)->min_ipu_util)
+-			return true;
+-		break;
+-	case F2FS_IPU_SSR_UTIL:
+-		if (need_SSR(sbi) && utilization(sbi) > SM_I(sbi)->min_ipu_util)
+-			return true;
+-		break;
+-	case F2FS_IPU_FSYNC:
+-		/* this is only set during fdatasync */
+-		if (is_inode_flag_set(F2FS_I(inode), FI_NEED_IPU))
+-			return true;
+-		break;
+-	case F2FS_IPU_DISABLE:
+-		break;
+-	}
++	if (policy & (0x1 << F2FS_IPU_SSR) && need_SSR(sbi))
++		return true;
++	if (policy & (0x1 << F2FS_IPU_UTIL) &&
++			utilization(sbi) > SM_I(sbi)->min_ipu_util)
++		return true;
++	if (policy & (0x1 << F2FS_IPU_SSR_UTIL) && need_SSR(sbi) &&
++			utilization(sbi) > SM_I(sbi)->min_ipu_util)
++		return true;
++
++	/* this is only set during fdatasync */
++	if (policy & (0x1 << F2FS_IPU_FSYNC) &&
++			is_inode_flag_set(F2FS_I(inode), FI_NEED_IPU))
++		return true;
++
+ 	return false;
  }
  
- static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi, int freed)
 -- 
 1.8.5.2 (Apple Git-48)
-
-
-------------------------------------------------------------------------------
-Want excitement?
-Manually upgrade your production database.
-When you want reliability, choose Perforce
-Perforce version control. Predictably reliable.
-http://pubads.g.doubleclick.net/gampad/clk?id=157508191&iu=/4140/ostg.clktrk
