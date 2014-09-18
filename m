@@ -1,165 +1,168 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/3] f2fs: introduce a flag to represent each nat
-	entry information
-Date: Wed, 17 Sep 2014 22:51:06 -0700
-Message-ID: <1411019468-2201-1-git-send-email-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XUUcj-0004d0-ST
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 18 Sep 2014 05:51:21 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XUUcg-0003IW-Vg for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 18 Sep 2014 05:51:21 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Subject: [PATCH 3/3] f2fs: fix roll-forward missing scenarios
+Date: Wed, 17 Sep 2014 22:51:08 -0700
+Message-ID: <1411019468-2201-3-git-send-email-jaegeuk@kernel.org>
+References: <1411019468-2201-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1411019468-2201-1-git-send-email-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Huang Ying <ying.huang@intel.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch introduces a flag in the nat entry structure to merge various
-information such as checkpointed and fsync_done marks.
+We can summarize the roll forward recovery scenarios as follows.
 
+[Term] F: fsync_mark, D: dentry_mark
+
+1. inode(x) | CP | inode(x) | dnode(F)
+-> Update the latest inode(x).
+
+2. inode(x) | CP | inode(F) | dnode(F)
+-> No problem.
+
+3. inode(x) | CP | dnode(F) | inode(x)
+-> Recover to the latest dnode(F), and drop the last inode(x)
+
+4. inode(x) | CP | dnode(F) | inode(F)
+-> No problem.
+
+5. CP | inode(x) | dnode(F)
+-> The inode(DF) was missing. Should drop this dnode(F).
+
+6. CP | inode(DF) | dnode(F)
+-> No problem.
+
+7. CP | dnode(F) | inode(DF)
+-> If f2fs_iget fails, then goto next to find inode(DF).
+
+8. CP | dnode(F) | inode(x)
+-> If f2fs_iget fails, then goto next to find inode(DF).
+   But it will fail due to no inode(DF).
+
+So, this patch adds some missing points such as #1, #5, #7, and #8.
+
+Signed-off-by: Huang Ying <ying.huang@intel.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/node.c | 13 +++++++------
- fs/f2fs/node.h | 28 ++++++++++++++++++++++++----
- 2 files changed, 31 insertions(+), 10 deletions(-)
+ fs/f2fs/recovery.c | 71 +++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 60 insertions(+), 11 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b32eb56..d19d6b1 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -131,7 +131,7 @@ int is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid)
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 36d4f73..a4eb978 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -14,6 +14,37 @@
+ #include "node.h"
+ #include "segment.h"
  
- 	read_lock(&nm_i->nat_tree_lock);
- 	e = __lookup_nat_cache(nm_i, nid);
--	if (e && !e->checkpointed)
-+	if (e && !get_nat_flag(e, IS_CHECKPOINTED))
- 		is_cp = 0;
- 	read_unlock(&nm_i->nat_tree_lock);
- 	return is_cp;
-@@ -146,7 +146,7 @@ bool fsync_mark_done(struct f2fs_sb_info *sbi, nid_t nid)
- 	read_lock(&nm_i->nat_tree_lock);
- 	e = __lookup_nat_cache(nm_i, nid);
- 	if (e)
--		fsync_done = e->fsync_done;
-+		fsync_done = get_nat_flag(e, HAS_FSYNC_MARK);
- 	read_unlock(&nm_i->nat_tree_lock);
- 	return fsync_done;
- }
-@@ -159,7 +159,7 @@ void fsync_mark_clear(struct f2fs_sb_info *sbi, nid_t nid)
- 	write_lock(&nm_i->nat_tree_lock);
- 	e = __lookup_nat_cache(nm_i, nid);
- 	if (e)
--		e->fsync_done = false;
-+		set_nat_flag(e, HAS_FSYNC_MARK, false);
- 	write_unlock(&nm_i->nat_tree_lock);
- }
++/*
++ * Roll forward recovery scenarios.
++ *
++ * [Term] F: fsync_mark, D: dentry_mark
++ *
++ * 1. inode(x) | CP | inode(x) | dnode(F)
++ * -> Update the latest inode(x).
++ *
++ * 2. inode(x) | CP | inode(F) | dnode(F)
++ * -> No problem.
++ *
++ * 3. inode(x) | CP | dnode(F) | inode(x)
++ * -> Recover to the latest dnode(F), and drop the last inode(x)
++ *
++ * 4. inode(x) | CP | dnode(F) | inode(F)
++ * -> No problem.
++ *
++ * 5. CP | inode(x) | dnode(F)
++ * -> The inode(DF) was missing. Should drop this dnode(F).
++ *
++ * 6. CP | inode(DF) | dnode(F)
++ * -> No problem.
++ *
++ * 7. CP | dnode(F) | inode(DF)
++ * -> If f2fs_iget fails, then goto next to find inode(DF).
++ *
++ * 8. CP | dnode(F) | inode(x)
++ * -> If f2fs_iget fails, then goto next to find inode(DF).
++ *    But it will fail due to no inode(DF).
++ */
++
+ static struct kmem_cache *fsync_entry_slab;
  
-@@ -176,7 +176,7 @@ static struct nat_entry *grab_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid)
- 	}
- 	memset(new, 0, sizeof(struct nat_entry));
- 	nat_set_nid(new, nid);
--	new->checkpointed = true;
-+	set_nat_flag(new, IS_CHECKPOINTED, true);
- 	list_add_tail(&new->list, &nm_i->nat_entries);
- 	nm_i->nat_cnt++;
- 	return new;
-@@ -249,7 +249,7 @@ retry:
- 	/* update fsync_mark if its inode nat entry is still alive */
- 	e = __lookup_nat_cache(nm_i, ni->ino);
- 	if (e)
--		e->fsync_done = fsync_done;
-+		set_nat_flag(e, HAS_FSYNC_MARK, fsync_done);
- 	write_unlock(&nm_i->nat_tree_lock);
+ bool space_for_roll_forward(struct f2fs_sb_info *sbi)
+@@ -110,27 +141,32 @@ out:
+ 	return err;
  }
  
-@@ -1349,7 +1349,8 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
- 		read_lock(&nm_i->nat_tree_lock);
- 		ne = __lookup_nat_cache(nm_i, nid);
- 		if (ne &&
--			(!ne->checkpointed || nat_get_blkaddr(ne) != NULL_ADDR))
-+			(!get_nat_flag(ne, IS_CHECKPOINTED) ||
-+				nat_get_blkaddr(ne) != NULL_ADDR))
- 			allocated = true;
- 		read_unlock(&nm_i->nat_tree_lock);
- 		if (allocated)
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 324917d..3043778 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -39,10 +39,14 @@ struct node_info {
- 	unsigned char version;	/* version of the node */
- };
- 
-+enum {
-+	IS_CHECKPOINTED,	/* is it checkpointed before? */
-+	HAS_FSYNC_MARK,		/* has the latest node fsync mark? */
-+};
-+
- struct nat_entry {
- 	struct list_head list;	/* for clean or dirty nat list */
--	bool checkpointed;	/* whether it is checkpointed or not */
--	bool fsync_done;	/* whether the latest node has fsync mark */
-+	unsigned char flag;	/* for node information bits */
- 	struct node_info ni;	/* in-memory node information */
- };
- 
-@@ -57,16 +61,32 @@ struct nat_entry {
- 
- #define __set_nat_cache_dirty(nm_i, ne)					\
- 	do {								\
--		ne->checkpointed = false;				\
-+		set_nat_flag(ne, IS_CHECKPOINTED, false);		\
- 		list_move_tail(&ne->list, &nm_i->dirty_nat_entries);	\
- 	} while (0)
- #define __clear_nat_cache_dirty(nm_i, ne)				\
- 	do {								\
--		ne->checkpointed = true;				\
-+		set_nat_flag(ne, IS_CHECKPOINTED, true);		\
- 		list_move_tail(&ne->list, &nm_i->nat_entries);		\
- 	} while (0)
- #define inc_node_version(version)	(++version)
- 
-+static inline void set_nat_flag(struct nat_entry *ne,
-+				unsigned int type, bool set)
-+{
-+	unsigned char mask = 0x01 << type;
-+	if (set)
-+		ne->flag |= mask;
-+	else
-+		ne->flag &= ~mask;
-+}
-+
-+static inline bool get_nat_flag(struct nat_entry *ne, unsigned int type)
-+{
-+	unsigned char mask = 0x01 << type;
-+	return ne->flag & mask;
-+}
-+
- static inline void node_info_from_raw_nat(struct node_info *ni,
- 						struct f2fs_nat_entry *raw_ne)
+-static int recover_inode(struct inode *inode, struct page *node_page)
++static void __recover_inode(struct inode *inode, struct page *page)
  {
+-	struct f2fs_inode *raw_inode = F2FS_INODE(node_page);
++	struct f2fs_inode *raw = F2FS_INODE(page);
++
++	inode->i_mode = le16_to_cpu(raw->i_mode);
++	i_size_write(inode, le64_to_cpu(raw->i_size));
++	inode->i_atime.tv_sec = le64_to_cpu(raw->i_mtime);
++	inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
++	inode->i_mtime.tv_sec = le64_to_cpu(raw->i_mtime);
++	inode->i_atime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
++	inode->i_ctime.tv_nsec = le32_to_cpu(raw->i_ctime_nsec);
++	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
++}
+ 
++static int recover_inode(struct inode *inode, struct page *node_page)
++{
+ 	if (!IS_INODE(node_page))
+ 		return 0;
+ 
+-	inode->i_mode = le16_to_cpu(raw_inode->i_mode);
+-	i_size_write(inode, le64_to_cpu(raw_inode->i_size));
+-	inode->i_atime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
+-	inode->i_ctime.tv_sec = le64_to_cpu(raw_inode->i_ctime);
+-	inode->i_mtime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
+-	inode->i_atime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
+-	inode->i_ctime.tv_nsec = le32_to_cpu(raw_inode->i_ctime_nsec);
+-	inode->i_mtime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
++	__recover_inode(inode, node_page);
+ 
+ 	if (is_dent_dnode(node_page))
+ 		return recover_dentry(node_page, inode);
+ 
+ 	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode: ino = %x, name = %s",
+-			ino_of_node(node_page), raw_inode->i_name);
++			ino_of_node(node_page), F2FS_INODE(node_page)->i_name);
+ 	return 0;
+ }
+ 
+@@ -183,10 +219,16 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ 				break;
+ 			}
+ 
++			/*
++			 * CP | dnode(F) | inode(DF)
++			 * For this case, we should not give up now.
++			 */
+ 			entry->inode = f2fs_iget(sbi->sb, ino_of_node(page));
+ 			if (IS_ERR(entry->inode)) {
+ 				err = PTR_ERR(entry->inode);
+ 				kmem_cache_free(fsync_entry_slab, entry);
++				if (err == -ENOENT)
++					goto next;
+ 				break;
+ 			}
+ 			list_add_tail(&entry->list, head);
+@@ -423,6 +465,13 @@ static int recover_data(struct f2fs_sb_info *sbi,
+ 		entry = get_fsync_inode(head, ino_of_node(page));
+ 		if (!entry)
+ 			goto next;
++		/*
++		 * inode(x) | CP | inode(x) | dnode(F)
++		 * In this case, we can lose the latest inode(x).
++		 * So, call __recover_inode for the inode update.
++		 */
++		if (IS_INODE(page))
++			__recover_inode(entry->inode, page);
+ 
+ 		err = do_recover_data(sbi, entry->inode, page, blkaddr);
+ 		if (err) {
 -- 
 1.8.5.2 (Apple Git-48)
-
-
-------------------------------------------------------------------------------
-Want excitement?
-Manually upgrade your production database.
-When you want reliability, choose Perforce
-Perforce version control. Predictably reliable.
-http://pubads.g.doubleclick.net/gampad/clk?id=157508191&iu=/4140/ostg.clktrk
