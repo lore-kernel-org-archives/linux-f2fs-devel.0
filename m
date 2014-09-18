@@ -1,24 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: systemd-fsck and f2fs
-Date: Wed, 17 Sep 2014 23:09:42 -0700
-Message-ID: <20140918060942.GA2501@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <2173116.zc0VPd5yib@pats-main>
+Subject: Re: Run xfstests for f2fs
+Date: Wed, 17 Sep 2014 23:20:57 -0700
+Message-ID: <20140918062057.GB2501@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <1410852658.7804.30.camel@yhuang-dev>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XUUud-0003mu-OF
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XUV5W-0005ZT-VX
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 18 Sep 2014 06:09:51 +0000
+	Thu, 18 Sep 2014 06:21:07 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XUUuc-0004ww-Hq for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 18 Sep 2014 06:09:51 +0000
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XUV5V-0004Ct-Ji for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 18 Sep 2014 06:21:06 +0000
 Content-Disposition: inline
-In-Reply-To: <2173116.zc0VPd5yib@pats-main>
+In-Reply-To: <1410852658.7804.30.camel@yhuang-dev>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,38 +28,41 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Patrick Houle <buddlespit@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Huang Ying <ying.huang@intel.com>
+Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
 
 Hi,
 
-On Wed, Sep 17, 2014 at 07:17:11PM -0400, Patrick Houle wrote:
-> I know that your master branch has fixed the systemd-fsck and f2fs 
-> problem with the "fsck.f2fs: invalid option -- 'a'". But your latest tag is 
-> 1.3.0 from 2/2014 which doesn't contain the fix in your master branch. 
-> Any idea when this will be added or updated? I know I could just 
-> download the git and compile it myself, but that will still leave a 
-> buggy package in the archlinux repo.
+On Tue, Sep 16, 2014 at 03:30:58PM +0800, Huang Ying wrote:
+> Hi, Jaegeuk,
+> 
+> xfstests (http://oss.sgi.com/cgi-bin/gitweb.cgi?p=xfs/cmds/xfstests.git)
+> is regression test suite for xfs and other file systems.  To run
+> xfstests for f2fs, we need to either
+> 
+> - change fsck.f2fs to support "-n", which is default fsck option in
+> xfstests.
+> - change xfstests to call fsck.f2fs without any parameters.
+> 
+> I think choosing which solution depends on whether we will implemented a
+> fsck which can repair file system.
 
-Do you mean it needs a tag for new version on HEAD?
-Anyway, as a matter of fact, I'm thinking to do that.
+I already implemented fsck.f2fs which fixes a corrupted partition.
+There are two options: -a and -f.
+
+> If so, we can add "-n" to fsck.f2fs.
+> Otherwise, we can change xfstests.
+
+http://patchwork.xfs.org/patch/7658/
+
+I sent a patch before, and couldn't follow up the latest xfstests tree.
+Could you check that?
 
 Thanks,
 
 > 
-> Patrick Houle
-> buddlespit@gmail.com
-> 
-> ------------------------------------------------------------------------------
-> Want excitement?
-> Manually upgrade your production database.
-> When you want reliability, choose Perforce
-> Perforce version control. Predictably reliable.
-> http://pubads.g.doubleclick.net/gampad/clk?id=157508191&iu=/4140/ostg.clktrk
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> Best Regards,
+> Huang, Ying
 
 ------------------------------------------------------------------------------
 Want excitement?
