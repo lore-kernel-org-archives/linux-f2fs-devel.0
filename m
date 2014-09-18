@@ -1,115 +1,50 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/3] f2fs: change the ipu_policy option to enable combinations
-Date: Wed, 17 Sep 2014 22:53:56 -0700
-Message-ID: <1411019637-2381-2-git-send-email-jaegeuk@kernel.org>
-References: <1411019637-2381-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/3] f2fs: update i_size when __allocate_data_block
+Date: Wed, 17 Sep 2014 22:53:55 -0700
+Message-ID: <1411019637-2381-1-git-send-email-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1411019637-2381-1-git-send-email-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch changes the ipu_policy setting to use any combination of orthogonal policies.
+The f2fs_direct_IO uses __allocate_data_block, but inside the allocation path,
+we should update i_size at the changed time to update its inode page.
+Otherwise, we can get wrong i_size after roll-forward recovery.
 
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- Documentation/filesystems/f2fs.txt |  6 +++---
- fs/f2fs/segment.c                  |  2 +-
- fs/f2fs/segment.h                  | 39 ++++++++++++++++----------------------
- 3 files changed, 20 insertions(+), 27 deletions(-)
+ fs/f2fs/data.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index d010da8..2cca5a2 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -192,9 +192,9 @@ Files in /sys/fs/f2fs/<devname>
- 
-  ipu_policy                   This parameter controls the policy of in-place
-                               updates in f2fs. There are five policies:
--                               0: F2FS_IPU_FORCE, 1: F2FS_IPU_SSR,
--                               2: F2FS_IPU_UTIL,  3: F2FS_IPU_SSR_UTIL,
--                               4: F2FS_IPU_FSYNC, 5: F2FS_IPU_DISABLE.
-+                               0x01: F2FS_IPU_FORCE, 0x02: F2FS_IPU_SSR,
-+                               0x04: F2FS_IPU_UTIL,  0x08: F2FS_IPU_SSR_UTIL,
-+                               0x10: F2FS_IPU_FSYNC.
- 
-  min_ipu_util                 This parameter controls the threshold to trigger
-                               in-place-updates. The number indicates percentage
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 24b768a..3125a3d 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1928,7 +1928,7 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
- 	sm_info->ssa_blkaddr = le32_to_cpu(raw_super->ssa_blkaddr);
- 	sm_info->rec_prefree_segments = sm_info->main_segments *
- 					DEF_RECLAIM_PREFREE_SEGMENTS / 100;
--	sm_info->ipu_policy = F2FS_IPU_FSYNC;
-+	sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
- 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
- 	sm_info->min_fsync_blocks = DEF_MIN_FSYNC_BLOCKS;
- 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 032c090..d317b61 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -487,40 +487,33 @@ enum {
- 	F2FS_IPU_UTIL,
- 	F2FS_IPU_SSR_UTIL,
- 	F2FS_IPU_FSYNC,
--	F2FS_IPU_DISABLE,
- };
- 
- static inline bool need_inplace_update(struct inode *inode)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7749f30..aaf22a9 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -572,9 +572,11 @@ put_err:
+ static int __allocate_data_block(struct dnode_of_data *dn)
  {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	unsigned int policy = SM_I(sbi)->ipu_policy;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
++	struct f2fs_inode_info *fi = F2FS_I(dn->inode);
+ 	struct f2fs_summary sum;
+ 	block_t new_blkaddr;
+ 	struct node_info ni;
++	pgoff_t fofs;
+ 	int type;
  
- 	/* IPU can be done only for the user data */
- 	if (S_ISDIR(inode->i_mode))
- 		return false;
+ 	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
+@@ -597,6 +599,12 @@ static int __allocate_data_block(struct dnode_of_data *dn)
+ 	update_extent_cache(new_blkaddr, dn);
+ 	clear_inode_flag(F2FS_I(dn->inode), FI_NO_EXTENT);
  
--	switch (SM_I(sbi)->ipu_policy) {
--	case F2FS_IPU_FORCE:
-+	if (policy & (0x1 << F2FS_IPU_FORCE))
- 		return true;
--	case F2FS_IPU_SSR:
--		if (need_SSR(sbi))
--			return true;
--		break;
--	case F2FS_IPU_UTIL:
--		if (utilization(sbi) > SM_I(sbi)->min_ipu_util)
--			return true;
--		break;
--	case F2FS_IPU_SSR_UTIL:
--		if (need_SSR(sbi) && utilization(sbi) > SM_I(sbi)->min_ipu_util)
--			return true;
--		break;
--	case F2FS_IPU_FSYNC:
--		/* this is only set during fdatasync */
--		if (is_inode_flag_set(F2FS_I(inode), FI_NEED_IPU))
--			return true;
--		break;
--	case F2FS_IPU_DISABLE:
--		break;
--	}
-+	if (policy & (0x1 << F2FS_IPU_SSR) && need_SSR(sbi))
-+		return true;
-+	if (policy & (0x1 << F2FS_IPU_UTIL) &&
-+			utilization(sbi) > SM_I(sbi)->min_ipu_util)
-+		return true;
-+	if (policy & (0x1 << F2FS_IPU_SSR_UTIL) && need_SSR(sbi) &&
-+			utilization(sbi) > SM_I(sbi)->min_ipu_util)
-+		return true;
++	/* update i_size */
++	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
++							dn->ofs_in_node;
++	if (i_size_read(dn->inode) < ((fofs + 1) << PAGE_CACHE_SHIFT))
++		i_size_write(dn->inode, ((fofs + 1) << PAGE_CACHE_SHIFT));
 +
-+	/* this is only set during fdatasync */
-+	if (policy & (0x1 << F2FS_IPU_FSYNC) &&
-+			is_inode_flag_set(F2FS_I(inode), FI_NEED_IPU))
-+		return true;
-+
- 	return false;
+ 	dn->data_blkaddr = new_blkaddr;
+ 	return 0;
  }
- 
 -- 
 1.8.5.2 (Apple Git-48)
