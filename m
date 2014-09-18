@@ -1,31 +1,26 @@
-From: Patrick Houle <buddlespit@gmail.com>
-Subject: systemd-fsck and f2fs
-Date: Wed, 17 Sep 2014 19:17:11 -0400
-Message-ID: <2173116.zc0VPd5yib@pats-main>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 09/10] f2fs: use MAX_BIO_BLOCKS(sbi)
+Date: Wed, 17 Sep 2014 22:37:44 -0700
+Message-ID: <20140918053744.GA1922@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <1410732864-53069-1-git-send-email-jaegeuk@kernel.org>
+	<1410732864-53069-9-git-send-email-jaegeuk@kernel.org>
+	<1410734091.917.26.camel@joe-AO725>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <buddlespit@gmail.com>) id 1XUOTR-0005im-HY
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XUUPh-0003Bs-Bs
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 17 Sep 2014 23:17:21 +0000
-Received: from mail-pd0-f169.google.com ([209.85.192.169])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1XUOTQ-0008AB-Q3
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 17 Sep 2014 23:17:21 +0000
-Received: by mail-pd0-f169.google.com with SMTP id fp1so91671pdb.14
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 17 Sep 2014 16:17:15 -0700 (PDT)
-Received: from pats-main.localnet (ip68-10-252-83.hr.hr.cox.net.
-	[68.10.252.83]) by mx.google.com with ESMTPSA id
-	ix1sm17878032pbc.60.2014.09.17.16.17.13
-	for <linux-f2fs-devel@lists.sourceforge.net>
-	(version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
-	Wed, 17 Sep 2014 16:17:14 -0700 (PDT)
+	Thu, 18 Sep 2014 05:37:53 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XUUPg-0002oT-27 for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 18 Sep 2014 05:37:53 +0000
+Content-Disposition: inline
+In-Reply-To: <1410734091.917.26.camel@joe-AO725>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,17 +30,133 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Joe Perches <joe@perches.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-I know that your master branch has fixed the systemd-fsck and f2fs 
-problem with the "fsck.f2fs: invalid option -- 'a'". But your latest tag is 
-1.3.0 from 2/2014 which doesn't contain the fix in your master branch. 
-Any idea when this will be added or updated? I know I could just 
-download the git and compile it myself, but that will still leave a 
-buggy package in the archlinux repo.
+Hi,
 
-Patrick Houle
-buddlespit@gmail.com
+Thank you for the review.
+I changed the return value of MAX_BIO_BLOCKS to int.
+IMO, it's the best way that I can do for now.
+
+Thanks,
+
+>From f3bcd1d658d1c4aa8178ddc2d4e6a7e45d8405cd Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Thu, 11 Sep 2014 14:37:35 -0700
+Subject: [PATCH] f2fs: use MAX_BIO_BLOCKS(sbi)
+
+Change log from v1:
+ o change the return value of MAX_BIO_BLOCKS to int type.
+
+This patch cleans up a simple macro.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c     | 2 +-
+ fs/f2fs/node.c     | 2 +-
+ fs/f2fs/recovery.c | 4 ++--
+ fs/f2fs/segment.c  | 2 +-
+ fs/f2fs/segment.h  | 8 ++++----
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index fdc3dbe..7749f30 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -193,7 +193,7 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *sbi, struct page *page,
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
+-		int bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++		int bio_blocks = MAX_BIO_BLOCKS(sbi);
+ 
+ 		io->bio = __bio_alloc(sbi, blk_addr, bio_blocks, is_read);
+ 		io->fio = *fio;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 7a2d9c9..21ed91b 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1697,7 +1697,7 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 	struct f2fs_summary *sum_entry;
+ 	struct inode *inode = sbi->sb->s_bdev->bd_inode;
+ 	block_t addr;
+-	int bio_blocks = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++	int bio_blocks = MAX_BIO_BLOCKS(sbi);
+ 	struct page *pages[bio_blocks];
+ 	int i, idx, last_offset, nrpages, err = 0;
+ 
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 78ef10c..1ccee36 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -180,7 +180,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ 		page = get_meta_page(sbi, blkaddr);
+ 
+ 		ra_meta_pages(sbi, next_blkaddr_of_node(page),
+-				MAX_BIO_BLOCKS(max_hw_blocks(sbi)), META_POR);
++					MAX_BIO_BLOCKS(sbi), META_POR);
+ 
+ 		if (cp_ver != cpver_of_node(page))
+ 			break;
+@@ -444,7 +444,7 @@ static int recover_data(struct f2fs_sb_info *sbi,
+ 		page = get_meta_page(sbi, blkaddr);
+ 
+ 		ra_meta_pages(sbi, next_blkaddr_of_node(page),
+-				MAX_BIO_BLOCKS(max_hw_blocks(sbi)), META_POR);
++					MAX_BIO_BLOCKS(sbi), META_POR);
+ 
+ 		if (cp_ver != cpver_of_node(page)) {
+ 			f2fs_put_page(page, 1);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index c6f627b..4ea53aa 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1757,7 +1757,7 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ 	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+ 	unsigned int i, start, end;
+ 	unsigned int readed, start_blk = 0;
+-	int nrpages = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++	int nrpages = MAX_BIO_BLOCKS(sbi);
+ 
+ 	do {
+ 		readed = ra_meta_pages(sbi, start_blk, nrpages, META_SIT);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index c6f37f2..633e822 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -93,8 +93,8 @@
+ 	(((sector_t)blk_addr) << (sbi)->log_sectors_per_block)
+ #define SECTOR_TO_BLOCK(sbi, sectors)					\
+ 	(sectors >> (sbi)->log_sectors_per_block)
+-#define MAX_BIO_BLOCKS(max_hw_blocks)					\
+-	(min((int)max_hw_blocks, BIO_MAX_PAGES))
++#define MAX_BIO_BLOCKS(sbi)						\
++	((int)min(max_hw_blocks(sbi), BIO_MAX_PAGES))
+ 
+ /*
+  * indicate a block allocation direction: RIGHT and LEFT.
+@@ -728,7 +728,7 @@ static inline int nr_pages_to_skip(struct f2fs_sb_info *sbi, int type)
+ 	else if (type == NODE)
+ 		return 3 * sbi->blocks_per_seg;
+ 	else if (type == META)
+-		return MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++		return MAX_BIO_BLOCKS(sbi);
+ 	else
+ 		return 0;
+ }
+@@ -751,7 +751,7 @@ static inline long nr_pages_to_write(struct f2fs_sb_info *sbi, int type,
+ 	else if (type == NODE)
+ 		desired = 3 * max_hw_blocks(sbi);
+ 	else
+-		desired = MAX_BIO_BLOCKS(max_hw_blocks(sbi));
++		desired = MAX_BIO_BLOCKS(sbi);
+ 
+ 	wbc->nr_to_write = desired;
+ 	return desired - nr_to_write;
+-- 
+1.8.5.2 (Apple Git-48)
+
 
 ------------------------------------------------------------------------------
 Want excitement?
