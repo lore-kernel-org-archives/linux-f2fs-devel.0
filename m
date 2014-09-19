@@ -1,24 +1,22 @@
-From: Huang Ying <ying.huang@intel.com>
-Subject: Re: Run xfstests for f2fs
-Date: Fri, 19 Sep 2014 15:59:30 +0800
-Message-ID: <1411113570.16814.2.camel@yhuang-mobile.sh.intel.com>
-References: <1410852658.7804.30.camel@yhuang-dev>
-	<20140918062057.GB2501@jaegeuk-mac02.hsd1.ca.comcast.net>
+From: "Jerome" <508152@qqvip.net>
+Subject: [SPAM] Re:stainless steel
+Date: Fri, 19 Sep 2014 21:10:30 +0800
+Message-ID: <E1XUxxR-00084s-Lb@sfs-ml-3.v29.ch3.sourceforge.com>
+Reply-To: jerome@sushinggroup.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ying.huang@intel.com>) id 1XUt6S-00017q-B9
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <508152@qqvip.net>) id 1XUxxP-00084d-O0
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Sep 2014 07:59:40 +0000
-Received: from mga14.intel.com ([192.55.52.115])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XUt6R-0001Ha-8X for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Sep 2014 07:59:40 +0000
-In-Reply-To: <20140918062057.GB2501@jaegeuk-mac02.hsd1.ca.comcast.net>
+	Fri, 19 Sep 2014 13:10:39 +0000
+Received: from [223.65.191.220] (helo=PC201403021443)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XUxxH-0006P4-H6 for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 19 Sep 2014 13:10:39 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,56 +26,33 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, 2014-09-17 at 23:20 -0700, Jaegeuk Kim wrote:
-> Hi,
-> 
-> On Tue, Sep 16, 2014 at 03:30:58PM +0800, Huang Ying wrote:
-> > Hi, Jaegeuk,
-> > 
-> > xfstests (http://oss.sgi.com/cgi-bin/gitweb.cgi?p=xfs/cmds/xfstests.git)
-> > is regression test suite for xfs and other file systems.  To run
-> > xfstests for f2fs, we need to either
-> > 
-> > - change fsck.f2fs to support "-n", which is default fsck option in
-> > xfstests.
-> > - change xfstests to call fsck.f2fs without any parameters.
-> > 
-> > I think choosing which solution depends on whether we will implemented a
-> > fsck which can repair file system.
-> 
-> I already implemented fsck.f2fs which fixes a corrupted partition.
-> There are two options: -a and -f.
-> 
-> > If so, we can add "-n" to fsck.f2fs.
-> > Otherwise, we can change xfstests.
-> 
-> http://patchwork.xfs.org/patch/7658/
-> 
-> I sent a patch before, and couldn't follow up the latest xfstests tree.
-> Could you check that?
-
-Checked the latest xfstests git tree:
-
-git://oss.sgi.com/xfs/cmds/xfstests.git
-
-The latest git log item is:
-
-commit cef47130ad17ff3a0c3cbdbd80d5dbc5f06cc876
-Author: Brian Foster <bfoster@redhat.com>
-Date:   Mon Sep 8 22:51:39 2014 +1000
-
-    xfs/051: test buffer use after free race on I/O failure in XFS log
-recovery
-
-There is still no f2fs support.  Resend your patch?
-
+Dear Friend,
+ 
+Gald to hear that you're on the market of ss products.
+ 
+I'm Jerome from SUSHING Group.First,please allow me to introduce our company to you,we are one of the biggest stainless steel manufacturer in China,we are engaged in stainless steel field for many years.Our main products include:ss bar,ss pipe,ss coils,ss wire,ss nails,ss angles,ss channel,ss profiled,etc..All of our items are with excellent quality and reasonable price and our factory has passed ISO9001 and BV cert..
+ 
+Once we offered large good quality produces to APPLE and Toyota company.We also have 30% market share in Thailand.We also have offshore branch to avoid the tax to make our price more competitive.
+ 
+We are pleasure to have this opportunity to cooperation with you.Please visite our website for more informations of our products,FREE SAMPLES can be sent on request.
+ 
+If there is anything we can do to help you,we shall be more than pleased to do so.
+ 
 Best Regards,
-Huang, Ying
+ 
+Jerome
 
-
+--------------------------------
+SUSHING GROUP(HONG KONG) CO.,  LIMITED.
+Address:Room301,No.26-1 Huowaxiang,Nanjing,China
+Tell:86-25-66020259
+Fax:86-25-83254405
+Mobile:86-18626464664
+Email:jerome@sushinggroup.com/jerome_sushing@sina.com
+Skype:jer8me87
+www.sushinggroup.com
 
 ------------------------------------------------------------------------------
 Slashdot TV.  Video for Nerds.  Stuff that Matters.
