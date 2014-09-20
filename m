@@ -1,22 +1,21 @@
-From: "Jerome" <508152@qqvip.net>
-Subject: [SPAM] Re:stainless steel
-Date: Fri, 19 Sep 2014 21:10:30 +0800
-Message-ID: <E1XUxxR-00084s-Lb@sfs-ml-3.v29.ch3.sourceforge.com>
-Reply-To: jerome@sushinggroup.com
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs-tools: release 1.4.0
+Date: Sat, 20 Sep 2014 09:19:01 -0700
+Message-ID: <1411229941-18054-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <508152@qqvip.net>) id 1XUxxP-00084d-O0
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XVNNP-0005PL-7E
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Sep 2014 13:10:39 +0000
-Received: from [223.65.191.220] (helo=PC201403021443)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XUxxH-0006P4-H6 for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Sep 2014 13:10:39 +0000
+	Sat, 20 Sep 2014 16:19:11 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XVNNO-0004xa-AV for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 20 Sep 2014 16:19:11 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,32 +26,31 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org
 
-Dear Friend,
- 
-Gald to hear that you're on the market of ss products.
- 
-I'm Jerome from SUSHING Group.First,please allow me to introduce our company to you,we are one of the biggest stainless steel manufacturer in China,we are engaged in stainless steel field for many years.Our main products include:ss bar,ss pipe,ss coils,ss wire,ss nails,ss angles,ss channel,ss profiled,etc..All of our items are with excellent quality and reasonable price and our factory has passed ISO9001 and BV cert..
- 
-Once we offered large good quality produces to APPLE and Toyota company.We also have 30% market share in Thailand.We also have offshore branch to avoid the tax to make our price more competitive.
- 
-We are pleasure to have this opportunity to cooperation with you.Please visite our website for more informations of our products,FREE SAMPLES can be sent on request.
- 
-If there is anything we can do to help you,we shall be more than pleased to do so.
- 
-Best Regards,
- 
-Jerome
+This version includes:
+ - fsck.f2fs fixing corrupted images/partitions
+ - dump.f2fs retrieving speicific file
+ - bug fixes on f2fsstat and fibmap.f2fs
+ - refactor code blocks for android build
 
---------------------------------
-SUSHING GROUP(HONG KONG) CO.,  LIMITED.
-Address:Room301,No.26-1 Huowaxiang,Nanjing,China
-Tell:86-25-66020259
-Fax:86-25-83254405
-Mobile:86-18626464664
-Email:jerome@sushinggroup.com/jerome_sushing@sina.com
-Skype:jer8me87
-www.sushinggroup.com
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ VERSION | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/VERSION b/VERSION
+index c3a3dd8..4e11b43 100644
+--- a/VERSION
++++ b/VERSION
+@@ -1,2 +1,2 @@
+-1.2.0
+-2013-10-25
++1.4.0
++2014-09-18
+-- 
+1.8.5.2 (Apple Git-48)
+
 
 ------------------------------------------------------------------------------
 Slashdot TV.  Video for Nerds.  Stuff that Matters.
