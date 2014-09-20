@@ -1,21 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs-tools: release 1.4.0
-Date: Sat, 20 Sep 2014 09:19:01 -0700
-Message-ID: <1411229941-18054-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH 3/3] f2fs: fix roll-forward missing scenarios
+Date: Sat, 20 Sep 2014 09:23:58 -0700
+Message-ID: <20140920162358.GA18133@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <1411019468-2201-1-git-send-email-jaegeuk@kernel.org>
+	<1411019468-2201-3-git-send-email-jaegeuk@kernel.org>
+	<CAC=cRTPotgNXbuPwG95HHuWiicS2OiD5R3HsOqdMG+2b=8ZyEg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XVNNP-0005PL-7E
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XVNSA-0002C4-Pj
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 20 Sep 2014 16:19:11 +0000
+	Sat, 20 Sep 2014 16:24:06 +0000
 Received: from mail.kernel.org ([198.145.19.201])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XVNNO-0004xa-AV for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 20 Sep 2014 16:19:11 +0000
+	id 1XVNS9-000560-IO for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 20 Sep 2014 16:24:06 +0000
+Content-Disposition: inline
+In-Reply-To: <CAC=cRTPotgNXbuPwG95HHuWiicS2OiD5R3HsOqdMG+2b=8ZyEg@mail.gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,32 +30,189 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org
+To: huang ying <huang.ying.caritas@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, Huang Ying <ying.huang@intel.com>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-This version includes:
- - fsck.f2fs fixing corrupted images/partitions
- - dump.f2fs retrieving speicific file
- - bug fixes on f2fsstat and fibmap.f2fs
- - refactor code blocks for android build
+On Thu, Sep 18, 2014 at 09:04:11PM +0800, huang ying wrote:
+> On Thu, Sep 18, 2014 at 1:51 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> 
+> > We can summarize the roll forward recovery scenarios as follows.
+> >
+> > [Term] F: fsync_mark, D: dentry_mark
+> >
+> > 1. inode(x) | CP | inode(x) | dnode(F)
+> > -> Update the latest inode(x).
+> >
+> > 2. inode(x) | CP | inode(F) | dnode(F)
+> > -> No problem.
+> >
+> > 3. inode(x) | CP | dnode(F) | inode(x)
+> > -> Recover to the latest dnode(F), and drop the last inode(x)
+> >
+> > 4. inode(x) | CP | dnode(F) | inode(F)
+> > -> No problem.
+> >
+> > 5. CP | inode(x) | dnode(F)
+> > -> The inode(DF) was missing. Should drop this dnode(F).
+> >
+> > 6. CP | inode(DF) | dnode(F)
+> > -> No problem.
+> >
+> > 7. CP | dnode(F) | inode(DF)
+> > -> If f2fs_iget fails, then goto next to find inode(DF).
+> >
+> > 8. CP | dnode(F) | inode(x)
+> > -> If f2fs_iget fails, then goto next to find inode(DF).
+> >    But it will fail due to no inode(DF).
+> >
+> > So, this patch adds some missing points such as #1, #5, #7, and #8.
+> >
+> > Signed-off-by: Huang Ying <ying.huang@intel.com>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/recovery.c | 71
+> > +++++++++++++++++++++++++++++++++++++++++++++---------
+> >  1 file changed, 60 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> > index 36d4f73..a4eb978 100644
+> > --- a/fs/f2fs/recovery.c
+> > +++ b/fs/f2fs/recovery.c
+> > @@ -14,6 +14,37 @@
+> >  #include "node.h"
+> >  #include "segment.h"
+> >
+> > +/*
+> > + * Roll forward recovery scenarios.
+> > + *
+> > + * [Term] F: fsync_mark, D: dentry_mark
+> > + *
+> > + * 1. inode(x) | CP | inode(x) | dnode(F)
+> > + * -> Update the latest inode(x).
+> > + *
+> > + * 2. inode(x) | CP | inode(F) | dnode(F)
+> > + * -> No problem.
+> > + *
+> > + * 3. inode(x) | CP | dnode(F) | inode(x)
+> > + * -> Recover to the latest dnode(F), and drop the last inode(x)
+> > + *
+> > + * 4. inode(x) | CP | dnode(F) | inode(F)
+> > + * -> No problem.
+> > + *
+> > + * 5. CP | inode(x) | dnode(F)
+> > + * -> The inode(DF) was missing. Should drop this dnode(F).
+> > + *
+> > + * 6. CP | inode(DF) | dnode(F)
+> > + * -> No problem.
+> > + *
+> > + * 7. CP | dnode(F) | inode(DF)
+> > + * -> If f2fs_iget fails, then goto next to find inode(DF).
+> > + *
+> > + * 8. CP | dnode(F) | inode(x)
+> > + * -> If f2fs_iget fails, then goto next to find inode(DF).
+> > + *    But it will fail due to no inode(DF).
+> > + */
+> > +
+> >  static struct kmem_cache *fsync_entry_slab;
+> >
+> >  bool space_for_roll_forward(struct f2fs_sb_info *sbi)
+> > @@ -110,27 +141,32 @@ out:
+> >         return err;
+> >  }
+> >
+> > -static int recover_inode(struct inode *inode, struct page *node_page)
+> > +static void __recover_inode(struct inode *inode, struct page *page)
+> >  {
+> > -       struct f2fs_inode *raw_inode = F2FS_INODE(node_page);
+> > +       struct f2fs_inode *raw = F2FS_INODE(page);
+> > +
+> > +       inode->i_mode = le16_to_cpu(raw->i_mode);
+> > +       i_size_write(inode, le64_to_cpu(raw->i_size));
+> > +       inode->i_atime.tv_sec = le64_to_cpu(raw->i_mtime);
+> > +       inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
+> > +       inode->i_mtime.tv_sec = le64_to_cpu(raw->i_mtime);
+> > +       inode->i_atime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+> > +       inode->i_ctime.tv_nsec = le32_to_cpu(raw->i_ctime_nsec);
+> > +       inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+> > +}
+> >
+> > +static int recover_inode(struct inode *inode, struct page *node_page)
+> > +{
+> >         if (!IS_INODE(node_page))
+> >                 return 0;
+> >
+> > -       inode->i_mode = le16_to_cpu(raw_inode->i_mode);
+> > -       i_size_write(inode, le64_to_cpu(raw_inode->i_size));
+> > -       inode->i_atime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
+> > -       inode->i_ctime.tv_sec = le64_to_cpu(raw_inode->i_ctime);
+> > -       inode->i_mtime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
+> > -       inode->i_atime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
+> > -       inode->i_ctime.tv_nsec = le32_to_cpu(raw_inode->i_ctime_nsec);
+> > -       inode->i_mtime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
+> > +       __recover_inode(inode, node_page);
+> >
+> >         if (is_dent_dnode(node_page))
+> >                 return recover_dentry(node_page, inode);
+> >
+> >         f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode: ino = %x, name
+> > = %s",
+> > -                       ino_of_node(node_page), raw_inode->i_name);
+> > +                       ino_of_node(node_page),
+> > F2FS_INODE(node_page)->i_name);
+> >         return 0;
+> >  }
+> >
+> > @@ -183,10 +219,16 @@ static int find_fsync_dnodes(struct f2fs_sb_info
+> > *sbi, struct list_head *head)
+> >                                 break;
+> >                         }
+> >
+> > +                       /*
+> > +                        * CP | dnode(F) | inode(DF)
+> > +                        * For this case, we should not give up now.
+> > +                        */
+> >                         entry->inode = f2fs_iget(sbi->sb,
+> > ino_of_node(page));
+> >                         if (IS_ERR(entry->inode)) {
+> >                                 err = PTR_ERR(entry->inode);
+> >                                 kmem_cache_free(fsync_entry_slab, entry);
+> > +                               if (err == -ENOENT)
+> > +                                       goto next;
+> >                                 break;
+> >                         }
+> >                         list_add_tail(&entry->list, head);
+> > @@ -423,6 +465,13 @@ static int recover_data(struct f2fs_sb_info *sbi,
+> >                 entry = get_fsync_inode(head, ino_of_node(page));
+> >                 if (!entry)
+> >                         goto next;
+> > +               /*
+> > +                * inode(x) | CP | inode(x) | dnode(F)
+> > +                * In this case, we can lose the latest inode(x).
+> > +                * So, call __recover_inode for the inode update.
+> > +                */
+> >
+> 
+> With 2/3, because both IS_CHECKPOINTED and HAS_FSYNCED_INODE flag are unset
+> for inode, we will append a inode(F).
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- VERSION | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+No, inode(F) is not appended.
+Please check the fsync rule #1.
+Thanks,
 
-diff --git a/VERSION b/VERSION
-index c3a3dd8..4e11b43 100644
---- a/VERSION
-+++ b/VERSION
-@@ -1,2 +1,2 @@
--1.2.0
--2013-10-25
-+1.4.0
-+2014-09-18
--- 
-1.8.5.2 (Apple Git-48)
-
+> So we do not need to call
+> __recover_inode here?
+> 
+> Best Regards,
+> Huang, Ying
+> 
+> 
+> > +               if (IS_INODE(page))
+> > +                       __recover_inode(entry->inode, page);
+> >
+> >                 err = do_recover_data(sbi, entry->inode, page, blkaddr);
+> >                 if (err) {
+> > --
+> >
 
 ------------------------------------------------------------------------------
 Slashdot TV.  Video for Nerds.  Stuff that Matters.
