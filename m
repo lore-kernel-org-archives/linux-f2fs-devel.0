@@ -1,246 +1,326 @@
-From: Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH 3/3] f2fs: fix roll-forward missing scenarios
-Date: Mon, 22 Sep 2014 10:13:01 +0800
-Message-ID: <1411351981.26108.5.camel@yhuang-dev>
-References: <1411019468-2201-1-git-send-email-jaegeuk@kernel.org>
-	 <1411019468-2201-3-git-send-email-jaegeuk@kernel.org>
-	 <CAC=cRTPotgNXbuPwG95HHuWiicS2OiD5R3HsOqdMG+2b=8ZyEg@mail.gmail.com>
-	 <20140920162358.GA18133@jaegeuk-mac02.hsd1.ca.comcast.net>
-	 <1411255352.10688.7.camel@yhuang-mobile.sh.intel.com>
-	 <20140921033639.GA19487@jaegeuk-mac02.hsd1.ca.comcast.net>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 07/10] f2fs: use meta_inode cache to improve
+	roll-forward speed
+Date: Mon, 22 Sep 2014 10:36:25 +0800
+Message-ID: <000001cfd60e$1ca204a0$55e60de0$@samsung.com>
+References: <1410732864-53069-1-git-send-email-jaegeuk@kernel.org>
+ <1410732864-53069-7-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20140921033639.GA19487@jaegeuk-mac02.hsd1.ca.comcast.net>
+In-reply-to: <1410732864-53069-7-git-send-email-jaegeuk@kernel.org>
+Content-language: zh-cn
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: huang ying <huang.ying.caritas@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Sat, 2014-09-20 at 20:36 -0700, Jaegeuk Kim wrote:
-> On Sun, Sep 21, 2014 at 07:22:32AM +0800, Huang Ying wrote:
-> > On Sat, 2014-09-20 at 09:23 -0700, Jaegeuk Kim wrote:
-> > > On Thu, Sep 18, 2014 at 09:04:11PM +0800, huang ying wrote:
-> > > > On Thu, Sep 18, 2014 at 1:51 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> > > > 
-> > > > > We can summarize the roll forward recovery scenarios as follows.
-> > > > >
-> > > > > [Term] F: fsync_mark, D: dentry_mark
-> > > > >
-> > > > > 1. inode(x) | CP | inode(x) | dnode(F)
-> > > > > -> Update the latest inode(x).
-> > > > >
-> > > > > 2. inode(x) | CP | inode(F) | dnode(F)
-> > > > > -> No problem.
-> > > > >
-> > > > > 3. inode(x) | CP | dnode(F) | inode(x)
-> > > > > -> Recover to the latest dnode(F), and drop the last inode(x)
-> > > > >
-> > > > > 4. inode(x) | CP | dnode(F) | inode(F)
-> > > > > -> No problem.
-> > > > >
-> > > > > 5. CP | inode(x) | dnode(F)
-> > > > > -> The inode(DF) was missing. Should drop this dnode(F).
-> > > > >
-> > > > > 6. CP | inode(DF) | dnode(F)
-> > > > > -> No problem.
-> > > > >
-> > > > > 7. CP | dnode(F) | inode(DF)
-> > > > > -> If f2fs_iget fails, then goto next to find inode(DF).
-> > > > >
-> > > > > 8. CP | dnode(F) | inode(x)
-> > > > > -> If f2fs_iget fails, then goto next to find inode(DF).
-> > > > >    But it will fail due to no inode(DF).
-> > > > >
-> > > > > So, this patch adds some missing points such as #1, #5, #7, and #8.
-> > > > >
-> > > > > Signed-off-by: Huang Ying <ying.huang@intel.com>
-> > > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > > ---
-> > > > >  fs/f2fs/recovery.c | 71
-> > > > > +++++++++++++++++++++++++++++++++++++++++++++---------
-> > > > >  1 file changed, 60 insertions(+), 11 deletions(-)
-> > > > >
-> > > > > diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> > > > > index 36d4f73..a4eb978 100644
-> > > > > --- a/fs/f2fs/recovery.c
-> > > > > +++ b/fs/f2fs/recovery.c
-> > > > > @@ -14,6 +14,37 @@
-> > > > >  #include "node.h"
-> > > > >  #include "segment.h"
-> > > > >
-> > > > > +/*
-> > > > > + * Roll forward recovery scenarios.
-> > > > > + *
-> > > > > + * [Term] F: fsync_mark, D: dentry_mark
-> > > > > + *
-> > > > > + * 1. inode(x) | CP | inode(x) | dnode(F)
-> > > > > + * -> Update the latest inode(x).
-> > > > > + *
-> > > > > + * 2. inode(x) | CP | inode(F) | dnode(F)
-> > > > > + * -> No problem.
-> > > > > + *
-> > > > > + * 3. inode(x) | CP | dnode(F) | inode(x)
-> > > > > + * -> Recover to the latest dnode(F), and drop the last inode(x)
-> > > > > + *
-> > > > > + * 4. inode(x) | CP | dnode(F) | inode(F)
-> > > > > + * -> No problem.
-> > > > > + *
-> > > > > + * 5. CP | inode(x) | dnode(F)
-> > > > > + * -> The inode(DF) was missing. Should drop this dnode(F).
-> > > > > + *
-> > > > > + * 6. CP | inode(DF) | dnode(F)
-> > > > > + * -> No problem.
-> > > > > + *
-> > > > > + * 7. CP | dnode(F) | inode(DF)
-> > > > > + * -> If f2fs_iget fails, then goto next to find inode(DF).
-> > > > > + *
-> > > > > + * 8. CP | dnode(F) | inode(x)
-> > > > > + * -> If f2fs_iget fails, then goto next to find inode(DF).
-> > > > > + *    But it will fail due to no inode(DF).
-> > > > > + */
-> > > > > +
-> > > > >  static struct kmem_cache *fsync_entry_slab;
-> > > > >
-> > > > >  bool space_for_roll_forward(struct f2fs_sb_info *sbi)
-> > > > > @@ -110,27 +141,32 @@ out:
-> > > > >         return err;
-> > > > >  }
-> > > > >
-> > > > > -static int recover_inode(struct inode *inode, struct page *node_page)
-> > > > > +static void __recover_inode(struct inode *inode, struct page *page)
-> > > > >  {
-> > > > > -       struct f2fs_inode *raw_inode = F2FS_INODE(node_page);
-> > > > > +       struct f2fs_inode *raw = F2FS_INODE(page);
-> > > > > +
-> > > > > +       inode->i_mode = le16_to_cpu(raw->i_mode);
-> > > > > +       i_size_write(inode, le64_to_cpu(raw->i_size));
-> > > > > +       inode->i_atime.tv_sec = le64_to_cpu(raw->i_mtime);
-> > > > > +       inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
-> > > > > +       inode->i_mtime.tv_sec = le64_to_cpu(raw->i_mtime);
-> > > > > +       inode->i_atime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
-> > > > > +       inode->i_ctime.tv_nsec = le32_to_cpu(raw->i_ctime_nsec);
-> > > > > +       inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
-> > > > > +}
-> > > > >
-> > > > > +static int recover_inode(struct inode *inode, struct page *node_page)
-> > > > > +{
-> > > > >         if (!IS_INODE(node_page))
-> > > > >                 return 0;
-> > > > >
-> > > > > -       inode->i_mode = le16_to_cpu(raw_inode->i_mode);
-> > > > > -       i_size_write(inode, le64_to_cpu(raw_inode->i_size));
-> > > > > -       inode->i_atime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
-> > > > > -       inode->i_ctime.tv_sec = le64_to_cpu(raw_inode->i_ctime);
-> > > > > -       inode->i_mtime.tv_sec = le64_to_cpu(raw_inode->i_mtime);
-> > > > > -       inode->i_atime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
-> > > > > -       inode->i_ctime.tv_nsec = le32_to_cpu(raw_inode->i_ctime_nsec);
-> > > > > -       inode->i_mtime.tv_nsec = le32_to_cpu(raw_inode->i_mtime_nsec);
-> > > > > +       __recover_inode(inode, node_page);
-> > > > >
-> > > > >         if (is_dent_dnode(node_page))
-> > > > >                 return recover_dentry(node_page, inode);
-> > > > >
-> > > > >         f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode: ino = %x, name
-> > > > > = %s",
-> > > > > -                       ino_of_node(node_page), raw_inode->i_name);
-> > > > > +                       ino_of_node(node_page),
-> > > > > F2FS_INODE(node_page)->i_name);
-> > > > >         return 0;
-> > > > >  }
-> > > > >
-> > > > > @@ -183,10 +219,16 @@ static int find_fsync_dnodes(struct f2fs_sb_info
-> > > > > *sbi, struct list_head *head)
-> > > > >                                 break;
-> > > > >                         }
-> > > > >
-> > > > > +                       /*
-> > > > > +                        * CP | dnode(F) | inode(DF)
-> > > > > +                        * For this case, we should not give up now.
-> > > > > +                        */
-> > > > >                         entry->inode = f2fs_iget(sbi->sb,
-> > > > > ino_of_node(page));
-> > > > >                         if (IS_ERR(entry->inode)) {
-> > > > >                                 err = PTR_ERR(entry->inode);
-> > > > >                                 kmem_cache_free(fsync_entry_slab, entry);
-> > > > > +                               if (err == -ENOENT)
-> > > > > +                                       goto next;
-> > > > >                                 break;
-> > > > >                         }
-> > > > >                         list_add_tail(&entry->list, head);
-> > > > > @@ -423,6 +465,13 @@ static int recover_data(struct f2fs_sb_info *sbi,
-> > > > >                 entry = get_fsync_inode(head, ino_of_node(page));
-> > > > >                 if (!entry)
-> > > > >                         goto next;
-> > > > > +               /*
-> > > > > +                * inode(x) | CP | inode(x) | dnode(F)
-> > > > > +                * In this case, we can lose the latest inode(x).
-> > > > > +                * So, call __recover_inode for the inode update.
-> > > > > +                */
-> > > > >
-> > > > 
-> > > > With 2/3, because both IS_CHECKPOINTED and HAS_FSYNCED_INODE flag are unset
-> > > > for inode, we will append a inode(F).
-> > > 
-> > > No, inode(F) is not appended.
-> > > Please check the fsync rule #1.
-> > 
-> > >From implementation of need_inode_block_update, we do not append an
-> > inode(F) or inode(DF), only if:
-> > 
-> >   get_nat_flag(e, HAS_LAST_FSYNC) &&
-> >           (get_nat_flag(e, IS_CHECKPOINTED) ||
-> >            get_nat_flag(e, HAS_FSYNCED_INODE)))
-> > 
-> > e is nat entry for the inode.
-> > 
-> > For inode(x) | CP | inode(x) | dnode(F)
-> > 
-> > We have:
-> > 
-> > HAS_LAST_FSYNC:    true
-> > IS_CHECKPOINTED:   false
+Hi Jaegeuk,
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Monday, September 15, 2014 6:14 AM
+> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Cc: Jaegeuk Kim
+> Subject: [f2fs-dev] [PATCH 07/10] f2fs: use meta_inode cache to improve roll-forward speed
 > 
-> IS_CHECKPOINTED: true
+> Previously, all the dnode pages should be read during the roll-forward recovery.
+> Even worsely, whole the chain was traversed twice.
+> This patch removes that redundant and costly read operations by using page cache
+> of meta_inode and readahead function as well.
 > 
-> I changed the rule for CHECKPOINTED too.
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c | 11 ++++++++--
+>  fs/f2fs/f2fs.h       |  5 +++--
+>  fs/f2fs/recovery.c   | 59 +++++++++++++++++++++++++---------------------------
+>  fs/f2fs/segment.h    |  5 +++--
+>  4 files changed, 43 insertions(+), 37 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 7262d99..d1ed889 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -82,6 +82,8 @@ static inline int get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
+>  	case META_SSA:
+>  	case META_CP:
+>  		return 0;
+> +	case META_POR:
+> +		return SM_I(sbi)->main_blkaddr + sbi->user_block_count;
 
-Sorry for the noise.  I did not notice that.
+Here we will skip virtual over-provision segments, so better to use TOTAL_BLKS(sbi).
 
-Best Regards,
-Huang, Ying
+>  	default:
+>  		BUG();
+>  	}
+> @@ -90,11 +92,11 @@ static inline int get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
+>  /*
+>   * Readahead CP/NAT/SIT/SSA pages
+>   */
+> -int ra_meta_pages(struct f2fs_sb_info *sbi, int start, int nrpages, int type)
+> +int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type)
+>  {
+>  	block_t prev_blk_addr = 0;
+>  	struct page *page;
+> -	int blkno = start;
+> +	block_t blkno = start;
+>  	int max_blks = get_max_meta_blks(sbi, type);
+> 
+>  	struct f2fs_io_info fio = {
+> @@ -128,6 +130,11 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, int start, int nrpages, int
+> type)
+>  			/* get ssa/cp block addr */
+>  			blk_addr = blkno;
+>  			break;
+> +		case META_POR:
+> +			if (unlikely(blkno >= max_blks))
+> +				goto out;
+> +			blk_addr = blkno;
+> +			break;
 
-> > HAS_FSYNCED_INODE: false
-> > 
-> > So we will append a inode(DF) here.
-> > 
-> > > > So we do not need to call
-> > > > __recover_inode here?
-> > 
-> > Thought again, __recover_inode here may be helpful here for the
-> > following situation:
-> > 
-> > inode(x) | CP | inode(x) | dnode(F) | inode(DF)
-> >                                     |
-> >                                     v
-> >                                Sudden power off
-> > 
-> > That is, sudden power off before writing inode(DF).
-> > 
-> > So I think we should keep the code, but maybe change the comments?
-> > 
-> > Best Regards,
-> > Huang, Ying
-> > 
-> > > > 
-> > > > 
-> > > > > +               if (IS_INODE(page))
-> > > > > +                       __recover_inode(entry->inode, page);
-> > > > >
-> > > > >                 err = do_recover_data(sbi, entry->inode, page, blkaddr);
-> > > > >                 if (err) {
-> > > > > --
-> > > > >
+The real modification in patch which is merged to dev of f2fs is as following:
 
+- /* get ssa/cp block addr */
++ case META_POR:
++ if (blkno >= max_blks || blkno < min_blks)
++ goto out;
+
+IMHO, it's better to verify boundary separately for META_{SSA,CP,POR} with unlikely.
+How do you think?
+
+>  		default:
+>  			BUG();
+>  		}
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 4f84d2a..48d7d46 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -103,7 +103,8 @@ enum {
+>  	META_CP,
+>  	META_NAT,
+>  	META_SIT,
+> -	META_SSA
+> +	META_SSA,
+> +	META_POR,
+>  };
+> 
+>  /* for the list of ino */
+> @@ -1291,7 +1292,7 @@ void destroy_segment_manager_caches(void);
+>   */
+>  struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);
+>  struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);
+> -int ra_meta_pages(struct f2fs_sb_info *, int, int, int);
+> +int ra_meta_pages(struct f2fs_sb_info *, block_t, int, int);
+>  long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
+>  void add_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
+>  void remove_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index 3736728..6f7fbfa 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -173,7 +173,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head
+> *head)
+>  {
+>  	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
+>  	struct curseg_info *curseg;
+> -	struct page *page;
+> +	struct page *page = NULL;
+>  	block_t blkaddr;
+>  	int err = 0;
+> 
+> @@ -181,20 +181,19 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head
+> *head)
+>  	curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
+>  	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+> 
+> -	/* read node page */
+> -	page = alloc_page(GFP_F2FS_ZERO);
+> -	if (!page)
+> -		return -ENOMEM;
+> -	lock_page(page);
+> -
+>  	while (1) {
+>  		struct fsync_inode_entry *entry;
+> 
+> -		err = f2fs_submit_page_bio(sbi, page, blkaddr, READ_SYNC);
+> -		if (err)
+> -			return err;
+> +		if (blkaddr < SM_I(sbi)->main_blkaddr ||
+> +					blkaddr > TOTAL_BLKS(sbi))
+
+blkaddr >= TOTAL_BLKS(sbi) ?
+
+> +			break;
+> 
+> -		lock_page(page);
+> +		page = get_meta_page(sbi, blkaddr);
+> +		if (IS_ERR(page))
+> +			return PTR_ERR(page);
+> +
+> +		ra_meta_pages(sbi, next_blkaddr_of_node(page),
+> +				MAX_BIO_BLOCKS(max_hw_blocks(sbi)), META_POR);
+
+In first round we readahead [0,n] pages, then in second round we readahead [1,n+1] pages,
+but as [1,n] pages is already uptodate, so we will readahead only one page, the same for the
+following rounds. It's low efficiency.
+
+So how about modify in find_fsync_dnodes/recover_data like this:
+
+	block_t blkaddr, ra_start_blk;
+	int err = 0;
+
+	/* get node pages in the current segment */
+	curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
+	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+	ra_start_blk = blkaddr;
+
+	while (1) {
+		struct fsync_inode_entry *entry;
+
+		if (blkaddr < SM_I(sbi)->main_blkaddr ||
+					blkaddr > TOTAL_BLKS(sbi))
+			return 0;
+
+		if (ra_start_blk == blkaddr) {
+			ra_meta_pages(sbi, ra_start_blk, MAX_BIO_BLOCKS(sbi),
+								META_POR);
+			ra_start_blk += MAX_BIO_BLOCKS(sbi);
+		}
+
+		page = get_meta_page(sbi, blkaddr);
+
+Thanks,
+Yu
+
+> 
+>  		if (cp_ver != cpver_of_node(page))
+>  			break;
+> @@ -243,11 +242,9 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head
+> *head)
+>  next:
+>  		/* check next segment */
+>  		blkaddr = next_blkaddr_of_node(page);
+> +		f2fs_put_page(page, 1);
+>  	}
+> -
+> -	unlock_page(page);
+> -	__free_pages(page, 0);
+> -
+> +	f2fs_put_page(page, 1);
+>  	return err;
+>  }
+> 
+> @@ -427,7 +424,7 @@ static int recover_data(struct f2fs_sb_info *sbi,
+>  {
+>  	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
+>  	struct curseg_info *curseg;
+> -	struct page *page;
+> +	struct page *page = NULL;
+>  	int err = 0;
+>  	block_t blkaddr;
+> 
+> @@ -435,21 +432,19 @@ static int recover_data(struct f2fs_sb_info *sbi,
+>  	curseg = CURSEG_I(sbi, type);
+>  	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+> 
+> -	/* read node page */
+> -	page = alloc_page(GFP_F2FS_ZERO);
+> -	if (!page)
+> -		return -ENOMEM;
+> -
+> -	lock_page(page);
+> -
+>  	while (1) {
+>  		struct fsync_inode_entry *entry;
+> 
+> -		err = f2fs_submit_page_bio(sbi, page, blkaddr, READ_SYNC);
+> -		if (err)
+> -			return err;
+> +		if (blkaddr < SM_I(sbi)->main_blkaddr ||
+> +					blkaddr > TOTAL_BLKS(sbi))
+> +			break;
+> 
+> -		lock_page(page);
+> +		page = get_meta_page(sbi, blkaddr);
+> +		if (IS_ERR(page))
+> +			return PTR_ERR(page);
+> +
+> +		ra_meta_pages(sbi, next_blkaddr_of_node(page),
+> +				MAX_BIO_BLOCKS(max_hw_blocks(sbi)), META_POR);
+> 
+>  		if (cp_ver != cpver_of_node(page))
+>  			break;
+> @@ -477,11 +472,9 @@ static int recover_data(struct f2fs_sb_info *sbi,
+>  next:
+>  		/* check next segment */
+>  		blkaddr = next_blkaddr_of_node(page);
+> +		f2fs_put_page(page, 1);
+>  	}
+> -
+> -	unlock_page(page);
+> -	__free_pages(page, 0);
+> -
+> +	f2fs_put_page(page, 1);
+>  	if (!err)
+>  		allocate_new_segments(sbi);
+>  	return err;
+> @@ -527,6 +520,10 @@ out:
+>  	destroy_fsync_dnodes(&inode_list);
+>  	kmem_cache_destroy(fsync_entry_slab);
+> 
+> +	/* truncate meta pages to be used by the recovery */
+> +	truncate_inode_pages_range(META_MAPPING(sbi),
+> +		SM_I(sbi)->main_blkaddr << PAGE_CACHE_SHIFT, -1);
+> +
+>  	if (err) {
+>  		truncate_inode_pages_final(NODE_MAPPING(sbi));
+>  		truncate_inode_pages_final(META_MAPPING(sbi));
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 013aed2..c6f37f2 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -87,6 +87,7 @@
+>  	(BITS_TO_LONGS(nr) * sizeof(unsigned long))
+>  #define TOTAL_SEGS(sbi)	(SM_I(sbi)->main_segments)
+>  #define TOTAL_SECS(sbi)	(sbi->total_sections)
+> +#define TOTAL_BLKS(sbi)	(SM_I(sbi)->segment_count << sbi->log_blocks_per_seg)
+> 
+>  #define SECTOR_FROM_BLOCK(sbi, blk_addr)				\
+>  	(((sector_t)blk_addr) << (sbi)->log_sectors_per_block)
+> @@ -553,7 +554,7 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int
+> segno)
+>  static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+>  {
+>  	struct f2fs_sm_info *sm_info = SM_I(sbi);
+> -	block_t total_blks = sm_info->segment_count << sbi->log_blocks_per_seg;
+> +	block_t total_blks = TOTAL_BLKS(sbi);
+>  	block_t start_addr = sm_info->seg0_blkaddr;
+>  	block_t end_addr = start_addr + total_blks - 1;
+>  	BUG_ON(blk_addr < start_addr);
+> @@ -606,7 +607,7 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int
+> segno)
+>  static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+>  {
+>  	struct f2fs_sm_info *sm_info = SM_I(sbi);
+> -	block_t total_blks = sm_info->segment_count << sbi->log_blocks_per_seg;
+> +	block_t total_blks = TOTAL_BLKS(sbi);
+>  	block_t start_addr = sm_info->seg0_blkaddr;
+>  	block_t end_addr = start_addr + total_blks - 1;
+> 
+> --
+> 1.8.5.2 (Apple Git-48)
+> 
+> 
+> ------------------------------------------------------------------------------
+> Want excitement?
+> Manually upgrade your production database.
+> When you want reliability, choose Perforce
+> Perforce version control. Predictably reliable.
+> http://pubads.g.doubleclick.net/gampad/clk?id=157508191&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
