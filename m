@@ -1,397 +1,297 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev][PATCH 4/6 v2] f2fs: add key function to handle inline dir
-Date: Wed, 24 Sep 2014 18:17:53 +0800
-Message-ID: <003f01cfd7e0$e7dcb100$b7961300$@samsung.com>
+Subject: [PATCH 5/6 v2] f2fs: enable inline dir handling
+Date: Wed, 24 Sep 2014 18:19:10 +0800
+Message-ID: <004001cfd7e1$1b5e92f0$521bb8d0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XWjgH-0004ED-Ih
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 24 Sep 2014 10:20:17 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XWjgF-00078p-0v
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 24 Sep 2014 10:20:17 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NCE00EYLI1JU760@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 24 Sep 2014 19:20:07 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Adds Functions to implement inline dir init/lookup/insert/delete/convert ops.
+Add inline dir functions into normal dir ops' function to handle inline ops.
+Besides, we enable inline dir mode when a new dir inode is created if
+inline_data option is on.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/f2fs.h   |   9 ++
- fs/f2fs/inline.c | 347 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 356 insertions(+)
+ fs/f2fs/dir.c      | 32 ++++++++++++++++++++++++++++++--
+ fs/f2fs/file.c     |  2 +-
+ fs/f2fs/inline.c   |  2 +-
+ fs/f2fs/namei.c    | 34 ++++++++++++++++++++++++----------
+ fs/f2fs/recovery.c |  3 ++-
+ 5 files changed, 58 insertions(+), 15 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8e819b0..630c671 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1526,4 +1526,13 @@ int f2fs_convert_inline_data(struct inode *, pgoff_t, struct page *);
- int f2fs_write_inline_data(struct inode *, struct page *, unsigned int);
- void truncate_inline_data(struct inode *, u64);
- bool recover_inline_data(struct inode *, struct page *);
-+struct f2fs_dir_entry *find_in_inline_dir(struct inode *, struct qstr *,
-+							struct page **);
-+struct f2fs_dir_entry *f2fs_parent_inline_dir(struct inode *, struct page **);
-+int make_empty_inline_dir(struct inode *inode, struct inode *, struct page *);
-+int f2fs_add_inline_entry(struct inode *, const struct qstr *, struct inode *);
-+void f2fs_delete_inline_entry(struct f2fs_dir_entry *, struct page *,
-+						struct inode *, struct inode *);
-+bool f2fs_empty_inline_dir(struct inode *);
-+int f2fs_read_inline_dir(struct file *, struct dir_context *);
- #endif
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 99e944e..cc6474a 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -201,6 +201,9 @@ struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
+ 	unsigned int max_depth;
+ 	unsigned int level;
+ 
++	if (f2fs_has_inline_dentry(dir))
++		return find_in_inline_dir(dir, child, res_page);
++
+ 	if (npages == 0)
+ 		return NULL;
+ 
+@@ -227,6 +230,9 @@ struct f2fs_dir_entry *f2fs_parent_dir(struct inode *dir, struct page **p)
+ 	struct f2fs_dir_entry *de;
+ 	struct f2fs_dentry_block *dentry_blk;
+ 
++	if (f2fs_has_inline_dentry(dir))
++		return f2fs_parent_inline_dir(dir, p);
++
+ 	page = get_lock_data_page(dir, 0);
+ 	if (IS_ERR(page))
+ 		return NULL;
+@@ -247,7 +253,8 @@ ino_t f2fs_inode_by_name(struct inode *dir, struct qstr *qstr)
+ 	de = f2fs_find_entry(dir, qstr, &page);
+ 	if (de) {
+ 		res = le32_to_cpu(de->ino);
+-		kunmap(page);
++		if (!f2fs_has_inline_dentry(dir))
++			kunmap(page);
+ 		f2fs_put_page(page, 0);
+ 	}
+ 
+@@ -261,7 +268,8 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
+ 	f2fs_wait_on_page_writeback(page, DATA);
+ 	de->ino = cpu_to_le32(inode->i_ino);
+ 	set_de_type(de, inode);
+-	kunmap(page);
++	if (!f2fs_has_inline_dentry(dir))
++		kunmap(page);
+ 	set_page_dirty(page);
+ 	dir->i_mtime = dir->i_ctime = CURRENT_TIME;
+ 	mark_inode_dirty(dir);
+@@ -303,6 +311,9 @@ static int make_empty_dir(struct inode *inode,
+ 	struct f2fs_dentry_block *dentry_blk;
+ 	struct f2fs_dir_entry *de;
+ 
++	if (f2fs_has_inline_dentry(inode))
++		return make_empty_inline_dir(inode, parent, page);
++
+ 	dentry_page = get_new_data_page(inode, page, 0, true);
+ 	if (IS_ERR(dentry_page))
+ 		return PTR_ERR(dentry_page);
+@@ -462,6 +473,14 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
+ 	int err = 0;
+ 	int i;
+ 
++	if (f2fs_has_inline_dentry(dir)) {
++		err = f2fs_add_inline_entry(dir, name, inode);
++		if (!err || err != -EAGAIN)
++			return err;
++		else
++			err = 0;
++	}
++
+ 	dentry_hash = f2fs_dentry_hash(name);
+ 	level = 0;
+ 	current_depth = F2FS_I(dir)->i_current_depth;
+@@ -600,6 +619,9 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
+ 	int i;
+ 
++	if (f2fs_has_inline_dentry(dir))
++		return f2fs_delete_inline_entry(dentry, page, dir, inode);
++
+ 	lock_page(page);
+ 	f2fs_wait_on_page_writeback(page, DATA);
+ 
+@@ -637,6 +659,9 @@ bool f2fs_empty_dir(struct inode *dir)
+ 	struct f2fs_dentry_block *dentry_blk;
+ 	unsigned long nblock = dir_blocks(dir);
+ 
++	if (f2fs_has_inline_dentry(dir))
++		return f2fs_empty_inline_dir(dir);
++
+ 	for (bidx = 0; bidx < nblock; bidx++) {
+ 		dentry_page = get_lock_data_page(dir, bidx);
+ 		if (IS_ERR(dentry_page)) {
+@@ -676,6 +701,9 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 	unsigned int n = ((unsigned long)ctx->pos / NR_DENTRY_IN_BLOCK);
+ 	unsigned char d_type = DT_UNKNOWN;
+ 
++	if (f2fs_has_inline_dentry(inode))
++		return f2fs_read_inline_dir(file, ctx);
++
+ 	bit_pos = ((unsigned long)ctx->pos % NR_DENTRY_IN_BLOCK);
+ 
+ 	/* readahead for multi pages of dir */
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 1184207..e1735b4 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -296,7 +296,7 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+ 		goto fail;
+ 
+ 	/* handle inline data case */
+-	if (f2fs_has_inline_data(inode)) {
++	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode)) {
+ 		if (whence == SEEK_HOLE)
+ 			data_ofs = isize;
+ 		goto found;
 diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 6aef11d..3c85def 100644
+index 3c85def..358194d 100644
 --- a/fs/f2fs/inline.c
 +++ b/fs/f2fs/inline.c
-@@ -254,3 +254,350 @@ process_inline:
+@@ -421,7 +421,7 @@ int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
+ 	/* clear inline dir and flag after data writeback */
+ 	zero_user_segment(ipage, INLINE_DATA_OFFSET,
+ 				 INLINE_DATA_OFFSET + MAX_INLINE_DATA);
+-
++	clear_inode_flag(F2FS_I(dir), FI_INLINE_DENTRY);
+ 	stat_dec_inline_inode(dir);
+ 
+ 	if (i_size_read(dir) < PAGE_CACHE_SIZE) {
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 58c1276..788e926 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -54,6 +54,10 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 		nid_free = true;
+ 		goto out;
  	}
- 	return false;
- }
 +
-+struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
-+				struct qstr *name, struct page **res_page){
-+	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
-+	struct page *ipage;
-+	struct f2fs_dir_entry *de;
-+	f2fs_hash_t namehash;
-+	unsigned long bit_pos = 0;
-+	struct f2fs_inline_dentry *dentry_blk;
-+	const void *dentry_bits;
-+
-+	ipage = get_node_page(sbi, dir->i_ino);
-+	if (IS_ERR(ipage))
-+		return NULL;
-+
-+	namehash = f2fs_dentry_hash(name);
-+
-+	dentry_blk = inline_data_addr(ipage);
-+	dentry_bits = &dentry_blk->dentry_bitmap;
-+
-+	while (bit_pos < NR_INLINE_DENTRY) {
-+		if (!test_bit_le(bit_pos, dentry_bits)) {
-+			bit_pos++;
-+			continue;
-+		}
-+		de = &dentry_blk->dentry[bit_pos];
-+		if (early_match_name(name->len, namehash, de)) {
-+			if (!memcmp(dentry_blk->filename[bit_pos],
-+							name->name,
-+							name->len)) {
-+				*res_page = ipage;
-+				goto found;
-+			}
-+		}
-+
-+		/*
-+		 * For the most part, it should be a bug when name_len is zero.
-+		 * We stop here for figuring out where the bugs are occurred.
-+		 */
-+		f2fs_bug_on(F2FS_P_SB(ipage), !de->name_len);
-+
-+		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-+	}
-+
-+	de = NULL;
-+found:
-+	unlock_page(ipage);
-+	return de;
-+}
-+
-+struct f2fs_dir_entry *f2fs_parent_inline_dir(struct inode *dir,
-+							struct page **p)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-+	struct page *ipage;
-+	struct f2fs_dir_entry *de;
-+	struct f2fs_inline_dentry *dentry_blk;
-+
-+	ipage = get_node_page(sbi, dir->i_ino);
-+	if (IS_ERR(ipage))
-+		return NULL;
-+
-+	dentry_blk = inline_data_addr(ipage);
-+	de = &dentry_blk->dentry[1];
-+	*p = ipage;
-+	unlock_page(ipage);
-+	return de;
-+}
-+
-+int make_empty_inline_dir(struct inode *inode, struct inode *parent,
-+							struct page *ipage)
-+{
-+	struct f2fs_inline_dentry *dentry_blk;
-+	struct f2fs_dir_entry *de;
-+
-+	dentry_blk = inline_data_addr(ipage);
-+
-+	de = &dentry_blk->dentry[0];
-+	de->name_len = cpu_to_le16(1);
-+	de->hash_code = 0;
-+	de->ino = cpu_to_le32(inode->i_ino);
-+	memcpy(dentry_blk->filename[0], ".", 1);
-+	set_de_type(de, inode);
-+
-+	de = &dentry_blk->dentry[1];
-+	de->hash_code = 0;
-+	de->name_len = cpu_to_le16(2);
-+	de->ino = cpu_to_le32(parent->i_ino);
-+	memcpy(dentry_blk->filename[1], "..", 2);
-+	set_de_type(de, inode);
-+
-+	test_and_set_bit_le(0, &dentry_blk->dentry_bitmap);
-+	test_and_set_bit_le(1, &dentry_blk->dentry_bitmap);
-+
-+	set_page_dirty(ipage);
-+
-+	/* update i_size to MAX_INLINE_DATA */
-+	if (i_size_read(inode) < MAX_INLINE_DATA) {
-+		i_size_write(inode, MAX_INLINE_DATA);
-+		set_inode_flag(F2FS_I(inode), FI_UPDATE_DIR);
-+	}
-+	return 0;
-+}
-+
-+int room_in_inline_dir(struct f2fs_inline_dentry *dentry_blk, int slots)
-+{
-+	int bit_start = 0;
-+	int zero_start, zero_end;
-+next:
-+	zero_start = find_next_zero_bit_le(&dentry_blk->dentry_bitmap,
-+						NR_INLINE_DENTRY,
-+						bit_start);
-+	if (zero_start >= NR_INLINE_DENTRY)
-+		return NR_INLINE_DENTRY;
-+
-+	zero_end = find_next_bit_le(&dentry_blk->dentry_bitmap,
-+						NR_INLINE_DENTRY,
-+						zero_start);
-+	if (zero_end - zero_start >= slots)
-+		return zero_start;
-+
-+	bit_start = zero_end + 1;
-+
-+	if (zero_end + 1 >= NR_INLINE_DENTRY)
-+		return NR_INLINE_DENTRY;
-+	goto next;
-+}
-+
-+int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
-+				struct f2fs_inline_dentry *inline_dentry)
-+{
-+	struct page *page;
-+	struct dnode_of_data dn;
-+	struct f2fs_dentry_block *dentry_blk;
-+	int err;
-+
-+	page = grab_cache_page(dir->i_mapping, 0);
-+	if (!page)
-+		return -ENOMEM;
-+
-+	set_new_dnode(&dn, dir, ipage, NULL, 0);
-+	err = f2fs_reserve_block(&dn, 0);
-+	if (err)
-+		goto out;
-+
-+	f2fs_wait_on_page_writeback(page, DATA);
-+	zero_user_segment(page, 0, PAGE_CACHE_SIZE);
-+
-+	dentry_blk = kmap(page);
-+
-+	/* copy data from inline dentry block to new dentry block */
-+	memcpy(dentry_blk->dentry_bitmap, inline_dentry->dentry_bitmap,
-+					INLINE_DENTRY_BITMAP_SIZE);
-+	memcpy(dentry_blk->reserved, inline_dentry->reserved,
-+					INLINE_RESERVED_SIZE);
-+	memcpy(dentry_blk->dentry, inline_dentry->dentry,
-+			sizeof(struct f2fs_dir_entry) * NR_INLINE_DENTRY);
-+	memcpy(dentry_blk->filename, inline_dentry->filename,
-+					NR_INLINE_DENTRY * F2FS_SLOT_LEN);
-+
-+	kunmap(page);
-+	SetPageUptodate(page);
-+	set_page_dirty(page);
-+
-+	/* clear inline dir and flag after data writeback */
-+	zero_user_segment(ipage, INLINE_DATA_OFFSET,
-+				 INLINE_DATA_OFFSET + MAX_INLINE_DATA);
-+
-+	stat_dec_inline_inode(dir);
-+
-+	if (i_size_read(dir) < PAGE_CACHE_SIZE) {
-+		i_size_write(dir, PAGE_CACHE_SIZE);
-+		set_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
-+	}
-+
-+	sync_inode_page(&dn);
-+out:
-+	f2fs_put_page(page, 1);
-+	return err;
-+}
-+
-+int f2fs_add_inline_entry(struct inode *dir, const struct qstr *name,
-+						struct inode *inode)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-+	struct page *ipage;
-+	unsigned int bit_pos;
-+	f2fs_hash_t name_hash;
-+	struct f2fs_dir_entry *de;
-+	size_t namelen = name->len;
-+	struct f2fs_inline_dentry *dentry_blk = NULL;
-+	int slots = GET_DENTRY_SLOTS(namelen);
-+	struct page *page;
-+	int err = 0;
-+	int i;
-+
-+	name_hash = f2fs_dentry_hash(name);
-+
-+	ipage = get_node_page(sbi, dir->i_ino);
-+	if (IS_ERR(ipage))
-+		return PTR_ERR(ipage);
-+
-+	dentry_blk = inline_data_addr(ipage);
-+	bit_pos = room_in_inline_dir(dentry_blk, slots);
-+	if (bit_pos >= NR_INLINE_DENTRY) {
-+		err = f2fs_convert_inline_dir(dir, ipage, dentry_blk);
-+		if (!err)
-+			err = -EAGAIN;
-+		goto out;
-+	}
-+
-+	f2fs_wait_on_page_writeback(ipage, DATA);
-+
-+	down_write(&F2FS_I(inode)->i_sem);
-+	page = init_inode_metadata(inode, dir, name);
-+	if (IS_ERR(page)) {
-+		err = PTR_ERR(page);
-+		goto fail;
-+	}
-+	de = &dentry_blk->dentry[bit_pos];
-+	de->hash_code = name_hash;
-+	de->name_len = cpu_to_le16(namelen);
-+	memcpy(dentry_blk->filename[bit_pos], name->name, name->len);
-+	de->ino = cpu_to_le32(inode->i_ino);
-+	set_de_type(de, inode);
-+	for (i = 0; i < slots; i++)
-+		test_and_set_bit_le(bit_pos + i, &dentry_blk->dentry_bitmap);
-+	set_page_dirty(ipage);
-+
-+	/* we don't need to mark_inode_dirty now */
-+	F2FS_I(inode)->i_pino = dir->i_ino;
-+	update_inode(inode, page);
-+	f2fs_put_page(page, 1);
-+
-+	update_parent_metadata(dir, inode, 0);
-+fail:
-+	up_write(&F2FS_I(inode)->i_sem);
-+
-+	if (is_inode_flag_set(F2FS_I(dir), FI_UPDATE_DIR)) {
-+		update_inode(dir, ipage);
-+		clear_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
-+	}
-+out:
-+	f2fs_put_page(ipage, 1);
-+	return err;
-+}
-+
-+void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry, struct page *page,
-+					struct inode *dir, struct inode *inode)
-+{
-+	struct f2fs_inline_dentry *inline_dentry;
-+	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
-+	unsigned int bit_pos;
-+	int i;
-+
-+	lock_page(page);
-+	f2fs_wait_on_page_writeback(page, DATA);
-+
-+	inline_dentry = inline_data_addr(page);
-+	bit_pos = dentry - inline_dentry->dentry;
-+	for (i = 0; i < slots; i++)
-+		test_and_clear_bit_le(bit_pos + i,
-+				&inline_dentry->dentry_bitmap);
-+
-+	set_page_dirty(page);
-+
-+	dir->i_ctime = dir->i_mtime = CURRENT_TIME;
-+
-+	if (inode)
-+		f2fs_drop_nlink(dir, inode, page);
-+
-+	f2fs_put_page(page, 1);
-+}
-+
-+bool f2fs_empty_inline_dir(struct inode *dir)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-+	struct page *ipage;
-+	unsigned int bit_pos = 2;
-+	struct f2fs_inline_dentry *dentry_blk;
-+
-+	ipage = get_node_page(sbi, dir->i_ino);
-+	if (IS_ERR(ipage))
-+		return false;
-+
-+	dentry_blk = inline_data_addr(ipage);
-+	bit_pos = find_next_bit_le(&dentry_blk->dentry_bitmap,
-+					NR_INLINE_DENTRY,
-+					bit_pos);
-+
-+	f2fs_put_page(ipage, 1);
-+
-+	if (bit_pos < NR_INLINE_DENTRY)
-+		return false;
-+
-+	return true;
-+}
-+
-+int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	unsigned int bit_pos = 0;
-+	struct f2fs_inline_dentry *inline_dentry = NULL;
-+	struct f2fs_dir_entry *de = NULL;
-+	struct page *ipage = NULL;
-+	unsigned char d_type = DT_UNKNOWN;
-+
-+	if (ctx->pos == NR_INLINE_DENTRY)
-+		return 0;
-+
-+	ipage = get_node_page(sbi, inode->i_ino);
-+	if (IS_ERR(ipage))
-+		return PTR_ERR(ipage);
-+
-+	bit_pos = ((unsigned long)ctx->pos % NR_INLINE_DENTRY);
-+
-+	inline_dentry = inline_data_addr(ipage);
-+	while (bit_pos < NR_INLINE_DENTRY) {
-+		bit_pos = find_next_bit_le(&inline_dentry->dentry_bitmap,
-+						NR_INLINE_DENTRY,
-+						bit_pos);
-+		if (bit_pos >= NR_INLINE_DENTRY)
-+			break;
-+
-+		de = &inline_dentry->dentry[bit_pos];
-+		if (de->file_type < F2FS_FT_MAX)
-+			d_type = f2fs_filetype_table[de->file_type];
-+		else
-+			d_type = DT_UNKNOWN;
-+
-+		if (!dir_emit(ctx,
-+				inline_dentry->filename[bit_pos],
-+				le16_to_cpu(de->name_len),
-+				le32_to_cpu(de->ino), d_type))
-+			goto out;
-+
-+		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-+		ctx->pos = bit_pos;
-+	}
-+
-+	ctx->pos = NR_INLINE_DENTRY;
-+out:
-+	f2fs_put_page(ipage, 1);
-+
-+	return 0;
-+}
++	if (test_opt(sbi, INLINE_DENTRY) && S_ISDIR(inode->i_mode))
++		set_inode_flag(F2FS_I(inode), FI_INLINE_DENTRY);
++
+ 	trace_f2fs_new_inode(inode, 0);
+ 	mark_inode_dirty(inode);
+ 	return inode;
+@@ -188,7 +192,8 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	de = f2fs_find_entry(dir, &dentry->d_name, &page);
+ 	if (de) {
+ 		nid_t ino = le32_to_cpu(de->ino);
+-		kunmap(page);
++		if (!f2fs_has_inline_dentry(dir))
++			kunmap(page);
+ 		f2fs_put_page(page, 0);
+ 
+ 		inode = f2fs_iget(dir->i_sb, ino);
+@@ -220,7 +225,8 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	err = acquire_orphan_inode(sbi);
+ 	if (err) {
+ 		f2fs_unlock_op(sbi);
+-		kunmap(page);
++		if (!f2fs_has_inline_dentry(dir))
++			kunmap(page);
+ 		f2fs_put_page(page, 0);
+ 		goto fail;
+ 	}
+@@ -450,7 +456,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 						old_dir_page, new_dir);
+ 			update_inode_page(old_inode);
+ 		} else {
+-			kunmap(old_dir_page);
++			if (!f2fs_has_inline_dentry(old_inode))
++				kunmap(old_dir_page);
+ 			f2fs_put_page(old_dir_page, 0);
+ 		}
+ 		drop_nlink(old_dir);
+@@ -463,15 +470,18 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ put_out_dir:
+ 	f2fs_unlock_op(sbi);
+-	kunmap(new_page);
++	if (!f2fs_has_inline_dentry(new_dir))
++		kunmap(new_page);
+ 	f2fs_put_page(new_page, 0);
+ out_dir:
+ 	if (old_dir_entry) {
+-		kunmap(old_dir_page);
++		if (!f2fs_has_inline_dentry(old_inode))
++			kunmap(old_dir_page);
+ 		f2fs_put_page(old_dir_page, 0);
+ 	}
+ out_old:
+-	kunmap(old_page);
++	if (!f2fs_has_inline_dentry(old_dir))
++		kunmap(old_page);
+ 	f2fs_put_page(old_page, 0);
+ out:
+ 	return err;
+@@ -603,19 +613,23 @@ out_unlock:
+ 	f2fs_unlock_op(sbi);
+ out_new_dir:
+ 	if (new_dir_entry) {
+-		kunmap(new_dir_page);
++		if (!f2fs_has_inline_dentry(new_inode))
++			kunmap(new_dir_page);
+ 		f2fs_put_page(new_dir_page, 0);
+ 	}
+ out_old_dir:
+ 	if (old_dir_entry) {
+-		kunmap(old_dir_page);
++		if (!f2fs_has_inline_dentry(old_inode))
++			kunmap(old_dir_page);
+ 		f2fs_put_page(old_dir_page, 0);
+ 	}
+ out_new:
+-	kunmap(new_page);
++	if (!f2fs_has_inline_dentry(new_dir))
++		kunmap(new_page);
+ 	f2fs_put_page(new_page, 0);
+ out_old:
+-	kunmap(old_page);
++	if (!f2fs_has_inline_dentry(old_dir))
++		kunmap(old_page);
+ 	f2fs_put_page(old_page, 0);
+ out:
+ 	return err;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index fdbcea4..9ce392d0 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -129,7 +129,8 @@ retry:
+ 	goto out;
+ 
+ out_unmap_put:
+-	kunmap(page);
++	if (!f2fs_has_inline_dentry(dir))
++		kunmap(page);
+ 	f2fs_put_page(page, 0);
+ out_err:
+ 	iput(dir);
 -- 
 2.0.1.474.g72c7794
+
+
+
+------------------------------------------------------------------------------
+Meet PCI DSS 3.0 Compliance Requirements with EventLog Analyzer
+Achieve PCI DSS 3.0 Compliant Status with Out-of-the-box PCI DSS Reports
+Are you Audit-Ready for PCI DSS 3.0 Compliance? Download White paper
+Comply to PCI DSS 3.0 Requirement 10 and 11.5 with EventLog Analyzer
+http://pubads.g.doubleclick.net/gampad/clk?id=154622311&iu=/4140/ostg.clktrk
