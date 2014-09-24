@@ -1,7 +1,8 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev][PATCH 0/6 v2] f2fs: support inline dir
-Date: Wed, 24 Sep 2014 18:14:15 +0800
-Message-ID: <003b01cfd7e0$6ce35e40$46aa1ac0$@samsung.com>
+Subject: [f2fs-dev][PATCH 1/6 v2] f2fs: add infra struct and helper for inline
+ dir
+Date: Wed, 24 Sep 2014 18:15:19 +0800
+Message-ID: <003c01cfd7e0$8b671af0$a23550d0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,78 +13,111 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-There are large space in f2fs inode, so last inline data patch set have made
-f2fs to acquire the ability of storing data of small file (less than ~3.4k)
-directly in inode block, but not support inline dir. In this patch, we make
-f2fs to support inline dir.
+This patch defines macro/inline dentry structure, and adds some helpers for
+inline dir infrastructure.
 
-Layout:
-Inline dir layout is the same as inline data layout,
-a. i_addr[0] are reserved space for converting from inline dir to regular one
-when out-of-space occur in inline dentry.
-b. i_addr[1..872] will be used as storing space of inline dentry.
-c. i_addr[873..922] are reserved for inline xattr.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/f2fs.h          | 21 +++++++++++++++++++--
+ include/linux/f2fs_fs.h | 19 +++++++++++++++++++
+ 2 files changed, 38 insertions(+), 2 deletions(-)
 
-Size:
-Since our max size of inline dir space is limit to MAX_INLINE_DATA (3488 bytes), 
-we introduce inline dentry struct fit for available space, then our dentry slot
-number in inline dentry reduce to 182, less than normal dentry block's 214.
-
-Process:
-In inline dir mode, our dir entries will be lookuped/stored/deleted in the
-inline dentry space of inode, util there are no more space to store new added
-dir entry, in this case we will convert inline dentry to normal 0-index dentry
-block and disable inline dir mode for this inode.
-
-Benefit points:
-a) space saving
-   1) Test with fsstress with special arguments, it can save about 7% space.
-   time fsstress -c -p 20 -n 500 -l 10 -d /mnt/f2fs -w -f chown=0 -f creat=10
-   -f dwrite=0 -f fdatasync=0 -f fsync=0 -f link=10 -f mkdir=10 -f mknod=10
-   -f rename=0 -f rmdir=0 -f symlink=10 -f truncate=0 -f unlink=0 -f write=10 -S
-		Dev		1K-blocks  Used    Available Use% Mounted on
-   empty	/dev/sdb        20969472  1134600  19691512   6% /mnt/f2fs
-   based	/dev/sdb        20969472  2331676  18494436  12% /mnt/f2fs
-   patched	/dev/sdb        20969472  2247480  18578632  11% /mnt/f2fs
-   2) Test with storing kernel src, it can save less than 1.4% space.
-   empty	/dev/sdb        20969472  1134600  19691512   6% /mnt/f2fs
-   based	/dev/sdb        20969472  1934656  18891456  10% /mnt/f2fs
-   patched	/dev/sdb        20969472  1923400  18902712  10% /mnt/f2fs
-
-b) performance
-   Test with fsstress shows cost time reduce about 5%.
-   time fsstress -d /mnt/f2fs -l 5 -n 1000 -p 20 -c -r
-   based	135.652 s
-   patched	129.256 s  (mount -o inline_dentry)
-
-v2:
- o introduce f2fs_drop_nlink from f2fs_delete_entry to reuse code in
-   f2fs_delete_inline_entry.
- o remove kmap/kunmap for inode page pointed out by Jaegeuk Kim.
- o introduce a new mount option inline_dentry for inline dir pointed out by
-   Jaegeuk Kim.
- o rebase to last dev of f2fs (20140924).
- o retest performance/space-gain for inline dir excluding influence of inline
-   data.
-
-Chao Yu (6):
-  f2fs: add infra struct and helper for inline dir
-  f2fs: add a new mount option for inline dir
-  f2fs: export dir operations for inline dir
-  f2fs: add key function to handle inline dir
-  f2fs: enable inline dir handling
-  f2fs: update f2fs documentation for inline dir support
-
- Documentation/filesystems/f2fs.txt |   4 +
- fs/f2fs/dir.c                      | 103 +++++++----
- fs/f2fs/f2fs.h                     |  40 ++++-
- fs/f2fs/file.c                     |   2 +-
- fs/f2fs/inline.c                   | 347 +++++++++++++++++++++++++++++++++++++
- fs/f2fs/namei.c                    |  38 ++--
- fs/f2fs/recovery.c                 |   5 +-
- fs/f2fs/super.c                    |   7 +
- include/linux/f2fs_fs.h            |  19 ++
- 9 files changed, 512 insertions(+), 53 deletions(-)
-
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 94cfdc4..b94721c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -46,8 +46,9 @@
+ #define F2FS_MOUNT_DISABLE_EXT_IDENTIFY	0x00000040
+ #define F2FS_MOUNT_INLINE_XATTR		0x00000080
+ #define F2FS_MOUNT_INLINE_DATA		0x00000100
+-#define F2FS_MOUNT_FLUSH_MERGE		0x00000200
+-#define F2FS_MOUNT_NOBARRIER		0x00000400
++#define F2FS_MOUNT_INLINE_DENTRY	0x00000200
++#define F2FS_MOUNT_FLUSH_MERGE		0x00000400
++#define F2FS_MOUNT_NOBARRIER		0x00000800
+ 
+ #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
+ #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
+@@ -1049,6 +1050,7 @@ enum {
+ 	FI_NO_EXTENT,		/* not to use the extent cache */
+ 	FI_INLINE_XATTR,	/* used for inline xattr */
+ 	FI_INLINE_DATA,		/* used for inline data*/
++	FI_INLINE_DENTRY,	/* used for inline dentry */
+ 	FI_APPEND_WRITE,	/* inode has appended data */
+ 	FI_UPDATE_WRITE,	/* inode has in-place-update data */
+ 	FI_NEED_IPU,		/* used fo ipu for fdatasync */
+@@ -1093,6 +1095,8 @@ static inline void get_inline_info(struct f2fs_inode_info *fi,
+ 		set_inode_flag(fi, FI_INLINE_XATTR);
+ 	if (ri->i_inline & F2FS_INLINE_DATA)
+ 		set_inode_flag(fi, FI_INLINE_DATA);
++	if (ri->i_inline & F2FS_INLINE_DENTRY)
++		set_inode_flag(fi, FI_INLINE_DENTRY);
+ }
+ 
+ static inline void set_raw_inline(struct f2fs_inode_info *fi,
+@@ -1104,6 +1108,8 @@ static inline void set_raw_inline(struct f2fs_inode_info *fi,
+ 		ri->i_inline |= F2FS_INLINE_XATTR;
+ 	if (is_inode_flag_set(fi, FI_INLINE_DATA))
+ 		ri->i_inline |= F2FS_INLINE_DATA;
++	if (is_inode_flag_set(fi, FI_INLINE_DENTRY))
++		ri->i_inline |= F2FS_INLINE_DENTRY;
+ }
+ 
+ static inline int f2fs_has_inline_xattr(struct inode *inode)
+@@ -1144,6 +1150,17 @@ static inline void *inline_data_addr(struct page *page)
+ 	return (void *)&(ri->i_addr[1]);
+ }
+ 
++static inline int f2fs_has_inline_dentry(struct inode *inode)
++{
++	return is_inode_flag_set(F2FS_I(inode), FI_INLINE_DENTRY);
++}
++
++static inline void *inline_dentry_addr(struct page *page)
++{
++	struct f2fs_inode *ri = F2FS_INODE(page);
++	return (void *)&(ri->i_addr[1]);
++}
++
+ static inline int f2fs_readonly(struct super_block *sb)
+ {
+ 	return sb->s_flags & MS_RDONLY;
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 860313a..29b3cf3 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -170,6 +170,7 @@ struct f2fs_extent {
+ 
+ #define F2FS_INLINE_XATTR	0x01	/* file inline xattr flag */
+ #define F2FS_INLINE_DATA	0x02	/* file inline data flag */
++#define F2FS_INLINE_DENTRY	0x04	/* file inline dentry flag */
+ 
+ #define MAX_INLINE_DATA		(sizeof(__le32) * (DEF_ADDRS_PER_INODE - \
+ 						F2FS_INLINE_XATTR_ADDRS - 1))
+@@ -435,6 +436,24 @@ struct f2fs_dentry_block {
+ 	__u8 filename[NR_DENTRY_IN_BLOCK][F2FS_SLOT_LEN];
+ } __packed;
+ 
++/* for inline dir */
++#define NR_INLINE_DENTRY	(MAX_INLINE_DATA * BITS_PER_BYTE / \
++				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
++				BITS_PER_BYTE + 1))
++#define INLINE_DENTRY_BITMAP_SIZE	((NR_INLINE_DENTRY + \
++					BITS_PER_BYTE - 1) / BITS_PER_BYTE)
++#define INLINE_RESERVED_SIZE	(MAX_INLINE_DATA - \
++				((SIZE_OF_DIR_ENTRY + F2FS_SLOT_LEN) * \
++				NR_INLINE_DENTRY + INLINE_DENTRY_BITMAP_SIZE))
++
++/* inline directory entry structure */
++struct f2fs_inline_dentry {
++	__u8 dentry_bitmap[INLINE_DENTRY_BITMAP_SIZE];
++	__u8 reserved[INLINE_RESERVED_SIZE];
++	struct f2fs_dir_entry dentry[NR_INLINE_DENTRY];
++	__u8 filename[NR_INLINE_DENTRY][F2FS_SLOT_LEN];
++} __packed;
++
+ /* file types used in inode_info->flags */
+ enum {
+ 	F2FS_FT_UNKNOWN,
 -- 
 2.0.1.474.g72c7794
