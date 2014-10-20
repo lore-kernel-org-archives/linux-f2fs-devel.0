@@ -1,179 +1,128 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 06/09] f2fs: avoid to allocate when inline_data
-	was written
-Date: Sun, 19 Oct 2014 22:18:29 -0700
-Message-ID: <1413782312-11631-6-git-send-email-jaegeuk@kernel.org>
-References: <1413782312-11631-1-git-send-email-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Xg5Mm-0008PE-1G
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Oct 2014 05:18:48 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Xg5Ml-0006gR-2a for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Oct 2014 05:18:47 +0000
-In-Reply-To: <1413782312-11631-1-git-send-email-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Subject: [PATCH 01/11] f2fs: reuse room_for_filename for inline dentry operation
+Date: Sun, 19 Oct 2014 22:19:29 -0700
+Message-ID: <1413782379-11758-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-The sceanrio is like this.
-inline_data   i_size     page                 write_begin/vm_page_mkwrite
-  X             30       dirty_page
-  X             30                            write to #4096 position
-  X             30       get_dnode_of_data    wait for get_dnode_of_data
-  O             30       write inline_data
-  O             30                            get_dnode_of_data
-  O             30                            reserve data block
-..
-
-In this case, we have #0 = NEW_ADDR and inline_data as well.
-We should not allow this condition for further access.
+This patch introduces to reuse the existing room_for_filename for inline dentry
+operation.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c | 32 +++++++++++++++++++++++---------
- fs/f2fs/file.c | 26 ++++++++++++++++++++++----
- 2 files changed, 45 insertions(+), 13 deletions(-)
+ fs/f2fs/dir.c    | 21 +++++++++------------
+ fs/f2fs/f2fs.h   |  1 +
+ fs/f2fs/inline.c | 27 ++-------------------------
+ 3 files changed, 12 insertions(+), 37 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 5b80ada..973fd77 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -257,9 +257,6 @@ int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index)
- 	bool need_put = dn->inode_page ? false : true;
- 	int err;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index cc6474a..164c6c9 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -427,27 +427,23 @@ void update_parent_metadata(struct inode *dir, struct inode *inode,
+ 		clear_inode_flag(F2FS_I(inode), FI_INC_LINK);
+ }
  
--	/* if inode_page exists, index should be zero */
--	f2fs_bug_on(F2FS_I_SB(dn->inode), !need_put && index);
--
- 	err = get_dnode_of_data(dn, index, ALLOC_NODE);
- 	if (err)
- 		return err;
-@@ -951,7 +948,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+-static int room_for_filename(struct f2fs_dentry_block *dentry_blk, int slots)
++int room_for_filename(const void *bitmap, int slots, int max_slots)
  {
- 	struct inode *inode = mapping->host;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct page *page;
-+	struct page *page, *ipage;
- 	pgoff_t index = ((unsigned long long) pos) >> PAGE_CACHE_SHIFT;
- 	struct dnode_of_data dn;
- 	int err = 0;
-@@ -979,13 +976,26 @@ repeat:
- 		goto inline_data;
+ 	int bit_start = 0;
+ 	int zero_start, zero_end;
+ next:
+-	zero_start = find_next_zero_bit_le(&dentry_blk->dentry_bitmap,
+-						NR_DENTRY_IN_BLOCK,
+-						bit_start);
+-	if (zero_start >= NR_DENTRY_IN_BLOCK)
+-		return NR_DENTRY_IN_BLOCK;
++	zero_start = find_next_zero_bit_le(bitmap, max_slots, bit_start);
++	if (zero_start >= max_slots)
++		return max_slots;
  
- 	f2fs_lock_op(sbi);
--	set_new_dnode(&dn, inode, NULL, NULL, 0);
--	err = f2fs_reserve_block(&dn, index);
--	f2fs_unlock_op(sbi);
--	if (err) {
-+
-+	/* check inline_data */
-+	ipage = get_node_page(sbi, inode->i_ino);
-+	if (IS_ERR(ipage))
-+		goto unlock_fail;
-+
-+	if (f2fs_has_inline_data(inode)) {
-+		f2fs_put_page(ipage, 1);
-+		f2fs_unlock_op(sbi);
- 		f2fs_put_page(page, 0);
--		goto fail;
-+		goto repeat;
- 	}
-+
-+	set_new_dnode(&dn, inode, ipage, NULL, 0);
-+	err = f2fs_reserve_block(&dn, index);
-+	if (err)
-+		goto unlock_fail;
-+	f2fs_put_dnode(&dn);
-+	f2fs_unlock_op(sbi);
-+
- inline_data:
- 	lock_page(page);
- 	if (unlikely(page->mapping != mapping)) {
-@@ -1038,6 +1048,10 @@ out:
- 	SetPageUptodate(page);
- 	clear_cold_data(page);
+-	zero_end = find_next_bit_le(&dentry_blk->dentry_bitmap,
+-						NR_DENTRY_IN_BLOCK,
+-						zero_start);
++	zero_end = find_next_bit_le(bitmap, max_slots, zero_start);
+ 	if (zero_end - zero_start >= slots)
+ 		return zero_start;
+ 
+ 	bit_start = zero_end + 1;
+ 
+-	if (zero_end + 1 >= NR_DENTRY_IN_BLOCK)
+-		return NR_DENTRY_IN_BLOCK;
++	if (zero_end + 1 >= max_slots)
++		return max_slots;
+ 	goto next;
+ }
+ 
+@@ -509,7 +505,8 @@ start:
+ 			return PTR_ERR(dentry_page);
+ 
+ 		dentry_blk = kmap(dentry_page);
+-		bit_pos = room_for_filename(dentry_blk, slots);
++		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
++						slots, NR_DENTRY_IN_BLOCK);
+ 		if (bit_pos < NR_DENTRY_IN_BLOCK)
+ 			goto add_dentry;
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c537699..aa055e3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1248,6 +1248,7 @@ void set_de_type(struct f2fs_dir_entry *, struct inode *);
+ struct page *init_inode_metadata(struct inode *, struct inode *,
+ 							const struct qstr *);
+ void update_parent_metadata(struct inode *, struct inode *, unsigned int);
++int room_for_filename(const void *, int, int);
+ void f2fs_drop_nlink(struct inode *, struct inode *, struct page *);
+ struct f2fs_dir_entry *f2fs_find_entry(struct inode *, struct qstr *,
+ 							struct page **);
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 02e2449..5d9dabb 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -363,30 +363,6 @@ int make_empty_inline_dir(struct inode *inode, struct inode *parent,
  	return 0;
-+
-+unlock_fail:
-+	f2fs_unlock_op(sbi);
-+	f2fs_put_page(page, 0);
- fail:
- 	f2fs_write_failed(mapping, pos + len);
- 	return err;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 543d8c6..456df07 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -35,12 +35,13 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
- 	struct inode *inode = file_inode(vma->vm_file);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct dnode_of_data dn;
-+	struct page *ipage;
- 	int err;
+ }
  
- 	f2fs_balance_fs(sbi);
- 
- 	sb_start_pagefault(inode->i_sb);
+-int room_in_inline_dir(struct f2fs_inline_dentry *dentry_blk, int slots)
+-{
+-	int bit_start = 0;
+-	int zero_start, zero_end;
+-next:
+-	zero_start = find_next_zero_bit_le(&dentry_blk->dentry_bitmap,
+-						NR_INLINE_DENTRY,
+-						bit_start);
+-	if (zero_start >= NR_INLINE_DENTRY)
+-		return NR_INLINE_DENTRY;
 -
-+retry:
- 	/* force to convert with normal data indices */
- 	err = f2fs_convert_inline_data(inode, MAX_INLINE_DATA + 1, page);
- 	if (err)
-@@ -48,11 +49,28 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
+-	zero_end = find_next_bit_le(&dentry_blk->dentry_bitmap,
+-						NR_INLINE_DENTRY,
+-						zero_start);
+-	if (zero_end - zero_start >= slots)
+-		return zero_start;
+-
+-	bit_start = zero_end + 1;
+-
+-	if (zero_end + 1 >= NR_INLINE_DENTRY)
+-		return NR_INLINE_DENTRY;
+-	goto next;
+-}
+-
+ int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
+ 				struct f2fs_inline_dentry *inline_dentry)
+ {
+@@ -462,7 +438,8 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *name,
+ 		return PTR_ERR(ipage);
  
- 	/* block allocation */
- 	f2fs_lock_op(sbi);
--	set_new_dnode(&dn, inode, NULL, NULL, 0);
-+
-+	/* check inline_data */
-+	ipage = get_node_page(sbi, inode->i_ino);
-+	if (IS_ERR(ipage)) {
-+		f2fs_unlock_op(sbi);
-+		goto out;
-+	}
-+
-+	if (f2fs_has_inline_data(inode)) {
-+		f2fs_put_page(ipage, 1);
-+		f2fs_unlock_op(sbi);
-+		goto retry;
-+	}
-+
-+	set_new_dnode(&dn, inode, ipage, NULL, 0);
- 	err = f2fs_reserve_block(&dn, page->index);
--	f2fs_unlock_op(sbi);
--	if (err)
-+	if (err) {
-+		f2fs_unlock_op(sbi);
- 		goto out;
-+	}
-+	f2fs_put_dnode(&dn);
-+	f2fs_unlock_op(sbi);
- 
- 	file_update_time(vma->vm_file);
- 	lock_page(page);
+ 	dentry_blk = inline_data_addr(ipage);
+-	bit_pos = room_in_inline_dir(dentry_blk, slots);
++	bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
++						slots, NR_INLINE_DENTRY);
+ 	if (bit_pos >= NR_INLINE_DENTRY) {
+ 		err = f2fs_convert_inline_dir(dir, ipage, dentry_blk);
+ 		if (!err)
 -- 
 2.1.1
-
-
-------------------------------------------------------------------------------
-Comprehensive Server Monitoring with Site24x7.
-Monitor 10 servers for $9/Month.
-Get alerted through email, SMS, voice calls or mobile push notifications.
-Take corrective actions from your mobile device.
-http://p.sf.net/sfu/Zoho
