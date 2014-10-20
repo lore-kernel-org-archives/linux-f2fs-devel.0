@@ -1,128 +1,262 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 01/11] f2fs: reuse room_for_filename for inline dentry operation
-Date: Sun, 19 Oct 2014 22:19:29 -0700
-Message-ID: <1413782379-11758-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 02/11] f2fs: reuse find_in_block code for
+	find_in_inline_dir
+Date: Sun, 19 Oct 2014 22:19:30 -0700
+Message-ID: <1413782379-11758-2-git-send-email-jaegeuk@kernel.org>
+References: <1413782379-11758-1-git-send-email-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Xg5Np-0004ut-DG
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 20 Oct 2014 05:19:53 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Xg5No-0006hw-8m for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 20 Oct 2014 05:19:53 +0000
+In-Reply-To: <1413782379-11758-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch introduces to reuse the existing room_for_filename for inline dentry
-operation.
+This patch removes redundant copied code in find_in_inline_dir.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/dir.c    | 21 +++++++++------------
- fs/f2fs/f2fs.h   |  1 +
- fs/f2fs/inline.c | 27 ++-------------------------
- 3 files changed, 12 insertions(+), 37 deletions(-)
+ fs/f2fs/dir.c    | 72 +++++++++++++++++++++++++++++++++++---------------------
+ fs/f2fs/f2fs.h   |  3 ++-
+ fs/f2fs/inline.c | 52 +++++++++++++---------------------------
+ 3 files changed, 64 insertions(+), 63 deletions(-)
 
 diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index cc6474a..164c6c9 100644
+index 164c6c9..c60b93f 100644
 --- a/fs/f2fs/dir.c
 +++ b/fs/f2fs/dir.c
-@@ -427,27 +427,23 @@ void update_parent_metadata(struct inode *dir, struct inode *inode,
- 		clear_inode_flag(F2FS_I(inode), FI_INC_LINK);
+@@ -77,7 +77,7 @@ static unsigned long dir_block_index(unsigned int level,
+ 	return bidx;
  }
  
--static int room_for_filename(struct f2fs_dentry_block *dentry_blk, int slots)
-+int room_for_filename(const void *bitmap, int slots, int max_slots)
+-bool early_match_name(size_t namelen, f2fs_hash_t namehash,
++static bool early_match_name(size_t namelen, f2fs_hash_t namehash,
+ 				struct f2fs_dir_entry *de)
  {
- 	int bit_start = 0;
- 	int zero_start, zero_end;
- next:
--	zero_start = find_next_zero_bit_le(&dentry_blk->dentry_bitmap,
--						NR_DENTRY_IN_BLOCK,
--						bit_start);
--	if (zero_start >= NR_DENTRY_IN_BLOCK)
--		return NR_DENTRY_IN_BLOCK;
-+	zero_start = find_next_zero_bit_le(bitmap, max_slots, bit_start);
-+	if (zero_start >= max_slots)
-+		return max_slots;
- 
--	zero_end = find_next_bit_le(&dentry_blk->dentry_bitmap,
--						NR_DENTRY_IN_BLOCK,
--						zero_start);
-+	zero_end = find_next_bit_le(bitmap, max_slots, zero_start);
- 	if (zero_end - zero_start >= slots)
- 		return zero_start;
- 
- 	bit_start = zero_end + 1;
- 
--	if (zero_end + 1 >= NR_DENTRY_IN_BLOCK)
--		return NR_DENTRY_IN_BLOCK;
-+	if (zero_end + 1 >= max_slots)
-+		return max_slots;
- 	goto next;
+ 	if (le16_to_cpu(de->name_len) != namelen)
+@@ -90,49 +90,68 @@ bool early_match_name(size_t namelen, f2fs_hash_t namehash,
  }
  
-@@ -509,7 +505,8 @@ start:
- 			return PTR_ERR(dentry_page);
+ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
+-			struct qstr *name, int *max_slots,
+-			f2fs_hash_t namehash, struct page **res_page)
++				struct qstr *name, int *max_slots,
++				struct page **res_page)
++{
++	struct f2fs_dentry_block *dentry_blk;
++	struct f2fs_dir_entry *de;
++
++	*max_slots = NR_DENTRY_IN_BLOCK;
++
++	dentry_blk = (struct f2fs_dentry_block *)kmap(dentry_page);
++	de = find_target_dentry(name, max_slots, &dentry_blk->dentry_bitmap,
++						dentry_blk->dentry,
++						dentry_blk->filename);
++	kunmap(dentry_page);
++	if (de)
++		*res_page = dentry_page;
++
++	/*
++	 * For the most part, it should be a bug when name_len is zero.
++	 * We stop here for figuring out where the bugs has occurred.
++	 */
++	f2fs_bug_on(F2FS_P_SB(dentry_page), *max_slots < 0);
++	return de;
++}
++
++struct f2fs_dir_entry *find_target_dentry(struct qstr *name, int *max_slots,
++			const void *bitmap, struct f2fs_dir_entry *dentry,
++			__u8 (*filenames)[F2FS_SLOT_LEN])
+ {
+ 	struct f2fs_dir_entry *de;
+ 	unsigned long bit_pos = 0;
+-	struct f2fs_dentry_block *dentry_blk = kmap(dentry_page);
+-	const void *dentry_bits = &dentry_blk->dentry_bitmap;
++	f2fs_hash_t namehash = f2fs_dentry_hash(name);
++	int max_bits = *max_slots;
+ 	int max_len = 0;
  
- 		dentry_blk = kmap(dentry_page);
--		bit_pos = room_for_filename(dentry_blk, slots);
-+		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
-+						slots, NR_DENTRY_IN_BLOCK);
- 		if (bit_pos < NR_DENTRY_IN_BLOCK)
- 			goto add_dentry;
+-	while (bit_pos < NR_DENTRY_IN_BLOCK) {
+-		if (!test_bit_le(bit_pos, dentry_bits)) {
++	*max_slots = 0;
++	while (bit_pos < max_bits) {
++		if (!test_bit_le(bit_pos, bitmap)) {
+ 			if (bit_pos == 0)
+ 				max_len = 1;
+-			else if (!test_bit_le(bit_pos - 1, dentry_bits))
++			else if (!test_bit_le(bit_pos - 1, bitmap))
+ 				max_len++;
+ 			bit_pos++;
+ 			continue;
+ 		}
+-		de = &dentry_blk->dentry[bit_pos];
+-		if (early_match_name(name->len, namehash, de)) {
+-			if (!memcmp(dentry_blk->filename[bit_pos],
+-							name->name,
+-							name->len)) {
+-				*res_page = dentry_page;
+-				goto found;
+-			}
+-		}
+-		if (max_len > *max_slots) {
++		de = &dentry[bit_pos];
++		if (early_match_name(name->len, namehash, de) &&
++			!memcmp(filenames[bit_pos], name->name, name->len))
++			goto found;
++
++		if (*max_slots >= 0 && max_len > *max_slots) {
+ 			*max_slots = max_len;
+ 			max_len = 0;
+ 		}
+ 
+-		/*
+-		 * For the most part, it should be a bug when name_len is zero.
+-		 * We stop here for figuring out where the bugs has occurred.
+-		 */
+-		f2fs_bug_on(F2FS_P_SB(dentry_page), !de->name_len);
++		/* remain bug on condition */
++		if (unlikely(!de->name_len))
++			*max_slots = -1;
+ 
+ 		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+ 	}
+ 
+ 	de = NULL;
+-	kunmap(dentry_page);
+ found:
+ 	if (max_len > *max_slots)
+ 		*max_slots = max_len;
+@@ -149,7 +168,7 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 	struct page *dentry_page;
+ 	struct f2fs_dir_entry *de = NULL;
+ 	bool room = false;
+-	int max_slots = 0;
++	int max_slots;
+ 
+ 	f2fs_bug_on(F2FS_I_SB(dir), level > MAX_DIR_HASH_DEPTH);
+ 
+@@ -168,8 +187,7 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 			continue;
+ 		}
+ 
+-		de = find_in_block(dentry_page, name, &max_slots,
+-					namehash, res_page);
++		de = find_in_block(dentry_page, name, &max_slots, res_page);
+ 		if (de)
+ 			break;
  
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c537699..aa055e3 100644
+index aa055e3..6aad6e0 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1248,6 +1248,7 @@ void set_de_type(struct f2fs_dir_entry *, struct inode *);
+@@ -1243,8 +1243,9 @@ struct dentry *f2fs_get_parent(struct dentry *child);
+  * dir.c
+  */
+ extern unsigned char f2fs_filetype_table[F2FS_FT_MAX];
+-bool early_match_name(size_t, f2fs_hash_t, struct f2fs_dir_entry *);
+ void set_de_type(struct f2fs_dir_entry *, struct inode *);
++struct f2fs_dir_entry *find_target_dentry(struct qstr *, int *, const void *,
++			struct f2fs_dir_entry *, __u8 (*)[F2FS_SLOT_LEN]);
  struct page *init_inode_metadata(struct inode *, struct inode *,
  							const struct qstr *);
  void update_parent_metadata(struct inode *, struct inode *, unsigned int);
-+int room_for_filename(const void *, int, int);
- void f2fs_drop_nlink(struct inode *, struct inode *, struct page *);
- struct f2fs_dir_entry *f2fs_find_entry(struct inode *, struct qstr *,
- 							struct page **);
 diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 02e2449..5d9dabb 100644
+index 5d9dabb..6f9ba80 100644
 --- a/fs/f2fs/inline.c
 +++ b/fs/f2fs/inline.c
-@@ -363,30 +363,6 @@ int make_empty_inline_dir(struct inode *inode, struct inode *parent,
- 	return 0;
+@@ -263,49 +263,31 @@ struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
+ 				struct qstr *name, struct page **res_page)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
+-	struct page *ipage;
++	struct f2fs_inline_dentry *inline_dentry;
+ 	struct f2fs_dir_entry *de;
+-	f2fs_hash_t namehash;
+-	unsigned long bit_pos = 0;
+-	struct f2fs_inline_dentry *dentry_blk;
+-	const void *dentry_bits;
++	struct page *ipage;
++	int max_slots = NR_INLINE_DENTRY;
+ 
+ 	ipage = get_node_page(sbi, dir->i_ino);
+ 	if (IS_ERR(ipage))
+ 		return NULL;
+ 
+-	namehash = f2fs_dentry_hash(name);
+-
+-	dentry_blk = inline_data_addr(ipage);
+-	dentry_bits = &dentry_blk->dentry_bitmap;
+-
+-	while (bit_pos < NR_INLINE_DENTRY) {
+-		if (!test_bit_le(bit_pos, dentry_bits)) {
+-			bit_pos++;
+-			continue;
+-		}
+-		de = &dentry_blk->dentry[bit_pos];
+-		if (early_match_name(name->len, namehash, de)) {
+-			if (!memcmp(dentry_blk->filename[bit_pos],
+-							name->name,
+-							name->len)) {
+-				*res_page = ipage;
+-				goto found;
+-			}
+-		}
+-
+-		/*
+-		 * For the most part, it should be a bug when name_len is zero.
+-		 * We stop here for figuring out where the bugs are occurred.
+-		 */
+-		f2fs_bug_on(F2FS_P_SB(ipage), !de->name_len);
+-
+-		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+-	}
++	inline_dentry = inline_data_addr(ipage);
+ 
+-	de = NULL;
+-found:
++	de = find_target_dentry(name, &max_slots, &inline_dentry->dentry_bitmap,
++						inline_dentry->dentry,
++						inline_dentry->filename);
+ 	unlock_page(ipage);
++	if (de)
++		*res_page = ipage;
++	else
++		f2fs_put_page(ipage, 0);
++
++	/*
++	 * For the most part, it should be a bug when name_len is zero.
++	 * We stop here for figuring out where the bugs has occurred.
++	 */
++	f2fs_bug_on(sbi, max_slots < 0);
+ 	return de;
  }
  
--int room_in_inline_dir(struct f2fs_inline_dentry *dentry_blk, int slots)
--{
--	int bit_start = 0;
--	int zero_start, zero_end;
--next:
--	zero_start = find_next_zero_bit_le(&dentry_blk->dentry_bitmap,
--						NR_INLINE_DENTRY,
--						bit_start);
--	if (zero_start >= NR_INLINE_DENTRY)
--		return NR_INLINE_DENTRY;
--
--	zero_end = find_next_bit_le(&dentry_blk->dentry_bitmap,
--						NR_INLINE_DENTRY,
--						zero_start);
--	if (zero_end - zero_start >= slots)
--		return zero_start;
--
--	bit_start = zero_end + 1;
--
--	if (zero_end + 1 >= NR_INLINE_DENTRY)
--		return NR_INLINE_DENTRY;
--	goto next;
--}
--
- int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
- 				struct f2fs_inline_dentry *inline_dentry)
- {
-@@ -462,7 +438,8 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *name,
- 		return PTR_ERR(ipage);
- 
- 	dentry_blk = inline_data_addr(ipage);
--	bit_pos = room_in_inline_dir(dentry_blk, slots);
-+	bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
-+						slots, NR_INLINE_DENTRY);
- 	if (bit_pos >= NR_INLINE_DENTRY) {
- 		err = f2fs_convert_inline_dir(dir, ipage, dentry_blk);
- 		if (!err)
 -- 
 2.1.1
+
+
+------------------------------------------------------------------------------
+Comprehensive Server Monitoring with Site24x7.
+Monitor 10 servers for $9/Month.
+Get alerted through email, SMS, voice calls or mobile push notifications.
+Take corrective actions from your mobile device.
+http://p.sf.net/sfu/Zoho
