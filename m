@@ -1,8 +1,8 @@
 From: Gu Zheng <guz.fnst@cn.fujitsu.com>
-Subject: [PATCH 4/6] f2fs: rename f2fs_set/clear_bit to
-	f2fs_test_and_set/clear_bit
-Date: Mon, 20 Oct 2014 17:45:51 +0800
-Message-ID: <1413798353-27811-4-git-send-email-guz.fnst@cn.fujitsu.com>
+Subject: [PATCH 3/6] f2fs: introduce f2fs_change_bit to simplify
+	the change bit logic
+Date: Mon, 20 Oct 2014 17:45:50 +0800
+Message-ID: <1413798353-27811-3-git-send-email-guz.fnst@cn.fujitsu.com>
 References: <1413798353-27811-1-git-send-email-guz.fnst@cn.fujitsu.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,30 +11,30 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <guz@guz>) id 1XgA2o-0002sY-Qt
+	(envelope-from <guz@guz>) id 1XgA31-0002tW-3v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Oct 2014 10:18:30 +0000
+	Mon, 20 Oct 2014 10:18:43 +0000
 Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1XgA2n-0006Jf-LO
+	(Exim 4.76) id 1XgA2z-0006K2-Rg
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Oct 2014 10:18:30 +0000
+	Mon, 20 Oct 2014 10:18:43 +0000
 Received: from fgwmail5.fujitsu.co.jp (fgwmail5.fujitsu.co.jp [192.51.44.35])
-	by fgwmail7.fujitsu.co.jp (Postfix) with ESMTP id 137B81796544
+	by fgwmail7.fujitsu.co.jp (Postfix) with ESMTP id 00EC1179617D
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 20 Oct 2014 19:04:47 +0900 (JST)
-Received: from kw-mxoi2.gw.nic.fujitsu.com (unknown [10.0.237.143])
-	by fgwmail5.fujitsu.co.jp (Postfix) with ESMTP id 86E163EE15F
+	Mon, 20 Oct 2014 19:03:48 +0900 (JST)
+Received: from kw-mxauth.gw.nic.fujitsu.com (unknown [10.0.237.134])
+	by fgwmail5.fujitsu.co.jp (Postfix) with ESMTP id 88ACD3EE1C7
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 20 Oct 2014 19:04:40 +0900 (JST)
+	Mon, 20 Oct 2014 19:03:41 +0900 (JST)
 Received: from s4.gw.fujitsu.co.jp (s4.gw.fujitsu.co.jp [10.0.50.94])
-	by kw-mxoi2.gw.nic.fujitsu.com (Postfix) with ESMTP id 9FB10AC062D
+	by kw-mxauth.gw.nic.fujitsu.com (Postfix) with ESMTP id 8FA36AC05F4
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 20 Oct 2014 19:04:39 +0900 (JST)
-Received: from s01.gw.fujitsu.co.jp (s01.gw.nic.fujitsu.com [133.161.11.16])
-	by s4.gw.fujitsu.co.jp (Postfix) with ESMTP id 4230F1DB8037
+	Mon, 20 Oct 2014 19:03:40 +0900 (JST)
+Received: from s00.gw.fujitsu.co.jp (s00.gw.nic.fujitsu.com [133.161.11.15])
+	by s4.gw.fujitsu.co.jp (Postfix) with ESMTP id 09C9C1DB8037
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 20 Oct 2014 19:04:39 +0900 (JST)
+	Mon, 20 Oct 2014 19:03:40 +0900 (JST)
 In-Reply-To: <1413798353-27811-1-git-send-email-guz.fnst@cn.fujitsu.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -48,54 +48,68 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
 Cc: Gu Zheng <guz.fnst@cn.fujitsu.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Rename f2fs_set/clear_bit to f2fs_test_and_set/clear_bit, which mean
-set/clear bit and return the old value, for better readability.
+Introduce f2fs_change_bit to simplify the change bit logic in
+function set_to_next_nat{sit}.
 
 Signed-off-by: Gu Zheng <guz.fnst@cn.fujitsu.com>
 ---
- fs/f2fs/f2fs.h    |    4 ++--
- fs/f2fs/segment.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ fs/f2fs/f2fs.h    |    9 +++++++++
+ fs/f2fs/node.h    |    5 +----
+ fs/f2fs/segment.h |    5 +----
+ 3 files changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3095a57..0aef88f 100644
+index 8171e80..3095a57 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1020,7 +1020,7 @@ static inline int f2fs_test_bit(unsigned int nr, char *addr)
- 	return mask & *addr;
- }
- 
--static inline int f2fs_set_bit(unsigned int nr, char *addr)
-+static inline int f2fs_test_and_set_bit(unsigned int nr, char *addr)
- {
- 	int mask;
- 	int ret;
-@@ -1032,7 +1032,7 @@ static inline int f2fs_set_bit(unsigned int nr, char *addr)
+@@ -1044,6 +1044,15 @@ static inline int f2fs_clear_bit(unsigned int nr, char *addr)
  	return ret;
  }
  
--static inline int f2fs_clear_bit(unsigned int nr, char *addr)
-+static inline int f2fs_test_and_clear_bit(unsigned int nr, char *addr)
++static inline void f2fs_change_bit(unsigned int nr, char *addr)
++{
++	int mask;
++
++	addr += (nr >> 3);
++	mask = 1 << (7 - (nr & 0x07));
++	*addr ^= mask;
++}
++
+ /* used for f2fs_inode_info->flags */
+ enum {
+ 	FI_NEW_INODE,		/* indicate newly allocated inode */
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index 8d5e6e0..acb71e5 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -192,10 +192,7 @@ static inline void set_to_next_nat(struct f2fs_nm_info *nm_i, nid_t start_nid)
  {
- 	int mask;
- 	int ret;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 6fb7446..1146029 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -620,10 +620,10 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 	unsigned int block_off = NAT_BLOCK_OFFSET(start_nid);
  
- 	/* Update valid block bitmap */
- 	if (del > 0) {
--		if (f2fs_set_bit(offset, se->cur_valid_map))
-+		if (f2fs_test_and_set_bit(offset, se->cur_valid_map))
- 			f2fs_bug_on(sbi, 1);
- 	} else {
--		if (!f2fs_clear_bit(offset, se->cur_valid_map))
-+		if (!f2fs_test_and_clear_bit(offset, se->cur_valid_map))
- 			f2fs_bug_on(sbi, 1);
- 	}
- 	if (!f2fs_test_bit(offset, se->ckpt_valid_map))
+-	if (f2fs_test_bit(block_off, nm_i->nat_bitmap))
+-		f2fs_clear_bit(block_off, nm_i->nat_bitmap);
+-	else
+-		f2fs_set_bit(block_off, nm_i->nat_bitmap);
++	f2fs_change_bit(block_off, nm_i->nat_bitmap);
+ }
+ 
+ static inline void fill_node_footer(struct page *page, nid_t nid,
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 2495bec..6723ccc 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -657,10 +657,7 @@ static inline void set_to_next_sit(struct sit_info *sit_i, unsigned int start)
+ {
+ 	unsigned int block_off = SIT_BLOCK_OFFSET(start);
+ 
+-	if (f2fs_test_bit(block_off, sit_i->sit_bitmap))
+-		f2fs_clear_bit(block_off, sit_i->sit_bitmap);
+-	else
+-		f2fs_set_bit(block_off, sit_i->sit_bitmap);
++	f2fs_change_bit(block_off, sit_i->sit_bitmap);
+ }
+ 
+ static inline unsigned long long get_mtime(struct f2fs_sb_info *sbi)
 -- 
 1.7.7
 
