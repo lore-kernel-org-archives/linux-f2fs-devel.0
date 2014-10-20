@@ -1,7 +1,7 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 05/09] f2fs: use highmem for directory pages
-Date: Sun, 19 Oct 2014 22:18:28 -0700
-Message-ID: <1413782312-11631-5-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 08/09] f2fs: avoid build warning
+Date: Sun, 19 Oct 2014 22:18:31 -0700
+Message-ID: <1413782312-11631-8-git-send-email-jaegeuk@kernel.org>
 References: <1413782312-11631-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Xg5Mk-0008Ot-A5
+	(envelope-from <jaegeuk@kernel.org>) id 1Xg5Mo-0008Pa-4h
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Oct 2014 05:18:46 +0000
+	Mon, 20 Oct 2014 05:18:50 +0000
 Received: from mail.kernel.org ([198.145.19.201])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Xg5Mj-0000qs-EK for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Oct 2014 05:18:46 +0000
+	id 1Xg5Mn-0000qz-4r for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 20 Oct 2014 05:18:50 +0000
 In-Reply-To: <1413782312-11631-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,41 +30,26 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch fixes to use highmem for directory pages.
+This patch removes build warning.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/inode.c         | 2 +-
- include/linux/f2fs_fs.h | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 0deead4..52d6f54 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -156,7 +156,7 @@ make_now:
- 		inode->i_op = &f2fs_dir_inode_operations;
- 		inode->i_fop = &f2fs_dir_operations;
- 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
--		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-+		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
- 	} else if (S_ISLNK(inode->i_mode)) {
- 		inode->i_op = &f2fs_symlink_inode_operations;
- 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 860313a..6d7381b 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -33,7 +33,8 @@
- #define F2FS_META_INO(sbi)	(sbi->meta_ino_num)
- 
- /* This flag is used by node and meta inodes, and by recovery */
--#define GFP_F2FS_ZERO	(GFP_NOFS | __GFP_ZERO)
-+#define GFP_F2FS_ZERO		(GFP_NOFS | __GFP_ZERO)
-+#define GFP_F2FS_HIGH_ZERO	(GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
- 
- /*
-  * For further optimization on multi-head logs, on-disk layout supports maximum
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 902c4c3..2c1e608 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1715,7 +1715,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	 * #2, flush sit entries to sit page.
+ 	 */
+ 	list_for_each_entry_safe(ses, tmp, head, set_list) {
+-		struct page *page;
++		struct page *page = NULL;
+ 		struct f2fs_sit_block *raw_sit = NULL;
+ 		unsigned int start_segno = ses->start_segno;
+ 		unsigned int end = min(start_segno + SIT_ENTRY_PER_BLOCK,
 -- 
 2.1.1
 
