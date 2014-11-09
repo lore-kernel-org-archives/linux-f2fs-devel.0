@@ -1,22 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/5] f2fs: disable roll-forward when active_logs
-	= 2
-Date: Sat,  8 Nov 2014 23:36:05 -0800
-Message-ID: <1415518569-20626-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 3/5] f2fs: control the memory footprint used by
+	ino entries
+Date: Sat,  8 Nov 2014 23:36:07 -0800
+Message-ID: <1415518569-20626-3-git-send-email-jaegeuk@kernel.org>
+References: <1415518569-20626-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XnN2p-0001tv-FX
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XnN2s-0004PK-3q
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 09 Nov 2014 07:36:19 +0000
+	Sun, 09 Nov 2014 07:36:22 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XnN2o-0002tV-8A for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 09 Nov 2014 07:36:19 +0000
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XnN2r-000536-4a for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 09 Nov 2014 07:36:22 +0000
+In-Reply-To: <1415518569-20626-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,43 +31,93 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-The roll-forward mechanism should be activated when the number of active
-logs is not 2.
+This patch adds to control the memory footprint used by ino entries.
+This will conduct best effort, not strictly.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c    | 2 ++
- fs/f2fs/segment.c | 4 ++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/f2fs/node.c    | 28 ++++++++++++++++++++++------
+ fs/f2fs/node.h    |  3 ++-
+ fs/f2fs/segment.c |  3 ++-
+ 3 files changed, 26 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 46311e7..54722a0 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -132,6 +132,8 @@ static inline bool need_do_checkpoint(struct inode *inode)
- 		need_cp = true;
- 	else if (test_opt(sbi, FASTBOOT))
- 		need_cp = true;
-+	else if (sbi->active_logs == 2)
-+		need_cp = true;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 44b8afe..4ea2c47 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -31,22 +31,38 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct sysinfo val;
++	unsigned long avail_ram;
+ 	unsigned long mem_size = 0;
+ 	bool res = false;
  
- 	return need_cp;
+ 	si_meminfo(&val);
+-	/* give 25%, 25%, 50% memory for each components respectively */
++
++	/* only uses low memory */
++	avail_ram = val.totalram - val.totalhigh;
++
++	/* give 25%, 25%, 50%, 50% memory for each components respectively */
+ 	if (type == FREE_NIDS) {
+-		mem_size = (nm_i->fcnt * sizeof(struct free_nid)) >> 12;
+-		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 2);
++		mem_size = (nm_i->fcnt * sizeof(struct free_nid)) >>
++							PAGE_CACHE_SHIFT;
++		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 2);
+ 	} else if (type == NAT_ENTRIES) {
+-		mem_size = (nm_i->nat_cnt * sizeof(struct nat_entry)) >> 12;
+-		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 2);
++		mem_size = (nm_i->nat_cnt * sizeof(struct nat_entry)) >>
++							PAGE_CACHE_SHIFT;
++		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 2);
+ 	} else if (type == DIRTY_DENTS) {
+ 		if (sbi->sb->s_bdi->dirty_exceeded)
+ 			return false;
+ 		mem_size = get_pages(sbi, F2FS_DIRTY_DENTS);
+-		res = mem_size < ((val.totalram * nm_i->ram_thresh / 100) >> 1);
++		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
++	} else if (type == INO_ENTRIES) {
++		int i;
++
++		if (sbi->sb->s_bdi->dirty_exceeded)
++			return false;
++		for (i = 0; i <= UPDATE_INO; i++)
++			mem_size += (sbi->ino_num[i] * sizeof(struct ino_entry))
++							>> PAGE_CACHE_SHIFT;
++		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
+ 	}
+ 	return res;
  }
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index acb71e5..d10b644 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -106,7 +106,8 @@ static inline void raw_nat_from_node_info(struct f2fs_nat_entry *raw_ne,
+ enum mem_type {
+ 	FREE_NIDS,	/* indicates the free nid list */
+ 	NAT_ENTRIES,	/* indicates the cached nat entry */
+-	DIRTY_DENTS	/* indicates dirty dentry pages */
++	DIRTY_DENTS,	/* indicates dirty dentry pages */
++	INO_ENTRIES,	/* indicates inode entries */
+ };
+ 
+ struct nat_entry_set {
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 2fb3d7f..16721b5d 100644
+index 16721b5d..e094675 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -1090,8 +1090,8 @@ static int __get_segment_type_4(struct page *page, enum page_type p_type)
- 		else
- 			return CURSEG_COLD_DATA;
- 	} else {
--		if (IS_DNODE(page) && !is_cold_node(page))
--			return CURSEG_HOT_NODE;
-+		if (IS_DNODE(page) && is_cold_node(page))
-+			return CURSEG_WARM_NODE;
- 		else
- 			return CURSEG_COLD_NODE;
- 	}
+@@ -276,7 +276,8 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ {
+ 	/* check the # of cached NAT entries and prefree segments */
+ 	if (try_to_free_nats(sbi, NAT_ENTRY_PER_BLOCK) ||
+-				excess_prefree_segs(sbi))
++			excess_prefree_segs(sbi) ||
++			available_free_memory(sbi, INO_ENTRIES))
+ 		f2fs_sync_fs(sbi->sb, true);
+ }
+ 
 -- 
 2.1.1
 
