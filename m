@@ -1,73 +1,115 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH 1/5] f2fs: disable roll-forward when active_logs
-	= 2
-Date: Mon, 10 Nov 2014 18:54:37 +0900
-Message-ID: <20141110095437.GE14659@lcm>
-References: <1415518569-20626-1-git-send-email-jaegeuk@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: implement -o dirsync
+Date: Mon, 10 Nov 2014 06:49:24 -0800
+Message-ID: <20141110144924.GA25172@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <1415600662-23337-1-git-send-email-jaegeuk@kernel.org>
+ <20141110074712.GD14659@lcm>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <1415518569-20626-1-git-send-email-jaegeuk@kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20141110074712.GD14659@lcm>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Changman Lee <cm224.lee@samsung.com>
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Sat, Nov 08, 2014 at 11:36:05PM -0800, Jaegeuk Kim wrote:
-> The roll-forward mechanism should be activated when the number of active
-> logs is not 2.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/file.c    | 2 ++
->  fs/f2fs/segment.c | 4 ++--
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 46311e7..54722a0 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -132,6 +132,8 @@ static inline bool need_do_checkpoint(struct inode *inode)
->  		need_cp = true;
->  	else if (test_opt(sbi, FASTBOOT))
->  		need_cp = true;
-> +	else if (sbi->active_logs == 2)
-> +		need_cp = true;
->  
->  	return need_cp;
->  }
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 2fb3d7f..16721b5d 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1090,8 +1090,8 @@ static int __get_segment_type_4(struct page *page, enum page_type p_type)
->  		else
->  			return CURSEG_COLD_DATA;
->  	} else {
-> -		if (IS_DNODE(page) && !is_cold_node(page))
-> -			return CURSEG_HOT_NODE;
-> +		if (IS_DNODE(page) && is_cold_node(page))
-> +			return CURSEG_WARM_NODE;
+Change log from v1:
+ o call sync after mark_inode_dirty
 
-Hi Jaegeuk,
+If a mount option has dirsync, we should call checkpoint for all the directory
+operations.
 
-We should take hot/cold seperation into account as well.
-In case of dir inode, it will be mixed with COLD_NODE.
-If it's trade-off, let's notice it kindly as comments.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/namei.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Regards,
-Changman
-
->  		else
->  			return CURSEG_COLD_NODE;
->  	}
-> -- 
-> 2.1.1
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 6312dd2..2bee559 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -138,6 +138,9 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	stat_inc_inline_inode(inode);
+ 	d_instantiate(dentry, inode);
+ 	unlock_new_inode(inode);
++
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 	return 0;
+ out:
+ 	handle_failed_inode(inode);
+@@ -164,6 +167,9 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
+ 	f2fs_unlock_op(sbi);
+ 
+ 	d_instantiate(dentry, inode);
++
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 	return 0;
+ out:
+ 	clear_inode_flag(F2FS_I(inode), FI_INC_LINK);
+@@ -235,6 +241,9 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ 	/* In order to evict this inode, we set it dirty */
+ 	mark_inode_dirty(inode);
++
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ fail:
+ 	trace_f2fs_unlink_exit(inode, err);
+ 	return err;
+@@ -268,6 +277,9 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 
+ 	d_instantiate(dentry, inode);
+ 	unlock_new_inode(inode);
++
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 	return err;
+ out:
+ 	handle_failed_inode(inode);
+@@ -304,6 +316,8 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	d_instantiate(dentry, inode);
+ 	unlock_new_inode(inode);
+ 
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 	return 0;
+ 
+ out_fail:
+@@ -346,8 +360,12 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
+ 	f2fs_unlock_op(sbi);
+ 
+ 	alloc_nid_done(sbi, inode->i_ino);
++
+ 	d_instantiate(dentry, inode);
+ 	unlock_new_inode(inode);
++
++	if (IS_DIRSYNC(dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 	return 0;
+ out:
+ 	handle_failed_inode(inode);
+@@ -461,6 +479,9 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	}
+ 
+ 	f2fs_unlock_op(sbi);
++
++	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 	return 0;
+ 
+ put_out_dir:
+@@ -600,6 +621,9 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	update_inode_page(new_dir);
+ 
+ 	f2fs_unlock_op(sbi);
++
++	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
++		f2fs_sync_fs(sbi->sb, 1);
+ 	return 0;
+ out_undo:
+ 	/* Still we may fail to recover name info of f2fs_inode here */
+-- 
+2.1.1
