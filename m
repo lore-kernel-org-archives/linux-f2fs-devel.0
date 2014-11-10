@@ -1,50 +1,64 @@
-From: JP Abgrall <jpa@google.com>
-Subject: Re: Don't merge not sended patches
-Date: Sun, 9 Nov 2014 23:24:22 -0800
-Message-ID: <CAKP4w2TypezS_ZcjsAm7i72=QBU4vtT7wYrdP2u-9LvQRGra3g@mail.gmail.com>
-References: <20141110041244.GB14659@lcm>
-	<20141110050523.GA21743@jaegeuk-mac02.mot-mobility.com>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH 4/5] f2fs: write node pages if checkpoint is not
+ doing
+Date: Mon, 10 Nov 2014 16:37:58 +0900
+Message-ID: <20141110073758.GC14659@lcm>
+References: <1415518569-20626-1-git-send-email-jaegeuk@kernel.org>
+ <1415518569-20626-4-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jpa@google.com>) id 1XnjLE-0003ev-K9
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 10 Nov 2014 07:24:48 +0000
-Received: from mail-qg0-f46.google.com ([209.85.192.46])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1XnjLD-0005Yp-TR
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 10 Nov 2014 07:24:48 +0000
-Received: by mail-qg0-f46.google.com with SMTP id i50so5000652qgf.5
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 09 Nov 2014 23:24:42 -0800 (PST)
-In-Reply-To: <20141110050523.GA21743@jaegeuk-mac02.mot-mobility.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-disposition: inline
+In-reply-to: <1415518569-20626-4-git-send-email-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-I agree.
+On Sat, Nov 08, 2014 at 11:36:08PM -0800, Jaegeuk Kim wrote:
+> It needs to write node pages if checkpoint is not doing in order to avoid
+> memory pressure.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/node.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 4ea2c47..6f514fb 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1314,10 +1314,12 @@ static int f2fs_write_node_page(struct page *page,
+>  		return 0;
+>  	}
+>  
+> -	if (wbc->for_reclaim)
+> -		goto redirty_out;
+> -
+> -	down_read(&sbi->node_write);
+> +	if (wbc->for_reclaim) {
+> +		if (!down_read_trylock(&sbi->node_write))
+> +			goto redirty_out;
 
-Next time, I'll remember to send the patches to this list.
+Previously, we skipped write_page for reclaim path, but from now on, we
+will write out node page to reclaim memory at any time except checkpoint.
+We should remember it may occur to break merging bio.
+Got it.
 
-> On Mon, Nov 10, 2014 at 01:12:44PM +0900, Changman Lee wrote:
->> Hi Jaegeuk,
->>
->> I've found new 2 patches when I pull f2fs-tools.
->> The patches didn't show in mailing list.
->> I think although patches is very trivial, it should be reported through
->> our mailing list.
+Reviewed-by: Changman Lee <cm224.lee@samsung.com>
 
-------------------------------------------------------------------------------
+> +	} else {
+> +		down_read(&sbi->node_write);
+> +	}
+>  	set_page_writeback(page);
+>  	write_node_page(sbi, page, &fio, nid, ni.blk_addr, &new_addr);
+>  	set_node_addr(sbi, &ni, new_addr, is_fsync_dnode(page));
+> -- 
+> 2.1.1
+> 
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
