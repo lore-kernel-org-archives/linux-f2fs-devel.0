@@ -1,28 +1,26 @@
-From: Pieter Smith <pieter@boesman.nl>
-Subject: [PATCH 21/56] fs/f2fs: support compiling out splice
-Date: Thu, 13 Nov 2014 22:22:58 +0100
-Message-ID: <1415913813-362-22-git-send-email-pieter@boesman.nl>
-References: <pieter@boesman.nl>
-	<1415913813-362-1-git-send-email-pieter@boesman.nl>
+From: JP Abgrall <jpa@google.com>
+Subject: [PATCH] fsck.f2fs: add a missing 'fixed' during
+	chk_dentries()
+Date: Thu, 13 Nov 2014 15:20:05 -0800
+Message-ID: <1415920805-28748-1-git-send-email-jpa@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <smipi01@gmail.com>) id 1Xp1xf-0007VR-MG
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jpa@google.com>) id 1Xp3gg-0005Cn-D6
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Nov 2014 21:29:51 +0000
-Received: from mail-wi0-f179.google.com ([209.85.212.179])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1Xp1xe-00066k-8C
+	Thu, 13 Nov 2014 23:20:26 +0000
+Received: from mail-qc0-f202.google.com ([209.85.216.202])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1Xp3gf-0005Wp-Ln
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Nov 2014 21:29:51 +0000
-Received: by mail-wi0-f179.google.com with SMTP id ex7so905905wid.6
+	Thu, 13 Nov 2014 23:20:26 +0000
+Received: by mail-qc0-f202.google.com with SMTP id x3so49814qcv.5
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Thu, 13 Nov 2014 13:29:44 -0800 (PST)
-In-Reply-To: <1415913813-362-1-git-send-email-pieter@boesman.nl>
+	Thu, 13 Nov 2014 15:20:20 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,32 +30,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: pieter@boesman.nl
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Josh Triplett <josh@joshtriplett.org>, open list <linux-kernel@vger.kernel.org>, "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Compile out splice support from f2fs when the splice-family of syscalls is not
-supported by the system (i.e. CONFIG_SYSCALL_SPLICE is undefined).
+One of the cases would update the dentries but not set
+fixed=1 causing the update to not be written out.
 
-Signed-off-by: Pieter Smith <pieter@boesman.nl>
+Change-Id: I111d599f93f7d5306dacd7d62da946fdb5c262ee
+Signed-off-by: JP Abgrall <jpa@google.com>
 ---
- fs/f2fs/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+:100644 100644 78737d5... fa667dc... M	fsck/fsck.c
+ fsck/fsck.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 208f1a9..57c6d40 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -853,6 +853,6 @@ const struct file_operations f2fs_file_operations = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl	= f2fs_compat_ioctl,
- #endif
--	.splice_read	= generic_file_splice_read,
--	.splice_write	= iter_file_splice_write,
-+	SPLICE_READ_INIT(generic_file_splice_read)
-+	SPLICE_WRITE_INIT(iter_file_splice_write)
- };
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 78737d5..fa667dc 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -739,6 +739,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, u32 *child_cnt,
+ 					dentry[i].file_type);
+ 			i += slots;
+ 			free(name);
++			fixed = 1;
+ 			continue;
+ 		}
+ 
 -- 
-1.9.1
+2.1.0.rc2.206.gedb03e5
 
 
 ------------------------------------------------------------------------------
