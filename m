@@ -1,109 +1,95 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/5] f2fs: disable roll-forward when
- active_logs = 2
-Date: Thu, 13 Nov 2014 17:21:27 -0800
-Message-ID: <20141114012127.GA49179@jaegeuk-mac02.mot.com>
-References: <1415518569-20626-1-git-send-email-jaegeuk@kernel.org>
- <20141110095437.GE14659@lcm>
- <20141110150759.GB25172@jaegeuk-mac02.hsd1.ca.comcast.net>
- <20141111224312.GA16657@lcm>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add cleancache support
+Date: Thu, 13 Nov 2014 17:27:51 -0800
+Message-ID: <20141114012751.GB49179@jaegeuk-mac02.mot.com>
+References: <1415856890-2455-1-git-send-email-cm224.lee@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20141111224312.GA16657@lcm>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1415856890-2455-1-git-send-email-cm224.lee@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: Changman Lee <cm224.lee@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Nov 12, 2014 at 07:43:12AM +0900, Changman Lee wrote:
-> On Mon, Nov 10, 2014 at 07:07:59AM -0800, Jaegeuk Kim wrote:
-> > Hi Changman,
-> > 
-> > On Mon, Nov 10, 2014 at 06:54:37PM +0900, Changman Lee wrote:
-> > > On Sat, Nov 08, 2014 at 11:36:05PM -0800, Jaegeuk Kim wrote:
-> > > > The roll-forward mechanism should be activated when the number of active
-> > > > logs is not 2.
-> > > > 
-> > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > ---
-> > > >  fs/f2fs/file.c    | 2 ++
-> > > >  fs/f2fs/segment.c | 4 ++--
-> > > >  2 files changed, 4 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > > > index 46311e7..54722a0 100644
-> > > > --- a/fs/f2fs/file.c
-> > > > +++ b/fs/f2fs/file.c
-> > > > @@ -132,6 +132,8 @@ static inline bool need_do_checkpoint(struct inode *inode)
-> > > >  		need_cp = true;
-> > > >  	else if (test_opt(sbi, FASTBOOT))
-> > > >  		need_cp = true;
-> > > > +	else if (sbi->active_logs == 2)
-> > > > +		need_cp = true;
-> > > >  
-> > > >  	return need_cp;
-> > > >  }
-> > > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > > > index 2fb3d7f..16721b5d 100644
-> > > > --- a/fs/f2fs/segment.c
-> > > > +++ b/fs/f2fs/segment.c
-> > > > @@ -1090,8 +1090,8 @@ static int __get_segment_type_4(struct page *page, enum page_type p_type)
-> > > >  		else
-> > > >  			return CURSEG_COLD_DATA;
-> > > >  	} else {
-> > > > -		if (IS_DNODE(page) && !is_cold_node(page))
-> > > > -			return CURSEG_HOT_NODE;
-> > > > +		if (IS_DNODE(page) && is_cold_node(page))
-> > > > +			return CURSEG_WARM_NODE;
-> > > 
-> > > Hi Jaegeuk,
-> > > 
-> > > We should take hot/cold seperation into account as well.
-> > > In case of dir inode, it will be mixed with COLD_NODE.
-> > > If it's trade-off, let's notice it kindly as comments.
-> > 
-> > NAK.
-> > This patch tries to fix a bug, which is not a trade-off.
-> > We should write files' direct node blocks in CURSEG_WARM_NODE for recovery.
-> > 
-> > Thanks,
-> 
-> Okay, a word of 'trade-off' is wrong. We must be able to do recovery.
-> However, we break a rule of hot/cold separation we want. So I thought we
-> should notice its negative effect.
-> Anyway, how about putting WARM and HOT together instead HOT and COLD?
-> We can distinguish enough if they are direct node and have fsync_mark at
-> recovery time although HOT/WARM are mixed.
+Hi Changman,
 
-We know that it's hard to say any negative effect on each way, since it depends
-on the workloads.
+On Thu, Nov 13, 2014 at 02:34:50PM +0900, Changman Lee wrote:
+> To use cleancache, fs must explicitly enable cleancache by calling
+> cleancache_init_fs.
 
-At least, however, we need to avoid mixing dir/files, since it increases the
-roll-forward recovery time incredibly.
-IMO, this is enough reason for not using that.
+Good catch!
+
+Prior to merge this patch, can you share any testing results or performance
+numbers?
+
+What condition will be the best way to exploit f2fs and cleancache?
+
+Can we confirm that f2fs satisfies most of requirements described by
+cleancache.txt below?
+
+Some points for a filesystem to consider:
+
+- The FS should be block-device-based (e.g. a ram-based FS such
+  as tmpfs should not enable cleancache)
+- To ensure coherency/correctness, the FS must ensure that all
+  file removal or truncation operations either go through VFS or
+  add hooks to do the equivalent cleancache "invalidate" operations
+- To ensure coherency/correctness, either inode numbers must
+  be unique across the lifetime of the on-disk file OR the
+  FS must provide an "encode_fh" function.
+- The FS must call the VFS superblock alloc and deactivate routines
+  or add hooks to do the equivalent cleancache calls done there.
+- To maximize performance, all pages fetched from the FS should
+  go through the do_mpag_readpage routine or the FS should add
+  hooks to do the equivalent (cf. btrfs)
+- Currently, the FS blocksize must be the same as PAGESIZE.  This
+  is not an architectural restriction, but no backends currently
+  support anything different.
+- A clustered FS should invoke the "shared_init_fs" cleancache
+  hook to get best performance for some backends.
 
 Thanks,
 
-> Let me know if there is my misundertanding.
 > 
-> Thanks,
+> Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+> ---
+>  fs/f2fs/super.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> > 
-> > > 
-> > > Regards,
-> > > Changman
-> > > 
-> > > >  		else
-> > > >  			return CURSEG_COLD_NODE;
-> > > >  	}
-> > > > -- 
-> > > > 2.1.1
-> > > > 
-> > > > 
-> > > > ------------------------------------------------------------------------------
-> > > > _______________________________________________
-> > > > Linux-f2fs-devel mailing list
-> > > > Linux-f2fs-devel@lists.sourceforge.net
-> > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 512ffd8..2ebb960 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/blkdev.h>
+>  #include <linux/f2fs_fs.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/cleancache.h>
+>  
+>  #include "f2fs.h"
+>  #include "node.h"
+> @@ -1144,6 +1145,8 @@ try_onemore:
+>  		if (err)
+>  			goto free_kobj;
+>  	}
+> +
+> +	cleancache_init_fs(sb);
+>  	return 0;
+>  
+>  free_kobj:
+> -- 
+> 1.9.1
+> 
+> 
+> ------------------------------------------------------------------------------
+> Comprehensive Server Monitoring with Site24x7.
+> Monitor 10 servers for $9/Month.
+> Get alerted through email, SMS, voice calls or mobile push notifications.
+> Take corrective actions from your mobile device.
+> http://pubads.g.doubleclick.net/gampad/clk?id=154624111&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
