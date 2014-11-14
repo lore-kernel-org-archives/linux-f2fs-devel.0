@@ -1,23 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/3] f2fs: convert inline_data when i_size
-	becomes large
-Date: Thu, 13 Nov 2014 16:59:34 -0800
-Message-ID: <1415926774-49230-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/3] f2fs: fix deadlock to grab 0'th data page
+Date: Thu, 13 Nov 2014 16:59:33 -0800
+Message-ID: <1415926774-49230-2-git-send-email-jaegeuk@kernel.org>
 References: <1415926774-49230-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Xp5Et-0001vH-SK
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Xp5Eq-0000bI-U4
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 14 Nov 2014 00:59:51 +0000
+	Fri, 14 Nov 2014 00:59:48 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Xp5Es-0007xw-SL for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 14 Nov 2014 00:59:51 +0000
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Xp5Ep-0005Gr-Ts for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 14 Nov 2014 00:59:48 +0000
 In-Reply-To: <1415926774-49230-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,49 +30,62 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If i_size becomes large outside of MAX_INLINE_DATA, we shoud convert the inode.
-Otherwise, we can make some dirty pages during the truncation, and those pages
-will be written through f2fs_write_data_page.
-At that moment, the inode has still inline_data, so that it tries to write non-
-zero pages into inline_data area.
+The scenario is like this.
+
+One trhead triggers:
+  f2fs_write_data_pages
+    lock_page
+    f2fs_write_data_page
+      f2fs_lock_op  <- wait
+
+The other thread triggers:
+  f2fs_truncate
+    truncate_blocks
+      f2fs_lock_op
+        truncate_partial_data_page
+          lock_page  <- wait for locking the page
+
+This patch resolves this bug by relocating truncate_partial_data_page.
+This function is just to truncate user data page and not related to FS
+consistency as well.
+And, we don't need to call truncate_inline_data. Rather than that,
+f2fs_write_data_page will finally update inline_data later.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c   | 6 ++++++
- fs/f2fs/inline.c | 3 +++
- 2 files changed, 9 insertions(+)
+ fs/f2fs/file.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index edc3ce8..7c2ec3e 100644
+index 54722a0..edc3ce8 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -522,6 +522,12 @@ void f2fs_truncate(struct inode *inode)
+@@ -477,8 +477,6 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 	}
  
- 	trace_f2fs_truncate(inode);
+ 	if (f2fs_has_inline_data(inode)) {
+-		truncate_inline_data(ipage, from);
+-		update_inode(inode, ipage);
+ 		f2fs_put_page(ipage, 1);
+ 		goto out;
+ 	}
+@@ -504,13 +502,13 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 	f2fs_put_dnode(&dn);
+ free_next:
+ 	err = truncate_inode_blocks(inode, free_from);
++out:
++	if (lock)
++		f2fs_unlock_op(sbi);
  
-+	/* we should check inline_data size */
-+	if (f2fs_has_inline_data(inode) && !f2fs_may_inline(inode)) {
-+		if (f2fs_convert_inline_inode(inode))
-+			return;
-+	}
-+
- 	if (!truncate_blocks(inode, i_size_read(inode), true)) {
- 		inode->i_mtime = inode->i_ctime = CURRENT_TIME;
- 		mark_inode_dirty(inode);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 2310670..053d114 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -24,6 +24,9 @@ bool f2fs_may_inline(struct inode *inode)
- 	if (!S_ISREG(inode->i_mode))
- 		return false;
+ 	/* lastly zero out the first data page */
+ 	if (!err)
+ 		err = truncate_partial_data_page(inode, from);
+-out:
+-	if (lock)
+-		f2fs_unlock_op(sbi);
  
-+	if (i_size_read(inode) > MAX_INLINE_DATA)
-+		return false;
-+
- 	return true;
- }
- 
+ 	trace_f2fs_truncate_blocks_exit(inode, err);
+ 	return err;
 -- 
 2.1.1
 
