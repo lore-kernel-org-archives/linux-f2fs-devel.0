@@ -1,61 +1,56 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: put the inode page when error was occurred
-Date: Mon, 17 Nov 2014 17:57:54 -0800
-Message-ID: <1416275874-74186-2-git-send-email-jaegeuk@kernel.org>
-References: <1416275874-74186-1-git-send-email-jaegeuk@kernel.org>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [f2fs-dev][PATCH 1/3] f2fs: avoid unable to restart gc thread in
+ remount
+Date: Tue, 18 Nov 2014 11:16:01 +0800
+Message-ID: <006601d002de$20ec59a0$62c50ce0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416275874-74186-1-git-send-email-jaegeuk@kernel.org>
+Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-We should put the inode page when error was occurred.
+In f2fs_remount, we will stop gc thread and set need_restart_gc as true when new
+option is set without BG_GC, then if any error occurred in the following
+procedure, we can restore to start the gc thread.
+But after that, We will fail to restore gc thread in start_gc_thread as BG_GC is
+not set in new option, so we'd better move this condition judgment out of
+start_gc_thread to fix this issue.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ fs/f2fs/gc.c    | 2 --
+ fs/f2fs/super.c | 2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8f16443..12dd58a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -963,22 +963,22 @@ repeat:
- 		} else if (page->index == 0) {
- 			err = f2fs_convert_inline_page(&dn, page);
- 			if (err)
--				goto unlock_fail;
-+				goto put_fail;
- 		} else {
- 			struct page *p = grab_cache_page(inode->i_mapping, 0);
- 			if (!p) {
- 				err = -ENOMEM;
--				goto unlock_fail;
-+				goto put_fail;
- 			}
- 			err = f2fs_convert_inline_page(&dn, p);
- 			f2fs_put_page(p, 1);
- 			if (err)
--				goto unlock_fail;
-+				goto put_fail;
- 		}
- 	}
- 	err = f2fs_reserve_block(&dn, index);
- 	if (err)
--		goto unlock_fail;
-+		goto put_fail;
- put_next:
- 	f2fs_put_dnode(&dn);
- 	f2fs_unlock_op(sbi);
-@@ -1021,6 +1021,8 @@ out:
- 	clear_cold_data(page);
- 	return 0;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index b197a2f..657683c9 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -96,8 +96,6 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+ 	dev_t dev = sbi->sb->s_bdev->bd_dev;
+ 	int err = 0;
  
-+put_fail:
-+	f2fs_put_dnode(&dn);
- unlock_fail:
- 	f2fs_unlock_op(sbi);
- 	f2fs_put_page(page, 1);
+-	if (!test_opt(sbi, BG_GC))
+-		goto out;
+ 	gc_th = kmalloc(sizeof(struct f2fs_gc_kthread), GFP_KERNEL);
+ 	if (!gc_th) {
+ 		err = -ENOMEM;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 512ffd8..536d414 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1138,7 +1138,7 @@ try_onemore:
+ 	 * If filesystem is not mounted as read-only then
+ 	 * do start the gc_thread.
+ 	 */
+-	if (!f2fs_readonly(sb)) {
++	if (test_opt(sbi, BG_GC) && !f2fs_readonly(sb)) {
+ 		/* After POR, we can run background GC thread.*/
+ 		err = start_gc_thread(sbi);
+ 		if (err)
 -- 
-2.1.1
+2.1.2
