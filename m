@@ -1,18 +1,21 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: fix to call put_page at the error
-	handling routine
-Date: Tue, 18 Nov 2014 13:22:05 +0800
-Message-ID: <006a01d002ef$b391f1f0$1ab5d5d0$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: put the inode page when error was
+	occurred
+Date: Tue, 18 Nov 2014 13:30:46 +0800
+Message-ID: <006b01d002f0$f6da1b80$e48e5280$@samsung.com>
 References: <1416275874-74186-1-git-send-email-jaegeuk@kernel.org>
+ <1416275874-74186-2-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1416275874-74186-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1416275874-74186-2-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
@@ -20,13 +23,77 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 1/2] f2fs: fix to call put_page at the error handling routine
+> Subject: [f2fs-dev] [PATCH 2/2] f2fs: put the inode page when error was occurred
 > 
-> The locked page should be released before returning the function.
-
-Good catch! I found this also, now removed from my patch set. :)
-
+> We should put the inode page when error was occurred.
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+You can add Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+after the following issue is fixed.
+
+> ---
+>  fs/f2fs/data.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 8f16443..12dd58a 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -963,22 +963,22 @@ repeat:
+>  		} else if (page->index == 0) {
+>  			err = f2fs_convert_inline_page(&dn, page);
+>  			if (err)
+> -				goto unlock_fail;
+> +				goto put_fail;
+>  		} else {
+>  			struct page *p = grab_cache_page(inode->i_mapping, 0);
+>  			if (!p) {
+>  				err = -ENOMEM;
+> -				goto unlock_fail;
+> +				goto put_fail;
+>  			}
+>  			err = f2fs_convert_inline_page(&dn, p);
+>  			f2fs_put_page(p, 1);
+>  			if (err)
+> -				goto unlock_fail;
+> +				goto put_fail;
+>  		}
+>  	}
+>  	err = f2fs_reserve_block(&dn, index);
+>  	if (err)
+> -		goto unlock_fail;
+> +		goto put_fail;
+
+f2fs_reserve_block will do the clean work, we should not release dn again.
+
+Thanks,
+Yu
+
+>  put_next:
+>  	f2fs_put_dnode(&dn);
+>  	f2fs_unlock_op(sbi);
+> @@ -1021,6 +1021,8 @@ out:
+>  	clear_cold_data(page);
+>  	return 0;
+> 
+> +put_fail:
+> +	f2fs_put_dnode(&dn);
+>  unlock_fail:
+>  	f2fs_unlock_op(sbi);
+>  	f2fs_put_page(page, 1);
+> --
+> 2.1.1
+> 
+> 
+> ------------------------------------------------------------------------------
+> Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
+> from Actuate! Instantly Supercharge Your Business Reports and Dashboards
+> with Interactivity, Sharing, Native Excel Exports, App Integration & more
+> Get technology previously reserved for billion-dollar corporations, FREE
+> http://pubads.g.doubleclick.net/gampad/clk?id=157005751&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
