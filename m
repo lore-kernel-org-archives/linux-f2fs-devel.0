@@ -1,27 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: put the inode page when error was
- occurred
-Date: Wed, 19 Nov 2014 14:33:01 -0800
-Message-ID: <20141119223301.GA6116@jaegeuk-mac02>
-References: <1416275874-74186-1-git-send-email-jaegeuk@kernel.org>
-	<1416275874-74186-2-git-send-email-jaegeuk@kernel.org>
-	<006b01d002f0$f6da1b80$e48e5280$@samsung.com>
+Subject: [PATCH 3/3] f2fs: write SSA pages under memory pressure
+Date: Wed, 19 Nov 2014 14:35:10 -0800
+Message-ID: <1416436510-6251-3-git-send-email-jaegeuk@kernel.org>
+References: <1416436510-6251-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XrDoI-0002mq-TV
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XrDqR-0005DS-T9
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Nov 2014 22:33:14 +0000
+	Wed, 19 Nov 2014 22:35:27 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XrDoH-0004kT-3Y for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Nov 2014 22:33:14 +0000
-Content-Disposition: inline
-In-Reply-To: <006b01d002f0$f6da1b80$e48e5280$@samsung.com>
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XrDqR-0004SO-1u for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 19 Nov 2014 22:35:27 +0000
+In-Reply-To: <1416436510-6251-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,97 +27,42 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On Tue, Nov 18, 2014 at 01:30:46PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Tuesday, November 18, 2014 9:58 AM
-> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH 2/2] f2fs: put the inode page when error was occurred
-> > 
-> > We should put the inode page when error was occurred.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> 
-> You can add Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-> after the following issue is fixed.
-> 
-> > ---
-> >  fs/f2fs/data.c | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 8f16443..12dd58a 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -963,22 +963,22 @@ repeat:
-> >  		} else if (page->index == 0) {
-> >  			err = f2fs_convert_inline_page(&dn, page);
-> >  			if (err)
-> > -				goto unlock_fail;
-> > +				goto put_fail;
-> >  		} else {
-> >  			struct page *p = grab_cache_page(inode->i_mapping, 0);
-> >  			if (!p) {
-> >  				err = -ENOMEM;
-> > -				goto unlock_fail;
-> > +				goto put_fail;
-> >  			}
-> >  			err = f2fs_convert_inline_page(&dn, p);
-> >  			f2fs_put_page(p, 1);
-> >  			if (err)
-> > -				goto unlock_fail;
-> > +				goto put_fail;
-> >  		}
-> >  	}
-> >  	err = f2fs_reserve_block(&dn, index);
-> >  	if (err)
-> > -		goto unlock_fail;
-> > +		goto put_fail;
-> 
-> f2fs_reserve_block will do the clean work, we should not release dn again.
+Under memory pressure, we don't need to skip SSA page writes.
 
-Well, I added this to handle errors consistently.
-It's harmless, since f2fs_put_dnode removes the pointers after putting them.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/checkpoint.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Thanks,
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 838e8ed..20a917b 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -178,7 +178,7 @@ static int f2fs_write_meta_page(struct page *page,
+ 
+ 	if (unlikely(sbi->por_doing))
+ 		goto redirty_out;
+-	if (wbc->for_reclaim)
++	if (wbc->for_reclaim && page->index < GET_SUM_BLOCK(sbi, 0))
+ 		goto redirty_out;
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		goto redirty_out;
+@@ -187,6 +187,9 @@ static int f2fs_write_meta_page(struct page *page,
+ 	write_meta_page(sbi, page);
+ 	dec_page_count(sbi, F2FS_DIRTY_META);
+ 	unlock_page(page);
++
++	if (wbc->for_reclaim)
++		f2fs_submit_merged_bio(sbi, META, WRITE);
+ 	return 0;
+ 
+ redirty_out:
+-- 
+2.1.1
 
-> 
-> Thanks,
-> Yu
-> 
-> >  put_next:
-> >  	f2fs_put_dnode(&dn);
-> >  	f2fs_unlock_op(sbi);
-> > @@ -1021,6 +1021,8 @@ out:
-> >  	clear_cold_data(page);
-> >  	return 0;
-> > 
-> > +put_fail:
-> > +	f2fs_put_dnode(&dn);
-> >  unlock_fail:
-> >  	f2fs_unlock_op(sbi);
-> >  	f2fs_put_page(page, 1);
-> > --
-> > 2.1.1
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
-> > from Actuate! Instantly Supercharge Your Business Reports and Dashboards
-> > with Interactivity, Sharing, Native Excel Exports, App Integration & more
-> > Get technology previously reserved for billion-dollar corporations, FREE
-> > http://pubads.g.doubleclick.net/gampad/clk?id=157005751&iu=/4140/ostg.clktrk
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
 Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
