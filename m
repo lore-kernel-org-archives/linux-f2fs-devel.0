@@ -1,152 +1,146 @@
 From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add cleancache support
-Date: Thu, 20 Nov 2014 13:38:51 +0900
-Message-ID: <20141120043851.GA3117@lcm>
-References: <1415856890-2455-1-git-send-email-cm224.lee@samsung.com>
- <20141114012751.GB49179@jaegeuk-mac02.mot.com> <20141114055302.GD16657@lcm>
+Subject: Re: [PATCH 1/3] f2fs: call flush_dcache_page when the
+	page	was updated
+Date: Thu, 20 Nov 2014 15:04:10 +0900
+Message-ID: <20141120060410.GB3117@lcm>
+References: <1416436510-6251-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <cm224.lee@samsung.com>) id 1XrKs4-0006m6-MO
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 20 Nov 2014 06:05:36 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XrKs2-0000ip-D9
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 20 Nov 2014 06:05:36 +0000
+Received: from epcpsbgr3.samsung.com
+	(u143.gpu120.samsung.co.kr [203.254.230.143])
+	by mailout2.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0NFB00JUHQ925E70@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 20 Nov 2014 15:05:26 +0900 (KST)
 Content-disposition: inline
-In-reply-to: <20141114055302.GD16657@lcm>
-Sender: linux-fsdevel-owner@vger.kernel.org
+In-reply-to: <1416436510-6251-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, dan.magenheimer@oracle.com
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Nov 14, 2014 at 02:53:02PM +0900, Changman Lee wrote:
-> On Thu, Nov 13, 2014 at 05:27:51PM -0800, Jaegeuk Kim wrote:
-> > Hi Changman,
-> > 
-> > On Thu, Nov 13, 2014 at 02:34:50PM +0900, Changman Lee wrote:
-> > > To use cleancache, fs must explicitly enable cleancache by calling
-> > > cleancache_init_fs.
-> > 
-> > Good catch!
-> > 
-> > Prior to merge this patch, can you share any testing results or performance
-> > numbers?
-> > 
-> Not yet, I'll try to get numbers.
+Hi Jaegeuk,
+
+We should call flush_dcache_page before kunmap because the purpose of the cache flush is to address aliasing problem related to virtual address.
+
+On Wed, Nov 19, 2014 at 02:35:08PM -0800, Jaegeuk Kim wrote:
+> Whenever f2fs updates mapped pages, it needs to call flush_dcache_page.
 > 
-
-Hi,
-
-This is the result of kernel compile on xen-4.4 enabled tmem
-: cleancache and frontswap.
-I'm afraid that there is little difference by cleancache.
-The cleancache shows a few cache hits but the effect through it doesn't
-show. I don't know best benchmark to testify it yet.
-Finally, I couldn't discover any bug during test.
-
-[before patch]
-		1		2		3
-Elapsed time	25:00.67	25:07.09	25:00.38
-Major fault	31100		31410		31333
-Minor fault	276869398	276869318	276871144
-
-[after patch]
-		1		2		3
-Elapsed time	25:12.34	25:13.29	25:11.99
-Major fault	31559		32069		31801
-Minor fault	276870283	276868046	276869251
-
-[cleancache] - diff between start and end
-		1		2		3
-failed_gets	1277980		1296355		1300368
-invalidates	2588227		2651722		2655285
-puts		1289970		1323685		1320623
-*succ_gets*	111111		121299		114310
-
-Thanks,
-Changman
-
-> > What condition will be the best way to exploit f2fs and cleancache?
-> > 
-> Not clear.
-> I think we can make a cleancache client for f2fs so that can compenstate
-> a penalty of node pages which are read mostly.
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/dir.c    | 7 ++++++-
+>  fs/f2fs/inline.c | 4 +++-
+>  2 files changed, 9 insertions(+), 2 deletions(-)
 > 
-> > Can we confirm that f2fs satisfies most of requirements described by
-> > cleancache.txt below?
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 5a49995..312fbfc 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -287,8 +287,10 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
+>  	f2fs_wait_on_page_writeback(page, type);
+>  	de->ino = cpu_to_le32(inode->i_ino);
+>  	set_de_type(de, inode);
+> -	if (!f2fs_has_inline_dentry(dir))
+> +	if (!f2fs_has_inline_dentry(dir)) {
+>  		kunmap(page);
+> +		flush_dcache_page(page);
+> +	}
+>  	set_page_dirty(page);
+>  	dir->i_mtime = dir->i_ctime = CURRENT_TIME;
+>  	mark_inode_dirty(dir);
+> @@ -366,6 +368,7 @@ static int make_empty_dir(struct inode *inode,
+>  	do_make_empty_dir(inode, parent, &d);
+>  
+>  	kunmap_atomic(dentry_blk);
+> +	flush_dcache_page(dentry_page);
+>  
+>  	set_page_dirty(dentry_page);
+>  	f2fs_put_page(dentry_page, 1);
+> @@ -579,6 +582,7 @@ fail:
+>  		clear_inode_flag(F2FS_I(dir), FI_UPDATE_DIR);
+>  	}
+>  	kunmap(dentry_page);
+> +	flush_dcache_page(dentry_page);
+>  	f2fs_put_page(dentry_page, 1);
+>  	return err;
+>  }
+> @@ -661,6 +665,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+>  			NR_DENTRY_IN_BLOCK,
+>  			0);
+>  	kunmap(page); /* kunmap - pair of f2fs_find_entry */
+> +	flush_dcache_page(page);
+>  	set_page_dirty(page);
+>  
+>  	dir->i_ctime = dir->i_mtime = CURRENT_TIME;
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index f26fb87..8b7cc51 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -45,8 +45,8 @@ void read_inline_data(struct page *page, struct page *ipage)
+>  	src_addr = inline_data_addr(ipage);
+>  	dst_addr = kmap_atomic(page);
+>  	memcpy(dst_addr, src_addr, MAX_INLINE_DATA);
+> -	flush_dcache_page(page);
+>  	kunmap_atomic(dst_addr);
+> +	flush_dcache_page(page);
+>  	SetPageUptodate(page);
+>  }
+>  
+> @@ -107,6 +107,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+>  	dst_addr = kmap_atomic(page);
+>  	memcpy(dst_addr, src_addr, MAX_INLINE_DATA);
+>  	kunmap_atomic(dst_addr);
+> +	flush_dcache_page(page);
+>  	SetPageUptodate(page);
+>  no_update:
+>  	/* write data page to try to make data consistent */
+> @@ -358,6 +359,7 @@ static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
+>  					NR_INLINE_DENTRY * F2FS_SLOT_LEN);
+>  
+>  	kunmap_atomic(dentry_blk);
+> +	flush_dcache_page(page);
+>  	SetPageUptodate(page);
+>  	set_page_dirty(page);
+>  
+> -- 
+> 2.1.1
 > 
-> Good point.
-> At a quick glance, F2FS seems to satisfy most of requirements.
-> Through a experimental, I'll try to check side effect.
-> 
-> > 
-> > Some points for a filesystem to consider:
-> > 
-> > - The FS should be block-device-based (e.g. a ram-based FS such
-> >   as tmpfs should not enable cleancache)
-> > - To ensure coherency/correctness, the FS must ensure that all
-> >   file removal or truncation operations either go through VFS or
-> >   add hooks to do the equivalent cleancache "invalidate" operations
-> > - To ensure coherency/correctness, either inode numbers must
-> >   be unique across the lifetime of the on-disk file OR the
-> >   FS must provide an "encode_fh" function.
-> > - The FS must call the VFS superblock alloc and deactivate routines
-> >   or add hooks to do the equivalent cleancache calls done there.
-> > - To maximize performance, all pages fetched from the FS should
-> >   go through the do_mpag_readpage routine or the FS should add
-> >   hooks to do the equivalent (cf. btrfs)
-> > - Currently, the FS blocksize must be the same as PAGESIZE.  This
-> >   is not an architectural restriction, but no backends currently
-> >   support anything different.
-> > - A clustered FS should invoke the "shared_init_fs" cleancache
-> >   hook to get best performance for some backends.
-> > 
-> > Thanks,
-> > 
-> > > 
-> > > Signed-off-by: Changman Lee <cm224.lee@samsung.com>
-> > > ---
-> > >  fs/f2fs/super.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > > index 512ffd8..2ebb960 100644
-> > > --- a/fs/f2fs/super.c
-> > > +++ b/fs/f2fs/super.c
-> > > @@ -24,6 +24,7 @@
-> > >  #include <linux/blkdev.h>
-> > >  #include <linux/f2fs_fs.h>
-> > >  #include <linux/sysfs.h>
-> > > +#include <linux/cleancache.h>
-> > >  
-> > >  #include "f2fs.h"
-> > >  #include "node.h"
-> > > @@ -1144,6 +1145,8 @@ try_onemore:
-> > >  		if (err)
-> > >  			goto free_kobj;
-> > >  	}
-> > > +
-> > > +	cleancache_init_fs(sb);
-> > >  	return 0;
-> > >  
-> > >  free_kobj:
-> > > -- 
-> > > 1.9.1
-> > > 
-> > > 
-> > > ------------------------------------------------------------------------------
-> > > Comprehensive Server Monitoring with Site24x7.
-> > > Monitor 10 servers for $9/Month.
-> > > Get alerted through email, SMS, voice calls or mobile push notifications.
-> > > Take corrective actions from your mobile device.
-> > > http://pubads.g.doubleclick.net/gampad/clk?id=154624111&iu=/4140/ostg.clktrk
-> > > _______________________________________________
-> > > Linux-f2fs-devel mailing list
-> > > Linux-f2fs-devel@lists.sourceforge.net
-> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 > 
 > ------------------------------------------------------------------------------
-> Comprehensive Server Monitoring with Site24x7.
-> Monitor 10 servers for $9/Month.
-> Get alerted through email, SMS, voice calls or mobile push notifications.
-> Take corrective actions from your mobile device.
-> http://pubads.g.doubleclick.net/gampad/clk?id=154624111&iu=/4140/ostg.clktrk
+> Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
+> from Actuate! Instantly Supercharge Your Business Reports and Dashboards
+> with Interactivity, Sharing, Native Excel Exports, App Integration & more
+> Get technology previously reserved for billion-dollar corporations, FREE
+> http://pubads.g.doubleclick.net/gampad/clk?id=157005751&iu=/4140/ostg.clktrk
 > _______________________________________________
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+------------------------------------------------------------------------------
+Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
+from Actuate! Instantly Supercharge Your Business Reports and Dashboards
+with Interactivity, Sharing, Native Excel Exports, App Integration & more
+Get technology previously reserved for billion-dollar corporations, FREE
+http://pubads.g.doubleclick.net/gampad/clk?id=157005751&iu=/4140/ostg.clktrk
