@@ -1,170 +1,175 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: call flush_dcache_page when the
- page was updated
-Date: Sun, 23 Nov 2014 22:04:03 -0800
-Message-ID: <20141124060403.GB24467@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <1416436510-6251-1-git-send-email-jaegeuk@kernel.org>
- <20141120060410.GB3117@lcm>
- <20141120064533.GA8860@jaegeuk-mac02.hsd1.ca.comcast.net>
- <20141120084729.GA4740@lcm>
- <20141123100853.GA6356@schnuecks.de>
- <20141124024646.GB4740@lcm>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add cleancache support
+Date: Mon, 24 Nov 2014 15:19:43 +0900
+Message-ID: <20141124061943.GC4740@lcm>
+References: <1415856890-2455-1-git-send-email-cm224.lee@samsung.com>
+ <20141114012751.GB49179@jaegeuk-mac02.mot.com> <20141114055302.GD16657@lcm>
+ <20141120043851.GA3117@lcm>
+ <20141124054212.GA22699@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141124024646.GB4740@lcm>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: Simon Baatz <gmbnomis@gmail.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-disposition: inline
+In-reply-to: <20141124054212.GA22699@jaegeuk-mac02.hsd1.ca.comcast.net>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, dan.magenheimer@oracle.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Nov 24, 2014 at 11:46:46AM +0900, Changman Lee wrote:
-> Hi Simon,
-> Thanks for your explanation kindly.
-> 
-> On Sun, Nov 23, 2014 at 11:08:54AM +0100, Simon Baatz wrote:
-> > Hi Changman, Jaegeuk,
-> > 
-> > On Thu, Nov 20, 2014 at 05:47:29PM +0900, Changman Lee wrote:
-> > > On Wed, Nov 19, 2014 at 10:45:33PM -0800, Jaegeuk Kim wrote:
-> > > > On Thu, Nov 20, 2014 at 03:04:10PM +0900, Changman Lee wrote:
-> > > > > Hi Jaegeuk,
-> > > > > 
-> > > > > We should call flush_dcache_page before kunmap because the purpose of the cache flush is to address aliasing problem related to virtual address.
+On Sun, Nov 23, 2014 at 09:42:12PM -0800, Jaegeuk Kim wrote:
+> On Thu, Nov 20, 2014 at 01:38:51PM +0900, Changman Lee wrote:
+> > On Fri, Nov 14, 2014 at 02:53:02PM +0900, Changman Lee wrote:
+> > > On Thu, Nov 13, 2014 at 05:27:51PM -0800, Jaegeuk Kim wrote:
+> > > > Hi Changman,
 > > > > 
-> > > > Oh, I just followed zero_user_segments below.
+> > > > On Thu, Nov 13, 2014 at 02:34:50PM +0900, Changman Lee wrote:
+> > > > > To use cleancache, fs must explicitly enable cleancache by calling
+> > > > > cleancache_init_fs.
 > > > > 
-> > > > static inline void zero_user_segments(struct page *page,
-> > > > 	unsigned start1, unsigned end1,
-> > > > 	unsigned start2, unsigned end2)
-> > > > {
-> > > > 	void *kaddr = kmap_atomic(page);
+> > > > Good catch!
 > > > > 
-> > > > 	BUG_ON(end1 > PAGE_SIZE || end2 > PAGE_SIZE);
+> > > > Prior to merge this patch, can you share any testing results or performance
+> > > > numbers?
 > > > > 
-> > > > 	if (end1 > start1)
-> > > > 		memset(kaddr + start1, 0, end1 - start1);
-> > > > 
-> > > > 	if (end2 > start2)
-> > > > 		memset(kaddr + start2, 0, end2 - start2);
-> > > > 
-> > > > 	kunmap_atomic(kaddr);
-> > > > 	flush_dcache_page(page);
-> > > > }
-> > > > 
-> > > > Is this a wrong reference? Or, a bug?
-> > > > 
-> > > 
-> > > Well.. Data in cache only have to be flushed until before other users read the data.
-> > > If so, it's not a bug.
+> > > Not yet, I'll try to get numbers.
 > > > 
 > > 
-> > Yes, it is not a bug, since flush_dcache_page() needs to be able to
-> > deal with non-kmapped pages. However, this may create overhead in
-> > some situations.
+> > Hi,
 > > 
+> > This is the result of kernel compile on xen-4.4 enabled tmem
+> > : cleancache and frontswap.
+> > I'm afraid that there is little difference by cleancache.
+> > The cleancache shows a few cache hits but the effect through it doesn't
+> > show. I don't know best benchmark to testify it yet.
+> > Finally, I couldn't discover any bug during test.
+> > 
+> > [before patch]
+> > 		1		2		3
+> > Elapsed time	25:00.67	25:07.09	25:00.38
+> > Major fault	31100		31410		31333
+> > Minor fault	276869398	276869318	276871144
+> > 
+> > [after patch]
+> > 		1		2		3
+> > Elapsed time	25:12.34	25:13.29	25:11.99
+> > Major fault	31559		32069		31801
+> > Minor fault	276870283	276868046	276869251
+> > 
+> > [cleancache] - diff between start and end
+> > 		1		2		3
+> > failed_gets	1277980		1296355		1300368
+> > invalidates	2588227		2651722		2655285
+> > puts		1289970		1323685		1320623
+> > *succ_gets*	111111		121299		114310
 > 
-> Previously, I was vague but I thought that it should be different
-> according to vaddr exists or not. So I told jaegeuk that it should
-> be better to change an order between flush_dache_page and kunmap.
-> But actually, it doesn't matter the order between them except
-> the situation you said.
-> Could you explain the situation that makes overhead by flushing after kummap.
-> I can't imagine it by just seeing flush_dcache_page code.
+> Hi Changman,
 > 
-> > According to documentation (see Documentation/cachetlb.txt), this is
-> > a use for flush_kernel_dcache_page(), since the page has been
-> > modified by the kernel only.  In contrast to flush_dcache_page(),
-> > this function must be called before kunmap().
+> So, what is your suggestion?
+> IMO, we first need to find a way exploiting cleancache over f2fs, so that
+> we can introduce some guide for users.
+> Until then, how about keeping this patch for a while?
+> 
+
+The performance of cleancache depends on workload but ext4 and btrfs
+support it already. So how about allowing to enable cleancache on f2fs?
+If backend of cleancache doesn't exists, there is no effect for f2fs.
+I think negative effectness of cleancache is little.
+Anyway, a final decision lies in your hand.
+
+Thanks
+
+> Thanks,
+> 
 > > 
-> > flush_kernel_dcache_page() does not need to flush the user space
-> > aliases.  Additionally, at least on ARM, it does not flush at all
-> > when called within kmap_atomic()/kunmap_atomic(), when
-> > kunmap_atomic() is going to flush the page anyway.  (I know that
-> > almost no one uses flush_kernel_dcache_page() (probably because
-> > almost no one knows when to use which of the two functions), but it
-> > may save a few cache flushes on architectures which are affected by
-> > aliasing)
+> > Thanks,
+> > Changman
 > > 
-> > 
-> > > > Anyway I modified as below.
+> > > > What condition will be the best way to exploit f2fs and cleancache?
+> > > > 
+> > > Not clear.
+> > > I think we can make a cleancache client for f2fs so that can compenstate
+> > > a penalty of node pages which are read mostly.
+> > > 
+> > > > Can we confirm that f2fs satisfies most of requirements described by
+> > > > cleancache.txt below?
+> > > 
+> > > Good point.
+> > > At a quick glance, F2FS seems to satisfy most of requirements.
+> > > Through a experimental, I'll try to check side effect.
+> > > 
+> > > > 
+> > > > Some points for a filesystem to consider:
+> > > > 
+> > > > - The FS should be block-device-based (e.g. a ram-based FS such
+> > > >   as tmpfs should not enable cleancache)
+> > > > - To ensure coherency/correctness, the FS must ensure that all
+> > > >   file removal or truncation operations either go through VFS or
+> > > >   add hooks to do the equivalent cleancache "invalidate" operations
+> > > > - To ensure coherency/correctness, either inode numbers must
+> > > >   be unique across the lifetime of the on-disk file OR the
+> > > >   FS must provide an "encode_fh" function.
+> > > > - The FS must call the VFS superblock alloc and deactivate routines
+> > > >   or add hooks to do the equivalent cleancache calls done there.
+> > > > - To maximize performance, all pages fetched from the FS should
+> > > >   go through the do_mpag_readpage routine or the FS should add
+> > > >   hooks to do the equivalent (cf. btrfs)
+> > > > - Currently, the FS blocksize must be the same as PAGESIZE.  This
+> > > >   is not an architectural restriction, but no backends currently
+> > > >   support anything different.
+> > > > - A clustered FS should invoke the "shared_init_fs" cleancache
+> > > >   hook to get best performance for some backends.
 > > > > 
 > > > > Thanks,
 > > > > 
-> > > > >From 7cb7b27c8cd2efc8a31d79239bef5b41c6e79216 Mon Sep 17 00:00:00 2001
-> > > > From: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > Date: Tue, 18 Nov 2014 10:50:21 -0800
-> > > > Subject: [PATCH] f2fs: call flush_dcache_page when the page was updated
-> > > > 
-> > > > Whenever f2fs updates mapped pages, it needs to call flush_dcache_page.
-> > > > 
-> > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > ---
-> > > >  fs/f2fs/dir.c    | 7 ++++++-
-> > > >  fs/f2fs/inline.c | 2 ++
-> > > >  2 files changed, 8 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> > > > index 5a49995..fabf4ee 100644
-> > > > --- a/fs/f2fs/dir.c
-> > > > +++ b/fs/f2fs/dir.c
-> > > > @@ -287,8 +287,10 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
-> > > >  	f2fs_wait_on_page_writeback(page, type);
-> > > >  	de->ino = cpu_to_le32(inode->i_ino);
-> > > >  	set_de_type(de, inode);
-> > > > -	if (!f2fs_has_inline_dentry(dir))
-> > > > +	if (!f2fs_has_inline_dentry(dir)) {
-> > > > +		flush_dcache_page(page);
-> > > >  		kunmap(page);
-> > > > +	}
-> > 
-> > Is this a page that may be mapped into user space? (I may be
-> > completely wrong here, since I have no idea how this code works.  But
-> > it looks like as if the answer is "no" ;-) ).
-> > 
-> > It is not necessary to flush pages that cannot be seen by user space
-> > (see also the NOTE in the documentation of flush_dcache_page() in
-> > cachetlb.txt). Thus, if you know that a page will not be mapped into
-> > user space, please don't create the overhead of flushing it.
-> > 
-> 
-> In the case of dentry unlike inline data, this is not mapped to user space, so dcache flush
-> makes overhead. Do you mean that?
-> 
-> Best regard,
-> Changman
-
-Hi Changman,
-
-This would be ok though.
-
->From 5c1c46d31452a59a37c96f6dcae600776a8002e3 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Tue, 18 Nov 2014 10:50:21 -0800
-Subject: [PATCH v2] f2fs: call flush_dcache_page when the page was updated
-
-Change log from v1:
- o remove flush_dcache_page calls for dentry pages.
-
-Whenever f2fs updates mapped pages, it needs to call flush_dcache_page.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/inline.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index f26fb87..914b6d3 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -106,6 +106,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
- 	src_addr = inline_data_addr(dn->inode_page);
- 	dst_addr = kmap_atomic(page);
- 	memcpy(dst_addr, src_addr, MAX_INLINE_DATA);
-+	flush_dcache_page(page);
- 	kunmap_atomic(dst_addr);
- 	SetPageUptodate(page);
- no_update:
--- 
-2.1.1
+> > > > > 
+> > > > > Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+> > > > > ---
+> > > > >  fs/f2fs/super.c | 3 +++
+> > > > >  1 file changed, 3 insertions(+)
+> > > > > 
+> > > > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > > > index 512ffd8..2ebb960 100644
+> > > > > --- a/fs/f2fs/super.c
+> > > > > +++ b/fs/f2fs/super.c
+> > > > > @@ -24,6 +24,7 @@
+> > > > >  #include <linux/blkdev.h>
+> > > > >  #include <linux/f2fs_fs.h>
+> > > > >  #include <linux/sysfs.h>
+> > > > > +#include <linux/cleancache.h>
+> > > > >  
+> > > > >  #include "f2fs.h"
+> > > > >  #include "node.h"
+> > > > > @@ -1144,6 +1145,8 @@ try_onemore:
+> > > > >  		if (err)
+> > > > >  			goto free_kobj;
+> > > > >  	}
+> > > > > +
+> > > > > +	cleancache_init_fs(sb);
+> > > > >  	return 0;
+> > > > >  
+> > > > >  free_kobj:
+> > > > > -- 
+> > > > > 1.9.1
+> > > > > 
+> > > > > 
+> > > > > ------------------------------------------------------------------------------
+> > > > > Comprehensive Server Monitoring with Site24x7.
+> > > > > Monitor 10 servers for $9/Month.
+> > > > > Get alerted through email, SMS, voice calls or mobile push notifications.
+> > > > > Take corrective actions from your mobile device.
+> > > > > http://pubads.g.doubleclick.net/gampad/clk?id=154624111&iu=/4140/ostg.clktrk
+> > > > > _______________________________________________
+> > > > > Linux-f2fs-devel mailing list
+> > > > > Linux-f2fs-devel@lists.sourceforge.net
+> > > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > > 
+> > > ------------------------------------------------------------------------------
+> > > Comprehensive Server Monitoring with Site24x7.
+> > > Monitor 10 servers for $9/Month.
+> > > Get alerted through email, SMS, voice calls or mobile push notifications.
+> > > Take corrective actions from your mobile device.
+> > > http://pubads.g.doubleclick.net/gampad/clk?id=154624111&iu=/4140/ostg.clktrk
+> > > _______________________________________________
+> > > Linux-f2fs-devel mailing list
+> > > Linux-f2fs-devel@lists.sourceforge.net
+> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
