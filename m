@@ -1,160 +1,109 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: call flush_dcache_page when the page
- was updated
-Date: Wed, 26 Nov 2014 07:35:40 +0900
-Message-ID: <20141125223540.GB16219@lcm>
-References: <1416436510-6251-1-git-send-email-jaegeuk@kernel.org>
- <20141120060410.GB3117@lcm>
- <20141120064533.GA8860@jaegeuk-mac02.hsd1.ca.comcast.net>
- <20141120084729.GA4740@lcm> <20141123100853.GA6356@schnuecks.de>
- <20141124024646.GB4740@lcm> <20141125190523.GA7715@schnuecks.de>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/2] f2fs: fix deadlock during inline_data
+	conversion
+Date: Tue, 25 Nov 2014 15:39:55 -0800
+Message-ID: <1416958796-39186-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <20141125190523.GA7715@schnuecks.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Baatz <gmbnomis@gmail.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XtPiW-0005BN-GP
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 25 Nov 2014 23:40:20 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XtPiV-0005RK-AH for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 25 Nov 2014 23:40:20 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Hi Simon,
+A deadlock can be occurred:
+Thread 1]                             Thread 2]
+ - f2fs_write_data_pages              - f2fs_write_begin
+   - lock_page(page #0)
+                                        - grab_cache_page(page #X)
+                                        - get_node_page(inode_page)
+                                        - grab_cache_page(page #0)
+                                          : to convert inline_data
+   - f2fs_write_data_page
+     - f2fs_write_inline_data
+       - get_node_page(inode_page)
 
-Thanks very much for your interest.
-It becomes more clear due to your explanation.
+In this case, trying to lock inode_page and page #0 causes deadlock.
+In order to avoid this, this patch adds a rule for this locking policy,
+which is that page #0 should be locked followed by inode_page lock.
 
-Regards,
-Changman
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-On Tue, Nov 25, 2014 at 08:05:23PM +0100, Simon Baatz wrote:
-> Hi Changman,
-> 
-> On Mon, Nov 24, 2014 at 11:46:46AM +0900, Changman Lee wrote:
-> > Hi Simon,
-> > Thanks for your explanation kindly.
-> > 
-> > On Sun, Nov 23, 2014 at 11:08:54AM +0100, Simon Baatz wrote:
-> > > Hi Changman, Jaegeuk,
-> > > 
-> > > On Thu, Nov 20, 2014 at 05:47:29PM +0900, Changman Lee wrote:
-> > > > On Wed, Nov 19, 2014 at 10:45:33PM -0800, Jaegeuk Kim wrote:
-> > > > > On Thu, Nov 20, 2014 at 03:04:10PM +0900, Changman Lee wrote:
-> > > > > > Hi Jaegeuk,
-> > > > > > 
-> > > > > > We should call flush_dcache_page before kunmap because the purpose of the cache flush is to address aliasing problem related to virtual address.
-> > > > > 
-> > > > > Oh, I just followed zero_user_segments below.
-> > > > > 
-> > > > > static inline void zero_user_segments(struct page *page,
-> > > > > 	unsigned start1, unsigned end1,
-> > > > > 	unsigned start2, unsigned end2)
-> > > > > {
-> > > > > 	void *kaddr = kmap_atomic(page);
-> > > > > 
-> > > > > 	BUG_ON(end1 > PAGE_SIZE || end2 > PAGE_SIZE);
-> > > > > 
-> > > > > 	if (end1 > start1)
-> > > > > 		memset(kaddr + start1, 0, end1 - start1);
-> > > > > 
-> > > > > 	if (end2 > start2)
-> > > > > 		memset(kaddr + start2, 0, end2 - start2);
-> > > > > 
-> > > > > 	kunmap_atomic(kaddr);
-> > > > > 	flush_dcache_page(page);
-> > > > > }
-> > > > > 
-> > > > > Is this a wrong reference? Or, a bug?
-> > > > > 
-> > > > 
-> > > > Well.. Data in cache only have to be flushed until before other users read the data.
-> > > > If so, it's not a bug.
-> > > > 
-> > > 
-> > > Yes, it is not a bug, since flush_dcache_page() needs to be able to
-> > > deal with non-kmapped pages. However, this may create overhead in
-> > > some situations.
-> > > 
-> > 
-> > Previously, I was vague but I thought that it should be different
-> > according to vaddr exists or not. So I told jaegeuk that it should
-> > be better to change an order between flush_dache_page and kunmap.
-> > But actually, it doesn't matter the order between them except
-> > the situation you said.
-> > Could you explain the situation that makes overhead by flushing after kummap.
-> > I can't imagine it by just seeing flush_dcache_page code.
-> > 
-> 
-> I was a not very precise here. Yes, flush_dcache_page() on ARM does
-> the same in both situations since it has no idea whether it is called
-> before or after kunmap.  However, flush_kernel_dcache_page() can
-> assume that it is called before kunmap and thus, for example, does not
-> need to pin a highmem page by kmap_high_get() (apart from not having
-> to care about flushing user space mappings)
-> 
-> > > According to documentation (see Documentation/cachetlb.txt), this is
-> > > a use for flush_kernel_dcache_page(), since the page has been
-> > > modified by the kernel only.  In contrast to flush_dcache_page(),
-> > > this function must be called before kunmap().
-> > > 
-> > > flush_kernel_dcache_page() does not need to flush the user space
-> > > aliases.  Additionally, at least on ARM, it does not flush at all
-> > > when called within kmap_atomic()/kunmap_atomic(), when
-> > > kunmap_atomic() is going to flush the page anyway.  (I know that
-> > > almost no one uses flush_kernel_dcache_page() (probably because
-> > > almost no one knows when to use which of the two functions), but it
-> > > may save a few cache flushes on architectures which are affected by
-> > > aliasing)
-> > > 
-> > > 
-> > > > > Anyway I modified as below.
-> > > > > 
-> > > > > Thanks,
-> > > > > 
-> > > > > >From 7cb7b27c8cd2efc8a31d79239bef5b41c6e79216 Mon Sep 17 00:00:00 2001
-> > > > > From: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > > Date: Tue, 18 Nov 2014 10:50:21 -0800
-> > > > > Subject: [PATCH] f2fs: call flush_dcache_page when the page was updated
-> > > > > 
-> > > > > Whenever f2fs updates mapped pages, it needs to call flush_dcache_page.
-> > > > > 
-> > > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > > ---
-> > > > >  fs/f2fs/dir.c    | 7 ++++++-
-> > > > >  fs/f2fs/inline.c | 2 ++
-> > > > >  2 files changed, 8 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> > > > > index 5a49995..fabf4ee 100644
-> > > > > --- a/fs/f2fs/dir.c
-> > > > > +++ b/fs/f2fs/dir.c
-> > > > > @@ -287,8 +287,10 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
-> > > > >  	f2fs_wait_on_page_writeback(page, type);
-> > > > >  	de->ino = cpu_to_le32(inode->i_ino);
-> > > > >  	set_de_type(de, inode);
-> > > > > -	if (!f2fs_has_inline_dentry(dir))
-> > > > > +	if (!f2fs_has_inline_dentry(dir)) {
-> > > > > +		flush_dcache_page(page);
-> > > > >  		kunmap(page);
-> > > > > +	}
-> > > 
-> > > Is this a page that may be mapped into user space? (I may be
-> > > completely wrong here, since I have no idea how this code works.  But
-> > > it looks like as if the answer is "no" ;-) ).
-> > > 
-> > > It is not necessary to flush pages that cannot be seen by user space
-> > > (see also the NOTE in the documentation of flush_dcache_page() in
-> > > cachetlb.txt). Thus, if you know that a page will not be mapped into
-> > > user space, please don't create the overhead of flushing it.
-> > > 
-> > 
-> > In the case of dentry unlike inline data, this is not mapped to user space, so dcache flush
-> > makes overhead. Do you mean that?
-> 
-> Yes. I suppose most architectures where D-cache aliasing is an issue
-> have optimizations that "defer" the actual flush when there are no
-> user space mappings.  But nevertheless, if you already now that there
-> can't be any aliases, there is no need to call these functions at
-> all.
-> 
-> 
-> - Simon 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 12dd58a..c7bc626 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -936,6 +936,17 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 	trace_f2fs_write_begin(inode, pos, len, flags);
+ 
+ 	f2fs_balance_fs(sbi);
++
++	/*
++	 * We should check this at this moment to avoid deadlock on inode page
++	 * and #0 page. The locking rule for inline_data conversion should be:
++	 * lock_page(page #0) -> lock_page(inode_page)
++	 */
++	if (index != 0) {
++		err = f2fs_convert_inline_inode(inode);
++		if (err)
++			goto fail;
++	}
+ repeat:
+ 	page = grab_cache_page_write_begin(mapping, index, flags);
+ 	if (!page) {
+@@ -960,21 +971,10 @@ repeat:
+ 			set_inode_flag(F2FS_I(inode), FI_DATA_EXIST);
+ 			sync_inode_page(&dn);
+ 			goto put_next;
+-		} else if (page->index == 0) {
+-			err = f2fs_convert_inline_page(&dn, page);
+-			if (err)
+-				goto put_fail;
+-		} else {
+-			struct page *p = grab_cache_page(inode->i_mapping, 0);
+-			if (!p) {
+-				err = -ENOMEM;
+-				goto put_fail;
+-			}
+-			err = f2fs_convert_inline_page(&dn, p);
+-			f2fs_put_page(p, 1);
+-			if (err)
+-				goto put_fail;
+ 		}
++		err = f2fs_convert_inline_page(&dn, page);
++		if (err)
++			goto put_fail;
+ 	}
+ 	err = f2fs_reserve_block(&dn, index);
+ 	if (err)
+-- 
+2.1.1
+
+
+------------------------------------------------------------------------------
+Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
+from Actuate! Instantly Supercharge Your Business Reports and Dashboards
+with Interactivity, Sharing, Native Excel Exports, App Integration & more
+Get technology previously reserved for billion-dollar corporations, FREE
+http://pubads.g.doubleclick.net/gampad/clk?id=157005751&iu=/4140/ostg.clktrk
