@@ -1,36 +1,70 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix to recover converted inline_data
-Date: Tue, 25 Nov 2014 18:08:11 -0800
-Message-ID: <1416967691-47240-1-git-send-email-jaegeuk@kernel.org>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: [PATCH] f2fs: cleanup if-statement of phase in gc_data_segment
+Date: Thu, 27 Nov 2014 16:03:08 +0900
+Message-ID: <1417071788-21013-1-git-send-email-cm224.lee@samsung.com>
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Changman Lee <cm224.lee@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If an inode has converted inline_data which was written to the disk, we should
-set its inode flag for further fsync so that this inline_data can be recovered
-from sudden power off.
+Little cleanup to distinguish each phase easily
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 ---
- fs/f2fs/inline.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/gc.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index e27f290..f2d3c58 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -122,6 +122,9 @@ no_update:
- 	if (dirty)
- 		inode_dec_dirty_pages(dn->inode);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 81686b2..de00713 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -602,27 +602,28 @@ next_step:
  
-+	/* this converted inline_data should be recovered. */
-+	set_inode_flag(F2FS_I(dn->inode), FI_APPEND_WRITE);
+ 			data_page = find_data_page(inode,
+ 					start_bidx + ofs_in_node, false);
+-			if (IS_ERR(data_page))
+-				goto next_iput;
++			if (IS_ERR(data_page)) {
++				iput(inode);
++				continue;
++			}
+ 
+ 			f2fs_put_page(data_page, 0);
+ 			add_gc_inode(inode, ilist);
+-		} else {
+-			inode = find_gc_inode(dni.ino, ilist);
+-			if (inode) {
+-				start_bidx = start_bidx_of_node(nofs,
+-								F2FS_I(inode));
+-				data_page = get_lock_data_page(inode,
+-						start_bidx + ofs_in_node);
+-				if (IS_ERR(data_page))
+-					continue;
+-				move_data_page(inode, data_page, gc_type);
+-				stat_inc_data_blk_count(sbi, 1);
+-			}
++			continue;
++		}
 +
- 	/* clear inline data and flag after data writeback */
- 	truncate_inline_data(dn->inode_page, 0);
- clear_out:
++		/* phase 3 */
++		inode = find_gc_inode(dni.ino, ilist);
++		if (inode) {
++			start_bidx = start_bidx_of_node(nofs,
++							F2FS_I(inode));
++			data_page = get_lock_data_page(inode,
++					start_bidx + ofs_in_node);
++			if (IS_ERR(data_page))
++				continue;
++			move_data_page(inode, data_page, gc_type);
++			stat_inc_data_blk_count(sbi, 1);
+ 		}
+-		continue;
+-next_iput:
+-		iput(inode);
+ 	}
+ 
+ 	if (++phase < 4)
 -- 
-2.1.1
+1.9.1
 
