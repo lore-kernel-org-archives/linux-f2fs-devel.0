@@ -1,121 +1,68 @@
 From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: more fast lookup for gc_inode list
-Date: Fri, 28 Nov 2014 15:00:57 +0900
-Message-ID: <20141128060057.GA2819@lcm>
-References: <1417079511-29479-1-git-send-email-cm224.lee@samsung.com>
- <20141128042421.GA59574@jaegeuk-mac02.hsd1.ca.comcast.net>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: move put_gc_inode into gc_mutex
+Date: Fri, 28 Nov 2014 15:08:37 +0900
+Message-ID: <20141128060837.GB2819@lcm>
+References: <1417081374-31626-1-git-send-email-cm224.lee@samsung.com>
+ <20141128035514.GA59415@jaegeuk-mac02.mot-mobility.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-disposition: inline
-In-reply-to: <20141128042421.GA59574@jaegeuk-mac02.hsd1.ca.comcast.net>
+In-reply-to: <20141128035514.GA59415@jaegeuk-mac02.mot-mobility.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
-
-As you said, I will resend a patch. Thanks for your review.
-
-On Thu, Nov 27, 2014 at 08:24:21PM -0800, Jaegeuk Kim wrote:
-> Hi,
+On Thu, Nov 27, 2014 at 07:55:14PM -0800, Jaegeuk Kim wrote:
+> Hi Changman,
 > 
-> On Thu, Nov 27, 2014 at 06:11:51PM +0900, Changman Lee wrote:
-> > If there are many inodes that have data blocks in victim segment,
-> > it takes long time to find a inode in gc_inode list.
-> > Let's use radix_tree to reduce lookup time.
+> On Thu, Nov 27, 2014 at 06:42:54PM +0900, Changman Lee wrote:
+> > There in no any lock to protect gc_inode list so let's move into
+> > gc_mutex, otherwise it might be lost links of list.
+> 
+> Could you explain why the links can be lost?
+> Cause the ilist is a local variable.
+
+Hi Jaegeuk,
+
+Oh, I missed ilist is a local variable.
+Sorry, ignore this patch.
+
+Thanks,
+
+> 
+> IIRC, the reason why put_gc_inode is called outside of gc_mutex is to avoid
+> deadlock between f2fs_evict_inode and gc operations.
+> I'm not sure it still has a problem, but it is unclear that we have to move
+> put_gc_inode inside gc_mutex.
+> 
+> Are you facing with any bug on this?
+> 
+> Thanks,
+> 
 > > 
 > > Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 > > ---
-> >  fs/f2fs/gc.c | 21 ++++++++++++++-------
-> >  1 file changed, 14 insertions(+), 7 deletions(-)
+> >  fs/f2fs/gc.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
 > > 
 > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index 29fc7e5..fc765c1 100644
+> > index 657683c9..99e1720 100644
 > > --- a/fs/f2fs/gc.c
 > > +++ b/fs/f2fs/gc.c
-> > @@ -24,6 +24,7 @@
-> >  #include "gc.h"
-> >  #include <trace/events/f2fs.h>
-> >  
-> > +RADIX_TREE(gc_inode_root, GFP_ATOMIC);
-> 
-> How about adding a radix tree locally along with ilist?
-> 
-> >  static struct kmem_cache *winode_slab;
-> >  
-> >  static int gc_thread_func(void *data)
-> > @@ -338,13 +339,13 @@ static const struct victim_selection default_v_ops = {
-> >  	.get_victim = get_victim_by_default,
-> >  };
-> >  
-> > -static struct inode *find_gc_inode(nid_t ino, struct list_head *ilist)
-> > +static struct inode *find_gc_inode(nid_t ino)
-> >  {
-> >  	struct inode_entry *ie;
-> >  
-> > -	list_for_each_entry(ie, ilist, list)
-> > -		if (ie->inode->i_ino == ino)
-> > -			return ie->inode;
-> > +	ie = radix_tree_lookup(&gc_inode_root, ino);
-> > +	if (ie)
-> > +		return ie->inode;
-> >  	return NULL;
-> >  }
-> >  
-> > @@ -352,13 +353,19 @@ static void add_gc_inode(struct inode *inode, struct list_head *ilist)
-> >  {
-> >  	struct inode_entry *new_ie;
-> >  
-> > -	if (inode == find_gc_inode(inode->i_ino, ilist)) {
-> > +	new_ie = radix_tree_lookup(&gc_inode_root, inode->i_ino);
-> > +	if (new_ie) {
-> >  		iput(inode);
-> >  		return;
-> >  	}
-> >  
-> >  	new_ie = f2fs_kmem_cache_alloc(winode_slab, GFP_NOFS);
-> >  	new_ie->inode = inode;
+> > @@ -733,9 +733,9 @@ gc_more:
+> >  	if (gc_type == FG_GC)
+> >  		write_checkpoint(sbi, &cpc);
+> >  stop:
+> > -	mutex_unlock(&sbi->gc_mutex);
+> > -
+> >  	put_gc_inode(&ilist);
 > > +
-> > +	if (radix_tree_insert(&gc_inode_root, inode->i_ino, new_ie)) {
-> > +		kmem_cache_free(winode_slab, new_ie);
-> > +		return;
-> > +	}
-> 
-> The add_gc_inode should succeed all the tiem.
-> It seems that we need a sort of loop to avoid that.
-> 
-> >  	list_add_tail(&new_ie->list, ilist);
+> > +	mutex_unlock(&sbi->gc_mutex);
+> >  	return ret;
 > >  }
 > >  
-> > @@ -367,7 +374,7 @@ static void put_gc_inode(struct list_head *ilist)
-> >  	struct inode_entry *ie, *next_ie;
-> >  	list_for_each_entry_safe(ie, next_ie, ilist, list) {
-> >  		iput(ie->inode);
-> > -		list_del(&ie->list);
-> 
-> Logically, it'd better remain list_del.
-> 
-> > +		radix_tree_delete(&gc_inode_root, ie->inode->i_ino);
-> 
-> We should not use ie->inode, since it was already put.
-> 
-> >  		kmem_cache_free(winode_slab, ie);
-> >  	}
-> >  }
-> > @@ -614,7 +621,7 @@ next_step:
-> >  		}
-> >  
-> >  		/* phase 3 */
-> > -		inode = find_gc_inode(dni.ino, ilist);
-> > +		inode = find_gc_inode(dni.ino);
-> 
-> It needs to pass a local radix tree pointer.
-> 
-> >  		if (inode) {
-> >  			start_bidx = start_bidx_of_node(nofs,
-> >  							F2FS_I(inode));
 > > -- 
 > > 1.9.1
 > > 
