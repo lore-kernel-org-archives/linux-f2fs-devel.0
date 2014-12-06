@@ -1,23 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/5] f2fs: set page private for inmemory pages
-	for truncation
-Date: Sat,  6 Dec 2014 11:55:37 -0800
-Message-ID: <1417895739-15251-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/5] f2fs: count inline_xx in do_read_inode
+Date: Sat,  6 Dec 2014 11:55:36 -0800
+Message-ID: <1417895739-15251-2-git-send-email-jaegeuk@kernel.org>
 References: <1417895739-15251-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1XxLSL-0001ku-On
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XxLSJ-00005o-VB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 06 Dec 2014 19:55:53 +0000
+	Sat, 06 Dec 2014 19:55:52 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1XxLSK-0007ZF-2U for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 06 Dec 2014 19:55:53 +0000
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XxLSJ-000487-7r for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 06 Dec 2014 19:55:51 +0000
 In-Reply-To: <1417895739-15251-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,27 +30,39 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-The inmemory pages should be handled by invalidate_page since it needs to be
-released int the truncation path.
+In do_read_inode, if we failed __recover_inline_status, the inode has inline
+flag without increasing its count.
+Later, f2fs_evict_inode will decrease the count, which causes -1.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/inode.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index c79d67e..3ebcf96 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -180,6 +180,8 @@ void register_inmem_page(struct inode *inode, struct page *page)
- 	struct inmem_pages *new;
- 	int err;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 9fe110e..196cc78 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -148,6 +148,10 @@ static int do_read_inode(struct inode *inode)
+ 	__get_inode_rdev(inode, ri);
  
-+	SetPagePrivate(page);
+ 	f2fs_put_page(node_page, 1);
 +
- 	new = f2fs_kmem_cache_alloc(inmem_entry_slab, GFP_NOFS);
++	stat_inc_inline_inode(inode);
++	stat_inc_inline_dir(inode);
++
+ 	return err;
+ }
  
- 	/* add atomic page indices to the list */
+@@ -199,8 +203,6 @@ make_now:
+ 		goto bad_inode;
+ 	}
+ 	unlock_new_inode(inode);
+-	stat_inc_inline_inode(inode);
+-	stat_inc_inline_dir(inode);
+ 	trace_f2fs_iget(inode);
+ 	return inode;
+ 
 -- 
 2.1.1
 
