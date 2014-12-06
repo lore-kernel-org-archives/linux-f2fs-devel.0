@@ -1,153 +1,77 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 3/3 v2] f2fs: call radix_tree_preload before
- radix_tree_insert
-Date: Fri, 5 Dec 2014 10:23:02 -0800
-Message-ID: <20141205182302.GA6978@jaegeuk-mac02>
+Subject: [PATCH 4/5] f2fs: release inmemory pages when the file
+	was closed
+Date: Sat,  6 Dec 2014 11:55:38 -0800
+Message-ID: <1417895739-15251-4-git-send-email-jaegeuk@kernel.org>
+References: <1417895739-15251-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1XxLSM-0000Oh-Hx
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 06 Dec 2014 19:55:54 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1XxLSL-0007ZI-OI for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 06 Dec 2014 19:55:54 +0000
+In-Reply-To: <1417895739-15251-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Change log from v1:
- o remain GFP_ATOMIC for free_nid list due to its spin_lock
-
->From 769ec6e5b7d4a8115447736871be8bffaaba3a7d Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Wed, 3 Dec 2014 20:47:26 -0800
-Subject: [PATCH] f2fs: call radix_tree_preload before radix_tree_insert
-
-This patch tries to fix:
-
- BUG: using smp_processor_id() in preemptible [00000000] code: f2fs_gc-254:0/384
-  (radix_tree_node_alloc+0x14/0x74) from [<c033d8a0>] (radix_tree_insert+0x110/0x200)
-  (radix_tree_insert+0x110/0x200) from [<c02e8264>] (gc_data_segment+0x340/0x52c)
-  (gc_data_segment+0x340/0x52c) from [<c02e8658>] (f2fs_gc+0x208/0x400)
-  (f2fs_gc+0x208/0x400) from [<c02e8a98>] (gc_thread_func+0x248/0x28c)
-  (gc_thread_func+0x248/0x28c) from [<c0139944>] (kthread+0xa0/0xac)
-  (kthread+0xa0/0xac) from [<c0105ef8>] (ret_from_fork+0x14/0x3c)
-
-The reason is that f2fs calls radix_tree_insert under enabled preemption.
-So, before calling it, we need to call radix_tree_preload.
-
-Otherwise, we should use _GFP_WAIT for the radix tree, and use mutex or
-semaphore to cover the radix tree operations.
+If file is closed, let's drop inmemory pages.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c |  8 ++++++++
- fs/f2fs/gc.c         |  6 ++----
- fs/f2fs/node.c       | 11 +++++++++--
- 3 files changed, 19 insertions(+), 6 deletions(-)
+ fs/f2fs/file.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 20a917b..6a81b73 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -304,6 +304,11 @@ static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
- 	struct inode_management *im = &sbi->im[type];
- 	struct ino_entry *e;
- retry:
-+	if (radix_tree_preload(GFP_NOFS)) {
-+		cond_resched();
-+		goto retry;
-+	}
-+
- 	spin_lock(&im->ino_lock);
- 
- 	e = radix_tree_lookup(&im->ino_root, ino);
-@@ -311,11 +316,13 @@ retry:
- 		e = kmem_cache_alloc(ino_entry_slab, GFP_ATOMIC);
- 		if (!e) {
- 			spin_unlock(&im->ino_lock);
-+			radix_tree_preload_end();
- 			goto retry;
- 		}
- 		if (radix_tree_insert(&im->ino_root, ino, e)) {
- 			spin_unlock(&im->ino_lock);
- 			kmem_cache_free(ino_entry_slab, e);
-+			radix_tree_preload_end();
- 			goto retry;
- 		}
- 		memset(e, 0, sizeof(struct ino_entry));
-@@ -326,6 +333,7 @@ retry:
- 			im->ino_num++;
- 	}
- 	spin_unlock(&im->ino_lock);
-+	radix_tree_preload_end();
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 146e58a..b6f3fbf 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -901,6 +901,14 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 	return f2fs_convert_inline_inode(inode);
  }
  
- static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a1af74f..2c58c58 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -351,7 +351,6 @@ static struct inode *find_gc_inode(struct gc_inode_list *gc_list, nid_t ino)
- static void add_gc_inode(struct gc_inode_list *gc_list, struct inode *inode)
++static int f2fs_release_file(struct inode *inode, struct file *filp)
++{
++	/* some remained atomic pages should discarded */
++	if (f2fs_is_atomic_file(inode) || f2fs_is_volatile_file(inode))
++		commit_inmem_pages(inode, true);
++	return 0;
++}
++
+ static int f2fs_ioc_commit_atomic_write(struct file *filp)
  {
- 	struct inode_entry *new_ie;
--	int ret;
- 
- 	if (inode == find_gc_inode(gc_list, inode->i_ino)) {
- 		iput(inode);
-@@ -361,8 +360,7 @@ retry:
- 	new_ie = f2fs_kmem_cache_alloc(winode_slab, GFP_NOFS);
- 	new_ie->inode = inode;
- 
--	ret = radix_tree_insert(&gc_list->iroot, inode->i_ino, new_ie);
--	if (ret) {
-+	if (radix_tree_insert(&gc_list->iroot, inode->i_ino, new_ie)) {
- 		kmem_cache_free(winode_slab, new_ie);
- 		goto retry;
- 	}
-@@ -703,7 +701,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi)
- 	struct cp_control cpc;
- 	struct gc_inode_list gc_list = {
- 		.ilist = LIST_HEAD_INIT(gc_list.ilist),
--		.iroot = RADIX_TREE_INIT(GFP_ATOMIC),
-+		.iroot = RADIX_TREE_INIT(GFP_NOFS),
- 	};
- 
- 	cpc.reason = test_opt(sbi, FASTBOOT) ? CP_UMOUNT : CP_SYNC;
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b47555f..8de4f55 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1447,15 +1447,22 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
- 	i->nid = nid;
- 	i->state = NID_NEW;
- 
-+	if (radix_tree_preload(GFP_NOFS)) {
-+		kmem_cache_free(free_nid_slab, i);
-+		return 0;
-+	}
-+
- 	spin_lock(&nm_i->free_nid_list_lock);
- 	if (radix_tree_insert(&nm_i->free_nid_root, i->nid, i)) {
- 		spin_unlock(&nm_i->free_nid_list_lock);
-+		radix_tree_preload_end();
- 		kmem_cache_free(free_nid_slab, i);
- 		return 0;
- 	}
- 	list_add_tail(&i->list, &nm_i->free_nid_list);
- 	nm_i->fcnt++;
- 	spin_unlock(&nm_i->free_nid_list_lock);
-+	radix_tree_preload_end();
- 	return 1;
- }
- 
-@@ -1994,8 +2001,8 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 
- 	INIT_RADIX_TREE(&nm_i->free_nid_root, GFP_ATOMIC);
- 	INIT_LIST_HEAD(&nm_i->free_nid_list);
--	INIT_RADIX_TREE(&nm_i->nat_root, GFP_ATOMIC);
--	INIT_RADIX_TREE(&nm_i->nat_set_root, GFP_ATOMIC);
-+	INIT_RADIX_TREE(&nm_i->nat_root, GFP_NOIO);
-+	INIT_RADIX_TREE(&nm_i->nat_set_root, GFP_NOIO);
- 	INIT_LIST_HEAD(&nm_i->nat_entries);
- 
- 	mutex_init(&nm_i->build_lock);
+ 	struct inode *inode = file_inode(filp);
+@@ -1010,6 +1018,7 @@ const struct file_operations f2fs_file_operations = {
+ 	.read_iter	= generic_file_read_iter,
+ 	.write_iter	= generic_file_write_iter,
+ 	.open		= generic_file_open,
++	.release	= f2fs_release_file,
+ 	.mmap		= f2fs_file_mmap,
+ 	.fsync		= f2fs_sync_file,
+ 	.fallocate	= f2fs_fallocate,
 -- 
 2.1.1
+
+
+------------------------------------------------------------------------------
+Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
+from Actuate! Instantly Supercharge Your Business Reports and Dashboards
+with Interactivity, Sharing, Native Excel Exports, App Integration & more
+Get technology previously reserved for billion-dollar corporations, FREE
+http://pubads.g.doubleclick.net/gampad/clk?id=164703151&iu=/4140/ostg.clktrk
