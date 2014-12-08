@@ -1,127 +1,68 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: [PATCH 2/3] f2fs: cleanup path to need cp at fsync
-Date: Mon, 08 Dec 2014 15:29:41 +0900
-Message-ID: <1418020182-5356-2-git-send-email-cm224.lee@samsung.com>
-References: <1418020182-5356-1-git-send-email-cm224.lee@samsung.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1418020182-5356-1-git-send-email-cm224.lee@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Changman Lee <cm224.lee@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [f2fs-dev][PATCH 1/4] f2fs: fix to enable readahead for SSA/CP blocks
+Date: Mon, 08 Dec 2014 14:56:19 +0800
+Message-ID: <001801d012b4$2ffb5c80$8ff21580$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Added some commentaries for code readability and cleaned up if-statement
-clearly.
+1.We use zero as upper boundary value for ra SSA/CP blocks, we will skip
+readahead as verification failure with max number, it causes low performance.
+2.Low boundary value is not accurate for SSA/CP/POR region verification, so
+these values need to be redefined.
 
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+This patch fixes above issues.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/file.c | 79 ++++++++++++++++++++++++++++++++--------------------------
- 1 file changed, 43 insertions(+), 36 deletions(-)
+ fs/f2fs/checkpoint.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 0b97002..3c27e0e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -149,6 +149,26 @@ static bool need_inode_page_update(struct f2fs_sb_info *sbi, nid_t ino)
- 	return ret;
- }
- 
-+static void try_to_fix_pino(struct inode *inode)
-+{
-+	struct f2fs_inode_info *fi = F2FS_I(inode);
-+	nid_t pino;
-+
-+	down_write(&fi->i_sem);
-+	fi->xattr_ver = 0;
-+	if (file_wrong_pino(inode) && inode->i_nlink == 1 &&
-+			get_parent_ino(inode, &pino)) {
-+		fi->i_pino = pino;
-+		file_got_pino(inode);
-+		up_write(&fi->i_sem);
-+
-+		mark_inode_dirty_sync(inode);
-+		f2fs_write_inode(inode, NULL);
-+	} else {
-+		up_write(&fi->i_sem);
-+	}
-+}
-+
- int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- {
- 	struct inode *inode = file->f_mapping->host;
-@@ -213,49 +233,36 @@ go_write:
- 	up_read(&fi->i_sem);
- 
- 	if (need_cp) {
--		nid_t pino;
--
- 		/* all the dirty node pages should be flushed for POR */
- 		ret = f2fs_sync_fs(inode->i_sb, 1);
- 
--		down_write(&fi->i_sem);
--		fi->xattr_ver = 0;
--		if (file_wrong_pino(inode) && inode->i_nlink == 1 &&
--					get_parent_ino(inode, &pino)) {
--			fi->i_pino = pino;
--			file_got_pino(inode);
--			up_write(&fi->i_sem);
--			mark_inode_dirty_sync(inode);
--			ret = f2fs_write_inode(inode, NULL);
--			if (ret)
--				goto out;
--		} else {
--			up_write(&fi->i_sem);
--		}
--	} else {
-+		/*
-+		 * We've secured consistency through sync_fs. Following pino
-+		 * will be used only for fsynced inodes after checkpoint.
-+		 */
-+		try_to_fix_pino(inode);
-+		goto out;
-+	}
- sync_nodes:
--		sync_node_pages(sbi, ino, &wbc);
--
--		if (need_inode_block_update(sbi, ino)) {
--			mark_inode_dirty_sync(inode);
--			ret = f2fs_write_inode(inode, NULL);
--			if (ret)
--				goto out;
--			goto sync_nodes;
--		}
-+	sync_node_pages(sbi, ino, &wbc);
- 
--		ret = wait_on_node_pages_writeback(sbi, ino);
--		if (ret)
--			goto out;
-+	if (need_inode_block_update(sbi, ino)) {
-+		mark_inode_dirty_sync(inode);
-+		f2fs_write_inode(inode, NULL);
-+		goto sync_nodes;
-+	}
- 
--		/* once recovery info is written, don't need to tack this */
--		remove_dirty_inode(sbi, ino, APPEND_INO);
--		clear_inode_flag(fi, FI_APPEND_WRITE);
-+	ret = wait_on_node_pages_writeback(sbi, ino);
-+	if (ret)
-+		goto out;
-+
-+	/* once recovery info is written, don't need to tack this */
-+	remove_dirty_inode(sbi, ino, APPEND_INO);
-+	clear_inode_flag(fi, FI_APPEND_WRITE);
- flush_out:
--		remove_dirty_inode(sbi, ino, UPDATE_INO);
--		clear_inode_flag(fi, FI_UPDATE_WRITE);
--		ret = f2fs_issue_flush(sbi);
--	}
-+	remove_dirty_inode(sbi, ino, UPDATE_INO);
-+	clear_inode_flag(fi, FI_UPDATE_WRITE);
-+	ret = f2fs_issue_flush(sbi);
- out:
- 	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
- 	return ret;
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 20a917b..c32ed7c 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -95,8 +95,9 @@ static inline block_t get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
+ 	case META_SIT:
+ 		return SIT_BLK_CNT(sbi);
+ 	case META_SSA:
++		return MAIN_BLKADDR(sbi);
+ 	case META_CP:
+-		return 0;
++		return SM_I(sbi)->sit_info->sit_base_addr;
+ 	case META_POR:
+ 		return MAX_BLKADDR(sbi);
+ 	default:
+@@ -141,11 +142,23 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type
+ 			prev_blk_addr = blk_addr;
+ 			break;
+ 		case META_SSA:
++			if (unlikely(blkno >= max_blks))
++				goto out;
++			if (unlikely(blkno < SM_I(sbi)->ssa_blkaddr))
++				goto out;
++			blk_addr = blkno;
++			break;
+ 		case META_CP:
++			if (unlikely(blkno >= max_blks))
++				goto out;
++			if (unlikely(blkno < __start_cp_addr(sbi)))
++				goto out;
++			blk_addr = blkno;
++			break;
+ 		case META_POR:
+ 			if (unlikely(blkno >= max_blks))
+ 				goto out;
+-			if (unlikely(blkno < SEG0_BLKADDR(sbi)))
++			if (unlikely(blkno < MAIN_BLKADDR(sbi)))
+ 				goto out;
+ 			blk_addr = blkno;
+ 			break;
 -- 
-1.9.1
-
+2.1.2
