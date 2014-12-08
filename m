@@ -1,131 +1,139 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev][PATCH 2/4] f2fs: introduce is_valid_blkaddr to cleanup
- codes in ra_meta_pages
-Date: Mon, 08 Dec 2014 14:59:17 +0800
-Message-ID: <001901d012b4$ab211670$01634350$@samsung.com>
+Subject: [PATCH 3/4] f2fs: readahead contiguous current summary
+ blocks in checkpoint
+Date: Mon, 08 Dec 2014 15:01:16 +0800
+Message-ID: <001a01d012b4$dfe9d040$9fbd70c0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1XxsKt-0003na-7h
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 08 Dec 2014 07:02:23 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1XxsKr-0007zP-LE
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 08 Dec 2014 07:02:23 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NG9000WW4VH4J90@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 08 Dec 2014 16:02:05 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch does cleanup work, it introduces is_valid_blkaddr() to include
-verification code for blkaddr with upper and down boundary value which were in
-ra_meta_pages previous.
+Let's add readahead code for reading contiguous compact/normal summary blocks
+in checkpoint, then we will gain better performance in mount procedure.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/checkpoint.c | 53 ++++++++++++++++++++++++++--------------------------
- 1 file changed, 26 insertions(+), 27 deletions(-)
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/segment.c    | 21 ++++++++++++++++++---
+ 3 files changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index c32ed7c..e0ff75e 100644
+index e0ff75e..aa2a21c 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -87,22 +87,36 @@ struct page *get_meta_page_ra(struct f2fs_sb_info *sbi, pgoff_t index)
- 	return get_meta_page(sbi, index);
- }
+@@ -915,7 +915,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	ckpt->next_free_nid = cpu_to_le32(last_nid);
  
--static inline block_t get_max_meta_blks(struct f2fs_sb_info *sbi, int type)
-+static inline bool is_valid_blkaddr(struct f2fs_sb_info *sbi,
-+						block_t blkaddr, int type)
- {
- 	switch (type) {
- 	case META_NAT:
--		return NM_I(sbi)->max_nid / NAT_ENTRY_PER_BLOCK;
-+		break;
- 	case META_SIT:
--		return SIT_BLK_CNT(sbi);
-+		if (unlikely(blkaddr >= SIT_BLK_CNT(sbi)))
-+			return false;
-+		break;
- 	case META_SSA:
--		return MAIN_BLKADDR(sbi);
-+		if (unlikely(blkaddr >= MAIN_BLKADDR(sbi) ||
-+			blkaddr < SM_I(sbi)->ssa_blkaddr))
-+			return false;
-+		break;
- 	case META_CP:
--		return SM_I(sbi)->sit_info->sit_base_addr;
-+		if (unlikely(blkaddr >= SIT_I(sbi)->sit_base_addr ||
-+			blkaddr < __start_cp_addr(sbi)))
-+			return false;
-+		break;
- 	case META_POR:
--		return MAX_BLKADDR(sbi);
-+		if (unlikely(blkaddr >= MAX_BLKADDR(sbi) ||
-+			blkaddr < MAIN_BLKADDR(sbi)))
-+			return false;
-+		break;
- 	default:
- 		BUG();
- 	}
-+
-+	return true;
- }
- 
+ 	/* 2 cp  + n data seg summary + orphan inode blocks */
+-	data_sum_blocks = npages_for_summary_flush(sbi);
++	data_sum_blocks = npages_for_summary_flush(sbi, false);
+ 	if (data_sum_blocks < NR_CURSEG_DATA_TYPE)
+ 		set_ckpt_flags(ckpt, CP_COMPACT_SUM_FLAG);
+ 	else
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d042813..fc88e8a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1393,7 +1393,7 @@ void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
+ void clear_prefree_segments(struct f2fs_sb_info *);
+ void release_discard_addrs(struct f2fs_sb_info *);
+ void discard_next_dnode(struct f2fs_sb_info *, block_t);
+-int npages_for_summary_flush(struct f2fs_sb_info *);
++int npages_for_summary_flush(struct f2fs_sb_info *, bool);
+ void allocate_new_segments(struct f2fs_sb_info *);
+ int f2fs_trim_fs(struct f2fs_sb_info *, struct fstrim_range *);
+ struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9a33e34..e3bec6e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -731,7 +731,7 @@ static void __add_sum_entry(struct f2fs_sb_info *sbi, int type,
  /*
-@@ -113,7 +127,6 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type
- 	block_t prev_blk_addr = 0;
- 	struct page *page;
- 	block_t blkno = start;
--	block_t max_blks = get_max_meta_blks(sbi, type);
+  * Calculate the number of current summary pages for writing
+  */
+-int npages_for_summary_flush(struct f2fs_sb_info *sbi)
++int npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra)
+ {
+ 	int valid_sum_count = 0;
+ 	int i, sum_in_page;
+@@ -739,8 +739,13 @@ int npages_for_summary_flush(struct f2fs_sb_info *sbi)
+ 	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
+ 		if (sbi->ckpt->alloc_type[i] == SSR)
+ 			valid_sum_count += sbi->blocks_per_seg;
+-		else
+-			valid_sum_count += curseg_blkoff(sbi, i);
++		else {
++			if (unlikely(for_ra))
++				valid_sum_count += le16_to_cpu(
++					F2FS_CKPT(sbi)->cur_data_blkoff[i]);
++			else
++				valid_sum_count += curseg_blkoff(sbi, i);
++		}
+ 	}
  
- 	struct f2fs_io_info fio = {
- 		.type = META,
-@@ -123,18 +136,20 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type
- 	for (; nrpages-- > 0; blkno++) {
- 		block_t blk_addr;
+ 	sum_in_page = (PAGE_CACHE_SIZE - 2 * SUM_JOURNAL_SIZE -
+@@ -1446,12 +1451,22 @@ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
+ 	int err;
  
-+		if (!is_valid_blkaddr(sbi, blkno, type))
-+			goto out;
+ 	if (is_set_ckpt_flags(F2FS_CKPT(sbi), CP_COMPACT_SUM_FLAG)) {
++		int npages = npages_for_summary_flush(sbi, true);
 +
- 		switch (type) {
- 		case META_NAT:
--			/* get nat block addr */
--			if (unlikely(blkno >= max_blks))
-+			if (unlikely(blkno >=
-+					NAT_BLOCK_OFFSET(NM_I(sbi)->max_nid)))
- 				blkno = 0;
-+			/* get nat block addr */
- 			blk_addr = current_nat_addr(sbi,
- 					blkno * NAT_ENTRY_PER_BLOCK);
- 			break;
- 		case META_SIT:
- 			/* get sit block addr */
--			if (unlikely(blkno >= max_blks))
--				goto out;
- 			blk_addr = current_sit_addr(sbi,
- 					blkno * SIT_ENTRY_PER_BLOCK);
- 			if (blkno != start && prev_blk_addr + 1 != blk_addr)
-@@ -142,24 +157,8 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type
- 			prev_blk_addr = blk_addr;
- 			break;
- 		case META_SSA:
--			if (unlikely(blkno >= max_blks))
--				goto out;
--			if (unlikely(blkno < SM_I(sbi)->ssa_blkaddr))
--				goto out;
--			blk_addr = blkno;
--			break;
- 		case META_CP:
--			if (unlikely(blkno >= max_blks))
--				goto out;
--			if (unlikely(blkno < __start_cp_addr(sbi)))
--				goto out;
--			blk_addr = blkno;
--			break;
- 		case META_POR:
--			if (unlikely(blkno >= max_blks))
--				goto out;
--			if (unlikely(blkno < MAIN_BLKADDR(sbi)))
--				goto out;
- 			blk_addr = blkno;
- 			break;
- 		default:
++		if (npages >= 2)
++			ra_meta_pages(sbi, start_sum_block(sbi), npages,
++								META_CP);
++
+ 		/* restore for compacted data summary */
+ 		if (read_compacted_summaries(sbi))
+ 			return -EINVAL;
+ 		type = CURSEG_HOT_NODE;
+ 	}
+ 
++	if (is_set_ckpt_flags(F2FS_CKPT(sbi), CP_UMOUNT_FLAG))
++		ra_meta_pages(sbi, sum_blk_addr(sbi, NR_CURSEG_TYPE, type),
++					NR_CURSEG_TYPE - type, META_CP);
++
+ 	for (; type <= CURSEG_COLD_NODE; type++) {
+ 		err = read_normal_summaries(sbi, type);
+ 		if (err)
 -- 
 2.1.2
+
+
+
+------------------------------------------------------------------------------
+Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
+from Actuate! Instantly Supercharge Your Business Reports and Dashboards
+with Interactivity, Sharing, Native Excel Exports, App Integration & more
+Get technology previously reserved for billion-dollar corporations, FREE
+http://pubads.g.doubleclick.net/gampad/clk?id=164703151&iu=/4140/ostg.clktrk
