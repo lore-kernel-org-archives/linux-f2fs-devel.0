@@ -1,93 +1,114 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: clear track info related to write
- mode all the time
-Date: Mon, 8 Dec 2014 10:53:25 -0800
-Message-ID: <20141208185325.GA18956@jaegeuk-mac02.mot.com>
-References: <1418020182-5356-1-git-send-email-cm224.lee@samsung.com>
- <1418020182-5356-3-git-send-email-cm224.lee@samsung.com>
+Subject: Re: [f2fs-dev][PATCH 3/4] f2fs: readahead contiguous current summary
+ blocks in checkpoint
+Date: Mon, 8 Dec 2014 11:09:24 -0800
+Message-ID: <20141208190924.GB18956@jaegeuk-mac02.mot.com>
+References: <001a01d012b4$dfe9d040$9fbd70c0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1418020182-5356-3-git-send-email-cm224.lee@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <001a01d012b4$dfe9d040$9fbd70c0$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: Changman Lee <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+Hi Chao,
 
-On Mon, Dec 08, 2014 at 03:29:42PM +0900, Changman Lee wrote:
-> In case of checkpoint is called at fsync, we should clear track info.
-> Otherwise, remained track info may influence to inode flag next
-> eviction.
+On Mon, Dec 08, 2014 at 03:01:16PM +0800, Chao Yu wrote:
+> Let's add readahead code for reading contiguous compact/normal summary blocks
+> in checkpoint, then we will gain better performance in mount procedure.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/checkpoint.c |  2 +-
+>  fs/f2fs/f2fs.h       |  2 +-
+>  fs/f2fs/segment.c    | 21 ++++++++++++++++++---
+>  3 files changed, 20 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index e0ff75e..aa2a21c 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -915,7 +915,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	ckpt->next_free_nid = cpu_to_le32(last_nid);
+>  
+>  	/* 2 cp  + n data seg summary + orphan inode blocks */
+> -	data_sum_blocks = npages_for_summary_flush(sbi);
+> +	data_sum_blocks = npages_for_summary_flush(sbi, false);
+>  	if (data_sum_blocks < NR_CURSEG_DATA_TYPE)
+>  		set_ckpt_flags(ckpt, CP_COMPACT_SUM_FLAG);
+>  	else
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index d042813..fc88e8a 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1393,7 +1393,7 @@ void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
+>  void clear_prefree_segments(struct f2fs_sb_info *);
+>  void release_discard_addrs(struct f2fs_sb_info *);
+>  void discard_next_dnode(struct f2fs_sb_info *, block_t);
+> -int npages_for_summary_flush(struct f2fs_sb_info *);
+> +int npages_for_summary_flush(struct f2fs_sb_info *, bool);
+>  void allocate_new_segments(struct f2fs_sb_info *);
+>  int f2fs_trim_fs(struct f2fs_sb_info *, struct fstrim_range *);
+>  struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 9a33e34..e3bec6e 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -731,7 +731,7 @@ static void __add_sum_entry(struct f2fs_sb_info *sbi, int type,
+>  /*
+>   * Calculate the number of current summary pages for writing
+>   */
+> -int npages_for_summary_flush(struct f2fs_sb_info *sbi)
+> +int npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra)
+>  {
+>  	int valid_sum_count = 0;
+>  	int i, sum_in_page;
+> @@ -739,8 +739,13 @@ int npages_for_summary_flush(struct f2fs_sb_info *sbi)
+>  	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
+>  		if (sbi->ckpt->alloc_type[i] == SSR)
+>  			valid_sum_count += sbi->blocks_per_seg;
+> -		else
+> -			valid_sum_count += curseg_blkoff(sbi, i);
+> +		else {
+> +			if (unlikely(for_ra))
 
-In do_checkpoint, release_dirty_inode() already removed UPDATE|APPEND_INO.
-So, let's just drop the inode flags.
+IMO, unlikely is not appropriate for here.
 
 Thanks,
 
-> 
-> Signed-off-by: Changman Lee <cm224.lee@samsung.com>
-> ---
->  fs/f2fs/file.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 3c27e0e..3860fb8 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -177,6 +177,7 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
->  	nid_t ino = inode->i_ino;
->  	int ret = 0;
->  	bool need_cp = false;
-> +	bool flush = true;
->  	struct writeback_control wbc = {
->  		.sync_mode = WB_SYNC_ALL,
->  		.nr_to_write = LONG_MAX,
-> @@ -238,10 +239,11 @@ go_write:
->  
->  		/*
->  		 * We've secured consistency through sync_fs. Following pino
-> -		 * will be used only for fsynced inodes after checkpoint.
-> +		 * will be used only for inodes to be fsynced after checkpoint.
->  		 */
->  		try_to_fix_pino(inode);
-> -		goto out;
-> +		flush = false;
-> +		goto flush_cleanup;
+> +				valid_sum_count += le16_to_cpu(
+> +					F2FS_CKPT(sbi)->cur_data_blkoff[i]);
+> +			else
+> +				valid_sum_count += curseg_blkoff(sbi, i);
+> +		}
 >  	}
->  sync_nodes:
->  	sync_node_pages(sbi, ino, &wbc);
-> @@ -256,13 +258,15 @@ sync_nodes:
->  	if (ret)
->  		goto out;
 >  
-> -	/* once recovery info is written, don't need to tack this */
-> +	/* once recovery info is written, don't need to track this */
-> +flush_cleanup:
->  	remove_dirty_inode(sbi, ino, APPEND_INO);
->  	clear_inode_flag(fi, FI_APPEND_WRITE);
->  flush_out:
->  	remove_dirty_inode(sbi, ino, UPDATE_INO);
->  	clear_inode_flag(fi, FI_UPDATE_WRITE);
-> -	ret = f2fs_issue_flush(sbi);
-> +	if (flush)
-> +		ret = f2fs_issue_flush(sbi);
->  out:
->  	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
->  	return ret;
+>  	sum_in_page = (PAGE_CACHE_SIZE - 2 * SUM_JOURNAL_SIZE -
+> @@ -1446,12 +1451,22 @@ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
+>  	int err;
+>  
+>  	if (is_set_ckpt_flags(F2FS_CKPT(sbi), CP_COMPACT_SUM_FLAG)) {
+> +		int npages = npages_for_summary_flush(sbi, true);
+> +
+> +		if (npages >= 2)
+> +			ra_meta_pages(sbi, start_sum_block(sbi), npages,
+> +								META_CP);
+> +
+>  		/* restore for compacted data summary */
+>  		if (read_compacted_summaries(sbi))
+>  			return -EINVAL;
+>  		type = CURSEG_HOT_NODE;
+>  	}
+>  
+> +	if (is_set_ckpt_flags(F2FS_CKPT(sbi), CP_UMOUNT_FLAG))
+> +		ra_meta_pages(sbi, sum_blk_addr(sbi, NR_CURSEG_TYPE, type),
+> +					NR_CURSEG_TYPE - type, META_CP);
+> +
+>  	for (; type <= CURSEG_COLD_NODE; type++) {
+>  		err = read_normal_summaries(sbi, type);
+>  		if (err)
 > -- 
-> 1.9.1
-> 
-> 
-> ------------------------------------------------------------------------------
-> Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
-> from Actuate! Instantly Supercharge Your Business Reports and Dashboards
-> with Interactivity, Sharing, Native Excel Exports, App Integration & more
-> Get technology previously reserved for billion-dollar corporations, FREE
-> http://pubads.g.doubleclick.net/gampad/clk?id=164703151&iu=/4140/ostg.clktrk
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 2.1.2
