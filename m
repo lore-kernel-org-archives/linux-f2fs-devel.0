@@ -1,176 +1,125 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] f2fs updates for v3.19
-Date: Tue, 9 Dec 2014 18:18:20 -0800
-Message-ID: <20141210021820.GA41187@jaegeuk-mac02.mot.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [f2fs-dev][PATCH] f2fs: use ra_meta_pages to simplify readahead code
+ in restore_node_summary
+Date: Thu, 11 Dec 2014 18:16:27 +0800
+Message-ID: <003e01d0152b$a7fd0b60$f7f72220$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Linus,
+Use more common function ra_meta_pages() with META_POR to readahead node blocks
+in restore_node_summary() instead of ra_sum_pages(), hence we can simplify the
+readahead code there, and also we can remove unused function ra_sum_pages().
 
-This patch-set includes lots of bug fixes based on clean-ups and refactored
-codes. And inline_dir was introduced and two minor mount options were added.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/node.c | 67 ++++++++++++----------------------------------------------
+ 1 file changed, 14 insertions(+), 53 deletions(-)
 
-Please, pull the following patches.
-
-Thank you,
-
-The following changes since commit f4ca536f71ad69d9a974d0156d43b24b3f3112de:
-
-  Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k (2014-11-03 14:09:33 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-3.19
-
-for you to fetch changes up to 635aee1fefef921ae4124b127fced62ea6008839:
-
-  f2fs: avoid to ra unneeded blocks in recover flow (2014-12-08 14:19:09 -0800)
-
-----------------------------------------------------------------
-f2fs updates for v3.19
-
-This series includes the following enhancement with refactored flows.
- o fix inmemory page operations
- o fix wrong inline_data & inline_dir logics
- o enhance memory and IO control under memory pressure
- o consider preemption on radix_tree operation
- o fix memory leaks and deadlocks
-
-But also, there are a couple of new features:
- o support inline_dir to store dentries inside inode page
- o add -o fastboot to reduce booting time
- o implement -o dirsync
-
-And a lot of clean-ups and minor bug fixes as well.
-
-----------------------------------------------------------------
-Changman Lee (8):
-      f2fs: fix wrong data structure when create slab
-      f2fs: check dirty_nat_cnt before flushing nat entries in journal
-      f2fs: no more dirty_nat_entires when flushing
-      f2fs: cleanup if-statement of phase in gc_data_segment
-      f2fs: cleanup redundant macro
-      f2fs: more fast lookup for gc_inode list
-      f2fs: check if inode state is dirty at fsync
-      f2fs: cleanup path to need cp at fsync
-
-Chao Yu (14):
-      f2fs: add infra struct and helper for inline dir
-      f2fs: add a new mount option for inline dir
-      f2fs: export dir operations for inline dir
-      f2fs: add key function to handle inline dir
-      f2fs: enable inline dir handling
-      f2fs: update f2fs documentation for inline dir support
-      f2fs: avoid unable to restart gc thread in remount
-      f2fs: remove unneeded check code with option in f2fs_remount
-      f2fs: introduce struct inode_management to wrap inner fields
-      f2fs: fix to return correct error number in f2fs_write_begin
-      f2fs: use atomic for counting inode with inline_{dir,inode} flag
-      f2fs: fix to enable readahead for SSA/CP blocks
-      f2fs: introduce is_valid_blkaddr to cleanup codes in ra_meta_pages
-      f2fs: avoid to ra unneeded blocks in recover flow
-
-Gu Zheng (6):
-      f2fs: remove the seems unneeded argument 'type' from __get_victim
-      f2fs: remove the redundant function cond_clear_inode_flag
-      f2fs: introduce f2fs_change_bit to simplify the change bit logic
-      f2fs: set raw_super default to NULL to avoid compile warning
-      f2fs: rename f2fs_set/clear_bit to f2fs_test_and_set/clear_bit
-      f2fs: use current_sit_addr to replace the open code
-
-Jaegeuk Kim (56):
-      f2fs: do not make dirty any inmemory pages
-      f2fs: invalidate inmemory page
-      f2fs: should truncate any allocated block for inline_data write
-      f2fs: fix race conditon on truncation with inline_data
-      f2fs: use highmem for directory pages
-      f2fs: avoid to allocate when inline_data was written
-      f2fs: fix to call f2fs_unlock_op
-      f2fs: avoid build warning
-      f2fs: avoid infinite loop at cp_error
-      f2fs: reuse room_for_filename for inline dentry operation
-      f2fs: reuse find_in_block code for find_in_inline_dir
-      f2fs: fix to wait correct block type
-      f2fs: avoid deadlock on init_inode_metadata
-      f2fs: add stat info for inline_dentry inodes
-      f2fs: fix counting inline_data inode numbers
-      f2fs: reuse core function in f2fs_readdir for inline_dentry
-      f2fs: should not truncate any inline_dentry
-      f2fs: introduce f2fs_dentry_ptr structure for code clean-up
-      f2fs: reuse make_empty_dir code for inline_dentry
-      f2fs: use kmap_atomic instead of kmap
-      f2fs: declare f2fs_convert_inline_dir as a static function
-      f2fs: call write_checkpoint under disabled gc
-      f2fs: flush_dcache_page for inline data
-      f2fs: do not discard data protected by the previous checkpoint
-      f2fs: revisit inline_data to avoid data races and potential bugs
-      f2fs: send discard commands in larger extent
-      f2fs: avoid race condition in handling wait_io
-      f2fs: remove unnecessary macro
-      f2fs: introduce -o fastboot for reducing booting time only
-      f2fs: disable roll-forward when active_logs = 2
-      f2fs: introduce the number of inode entries
-      f2fs: control the memory footprint used by ino entries
-      f2fs: write node pages if checkpoint is not doing
-      f2fs: do not skip any writes under memory pressure
-      f2fs: implement -o dirsync
-      f2fs: reduce the number of inline_data inode before clearing it
-      f2fs: fix deadlock to grab 0'th data page
-      f2fs: convert inline_data when i_size becomes large
-      f2fs: fix to call put_page at the error handling routine
-      f2fs: put the inode page when error was occurred
-      f2fs: submit bio for node blocks in the reclaim path
-      f2fs: write SSA pages under memory pressure
-      f2fs: call flush_dcache_page when the page was updated
-      f2fs: introduce f2fs_dentry_kunmap to clean up
-      f2fs: fix livelock calling f2fs_iget during f2fs_evict_inode
-      f2fs: fix deadlock during inline_data conversion
-      f2fs: make clean the page before writing
-      f2fs: fix to recover converted inline_data
-      f2fs: fix missing kmem_cache_free
-      f2fs: use rw_semaphore for nat entry lock
-      f2fs: call radix_tree_preload before radix_tree_insert
-      f2fs: do retry operations with cond_resched
-      f2fs: count inline_xx in do_read_inode
-      f2fs: set page private for inmemory pages for truncation
-      f2fs: release inmemory pages when the file was closed
-      f2fs: count the number of inmemory pages
-
-Jan Kara (3):
-      f2fs: avoid returning uninitialized value to userspace from f2fs_trim_fs()
-      f2fs: fix possible data corruption in f2fs_write_begin()
-      f2fs: remove pointless bit testing in f2fs_delete_entry()
-
-Markus Elfring (1):
-      f2fs: fix typos for the word "destroy" in jump labels
-
- Documentation/filesystems/f2fs.txt |   7 +
- fs/f2fs/acl.c                      | 148 +++++++++++-
- fs/f2fs/acl.h                      |   5 +-
- fs/f2fs/checkpoint.c               | 186 ++++++++------
- fs/f2fs/data.c                     | 166 ++++++-------
- fs/f2fs/debug.c                    |  15 +-
- fs/f2fs/dir.c                      | 308 +++++++++++++++---------
- fs/f2fs/f2fs.h                     | 176 +++++++++++---
- fs/f2fs/file.c                     | 212 ++++++++++------
- fs/f2fs/gc.c                       |  89 +++----
- fs/f2fs/gc.h                       |   5 +
- fs/f2fs/inline.c                   | 482 +++++++++++++++++++++++++++++--------
- fs/f2fs/inode.c                    |  44 +++-
- fs/f2fs/namei.c                    |  58 +++--
- fs/f2fs/node.c                     | 163 +++++++------
- fs/f2fs/node.h                     |   8 +-
- fs/f2fs/recovery.c                 |  14 +-
- fs/f2fs/segment.c                  | 122 +++++++---
- fs/f2fs/segment.h                  |   8 +-
- fs/f2fs/super.c                    |  29 ++-
- fs/f2fs/xattr.c                    |   6 +-
- fs/f2fs/xattr.h                    |   6 +-
- include/linux/f2fs_fs.h            |  27 ++-
- 23 files changed, 1578 insertions(+), 706 deletions(-)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index f83326c..5824d6a 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1726,80 +1726,41 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ 	return 0;
+ }
+ 
+-/*
+- * ra_sum_pages() merge contiguous pages into one bio and submit.
+- * these pre-read pages are allocated in bd_inode's mapping tree.
+- */
+-static int ra_sum_pages(struct f2fs_sb_info *sbi, struct page **pages,
+-				int start, int nrpages)
+-{
+-	struct inode *inode = sbi->sb->s_bdev->bd_inode;
+-	struct address_space *mapping = inode->i_mapping;
+-	int i, page_idx = start;
+-	struct f2fs_io_info fio = {
+-		.type = META,
+-		.rw = READ_SYNC | REQ_META | REQ_PRIO
+-	};
+-
+-	for (i = 0; page_idx < start + nrpages; page_idx++, i++) {
+-		/* alloc page in bd_inode for reading node summary info */
+-		pages[i] = grab_cache_page(mapping, page_idx);
+-		if (!pages[i])
+-			break;
+-		f2fs_submit_page_mbio(sbi, pages[i], page_idx, &fio);
+-	}
+-
+-	f2fs_submit_merged_bio(sbi, META, READ);
+-	return i;
+-}
+-
+ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 			unsigned int segno, struct f2fs_summary_block *sum)
+ {
+ 	struct f2fs_node *rn;
+ 	struct f2fs_summary *sum_entry;
+-	struct inode *inode = sbi->sb->s_bdev->bd_inode;
+ 	block_t addr;
+ 	int bio_blocks = MAX_BIO_BLOCKS(sbi);
+-	struct page *pages[bio_blocks];
+-	int i, idx, last_offset, nrpages, err = 0;
++	int i, idx, last_offset, nrpages;
+ 
+ 	/* scan the node segment */
+ 	last_offset = sbi->blocks_per_seg;
+ 	addr = START_BLOCK(sbi, segno);
+ 	sum_entry = &sum->entries[0];
+ 
+-	for (i = 0; !err && i < last_offset; i += nrpages, addr += nrpages) {
++	for (i = 0; i < last_offset; i += nrpages, addr += nrpages) {
+ 		nrpages = min(last_offset - i, bio_blocks);
+ 
+ 		/* readahead node pages */
+-		nrpages = ra_sum_pages(sbi, pages, addr, nrpages);
+-		if (!nrpages)
+-			return -ENOMEM;
++		ra_meta_pages(sbi, addr, nrpages, META_POR);
+ 
+-		for (idx = 0; idx < nrpages; idx++) {
+-			if (err)
+-				goto skip;
++		for (idx = addr; idx < addr + nrpages; idx++) {
++			struct page *page = get_meta_page(sbi, idx);
+ 
+-			lock_page(pages[idx]);
+-			if (unlikely(!PageUptodate(pages[idx]))) {
+-				err = -EIO;
+-			} else {
+-				rn = F2FS_NODE(pages[idx]);
+-				sum_entry->nid = rn->footer.nid;
+-				sum_entry->version = 0;
+-				sum_entry->ofs_in_node = 0;
+-				sum_entry++;
+-			}
+-			unlock_page(pages[idx]);
+-skip:
+-			page_cache_release(pages[idx]);
++			rn = F2FS_NODE(page);
++			sum_entry->nid = rn->footer.nid;
++			sum_entry->version = 0;
++			sum_entry->ofs_in_node = 0;
++			sum_entry++;
++			f2fs_put_page(page, 1);
+ 		}
+ 
+-		invalidate_mapping_pages(inode->i_mapping, addr,
+-							addr + nrpages);
++		truncate_inode_pages_range(META_MAPPING(sbi),
++						addr, addr + nrpages);
+ 	}
+-	return err;
++	return 0;
+ }
+ 
+ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+-- 
+2.1.2
