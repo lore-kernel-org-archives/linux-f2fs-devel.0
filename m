@@ -1,74 +1,53 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: merge two uchar variable in struct
- node_info to reduce memory cost
-Date: Thu, 18 Dec 2014 17:07:43 +0900
-Message-ID: <20141218080743.GA3335@lcm>
-References: <000001d0184a$3f09d580$bd1d8080$@samsung.com>
- <CAN863PvqCJJ-m3NimjX7FKeY941rjSgmzupfPEMHm_qXgRBwfQ@mail.gmail.com>
- <004c01d01a96$2b5b3a80$8211af80$@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH v2] f2fs: use ra_meta_pages to simplify
+ readahead code in restore_node_summary
+Date: Thu, 18 Dec 2014 17:26:03 +0800
+Message-ID: <005101d01aa4$c1974760$44c5d620$@samsung.com>
+References: <001d01d019e1$d6ad6c10$84084430$@samsung.com>
+ <CAN863PuF-aSNGxe6=5k9LL-9V5maHnNnd7w-Sz2GQPFz-MHC7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <004c01d01a96$2b5b3a80$8211af80$@samsung.com>
+In-reply-to: <CAN863PuF-aSNGxe6=5k9LL-9V5maHnNnd7w-Sz2GQPFz-MHC7A@mail.gmail.com>
+Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: 'Changman Lee' <cm224.lee@gmail.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: 'Changman Lee' <cm224.lee@gmail.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Dec 18, 2014 at 02:29:51PM +0800, Chao Yu wrote:
-> Hi Changman,
-> 
-> > -----Original Message-----
-> > From: Changman Lee [mailto:cm224.lee@gmail.com]
-> > Sent: Wednesday, December 17, 2014 11:09 PM
-> > To: Chao Yu
-> > Cc: Jaegeuk Kim; Changman Lee; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Subject: Re: [f2fs-dev] [PATCH v2] f2fs: merge two uchar variable in struct node_info to reduce
-> > memory cost
-> > 
-> > Hi Yu,
-> > 
-> > This patch is effective only in 32 bit machine. In case of 64 bit
-> > machine, nat_entry will be aligned in 8 bytes due to pointer variable
-> > (i.e. struct list_head). So it can't get any benefit to reduce memory
-> > usage. In the case of node_info, however, it will be gain in terms of
-> > memory usage.
-> > Hence, I think it's not correct for commit log to describe this patch.
-> > 
-> 
-> Thanks for your review! :)
-> 
-> AFFIK, in 64 bit machine, size of struct nat_entry is 40 bytes before this patch
-> apply, the reason is that our compiler will fill 3 bytes pads after flag as
-> nid's offset should align to type size of nid, and then fill 7 byte pads after
-> version as size of structure should align to 64 bits when the struct size is bigger
-> than 64 bits.
-> layout of struct nat_entry:
-> |-----8 bytes-----|
-> |list.next        |
-> |list.prev        |
-> |flag    |nid     |
-> |ino     |blk_addr|
-> |version          |
-> After we apply this patch, size of struct nat_entry will be reduced to 32 bytes.
-> Please correct me if I'm wrong.
+Hi Changman,
 
-Hi,
-
-Sorry, you're right.
-I miscalculated.
-
-Thanks,
-
+> -----Original Message-----
+> From: Changman Lee [mailto:cm224.lee@gmail.com]
+> Sent: Wednesday, December 17, 2014 11:20 PM
+> To: Chao Yu
+> Cc: Jaegeuk Kim; Changman Lee; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH v2] f2fs: use ra_meta_pages to simplify readahead code in
+> restore_node_summary
 > 
-> Anyway, I agreed that commit log should be uptodate.
+> Hi,
+> 
+> Is there any reason to use truncate_inode_pages_range instead of
+> invalidate_mapping_pages?
+> IMHO, it seems nice to just use invalidate_mapping_pages because pages
+> of meta_inode shouldn't be dirty, locked, under writeback or mapped in
+> this function.
+> If there is my misunderstanding, let me know.
+
+I think you're right, I use truncate_inode_pages_range because just following the
+usage of readahead-invalidate pair in recovery flow, but without considering the
+difference between them.
+
+I will fix this as you suggested.
+
 > 
 > Thanks,
-> Yu
 > 
-> > Thanks,
-> > 
-> > Reviewed-by: Changman Lee <cm224.lee@samsung.com>
-> > 
+> Reviewed-by: Changman Lee <cm224.lee@samsung.com>
+
+And thanks for your review! :)
+
+Regards,
+Yu
