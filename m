@@ -1,8 +1,8 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev] [PATCH v3] f2fs: merge two uchar variable in struct
- node_info to reduce memory cost
-Date: Thu, 18 Dec 2014 17:37:21 +0800
-Message-ID: <005201d01aa6$5593d770$00bb8650$@samsung.com>
+Subject: [f2fs-dev] [PATCH v3] f2fs: use ra_meta_pages to simplify readahead
+ code in restore_node_summary
+Date: Thu, 18 Dec 2014 18:29:05 +0800
+Message-ID: <005301d01aad$9128d0e0$b37a72a0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -13,120 +13,118 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch moves one member of struct nat_entry: _flag_ to struct node_info,
-so _version_ in struct node_info and _flag_ which are unsigned char type will
-merge to one 32-bit space in register/memory. So the size of nat_entry will be
-reduced from 28 bytes to 24 bytes (for 64-bit machine, reduce its size from 40
-bytes to 32 bytes) and then slab memory using by f2fs will be reduced.
+Use more common function ra_meta_pages() with META_POR to readahead node blocks
+in restore_node_summary() instead of ra_sum_pages(), hence we can simplify the
+readahead code there, and also we can remove unused function ra_sum_pages().
 
 changes from v2:
- o update description of memory usage gain for 64-bit machine suggested by
-   Changman Lee.
+ o use invalidate_mapping_pages as before suggested by Changman Lee.
 changes from v1:
- o introduce inline copy_node_info() to copy valid data from node info suggested
-   by Jaegeuk Kim, it can avoid bug.
+ o fix one bug when using truncate_inode_pages_range which is pointed out by
+   Jaegeuk Kim.
 
 Reviewed-by: Changman Lee <cm224.lee@samsung.com>
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/node.c |  4 ++--
- fs/f2fs/node.h | 33 ++++++++++++++++++++++-----------
- 2 files changed, 24 insertions(+), 13 deletions(-)
+ fs/f2fs/node.c | 63 +++++++++++-----------------------------------------------
+ 1 file changed, 12 insertions(+), 51 deletions(-)
 
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f83326c..5aa54a0 100644
+index 5aa54a0..17bf239 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -268,7 +268,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 	e = __lookup_nat_cache(nm_i, ni->nid);
- 	if (!e) {
- 		e = grab_nat_entry(nm_i, ni->nid);
--		e->ni = *ni;
-+		copy_node_info(&e->ni, ni);
- 		f2fs_bug_on(sbi, ni->blk_addr == NEW_ADDR);
- 	} else if (new_blkaddr == NEW_ADDR) {
- 		/*
-@@ -276,7 +276,7 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 		 * previous nat entry can be remained in nat cache.
- 		 * So, reinitialize it with new information.
- 		 */
--		e->ni = *ni;
-+		copy_node_info(&e->ni, ni);
- 		f2fs_bug_on(sbi, ni->blk_addr != NULL_ADDR);
- 	}
+@@ -1726,80 +1726,41 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ 	return 0;
+ }
  
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index d10b644..eb59167 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -29,6 +29,14 @@
- /* return value for read_node_page */
- #define LOCKED_PAGE	1
- 
-+/* For flag in struct node_info */
-+enum {
-+	IS_CHECKPOINTED,	/* is it checkpointed before? */
-+	HAS_FSYNCED_INODE,	/* is the inode fsynced before? */
-+	HAS_LAST_FSYNC,		/* has the latest node fsync mark? */
-+	IS_DIRTY,		/* this nat entry is dirty? */
-+};
-+
- /*
-  * For node information
-  */
-@@ -37,18 +45,11 @@ struct node_info {
- 	nid_t ino;		/* inode number of the node's owner */
- 	block_t	blk_addr;	/* block address of the node */
- 	unsigned char version;	/* version of the node */
--};
+-/*
+- * ra_sum_pages() merge contiguous pages into one bio and submit.
+- * these pre-read pages are allocated in bd_inode's mapping tree.
+- */
+-static int ra_sum_pages(struct f2fs_sb_info *sbi, struct page **pages,
+-				int start, int nrpages)
+-{
+-	struct inode *inode = sbi->sb->s_bdev->bd_inode;
+-	struct address_space *mapping = inode->i_mapping;
+-	int i, page_idx = start;
+-	struct f2fs_io_info fio = {
+-		.type = META,
+-		.rw = READ_SYNC | REQ_META | REQ_PRIO
+-	};
 -
--enum {
--	IS_CHECKPOINTED,	/* is it checkpointed before? */
--	HAS_FSYNCED_INODE,	/* is the inode fsynced before? */
--	HAS_LAST_FSYNC,		/* has the latest node fsync mark? */
--	IS_DIRTY,		/* this nat entry is dirty? */
-+	unsigned char flag;	/* for node information bits */
- };
- 
- struct nat_entry {
- 	struct list_head list;	/* for clean or dirty nat list */
--	unsigned char flag;	/* for node information bits */
- 	struct node_info ni;	/* in-memory node information */
- };
- 
-@@ -63,20 +64,30 @@ struct nat_entry {
- 
- #define inc_node_version(version)	(++version)
- 
-+static inline void copy_node_info(struct node_info *dst,
-+						struct node_info *src)
-+{
-+	dst->nid = src->nid;
-+	dst->ino = src->ino;
-+	dst->blk_addr = src->blk_addr;
-+	dst->version = src->version;
-+	/* should not copy flag here */
-+}
-+
- static inline void set_nat_flag(struct nat_entry *ne,
- 				unsigned int type, bool set)
+-	for (i = 0; page_idx < start + nrpages; page_idx++, i++) {
+-		/* alloc page in bd_inode for reading node summary info */
+-		pages[i] = grab_cache_page(mapping, page_idx);
+-		if (!pages[i])
+-			break;
+-		f2fs_submit_page_mbio(sbi, pages[i], page_idx, &fio);
+-	}
+-
+-	f2fs_submit_merged_bio(sbi, META, READ);
+-	return i;
+-}
+-
+ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 			unsigned int segno, struct f2fs_summary_block *sum)
  {
- 	unsigned char mask = 0x01 << type;
- 	if (set)
--		ne->flag |= mask;
-+		ne->ni.flag |= mask;
- 	else
--		ne->flag &= ~mask;
-+		ne->ni.flag &= ~mask;
+ 	struct f2fs_node *rn;
+ 	struct f2fs_summary *sum_entry;
+-	struct inode *inode = sbi->sb->s_bdev->bd_inode;
+ 	block_t addr;
+ 	int bio_blocks = MAX_BIO_BLOCKS(sbi);
+-	struct page *pages[bio_blocks];
+-	int i, idx, last_offset, nrpages, err = 0;
++	int i, idx, last_offset, nrpages;
+ 
+ 	/* scan the node segment */
+ 	last_offset = sbi->blocks_per_seg;
+ 	addr = START_BLOCK(sbi, segno);
+ 	sum_entry = &sum->entries[0];
+ 
+-	for (i = 0; !err && i < last_offset; i += nrpages, addr += nrpages) {
++	for (i = 0; i < last_offset; i += nrpages, addr += nrpages) {
+ 		nrpages = min(last_offset - i, bio_blocks);
+ 
+ 		/* readahead node pages */
+-		nrpages = ra_sum_pages(sbi, pages, addr, nrpages);
+-		if (!nrpages)
+-			return -ENOMEM;
++		ra_meta_pages(sbi, addr, nrpages, META_POR);
+ 
+-		for (idx = 0; idx < nrpages; idx++) {
+-			if (err)
+-				goto skip;
++		for (idx = addr; idx < addr + nrpages; idx++) {
++			struct page *page = get_meta_page(sbi, idx);
+ 
+-			lock_page(pages[idx]);
+-			if (unlikely(!PageUptodate(pages[idx]))) {
+-				err = -EIO;
+-			} else {
+-				rn = F2FS_NODE(pages[idx]);
+-				sum_entry->nid = rn->footer.nid;
+-				sum_entry->version = 0;
+-				sum_entry->ofs_in_node = 0;
+-				sum_entry++;
+-			}
+-			unlock_page(pages[idx]);
+-skip:
+-			page_cache_release(pages[idx]);
++			rn = F2FS_NODE(page);
++			sum_entry->nid = rn->footer.nid;
++			sum_entry->version = 0;
++			sum_entry->ofs_in_node = 0;
++			sum_entry++;
++			f2fs_put_page(page, 1);
+ 		}
+ 
+ 		invalidate_mapping_pages(inode->i_mapping, addr,
+ 							addr + nrpages);
+ 	}
+-	return err;
++	return 0;
  }
  
- static inline bool get_nat_flag(struct nat_entry *ne, unsigned int type)
- {
- 	unsigned char mask = 0x01 << type;
--	return ne->flag & mask;
-+	return ne->ni.flag & mask;
- }
- 
- static inline void nat_reset_flag(struct nat_entry *ne)
+ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
 -- 
 2.1.2
