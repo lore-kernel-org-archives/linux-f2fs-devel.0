@@ -1,22 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/6] f2fs: add f2fs_io_tracer support
-Date: Sun, 21 Dec 2014 08:35:19 -0800
-Message-ID: <1419179723-3234-2-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 3/6] f2fs: add key functions for f2fs_io_tracer
+Date: Sun, 21 Dec 2014 08:35:20 -0800
+Message-ID: <1419179723-3234-3-git-send-email-jaegeuk@kernel.org>
 References: <1419179723-3234-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Y2jTk-0005WT-QB
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Y2jTl-00074F-O0
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 21 Dec 2014 16:35:36 +0000
+	Sun, 21 Dec 2014 16:35:37 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Y2jTj-0001im-KC for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 21 Dec 2014 16:35:36 +0000
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Y2jTk-0003Bo-Ly for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 21 Dec 2014 16:35:37 +0000
 In-Reply-To: <1419179723-3234-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,107 +30,149 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch adds:
- o initial trace.c and trace.h with skeleton functions
- o Kconfig and Makefile to activate this feature
+This patch adds two key functions to trace process ids and IOs.
+The basic idea is to
+1. remain process ids, pids, in page->private.
+2. show pids in IO traces.
+
+So, later we can retrieve process information according to IO traces.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/Kconfig  | 10 ++++++++++
- fs/f2fs/Makefile |  1 +
- fs/f2fs/trace.c  | 24 ++++++++++++++++++++++++
- fs/f2fs/trace.h  | 24 ++++++++++++++++++++++++
- 4 files changed, 59 insertions(+)
- create mode 100644 fs/f2fs/trace.c
- create mode 100644 fs/f2fs/trace.h
+ fs/f2fs/trace.c | 86 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/trace.h | 18 ++++++++++++
+ 2 files changed, 104 insertions(+)
 
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index 736a348..94e2d2f 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -71,3 +71,13 @@ config F2FS_CHECK_FS
- 	  Enables BUG_ONs which check the filesystem consistency in runtime.
- 
- 	  If you want to improve the performance, say N.
-+
-+config F2FS_IO_TRACE
-+	bool "F2FS IO tracer"
-+	depends on F2FS_FS
-+	depends on FUNCTION_TRACER
-+	help
-+	  F2FS IO trace is based on a function trace, which gathers process
-+	  information and block IO patterns in the filesystem level.
-+
-+	  If unsure, say N.
-diff --git a/fs/f2fs/Makefile b/fs/f2fs/Makefile
-index 2e35da1..d923977 100644
---- a/fs/f2fs/Makefile
-+++ b/fs/f2fs/Makefile
-@@ -5,3 +5,4 @@ f2fs-y		+= checkpoint.o gc.o data.o node.o segment.o recovery.o
- f2fs-$(CONFIG_F2FS_STAT_FS) += debug.o
- f2fs-$(CONFIG_F2FS_FS_XATTR) += xattr.o
- f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) += acl.o
-+f2fs-$(CONFIG_F2FS_IO_TRACE) += trace.o
 diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-new file mode 100644
-index 0000000..4e4a069
---- /dev/null
+index 4e4a069..19f5216 100644
+--- a/fs/f2fs/trace.c
 +++ b/fs/f2fs/trace.c
-@@ -0,0 +1,24 @@
-+/*
-+ * f2fs IO tracer
-+ *
-+ * Copyright (c) 2014 Motorola Mobility
-+ * Copyright (c) 2014 Jaegeuk Kim <jaegeuk@kernel.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#include <linux/fs.h>
-+#include <linux/f2fs_fs.h>
-+#include <linux/sched.h>
+@@ -15,10 +15,96 @@
+ #include "f2fs.h"
+ #include "trace.h"
+ 
++RADIX_TREE(pids, GFP_NOIO);
++struct last_io_info last_io;
 +
-+#include "f2fs.h"
-+#include "trace.h"
-+
-+void f2fs_trace_pid(struct page *page)
++static inline void __print_last_io(void)
 +{
++	if (!last_io.len)
++		return;
++
++	trace_printk("%3x:%3x %4x %-16s %2x %5x %12x %4x\n",
++			last_io.major, last_io.minor,
++			last_io.pid, "----------------",
++			last_io.type,
++			last_io.fio.rw, last_io.fio.blk_addr,
++			last_io.len);
++	memset(&last_io, 0, sizeof(last_io));
 +}
 +
-+void f2fs_trace_ios(struct page *page, struct f2fs_io_info *fio, int flush)
++static int __file_type(struct inode *inode, pid_t pid)
 +{
++	if (f2fs_is_atomic_file(inode))
++		return __ATOMIC_FILE;
++	else if (f2fs_is_volatile_file(inode))
++		return __VOLATILE_FILE;
++	else if (S_ISDIR(inode->i_mode))
++		return __DIR_FILE;
++	else if (inode->i_ino == F2FS_NODE_INO(F2FS_I_SB(inode)))
++		return __NODE_FILE;
++	else if (inode->i_ino == F2FS_META_INO(F2FS_I_SB(inode)))
++		return __META_FILE;
++	else if (pid)
++		return __NORMAL_FILE;
++	else
++		return __MISC_FILE;
 +}
++
+ void f2fs_trace_pid(struct page *page)
+ {
++	struct inode *inode = page->mapping->host;
++	pid_t pid = task_pid_nr(current);
++	void *p;
++
++	page->private = pid;
++
++	p = radix_tree_lookup(&pids, pid);
++	if (p == current)
++		return;
++	if (p)
++		radix_tree_delete(&pids, pid);
++
++	f2fs_radix_tree_insert(&pids, pid, current);
++
++	trace_printk("%3x:%3x %4x %-16s\n",
++			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
++			pid, current->comm);
++
+ }
+ 
+ void f2fs_trace_ios(struct page *page, struct f2fs_io_info *fio, int flush)
+ {
++	struct inode *inode;
++	pid_t pid;
++	int major, minor;
++
++	if (flush) {
++		__print_last_io();
++		return;
++	}
++
++	inode = page->mapping->host;
++	pid = page_private(page);
++
++	major = MAJOR(inode->i_sb->s_dev);
++	minor = MINOR(inode->i_sb->s_dev);
++
++	if (last_io.major == major && last_io.minor == minor &&
++			last_io.pid == pid &&
++			last_io.type == __file_type(inode, pid) &&
++			last_io.fio.rw == fio->rw &&
++			last_io.fio.blk_addr + last_io.len == fio->blk_addr) {
++		last_io.len++;
++		return;
++	}
++
++	__print_last_io();
++
++	last_io.major = major;
++	last_io.minor = minor;
++	last_io.pid = pid;
++	last_io.type = __file_type(inode, pid);
++	last_io.fio = *fio;
++	last_io.len = 1;
++	return;
+ }
 diff --git a/fs/f2fs/trace.h b/fs/f2fs/trace.h
-new file mode 100644
-index 0000000..08856a9
---- /dev/null
+index 08856a9..aa6663b 100644
+--- a/fs/f2fs/trace.h
 +++ b/fs/f2fs/trace.h
-@@ -0,0 +1,24 @@
-+/*
-+ * f2fs IO tracer
-+ *
-+ * Copyright (c) 2014 Motorola Mobility
-+ * Copyright (c) 2014 Jaegeuk Kim <jaegeuk@kernel.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef __F2FS_TRACE_H__
-+#define __F2FS_TRACE_H__
+@@ -14,6 +14,24 @@
+ #ifdef CONFIG_F2FS_IO_TRACE
+ #include <trace/events/f2fs.h>
+ 
++enum file_type {
++	__NORMAL_FILE,
++	__DIR_FILE,
++	__NODE_FILE,
++	__META_FILE,
++	__ATOMIC_FILE,
++	__VOLATILE_FILE,
++	__MISC_FILE,
++};
 +
-+#ifdef CONFIG_F2FS_IO_TRACE
-+#include <trace/events/f2fs.h>
++struct last_io_info {
++	int major, minor;
++	pid_t pid;
++	enum file_type type;
++	struct f2fs_io_info fio;
++	block_t len;
++};
 +
-+extern void f2fs_trace_pid(struct page *);
-+extern void f2fs_trace_ios(struct page *, struct f2fs_io_info *, int);
-+#else
-+#define f2fs_trace_pid(p)
-+#define f2fs_trace_ios(p, i, n)
-+
-+#endif
-+#endif /* __F2FS_TRACE_H__ */
+ extern void f2fs_trace_pid(struct page *);
+ extern void f2fs_trace_ios(struct page *, struct f2fs_io_info *, int);
+ #else
 -- 
 2.1.1
 
