@@ -1,24 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] parse.f2fs: add a tool to parse IO traces
-	made by runtime f2fs
-Date: Sun, 21 Dec 2014 08:37:14 -0800
-Message-ID: <1419179834-3345-2-git-send-email-jaegeuk@kernel.org>
-References: <1419179834-3345-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/2] dump.f2fs: dump owner of data given block
+	address
+Date: Sun, 21 Dec 2014 08:37:13 -0800
+Message-ID: <1419179834-3345-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Y2jVW-0005df-7I
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Y2jVT-00077p-Sg
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 21 Dec 2014 16:37:26 +0000
+	Sun, 21 Dec 2014 16:37:23 +0000
 Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Y2jVU-0001nM-3y for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 21 Dec 2014 16:37:26 +0000
-In-Reply-To: <1419179834-3345-1-git-send-email-jaegeuk@kernel.org>
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Y2jVS-0003G4-KS for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 21 Dec 2014 16:37:23 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,361 +27,315 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@motorola.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-From: Jaegeuk Kim <jaegeuk@motorola.com>
+This patch introduces a feature to dump owner information of given block
+address.
 
-This patch adds parse.f2fs to retrieve process information and an amount
-of data reads and writes from given IO trace got by f2fs.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@motorola.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- tools/Makefile.am     |   3 +-
- tools/f2fs_io_parse.c | 322 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 324 insertions(+), 1 deletion(-)
- create mode 100644 tools/f2fs_io_parse.c
+ fsck/dump.c  | 161 ++++++++++++++++++++++++++++++++++++++++++++++++++++-------
+ fsck/f2fs.h  |  12 +++++
+ fsck/fsck.h  |   4 +-
+ fsck/main.c  |   2 +-
+ fsck/mount.c |  14 +++++-
+ 5 files changed, 169 insertions(+), 24 deletions(-)
 
-diff --git a/tools/Makefile.am b/tools/Makefile.am
-index 1ead174..69a0bb1 100644
---- a/tools/Makefile.am
-+++ b/tools/Makefile.am
-@@ -2,6 +2,7 @@
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 4bb906f..3c4a8d1 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -11,6 +11,7 @@
+ #include <inttypes.h>
  
- AM_CPPFLAGS = ${libuuid_CFLAGS} -I$(top_srcdir)/include
- AM_CFLAGS = -Wall
--sbin_PROGRAMS = f2fstat fibmap.f2fs
-+sbin_PROGRAMS = f2fstat fibmap.f2fs parse.f2fs
- f2fstat_SOURCES = f2fstat.c
- fibmap_f2fs_SOURCES = fibmap.c
-+parse_f2fs_SOURCES = f2fs_io_parse.c
-diff --git a/tools/f2fs_io_parse.c b/tools/f2fs_io_parse.c
-new file mode 100644
-index 0000000..7f97270
---- /dev/null
-+++ b/tools/f2fs_io_parse.c
-@@ -0,0 +1,322 @@
-+/*
-+ * f2fs IO tracer
-+ *
-+ * Copyright (c) 2014 Motorola Mobility
-+ * Copyright (c) 2014 Jaegeuk Kim <jaegeuk@kernel.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#define _LARGEFILE64_SOURCE
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <string.h>
-+#include <sys/queue.h>
-+#include <assert.h>
+ #include "fsck.h"
 +#include <locale.h>
+ 
+ #define BUF_SZ	80
+ 
+@@ -298,13 +299,114 @@ void dump_node(struct f2fs_sb_info *sbi, nid_t nid)
+ 	free(node_blk);
+ }
+ 
+-int dump_inode_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
++static void dump_node_from_blkaddr(u32 blk_addr)
+ {
+-	nid_t ino, nid;
+-	int type, ret;
+-	struct f2fs_summary sum_entry;
+-	struct node_info ni;
+ 	struct f2fs_node *node_blk;
++	int ret;
 +
-+#define P_NAMELEN	16
++	node_blk = calloc(BLOCK_SZ, 1);
++	ASSERT(node_blk);
 +
-+/* For global trace methods */
-+enum show_type {
-+	SHOW_PID,
-+	SHOW_FTYPE,
-+	SHOW_ALL,
-+};
++	ret = dev_read_block(node_blk, blk_addr);
++	ASSERT(ret >= 0);
 +
-+enum trace_types {
-+	TP_PID,
-+	TP_IOS,
-+	TP_MAX,
-+};
++	if (config.dbg_lv > 0)
++		print_node_info(node_blk);
++	else
++		print_inode_info(&node_blk->i, 1);
 +
-+struct tps {
-+	enum trace_types type;
-+	const char *name;
-+};
-+
-+struct tps trace_points[] = {
-+	{ TP_PID,	"f2fs_trace_pid" },
-+	{ TP_IOS,	"f2fs_trace_ios" },
-+};
-+
-+/* For f2fs_trace_pid and f2fs_trace_ios */
-+enum rw_type {
-+	READ,
-+	WRITE,
-+	MAX_RW,
-+};
-+
-+enum file_type {
-+	__NORMAL_FILE,
-+	__DIR_FILE,
-+	__NODE_FILE,
-+	__META_FILE,
-+	__ATOMIC_FILE,
-+	__VOLATILE_FILE,
-+	__MISC_FILE,
-+	__NR_FILES,
-+};
-+
-+char *file_type_string[] = {
-+	"User      ",
-+	"Dir       ",
-+	"Node      ",
-+	"Meta      ",
-+	"Atomic    ",
-+	"Voltile   ",
-+	"Misc      ",
-+};
-+
-+struct pid_ent {
-+	int pid;
-+	char name[P_NAMELEN];
-+	unsigned long long io[__NR_FILES][MAX_RW];
-+	unsigned long long total_io[MAX_RW];
-+	LIST_ENTRY(pid_ent) ptr;
-+};
-+
-+/* global variables */
-+int major = 0, minor = 0;
-+int show_option = SHOW_ALL;
-+unsigned long long total_io[__NR_FILES][MAX_RW];
-+
-+LIST_HEAD(plist, pid_ent) pid_info;
-+
-+/* Functions */
-+static inline int atoh(char *str)
-+{
-+	int val;
-+	sscanf(str, "%x", &val);
-+	return val;
++	free(node_blk);
 +}
 +
-+static void do_init()
++static void dump_data_offset(u32 blk_addr, int ofs_in_node)
 +{
-+	struct pid_ent *misc;
++	struct f2fs_node *node_blk;
++	unsigned int indirect_blks = 2 * NIDS_PER_BLOCK + 4;
++	unsigned int bidx = 0;
++	unsigned int node_ofs;
++	int ret;
 +
-+	misc = calloc(1, sizeof(struct pid_ent));
-+	assert(misc);
++	node_blk = calloc(BLOCK_SZ, 1);
++	ASSERT(node_blk);
 +
-+	LIST_INIT(&pid_info);
-+	LIST_INSERT_HEAD(&pid_info, misc, ptr);
-+}
++	ret = dev_read_block(node_blk, blk_addr);
++	ASSERT(ret >= 0);
 +
-+void show_usage()
-+{
-+	printf("\nUsage: parse.f2fs [options] log_file\n");
-+	printf("[options]:\n");
-+	printf("  -a RW sorted by pid & file types\n");
-+	printf("  -f RW sorted by file types\n");
-+	printf("  -p RW sorted by pid\n");
-+	printf("  -m major number\n");
-+	printf("  -n minor number\n");
-+	exit(1);
-+}
++	node_ofs = ofs_of_node(node_blk);
 +
-+static int parse_options(int argc, char *argv[])
-+{
-+	const char *option_string = "fm:n:p";
-+	int option = 0;
++	if (node_ofs == 0)
++		goto got_it;
 +
-+	while ((option = getopt(argc, argv, option_string)) != EOF) {
-+		switch (option) {
-+		case 'f':
-+			show_option = SHOW_FTYPE;
-+			break;
-+		case 'm':
-+			major = atoh(optarg);
-+			break;
-+		case 'n':
-+			minor = atoh(optarg);
-+			break;
-+		case 'p':
-+			show_option = SHOW_PID;
-+			break;
-+		default:
-+			printf("\tError: Unknown option %c\n", option);
-+			show_usage();
-+			break;
-+		}
++	if (node_ofs > 0 && node_ofs <= 2) {
++		bidx = node_ofs - 1;
++	} else if (node_ofs <= indirect_blks) {
++		int dec = (node_ofs - 4) / (NIDS_PER_BLOCK + 1);
++		bidx = node_ofs - 2 - dec;
++	} else {
++		int dec = (node_ofs - indirect_blks - 3) / (NIDS_PER_BLOCK + 1);
++		bidx = node_ofs - 5 - dec;
 +	}
-+	if ((optind + 1) != argc) {
-+		printf("\tError: Log file is not specified.\n");
-+		show_usage();
-+	}
-+	return optind;
-+}
-+
-+struct pid_ent *get_pid_entry(int pid)
-+{
-+	struct pid_ent *entry;
-+
-+	LIST_FOREACH(entry, &pid_info, ptr) {
-+		if (entry->pid == pid)
-+			return entry;
-+	}
-+	return LIST_FIRST(&pid_info);
-+}
-+
-+static void handle_tp_pid(char *ptr)
-+{
-+	struct pid_ent *pent;
-+
-+	pent = calloc(1, sizeof(struct pid_ent));
-+	assert(pent);
-+
-+	ptr = strtok(NULL, " ");
-+	pent->pid = atoh(ptr);
-+
-+	ptr = strtok(NULL, " ");
-+	strcpy(pent->name, ptr);
-+
-+	LIST_INSERT_HEAD(&pid_info, pent, ptr);
-+}
-+
-+static void handle_tp_ios(char *ptr)
-+{
-+	int pid, type, rw, len;
-+	struct pid_ent *p;
-+
-+	ptr = strtok(NULL, " ");
-+	pid = atoh(ptr);
-+
-+	ptr = strtok(NULL, " ");
-+	ptr = strtok(NULL, " ");
-+	type = atoh(ptr);
-+
-+	ptr = strtok(NULL, " ");
-+	rw = atoh(ptr);
-+
-+	ptr = strtok(NULL, " ");
-+	/* unsigned long long blkaddr = atoh(ptr); */
-+
-+	ptr = strtok(NULL, " ");
-+	len = atoh(ptr);
-+
-+	/* update per-pid stat */
-+	p = get_pid_entry(pid);
-+	p->io[type][rw & 0x1] += len;
-+	p->total_io[rw & 0x1] += len;
-+
-+	/* update total stat */
-+	total_io[type][rw & 0x1] += len;
-+}
-+
-+static void do_parse(FILE *file)
-+{
-+	char line[300];
-+	char *ptr;
-+	int i;
-+
-+	while (fgets(line, sizeof(line), file) != NULL) {
-+		ptr = strtok(line, ":");
-+
-+		ptr = strtok(NULL, " :");
-+
-+		for (i = 0; i < TP_MAX; i++) {
-+			if (!strcmp(ptr, trace_points[i].name))
-+				break;
-+		}
-+		if (i == TP_MAX)
-+			continue;
-+		ptr = strtok(NULL, " :");
-+		if (major && major != atoh(ptr))
-+			continue;
-+		ptr = strtok(NULL, " :");
-+		if (minor && minor != atoh(ptr))
-+			continue;
-+
-+		switch (i) {
-+		case TP_PID:
-+			handle_tp_pid(ptr);
-+			break;
-+		case TP_IOS:
-+			handle_tp_ios(ptr);
-+			break;
-+		}
-+	}
-+}
-+
-+static void __print_pid()
-+{
-+	struct pid_ent *entry;
-+	int i;
++	bidx = bidx * ADDRS_PER_BLOCK + ADDRS_PER_INODE(&node_blk->i);
++got_it:
++	bidx +=  ofs_in_node;
 +
 +	setlocale(LC_ALL, "");
-+	printf("%8s %16s %17s ||", "PID", "NAME", "R/W in 4KB");
-+	for (i = 0; i < __NR_FILES; i++)
-+		printf(" %17s |", file_type_string[i]);
-+	printf("\n");
-+
-+	LIST_FOREACH(entry, &pid_info, ptr) {
-+		printf("%8x %16s %'8lld %'8lld ||",
-+				entry->pid, entry->name,
-+				entry->total_io[READ],
-+				entry->total_io[WRITE]);
-+		for (i = 0; i < __NR_FILES; i++)
-+			printf(" %'8lld %'8lld |",
-+				entry->io[i][READ],
-+				entry->io[i][WRITE]);
-+		printf("\n");
-+	}
++	MSG(0, " - Data offset       : 0x%x (4KB), %'u (bytes)\n",
++				bidx, bidx * 4096);
++	free(node_blk);
 +}
 +
-+static void __print_ftype()
++static void dump_node_offset(u32 blk_addr)
 +{
-+	int i;
++	struct f2fs_node *node_blk;
++	int ret;
 +
-+	setlocale(LC_ALL, "");
-+	printf("\n===== Data R/W in 4KB accoring to File types =====\n");
-+	for (i = 0; i < __NR_FILES; i++)
-+		printf(" %17s |", file_type_string[i]);
-+	printf("\n");
++	node_blk = calloc(BLOCK_SZ, 1);
++	ASSERT(node_blk);
 +
-+	for (i = 0; i < __NR_FILES; i++)
-+		printf(" %'8lld %'8lld |",
-+				total_io[i][READ],
-+				total_io[i][WRITE]);
-+	printf("\n");
++	ret = dev_read_block(node_blk, blk_addr);
++	ASSERT(ret >= 0);
++
++	MSG(0, " - Node offset       : 0x%x\n", ofs_of_node(node_blk));
++	free(node_blk);
 +}
 +
-+static void do_print()
++int dump_info_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
 +{
-+	switch (show_option) {
-+	case SHOW_PID:
-+		__print_pid();
-+		break;
-+	case SHOW_FTYPE:
-+		__print_ftype();
-+		break;
-+	case SHOW_ALL:
-+		__print_pid();
-+		printf("\n\n");
-+		__print_ftype();
-+		break;
++	nid_t nid;
++	int type;
++	struct f2fs_summary sum_entry;
++	struct node_info ni, ino_ni;
++	int ret = 0;
++
++	MSG(0, "\n== Dump data from block address ==\n\n");
++
++	if (blk_addr < SM_I(sbi)->seg0_blkaddr) {
++		MSG(0, "\nFS Reserved Area for SEG #0: ");
++		ret = -EINVAL;
++	} else if (blk_addr < SIT_I(sbi)->sit_base_addr) {
++		MSG(0, "\nFS Metadata Area: ");
++		ret = -EINVAL;
++	} else if (blk_addr < NM_I(sbi)->nat_blkaddr) {
++		MSG(0, "\nFS SIT Area: ");
++		ret = -EINVAL;
++	} else if (blk_addr < SM_I(sbi)->ssa_blkaddr) {
++		MSG(0, "\nFS NAT Area: ");
++		ret = -EINVAL;
++	} else if (blk_addr < SM_I(sbi)->main_blkaddr) {
++		MSG(0, "\nFS SSA Area: ");
++		ret = -EINVAL;
++	} else if (blk_addr > __end_block_addr(sbi)) {
++		MSG(0, "\nOut of address space: ");
++		ret = -EINVAL;
 +	}
-+}
 +
-+int main(int argc, char **argv)
-+{
-+	FILE *file;
-+	int opt;
-+
-+	opt = parse_options(argc, argv);
-+
-+	file = fopen(argv[opt], "r");
-+	if (!file) {
-+		perror("open log file");
-+		exit(EXIT_FAILURE);
++	if (ret) {
++		MSG(0, "User data is from 0x%x to 0x%x\n\n",
++			SM_I(sbi)->main_blkaddr,
++			__end_block_addr(sbi));
++		return ret;
 +	}
+ 
+ 	type = get_sum_entry(sbi, blk_addr, &sum_entry);
+ 	nid = le32_to_cpu(sum_entry.nid);
+@@ -318,26 +420,47 @@ int dump_inode_from_blkaddr(struct f2fs_sb_info *sbi, u32 blk_addr)
+ 	DBG(1, "SUM.nid               [0x%x]\n", nid);
+ 	DBG(1, "SUM.type              [%s]\n", seg_type_name[type]);
+ 	DBG(1, "SUM.version           [%d]\n", sum_entry.version);
+-	DBG(1, "SUM.ofs_in_node       [%d]\n", sum_entry.ofs_in_node);
++	DBG(1, "SUM.ofs_in_node       [0x%x]\n", sum_entry.ofs_in_node);
+ 	DBG(1, "NAT.blkaddr           [0x%x]\n", ni.blk_addr);
+ 	DBG(1, "NAT.ino               [0x%x]\n", ni.ino);
+ 
+-	node_blk = calloc(BLOCK_SZ, 1);
+-
+-read_node_blk:
+-	ret = dev_read_block(node_blk, blk_addr);
+-	ASSERT(ret >= 0);
++	get_node_info(sbi, ni.ino, &ino_ni);
+ 
+-	ino = le32_to_cpu(node_blk->footer.ino);
+-	nid = le32_to_cpu(node_blk->footer.nid);
++	/* inode block address */
++	if (ni.blk_addr == NULL_ADDR || ino_ni.blk_addr == NULL_ADDR) {
++		MSG(0, "FS Userdata Area: Obsolete block from 0x%x\n",
++			blk_addr);
++		return -EINVAL;
++	}
+ 
+-	if (ino == nid) {
+-		print_node_info(node_blk);
++	/* print inode */
++	if (config.dbg_lv > 0)
++		dump_node_from_blkaddr(ino_ni.blk_addr);
 +
-+	do_init();
-+
-+	do_parse(file);
-+
-+	do_print();
-+
-+	fclose(file);
++	if (type == SEG_TYPE_CUR_DATA || type == SEG_TYPE_DATA) {
++		MSG(0, "FS Userdata Area: Data block from 0x%x\n", blk_addr);
++		MSG(0, " - Direct node block : id = 0x%x from 0x%x\n",
++					nid, ni.blk_addr);
++		MSG(0, " - Inode block       : id = 0x%x from 0x%x\n",
++					ni.ino, ino_ni.blk_addr);
++		dump_node_from_blkaddr(ino_ni.blk_addr);
++		dump_data_offset(ni.blk_addr,
++			le16_to_cpu(sum_entry.ofs_in_node));
+ 	} else {
+-		get_node_info(sbi, ino, &ni);
+-		goto read_node_blk;
++		MSG(0, "FS Userdata Area: Node block from 0x%x\n", blk_addr);
++		if (ni.ino == ni.nid) {
++			MSG(0, " - Inode block       : id = 0x%x from 0x%x\n",
++					ni.ino, ino_ni.blk_addr);
++			dump_node_from_blkaddr(ino_ni.blk_addr);
++		} else {
++			MSG(0, " - Node block        : id = 0x%x from 0x%x\n",
++					nid, ni.blk_addr);
++			MSG(0, " - Inode block       : id = 0x%x from 0x%x\n",
++					ni.ino, ino_ni.blk_addr);
++			dump_node_from_blkaddr(ino_ni.blk_addr);
++			dump_node_offset(ni.blk_addr);
++		}
+ 	}
+ 
+-	free(node_blk);
+-	return ino;
 +	return 0;
+ }
+diff --git a/fsck/f2fs.h b/fsck/f2fs.h
+index 57bad9b..c268f15 100644
+--- a/fsck/f2fs.h
++++ b/fsck/f2fs.h
+@@ -197,6 +197,12 @@ static inline void *inline_data_addr(struct f2fs_node *node_blk)
+ 	return (void *)&(node_blk->i.i_addr[1]);
+ }
+ 
++static inline unsigned int ofs_of_node(struct f2fs_node *node_blk)
++{
++	unsigned flag = le32_to_cpu(node_blk->footer.flag);
++	return flag >> OFFSET_BIT_SHIFT;
 +}
++
+ static inline unsigned long __bitmap_size(struct f2fs_sb_info *sbi, int flag)
+ {
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+@@ -255,6 +261,12 @@ static inline block_t __start_sum_addr(struct f2fs_sb_info *sbi)
+ 	return le32_to_cpu(F2FS_CKPT(sbi)->cp_pack_start_sum);
+ }
+ 
++static inline block_t __end_block_addr(struct f2fs_sb_info *sbi)
++{
++	block_t end = SM_I(sbi)->main_blkaddr;
++	return end + le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
++}
++
+ #define GET_ZONENO_FROM_SEGNO(sbi, segno)                               \
+ 	((segno / sbi->segs_per_sec) / sbi->secs_per_zone)
+ 
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 49d6d1d..9cad013 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -97,7 +97,7 @@ int fsck_chk_inline_dentries(struct f2fs_sb_info *, struct f2fs_node *,
+ 		u32 *, u32 *);
+ 
+ extern void print_node_info(struct f2fs_node *);
+-extern void print_inode_info(struct f2fs_inode *);
++extern void print_inode_info(struct f2fs_inode *, int);
+ extern struct seg_entry *get_seg_entry(struct f2fs_sb_info *, unsigned int);
+ extern int get_sum_block(struct f2fs_sb_info *, unsigned int,
+ 				struct f2fs_summary_block *);
+@@ -126,6 +126,6 @@ struct dump_option {
+ extern void sit_dump(struct f2fs_sb_info *, int, int);
+ extern void ssa_dump(struct f2fs_sb_info *, int, int);
+ extern void dump_node(struct f2fs_sb_info *, nid_t);
+-extern int dump_inode_from_blkaddr(struct f2fs_sb_info *, u32);
++extern int dump_info_from_blkaddr(struct f2fs_sb_info *, u32);
+ 
+ #endif /* _FSCK_H_ */
+diff --git a/fsck/main.c b/fsck/main.c
+index 2af3daf..e05e528 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -169,7 +169,7 @@ static void do_dump(struct f2fs_sb_info *sbi)
+ 	if (opt->start_ssa != -1)
+ 		ssa_dump(sbi, opt->start_ssa, opt->end_ssa);
+ 	if (opt->blk_addr != -1) {
+-		dump_inode_from_blkaddr(sbi, opt->blk_addr);
++		dump_info_from_blkaddr(sbi, opt->blk_addr);
+ 		goto cleanup;
+ 	}
+ 	dump_node(sbi, opt->nid);
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 0aca60b..73eba6b 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -9,12 +9,22 @@
+  * published by the Free Software Foundation.
+  */
+ #include "fsck.h"
++#include <locale.h>
+ 
+-void print_inode_info(struct f2fs_inode *inode)
++void print_inode_info(struct f2fs_inode *inode, int name)
+ {
+ 	unsigned int i = 0;
+ 	int namelen = le32_to_cpu(inode->i_namelen);
+ 
++	if (name && namelen) {
++		inode->i_name[namelen] = '\0';
++		MSG(0, " - File name         : %s\n", inode->i_name);
++		setlocale(LC_ALL, "");
++		MSG(0, " - File size         : %'llu (bytes)\n",
++				le64_to_cpu(inode->i_size));
++		return;
++	}
++
+ 	DISP_u32(inode, i_mode);
+ 	DISP_u32(inode, i_uid);
+ 	DISP_u32(inode, i_gid);
+@@ -76,7 +86,7 @@ void print_node_info(struct f2fs_node *node_block)
+ 	/* Is this inode? */
+ 	if (ino == nid) {
+ 		DBG(0, "Node ID [0x%x:%u] is inode\n", nid, nid);
+-		print_inode_info(&node_block->i);
++		print_inode_info(&node_block->i, 0);
+ 	} else {
+ 		int i;
+ 		u32 *dump_blk = (u32 *)node_block;
 -- 
 2.1.1
 
