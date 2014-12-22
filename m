@@ -1,108 +1,85 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
-Date: Mon, 22 Dec 2014 15:16:04 -0800
-Message-ID: <20141222231604.GC8287@jaegeuk-mac02.mot.com>
-References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
- <20141222020317.GB3335@lcm>
- <000001d01db6$7d718770$78549650$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <000001d01db6$7d718770$78549650$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: [PATCH] f2fs: add block count by in-place-update in stat info
+Date: Tue, 23 Dec 2014 08:30:54 +0900
+Message-ID: <1419291054-7630-1-git-send-email-cm224.lee@samsung.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Changman Lee <cm224.lee@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+This patch adds block count by in-place-update in stat.
 
-On Mon, Dec 22, 2014 at 03:10:30PM +0800, Chao Yu wrote:
-> Hi Changman,
-> 
-> > -----Original Message-----
-> > From: Changman Lee [mailto:cm224.lee@samsung.com]
-> > Sent: Monday, December 22, 2014 10:03 AM
-> > To: Chao Yu
-> > Cc: Jaegeuk Kim; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
-> > 
-> > Hi Yu,
-> > 
-> > Good approach.
-> 
-> Thank you. :)
-> 
-> > As you know, however, f2fs breaks extent itself due to COW.
-> 
-> Yes, and sometimes f2fs use IPU when override writing, in this condition,
-> by using this approach we can cache more contiguous mapping extent for better
-> performance.
+Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+---
+ fs/f2fs/debug.c   | 3 +++
+ fs/f2fs/f2fs.h    | 5 ++++-
+ fs/f2fs/segment.c | 1 +
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
-Hmm. When f2fs faces with this case, there is no chance to make an extent itself
-at all.
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 91e8f69..46bef86 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -79,6 +79,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 		si->segment_count[i] = sbi->segment_count[i];
+ 		si->block_count[i] = sbi->block_count[i];
+ 	}
++
++	si->inplace_count = sbi->inplace_count;
+ }
+ 
+ /*
+@@ -277,6 +279,7 @@ static int stat_show(struct seq_file *s, void *v)
+ 		for (j = 0; j < si->util_free; j++)
+ 			seq_putc(s, '-');
+ 		seq_puts(s, "]\n\n");
++		seq_printf(s, "IPU: %u blocks\n", si->inplace_count);
+ 		seq_printf(s, "SSR: %u blocks in %u segments\n",
+ 			   si->block_count[SSR], si->segment_count[SSR]);
+ 		seq_printf(s, "LFS: %u blocks in %u segments\n",
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ec58bb2..ae6dfb6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -589,6 +589,7 @@ struct f2fs_sb_info {
+ 	struct f2fs_stat_info *stat_info;	/* FS status information */
+ 	unsigned int segment_count[2];		/* # of allocated segments */
+ 	unsigned int block_count[2];		/* # of allocated blocks */
++	unsigned int inplace_count;		/* # of inplace update */
+ 	int total_hit_ext, read_hit_ext;	/* extent cache hit ratio */
+ 	atomic_t inline_inode;			/* # of inline_data inodes */
+ 	atomic_t inline_dir;			/* # of inline_dentry inodes */
+@@ -1514,6 +1515,7 @@ struct f2fs_stat_info {
+ 
+ 	unsigned int segment_count[2];
+ 	unsigned int block_count[2];
++	unsigned int inplace_count;
+ 	unsigned base_mem, cache_mem;
+ };
+ 
+@@ -1553,7 +1555,8 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+ 		((sbi)->segment_count[(curseg)->alloc_type]++)
+ #define stat_inc_block_count(sbi, curseg)				\
+ 		((sbi)->block_count[(curseg)->alloc_type]++)
+-
++#define stat_inc_inplace_blocks(sbi)					\
++		((sbi)->inplace_count++)
+ #define stat_inc_seg_count(sbi, type)					\
+ 	do {								\
+ 		struct f2fs_stat_info *si = F2FS_STAT(sbi);		\
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 42607a6..fd9bc96 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1235,6 +1235,7 @@ void write_data_page(struct page *page, struct dnode_of_data *dn,
+ void rewrite_data_page(struct page *page, block_t old_blkaddr,
+ 					struct f2fs_io_info *fio)
+ {
++	stat_inc_inplace_blocks(F2FS_P_SB(page));
+ 	f2fs_submit_page_mbio(F2FS_P_SB(page), page, old_blkaddr, fio);
+ }
+ 
+-- 
+1.9.1
 
-> 
-> > Unlike other filesystem like btrfs, minimum extent of f2fs could have 4KB granularity.
-> > So we would have lots of extents per inode and it could lead to overhead
-> > to manage extents.
-> 
-> Agree, the more number of extents are growing in one inode, the more memory
-> pressure and longer latency operating in rb-tree we are facing.
-> IMO, to solve this problem, we'd better to add limitation or shrink ability into
-> extent cache:
-> 1.limit extent number per inode with the value set from sysfs and discard extent
-> from inode's extent lru list if we touch the limitation; (e.g. in FAT, max number
-> of mapping extent per inode is fixed: 8)
-> 2.add all extents of inodes into a global lru list, we will try to shrink this list
-> if we're facing memory pressure.
-> 
-> How do you think? or any better ideas are welcome. :)
-
-Historically, the reason that I added only one small extent cache is that I
-wanted to avoid additional data structures having any overhead in critical data
-write path.
-Instead, I intended to use a well operating node page cache.
-
-We need to consider what would be the benefit when using extent cache rather
-than existing node page cache.
-
-Thanks,
-
-> 
-> > 
-> > Anyway, mount option could be alternative for this patch.
-> 
-> Yes, will do.
-> 
-> Thanks,
-> Yu
-> 
-> > 
-> > On Fri, Dec 19, 2014 at 06:49:29PM +0800, Chao Yu wrote:
-> > > Now f2fs have page-block mapping cache which can cache only one extent mapping
-> > > between contiguous logical address and physical address.
-> > > Normally, this design will work well because f2fs will expand coverage area of
-> > > the mapping extent when we write forward sequentially. But when we write data
-> > > randomly in Out-Place-Update mode, the extent will be shorten and hardly be
-> > > expanded for most time as following reasons:
-> > > 1.The short part of extent will be discarded if we break contiguous mapping in
-> > > the middle of extent.
-> > > 2.The new mapping will be added into mapping cache only at head or tail of the
-> > > extent.
-> > > 3.We will drop the extent cache when the extent became very fragmented.
-> > > 4.We will not update the extent with mapping which we get from readpages or
-> > > readpage.
-> > >
-> > > To solve above problems, this patch adds extent cache base on rb-tree like other
-> > > filesystems (e.g.: ext4/btrfs) in f2fs. By this way, f2fs can support another
-> > > more effective cache between dnode page cache and disk. It will supply high hit
-> > > ratio in the cache with fewer memory when dnode page cache are reclaimed in
-> > > environment of low memory.
-> > >
-> > > Todo:
-> > > *introduce mount option for extent cache.
-> > > *add shrink ability for extent cache.
-> > >
-> > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > > ---
