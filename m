@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
 Subject: RE: [RFC PATCH] f2fs: add extent cache base on rb-tree
-Date: Mon, 22 Dec 2014 15:10:30 +0800
-Message-ID: <000001d01db6$7d718770$78549650$@samsung.com>
+Date: Mon, 22 Dec 2014 17:06:52 +0800
+Message-ID: <000401d01dc6$bce92330$36bb6990$@samsung.com>
 References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
  <20141222020317.GB3335@lcm>
 Mime-Version: 1.0
@@ -27,39 +27,12 @@ Hi Changman,
 > Hi Yu,
 > 
 > Good approach.
-
-Thank you. :)
-
 > As you know, however, f2fs breaks extent itself due to COW.
-
-Yes, and sometimes f2fs use IPU when override writing, in this condition,
-by using this approach we can cache more contiguous mapping extent for better
-performance.
-
 > Unlike other filesystem like btrfs, minimum extent of f2fs could have 4KB granularity.
 > So we would have lots of extents per inode and it could lead to overhead
 > to manage extents.
-
-Agree, the more number of extents are growing in one inode, the more memory
-pressure and longer latency operating in rb-tree we are facing.
-IMO, to solve this problem, we'd better to add limitation or shrink ability into
-extent cache:
-1.limit extent number per inode with the value set from sysfs and discard extent
-from inode's extent lru list if we touch the limitation; (e.g. in FAT, max number
-of mapping extent per inode is fixed: 8)
-2.add all extents of inodes into a global lru list, we will try to shrink this list
-if we're facing memory pressure.
-
-How do you think? or any better ideas are welcome. :)
-
 > 
 > Anyway, mount option could be alternative for this patch.
-
-Yes, will do.
-
-Thanks,
-Yu
-
 > 
 > On Fri, Dec 19, 2014 at 06:49:29PM +0800, Chao Yu wrote:
 > > Now f2fs have page-block mapping cache which can cache only one extent mapping
@@ -87,4 +60,26 @@ Yu
 > > *add shrink ability for extent cache.
 > >
 > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
+
+[snip]
+
+> > +static void __try_merge_extent(struct inode *inode, struct extent_info *ei)
+> > +{
+> > +	struct rb_root *root = &F2FS_I(inode)->ei_tree.root;
+> > +	struct extent_info *pei = NULL;
+> > +	struct rb_node *node;
+> > +
+> > +	node = rb_prev(&ei->rb_node);
+> > +	if (node) {
+> > +		pei = rb_entry(node, struct extent_info, rb_node);
+> > +		if (ei->blk == pei->blk + pei->len) {
+> 
+> Shouldn't we check below together, too?
+> if (ei->fofs == pei->fofs + pei->len)
+
+Yes, you're right.
+The following "if (ei->blk + 1 == pei->blk)" has the same problem.
+I will fix this issue, thanks for your review!
+
+Regards,
+Yu
