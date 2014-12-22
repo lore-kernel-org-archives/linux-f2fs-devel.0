@@ -1,94 +1,137 @@
 From: Changman Lee <cm224.lee@samsung.com>
-Subject: [PATCH 1/2] f2fs: conduct f2fs_gc as explicit gc_type
-Date: Tue, 23 Dec 2014 08:37:38 +0900
-Message-ID: <1419291459-7731-1-git-send-email-cm224.lee@samsung.com>
+Subject: [PATCH 2/2] f2fs: add stat info for moved blocks by background gc
+Date: Tue, 23 Dec 2014 08:37:39 +0900
+Message-ID: <1419291459-7731-2-git-send-email-cm224.lee@samsung.com>
+References: <1419291459-7731-1-git-send-email-cm224.lee@samsung.com>
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1419291459-7731-1-git-send-email-cm224.lee@samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 To: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Changman Lee <cm224.lee@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-f2fs has 2 gc_type; foreground gc and background gc.
-In the case of foreground gc, f2fs will select victim as greedy.
-Otherwise, as cost-benefit. And also it runs as greedy in SSR mode.
-Until now, f2fs_gc conducted with BG_GC as default. So we couldn't
-expect how it runs; BG_GC or FG_GC and GREEDY or COST_BENEFIT.
-Therefore sometimes it runs as BG_GC/COST_BENEFIT although gc_thread
-don't put f2fs_gc to work.
+This patch is for looking into gc performance of f2fs in detail.
 
 Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 ---
- fs/f2fs/f2fs.h    | 2 +-
- fs/f2fs/gc.c      | 5 ++---
- fs/f2fs/segment.c | 6 +++---
- 3 files changed, 6 insertions(+), 7 deletions(-)
+ fs/f2fs/debug.c | 15 ++++++++++-----
+ fs/f2fs/f2fs.h  | 17 ++++++++++++-----
+ fs/f2fs/gc.c    |  6 +++---
+ 3 files changed, 25 insertions(+), 13 deletions(-)
 
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 46bef86..285cce1 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -244,11 +244,16 @@ static int stat_show(struct seq_file *s, void *v)
+ 		seq_printf(s, "CP calls: %d\n", si->cp_count);
+ 		seq_printf(s, "GC calls: %d (BG: %d)\n",
+ 			   si->call_count, si->bg_gc);
+-		seq_printf(s, "  - data segments : %d\n", si->data_segs);
+-		seq_printf(s, "  - node segments : %d\n", si->node_segs);
+-		seq_printf(s, "Try to move %d blocks\n", si->tot_blks);
+-		seq_printf(s, "  - data blocks : %d\n", si->data_blks);
+-		seq_printf(s, "  - node blocks : %d\n", si->node_blks);
++		seq_printf(s, "  - data segments : %d (%d)\n",
++				si->data_segs, si->bg_data_segs);
++		seq_printf(s, "  - node segments : %d (%d)\n",
++				si->node_segs, si->bg_node_segs);
++		seq_printf(s, "Try to move %d blocks (BG: %d)\n", si->tot_blks,
++				si->bg_data_blks + si->bg_node_blks);
++		seq_printf(s, "  - data blocks : %d (%d)\n", si->data_blks,
++				si->bg_data_blks);
++		seq_printf(s, "  - node blocks : %d (%d)\n", si->node_blks,
++				si->bg_node_blks);
+ 		seq_printf(s, "\nExtent Hit Ratio: %d / %d\n",
+ 			   si->hit_ext, si->total_ext);
+ 		seq_puts(s, "\nBalancing F2FS Async:\n");
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ae6dfb6..c956535 100644
+index c956535..c88e2fc 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1476,7 +1476,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
- int start_gc_thread(struct f2fs_sb_info *);
- void stop_gc_thread(struct f2fs_sb_info *);
- block_t start_bidx_of_node(unsigned int, struct f2fs_inode_info *);
--int f2fs_gc(struct f2fs_sb_info *);
-+int f2fs_gc(struct f2fs_sb_info *, int);
- void build_gc_manager(struct f2fs_sb_info *);
- int __init create_gc_caches(void);
- void destroy_gc_caches(void);
+@@ -1508,7 +1508,9 @@ struct f2fs_stat_info {
+ 	int dirty_count, node_pages, meta_pages;
+ 	int prefree_count, call_count, cp_count;
+ 	int tot_segs, node_segs, data_segs, free_segs, free_secs;
++	int bg_node_segs, bg_data_segs;
+ 	int tot_blks, data_blks, node_blks;
++	int bg_data_blks, bg_node_blks;
+ 	int curseg[NR_CURSEG_TYPE];
+ 	int cursec[NR_CURSEG_TYPE];
+ 	int curzone[NR_CURSEG_TYPE];
+@@ -1557,31 +1559,36 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+ 		((sbi)->block_count[(curseg)->alloc_type]++)
+ #define stat_inc_inplace_blocks(sbi)					\
+ 		((sbi)->inplace_count++)
+-#define stat_inc_seg_count(sbi, type)					\
++#define stat_inc_seg_count(sbi, type, gc_type)				\
+ 	do {								\
+ 		struct f2fs_stat_info *si = F2FS_STAT(sbi);		\
+ 		(si)->tot_segs++;					\
+-		if (type == SUM_TYPE_DATA)				\
++		if (type == SUM_TYPE_DATA) {				\
+ 			si->data_segs++;				\
+-		else							\
++			si->bg_data_segs += (gc_type == BG_GC) ? 1 : 0;	\
++		} else {						\
+ 			si->node_segs++;				\
++			si->bg_node_segs += (gc_type == BG_GC) ? 1 : 0;	\
++		}							\
+ 	} while (0)
+ 
+ #define stat_inc_tot_blk_count(si, blks)				\
+ 	(si->tot_blks += (blks))
+ 
+-#define stat_inc_data_blk_count(sbi, blks)				\
++#define stat_inc_data_blk_count(sbi, blks, gc_type)			\
+ 	do {								\
+ 		struct f2fs_stat_info *si = F2FS_STAT(sbi);		\
+ 		stat_inc_tot_blk_count(si, blks);			\
+ 		si->data_blks += (blks);				\
++		si->bg_data_blks += (gc_type == BG_GC) ? (blks) : 0;	\
+ 	} while (0)
+ 
+-#define stat_inc_node_blk_count(sbi, blks)				\
++#define stat_inc_node_blk_count(sbi, blks, gc_type)			\
+ 	do {								\
+ 		struct f2fs_stat_info *si = F2FS_STAT(sbi);		\
+ 		stat_inc_tot_blk_count(si, blks);			\
+ 		si->node_blks += (blks);				\
++		si->bg_node_blks += (gc_type == BG_GC) ? (blks) : 0;	\
+ 	} while (0)
+ 
+ int f2fs_build_stats(struct f2fs_sb_info *);
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index eec0933..e1fa53a 100644
+index e1fa53a..f67eb2a 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -80,7 +80,7 @@ static int gc_thread_func(void *data)
- 		stat_inc_bggc_count(sbi);
- 
- 		/* if return value is not zero, no victim was selected */
--		if (f2fs_gc(sbi))
-+		if (f2fs_gc(sbi, BG_GC))
- 			wait_ms = gc_th->no_gc_sleep_time;
- 
- 		/* balancing f2fs's metadata periodically */
-@@ -691,10 +691,9 @@ static void do_garbage_collect(struct f2fs_sb_info *sbi, unsigned int segno,
- 	f2fs_put_page(sum_page, 1);
- }
- 
--int f2fs_gc(struct f2fs_sb_info *sbi)
-+int f2fs_gc(struct f2fs_sb_info *sbi, int gc_type)
- {
- 	unsigned int segno, i;
--	int gc_type = BG_GC;
- 	int nfree = 0;
- 	int ret = -1;
- 	struct cp_control cpc;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index fd9bc96..3b32404 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -281,7 +281,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi)
- 	 */
- 	if (has_not_enough_free_secs(sbi, 0)) {
- 		mutex_lock(&sbi->gc_mutex);
--		f2fs_gc(sbi);
-+		f2fs_gc(sbi, FG_GC);
+@@ -440,7 +440,7 @@ next_step:
+ 				set_page_dirty(node_page);
+ 		}
+ 		f2fs_put_page(node_page, 1);
+-		stat_inc_node_blk_count(sbi, 1);
++		stat_inc_node_blk_count(sbi, 1, gc_type);
  	}
- }
  
-@@ -994,12 +994,12 @@ static int get_ssr_segment(struct f2fs_sb_info *sbi, int type)
+ 	if (initial) {
+@@ -627,7 +627,7 @@ next_step:
+ 			if (IS_ERR(data_page))
+ 				continue;
+ 			move_data_page(inode, data_page, gc_type);
+-			stat_inc_data_blk_count(sbi, 1);
++			stat_inc_data_blk_count(sbi, 1, gc_type);
+ 		}
+ 	}
  
- 	if (IS_NODESEG(type) || !has_not_enough_free_secs(sbi, 0))
- 		return v_ops->get_victim(sbi,
--				&(curseg)->next_segno, BG_GC, type, SSR);
-+				&(curseg)->next_segno, FG_GC, type, SSR);
+@@ -685,7 +685,7 @@ static void do_garbage_collect(struct f2fs_sb_info *sbi, unsigned int segno,
+ 	}
+ 	blk_finish_plug(&plug);
  
- 	/* For data segments, let's do SSR more intensively */
- 	for (; type >= CURSEG_HOT_DATA; type--)
- 		if (v_ops->get_victim(sbi, &(curseg)->next_segno,
--						BG_GC, type, SSR))
-+						FG_GC, type, SSR))
- 			return 1;
- 	return 0;
- }
+-	stat_inc_seg_count(sbi, GET_SUM_TYPE((&sum->footer)));
++	stat_inc_seg_count(sbi, GET_SUM_TYPE((&sum->footer)), gc_type);
+ 	stat_inc_call_count(sbi->stat_info);
+ 
+ 	f2fs_put_page(sum_page, 1);
 -- 
 1.9.1
 
