@@ -1,88 +1,108 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: F2fs on eMMC on Beaglebone Black based custom board.
-Date: Mon, 22 Dec 2014 15:02:32 -0800
-Message-ID: <20141222230148.GB8287@jaegeuk-mac02.mot.com>
-References: <CAHoHJEjCgLyn-Om-g5G9LhjTfBKyVf4PR1fa45nPvDL2Ue+6Ng@mail.gmail.com>
+Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+Date: Mon, 22 Dec 2014 15:16:04 -0800
+Message-ID: <20141222231604.GC8287@jaegeuk-mac02.mot.com>
+References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
+ <20141222020317.GB3335@lcm>
+ <000001d01db6$7d718770$78549650$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Y3C0L-0001ej-CF
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 22 Dec 2014 23:03:09 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Y3C04-0008Vl-Pz for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 22 Dec 2014 23:03:09 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAHoHJEjCgLyn-Om-g5G9LhjTfBKyVf4PR1fa45nPvDL2Ue+6Ng@mail.gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Ankur Tank <artfri2@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <000001d01db6$7d718770$78549650$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgQW5rdXIsCgpPbiBTdW4sIERlYyAyMSwgMjAxNCBhdCAwODo0MzozN0FNICswNTMwLCBBbmt1
-ciBUYW5rIHdyb3RlOgo+IEhlbGxvIEFsbCwKPiAKPiBXZSBhcmUgZGV2ZWxvcGluZyBCZWFnbGVi
-b25lIGJsYWNrIGJhc2VkIEN1c3RvbSBib2FyZCB3aXRoIGVNTUMuCj4gV2Ugd2FudCB0byBkZWNp
-ZGUgdGhlIGZpbGUtc3lzdGVtIGZvciBSRlMgcGFydGl0aW9uIG9mIGVNTUMuCj4gV2UgYXJlIGlu
-IHByb2Nlc3Mgb2YgdGVzdGluZy9CZW5jaG1hcmtpbmcgZGlmZmVyZW50IGZpbGVzeXN0ZW0gb24g
-QkJCIGl0c2VsZi4KPiBNYWpvciBjb250cmlidXRvciB0byB3cml0ZXMgdG8gdGhlIGZpbGVzeXN0
-ZW0gaXMgZG9uZSBieSBsb2dnaW5nIHByb2Nlc3MuCj4gVG8gZmluYWxpemUgdGhlIGZpbGUtc3lz
-dGVtIHdlIG5lZWQgc29tZSBoZWxwIGZyb20gZGV2ZWxvcGVycy4KPiBCZWxvdyBhcmUgb3VyIHNw
-ZWNpZmljIHF1ZXN0aW9ucywgS2luZGx5IGd1aWRlIHVzLgo+IAo+IDEuIFdlIGFyZSB1c2luZyBM
-aW51eCBrZXJuZWwgMy4xMiwgaXMgRjJmcyBzdGFibGUgZm9yIHRoYXQgdmVyc2lvbj8KClRoZSBi
-ZXN0IHRoaW5nIHRoYXQgSSBjYW4gdGVsbCBpcyBiYWNrLXBvcnRpbmcgdGhlIGxhdGVzdCBmMmZz
-IGludG8geW91ciBrZXJuZWwuCk1heWJlIHlvdSBjYW4gcmVmZXIgdGhlIGJyYW5jaCwgbGludXgt
-My4xMiwgdGhhdCBJJ3ZlIG1haW50YWluZWQgaW46CiBnaXQua2VybmVsLm9yZy9jZ2l0L2xpbnV4
-L2tlcm5lbC9naXQvamFlZ2V1ay9mMmZzLmdpdAoKSSd2ZSBiZWVuIHN5bmNpbmcgMy40IGFuZCAz
-LjEwIHdpdGggdGhlIGxhdGVzdCBmMmZzIGFsbCB0aGUgdGltZSwgYnV0IGlmIHlvdQp3YW50LCBJ
-IGNhbiBicmluZyB1cCBsaW51eC0zLjEyIGFnYWluLgoKPiAyLiBJcyB0aGVyZSBhbnkgdHVuaW5n
-IG9wdGlvbiB0byByZWR1Y2UgdGhlIGRhdGEgbG9zcyBkdXJpbmcgc3VkZGVuCj4gcG93ZXIgbG9z
-cy9mYWlsdXJlcy4KPiAzLiBPbiBvbmUgdGhlIGZvcnVtcyB3ZSByZWFkIHRoYXQsIEYyZjIgZG9l
-buKAmXQgd3JpdGVzIGFnZ3Jlc3NpdmVseSB0bwo+IHRoZSBkaXNrIHNvIHRoZXJlIGlzIGNoYW5j
-ZSBvZiBsb3NpbmcgZGF0YSwgaXMgdGhlcmUgYW55IG9wdGlvbiB0bwo+IHR1bmUvY29udHJvbCBp
-dD8KCkJhc2ljYWxseSwgZjJmcyBndWFyYW50ZWVzIGFueSB3cml0dGVuIGRhdGEgcmVxdWVzdGVk
-IGJ5IGZzeW5jIG9yIHN5bmMgY2FsbHMKZnJvbSB1c2Vycy4gQnV0IHNvbWV0aW1lcyBkYXRhIGNh
-biBiZSBjaGVja3BvaW50ZWQgYXMgYmVpbmcgcmVjb3ZlcmFibGUKYWNjb3JkaW5nIHRvIHRoZSBz
-eXN0ZW0ncyBzdGF0dXMuCgo+IDQuIFNvbWUgZm9ydW0gc2F5cyBpdOKAmXMgbm90IGdvb2QgZm9y
-IHNtYWxsIG1lbW9yeT8gSXMgaXQgdHJ1ZT8gSWYgeWVzCj4gd2hhdCBpcyB0aGUgbWluaW11bSBz
-aXplIG9mIG1lbW9yeSBpZGVhbCBmb3IgRjJGUyA/CgpUaGVyZSBpcyBubyBtZW1vcnkgcmVxdWly
-ZW1lbnQuIFRoZSBmMmZzIHVzZXMgbW9zdGx5IHBhZ2UgY2FjaGUgbWFuYWdlZCBieQprZXJuZWwu
-CgpCeSB0aGUgd2F5LCBJIHRoaW5rIHRoZXJlIGlzIG9uZSBzeXNmcyBlbnRyeSwgcmFtX3RocmVz
-aC4KQnkgY2hhbmdpbmcgdGhpcyB2YWx1ZSwgeW91IG1heSBjb250cm9sIGRhdGEgbG9zcyBhbmQg
-bWVtb3J5IGZvb3RwcmludCBhdCB0aGUKc2FtZSB0aW1lLgoKSWYgeW91IGRlY3JlYXNlIHRoaXMg
-dmFsdWUsIGYyZnMgdHJpZXMgdG8gc3luYyBmcmVxdWVudGx5IGFuZCBmb3JjZSB0byByZWR1Y2UK
-dGhlIGFtb3VudCBvZiBtZW1vcnkgY29uc3VtZWQgYnkgc2xhYiBjYWNoZXMuCgpUaGFua3MsCgo+
-IAo+IFRoYW5rIHlvdSwKPiAKPiBSZWdhcmRzLAo+IEFua3VyCj4gCj4gLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tCj4gRG93bmxvYWQgQklSVCBpSHViIEYtVHlwZSAtIFRoZSBGcmVlIEVudGVycHJpc2Ut
-R3JhZGUgQklSVCBTZXJ2ZXIKPiBmcm9tIEFjdHVhdGUhIEluc3RhbnRseSBTdXBlcmNoYXJnZSBZ
-b3VyIEJ1c2luZXNzIFJlcG9ydHMgYW5kIERhc2hib2FyZHMKPiB3aXRoIEludGVyYWN0aXZpdHks
-IFNoYXJpbmcsIE5hdGl2ZSBFeGNlbCBFeHBvcnRzLCBBcHAgSW50ZWdyYXRpb24gJiBtb3JlCj4g
-R2V0IHRlY2hub2xvZ3kgcHJldmlvdXNseSByZXNlcnZlZCBmb3IgYmlsbGlvbi1kb2xsYXIgY29y
-cG9yYXRpb25zLCBGUkVFCj4gaHR0cDovL3B1YmFkcy5nLmRvdWJsZWNsaWNrLm5ldC9nYW1wYWQv
-Y2xrP2lkPTE2NDcwMzE1MSZpdT0vNDE0MC9vc3RnLmNsa3Ryawo+IF9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5n
-IGxpc3QKPiBMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8v
-bGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKCi0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQpEaXZlIGludG8gdGhlIFdvcmxkIG9mIFBhcmFsbGVsIFByb2dy
-YW1taW5nISBUaGUgR28gUGFyYWxsZWwgV2Vic2l0ZSwKc3BvbnNvcmVkIGJ5IEludGVsIGFuZCBk
-ZXZlbG9wZWQgaW4gcGFydG5lcnNoaXAgd2l0aCBTbGFzaGRvdCBNZWRpYSwgaXMgeW91cgpodWIg
-Zm9yIGFsbCB0aGluZ3MgcGFyYWxsZWwgc29mdHdhcmUgZGV2ZWxvcG1lbnQsIGZyb20gd2Vla2x5
-IHRob3VnaHQKbGVhZGVyc2hpcCBibG9ncyB0byBuZXdzLCB2aWRlb3MsIGNhc2Ugc3R1ZGllcywg
-dHV0b3JpYWxzIGFuZCBtb3JlLiBUYWtlIGEKbG9vayBhbmQgam9pbiB0aGUgY29udmVyc2F0aW9u
-IG5vdy4gaHR0cDovL2dvcGFyYWxsZWwuc291cmNlZm9yZ2UubmV0Cl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
-aXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMu
-c291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Hi Chao,
+
+On Mon, Dec 22, 2014 at 03:10:30PM +0800, Chao Yu wrote:
+> Hi Changman,
+> 
+> > -----Original Message-----
+> > From: Changman Lee [mailto:cm224.lee@samsung.com]
+> > Sent: Monday, December 22, 2014 10:03 AM
+> > To: Chao Yu
+> > Cc: Jaegeuk Kim; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> > 
+> > Hi Yu,
+> > 
+> > Good approach.
+> 
+> Thank you. :)
+> 
+> > As you know, however, f2fs breaks extent itself due to COW.
+> 
+> Yes, and sometimes f2fs use IPU when override writing, in this condition,
+> by using this approach we can cache more contiguous mapping extent for better
+> performance.
+
+Hmm. When f2fs faces with this case, there is no chance to make an extent itself
+at all.
+
+> 
+> > Unlike other filesystem like btrfs, minimum extent of f2fs could have 4KB granularity.
+> > So we would have lots of extents per inode and it could lead to overhead
+> > to manage extents.
+> 
+> Agree, the more number of extents are growing in one inode, the more memory
+> pressure and longer latency operating in rb-tree we are facing.
+> IMO, to solve this problem, we'd better to add limitation or shrink ability into
+> extent cache:
+> 1.limit extent number per inode with the value set from sysfs and discard extent
+> from inode's extent lru list if we touch the limitation; (e.g. in FAT, max number
+> of mapping extent per inode is fixed: 8)
+> 2.add all extents of inodes into a global lru list, we will try to shrink this list
+> if we're facing memory pressure.
+> 
+> How do you think? or any better ideas are welcome. :)
+
+Historically, the reason that I added only one small extent cache is that I
+wanted to avoid additional data structures having any overhead in critical data
+write path.
+Instead, I intended to use a well operating node page cache.
+
+We need to consider what would be the benefit when using extent cache rather
+than existing node page cache.
+
+Thanks,
+
+> 
+> > 
+> > Anyway, mount option could be alternative for this patch.
+> 
+> Yes, will do.
+> 
+> Thanks,
+> Yu
+> 
+> > 
+> > On Fri, Dec 19, 2014 at 06:49:29PM +0800, Chao Yu wrote:
+> > > Now f2fs have page-block mapping cache which can cache only one extent mapping
+> > > between contiguous logical address and physical address.
+> > > Normally, this design will work well because f2fs will expand coverage area of
+> > > the mapping extent when we write forward sequentially. But when we write data
+> > > randomly in Out-Place-Update mode, the extent will be shorten and hardly be
+> > > expanded for most time as following reasons:
+> > > 1.The short part of extent will be discarded if we break contiguous mapping in
+> > > the middle of extent.
+> > > 2.The new mapping will be added into mapping cache only at head or tail of the
+> > > extent.
+> > > 3.We will drop the extent cache when the extent became very fragmented.
+> > > 4.We will not update the extent with mapping which we get from readpages or
+> > > readpage.
+> > >
+> > > To solve above problems, this patch adds extent cache base on rb-tree like other
+> > > filesystems (e.g.: ext4/btrfs) in f2fs. By this way, f2fs can support another
+> > > more effective cache between dnode page cache and disk. It will supply high hit
+> > > ratio in the cache with fewer memory when dnode page cache are reclaimed in
+> > > environment of low memory.
+> > >
+> > > Todo:
+> > > *introduce mount option for extent cache.
+> > > *add shrink ability for extent cache.
+> > >
+> > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > ---
