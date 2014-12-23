@@ -1,89 +1,116 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 6/6] f2fs: avoid double lock for cp_rwsem
-Date: Tue, 23 Dec 2014 15:01:36 +0800
-Message-ID: <003201d01e7e$66126ae0$323740a0$@samsung.com>
-References: <1419179723-3234-1-git-send-email-jaegeuk@kernel.org>
- <1419179723-3234-6-git-send-email-jaegeuk@kernel.org>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: add block count by in-place-update in
+ stat	info
+Date: Tue, 23 Dec 2014 15:03:26 +0800
+Message-ID: <003301d01e7e$ab0d42f0$0127c8d0$@samsung.com>
+References: <1419291054-7630-1-git-send-email-cm224.lee@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1419179723-3234-6-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1419291054-7630-1-git-send-email-cm224.lee@samsung.com>
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: 'Changman Lee' <cm224.lee@samsung.com>, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+Hi Changman,
 
 > -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Monday, December 22, 2014 12:35 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 6/6] f2fs: avoid double lock for cp_rwsem
+> From: Changman Lee [mailto:cm224.lee@samsung.com]
+> Sent: Tuesday, December 23, 2014 7:31 AM
+> To: linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] [PATCH] f2fs: add block count by in-place-update in stat info
 > 
-> The __f2fs_add_link is covered by cp_rwsem all the time.
-> This calls init_inode_metadata, which conducts some acl operations including
-> memory allocation with GFP_KERNEL previously.
-> But, under memory pressure, f2fs_write_data_page can be called, which also
-> grabs cp_mutex too.
-
-grabs cp_rwsem.
-
-> Basically, it's safe since down_read was used in both of cases, but it'd
-> better avoid this situation in advance.
-
-If checkpoint intend to hold down_write in the middle of the two down_read
-caller, it will cause a deadlock, so it's not safe.
-
-Could you update the comments?
-
+> This patch adds block count by in-place-update in stat.
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
-Anyway, Nice catch and please add:
-
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-
+> Signed-off-by: Changman Lee <cm224.lee@samsung.com>
 > ---
->  fs/f2fs/acl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  fs/f2fs/debug.c   | 3 +++
+>  fs/f2fs/f2fs.h    | 5 ++++-
+>  fs/f2fs/segment.c | 1 +
+>  3 files changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-> index 1ccb26b..7f12d28 100644
-> --- a/fs/f2fs/acl.c
-> +++ b/fs/f2fs/acl.c
-> @@ -62,7 +62,7 @@ static struct posix_acl *f2fs_acl_from_disk(const char *value, size_t size)
->  	if (count == 0)
->  		return NULL;
+> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+> index 91e8f69..46bef86 100644
+> --- a/fs/f2fs/debug.c
+> +++ b/fs/f2fs/debug.c
+> @@ -79,6 +79,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+>  		si->segment_count[i] = sbi->segment_count[i];
+>  		si->block_count[i] = sbi->block_count[i];
+>  	}
+> +
+> +	si->inplace_count = sbi->inplace_count;
+>  }
 > 
-> -	acl = posix_acl_alloc(count, GFP_KERNEL);
-> +	acl = posix_acl_alloc(count, GFP_NOFS);
->  	if (!acl)
->  		return ERR_PTR(-ENOMEM);
+>  /*
+> @@ -277,6 +279,7 @@ static int stat_show(struct seq_file *s, void *v)
+>  		for (j = 0; j < si->util_free; j++)
+>  			seq_putc(s, '-');
+>  		seq_puts(s, "]\n\n");
+> +		seq_printf(s, "IPU: %u blocks\n", si->inplace_count);
+>  		seq_printf(s, "SSR: %u blocks in %u segments\n",
+>  			   si->block_count[SSR], si->segment_count[SSR]);
+>  		seq_printf(s, "LFS: %u blocks in %u segments\n",
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index ec58bb2..ae6dfb6 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -589,6 +589,7 @@ struct f2fs_sb_info {
+>  	struct f2fs_stat_info *stat_info;	/* FS status information */
+>  	unsigned int segment_count[2];		/* # of allocated segments */
+>  	unsigned int block_count[2];		/* # of allocated blocks */
+> +	unsigned int inplace_count;		/* # of inplace update */
+
+Shouldn't we use atomic type for more accurate?
+
+Thanks
+
+>  	int total_hit_ext, read_hit_ext;	/* extent cache hit ratio */
+>  	atomic_t inline_inode;			/* # of inline_data inodes */
+>  	atomic_t inline_dir;			/* # of inline_dentry inodes */
+> @@ -1514,6 +1515,7 @@ struct f2fs_stat_info {
 > 
-> @@ -116,7 +116,7 @@ static void *f2fs_acl_to_disk(const struct posix_acl *acl, size_t *size)
->  	int i;
+>  	unsigned int segment_count[2];
+>  	unsigned int block_count[2];
+> +	unsigned int inplace_count;
+>  	unsigned base_mem, cache_mem;
+>  };
 > 
->  	f2fs_acl = kmalloc(sizeof(struct f2fs_acl_header) + acl->a_count *
-> -			sizeof(struct f2fs_acl_entry), GFP_KERNEL);
-> +			sizeof(struct f2fs_acl_entry), GFP_NOFS);
->  	if (!f2fs_acl)
->  		return ERR_PTR(-ENOMEM);
+> @@ -1553,7 +1555,8 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+>  		((sbi)->segment_count[(curseg)->alloc_type]++)
+>  #define stat_inc_block_count(sbi, curseg)				\
+>  		((sbi)->block_count[(curseg)->alloc_type]++)
+> -
+> +#define stat_inc_inplace_blocks(sbi)					\
+> +		((sbi)->inplace_count++)
+>  #define stat_inc_seg_count(sbi, type)					\
+>  	do {								\
+>  		struct f2fs_stat_info *si = F2FS_STAT(sbi);		\
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 42607a6..fd9bc96 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1235,6 +1235,7 @@ void write_data_page(struct page *page, struct dnode_of_data *dn,
+>  void rewrite_data_page(struct page *page, block_t old_blkaddr,
+>  					struct f2fs_io_info *fio)
+>  {
+> +	stat_inc_inplace_blocks(F2FS_P_SB(page));
+>  	f2fs_submit_page_mbio(F2FS_P_SB(page), page, old_blkaddr, fio);
+>  }
 > 
 > --
-> 2.1.1
+> 1.9.1
 > 
 > 
 > ------------------------------------------------------------------------------
-> Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
-> from Actuate! Instantly Supercharge Your Business Reports and Dashboards
-> with Interactivity, Sharing, Native Excel Exports, App Integration & more
-> Get technology previously reserved for billion-dollar corporations, FREE
-> http://pubads.g.doubleclick.net/gampad/clk?id=164703151&iu=/4140/ostg.clktrk
+> Dive into the World of Parallel Programming! The Go Parallel Website,
+> sponsored by Intel and developed in partnership with Slashdot Media, is your
+> hub for all things parallel software development, from weekly thought
+> leadership blogs to news, videos, case studies, tutorials and more. Take a
+> look and join the conversation now. http://goparallel.sourceforge.net
 > _______________________________________________
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
