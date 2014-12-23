@@ -1,133 +1,149 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 6/6] f2fs: avoid double lock for cp_rwsem
-Date: Tue, 23 Dec 2014 16:58:46 +0800
-Message-ID: <003801d01e8e$c496f080$4dc4d180$@samsung.com>
-References: <1419179723-3234-1-git-send-email-jaegeuk@kernel.org>
- <1419179723-3234-6-git-send-email-jaegeuk@kernel.org>
- <003201d01e7e$66126ae0$323740a0$@samsung.com>
- <20141223074041.GB9946@jaegeuk-mac02.hsd1.ca.comcast.net>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: conduct f2fs_gc as explicit gc_type
+Date: Tue, 23 Dec 2014 18:04:54 +0900
+Message-ID: <20141223090454.GF3335@lcm>
+References: <1419291459-7731-1-git-send-email-cm224.lee@samsung.com>
+ <20141223080037.GA10999@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <20141223074041.GB9946@jaegeuk-mac02.hsd1.ca.comcast.net>
-Content-language: zh-cn
+Content-disposition: inline
+In-reply-to: <20141223080037.GA10999@jaegeuk-mac02.hsd1.ca.comcast.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+Hi,
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Tuesday, December 23, 2014 3:41 PM
-> To: Chao Yu
-> Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 6/6] f2fs: avoid double lock for cp_rwsem
+On Tue, Dec 23, 2014 at 12:00:37AM -0800, Jaegeuk Kim wrote:
+> Hi Changman,
 > 
-> Hi,
+> On Tue, Dec 23, 2014 at 08:37:38AM +0900, Changman Lee wrote:
+> > f2fs has 2 gc_type; foreground gc and background gc.
+> > In the case of foreground gc, f2fs will select victim as greedy.
+> > Otherwise, as cost-benefit. And also it runs as greedy in SSR mode.
+> > Until now, f2fs_gc conducted with BG_GC as default. So we couldn't
+> > expect how it runs; BG_GC or FG_GC and GREEDY or COST_BENEFIT.
 > 
-> On Tue, Dec 23, 2014 at 03:01:36PM +0800, Chao Yu wrote:
-> > Hi Jaegeuk,
-> >
-> > > -----Original Message-----
-> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > Sent: Monday, December 22, 2014 12:35 AM
-> > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > > linux-f2fs-devel@lists.sourceforge.net
-> > > Cc: Jaegeuk Kim
-> > > Subject: [f2fs-dev] [PATCH 6/6] f2fs: avoid double lock for cp_rwsem
-> > >
-> > > The __f2fs_add_link is covered by cp_rwsem all the time.
-> > > This calls init_inode_metadata, which conducts some acl operations including
-> > > memory allocation with GFP_KERNEL previously.
-> > > But, under memory pressure, f2fs_write_data_page can be called, which also
-> > > grabs cp_mutex too.
-> >
-> > grabs cp_rwsem.
-> 
-> Got it.
-> 
-> >
-> > > Basically, it's safe since down_read was used in both of cases, but it'd
-> > > better avoid this situation in advance.
-> >
-> > If checkpoint intend to hold down_write in the middle of the two down_read
-> > caller, it will cause a deadlock, so it's not safe.
-> 
-> What I meant was like this.
-> - down_read
+> What does this mean?
+> In f2fs_gc, the gc_type will be changed accoring to the number of free
+> sections.
 
-If someone else intends to hold down_write (in checkpoint()) here,
-we will encounter deadlock.
+Right, but when I turn on trace I saw 3 cases.
+1. BG_GC and COST_BENEFIT
+2. BG_GC and GREEDY
+3. FG_GC and GREEDY
 
-Because this writer will add itself to inner waiter list of spinlock as there
-is an exist reader had held this lock, then the following reader will start to
-spin as it detect that waiter list is not empty. Then deadlock occurred.
+I expected that case 1 is likely to operate only by gc_thread.
+But it was not.
 
-I guess this design can effectively avoid starve for the writer when encounters
-a large number of readers.
-
-Thanks
-
->   - down_read
->   - up_read
-> - up_read
 > 
-> This should be safe, right?
+> > Therefore sometimes it runs as BG_GC/COST_BENEFIT although gc_thread
+> > don't put f2fs_gc to work.
+> 
+> You mean f2fs_balance_fs?
+> In this case, again, the gc_type will be assigned FG_GC.
+> 
+> Why do you want to set FG_GC/GREEDY for the SSR victims?
+
+We should alloate a block as soon as possible.
+In the case of FG_GC, it also uses invalid blocks dirtied by background gc.
+In another case, if (BG_GC && test_bit(victim_secmap)), it will be
+skipped.
+I intended that SSR operates fastly like FG_GC.
+
+Regards,
+Changman
+
+> 
 > Thanks,
 > 
-> >
-> > Could you update the comments?
-> >
-> > >
-> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >
-> > Anyway, Nice catch and please add:
-> >
-> > Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-> >
-> > > ---
-> > >  fs/f2fs/acl.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-> > > index 1ccb26b..7f12d28 100644
-> > > --- a/fs/f2fs/acl.c
-> > > +++ b/fs/f2fs/acl.c
-> > > @@ -62,7 +62,7 @@ static struct posix_acl *f2fs_acl_from_disk(const char *value, size_t
-> size)
-> > >  	if (count == 0)
-> > >  		return NULL;
-> > >
-> > > -	acl = posix_acl_alloc(count, GFP_KERNEL);
-> > > +	acl = posix_acl_alloc(count, GFP_NOFS);
-> > >  	if (!acl)
-> > >  		return ERR_PTR(-ENOMEM);
-> > >
-> > > @@ -116,7 +116,7 @@ static void *f2fs_acl_to_disk(const struct posix_acl *acl, size_t *size)
-> > >  	int i;
-> > >
-> > >  	f2fs_acl = kmalloc(sizeof(struct f2fs_acl_header) + acl->a_count *
-> > > -			sizeof(struct f2fs_acl_entry), GFP_KERNEL);
-> > > +			sizeof(struct f2fs_acl_entry), GFP_NOFS);
-> > >  	if (!f2fs_acl)
-> > >  		return ERR_PTR(-ENOMEM);
-> > >
-> > > --
-> > > 2.1.1
-> > >
-> > >
-> > > ------------------------------------------------------------------------------
-> > > Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
-> > > from Actuate! Instantly Supercharge Your Business Reports and Dashboards
-> > > with Interactivity, Sharing, Native Excel Exports, App Integration & more
-> > > Get technology previously reserved for billion-dollar corporations, FREE
-> > > http://pubads.g.doubleclick.net/gampad/clk?id=164703151&iu=/4140/ostg.clktrk
-> > > _______________________________________________
-> > > Linux-f2fs-devel mailing list
-> > > Linux-f2fs-devel@lists.sourceforge.net
-> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
+> > 
+> > Signed-off-by: Changman Lee <cm224.lee@samsung.com>
+> > ---
+> >  fs/f2fs/f2fs.h    | 2 +-
+> >  fs/f2fs/gc.c      | 5 ++---
+> >  fs/f2fs/segment.c | 6 +++---
+> >  3 files changed, 6 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index ae6dfb6..c956535 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1476,7 +1476,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
+> >  int start_gc_thread(struct f2fs_sb_info *);
+> >  void stop_gc_thread(struct f2fs_sb_info *);
+> >  block_t start_bidx_of_node(unsigned int, struct f2fs_inode_info *);
+> > -int f2fs_gc(struct f2fs_sb_info *);
+> > +int f2fs_gc(struct f2fs_sb_info *, int);
+> >  void build_gc_manager(struct f2fs_sb_info *);
+> >  int __init create_gc_caches(void);
+> >  void destroy_gc_caches(void);
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index eec0933..e1fa53a 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -80,7 +80,7 @@ static int gc_thread_func(void *data)
+> >  		stat_inc_bggc_count(sbi);
+> >  
+> >  		/* if return value is not zero, no victim was selected */
+> > -		if (f2fs_gc(sbi))
+> > +		if (f2fs_gc(sbi, BG_GC))
+> >  			wait_ms = gc_th->no_gc_sleep_time;
+> >  
+> >  		/* balancing f2fs's metadata periodically */
+> > @@ -691,10 +691,9 @@ static void do_garbage_collect(struct f2fs_sb_info *sbi, unsigned int segno,
+> >  	f2fs_put_page(sum_page, 1);
+> >  }
+> >  
+> > -int f2fs_gc(struct f2fs_sb_info *sbi)
+> > +int f2fs_gc(struct f2fs_sb_info *sbi, int gc_type)
+> >  {
+> >  	unsigned int segno, i;
+> > -	int gc_type = BG_GC;
+> >  	int nfree = 0;
+> >  	int ret = -1;
+> >  	struct cp_control cpc;
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index fd9bc96..3b32404 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -281,7 +281,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi)
+> >  	 */
+> >  	if (has_not_enough_free_secs(sbi, 0)) {
+> >  		mutex_lock(&sbi->gc_mutex);
+> > -		f2fs_gc(sbi);
+> > +		f2fs_gc(sbi, FG_GC);
+> >  	}
+> >  }
+> >  
+> > @@ -994,12 +994,12 @@ static int get_ssr_segment(struct f2fs_sb_info *sbi, int type)
+> >  
+> >  	if (IS_NODESEG(type) || !has_not_enough_free_secs(sbi, 0))
+> >  		return v_ops->get_victim(sbi,
+> > -				&(curseg)->next_segno, BG_GC, type, SSR);
+> > +				&(curseg)->next_segno, FG_GC, type, SSR);
+> >  
+> >  	/* For data segments, let's do SSR more intensively */
+> >  	for (; type >= CURSEG_HOT_DATA; type--)
+> >  		if (v_ops->get_victim(sbi, &(curseg)->next_segno,
+> > -						BG_GC, type, SSR))
+> > +						FG_GC, type, SSR))
+> >  			return 1;
+> >  	return 0;
+> >  }
+> > -- 
+> > 1.9.1
+> > 
+> > 
+> > ------------------------------------------------------------------------------
+> > Dive into the World of Parallel Programming! The Go Parallel Website,
+> > sponsored by Intel and developed in partnership with Slashdot Media, is your
+> > hub for all things parallel software development, from weekly thought
+> > leadership blogs to news, videos, case studies, tutorials and more. Take a
+> > look and join the conversation now. http://goparallel.sourceforge.net
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
