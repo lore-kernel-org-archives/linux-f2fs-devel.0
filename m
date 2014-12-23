@@ -1,73 +1,159 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 6/6 v2] f2fs: avoid double lock for cp_rwsem
-Date: Tue, 23 Dec 2014 11:08:38 -0800
-Message-ID: <20141223190838.GA13638@jaegeuk-mac02>
-References: <1419179723-3234-1-git-send-email-jaegeuk@kernel.org>
- <1419179723-3234-6-git-send-email-jaegeuk@kernel.org>
- <003201d01e7e$66126ae0$323740a0$@samsung.com>
- <20141223074041.GB9946@jaegeuk-mac02.hsd1.ca.comcast.net>
- <003801d01e8e$c496f080$4dc4d180$@samsung.com>
- <20141223190537.GB12880@jaegeuk-mac02>
+Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+Date: Tue, 23 Dec 2014 11:24:49 -0800
+Message-ID: <20141223192449.GB13638@jaegeuk-mac02>
+References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
+	<20141222020317.GB3335@lcm>
+	<000001d01db6$7d718770$78549650$@samsung.com>
+	<20141223043056.GC3335@lcm>
+	<003901d01e93$e53efa80$afbcef80$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Y3V4n-0005B6-Dw
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 23 Dec 2014 19:25:01 +0000
+Received: from mail.kernel.org ([198.145.19.201])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Y3V4m-0004K0-0p for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 23 Dec 2014 19:25:01 +0000
 Content-Disposition: inline
-In-Reply-To: <20141223190537.GB12880@jaegeuk-mac02>
-Sender: linux-fsdevel-owner@vger.kernel.org
+In-Reply-To: <003901d01e93$e53efa80$afbcef80$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Change log from v1:
- o fix description
+On Tue, Dec 23, 2014 at 05:35:11PM +0800, Chao Yu wrote:
+> Hi Changman,
+> 
+> > -----Original Message-----
+> > From: Changman Lee [mailto:cm224.lee@samsung.com]
+> > Sent: Tuesday, December 23, 2014 12:31 PM
+> > To: Chao Yu
+> > Cc: 'Jaegeuk Kim'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> > 
+> > Hi,
+> > 
+> > On Mon, Dec 22, 2014 at 03:10:30PM +0800, Chao Yu wrote:
+> > > Hi Changman,
+> > >
+> > > > -----Original Message-----
+> > > > From: Changman Lee [mailto:cm224.lee@samsung.com]
+> > > > Sent: Monday, December 22, 2014 10:03 AM
+> > > > To: Chao Yu
+> > > > Cc: Jaegeuk Kim; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> > > >
+> > > > Hi Yu,
+> > > >
+> > > > Good approach.
+> > >
+> > > Thank you. :)
+> > >
+> > > > As you know, however, f2fs breaks extent itself due to COW.
+> > >
+> > > Yes, and sometimes f2fs use IPU when override writing, in this condition,
+> > > by using this approach we can cache more contiguous mapping extent for better
+> > > performance.
+> > >
+> > > > Unlike other filesystem like btrfs, minimum extent of f2fs could have 4KB granularity.
+> > > > So we would have lots of extents per inode and it could lead to overhead
+> > > > to manage extents.
+> > >
+> > > Agree, the more number of extents are growing in one inode, the more memory
+> > > pressure and longer latency operating in rb-tree we are facing.
+> > > IMO, to solve this problem, we'd better to add limitation or shrink ability into
+> > > extent cache:
+> > > 1.limit extent number per inode with the value set from sysfs and discard extent
+> > > from inode's extent lru list if we touch the limitation; (e.g. in FAT, max number
+> > > of mapping extent per inode is fixed: 8)
+> > > 2.add all extents of inodes into a global lru list, we will try to shrink this list
+> > > if we're facing memory pressure.
+> > >
+> > > How do you think? or any better ideas are welcome. :)
+> > >
+> > 
+> > I think both of them are considerable options.
+> > How about adding extent to inode selected by user using ioctl or xattr?
+> > In the case of read most files having large size, user could get a benefit
+> > surely although they are seperated some pieces.
+> 
+> Yes, I agree, I prefer ioctl more than xattr, as xattr will take over some extra
+> space of inode, and also new added xattr name may conflict with exist extent xattr.
+> 
+> Anyway, this will provide more flexible management of extent cache to users of f2fs.
 
->From fc897d61c01acc19dba434cd4aa29baeb1537b60 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Thu, 18 Dec 2014 19:32:36 -0800
-Subject: [PATCH] f2fs: avoid double lock for cp_rwsem
+Oh, well.
+This is not a good way, since we cannot guide users to call another system call
+for their files.
 
-The __f2fs_add_link is covered by cp_rwsem all the time.
-This calls init_inode_metadata, which conducts some acl operations including
-memory allocation with GFP_KERNEL previously.
-But, under memory pressure, f2fs_write_data_page can be called, which also
-grabs cp_rwsem too.
+Instead, it needs to check fadvise hints or RDONLY in the open flag?
 
-In this case, this incurs a deadlock pointed by Chao.
-Thread #1        Thread #2
- down_read
-                 down_write
-  down_read
- -> here down_read should wait forever.
+Thanks,
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/acl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Thank you for your idea!
+> 
+> Regards,
+> Yu
+> 
+> > 
+> > Thanks,
+> > 
+> > > >
+> > > > Anyway, mount option could be alternative for this patch.
+> > >
+> > > Yes, will do.
+> > >
+> > > Thanks,
+> > > Yu
+> > >
+> > > >
+> > > > On Fri, Dec 19, 2014 at 06:49:29PM +0800, Chao Yu wrote:
+> > > > > Now f2fs have page-block mapping cache which can cache only one extent mapping
+> > > > > between contiguous logical address and physical address.
+> > > > > Normally, this design will work well because f2fs will expand coverage area of
+> > > > > the mapping extent when we write forward sequentially. But when we write data
+> > > > > randomly in Out-Place-Update mode, the extent will be shorten and hardly be
+> > > > > expanded for most time as following reasons:
+> > > > > 1.The short part of extent will be discarded if we break contiguous mapping in
+> > > > > the middle of extent.
+> > > > > 2.The new mapping will be added into mapping cache only at head or tail of the
+> > > > > extent.
+> > > > > 3.We will drop the extent cache when the extent became very fragmented.
+> > > > > 4.We will not update the extent with mapping which we get from readpages or
+> > > > > readpage.
+> > > > >
+> > > > > To solve above problems, this patch adds extent cache base on rb-tree like other
+> > > > > filesystems (e.g.: ext4/btrfs) in f2fs. By this way, f2fs can support another
+> > > > > more effective cache between dnode page cache and disk. It will supply high hit
+> > > > > ratio in the cache with fewer memory when dnode page cache are reclaimed in
+> > > > > environment of low memory.
+> > > > >
+> > > > > Todo:
+> > > > > *introduce mount option for extent cache.
+> > > > > *add shrink ability for extent cache.
+> > > > >
+> > > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > > > ---
+> > >
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index 1ccb26b..7f12d28 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -62,7 +62,7 @@ static struct posix_acl *f2fs_acl_from_disk(const char *value, size_t size)
- 	if (count == 0)
- 		return NULL;
- 
--	acl = posix_acl_alloc(count, GFP_KERNEL);
-+	acl = posix_acl_alloc(count, GFP_NOFS);
- 	if (!acl)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -116,7 +116,7 @@ static void *f2fs_acl_to_disk(const struct posix_acl *acl, size_t *size)
- 	int i;
- 
- 	f2fs_acl = kmalloc(sizeof(struct f2fs_acl_header) + acl->a_count *
--			sizeof(struct f2fs_acl_entry), GFP_KERNEL);
-+			sizeof(struct f2fs_acl_entry), GFP_NOFS);
- 	if (!f2fs_acl)
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.1.1
-
-
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming! The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net
