@@ -1,18 +1,20 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 1/6] f2fs: use f2fs_io_info to clean up messy
-	parameters during IO path
-Date: Tue, 23 Dec 2014 15:00:24 +0800
-Message-ID: <003101d01e7e$3cb6a620$b623f260$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 6/6] f2fs: avoid double lock for cp_rwsem
+Date: Tue, 23 Dec 2014 15:01:36 +0800
+Message-ID: <003201d01e7e$66126ae0$323740a0$@samsung.com>
 References: <1419179723-3234-1-git-send-email-jaegeuk@kernel.org>
+ <1419179723-3234-6-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1419179723-3234-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1419179723-3234-6-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
@@ -20,17 +22,68 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 1/6] f2fs: use f2fs_io_info to clean up messy parameters during IO
-> path
+> Subject: [f2fs-dev] [PATCH 6/6] f2fs: avoid double lock for cp_rwsem
 > 
-> This patch cleans up parameters on IO paths.
-> The key idea is to use f2fs_io_info adding a parameter, block address, and then
-> use this structure as parameters.
+> The __f2fs_add_link is covered by cp_rwsem all the time.
+> This calls init_inode_metadata, which conducts some acl operations including
+> memory allocation with GFP_KERNEL previously.
+> But, under memory pressure, f2fs_write_data_page can be called, which also
+> grabs cp_mutex too.
+
+grabs cp_rwsem.
+
+> Basically, it's safe since down_read was used in both of cases, but it'd
+> better avoid this situation in advance.
+
+If checkpoint intend to hold down_write in the middle of the two down_read
+caller, it will cause a deadlock, so it's not safe.
+
+Could you update the comments?
+
 > 
-
-Nice clean work.
-
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+Anyway, Nice catch and please add:
 
 Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
+> ---
+>  fs/f2fs/acl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+> index 1ccb26b..7f12d28 100644
+> --- a/fs/f2fs/acl.c
+> +++ b/fs/f2fs/acl.c
+> @@ -62,7 +62,7 @@ static struct posix_acl *f2fs_acl_from_disk(const char *value, size_t size)
+>  	if (count == 0)
+>  		return NULL;
+> 
+> -	acl = posix_acl_alloc(count, GFP_KERNEL);
+> +	acl = posix_acl_alloc(count, GFP_NOFS);
+>  	if (!acl)
+>  		return ERR_PTR(-ENOMEM);
+> 
+> @@ -116,7 +116,7 @@ static void *f2fs_acl_to_disk(const struct posix_acl *acl, size_t *size)
+>  	int i;
+> 
+>  	f2fs_acl = kmalloc(sizeof(struct f2fs_acl_header) + acl->a_count *
+> -			sizeof(struct f2fs_acl_entry), GFP_KERNEL);
+> +			sizeof(struct f2fs_acl_entry), GFP_NOFS);
+>  	if (!f2fs_acl)
+>  		return ERR_PTR(-ENOMEM);
+> 
+> --
+> 2.1.1
+> 
+> 
+> ------------------------------------------------------------------------------
+> Download BIRT iHub F-Type - The Free Enterprise-Grade BIRT Server
+> from Actuate! Instantly Supercharge Your Business Reports and Dashboards
+> with Interactivity, Sharing, Native Excel Exports, App Integration & more
+> Get technology previously reserved for billion-dollar corporations, FREE
+> http://pubads.g.doubleclick.net/gampad/clk?id=164703151&iu=/4140/ostg.clktrk
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
