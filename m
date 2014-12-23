@@ -1,194 +1,211 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev][PATCH] f2fs: cleanup trace event of
- f2fs_submit_page_{m,}bio with DECLARE_EVENT_CLASS
-Date: Tue, 23 Dec 2014 16:35:21 +0800
-Message-ID: <003701d01e8b$883e0e00$98ba2a00$@samsung.com>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+Date: Tue, 23 Dec 2014 17:45:33 +0900
+Message-ID: <20141223084533.GE3335@lcm>
+References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
+ <20141222020317.GB3335@lcm> <000001d01db6$7d718770$78549650$@samsung.com>
+ <20141222231604.GC8287@jaegeuk-mac02.mot.com>
+ <002a01d01e5c$e2ba0250$a82e06f0$@samsung.com>
+ <20141223073609.GA9946@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
+Content-disposition: inline
+In-reply-to: <20141223073609.GA9946@jaegeuk-mac02.hsd1.ca.comcast.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds missing parameter _type_ for trace_f2fs_submit_page_bio, then
-use DECLARE_EVENT_CLASS/DEFINE_EVENT_CONDITION pair to cleanup some trace event
-code related to f2fs_submit_page_{m,}bio.
+On Mon, Dec 22, 2014 at 11:36:09PM -0800, Jaegeuk Kim wrote:
+> Hi Chao,
+> 
+> On Tue, Dec 23, 2014 at 11:01:39AM +0800, Chao Yu wrote:
+> > Hi Jaegeuk,
+> > 
+> > > -----Original Message-----
+> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > Sent: Tuesday, December 23, 2014 7:16 AM
+> > > To: Chao Yu
+> > > Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> > > 
+> > > Hi Chao,
+> > > 
+> > > On Mon, Dec 22, 2014 at 03:10:30PM +0800, Chao Yu wrote:
+> > > > Hi Changman,
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Changman Lee [mailto:cm224.lee@samsung.com]
+> > > > > Sent: Monday, December 22, 2014 10:03 AM
+> > > > > To: Chao Yu
+> > > > > Cc: Jaegeuk Kim; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > > > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> > > > >
+> > > > > Hi Yu,
+> > > > >
+> > > > > Good approach.
+> > > >
+> > > > Thank you. :)
+> > > >
+> > > > > As you know, however, f2fs breaks extent itself due to COW.
+> > > >
+> > > > Yes, and sometimes f2fs use IPU when override writing, in this condition,
+> > > > by using this approach we can cache more contiguous mapping extent for better
+> > > > performance.
+> > > 
+> > > Hmm. When f2fs faces with this case, there is no chance to make an extent itself
+> > > at all.
+> > 
+> > With new implementation of this patch f2fs will build extent cache when readpage/readpages.
+> 
+> I don't understand your points exactly. :(
+> If there are no on-disk extents, it doesn't matter when the caches are built.
+> Could you define what scenarios you're looking at?
+> 
+> > 
+> > > 
+> > > >
+> > > > > Unlike other filesystem like btrfs, minimum extent of f2fs could have 4KB granularity.
+> > > > > So we would have lots of extents per inode and it could lead to overhead
+> > > > > to manage extents.
+> > > >
+> > > > Agree, the more number of extents are growing in one inode, the more memory
+> > > > pressure and longer latency operating in rb-tree we are facing.
+> > > > IMO, to solve this problem, we'd better to add limitation or shrink ability into
+> > > > extent cache:
+> > > > 1.limit extent number per inode with the value set from sysfs and discard extent
+> > > > from inode's extent lru list if we touch the limitation; (e.g. in FAT, max number
+> > > > of mapping extent per inode is fixed: 8)
+> > > > 2.add all extents of inodes into a global lru list, we will try to shrink this list
+> > > > if we're facing memory pressure.
+> > > >
+> > > > How do you think? or any better ideas are welcome. :)
+> > > 
+> > > Historically, the reason that I added only one small extent cache is that I
+> > > wanted to avoid additional data structures having any overhead in critical data
+> > > write path.
+> > 
+> > Thank you for telling me the history of original extent cache.
+> > 
+> > > Instead, I intended to use a well operating node page cache.
+> > > 
+> > > We need to consider what would be the benefit when using extent cache rather
+> > > than existing node page cache.
+> > 
+> > IMO, node page cache belongs to system level cache, filesystem sub system can
+> > not control it completely, cached uptodate node page will be invalidated by
+> > using drop_caches from sysfs, or reclaimer of mm, result in more IO when we need
+> > these node page next time.
+> 
+> Yes, that's exactly what I wanted.
+> 
+> > New extent cache belongs to filesystem level cache, it is completely controlled
+> > by filesystem itself. What we can profit is: on the one hand, it is used as
+> > first level cache above the node page cache, which can also increase the cache
+> > hit ratio.
+> 
+> I don't think so. The hit ratio depends on the cache policy. The node page
+> cache is managed globally by kernel in LRU manner, so I think this can show
+> affordable hit ratio.
+> 
+> > On the other hand, it is more instable and controllable than node page
+> > cache.
+> 
+> It depends on how you can control the extent cache. But, I'm not sure that
+> would be better than page cache managed by MM.
+> 
+> So, my concerns are:
+> 
+> 1. Redundant memory overhead
+>  : The extent cache is likely on top of the node page cache, which will consume 
+>  memory redundantly.
+> 
+> 2. CPU overhead
+>  : In every block address updates, it needs to traverse extent cache entries.
+> 
+> 3. Effectiveness
+>  : We have a node page cache that is managed by MM in LRU order. I think this
+>  provides good hit ratio, system-wide memory relciaming algorithms, and well-
+>  defined locking mechanism.
+> 
+> 4. Cache reclaiming policy
+>  a. global approach: it needs to consider lock contention, CPU overhead, and
+>                      shrinker. I don't think it is better than page cache.
+>  b. local approach: there still exists cold misses at the initial read
+>                     operations. After then, how does the extent cache increase
+> 		    hit ratio more than giving node page cache?
+> 
+> 		    For example, in the case of pretty normal scenario like
+> 		    open -> read -> close -> open -> read ..., we can't get
+> 		    benefits form locally-managed extent cache, while node
+> 		    page cache serves many block addresses.
 
-Additionally, after we remove redundant code, size of code can be reduced:
-   text    data     bss     dec     hex filename
- 176787    8712      56  185555   2d4d3 f2fs.ko.org
- 174408    8648      56  183112   2cb48 f2fs.ko
+I think we can solve the problem you pointed by managing global extent cache with i_ino.
+If so, we don't lose extent caches.
+And We can control extent caches by LRU as memory reclaim. (this is Chao's idea)
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/data.c              |   4 +-
- include/trace/events/f2fs.h | 115 ++++++++++++++++++++------------------------
- 2 files changed, 53 insertions(+), 66 deletions(-)
+> 
+> This is my initial thought on the extent cache.
+> Definitely, it is worth to discuss further in more details.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 20aa3c3..7953bc2 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -137,7 +137,7 @@ int f2fs_submit_page_bio(struct f2fs_sb_info *sbi, struct page *page,
- {
- 	struct bio *bio;
- 
--	trace_f2fs_submit_page_bio(page, fio->blk_addr, fio->rw);
-+	trace_f2fs_submit_page_bio(page, fio->blk_addr, fio->rw, fio->type);
- 	f2fs_trace_ios(page, fio, 0);
- 
- 	/* Allocate a new bio */
-@@ -190,7 +190,7 @@ alloc_new:
- 	f2fs_trace_ios(page, fio, 0);
- 
- 	up_write(&io->io_rwsem);
--	trace_f2fs_submit_page_mbio(page, fio->rw, fio->type, fio->blk_addr);
-+	trace_f2fs_submit_page_mbio(page, fio->blk_addr, fio->rw, fio->type);
- }
- 
- /*
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index bbc4de9..553311f 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -440,38 +440,6 @@ TRACE_EVENT(f2fs_truncate_partial_nodes,
- 		__entry->err)
- );
- 
--TRACE_EVENT_CONDITION(f2fs_submit_page_bio,
--
--	TP_PROTO(struct page *page, sector_t blkaddr, int type),
--
--	TP_ARGS(page, blkaddr, type),
--
--	TP_CONDITION(page->mapping),
--
--	TP_STRUCT__entry(
--		__field(dev_t,	dev)
--		__field(ino_t,	ino)
--		__field(pgoff_t,	index)
--		__field(sector_t,	blkaddr)
--		__field(int,	type)
--	),
--
--	TP_fast_assign(
--		__entry->dev		= page->mapping->host->i_sb->s_dev;
--		__entry->ino		= page->mapping->host->i_ino;
--		__entry->index		= page->index;
--		__entry->blkaddr	= blkaddr;
--		__entry->type		= type;
--	),
--
--	TP_printk("dev = (%d,%d), ino = %lu, page_index = 0x%lx, "
--		"blkaddr = 0x%llx, bio_type = %s%s",
--		show_dev_ino(__entry),
--		(unsigned long)__entry->index,
--		(unsigned long long)__entry->blkaddr,
--		show_bio_type(__entry->type))
--);
--
- TRACE_EVENT(f2fs_get_data_block,
- 	TP_PROTO(struct inode *inode, sector_t iblock,
- 				struct buffer_head *bh, int ret),
-@@ -680,6 +648,57 @@ TRACE_EVENT(f2fs_reserve_new_block,
- 		__entry->ofs_in_node)
- );
- 
-+DECLARE_EVENT_CLASS(f2fs__submit_page_bio,
-+
-+	TP_PROTO(struct page *page, block_t blkaddr, int rw, int type),
-+
-+	TP_ARGS(page, blkaddr, rw, type),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(ino_t, ino)
-+		__field(pgoff_t, index)
-+		__field(block_t, blkaddr)
-+		__field(int, rw)
-+		__field(int, type)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev		= page->mapping->host->i_sb->s_dev;
-+		__entry->ino		= page->mapping->host->i_ino;
-+		__entry->index		= page->index;
-+		__entry->blkaddr	= blkaddr;
-+		__entry->rw		= rw;
-+		__entry->type		= type;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %lu, page_index = 0x%lx, "
-+		"blkaddr = 0x%llx, rw = %s%s, type = %s",
-+		show_dev_ino(__entry),
-+		(unsigned long)__entry->index,
-+		(unsigned long long)__entry->blkaddr,
-+		show_bio_type(__entry->rw),
-+		show_block_type(__entry->type))
-+);
-+
-+DEFINE_EVENT_CONDITION(f2fs__submit_page_bio, f2fs_submit_page_bio,
-+
-+	TP_PROTO(struct page *page, block_t blkaddr, int rw, int type),
-+
-+	TP_ARGS(page, blkaddr, rw, type),
-+
-+	TP_CONDITION(page->mapping)
-+);
-+
-+DEFINE_EVENT_CONDITION(f2fs__submit_page_bio, f2fs_submit_page_mbio,
-+
-+	TP_PROTO(struct page *page, block_t blkaddr, int rw, int type),
-+
-+	TP_ARGS(page, blkaddr, rw, type),
-+
-+	TP_CONDITION(page->mapping)
-+);
-+
- DECLARE_EVENT_CLASS(f2fs__submit_bio,
- 
- 	TP_PROTO(struct super_block *sb, int rw, int type, struct bio *bio),
-@@ -916,38 +935,6 @@ TRACE_EVENT(f2fs_writepages,
- 		__entry->for_sync)
- );
- 
--TRACE_EVENT(f2fs_submit_page_mbio,
--
--	TP_PROTO(struct page *page, int rw, int type, block_t blk_addr),
--
--	TP_ARGS(page, rw, type, blk_addr),
--
--	TP_STRUCT__entry(
--		__field(dev_t,	dev)
--		__field(ino_t,	ino)
--		__field(int, rw)
--		__field(int, type)
--		__field(pgoff_t, index)
--		__field(block_t, block)
--	),
--
--	TP_fast_assign(
--		__entry->dev	= page->mapping->host->i_sb->s_dev;
--		__entry->ino	= page->mapping->host->i_ino;
--		__entry->rw	= rw;
--		__entry->type	= type;
--		__entry->index	= page->index;
--		__entry->block	= blk_addr;
--	),
--
--	TP_printk("dev = (%d,%d), ino = %lu, %s%s, %s, index = %lu, blkaddr = 0x%llx",
--		show_dev_ino(__entry),
--		show_bio_type(__entry->rw),
--		show_block_type(__entry->type),
--		(unsigned long)__entry->index,
--		(unsigned long long)__entry->block)
--);
--
- TRACE_EVENT(f2fs_write_checkpoint,
- 
- 	TP_PROTO(struct super_block *sb, int reason, char *msg),
--- 
-2.2.1
+Neverthless, I think Chao's suggestion have some benefits.
+It needs more memory to keep node pages than extent caches.
+The extent is better effective because it covers greater space as using
+small memory.
+I told this before but again, how about using ioctl or xattr for caching extent?
+User could get a benefit for read most files which are fragmented in a
+few chunks.
+
+If we add some ideas on Chao's patch, we will get good result.
+
+Regards,
+Changman
+
+> 
+> Thanks,
+> 
+> > 
+> > Thanks,
+> > Yu
+> > 
+> > > 
+> > > Thanks,
+> > > 
+> > > >
+> > > > >
+> > > > > Anyway, mount option could be alternative for this patch.
+> > > >
+> > > > Yes, will do.
+> > > >
+> > > > Thanks,
+> > > > Yu
+> > > >
+> > > > >
+> > > > > On Fri, Dec 19, 2014 at 06:49:29PM +0800, Chao Yu wrote:
+> > > > > > Now f2fs have page-block mapping cache which can cache only one extent mapping
+> > > > > > between contiguous logical address and physical address.
+> > > > > > Normally, this design will work well because f2fs will expand coverage area of
+> > > > > > the mapping extent when we write forward sequentially. But when we write data
+> > > > > > randomly in Out-Place-Update mode, the extent will be shorten and hardly be
+> > > > > > expanded for most time as following reasons:
+> > > > > > 1.The short part of extent will be discarded if we break contiguous mapping in
+> > > > > > the middle of extent.
+> > > > > > 2.The new mapping will be added into mapping cache only at head or tail of the
+> > > > > > extent.
+> > > > > > 3.We will drop the extent cache when the extent became very fragmented.
+> > > > > > 4.We will not update the extent with mapping which we get from readpages or
+> > > > > > readpage.
+> > > > > >
+> > > > > > To solve above problems, this patch adds extent cache base on rb-tree like other
+> > > > > > filesystems (e.g.: ext4/btrfs) in f2fs. By this way, f2fs can support another
+> > > > > > more effective cache between dnode page cache and disk. It will supply high hit
+> > > > > > ratio in the cache with fewer memory when dnode page cache are reclaimed in
+> > > > > > environment of low memory.
+> > > > > >
+> > > > > > Todo:
+> > > > > > *introduce mount option for extent cache.
+> > > > > > *add shrink ability for extent cache.
+> > > > > >
+> > > > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > > > > ---
