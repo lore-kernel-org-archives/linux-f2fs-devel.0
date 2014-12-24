@@ -1,159 +1,62 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
-Date: Tue, 23 Dec 2014 11:24:49 -0800
-Message-ID: <20141223192449.GB13638@jaegeuk-mac02>
-References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
-	<20141222020317.GB3335@lcm>
-	<000001d01db6$7d718770$78549650$@samsung.com>
-	<20141223043056.GC3335@lcm>
-	<003901d01e93$e53efa80$afbcef80$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Y3V4n-0005B6-Dw
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 23 Dec 2014 19:25:01 +0000
-Received: from mail.kernel.org ([198.145.19.201])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Y3V4m-0004K0-0p for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 23 Dec 2014 19:25:01 +0000
-Content-Disposition: inline
-In-Reply-To: <003901d01e93$e53efa80$afbcef80$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs: fix missing cold bit during recovery
+Date: Tue, 23 Dec 2014 18:01:01 -0800
+Message-ID: <1419386461-15903-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Dec 23, 2014 at 05:35:11PM +0800, Chao Yu wrote:
-> Hi Changman,
-> 
-> > -----Original Message-----
-> > From: Changman Lee [mailto:cm224.lee@samsung.com]
-> > Sent: Tuesday, December 23, 2014 12:31 PM
-> > To: Chao Yu
-> > Cc: 'Jaegeuk Kim'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
-> > 
-> > Hi,
-> > 
-> > On Mon, Dec 22, 2014 at 03:10:30PM +0800, Chao Yu wrote:
-> > > Hi Changman,
-> > >
-> > > > -----Original Message-----
-> > > > From: Changman Lee [mailto:cm224.lee@samsung.com]
-> > > > Sent: Monday, December 22, 2014 10:03 AM
-> > > > To: Chao Yu
-> > > > Cc: Jaegeuk Kim; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > > > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
-> > > >
-> > > > Hi Yu,
-> > > >
-> > > > Good approach.
-> > >
-> > > Thank you. :)
-> > >
-> > > > As you know, however, f2fs breaks extent itself due to COW.
-> > >
-> > > Yes, and sometimes f2fs use IPU when override writing, in this condition,
-> > > by using this approach we can cache more contiguous mapping extent for better
-> > > performance.
-> > >
-> > > > Unlike other filesystem like btrfs, minimum extent of f2fs could have 4KB granularity.
-> > > > So we would have lots of extents per inode and it could lead to overhead
-> > > > to manage extents.
-> > >
-> > > Agree, the more number of extents are growing in one inode, the more memory
-> > > pressure and longer latency operating in rb-tree we are facing.
-> > > IMO, to solve this problem, we'd better to add limitation or shrink ability into
-> > > extent cache:
-> > > 1.limit extent number per inode with the value set from sysfs and discard extent
-> > > from inode's extent lru list if we touch the limitation; (e.g. in FAT, max number
-> > > of mapping extent per inode is fixed: 8)
-> > > 2.add all extents of inodes into a global lru list, we will try to shrink this list
-> > > if we're facing memory pressure.
-> > >
-> > > How do you think? or any better ideas are welcome. :)
-> > >
-> > 
-> > I think both of them are considerable options.
-> > How about adding extent to inode selected by user using ioctl or xattr?
-> > In the case of read most files having large size, user could get a benefit
-> > surely although they are seperated some pieces.
-> 
-> Yes, I agree, I prefer ioctl more than xattr, as xattr will take over some extra
-> space of inode, and also new added xattr name may conflict with exist extent xattr.
-> 
-> Anyway, this will provide more flexible management of extent cache to users of f2fs.
+In do_recover_data, we find and update previous node pages after updating
+its new block addresses.
+After then, we call fill_node_footer without reset field, we erase its
+cold bit so that this new cold node block is written to wrong log area.
+This patch fixes not to miss its old flag.
 
-Oh, well.
-This is not a good way, since we cannot guide users to call another system call
-for their files.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/node.h          | 10 +++++++++-
+ include/linux/f2fs_fs.h |  2 ++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-Instead, it needs to check fadvise hints or RDONLY in the open flag?
-
-Thanks,
-
-> 
-> Thank you for your idea!
-> 
-> Regards,
-> Yu
-> 
-> > 
-> > Thanks,
-> > 
-> > > >
-> > > > Anyway, mount option could be alternative for this patch.
-> > >
-> > > Yes, will do.
-> > >
-> > > Thanks,
-> > > Yu
-> > >
-> > > >
-> > > > On Fri, Dec 19, 2014 at 06:49:29PM +0800, Chao Yu wrote:
-> > > > > Now f2fs have page-block mapping cache which can cache only one extent mapping
-> > > > > between contiguous logical address and physical address.
-> > > > > Normally, this design will work well because f2fs will expand coverage area of
-> > > > > the mapping extent when we write forward sequentially. But when we write data
-> > > > > randomly in Out-Place-Update mode, the extent will be shorten and hardly be
-> > > > > expanded for most time as following reasons:
-> > > > > 1.The short part of extent will be discarded if we break contiguous mapping in
-> > > > > the middle of extent.
-> > > > > 2.The new mapping will be added into mapping cache only at head or tail of the
-> > > > > extent.
-> > > > > 3.We will drop the extent cache when the extent became very fragmented.
-> > > > > 4.We will not update the extent with mapping which we get from readpages or
-> > > > > readpage.
-> > > > >
-> > > > > To solve above problems, this patch adds extent cache base on rb-tree like other
-> > > > > filesystems (e.g.: ext4/btrfs) in f2fs. By this way, f2fs can support another
-> > > > > more effective cache between dnode page cache and disk. It will supply high hit
-> > > > > ratio in the cache with fewer memory when dnode page cache are reclaimed in
-> > > > > environment of low memory.
-> > > > >
-> > > > > Todo:
-> > > > > *introduce mount option for extent cache.
-> > > > > *add shrink ability for extent cache.
-> > > > >
-> > > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > > > > ---
-> > >
-
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming! The Go Parallel Website,
-sponsored by Intel and developed in partnership with Slashdot Media, is your
-hub for all things parallel software development, from weekly thought
-leadership blogs to news, videos, case studies, tutorials and more. Take a
-look and join the conversation now. http://goparallel.sourceforge.net
+diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+index fa6f959..cac8a3d 100644
+--- a/fs/f2fs/node.h
++++ b/fs/f2fs/node.h
+@@ -212,11 +212,19 @@ static inline void fill_node_footer(struct page *page, nid_t nid,
+ 				nid_t ino, unsigned int ofs, bool reset)
+ {
+ 	struct f2fs_node *rn = F2FS_NODE(page);
++	unsigned int old_flag = 0;
++
+ 	if (reset)
+ 		memset(rn, 0, sizeof(*rn));
++	else
++		old_flag = le32_to_cpu(rn->footer.flag);
++
+ 	rn->footer.nid = cpu_to_le32(nid);
+ 	rn->footer.ino = cpu_to_le32(ino);
+-	rn->footer.flag = cpu_to_le32(ofs << OFFSET_BIT_SHIFT);
++
++	/* should remain old flag bits such as COLD_BIT_SHIFT */
++	rn->footer.flag = cpu_to_le32((ofs << OFFSET_BIT_SHIFT) |
++					(old_flag & OFFSET_BIT_MASK));
+ }
+ 
+ static inline void copy_node_footer(struct page *dst, struct page *src)
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 87f14e9..e993b0b 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -224,6 +224,8 @@ enum {
+ 	OFFSET_BIT_SHIFT
+ };
+ 
++#define OFFSET_BIT_MASK		(0x07)	/* (0x01 << OFFSET_BIT_SHIFT) - 1 */
++
+ struct node_footer {
+ 	__le32 nid;		/* node id */
+ 	__le32 ino;		/* inode nunmber */
+-- 
+2.1.1
