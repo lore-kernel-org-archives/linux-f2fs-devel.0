@@ -1,271 +1,265 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev][PATCH]f2fs: reuse inode_entry_slab in gc procedure for
- using slab more effectively
-Date: Thu, 25 Dec 2014 14:32:50 +0800
-Message-ID: <000d01d0200c$ca1e1590$5e5a40b0$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+Date: Thu, 25 Dec 2014 00:35:23 -0800
+Message-ID: <20141225083523.GA18401@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
+ <20141222020317.GB3335@lcm>
+ <000001d01db6$7d718770$78549650$@samsung.com>
+ <20141222231604.GC8287@jaegeuk-mac02.mot.com>
+ <002a01d01e5c$e2ba0250$a82e06f0$@samsung.com>
+ <20141223073609.GA9946@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <006e01d01f4f$ef9fa940$cedefbc0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
+Content-Disposition: inline
+In-Reply-To: <006e01d01f4f$ef9fa940$cedefbc0$@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-There are two slab cache inode_entry_slab and winode_slab using the same
-structure as below:
+Hi Chao,
 
-struct dir_inode_entry {
-	struct list_head list;	/* list head */
-	struct inode *inode;	/* vfs inode pointer */
-};
+On Wed, Dec 24, 2014 at 04:01:16PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Tuesday, December 23, 2014 3:36 PM
+> > To: Chao Yu
+> > Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> > 
+> > Hi Chao,
+> > 
+> > On Tue, Dec 23, 2014 at 11:01:39AM +0800, Chao Yu wrote:
+> > > Hi Jaegeuk,
+> > >
+> > > > -----Original Message-----
+> > > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > > Sent: Tuesday, December 23, 2014 7:16 AM
+> > > > To: Chao Yu
+> > > > Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> > > >
+> > > > Hi Chao,
+> > > >
+> > > > On Mon, Dec 22, 2014 at 03:10:30PM +0800, Chao Yu wrote:
+> > > > > Hi Changman,
+> > > > >
+> > > > > > -----Original Message-----
+> > > > > > From: Changman Lee [mailto:cm224.lee@samsung.com]
+> > > > > > Sent: Monday, December 22, 2014 10:03 AM
+> > > > > > To: Chao Yu
+> > > > > > Cc: Jaegeuk Kim; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > > > > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> > > > > >
+> > > > > > Hi Yu,
+> > > > > >
+> > > > > > Good approach.
+> > > > >
+> > > > > Thank you. :)
+> > > > >
+> > > > > > As you know, however, f2fs breaks extent itself due to COW.
+> > > > >
+> > > > > Yes, and sometimes f2fs use IPU when override writing, in this condition,
+> > > > > by using this approach we can cache more contiguous mapping extent for better
+> > > > > performance.
+> > > >
+> > > > Hmm. When f2fs faces with this case, there is no chance to make an extent itself
+> > > > at all.
+> > >
+> > > With new implementation of this patch f2fs will build extent cache when readpage/readpages.
+> > 
+> > I don't understand your points exactly. :(
+> > If there are no on-disk extents, it doesn't matter when the caches are built.
+> > Could you define what scenarios you're looking at?
+> 
+> What I mean is that IPU will not split the exist extent in extent cache; and
+> this exist extent cache was been built when we init cache with last accessed extent
+> (the only on-disk extent) which was stored in inode, or be built when we invoke
+> get_data_block in readpage/readpages in IPU mode. So there is a chance to make
+> extent in this scenario.
 
-struct inode_entry {
-	struct list_head list;
-	struct inode *inode;
-};
+As long as I can understand your point, IPU can mitigate data fragmentation,
+resulting in more extents, but current IPU policies except FORCE are activated
+only when partition was already fragmented a lot such as high utilization or
+SSR modes. That's why I said IPU is actually not helping extent caches.
 
-It's a little waste that the two cache can not share their memory space for each
-other.
-So in this patch we remove one redundant winode_slab slab cache, then use more
-universal name struct inode_entry as remaining data structure name of slab,
-finally we reuse the inode_entry_slab to store dirty dir item and gc item for
-more effective.
+[snip]
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/checkpoint.c | 18 +++++++++---------
- fs/f2fs/debug.c      |  2 +-
- fs/f2fs/f2fs.h       |  8 +++-----
- fs/f2fs/gc.c         | 20 +++-----------------
- fs/f2fs/gc.h         |  5 -----
- fs/f2fs/super.c      |  8 +-------
- 6 files changed, 17 insertions(+), 44 deletions(-)
+> > > IMO, node page cache belongs to system level cache, filesystem sub system can
+> > > not control it completely, cached uptodate node page will be invalidated by
+> > > using drop_caches from sysfs, or reclaimer of mm, result in more IO when we need
+> > > these node page next time.
+> > 
+> > Yes, that's exactly what I wanted.
+> 
+> IMO, cost is expensive when we read node page again if these pages are invalidated
+> by MM. In the worst case, we will read 3 ind-node blocks + 1 dnode block + 3 NAT blocks
+> from disk for one blkaddr.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 3999933..9f5317c 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -24,7 +24,7 @@
- #include <trace/events/f2fs.h>
- 
- static struct kmem_cache *ino_entry_slab;
--static struct kmem_cache *inode_entry_slab;
-+struct kmem_cache *inode_entry_slab;
- 
- /*
-  * We guarantee no failure on the returned page.
-@@ -673,7 +673,7 @@ fail_no_cp:
- 	return -EINVAL;
- }
- 
--static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
-+static int __add_dirty_inode(struct inode *inode, struct inode_entry *new)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 
-@@ -690,7 +690,7 @@ static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
- void update_dirty_page(struct inode *inode, struct page *page)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct dir_inode_entry *new;
-+	struct inode_entry *new;
- 	int ret = 0;
- 
- 	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode))
-@@ -720,7 +720,7 @@ out:
- void add_dirty_dir_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct dir_inode_entry *new =
-+	struct inode_entry *new =
- 			f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
- 	int ret = 0;
- 
-@@ -738,7 +738,7 @@ void add_dirty_dir_inode(struct inode *inode)
- void remove_dirty_dir_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct dir_inode_entry *entry;
-+	struct inode_entry *entry;
- 
- 	if (!S_ISDIR(inode->i_mode))
- 		return;
-@@ -768,7 +768,7 @@ void remove_dirty_dir_inode(struct inode *inode)
- void sync_dirty_dir_inodes(struct f2fs_sb_info *sbi)
- {
- 	struct list_head *head;
--	struct dir_inode_entry *entry;
-+	struct inode_entry *entry;
- 	struct inode *inode;
- retry:
- 	if (unlikely(f2fs_cp_error(sbi)))
-@@ -781,7 +781,7 @@ retry:
- 		spin_unlock(&sbi->dir_inode_lock);
- 		return;
- 	}
--	entry = list_entry(head->next, struct dir_inode_entry, list);
-+	entry = list_entry(head->next, struct inode_entry, list);
- 	inode = igrab(entry->inode);
- 	spin_unlock(&sbi->dir_inode_lock);
- 	if (inode) {
-@@ -1107,8 +1107,8 @@ int __init create_checkpoint_caches(void)
- 			sizeof(struct ino_entry));
- 	if (!ino_entry_slab)
- 		return -ENOMEM;
--	inode_entry_slab = f2fs_kmem_cache_create("f2fs_dirty_dir_entry",
--			sizeof(struct dir_inode_entry));
-+	inode_entry_slab = f2fs_kmem_cache_create("f2fs_inode_entry",
-+			sizeof(struct inode_entry));
- 	if (!inode_entry_slab) {
- 		kmem_cache_destroy(ino_entry_slab);
- 		return -ENOMEM;
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 2b64221..dd7835b 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -172,7 +172,7 @@ get_cache:
- 	si->cache_mem += npages << PAGE_CACHE_SHIFT;
- 	npages = META_MAPPING(sbi)->nrpages;
- 	si->cache_mem += npages << PAGE_CACHE_SHIFT;
--	si->cache_mem += sbi->n_dirty_dirs * sizeof(struct dir_inode_entry);
-+	si->cache_mem += sbi->n_dirty_dirs * sizeof(struct inode_entry);
- 	for (i = 0; i <= UPDATE_INO; i++)
- 		si->cache_mem += sbi->im[i].ino_num * sizeof(struct ino_entry);
- }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e22ec06..573fdc8 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -136,8 +136,8 @@ struct ino_entry {
- 	nid_t ino;		/* inode number */
- };
- 
--/* for the list of directory inodes */
--struct dir_inode_entry {
-+/* for the list of directory inodes or gc inodes */
-+struct inode_entry {
- 	struct list_head list;	/* list head */
- 	struct inode *inode;	/* vfs inode pointer */
- };
-@@ -297,7 +297,7 @@ struct f2fs_inode_info {
- 	nid_t i_xattr_nid;		/* node id that contains xattrs */
- 	unsigned long long xattr_ver;	/* cp version of xattr modification */
- 	struct extent_info ext;		/* in-memory extent cache entry */
--	struct dir_inode_entry *dirty_dir;	/* the pointer of dirty dir */
-+	struct inode_entry *dirty_dir;	/* the pointer of dirty dir */
- 
- 	struct radix_tree_root inmem_root;	/* radix tree for inmem pages */
- 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
-@@ -1487,8 +1487,6 @@ void stop_gc_thread(struct f2fs_sb_info *);
- block_t start_bidx_of_node(unsigned int, struct f2fs_inode_info *);
- int f2fs_gc(struct f2fs_sb_info *);
- void build_gc_manager(struct f2fs_sb_info *);
--int __init create_gc_caches(void);
--void destroy_gc_caches(void);
- 
- /*
-  * recovery.c
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index eec0933..139b79c 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -24,7 +24,7 @@
- #include "gc.h"
- #include <trace/events/f2fs.h>
- 
--static struct kmem_cache *winode_slab;
-+extern struct kmem_cache *inode_entry_slab;
- 
- static int gc_thread_func(void *data)
- {
-@@ -356,7 +356,7 @@ static void add_gc_inode(struct gc_inode_list *gc_list, struct inode *inode)
- 		iput(inode);
- 		return;
- 	}
--	new_ie = f2fs_kmem_cache_alloc(winode_slab, GFP_NOFS);
-+	new_ie = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
- 	new_ie->inode = inode;
- retry:
- 	if (radix_tree_insert(&gc_list->iroot, inode->i_ino, new_ie)) {
-@@ -373,7 +373,7 @@ static void put_gc_inode(struct gc_inode_list *gc_list)
- 		radix_tree_delete(&gc_list->iroot, ie->inode->i_ino);
- 		iput(ie->inode);
- 		list_del(&ie->list);
--		kmem_cache_free(winode_slab, ie);
-+		kmem_cache_free(inode_entry_slab, ie);
- 	}
- }
- 
-@@ -750,17 +750,3 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
- {
- 	DIRTY_I(sbi)->v_ops = &default_v_ops;
- }
--
--int __init create_gc_caches(void)
--{
--	winode_slab = f2fs_kmem_cache_create("f2fs_gc_inodes",
--			sizeof(struct inode_entry));
--	if (!winode_slab)
--		return -ENOMEM;
--	return 0;
--}
--
--void destroy_gc_caches(void)
--{
--	kmem_cache_destroy(winode_slab);
--}
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index 6ff7ad3..f9166a4 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -35,11 +35,6 @@ struct f2fs_gc_kthread {
- 	unsigned int gc_idle;
- };
- 
--struct inode_entry {
--	struct list_head list;
--	struct inode *inode;
--};
--
- struct gc_inode_list {
- 	struct list_head ilist;
- 	struct radix_tree_root iroot;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index cf68e44..0ae6a2f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1231,12 +1231,9 @@ static int __init init_f2fs_fs(void)
- 	err = create_segment_manager_caches();
- 	if (err)
- 		goto free_node_manager_caches;
--	err = create_gc_caches();
--	if (err)
--		goto free_segment_manager_caches;
- 	err = create_checkpoint_caches();
- 	if (err)
--		goto free_gc_caches;
-+		goto free_segment_manager_caches;
- 	f2fs_kset = kset_create_and_add("f2fs", NULL, fs_kobj);
- 	if (!f2fs_kset) {
- 		err = -ENOMEM;
-@@ -1253,8 +1250,6 @@ free_kset:
- 	kset_unregister(f2fs_kset);
- free_checkpoint_caches:
- 	destroy_checkpoint_caches();
--free_gc_caches:
--	destroy_gc_caches();
- free_segment_manager_caches:
- 	destroy_segment_manager_caches();
- free_node_manager_caches:
-@@ -1271,7 +1266,6 @@ static void __exit exit_f2fs_fs(void)
- 	f2fs_destroy_root_stats();
- 	unregister_filesystem(&f2fs_fs_type);
- 	destroy_checkpoint_caches();
--	destroy_gc_caches();
- 	destroy_segment_manager_caches();
- 	destroy_node_manager_caches();
- 	destroy_inodecache();
--- 
-2.2.1
+My point is who should control this sort of caches.
+At least, we should focus on the hit ratio, not the worst case comparison.
+In the worst case, extent cache has more overhead than node page cache alone.
+
+> 
+> > 
+> > > New extent cache belongs to filesystem level cache, it is completely controlled
+> > > by filesystem itself. What we can profit is: on the one hand, it is used as
+> > > first level cache above the node page cache, which can also increase the cache
+> > > hit ratio.
+> > 
+> > I don't think so. The hit ratio depends on the cache policy. The node page
+> > cache is managed globally by kernel in LRU manner, so I think this can show
+> > affordable hit ratio.
+> 
+> As I test, in this scenario we can have higher ratio hit in new extent cache
+> than original extent cache:
+> 1.write a large file
+> 2.write randomly in this file
+> 3.drop cache through drop_caches entry (or reclaim by MM)
+> 4.read this large file
+> 
+> We cache all segregated extents in inode, so our ratio hit is 100% in
+> above scenario. If we add cache policy in extent cache, our hit ratio
+> will drop. But added policy can provide us more choose for different hit
+> ratio (may affect IO count) requirement of users.
+
+Of course! Even though system wants to get more memory, you're trying to grab
+in-house memory for extents.
+Or, new shrinker reclaims some of them, but it will drop hit raio obviously.
+
+Please see below as a summary.
+
+> 
+> > 
+> > > On the other hand, it is more instable and controllable than node page
+> > > cache.
+> > 
+> > It depends on how you can control the extent cache. But, I'm not sure that
+> > would be better than page cache managed by MM.
+> > 
+> > So, my concerns are:
+> > 
+> > 1. Redundant memory overhead
+> >  : The extent cache is likely on top of the node page cache, which will consume
+> >  memory redundantly.
+> > 
+> > 2. CPU overhead
+> >  : In every block address updates, it needs to traverse extent cache entries.
+> 
+> As I mentioned above, if extent cache has the ability of limitation and shrink,
+> overhead of memory and CPU can be controlled.
+> 
+> > 
+> > 3. Effectiveness
+> >  : We have a node page cache that is managed by MM in LRU order. I think this
+> >  provides good hit ratio, system-wide memory relciaming algorithms, and well-
+> >  defined locking mechanism.
+> 
+> The effectiveness of new extent cache is the key point we should discuss.
+> 
+> IMO, hit ratio of extent cache and memory/CPU cost can be tradeoff.
+> For example:
+> 1.if limitation is on, max value is 1; shrink is off:
+> 	our extent cache will be the same as original extent cache.
+> 2.if limitation is off, shrink is off:
+> 	our extent cache can provide high hit ratio when node page cache is
+> 	invalid but there is more memory/CPU overhead.
+> 3.there are more status between label 1 and label 2 as limitation and shrink is
+> set to different value.
+> So we just develop our extent cache for more functionality and selective.
+> 
+> Another point is that, now size of struct extent_info is 24 bytes which is much
+> smaller than 4096 of node page size (ind-node page size is not calced), it's
+> cost-efficient to use small memory to store contiguous mapping. (This is pointed
+> out by Changman also)
+> 
+> > 
+> > 4. Cache reclaiming policy
+> >  a. global approach: it needs to consider lock contention, CPU overhead, and
+> >                      shrinker. I don't think it is better than page cache.
+> >  b. local approach: there still exists cold misses at the initial read
+> >                     operations. After then, how does the extent cache increase
+> > 		    hit ratio more than giving node page cache?
+> > 
+> > 		    For example, in the case of pretty normal scenario like
+> > 		    open -> read -> close -> open -> read ..., we can't get
+> > 		    benefits form locally-managed extent cache, while node
+> > 		    page cache serves many block addresses.
+> 
+> If this case should be covered, how about remembering these recently accessed extent
+> in a global list when evict, recovering extent cache from list when re-open?
+
+Oh, surely, this example is from the local approach, not existing in
+the global one. :)
+
+I guess you've understood my concerns enoughly.
+So, could you share a detailed design for all these stuffs?
+
+For the design, I think these must be addressed seriously.
+ 1. decide one of global or local management
+ 2. should add a shrinker
+ 3. reduce lock contention and critical region
+
+Please, limit this feature to consume memory as less as possible, since it will
+increase memory footprint definitely.
+
+Thanks,
+
+> 
+> Thanks,
+> Yu
+> 
+> > 
+> > This is my initial thought on the extent cache.
+> > Definitely, it is worth to discuss further in more details.
+> > 
+> > Thanks,
+> > 
+> > >
+> > > Thanks,
+> > > Yu
+> > >
+> > > >
+> > > > Thanks,
+> > > >
+> > > > >
+> > > > > >
+> > > > > > Anyway, mount option could be alternative for this patch.
+> > > > >
+> > > > > Yes, will do.
+> > > > >
+> > > > > Thanks,
+> > > > > Yu
+> > > > >
+> > > > > >
+> > > > > > On Fri, Dec 19, 2014 at 06:49:29PM +0800, Chao Yu wrote:
+> > > > > > > Now f2fs have page-block mapping cache which can cache only one extent mapping
+> > > > > > > between contiguous logical address and physical address.
+> > > > > > > Normally, this design will work well because f2fs will expand coverage area of
+> > > > > > > the mapping extent when we write forward sequentially. But when we write data
+> > > > > > > randomly in Out-Place-Update mode, the extent will be shorten and hardly be
+> > > > > > > expanded for most time as following reasons:
+> > > > > > > 1.The short part of extent will be discarded if we break contiguous mapping in
+> > > > > > > the middle of extent.
+> > > > > > > 2.The new mapping will be added into mapping cache only at head or tail of the
+> > > > > > > extent.
+> > > > > > > 3.We will drop the extent cache when the extent became very fragmented.
+> > > > > > > 4.We will not update the extent with mapping which we get from readpages or
+> > > > > > > readpage.
+> > > > > > >
+> > > > > > > To solve above problems, this patch adds extent cache base on rb-tree like other
+> > > > > > > filesystems (e.g.: ext4/btrfs) in f2fs. By this way, f2fs can support another
+> > > > > > > more effective cache between dnode page cache and disk. It will supply high hit
+> > > > > > > ratio in the cache with fewer memory when dnode page cache are reclaimed in
+> > > > > > > environment of low memory.
+> > > > > > >
+> > > > > > > Todo:
+> > > > > > > *introduce mount option for extent cache.
+> > > > > > > *add shrink ability for extent cache.
+> > > > > > >
+> > > > > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > > > > > ---
