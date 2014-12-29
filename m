@@ -1,284 +1,143 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev] [PATCH] f2fs: reuse inode_entry_slab in gc procedure for
- using slab more effectively
-Date: Mon, 29 Dec 2014 15:56:18 +0800
-Message-ID: <003401d0233d$1474cac0$3d5e6040$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+Date: Mon, 29 Dec 2014 13:23:00 -0800
+Message-ID: <20141229212300.GB29975@jaegeuk-mac02.mot.com>
+References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
+ <20141222020317.GB3335@lcm>
+ <000001d01db6$7d718770$78549650$@samsung.com>
+ <20141222231604.GC8287@jaegeuk-mac02.mot.com>
+ <002a01d01e5c$e2ba0250$a82e06f0$@samsung.com>
+ <20141223073609.GA9946@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <006e01d01f4f$ef9fa940$cedefbc0$@samsung.com>
+ <20141225083523.GA18401@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <003301d02337$e793a210$b6bae630$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
+Content-Disposition: inline
+In-Reply-To: <003301d02337$e793a210$b6bae630$@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-There are two slab cache inode_entry_slab and winode_slab using the same
-structure as below:
+Hi Chao,
 
-struct dir_inode_entry {
-	struct list_head list;	/* list head */
-	struct inode *inode;	/* vfs inode pointer */
+On Mon, Dec 29, 2014 at 03:19:18PM +0800, Chao Yu wrote:
+
+[snip]
+
+Nice draft. :)
+
+> 
+> Please see the draft below.
+> 
+> 1) Extent management:
+> If we use global management that managing all extents which are from different
+> inodes in sbi, we will face with serious lock contention when we access these
+> extents belong to different inodes concurrently, the loss may outweights the
+> gain.
+
+Agreed.
+
+> So we choose a local management for extent which means all extents are
+> managed by inode itself to avoid above lock contention. Addtionlly, we manage
+> all extents globally by linking all inode into a global lru list for extent
+> cache shrinker.
+> Approach:
+> 	a) build extent tree/rwlock/lru list/extent count in each inode.
+> 		*extent tree: link all extent in rb-tree;
+> 		*rwlock: protect fields when accessing extent cache concurrently;
+> 		*lru list: sort all extents in accessing time order;
+> 		*extent count: record total count of extents in cache.
+> 	b) use lru shrink list in sbi to manage all inode which cached extents.
+> 		*inode will be added or repostioned in this global list whenever
+> 		extent is being access in this inode.
+> 		*use spinlock to protect this shrink list.
+
+1. How about adding a data structure with inode number instead of referring
+inode pointer?
+
+2. How about managing extent entries globally and setting an upper bound to
+the number of extent entries instead of limiting them per each inode?
+(The rb-tree will handle many extents per inode.)
+
+3. It needs to set a minimum length for the candidate of extent cache.
+ (e.g., 64)
+
+So, for example,
+struct ino_entry_for_extents {
+	inode number;
+	rb_tree for extent_entry objects;
+	rwlock;
 };
 
-struct inode_entry {
-	struct list_head list;
-	struct inode *inode;
+struct extent_entry {
+	blkaddr, len;
+	list_head *;
 };
 
-It's a little waste that the two cache can not share their memory space for each
-other.
-So in this patch we remove one redundant winode_slab slab cache, then use more
-universal name struct inode_entry as remaining data structure name of slab,
-finally we reuse the inode_entry_slab to store dirty dir item and gc item for
-more effective.
+Something like this.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/checkpoint.c | 18 +++++++++---------
- fs/f2fs/debug.c      |  2 +-
- fs/f2fs/f2fs.h       | 14 +++++++++-----
- fs/f2fs/gc.c         | 20 ++------------------
- fs/f2fs/gc.h         |  7 ++-----
- fs/f2fs/super.c      |  8 +-------
- 6 files changed, 24 insertions(+), 45 deletions(-)
+[A, B, C, ... are extent entry]
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 3999933..9f5317c 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -24,7 +24,7 @@
- #include <trace/events/f2fs.h>
- 
- static struct kmem_cache *ino_entry_slab;
--static struct kmem_cache *inode_entry_slab;
-+struct kmem_cache *inode_entry_slab;
- 
- /*
-  * We guarantee no failure on the returned page.
-@@ -673,7 +673,7 @@ fail_no_cp:
- 	return -EINVAL;
- }
- 
--static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
-+static int __add_dirty_inode(struct inode *inode, struct inode_entry *new)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 
-@@ -690,7 +690,7 @@ static int __add_dirty_inode(struct inode *inode, struct dir_inode_entry *new)
- void update_dirty_page(struct inode *inode, struct page *page)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct dir_inode_entry *new;
-+	struct inode_entry *new;
- 	int ret = 0;
- 
- 	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode))
-@@ -720,7 +720,7 @@ out:
- void add_dirty_dir_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct dir_inode_entry *new =
-+	struct inode_entry *new =
- 			f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
- 	int ret = 0;
- 
-@@ -738,7 +738,7 @@ void add_dirty_dir_inode(struct inode *inode)
- void remove_dirty_dir_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct dir_inode_entry *entry;
-+	struct inode_entry *entry;
- 
- 	if (!S_ISDIR(inode->i_mode))
- 		return;
-@@ -768,7 +768,7 @@ void remove_dirty_dir_inode(struct inode *inode)
- void sync_dirty_dir_inodes(struct f2fs_sb_info *sbi)
- {
- 	struct list_head *head;
--	struct dir_inode_entry *entry;
-+	struct inode_entry *entry;
- 	struct inode *inode;
- retry:
- 	if (unlikely(f2fs_cp_error(sbi)))
-@@ -781,7 +781,7 @@ retry:
- 		spin_unlock(&sbi->dir_inode_lock);
- 		return;
- 	}
--	entry = list_entry(head->next, struct dir_inode_entry, list);
-+	entry = list_entry(head->next, struct inode_entry, list);
- 	inode = igrab(entry->inode);
- 	spin_unlock(&sbi->dir_inode_lock);
- 	if (inode) {
-@@ -1107,8 +1107,8 @@ int __init create_checkpoint_caches(void)
- 			sizeof(struct ino_entry));
- 	if (!ino_entry_slab)
- 		return -ENOMEM;
--	inode_entry_slab = f2fs_kmem_cache_create("f2fs_dirty_dir_entry",
--			sizeof(struct dir_inode_entry));
-+	inode_entry_slab = f2fs_kmem_cache_create("f2fs_inode_entry",
-+			sizeof(struct inode_entry));
- 	if (!inode_entry_slab) {
- 		kmem_cache_destroy(ino_entry_slab);
- 		return -ENOMEM;
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 2b64221..dd7835b 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -172,7 +172,7 @@ get_cache:
- 	si->cache_mem += npages << PAGE_CACHE_SHIFT;
- 	npages = META_MAPPING(sbi)->nrpages;
- 	si->cache_mem += npages << PAGE_CACHE_SHIFT;
--	si->cache_mem += sbi->n_dirty_dirs * sizeof(struct dir_inode_entry);
-+	si->cache_mem += sbi->n_dirty_dirs * sizeof(struct inode_entry);
- 	for (i = 0; i <= UPDATE_INO; i++)
- 		si->cache_mem += sbi->im[i].ino_num * sizeof(struct ino_entry);
- }
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3226af0..c48847e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -136,8 +136,14 @@ struct ino_entry {
- 	nid_t ino;		/* inode number */
- };
- 
--/* for the list of directory inodes */
--struct dir_inode_entry {
-+/*
-+ * for the list of directory inodes or gc inodes.
-+ * NOTE: there are two slab users for this structure, if we add/modify/delete
-+ * fields in structure for one of slab users, it may affect fields or size of
-+ * other one, in this condition, it's better to split both of slab and related
-+ * data structure.
-+ */
-+struct inode_entry {
- 	struct list_head list;	/* list head */
- 	struct inode *inode;	/* vfs inode pointer */
- };
-@@ -297,7 +303,7 @@ struct f2fs_inode_info {
- 	nid_t i_xattr_nid;		/* node id that contains xattrs */
- 	unsigned long long xattr_ver;	/* cp version of xattr modification */
- 	struct extent_info ext;		/* in-memory extent cache entry */
--	struct dir_inode_entry *dirty_dir;	/* the pointer of dirty dir */
-+	struct inode_entry *dirty_dir;	/* the pointer of dirty dir */
- 
- 	struct radix_tree_root inmem_root;	/* radix tree for inmem pages */
- 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
-@@ -1487,8 +1493,6 @@ void stop_gc_thread(struct f2fs_sb_info *);
- block_t start_bidx_of_node(unsigned int, struct f2fs_inode_info *);
- int f2fs_gc(struct f2fs_sb_info *);
- void build_gc_manager(struct f2fs_sb_info *);
--int __init create_gc_caches(void);
--void destroy_gc_caches(void);
- 
- /*
-  * recovery.c
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index eec0933..40887d3 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -24,8 +24,6 @@
- #include "gc.h"
- #include <trace/events/f2fs.h>
- 
--static struct kmem_cache *winode_slab;
--
- static int gc_thread_func(void *data)
- {
- 	struct f2fs_sb_info *sbi = data;
-@@ -356,7 +354,7 @@ static void add_gc_inode(struct gc_inode_list *gc_list, struct inode *inode)
- 		iput(inode);
- 		return;
- 	}
--	new_ie = f2fs_kmem_cache_alloc(winode_slab, GFP_NOFS);
-+	new_ie = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
- 	new_ie->inode = inode;
- retry:
- 	if (radix_tree_insert(&gc_list->iroot, inode->i_ino, new_ie)) {
-@@ -373,7 +371,7 @@ static void put_gc_inode(struct gc_inode_list *gc_list)
- 		radix_tree_delete(&gc_list->iroot, ie->inode->i_ino);
- 		iput(ie->inode);
- 		list_del(&ie->list);
--		kmem_cache_free(winode_slab, ie);
-+		kmem_cache_free(inode_entry_slab, ie);
- 	}
- }
- 
-@@ -750,17 +748,3 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
- {
- 	DIRTY_I(sbi)->v_ops = &default_v_ops;
- }
--
--int __init create_gc_caches(void)
--{
--	winode_slab = f2fs_kmem_cache_create("f2fs_gc_inodes",
--			sizeof(struct inode_entry));
--	if (!winode_slab)
--		return -ENOMEM;
--	return 0;
--}
--
--void destroy_gc_caches(void)
--{
--	kmem_cache_destroy(winode_slab);
--}
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index 6ff7ad3..524543a 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -35,16 +35,13 @@ struct f2fs_gc_kthread {
- 	unsigned int gc_idle;
- };
- 
--struct inode_entry {
--	struct list_head list;
--	struct inode *inode;
--};
--
- struct gc_inode_list {
- 	struct list_head ilist;
- 	struct radix_tree_root iroot;
- };
- 
-+extern struct kmem_cache *inode_entry_slab;
-+
- /*
-  * inline functions
-  */
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index cf68e44..0ae6a2f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1231,12 +1231,9 @@ static int __init init_f2fs_fs(void)
- 	err = create_segment_manager_caches();
- 	if (err)
- 		goto free_node_manager_caches;
--	err = create_gc_caches();
--	if (err)
--		goto free_segment_manager_caches;
- 	err = create_checkpoint_caches();
- 	if (err)
--		goto free_gc_caches;
-+		goto free_segment_manager_caches;
- 	f2fs_kset = kset_create_and_add("f2fs", NULL, fs_kobj);
- 	if (!f2fs_kset) {
- 		err = -ENOMEM;
-@@ -1253,8 +1250,6 @@ free_kset:
- 	kset_unregister(f2fs_kset);
- free_checkpoint_caches:
- 	destroy_checkpoint_caches();
--free_gc_caches:
--	destroy_gc_caches();
- free_segment_manager_caches:
- 	destroy_segment_manager_caches();
- free_node_manager_caches:
-@@ -1271,7 +1266,6 @@ static void __exit exit_f2fs_fs(void)
- 	f2fs_destroy_root_stats();
- 	unregister_filesystem(&f2fs_fs_type);
- 	destroy_checkpoint_caches();
--	destroy_gc_caches();
- 	destroy_segment_manager_caches();
- 	destroy_node_manager_caches();
- 	destroy_inodecache();
--- 
-2.2.1
+The sbi has
+1. an extent_list: (LRU) A -> B -> C -> D -> E -> F -> G (MRU)
+2. radix_tree:  ino_entry_for_extents (#10) has D, B in rb-tree
+              ` ino_entry_for_extents (#11) has A, C in rb-tree
+              ` ino_entry_for_extents (#12) has F    in rb-tree
+              ` ino_entry_for_extents (#13) has G, E in rb-tree
+
+In f2fs_update_extent_cache and __get_data_block for #10,
+  ino_entry_for_extents (#10) was founded and updated D or B.
+  Then, updated entries are moved to MRU.
+
+In f2fs_evict_inode for #11, A and C are moved to LRU.
+But, if this inode is unlinked, all the A, C, and ino_entry_for_extens (#11)
+should be released.
+
+In f2fs_balance_fs_bg, some LRU extents are released according to the amount
+of consumed memory. Then, it frees any ino_entry_for_extents having no extent.
+
+IMO, we don't need to consider readahead for this, since get_data_block will
+be called by VFS readahead.
+
+Furthermore, we need to think about whether LRU is really best or not.
+IMO, the extent cache aims to improve second access speed, rather than initial
+cold misses. So, maybe MRU or another algorithms would be better.
+
+Thanks,
+
+> 
+> 2) Limitation:
+> In one inode, as we split or add extent in extent cache when read/write, extent
+> number will enlarge, so memory and CPU overhead will increase.
+> In order to control the overhead of memory and CPU, we try to set a upper bound
+> number to limit total extent number in each inode, This number is global
+> configuration which is visable to all inode. This number will be exported to
+> sysfs for configuring according to requirement of user. By default, designed
+> number is 8.
+> 
+> 3) Shrinker:
+> There are two shrink paths:
+> 	a) one is triggered when extent count has exceed the upper bound of
+> 	inode's extent cache. We will try to release extent(s) from head of
+> 	inode's inner extent lru list until extent count is equal to upper bound.
+> 	This operation could be in f2fs_update_extent_cache().
+> 	b) the other one is triggered when memory util exceed threshold, we try
+> 	get inode from head of global lru list(s), and release extent(s) with
+> 	fixed number (by default: 64 extents) in inode one by one.
+> 	This operation could be in f2fs_balance_fs_bg().
+> 
+> 4) Revalidation:
+> In ->evict(), extent cache will be released, in order to reuse extent cache
+> of inode when reopen for high hit ratio, a proper way is to add cached extent
+> tree into a hash table (could be radix tree), revalidate extent tree and recover
+> it to inode when reopen.
+> Besides, a global lru list is needed here for shrinker.
+> 
+> 5) Readahead:
+> Expand extent cache by readaheading when we call get_dnode_of_data in non-emergency
+> path. Note, ra can affect lock contention for both ->rwlock in extent cache and
+> ->lock of global shrink list.
+> 
