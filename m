@@ -1,7 +1,7 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
-Date: Tue, 30 Dec 2014 09:32:07 +0900
-Message-ID: <20141230003206.GA13021@lcm>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [RFC PATCH] f2fs: add extent cache base on rb-tree
+Date: Tue, 30 Dec 2014 18:10:21 +0800
+Message-ID: <004b01d02418$f77db490$e6791db0$@samsung.com>
 References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
  <20141222020317.GB3335@lcm> <000001d01db6$7d718770$78549650$@samsung.com>
  <20141222231604.GC8287@jaegeuk-mac02.mot.com>
@@ -13,17 +13,24 @@ References: <001f01d01b79$954f0140$bfed03c0$@samsung.com>
  <20141229212300.GB29975@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-disposition: inline
 In-reply-to: <20141229212300.GB29975@jaegeuk-mac02.mot.com>
+Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi all,
+Hi Jaegeuk,
 
-On Mon, Dec 29, 2014 at 01:23:00PM -0800, Jaegeuk Kim wrote:
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Tuesday, December 30, 2014 5:23 AM
+> To: Chao Yu
+> Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> 
 > Hi Chao,
 > 
 > On Mon, Dec 29, 2014 at 03:19:18PM +0800, Chao Yu wrote:
@@ -31,10 +38,13 @@ On Mon, Dec 29, 2014 at 01:23:00PM -0800, Jaegeuk Kim wrote:
 > [snip]
 > 
 > Nice draft. :)
+
+Thanks! :)
+
 > 
-> > 
+> >
 > > Please see the draft below.
-> > 
+> >
 > > 1) Extent management:
 > > If we use global management that managing all extents which are from different
 > > inodes in sbi, we will face with serious lock contention when we access these
@@ -64,13 +74,43 @@ On Mon, Dec 29, 2014 at 01:23:00PM -0800, Jaegeuk Kim wrote:
 > 2. How about managing extent entries globally and setting an upper bound to
 > the number of extent entries instead of limiting them per each inode?
 > (The rb-tree will handle many extents per inode.)
+
+[assumption]
+Approach A: global lru list;
+Approach B: lru list per inode.
+
+I have considered Approach A before writing the draft, although Approach A could
+provide us higher ratio hit due to global lru, it may make lock contention more
+intensively and has more memory overhead descripted below. So I choose more
+conservative Approach B.
+1) as extent_entry will split in Cow, we may lock extent_list more times when
+move these separated extent entries in extent_list, unless we have batch mode
+interface.
+2) lock overhead between shrinker and lookuper and updater.
+e.g. extent_list: (LRU) A -> B -> C -> D -> E -> F -> G (MRU)
+(#1) has A, C, E, G in rb-tree
+(#2) has B, D, F in rb-tree
+shrinker op: lock list -> trylock #1 -> unlock list -> free A -> unlock #1
+	lock list -> trylock #2 -> unlock list -> free B -> unlock #2
+	lock list -> trylock #1 -> unlock list -> free C -> unlock #1
+	...
+*trylock/unlock* for all free extent entries belong to one inode will be separated
+to lots of parts, resulting in more contention.
+3) it has more memory overhead in each extent entry:
+Approach A: need add inode number for backref and list_head *
+Approach B: need add list_head *
+
+Or maybe it's not a problem because we can afford all these above.
+
+Anyway, I'm not against.
+
 > 
 > 3. It needs to set a minimum length for the candidate of extent cache.
 >  (e.g., 64)
+
+Is this used for shrinker? Can you please explain more about this minimum length?
+
 > 
-
-Agreed.
-
 > So, for example,
 > struct ino_entry_for_extents {
 > 	inode number;
@@ -81,6 +121,11 @@ Agreed.
 > struct extent_entry {
 > 	blkaddr, len;
 > 	list_head *;
+
+We should add one other field 'inode number' here, as through it we can get
+rb-tree root from ino_entry_for_extents for rb_erase when we free the extent
+entry in shrinker.
+
 > };
 > 
 > Something like this.
@@ -107,26 +152,24 @@ Agreed.
 > 
 > IMO, we don't need to consider readahead for this, since get_data_block will
 > be called by VFS readahead.
+
+In get_data_block we can cache only one blkaddr once after get_dnode_of_data
+returned, it seems less efficient. So why not readahead selectively more
+contiguous valid blkaddr in get_dnode_of_data once?
+
 > 
 > Furthermore, we need to think about whether LRU is really best or not.
 > IMO, the extent cache aims to improve second access speed, rather than initial
 > cold misses. So, maybe MRU or another algorithms would be better.
+
+Agree, let's rethink about this. :)
+
+Thanks,
+
 > 
-
-Right. It's very comflicated to judge which is better.
-In read or write path, extents could be made every time. At that time, we should
-decide which extent evicts instead of new extents if we set upper bound.
-In update, one extent could be seperated into 3. It requires 3 insertion and 1 deletion.
-So if update happends frequently, we could give up extent management for some ranges.
-And we need to bring ideas from vm managemnt. For example,
-active/inactive list and second chance to promotion, or batch work for insertion/deletion
-
-I thought suddenly 'Simple is best'.
-Let's think about better ideas together.
-
 > Thanks,
 > 
-> > 
+> >
 > > 2) Limitation:
 > > In one inode, as we split or add extent in extent cache when read/write, extent
 > > number will enlarge, so memory and CPU overhead will increase.
@@ -135,12 +178,7 @@ Let's think about better ideas together.
 > > configuration which is visable to all inode. This number will be exported to
 > > sysfs for configuring according to requirement of user. By default, designed
 > > number is 8.
-> > 
-
-Chao,
-It's better which # of extent are controlled globally rather than limit extents
-per inode as Jaegeuk said to reduce extent management overhead.
-
+> >
 > > 3) Shrinker:
 > > There are two shrink paths:
 > > 	a) one is triggered when extent count has exceed the upper bound of
@@ -151,20 +189,16 @@ per inode as Jaegeuk said to reduce extent management overhead.
 > > 	get inode from head of global lru list(s), and release extent(s) with
 > > 	fixed number (by default: 64 extents) in inode one by one.
 > > 	This operation could be in f2fs_balance_fs_bg().
-> > 
-
-Let's consider to use register_shrinker which is called by vm when
-memory pressure happens.
-
+> >
 > > 4) Revalidation:
 > > In ->evict(), extent cache will be released, in order to reuse extent cache
 > > of inode when reopen for high hit ratio, a proper way is to add cached extent
 > > tree into a hash table (could be radix tree), revalidate extent tree and recover
 > > it to inode when reopen.
 > > Besides, a global lru list is needed here for shrinker.
-> > 
+> >
 > > 5) Readahead:
 > > Expand extent cache by readaheading when we call get_dnode_of_data in non-emergency
 > > path. Note, ra can affect lock contention for both ->rwlock in extent cache and
 > > ->lock of global shrink list.
-> > 
+> >
