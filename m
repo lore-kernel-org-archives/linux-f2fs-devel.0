@@ -1,61 +1,232 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev][PATCH] f2fs: fix wrong memory footprint statistics in
- debugfs
-Date: Tue, 06 Jan 2015 16:40:49 +0800
-Message-ID: <009c01d0298c$946435e0$bd2ca1a0$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/4] f2fs: clean up to remove parameter
+Date: Tue,  6 Jan 2015 11:20:31 -0800
+Message-ID: <1420572034-53758-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Y8ZgQ-0007Fz-IM
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 06 Jan 2015 19:20:50 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Y8ZgP-0000s9-Cu for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 06 Jan 2015 19:20:50 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Our value of memory footprint statistics showed in debugfs is not calculated
-correctly. Fix it in this patch.
+This patch uses dn->data_blkaddr as a parameter for the destination block
+address.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/debug.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/f2fs/data.c     | 27 ++++++++++++++-------------
+ fs/f2fs/f2fs.h     |  2 +-
+ fs/f2fs/file.c     |  3 ++-
+ fs/f2fs/inline.c   |  2 +-
+ fs/f2fs/recovery.c |  3 ++-
+ fs/f2fs/segment.c  |  1 +
+ 6 files changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index dd7835b..6aeaf46 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -125,7 +125,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- 	int i;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6308435..2c0cb66 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -197,7 +197,7 @@ alloc_new:
+  *  ->node_page
+  *    update block addresses in the node page
+  */
+-static void __set_data_blkaddr(struct dnode_of_data *dn, block_t new_addr)
++static void __set_data_blkaddr(struct dnode_of_data *dn)
+ {
+ 	struct f2fs_node *rn;
+ 	__le32 *addr_array;
+@@ -210,7 +210,7 @@ static void __set_data_blkaddr(struct dnode_of_data *dn, block_t new_addr)
  
- 	if (si->base_mem)
--		goto get_cache;
-+		goto get_dynamic_cache;
+ 	/* Get physical address of data block */
+ 	addr_array = blkaddr_in_node(rn);
+-	addr_array[ofs_in_node] = cpu_to_le32(new_addr);
++	addr_array[ofs_in_node] = cpu_to_le32(dn->data_blkaddr);
+ 	set_page_dirty(node_page);
+ }
  
- 	si->base_mem = sizeof(struct f2fs_sb_info) + sbi->sb->s_blocksize;
- 	si->base_mem += 2 * sizeof(struct f2fs_inode_info);
-@@ -161,13 +161,18 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- 	si->base_mem += sizeof(struct f2fs_nm_info);
- 	si->base_mem += __bitmap_size(sbi, NAT_BITMAP);
+@@ -225,8 +225,8 @@ int reserve_new_block(struct dnode_of_data *dn)
  
-+get_dynamic_cache:
- 	/* build gc */
--	si->base_mem += sizeof(struct f2fs_gc_kthread);
-+	if (sbi->gc_thread)
-+		si->base_mem += sizeof(struct f2fs_gc_kthread);
-+
-+	/* build merge flush thread */
-+	if (SM_I(sbi)->cmd_control_info)
-+		si->base_mem += sizeof(struct flush_cmd_control);
+ 	trace_f2fs_reserve_new_block(dn->inode, dn->nid, dn->ofs_in_node);
  
--get_cache:
- 	/* free nids */
--	si->cache_mem = NM_I(sbi)->fcnt;
--	si->cache_mem += NM_I(sbi)->nat_cnt;
-+	si->cache_mem = NM_I(sbi)->fcnt * sizeof(struct free_nid);
-+	si->cache_mem += NM_I(sbi)->nat_cnt * sizeof(struct nat_entry);
- 	npages = NODE_MAPPING(sbi)->nrpages;
- 	si->cache_mem += npages << PAGE_CACHE_SHIFT;
- 	npages = META_MAPPING(sbi)->nrpages;
+-	__set_data_blkaddr(dn, NEW_ADDR);
+ 	dn->data_blkaddr = NEW_ADDR;
++	__set_data_blkaddr(dn);
+ 	mark_inode_dirty(dn->inode);
+ 	sync_inode_page(dn);
+ 	return 0;
+@@ -291,19 +291,19 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 	return 0;
+ }
+ 
+-void update_extent_cache(block_t blk_addr, struct dnode_of_data *dn)
++void update_extent_cache(struct dnode_of_data *dn)
+ {
+ 	struct f2fs_inode_info *fi = F2FS_I(dn->inode);
+ 	pgoff_t fofs, start_fofs, end_fofs;
+ 	block_t start_blkaddr, end_blkaddr;
+ 	int need_update = true;
+ 
+-	f2fs_bug_on(F2FS_I_SB(dn->inode), blk_addr == NEW_ADDR);
++	f2fs_bug_on(F2FS_I_SB(dn->inode), dn->data_blkaddr == NEW_ADDR);
+ 	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
+ 							dn->ofs_in_node;
+ 
+ 	/* Update the page address in the parent node */
+-	__set_data_blkaddr(dn, blk_addr);
++	__set_data_blkaddr(dn);
+ 
+ 	if (is_inode_flag_set(fi, FI_NO_EXTENT))
+ 		return;
+@@ -321,16 +321,16 @@ void update_extent_cache(block_t blk_addr, struct dnode_of_data *dn)
+ 
+ 	/* Initial extent */
+ 	if (fi->ext.len == 0) {
+-		if (blk_addr != NULL_ADDR) {
++		if (dn->data_blkaddr != NULL_ADDR) {
+ 			fi->ext.fofs = fofs;
+-			fi->ext.blk_addr = blk_addr;
++			fi->ext.blk_addr = dn->data_blkaddr;
+ 			fi->ext.len = 1;
+ 		}
+ 		goto end_update;
+ 	}
+ 
+ 	/* Front merge */
+-	if (fofs == start_fofs - 1 && blk_addr == start_blkaddr - 1) {
++	if (fofs == start_fofs - 1 && dn->data_blkaddr == start_blkaddr - 1) {
+ 		fi->ext.fofs--;
+ 		fi->ext.blk_addr--;
+ 		fi->ext.len++;
+@@ -338,7 +338,7 @@ void update_extent_cache(block_t blk_addr, struct dnode_of_data *dn)
+ 	}
+ 
+ 	/* Back merge */
+-	if (fofs == end_fofs + 1 && blk_addr == end_blkaddr + 1) {
++	if (fofs == end_fofs + 1 && dn->data_blkaddr == end_blkaddr + 1) {
+ 		fi->ext.len++;
+ 		goto end_update;
+ 	}
+@@ -572,8 +572,8 @@ static int __allocate_data_block(struct dnode_of_data *dn)
+ 	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
+ 		return -ENOSPC;
+ 
+-	__set_data_blkaddr(dn, NEW_ADDR);
+ 	dn->data_blkaddr = NEW_ADDR;
++	__set_data_blkaddr(dn);
+ 
+ 	get_node_info(sbi, dn->nid, &ni);
+ 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+@@ -584,7 +584,8 @@ static int __allocate_data_block(struct dnode_of_data *dn)
+ 
+ 	/* direct IO doesn't use extent cache to maximize the performance */
+ 	set_inode_flag(F2FS_I(dn->inode), FI_NO_EXTENT);
+-	update_extent_cache(new_blkaddr, dn);
++	dn->data_blkaddr = new_blkaddr;
++	update_extent_cache(dn);
+ 	clear_inode_flag(F2FS_I(dn->inode), FI_NO_EXTENT);
+ 
+ 	/* update i_size */
+@@ -784,7 +785,7 @@ int do_write_data_page(struct page *page, struct f2fs_io_info *fio)
+ 		set_inode_flag(F2FS_I(inode), FI_UPDATE_WRITE);
+ 	} else {
+ 		write_data_page(page, &dn, fio);
+-		update_extent_cache(fio->blk_addr, &dn);
++		update_extent_cache(&dn);
+ 		set_inode_flag(F2FS_I(inode), FI_APPEND_WRITE);
+ 	}
+ out_writepage:
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c48847e..37e935a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1478,7 +1478,7 @@ void f2fs_submit_page_mbio(struct f2fs_sb_info *, struct page *,
+ 						struct f2fs_io_info *);
+ int reserve_new_block(struct dnode_of_data *);
+ int f2fs_reserve_block(struct dnode_of_data *, pgoff_t);
+-void update_extent_cache(block_t, struct dnode_of_data *);
++void update_extent_cache(struct dnode_of_data *);
+ struct page *find_data_page(struct inode *, pgoff_t, bool);
+ struct page *get_lock_data_page(struct inode *, pgoff_t);
+ struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f172ddc4..5df3367 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -429,7 +429,8 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 		if (blkaddr == NULL_ADDR)
+ 			continue;
+ 
+-		update_extent_cache(NULL_ADDR, dn);
++		dn->data_blkaddr = NULL_ADDR;
++		update_extent_cache(dn);
+ 		invalidate_blocks(sbi, blkaddr);
+ 		nr_free++;
+ 	}
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 0c3f3f9..fa2aa2f 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -116,7 +116,7 @@ no_update:
+ 	set_page_writeback(page);
+ 	fio.blk_addr = dn->data_blkaddr;
+ 	write_data_page(page, dn, &fio);
+-	update_extent_cache(fio.blk_addr, dn);
++	update_extent_cache(dn);
+ 	f2fs_wait_on_page_writeback(page, DATA);
+ 	if (dirty)
+ 		inode_dec_dirty_pages(dn->inode);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 9160a37..c4211a5 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -396,7 +396,8 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 
+ 			/* write dummy data page */
+ 			recover_data_page(sbi, NULL, &sum, src, dest);
+-			update_extent_cache(dest, &dn);
++			dn.data_blkaddr = dest;
++			update_extent_cache(&dn);
+ 			recovered++;
+ 		}
+ 		dn.ofs_in_node++;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index f995a85..8144a30 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1226,6 +1226,7 @@ void write_data_page(struct page *page, struct dnode_of_data *dn,
+ 	get_node_info(sbi, dn->nid, &ni);
+ 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+ 	do_write_page(sbi, page, &sum, fio);
++	dn->data_blkaddr = fio->blk_addr;
+ }
+ 
+ void rewrite_data_page(struct page *page, struct f2fs_io_info *fio)
 -- 
-2.2.1
+2.1.1
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming! The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net
