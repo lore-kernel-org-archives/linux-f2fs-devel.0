@@ -1,199 +1,218 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: add adaptive ssr/ipu policy as valid
- blocks in dirty segments
-Date: Tue, 6 Jan 2015 15:07:00 -0800
-Message-ID: <20150106230700.GE54001@jaegeuk-mac02>
-References: <1420002922-6482-1-git-send-email-cm224.lee@samsung.com>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+Date: Wed, 07 Jan 2015 20:16:34 +0900
+Message-ID: <20150107111634.GA4720@lcm>
+References: <000001d01db6$7d718770$78549650$@samsung.com>
+ <20141222231604.GC8287@jaegeuk-mac02.mot.com>
+ <002a01d01e5c$e2ba0250$a82e06f0$@samsung.com>
+ <20141223073609.GA9946@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <006e01d01f4f$ef9fa940$cedefbc0$@samsung.com>
+ <20141225083523.GA18401@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <003301d02337$e793a210$b6bae630$@samsung.com>
+ <20141229212300.GB29975@jaegeuk-mac02.mot.com> <20141230003206.GA13021@lcm>
+ <001701d027cd$5c8d08b0$15a71a10$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Y8dDU-0002qj-71
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 06 Jan 2015 23:07:12 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Y8dDS-0007l1-Sk for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 06 Jan 2015 23:07:12 +0000
-Content-Disposition: inline
-In-Reply-To: <1420002922-6482-1-git-send-email-cm224.lee@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-disposition: inline
+In-reply-to: <001701d027cd$5c8d08b0$15a71a10$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Changman,
+Hi Chao,
 
-On Wed, Dec 31, 2014 at 02:15:22PM +0900, Changman Lee wrote:
-> If there is not enough invalid area in dirty segments, SSR won't get any
-> gains. In the case, IPU could be better than SSR. This patch is for
-> changing write style into IPU or SSR according to valid blocks in dirty segments.
+On Sun, Jan 04, 2015 at 11:19:28AM +0800, Chao Yu wrote:
+> Hi Changman,
 > 
-> Under 98% untilization, performance grows over 5.6%.
+> Sorry for replying late!
 > 
-> [FIO randwrite performance]
-> before : 338512KB/s, 307784KB/s, 296553KB/s, 287964KB/s, 283813KB/s
-> after  : 337842KB/s, 321810KB/s, 319700KB/s, 320000KB/s, 320902KB/s
+> > -----Original Message-----
+> > From: Changman Lee [mailto:cm224.lee@samsung.com]
+> > Sent: Tuesday, December 30, 2014 8:32 AM
+> > To: Jaegeuk Kim
+> > Cc: Chao Yu; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
+> > 
+> > Hi all,
+> > 
+> > On Mon, Dec 29, 2014 at 01:23:00PM -0800, Jaegeuk Kim wrote:
+> > > Hi Chao,
+> > >
+> > > On Mon, Dec 29, 2014 at 03:19:18PM +0800, Chao Yu wrote:
+> > >
+> > > [snip]
+> > >
+> > > Nice draft. :)
+> > >
+> > > >
+> > > > Please see the draft below.
+> > > >
+> > > > 1) Extent management:
+> > > > If we use global management that managing all extents which are from different
+> > > > inodes in sbi, we will face with serious lock contention when we access these
+> > > > extents belong to different inodes concurrently, the loss may outweights the
+> > > > gain.
+> > >
+> > > Agreed.
+> > >
+> > > > So we choose a local management for extent which means all extents are
+> > > > managed by inode itself to avoid above lock contention. Addtionlly, we manage
+> > > > all extents globally by linking all inode into a global lru list for extent
+> > > > cache shrinker.
+> > > > Approach:
+> > > > 	a) build extent tree/rwlock/lru list/extent count in each inode.
+> > > > 		*extent tree: link all extent in rb-tree;
+> > > > 		*rwlock: protect fields when accessing extent cache concurrently;
+> > > > 		*lru list: sort all extents in accessing time order;
+> > > > 		*extent count: record total count of extents in cache.
+> > > > 	b) use lru shrink list in sbi to manage all inode which cached extents.
+> > > > 		*inode will be added or repostioned in this global list whenever
+> > > > 		extent is being access in this inode.
+> > > > 		*use spinlock to protect this shrink list.
+> > >
+> > > 1. How about adding a data structure with inode number instead of referring
+> > > inode pointer?
+> > >
+> > > 2. How about managing extent entries globally and setting an upper bound to
+> > > the number of extent entries instead of limiting them per each inode?
+> > > (The rb-tree will handle many extents per inode.)
+> > >
+> > > 3. It needs to set a minimum length for the candidate of extent cache.
+> > >  (e.g., 64)
+> > >
+> > 
+> > Agreed.
+> > 
+> > > So, for example,
+> > > struct ino_entry_for_extents {
+> > > 	inode number;
+> > > 	rb_tree for extent_entry objects;
+> > > 	rwlock;
+> > > };
+> > >
+> > > struct extent_entry {
+> > > 	blkaddr, len;
+> > > 	list_head *;
+> > > };
+> > >
+> > > Something like this.
+> > >
+> > > [A, B, C, ... are extent entry]
+> > >
+> > > The sbi has
+> > > 1. an extent_list: (LRU) A -> B -> C -> D -> E -> F -> G (MRU)
+> > > 2. radix_tree:  ino_entry_for_extents (#10) has D, B in rb-tree
+> > >               ` ino_entry_for_extents (#11) has A, C in rb-tree
+> > >               ` ino_entry_for_extents (#12) has F    in rb-tree
+> > >               ` ino_entry_for_extents (#13) has G, E in rb-tree
+> > >
+> > > In f2fs_update_extent_cache and __get_data_block for #10,
+> > >   ino_entry_for_extents (#10) was founded and updated D or B.
+> > >   Then, updated entries are moved to MRU.
+> > >
+> > > In f2fs_evict_inode for #11, A and C are moved to LRU.
+> > > But, if this inode is unlinked, all the A, C, and ino_entry_for_extens (#11)
+> > > should be released.
+> > >
+> > > In f2fs_balance_fs_bg, some LRU extents are released according to the amount
+> > > of consumed memory. Then, it frees any ino_entry_for_extents having no extent.
+> > >
+> > > IMO, we don't need to consider readahead for this, since get_data_block will
+> > > be called by VFS readahead.
+> > >
+> > > Furthermore, we need to think about whether LRU is really best or not.
+> > > IMO, the extent cache aims to improve second access speed, rather than initial
+> > > cold misses. So, maybe MRU or another algorithms would be better.
+> > >
+> > 
+> > Right. It's very comflicated to judge which is better.
+> > In read or write path, extents could be made every time. At that time, we should
+> > decide which extent evicts instead of new extents if we set upper bound.
+> > In update, one extent could be seperated into 3. It requires 3 insertion and 1 deletion.
+> > So if update happends frequently, we could give up extent management for some ranges.
+> > And we need to bring ideas from vm managemnt. For example,
+> > active/inactive list and second chance to promotion, or batch work for insertion/deletion
+> > 
+> > I thought suddenly 'Simple is best'.
+> > Let's think about better ideas together.
 > 
-> [before]
-> IPU: 0 blocks
-> SSR: 1492820 blocks in 17278 segments
-> LFS: 517638 blocks in 1009 segments
-> BDF: 80, avg. vblocks: 457
+> Yeah, how about using an opposite way to the way of page cache manager?
 > 
-> [after]
-> IPU: 1256249 blocks
-> SSR: 251079 blocks in 891 segments
-> LFS: 490825 blocks in 957 segments
-> BDF: 86, avg. vblocks: 380
+> for example:
+> node page A,B,C,D is in page cache;
+> extent a,b,c,d is in extent cache;
+> extent a is built from page A, ..., d is built from page D.
+> page cache: LRU A -> B -> C -> D MRU
+> extent cache: LRU a -> b -> c -> d MRU
 > 
-> Signed-off-by: Changman Lee <cm224.lee@samsung.com>
-> ---
->  Documentation/filesystems/f2fs.txt |  2 +-
->  fs/f2fs/data.c                     |  2 +-
->  fs/f2fs/debug.c                    | 11 +++++++
->  fs/f2fs/f2fs.h                     |  4 +++
->  fs/f2fs/segment.c                  | 18 +++++++++---
->  fs/f2fs/segment.h                  | 60 ++++++++++++++++++++++++++++++++++++--
->  fs/f2fs/super.c                    |  2 ++
->  7 files changed, 91 insertions(+), 8 deletions(-)
+> If we use
+> 1) the same way LRU, cache pair A-a, B-b, ... may be reclaimed in the same time as OOM.
+> 2) the opposite way, maybe A,B in page cache and d,c in extent cache will be reclaimed,
+> but we still can hit whole cache in combination of page cache and extent cache.
 > 
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index e0950c4..b832720 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -201,7 +201,7 @@ Files in /sys/fs/f2fs/<devname>
->                                updates in f2fs. There are five policies:
->                                 0x01: F2FS_IPU_FORCE, 0x02: F2FS_IPU_SSR,
->                                 0x04: F2FS_IPU_UTIL,  0x08: F2FS_IPU_SSR_UTIL,
-> -                               0x10: F2FS_IPU_FSYNC.
-> +                               0x10: F2FS_IPU_FSYNC, 0x20: F2FS_IPU_SSR_ADAP.
->  
->   min_ipu_util                 This parameter controls the threshold to trigger
->                                in-place-updates. The number indicates percentage
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 6308435..80f42da 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -779,7 +779,7 @@ int do_write_data_page(struct page *page, struct f2fs_io_info *fio)
->  	 */
->  	if (unlikely(fio->blk_addr != NEW_ADDR &&
->  			!is_cold_data(page) &&
-> -			need_inplace_update(inode))) {
-> +			need_inplace_update(inode, page))) {
->  		rewrite_data_page(page, fio);
->  		set_inode_flag(F2FS_I(inode), FI_UPDATE_WRITE);
->  	} else {
-> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> index dd7835b..c7e6ef8 100644
-> --- a/fs/f2fs/debug.c
-> +++ b/fs/f2fs/debug.c
-> @@ -81,6 +81,9 @@ static void update_general_status(struct f2fs_sb_info *sbi)
->  	}
->  
->  	si->inplace_count = atomic_read(&sbi->inplace_count);
-> +
-> +	for (i = 0; i < DIRTY; i++)
-> +		si->ssr_area[i] = get_ssr_area(sbi, i);
->  }
->  
->  /*
-> @@ -290,6 +293,14 @@ static int stat_show(struct seq_file *s, void *v)
->  		seq_printf(s, "\nBDF: %u, avg. vblocks: %u\n",
->  			   si->bimodal, si->avg_vblocks);
->  
-> +		seq_puts(s, "SSR area: ");
-> +		seq_printf(s, "%u/%u/%u, ", si->ssr_area[DIRTY_HOT_DATA],
-> +				si->ssr_area[DIRTY_WARM_DATA],
-> +				si->ssr_area[DIRTY_COLD_DATA]);
-> +		seq_printf(s, "%u/%u/%u\n", si->ssr_area[DIRTY_HOT_NODE],
-> +				si->ssr_area[DIRTY_WARM_NODE],
-> +				si->ssr_area[DIRTY_COLD_NODE]);
-> +
->  		/* memory footprint */
->  		update_mem_info(si->sbi);
->  		seq_printf(s, "\nMemory: %u KB = static: %u + cached: %u\n",
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index c48847e..81f88d3 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -450,6 +450,8 @@ struct f2fs_sm_info {
->  	unsigned int ipu_policy;	/* in-place-update policy */
->  	unsigned int min_ipu_util;	/* in-place-update threshold */
->  	unsigned int min_fsync_blocks;	/* threshold for fsync */
-> +	unsigned int min_ssr_area;	/* in-place-update under value */
-> +	unsigned int vblocks_in_dirty[NR_CURSEG_TYPE];
->  	/* for flush command control */
->  	struct flush_cmd_control *cmd_control_info;
-> @@ -1417,6 +1419,7 @@ void clear_prefree_segments(struct f2fs_sb_info *);
->  void release_discard_addrs(struct f2fs_sb_info *);
->  void discard_next_dnode(struct f2fs_sb_info *, block_t);
->  int npages_for_summary_flush(struct f2fs_sb_info *, bool);
-> +int get_segment_type(struct page *, enum page_type);
->  void allocate_new_segments(struct f2fs_sb_info *);
->  int f2fs_trim_fs(struct f2fs_sb_info *, struct fstrim_range *);
->  struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
-> @@ -1525,6 +1528,7 @@ struct f2fs_stat_info {
->  	int curseg[NR_CURSEG_TYPE];
->  	int cursec[NR_CURSEG_TYPE];
->  	int curzone[NR_CURSEG_TYPE];
-> +	unsigned int ssr_area[NR_CURSEG_TYPE];
->  
->  	unsigned int segment_count[2];
->  	unsigned int block_count[2];
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index f995a85..3987e65 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -398,8 +398,10 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
->  			f2fs_bug_on(sbi, 1);
->  			return;
->  		}
-> -		if (!test_and_set_bit(segno, dirty_i->dirty_segmap[t]))
-> +		if (!test_and_set_bit(segno, dirty_i->dirty_segmap[t])) {
->  			dirty_i->nr_dirty[t]++;
-> +			add_vblocks_in_dirty(sbi, sentry);
-> +		}
->  	}
->  }
->  
-> @@ -415,8 +417,10 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
->  		struct seg_entry *sentry = get_seg_entry(sbi, segno);
->  		enum dirty_type t = sentry->type;
->  
-> -		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
-> +		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t])) {
->  			dirty_i->nr_dirty[t]--;
-> +			del_vblocks_in_dirty(sbi, sentry);
-> +		}
->  
->  		if (get_valid_blocks(sbi, segno, sbi->segs_per_sec) == 0)
->  			clear_bit(GET_SECNO(sbi, segno),
-> @@ -658,6 +662,8 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
->  	f2fs_bug_on(sbi, (new_vblocks >> (sizeof(unsigned short) << 3) ||
->  				(new_vblocks > sbi->blocks_per_seg)));
->  
-> +	update_vblocks_in_dirty(sbi, se, segno, del);
+> So by the way '2)' we can increase the total coverage area of page cache + extent cache.
 
-If we do not use F2FS_IPU_SSR_ADAP, these functions incur another overheads.
-
-Please, avoid this first.
+Good idea. :)
+If we decide which one is better between global lru and per inode lru,
+it's expected that f2fs read performance will be more improved.
+I'll wait your patch.
 
 Thanks,
 
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming! The Go Parallel Website,
-sponsored by Intel and developed in partnership with Slashdot Media, is your
-hub for all things parallel software development, from weekly thought
-leadership blogs to news, videos, case studies, tutorials and more. Take a
-look and join the conversation now. http://goparallel.sourceforge.net
+> 
+> > 
+> > > Thanks,
+> > >
+> > > >
+> > > > 2) Limitation:
+> > > > In one inode, as we split or add extent in extent cache when read/write, extent
+> > > > number will enlarge, so memory and CPU overhead will increase.
+> > > > In order to control the overhead of memory and CPU, we try to set a upper bound
+> > > > number to limit total extent number in each inode, This number is global
+> > > > configuration which is visable to all inode. This number will be exported to
+> > > > sysfs for configuring according to requirement of user. By default, designed
+> > > > number is 8.
+> > > >
+> > 
+> > Chao,
+> > It's better which # of extent are controlled globally rather than limit extents
+> > per inode as Jaegeuk said to reduce extent management overhead.
+> 
+> It's OK.
+> 
+> > 
+> > > > 3) Shrinker:
+> > > > There are two shrink paths:
+> > > > 	a) one is triggered when extent count has exceed the upper bound of
+> > > > 	inode's extent cache. We will try to release extent(s) from head of
+> > > > 	inode's inner extent lru list until extent count is equal to upper bound.
+> > > > 	This operation could be in f2fs_update_extent_cache().
+> > > > 	b) the other one is triggered when memory util exceed threshold, we try
+> > > > 	get inode from head of global lru list(s), and release extent(s) with
+> > > > 	fixed number (by default: 64 extents) in inode one by one.
+> > > > 	This operation could be in f2fs_balance_fs_bg().
+> > > >
+> > 
+> > Let's consider to use register_shrinker which is called by vm when
+> > memory pressure happens.
+> 
+> Great, thanks for your reminding! :-)
+> 
+> Thanks,
+> Yu
+> 
+> > 
+> > > > 4) Revalidation:
+> > > > In ->evict(), extent cache will be released, in order to reuse extent cache
+> > > > of inode when reopen for high hit ratio, a proper way is to add cached extent
+> > > > tree into a hash table (could be radix tree), revalidate extent tree and recover
+> > > > it to inode when reopen.
+> > > > Besides, a global lru list is needed here for shrinker.
+> > > >
+> > > > 5) Readahead:
+> > > > Expand extent cache by readaheading when we call get_dnode_of_data in non-emergency
+> > > > path. Note, ra can affect lock contention for both ->rwlock in extent cache and
+> > > > ->lock of global shrink list.
+> > > >
