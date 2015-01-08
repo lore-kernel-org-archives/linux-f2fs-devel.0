@@ -1,194 +1,111 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] src/godown: support f2fs triggering specific ioctl
-Date: Thu, 8 Jan 2015 12:09:07 -0800
-Message-ID: <20150108200907.GA74189@jaegeuk-mac02>
-References: <1420741879-73691-1-git-send-email-jaegeuk@kernel.org>
- <54AED028.10101@sandeen.net>
+Subject: Re: [PATCH 2/6] f2fs: support goingdown for fs shutdown
+Date: Thu, 8 Jan 2015 12:18:43 -0800
+Message-ID: <20150108201843.GA74570@jaegeuk-mac02>
+References: <1420740661-72288-1-git-send-email-jaegeuk@kernel.org>
+	<1420740661-72288-2-git-send-email-jaegeuk@kernel.org>
+	<54AEE06C.90806@sandeen.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <fstests-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Y9JXi-0004cq-CW
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Jan 2015 20:18:54 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Y9JXh-0006L4-6B for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Jan 2015 20:18:54 +0000
 Content-Disposition: inline
-In-Reply-To: <54AED028.10101@sandeen.net>
-Sender: fstests-owner@vger.kernel.org
+In-Reply-To: <54AEE06C.90806@sandeen.net>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Dave Chinner <david@fromorbit.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Jan 08, 2015 at 12:44:56PM -0600, Eric Sandeen wrote:
-> On 1/8/15 12:31 PM, Jaegeuk Kim wrote:
-> > This patch triggers the F2FS-related ioctl for godown.
+On Thu, Jan 08, 2015 at 01:54:20PM -0600, Eric Sandeen wrote:
+> On 1/8/15 12:10 PM, Jaegeuk Kim wrote:
+> > This patch add an ioctl to shutdown f2fs, which stops all the further block
+> > writes after this point.
 > 
-> hohum, wouldn't it be a whole lot easier to just re-use the XFS ioctl
-> number in f2fs?  Then you wouldn't have to duplicate all this code.
+> would it make sense to just re-use the xfs ioctl nr, if the semantics are
+> the same?
 
-Actually I tried to do like that. But, xfs's goingdown has some specific options
-wrt flushing logs which provide some rules on data recovery.
-
-So, I decided to add a new ioctl and a test script, (i.e., f2fs/087) which is
-different from xfs/087.
-
-> 
-> If you really want your own unique ioctl number, what about
-> just doing statfs on the target, and if f_type returns F2FS_SUPER_MAGIC,
-> swictch the ioctl nr to F2FS_IOC_GOINGDOWN.
-
-Oh, I'll change detecting the file system type.
-For the common ioctl, it needs to consider ioctl's format where xfs calls xfsctl
-with flushing options while f2fs triggers ioctl without paramter.
-
-> 
-> Then if not F2FS_SUPER_MAGIC, leave the ioctl nr at XFS_IOC_GOINGDOWN, and
-> if it fails, it fails (other filesystems might support the original nr.)
-> 
-> And then you can probably just add "f2fs" to the existing testcase,
-> and move it to tests/shared?
-
-I can't use the same scripts due to the different options used by xfs's
-goingdown.
-
-Thank you for the comments. :)
+The semantics are not same for now.
+In order to reuse xfs ioctl, it needs to support options for flushing logs.
 
 Thanks,
 
+> 
+> That way any test using it will "just work" on f2fs...
 > 
 > -Eric
 > 
 > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > > ---
-> >  src/godown.c | 88 ++++++++++++++++++++++++++++++++++++++++++++----------------
-> >  1 file changed, 65 insertions(+), 23 deletions(-)
+> >  fs/f2fs/f2fs.h |  1 +
+> >  fs/f2fs/file.c | 14 ++++++++++++++
+> >  2 files changed, 15 insertions(+)
 > > 
-> > diff --git a/src/godown.c b/src/godown.c
-> > index b140a41..b44790b 100644
-> > --- a/src/godown.c
-> > +++ b/src/godown.c
-> > @@ -19,33 +19,82 @@
-> >  #include <syslog.h>
-> >  #include "global.h"
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index ba30218..febad35 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -209,6 +209,7 @@ static inline bool __has_cursum_space(struct f2fs_summary_block *sum, int size,
+> >  #define F2FS_IOC_START_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 3)
+> >  #define F2FS_IOC_RELEASE_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 4)
+> >  #define F2FS_IOC_ABORT_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 5)
+> > +#define F2FS_IOC_GOINGDOWN		_IO(F2FS_IOCTL_MAGIC, 6)
 > >  
-> > +#define F2FS_IOCTL_MAGIC	0xf5
-> > +#define F2FS_IOC_GOINGDOWN	_IO(F2FS_IOCTL_MAGIC, 6)
-> > +
-> > +enum ftypes {
-> > +	XFS_FS,
-> > +	F2FS_FS,
-> > +};
-> > +
-> >  static char *xprogname;
-> > +static char *mnt_dir;
-> > +static int verbose_opt = 0;
-> > +static int flushlog_opt = 0;
+> >  #if defined(__KERNEL__) && defined(CONFIG_COMPAT)
+> >  /*
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index 5df3367..de2f669 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -1020,6 +1020,18 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+> >  	return ret;
+> >  }
 > >  
-> > +static enum ftypes fs = XFS_FS;
-> >  
-> >  static void
-> >  usage(void)
-> >  {
-> > -	fprintf(stderr, "usage: %s [-f] [-v] mnt-dir\n", xprogname);
-> > +	fprintf(stderr, "usage: %s [-f] [-v] [-s 0/1] mnt-dir\n", xprogname);
-> > +}
-> > +
-> > +static int
-> > +xfs_goingdown(int fd)
+> > +static int f2fs_ioc_goingdown(struct file *filp)
 > > +{
-> > +	int flag;
+> > +	struct inode *inode = file_inode(filp);
+> > +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
 > > +
-> > +	flag = (flushlog_opt ? XFS_FSOP_GOING_FLAGS_LOGFLUSH
-> > +			    : XFS_FSOP_GOING_FLAGS_NOLOGFLUSH);
-> > +	if (verbose_opt) {
-> > +		printf("Calling XFS_IOC_GOINGDOWN\n");
-> > +	}
+> > +	if (!capable(CAP_SYS_ADMIN))
+> > +		return -EPERM;
 > > +
-> > +	syslog(LOG_WARNING, "xfstests-induced forced shutdown of %s:\n",
-> > +			mnt_dir);
-> > +	if ((xfsctl(mnt_dir, fd, XFS_IOC_GOINGDOWN, &flag)) == -1) {
-> > +		fprintf(stderr, "%s: error on xfsctl(GOINGDOWN) of \"%s\": %s\n",
-> > +				xprogname, mnt_dir, strerror(errno));
-> > +		return 1;
-> > +	}
+> > +	f2fs_stop_checkpoint(sbi);
 > > +	return 0;
 > > +}
 > > +
-> > +static int
-> > +f2fs_goingdown(int fd)
-> > +{
-> > +	if (verbose_opt) {
-> > +		printf("Calling F2FS_IOC_GOINGDOWN\n");
-> > +	}
-> > +	syslog(LOG_WARNING, "xfstests-induced forced shutdown of %s:\n",
-> > +			mnt_dir);
-> > +	if ((ioctl(fd, F2FS_IOC_GOINGDOWN)) == -1) {
-> > +		fprintf(stderr, "%s: error on ioctl(GOINGDOWN) of \"%s\": %s\n",
-> > +				xprogname, mnt_dir, strerror(errno));
-> > +		return 1;
-> > +	}
-> > +	return 0;
-> > +
-> >  }
-> >  
-> >  int
-> >  main(int argc, char *argv[])
+> >  static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
 > >  {
-> > -	int c;
-> > -	int flag;
-> > -	int flushlog_opt = 0;
-> > -	int verbose_opt = 0;
-> > +	int c, fd;
-> >  	struct stat st;
-> > -	char *mnt_dir;
-> > -	int fd;
-> > +	int ret = 0;
-> >  
-> >        	xprogname = argv[0];
-> >  
-> > -	while ((c = getopt(argc, argv, "fv")) != -1) {
-> > +	while ((c = getopt(argc, argv, "fs:v")) != -1) {
-> >  		switch (c) {
-> >  		case 'f':
-> >  			flushlog_opt = 1;
-> >  			break;
-> > +		case 's':
-> > +			fs = atoi(optarg);
-> > +			break;
-> >  		case 'v':
-> >  			verbose_opt = 1;
-> >  			break;
-> > @@ -94,10 +143,6 @@ main(int argc, char *argv[])
-> >  	}
-> >  #endif
-> >  
-> > -
-> > -	flag = (flushlog_opt ? XFS_FSOP_GOING_FLAGS_LOGFLUSH 
-> > -			    : XFS_FSOP_GOING_FLAGS_NOLOGFLUSH);
-> > -
-> >  	if (verbose_opt) {
-> >  		printf("Opening \"%s\"\n", mnt_dir);
-> >  	}
-> > @@ -107,18 +152,15 @@ main(int argc, char *argv[])
-> >  		return 1;
-> >  	}
-> >  
-> > -	if (verbose_opt) {
-> > -		printf("Calling XFS_IOC_GOINGDOWN\n");
-> > +	switch (fs) {
-> > +	case XFS_FS:
-> > +		ret = xfs_goingdown(fd);
-> > +		break;
-> > +	case F2FS_FS:
-> > +		ret = f2fs_goingdown(fd);
-> > +		break;
-> >  	}
-> > -	syslog(LOG_WARNING, "xfstests-induced forced shutdown of %s:\n",
-> > -		mnt_dir);
-> > -	if ((xfsctl(mnt_dir, fd, XFS_IOC_GOINGDOWN, &flag)) == -1) {
-> > -		fprintf(stderr, "%s: error on xfsctl(GOINGDOWN) of \"%s\": %s\n",
-> > -			xprogname, mnt_dir, strerror(errno));
-> > -		return 1;
-> > -	}
-> > -
-> >  	close(fd);
-> >  
-> > -	return 0;
-> > +	return ret;
-> >  }
+> >  	struct inode *inode = file_inode(filp);
+> > @@ -1067,6 +1079,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> >  		return f2fs_ioc_release_volatile_write(filp);
+> >  	case F2FS_IOC_ABORT_VOLATILE_WRITE:
+> >  		return f2fs_ioc_abort_volatile_write(filp);
+> > +	case F2FS_IOC_GOINGDOWN:
+> > +		return f2fs_ioc_goingdown(filp);
+> >  	case FITRIM:
+> >  		return f2fs_ioc_fitrim(filp, arg);
+> >  	default:
 > > 
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming! The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net
