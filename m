@@ -1,61 +1,59 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/6] f2fs: add nat/sit entries into status
-Date: Thu,  8 Jan 2015 10:10:59 -0800
-Message-ID: <1420740661-72288-4-git-send-email-jaegeuk@kernel.org>
-References: <1420740661-72288-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1420740661-72288-1-git-send-email-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 1/6] f2fs: fix wrong unlock_page call
+Date: Thu,  8 Jan 2015 10:10:56 -0800
+Message-ID: <1420740661-72288-1-git-send-email-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Y9HYE-0003K2-Pb
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Jan 2015 18:11:18 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Y9HY9-0003ZZ-2d for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Jan 2015 18:11:18 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds NAT/SIT entry informations.
+This patch removes wrongly called unlock_page.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/debug.c | 8 +++++---
- fs/f2fs/f2fs.h  | 2 +-
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ fs/f2fs/data.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index dd7835b..1f0fb58 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -57,7 +57,9 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 	si->node_pages = NODE_MAPPING(sbi)->nrpages;
- 	si->meta_pages = META_MAPPING(sbi)->nrpages;
- 	si->nats = NM_I(sbi)->nat_cnt;
--	si->sits = SIT_I(sbi)->dirty_sentries;
-+	si->dirty_nats = NM_I(sbi)->dirty_nat_cnt;
-+	si->sits = MAIN_SEGS(sbi);
-+	si->dirty_sits = SIT_I(sbi)->dirty_sentries;
- 	si->fnids = NM_I(sbi)->fcnt;
- 	si->bg_gc = sbi->bg_gc;
- 	si->util_free = (int)(free_user_blocks(sbi) >> sbi->log_blocks_per_seg)
-@@ -260,8 +262,8 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->ndirty_dent, si->ndirty_dirs);
- 		seq_printf(s, "  - meta: %4d in %4d\n",
- 			   si->ndirty_meta, si->meta_pages);
--		seq_printf(s, "  - NATs: %9d\n  - SITs: %9d\n",
--			   si->nats, si->sits);
-+		seq_printf(s, "  - NATs: %9d/%9d\n  - SITs: %9d/%9d\n",
-+			   si->dirty_nats, si->nats, si->dirty_sits, si->sits);
- 		seq_printf(s, "  - free_nids: %9d\n",
- 			   si->fnids);
- 		seq_puts(s, "\nDistribution of User Blocks:");
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index febad35..d39b230 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1513,7 +1513,7 @@ struct f2fs_stat_info {
- 	int main_area_segs, main_area_sections, main_area_zones;
- 	int hit_ext, total_ext;
- 	int ndirty_node, ndirty_dent, ndirty_dirs, ndirty_meta;
--	int nats, sits, fnids;
-+	int nats, dirty_nats, sits, dirty_sits, fnids;
- 	int total_count, utilization;
- 	int bg_gc, inline_inode, inline_dir, inmem_pages;
- 	unsigned int valid_count, valid_node_count, valid_inode_count;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index b48b355..a7b905c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -837,7 +837,6 @@ write:
+ 	/* we should bypass data pages to proceed the kworkder jobs */
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		SetPageError(page);
+-		unlock_page(page);
+ 		goto out;
+ 	}
+ 
 -- 
 2.1.1
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming! The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net
