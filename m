@@ -1,93 +1,130 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/6] f2fs: free radix_tree_nodes used by nat_set entries
-Date: Thu,  8 Jan 2015 10:10:58 -0800
-Message-ID: <1420740661-72288-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 5/6] f2fs: add spin_lock to cover radix
+	operations in IO tracer
+Date: Thu,  8 Jan 2015 10:11:00 -0800
+Message-ID: <1420740661-72288-5-git-send-email-jaegeuk@kernel.org>
 References: <1420740661-72288-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Y9HYU-0003LJ-EX
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Jan 2015 18:11:34 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Y9HYT-0002oJ-Ks for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Jan 2015 18:11:34 +0000
 In-Reply-To: <1420740661-72288-1-git-send-email-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In the normal case, the radix_tree_nodes are freed successfully.
-But, when cp_error was detected, we should destroy them forcefully.
+This patch adds spin_lock to cover radix tree operations in IO tracer.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/node.c | 21 +++++++++++++++++++--
- fs/f2fs/node.h |  1 +
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c |  2 ++
+ fs/f2fs/trace.c | 18 +++++++++++++++---
+ fs/f2fs/trace.h |  2 ++
+ 3 files changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 9bed016..d7c1436 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1894,7 +1894,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
- 	struct f2fs_summary_block *sum = curseg->sum_blk;
--	struct nat_entry_set *setvec[NATVEC_SIZE];
-+	struct nat_entry_set *setvec[SETVEC_SIZE];
- 	struct nat_entry_set *set, *tmp;
- 	unsigned int found;
- 	nid_t set_idx = 0;
-@@ -1911,7 +1911,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
- 		remove_nats_in_journal(sbi);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0ae6a2f..e6f035c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1222,6 +1222,8 @@ static int __init init_f2fs_fs(void)
+ {
+ 	int err;
  
- 	while ((found = __gang_lookup_nat_set(nm_i,
--					set_idx, NATVEC_SIZE, setvec))) {
-+					set_idx, SETVEC_SIZE, setvec))) {
- 		unsigned idx;
- 		set_idx = setvec[found - 1]->set + 1;
- 		for (idx = 0; idx < found; idx++)
-@@ -1991,6 +1991,7 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct free_nid *i, *next_i;
- 	struct nat_entry *natvec[NATVEC_SIZE];
-+	struct nat_entry_set *setvec[SETVEC_SIZE];
- 	nid_t nid = 0;
- 	unsigned int found;
- 
-@@ -2015,11 +2016,27 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
- 	while ((found = __gang_lookup_nat_cache(nm_i,
- 					nid, NATVEC_SIZE, natvec))) {
- 		unsigned idx;
++	f2fs_build_trace_ios();
 +
- 		nid = nat_get_nid(natvec[found - 1]) + 1;
- 		for (idx = 0; idx < found; idx++)
- 			__del_from_nat_cache(nm_i, natvec[idx]);
- 	}
- 	f2fs_bug_on(sbi, nm_i->nat_cnt);
+ 	err = init_inodecache();
+ 	if (err)
+ 		goto fail;
+diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
+index 19f5216..92fa38a 100644
+--- a/fs/f2fs/trace.c
++++ b/fs/f2fs/trace.c
+@@ -15,7 +15,8 @@
+ #include "f2fs.h"
+ #include "trace.h"
+ 
+-RADIX_TREE(pids, GFP_NOIO);
++RADIX_TREE(pids, GFP_ATOMIC);
++spinlock_t pids_lock;
+ struct last_io_info last_io;
+ 
+ static inline void __print_last_io(void)
+@@ -58,9 +59,13 @@ void f2fs_trace_pid(struct page *page)
+ 
+ 	page->private = pid;
+ 
++	if (radix_tree_preload(GFP_NOFS))
++		return;
 +
-+	/* destroy nat set cache */
-+	nid = 0;
-+	while ((found = __gang_lookup_nat_set(nm_i,
-+					nid, SETVEC_SIZE, setvec))) {
-+		unsigned idx;
++	spin_lock(&pids_lock);
+ 	p = radix_tree_lookup(&pids, pid);
+ 	if (p == current)
+-		return;
++		goto out;
+ 	if (p)
+ 		radix_tree_delete(&pids, pid);
+ 
+@@ -69,7 +74,9 @@ void f2fs_trace_pid(struct page *page)
+ 	trace_printk("%3x:%3x %4x %-16s\n",
+ 			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
+ 			pid, current->comm);
+-
++out:
++	spin_unlock(&pids_lock);
++	radix_tree_preload_end();
+ }
+ 
+ void f2fs_trace_ios(struct page *page, struct f2fs_io_info *fio, int flush)
+@@ -108,3 +115,8 @@ void f2fs_trace_ios(struct page *page, struct f2fs_io_info *fio, int flush)
+ 	last_io.len = 1;
+ 	return;
+ }
 +
-+		nid = setvec[found - 1]->set + 1;
-+		for (idx = 0; idx < found; idx++) {
-+			/* entry_cnt is not zero, when cp_error was occurred */
-+			f2fs_bug_on(sbi, !list_empty(&setvec[idx]->entry_list));
-+			radix_tree_delete(&nm_i->nat_set_root, setvec[idx]->set);
-+			kmem_cache_free(nat_entry_set_slab, setvec[idx]);
-+		}
-+	}
- 	up_write(&nm_i->nat_tree_lock);
++void f2fs_build_trace_ios(void)
++{
++	spin_lock_init(&pids_lock);
++}
+diff --git a/fs/f2fs/trace.h b/fs/f2fs/trace.h
+index aa6663b..eb39fa0 100644
+--- a/fs/f2fs/trace.h
++++ b/fs/f2fs/trace.h
+@@ -34,9 +34,11 @@ struct last_io_info {
  
- 	kfree(nm_i->nat_bitmap);
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index cac8a3d..f405bbf 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -25,6 +25,7 @@
+ extern void f2fs_trace_pid(struct page *);
+ extern void f2fs_trace_ios(struct page *, struct f2fs_io_info *, int);
++extern void f2fs_build_trace_ios(void);
+ #else
+ #define f2fs_trace_pid(p)
+ #define f2fs_trace_ios(p, i, n)
++#define f2fs_build_trace_ios()
  
- /* vector size for gang look-up from nat cache that consists of radix tree */
- #define NATVEC_SIZE	64
-+#define SETVEC_SIZE	32
- 
- /* return value for read_node_page */
- #define LOCKED_PAGE	1
+ #endif
+ #endif /* __F2FS_TRACE_H__ */
 -- 
 2.1.1
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming! The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net
