@@ -1,104 +1,95 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 6/6] f2fs: add f2fs_destroy_trace_ios to free radix tree
-Date: Thu,  8 Jan 2015 10:11:01 -0800
-Message-ID: <1420740661-72288-6-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/6] f2fs: support goingdown for fs shutdown
+Date: Thu,  8 Jan 2015 10:10:57 -0800
+Message-ID: <1420740661-72288-2-git-send-email-jaegeuk@kernel.org>
 References: <1420740661-72288-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Y9HYC-00082Z-8w
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Jan 2015 18:11:16 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Y9HY9-0003Za-DG for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Jan 2015 18:11:16 +0000
 In-Reply-To: <1420740661-72288-1-git-send-email-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch removes radix tree after finishing tracing IOs.
+This patch add an ioctl to shutdown f2fs, which stops all the further block
+writes after this point.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/super.c |  1 +
- fs/f2fs/trace.c | 37 +++++++++++++++++++++++++++++++++++++
- fs/f2fs/trace.h |  2 ++
- 3 files changed, 40 insertions(+)
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/file.c | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index e6f035c..0e97974 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1272,6 +1272,7 @@ static void __exit exit_f2fs_fs(void)
- 	destroy_node_manager_caches();
- 	destroy_inodecache();
- 	kset_unregister(f2fs_kset);
-+	f2fs_destroy_trace_ios();
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ba30218..febad35 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -209,6 +209,7 @@ static inline bool __has_cursum_space(struct f2fs_summary_block *sum, int size,
+ #define F2FS_IOC_START_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 3)
+ #define F2FS_IOC_RELEASE_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 4)
+ #define F2FS_IOC_ABORT_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 5)
++#define F2FS_IOC_GOINGDOWN		_IO(F2FS_IOCTL_MAGIC, 6)
+ 
+ #if defined(__KERNEL__) && defined(CONFIG_COMPAT)
+ /*
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5df3367..de2f669 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1020,6 +1020,18 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+ 	return ret;
  }
  
- module_init(init_f2fs_fs)
-diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-index 92fa38a..b3570dc 100644
---- a/fs/f2fs/trace.c
-+++ b/fs/f2fs/trace.c
-@@ -11,6 +11,7 @@
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
- #include <linux/sched.h>
-+#include <linux/radix-tree.h>
- 
- #include "f2fs.h"
- #include "trace.h"
-@@ -120,3 +121,39 @@ void f2fs_build_trace_ios(void)
++static int f2fs_ioc_goingdown(struct file *filp)
++{
++	struct inode *inode = file_inode(filp);
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	f2fs_stop_checkpoint(sbi);
++	return 0;
++}
++
+ static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
  {
- 	spin_lock_init(&pids_lock);
- }
-+
-+#define PIDVEC_SIZE	128
-+static unsigned int gang_lookup_pids(pid_t *results, unsigned long first_index,
-+							unsigned int max_items)
-+{
-+	struct radix_tree_iter iter;
-+	void **slot;
-+	unsigned int ret = 0;
-+
-+	if (unlikely(!max_items))
-+		return 0;
-+
-+	radix_tree_for_each_slot(slot, &pids, &iter, first_index) {
-+		results[ret] = iter.index;
-+		if (++ret == PIDVEC_SIZE)
-+			break;
-+	}
-+	return ret;
-+}
-+
-+void f2fs_destroy_trace_ios(void)
-+{
-+	pid_t pid[PIDVEC_SIZE];
-+	pid_t next_pid = 0;
-+	unsigned int found;
-+
-+	spin_lock(&pids_lock);
-+	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
-+		unsigned idx;
-+
-+		next_pid = pid[found - 1] + 1;
-+		for (idx = 0; idx < found; idx++)
-+			radix_tree_delete(&pids, pid[idx]);
-+	}
-+	spin_unlock(&pids_lock);
-+}
-diff --git a/fs/f2fs/trace.h b/fs/f2fs/trace.h
-index eb39fa0..1041dbe 100644
---- a/fs/f2fs/trace.h
-+++ b/fs/f2fs/trace.h
-@@ -35,10 +35,12 @@ struct last_io_info {
- extern void f2fs_trace_pid(struct page *);
- extern void f2fs_trace_ios(struct page *, struct f2fs_io_info *, int);
- extern void f2fs_build_trace_ios(void);
-+extern void f2fs_destroy_trace_ios(void);
- #else
- #define f2fs_trace_pid(p)
- #define f2fs_trace_ios(p, i, n)
- #define f2fs_build_trace_ios()
-+#define f2fs_destroy_trace_ios()
- 
- #endif
- #endif /* __F2FS_TRACE_H__ */
+ 	struct inode *inode = file_inode(filp);
+@@ -1067,6 +1079,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_ioc_release_volatile_write(filp);
+ 	case F2FS_IOC_ABORT_VOLATILE_WRITE:
+ 		return f2fs_ioc_abort_volatile_write(filp);
++	case F2FS_IOC_GOINGDOWN:
++		return f2fs_ioc_goingdown(filp);
+ 	case FITRIM:
+ 		return f2fs_ioc_fitrim(filp, arg);
+ 	default:
 -- 
 2.1.1
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming! The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net
