@@ -1,105 +1,87 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: support fs shutdown
-Date: Fri,  9 Jan 2015 01:34:36 -0800
-Message-ID: <1420796076-82847-2-git-send-email-jaegeuk@kernel.org>
-References: <1420796076-82847-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH] fsck.f2fs: fix sit types seamlessly
+Date: Fri,  9 Jan 2015 03:09:06 -0800
+Message-ID: <1420801746-84082-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <xfs-bounces@oss.sgi.com>
-In-Reply-To: <1420796076-82847-1-git-send-email-jaegeuk@kernel.org>
-List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
-List-Archive: <http://oss.sgi.com/pipermail/xfs>
-List-Post: <mailto:xfs@oss.sgi.com>
-List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
-List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
-	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
-Errors-To: xfs-bounces@oss.sgi.com
-Sender: xfs-bounces@oss.sgi.com
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, xfs@oss.sgi.com
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Y9XRP-00050D-7B
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 09 Jan 2015 11:09:19 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Y9XRO-0006Uv-6a for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 09 Jan 2015 11:09:19 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch add an ioctl to shutdown f2fs, which stops all the further block
-writes after this point.
-
-The ioctl, FS_IOC_SHUTDOWN, provides the following three options.
-
-1. FS_GOING_DOWN_FULLSYNC
- : this will flush all the data and dentry blocks, and do checkpoint before
- shutdown.
-
-2. FS_GOING_DOWN_METASYNC
- : this will do checkpoint before shutdown.
-
-3. FS_GOING_DOWN_NOSYNC
- : this will trigger shutdown as is.
+SIT types can be wrong when active_logs are 2 or 4.
+So, let's fix this implicitly.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ fsck/fsck.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5df3367..a7114858 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1020,6 +1020,41 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
- 	return ret;
- }
- 
-+static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct super_block *sb = sbi->sb;
-+	__u32 in;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (get_user(in, (__u32 __user *)arg))
-+		return -EFAULT;
-+
-+	switch (in) {
-+	case FS_GOING_DOWN_FULLSYNC:
-+		sb = freeze_bdev(sb->s_bdev);
-+		if (sb && !IS_ERR(sb)) {
-+			f2fs_stop_checkpoint(sbi);
-+			thaw_bdev(sb->s_bdev, sb);
-+		}
-+		break;
-+	case FS_GOING_DOWN_METASYNC:
-+		/* do checkpoint only */
-+		f2fs_sync_fs(sb, 1);
-+		f2fs_stop_checkpoint(sbi);
-+		break;
-+	case FS_GOING_DOWN_NOSYNC:
-+		f2fs_stop_checkpoint(sbi);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index f4e81a5..9d6fc42 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1055,6 +1055,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
  {
- 	struct inode *inode = file_inode(filp);
-@@ -1067,6 +1102,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_release_volatile_write(filp);
- 	case F2FS_IOC_ABORT_VOLATILE_WRITE:
- 		return f2fs_ioc_abort_volatile_write(filp);
-+	case FS_IOC_SHUTDOWN:
-+		return f2fs_ioc_shutdown(filp, arg);
- 	case FITRIM:
- 		return f2fs_ioc_fitrim(filp, arg);
- 	default:
+ 	unsigned int i = 0;
+ 	int ret = 0;
++	int force = 0;
+ 	u32 nr_unref_nid = 0;
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+ 	struct hard_link_node *node = NULL;
+@@ -1161,14 +1162,9 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 		config.bug_on = 1;
+ 	}
+ 
+-	printf("[FSCK] SIT types                                     ");
+-	if (check_sit_types(sbi) == 0) {
+-		printf(" [Ok..]\n");
+-	} else {
+-		printf(" [Fail]\n");
+-		ret = EXIT_ERR_CODE;
+-		config.bug_on = 1;
+-	}
++	printf("[FSCK] fixing SIT types\n");
++	if (check_sit_types(sbi) != 0)
++		force = 1;
+ 
+ 	printf("[FSCK] other corrupted bugs                          ");
+ 	if (config.bug_on == 0) {
+@@ -1179,7 +1175,7 @@ int fsck_verify(struct f2fs_sb_info *sbi)
+ 	}
+ 
+ 	/* fix global metadata */
+-	if (config.bug_on && config.fix_on) {
++	if (force || (config.bug_on && config.fix_on)) {
+ 		fix_nat_entries(sbi);
+ 		rewrite_sit_area_bitmap(sbi);
+ 		fix_checkpoint(sbi);
 -- 
 2.1.1
 
-_______________________________________________
-xfs mailing list
-xfs@oss.sgi.com
-http://oss.sgi.com/mailman/listinfo/xfs
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming! The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net
