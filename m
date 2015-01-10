@@ -1,15 +1,15 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev][PATCH 2/2] f2fs: enable recover_xattr_data to avoid cp
- when fsync after operating xattr
-Date: Sat, 10 Jan 2015 20:08:33 +0800
-Message-ID: <000101d02cce$4bed1c60$e3c75520$@samsung.com>
-References: <009401d0297a$41523580$c3f6a080$@samsung.com>
- <20150106194419.GB54001@jaegeuk-mac02>
+Subject: RE: [f2fs-dev][PATCH] f2fs: fix wrong memory footprint statistics in
+ debugfs
+Date: Sat, 10 Jan 2015 20:09:52 +0800
+Message-ID: <000201d02cce$70f628d0$52e27a70$@samsung.com>
+References: <009c01d0298c$946435e0$bd2ca1a0$@samsung.com>
+ <20150106194834.GC54001@jaegeuk-mac02>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150106194419.GB54001@jaegeuk-mac02>
+In-reply-to: <20150106194834.GC54001@jaegeuk-mac02>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
@@ -20,35 +20,95 @@ Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, January 07, 2015 3:44 AM
+> Sent: Wednesday, January 07, 2015 3:49 AM
 > To: Chao Yu
 > Cc: Changman Lee; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [f2fs-dev][PATCH 2/2] f2fs: enable recover_xattr_data to avoid cp when fsync after
-> operating xattr
+> Subject: Re: [f2fs-dev][PATCH] f2fs: fix wrong memory footprint statistics in debugfs
 > 
 > Hi Chao,
 > 
-> On Tue, Jan 06, 2015 at 02:29:40PM +0800, Chao Yu wrote:
-> > Now if we call fsync() after we update the xattr date belongs to the file, f2fs
-> > will do checkpoint to keep data.
-> > This can cause low performance because checkpoint block most operation and write
-> > lots of blocks. So we'd better to avoid doing checkpoint by writing modified
-> > xattr node page to warm node segment, and then it can be recovered when we mount
-> > this device later on.
+> On Tue, Jan 06, 2015 at 04:40:49PM +0800, Chao Yu wrote:
+> > Our value of memory footprint statistics showed in debugfs is not calculated
+> > correctly. Fix it in this patch.
+> >
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/debug.c | 15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+> > index dd7835b..6aeaf46 100644
+> > --- a/fs/f2fs/debug.c
+> > +++ b/fs/f2fs/debug.c
+> > @@ -125,7 +125,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
+> >  	int i;
+> >
+> >  	if (si->base_mem)
+> > -		goto get_cache;
+> > +		goto get_dynamic_cache;
+> >
+> >  	si->base_mem = sizeof(struct f2fs_sb_info) + sbi->sb->s_blocksize;
+> >  	si->base_mem += 2 * sizeof(struct f2fs_inode_info);
+> > @@ -161,13 +161,18 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
+> >  	si->base_mem += sizeof(struct f2fs_nm_info);
+> >  	si->base_mem += __bitmap_size(sbi, NAT_BITMAP);
+> >
+> > +get_dynamic_cache:
+> >  	/* build gc */
+> > -	si->base_mem += sizeof(struct f2fs_gc_kthread);
+> > +	if (sbi->gc_thread)
+> > +		si->base_mem += sizeof(struct f2fs_gc_kthread);
+> > +
+> > +	/* build merge flush thread */
+> > +	if (SM_I(sbi)->cmd_control_info)
+> > +		si->base_mem += sizeof(struct flush_cmd_control);
 > 
-> You're trying to change the writing policy as xattr blocks are written into
-> WARM_NODE area instead of COLD_NODE area.
-> I don't think xattrs are frequently changed between each fsync calls.
-> 
-> How do you think?
+> It seems base_mem increases repeatedly?
 
-I'm not sure whether there is a scenario that setxattr and fsync are invoked
-alternately, but if there is, our performance will decrease obviously.
+Right, my mistaken. How about counting memory of these two cache into cache_mem
+as following?
 
-If you don't want to change writing policy, how about writing xattr node with
-fsync flag into cold node segment when fsync() is called, then try to recover
-it from cold node chain when recovery after abnormally pow-cut, this way can
-avoid cp frequently in above scenario.
+>From edfa0beaed83ebfec34b07bfcb5e8ce3cdcb0858 Mon Sep 17 00:00:00 2001
+From: Chao Yu <chao2.yu@samsung.com>
+Date: Sat, 10 Jan 2015 19:24:24 +0800
+Subject: [PATCH] f2fs: fix wrong memory footprint statistics in debugfs
 
-Thanks,
-Yu
+Our value of memory footprint statistics showed in debugfs is not calculated
+correctly. Fix it in this patch.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/debug.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 1f0fb58..b45daab 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -163,13 +163,20 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
+ 	si->base_mem += sizeof(struct f2fs_nm_info);
+ 	si->base_mem += __bitmap_size(sbi, NAT_BITMAP);
+ 
++get_cache:
++	si->cache_mem = 0;
++
+ 	/* build gc */
+-	si->base_mem += sizeof(struct f2fs_gc_kthread);
++	if (sbi->gc_thread)
++		si->cache_mem += sizeof(struct f2fs_gc_kthread);
++
++	/* build merge flush thread */
++	if (SM_I(sbi)->cmd_control_info)
++		si->cache_mem += sizeof(struct flush_cmd_control);
+ 
+-get_cache:
+ 	/* free nids */
+-	si->cache_mem = NM_I(sbi)->fcnt;
+-	si->cache_mem += NM_I(sbi)->nat_cnt;
++	si->cache_mem += NM_I(sbi)->fcnt * sizeof(struct free_nid);
++	si->cache_mem += NM_I(sbi)->nat_cnt * sizeof(struct nat_entry);
+ 	npages = NODE_MAPPING(sbi)->nrpages;
+ 	si->cache_mem += npages << PAGE_CACHE_SHIFT;
+ 	npages = META_MAPPING(sbi)->nrpages;
+-- 
+2.2.1
