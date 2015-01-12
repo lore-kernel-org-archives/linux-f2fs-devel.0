@@ -1,233 +1,191 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [RFC PATCH] f2fs: add extent cache base on rb-tree
-Date: Mon, 12 Jan 2015 15:06:06 +0800
-Message-ID: <000401d02e36$5f942380$1ebc6a80$@samsung.com>
-References: <000001d01db6$7d718770$78549650$@samsung.com>
- <20141222231604.GC8287@jaegeuk-mac02.mot.com>
- <002a01d01e5c$e2ba0250$a82e06f0$@samsung.com>
- <20141223073609.GA9946@jaegeuk-mac02.hsd1.ca.comcast.net>
- <006e01d01f4f$ef9fa940$cedefbc0$@samsung.com>
- <20141225083523.GA18401@jaegeuk-mac02.hsd1.ca.comcast.net>
- <003301d02337$e793a210$b6bae630$@samsung.com>
- <20141229212300.GB29975@jaegeuk-mac02.mot.com> <20141230003206.GA13021@lcm>
- <001701d027cd$5c8d08b0$15a71a10$@samsung.com> <20150107111634.GA4720@lcm>
+Subject: [RFC PATCH 01/10] f2fs: move ext_lock out of struct
+ extent_info
+Date: Mon, 12 Jan 2015 15:08:52 +0800
+Message-ID: <000501d02e36$ba5070d0$2ef15270$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150107111634.GA4720@lcm>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1YAZ8N-0005zm-UT
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 12 Jan 2015 07:09:55 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1YAZ8M-0000G1-2s
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 12 Jan 2015 07:09:55 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NI100GY1YK1UO50@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 12 Jan 2015 16:09:37 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Changman Lee' <cm224.lee@samsung.com>
-Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Changman,
+Move ext_lock out of struct extent_info, then in the following patches we can
+use variables with struct extent_info type as a parameter to pass pure data.
 
-> -----Original Message-----
-> From: Changman Lee [mailto:cm224.lee@samsung.com]
-> Sent: Wednesday, January 07, 2015 7:17 PM
-> To: Chao Yu
-> Cc: 'Jaegeuk Kim'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
-> 
-> Hi Chao,
-> 
-> On Sun, Jan 04, 2015 at 11:19:28AM +0800, Chao Yu wrote:
-> > Hi Changman,
-> >
-> > Sorry for replying late!
-> >
-> > > -----Original Message-----
-> > > From: Changman Lee [mailto:cm224.lee@samsung.com]
-> > > Sent: Tuesday, December 30, 2014 8:32 AM
-> > > To: Jaegeuk Kim
-> > > Cc: Chao Yu; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > > Subject: Re: [RFC PATCH] f2fs: add extent cache base on rb-tree
-> > >
-> > > Hi all,
-> > >
-> > > On Mon, Dec 29, 2014 at 01:23:00PM -0800, Jaegeuk Kim wrote:
-> > > > Hi Chao,
-> > > >
-> > > > On Mon, Dec 29, 2014 at 03:19:18PM +0800, Chao Yu wrote:
-> > > >
-> > > > [snip]
-> > > >
-> > > > Nice draft. :)
-> > > >
-> > > > >
-> > > > > Please see the draft below.
-> > > > >
-> > > > > 1) Extent management:
-> > > > > If we use global management that managing all extents which are from different
-> > > > > inodes in sbi, we will face with serious lock contention when we access these
-> > > > > extents belong to different inodes concurrently, the loss may outweights the
-> > > > > gain.
-> > > >
-> > > > Agreed.
-> > > >
-> > > > > So we choose a local management for extent which means all extents are
-> > > > > managed by inode itself to avoid above lock contention. Addtionlly, we manage
-> > > > > all extents globally by linking all inode into a global lru list for extent
-> > > > > cache shrinker.
-> > > > > Approach:
-> > > > > 	a) build extent tree/rwlock/lru list/extent count in each inode.
-> > > > > 		*extent tree: link all extent in rb-tree;
-> > > > > 		*rwlock: protect fields when accessing extent cache concurrently;
-> > > > > 		*lru list: sort all extents in accessing time order;
-> > > > > 		*extent count: record total count of extents in cache.
-> > > > > 	b) use lru shrink list in sbi to manage all inode which cached extents.
-> > > > > 		*inode will be added or repostioned in this global list whenever
-> > > > > 		extent is being access in this inode.
-> > > > > 		*use spinlock to protect this shrink list.
-> > > >
-> > > > 1. How about adding a data structure with inode number instead of referring
-> > > > inode pointer?
-> > > >
-> > > > 2. How about managing extent entries globally and setting an upper bound to
-> > > > the number of extent entries instead of limiting them per each inode?
-> > > > (The rb-tree will handle many extents per inode.)
-> > > >
-> > > > 3. It needs to set a minimum length for the candidate of extent cache.
-> > > >  (e.g., 64)
-> > > >
-> > >
-> > > Agreed.
-> > >
-> > > > So, for example,
-> > > > struct ino_entry_for_extents {
-> > > > 	inode number;
-> > > > 	rb_tree for extent_entry objects;
-> > > > 	rwlock;
-> > > > };
-> > > >
-> > > > struct extent_entry {
-> > > > 	blkaddr, len;
-> > > > 	list_head *;
-> > > > };
-> > > >
-> > > > Something like this.
-> > > >
-> > > > [A, B, C, ... are extent entry]
-> > > >
-> > > > The sbi has
-> > > > 1. an extent_list: (LRU) A -> B -> C -> D -> E -> F -> G (MRU)
-> > > > 2. radix_tree:  ino_entry_for_extents (#10) has D, B in rb-tree
-> > > >               ` ino_entry_for_extents (#11) has A, C in rb-tree
-> > > >               ` ino_entry_for_extents (#12) has F    in rb-tree
-> > > >               ` ino_entry_for_extents (#13) has G, E in rb-tree
-> > > >
-> > > > In f2fs_update_extent_cache and __get_data_block for #10,
-> > > >   ino_entry_for_extents (#10) was founded and updated D or B.
-> > > >   Then, updated entries are moved to MRU.
-> > > >
-> > > > In f2fs_evict_inode for #11, A and C are moved to LRU.
-> > > > But, if this inode is unlinked, all the A, C, and ino_entry_for_extens (#11)
-> > > > should be released.
-> > > >
-> > > > In f2fs_balance_fs_bg, some LRU extents are released according to the amount
-> > > > of consumed memory. Then, it frees any ino_entry_for_extents having no extent.
-> > > >
-> > > > IMO, we don't need to consider readahead for this, since get_data_block will
-> > > > be called by VFS readahead.
-> > > >
-> > > > Furthermore, we need to think about whether LRU is really best or not.
-> > > > IMO, the extent cache aims to improve second access speed, rather than initial
-> > > > cold misses. So, maybe MRU or another algorithms would be better.
-> > > >
-> > >
-> > > Right. It's very comflicated to judge which is better.
-> > > In read or write path, extents could be made every time. At that time, we should
-> > > decide which extent evicts instead of new extents if we set upper bound.
-> > > In update, one extent could be seperated into 3. It requires 3 insertion and 1 deletion.
-> > > So if update happends frequently, we could give up extent management for some ranges.
-> > > And we need to bring ideas from vm managemnt. For example,
-> > > active/inactive list and second chance to promotion, or batch work for insertion/deletion
-> > >
-> > > I thought suddenly 'Simple is best'.
-> > > Let's think about better ideas together.
-> >
-> > Yeah, how about using an opposite way to the way of page cache manager?
-> >
-> > for example:
-> > node page A,B,C,D is in page cache;
-> > extent a,b,c,d is in extent cache;
-> > extent a is built from page A, ..., d is built from page D.
-> > page cache: LRU A -> B -> C -> D MRU
-> > extent cache: LRU a -> b -> c -> d MRU
-> >
-> > If we use
-> > 1) the same way LRU, cache pair A-a, B-b, ... may be reclaimed in the same time as OOM.
-> > 2) the opposite way, maybe A,B in page cache and d,c in extent cache will be reclaimed,
-> > but we still can hit whole cache in combination of page cache and extent cache.
-> >
-> > So by the way '2)' we can increase the total coverage area of page cache + extent cache.
-> 
-> Good idea. :)
-> If we decide which one is better between global lru and per inode lru,
-> it's expected that f2fs read performance will be more improved.
-> I'll wait your patch.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c  | 12 ++++++------
+ fs/f2fs/f2fs.h  |  6 +-----
+ fs/f2fs/inode.c |  7 +++++++
+ fs/f2fs/super.c |  2 +-
+ 4 files changed, 15 insertions(+), 12 deletions(-)
 
-Please review and comment on following RFC patch set, thank you! :)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a7b905c..fece5cc 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -258,9 +258,9 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 	if (is_inode_flag_set(fi, FI_NO_EXTENT))
+ 		return 0;
+ 
+-	read_lock(&fi->ext.ext_lock);
++	read_lock(&fi->ext_lock);
+ 	if (fi->ext.len == 0) {
+-		read_unlock(&fi->ext.ext_lock);
++		read_unlock(&fi->ext_lock);
+ 		return 0;
+ 	}
+ 
+@@ -284,10 +284,10 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 			bh_result->b_size = UINT_MAX;
+ 
+ 		stat_inc_read_hit(inode->i_sb);
+-		read_unlock(&fi->ext.ext_lock);
++		read_unlock(&fi->ext_lock);
+ 		return 1;
+ 	}
+-	read_unlock(&fi->ext.ext_lock);
++	read_unlock(&fi->ext_lock);
+ 	return 0;
+ }
+ 
+@@ -309,7 +309,7 @@ void update_extent_cache(struct dnode_of_data *dn)
+ 	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
+ 							dn->ofs_in_node;
+ 
+-	write_lock(&fi->ext.ext_lock);
++	write_lock(&fi->ext_lock);
+ 
+ 	start_fofs = fi->ext.fofs;
+ 	end_fofs = fi->ext.fofs + fi->ext.len - 1;
+@@ -366,7 +366,7 @@ void update_extent_cache(struct dnode_of_data *dn)
+ 		need_update = true;
+ 	}
+ end_update:
+-	write_unlock(&fi->ext.ext_lock);
++	write_unlock(&fi->ext_lock);
+ 	if (need_update)
+ 		sync_inode_page(dn);
+ 	return;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 209532c..beacda0 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -271,7 +271,6 @@ enum {
+ #define F2FS_MIN_EXTENT_LEN	16	/* minimum extent length */
+ 
+ struct extent_info {
+-	rwlock_t ext_lock;	/* rwlock for consistency */
+ 	unsigned int fofs;	/* start offset in a file */
+ 	u32 blk_addr;		/* start block address of the extent */
+ 	unsigned int len;	/* length of the extent */
+@@ -303,6 +302,7 @@ struct f2fs_inode_info {
+ 	nid_t i_xattr_nid;		/* node id that contains xattrs */
+ 	unsigned long long xattr_ver;	/* cp version of xattr modification */
+ 	struct extent_info ext;		/* in-memory extent cache entry */
++	rwlock_t ext_lock;		/* rwlock for single extent cache */
+ 	struct inode_entry *dirty_dir;	/* the pointer of dirty dir */
+ 
+ 	struct radix_tree_root inmem_root;	/* radix tree for inmem pages */
+@@ -313,21 +313,17 @@ struct f2fs_inode_info {
+ static inline void get_extent_info(struct extent_info *ext,
+ 					struct f2fs_extent i_ext)
+ {
+-	write_lock(&ext->ext_lock);
+ 	ext->fofs = le32_to_cpu(i_ext.fofs);
+ 	ext->blk_addr = le32_to_cpu(i_ext.blk_addr);
+ 	ext->len = le32_to_cpu(i_ext.len);
+-	write_unlock(&ext->ext_lock);
+ }
+ 
+ static inline void set_raw_extent(struct extent_info *ext,
+ 					struct f2fs_extent *i_ext)
+ {
+-	read_lock(&ext->ext_lock);
+ 	i_ext->fofs = cpu_to_le32(ext->fofs);
+ 	i_ext->blk_addr = cpu_to_le32(ext->blk_addr);
+ 	i_ext->len = cpu_to_le32(ext->len);
+-	read_unlock(&ext->ext_lock);
+ }
+ 
+ struct f2fs_nm_info {
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 2d002e3..28dd26a 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -130,7 +130,10 @@ static int do_read_inode(struct inode *inode)
+ 	fi->i_pino = le32_to_cpu(ri->i_pino);
+ 	fi->i_dir_level = ri->i_dir_level;
+ 
++	write_lock(&fi->ext_lock);
+ 	get_extent_info(&fi->ext, ri->i_ext);
++	write_unlock(&fi->ext_lock);
++
+ 	get_inline_info(fi, ri);
+ 
+ 	/* check data exist */
+@@ -220,7 +223,11 @@ void update_inode(struct inode *inode, struct page *node_page)
+ 	ri->i_links = cpu_to_le32(inode->i_nlink);
+ 	ri->i_size = cpu_to_le64(i_size_read(inode));
+ 	ri->i_blocks = cpu_to_le64(inode->i_blocks);
++
++	read_lock(&F2FS_I(inode)->ext_lock);
+ 	set_raw_extent(&F2FS_I(inode)->ext, &ri->i_ext);
++	read_unlock(&F2FS_I(inode)->ext_lock);
++
+ 	set_raw_inline(F2FS_I(inode), ri);
+ 
+ 	ri->i_atime = cpu_to_le64(inode->i_atime.tv_sec);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0e97974..8b8de7f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -382,7 +382,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	atomic_set(&fi->dirty_pages, 0);
+ 	fi->i_current_depth = 1;
+ 	fi->i_advise = 0;
+-	rwlock_init(&fi->ext.ext_lock);
++	rwlock_init(&fi->ext_lock);
+ 	init_rwsem(&fi->i_sem);
+ 	INIT_RADIX_TREE(&fi->inmem_root, GFP_NOFS);
+ 	INIT_LIST_HEAD(&fi->inmem_pages);
+-- 
+2.2.1
 
-Thanks,
 
-> 
-> Thanks,
-> 
-> >
-> > >
-> > > > Thanks,
-> > > >
-> > > > >
-> > > > > 2) Limitation:
-> > > > > In one inode, as we split or add extent in extent cache when read/write, extent
-> > > > > number will enlarge, so memory and CPU overhead will increase.
-> > > > > In order to control the overhead of memory and CPU, we try to set a upper bound
-> > > > > number to limit total extent number in each inode, This number is global
-> > > > > configuration which is visable to all inode. This number will be exported to
-> > > > > sysfs for configuring according to requirement of user. By default, designed
-> > > > > number is 8.
-> > > > >
-> > >
-> > > Chao,
-> > > It's better which # of extent are controlled globally rather than limit extents
-> > > per inode as Jaegeuk said to reduce extent management overhead.
-> >
-> > It's OK.
-> >
-> > >
-> > > > > 3) Shrinker:
-> > > > > There are two shrink paths:
-> > > > > 	a) one is triggered when extent count has exceed the upper bound of
-> > > > > 	inode's extent cache. We will try to release extent(s) from head of
-> > > > > 	inode's inner extent lru list until extent count is equal to upper bound.
-> > > > > 	This operation could be in f2fs_update_extent_cache().
-> > > > > 	b) the other one is triggered when memory util exceed threshold, we try
-> > > > > 	get inode from head of global lru list(s), and release extent(s) with
-> > > > > 	fixed number (by default: 64 extents) in inode one by one.
-> > > > > 	This operation could be in f2fs_balance_fs_bg().
-> > > > >
-> > >
-> > > Let's consider to use register_shrinker which is called by vm when
-> > > memory pressure happens.
-> >
-> > Great, thanks for your reminding! :-)
-> >
-> > Thanks,
-> > Yu
-> >
-> > >
-> > > > > 4) Revalidation:
-> > > > > In ->evict(), extent cache will be released, in order to reuse extent cache
-> > > > > of inode when reopen for high hit ratio, a proper way is to add cached extent
-> > > > > tree into a hash table (could be radix tree), revalidate extent tree and recover
-> > > > > it to inode when reopen.
-> > > > > Besides, a global lru list is needed here for shrinker.
-> > > > >
-> > > > > 5) Readahead:
-> > > > > Expand extent cache by readaheading when we call get_dnode_of_data in non-emergency
-> > > > > path. Note, ra can affect lock contention for both ->rwlock in extent cache and
-> > > > > ->lock of global shrink list.
-> > > > >
+
+------------------------------------------------------------------------------
+New Year. New Location. New Benefits. New Data Center in Ashburn, VA.
+GigeNET is offering a free month of service with a new server in Ashburn.
+Choose from 2 high performing configs, both with 100TB of bandwidth.
+Higher redundancy.Lower latency.Increased capacity.Completely compliant.
+vanity: www.gigenet.com
