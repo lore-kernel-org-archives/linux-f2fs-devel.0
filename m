@@ -1,257 +1,191 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [RFC PATCH 10/10] f2fs: add trace for rb-tree extent
- cache ops
-Date: Mon, 12 Jan 2015 15:38:51 +0800
-Message-ID: <000201d02e3a$ec081d40$c41857c0$@samsung.com>
+Subject: RE: [f2fs-dev][PATCH 2/2] f2fs: enable recover_xattr_data to avoid cp
+ when fsync after operating xattr
+Date: Mon, 12 Jan 2015 17:40:28 +0800
+Message-ID: <000301d02e4b$e768bbd0$b63a3370$@samsung.com>
+References: <009401d0297a$41523580$c3f6a080$@samsung.com>
+ <20150106194419.GB54001@jaegeuk-mac02>
+ <000101d02cce$4bed1c60$e3c75520$@samsung.com>
+ <20150111053212.GB91790@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1YAZbI-0006lU-6M
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Jan 2015 07:39:48 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1YAZbF-0003hW-PR
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Jan 2015 07:39:48 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0NI1003Z6ZY28QA0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Jan 2015 16:39:38 +0900 (KST)
-Received: from yuchao ([109.123.105.89])
-	by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
-	(7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTPA id <0NI100GLIZWP80B0@mmp2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Jan 2015 16:39:37 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20150111053212.GB91790@jaegeuk-mac02.hsd1.ca.comcast.net>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds trace for lookup/update/shrink/destroy ops in rb-tree extent cache.
+Hi Jaegeuk,
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Sunday, January 11, 2015 1:32 PM
+> To: Chao Yu
+> Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> Subject: Re: [f2fs-dev][PATCH 2/2] f2fs: enable recover_xattr_data to avoid cp when fsync after
+> operating xattr
+> 
+> On Sat, Jan 10, 2015 at 08:08:33PM +0800, Chao Yu wrote:
+> > Hi Jaegeuk,
+> >
+> > > -----Original Message-----
+> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > Sent: Wednesday, January 07, 2015 3:44 AM
+> > > To: Chao Yu
+> > > Cc: Changman Lee; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > Subject: Re: [f2fs-dev][PATCH 2/2] f2fs: enable recover_xattr_data to avoid cp when fsync
+> after
+> > > operating xattr
+> > >
+> > > Hi Chao,
+> > >
+> > > On Tue, Jan 06, 2015 at 02:29:40PM +0800, Chao Yu wrote:
+> > > > Now if we call fsync() after we update the xattr date belongs to the file, f2fs
+> > > > will do checkpoint to keep data.
+> > > > This can cause low performance because checkpoint block most operation and write
+> > > > lots of blocks. So we'd better to avoid doing checkpoint by writing modified
+> > > > xattr node page to warm node segment, and then it can be recovered when we mount
+> > > > this device later on.
+> > >
+> > > You're trying to change the writing policy as xattr blocks are written into
+> > > WARM_NODE area instead of COLD_NODE area.
+> > > I don't think xattrs are frequently changed between each fsync calls.
+> > >
+> > > How do you think?
+> >
+> > I'm not sure whether there is a scenario that setxattr and fsync are invoked
+> > alternately, but if there is, our performance will decrease obviously.
+> >
+> > If you don't want to change writing policy, how about writing xattr node with
+> > fsync flag into cold node segment when fsync() is called, then try to recover
+> > it from cold node chain when recovery after abnormally pow-cut, this way can
+> > avoid cp frequently in above scenario.
+> 
+> Firt of all, I don't think this scenario is frequent enough that we have to
+> break the exisiting writing and recovery procedures.
+> Moreover, if xattr entries are covered by inline_xattr, it doesn't trigger
+> checkpoint.
+
+Agree, that's a good solution.
+
+> 
+> Let me know, if I'm missing something.
+> 
+> If you try to change the recovery procedure, it needs to think about the
+> disk full condition. (i.e., space_for_roll_forward())
+> And, I don't want to search cold node chain.
+
+OK, if we keep writing policy and recovery procedure as it is, then, shouldn't our
+recover_xattr_data be dropped because it will be not used from any call path?
+How do you think of below patch?
+
+>From 4fee238292aa0198a1530492afbd529e84e83141 Mon Sep 17 00:00:00 2001
+From: Chao Yu <chao2.yu@samsung.com>
+Date: Mon, 12 Jan 2015 17:25:44 +0800
+Subject: [PATCH] f2fs: drop recover_xattr_data
+
+Because xattr node will be written to cold node segment, so in current procedure
+it's wrong that we try to find and recover it from warm node chain in
+recover_xattr_data.
+
+Let's drop this related function and invoking.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c              |   9 +++
- include/trace/events/f2fs.h | 134 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 143 insertions(+)
+ fs/f2fs/f2fs.h     |  1 -
+ fs/f2fs/node.c     | 36 ------------------------------------
+ fs/f2fs/recovery.c |  8 ++------
+ 3 files changed, 2 insertions(+), 43 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ed7b9c5..d636475 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -572,6 +572,8 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
- 	if (is_inode_flag_set(F2FS_I(inode), FI_NO_EXTENT))
- 		return false;
- 
-+	trace_f2fs_lookup_extent_tree_start(inode, pgofs);
-+
- 	down_read(&sbi->extent_tree_lock);
- 	et = radix_tree_lookup(&sbi->extent_tree_root, inode->i_ino);
- 	if (!et) {
-@@ -594,6 +596,8 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
- 	stat_inc_total_hit(sbi->sb);
- 	read_unlock(&et->lock);
- 
-+	trace_f2fs_lookup_extent_tree_end(inode, pgofs, en);
-+
- 	atomic_dec(&et->refcount);
- 	return en ? true : false;
- }
-@@ -613,6 +617,8 @@ static void f2fs_update_extent_tree(struct inode *inode, pgoff_t fofs,
- 	if (is_inode_flag_set(F2FS_I(inode), FI_NO_EXTENT))
- 		return;
- 
-+	trace_f2fs_update_extent_tree(inode, fofs, blkaddr);
-+
- retry:
- 	down_write(&sbi->extent_tree_lock);
- 	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
-@@ -763,6 +769,8 @@ void f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
- 		}
- 	}
- 	up_write(&sbi->extent_tree_lock);
-+
-+	trace_f2fs_shrink_extent_tree(sbi, node_cnt, tree_cnt);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 209532c..3b18072 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1392,7 +1392,6 @@ bool alloc_nid(struct f2fs_sb_info *, nid_t *);
+ void alloc_nid_done(struct f2fs_sb_info *, nid_t);
+ void alloc_nid_failed(struct f2fs_sb_info *, nid_t);
+ void recover_inline_xattr(struct inode *, struct page *);
+-void recover_xattr_data(struct inode *, struct page *, block_t);
+ int recover_inode_page(struct f2fs_sb_info *, struct page *);
+ int restore_node_summary(struct f2fs_sb_info *, unsigned int,
+ 				struct f2fs_summary_block *);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index d7c1436..75aa233 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1656,42 +1656,6 @@ update_inode:
+ 	f2fs_put_page(ipage, 1);
  }
  
- void f2fs_destroy_extent_tree(struct inode *inode)
-@@ -803,6 +811,7 @@ void f2fs_destroy_extent_tree(struct inode *inode)
- 	sbi->total_ext_tree--;
- 	up_write(&sbi->extent_tree_lock);
- out:
-+	trace_f2fs_destroy_extent_tree(inode, node_cnt);
- 	return;
- }
+-void recover_xattr_data(struct inode *inode, struct page *page, block_t blkaddr)
+-{
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	nid_t prev_xnid = F2FS_I(inode)->i_xattr_nid;
+-	nid_t new_xnid = nid_of_node(page);
+-	struct node_info ni;
+-
+-	/* 1: invalidate the previous xattr nid */
+-	if (!prev_xnid)
+-		goto recover_xnid;
+-
+-	/* Deallocate node address */
+-	get_node_info(sbi, prev_xnid, &ni);
+-	f2fs_bug_on(sbi, ni.blk_addr == NULL_ADDR);
+-	invalidate_blocks(sbi, ni.blk_addr);
+-	dec_valid_node_count(sbi, inode);
+-	set_node_addr(sbi, &ni, NULL_ADDR, false);
+-
+-recover_xnid:
+-	/* 2: allocate new xattr nid */
+-	if (unlikely(!inc_valid_node_count(sbi, inode)))
+-		f2fs_bug_on(sbi, 1);
+-
+-	remove_free_nid(NM_I(sbi), new_xnid);
+-	get_node_info(sbi, new_xnid, &ni);
+-	ni.ino = inode->i_ino;
+-	set_node_addr(sbi, &ni, NEW_ADDR, false);
+-	F2FS_I(inode)->i_xattr_nid = new_xnid;
+-
+-	/* 3: update xattr blkaddr */
+-	refresh_sit_entry(sbi, NEW_ADDR, blkaddr);
+-	set_node_addr(sbi, &ni, blkaddr, false);
+-
+-	update_inode_page(inode);
+-}
+-
+ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ {
+ 	struct f2fs_inode *src, *dst;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index c4211a5..f70c2e7 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -342,13 +342,9 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	struct node_info ni;
+ 	int err = 0, recovered = 0;
  
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 13992f3..8f53fda 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -1009,6 +1009,140 @@ TRACE_EVENT(f2fs_issue_flush,
- 		__entry->nobarrier ? "skip (nobarrier)" : "issue",
- 		__entry->flush_merge ? " with flush_merge" : "")
- );
-+
-+TRACE_EVENT(f2fs_lookup_extent_tree_start,
-+
-+	TP_PROTO(struct inode *inode, unsigned int pgofs),
-+
-+	TP_ARGS(inode, pgofs),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(ino_t,	ino)
-+		__field(unsigned int, pgofs)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev = inode->i_sb->s_dev;
-+		__entry->ino = inode->i_ino;
-+		__entry->pgofs = pgofs;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %lu, pgofs = %u",
-+		show_dev_ino(__entry),
-+		__entry->pgofs)
-+);
-+
-+TRACE_EVENT_CONDITION(f2fs_lookup_extent_tree_end,
-+
-+	TP_PROTO(struct inode *inode, unsigned int pgofs,
-+						struct extent_node *en),
-+
-+	TP_ARGS(inode, pgofs, en),
-+
-+	TP_CONDITION(en),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(ino_t,	ino)
-+		__field(unsigned int, pgofs)
-+		__field(unsigned int, fofs)
-+		__field(u32, blk)
-+		__field(unsigned int, len)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev = inode->i_sb->s_dev;
-+		__entry->ino = inode->i_ino;
-+		__entry->pgofs = pgofs;
-+		__entry->fofs = en->ei.fofs;
-+		__entry->blk = en->ei.blk;
-+		__entry->len = en->ei.len;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %lu, pgofs = %u, "
-+		"ext_info(fofs: %u, blk: %u, len: %u)",
-+		show_dev_ino(__entry),
-+		__entry->pgofs,
-+		__entry->fofs,
-+		__entry->blk,
-+		__entry->len)
-+);
-+
-+TRACE_EVENT(f2fs_update_extent_tree,
-+
-+	TP_PROTO(struct inode *inode, unsigned int pgofs, block_t blkaddr),
-+
-+	TP_ARGS(inode, pgofs, blkaddr),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(ino_t,	ino)
-+		__field(unsigned int, pgofs)
-+		__field(u32, blk)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev = inode->i_sb->s_dev;
-+		__entry->ino = inode->i_ino;
-+		__entry->pgofs = pgofs;
-+		__entry->blk = blkaddr;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %lu, pgofs = %u, blkaddr = %u",
-+		show_dev_ino(__entry),
-+		__entry->pgofs,
-+		__entry->blk)
-+);
-+
-+TRACE_EVENT(f2fs_shrink_extent_tree,
-+
-+	TP_PROTO(struct f2fs_sb_info *sbi, unsigned int node_cnt,
-+						unsigned int tree_cnt),
-+
-+	TP_ARGS(sbi, node_cnt, tree_cnt),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(unsigned int, node_cnt)
-+		__field(unsigned int, tree_cnt)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev = sbi->sb->s_dev;
-+		__entry->node_cnt = node_cnt;
-+		__entry->tree_cnt = tree_cnt;
-+	),
-+
-+	TP_printk("dev = (%d,%d), shrunk: node_cnt = %u, tree_cnt = %u",
-+		show_dev(__entry),
-+		__entry->node_cnt,
-+		__entry->tree_cnt)
-+);
-+
-+TRACE_EVENT(f2fs_destroy_extent_tree,
-+
-+	TP_PROTO(struct inode *inode, unsigned int node_cnt),
-+
-+	TP_ARGS(inode, node_cnt),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(ino_t,	ino)
-+		__field(unsigned int, node_cnt)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev = inode->i_sb->s_dev;
-+		__entry->ino = inode->i_ino;
-+		__entry->node_cnt = node_cnt;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %lu, destroyed: node_cnt = %u",
-+		show_dev_ino(__entry),
-+		__entry->node_cnt)
-+);
-+
- #endif /* _TRACE_F2FS_H */
+-	/* step 1: recover xattr */
+-	if (IS_INODE(page)) {
++	/* step 1: recover inline xattr */
++	if (IS_INODE(page))
+ 		recover_inline_xattr(inode, page);
+-	} else if (f2fs_has_xattr_block(ofs_of_node(page))) {
+-		recover_xattr_data(inode, page, blkaddr);
+-		goto out;
+-	}
  
-  /* This part must be outside protection */
+ 	/* step 2: recover inline data */
+ 	if (recover_inline_data(inode, page))
 -- 
 2.2.1
 
 
-
-------------------------------------------------------------------------------
-New Year. New Location. New Benefits. New Data Center in Ashburn, VA.
-GigeNET is offering a free month of service with a new server in Ashburn.
-Choose from 2 high performing configs, both with 100TB of bandwidth.
-Higher redundancy.Lower latency.Increased capacity.Completely compliant.
-vanity: www.gigenet.com
+> 
+> Thanks,
+> 
+> >
+> > Thanks,
+> > Yu
