@@ -1,8 +1,8 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [f2fs-dev][PATCH] f2fs: fix to release count of meta page in
+Subject: [f2fs-dev][PATCH RESEND] f2fs: fix to release count of meta page in
  ->invalidatepage
-Date: Mon, 19 Jan 2015 20:12:26 +0800
-Message-ID: <007601d033e1$653f74a0$2fbe5de0$@samsung.com>
+Date: Mon, 19 Jan 2015 20:24:37 +0800
+Message-ID: <007701d033e2$fec89c90$fc59d5b0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -52,7 +52,7 @@ Signed-off-by: Chao Yu <chao2.yu@samsung.com>
  1 file changed, 19 insertions(+)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 9f5317c..51ec97c 100644
+index 9f5317c..63bf844 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
 @@ -302,16 +302,35 @@ static int f2fs_set_meta_page_dirty(struct page *page)
@@ -70,7 +70,7 @@ index 9f5317c..51ec97c 100644
 +				      unsigned int length)
 +{
 +	struct inode *inode = page->mapping->host;
-+		get_pages(F2FS_I_SB(inode), F2FS_DIRTY_META));
++
 +	if (PageDirty(page))
 +		dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_META);
 +	ClearPagePrivate(page);
