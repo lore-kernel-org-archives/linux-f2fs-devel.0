@@ -1,184 +1,47 @@
-From: Changman Lee <cm224.lee@gmail.com>
-Subject: Re: [f2fs-dev][RFC PATCH 06/10] f2fs: add core functions for rb-tree
- extent cache
-Date: Wed, 21 Jan 2015 00:06:11 +0900
-Message-ID: <CAN863PvqoS4EpUJRLYxhra6ZyUG6ATMSGnJh_NNj_QpznUuu6Q@mail.gmail.com>
-References: <000a01d02e37$8e245890$aa6d09b0$@samsung.com>
+From: "Anna Dec" <a.dec@tlum24.pl>
+Subject: Dokumenty
+Date: Tue, 20 Jan 2015 14:24:08 +0100
+Message-ID: <f494dcb2caffbfeca1f100ecd9952b10@hermes365.pl>
+Reply-To: a.dec@tlum24.pl
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000a01d02e37$8e245890$aa6d09b0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zwroty@m1.tlumaczymy24.pl>) id 1YDgAi-0005Ki-FU
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 20 Jan 2015 21:17:12 +0000
+Received: from 5210.niebieski.net ([94.152.193.110] helo=smtp.5210.v.tld.pl)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YDgAg-00032Y-MP for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 20 Jan 2015 21:17:12 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chao,
-
-Great works. :)
-
-2015-01-12 16:14 GMT+09:00 Chao Yu <chao2.yu@samsung.com>:
-> This patch adds core functions including slab cache init function and
-> init/lookup/update/shrink/destroy function for rb-tree based extent cache.
->
-> Thank Jaegeuk Kim and Changman Lee as they gave much suggestion about detail
-> design and implementation of extent cache.
->
-> Todo:
->  * add a cached_ei into struct extent_tree for a quick recent cache.
->  * register rb-based extent cache shrink with mm shrink interface.
->  * disable dir inode's extent cache.
->
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> Signed-off-by: Changman Lee <cm224.lee@samsung.com>
-> ---
->  fs/f2fs/data.c | 458 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  fs/f2fs/node.c |   9 +-
->  2 files changed, 466 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 4f5b871e..bf8c5eb 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -25,6 +25,9 @@
->  #include "trace.h"
->  #include <trace/events/f2fs.h>
->
-
-~ snip ~
-
-> +
-> +static void f2fs_update_extent_tree(struct inode *inode, pgoff_t fofs,
-> +                                                       block_t blkaddr)
-> +{
-> +       struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +       nid_t ino = inode->i_ino;
-> +       struct extent_tree *et;
-> +       struct extent_node *en = NULL, *en1 = NULL, *en2 = NULL, *en3 = NULL;
-> +       struct extent_node *den = NULL;
-> +       struct extent_info *pei;
-> +       struct extent_info ei;
-> +       unsigned int endofs;
-> +
-> +       if (is_inode_flag_set(F2FS_I(inode), FI_NO_EXTENT))
-> +               return;
-> +
-> +retry:
-> +       down_write(&sbi->extent_tree_lock);
-> +       et = radix_tree_lookup(&sbi->extent_tree_root, ino);
-> +       if (!et) {
-
-We've already made some useful functions.
-How about using f2fs_kmem_cache_alloc and f2fs_radix_tree_insert ?
-
-> +               et = kmem_cache_alloc(extent_tree_slab, GFP_ATOMIC);
-> +               if (!et) {
-> +                       up_write(&sbi->extent_tree_lock);
-> +                       goto retry;
-> +               }
-> +               if (radix_tree_insert(&sbi->extent_tree_root, ino, et)) {
-> +                       up_write(&sbi->extent_tree_lock);
-> +                       kmem_cache_free(extent_tree_slab, et);
-> +                       goto retry;
-> +               }
-> +               memset(et, 0, sizeof(struct extent_tree));
-> +               et->ino = ino;
-> +               et->root = RB_ROOT;
-> +               rwlock_init(&et->lock);
-> +               atomic_set(&et->refcount, 0);
-> +               et->count = 0;
-> +               sbi->total_ext_tree++;
-> +       }
-> +       atomic_inc(&et->refcount);
-> +       up_write(&sbi->extent_tree_lock);
-> +
-
-~ snip ~
-
-> +
-> +       write_unlock(&et->lock);
-> +       atomic_dec(&et->refcount);
-> +}
-> +
-> +void f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
-> +{
-> +       struct extent_tree *treevec[EXT_TREE_VEC_SIZE];
-> +       struct extent_node *en, *tmp;
-> +       unsigned long ino = F2FS_ROOT_INO(sbi);
-> +       struct radix_tree_iter iter;
-> +       void **slot;
-> +       unsigned int found;
-> +       unsigned int node_cnt = 0, tree_cnt = 0;
-> +
-> +       if (available_free_memory(sbi, EXTENT_CACHE))
-> +               return;
-> +
-> +       spin_lock(&sbi->extent_lock);
-> +       list_for_each_entry_safe(en, tmp, &sbi->extent_list, list) {
-> +               if (!nr_shrink--)
-> +                       break;
-> +               list_del_init(&en->list);
-> +       }
-> +       spin_unlock(&sbi->extent_lock);
-> +
-
-IMHO, it's expensive to retrieve all extent_tree to free extent_node
-that list_empty() is true.
-Is there any idea to improve this?
-For example, if each extent_node has its extent_root, it would be more
-fast by not to retrieve all trees.
-Of course, however, it uses more memory.
-
-But, I think that your patchset might just as well be merged because
-patches are well made and it's clearly separated with mount option. In
-the next time, we could improve this.
-
-Regards,
-Changman
-
-> +       down_read(&sbi->extent_tree_lock);
-> +       while ((found = radix_tree_gang_lookup(&sbi->extent_tree_root,
-> +                               (void **)treevec, ino, EXT_TREE_VEC_SIZE))) {
-> +               unsigned i;
-> +
-> +               ino = treevec[found - 1]->ino + 1;
-> +               for (i = 0; i < found; i++) {
-> +                       struct extent_tree *et = treevec[i];
-> +
-> +                       atomic_inc(&et->refcount);
-> +                       write_lock(&et->lock);
-> +                       node_cnt += __free_extent_tree(sbi, et, false);
-> +                       write_unlock(&et->lock);
-> +                       atomic_dec(&et->refcount);
-> +               }
-> +       }
-> +       up_read(&sbi->extent_tree_lock);
-> +
-> +       down_write(&sbi->extent_tree_lock);
-> +       radix_tree_for_each_slot(slot, &sbi->extent_tree_root, &iter,
-> +                                                       F2FS_ROOT_INO(sbi)) {
-> +               struct extent_tree *et = (struct extent_tree *)*slot;
-> +
-> +               if (!atomic_read(&et->refcount) && !et->count) {
-> +                       radix_tree_delete(&sbi->extent_tree_root, et->ino);
-> +                       kmem_cache_free(extent_tree_slab, et);
-> +                       sbi->total_ext_tree--;
-> +                       tree_cnt++;
-> +               }
-> +       }
-> +       up_write(&sbi->extent_tree_lock);
-> +}
-> +
-
-~ snip ~
-
-> --
-> 2.2.1
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+V2l0YW0sCgpad3JhY2FtIHNpxJkgeiB6YXB5dGFuaWVtIHcgaW1pZW5pdSBpbnRlcm5ldG93ZWdv
+CnNlcndpc3UgdMWCdW1hY3plbmlvd2Vnby4KClBvbHNjeSBwcnplZHNpxJliaW9yY3kgc3p1a2Fq
+xIUgZG9icnljaCBqYWtvxZtjaW93byB0xYJ1bWFjemXFhCB3IHp3acSFemt1Cnogcm9zbsSFY3lt
+IGVrc3BvcnRlbSBpIGNoxJljacSFIG5hd2nEhXp5d2FuaWEgbWnEmWR6eW5hcm9kb3dlagp3c3DD
+s8WCcHJhY3kuCgpDaGNpYcWCYW0gemFweXRhxIcgY3p5IG1vZ8SZIHByemVkc3Rhd2nEhyBvZmVy
+dMSZIG5hIHVzxYJ1Z2kgdMWCdW1hY3plxYQKcGlzZW1ueWNoPwoKUG96ZHJhd2lhbSwKQW5uYSBE
+ZWMKVGx1bWFjenlteTI0LnBsCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCk5ldyBZZWFyLiBOZXcg
+TG9jYXRpb24uIE5ldyBCZW5lZml0cy4gTmV3IERhdGEgQ2VudGVyIGluIEFzaGJ1cm4sIFZBLgpH
+aWdlTkVUIGlzIG9mZmVyaW5nIGEgZnJlZSBtb250aCBvZiBzZXJ2aWNlIHdpdGggYSBuZXcgc2Vy
+dmVyIGluIEFzaGJ1cm4uCkNob29zZSBmcm9tIDIgaGlnaCBwZXJmb3JtaW5nIGNvbmZpZ3MsIGJv
+dGggd2l0aCAxMDBUQiBvZiBiYW5kd2lkdGguCkhpZ2hlciByZWR1bmRhbmN5Lkxvd2VyIGxhdGVu
+Y3kuSW5jcmVhc2VkIGNhcGFjaXR5LkNvbXBsZXRlbHkgY29tcGxpYW50LgpodHRwOi8vcC5zZi5u
+ZXQvc2Z1L2dpZ2VuZXQKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0
+cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
+dGluZm8vbGludXgtZjJmcy1kZXZlbAo=
