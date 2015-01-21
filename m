@@ -1,47 +1,51 @@
-From: "Anna Dec" <a.dec@tlum24.pl>
-Subject: Dokumenty
-Date: Tue, 20 Jan 2015 14:24:08 +0100
-Message-ID: <f494dcb2caffbfeca1f100ecd9952b10@hermes365.pl>
-Reply-To: a.dec@tlum24.pl
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 1/2 v3] xfs/087: test f2fs selectively
+Date: Wed, 21 Jan 2015 14:38:32 +1100
+Message-ID: <20150121033832.GB16510@dastard>
+References: <1420804366-85126-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zwroty@m1.tlumaczymy24.pl>) id 1YDgAi-0005Ki-FU
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Jan 2015 21:17:12 +0000
-Received: from 5210.niebieski.net ([94.152.193.110] helo=smtp.5210.v.tld.pl)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YDgAg-00032Y-MP for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Jan 2015 21:17:12 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <fstests-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1420804366-85126-1-git-send-email-jaegeuk@kernel.org>
+Sender: fstests-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-V2l0YW0sCgpad3JhY2FtIHNpxJkgeiB6YXB5dGFuaWVtIHcgaW1pZW5pdSBpbnRlcm5ldG93ZWdv
-CnNlcndpc3UgdMWCdW1hY3plbmlvd2Vnby4KClBvbHNjeSBwcnplZHNpxJliaW9yY3kgc3p1a2Fq
-xIUgZG9icnljaCBqYWtvxZtjaW93byB0xYJ1bWFjemXFhCB3IHp3acSFemt1Cnogcm9zbsSFY3lt
-IGVrc3BvcnRlbSBpIGNoxJljacSFIG5hd2nEhXp5d2FuaWEgbWnEmWR6eW5hcm9kb3dlagp3c3DD
-s8WCcHJhY3kuCgpDaGNpYcWCYW0gemFweXRhxIcgY3p5IG1vZ8SZIHByemVkc3Rhd2nEhyBvZmVy
-dMSZIG5hIHVzxYJ1Z2kgdMWCdW1hY3plxYQKcGlzZW1ueWNoPwoKUG96ZHJhd2lhbSwKQW5uYSBE
-ZWMKVGx1bWFjenlteTI0LnBsCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCk5ldyBZZWFyLiBOZXcg
-TG9jYXRpb24uIE5ldyBCZW5lZml0cy4gTmV3IERhdGEgQ2VudGVyIGluIEFzaGJ1cm4sIFZBLgpH
-aWdlTkVUIGlzIG9mZmVyaW5nIGEgZnJlZSBtb250aCBvZiBzZXJ2aWNlIHdpdGggYSBuZXcgc2Vy
-dmVyIGluIEFzaGJ1cm4uCkNob29zZSBmcm9tIDIgaGlnaCBwZXJmb3JtaW5nIGNvbmZpZ3MsIGJv
-dGggd2l0aCAxMDBUQiBvZiBiYW5kd2lkdGguCkhpZ2hlciByZWR1bmRhbmN5Lkxvd2VyIGxhdGVu
-Y3kuSW5jcmVhc2VkIGNhcGFjaXR5LkNvbXBsZXRlbHkgY29tcGxpYW50LgpodHRwOi8vcC5zZi5u
-ZXQvc2Z1L2dpZ2VuZXQKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0
-cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
-dGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On Fri, Jan 09, 2015 at 03:52:45AM -0800, Jaegeuk Kim wrote:
+> This patch add the f2fs support for xfs/087 with goingdown.
+> 
+
+xfs/087 is not really a test that should be made generic/shared;
+it's testing a bunch of different XFS specific mount options and log
+recovery behaviour which has no relevance to any other filesystem.
+
+If you want to take xfs specific tests that are only XFS specific
+because of the shutdowns they use, look at these ones:
+
+	xfs/053		(data exposure)
+	xfs/137		(data vs filesize)
+	xfs/138		(data vs filesize vs truncate)
+	xfs/139		(data vs filesize vs partial truncate)
+	xfs/140		(data vs filesize vs extending truncate)
+	xfs/179		(data vs filesize w/ fsync)
+	xfs/180		(data vs filesize w/ sync)
+	xfs/182		(data vs filesize w/ recovery)
+	xfs/200		(recovery vs ro-block device)
+	xfs/306		(fsstress vs recovery)
+
+These can all be made generic with very little effort -
+"_require_shutdown" is probably all that is necessary for most of
+them....
+
+Also, we really are trying not to add more "shared" tests - with the
+correct "_requires_foo" rules we can just place those tests in
+generic/ and filesystems that don't support "foo" will avoid it.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
