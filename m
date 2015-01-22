@@ -1,105 +1,144 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] fibmap.f2fs: fix the wrong stat info
-Date: Thu, 22 Jan 2015 11:19:05 +0800
-Message-ID: <00c501d035f2$52ea29e0$f8be7da0$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev][PATCH 2/2] f2fs: enable recover_xattr_data to avoid
+ cp when fsync after operating xattr
+Date: Thu, 22 Jan 2015 15:13:18 -0800
+Message-ID: <20150122231318.GA16473@jaegeuk-mac02>
+References: <009401d0297a$41523580$c3f6a080$@samsung.com>
+ <20150106194419.GB54001@jaegeuk-mac02>
+ <000101d02cce$4bed1c60$e3c75520$@samsung.com>
+ <20150111053212.GB91790@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <000301d02e4b$e768bbd0$b63a3370$@samsung.com>
+ <20150114002215.GA4930@jaegeuk-mac02.mot.com>
+ <008a01d02fb7$3abb2bd0$b0318370$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1YE8Je-0006bW-29
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 22 Jan 2015 03:20:18 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1YE8Jb-0003s7-R1
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 22 Jan 2015 03:20:18 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0NIK002G56LK4870@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 22 Jan 2015 12:20:08 +0900 (KST)
-Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <008a01d02fb7$3abb2bd0$b0318370$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-fibmap shows ino, size, blocks with incorrectly decimal number, fix it.
+Hi Chao,
 
-Before:
---------------------------------------------
-dev       [8:16]
-ino       [0x   238ea : 0]
-mode      [0x    81a4 : 33188]
-nlink     [0x       1 : 1]
-uid       [0x       0 : 0]
-gid       [0x       0 : 0]
-size      [0x   79e00 : 0]
-blksize   [0x    1000 : 4096]
-blocks    [0x     268 : 0]
---------------------------------------------
+On Wed, Jan 14, 2015 at 01:01:13PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Wednesday, January 14, 2015 8:22 AM
+> > To: Chao Yu
+> > Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > Subject: Re: [f2fs-dev][PATCH 2/2] f2fs: enable recover_xattr_data to avoid cp when fsync after
+> > operating xattr
+> > 
+> > On Mon, Jan 12, 2015 at 05:40:28PM +0800, Chao Yu wrote:
+> > > Hi Jaegeuk,
+> > >
+> > > > -----Original Message-----
+> > > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > > Sent: Sunday, January 11, 2015 1:32 PM
+> > > > To: Chao Yu
+> > > > Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > > Subject: Re: [f2fs-dev][PATCH 2/2] f2fs: enable recover_xattr_data to avoid cp when fsync
+> > after
+> > > > operating xattr
+> > > >
+> > > > On Sat, Jan 10, 2015 at 08:08:33PM +0800, Chao Yu wrote:
+> > > > > Hi Jaegeuk,
+> > > > >
+> > > > > > -----Original Message-----
+> > > > > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > > > > Sent: Wednesday, January 07, 2015 3:44 AM
+> > > > > > To: Chao Yu
+> > > > > > Cc: Changman Lee; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > > > > Subject: Re: [f2fs-dev][PATCH 2/2] f2fs: enable recover_xattr_data to avoid cp when
+> > fsync
+> > > > after
+> > > > > > operating xattr
+> > > > > >
+> > > > > > Hi Chao,
+> > > > > >
+> > > > > > On Tue, Jan 06, 2015 at 02:29:40PM +0800, Chao Yu wrote:
+> > > > > > > Now if we call fsync() after we update the xattr date belongs to the file, f2fs
+> > > > > > > will do checkpoint to keep data.
+> > > > > > > This can cause low performance because checkpoint block most operation and write
+> > > > > > > lots of blocks. So we'd better to avoid doing checkpoint by writing modified
+> > > > > > > xattr node page to warm node segment, and then it can be recovered when we mount
+> > > > > > > this device later on.
+> > > > > >
+> > > > > > You're trying to change the writing policy as xattr blocks are written into
+> > > > > > WARM_NODE area instead of COLD_NODE area.
+> > > > > > I don't think xattrs are frequently changed between each fsync calls.
+> > > > > >
+> > > > > > How do you think?
+> > > > >
+> > > > > I'm not sure whether there is a scenario that setxattr and fsync are invoked
+> > > > > alternately, but if there is, our performance will decrease obviously.
+> > > > >
+> > > > > If you don't want to change writing policy, how about writing xattr node with
+> > > > > fsync flag into cold node segment when fsync() is called, then try to recover
+> > > > > it from cold node chain when recovery after abnormally pow-cut, this way can
+> > > > > avoid cp frequently in above scenario.
+> > > >
+> > > > Firt of all, I don't think this scenario is frequent enough that we have to
+> > > > break the exisiting writing and recovery procedures.
+> > > > Moreover, if xattr entries are covered by inline_xattr, it doesn't trigger
+> > > > checkpoint.
+> > >
+> > > Agree, that's a good solution.
+> > >
+> > > >
+> > > > Let me know, if I'm missing something.
+> > > >
+> > > > If you try to change the recovery procedure, it needs to think about the
+> > > > disk full condition. (i.e., space_for_roll_forward())
+> > > > And, I don't want to search cold node chain.
+> > >
+> > > OK, if we keep writing policy and recovery procedure as it is, then, shouldn't our
+> > > recover_xattr_data be dropped because it will be not used from any call path?
+> > > How do you think of below patch?
+> > 
+> > Hi Chao,
+> > 
+> > Nice catch.
+> > But, IIRC, this code was remained for backward compatibility, since long time
+> > ago, xattr blocks were written into the warm node chain.
+> 
+> Ah, I got it, thanks for your explanation! :)
+> How do you think of adding some comments on these codes, because this can help
+> developers understand it well and not to submit the wrong fix patch like me again.
 
-Patched:
---------------------------------------------
-dev       [8:16]
-ino       [0x   238ea : 145642]
-mode      [0x    81a4 : 33188]
-nlink     [0x       1 : 1]
-uid       [0x       0 : 0]
-gid       [0x       0 : 0]
-size      [0x   79e00 : 499200]
-blksize   [0x    1000 : 4096]
-blocks    [0x     268 : 616]
---------------------------------------------
+Something like this?
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+>From 6b609421e4f9f52de26554300aae62de33e0703a Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Thu, 22 Jan 2015 14:48:28 -0800
+Subject: [PATCH] f2fs: leave comment for code readability
+
+During the recovery, any xattr blocks should not be found, since they are
+written into cold log, not the warm node chain.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- tools/fibmap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/f2fs/recovery.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/fibmap.c b/tools/fibmap.c
-index a6a112b..2df8094 100644
---- a/tools/fibmap.c
-+++ b/tools/fibmap.c
-@@ -33,14 +33,14 @@ void print_stat(struct stat64 *st)
- {
- 	printf("--------------------------------------------\n");
- 	printf("dev       [%d:%d]\n", major(st->st_dev), minor(st->st_dev));
--	printf("ino       [0x%8lx : %ld]\n", st->st_ino, st->st_ino);
-+	printf("ino       [0x%8llx : %lld]\n", st->st_ino, st->st_ino);
- 	printf("mode      [0x%8x : %d]\n", st->st_mode, st->st_mode);
- 	printf("nlink     [0x%8lx : %ld]\n", st->st_nlink, st->st_nlink);
- 	printf("uid       [0x%8x : %d]\n", st->st_uid, st->st_uid);
- 	printf("gid       [0x%8x : %d]\n", st->st_gid, st->st_gid);
--	printf("size      [0x%8lx : %ld]\n", st->st_size, st->st_size);
-+	printf("size      [0x%8llx : %lld]\n", st->st_size, st->st_size);
- 	printf("blksize   [0x%8lx : %ld]\n", st->st_blksize, st->st_blksize);
--	printf("blocks    [0x%8lx : %ld]\n", st->st_blocks, st->st_blocks);
-+	printf("blocks    [0x%8llx : %lld]\n", st->st_blocks, st->st_blocks);
- 	printf("--------------------------------------------\n\n");
- }
- 
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index c4211a5..57603a7 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -346,6 +346,10 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	if (IS_INODE(page)) {
+ 		recover_inline_xattr(inode, page);
+ 	} else if (f2fs_has_xattr_block(ofs_of_node(page))) {
++		/*
++		 * Deprecated; xattr blocks should be found from cold log.
++		 * But, we should remain this for backward compatibility.
++		 */
+ 		recover_xattr_data(inode, page, blkaddr);
+ 		goto out;
+ 	}
 -- 
-2.2.1
-
-
-
-------------------------------------------------------------------------------
-New Year. New Location. New Benefits. New Data Center in Ashburn, VA.
-GigeNET is offering a free month of service with a new server in Ashburn.
-Choose from 2 high performing configs, both with 100TB of bandwidth.
-Higher redundancy.Lower latency.Increased capacity.Completely compliant.
-http://p.sf.net/sfu/gigenet
+2.1.1
