@@ -1,74 +1,71 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2 v3] xfs/087: test f2fs selectively
-Date: Thu, 22 Jan 2015 15:50:45 -0800
-Message-ID: <20150122235045.GB16473@jaegeuk-mac02>
-References: <1420804366-85126-1-git-send-email-jaegeuk@kernel.org>
- <20150121033832.GB16510@dastard>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <fstests-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150121033832.GB16510@dastard>
-Sender: fstests-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH 1/2] f2fs: trigger correct checkpoint during umount
+Date: Thu, 22 Jan 2015 16:08:49 -0800
+Message-ID: <1421971730-17024-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Jan 21, 2015 at 02:38:32PM +1100, Dave Chinner wrote:
-> On Fri, Jan 09, 2015 at 03:52:45AM -0800, Jaegeuk Kim wrote:
-> > This patch add the f2fs support for xfs/087 with goingdown.
-> > 
-> 
-> xfs/087 is not really a test that should be made generic/shared;
-> it's testing a bunch of different XFS specific mount options and log
-> recovery behaviour which has no relevance to any other filesystem.
+This patch fixes to trigger checkpoint with umount flag when kill_sb was called.
+In kill_sb, f2fs_sync_fs was finally called, but at this time, f2fs can't do
+checkpoint with CP_UMOUNT.
+After then, f2fs_put_super is not doing checkpoint, since it is not dirty.
 
-When I took a closer look at clean and dirty logs in xfs, I thought that they
-are very similar to the f2fs's logs.
-If it is correct that the dirty log in xfs means that there are something to
-replay metadata operations, I think f2fs can also detect them in a same manner.
+So, this patch adds a flag to indicate f2fs_sync_fs is called during umount.
 
-So, actually I've already been testing xfs/086 and xfs/087 on f2fs having clean
-and dirty log statement (which is retrieved by f2fs-tools).
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/super.c | 12 ++++++++++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-Additionally, I've found that f2fs can be added into:
- xfs/051
- xfs/085
-
-Anyway, if you think these are still not proper testcases, let me know.
-
-> 
-> If you want to take xfs specific tests that are only XFS specific
-> because of the shutdowns they use, look at these ones:
-> 
-> 	xfs/053		(data exposure)
-> 	xfs/137		(data vs filesize)
-> 	xfs/138		(data vs filesize vs truncate)
-> 	xfs/139		(data vs filesize vs partial truncate)
-> 	xfs/140		(data vs filesize vs extending truncate)
-> 	xfs/179		(data vs filesize w/ fsync)
-> 	xfs/180		(data vs filesize w/ sync)
-> 	xfs/182		(data vs filesize w/ recovery)
-> 	xfs/200		(recovery vs ro-block device)
-> 	xfs/306		(fsstress vs recovery)
-> 
-> These can all be made generic with very little effort -
-> "_require_shutdown" is probably all that is necessary for most of
-> them....
-> 
-> Also, we really are trying not to add more "shared" tests - with the
-> correct "_requires_foo" rules we can just place those tests in
-> generic/ and filesystems that don't support "foo" will avoid it.
-
-Thank you for the list. :)
-I'll check and try to follow the rule for _requires_foo.
-
-Thanks,
-
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c2cf040..1795ce2 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -525,6 +525,7 @@ struct f2fs_sb_info {
+ 	struct f2fs_super_block *raw_super;	/* raw super block pointer */
+ 	int s_dirty;				/* dirty flag for checkpoint */
+ 	bool need_fsck;				/* need fsck.f2fs to fix */
++	bool s_closing;				/* specify unmounting */
+ 
+ 	/* for node-related operations */
+ 	struct f2fs_nm_info *nm_info;		/* node manager */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0e97974..84f95cd 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -487,7 +487,8 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
+ 	if (sync) {
+ 		struct cp_control cpc;
+ 
+-		cpc.reason = test_opt(sbi, FASTBOOT) ? CP_UMOUNT : CP_SYNC;
++		cpc.reason = (test_opt(sbi, FASTBOOT) || sbi->s_closing) ?
++							CP_UMOUNT : CP_SYNC;
+ 		mutex_lock(&sbi->gc_mutex);
+ 		write_checkpoint(sbi, &cpc);
+ 		mutex_unlock(&sbi->gc_mutex);
+@@ -1190,11 +1191,18 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+ 	return mount_bdev(fs_type, flags, dev_name, data, f2fs_fill_super);
+ }
+ 
++static void kill_f2fs_super(struct super_block *sb)
++{
++	if (sb->s_root)
++		F2FS_SB(sb)->s_closing = true;
++	kill_block_super(sb);
++}
++
+ static struct file_system_type f2fs_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "f2fs",
+ 	.mount		= f2fs_mount,
+-	.kill_sb	= kill_block_super,
++	.kill_sb	= kill_f2fs_super,
+ 	.fs_flags	= FS_REQUIRES_DEV,
+ };
+ MODULE_ALIAS_FS("f2fs");
+-- 
+2.1.1
