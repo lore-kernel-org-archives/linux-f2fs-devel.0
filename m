@@ -1,156 +1,157 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev][RFC PATCH 06/10] f2fs: add core functions for rb-tree
- extent cache
-Date: Mon, 26 Jan 2015 13:39:23 +0800
-Message-ID: <005c01d0392a$8d59b2e0$a80d18a0$@samsung.com>
-References: <000a01d02e37$8e245890$aa6d09b0$@samsung.com>
- <20150123014802.GA17947@jaegeuk-mac02>
- <00ed01d036d4$28fb0310$7af10930$@samsung.com>
- <20150123194328.GC22493@jaegeuk-mac02.mot.com>
+Subject: [f2fs-dev][PATCH v2 01/10] f2fs: move ext_lock out of struct
+ extent_info
+Date: Mon, 26 Jan 2015 13:44:08 +0800
+Message-ID: <005d01d0392b$35b8e0f0$a12aa2d0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150123194328.GC22493@jaegeuk-mac02.mot.com>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+Move ext_lock out of struct extent_info, then in the following patches we can
+use variables with struct extent_info type as a parameter to pass pure data.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Saturday, January 24, 2015 3:43 AM
-> To: Chao Yu
-> Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [f2fs-dev][RFC PATCH 06/10] f2fs: add core functions for rb-tree extent cache
-> 
-> On Fri, Jan 23, 2015 at 02:15:56PM +0800, Chao Yu wrote:
-> > Hi Jaegeuk,
-> >
-> > > -----Original Message-----
-> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > Sent: Friday, January 23, 2015 9:48 AM
-> > > To: Chao Yu
-> > > Cc: Changman Lee; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > > Subject: Re: [f2fs-dev][RFC PATCH 06/10] f2fs: add core functions for rb-tree extent cache
-> > >
-> > > On Mon, Jan 12, 2015 at 03:14:48PM +0800, Chao Yu wrote:
-> > > > This patch adds core functions including slab cache init function and
-> > > > init/lookup/update/shrink/destroy function for rb-tree based extent cache.
-> > > >
-> > > > Thank Jaegeuk Kim and Changman Lee as they gave much suggestion about detail
-> > > > design and implementation of extent cache.
-> > > >
-> > > > Todo:
-> > > >  * add a cached_ei into struct extent_tree for a quick recent cache.
-> > > >  * register rb-based extent cache shrink with mm shrink interface.
-> > > >  * disable dir inode's extent cache.
-> > > >
-> 
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c  | 12 ++++++------
+ fs/f2fs/f2fs.h  |  6 +-----
+ fs/f2fs/inode.c |  7 +++++++
+ fs/f2fs/super.c |  2 +-
+ 4 files changed, 15 insertions(+), 12 deletions(-)
 
-[snip]
-
-> > > > +static void f2fs_update_extent_tree(struct inode *inode, pgoff_t fofs,
-> > > > +							block_t blkaddr)
-> > > > +{
-> > > > +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> > > > +	nid_t ino = inode->i_ino;
-> > > > +	struct extent_tree *et;
-> > > > +	struct extent_node *en = NULL, *en1 = NULL, *en2 = NULL, *en3 = NULL;
-> > > > +	struct extent_node *den = NULL;
-> > > > +	struct extent_info *pei;
-> > > > +	struct extent_info ei;
-> > > > +	unsigned int endofs;
-> > > > +
-> > > > +	if (is_inode_flag_set(F2FS_I(inode), FI_NO_EXTENT))
-> > > > +		return;
-> > > > +
-> > > > +retry:
-> > > > +	down_write(&sbi->extent_tree_lock);
-> > > > +	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
-> > > > +	if (!et) {
-> > > > +		et = kmem_cache_alloc(extent_tree_slab, GFP_ATOMIC);
-> > >
-> > > et = f2fs_kmem_cache_alloc(.., GFP_ATOMIC);
-> >
-> > How about modifying as below to avoid holding extent_tree_lock for long time?
-> 
-> Hmm. I don't think it doesn't take such the long time.
-> It's GFP_ATOMIC.
-> 
-> Moreover, for radix_tree, I prefer to use f2fs_radix_tree_insert with GFP_NOIO.
-> Since, we actually don't need to call kmem_cache_free.
-
-How about use following code?
-
-	f2fs_kmem_cache_alloc(extent_tree_slab, GFP_NOFS);
-	f2fs_radix_tree_insert(&sbi->extent_tree_root, ino, et);
-
-in init_extent_cache_info()
-	INIT_RADIX_TREE(&sbi->extent_tree_root, GFP_NOIO);
-
-> 
-> >
-> > et = kmem_cache_alloc(extent_tree_slab, GFP_ATOMIC);
-> > if (!et) {
-> > 	up_write(&sbi->extent_tree_lock);
-> > 	cond_resched();
-> > 	goto retry;
-> > }
-> >
-> > >
-> > > > +		if (!et) {
-> > > > +			up_write(&sbi->extent_tree_lock);
-> > > > +			goto retry;
-> > > > +		}
-> > > > +		if (radix_tree_insert(&sbi->extent_tree_root, ino, et)) {
-> > > > +			up_write(&sbi->extent_tree_lock);
-> > > > +			kmem_cache_free(extent_tree_slab, et);
-> >
-> > cond_resched()?
-> 
-> I'm not sure why this should be needed.
-> There is rw_semaphore, so we have already a rescheduling point.
-> 
-
-[snip]
-
-> > > Can we just remove en1 and en2 in __insert_extent_tree?
-> >
-> > en1 and en2 is newly added, in __attach_extent_node we do not add en1 and en2 into
-> > lru list, so if you do not want to keep split part in lru list, let's just remove
-> > the below codes.
-> 
-> What I meant was, how about avoiding attaching en1 and en2, if they are splits whose
-> lens are less than F2FS_MIN_EXTENT_LEN in advance?
-
-Oh, it's better, I will do it.
-
-[snip]
-
-> > > No use of tree_cnt.
-> >
-> > This is used by trace function in RFC PATCH 10/10.
-> 
-> Well, then, it needs to add tree_cnt in Patch #10. :)
-
-OK, let's move it. :)
-
-Thanks,
-
-> 
-> Thanks,
-> 
-> >
-> > Thanks for your review! :)
-> >
-> > Regards,
-> > Yu
-> >
-> > >
-> > > Thanks,
-> >
-> > [snip]
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a7b905c..fece5cc 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -258,9 +258,9 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 	if (is_inode_flag_set(fi, FI_NO_EXTENT))
+ 		return 0;
+ 
+-	read_lock(&fi->ext.ext_lock);
++	read_lock(&fi->ext_lock);
+ 	if (fi->ext.len == 0) {
+-		read_unlock(&fi->ext.ext_lock);
++		read_unlock(&fi->ext_lock);
+ 		return 0;
+ 	}
+ 
+@@ -284,10 +284,10 @@ static int check_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 			bh_result->b_size = UINT_MAX;
+ 
+ 		stat_inc_read_hit(inode->i_sb);
+-		read_unlock(&fi->ext.ext_lock);
++		read_unlock(&fi->ext_lock);
+ 		return 1;
+ 	}
+-	read_unlock(&fi->ext.ext_lock);
++	read_unlock(&fi->ext_lock);
+ 	return 0;
+ }
+ 
+@@ -309,7 +309,7 @@ void update_extent_cache(struct dnode_of_data *dn)
+ 	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
+ 							dn->ofs_in_node;
+ 
+-	write_lock(&fi->ext.ext_lock);
++	write_lock(&fi->ext_lock);
+ 
+ 	start_fofs = fi->ext.fofs;
+ 	end_fofs = fi->ext.fofs + fi->ext.len - 1;
+@@ -366,7 +366,7 @@ void update_extent_cache(struct dnode_of_data *dn)
+ 		need_update = true;
+ 	}
+ end_update:
+-	write_unlock(&fi->ext.ext_lock);
++	write_unlock(&fi->ext_lock);
+ 	if (need_update)
+ 		sync_inode_page(dn);
+ 	return;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1795ce2..f1452a3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -271,7 +271,6 @@ enum {
+ #define F2FS_MIN_EXTENT_LEN	16	/* minimum extent length */
+ 
+ struct extent_info {
+-	rwlock_t ext_lock;	/* rwlock for consistency */
+ 	unsigned int fofs;	/* start offset in a file */
+ 	u32 blk_addr;		/* start block address of the extent */
+ 	unsigned int len;	/* length of the extent */
+@@ -303,6 +302,7 @@ struct f2fs_inode_info {
+ 	nid_t i_xattr_nid;		/* node id that contains xattrs */
+ 	unsigned long long xattr_ver;	/* cp version of xattr modification */
+ 	struct extent_info ext;		/* in-memory extent cache entry */
++	rwlock_t ext_lock;		/* rwlock for single extent cache */
+ 	struct inode_entry *dirty_dir;	/* the pointer of dirty dir */
+ 
+ 	struct radix_tree_root inmem_root;	/* radix tree for inmem pages */
+@@ -313,21 +313,17 @@ struct f2fs_inode_info {
+ static inline void get_extent_info(struct extent_info *ext,
+ 					struct f2fs_extent i_ext)
+ {
+-	write_lock(&ext->ext_lock);
+ 	ext->fofs = le32_to_cpu(i_ext.fofs);
+ 	ext->blk_addr = le32_to_cpu(i_ext.blk_addr);
+ 	ext->len = le32_to_cpu(i_ext.len);
+-	write_unlock(&ext->ext_lock);
+ }
+ 
+ static inline void set_raw_extent(struct extent_info *ext,
+ 					struct f2fs_extent *i_ext)
+ {
+-	read_lock(&ext->ext_lock);
+ 	i_ext->fofs = cpu_to_le32(ext->fofs);
+ 	i_ext->blk_addr = cpu_to_le32(ext->blk_addr);
+ 	i_ext->len = cpu_to_le32(ext->len);
+-	read_unlock(&ext->ext_lock);
+ }
+ 
+ struct f2fs_nm_info {
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 2d002e3..28dd26a 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -130,7 +130,10 @@ static int do_read_inode(struct inode *inode)
+ 	fi->i_pino = le32_to_cpu(ri->i_pino);
+ 	fi->i_dir_level = ri->i_dir_level;
+ 
++	write_lock(&fi->ext_lock);
+ 	get_extent_info(&fi->ext, ri->i_ext);
++	write_unlock(&fi->ext_lock);
++
+ 	get_inline_info(fi, ri);
+ 
+ 	/* check data exist */
+@@ -220,7 +223,11 @@ void update_inode(struct inode *inode, struct page *node_page)
+ 	ri->i_links = cpu_to_le32(inode->i_nlink);
+ 	ri->i_size = cpu_to_le64(i_size_read(inode));
+ 	ri->i_blocks = cpu_to_le64(inode->i_blocks);
++
++	read_lock(&F2FS_I(inode)->ext_lock);
+ 	set_raw_extent(&F2FS_I(inode)->ext, &ri->i_ext);
++	read_unlock(&F2FS_I(inode)->ext_lock);
++
+ 	set_raw_inline(F2FS_I(inode), ri);
+ 
+ 	ri->i_atime = cpu_to_le64(inode->i_atime.tv_sec);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0d627f2..5706c17 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -382,7 +382,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	atomic_set(&fi->dirty_pages, 0);
+ 	fi->i_current_depth = 1;
+ 	fi->i_advise = 0;
+-	rwlock_init(&fi->ext.ext_lock);
++	rwlock_init(&fi->ext_lock);
+ 	init_rwsem(&fi->i_sem);
+ 	INIT_RADIX_TREE(&fi->inmem_root, GFP_NOFS);
+ 	INIT_LIST_HEAD(&fi->inmem_pages);
+-- 
+2.2.1
