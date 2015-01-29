@@ -1,92 +1,104 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/5 v2] f2fs: fix not to drop mount options when retrying
- fill_super
-Date: Thu, 29 Jan 2015 10:21:18 -0800
-Message-ID: <20150129181944.GA15313@jaegeuk-mac02.mot.com>
+Subject: Re: [PATCH 2/5] f2fs: support norecovery mount option
+Date: Thu, 29 Jan 2015 10:27:45 -0800
+Message-ID: <20150129182745.GB15313@jaegeuk-mac02.mot.com>
 References: <1422401503-4769-1-git-send-email-jaegeuk@kernel.org>
- <002a01d03bb6$530c8340$f92589c0$@samsung.com>
+ <1422401503-4769-2-git-send-email-jaegeuk@kernel.org>
+ <002b01d03bba$37f763a0$a7e62ae0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <002a01d03bb6$530c8340$f92589c0$@samsung.com>
+In-Reply-To: <002b01d03bba$37f763a0$a7e62ae0$@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <chao2.yu@samsung.com>
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Chang log from v1:
- o fix memory leak pointed by Chao
+Hi Chao,
 
->From 82760814db6a01539ad15026b0469686110d92bc Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri, 23 Jan 2015 17:41:39 -0800
-Subject: [PATCH] f2fs: fix not to drop mount options when retrying fill_super
+On Thu, Jan 29, 2015 at 07:52:56PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> > -----Original Message-----
+> > From: linux-fsdevel-owner@vger.kernel.org [mailto:linux-fsdevel-owner@vger.kernel.org] On
+> > Behalf Of Jaegeuk Kim
+> > Sent: Wednesday, January 28, 2015 7:32 AM
+> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > linux-f2fs-devel@lists.sourceforge.net
+> > Cc: Jaegeuk Kim
+> > Subject: [PATCH 2/5] f2fs: support norecovery mount option
+> > 
+> > This patch adds a mount option, norecovery, which is mostly same as
+> > disable_roll_forward. The only difference is that norecovery should be activated
+> > with read-only mount option.
+> > 
+> > This can be used when user wants to check whether f2fs is mountable or not
+> > without any recovery process. (e.g., xfstests/200)
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/super.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index fbc7f5a..0ca1fb2 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -42,6 +42,7 @@ static struct kset *f2fs_kset;
+> >  enum {
+> >  	Opt_gc_background,
+> >  	Opt_disable_roll_forward,
+> > +	Opt_norecovery,
+> >  	Opt_discard,
+> >  	Opt_noheap,
+> >  	Opt_user_xattr,
+> > @@ -62,6 +63,7 @@ enum {
+> >  static match_table_t f2fs_tokens = {
+> >  	{Opt_gc_background, "background_gc=%s"},
+> >  	{Opt_disable_roll_forward, "disable_roll_forward"},
+> > +	{Opt_norecovery, "norecovery"},
+> 
+> IMO, it's better to show 'norecovery' in f2fs_show_options instead of showing
+> 'disable_roll_forward', so user will know the details of mount option as we show.
 
-If wrong mount option was requested, f2fs tries to fill_super again.
-But, during the next trial, f2fs has no valid mount options, since
-parse_options deleted all the separators in the original string.
+Hmm, I did think like that at the first time.
+But, as you guess, this option is totally same as ro,disable_roll_forward.
+So, I just wanted to avoid user's confusing for the behaviors of this option.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/super.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> >  	{Opt_discard, "discard"},
+> >  	{Opt_noheap, "no_heap"},
+> >  	{Opt_user_xattr, "user_xattr"},
+> > @@ -287,6 +289,12 @@ static int parse_options(struct super_block *sb, char *options)
+> >  		case Opt_disable_roll_forward:
+> >  			set_opt(sbi, DISABLE_ROLL_FORWARD);
+> >  			break;
+> > +		case Opt_norecovery:
+> > +			/* this option mounts f2fs with ro */
+> > +			set_opt(sbi, DISABLE_ROLL_FORWARD);
+> 
+> set_opt(sbi, NORECOVERY); and check this option before recover_fsync_data()?
+> 
+> It's better to add description for this "norecovery" option in Documentation.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 25f4291..47d9b04 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -951,6 +951,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	struct inode *root;
- 	long err = -EINVAL;
- 	bool retry = true;
-+	char *options = NULL;
- 	int i;
- 
- try_onemore:
-@@ -982,9 +983,15 @@ try_onemore:
- 	set_opt(sbi, POSIX_ACL);
- #endif
- 	/* parse mount options */
--	err = parse_options(sb, (char *)data);
--	if (err)
-+	options = kstrdup((const char *)data, GFP_KERNEL);
-+	if (data && !options) {
-+		err = -ENOMEM;
- 		goto free_sb_buf;
-+	}
-+
-+	err = parse_options(sb, options);
-+	if (err)
-+		goto free_options;
- 
- 	sb->s_maxbytes = max_file_size(le32_to_cpu(raw_super->log_blocksize));
- 	sb->s_max_links = F2FS_LINK_MAX;
-@@ -1028,7 +1035,7 @@ try_onemore:
- 	if (IS_ERR(sbi->meta_inode)) {
- 		f2fs_msg(sb, KERN_ERR, "Failed to read F2FS meta data inode");
- 		err = PTR_ERR(sbi->meta_inode);
--		goto free_sb_buf;
-+		goto free_options;
- 	}
- 
- 	err = get_valid_checkpoint(sbi);
-@@ -1153,6 +1160,7 @@ try_onemore:
- 		if (err)
- 			goto free_kobj;
- 	}
-+	kfree(options);
- 	return 0;
- 
- free_kobj:
-@@ -1177,6 +1185,8 @@ free_cp:
- free_meta_inode:
- 	make_bad_inode(sbi->meta_inode);
- 	iput(sbi->meta_inode);
-+free_options:
-+	kfree(options);
- free_sb_buf:
- 	brelse(raw_super_buf);
- free_sbi:
--- 
-2.1.1
+I'll do that.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> > +			if (!f2fs_readonly(sb))
+> > +				return -EINVAL;
+> > +			break;
+> >  		case Opt_discard:
+> >  			set_opt(sbi, DISCARD);
+> >  			break;
+> > --
+> > 2.1.1
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
