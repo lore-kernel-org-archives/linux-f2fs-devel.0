@@ -1,15 +1,14 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [PATCH 4/5] f2fs: should fail mount when trying to recover data on
- read-only dev
-Date: Thu, 29 Jan 2015 20:16:38 +0800
-Message-ID: <002d01d03bbd$8b533c10$a1f9b430$@samsung.com>
+Subject: RE: [PATCH 5/5] f2fs: introduce a batched trim
+Date: Thu, 29 Jan 2015 20:38:30 +0800
+Message-ID: <003b01d03bc0$a5f23d20$f1d6b760$@samsung.com>
 References: <1422401503-4769-1-git-send-email-jaegeuk@kernel.org>
- <1422401503-4769-4-git-send-email-jaegeuk@kernel.org>
+ <1422401503-4769-5-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1422401503-4769-4-git-send-email-jaegeuk@kernel.org>
+In-reply-to: <1422401503-4769-5-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
@@ -24,43 +23,66 @@ Hi Jaegeuk,
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [PATCH 4/5] f2fs: should fail mount when trying to recover data on read-only dev
+> Subject: [PATCH 5/5] f2fs: introduce a batched trim
 > 
-> If device is read-only, we should not proceed data recovery.
-> But, if the previous checkpoint was done by normal clean shutdown, it's safe to
-> proceed the recovery, since there will be no data to be recovered.
+> This patch introduces a batched trimming feature, which submits split discard
+> commands.
 
-Now, with 'fastboot' option, f2fs will write cp with CP_UMOUNT_FLAG, but we count not
-guarantee there is no abnormally power cut after data fsynced.
+I didn't get it, why we should split discard commands. :(
+
+Does smaller discarding for flash shows better performance or effect or safety?
+Can you please explain more about this patch?
 
 Thanks,
 
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/super.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  fs/f2fs/f2fs.h    |  1 +
+>  fs/f2fs/segment.c | 15 ++++++++++-----
+>  2 files changed, 11 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 0ca1fb2..7039969 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1149,6 +1149,15 @@ try_onemore:
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index c0b83d6..ec4d16b 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -104,6 +104,7 @@ enum {
+>  	CP_DISCARD,
+>  };
 > 
->  	/* recover fsynced data */
->  	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
-> +		/*
-> +		 * mount should be failed, when device has readonly mode, and
-> +		 * previous checkpoint was not done by clean system shutdown.
-> +		 */
-> +		if (bdev_read_only(sb->s_bdev) &&
-> +				!is_set_ckpt_flags(sbi->ckpt, CP_UMOUNT_FLAG)) {
-> +			err = -EROFS;
-> +			goto free_kobj;
-> +		}
->  		err = recover_fsync_data(sbi);
->  		if (err) {
->  			f2fs_msg(sb, KERN_ERR,
+> +#define BATCHED_TRIM_SEGMENTS	10
+>  struct cp_control {
+>  	int reason;
+>  	__u64 trim_start;
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 31c4e57..6c9c784 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1066,14 +1066,19 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+>  	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
+>  						GET_SEGNO(sbi, end);
+>  	cpc.reason = CP_DISCARD;
+> -	cpc.trim_start = start_segno;
+> -	cpc.trim_end = end_segno;
+>  	cpc.trim_minlen = range->minlen >> sbi->log_blocksize;
+> 
+>  	/* do checkpoint to issue discard commands safely */
+> -	mutex_lock(&sbi->gc_mutex);
+> -	write_checkpoint(sbi, &cpc);
+> -	mutex_unlock(&sbi->gc_mutex);
+> +	for (; start_segno <= end_segno;
+> +				start_segno += BATCHED_TRIM_SEGMENTS + 1) {
+> +		cpc.trim_start = start_segno;
+> +		cpc.trim_end = min_t(unsigned int,
+> +				start_segno + BATCHED_TRIM_SEGMENTS, end_segno);
+> +
+> +		mutex_lock(&sbi->gc_mutex);
+> +		write_checkpoint(sbi, &cpc);
+> +		mutex_unlock(&sbi->gc_mutex);
+> +	}
+>  out:
+>  	range->len = cpc.trimmed << sbi->log_blocksize;
+>  	return 0;
 > --
 > 2.1.1
 > 
