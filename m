@@ -1,45 +1,53 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 2/5 v2] f2fs: support norecovery mount option
-Date: Fri, 30 Jan 2015 13:11:09 +0800
-Message-ID: <006501d03c4b$43aa1c60$cafe5520$@samsung.com>
+Subject: RE: [PATCH 4/5] f2fs: should fail mount when trying to recover data on
+ read-only dev
+Date: Fri, 30 Jan 2015 13:12:10 +0800
+Message-ID: <006601d03c4b$68190bb0$384b2310$@samsung.com>
 References: <1422401503-4769-1-git-send-email-jaegeuk@kernel.org>
- <1422401503-4769-2-git-send-email-jaegeuk@kernel.org>
- <002b01d03bba$37f763a0$a7e62ae0$@samsung.com>
- <20150129182745.GB15313@jaegeuk-mac02.mot.com>
- <20150129183102.GC15313@jaegeuk-mac02.mot.com>
+ <1422401503-4769-4-git-send-email-jaegeuk@kernel.org>
+ <002d01d03bbd$8b533c10$a1f9b430$@samsung.com>
+ <20150129213931.GA17521@jaegeuk-mac02>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150129183102.GC15313@jaegeuk-mac02.mot.com>
+In-reply-to: <20150129213931.GA17521@jaegeuk-mac02>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Friday, January 30, 2015 2:31 AM
+> Sent: Friday, January 30, 2015 5:40 AM
 > To: Chao Yu
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 2/5 v2] f2fs: support norecovery mount option
+> Subject: Re: [PATCH 4/5] f2fs: should fail mount when trying to recover data on read-only dev
 > 
-> Change log from v1:
->  o add description for the new mount option in Documentation/filesystems/f2fs.txt
+> Hi Chao,
 > 
-> From 079dbb14c7d91d90863c9be4d9337b8ec086db7e Mon Sep 17 00:00:00 2001
+> This is another patch to fix that.
+> 
+> From d241924043778d0fe01e9020d5771cc42cf246e6 Mon Sep 17 00:00:00 2001
 > From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Fri, 23 Jan 2015 18:33:46 -0800
-> Subject: [PATCH] f2fs: support norecovery mount option
+> Date: Thu, 29 Jan 2015 11:45:33 -0800
+> Subject: [PATCH] f2fs: split UMOUNT and FASTBOOT flags
 > 
-> This patch adds a mount option, norecovery, which is mostly same as
-> disable_roll_forward. The only difference is that norecovery should be activated
-> with read-only mount option.
+> This patch adds FASTBOOT flag into checkpoint as follows.
 > 
-> This can be used when user wants to check whether f2fs is mountable or not
-> without any recovery process. (e.g., xfstests/200)
+>  - CP_UMOUNT_FLAG is set when system is umounted.
+>  - CP_FASTBOOT_FLAG is set when intermediate checkpoint having node summaries
+>    was done.
+> 
+> So, if you get CP_UMOUNT_FLAG from checkpoint, the system was umounted cleanly.
+> Instead, if there was sudden-power-off, you can get CP_FASTBOOT_FLAG or nothing.
+
+Nice work, it looks good to me, and this can fix that issue. :)
+
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
