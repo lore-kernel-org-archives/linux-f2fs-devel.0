@@ -1,82 +1,87 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: keep PagePrivate during releasepage
-Date: Mon,  2 Feb 2015 14:51:18 -0800
-Message-ID: <1422917479-36393-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 2/2] f2fs: show the number of writeback pages in
+	stat
+Date: Mon,  2 Feb 2015 14:51:19 -0800
+Message-ID: <1422917479-36393-2-git-send-email-jaegeuk@kernel.org>
+References: <1422917479-36393-1-git-send-email-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YIPq7-0003ho-7i
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 02 Feb 2015 22:51:31 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YIPq6-00037T-G6 for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 02 Feb 2015 22:51:31 +0000
+In-Reply-To: <1422917479-36393-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If PagePrivate is removed by releasepage, f2fs loses counting dirty pages.
-
-e.g., try_to_release_page will not release page when the page is dirty,
-but our releasepage removes PagePrivate.
-
-    [<ffffffff81188d75>] try_to_release_page+0x35/0x50
-    [<ffffffff811996f9>] invalidate_inode_pages2_range+0x2f9/0x3b0
-    [<ffffffffa02a7f54>] ? truncate_blocks+0x384/0x4d0 [f2fs]
-    [<ffffffffa02b7583>] ? f2fs_direct_IO+0x283/0x290 [f2fs]
-    [<ffffffffa02b7fb0>] ? get_data_block_fiemap+0x20/0x20 [f2fs]
-    [<ffffffff8118aa53>] generic_file_direct_write+0x163/0x170
-    [<ffffffff8118ad06>] __generic_file_write_iter+0x2a6/0x350
-    [<ffffffff8118adef>] generic_file_write_iter+0x3f/0xb0
-    [<ffffffff81203081>] new_sync_write+0x81/0xb0
-    [<ffffffff81203837>] vfs_write+0xb7/0x1f0
-    [<ffffffff81204459>] SyS_write+0x49/0xb0
-    [<ffffffff817c286d>] system_call_fastpath+0x16/0x1b
+This patch adds the # of writeback pages in stat info.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 4 ++++
- fs/f2fs/data.c       | 4 ++++
- fs/f2fs/node.c       | 4 ++++
- 3 files changed, 12 insertions(+)
+ fs/f2fs/debug.c | 5 +++--
+ fs/f2fs/f2fs.h  | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index f7cdcad..470fa58 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -321,6 +321,10 @@ static void f2fs_invalidate_meta_page(struct page *page, unsigned int offset,
- 
- static int f2fs_release_meta_page(struct page *page, gfp_t wait)
- {
-+	/* If this is dirty page, keep PagePrivate */
-+	if (PageDirty(page))
-+		return 0;
-+
- 	ClearPagePrivate(page);
- 	return 1;
- }
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 6d9e6e4..27dc3fd 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1130,6 +1130,10 @@ static void f2fs_invalidate_data_page(struct page *page, unsigned int offset,
- 
- static int f2fs_release_data_page(struct page *page, gfp_t wait)
- {
-+	/* If this is dirty page, keep PagePrivate */
-+	if (PageDirty(page))
-+		return 0;
-+
- 	ClearPagePrivate(page);
- 	return 1;
- }
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 05e6faa..9feda38 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1381,6 +1381,10 @@ static void f2fs_invalidate_node_page(struct page *page, unsigned int offset,
- 
- static int f2fs_release_node_page(struct page *page, gfp_t wait)
- {
-+	/* If this is dirty page, keep PagePrivate */
-+	if (PageDirty(page))
-+		return 0;
-+
- 	ClearPagePrivate(page);
- 	return 1;
- }
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 0f721f6..ac2bd8e 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -40,6 +40,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 	si->ndirty_dirs = sbi->n_dirty_dirs;
+ 	si->ndirty_meta = get_pages(sbi, F2FS_DIRTY_META);
+ 	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
++	si->wb_pages = get_pages(sbi, F2FS_WRITEBACK);
+ 	si->total_count = (int)sbi->user_block_count / sbi->blocks_per_seg;
+ 	si->rsvd_segs = reserved_segments(sbi);
+ 	si->overp_segs = overprovision_segments(sbi);
+@@ -266,8 +267,8 @@ static int stat_show(struct seq_file *s, void *v)
+ 		seq_printf(s, "\nExtent Hit Ratio: %d / %d\n",
+ 			   si->hit_ext, si->total_ext);
+ 		seq_puts(s, "\nBalancing F2FS Async:\n");
+-		seq_printf(s, "  - inmem: %4d\n",
+-			   si->inmem_pages);
++		seq_printf(s, "  - inmem: %4d, wb: %4d\n",
++			   si->inmem_pages, si->wb_pages);
+ 		seq_printf(s, "  - nodes: %4d in %4d\n",
+ 			   si->ndirty_node, si->node_pages);
+ 		seq_printf(s, "  - dents: %4d in dirs:%4d\n",
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d89dc5d0..d005939c3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1550,7 +1550,7 @@ struct f2fs_stat_info {
+ 	int ndirty_node, ndirty_dent, ndirty_dirs, ndirty_meta;
+ 	int nats, dirty_nats, sits, dirty_sits, fnids;
+ 	int total_count, utilization;
+-	int bg_gc, inline_inode, inline_dir, inmem_pages;
++	int bg_gc, inline_inode, inline_dir, inmem_pages, wb_pages;
+ 	unsigned int valid_count, valid_node_count, valid_inode_count;
+ 	unsigned int bimodal, avg_vblocks;
+ 	int util_free, util_valid, util_invalid;
 -- 
 2.1.1
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming. The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net/
