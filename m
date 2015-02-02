@@ -1,87 +1,86 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: show the number of writeback pages in
-	stat
-Date: Mon,  2 Feb 2015 14:51:19 -0800
-Message-ID: <1422917479-36393-2-git-send-email-jaegeuk@kernel.org>
-References: <1422917479-36393-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH 5/5 v2] f2fs: introduce a batched trim
+Date: Mon, 2 Feb 2015 15:29:25 -0800
+Message-ID: <20150202232803.GB34575@jaegeuk-mac02.mot.com>
+References: <1422401503-4769-1-git-send-email-jaegeuk@kernel.org>
+ <1422401503-4769-5-git-send-email-jaegeuk@kernel.org>
+ <003b01d03bc0$a5f23d20$f1d6b760$@samsung.com>
+ <20150129214117.GB17521@jaegeuk-mac02>
+ <006701d03c4b$a62ec0c0$f28c4240$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YIPq7-0003ho-7i
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Feb 2015 22:51:31 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YIPq6-00037T-G6 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Feb 2015 22:51:31 +0000
-In-Reply-To: <1422917479-36393-1-git-send-email-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <006701d03c4b$a62ec0c0$f28c4240$@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds the # of writeback pages in stat info.
+Change long from v1:
+ o add description
+ o change the # of batched segments suggested by Chao
+ o make consistent for # of batched segments
+
+This patch introduces a batched trimming feature, which submits split discard
+commands.
+
+This patch introduces a batched trimming feature, which submits split discard
+commands.
+
+This is to avoid long latency due to huge trim commands.
+If fstrim was triggered ranging from 0 to the end of device, we should lock
+all the checkpoint-related mutexes, resulting in very long latency.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/debug.c | 5 +++--
- fs/f2fs/f2fs.h  | 2 +-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ fs/f2fs/f2fs.h    |  2 ++
+ fs/f2fs/segment.c | 16 +++++++++++-----
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 0f721f6..ac2bd8e 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -40,6 +40,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 	si->ndirty_dirs = sbi->n_dirty_dirs;
- 	si->ndirty_meta = get_pages(sbi, F2FS_DIRTY_META);
- 	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
-+	si->wb_pages = get_pages(sbi, F2FS_WRITEBACK);
- 	si->total_count = (int)sbi->user_block_count / sbi->blocks_per_seg;
- 	si->rsvd_segs = reserved_segments(sbi);
- 	si->overp_segs = overprovision_segments(sbi);
-@@ -266,8 +267,8 @@ static int stat_show(struct seq_file *s, void *v)
- 		seq_printf(s, "\nExtent Hit Ratio: %d / %d\n",
- 			   si->hit_ext, si->total_ext);
- 		seq_puts(s, "\nBalancing F2FS Async:\n");
--		seq_printf(s, "  - inmem: %4d\n",
--			   si->inmem_pages);
-+		seq_printf(s, "  - inmem: %4d, wb: %4d\n",
-+			   si->inmem_pages, si->wb_pages);
- 		seq_printf(s, "  - nodes: %4d in %4d\n",
- 			   si->ndirty_node, si->node_pages);
- 		seq_printf(s, "  - dents: %4d in dirs:%4d\n",
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d89dc5d0..d005939c3 100644
+index 8231a59..ec5e66f 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1550,7 +1550,7 @@ struct f2fs_stat_info {
- 	int ndirty_node, ndirty_dent, ndirty_dirs, ndirty_meta;
- 	int nats, dirty_nats, sits, dirty_sits, fnids;
- 	int total_count, utilization;
--	int bg_gc, inline_inode, inline_dir, inmem_pages;
-+	int bg_gc, inline_inode, inline_dir, inmem_pages, wb_pages;
- 	unsigned int valid_count, valid_node_count, valid_inode_count;
- 	unsigned int bimodal, avg_vblocks;
- 	int util_free, util_valid, util_invalid;
+@@ -105,6 +105,8 @@ enum {
+ 	CP_DISCARD,
+ };
+ 
++#define BATCHED_TRIM_SEGMENTS(sbi)	(((sbi)->segs_per_sec) << 5)
++
+ struct cp_control {
+ 	int reason;
+ 	__u64 trim_start;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5ea57ec..b85bb97 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1066,14 +1066,20 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
+ 						GET_SEGNO(sbi, end);
+ 	cpc.reason = CP_DISCARD;
+-	cpc.trim_start = start_segno;
+-	cpc.trim_end = end_segno;
+ 	cpc.trim_minlen = range->minlen >> sbi->log_blocksize;
+ 
+ 	/* do checkpoint to issue discard commands safely */
+-	mutex_lock(&sbi->gc_mutex);
+-	write_checkpoint(sbi, &cpc);
+-	mutex_unlock(&sbi->gc_mutex);
++	for (; start_segno <= end_segno;
++				start_segno += BATCHED_TRIM_SEGMENTS(sbi)) {
++		cpc.trim_start = start_segno;
++		cpc.trim_end = min_t(unsigned int,
++				start_segno + BATCHED_TRIM_SEGMENTS (sbi) - 1,
++				end_segno);
++
++		mutex_lock(&sbi->gc_mutex);
++		write_checkpoint(sbi, &cpc);
++		mutex_unlock(&sbi->gc_mutex);
++	}
+ out:
+ 	range->len = cpc.trimmed << sbi->log_blocksize;
+ 	return 0;
 -- 
 2.1.1
 
-
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming. The Go Parallel Website,
-sponsored by Intel and developed in partnership with Slashdot Media, is your
-hub for all things parallel software development, from weekly thought
-leadership blogs to news, videos, case studies, tutorials and more. Take a
-look and join the conversation now. http://goparallel.sourceforge.net/
