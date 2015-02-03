@@ -1,164 +1,192 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 5/5 v3] f2fs: introduce a batched trim
-Date: Tue, 3 Feb 2015 12:10:30 -0800
-Message-ID: <20150203200904.GA43329@jaegeuk-mac02.mot.com>
-References: <1422401503-4769-1-git-send-email-jaegeuk@kernel.org>
- <1422401503-4769-5-git-send-email-jaegeuk@kernel.org>
- <003b01d03bc0$a5f23d20$f1d6b760$@samsung.com>
- <20150129214117.GB17521@jaegeuk-mac02>
- <006701d03c4b$a62ec0c0$f28c4240$@samsung.com>
- <20150202232803.GB34575@jaegeuk-mac02.mot.com>
- <20150203024822.GA8798@lcm>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150203024822.GA8798@lcm>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: Chao Yu <chao2.yu@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH 0/8 v4] make xfs/tests generic by introducing shutdown for filesystems
+Date: Tue,  3 Feb 2015 15:07:12 -0800
+Message-ID: <1423004840-45315-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <fstests-owner@vger.kernel.org>
+Sender: fstests-owner@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Changman,
+This patch-set modifies several existing xfs's tests to be used by generic
+filesystems.
 
-Good idea!
+1. FS requirement
 
-Change log from v2:
- o add sysfs to change the # of sections for trimming.
- 
-Change log from v1:
- o add description
- o change the # of batched segments suggested by Chao
- o make consistent for # of batched segments
+In order to activate these testcases, filesystem should support a new feature,
+shutdown, triggered by the following ioctl command.
 
-This patch introduces a batched trimming feature, which submits split discard
-commands.
+#define FS_IOC_SHUTDOWN _IOR('X', 125, __u32)   /* Shutdown */
 
-This is to avoid long latency due to huge trim commands.
-If fstrim was triggered ranging from 0 to the end of device, we should lock
-all the checkpoint-related mutexes, resulting in very long latency.
+This ioctl needs one of three modes passed by a flag according to the syncing
+policy.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++++++
- Documentation/filesystems/f2fs.txt      |  4 ++++
- fs/f2fs/f2fs.h                          |  7 +++++++
- fs/f2fs/segment.c                       | 18 +++++++++++++-----
- fs/f2fs/super.c                         |  2 ++
- 5 files changed, 32 insertions(+), 5 deletions(-)
+#define FS_GOING_DOWN_FULLSYNC  0x0     /* going down with full sync */
+#define FS_GOING_DOWN_METASYNC  0x1     /* going down with metadata */
+#define FS_GOING_DOWN_NOSYNC    0x2     /* going down */
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 6f9157f..2c4cc42 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -74,3 +74,9 @@ Date:		March 2014
- Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
- Description:
- 		 Controls the memory footprint used by f2fs.
-+
-+What:		/sys/fs/f2fs/<disk>/trim_sections
-+Date:		February 2015
-+Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-+Description:
-+		 Controls the trimming rate in batch mode.
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 6758aa3..dac11d7 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -199,6 +199,10 @@ Files in /sys/fs/f2fs/<devname>
- 			      checkpoint is triggered, and issued during the
- 			      checkpoint. By default, it is disabled with 0.
- 
-+ trim_sections                This parameter controls the number of sections
-+                              to be trimmed out in batch mode when FITRIM
-+                              conducts. 32 sections is set by default.
-+
-  ipu_policy                   This parameter controls the policy of in-place
-                               updates in f2fs. There are five policies:
-                                0x01: F2FS_IPU_FORCE, 0x02: F2FS_IPU_SSR,
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 964c240..6f57da1 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -105,6 +105,10 @@ enum {
- 	CP_DISCARD,
- };
- 
-+#define DEF_BATCHED_TRIM_SECTIONS	32
-+#define BATCHED_TRIM_SEGMENTS(sbi)	\
-+		(SM_I(sbi)->trim_sections * (sbi)->segs_per_sec)
-+
- struct cp_control {
- 	int reason;
- 	__u64 trim_start;
-@@ -448,6 +452,9 @@ struct f2fs_sm_info {
- 	int nr_discards;			/* # of discards in the list */
- 	int max_discards;			/* max. discards to be issued */
- 
-+	/* for batched trimming */
-+	int trim_sections;			/* # of sections to trim */
-+
- 	struct list_head sit_entry_set;	/* sit entry set list */
- 
- 	unsigned int ipu_policy;	/* in-place-update policy */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 5ea57ec..c542f63 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1066,14 +1066,20 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
- 						GET_SEGNO(sbi, end);
- 	cpc.reason = CP_DISCARD;
--	cpc.trim_start = start_segno;
--	cpc.trim_end = end_segno;
- 	cpc.trim_minlen = range->minlen >> sbi->log_blocksize;
- 
- 	/* do checkpoint to issue discard commands safely */
--	mutex_lock(&sbi->gc_mutex);
--	write_checkpoint(sbi, &cpc);
--	mutex_unlock(&sbi->gc_mutex);
-+	for (; start_segno <= end_segno;
-+				start_segno += BATCHED_TRIM_SEGMENTS(sbi)) {
-+		cpc.trim_start = start_segno;
-+		cpc.trim_end = min_t(unsigned int,
-+				start_segno + BATCHED_TRIM_SEGMENTS (sbi) - 1,
-+				end_segno);
-+
-+		mutex_lock(&sbi->gc_mutex);
-+		write_checkpoint(sbi, &cpc);
-+		mutex_unlock(&sbi->gc_mutex);
-+	}
- out:
- 	range->len = cpc.trimmed << sbi->log_blocksize;
- 	return 0;
-@@ -2127,6 +2133,8 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
- 	sm_info->nr_discards = 0;
- 	sm_info->max_discards = 0;
- 
-+	sm_info->trim_sections = DEF_BATCHED_TRIM_SECTIONS;
-+
- 	INIT_LIST_HEAD(&sm_info->sit_entry_set);
- 
- 	if (test_opt(sbi, FLUSH_MERGE) && !f2fs_readonly(sbi->sb)) {
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1e92c2e..f2fe666 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -195,6 +195,7 @@ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_idle, gc_idle);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, max_small_discards, max_discards);
-+F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
- F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
-@@ -210,6 +211,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(gc_idle),
- 	ATTR_LIST(reclaim_segments),
- 	ATTR_LIST(max_small_discards),
-+	ATTR_LIST(batched_trim_sections),
- 	ATTR_LIST(ipu_policy),
- 	ATTR_LIST(min_ipu_util),
- 	ATTR_LIST(min_fsync_blocks),
+Whenever shutdown is requested with one of the above mode, filesystem must
+stop any IOs, and wait for unmount, which is very useful to test power-off-
+recovery.
+
+2. Changes in xfstests
+
+In this patch set, common/rc adds three macros:
+ o _require_scratch_shutdown : check whether FS supports shutdown
+ o _require_bmap             : check bmap tool is defined
+ o _require_norecovery       : check filesystem supports norecovery option.
+
+ The following tests become generic.
+    xfs/051 -> generic/051
+  * xfs/053 -> generic/054
+    xfs/085 -> generic/085
+    xfs/086 -> generic/086
+    xfs/087 -> generic/087
+    xfs/137 -> generic/137
+    xfs/138 -> generic/138
+    xfs/139 -> generic/139
+    xfs/140 -> generic/140
+    xfs/179 -> generic/179
+    xfs/180 -> generic/180
+    xfs/182 -> generic/182
+    xfs/200 -> generic/200
+  * xfs/306 -> generic/305
+
+*) changed test numbers due to conflict.
+
+Jaeeuk Km (8)
+  comon/rc: add _require_scratch_shtudown
+  common/rc: add _require_bmap
+  common/rc: add _require_norecovery
+  tests/xfs: convert 10 xfs's tests to be generic ones
+  tests/generic: relocate xfs's tests into tests/generic/
+  common/rc:  define dump.f2fs and logstate for f2fs
+  tests/xfs: add f2fs testcase and convert them being generic
+  tests/generic: relocate four xfs's tests into tests/generic/
+
+ common/config              |    3 +
+ common/log                 |   20 +-
+ common/rc                  |   59 +
+ tests/generic/051          |  103 +
+ tests/generic/051.out      |    2 +
+ tests/generic/054          |  102 +
+ tests/generic/054.out      |   10 +
+ tests/generic/085          |   98 +
+ tests/generic/085.out      |  113 ++
+ tests/generic/086          |  178 ++
+ tests/generic/086.out.f2fs | 3306 +++++++++++++++++++++++++++++++
+ tests/generic/086.out.xfs  | 4722 ++++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/087          |  179 ++
+ tests/generic/087.out.f2fs |  303 +++
+ tests/generic/087.out.xfs  |  389 ++++
+ tests/generic/137          |  106 +
+ tests/generic/137.out      |    1 +
+ tests/generic/138          |  112 ++
+ tests/generic/138.out      |    1 +
+ tests/generic/139          |  112 ++
+ tests/generic/139.out      |    1 +
+ tests/generic/140          |  109 +
+ tests/generic/140.out      |    1 +
+ tests/generic/179          |  107 +
+ tests/generic/179.out      |    1 +
+ tests/generic/180          |  111 ++
+ tests/generic/180.out      |    1 +
+ tests/generic/182          |  108 +
+ tests/generic/182.out      |    1 +
+ tests/generic/200          |  127 ++
+ tests/generic/200.out      |   24 +
+ tests/generic/305          |  105 +
+ tests/generic/305.out      |    2 +
+ tests/generic/group        |   14 +
+ tests/xfs/051              |   95 -
+ tests/xfs/051.out          |    2 -
+ tests/xfs/053              |  101 -
+ tests/xfs/053.out          |   10 -
+ tests/xfs/085              |   93 -
+ tests/xfs/085.out          |  113 --
+ tests/xfs/086              |  152 --
+ tests/xfs/086.out          | 4722 --------------------------------------------
+ tests/xfs/087              |  153 --
+ tests/xfs/087.out          |  389 ----
+ tests/xfs/137              |  104 -
+ tests/xfs/137.out          |    1 -
+ tests/xfs/138              |  110 --
+ tests/xfs/138.out          |    1 -
+ tests/xfs/139              |  110 --
+ tests/xfs/139.out          |    1 -
+ tests/xfs/140              |  107 -
+ tests/xfs/140.out          |    1 -
+ tests/xfs/179              |  105 -
+ tests/xfs/179.out          |    1 -
+ tests/xfs/180              |  109 -
+ tests/xfs/180.out          |    1 -
+ tests/xfs/182              |  106 -
+ tests/xfs/182.out          |    1 -
+ tests/xfs/200              |  125 --
+ tests/xfs/200.out          |   24 -
+ tests/xfs/306              |  104 -
+ tests/xfs/306.out          |    2 -
+ tests/xfs/group            |   14 -
+ 63 files changed, 10628 insertions(+), 6860 deletions(-)
+ create mode 100755 tests/generic/051
+ create mode 100644 tests/generic/051.out
+ create mode 100755 tests/generic/054
+ create mode 100644 tests/generic/054.out
+ create mode 100755 tests/generic/085
+ create mode 100644 tests/generic/085.out
+ create mode 100755 tests/generic/086
+ create mode 100644 tests/generic/086.out.f2fs
+ create mode 100644 tests/generic/086.out.xfs
+ create mode 100755 tests/generic/087
+ create mode 100644 tests/generic/087.out.f2fs
+ create mode 100644 tests/generic/087.out.xfs
+ create mode 100755 tests/generic/137
+ create mode 100644 tests/generic/137.out
+ create mode 100755 tests/generic/138
+ create mode 100644 tests/generic/138.out
+ create mode 100755 tests/generic/139
+ create mode 100644 tests/generic/139.out
+ create mode 100755 tests/generic/140
+ create mode 100644 tests/generic/140.out
+ create mode 100755 tests/generic/179
+ create mode 100644 tests/generic/179.out
+ create mode 100755 tests/generic/180
+ create mode 100644 tests/generic/180.out
+ create mode 100755 tests/generic/182
+ create mode 100644 tests/generic/182.out
+ create mode 100755 tests/generic/200
+ create mode 100644 tests/generic/200.out
+ create mode 100755 tests/generic/305
+ create mode 100644 tests/generic/305.out
+ delete mode 100755 tests/xfs/051
+ delete mode 100644 tests/xfs/051.out
+ delete mode 100755 tests/xfs/053
+ delete mode 100644 tests/xfs/053.out
+ delete mode 100755 tests/xfs/085
+ delete mode 100644 tests/xfs/085.out
+ delete mode 100755 tests/xfs/086
+ delete mode 100644 tests/xfs/086.out
+ delete mode 100755 tests/xfs/087
+ delete mode 100644 tests/xfs/087.out
+ delete mode 100755 tests/xfs/137
+ delete mode 100644 tests/xfs/137.out
+ delete mode 100755 tests/xfs/138
+ delete mode 100644 tests/xfs/138.out
+ delete mode 100755 tests/xfs/139
+ delete mode 100644 tests/xfs/139.out
+ delete mode 100755 tests/xfs/140
+ delete mode 100644 tests/xfs/140.out
+ delete mode 100755 tests/xfs/179
+ delete mode 100644 tests/xfs/179.out
+ delete mode 100755 tests/xfs/180
+ delete mode 100644 tests/xfs/180.out
+ delete mode 100755 tests/xfs/182
+ delete mode 100644 tests/xfs/182.out
+ delete mode 100755 tests/xfs/200
+ delete mode 100644 tests/xfs/200.out
+ delete mode 100755 tests/xfs/306
+ delete mode 100644 tests/xfs/306.out
+
 -- 
 2.1.1
+
