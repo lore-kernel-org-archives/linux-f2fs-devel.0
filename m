@@ -1,84 +1,107 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: don't discard next free dnode page
- for an umount checkpoint
-Date: Mon, 2 Feb 2015 15:37:34 -0800
-Message-ID: <20150202233734.GD34575@jaegeuk-mac02.mot.com>
-References: <008c01d03d35$62ceb7a0$286c26e0$@samsung.com>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH 5/5 v2] f2fs: introduce a batched trim
+Date: Tue, 03 Feb 2015 11:48:22 +0900
+Message-ID: <20150203024822.GA8798@lcm>
+References: <1422401503-4769-1-git-send-email-jaegeuk@kernel.org>
+ <1422401503-4769-5-git-send-email-jaegeuk@kernel.org>
+ <003b01d03bc0$a5f23d20$f1d6b760$@samsung.com>
+ <20150129214117.GB17521@jaegeuk-mac02>
+ <006701d03c4b$a62ec0c0$f28c4240$@samsung.com>
+ <20150202232803.GB34575@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YIQYq-0007S6-4l
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Feb 2015 23:37:44 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YIQYp-0006ZJ-8b for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 02 Feb 2015 23:37:44 +0000
-Content-Disposition: inline
-In-Reply-To: <008c01d03d35$62ceb7a0$286c26e0$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-disposition: inline
+In-reply-to: <20150202232803.GB34575@jaegeuk-mac02.mot.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao2.yu@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+Hi Jaegeuk,
 
-On Sat, Jan 31, 2015 at 05:06:59PM +0800, Chao Yu wrote:
-> Previously, discard_next_dnode is added before a checkpoint to prevent that we
-> may meet a garbage dnode page readed from next free blkaddr in recover flow.
+IMHO, it looks better user could decide the size of trim considering latency of trim.
+Otherwise, additional checkpoints user doesn't want will occur.
+
+Regards,
+Changman
+
+On Mon, Feb 02, 2015 at 03:29:25PM -0800, Jaegeuk Kim wrote:
+> Change long from v1:
+>  o add description
+>  o change the # of batched segments suggested by Chao
+>  o make consistent for # of batched segments
 > 
-> Since f2fs will skip recovery flow for a clean umount image, this condition will
-> never happen.
+> This patch introduces a batched trimming feature, which submits split discard
+> commands.
 > 
-> So it's safe for us to leave next free dnode as it is in an umount checkpoint.
+> This patch introduces a batched trimming feature, which submits split discard
+> commands.
 > 
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> This is to avoid long latency due to huge trim commands.
+> If fstrim was triggered ranging from 0 to the end of device, we should lock
+> all the checkpoint-related mutexes, resulting in very long latency.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/checkpoint.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>  fs/f2fs/f2fs.h    |  2 ++
+>  fs/f2fs/segment.c | 16 +++++++++++-----
+>  2 files changed, 13 insertions(+), 5 deletions(-)
 > 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index f7cdcad..991fd0a 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -905,8 +905,12 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  	/*
->  	 * This avoids to conduct wrong roll-forward operations and uses
->  	 * metapages, so should be called prior to sync_meta_pages below.
-> +	 * But if we are in an umount checkpoint, we'd better skip this
-> +	 * because we will not enter recovery flow to use the next free
-> +	 * blkaddr when mounting it.
->  	 */
-> -	discard_next_dnode(sbi, NEXT_FREE_BLKADDR(sbi, curseg));
-> +	if (cpc->reason != CP_UMOUNT)
-> +		discard_next_dnode(sbi, NEXT_FREE_BLKADDR(sbi, curseg));
-
-The reason for discard_next_dnode is to avoid wrong execution due to old
-mkfs.f2fs which remains gabage data.
-It needs to do all the time.
-
-Thanks,
-
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 8231a59..ec5e66f 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -105,6 +105,8 @@ enum {
+>  	CP_DISCARD,
+>  };
 >  
->  	/* Flush all the NAT/SIT pages */
->  	while (get_pages(sbi, F2FS_DIRTY_META)) {
+> +#define BATCHED_TRIM_SEGMENTS(sbi)	(((sbi)->segs_per_sec) << 5)
+> +
+>  struct cp_control {
+>  	int reason;
+>  	__u64 trim_start;
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 5ea57ec..b85bb97 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1066,14 +1066,20 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+>  	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
+>  						GET_SEGNO(sbi, end);
+>  	cpc.reason = CP_DISCARD;
+> -	cpc.trim_start = start_segno;
+> -	cpc.trim_end = end_segno;
+>  	cpc.trim_minlen = range->minlen >> sbi->log_blocksize;
+>  
+>  	/* do checkpoint to issue discard commands safely */
+> -	mutex_lock(&sbi->gc_mutex);
+> -	write_checkpoint(sbi, &cpc);
+> -	mutex_unlock(&sbi->gc_mutex);
+> +	for (; start_segno <= end_segno;
+> +				start_segno += BATCHED_TRIM_SEGMENTS(sbi)) {
+> +		cpc.trim_start = start_segno;
+> +		cpc.trim_end = min_t(unsigned int,
+> +				start_segno + BATCHED_TRIM_SEGMENTS (sbi) - 1,
+> +				end_segno);
+> +
+> +		mutex_lock(&sbi->gc_mutex);
+> +		write_checkpoint(sbi, &cpc);
+> +		mutex_unlock(&sbi->gc_mutex);
+> +	}
+>  out:
+>  	range->len = cpc.trimmed << sbi->log_blocksize;
+>  	return 0;
 > -- 
-> 2.2.1
-
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming. The Go Parallel Website,
-sponsored by Intel and developed in partnership with Slashdot Media, is your
-hub for all things parallel software development, from weekly thought
-leadership blogs to news, videos, case studies, tutorials and more. Take a
-look and join the conversation now. http://goparallel.sourceforge.net/
+> 2.1.1
+> 
+> 
+> ------------------------------------------------------------------------------
+> Dive into the World of Parallel Programming. The Go Parallel Website,
+> sponsored by Intel and developed in partnership with Slashdot Media, is your
+> hub for all things parallel software development, from weekly thought
+> leadership blogs to news, videos, case studies, tutorials and more. Take a
+> look and join the conversation now. http://goparallel.sourceforge.net/
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
