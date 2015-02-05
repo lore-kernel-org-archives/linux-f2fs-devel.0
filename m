@@ -1,101 +1,171 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH RESEND 2/2] fsck.f2fs: support large sector size
-Date: Thu, 05 Feb 2015 17:38:09 +0800
-Message-ID: <006301d04127$7f88dbf0$7e9a93d0$@samsung.com>
+Subject: [PATCH] f2fs: merge {invalidate,release}page for meta/node/data pages
+Date: Thu, 05 Feb 2015 17:44:29 +0800
+Message-ID: <006401d04128$7349ad50$59dd07f0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1YJItU-0004Kh-Ca
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 05 Feb 2015 09:38:40 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1YJItS-0005Az-KQ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 05 Feb 2015 09:38:40 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0NJA00K1SLG68A30@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 05 Feb 2015 18:38:30 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Since f2fs support large sector size in commit 55cf9cb63f0e "f2fs: support large
-sector size", block device with sector size of 512/1024/2048/4096 bytes can be
-supported.
+This patch merges ->{invalidate,release}page function for meta/node/data pages.
 
-But fsck.f2fs still use default F2FS_LOG_SECTOR_SIZE/F2FS_LOG_SECTORS_PER_BLOCK to
-verify related data in f2fs image, it's wrong, let's fix this issue in this patch.
+After this, duplication of codes could be removed.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fsck/mount.c      | 9 ++++++---
- include/f2fs_fs.h | 4 ++--
- 2 files changed, 8 insertions(+), 5 deletions(-)
+ fs/f2fs/checkpoint.c | 24 ++----------------------
+ fs/f2fs/data.c       | 24 ++++++++++++++++--------
+ fs/f2fs/f2fs.h       |  2 ++
+ fs/f2fs/node.c       | 23 ++---------------------
+ 4 files changed, 22 insertions(+), 51 deletions(-)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 73eba6b..6d96db8 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -221,12 +221,15 @@ int sanity_check_raw_super(struct f2fs_super_block *raw_super)
- 		return -1;
- 	}
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 470fa58..31a715b 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -309,32 +309,12 @@ static int f2fs_set_meta_page_dirty(struct page *page)
+ 	return 0;
+ }
  
--	if (F2FS_LOG_SECTOR_SIZE != le32_to_cpu(raw_super->log_sectorsize)) {
-+	if (le32_to_cpu(raw_super->log_sectorsize) > F2FS_MAX_LOG_SECTOR_SIZE ||
-+		le32_to_cpu(raw_super->log_sectorsize) <
-+						F2FS_MIN_LOG_SECTOR_SIZE) {
- 		return -1;
- 	}
+-static void f2fs_invalidate_meta_page(struct page *page, unsigned int offset,
+-				      unsigned int length)
+-{
+-	struct inode *inode = page->mapping->host;
+-
+-	if (PageDirty(page))
+-		dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_META);
+-	ClearPagePrivate(page);
+-}
+-
+-static int f2fs_release_meta_page(struct page *page, gfp_t wait)
+-{
+-	/* If this is dirty page, keep PagePrivate */
+-	if (PageDirty(page))
+-		return 0;
+-
+-	ClearPagePrivate(page);
+-	return 1;
+-}
+-
+ const struct address_space_operations f2fs_meta_aops = {
+ 	.writepage	= f2fs_write_meta_page,
+ 	.writepages	= f2fs_write_meta_pages,
+ 	.set_page_dirty	= f2fs_set_meta_page_dirty,
+-	.invalidatepage = f2fs_invalidate_meta_page,
+-	.releasepage	= f2fs_release_meta_page,
++	.invalidatepage = f2fs_invalidate_page,
++	.releasepage	= f2fs_release_page,
+ };
  
--	if (F2FS_LOG_SECTORS_PER_BLOCK !=
--				le32_to_cpu(raw_super->log_sectors_per_block)) {
-+	if (le32_to_cpu(raw_super->log_sectors_per_block) +
-+				le32_to_cpu(raw_super->log_sectorsize) !=
-+						F2FS_MAX_LOG_SECTOR_SIZE) {
- 		return -1;
- 	}
+ static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 27dc3fd..d166557 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1115,20 +1115,28 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
+ 	return err;
+ }
  
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 4dc2426..99c21eb 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -289,8 +289,8 @@ enum {
-  * Copied from include/linux/f2fs_sb.h
+-static void f2fs_invalidate_data_page(struct page *page, unsigned int offset,
+-				      unsigned int length)
++void f2fs_invalidate_page(struct page *page, unsigned int offset,
++							unsigned int length)
+ {
+ 	struct inode *inode = page->mapping->host;
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 
+-	if (offset % PAGE_CACHE_SIZE || length != PAGE_CACHE_SIZE)
++	if (inode->i_ino >= F2FS_ROOT_INO(sbi) &&
++		(offset % PAGE_CACHE_SIZE || length != PAGE_CACHE_SIZE))
+ 		return;
+ 
+-	if (PageDirty(page))
+-		inode_dec_dirty_pages(inode);
++	if (PageDirty(page)) {
++		if (inode->i_ino == F2FS_META_INO(sbi))
++			dec_page_count(sbi, F2FS_DIRTY_META);
++		else if (inode->i_ino == F2FS_NODE_INO(sbi))
++			dec_page_count(sbi, F2FS_DIRTY_NODES);
++		else
++			inode_dec_dirty_pages(inode);
++	}
+ 	ClearPagePrivate(page);
+ }
+ 
+-static int f2fs_release_data_page(struct page *page, gfp_t wait)
++int f2fs_release_page(struct page *page, gfp_t wait)
+ {
+ 	/* If this is dirty page, keep PagePrivate */
+ 	if (PageDirty(page))
+@@ -1183,8 +1191,8 @@ const struct address_space_operations f2fs_dblock_aops = {
+ 	.write_begin	= f2fs_write_begin,
+ 	.write_end	= f2fs_write_end,
+ 	.set_page_dirty	= f2fs_set_data_page_dirty,
+-	.invalidatepage	= f2fs_invalidate_data_page,
+-	.releasepage	= f2fs_release_data_page,
++	.invalidatepage	= f2fs_invalidate_page,
++	.releasepage	= f2fs_release_page,
+ 	.direct_IO	= f2fs_direct_IO,
+ 	.bmap		= f2fs_bmap,
+ };
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 47a8857..03929dc 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1522,6 +1522,8 @@ struct page *get_lock_data_page(struct inode *, pgoff_t);
+ struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
+ int do_write_data_page(struct page *, struct f2fs_io_info *);
+ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
++void f2fs_invalidate_page(struct page *, unsigned int, unsigned int);
++int f2fs_release_page(struct page *, gfp_t);
+ 
+ /*
+  * gc.c
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 9feda38..ea22c32 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1370,25 +1370,6 @@ static int f2fs_set_node_page_dirty(struct page *page)
+ 	return 0;
+ }
+ 
+-static void f2fs_invalidate_node_page(struct page *page, unsigned int offset,
+-				      unsigned int length)
+-{
+-	struct inode *inode = page->mapping->host;
+-	if (PageDirty(page))
+-		dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_NODES);
+-	ClearPagePrivate(page);
+-}
+-
+-static int f2fs_release_node_page(struct page *page, gfp_t wait)
+-{
+-	/* If this is dirty page, keep PagePrivate */
+-	if (PageDirty(page))
+-		return 0;
+-
+-	ClearPagePrivate(page);
+-	return 1;
+-}
+-
+ /*
+  * Structure of the f2fs node operations
   */
- #define F2FS_SUPER_OFFSET		1024	/* byte-size offset */
--#define F2FS_LOG_SECTOR_SIZE		9	/* 9 bits for 512 byte */
--#define F2FS_LOG_SECTORS_PER_BLOCK	3	/* 4KB: F2FS_BLKSIZE */
-+#define F2FS_MIN_LOG_SECTOR_SIZE	9	/* 9 bits for 512 bytes */
-+#define F2FS_MAX_LOG_SECTOR_SIZE	12	/* 12 bits for 4096 bytes */
- #define F2FS_BLKSIZE			4096	/* support only 4KB block */
- #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
- #define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
+@@ -1396,8 +1377,8 @@ const struct address_space_operations f2fs_node_aops = {
+ 	.writepage	= f2fs_write_node_page,
+ 	.writepages	= f2fs_write_node_pages,
+ 	.set_page_dirty	= f2fs_set_node_page_dirty,
+-	.invalidatepage	= f2fs_invalidate_node_page,
+-	.releasepage	= f2fs_release_node_page,
++	.invalidatepage	= f2fs_invalidate_page,
++	.releasepage	= f2fs_release_page,
+ };
+ 
+ static struct free_nid *__lookup_free_nid_list(struct f2fs_nm_info *nm_i,
 -- 
 2.2.1
-
-
-
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming. The Go Parallel Website,
-sponsored by Intel and developed in partnership with Slashdot Media, is your
-hub for all things parallel software development, from weekly thought
-leadership blogs to news, videos, case studies, tutorials and more. Take a
-look and join the conversation now. http://goparallel.sourceforge.net/
