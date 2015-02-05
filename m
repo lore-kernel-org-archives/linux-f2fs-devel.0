@@ -1,217 +1,44 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 7/8 v4] tests/xfs: add f2fs testcase and convert them
- being generic
-Date: Thu, 5 Feb 2015 14:12:29 +1100
-Message-ID: <20150205031229.GH12722@dastard>
-References: <1423004840-45315-1-git-send-email-jaegeuk@kernel.org>
- <1423004840-45315-8-git-send-email-jaegeuk@kernel.org>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: keep PagePrivate during releasepage
+Date: Thu, 05 Feb 2015 15:50:49 +0800
+Message-ID: <005c01d04118$9042c5a0$b0c850e0$@samsung.com>
+References: <1422917479-36393-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <fstests-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1423004840-45315-8-git-send-email-jaegeuk@kernel.org>
-Sender: fstests-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1422917479-36393-1-git-send-email-jaegeuk@kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Feb 03, 2015 at 03:07:19PM -0800, Jaegeuk Kim wrote:
-> This patch changes the following xfs's testcases to be generic ones by adding
-> f2fs support.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Tuesday, February 03, 2015 6:51 AM
+> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Cc: Jaegeuk Kim
+> Subject: [f2fs-dev] [PATCH 1/2] f2fs: keep PagePrivate during releasepage
 > 
->  xfs/051
->  xfs/085
->  xfs/086
->  xfs/087
+> If PagePrivate is removed by releasepage, f2fs loses counting dirty pages.
+> 
+> e.g., try_to_release_page will not release page when the page is dirty,
+> but our releasepage removes PagePrivate.
+> 
+>     [<ffffffff81188d75>] try_to_release_page+0x35/0x50
+>     [<ffffffff811996f9>] invalidate_inode_pages2_range+0x2f9/0x3b0
+>     [<ffffffffa02a7f54>] ? truncate_blocks+0x384/0x4d0 [f2fs]
+>     [<ffffffffa02b7583>] ? f2fs_direct_IO+0x283/0x290 [f2fs]
+>     [<ffffffffa02b7fb0>] ? get_data_block_fiemap+0x20/0x20 [f2fs]
+>     [<ffffffff8118aa53>] generic_file_direct_write+0x163/0x170
+>     [<ffffffff8118ad06>] __generic_file_write_iter+0x2a6/0x350
+>     [<ffffffff8118adef>] generic_file_write_iter+0x3f/0xb0
+>     [<ffffffff81203081>] new_sync_write+0x81/0xb0
+>     [<ffffffff81203837>] vfs_write+0xb7/0x1f0
+>     [<ffffffff81204459>] SyS_write+0x49/0xb0
+>     [<ffffffff817c286d>] system_call_fastpath+0x16/0x1b
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  tests/xfs/051          |   18 +-
->  tests/xfs/085          |    9 +-
->  tests/xfs/086          |   34 +-
->  tests/xfs/086.out      | 4722 ------------------------------------------------
->  tests/xfs/086.out.f2fs | 3306 +++++++++++++++++++++++++++++++++
->  tests/xfs/086.out.xfs  | 4722 ++++++++++++++++++++++++++++++++++++++++++++++++
->  tests/xfs/087          |   58 +-
->  tests/xfs/087.out      |  389 ----
->  tests/xfs/087.out.f2fs |  303 ++++
->  tests/xfs/087.out.xfs  |  389 ++++
->  10 files changed, 8812 insertions(+), 5138 deletions(-)
->  delete mode 100644 tests/xfs/086.out
->  create mode 100644 tests/xfs/086.out.f2fs
->  create mode 100644 tests/xfs/086.out.xfs
->  delete mode 100644 tests/xfs/087.out
->  create mode 100644 tests/xfs/087.out.f2fs
->  create mode 100644 tests/xfs/087.out.xfs
-> 
-> diff --git a/tests/xfs/051 b/tests/xfs/051
-> index a84746b..f2f21f0 100755
-> --- a/tests/xfs/051
-> +++ b/tests/xfs/051
-> @@ -45,16 +45,20 @@ _cleanup()
->  . ./common/dmflakey
->  
->  # Modify as appropriate.
-> -_supported_fs xfs
-> +_supported_fs generic
->  _supported_os Linux
->  
->  _require_scratch
-> +_require_scratch_shutdown
->  _require_dm_flakey
-> -_require_xfs_sysfs debug/log_recovery_delay
-> +
-> +if [ "$FSTYP" == "xfs" ]; then
-> +    _require_xfs_sysfs debug/log_recovery_delay
-> +fi
 
-Really, this is an XFS specific test unless you can reliably
-trigger IO errors in the middle of log recovery. Otherwise you
-aren't actually testing what the regression test is actually trying
-to cover.
-
-> diff --git a/tests/xfs/085 b/tests/xfs/085
-> index 54c2d01..db394eb 100755
-> --- a/tests/xfs/085
-> +++ b/tests/xfs/085
-> @@ -40,16 +40,21 @@ trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
->  . ./common/log
->  
->  # real QA test starts here
-> -_supported_fs xfs
-> +_supported_fs generic
->  _supported_os IRIX Linux
->  
->  rm -f $seqres.full
->  rm -f $tmp.log
->  
->  _require_scratch
-> +_require_scratch_shutdown
-> +
-> +if [ "$FSTYP" == "f2fs" ]; then
-> +    _require_dumpf2fs
-> +fi
-
-_require_logstate, as per comments in the previous patch.
-
->  
->  echo "mkfs"
-> -_scratch_mkfs_xfs >>$seqres.full 2>&1 \
-> +_scratch_mkfs >>$seqres.full 2>&1 \
->      || _fail "mkfs scratch failed"
-
-We don't need to catch failure here, and it needs to be done before
-the shutdown require....
-
->  echo "mount"
-> diff --git a/tests/xfs/086 b/tests/xfs/086
-> index af09c7f..037b81d 100755
-> --- a/tests/xfs/086
-> +++ b/tests/xfs/086
-> @@ -24,6 +24,7 @@
->  #-----------------------------------------------------------------------
->  #
->  
-> +seqfull=$0
->  seq=`basename $0`
->  seqres=$RESULT_DIR/$seq
->  echo "QA output created by $seq"
-> @@ -39,17 +40,28 @@ trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
->  . ./common/log
->  
->  # real QA test starts here
-> -_supported_fs xfs
-> +_supported_fs generic
->  _supported_os IRIX Linux
->  
->  rm -f $seqres.full $tmp.*
->  _require_scratch
-> -_require_v2log
-> +_require_scratch_shutdown
-> +
-> +case "$FSTYP" in
-> +    xfs)
-> +        _require_v2log
-> +        ;;
-> +    f2fs)
-> +        _require_dumpf2fs
-> +esac
-
-It's pretty safe to make this _require_logstate() - v2 log support
-has been around long enough with XFS that we probably don't need to
-test for it anymore.
-
-> +# link correct .out file
-> +_link_out_file_fs $seq.out $seqfull.out
-
-I don't think we need multiple output files.
-
->  echo "*** init FS"
->  umount $SCRATCH_DEV >/dev/null 2>&1
->  
-> -cat >$tmp.seq.params <<EOF
-> +cat >$tmp.seq.params.xfs <<EOF
->  # mkfs-opt             mount-opt
->  # ------------------------------
->    version=2            logbsize=32k
-> @@ -64,6 +76,20 @@ cat >$tmp.seq.params <<EOF
->    version=2,su=256k    logbsize=256k
->  EOF
->  
-> +cat >$tmp.seq.params.f2fs <<EOF
-> +# mkfs-opt  mount-opt
-> +# ---------------------------
-> +  test1     active_logs=6,background_gc=off
-> +  test2     active_logs=6,background_gc=off,inline_data
-> +  test3     active_logs=6,background_gc=off,inline_dentry
-> +  test4     active_logs=6,background_gc=off,inline_dentry,inline_data
-> +  test5     active_logs=6,background_gc=off,disable_roll_forward
-> +  test6     active_logs=4,background_gc=off
-> +  test7     active_logs=2,background_gc=off
-> +EOF
-> +
-> +cat $tmp.seq.params.$FSTYP > $tmp.seq.params
-
-_get_log_configs > $tmp.seq.params
-
-And wrap the log configuration dump into fs specific functions
-somewhere. e.g. common/log
-
-Also, it needs to have the same number of options in the table
-as the XFS log option table. If you do that, then with one minor
-tweak (below) we don't need filesystem specific golden output files.
-
->  # Do the work for various log params which
->  # should not effect the data content of the log
->  # Try with and without sync'ing - sync'ing will mean that
-> @@ -84,7 +110,7 @@ for s in sync nosync ; do
->  
->  	# mkfs the FS
->  	_echofull "mkfs"
-> -	_scratch_mkfs_xfs >>$seqres.full 2>&1
-> +	_scratch_mkfs >>$seqres.full 2>&1
->  	if [ $? -ne 0 ] ; then 
->  	    _echofull "mkfs failed: $MKFS_OPTIONS"
->  	    continue
-> diff --git a/tests/xfs/086.out b/tests/xfs/086.out
-> deleted file mode 100644
-> index ac56cc2..0000000
-> --- a/tests/xfs/086.out
-> +++ /dev/null
-> @@ -1,4722 +0,0 @@
-> -QA output created by 086
-> -*** init FS
-> ---- mkfs=version=2, mnt=logbsize=32k, sync=sync ---
-
-This is the only output in the golden image file that changes
-between xfs and f2fs. It doesn't need to be in the golden output
-file - it can just be dumped in the $seqres.full file.
-
-Similar changes can be made to 087 as well.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
