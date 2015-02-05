@@ -1,190 +1,122 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 5/5 v3] f2fs: introduce a batched trim
-Date: Thu, 05 Feb 2015 17:30:33 +0800
-Message-ID: <006001d04126$895e3680$9c1aa380$@samsung.com>
-References: <1422401503-4769-1-git-send-email-jaegeuk@kernel.org>
- <1422401503-4769-5-git-send-email-jaegeuk@kernel.org>
- <003b01d03bc0$a5f23d20$f1d6b760$@samsung.com>
- <20150129214117.GB17521@jaegeuk-mac02>
- <006701d03c4b$a62ec0c0$f28c4240$@samsung.com>
- <20150202232803.GB34575@jaegeuk-mac02.mot.com> <20150203024822.GA8798@lcm>
- <20150203200904.GA43329@jaegeuk-mac02.mot.com>
+Subject: Re: [PATCH 1/2] mkfs.f2fs: support large sector size
+Date: Thu, 05 Feb 2015 17:32:11 +0800
+Message-ID: <006101d04126$c83e1960$58ba4c20$@samsung.com>
+References: <000501d0402b$05d34e50$1179eaf0$@samsung.com>
+	<CAB6yy350KAfLDD_nP2nYq=2pC2UtTGaq2gihfY-__ALePetd3g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150203200904.GA43329@jaegeuk-mac02.mot.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1YJIos-0007Jd-LW
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Feb 2015 09:33:54 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1YJIoq-00051x-MP
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Feb 2015 09:33:54 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NJA006VOL7RIS20@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Feb 2015 18:33:27 +0900 (KST)
+In-reply-to: <CAB6yy350KAfLDD_nP2nYq=2pC2UtTGaq2gihfY-__ALePetd3g@mail.gmail.com>
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Changman Lee' <cm224.lee@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Kinglong Mee' <kinglongmee@gmail.com>
+Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk, Changman,
+Hi Kinglong,
 
 > -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, February 04, 2015 4:11 AM
-> To: Changman Lee
-> Cc: Chao Yu; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> From: Kinglong Mee [mailto:kinglongmee@gmail.com]
+> Sent: Wednesday, February 04, 2015 9:43 PM
+> To: Chao Yu
+> Cc: Jaegeuk Kim; Changman Lee; linux-kernel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 5/5 v3] f2fs: introduce a batched trim
+> Subject: Re: [f2fs-dev] [PATCH 1/2] mkfs.f2fs: support large sector size
 > 
-> Hi Changman,
+> Hi Chao,
 > 
-> Good idea!
+> On Wed, Feb 4, 2015 at 11:30 AM, Chao Yu <chao2.yu@samsung.com> wrote:
+> > Since f2fs support large sector size in commit 55cf9cb63f0e "f2fs: support large
+> > sector size", block device with sector size of 512/1024/2048/4096 bytes can be
+> > supported.
+> >
+> > But mkfs.f2fs still use default sector size: 512 bytes as sector size, let's fix
+> > this issue in this patch.
+> >
+> > v2:
+> >  o remove unneeded printed message when sector size is large than 512 bytes
+> >    suggested by Kinglong.
+> >  o show correct sector size in printed message.
+> >  o use config.sectors_per_blk instead of DEFAULT_SECTORS_PER_BLOCK suggested by
+> >    Kinglong.
+> >
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  lib/libf2fs.c            | 10 +++-------
+> >  mkfs/f2fs_format.c       | 12 ++++++------
+> >  mkfs/f2fs_format_utils.c |  2 +-
+> >  3 files changed, 10 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+> > index 8123528..d2942f0 100644
+> > --- a/lib/libf2fs.c
+> > +++ b/lib/libf2fs.c
+> > @@ -463,10 +463,6 @@ int f2fs_get_device_info(struct f2fs_configuration *c)
+> >                         MSG(0, "\tError: Using the default sector size\n");
+> >                 } else {
+> >                         if (c->sector_size < sector_size) {
+> > -                               MSG(0, "\tError: Cannot set the sector size to:"
+> > -                                       " %d as the device does not support"
+> > -                                       "\nSetting the sector size to : %d\n",
+> > -                                       c->sector_size, sector_size);
+> >                                 c->sector_size = sector_size;
+> >                                 c->sectors_per_blk = PAGE_SIZE / sector_size;
+> >                         }
+> > @@ -495,8 +491,8 @@ int f2fs_get_device_info(struct f2fs_configuration *c)
+> >                 return -1;
+> >         }
+> >         if (wanted_total_sectors && wanted_total_sectors < c->total_sectors) {
+> > -               MSG(0, "Info: total device sectors = %"PRIu64" (in 512bytes)\n",
+> > -                                       c->total_sectors);
+> > +               MSG(0, "Info: total device sectors = %"PRIu64" (in %u bytes)\n",
+> > +                                       c->total_sectors, c->sector_size);
+> >                 c->total_sectors = wanted_total_sectors;
+> >
+> >         }
+> > @@ -504,7 +500,7 @@ int f2fs_get_device_info(struct f2fs_configuration *c)
+> >         MSG(0, "Info: total sectors = %"PRIu64" (in 512bytes)\n",
 > 
-> Change log from v2:
->  o add sysfs to change the # of sections for trimming.
+> This "512bytes" should be modified as above too.
 
-Good idea!
+Oh my miss, sorry about this. I will resend the patch.
 
+thanks,
+Yu
 > 
-> Change log from v1:
->  o add description
->  o change the # of batched segments suggested by Chao
->  o make consistent for # of batched segments
-> 
-> This patch introduces a batched trimming feature, which submits split discard
-> commands.
-> 
-> This is to avoid long latency due to huge trim commands.
-> If fstrim was triggered ranging from 0 to the end of device, we should lock
-> all the checkpoint-related mutexes, resulting in very long latency.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++++++
->  Documentation/filesystems/f2fs.txt      |  4 ++++
->  fs/f2fs/f2fs.h                          |  7 +++++++
->  fs/f2fs/segment.c                       | 18 +++++++++++++-----
->  fs/f2fs/super.c                         |  2 ++
->  5 files changed, 32 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs
-> b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index 6f9157f..2c4cc42 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -74,3 +74,9 @@ Date:		March 2014
->  Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
->  Description:
->  		 Controls the memory footprint used by f2fs.
-> +
-> +What:		/sys/fs/f2fs/<disk>/trim_sections
-> +Date:		February 2015
-> +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
-> +Description:
-> +		 Controls the trimming rate in batch mode.
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index 6758aa3..dac11d7 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -199,6 +199,10 @@ Files in /sys/fs/f2fs/<devname>
->  			      checkpoint is triggered, and issued during the
->  			      checkpoint. By default, it is disabled with 0.
-> 
-> + trim_sections                This parameter controls the number of sections
-> +                              to be trimmed out in batch mode when FITRIM
-> +                              conducts. 32 sections is set by default.
-> +
->   ipu_policy                   This parameter controls the policy of in-place
->                                updates in f2fs. There are five policies:
->                                 0x01: F2FS_IPU_FORCE, 0x02: F2FS_IPU_SSR,
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 964c240..6f57da1 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -105,6 +105,10 @@ enum {
->  	CP_DISCARD,
->  };
-> 
-> +#define DEF_BATCHED_TRIM_SECTIONS	32
-> +#define BATCHED_TRIM_SEGMENTS(sbi)	\
-> +		(SM_I(sbi)->trim_sections * (sbi)->segs_per_sec)
-> +
->  struct cp_control {
->  	int reason;
->  	__u64 trim_start;
-> @@ -448,6 +452,9 @@ struct f2fs_sm_info {
->  	int nr_discards;			/* # of discards in the list */
->  	int max_discards;			/* max. discards to be issued */
-> 
-> +	/* for batched trimming */
-> +	int trim_sections;			/* # of sections to trim */
-> +
->  	struct list_head sit_entry_set;	/* sit entry set list */
-> 
->  	unsigned int ipu_policy;	/* in-place-update policy */
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 5ea57ec..c542f63 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1066,14 +1066,20 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
->  	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
->  						GET_SEGNO(sbi, end);
->  	cpc.reason = CP_DISCARD;
-> -	cpc.trim_start = start_segno;
-> -	cpc.trim_end = end_segno;
->  	cpc.trim_minlen = range->minlen >> sbi->log_blocksize;
-> 
->  	/* do checkpoint to issue discard commands safely */
-> -	mutex_lock(&sbi->gc_mutex);
-> -	write_checkpoint(sbi, &cpc);
-> -	mutex_unlock(&sbi->gc_mutex);
-> +	for (; start_segno <= end_segno;
-> +				start_segno += BATCHED_TRIM_SEGMENTS(sbi)) {
-> +		cpc.trim_start = start_segno;
-> +		cpc.trim_end = min_t(unsigned int,
-> +				start_segno + BATCHED_TRIM_SEGMENTS (sbi) - 1,
+> thanks,
+> Kinglong Mee
 
-Actually what I mean is that in each trim we try to align start segment
-to first segment of section as much as possible.
 
-How about using:
-		cpc.trim_end = min_t(unsigned int, rounddown(start_segno +
-					BATCHED_TRIM_SEGMENTS(sbi),
-					(sbi)->segs_per_sec) - 1, end_segno);
-Thanks,
-
-> +				end_segno);
-> +
-> +		mutex_lock(&sbi->gc_mutex);
-> +		write_checkpoint(sbi, &cpc);
-> +		mutex_unlock(&sbi->gc_mutex);
-> +	}
->  out:
->  	range->len = cpc.trimmed << sbi->log_blocksize;
->  	return 0;
-> @@ -2127,6 +2133,8 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
->  	sm_info->nr_discards = 0;
->  	sm_info->max_discards = 0;
-> 
-> +	sm_info->trim_sections = DEF_BATCHED_TRIM_SECTIONS;
-> +
->  	INIT_LIST_HEAD(&sm_info->sit_entry_set);
-> 
->  	if (test_opt(sbi, FLUSH_MERGE) && !f2fs_readonly(sbi->sb)) {
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 1e92c2e..f2fe666 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -195,6 +195,7 @@ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time,
-> no_gc_sleep_time);
->  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_idle, gc_idle);
->  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
->  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, max_small_discards, max_discards);
-> +F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, batched_trim_sections, trim_sections);
->  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, ipu_policy, ipu_policy);
->  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_ipu_util, min_ipu_util);
->  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
-> @@ -210,6 +211,7 @@ static struct attribute *f2fs_attrs[] = {
->  	ATTR_LIST(gc_idle),
->  	ATTR_LIST(reclaim_segments),
->  	ATTR_LIST(max_small_discards),
-> +	ATTR_LIST(batched_trim_sections),
->  	ATTR_LIST(ipu_policy),
->  	ATTR_LIST(min_ipu_util),
->  	ATTR_LIST(min_fsync_blocks),
-> --
-> 2.1.1
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming. The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net/
