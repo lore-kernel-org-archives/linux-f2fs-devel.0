@@ -1,266 +1,258 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 9/9 v5] tests/generic: relocate xfs's tests into tests/generic/
-Date: Thu,  5 Feb 2015 22:37:13 -0800
-Message-ID: <1423204633-66673-10-git-send-email-jaegeuk@kernel.org>
-References: <1423204633-66673-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <fstests-owner@vger.kernel.org>
-In-Reply-To: <1423204633-66673-1-git-send-email-jaegeuk@kernel.org>
-Sender: fstests-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH] mkfs.f2fs: avoid memory leak in mkfs
+Date: Fri, 06 Feb 2015 16:11:41 +0800
+Message-ID: <004f01d041e4$abd5d150$038173f0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1YJe1y-0000Ce-TG
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 06 Feb 2015 08:12:50 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1YJe1v-00010n-JC
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 06 Feb 2015 08:12:50 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NJC00H7TC536KB0@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 06 Feb 2015 17:12:39 +0900 (KST)
+Content-language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This patch moves the generic testcases defined in xfs into tests/generic/.
-  xfs/085 -> generic/052
-  xfs/086 -> generic/054
-  xfs/087 -> generic/055
+This patch fixes memory leak in mkfs.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- tests/{xfs/085 => generic/052}         |  6 +++---
- tests/{xfs/085.out => generic/052.out} |  2 +-
- tests/{xfs/086 => generic/054}         | 17 ++++++++---------
- tests/{xfs/086.out => generic/054.out} |  2 +-
- tests/{xfs/087 => generic/055}         | 15 +++++++--------
- tests/{xfs/087.out => generic/055.out} |  2 +-
- tests/generic/group                    |  3 +++
- tests/xfs/group                        |  3 ---
- 8 files changed, 24 insertions(+), 26 deletions(-)
+ mkfs/f2fs_format.c | 46 ++++++++++++++++++++++++++++++----------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
 
-diff --git a/tests/xfs/085 b/tests/generic/052
-similarity index 96%
-rename from tests/xfs/085
-rename to tests/generic/052
-index 1b6f424..3430b65 100755
---- a/tests/xfs/085
-+++ b/tests/generic/052
-@@ -1,5 +1,5 @@
- #! /bin/bash
--# FS QA Test No. 085
-+# FS QA Test No. 052
- #
- # To test log replay by shutdown of file system
- # This is the first simple initial test to ensure that
-@@ -40,7 +40,7 @@ trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
- . ./common/log
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 2cce7c3..094afa3 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -391,6 +391,7 @@ static int f2fs_init_sit_area(void)
+ 		if (dev_fill(zero_buf, sit_seg_addr, seg_size)) {
+ 			MSG(1, "\tError: While zeroing out the sit area \
+ 					on disk!!!\n");
++			free(zero_buf);
+ 			return -1;
+ 		}
+ 		sit_seg_addr += seg_size;
+@@ -424,6 +425,7 @@ static int f2fs_init_nat_area(void)
+ 		if (dev_fill(nat_buf, nat_seg_addr, seg_size)) {
+ 			MSG(1, "\tError: While zeroing out the nat area \
+ 					on disk!!!\n");
++			free(nat_buf);
+ 			return -1;
+ 		}
+ 		nat_seg_addr = nat_seg_addr + (2 * seg_size);
+@@ -443,30 +445,31 @@ static int f2fs_write_check_point_pack(void)
+ 	char *cp_payload = NULL;
+ 	char *sum_compact, *sum_compact_p;
+ 	struct f2fs_summary *sum_entry;
++	int ret = -1;
  
- # real QA test starts here
--_supported_fs xfs
-+_supported_fs generic
- _supported_os IRIX Linux
+ 	cp = calloc(F2FS_BLKSIZE, 1);
+ 	if (cp == NULL) {
+ 		MSG(1, "\tError: Calloc Failed for f2fs_checkpoint!!!\n");
+-		return -1;
++		return ret;
+ 	}
  
- rm -f $seqres.full
-@@ -51,7 +51,7 @@ _require_scratch_shutdown
- _require_logstate
+ 	sum = calloc(F2FS_BLKSIZE, 1);
+ 	if (sum == NULL) {
+ 		MSG(1, "\tError: Calloc Failed for summay_node!!!\n");
+-		return -1;
++		goto free_cp;
+ 	}
  
- echo "mkfs"
--_scratch_mkfs_xfs >>$seqres.full 2>&1 \
-+_scratch_mkfs >>$seqres.full 2>&1 \
-     || _fail "mkfs scratch failed"
+ 	sum_compact = calloc(F2FS_BLKSIZE, 1);
+ 	if (sum == NULL) {
+ 		MSG(1, "\tError: Calloc Failed for summay buffer!!!\n");
+-		return -1;
++		goto free_sum;
+ 	}
+ 	sum_compact_p = sum_compact;
  
- echo "mount"
-diff --git a/tests/xfs/085.out b/tests/generic/052.out
-similarity index 94%
-rename from tests/xfs/085.out
-rename to tests/generic/052.out
-index d2d99a1..df7a66a 100644
---- a/tests/xfs/085.out
-+++ b/tests/generic/052.out
-@@ -1,4 +1,4 @@
--QA output created by 085
-+QA output created by 052
- mkfs
- mount
- touch files
-diff --git a/tests/xfs/086 b/tests/generic/054
-similarity index 92%
-rename from tests/xfs/086
-rename to tests/generic/054
-index 0cc5008..6cb0122 100755
---- a/tests/xfs/086
-+++ b/tests/generic/054
-@@ -1,5 +1,5 @@
- #! /bin/bash
--# FS QA Test No. 086
-+# FS QA Test No. 054
- #
- # To test log replay with version 2 logs
- # Initially keep this simple with just creates.
-@@ -39,14 +39,13 @@ trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
- . ./common/log
+ 	cp_payload = calloc(F2FS_BLKSIZE, 1);
+ 	if (cp_payload == NULL) {
+ 		MSG(1, "\tError: Calloc Failed for cp_payload!!!\n");
+-		return -1;
++		goto free_sum_compact;
+ 	}
  
- # real QA test starts here
--_supported_fs xfs
-+_supported_fs generic
- _supported_os IRIX Linux
+ 	/* 1. cp page 1 of checkpoint pack 1 */
+@@ -522,7 +525,7 @@ static int f2fs_write_check_point_pack(void)
+ 	DBG(1, "\tWriting main segments, cp at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
+ 	if (dev_write(cp, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the cp to disk!!!\n");
+-		return -1;
++		goto free_cp_payload;
+ 	}
  
- rm -f $seqres.full $tmp.*
- _require_scratch
- _require_scratch_shutdown
- _require_logstate
--_require_v2log
+ 	for (i = 0; i < get_sb(cp_payload); i++) {
+@@ -530,7 +533,7 @@ static int f2fs_write_check_point_pack(void)
+ 		if (dev_fill(cp_payload, cp_seg_blk_offset, blk_size_bytes)) {
+ 			MSG(1, "\tError: While zeroing out the sit bitmap area \
+ 					on disk!!!\n");
+-			return -1;
++			goto free_cp_payload;
+ 		}
+ 	}
  
- echo "*** init FS"
- umount $SCRATCH_DEV >/dev/null 2>&1
-@@ -56,14 +55,14 @@ _get_log_configs > $tmp.seq.params
- # Do the work for various log params which
- # should not effect the data content of the log
- # Try with and without sync'ing - sync'ing will mean that
--# the log will be written out unfilled and thus the log 
-+# the log will be written out unfilled and thus the log
- # stripe can have an effect.
- #
- for s in sync nosync ; do
-     cat $tmp.seq.params \
-     | while read mkfs mnt restofline
-     do
--	if [ "$mkfs" = "#" ]; then 
-+	if [ "$mkfs" = "#" ]; then
- 	    continue
- 	fi
+@@ -598,7 +601,7 @@ static int f2fs_write_check_point_pack(void)
+ 			cp_seg_blk_offset);
+ 	if (dev_write(sum_compact, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
+-		return -1;
++		goto free_cp_payload;
+ 	}
  
-@@ -73,8 +72,8 @@ for s in sync nosync ; do
+ 	/* Prepare and write Segment summary for HOT_NODE */
+@@ -613,7 +616,7 @@ static int f2fs_write_check_point_pack(void)
+ 			cp_seg_blk_offset);
+ 	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
+-		return -1;
++		goto free_cp_payload;
+ 	}
  
- 	# mkfs the FS
- 	_echofull "mkfs"
--	_scratch_mkfs_xfs >>$seqres.full 2>&1
--	if [ $? -ne 0 ] ; then 
-+	_scratch_mkfs >>$seqres.full 2>&1
-+	if [ $? -ne 0 ] ; then
- 	    _echofull "mkfs failed: $MKFS_OPTIONS"
- 	    continue
- 	fi
-@@ -89,7 +88,7 @@ for s in sync nosync ; do
- 	# create the metadata
- 	if [ $s = "sync" ]; then
- 	    # generate some log traffic - but not too much
--	    # add some syncs to get the log flushed to disk 
-+	    # add some syncs to get the log flushed to disk
- 	    for file in $SCRATCH_MNT/{0,1,2,3,4,5,6,7,8,9}{0,1,2,3,4,5,6,7,8,9}; do
- 		touch $file
- 		sync
-@@ -137,5 +136,5 @@ for s in sync nosync ; do
-     done
- done
+ 	/* Fill segment summary for WARM_NODE to zero. */
+@@ -625,7 +628,7 @@ static int f2fs_write_check_point_pack(void)
+ 			cp_seg_blk_offset);
+ 	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
+-		return -1;
++		goto free_cp_payload;
+ 	}
  
--status=0 
-+status=0
- exit
-diff --git a/tests/xfs/086.out b/tests/generic/054.out
-similarity index 99%
-rename from tests/xfs/086.out
-rename to tests/generic/054.out
-index 40326ee..4654bde 100644
---- a/tests/xfs/086.out
-+++ b/tests/generic/054.out
-@@ -1,4 +1,4 @@
--QA output created by 086
-+QA output created by 054
- *** init FS
+ 	/* Fill segment summary for COLD_NODE to zero. */
+@@ -636,7 +639,7 @@ static int f2fs_write_check_point_pack(void)
+ 			cp_seg_blk_offset);
+ 	if (dev_write(sum, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the sum_blk to disk!!!\n");
+-		return -1;
++		goto free_cp_payload;
+ 	}
  
- *** mkfs ***
-diff --git a/tests/xfs/087 b/tests/generic/055
-similarity index 93%
-rename from tests/xfs/087
-rename to tests/generic/055
-index 2fd6f1a..068f0c3 100755
---- a/tests/xfs/087
-+++ b/tests/generic/055
-@@ -1,7 +1,7 @@
- #! /bin/bash
--# FS QA Test No. 087
-+# FS QA Test No. 055
- #
--# * like 086 but want to create more/different kinds of metadata
-+# * like 054 but want to create more/different kinds of metadata
- #   and so will use fsstress
- # * also can interrupt metadata with godown
- #
-@@ -54,14 +54,13 @@ _do_meta()
+ 	/* cp page2 */
+@@ -644,7 +647,7 @@ static int f2fs_write_check_point_pack(void)
+ 	DBG(1, "\tWriting cp page2, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
+ 	if (dev_write(cp, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the cp to disk!!!\n");
+-		return -1;
++		goto free_cp_payload;
+ 	}
+ 
+ 	/* cp page 1 of check point pack 2
+@@ -661,7 +664,7 @@ static int f2fs_write_check_point_pack(void)
+ 	DBG(1, "\tWriting cp page 1 of checkpoint pack 2, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
+ 	if (dev_write(cp, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the cp to disk!!!\n");
+-		return -1;
++		goto free_cp_payload;
+ 	}
+ 
+ 	for (i = 0; i < get_sb(cp_payload); i++) {
+@@ -669,7 +672,7 @@ static int f2fs_write_check_point_pack(void)
+ 		if (dev_fill(cp_payload, cp_seg_blk_offset, blk_size_bytes)) {
+ 			MSG(1, "\tError: While zeroing out the sit bitmap area \
+ 					on disk!!!\n");
+-			return -1;
++			goto free_cp_payload;
+ 		}
+ 	}
+ 
+@@ -679,14 +682,20 @@ static int f2fs_write_check_point_pack(void)
+ 	DBG(1, "\tWriting cp page 2 of checkpoint pack 2, at offset 0x%08"PRIx64"\n", cp_seg_blk_offset);
+ 	if (dev_write(cp, cp_seg_blk_offset, blk_size_bytes)) {
+ 		MSG(1, "\tError: While writing the cp to disk!!!\n");
+-		return -1;
++		goto free_cp_payload;
+ 	}
+ 
++	ret = 0;
++
++free_cp_payload:
++	free(cp_payload);
++free_sum_compact:
+ 	free(sum_compact);
++free_sum:
+ 	free(sum);
+-	free(cp_payload);
++free_cp:
+ 	free(cp);
+-	return	0;
++	return ret;
  }
  
- # real QA test starts here
--_supported_fs xfs
-+_supported_fs generic
- _supported_os IRIX Linux
+ static int f2fs_write_super_block(void)
+@@ -703,6 +712,7 @@ static int f2fs_write_super_block(void)
+ 		if (dev_write(zero_buff, index * F2FS_BLKSIZE, F2FS_BLKSIZE)) {
+ 			MSG(1, "\tError: While while writing supe_blk \
+ 					on disk!!! index : %d\n", index);
++			free(zero_buff);
+ 			return -1;
+ 		}
+ 	}
+@@ -768,6 +778,7 @@ static int f2fs_write_root_inode(void)
+ 	DBG(1, "\tWriting root inode (hot node), at offset 0x%08"PRIx64"\n", main_area_node_seg_blk_offset);
+ 	if (dev_write(raw_node, main_area_node_seg_blk_offset, F2FS_BLKSIZE)) {
+ 		MSG(1, "\tError: While writing the raw_node to disk!!!\n");
++		free(raw_node);
+ 		return -1;
+ 	}
  
- rm -f $seqres.full $tmp.*
- _require_scratch
- _require_scratch_shutdown
- _require_logstate
--_require_v2log 
+@@ -782,6 +793,7 @@ static int f2fs_write_root_inode(void)
+ 	DBG(1, "\tWriting root inode (warm node), at offset 0x%08"PRIx64"\n", main_area_node_seg_blk_offset);
+ 	if (dev_write(raw_node, main_area_node_seg_blk_offset, F2FS_BLKSIZE)) {
+ 		MSG(1, "\tError: While writing the raw_node to disk!!!\n");
++		free(raw_node);
+ 		return -1;
+ 	}
+ 	free(raw_node);
+@@ -820,6 +832,7 @@ static int f2fs_update_nat_root(void)
+ 	DBG(1, "\tWriting nat root, at offset 0x%08"PRIx64"\n", nat_seg_blk_offset);
+ 	if (dev_write(nat_blk, nat_seg_blk_offset, F2FS_BLKSIZE)) {
+ 		MSG(1, "\tError: While writing the nat_blk set0 to disk!\n");
++		free(nat_blk);
+ 		return -1;
+ 	}
  
- QUOTA_OPTION=`_get_quota_option`
+@@ -861,6 +874,7 @@ static int f2fs_add_default_dentry_root(void)
+ 	DBG(1, "\tWriting default dentry root, at offset 0x%08"PRIx64"\n", data_blk_offset);
+ 	if (dev_write(dent_blk, data_blk_offset, F2FS_BLKSIZE)) {
+ 		MSG(1, "\tError: While writing the dentry_blk to disk!!!\n");
++		free(dent_blk);
+ 		return -1;
+ 	}
  
-@@ -73,7 +72,7 @@ _get_log_configs > $tmp.seq.params
- cat $tmp.seq.params \
- | while read mkfs mnt restofline
- do
--    if [ "$mkfs" = "#" ]; then 
-+    if [ "$mkfs" = "#" ]; then
- 	continue
-     fi
- 
-@@ -83,8 +82,8 @@ do
- 
-     # mkfs the FS
-     _echofull "mkfs"
--    _scratch_mkfs_xfs >>$seqres.full 2>&1
--    if [ $? -ne 0 ] ; then 
-+    _scratch_mkfs >>$seqres.full 2>&1
-+    if [ $? -ne 0 ] ; then
- 	_echofull "mkfs failed: $MKFS_OPTIONS"
- 	continue
-     fi
-@@ -140,5 +139,5 @@ do
-     fi
- done
- 
--status=0 
-+status=0
- exit
-diff --git a/tests/xfs/087.out b/tests/generic/055.out
-similarity index 99%
-rename from tests/xfs/087.out
-rename to tests/generic/055.out
-index 9f6f80a..048ef1e 100644
---- a/tests/xfs/087.out
-+++ b/tests/generic/055.out
-@@ -1,4 +1,4 @@
--QA output created by 087
-+QA output created by 055
- *** init FS
- 
- *** mkfs ***
-diff --git a/tests/generic/group b/tests/generic/group
-index d38240e..441d5a1 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -54,7 +54,10 @@
- 049 metadata rw auto
- 050 mount auto quick
- 051 auto stress log metadata repair
-+052 log auto quick
- 053 acl repair auto quick
-+054 log v2log auto
-+055 log v2log auto quota stress
- 062 attr udf auto quick
- 068 other auto freeze dangerous stress
- 069 rw udf auto quick
-diff --git a/tests/xfs/group b/tests/xfs/group
-index 4099793..3e1cffb 100644
---- a/tests/xfs/group
-+++ b/tests/xfs/group
-@@ -73,9 +73,6 @@
- 081 deprecated # log logprint quota
- 082 deprecated # log logprint v2log
- 084 ioctl rw auto
--085 log auto quick
--086 log v2log auto
--087 log v2log auto quota stress
- 090 rw auto
- 092 other auto quick
- 094 metadata dir ioctl auto
 -- 
-2.1.1
+2.2.1
 
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming. The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net/
