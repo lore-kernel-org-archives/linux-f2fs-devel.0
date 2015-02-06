@@ -1,7 +1,7 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 7/9 v5] common/log: add _get_log_configs for testing options
-Date: Thu,  5 Feb 2015 22:37:11 -0800
-Message-ID: <1423204633-66673-8-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 9/9 v5] tests/generic: relocate xfs's tests into tests/generic/
+Date: Thu,  5 Feb 2015 22:37:13 -0800
+Message-ID: <1423204633-66673-10-git-send-email-jaegeuk@kernel.org>
 References: <1423204633-66673-1-git-send-email-jaegeuk@kernel.org>
 Return-path: <fstests-owner@vger.kernel.org>
 In-Reply-To: <1423204633-66673-1-git-send-email-jaegeuk@kernel.org>
@@ -10,179 +10,257 @@ To: Dave Chinner <david@fromorbit.com>
 Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds _get_log_configs for xfs and f2fs to test several mount options
-for:
-  xfs/086
-* xfs/087
-
-In xfs/087, one more test was added, so 10 tests will be done in total.
+This patch moves the generic testcases defined in xfs into tests/generic/.
+  xfs/085 -> generic/052
+  xfs/086 -> generic/054
+  xfs/087 -> generic/055
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- common/log        | 47 +++++++++++++++++++++++++++++++++++++++++++++++
- tests/xfs/086     | 15 +--------------
- tests/xfs/087     | 14 +-------------
- tests/xfs/087.out | 42 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 91 insertions(+), 27 deletions(-)
+ tests/{xfs/085 => generic/052}         |  6 +++---
+ tests/{xfs/085.out => generic/052.out} |  2 +-
+ tests/{xfs/086 => generic/054}         | 17 ++++++++---------
+ tests/{xfs/086.out => generic/054.out} |  2 +-
+ tests/{xfs/087 => generic/055}         | 15 +++++++--------
+ tests/{xfs/087.out => generic/055.out} |  2 +-
+ tests/generic/group                    |  3 +++
+ tests/xfs/group                        |  3 ---
+ 8 files changed, 24 insertions(+), 26 deletions(-)
 
-diff --git a/common/log b/common/log
-index d8b18f8..5be5411 100644
---- a/common/log
-+++ b/common/log
-@@ -510,5 +510,52 @@ _require_logstate()
-     esac
- }
+diff --git a/tests/xfs/085 b/tests/generic/052
+similarity index 96%
+rename from tests/xfs/085
+rename to tests/generic/052
+index 1b6f424..3430b65 100755
+--- a/tests/xfs/085
++++ b/tests/generic/052
+@@ -1,5 +1,5 @@
+ #! /bin/bash
+-# FS QA Test No. 085
++# FS QA Test No. 052
+ #
+ # To test log replay by shutdown of file system
+ # This is the first simple initial test to ensure that
+@@ -40,7 +40,7 @@ trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
+ . ./common/log
  
-+_xfs_log_config()
-+{
-+    echo "# mkfs-opt             mount-opt"
-+    echo "# ------------------------------"
-+    echo "  version=2            logbsize=32k"
-+    echo "  version=2,su=4096    logbsize=32k"
-+    echo "  version=2,su=32768   logbsize=32k"
-+    echo "  version=2,su=32768   logbsize=64k"
-+    echo "  version=2            logbsize=64k"
-+    echo "  version=2,su=64k     logbsize=64k"
-+    echo "  version=2            logbsize=128k"
-+    echo "  version=2,su=128k    logbsize=128k"
-+    echo "  version=2            logbsize=256k"
-+    echo "  version=2,su=256k    logbsize=256k"
-+}
-+
-+_f2fs_log_config()
-+{
-+    echo "# mkfs-opt             mount-opt"
-+    echo "# ------------------------------"
-+    echo "  test1     active_logs=6,background_gc=off"
-+    echo "  test2     active_logs=6,background_gc=off,inline_data"
-+    echo "  test3     active_logs=6,background_gc=off,inline_dentry"
-+    echo "  test4     active_logs=6,background_gc=off,inline_data,inline_dentry"
-+    echo "  test5     active_logs=6,background_gc=off,disable_roll_forward"
-+    echo "  test6     active_logs=6,background_gc=off,discard,inline_data,inline_dentry"
-+    echo "  test7     active_logs=6,background_gc=on"
-+    echo "  test8     active_logs=6,background_gc=on,inline_data"
-+    echo "  test9     active_logs=6,background_gc=on,inline_data,inline_dentry"
-+    echo "  test10    active_logs=6,background_gc=on,discard,inline_data,inline_dentry"
-+}
-+
-+_get_log_configs()
-+{
-+    case "$FSTYP" in
-+    xfs)
-+        _xfs_log_config
-+        ;;
-+    f2fs)
-+        _f2fs_log_config
-+        ;;
-+    *)
-+        _notrun "$FSTYP does not support log configs."
-+        ;;
-+    esac
-+}
-+
- # make sure this script returns success
- /bin/true
-diff --git a/tests/xfs/086 b/tests/xfs/086
-index 1f81c1b..0cc5008 100755
+ # real QA test starts here
+-_supported_fs xfs
++_supported_fs generic
+ _supported_os IRIX Linux
+ 
+ rm -f $seqres.full
+@@ -51,7 +51,7 @@ _require_scratch_shutdown
+ _require_logstate
+ 
+ echo "mkfs"
+-_scratch_mkfs_xfs >>$seqres.full 2>&1 \
++_scratch_mkfs >>$seqres.full 2>&1 \
+     || _fail "mkfs scratch failed"
+ 
+ echo "mount"
+diff --git a/tests/xfs/085.out b/tests/generic/052.out
+similarity index 94%
+rename from tests/xfs/085.out
+rename to tests/generic/052.out
+index d2d99a1..df7a66a 100644
+--- a/tests/xfs/085.out
++++ b/tests/generic/052.out
+@@ -1,4 +1,4 @@
+-QA output created by 085
++QA output created by 052
+ mkfs
+ mount
+ touch files
+diff --git a/tests/xfs/086 b/tests/generic/054
+similarity index 92%
+rename from tests/xfs/086
+rename to tests/generic/054
+index 0cc5008..6cb0122 100755
 --- a/tests/xfs/086
-+++ b/tests/xfs/086
-@@ -51,20 +51,7 @@ _require_v2log
++++ b/tests/generic/054
+@@ -1,5 +1,5 @@
+ #! /bin/bash
+-# FS QA Test No. 086
++# FS QA Test No. 054
+ #
+ # To test log replay with version 2 logs
+ # Initially keep this simple with just creates.
+@@ -39,14 +39,13 @@ trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
+ . ./common/log
+ 
+ # real QA test starts here
+-_supported_fs xfs
++_supported_fs generic
+ _supported_os IRIX Linux
+ 
+ rm -f $seqres.full $tmp.*
+ _require_scratch
+ _require_scratch_shutdown
+ _require_logstate
+-_require_v2log
+ 
  echo "*** init FS"
  umount $SCRATCH_DEV >/dev/null 2>&1
- 
--cat >$tmp.seq.params <<EOF
--# mkfs-opt             mount-opt
--# ------------------------------
--  version=2            logbsize=32k
--  version=2,su=4096    logbsize=32k
--  version=2,su=32768   logbsize=32k
--  version=2,su=32768   logbsize=64k
--  version=2            logbsize=64k
--  version=2,su=64k     logbsize=64k
--  version=2            logbsize=128k
--  version=2,su=128k    logbsize=128k
--  version=2            logbsize=256k
--  version=2,su=256k    logbsize=256k
--EOF
-+_get_log_configs > $tmp.seq.params
- 
+@@ -56,14 +55,14 @@ _get_log_configs > $tmp.seq.params
  # Do the work for various log params which
  # should not effect the data content of the log
-diff --git a/tests/xfs/087 b/tests/xfs/087
-index 8986f67..8da0f9c 100755
+ # Try with and without sync'ing - sync'ing will mean that
+-# the log will be written out unfilled and thus the log 
++# the log will be written out unfilled and thus the log
+ # stripe can have an effect.
+ #
+ for s in sync nosync ; do
+     cat $tmp.seq.params \
+     | while read mkfs mnt restofline
+     do
+-	if [ "$mkfs" = "#" ]; then 
++	if [ "$mkfs" = "#" ]; then
+ 	    continue
+ 	fi
+ 
+@@ -73,8 +72,8 @@ for s in sync nosync ; do
+ 
+ 	# mkfs the FS
+ 	_echofull "mkfs"
+-	_scratch_mkfs_xfs >>$seqres.full 2>&1
+-	if [ $? -ne 0 ] ; then 
++	_scratch_mkfs >>$seqres.full 2>&1
++	if [ $? -ne 0 ] ; then
+ 	    _echofull "mkfs failed: $MKFS_OPTIONS"
+ 	    continue
+ 	fi
+@@ -89,7 +88,7 @@ for s in sync nosync ; do
+ 	# create the metadata
+ 	if [ $s = "sync" ]; then
+ 	    # generate some log traffic - but not too much
+-	    # add some syncs to get the log flushed to disk 
++	    # add some syncs to get the log flushed to disk
+ 	    for file in $SCRATCH_MNT/{0,1,2,3,4,5,6,7,8,9}{0,1,2,3,4,5,6,7,8,9}; do
+ 		touch $file
+ 		sync
+@@ -137,5 +136,5 @@ for s in sync nosync ; do
+     done
+ done
+ 
+-status=0 
++status=0
+ exit
+diff --git a/tests/xfs/086.out b/tests/generic/054.out
+similarity index 99%
+rename from tests/xfs/086.out
+rename to tests/generic/054.out
+index 40326ee..4654bde 100644
+--- a/tests/xfs/086.out
++++ b/tests/generic/054.out
+@@ -1,4 +1,4 @@
+-QA output created by 086
++QA output created by 054
+ *** init FS
+ 
+ *** mkfs ***
+diff --git a/tests/xfs/087 b/tests/generic/055
+similarity index 93%
+rename from tests/xfs/087
+rename to tests/generic/055
+index 2fd6f1a..068f0c3 100755
 --- a/tests/xfs/087
-+++ b/tests/xfs/087
-@@ -67,19 +67,7 @@ _require_xfs_quota
- echo "*** init FS"
- umount $SCRATCH_DEV >/dev/null 2>&1
++++ b/tests/generic/055
+@@ -1,7 +1,7 @@
+ #! /bin/bash
+-# FS QA Test No. 087
++# FS QA Test No. 055
+ #
+-# * like 086 but want to create more/different kinds of metadata
++# * like 054 but want to create more/different kinds of metadata
+ #   and so will use fsstress
+ # * also can interrupt metadata with godown
+ #
+@@ -54,14 +54,13 @@ _do_meta()
+ }
  
--cat >$tmp.seq.params <<EOF
--# mkfs-opt             mount-opt
--# ------------------------------
--  version=2            logbsize=32k
--  version=2,su=4096    logbsize=32k
--  version=2,su=32768   logbsize=32k
--  version=2            logbsize=64k
--  version=2,su=64k     logbsize=64k
--  version=2            logbsize=128k
--  version=2,su=128k    logbsize=128k
--  version=2            logbsize=256k
--  version=2,su=256k    logbsize=256k
--EOF
-+_get_log_configs > $tmp.seq.params
+ # real QA test starts here
+-_supported_fs xfs
++_supported_fs generic
+ _supported_os IRIX Linux
  
+ rm -f $seqres.full $tmp.*
+ _require_scratch
+ _require_scratch_shutdown
+ _require_logstate
+-_require_v2log 
+ 
+ QUOTA_OPTION=`_get_quota_option`
+ 
+@@ -73,7 +72,7 @@ _get_log_configs > $tmp.seq.params
  cat $tmp.seq.params \
  | while read mkfs mnt restofline
-diff --git a/tests/xfs/087.out b/tests/xfs/087.out
-index 181774e..9f6f80a 100644
+ do
+-    if [ "$mkfs" = "#" ]; then 
++    if [ "$mkfs" = "#" ]; then
+ 	continue
+     fi
+ 
+@@ -83,8 +82,8 @@ do
+ 
+     # mkfs the FS
+     _echofull "mkfs"
+-    _scratch_mkfs_xfs >>$seqres.full 2>&1
+-    if [ $? -ne 0 ] ; then 
++    _scratch_mkfs >>$seqres.full 2>&1
++    if [ $? -ne 0 ] ; then
+ 	_echofull "mkfs failed: $MKFS_OPTIONS"
+ 	continue
+     fi
+@@ -140,5 +139,5 @@ do
+     fi
+ done
+ 
+-status=0 
++status=0
+ exit
+diff --git a/tests/xfs/087.out b/tests/generic/055.out
+similarity index 99%
+rename from tests/xfs/087.out
+rename to tests/generic/055.out
+index 9f6f80a..048ef1e 100644
 --- a/tests/xfs/087.out
-+++ b/tests/xfs/087.out
-@@ -378,3 +378,45 @@ clean log
++++ b/tests/generic/055.out
+@@ -1,4 +1,4 @@
+-QA output created by 087
++QA output created by 055
+ *** init FS
  
- *** filesystem is checked ok ***
- 
-+
-+*** mkfs ***
-+
-+
-+*** mount ***
-+
-+
-+*** calling fsstress -p 4 -z -f rmdir=10 -f link=10 -f creat=10 -f mkdir=10            -f rename=30 -f stat=30 -f unlink=30 -f truncate=20 -m8 -n 10000 ***
-+
-+
-+*** ls -RF SCRATCH_MNT ***
-+
-+
-+*** godown ***
-+
-+
-+*** unmount ***
-+
-+
-+*** logprint after going down... ***
-+
-+dirty log
-+
-+*** mount with replay ***
-+
-+
-+*** ls -RF SCRATCH_MNT ***
-+
-+
-+*** diff ls before and after ***
-+
-+Files TMP.ls1 and TMP.ls2 are identical
-+
-+*** unmount ***
-+
-+
-+*** logprint after mount and replay... ***
-+
-+clean log
-+
-+*** filesystem is checked ok ***
-+
+ *** mkfs ***
+diff --git a/tests/generic/group b/tests/generic/group
+index d38240e..441d5a1 100644
+--- a/tests/generic/group
++++ b/tests/generic/group
+@@ -54,7 +54,10 @@
+ 049 metadata rw auto
+ 050 mount auto quick
+ 051 auto stress log metadata repair
++052 log auto quick
+ 053 acl repair auto quick
++054 log v2log auto
++055 log v2log auto quota stress
+ 062 attr udf auto quick
+ 068 other auto freeze dangerous stress
+ 069 rw udf auto quick
+diff --git a/tests/xfs/group b/tests/xfs/group
+index 4099793..3e1cffb 100644
+--- a/tests/xfs/group
++++ b/tests/xfs/group
+@@ -73,9 +73,6 @@
+ 081 deprecated # log logprint quota
+ 082 deprecated # log logprint v2log
+ 084 ioctl rw auto
+-085 log auto quick
+-086 log v2log auto
+-087 log v2log auto quota stress
+ 090 rw auto
+ 092 other auto quick
+ 094 metadata dir ioctl auto
 -- 
 2.1.1
 
