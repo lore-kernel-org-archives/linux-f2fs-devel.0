@@ -1,85 +1,68 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 3/3] f2fs: use extent cache for dir
-Date: Thu, 05 Feb 2015 18:03:40 +0800
-Message-ID: <000a01d0412b$27eee070$77cca150$@samsung.com>
+From: Kinglong Mee <kinglongmee@gmail.com>
+Subject: Re: [PATCH RESEND 1/2] mkfs.f2fs: support large sector
+	size
+Date: Fri, 6 Feb 2015 08:42:44 +0800
+Message-ID: <CAB6yy349NJJMhQCBT3myt7wvCDnXd56YV3w_zGe+1pLA5D+pqw@mail.gmail.com>
+References: <006201d04127$6f254d70$4d6fe850$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1YJX0V-0004im-Fs
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 06 Feb 2015 00:42:51 +0000
+Received: from mail-wg0-f50.google.com ([74.125.82.50])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1YJX0U-00045J-MV
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 06 Feb 2015 00:42:51 +0000
+Received: by mail-wg0-f50.google.com with SMTP id b13so10569658wgh.9
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Thu, 05 Feb 2015 16:42:44 -0800 (PST)
+In-Reply-To: <006201d04127$6f254d70$4d6fe850$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-We update extent cache for all user inode of f2fs including dir inode, so this
-patch gives another chance to try to get physical address of page from extent
-cache for dir inode.
+On Thu, Feb 5, 2015 at 5:36 PM, Chao Yu <chao2.yu@samsung.com> wrote:
+> Since f2fs support large sector size in commit 55cf9cb63f0e "f2fs: support large
+> sector size", block device with sector size of 512/1024/2048/4096 bytes can be
+> supported.
+>
+> But mkfs.f2fs still use default sector size: 512 bytes as sector size, let's fix
+> this issue in this patch.
+>
+> v2:
+>  o remove unneeded printed message when sector size is large than 512 bytes
+>    suggested by Kinglong.
+>  o show correct sector size in printed message.
+>  o use config.sectors_per_blk instead of DEFAULT_SECTORS_PER_BLOCK suggested by
+>    Kinglong.
+> v3:
+>  o remove another unneeded printed message when sector size is large than 512
+>    bytes suggested by Kinglong.
+>
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/data.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Reviewed-by: Kinglong Mee <kinglongmee@gmail.com>
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 45b97a5..f84c44a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -806,6 +806,7 @@ struct page *find_data_page(struct inode *inode, pgoff_t index, bool sync)
- 	struct address_space *mapping = inode->i_mapping;
- 	struct dnode_of_data dn;
- 	struct page *page;
-+	struct extent_info ei;
- 	int err;
- 	struct f2fs_io_info fio = {
- 		.type = DATA,
-@@ -817,6 +818,11 @@ struct page *find_data_page(struct inode *inode, pgoff_t index, bool sync)
- 		return page;
- 	f2fs_put_page(page, 0);
- 
-+	if (f2fs_lookup_extent_cache(inode, index, &ei)) {
-+		dn.data_blkaddr = ei.blk + index - ei.fofs;
-+		goto got_it;
-+	}
-+
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
- 	err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
- 	if (err)
-@@ -830,6 +836,7 @@ struct page *find_data_page(struct inode *inode, pgoff_t index, bool sync)
- 	if (unlikely(dn.data_blkaddr == NEW_ADDR))
- 		return ERR_PTR(-EINVAL);
- 
-+got_it:
- 	page = grab_cache_page(mapping, index);
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
-@@ -864,6 +871,7 @@ struct page *get_lock_data_page(struct inode *inode, pgoff_t index)
- 	struct address_space *mapping = inode->i_mapping;
- 	struct dnode_of_data dn;
- 	struct page *page;
-+	struct extent_info ei;
- 	int err;
- 	struct f2fs_io_info fio = {
- 		.type = DATA,
-@@ -874,6 +882,11 @@ repeat:
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
- 
-+	if (f2fs_lookup_extent_cache(inode, index, &ei)) {
-+		dn.data_blkaddr = ei.blk + index - ei.fofs;
-+		goto got_it;
-+	}
-+
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
- 	err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
- 	if (err) {
-@@ -887,6 +900,7 @@ repeat:
- 		return ERR_PTR(-ENOENT);
- 	}
- 
-+got_it:
- 	if (PageUptodate(page))
- 		return page;
- 
--- 
-2.2.1
+thanks,
+Kinglong Mee
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming. The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net/
