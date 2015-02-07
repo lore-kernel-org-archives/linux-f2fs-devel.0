@@ -1,53 +1,76 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 5/5 v4] f2fs: introduce a batched trim
-Date: Fri, 06 Feb 2015 16:20:37 +0800
-Message-ID: <005001d041e5$e87089b0$b9519d10$@samsung.com>
-References: <1422401503-4769-1-git-send-email-jaegeuk@kernel.org>
- <1422401503-4769-5-git-send-email-jaegeuk@kernel.org>
- <003b01d03bc0$a5f23d20$f1d6b760$@samsung.com>
- <20150129214117.GB17521@jaegeuk-mac02>
- <006701d03c4b$a62ec0c0$f28c4240$@samsung.com>
- <20150202232803.GB34575@jaegeuk-mac02.mot.com> <20150203024822.GA8798@lcm>
- <20150203200904.GA43329@jaegeuk-mac02.mot.com>
- <006001d04126$895e3680$9c1aa380$@samsung.com>
- <20150206061837.GA66378@jaegeuk-mac02.hsd1.ca.comcast.net>
+Subject: [PATCH] f2fs: fix to use highmem for pages of newly
+	created directory
+Date: Sat, 07 Feb 2015 17:36:15 +0800
+Message-ID: <002801d042b9$a9a12e40$fce38ac0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150206061837.GA66378@jaegeuk-mac02.hsd1.ca.comcast.net>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1YK1pQ-0001Av-PD
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 07 Feb 2015 09:37:28 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1YK1pN-00025r-Fx
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 07 Feb 2015 09:37:28 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NJE003H2AQ50X40@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 07 Feb 2015 18:37:17 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+In commit a78186ebe516 ("f2fs: use highmem for directory pages"), we have set
+__GFP_HIGHMEM into dir mapping's gfp flag in f2fs_iget, so high address memory
+could be used for these existing dir's page.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Friday, February 06, 2015 2:19 PM
-> To: Chao Yu
-> Cc: 'Changman Lee'; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 5/5 v4] f2fs: introduce a batched trim
-> 
-> Hi Chao,
-> 
-> Something like this?
-> 
-> Change log from v3:
->  o align to section size
-> 
-> This patch introduces a batched trimming feature, which submits split discard
-> commands.
-> 
-> This is to avoid long latency due to huge trim commands.
-> If fstrim was triggered ranging from 0 to the end of device, we should lock
-> all the checkpoint-related mutexes, resulting in very long latency.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+But we forgot to set flag for newly created dir, due to this reason, our newly
+created dir pages could not be allocated from high address memory. Fix it.
 
-Looks good to me.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 547a2de..e79639a9 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -299,7 +299,7 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	inode->i_op = &f2fs_dir_inode_operations;
+ 	inode->i_fop = &f2fs_dir_operations;
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+-	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
++	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
+ 
+ 	set_inode_flag(F2FS_I(inode), FI_INC_LINK);
+ 	f2fs_lock_op(sbi);
+-- 
+2.2.1
+
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming. The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net/
