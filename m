@@ -1,26 +1,63 @@
-From: Leon Romanovsky <leon@leon.nu>
-Subject: Re: [f2fs-dev] [PATCH 5/5 v4] f2fs: introduce a batched trim
-Date: Sat, 7 Feb 2015 17:57:46 +0200
-Message-ID: <CALq1K=JHCyzF6CL7FOngfFAJX_S-jJZ38umNB43fPCURR=F=dg@mail.gmail.com>
-References: <1422401503-4769-1-git-send-email-jaegeuk@kernel.org>
- <1422401503-4769-5-git-send-email-jaegeuk@kernel.org> <003b01d03bc0$a5f23d20$f1d6b760$@samsung.com>
- <20150129214117.GB17521@jaegeuk-mac02> <006701d03c4b$a62ec0c0$f28c4240$@samsung.com>
- <20150202232803.GB34575@jaegeuk-mac02.mot.com> <20150203024822.GA8798@lcm>
- <20150203200904.GA43329@jaegeuk-mac02.mot.com> <006001d04126$895e3680$9c1aa380$@samsung.com>
- <20150206061837.GA66378@jaegeuk-mac02.hsd1.ca.comcast.net>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH] f2fs: avoid data offset overflow when lseeking huge file
+Date: Mon, 09 Feb 2015 11:23:58 +0800
+Message-ID: <004501d04418$006f4360$014dca20$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150206061837.GA66378@jaegeuk-mac02.hsd1.ca.comcast.net>
+Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao2.yu@samsung.com>, Linux-FSDevel <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+xfstest generic/285 complains our issue in lseeking huge file.
 
-> +       /* for batched trimming */
-> +       int trim_sections;                      /* # of sections to trim */
-I would like to suggest to declare trim_sections variable as an
-unsigned int and not int, since it can't be negative by definition.
-What do you think about it?
+Here is the detail output of generic/285:
+"./check -f2fs tests/generic/285
+Ran: generic/285
+Failures: generic/285
+Failed 1 of 1 tests
+
+10. Test a huge file for offset overflow
+10.01 SEEK_HOLE expected 65536 or 8589934592, got 65536.          succ
+10.02 SEEK_HOLE expected 65536 or 8589934592, got 65536.          succ
+10.03 SEEK_DATA expected 0 or 0, got 0.                           succ
+10.04 SEEK_DATA expected 1 or 1, got 1.                           succ
+10.05 SEEK_HOLE expected 8589934592 or 8589934592, got 0.         FAIL
+10.06 SEEK_DATA expected 8589869056 or 8589869056, got 8589869056. succ
+10.07 SEEK_DATA expected 8589869057 or 8589869057, got 8589869057. succ
+10.08 SEEK_DATA expected 8589869056 or 8589869056, got 4294901760. FAIL"
+
+The reason of this issue is:
+We will calculate current offset through left shifting page-offset with
+PAGE_CACHE_SHIFT bits, but our page-offset is a type of unsigned long, its size
+is 4 bytes in 32-bits machine.
+
+So if our page-offset is bigger than (1 << 32 / pagesize - 1), result of left
+shifting will overflow.
+
+Let's fix this issue by casting type of page-offset to type of current offset:
+loff_t.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 5cbbc9a..7dc0ed8 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -357,7 +357,7 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+ 		/* find data/hole in dnode block */
+ 		for (; dn.ofs_in_node < end_offset;
+ 				dn.ofs_in_node++, pgofs++,
+-				data_ofs = pgofs << PAGE_CACHE_SHIFT) {
++				data_ofs = (loff_t)pgofs << PAGE_CACHE_SHIFT) {
+ 			block_t blkaddr;
+ 			blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
+ 
+-- 
+2.2.2
