@@ -1,40 +1,72 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 5/5 v4] f2fs: introduce a batched trim
-Date: Sun, 8 Feb 2015 23:04:12 -0800
-Message-ID: <20150209070412.GA72988@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <1422401503-4769-5-git-send-email-jaegeuk@kernel.org>
- <003b01d03bc0$a5f23d20$f1d6b760$@samsung.com>
- <20150129214117.GB17521@jaegeuk-mac02>
- <006701d03c4b$a62ec0c0$f28c4240$@samsung.com>
- <20150202232803.GB34575@jaegeuk-mac02.mot.com>
- <20150203024822.GA8798@lcm>
- <20150203200904.GA43329@jaegeuk-mac02.mot.com>
- <006001d04126$895e3680$9c1aa380$@samsung.com>
- <20150206061837.GA66378@jaegeuk-mac02.hsd1.ca.comcast.net>
- <CALq1K=JHCyzF6CL7FOngfFAJX_S-jJZ38umNB43fPCURR=F=dg@mail.gmail.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 2/9 v5] common/rc: add _require_fiemap and
+ _extent_hole_counts
+Date: Tue, 10 Feb 2015 16:47:48 +1100
+Message-ID: <20150210054748.GL4251@dastard>
+References: <1423204633-66673-1-git-send-email-jaegeuk@kernel.org>
+ <1423204633-66673-3-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <fstests-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CALq1K=JHCyzF6CL7FOngfFAJX_S-jJZ38umNB43fPCURR=F=dg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Leon Romanovsky <leon@leon.nu>
-Cc: Chao Yu <chao2.yu@samsung.com>, Linux-FSDevel <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <1423204633-66673-3-git-send-email-jaegeuk@kernel.org>
+Sender: fstests-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Sat, Feb 07, 2015 at 05:57:46PM +0200, Leon Romanovsky wrote:
-> Hi Jaegeuk,
+On Thu, Feb 05, 2015 at 10:37:06PM -0800, Jaegeuk Kim wrote:
+> This is to detect whether fiemap tool supports or not.
 > 
-> > +       /* for batched trimming */
-> > +       int trim_sections;                      /* # of sections to trim */
-> I would like to suggest to declare trim_sections variable as an
-> unsigned int and not int, since it can't be negative by definition.
-> What do you think about it?
+> For the follwoing tests, this patch adds general script to get extent and
+> hole counts.
+> 
+>  xfs/137         (data vs filesize)
+>  xfs/138         (data vs filesize vs truncate)
+>  xfs/139         (data vs filesize vs partial truncate)
+>  xfs/140         (data vs filesize vs extending truncate)
+>  xfs/179         (data vs filesize w/ fsync)
+>  xfs/180         (data vs filesize w/ sync)
+>  xfs/182         (data vs filesize w/ recovery)
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  common/rc     | 13 +++++++++++++
+>  tests/xfs/137 | 10 ++++++----
+>  tests/xfs/138 | 10 ++++++----
+>  tests/xfs/139 | 10 ++++++----
+>  tests/xfs/140 |  6 ++++--
+>  tests/xfs/179 |  6 ++++--
+>  tests/xfs/180 |  6 ++++--
+>  tests/xfs/182 |  6 ++++--
+>  8 files changed, 47 insertions(+), 20 deletions(-)
+> 
+> diff --git a/common/rc b/common/rc
+> index 234638b..078d3ca 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -2332,6 +2332,19 @@ _require_scratch_shutdown()
+>  	_scratch_unmount
+>  }
+>  
+> +# Does fiemap support?
+> +_require_fiemap()
+> +{
+> +	_require_xfs_io_command "fiemap"
+> +}
+> +
+> +_extent_hole_counts()
+> +{
+> +	res=`$XFS_IO_PROG -c "fiemap" $1 | tail -n +2`
+> +	echo $res | grep -v hole | wc -l | $AWK_PROG '{print $1}'
+> +	echo $res | grep hole | wc -l | $AWK_PROG '{print $1}'
+> +}
 
-Hi Leon,
+Two functions - _count_extents() and _count_holes().
 
-No problem. :)
+Cheers,
 
-I'll change that and merge the patch.
-
-Thanks,
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
