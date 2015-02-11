@@ -1,151 +1,118 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: fix sparse warnings
-Date: Tue, 10 Feb 2015 17:25:21 -0800
-Message-ID: <1423617922-87948-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 2/2] f2fs: avoid variable length array
+Date: Tue, 10 Feb 2015 17:25:22 -0800
+Message-ID: <1423617922-87948-2-git-send-email-jaegeuk@kernel.org>
+References: <1423617922-87948-1-git-send-email-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YLM3g-0007XZ-8m
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 11 Feb 2015 01:25:40 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YLM3f-0007EH-1z for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 11 Feb 2015 01:25:40 +0000
+In-Reply-To: <1423617922-87948-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch resolves the following warnings.
-
-include/trace/events/f2fs.h:150:1: warning: expression using sizeof bool
-include/trace/events/f2fs.h:180:1: warning: expression using sizeof bool
-include/trace/events/f2fs.h:990:1: warning: expression using sizeof bool
-include/trace/events/f2fs.h:990:1: warning: expression using sizeof bool
-include/trace/events/f2fs.h:150:1: warning: odd constant _Bool cast (ffffffffffffffff becomes 1)
-include/trace/events/f2fs.h:180:1: warning: odd constant _Bool cast (ffffffffffffffff becomes 1)
-include/trace/events/f2fs.h:990:1: warning: odd constant _Bool cast (ffffffffffffffff becomes 1)
-include/trace/events/f2fs.h:990:1: warning: odd constant _Bool cast (ffffffffffffffff becomes 1)
-
-fs/f2fs/checkpoint.c:27:19: warning: symbol 'inode_entry_slab' was not declared. Should it be static?
-fs/f2fs/checkpoint.c:577:15: warning: cast to restricted __le32
-fs/f2fs/checkpoint.c:592:15: warning: cast to restricted __le32
-
-fs/f2fs/trace.c:19:1: warning: symbol 'pids' was not declared. Should it be static?
-fs/f2fs/trace.c:21:21: warning: symbol 'last_io' was not declared. Should it be static?
+Instead of using variable length array, this patch let preallocate memory for
+them.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c        |  4 ++--
- fs/f2fs/f2fs.h              |  1 +
- fs/f2fs/gc.h                |  2 --
- fs/f2fs/trace.c             |  4 ++--
- include/trace/events/f2fs.h | 13 +++++++------
- 5 files changed, 12 insertions(+), 12 deletions(-)
+ fs/f2fs/debug.c   |  1 +
+ fs/f2fs/segment.c | 10 ++++++++--
+ fs/f2fs/segment.h |  1 +
+ 3 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 58d88df..7f794b7 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -574,7 +574,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
- 	if (crc_offset >= blk_size)
- 		goto invalid_cp1;
- 
--	crc = le32_to_cpu(*((__u32 *)((unsigned char *)cp_block + crc_offset)));
-+	crc = le32_to_cpu(*((__le32 *)((unsigned char *)cp_block + crc_offset)));
- 	if (!f2fs_crc_valid(crc, cp_block, crc_offset))
- 		goto invalid_cp1;
- 
-@@ -589,7 +589,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
- 	if (crc_offset >= blk_size)
- 		goto invalid_cp2;
- 
--	crc = le32_to_cpu(*((__u32 *)((unsigned char *)cp_block + crc_offset)));
-+	crc = le32_to_cpu(*((__le32 *)((unsigned char *)cp_block + crc_offset)));
- 	if (!f2fs_crc_valid(crc, cp_block, crc_offset))
- 		goto invalid_cp2;
- 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 337204d..7fa3313 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1681,6 +1681,7 @@ extern const struct address_space_operations f2fs_meta_aops;
- extern const struct inode_operations f2fs_dir_inode_operations;
- extern const struct inode_operations f2fs_symlink_inode_operations;
- extern const struct inode_operations f2fs_special_inode_operations;
-+extern struct kmem_cache *inode_entry_slab;
- 
- /*
-  * inline.c
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index d5ff97c..b4a65be 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -40,8 +40,6 @@ struct gc_inode_list {
- 	struct radix_tree_root iroot;
- };
- 
--extern struct kmem_cache *inode_entry_slab;
--
- /*
-  * inline functions
-  */
-diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-index ce01a2c..875aa81 100644
---- a/fs/f2fs/trace.c
-+++ b/fs/f2fs/trace.c
-@@ -16,9 +16,9 @@
- #include "f2fs.h"
- #include "trace.h"
- 
--RADIX_TREE(pids, GFP_ATOMIC);
-+static RADIX_TREE(pids, GFP_ATOMIC);
- static spinlock_t pids_lock;
--struct last_io_info last_io;
-+static struct last_io_info last_io;
- 
- static inline void __print_last_io(void)
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index ac2bd8e..e671373 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -142,6 +142,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
+ 	si->base_mem += MAIN_SEGS(sbi) * sizeof(struct seg_entry);
+ 	si->base_mem += f2fs_bitmap_size(MAIN_SEGS(sbi));
+ 	si->base_mem += 2 * SIT_VBLOCK_MAP_SIZE * MAIN_SEGS(sbi);
++	si->base_mem += SIT_VBLOCK_MAP_SIZE;
+ 	if (sbi->segs_per_sec > 1)
+ 		si->base_mem += MAIN_SECS(sbi) * sizeof(struct sec_entry);
+ 	si->base_mem += __bitmap_size(sbi, SIT_BITMAP);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 877a272..c9d314f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -505,7 +505,7 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	struct seg_entry *se = get_seg_entry(sbi, cpc->trim_start);
+ 	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
+ 	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
+-	unsigned long dmap[entries];
++	unsigned long *dmap = SIT_I(sbi)->tmp_map;
+ 	unsigned int start = 0, end = -1;
+ 	bool force = (cpc->reason == CP_DISCARD);
+ 	int i;
+@@ -924,7 +924,7 @@ static void __next_free_blkoff(struct f2fs_sb_info *sbi,
  {
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 6962982..5422dbf 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -149,14 +149,14 @@ DEFINE_EVENT(f2fs__inode, f2fs_sync_file_enter,
+ 	struct seg_entry *se = get_seg_entry(sbi, seg->segno);
+ 	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
+-	unsigned long target_map[entries];
++	unsigned long *target_map = SIT_I(sbi)->tmp_map;
+ 	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
+ 	unsigned long *cur_map = (unsigned long *)se->cur_valid_map;
+ 	int i, pos;
+@@ -1855,6 +1855,10 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+ 			return -ENOMEM;
+ 	}
  
- TRACE_EVENT(f2fs_sync_file_exit,
++	sit_i->tmp_map = kzalloc(SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
++	if (!sit_i->tmp_map)
++		return -ENOMEM;
++
+ 	if (sbi->segs_per_sec > 1) {
+ 		sit_i->sec_entries = vzalloc(MAIN_SECS(sbi) *
+ 					sizeof(struct sec_entry));
+@@ -2236,6 +2240,8 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+ 			kfree(sit_i->sentries[start].ckpt_valid_map);
+ 		}
+ 	}
++	kfree(sit_i->tmp_map);
++
+ 	vfree(sit_i->sentries);
+ 	vfree(sit_i->sec_entries);
+ 	kfree(sit_i->dirty_sentries_bitmap);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 421d579..ba858ca 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -189,6 +189,7 @@ struct sit_info {
+ 	char *sit_bitmap;		/* SIT bitmap pointer */
+ 	unsigned int bitmap_size;	/* SIT bitmap size */
  
--	TP_PROTO(struct inode *inode, bool need_cp, int datasync, int ret),
-+	TP_PROTO(struct inode *inode, int need_cp, int datasync, int ret),
- 
- 	TP_ARGS(inode, need_cp, datasync, ret),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
- 		__field(ino_t,	ino)
--		__field(bool,	need_cp)
-+		__field(int,	need_cp)
- 		__field(int,	datasync)
- 		__field(int,	ret)
- 	),
-@@ -185,7 +185,7 @@ TRACE_EVENT(f2fs_sync_fs,
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
--		__field(bool,	dirty)
-+		__field(int,	dirty)
- 		__field(int,	wait)
- 	),
- 
-@@ -989,14 +989,15 @@ TRACE_EVENT(f2fs_issue_discard,
- 
- TRACE_EVENT(f2fs_issue_flush,
- 
--	TP_PROTO(struct super_block *sb, bool nobarrier, bool flush_merge),
-+	TP_PROTO(struct super_block *sb, unsigned int nobarrier,
-+					unsigned int flush_merge),
- 
- 	TP_ARGS(sb, nobarrier, flush_merge),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
--		__field(bool, nobarrier)
--		__field(bool, flush_merge)
-+		__field(unsigned int, nobarrier)
-+		__field(unsigned int, flush_merge)
- 	),
- 
- 	TP_fast_assign(
++	unsigned long *tmp_map;			/* bitmap for temporal use */
+ 	unsigned long *dirty_sentries_bitmap;	/* bitmap for dirty sentries */
+ 	unsigned int dirty_sentries;		/* # of dirty sentries */
+ 	unsigned int sents_per_block;		/* # of SIT entries per block */
 -- 
 2.1.1
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming. The Go Parallel Website,
+sponsored by Intel and developed in partnership with Slashdot Media, is your
+hub for all things parallel software development, from weekly thought
+leadership blogs to news, videos, case studies, tutorials and more. Take a
+look and join the conversation now. http://goparallel.sourceforge.net/
