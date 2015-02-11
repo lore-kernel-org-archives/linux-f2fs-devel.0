@@ -1,153 +1,151 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/4] f2fs: introduce macros to convert bytes and
-	blocks in f2fs
-Date: Tue, 10 Feb 2015 13:58:44 -0800
-Message-ID: <1423605525-85348-3-git-send-email-jaegeuk@kernel.org>
-References: <1423605525-85348-1-git-send-email-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YLIpi-0002bo-IH
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 10 Feb 2015 21:59:02 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YLIph-0007be-8X for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 10 Feb 2015 21:59:02 +0000
-In-Reply-To: <1423605525-85348-1-git-send-email-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Subject: [PATCH 1/2] f2fs: fix sparse warnings
+Date: Tue, 10 Feb 2015 17:25:21 -0800
+Message-ID: <1423617922-87948-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds two macros for transition between byte and block offsets.
-Currently, f2fs only supports 4KB blocks, so use the default size for now.
+This patch resolves the following warnings.
+
+include/trace/events/f2fs.h:150:1: warning: expression using sizeof bool
+include/trace/events/f2fs.h:180:1: warning: expression using sizeof bool
+include/trace/events/f2fs.h:990:1: warning: expression using sizeof bool
+include/trace/events/f2fs.h:990:1: warning: expression using sizeof bool
+include/trace/events/f2fs.h:150:1: warning: odd constant _Bool cast (ffffffffffffffff becomes 1)
+include/trace/events/f2fs.h:180:1: warning: odd constant _Bool cast (ffffffffffffffff becomes 1)
+include/trace/events/f2fs.h:990:1: warning: odd constant _Bool cast (ffffffffffffffff becomes 1)
+include/trace/events/f2fs.h:990:1: warning: odd constant _Bool cast (ffffffffffffffff becomes 1)
+
+fs/f2fs/checkpoint.c:27:19: warning: symbol 'inode_entry_slab' was not declared. Should it be static?
+fs/f2fs/checkpoint.c:577:15: warning: cast to restricted __le32
+fs/f2fs/checkpoint.c:592:15: warning: cast to restricted __le32
+
+fs/f2fs/trace.c:19:1: warning: symbol 'pids' was not declared. Should it be static?
+fs/f2fs/trace.c:21:21: warning: symbol 'last_io' was not declared. Should it be static?
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c    | 7 +++----
- fs/f2fs/file.c          | 3 +--
- fs/f2fs/segment.c       | 8 ++++----
- include/linux/f2fs_fs.h | 4 ++++
- 4 files changed, 12 insertions(+), 10 deletions(-)
+ fs/f2fs/checkpoint.c        |  4 ++--
+ fs/f2fs/f2fs.h              |  1 +
+ fs/f2fs/gc.h                |  2 --
+ fs/f2fs/trace.c             |  4 ++--
+ include/trace/events/f2fs.h | 13 +++++++------
+ 5 files changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 31a715b..58d88df 100644
+index 58d88df..7f794b7 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -981,15 +981,14 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	/* write out checkpoint buffer at block 0 */
- 	cp_page = grab_meta_page(sbi, start_blk++);
- 	kaddr = page_address(cp_page);
--	memcpy(kaddr, ckpt, (1 << sbi->log_blocksize));
-+	memcpy(kaddr, ckpt, F2FS_BLKSIZE);
- 	set_page_dirty(cp_page);
- 	f2fs_put_page(cp_page, 1);
+@@ -574,7 +574,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 	if (crc_offset >= blk_size)
+ 		goto invalid_cp1;
  
- 	for (i = 1; i < 1 + cp_payload_blks; i++) {
- 		cp_page = grab_meta_page(sbi, start_blk++);
- 		kaddr = page_address(cp_page);
--		memcpy(kaddr, (char *)ckpt + i * F2FS_BLKSIZE,
--				(1 << sbi->log_blocksize));
-+		memcpy(kaddr, (char *)ckpt + i * F2FS_BLKSIZE, F2FS_BLKSIZE);
- 		set_page_dirty(cp_page);
- 		f2fs_put_page(cp_page, 1);
- 	}
-@@ -1009,7 +1008,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	/* writeout checkpoint block */
- 	cp_page = grab_meta_page(sbi, start_blk);
- 	kaddr = page_address(cp_page);
--	memcpy(kaddr, ckpt, (1 << sbi->log_blocksize));
-+	memcpy(kaddr, ckpt, F2FS_BLKSIZE);
- 	set_page_dirty(cp_page);
- 	f2fs_put_page(cp_page, 1);
+-	crc = le32_to_cpu(*((__u32 *)((unsigned char *)cp_block + crc_offset)));
++	crc = le32_to_cpu(*((__le32 *)((unsigned char *)cp_block + crc_offset)));
+ 	if (!f2fs_crc_valid(crc, cp_block, crc_offset))
+ 		goto invalid_cp1;
  
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7dc0ed8..790edb9 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -491,8 +491,7 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+@@ -589,7 +589,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 	if (crc_offset >= blk_size)
+ 		goto invalid_cp2;
  
- 	trace_f2fs_truncate_blocks_enter(inode, from);
+-	crc = le32_to_cpu(*((__u32 *)((unsigned char *)cp_block + crc_offset)));
++	crc = le32_to_cpu(*((__le32 *)((unsigned char *)cp_block + crc_offset)));
+ 	if (!f2fs_crc_valid(crc, cp_block, crc_offset))
+ 		goto invalid_cp2;
  
--	free_from = (pgoff_t)
--		((from + blocksize - 1) >> (sbi->log_blocksize));
-+	free_from = (pgoff_t)F2FS_BYTES_TO_BLK(from + blocksize - 1);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 337204d..7fa3313 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1681,6 +1681,7 @@ extern const struct address_space_operations f2fs_meta_aops;
+ extern const struct inode_operations f2fs_dir_inode_operations;
+ extern const struct inode_operations f2fs_symlink_inode_operations;
+ extern const struct inode_operations f2fs_special_inode_operations;
++extern struct kmem_cache *inode_entry_slab;
  
- 	if (lock)
- 		f2fs_lock_op(sbi);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9f278d1..877a272 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1048,8 +1048,8 @@ static const struct segment_allocation default_salloc_ops = {
+ /*
+  * inline.c
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index d5ff97c..b4a65be 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -40,8 +40,6 @@ struct gc_inode_list {
+ 	struct radix_tree_root iroot;
+ };
  
- int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+-extern struct kmem_cache *inode_entry_slab;
+-
+ /*
+  * inline functions
+  */
+diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
+index ce01a2c..875aa81 100644
+--- a/fs/f2fs/trace.c
++++ b/fs/f2fs/trace.c
+@@ -16,9 +16,9 @@
+ #include "f2fs.h"
+ #include "trace.h"
+ 
+-RADIX_TREE(pids, GFP_ATOMIC);
++static RADIX_TREE(pids, GFP_ATOMIC);
+ static spinlock_t pids_lock;
+-struct last_io_info last_io;
++static struct last_io_info last_io;
+ 
+ static inline void __print_last_io(void)
  {
--	__u64 start = range->start >> sbi->log_blocksize;
--	__u64 end = start + (range->len >> sbi->log_blocksize) - 1;
-+	__u64 start = F2FS_BYTES_TO_BLK(range->start);
-+	__u64 end = start + F2FS_BYTES_TO_BLK(range->len) - 1;
- 	unsigned int start_segno, end_segno;
- 	struct cp_control cpc;
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 6962982..5422dbf 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -149,14 +149,14 @@ DEFINE_EVENT(f2fs__inode, f2fs_sync_file_enter,
  
-@@ -1066,7 +1066,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
- 						GET_SEGNO(sbi, end);
- 	cpc.reason = CP_DISCARD;
--	cpc.trim_minlen = range->minlen >> sbi->log_blocksize;
-+	cpc.trim_minlen = F2FS_BYTES_TO_BLK(range->minlen);
+ TRACE_EVENT(f2fs_sync_file_exit,
  
- 	/* do checkpoint to issue discard commands safely */
- 	for (; start_segno <= end_segno; start_segno = cpc.trim_end + 1) {
-@@ -1080,7 +1080,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 		mutex_unlock(&sbi->gc_mutex);
- 	}
- out:
--	range->len = cpc.trimmed << sbi->log_blocksize;
-+	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
- 	return 0;
- }
+-	TP_PROTO(struct inode *inode, bool need_cp, int datasync, int ret),
++	TP_PROTO(struct inode *inode, int need_cp, int datasync, int ret),
  
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 0980572..a23556c 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -19,12 +19,16 @@
- #define F2FS_MAX_LOG_SECTOR_SIZE	12	/* 12 bits for 4096 bytes */
- #define F2FS_LOG_SECTORS_PER_BLOCK	3	/* log number for sector/blk */
- #define F2FS_BLKSIZE			4096	/* support only 4KB block */
-+#define F2FS_BLKSIZE_BITS		12	/* bits for F2FS_BLKSIZE */
- #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
- #define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) / F2FS_BLKSIZE)
+ 	TP_ARGS(inode, need_cp, datasync, ret),
  
- #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
- #define NEW_ADDR		((block_t)-1)	/* used as block_t addresses */
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+ 		__field(ino_t,	ino)
+-		__field(bool,	need_cp)
++		__field(int,	need_cp)
+ 		__field(int,	datasync)
+ 		__field(int,	ret)
+ 	),
+@@ -185,7 +185,7 @@ TRACE_EVENT(f2fs_sync_fs,
  
-+#define F2FS_BYTES_TO_BLK(bytes)	((bytes) >> F2FS_BLKSIZE_BITS)
-+#define F2FS_BLK_TO_BYTES(blk)		((blk) << F2FS_BLKSIZE_BITS)
-+
- /* 0, 1(node nid), 2(meta nid) are reserved node id */
- #define F2FS_RESERVED_NODE_NUM		3
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(bool,	dirty)
++		__field(int,	dirty)
+ 		__field(int,	wait)
+ 	),
  
+@@ -989,14 +989,15 @@ TRACE_EVENT(f2fs_issue_discard,
+ 
+ TRACE_EVENT(f2fs_issue_flush,
+ 
+-	TP_PROTO(struct super_block *sb, bool nobarrier, bool flush_merge),
++	TP_PROTO(struct super_block *sb, unsigned int nobarrier,
++					unsigned int flush_merge),
+ 
+ 	TP_ARGS(sb, nobarrier, flush_merge),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+-		__field(bool, nobarrier)
+-		__field(bool, flush_merge)
++		__field(unsigned int, nobarrier)
++		__field(unsigned int, flush_merge)
+ 	),
+ 
+ 	TP_fast_assign(
 -- 
 2.1.1
-
-
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming. The Go Parallel Website,
-sponsored by Intel and developed in partnership with Slashdot Media, is your
-hub for all things parallel software development, from weekly thought
-leadership blogs to news, videos, case studies, tutorials and more. Take a
-look and join the conversation now. http://goparallel.sourceforge.net/
