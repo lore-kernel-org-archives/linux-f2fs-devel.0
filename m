@@ -1,46 +1,41 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH v3 06/10] f2fs: add core functions for rb-tree
-	extent cache
-Date: Mon, 16 Feb 2015 16:10:54 +0800
-Message-ID: <006301d049c0$3c6ed7b0$b54c8710$@samsung.com>
-References: <000301d04129$d7546000$85fd2000$@samsung.com>
+Subject: [PATCH 1/4] f2fs: remove unused inline_dentry_addr
+Date: Mon, 16 Feb 2015 16:15:44 +0800
+Message-ID: <006401d049c0$dd65f720$9831e560$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <000301d04129$d7546000$85fd2000$@samsung.com>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Changman Lee' <cm224.lee@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Ping.
+inline_dentry_addr is introduced with inline dentry feature without being used,
+now we do not need to keep it for any reason, so remove it.
 
-Any comments on this patch now?
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/f2fs.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-> -----Original Message-----
-> From: Chao Yu [mailto:chao2.yu@samsung.com]
-> Sent: Thursday, February 05, 2015 5:55 PM
-> To: Jaegeuk Kim; Changman Lee
-> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH v3 06/10] f2fs: add core functions for rb-tree extent cache
-> 
-> This patch adds core functions including slab cache init function and
-> init/lookup/update/shrink/destroy function for rb-tree based extent cache.
-> 
-> Thank Jaegeuk Kim and Changman Lee as they gave much suggestion about detail
-> design and implementation of extent cache.
-> 
-> Todo:
->  * register rb-based extent cache shrink with mm shrink interface.
-> 
-> v2:
->  o move set_extent_info and __is_{extent,back,front}_mergeable into f2fs.h.
->  o introduce __{attach,detach}_extent_node for code readability.
->  o add cond_resched() when fail to invoke kmem_cache_alloc/radix_tree_insert.
->  o fix some coding style and typo issues.
-> 
-> v3:
->  o fix oops due to using an unassigned pointer.
->  o use list_del to remove extent node in shrink list.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7fa3313..a978b65 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1290,12 +1290,6 @@ static inline int f2fs_has_inline_dentry(struct inode *inode)
+ 	return is_inode_flag_set(F2FS_I(inode), FI_INLINE_DENTRY);
+ }
+ 
+-static inline void *inline_dentry_addr(struct page *page)
+-{
+-	struct f2fs_inode *ri = F2FS_INODE(page);
+-	return (void *)&(ri->i_addr[1]);
+-}
+-
+ static inline void f2fs_dentry_kunmap(struct inode *dir, struct page *page)
+ {
+ 	if (!f2fs_has_inline_dentry(dir))
+-- 
+2.2.1
