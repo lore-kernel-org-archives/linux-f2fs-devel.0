@@ -1,21 +1,26 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: remove obsolete code
-Date: Wed, 25 Feb 2015 13:47:24 -0800
-Message-ID: <1424900845-54141-1-git-send-email-jaegeuk@kernel.org>
+From: Wanpeng Li <wanpeng.li@linux.intel.com>
+Subject: Re: [PATCH] f2fs: fix recover orphan inodes
+Date: Thu, 26 Feb 2015 07:04:07 +0800
+Message-ID: <20150225230407.GA7267@kernel>
+References: <1424840017-97604-1-git-send-email-wanpeng.li@linux.intel.com>
+	<20150225183403.GA51593@jaegeuk-mac02.mot.com>
+Reply-To: Wanpeng Li <wanpeng.li@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YQjnr-0006ll-4i
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <wanpeng.li@linux.intel.com>) id 1YQlHq-0006sr-0y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 25 Feb 2015 21:47:35 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YQjnq-0004o6-B5 for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 25 Feb 2015 21:47:35 +0000
+	Wed, 25 Feb 2015 23:22:38 +0000
+Received: from mga14.intel.com ([192.55.52.115])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YQlHo-00012H-AR for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 25 Feb 2015 23:22:37 +0000
+Content-Disposition: inline
+In-Reply-To: <20150225183403.GA51593@jaegeuk-mac02.mot.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,32 +30,63 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Wanpeng Li <wanpeng.li@linux.intel.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch removes obsolete code in which summary variable is not needed.
+Hi Jaegeuk,
+On Wed, Feb 25, 2015 at 10:35:23AM -0800, Jaegeuk Kim wrote:
+>Hi Wanpeng,
+>
+>On Wed, Feb 25, 2015 at 12:53:37PM +0800, Wanpeng Li wrote:
+>> recover_orphan_inodes is used to recover orphan inodes, the meta pages 
+>> which readahead should be orphan_blkaddr - start_blk instead of orphan_blkaddr.
+>> This patch fix it.
+>> 
+>> Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
+>> ---
+>>  fs/f2fs/checkpoint.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index e6c271f..0f42ff3 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -468,9 +468,9 @@ void recover_orphan_inodes(struct f2fs_sb_info *sbi)
+>>  		le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
+>
+>Actually it seems the name, orphan_blkaddr, was wrong.
+>That should be orphan_blocks which is no need to fix like this.
+>
+>Instead, I found there is another bug below.
+>
+>>  	orphan_blkaddr = __start_sum_addr(sbi) - 1;
+>        orphan_blocks = __start_sum_addr(sbi) - 1 - 
+>			le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/recovery.c | 2 --
- 1 file changed, 2 deletions(-)
+Indeed, I will send a patch to fix it.
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 188a034..b2a92d4 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -407,8 +407,6 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 		dn.ofs_in_node++;
- 	}
- 
--	/* write node page in place */
--	set_summary(&sum, dn.nid, 0, 0);
- 	if (IS_INODE(dn.node_page))
- 		sync_inode_page(&dn);
- 
--- 
-2.1.1
+>
+>It may help to define a macro to get cp_payload.
+>
 
+Will do. Thanks for your help. ;-)
+
+Regards,
+Wanpeng Li 
+
+>>  
+>> -	ra_meta_pages(sbi, start_blk, orphan_blkaddr, META_CP);
+>> +	ra_meta_pages(sbi, start_blk, orphan_blkaddr - start_blk, META_CP);
+>
+>The orphan_blocks is enough. No need to fix this.
+>
+>>  
+>> -	for (i = 0; i < orphan_blkaddr; i++) {
+>> +	for (i = 0; i < orphan_blkaddr - start_blk; i++) {
+>
+>ditto.
+>
+>Thanks,
 
 ------------------------------------------------------------------------------
 Dive into the World of Parallel Programming The Go Parallel Website, sponsored
