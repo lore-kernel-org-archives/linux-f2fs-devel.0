@@ -1,35 +1,33 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: avoid wrong error during recovery
-Date: Thu, 26 Feb 2015 09:15:13 +0800
-Message-ID: <013001d05161$ca5fd4e0$5f1f7ea0$@samsung.com>
-References: <1424900845-54141-1-git-send-email-jaegeuk@kernel.org>
- <1424900845-54141-2-git-send-email-jaegeuk@kernel.org>
+Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: introduce macro __cp_payload
+Date: Thu, 26 Feb 2015 09:27:08 +0800
+Message-ID: <013101d05163$708b64a0$51a22de0$@samsung.com>
+References: <1424908641-76409-1-git-send-email-wanpeng.li@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1424900845-54141-2-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1424908641-76409-1-git-send-email-wanpeng.li@linux.intel.com>
 Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: 'Jaegeuk Kim' <jaegeuk@motorola.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Wanpeng Li' <wanpeng.li@linux.intel.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Hi Wanpeng,
+
 > -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Thursday, February 26, 2015 5:47 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 2/2] f2fs: avoid wrong error during recovery
+> From: Wanpeng Li [mailto:wanpeng.li@linux.intel.com]
+> Sent: Thursday, February 26, 2015 7:57 AM
+> To: Jaegeuk Kim
+> Cc: Wanpeng Li; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] [PATCH 1/2] f2fs: introduce macro __cp_payload
 > 
-> From: Jaegeuk Kim <jaegeuk@motorola.com>
+> This patch introduce macro __cp_payload.
+
+Good work! This patch looks good to me.
+
 > 
-> During the roll-forward recovery, -ENOENT for f2fs_iget can be skipped.
-> So, this error value should not be propagated.
-> 
-> Change-Id: I230ad2371e3fb4b9df42059c4a61f92c1f9838de
-> Signed-off-by: Jaegeuk Kim <jaegeuk@motorola.com>
+> Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
 
 Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-
