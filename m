@@ -1,331 +1,192 @@
-From: Filipe David Manana <fdmanana@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 2/2] generic/066: add _require_metadata_replay
-Date: Fri, 27 Feb 2015 15:09:32 +0000
-Message-ID: <CAL3q7H6CK=u_x6sKPUSotp2Uo2P2Be6McVEWYTizDuzYeEah8w@mail.gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/2] generic/066: add _require_metadata_replay
+Date: Fri, 27 Feb 2015 11:02:37 -0800
+Message-ID: <20150227190153.GB71843@jaegeuk-mac02.mot.com>
 References: <1425000227-69601-1-git-send-email-jaegeuk@kernel.org>
-	<1425000227-69601-2-git-send-email-jaegeuk@kernel.org>
-	<alpine.LFD.2.00.1502271056110.2188@localhost.localdomain>
-	<CAL3q7H50n+TmUT89sAeGsKeBsrHF4xo56ZRoZ2UZ3gw-15EUAg@mail.gmail.com>
-	<alpine.LFD.2.00.1502271351340.2188@localhost.localdomain>
-	<CAL3q7H4Mk22Reg7RpspVY_eEFdPC-phkT9cVeNcrUb36Ra4DUg@mail.gmail.com>
-	<alpine.LFD.2.00.1502271603110.2188@localhost.localdomain>
-Reply-To: fdmanana@gmail.com
+ <1425000227-69601-2-git-send-email-jaegeuk@kernel.org>
+ <alpine.LFD.2.00.1502271056110.2188@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <fstests-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.00.1502271603110.2188@localhost.localdomain>
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.00.1502271056110.2188@localhost.localdomain>
 Sender: fstests-owner@vger.kernel.org
-To: =?UTF-8?B?THVrw6HFoSBDemVybmVy?= <lczerner@redhat.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Filipe Manana <fdmanana@suse.com>, Eric Sandeen <sandeen@redhat.com>, Dave Chinner <david@fromorbit.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: =?utf-8?B?THVrw6HFoQ==?= Czerner <lczerner@redhat.com>
+Cc: Dave Chinner <david@fromorbit.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Filipe Manana <fdmanana@suse.com>, Eric Sandeen <sandeen@redhat.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, Feb 27, 2015 at 3:05 PM, Luk=C3=A1=C5=A1 Czerner <lczerner@redh=
-at.com> wrote:
-> On Fri, 27 Feb 2015, Filipe David Manana wrote:
->
->> Date: Fri, 27 Feb 2015 14:34:35 +0000
->> From: Filipe David Manana <fdmanana@gmail.com>
->> To: Luk=C3=A1=C5=A1 Czerner <lczerner@redhat.com>
->> Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Filipe Manana <fdmanana@suse.c=
-om>,
->>     Eric Sandeen <sandeen@redhat.com>, Dave Chinner <david@fromorbit=
-=2Ecom>,
->>     fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
->> Subject: Re: [f2fs-dev] [PATCH 2/2] generic/066: add _require_metada=
-ta_replay
->>
->> On Fri, Feb 27, 2015 at 1:10 PM, Luk=C3=A1=C5=A1 Czerner <lczerner@r=
-edhat.com> wrote:
->> > On Fri, 27 Feb 2015, Filipe David Manana wrote:
->> >
->> >> Date: Fri, 27 Feb 2015 11:43:36 +0000
->> >> From: Filipe David Manana <fdmanana@gmail.com>
->> >> To: Luk=C3=A1=C5=A1 Czerner <lczerner@redhat.com>
->> >> Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Filipe Manana <fdmanana@sus=
-e.com>,
->> >>     Eric Sandeen <sandeen@redhat.com>, Dave Chinner <david@fromor=
-bit.com>,
->> >>     fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.n=
-et
->> >> Subject: Re: [f2fs-dev] [PATCH 2/2] generic/066: add _require_met=
-adata_replay
->> >>
->> >> On Fri, Feb 27, 2015 at 11:34 AM, Luk=C3=A1=C5=A1 Czerner <lczern=
-er@redhat.com> wrote:
->> >> > On Thu, 26 Feb 2015, Jaegeuk Kim wrote:
->> >> >
->> >> >> Date: Thu, 26 Feb 2015 17:23:47 -0800
->> >> >> From: Jaegeuk Kim <jaegeuk@kernel.org>
->> >> >> To: Dave Chinner <david@fromorbit.com>
->> >> >> Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforg=
-e.net,
->> >> >>     Jaegeuk Kim <jaegeuk@kernel.org>, Filipe Manana <fdmanana@=
-suse.com>,
->> >> >>     Eric Sandeen <sandeen@redhat.com>
->> >> >> Subject: [PATCH 2/2] generic/066: add _require_metadata_replay
->> >> >>
->> >> >> This patch adds _require_metadata_replay to detect whether or =
-not filesystem
->> >> >> supports metadata replay.
->> >> >>
->> >> >> This should be used when:
->> >> >>
->> >> >> 1. create file A
->> >> >> 2. write file A
->> >> >> 3. fsync file A
->> >> >>
->> >> >> 4. write file A
->> >> >>
->> >> >> 5. create file B
->> >> >> 6. fsync file B
->> >> >> 7. crash!
->> >> >>
->> >> >> In this case, if filesystem supports metadata_replay, file A's=
- data written
->> >> >> by #4 should be recovered.
->> >> >
->> >> > What ? No it should not! file A was never fsync after the last
->> >> > write, so there is no guarantee that we'll have the new content=
-=2E
->> >> > "Metadata replay" suggests that we only replay metadata, not da=
-ta
->> >> > and that's what file systems usually do with they journals, cow=
-s,
->> >> > and so on...
->> >> >
->> >> > But this test is not about writing to a file, it's about changi=
-ng
->> >> > file xattr. And while extended attributes are metadata, they ar=
-e
->> >> > _not_ file system metadata and as such I think it can be very w=
-ell
->> >> > treated as data. Hence explicit fsync is needed to make sure it=
-'s
->> >> > written to the disk.
->> >> >
->> >> > Now let's look at the test itself:
->> >> >
->> >> >
->> >> >         echo "hello world!" >> $SCRATCH_MNT/foobar
->> >> >         $XFS_IO_PROG -c "fsync" $SCRATCH_MNT/foobar
->> >> >         $SETFATTR_PROG -x user.attr1 $SCRATCH_MNT/foobar
->> >> >         ln $SCRATCH_MNT/foobar $SCRATCH_MNT/foobar_link
->> >> >         touch $SCRATCH_MNT/qwerty
->> >> >         $XFS_IO_PROG -c "fsync" $SCRATCH_MNT/qwerty
->> >> >
->> >> >         _crash_and_mount
->> >> >
->> >> >         # Now only the xattr with name user.attr3 should be set=
- in our file.
->> >> >         echo "xattr names and values after second fsync log rep=
-lay:"
->> >> >         $GETFATTR_PROG --absolute-names --dump $SCRATCH_MNT/foo=
-bar |
->> >> >         _filter_scratch
->> >> >
->> >> > No it should not have only attr3 because $SCRATCH_MNT/foobar wa=
-s
->> >> > never fsynced after attr3 removal. If the internal design of th=
-e
->> >> > file system accidentally synces unrelated xattrs on unrelated f=
-sync,
->> >> > than that's fine, but that's not what we need to test for at al=
-l
->> >> > because it might not be guaranteed by all the file systems. So =
-I
->> >> > think this last part of the test is rather pointless. So I thin=
-k
->> >> > this patch is not needed as well.
->> >> >
->> >> > Or am I missing something Filipe ?
->> >>
->> >> So that second part of the test, essentially comes from this orde=
-red
->> >> metadata dependency explanation Dave gave me recently on another
->> >> thread:
->> >>
->> >> http://www.spinics.net/lists/linux-btrfs/msg42086.html
->> >
->> > It's interesting, but it really applies only to metadata updates
->> > since really we normally only journal metadata. We do not
->> > consider extended attributes to be metadata, do we ?
->> >
->> >>
->> >> Yes, I'm considering xattrs as metadata (even though they can be =
-seen
->> >> as data as well). This behaviour I'm testing for applies to ext3/=
-4 and
->> >> xfs for example (and apparently intentional, since the test passe=
-s on
->> >> these filesystems).
->> >
->> > Ok, I am confused. Clearly ext4, nor xfs consider xattrs metadata
->> > which can be tested simply by attaching xattr and crashing the fil=
-e
->> > system immediately afterwards - the new xattr will not be there -
->> > that's expected for data, but unexpected for metadata.
->>
->> Hum, my testing (on a 3.19 kernel) for both ext4 and xfs shows me
->> something different.
->> Perhaps we're testing differently.
->>
->> So I just replaced the the line that adds a hard link to our inode w=
-ith:
->>
->> $SETFATTR_PROG -n user.attr4 -v val4 $SCRATCH_MNT/foobar
->>
->> Then after the crash + mount, the new xattr is listed (with the
->> correct value val4).
->> I also tried the variants of leaving the 'ln' command and adding the
->> xattr either right before or right after the 'ln' command. For both
->> cases, the new xattr was there after crash + mount.
->>
->> How did you test?
->
-> Simply created file, fsync, added xattr and crash. But I think I am
-> confusing consistency vs. persistence again :(
+Hi Lukas,
 
-Ah in that case it's normal. You need to be sure the journal/log is
-persisted by fsyncing the other file (named 'qwerty').
-=46or the xattr removal case, if you don't fsync 'qwerty', the xattr
-'user.attr1' will still be there for file 'foobar' after crash +
-mount.
+On Fri, Feb 27, 2015 at 12:34:09PM +0100, Luk=C3=A1=C5=A1 Czerner wrote=
+:
+> On Thu, 26 Feb 2015, Jaegeuk Kim wrote:
+>=20
+> > Date: Thu, 26 Feb 2015 17:23:47 -0800
+> > From: Jaegeuk Kim <jaegeuk@kernel.org>
+> > To: Dave Chinner <david@fromorbit.com>
+> > Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net=
+,
+> >     Jaegeuk Kim <jaegeuk@kernel.org>, Filipe Manana <fdmanana@suse.=
+com>,
+> >     Eric Sandeen <sandeen@redhat.com>
+> > Subject: [PATCH 2/2] generic/066: add _require_metadata_replay
+> >=20
+> > This patch adds _require_metadata_replay to detect whether or not f=
+ilesystem
+> > supports metadata replay.
+> >=20
+> > This should be used when:
+> >=20
+> > 1. create file A
+> > 2. write file A
+> > 3. fsync file A
+> >=20
+> > 4. write file A
+> >=20
+> > 5. create file B
+> > 6. fsync file B
+> > 7. crash!
+> >=20
+> > In this case, if filesystem supports metadata_replay, file A's data=
+ written
+> > by #4 should be recovered.
+>=20
+> What ? No it should not! file A was never fsync after the last
+> write, so there is no guarantee that we'll have the new content.
+> "Metadata replay" suggests that we only replay metadata, not data
+> and that's what file systems usually do with they journals, cows,
+> and so on...
+
+I totally wrote this description insanely.
+My apologies.
+
+Yes, what I wanted to point out was the coverage of xattr recovery, not=
+ data.
+1. create file A
+2. write file A
+3. fsync file A
+
+*4. setxattr file A
+
+5. create file B
+6. fsync file B
+7. crash!
+
+What I've focussed on actually was the coverage of metadata replay whic=
+h depends
+on filesystem's design.
+
+In this case, I think the metadata log contains:
+=2E..
+1. fsync'ed file A
+2. changed xattrs on file A
+3. fsync'ed file B
+
+Currently, xfs and ext4 recover #2, and btrfs without Filipe's patch do=
+es not.
+And, I understood that this testcase intends to check #2 is recoverable=
+ or not.
+
+IMHO, however, basically filesystem doesn't need to recover #2 at all.
+So, I tried to add _require_something to check whether filesystem recov=
+ers
+written xattrs followed by any fsync'ed file coincidentally.
+
+Thanks,
 
 >
->>
->> >
->> > Now the fact that it works might be just a coincidence. Btw in the
->> > discussion Dave never mentioned xattr, he only talks about inode
->> > size and extent list changes which makes sense since those are
->> > metadata and it's expected to be "stabilised" as he very well
->> > described. I just do not think this applies to this case.
->>
->> Correct, I assumed his explanation applied to metadata in general an=
-d
->> I'm considering xattrs as metadata (though as I said before, it's no=
-t
->> unreasonable to consider them as data as well imho).
->
-> Well that's the thing I am not really sure about. Can not find any
-> documentation about this anywhere at all.
->
+>=20
+> But this test is not about writing to a file, it's about changing
+> file xattr. And while extended attributes are metadata, they are
+> _not_ file system metadata and as such I think it can be very well
+> treated as data. Hence explicit fsync is needed to make sure it's
+> written to the disk.
+>=20
+> Now let's look at the test itself:
+>=20
+>=20
+> 	echo "hello world!" >> $SCRATCH_MNT/foobar
+> 	$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/foobar
+> 	$SETFATTR_PROG -x user.attr1 $SCRATCH_MNT/foobar
+> 	ln $SCRATCH_MNT/foobar $SCRATCH_MNT/foobar_link
+> 	touch $SCRATCH_MNT/qwerty
+> 	$XFS_IO_PROG -c "fsync" $SCRATCH_MNT/qwerty
+>=20
+> 	_crash_and_mount
+>=20
+> 	# Now only the xattr with name user.attr3 should be set in our file.
+> 	echo "xattr names and values after second fsync log replay:"
+> 	$GETFATTR_PROG --absolute-names --dump $SCRATCH_MNT/foobar |
+> 	_filter_scratch
+>=20
+> No it should not have only attr3 because $SCRATCH_MNT/foobar was
+> never fsynced after attr3 removal. If the internal design of the
+> file system accidentally synces unrelated xattrs on unrelated fsync,
+> than that's fine, but that's not what we need to test for at all
+> because it might not be guaranteed by all the file systems. So I
+> think this last part of the test is rather pointless. So I think
+> this patch is not needed as well.
+>=20
+> Or am I missing something Filipe ?
+>=20
+> Thanks!
 > -Lukas
->
->>
->> >
->> > Also I think that his wording that fsync on the file implies fsync
->> > on the directory is unfortunate because it does not. However it
->> > implies that the directory will actually be stabilised as well due
->> > to journalling. But the results are the same.
->> >
->> > Anyway, maybe Dave can sprinkle some of his wisdom over this...
->>
->> Yes :)
->>
->> Thanks
->>
->> >
->> > Thanks!
->> > -Lukas
->> >
->> >>
->> >> Thanks
->> >>
->> >> >
->> >> > Thanks!
->> >> > -Lukas
->> >> >
->> >> >> Otherwise, file A is recovered to #3.
->> >> >
->> >> >
->> >> >>
->> >> >> Cc: Filipe Manana <fdmanana@suse.com>
->> >> >> Cc: Eric Sandeen <sandeen@redhat.com>
->> >> >> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->> >> >> ---
->> >> >>  common/rc         | 18 ++++++++++++++++++
->> >> >>  tests/generic/066 |  2 +-
->> >> >>  2 files changed, 19 insertions(+), 1 deletion(-)
->> >> >>
->> >> >> diff --git a/common/rc b/common/rc
->> >> >> index 1ed9df5..e6e8d1f 100644
->> >> >> --- a/common/rc
->> >> >> +++ b/common/rc
->> >> >> @@ -2372,6 +2372,24 @@ _require_metadata_journaling()
->> >> >>       esac
->> >> >>  }
->> >> >>
->> >> >> +# Does this filesystem support metadata replay?
->> >> >> +# Filesystem is able to recover metadata which were not writt=
-en by fsync
->> >> >> +# exlicitly. But another fsync'ed metadata should be followed=
- by them.
->> >> >> +_require_metadata_replay()
->> >> >> +{
->> >> >> +     _require_metadata_journaling $1
->> >> >> +
->> >> >> +     case "$FSTYP" in
->> >> >> +     f2fs)
->> >> >> +             # f2fs supports metadata_journaling, but does no=
-t recover any
->> >> >> +             # intermediate metadata which was not fsync'ed e=
-xplicitly.
->> >> >> +             _notrun "$FSTYP does not support metadata replay=
-"
->> >> >> +             ;;
->> >> >> +     *)
->> >> >> +             ;;
->> >> >> +     esac
->> >> >> +}
->> >> >> +
->> >> >>  # Does fiemap support?
->> >> >>  _require_fiemap()
->> >> >>  {
->> >> >> diff --git a/tests/generic/066 b/tests/generic/066
->> >> >> index cb36506..3fefda4 100755
->> >> >> --- a/tests/generic/066
->> >> >> +++ b/tests/generic/066
->> >> >> @@ -61,7 +61,7 @@ _need_to_be_root
->> >> >>  _require_scratch
->> >> >>  _require_dm_flakey
->> >> >>  _require_attrs
->> >> >> -_require_metadata_journaling $SCRATCH_DEV
->> >> >> +_require_metadata_replay $SCRATCH_DEV
->> >> >>
->> >> >>  _crash_and_mount()
->> >> >>  {
->> >> >>
->> >> >
->> >> > ---------------------------------------------------------------=
----------------
->> >> > Dive into the World of Parallel Programming The Go Parallel Web=
-site, sponsored
->> >> > by Intel and developed in partnership with Slashdot Media, is y=
-our hub for all
->> >> > things parallel software development, from weekly thought leade=
-rship blogs to
->> >> > news, videos, case studies, tutorials and more. Take a look and=
- join the
->> >> > conversation now. http://goparallel.sourceforge.net/
->> >> > _______________________________________________
->> >> > Linux-f2fs-devel mailing list
->> >> > Linux-f2fs-devel@lists.sourceforge.net
->> >> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->> >>
->> >>
->> >>
->> >>
->>
->>
->>
->>
-
-
-
---=20
-=46ilipe David Manana,
-
-"Reasonable men adapt themselves to the world.
- Unreasonable men adapt the world to themselves.
- That's why all progress depends on unreasonable men."
+>=20
+> > Otherwise, file A is recovered to #3.
+>=20
+>=20
+> >=20
+> > Cc: Filipe Manana <fdmanana@suse.com>
+> > Cc: Eric Sandeen <sandeen@redhat.com>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  common/rc         | 18 ++++++++++++++++++
+> >  tests/generic/066 |  2 +-
+> >  2 files changed, 19 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/common/rc b/common/rc
+> > index 1ed9df5..e6e8d1f 100644
+> > --- a/common/rc
+> > +++ b/common/rc
+> > @@ -2372,6 +2372,24 @@ _require_metadata_journaling()
+> >  	esac
+> >  }
+> > =20
+> > +# Does this filesystem support metadata replay?
+> > +# Filesystem is able to recover metadata which were not written by=
+ fsync
+> > +# exlicitly. But another fsync'ed metadata should be followed by t=
+hem.
+> > +_require_metadata_replay()
+> > +{
+> > +	_require_metadata_journaling $1
+> > +
+> > +	case "$FSTYP" in
+> > +	f2fs)
+> > +		# f2fs supports metadata_journaling, but does not recover any
+> > +		# intermediate metadata which was not fsync'ed explicitly.
+> > +		_notrun "$FSTYP does not support metadata replay"
+> > +		;;
+> > +	*)
+> > +		;;
+> > +	esac
+> > +}
+> > +
+> >  # Does fiemap support?
+> >  _require_fiemap()
+> >  {
+> > diff --git a/tests/generic/066 b/tests/generic/066
+> > index cb36506..3fefda4 100755
+> > --- a/tests/generic/066
+> > +++ b/tests/generic/066
+> > @@ -61,7 +61,7 @@ _need_to_be_root
+> >  _require_scratch
+> >  _require_dm_flakey
+> >  _require_attrs
+> > -_require_metadata_journaling $SCRATCH_DEV
+> > +_require_metadata_replay $SCRATCH_DEV
+> > =20
+> >  _crash_and_mount()
+> >  {
+> >=20
