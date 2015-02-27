@@ -1,67 +1,85 @@
-From: Wanpeng Li <wanpeng.li@linux.intel.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix max orphan inodes calculation
-Date: Fri, 27 Feb 2015 17:25:35 +0800
-Message-ID: <20150227092535.GA23044@kernel>
-References: <1425020704-10355-1-git-send-email-wanpeng.li@linux.intel.com>
- <018001d05271$6cc02c20$46408460$@samsung.com>
-Reply-To: Wanpeng Li <wanpeng.li@linux.intel.com>
+From: =?ISO-8859-15?Q?Luk=E1=A8_Czerner?= <lczerner@redhat.com>
+Subject: Re: [PATCH 1/2] generic/065: f2fs serves 64KB size with zero data
+Date: Fri, 27 Feb 2015 10:54:58 +0100 (CET)
+Message-ID: <alpine.LFD.2.00.1502271049050.2188@localhost.localdomain>
+References: <1425000227-69601-1-git-send-email-jaegeuk@kernel.org> <54EFDA67.1060606@sandeen.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <018001d05271$6cc02c20$46408460$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: Changman Lee <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Wanpeng Li <wanpeng.li@linux.intel.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <fstests-owner@vger.kernel.org>
+In-Reply-To: <54EFDA67.1060606@sandeen.net>
+Sender: fstests-owner@vger.kernel.org
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Dave Chinner <david@fromorbit.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Filipe Manana <fdmanana@suse.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
-On Fri, Feb 27, 2015 at 05:39:39PM +0800, Chao Yu wrote:
->Hi Wanpeng,
->
->> -----Original Message-----
->> From: Wanpeng Li [mailto:wanpeng.li@linux.intel.com]
->> Sent: Friday, February 27, 2015 3:05 PM
->> To: Jaegeuk Kim
->> Cc: Wanpeng Li; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
->> Subject: [f2fs-dev] [PATCH] f2fs: fix max orphan inodes calculation
->> 
->> cp_payload is introduced for sit bitmap to support large volume, and it is
->> just after the block of f2fs_checkpoint + nat bitmap, so the first segment
->> should include F2FS_CP_PACKS + NR_CURSEG_TYPE + cp_payload + orphan blocks.
->> However, current max orphan inodes calculation don't consider cp_payload,
->> this patch fix it by reducing the number of cp_payload from total blocks of
->> the first segment when calculate max orphan inodes.
->> 
->> Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
->> ---
->>  fs/f2fs/checkpoint.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index db82e09..3c9d677 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -1109,7 +1109,7 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
->>  	 * for cp pack we can have max 1020*504 orphan entries
->
->The description above should be wrong, can you please update it in this patch?
+On Thu, 26 Feb 2015, Eric Sandeen wrote:
 
-Ok, I will adjust the comments above the codes.
+> Date: Thu, 26 Feb 2015 20:45:59 -0600
+> From: Eric Sandeen <sandeen@sandeen.net>
+> To: Jaegeuk Kim <jaegeuk@kernel.org>, Dave Chinner <david@fromorbit.com>
+> Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+>     Filipe Manana <fdmanana@suse.com>
+> Subject: Re: [PATCH 1/2] generic/065: f2fs serves 64KB size with zero data
+> 
+> On 2/26/15 7:23 PM, Jaegeuk Kim wrote:
+> > The f2fs provides 64KB size with 0 data after fsync was done to directory file.
+> > 
+> > Cc: Filipe Manana <fdmanana@suse.com>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  tests/generic/065 | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/tests/generic/065 b/tests/generic/065
+> > index b5a296d..3d2b437 100755
+> > --- a/tests/generic/065
+> > +++ b/tests/generic/065
+> > @@ -139,6 +139,10 @@ ext3)
+> >  	# a 64Kb file, with all bytes having the value 0xff
+> >  	[ $hello_digest == "ecb99e6ffea7be1e5419350f725da86b" ] && digest_ok=yes
+> >  	;;
+> > +f2fs)
+> > +	# a 64Kb file, with all bytes having the value 0
+> > +	[ $hello_digest == "fcd6bcb56c1689fcef28b57c22475bad" ] && digest_ok=yes
+> > +	;;
+> 
+> whoa... I will admit to having poorly reviewed this test.  Given that this file was
+> never fsynced, I don't think the test should be looking at file contents *at all*
+> I'll do an ex post facto review, I think, and really, I think all of the above should
+> just be removed from the test.  Without fsync, we don't know what's in the file.
+> (ext3 could be mounted with writeback mode, for example).
 
->
->>  	 */
->>  	sbi->max_orphans = (sbi->blocks_per_seg - F2FS_CP_PACKS -
->> -			NR_CURSEG_TYPE) * F2FS_ORPHANS_PER_BLOCK;
->> +			NR_CURSEG_TYPE - __cp_payload(sbi)) * F2FS_ORPHANS_PER_BLOCK;
->
->There is a trivial coding style issue: "line over 80 characters"
+wow :D
 
-Will fix it.
+Different mdsums for different file systems and
 
-Regards,
-Wanpeng Li 
+"file 'hello' has expected size and content"
 
->
->Thanks,
->
+You have to have some fun from time to time ;)
+
+I can not tell whether the content of the file is important, or
+whether the explicit fsync on the file defeats the purpose of the
+test, but the easier would be to just fsync the file and then print
+out md5sum since it should be always the same no matter what file
+system you use.
+
+Or we can just not test the content of the file at all. But
+regardless of the decision we do not need this patch.
+
+Felipe what would be the best solution ?
+
+Thanks!
+
+> 
+> -Eric
+> 
+> >  *)
+> >  	# an empty file
+> >  	[ $hello_digest == "d41d8cd98f00b204e9800998ecf8427e" ] && digest_ok=yes
+> > 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe fstests" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
