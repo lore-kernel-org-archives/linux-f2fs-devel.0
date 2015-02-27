@@ -1,130 +1,215 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] fs/f2fs: add cond_resched() to
-	sync_dirty_dir_inodes()
-Date: Fri, 27 Feb 2015 13:13:14 +0100
-Message-ID: <20150227121314.GA21939@linutronix.de>
-References: <20150220201035.GA6005@linutronix.de>
-	<20150223233353.GA35245@jaegeuk-mac02>
+From: =?ISO-8859-15?Q?Luk=E1=A8_Czerner?= <lczerner@redhat.com>
+Subject: Re: [f2fs-dev] [PATCH 2/2] generic/066: add
+ _require_metadata_replay
+Date: Fri, 27 Feb 2015 14:10:55 +0100 (CET)
+Message-ID: <alpine.LFD.2.00.1502271351340.2188@localhost.localdomain>
+References: <1425000227-69601-1-git-send-email-jaegeuk@kernel.org> <1425000227-69601-2-git-send-email-jaegeuk@kernel.org> <alpine.LFD.2.00.1502271056110.2188@localhost.localdomain> <CAL3q7H50n+TmUT89sAeGsKeBsrHF4xo56ZRoZ2UZ3gw-15EUAg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <bigeasy@linutronix.de>) id 1YRJnM-0008Le-04
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 27 Feb 2015 12:13:28 +0000
-Received: from www.linutronix.de ([62.245.132.108] helo=Galois.linutronix.de)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps
-	(TLSv1:AES128-SHA:128) (Exim 4.76) id 1YRJnJ-00005g-7j
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 27 Feb 2015 12:13:27 +0000
-Content-Disposition: inline
-In-Reply-To: <20150223233353.GA35245@jaegeuk-mac02>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323328-522509084-1425042659=:2188"
+Return-path: <fstests-owner@vger.kernel.org>
+In-Reply-To: <CAL3q7H50n+TmUT89sAeGsKeBsrHF4xo56ZRoZ2UZ3gw-15EUAg@mail.gmail.com>
+Sender: fstests-owner@vger.kernel.org
+To: Filipe David Manana <fdmanana@gmail.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Filipe Manana <fdmanana@suse.com>, Eric Sandeen <sandeen@redhat.com>, Dave Chinner <david@fromorbit.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SW4gYSBwcmVlbXB0LW9mZiBlbnZpcm9tZW50IGEgYWxvdCBvZiBGUyBhY3Rpdml0eSAod3JpdGUv
-ZGVsZXRlKSBJIHJ1bgppbnRvIGEgQ1BVIHN0YWxsOgoKfCBOTUkgd2F0Y2hkb2c6IEJVRzogc29m
-dCBsb2NrdXAgLSBDUFUjMCBzdHVjayBmb3IgMjJzISBba3dvcmtlci91MjoyOjU5XQp8IE1vZHVs
-ZXMgbGlua2VkIGluOgp8IENQVTogMCBQSUQ6IDU5IENvbW06IGt3b3JrZXIvdTI6MiBUYWludGVk
-OiBHICAgICAgICBXICAgICAgMy4xOS4wLTAwMDEwLWcxMGMxMWM1MWZmZWQgIzE1Mwp8IFdvcmtx
-dWV1ZTogd3JpdGViYWNrIGJkaV93cml0ZWJhY2tfd29ya2ZuIChmbHVzaC0xNzk6MCkKfCB0YXNr
-OiBkZjIzMDAwMCB0aTogZGYyM2UwMDAgdGFzay50aTogZGYyM2UwMDAKfCBQQyBpcyBhdCBfX3N1
-Ym1pdF9tZXJnZWRfYmlvKzB4NmMvMHgxMTAKfCBMUiBpcyBhdCBmMmZzX3N1Ym1pdF9tZXJnZWRf
-YmlvKzB4NzQvMHg4MArigKYKfCBbPGMwMDA4NWM0Pl0gKGdpY19oYW5kbGVfaXJxKSBmcm9tIFs8
-YzAwMTJlODQ+XSAoX19pcnFfc3ZjKzB4NDQvMHg1YykKfCBFeGNlcHRpb24gc3RhY2soMHhkZjIz
-ZmI0OCB0byAweGRmMjNmYjkwKQp8IGZiNDA6ICAgICAgICAgICAgICAgICAgIGRlZWYzNDg0IGZm
-ZmYwMDAxIGZmZmYwMDAxIDAwMDAwMDI3IGRlZWYzNDg0IDAwMDAwMDAwCnwgZmI2MDogZGVlZjM0
-NDAgMDAwMDAwMDAgZGU0MjYwMDAgZGVlZjM0ZWMgZGVlZmM0NDAgZGYyM2ZiYjQgZGYyM2ZiYjgg
-ZGYyM2ZiOTAKfCBmYjgwOiBjMDIxOTFmMCBjMDIxOGZhMCA2MDAwMDAxMyBmZmZmZmZmZgp8IFs8
-YzAwMTJlODQ+XSAoX19pcnFfc3ZjKSBmcm9tIFs8YzAyMThmYTA+XSAoX19zdWJtaXRfbWVyZ2Vk
-X2JpbysweDZjLzB4MTEwKQp8IFs8YzAyMThmYTA+XSAoX19zdWJtaXRfbWVyZ2VkX2JpbykgZnJv
-bSBbPGMwMjE5MWYwPl0gKGYyZnNfc3VibWl0X21lcmdlZF9iaW8rMHg3NC8weDgwKQp8IFs8YzAy
-MTkxZjA+XSAoZjJmc19zdWJtaXRfbWVyZ2VkX2JpbykgZnJvbSBbPGMwMjE2MjRjPl0gKHN5bmNf
-ZGlydHlfZGlyX2lub2RlcysweDcwLzB4NzgpCnwgWzxjMDIxNjI0Yz5dIChzeW5jX2RpcnR5X2Rp
-cl9pbm9kZXMpIGZyb20gWzxjMDIxNjM1OD5dICh3cml0ZV9jaGVja3BvaW50KzB4MTA0LzB4YzEw
-KQp8IFs8YzAyMTYzNTg+XSAod3JpdGVfY2hlY2twb2ludCkgZnJvbSBbPGMwMjEyMzFjPl0gKGYy
-ZnNfc3luY19mcysweDgwLzB4YmMpCnwgWzxjMDIxMjMxYz5dIChmMmZzX3N5bmNfZnMpIGZyb20g
-WzxjMDIyMWViOD5dIChmMmZzX2JhbGFuY2VfZnNfYmcrMHg0Yy8weDY4KQp8IFs8YzAyMjFlYjg+
-XSAoZjJmc19iYWxhbmNlX2ZzX2JnKSBmcm9tIFs8YzAyMWU5Yjg+XSAoZjJmc193cml0ZV9ub2Rl
-X3BhZ2VzKzB4NDAvMHgxMTApCnwgWzxjMDIxZTliOD5dIChmMmZzX3dyaXRlX25vZGVfcGFnZXMp
-IGZyb20gWzxjMDBkZTYyMD5dIChkb193cml0ZXBhZ2VzKzB4MzQvMHg0OCkKfCBbPGMwMGRlNjIw
-Pl0gKGRvX3dyaXRlcGFnZXMpIGZyb20gWzxjMDE0NTcxND5dIChfX3dyaXRlYmFja19zaW5nbGVf
-aW5vZGUrMHg1MC8weDIyOCkKfCBbPGMwMTQ1NzE0Pl0gKF9fd3JpdGViYWNrX3NpbmdsZV9pbm9k
-ZSkgZnJvbSBbPGMwMTQ2MTg0Pl0gKHdyaXRlYmFja19zYl9pbm9kZXMrMHgxYTgvMHgzNzgpCnwg
-WzxjMDE0NjE4ND5dICh3cml0ZWJhY2tfc2JfaW5vZGVzKSBmcm9tIFs8YzAxNDYzZTQ+XSAoX193
-cml0ZWJhY2tfaW5vZGVzX3diKzB4OTAvMHhjOCkKfCBbPGMwMTQ2M2U0Pl0gKF9fd3JpdGViYWNr
-X2lub2Rlc193YikgZnJvbSBbPGMwMTQ2NWY4Pl0gKHdiX3dyaXRlYmFjaysweDFkYy8weDI4YykK
-fCBbPGMwMTQ2NWY4Pl0gKHdiX3dyaXRlYmFjaykgZnJvbSBbPGMwMTQ2ZGQ4Pl0gKGJkaV93cml0
-ZWJhY2tfd29ya2ZuKzB4MmFjLzB4NDYwKQp8IFs8YzAxNDZkZDg+XSAoYmRpX3dyaXRlYmFja193
-b3JrZm4pIGZyb20gWzxjMDAzYzNmYz5dIChwcm9jZXNzX29uZV93b3JrKzB4MTFjLzB4M2E0KQp8
-IFs8YzAwM2MzZmM+XSAocHJvY2Vzc19vbmVfd29yaykgZnJvbSBbPGMwMDNjODQ0Pl0gKHdvcmtl
-cl90aHJlYWQrMHgxN2MvMHg0OTApCnwgWzxjMDAzYzg0ND5dICh3b3JrZXJfdGhyZWFkKSBmcm9t
-IFs8YzAwNDEzOTg+XSAoa3RocmVhZCsweGVjLzB4MTAwKQp8IFs8YzAwNDEzOTg+XSAoa3RocmVh
-ZCkgZnJvbSBbPGMwMDBlZDEwPl0gKHJldF9mcm9tX2ZvcmsrMHgxNC8weDI0KQoKQXMgaXQgdHVy
-bnMgb3V0LCB0aGUgY29kZSBsb29wcyBpbiBzeW5jX2RpcnR5X2Rpcl9pbm9kZXMoKSBhbmQgd2Fp
-dHMgZm9yCm90aGVycyB0byBtYWtlIHByb2dyZXNzIGJ1dCBzaW5jZSBpdCBuZXZlciBsZWF2ZXMg
-dGhlIENQVSB0aGVyZSBpcyBubwpwcm9ncmVzcyBtYWRlLiBBdCB0aGUgdGltZSBvZiB0aGlzIHN0
-YWxsLCB0aGVyZSBpcyBhbHNvIGEgcm0gcHJvY2VzcwpibG9ja2VkOgp8IHJtICAgICAgICAgICAg
-ICBSIHJ1bm5pbmcgICAgICAwICAxOTg5ICAgMTc3NCAweDAwMDAwMDAwCnwgWzxjMDQ3YzU1Yz5d
-IChfX3NjaGVkdWxlKSBmcm9tIFs8YzAwNDg2ZGM+XSAoX19jb25kX3Jlc2NoZWQrMHgzMC8weDRj
-KQp8IFs8YzAwNDg2ZGM+XSAoX19jb25kX3Jlc2NoZWQpIGZyb20gWzxjMDQ3YzhjOD5dIChfY29u
-ZF9yZXNjaGVkKzB4NGMvMHg1NCkKfCBbPGMwNDdjOGM4Pl0gKF9jb25kX3Jlc2NoZWQpIGZyb20g
-WzxjMDBlMWFlYz5dICh0cnVuY2F0ZV9pbm9kZV9wYWdlc19yYW5nZSsweDFmMC8weDVlOCkKfCBb
-PGMwMGUxYWVjPl0gKHRydW5jYXRlX2lub2RlX3BhZ2VzX3JhbmdlKSBmcm9tIFs8YzAwZTFmZDg+
-XSAodHJ1bmNhdGVfaW5vZGVfcGFnZXMrMHgyOC8weDMwKQp8IFs8YzAwZTFmZDg+XSAodHJ1bmNh
-dGVfaW5vZGVfcGFnZXMpIGZyb20gWzxjMDBlMjE0OD5dICh0cnVuY2F0ZV9pbm9kZV9wYWdlc19m
-aW5hbCsweDYwLzB4NjQpCnwgWzxjMDBlMjE0OD5dICh0cnVuY2F0ZV9pbm9kZV9wYWdlc19maW5h
-bCkgZnJvbSBbPGMwMjBjOTJjPl0gKGYyZnNfZXZpY3RfaW5vZGUrMHg0Yy8weDI2OCkKfCBbPGMw
-MjBjOTJjPl0gKGYyZnNfZXZpY3RfaW5vZGUpIGZyb20gWzxjMDEzNzIxND5dIChldmljdCsweDk0
-LzB4MTQwKQp8IFs8YzAxMzcyMTQ+XSAoZXZpY3QpIGZyb20gWzxjMDEzNzdlOD5dIChpcHV0KzB4
-YzgvMHgxMzQpCnwgWzxjMDEzNzdlOD5dIChpcHV0KSBmcm9tIFs8YzAxMzMzZTQ+XSAoZF9kZWxl
-dGUrMHgxNTQvMHgxODApCnwgWzxjMDEzMzNlND5dIChkX2RlbGV0ZSkgZnJvbSBbPGMwMTI5ODcw
-Pl0gKHZmc19ybWRpcisweDExNC8weDEyYykKfCBbPGMwMTI5ODcwPl0gKHZmc19ybWRpcikgZnJv
-bSBbPGMwMTJkNjQ0Pl0gKGRvX3JtZGlyKzB4MTU4LzB4MTY4KQp8IFs8YzAxMmQ2NDQ+XSAoZG9f
-cm1kaXIpIGZyb20gWzxjMDEyZGQ5MD5dIChTeVNfdW5saW5rYXQrMHgzMC8weDNjKQp8IFs8YzAx
-MmRkOTA+XSAoU3lTX3VubGlua2F0KSBmcm9tIFs8YzAwMGVjNDA+XSAocmV0X2Zhc3Rfc3lzY2Fs
-bCsweDAvMHg0YykKCkFzIGV4cGxhaW5lZCBieSBKYWVnZXVrIEtpbToKfFRoaXMgaW5vZGUgaXMg
-dGhlIGRpcmVjdG9yeSAoYy5mLiwgZG9fcm1kaXIpIGNhdXNpbmcgYSBpbmZpbml0ZSBsb29wIG9u
-CnxzeW5jX2RpcnR5X2Rpcl9pbm9kZXMuCnxUaGUgc3luY19kaXJ0eV9kaXJfaW5vZGVzIHRyaWVz
-IHRvIGZsdXNoIGRpcnR5IGRlbnRyeSBwYWdlcywgYnV0IGlmIHRoZQp8aW5vZGUgaXMgdW5kZXIg
-ZXZpY3Rpb24sIGl0IHN1Ym1pdHMgYmlvcyBhbmQgZG8gaXQgYWdhaW4gdW50aWwgZXZpY3Rpb24K
-fGlzIGZpbmlzaGVkLgoKVGhpcyBwYXRjaCBhZGRzIGEgY29uZF9yZXNjaGVkKCkgKGFzIHN1Z2dl
-c3RlZCBieSBKYWVnZXVrKSBhZnRlciBhIEJJTwppcyBzdWJtaXR0ZWQgc28gb3RoZXIgdGhyZWFk
-IGNhbiBtYWtlIHByb2dyZXNzLgoKU2lnbmVkLW9mZi1ieTogU2ViYXN0aWFuIEFuZHJ6ZWogU2ll
-d2lvciA8YmlnZWFzeUBsaW51dHJvbml4LmRlPgotLS0KSGkgSmFlZ2V1aywKCj5Ib3cgYWJvdXQg
-YWRkaW5nIGNvbmRfcmVzY2hlZCgpIHJpZ2h0IGFmdGVyIGYyZnNfc3VibWl0X21lcmdlZF9iaW8g
-aW4KPnN5bmNfZGlydHlfZGlyX2lub2Rlcz8KPgo+Q291bGQgeW91IHRlc3QgdGhpcz8KClNvIEkg
-YWRkZWQgaXQgYXMgeW91IHN1Z2dzdGVkLiBJJ3ZlIHNlZW4gdGhhdCB0aGUgdHdvIGZ1bmN0aW9u
-IGxvb3BlZApmb3IgPjVzZWMgYnV0IHRoZSBzeXN0ZW0gZGlkIG5vdCBmcmVlemUgbGlrZSBiZWZv
-cmUgdGhhdCBwYXRjaC4gU28gaXQKc2VlbXMgdG8gd29yaywgdGhhbmtzLgoKIGZzL2YyZnMvY2hl
-Y2twb2ludC5jIHwgMSArCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKCmRpZmYgLS1n
-aXQgYS9mcy9mMmZzL2NoZWNrcG9pbnQuYyBiL2ZzL2YyZnMvY2hlY2twb2ludC5jCmluZGV4IDdm
-Nzk0YjcyYjNiNy4uYTJhZDNkZjM5ZjI0IDEwMDY0NAotLS0gYS9mcy9mMmZzL2NoZWNrcG9pbnQu
-YworKysgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwpAQCAtNzk2LDYgKzc5Niw3IEBAIHZvaWQgc3lu
-Y19kaXJ0eV9kaXJfaW5vZGVzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKIAkJICogd3JpYmFj
-a2luZyBkZW50cnkgcGFnZXMgaW4gdGhlIGZyZWVpbmcgaW5vZGUuCiAJCSAqLwogCQlmMmZzX3N1
-Ym1pdF9tZXJnZWRfYmlvKHNiaSwgREFUQSwgV1JJVEUpOworCQljb25kX3Jlc2NoZWQoKTsKIAl9
-CiAJZ290byByZXRyeTsKIH0KLS0gCjIuMS40CgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KRGl2ZSBp
-bnRvIHRoZSBXb3JsZCBvZiBQYXJhbGxlbCBQcm9ncmFtbWluZyBUaGUgR28gUGFyYWxsZWwgV2Vi
-c2l0ZSwgc3BvbnNvcmVkCmJ5IEludGVsIGFuZCBkZXZlbG9wZWQgaW4gcGFydG5lcnNoaXAgd2l0
-aCBTbGFzaGRvdCBNZWRpYSwgaXMgeW91ciBodWIgZm9yIGFsbAp0aGluZ3MgcGFyYWxsZWwgc29m
-dHdhcmUgZGV2ZWxvcG1lbnQsIGZyb20gd2Vla2x5IHRob3VnaHQgbGVhZGVyc2hpcCBibG9ncyB0
-bwpuZXdzLCB2aWRlb3MsIGNhc2Ugc3R1ZGllcywgdHV0b3JpYWxzIGFuZCBtb3JlLiBUYWtlIGEg
-bG9vayBhbmQgam9pbiB0aGUgCmNvbnZlcnNhdGlvbiBub3cuIGh0dHA6Ly9nb3BhcmFsbGVsLnNv
-dXJjZWZvcmdlLm5ldC8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0
-cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
-dGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-522509084-1425042659=:2188
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Fri, 27 Feb 2015, Filipe David Manana wrote:
+
+> Date: Fri, 27 Feb 2015 11:43:36 +0000
+> From: Filipe David Manana <fdmanana@gmail.com>
+> To: Lukáš Czerner <lczerner@redhat.com>
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Filipe Manana <fdmanana@suse.com>,
+>     Eric Sandeen <sandeen@redhat.com>, Dave Chinner <david@fromorbit.com>,
+>     fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 2/2] generic/066: add _require_metadata_replay
+> 
+> On Fri, Feb 27, 2015 at 11:34 AM, Lukáš Czerner <lczerner@redhat.com> wrote:
+> > On Thu, 26 Feb 2015, Jaegeuk Kim wrote:
+> >
+> >> Date: Thu, 26 Feb 2015 17:23:47 -0800
+> >> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> >> To: Dave Chinner <david@fromorbit.com>
+> >> Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+> >>     Jaegeuk Kim <jaegeuk@kernel.org>, Filipe Manana <fdmanana@suse.com>,
+> >>     Eric Sandeen <sandeen@redhat.com>
+> >> Subject: [PATCH 2/2] generic/066: add _require_metadata_replay
+> >>
+> >> This patch adds _require_metadata_replay to detect whether or not filesystem
+> >> supports metadata replay.
+> >>
+> >> This should be used when:
+> >>
+> >> 1. create file A
+> >> 2. write file A
+> >> 3. fsync file A
+> >>
+> >> 4. write file A
+> >>
+> >> 5. create file B
+> >> 6. fsync file B
+> >> 7. crash!
+> >>
+> >> In this case, if filesystem supports metadata_replay, file A's data written
+> >> by #4 should be recovered.
+> >
+> > What ? No it should not! file A was never fsync after the last
+> > write, so there is no guarantee that we'll have the new content.
+> > "Metadata replay" suggests that we only replay metadata, not data
+> > and that's what file systems usually do with they journals, cows,
+> > and so on...
+> >
+> > But this test is not about writing to a file, it's about changing
+> > file xattr. And while extended attributes are metadata, they are
+> > _not_ file system metadata and as such I think it can be very well
+> > treated as data. Hence explicit fsync is needed to make sure it's
+> > written to the disk.
+> >
+> > Now let's look at the test itself:
+> >
+> >
+> >         echo "hello world!" >> $SCRATCH_MNT/foobar
+> >         $XFS_IO_PROG -c "fsync" $SCRATCH_MNT/foobar
+> >         $SETFATTR_PROG -x user.attr1 $SCRATCH_MNT/foobar
+> >         ln $SCRATCH_MNT/foobar $SCRATCH_MNT/foobar_link
+> >         touch $SCRATCH_MNT/qwerty
+> >         $XFS_IO_PROG -c "fsync" $SCRATCH_MNT/qwerty
+> >
+> >         _crash_and_mount
+> >
+> >         # Now only the xattr with name user.attr3 should be set in our file.
+> >         echo "xattr names and values after second fsync log replay:"
+> >         $GETFATTR_PROG --absolute-names --dump $SCRATCH_MNT/foobar |
+> >         _filter_scratch
+> >
+> > No it should not have only attr3 because $SCRATCH_MNT/foobar was
+> > never fsynced after attr3 removal. If the internal design of the
+> > file system accidentally synces unrelated xattrs on unrelated fsync,
+> > than that's fine, but that's not what we need to test for at all
+> > because it might not be guaranteed by all the file systems. So I
+> > think this last part of the test is rather pointless. So I think
+> > this patch is not needed as well.
+> >
+> > Or am I missing something Filipe ?
+> 
+> So that second part of the test, essentially comes from this ordered
+> metadata dependency explanation Dave gave me recently on another
+> thread:
+> 
+> http://www.spinics.net/lists/linux-btrfs/msg42086.html
+
+It's interesting, but it really applies only to metadata updates
+since really we normally only journal metadata. We do not
+consider extended attributes to be metadata, do we ?
+
+> 
+> Yes, I'm considering xattrs as metadata (even though they can be seen
+> as data as well). This behaviour I'm testing for applies to ext3/4 and
+> xfs for example (and apparently intentional, since the test passes on
+> these filesystems).
+
+Ok, I am confused. Clearly ext4, nor xfs consider xattrs metadata
+which can be tested simply by attaching xattr and crashing the file
+system immediately afterwards - the new xattr will not be there -
+that's expected for data, but unexpected for metadata.
+
+Now the fact that it works might be just a coincidence. Btw in the
+discussion Dave never mentioned xattr, he only talks about inode
+size and extent list changes which makes sense since those are
+metadata and it's expected to be "stabilised" as he very well
+described. I just do not think this applies to this case.
+
+Also I think that his wording that fsync on the file implies fsync
+on the directory is unfortunate because it does not. However it
+implies that the directory will actually be stabilised as well due
+to journalling. But the results are the same.
+
+Anyway, maybe Dave can sprinkle some of his wisdom over this...
+
+Thanks!
+-Lukas
+
+> 
+> Thanks
+> 
+> >
+> > Thanks!
+> > -Lukas
+> >
+> >> Otherwise, file A is recovered to #3.
+> >
+> >
+> >>
+> >> Cc: Filipe Manana <fdmanana@suse.com>
+> >> Cc: Eric Sandeen <sandeen@redhat.com>
+> >> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >> ---
+> >>  common/rc         | 18 ++++++++++++++++++
+> >>  tests/generic/066 |  2 +-
+> >>  2 files changed, 19 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/common/rc b/common/rc
+> >> index 1ed9df5..e6e8d1f 100644
+> >> --- a/common/rc
+> >> +++ b/common/rc
+> >> @@ -2372,6 +2372,24 @@ _require_metadata_journaling()
+> >>       esac
+> >>  }
+> >>
+> >> +# Does this filesystem support metadata replay?
+> >> +# Filesystem is able to recover metadata which were not written by fsync
+> >> +# exlicitly. But another fsync'ed metadata should be followed by them.
+> >> +_require_metadata_replay()
+> >> +{
+> >> +     _require_metadata_journaling $1
+> >> +
+> >> +     case "$FSTYP" in
+> >> +     f2fs)
+> >> +             # f2fs supports metadata_journaling, but does not recover any
+> >> +             # intermediate metadata which was not fsync'ed explicitly.
+> >> +             _notrun "$FSTYP does not support metadata replay"
+> >> +             ;;
+> >> +     *)
+> >> +             ;;
+> >> +     esac
+> >> +}
+> >> +
+> >>  # Does fiemap support?
+> >>  _require_fiemap()
+> >>  {
+> >> diff --git a/tests/generic/066 b/tests/generic/066
+> >> index cb36506..3fefda4 100755
+> >> --- a/tests/generic/066
+> >> +++ b/tests/generic/066
+> >> @@ -61,7 +61,7 @@ _need_to_be_root
+> >>  _require_scratch
+> >>  _require_dm_flakey
+> >>  _require_attrs
+> >> -_require_metadata_journaling $SCRATCH_DEV
+> >> +_require_metadata_replay $SCRATCH_DEV
+> >>
+> >>  _crash_and_mount()
+> >>  {
+> >>
+> >
+> > ------------------------------------------------------------------------------
+> > Dive into the World of Parallel Programming The Go Parallel Website, sponsored
+> > by Intel and developed in partnership with Slashdot Media, is your hub for all
+> > things parallel software development, from weekly thought leadership blogs to
+> > news, videos, case studies, tutorials and more. Take a look and join the
+> > conversation now. http://goparallel.sourceforge.net/
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
+> 
+> 
+--8323328-522509084-1425042659=:2188--
