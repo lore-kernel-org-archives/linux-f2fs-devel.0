@@ -1,39 +1,84 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: fix the number of orphan inode blocks
-Date: Thu, 26 Feb 2015 09:33:55 +0800
-Message-ID: <013201d05164$637b7880$2a726980$@samsung.com>
-References: <1424908641-76409-1-git-send-email-wanpeng.li@linux.intel.com>
- <1424908641-76409-2-git-send-email-wanpeng.li@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1424908641-76409-2-git-send-email-wanpeng.li@linux.intel.com>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Wanpeng Li' <wanpeng.li@linux.intel.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 2/2] generic/066: add _require_metadata_replay
+Date: Thu, 26 Feb 2015 17:23:47 -0800
+Message-ID: <1425000227-69601-2-git-send-email-jaegeuk@kernel.org>
+References: <1425000227-69601-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <fstests-owner@vger.kernel.org>
+In-Reply-To: <1425000227-69601-1-git-send-email-jaegeuk@kernel.org>
+Sender: fstests-owner@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>, Filipe Manana <fdmanana@suse.com>, Eric Sandeen <sandeen@redhat.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Wanpeng,
+This patch adds _require_metadata_replay to detect whether or not filesystem
+supports metadata replay.
 
-> -----Original Message-----
-> From: Wanpeng Li [mailto:wanpeng.li@linux.intel.com]
-> Sent: Thursday, February 26, 2015 7:57 AM
-> To: Jaegeuk Kim
-> Cc: Wanpeng Li; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH 2/2] f2fs: fix the number of orphan inode blocks
-> 
-> cp_pack_start_sum is calculated in do_checkpoint and is equal to
-> cpu_to_le32(1 + cp_payload_blks + orphan_blocks). The number of
-> orphan inode blocks is take advantage of by recover_orphan_inodes
-> to readahead meta pages and recovery inodes. However, current codes
-> forget to reduce the number of cp payload blocks when calculate
-> the number of orphan inode blocks. This patch fix it.
+This should be used when:
 
-Nice work! looks good to me. :)
+1. create file A
+2. write file A
+3. fsync file A
 
-> 
-> Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
+4. write file A
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+5. create file B
+6. fsync file B
+7. crash!
+
+In this case, if filesystem supports metadata_replay, file A's data written
+by #4 should be recovered.
+Otherwise, file A is recovered to #3.
+
+Cc: Filipe Manana <fdmanana@suse.com>
+Cc: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ common/rc         | 18 ++++++++++++++++++
+ tests/generic/066 |  2 +-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/common/rc b/common/rc
+index 1ed9df5..e6e8d1f 100644
+--- a/common/rc
++++ b/common/rc
+@@ -2372,6 +2372,24 @@ _require_metadata_journaling()
+ 	esac
+ }
+ 
++# Does this filesystem support metadata replay?
++# Filesystem is able to recover metadata which were not written by fsync
++# exlicitly. But another fsync'ed metadata should be followed by them.
++_require_metadata_replay()
++{
++	_require_metadata_journaling $1
++
++	case "$FSTYP" in
++	f2fs)
++		# f2fs supports metadata_journaling, but does not recover any
++		# intermediate metadata which was not fsync'ed explicitly.
++		_notrun "$FSTYP does not support metadata replay"
++		;;
++	*)
++		;;
++	esac
++}
++
+ # Does fiemap support?
+ _require_fiemap()
+ {
+diff --git a/tests/generic/066 b/tests/generic/066
+index cb36506..3fefda4 100755
+--- a/tests/generic/066
++++ b/tests/generic/066
+@@ -61,7 +61,7 @@ _need_to_be_root
+ _require_scratch
+ _require_dm_flakey
+ _require_attrs
+-_require_metadata_journaling $SCRATCH_DEV
++_require_metadata_replay $SCRATCH_DEV
+ 
+ _crash_and_mount()
+ {
+-- 
+2.1.1
+
