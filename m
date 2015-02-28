@@ -1,32 +1,33 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH] f2fs: don't need to collect dirty sit entries
-	and flush journal when there's no dirty sit entries
-Date: Sat, 28 Feb 2015 16:59:11 +0800
-Message-ID: <019601d05334$f097f640$d1c7e2c0$@samsung.com>
-References: <1425027170-21093-1-git-send-email-wanpeng.li@linux.intel.com>
+Subject: RE: [PATCH v2] f2fs: fix max orphan inodes calculation
+Date: Sat, 28 Feb 2015 17:00:29 +0800
+Message-ID: <019701d05335$29150580$7b3f1080$@samsung.com>
+References: <1425029893-24702-1-git-send-email-wanpeng.li@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1425027170-21093-1-git-send-email-wanpeng.li@linux.intel.com>
+In-reply-to: <1425029893-24702-1-git-send-email-wanpeng.li@linux.intel.com>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
 To: 'Wanpeng Li' <wanpeng.li@linux.intel.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 > -----Original Message-----
 > From: Wanpeng Li [mailto:wanpeng.li@linux.intel.com]
-> Sent: Friday, February 27, 2015 4:53 PM
+> Sent: Friday, February 27, 2015 5:38 PM
 > To: Jaegeuk Kim
-> Cc: linux-fsdevel@vger.kernel.org; Wanpeng Li; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH] f2fs: don't need to collect dirty sit entries and flush journal
-> when there's no dirty sit entries
+> Cc: Changman Lee; Chao Yu; linux-f2fs-devel@lists.sourceforge.net;
+> linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; Wanpeng Li
+> Subject: [PATCH v2] f2fs: fix max orphan inodes calculation
 > 
->  Don't need to collect dirty sit entries and flush sit journal to sit
->  entries when there's no dirty sit entries. This patch check dirty_sentries
->  earlier just like flush_nat_entries.
+> cp_payload is introduced for sit bitmap to support large volume, and it is
+> just after the block of f2fs_checkpoint + nat bitmap, so the first segment
+> should include F2FS_CP_PACKS + NR_CURSEG_TYPE + cp_payload + orphan blocks.
+> However, current max orphan inodes calculation don't consider cp_payload,
+> this patch fix it by reducing the number of cp_payload from total blocks of
+> the first segment when calculate max orphan inodes.
 > 
 > Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
 
