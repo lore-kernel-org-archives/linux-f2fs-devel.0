@@ -1,164 +1,69 @@
-From: nick <xerofoify@gmail.com>
-Subject: Re: [PATCH] fs/f2fs: add cond_resched() to
-	sync_dirty_dir_inodes()
-Date: Mon, 02 Mar 2015 20:32:39 -0500
-Message-ID: <54F50F37.6000207@gmail.com>
-References: <20150220201035.GA6005@linutronix.de>	<20150223233353.GA35245@jaegeuk-mac02>	<20150227121314.GA21939@linutronix.de>
-	<20150303011303.GC6541@lcm-devel.org>
+From: Changman Lee <cm224.lee@samsung.com>
+Subject: Re: [PATCH v2] f2fs: fix max orphan inodes calculation
+Date: Tue, 03 Mar 2015 10:40:22 +0900
+Message-ID: <20150303014022.GD6541@lcm-devel.org>
+References: <1425029893-24702-1-git-send-email-wanpeng.li@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <xerofoify@gmail.com>) id 1YSbhY-0001Ga-84
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 Mar 2015 01:32:48 +0000
-Received: from mail-ie0-f181.google.com ([209.85.223.181])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1YSbhX-0002le-2r
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 Mar 2015 01:32:48 +0000
-Received: by iecvy18 with SMTP id vy18so53122445iec.6
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 02 Mar 2015 17:32:41 -0800 (PST)
-In-Reply-To: <20150303011303.GC6541@lcm-devel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Changman Lee <cm224.lee@samsung.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-disposition: inline
+In-reply-to: <1425029893-24702-1-git-send-email-wanpeng.li@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao2.yu@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-CgpPbiAyMDE1LTAzLTAyIDA4OjEzIFBNLCBDaGFuZ21hbiBMZWUgd3JvdGU6Cj4gT24gRnJpLCBG
-ZWIgMjcsIDIwMTUgYXQgMDE6MTM6MTRQTSArMDEwMCwgU2ViYXN0aWFuIEFuZHJ6ZWogU2lld2lv
-ciB3cm90ZToKPj4gSW4gYSBwcmVlbXB0LW9mZiBlbnZpcm9tZW50IGEgYWxvdCBvZiBGUyBhY3Rp
-dml0eSAod3JpdGUvZGVsZXRlKSBJIHJ1bgo+PiBpbnRvIGEgQ1BVIHN0YWxsOgo+Pgo+PiB8IE5N
-SSB3YXRjaGRvZzogQlVHOiBzb2Z0IGxvY2t1cCAtIENQVSMwIHN0dWNrIGZvciAyMnMhIFtrd29y
-a2VyL3UyOjI6NTldCj4+IHwgTW9kdWxlcyBsaW5rZWQgaW46Cj4+IHwgQ1BVOiAwIFBJRDogNTkg
-Q29tbToga3dvcmtlci91MjoyIFRhaW50ZWQ6IEcgICAgICAgIFcgICAgICAzLjE5LjAtMDAwMTAt
-ZzEwYzExYzUxZmZlZCAjMTUzCj4+IHwgV29ya3F1ZXVlOiB3cml0ZWJhY2sgYmRpX3dyaXRlYmFj
-a193b3JrZm4gKGZsdXNoLTE3OTowKQo+PiB8IHRhc2s6IGRmMjMwMDAwIHRpOiBkZjIzZTAwMCB0
-YXNrLnRpOiBkZjIzZTAwMAo+PiB8IFBDIGlzIGF0IF9fc3VibWl0X21lcmdlZF9iaW8rMHg2Yy8w
-eDExMAo+PiB8IExSIGlzIGF0IGYyZnNfc3VibWl0X21lcmdlZF9iaW8rMHg3NC8weDgwCj4+IOKA
-pgo+PiB8IFs8YzAwMDg1YzQ+XSAoZ2ljX2hhbmRsZV9pcnEpIGZyb20gWzxjMDAxMmU4ND5dIChf
-X2lycV9zdmMrMHg0NC8weDVjKQo+PiB8IEV4Y2VwdGlvbiBzdGFjaygweGRmMjNmYjQ4IHRvIDB4
-ZGYyM2ZiOTApCj4+IHwgZmI0MDogICAgICAgICAgICAgICAgICAgZGVlZjM0ODQgZmZmZjAwMDEg
-ZmZmZjAwMDEgMDAwMDAwMjcgZGVlZjM0ODQgMDAwMDAwMDAKPj4gfCBmYjYwOiBkZWVmMzQ0MCAw
-MDAwMDAwMCBkZTQyNjAwMCBkZWVmMzRlYyBkZWVmYzQ0MCBkZjIzZmJiNCBkZjIzZmJiOCBkZjIz
-ZmI5MAo+PiB8IGZiODA6IGMwMjE5MWYwIGMwMjE4ZmEwIDYwMDAwMDEzIGZmZmZmZmZmCj4+IHwg
-WzxjMDAxMmU4ND5dIChfX2lycV9zdmMpIGZyb20gWzxjMDIxOGZhMD5dIChfX3N1Ym1pdF9tZXJn
-ZWRfYmlvKzB4NmMvMHgxMTApCj4+IHwgWzxjMDIxOGZhMD5dIChfX3N1Ym1pdF9tZXJnZWRfYmlv
-KSBmcm9tIFs8YzAyMTkxZjA+XSAoZjJmc19zdWJtaXRfbWVyZ2VkX2JpbysweDc0LzB4ODApCj4+
-IHwgWzxjMDIxOTFmMD5dIChmMmZzX3N1Ym1pdF9tZXJnZWRfYmlvKSBmcm9tIFs8YzAyMTYyNGM+
-XSAoc3luY19kaXJ0eV9kaXJfaW5vZGVzKzB4NzAvMHg3OCkKPj4gfCBbPGMwMjE2MjRjPl0gKHN5
-bmNfZGlydHlfZGlyX2lub2RlcykgZnJvbSBbPGMwMjE2MzU4Pl0gKHdyaXRlX2NoZWNrcG9pbnQr
-MHgxMDQvMHhjMTApCj4+IHwgWzxjMDIxNjM1OD5dICh3cml0ZV9jaGVja3BvaW50KSBmcm9tIFs8
-YzAyMTIzMWM+XSAoZjJmc19zeW5jX2ZzKzB4ODAvMHhiYykKPj4gfCBbPGMwMjEyMzFjPl0gKGYy
-ZnNfc3luY19mcykgZnJvbSBbPGMwMjIxZWI4Pl0gKGYyZnNfYmFsYW5jZV9mc19iZysweDRjLzB4
-NjgpCj4+IHwgWzxjMDIyMWViOD5dIChmMmZzX2JhbGFuY2VfZnNfYmcpIGZyb20gWzxjMDIxZTli
-OD5dIChmMmZzX3dyaXRlX25vZGVfcGFnZXMrMHg0MC8weDExMCkKPj4gfCBbPGMwMjFlOWI4Pl0g
-KGYyZnNfd3JpdGVfbm9kZV9wYWdlcykgZnJvbSBbPGMwMGRlNjIwPl0gKGRvX3dyaXRlcGFnZXMr
-MHgzNC8weDQ4KQo+PiB8IFs8YzAwZGU2MjA+XSAoZG9fd3JpdGVwYWdlcykgZnJvbSBbPGMwMTQ1
-NzE0Pl0gKF9fd3JpdGViYWNrX3NpbmdsZV9pbm9kZSsweDUwLzB4MjI4KQo+PiB8IFs8YzAxNDU3
-MTQ+XSAoX193cml0ZWJhY2tfc2luZ2xlX2lub2RlKSBmcm9tIFs8YzAxNDYxODQ+XSAod3JpdGVi
-YWNrX3NiX2lub2RlcysweDFhOC8weDM3OCkKPj4gfCBbPGMwMTQ2MTg0Pl0gKHdyaXRlYmFja19z
-Yl9pbm9kZXMpIGZyb20gWzxjMDE0NjNlND5dIChfX3dyaXRlYmFja19pbm9kZXNfd2IrMHg5MC8w
-eGM4KQo+PiB8IFs8YzAxNDYzZTQ+XSAoX193cml0ZWJhY2tfaW5vZGVzX3diKSBmcm9tIFs8YzAx
-NDY1Zjg+XSAod2Jfd3JpdGViYWNrKzB4MWRjLzB4MjhjKQo+PiB8IFs8YzAxNDY1Zjg+XSAod2Jf
-d3JpdGViYWNrKSBmcm9tIFs8YzAxNDZkZDg+XSAoYmRpX3dyaXRlYmFja193b3JrZm4rMHgyYWMv
-MHg0NjApCj4+IHwgWzxjMDE0NmRkOD5dIChiZGlfd3JpdGViYWNrX3dvcmtmbikgZnJvbSBbPGMw
-MDNjM2ZjPl0gKHByb2Nlc3Nfb25lX3dvcmsrMHgxMWMvMHgzYTQpCj4+IHwgWzxjMDAzYzNmYz5d
-IChwcm9jZXNzX29uZV93b3JrKSBmcm9tIFs8YzAwM2M4NDQ+XSAod29ya2VyX3RocmVhZCsweDE3
-Yy8weDQ5MCkKPj4gfCBbPGMwMDNjODQ0Pl0gKHdvcmtlcl90aHJlYWQpIGZyb20gWzxjMDA0MTM5
-OD5dIChrdGhyZWFkKzB4ZWMvMHgxMDApCj4+IHwgWzxjMDA0MTM5OD5dIChrdGhyZWFkKSBmcm9t
-IFs8YzAwMGVkMTA+XSAocmV0X2Zyb21fZm9yaysweDE0LzB4MjQpCj4+Cj4+IEFzIGl0IHR1cm5z
-IG91dCwgdGhlIGNvZGUgbG9vcHMgaW4gc3luY19kaXJ0eV9kaXJfaW5vZGVzKCkgYW5kIHdhaXRz
-IGZvcgo+PiBvdGhlcnMgdG8gbWFrZSBwcm9ncmVzcyBidXQgc2luY2UgaXQgbmV2ZXIgbGVhdmVz
-IHRoZSBDUFUgdGhlcmUgaXMgbm8KPj4gcHJvZ3Jlc3MgbWFkZS4gQXQgdGhlIHRpbWUgb2YgdGhp
-cyBzdGFsbCwgdGhlcmUgaXMgYWxzbyBhIHJtIHByb2Nlc3MKPj4gYmxvY2tlZDoKPj4gfCBybSAg
-ICAgICAgICAgICAgUiBydW5uaW5nICAgICAgMCAgMTk4OSAgIDE3NzQgMHgwMDAwMDAwMAo+PiB8
-IFs8YzA0N2M1NWM+XSAoX19zY2hlZHVsZSkgZnJvbSBbPGMwMDQ4NmRjPl0gKF9fY29uZF9yZXNj
-aGVkKzB4MzAvMHg0YykKPj4gfCBbPGMwMDQ4NmRjPl0gKF9fY29uZF9yZXNjaGVkKSBmcm9tIFs8
-YzA0N2M4Yzg+XSAoX2NvbmRfcmVzY2hlZCsweDRjLzB4NTQpCj4+IHwgWzxjMDQ3YzhjOD5dIChf
-Y29uZF9yZXNjaGVkKSBmcm9tIFs8YzAwZTFhZWM+XSAodHJ1bmNhdGVfaW5vZGVfcGFnZXNfcmFu
-Z2UrMHgxZjAvMHg1ZTgpCj4+IHwgWzxjMDBlMWFlYz5dICh0cnVuY2F0ZV9pbm9kZV9wYWdlc19y
-YW5nZSkgZnJvbSBbPGMwMGUxZmQ4Pl0gKHRydW5jYXRlX2lub2RlX3BhZ2VzKzB4MjgvMHgzMCkK
-Pj4gfCBbPGMwMGUxZmQ4Pl0gKHRydW5jYXRlX2lub2RlX3BhZ2VzKSBmcm9tIFs8YzAwZTIxNDg+
-XSAodHJ1bmNhdGVfaW5vZGVfcGFnZXNfZmluYWwrMHg2MC8weDY0KQo+PiB8IFs8YzAwZTIxNDg+
-XSAodHJ1bmNhdGVfaW5vZGVfcGFnZXNfZmluYWwpIGZyb20gWzxjMDIwYzkyYz5dIChmMmZzX2V2
-aWN0X2lub2RlKzB4NGMvMHgyNjgpCj4+IHwgWzxjMDIwYzkyYz5dIChmMmZzX2V2aWN0X2lub2Rl
-KSBmcm9tIFs8YzAxMzcyMTQ+XSAoZXZpY3QrMHg5NC8weDE0MCkKPj4gfCBbPGMwMTM3MjE0Pl0g
-KGV2aWN0KSBmcm9tIFs8YzAxMzc3ZTg+XSAoaXB1dCsweGM4LzB4MTM0KQo+PiB8IFs8YzAxMzc3
-ZTg+XSAoaXB1dCkgZnJvbSBbPGMwMTMzM2U0Pl0gKGRfZGVsZXRlKzB4MTU0LzB4MTgwKQo+PiB8
-IFs8YzAxMzMzZTQ+XSAoZF9kZWxldGUpIGZyb20gWzxjMDEyOTg3MD5dICh2ZnNfcm1kaXIrMHgx
-MTQvMHgxMmMpCj4+IHwgWzxjMDEyOTg3MD5dICh2ZnNfcm1kaXIpIGZyb20gWzxjMDEyZDY0ND5d
-IChkb19ybWRpcisweDE1OC8weDE2OCkKPj4gfCBbPGMwMTJkNjQ0Pl0gKGRvX3JtZGlyKSBmcm9t
-IFs8YzAxMmRkOTA+XSAoU3lTX3VubGlua2F0KzB4MzAvMHgzYykKPj4gfCBbPGMwMTJkZDkwPl0g
-KFN5U191bmxpbmthdCkgZnJvbSBbPGMwMDBlYzQwPl0gKHJldF9mYXN0X3N5c2NhbGwrMHgwLzB4
-NGMpCj4+Cj4+IEFzIGV4cGxhaW5lZCBieSBKYWVnZXVrIEtpbToKPj4gfFRoaXMgaW5vZGUgaXMg
-dGhlIGRpcmVjdG9yeSAoYy5mLiwgZG9fcm1kaXIpIGNhdXNpbmcgYSBpbmZpbml0ZSBsb29wIG9u
-Cj4+IHxzeW5jX2RpcnR5X2Rpcl9pbm9kZXMuCj4+IHxUaGUgc3luY19kaXJ0eV9kaXJfaW5vZGVz
-IHRyaWVzIHRvIGZsdXNoIGRpcnR5IGRlbnRyeSBwYWdlcywgYnV0IGlmIHRoZQo+PiB8aW5vZGUg
-aXMgdW5kZXIgZXZpY3Rpb24sIGl0IHN1Ym1pdHMgYmlvcyBhbmQgZG8gaXQgYWdhaW4gdW50aWwg
-ZXZpY3Rpb24KPj4gfGlzIGZpbmlzaGVkLgo+Pgo+PiBUaGlzIHBhdGNoIGFkZHMgYSBjb25kX3Jl
-c2NoZWQoKSAoYXMgc3VnZ2VzdGVkIGJ5IEphZWdldWspIGFmdGVyIGEgQklPCj4+IGlzIHN1Ym1p
-dHRlZCBzbyBvdGhlciB0aHJlYWQgY2FuIG1ha2UgcHJvZ3Jlc3MuCj4+Cj4+IFNpZ25lZC1vZmYt
-Ynk6IFNlYmFzdGlhbiBBbmRyemVqIFNpZXdpb3IgPGJpZ2Vhc3lAbGludXRyb25peC5kZT4KPj4g
-LS0tCj4+IEhpIEphZWdldWssCj4+Cj4+PiBIb3cgYWJvdXQgYWRkaW5nIGNvbmRfcmVzY2hlZCgp
-IHJpZ2h0IGFmdGVyIGYyZnNfc3VibWl0X21lcmdlZF9iaW8gaW4KPj4+IHN5bmNfZGlydHlfZGly
-X2lub2Rlcz8KPj4+Cj4+PiBDb3VsZCB5b3UgdGVzdCB0aGlzPwo+Pgo+PiBTbyBJIGFkZGVkIGl0
-IGFzIHlvdSBzdWdnc3RlZC4gSSd2ZSBzZWVuIHRoYXQgdGhlIHR3byBmdW5jdGlvbiBsb29wZWQK
-Pj4gZm9yID41c2VjIGJ1dCB0aGUgc3lzdGVtIGRpZCBub3QgZnJlZXplIGxpa2UgYmVmb3JlIHRo
-YXQgcGF0Y2guIFNvIGl0Cj4+IHNlZW1zIHRvIHdvcmssIHRoYW5rcy4KPiAKPiBIaSBTZWJhc3Rp
-YW4sCj4gCj4gQWZ0ZXIgdGhpcyBwYXRjaCwgeW91ciB0ZXN0IGlzIGFsbCBkb25lIHdpdGhvdXQg
-YW55IENQVSBzdGFsbCwgUmlnaHQ/Cj4gSU1ITywgY29udGV4dCBzaG91bGQgYmUgc3dpdGNoZWQg
-d2l0aG91dCBjb25kX3Jlc2NoZWQoKSBhZnRlciBjb25zdW1lZAo+IG93biB0aW1lIHF1b3RhLiBT
-bywgaXQganVzdCByZWR1Y2VzIHN5c3RlbSBsYXRlbmN5IGR1ZSB0byB5aWVsZGluZy4KPiBJIHRo
-b3VnaHQgYW5vdGhlciB3YXkgdG8gZGlzY2FyZCBwYWdlcyBvZiBpbm9kZSB0byBiZSBldmljdGVk
-IGluIG1lcmdlZCBiaW8KPiBpbnN0ZWFkIG9mIHN1Ym1pdC4gSWYgc28sIGV2aWN0KCkgZG9lc24n
-dCBuZWVkIHRvIHdhaXQgZm9yIHdyaXRlYmFjay4KPiBKdXN0IG15IGN1cmlvdXNpdHkgb3V0IG9m
-IHRoaXMgcHJvYmxlbS4KPiAKPiBUaGFua3MsCj4gCj4+Cj4+ICBmcy9mMmZzL2NoZWNrcG9pbnQu
-YyB8IDEgKwo+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspCj4+Cj4+IGRpZmYgLS1n
-aXQgYS9mcy9mMmZzL2NoZWNrcG9pbnQuYyBiL2ZzL2YyZnMvY2hlY2twb2ludC5jCj4+IGluZGV4
-IDdmNzk0YjcyYjNiNy4uYTJhZDNkZjM5ZjI0IDEwMDY0NAo+PiAtLS0gYS9mcy9mMmZzL2NoZWNr
-cG9pbnQuYwo+PiArKysgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYwo+PiBAQCAtNzk2LDYgKzc5Niw3
-IEBAIHZvaWQgc3luY19kaXJ0eV9kaXJfaW5vZGVzKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkK
-Pj4gIAkJICogd3JpYmFja2luZyBkZW50cnkgcGFnZXMgaW4gdGhlIGZyZWVpbmcgaW5vZGUuCj4+
-ICAJCSAqLwo+PiAgCQlmMmZzX3N1Ym1pdF9tZXJnZWRfYmlvKHNiaSwgREFUQSwgV1JJVEUpOwo+
-PiArCQljb25kX3Jlc2NoZWQoKTsKPj4gIAl9Cj4+ICAJZ290byByZXRyeTsKPj4gIH0KPj4gLS0g
-Cj4+IDIuMS40Cj4gCj4gCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gRGl2ZSBpbnRvIHRoZSBX
-b3JsZCBvZiBQYXJhbGxlbCBQcm9ncmFtbWluZyBUaGUgR28gUGFyYWxsZWwgV2Vic2l0ZSwgc3Bv
-bnNvcmVkCj4gYnkgSW50ZWwgYW5kIGRldmVsb3BlZCBpbiBwYXJ0bmVyc2hpcCB3aXRoIFNsYXNo
-ZG90IE1lZGlhLCBpcyB5b3VyIGh1YiBmb3IgYWxsCj4gdGhpbmdzIHBhcmFsbGVsIHNvZnR3YXJl
-IGRldmVsb3BtZW50LCBmcm9tIHdlZWtseSB0aG91Z2h0IGxlYWRlcnNoaXAgYmxvZ3MgdG8KPiBu
-ZXdzLCB2aWRlb3MsIGNhc2Ugc3R1ZGllcywgdHV0b3JpYWxzIGFuZCBtb3JlLiBUYWtlIGEgbG9v
-ayBhbmQgam9pbiB0aGUgCj4gY29udmVyc2F0aW9uIG5vdy4gaHR0cDovL2dvcGFyYWxsZWwuc291
-cmNlZm9yZ2UubmV0Lwo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCj4gTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKPiBMaW51eC1mMmZzLWRldmVs
-QGxpc3RzLnNvdXJjZWZvcmdlLm5ldAo+IGh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
-c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwKPiAKQ2hhbmdtYW4sClRoYXQgc2VlbXMgYSBn
-b29kIGlkZWEgdW50aWwgd2UgdGhpbmsgYWJvdXQgZmlsZSBzeXN0ZW0gY2FjaGluZyBhbmQgaWYg
-dGhhdCB3b3VsZApjYXVzZSBhIHBlcmZvcm1hbmNlIGhpdC4gSSBkb24ndCBmMmZzIHRoYXQgd2hp
-bGUgYnV0IHRoaXMgc2VlbXMgdGhlIHNpbXBsZXN0IGFuZApjbGVhbmVzdCB3YXkgdG8gZG8gdGhp
-cyB3aXRob3V0IHJlbW92aW5nIHRoZSBjYWNoaW5nIG9mIHRoZSBpbm9kZXMgYW5kIHJlbGF0ZWQK
-Zmxhc2ggYmxvY2tzLgpSZWdhcmRzLApOaWNrClAuUy4gR29vZCBjYXVnaHQgZ29lcyBvdXQgdG8g
-U2ViYXN0aWFuIG9uIHRoaXMgcGF0Y2ggOikKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpEaXZlIGlu
-dG8gdGhlIFdvcmxkIG9mIFBhcmFsbGVsIFByb2dyYW1taW5nIFRoZSBHbyBQYXJhbGxlbCBXZWJz
-aXRlLCBzcG9uc29yZWQKYnkgSW50ZWwgYW5kIGRldmVsb3BlZCBpbiBwYXJ0bmVyc2hpcCB3aXRo
-IFNsYXNoZG90IE1lZGlhLCBpcyB5b3VyIGh1YiBmb3IgYWxsCnRoaW5ncyBwYXJhbGxlbCBzb2Z0
-d2FyZSBkZXZlbG9wbWVudCwgZnJvbSB3ZWVrbHkgdGhvdWdodCBsZWFkZXJzaGlwIGJsb2dzIHRv
-Cm5ld3MsIHZpZGVvcywgY2FzZSBzdHVkaWVzLCB0dXRvcmlhbHMgYW5kIG1vcmUuIFRha2UgYSBs
-b29rIGFuZCBqb2luIHRoZSAKY29udmVyc2F0aW9uIG5vdy4gaHR0cDovL2dvcGFyYWxsZWwuc291
-cmNlZm9yZ2UubmV0LwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3Rz
-LnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0
-aW5mby9saW51eC1mMmZzLWRldmVsCg==
+On Fri, Feb 27, 2015 at 05:38:13PM +0800, Wanpeng Li wrote:
+> cp_payload is introduced for sit bitmap to support large volume, and it is
+> just after the block of f2fs_checkpoint + nat bitmap, so the first segment
+> should include F2FS_CP_PACKS + NR_CURSEG_TYPE + cp_payload + orphan blocks.
+> However, current max orphan inodes calculation don't consider cp_payload,
+> this patch fix it by reducing the number of cp_payload from total blocks of
+> the first segment when calculate max orphan inodes.
+> 
+> Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
+> ---
+> v1 -> v2:
+>  * adjust comments above the codes 
+>  * fix coding style issue
+> 
+>  fs/f2fs/checkpoint.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index db82e09..a914e99 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1103,13 +1103,15 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
+>  	}
+>  
+>  	/*
+> -	 * considering 512 blocks in a segment 8 blocks are needed for cp
+> -	 * and log segment summaries. Remaining blocks are used to keep
+> -	 * orphan entries with the limitation one reserved segment
+> -	 * for cp pack we can have max 1020*504 orphan entries
+> +	 * considering 512 blocks in a segment 8+cp_payload blocks are
+> +	 * needed for cp and log segment summaries. Remaining blocks are
+> +	 * used to keep orphan entries with the limitation one reserved
+> +	 * segment for cp pack we can have max 1020*(504-cp_payload)
+> +	 * orphan entries
+>  	 */
+
+Hi all,
+
+I think below code give us information enough so it doesn't need to
+describe above comments. And someone could get confused by 1020 constants.
+How do you think about removing comments.
+
+Regards,
+Changman
+
+>  	sbi->max_orphans = (sbi->blocks_per_seg - F2FS_CP_PACKS -
+> -			NR_CURSEG_TYPE) * F2FS_ORPHANS_PER_BLOCK;
+> +			NR_CURSEG_TYPE - __cp_payload(sbi)) *
+> +				F2FS_ORPHANS_PER_BLOCK;
+>  }
+>  
+>  int __init create_checkpoint_caches(void)
+> -- 
+> 1.9.1
