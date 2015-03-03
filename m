@@ -1,69 +1,73 @@
-From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [PATCH v2] f2fs: fix max orphan inodes calculation
-Date: Tue, 03 Mar 2015 10:40:22 +0900
-Message-ID: <20150303014022.GD6541@lcm-devel.org>
-References: <1425029893-24702-1-git-send-email-wanpeng.li@linux.intel.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH] fs/f2fs: add cond_resched() to
+	sync_dirty_dir_inodes()
+Date: Tue, 03 Mar 2015 09:22:37 +0100
+Message-ID: <54F56F4D.7000202@linutronix.de>
+References: <20150220201035.GA6005@linutronix.de>
+	<20150223233353.GA35245@jaegeuk-mac02>
+	<20150227121314.GA21939@linutronix.de>
+	<20150303011303.GC6541@lcm-devel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-disposition: inline
-In-reply-to: <1425029893-24702-1-git-send-email-wanpeng.li@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao2.yu@samsung.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <bigeasy@linutronix.de>) id 1YSi6J-00062B-Mj
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 03 Mar 2015 08:22:47 +0000
+Received: from www.linutronix.de ([62.245.132.108] helo=Galois.linutronix.de)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps
+	(TLSv1:AES128-SHA:128) (Exim 4.76) id 1YSi6H-0006Lq-RE
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 03 Mar 2015 08:22:47 +0000
+In-Reply-To: <20150303011303.GC6541@lcm-devel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Changman Lee <cm224.lee@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Feb 27, 2015 at 05:38:13PM +0800, Wanpeng Li wrote:
-> cp_payload is introduced for sit bitmap to support large volume, and it is
-> just after the block of f2fs_checkpoint + nat bitmap, so the first segment
-> should include F2FS_CP_PACKS + NR_CURSEG_TYPE + cp_payload + orphan blocks.
-> However, current max orphan inodes calculation don't consider cp_payload,
-> this patch fix it by reducing the number of cp_payload from total blocks of
-> the first segment when calculate max orphan inodes.
+On 03/03/2015 02:13 AM, Changman Lee wrote:
+
+> Hi Sebastian,
+Hi Jaegeuk,
+
+> After this patch, your test is all done without any CPU stall, Right?
+
+correct.
+
+> IMHO, context should be switched without cond_resched() after consumed
+> own time quota. So, it just reduces system latency due to yielding.
+Correct but without preemption enabled there is no time quota. I still
+have the >5sec printk but since the task schedules away I don't have a
+"problem" anymore.
+
+> I thought another way to discard pages of inode to be evicted in merged bio
+> instead of submit. If so, evict() doesn't need to wait for writeback.
+You are lucky that the workqueue code is aware of "that". That means it
+will schedule another worker if the current task schedules away because
+it waits for something. Otherwise you would stall other worker.
+
+If you could solve it in another way, that would be better than just
+polling for it.
+
+> Just my curiousity out of this problem.
 > 
-> Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
-> ---
-> v1 -> v2:
->  * adjust comments above the codes 
->  * fix coding style issue
-> 
->  fs/f2fs/checkpoint.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index db82e09..a914e99 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -1103,13 +1103,15 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
->  	}
->  
->  	/*
-> -	 * considering 512 blocks in a segment 8 blocks are needed for cp
-> -	 * and log segment summaries. Remaining blocks are used to keep
-> -	 * orphan entries with the limitation one reserved segment
-> -	 * for cp pack we can have max 1020*504 orphan entries
-> +	 * considering 512 blocks in a segment 8+cp_payload blocks are
-> +	 * needed for cp and log segment summaries. Remaining blocks are
-> +	 * used to keep orphan entries with the limitation one reserved
-> +	 * segment for cp pack we can have max 1020*(504-cp_payload)
-> +	 * orphan entries
->  	 */
+> Thanks,
 
-Hi all,
+Sebastian
 
-I think below code give us information enough so it doesn't need to
-describe above comments. And someone could get confused by 1020 constants.
-How do you think about removing comments.
-
-Regards,
-Changman
-
->  	sbi->max_orphans = (sbi->blocks_per_seg - F2FS_CP_PACKS -
-> -			NR_CURSEG_TYPE) * F2FS_ORPHANS_PER_BLOCK;
-> +			NR_CURSEG_TYPE - __cp_payload(sbi)) *
-> +				F2FS_ORPHANS_PER_BLOCK;
->  }
->  
->  int __init create_checkpoint_caches(void)
-> -- 
-> 1.9.1
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming The Go Parallel Website, sponsored
+by Intel and developed in partnership with Slashdot Media, is your hub for all
+things parallel software development, from weekly thought leadership blogs to
+news, videos, case studies, tutorials and more. Take a look and join the 
+conversation now. http://goparallel.sourceforge.net/
