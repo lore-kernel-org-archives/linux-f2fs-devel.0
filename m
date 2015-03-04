@@ -1,62 +1,53 @@
-From: Michael Lass <bevan@bi-co.net>
-Subject: [PATCH] f2fstat: Fix option parsing
-Date: Wed,  4 Mar 2015 00:42:17 +0100
-Message-ID: <1425426137-4644-1-git-send-email-bevan@bi-co.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <bevan@bi-co.net>) id 1YSwYj-000504-N0
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 Mar 2015 23:49:05 +0000
-Received: from voltaic.bi-co.net ([134.119.3.22])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1YSwYg-00052q-QT
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 Mar 2015 23:49:05 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Michael Lass <bevan@bi-co.net>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: relocate Kconfig from misc filesystems
+Date: Tue,  3 Mar 2015 17:22:33 -0800
+Message-ID: <1425432153-99012-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On systems using unsigned char as default (char)EOF != EOF.
-Use int to store returned value of getopt to make it work on all platforms.
+The f2fs has been shipped on many smartphone devices during a couple of years.
+So, it is worth to relocate Kconfig into main page from misc filesystems for
+developers to choose it more easily.
 
-Signed-off-by: Michael Lass <bevan@bi-co.net>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- tools/f2fstat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/Kconfig      | 2 +-
+ fs/f2fs/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/f2fstat.c b/tools/f2fstat.c
-index 8643797..7f485b0 100644
---- a/tools/f2fstat.c
-+++ b/tools/f2fstat.c
-@@ -191,7 +191,7 @@ void usage(void)
+diff --git a/fs/Kconfig b/fs/Kconfig
+index ec35851..011f433 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -32,6 +32,7 @@ source "fs/gfs2/Kconfig"
+ source "fs/ocfs2/Kconfig"
+ source "fs/btrfs/Kconfig"
+ source "fs/nilfs2/Kconfig"
++source "fs/f2fs/Kconfig"
  
- void parse_option(int argc, char *argv[], struct options *opt)
- {
--	char option;
-+	int option;
- 	const char *option_string = "d:i:p:h";
+ config FS_DAX
+ 	bool "Direct Access (DAX) support"
+@@ -217,7 +218,6 @@ source "fs/pstore/Kconfig"
+ source "fs/sysv/Kconfig"
+ source "fs/ufs/Kconfig"
+ source "fs/exofs/Kconfig"
+-source "fs/f2fs/Kconfig"
  
- 	while ((option = getopt(argc, argv, option_string)) != EOF) {
+ endif # MISC_FILESYSTEMS
+ 
+diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+index 94e2d2f..05f0f66 100644
+--- a/fs/f2fs/Kconfig
++++ b/fs/f2fs/Kconfig
+@@ -1,5 +1,5 @@
+ config F2FS_FS
+-	tristate "F2FS filesystem support (EXPERIMENTAL)"
++	tristate "F2FS filesystem support"
+ 	depends on BLOCK
+ 	help
+ 	  F2FS is based on Log-structured File System (LFS), which supports
 -- 
-2.3.1
-
-
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming The Go Parallel Website, sponsored
-by Intel and developed in partnership with Slashdot Media, is your hub for all
-things parallel software development, from weekly thought leadership blogs to
-news, videos, case studies, tutorials and more. Take a look and join the 
-conversation now. http://goparallel.sourceforge.net/
+2.1.1
