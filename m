@@ -1,53 +1,56 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: relocate Kconfig from misc filesystems
-Date: Tue,  3 Mar 2015 17:22:33 -0800
-Message-ID: <1425432153-99012-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs-tools: release 1.4.1
+Date: Wed,  4 Mar 2015 20:38:31 -0800
+Message-ID: <1425530311-12962-1-git-send-email-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YTNYX-0007uI-9C
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Mar 2015 04:38:41 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YTNYW-0004ES-9k for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 Mar 2015 04:38:41 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-The f2fs has been shipped on many smartphone devices during a couple of years.
-So, it is worth to relocate Kconfig into main page from misc filesystems for
-developers to choose it more easily.
+This version includes mostly bug fixes.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/Kconfig      | 2 +-
- fs/f2fs/Kconfig | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ VERSION | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index ec35851..011f433 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -32,6 +32,7 @@ source "fs/gfs2/Kconfig"
- source "fs/ocfs2/Kconfig"
- source "fs/btrfs/Kconfig"
- source "fs/nilfs2/Kconfig"
-+source "fs/f2fs/Kconfig"
- 
- config FS_DAX
- 	bool "Direct Access (DAX) support"
-@@ -217,7 +218,6 @@ source "fs/pstore/Kconfig"
- source "fs/sysv/Kconfig"
- source "fs/ufs/Kconfig"
- source "fs/exofs/Kconfig"
--source "fs/f2fs/Kconfig"
- 
- endif # MISC_FILESYSTEMS
- 
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index 94e2d2f..05f0f66 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -1,5 +1,5 @@
- config F2FS_FS
--	tristate "F2FS filesystem support (EXPERIMENTAL)"
-+	tristate "F2FS filesystem support"
- 	depends on BLOCK
- 	help
- 	  F2FS is based on Log-structured File System (LFS), which supports
+diff --git a/VERSION b/VERSION
+index 4e11b43..0e58c09 100644
+--- a/VERSION
++++ b/VERSION
+@@ -1,2 +1,2 @@
+-1.4.0
+-2014-09-18
++1.4.1
++2015-03-04
 -- 
 2.1.1
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming The Go Parallel Website, sponsored
+by Intel and developed in partnership with Slashdot Media, is your hub for all
+things parallel software development, from weekly thought leadership blogs to
+news, videos, case studies, tutorials and more. Take a look and join the 
+conversation now. http://goparallel.sourceforge.net/
