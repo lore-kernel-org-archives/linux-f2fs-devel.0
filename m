@@ -1,233 +1,91 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix to truncate inline data past EOF
-Date: Thu, 5 Mar 2015 13:33:46 -0800
-Message-ID: <20150305213346.GA17190@jaegeuk-mac02.mot.com>
-References: <00d101d05728$aac41570$004c4050$@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [PATCH v2] f2fs: fix max orphan inodes calculation
+Date: Fri, 06 Mar 2015 11:37:28 +0800
+Message-ID: <012301d057bf$029602e0$07c208a0$@samsung.com>
+References: <1425029893-24702-1-git-send-email-wanpeng.li@linux.intel.com>
+ <20150303014022.GD6541@lcm-devel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YTdP3-0006jg-3e
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 05 Mar 2015 21:33:57 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YTdP1-0005uG-NH for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 05 Mar 2015 21:33:57 +0000
-Content-Disposition: inline
-In-Reply-To: <00d101d05728$aac41570$004c4050$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20150303014022.GD6541@lcm-devel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+Hi Changman,
 
-On Thu, Mar 05, 2015 at 05:41:32PM +0800, Chao Yu wrote:
-> Previously if inode is with inline data, we will try to invalid partial inline
-> data in page #0 when we truncate size of inode in truncate_partial_data_page().
-> And then we set page #0 to dirty, after this we can synchronize inode page with
-> page #0 at ->writepage().
+> -----Original Message-----
+> From: Changman Lee [mailto:cm224.lee@samsung.com]
+> Sent: Tuesday, March 03, 2015 9:40 AM
+> To: linux-f2fs-devel@lists.sourceforge.net
+> Cc: Jaegeuk Kim; Chao Yu; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH v2] f2fs: fix max orphan inodes calculation
 > 
-> But sometimes we will fail to operate page #0 in truncate_partial_data_page()
-> due to below reason:
-> a) if offset is zero, we will skip setting page #0 to dirty.
-> b) if page #0 is not uptodate, we will fail to update it as it has no mapping
-> data.
+> On Fri, Feb 27, 2015 at 05:38:13PM +0800, Wanpeng Li wrote:
+> > cp_payload is introduced for sit bitmap to support large volume, and it is
+> > just after the block of f2fs_checkpoint + nat bitmap, so the first segment
+> > should include F2FS_CP_PACKS + NR_CURSEG_TYPE + cp_payload + orphan blocks.
+> > However, current max orphan inodes calculation don't consider cp_payload,
+> > this patch fix it by reducing the number of cp_payload from total blocks of
+> > the first segment when calculate max orphan inodes.
+> >
+> > Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
+> > ---
+> > v1 -> v2:
+> >  * adjust comments above the codes
+> >  * fix coding style issue
+> >
+> >  fs/f2fs/checkpoint.c | 12 +++++++-----
+> >  1 file changed, 7 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index db82e09..a914e99 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -1103,13 +1103,15 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
+> >  	}
+> >
+> >  	/*
+> > -	 * considering 512 blocks in a segment 8 blocks are needed for cp
+> > -	 * and log segment summaries. Remaining blocks are used to keep
+> > -	 * orphan entries with the limitation one reserved segment
+> > -	 * for cp pack we can have max 1020*504 orphan entries
+> > +	 * considering 512 blocks in a segment 8+cp_payload blocks are
+> > +	 * needed for cp and log segment summaries. Remaining blocks are
+> > +	 * used to keep orphan entries with the limitation one reserved
+> > +	 * segment for cp pack we can have max 1020*(504-cp_payload)
+> > +	 * orphan entries
+> >  	 */
 > 
-> So with following operations, we will meet recent data which should be
-> truncated.
+> Hi all,
 > 
-> 1.write inline data to file
-> 2.sync first data page to inode page
-> 3.truncate file size to 0
-> 4.truncate file size to max_inline_size
-> 5.echo 1 > /proc/sys/vm/drop_caches
-> 6.read file --> meet original inline data which is remained in inode page.
-> 
-> This patch renames truncate_inline_data() to truncate_inline_inode() for code
-> readability, then intruduces new truncate_inline_data() and use it to truncate
-> inline data in page #0 and inode page in truncate_partial_data_page() for
-> fixing.
-> 
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> ---
->  fs/f2fs/f2fs.h   |  1 +
->  fs/f2fs/file.c   | 13 ++++++++-----
->  fs/f2fs/inline.c | 57 +++++++++++++++++++++++++++++++++++++++++++++++++++-----
->  3 files changed, 61 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 511d6cd..55dbbe7 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1754,6 +1754,7 @@ extern struct kmem_cache *inode_entry_slab;
->   */
->  bool f2fs_may_inline(struct inode *);
->  void read_inline_data(struct page *, struct page *);
-> +int truncate_inline_data(struct inode *, u64 from);
->  int f2fs_read_inline_data(struct inode *, struct page *);
->  int f2fs_convert_inline_page(struct dnode_of_data *, struct page *);
->  int f2fs_convert_inline_inode(struct inode *);
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index f1341c7..6c4443e 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -461,6 +461,9 @@ static int truncate_partial_data_page(struct inode *inode, u64 from)
->  	unsigned offset = from & (PAGE_CACHE_SIZE - 1);
->  	struct page *page;
->  
-> +	if (f2fs_has_inline_data(inode))
-> +		return 0;
-> +
->  	if (!offset)
->  		return 0;
->  
-> @@ -497,14 +500,14 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
->  	if (lock)
->  		f2fs_lock_op(sbi);
->  
-> -	ipage = get_node_page(sbi, inode->i_ino);
-> -	if (IS_ERR(ipage)) {
-> -		err = PTR_ERR(ipage);
-> +	if (f2fs_has_inline_data(inode)) {
-> +		err = truncate_inline_data(inode, from);
->  		goto out;
->  	}
->  
-> -	if (f2fs_has_inline_data(inode)) {
-> -		f2fs_put_page(ipage, 1);
-> +	ipage = get_node_page(sbi, inode->i_ino);
-> +	if (IS_ERR(ipage)) {
-> +		err = PTR_ERR(ipage);
->  		goto out;
->  	}
->  
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 4ba9732..a8189c92 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -50,10 +50,57 @@ void read_inline_data(struct page *page, struct page *ipage)
->  	SetPageUptodate(page);
->  }
->  
-> -static void truncate_inline_data(struct page *ipage)
-> +static void truncate_inline_inode(struct page *ipage, u64 from)
->  {
-> +	void *addr = inline_data_addr(ipage);
-> +
->  	f2fs_wait_on_page_writeback(ipage, NODE);
-> -	memset(inline_data_addr(ipage), 0, MAX_INLINE_DATA);
-> +	memset(addr + from, 0, MAX_INLINE_DATA - from);
-> +}
-> +
-> +int truncate_inline_data(struct inode *inode, u64 from)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> +	struct page *page, *ipage;
-> +	void *addr;
-> +	int err = 0;
-> +
-> +	/*
-> +	 * we should never truncate inline data past max inline data size,
-> +	 * because we always convert inline inode to normal one before
-> +	 * truncating real data if new size is past max inline data size.
-> +	 */
-> +	f2fs_bug_on(sbi, from > MAX_INLINE_DATA);
-> +
-> +	if (from == MAX_INLINE_DATA)
-> +		return 0;
-> +
-> +	page = grab_cache_page(inode->i_mapping, 0);
-> +	if (!page)
-> +		return -ENOMEM;
+> I think below code give us information enough so it doesn't need to
+> describe above comments. And someone could get confused by 1020 constants.
+> How do you think about removing comments.
 
-Do we need to grab and read #0 page?
-How about checking its cached page after on-disk truncation?
+I agree with you.
 
-1. page = get_node_page()
-2. check_inline
-3. truncate_inline_inode
-4. f2fs_put_page(ipage)
+There are nothing special need to be pay attention for the below statement,
+all meaning of statement could be easily readed as each macro in statement
+can indicate meaning of itself clearly.
 
-5. truncate_partial_data_page(inode, from, force)
-	if (!offset && !force)
- 		return 0;
-
-> +
-> +	ipage = get_node_page(sbi, inode->i_ino);
-> +	if (IS_ERR(ipage)) {
-> +		err = PTR_ERR(ipage);
-> +		goto out;
-> +	}
-> +
-> +	if (!f2fs_has_inline_data(inode)) {
-> +		f2fs_put_page(ipage, 1);
-> +		goto out;
-> +	}
-> +
-> +	truncate_inline_inode(ipage, from);
-> +	set_page_dirty(ipage);
-> +
-> +	read_inline_data(page, ipage);
-> +	f2fs_put_page(ipage, 1);
-> +
-> +	addr = inline_data_addr(page);
-> +	memset(addr + from, 0, MAX_INLINE_DATA - from);
-
-It needs to do likewise truncate_partial_data_page.
+So could you send another patch to remove it?
 
 Thanks,
 
-> +out:
-> +	f2fs_put_page(page, 1);
-> +	return err;
->  }
->  
->  int f2fs_read_inline_data(struct inode *inode, struct page *page)
-> @@ -131,7 +178,7 @@ no_update:
->  	set_inode_flag(F2FS_I(dn->inode), FI_APPEND_WRITE);
->  
->  	/* clear inline data and flag after data writeback */
-> -	truncate_inline_data(dn->inode_page);
-> +	truncate_inline_inode(dn->inode_page, 0);
->  clear_out:
->  	stat_dec_inline_inode(dn->inode);
->  	f2fs_clear_inline_inode(dn->inode);
-> @@ -245,7 +292,7 @@ process_inline:
->  	if (f2fs_has_inline_data(inode)) {
->  		ipage = get_node_page(sbi, inode->i_ino);
->  		f2fs_bug_on(sbi, IS_ERR(ipage));
-> -		truncate_inline_data(ipage);
-> +		truncate_inline_inode(ipage, 0);
->  		f2fs_clear_inline_inode(inode);
->  		update_inode(inode, ipage);
->  		f2fs_put_page(ipage, 1);
-> @@ -363,7 +410,7 @@ static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
->  	set_page_dirty(page);
->  
->  	/* clear inline dir and flag after data writeback */
-> -	truncate_inline_data(ipage);
-> +	truncate_inline_inode(ipage, 0);
->  
->  	stat_dec_inline_dir(dir);
->  	clear_inode_flag(F2FS_I(dir), FI_INLINE_DENTRY);
-> -- 
-> 2.3.1
-
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming The Go Parallel Website, sponsored
-by Intel and developed in partnership with Slashdot Media, is your hub for all
-things parallel software development, from weekly thought leadership blogs to
-news, videos, case studies, tutorials and more. Take a look and join the 
-conversation now. http://goparallel.sourceforge.net/
+> 
+> Regards,
+> Changman
+> 
+> >  	sbi->max_orphans = (sbi->blocks_per_seg - F2FS_CP_PACKS -
+> > -			NR_CURSEG_TYPE) * F2FS_ORPHANS_PER_BLOCK;
+> > +			NR_CURSEG_TYPE - __cp_payload(sbi)) *
+> > +				F2FS_ORPHANS_PER_BLOCK;
+> >  }
+> >
+> >  int __init create_checkpoint_caches(void)
+> > --
+> > 1.9.1
