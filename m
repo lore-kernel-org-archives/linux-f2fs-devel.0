@@ -1,72 +1,31 @@
 From: Yuan Zhong <yuan.mark.zhong@samsung.com>
-Subject: [PATCH 1/3] f2fs:remove unnecessary condition judgment
-Date: Sat, 07 Mar 2015 10:05:25 +0000 (GMT)
-Message-ID: <300031252.458581425722724194.JavaMail.weblogic@epmlwas08b>
+Subject: [f2fs-dev] [PATCH 2/3] f2fs:set the correct place of initializing
+ *res_page
+Date: Sat, 07 Mar 2015 10:07:43 +0000 (GMT)
+Message-ID: <190202356.458601425722862565.JavaMail.weblogic@epmlwas08b>
 Reply-To: yuan.mark.zhong@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuan.mark.zhong@samsung.com>) id 1YUBbz-0004eo-7L
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 07 Mar 2015 10:05:35 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1YUBbx-0008Fy-0T
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 07 Mar 2015 10:05:35 +0000
-Received: from epcpsbgx3.samsung.com
-	(u163.gpu120.samsung.co.kr [203.254.230.163])
-	by mailout1.samsung.com (Oracle Communications Messaging Server
-	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
-	with ESMTP id <0NKU006N46P1DU30@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 07 Mar 2015 19:05:25 +0900 (KST)
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
 MIME-version: 1.0
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Remove the unnecessary condition judgment, because 
-'max_slots' has been initialized to '0' at the beginging 
-of the function, as following:
-if (max_slots)
-       max_len = 0;
-	
-Signed-off-by: Yuan Zhong <yuan.mark.zhong@samsung.com>	
----
- fs/f2fs/dir.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 590aeef..1f1a1bc 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -139,7 +139,7 @@ struct f2fs_dir_entry *find_target_dentry(struct qstr *name, int *max_slots,
- 			!memcmp(d->filename[bit_pos], name->name, name->len))
- 			goto found;
- 
--		if (max_slots && *max_slots >= 0 && max_len > *max_slots) {
-+		if (max_slots && max_len > *max_slots) {
- 			*max_slots = max_len;
- 			max_len = 0;
- 		}
--- 
-1.7.9.5
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming The Go Parallel Website, sponsored
-by Intel and developed in partnership with Slashdot Media, is your hub for all
-things parallel software development, from weekly thought leadership blogs to
-news, videos, case studies, tutorials and more. Take a look and join the 
-conversation now. http://goparallel.sourceforge.net/
+VGhlIGZ1bmN0aW9uICdmaW5kX2luX2lubGluZV9kaXIoKScgY29udGFpbiAncmVzX3BhZ2UnDQph
+cyBhbiBhcmd1bWVudC4gU28sIHdlIHNob3VsZCBpbml0aWFpemUgJ3Jlc19wYWdlJyBiZWZvcmUN
+CnRoaXMgZnVuY3Rpb24uDQoJDQpTaWduZWQtb2ZmLWJ5OiBZdWFuIFpob25nIDx5dWFuLm1hcmsu
+emhvbmdAc2Ftc3VuZy5jb20+CQ0KLS0tDQogZnMvZjJmcy9kaXIuYyB8ICAgIDQgKystLQ0KIDEg
+ZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1n
+aXQgYS9mcy9mMmZzL2Rpci5jIGIvZnMvZjJmcy9kaXIuYw0KaW5kZXggNTkwYWVlZi4uYTI4OTA5
+ZCAxMDA2NDQNCi0tLSBhL2ZzL2YyZnMvZGlyLmMNCisrKyBiL2ZzL2YyZnMvZGlyLmMNCkBAIC0y
+MTksMTQgKzIxOSwxNCBAQCBzdHJ1Y3QgZjJmc19kaXJfZW50cnkgKmYyZnNfZmluZF9lbnRyeShz
+dHJ1Y3QgaW5vZGUgKmRpciwNCiAJdW5zaWduZWQgaW50IG1heF9kZXB0aDsNCiAJdW5zaWduZWQg
+aW50IGxldmVsOw0KIA0KKwkqcmVzX3BhZ2UgPSBOVUxMOw0KKw0KIAlpZiAoZjJmc19oYXNfaW5s
+aW5lX2RlbnRyeShkaXIpKQ0KIAkJcmV0dXJuIGZpbmRfaW5faW5saW5lX2RpcihkaXIsIGNoaWxk
+LCByZXNfcGFnZSk7DQogDQogCWlmIChucGFnZXMgPT0gMCkNCiAJCXJldHVybiBOVUxMOw0KIA0K
+LQkqcmVzX3BhZ2UgPSBOVUxMOw0KLQ0KIAluYW1lX2hhc2ggPSBmMmZzX2RlbnRyeV9oYXNoKGNo
+aWxkKTsNCiAJbWF4X2RlcHRoID0gRjJGU19JKGRpciktPmlfY3VycmVudF9kZXB0aDsNCiANCi0t
+IA0KMS43LjkuNQ==
