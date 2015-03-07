@@ -1,40 +1,72 @@
-From: Wanpeng Li <wanpeng.li@linux.intel.com>
-Subject: [PATCH 2/2] f2fs: reduce searching region of segmap when set free section
-Date: Fri,  6 Mar 2015 15:00:55 +0800
-Message-ID: <1425625255-4204-2-git-send-email-wanpeng.li@linux.intel.com>
-References: <1425625255-4204-1-git-send-email-wanpeng.li@linux.intel.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1425625255-4204-1-git-send-email-wanpeng.li@linux.intel.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+From: Yuan Zhong <yuan.mark.zhong@samsung.com>
+Subject: [PATCH 1/3] f2fs:remove unnecessary condition judgment
+Date: Sat, 07 Mar 2015 10:05:25 +0000 (GMT)
+Message-ID: <300031252.458581425722724194.JavaMail.weblogic@epmlwas08b>
+Reply-To: yuan.mark.zhong@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuan.mark.zhong@samsung.com>) id 1YUBbz-0004eo-7L
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 07 Mar 2015 10:05:35 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1YUBbx-0008Fy-0T
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 07 Mar 2015 10:05:35 +0000
+Received: from epcpsbgx3.samsung.com
+	(u163.gpu120.samsung.co.kr [203.254.230.163])
+	by mailout1.samsung.com (Oracle Communications Messaging Server
+	7u4-24.01 (7.0.4.24.0) 64bit (built Nov 17 2011))
+	with ESMTP id <0NKU006N46P1DU30@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 07 Mar 2015 19:05:25 +0900 (KST)
+MIME-version: 1.0
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Wanpeng Li <wanpeng.li@linux.intel.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-In __set_free we will check whether all segment are free in one section 
-when free one segment, in order to set section to free status. But the 
-searching region of segmap is from start segno to last segno of main 
-area, it's not necessary. So let's just only check all segment bitmap 
-of target section.
-
-Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
+Remove the unnecessary condition judgment, because 
+'max_slots' has been initialized to '0' at the beginging 
+of the function, as following:
+if (max_slots)
+       max_len = 0;
+	
+Signed-off-by: Yuan Zhong <yuan.mark.zhong@samsung.com>	
 ---
- fs/f2fs/segment.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/dir.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 7fd3511..85d7fa7 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -336,7 +336,8 @@ static inline void __set_free(struct f2fs_sb_info *sbi, unsigned int segno)
- 	clear_bit(segno, free_i->free_segmap);
- 	free_i->free_segments++;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 590aeef..1f1a1bc 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -139,7 +139,7 @@ struct f2fs_dir_entry *find_target_dentry(struct qstr *name, int *max_slots,
+ 			!memcmp(d->filename[bit_pos], name->name, name->len))
+ 			goto found;
  
--	next = find_next_bit(free_i->free_segmap, MAIN_SEGS(sbi), start_segno);
-+	next = find_next_bit(free_i->free_segmap,
-+			start_segno + sbi->segs_per_sec, start_segno);
- 	if (next >= start_segno + sbi->segs_per_sec) {
- 		clear_bit(secno, free_i->free_secmap);
- 		free_i->free_sections++;
+-		if (max_slots && *max_slots >= 0 && max_len > *max_slots) {
++		if (max_slots && max_len > *max_slots) {
+ 			*max_slots = max_len;
+ 			max_len = 0;
+ 		}
 -- 
-1.9.1
-
+1.7.9.5
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming The Go Parallel Website, sponsored
+by Intel and developed in partnership with Slashdot Media, is your hub for all
+things parallel software development, from weekly thought leadership blogs to
+news, videos, case studies, tutorials and more. Take a look and join the 
+conversation now. http://goparallel.sourceforge.net/
