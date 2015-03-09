@@ -1,36 +1,49 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [PATCH 1/2] f2fs: fix extent cache memory leak
-Date: Mon, 09 Mar 2015 10:30:18 +0800
-Message-ID: <004601d05a11$1af593b0$50e0bb10$@samsung.com>
-References: <1425625255-4204-1-git-send-email-wanpeng.li@linux.intel.com>
+From: Yuan Zhong <yuan.mark.zhong@samsung.com>
+Subject: Re: Re: [f2fs-dev] [PATCH 1/3] f2fs:remove unnecessary condition
+ judgment
+Date: Mon, 09 Mar 2015 02:38:19 +0000 (GMT)
+Message-ID: <1119963205.1194691425868698614.JavaMail.weblogic@epmlwas01c>
+Reply-To: yuan.mark.zhong@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1425625255-4204-1-git-send-email-wanpeng.li@linux.intel.com>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Wanpeng Li' <wanpeng.li@linux.intel.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=gb2312
+Content-Transfer-Encoding: base64
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: =?gb2312?Q?=3F=3F=3F?= <cm224.lee@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Wanpeng,
+SGkgTGVlLA0KDQo+T24gU2F0LCBNYXIgMDcsIDIwMTUgYXQgMTA6MDU6MjVBTSArMDAwMCwgWXVh
+biBaaG9uZyB3cm90ZToNCj4+IFJlbW92ZSB0aGUgdW5uZWNlc3NhcnkgY29uZGl0aW9uIGp1ZGdt
+ZW50LCBiZWNhdXNlIA0KPj4gJ21heF9zbG90cycgaGFzIGJlZW4gaW5pdGlhbGl6ZWQgdG8gJzAn
+IGF0IHRoZSBiZWdpbmdpbmcgDQo+PiBvZiB0aGUgZnVuY3Rpb24sIGFzIGZvbGxvd2luZzoNCj4+
+IGlmIChtYXhfc2xvdHMpDQo+PiAgICAgICAgbWF4X2xlbiA9IDA7DQo+DQo+VGhlcmUgaXMgd3Jv
+bmcgc3RhdGVtZW50LiBJdCBzaG91bGQgYmUgZml4ZWQgYXMgKm1heF9zbG90ID0gMC4NCj4NCj5U
+aGFua3MsDQoNClRoYW5rcyBmb3IgeW91ciByZXZpZXcuIA0KaXQgaXMgbXkgbWlzdGFrZS5JIHdp
+bGwgZml4IGFuZCByZXNlbmQgdGhlIHBhdGNoLg0KDQo+DQo+PiAJDQo+PiBTaWduZWQtb2ZmLWJ5
+OiBZdWFuIFpob25nIDx5dWFuLm1hcmsuemhvbmdAc2Ftc3VuZy5jb20+CQ0KPj4gLS0tDQo+PiAg
+ZnMvZjJmcy9kaXIuYyB8ICAgIDIgKy0NCj4+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24o
+KyksIDEgZGVsZXRpb24oLSkNCj4+IA0KPj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZGlyLmMgYi9m
+cy9mMmZzL2Rpci5jDQo+PiBpbmRleCA1OTBhZWVmLi4xZjFhMWJjIDEwMDY0NA0KPj4gLS0tIGEv
+ZnMvZjJmcy9kaXIuYw0KPj4gKysrIGIvZnMvZjJmcy9kaXIuYw0KPj4gQEAgLTEzOSw3ICsxMzks
+NyBAQCBzdHJ1Y3QgZjJmc19kaXJfZW50cnkgKmZpbmRfdGFyZ2V0X2RlbnRyeShzdHJ1Y3QgcXN0
+ciAqbmFtZSwgaW50ICptYXhfc2xvdHMsDQo+PiAgCQkJIW1lbWNtcChkLT5maWxlbmFtZVtiaXRf
+cG9zXSwgbmFtZS0+bmFtZSwgbmFtZS0+bGVuKSkNCj4+ICAJCQlnb3RvIGZvdW5kOw0KPj4gIA0K
+Pj4gLQkJaWYgKG1heF9zbG90cyAmJiAqbWF4X3Nsb3RzID49IDAgJiYgbWF4X2xlbiA+ICptYXhf
+c2xvdHMpIHsNCj4+ICsJCWlmIChtYXhfc2xvdHMgJiYgbWF4X2xlbiA+ICptYXhfc2xvdHMpIHsN
+Cj4+ICAJCQkqbWF4X3Nsb3RzID0gbWF4X2xlbjsNCj4+ICAJCQltYXhfbGVuID0gMDsNCj4+ICAJ
+CX0NCj4+IC0tIA0KPj4gMS43LjkuNQ0KPj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+PiBEaXZl
+IGludG8gdGhlIFdvcmxkIG9mIFBhcmFsbGVsIFByb2dyYW1taW5nIFRoZSBHbyBQYXJhbGxlbCBX
+ZWJzaXRlLCBzcG9uc29yZWQNCj4+IGJ5IEludGVsIGFuZCBkZXZlbG9wZWQgaW4gcGFydG5lcnNo
+aXAgd2l0aCBTbGFzaGRvdCBNZWRpYSwgaXMgeW91ciBodWIgZm9yIGFsbA0KPj4gdGhpbmdzIHBh
+cmFsbGVsIHNvZnR3YXJlIGRldmVsb3BtZW50LCBmcm9tIHdlZWtseSB0aG91Z2h0IGxlYWRlcnNo
+aXAgYmxvZ3MgdG8NCj4+IG5ld3MsIHZpZGVvcywgY2FzZSBzdHVkaWVzLCB0dXRvcmlhbHMgYW5k
+IG1vcmUuIFRha2UgYSBsb29rIGFuZCBqb2luIHRoZSANCj4+IGNvbnZlcnNhdGlvbiBub3cuIGh0
+dHA6Ly9nb3BhcmFsbGVsLnNvdXJjZWZvcmdlLm5ldC8NCj4+IF9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+PiBMaW51eC1mMmZzLWRldmVsIG1haWxpbmcg
+bGlzdA0KPj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj4+IGh0dHBz
+Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWw=
 
-> -----Original Message-----
-> From: Wanpeng Li [mailto:wanpeng.li@linux.intel.com]
-> Sent: Friday, March 06, 2015 3:01 PM
-> To: Jaegeuk Kim
-> Cc: Changman Lee; Chao Yu; linux-f2fs-devel@lists.sourceforge.net;
-> linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; Wanpeng Li
-> Subject: [PATCH 1/2] f2fs: fix extent cache memory leak
-> 
-> extent tree/node slab cache is created during f2fs insmod,
-> how, it isn't destroyed during f2fs rmmod, this patch fix
-> it by destroy extent tree/node slab cache once rmmod f2fs.
 
-This is my bad, thanks for your catching and fixing.
-
-> 
-> Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
-
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
