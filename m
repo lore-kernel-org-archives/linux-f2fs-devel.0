@@ -1,102 +1,349 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 3/3] f2fs:use enum dentrt_ptr type to replace
- constant use
-Date: Mon, 09 Mar 2015 14:52:29 +0800
-Message-ID: <000201d05a35$b84bdb50$28e391f0$@samsung.com>
-References: <1592448705.458641425723017011.JavaMail.weblogic@epmlwas08b>
+Subject: RE: [PATCH] f2fs: fix to truncate inline data past EOF
+Date: Mon, 09 Mar 2015 16:30:32 +0800
+Message-ID: <000601d05a43$6a8c6980$3fa53c80$@samsung.com>
+References: <00d101d05728$aac41570$004c4050$@samsung.com>
+ <20150305213346.GA17190@jaegeuk-mac02.mot.com>
+ <004501d05a10$511e4820$f35ad860$@samsung.com>
+ <20150309034855.GA4472@jaegeuk-mac02>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1592448705.458641425723017011.JavaMail.weblogic@epmlwas08b>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20150309034855.GA4472@jaegeuk-mac02>
 Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: yuan.mark.zhong@samsung.com, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yuan,
+Hi Jaegeuk,
 
 > -----Original Message-----
-> From: Yuan Zhong [mailto:yuan.mark.zhong@samsung.com]
-> Sent: Saturday, March 07, 2015 6:10 PM
-> To: Jaegeuk Kim
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH 3/3] f2fs:use enum dentrt_ptr type to replace constant use
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Monday, March 09, 2015 11:49 AM
+> To: Chao Yu
+> Cc: 'Changman Lee'; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] f2fs: fix to truncate inline data past EOF
 > 
-> The function make_dentry_ptr has an argument 'int type'.
-> This argument is used to distinguish 'block dentry' and
-> 'inline dentry'. We used 1 and 2 as the type. To make
-> code more readable, we use enum type to replace constant
-> use.
+> Hi Chao,
 > 
-> Signed-off-by: Yuan Zhong <yuan.mark.zhong@samsung.com>
+> 
+> On Mon, Mar 09, 2015 at 10:24:35AM +0800, Chao Yu wrote:
+> > Hi Jaegeuk,
+> >
+> > > -----Original Message-----
+> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > Sent: Friday, March 06, 2015 5:34 AM
+> > > To: Chao Yu
+> > > Cc: Changman Lee; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > Subject: Re: [PATCH] f2fs: fix to truncate inline data past EOF
+> > >
+> > > Hi Chao,
+> > >
+> > > On Thu, Mar 05, 2015 at 05:41:32PM +0800, Chao Yu wrote:
+> > > > Previously if inode is with inline data, we will try to invalid partial inline
+> > > > data in page #0 when we truncate size of inode in truncate_partial_data_page().
+> > > > And then we set page #0 to dirty, after this we can synchronize inode page with
+> > > > page #0 at ->writepage().
+> > > >
+> > > > But sometimes we will fail to operate page #0 in truncate_partial_data_page()
+> > > > due to below reason:
+> > > > a) if offset is zero, we will skip setting page #0 to dirty.
+> > > > b) if page #0 is not uptodate, we will fail to update it as it has no mapping
+> > > > data.
+> > > >
+> > > > So with following operations, we will meet recent data which should be
+> > > > truncated.
+> > > >
+> > > > 1.write inline data to file
+> > > > 2.sync first data page to inode page
+> > > > 3.truncate file size to 0
+> > > > 4.truncate file size to max_inline_size
+> > > > 5.echo 1 > /proc/sys/vm/drop_caches
+> > > > 6.read file --> meet original inline data which is remained in inode page.
+> > > >
+> > > > This patch renames truncate_inline_data() to truncate_inline_inode() for code
+> > > > readability, then intruduces new truncate_inline_data() and use it to truncate
+> > > > inline data in page #0 and inode page in truncate_partial_data_page() for
+> > > > fixing.
+> > > >
+> > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > > ---
+> > > >  fs/f2fs/f2fs.h   |  1 +
+> > > >  fs/f2fs/file.c   | 13 ++++++++-----
+> > > >  fs/f2fs/inline.c | 57 +++++++++++++++++++++++++++++++++++++++++++++++++++-----
+> > > >  3 files changed, 61 insertions(+), 10 deletions(-)
+> > > >
+> > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > > index 511d6cd..55dbbe7 100644
+> > > > --- a/fs/f2fs/f2fs.h
+> > > > +++ b/fs/f2fs/f2fs.h
+> > > > @@ -1754,6 +1754,7 @@ extern struct kmem_cache *inode_entry_slab;
+> > > >   */
+> > > >  bool f2fs_may_inline(struct inode *);
+> > > >  void read_inline_data(struct page *, struct page *);
+> > > > +int truncate_inline_data(struct inode *, u64 from);
+> > > >  int f2fs_read_inline_data(struct inode *, struct page *);
+> > > >  int f2fs_convert_inline_page(struct dnode_of_data *, struct page *);
+> > > >  int f2fs_convert_inline_inode(struct inode *);
+> > > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > > index f1341c7..6c4443e 100644
+> > > > --- a/fs/f2fs/file.c
+> > > > +++ b/fs/f2fs/file.c
+> > > > @@ -461,6 +461,9 @@ static int truncate_partial_data_page(struct inode *inode, u64 from)
+> > > >  	unsigned offset = from & (PAGE_CACHE_SIZE - 1);
+> > > >  	struct page *page;
+> > > >
+> > > > +	if (f2fs_has_inline_data(inode))
+> > > > +		return 0;
+> > > > +
+> > > >  	if (!offset)
+> > > >  		return 0;
+> > > >
+> > > > @@ -497,14 +500,14 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+> > > >  	if (lock)
+> > > >  		f2fs_lock_op(sbi);
+> > > >
+> > > > -	ipage = get_node_page(sbi, inode->i_ino);
+> > > > -	if (IS_ERR(ipage)) {
+> > > > -		err = PTR_ERR(ipage);
+> > > > +	if (f2fs_has_inline_data(inode)) {
+> > > > +		err = truncate_inline_data(inode, from);
+> > > >  		goto out;
+> > > >  	}
+> > > >
+> > > > -	if (f2fs_has_inline_data(inode)) {
+> > > > -		f2fs_put_page(ipage, 1);
+> > > > +	ipage = get_node_page(sbi, inode->i_ino);
+> > > > +	if (IS_ERR(ipage)) {
+> > > > +		err = PTR_ERR(ipage);
+> > > >  		goto out;
+> > > >  	}
+> > > >
+> > > > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> > > > index 4ba9732..a8189c92 100644
+> > > > --- a/fs/f2fs/inline.c
+> > > > +++ b/fs/f2fs/inline.c
+> > > > @@ -50,10 +50,57 @@ void read_inline_data(struct page *page, struct page *ipage)
+> > > >  	SetPageUptodate(page);
+> > > >  }
+> > > >
+> > > > -static void truncate_inline_data(struct page *ipage)
+> > > > +static void truncate_inline_inode(struct page *ipage, u64 from)
+> > > >  {
+> > > > +	void *addr = inline_data_addr(ipage);
+> > > > +
+> > > >  	f2fs_wait_on_page_writeback(ipage, NODE);
+> > > > -	memset(inline_data_addr(ipage), 0, MAX_INLINE_DATA);
+> > > > +	memset(addr + from, 0, MAX_INLINE_DATA - from);
+> > > > +}
+> > > > +
+> > > > +int truncate_inline_data(struct inode *inode, u64 from)
+> > > > +{
+> > > > +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> > > > +	struct page *page, *ipage;
+> > > > +	void *addr;
+> > > > +	int err = 0;
+> > > > +
+> > > > +	/*
+> > > > +	 * we should never truncate inline data past max inline data size,
+> > > > +	 * because we always convert inline inode to normal one before
+> > > > +	 * truncating real data if new size is past max inline data size.
+> > > > +	 */
+> > > > +	f2fs_bug_on(sbi, from > MAX_INLINE_DATA);
+> > > > +
+> > > > +	if (from == MAX_INLINE_DATA)
+> > > > +		return 0;
+> > > > +
+> > > > +	page = grab_cache_page(inode->i_mapping, 0);
+> > > > +	if (!page)
+> > > > +		return -ENOMEM;
+> > >
+> > > Do we need to grab and read #0 page?
+> >
+> > No need to read #0 page, sorry for the mistake.
+> >
+> > > How about checking its cached page after on-disk truncation?
+> > >
+> > > 1. page = get_node_page()
+> > > 2. check_inline
+> > > 3. truncate_inline_inode
+> > > 4. f2fs_put_page(ipage)
+> > >
+> > > 5. truncate_partial_data_page(inode, from, force)
+> > > 	if (!offset && !force)
+> > >  		return 0;
+> > >
+> > > > +
+> > > > +	ipage = get_node_page(sbi, inode->i_ino);
+> > > > +	if (IS_ERR(ipage)) {
+> > > > +		err = PTR_ERR(ipage);
+> > > > +		goto out;
+> > > > +	}
+> > > > +
+> > > > +	if (!f2fs_has_inline_data(inode)) {
+> > > > +		f2fs_put_page(ipage, 1);
+> > > > +		goto out;
+> > > > +	}
+> > > > +
+> > > > +	truncate_inline_inode(ipage, from);
+> > > > +	set_page_dirty(ipage);
+> > > > +
+> > > > +	read_inline_data(page, ipage);
+> > > > +	f2fs_put_page(ipage, 1);
+> > > > +
+> > > > +	addr = inline_data_addr(page);
+> > > > +	memset(addr + from, 0, MAX_INLINE_DATA - from);
+> > >
+> > > It needs to do likewise truncate_partial_data_page.
+> >
+> > Do you mean like this?
+> 
+> I meant this.
+> 
+> Anyway, I also wrote a patch about your testing scenario wrt inline_data.
+> So, let me submit the patch sooner or later to xfstests mailing list.
+
+Sounds good! :)
+
+> 
+> Thanks,
+> 
 > ---
->  fs/f2fs/dir.c    |    8 ++++----
->  fs/f2fs/f2fs.h   |    8 +++++++-
->  fs/f2fs/inline.c |    8 ++++----
->  3 files changed, 15 insertions(+), 9 deletions(-)
+>  fs/f2fs/f2fs.h   |  1 +
+>  fs/f2fs/file.c   | 10 +++++++---
+>  fs/f2fs/inline.c | 12 +++++++-----
+>  3 files changed, 15 insertions(+), 8 deletions(-)
 > 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index 590aeef..c39a18f 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -99,7 +99,7 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
-> 
->  	dentry_blk = (struct f2fs_dentry_block *)kmap(dentry_page);
-> 
-> -	make_dentry_ptr(&d, (void *)dentry_blk, 1);
-> +	make_dentry_ptr(&d, (void *)dentry_blk, DENTRY_PTR_TYPE_BLOCK);
->  	de = find_target_dentry(name, max_slots, &d);
-> 
->  	if (de)
-> @@ -360,7 +360,7 @@ static int make_empty_dir(struct inode *inode,
-> 
->  	dentry_blk = kmap_atomic(dentry_page);
-> 
-> -	make_dentry_ptr(&d, (void *)dentry_blk, 1);
-> +	make_dentry_ptr(&d, (void *)dentry_blk, DENTRY_PTR_TYPE_BLOCK);
->  	do_make_empty_dir(inode, parent, &d);
-> 
->  	kunmap_atomic(dentry_blk);
-> @@ -571,7 +571,7 @@ add_dentry:
->  		goto fail;
->  	}
-> 
-> -	make_dentry_ptr(&d, (void *)dentry_blk, 1);
-> +	make_dentry_ptr(&d, (void *)dentry_blk, DENTRY_PTR_TYPE_BLOCK);
->  	f2fs_update_dentry(inode, &d, name, dentry_hash, bit_pos);
-> 
->  	set_page_dirty(dentry_page);
-> @@ -782,7 +782,7 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
-> 
->  		dentry_blk = kmap(dentry_page);
-> 
-> -		make_dentry_ptr(&d, (void *)dentry_blk, 1);
-> +		make_dentry_ptr(&d, (void *)dentry_blk, DENTRY_PTR_TYPE_BLOCK);
-> 
->  		if (f2fs_fill_dentries(ctx, &d, n * NR_DENTRY_IN_BLOCK))
->  			goto stop;
 > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 511d6cd..31b440e 100644
+> index 31b440e..b222b3a 100644
 > --- a/fs/f2fs/f2fs.h
 > +++ b/fs/f2fs/f2fs.h
-> @@ -236,10 +236,16 @@ struct f2fs_dentry_ptr {
->  	int max;
->  };
+> @@ -1760,6 +1760,7 @@ extern struct kmem_cache *inode_entry_slab;
+>   */
+>  bool f2fs_may_inline(struct inode *);
+>  void read_inline_data(struct page *, struct page *);
+> +void truncate_inline_inode(struct page *, u64);
+>  int f2fs_read_inline_data(struct inode *, struct page *);
+>  int f2fs_convert_inline_page(struct dnode_of_data *, struct page *);
+>  int f2fs_convert_inline_inode(struct inode *);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index f1341c7..ab249dd 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -456,12 +456,12 @@ void truncate_data_blocks(struct dnode_of_data *dn)
+>  	truncate_data_blocks_range(dn, ADDRS_PER_BLOCK);
+>  }
 > 
-> +enum {
-> +	DENTRY_PTR_TYPE_BLOCK = 1,
-> +	DENTRY_PTR_TYPE_INLNE,
-> +	DENTRY_PTR_TYPE_MAX
-> +};
+> -static int truncate_partial_data_page(struct inode *inode, u64 from)
+> +static int truncate_partial_data_page(struct inode *inode, u64 from, bool force)
+>  {
+>  	unsigned offset = from & (PAGE_CACHE_SIZE - 1);
+>  	struct page *page;
+> 
+> -	if (!offset)
+> +	if (!offset && !force)
 
-How do you think of using below enum?
+We truncate on-disk inode page and #0 page separately, so IMO there is a very
+small chance the following issue will occur.
 
-enum dentry_type {
-	REGULAR_DENTRY = 1,
-	INLINE_DENTRY,
-};
+(0 < truncated_size < MAX_INLINE_SIZE)
+->f2fs_setattr
+  ->truncate_setsize #0 page has been truncated partially
+  ->f2fs_truncate
+    ->truncate_blocks
+					invalidate #0 page by reclaimer
+					update #0 page with original data in inode page by reader
+      ->truncate_inline_inode
+      ->truncate_partial_data_page
+        we will fail to truncate #0 page because we can't find valid blkaddr for
+        #0 page in find_data_page(,,false)
 
+How about using find_data_page(,,true) to check weather this page is update or not
+for this condition.
 
+>  		return 0;
+> 
+>  	page = find_data_page(inode, from >> PAGE_CACHE_SHIFT, false);
+> @@ -489,6 +489,7 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+>  	pgoff_t free_from;
+>  	int count = 0, err = 0;
+>  	struct page *ipage;
+> +	bool truncate_page = false;
+> 
+>  	trace_f2fs_truncate_blocks_enter(inode, from);
+> 
+> @@ -504,6 +505,9 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+>  	}
+> 
+>  	if (f2fs_has_inline_data(inode)) {
+> +		truncate_inline_inode(ipage, from);
+> +		set_page_dirty(ipage);
+
+If @from is the same as MAX_INLINE_DATA, we will change nothing in inode page,
+How about skipping set_page_dirty for inode page in this condition?
+
+Thanks,
+
+> +		truncate_page = true;
+>  		f2fs_put_page(ipage, 1);
+>  		goto out;
+>  	}
+> @@ -535,7 +539,7 @@ out:
+> 
+>  	/* lastly zero out the first data page */
+>  	if (!err)
+> -		err = truncate_partial_data_page(inode, from);
+> +		err = truncate_partial_data_page(inode, from, truncate_page);
+> 
+>  	trace_f2fs_truncate_blocks_exit(inode, err);
+>  	return err;
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index ee0984c..b236e30 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -50,10 +50,12 @@ void read_inline_data(struct page *page, struct page *ipage)
+>  	SetPageUptodate(page);
+>  }
+> 
+> -static void truncate_inline_data(struct page *ipage)
+> +void truncate_inline_inode(struct page *ipage, u64 from)
+>  {
+> +	void *addr = inline_data_addr(ipage);
+> +
+>  	f2fs_wait_on_page_writeback(ipage, NODE);
+> -	memset(inline_data_addr(ipage), 0, MAX_INLINE_DATA);
+> +	memset(addr + from, 0, MAX_INLINE_DATA - from);
+>  }
+> 
+>  int f2fs_read_inline_data(struct inode *inode, struct page *page)
+> @@ -131,7 +133,7 @@ no_update:
+>  	set_inode_flag(F2FS_I(dn->inode), FI_APPEND_WRITE);
+> 
+>  	/* clear inline data and flag after data writeback */
+> -	truncate_inline_data(dn->inode_page);
+> +	truncate_inline_inode(dn->inode_page, 0);
+>  clear_out:
+>  	stat_dec_inline_inode(dn->inode);
+>  	f2fs_clear_inline_inode(dn->inode);
+> @@ -245,7 +247,7 @@ process_inline:
+>  	if (f2fs_has_inline_data(inode)) {
+>  		ipage = get_node_page(sbi, inode->i_ino);
+>  		f2fs_bug_on(sbi, IS_ERR(ipage));
+> -		truncate_inline_data(ipage);
+> +		truncate_inline_inode(ipage, 0);
+>  		f2fs_clear_inline_inode(inode);
+>  		update_inode(inode, ipage);
+>  		f2fs_put_page(ipage, 1);
+> @@ -363,7 +365,7 @@ static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
+>  	set_page_dirty(page);
+> 
+>  	/* clear inline dir and flag after data writeback */
+> -	truncate_inline_data(ipage);
+> +	truncate_inline_inode(ipage, 0);
+> 
+>  	stat_dec_inline_dir(dir);
+>  	clear_inode_flag(F2FS_I(dir), FI_INLINE_DENTRY);
+> --
+> 2.1.1
