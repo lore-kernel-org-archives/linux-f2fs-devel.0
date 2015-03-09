@@ -1,100 +1,35 @@
-From: Wanpeng Li <wanpeng.li@linux.intel.com>
-Subject: Re: [PATCH 2/3] f2fs: fix get stale meta pages when build free nids
-Date: Mon, 9 Mar 2015 12:24:53 +0800
-Message-ID: <20150309042453.GA27895@kernel>
-References: <1425870055-27694-1-git-send-email-wanpeng.li@linux.intel.com>
- <1425870055-27694-2-git-send-email-wanpeng.li@linux.intel.com>
- <20150309041847.GC4472@jaegeuk-mac02>
-Reply-To: Wanpeng Li <wanpeng.li@linux.intel.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 1/3 v2] f2fs:remove unnecessary condition
+ judgment
+Date: Mon, 09 Mar 2015 14:46:53 +0800
+Message-ID: <000001d05a34$fb2157d0$f1640770$@samsung.com>
+References: <1261310236.1196121425869030109.JavaMail.weblogic@epmlwas01c>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150309041847.GC4472@jaegeuk-mac02>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Wanpeng Li <wanpeng.li@linux.intel.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1261310236.1196121425869030109.JavaMail.weblogic@epmlwas01c>
+Content-language: zh-cn
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: yuan.mark.zhong@samsung.com, 'Jaegeuk Kim' <jaegeuk@kernel.org>, '???' <cm224.lee@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-On Sun, Mar 08, 2015 at 09:18:47PM -0700, Jaegeuk Kim wrote:
->Hi Wanpeng,
->
->On Mon, Mar 09, 2015 at 11:00:54AM +0800, Wanpeng Li wrote:
->> The blocks of nat pages to be scanned will be readahead when build free 
->> nids. The start blkno will be adjusted to 0 when the intended range over 
->> max_nids, then function ra_meta_pages readahead the right blkno, however, 
->> function get_current_nat_page which is called in build_free_nids still 
->> get the meta pages w/ stale blkno, this patch fix it by adjusting the nid 
->> and the blkno which will be readahead in avdance in order to readahead and 
->> get the right meta pages.
->> 
->> Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
->> ---
->>  fs/f2fs/checkpoint.c | 3 ---
->>  fs/f2fs/node.c       | 9 ++++++++-
->>  2 files changed, 8 insertions(+), 4 deletions(-)
->> 
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 53bc328..aedb441 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -129,9 +129,6 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type
->>  
->>  		switch (type) {
->>  		case META_NAT:
->> -			if (unlikely(blkno >=
->> -					NAT_BLOCK_OFFSET(NM_I(sbi)->max_nid)))
->> -				blkno = 0;
->>  			/* get nat block addr */
->>  			fio.blk_addr = current_nat_addr(sbi,
->>  					blkno * NAT_ENTRY_PER_BLOCK);
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index 1a7e925..8751375 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -1509,13 +1509,20 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
->>  	struct f2fs_summary_block *sum = curseg->sum_blk;
->>  	int i = 0;
->>  	nid_t nid = nm_i->next_scan_nid;
->> +	block_t blkno = NAT_BLOCK_OFFSET(nid);
->>  
->>  	/* Enough entries */
->>  	if (nm_i->fcnt > NAT_ENTRY_PER_BLOCK)
->>  		return;
->>  
->> +	if (unlikely(blkno >=
->> +			NAT_BLOCK_OFFSET(NM_I(sbi)->max_nid))) {
->> +		blkno = 0;
->> +		nid = 0;
->> +	}
->
->The assumption here is that the nid does not exceeed max_nid, since the
->previous call already set next_scan_nid to 0, if it exceeds max_nid.
->So, we don't need to do like this.
+> -----Original Message-----
+> From: Yuan Zhong [mailto:yuan.mark.zhong@samsung.com]
+> Sent: Monday, March 09, 2015 10:44 AM
+> To: Jaegeuk Kim; ???
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] [PATCH 1/3 v2] f2fs:remove unnecessary condition judgment
+> 
+> Remove the unnecessary condition judgment, because
+> 'max_slots' has been initialized to '0' at the beginging
+> of the function, as following:
+> if (max_slots)
+>        *max_slots = 0;
+> 
+> Signed-off-by: Yuan Zhong <yuan.mark.zhong@samsung.com>
 
-So get_current_nat_page in while(1) still get the wrong meta page for
-one time, right? The nid will be set to 0 in the second round.
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
-Regards,
-Wanpeng Li 
-
->
->BTW, even if ra_meta_pages doesn't get the below condition,
->		if (unlikely(blkno >=
->				NAT_BLOCK_OFFSET(NM_I(sbi)->max_nid)))
->			blkno = 0;
->IMO, it is still worth to remain that to avoid any bugs due to further code
->changes. It makes sense that unlikely was used for this too.
->
->Thanks,
->
->> +
->>  	/* readahead nat pages to be scanned */
->> -	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES, META_NAT);
->> +	ra_meta_pages(sbi, blkno, FREE_NID_PAGES, META_NAT);
->>  
->>  	while (1) {
->>  		struct page *page = get_current_nat_page(sbi, nid);
->> -- 
->> 1.9.1
