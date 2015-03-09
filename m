@@ -1,53 +1,59 @@
 From: Changman Lee <cm224.lee@samsung.com>
-Subject: Re: [PATCH v2] f2fs: fix max orphan inodes calculation
-Date: Mon, 09 Mar 2015 08:37:07 +0900
-Message-ID: <20150308233707.GA4450@lcm-devel.org>
-References: <1425029893-24702-1-git-send-email-wanpeng.li@linux.intel.com>
- <20150303014022.GD6541@lcm-devel.org>
- <012301d057bf$029602e0$07c208a0$@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs:remove unnecessary condition judgment
+Date: Mon, 09 Mar 2015 10:21:44 +0900
+Message-ID: <20150309012144.GB4450@lcm-devel.org>
+References: <300031252.458581425722724194.JavaMail.weblogic@epmlwas08b>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-disposition: inline
-In-reply-to: <012301d057bf$029602e0$07c208a0$@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+In-reply-to: <300031252.458581425722724194.JavaMail.weblogic@epmlwas08b>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yuan Zhong <yuan.mark.zhong@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Hi Yuan,
 
---> 8 --
+On Sat, Mar 07, 2015 at 10:05:25AM +0000, Yuan Zhong wrote:
+> Remove the unnecessary condition judgment, because 
+> 'max_slots' has been initialized to '0' at the beginging 
+> of the function, as following:
+> if (max_slots)
+>        max_len = 0;
 
->From ce2462523dd5940b59f770c09a50d4babff5fcdb Mon Sep 17 00:00:00 2001
-From: Changman Lee <cm224.lee@samsung.com>
-Date: Mon, 9 Mar 2015 08:07:04 +0900
-Subject: [PATCH] f2fs: cleanup statement about max orphan inodes calc
+There is wrong statement. It should be fixed as *max_slot = 0.
 
-Through each macro, we can read the meaning easily.
+Thanks,
 
-Signed-off-by: Changman Lee <cm224.lee@samsung.com>
----
- fs/f2fs/checkpoint.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 53bc328..384bfc4 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1104,13 +1104,6 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
- 		im->ino_num = 0;
- 	}
- 
--	/*
--	 * considering 512 blocks in a segment 8+cp_payload blocks are
--	 * needed for cp and log segment summaries. Remaining blocks are
--	 * used to keep orphan entries with the limitation one reserved
--	 * segment for cp pack we can have max 1020*(504-cp_payload)
--	 * orphan entries
--	 */
- 	sbi->max_orphans = (sbi->blocks_per_seg - F2FS_CP_PACKS -
- 			NR_CURSEG_TYPE - __cp_payload(sbi)) *
- 				F2FS_ORPHANS_PER_BLOCK;
--- 
-1.9.1
-
+> 	
+> Signed-off-by: Yuan Zhong <yuan.mark.zhong@samsung.com>	
+> ---
+>  fs/f2fs/dir.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 590aeef..1f1a1bc 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -139,7 +139,7 @@ struct f2fs_dir_entry *find_target_dentry(struct qstr *name, int *max_slots,
+>  			!memcmp(d->filename[bit_pos], name->name, name->len))
+>  			goto found;
+>  
+> -		if (max_slots && *max_slots >= 0 && max_len > *max_slots) {
+> +		if (max_slots && max_len > *max_slots) {
+>  			*max_slots = max_len;
+>  			max_len = 0;
+>  		}
+> -- 
+> 1.7.9.5
+> ------------------------------------------------------------------------------
+> Dive into the World of Parallel Programming The Go Parallel Website, sponsored
+> by Intel and developed in partnership with Slashdot Media, is your hub for all
+> things parallel software development, from weekly thought leadership blogs to
+> news, videos, case studies, tutorials and more. Take a look and join the 
+> conversation now. http://goparallel.sourceforge.net/
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
