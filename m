@@ -1,7 +1,8 @@
 From: Wanpeng Li <wanpeng.li@linux.intel.com>
-Subject: [PATCH 3/3] f2fs: fix unlocked nat set cache operation
-Date: Mon,  9 Mar 2015 11:00:55 +0800
-Message-ID: <1425870055-27694-3-git-send-email-wanpeng.li@linux.intel.com>
+Subject: [PATCH 2/3] f2fs: fix get stale meta pages when build
+	free nids
+Date: Mon,  9 Mar 2015 11:00:54 +0800
+Message-ID: <1425870055-27694-2-git-send-email-wanpeng.li@linux.intel.com>
 References: <1425870055-27694-1-git-send-email-wanpeng.li@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,14 +10,14 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <wanpeng.li@linux.intel.com>) id 1YUoDu-0007ai-Sl
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <wanpeng.li@linux.intel.com>) id 1YUoDt-0005rz-QZ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Mar 2015 03:19:18 +0000
+	Mon, 09 Mar 2015 03:19:17 +0000
 Received: from mga02.intel.com ([134.134.136.20])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YUoDu-0006tM-06 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 Mar 2015 03:19:18 +0000
+	id 1YUoDr-0006tM-QV for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 09 Mar 2015 03:19:17 +0000
 In-Reply-To: <1425870055-27694-1-git-send-email-wanpeng.li@linux.intel.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,55 +31,60 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: Wanpeng Li <wanpeng.li@linux.intel.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 
-nm_i->nat_tree_lock is used to sync both the operations of nat entry
-cache tree and nat set cache tree, however, it isn't held when flush 
-nat entries during checkpoint which lead to potential race, this patch 
-fix it by holding the lock when gang lookup nat set cache and delete 
-item from nat set cache.
+The blocks of nat pages to be scanned will be readahead when build free 
+nids. The start blkno will be adjusted to 0 when the intended range over 
+max_nids, then function ra_meta_pages readahead the right blkno, however, 
+function get_current_nat_page which is called in build_free_nids still 
+get the meta pages w/ stale blkno, this patch fix it by adjusting the nid 
+and the blkno which will be readahead in avdance in order to readahead and 
+get the right meta pages.
 
 Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
 ---
- fs/f2fs/node.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/f2fs/checkpoint.c | 3 ---
+ fs/f2fs/node.c       | 9 ++++++++-
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 53bc328..aedb441 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -129,9 +129,6 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type
+ 
+ 		switch (type) {
+ 		case META_NAT:
+-			if (unlikely(blkno >=
+-					NAT_BLOCK_OFFSET(NM_I(sbi)->max_nid)))
+-				blkno = 0;
+ 			/* get nat block addr */
+ 			fio.blk_addr = current_nat_addr(sbi,
+ 					blkno * NAT_ENTRY_PER_BLOCK);
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 8751375..14e4387 100644
+index 1a7e925..8751375 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1837,6 +1837,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 	struct f2fs_nat_block *nat_blk;
- 	struct nat_entry *ne, *cur;
- 	struct page *page = NULL;
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
+@@ -1509,13 +1509,20 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
+ 	struct f2fs_summary_block *sum = curseg->sum_blk;
+ 	int i = 0;
+ 	nid_t nid = nm_i->next_scan_nid;
++	block_t blkno = NAT_BLOCK_OFFSET(nid);
  
- 	/*
- 	 * there are two steps to flush nat entries:
-@@ -1890,7 +1891,9 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	/* Enough entries */
+ 	if (nm_i->fcnt > NAT_ENTRY_PER_BLOCK)
+ 		return;
  
- 	f2fs_bug_on(sbi, set->entry_cnt);
++	if (unlikely(blkno >=
++			NAT_BLOCK_OFFSET(NM_I(sbi)->max_nid))) {
++		blkno = 0;
++		nid = 0;
++	}
++
+ 	/* readahead nat pages to be scanned */
+-	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES, META_NAT);
++	ra_meta_pages(sbi, blkno, FREE_NID_PAGES, META_NAT);
  
-+	down_write(&nm_i->nat_tree_lock);
- 	radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
-+	up_write(&nm_i->nat_tree_lock);
- 	kmem_cache_free(nat_entry_set_slab, set);
- }
- 
-@@ -1918,6 +1921,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
- 	if (!__has_cursum_space(sum, nm_i->dirty_nat_cnt, NAT_JOURNAL))
- 		remove_nats_in_journal(sbi);
- 
-+	down_write(&nm_i->nat_tree_lock);
- 	while ((found = __gang_lookup_nat_set(nm_i,
- 					set_idx, SETVEC_SIZE, setvec))) {
- 		unsigned idx;
-@@ -1926,6 +1930,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
- 			__adjust_nat_entry_set(setvec[idx], &sets,
- 							MAX_NAT_JENTRIES(sum));
- 	}
-+	up_write(&nm_i->nat_tree_lock);
- 
- 	/* flush dirty nats in nat entry set */
- 	list_for_each_entry_safe(set, tmp, &sets, set_list)
+ 	while (1) {
+ 		struct page *page = get_current_nat_page(sbi, nid);
 -- 
 1.9.1
 
