@@ -1,12 +1,17 @@
 From: Wanpeng Li <wanpeng.li@linux.intel.com>
 Subject: [PATCH] f2fs: add fast symlink support
-Date: Thu, 12 Mar 2015 14:35:33 +0800
-Message-ID: <1426142133-12076-1-git-send-email-wanpeng.li@linux.intel.com>
+Date: Thu, 12 Mar 2015 14:36:25 +0800
+Message-ID: <1426142185-12201-1-git-send-email-wanpeng.li@linux.intel.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Wanpeng Li <wanpeng.li@linux.intel.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+This patch introduces the improvement fast symlinks to allow storage of 
+the target path within inode, thus symlinks with short target paths are 
+more accessed quickly. It will fall back to using the original slow 
+symlink if the target path exceeds the available inode space.
 
 Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
 ---
