@@ -1,488 +1,293 @@
-From: Omar Sandoval <osandov@osandov.com>
-Subject: [RFC PATCH 2/5] Remove rw from {,__,do_}blockdev_direct_IO()
-Date: Mon, 16 Mar 2015 04:33:50 -0700
-Message-ID: <16009f67c954bb645848d55d75a2601023604055.1426502566.git.osandov@osandov.com>
-References: <cover.1426502566.git.osandov@osandov.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [PATCH v3] f2fs: add fast symlink support
+Date: Mon, 16 Mar 2015 21:03:30 +0800
+Message-ID: <002d01d05fe9$ba235200$2e69f600$@samsung.com>
+References: <1426228419-11183-1-git-send-email-wanpeng.li@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <cover.1426502566.git.osandov@osandov.com>
-In-Reply-To: <cover.1426502566.git.osandov@osandov.com>
-References: <cover.1426502566.git.osandov@osandov.com>
+In-reply-to: <1426228419-11183-1-git-send-email-wanpeng.li@linux.intel.com>
+Content-language: zh-cn
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org, osd-dev@open-osd.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, fuse-devel@lists.sourceforge.net, cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net, HPDD-discuss@lists.01.org, linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org, ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net, xfs@oss.sgi.com
-Cc: linux-kernel@vger.kernel.org, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.cz>, Yan Zheng <zyan@redhat.com>, Sage Weil <sage@redhat.com>, Steve French <sfrench@samba.org>, Boaz Harrosh <ooo@electrozaur.com>, Benny Halevy <bhalevy@primarydata.com>, Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>, Miklos Szeredi <miklos@szeredi.hu>, Steven Whitehouse <swhiteho@redhat.com>, Dave Kleikamp <shaggy@kernel.org>, Oleg Drokin <oleg.drokin@intel.com>, Trond Myklebust <trond.myklebust@primarydata.com>, Anna Schumaker <anna.schumaker@netapp.com>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>, Mark Fasheh <mfasheh@suse.com>, Joel Becker <jlbec@evilplan.org>, Eric Van Hensbergen <ericvh@gmail.com>, Ron Minnich <rmin>
+To: 'Wanpeng Li' <wanpeng.li@linux.intel.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Most filesystems call through to these at some point, so we'll start
-here.
+Hi Wanpeng, Jaegeuk,
 
-Signed-off-by: Omar Sandoval <osandov@osandov.com>
----
- fs/affs/file.c      |  2 +-
- fs/block_dev.c      |  5 ++---
- fs/btrfs/inode.c    |  8 ++++----
- fs/direct-io.c      | 39 ++++++++++++++++++---------------------
- fs/ext2/inode.c     |  2 +-
- fs/ext3/inode.c     |  2 +-
- fs/ext4/indirect.c  | 11 ++++++-----
- fs/ext4/inode.c     |  2 +-
- fs/f2fs/data.c      |  2 +-
- fs/fat/inode.c      |  2 +-
- fs/gfs2/aops.c      |  5 ++---
- fs/hfs/inode.c      |  2 +-
- fs/hfsplus/inode.c  |  3 +--
- fs/jfs/inode.c      |  2 +-
- fs/nilfs2/inode.c   |  3 +--
- fs/ocfs2/aops.c     | 16 +++++++---------
- fs/reiserfs/inode.c |  2 +-
- fs/udf/inode.c      |  2 +-
- fs/xfs/xfs_aops.c   |  9 ++++-----
- include/linux/fs.h  | 22 ++++++++++++----------
- 20 files changed, 67 insertions(+), 74 deletions(-)
+> -----Original Message-----
+> From: Wanpeng Li [mailto:wanpeng.li@linux.intel.com]
+> Sent: Friday, March 13, 2015 2:34 PM
+> To: Jaegeuk Kim
+> Cc: Changman Lee; Chao Yu; linux-f2fs-devel@lists.sourceforge.net;
+> linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; Wanpeng Li
+> Subject: [PATCH v3] f2fs: add fast symlink support
+> 
+> This patch introduces the improvement fast symlinks to allow storage of
+> the target path within inode, thus symlinks with short target paths are
+> more accessed quickly. It will fall back to using the original slow
+> symlink if the target path exceeds the available inode space.
+> 
+> Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
+> ---
+> v2 -> v3:
+>  * handle fast symlink in remove_inode_page
+> v1 -> v2:
+>  * set max size of fast symlink according to inline_xattr flag
+> 
+>  fs/f2fs/f2fs.h          | 15 ++++++++++++++
+>  fs/f2fs/file.c          |  2 ++
+>  fs/f2fs/inode.c         |  9 +++++++--
+>  fs/f2fs/namei.c         | 53 +++++++++++++++++++++++++++++++++++++++++++++----
+>  fs/f2fs/node.c          |  5 +++--
+>  include/linux/f2fs_fs.h |  2 ++
+>  6 files changed, 78 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 511d6cd..3012ea0 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1226,6 +1226,7 @@ enum {
+>  	FI_VOLATILE_FILE,	/* indicate volatile file */
+>  	FI_DROP_CACHE,		/* drop dirty page cache */
+>  	FI_DATA_EXIST,		/* indicate data exists */
+> +	FI_FAST_SYMLINK,        /* indicate fast symlink */
+>  };
+> 
+>  static inline void set_inode_flag(struct f2fs_inode_info *fi, int flag)
+> @@ -1262,6 +1263,8 @@ static inline void get_inline_info(struct f2fs_inode_info *fi,
+>  		set_inode_flag(fi, FI_INLINE_DENTRY);
+>  	if (ri->i_inline & F2FS_DATA_EXIST)
+>  		set_inode_flag(fi, FI_DATA_EXIST);
+> +	if (ri->i_inline & F2FS_FAST_SYMLINK)
+> +		set_inode_flag(fi, FI_FAST_SYMLINK);
+>  }
+> 
+>  static inline void set_raw_inline(struct f2fs_inode_info *fi,
+> @@ -1277,6 +1280,8 @@ static inline void set_raw_inline(struct f2fs_inode_info *fi,
+>  		ri->i_inline |= F2FS_INLINE_DENTRY;
+>  	if (is_inode_flag_set(fi, FI_DATA_EXIST))
+>  		ri->i_inline |= F2FS_DATA_EXIST;
+> +	if (is_inode_flag_set(fi, FI_FAST_SYMLINK))
+> +		ri->i_inline |= F2FS_FAST_SYMLINK;
+>  }
+> 
+>  static inline int f2fs_has_inline_xattr(struct inode *inode)
+> @@ -1370,6 +1375,15 @@ static inline void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi)
+>  	sbi->sb->s_flags |= MS_RDONLY;
+>  }
+> 
+> +/*
+> + * Test whether an inode is a fast symlink.
+> + */
+> +static inline int f2fs_inode_is_fast_symlink(struct inode *inode)
+> +{
+> +	return (S_ISLNK(inode->i_mode) &&
+> +			is_inode_flag_set(F2FS_I(inode), FI_FAST_SYMLINK));
 
-diff --git a/fs/affs/file.c b/fs/affs/file.c
-index d2468bf..f3028aa 100644
---- a/fs/affs/file.c
-+++ b/fs/affs/file.c
-@@ -405,7 +405,7 @@ affs_direct_IO(int rw, struct kiocb *iocb, struct iov_iter *iter,
- 			return 0;
- 	}
- 
--	ret = blockdev_direct_IO(rw, iocb, inode, iter, offset, affs_get_block);
-+	ret = blockdev_direct_IO(iocb, inode, iter, offset, affs_get_block);
- 	if (ret < 0 && (rw & WRITE))
- 		affs_write_failed(mapping, offset + count);
- 	return ret;
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 975266b..e3a3125 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -153,9 +153,8 @@ blkdev_direct_IO(int rw, struct kiocb *iocb, struct iov_iter *iter,
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file->f_mapping->host;
- 
--	return __blockdev_direct_IO(rw, iocb, inode, I_BDEV(inode), iter,
--				    offset, blkdev_get_block,
--				    NULL, NULL, 0);
-+	return __blockdev_direct_IO(iocb, inode, I_BDEV(inode), iter, offset,
-+				    blkdev_get_block, NULL, NULL, 0);
- }
- 
- int __sync_blockdev(struct block_device *bdev, int wait)
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index da828cf..d6413f4 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8119,10 +8119,10 @@ static ssize_t btrfs_direct_IO(int rw, struct kiocb *iocb,
- 		wakeup = false;
- 	}
- 
--	ret = __blockdev_direct_IO(rw, iocb, inode,
--			BTRFS_I(inode)->root->fs_info->fs_devices->latest_bdev,
--			iter, offset, btrfs_get_blocks_direct, NULL,
--			btrfs_submit_direct, flags);
-+	ret = __blockdev_direct_IO(iocb, inode,
-+				   BTRFS_I(inode)->root->fs_info->fs_devices->latest_bdev,
-+				   iter, offset, btrfs_get_blocks_direct, NULL,
-+				   btrfs_submit_direct, flags);
- 	if (rw & WRITE) {
- 		if (ret < 0 && ret != -EIOCBQUEUED)
- 			btrfs_delalloc_release_space(inode, count);
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index e181b6b..02a87d9 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1094,10 +1094,10 @@ static inline int drop_refcount(struct dio *dio)
-  * for the whole file.
-  */
- static inline ssize_t
--do_blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
--	struct block_device *bdev, struct iov_iter *iter, loff_t offset, 
--	get_block_t get_block, dio_iodone_t end_io,
--	dio_submit_t submit_io,	int flags)
-+do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
-+		      struct block_device *bdev, struct iov_iter *iter,
-+		      loff_t offset, get_block_t get_block, dio_iodone_t end_io,
-+		      dio_submit_t submit_io, int flags)
- {
- 	unsigned i_blkbits = ACCESS_ONCE(inode->i_blkbits);
- 	unsigned blkbits = i_blkbits;
-@@ -1111,9 +1111,6 @@ do_blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
- 	struct blk_plug plug;
- 	unsigned long align = offset | iov_iter_alignment(iter);
- 
--	if (rw & WRITE)
--		rw = WRITE_ODIRECT;
--
- 	/*
- 	 * Avoid references to bdev if not absolutely needed to give
- 	 * the early prefetch in the caller enough time.
-@@ -1128,7 +1125,7 @@ do_blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
- 	}
- 
- 	/* watch out for a 0 len io from a tricksy fs */
--	if (rw == READ && !iov_iter_count(iter))
-+	if (iov_iter_rw(iter) == READ && !iov_iter_count(iter))
- 		return 0;
- 
- 	dio = kmem_cache_alloc(dio_cache, GFP_KERNEL);
-@@ -1144,7 +1141,7 @@ do_blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
- 
- 	dio->flags = flags;
- 	if (dio->flags & DIO_LOCKING) {
--		if (rw == READ) {
-+		if (iov_iter_rw(iter) == READ) {
- 			struct address_space *mapping =
- 					iocb->ki_filp->f_mapping;
- 
-@@ -1170,19 +1167,19 @@ do_blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
- 	if (is_sync_kiocb(iocb))
- 		dio->is_async = false;
- 	else if (!(dio->flags & DIO_ASYNC_EXTEND) &&
--            (rw & WRITE) && end > i_size_read(inode))
-+		 iov_iter_rw(iter) == WRITE && end > i_size_read(inode))
- 		dio->is_async = false;
- 	else
- 		dio->is_async = true;
- 
- 	dio->inode = inode;
--	dio->rw = rw;
-+	dio->rw = iov_iter_rw(iter) == WRITE ? WRITE_ODIRECT : READ;
- 
- 	/*
- 	 * For AIO O_(D)SYNC writes we need to defer completions to a workqueue
- 	 * so that we can call ->fsync.
- 	 */
--	if (dio->is_async && (rw & WRITE) &&
-+	if (dio->is_async && iov_iter_rw(iter) == WRITE &&
- 	    ((iocb->ki_filp->f_flags & O_DSYNC) ||
- 	     IS_SYNC(iocb->ki_filp->f_mapping->host))) {
- 		retval = dio_set_defer_completion(dio);
-@@ -1275,7 +1272,7 @@ do_blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
- 	 * we can let i_mutex go now that its achieved its purpose
- 	 * of protecting us from looking up uninitialized blocks.
- 	 */
--	if (rw == READ && (dio->flags & DIO_LOCKING))
-+	if (iov_iter_rw(iter) == READ && (dio->flags & DIO_LOCKING))
- 		mutex_unlock(&dio->inode->i_mutex);
- 
- 	/*
-@@ -1287,7 +1284,7 @@ do_blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
- 	 */
- 	BUG_ON(retval == -EIOCBQUEUED);
- 	if (dio->is_async && retval == 0 && dio->result &&
--	    (rw == READ || dio->result == count))
-+	    (iov_iter_rw(iter) == READ || dio->result == count))
- 		retval = -EIOCBQUEUED;
- 	else
- 		dio_await_completion(dio);
-@@ -1301,11 +1298,11 @@ out:
- 	return retval;
- }
- 
--ssize_t
--__blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
--	struct block_device *bdev, struct iov_iter *iter, loff_t offset,
--	get_block_t get_block, dio_iodone_t end_io,
--	dio_submit_t submit_io,	int flags)
-+ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
-+			     struct block_device *bdev, struct iov_iter *iter,
-+			     loff_t offset, get_block_t get_block,
-+			     dio_iodone_t end_io, dio_submit_t submit_io,
-+			     int flags)
- {
- 	/*
- 	 * The block device state is needed in the end to finally
-@@ -1319,8 +1316,8 @@ __blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
- 	prefetch(bdev->bd_queue);
- 	prefetch((char *)bdev->bd_queue + SMP_CACHE_BYTES);
- 
--	return do_blockdev_direct_IO(rw, iocb, inode, bdev, iter, offset,
--				     get_block, end_io, submit_io, flags);
-+	return do_blockdev_direct_IO(iocb, inode, bdev, iter, offset, get_block,
-+				     end_io, submit_io, flags);
- }
- 
- EXPORT_SYMBOL(__blockdev_direct_IO);
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 6434bc0..00979a6 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -864,7 +864,7 @@ ext2_direct_IO(int rw, struct kiocb *iocb, struct iov_iter *iter,
- 		ret = dax_do_io(rw, iocb, inode, iter, offset, ext2_get_block,
- 				NULL, DIO_LOCKING);
- 	else
--		ret = blockdev_direct_IO(rw, iocb, inode, iter, offset,
-+		ret = blockdev_direct_IO(iocb, inode, iter, offset,
- 					 ext2_get_block);
- 	if (ret < 0 && (rw & WRITE))
- 		ext2_write_failed(mapping, offset + count);
-diff --git a/fs/ext3/inode.c b/fs/ext3/inode.c
-index 2c6ccc4..28bba7d 100644
---- a/fs/ext3/inode.c
-+++ b/fs/ext3/inode.c
-@@ -1856,7 +1856,7 @@ static ssize_t ext3_direct_IO(int rw, struct kiocb *iocb,
- 	}
- 
- retry:
--	ret = blockdev_direct_IO(rw, iocb, inode, iter, offset, ext3_get_block);
-+	ret = blockdev_direct_IO(iocb, inode, iter, offset, ext3_get_block);
- 	/*
- 	 * In case of error extending write may have instantiated a few
- 	 * blocks outside i_size. Trim these off again.
-diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
-index 45fe924..57135a7 100644
---- a/fs/ext4/indirect.c
-+++ b/fs/ext4/indirect.c
-@@ -693,9 +693,10 @@ retry:
- 			ret = dax_do_io(rw, iocb, inode, iter, offset,
- 					ext4_get_block, NULL, 0);
- 		else
--			ret = __blockdev_direct_IO(rw, iocb, inode,
--					inode->i_sb->s_bdev, iter, offset,
--					ext4_get_block, NULL, NULL, 0);
-+			ret = __blockdev_direct_IO(iocb, inode,
-+						   inode->i_sb->s_bdev, iter,
-+						   offset, ext4_get_block, NULL,
-+						   NULL, 0);
- 		inode_dio_done(inode);
- 	} else {
- locked:
-@@ -703,8 +704,8 @@ locked:
- 			ret = dax_do_io(rw, iocb, inode, iter, offset,
- 					ext4_get_block, NULL, DIO_LOCKING);
- 		else
--			ret = blockdev_direct_IO(rw, iocb, inode, iter,
--					offset, ext4_get_block);
-+			ret = blockdev_direct_IO(iocb, inode, iter, offset,
-+						 ext4_get_block);
- 
- 		if (unlikely((rw & WRITE) && ret < 0)) {
- 			loff_t isize = i_size_read(inode);
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5cb9a21..81f8f10 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3038,7 +3038,7 @@ static ssize_t ext4_ext_direct_IO(int rw, struct kiocb *iocb,
- 		ret = dax_do_io(rw, iocb, inode, iter, offset, get_block_func,
- 				ext4_end_io_dio, dio_flags);
- 	else
--		ret = __blockdev_direct_IO(rw, iocb, inode,
-+		ret = __blockdev_direct_IO(iocb, inode,
- 					   inode->i_sb->s_bdev, iter, offset,
- 					   get_block_func,
- 					   ext4_end_io_dio, NULL, dio_flags);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 985ed02..d2addce 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1159,7 +1159,7 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
- 	if (rw & WRITE)
- 		__allocate_data_blocks(inode, offset, count);
- 
--	err = blockdev_direct_IO(rw, iocb, inode, iter, offset, get_data_block);
-+	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block);
- 	if (err < 0 && (rw & WRITE))
- 		f2fs_write_failed(mapping, offset + count);
- 
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index 497c7c5..a969a34 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -275,7 +275,7 @@ static ssize_t fat_direct_IO(int rw, struct kiocb *iocb,
- 	 * FAT need to use the DIO_LOCKING for avoiding the race
- 	 * condition of fat_get_block() and ->truncate().
- 	 */
--	ret = blockdev_direct_IO(rw, iocb, inode, iter, offset, fat_get_block);
-+	ret = blockdev_direct_IO(iocb, inode, iter, offset, fat_get_block);
- 	if (ret < 0 && (rw & WRITE))
- 		fat_write_failed(mapping, offset + count);
- 
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index 4ad4f94..fc691f2 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -1095,9 +1095,8 @@ static ssize_t gfs2_direct_IO(int rw, struct kiocb *iocb,
- 			truncate_inode_pages_range(mapping, lstart, end);
- 	}
- 
--	rv = __blockdev_direct_IO(rw, iocb, inode, inode->i_sb->s_bdev,
--				  iter, offset,
--				  gfs2_get_block_direct, NULL, NULL, 0);
-+	rv = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev, iter,
-+				  offset, gfs2_get_block_direct, NULL, NULL, 0);
- out:
- 	gfs2_glock_dq(&gh);
- 	gfs2_holder_uninit(&gh);
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index d0929bc..d367253 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -133,7 +133,7 @@ static ssize_t hfs_direct_IO(int rw, struct kiocb *iocb,
- 	size_t count = iov_iter_count(iter);
- 	ssize_t ret;
- 
--	ret = blockdev_direct_IO(rw, iocb, inode, iter, offset, hfs_get_block);
-+	ret = blockdev_direct_IO(iocb, inode, iter, offset, hfs_get_block);
- 
- 	/*
- 	 * In case of error extending write may have instantiated a few
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index 0cf786f..a7ec37d 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -131,8 +131,7 @@ static ssize_t hfsplus_direct_IO(int rw, struct kiocb *iocb,
- 	size_t count = iov_iter_count(iter);
- 	ssize_t ret;
- 
--	ret = blockdev_direct_IO(rw, iocb, inode, iter, offset, 
--				 hfsplus_get_block);
-+	ret = blockdev_direct_IO(iocb, inode, iter, offset, hfsplus_get_block);
- 
- 	/*
- 	 * In case of error extending write may have instantiated a few
-diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
-index bd3df1c..88271ac 100644
---- a/fs/jfs/inode.c
-+++ b/fs/jfs/inode.c
-@@ -339,7 +339,7 @@ static ssize_t jfs_direct_IO(int rw, struct kiocb *iocb,
- 	size_t count = iov_iter_count(iter);
- 	ssize_t ret;
- 
--	ret = blockdev_direct_IO(rw, iocb, inode, iter, offset, jfs_get_block);
-+	ret = blockdev_direct_IO(iocb, inode, iter, offset, jfs_get_block);
- 
- 	/*
- 	 * In case of error extending write may have instantiated a few
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index 8b59695..76587c3 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -318,8 +318,7 @@ nilfs_direct_IO(int rw, struct kiocb *iocb, struct iov_iter *iter,
- 		return 0;
- 
- 	/* Needs synchronization with the cleaner */
--	size = blockdev_direct_IO(rw, iocb, inode, iter, offset,
--				  nilfs_get_block);
-+	size = blockdev_direct_IO(iocb, inode, iter, offset, nilfs_get_block);
- 
- 	/*
- 	 * In case of error extending write may have instantiated a few
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index 44db180..162a2a8 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -737,10 +737,9 @@ static ssize_t ocfs2_direct_IO_write(struct kiocb *iocb,
- 		di_bh = NULL;
- 	}
- 
--	written = __blockdev_direct_IO(WRITE, iocb, inode, inode->i_sb->s_bdev,
--			iter, offset,
--			ocfs2_direct_IO_get_blocks,
--			ocfs2_dio_end_io, NULL, 0);
-+	written = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev, iter,
-+				       offset, ocfs2_direct_IO_get_blocks,
-+				       ocfs2_dio_end_io, NULL, 0);
- 	if (unlikely(written < 0)) {
- 		loff_t i_size = i_size_read(inode);
- 
-@@ -843,11 +842,10 @@ static ssize_t ocfs2_direct_IO(int rw,
- 		return 0;
- 
- 	if (rw == READ)
--		return __blockdev_direct_IO(rw, iocb, inode,
--				    inode->i_sb->s_bdev,
--				    iter, offset,
--				    ocfs2_direct_IO_get_blocks,
--				    ocfs2_dio_end_io, NULL, 0);
-+		return __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev,
-+					    iter, offset,
-+					    ocfs2_direct_IO_get_blocks,
-+					    ocfs2_dio_end_io, NULL, 0);
- 	else
- 		return ocfs2_direct_IO_write(iocb, iter, offset);
- }
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index e72401e..254e800 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -3286,7 +3286,7 @@ static ssize_t reiserfs_direct_IO(int rw, struct kiocb *iocb,
- 	size_t count = iov_iter_count(iter);
- 	ssize_t ret;
- 
--	ret = blockdev_direct_IO(rw, iocb, inode, iter, offset,
-+	ret = blockdev_direct_IO(iocb, inode, iter, offset,
- 				 reiserfs_get_blocks_direct_io);
- 
- 	/*
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index a445d59..bcb0082 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -225,7 +225,7 @@ static ssize_t udf_direct_IO(int rw, struct kiocb *iocb,
- 	size_t count = iov_iter_count(iter);
- 	ssize_t ret;
- 
--	ret = blockdev_direct_IO(rw, iocb, inode, iter, offset, udf_get_block);
-+	ret = blockdev_direct_IO(iocb, inode, iter, offset, udf_get_block);
- 	if (unlikely(ret < 0 && (rw & WRITE)))
- 		udf_write_failed(mapping, offset + count);
- 	return ret;
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 3a9b7a1..fdb1353 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -1505,14 +1505,13 @@ xfs_vm_direct_IO(
- 	struct block_device	*bdev = xfs_find_bdev_for_inode(inode);
- 
- 	if (rw & WRITE) {
--		return __blockdev_direct_IO(rw, iocb, inode, bdev, iter,
--					    offset, xfs_get_blocks_direct,
-+		return __blockdev_direct_IO(iocb, inode, bdev, iter, offset,
-+					    xfs_get_blocks_direct,
- 					    xfs_end_io_direct_write, NULL,
- 					    DIO_ASYNC_EXTEND);
- 	}
--	return __blockdev_direct_IO(rw, iocb, inode, bdev, iter,
--				    offset, xfs_get_blocks_direct,
--				    NULL, NULL, 0);
-+	return __blockdev_direct_IO(iocb, inode, bdev, iter, offset,
-+				    xfs_get_blocks_direct, NULL, NULL, 0);
- }
- 
- /*
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b4d71b5..ba1b580 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2616,16 +2616,18 @@ enum {
- 
- void dio_end_io(struct bio *bio, int error);
- 
--ssize_t __blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
--	struct block_device *bdev, struct iov_iter *iter, loff_t offset,
--	get_block_t get_block, dio_iodone_t end_io,
--	dio_submit_t submit_io,	int flags);
--
--static inline ssize_t blockdev_direct_IO(int rw, struct kiocb *iocb,
--		struct inode *inode, struct iov_iter *iter, loff_t offset,
--		get_block_t get_block)
--{
--	return __blockdev_direct_IO(rw, iocb, inode, inode->i_sb->s_bdev, iter,
-+ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
-+			     struct block_device *bdev, struct iov_iter *iter,
-+			     loff_t offset, get_block_t get_block,
-+			     dio_iodone_t end_io, dio_submit_t submit_io,
-+			     int flags);
-+
-+static inline ssize_t blockdev_direct_IO(struct kiocb *iocb,
-+					 struct inode *inode,
-+					 struct iov_iter *iter, loff_t offset,
-+					 get_block_t get_block)
-+{
-+	return __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev, iter,
- 				    offset, get_block, NULL, NULL,
- 				    DIO_LOCKING | DIO_SKIP_HOLES);
- }
--- 
-2.3.3
+Look at this again, it seems that it's not necessary to introduce FI_FAST_SYMLINK
+& F2FS_FAST_SYNLINK as we waste one bit in i_inline flag, for fast symlink, using
+your original design will be enough until we consider xattr node block case.
+
+static inline int f2fs_inode_is_fast_symlink(struct inode *inode)
+{
+	return (S_ISLNK(inode->i_mode) && !F2FS_HAS_BLOCKS(inode));
+}
+
+Wanpeng, how about waiting for Jaegeuk's opinion?
+
+> +}
+> +
+>  #define get_inode_mode(i) \
+>  	((is_inode_flag_set(F2FS_I(i), FI_ACL_MODE)) ? \
+>  	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
+> @@ -1746,6 +1760,7 @@ extern const struct address_space_operations f2fs_node_aops;
+>  extern const struct address_space_operations f2fs_meta_aops;
+>  extern const struct inode_operations f2fs_dir_inode_operations;
+>  extern const struct inode_operations f2fs_symlink_inode_operations;
+> +extern const struct inode_operations f2fs_fast_symlink_inode_operations;
+>  extern const struct inode_operations f2fs_special_inode_operations;
+>  extern struct kmem_cache *inode_entry_slab;
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index f1341c7..05a3d4f 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -546,6 +546,8 @@ void f2fs_truncate(struct inode *inode)
+>  	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
+>  				S_ISLNK(inode->i_mode)))
+>  		return;
+> +	if (f2fs_inode_is_fast_symlink(inode))
+> +		return;
+> 
+>  	trace_f2fs_truncate(inode);
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index b508744..ec9ad22 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/buffer_head.h>
+>  #include <linux/writeback.h>
+>  #include <linux/bitops.h>
+> +#include <linux/namei.h>
+> 
+>  #include "f2fs.h"
+>  #include "node.h"
+> @@ -188,8 +189,12 @@ make_now:
+>  		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+>  		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
+>  	} else if (S_ISLNK(inode->i_mode)) {
+> -		inode->i_op = &f2fs_symlink_inode_operations;
+> -		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+> +		if (f2fs_inode_is_fast_symlink(inode))
+> +			inode->i_op = &f2fs_fast_symlink_inode_operations;
+> +		else {
+> +			inode->i_op = &f2fs_symlink_inode_operations;
+> +			inode->i_mapping->a_ops = &f2fs_dblock_aops;
+> +		}
+>  	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+>  			S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+>  		inode->i_op = &f2fs_special_inode_operations;
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 1e2ae21..0619909 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/ctype.h>
+>  #include <linux/dcache.h>
+> +#include <linux/namei.h>
+> 
+>  #include "f2fs.h"
+>  #include "node.h"
+> @@ -247,6 +248,21 @@ fail:
+>  	return err;
+>  }
+> 
+> +static void *f2fs_follow_link(struct dentry *dentry, struct nameidata *nd)
+> +{
+> +	struct page *node_page;
+> +
+> +	node_page = get_node_page(F2FS_I_SB(dentry->d_inode),
+> +				dentry->d_inode->i_ino);
+> +	if (IS_ERR(node_page)) {
+> +		nd_set_link(nd, NULL);
+> +		return NULL;
+> +	}
+> +	nd_set_link(nd, (char *)(F2FS_INODE(node_page)->i_addr));
+> +	f2fs_put_page(node_page, 1);
+> +	return NULL;
+> +}
+
+The only different of i_op for fast symlink and normal symlink is that
+we use different callback function for ->follow_link, if we merge
+page_follow_link_light & f2fs_follow_link into one, we can remove duplicated
+f2fs_fast_symlink_inode_operations. How do you think of it?
+
+> +
+>  static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+>  					const char *symname)
+>  {
+> @@ -261,16 +277,31 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+> 
+> -	inode->i_op = &f2fs_symlink_inode_operations;
+> -	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+> -
+>  	f2fs_lock_op(sbi);
+>  	err = f2fs_add_link(dentry, inode);
+>  	if (err)
+>  		goto out;
+>  	f2fs_unlock_op(sbi);
+> 
+> -	err = page_symlink(inode, symname, symlen);
+> +
+> +	if (symlen > MAX_FAST_SYMLINK_SIZE) {
+
+I think we should be pick up max_fast_symlink_size which is introduced in v2.
+
+> +		/* slow symlink */
+> +		inode->i_op = &f2fs_symlink_inode_operations;
+> +		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+> +		err = page_symlink(inode, symname, symlen);
+> +	} else {
+> +		/* fast symlink */
+> +		struct page *node_page;
+> +
+> +		inode->i_op = &f2fs_fast_symlink_inode_operations;
+> +		node_page = get_node_page(sbi, inode->i_ino);
+> +		memcpy((char *)&F2FS_INODE(node_page)->i_addr, symname, symlen);
+> +		set_page_dirty(node_page);
+> +		f2fs_put_page(node_page, 1);
+> +		inode->i_size = symlen-1;
+
+trivial coding style issue.
+inode->i_size = symlen - 1;
+
+Thanks,
+
+> +		set_inode_flag(F2FS_I(inode), FI_FAST_SYMLINK);
+> +		mark_inode_dirty(inode);
+> +	}
+>  	alloc_nid_done(sbi, inode->i_ino);
+> 
+>  	d_instantiate(dentry, inode);
+> @@ -743,6 +774,20 @@ const struct inode_operations f2fs_symlink_inode_operations = {
+>  #endif
+>  };
+> 
+> +const struct inode_operations f2fs_fast_symlink_inode_operations = {
+> +	.readlink       = generic_readlink,
+> +	.follow_link    = f2fs_follow_link,
+> +	.put_link       = page_put_link,
+> +	.getattr	= f2fs_getattr,
+> +	.setattr	= f2fs_setattr,
+> +#ifdef CONFIG_F2FS_FS_XATTR
+> +	.setxattr	= generic_setxattr,
+> +	.getxattr	= generic_getxattr,
+> +	.listxattr	= f2fs_listxattr,
+> +	.removexattr	= generic_removexattr,
+> +#endif
+> +};
+> +
+>  const struct inode_operations f2fs_special_inode_operations = {
+>  	.getattr	= f2fs_getattr,
+>  	.setattr        = f2fs_setattr,
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 35a9117..efe28a2b 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -908,8 +908,9 @@ void remove_inode_page(struct inode *inode)
+>  	}
+> 
+>  	/* remove potential inline_data blocks */
+> -	if (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
+> -				S_ISLNK(inode->i_mode))
+> +	if ((S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
+> +				S_ISLNK(inode->i_mode)) &&
+> +				!f2fs_inode_is_fast_symlink(inode))
+>  		truncate_data_blocks_range(&dn, 1);
+> 
+>  	/* 0 is possible, after f2fs_new_inode() has failed */
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index 502f28c..834880c 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -178,9 +178,11 @@ struct f2fs_extent {
+>  #define F2FS_INLINE_DATA	0x02	/* file inline data flag */
+>  #define F2FS_INLINE_DENTRY	0x04	/* file inline dentry flag */
+>  #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
+> +#define F2FS_FAST_SYMLINK	0x10    /* file fast symlink flag */
+> 
+>  #define MAX_INLINE_DATA		(sizeof(__le32) * (DEF_ADDRS_PER_INODE - \
+>  						F2FS_INLINE_XATTR_ADDRS - 1))
+> +#define MAX_FAST_SYMLINK_SIZE (MAX_INLINE_DATA + 1)
+> 
+>  struct f2fs_inode {
+>  	__le16 i_mode;			/* file mode */
+> --
+> 1.9.1
 
