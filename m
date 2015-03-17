@@ -1,154 +1,47 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs/001: introduce a testcaes for -ENOSPC with inline operation
-Date: Tue, 17 Mar 2015 10:32:52 -0700
-Message-ID: <1426613572-2405-2-git-send-email-jaegeuk@kernel.org>
-References: <1426613572-2405-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <fstests-owner@vger.kernel.org>
-In-Reply-To: <1426613572-2405-1-git-send-email-jaegeuk@kernel.org>
-Sender: fstests-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
+From: Al Viro <viro-3bDd1+5oDREiFSDQTTA3OLVCufUGDwFn@public.gmane.org>
+Subject: Re: [RFC PATCH 1/5] new helper: iov_iter_rw()
+Date: Tue, 17 Mar 2015 18:19:15 +0000
+Message-ID: <20150317181910.GK29656@ZenIV.linux.org.uk>
+References: <cover.1426502566.git.osandov@osandov.com>
+ <34dc78b262546e9343e0ed872232a97f5eaa5f15.1426502566.git.osandov@osandov.com>
+ <20150316173605.GX29656@ZenIV.linux.org.uk>
+ <20150317093151.GS20767@twin.jikos.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150317093151.GS20767-1ReQVI26iDCaZKY3DrU6dA@public.gmane.org>
+Sender: linux-nilfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dsterba-AlSwsSmVLrQ@public.gmane.org, Omar Sandoval <osandov-nWWhXC5lh1RBDgjK7y7TUQ@public.gmane.org>, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, osd-dev-yNzVSZO3znNg9hUCZPvPmw@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, fuse-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, HPDD-discuss-y27Ovi1pjclAfugRpC6u6w@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, v9fs-developer-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, xfs-VZNHf3L845pBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chris Mason <clm-b10kYP2dOMg@public.gmane.org>, Josef Bacik <jbacik-b10kYP2dOMg@public.gmane.org>, Yan Zheng <zyan-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sage Weil <sage-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Steve French <sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>, Boaz Harrosh <ooo-rh7Tgz9RNieUD9Wbbkgo/g@public.gmane.org>, Benny Halevy <bhalevy-7I+n7zu2hftEKMMhf/gKZA@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>, Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch introduces f2fs/001 to test -ENOSPC when inline operation was
-activated.
+On Tue, Mar 17, 2015 at 10:31:51AM +0100, David Sterba wrote:
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- tests/f2fs/001     | 81 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- tests/f2fs/001.out | 21 ++++++++++++++
- tests/f2fs/group   |  6 ++++
- 3 files changed, 108 insertions(+)
- create mode 100755 tests/f2fs/001
- create mode 100644 tests/f2fs/001.out
- create mode 100644 tests/f2fs/group
+> Agreed, but the proposed define is rather cryptic and I was not able to
+> understand the meaning on the first glance.
+> 
+> > #define iov_iter_rw(i) ((0 ? (struct iov_iter *)0 : (i))->type & RW_MASK)
+> 
+> This worked for me, does not compile with anything else than
+> 'struct iov_iter*' as i:
+> 
+> #define iov_iter_rw(i)	({			\
+> 	struct iov_iter __iter = *(i);		\
+> 	(i)->type & RW_MASK;			\
+> 	})
+> 
+> The assignment is optimized out.
 
-diff --git a/tests/f2fs/001 b/tests/f2fs/001
-new file mode 100755
-index 0000000..775b0f1
---- /dev/null
-+++ b/tests/f2fs/001
-@@ -0,0 +1,81 @@
-+#! /bin/bash
-+# FS QA Test No. f2fs/001
-+#
-+# Test -ENSPC wth inline operations.
-+#
-+#-----------------------------------------------------------------------
-+# Copyright (c) 2014 Jaegeuk Kim.  All Rights Reserved.
-+#
-+# This program is free software; you can redistribute it and/or
-+# modify it under the terms of the GNU General Public License as
-+# published by the Free Software Foundation.
-+#
-+# This program is distributed in the hope that it would be useful,
-+# but WITHOUT ANY WARRANTY; without even the implied warranty of
-+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+# GNU General Public License for more details.
-+#
-+# You should have received a copy of the GNU General Public License
-+# along with this program; if not, write the Free Software Foundation,
-+# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-+#-----------------------------------------------------------------------
-+#
-+
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1	# failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+    cd /
-+    rm -f $tmp.*
-+}
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+
-+_supported_fs f2fs
-+_supported_os Linux
-+_require_scratch
-+
-+testfile=$SCRATCH_MNT/testfile
-+dummyfile=$SCRATCH_MNT/dummyfile
-+
-+_scratch_mkfs > /dev/null 2>&1
-+_scratch_mount
-+
-+echo "==== create small file ==="
-+$XFS_IO_PROG -t -f \
-+-c "pwrite -S 0x58 0 120" \
-+-c "close" \
-+$testfile | _filter_xfs_io
-+
-+echo "==== fill 100% partition ==="
-+$XFS_IO_PROG -t -f \
-+-c "falloc 0 8g" \
-+-c "close" \
-+$dummyfile | _filter_xfs_io
-+
-+echo "==== change i_size & write data ==="
-+$XFS_IO_PROG \
-+-c "truncate 4096" \
-+-c "pwrite -S 0x58 8192 4096" \
-+-c "close" \
-+$testfile | _filter_xfs_io
-+
-+echo "==== check data contents ==="
-+hexdump -C $testfile
-+_scratch_remount
-+hexdump -C $testfile
-+
-+rm $testfile
-+rm $dummyfile
-+
-+status=0
-+exit
-diff --git a/tests/f2fs/001.out b/tests/f2fs/001.out
-new file mode 100644
-index 0000000..8862156
---- /dev/null
-+++ b/tests/f2fs/001.out
-@@ -0,0 +1,21 @@
-+QA output created by 001
-+==== create small file ===
-+wrote 120/120 bytes at offset 0
-+XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-+==== fill 100% partition ===
-+fallocate: No space left on device
-+==== change i_size & write data ===
-+pwrite64: No space left on device
-+==== check data contents ===
-+00000000  58 58 58 58 58 58 58 58  58 58 58 58 58 58 58 58  |XXXXXXXXXXXXXXXX|
-+*
-+00000070  58 58 58 58 58 58 58 58  00 00 00 00 00 00 00 00  |XXXXXXXX........|
-+00000080  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-+*
-+00001000
-+00000000  58 58 58 58 58 58 58 58  58 58 58 58 58 58 58 58  |XXXXXXXXXXXXXXXX|
-+*
-+00000070  58 58 58 58 58 58 58 58  00 00 00 00 00 00 00 00  |XXXXXXXX........|
-+00000080  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-+*
-+00001000
-diff --git a/tests/f2fs/group b/tests/f2fs/group
-new file mode 100644
-index 0000000..daba9a3
---- /dev/null
-+++ b/tests/f2fs/group
-@@ -0,0 +1,6 @@
-+# QA groups control file
-+# Defines test groups and nominal group owners
-+# - do not start group names with a digit
-+# - comment line before each group is "new" description
-+#
-+001 auto quick rw
--- 
-2.1.1
+... and you are getting
+	a) use of rather lousy gccism when plain C would do
+	b) double evaluation since you've got it wrong (should've been
+__iter.type & RW_MASK, if you do it that way).  As it is, if argument has
+any side effects, your variant will trigger those twice - even if the
+destination of the assignment is never used, the side effects remain.
 
+I agree that it could use /* use ?: for typechecking */, but let's not go into
+({...}) land unless we absolutely have to.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nilfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
