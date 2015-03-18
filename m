@@ -1,96 +1,73 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 4/4] f2fs: avoid wrong f2fs_bug_on when
- truncating inline_data
-Date: Wed, 18 Mar 2015 10:57:50 -0700
-Message-ID: <20150318175750.GB7461@jaegeuk-mac02>
-References: <1426611461-690-1-git-send-email-jaegeuk@kernel.org>
- <1426611461-690-4-git-send-email-jaegeuk@kernel.org>
- <006d01d06118$a3a23390$eae69ab0$@samsung.com>
+Subject: Re: [PATCH 1/2] generic/067: add a testcase to check some inline
+ truncation behaviors
+Date: Wed, 18 Mar 2015 11:01:06 -0700
+Message-ID: <20150318180106.GC7461@jaegeuk-mac02>
+References: <1426613572-2405-1-git-send-email-jaegeuk@kernel.org>
+ <20150318034653.GE10105@dastard>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <fstests-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <006d01d06118$a3a23390$eae69ab0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20150318034653.GE10105@dastard>
+Sender: fstests-owner@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+Hi Dave,
 
-On Wed, Mar 18, 2015 at 09:12:00AM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Wednesday, March 18, 2015 12:58 AM
-> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH 4/4] f2fs: avoid wrong f2fs_bug_on when truncating inline_data
-> > 
-> > This patch removes wrong f2fs_bug_on in truncate_inline_inode.
-> > 
-> > When there is no space, it can happen a corner case where i_isze is over
-> > MAX_INLINE_SIZE while its inode is still inline_data.
-> > 
-> > The scenario is
-> >  1. write small data into file #A.
-> >  2. fill the whole partition to 100%.
-> >  3. truncate 4096 on file #A.
-> 
-> If we truncate size over MAX_INLINE_DATA, we will convert inline data in
-> f2fs_truncate rather than write_begin below. isn't it?
-
-But, it fails to convert that due to -ENOSPC. :)
+Thank you for the review.
+I'll resend this series with precise description and fixes as you pointed.
 
 Thanks,
 
+On Wed, Mar 18, 2015 at 02:46:53PM +1100, Dave Chinner wrote:
+> On Tue, Mar 17, 2015 at 10:32:51AM -0700, Jaegeuk Kim wrote:
+> > This patch introduces a new testcase, generic/067, to test several truncation
+> > cases under the inline feature supported by filesystems.
 > 
-> Thanks,
+> "inline feature" means what, exactly?
 > 
-> >  4. write data at 8192 offset.
-> >   --> f2fs_write_begin
-> >     -> -ENOSPC = f2fs_convert_inline_page
-> >     -> f2fs_write_failed
-> >       -> truncate_blocks
-> >         -> truncate_inline_inode
-> > 	  BUG_ON, since i_size is 4096.
 > > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/inline.c | 7 -------
-> >  1 file changed, 7 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> > index 153c5e7..d3e0599 100644
-> > --- a/fs/f2fs/inline.c
-> > +++ b/fs/f2fs/inline.c
-> > @@ -54,13 +54,6 @@ bool truncate_inline_inode(struct page *ipage, u64 from)
-> >  {
-> >  	void *addr;
-> > 
-> > -	/*
-> > -	 * we should never truncate inline data past max inline data size,
-> > -	 * because we always convert inline inode to normal one before
-> > -	 * truncating real data if new size is past max inline data size.
-> > -	 */
-> > -	f2fs_bug_on(F2FS_P_SB(ipage), from > MAX_INLINE_DATA);
-> > -
-> >  	if (from >= MAX_INLINE_DATA)
-> >  		return false;
-> > 
-> > --
-> > 2.1.1
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > Dive into the World of Parallel Programming The Go Parallel Website, sponsored
-> > by Intel and developed in partnership with Slashdot Media, is your hub for all
-> > things parallel software development, from weekly thought leadership blogs to
-> > news, videos, case studies, tutorials and more. Take a look and join the
-> > conversation now. http://goparallel.sourceforge.net/
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > +_supported_os Linux
+> > +_require_scratch
+> > +
+> > +testfile=$SCRATCH_MNT/testfile
+> > +
+> > +_scratch_mkfs > /dev/null 2>&1
+> > +_scratch_mount
+> > +
+> > +# aligned inline truncation
+> 
+> Aligned to what, exactly?
+> 
+> > +$XFS_IO_PROG -t -f \
+> > +-c "pwrite -S 0x58 0 120"       `# write        |XXXXXXXXXXXXXXXXXXXXXXXX|` \
+> > +-c "fsync"	\
+> > +-c "truncate 0"                 `# truncate     |                        |` \
+> > +-c "truncate 160"               `# truncate     |                        |` \
+> > +-c "close"      \
+> > +$testfile | _filter_xfs_io
+> 
+> Please indent multiple line xfs_io command a little more clearly,
+> and align the "\" so it's clear it's amultiple line command
+> 
+> $XFS_IO_PROG -t -f								    \
+> 	-c "pwrite -S 0x58 0 120"       `# write        |XXXXXXXXXXXXXXXXXXXXXXXX|` \
+> 	-c "fsync"								    \
+> 	-c "truncate 0"                 `# truncate     |                        |` \
+> 	-c "truncate 160"               `# truncate     |                        |` \
+> 	-c "close"								    \
+> 	$testfile | _filter_xfs_io
+> 
+> (not sure the comment on the second truncate is correct, either)
+> 
+> Also, why do you need the "close" command?
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
