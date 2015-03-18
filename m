@@ -1,112 +1,161 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: avoid punch_hole overhead when releasing volatile data
-Date: Wed, 18 Mar 2015 11:18:20 -0700
-Message-ID: <1426702701-7757-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 2/2] f2fs: add some tracepoints to debug volatile
+	and atomic writes
+Date: Wed, 18 Mar 2015 11:18:21 -0700
+Message-ID: <1426702701-7757-2-git-send-email-jaegeuk@kernel.org>
+References: <1426702701-7757-1-git-send-email-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YYIY7-0002Sv-Od
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 18 Mar 2015 18:18:35 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YYIY6-0005bU-KA for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 18 Mar 2015 18:18:35 +0000
+In-Reply-To: <1426702701-7757-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
-
-This patch is to avoid some punch_hole overhead when releasing volatile data.
-If volatile data was not written yet, we just can make the first page as zero.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c  |  2 ++
- fs/f2fs/f2fs.h  |  6 ++++++
- fs/f2fs/file.c  |  6 ++++++
- fs/f2fs/inode.c | 10 ++++++++++
- 4 files changed, 24 insertions(+)
+ fs/f2fs/data.c              |  2 ++
+ fs/f2fs/f2fs.h              |  4 ++++
+ fs/f2fs/segment.c           |  4 ++++
+ include/trace/events/f2fs.h | 27 ++++++++++++++++++++++++++-
+ 4 files changed, 36 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f0a18a0..486113d 100644
+index 486113d..241b987 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1291,6 +1291,8 @@ int do_write_data_page(struct page *page, struct f2fs_io_info *fio)
+@@ -1287,9 +1287,11 @@ int do_write_data_page(struct page *page, struct f2fs_io_info *fio)
+ 			need_inplace_update(inode))) {
+ 		rewrite_data_page(page, fio);
+ 		set_inode_flag(F2FS_I(inode), FI_UPDATE_WRITE);
++		trace_f2fs_do_write_data_page(page, IPU);
+ 	} else {
  		write_data_page(page, &dn, fio);
  		f2fs_update_extent_cache(&dn);
++		trace_f2fs_do_write_data_page(page, OPU);
  		set_inode_flag(F2FS_I(inode), FI_APPEND_WRITE);
-+		if (page->index == 0)
-+			set_inode_flag(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
- 	}
- out_writepage:
- 	f2fs_put_dnode(&dn);
+ 		if (page->index == 0)
+ 			set_inode_flag(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f2909c6..fec8acc 100644
+index fec8acc..7d4e3fc 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1223,6 +1223,7 @@ enum {
- 	FI_NEED_IPU,		/* used for ipu per file */
- 	FI_ATOMIC_FILE,		/* indicate atomic file */
- 	FI_VOLATILE_FILE,	/* indicate volatile file */
-+	FI_FIRST_BLOCK_WRITTEN,	/* indicate #0 data block was written */
- 	FI_DROP_CACHE,		/* drop dirty page cache */
- 	FI_DATA_EXIST,		/* indicate data exists */
+@@ -547,6 +547,10 @@ enum page_type {
+ 	META,
+ 	NR_PAGE_TYPE,
+ 	META_FLUSH,
++	INMEM,		/* the below types are used by tracepoints only. */
++	INMEM_DROP,
++	IPU,
++	OPU,
  };
-@@ -1331,6 +1332,11 @@ static inline bool f2fs_is_volatile_file(struct inode *inode)
- 	return is_inode_flag_set(F2FS_I(inode), FI_VOLATILE_FILE);
+ 
+ struct f2fs_io_info {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index eafaf72..f939660 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -205,6 +205,8 @@ retry:
+ 	list_add_tail(&new->list, &fi->inmem_pages);
+ 	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
+ 	mutex_unlock(&fi->inmem_lock);
++
++	trace_f2fs_register_inmem_page(page, INMEM);
  }
  
-+static inline bool f2fs_is_first_block_written(struct inode *inode)
-+{
-+	return is_inode_flag_set(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
-+}
-+
- static inline bool f2fs_is_drop_cache(struct inode *inode)
- {
- 	return is_inode_flag_set(F2FS_I(inode), FI_DROP_CACHE);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d927f8e..d17ac60 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -437,6 +437,9 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 		dn->data_blkaddr = NULL_ADDR;
- 		f2fs_update_extent_cache(dn);
- 		invalidate_blocks(sbi, blkaddr);
-+		if (dn->ofs_in_node == 0 && IS_INODE(dn->node_page))
-+			clear_inode_flag(F2FS_I(dn->inode),
-+						FI_FIRST_BLOCK_WRITTEN);
- 		nr_free++;
- 	}
- 	if (nr_free) {
-@@ -1005,6 +1008,9 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
- 	if (!f2fs_is_volatile_file(inode))
- 		return 0;
+ void commit_inmem_pages(struct inode *inode, bool abort)
+@@ -238,11 +240,13 @@ void commit_inmem_pages(struct inode *inode, bool abort)
+ 				f2fs_wait_on_page_writeback(cur->page, DATA);
+ 				if (clear_page_dirty_for_io(cur->page))
+ 					inode_dec_dirty_pages(inode);
++				trace_f2fs_commit_inmem_page(cur->page, INMEM);
+ 				do_write_data_page(cur->page, &fio);
+ 				submit_bio = true;
+ 			}
+ 			f2fs_put_page(cur->page, 1);
+ 		} else {
++			trace_f2fs_commit_inmem_page(cur->page, INMEM_DROP);
+ 			put_page(cur->page);
+ 		}
+ 		radix_tree_delete(&fi->inmem_root, cur->page->index);
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 09a56dc..75724bd 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -14,7 +14,11 @@
+ 		{ NODE,		"NODE" },				\
+ 		{ DATA,		"DATA" },				\
+ 		{ META,		"META" },				\
+-		{ META_FLUSH,	"META_FLUSH" })
++		{ META_FLUSH,	"META_FLUSH" },				\
++		{ INMEM,	"INMEM" },				\
++		{ INMEM_DROP,	"INMEM_DROP" },				\
++		{ IPU,		"IN-PLACE" },				\
++		{ OPU,		"OUT-OF-PLACE" })
  
-+	if (!f2fs_is_first_block_written(inode))
-+		return truncate_partial_data_page(inode, 0, true);
-+
- 	punch_hole(inode, 0, F2FS_BLKSIZE);
- 	return 0;
- }
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index b508744..bb58009 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -51,6 +51,13 @@ static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
- 	}
- }
+ #define F2FS_BIO_MASK(t)	(t & (READA | WRITE_FLUSH_FUA))
+ #define F2FS_BIO_EXTRA_MASK(t)	(t & (REQ_META | REQ_PRIO))
+@@ -854,6 +858,13 @@ DEFINE_EVENT(f2fs__page, f2fs_writepage,
+ 	TP_ARGS(page, type)
+ );
  
-+static bool __written_first_block(struct f2fs_inode *ri)
-+{
-+	if (ri->i_addr[0] != NEW_ADDR && ri->i_addr[0] != NULL_ADDR)
-+		return true;
-+	return false;
-+}
++DEFINE_EVENT(f2fs__page, f2fs_do_write_data_page,
 +
- static void __set_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
- {
- 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode)) {
-@@ -143,6 +150,9 @@ static int do_read_inode(struct inode *inode)
- 	/* get rdev by using inline_info */
- 	__get_inode_rdev(inode, ri);
- 
-+	if (__written_first_block(ri))
-+		set_inode_flag(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
++	TP_PROTO(struct page *page, int type),
 +
- 	f2fs_put_page(node_page, 1);
++	TP_ARGS(page, type)
++);
++
+ DEFINE_EVENT(f2fs__page, f2fs_readpage,
  
- 	stat_inc_inline_inode(inode);
+ 	TP_PROTO(struct page *page, int type),
+@@ -875,6 +886,20 @@ DEFINE_EVENT(f2fs__page, f2fs_vm_page_mkwrite,
+ 	TP_ARGS(page, type)
+ );
+ 
++DEFINE_EVENT(f2fs__page, f2fs_register_inmem_page,
++
++	TP_PROTO(struct page *page, int type),
++
++	TP_ARGS(page, type)
++);
++
++DEFINE_EVENT(f2fs__page, f2fs_commit_inmem_page,
++
++	TP_PROTO(struct page *page, int type),
++
++	TP_ARGS(page, type)
++);
++
+ TRACE_EVENT(f2fs_writepages,
+ 
+ 	TP_PROTO(struct inode *inode, struct writeback_control *wbc, int type),
 -- 
 2.1.1
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming The Go Parallel Website, sponsored
+by Intel and developed in partnership with Slashdot Media, is your hub for all
+things parallel software development, from weekly thought leadership blogs to
+news, videos, case studies, tutorials and more. Take a look and join the 
+conversation now. http://goparallel.sourceforge.net/
