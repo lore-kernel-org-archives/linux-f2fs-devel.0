@@ -1,123 +1,112 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v3] f2fs: add fast symlink support
-Date: Wed, 18 Mar 2015 11:05:28 -0700
-Message-ID: <20150318180528.GD7461@jaegeuk-mac02>
-References: <1426228419-11183-1-git-send-email-wanpeng.li@linux.intel.com>
- <20150317172127.GA745@jaegeuk-mac02>
- <20150318085851.GA2863@kernel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150318085851.GA2863@kernel>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Wanpeng Li <wanpeng.li@linux.intel.com>
-Cc: Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] f2fs: avoid punch_hole overhead when releasing volatile data
+Date: Wed, 18 Mar 2015 11:18:20 -0700
+Message-ID: <1426702701-7757-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+This patch is to avoid some punch_hole overhead when releasing volatile data.
+If volatile data was not written yet, we just can make the first page as zero.
 
-On Wed, Mar 18, 2015 at 04:58:52PM +0800, Wanpeng Li wrote:
-> Hi Jaegeuk,
-> On Tue, Mar 17, 2015 at 10:21:27AM -0700, Jaegeuk Kim wrote:
-> >> -	err = page_symlink(inode, symname, symlen);
-> >> +
-> >> +	if (symlen > MAX_FAST_SYMLINK_SIZE) {
-> >> +		/* slow symlink */
-> >> +		inode->i_op = &f2fs_symlink_inode_operations;
-> >> +		inode->i_mapping->a_ops = &f2fs_dblock_aops;
-> >> +		err = page_symlink(inode, symname, symlen);
-> >> +	} else {
-> >> +		/* fast symlink */
-> >> +		struct page *node_page;
-> >> +
-> >> +		inode->i_op = &f2fs_fast_symlink_inode_operations;
-> >> +		node_page = get_node_page(sbi, inode->i_ino);
-> >> +		memcpy((char *)&F2FS_INODE(node_page)->i_addr, symname, symlen);
-> >
-> >This is mostly likewise the inline_data flow.
-> >As of now, I can't recommend using any i_addr region, since we need to handle
-> >many cases such as truncation, roll-forward recovery, and fsck/dump tools.
-> >
-> >It is more sensible to enable inline_data by default, isn't it?
-> 
-> Do you mean to replace the codes above by something like
-> f2fs_write_inline_data()?
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c  |  2 ++
+ fs/f2fs/f2fs.h  |  6 ++++++
+ fs/f2fs/file.c  |  6 ++++++
+ fs/f2fs/inode.c | 10 ++++++++++
+ 4 files changed, 24 insertions(+)
 
-I meant the mount option, inline_data.
-Currently, f2fs doesn't set that option at mount time, but I thought that we
-can set it by default since it becomes stable.
-
-Thanks,
-
-> 
-> Regards,
-> Wanpeng Li 
-> 
-> >
-> >Thanks,
-> >
-> >> +		set_page_dirty(node_page);
-> >> +		f2fs_put_page(node_page, 1);
-> >> +		inode->i_size = symlen-1;
-> >> +		set_inode_flag(F2FS_I(inode), FI_FAST_SYMLINK);
-> >> +		mark_inode_dirty(inode);
-> >> +	}
-> >>  	alloc_nid_done(sbi, inode->i_ino);
-> >>  
-> >>  	d_instantiate(dentry, inode);
-> >> @@ -743,6 +774,20 @@ const struct inode_operations f2fs_symlink_inode_operations = {
-> >>  #endif
-> >>  };
-> >>  
-> >> +const struct inode_operations f2fs_fast_symlink_inode_operations = {
-> >> +	.readlink       = generic_readlink,
-> >> +	.follow_link    = f2fs_follow_link,
-> >> +	.put_link       = page_put_link,
-> >> +	.getattr	= f2fs_getattr,
-> >> +	.setattr	= f2fs_setattr,
-> >> +#ifdef CONFIG_F2FS_FS_XATTR
-> >> +	.setxattr	= generic_setxattr,
-> >> +	.getxattr	= generic_getxattr,
-> >> +	.listxattr	= f2fs_listxattr,
-> >> +	.removexattr	= generic_removexattr,
-> >> +#endif
-> >> +};
-> >> +
-> >>  const struct inode_operations f2fs_special_inode_operations = {
-> >>  	.getattr	= f2fs_getattr,
-> >>  	.setattr        = f2fs_setattr,
-> >> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> >> index 35a9117..efe28a2b 100644
-> >> --- a/fs/f2fs/node.c
-> >> +++ b/fs/f2fs/node.c
-> >> @@ -908,8 +908,9 @@ void remove_inode_page(struct inode *inode)
-> >>  	}
-> >>  
-> >>  	/* remove potential inline_data blocks */
-> >> -	if (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
-> >> -				S_ISLNK(inode->i_mode))
-> >> +	if ((S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
-> >> +				S_ISLNK(inode->i_mode)) &&
-> >> +				!f2fs_inode_is_fast_symlink(inode))
-> >>  		truncate_data_blocks_range(&dn, 1);
-> >>  
-> >>  	/* 0 is possible, after f2fs_new_inode() has failed */
-> >> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-> >> index 502f28c..834880c 100644
-> >> --- a/include/linux/f2fs_fs.h
-> >> +++ b/include/linux/f2fs_fs.h
-> >> @@ -178,9 +178,11 @@ struct f2fs_extent {
-> >>  #define F2FS_INLINE_DATA	0x02	/* file inline data flag */
-> >>  #define F2FS_INLINE_DENTRY	0x04	/* file inline dentry flag */
-> >>  #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
-> >> +#define F2FS_FAST_SYMLINK	0x10    /* file fast symlink flag */
-> >>  
-> >>  #define MAX_INLINE_DATA		(sizeof(__le32) * (DEF_ADDRS_PER_INODE - \
-> >>  						F2FS_INLINE_XATTR_ADDRS - 1))
-> >> +#define MAX_FAST_SYMLINK_SIZE (MAX_INLINE_DATA + 1)
-> >>  
-> >>  struct f2fs_inode {
-> >>  	__le16 i_mode;			/* file mode */
-> >> -- 
-> >> 1.9.1
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index f0a18a0..486113d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1291,6 +1291,8 @@ int do_write_data_page(struct page *page, struct f2fs_io_info *fio)
+ 		write_data_page(page, &dn, fio);
+ 		f2fs_update_extent_cache(&dn);
+ 		set_inode_flag(F2FS_I(inode), FI_APPEND_WRITE);
++		if (page->index == 0)
++			set_inode_flag(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
+ 	}
+ out_writepage:
+ 	f2fs_put_dnode(&dn);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f2909c6..fec8acc 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1223,6 +1223,7 @@ enum {
+ 	FI_NEED_IPU,		/* used for ipu per file */
+ 	FI_ATOMIC_FILE,		/* indicate atomic file */
+ 	FI_VOLATILE_FILE,	/* indicate volatile file */
++	FI_FIRST_BLOCK_WRITTEN,	/* indicate #0 data block was written */
+ 	FI_DROP_CACHE,		/* drop dirty page cache */
+ 	FI_DATA_EXIST,		/* indicate data exists */
+ };
+@@ -1331,6 +1332,11 @@ static inline bool f2fs_is_volatile_file(struct inode *inode)
+ 	return is_inode_flag_set(F2FS_I(inode), FI_VOLATILE_FILE);
+ }
+ 
++static inline bool f2fs_is_first_block_written(struct inode *inode)
++{
++	return is_inode_flag_set(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
++}
++
+ static inline bool f2fs_is_drop_cache(struct inode *inode)
+ {
+ 	return is_inode_flag_set(F2FS_I(inode), FI_DROP_CACHE);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index d927f8e..d17ac60 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -437,6 +437,9 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+ 		dn->data_blkaddr = NULL_ADDR;
+ 		f2fs_update_extent_cache(dn);
+ 		invalidate_blocks(sbi, blkaddr);
++		if (dn->ofs_in_node == 0 && IS_INODE(dn->node_page))
++			clear_inode_flag(F2FS_I(dn->inode),
++						FI_FIRST_BLOCK_WRITTEN);
+ 		nr_free++;
+ 	}
+ 	if (nr_free) {
+@@ -1005,6 +1008,9 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
+ 	if (!f2fs_is_volatile_file(inode))
+ 		return 0;
+ 
++	if (!f2fs_is_first_block_written(inode))
++		return truncate_partial_data_page(inode, 0, true);
++
+ 	punch_hole(inode, 0, F2FS_BLKSIZE);
+ 	return 0;
+ }
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index b508744..bb58009 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -51,6 +51,13 @@ static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+ 	}
+ }
+ 
++static bool __written_first_block(struct f2fs_inode *ri)
++{
++	if (ri->i_addr[0] != NEW_ADDR && ri->i_addr[0] != NULL_ADDR)
++		return true;
++	return false;
++}
++
+ static void __set_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+ {
+ 	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode)) {
+@@ -143,6 +150,9 @@ static int do_read_inode(struct inode *inode)
+ 	/* get rdev by using inline_info */
+ 	__get_inode_rdev(inode, ri);
+ 
++	if (__written_first_block(ri))
++		set_inode_flag(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
++
+ 	f2fs_put_page(node_page, 1);
+ 
+ 	stat_inc_inline_inode(inode);
+-- 
+2.1.1
