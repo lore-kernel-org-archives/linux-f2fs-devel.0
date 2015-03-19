@@ -1,34 +1,41 @@
-From: Wanpeng Li <wanpeng.li@linux.intel.com>
-Subject: [PATCH] f2fs: enable fast symlink by utilizing inline data
-Date: Thu, 19 Mar 2015 13:23:48 +0800
-Message-ID: <1426742628-8028-1-git-send-email-wanpeng.li@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Wanpeng Li <wanpeng.li@linux.intel.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/4 v2] f2fs: set buffer_new when new blocks are
+ allocated
+Date: Thu, 19 Mar 2015 19:18:44 +0800
+Message-ID: <009d01d06236$91bd9060$b538b120$@samsung.com>
+References: <1426611461-690-1-git-send-email-jaegeuk@kernel.org>
+ <1426611461-690-2-git-send-email-jaegeuk@kernel.org>
+ <006e01d06122$bce68270$36b38750$@samsung.com>
+ <20150318175700.GA7461@jaegeuk-mac02>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <20150318175700.GA7461@jaegeuk-mac02>
+Content-language: zh-cn
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Fast symlink can utilize inline data flow to avoid using any 
-i_addr region, since we need to handle many cases such as 
-truncation, roll-forward recovery, and fsck/dump tools.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Thursday, March 19, 2015 1:57 AM
+> To: Chao Yu
+> Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 2/4 v2] f2fs: set buffer_new when new blocks are allocated
+> 
+> Hi Chao,
+> 
+> Thanks for the review.
+> 
+> Change log from v1:
+>  o add clear_buffer_new() in f2fs_map_bh
+> 
+> This patch modifies to call set_buffer_new, if new blocks are allocated.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
----
- fs/f2fs/inline.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index d67bc0d..b7baad6 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -18,7 +18,7 @@ bool f2fs_may_inline(struct inode *inode)
- 	if (f2fs_is_atomic_file(inode))
- 		return false;
- 
--	if (!S_ISREG(inode->i_mode))
-+	if (!S_ISREG(inode->i_mode) && !S_ISLNK(inode->i_mode))
- 		return false;
- 
- 	if (i_size_read(inode) > MAX_INLINE_DATA)
--- 
-2.1.0
