@@ -1,178 +1,122 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/4] f2fs: introduce __{find,grab}_extent_tree
-Date: Thu, 19 Mar 2015 19:24:59 +0800
-Message-ID: <000101d06237$702d3a80$5087af80$@samsung.com>
+Subject: [PATCH 3/4] f2fs: initialize extent tree with on-disk extent info of
+ inode
+Date: Thu, 19 Mar 2015 19:26:02 +0800
+Message-ID: <000201d06237$95bd9f60$c138de20$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1YYYaH-0005At-7v
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Mar 2015 11:25:53 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
-	(Exim 4.76) id 1YYYaE-0004IL-VO
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Mar 2015 11:25:53 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
-	(built Nov
-	17 2011)) with ESMTP id <0NLG0067VIEUVA70@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Mar 2015 20:25:43 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch introduces __{find,grab}_extent_tree for reusing by following
-patches.
+With normal extent info cache, we records largest extent mapping between logical
+block and physical block into extent info, and we persist extent info in on-disk
+inode.
+
+When we enable extent tree cache, if extent info of on-disk inode is exist, and
+the extent is not a small fragmented mapping extent. We'd better to load the
+extent info into extent tree cache when inode is loaded. By this way we can have
+more chance to hit extent tree cache rather than taking more time to read dnode
+page for block address.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c | 79 +++++++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 48 insertions(+), 31 deletions(-)
+ fs/f2fs/data.c  | 43 +++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/inode.c |  4 +---
+ 3 files changed, 45 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index edeba35..a73df90 100644
+index a73df90..0c48af91 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -393,6 +393,49 @@ static void __detach_extent_node(struct f2fs_sb_info *sbi,
- 		et->cached_en = NULL;
+@@ -571,6 +571,39 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+ 	return count - et->count;
  }
  
-+static struct extent_tree *__find_extent_tree(struct f2fs_sb_info *sbi,
-+							nid_t ino)
-+{
-+	struct extent_tree *et;
-+
-+	down_read(&sbi->extent_tree_lock);
-+	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
-+	if (!et) {
-+		up_read(&sbi->extent_tree_lock);
-+		return NULL;
-+	}
-+	atomic_inc(&et->refcount);
-+	up_read(&sbi->extent_tree_lock);
-+
-+	return et;
-+}
-+
-+static struct extent_tree *__grab_extent_tree(struct inode *inode)
++static void f2fs_init_extent_tree(struct inode *inode,
++						struct f2fs_extent *i_ext)
 +{
 +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
 +	struct extent_tree *et;
-+	nid_t ino = inode->i_ino;
++	struct extent_node *en;
++	struct extent_info ei;
 +
-+	down_write(&sbi->extent_tree_lock);
-+	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
-+	if (!et) {
-+		et = f2fs_kmem_cache_alloc(extent_tree_slab, GFP_NOFS);
-+		f2fs_radix_tree_insert(&sbi->extent_tree_root, ino, et);
-+		memset(et, 0, sizeof(struct extent_tree));
-+		et->ino = ino;
-+		et->root = RB_ROOT;
-+		et->cached_en = NULL;
-+		rwlock_init(&et->lock);
-+		atomic_set(&et->refcount, 0);
-+		et->count = 0;
-+		sbi->total_ext_tree++;
++	if (le32_to_cpu(i_ext->len) < F2FS_MIN_EXTENT_LEN)
++		return;
++
++	et = __grab_extent_tree(inode);
++
++	write_lock(&et->lock);
++	if (et->count)
++		goto out;
++
++	set_extent_info(&ei, le32_to_cpu(i_ext->fofs),
++		le32_to_cpu(i_ext->blk), le32_to_cpu(i_ext->len));
++
++	en = __insert_extent_tree(sbi, et, &ei, NULL);
++	if (en) {
++		et->cached_en = en;
++
++		spin_lock(&sbi->extent_lock);
++		list_add_tail(&en->list, &sbi->extent_list);
++		spin_unlock(&sbi->extent_lock);
 +	}
-+	atomic_inc(&et->refcount);
-+	up_write(&sbi->extent_tree_lock);
-+
-+	return et;
++out:
++	write_unlock(&et->lock);
++	atomic_dec(&et->refcount);
 +}
 +
- static struct extent_node *__lookup_extent_tree(struct extent_tree *et,
- 							unsigned int fofs)
+ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+ 							struct extent_info *ei)
  {
-@@ -537,14 +580,9 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+@@ -781,6 +814,16 @@ out:
+ 	return;
+ }
  
- 	trace_f2fs_lookup_extent_tree_start(inode, pgofs);
- 
--	down_read(&sbi->extent_tree_lock);
--	et = radix_tree_lookup(&sbi->extent_tree_root, inode->i_ino);
--	if (!et) {
--		up_read(&sbi->extent_tree_lock);
-+	et = __find_extent_tree(sbi, inode->i_ino);
-+	if (!et)
- 		return false;
--	}
--	atomic_inc(&et->refcount);
--	up_read(&sbi->extent_tree_lock);
- 
- 	read_lock(&et->lock);
- 	en = __lookup_extent_tree(et, pgofs);
-@@ -569,7 +607,6 @@ static void f2fs_update_extent_tree(struct inode *inode, pgoff_t fofs,
- 							block_t blkaddr)
++void f2fs_init_extent_cache(struct inode *inode, struct f2fs_extent *i_ext)
++{
++	if (test_opt(F2FS_I_SB(inode), EXTENT_CACHE))
++		f2fs_init_extent_tree(inode, i_ext);
++
++	write_lock(&F2FS_I(inode)->ext_lock);
++	get_extent_info(&F2FS_I(inode)->ext, *i_ext);
++	write_unlock(&F2FS_I(inode)->ext_lock);
++}
++
+ static bool f2fs_lookup_extent_cache(struct inode *inode, pgoff_t pgofs,
+ 							struct extent_info *ei)
  {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	nid_t ino = inode->i_ino;
- 	struct extent_tree *et;
- 	struct extent_node *en = NULL, *en1 = NULL, *en2 = NULL, *en3 = NULL;
- 	struct extent_node *den = NULL;
-@@ -578,22 +615,7 @@ static void f2fs_update_extent_tree(struct inode *inode, pgoff_t fofs,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c5c3ae9..836e5a9 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1577,6 +1577,7 @@ int reserve_new_block(struct dnode_of_data *);
+ int f2fs_reserve_block(struct dnode_of_data *, pgoff_t);
+ void f2fs_shrink_extent_tree(struct f2fs_sb_info *, int);
+ void f2fs_destroy_extent_tree(struct inode *);
++void f2fs_init_extent_cache(struct inode *, struct f2fs_extent *);
+ void f2fs_update_extent_cache(struct dnode_of_data *);
+ struct page *find_data_page(struct inode *, pgoff_t, bool);
+ struct page *get_lock_data_page(struct inode *, pgoff_t);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index b508744..fcd1e7b 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -130,9 +130,7 @@ static int do_read_inode(struct inode *inode)
+ 	fi->i_pino = le32_to_cpu(ri->i_pino);
+ 	fi->i_dir_level = ri->i_dir_level;
  
- 	trace_f2fs_update_extent_tree(inode, fofs, blkaddr);
+-	write_lock(&fi->ext_lock);
+-	get_extent_info(&fi->ext, ri->i_ext);
+-	write_unlock(&fi->ext_lock);
++	f2fs_init_extent_cache(inode, &ri->i_ext);
  
--	down_write(&sbi->extent_tree_lock);
--	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
--	if (!et) {
--		et = f2fs_kmem_cache_alloc(extent_tree_slab, GFP_NOFS);
--		f2fs_radix_tree_insert(&sbi->extent_tree_root, ino, et);
--		memset(et, 0, sizeof(struct extent_tree));
--		et->ino = ino;
--		et->root = RB_ROOT;
--		et->cached_en = NULL;
--		rwlock_init(&et->lock);
--		atomic_set(&et->refcount, 0);
--		et->count = 0;
--		sbi->total_ext_tree++;
--	}
--	atomic_inc(&et->refcount);
--	up_write(&sbi->extent_tree_lock);
-+	et = __grab_extent_tree(inode);
+ 	get_inline_info(fi, ri);
  
- 	write_lock(&et->lock);
- 
-@@ -731,14 +753,9 @@ void f2fs_destroy_extent_tree(struct inode *inode)
- 	if (!test_opt(sbi, EXTENT_CACHE))
- 		return;
- 
--	down_read(&sbi->extent_tree_lock);
--	et = radix_tree_lookup(&sbi->extent_tree_root, inode->i_ino);
--	if (!et) {
--		up_read(&sbi->extent_tree_lock);
-+	et = __find_extent_tree(sbi, inode->i_ino);
-+	if (!et)
- 		goto out;
--	}
--	atomic_inc(&et->refcount);
--	up_read(&sbi->extent_tree_lock);
- 
- 	/* free all extent info belong to this extent tree */
- 	write_lock(&et->lock);
 -- 
 2.3.1
-
-
-
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming The Go Parallel Website, sponsored
-by Intel and developed in partnership with Slashdot Media, is your hub for all
-things parallel software development, from weekly thought leadership blogs to
-news, videos, case studies, tutorials and more. Take a look and join the 
-conversation now. http://goparallel.sourceforge.net/
