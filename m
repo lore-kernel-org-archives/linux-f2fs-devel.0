@@ -1,126 +1,178 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/4] f2fs: split set_data_blkaddr from f2fs_update_extent_cache
-Date: Thu, 19 Mar 2015 19:23:32 +0800
-Message-ID: <000001d06237$3ba58150$b2f083f0$@samsung.com>
+Subject: [PATCH 2/4] f2fs: introduce __{find,grab}_extent_tree
+Date: Thu, 19 Mar 2015 19:24:59 +0800
+Message-ID: <000101d06237$702d3a80$5087af80$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1YYYaH-0005At-7v
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 19 Mar 2015 11:25:53 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-MD5:128)
+	(Exim 4.76) id 1YYYaE-0004IL-VO
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 19 Mar 2015 11:25:53 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit
+	(built Nov
+	17 2011)) with ESMTP id <0NLG0067VIEUVA70@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 19 Mar 2015 20:25:43 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Split __set_data_blkaddr from f2fs_update_extent_cache for readability.
-
-Additionally rename __set_data_blkaddr to set_data_blkaddr for exporting.
+This patch introduces __{find,grab}_extent_tree for reusing by following
+patches.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c     | 10 ++++------
- fs/f2fs/f2fs.h     |  1 +
- fs/f2fs/file.c     |  1 +
- fs/f2fs/inline.c   |  1 +
- fs/f2fs/recovery.c |  1 +
- 5 files changed, 8 insertions(+), 6 deletions(-)
+ fs/f2fs/data.c | 79 +++++++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 48 insertions(+), 31 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 1a3d86a..edeba35 100644
+index edeba35..a73df90 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -200,7 +200,7 @@ alloc_new:
-  *  ->node_page
-  *    update block addresses in the node page
-  */
--static void __set_data_blkaddr(struct dnode_of_data *dn)
-+void set_data_blkaddr(struct dnode_of_data *dn)
+@@ -393,6 +393,49 @@ static void __detach_extent_node(struct f2fs_sb_info *sbi,
+ 		et->cached_en = NULL;
+ }
+ 
++static struct extent_tree *__find_extent_tree(struct f2fs_sb_info *sbi,
++							nid_t ino)
++{
++	struct extent_tree *et;
++
++	down_read(&sbi->extent_tree_lock);
++	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
++	if (!et) {
++		up_read(&sbi->extent_tree_lock);
++		return NULL;
++	}
++	atomic_inc(&et->refcount);
++	up_read(&sbi->extent_tree_lock);
++
++	return et;
++}
++
++static struct extent_tree *__grab_extent_tree(struct inode *inode)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct extent_tree *et;
++	nid_t ino = inode->i_ino;
++
++	down_write(&sbi->extent_tree_lock);
++	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
++	if (!et) {
++		et = f2fs_kmem_cache_alloc(extent_tree_slab, GFP_NOFS);
++		f2fs_radix_tree_insert(&sbi->extent_tree_root, ino, et);
++		memset(et, 0, sizeof(struct extent_tree));
++		et->ino = ino;
++		et->root = RB_ROOT;
++		et->cached_en = NULL;
++		rwlock_init(&et->lock);
++		atomic_set(&et->refcount, 0);
++		et->count = 0;
++		sbi->total_ext_tree++;
++	}
++	atomic_inc(&et->refcount);
++	up_write(&sbi->extent_tree_lock);
++
++	return et;
++}
++
+ static struct extent_node *__lookup_extent_tree(struct extent_tree *et,
+ 							unsigned int fofs)
  {
- 	struct f2fs_node *rn;
- 	__le32 *addr_array;
-@@ -229,7 +229,7 @@ int reserve_new_block(struct dnode_of_data *dn)
- 	trace_f2fs_reserve_new_block(dn->inode, dn->nid, dn->ofs_in_node);
+@@ -537,14 +580,9 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
  
- 	dn->data_blkaddr = NEW_ADDR;
--	__set_data_blkaddr(dn);
-+	set_data_blkaddr(dn);
- 	mark_inode_dirty(dn->inode);
- 	sync_inode_page(dn);
- 	return 0;
-@@ -783,9 +783,6 @@ void f2fs_update_extent_cache(struct dnode_of_data *dn)
+ 	trace_f2fs_lookup_extent_tree_start(inode, pgofs);
  
- 	f2fs_bug_on(F2FS_I_SB(dn->inode), dn->data_blkaddr == NEW_ADDR);
+-	down_read(&sbi->extent_tree_lock);
+-	et = radix_tree_lookup(&sbi->extent_tree_root, inode->i_ino);
+-	if (!et) {
+-		up_read(&sbi->extent_tree_lock);
++	et = __find_extent_tree(sbi, inode->i_ino);
++	if (!et)
+ 		return false;
+-	}
+-	atomic_inc(&et->refcount);
+-	up_read(&sbi->extent_tree_lock);
  
--	/* Update the page address in the parent node */
--	__set_data_blkaddr(dn);
--
- 	if (is_inode_flag_set(fi, FI_NO_EXTENT))
+ 	read_lock(&et->lock);
+ 	en = __lookup_extent_tree(et, pgofs);
+@@ -569,7 +607,6 @@ static void f2fs_update_extent_tree(struct inode *inode, pgoff_t fofs,
+ 							block_t blkaddr)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	nid_t ino = inode->i_ino;
+ 	struct extent_tree *et;
+ 	struct extent_node *en = NULL, *en1 = NULL, *en2 = NULL, *en3 = NULL;
+ 	struct extent_node *den = NULL;
+@@ -578,22 +615,7 @@ static void f2fs_update_extent_tree(struct inode *inode, pgoff_t fofs,
+ 
+ 	trace_f2fs_update_extent_tree(inode, fofs, blkaddr);
+ 
+-	down_write(&sbi->extent_tree_lock);
+-	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
+-	if (!et) {
+-		et = f2fs_kmem_cache_alloc(extent_tree_slab, GFP_NOFS);
+-		f2fs_radix_tree_insert(&sbi->extent_tree_root, ino, et);
+-		memset(et, 0, sizeof(struct extent_tree));
+-		et->ino = ino;
+-		et->root = RB_ROOT;
+-		et->cached_en = NULL;
+-		rwlock_init(&et->lock);
+-		atomic_set(&et->refcount, 0);
+-		et->count = 0;
+-		sbi->total_ext_tree++;
+-	}
+-	atomic_inc(&et->refcount);
+-	up_write(&sbi->extent_tree_lock);
++	et = __grab_extent_tree(inode);
+ 
+ 	write_lock(&et->lock);
+ 
+@@ -731,14 +753,9 @@ void f2fs_destroy_extent_tree(struct inode *inode)
+ 	if (!test_opt(sbi, EXTENT_CACHE))
  		return;
  
-@@ -1031,7 +1028,7 @@ static int __allocate_data_block(struct dnode_of_data *dn)
- 	allocate_data_block(sbi, NULL, NULL_ADDR, &dn->data_blkaddr, &sum, seg);
+-	down_read(&sbi->extent_tree_lock);
+-	et = radix_tree_lookup(&sbi->extent_tree_root, inode->i_ino);
+-	if (!et) {
+-		up_read(&sbi->extent_tree_lock);
++	et = __find_extent_tree(sbi, inode->i_ino);
++	if (!et)
+ 		goto out;
+-	}
+-	atomic_inc(&et->refcount);
+-	up_read(&sbi->extent_tree_lock);
  
- 	/* direct IO doesn't use extent cache to maximize the performance */
--	__set_data_blkaddr(dn);
-+	set_data_blkaddr(dn);
- 
- 	/* update i_size */
- 	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
-@@ -1288,6 +1285,7 @@ int do_write_data_page(struct page *page, struct f2fs_io_info *fio)
- 		set_inode_flag(F2FS_I(inode), FI_UPDATE_WRITE);
- 	} else {
- 		write_data_page(page, &dn, fio);
-+		set_data_blkaddr(&dn);
- 		f2fs_update_extent_cache(&dn);
- 		set_inode_flag(F2FS_I(inode), FI_APPEND_WRITE);
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f2909c6..c5c3ae9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1572,6 +1572,7 @@ int f2fs_submit_page_bio(struct f2fs_sb_info *, struct page *,
- 						struct f2fs_io_info *);
- void f2fs_submit_page_mbio(struct f2fs_sb_info *, struct page *,
- 						struct f2fs_io_info *);
-+void set_data_blkaddr(struct dnode_of_data *);
- int reserve_new_block(struct dnode_of_data *);
- int f2fs_reserve_block(struct dnode_of_data *, pgoff_t);
- void f2fs_shrink_extent_tree(struct f2fs_sb_info *, int);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d927f8e..e0f6b94 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -435,6 +435,7 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 			continue;
- 
- 		dn->data_blkaddr = NULL_ADDR;
-+		set_data_blkaddr(dn);
- 		f2fs_update_extent_cache(dn);
- 		invalidate_blocks(sbi, blkaddr);
- 		nr_free++;
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index d3e0599..7484cff 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -131,6 +131,7 @@ no_update:
- 	set_page_writeback(page);
- 	fio.blk_addr = dn->data_blkaddr;
- 	write_data_page(page, dn, &fio);
-+	set_data_blkaddr(dn);
- 	f2fs_update_extent_cache(dn);
- 	f2fs_wait_on_page_writeback(page, DATA);
- 	if (dirty)
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 6e40874..e60ffaa 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -403,6 +403,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 			/* write dummy data page */
- 			recover_data_page(sbi, NULL, &sum, src, dest);
- 			dn.data_blkaddr = dest;
-+			set_data_blkaddr(&dn);
- 			f2fs_update_extent_cache(&dn);
- 			recovered++;
- 		}
+ 	/* free all extent info belong to this extent tree */
+ 	write_lock(&et->lock);
 -- 
 2.3.1
+
+
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming The Go Parallel Website, sponsored
+by Intel and developed in partnership with Slashdot Media, is your hub for all
+things parallel software development, from weekly thought leadership blogs to
+news, videos, case studies, tutorials and more. Take a look and join the 
+conversation now. http://goparallel.sourceforge.net/
