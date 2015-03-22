@@ -1,7 +1,9 @@
 From: Wanpeng Li <wanpeng.li@linux.intel.com>
-Subject: [PATCH v2 1/2] f2fs: enable inline data by default
-Date: Mon, 23 Mar 2015 07:43:59 +0800
-Message-ID: <1427067840-20610-1-git-send-email-wanpeng.li@linux.intel.com>
+Subject: [PATCH v2 2/2] f2fs: enable fast symlink by utilizing
+	inline data
+Date: Mon, 23 Mar 2015 07:44:00 +0800
+Message-ID: <1427067840-20610-2-git-send-email-wanpeng.li@linux.intel.com>
+References: <1427067840-20610-1-git-send-email-wanpeng.li@linux.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -9,13 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <wanpeng.li@linux.intel.com>) id 1YZpou-0004zb-9p
+	(envelope-from <wanpeng.li@linux.intel.com>) id 1YZpow-0004zo-7o
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 23 Mar 2015 00:02:16 +0000
+	Mon, 23 Mar 2015 00:02:18 +0000
 Received: from mga14.intel.com ([192.55.52.115])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YZpot-0000Qw-1Z for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 23 Mar 2015 00:02:16 +0000
+	id 1YZpou-0000Qw-Ey for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 23 Mar 2015 00:02:18 +0000
+In-Reply-To: <1427067840-20610-1-git-send-email-wanpeng.li@linux.intel.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,109 +31,28 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 
-Enable inline_data feature by default since it brings us better
-performance and space utilization and now has already stable.
-Add another option noinline_data to disable it during mount.
+Fast symlink can utilize inline data flow to avoid using any
+i_addr region, since we need to handle many cases such as
+truncation, roll-forward recovery, and fsck/dump tools.
 
-Suggested-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Suggested-by: Chao Yu <chao2.yu@samsung.com>
 Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
 ---
-v1 -> v2:
- * retain inline_data option and enable it by default
- * add another noinline_data option
+ fs/f2fs/inline.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Documentation/filesystems/f2fs.txt | 2 ++
- fs/f2fs/f2fs.h                     | 1 +
- fs/f2fs/inline.c                   | 2 +-
- fs/f2fs/super.c                    | 8 ++++++++
- 4 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 48e2123..e9e750e 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -144,6 +144,8 @@ extent_cache           Enable an extent cache based on rb-tree, it can cache
-                        as many as extent which map between contiguous logical
-                        address and physical address per inode, resulting in
-                        increasing the cache hit ratio.
-+noinline_data          Disable the inline data feature, inline data feature is
-+                       enabled by default.
- 
- ================================================================================
- DEBUGFS ENTRIES
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f2909c6..6d4ceb3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -51,6 +51,7 @@
- #define F2FS_MOUNT_NOBARRIER		0x00000800
- #define F2FS_MOUNT_FASTBOOT		0x00001000
- #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
-+#define F2FS_MOUNT_NOINLINE_DATA	0x00004000
- 
- #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
- #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
 diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index d3e0599..0363b57 100644
+index 0363b57..b93d6a0 100644
 --- a/fs/f2fs/inline.c
 +++ b/fs/f2fs/inline.c
-@@ -15,7 +15,7 @@
- 
- bool f2fs_may_inline(struct inode *inode)
- {
--	if (!test_opt(F2FS_I_SB(inode), INLINE_DATA))
-+	if (!test_opt(F2FS_I_SB(inode), NOINLINE_DATA))
+@@ -21,7 +21,7 @@ bool f2fs_may_inline(struct inode *inode)
+ 	if (f2fs_is_atomic_file(inode))
  		return false;
  
- 	if (f2fs_is_atomic_file(inode))
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fc6857f..7b17795 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -58,6 +58,7 @@ enum {
- 	Opt_nobarrier,
- 	Opt_fastboot,
- 	Opt_extent_cache,
-+	Opt_noinline_data,
- 	Opt_err,
- };
+-	if (!S_ISREG(inode->i_mode))
++	if (!S_ISREG(inode->i_mode) && !S_ISLNK(inode->i_mode))
+ 		return false;
  
-@@ -80,6 +81,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_nobarrier, "nobarrier"},
- 	{Opt_fastboot, "fastboot"},
- 	{Opt_extent_cache, "extent_cache"},
-+	{Opt_noinline_data, "noinline_data"},
- 	{Opt_err, NULL},
- };
- 
-@@ -372,6 +374,9 @@ static int parse_options(struct super_block *sb, char *options)
- 		case Opt_extent_cache:
- 			set_opt(sbi, EXTENT_CACHE);
- 			break;
-+		case Opt_noinline_data:
-+			set_opt(sbi, NOINLINE_DATA);
-+			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
-@@ -606,6 +611,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",fastboot");
- 	if (test_opt(sbi, EXTENT_CACHE))
- 		seq_puts(seq, ",extent_cache");
-+	if (test_opt(sbi, NOINLINE_DATA))
-+		seq_puts(seq, ",noinline_data");
- 	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
- 
- 	return 0;
-@@ -991,6 +998,7 @@ try_onemore:
- 	sbi->active_logs = NR_CURSEG_TYPE;
- 
- 	set_opt(sbi, BG_GC);
-+	set_opt(sbi, INLINE_DATA);
- 
- #ifdef CONFIG_F2FS_FS_XATTR
- 	set_opt(sbi, XATTR_USER);
+ 	if (i_size_read(inode) > MAX_INLINE_DATA)
 -- 
 1.9.1
 
