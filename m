@@ -1,7 +1,8 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/4] f2fs: preallocate fallocated blocks for direct IO
-Date: Mon, 23 Mar 2015 10:33:37 +0800
-Message-ID: <002301d06511$de54e760$9afeb620$@samsung.com>
+Subject: [PATCH 3/4] f2fs: avoid NULL pointer dereference in
+ f2fs_xattr_advise_get
+Date: Mon, 23 Mar 2015 10:36:15 +0800
+Message-ID: <002401d06512$3d3da050$b7b8e0f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -12,81 +13,86 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Normally, due to DIO_SKIP_HOLES flag is set by default, blockdev_direct_IO in
-f2fs_direct_IO tries to skip DIO in holes when writing inside i_size, this
-makes us falling back to buffered IO which shows lower performance.
+We will encounter oops by executing below command.
+getfattr -n system.advise /mnt/f2fs/file
+Killed
 
-So in commit 59b802e5a453 ("f2fs: allocate data blocks in advance for
-f2fs_direct_IO"), we improve perfromance by allocating data blocks in advance
-if we meet holes no matter in i_size or not, since with it we can avoid falling
-back to buffered IO.
+message log:
+BUG: unable to handle kernel NULL pointer dereference at   (null)
+IP: [<f8b54d69>] f2fs_xattr_advise_get+0x29/0x40 [f2fs]
+*pdpt = 00000000319b7001 *pde = 0000000000000000
+Oops: 0002 [#1] SMP
+Modules linked in: f2fs(O) snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq joydev
+snd_seq_device snd_timer bnep snd rfcomm microcode bluetooth soundcore i2c_piix4 mac_hid serio_raw parport_pc ppdev lp parport
+binfmt_misc hid_generic psmouse usbhid hid e1000 [last unloaded: f2fs]
+CPU: 3 PID: 3134 Comm: getfattr Tainted: G           O    4.0.0-rc1 #6
+Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+task: f3a71b60 ti: f19a6000 task.ti: f19a6000
+EIP: 0060:[<f8b54d69>] EFLAGS: 00010246 CPU: 3
+EIP is at f2fs_xattr_advise_get+0x29/0x40 [f2fs]
+EAX: 00000000 EBX: f19a7e71 ECX: 00000000 EDX: f8b5b467
+ESI: 00000000 EDI: f2008570 EBP: f19a7e14 ESP: f19a7e08
+ DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
+CR0: 80050033 CR2: 00000000 CR3: 319b8000 CR4: 000007f0
+Stack:
+ f8b5a634 c0cbb580 00000000 f19a7e34 c1193850 00000000 00000007 f19a7e71
+ f19a7e64 c0cbb580 c1193810 f19a7e50 c1193c00 00000000 00000000 00000000
+ c0cbb580 00000000 f19a7f70 c1194097 00000000 00000000 00000000 74737973
+Call Trace:
+ [<c1193850>] generic_getxattr+0x40/0x50
+ [<c1193810>] ? xattr_resolve_name+0x80/0x80
+ [<c1193c00>] vfs_getxattr+0x70/0xa0
+ [<c1194097>] getxattr+0x87/0x190
+ [<c11801d7>] ? path_lookupat+0x57/0x5f0
+ [<c11819d2>] ? putname+0x32/0x50
+ [<c116653a>] ? kmem_cache_alloc+0x2a/0x130
+ [<c11819d2>] ? putname+0x32/0x50
+ [<c11819d2>] ? putname+0x32/0x50
+ [<c11819d2>] ? putname+0x32/0x50
+ [<c11827f9>] ? user_path_at_empty+0x49/0x70
+ [<c118283f>] ? user_path_at+0x1f/0x30
+ [<c11941e7>] path_getxattr+0x47/0x80
+ [<c11948e7>] SyS_getxattr+0x27/0x30
+ [<c163f748>] sysenter_do_call+0x12/0x12
+Code: 66 90 55 89 e5 57 56 53 66 66 66 66 90 8b 78 20 89 d3 ba 67 b4 b5 f8 89 d8 89 ce e8 42 7c 7b c8 85 c0 75 16 0f b6 87 44 01 00
+00 <88> 06 b8 01 00 00 00 5b 5e 5f 5d c3 8d 76 00 b8 ea ff ff ff eb
+EIP: [<f8b54d69>] f2fs_xattr_advise_get+0x29/0x40 [f2fs] SS:ESP 0068:f19a7e08
+CR2: 0000000000000000
+---[ end trace 860260654f1f416a ]---
 
-But we forget to consider for unwritten fallocated block in this commit.
-This patch tries to fix it for fallocate case, this helps to improve
-performance.
+The reason is that in getfattr there are two steps which is indicated by strace info:
+1) try to lookup and get size of specified xattr.
+2) get value of the extented attribute.
 
-Test result:
-Storage info: sandisk ultra 64G micro sd card.
+strace info:
+getxattr("/mnt/f2fs/file", "system.advise", 0x0, 0) = 1
+getxattr("/mnt/f2fs/file", "system.advise", "\x00", 256) = 1
 
-touch /mnt/f2fs/file
-truncate -s 67108864 /mnt/f2fs/file
-fallocate -o 0 -l 67108864 /mnt/f2fs/file
-time dd if=/dev/zero of=/mnt/f2fs/file bs=1M count=64 conv=notrunc oflag=direct
+For the first step, getfattr may pass a NULL pointer in @value and zero in @size
+as parameters for ->getxattr, but we access this @value pointer directly without
+checking whether the pointer is valid or not in f2fs_xattr_advise_get, so the
+oops occurs.
 
-Time before applying the patch:
-67108864 bytes (67 MB) copied, 36.16 s, 1.9 MB/s
-real    0m36.162s
-user    0m0.000s
-sys     0m0.180s
-
-Time after applying the patch:
-67108864 bytes (67 MB) copied, 27.7776 s, 2.4 MB/s
-real    0m27.780s
-user    0m0.000s
-sys     0m0.036s
+This patch fixes this issue by verifying @value pointer before using.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ fs/f2fs/xattr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a99bc7f..e20c4c7 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1021,16 +1021,23 @@ static int __allocate_data_block(struct dnode_of_data *dn)
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 5072bf9..55649be 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -135,7 +135,8 @@ static int f2fs_xattr_advise_get(struct dentry *dentry, const char *name,
+ 	if (strcmp(name, "") != 0)
+ 		return -EINVAL;
  
- 	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
- 		return -EPERM;
-+
-+	dn->data_blkaddr = datablock_addr(dn->node_page, dn->ofs_in_node);
-+	if (dn->data_blkaddr == NEW_ADDR)
-+		goto alloc;
-+
- 	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
- 		return -ENOSPC;
+-	*((char *)buffer) = F2FS_I(inode)->i_advise;
++	if (buffer)
++		*((char *)buffer) = F2FS_I(inode)->i_advise;
+ 	return sizeof(char);
+ }
  
-+alloc:
- 	get_node_info(sbi, dn->nid, &ni);
- 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
- 
- 	if (dn->ofs_in_node == 0 && dn->inode_page == dn->node_page)
- 		seg = CURSEG_DIRECT_IO;
- 
--	allocate_data_block(sbi, NULL, NULL_ADDR, &dn->data_blkaddr, &sum, seg);
-+	allocate_data_block(sbi, NULL, dn->data_blkaddr, &dn->data_blkaddr,
-+								&sum, seg);
- 
- 	/* direct IO doesn't use extent cache to maximize the performance */
- 	__set_data_blkaddr(dn);
-@@ -1070,7 +1077,7 @@ static void __allocate_data_blocks(struct inode *inode, loff_t offset,
- 			block_t blkaddr;
- 
- 			blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
--			if (blkaddr == NULL_ADDR) {
-+			if (blkaddr == NULL_ADDR || blkaddr == NEW_ADDR) {
- 				if (__allocate_data_block(&dn))
- 					goto sync_out;
- 				allocated = true;
 -- 
 2.3.3
