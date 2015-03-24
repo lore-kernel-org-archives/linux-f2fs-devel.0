@@ -1,29 +1,23 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2] f2fs: limit b_size of mapped bh in f2fs_map_bh
-Date: Tue, 24 Mar 2015 13:08:05 +0800
-Message-ID: <003401d065f0$9cdcb210$d6961630$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 2/2] mkfs.f2fs: 512 UTF-16 characters for label
+Date: Tue, 24 Mar 2015 00:37:04 -0700
+Message-ID: <1427182624-40539-2-git-send-email-jaegeuk@kernel.org>
+References: <1427182624-40539-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1YaH5H-0004o4-Ut
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YaJOk-0005do-8p
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Mar 2015 05:08:59 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1YaH5F-00085U-V5
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Mar 2015 05:08:59 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NLP00957AAQW680@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Mar 2015 14:08:50 +0900 (KST)
-Content-language: zh-cn
+	Tue, 24 Mar 2015 07:37:14 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YaJOj-0002d0-8o for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 24 Mar 2015 07:37:14 +0000
+In-Reply-To: <1427182624-40539-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,47 +27,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Map bh over max size which caller defined is not needed, limit it in
-f2fs_map_bh.
+We can use 512 UTF-16 characters for label.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
-v2 change log:
- - use min() for cleanup code suggested by Jaegeuk Kim.
+ mkfs/f2fs_format_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- fs/f2fs/data.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f0a18a0..279c9c6e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -255,15 +255,13 @@ static void f2fs_map_bh(struct super_block *sb, pgoff_t pgofs,
- 			struct extent_info *ei, struct buffer_head *bh_result)
- {
- 	unsigned int blkbits = sb->s_blocksize_bits;
--	size_t count;
-+	size_t max_size = bh_result->b_size;
-+	size_t mapped_size;
- 
- 	clear_buffer_new(bh_result);
- 	map_bh(bh_result, sb, ei->blk + pgofs - ei->fofs);
--	count = ei->fofs + ei->len - pgofs;
--	if (count < (UINT_MAX >> blkbits))
--		bh_result->b_size = (count << blkbits);
--	else
--		bh_result->b_size = UINT_MAX;
-+	mapped_size = (ei->fofs + ei->len - pgofs) << blkbits;
-+	bh_result->b_size = min(max_size, mapped_size);
- }
- 
- static bool lookup_extent_info(struct inode *inode, pgoff_t pgofs,
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 9a96798..43e5c03 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -81,9 +81,9 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 			config.extension_list = strdup(optarg);
+ 			break;
+ 		case 'l':		/*v: volume label */
+-			if (strlen(optarg) > 512) {
++			if (strlen(optarg) > 1024) {
+ 				MSG(0, "Error: Volume Label should be less than\
+-						512 characters\n");
++						512 UTF-16 characters\n");
+ 				mkfs_usage();
+ 			}
+ 			config.vol_label = optarg;
 -- 
-2.3.3
-
+2.1.1
 
 
 ------------------------------------------------------------------------------
