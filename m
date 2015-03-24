@@ -1,92 +1,65 @@
 From: Wanpeng Li <wanpeng.li@linux.intel.com>
-Subject: [PATCH v3 1/2] f2fs: enable inline data by default
-Date: Tue, 24 Mar 2015 10:20:27 +0800
-Message-ID: <1427163628-3840-1-git-send-email-wanpeng.li@linux.intel.com>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Subject: [PATCH v3 2/2] f2fs: enable fast symlink by utilizing
+	inline data
+Date: Tue, 24 Mar 2015 10:20:28 +0800
+Message-ID: <1427163628-3840-2-git-send-email-wanpeng.li@linux.intel.com>
+References: <1427163628-3840-1-git-send-email-wanpeng.li@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <wanpeng.li@linux.intel.com>) id 1YaEjn-00072s-MA
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 24 Mar 2015 02:38:39 +0000
+Received: from mga02.intel.com ([134.134.136.20])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YaEjm-0008VC-Ko for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 24 Mar 2015 02:38:39 +0000
+In-Reply-To: <1427163628-3840-1-git-send-email-wanpeng.li@linux.intel.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Wanpeng Li <wanpeng.li@linux.intel.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 
-Enable inline_data feature by default since it brings us better
-performance and space utilization and now has already stable.
-Add another option noinline_data to disable it during mount.
+Fast symlink can utilize inline data flow to avoid using any
+i_addr region, since we need to handle many cases such as
+truncation, roll-forward recovery, and fsck/dump tools.
 
-Suggested-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Suggested-by: Chao Yu <chao2.yu@samsung.com>
 Signed-off-by: Wanpeng Li <wanpeng.li@linux.intel.com>
 ---
-v2 -> v3:
- * reuse F2FS_MOUNT_INLINE_DATA
- * fix show both options "inline_data,noinline_data" in ->show_options
-v1 -> v2:
- * retain inline_data option and enable it by default
- * add another noinline_data option
+ fs/f2fs/inline.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Documentation/filesystems/f2fs.txt | 2 ++
- fs/f2fs/super.c                    | 8 ++++++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 48e2123..e9e750e 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -144,6 +144,8 @@ extent_cache           Enable an extent cache based on rb-tree, it can cache
-                        as many as extent which map between contiguous logical
-                        address and physical address per inode, resulting in
-                        increasing the cache hit ratio.
-+noinline_data          Disable the inline data feature, inline data feature is
-+                       enabled by default.
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index d3e0599..375d2c7 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -21,7 +21,7 @@ bool f2fs_may_inline(struct inode *inode)
+ 	if (f2fs_is_atomic_file(inode))
+ 		return false;
  
- ================================================================================
- DEBUGFS ENTRIES
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fc6857f..45aa843 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -58,6 +58,7 @@ enum {
- 	Opt_nobarrier,
- 	Opt_fastboot,
- 	Opt_extent_cache,
-+	Opt_noinline_data,
- 	Opt_err,
- };
+-	if (!S_ISREG(inode->i_mode))
++	if (!S_ISREG(inode->i_mode) && !S_ISLNK(inode->i_mode))
+ 		return false;
  
-@@ -80,6 +81,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_nobarrier, "nobarrier"},
- 	{Opt_fastboot, "fastboot"},
- 	{Opt_extent_cache, "extent_cache"},
-+	{Opt_noinline_data, "noinline_data"},
- 	{Opt_err, NULL},
- };
- 
-@@ -372,6 +374,9 @@ static int parse_options(struct super_block *sb, char *options)
- 		case Opt_extent_cache:
- 			set_opt(sbi, EXTENT_CACHE);
- 			break;
-+		case Opt_noinline_data:
-+			clear_opt(sbi, INLINE_DATA);
-+			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
-@@ -596,6 +601,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",disable_ext_identify");
- 	if (test_opt(sbi, INLINE_DATA))
- 		seq_puts(seq, ",inline_data");
-+	else
-+		seq_puts(seq, ",noinline_data");
- 	if (test_opt(sbi, INLINE_DENTRY))
- 		seq_puts(seq, ",inline_dentry");
- 	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, FLUSH_MERGE))
-@@ -991,6 +998,7 @@ try_onemore:
- 	sbi->active_logs = NR_CURSEG_TYPE;
- 
- 	set_opt(sbi, BG_GC);
-+	set_opt(sbi, INLINE_DATA);
- 
- #ifdef CONFIG_F2FS_FS_XATTR
- 	set_opt(sbi, XATTR_USER);
+ 	if (i_size_read(inode) > MAX_INLINE_DATA)
 -- 
 2.1.0
 
+
+------------------------------------------------------------------------------
+Dive into the World of Parallel Programming The Go Parallel Website, sponsored
+by Intel and developed in partnership with Slashdot Media, is your hub for all
+things parallel software development, from weekly thought leadership blogs to
+news, videos, case studies, tutorials and more. Take a look and join the 
+conversation now. http://goparallel.sourceforge.net/
