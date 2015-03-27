@@ -1,23 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/6] fsck.f2fs: remove inconsistent named
-	directories
-Date: Thu, 26 Mar 2015 17:03:05 -0700
-Message-ID: <1427414589-66956-2-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 6/6] fsck.f2fs: preserve orphan blocks
+Date: Thu, 26 Mar 2015 17:03:09 -0700
+Message-ID: <1427414589-66956-6-git-send-email-jaegeuk@kernel.org>
 References: <1427414589-66956-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YbHkC-00066L-D7
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YbHkL-0000KI-37
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 27 Mar 2015 00:03:24 +0000
+	Fri, 27 Mar 2015 00:03:33 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YbHkB-0007cK-3p for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 27 Mar 2015 00:03:24 +0000
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YbHkK-0003Eu-0C for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 27 Mar 2015 00:03:33 +0000
 In-Reply-To: <1427414589-66956-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,145 +30,116 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Each inode has its filename inside inode block.
-For directory, the name should be matched all the time.
-In other cases, it shouldn't, since there is able to be linked to other file
-names.
+If fsck.f2fs found some orphan blocks, previously fsck.f2fs drops them and
+fixes checkpoint, resulting in false alarm on corruption.
+This patch preserves orphan blocks to avoid such the alarms.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/fsck.c | 27 ++++++++++++++++++---------
- fsck/fsck.h |  2 +-
- fsck/main.c |  2 +-
- 3 files changed, 20 insertions(+), 11 deletions(-)
+ fsck/fsck.c | 48 ++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 36 insertions(+), 12 deletions(-)
 
 diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 1b27ae0..e803fa0 100644
+index 97bf6ce..6b687d8 100644
 --- a/fsck/fsck.c
 +++ b/fsck/fsck.c
-@@ -192,7 +192,7 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
- 			struct f2fs_node *node_blk,
- 			enum FILE_TYPE ftype, enum NODE_TYPE ntype,
--			struct node_info *ni)
-+			struct node_info *ni, u8 *name)
+@@ -946,8 +946,10 @@ void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
  {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
- 	int ret;
-@@ -263,6 +263,15 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
- 		}
- 	}
+ 	u32 blk_cnt = 0;
+ 	block_t start_blk, orphan_blkaddr, i, j;
+-	struct f2fs_orphan_block *orphan_blk;
++	struct f2fs_orphan_block *orphan_blk, *new_blk;
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
++	u32 entry_count;
++	u32 new_entry_count = 0;
  
-+	if (ntype == TYPE_INODE && ftype == F2FS_FT_DIR) {
-+		u32 len = le32_to_cpu(node_blk->i.i_namelen);
-+		if (name && memcmp(name, node_blk->i.i_name, len)) {
-+			ASSERT_MSG("mismatch name [0x%x] [%s vs. %s]",
-+					nid, name, node_blk->i.i_name);
-+			return -EINVAL;
-+		}
-+	}
+ 	if (!is_set_ckpt_flags(ckpt, CP_ORPHAN_PRESENT_FLAG))
+ 		return;
+@@ -955,28 +957,43 @@ void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
+ 	start_blk = __start_cp_addr(sbi) + 1 +
+ 		le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
+ 	orphan_blkaddr = __start_sum_addr(sbi) - 1;
 +
- 	/* workaround to fix later */
- 	if (ftype != F2FS_FT_ORPHAN ||
- 			f2fs_test_bit(nid, fsck->nat_area_bitmap) != 0)
-@@ -297,7 +306,7 @@ static int fsck_chk_xattr_blk(struct f2fs_sb_info *sbi, u32 ino,
+ 	orphan_blk = calloc(BLOCK_SZ, 1);
++	ASSERT(orphan_blk);
++
++	new_blk = calloc(BLOCK_SZ, 1);
++	ASSERT(new_blk);
  
- 	/* Sanity check */
- 	if (sanity_check_nid(sbi, x_nid, node_blk,
--				F2FS_FT_XATTR, TYPE_XATTR, &ni)) {
-+				F2FS_FT_XATTR, TYPE_XATTR, &ni, NULL)) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -311,7 +320,7 @@ out:
- }
+ 	for (i = 0; i < orphan_blkaddr; i++) {
+ 		int ret = dev_read_block(orphan_blk, start_blk + i);
  
- int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
--		u32 nid, enum FILE_TYPE ftype, enum NODE_TYPE ntype,
-+		u32 nid, u8 *name, enum FILE_TYPE ftype, enum NODE_TYPE ntype,
- 		u32 *blk_cnt)
- {
- 	struct node_info ni;
-@@ -320,7 +329,7 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 	node_blk = (struct f2fs_node *)calloc(BLOCK_SZ, 1);
- 	ASSERT(node_blk != NULL);
+ 		ASSERT(ret >= 0);
++		entry_count = le32_to_cpu(orphan_blk->entry_count);
  
--	if (sanity_check_nid(sbi, nid, node_blk, ftype, ntype, &ni))
-+	if (sanity_check_nid(sbi, nid, node_blk, ftype, ntype, &ni, name))
- 		goto err;
- 
- 	if (ntype == TYPE_INODE) {
-@@ -496,7 +505,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 		if (le32_to_cpu(node_blk->i.i_nid[idx]) != 0) {
- 			ret = fsck_chk_node_blk(sbi, &node_blk->i,
- 					le32_to_cpu(node_blk->i.i_nid[idx]),
--					ftype, ntype, blk_cnt);
-+					NULL, ftype, ntype, blk_cnt);
- 			if (!ret) {
- 				*blk_cnt = *blk_cnt + 1;
- 			} else if (config.fix_on) {
-@@ -591,7 +600,7 @@ int fsck_chk_idnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 		if (le32_to_cpu(node_blk->in.nid[i]) == 0x0)
- 			continue;
- 		ret = fsck_chk_node_blk(sbi, inode,
--				le32_to_cpu(node_blk->in.nid[i]),
-+				le32_to_cpu(node_blk->in.nid[i]), NULL,
- 				ftype, TYPE_DIRECT_NODE, blk_cnt);
- 		if (!ret)
- 			*blk_cnt = *blk_cnt + 1;
-@@ -611,7 +620,7 @@ int fsck_chk_didnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 		if (le32_to_cpu(node_blk->in.nid[i]) == 0x0)
- 			continue;
- 		ret = fsck_chk_node_blk(sbi, inode,
--				le32_to_cpu(node_blk->in.nid[i]),
-+				le32_to_cpu(node_blk->in.nid[i]), NULL,
- 				ftype, TYPE_INDIRECT_NODE, blk_cnt);
- 		if (!ret)
- 			*blk_cnt = *blk_cnt + 1;
-@@ -764,7 +773,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, u32 *child_cnt,
- 
- 		blk_cnt = 1;
- 		ret = fsck_chk_node_blk(sbi,
--				NULL, le32_to_cpu(dentry[i].ino),
-+				NULL, le32_to_cpu(dentry[i].ino), name,
- 				ftype, TYPE_INODE, &blk_cnt);
- 
- 		if (ret && config.fix_on) {
-@@ -927,7 +936,7 @@ void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
- 				continue;
- 			}
+-		for (j = 0; j < le32_to_cpu(orphan_blk->entry_count); j++) {
++		for (j = 0; j < entry_count; j++) {
+ 			nid_t ino = le32_to_cpu(orphan_blk->ino[j]);
+ 			DBG(1, "[%3d] ino [0x%x]\n", i, ino);
+-			if (config.fix_on) {
+-				FIX_MSG("Discard orphan inodes: ino [0x%x]",
+-									ino);
+-				continue;
+-			}
  			blk_cnt = 1;
--			fsck_chk_node_blk(sbi, NULL, ino,
-+			fsck_chk_node_blk(sbi, NULL, ino, NULL,
+-			fsck_chk_node_blk(sbi, NULL, ino, NULL,
++			ret = fsck_chk_node_blk(sbi, NULL, ino, NULL,
  					F2FS_FT_ORPHAN, TYPE_INODE, &blk_cnt);
++			if (!ret)
++				new_blk->ino[new_entry_count++] =
++							orphan_blk->ino[j];
++			else if (ret && config.fix_on)
++				FIX_MSG("[0x%x] remove from orphan list", ino);
++			else if (ret)
++				ASSERT_MSG("[0x%x] wrong orphan inode", ino);
++		}
++		if (config.fix_on && entry_count != new_entry_count) {
++			new_blk->entry_count = cpu_to_le32(new_entry_count);
++			ret = dev_write_block(new_blk, start_blk + i);
++			ASSERT(ret >= 0);
  		}
  		memset(orphan_blk, 0, BLOCK_SZ);
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 98425c6..ff2b25d 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -80,7 +80,7 @@ enum seg_type {
++		memset(new_blk, 0, BLOCK_SZ);
+ 	}
+ 	free(orphan_blk);
++	free(new_blk);
+ }
  
- extern void fsck_chk_orphan_node(struct f2fs_sb_info *);
- extern int fsck_chk_node_blk(struct f2fs_sb_info *, struct f2fs_inode *, u32,
--		enum FILE_TYPE, enum NODE_TYPE, u32 *);
-+		u8 *, enum FILE_TYPE, enum NODE_TYPE, u32 *);
- extern void fsck_chk_inode_blk(struct f2fs_sb_info *, u32, enum FILE_TYPE,
- 		struct f2fs_node *, u32 *, struct node_info *);
- extern int fsck_chk_dnode_blk(struct f2fs_sb_info *, struct f2fs_inode *,
-diff --git a/fsck/main.c b/fsck/main.c
-index 16fab9c..e0b126b 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -152,7 +152,7 @@ static void do_fsck(struct f2fs_sb_info *sbi)
+ void fsck_init(struct f2fs_sb_info *sbi)
+@@ -1056,15 +1073,20 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 	struct f2fs_super_block *raw_sb = sbi->raw_super;
+ 	struct f2fs_checkpoint *ckp = F2FS_CKPT(sbi);
+ 	unsigned long long cp_blk_no;
++	u32 flags = CP_UMOUNT_FLAG;
++	block_t orphan_blks = 0;
+ 	u32 i;
+ 	int ret;
+ 	u_int32_t crc = 0;
  
- 	/* Traverse all block recursively from root inode */
- 	blk_cnt = 1;
--	fsck_chk_node_blk(sbi, NULL, sbi->root_ino_num,
-+	fsck_chk_node_blk(sbi, NULL, sbi->root_ino_num, (u8 *)"/",
- 			F2FS_FT_DIR, TYPE_INODE, &blk_cnt);
- 	fsck_verify(sbi);
- 	fsck_free(sbi);
+-	ckp->ckpt_flags = cpu_to_le32(CP_UMOUNT_FLAG);
++	if (is_set_ckpt_flags(ckp, CP_ORPHAN_PRESENT_FLAG)) {
++		orphan_blks = __start_sum_addr(sbi) - 1;
++		flags |= CP_ORPHAN_PRESENT_FLAG;
++	}
++
++	ckp->ckpt_flags = cpu_to_le32(flags);
+ 	ckp->cp_pack_total_block_count =
+-		cpu_to_le32(8 + le32_to_cpu(raw_sb->cp_payload));
+-	ckp->cp_pack_start_sum = cpu_to_le32(1 +
+-				le32_to_cpu(raw_sb->cp_payload));
++		cpu_to_le32(8 + orphan_blks + le32_to_cpu(raw_sb->cp_payload));
+ 
+ 	ckp->free_segment_count = cpu_to_le32(fsck->chk.free_segs);
+ 	ckp->valid_block_count = cpu_to_le32(fsck->chk.valid_blk_cnt);
+@@ -1088,6 +1110,8 @@ static void fix_checkpoint(struct f2fs_sb_info *sbi)
+ 		ASSERT(ret >= 0);
+ 	}
+ 
++	cp_blk_no += orphan_blks;
++
+ 	for (i = 0; i < NO_CHECK_TYPE; i++) {
+ 		struct curseg_info *curseg = CURSEG_I(sbi, i);
+ 
 -- 
 2.1.1
 
