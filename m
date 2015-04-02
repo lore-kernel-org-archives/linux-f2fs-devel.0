@@ -1,22 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/5] f2fs: assign parent's i_mode for empty dir
-Date: Thu,  2 Apr 2015 10:49:23 -0700
-Message-ID: <1427996965-10578-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 5/5] f2fs: do not recover wrong data index
+Date: Thu,  2 Apr 2015 10:49:25 -0700
+Message-ID: <1427996965-10578-5-git-send-email-jaegeuk@kernel.org>
 References: <1427996965-10578-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YdjFW-0002Gz-6B
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YdjFb-0003xi-6Z
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Apr 2015 17:49:50 +0000
+	Thu, 02 Apr 2015 17:49:55 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YdjFU-0004dW-Rp for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Apr 2015 17:49:50 +0000
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YdjFa-0002bb-8d for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 02 Apr 2015 17:49:55 +0000
 In-Reply-To: <1427996965-10578-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,26 +30,36 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-When assigning i_mode for dotdot, it needs to assign parent's i_mode.
+During the roll-forward recovery, if we found a new data index written fsync
+lastly, we need to recover new block address.
+But, if that address was corrupted, we should not recover that.
+Otherwise, f2fs gets kernel panic from:
+
+ In check_index_in_prev_nodes(),
+
+    sentry = get_seg_entry(sbi, segno);
+             --------------------------> out-of-range segno.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/recovery.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index b2970fb..60a2a41 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -334,7 +334,7 @@ void do_make_empty_dir(struct inode *inode, struct inode *parent,
- 	de->name_len = cpu_to_le16(2);
- 	de->ino = cpu_to_le32(parent->i_ino);
- 	memcpy(d->filename[1], "..", 2);
--	set_de_type(de, inode->i_mode);
-+	set_de_type(de, parent->i_mode);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 63b720b..4b742c9 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -395,7 +395,9 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		src = datablock_addr(dn.node_page, dn.ofs_in_node);
+ 		dest = datablock_addr(page, dn.ofs_in_node);
  
- 	test_and_set_bit_le(0, (void *)d->bitmap);
- 	test_and_set_bit_le(1, (void *)d->bitmap);
+-		if (src != dest && dest != NEW_ADDR && dest != NULL_ADDR) {
++		if (src != dest && dest != NEW_ADDR && dest != NULL_ADDR &&
++			dest >= MAIN_BLKADDR(sbi) && dest < MAX_BLKADDR(sbi)) {
++
+ 			if (src == NULL_ADDR) {
+ 				err = reserve_new_block(&dn);
+ 				/* We should not get -ENOSPC */
 -- 
 2.1.1
 
