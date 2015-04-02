@@ -1,23 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/8] fsck.f2fs: count child directories correctly
-	for i_links
-Date: Thu,  2 Apr 2015 10:50:51 -0700
-Message-ID: <1427997055-10715-4-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/8] fsck.f2fs: fix summary block
+Date: Thu,  2 Apr 2015 10:50:49 -0700
+Message-ID: <1427997055-10715-2-git-send-email-jaegeuk@kernel.org>
 References: <1427997055-10715-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YdjGw-00027Z-JG
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YdjGr-00046z-ON
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Apr 2015 17:51:18 +0000
+	Thu, 02 Apr 2015 17:51:13 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YdjGu-0002eH-PJ for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Apr 2015 17:51:18 +0000
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YdjGq-0004gW-JC for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 02 Apr 2015 17:51:13 +0000
 In-Reply-To: <1427997055-10715-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,81 +30,211 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If some of children including directories are corrupted, we should not include
-them into i_links of their parent.
-This patch fixes that.
+Previously, if data and node summary was corrupted, the block was deallocated.
+But, this patch fixes their summary first, so that we can keep their blocks.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/fsck.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ fsck/fsck.c | 166 ++++++++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 118 insertions(+), 48 deletions(-)
 
 diff --git a/fsck/fsck.c b/fsck/fsck.c
-index debae1c..828d889 100644
+index a3029ba..ecb18f2 100644
 --- a/fsck/fsck.c
 +++ b/fsck/fsck.c
-@@ -793,7 +793,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, u32 *child_cnt,
- 	u16 name_len;;
- 	int ret = 0;
- 	int fixed = 0;
--	int i;
-+	int i, slots;
- 
- 	/* readahead inode blocks */
- 	for (i = 0; i < max; i++) {
-@@ -864,6 +864,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, u32 *child_cnt,
- 		memcpy(name, filenames[i], name_len);
- 		hash_code = f2fs_dentry_hash((const unsigned char *)name,
- 								name_len);
-+		slots = (name_len + F2FS_SLOT_LEN - 1) / F2FS_SLOT_LEN;
- 
- 		/* fix hash_code made by old buggy code */
- 		if (le32_to_cpu(dentry[i].hash_code) != hash_code) {
-@@ -874,12 +875,12 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, u32 *child_cnt,
- 
- 		/* Becareful. 'dentry.file_type' is not imode. */
- 		if (ftype == F2FS_FT_DIR) {
--			*child_cnt = *child_cnt + 1;
- 			if ((name[0] == '.' && name_len == 1) ||
- 				(name[0] == '.' && name[1] == '.' &&
- 							name_len == 2)) {
- 				i++;
- 				free(name);
-+				*child_cnt = *child_cnt + 1;
- 				continue;
- 			}
- 		}
-@@ -899,23 +900,22 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, u32 *child_cnt,
- 
- 		if (ret && config.fix_on) {
- 			int j;
--			int slots = (name_len + F2FS_SLOT_LEN - 1) /
--				F2FS_SLOT_LEN;
+@@ -129,66 +129,137 @@ static int find_and_dec_hard_link_list(struct f2fs_sb_info *sbi, u32 nid)
+ static int is_valid_ssa_node_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 							u32 blk_addr)
+ {
+-	int ret = 0;
+-	struct f2fs_summary sum_entry;
+-
+-	ret = get_sum_entry(sbi, blk_addr, &sum_entry);
++	struct f2fs_summary_block *sum_blk;
++	struct f2fs_summary *sum_entry;
++	u32 segno, offset;
++	int need_fix = 0, ret = 0;
++	int type;
 +
- 			for (j = 0; j < slots; j++)
- 				clear_bit(i + j, bitmap);
- 			FIX_MSG("Unlink [0x%x] - %s len[0x%x], type[0x%x]",
- 					le32_to_cpu(dentry[i].ino),
- 					name, name_len,
- 					dentry[i].file_type);
--			i += slots;
--			free(name);
- 			fixed = 1;
--			continue;
-+		} else if (ret == 0) {
-+			if (ftype == F2FS_FT_DIR)
-+				*child_cnt = *child_cnt + 1;
-+			dentries++;
-+			*child_files = *child_files + 1;
- 		}
++	segno = GET_SEGNO(sbi, blk_addr);
++	offset = OFFSET_IN_SEG(sbi, blk_addr);
++
++	sum_blk = get_sum_block(sbi, segno, &type);
++
++	if (type != SEG_TYPE_NODE && type != SEG_TYPE_CUR_NODE) {
++		/* can't fix current summary, then drop the block */
++		if (!config.fix_on || type < 0) {
++			ASSERT_MSG("Summary footer is not for node segment");
++			ret = -EINVAL;
++			goto out;
++		}
++		FIX_MSG("Summary footer indicates a node segment: 0x%x", segno);
++		sum_blk->footer.entry_type = SUM_TYPE_NODE;
++		need_fix = 1;
++	}
  
--		i += (name_len + F2FS_SLOT_LEN - 1) / F2FS_SLOT_LEN;
--		dentries++;
--		*child_files = *child_files + 1;
-+		i += slots;
- 		free(name);
+-	if (ret != SEG_TYPE_NODE && ret != SEG_TYPE_CUR_NODE) {
+-		ASSERT_MSG("Summary footer is not for node segment");
+-		return -EINVAL;
++	sum_entry = &(sum_blk->entries[offset]);
++
++	if (le32_to_cpu(sum_entry->nid) != nid) {
++		if (!config.fix_on || type < 0) {
++			DBG(0, "nid                       [0x%x]\n", nid);
++			DBG(0, "target blk_addr           [0x%x]\n", blk_addr);
++			DBG(0, "summary blk_addr          [0x%x]\n",
++						GET_SUM_BLKADDR(sbi,
++						GET_SEGNO(sbi, blk_addr)));
++			DBG(0, "seg no / offset           [0x%x / 0x%x]\n",
++						GET_SEGNO(sbi, blk_addr),
++						OFFSET_IN_SEG(sbi, blk_addr));
++			DBG(0, "summary_entry.nid         [0x%x]\n",
++						le32_to_cpu(sum_entry->nid));
++			DBG(0, "--> node block's nid      [0x%x]\n", nid);
++			ASSERT_MSG("Invalid node seg summary\n");
++			ret = -EINVAL;
++		} else {
++			FIX_MSG("Set node summary 0x%x -> [0x%x] [0x%x]",
++						segno, nid, blk_addr);
++			sum_entry->nid = cpu_to_le32(nid);
++			need_fix = 1;
++		}
  	}
- 	return fixed ? -1 : dentries;
++	if (need_fix) {
++		u64 ssa_blk;
++		int ret2;
+ 
+-	if (le32_to_cpu(sum_entry.nid) != nid) {
+-		DBG(0, "nid                       [0x%x]\n", nid);
+-		DBG(0, "target blk_addr           [0x%x]\n", blk_addr);
+-		DBG(0, "summary blk_addr          [0x%x]\n",
+-					GET_SUM_BLKADDR(sbi,
+-					GET_SEGNO(sbi, blk_addr)));
+-		DBG(0, "seg no / offset           [0x%x / 0x%x]\n",
+-					GET_SEGNO(sbi, blk_addr),
+-					OFFSET_IN_SEG(sbi, blk_addr));
+-		DBG(0, "summary_entry.nid         [0x%x]\n",
+-					le32_to_cpu(sum_entry.nid));
+-		DBG(0, "--> node block's nid      [0x%x]\n", nid);
+-		ASSERT_MSG("Invalid node seg summary\n");
+-		return -EINVAL;
++		ssa_blk = GET_SUM_BLKADDR(sbi, segno);
++		ret2 = dev_write_block(sum_blk, ssa_blk);
++		ASSERT(ret2 >= 0);
+ 	}
+-	return 0;
++out:
++	if (type == SEG_TYPE_NODE || type == SEG_TYPE_DATA ||
++					type == SEG_TYPE_MAX)
++		free(sum_blk);
++	return ret;
+ }
+ 
+ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
+ 		u32 parent_nid, u16 idx_in_node, u8 version)
+ {
+-	int ret = 0;
+-	struct f2fs_summary sum_entry;
+-
+-	ret = get_sum_entry(sbi, blk_addr, &sum_entry);
+-
+-	if (ret != SEG_TYPE_DATA && ret != SEG_TYPE_CUR_DATA) {
+-		ASSERT_MSG("Summary footer is not for data segment");
+-		return -EINVAL;
++	struct f2fs_summary_block *sum_blk;
++	struct f2fs_summary *sum_entry;
++	u32 segno, offset;
++	int need_fix = 0, ret = 0;
++	int type;
++
++	segno = GET_SEGNO(sbi, blk_addr);
++	offset = OFFSET_IN_SEG(sbi, blk_addr);
++
++	sum_blk = get_sum_block(sbi, segno, &type);
++
++	if (type != SEG_TYPE_DATA && type != SEG_TYPE_CUR_DATA) {
++		/* can't fix current summary, then drop the block */
++		if (!config.fix_on || type < 0) {
++			ASSERT_MSG("Summary footer is not for data segment");
++			ret = -EINVAL;
++			goto out;
++		}
++		FIX_MSG("Summary footer indicates a data segment: 0x%x", segno);
++		sum_blk->footer.entry_type = SUM_TYPE_DATA;
++		need_fix = 1;
+ 	}
+ 
+-	if (le32_to_cpu(sum_entry.nid) != parent_nid ||
+-			sum_entry.version != version ||
+-			le16_to_cpu(sum_entry.ofs_in_node) != idx_in_node) {
+-
+-		DBG(0, "summary_entry.nid         [0x%x]\n",
+-					le32_to_cpu(sum_entry.nid));
+-		DBG(0, "summary_entry.version     [0x%x]\n",
+-					sum_entry.version);
+-		DBG(0, "summary_entry.ofs_in_node [0x%x]\n",
+-					le16_to_cpu(sum_entry.ofs_in_node));
+-		DBG(0, "parent nid                [0x%x]\n", parent_nid);
+-		DBG(0, "version from nat          [0x%x]\n", version);
+-		DBG(0, "idx in parent node        [0x%x]\n", idx_in_node);
++	sum_entry = &(sum_blk->entries[offset]);
++
++	if (le32_to_cpu(sum_entry->nid) != parent_nid ||
++			sum_entry->version != version ||
++			le16_to_cpu(sum_entry->ofs_in_node) != idx_in_node) {
++		if (!config.fix_on || type < 0) {
++			DBG(0, "summary_entry.nid         [0x%x]\n",
++					le32_to_cpu(sum_entry->nid));
++			DBG(0, "summary_entry.version     [0x%x]\n",
++					sum_entry->version);
++			DBG(0, "summary_entry.ofs_in_node [0x%x]\n",
++					le16_to_cpu(sum_entry->ofs_in_node));
++			DBG(0, "parent nid                [0x%x]\n",
++					parent_nid);
++			DBG(0, "version from nat          [0x%x]\n", version);
++			DBG(0, "idx in parent node        [0x%x]\n",
++					idx_in_node);
++
++			DBG(0, "Target data block addr    [0x%x]\n", blk_addr);
++			ASSERT_MSG("Invalid data seg summary\n");
++			ret = -EINVAL;
++		} else {
++			FIX_MSG("Set data summary 0x%x -> [0x%x] [0x%x] [0x%x]",
++					segno, parent_nid, version, idx_in_node);
++			sum_entry->nid = cpu_to_le32(parent_nid);
++			sum_entry->version = version;
++			sum_entry->ofs_in_node = cpu_to_le16(idx_in_node);
++			need_fix = 1;
++		}
++	}
++	if (need_fix) {
++		u64 ssa_blk;
++		int ret2;
+ 
+-		DBG(0, "Target data block addr    [0x%x]\n", blk_addr);
+-		ASSERT_MSG("Invalid data seg summary\n");
+-		return -EINVAL;
++		ssa_blk = GET_SUM_BLKADDR(sbi, segno);
++		ret2 = dev_write_block(sum_blk, ssa_blk);
++		ASSERT(ret2 >= 0);
+ 	}
+-	return 0;
++out:
++	if (type == SEG_TYPE_NODE || type == SEG_TYPE_DATA ||
++					type == SEG_TYPE_MAX)
++		free(sum_blk);
++	return ret;
+ }
+ 
+ static int __check_inode_mode(u32 nid, enum FILE_TYPE ftype, u32 mode)
+@@ -929,7 +1000,6 @@ int fsck_chk_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
+ 		ASSERT_MSG("Duplicated data [0x%x]. pnid[0x%x] idx[0x%x]",
+ 				blk_addr, parent_nid, idx_in_node);
+ 
+-
+ 	fsck->chk.valid_blk_cnt++;
+ 
+ 	if (ftype == F2FS_FT_DIR) {
 -- 
 2.1.1
 
