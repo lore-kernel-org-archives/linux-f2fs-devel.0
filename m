@@ -1,23 +1,31 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 8/8] fsck.f2fs: fix orphan inode's link count
-Date: Thu,  2 Apr 2015 10:50:55 -0700
-Message-ID: <1427997055-10715-8-git-send-email-jaegeuk@kernel.org>
-References: <1427997055-10715-1-git-send-email-jaegeuk@kernel.org>
+From: <angelique@ukisend.com>
+Subject: =?utf-8?q?Le_bonheur_n=E2=80=99est_pas_dans_la_fid?=
+	=?utf-8?b?w6lsaXTDqQ==?=
+Date: Fri,  3 Apr 2015 10:38:31 GMT
+Message-ID: <20150402172810-0.1.1e.1tl2f.0.omoe8p6a47@ukisend.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YdjH0-0001K3-FN
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <angelique@ukisend.com>) id 1Ydyzx-00049Z-OS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Apr 2015 17:51:22 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YdjGz-0002eK-NV for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Apr 2015 17:51:22 +0000
-In-Reply-To: <1427997055-10715-1-git-send-email-jaegeuk@kernel.org>
+	Fri, 03 Apr 2015 10:38:49 +0000
+Received: from 81-7-59-153.blue.kundencontroller.de ([81.7.59.153])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1Ydyzw-0008Gu-Gz
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 03 Apr 2015 10:38:49 +0000
+Received: from ukisend.com ([92.222.196.33] helo=ukisend.ip-94-23-196.eu)
+	by 81-7-10-142.blue.kundencontroller.de with esmtp (Exim 4.80)
+	(envelope-from <angelique@ukisend.com>) id 1YdzH4-00052I-Vf
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 03 Apr 2015 12:56:31 +0200
+Received: by ukisend.ip-94-23-196.eu for
+	<linux-f2fs-devel@lists.sourceforge.net>;
+	Fri,  3 Apr 2015 10:38:31 GMT
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,53 +36,23 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch fixes orphan inode's link count as 0.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/fsck.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 8211159..f3fbdfa 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -493,7 +493,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 		if (f2fs_test_main_bitmap(sbi, ni->blk_addr) == 0) {
- 			f2fs_set_main_bitmap(sbi, ni->blk_addr,
- 							CURSEG_WARM_NODE);
--			if (i_links > 1) {
-+			if (i_links > 1 && ftype != F2FS_FT_ORPHAN) {
- 				/* First time. Create new hard link node */
- 				add_into_hard_link_list(sbi, nid, i_links);
- 				fsck->chk.multi_hard_link_files++;
-@@ -666,9 +666,16 @@ skip_blkcnt_fix:
- 		}
- 	}
- 
--	if (ftype == F2FS_FT_ORPHAN && i_links)
-+	if (ftype == F2FS_FT_ORPHAN && i_links) {
- 		ASSERT_MSG("ino: 0x%x is orphan inode, but has i_links: %u",
- 				nid, i_links);
-+		if (config.fix_on) {
-+			node_blk->i.i_links = 0;
-+			need_fix = 1;
-+			FIX_MSG("ino: 0x%x orphan_inode, i_links= 0x%x -> 0",
-+					nid, i_links);
-+		}
-+	}
- 	if (need_fix) {
- 		ret = dev_write_block(node_blk, ni->blk_addr);
- 		ASSERT(ret >= 0);
--- 
-2.1.1
-
-
-------------------------------------------------------------------------------
-Dive into the World of Parallel Programming The Go Parallel Website, sponsored
-by Intel and developed in partnership with Slashdot Media, is your hub for all
-things parallel software development, from weekly thought leadership blogs to
-news, videos, case studies, tutorials and more. Take a look and join the 
-conversation now. http://goparallel.sourceforge.net/
+T3VpIGrigJlhaW1lIGzigJlhZHVsdMOocmUuIEplIGzigJlhaW1lIHBsdXMgcXVlIHRvdXQsIGNh
+ciBpbCBpbXBsaXF1ZSDDoCBsYSBmb2lzIGxlcyBsaWVucyBkdSBtYXJpYWdlIGV0IGRlcyBzYXV0
+ZXJpZXMgZGVzIHBsdXMgZMOpbGljaWV1c2VzLiBMZSB0b3V0IGF2ZWMgZGVzIHBlcnNvbm5lcyBx
+dWkgY29tbWUgbW9pIHNvbnQgbWFyacOpZXMgISEhIEplIG5lIG1lIGTDqWZpbmlyYWl0IHBhcyBj
+b21tZSBsaWLDqXLDqWUsIGrigJllbW1lcmRlIGxlcyBmw6ltaW5pc3RlcywgamUgc3VpcyBqdXN0
+ZSB1bmUgam91aXNzZXVzZS4KLXdlYmNhbW1hcmllLnB3LQoKVm9pbMOgIGzigJllbmRyb2l0IG/D
+uSBkZXMgZmVtbWVzIHBvc3QtbW9kZXJuZXMgY29tbWUgbW9pIHPDqXZpc3NlbnQgOiAKICAgICAg
+ICAgICAgICAgICAgICAgICAtd2ViY2FtbWFyaWUucHctCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+RGl2ZSBpbnRvIHRoZSBXb3JsZCBvZiBQYXJhbGxlbCBQcm9ncmFtbWluZyBUaGUgR28gUGFyYWxs
+ZWwgV2Vic2l0ZSwgc3BvbnNvcmVkCmJ5IEludGVsIGFuZCBkZXZlbG9wZWQgaW4gcGFydG5lcnNo
+aXAgd2l0aCBTbGFzaGRvdCBNZWRpYSwgaXMgeW91ciBodWIgZm9yIGFsbAp0aGluZ3MgcGFyYWxs
+ZWwgc29mdHdhcmUgZGV2ZWxvcG1lbnQsIGZyb20gd2Vla2x5IHRob3VnaHQgbGVhZGVyc2hpcCBi
+bG9ncyB0bwpuZXdzLCB2aWRlb3MsIGNhc2Ugc3R1ZGllcywgdHV0b3JpYWxzIGFuZCBtb3JlLiBU
+YWtlIGEgbG9vayBhbmQgam9pbiB0aGUgCmNvbnZlcnNhdGlvbiBub3cuIGh0dHA6Ly9nb3BhcmFs
+bGVsLnNvdXJjZWZvcmdlLm5ldC8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
+bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
+dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
