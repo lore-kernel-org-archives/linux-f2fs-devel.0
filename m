@@ -1,85 +1,91 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 2/2][v2] blk-plug: don't flush nested plug lists
-Date: Thu, 9 Apr 2015 10:54:23 +1000
-Message-ID: <20150409005423.GD13731@dastard>
-References: <1428347694-17704-1-git-send-email-jmoyer@redhat.com>
- <1428347694-17704-2-git-send-email-jmoyer@redhat.com>
- <x49wq1nrcoe.fsf_-_@segfault.boston.devel.redhat.com>
- <20150408230203.GG15810@dastard>
+From: "mike" <mike@wwweee.net>
+Subject: welding equipments
+Date: Fri, 10 Apr 2015 13:19:09 +0800
+Message-ID: <E1YgRG8-0007f1-JZ@sfs-ml-4.v29.ch3.sourceforge.com>
+Reply-To: elitewelding@yeah.net
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <target-devel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150408230203.GG15810@dastard>
-Sender: target-devel-owner@vger.kernel.org
-To: Jeff Moyer <jmoyer@redhat.com>
-Cc: linux-kernel@vger.kernel.org, dm-devel@redhat.com, xen-devel@lists.xenproject.org, linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-aio@kvack.org, linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, linux-mm@kvack.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <mike@wwweee.net>) id 1YgRG6-0007dv-JO
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 10 Apr 2015 05:13:38 +0000
+Received: from [58.214.8.250] (helo=2012-20130103AH)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YgRG4-0003Oq-W0 for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 10 Apr 2015 05:13:38 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-[ Sending again with a trimmed CC list to just the lists. Jeff - cc
-lists that large get blocked by mailing lists... ]
+Dear my customer,
 
-On Tue, Apr 07, 2015 at 02:55:13PM -0400, Jeff Moyer wrote:
-> The way the on-stack plugging currently works, each nesting level
-> flushes its own list of I/Os.  This can be less than optimal (read
-> awful) for certain workloads.  For example, consider an application
-> that issues asynchronous O_DIRECT I/Os.  It can send down a bunch of
-> I/Os together in a single io_submit call, only to have each of them
-> dispatched individually down in the bowels of the dirct I/O code.
-> The reason is that there are blk_plug-s instantiated both at the upper
-> call site in do_io_submit and down in do_direct_IO.  The latter will
-> submit as little as 1 I/O at a time (if you have a small enough I/O
-> size) instead of performing the batching that the plugging
-> infrastructure is supposed to provide.
+We are specialized in manufacturing and exporting in automatic welding equipment, CNC cutting equipment, milling equipment and other special welding equipment.
 
-I'm wondering what impact this will have on filesystem metadata IO
-that needs to be issued immediately. e.g. we are doing writeback, so
-there is a high level plug in place and we need to page in btree
-blocks to do extent allocation. We do readahead at this point,
-but it looks like this change will prevent the readahead from being
-issued by the unplug in xfs_buf_iosubmit().
+Main Products: 
 
-So while I can see how this can make your single microbenchmark
-better (because it's only doing concurrent direct IO to the block
-device and hence there are no dependencies between individual IOs),
-I have significant reservations that it's actually a win for
-filesystem-based workloads where we need direct control of flushing
-to minimise IO latency due to IO dependencies...
+Welding manipulator
 
-Patches like this one:
+Welding rotator
 
-https://lkml.org/lkml/2015/3/20/442
+Welding positioner 
 
-show similar real-world workload improvements to your patchset by
-being smarter about using high level plugging to enable cross-file
-merging of IO, but it still relies on the lower layers of plugging
-to resolve latency bubbles caused by IO dependencies in the
-filesystems.
+Edge-milling machine
 
-> NOTE TO SUBSYSTEM MAINTAINERS: Before this patch, blk_finish_plug
-> would always flush the plug list.  After this patch, this is only the
-> case for the outer-most plug.  If you require the plug list to be
-> flushed, you should be calling blk_flush_plug(current).  Btrfs and dm
-> maintainers should take a close look at this patch and ensure they get
-> the right behavior in the end.
+Shot blasting machine
 
-IOWs, you are saying we need to change all our current unplugs to
-blk_flush_plug(current) to *try* to maintain the same behaviour as
-we currently have? I say *try*, because no instead of just flushing
-the readahead IO on the plug, we'll also flush all the queued data
-writeback IO onthe high level plug. We don't actually want to do
-that; we only want to submit the readahead and not the bulk IO that
-will delay the latency sensitive dependent IOs....
+CNC cutter
 
-If that is the case, shouldn't you actually be trying to fix the
-specific plugging problem you've identified (i.e. do_direct_IO() is
-flushing far too frequently) rather than making a sweeping
-generalisation that the IO stack plugging infrastructure
-needs fundamental change?
+Special welding machine
+H beam Welding Production Line
+Pipe Welding Rotator 
+Tank Rotators 
+Rotary Welding Positioners 
+Column And Boom Manipulator 
+Self Aligning Rotators 
+Beam Welding Line 
+CNC Plasma Cutting Machine 
+CNC Flame Cutting Machine 
+Edge Beveling Machine 
+Edge Milling Machine 
+Shot Blasting Machine 
+Box Beam Welding 
+Hydraulic Tilter
+Wind Tower Production Line 
 
-Cheers,
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+If you are interested in our products, Please reply us email. we will send you more information.
+
+Have you found our production interesting?  
+Would you like to get advice or send an enquiry?  
+We will be happy for you to call us, send an email ,  
+We will gladly answer all your questions and recommend an ideal solution for your needs.  
+We look forward to our anticipated future collaboration.
+
+Thanks
+
+*****************************************************************
+Mike Zhao
+(Marketing manager)
+Elite Welding & Cutting Equipment Co.,Ltd.
+Luoshe Town Wuxi City, Jiangsu Province, China Zip:214154 
+Cell phone: +86-0-13812528128
+Email:elitewelding@163.com
+*****************************************************************
+
+------------------------------------------------------------------------------
+BPM Camp - Free Virtual Workshop May 6th at 10am PDT/1PM EDT
+Develop your own process in accordance with the BPMN 2 standard
+Learn Process modeling best practices with Bonita BPM through live exercises
+http://www.bonitasoft.com/be-part-of-it/events/bpm-camp-virtual- event?utm_
+source=Sourceforge_BPM_Camp_5_6_15&utm_medium=email&utm_campaign=VA_SF
