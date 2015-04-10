@@ -1,91 +1,50 @@
-From: "mike" <mike@wwweee.net>
-Subject: welding equipments
-Date: Fri, 10 Apr 2015 13:19:09 +0800
-Message-ID: <E1YgRG8-0007f1-JZ@sfs-ml-4.v29.ch3.sourceforge.com>
-Reply-To: elitewelding@yeah.net
+From: Jeff Moyer <jmoyer@redhat.com>
+Subject: Re: [PATCH 2/2][v2] blk-plug: don't flush nested plug lists
+Date: Fri, 10 Apr 2015 17:50:06 -0400
+Message-ID: <x498udzlkkx.fsf@segfault.boston.devel.redhat.com>
+References: <1428347694-17704-1-git-send-email-jmoyer@redhat.com>
+	<1428347694-17704-2-git-send-email-jmoyer@redhat.com>
+	<x49wq1nrcoe.fsf_-_@segfault.boston.devel.redhat.com>
+	<20150408230203.GG15810@dastard>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <mike@wwweee.net>) id 1YgRG6-0007dv-JO
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Apr 2015 05:13:38 +0000
-Received: from [58.214.8.250] (helo=2012-20130103AH)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YgRG4-0003Oq-W0 for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Apr 2015 05:13:38 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <owner-linux-aio@kvack.org>
+In-Reply-To: <20150408230203.GG15810@dastard> (Dave Chinner's message of "Thu,
+	9 Apr 2015 09:02:03 +1000")
+Sender: owner-linux-aio@kvack.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <tom.leiming@gmail.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Roger Pau Monn?? <roger.pau@citrix.com>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Neil Brown <neilb@suse.de>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.cz>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>, Steven Whitehouse <swhiteho@redhat.com>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Andrew Morton <akpm@linux-foundation.org>, Rik van Riel <riel@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Dear my customer,
+Dave Chinner <david@fromorbit.com> writes:
 
-We are specialized in manufacturing and exporting in automatic welding equipment, CNC cutting equipment, milling equipment and other special welding equipment.
+> On Tue, Apr 07, 2015 at 02:55:13PM -0400, Jeff Moyer wrote:
+>> The way the on-stack plugging currently works, each nesting level
+>> flushes its own list of I/Os.  This can be less than optimal (read
+>> awful) for certain workloads.  For example, consider an application
+>> that issues asynchronous O_DIRECT I/Os.  It can send down a bunch of
+>> I/Os together in a single io_submit call, only to have each of them
+>> dispatched individually down in the bowels of the dirct I/O code.
+>> The reason is that there are blk_plug-s instantiated both at the upper
+>> call site in do_io_submit and down in do_direct_IO.  The latter will
+>> submit as little as 1 I/O at a time (if you have a small enough I/O
+>> size) instead of performing the batching that the plugging
+>> infrastructure is supposed to provide.
+>
+> I'm wondering what impact this will have on filesystem metadata IO
+> that needs to be issued immediately. e.g. we are doing writeback, so
+> there is a high level plug in place and we need to page in btree
+> blocks to do extent allocation. We do readahead at this point,
+> but it looks like this change will prevent the readahead from being
+> issued by the unplug in xfs_buf_iosubmit().
 
-Main Products: 
+I'm not ignoring you, Dave, I'm just doing some more investigation and
+testing.  It's taking longer than I had hoped.
 
-Welding manipulator
+-Jeff
 
-Welding rotator
-
-Welding positioner 
-
-Edge-milling machine
-
-Shot blasting machine
-
-CNC cutter
-
-Special welding machine
-H beam Welding Production Line
-Pipe Welding Rotator 
-Tank Rotators 
-Rotary Welding Positioners 
-Column And Boom Manipulator 
-Self Aligning Rotators 
-Beam Welding Line 
-CNC Plasma Cutting Machine 
-CNC Flame Cutting Machine 
-Edge Beveling Machine 
-Edge Milling Machine 
-Shot Blasting Machine 
-Box Beam Welding 
-Hydraulic Tilter
-Wind Tower Production Line 
-
-
-If you are interested in our products, Please reply us email. we will send you more information.
-
-Have you found our production interesting?  
-Would you like to get advice or send an enquiry?  
-We will be happy for you to call us, send an email ,  
-We will gladly answer all your questions and recommend an ideal solution for your needs.  
-We look forward to our anticipated future collaboration.
-
-Thanks
-
-*****************************************************************
-Mike Zhao
-(Marketing manager)
-Elite Welding & Cutting Equipment Co.,Ltd.
-Luoshe Town Wuxi City, Jiangsu Province, China Zip:214154 
-Cell phone: +86-0-13812528128
-Email:elitewelding@163.com
-*****************************************************************
-
-------------------------------------------------------------------------------
-BPM Camp - Free Virtual Workshop May 6th at 10am PDT/1PM EDT
-Develop your own process in accordance with the BPMN 2 standard
-Learn Process modeling best practices with Bonita BPM through live exercises
-http://www.bonitasoft.com/be-part-of-it/events/bpm-camp-virtual- event?utm_
-source=Sourceforge_BPM_Camp_5_6_15&utm_medium=email&utm_campaign=VA_SF
+--
+To unsubscribe, send a message with 'unsubscribe linux-aio' in
+the body to majordomo@kvack.org.  For more info on Linux AIO,
+see: http://www.kvack.org/aio/
+Don't email: <a href=mailto:"aart@kvack.org">aart@kvack.org</a>
