@@ -1,30 +1,25 @@
-From: <liam@sofunmail.com>
-Subject: [SPAM] être belle oui, mais fidèle non
-Date: Mon, 13 Apr 2015 01:03:52 GMT
-Message-ID: <20150412075326-0.1.28.1tl2f.0.0zn996rtja@sofunmail.com>
+From: Taehee Yoo <ap420073@gmail.com>
+Subject: [PATCH] f2fs: change 0 to false for bool type
+Date: Mon, 13 Apr 2015 21:48:06 +0900
+Message-ID: <1428929286-16632-1-git-send-email-ap420073@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <liam@sofunmail.com>) id 1YhSpH-0000Is-J3
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <ap420073@gmail.com>) id 1Yhdne-0003rc-KE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 13 Apr 2015 01:06:11 +0000
-Received: from 81-7-59-162.blue.kundencontroller.de ([81.7.59.162])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1YhSpF-0005O5-O3
+	Mon, 13 Apr 2015 12:49:14 +0000
+Received: from mail-pa0-f52.google.com ([209.85.220.52])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1Yhdna-0003Bj-SM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 13 Apr 2015 01:06:11 +0000
-Received: from sofunmail.com ([92.222.196.34] helo=sofunmail.ip-94-23-196.eu)
-	by 81-7-10-142.blue.kundencontroller.de with esmtp (Exim 4.80)
-	(envelope-from <liam@sofunmail.com>) id 1YhT70-0005Rj-86
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 13 Apr 2015 03:24:30 +0200
-Received: by sofunmail.ip-94-23-196.eu for
-	<linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 13 Apr 2015 01:03:52 GMT
+	Mon, 13 Apr 2015 12:49:14 +0000
+Received: by pacyx8 with SMTP id yx8so101243035pac.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 13 Apr 2015 05:49:05 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,26 +29,37 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, cm224.lee@samsung.com, ap420073@gmail.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Qm9uam91ciwKCkplIG1lIHByw6lzZW50ZSBMaWFtLiBKZSBuZSBzdWlzIHBhcyBkdSBnZW5yZSBt
-b2Rlc3RlLCBhbG9ycywgamUgdm91cyBsZSBkaXMgY2xhaXJlbWVudCA6IGplIHN1aXMgcGx1dMO0
-dCBiZWxsZS4gRW4gcGx1cyBkZSBjZWxhLCBldCAoY2VsYSByaW1lKSwgamUgc3VpcyBwYXMgZHUg
-Z2VucmUgZmlkw6hsZS4gUGFyIGNvbnRyZSwgamUgc3VpcyBtYXJpw6llLCBldCBqZSBuZSBjb21w
-dGUgcGFzIGRpdm9yY2VyLiBKZSBzdWlzIHRyb3AgYmllbiwgYXZlYyBtYSBwZXRpdGUgdmllIGRl
-IGZhbWlsbGXigKYKLXdlYmNhbW1hcmllLnB3LQoKU2kgdm91cyDDqnRlcyBjb21tZSBtb2ksIHVu
-IHBldSB0b3JkdWUsIHVuIHBldSBwYXJhZG94YWxlLCByZWpvaWduZXotbm91cyBzdXIgLXdlYmNh
-bW1hcmllLnB3LSAoc2FucyBsZXMgdGlyZXRzIMOpdmlkZW1tZW50IHBvdXIgYWNjw6lkZXIgYXUg
-c2l0ZS4pCgpWb3VzIHZlcnJleiwgeSBhIHF1ZSBkZXMgaG9tbWVzIG1hcmnDqXMsIGV0IGNsYXNz
-ZXMgZW4gcGx1cy4gTGEgZGlzY3LDqXRpb24gZXN0IGdhcmFudGllLiBGYXV0IHNhdm9pciBzZSBm
-YWlyZSBwbGFpc2ly4oCmLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkJQTSBDYW1wIC0gRnJlZSBW
-aXJ0dWFsIFdvcmtzaG9wIE1heSA2dGggYXQgMTBhbSBQRFQvMVBNIEVEVApEZXZlbG9wIHlvdXIg
-b3duIHByb2Nlc3MgaW4gYWNjb3JkYW5jZSB3aXRoIHRoZSBCUE1OIDIgc3RhbmRhcmQKTGVhcm4g
-UHJvY2VzcyBtb2RlbGluZyBiZXN0IHByYWN0aWNlcyB3aXRoIEJvbml0YSBCUE0gdGhyb3VnaCBs
-aXZlIGV4ZXJjaXNlcwpodHRwOi8vd3d3LmJvbml0YXNvZnQuY29tL2JlLXBhcnQtb2YtaXQvZXZl
-bnRzL2JwbS1jYW1wLXZpcnR1YWwtIGV2ZW50P3V0bV8Kc291cmNlPVNvdXJjZWZvcmdlX0JQTV9D
-YW1wXzVfNl8xNSZ1dG1fbWVkaXVtPWVtYWlsJnV0bV9jYW1wYWlnbj1WQV9TRgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
-aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
-L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+in the f2fs_fill_super function, variable "retry" is bool type
+i think that it should be set as false.
+
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+---
+ fs/f2fs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f2fe666..d524be0 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1212,7 +1212,7 @@ free_sbi:
+ 
+ 	/* give only one another chance */
+ 	if (retry) {
+-		retry = 0;
++		retry = false;
+ 		shrink_dcache_sb(sb);
+ 		goto try_onemore;
+ 	}
+-- 
+1.9.1
+
+
+------------------------------------------------------------------------------
+BPM Camp - Free Virtual Workshop May 6th at 10am PDT/1PM EDT
+Develop your own process in accordance with the BPMN 2 standard
+Learn Process modeling best practices with Bonita BPM through live exercises
+http://www.bonitasoft.com/be-part-of-it/events/bpm-camp-virtual- event?utm_
+source=Sourceforge_BPM_Camp_5_6_15&utm_medium=email&utm_campaign=VA_SF
