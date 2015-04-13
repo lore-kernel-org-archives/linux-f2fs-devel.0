@@ -1,71 +1,59 @@
-From: nick <xerofoify@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH 2/2][v2] blk-plug: don't flush nested plug
- lists
-Date: Sat, 11 Apr 2015 00:11:54 -0400
-Message-ID: <55289F0A.1040309@gmail.com>
-References: <1428347694-17704-1-git-send-email-jmoyer@redhat.com>	<1428347694-17704-2-git-send-email-jmoyer@redhat.com>	<x49wq1nrcoe.fsf_-_@segfault.boston.devel.redhat.com>	<20150408230203.GG15810@dastard> <x498udzlkkx.fsf@segfault.boston.devel.redhat.com>
+From: <liam@sofunmail.com>
+Subject: [SPAM] être belle oui, mais fidèle non
+Date: Mon, 13 Apr 2015 01:03:52 GMT
+Message-ID: <20150412075326-0.1.28.1tl2f.0.0zn996rtja@sofunmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-aio@kvack.org>
-In-Reply-To: <x498udzlkkx.fsf@segfault.boston.devel.redhat.com>
-Sender: owner-linux-aio@kvack.org
-To: Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>
-Cc: Vladimir Davydov <vdavydov@parallels.com>, linux-aio@kvack.org, Miklos Szeredi <mszeredi@suse.cz>, Mike Snitzer <snitzer@redhat.com>, Ming Lei <tom.leiming@gmail.com>, Ming Lei <ming.lei@canonical.com>, Trond Myklebust <trond.myklebust@primarydata.com>, Jianyu Zhan <nasa4836@gmail.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>, linux-kernel@vger.kernel.org, Sagi Grimberg <sagig@mellanox.com>, Chris Mason <clm@fb.com>, dm-devel@redhat.com, target-devel@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>, Mark Rustad <mark.d.rustad@intel.com>, Christoph Hellwig <hch@lst.de>, Alasdair Kergon <agk@redhat.com>, Matthew Wilcox <matthew.r.wilcox@intel.com>, linux-scsi@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>, linux-raid@vger.kernel.org, cluster-devel@redhat.com, Mel Gorman <mgorman@suse.>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <liam@sofunmail.com>) id 1YhSpH-0000Is-J3
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 13 Apr 2015 01:06:11 +0000
+Received: from 81-7-59-162.blue.kundencontroller.de ([81.7.59.162])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1YhSpF-0005O5-O3
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 13 Apr 2015 01:06:11 +0000
+Received: from sofunmail.com ([92.222.196.34] helo=sofunmail.ip-94-23-196.eu)
+	by 81-7-10-142.blue.kundencontroller.de with esmtp (Exim 4.80)
+	(envelope-from <liam@sofunmail.com>) id 1YhT70-0005Rj-86
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 13 Apr 2015 03:24:30 +0200
+Received: by sofunmail.ip-94-23-196.eu for
+	<linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 13 Apr 2015 01:03:52 GMT
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-
-
-On 2015-04-10 05:50 PM, Jeff Moyer wrote:
-> Dave Chinner <david@fromorbit.com> writes:
-> 
->> On Tue, Apr 07, 2015 at 02:55:13PM -0400, Jeff Moyer wrote:
->>> The way the on-stack plugging currently works, each nesting level
->>> flushes its own list of I/Os.  This can be less than optimal (read
->>> awful) for certain workloads.  For example, consider an application
->>> that issues asynchronous O_DIRECT I/Os.  It can send down a bunch of
->>> I/Os together in a single io_submit call, only to have each of them
->>> dispatched individually down in the bowels of the dirct I/O code.
->>> The reason is that there are blk_plug-s instantiated both at the upper
->>> call site in do_io_submit and down in do_direct_IO.  The latter will
->>> submit as little as 1 I/O at a time (if you have a small enough I/O
->>> size) instead of performing the batching that the plugging
->>> infrastructure is supposed to provide.
->>
->> I'm wondering what impact this will have on filesystem metadata IO
->> that needs to be issued immediately. e.g. we are doing writeback, so
->> there is a high level plug in place and we need to page in btree
->> blocks to do extent allocation. We do readahead at this point,
->> but it looks like this change will prevent the readahead from being
->> issued by the unplug in xfs_buf_iosubmit().
-> 
-> I'm not ignoring you, Dave, I'm just doing some more investigation and
-> testing.  It's taking longer than I had hoped.
-> 
-> -Jeff
-> 
-Jeff,
-Would you mind sending your test reports to the list so we can see what workloads
-and tests your running your patch under. This is due to me and the others perhaps
-being able to give input into the other major benchmarks or workloads we need to
-test too in order to see if there are any regressions with your patch.
-Thanks,
-Nick
-
-> ------------------------------------------------------------------------------
-> BPM Camp - Free Virtual Workshop May 6th at 10am PDT/1PM EDT
-> Develop your own process in accordance with the BPMN 2 standard
-> Learn Process modeling best practices with Bonita BPM through live exercises
-> http://www.bonitasoft.com/be-part-of-it/events/bpm-camp-virtual- event?utm_
-> source=Sourceforge_BPM_Camp_5_6_15&utm_medium=email&utm_campaign=VA_SF
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-
---
-To unsubscribe, send a message with 'unsubscribe linux-aio' in
-the body to majordomo@kvack.org.  For more info on Linux AIO,
-see: http://www.kvack.org/aio/
-Don't email: <a href=mailto:"aart@kvack.org">aart@kvack.org</a>
+Qm9uam91ciwKCkplIG1lIHByw6lzZW50ZSBMaWFtLiBKZSBuZSBzdWlzIHBhcyBkdSBnZW5yZSBt
+b2Rlc3RlLCBhbG9ycywgamUgdm91cyBsZSBkaXMgY2xhaXJlbWVudCA6IGplIHN1aXMgcGx1dMO0
+dCBiZWxsZS4gRW4gcGx1cyBkZSBjZWxhLCBldCAoY2VsYSByaW1lKSwgamUgc3VpcyBwYXMgZHUg
+Z2VucmUgZmlkw6hsZS4gUGFyIGNvbnRyZSwgamUgc3VpcyBtYXJpw6llLCBldCBqZSBuZSBjb21w
+dGUgcGFzIGRpdm9yY2VyLiBKZSBzdWlzIHRyb3AgYmllbiwgYXZlYyBtYSBwZXRpdGUgdmllIGRl
+IGZhbWlsbGXigKYKLXdlYmNhbW1hcmllLnB3LQoKU2kgdm91cyDDqnRlcyBjb21tZSBtb2ksIHVu
+IHBldSB0b3JkdWUsIHVuIHBldSBwYXJhZG94YWxlLCByZWpvaWduZXotbm91cyBzdXIgLXdlYmNh
+bW1hcmllLnB3LSAoc2FucyBsZXMgdGlyZXRzIMOpdmlkZW1tZW50IHBvdXIgYWNjw6lkZXIgYXUg
+c2l0ZS4pCgpWb3VzIHZlcnJleiwgeSBhIHF1ZSBkZXMgaG9tbWVzIG1hcmnDqXMsIGV0IGNsYXNz
+ZXMgZW4gcGx1cy4gTGEgZGlzY3LDqXRpb24gZXN0IGdhcmFudGllLiBGYXV0IHNhdm9pciBzZSBm
+YWlyZSBwbGFpc2ly4oCmLgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkJQTSBDYW1wIC0gRnJlZSBW
+aXJ0dWFsIFdvcmtzaG9wIE1heSA2dGggYXQgMTBhbSBQRFQvMVBNIEVEVApEZXZlbG9wIHlvdXIg
+b3duIHByb2Nlc3MgaW4gYWNjb3JkYW5jZSB3aXRoIHRoZSBCUE1OIDIgc3RhbmRhcmQKTGVhcm4g
+UHJvY2VzcyBtb2RlbGluZyBiZXN0IHByYWN0aWNlcyB3aXRoIEJvbml0YSBCUE0gdGhyb3VnaCBs
+aXZlIGV4ZXJjaXNlcwpodHRwOi8vd3d3LmJvbml0YXNvZnQuY29tL2JlLXBhcnQtb2YtaXQvZXZl
+bnRzL2JwbS1jYW1wLXZpcnR1YWwtIGV2ZW50P3V0bV8Kc291cmNlPVNvdXJjZWZvcmdlX0JQTV9D
+YW1wXzVfNl8xNSZ1dG1fbWVkaXVtPWVtYWlsJnV0bV9jYW1wYWlnbj1WQV9TRgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
+aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
+L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
