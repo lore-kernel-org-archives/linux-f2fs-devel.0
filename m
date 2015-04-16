@@ -1,24 +1,21 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/3] f2fs: pass checkpoint reason on roll-forward
-	recovery
-Date: Thu, 16 Apr 2015 00:30:45 -0700
-Message-ID: <1429169445-18306-3-git-send-email-jaegeuk@kernel.org>
-References: <1429169445-18306-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH] fsck.f2fs: show ckeckpoint version info
+Date: Thu, 16 Apr 2015 00:31:11 -0700
+Message-ID: <1429169471-18383-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YieGH-0006v6-30
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YieGf-0001Kq-2m
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 16 Apr 2015 07:30:57 +0000
+	Thu, 16 Apr 2015 07:31:21 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YieGF-0001T8-VO for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 16 Apr 2015 07:30:57 +0000
-In-Reply-To: <1429169445-18306-1-git-send-email-jaegeuk@kernel.org>
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YieGe-0004mP-7s for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 16 Apr 2015 07:31:21 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,81 +25,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch adds CP_RECOVERY to remain recovery information for checkpoint.
-And, it makes sure writing checkpoint in this case.
+This patch shows the valid checkpoint version number.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c        | 6 +++++-
- fs/f2fs/f2fs.h              | 1 +
- fs/f2fs/recovery.c          | 2 +-
- include/trace/events/f2fs.h | 1 +
- 4 files changed, 8 insertions(+), 2 deletions(-)
+ fsck/mount.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 384bfc4..a5e17a2 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1051,7 +1051,7 @@ void write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	mutex_lock(&sbi->cp_mutex);
+diff --git a/fsck/mount.c b/fsck/mount.c
+index f900dd7..1c55f40 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -400,7 +400,7 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	struct f2fs_super_block *raw_sb = sbi->raw_super;
+ 	void *cp1, *cp2, *cur_page;
+ 	unsigned long blk_size = sbi->blocksize;
+-	unsigned long long cp1_version = 0, cp2_version = 0;
++	unsigned long long cp1_version = 0, cp2_version = 0, version;
+ 	unsigned long long cp_start_blk_no;
+ 	unsigned int cp_blks = 1 + le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_payload);
+ 	int ret;
+@@ -423,22 +423,28 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 		if (ver_after(cp2_version, cp1_version)) {
+ 			cur_page = cp2;
+ 			sbi->cur_cp = 2;
++			version = cp2_version;
+ 		} else {
+ 			cur_page = cp1;
+ 			sbi->cur_cp = 1;
++			version = cp1_version;
+ 		}
+ 	} else if (cp1) {
+ 		cur_page = cp1;
+ 		sbi->cur_cp = 1;
++		version = cp1_version;
+ 	} else if (cp2) {
+ 		cur_page = cp2;
+ 		sbi->cur_cp = 2;
++		version = cp2_version;
+ 	} else {
+ 		free(cp1);
+ 		free(cp2);
+ 		goto fail_no_cp;
+ 	}
  
- 	if (!is_sbi_flag_set(sbi, SBI_IS_DIRTY) &&
--			cpc->reason != CP_DISCARD && cpc->reason != CP_UMOUNT)
-+		(cpc->reason == CP_FASTBOOT || cpc->reason == CP_SYNC))
- 		goto out;
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		goto out;
-@@ -1086,6 +1086,10 @@ void write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	unblock_operations(sbi);
- 	stat_inc_cp_count(sbi->stat_info);
++	MSG(0, "Info: CKPT version = %"PRIx64"\n", version);
 +
-+	if (cpc->reason == CP_RECOVERY)
-+		f2fs_msg(sbi->sb, KERN_NOTICE,
-+			"checkpoint: version = %llx", ckpt_ver);
- out:
- 	mutex_unlock(&sbi->cp_mutex);
- 	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 053361a..c06a25e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -103,6 +103,7 @@ enum {
- 	CP_UMOUNT,
- 	CP_FASTBOOT,
- 	CP_SYNC,
-+	CP_RECOVERY,
- 	CP_DISCARD,
- };
+ 	memcpy(sbi->ckpt, cur_page, blk_size);
  
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 4b742c9..8d8ea99 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -564,7 +564,7 @@ out:
- 		mutex_unlock(&sbi->cp_mutex);
- 	} else if (need_writecp) {
- 		struct cp_control cpc = {
--			.reason = CP_SYNC,
-+			.reason = CP_RECOVERY,
- 		};
- 		mutex_unlock(&sbi->cp_mutex);
- 		write_checkpoint(sbi, &cpc);
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 75724bd..8804f22 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -78,6 +78,7 @@
- 		{ CP_UMOUNT,	"Umount" },				\
- 		{ CP_FASTBOOT,	"Fastboot" },				\
- 		{ CP_SYNC,	"Sync" },				\
-+		{ CP_RECOVERY,	"Recovery" },				\
- 		{ CP_DISCARD,	"Discard" })
- 
- struct victim_sel_policy;
+ 	if (cp_blks > 1) {
 -- 
 2.1.1
 
