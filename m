@@ -1,96 +1,75 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: flush symlink path to avoid broken
- symlink after POR
-Date: Thu, 16 Apr 2015 09:51:26 -0700
-Message-ID: <20150416165126.GA20085@jaegeuk-mac02.mot.com>
-References: <1429169445-18306-1-git-send-email-jaegeuk@kernel.org>
- <000001d07830$e0787b60$a1697220$@samsung.com>
+Subject: Re: [PATCH] f2fs: remove duplicated code in the
+	f2fs_lookup()
+Date: Thu, 16 Apr 2015 10:00:22 -0700
+Message-ID: <20150416170022.GA20307@jaegeuk-mac02>
+References: <1429173763-12707-1-git-send-email-ap420073@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Yin9S-0003QX-Va
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 16 Apr 2015 17:00:30 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Yin9R-0002rH-W6 for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 16 Apr 2015 17:00:30 +0000
 Content-Disposition: inline
-In-Reply-To: <000001d07830$e0787b60$a1697220$@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <1429173763-12707-1-git-send-email-ap420073@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Taehee Yoo <ap420073@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chao,
+Hi Taehee,
 
-On Thu, Apr 16, 2015 at 06:33:29PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Thursday, April 16, 2015 3:31 PM
-> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH 1/3] f2fs: flush symlink path to avoid broken symlink after POR
-> > 
-> > This patch tries to avoid broken symlink case after POR in best effort.
-> > This results in performance regression.
-> > But, if f2fs has inline_data and the target path is under 3KB-sized long,
-> > the page would be stored in its inode_block, so that there would be no
-> > performance regression.
-> > 
-> > Note that, if user wants to keep this file atomically, it needs to trigger
-> > dir->fsync.
-> > And, there is still a hole to produce broken symlink.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/namei.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> > index 8055e30..5d990d8 100644
-> > --- a/fs/f2fs/namei.c
-> > +++ b/fs/f2fs/namei.c
-> > @@ -324,6 +324,17 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
-> >  	d_instantiate(dentry, inode);
-> >  	unlock_new_inode(inode);
-> > 
-> > +	/*
-> > +	 * Let's flush symlink data in order to avoid broken symlink as much as
-> > +	 * possible. Nevertheless, fsyncing is the best way, but there is no
-> > +	 * way to get a file descriptor in order to flush that.
-> > +	 *
-> > +	 * Note that, it needs to do dir->fsync to make this recoverable.
-> > +	 * If the symlink path is stored into inline_data, there is no
-> > +	 * performance regression.
-> > +	 */
-> > +	filemap_write_and_wait_range(inode->i_mapping, 0, symlen);
-> 
-> One minor thing.
-> 
-> filemap_write_and_wait_range(inode->i_mapping, 0, symlen - 1);
-> 
-> Because we don't need to write out data exceed isize here.
+On Thu, Apr 16, 2015 at 05:42:43PM +0900, Taehee Yoo wrote:
+> in the f2fs_lookup(), checks that inode isn't null
+> but d_splice_alias() has same routine at first line.
+> so i remove this routine.
 
-Thank you for the review.
-I fixed this and merged.
+In the latest f2fs, we cannot merge this patch.
+Since some inline_dots codes were added with a valid inode before
+d_splice_alias.
 
 Thanks,
 
 > 
-> Thanks,
+> Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+> ---
+>  fs/f2fs/namei.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> > +
-> >  	if (IS_DIRSYNC(dir))
-> >  		f2fs_sync_fs(sbi->sb, 1);
-> >  	return err;
-> > --
-> > 2.1.1
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > BPM Camp - Free Virtual Workshop May 6th at 10am PDT/1PM EDT
-> > Develop your own process in accordance with the BPMN 2 standard
-> > Learn Process modeling best practices with Bonita BPM through live exercises
-> > http://www.bonitasoft.com/be-part-of-it/events/bpm-camp-virtual- event?utm_
-> > source=Sourceforge_BPM_Camp_5_6_15&utm_medium=email&utm_campaign=VA_SF
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index e79639a9..f17b4b5 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -204,8 +204,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+>  		f2fs_put_page(page, 0);
+>  
+>  		inode = f2fs_iget(dir->i_sb, ino);
+> -		if (IS_ERR(inode))
+> -			return ERR_CAST(inode);
+>  	}
+>  
+>  	return d_splice_alias(inode, dentry);
+> -- 
+> 1.9.1
+
+------------------------------------------------------------------------------
+BPM Camp - Free Virtual Workshop May 6th at 10am PDT/1PM EDT
+Develop your own process in accordance with the BPMN 2 standard
+Learn Process modeling best practices with Bonita BPM through live exercises
+http://www.bonitasoft.com/be-part-of-it/events/bpm-camp-virtual- event?utm_
+source=Sourceforge_BPM_Camp_5_6_15&utm_medium=email&utm_campaign=VA_SF
