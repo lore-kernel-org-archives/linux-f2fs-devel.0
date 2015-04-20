@@ -1,26 +1,23 @@
-From: Taehee Yoo <ap420073@gmail.com>
-Subject: [PATCH] f2fs: Add offset check routine before
-	punch_hole() in f2fs_fallocate()
-Date: Mon, 20 Apr 2015 17:46:14 +0900
-Message-ID: <1429519574-5110-1-git-send-email-ap420073@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: f2fs: avoid abnormal behavior on broken symlink
+Date: Mon, 20 Apr 2015 17:49:47 +0300
+Message-ID: <20150420144947.GA10518@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ap420073@gmail.com>) id 1Yk7Mt-00089B-SA
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <dan.carpenter@oracle.com>) id 1YkD1f-0003eF-V3
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Apr 2015 08:47:51 +0000
-Received: from mail-pa0-f52.google.com ([209.85.220.52])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1Yk7Mt-000874-0I
+	Mon, 20 Apr 2015 14:50:19 +0000
+Received: from aserp1040.oracle.com ([141.146.126.69])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1YkD1e-00039I-Mf
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 20 Apr 2015 08:47:51 +0000
-Received: by pacyx8 with SMTP id yx8so200235839pac.1
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 20 Apr 2015 01:47:45 -0700 (PDT)
+	Mon, 20 Apr 2015 14:50:19 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,55 +27,45 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, cm224.lee@samsung.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-In the punch_hole(), if offset bigger than inode size, it returns SUCCESS.
-Then f2fs_fallocate() will update time and dirty mark.
-In that case, inode has not been modified actually.
-So I have added offset check routine that prevent to call the punch_hole().
+Hello Jaegeuk Kim,
 
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
----
- fs/f2fs/file.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+The patch feb7cbb079e6: "f2fs: avoid abnormal behavior on broken
+symlink" from Apr 15, 2015, leads to the following static checker
+warning:
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a6f3f61..6470831 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -830,15 +830,19 @@ static long f2fs_fallocate(struct file *file, int mode,
- 				loff_t offset, loff_t len)
- {
- 	struct inode *inode = file_inode(file);
--	long ret;
-+	long ret = 0;
- 
- 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
- 		return -EOPNOTSUPP;
- 
- 	mutex_lock(&inode->i_mutex);
- 
--	if (mode & FALLOC_FL_PUNCH_HOLE)
-+	if (mode & FALLOC_FL_PUNCH_HOLE) {
-+		if (offset >= inode->i_size)
-+			goto out;
-+
- 		ret = punch_hole(inode, offset, len);
-+	}
- 	else
- 		ret = expand_inode_data(inode, offset, len, mode);
- 
-@@ -847,6 +851,7 @@ static long f2fs_fallocate(struct file *file, int mode,
- 		mark_inode_dirty(inode);
- 	}
- 
-+out:
- 	mutex_unlock(&inode->i_mutex);
- 
- 	trace_f2fs_fallocate(inode, mode, offset, len, ret);
--- 
-1.9.1
+	fs/f2fs/namei.c:304 f2fs_follow_link()
+	warn: 'page' isn't an ERR_PTR
 
+fs/f2fs/namei.c
+   299  static void *f2fs_follow_link(struct dentry *dentry, struct nameidata *nd)
+   300  {
+   301          struct page *page;
+   302  
+   303          page = page_follow_link_light(dentry, nd);
+   304          if (IS_ERR(page))
+                           ^^^^
+The code in page_follow_link_light() is a bit hard to follow but it
+returns NULL on error.
+
+   305                  return page;
+   306  
+   307          /* this is broken symlink case */
+   308          if (*nd_get_link(nd) == 0) {
+   309                  kunmap(page);
+                        ^^^^^^^^^^^^
+Potential NULL deref.
+
+   310                  page_cache_release(page);
+   311                  return ERR_PTR(-ENOENT);
+   312          }
+   313          return page;
+   314  }
+
+regards,
+dan carpenter
 
 ------------------------------------------------------------------------------
 BPM Camp - Free Virtual Workshop May 6th at 10am PDT/1PM EDT
