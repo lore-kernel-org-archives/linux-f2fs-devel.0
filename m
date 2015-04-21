@@ -1,26 +1,24 @@
-From: Taehee Yoo <ap420073@gmail.com>
-Subject: [PATCH v2] f2fs: Add offset check routine before
-	punch_hole() in f2fs_fallocate()
-Date: Tue, 21 Apr 2015 15:59:12 +0900
-Message-ID: <1429599552-14528-1-git-send-email-ap420073@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: f2fs: avoid abnormal behavior on broken symlink
+Date: Tue, 21 Apr 2015 11:20:45 -0700
+Message-ID: <20150421182045.GB66459@jaegeuk-mac02>
+References: <20150420144947.GA10518@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ap420073@gmail.com>) id 1YkS9Z-0001qo-UX
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Ykcn0-0002KH-Ks
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 21 Apr 2015 06:59:29 +0000
-Received: from mail-pa0-f48.google.com ([209.85.220.48])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1YkS9Z-0008JP-4L
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 21 Apr 2015 06:59:29 +0000
-Received: by pacyx8 with SMTP id yx8so232114129pac.1
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 20 Apr 2015 23:59:23 -0700 (PDT)
+	Tue, 21 Apr 2015 18:20:54 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Ykcmz-0003MM-GU for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 21 Apr 2015 18:20:54 +0000
+Content-Disposition: inline
+In-Reply-To: <20150420144947.GA10518@mwanda>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,66 +28,85 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, cm224.lee@samsung.com, linux-f2fs-devel@lists.sourceforge.net
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-In the punch_hole(), if offset bigger than inode size, it returns SUCCESS.
-Then f2fs_fallocate() will update time and dirty mark.
-In that case, inode has not been modified actually.
-So I have added offset check routine that prevent to call the punch_hole().
+Hi Dan,
 
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Thank you for letting me know.
+I wrote a patch for this below.
+
+Thanks,
+
+On Mon, Apr 20, 2015 at 05:49:47PM +0300, Dan Carpenter wrote:
+> Hello Jaegeuk Kim,
+> 
+> The patch feb7cbb079e6: "f2fs: avoid abnormal behavior on broken
+> symlink" from Apr 15, 2015, leads to the following static checker
+> warning:
+> 
+> 	fs/f2fs/namei.c:304 f2fs_follow_link()
+> 	warn: 'page' isn't an ERR_PTR
+> 
+> fs/f2fs/namei.c
+>    299  static void *f2fs_follow_link(struct dentry *dentry, struct nameidata *nd)
+>    300  {
+>    301          struct page *page;
+>    302  
+>    303          page = page_follow_link_light(dentry, nd);
+>    304          if (IS_ERR(page))
+>                            ^^^^
+> The code in page_follow_link_light() is a bit hard to follow but it
+> returns NULL on error.
+> 
+>    305                  return page;
+>    306  
+>    307          /* this is broken symlink case */
+>    308          if (*nd_get_link(nd) == 0) {
+>    309                  kunmap(page);
+>                         ^^^^^^^^^^^^
+> Potential NULL deref.
+> 
+>    310                  page_cache_release(page);
+>    311                  return ERR_PTR(-ENOENT);
+>    312          }
+>    313          return page;
+>    314  }
+> 
+> regards,
+> dan carpenter
+
+>From 52889398489d4edc0cb016ae24036b994e3d9ccd Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Mon, 20 Apr 2015 16:30:14 -0700
+Subject: [PATCH] f2fs: fix wrong error hanlder in f2fs_follow_link
+
+The page_follow_link_light returns NULL and its error pointer was remained
+in nd->path.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ fs/f2fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a6f3f61..cb57baa 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -718,10 +718,6 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 	if (!S_ISREG(inode->i_mode))
- 		return -EOPNOTSUPP;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 407dde3..678b6dd 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -301,8 +301,8 @@ static void *f2fs_follow_link(struct dentry *dentry, struct nameidata *nd)
+ 	struct page *page;
  
--	/* skip punching hole beyond i_size */
--	if (offset >= inode->i_size)
--		return ret;
--
- 	if (f2fs_has_inline_data(inode)) {
- 		ret = f2fs_convert_inline_inode(inode);
- 		if (ret)
-@@ -830,15 +826,19 @@ static long f2fs_fallocate(struct file *file, int mode,
- 				loff_t offset, loff_t len)
- {
- 	struct inode *inode = file_inode(file);
--	long ret;
-+	long ret = 0;
+ 	page = page_follow_link_light(dentry, nd);
+-	if (IS_ERR(page))
+-		return page;
++	if (!page)
++		return NULL;
  
- 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
- 		return -EOPNOTSUPP;
- 
- 	mutex_lock(&inode->i_mutex);
- 
--	if (mode & FALLOC_FL_PUNCH_HOLE)
-+	if (mode & FALLOC_FL_PUNCH_HOLE) {
-+		if (offset >= inode->i_size)
-+			goto out;
-+
- 		ret = punch_hole(inode, offset, len);
-+	}
- 	else
- 		ret = expand_inode_data(inode, offset, len, mode);
- 
-@@ -847,6 +847,7 @@ static long f2fs_fallocate(struct file *file, int mode,
- 		mark_inode_dirty(inode);
- 	}
- 
-+out:
- 	mutex_unlock(&inode->i_mutex);
- 
- 	trace_f2fs_fallocate(inode, mode, offset, len, ret);
+ 	/* this is broken symlink case */
+ 	if (*nd_get_link(nd) == 0) {
 -- 
-1.9.1
-
+2.1.1
 
 ------------------------------------------------------------------------------
 BPM Camp - Free Virtual Workshop May 6th at 10am PDT/1PM EDT
