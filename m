@@ -1,32 +1,159 @@
-From: Andrei Borzenkov <arvidjaar@gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v2] F2FS support
-Date: Thu, 30 Apr 2015 06:32:25 +0300
-Message-ID: <20150430063225.6651b203@opensuse.site>
-References: <1427185140-41120-1-git-send-email-jaegeuk@kernel.org>
-	<20150403224908.GB25673@jaegeuk-mac02.mot.com>
-	<20150429204821.GA8429@jaegeuk-mac02.mot.com>
-Reply-To: The development of GNU GRUB <grub-devel@gnu.org>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH v2 1/3] f2fs: introduce replace_block() for reuse
+Date: Thu, 30 Apr 2015 18:11:35 +0800
+Message-ID: <025501d0832e$24f33fc0$6ed9bf40$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org>
-In-Reply-To: <20150429204821.GA8429@jaegeuk-mac02.mot.com>
-List-Unsubscribe: <https://lists.gnu.org/mailman/options/grub-devel>,
-	<mailto:grub-devel-request@gnu.org?subject=unsubscribe>
-List-Archive: <http://lists.gnu.org/archive/html/grub-devel>
-List-Post: <mailto:grub-devel@gnu.org>
-List-Help: <mailto:grub-devel-request@gnu.org?subject=help>
-List-Subscribe: <https://lists.gnu.org/mailman/listinfo/grub-devel>,
-	<mailto:grub-devel-request@gnu.org?subject=subscribe>
-Errors-To: grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org
-Sender: grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: grub-devel@gnu.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1YnlSH-0003pM-Fn
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 30 Apr 2015 10:12:29 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1YnlSF-0006y4-6r
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 30 Apr 2015 10:12:29 +0000
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout2.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0NNM00DLS70JCRA0@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 30 Apr 2015 19:12:19 +0900 (KST)
+Content-language: zh-cn
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-0JIgV2VkLCAyOSBBcHIgMjAxNSAxMzo0ODoyMSAtMDcwMApKYWVnZXVrIEtpbSA8amFlZ2V1a0Br
-ZXJuZWwub3JnPiDQv9C40YjQtdGCOgoKPiBIaSBmb2xrcywKPiAKPiBBbnkgY29tbWVudHMgb24g
-dGhpcyBwYXRjaD8KPiAKClNvcnJ5LCBzdGlsbCBkaWQgbm90IGdldCBhcm91bmQsIGhvcGVmdWxs
-eSBzb21lb25lIGJlYXRzIG1lIDopCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpHcnViLWRldmVsIG1haWxpbmcgbGlzdApHcnViLWRldmVsQGdudS5vcmcK
-aHR0cHM6Ly9saXN0cy5nbnUub3JnL21haWxtYW4vbGlzdGluZm8vZ3J1Yi1kZXZlbAo=
+Introduce a generic function replace_block base on recover_data_page,
+and export it. So wit it we can operate file's meta data which is in
+CP/SSA area when we invoke fallocate with FALLOC_FL_COLLAPSE_RANGE flag.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/f2fs.h     |  4 ++--
+ fs/f2fs/recovery.c |  2 +-
+ fs/f2fs/segment.c  | 33 ++++++++++++++++++++++++++-------
+ 3 files changed, 29 insertions(+), 10 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8be6cab..7ab06e8 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1560,8 +1560,8 @@ void write_node_page(struct f2fs_sb_info *, struct page *,
+ void write_data_page(struct page *, struct dnode_of_data *,
+ 			struct f2fs_io_info *);
+ void rewrite_data_page(struct page *, struct f2fs_io_info *);
+-void recover_data_page(struct f2fs_sb_info *, struct page *,
+-				struct f2fs_summary *, block_t, block_t);
++void replace_block(struct f2fs_sb_info *, struct f2fs_summary *,
++					block_t, block_t, bool);
+ void allocate_data_block(struct f2fs_sb_info *, struct page *,
+ 		block_t, block_t *, struct f2fs_summary *, int);
+ void f2fs_wait_on_page_writeback(struct page *, enum page_type);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index b80d9d4..703ab2f 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -412,7 +412,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
+ 
+ 			/* write dummy data page */
+-			recover_data_page(sbi, NULL, &sum, src, dest);
++			replace_block(sbi, &sum, src, dest, true);
+ 			dn.data_blkaddr = dest;
+ 			set_data_blkaddr(&dn);
+ 			f2fs_update_extent_cache(&dn);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index f939660..3db92fe 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1258,26 +1258,34 @@ void rewrite_data_page(struct page *page, struct f2fs_io_info *fio)
+ 	f2fs_submit_page_mbio(F2FS_P_SB(page), page, fio);
+ }
+ 
+-void recover_data_page(struct f2fs_sb_info *sbi,
+-			struct page *page, struct f2fs_summary *sum,
+-			block_t old_blkaddr, block_t new_blkaddr)
++void replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
++				block_t old_blkaddr, block_t new_blkaddr,
++				bool recover_curseg)
+ {
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct curseg_info *curseg;
+ 	unsigned int segno, old_cursegno;
+ 	struct seg_entry *se;
+ 	int type;
++	unsigned short old_blkoff;
+ 
+ 	segno = GET_SEGNO(sbi, new_blkaddr);
+ 	se = get_seg_entry(sbi, segno);
+ 	type = se->type;
+ 
+-	if (se->valid_blocks == 0 && !IS_CURSEG(sbi, segno)) {
+-		if (old_blkaddr == NULL_ADDR)
+-			type = CURSEG_COLD_DATA;
+-		else
++	if (recover_curseg) {
++		/* for recovery flow */
++		if (se->valid_blocks == 0 && !IS_CURSEG(sbi, segno)) {
++			if (old_blkaddr == NULL_ADDR)
++				type = CURSEG_COLD_DATA;
++			else
++				type = CURSEG_WARM_DATA;
++		}
++	} else {
++		if (!IS_CURSEG(sbi, segno))
+ 			type = CURSEG_WARM_DATA;
+ 	}
++
+ 	curseg = CURSEG_I(sbi, type);
+ 
+ 	mutex_lock(&curseg->curseg_mutex);
+@@ -1289,6 +1297,10 @@ void recover_data_page(struct f2fs_sb_info *sbi,
+ 	if (segno != curseg->segno) {
+ 		curseg->next_segno = segno;
+ 		change_curseg(sbi, type, true);
++		recover_curseg = true;
++	} else {
++		old_blkoff = curseg->next_blkoff;
++		recover_curseg = false;
+ 	}
+ 
+ 	curseg->next_blkoff = GET_BLKOFF_FROM_SEG0(sbi, new_blkaddr);
+@@ -1297,6 +1309,13 @@ void recover_data_page(struct f2fs_sb_info *sbi,
+ 	refresh_sit_entry(sbi, old_blkaddr, new_blkaddr);
+ 	locate_dirty_segment(sbi, old_cursegno);
+ 
++	if (recover_curseg) {
++		curseg->next_segno = old_cursegno;
++		change_curseg(sbi, type, true);
++	} else {
++		curseg->next_blkoff = old_blkoff;
++	}
++
+ 	mutex_unlock(&sit_i->sentry_lock);
+ 	mutex_unlock(&curseg->curseg_mutex);
+ }
+-- 
+2.3.3
+
+
+
+------------------------------------------------------------------------------
+One dashboard for servers and applications across Physical-Virtual-Cloud 
+Widest out-of-the-box monitoring support with 50+ applications
+Performance metrics, stats and reports that give you Actionable Insights
+Deep dive visibility with transaction tracing using APM Insight.
+http://ad.doubleclick.net/ddm/clk/290420510;117567292;y
