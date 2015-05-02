@@ -1,7 +1,8 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 09/19] f2fs: add f2fs_may_inline_{data, dentry}
-Date: Fri,  1 May 2015 17:48:36 -0700
-Message-ID: <1430527726-68547-9-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 13/19] f2fs: fix race on allocating and
+	deallocating a dentry block
+Date: Fri,  1 May 2015 17:48:40 -0700
+Message-ID: <1430527726-68547-13-git-send-email-jaegeuk@kernel.org>
 References: <1430527726-68547-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +11,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YoLcX-0001eE-9G
+	(envelope-from <jaegeuk@kernel.org>) id 1YoLcc-0001eo-Kb
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 02 May 2015 00:49:29 +0000
+	Sat, 02 May 2015 00:49:34 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YoLcW-0004Sy-Dy for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 02 May 2015 00:49:29 +0000
+	id 1YoLcb-0004Sy-Tj for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 02 May 2015 00:49:34 +0000
 In-Reply-To: <1430527726-68547-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,90 +31,99 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch adds f2fs_may_inline_data and f2fs_may_inline_dentry.
+There are two threads:
+ f2fs_delete_entry()              get_new_data_page()
+                                  f2fs_reserve_block()
+				  dn.blkaddr = XXX
+ lock_page(dentry_block)
+ truncate_hole()
+ dn.blkaddr = NULL
+ unlock_page(dentry_block)
+                                  lock_page(dentry_block)
+                                  fill the block from XXX address
+                                  add new dentries
+                                  unlock_page(dentry_block)
+
+Later, f2fs_write_data_page() will truncate the dentry_block, since
+its block address is NULL.
+
+The reason for this was due to the wrong lock order.
+In this case, we should do f2fs_reserve_block() after locking its dentry block.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/f2fs.h   |  3 ++-
- fs/f2fs/file.c   |  2 +-
- fs/f2fs/inline.c | 13 ++++++++++++-
- fs/f2fs/namei.c  |  4 ++--
- 4 files changed, 17 insertions(+), 5 deletions(-)
+ fs/f2fs/data.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7ff3ac7..2bb9b57 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1839,7 +1839,8 @@ extern struct kmem_cache *inode_entry_slab;
- /*
-  * inline.c
-  */
--bool f2fs_may_inline(struct inode *);
-+bool f2fs_may_inline_data(struct inode *);
-+bool f2fs_may_inline_dentry(struct inode *);
- void read_inline_data(struct page *, struct page *);
- bool truncate_inline_inode(struct page *, u64);
- int f2fs_read_inline_data(struct inode *, struct page *);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 3d6de54..ffd9b7e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -560,7 +560,7 @@ void f2fs_truncate(struct inode *inode)
- 	trace_f2fs_truncate(inode);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 81d1fd5..9ba30b4 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1076,20 +1076,22 @@ struct page *get_new_data_page(struct inode *inode,
+ 	struct page *page;
+ 	struct dnode_of_data dn;
+ 	int err;
++repeat:
++	page = grab_cache_page(mapping, index);
++	if (!page)
++		return ERR_PTR(-ENOMEM);
  
- 	/* we should check inline_data size */
--	if (f2fs_has_inline_data(inode) && !f2fs_may_inline(inode)) {
-+	if (f2fs_has_inline_data(inode) && !f2fs_may_inline_data(inode)) {
- 		if (f2fs_convert_inline_inode(inode))
- 			return;
+ 	set_new_dnode(&dn, inode, ipage, NULL, 0);
+ 	err = f2fs_reserve_block(&dn, index);
+-	if (err)
++	if (err) {
++		f2fs_put_page(page, 1);
+ 		return ERR_PTR(err);
+-repeat:
+-	page = grab_cache_page(mapping, index);
+-	if (!page) {
+-		err = -ENOMEM;
+-		goto put_err;
  	}
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 8140e4f..99d5148 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -13,7 +13,7 @@
++	if (!ipage)
++		f2fs_put_dnode(&dn);
  
- #include "f2fs.h"
+ 	if (PageUptodate(page))
+-		return page;
++		goto got_it;
  
--bool f2fs_may_inline(struct inode *inode)
-+bool f2fs_may_inline_data(struct inode *inode)
- {
- 	if (!test_opt(F2FS_I_SB(inode), INLINE_DATA))
- 		return false;
-@@ -30,6 +30,17 @@ bool f2fs_may_inline(struct inode *inode)
- 	return true;
+ 	if (dn.data_blkaddr == NEW_ADDR) {
+ 		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
+@@ -1104,20 +1106,19 @@ repeat:
+ 		};
+ 		err = f2fs_submit_page_bio(&fio);
+ 		if (err)
+-			goto put_err;
++			return ERR_PTR(err);
+ 
+ 		lock_page(page);
+ 		if (unlikely(!PageUptodate(page))) {
+ 			f2fs_put_page(page, 1);
+-			err = -EIO;
+-			goto put_err;
++			return ERR_PTR(-EIO);
+ 		}
+ 		if (unlikely(page->mapping != mapping)) {
+ 			f2fs_put_page(page, 1);
+ 			goto repeat;
+ 		}
+ 	}
+-
++got_it:
+ 	if (new_i_size &&
+ 		i_size_read(inode) < ((index + 1) << PAGE_CACHE_SHIFT)) {
+ 		i_size_write(inode, ((index + 1) << PAGE_CACHE_SHIFT));
+@@ -1125,10 +1126,6 @@ repeat:
+ 		set_inode_flag(F2FS_I(inode), FI_UPDATE_DIR);
+ 	}
+ 	return page;
+-
+-put_err:
+-	f2fs_put_dnode(&dn);
+-	return ERR_PTR(err);
  }
  
-+bool f2fs_may_inline_dentry(struct inode *inode)
-+{
-+	if (!test_opt(F2FS_I_SB(inode), INLINE_DENTRY))
-+		return false;
-+
-+	if (!S_ISDIR(inode->i_mode))
-+		return false;
-+
-+	return true;
-+}
-+
- void read_inline_data(struct page *page, struct page *ipage)
- {
- 	void *src_addr, *dst_addr;
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index a311c3c..c0ba8e3 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -56,9 +56,9 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 		goto out;
- 	}
- 
--	if (f2fs_may_inline(inode))
-+	if (f2fs_may_inline_data(inode))
- 		set_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
--	if (test_opt(sbi, INLINE_DENTRY) && S_ISDIR(inode->i_mode))
-+	if (f2fs_may_inline_dentry(inode))
- 		set_inode_flag(F2FS_I(inode), FI_INLINE_DENTRY);
- 
- 	trace_f2fs_new_inode(inode, 0);
+ static int __allocate_data_block(struct dnode_of_data *dn)
 -- 
 2.1.1
 
