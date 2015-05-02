@@ -1,23 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 17/19] f2fs: revmove spin_lock for
-	write_orphan_inodes
-Date: Fri,  1 May 2015 17:48:44 -0700
-Message-ID: <1430527726-68547-17-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 14/19] f2fs: add need_dentry_mark
+Date: Fri,  1 May 2015 17:48:41 -0700
+Message-ID: <1430527726-68547-14-git-send-email-jaegeuk@kernel.org>
 References: <1430527726-68547-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YoLct-0003tZ-IJ
+	(envelope-from <jaegeuk@kernel.org>) id 1YoLck-0003sE-QS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 02 May 2015 00:49:51 +0000
+	Sat, 02 May 2015 00:49:42 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YoLcs-0004To-Mi for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 02 May 2015 00:49:51 +0000
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YoLcj-0000pc-PP for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 02 May 2015 00:49:42 +0000
 In-Reply-To: <1430527726-68547-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,41 +30,95 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch removes spin_lock, since this is covered by f2fs_lock_op already.
-And, we should avoid to use page operations inside spin_lock.
+This patch introduces need_dentry_mark() to clean up and avoid redundant
+node locks.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/node.c | 35 +++++++++++++++++------------------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 6dbff2b..d076e7e 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -514,7 +514,12 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- 		grab_meta_page(sbi, start_blk + index);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b8f99fd..9e43ddc 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1565,6 +1565,7 @@ struct dnode_of_data;
+ struct node_info;
  
- 	index = 1;
--	spin_lock(&im->ino_lock);
-+
-+	/*
-+	 * we don't need to do spin_lock(&im->ino_lock) here, since all the
-+	 * orphan inode operations are covered under f2fs_lock_op().
-+	 * And, spin_lock should be avoided due to page operations below.
-+	 */
- 	head = &im->ino_list;
- 
- 	/* loop for each orphan inode entry and write them in Jornal block */
-@@ -554,8 +559,6 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- 		set_page_dirty(page);
- 		f2fs_put_page(page, 1);
- 	}
--
--	spin_unlock(&im->ino_lock);
+ bool available_free_memory(struct f2fs_sb_info *, int);
++int need_dentry_mark(struct f2fs_sb_info *, nid_t);
+ bool is_checkpointed_node(struct f2fs_sb_info *, nid_t);
+ bool need_inode_block_update(struct f2fs_sb_info *, nid_t);
+ void get_node_info(struct f2fs_sb_info *, nid_t, struct node_info *);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 880d578..62982e6 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -195,32 +195,35 @@ static unsigned int __gang_lookup_nat_set(struct f2fs_nm_info *nm_i,
+ 							start, nr);
  }
  
- static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+-bool is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid)
++int need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct nat_entry *e;
+-	bool is_cp = true;
++	bool need = false;
+ 
+ 	down_read(&nm_i->nat_tree_lock);
+ 	e = __lookup_nat_cache(nm_i, nid);
+-	if (e && !get_nat_flag(e, IS_CHECKPOINTED))
+-		is_cp = false;
++	if (e) {
++		if (!get_nat_flag(e, IS_CHECKPOINTED) &&
++				!get_nat_flag(e, HAS_FSYNCED_INODE))
++			need = true;
++	}
+ 	up_read(&nm_i->nat_tree_lock);
+-	return is_cp;
++	return need;
+ }
+ 
+-static bool has_fsynced_inode(struct f2fs_sb_info *sbi, nid_t ino)
++bool is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct nat_entry *e;
+-	bool fsynced = false;
++	bool is_cp = true;
+ 
+ 	down_read(&nm_i->nat_tree_lock);
+-	e = __lookup_nat_cache(nm_i, ino);
+-	if (e && get_nat_flag(e, HAS_FSYNCED_INODE))
+-		fsynced = true;
++	e = __lookup_nat_cache(nm_i, nid);
++	if (e && !get_nat_flag(e, IS_CHECKPOINTED))
++		is_cp = false;
+ 	up_read(&nm_i->nat_tree_lock);
+-	return fsynced;
++	return is_cp;
+ }
+ 
+ bool need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino)
+@@ -1206,13 +1209,9 @@ continue_unlock:
+ 			/* called by fsync() */
+ 			if (ino && IS_DNODE(page)) {
+ 				set_fsync_mark(page, 1);
+-				if (IS_INODE(page)) {
+-					if (!is_checkpointed_node(sbi, ino) &&
+-						!has_fsynced_inode(sbi, ino))
+-						set_dentry_mark(page, 1);
+-					else
+-						set_dentry_mark(page, 0);
+-				}
++				if (IS_INODE(page))
++					set_dentry_mark(page,
++						need_dentry_mark(sbi, ino));
+ 				nwritten++;
+ 			} else {
+ 				set_fsync_mark(page, 0);
 -- 
 2.1.1
 
