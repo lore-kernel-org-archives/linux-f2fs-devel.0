@@ -1,22 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 03/19] f2fs: move existing definitions into f2fs.h
-Date: Fri,  1 May 2015 17:48:30 -0700
-Message-ID: <1430527726-68547-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 08/19] f2fs: clean up f2fs_lookup
+Date: Fri,  1 May 2015 17:48:35 -0700
+Message-ID: <1430527726-68547-8-git-send-email-jaegeuk@kernel.org>
 References: <1430527726-68547-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YoLcJ-0001dY-Op
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YoLcP-0001Bk-Q0
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 02 May 2015 00:49:15 +0000
+	Sat, 02 May 2015 00:49:21 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YoLcH-0001Cj-HR for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 02 May 2015 00:49:15 +0000
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YoLcP-0004Sj-0v for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 02 May 2015 00:49:21 +0000
 In-Reply-To: <1430527726-68547-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,88 +30,65 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch moves some inode-related definitions from node.h to f2fs.h to
-add new features.
+This patch cleans up to avoid deep indentation.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/f2fs.h | 22 ++++++++++++++++++++++
- fs/f2fs/node.h | 22 ----------------------
- 2 files changed, 22 insertions(+), 22 deletions(-)
+ fs/f2fs/namei.c | 31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8be6cab..cd9748a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -320,6 +320,13 @@ struct extent_tree {
- #define FADVISE_COLD_BIT	0x01
- #define FADVISE_LOST_PINO_BIT	0x02
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 658e807..a311c3c 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -232,31 +232,32 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	struct inode *inode = NULL;
+ 	struct f2fs_dir_entry *de;
+ 	struct page *page;
++	nid_t ino;
  
-+#define file_is_cold(inode)	is_file(inode, FADVISE_COLD_BIT)
-+#define file_wrong_pino(inode)	is_file(inode, FADVISE_LOST_PINO_BIT)
-+#define file_set_cold(inode)	set_file(inode, FADVISE_COLD_BIT)
-+#define file_lost_pino(inode)	set_file(inode, FADVISE_LOST_PINO_BIT)
-+#define file_clear_cold(inode)	clear_file(inode, FADVISE_COLD_BIT)
-+#define file_got_pino(inode)	clear_file(inode, FADVISE_LOST_PINO_BIT)
+ 	if (dentry->d_name.len > F2FS_NAME_LEN)
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 
+ 	de = f2fs_find_entry(dir, &dentry->d_name, &page);
+-	if (de) {
+-		nid_t ino = le32_to_cpu(de->ino);
+-		f2fs_dentry_kunmap(dir, page);
+-		f2fs_put_page(page, 0);
++	if (!de)
++		return d_splice_alias(inode, dentry);
+ 
+-		inode = f2fs_iget(dir->i_sb, ino);
+-		if (IS_ERR(inode))
+-			return ERR_CAST(inode);
++	ino = le32_to_cpu(de->ino);
++	f2fs_dentry_kunmap(dir, page);
++	f2fs_put_page(page, 0);
+ 
+-		if (f2fs_has_inline_dots(inode)) {
+-			int err;
++	inode = f2fs_iget(dir->i_sb, ino);
++	if (IS_ERR(inode))
++		return ERR_CAST(inode);
 +
- #define DEF_DIR_LEVEL		0
++	if (f2fs_has_inline_dots(inode)) {
++		int err;
  
- struct f2fs_inode_info {
-@@ -1391,6 +1398,21 @@ static inline void f2fs_dentry_kunmap(struct inode *dir, struct page *page)
- 		kunmap(page);
+-			err = __recover_dot_dentries(inode, dir->i_ino);
+-			if (err) {
+-				iget_failed(inode);
+-				return ERR_PTR(err);
+-			}
++		err = __recover_dot_dentries(inode, dir->i_ino);
++		if (err) {
++			iget_failed(inode);
++			return ERR_PTR(err);
+ 		}
+ 	}
+-
+ 	return d_splice_alias(inode, dentry);
  }
  
-+static inline int is_file(struct inode *inode, int type)
-+{
-+	return F2FS_I(inode)->i_advise & type;
-+}
-+
-+static inline void set_file(struct inode *inode, int type)
-+{
-+	F2FS_I(inode)->i_advise |= type;
-+}
-+
-+static inline void clear_file(struct inode *inode, int type)
-+{
-+	F2FS_I(inode)->i_advise &= ~type;
-+}
-+
- static inline int f2fs_readonly(struct super_block *sb)
- {
- 	return sb->s_flags & MS_RDONLY;
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index c56026f..7427e95 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -343,28 +343,6 @@ static inline nid_t get_nid(struct page *p, int off, bool i)
-  *  - Mark cold node blocks in their node footer
-  *  - Mark cold data pages in page cache
-  */
--static inline int is_file(struct inode *inode, int type)
--{
--	return F2FS_I(inode)->i_advise & type;
--}
--
--static inline void set_file(struct inode *inode, int type)
--{
--	F2FS_I(inode)->i_advise |= type;
--}
--
--static inline void clear_file(struct inode *inode, int type)
--{
--	F2FS_I(inode)->i_advise &= ~type;
--}
--
--#define file_is_cold(inode)	is_file(inode, FADVISE_COLD_BIT)
--#define file_wrong_pino(inode)	is_file(inode, FADVISE_LOST_PINO_BIT)
--#define file_set_cold(inode)	set_file(inode, FADVISE_COLD_BIT)
--#define file_lost_pino(inode)	set_file(inode, FADVISE_LOST_PINO_BIT)
--#define file_clear_cold(inode)	clear_file(inode, FADVISE_COLD_BIT)
--#define file_got_pino(inode)	clear_file(inode, FADVISE_LOST_PINO_BIT)
--
- static inline int is_cold_data(struct page *page)
- {
- 	return PageChecked(page);
 -- 
 2.1.1
 
