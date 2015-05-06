@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v3 1/3] f2fs: introduce f2fs_replace_block() for reuse
-Date: Wed, 06 May 2015 13:08:06 +0800
-Message-ID: <004701d087ba$bdfbb180$39f31480$@samsung.com>
+Subject: [PATCH v3 2/3] f2fs: support FALLOC_FL_COLLAPSE_RANGE
+Date: Wed, 06 May 2015 13:09:46 +0800
+Message-ID: <004801d087ba$f9831a90$ec894fb0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,118 +12,192 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Introduce a generic function replace_block base on recover_data_page,
-and export it. So with it we can operate file's meta data which is in
-CP/SSA area when we invoke fallocate with FALLOC_FL_COLLAPSE_RANGE
-flag.
+Now, FALLOC_FL_COLLAPSE_RANGE flag in ->fallocate is supported in ext4/xfs.
+
+In commit, the semantics of this flag is descripted as following:"
+1) It collapses the range lying between offset and length by removing any
+   data blocks which are present in this range and than updates all the
+   logical offsets of extents beyond "offset + len" to nullify the hole
+   created by removing blocks. In short, it does not leave a hole.
+2) It should be used exclusively. No other fallocate flag in combination.
+3) Offset and length supplied to fallocate should be fs block size aligned
+   in case of xfs and ext4.
+4) Collaspe range does not work beyond i_size."
+
+This patch implements fallocate's FALLOC_FL_COLLAPSE_RANGE for f2fs.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
+v2:
+ * rebase to last git repository of f2fs (20150430)
+ * remove replace_block() introduction.
 v3:
- * rename replace_block() to f2fs_replace_block() for readability.
- * fix incorrect usage of @recover_curseg in f2fs_replace_block().
- * recover old next blkaddr of current segment for fcollapse.
+ * rebase to last git repository of f2fs (20150506)
+ * fix to pass right parameter to f2fs_replace_block().
 
- fs/f2fs/f2fs.h     |  4 ++--
- fs/f2fs/recovery.c |  2 +-
- fs/f2fs/segment.c  | 31 ++++++++++++++++++++++++-------
- 3 files changed, 27 insertions(+), 10 deletions(-)
+ fs/f2fs/file.c | 135 +++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 132 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5fff184..160945f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1638,8 +1638,8 @@ void write_meta_page(struct f2fs_sb_info *, struct page *);
- void write_node_page(unsigned int, struct f2fs_io_info *);
- void write_data_page(struct dnode_of_data *, struct f2fs_io_info *);
- void rewrite_data_page(struct f2fs_io_info *);
--void recover_data_page(struct f2fs_sb_info *, struct page *,
--				struct f2fs_summary *, block_t, block_t);
-+void f2fs_replace_block(struct f2fs_sb_info *, struct f2fs_summary *,
-+					block_t, block_t, bool);
- void allocate_data_block(struct f2fs_sb_info *, struct page *,
- 		block_t, block_t *, struct f2fs_summary *, int);
- void f2fs_wait_on_page_writeback(struct page *, enum page_type);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index b80d9d4..f77a1be 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -412,7 +412,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 			set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
- 
- 			/* write dummy data page */
--			recover_data_page(sbi, NULL, &sum, src, dest);
-+			f2fs_replace_block(sbi, &sum, src, dest, false);
- 			dn.data_blkaddr = dest;
- 			set_data_blkaddr(&dn);
- 			f2fs_update_extent_cache(&dn);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 667bbf2..bdf487a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1279,32 +1279,41 @@ void rewrite_data_page(struct f2fs_io_info *fio)
- 	f2fs_submit_page_mbio(fio);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index cb002c0..dbddc79 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -765,6 +765,132 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 	return ret;
  }
  
--void recover_data_page(struct f2fs_sb_info *sbi,
--			struct page *page, struct f2fs_summary *sum,
--			block_t old_blkaddr, block_t new_blkaddr)
-+void f2fs_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-+				block_t old_blkaddr, block_t new_blkaddr,
-+				bool recover_curseg)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	struct curseg_info *curseg;
- 	unsigned int segno, old_cursegno;
- 	struct seg_entry *se;
- 	int type;
-+	unsigned short old_blkoff;
- 
- 	segno = GET_SEGNO(sbi, new_blkaddr);
- 	se = get_seg_entry(sbi, segno);
- 	type = se->type;
- 
--	if (se->valid_blocks == 0 && !IS_CURSEG(sbi, segno)) {
--		if (old_blkaddr == NULL_ADDR)
--			type = CURSEG_COLD_DATA;
--		else
-+	if (!recover_curseg) {
-+		/* for recovery flow */
-+		if (se->valid_blocks == 0 && !IS_CURSEG(sbi, segno)) {
-+			if (old_blkaddr == NULL_ADDR)
-+				type = CURSEG_COLD_DATA;
-+			else
-+				type = CURSEG_WARM_DATA;
-+		}
-+	} else {
-+		if (!IS_CURSEG(sbi, segno))
- 			type = CURSEG_WARM_DATA;
- 	}
++static int f2fs_do_collapse(struct inode *inode, pgoff_t start, pgoff_t end)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct dnode_of_data dn;
++	pgoff_t nrpages = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
++	int ret = 0;
 +
- 	curseg = CURSEG_I(sbi, type);
- 
- 	mutex_lock(&curseg->curseg_mutex);
- 	mutex_lock(&sit_i->sentry_lock);
- 
- 	old_cursegno = curseg->segno;
-+	old_blkoff = curseg->next_blkoff;
- 
- 	/* change the current segment */
- 	if (segno != curseg->segno) {
-@@ -1318,6 +1327,14 @@ void recover_data_page(struct f2fs_sb_info *sbi,
- 	refresh_sit_entry(sbi, old_blkaddr, new_blkaddr);
- 	locate_dirty_segment(sbi, old_cursegno);
- 
-+	if (recover_curseg) {
-+		if (old_cursegno != curseg->segno) {
-+			curseg->next_segno = old_cursegno;
-+			change_curseg(sbi, type, true);
++	f2fs_lock_op(sbi);
++
++	for (; end < nrpages; start++, end++) {
++		block_t new_addr, old_addr;
++
++		set_new_dnode(&dn, inode, NULL, NULL, 0);
++		ret = get_dnode_of_data(&dn, end, LOOKUP_NODE_RA);
++		if (ret && ret != -ENOENT) {
++			goto out;
++		} else if (ret == -ENOENT) {
++			new_addr = NULL_ADDR;
++		} else {
++			new_addr = dn.data_blkaddr;
++			truncate_data_blocks_range(&dn, 1);
++			f2fs_put_dnode(&dn);
 +		}
-+		curseg->next_blkoff = old_blkoff;
++
++		if (new_addr == NULL_ADDR) {
++			set_new_dnode(&dn, inode, NULL, NULL, 0);
++			ret = get_dnode_of_data(&dn, start, LOOKUP_NODE_RA);
++			if (ret && ret != -ENOENT)
++				goto out;
++			else if (ret == -ENOENT)
++				continue;
++
++			if (dn.data_blkaddr == NULL_ADDR) {
++				f2fs_put_dnode(&dn);
++				continue;
++			} else {
++				truncate_data_blocks_range(&dn, 1);
++			}
++
++			f2fs_put_dnode(&dn);
++		} else {
++			struct page *ipage;
++
++			ipage = get_node_page(sbi, inode->i_ino);
++			if (IS_ERR(ipage)) {
++				ret = PTR_ERR(ipage);
++				goto out;
++			}
++
++			set_new_dnode(&dn, inode, ipage, NULL, 0);
++			ret = f2fs_reserve_block(&dn, start);
++			if (ret)
++				goto out;
++
++			old_addr = dn.data_blkaddr;
++			if (old_addr != NEW_ADDR && new_addr == NEW_ADDR) {
++				dn.data_blkaddr = NULL_ADDR;
++				f2fs_update_extent_cache(&dn);
++				invalidate_blocks(sbi, old_addr);
++
++				dn.data_blkaddr = new_addr;
++				set_data_blkaddr(&dn);
++			} else if (new_addr != NEW_ADDR) {
++				struct node_info ni;
++				struct f2fs_summary sum;
++
++				get_node_info(sbi, dn.nid, &ni);
++				set_summary(&sum, dn.nid, dn.ofs_in_node,
++								ni.version);
++
++				f2fs_replace_block(sbi, &sum, old_addr,
++								new_addr, true);
++
++				dn.data_blkaddr = new_addr;
++				set_data_blkaddr(&dn);
++				f2fs_update_extent_cache(&dn);
++			}
++
++			f2fs_put_dnode(&dn);
++		}
 +	}
++	ret = 0;
++out:
++	f2fs_unlock_op(sbi);
++	return ret;
++}
 +
- 	mutex_unlock(&sit_i->sentry_lock);
- 	mutex_unlock(&curseg->curseg_mutex);
- }
++static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
++{
++	pgoff_t pg_start, pg_end;
++	loff_t new_size;
++	int ret;
++
++	if (!S_ISREG(inode->i_mode))
++		return -EINVAL;
++
++	if (offset + len >= i_size_read(inode))
++		return -EINVAL;
++
++	/* collapse range should be aligned to block size of f2fs. */
++	if (offset & (F2FS_BLKSIZE - 1) || len & (F2FS_BLKSIZE - 1))
++		return -EINVAL;
++
++	pg_start = offset >> PAGE_CACHE_SHIFT;
++	pg_end = (offset + len) >> PAGE_CACHE_SHIFT;
++
++	/* write out all dirty pages from offset */
++	ret = filemap_write_and_wait_range(inode->i_mapping, offset, LLONG_MAX);
++	if (ret)
++		return ret;
++
++	truncate_pagecache(inode, offset);
++
++	ret = f2fs_do_collapse(inode, pg_start, pg_end);
++	if (ret)
++		return ret;
++
++	new_size = i_size_read(inode) - len;
++
++	ret = truncate_blocks(inode, new_size, true);
++	if (!ret)
++		i_size_write(inode, new_size);
++
++	return ret;
++}
++
+ static int expand_inode_data(struct inode *inode, loff_t offset,
+ 					loff_t len, int mode)
+ {
+@@ -832,7 +958,8 @@ static long f2fs_fallocate(struct file *file, int mode,
+ 	struct inode *inode = file_inode(file);
+ 	long ret = 0;
+ 
+-	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
++	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
++			FALLOC_FL_COLLAPSE_RANGE))
+ 		return -EOPNOTSUPP;
+ 
+ 	mutex_lock(&inode->i_mutex);
+@@ -842,9 +969,11 @@ static long f2fs_fallocate(struct file *file, int mode,
+ 			goto out;
+ 
+ 		ret = punch_hole(inode, offset, len);
+-	}
+-	else
++	} else if (mode & FALLOC_FL_COLLAPSE_RANGE) {
++		ret = f2fs_collapse_range(inode, offset, len);
++	} else {
+ 		ret = expand_inode_data(inode, offset, len, mode);
++	}
+ 
+ 	if (!ret) {
+ 		inode->i_mtime = inode->i_ctime = CURRENT_TIME;
 -- 
 2.3.3
