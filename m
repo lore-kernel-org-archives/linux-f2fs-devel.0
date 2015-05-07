@@ -1,171 +1,111 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v3 3/3] f2fs: support FALLOC_FL_ZERO_RANGE
-Date: Wed, 06 May 2015 13:11:13 +0800
-Message-ID: <004901d087bb$2c287f30$84797d90$@samsung.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: add default mount options to remount
+Date: Thu, 7 May 2015 17:20:35 +0800
+Message-ID: <1430990435-3679-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1YqHyf-0004fc-JZ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 07 May 2015 09:20:21 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1YqHyW-0006nv-Cq
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 07 May 2015 09:20:21 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, cm224.lee@samsung.com
 
-Now, FALLOC_FL_ZERO_RANGE flag in ->fallocate is supported in ext4/xfs.
+I use f2fs filesystem with /data partition on my Android phone
+by the default mount options. When I remount /data in order to
+adding discard option to run some benchmarks, I find the default
+options such as background_gc, user_xattr and acl turned off.
 
-In commit, the semantics of this flag is descripted as following:"
-1) Make sure that both offset and len are block size aligned.
-2) Update the i_size of inode by len bytes.
-3) Compute the file's logical block number against offset. If the computed
-   block number is not the starting block of the extent, split the extent
-   such that the block number is the starting block of the extent.
-4) Shift all the extents which are lying between
-   [offset, last allocated extent] towards right by len bytes. This step
-   will make a hole of len bytes at offset."
+So I introduce a function named default_options in super.c. It do
+some default setting, and both mount and remount operations will
+call this function to complete default setting.
 
-This patch implements fallocate's FALLOC_FL_ZERO_RANGE for f2fs.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
-v2:
- * rebase to last git repository of f2fs (20150430)
-v3:
- * rebase to last git repository of f2fs (20150506)
+ fs/f2fs/super.c | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
- fs/f2fs/file.c | 106 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 105 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index dbddc79..7293746 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -891,6 +891,108 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	return ret;
- }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 138fa93..1f9f18a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -658,6 +658,22 @@ static const struct file_operations f2fs_seq_segment_info_fops = {
+ 	.release = single_release,
+ };
  
-+static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
-+								int mode)
++static void default_options(struct f2fs_sb_info *sbi)
 +{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct address_space *mapping = inode->i_mapping;
-+	pgoff_t index, pg_start, pg_end;
-+	loff_t new_size = i_size_read(inode);
-+	loff_t off_start, off_end;
-+	int ret = 0;
++	/* init some FS parameters */
++	sbi->active_logs = NR_CURSEG_TYPE;
 +
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
++	set_opt(sbi, BG_GC);
++	set_opt(sbi, INLINE_DATA);
 +
-+	ret = inode_newsize_ok(inode, (len + offset));
-+	if (ret)
-+		return ret;
-+
-+	f2fs_balance_fs(sbi);
-+
-+	if (f2fs_has_inline_data(inode)) {
-+		ret = f2fs_convert_inline_inode(inode);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = filemap_write_and_wait_range(mapping, offset, offset + len - 1);
-+	if (ret)
-+		return ret;
-+
-+	truncate_pagecache_range(inode, offset, offset + len - 1);
-+
-+	pg_start = ((unsigned long long) offset) >> PAGE_CACHE_SHIFT;
-+	pg_end = ((unsigned long long) offset + len) >> PAGE_CACHE_SHIFT;
-+
-+	off_start = offset & (PAGE_CACHE_SIZE - 1);
-+	off_end = (offset + len) & (PAGE_CACHE_SIZE - 1);
-+
-+	if (pg_start == pg_end) {
-+		fill_zero(inode, pg_start, off_start, off_end - off_start);
-+		if (offset + len > new_size)
-+			new_size = offset + len;
-+		new_size = max_t(loff_t, new_size, offset + len);
-+	} else {
-+		if (off_start) {
-+			fill_zero(inode, pg_start++, off_start,
-+					PAGE_CACHE_SIZE - off_start);
-+			new_size = max_t(loff_t, new_size,
-+						pg_start << PAGE_CACHE_SHIFT);
-+		}
-+
-+		for (index = pg_start; index < pg_end; index++) {
-+			struct dnode_of_data dn;
-+			struct page *ipage;
-+
-+			f2fs_lock_op(sbi);
-+
-+			ipage = get_node_page(sbi, inode->i_ino);
-+			if (IS_ERR(ipage)) {
-+				ret = PTR_ERR(ipage);
-+				f2fs_unlock_op(sbi);
-+				goto out;
-+			}
-+
-+			set_new_dnode(&dn, inode, ipage, NULL, 0);
-+			ret = f2fs_reserve_block(&dn, index);
-+			if (ret) {
-+				f2fs_unlock_op(sbi);
-+				goto out;
-+			}
-+
-+			if (dn.data_blkaddr != NEW_ADDR) {
-+				invalidate_blocks(sbi, dn.data_blkaddr);
-+
-+				dn.data_blkaddr = NEW_ADDR;
-+				set_data_blkaddr(&dn);
-+
-+				dn.data_blkaddr = NULL_ADDR;
-+				f2fs_update_extent_cache(&dn);
-+			}
-+			f2fs_put_dnode(&dn);
-+			f2fs_unlock_op(sbi);
-+
-+			new_size = max_t(loff_t, new_size,
-+					(index + 1) << PAGE_CACHE_SHIFT);
-+		}
-+
-+		if (off_end) {
-+			fill_zero(inode, pg_end, 0, off_end);
-+			new_size = max_t(loff_t, new_size, offset + len);
-+		}
-+	}
-+
-+out:
-+	if (!(mode & FALLOC_FL_KEEP_SIZE) && i_size_read(inode) < new_size) {
-+		i_size_write(inode, new_size);
-+		mark_inode_dirty(inode);
-+		update_inode_page(inode);
-+	}
-+
-+	return ret;
++#ifdef CONFIG_F2FS_FS_XATTR
++	set_opt(sbi, XATTR_USER);
++#endif
++#ifdef CONFIG_F2FS_FS_POSIX_ACL
++	set_opt(sbi, POSIX_ACL);
++#endif
 +}
 +
- static int expand_inode_data(struct inode *inode, loff_t offset,
- 					loff_t len, int mode)
+ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
  {
-@@ -959,7 +1061,7 @@ static long f2fs_fallocate(struct file *file, int mode,
- 	long ret = 0;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -675,8 +691,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	org_mount_opt = sbi->mount_opt;
+ 	active_logs = sbi->active_logs;
  
- 	if (mode & ~(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |
--			FALLOC_FL_COLLAPSE_RANGE))
-+			FALLOC_FL_COLLAPSE_RANGE | FALLOC_FL_ZERO_RANGE))
- 		return -EOPNOTSUPP;
+-	sbi->mount_opt.opt = 0;
+-	sbi->active_logs = NR_CURSEG_TYPE;
++	default_options(sbi);
  
- 	mutex_lock(&inode->i_mutex);
-@@ -971,6 +1073,8 @@ static long f2fs_fallocate(struct file *file, int mode,
- 		ret = punch_hole(inode, offset, len);
- 	} else if (mode & FALLOC_FL_COLLAPSE_RANGE) {
- 		ret = f2fs_collapse_range(inode, offset, len);
-+	} else if (mode & FALLOC_FL_ZERO_RANGE) {
-+		ret = f2fs_zero_range(inode, offset, len, mode);
- 	} else {
- 		ret = expand_inode_data(inode, offset, len, mode);
- 	}
+ 	/* parse mount options */
+ 	err = parse_options(sb, data);
+@@ -1018,18 +1033,7 @@ try_onemore:
+ 		goto free_sbi;
+ 
+ 	sb->s_fs_info = sbi;
+-	/* init some FS parameters */
+-	sbi->active_logs = NR_CURSEG_TYPE;
+-
+-	set_opt(sbi, BG_GC);
+-	set_opt(sbi, INLINE_DATA);
+-
+-#ifdef CONFIG_F2FS_FS_XATTR
+-	set_opt(sbi, XATTR_USER);
+-#endif
+-#ifdef CONFIG_F2FS_FS_POSIX_ACL
+-	set_opt(sbi, POSIX_ACL);
+-#endif
++	default_options(sbi);
+ 	/* parse mount options */
+ 	options = kstrdup((const char *)data, GFP_KERNEL);
+ 	if (data && !options) {
 -- 
-2.3.3
+1.9.1
+
+
+------------------------------------------------------------------------------
+One dashboard for servers and applications across Physical-Virtual-Cloud 
+Widest out-of-the-box monitoring support with 50+ applications
+Performance metrics, stats and reports that give you Actionable Insights
+Deep dive visibility with transaction tracing using APM Insight.
+http://ad.doubleclick.net/ddm/clk/290420510;117567292;y
