@@ -1,23 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 10/18] f2fs crypto: activate encryption support
-	for fs APIs
-Date: Fri,  8 May 2015 21:20:45 -0700
-Message-ID: <1431145253-2019-10-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 09/18] f2fs crypto: filename encryption facilities
+Date: Fri,  8 May 2015 21:20:44 -0700
+Message-ID: <1431145253-2019-9-git-send-email-jaegeuk@kernel.org>
 References: <1431145253-2019-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YqwGZ-0007hU-G0
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YqwGc-0003w8-Ak
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 09 May 2015 04:21:31 +0000
+	Sat, 09 May 2015 04:21:34 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YqwGY-0004er-B8 for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 09 May 2015 04:21:31 +0000
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YqwGa-0003sN-KL for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 09 May 2015 04:21:34 +0000
 In-Reply-To: <1431145253-2019-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -29,262 +28,614 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Theodore Ts'o <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Ildar Muslukhov <ildarm@google.com>, Michael Halcrow <mhalcrow@google.com>, Theodore Ts'o <tytso@mit.edu>, Uday Savagaonkar <savagaon@google.com>
 
-This patch activates the following APIs for encryption support.
+This patch adds filename encryption infra.
+Most of codes are copied from ext4 part, but changed to adjust f2fs
+directory structure.
 
-The rules quoted by ext4 are:
- - An unencrypted directory may contain encrypted or unencrypted files
-   or directories.
- - All files or directories in a directory must be protected using the
-   same key as their containing directory.
- - Encrypted inode for regular file should not have inline_data.
- - Encrypted symlink and directory may have inline_data and inline_dentry.
-
-This patch activates the following APIs.
-1. f2fs_link              : validate context
-2. f2fs_lookup            :      ''
-3. f2fs_rename            :      ''
-4. f2fs_create/f2fs_mkdir : inherit its dir's context
-5. f2fs_direct_IO         : do buffered io for regular files
-6. f2fs_open              : check encryption info
-7. f2fs_file_mmap         :      ''
-8. f2fs_setattr           :      ''
-9. f2fs_file_write_iter   :      ''           (Called by sys_io_submit)
-
+Signed-off-by: Uday Savagaonkar <savagaon@google.com>
+Signed-off-by: Ildar Muslukhov <ildarm@google.com>
 Signed-off-by: Michael Halcrow <mhalcrow@google.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c   |  3 +++
- fs/f2fs/dir.c    |  6 ++++++
- fs/f2fs/f2fs.h   | 11 +++++++++++
- fs/f2fs/file.c   | 34 ++++++++++++++++++++++++++++++++--
- fs/f2fs/inline.c |  3 +++
- fs/f2fs/namei.c  | 38 ++++++++++++++++++++++++++++++++------
- 6 files changed, 87 insertions(+), 8 deletions(-)
+ fs/f2fs/Makefile       |   3 +-
+ fs/f2fs/crypto_fname.c | 490 +++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h         |  52 ++++++
+ 3 files changed, 544 insertions(+), 1 deletion(-)
+ create mode 100644 fs/f2fs/crypto_fname.c
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 842fcdd..473b4d4 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1982,6 +1982,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 			return err;
- 	}
- 
-+	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+diff --git a/fs/f2fs/Makefile b/fs/f2fs/Makefile
+index b08925d..396be1a 100644
+--- a/fs/f2fs/Makefile
++++ b/fs/f2fs/Makefile
+@@ -6,4 +6,5 @@ f2fs-$(CONFIG_F2FS_STAT_FS) += debug.o
+ f2fs-$(CONFIG_F2FS_FS_XATTR) += xattr.o
+ f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) += acl.o
+ f2fs-$(CONFIG_F2FS_IO_TRACE) += trace.o
+-f2fs-$(CONFIG_F2FS_FS_ENCRYPTION) += crypto_policy.o crypto.o crypto_key.o
++f2fs-$(CONFIG_F2FS_FS_ENCRYPTION) += crypto_policy.o crypto.o \
++		crypto_key.o crypto_fname.o
+diff --git a/fs/f2fs/crypto_fname.c b/fs/f2fs/crypto_fname.c
+new file mode 100644
+index 0000000..8f3ff9b
+--- /dev/null
++++ b/fs/f2fs/crypto_fname.c
+@@ -0,0 +1,490 @@
++/*
++ * linux/fs/f2fs/crypto_fname.c
++ *
++ * Copied from linux/fs/ext4/crypto.c
++ *
++ * Copyright (C) 2015, Google, Inc.
++ * Copyright (C) 2015, Motorola Mobility
++ *
++ * This contains functions for filename crypto management in f2fs
++ *
++ * Written by Uday Savagaonkar, 2014.
++ *
++ * Adjust f2fs dentry structure
++ *	Jaegeuk Kim, 2015.
++ *
++ * This has not yet undergone a rigorous security audit.
++ */
++#include <crypto/hash.h>
++#include <crypto/sha.h>
++#include <keys/encrypted-type.h>
++#include <keys/user-type.h>
++#include <linux/crypto.h>
++#include <linux/gfp.h>
++#include <linux/kernel.h>
++#include <linux/key.h>
++#include <linux/list.h>
++#include <linux/mempool.h>
++#include <linux/random.h>
++#include <linux/scatterlist.h>
++#include <linux/spinlock_types.h>
++#include <linux/f2fs_fs.h>
++#include <linux/ratelimit.h>
++
++#include "f2fs.h"
++#include "f2fs_crypto.h"
++#include "xattr.h"
++
++/**
++ * f2fs_dir_crypt_complete() -
++ */
++static void f2fs_dir_crypt_complete(struct crypto_async_request *req, int res)
++{
++	struct f2fs_completion_result *ecr = req->data;
++
++	if (res == -EINPROGRESS)
++		return;
++	ecr->res = res;
++	complete(&ecr->completion);
++}
++
++bool f2fs_valid_filenames_enc_mode(uint32_t mode)
++{
++	return (mode == F2FS_ENCRYPTION_MODE_AES_256_CTS);
++}
++
++static unsigned max_name_len(struct inode *inode)
++{
++	return S_ISLNK(inode->i_mode) ? inode->i_sb->s_blocksize :
++					F2FS_NAME_LEN;
++}
++
++/**
++ * f2fs_fname_encrypt() -
++ *
++ * This function encrypts the input filename, and returns the length of the
++ * ciphertext. Errors are returned as negative numbers.  We trust the caller to
++ * allocate sufficient memory to oname string.
++ */
++static int f2fs_fname_encrypt(struct inode *inode,
++			const struct qstr *iname, struct f2fs_str *oname)
++{
++	u32 ciphertext_len;
++	struct ablkcipher_request *req = NULL;
++	DECLARE_F2FS_COMPLETION_RESULT(ecr);
++	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
++	struct crypto_ablkcipher *tfm = ci->ci_ctfm;
++	int res = 0;
++	char iv[F2FS_CRYPTO_BLOCK_SIZE];
++	struct scatterlist src_sg, dst_sg;
++	int padding = 4 << (ci->ci_flags & F2FS_POLICY_FLAGS_PAD_MASK);
++	char *workbuf, buf[32], *alloc_buf = NULL;
++	unsigned lim = max_name_len(inode);
++
++	if (iname->len <= 0 || iname->len > lim)
++		return -EIO;
++
++	ciphertext_len = (iname->len < F2FS_CRYPTO_BLOCK_SIZE) ?
++		F2FS_CRYPTO_BLOCK_SIZE : iname->len;
++	ciphertext_len = f2fs_fname_crypto_round_up(ciphertext_len, padding);
++	ciphertext_len = (ciphertext_len > lim) ? lim : ciphertext_len;
++
++	if (ciphertext_len <= sizeof(buf)) {
++		workbuf = buf;
++	} else {
++		alloc_buf = kmalloc(ciphertext_len, GFP_NOFS);
++		if (!alloc_buf)
++			return -ENOMEM;
++		workbuf = alloc_buf;
++	}
++
++	/* Allocate request */
++	req = ablkcipher_request_alloc(tfm, GFP_NOFS);
++	if (!req) {
++		printk_ratelimited(KERN_ERR
++			"%s: crypto_request_alloc() failed\n", __func__);
++		kfree(alloc_buf);
++		return -ENOMEM;
++	}
++	ablkcipher_request_set_callback(req,
++			CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
++			f2fs_dir_crypt_complete, &ecr);
++
++	/* Copy the input */
++	memcpy(workbuf, iname->name, iname->len);
++	if (iname->len < ciphertext_len)
++		memset(workbuf + iname->len, 0, ciphertext_len - iname->len);
++
++	/* Initialize IV */
++	memset(iv, 0, F2FS_CRYPTO_BLOCK_SIZE);
++
++	/* Create encryption request */
++	sg_init_one(&src_sg, workbuf, ciphertext_len);
++	sg_init_one(&dst_sg, oname->name, ciphertext_len);
++	ablkcipher_request_set_crypt(req, &src_sg, &dst_sg, ciphertext_len, iv);
++	res = crypto_ablkcipher_encrypt(req);
++	if (res == -EINPROGRESS || res == -EBUSY) {
++		BUG_ON(req->base.data != &ecr);
++		wait_for_completion(&ecr.completion);
++		res = ecr.res;
++	}
++	kfree(alloc_buf);
++	ablkcipher_request_free(req);
++	if (res < 0) {
++		printk_ratelimited(KERN_ERR
++				"%s: Error (error code %d)\n", __func__, res);
++	}
++	oname->len = ciphertext_len;
++	return res;
++}
++
++/*
++ * f2fs_fname_decrypt()
++ *	This function decrypts the input filename, and returns
++ *	the length of the plaintext.
++ *	Errors are returned as negative numbers.
++ *	We trust the caller to allocate sufficient memory to oname string.
++ */
++static int f2fs_fname_decrypt(struct inode *inode,
++			const struct f2fs_str *iname, struct f2fs_str *oname)
++{
++	struct ablkcipher_request *req = NULL;
++	DECLARE_F2FS_COMPLETION_RESULT(ecr);
++	struct scatterlist src_sg, dst_sg;
++	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
++	struct crypto_ablkcipher *tfm = ci->ci_ctfm;
++	int res = 0;
++	char iv[F2FS_CRYPTO_BLOCK_SIZE];
++	unsigned lim = max_name_len(inode);
++
++	if (iname->len <= 0 || iname->len > lim)
++		return -EIO;
++
++	/* Allocate request */
++	req = ablkcipher_request_alloc(tfm, GFP_NOFS);
++	if (!req) {
++		printk_ratelimited(KERN_ERR
++			"%s: crypto_request_alloc() failed\n",  __func__);
++		return -ENOMEM;
++	}
++	ablkcipher_request_set_callback(req,
++		CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
++		f2fs_dir_crypt_complete, &ecr);
++
++	/* Initialize IV */
++	memset(iv, 0, F2FS_CRYPTO_BLOCK_SIZE);
++
++	/* Create decryption request */
++	sg_init_one(&src_sg, iname->name, iname->len);
++	sg_init_one(&dst_sg, oname->name, oname->len);
++	ablkcipher_request_set_crypt(req, &src_sg, &dst_sg, iname->len, iv);
++	res = crypto_ablkcipher_decrypt(req);
++	if (res == -EINPROGRESS || res == -EBUSY) {
++		BUG_ON(req->base.data != &ecr);
++		wait_for_completion(&ecr.completion);
++		res = ecr.res;
++	}
++	ablkcipher_request_free(req);
++	if (res < 0) {
++		printk_ratelimited(KERN_ERR
++			"%s: Error in f2fs_fname_decrypt (error code %d)\n",
++			__func__, res);
++		return res;
++	}
++
++	oname->len = strnlen(oname->name, iname->len);
++	return oname->len;
++}
++
++static const char *lookup_table =
++	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
++
++/**
++ * f2fs_fname_encode_digest() -
++ *
++ * Encodes the input digest using characters from the set [a-zA-Z0-9_+].
++ * The encoded string is roughly 4/3 times the size of the input string.
++ */
++static int digest_encode(const char *src, int len, char *dst)
++{
++	int i = 0, bits = 0, ac = 0;
++	char *cp = dst;
++
++	while (i < len) {
++		ac += (((unsigned char) src[i]) << bits);
++		bits += 8;
++		do {
++			*cp++ = lookup_table[ac & 0x3f];
++			ac >>= 6;
++			bits -= 6;
++		} while (bits >= 6);
++		i++;
++	}
++	if (bits)
++		*cp++ = lookup_table[ac & 0x3f];
++	return cp - dst;
++}
++
++static int digest_decode(const char *src, int len, char *dst)
++{
++	int i = 0, bits = 0, ac = 0;
++	const char *p;
++	char *cp = dst;
++
++	while (i < len) {
++		p = strchr(lookup_table, src[i]);
++		if (p == NULL || src[i] == 0)
++			return -2;
++		ac += (p - lookup_table) << bits;
++		bits += 6;
++		if (bits >= 8) {
++			*cp++ = ac & 0xff;
++			ac >>= 8;
++			bits -= 8;
++		}
++		i++;
++	}
++	if (ac)
++		return -1;
++	return cp - dst;
++}
++
++int f2fs_setup_fname_crypto(struct inode *inode)
++{
++	struct f2fs_inode_info *fi = F2FS_I(inode);
++	struct f2fs_crypt_info *ci = fi->i_crypt_info;
++	struct crypto_ablkcipher *ctfm;
++	int res;
++
++	/* Check if the crypto policy is set on the inode */
++	res = f2fs_encrypted_inode(inode);
++	if (res == 0)
 +		return 0;
 +
- 	if (check_direct_IO(inode, iter, offset))
- 		return 0;
- 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 9d558d2..f7293a2 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -390,6 +390,12 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 		err = f2fs_init_security(inode, dir, name, page);
- 		if (err)
- 			goto put_error;
++	res = f2fs_get_encryption_info(inode);
++	if (res < 0)
++		return res;
++	ci = fi->i_crypt_info;
 +
-+		if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode)) {
-+			err = f2fs_inherit_context(dir, inode, page);
-+			if (err)
-+				goto put_error;
-+		}
- 	} else {
- 		page = get_node_page(F2FS_I_SB(dir), inode->i_ino);
- 		if (IS_ERR(page))
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e99205b..544766e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1975,6 +1975,17 @@ static inline int f2fs_sb_has_crypto(struct super_block *sb)
- #endif
- }
- 
-+static inline bool f2fs_may_encrypt(struct inode *inode)
-+{
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+	mode_t mode = inode->i_mode;
++	if (!ci || ci->ci_ctfm)
++		return 0;
 +
-+	return (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode));
-+#else
++	if (ci->ci_mode != F2FS_ENCRYPTION_MODE_AES_256_CTS) {
++		printk_once(KERN_WARNING "f2fs: unsupported key mode %d\n",
++				ci->ci_mode);
++		return -ENOKEY;
++	}
++
++	ctfm = crypto_alloc_ablkcipher("cts(cbc(aes))", 0, 0);
++	if (!ctfm || IS_ERR(ctfm)) {
++		res = ctfm ? PTR_ERR(ctfm) : -ENOMEM;
++		printk(KERN_DEBUG "%s: error (%d) allocating crypto tfm\n",
++				__func__, res);
++		return res;
++	}
++	crypto_ablkcipher_clear_flags(ctfm, ~0);
++	crypto_tfm_set_flags(crypto_ablkcipher_tfm(ctfm),
++			     CRYPTO_TFM_REQ_WEAK_KEY);
++
++	res = crypto_ablkcipher_setkey(ctfm, ci->ci_raw, ci->ci_size);
++	if (res) {
++		crypto_free_ablkcipher(ctfm);
++		return -EIO;
++	}
++	ci->ci_ctfm = ctfm;
 +	return 0;
-+#endif
 +}
 +
- /* crypto_policy.c */
- int f2fs_is_child_context_consistent_with_parent(struct inode *,
- 							struct inode *);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7236be4..9f4b34c 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -408,6 +408,12 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct inode *inode = file_inode(file);
- 
-+	if (f2fs_encrypted_inode(inode)) {
-+		int err = f2fs_get_encryption_info(inode);
-+		if (err)
-+			return 0;
++/**
++ * f2fs_fname_crypto_round_up() -
++ *
++ * Return: The next multiple of block size
++ */
++u32 f2fs_fname_crypto_round_up(u32 size, u32 blksize)
++{
++	return ((size + blksize - 1) / blksize) * blksize;
++}
++
++/**
++ * f2fs_fname_crypto_alloc_obuff() -
++ *
++ * Allocates an output buffer that is sufficient for the crypto operation
++ * specified by the context and the direction.
++ */
++int f2fs_fname_crypto_alloc_buffer(struct inode *inode,
++				   u32 ilen, struct f2fs_str *crypto_str)
++{
++	unsigned int olen;
++	int padding = 16;
++	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
++
++	if (ci)
++		padding = 4 << (ci->ci_flags & F2FS_POLICY_FLAGS_PAD_MASK);
++	if (padding < F2FS_CRYPTO_BLOCK_SIZE)
++		padding = F2FS_CRYPTO_BLOCK_SIZE;
++	olen = f2fs_fname_crypto_round_up(ilen, padding);
++	crypto_str->len = olen;
++	if (olen < F2FS_FNAME_CRYPTO_DIGEST_SIZE * 2)
++		olen = F2FS_FNAME_CRYPTO_DIGEST_SIZE * 2;
++	/* Allocated buffer can hold one more character to null-terminate the
++	 * string */
++	crypto_str->name = kmalloc(olen + 1, GFP_NOFS);
++	if (!(crypto_str->name))
++		return -ENOMEM;
++	return 0;
++}
++
++/**
++ * f2fs_fname_crypto_free_buffer() -
++ *
++ * Frees the buffer allocated for crypto operation.
++ */
++void f2fs_fname_crypto_free_buffer(struct f2fs_str *crypto_str)
++{
++	if (!crypto_str)
++		return;
++	kfree(crypto_str->name);
++	crypto_str->name = NULL;
++}
++
++/**
++ * f2fs_fname_disk_to_usr() - converts a filename from disk space to user space
++ */
++int f2fs_fname_disk_to_usr(struct inode *inode,
++			f2fs_hash_t *hash,
++			const struct f2fs_str *iname,
++			struct f2fs_str *oname)
++{
++	const struct qstr qname = FSTR_TO_QSTR(iname);
++	char buf[24];
++	int ret;
++
++	if (is_dot_dotdot(&qname)) {
++		oname->name[0] = '.';
++		oname->name[iname->len - 1] = '.';
++		oname->len = iname->len;
++		return oname->len;
 +	}
 +
- 	/* we don't need to use inline_data strictly */
- 	if (f2fs_has_inline_data(inode)) {
- 		int err = f2fs_convert_inline_inode(inode);
-@@ -420,6 +426,14 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 	return 0;
- }
- 
-+static int f2fs_file_open(struct inode *inode, struct file *filp)
-+{
-+	if (f2fs_encrypted_inode(inode) && f2fs_get_encryption_info(inode))
-+		return -EACCES;
++	if (F2FS_I(inode)->i_crypt_info)
++		return f2fs_fname_decrypt(inode, iname, oname);
 +
-+	return generic_file_open(inode, filp);
-+}
-+
- int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- {
- 	int nr_free = 0, ofs = dn->ofs_in_node;
-@@ -627,6 +641,10 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 		return err;
- 
- 	if (attr->ia_valid & ATTR_SIZE) {
-+		if (f2fs_encrypted_inode(inode) &&
-+				f2fs_get_encryption_info(inode))
-+			return -EACCES;
-+
- 		if (attr->ia_size != i_size_read(inode)) {
- 			truncate_setsize(inode, attr->ia_size);
- 			f2fs_truncate(inode);
-@@ -1466,6 +1484,18 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	}
- }
- 
-+static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+
-+	if (f2fs_encrypted_inode(inode) &&
-+				!f2fs_has_encryption_key(inode) &&
-+				f2fs_get_encryption_info(inode))
-+		return -EACCES;
-+
-+	return generic_file_write_iter(iocb, from);
-+}
-+
- #ifdef CONFIG_COMPAT
- long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
-@@ -1486,8 +1516,8 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- const struct file_operations f2fs_file_operations = {
- 	.llseek		= f2fs_llseek,
- 	.read_iter	= generic_file_read_iter,
--	.write_iter	= generic_file_write_iter,
--	.open		= generic_file_open,
-+	.write_iter	= f2fs_file_write_iter,
-+	.open		= f2fs_file_open,
- 	.release	= f2fs_release_file,
- 	.mmap		= f2fs_file_mmap,
- 	.fsync		= f2fs_sync_file,
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index d9b3033..5f5b34b 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -27,6 +27,9 @@ bool f2fs_may_inline_data(struct inode *inode)
- 	if (i_size_read(inode) > MAX_INLINE_DATA)
- 		return false;
- 
-+	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-+		return false;
-+
- 	return true;
- }
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 90a9640..bc8992e 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -56,6 +56,10 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 		goto out;
- 	}
- 
-+	/* If the directory encrypted, then we should encrypt the inode. */
-+	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
-+		f2fs_set_encrypted_inode(inode);
-+
- 	if (f2fs_may_inline_data(inode))
- 		set_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
- 	if (f2fs_may_inline_dentry(inode))
-@@ -157,6 +161,10 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
- 	int err;
- 
-+	if (f2fs_encrypted_inode(dir) &&
-+		!f2fs_is_child_context_consistent_with_parent(dir, inode))
-+		return -EPERM;
-+
- 	f2fs_balance_fs(sbi);
- 
- 	inode->i_ctime = CURRENT_TIME;
-@@ -235,6 +243,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	struct f2fs_dir_entry *de;
- 	struct page *page;
- 	nid_t ino;
-+	int err = 0;
- 
- 	if (dentry->d_name.len > F2FS_NAME_LEN)
- 		return ERR_PTR(-ENAMETOOLONG);
-@@ -251,16 +260,26 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
- 
--	if (f2fs_has_inline_dots(inode)) {
--		int err;
-+	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode) &&
-+		!f2fs_is_child_context_consistent_with_parent(dir, inode)) {
-+		iput(inode);
-+		f2fs_msg(inode->i_sb, KERN_WARNING,
-+				"Inconsistent encryption contexts: %lu/%lu\n",
-+				(unsigned long)dir->i_ino,
-+				(unsigned long)inode->i_ino);
-+		return ERR_PTR(-EPERM);
++	if (iname->len <= F2FS_FNAME_CRYPTO_DIGEST_SIZE) {
++		ret = digest_encode(iname->name, iname->len, oname->name);
++		oname->len = ret;
++		return ret;
 +	}
- 
-+	if (f2fs_has_inline_dots(inode)) {
- 		err = __recover_dot_dentries(inode, dir->i_ino);
--		if (err) {
--			iget_failed(inode);
--			return ERR_PTR(err);
--		}
-+		if (err)
-+			goto err_out;
- 	}
- 	return d_splice_alias(inode, dentry);
++	if (hash) {
++		memcpy(buf, hash, 4);
++		memset(buf + 4, 0, 4);
++	} else
++		memset(buf, 0, 8);
++	memcpy(buf + 8, iname->name + iname->len - 16, 16);
++	oname->name[0] = '_';
++	ret = digest_encode(buf, 24, oname->name + 1);
++	oname->len = ret + 1;
++	return ret + 1;
++}
 +
-+err_out:
-+	iget_failed(inode);
-+	return ERR_PTR(err);
- }
- 
- static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
-@@ -460,6 +479,13 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	struct f2fs_dir_entry *new_entry;
- 	int err = -ENOENT;
- 
-+	if ((old_dir != new_dir) && f2fs_encrypted_inode(new_dir) &&
-+		!f2fs_is_child_context_consistent_with_parent(new_dir,
-+							old_inode)) {
-+		err = -EPERM;
++/**
++ * f2fs_fname_usr_to_disk() - converts a filename from user space to disk space
++ */
++int f2fs_fname_usr_to_disk(struct inode *inode,
++			const struct qstr *iname,
++			struct f2fs_str *oname)
++{
++	int res;
++	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
++
++	if (is_dot_dotdot(iname)) {
++		oname->name[0] = '.';
++		oname->name[iname->len - 1] = '.';
++		oname->len = iname->len;
++		return oname->len;
++	}
++
++	if (ci) {
++		res = f2fs_fname_encrypt(inode, iname, oname);
++		return res;
++	}
++	/* Without a proper key, a user is not allowed to modify the filenames
++	 * in a directory. Consequently, a user space name cannot be mapped to
++	 * a disk-space name */
++	return -EACCES;
++}
++
++int f2fs_fname_setup_filename(struct inode *dir, const struct qstr *iname,
++			      int lookup, struct f2fs_filename *fname)
++{
++	struct f2fs_crypt_info *ci;
++	int ret = 0, bigname = 0;
++
++	memset(fname, 0, sizeof(struct f2fs_filename));
++	fname->usr_fname = iname;
++
++	if (!f2fs_encrypted_inode(dir) || is_dot_dotdot(iname)) {
++		fname->disk_name.name = (unsigned char *)iname->name;
++		fname->disk_name.len = iname->len;
++		goto out;
++	}
++	ret = f2fs_setup_fname_crypto(dir);
++	if (ret)
++		return ret;
++	ci = F2FS_I(dir)->i_crypt_info;
++	if (ci) {
++		ret = f2fs_fname_crypto_alloc_buffer(dir, iname->len,
++						     &fname->crypto_buf);
++		if (ret < 0)
++			goto out;
++		ret = f2fs_fname_encrypt(dir, iname, &fname->crypto_buf);
++		if (ret < 0)
++			goto out;
++		fname->disk_name.name = fname->crypto_buf.name;
++		fname->disk_name.len = fname->crypto_buf.len;
++		ret = 0;
++		goto out;
++	}
++	if (!lookup) {
++		ret = -EACCES;
 +		goto out;
 +	}
 +
- 	f2fs_balance_fs(sbi);
++	/* We don't have the key and we are doing a lookup; decode the
++	 * user-supplied name
++	 */
++	if (iname->name[0] == '_')
++		bigname = 1;
++	if ((bigname && (iname->len != 33)) ||
++	    (!bigname && (iname->len > 43))) {
++		ret = -ENOENT;
++	}
++	fname->crypto_buf.name = kmalloc(32, GFP_KERNEL);
++	if (fname->crypto_buf.name == NULL) {
++		ret = -ENOMEM;
++		goto out;
++	}
++	ret = digest_decode(iname->name + bigname, iname->len - bigname,
++				fname->crypto_buf.name);
++	if (ret < 0) {
++		ret = -ENOENT;
++		goto out;
++	}
++	fname->crypto_buf.len = ret;
++	if (bigname) {
++		memcpy(&fname->hash, fname->crypto_buf.name, 4);
++	} else {
++		fname->disk_name.name = fname->crypto_buf.name;
++		fname->disk_name.len = fname->crypto_buf.len;
++	}
++	ret = 0;
++out:
++	return ret;
++}
++
++void f2fs_fname_free_filename(struct f2fs_filename *fname)
++{
++	kfree(fname->crypto_buf.name);
++	fname->crypto_buf.name = NULL;
++	fname->usr_fname = NULL;
++	fname->disk_name.name = NULL;
++}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ef79ac8..e99205b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -257,6 +257,25 @@ static inline bool __has_cursum_space(struct f2fs_summary_block *sum, int size,
+  * For INODE and NODE manager
+  */
+ /* for directory operations */
++struct f2fs_str {
++	unsigned char *name;
++	u32 len;
++};
++
++struct f2fs_filename {
++	const struct qstr *usr_fname;
++	struct f2fs_str disk_name;
++	f2fs_hash_t hash;
++#ifdef CONFIG_F2FS_FS_ENCRYPTION
++	struct f2fs_str crypto_buf;
++#endif
++};
++
++#define FSTR_INIT(n, l)		{ .name = n, .len = l }
++#define FSTR_TO_QSTR(f)		FSTR_INIT((f)->name, (f)->len)
++#define fname_name(p)		((p)->disk_name.name)
++#define fname_len(p)		((p)->disk_name.len)
++
+ struct f2fs_dentry_ptr {
+ 	const void *bitmap;
+ 	struct f2fs_dir_entry *dentry;
+@@ -1977,6 +1996,17 @@ void f2fs_end_io_crypto_work(struct f2fs_crypto_ctx *, struct bio *);
+ void f2fs_free_encryption_info(struct inode *);
+ int _f2fs_get_encryption_info(struct inode *inode);
  
- 	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
++/* crypto_fname.c */
++bool f2fs_valid_filenames_enc_mode(uint32_t);
++u32 f2fs_fname_crypto_round_up(u32, u32);
++int f2fs_fname_crypto_alloc_buffer(struct inode *, u32, struct f2fs_str *);
++int f2fs_fname_disk_to_usr(struct inode *, f2fs_hash_t *,
++			const struct f2fs_str *, struct f2fs_str *);
++int f2fs_fname_disk_to_usr(struct inode *, f2fs_hash_t *,
++			const struct f2fs_str *, struct f2fs_str *);
++int f2fs_fname_usr_to_disk(struct inode *, const struct qstr *,
++			struct f2fs_str *);
++
+ #ifdef CONFIG_F2FS_FS_ENCRYPTION
+ void f2fs_restore_and_release_control_page(struct page **);
+ void f2fs_restore_control_page(struct page *);
+@@ -1998,6 +2028,12 @@ static inline int f2fs_get_encryption_info(struct inode *inode)
+ 		return _f2fs_get_encryption_info(inode);
+ 	return 0;
+ }
++
++int f2fs_setup_fname_crypto(struct inode *);
++void f2fs_fname_crypto_free_buffer(struct f2fs_str *);
++int f2fs_fname_setup_filename(struct inode *, const struct qstr *,
++				int lookup, struct f2fs_filename *);
++void f2fs_fname_free_filename(struct f2fs_filename *);
+ #else
+ static inline void f2fs_restore_and_release_control_page(struct page **p) { }
+ static inline void f2fs_restore_control_page(struct page *p) { }
+@@ -2007,5 +2043,21 @@ static inline void f2fs_exit_crypto(void) { }
+ 
+ static inline int f2fs_has_encryption_key(struct inode *i) { return 0; }
+ static inline int f2fs_get_encryption_info(struct inode *i) { return 0; }
++
++static inline int f2fs_setup_fname_crypto(struct inode *i) { return 0; }
++static inline void f2fs_fname_crypto_free_buffer(struct f2fs_str *p) { }
++
++static inline int f2fs_fname_setup_filename(struct inode *dir,
++					const struct qstr *iname,
++					int lookup, struct f2fs_filename *fname)
++{
++	memset(fname, 0, sizeof(struct f2fs_filename));
++	fname->usr_fname = iname;
++	fname->disk_name.name = (unsigned char *)iname->name;
++	fname->disk_name.len = iname->len;
++	return 0;
++}
++
++static inline void f2fs_fname_free_filename(struct f2fs_filename *fname) { }
+ #endif
+ #endif
 -- 
 2.1.1
 
