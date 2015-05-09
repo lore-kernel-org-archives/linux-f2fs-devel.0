@@ -1,21 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/5] mkfs.f2fs: set encryption feature
-Date: Fri,  8 May 2015 21:24:37 -0700
-Message-ID: <1431145481-2184-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/5] fsck.f2fs: show superblock features and
+	encryption info
+Date: Fri,  8 May 2015 21:24:38 -0700
+Message-ID: <1431145481-2184-2-git-send-email-jaegeuk@kernel.org>
+References: <1431145481-2184-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YqwK0-0007nw-Uw
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YqwK3-00059O-4U
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 09 May 2015 04:25:04 +0000
+	Sat, 09 May 2015 04:25:07 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YqwK0-0003wy-0H for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 09 May 2015 04:25:04 +0000
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YqwK2-0004k9-2p for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 09 May 2015 04:25:07 +0000
+In-Reply-To: <1431145481-2184-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,103 +31,47 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch add to support encryption feature.
-
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- include/f2fs_fs.h       |  7 +++++++
- mkfs/f2fs_format.c      |  2 ++
- mkfs/f2fs_format_main.c | 16 +++++++++++++++-
- 3 files changed, 24 insertions(+), 1 deletion(-)
+ fsck/mount.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index d23ae1b..6aefa5d 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -251,6 +251,7 @@ struct f2fs_configuration {
- 	int fix_on;
- 	int bug_on;
- 	int auto_fix;
-+	__le32 feature;			/* defined features */
- } __attribute__((packed));
- 
- #ifdef CONFIG_64BIT
-@@ -315,6 +316,8 @@ enum {
- #define MAX_ACTIVE_NODE_LOGS	8
- #define MAX_ACTIVE_DATA_LOGS	8
- 
-+#define F2FS_FEATURE_ENCRYPT	0x0001
-+
- /*
-  * For superblock
-  */
-@@ -353,6 +356,10 @@ struct f2fs_super_block {
- 	__le32 cp_payload;
- 	__u8 version[VERSION_LEN];	/* the kernel version */
- 	__u8 init_version[VERSION_LEN];	/* the initial kernel version */
-+	__le32 feature;			/* defined features */
-+	__u8 encryption_level;		/* versioning level for encryption */
-+	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
-+	__u8 reserved[871];		/* valid reserved region */
- } __attribute__((packed));
- 
- /*
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 094afa3..f879bca 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -364,6 +364,8 @@ static int f2fs_prepare_super_block(void)
- 	memcpy(sb.version, config.version, VERSION_LEN);
- 	memcpy(sb.init_version, config.version, VERSION_LEN);
- 
-+	sb.feature = config.feature;
-+
- 	return 0;
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 1c55f40..11ab197 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -224,6 +224,23 @@ void print_cp_state(u32 flag)
+ 	MSG(0, "\n");
  }
  
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 9a96798..5a9e7e2 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -33,6 +33,7 @@ static void mkfs_usage()
- 	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
- 	MSG(0, "  -l label\n");
- 	MSG(0, "  -o overprovision ratio [default:5]\n");
-+	MSG(0, "  -O set feature\n");
- 	MSG(0, "  -q quiet mode\n");
- 	MSG(0, "  -s # of segments per section [default:1]\n");
- 	MSG(0, "  -z # of sections per zone [default:1]\n");
-@@ -61,9 +62,19 @@ static void f2fs_show_info()
- 	MSG(0, "Info: Trim is %s\n", config.trim ? "enabled": "disabled");
- }
- 
-+static void parse_feature(char *features)
++void print_sb_state(struct f2fs_super_block *sb)
 +{
-+	if (!strcmp(features, "encrypt")) {
-+		config.feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
-+	} else {
-+		MSG(0, "Error: Wrong features\n");
-+		mkfs_usage();
++	__le32 f = sb->feature;
++	int i;
++
++	MSG(0, "Info: superblock features = %x : ", f);
++	if (f & cpu_to_le32(F2FS_FEATURE_ENCRYPT)) {
++		MSG(0, "%s", " encrypt");
 +	}
++	MSG(0, "\n");
++	MSG(0, "Info: superblock encrypt level = %d, salt = ",
++					sb->encryption_level);
++	for (i = 0; i < 16; i++)
++		MSG(0, "%02x", sb->encrypt_pw_salt[i]);
++	MSG(0, "\n");
 +}
 +
- static void f2fs_parse_options(int argc, char *argv[])
+ int sanity_check_raw_super(struct f2fs_super_block *raw_super)
  {
--	static const char *option_string = "qa:d:e:l:o:s:z:t:";
-+	static const char *option_string = "qa:d:e:l:o:O:s:z:t:";
- 	int32_t option=0;
+ 	unsigned int blocksize;
+@@ -300,6 +317,7 @@ int validate_super_block(struct f2fs_sb_info *sbi, int block)
+ 			config.auto_fix = 0;
+ 			config.fix_on = 1;
+ 		}
++		print_sb_state(sbi->raw_super);
+ 		return 0;
+ 	}
  
- 	while ((option = getopt(argc,argv,option_string)) != EOF) {
-@@ -91,6 +102,9 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		case 'o':
- 			config.overprovision = atoi(optarg);
- 			break;
-+		case 'O':
-+			parse_feature(strdup(optarg));
-+			break;
- 		case 's':
- 			config.segs_per_sec = atoi(optarg);
- 			break;
 -- 
 2.1.1
 
