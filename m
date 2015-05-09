@@ -1,23 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 15/18] f2fs crypto: add filename encryption for
-	roll-forward recovery
-Date: Fri,  8 May 2015 21:20:50 -0700
-Message-ID: <1431145253-2019-15-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 16/18] f2fs crypto: add symlink encryption
+Date: Fri,  8 May 2015 21:20:51 -0700
+Message-ID: <1431145253-2019-16-git-send-email-jaegeuk@kernel.org>
 References: <1431145253-2019-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YqwGt-0002YD-7W
+	(envelope-from <jaegeuk@kernel.org>) id 1YqwGw-0002ZX-78
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 09 May 2015 04:21:51 +0000
+	Sat, 09 May 2015 04:21:54 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YqwGs-0003so-1r for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 09 May 2015 04:21:51 +0000
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YqwGv-0007jK-5G for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 09 May 2015 04:21:54 +0000
 In-Reply-To: <1431145253-2019-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -29,200 +28,215 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Uday Savagaonkar <savagaon@google.com>
 
-This patch adds a bit flag to indicate whether or not i_name in the inode
-is encrypted.
+This patch implements encryption support for symlink.
 
-If this name is encrypted, we can't do recover_dentry during roll-forward.
-So, f2fs_sync_file() needs to do checkpoint, if this will be needed in future.
+The codes refered the ext4 symlink path.
 
+Signed-off-by: Uday Savagaonkar <savagaon@google.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/dir.c      |  8 +++++++-
- fs/f2fs/f2fs.h     |  5 ++++-
- fs/f2fs/file.c     |  4 +++-
- fs/f2fs/namei.c    | 20 +++++++++++++++-----
- fs/f2fs/recovery.c | 13 ++++++++++++-
- 5 files changed, 41 insertions(+), 9 deletions(-)
+ fs/f2fs/f2fs_crypto.h |   2 -
+ fs/f2fs/namei.c       | 138 ++++++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 135 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 5e10d9d..12f6869 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -314,10 +314,14 @@ static void init_dent_inode(const struct qstr *name, struct page *ipage)
- 	set_page_dirty(ipage);
- }
- 
--int update_dent_inode(struct inode *inode, const struct qstr *name)
-+int update_dent_inode(struct inode *inode, struct inode *to,
-+					const struct qstr *name)
+diff --git a/fs/f2fs/f2fs_crypto.h b/fs/f2fs/f2fs_crypto.h
+index bad32e6..6e41394 100644
+--- a/fs/f2fs/f2fs_crypto.h
++++ b/fs/f2fs/f2fs_crypto.h
+@@ -145,8 +145,6 @@ struct f2fs_encrypted_symlink_data {
+  */
+ static inline u32 encrypted_symlink_data_len(u32 l)
  {
- 	struct page *page;
- 
-+	if (file_enc_name(to))
-+		return 0;
-+
- 	page = get_node_page(F2FS_I_SB(inode), inode->i_ino);
- 	if (IS_ERR(page))
- 		return PTR_ERR(page);
-@@ -597,6 +601,8 @@ add_dentry:
- 			err = PTR_ERR(page);
- 			goto fail;
- 		}
-+		if (f2fs_encrypted_inode(dir))
-+			file_set_enc_name(inode);
- 	}
- 
- 	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6898331..fda040b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -378,6 +378,7 @@ struct f2fs_map_blocks {
- #define FADVISE_COLD_BIT	0x01
- #define FADVISE_LOST_PINO_BIT	0x02
- #define FADVISE_ENCRYPT_BIT	0x04
-+#define FADVISE_ENC_NAME_BIT	0x08
- 
- #define file_is_cold(inode)	is_file(inode, FADVISE_COLD_BIT)
- #define file_wrong_pino(inode)	is_file(inode, FADVISE_LOST_PINO_BIT)
-@@ -388,6 +389,8 @@ struct f2fs_map_blocks {
- #define file_is_encrypt(inode)	is_file(inode, FADVISE_ENCRYPT_BIT)
- #define file_set_encrypt(inode)	set_file(inode, FADVISE_ENCRYPT_BIT)
- #define file_clear_encrypt(inode) clear_file(inode, FADVISE_ENCRYPT_BIT)
-+#define file_enc_name(inode)	is_file(inode, FADVISE_ENC_NAME_BIT)
-+#define file_set_enc_name(inode) set_file(inode, FADVISE_ENC_NAME_BIT)
- 
- /* Encryption algorithms */
- #define F2FS_ENCRYPTION_MODE_INVALID		0
-@@ -1602,7 +1605,7 @@ struct f2fs_dir_entry *f2fs_parent_dir(struct inode *, struct page **);
- ino_t f2fs_inode_by_name(struct inode *, struct qstr *);
- void f2fs_set_link(struct inode *, struct f2fs_dir_entry *,
- 				struct page *, struct inode *);
--int update_dent_inode(struct inode *, const struct qstr *);
-+int update_dent_inode(struct inode *, struct inode *, const struct qstr *);
- void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *,
- 			const struct qstr *, f2fs_hash_t , unsigned int);
- int __f2fs_add_link(struct inode *, const struct qstr *, struct inode *, nid_t,
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d7daff8..14eb4f7 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -106,7 +106,7 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
- 	if (!dentry)
- 		return 0;
- 
--	if (update_dent_inode(inode, &dentry->d_name)) {
-+	if (update_dent_inode(inode, inode, &dentry->d_name)) {
- 		dput(dentry);
- 		return 0;
- 	}
-@@ -123,6 +123,8 @@ static inline bool need_do_checkpoint(struct inode *inode)
- 
- 	if (!S_ISREG(inode->i_mode) || inode->i_nlink != 1)
- 		need_cp = true;
-+	else if (file_enc_name(inode) && need_dentry_mark(sbi, inode->i_ino))
-+		need_cp = true;
- 	else if (file_wrong_pino(inode))
- 		need_cp = true;
- 	else if (!space_for_roll_forward(sbi))
+-	if (l < F2FS_CRYPTO_BLOCK_SIZE)
+-		l = F2FS_CRYPTO_BLOCK_SIZE;
+ 	return (l + sizeof(struct f2fs_encrypted_symlink_data) - 1);
+ }
+ #endif	/* _F2FS_CRYPTO_H */
 diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index bc8992e..c857f82 100644
+index c857f82..e6a6310 100644
 --- a/fs/f2fs/namei.c
 +++ b/fs/f2fs/namei.c
-@@ -517,7 +517,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		if (err)
- 			goto put_out_dir;
- 
--		if (update_dent_inode(old_inode, &new_dentry->d_name)) {
-+		if (update_dent_inode(old_inode, new_inode,
-+						&new_dentry->d_name)) {
- 			release_orphan_inode(sbi);
- 			goto put_out_dir;
- 		}
-@@ -557,6 +558,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	down_write(&F2FS_I(old_inode)->i_sem);
- 	file_lost_pino(old_inode);
-+	if (new_inode && file_enc_name(new_inode))
-+		file_set_enc_name(old_inode);
- 	up_write(&F2FS_I(old_inode)->i_sem);
- 
- 	old_inode->i_ctime = CURRENT_TIME;
-@@ -659,13 +662,17 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	f2fs_lock_op(sbi);
- 
--	err = update_dent_inode(old_inode, &new_dentry->d_name);
-+	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
- 	if (err)
- 		goto out_unlock;
-+	if (file_enc_name(new_inode))
-+		file_set_enc_name(old_inode);
- 
--	err = update_dent_inode(new_inode, &old_dentry->d_name);
-+	err = update_dent_inode(new_inode, old_inode, &old_dentry->d_name);
- 	if (err)
- 		goto out_undo;
-+	if (file_enc_name(old_inode))
-+		file_set_enc_name(new_inode);
- 
- 	/* update ".." directory entry info of old dentry */
- 	if (old_dir_entry)
-@@ -723,8 +730,11 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		f2fs_sync_fs(sbi->sb, 1);
- 	return 0;
- out_undo:
--	/* Still we may fail to recover name info of f2fs_inode here */
--	update_dent_inode(old_inode, &old_dentry->d_name);
-+	/*
-+	 * Still we may fail to recover name info of f2fs_inode here
-+	 * Drop it, once its name is set as encrypted
-+	 */
-+	update_dent_inode(old_inode, old_inode, &old_dentry->d_name);
- out_unlock:
- 	f2fs_unlock_op(sbi);
- out_new_dir:
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index f77a1be..9de2587 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -83,6 +83,11 @@ static int recover_dentry(struct inode *inode, struct page *ipage)
- 		goto out;
- 	}
- 
-+	if (file_enc_name(inode)) {
-+		iput(dir);
-+		return 0;
-+	}
-+
- 	name.len = le32_to_cpu(raw_inode->i_namelen);
- 	name.name = raw_inode->i_name;
- 
-@@ -143,6 +148,7 @@ out:
- static void recover_inode(struct inode *inode, struct page *page)
- {
- 	struct f2fs_inode *raw = F2FS_INODE(page);
-+	char *name;
- 
- 	inode->i_mode = le16_to_cpu(raw->i_mode);
- 	i_size_write(inode, le64_to_cpu(raw->i_size));
-@@ -153,8 +159,13 @@ static void recover_inode(struct inode *inode, struct page *page)
- 	inode->i_ctime.tv_nsec = le32_to_cpu(raw->i_ctime_nsec);
- 	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
- 
-+	if (file_enc_name(inode))
-+		name = "<encrypted>";
-+	else
-+		name = F2FS_INODE(page)->i_name;
-+
- 	f2fs_msg(inode->i_sb, KERN_NOTICE, "recover_inode: ino = %x, name = %s",
--			ino_of_node(page), F2FS_INODE(page)->i_name);
-+			ino_of_node(page), name);
+@@ -333,12 +333,102 @@ static void *f2fs_follow_link(struct dentry *dentry, struct nameidata *nd)
+ 	return page;
  }
  
- static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
++#ifdef CONFIG_F2FS_FS_ENCRYPTION
++static void *f2fs_encrypted_follow_link(struct dentry *dentry,
++						struct nameidata *nd)
++{
++	struct page *cpage = NULL;
++	char *caddr, *paddr = NULL;
++	struct f2fs_str cstr, pstr;
++	struct inode *inode = d_inode(dentry);
++	struct f2fs_encrypted_symlink_data *sd;
++	loff_t size = min_t(loff_t, i_size_read(inode), PAGE_SIZE - 1);
++	int res;
++	u32 max_size = inode->i_sb->s_blocksize;
++
++	if (!f2fs_encrypted_inode(inode))
++		return f2fs_follow_link(dentry, nd);
++
++	res = f2fs_setup_fname_crypto(inode);
++	if (res)
++		return ERR_PTR(res);
++
++	cpage = read_mapping_page(inode->i_mapping, 0, NULL);
++	if (IS_ERR(cpage))
++		return cpage;
++	caddr = kmap(cpage);
++	caddr[size] = 0;
++
++	/* Symlink is encrypted */
++	sd = (struct f2fs_encrypted_symlink_data *)caddr;
++	cstr.name = sd->encrypted_path;
++	cstr.len = le16_to_cpu(sd->len);
++
++	/* this is broken symlink case */
++	if (cstr.name[0] == 0 && cstr.len == 0) {
++		res = -ENOENT;
++		goto errout;
++	}
++
++	if ((cstr.len + sizeof(struct f2fs_encrypted_symlink_data) - 1) >
++								max_size) {
++		/* Symlink data on the disk is corrupted */
++		res = -EIO;
++		goto errout;
++	}
++	paddr = kmalloc(cstr.len + 1, GFP_NOFS);
++	if (!paddr) {
++		res = -ENOMEM;
++		goto errout;
++	}
++	pstr.name = paddr;
++	pstr.len = cstr.len;
++	res = f2fs_fname_disk_to_usr(inode, NULL, &cstr, &pstr);
++	if (res < 0)
++		goto errout;
++
++	/* Null-terminate the name */
++	if (res <= cstr.len)
++		paddr[res] = '\0';
++	nd_set_link(nd, paddr);
++	if (cpage) {
++		kunmap(cpage);
++		page_cache_release(cpage);
++	}
++	return NULL;
++errout:
++	if (cpage) {
++		kunmap(cpage);
++		page_cache_release(cpage);
++	}
++	kfree(paddr);
++	return ERR_PTR(res);
++}
++
++static void f2fs_encrypted_put_link(struct dentry *dentry, struct nameidata *nd,
++			  void *cookie)
++{
++	struct page *page = cookie;
++
++	if (!page) {
++		kfree(nd_get_link(nd));
++	} else {
++		kunmap(page);
++		page_cache_release(page);
++	}
++}
++#endif
++
+ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 					const char *symname)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+ 	struct inode *inode;
+-	size_t symlen = strlen(symname) + 1;
++	size_t len = strlen(symname);
++	size_t p_len;
++	char *p_str;
++	struct f2fs_str disk_link = FSTR_INIT(NULL, 0);
++	struct f2fs_encrypted_symlink_data *sd = NULL;
+ 	int err;
+ 
+ 	f2fs_balance_fs(sbi);
+@@ -356,7 +446,40 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 		goto out;
+ 	f2fs_unlock_op(sbi);
+ 
+-	err = page_symlink(inode, symname, symlen);
++	if (f2fs_encrypted_inode(dir)) {
++		struct qstr istr = QSTR_INIT(symname, len);
++
++		err = f2fs_inherit_context(dir, inode, NULL);
++		if (err)
++			goto out;
++
++		err = f2fs_setup_fname_crypto(inode);
++		if (err)
++			goto out;
++
++		err = f2fs_fname_crypto_alloc_buffer(inode, len, &disk_link);
++		if (err)
++			goto out;
++
++		err = f2fs_fname_usr_to_disk(inode, &istr, &disk_link);
++		if (err < 0)
++			goto out;
++
++		p_len = encrypted_symlink_data_len(disk_link.len) + 1;
++		sd = kzalloc(p_len, GFP_NOFS);
++		if (!sd) {
++			err = -ENOMEM;
++			goto out;
++		}
++		memcpy(sd->encrypted_path, disk_link.name, disk_link.len);
++		sd->len = cpu_to_le16(disk_link.len);
++		p_str = (char *)sd;
++	} else {
++		p_len = len + 1;
++		p_str = (char *)symname;
++	}
++
++	err = page_symlink(inode, p_str, p_len);
+ 	alloc_nid_done(sbi, inode->i_ino);
+ 
+ 	d_instantiate(dentry, inode);
+@@ -371,12 +494,16 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	 * If the symlink path is stored into inline_data, there is no
+ 	 * performance regression.
+ 	 */
+-	filemap_write_and_wait_range(inode->i_mapping, 0, symlen - 1);
++	filemap_write_and_wait_range(inode->i_mapping, 0, p_len);
+ 
+ 	if (IS_DIRSYNC(dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
++	kfree(sd);
++	f2fs_fname_crypto_free_buffer(&disk_link);
+ 	return err;
+ out:
++	kfree(sd);
++	f2fs_fname_crypto_free_buffer(&disk_link);
+ 	handle_failed_inode(inode);
+ 	return err;
+ }
+@@ -843,8 +970,13 @@ const struct inode_operations f2fs_dir_inode_operations = {
+ 
+ const struct inode_operations f2fs_symlink_inode_operations = {
+ 	.readlink       = generic_readlink,
++#ifdef CONFIG_F2FS_FS_ENCRYPTION
++	.follow_link    = f2fs_encrypted_follow_link,
++	.put_link       = f2fs_encrypted_put_link,
++#else
+ 	.follow_link    = f2fs_follow_link,
+ 	.put_link       = page_put_link,
++#endif
+ 	.getattr	= f2fs_getattr,
+ 	.setattr	= f2fs_setattr,
+ #ifdef CONFIG_F2FS_FS_XATTR
 -- 
 2.1.1
 
