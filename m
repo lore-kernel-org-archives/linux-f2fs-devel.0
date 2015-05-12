@@ -1,96 +1,75 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: get rid of buggy function
-Date: Mon, 11 May 2015 23:00:30 -0700
-Message-ID: <20150512060030.GA25143@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <1431402528-24156-1-git-send-email-jaegeuk@kernel.org>
- <1431402528-24156-3-git-send-email-jaegeuk@kernel.org>
- <0DE36CEE-3086-4727-9B7B-58D784941567@gmail.com>
+From: hujianyang <hujianyang@huawei.com>
+Subject: [PATCH] f2fs: add compat_ioctl to f2fs_dir_operations
+Date: Tue, 12 May 2015 16:05:57 +0800
+Message-ID: <5551B465.8000804@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0DE36CEE-3086-4727-9B7B-58D784941567@gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Nicholas Krause <xerofoify@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <hujianyang@huawei.com>) id 1Ys5DB-0001AP-76
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 May 2015 08:06:45 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1Ys5D7-0007cp-AJ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 May 2015 08:06:45 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: namjae.jeon@samsung.com, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, May 12, 2015 at 12:10:16AM -0400, Nicholas Krause wrote:
-> 
-> 
-> On May 11, 2015 11:48:48 PM EDT, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> >This patch avoids to use a buggy function for now.
-> >It needs to fix it later.
-> >
-> >Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >---
-> > fs/f2fs/segment.c | 15 ++++++++++-----
-> > 1 file changed, 10 insertions(+), 5 deletions(-)
-> >
-> >diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >index 342e0f7..17e89ba 100644
-> >--- a/fs/f2fs/segment.c
-> >+++ b/fs/f2fs/segment.c
-> >@@ -64,6 +64,8 @@ static inline unsigned long __reverse_ffs(unsigned
-> >long word)
-> > 	return num;
-> > }
-> > 
-> >+/* FIXME: Do not use this due to a subtle bug */
-> >+#if 0
-> > /*
-> >* __find_rev_next(_zero)_bit is copied from lib/find_next_bit.c because
-> >  * f2fs_set_bit makes MSB and LSB reversed in a byte.
-> >@@ -122,6 +124,7 @@ found_first:
-> > found_middle:
-> > 	return result + __reverse_ffs(tmp);
-> > }
-> >+#endif
-> > 
-> >static unsigned long __find_rev_next_zero_bit(const unsigned long
-> >*addr,
-> > 			unsigned long size, unsigned long offset)
-> >@@ -542,7 +545,7 @@ static void add_discard_addrs(struct f2fs_sb_info
-> >*sbi, struct cp_control *cpc)
-> > 	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
-> > 	unsigned long *discard_map = (unsigned long *)se->discard_map;
-> > 	unsigned long *dmap = SIT_I(sbi)->tmp_map;
-> >-	unsigned int start = 0, end = -1;
-> >+	unsigned int start = -1, end = 0;
-> > 	bool force = (cpc->reason == CP_DISCARD);
-> > 	int i;
-> > 
-> >@@ -561,12 +564,14 @@ static void add_discard_addrs(struct f2fs_sb_info
-> >*sbi, struct cp_control *cpc)
-> > 				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
-> > 
-> > 	while (force || SM_I(sbi)->nr_discards <= SM_I(sbi)->max_discards) {
-> >-		start = __find_rev_next_bit(dmap, max_blocks, end + 1);
-> >-		if (start >= max_blocks)
-> >-			break;
-> > 
-> > 		end = __find_rev_next_zero_bit(dmap, max_blocks, start + 1);
-> >-		__add_discard_entry(sbi, cpc, se, start, end);
-> >+
-> >+		__add_discard_entry(sbi, cpc, se, start + 1, end);
-> >+
-> >+		if (end >= max_blocks)
-> >+			break;
-> >+		start = end;
-> > 	}
-> > }
-> > 
-> Rather then avoid that  function, why not fix it.  This seems to add more work in the future and due to this I would like recommend fixing the function,__find_rev_next_zero now. 
-> IMHO, 
+commit e9750824114ff939d9da299e73651add6aa65456
 
-Agreed.
-But, in the mean time, it'd be necessary to avoid the bug.
-And, I think this will not cause any additional work, since this is a somewhat
-f2fs-only function used in very corner cases.
+f2fs: add compat_ioctl to provide backward compatability
 
-Thanks,
+introduce compat_ioctl to regular files, but doesn't add this
+functionality to f2fs_dir_operations.
 
-> Nick 
-> 
-> -- 
-> Sent from my Android device with K-9 Mail. Please excuse my brevity.
+While running a 32-bit busybox, I met an error like this:
+(A is a directory)
+
+# busybox chattr +i A
+chattr: reading flags on A: Inappropriate ioctl for device
+
+This patch copies compat_ioctl from f2fs_file_operations and
+fix this problem.
+
+Signed-off-by: hujianyang <hujianyang@huawei.com>
+---
+ fs/f2fs/dir.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 12f6869..3e92376 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -879,4 +879,7 @@ const struct file_operations f2fs_dir_operations = {
+ 	.iterate	= f2fs_readdir,
+ 	.fsync		= f2fs_sync_file,
+ 	.unlocked_ioctl	= f2fs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = f2fs_compat_ioctl,
++#endif
+ };
+-- 
+1.6.0.2
+
+
+
+------------------------------------------------------------------------------
+One dashboard for servers and applications across Physical-Virtual-Cloud 
+Widest out-of-the-box monitoring support with 50+ applications
+Performance metrics, stats and reports that give you Actionable Insights
+Deep dive visibility with transaction tracing using APM Insight.
+http://ad.doubleclick.net/ddm/clk/290420510;117567292;y
