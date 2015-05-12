@@ -1,86 +1,51 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: f2fs crypto: add symlink encryption
-Date: Tue, 12 May 2015 11:39:32 -0700
-Message-ID: <20150512183932.GA28387@jaegeuk-mac02>
-References: <20150512120916.GA9471@mwanda>
-	<20150512181716.GA27003@jaegeuk-mac02.mot.com>
-	<20150512183621.GP16501@mwanda>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH] f2fs crypto: use inode number for xts_tweak
+Date: Tue, 12 May 2015 19:35:57 -0400
+Message-ID: <20150512233557.GA2969@thunk.org>
+References: <1431402663-24809-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YsF5i-0005xn-Aq
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 18:39:42 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YsF5h-0007Av-Gl for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 18:39:42 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150512183621.GP16501@mwanda>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <1431402663-24809-1-git-send-email-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, mhalcrow@google.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, May 12, 2015 at 09:36:21PM +0300, Dan Carpenter wrote:
-> On Tue, May 12, 2015 at 11:17:16AM -0700, Jaegeuk Kim wrote:
-> > > For example, shouldn't we release f2fs_lock_op(sbi) when f2fs_add_link()
-> > > fails earlier?
-> > 
-> > The pair of f2fs_lock_op and f2fs_unlock_op here is used to keep FS
-> > consistency.
-> > And, the handle_failed_inode() should be covered by f2fs_lock_op, so there is
-> > no reason to do unlock and lock redundantly to handle the error case.
+On Mon, May 11, 2015 at 08:51:03PM -0700, Jaegeuk Kim wrote:
+> Previoulsy when making xts_tweak, page->index was used.
+> But, when it supports fcollapse, the block address was moved, so that we can
+> lose the original page->index, which causes decrytion failure.
 > 
-> Yes, you are right, but the code is still not correct unfortunately.
+> In order to avoid that, let's use the inode->i_ino for xfs_tweak hint.
 
-Yeah, it was. Please check the V2 patch.
+I'm afraid that's a really bad idea.  We need to have a different xts
+tweak for each block, and if we use the inode number, then every
+single block will have the same XTS tweak, which is a cryptographic
+disaster.
 
-Thanks,
+Basically, we currently can't support either collapse range or insert
+range for encrypted files.  In ext4 we explicitly return EOPNOTSUPP if
+there is an attempt to call collapse range on an encrypted file.
+Personally, I don't think this is a major restriction, so I haven't
+lost any sleep over this.
 
-> 
-> fs/f2fs/namei.c
->    424  
->    425          f2fs_lock_op(sbi);
->    426          err = f2fs_add_link(dentry, inode);
->    427          if (err)
->    428                  goto out;
->                         ^^^^^^^^
-> Holding the lock.  This is correct as you say.
-> 
->    429          f2fs_unlock_op(sbi);
->    430  
->    431          if (f2fs_encrypted_inode(dir)) {
->    432                  struct qstr istr = QSTR_INIT(symname, len);
->    433  
->    434                  err = f2fs_inherit_context(dir, inode, NULL);
->    435                  if (err)
->    436                          goto out;
->                                 ^^^^^^^^
-> Not holding the lock.  This is a double unlock bug.
-> 
->    437  
->    438                  err = f2fs_setup_fname_crypto(inode);
->    439                  if (err)
->    440                          goto out;
-> 
-> regards,
-> dan carpenter
+Eventually, Michael and I hope to add support for Galois Counter Mode,
+but that requires the file system to be able to store per-block
+cryptrographic information, which can be used for the GCM
+authentication tag as well as a per-block IV.  The per-block IV being
+stored in a separate data structure would also allow insert
+range/collapse range to work, at the cost of needing to do a lookup to
+fetch the per-block cryptographic information.  (And to set the
+per-block cryptographic information when writing the information, in a
+way where we can atomically write the data block as well as the
+per-block authenticaiton tag, which gets a bit tricky....)
 
-------------------------------------------------------------------------------
-One dashboard for servers and applications across Physical-Virtual-Cloud 
-Widest out-of-the-box monitoring support with 50+ applications
-Performance metrics, stats and reports that give you Actionable Insights
-Deep dive visibility with transaction tracing using APM Insight.
-http://ad.doubleclick.net/ddm/clk/290420510;117567292;y
+In any case, I believe support for data integrity is a far more
+compelling reason for adding pre-block crypto information, and
+supporting collapse/insert range is at best a fortunate side effect.
+
+Cheers,
+
+						- Ted
