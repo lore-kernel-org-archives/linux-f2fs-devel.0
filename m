@@ -1,24 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: f2fs crypto: add symlink encryption
-Date: Tue, 12 May 2015 11:17:16 -0700
-Message-ID: <20150512181716.GA27003@jaegeuk-mac02.mot.com>
-References: <20150512120916.GA9471@mwanda>
+Subject: Re: f2fs crypto: filename encryption facilities
+Date: Tue, 12 May 2015 11:19:45 -0700
+Message-ID: <20150512181945.GB27003@jaegeuk-mac02.mot.com>
+References: <20150512113856.GA12780@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YsEkB-0006GZ-5R
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YsEmY-00070s-1V
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 18:17:27 +0000
+	Tue, 12 May 2015 18:19:54 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YsEkA-00021T-36 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 18:17:27 +0000
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YsEmX-0006P0-47 for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 May 2015 18:19:54 +0000
 Content-Disposition: inline
-In-Reply-To: <20150512120916.GA9471@mwanda>
+In-Reply-To: <20150512113856.GA12780@mwanda>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,73 +33,33 @@ Cc: linux-f2fs-devel@lists.sourceforge.net
 
 Hi Dan,
 
-Thank you for pointing this out. :)
-
-On Tue, May 12, 2015 at 03:09:17PM +0300, Dan Carpenter wrote:
+On Tue, May 12, 2015 at 02:38:57PM +0300, Dan Carpenter wrote:
 > Hello Jaegeuk Kim,
 > 
-> The patch 24d584edddca: "f2fs crypto: add symlink encryption" from
-> Apr 29, 2015, leads to the following static checker warning:
+> The patch c54316510133: "f2fs crypto: filename encryption facilities"
+> from Apr 26, 2015, leads to the following static checker warning:
 > 
-> 	fs/f2fs/namei.c:487 f2fs_symlink()
-> 	warn: calling kfree() when 'sd' is always NULL.
-> 
-> fs/f2fs/namei.c
->    484          f2fs_fname_crypto_free_buffer(&disk_link);
->    485          return err;
->    486  out:
->    487          kfree(sd);
->                 ^^^^^^^^^
-> Freeing a NULL pointer is harmless but I have a static checker warning
-> for it because it can indicate confusion or typos.
+> 	fs/f2fs/crypto_fname.c:189 f2fs_fname_decrypt()
+> 	warn: passing __func__ while the format string already contains the name of the function 'f2fs_fname_decrypt'
 
-V2 resolved this.
-
-> 
->    488          f2fs_fname_crypto_free_buffer(&disk_link);
->    489          handle_failed_inode(inode);
->    490          return err;
->    491  }
-> 
-> "out" labels are bad.
-> 
-> The name is meaningless.  If it says "goto free_sd;" that's useful and
-> you know what it does without scrolling down and losing your place.
-> But with out: labels you can't know.
-> 
-> Sometimes out labels do nothing.
-> 
-> 	out:
-> 		return err;
-> 
-> These are supposed to prevent return with lock held bugs etc, but if you
-> look through the git log it has historically not been effective.  It
-> also introduces "forgot to set the error code" bugs.
-
-Agreed.
-Let me think about changing labels across the whole areas.
-
-> 
-> Sometime it does everything like in this case and that's very bug prone.
-> For example, shouldn't we release f2fs_lock_op(sbi) when f2fs_add_link()
-> fails earlier?
-
-The pair of f2fs_lock_op and f2fs_unlock_op here is used to keep FS
-consistency.
-And, the handle_failed_inode() should be covered by f2fs_lock_op, so there is
-no reason to do unlock and lock redundantly to handle the error case.
+Let me remain this.
+Since I'd like to merge these crypto files with ext4's ones and move into fs/.
+It needs to sync between ext4 and f2fs.
 
 Thanks,
 
 > 
-> Sometimes it does one thing which is good, but the name is just lazy.
+> fs/f2fs/crypto_fname.c
+>    187          ablkcipher_request_free(req);
+>    188          if (res < 0) {
+>    189                  printk_ratelimited(KERN_ERR
+>    190                          "%s: Error in f2fs_fname_decrypt (error code %d)\n",
+>                                               ^^^^^^^^^^^^^^^^^^
+>    191                          __func__, res);
+>                                 ^^^^^^^^
 > 
-> -out:
-> +unlock:
-> 	mutext_unlock();
-> 	return err;
-> 
-> Btw shouldn't we earlier if page_symlink() fails?
+>    192                  return res;
+>    193          }
 > 
 > regards,
 > dan carpenter
