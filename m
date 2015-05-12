@@ -1,22 +1,31 @@
-From: hujianyang <hujianyang@huawei.com>
-Subject: [PATCH] f2fs: add compat_ioctl to f2fs_dir_operations
-Date: Tue, 12 May 2015 16:05:57 +0800
-Message-ID: <5551B465.8000804@huawei.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH] f2fs: add default mount options to remount
+Date: Tue, 12 May 2015 17:52:51 +0800
+Message-ID: <009a01d08c99$86819ab0$9384d010$@samsung.com>
+References: <1430993497-3894-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <hujianyang@huawei.com>) id 1Ys5DB-0001AP-76
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1Ys6t3-0001Gz-5w
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 08:06:45 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1Ys5D7-0007cp-AJ
+	Tue, 12 May 2015 09:54:05 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1Ys6su-00033j-Pg
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 08:06:45 +0000
+	Tue, 12 May 2015 09:54:05 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0NO8002FKE5HC940@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 May 2015 18:53:41 +0900 (KST)
+In-reply-to: <1430993497-3894-1-git-send-email-heyunlei@huawei.com>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,44 +35,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: namjae.jeon@samsung.com, linux-f2fs-devel@lists.sourceforge.net
+To: 'Yunlei He' <heyunlei@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, cm224.lee@samsung.com
 
-commit e9750824114ff939d9da299e73651add6aa65456
+Hi Yunlei,
 
-f2fs: add compat_ioctl to provide backward compatability
+> -----Original Message-----
+> From: Yunlei He [mailto:heyunlei@huawei.com]
+> Sent: Thursday, May 07, 2015 6:12 PM
+> To: linux-f2fs-devel@lists.sourceforge.net; jaegeuk@kernel.org; cm224.lee@samsung.com
+> Cc: chao2.yu@samsung.com; Yunlei He
+> Subject: [PATCH] f2fs: add default mount options to remount
+> 
+> I use f2fs filesystem with /data partition on my Android phone
+> by the default mount options. When I remount /data in order to
+> adding discard option to run some benchmarks, I find the default
+> options such as background_gc, user_xattr and acl turned off.
+> 
+> So I introduce a function named default_options in super.c. It do
+> some default setting, and both mount and remount operations will
+> call this function to complete default setting.
 
-introduce compat_ioctl to regular files, but doesn't add this
-functionality to f2fs_dir_operations.
+Looks good to me.
 
-While running a 32-bit busybox, I met an error like this:
-(A is a directory)
+> 
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
 
-# busybox chattr +i A
-chattr: reading flags on A: Inappropriate ioctl for device
-
-This patch copies compat_ioctl from f2fs_file_operations and
-fix this problem.
-
-Signed-off-by: hujianyang <hujianyang@huawei.com>
----
- fs/f2fs/dir.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
-
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 12f6869..3e92376 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -879,4 +879,7 @@ const struct file_operations f2fs_dir_operations = {
- 	.iterate	= f2fs_readdir,
- 	.fsync		= f2fs_sync_file,
- 	.unlocked_ioctl	= f2fs_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl   = f2fs_compat_ioctl,
-+#endif
- };
--- 
-1.6.0.2
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
 
 
