@@ -1,31 +1,23 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: add compat_ioctl to f2fs_dir_operations
-Date: Tue, 12 May 2015 17:54:53 +0800
-Message-ID: <009b01d08c99$cc49fbf0$64ddf3d0$@samsung.com>
-References: <5551B465.8000804@huawei.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: f2fs crypto: filename encryption facilities
+Date: Tue, 12 May 2015 14:38:57 +0300
+Message-ID: <20150512113856.GA12780@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1Ys6ux-00035t-OT
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <dan.carpenter@oracle.com>) id 1Ys8Wm-00063n-4d
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 09:56:03 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1Ys6ul-00011L-PQ
+	Tue, 12 May 2015 11:39:12 +0000
+Received: from aserp1040.oracle.com ([141.146.126.69])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1Ys8Wl-0001Ym-7f
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 09:56:03 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NO800JYEE8QNL30@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 18:55:38 +0900 (KST)
-In-reply-to: <5551B465.8000804@huawei.com>
-Content-language: zh-cn
+	Tue, 12 May 2015 11:39:12 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,42 +27,31 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'hujianyang' <hujianyang@huawei.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: namjae.jeon@samsung.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jianyang,
+Hello Jaegeuk Kim,
 
-> -----Original Message-----
-> From: hujianyang [mailto:hujianyang@huawei.com]
-> Sent: Tuesday, May 12, 2015 4:06 PM
-> To: Jaegeuk Kim
-> Cc: Chao Yu; namjae.jeon@samsung.com; linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev][PATCH] f2fs: add compat_ioctl to f2fs_dir_operations
-> 
-> commit e9750824114ff939d9da299e73651add6aa65456
-> 
-> f2fs: add compat_ioctl to provide backward compatability
-> 
-> introduce compat_ioctl to regular files, but doesn't add this
-> functionality to f2fs_dir_operations.
-> 
-> While running a 32-bit busybox, I met an error like this:
-> (A is a directory)
-> 
-> # busybox chattr +i A
-> chattr: reading flags on A: Inappropriate ioctl for device
-> 
-> This patch copies compat_ioctl from f2fs_file_operations and
-> fix this problem.
+The patch c54316510133: "f2fs crypto: filename encryption facilities"
+from Apr 26, 2015, leads to the following static checker warning:
 
-Looks good to me.
+	fs/f2fs/crypto_fname.c:189 f2fs_fname_decrypt()
+	warn: passing __func__ while the format string already contains the name of the function 'f2fs_fname_decrypt'
 
-> 
-> Signed-off-by: hujianyang <hujianyang@huawei.com>
+fs/f2fs/crypto_fname.c
+   187          ablkcipher_request_free(req);
+   188          if (res < 0) {
+   189                  printk_ratelimited(KERN_ERR
+   190                          "%s: Error in f2fs_fname_decrypt (error code %d)\n",
+                                              ^^^^^^^^^^^^^^^^^^
+   191                          __func__, res);
+                                ^^^^^^^^
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+   192                  return res;
+   193          }
 
-
+regards,
+dan carpenter
 
 ------------------------------------------------------------------------------
 One dashboard for servers and applications across Physical-Virtual-Cloud 
