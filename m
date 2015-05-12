@@ -1,24 +1,26 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: f2fs crypto: filename encryption facilities
-Date: Tue, 12 May 2015 11:19:45 -0700
-Message-ID: <20150512181945.GB27003@jaegeuk-mac02.mot.com>
-References: <20150512113856.GA12780@mwanda>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: f2fs crypto: add symlink encryption
+Date: Tue, 12 May 2015 21:36:21 +0300
+Message-ID: <20150512183621.GP16501@mwanda>
+References: <20150512120916.GA9471@mwanda>
+	<20150512181716.GA27003@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YsEmY-00070s-1V
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <dan.carpenter@oracle.com>) id 1YsF2o-00079T-3O
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 18:19:54 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YsEmX-0006P0-47 for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 18:19:54 +0000
+	Tue, 12 May 2015 18:36:42 +0000
+Received: from aserp1040.oracle.com ([141.146.126.69])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1YsF2n-0003DD-CK
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 May 2015 18:36:42 +0000
 Content-Disposition: inline
-In-Reply-To: <20150512113856.GA12780@mwanda>
+In-Reply-To: <20150512181716.GA27003@jaegeuk-mac02.mot.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,41 +30,48 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Dan Carpenter <dan.carpenter@oracle.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Dan,
+On Tue, May 12, 2015 at 11:17:16AM -0700, Jaegeuk Kim wrote:
+> > For example, shouldn't we release f2fs_lock_op(sbi) when f2fs_add_link()
+> > fails earlier?
+> 
+> The pair of f2fs_lock_op and f2fs_unlock_op here is used to keep FS
+> consistency.
+> And, the handle_failed_inode() should be covered by f2fs_lock_op, so there is
+> no reason to do unlock and lock redundantly to handle the error case.
 
-On Tue, May 12, 2015 at 02:38:57PM +0300, Dan Carpenter wrote:
-> Hello Jaegeuk Kim,
-> 
-> The patch c54316510133: "f2fs crypto: filename encryption facilities"
-> from Apr 26, 2015, leads to the following static checker warning:
-> 
-> 	fs/f2fs/crypto_fname.c:189 f2fs_fname_decrypt()
-> 	warn: passing __func__ while the format string already contains the name of the function 'f2fs_fname_decrypt'
+Yes, you are right, but the code is still not correct unfortunately.
 
-Let me remain this.
-Since I'd like to merge these crypto files with ext4's ones and move into fs/.
-It needs to sync between ext4 and f2fs.
+fs/f2fs/namei.c
+   424  
+   425          f2fs_lock_op(sbi);
+   426          err = f2fs_add_link(dentry, inode);
+   427          if (err)
+   428                  goto out;
+                        ^^^^^^^^
+Holding the lock.  This is correct as you say.
 
-Thanks,
+   429          f2fs_unlock_op(sbi);
+   430  
+   431          if (f2fs_encrypted_inode(dir)) {
+   432                  struct qstr istr = QSTR_INIT(symname, len);
+   433  
+   434                  err = f2fs_inherit_context(dir, inode, NULL);
+   435                  if (err)
+   436                          goto out;
+                                ^^^^^^^^
+Not holding the lock.  This is a double unlock bug.
 
-> 
-> fs/f2fs/crypto_fname.c
->    187          ablkcipher_request_free(req);
->    188          if (res < 0) {
->    189                  printk_ratelimited(KERN_ERR
->    190                          "%s: Error in f2fs_fname_decrypt (error code %d)\n",
->                                               ^^^^^^^^^^^^^^^^^^
->    191                          __func__, res);
->                                 ^^^^^^^^
-> 
->    192                  return res;
->    193          }
-> 
-> regards,
-> dan carpenter
+   437  
+   438                  err = f2fs_setup_fname_crypto(inode);
+   439                  if (err)
+   440                          goto out;
+
+regards,
+dan carpenter
+
 
 ------------------------------------------------------------------------------
 One dashboard for servers and applications across Physical-Virtual-Cloud 
