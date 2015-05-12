@@ -1,22 +1,22 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: f2fs crypto: filename encryption facilities
-Date: Tue, 12 May 2015 14:38:57 +0300
-Message-ID: <20150512113856.GA12780@mwanda>
+Subject: Re: f2fs crypto: add symlink encryption
+Date: Tue, 12 May 2015 15:09:17 +0300
+Message-ID: <20150512120916.GA9471@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <dan.carpenter@oracle.com>) id 1Ys8Wm-00063n-4d
+	(envelope-from <dan.carpenter@oracle.com>) id 1Ys90B-0007mL-7I
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 11:39:12 +0000
+	Tue, 12 May 2015 12:09:35 +0000
 Received: from aserp1040.oracle.com ([141.146.126.69])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1Ys8Wl-0001Ym-7f
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1Ys90A-0005YA-DB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 11:39:12 +0000
+	Tue, 12 May 2015 12:09:35 +0000
 Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,26 +32,57 @@ Cc: linux-f2fs-devel@lists.sourceforge.net
 
 Hello Jaegeuk Kim,
 
-The patch c54316510133: "f2fs crypto: filename encryption facilities"
-from Apr 26, 2015, leads to the following static checker warning:
+The patch 24d584edddca: "f2fs crypto: add symlink encryption" from
+Apr 29, 2015, leads to the following static checker warning:
 
-	fs/f2fs/crypto_fname.c:189 f2fs_fname_decrypt()
-	warn: passing __func__ while the format string already contains the name of the function 'f2fs_fname_decrypt'
+	fs/f2fs/namei.c:487 f2fs_symlink()
+	warn: calling kfree() when 'sd' is always NULL.
 
-fs/f2fs/crypto_fname.c
-   187          ablkcipher_request_free(req);
-   188          if (res < 0) {
-   189                  printk_ratelimited(KERN_ERR
-   190                          "%s: Error in f2fs_fname_decrypt (error code %d)\n",
-                                              ^^^^^^^^^^^^^^^^^^
-   191                          __func__, res);
-                                ^^^^^^^^
+fs/f2fs/namei.c
+   484          f2fs_fname_crypto_free_buffer(&disk_link);
+   485          return err;
+   486  out:
+   487          kfree(sd);
+                ^^^^^^^^^
+Freeing a NULL pointer is harmless but I have a static checker warning
+for it because it can indicate confusion or typos.
 
-   192                  return res;
-   193          }
+   488          f2fs_fname_crypto_free_buffer(&disk_link);
+   489          handle_failed_inode(inode);
+   490          return err;
+   491  }
+
+"out" labels are bad.
+
+The name is meaningless.  If it says "goto free_sd;" that's useful and
+you know what it does without scrolling down and losing your place.
+But with out: labels you can't know.
+
+Sometimes out labels do nothing.
+
+	out:
+		return err;
+
+These are supposed to prevent return with lock held bugs etc, but if you
+look through the git log it has historically not been effective.  It
+also introduces "forgot to set the error code" bugs.
+
+Sometime it does everything like in this case and that's very bug prone.
+For example, shouldn't we release f2fs_lock_op(sbi) when f2fs_add_link()
+fails earlier?
+
+Sometimes it does one thing which is good, but the name is just lazy.
+
+-out:
++unlock:
+	mutext_unlock();
+	return err;
+
+Btw shouldn't we earlier if page_symlink() fails?
 
 regards,
 dan carpenter
+
 
 ------------------------------------------------------------------------------
 One dashboard for servers and applications across Physical-Virtual-Cloud 
