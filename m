@@ -1,23 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/3] f2fs: do not issue next dnode discard
-	redundantly
-Date: Mon, 11 May 2015 20:48:47 -0700
-Message-ID: <1431402528-24156-2-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 3/3] f2fs: get rid of buggy function
+Date: Mon, 11 May 2015 20:48:48 -0700
+Message-ID: <1431402528-24156-3-git-send-email-jaegeuk@kernel.org>
 References: <1431402528-24156-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Ys1Bk-0006NR-HK
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Ys1Bn-000876-4Y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 03:49:00 +0000
+	Tue, 12 May 2015 03:49:03 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Ys1Bj-0005zC-QD for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 May 2015 03:49:00 +0000
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Ys1Bm-0004QW-E3 for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 12 May 2015 03:49:03 +0000
 In-Reply-To: <1431402528-24156-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,39 +30,63 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-We have a discard map, so that we can avoid redundant discard issues.
+This patch avoids to use a buggy function for now.
+It needs to fix it later.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ fs/f2fs/segment.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 2c40ce1..342e0f7 100644
+index 342e0f7..17e89ba 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -486,7 +486,20 @@ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
+@@ -64,6 +64,8 @@ static inline unsigned long __reverse_ffs(unsigned long word)
+ 	return num;
+ }
  
- void discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
- {
--	if (f2fs_issue_discard(sbi, blkaddr, 1)) {
-+	int err = -ENOTSUPP;
++/* FIXME: Do not use this due to a subtle bug */
++#if 0
+ /*
+  * __find_rev_next(_zero)_bit is copied from lib/find_next_bit.c because
+  * f2fs_set_bit makes MSB and LSB reversed in a byte.
+@@ -122,6 +124,7 @@ found_first:
+ found_middle:
+ 	return result + __reverse_ffs(tmp);
+ }
++#endif
+ 
+ static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
+ 			unsigned long size, unsigned long offset)
+@@ -542,7 +545,7 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	unsigned long *ckpt_map = (unsigned long *)se->ckpt_valid_map;
+ 	unsigned long *discard_map = (unsigned long *)se->discard_map;
+ 	unsigned long *dmap = SIT_I(sbi)->tmp_map;
+-	unsigned int start = 0, end = -1;
++	unsigned int start = -1, end = 0;
+ 	bool force = (cpc->reason == CP_DISCARD);
+ 	int i;
+ 
+@@ -561,12 +564,14 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 				(cur_map[i] ^ ckpt_map[i]) & ckpt_map[i];
+ 
+ 	while (force || SM_I(sbi)->nr_discards <= SM_I(sbi)->max_discards) {
+-		start = __find_rev_next_bit(dmap, max_blocks, end + 1);
+-		if (start >= max_blocks)
+-			break;
+ 
+ 		end = __find_rev_next_zero_bit(dmap, max_blocks, start + 1);
+-		__add_discard_entry(sbi, cpc, se, start, end);
 +
-+	if (test_opt(sbi, DISCARD)) {
-+		struct seg_entry *se = get_seg_entry(sbi,
-+				GET_SEGNO(sbi, blkaddr));
-+		unsigned int offset = GET_BLKOFF_FROM_SEG0(sbi, blkaddr);
++		__add_discard_entry(sbi, cpc, se, start + 1, end);
 +
-+		if (f2fs_test_bit(offset, se->discard_map))
-+			return;
-+
-+		err = f2fs_issue_discard(sbi, blkaddr, 1);
-+	}
-+
-+	if (err) {
- 		struct page *page = grab_meta_page(sbi, blkaddr);
- 		/* zero-filled page */
- 		set_page_dirty(page);
++		if (end >= max_blocks)
++			break;
++		start = end;
+ 	}
+ }
+ 
 -- 
 2.1.1
 
