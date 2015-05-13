@@ -1,23 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/6] f2fs crypto: get rid of ci_mode from struct
-	f2fs_crypt_info
-Date: Tue, 12 May 2015 17:40:32 -0700
-Message-ID: <1431477634-48111-4-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 5/6] f2fs crypto: shrink size of the
+	f2fs_crypto_ctx structure
+Date: Tue, 12 May 2015 17:40:33 -0700
+Message-ID: <1431477634-48111-5-git-send-email-jaegeuk@kernel.org>
 References: <1431477634-48111-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1YsKjO-0005g4-LW
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YsKjR-0001fo-99
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 13 May 2015 00:41:02 +0000
+	Wed, 13 May 2015 00:41:05 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1YsKjN-0007nW-Ks for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 13 May 2015 00:41:02 +0000
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YsKjQ-0003zW-9T for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 13 May 2015 00:41:05 +0000
 In-Reply-To: <1431477634-48111-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -33,115 +33,175 @@ Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
 
 This patch integrates the below patch into f2fs.
 
-"ext4 crypto: get rid of ci_mode from struct ext4_crypt_info
+"ext4 crypto: shrink size of the ext4_crypto_ctx structure
 
-The ci_mode field was superfluous, and getting rid of it gets rid of
-an unused hole in the structure."
+Some fields are only used when the crypto_ctx is being used on the
+read path, some are only used on the write path, and some are only
+used when the structure is on free list.  Optimize memory use by using
+a union."
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/crypto.c       | 11 +++++------
- fs/f2fs/crypto_fname.c |  4 ++--
- fs/f2fs/crypto_key.c   | 12 ++++++------
- fs/f2fs/f2fs_crypto.h  |  1 -
- 4 files changed, 13 insertions(+), 15 deletions(-)
+ fs/f2fs/crypto.c      | 40 ++++++++++++++++++----------------------
+ fs/f2fs/f2fs_crypto.h | 21 ++++++++++++++-------
+ fs/f2fs/segment.c     |  2 +-
+ 3 files changed, 33 insertions(+), 30 deletions(-)
 
 diff --git a/fs/f2fs/crypto.c b/fs/f2fs/crypto.c
-index 5491d1e..c1a5c6f 100644
+index c1a5c6f..e36eddd 100644
 --- a/fs/f2fs/crypto.c
 +++ b/fs/f2fs/crypto.c
-@@ -151,14 +151,13 @@ struct f2fs_crypto_ctx *f2fs_get_crypto_ctx(struct inode *inode)
- 	 * Allocate a new Crypto API context if we don't already have
- 	 * one or if it isn't the right mode.
- 	 */
--	BUG_ON(ci->ci_mode == F2FS_ENCRYPTION_MODE_INVALID);
--	if (ctx->tfm && (ctx->mode != ci->ci_mode)) {
-+	if (ctx->tfm && (ctx->mode != ci->ci_data_mode)) {
- 		crypto_free_tfm(ctx->tfm);
- 		ctx->tfm = NULL;
- 		ctx->mode = F2FS_ENCRYPTION_MODE_INVALID;
+@@ -82,14 +82,14 @@ void f2fs_release_crypto_ctx(struct f2fs_crypto_ctx *ctx)
+ {
+ 	unsigned long flags;
+ 
+-	if (ctx->bounce_page) {
++	if (ctx->flags & F2FS_WRITE_PATH_FL && ctx->w.bounce_page) {
+ 		if (ctx->flags & F2FS_BOUNCE_PAGE_REQUIRES_FREE_ENCRYPT_FL)
+-			__free_page(ctx->bounce_page);
++			__free_page(ctx->w.bounce_page);
+ 		else
+-			mempool_free(ctx->bounce_page, f2fs_bounce_page_pool);
+-		ctx->bounce_page = NULL;
++			mempool_free(ctx->w.bounce_page, f2fs_bounce_page_pool);
++		ctx->w.bounce_page = NULL;
  	}
- 	if (!ctx->tfm) {
--		switch (ci->ci_mode) {
-+		switch (ci->ci_data_mode) {
- 		case F2FS_ENCRYPTION_MODE_AES_256_XTS:
- 			ctx->tfm = crypto_ablkcipher_tfm(
- 				crypto_alloc_ablkcipher("xts(aes)", 0, 0));
-@@ -178,9 +177,9 @@ struct f2fs_crypto_ctx *f2fs_get_crypto_ctx(struct inode *inode)
- 			ctx->tfm = NULL;
- 			goto out;
- 		}
--		ctx->mode = ci->ci_mode;
-+		ctx->mode = ci->ci_data_mode;
+-	ctx->control_page = NULL;
++	ctx->w.control_page = NULL;
+ 	if (ctx->flags & F2FS_CTX_REQUIRES_FREE_ENCRYPT_FL) {
+ 		if (ctx->tfm)
+ 			crypto_free_tfm(ctx->tfm);
+@@ -146,6 +146,7 @@ struct f2fs_crypto_ctx *f2fs_get_crypto_ctx(struct inode *inode)
+ 	} else {
+ 		ctx->flags &= ~F2FS_CTX_REQUIRES_FREE_ENCRYPT_FL;
  	}
--	BUG_ON(ci->ci_size != f2fs_encryption_key_size(ci->ci_mode));
-+	BUG_ON(ci->ci_size != f2fs_encryption_key_size(ci->ci_data_mode));
++	ctx->flags &= ~F2FS_WRITE_PATH_FL;
  
  	/*
- 	 * There shouldn't be a bounce page attached to the crypto
-@@ -388,7 +387,7 @@ static int f2fs_page_crypto(struct f2fs_crypto_ctx *ctx,
- 	int res = 0;
- 
- 	BUG_ON(!ctx->tfm);
--	BUG_ON(ctx->mode != fi->i_crypt_info->ci_mode);
-+	BUG_ON(ctx->mode != fi->i_crypt_info->ci_data_mode);
- 
- 	if (ctx->mode != F2FS_ENCRYPTION_MODE_AES_256_XTS) {
- 		printk_ratelimited(KERN_ERR
-diff --git a/fs/f2fs/crypto_fname.c b/fs/f2fs/crypto_fname.c
-index 8f3ff9b..e3a1bdc 100644
---- a/fs/f2fs/crypto_fname.c
-+++ b/fs/f2fs/crypto_fname.c
-@@ -269,9 +269,9 @@ int f2fs_setup_fname_crypto(struct inode *inode)
- 	if (!ci || ci->ci_ctfm)
- 		return 0;
- 
--	if (ci->ci_mode != F2FS_ENCRYPTION_MODE_AES_256_CTS) {
-+	if (ci->ci_filename_mode != F2FS_ENCRYPTION_MODE_AES_256_CTS) {
- 		printk_once(KERN_WARNING "f2fs: unsupported key mode %d\n",
--				ci->ci_mode);
-+				ci->ci_filename_mode);
- 		return -ENOKEY;
+ 	 * Allocate a new Crypto API context if we don't already have
+@@ -181,12 +182,6 @@ struct f2fs_crypto_ctx *f2fs_get_crypto_ctx(struct inode *inode)
  	}
+ 	BUG_ON(ci->ci_size != f2fs_encryption_key_size(ci->ci_data_mode));
  
-diff --git a/fs/f2fs/crypto_key.c b/fs/f2fs/crypto_key.c
-index 2bdcae5..dbfc616 100644
---- a/fs/f2fs/crypto_key.c
-+++ b/fs/f2fs/crypto_key.c
-@@ -142,14 +142,14 @@ int _f2fs_get_encryption_info(struct inode *inode)
- 	memcpy(crypt_info->ci_master_key, ctx.master_key_descriptor,
- 				sizeof(crypt_info->ci_master_key));
- 	if (S_ISREG(inode->i_mode))
--		crypt_info->ci_mode = ctx.contents_encryption_mode;
-+		crypt_info->ci_size =
-+			f2fs_encryption_key_size(crypt_info->ci_data_mode);
- 	else if (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode))
--		crypt_info->ci_mode = ctx.filenames_encryption_mode;
--	else {
--		printk(KERN_ERR "f2fs crypto: Unsupported inode type.\n");
-+		crypt_info->ci_size =
-+			f2fs_encryption_key_size(crypt_info->ci_filename_mode);
-+	else
- 		BUG();
--	}
--	crypt_info->ci_size = f2fs_encryption_key_size(crypt_info->ci_mode);
-+
- 	BUG_ON(!crypt_info->ci_size);
+-	/*
+-	 * There shouldn't be a bounce page attached to the crypto
+-	 * context at this point.
+-	 */
+-	BUG_ON(ctx->bounce_page);
+-
+ out:
+ 	if (res) {
+ 		if (!IS_ERR_OR_NULL(ctx))
+@@ -203,8 +198,8 @@ out:
+ static void completion_pages(struct work_struct *work)
+ {
+ 	struct f2fs_crypto_ctx *ctx =
+-		container_of(work, struct f2fs_crypto_ctx, work);
+-	struct bio *bio	= ctx->bio;
++		container_of(work, struct f2fs_crypto_ctx, r.work);
++	struct bio *bio = ctx->r.bio;
+ 	struct bio_vec *bv;
+ 	int i;
  
- 	memcpy(full_key_descriptor, F2FS_KEY_DESC_PREFIX,
+@@ -225,9 +220,9 @@ static void completion_pages(struct work_struct *work)
+ 
+ void f2fs_end_io_crypto_work(struct f2fs_crypto_ctx *ctx, struct bio *bio)
+ {
+-	INIT_WORK(&ctx->work, completion_pages);
+-	ctx->bio = bio;
+-	queue_work(f2fs_read_workqueue, &ctx->work);
++	INIT_WORK(&ctx->r.work, completion_pages);
++	ctx->r.bio = bio;
++	queue_work(f2fs_read_workqueue, &ctx->r.work);
+ }
+ 
+ /**
+@@ -238,12 +233,12 @@ void f2fs_exit_crypto(void)
+ 	struct f2fs_crypto_ctx *pos, *n;
+ 
+ 	list_for_each_entry_safe(pos, n, &f2fs_free_crypto_ctxs, free_list) {
+-		if (pos->bounce_page) {
++		if (pos->w.bounce_page) {
+ 			if (pos->flags &
+ 				F2FS_BOUNCE_PAGE_REQUIRES_FREE_ENCRYPT_FL)
+-				__free_page(pos->bounce_page);
++				__free_page(pos->w.bounce_page);
+ 			else
+-				mempool_free(pos->bounce_page,
++				mempool_free(pos->w.bounce_page,
+ 						f2fs_bounce_page_pool);
+ 		}
+ 		if (pos->tfm)
+@@ -335,7 +330,7 @@ void f2fs_restore_and_release_control_page(struct page **page)
+ 	ctx = (struct f2fs_crypto_ctx *)page_private(bounce_page);
+ 
+ 	/* restore control page */
+-	*page = ctx->control_page;
++	*page = ctx->w.control_page;
+ 
+ 	f2fs_restore_control_page(bounce_page);
+ }
+@@ -492,8 +487,9 @@ struct page *f2fs_encrypt(struct inode *inode,
+ 	} else {
+ 		ctx->flags |= F2FS_BOUNCE_PAGE_REQUIRES_FREE_ENCRYPT_FL;
+ 	}
+-	ctx->bounce_page = ciphertext_page;
+-	ctx->control_page = plaintext_page;
++	ctx->flags |= F2FS_WRITE_PATH_FL;
++	ctx->w.bounce_page = ciphertext_page;
++	ctx->w.control_page = plaintext_page;
+ 	err = f2fs_page_crypto(ctx, inode, F2FS_ENCRYPT, plaintext_page->index,
+ 					plaintext_page, ciphertext_page);
+ 	if (err) {
 diff --git a/fs/f2fs/f2fs_crypto.h b/fs/f2fs/f2fs_crypto.h
-index 6e41394..58682d2 100644
+index 58682d2..e33cec9 100644
 --- a/fs/f2fs/f2fs_crypto.h
 +++ b/fs/f2fs/f2fs_crypto.h
-@@ -75,7 +75,6 @@ struct f2fs_encryption_key {
- } __attribute__((__packed__));
+@@ -87,16 +87,23 @@ struct f2fs_crypt_info {
  
- struct f2fs_crypt_info {
--	unsigned char	ci_mode;
- 	unsigned char	ci_size;
- 	char		ci_data_mode;
- 	char		ci_filename_mode;
+ #define F2FS_CTX_REQUIRES_FREE_ENCRYPT_FL             0x00000001
+ #define F2FS_BOUNCE_PAGE_REQUIRES_FREE_ENCRYPT_FL     0x00000002
++#define F2FS_WRITE_PATH_FL			      0x00000004
+ 
+ struct f2fs_crypto_ctx {
+ 	struct crypto_tfm *tfm;         /* Crypto API context */
+-	struct page *bounce_page;       /* Ciphertext page on write path */
+-	struct page *control_page;      /* Original page on write path */
+-	struct bio *bio;                /* The bio for this context */
+-	struct work_struct work;        /* Work queue for read complete path */
+-	struct list_head free_list;     /* Free list */
+-	int flags;                      /* Flags */
+-	int mode;                       /* Encryption mode for tfm */
++	union {
++		struct {
++			struct page *bounce_page;       /* Ciphertext page */
++			struct page *control_page;      /* Original page  */
++		} w;
++		struct {
++			struct bio *bio;
++			struct work_struct work;
++		} r;
++		struct list_head free_list;     /* Free list */
++	};
++	char flags;                      /* Flags */
++	char mode;                       /* Encryption mode for tfm */
+ };
+ 
+ struct f2fs_completion_result {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 17e89ba..70d1ccb 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1369,7 +1369,7 @@ static inline bool is_merged_page(struct f2fs_sb_info *sbi,
+ 			/* encrypted page */
+ 			ctx = (struct f2fs_crypto_ctx *)page_private(
+ 								bvec->bv_page);
+-			target = ctx->control_page;
++			target = ctx->w.control_page;
+ 		}
+ 
+ 		if (page == target) {
 -- 
 2.1.1
 
