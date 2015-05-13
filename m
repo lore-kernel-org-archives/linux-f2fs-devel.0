@@ -1,66 +1,48 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] Space leak in f2fs
-Date: Wed, 13 May 2015 10:46:04 -0700
-Message-ID: <20150513174417.GA56247@jaegeuk-mac02.mot.com>
-References: <5552FA7D.7000704@huawei.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] f2fs: fix building on 32-bit architectures
+Date: Wed, 13 May 2015 22:49:58 +0200
+Message-ID: <2179770.3R5P5nr1c7@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5552FA7D.7000704@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: hujianyang <hujianyang@huawei.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Yossi Goldfill <ygoldfill@radianmemory.com>, linux-f2fs-devel@lists.sourceforge.net, Changman Lee <cm224.lee@samsung.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Hu,
+A bug fix to the debug output extended the type of some local
+variables to 64-bit, which now causes the kernel to fail building
+because of missing 64-bit division functions:
 
-Thank you for the report.
+ERROR: "__aeabi_uldivmod" [fs/f2fs/f2fs.ko] undefined!
 
-When I tried to reproduce this, it seems that this can occur under somewhat
-stressful condition. I could't reach out to this problem.
+In the kernel, we have to use div_u64 or do_div to do this,
+in order to annotate that this is an expensive operation.
 
-Nevertheless, I think this is a possible scenario, so I wrote a patch for this.
-Could you test this patch?
+As the function is only called for debug out, we know this
+is not performance critical, so it is safe to use div_u64.
 
-Thanks,
-
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: d1f85bd38db19 ("f2fs: avoid value overflow in showing current status")
 ---
- fs/f2fs/super.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+This patch is required for ARM allmodconfig builds.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 19438f2..4593cd1 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -431,8 +431,26 @@ static int f2fs_drop_inode(struct inode *inode)
- 	 *    - f2fs_gc -> iput -> evict
- 	 *       - inode_wait_for_writeback(inode)
- 	 */
--	if (!inode_unhashed(inode) && inode->i_state & I_SYNC)
-+	if (!inode_unhashed(inode) && inode->i_state & I_SYNC) {
-+		if (!inode->i_nlink && !is_bad_inode(inode)) {
-+			spin_unlock(&inode->i_lock);
-+
-+			i_size_write(inode, 0);
-+
-+			if (F2FS_HAS_BLOCKS(inode))
-+				f2fs_truncate(inode);
-+
-+			f2fs_lock_op(F2FS_I_SB(inode));
-+			remove_inode_page(inode);
-+			f2fs_unlock_op(F2FS_I_SB(inode));
-+
-+			/* avoid any write_inode call */
-+			clear_inode_flag(F2FS_I(inode), FI_DIRTY_INODE);
-+
-+			spin_lock(&inode->i_lock);
-+		}
- 		return 0;
-+	}
- 	return generic_drop_inode(inode);
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index efbc83f07305..75176e0dd6c8 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -113,10 +113,10 @@ static void update_sit_info(struct f2fs_sb_info *sbi)
+ 			ndirty++;
+ 		}
+ 	}
+-	dist = MAIN_SECS(sbi) * hblks_per_sec * hblks_per_sec / 100;
+-	si->bimodal = bimodal / dist;
++	dist = div_u64(MAIN_SECS(sbi) * hblks_per_sec * hblks_per_sec, 100);
++	si->bimodal = div_u64(bimodal, dist);
+ 	if (si->dirty_count)
+-		si->avg_vblocks = total_vblocks / ndirty;
++		si->avg_vblocks = div_u64(total_vblocks, ndirty);
+ 	else
+ 		si->avg_vblocks = 0;
  }
- 
--- 
-2.1.1
-
