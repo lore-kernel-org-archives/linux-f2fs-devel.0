@@ -1,60 +1,111 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 03/18] f2fs crypto: declare some definitions for f2fs
- encryption feature
-Date: Tue, 12 May 2015 23:48:02 -0700
-Message-ID: <20150513064802.GA48682@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <1431145253-2019-1-git-send-email-jaegeuk@kernel.org>
- <1431145253-2019-3-git-send-email-jaegeuk@kernel.org>
- <20150513020208.GK15721@dastard>
+From: hujianyang <hujianyang@huawei.com>
+Subject: Space leak in f2fs
+Date: Wed, 13 May 2015 15:17:17 +0800
+Message-ID: <5552FA7D.7000704@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150513020208.GK15721@dastard>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao2.yu@samsung.com>, cm224.lee@samsung.com, linux-f2fs-devel@lists.sourceforge.net, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, May 13, 2015 at 12:02:08PM +1000, Dave Chinner wrote:
-> On Fri, May 08, 2015 at 09:20:38PM -0700, Jaegeuk Kim wrote:
-> > This definitions will be used by inode and superblock for encyption.
-> 
-> How much of this crypto stuff is common with or only slightly
-> modified from the ext4 code?  Is the behaviour and features the
-> same? Is the user API and management tools the same?
-> 
-> IMO, if there is any amount of overlap, then we should be
-> implementing this stuff as generic code, not propagating the same
-> code through multiple filesystems via copy-n-paste-n-modify. This
-> will simply end up with diverging code, different bugs and feature
-> sets, and none of the implementations will get the review and
-> maintenance they really require...
-> 
-> And, FWIW, this is the reason why I originally asked for the ext4
-> encryption code to be pulled up to the VFS: precisely so we didn't
-> end up with a rapid proliferation of individual in-filesystem
-> encryption implementations that are all slightly different...
+Hi Jaegeuk,
 
-Totally agreed!
+I found a space leak problem in f2fs. This problem could lead to
+ENOSPC error during stress tests, e.g. ltp.
 
-AFAIK, Ted wants to push the codes as a crypto library into fs/ finally, so
-I believe most part of crypto codes are common.
+<<<test_output>>>
+growfiles(gf15): 11656 growfiles.c/2249: 16920 tlibio.c/739 write(6, buf, 1352) ret:-1, errno=28 No space left on device
+gf15        1  TFAIL  :  growfiles.c:132: Test failed
 
-But, in order to realize that quickly, Ted implemented the feature to finalize
-on-disk and in-memory design in EXT4 as a first step.
-Then, I've been catching up and validating its design by implementing it in
-F2FS, which also intends to figure out what crypto codes can be exactly common.
+...
 
-As Ted mentioned before, since next android version tries to use per-file
-encryption, F2FS also needs to support it as quick as possible likewise EXT4.
+And can be reproduced by these steps whether background_gc is on
+or not:
 
-Meanwhile, surely I've been working on writing patches to push them into fs/;
-currenlty, I did for cryto.c and will do for crypto_key.c and crypto_fname.c.
-But, it needs to think about crypto_policy.c differently, since it may depend
-on how each filesystem stores the policy information respectively; we cannot
-push all the filesystems should use xattrs, right?
+1) format a 4GB f2fs partition
+2) dd a 3G file,
+3) unlink it.
 
-Anyway, let me take a time to work on this and submit RFC patches.
+Do these steps again and again. Soon, after one unlink operation,
+you can see the space of the 3G file is not free.
+
+Fs-Server:/mnt/f2fs # df .
+Filesystem     1K-blocks   Used Available Use% Mounted on
+/dev/sdd3        4193280 301064   3854328   8% /mnt/f2fs
+Fs-Server:/mnt/f2fs # dd if=/dev/zero of=./test bs=1M count=3072
+3072+0 records in
+3072+0 records out
+3221225472 bytes (3.2 GB) copied, 3.1892 s, 1.0 GB/s
+Fs-Server:/mnt/f2fs # unlink ./test
+Fs-Server:/mnt/f2fs # dd if=/dev/zero of=./test bs=1M count=3072
+3072+0 records in
+3072+0 records out
+3221225472 bytes (3.2 GB) copied, 3.44288 s, 936 MB/s
+Fs-Server:/mnt/f2fs # unlink ./test
+Fs-Server:/mnt/f2fs # df .
+Filesystem     1K-blocks    Used Available Use% Mounted on
+/dev/sdd3        4193280 3449888    705504  84% /mnt/f2fs
+Fs-Server:/mnt/f2fs # ls
+Fs-Server:/mnt/f2fs # ls
+Fs-Server:/mnt/f2fs # df .
+Filesystem     1K-blocks    Used Available Use% Mounted on
+/dev/sdd3        4193280 3449888    705504  84% /mnt/f2fs
+Fs-Server:/mnt/f2fs # dd if=/dev/zero of=./test bs=1M count=3072
+dd: writing `./test': No space left on device
+689+0 records in
+688+0 records out
+721719296 bytes (722 MB) copied, 0.618972 s, 1.2 GB/s
+Fs-Server:/mnt/f2fs # df .
+Filesystem     1K-blocks    Used Available Use% Mounted on
+/dev/sdd3        4193280 4155392         0 100% /mnt/f2fs
+Fs-Server:/mnt/f2fs # ls -l test
+-rw-r--r-- 1 root root 721719296 May 13 14:52 test
+
+
+We can reuse the leaking space after a sync call:
+
+
+Fs-Server:/mnt/f2fs # df .
+Filesystem     1K-blocks    Used Available Use% Mounted on
+/dev/sdd3        4193280 4155392         0 100% /mnt/f2fs
+Fs-Server:/mnt/f2fs # sync
+Fs-Server:/mnt/f2fs # df .
+Filesystem     1K-blocks    Used Available Use% Mounted on
+/dev/sdd3        4193280 1006568   3148824  25% /mnt/f2fs
+
+
+I found this may caused by .drop_inode in f2fs. see f2fs_drop_inode()
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 19438f2..7646d2a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -424,15 +424,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+
+ static int f2fs_drop_inode(struct inode *inode)
+ {
+-       /*
+-        * This is to avoid a deadlock condition like below.
+-        * writeback_single_inode(inode)
+-        *  - f2fs_write_data_page
+-        *    - f2fs_gc -> iput -> evict
+-        *       - inode_wait_for_writeback(inode)
+-        */
+-       if (!inode_unhashed(inode) && inode->i_state & I_SYNC)
+-               return 0;
+        return generic_drop_inode(inode);
+ }
+
+After removing these code, this problem is fixed. But this function is
+introduced by commit 531ad7d58c6476c5856653448b4c7d26427502b4 to fix
+a deadlock problem.
+
+I wish you and other developers in this list could help me to fix this
+problem in a correct way.
 
 Thanks,
+Hu
+
