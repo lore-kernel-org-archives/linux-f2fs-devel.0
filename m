@@ -1,86 +1,172 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs crypto: fix incorrect release for crypto ctx
-Date: Fri, 15 May 2015 11:14:34 +0800
-Message-ID: <015d01d08ebd$5f5edd00$1e1c9700$@samsung.com>
+Subject: RE: [f2fs-dev] Space leak in f2fs
+Date: Fri, 15 May 2015 16:31:43 +0800
+Message-ID: <015e01d08ee9$ac8e1060$05aa3120$@samsung.com>
+References: <5552FA7D.7000704@huawei.com>
+ <20150513174417.GA56247@jaegeuk-mac02.mot.com>
+ <20150514002417.GC68412@jaegeuk-mac02> <5553FD09.9030508@huawei.com>
+ <20150514211250.GA76424@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <20150514211250.GA76424@jaegeuk-mac02.mot.com>
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'hujianyang' <hujianyang@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When encryption feature is enable, if we rmmod f2fs module,
-we will encounter a stack backtrace reported in syslog:
+Hi Jaegeuk,
 
-"BUG: Bad page state in process rmmod  pfn:aaf8a
-page:f0f4f148 count:0 mapcount:129 mapping:ee2f4104 index:0x80
-flags: 0xee2830a4(referenced|lru|slab|private_2|writeback|swapbacked|mlocked)
-page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-bad because of flags:
-flags: 0x2030a0(lru|slab|private_2|writeback|mlocked)
-Modules linked in: f2fs(O-) fuse bnep rfcomm bluetooth dm_crypt binfmt_misc snd_intel8x0 snd_ac97_codec ac97_bus snd_pcm
-snd_seq_midi snd_rawmidi snd_seq_midi_event snd_seq snd_timer snd_seq_device joydev ppdev mac_hid lp hid_generic i2c_piix4
-parport_pc psmouse snd serio_raw parport soundcore ext4 jbd2 mbcache usbhid hid e1000 [last unloaded: f2fs]
-CPU: 1 PID: 3049 Comm: rmmod Tainted: G    B      O    4.1.0-rc3+ #10
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-00000000 00000000 c0021eb4 c15b7518 f0f4f148 c0021ed8 c112e0b7 c1779174
-c9b75674 000aaf8a 01b13ce1 c17791a4 f0f4f148 ee2830a4 c0021ef8 c112e3c3
-00000000 f0f4f148 c0021f34 f0f4f148 ee2830a4 ef9f0000 c0021f20 c112fdf8
-Call Trace:
-[<c15b7518>] dump_stack+0x41/0x52
-[<c112e0b7>] bad_page.part.72+0xa7/0x100
-[<c112e3c3>] free_pages_prepare+0x213/0x220
-[<c112fdf8>] free_hot_cold_page+0x28/0x120
-[<c1073380>] ? try_to_wake_up+0x2b0/0x2b0
-[<c112ff15>] __free_pages+0x25/0x30
-[<c112c4fd>] mempool_free_pages+0xd/0x10
-[<c112c5f1>] mempool_free+0x31/0x90
-[<f0f441cf>] f2fs_exit_crypto+0x6f/0xf0 [f2fs]
-[<f0f456c4>] exit_f2fs_fs+0x23/0x95f [f2fs]
-[<c10c30e0>] SyS_delete_module+0x130/0x180
-[<c11556d6>] ? vm_munmap+0x46/0x60
-[<c15bd888>] sysenter_do_call+0x12/0x12"
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Friday, May 15, 2015 5:14 AM
+> To: hujianyang
+> Cc: linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] Space leak in f2fs
+> 
+> Hi Hu,
+> 
+> I've been rethinking about whole this issue differently.
+> And, now I'm starting to test with the below patch instead of previous one.
+> 
+> Thanks,
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c | 19 +++++++++++++++++++
+>  fs/f2fs/data.c       |  4 ++++
+>  fs/f2fs/f2fs.h       |  1 +
+>  fs/f2fs/super.c      | 15 ---------------
+>  4 files changed, 24 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 7b7a9d8..74875fb 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -378,6 +378,20 @@ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int
+> type)
+>  	spin_unlock(&im->ino_lock);
+>  }
+> 
+> +static bool __exist_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+> +{
+> +	struct inode_management *im = &sbi->im[type];
+> +	struct ino_entry *e;
+> +	bool exist = false;
+> +
+> +	spin_lock(&im->ino_lock);
+> +	e = radix_tree_lookup(&im->ino_root, ino);
+> +	if (e)
+> +		exist = true;
+> +	spin_unlock(&im->ino_lock);
+> +	return exist;
+> +}
+> +
+>  void add_dirty_inode(struct f2fs_sb_info *sbi, nid_t ino, int type)
+>  {
+>  	/* add new dirty ino entry into list */
+> @@ -458,6 +472,11 @@ void remove_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+>  	__remove_ino_entry(sbi, ino, ORPHAN_INO);
+>  }
+> 
+> +bool is_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+> +{
+> +	return __exist_ino_entry(sbi, ino, ORPHAN_INO);
+> +}
+> +
+>  static void recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+>  {
+>  	struct inode *inode = f2fs_iget(sbi->sb, ino);
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index b0cc2aa..1988f5f 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1749,6 +1749,10 @@ write:
+>  		goto out;
+>  	}
+> 
+> +	/* if orphan inode, we don't need to write its data */
+> +	if (is_orphan_inode(sbi, inode->i_ino))
+> +		goto out;
 
-The reason is that:
+When user create a temp file by invoking open with O_TMPFILE flag,
+in ->tmpfile our temp file will be added into orphan list as its
+nlink is zero.
 
-since commit 0827e645fd35
-("f2fs crypto: shrink size of the f2fs_crypto_ctx structure") is merged,
-some fields in f2fs_crypto_ctx structure are merged into a union as they
-will never be used simultaneously in write path, read path or on free list.
+If we skip writting out data for this orphan inode, later, even though
+we add nlink/directory entry for orphan inode by calling linkat,
+our file will contain inconsistent data between in-memory and on-disk.
 
-In f2fs_exit_crypto, we traverse each crypto ctx from free list, in this
-moment, our free_list field in union is valid, but still we will try to
-release memory space which is pointed by other invalid field in union
-structure for each ctx.
+So how about considering for this case?
 
-Then the error occurs, let's fix it with this patch.
+BTW, the previous fixing patch looks good to me.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/crypto.c | 8 --------
- 1 file changed, 8 deletions(-)
+Thanks,
 
-diff --git a/fs/f2fs/crypto.c b/fs/f2fs/crypto.c
-index e36eddd..0a66c9b 100644
---- a/fs/f2fs/crypto.c
-+++ b/fs/f2fs/crypto.c
-@@ -233,14 +233,6 @@ void f2fs_exit_crypto(void)
- 	struct f2fs_crypto_ctx *pos, *n;
- 
- 	list_for_each_entry_safe(pos, n, &f2fs_free_crypto_ctxs, free_list) {
--		if (pos->w.bounce_page) {
--			if (pos->flags &
--				F2FS_BOUNCE_PAGE_REQUIRES_FREE_ENCRYPT_FL)
--				__free_page(pos->w.bounce_page);
--			else
--				mempool_free(pos->w.bounce_page,
--						f2fs_bounce_page_pool);
--		}
- 		if (pos->tfm)
- 			crypto_free_tfm(pos->tfm);
- 		kmem_cache_free(f2fs_crypto_ctx_cachep, pos);
--- 
-2.3.3
+> +
+>  	if (!wbc->for_reclaim)
+>  		need_balance_fs = true;
+>  	else if (has_not_enough_free_secs(sbi, 0))
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 8f1f21a..697346a 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1726,6 +1726,7 @@ int acquire_orphan_inode(struct f2fs_sb_info *);
+>  void release_orphan_inode(struct f2fs_sb_info *);
+>  void add_orphan_inode(struct f2fs_sb_info *, nid_t);
+>  void remove_orphan_inode(struct f2fs_sb_info *, nid_t);
+> +bool is_orphan_inode(struct f2fs_sb_info *, nid_t);
+>  void recover_orphan_inodes(struct f2fs_sb_info *);
+>  int get_valid_checkpoint(struct f2fs_sb_info *);
+>  void update_dirty_page(struct inode *, struct page *);
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 19438f2..1d0973a 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -422,20 +422,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+>  	return &fi->vfs_inode;
+>  }
+> 
+> -static int f2fs_drop_inode(struct inode *inode)
+> -{
+> -	/*
+> -	 * This is to avoid a deadlock condition like below.
+> -	 * writeback_single_inode(inode)
+> -	 *  - f2fs_write_data_page
+> -	 *    - f2fs_gc -> iput -> evict
+> -	 *       - inode_wait_for_writeback(inode)
+> -	 */
+> -	if (!inode_unhashed(inode) && inode->i_state & I_SYNC)
+> -		return 0;
+> -	return generic_drop_inode(inode);
+> -}
+> -
+>  /*
+>   * f2fs_dirty_inode() is called from __mark_inode_dirty()
+>   *
+> @@ -759,7 +745,6 @@ restore_opts:
+> 
+>  static struct super_operations f2fs_sops = {
+>  	.alloc_inode	= f2fs_alloc_inode,
+> -	.drop_inode	= f2fs_drop_inode,
+>  	.destroy_inode	= f2fs_destroy_inode,
+>  	.write_inode	= f2fs_write_inode,
+>  	.dirty_inode	= f2fs_dirty_inode,
+> --
+> 2.1.1
+> 
+> 
+> 
+> ------------------------------------------------------------------------------
+> One dashboard for servers and applications across Physical-Virtual-Cloud
+> Widest out-of-the-box monitoring support with 50+ applications
+> Performance metrics, stats and reports that give you Actionable Insights
+> Deep dive visibility with transaction tracing using APM Insight.
+> http://ad.doubleclick.net/ddm/clk/290420510;117567292;y
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
