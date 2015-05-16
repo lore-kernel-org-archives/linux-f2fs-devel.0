@@ -1,181 +1,105 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] Space leak in f2fs
-Date: Fri, 15 May 2015 17:55:58 -0700
-Message-ID: <20150516005436.GA10530@jaegeuk-mac02.mot.com>
-References: <5552FA7D.7000704@huawei.com>
- <20150513174417.GA56247@jaegeuk-mac02.mot.com>
- <20150514002417.GC68412@jaegeuk-mac02>
- <5553FD09.9030508@huawei.com>
- <20150514211250.GA76424@jaegeuk-mac02.mot.com>
- <015e01d08ee9$ac8e1060$05aa3120$@samsung.com>
+Subject: Re: [PATCH 03/18] f2fs crypto: declare some definitions for f2fs
+ encryption feature
+Date: Fri, 15 May 2015 18:14:24 -0700
+Message-ID: <20150516011424.GB10530@jaegeuk-mac02.mot.com>
+References: <1431145253-2019-1-git-send-email-jaegeuk@kernel.org>
+ <1431145253-2019-3-git-send-email-jaegeuk@kernel.org>
+ <20150513020208.GK15721@dastard>
+ <20150513064802.GA48682@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <20150514003721.GN15721@dastard>
+ <20150514015643.GA70216@jaegeuk-mac02>
+ <5554D264.7070105@cyngn.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <015e01d08ee9$ac8e1060$05aa3120$@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: 'hujianyang' <hujianyang@huawei.com>, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <5554D264.7070105@cyngn.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tom Marshall <tom@cyngn.com>
+Cc: Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+On Thu, May 14, 2015 at 09:50:44AM -0700, Tom Marshall wrote:
+> Please keep in mind that I'm also working on transparent
+> compression.  I'm watching this thread closely so that I can
+> implement a compression library alongside the crypto library.  If
+> there is any interest or benefit, I would be glad to work together
+> so that the two can be done cooperatively at the same time.
 
-On Fri, May 15, 2015 at 04:31:43PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
+I can't imagine quickly how compression code can be shared with crypto.
+The basic approach for compression would be that X pages can be compressed into
+small number of pages, Y, which can be a X to Y mapping.
+But, this per-file encryption supports only 1 to 1 4KB mapping, so that it could
+be quite a simple implementation.
 
-[snip]
-
-> > +	/* if orphan inode, we don't need to write its data */
-> > +	if (is_orphan_inode(sbi, inode->i_ino))
-> > +		goto out;
-> 
-> When user create a temp file by invoking open with O_TMPFILE flag,
-> in ->tmpfile our temp file will be added into orphan list as its
-> nlink is zero.
-> 
-> If we skip writting out data for this orphan inode, later, even though
-> we add nlink/directory entry for orphan inode by calling linkat,
-> our file will contain inconsistent data between in-memory and on-disk.
-> 
-> So how about considering for this case?
-
-Right.
-How about the below patch?
-
-> 
-> BTW, the previous fixing patch looks good to me.
-
-But, my new concern here is a memory pressure. If we do not drop the inode
-when iput was called, we need to wait for another time slot to reclaim its
-memory.
+Could you elaborate on your approach or design? Or, codes?
+Whatever, IMO, it needs to implement it by any filesystem first.
 
 Thanks,
 
----
- fs/f2fs/checkpoint.c | 19 +++++++++++++++++++
- fs/f2fs/data.c       |  8 ++++++++
- fs/f2fs/dir.c        |  1 +
- fs/f2fs/f2fs.h       |  2 ++
- fs/f2fs/super.c      | 14 +++++++++++++-
- 5 files changed, 43 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 7b7a9d8..74875fb 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -378,6 +378,20 @@ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
- 	spin_unlock(&im->ino_lock);
- }
- 
-+static bool __exist_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
-+{
-+	struct inode_management *im = &sbi->im[type];
-+	struct ino_entry *e;
-+	bool exist = false;
-+
-+	spin_lock(&im->ino_lock);
-+	e = radix_tree_lookup(&im->ino_root, ino);
-+	if (e)
-+		exist = true;
-+	spin_unlock(&im->ino_lock);
-+	return exist;
-+}
-+
- void add_dirty_inode(struct f2fs_sb_info *sbi, nid_t ino, int type)
- {
- 	/* add new dirty ino entry into list */
-@@ -458,6 +472,11 @@ void remove_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
- 	__remove_ino_entry(sbi, ino, ORPHAN_INO);
- }
- 
-+bool is_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
-+{
-+	return __exist_ino_entry(sbi, ino, ORPHAN_INO);
-+}
-+
- static void recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
- {
- 	struct inode *inode = f2fs_iget(sbi->sb, ino);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b0cc2aa..d883c14 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1749,6 +1749,14 @@ write:
- 		goto out;
- 	}
- 
-+	/*
-+	 * if orphan inode, we don't need to write its data,
-+	 * but, tmpfile is not the case.
-+	 */
-+	if (is_orphan_inode(sbi, inode->i_ino) &&
-+			!is_inode_flag_set(F2FS_I(inode), FI_TMP_INODE))
-+		goto out;
-+
- 	if (!wbc->for_reclaim)
- 		need_balance_fs = true;
- 	else if (has_not_enough_free_secs(sbi, 0))
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 3e92376..a2ea1b9 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -648,6 +648,7 @@ int f2fs_do_tmpfile(struct inode *inode, struct inode *dir)
- 	update_inode(inode, page);
- 	f2fs_put_page(page, 1);
- 
-+	set_inode_flag(F2FS_I(inode), FI_TMP_INODE);
- 	clear_inode_flag(F2FS_I(inode), FI_NEW_INODE);
- fail:
- 	up_write(&F2FS_I(inode)->i_sem);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cdcae06..de21d38 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1337,6 +1337,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- /* used for f2fs_inode_info->flags */
- enum {
- 	FI_NEW_INODE,		/* indicate newly allocated inode */
-+	FI_TMP_INODE,		/* indicate tmpfile */
- 	FI_DIRTY_INODE,		/* indicate inode is dirty or not */
- 	FI_DIRTY_DIR,		/* indicate directory has dirty pages */
- 	FI_INC_LINK,		/* need to increment i_nlink */
-@@ -1726,6 +1727,7 @@ int acquire_orphan_inode(struct f2fs_sb_info *);
- void release_orphan_inode(struct f2fs_sb_info *);
- void add_orphan_inode(struct f2fs_sb_info *, nid_t);
- void remove_orphan_inode(struct f2fs_sb_info *, nid_t);
-+bool is_orphan_inode(struct f2fs_sb_info *, nid_t);
- void recover_orphan_inodes(struct f2fs_sb_info *);
- int get_valid_checkpoint(struct f2fs_sb_info *);
- void update_dirty_page(struct inode *, struct page *);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7464d08..98af3bf 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -430,9 +430,21 @@ static int f2fs_drop_inode(struct inode *inode)
- 	 *  - f2fs_write_data_page
- 	 *    - f2fs_gc -> iput -> evict
- 	 *       - inode_wait_for_writeback(inode)
-+	 * In order to avoid that, f2fs_write_data_page does not write data
-+	 * pages for orphan inode except tmpfile.
-+	 * Nevertheless, we need to truncate the tmpfile's data to avoid
-+	 * needless cleaning.
- 	 */
--	if (!inode_unhashed(inode) && inode->i_state & I_SYNC)
-+	if (is_inode_flag_set(F2FS_I(inode), FI_TMP_INODE) &&
-+						inode->i_state & I_SYNC) {
-+		spin_unlock(&inode->i_lock);
-+		i_size_write(inode, 0);
-+
-+		if (F2FS_HAS_BLOCKS(inode))
-+			f2fs_truncate(inode);
-+		spin_lock(&inode->i_lock);
- 		return 0;
-+	}
- 	return generic_drop_inode(inode);
- }
- 
--- 
-2.1.1
-
-
+> 
+> On 05/13/2015 06:56 PM, Jaegeuk Kim wrote:
+> >On Thu, May 14, 2015 at 10:37:21AM +1000, Dave Chinner wrote:
+> >>On Tue, May 12, 2015 at 11:48:02PM -0700, Jaegeuk Kim wrote:
+> >>>On Wed, May 13, 2015 at 12:02:08PM +1000, Dave Chinner wrote:
+> >>>>On Fri, May 08, 2015 at 09:20:38PM -0700, Jaegeuk Kim wrote:
+> >>>>>This definitions will be used by inode and superblock for encyption.
+> >>>>How much of this crypto stuff is common with or only slightly
+> >>>>modified from the ext4 code?  Is the behaviour and features the
+> >>>>same? Is the user API and management tools the same?
+> >>>>
+> >>>>IMO, if there is any amount of overlap, then we should be
+> >>>>implementing this stuff as generic code, not propagating the same
+> >>>>code through multiple filesystems via copy-n-paste-n-modify. This
+> >>>>will simply end up with diverging code, different bugs and feature
+> >>>>sets, and none of the implementations will get the review and
+> >>>>maintenance they really require...
+> >>>>
+> >>>>And, FWIW, this is the reason why I originally asked for the ext4
+> >>>>encryption code to be pulled up to the VFS: precisely so we didn't
+> >>>>end up with a rapid proliferation of individual in-filesystem
+> >>>>encryption implementations that are all slightly different...
+> >>>Totally agreed!
+> >>>
+> >>>AFAIK, Ted wants to push the codes as a crypto library into fs/ finally, so
+> >>>I believe most part of crypto codes are common.
+> >>Can I suggest fs/crypto/ if there are going to be multiple files?
+> >No problem at all. I'll do.
+> >
+> >>>But, in order to realize that quickly, Ted implemented the feature to finalize
+> >>>on-disk and in-memory design in EXT4 as a first step.
+> >>>Then, I've been catching up and validating its design by implementing it in
+> >>>F2FS, which also intends to figure out what crypto codes can be exactly common.
+> >>Excellent. That will make it easier and less error prone for other
+> >>filesystems to implement it, too!
+> >>
+> >>>As Ted mentioned before, since next android version tries to use per-file
+> >>>encryption, F2FS also needs to support it as quick as possible likewise EXT4.
+> >>Fair enough.
+> >>
+> >>>Meanwhile, surely I've been working on writing patches to push them into fs/;
+> >>>currenlty, I did for cryto.c and will do for crypto_key.c and crypto_fname.c.
+> >>>But, it needs to think about crypto_policy.c differently, since it may depend
+> >>>on how each filesystem stores the policy information respectively; we cannot
+> >>>push all the filesystems should use xattrs, right?
+> >>All filesystems likely to implement per-file crypto support xattrs,
+> >>and this is exactly what xattrs are designed for. e.g. we already
+> >>require xattrs for generic security labels, ACLs, etc. Hence
+> >>per-file crypto information should also use a common, shared xattr
+> >>format. That way it only needs to be implemented once in the generic
+> >>code and there's very little (hopefully nothing!) each filesystem
+> >>has to customise to store the crypto information for each file.
+> >Ok, I see. Let me take a look at that too.
+> >Thank you for sharing your thoughts. :)
+> >
+> >>Cheers,
+> >>
+> >>Dave.
+> >>-- 
+> >>Dave Chinner
+> >>david@fromorbit.com
+> >--
+> >To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
+> >the body of a message to majordomo@vger.kernel.org
+> >More majordomo info at  http://vger.kernel.org/majordomo-info.html
