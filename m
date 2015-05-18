@@ -1,92 +1,37 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 03/18] f2fs crypto: declare some definitions for f2fs
- encryption feature
-Date: Sun, 17 May 2015 23:24:12 -0700
-Message-ID: <20150518062412.GA21419@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <1431145253-2019-1-git-send-email-jaegeuk@kernel.org>
- <1431145253-2019-3-git-send-email-jaegeuk@kernel.org>
- <20150513020208.GK15721@dastard>
- <20150513064802.GA48682@jaegeuk-mac02.hsd1.ca.comcast.net>
- <20150514003721.GN15721@dastard>
- <20150514015643.GA70216@jaegeuk-mac02>
- <5554D264.7070105@cyngn.com>
- <20150516011424.GB10530@jaegeuk-mac02.mot.com>
- <20150516044704.GA27800@eden.sea.cyngn.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH] f2fs crypto: zero next free dnode block
+Date: Mon, 18 May 2015 18:00:06 +0800
+Message-ID: <003101d09151$85408140$8fc183c0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150516044704.GA27800@eden.sea.cyngn.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Tom Marshall <tom@cyngn.com>
-Cc: Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Fri, May 15, 2015 at 09:47:05PM -0700, Tom Marshall wrote:
-> On Fri, May 15, 2015 at 06:14:24PM -0700, Jaegeuk Kim wrote:
-> > On Thu, May 14, 2015 at 09:50:44AM -0700, Tom Marshall wrote:
-> > > Please keep in mind that I'm also working on transparent
-> > > compression.  I'm watching this thread closely so that I can
-> > > implement a compression library alongside the crypto library.  If
-> > > there is any interest or benefit, I would be glad to work together
-> > > so that the two can be done cooperatively at the same time.
-> > 
-> > I can't imagine quickly how compression code can be shared with crypto.
-> > The basic approach for compression would be that X pages can be compressed into
-> > small number of pages, Y, which can be a X to Y mapping.
-> > But, this per-file encryption supports only 1 to 1 4KB mapping, so that it could
-> > be quite a simple implementation.
-> 
-> No, I don't intend to share actual code with crypto -- at least not much. 
-> I'm more interested in looking at how the crypto layer is implemented to
-> give me clues about how to implement a compression layer.
+Now page cache of meta inode is used by garbage collection for encrypted page,
+it may contain random data, so we should zero it before issuing discard.
 
-Ok, I see.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Currently, I've been writing up fs/crypto having shared crypto codes between
-ext4 and f2fs; I refactored existing codes a little bit though.
-
-I'm approaching to introduce a fscypt_operations for each filesystems like this.
-
-struct fscrypt_operations {
-	int (*get_context)(struct inode *, void *, size_t, void *);
-	int (*set_context)(struct inode *, const void *, size_t, int, void *);
-	int (*prepare_new_context)(struct inode *);
-	bool (*is_encrypted)(struct inode *);
-	bool (*empty_dir)(struct inode *);
-	unsigned (*max_namelen)(struct inode *);
-};
-
-And, the following two basic functions will be used by filesystems:
-fscrypt_encrypt_page() and fscrypt_decrypt_page().
-
-> 
-> > Could you elaborate on your approach or design? Or, codes?
-> > Whatever, IMO, it needs to implement it by any filesystem first.
-> 
-> I don't really have any working code yet.  I will probably get to that in
-> the coming few weeks.  Right now I'm still working with the ugly VFS
-> stacking implementation that I posted initially.
-> 
-> The thing that I have done is dismissed the standard compression framing
-> formats.
-> 
-> zlib (and gzip) are designed for streaming and it is quite difficult to
-> implement random access on it.  See the example code in the zlib source,
-> zran.c.  It's not really tenable because 32kb of prior data is required to
-> be kept as priming information.  Even doing fully encapsulated blocks with
-> Z_FINISH, there is still no way to skip over data without decompressing it
-> first to build an index.
-> 
-> lz4 is somewhat better in that blocks are self contained.  But block lengths
-> must be read sequentially.  This means that reading an arbitrary position in
-> a file requires a proportional number of reads to find the desired block.
-> 
-> So, I am working with a simple framing format that I threw together.  The
-> header has a compression method (zlib or lz4), block size, original input
-> size, and a block map.
-
-Thank you for sharing the approach, and it makes sense to improve random
-read performance.
-
-Thanks,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 16aa66e..bdf874a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -504,7 +504,7 @@ void discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 
+ 	if (err) {
+ 		struct page *page = grab_meta_page(sbi, blkaddr);
+-		/* zero-filled page */
++		memset(page_address(page), 0, F2FS_BLKSIZE);
+ 		set_page_dirty(page);
+ 		f2fs_put_page(page, 1);
+ 	}
+-- 
+2.3.3
