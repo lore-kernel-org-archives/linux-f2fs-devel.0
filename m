@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2] f2fs: support RENAME_WHITEOUT
-Date: Tue, 19 May 2015 17:37:26 +0800
-Message-ID: <005c01d09217$84694920$8d3bdb60$@samsung.com>
+Subject: [PATCH 1/2] f2fs: avoid duplicated code by reusing f2fs_read_end_io
+Date: Tue, 19 May 2015 17:38:56 +0800
+Message-ID: <005d01d09217$c0df57f0$429e07d0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,262 +12,87 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-As the description of rename in manual, RENAME_WHITEOUT is a special operation
-that only makes sense for overlay/union type filesystem.
-
-When performing rename with RENAME_WHITEOUT, dst will be replace with src, and
-meanwhile, a 'whiteout' will be create with name of src.
-
-A "whiteout" is designed to be a char device with 0,0 device number, it has
-specially meaning for stackable filesystem. In these filesystems, there are
-multiple layers exist, and only top of these can be modified. So a whiteout
-in top layer is used to hide a corresponding file in lower layer, as well
-removal of whiteout will make the file appear.
-
-Now in overlayfs, when we rename a file which is exist in lower layer, it
-will be copied up to upper if it is not on upper layer yet, and then rename
-it on upper layer, source file will be whiteouted to hide corresponding file
-in lower layer at the same time.
-
-So in upper layer filesystem, implementation of RENAME_WHITEOUT provide a
-atomic operation for stackable filesystem to support rename operation.
-
-There are multiple ways to implement RENAME_WHITEOUT in log of this commit:
-7dcf5c3e4527 ("xfs: add RENAME_WHITEOUT support") which pointed out by
-Dave Chinner.
-
-For now, we just try to follow the way that xfs/ext4 use.
+This patch tries to clean up code as part code of f2fs_read_end_io
+and mpage_end_io are the same, so it's better to merge and reuse them.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
-v2:
- * fix to release reference of whiteout inode after being linkated.
- * add f2fs_balance_fs for ->tmpfile().
+ fs/f2fs/data.c | 35 +++++------------------------------
+ 1 file changed, 5 insertions(+), 30 deletions(-)
 
- fs/f2fs/namei.c | 153 ++++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 100 insertions(+), 53 deletions(-)
-
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 16b74da..0e15ff3 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -510,14 +510,83 @@ out:
- 	return err;
- }
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8d04e24..5173d0f 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -34,40 +34,16 @@ static void f2fs_read_end_io(struct bio *bio, int err)
+ 	struct bio_vec *bvec;
+ 	int i;
  
-+static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
-+					umode_t mode, struct inode **whiteout)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
-+	struct inode *inode;
-+	int err;
-+
-+	if (!whiteout)
-+		f2fs_balance_fs(sbi);
-+
-+	inode = f2fs_new_inode(dir, mode);
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
-+
-+	if (whiteout) {
-+		init_special_inode(inode, inode->i_mode, WHITEOUT_DEV);
-+		inode->i_op = &f2fs_special_inode_operations;
-+	} else {
-+		inode->i_op = &f2fs_file_inode_operations;
-+		inode->i_fop = &f2fs_file_operations;
-+		inode->i_mapping->a_ops = &f2fs_dblock_aops;
-+	}
-+
-+	f2fs_lock_op(sbi);
-+	err = acquire_orphan_inode(sbi);
-+	if (err)
-+		goto out;
-+
-+	err = f2fs_do_tmpfile(inode, dir);
-+	if (err)
-+		goto release_out;
-+
-+	/*
-+	 * add this non-linked tmpfile to orphan list, in this way we could
-+	 * remove all unused data of tmpfile after abnormal power-off.
-+	 */
-+	add_orphan_inode(sbi, inode->i_ino);
-+	f2fs_unlock_op(sbi);
-+
-+	alloc_nid_done(sbi, inode->i_ino);
-+
-+	if (whiteout) {
-+		inode_dec_link_count(inode);
-+		*whiteout = inode;
-+	} else {
-+		d_tmpfile(dentry, inode);
-+	}
-+	unlock_new_inode(inode);
-+	return 0;
-+
-+release_out:
-+	release_orphan_inode(sbi);
-+out:
-+	handle_failed_inode(inode);
-+	return err;
-+}
-+
-+static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
-+{
-+	return __f2fs_tmpfile(dir, dentry, mode, NULL);
-+}
-+
-+static int f2fs_create_whiteout(struct inode *dir, struct inode **whiteout)
-+{
-+	return __f2fs_tmpfile(dir, NULL, S_IFCHR | WHITEOUT_MODE, whiteout);
-+}
-+
- static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
--			struct inode *new_dir, struct dentry *new_dentry)
-+			struct inode *new_dir, struct dentry *new_dentry,
-+			unsigned int flags)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(old_dir);
- 	struct inode *old_inode = d_inode(old_dentry);
- 	struct inode *new_inode = d_inode(new_dentry);
-+	struct inode *whiteout = NULL;
- 	struct page *old_dir_page;
--	struct page *old_page, *new_page;
-+	struct page *old_page, *new_page = NULL;
- 	struct f2fs_dir_entry *old_dir_entry = NULL;
- 	struct f2fs_dir_entry *old_entry;
- 	struct f2fs_dir_entry *new_entry;
-@@ -543,17 +612,23 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			goto out_old;
- 	}
- 
-+	if (flags & RENAME_WHITEOUT) {
-+		err = f2fs_create_whiteout(old_dir, &whiteout);
-+		if (err)
-+			goto out_dir;
-+	}
-+
- 	if (new_inode) {
- 
- 		err = -ENOTEMPTY;
- 		if (old_dir_entry && !f2fs_empty_dir(new_inode))
--			goto out_dir;
-+			goto out_whiteout;
- 
- 		err = -ENOENT;
- 		new_entry = f2fs_find_entry(new_dir, &new_dentry->d_name,
- 						&new_page);
- 		if (!new_entry)
--			goto out_dir;
-+			goto out_whiteout;
- 
- 		f2fs_lock_op(sbi);
- 
-@@ -591,7 +666,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		err = f2fs_add_link(new_dentry, old_inode);
- 		if (err) {
- 			f2fs_unlock_op(sbi);
--			goto out_dir;
-+			goto out_whiteout;
- 		}
- 
- 		if (old_dir_entry) {
-@@ -611,8 +686,18 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	f2fs_delete_entry(old_entry, old_page, old_dir, NULL);
- 
-+	if (whiteout) {
-+		whiteout->i_state |= I_LINKABLE;
-+		set_inode_flag(F2FS_I(whiteout), FI_INC_LINK);
-+		err = f2fs_add_link(old_dentry, whiteout);
-+		if (err)
-+			goto put_out_dir;
-+		whiteout->i_state &= ~I_LINKABLE;
-+		iput(whiteout);
-+	}
-+
- 	if (old_dir_entry) {
--		if (old_dir != new_dir) {
-+		if (old_dir != new_dir && !whiteout) {
- 			f2fs_set_link(old_inode, old_dir_entry,
- 						old_dir_page, new_dir);
- 			update_inode_page(old_inode);
-@@ -633,8 +718,13 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- put_out_dir:
- 	f2fs_unlock_op(sbi);
--	f2fs_dentry_kunmap(new_dir, new_page);
--	f2fs_put_page(new_page, 0);
-+	if (new_page) {
-+		f2fs_dentry_kunmap(new_dir, new_page);
-+		f2fs_put_page(new_page, 0);
-+	}
-+out_whiteout:
-+	if (whiteout)
-+		iput(whiteout);
- out_dir:
- 	if (old_dir_entry) {
- 		f2fs_dentry_kunmap(old_inode, old_dir_page);
-@@ -805,7 +895,7 @@ static int f2fs_rename2(struct inode *old_dir, struct dentry *old_dentry,
- 			struct inode *new_dir, struct dentry *new_dentry,
- 			unsigned int flags)
- {
--	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
- 		return -EINVAL;
- 
- 	if (flags & RENAME_EXCHANGE) {
-@@ -816,50 +906,7 @@ static int f2fs_rename2(struct inode *old_dir, struct dentry *old_dentry,
- 	 * VFS has already handled the new dentry existence case,
- 	 * here, we just deal with "RENAME_NOREPLACE" as regular rename.
- 	 */
--	return f2fs_rename(old_dir, old_dentry, new_dir, new_dentry);
+-	bio_for_each_segment_all(bvec, bio, i) {
+-		struct page *page = bvec->bv_page;
+-
+-		if (!err) {
+-			SetPageUptodate(page);
+-		} else {
+-			ClearPageUptodate(page);
+-			SetPageError(page);
+-		}
+-		unlock_page(page);
+-	}
+-	bio_put(bio);
 -}
 -
--static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+-/*
+- * I/O completion handler for multipage BIOs.
+- * copied from fs/mpage.c
+- */
+-static void mpage_end_io(struct bio *bio, int err)
 -{
--	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
--	struct inode *inode;
--	int err;
+-	struct bio_vec *bv;
+-	int i;
 -
--	inode = f2fs_new_inode(dir, mode);
--	if (IS_ERR(inode))
--		return PTR_ERR(inode);
+ 	if (f2fs_bio_encrypted(bio)) {
+ 		if (err) {
+ 			f2fs_release_crypto_ctx(bio->bi_private);
+ 		} else {
+-			f2fs_end_io_crypto_work(bio->bi_private, bio);
+-			return;
++			return f2fs_end_io_crypto_work(bio->bi_private, bio);
+ 		}
+ 	}
+ 
+-	bio_for_each_segment_all(bv, bio, i) {
+-		struct page *page = bv->bv_page;
++	bio_for_each_segment_all(bvec, bio, i) {
++		struct page *page = bvec->bv_page;
+ 
+ 		if (!err) {
+ 			SetPageUptodate(page);
+@@ -77,7 +53,6 @@ static void mpage_end_io(struct bio *bio, int err)
+ 		}
+ 		unlock_page(page);
+ 	}
 -
--	inode->i_op = &f2fs_file_inode_operations;
--	inode->i_fop = &f2fs_file_operations;
--	inode->i_mapping->a_ops = &f2fs_dblock_aops;
--
--	f2fs_lock_op(sbi);
--	err = acquire_orphan_inode(sbi);
--	if (err)
--		goto out;
--
--	err = f2fs_do_tmpfile(inode, dir);
--	if (err)
--		goto release_out;
--
--	/*
--	 * add this non-linked tmpfile to orphan list, in this way we could
--	 * remove all unused data of tmpfile after abnormal power-off.
--	 */
--	add_orphan_inode(sbi, inode->i_ino);
--	f2fs_unlock_op(sbi);
--
--	alloc_nid_done(sbi, inode->i_ino);
--
--	d_tmpfile(dentry, inode);
--	unlock_new_inode(inode);
--	return 0;
--
--release_out:
--	release_orphan_inode(sbi);
--out:
--	handle_failed_inode(inode);
--	return err;
-+	return f2fs_rename(old_dir, old_dentry, new_dir, new_dentry, flags);
+ 	bio_put(bio);
  }
  
- #ifdef CONFIG_F2FS_FS_ENCRYPTION
+@@ -122,7 +97,7 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
+ 	bio->bi_bdev = sbi->sb->s_bdev;
+ 	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blk_addr);
+ 	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
+-	bio->bi_private = sbi;
++	bio->bi_private = is_read ? NULL : sbi;
+ 
+ 	return bio;
+ }
+@@ -1584,7 +1559,7 @@ submit_and_realloc:
+ 			}
+ 			bio->bi_bdev = bdev;
+ 			bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(block_nr);
+-			bio->bi_end_io = mpage_end_io;
++			bio->bi_end_io = f2fs_read_end_io;
+ 			bio->bi_private = ctx;
+ 		}
+ 
 -- 
 2.3.3
