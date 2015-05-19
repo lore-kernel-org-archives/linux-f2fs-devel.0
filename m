@@ -1,97 +1,107 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs crypto: add rwsem to avoid data races
-Date: Tue, 19 May 2015 10:42:04 -0700
-Message-ID: <20150519174204.GA42970@jaegeuk-mac02.mot.com>
-References: <1432013801-39069-1-git-send-email-jaegeuk@kernel.org>
- <20150519142943.GE20421@thunk.org>
+Subject: Re: [PATCH 1/2] f2fs: support RENAME_WHITEOUT
+Date: Tue, 19 May 2015 10:43:44 -0700
+Message-ID: <20150519174344.GB42970@jaegeuk-mac02.mot.com>
+References: <002e01d0912f$30fc5cc0$92f51640$@samsung.com>
+	<20150519055119.GA39478@jaegeuk-mac02.hsd1.ca.comcast.net>
+	<005b01d09217$58302e00$08908a00$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1YulYb-00048T-21
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 19 May 2015 17:43:57 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1YulYY-0003rw-QP for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 19 May 2015 17:43:57 +0000
 Content-Disposition: inline
-In-Reply-To: <20150519142943.GE20421@thunk.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <005b01d09217$58302e00$08908a00$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, May 19, 2015 at 10:29:43AM -0400, Theodore Ts'o wrote:
-> On Mon, May 18, 2015 at 10:36:41PM -0700, Jaegeuk Kim wrote:
-> > Previoulsy, fi->i_crypt_info was not covered by any lock, resulting in
-> > memory leak.
-> > 
-> > This patch adds a rwsem to avoid leaking objects on i_crypt_info.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+On Tue, May 19, 2015 at 05:36:11PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> I'm not sure we need an rwsem to fix this issue.  In terms of
-> serializing the creation and deletion of the structure, it should be
-> possible to use an cmpxchg() on the pointer itself.  (e.g., if we lose
-> the race on the creation side, we just release our structure and use
-> the one that the winner allocated).
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Tuesday, May 19, 2015 1:51 PM
+> > To: Chao Yu
+> > Cc: Changman Lee; linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH 1/2] f2fs: support RENAME_WHITEOUT
+> > 
+> > Hi Chao,
+> > 
+> > On Mon, May 18, 2015 at 01:54:22PM +0800, Chao Yu wrote:
+> > > As the description of rename in manual, RENAME_WHITEOUT is a special operation
+> > > that only makes sense for overlay/union type filesystem.
+> > >
+> > > When performing rename with RENAME_WHITEOUT, dst will be replace with src, and
+> > > meanwhile, a 'whiteout' will be create with name of src.
+> > >
+> > > A "whiteout" is designed to be a char device with 0,0 device number, it has
+> > > specially meaning for stackable filesystem. In these filesystems, there are
+> > > multiple layers exist, and only top of these can be modified. So a whiteout
+> > > in top layer is used to hide a corresponding file in lower layer, as well
+> > > removal of whiteout will make the file appear.
+> > >
+> > > Now in overlayfs, when we rename a file which is exist in lower layer, it
+> > > will be copied up to upper if it is not on upper layer yet, and then rename
+> > > it on upper layer, source file will be whiteouted to hide corresponding file
+> > > in lower layer at the same time.
+> > >
+> > > So in upper layer filesystem, implementation of RENAME_WHITEOUT provide a
+> > > atomic operation for stackable filesystem to support rename operation.
+> > >
+> > > There are multiple ways to implement RENAME_WHITEOUT in log of this commit:
+> > > 7dcf5c3e4527 ("xfs: add RENAME_WHITEOUT support") which pointed out by
+> > > Dave Chinner.
+> > >
+> > > For now, we just try to follow the way that xfs/ext4 use.
+> > 
+> > Could you merge the two patches into one?
+> 
+> OK.
+> 
+> > And, after finishing xfstests, kernel reports missing inode objects.
+> 
+> Do you mean this?
+> 
+> BUG f2fs_inode_cache (Tainted: G    B      O   ): 
+> Objects remaining in f2fs_inode_cache on kmem_cache_close()
+> 
+> Whenever rmmod f2fs module after tests/generic/078, system report this.
 
-What I'm looking is when multiple threads enter into get_encryption_info.
-If ei->i_crypt_info doesn't exist, all of them can go into the allocation phase.
-Since, new ei->i_crypt_info will be assigned after finishing all the stuffs,
-it can do allocation redundantly without freeing the existing one.
-
-I've seen some crypt_info object leaks reported by kmemleak after finishing
-some tests in xfstests below. And I confirmed that this patch fixes that.
-
-=============================================================================
-BUG f2fs_crypt_info (Tainted: G           O   ): Objects remaining in
-				f2fs_crypt_info on kmem_cache_close()
------------------------------------------------------------------------------
-
-Disabling lock debugging due to kernel taint
-CPU: 3 PID: 26284 Comm: rmmod Tainted: G    B      O    4.1.0-rc2+ #20
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
- ffff8800376d98c0 ffff88001dd13d38 ffffffff817ffd6a 0000000000000001
- ffffea00007d6a80 ffff88001dd13e08 ffffffff81218ac0 ffff880000000020
- ffff88001dd13e18 ffff88001dd13dc8 656a624f001a0000 616d657220737463
-Call Trace:
- [<ffffffff817ffd6a>] dump_stack+0x4f/0x7b
- [<ffffffff81218ac0>] slab_err+0xa0/0xb0
- [<ffffffff8121c89c>] ? __kmalloc+0x37c/0x3d0
- [<ffffffff8121dcd6>] ? __kmem_cache_shutdown+0x126/0x340
- [<ffffffff8121dcd6>] ? __kmem_cache_shutdown+0x126/0x340
- [<ffffffff8121dcf6>] __kmem_cache_shutdown+0x146/0x340
- [<ffffffff811e3079>] ? kmem_cache_destroy+0x39/0x130
- [<ffffffff811e30e8>] kmem_cache_destroy+0xa8/0x130
- [<ffffffffa03a0801>] f2fs_exit_crypto+0x41/0x50 [f2fs]
- [<ffffffffa03a1e2a>] exit_f2fs_fs+0x28/0x1fe [f2fs]
- [<ffffffff8113125c>] SyS_delete_module+0x18c/0x210
- [<ffffffff8180b532>] system_call_fastpath+0x16/0x7a
- INFO: Object 0xffff88001f5ab3e0 @offset=5088
- INFO: Allocated in _f2fs_get_encryption_info+0x97/0x260 [f2fs]
- 	__slab_alloc+0x4bd/0x562
- 	kmem_cache_alloc+0x2a4/0x390
- 	_f2fs_get_encryption_info+0x97/0x260 [f2fs]
- 	f2fs_file_open+0x57/0x70 [f2fs]
- 	do_dentry_open+0x257/0x350
- 	vfs_open+0x49/0x50
- 	do_last+0x208/0x13e0
- 	path_openat+0x84/0x660
- 	do_filp_open+0x3a/0x90
- 	do_sys_open+0x128/0x220
- 	SyS_creat+0x1e/0x20
- 	system_call_fastpath+0x16/0x7a
- INFO: Freed in f2fs_free_encryption_info+0x52/0x70 [f2fs]
- 	__slab_free+0x39/0x214
- 	kmem_cache_free+0x394/0x3a0
- 	f2fs_free_encryption_info+0x52/0x70 [f2fs]
- 	f2fs_evict_inode+0x15a/0x460 [f2fs]
- 	evict+0xb8/0x190
- 	iput+0x30e/0x3f0
- 	d_delete+0x178/0x1b0
- 	vfs_rmdir+0x122/0x140
- 	do_rmdir+0x1fb/0x220
- 	SyS_rmdir+0x16/0x20
- 	system_call_fastpath+0x16/0x7a
+Right. :)
 
 > 
-> If we do end up needing to serialize access to the tfm in the
-> i_crypt_info object for datapath reads/writes, then we might need a
-> mutex, but I think that should be it, no?
+> > Could you check it out?
+> 
+> I find that the whiteout file is not be iput() after being linkated to
+> an entry. After fixing this issue, no exceptional report appears again.
+> 
+> So can you please help to test the v2 patch?
 
-Seems like we don't need to care about serialization on tfm.
+Great. Will do.
 
 Thanks,
+
+------------------------------------------------------------------------------
+One dashboard for servers and applications across Physical-Virtual-Cloud 
+Widest out-of-the-box monitoring support with 50+ applications
+Performance metrics, stats and reports that give you Actionable Insights
+Deep dive visibility with transaction tracing using APM Insight.
+http://ad.doubleclick.net/ddm/clk/290420510;117567292;y
