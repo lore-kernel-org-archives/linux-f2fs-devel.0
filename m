@@ -1,141 +1,60 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/2] f2fs: introduce update_meta_page
-Date: Tue, 19 May 2015 17:40:04 +0800
-Message-ID: <006201d09217$e27a18a0$a76e49e0$@samsung.com>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH] crypto: allow to assign gfp_t for __crypto_alloc_tfm
+Date: Tue, 19 May 2015 10:14:30 -0400
+Message-ID: <20150519141430.GD20421@thunk.org>
+References: <1432014416-39326-1-git-send-email-jaegeuk@kernel.org>
+ <20150519054945.GA28060@gondor.apana.org.au>
+ <20150519062430.GA39588@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <20150519063211.GA28347@gondor.apana.org.au>
+ <20150519065812.GA40012@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <20150519065929.GA28610@gondor.apana.org.au>
+ <20150519071317.GB40012@jaegeuk-mac02.hsd1.ca.comcast.net>
+ <20150519071521.GA28862@gondor.apana.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Return-path: <ecryptfs-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150519071521.GA28862@gondor.apana.org.au>
+Sender: ecryptfs-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, davem@davemloft.net, linux-crypto@vger.kernel.org, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, ecryptfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Add a help function update_meta_page() to update meta page with specified
-buffer.
+On Tue, May 19, 2015 at 03:15:21PM +0800, Herbert Xu wrote:
+> On Tue, May 19, 2015 at 12:13:17AM -0700, Jaegeuk Kim wrote:
+> >
+> > The key generation is done by ext4_generate_encryption_key in
+> > fs/ext4/crypto_key.c.
+> > And, ext4_file_mmap and ext4_file_open trigger it.
+> 
+> Well that's where you should be doing crypto_alloc_ablkcipher
+> and crypto_ablkcipher_setkey.
+> 
+> The whole point of a crypto tfm is to represent a key so any time
+> you get one you should create a crypto tfm.  Carrying around a raw
+> key is just wrong.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/checkpoint.c | 26 ++++++--------------------
- fs/f2fs/f2fs.h       |  1 +
- fs/f2fs/segment.c    | 26 ++++++++++++++++----------
- 3 files changed, 23 insertions(+), 30 deletions(-)
+There can be multiple reads going on in parallel, so we're currently
+creating tfm's as necessary.  In fact one of the things that we've
+talked about doing is since there are some ARM cores where their
+"hardware acceleration" is slower than optimized software (sigh), and
+there are some Android applications (such as Facebook) that read
+*vast* quantities of data from flash on startup before painting a
+single pixel, that we might want to consider in some cases,
+parallelizing the decryption across multiple ARM cores.  Figuring out
+when to do this, both in terms of the workload, how many cores to use
+to balance off against power utilization, how much (if ever) to use
+the hardware "accelerator", and just plain lack of time caused us not
+to go down that particular path.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 7b7a9d8..b70bbe1 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -888,10 +888,8 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	unsigned long orphan_num = sbi->im[ORPHAN_INO].ino_num;
- 	nid_t last_nid = nm_i->next_scan_nid;
- 	block_t start_blk;
--	struct page *cp_page;
- 	unsigned int data_sum_blocks, orphan_blocks;
- 	__u32 crc32 = 0;
--	void *kaddr;
- 	int i;
- 	int cp_payload_blks = __cp_payload(sbi);
- 
-@@ -988,19 +986,11 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	start_blk = __start_cp_addr(sbi);
- 
- 	/* write out checkpoint buffer at block 0 */
--	cp_page = grab_meta_page(sbi, start_blk++);
--	kaddr = page_address(cp_page);
--	memcpy(kaddr, ckpt, F2FS_BLKSIZE);
--	set_page_dirty(cp_page);
--	f2fs_put_page(cp_page, 1);
--
--	for (i = 1; i < 1 + cp_payload_blks; i++) {
--		cp_page = grab_meta_page(sbi, start_blk++);
--		kaddr = page_address(cp_page);
--		memcpy(kaddr, (char *)ckpt + i * F2FS_BLKSIZE, F2FS_BLKSIZE);
--		set_page_dirty(cp_page);
--		f2fs_put_page(cp_page, 1);
--	}
-+	update_meta_page(sbi, ckpt, start_blk++);
-+
-+	for (i = 1; i < 1 + cp_payload_blks; i++)
-+		update_meta_page(sbi, (char *)ckpt + i * F2FS_BLKSIZE,
-+							start_blk++);
- 
- 	if (orphan_num) {
- 		write_orphan_inodes(sbi, start_blk);
-@@ -1015,11 +1005,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	}
- 
- 	/* writeout checkpoint block */
--	cp_page = grab_meta_page(sbi, start_blk);
--	kaddr = page_address(cp_page);
--	memcpy(kaddr, ckpt, F2FS_BLKSIZE);
--	set_page_dirty(cp_page);
--	f2fs_put_page(cp_page, 1);
-+	update_meta_page(sbi, ckpt, start_blk);
- 
- 	/* wait for previous submitted node/meta pages writeback */
- 	wait_on_all_pages_writeback(sbi);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5119167..7e93fcf 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1690,6 +1690,7 @@ int npages_for_summary_flush(struct f2fs_sb_info *, bool);
- void allocate_new_segments(struct f2fs_sb_info *);
- int f2fs_trim_fs(struct f2fs_sb_info *, struct fstrim_range *);
- struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
-+void update_meta_page(struct f2fs_sb_info *, void *, block_t);
- void write_meta_page(struct f2fs_sb_info *, struct page *);
- void write_node_page(unsigned int, struct f2fs_io_info *);
- void write_data_page(struct dnode_of_data *, struct f2fs_io_info *);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index bdf874a..0b2bdd2 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -502,12 +502,8 @@ void discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
- 		err = f2fs_issue_discard(sbi, blkaddr, 1);
- 	}
- 
--	if (err) {
--		struct page *page = grab_meta_page(sbi, blkaddr);
--		memset(page_address(page), 0, F2FS_BLKSIZE);
--		set_page_dirty(page);
--		f2fs_put_page(page, 1);
--	}
-+	if (err)
-+		update_meta_page(sbi, NULL, blkaddr);
- }
- 
- static void __add_discard_entry(struct f2fs_sb_info *sbi,
-@@ -788,16 +784,26 @@ struct page *get_sum_page(struct f2fs_sb_info *sbi, unsigned int segno)
- 	return get_meta_page(sbi, GET_SUM_BLOCK(sbi, segno));
- }
- 
--static void write_sum_page(struct f2fs_sb_info *sbi,
--			struct f2fs_summary_block *sum_blk, block_t blk_addr)
-+void update_meta_page(struct f2fs_sb_info *sbi, void *src,
-+							block_t blk_addr)
- {
- 	struct page *page = grab_meta_page(sbi, blk_addr);
--	void *kaddr = page_address(page);
--	memcpy(kaddr, sum_blk, PAGE_CACHE_SIZE);
-+	void *dst = page_address(page);
-+
-+	if (src)
-+		memcpy(dst, src, PAGE_CACHE_SIZE);
-+	else
-+		memset(dst, 0, PAGE_CACHE_SIZE);
- 	set_page_dirty(page);
- 	f2fs_put_page(page, 1);
- }
- 
-+static void write_sum_page(struct f2fs_sb_info *sbi,
-+			struct f2fs_summary_block *sum_blk, block_t blk_addr)
-+{
-+	update_meta_page(sbi, (void *)sum_blk, blk_addr);
-+}
-+
- static int is_next_segment_free(struct f2fs_sb_info *sbi, int type)
- {
- 	struct curseg_info *curseg = CURSEG_I(sbi, type);
--- 
-2.3.3
+We do have a tfm pointer hanging off the inode (currently only used
+for directories and file name encryption, where i_mutex is serializing
+us anyway), and in theory we could use that for the data path as well.
+We'd have to serialize access to it, which could be performance
+problem, and if the tfm is significantly larger than the raw key, we'd
+need to know when we should nuke the tfm.
+
+After all, we don't want to have users waiting for their Facebook app
+to launch.  :-)
+
+					- Ted
