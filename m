@@ -1,55 +1,54 @@
-From: Steffen Klassert <steffen.klassert@secunet.com>
-Subject: Re: [PATCH] crypto: allow to assign gfp_t for __crypto_alloc_tfm
-Date: Wed, 20 May 2015 09:21:20 +0200
-Message-ID: <20150520072118.GN8928@secunet.com>
-References: <1432014416-39326-1-git-send-email-jaegeuk@kernel.org>
- <20150519054945.GA28060@gondor.apana.org.au>
- <20150519062430.GA39588@jaegeuk-mac02.hsd1.ca.comcast.net>
- <20150519063211.GA28347@gondor.apana.org.au>
- <20150519065812.GA40012@jaegeuk-mac02.hsd1.ca.comcast.net>
- <20150519065929.GA28610@gondor.apana.org.au>
- <20150519071317.GB40012@jaegeuk-mac02.hsd1.ca.comcast.net>
- <20150519071521.GA28862@gondor.apana.org.au>
- <20150519141430.GD20421@thunk.org>
- <20150519142755.GB32663@gondor.apana.org.au>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [f2fs-dev] [PATCH] f2fs crypto: add rwsem to avoid data races
+Date: Wed, 20 May 2015 08:38:30 -0400
+Message-ID: <20150520123830.GE2871@thunk.org>
+References: <1432013801-39069-1-git-send-email-jaegeuk@kernel.org>
+ <20150519142943.GE20421@thunk.org>
+ <555B4A32.3000302@gmail.com>
+ <20150520003859.GA55280@jaegeuk-mac02.mot.com>
+ <20150520043518.GC2871@thunk.org>
+ <20150520045554.GA56982@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150519142755.GB32663@gondor.apana.org.au>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, davem@davemloft.net, linux-crypto@vger.kernel.org, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, ecryptfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20150520045554.GA56982@jaegeuk-mac02.hsd1.ca.comcast.net>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: nick <xerofoify@gmail.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, May 19, 2015 at 10:27:55PM +0800, Herbert Xu wrote:
-> On Tue, May 19, 2015 at 10:14:30AM -0400, Theodore Ts'o wrote:
-> > 
-> > There can be multiple reads going on in parallel, so we're currently
-> > creating tfm's as necessary.  In fact one of the things that we've
+On Tue, May 19, 2015 at 09:55:54PM -0700, Jaegeuk Kim wrote:
 > 
-> A single tfm is fully-reentrant (as long as you don't change the
-> key).  So multiple reads/writes on a single file can all use one
-> tfm with no locking at all.
-> 
-> There should be a single tfm per key.  As your code appears to use
-> one key per inode, that translates to one tfm per inode.
-> 
-> > talked about doing is since there are some ARM cores where their
-> > "hardware acceleration" is slower than optimized software (sigh), and
-> > there are some Android applications (such as Facebook) that read
-> > *vast* quantities of data from flash on startup before painting a
-> > single pixel, that we might want to consider in some cases,
-> > parallelizing the decryption across multiple ARM cores.  Figuring out
-> > when to do this, both in terms of the workload, how many cores to use
-> > to balance off against power utilization, how much (if ever) to use
-> > the hardware "accelerator", and just plain lack of time caused us not
-> > to go down that particular path.
-> 
-> We already have some support for such parallelisation in the form of
-> pcrypt.  It has been used on IPsec and I believe dmcrypt.
+> Looking at a glance, it's mostly same as what I wanted. The key is to share
+> ci->ci_ctfm for regular file and the other dir/symlink files.
+> So, ext4_get_encryption_info will handle most of cases.
 
-The current pcrypt version is used just for IPsec because it supports
-only AEAD type algorithms and does not support request backlog. But
-I have patches to support ablkcipher algorithms and request backlog.
-I could provide them if there is interest in it.
+Yeah, I noticed after sending out my changes that your patches did
+something really similar in that regard.  "Great minds run in the same
+channels", as the (very) old saying goes...
+
+> In ext4_readdir, it also needs ext4_get_encryption_info?
+
+No, it not needed because when the directory is opened using
+opendir(3), we'll end up calling ext4_get_encryption_info() in
+ext4_file_open() --- yes, the name is a little misleading, but it gets
+used for all ext4 open(2)'s.
+
+One of the things which I've been mildly concerned about is that in
+the no key case, we end up calling ext4_get_encrpyion_info() over and
+over again, which means we end up calling request_key() over and over
+again as well.  On the other hand, we do want to use the key as soon
+as it becomes available, there isn't a good way of doing a negative
+cache on the unavailability of the logon key that could be reliably
+revoked the moment the user does have the key --- and the no-key case
+isn't the common one, so I haven't worried too much about it.  But I
+did want to remove it from the readdir() path, since it also means
+that we don't have to worry about oddities stemming from half the
+files being returned in encrypted form, and half the files in
+plaintext, because the user inserted an encryption key in the while
+there was an "ls" running in the background.
+
+Cheers,
+
+						- Ted
