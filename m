@@ -1,74 +1,135 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 3/4] f2fs crypto: check encryption for tmpfile
-Date: Thu, 28 May 2015 18:20:05 +0800
-Message-ID: <007001d0992f$f77f6ba0$e67e42e0$@samsung.com>
-References: <1432082606-55975-1-git-send-email-jaegeuk@kernel.org>
- <1432082606-55975-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/2] f2fs: hide common code in f2fs_replace_block
+Date: Thu, 28 May 2015 19:15:35 +0800
+Message-ID: <007501d09937$b7c64620$2752d260$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1432082606-55975-3-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+This patch clean up codes through:
+1.rename f2fs_replace_block to __f2fs_replace_block().
+2.introduce new f2fs_replace_block() to include __f2fs_replace_block()
+and some common related codes around __f2fs_replace_block().
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, May 20, 2015 8:43 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 3/4] f2fs crypto: check encryption for tmpfile
-> 
-> This patch adds to check encryption for tmpfile in early stage.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/namei.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index dded2b0..47066b0 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -531,6 +531,11 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
->  	}
-> 
->  	f2fs_lock_op(sbi);
-> +
-> +	err = f2fs_get_encryption_info(dir);
-> +	if (err)
-> +		goto out;
-> +
->  	err = acquire_orphan_inode(sbi);
->  	if (err)
->  		goto out;
-> --
-> 2.1.1
+Then, newly introduced function f2fs_replace_block can be used by
+following patch.
 
-I can't find the original thread, so I reply here.
-Merged patch in dev branch shows that our code is modified as below:
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/f2fs.h     |  4 ++--
+ fs/f2fs/file.c     | 12 ++----------
+ fs/f2fs/recovery.c |  9 ++-------
+ fs/f2fs/segment.c  | 17 ++++++++++++++++-
+ 4 files changed, 22 insertions(+), 20 deletions(-)
 
-static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- {
-+	int err = f2fs_get_encryption_info(dir);
-+	if (err)
-+		return err;
-+
- 	return __f2fs_tmpfile(dir, dentry, mode, NULL);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 70cdf7b..1a0716c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1695,8 +1695,8 @@ void write_meta_page(struct f2fs_sb_info *, struct page *);
+ void write_node_page(unsigned int, struct f2fs_io_info *);
+ void write_data_page(struct dnode_of_data *, struct f2fs_io_info *);
+ void rewrite_data_page(struct f2fs_io_info *);
+-void f2fs_replace_block(struct f2fs_sb_info *, struct f2fs_summary *,
+-					block_t, block_t, bool);
++void f2fs_replace_block(struct f2fs_sb_info *, struct dnode_of_data *,
++				block_t, block_t, unsigned char, bool);
+ void allocate_data_block(struct f2fs_sb_info *, struct page *,
+ 		block_t, block_t *, struct f2fs_summary *, int);
+ void f2fs_wait_on_page_writeback(struct page *, enum page_type);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6b4ba74..aec96d3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -854,18 +854,10 @@ static int f2fs_do_collapse(struct inode *inode, pgoff_t start, pgoff_t end)
+ 				set_data_blkaddr(&dn);
+ 			} else if (new_addr != NEW_ADDR) {
+ 				struct node_info ni;
+-				struct f2fs_summary sum;
+ 
+ 				get_node_info(sbi, dn.nid, &ni);
+-				set_summary(&sum, dn.nid, dn.ofs_in_node,
+-								ni.version);
+-
+-				f2fs_replace_block(sbi, &sum, old_addr,
+-								new_addr, true);
+-
+-				dn.data_blkaddr = new_addr;
+-				set_data_blkaddr(&dn);
+-				f2fs_update_extent_cache(&dn);
++				f2fs_replace_block(sbi, &dn, old_addr, new_addr,
++							ni.version, true);
+ 			}
+ 
+ 			f2fs_put_dnode(&dn);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 9de2587..24a8c1d 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -360,7 +360,6 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	unsigned int start, end;
+ 	struct dnode_of_data dn;
+-	struct f2fs_summary sum;
+ 	struct node_info ni;
+ 	int err = 0, recovered = 0;
+ 
+@@ -420,13 +419,9 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			if (err)
+ 				goto err;
+ 
+-			set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
+-
+ 			/* write dummy data page */
+-			f2fs_replace_block(sbi, &sum, src, dest, false);
+-			dn.data_blkaddr = dest;
+-			set_data_blkaddr(&dn);
+-			f2fs_update_extent_cache(&dn);
++			f2fs_replace_block(sbi, &dn, src, dest,
++							ni.version, false);
+ 			recovered++;
+ 		}
+ 		dn.ofs_in_node++;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 492c59e..5545468 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1302,7 +1302,7 @@ void rewrite_data_page(struct f2fs_io_info *fio)
+ 	f2fs_submit_page_mbio(fio);
  }
-
-It seems that, if we try to make a temp file in an unencrypted dir, we will
-always fail with -ENODATA in f2fs_get_encryption_info because encryption
-context is not exist in xattr.
-
-So we should check dir with f2fs_encrypted_inode() before
-f2fs_get_encryption_info() to avoid that.
-
-Thanks,
-
+ 
+-void f2fs_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
++void __f2fs_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 				block_t old_blkaddr, block_t new_blkaddr,
+ 				bool recover_curseg)
+ {
+@@ -1362,6 +1362,21 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 	mutex_unlock(&curseg->curseg_mutex);
+ }
+ 
++void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
++				block_t old_addr, block_t new_addr,
++				unsigned char version, bool recover_curseg)
++{
++	struct f2fs_summary sum;
++
++	set_summary(&sum, dn->nid, dn->ofs_in_node, version);
++
++	__f2fs_replace_block(sbi, &sum, old_addr, new_addr, recover_curseg);
++
++	dn->data_blkaddr = new_addr;
++	set_data_blkaddr(dn);
++	f2fs_update_extent_cache(dn);
++}
++
+ static inline bool is_merged_page(struct f2fs_sb_info *sbi,
+ 					struct page *page, enum page_type type)
+ {
+-- 
+2.3.3
