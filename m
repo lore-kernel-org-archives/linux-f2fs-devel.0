@@ -1,78 +1,56 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs crypto: clean up error handling in f2fs_fname_setup_filename
-Date: Fri, 29 May 2015 11:04:37 -0700
-Message-ID: <1432922678-22578-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: fix a deadlock for summary page lock vs. sentry_lock
+Date: Fri, 29 May 2015 11:04:38 -0700
+Message-ID: <1432922678-22578-2-git-send-email-jaegeuk@kernel.org>
+References: <1432922678-22578-1-git-send-email-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1432922678-22578-1-git-send-email-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Sync with:
-  ext4 crypto: clean up error handling in ext4_fname_setup_filename
+In f2fs_gc:                      In f2fs_replace_block:
+ - lock_page(sum_page)
+  - check_valid_map()            - mutex_lock(sentry_lock)
+   - mutex_lock(sentry_lock)     - change_curseg()
+                                  - lock_page(sum_page)
+
+This patch fixes the deadlock condition.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/crypto_fname.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ fs/f2fs/gc.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/crypto_fname.c b/fs/f2fs/crypto_fname.c
-index 81852cc..ab377d4 100644
---- a/fs/f2fs/crypto_fname.c
-+++ b/fs/f2fs/crypto_fname.c
-@@ -392,15 +392,13 @@ int f2fs_fname_setup_filename(struct inode *dir, const struct qstr *iname,
- 			return ret;
- 		ret = f2fs_fname_encrypt(dir, iname, &fname->crypto_buf);
- 		if (ret < 0)
--			goto out;
-+			goto errout;
- 		fname->disk_name.name = fname->crypto_buf.name;
- 		fname->disk_name.len = fname->crypto_buf.len;
- 		return 0;
- 	}
--	if (!lookup) {
--		ret = -EACCES;
--		goto out;
--	}
-+	if (!lookup)
-+		return -EACCES;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 43354cb..e1e7361 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -750,6 +750,15 @@ static void do_garbage_collect(struct f2fs_sb_info *sbi, unsigned int segno,
  
- 	/* We don't have the key and we are doing a lookup; decode the
- 	 * user-supplied name
-@@ -408,19 +406,17 @@ int f2fs_fname_setup_filename(struct inode *dir, const struct qstr *iname,
- 	if (iname->name[0] == '_')
- 		bigname = 1;
- 	if ((bigname && (iname->len != 33)) ||
--	    (!bigname && (iname->len > 43))) {
--		ret = -ENOENT;
--	}
-+	    (!bigname && (iname->len > 43)))
-+		return -ENOENT;
+ 	sum = page_address(sum_page);
+ 
++	/*
++	 * this is to avoid deadlock:
++	 * - lock_page(sum_page)         - f2fs_replace_block
++	 *  - check_valid_map()            - mutex_lock(sentry_lock)
++	 *   - mutex_lock(sentry_lock)     - change_curseg()
++	 *                                  - lock_page(sum_page)
++	 */
++	unlock_page(sum_page);
 +
- 	fname->crypto_buf.name = kmalloc(32, GFP_KERNEL);
--	if (fname->crypto_buf.name == NULL) {
--		ret = -ENOMEM;
--		goto out;
--	}
-+	if (fname->crypto_buf.name == NULL)
-+		return -ENOMEM;
- 	ret = digest_decode(iname->name + bigname, iname->len - bigname,
- 				fname->crypto_buf.name);
- 	if (ret < 0) {
- 		ret = -ENOENT;
--		goto out;
-+		goto errout;
- 	}
- 	fname->crypto_buf.len = ret;
- 	if (bigname) {
-@@ -430,7 +426,7 @@ int f2fs_fname_setup_filename(struct inode *dir, const struct qstr *iname,
- 		fname->disk_name.len = fname->crypto_buf.len;
- 	}
- 	return 0;
--out:
-+errout:
- 	f2fs_fname_crypto_free_buffer(&fname->crypto_buf);
- 	return ret;
+ 	switch (GET_SUM_TYPE((&sum->footer))) {
+ 	case SUM_TYPE_NODE:
+ 		gc_node_segment(sbi, sum->entries, segno, gc_type);
+@@ -763,7 +772,7 @@ static void do_garbage_collect(struct f2fs_sb_info *sbi, unsigned int segno,
+ 	stat_inc_seg_count(sbi, GET_SUM_TYPE((&sum->footer)), gc_type);
+ 	stat_inc_call_count(sbi->stat_info);
+ 
+-	f2fs_put_page(sum_page, 1);
++	f2fs_put_page(sum_page, 0);
  }
+ 
+ int f2fs_gc(struct f2fs_sb_info *sbi)
 -- 
 2.1.1
