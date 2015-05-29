@@ -1,68 +1,94 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH 2/3] f2fs crypto: use bounce pages from mempool first
-Date: Thu, 28 May 2015 14:18:11 -0400
-Message-ID: <20150528181811.GC18540@thunk.org>
-References: <1432255225-76792-1-git-send-email-jaegeuk@kernel.org>
- <1432255225-76792-2-git-send-email-jaegeuk@kernel.org>
- <20150525195551.GB16402@thunk.org>
- <20150527211641.GA1397@jaegeuk-mac02.mot.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs crypto: check context consistent for
+ rename2
+Date: Thu, 28 May 2015 19:29:20 -0700
+Message-ID: <20150529022920.GA18700@jaegeuk-mac02.mot.com>
+References: <00d401d096d2$a58db310$f0a91930$@samsung.com>
+ <20150528170726.GB11631@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150527211641.GA1397@jaegeuk-mac02.mot.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20150528170726.GB11631@jaegeuk-mac02.mot.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, May 27, 2015 at 02:18:54PM -0700, Jaegeuk Kim wrote:
-> The problem that I'd like to address here is to reduce the call counts of
-> allocating and freeing a number of pages in pairs.
+On Thu, May 28, 2015 at 10:07:26AM -0700, Jaegeuk Kim wrote:
+> Hi Chao,
 > 
-> When I conduct xfstests/224 under 1GB DRAM, I've seen triggering several oom
-> killers, and in that moment, a huge number of inactive anonymous pages are
-> registered in the page cache. Not sure why those pages are not reclaimed
-> seamlessly though.
+> On Mon, May 25, 2015 at 06:07:02PM +0800, Chao Yu wrote:
+> > For exchange rename, we should check context consistent of encryption
+> > between new_dir and old_inode or old_dir and new_inode. Otherwise
+> > inheritance of parent's encryption context will be broken.
+> > 
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/namei.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> > index daed09c..3188464 100644
+> > --- a/fs/f2fs/namei.c
+> > +++ b/fs/f2fs/namei.c
+> > @@ -754,6 +754,15 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+> >  	int old_nlink = 0, new_nlink = 0;
+> >  	int err = -ENOENT;
+> >  
+> > +	if ((old_dir != new_dir) &&
+> > +		(!f2fs_is_child_context_consistent_with_parent(new_dir,
+> > +							old_inode) ||
+> > +		!f2fs_is_child_context_consistent_with_parent(old_dir,
+> > +							new_inode))) {
+> > +		err = -EPERM;
+> > +		goto out;
+> > +	}
+> > +
+> 
+> Seems like we need this?
+> 
+> ---
+>  fs/f2fs/namei.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 55d0d27..4772c14 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -756,6 +756,21 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  	int old_nlink = 0, new_nlink = 0;
+>  	int err = -ENOENT;
+>  
+> +	if (old_dir != new_dir) {
+> +		if (f2fs_encrypted_inode(new_dir) &&
+> +			!f2fs_is_child_context_consistent_with_parent(new_dir,
+> +							old_inode)) {
+> +			err = -EPERM;
+> +			goto out;
+> +		}
+> +		if (f2fs_encrypted_inode(old_dir) &&
+> +			!f2fs_is_child_context_consistent_with_parent(old_dir,
+> +							new_inode)) {
+> +			err = -EPERM;
+> +			goto out;
+> +		}
+> +	}
 
-If the system is running 8 fio processes, each one writing 1 meg
-(BIO_MAX pages) at a time, one of the things that is going on is that
-we need to grab 256 4k paegs before the submitting the bio, and then
-if there are a large number of bio's queued, we can have potentially a
-very large number of pages allocated until the I/O has been completed.
+It needs to sync with ext4 patch published by Ted.
 
-So the problem is it's extremely difficult to determine ahead of time
-how many pages that need to be reserved in a mempool.  Simply
-increasing the number of in the mempool from 32 to 256 is no guarantee
-that it will be enough.  We originally only reserved 32 pages so that
-in the case of an extreme memory crunch, we could make at least some
-amount of forward progress.
+Thanks,
 
-I can imagine a number of different solutions (and these are not
-mutally exclusive):
-
-1) Try to dynamically adjust the number of pages we keep in the
-mempool so that we ramp up under I/O load and then gradually ramp down
-when the I/O pressure decreases.
-
-2) Keep track of how many temporary encryption outstanding bounce
-pages are outstanding, if we exceed some number, push back in
-writepages for encrypted inode.  That way we can make it be a tunable
-so that we don't end up using a huge number of pages, and can start
-throttling encrypted writeback even before we start getting allocation
-failures.
-
-I'm currently leaning towards #2, myself.  I haven't tried doing some
-kernel performance measurements to see how much CPU time we're
-spending in alloc_page() and free_page() when under a very heavy
-memory load.  I assume you've done some measurements and this has been
-very heavy.  Can you give more details about how much CPU time is
-getting burned by alloc_page() and free_page()?  I had been assuming
-that if we're I/O bound, the extra CPU time to allocate and free the
-pages wouldn't be really onerous.  If you're seeing something
-different, I'd love to see some data (perf traces, etc.) to correct my
-impressions.
-
-Cheers,
-
-					- Ted
+> +
+>  	f2fs_balance_fs(sbi);
+>  
+>  	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+> -- 
+> 2.1.1
+> 
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
