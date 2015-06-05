@@ -1,88 +1,70 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev]   Not use inline_data  after file shrink
-Date: Fri, 05 Jun 2015 18:13:43 +0800
-Message-ID: <000001d09f78$684d4250$38e7c6f0$@samsung.com>
-References: <5567F382.5060403@huawei.com>
- <003601d099fd$837394b0$8a5abe10$@samsung.com>
- <20150529231425.GB24511@jaegeuk-mac02.mot.com>
+Subject: [PATCH] f2fs: do not trim preallocated blocks when truncating after
+ i_size
+Date: Fri, 05 Jun 2015 18:34:02 +0800
+Message-ID: <000101d09f7b$4a2559e0$de700da0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <20150529231425.GB24511@jaegeuk-mac02.mot.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: 'He YunLei' <heyunlei@huawei.com>, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+When we perform generic/092 in xfstests, output is like below:
 
-Sorry for the long delay!
+     XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
+     0: [0..10239]: data
+     0: [0..10239]: data
+    -1: [10240..20479]: unwritten
+    +1: [10240..14335]: unwritten
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Saturday, May 30, 2015 7:14 AM
-> To: Chao Yu
-> Cc: 'He YunLei'; linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] Not use inline_data after file shrink
-> 
-> Hi Chao,
-> 
-> [snip]
-> 
-> > > We can see that file still uses 16 Blocks
-> > >
-> > > How do we deal with such situation?
-> >
-> > Now, f2fs does not convert non-inline inode to inline one for these potential
-> > inodes with small size. So, once inline inode is converted, there is no
-> > procedure to revert it.
-> >
-> > > it's meaningful to reuse inline_data?
-> >
-> > Actually, I did not know the history reason why we don't implement the
-> > reverse procedure, as inline_data feature is designed and implemented
-> > by Huajun and Jaegeuk. I can't find any clues in old threads.
-> 
-> Initial proposal implemented this sort of conversion.
-> But, in the production level, I suffered from many bugs like eating data.
-> The major attack to me was the lock coverage which was not fully designed
-> concretely.
-> 
-> The real complexity lied on allocation and truncation paths in parallel.
-> And, it turned out the key data structures was not covered by a lock correctly.
-> So, I changed them not only to use node page lock as much as possible, but
-> also to implement one-way conversion to reduce lock contention, inline_data
-> conversion overhead, and code complexity.
+This is because with this testcase, we redefine the regulation for
+truncate in perallocated space past i_size as below:
 
-Thank you for letting me know the history! :)
+"There was some confused about what the fs was supposed to do when you
+truncate at i_size with preallocated space past i_size. We decided on the
+following things.
 
-> 
-> In addition, the reason why I decided to do that is from the question how many
-> large files are converted to small-sized (1B ~ 3.5KB) files.
+1) truncate(i_size) will trim all blocks past i_size.
+2) truncate(x) where x > i_size will not trim all blocks past i_size.
+"
 
-I think the scenario is existing as below:
-a. sqlite may use truncate mode for its log file.
-b. file size can be shrunk automatically if we have enable auto-vacuum feature
-   in db system.
+This method is used in xfs, and then ext4/btrfs will follow the rule.
 
-But unfortunately it's not very common, we can hardly benefit a lot from the
-scenario, and base on intensive lock contention due to two-way conversion as
-you mentioned, I can't say we should implement it.
+This patch fixes to follow the new rule for f2fs.
 
-So for now I don't mind keeping original inline_data implementation.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/file.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks,
-
-> 
-> In terms of life of files, I believe it is enough to set inline_data for
-> originally small files, which mitigates cleaning overhead as my expectation.
-> 
-> For space utilization, I'm not quite sure since most of space are normally
-> occupied by many large files for multimedia.
-> 
-> Let me correct, if I'm missing something.
-> 
-> Thanks,
-
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 4d42d66..85f97af 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -651,16 +651,16 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 				f2fs_get_encryption_info(inode))
+ 			return -EACCES;
+ 
+-		if (attr->ia_size != i_size_read(inode)) {
++		if (attr->ia_size <= i_size_read(inode)) {
+ 			truncate_setsize(inode, attr->ia_size);
+ 			f2fs_truncate(inode);
+ 			f2fs_balance_fs(F2FS_I_SB(inode));
+ 		} else {
+ 			/*
+-			 * giving a chance to truncate blocks past EOF which
+-			 * are fallocated with FALLOC_FL_KEEP_SIZE.
++			 * do not trim all blocks after i_size if target size is
++			 * larger than i_size.
+ 			 */
+-			f2fs_truncate(inode);
++			truncate_setsize(inode, attr->ia_size);
+ 		}
+ 	}
+ 
+-- 
+2.4.2
