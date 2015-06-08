@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/2] f2fs: setting discard option in parse_options()
-Date: Mon, 08 Jun 2015 13:20:10 +0800
-Message-ID: <004501d0a1aa$e4dfd150$ae9f73f0$@samsung.com>
+Subject: [PATCH 2/2] f2fs: skip committing valid superblock
+Date: Mon, 08 Jun 2015 13:28:03 +0800
+Message-ID: <004601d0a1ac$07f97460$17ec5d20$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,62 +12,76 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-For the first mount of f2fs image with realtime discard option, we will
-disable discard option if device is not supported, but for remount
-operation, our discard option can still be set, this should be avoided.
-
-This patch moves configuring of discard option to parse_options() to fix
-this issue.
+In recovery procedure for superblock, we try to write data of valid
+superblock into invalid one for recovery, work should be finished here,
+but then still we will write the valid one with its original data.
+This operation is not needed. Let's skip doing this unnecessary work.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/super.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+ fs/f2fs/f2fs.h  | 2 +-
+ fs/f2fs/file.c  | 2 +-
+ fs/f2fs/super.c | 8 +++++---
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1a0716c..a8327ed 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1624,7 +1624,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+ /*
+  * super.c
+  */
+-int f2fs_commit_super(struct f2fs_sb_info *);
++int f2fs_commit_super(struct f2fs_sb_info *, bool);
+ int f2fs_sync_fs(struct super_block *, int);
+ extern __printf(3, 4)
+ void f2fs_msg(struct super_block *, const char *, const char *, ...);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 85f97af..4c8885d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1530,7 +1530,7 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
+ 	/* update superblock with uuid */
+ 	generate_random_uuid(sbi->raw_super->encrypt_pw_salt);
+ 
+-	err = f2fs_commit_super(sbi);
++	err = f2fs_commit_super(sbi, false);
+ 
+ 	mnt_drop_write_file(filp);
+ 	if (err) {
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fbbf785..a06b0b4 100644
+index f0be6a6..fbbf785 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -258,6 +258,7 @@ static void init_once(void *foo)
- static int parse_options(struct super_block *sb, char *options)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-+	struct request_queue *q;
- 	substring_t args[MAX_OPT_ARGS];
- 	char *p, *name;
- 	int arg = 0;
-@@ -302,7 +303,14 @@ static int parse_options(struct super_block *sb, char *options)
- 				return -EINVAL;
- 			break;
- 		case Opt_discard:
--			set_opt(sbi, DISCARD);
-+			q = bdev_get_queue(sb->s_bdev);
-+			if (blk_queue_discard(q)) {
-+				set_opt(sbi, DISCARD);
-+			} else {
-+				f2fs_msg(sb, KERN_WARNING,
-+					"mounting with \"discard\" option, but "
-+					"the device does not support discard");
-+			}
- 			break;
- 		case Opt_noheap:
- 			set_opt(sbi, NOHEAP);
-@@ -1237,16 +1245,6 @@ try_onemore:
- 		proc_create_data("segment_info", S_IRUGO, sbi->s_proc,
- 				 &f2fs_seq_segment_info_fops, sb);
+@@ -1035,7 +1035,7 @@ out:
+ 	return 0;
+ }
  
--	if (test_opt(sbi, DISCARD)) {
--		struct request_queue *q = bdev_get_queue(sb->s_bdev);
--		if (!blk_queue_discard(q)) {
--			f2fs_msg(sb, KERN_WARNING,
--					"mounting with \"discard\" option, but "
--					"the device does not support discard");
--			clear_opt(sbi, DISCARD);
--		}
--	}
--
- 	sbi->s_kobj.kset = f2fs_kset;
- 	init_completion(&sbi->s_kobj_unregister);
- 	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_ktype, NULL,
+-int f2fs_commit_super(struct f2fs_sb_info *sbi)
++int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
+ {
+ 	struct buffer_head *sbh = sbi->raw_super_buf;
+ 	sector_t block = sbh->b_blocknr;
+@@ -1047,7 +1047,9 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi)
+ 	err = sync_dirty_buffer(sbh);
+ 
+ 	sbh->b_blocknr = block;
+-	if (err)
++
++	/* if we are in recovery path, skip writing valid superblock */
++	if (recover || err)
+ 		goto out;
+ 
+ 	/* write current valid superblock */
+@@ -1291,7 +1293,7 @@ try_onemore:
+ 	/* recover broken superblock */
+ 	if (recovery && !f2fs_readonly(sb) && !bdev_read_only(sb->s_bdev)) {
+ 		f2fs_msg(sb, KERN_INFO, "Recover invalid superblock");
+-		f2fs_commit_super(sbi);
++		f2fs_commit_super(sbi, true);
+ 	}
+ 
+ 	return 0;
 -- 
 2.4.2
