@@ -1,70 +1,73 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: do not trim preallocated blocks when truncating after
- i_size
-Date: Fri, 05 Jun 2015 18:34:02 +0800
-Message-ID: <000101d09f7b$4a2559e0$de700da0$@samsung.com>
+Subject: [PATCH 1/2] f2fs: setting discard option in parse_options()
+Date: Mon, 08 Jun 2015 13:20:10 +0800
+Message-ID: <004501d0a1aa$e4dfd150$ae9f73f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When we perform generic/092 in xfstests, output is like below:
+For the first mount of f2fs image with realtime discard option, we will
+disable discard option if device is not supported, but for remount
+operation, our discard option can still be set, this should be avoided.
 
-     XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-     0: [0..10239]: data
-     0: [0..10239]: data
-    -1: [10240..20479]: unwritten
-    +1: [10240..14335]: unwritten
-
-This is because with this testcase, we redefine the regulation for
-truncate in perallocated space past i_size as below:
-
-"There was some confused about what the fs was supposed to do when you
-truncate at i_size with preallocated space past i_size. We decided on the
-following things.
-
-1) truncate(i_size) will trim all blocks past i_size.
-2) truncate(x) where x > i_size will not trim all blocks past i_size.
-"
-
-This method is used in xfs, and then ext4/btrfs will follow the rule.
-
-This patch fixes to follow the new rule for f2fs.
+This patch moves configuring of discard option to parse_options() to fix
+this issue.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/file.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/f2fs/super.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 4d42d66..85f97af 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -651,16 +651,16 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 				f2fs_get_encryption_info(inode))
- 			return -EACCES;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index fbbf785..a06b0b4 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -258,6 +258,7 @@ static void init_once(void *foo)
+ static int parse_options(struct super_block *sb, char *options)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++	struct request_queue *q;
+ 	substring_t args[MAX_OPT_ARGS];
+ 	char *p, *name;
+ 	int arg = 0;
+@@ -302,7 +303,14 @@ static int parse_options(struct super_block *sb, char *options)
+ 				return -EINVAL;
+ 			break;
+ 		case Opt_discard:
+-			set_opt(sbi, DISCARD);
++			q = bdev_get_queue(sb->s_bdev);
++			if (blk_queue_discard(q)) {
++				set_opt(sbi, DISCARD);
++			} else {
++				f2fs_msg(sb, KERN_WARNING,
++					"mounting with \"discard\" option, but "
++					"the device does not support discard");
++			}
+ 			break;
+ 		case Opt_noheap:
+ 			set_opt(sbi, NOHEAP);
+@@ -1237,16 +1245,6 @@ try_onemore:
+ 		proc_create_data("segment_info", S_IRUGO, sbi->s_proc,
+ 				 &f2fs_seq_segment_info_fops, sb);
  
--		if (attr->ia_size != i_size_read(inode)) {
-+		if (attr->ia_size <= i_size_read(inode)) {
- 			truncate_setsize(inode, attr->ia_size);
- 			f2fs_truncate(inode);
- 			f2fs_balance_fs(F2FS_I_SB(inode));
- 		} else {
- 			/*
--			 * giving a chance to truncate blocks past EOF which
--			 * are fallocated with FALLOC_FL_KEEP_SIZE.
-+			 * do not trim all blocks after i_size if target size is
-+			 * larger than i_size.
- 			 */
--			f2fs_truncate(inode);
-+			truncate_setsize(inode, attr->ia_size);
- 		}
- 	}
- 
+-	if (test_opt(sbi, DISCARD)) {
+-		struct request_queue *q = bdev_get_queue(sb->s_bdev);
+-		if (!blk_queue_discard(q)) {
+-			f2fs_msg(sb, KERN_WARNING,
+-					"mounting with \"discard\" option, but "
+-					"the device does not support discard");
+-			clear_opt(sbi, DISCARD);
+-		}
+-	}
+-
+ 	sbi->s_kobj.kset = f2fs_kset;
+ 	init_completion(&sbi->s_kobj_unregister);
+ 	err = kobject_init_and_add(&sbi->s_kobj, &f2fs_ktype, NULL,
 -- 
 2.4.2
