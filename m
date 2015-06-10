@@ -1,76 +1,39 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2] f2fs: do not trim preallocated blocks when truncating after
- i_size
-Date: Tue, 09 Jun 2015 10:27:39 +0800
-Message-ID: <007b01d0a25b$ff2a99d0$fd7fcd70$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: drop the volatile_write flag only
+Date: Wed, 10 Jun 2015 06:48:11 -0700
+Message-ID: <1433944091-69224-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When we perform generic/092 in xfstests, output is like below:
+When aborting volatile_writes, let's drop its flag and give up any further
+volatile_writes.
 
-     XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-     0: [0..10239]: data
-     0: [0..10239]: data
-    -1: [10240..20479]: unwritten
-    +1: [10240..14335]: unwritten
-
-This is because with this testcase, we redefine the regulation for
-truncate in perallocated space past i_size as below:
-
-"There was some confused about what the fs was supposed to do when you
-truncate at i_size with preallocated space past i_size. We decided on the
-following things.
-
-1) truncate(i_size) will trim all blocks past i_size.
-2) truncate(x) where x > i_size will not trim all blocks past i_size.
-"
-
-This method is used in xfs, and then ext4/btrfs will follow the rule.
-
-This patch fixes to follow the new rule for f2fs.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
-v2:
- * adjust code style pointed out by Jaegeuk Kim.
-
- fs/f2fs/file.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ fs/f2fs/file.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 4d42d66..ec47c4a 100644
+index 096e08c..53c1b74 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -651,16 +651,15 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 				f2fs_get_encryption_info(inode))
- 			return -EACCES;
- 
--		if (attr->ia_size != i_size_read(inode)) {
--			truncate_setsize(inode, attr->ia_size);
-+		truncate_setsize(inode, attr->ia_size);
-+
-+		/*
-+		 * do not trim all preallocated blocks after i_size if target
-+		 * size is larger than i_size.
-+		 */
-+		if (attr->ia_size <= i_size_read(inode)) {
- 			f2fs_truncate(inode);
- 			f2fs_balance_fs(F2FS_I_SB(inode));
--		} else {
--			/*
--			 * giving a chance to truncate blocks past EOF which
--			 * are fallocated with FALLOC_FL_KEEP_SIZE.
--			 */
--			f2fs_truncate(inode);
- 		}
+@@ -1391,11 +1391,9 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+ 		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
  	}
  
+-	if (f2fs_is_volatile_file(inode)) {
++	if (f2fs_is_volatile_file(inode))
+ 		clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
+-		filemap_fdatawrite(inode->i_mapping);
+-		set_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
+-	}
++
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+ }
 -- 
-2.4.2
+2.1.1
+
