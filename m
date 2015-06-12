@@ -1,26 +1,28 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: do not trim preallocated blocks
- when truncating after i_size
-Date: Thu, 11 Jun 2015 18:30:39 -0700
-Message-ID: <20150612013039.GA76743@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <007b01d0a25b$ff2a99d0$fd7fcd70$@samsung.com>
-	<00e401d0a4a7$11d8a9d0$3589fd70$@samsung.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH] fs/f2fs: add cond_resched() to
+	sync_dirty_dir_inodes()
+Date: Fri, 12 Jun 2015 15:28:27 +0200
+Message-ID: <557ADE7B.2010106@linutronix.de>
+References: <20150220201035.GA6005@linutronix.de>
+	<20150223233353.GA35245@jaegeuk-mac02>
+	<20150227121314.GA21939@linutronix.de>
+	<20150303011303.GC6541@lcm-devel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Z3Do2-0000W8-Jd
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <bigeasy@linutronix.de>) id 1Z3P0f-0003f1-9V
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 12 Jun 2015 01:30:50 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Z3Do1-0006mR-B4 for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 12 Jun 2015 01:30:50 +0000
-Content-Disposition: inline
-In-Reply-To: <00e401d0a4a7$11d8a9d0$3589fd70$@samsung.com>
+	Fri, 12 Jun 2015 13:28:37 +0000
+Received: from www.linutronix.de ([62.245.132.108] helo=Galois.linutronix.de)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps
+	(TLSv1:AES128-SHA:128) (Exim 4.76) id 1Z3P0d-0005zr-GO
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 12 Jun 2015 13:28:37 +0000
+In-Reply-To: <20150303011303.GC6541@lcm-devel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,104 +32,28 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Changman Lee <cm224.lee@samsung.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Jun 12, 2015 at 08:30:09AM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
+On 03/03/2015 02:13 AM, Changman Lee wrote:
 > 
-> > -----Original Message-----
-> > From: Chao Yu [mailto:chao2.yu@samsung.com]
-> > Sent: Tuesday, June 09, 2015 10:28 AM
-> > To: Jaegeuk Kim; Changman Lee
-> > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> > Subject: [f2fs-dev] [PATCH v2] f2fs: do not trim preallocated blocks when truncating after i_size
-> > 
-> > When we perform generic/092 in xfstests, output is like below:
-> > 
-> >      XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-> >      0: [0..10239]: data
-> >      0: [0..10239]: data
-> >     -1: [10240..20479]: unwritten
-> >     +1: [10240..14335]: unwritten
-> > 
-> > This is because with this testcase, we redefine the regulation for
-> > truncate in perallocated space past i_size as below:
-> > 
-> > "There was some confused about what the fs was supposed to do when you
-> > truncate at i_size with preallocated space past i_size. We decided on the
-> > following things.
-> > 
-> > 1) truncate(i_size) will trim all blocks past i_size.
-> > 2) truncate(x) where x > i_size will not trim all blocks past i_size.
-> > "
-> > 
-> > This method is used in xfs, and then ext4/btrfs will follow the rule.
-> > 
-> > This patch fixes to follow the new rule for f2fs.
-> > 
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> > v2:
-> >  * adjust code style pointed out by Jaegeuk Kim.
-> > 
-> >  fs/f2fs/file.c | 15 +++++++--------
-> >  1 file changed, 7 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 4d42d66..ec47c4a 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -651,16 +651,15 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
-> >  				f2fs_get_encryption_info(inode))
-> >  			return -EACCES;
-> > 
-> > -		if (attr->ia_size != i_size_read(inode)) {
-> > -			truncate_setsize(inode, attr->ia_size);
-> > +		truncate_setsize(inode, attr->ia_size);
-> > +
-> > +		/*
-> > +		 * do not trim all preallocated blocks after i_size if target
-> > +		 * size is larger than i_size.
-> > +		 */
-> > +		if (attr->ia_size <= i_size_read(inode)) {
-> 
-> It's wrong implementation here, because we have set i_size in inode with
-> attr->ia_size, so that we will always go into this "truncate smaller size"
-> branch.
-> 
-> Please ignore this patch, sorry for my mistake.
-> 
-> Jaegeuk, I'd like to use v1 patch, how do you think?
+> Hi Sebastian,
 
-Oh, I see.
-I'll merge v1.
+Hi Changman,
 
-Thank you for pointing out this.
+> After this patch, your test is all done without any CPU stall, Right?
+> IMHO, context should be switched without cond_resched() after consumed
+> own time quota. So, it just reduces system latency due to yielding.
+> I thought another way to discard pages of inode to be evicted in merged bio
+> instead of submit. If so, evict() doesn't need to wait for writeback.
+> Just my curiousity out of this problem.
+
+Where do we stand on this?
 
 > 
 > Thanks,
 > 
-> >  			f2fs_truncate(inode);
-> >  			f2fs_balance_fs(F2FS_I_SB(inode));
-> > -		} else {
-> > -			/*
-> > -			 * giving a chance to truncate blocks past EOF which
-> > -			 * are fallocated with FALLOC_FL_KEEP_SIZE.
-> > -			 */
-> > -			f2fs_truncate(inode);
-> >  		}
-> >  	}
-> > 
-> > --
-> > 2.4.2
-> > 
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+Sebastian
 
 ------------------------------------------------------------------------------
