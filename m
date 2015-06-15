@@ -1,28 +1,22 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] fs/f2fs: add cond_resched() to
-	sync_dirty_dir_inodes()
-Date: Fri, 12 Jun 2015 15:28:27 +0200
-Message-ID: <557ADE7B.2010106@linutronix.de>
-References: <20150220201035.GA6005@linutronix.de>
-	<20150223233353.GA35245@jaegeuk-mac02>
-	<20150227121314.GA21939@linutronix.de>
-	<20150303011303.GC6541@lcm-devel.org>
+From: "mike" <mike@welding122133.net>
+Subject: [SPAM] welding cutting
+Date: Mon, 15 Jun 2015 22:48:58 +0800
+Message-ID: <E1Z4VbG-00012L-Qu@sfs-ml-1.v29.ch3.sourceforge.com>
+Reply-To: elitewelding@yeah.net
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <bigeasy@linutronix.de>) id 1Z3P0f-0003f1-9V
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <mike@welding122133.net>) id 1Z4VbE-00011r-9M
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 12 Jun 2015 13:28:37 +0000
-Received: from www.linutronix.de ([62.245.132.108] helo=Galois.linutronix.de)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps
-	(TLSv1:AES128-SHA:128) (Exim 4.76) id 1Z3P0d-0005zr-GO
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 12 Jun 2015 13:28:37 +0000
-In-Reply-To: <20150303011303.GC6541@lcm-devel.org>
+	Mon, 15 Jun 2015 14:42:56 +0000
+Received: from [221.227.54.60] (helo=2012-20130103AH)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Z4VbB-0000kU-Bo for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 15 Jun 2015 14:42:56 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,28 +26,48 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Changman Lee <cm224.lee@samsung.com>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On 03/03/2015 02:13 AM, Changman Lee wrote:
-> 
-> Hi Sebastian,
+Dear my customer,
 
-Hi Changman,
+If you are interested in our products, Please reply us email. we will send you more information.
 
-> After this patch, your test is all done without any CPU stall, Right?
-> IMHO, context should be switched without cond_resched() after consumed
-> own time quota. So, it just reduces system latency due to yielding.
-> I thought another way to discard pages of inode to be evicted in merged bio
-> instead of submit. If so, evict() doesn't need to wait for writeback.
-> Just my curiousity out of this problem.
+We are specialized in manufacturing and exporting in automatic welding equipment, 
+CNC cutting equipment, milling equipment and other special welding equipment.
 
-Where do we stand on this?
+Main Products:
+Welding manipulator
+Welding rotator
+Welding positioner
+Edge-milling machine
+Shot blasting machine
+CNC cutter
+Special welding machine
+H beam Welding Production Line
+Pipe Welding Rotator
+Tank Rotators
+Rotary Welding Positioners
+Column And Boom Manipulator
+Self Aligning Rotators
+Beam Welding Line
+CNC Plasma Cutting Machine
+CNC Flame Cutting Machine
+Edge Beveling Machine
+Edge Milling Machine
+Shot Blasting Machine
+Box Beam Welding
+Hydraulic Tilter
+Wind Tower Production Line
 
-> 
-> Thanks,
-> 
+Thanks
 
-Sebastian
+*****************************************************************
+Mike Zhao
+(Marketing manager)
+Elite Welding & Cutting Equipment Co.,Ltd.
+Luoshe Town Wuxi City, Jiangsu Province, China Zip:214154
+Cell phone: +86-0-13812528128
+Email:elitewelding@163.com
+*****************************************************************
 
 ------------------------------------------------------------------------------
