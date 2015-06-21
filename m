@@ -1,22 +1,28 @@
-From: "mike" <mike@welding122133.net>
-Subject: [SPAM] welding cutting
-Date: Mon, 15 Jun 2015 22:48:58 +0800
-Message-ID: <E1Z4VbG-00012L-Qu@sfs-ml-1.v29.ch3.sourceforge.com>
-Reply-To: elitewelding@yeah.net
+From: info@un.org <patrickmba_firstbknigeria1@outlook.com>
+Subject: [SPAM] UNITED NATIONS COMPENSATION UNIT,
+	IN AFFILIATION WITH THE FIRST BANK PLC
+Date: Sun, 21 Jun 2015 20:54:22 +0200
+Message-ID: <E1Z6kNq-0005y2-6d@server35.speedpacket.com>
+Reply-To: patrickmba_firstbknigeria1@outlook.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <mike@welding122133.net>) id 1Z4VbE-00011r-9M
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <nobody@server35.speedpacket.com>) id 1Z6kNy-0001ez-13
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Jun 2015 14:42:56 +0000
-Received: from [221.227.54.60] (helo=2012-20130103AH)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Z4VbB-0000kU-Bo for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Jun 2015 14:42:56 +0000
+	Sun, 21 Jun 2015 18:54:30 +0000
+Received: from server35.speedpacket.com ([92.48.84.200])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1Z6kNw-0003Gn-VD
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 21 Jun 2015 18:54:30 +0000
+Received: from nobody by server35.speedpacket.com with local (Exim 4.85)
+	(envelope-from <nobody@server35.speedpacket.com>) id 1Z6kNq-0005y2-6d
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 21 Jun 2015 20:54:22 +0200
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,46 +34,30 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
-Dear my customer,
+UNITED NATIONS COMPENSATION UNIT, IN AFFILIATION WITH THE FIRST BANK PLC
 
-If you are interested in our products, Please reply us email. we will send you more information.
 
-We are specialized in manufacturing and exporting in automatic welding equipment, 
-CNC cutting equipment, milling equipment and other special welding equipment.
+Attention:Beneficiary,
+How are you today?Hope all is well with you and family?,You may not understand why this mail came to you.
 
-Main Products:
-Welding manipulator
-Welding rotator
-Welding positioner
-Edge-milling machine
-Shot blasting machine
-CNC cutter
-Special welding machine
-H beam Welding Production Line
-Pipe Welding Rotator
-Tank Rotators
-Rotary Welding Positioners
-Column And Boom Manipulator
-Self Aligning Rotators
-Beam Welding Line
-CNC Plasma Cutting Machine
-CNC Flame Cutting Machine
-Edge Beveling Machine
-Edge Milling Machine
-Shot Blasting Machine
-Box Beam Welding
-Hydraulic Tilter
-Wind Tower Production Line
+We have been having a meeting that just ended 2 days ago with the former secretary to the UNITED NATIONS. This email is to all the people that have been scammed in any part of the world. The UNITED NATIONS have agreed to compensate them with the sum of US$3,500,000.00.This includes every foreigner that may have not received their contract sum,and people that have had an unfinished transaction or international businesses that failed due to Government problems etc.
 
-Thanks
+We found your name in our list and that is why we are contacting you,This have been agreed upon and have been signed Therefore,we are happy to inform you that an arrangement has perfectly been concluded to effect your payment as soon as possible in our bid to be transparent.
+However,it is our pleasure to inform you that your Bank Draft (Cheque) has been approved and ready.
+We have also concluded delivery arrangement with our accredited courier service Company to oversee the delivery of the Bank Draft to you without any further delay.
 
-*****************************************************************
-Mike Zhao
-(Marketing manager)
-Elite Welding & Cutting Equipment Co.,Ltd.
-Luoshe Town Wuxi City, Jiangsu Province, China Zip:214154
-Cell phone: +86-0-13812528128
-Email:elitewelding@163.com
-*****************************************************************
+So you are hereby advice to forward to this office Director International Payment Department.
+Therefore you should send him your full Name and Telephone number/your correct mailing address where you want him to send the Bank Draft to you.
+Contact Mr. Patrick Mba immediately for your Bank Draft:
+Person to Contact Mr. Patrick Mba
+Email: patrickmba_firstbknigeria1@outlook.com
+Thanks and God bless you and your family.
+Hoping to hear from you as soon as you receive your Bank Draft.
+Making the world a better place
+Regards,
+Mrs. Linda Anderson
+Chief announcer
+
+
 
 ------------------------------------------------------------------------------
