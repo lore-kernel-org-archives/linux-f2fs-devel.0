@@ -1,35 +1,47 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [GIT PULL] f2fs updates for v4.2
-Date: Wed, 24 Jun 2015 23:48:26 -0700
-Message-ID: <20150625064522.GA44674@jaegeuk-mac02.mot-mobility.com>
-References: <20150624202401.GA40031@jaegeuk-mac02.mot.com>
- <CA+55aFycRo0ttWw5kAgf=tDrfz-hvhSsjveu9LqdXH-RNbXE3A@mail.gmail.com>
- <20150625043334.GT17109@ZenIV.linux.org.uk>
- <20150625054917.GA43469@jaegeuk-mac02.hsd1.ca.comcast.net>
- <20150625063235.GV17109@ZenIV.linux.org.uk>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] f2fs crypto: Delete an unnecessary check before the function
+ call "key_put"
+Date: Fri, 26 Jun 2015 17:33:22 +0200
+Message-ID: <558D70C2.4080406@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150625063235.GV17109@ZenIV.linux.org.uk>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Changman Lee <cm224.lee@samsung.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Jun 25, 2015 at 07:32:36AM +0100, Al Viro wrote:
-> On Wed, Jun 24, 2015 at 10:50:10PM -0700, Jaegeuk Kim wrote:
-> 
-> > Right, I missed merging the fix-up patch in linux-next into my pull-request.
-> > At a glance, I think there is no problem; except 80 column width, though.
-> > 
-> > Also, agreed that I need to take a look at deleting the dentry to deal with that
-> > failure case.
-> 
-> 	Why not set the symlink up first and create a directory entry only
-> if that succeeds?  Looks like it's less work that way...
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 26 Jun 2015 17:28:55 +0200
 
-Cause f2fs_add_link initializes some on-disk inode structures to be used when
-writing data.
+The key_put() function tests whether its argument is NULL and then
+returns immediately. Thus the test around the call is not needed.
 
-Maybe simply call f2fs_unlink?
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ fs/f2fs/crypto_key.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/crypto_key.c b/fs/f2fs/crypto_key.c
+index 95b8f93..9f77de2 100644
+--- a/fs/f2fs/crypto_key.c
++++ b/fs/f2fs/crypto_key.c
+@@ -92,8 +92,7 @@ static void f2fs_free_crypt_info(struct f2fs_crypt_info *ci)
+ 	if (!ci)
+ 		return;
+ 
+-	if (ci->ci_keyring_key)
+-		key_put(ci->ci_keyring_key);
++	key_put(ci->ci_keyring_key);
+ 	crypto_free_ablkcipher(ci->ci_ctfm);
+ 	kmem_cache_free(f2fs_crypt_info_cachep, ci);
+ }
+-- 
+2.4.4
+
