@@ -1,47 +1,78 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH] f2fs crypto: Delete an unnecessary check before the function
- call "key_put"
-Date: Fri, 26 Jun 2015 17:33:22 +0200
-Message-ID: <558D70C2.4080406@users.sourceforge.net>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
+From: "mike" <mike@welding133.net>
+Subject: [SPAM] welding
+Date: Sun, 28 Jun 2015 22:11:43 +0800
+Message-ID: <E1Z9DDH-0007cH-R8@sfs-ml-2.v29.ch3.sourceforge.com>
+Reply-To: elitewelding@yeah.net
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Changman Lee <cm224.lee@samsung.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <mike@welding133.net>) id 1Z9DDG-0007cC-Pr
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 28 Jun 2015 14:05:38 +0000
+Received: from [180.112.56.135] (helo=2012-20130103AH)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Z9DDD-0004wB-80 for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 28 Jun 2015 14:05:38 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 26 Jun 2015 17:28:55 +0200
+Dear my customer,
 
-The key_put() function tests whether its argument is NULL and then
-returns immediately. Thus the test around the call is not needed.
+If you are interested in our products, Please reply us email. we will send you more information.
 
-This issue was detected by using the Coccinelle software.
+We are specialized in manufacturing and exporting in automatic welding equipment, 
+CNC cutting equipment, milling equipment and other special welding equipment.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- fs/f2fs/crypto_key.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Main Products:
+Welding manipulator
+Welding rotator
+Welding positioner
+Edge-milling machine
+Shot blasting machine
+CNC cutter
+Special welding machine
+H beam Welding Production Line
+Pipe Welding Rotator
+Tank Rotators
+Rotary Welding Positioners
+Column And Boom Manipulator
+Self Aligning Rotators
+Beam Welding Line
+CNC Plasma Cutting Machine
+CNC Flame Cutting Machine
+Edge Beveling Machine
+Edge Milling Machine
+Shot Blasting Machine
+Box Beam Welding
+Hydraulic Tilter
+Wind Tower Production Line
 
-diff --git a/fs/f2fs/crypto_key.c b/fs/f2fs/crypto_key.c
-index 95b8f93..9f77de2 100644
---- a/fs/f2fs/crypto_key.c
-+++ b/fs/f2fs/crypto_key.c
-@@ -92,8 +92,7 @@ static void f2fs_free_crypt_info(struct f2fs_crypt_info *ci)
- 	if (!ci)
- 		return;
- 
--	if (ci->ci_keyring_key)
--		key_put(ci->ci_keyring_key);
-+	key_put(ci->ci_keyring_key);
- 	crypto_free_ablkcipher(ci->ci_ctfm);
- 	kmem_cache_free(f2fs_crypt_info_cachep, ci);
- }
--- 
-2.4.4
+Thanks
 
+*****************************************************************
+Mike Zhao
+(Marketing manager)
+Elite Welding & Cutting Equipment Co.,Ltd.
+Luoshe Town Wuxi City, Jiangsu Province, China Zip:214154
+Cell phone: +86-0-13812528128
+Email:elitewelding@163.com
+*****************************************************************
+
+------------------------------------------------------------------------------
+Monitor 25 network devices or servers for free with OpManager!
+OpManager is web-based network management software that monitors 
+network devices and physical & virtual servers, alerts via email & sms 
+for fault. Monitor 25 devices for free with no restriction. Download now
+http://ad.doubleclick.net/ddm/clk/292181274;119417398;o
