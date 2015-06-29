@@ -1,56 +1,70 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: fix to record dirty page count for symlink
-Date: Mon, 29 Jun 2015 18:14:10 +0800
-Message-ID: <00dd01d0b254$7082c640$518852c0$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 01/12] f2fs: avoid freed stat information
+Date: Mon, 29 Jun 2015 11:39:25 -0700
+Message-ID: <1435603176-63219-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Z9dy8-0002zb-1p
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 29 Jun 2015 18:39:48 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Z9dy7-0005AE-0T for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 29 Jun 2015 18:39:48 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Dirty page can be exist in mapping of newly created symlink, but previously
-we did not maintain the counting of dirty page for symlink like we maintained
-for regular/directory, so the counting we lookuped should be wrong.
+The write_checkpoint can update stat information, so we should destroy the stat
+structure after it.
 
-This patch adds missed dirty page counting for symlink to fix this issue.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 3 ++-
- fs/f2fs/f2fs.h       | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index b70bbe1..de7a0d6 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -704,7 +704,8 @@ void update_dirty_page(struct inode *inode, struct page *page)
- 	struct inode_entry *new;
- 	int ret = 0;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index a06b0b4..da27710 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -498,7 +498,6 @@ static void f2fs_put_super(struct super_block *sb)
+ 	}
+ 	kobject_del(&sbi->s_kobj);
  
--	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode))
-+	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
-+			!S_ISLNK(inode->i_mode))
- 		return;
+-	f2fs_destroy_stats(sbi);
+ 	stop_gc_thread(sbi);
  
- 	if (!S_ISDIR(inode->i_mode)) {
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a8327ed..5162204 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1039,7 +1039,8 @@ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
+ 	/*
+@@ -514,6 +513,9 @@ static void f2fs_put_super(struct super_block *sb)
+ 		write_checkpoint(sbi, &cpc);
+ 	}
  
- static inline void inode_dec_dirty_pages(struct inode *inode)
- {
--	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode))
-+	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
-+			!S_ISLNK(inode->i_mode))
- 		return;
- 
- 	atomic_dec(&F2FS_I(inode)->dirty_pages);
++	/* write_checkpoint can update stat informaion */
++	f2fs_destroy_stats(sbi);
++
+ 	/*
+ 	 * normally superblock is clean, so we need to release this.
+ 	 * In addition, EIO will skip do checkpoint, we need this as well.
 -- 
-2.4.2
+2.1.1
+
+
+------------------------------------------------------------------------------
+Don't Limit Your Business. Reach for the Cloud.
+GigeNET's Cloud Solutions provide you with the tools and support that
+you need to offload your IT needs and focus on growing your business.
+Configured For All Businesses. Start Your Cloud Today.
+https://www.gigenetcloud.com/
