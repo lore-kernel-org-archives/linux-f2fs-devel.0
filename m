@@ -1,78 +1,56 @@
-From: "mike" <mike@welding133.net>
-Subject: [SPAM] welding
-Date: Sun, 28 Jun 2015 22:11:43 +0800
-Message-ID: <E1Z9DDH-0007cH-R8@sfs-ml-2.v29.ch3.sourceforge.com>
-Reply-To: elitewelding@yeah.net
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH] f2fs: fix to record dirty page count for symlink
+Date: Mon, 29 Jun 2015 18:14:10 +0800
+Message-ID: <00dd01d0b254$7082c640$518852c0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <mike@welding133.net>) id 1Z9DDG-0007cC-Pr
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 28 Jun 2015 14:05:38 +0000
-Received: from [180.112.56.135] (helo=2012-20130103AH)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Z9DDD-0004wB-80 for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 28 Jun 2015 14:05:38 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Dear my customer,
+Dirty page can be exist in mapping of newly created symlink, but previously
+we did not maintain the counting of dirty page for symlink like we maintained
+for regular/directory, so the counting we lookuped should be wrong.
 
-If you are interested in our products, Please reply us email. we will send you more information.
+This patch adds missed dirty page counting for symlink to fix this issue.
 
-We are specialized in manufacturing and exporting in automatic welding equipment, 
-CNC cutting equipment, milling equipment and other special welding equipment.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/checkpoint.c | 3 ++-
+ fs/f2fs/f2fs.h       | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-Main Products:
-Welding manipulator
-Welding rotator
-Welding positioner
-Edge-milling machine
-Shot blasting machine
-CNC cutter
-Special welding machine
-H beam Welding Production Line
-Pipe Welding Rotator
-Tank Rotators
-Rotary Welding Positioners
-Column And Boom Manipulator
-Self Aligning Rotators
-Beam Welding Line
-CNC Plasma Cutting Machine
-CNC Flame Cutting Machine
-Edge Beveling Machine
-Edge Milling Machine
-Shot Blasting Machine
-Box Beam Welding
-Hydraulic Tilter
-Wind Tower Production Line
-
-Thanks
-
-*****************************************************************
-Mike Zhao
-(Marketing manager)
-Elite Welding & Cutting Equipment Co.,Ltd.
-Luoshe Town Wuxi City, Jiangsu Province, China Zip:214154
-Cell phone: +86-0-13812528128
-Email:elitewelding@163.com
-*****************************************************************
-
-------------------------------------------------------------------------------
-Monitor 25 network devices or servers for free with OpManager!
-OpManager is web-based network management software that monitors 
-network devices and physical & virtual servers, alerts via email & sms 
-for fault. Monitor 25 devices for free with no restriction. Download now
-http://ad.doubleclick.net/ddm/clk/292181274;119417398;o
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index b70bbe1..de7a0d6 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -704,7 +704,8 @@ void update_dirty_page(struct inode *inode, struct page *page)
+ 	struct inode_entry *new;
+ 	int ret = 0;
+ 
+-	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode))
++	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
++			!S_ISLNK(inode->i_mode))
+ 		return;
+ 
+ 	if (!S_ISDIR(inode->i_mode)) {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a8327ed..5162204 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1039,7 +1039,8 @@ static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
+ 
+ static inline void inode_dec_dirty_pages(struct inode *inode)
+ {
+-	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode))
++	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
++			!S_ISLNK(inode->i_mode))
+ 		return;
+ 
+ 	atomic_dec(&F2FS_I(inode)->dirty_pages);
+-- 
+2.4.2
