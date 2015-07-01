@@ -1,22 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: check the largest extent at look-up
-	time
-Date: Tue, 30 Jun 2015 18:25:45 -0700
-Message-ID: <1435713946-6910-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: shrink unreferenced extent_caches first
+Date: Tue, 30 Jun 2015 18:25:46 -0700
+Message-ID: <1435713946-6910-2-git-send-email-jaegeuk@kernel.org>
+References: <1435713946-6910-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZA6mk-0002nW-9y
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZA6mm-0006DD-0V
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Jul 2015 01:25:58 +0000
+	Wed, 01 Jul 2015 01:26:00 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZA6mj-0003PG-Bi for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Jul 2015 01:25:58 +0000
+	id 1ZA6ml-0003PK-8m for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 01 Jul 2015 01:25:59 +0000
+In-Reply-To: <1435713946-6910-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,95 +30,96 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Because of the extent shrinker or other -ENOMEM scenarios, it cannot guarantee
-that the largest extent would be cached in the tree all the time.
-
-Instead of relying on extent_tree, we can simply check the cached one in extent
-tree accordingly.
+If an extent_tree entry has a zero reference count, we can drop it from the
+cache in higher priority rather than currently referencing entries.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c              | 16 ++++++++++++++--
- include/trace/events/f2fs.h | 12 ++++++------
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ fs/f2fs/data.c | 51 +++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 41 insertions(+), 10 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b6c28bb..8f059e0 100644
+index 8f059e0..a0a0e2b 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -511,12 +511,22 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
- 	struct extent_node *en;
-+	bool ret = false;
+@@ -661,21 +661,54 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+ 	struct radix_tree_root *root = &sbi->extent_tree_root;
+ 	unsigned int found;
+ 	unsigned int node_cnt = 0, tree_cnt = 0;
++	int remained;
  
- 	f2fs_bug_on(sbi, !et);
+ 	if (!test_opt(sbi, EXTENT_CACHE))
+ 		return 0;
  
- 	trace_f2fs_lookup_extent_tree_start(inode, pgofs);
- 
- 	read_lock(&et->lock);
-+
-+	if (et->largest.fofs <= pgofs &&
-+			et->largest.fofs + et->largest.len > pgofs) {
-+		*ei = et->largest;
-+		ret = true;
-+		stat_inc_read_hit(sbi->sb);
++	if (!down_write_trylock(&sbi->extent_tree_lock))
 +		goto out;
-+	}
 +
- 	en = __lookup_extent_tree(et, pgofs);
- 	if (en) {
- 		*ei = en->ei;
-@@ -525,13 +535,15 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
- 			list_move_tail(&en->list, &sbi->extent_list);
- 		et->cached_en = en;
- 		spin_unlock(&sbi->extent_lock);
-+		ret = true;
- 		stat_inc_read_hit(sbi->sb);
++	/* 1. remove unreferenced extent tree */
++	while ((found = radix_tree_gang_lookup(root,
++				(void **)treevec, ino, EXT_TREE_VEC_SIZE))) {
++		unsigned i;
++
++		ino = treevec[found - 1]->ino + 1;
++		for (i = 0; i < found; i++) {
++			struct extent_tree *et = treevec[i];
++
++			if (!atomic_read(&et->refcount)) {
++				write_lock(&et->lock);
++				node_cnt += __free_extent_tree(sbi, et, true);
++				write_unlock(&et->lock);
++
++				radix_tree_delete(root, et->ino);
++				kmem_cache_free(extent_tree_slab, et);
++				sbi->total_ext_tree--;
++				tree_cnt++;
++
++				if (node_cnt + tree_cnt >= nr_shrink)
++					goto unlock_out;
++			}
++		}
++	}
++	up_write(&sbi->extent_tree_lock);
++
++	/* 2. remove LRU extent entries */
++	if (!down_write_trylock(&sbi->extent_tree_lock))
++		goto out;
++
++	remained = nr_shrink - (node_cnt + tree_cnt);
++
+ 	spin_lock(&sbi->extent_lock);
+ 	list_for_each_entry_safe(en, tmp, &sbi->extent_list, list) {
+-		if (!nr_shrink--)
++		if (!remained--)
+ 			break;
+ 		list_del_init(&en->list);
  	}
-+out:
- 	stat_inc_total_hit(sbi->sb);
- 	read_unlock(&et->lock);
+ 	spin_unlock(&sbi->extent_lock);
  
--	trace_f2fs_lookup_extent_tree_end(inode, pgofs, en);
--	return en ? true : false;
-+	trace_f2fs_lookup_extent_tree_end(inode, pgofs, ei);
-+	return ret;
- }
- 
- /* return true, if on-disk extent should be updated */
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 04856a2..a019465 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -1099,11 +1099,11 @@ TRACE_EVENT(f2fs_lookup_extent_tree_start,
- TRACE_EVENT_CONDITION(f2fs_lookup_extent_tree_end,
- 
- 	TP_PROTO(struct inode *inode, unsigned int pgofs,
--						struct extent_node *en),
-+						struct extent_info *ei),
- 
--	TP_ARGS(inode, pgofs, en),
-+	TP_ARGS(inode, pgofs, ei),
- 
--	TP_CONDITION(en),
-+	TP_CONDITION(ei),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
-@@ -1118,9 +1118,9 @@ TRACE_EVENT_CONDITION(f2fs_lookup_extent_tree_end,
- 		__entry->dev = inode->i_sb->s_dev;
- 		__entry->ino = inode->i_ino;
- 		__entry->pgofs = pgofs;
--		__entry->fofs = en->ei.fofs;
--		__entry->blk = en->ei.blk;
--		__entry->len = en->ei.len;
-+		__entry->fofs = ei->fofs;
-+		__entry->blk = ei->blk;
-+		__entry->len = ei->len;
- 	),
- 
- 	TP_printk("dev = (%d,%d), ino = %lu, pgofs = %u, "
+-	if (!down_write_trylock(&sbi->extent_tree_lock))
+-		goto out;
+-
+ 	while ((found = radix_tree_gang_lookup(root,
+ 				(void **)treevec, ino, EXT_TREE_VEC_SIZE))) {
+ 		unsigned i;
+@@ -687,14 +720,12 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+ 			write_lock(&et->lock);
+ 			node_cnt += __free_extent_tree(sbi, et, false);
+ 			write_unlock(&et->lock);
+-			if (!atomic_read(&et->refcount) && !et->count) {
+-				radix_tree_delete(root, et->ino);
+-				kmem_cache_free(extent_tree_slab, et);
+-				sbi->total_ext_tree--;
+-				tree_cnt++;
+-			}
++
++			if (node_cnt + tree_cnt >= nr_shrink)
++				break;
+ 		}
+ 	}
++unlock_out:
+ 	up_write(&sbi->extent_tree_lock);
+ out:
+ 	trace_f2fs_shrink_extent_tree(sbi, node_cnt, tree_cnt);
 -- 
 2.1.1
 
