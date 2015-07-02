@@ -1,26 +1,25 @@
 From: Chao Yu <yuchaochina@hotmail.com>
-Subject: Re: [PATCH 1/2] f2fs: refactor shrink flow for
-	extent	cache
-Date: Thu, 2 Jul 2015 20:37:11 +0800
-Message-ID: <COL402-EAS125E9214A5E90E6EF1FA7F5AB970@phx.gbl>
-References: <00ea01d0b321$854293d0$8fc7bb70$@samsung.com>
-	<20150701012536.GD1496@jaegeuk-mac02.mot.com>
+Subject: Re: [PATCH 1/2] f2fs: check the largest extent at
+	look-up	time
+Date: Thu, 2 Jul 2015 20:38:11 +0800
+Message-ID: <COL402-EAS276860A94E32E730F8A4367AB970@phx.gbl>
+References: <1435713946-6910-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1ZAdk6-00005u-9r
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchaochina@hotmail.com>) id 1ZAdl1-0006Ej-Gp
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Jul 2015 12:37:26 +0000
+	Thu, 02 Jul 2015 12:38:23 +0000
 Received: from col004-omc1s12.hotmail.com ([65.55.34.22])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ZAdk2-0004LK-G2
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ZAdkz-0000S8-Nz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Jul 2015 12:37:26 +0000
-In-Reply-To: <20150701012536.GD1496@jaegeuk-mac02.mot.com>
+	Thu, 02 Jul 2015 12:38:23 +0000
+In-Reply-To: <1435713946-6910-1-git-send-email-jaegeuk@kernel.org>
 Content-Language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,64 +30,27 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Chao Yu' <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-
-Hi Jaegeuk,
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
 > Sent: Wednesday, July 01, 2015 9:26 AM
-> To: Chao Yu; Chao Yu
-> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net;
-> linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: refactor shrink flow for extent cache
+> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org;
+> linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Cc: Jaegeuk Kim; Jaegeuk Kim
+> Subject: [f2fs-dev] [PATCH 1/2] f2fs: check the largest extent at look-up time
 > 
-> Hi Chao,
+> Because of the extent shrinker or other -ENOMEM scenarios, it cannot guarantee
+> that the largest extent would be cached in the tree all the time.
 > 
-> On Tue, Jun 30, 2015 at 06:42:09PM +0800, Chao Yu wrote:
-> > For now, in extent cache, we have a global lru list which links all extent
-> > node in the cache, and the list is protected by a global spinlock.
-> >
-> > If we want to shrink extent cache, we will:
-> > 1. delete all target extent node from global lru list under spinlock;
-> > 2. traverse all per-inode extent tree in global radix tree;
-> > 	2.a. traverse all extent node in per-inode extent tree, try to free extent
-> >          node if it is not in global lru list already.
-> >
-> > This method is inefficient when there is huge number of inode extent tree in
-> > global extent tree.
-> >
-> > In this patch we introduce a new method for extent cache shrinking:
-> > When we attach a new extent node, we record extent tree pointer in extent node.
-> > In shrink flow, we can try to find and lock extent tree of inode directly by
-> > this backward pointer, and then detach the extent node from extent tree.
-> >
-> > This can help to shrink extent cache more efficiently.
+> Instead of relying on extent_tree, we can simply check the cached one in extent
+> tree accordingly.
 > 
-> Yes, but as we discussed before, this way will consume 4 bytes per each
-> extent_node. Can it be acceptable?
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Yes, this method will increase memory overhead obviously.
-
-Maybe there is a better way to reduce lock contention and block time
-of shrinker maked. I will rethink about it.
-
-What I think now is I should firstly tests on our new shrinker with
-extreme case to see how bad it shows.
-
-> 
-> Instead, IMO, we need to focus on how to increase its hit ratio first.
-> Actually, I wrote a patch for that.
-> Could you check that first?
-
-OK
-
-Thanks,
-
-> 
-> Thanks,
-
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
 ------------------------------------------------------------------------------
 Don't Limit Your Business. Reach for the Cloud.
