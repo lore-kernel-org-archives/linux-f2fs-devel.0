@@ -1,26 +1,25 @@
 From: Chao Yu <yuchaochina@hotmail.com>
-Subject: Re: [PATCH 08/12] f2fs: introduce a shrinker for mounted
-	fs
-Date: Thu, 2 Jul 2015 20:32:39 +0800
-Message-ID: <COL402-EAS146FC72F96B6A18319140B5AB970@phx.gbl>
+Subject: Re: [PATCH 09/12] f2fs: shrink nat_cache entries
+Date: Thu, 2 Jul 2015 20:33:45 +0800
+Message-ID: <COL402-EAS9237A58E4258C452A7994AB970@phx.gbl>
 References: <1435603176-63219-1-git-send-email-jaegeuk@kernel.org>
-	<1435603176-63219-8-git-send-email-jaegeuk@kernel.org>
+	<1435603176-63219-9-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1ZAdfr-0008KA-IV
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchaochina@hotmail.com>) id 1ZAdgo-00062C-Pm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Jul 2015 12:33:03 +0000
-Received: from col004-omc1s5.hotmail.com ([65.55.34.15])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ZAdfq-0007pD-RH
+	Thu, 02 Jul 2015 12:34:02 +0000
+Received: from col004-omc1s19.hotmail.com ([65.55.34.29])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ZAdgn-0006Qr-Ve
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Jul 2015 12:33:03 +0000
-In-Reply-To: <1435603176-63219-8-git-send-email-jaegeuk@kernel.org>
+	Thu, 02 Jul 2015 12:34:02 +0000
+In-Reply-To: <1435603176-63219-9-git-send-email-jaegeuk@kernel.org>
 Content-Language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -40,43 +39,13 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-deve
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 08/12] f2fs: introduce a shrinker for mounted fs
+> Subject: [f2fs-dev] [PATCH 09/12] f2fs: shrink nat_cache entries
 > 
-> This patch introduces a shrinker targeting to reduce memory footprint consumed
-> by a number of in-memory f2fs data structures.
+> This patch registers shrinking nat_cache entries.
 > 
-> In addition, it newly adds:
->  - sbi->umount_mutex to avoid data races on shrinker and put_super
->  - sbi->shruinker_run_no to not revisit objects
-> 
-> Noteh that the basic implementation was copied from fs/btrfs/shrinker.c
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This file seems not exist...
-
-> @@ -1310,6 +1328,7 @@ free_root_inode:
->  	dput(sb->s_root);
->  	sb->s_root = NULL;
->  free_node_inode:
-> +	f2fs_leave_shrinker(sbi);
-
-We should detach shrinker under sbi->umount_mutex.
-Otherwise we will access freed memory in following call path:
-
-mount					shrinker
-->fill_super
-  Failed after f2fs_join_shrinker
-  ->f2fs_leave_shrinker
-					->f2fs_shrink_scan
-					  spin_lock
-					  get sbi pointer
-					  spin_unlock
-    spin_lock
-    list_del sbi->s_list
-    spin_unlock
-    free sbi
-					  use-after-free for sbi
-
-Thanks,
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
 ------------------------------------------------------------------------------
 Don't Limit Your Business. Reach for the Cloud.
