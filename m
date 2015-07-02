@@ -1,24 +1,27 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [RFC] maintain stable and dev code separately
-Date: Tue, 30 Jun 2015 19:41:48 -0700
-Message-ID: <20150701024129.GA8242@jaegeuk-mac02.mot.com>
-References: <00f501d0b3a1$d8443680$88cca380$@samsung.com>
+From: Chao Yu <yuchaochina@hotmail.com>
+Subject: Re: [PATCH 08/12] f2fs: introduce a shrinker for mounted
+	fs
+Date: Thu, 2 Jul 2015 20:32:39 +0800
+Message-ID: <COL402-EAS146FC72F96B6A18319140B5AB970@phx.gbl>
+References: <1435603176-63219-1-git-send-email-jaegeuk@kernel.org>
+	<1435603176-63219-8-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZA7yH-0000Ag-OE
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchaochina@hotmail.com>) id 1ZAdfr-0008KA-IV
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Jul 2015 02:41:57 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZA7yG-0005TY-Or for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Jul 2015 02:41:57 +0000
-Content-Disposition: inline
-In-Reply-To: <00f501d0b3a1$d8443680$88cca380$@samsung.com>
+	Thu, 02 Jul 2015 12:33:03 +0000
+Received: from col004-omc1s5.hotmail.com ([65.55.34.15])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ZAdfq-0007pD-RH
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 02 Jul 2015 12:33:03 +0000
+In-Reply-To: <1435603176-63219-8-git-send-email-jaegeuk@kernel.org>
+Content-Language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,46 +31,52 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, Jul 01, 2015 at 10:00:52AM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Tuesday, June 30, 2015 2:40 AM
+> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Cc: Jaegeuk Kim
+> Subject: [f2fs-dev] [PATCH 08/12] f2fs: introduce a shrinker for mounted fs
 > 
-> Now in our f2fs git repository, we have only one major 'dev' branch
-> for collecting last reviewed and tested patches.
+> This patch introduces a shrinker targeting to reduce memory footprint consumed
+> by a number of in-memory f2fs data structures.
 > 
-> And in merge window of Linux, we do not update dev branch with last
-> patches, so in this period of two weeks, it's hard for your developers
-> to rebase the right and last dev branch for developing, and there maybe
-> more conflict when we merge patches.
+> In addition, it newly adds:
+>  - sbi->umount_mutex to avoid data races on shrinker and put_super
+>  - sbi->shruinker_run_no to not revisit objects
 > 
-> Have you considered to maintain stable and dev code separately? 
-> Something like:
-> 
-> One 'devel' branch updated with new patches after being reviewed and tested;
-> One 'stable' branch updated periodically from 'devel' branch.
-> 
-> In merge window linus can pull all patches from 'stable' branch, and meanwhile
-> we can develop base on 'devel' branch.
-> 
-> And also Fengguang Wu's lkp project can test both branch well, especially for
-> last patches sent in merge window.
+> Noteh that the basic implementation was copied from fs/btrfs/shrinker.c
 
-Good suggestion.
-I've also thought about that actually.
+This file seems not exist...
 
-I created and pushed *dev-test* branch for the testing purpose in order to avoid
-any conflicts on *dev* branch.
+> @@ -1310,6 +1328,7 @@ free_root_inode:
+>  	dput(sb->s_root);
+>  	sb->s_root = NULL;
+>  free_node_inode:
+> +	f2fs_leave_shrinker(sbi);
 
-I'll keep *dev* branch for linux-next and we can use *dev-test* branch for
-upcoming changeable patches.
+We should detach shrinker under sbi->umount_mutex.
+Otherwise we will access freed memory in following call path:
+
+mount					shrinker
+->fill_super
+  Failed after f2fs_join_shrinker
+  ->f2fs_leave_shrinker
+					->f2fs_shrink_scan
+					  spin_lock
+					  get sbi pointer
+					  spin_unlock
+    spin_lock
+    list_del sbi->s_list
+    spin_unlock
+    free sbi
+					  use-after-free for sbi
 
 Thanks,
-
-> 
-> Regards,
-> Yu
 
 ------------------------------------------------------------------------------
 Don't Limit Your Business. Reach for the Cloud.
