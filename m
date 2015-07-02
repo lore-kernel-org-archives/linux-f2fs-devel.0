@@ -1,62 +1,102 @@
 From: Chao Yu <yuchaochina@hotmail.com>
-Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: shrink unreferenced extent_caches first
-Date: Thu, 2 Jul 2015 20:39:43 +0800
-Message-ID: <COL402-EAS277B75C19DA375A394DDFCEAB970@phx.gbl>
-References: <1435713946-6910-1-git-send-email-jaegeuk@kernel.org> <1435713946-6910-2-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: reduce lock overhead of extent node
+	releasing
+Date: Thu, 2 Jul 2015 20:40:12 +0800
+Message-ID: <COL402-EAS176E0D9A5A44C7C97F55904AB970@phx.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1435713946-6910-2-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchaochina@hotmail.com>) id 1ZAdmw-0000Fb-QZ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 02 Jul 2015 12:40:22 +0000
+Received: from col004-omc1s17.hotmail.com ([65.55.34.27])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ZAdmw-0006kn-0t
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 02 Jul 2015 12:40:22 +0000
 Content-Language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, July 01, 2015 9:26 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org;
-> linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim; Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 2/2] f2fs: shrink unreferenced extent_caches first
-> 
-> If an extent_tree entry has a zero reference count, we can drop it from the
-> cache in higher priority rather than currently referencing entries.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/data.c | 51 +++++++++++++++++++++++++++++++++++++++++----------
->  1 file changed, 41 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 8f059e0..a0a0e2b 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -661,21 +661,54 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
-> nr_shrink)
->  	struct radix_tree_root *root = &sbi->extent_tree_root;
->  	unsigned int found;
->  	unsigned int node_cnt = 0, tree_cnt = 0;
-> +	int remained;
-> 
->  	if (!test_opt(sbi, EXTENT_CACHE))
->  		return 0;
-> 
-> +	if (!down_write_trylock(&sbi->extent_tree_lock))
-> +		goto out;
-> +
-> +	/* 1. remove unreferenced extent tree */
+>From e5c6600d01c4462c4e1ee0c70ec1d9319862077d Mon Sep 17 00:00:00 2001
+From: Chao Yu <chao2.yu@samsung.com>
+Date: Thu, 2 Jul 2015 18:52:46 +0800
+Subject: [PATCH] f2fs: reduce lock overhead of extent node releasing
 
-We always release extent node and tree from inode with lowest ino,
-why not random ino?
+Open and close critical section for each extent node when traversing rb-tree
+results in high overhead of cpu, slows thing down.
 
-And this step releasing breaks the rule of lru runs.
+This patch alternates to batch mode for removing extent nodes under spin lock.
 
-Some unreferenced file has high hit ratio and some referenced file may
-have low hit ratio. Why not release low hit ratio extent tree at first?
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6a706dd..7fb56a0 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -441,19 +441,31 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+ 	struct extent_node *en;
+ 	unsigned int count = et->count;
+ 
+-	node = rb_first(&et->root);
+-	while (node) {
+-		next = rb_next(node);
+-		en = rb_entry(node, struct extent_node, rb_node);
++	if (!et->count)
++		return 0;
++
++	/* 1. remove all extent nodes in global lru list */
++	if (free_all) {
++		spin_lock(&sbi->extent_lock);
++		node = rb_first(&et->root);
++		while (node) {
++			next = rb_next(node);
++			en = rb_entry(node, struct extent_node, rb_node);
+ 
+-		if (free_all) {
+-			spin_lock(&sbi->extent_lock);
+ 			if (!list_empty(&en->list))
+ 				list_del_init(&en->list);
+-			spin_unlock(&sbi->extent_lock);
++			node = next;
+ 		}
++		spin_unlock(&sbi->extent_lock);
++	}
++
++	/* 2. release all extent nodes which are not in global lru list */
++	node = rb_first(&et->root);
++	while (node) {
++		next = rb_next(node);
++		en = rb_entry(node, struct extent_node, rb_node);
+ 
+-		if (free_all || list_empty(&en->list)) {
++		if (list_empty(&en->list)) {
+ 			__detach_extent_node(sbi, et, en);
+ 			kmem_cache_free(extent_node_slab, en);
+ 		}
+-- 
+2.4.2
 
+
+------------------------------------------------------------------------------
+Don't Limit Your Business. Reach for the Cloud.
+GigeNET's Cloud Solutions provide you with the tools and support that
+you need to offload your IT needs and focus on growing your business.
+Configured For All Businesses. Start Your Cloud Today.
+https://www.gigenetcloud.com/
