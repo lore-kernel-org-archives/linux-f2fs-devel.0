@@ -1,25 +1,26 @@
 From: Chao Yu <yuchaochina@hotmail.com>
-Subject: Re: [PATCH 12/12] f2fs: use extent_cache by default
-Date: Thu, 2 Jul 2015 20:36:16 +0800
-Message-ID: <COL402-EAS385C99A3E59C61CC6871C57AB970@phx.gbl>
-References: <1435603176-63219-1-git-send-email-jaegeuk@kernel.org>
-	<1435603176-63219-12-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH 1/2] f2fs: refactor shrink flow for
+	extent	cache
+Date: Thu, 2 Jul 2015 20:37:11 +0800
+Message-ID: <COL402-EAS125E9214A5E90E6EF1FA7F5AB970@phx.gbl>
+References: <00ea01d0b321$854293d0$8fc7bb70$@samsung.com>
+	<20150701012536.GD1496@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1ZAdj9-0002zB-8n
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchaochina@hotmail.com>) id 1ZAdk6-00005u-9r
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Jul 2015 12:36:27 +0000
-Received: from col004-omc1s10.hotmail.com ([65.55.34.20])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ZAdj8-00080D-GT
+	Thu, 02 Jul 2015 12:37:26 +0000
+Received: from col004-omc1s12.hotmail.com ([65.55.34.22])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ZAdk2-0004LK-G2
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Jul 2015 12:36:27 +0000
-In-Reply-To: <1435603176-63219-12-git-send-email-jaegeuk@kernel.org>
+	Thu, 02 Jul 2015 12:37:26 +0000
+In-Reply-To: <20150701012536.GD1496@jaegeuk-mac02.mot.com>
 Content-Language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,72 +31,64 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Chao Yu' <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Tuesday, June 30, 2015 2:40 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 12/12] f2fs: use extent_cache by default
+> Sent: Wednesday, July 01, 2015 9:26 AM
+> To: Chao Yu; Chao Yu
+> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net;
+> linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: refactor shrink flow for extent cache
 > 
-> We don't need to handle the duplicate extent infot showrmation.
+> Hi Chao,
+> 
+> On Tue, Jun 30, 2015 at 06:42:09PM +0800, Chao Yu wrote:
+> > For now, in extent cache, we have a global lru list which links all extent
+> > node in the cache, and the list is protected by a global spinlock.
+> >
+> > If we want to shrink extent cache, we will:
+> > 1. delete all target extent node from global lru list under spinlock;
+> > 2. traverse all per-inode extent tree in global radix tree;
+> > 	2.a. traverse all extent node in per-inode extent tree, try to free extent
+> >          node if it is not in global lru list already.
+> >
+> > This method is inefficient when there is huge number of inode extent tree in
+> > global extent tree.
+> >
+> > In this patch we introduce a new method for extent cache shrinking:
+> > When we attach a new extent node, we record extent tree pointer in extent node.
+> > In shrink flow, we can try to find and lock extent tree of inode directly by
+> > this backward pointer, and then detach the extent node from extent tree.
+> >
+> > This can help to shrink extent cache more efficiently.
+> 
+> Yes, but as we discussed before, this way will consume 4 bytes per each
+> extent_node. Can it be acceptable?
 
-information?
+Yes, this method will increase memory overhead obviously.
+
+Maybe there is a better way to reduce lock contention and block time
+of shrinker maked. I will rethink about it.
+
+What I think now is I should firstly tests on our new shrinker with
+extreme case to see how bad it shows.
 
 > 
-> The integrated rule is:
->  - update on-disk extent with largest one tracked by in-memory extent_cache
->  - destroy extent_tree for the truncation case
->  - drop per-inode extent_cache by shrinker
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Instead, IMO, we need to focus on how to increase its hit ratio first.
+> Actually, I wrote a patch for that.
+> Could you check that first?
 
-[snip]
-
-> @@ -538,7 +427,11 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
->  		}
->  	}
-> 
-> -	return __attach_extent_node(sbi, et, ei, parent, p);
-> +	en = __attach_extent_node(sbi, et, ei, parent, p);
-> +update_out:
-> +	if (en && en->ei.len > et->largest.len)
-> +		et->largest = en->ei;
-
-IMO, it's better to update cached_en here if it is invalid in
-__detach_extent_node, then cached_en and largest may point different
-extent info, it can expand our region of first level extent cache.
-
-[snip]
-
-> +
-> +	/* free all extent info belong to this extent tree */
-> +	f2fs_destroy_extent_node(inode);
-
-How about returning number of freed extent node for tracing.
-
-node_cnt = f2fs_destroy_extent_node(inode);
-
-[snip]
-
-> @@ -237,10 +237,11 @@ void update_inode(struct inode *inode, struct page *node_page)
->  	ri->i_size = cpu_to_le64(i_size_read(inode));
->  	ri->i_blocks = cpu_to_le64(inode->i_blocks);
-> 
-> -	read_lock(&F2FS_I(inode)->ext_lock);
-> -	set_raw_extent(&F2FS_I(inode)->ext, &ri->i_ext);
-> -	read_unlock(&F2FS_I(inode)->ext_lock);
-> -
-> +	if (F2FS_I(inode)->extent_tree)
-
-Could extent cache destroy after above check?
+OK
 
 Thanks,
+
+> 
+> Thanks,
+
 
 ------------------------------------------------------------------------------
 Don't Limit Your Business. Reach for the Cloud.
