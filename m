@@ -1,102 +1,147 @@
-From: Chao Yu <yuchaochina@hotmail.com>
-Subject: [PATCH] f2fs: reduce lock overhead of extent node
-	releasing
-Date: Thu, 2 Jul 2015 20:40:12 +0800
-Message-ID: <COL402-EAS176E0D9A5A44C7C97F55904AB970@phx.gbl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1ZAdmw-0000Fb-QZ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Jul 2015 12:40:22 +0000
-Received: from col004-omc1s17.hotmail.com ([65.55.34.27])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ZAdmw-0006kn-0t
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Jul 2015 12:40:22 +0000
-Content-Language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-
->From e5c6600d01c4462c4e1ee0c70ec1d9319862077d Mon Sep 17 00:00:00 2001
 From: Chao Yu <chao2.yu@samsung.com>
-Date: Thu, 2 Jul 2015 18:52:46 +0800
-Subject: [PATCH] f2fs: reduce lock overhead of extent node releasing
+Subject: RE: [f2fs-dev] Dwrite with non-aligned offset and size
+Date: Fri, 03 Jul 2015 16:02:17 +0800
+Message-ID: <000901d0b566$aeed8e00$0cc8aa00$@samsung.com>
+References: <556C481C.1050400@huawei.com>
+ <20150601230155.GB28650@jaegeuk-mac02.mot.com> <556D2F38.4040304@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <556D2F38.4040304@huawei.com>
+Content-language: zh-cn
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: 'He YunLei' <heyunlei@huawei.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Open and close critical section for each extent node when traversing rb-tree
-results in high overhead of cpu, slows thing down.
+Hi Yunlei,
 
-This patch alternates to batch mode for removing extent nodes under spin lock.
+Sorry for the long delay.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/data.c | 28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+> -----Original Message-----
+> From: He YunLei [mailto:heyunlei@huawei.com]
+> Sent: Tuesday, June 02, 2015 12:21 PM
+> To: Jaegeuk Kim
+> Cc: linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] Dwrite with non-aligned offset and size
+> 
+> On 2015/6/2 7:01, Jaegeuk Kim wrote:
+> > On Mon, Jun 01, 2015 at 07:55:08PM +0800, He YunLei wrote:
+> >> Hi Jaegeuk,
+> >>
+> >> We run ltp testcase with f2fs and obtain a TFAIL in diotest4, the result in detail is
+> >> as fallow:
+> >>
+> >> dio04
+> >>
+> >> <<<test_start>>>
+> >> tag=dio04 stime=1432278894
+> >> cmdline="diotest4"
+> >> contacts=""
+> >> analysis=exit
+> >> <<<test_output>>>
+> >> diotest4    1  TPASS  :  Negative Offset
+> >> diotest4    2  TPASS  :  removed
+> >> diotest4    3  TFAIL  :  diotest4.c:129: write allows odd count.returns 1: Success
+> >> diotest4    4  TFAIL  :  diotest4.c:183: Odd count of read and write
+> >> diotest4    5  TPASS  :  Read beyond the file size
+> >> ......
+> >>
+> >> the result of ext4 with same environment:
+> >>
+> >> dio04
+> >>
+> >> <<<test_start>>>
+> >> tag=dio04 stime=1432259643
+> >> cmdline="diotest4"
+> >> contacts=""
+> >> analysis=exit
+> >> <<<test_output>>>
+> >> diotest4    1  TPASS  :  Negative Offset
+> >> diotest4    2  TPASS  :  removed
+> >> diotest4    3  TPASS  :  Odd count of read and write
+> >> diotest4    4  TPASS  :  Read beyond the file size
+> >> ......
+> >>
+> >> Does f2fs allow dwrite with non-aligned offset and size? I check the code and found
+> >> dwrite with non-aligned offset and size will turn into buffered write. Whether it will
+> >> have some impact on user layer applications?
+> >
+> > It's not a big deal to return -EINVAL.
+> > When I take a look at other filesystem behaviors, it seems there is no restriction.
+> >
+> 
+> Ext4 do a check in the function do_blockdev_direct_IO:
+> 
+>           if (align & blocksize_mask) {
+>               if (bdev)
+>                   blkbits = blksize_bits(bdev_logical_block_size(bdev));
+>               blocksize_mask = (1 << blkbits) - 1;
+>               if (align & blocksize_mask)
+>                   goto out;
+>           }
+> 
+> It will return -EINVAL if the alignment is not satisfied.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 6a706dd..7fb56a0 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -441,19 +441,31 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
- 	struct extent_node *en;
- 	unsigned int count = et->count;
- 
--	node = rb_first(&et->root);
--	while (node) {
--		next = rb_next(node);
--		en = rb_entry(node, struct extent_node, rb_node);
-+	if (!et->count)
-+		return 0;
-+
-+	/* 1. remove all extent nodes in global lru list */
-+	if (free_all) {
-+		spin_lock(&sbi->extent_lock);
-+		node = rb_first(&et->root);
-+		while (node) {
-+			next = rb_next(node);
-+			en = rb_entry(node, struct extent_node, rb_node);
- 
--		if (free_all) {
--			spin_lock(&sbi->extent_lock);
- 			if (!list_empty(&en->list))
- 				list_del_init(&en->list);
--			spin_unlock(&sbi->extent_lock);
-+			node = next;
- 		}
-+		spin_unlock(&sbi->extent_lock);
-+	}
-+
-+	/* 2. release all extent nodes which are not in global lru list */
-+	node = rb_first(&et->root);
-+	while (node) {
-+		next = rb_next(node);
-+		en = rb_entry(node, struct extent_node, rb_node);
- 
--		if (free_all || list_empty(&en->list)) {
-+		if (list_empty(&en->list)) {
- 			__detach_extent_node(sbi, et, en);
- 			kmem_cache_free(extent_node_slab, en);
- 		}
--- 
-2.4.2
+I think we can get hint from the error case description in write(2) manual:
 
+"EINVAL  fd is attached to an object which is unsuitable for writing; or the file
+was  opened with the O_DIRECT flag, and either the address specified in buf, the
+value specified in count, or the current file offset is not suitably aligned."
 
-------------------------------------------------------------------------------
-Don't Limit Your Business. Reach for the Cloud.
-GigeNET's Cloud Solutions provide you with the tools and support that
-you need to offload your IT needs and focus on growing your business.
-Configured For All Businesses. Start Your Cloud Today.
-https://www.gigenetcloud.com/
+So if the alignment is not satisfied, we should return '-EINVAL' instead of
+letting user fall back to buffered write.
+
+Do you have time to make and send us a patch for fixing this issue?
+
+Thanks,
+
+> 
+> In f2fs, it do the check by check_direct_IO() before blockdev_direct_IO().
+> The difference between the two methods is whether turn dwrite with non-aligned
+> offset and size into buffered write. I am not very clear which one is better!
+> 
+> Thanks,
+> He
+> 
+> >>
+> >> I wrote a patch, not well tested, how do you think of it?
+> >
+> > Returning the error number would be good to me.
+> > Could you write and sumbit a complete one?
+> >
+> > Thanks,
+> >
+> >>
+> >> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> >> index 9bedfa8..ba5d94c 100644
+> >> --- a/fs/f2fs/data.c
+> >> +++ b/fs/f2fs/data.c
+> >> @@ -2010,8 +2010,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+> >>          if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+> >>                  return 0;
+> >>
+> >> -       if (check_direct_IO(inode, iter, offset))
+> >> -               return 0;
+> >> +       err = check_direct_IO(inode, iter, offset)
+> >> +       if (err)
+> >> +               return -EINVAL;
+> >>
+> >>          trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+> >>
+> >> I wish you and other developers in this list could help me in a correct way.
+> >>
+> >> Thanks,
+> >> He
+> >
+> > .
+> >
+> 
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
