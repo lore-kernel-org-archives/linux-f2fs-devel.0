@@ -1,147 +1,49 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] Dwrite with non-aligned offset and size
-Date: Fri, 03 Jul 2015 16:02:17 +0800
-Message-ID: <000901d0b566$aeed8e00$0cc8aa00$@samsung.com>
-References: <556C481C.1050400@huawei.com>
- <20150601230155.GB28650@jaegeuk-mac02.mot.com> <556D2F38.4040304@huawei.com>
+From: Josh Dener <denerjosh@yahoo.com>
+Subject: Design questions (rsv space & nat)
+Date: Fri, 3 Jul 2015 17:05:02 +0000 (UTC)
+Message-ID: <2062337506.1741901.1435943102912.JavaMail.yahoo@mail.yahoo.com>
+Reply-To: Josh Dener <denerjosh@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <556D2F38.4040304@huawei.com>
-Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: 'He YunLei' <heyunlei@huawei.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <denerjosh@yahoo.com>) id 1ZB4RT-0000Q2-BC
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 03 Jul 2015 17:07:59 +0000
+Received: from nm35-vm3.bullet.mail.ne1.yahoo.com ([98.138.229.99])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZB4RS-0004V8-BG
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 03 Jul 2015 17:07:59 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Yunlei,
+Hi,
 
-Sorry for the long delay.
+If I got it right, the overprovisioning space gets used to keep writing in LFS mode even when when there are too many dirty segments, until it falls below reserved, when it switches to SSR. The reserved space is needed for "cleaning" - not sure about the details.
 
-> -----Original Message-----
-> From: He YunLei [mailto:heyunlei@huawei.com]
-> Sent: Tuesday, June 02, 2015 12:21 PM
-> To: Jaegeuk Kim
-> Cc: linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] Dwrite with non-aligned offset and size
-> 
-> On 2015/6/2 7:01, Jaegeuk Kim wrote:
-> > On Mon, Jun 01, 2015 at 07:55:08PM +0800, He YunLei wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> We run ltp testcase with f2fs and obtain a TFAIL in diotest4, the result in detail is
-> >> as fallow:
-> >>
-> >> dio04
-> >>
-> >> <<<test_start>>>
-> >> tag=dio04 stime=1432278894
-> >> cmdline="diotest4"
-> >> contacts=""
-> >> analysis=exit
-> >> <<<test_output>>>
-> >> diotest4    1  TPASS  :  Negative Offset
-> >> diotest4    2  TPASS  :  removed
-> >> diotest4    3  TFAIL  :  diotest4.c:129: write allows odd count.returns 1: Success
-> >> diotest4    4  TFAIL  :  diotest4.c:183: Odd count of read and write
-> >> diotest4    5  TPASS  :  Read beyond the file size
-> >> ......
-> >>
-> >> the result of ext4 with same environment:
-> >>
-> >> dio04
-> >>
-> >> <<<test_start>>>
-> >> tag=dio04 stime=1432259643
-> >> cmdline="diotest4"
-> >> contacts=""
-> >> analysis=exit
-> >> <<<test_output>>>
-> >> diotest4    1  TPASS  :  Negative Offset
-> >> diotest4    2  TPASS  :  removed
-> >> diotest4    3  TPASS  :  Odd count of read and write
-> >> diotest4    4  TPASS  :  Read beyond the file size
-> >> ......
-> >>
-> >> Does f2fs allow dwrite with non-aligned offset and size? I check the code and found
-> >> dwrite with non-aligned offset and size will turn into buffered write. Whether it will
-> >> have some impact on user layer applications?
-> >
-> > It's not a big deal to return -EINVAL.
-> > When I take a look at other filesystem behaviors, it seems there is no restriction.
-> >
-> 
-> Ext4 do a check in the function do_blockdev_direct_IO:
-> 
->           if (align & blocksize_mask) {
->               if (bdev)
->                   blkbits = blksize_bits(bdev_logical_block_size(bdev));
->               blocksize_mask = (1 << blkbits) - 1;
->               if (align & blocksize_mask)
->                   goto out;
->           }
-> 
-> It will return -EINVAL if the alignment is not satisfied.
+But what's interesting is that the reserved space depends only on the overprovisioned percentage at format time. Volume size has no influence. Since all the overpsovisioning can be consumed normally, this doesn't make sense to me - why would you need more reserve in any case?
 
-I think we can get hint from the error case description in write(2) manual:
+In fact, this can lead to situations where less overprovisioning reserves more total space, for example with a 13 GB volume (6613 segments, of which 6565 are the main area) if you request 2% OP you get 129 segments of OP and 108 of reserve, but requesting 1% gives you 63 OP and 208 reserve, more in total!
 
-"EINVAL  fd is attached to an object which is unsuitable for writing; or the file
-was  opened with the O_DIRECT flag, and either the address specified in buf, the
-value specified in count, or the current file offset is not suitably aligned."
+In fact you'd get a 208 reserve even for a tiny volume. So my question is, why does the reserved space depend on overprovisioning percentage, and only that?
 
-So if the alignment is not satisfied, we should return '-EINVAL' instead of
-letting user fall back to buffered write.
+Another design question - the NAT's purpose is to cut off tree updates when moving blocks around. But it covers just node blocks. So to move a data block, you update a node block, then update the NAT to point to this new node block. Wouldn't it be better for the NAT to cover data blocks, so when some are moved, only the NAT (and not the node blocks) has to be updated?
 
-Do you have time to make and send us a patch for fixing this issue?
-
-Thanks,
-
-> 
-> In f2fs, it do the check by check_direct_IO() before blockdev_direct_IO().
-> The difference between the two methods is whether turn dwrite with non-aligned
-> offset and size into buffered write. I am not very clear which one is better!
-> 
-> Thanks,
-> He
-> 
-> >>
-> >> I wrote a patch, not well tested, how do you think of it?
-> >
-> > Returning the error number would be good to me.
-> > Could you write and sumbit a complete one?
-> >
-> > Thanks,
-> >
-> >>
-> >> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >> index 9bedfa8..ba5d94c 100644
-> >> --- a/fs/f2fs/data.c
-> >> +++ b/fs/f2fs/data.c
-> >> @@ -2010,8 +2010,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
-> >>          if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> >>                  return 0;
-> >>
-> >> -       if (check_direct_IO(inode, iter, offset))
-> >> -               return 0;
-> >> +       err = check_direct_IO(inode, iter, offset)
-> >> +       if (err)
-> >> +               return -EINVAL;
-> >>
-> >>          trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
-> >>
-> >> I wish you and other developers in this list could help me in a correct way.
-> >>
-> >> Thanks,
-> >> He
-> >
-> > .
-> >
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
+------------------------------------------------------------------------------
+Don't Limit Your Business. Reach for the Cloud.
+GigeNET's Cloud Solutions provide you with the tools and support that
+you need to offload your IT needs and focus on growing your business.
+Configured For All Businesses. Start Your Cloud Today.
+https://www.gigenetcloud.com/
