@@ -1,28 +1,25 @@
-From: Chao Yu <yuchaochina@hotmail.com>
-Subject: Re: [PATCH 12/12] f2fs: use extent_cache by default
-Date: Sat, 4 Jul 2015 14:30:15 +0800
-Message-ID: <COL402-EAS29173C752AB35D52DE4243DAB950@phx.gbl>
-References: <1435603176-63219-1-git-send-email-jaegeuk@kernel.org>
-	<1435603176-63219-12-git-send-email-jaegeuk@kernel.org>
-	<COL402-EAS385C99A3E59C61CC6871C57AB970@phx.gbl>
-	<20150704051610.GC15817@jaegeuk-mac02.hsd1.ca.comcast.net>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: reduce lock overhead of extent node
+	releasing
+Date: Sat, 4 Jul 2015 00:03:53 -0700
+Message-ID: <20150704070353.GE15817@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <COL402-EAS176E0D9A5A44C7C97F55904AB970@phx.gbl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1ZBGy4-0003jX-CA
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZBHUY-0000V7-36
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Jul 2015 06:30:28 +0000
-Received: from col004-omc1s14.hotmail.com ([65.55.34.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ZBGy3-0006TL-LW
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Jul 2015 06:30:28 +0000
-In-Reply-To: <20150704051610.GC15817@jaegeuk-mac02.hsd1.ca.comcast.net>
-Content-Language: zh-cn
+	Sat, 04 Jul 2015 07:04:02 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZBHUX-0001UR-0W for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 04 Jul 2015 07:04:02 +0000
+Content-Disposition: inline
+In-Reply-To: <COL402-EAS176E0D9A5A44C7C97F55904AB970@phx.gbl>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,51 +29,78 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchaochina@hotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
-
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Saturday, July 04, 2015 1:16 PM
-> To: Chao Yu
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 12/12] f2fs: use extent_cache by default
-
-[snip]
-
-> > > @@ -237,10 +237,11 @@ void update_inode(struct inode *inode, struct page *node_page)
-> > >  	ri->i_size = cpu_to_le64(i_size_read(inode));
-> > >  	ri->i_blocks = cpu_to_le64(inode->i_blocks);
-> > >
-> > > -	read_lock(&F2FS_I(inode)->ext_lock);
-> > > -	set_raw_extent(&F2FS_I(inode)->ext, &ri->i_ext);
-> > > -	read_unlock(&F2FS_I(inode)->ext_lock);
-> > > -
-> > > +	if (F2FS_I(inode)->extent_tree)
-> >
-> > Could extent cache destroy after above check?
+On Thu, Jul 02, 2015 at 08:40:12PM +0800, Chao Yu wrote:
+> >From e5c6600d01c4462c4e1ee0c70ec1d9319862077d Mon Sep 17 00:00:00 2001
+> From: Chao Yu <chao2.yu@samsung.com>
+> Date: Thu, 2 Jul 2015 18:52:46 +0800
+> Subject: [PATCH] f2fs: reduce lock overhead of extent node releasing
 > 
-> I don't think so.
+> Open and close critical section for each extent node when traversing rb-tree
+> results in high overhead of cpu, slows thing down.
 > 
-> The extent_tree is assigned as one way.
-> Once it is assigned, it will be deallocated only after evict_inode.
+> This patch alternates to batch mode for removing extent nodes under spin lock.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/data.c | 28 ++++++++++++++++++++--------
+>  1 file changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 6a706dd..7fb56a0 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -441,19 +441,31 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+>  	struct extent_node *en;
+>  	unsigned int count = et->count;
+>  
+> -	node = rb_first(&et->root);
+> -	while (node) {
+> -		next = rb_next(node);
+> -		en = rb_entry(node, struct extent_node, rb_node);
+> +	if (!et->count)
+> +		return 0;
+> +
+> +	/* 1. remove all extent nodes in global lru list */
+> +	if (free_all) {
+> +		spin_lock(&sbi->extent_lock);
+> +		node = rb_first(&et->root);
+> +		while (node) {
+> +			next = rb_next(node);
+> +			en = rb_entry(node, struct extent_node, rb_node);
+>  
+> -		if (free_all) {
+> -			spin_lock(&sbi->extent_lock);
+>  			if (!list_empty(&en->list))
+>  				list_del_init(&en->list);
+> -			spin_unlock(&sbi->extent_lock);
+> +			node = next;
+>  		}
+> +		spin_unlock(&sbi->extent_lock);
+> +	}
+> +
+> +	/* 2. release all extent nodes which are not in global lru list */
 
-Previously, I suspected that ->write_inode and ->evict will be executed
-concurrently.
-
-After checking the code, I find that would not happen, so we are safe.
+Hmm,
+Is there any overhead to traverse the rb_tree twice and any spin_lock delay
+caused by contention?
 
 Thanks,
 
-> 
-> Thanks,
-> 
-> >
-> > Thanks,
-
+> +	node = rb_first(&et->root);
+> +	while (node) {
+> +		next = rb_next(node);
+> +		en = rb_entry(node, struct extent_node, rb_node);
+>  
+> -		if (free_all || list_empty(&en->list)) {
+> +		if (list_empty(&en->list)) {
+>  			__detach_extent_node(sbi, et, en);
+>  			kmem_cache_free(extent_node_slab, en);
+>  		}
+> -- 
+> 2.4.2
 
 ------------------------------------------------------------------------------
 Don't Limit Your Business. Reach for the Cloud.
