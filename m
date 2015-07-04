@@ -1,136 +1,89 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 12/12] f2fs: use extent_cache by default
-Date: Fri, 3 Jul 2015 22:16:10 -0700
-Message-ID: <20150704051610.GC15817@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <1435603176-63219-1-git-send-email-jaegeuk@kernel.org>
-	<1435603176-63219-12-git-send-email-jaegeuk@kernel.org>
-	<COL402-EAS385C99A3E59C61CC6871C57AB970@phx.gbl>
+Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: shrink unreferenced extent_caches
+ first
+Date: Fri, 3 Jul 2015 23:29:17 -0700
+Message-ID: <20150704062917.GD15817@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <1435713946-6910-1-git-send-email-jaegeuk@kernel.org>
+ <1435713946-6910-2-git-send-email-jaegeuk@kernel.org>
+ <COL402-EAS277B75C19DA375A394DDFCEAB970@phx.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZBFoJ-0002ya-Ir
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Jul 2015 05:16:19 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZBFoI-0004cp-BK for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Jul 2015 05:16:19 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <COL402-EAS385C99A3E59C61CC6871C57AB970@phx.gbl>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+In-Reply-To: <COL402-EAS277B75C19DA375A394DDFCEAB970@phx.gbl>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <yuchaochina@hotmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
-
-On Thu, Jul 02, 2015 at 08:36:16PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
+On Thu, Jul 02, 2015 at 08:39:43PM +0800, Chao Yu wrote:
 > > -----Original Message-----
 > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Tuesday, June 30, 2015 2:40 AM
+> > Sent: Wednesday, July 01, 2015 9:26 AM
 > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH 12/12] f2fs: use extent_cache by default
+> > linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org;
+> > linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> > Cc: Jaegeuk Kim; Jaegeuk Kim
+> > Subject: [f2fs-dev] [PATCH 2/2] f2fs: shrink unreferenced extent_caches first
 > > 
-> > We don't need to handle the duplicate extent infot showrmation.
-> 
-> information?
-
-Fixed.
-
-> 
-> > 
-> > The integrated rule is:
-> >  - update on-disk extent with largest one tracked by in-memory extent_cache
-> >  - destroy extent_tree for the truncation case
-> >  - drop per-inode extent_cache by shrinker
+> > If an extent_tree entry has a zero reference count, we can drop it from the
+> > cache in higher priority rather than currently referencing entries.
 > > 
 > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> 
-> [snip]
-> 
-> > @@ -538,7 +427,11 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
-> >  		}
-> >  	}
+> > ---
+> >  fs/f2fs/data.c | 51 +++++++++++++++++++++++++++++++++++++++++----------
+> >  1 file changed, 41 insertions(+), 10 deletions(-)
 > > 
-> > -	return __attach_extent_node(sbi, et, ei, parent, p);
-> > +	en = __attach_extent_node(sbi, et, ei, parent, p);
-> > +update_out:
-> > +	if (en && en->ei.len > et->largest.len)
-> > +		et->largest = en->ei;
-> 
-> IMO, it's better to update cached_en here if it is invalid in
-> __detach_extent_node, then cached_en and largest may point different
-> extent info, it can expand our region of first level extent cache.
-
-Agreed.
-
-> 
-> [snip]
-> 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 8f059e0..a0a0e2b 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -661,21 +661,54 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
+> > nr_shrink)
+> >  	struct radix_tree_root *root = &sbi->extent_tree_root;
+> >  	unsigned int found;
+> >  	unsigned int node_cnt = 0, tree_cnt = 0;
+> > +	int remained;
+> > 
+> >  	if (!test_opt(sbi, EXTENT_CACHE))
+> >  		return 0;
+> > 
+> > +	if (!down_write_trylock(&sbi->extent_tree_lock))
+> > +		goto out;
 > > +
-> > +	/* free all extent info belong to this extent tree */
-> > +	f2fs_destroy_extent_node(inode);
+> > +	/* 1. remove unreferenced extent tree */
 > 
-> How about returning number of freed extent node for tracing.
-> 
-> node_cnt = f2fs_destroy_extent_node(inode);
+> We always release extent node and tree from inode with lowest ino,
+> why not random ino?
 
-No problem.
+Here what I want to do is to
+1. drop unreferenced inodes' extent trees;
+   the inodes were already evicted before,
+2. drop LRU ordered extent nodes.
+
+You're right. We don't need to drop it having the lowest ino first.
+Actually, I was supposed to add an LRU list for extent_trees.
+But, do we need to really take care of its order for already evicted inodes?
+
+Here, we should think about two types of hit ratios.
+One is for inodes, and the other is for data.
+The VFS maintains inode_cache in an LRU order, while its data is cached via
+page cache also conrolled by LRU. And, whenever inode is evicted, VFS drops
+all the cached data.
+So, I believe we should give a higher priority to inodes rather than data.
+
+And, in order to increase the hit ratio, we're trying to keep an extent tree
+and its nodes even if its corresponding inode was evicted.
+So, I concluded that the dropping order would not be critical especially for
+the already evicted inodes.
 
 > 
-> [snip]
+> And this step releasing breaks the rule of lru runs.
 > 
-> > @@ -237,10 +237,11 @@ void update_inode(struct inode *inode, struct page *node_page)
-> >  	ri->i_size = cpu_to_le64(i_size_read(inode));
-> >  	ri->i_blocks = cpu_to_le64(inode->i_blocks);
-> > 
-> > -	read_lock(&F2FS_I(inode)->ext_lock);
-> > -	set_raw_extent(&F2FS_I(inode)->ext, &ri->i_ext);
-> > -	read_unlock(&F2FS_I(inode)->ext_lock);
-> > -
-> > +	if (F2FS_I(inode)->extent_tree)
-> 
-> Could extent cache destroy after above check?
+> Some unreferenced file has high hit ratio and some referenced file may
+> have low hit ratio. Why not release low hit ratio extent tree at first?
 
-I don't think so.
-
-The extent_tree is assigned as one way.
-Once it is assigned, it will be deallocated only after evict_inode.
+But, still user has opened the referenced file to further access, right?
+And, the unreferenced file was evicted by VFS.
 
 Thanks,
-
-> 
-> Thanks,
-> 
-> ------------------------------------------------------------------------------
-> Don't Limit Your Business. Reach for the Cloud.
-> GigeNET's Cloud Solutions provide you with the tools and support that
-> you need to offload your IT needs and focus on growing your business.
-> Configured For All Businesses. Start Your Cloud Today.
-> https://www.gigenetcloud.com/
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
-Don't Limit Your Business. Reach for the Cloud.
-GigeNET's Cloud Solutions provide you with the tools and support that
-you need to offload your IT needs and focus on growing your business.
-Configured For All Businesses. Start Your Cloud Today.
-https://www.gigenetcloud.com/
