@@ -1,110 +1,139 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: reduce lock overhead of extent node
-	releasing
-Date: Sat, 4 Jul 2015 00:03:53 -0700
-Message-ID: <20150704070353.GE15817@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <COL402-EAS176E0D9A5A44C7C97F55904AB970@phx.gbl>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: shrink unreferenced extent_caches
+ first
+Date: Mon, 06 Jul 2015 20:25:23 +0800
+Message-ID: <004401d0b7e6$ee859f80$cb90de80$@samsung.com>
+References: <1435713946-6910-1-git-send-email-jaegeuk@kernel.org>
+ <1435713946-6910-2-git-send-email-jaegeuk@kernel.org>
+ <COL402-EAS277B75C19DA375A394DDFCEAB970@phx.gbl>
+ <20150704062917.GD15817@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZBHUY-0000V7-36
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Jul 2015 07:04:02 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZBHUX-0001UR-0W for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Jul 2015 07:04:02 +0000
-Content-Disposition: inline
-In-Reply-To: <COL402-EAS176E0D9A5A44C7C97F55904AB970@phx.gbl>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchaochina@hotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20150704062917.GD15817@jaegeuk-mac02.hsd1.ca.comcast.net>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Jul 02, 2015 at 08:40:12PM +0800, Chao Yu wrote:
-> >From e5c6600d01c4462c4e1ee0c70ec1d9319862077d Mon Sep 17 00:00:00 2001
-> From: Chao Yu <chao2.yu@samsung.com>
-> Date: Thu, 2 Jul 2015 18:52:46 +0800
-> Subject: [PATCH] f2fs: reduce lock overhead of extent node releasing
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Saturday, July 04, 2015 2:29 PM
+> To: Chao Yu
+> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: shrink unreferenced extent_caches first
 > 
-> Open and close critical section for each extent node when traversing rb-tree
-> results in high overhead of cpu, slows thing down.
+> On Thu, Jul 02, 2015 at 08:39:43PM +0800, Chao Yu wrote:
+> > > -----Original Message-----
+> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > Sent: Wednesday, July 01, 2015 9:26 AM
+> > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > > linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org;
+> > > linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> > > Cc: Jaegeuk Kim; Jaegeuk Kim
+> > > Subject: [f2fs-dev] [PATCH 2/2] f2fs: shrink unreferenced extent_caches first
+> > >
+> > > If an extent_tree entry has a zero reference count, we can drop it from the
+> > > cache in higher priority rather than currently referencing entries.
+> > >
+> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > ---
+> > >  fs/f2fs/data.c | 51 +++++++++++++++++++++++++++++++++++++++++----------
+> > >  1 file changed, 41 insertions(+), 10 deletions(-)
+> > >
+> > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > index 8f059e0..a0a0e2b 100644
+> > > --- a/fs/f2fs/data.c
+> > > +++ b/fs/f2fs/data.c
+> > > @@ -661,21 +661,54 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
+> > > nr_shrink)
+> > >  	struct radix_tree_root *root = &sbi->extent_tree_root;
+> > >  	unsigned int found;
+> > >  	unsigned int node_cnt = 0, tree_cnt = 0;
+> > > +	int remained;
+> > >
+> > >  	if (!test_opt(sbi, EXTENT_CACHE))
+> > >  		return 0;
+> > >
+> > > +	if (!down_write_trylock(&sbi->extent_tree_lock))
+> > > +		goto out;
+> > > +
+> > > +	/* 1. remove unreferenced extent tree */
+> >
+> > We always release extent node and tree from inode with lowest ino,
+> > why not random ino?
 > 
-> This patch alternates to batch mode for removing extent nodes under spin lock.
-> 
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> ---
->  fs/f2fs/data.c | 28 ++++++++++++++++++++--------
->  1 file changed, 20 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 6a706dd..7fb56a0 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -441,19 +441,31 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
->  	struct extent_node *en;
->  	unsigned int count = et->count;
->  
-> -	node = rb_first(&et->root);
-> -	while (node) {
-> -		next = rb_next(node);
-> -		en = rb_entry(node, struct extent_node, rb_node);
-> +	if (!et->count)
-> +		return 0;
-> +
-> +	/* 1. remove all extent nodes in global lru list */
-> +	if (free_all) {
-> +		spin_lock(&sbi->extent_lock);
-> +		node = rb_first(&et->root);
-> +		while (node) {
-> +			next = rb_next(node);
-> +			en = rb_entry(node, struct extent_node, rb_node);
->  
-> -		if (free_all) {
-> -			spin_lock(&sbi->extent_lock);
->  			if (!list_empty(&en->list))
->  				list_del_init(&en->list);
-> -			spin_unlock(&sbi->extent_lock);
-> +			node = next;
->  		}
-> +		spin_unlock(&sbi->extent_lock);
-> +	}
-> +
-> +	/* 2. release all extent nodes which are not in global lru list */
+> Here what I want to do is to
+> 1. drop unreferenced inodes' extent trees;
+>    the inodes were already evicted before,
+> 2. drop LRU ordered extent nodes.
 
-Hmm,
-Is there any overhead to traverse the rb_tree twice and any spin_lock delay
-caused by contention?
+Actually, I got it, you codes show this method very clearly. :)
+
+> 
+> You're right. We don't need to drop it having the lowest ino first.
+> Actually, I was supposed to add an LRU list for extent_trees.
+> But, do we need to really take care of its order for already evicted inodes?
+> 
+> Here, we should think about two types of hit ratios.
+> One is for inodes, and the other is for data.
+> The VFS maintains inode_cache in an LRU order, while its data is cached via
+> page cache also conrolled by LRU. And, whenever inode is evicted, VFS drops
+> all the cached data.
+> So, I believe we should give a higher priority to inodes rather than data.
+> 
+> And, in order to increase the hit ratio, we're trying to keep an extent tree
+> and its nodes even if its corresponding inode was evicted.
+> So, I concluded that the dropping order would not be critical especially for
+> the already evicted inodes.
+
+>From perspective of shrinking memory size, I think you're completely right,
+because we can regard extent tree and its nodes as metadata of one inode, if
+VFS evict one inode, all its data and metadata include data in extent cache
+should be evicted.
+
+But from perspective of arising hit ratio of our cache, I'm not sure this is
+the best way.
+
+I guess in this method, we may encounter lower coverage area of dnode + extent
+cache and double caches exist issue, like:
+a) all data of inode is evicted by VFS, and its tree and nodes in extent cache
+is evicted too, resulting lower hit raito of further access.
+b) data and node cache of inode is exist in VFS, and its tree and nodes in extent
+cache is exist too.
+
+> 
+> >
+> > And this step releasing breaks the rule of lru runs.
+> >
+> > Some unreferenced file has high hit ratio and some referenced file may
+> > have low hit ratio. Why not release low hit ratio extent tree at first?
+> 
+> But, still user has opened the referenced file to further access, right?
+
+It depends on access model.
+
+What I mean is that if extent cache of one inode can be hit for many times,
+we can assume the access model is re-accessly, that means, we can expect
+this cache can be hit more times. On the contrary, we can release it if it
+is necessary.
 
 Thanks,
 
-> +	node = rb_first(&et->root);
-> +	while (node) {
-> +		next = rb_next(node);
-> +		en = rb_entry(node, struct extent_node, rb_node);
->  
-> -		if (free_all || list_empty(&en->list)) {
-> +		if (list_empty(&en->list)) {
->  			__detach_extent_node(sbi, et, en);
->  			kmem_cache_free(extent_node_slab, en);
->  		}
-> -- 
-> 2.4.2
-
-------------------------------------------------------------------------------
-Don't Limit Your Business. Reach for the Cloud.
-GigeNET's Cloud Solutions provide you with the tools and support that
-you need to offload your IT needs and focus on growing your business.
-Configured For All Businesses. Start Your Cloud Today.
-https://www.gigenetcloud.com/
+> And, the unreferenced file was evicted by VFS.
+> 
+> Thanks,
+> 
+> ------------------------------------------------------------------------------
+> Don't Limit Your Business. Reach for the Cloud.
+> GigeNET's Cloud Solutions provide you with the tools and support that
+> you need to offload your IT needs and focus on growing your business.
+> Configured For All Businesses. Start Your Cloud Today.
+> https://www.gigenetcloud.com/
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
