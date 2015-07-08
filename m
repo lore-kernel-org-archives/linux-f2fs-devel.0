@@ -1,22 +1,32 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] fsck.f2fs: select to update the latest valid
-	summary
-Date: Mon,  6 Jul 2015 15:55:30 -0700
-Message-ID: <1436223331-29064-1-git-send-email-jaegeuk@kernel.org>
+From: Fan Li <fanofcode.li@samsung.com>
+Subject: [PATCH] f2fs: Don't try to split extents shorter than
+ F2FS_MIN_EXTENT_LEN
+Date: Wed, 08 Jul 2015 16:02:54 +0800
+Message-ID: <000b01d0b954$943ecf00$bcbc6d00$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZCFIc-0005to-Lc
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fanofcode.li@samsung.com>) id 1ZCkKT-0002ui-IC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 06 Jul 2015 22:55:42 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZCFIb-00035M-LX for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 06 Jul 2015 22:55:42 +0000
+	Wed, 08 Jul 2015 08:03:41 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZCkKR-0000Ah-AG
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 08 Jul 2015 08:03:41 +0000
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0NR502808T1VU9D0@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 08 Jul 2015 17:03:31 +0900 (KST)
+References: 
+In-reply-to: 
+Content-language: en-us
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,81 +36,35 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-If two dnode blocks indicate one block address, it needs to keep the latest
-valid address selectively.
+Since only parts of extents longer than F2FS_MIN_EXTENT_LEN will 
+be kept in extent cache after split, extents already shorter than 
+F2FS_MIN_EXTENT_LEN don't need to try split at all.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+Signed-off-by: Fan Li <fanofcode.li@samsung.com>
 ---
- fsck/fsck.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ fs/f2fs/data.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index b15edbe..bbd4cab 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -191,6 +191,47 @@ out:
- 	return ret;
- }
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 37a2632..e2996cb 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -585,7 +585,7 @@ static bool f2fs_update_extent_tree(struct inode *inode,
+pgoff_t fofs,
+ 	__detach_extent_node(sbi, et, en);
  
-+static int is_valid_summary(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-+							u32 blk_addr)
-+{
-+	u16 ofs_in_node = le16_to_cpu(sum->ofs_in_node);
-+	u32 nid = le32_to_cpu(sum->nid);
-+	struct f2fs_node *node_blk = NULL;
-+	__le32 target_blk_addr;
-+	struct node_info ni;
-+	int ret = 0;
-+
-+	node_blk = (struct f2fs_node *)calloc(BLOCK_SZ, 1);
-+	ASSERT(node_blk != NULL);
-+
-+	if (!IS_VALID_NID(sbi, nid))
-+		goto out;
-+
-+	get_node_info(sbi, nid, &ni);
-+
-+	if (!IS_VALID_BLK_ADDR(sbi, ni.blk_addr))
-+		goto out;
-+
-+	/* read node_block */
-+	ret = dev_read_block(node_blk, ni.blk_addr);
-+	ASSERT(ret >= 0);
-+
-+	if (le32_to_cpu(node_blk->footer.nid) != nid)
-+		goto out;
-+
-+	/* check its block address */
-+	if (node_blk->footer.nid == node_blk->footer.ino)
-+		target_blk_addr = node_blk->i.i_addr[ofs_in_node];
-+	else
-+		target_blk_addr = node_blk->dn.addr[ofs_in_node];
-+
-+	if (blk_addr == le32_to_cpu(target_blk_addr))
-+		ret = 1;
-+out:
-+	free(node_blk);
-+	return ret;
-+}
-+
- static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 		u32 parent_nid, u16 idx_in_node, u8 version)
- {
-@@ -238,6 +279,9 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 			DBG(0, "Target data block addr    [0x%x]\n", blk_addr);
- 			ASSERT_MSG("Invalid data seg summary\n");
- 			ret = -EINVAL;
-+		} else if (is_valid_summary(sbi, sum_entry, blk_addr)) {
-+			/* delete wrong index */
-+			ret = -EINVAL;
- 		} else {
- 			FIX_MSG("Set data summary 0x%x -> [0x%x] [0x%x] [0x%x]",
- 					segno, parent_nid, version, idx_in_node);
+ 	/* 2. if extent can be split more, split and insert the left part */
+-	if (dei.len > 1) {
++	if (dei.len > F2FS_MIN_EXTENT_LEN) {
+ 		/*  insert left part of split extent into cache */
+ 		if (fofs - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
+ 			set_extent_info(&ei, dei.fofs, dei.blk,
 -- 
-2.1.1
+1.7.9.5
 
 
 ------------------------------------------------------------------------------
