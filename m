@@ -1,29 +1,31 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: add new ioctl F2FS_IOC_GARBAGE_COLLECT
-Date: Fri, 10 Jul 2015 18:08:10 +0800
-Message-ID: <015b01d0baf8$6e595b70$4b0c1250$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: shrink unreferenced extent_caches
+ first
+Date: Fri, 10 Jul 2015 16:54:17 -0700
+Message-ID: <20150710235417.GA57109@jaegeuk-mac02.mot.com>
+References: <1435713946-6910-1-git-send-email-jaegeuk@kernel.org>
+	<1435713946-6910-2-git-send-email-jaegeuk@kernel.org>
+	<COL402-EAS277B75C19DA375A394DDFCEAB970@phx.gbl>
+	<20150704062917.GD15817@jaegeuk-mac02.hsd1.ca.comcast.net>
+	<004401d0b7e6$ee859f80$cb90de80$@samsung.com>
+	<20150706221624.GA26544@jaegeuk-mac02.mot.com>
+	<00af01d0b962$8682d880$93888980$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZDVEt-0006Hf-VW
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZDi7g-0007YP-7F
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Jul 2015 10:09:03 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZDVEr-0005QH-Pu
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Jul 2015 10:09:03 +0000
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NR9003NUO6UMO90@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Jul 2015 19:08:54 +0900 (KST)
-Content-language: zh-cn
+	Fri, 10 Jul 2015 23:54:28 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZDi7e-0007u4-Tv for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 10 Jul 2015 23:54:28 +0000
+Content-Disposition: inline
+In-Reply-To: <00af01d0b962$8682d880$93888980$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,118 +35,124 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-When background gc is off, the only way to trigger gc is executing
-a force gc in some operations who wants to grab space in disk.
+On Wed, Jul 08, 2015 at 05:41:57PM +0800, Chao Yu wrote:
 
-The executing condition is limited: to execute force gc, we should
-wait for the time when there is almost no more free section for LFS
-allocation. This seems not reasonable for our user who wants to
-control triggering gc by himself.
+[snip]
 
-This patch introduces F2FS_IOC_GARBAGE_COLLECT interface for
-triggering garbage collection by using ioctl. It provides our users
-one more option to trigger gc.
+> > > > You're right. We don't need to drop it having the lowest ino first.
+> > > > Actually, I was supposed to add an LRU list for extent_trees.
+> > > > But, do we need to really take care of its order for already evicted inodes?
+> > > >
+> > > > Here, we should think about two types of hit ratios.
+> > > > One is for inodes, and the other is for data.
+> > > > The VFS maintains inode_cache in an LRU order, while its data is cached via
+> > > > page cache also conrolled by LRU. And, whenever inode is evicted, VFS drops
+> > > > all the cached data.
+> > > > So, I believe we should give a higher priority to inodes rather than data.
+> > > >
+> > > > And, in order to increase the hit ratio, we're trying to keep an extent tree
+> > > > and its nodes even if its corresponding inode was evicted.
+> > > > So, I concluded that the dropping order would not be critical especially for
+> > > > the already evicted inodes.
+> > >
+> > > >From perspective of shrinking memory size, I think you're completely right,
+> > > because we can regard extent tree and its nodes as metadata of one inode, if
+> > > VFS evict one inode, all its data and metadata include data in extent cache
+> > > should be evicted.
+> > >
+> > > But from perspective of arising hit ratio of our cache, I'm not sure this is
+> > > the best way.
+> > >
+> > > I guess in this method, we may encounter lower coverage area of dnode + extent
+> > > cache and double caches exist issue, like:
+> > > a) all data of inode is evicted by VFS, and its tree and nodes in extent cache
+> > > is evicted too, resulting lower hit raito of further access.
+> > 
+> > Well, f2fs_evict_inode does not destroy whole its extent tree and nodes right
+> > away, but just drops the refcount of the extent tree. So, I expect that this
+> > gives another chance of cache hit for further data access.
+> 
+> Agreed.
+> 
+> > Moreover, since this only matters with memory pressure, the unreferenced extent
+> > trees and nodes would be kept long enough beyond the normal situation.
+> 
+> I'm worry about the 'only matters' thing, I will investigate it if I have time.
+> 
+> > 
+> > > b) data and node cache of inode is exist in VFS, and its tree and nodes in extent
+> > > cache is exist too.
+> > 
+> > We know that this is a separate issue, since there is no such code to check
+> > whether data and node cache exist along with extent cache entries.
+> 
+> Well, just thought, for multimedia objects, like a movie file, most time
+> we will just read it, there will no further writes in it. So why not
+> building extent cache for reaccessing, and meanwhile releasing dnode pages
+> for saving memory?
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/file.c | 32 ++++++++++++++++++++++++++++++++
- fs/f2fs/gc.h   |  6 ++++++
- 3 files changed, 39 insertions(+)
+Hmm, my basic approach is letting mm reclaim caches in an LRU manner as much
+as possible.
+Of course, we can think about many specific conditions, but IMO, it is not
+enough to treat them as general ones.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 88b05cb..673623b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -228,6 +228,7 @@ static inline bool __has_cursum_space(struct f2fs_summary_block *sum, int size,
- #define F2FS_IOC_START_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 3)
- #define F2FS_IOC_RELEASE_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 4)
- #define F2FS_IOC_ABORT_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 5)
-+#define F2FS_IOC_GARBAGE_COLLECT	_IO(F2FS_IOCTL_MAGIC, 6)
- 
- #define F2FS_IOC_SET_ENCRYPTION_POLICY					\
- 		_IOR('f', 19, struct f2fs_encryption_policy)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 1b67215..55e8e4b 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -27,6 +27,7 @@
- #include "segment.h"
- #include "xattr.h"
- #include "acl.h"
-+#include "gc.h"
- #include "trace.h"
- #include <trace/events/f2fs.h>
- 
-@@ -1557,6 +1558,35 @@ got_it:
- 	return 0;
- }
- 
-+static int f2fs_ioc_gc(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	__u32 i, count;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (get_user(count, (__u32 __user *)arg))
-+		return -EFAULT;
-+
-+	if (!count || count > F2FS_BATCH_GC_MAX_NUM)
-+		return -EINVAL;
-+
-+	for (i = 0; i < count; i++) {
-+		if (!mutex_trylock(&sbi->gc_mutex))
-+			break;
-+
-+		if (f2fs_gc(sbi))
-+			break;
-+	}
-+
-+	if (put_user(i, (__u32 __user *)arg))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	switch (cmd) {
-@@ -1586,6 +1616,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_get_encryption_policy(filp, arg);
- 	case F2FS_IOC_GET_ENCRYPTION_PWSALT:
- 		return f2fs_ioc_get_encryption_pwsalt(filp, arg);
-+	case F2FS_IOC_GARBAGE_COLLECT:
-+		return f2fs_ioc_gc(filp, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index b4a65be..c5a055b 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -19,6 +19,12 @@
- #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
- #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
- 
-+/*
-+ * with this macro, we can control the max time we do garbage collection,
-+ * when user triggers batch mode gc by ioctl.
-+ */
-+#define F2FS_BATCH_GC_MAX_NUM		16
-+
- /* Search max. number of dirty segments to select a victim segment */
- #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
- 
--- 
-2.4.2
+> 
+> > And, I don't think we should eliminate such the duplicate, since the extent
+> > cache is a supplemenray subset of data and node caches.
+> 
+> Right.
+> 
+> > 
+> > >
+> > > >
+> > > > >
+> > > > > And this step releasing breaks the rule of lru runs.
+> > > > >
+> > > > > Some unreferenced file has high hit ratio and some referenced file may
+> > > > > have low hit ratio. Why not release low hit ratio extent tree at first?
+> > > >
+> > > > But, still user has opened the referenced file to further access, right?
+> > >
+> > > It depends on access model.
+> > >
+> > > What I mean is that if extent cache of one inode can be hit for many times,
+> > > we can assume the access model is re-accessly, that means, we can expect
+> > > this cache can be hit more times. On the contrary, we can release it if it
+> > > is necessary.
+> > 
+> > Yes, exactly it depends on user workloads.
+> > 
+> > As a counter example,
+> > 1. thread A wrote extents and remained the file as it was opened to use later,
+> > 2. thread B wrote many extents newly and never touched.
+> > 
+> > After #2, if shrinker was activated, the extents cached by thread A would
+> > be evicted, resulting in cache misses on further thread A's accesses.
+> 
+> I didn't understand, if thread A's file is opened for reusing, from long-term
+> view, it will have high hit ratio in its extent cache than thread B's, Why
+> thread B's extent cache is not be evicted firstly.
 
+Not long-term view. Like #1 -> #2 -> shrink -> #1 -> ...
 
+> 
+> > 
+> > IMO, this can happen when a bunch of data blocks were written without updates,
+> > while some opened library/database files will access the data sooner or later.
+> 
+> You mean the file with one time written in its life, like lib file or multimedia
+> file?
+> 
+> So I guess what you mean is that, some app keeps file opened for long time, and
+> will access it again sooner or later, at least we should keep these referenced
+> extent cache visible rather than evicting them before evicting unreferenced one's.
+
+Something like that. :)
+
+Thanks,
 
 ------------------------------------------------------------------------------
 Don't Limit Your Business. Reach for the Cloud.
