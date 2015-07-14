@@ -1,52 +1,41 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs:dev-test 24/27] fs/f2fs/data.c:1136:5: sparse: symbol
- 'f2fs_write_cache_pages' was not declared. Should it be static?
-Date: Tue, 14 Jul 2015 18:11:55 +0800
-Message-ID: <00f301d0be1d$a15ed4a0$e41c7de0$@samsung.com>
-References: <201507140816.NqM3qfvR%fengguang.wu@intel.com>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: fix to release inode page in
+ get_new_data_page
+Date: Tue, 14 Jul 2015 18:13:05 +0800
+Message-ID: <00f401d0be1d$cbb489c0$631d9d40$@samsung.com>
+References: <00f301d0ba30$ebe95b80$c3bc1280$@samsung.com>
+ <20150711001715.GA61190@jaegeuk-mac02>
+ <COL402-EAS409F2B0F7AE6CCD5F95F8D1AB9E0@phx.gbl>
+ <20150713232437.GA64479@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <201507140816.NqM3qfvR%fengguang.wu@intel.com>
+In-reply-to: <20150713232437.GA64479@jaegeuk-mac02.mot.com>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'kbuild test robot' <fengguang.wu@intel.com>
-Cc: kbuild-all@01.org, 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Changman Lee' <cm224.lee@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Fengguang,
-
-Thanks for your reminder. Issue was fixed.
-
-Regards,
-
 > -----Original Message-----
-> From: kbuild test robot [mailto:fengguang.wu@intel.com]
-> Sent: Tuesday, July 14, 2015 8:24 AM
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Tuesday, July 14, 2015 7:26 AM
 > To: Chao Yu
-> Cc: kbuild-all@01.org; Jaegeuk Kim; Changman Lee; linux-f2fs-devel@lists.sourceforge.net;
-> linux-kernel@vger.kernel.org
-> Subject: [f2fs:dev-test 24/27] fs/f2fs/data.c:1136:5: sparse: symbol 'f2fs_write_cache_pages'
-> was not declared. Should it be static?
+> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to release inode page in get_new_data_page
+
+[snip]
+
+> > And I don't think we should change error handling method of f2fs_put_dnode
+> > for just fixing this issue.
+> >
+> > How do you think?
 > 
-> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs dev-test
-> head:   ac8132095a69bd62e30a505212627e2657740452
-> commit: 7e4a4d93dd6faf05d6201423d21ae8a00e538a2c [24/27] f2fs: expose f2fs_write_cache_pages
-> reproduce:
->   # apt-get install sparse
->   git checkout 7e4a4d93dd6faf05d6201423d21ae8a00e538a2c
->   make ARCH=x86_64 allmodconfig
->   make C=1 CF=-D__CHECK_ENDIAN__
-> 
-> 
-> sparse warnings: (new ones prefixed by >>)
-> 
-> >> fs/f2fs/data.c:1136:5: sparse: symbol 'f2fs_write_cache_pages' was not declared. Should it
-> be static?
-> 
-> Please review and possibly fold the followup patch.
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> Indeed. I cannot think about other clean way for now.
+> Instead, how about adding this description in the patch and some comments in
+> the codes?
+
+OK, Please help to review the following patch. :)
+
+Thanks,
