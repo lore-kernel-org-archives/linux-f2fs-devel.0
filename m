@@ -1,40 +1,16 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/4 v2] f2fs: expose f2fs_write_cache_pages
-Date: Tue, 14 Jul 2015 18:14:58 +0800
-Message-ID: <00f601d0be1e$0a91fba0$1fb5f2e0$@samsung.com>
+Subject: [PATCH 1/4 v2 RESEND] f2fs: expose f2fs_write_cache_pages
+Date: Tue, 14 Jul 2015 18:56:10 +0800
+Message-ID: <00f701d0be23$cc36ca60$64a45f20$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZExFl-0001Ck-9o
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 14 Jul 2015 10:15:57 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZExFk-0001QU-4E
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 14 Jul 2015 10:15:57 +0000
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NRH0120U368C940@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 14 Jul 2015 19:15:44 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 If there are gced dirty pages and normal dirty pages in the mapping
 of one inode, we might writeback them alternately with discontinuous
@@ -76,6 +52,7 @@ user	0m0.004s
 sys	0m0.004s
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
 v2:
  * use f2fs_wait_on_page_writeback instead of wait_on_page_writeback
@@ -85,7 +62,7 @@ v2:
  1 file changed, 135 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f84c268..431fc2f 100644
+index f84c268..ee091f3 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
 @@ -14,6 +14,7 @@
@@ -185,7 +162,7 @@ index f84c268..431fc2f 100644
 +
 +			if (PageWriteback(page)) {
 +				if (wbc->sync_mode != WB_SYNC_NONE)
-+					f2fs_wait_on_page_writeback(page);
++					f2fs_wait_on_page_writeback(page, DATA);
 +				else
 +					goto continue_unlock;
 +			}
@@ -247,12 +224,3 @@ index f84c268..431fc2f 100644
  		mutex_unlock(&sbi->writepages);
 -- 
 2.4.2
-
-
-
-------------------------------------------------------------------------------
-Don't Limit Your Business. Reach for the Cloud.
-GigeNET's Cloud Solutions provide you with the tools and support that
-you need to offload your IT needs and focus on growing your business.
-Configured For All Businesses. Start Your Cloud Today.
-https://www.gigenetcloud.com/
