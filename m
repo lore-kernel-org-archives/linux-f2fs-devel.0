@@ -1,89 +1,68 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: handle error cases in
- move_encrypted_block
-Date: Wed, 15 Jul 2015 15:42:48 -0700
-Message-ID: <20150715224248.GA86133@jaegeuk-mac02.mot.com>
-References: <1436901502-78825-1-git-send-email-jaegeuk@kernel.org>
- <012501d0be9f$3ca52dc0$b5ef8940$@samsung.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] fsck.f2fs: add segment type in sit_dump
+Date: Thu, 16 Jul 2015 10:10:36 +0800
+Message-ID: <1437012636-3300-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <012501d0be9f$3ca52dc0$b5ef8940$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1ZFYde-0007Bb-Lf
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 16 Jul 2015 02:11:06 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZFYda-0000fT-T6
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 16 Jul 2015 02:11:06 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
 
-On Wed, Jul 15, 2015 at 09:39:47AM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Wednesday, July 15, 2015 3:18 AM
-> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH 1/2] f2fs: handle error cases in move_encrypted_block
-> > 
-> > This patch fixes some missing error handlers.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/gc.c | 25 ++++++++++++++++---------
-> >  1 file changed, 16 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index 11046db..db11861 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -556,27 +556,34 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
-> >  	if (!fio.encrypted_page)
-> >  		goto put_out;
-> > 
-> > -	f2fs_submit_page_bio(&fio);
-> > -
-> > -	/* allocate block address */
-> > -	f2fs_wait_on_page_writeback(dn.node_page, NODE);
-> > -
-> > -	allocate_data_block(fio.sbi, NULL, fio.blk_addr,
-> > -					&fio.blk_addr, &sum, CURSEG_COLD_DATA);
-> > -	dn.data_blkaddr = fio.blk_addr;
-> > +	err = f2fs_submit_page_bio(&fio);
-> > +	if (err)
-> > +		goto put_page_out;
-> 
-> f2fs_submit_page_bio will put the page when failed.
-> 
-> So goto put_out is enough?
+Add segment type information in sit_dump:
 
-Right.
-BTW, I realized that this is somewhat wrong, since this function needs to
-take care of its page for error cases too.
-I wrote a patch dealing with errors of f2fs_submit_page_bio, and submitted
-it right ago.
+	[sit_dump:  48] SIT[0x12905] : 0x  1 : 0
+	[sit_dump:  48] SIT[0x12906] : 0x  1 : 5
+	[sit_dump:  48] SIT[0x12907] : 0x  7 : 4
+	[sit_dump:  48] SIT[0x12908] : 0x  1 : 3
 
-> 
-> > 
-> >  	/* write page */
-> >  	lock_page(fio.encrypted_page);
-> > +
-> > +	if (unlikely(!PageUptodate(fio.encrypted_page)))
-> > +		goto put_page_out;
-> > +	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi)))
-> > +		goto put_page_out;
-> > +
-> >  	set_page_writeback(fio.encrypted_page);
-> >  	fio.rw = WRITE_SYNC;
-> >  	f2fs_submit_page_mbio(&fio);
-> > 
-> > +	/* allocate block address */
-> > +	f2fs_wait_on_page_writeback(dn.node_page, NODE);
-> > +	allocate_data_block(fio.sbi, NULL, fio.blk_addr,
-> > +					&fio.blk_addr, &sum, CURSEG_COLD_DATA);
-> 
-> move above f2fs_submit_page_mbio(&fio) to here?
+The last column output message on behalf of segment type like
+CURSEG_XXX_TYPE.
 
-Fixed.
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fsck/dump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/fsck/dump.c b/fsck/dump.c
+index 8698b28..81a39c8 100644
+--- a/fsck/dump.c
++++ b/fsck/dump.c
+@@ -45,7 +45,7 @@ void sit_dump(struct f2fs_sb_info *sbi, int start_sit, int end_sit)
+ 		ret = write(fd, buf, strlen(buf));
+ 		ASSERT(ret >= 0);
+ 
+-		DBG(4, "SIT[0x%3x] : 0x%x\n", segno, se->valid_blocks);
++		DBG(4, "SIT[0x%3x] : 0x%3x : %d\n", segno, se->valid_blocks, se->type);
+ 		if (se->valid_blocks == 0x0) {
+ 			free_segs++;
+ 		} else {
+-- 
+1.9.1
+
+
+------------------------------------------------------------------------------
+Don't Limit Your Business. Reach for the Cloud.
+GigeNET's Cloud Solutions provide you with the tools and support that
+you need to offload your IT needs and focus on growing your business.
+Configured For All Businesses. Start Your Cloud Today.
+https://www.gigenetcloud.com/
