@@ -1,99 +1,186 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 3/3] f2fs: allow zeroed name length during
-	find_dentry
-Date: Thu, 16 Jul 2015 18:03:46 +0800
-Message-ID: <018b01d0bfae$ce294410$6a7bcc30$@samsung.com>
-References: <1436999892-86682-1-git-send-email-jaegeuk@kernel.org>
- <1436999892-86682-3-git-send-email-jaegeuk@kernel.org>
+Subject: RE: [f2fs-dev] Dwrite with non-aligned offset and size
+Date: Thu, 16 Jul 2015 18:13:40 +0800
+Message-ID: <018c01d0bfb0$397df610$ac79e230$@samsung.com>
+References: <556C481C.1050400@huawei.com>
+ <20150601230155.GB28650@jaegeuk-mac02.mot.com> <556D2F38.4040304@huawei.com>
+ <000901d0b566$aeed8e00$0cc8aa00$@samsung.com> <55A71DB3.30102@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1436999892-86682-3-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <55A71DB3.30102@huawei.com>
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: 'He YunLei' <heyunlei@huawei.com>
+Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
 > -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Thursday, July 16, 2015 6:38 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 3/3] f2fs: allow zeroed name length during find_dentry
+> From: He YunLei [mailto:heyunlei@huawei.com]
+> Sent: Thursday, July 16, 2015 10:58 AM
+> To: Chao Yu
+> Cc: 'Jaegeuk Kim'; linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] Dwrite with non-aligned offset and size
 > 
-> Since find_dentry doesn't lock its dentry page, it can traverse intermediate
-> bit positions consisting of a big dentry.
-> For these bit positions, this patch fills the intermediate name length fields
-> as zeros and skips them during look-up.
+> On 2015/7/3 16:02, Chao Yu wrote:
+> > Hi Yunlei,
+> >
+> > Sorry for the long delay.
+> >
+> >> -----Original Message-----
+> >> From: He YunLei [mailto:heyunlei@huawei.com]
+> >> Sent: Tuesday, June 02, 2015 12:21 PM
+> >> To: Jaegeuk Kim
+> >> Cc: linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> >> Subject: Re: [f2fs-dev] Dwrite with non-aligned offset and size
+> >>
+> >> On 2015/6/2 7:01, Jaegeuk Kim wrote:
+> >>> On Mon, Jun 01, 2015 at 07:55:08PM +0800, He YunLei wrote:
+> >>>> Hi Jaegeuk,
+> >>>>
+> >>>> We run ltp testcase with f2fs and obtain a TFAIL in diotest4, the result in detail is
+> >>>> as fallow:
+> >>>>
+> >>>> dio04
+> >>>>
+> >>>> <<<test_start>>>
+> >>>> tag=dio04 stime=1432278894
+> >>>> cmdline="diotest4"
+> >>>> contacts=""
+> >>>> analysis=exit
+> >>>> <<<test_output>>>
+> >>>> diotest4    1  TPASS  :  Negative Offset
+> >>>> diotest4    2  TPASS  :  removed
+> >>>> diotest4    3  TFAIL  :  diotest4.c:129: write allows odd count.returns 1: Success
+> >>>> diotest4    4  TFAIL  :  diotest4.c:183: Odd count of read and write
+> >>>> diotest4    5  TPASS  :  Read beyond the file size
+> >>>> ......
+> >>>>
+> >>>> the result of ext4 with same environment:
+> >>>>
+> >>>> dio04
+> >>>>
+> >>>> <<<test_start>>>
+> >>>> tag=dio04 stime=1432259643
+> >>>> cmdline="diotest4"
+> >>>> contacts=""
+> >>>> analysis=exit
+> >>>> <<<test_output>>>
+> >>>> diotest4    1  TPASS  :  Negative Offset
+> >>>> diotest4    2  TPASS  :  removed
+> >>>> diotest4    3  TPASS  :  Odd count of read and write
+> >>>> diotest4    4  TPASS  :  Read beyond the file size
+> >>>> ......
+> >>>>
+> >>>> Does f2fs allow dwrite with non-aligned offset and size? I check the code and found
+> >>>> dwrite with non-aligned offset and size will turn into buffered write. Whether it will
+> >>>> have some impact on user layer applications?
+> >>>
+> >>> It's not a big deal to return -EINVAL.
+> >>> When I take a look at other filesystem behaviors, it seems there is no restriction.
+> >>>
+> >>
+> >> Ext4 do a check in the function do_blockdev_direct_IO:
+> >>
+> >>            if (align & blocksize_mask) {
+> >>                if (bdev)
+> >>                    blkbits = blksize_bits(bdev_logical_block_size(bdev));
+> >>                blocksize_mask = (1 << blkbits) - 1;
+> >>                if (align & blocksize_mask)
+> >>                    goto out;
+> >>            }
+> >>
+> >> It will return -EINVAL if the alignment is not satisfied.
+> >
+> > I think we can get hint from the error case description in write(2) manual:
+> >
+> > "EINVAL  fd is attached to an object which is unsuitable for writing; or the file
+> > was  opened with the O_DIRECT flag, and either the address specified in buf, the
+> > value specified in count, or the current file offset is not suitably aligned."
+> >
+> > So if the alignment is not satisfied, we should return '-EINVAL' instead of
+> > letting user fall back to buffered write.
+> >
+> > Do you have time to make and send us a patch for fixing this issue?
+> >
+> > Thanks,
+> >
+> In man page of open(2)
+> 
+> The O_DIRECT flag may impose alignment restrictions on the length and
+> address of user-space buffers and the file offset of I/Os.  In Linux
+> alignment restrictions vary by filesystem and kernel version and
+> might be absent entirely.  However there is currently no
+> filesystem-independent interface for an application to discover these
+> restrictions for a given file or filesystem.
 
-I didn't get it, AFAIK, dentry page will be accessed under protection of
-i_mutex, if our inode operation has no bug, why this zeroed name_len can
-exist?
+Right, there is no such interface here, and I don't think we need this,
+since developers already have the manual for guiding them to use the
+interfaces of filesystem correctly. Manuals should describe the restrictions
+of interfaces which is exported by VFS, if some filesystems did not follow
+theses restricting rules, we should add related description in manual.
+
+> 
+> So now I don't know which one is better, falling back to buffered write or not?
+
+IMO, DIO is used for special purpose, if the target if not be achieved because of
+wrong parameters, why not feedback to our user as write(2) manual descripted?
+
+Any special reason to fallback to buffered write in f2fs?
 
 Thanks,
 
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/dir.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index a34ebd8..71195f5 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -141,11 +141,15 @@ struct f2fs_dir_entry *find_target_dentry(struct f2fs_filename *fname,
->  			*max_slots = max_len;
->  		max_len = 0;
-> 
-> -		/* remain bug on condition */
-> -		if (unlikely(!de->name_len))
-> -			d->max = -1;
-> -
-> -		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-> +		/*
-> +		 * While a large dentry is adding, it can traverse its valid bit
-> +		 * positions, since find_entry does not lock its dentry page.
-> +		 * In that case, let's skip the bit position.
-> +		 */
-> +		if (de_name.len == 0)
-> +			bit_pos++;
-> +		else
-> +			bit_pos += GET_DENTRY_SLOTS(de_name.len);
->  	}
-> 
->  	de = NULL;
-> @@ -505,8 +509,12 @@ void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr
-> *d,
->  	memcpy(d->filename[bit_pos], name->name, name->len);
->  	de->ino = cpu_to_le32(ino);
->  	set_de_type(de, mode);
-> -	for (i = 0; i < slots; i++)
-> +	for (i = 0; i < slots; i++) {
-> +		/* fill zeros for intermediate name_len slots */
-> +		if (i >= 1)
-> +			d->dentry[bit_pos + i].name_len = 0;
->  		test_and_set_bit_le(bit_pos + i, (void *)d->bitmap);
-> +	}
->  }
-> 
->  /*
-> --
-> 2.1.1
-> 
-> 
-> ------------------------------------------------------------------------------
-> Don't Limit Your Business. Reach for the Cloud.
-> GigeNET's Cloud Solutions provide you with the tools and support that
-> you need to offload your IT needs and focus on growing your business.
-> Configured For All Businesses. Start Your Cloud Today.
-> https://www.gigenetcloud.com/
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>
+> >> In f2fs, it do the check by check_direct_IO() before blockdev_direct_IO().
+> >> The difference between the two methods is whether turn dwrite with non-aligned
+> >> offset and size into buffered write. I am not very clear which one is better!
+> >>
+> >> Thanks,
+> >> He
+> >>
+> >>>>
+> >>>> I wrote a patch, not well tested, how do you think of it?
+> >>>
+> >>> Returning the error number would be good to me.
+> >>> Could you write and sumbit a complete one?
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> >>>> index 9bedfa8..ba5d94c 100644
+> >>>> --- a/fs/f2fs/data.c
+> >>>> +++ b/fs/f2fs/data.c
+> >>>> @@ -2010,8 +2010,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
+> *iter,
+> >>>>           if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+> >>>>                   return 0;
+> >>>>
+> >>>> -       if (check_direct_IO(inode, iter, offset))
+> >>>> -               return 0;
+> >>>> +       err = check_direct_IO(inode, iter, offset)
+> >>>> +       if (err)
+> >>>> +               return -EINVAL;
+> >>>>
+> >>>>           trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+> >>>>
+> >>>> I wish you and other developers in this list could help me in a correct way.
+> >>>>
+> >>>> Thanks,
+> >>>> He
+> >>>
+> >>> .
+> >>>
+> >>
+> >>
+> >> ------------------------------------------------------------------------------
+> >> _______________________________________________
+> >> Linux-f2fs-devel mailing list
+> >> Linux-f2fs-devel@lists.sourceforge.net
+> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >
+> >
+> > .
+> >
+
