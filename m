@@ -1,201 +1,30 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] Dwrite with non-aligned offset and size
-Date: Thu, 16 Jul 2015 19:16:23 -0700
-Message-ID: <20150717021623.GB94233@jaegeuk-mac02.mot.com>
-References: <556C481C.1050400@huawei.com>
- <20150601230155.GB28650@jaegeuk-mac02.mot.com>
- <556D2F38.4040304@huawei.com>
- <000901d0b566$aeed8e00$0cc8aa00$@samsung.com>
- <55A71DB3.30102@huawei.com>
- <018c01d0bfb0$397df610$ac79e230$@samsung.com>
+From: "Tiezhu Yang" <kernelpatch@126.com>
+Subject: [PATCH RESEND] f2fs: optimize f2fs_write_cache_pages
+Date: Fri, 17 Jul 2015 12:56:00 +0800 (CST)
+Message-ID: <2f135856.6709.14e9a5e7d5a.Coremail.kernelpatch@126.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <018c01d0bfb0$397df610$ac79e230$@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: 'He YunLei' <heyunlei@huawei.com>, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=GBK
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, cm224.lee@samsung.com, chao2.yu@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
-
-On Thu, Jul 16, 2015 at 06:13:40PM +0800, Chao Yu wrote:
-> > -----Original Message-----
-> > From: He YunLei [mailto:heyunlei@huawei.com]
-> > Sent: Thursday, July 16, 2015 10:58 AM
-> > To: Chao Yu
-> > Cc: 'Jaegeuk Kim'; linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> > Subject: Re: [f2fs-dev] Dwrite with non-aligned offset and size
-> > 
-> > On 2015/7/3 16:02, Chao Yu wrote:
-> > > Hi Yunlei,
-> > >
-> > > Sorry for the long delay.
-> > >
-> > >> -----Original Message-----
-> > >> From: He YunLei [mailto:heyunlei@huawei.com]
-> > >> Sent: Tuesday, June 02, 2015 12:21 PM
-> > >> To: Jaegeuk Kim
-> > >> Cc: linux-fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> > >> Subject: Re: [f2fs-dev] Dwrite with non-aligned offset and size
-> > >>
-> > >> On 2015/6/2 7:01, Jaegeuk Kim wrote:
-> > >>> On Mon, Jun 01, 2015 at 07:55:08PM +0800, He YunLei wrote:
-> > >>>> Hi Jaegeuk,
-> > >>>>
-> > >>>> We run ltp testcase with f2fs and obtain a TFAIL in diotest4, the result in detail is
-> > >>>> as fallow:
-> > >>>>
-> > >>>> dio04
-> > >>>>
-> > >>>> <<<test_start>>>
-> > >>>> tag=dio04 stime=1432278894
-> > >>>> cmdline="diotest4"
-> > >>>> contacts=""
-> > >>>> analysis=exit
-> > >>>> <<<test_output>>>
-> > >>>> diotest4    1  TPASS  :  Negative Offset
-> > >>>> diotest4    2  TPASS  :  removed
-> > >>>> diotest4    3  TFAIL  :  diotest4.c:129: write allows odd count.returns 1: Success
-> > >>>> diotest4    4  TFAIL  :  diotest4.c:183: Odd count of read and write
-> > >>>> diotest4    5  TPASS  :  Read beyond the file size
-> > >>>> ......
-> > >>>>
-> > >>>> the result of ext4 with same environment:
-> > >>>>
-> > >>>> dio04
-> > >>>>
-> > >>>> <<<test_start>>>
-> > >>>> tag=dio04 stime=1432259643
-> > >>>> cmdline="diotest4"
-> > >>>> contacts=""
-> > >>>> analysis=exit
-> > >>>> <<<test_output>>>
-> > >>>> diotest4    1  TPASS  :  Negative Offset
-> > >>>> diotest4    2  TPASS  :  removed
-> > >>>> diotest4    3  TPASS  :  Odd count of read and write
-> > >>>> diotest4    4  TPASS  :  Read beyond the file size
-> > >>>> ......
-> > >>>>
-> > >>>> Does f2fs allow dwrite with non-aligned offset and size? I check the code and found
-> > >>>> dwrite with non-aligned offset and size will turn into buffered write. Whether it will
-> > >>>> have some impact on user layer applications?
-> > >>>
-> > >>> It's not a big deal to return -EINVAL.
-> > >>> When I take a look at other filesystem behaviors, it seems there is no restriction.
-> > >>>
-> > >>
-> > >> Ext4 do a check in the function do_blockdev_direct_IO:
-> > >>
-> > >>            if (align & blocksize_mask) {
-> > >>                if (bdev)
-> > >>                    blkbits = blksize_bits(bdev_logical_block_size(bdev));
-> > >>                blocksize_mask = (1 << blkbits) - 1;
-> > >>                if (align & blocksize_mask)
-> > >>                    goto out;
-> > >>            }
-> > >>
-> > >> It will return -EINVAL if the alignment is not satisfied.
-> > >
-> > > I think we can get hint from the error case description in write(2) manual:
-> > >
-> > > "EINVAL  fd is attached to an object which is unsuitable for writing; or the file
-> > > was  opened with the O_DIRECT flag, and either the address specified in buf, the
-> > > value specified in count, or the current file offset is not suitably aligned."
-> > >
-> > > So if the alignment is not satisfied, we should return '-EINVAL' instead of
-> > > letting user fall back to buffered write.
-> > >
-> > > Do you have time to make and send us a patch for fixing this issue?
-> > >
-> > > Thanks,
-> > >
-> > In man page of open(2)
-> > 
-> > The O_DIRECT flag may impose alignment restrictions on the length and
-> > address of user-space buffers and the file offset of I/Os.  In Linux
-> > alignment restrictions vary by filesystem and kernel version and
-> > might be absent entirely.  However there is currently no
-> > filesystem-independent interface for an application to discover these
-> > restrictions for a given file or filesystem.
-> 
-> Right, there is no such interface here, and I don't think we need this,
-> since developers already have the manual for guiding them to use the
-> interfaces of filesystem correctly. Manuals should describe the restrictions
-> of interfaces which is exported by VFS, if some filesystems did not follow
-> theses restricting rules, we should add related description in manual.
-> 
-> > 
-> > So now I don't know which one is better, falling back to buffered write or not?
-> 
-> IMO, DIO is used for special purpose, if the target if not be achieved because of
-> wrong parameters, why not feedback to our user as write(2) manual descripted?
-> 
-> Any special reason to fallback to buffered write in f2fs?
-
-I think it'd be better to return -EINVAL, when unaligned offset was given, since
-what users try to request dios means they want to avoid the filesystem layer
-and get the maximum storage performance.
-So, we need to alarm them to guide correct settings.
-
-The only case that we need to fall back to buffered write would be some specific
-conditions like inline_data and encryption.
-
-Thanks,
-
-> 
-> Thanks,
-> 
-> > >>
-> > >> In f2fs, it do the check by check_direct_IO() before blockdev_direct_IO().
-> > >> The difference between the two methods is whether turn dwrite with non-aligned
-> > >> offset and size into buffered write. I am not very clear which one is better!
-> > >>
-> > >> Thanks,
-> > >> He
-> > >>
-> > >>>>
-> > >>>> I wrote a patch, not well tested, how do you think of it?
-> > >>>
-> > >>> Returning the error number would be good to me.
-> > >>> Could you write and sumbit a complete one?
-> > >>>
-> > >>> Thanks,
-> > >>>
-> > >>>>
-> > >>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > >>>> index 9bedfa8..ba5d94c 100644
-> > >>>> --- a/fs/f2fs/data.c
-> > >>>> +++ b/fs/f2fs/data.c
-> > >>>> @@ -2010,8 +2010,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
-> > *iter,
-> > >>>>           if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> > >>>>                   return 0;
-> > >>>>
-> > >>>> -       if (check_direct_IO(inode, iter, offset))
-> > >>>> -               return 0;
-> > >>>> +       err = check_direct_IO(inode, iter, offset)
-> > >>>> +       if (err)
-> > >>>> +               return -EINVAL;
-> > >>>>
-> > >>>>           trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
-> > >>>>
-> > >>>> I wish you and other developers in this list could help me in a correct way.
-> > >>>>
-> > >>>> Thanks,
-> > >>>> He
-> > >>>
-> > >>> .
-> > >>>
-> > >>
-> > >>
-> > >> ------------------------------------------------------------------------------
-> > >> _______________________________________________
-> > >> Linux-f2fs-devel mailing list
-> > >> Linux-f2fs-devel@lists.sourceforge.net
-> > >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > >
-> > >
-> > > .
-> > >
+VGhlIGlmIHN0YXRlbWVudCAiZ290byBjb250aW51ZV91bmxvY2siIGlzIGV4YWN0bHkgdGhlIHNh
+bWUgd2hlbgplYWNoIGlmIGNvbmRpdGlvbiBpcyB0cnVlIHRoYXQgaXMgZGVwZW5kZWQgb24gdGhl
+IHZhbHVlIG9mIGJvdGgKInN0ZXAiIGFuZCAiaXNfY29sZF9kYXRhKHBhZ2UpIiBhcmUgMCBvciAx
+LiBUaGF0IG1lYW5zIHdoZW4gdGhlCnZhbHVlIG9mICJzdGVwIiBlcXVhbHMgdG8gImlzX2NvbGRf
+ZGF0YShwYWdlKSIsIHRoZSBpZiBjb25kaXRpb24KaXMgdHJ1ZSBhbmQgdGhlIGlmIHN0YXRlbWVu
+dCAiZ290byBjb250aW51ZV91bmxvY2siIGFwcGVhcnMgb25seQpvbmNlLCBzbyBpdCBjYW4gYmUg
+b3B0aW1pemVkIHRvIHJlZHVjZSB0aGUgZHVwbGljYXRlZCBjb2RlLgoKU2lnbmVkLW9mZi1ieTog
+VGllemh1IFlhbmcgPGtlcm5lbHBhdGNoQDEyNi5jb20+Ci0tLQogZnMvZjJmcy9kYXRhLmMgfCA0
+ICstLS0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMyBkZWxldGlvbnMoLSkKCmRp
+ZmYgLS1naXQgYS9mcy9mMmZzL2RhdGEuYyBiL2ZzL2YyZnMvZGF0YS5jCmluZGV4IGI2MjFjMDgu
+LjAyMTliZDAgMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvZGF0YS5jCisrKyBiL2ZzL2YyZnMvZGF0YS5j
+CkBAIC0xMjE0LDkgKzEyMTQsNyBAQCBjb250aW51ZV91bmxvY2s6CiAJCQkJZ290byBjb250aW51
+ZV91bmxvY2s7CiAJCQl9CiAKLQkJCWlmIChzdGVwID09IDAgJiYgIWlzX2NvbGRfZGF0YShwYWdl
+KSkKLQkJCQlnb3RvIGNvbnRpbnVlX3VubG9jazsKLQkJCWlmIChzdGVwID09IDEgJiYgaXNfY29s
+ZF9kYXRhKHBhZ2UpKQorCQkJaWYgKHN0ZXAgPT0gaXNfY29sZF9kYXRhKHBhZ2UpKQogCQkJCWdv
+dG8gY29udGludWVfdW5sb2NrOwogCiAJCQlpZiAoUGFnZVdyaXRlYmFjayhwYWdlKSkgewotLSAK
+MS44LjMuMQ==
