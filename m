@@ -1,30 +1,41 @@
-From: "Tiezhu Yang" <kernelpatch@126.com>
-Subject: [PATCH RESEND] f2fs: optimize f2fs_write_cache_pages
-Date: Fri, 17 Jul 2015 12:56:00 +0800 (CST)
-Message-ID: <2f135856.6709.14e9a5e7d5a.Coremail.kernelpatch@126.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH 1/3] f2fs: skip writing in ->writepages when no dirty pages
+ exist
+Date: Fri, 17 Jul 2015 18:02:39 +0800
+Message-ID: <01a301d0c077$d111a4a0$7334ede0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=GBK
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, cm224.lee@samsung.com, chao2.yu@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-VGhlIGlmIHN0YXRlbWVudCAiZ290byBjb250aW51ZV91bmxvY2siIGlzIGV4YWN0bHkgdGhlIHNh
-bWUgd2hlbgplYWNoIGlmIGNvbmRpdGlvbiBpcyB0cnVlIHRoYXQgaXMgZGVwZW5kZWQgb24gdGhl
-IHZhbHVlIG9mIGJvdGgKInN0ZXAiIGFuZCAiaXNfY29sZF9kYXRhKHBhZ2UpIiBhcmUgMCBvciAx
-LiBUaGF0IG1lYW5zIHdoZW4gdGhlCnZhbHVlIG9mICJzdGVwIiBlcXVhbHMgdG8gImlzX2NvbGRf
-ZGF0YShwYWdlKSIsIHRoZSBpZiBjb25kaXRpb24KaXMgdHJ1ZSBhbmQgdGhlIGlmIHN0YXRlbWVu
-dCAiZ290byBjb250aW51ZV91bmxvY2siIGFwcGVhcnMgb25seQpvbmNlLCBzbyBpdCBjYW4gYmUg
-b3B0aW1pemVkIHRvIHJlZHVjZSB0aGUgZHVwbGljYXRlZCBjb2RlLgoKU2lnbmVkLW9mZi1ieTog
-VGllemh1IFlhbmcgPGtlcm5lbHBhdGNoQDEyNi5jb20+Ci0tLQogZnMvZjJmcy9kYXRhLmMgfCA0
-ICstLS0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMyBkZWxldGlvbnMoLSkKCmRp
-ZmYgLS1naXQgYS9mcy9mMmZzL2RhdGEuYyBiL2ZzL2YyZnMvZGF0YS5jCmluZGV4IGI2MjFjMDgu
-LjAyMTliZDAgMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvZGF0YS5jCisrKyBiL2ZzL2YyZnMvZGF0YS5j
-CkBAIC0xMjE0LDkgKzEyMTQsNyBAQCBjb250aW51ZV91bmxvY2s6CiAJCQkJZ290byBjb250aW51
-ZV91bmxvY2s7CiAJCQl9CiAKLQkJCWlmIChzdGVwID09IDAgJiYgIWlzX2NvbGRfZGF0YShwYWdl
-KSkKLQkJCQlnb3RvIGNvbnRpbnVlX3VubG9jazsKLQkJCWlmIChzdGVwID09IDEgJiYgaXNfY29s
-ZF9kYXRhKHBhZ2UpKQorCQkJaWYgKHN0ZXAgPT0gaXNfY29sZF9kYXRhKHBhZ2UpKQogCQkJCWdv
-dG8gY29udGludWVfdW5sb2NrOwogCiAJCQlpZiAoUGFnZVdyaXRlYmFjayhwYWdlKSkgewotLSAK
-MS44LjMuMQ==
+When flushing comes from background, if there is no dirty page in the
+mapping of inode, we'd better to skip seeking dirty page from mapping
+for writebacking.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index b621c08..5370a74 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1284,6 +1284,10 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+ 	if (!mapping->a_ops->writepage)
+ 		return 0;
+ 
++	/* skip writing if there is no dirty page in this inode */
++	if (!get_dirty_pages(inode) && wbc->sync_mode == WB_SYNC_NONE)
++		return 0;
++
+ 	if (S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_NONE &&
+ 			get_dirty_pages(inode) < nr_pages_to_skip(sbi, DATA) &&
+ 			available_free_memory(sbi, DIRTY_DENTS))
+-- 
+2.4.2
