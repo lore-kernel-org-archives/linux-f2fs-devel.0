@@ -1,8 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/3] f2fs: skip writing in ->writepages when no dirty pages
- exist
-Date: Fri, 17 Jul 2015 18:02:39 +0800
-Message-ID: <01a301d0c077$d111a4a0$7334ede0$@samsung.com>
+Subject: [PATCH 2/3] f2fs: fix to wait all atomic written pages writeback
+Date: Fri, 17 Jul 2015 18:05:21 +0800
+Message-ID: <01a401d0c078$32519400$96f4bc00$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -13,29 +12,31 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When flushing comes from background, if there is no dirty page in the
-mapping of inode, we'd better to skip seeking dirty page from mapping
-for writebacking.
+This patch fixes the incorrect range (0, LONG_MAX) which is used
+in ranged fsync. If we use LONG_MAX as the parameter for indicating
+the end of file we want to synchronize, in 32-bits architecture
+machine, these datas after 4GB offset may not be persisted in
+storage after ->fsync returned.
+
+Here, we alter LONG_MAX to LLONG_MAX to fix this issue.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/f2fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b621c08..5370a74 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1284,6 +1284,10 @@ static int f2fs_write_data_pages(struct address_space *mapping,
- 	if (!mapping->a_ops->writepage)
- 		return 0;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9989616..1bb1d6e 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1355,7 +1355,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 	if (f2fs_is_atomic_file(inode))
+ 		commit_inmem_pages(inode, false);
  
-+	/* skip writing if there is no dirty page in this inode */
-+	if (!get_dirty_pages(inode) && wbc->sync_mode == WB_SYNC_NONE)
-+		return 0;
-+
- 	if (S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_NONE &&
- 			get_dirty_pages(inode) < nr_pages_to_skip(sbi, DATA) &&
- 			available_free_memory(sbi, DIRTY_DENTS))
+-	ret = f2fs_sync_file(filp, 0, LONG_MAX, 0);
++	ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
+ 	mnt_drop_write_file(filp);
+ 	clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
+ 	return ret;
 -- 
 2.4.2
