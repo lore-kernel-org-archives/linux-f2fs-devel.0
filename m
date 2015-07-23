@@ -1,23 +1,25 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] f2fs: initialize both two copies of NAT and SIT
-	area
-Date: Thu, 23 Jul 2015 09:43:04 +0800
-Message-ID: <1437615784-16194-1-git-send-email-heyunlei@huawei.com>
+From: Jialin Li <nick.lijl@gmail.com>
+Subject: f2fs data write ordering
+Date: Thu, 23 Jul 2015 10:02:48 -0700
+Message-ID: <55B11E38.8090400@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1ZI5Wu-00038s-Ow
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <nick.lijl@gmail.com>) id 1ZIJtk-0004Cs-H2
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Jul 2015 01:42:36 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ZI5Wo-0003WQ-GR
+	Thu, 23 Jul 2015 17:03:08 +0000
+Received: from mail-pa0-f52.google.com ([209.85.220.52])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZIJtj-0006H3-L4
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Jul 2015 01:42:36 +0000
+	Thu, 23 Jul 2015 17:03:08 +0000
+Received: by pabkd10 with SMTP id kd10so88579281pab.2
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Thu, 23 Jul 2015 10:02:55 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,49 +29,46 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Xi Wang <xi@cs.washington.edu>
 
-In the process of formatting, we zero out only one copy of NAT and
-SIT area, but we use both of them when the filesystem is sucessfully
-mounted. So I change the code to initialize both of two copies in mkfs.
+Hi,
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- mkfs/f2fs_format.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+When testing the crash consistency of f2fs, we saw in the documentation 
+that one of the mount option "nobarrier" states that "if this option is 
+set, no cache_flush commands are issued but f2fs still guarantees the 
+write ordering of all the data writes." Does it imply that both with and 
+without the "nobarrier" option set, the ordering of all data writes is 
+guaranteed? And this ordering applies to data writes to different files 
+too?
 
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index f879bca..b2b3549 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -389,7 +389,7 @@ static int f2fs_init_sit_area(void)
- 	sit_seg_addr *= blk_size;
- 
- 	DBG(1, "\tFilling sit area at offset 0x%08"PRIx64"\n", sit_seg_addr);
--	for (index = 0; index < (get_sb(segment_count_sit) / 2); index++) {
-+	for (index = 0; index < get_sb(segment_count_sit); index++) {
- 		if (dev_fill(zero_buf, sit_seg_addr, seg_size)) {
- 			MSG(1, "\tError: While zeroing out the sit area \
- 					on disk!!!\n");
-@@ -423,14 +423,14 @@ static int f2fs_init_nat_area(void)
- 	nat_seg_addr *= blk_size;
- 
- 	DBG(1, "\tFilling nat area at offset 0x%08"PRIx64"\n", nat_seg_addr);
--	for (index = 0; index < get_sb(segment_count_nat) / 2; index++) {
-+	for (index = 0; index < get_sb(segment_count_nat); index++) {
- 		if (dev_fill(nat_buf, nat_seg_addr, seg_size)) {
- 			MSG(1, "\tError: While zeroing out the nat area \
- 					on disk!!!\n");
- 			free(nat_buf);
- 			return -1;
- 		}
--		nat_seg_addr = nat_seg_addr + (2 * seg_size);
-+		nat_seg_addr = nat_seg_addr + seg_size;
- 	}
- 
- 	free(nat_buf);
--- 
-1.9.1
+We wrote the following python test:
 
+---------
+import os
+
+with open("a", "wb") as f:
+   f.write(b"hello\n")
+with open("b", "wb") as f:
+   f.write(b"world\n")
+os.sync()
+
+fd0 = os.open("a", os.O_RDWR)
+fd1 = os.open("b", os.O_RDWR)
+os.pwrite(fd0, b'x', 1)
+os.pwrite(fd1, b'y', 1)
+os.fdatasync(fd1)
+/* Crash here */
+----------
+
+However, after the crash, we were able to observe that file "b" on disk 
+contains "wyrld" while the content of file "a" is still "hello": the two 
+pwrites reached the disk out of order. This happened both when we set 
+and unset the "nobarrier" option. Maybe we misunderstood the 
+documentation regarding the ordering guarantee of f2fs, and it would be 
+much appreciated if you could provide some clarifications.
+
+Thanks,
+Jialin
 
 ------------------------------------------------------------------------------
