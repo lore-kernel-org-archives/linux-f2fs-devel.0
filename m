@@ -1,105 +1,123 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: handle error cases in commit_inmem_pages
-Date: Sat, 25 Jul 2015 17:21:17 -0700
-Message-ID: <1437870077-46892-2-git-send-email-jaegeuk@kernel.org>
-References: <1437870077-46892-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1437870077-46892-1-git-send-email-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Liu Xue <liuxueliu.liu@huawei.com>
+Subject: [PATCH] f2fs: unify f2fs_bug_on when check blocks and
+	segment
+Date: Mon, 27 Jul 2015 10:17:59 +0000
+Message-ID: <1437992279-143535-1-git-send-email-liuxueliu.liu@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <liuxueliu.liu@huawei.com>) id 1ZJfUG-0005k6-0R
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 Jul 2015 10:18:24 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZJfUB-0001W0-I6
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 Jul 2015 10:18:23 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds to handle error cases in commit_inmem_pages.
-If an error occurs, it stops to write the pages and return the error right
-away.
+Replace BUG_ON with f2fs_bug_on to deal with
+block and segment validity check failed.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
 ---
- fs/f2fs/f2fs.h    |  2 +-
- fs/f2fs/file.c    |  6 ++++--
- fs/f2fs/segment.c | 10 ++++++++--
- 3 files changed, 13 insertions(+), 5 deletions(-)
+ fs/f2fs/segment.h | 45 ++++++++-------------------------------------
+ 1 file changed, 8 insertions(+), 37 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e73f2e2..58b05b5 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1697,7 +1697,7 @@ void destroy_node_manager_caches(void);
-  * segment.c
-  */
- void register_inmem_page(struct inode *, struct page *);
--void commit_inmem_pages(struct inode *, bool);
-+int commit_inmem_pages(struct inode *, bool);
- void f2fs_balance_fs(struct f2fs_sb_info *);
- void f2fs_balance_fs_bg(struct f2fs_sb_info *);
- int f2fs_issue_flush(struct f2fs_sb_info *);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 25d1a2f..a2b3656 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1358,7 +1358,9 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
- 
- 	if (f2fs_is_atomic_file(inode)) {
- 		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
--		commit_inmem_pages(inode, false);
-+		ret = commit_inmem_pages(inode, false);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
-@@ -1418,7 +1420,7 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
- 
- 	if (f2fs_is_atomic_file(inode)) {
- 		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
--		commit_inmem_pages(inode, false);
-+		commit_inmem_pages(inode, true);
- 	}
- 
- 	if (f2fs_is_volatile_file(inode))
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index f7bfc3b..509a2c4 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -227,7 +227,7 @@ retry:
- 	trace_f2fs_register_inmem_page(page, INMEM);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 79e7b87..230f9cd 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -555,16 +555,15 @@ static inline unsigned short curseg_blkoff(struct f2fs_sb_info *sbi, int type)
+ 	return curseg->next_blkoff;
  }
  
--void commit_inmem_pages(struct inode *inode, bool abort)
-+int commit_inmem_pages(struct inode *inode, bool abort)
+-#ifdef CONFIG_F2FS_CHECK_FS
+ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
  {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
-@@ -239,6 +239,7 @@ void commit_inmem_pages(struct inode *inode, bool abort)
- 		.rw = WRITE_SYNC | REQ_PRIO,
- 		.encrypted_page = NULL,
- 	};
-+	int err = 0;
+-	BUG_ON(segno > TOTAL_SEGS(sbi) - 1);
++	f2fs_bug_on(sbi, segno > TOTAL_SEGS(sbi) - 1);
+ }
  
- 	/*
- 	 * The abort is true only when f2fs_evict_inode is called.
-@@ -263,8 +264,12 @@ void commit_inmem_pages(struct inode *inode, bool abort)
- 					inode_dec_dirty_pages(inode);
- 				trace_f2fs_commit_inmem_page(cur->page, INMEM);
- 				fio.page = cur->page;
--				do_write_data_page(&fio);
-+				err = do_write_data_page(&fio);
- 				submit_bio = true;
-+				if (err) {
-+					unlock_page(cur->page);
-+					break;
-+				}
- 			}
- 			f2fs_put_page(cur->page, 1);
- 		} else {
-@@ -283,6 +288,7 @@ void commit_inmem_pages(struct inode *inode, bool abort)
- 		if (submit_bio)
- 			f2fs_submit_merged_bio(sbi, DATA, WRITE);
- 	}
-+	return err;
+ static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+ {
+-	BUG_ON(blk_addr < SEG0_BLKADDR(sbi));
+-	BUG_ON(blk_addr >= MAX_BLKADDR(sbi));
++	f2fs_bug_on(sbi, blk_addr < SEG0_BLKADDR(sbi)
++					|| blk_addr >= MAX_BLKADDR(sbi));
  }
  
  /*
+@@ -577,12 +576,11 @@ static inline void check_block_count(struct f2fs_sb_info *sbi,
+ 	int valid_blocks = 0;
+ 	int cur_pos = 0, next_pos;
+ 
+-	/* check segment usage */
+-	BUG_ON(GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg);
+-
+-	/* check boundary of a given segment number */
+-	BUG_ON(segno > TOTAL_SEGS(sbi) - 1);
++	/* check segment usage, and check boundary of a given segment number */
++	f2fs_bug_on(sbi, GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg
++					|| segno > TOTAL_SEGS(sbi) - 1);
+ 
++#ifdef CONFIG_F2FS_CHECK_FS
+ 	/* check bitmap with valid block count */
+ 	do {
+ 		if (is_valid) {
+@@ -598,35 +596,8 @@ static inline void check_block_count(struct f2fs_sb_info *sbi,
+ 		is_valid = !is_valid;
+ 	} while (cur_pos < sbi->blocks_per_seg);
+ 	BUG_ON(GET_SIT_VBLOCKS(raw_sit) != valid_blocks);
+-}
+-#else
+-static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+-{
+-	if (segno > TOTAL_SEGS(sbi) - 1)
+-		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-}
+-
+-static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+-{
+-	if (blk_addr < SEG0_BLKADDR(sbi) || blk_addr >= MAX_BLKADDR(sbi))
+-		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-}
+-
+-/*
+- * Summary block is always treated as an invalid block
+- */
+-static inline void check_block_count(struct f2fs_sb_info *sbi,
+-		int segno, struct f2fs_sit_entry *raw_sit)
+-{
+-	/* check segment usage */
+-	if (GET_SIT_VBLOCKS(raw_sit) > sbi->blocks_per_seg)
+-		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-
+-	/* check boundary of a given segment number */
+-	if (segno > TOTAL_SEGS(sbi) - 1)
+-		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-}
+ #endif
++}
+ 
+ static inline pgoff_t current_sit_addr(struct f2fs_sb_info *sbi,
+ 						unsigned int start)
 -- 
-2.1.1
+1.8.3.4
+
+
+------------------------------------------------------------------------------
