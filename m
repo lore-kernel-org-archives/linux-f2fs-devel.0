@@ -1,30 +1,22 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: freeze filesystem when fail to update meta
- page due to IO error
-Date: Wed, 29 Jul 2015 17:33:13 +0800
-Message-ID: <011b01d0c9e1$b82b3b90$2881b2b0$@samsung.com>
+From: He YunLei <heyunlei@huawei.com>
+Subject: Data lost in Android app for not write new checkpoint
+Date: Fri, 31 Jul 2015 10:28:34 +0800
+Message-ID: <55BADD52.9060901@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZKNkc-0000Tj-GH
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1ZL04O-0001sV-G7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 29 Jul 2015 09:34:14 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZKNka-0001uc-JM
+	Fri, 31 Jul 2015 02:29:12 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZL04K-0007YQ-4p
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 29 Jul 2015 09:34:14 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NS801J74T8MYXD0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 29 Jul 2015 18:34:03 +0900 (KST)
-Content-language: zh-cn
+	Fri, 31 Jul 2015 02:29:12 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,45 +26,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>
 
-In get_meta_page, we guarantee no failure for the returned page,
-but sometimes, IO error from device will incur returning an
-non-updated page.
+Hi all,
+	Recently I did some test with f2fs on my Android phone, and found a problem
+which I didn't know how to tackle it.
+	I use my Android phone with /data partition formatted  by mkfs.f2fs. When the
+phone just started, I check the f2fs status by reading the file /sys/kernel/debug/f2fs/status
+in debugfs.
+	
+CP calls: 10
+GC calls: 19 (BG: 19)
+   - data segments : 19 (19)
+   - node segments : 0 (0)
 
-Then, we still use this page as updated one, exception could happen
-when using this kind of page.
+	We can see /data partition has done 10 times write_checkpoint since f2fs is mounted
+on the phone, it also has triggered 19 times background GC.
 
-So in this condition, we'd better freeze fs by making fs readonly and
-and stop doing checkpoint.
+******
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/checkpoint.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Here I took some photos consecutively, and check the file /sys/kernel/debug/f2fs/status again
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 84e0dfe..c311176 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -79,6 +79,14 @@ repeat:
- 		f2fs_put_page(page, 1);
- 		goto repeat;
- 	}
-+
-+	/*
-+	 * if there is any IO error when accessing device, make our filesystem
-+	 * readonly and make sure do not write checkpoint with non-uptodate
-+	 * meta page.
-+	 */
-+	if (unlikely(!PageUptodate(page)))
-+		f2fs_stop_checkpoint(sbi);
- out:
- 	return page;
- }
--- 
-2.4.2
+******
+
+CP calls: 10
+GC calls: 20 (BG: 20)
+   - data segments : 20 (20)
+   - node segments : 0 (0)
+	
+	there is no change in CP calls number and background GC doesn't write new checkpoint.
+if then a sudden power failure or system crash occur, the photos will be lost when the phone
+restart, and a sync before crash will avoid the data lost.
+	I think this problem is bad for user experience of using Android phone with f2fs.
+How do we deal with such situation? I wish you and other developers in this list could help
+me in a correct way.
+
+Thanks,
+He
 
 
 
