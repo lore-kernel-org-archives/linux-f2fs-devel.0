@@ -1,32 +1,25 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: Change the timing of
- f2fs_wait_on_page_writeback
-Date: Tue, 04 Aug 2015 18:00:45 +0800
-Message-ID: <005701d0ce9c$83189230$8949b690$@samsung.com>
-References: <000901d0ce76$64916f60$2db44e20$@samsung.com>
+From: He YunLei <heyunlei@huawei.com>
+Subject: Re: Data lost in Android app for not write new checkpoint
+Date: Tue, 4 Aug 2015 21:16:21 +0800
+Message-ID: <55C0BB25.1070208@huawei.com>
+References: <55BADD52.9060901@huawei.com>
+	<01a401d0cb7e$bc483130$34d89390$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZMZ2H-0001qB-MX
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1ZMc5N-00017o-7c
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 04 Aug 2015 10:01:29 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZMZ2F-0002r2-Qu
+	Tue, 04 Aug 2015 13:16:53 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZMc5H-0006Hj-8H
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 04 Aug 2015 10:01:29 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NSJ00L9BYI4Y7D0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 04 Aug 2015 19:01:20 +0900 (KST)
-In-reply-to: <000901d0ce76$64916f60$2db44e20$@samsung.com>
-Content-language: zh-cn
+	Tue, 04 Aug 2015 13:16:53 +0000
+In-Reply-To: <01a401d0cb7e$bc483130$34d89390$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,24 +29,116 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-> -----Original Message-----
-> From: Fan Li [mailto:fanofcode.li@samsung.com]
-> Sent: Tuesday, August 04, 2015 1:28 PM
-> To: jaegeuk@kernel.org
-> Cc: linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH] f2fs: Change the timing of f2fs_wait_on_page_writeback
-> 
-> some backing devices need pages to be stable during writeback. It doesn't
-> matter if
-> the page is completely overwritten or already uptodate, it needs to wait
-> before write.
-> 
-> Signed-off-by: Fan li <fanofcode.li@samsung.com>
+On 2015/7/31 18:49, Chao Yu wrote:
+> Hi Bintian,
+>
+>> -----Original Message-----
+>> From: He YunLei [mailto:heyunlei@huawei.com]
+>> Sent: Friday, July 31, 2015 10:29 AM
+>> To: linux-f2fs-devel@lists.sourceforge.net; Jaegeuk Kim
+>> Cc: Chao Yu; cm224.lee@samsung.com; Bintian
+>> Subject: [f2fs-dev] Data lost in Android app for not write new checkpoint
+>>
+>> Hi all,
+>> 	Recently I did some test with f2fs on my Android phone, and found a problem
+>> which I didn't know how to tackle it.
+>> 	I use my Android phone with /data partition formatted  by mkfs.f2fs. When the
+>> phone just started, I check the f2fs status by reading the file /sys/kernel/debug/f2fs/status
+>> in debugfs.
+>>
+>> CP calls: 10
+>> GC calls: 19 (BG: 19)
+>>     - data segments : 19 (19)
+>>     - node segments : 0 (0)
+>>
+>> 	We can see /data partition has done 10 times write_checkpoint since f2fs is mounted
+>> on the phone, it also has triggered 19 times background GC.
+>>
+>> ******
+>>
+>> Here I took some photos consecutively, and check the file /sys/kernel/debug/f2fs/status again
+>>
+>> ******
+>>
+>> CP calls: 10
+>> GC calls: 20 (BG: 20)
+>>     - data segments : 20 (20)
+>>     - node segments : 0 (0)
+>>
+>> 	there is no change in CP calls number and background GC doesn't write new checkpoint.
+>> if then a sudden power failure or system crash occur, the photos will be lost when the phone
+>> restart, and a sync before crash will avoid the data lost.
+>> 	I think this problem is bad for user experience of using Android phone with f2fs.
+>> How do we deal with such situation? I wish you and other developers in this list could help
+>> me in a correct way.
+>
+> IMO, it's better to figure out whether this is a bug of f2fs first or not.
+>
+> You can enable some traces in f2fs to see whether fsync is called or not.
+>
+> enable trace by:
+> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_sync_file_enter/enable
+> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_sync_file_exit/enable
+> print trace by:
+> cat /sys/kernel/debug/tracing/trace
+>
+> If fsync is not be called, I think in ext4 there must be the same problem,
+> but I guess fortunately journal commit thread save its data since it commit
+> transaction per 5 second by default. You can try to configure (commit=nrsec)
+> it with larger value for verification the issue with ext4 filesystem.
+>
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+I enable the event xxx_sync_file_enter both in f2fs and ext4, and find neither of
+them was triggered by photo files.
+
+Then I try f2fs_writepages and ext4_da_write_pages:
+
+    ino     file_name
+				
+    65573   IMG_20150804_031619.jpg
+    65575   IMG_20150804_031619_1.jpg
+    65576   IMG_20150804_031620.jpg
+    65577   IMG_20150804_031620_1.jpg
+
+  ext4_da_write_pages: dev 259,0 ino 65573 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0 io_done 0 pages_written 0 sync_mode 0
+  ext4_da_write_pages: dev 259,0 ino 65575 b_blocknr 0 b_size 2408448 b_state 0x0221 first_page 0 io_done 1 pages_written 588 sync_mode 0
+  ext4_da_write_pages: dev 259,0 ino 65575 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0 io_done 0 pages_written 0 sync_mode 0
+  ext4_da_write_pages: dev 259,0 ino 65576 b_blocknr 0 b_size 2428928 b_state 0x0221 first_page 0 io_done 1 pages_written 593 sync_mode 0
+  ext4_da_write_pages: dev 259,0 ino 65576 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0 io_done 0 pages_written 0 sync_mode 0
+  ext4_da_write_pages: dev 259,0 ino 65577 b_blocknr 0 b_size 2383872 b_state 0x0221 first_page 0 io_done 1 pages_written 582 sync_mode 0
+  ext4_da_write_pages: dev 259,0 ino 65577 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0 io_done 0 pages_written 0 sync_mode 0
+
+f2fs_writepages doesn't appear in the test of f2fs
+
+I also try modify commit=300(default 5), but it doesn't work. Maybe somewhere else in ext4
+launch the ext4_da_write_pages operation.
+
+At the end, I try to mount f2fs with disable_roll_forward, when system reboot, the f2fs is inconsistent,
+there are several failed check items in fsck.
+
+Thanks,
+He
+
+> As a quick thought, maybe we can add one commit data thread, periodically
+> writebacking user data written by user previously, then do checkpoint for
+> persistence.
+>
+> So by this way, at most, we just lose our data for last configured time of
+> commit period.
+>
+> Thanks,
+>
+>>
+>> Thanks,
+>> He
+>
+>
+>
+> .
+>
 
 
 ------------------------------------------------------------------------------
