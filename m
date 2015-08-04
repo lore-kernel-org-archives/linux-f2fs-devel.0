@@ -1,26 +1,29 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: Data lost in Android app for not write new checkpoint
-Date: Tue, 4 Aug 2015 11:29:44 -0700
-Message-ID: <20150804182944.GA69437@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <55BADD52.9060901@huawei.com>
-	<01a401d0cb7e$bc483130$34d89390$@samsung.com>
-	<55C0BB25.1070208@huawei.com>
+Subject: Re: [PATCH 2/2] f2fs: handle error cases in
+ commit_inmem_pages
+Date: Tue, 4 Aug 2015 11:37:53 -0700
+Message-ID: <20150804183753.GB69437@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <1437870077-46892-1-git-send-email-jaegeuk@kernel.org>
+	<1437870077-46892-2-git-send-email-jaegeuk@kernel.org>
+	<00e301d0c91f$d303dfc0$790b9f40$@samsung.com>
+	<20150728155705.GA57016@jaegeuk-mac02.hsd1.ca.comcast.net>
+	<011a01d0c9e1$8ead48d0$ac07da70$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZMgy2-0005Px-Iw
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZMh5y-0007fz-9n
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 04 Aug 2015 18:29:38 +0000
+	Tue, 04 Aug 2015 18:37:50 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZMgy1-0003IN-7E for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 04 Aug 2015 18:29:38 +0000
+	id 1ZMh5t-0003XB-Ls for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 04 Aug 2015 18:37:50 +0000
 Content-Disposition: inline
-In-Reply-To: <55C0BB25.1070208@huawei.com>
+In-Reply-To: <011a01d0c9e1$8ead48d0$ac07da70$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,134 +33,82 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: He YunLei <heyunlei@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi He,
+On Wed, Jul 29, 2015 at 05:32:00PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Tuesday, July 28, 2015 11:57 PM
+> > To: Chao Yu
+> > Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > linux-f2fs-devel@lists.sourceforge.net
+> > Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: handle error cases in commit_inmem_pages
+> > 
+> > On Tue, Jul 28, 2015 at 06:25:26PM +0800, Chao Yu wrote:
+> > > Hi Jaegeuk,
+> > >
+> > > > -----Original Message-----
+> > > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > > Sent: Sunday, July 26, 2015 8:21 AM
+> > > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > > > linux-f2fs-devel@lists.sourceforge.net
+> > > > Cc: Jaegeuk Kim
+> > > > Subject: [f2fs-dev] [PATCH 2/2] f2fs: handle error cases in commit_inmem_pages
+> > > >
+> > > > This patch adds to handle error cases in commit_inmem_pages.
+> > > > If an error occurs, it stops to write the pages and return the error right
+> > > > away.
+> > > >
+> > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > > ---
+> > > >  fs/f2fs/f2fs.h    |  2 +-
+> > > >  fs/f2fs/file.c    |  6 ++++--
+> > > >  fs/f2fs/segment.c | 10 ++++++++--
+> > > >  3 files changed, 13 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > > index e73f2e2..58b05b5 100644
+> > > > --- a/fs/f2fs/f2fs.h
+> > > > +++ b/fs/f2fs/f2fs.h
+> > > > @@ -1697,7 +1697,7 @@ void destroy_node_manager_caches(void);
+> > > >   * segment.c
+> > > >   */
+> > > >  void register_inmem_page(struct inode *, struct page *);
+> > > > -void commit_inmem_pages(struct inode *, bool);
+> > > > +int commit_inmem_pages(struct inode *, bool);
+> > > >  void f2fs_balance_fs(struct f2fs_sb_info *);
+> > > >  void f2fs_balance_fs_bg(struct f2fs_sb_info *);
+> > > >  int f2fs_issue_flush(struct f2fs_sb_info *);
+> > > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > > index 25d1a2f..a2b3656 100644
+> > > > --- a/fs/f2fs/file.c
+> > > > +++ b/fs/f2fs/file.c
+> > > > @@ -1358,7 +1358,9 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> > > >
+> > > >  	if (f2fs_is_atomic_file(inode)) {
+> > > >  		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
+> > > > -		commit_inmem_pages(inode, false);
+> > > > +		ret = commit_inmem_pages(inode, false);
+> > > > +		if (ret)
+> > > > +			return ret;
+> 
+> It looks we forget to call mnt_drop_write_file before return.
 
-On Tue, Aug 04, 2015 at 09:16:21PM +0800, He YunLei wrote:
-> On 2015/7/31 18:49, Chao Yu wrote:
-> > Hi Bintian,
-> >
-> >> -----Original Message-----
-> >> From: He YunLei [mailto:heyunlei@huawei.com]
-> >> Sent: Friday, July 31, 2015 10:29 AM
-> >> To: linux-f2fs-devel@lists.sourceforge.net; Jaegeuk Kim
-> >> Cc: Chao Yu; cm224.lee@samsung.com; Bintian
-> >> Subject: [f2fs-dev] Data lost in Android app for not write new checkpoint
-> >>
-> >> Hi all,
-> >> 	Recently I did some test with f2fs on my Android phone, and found a problem
-> >> which I didn't know how to tackle it.
-> >> 	I use my Android phone with /data partition formatted  by mkfs.f2fs. When the
-> >> phone just started, I check the f2fs status by reading the file /sys/kernel/debug/f2fs/status
-> >> in debugfs.
-> >>
-> >> CP calls: 10
-> >> GC calls: 19 (BG: 19)
-> >>     - data segments : 19 (19)
-> >>     - node segments : 0 (0)
-> >>
-> >> 	We can see /data partition has done 10 times write_checkpoint since f2fs is mounted
-> >> on the phone, it also has triggered 19 times background GC.
-> >>
-> >> ******
-> >>
-> >> Here I took some photos consecutively, and check the file /sys/kernel/debug/f2fs/status again
-> >>
-> >> ******
-> >>
-> >> CP calls: 10
-> >> GC calls: 20 (BG: 20)
-> >>     - data segments : 20 (20)
-> >>     - node segments : 0 (0)
-> >>
-> >> 	there is no change in CP calls number and background GC doesn't write new checkpoint.
-> >> if then a sudden power failure or system crash occur, the photos will be lost when the phone
-> >> restart, and a sync before crash will avoid the data lost.
-> >> 	I think this problem is bad for user experience of using Android phone with f2fs.
-> >> How do we deal with such situation? I wish you and other developers in this list could help
-> >> me in a correct way.
-> >
-> > IMO, it's better to figure out whether this is a bug of f2fs first or not.
-> >
-> > You can enable some traces in f2fs to see whether fsync is called or not.
-> >
-> > enable trace by:
-> > echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_sync_file_enter/enable
-> > echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_sync_file_exit/enable
-> > print trace by:
-> > cat /sys/kernel/debug/tracing/trace
-> >
-> > If fsync is not be called, I think in ext4 there must be the same problem,
-> > but I guess fortunately journal commit thread save its data since it commit
-> > transaction per 5 second by default. You can try to configure (commit=nrsec)
-> > it with larger value for verification the issue with ext4 filesystem.
-> >
-> 
-> I enable the event xxx_sync_file_enter both in f2fs and ext4, and find neither of
-> them was triggered by photo files.
-> 
-> Then I try f2fs_writepages and ext4_da_write_pages:
-> 
->     ino     file_name
-> 				
->     65573   IMG_20150804_031619.jpg
->     65575   IMG_20150804_031619_1.jpg
->     65576   IMG_20150804_031620.jpg
->     65577   IMG_20150804_031620_1.jpg
-> 
->   ext4_da_write_pages: dev 259,0 ino 65573 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0 io_done 0 pages_written 0 sync_mode 0
->   ext4_da_write_pages: dev 259,0 ino 65575 b_blocknr 0 b_size 2408448 b_state 0x0221 first_page 0 io_done 1 pages_written 588 sync_mode 0
->   ext4_da_write_pages: dev 259,0 ino 65575 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0 io_done 0 pages_written 0 sync_mode 0
->   ext4_da_write_pages: dev 259,0 ino 65576 b_blocknr 0 b_size 2428928 b_state 0x0221 first_page 0 io_done 1 pages_written 593 sync_mode 0
->   ext4_da_write_pages: dev 259,0 ino 65576 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0 io_done 0 pages_written 0 sync_mode 0
->   ext4_da_write_pages: dev 259,0 ino 65577 b_blocknr 0 b_size 2383872 b_state 0x0221 first_page 0 io_done 1 pages_written 582 sync_mode 0
->   ext4_da_write_pages: dev 259,0 ino 65577 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0 io_done 0 pages_written 0 sync_mode 0
-> 
-> f2fs_writepages doesn't appear in the test of f2fs
-
-Could you check the submitted IOs from block layer?
-
-> 
-> I also try modify commit=300(default 5), but it doesn't work. Maybe somewhere else in ext4
-> launch the ext4_da_write_pages operation.
-> 
-> At the end, I try to mount f2fs with disable_roll_forward, when system reboot, the f2fs is inconsistent,
-> there are several failed check items in fsck.
-
-The disable_roll_forward should not be related to any inconsistency.
-Could you share the log provided by fsck?
-
+Oh, yes. :)
+I fixed that.
 Thanks,
 
 > 
+> [snip]
+> 
+> > This entry is not removed from the list.
+> > So, after failure, the abort path will put the page and remove it from the list.
+> 
+> Oh, you're right, thanks for your explanation! :)
+> 
 > Thanks,
-> He
-> 
-> > As a quick thought, maybe we can add one commit data thread, periodically
-> > writebacking user data written by user previously, then do checkpoint for
-> > persistence.
-> >
-> > So by this way, at most, we just lose our data for last configured time of
-> > commit period.
-> >
-> > Thanks,
-> >
-> >>
-> >> Thanks,
-> >> He
-> >
-> >
-> >
-> > .
-> >
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
