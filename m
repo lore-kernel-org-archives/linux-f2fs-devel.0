@@ -1,29 +1,32 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: recover invalid/reserved block address for
-	fsynced file
-Date: Wed, 05 Aug 2015 17:23:54 +0800
-Message-ID: <009e01d0cf60$8b66bb00$a2343100$@samsung.com>
+Subject: Re: [PATCH v2] f2fs: fix to release inode
+	page	in	get_new_data_page
+Date: Wed, 05 Aug 2015 17:25:12 +0800
+Message-ID: <009f01d0cf60$b96a5cf0$2c3f16d0$@samsung.com>
+References: <00f501d0be1d$e89f08d0$b9dd1a70$@samsung.com>
+	<001701d0cdec$d74ba820$85e2f860$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZMuwG-0004YA-N3
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1ZMuxU-0008Ec-Sj
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 05 Aug 2015 09:24:44 +0000
+	Wed, 05 Aug 2015 09:26:00 +0000
 Received: from mailout2.samsung.com ([203.254.224.25])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZMuwE-0005Sl-Mx
+	(Exim 4.76) id 1ZMuxS-0005Vj-Ui
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 05 Aug 2015 09:24:44 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	Wed, 05 Aug 2015 09:26:00 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
 	by mailout2.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NSL0129JRGPM240@mailout2.samsung.com> for
+	2014)) with ESMTP id <0NSL012DERIOM240@mailout2.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 05 Aug 2015 18:24:35 +0900 (KST)
+	Wed, 05 Aug 2015 18:25:52 +0900 (KST)
+In-reply-to: <001701d0cdec$d74ba820$85e2f860$@samsung.com>
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -34,105 +37,137 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-When testing with generic/101 in xfstests, error message outputed as below:
+Hi Jaegeuk,
 
-    --- tests/generic/101.out
-    +++ results//generic/101.out.bad
-    @@ -10,10 +10,14 @@
-     File foo content after log replay:
-     0000000 aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa aa
-     *
-    -0200000 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    +0200000 bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb
-     *
-     0372000
-    ...
-    (Run 'diff -u tests/generic/101.out results/generic/101.out.bad'  to see the entire diff)
+How about using v3 instead of v2 since it fixes the same type issue
+in f2fs_convert_inline_dir?
 
-The test flow is like below:
-1. pwrite foo -S 0xaa 0 64K
-2. pwrite foo -S 0xbb 64K 61K
-3. sync
-4. truncate foo 64K
-5. truncate foo 125K
-6. fsync foo
-7. flakey drop writes
-8. umount
+Thanks,
 
-After this test, we expect the data of recovered file will have the first
-64k of data filling with value 0xaa and the next 61k of data filling with
-value 0x00 because we have fsynced it before dropping writes in dm.
-
-In f2fs, during recovering, we will only recover the valid block address
-in direct node page if it is marked as a fsynced dnode, but block address
-which means invalid/reserved (with value NULL_ADDR/NEW_ADDR) will not be
-recovered. So, the file recovered shows its incorrect data 0xbb in range of
-[61k, 125k].
-
-In this patch, we fix to recover invalid/reserved block during recover flow.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/recovery.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
-
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 07a36e4..d2ef0c9 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -399,14 +399,35 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 	f2fs_bug_on(sbi, ni.ino != ino_of_node(page));
- 	f2fs_bug_on(sbi, ofs_of_node(dn.node_page) != ofs_of_node(page));
- 
--	for (; start < end; start++) {
-+	for (; start < end; start++, dn.ofs_in_node++) {
- 		block_t src, dest;
- 
- 		src = datablock_addr(dn.node_page, dn.ofs_in_node);
- 		dest = datablock_addr(page, dn.ofs_in_node);
- 
--		if (src != dest && dest != NEW_ADDR && dest != NULL_ADDR &&
--			is_valid_blkaddr(sbi, dest, META_POR)) {
-+		/* skip recovering if dest is the same as src */
-+		if (src == dest)
-+			continue;
-+
-+		/* dest is invalid, just invalidate src block */
-+		if (dest == NULL_ADDR) {
-+			truncate_data_blocks_range(&dn, 1);
-+			continue;
-+		}
-+
-+		/*
-+		 * dest is reserved block, invalidate src block
-+		 * and then reserve one new block in dnode page.
-+		 */
-+		if (dest == NEW_ADDR) {
-+			truncate_data_blocks_range(&dn, 1);
-+			err = reserve_new_block(&dn);
-+			f2fs_bug_on(sbi, err);
-+			continue;
-+		}
-+
-+		/* dest is valid block, try to recover from src to dest */
-+		if (is_valid_blkaddr(sbi, dest, META_POR)) {
- 
- 			if (src == NULL_ADDR) {
- 				err = reserve_new_block(&dn);
-@@ -424,7 +445,6 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 							ni.version, false);
- 			recovered++;
- 		}
--		dn.ofs_in_node++;
- 	}
- 
- 	if (IS_INODE(dn.node_page))
--- 
-2.4.2
-
+> -----Original Message-----
+> From: Chao Yu [mailto:chao2.yu@samsung.com]
+> Sent: Monday, August 03, 2015 9:03 PM
+> To: 'Jaegeuk Kim'
+> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to release inode page in get_new_data_page
+> 
+> >From c0f2abda489150d5d458aaae9026f1243daea604 Mon Sep 17 00:00:00 2001
+> From: Chao Yu <chao2.yu@samsung.com>
+> Date: Tue, 14 Jul 2015 18:14:06 +0800
+> Subject: [PATCH v3] f2fs: fix to release inode page correctly
+> 
+> In following call path, we will pass a locked and referenced ipage
+> pointer to get_new_data_page:
+>  - init_inode_metadata
+>   - make_empty_dir
+>    - get_new_data_page
+> 
+> There are two exit paths in get_new_data_page when error occurs:
+> 1) grab_cache_page fails, ipage will not be released;
+> 2) f2fs_reserve_block fails, ipage will be released in callee.
+> 
+> So, it's not consistent for error handling in get_new_data_page.
+> 
+> For f2fs_reserve_block, it's not very easy to change the rule
+> of error handling, since it's already complicated.
+> 
+> Here we deside to choose an easy way to fix this issue:
+> If any error occur in get_new_data_page, we will ensure releasing
+> ipage in this function.
+> 
+> The same issue is in f2fs_convert_inline_dir, fix that too.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+> v3:
+>  * fix the same issue in f2fs_convert_inline_dir.
+> 
+>  fs/f2fs/data.c   | 11 +++++++++--
+>  fs/f2fs/inline.c | 13 ++++++++++---
+>  2 files changed, 19 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index e58562e..5da0529 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -387,7 +387,8 @@ repeat:
+>   *
+>   * Also, caller should grab and release a rwsem by calling f2fs_lock_op() and
+>   * f2fs_unlock_op().
+> - * Note that, ipage is set only by make_empty_dir.
+> + * Note that, ipage is set only by make_empty_dir, and if any error occur,
+> + * ipage should be released by this function.
+>   */
+>  struct page *get_new_data_page(struct inode *inode,
+>  		struct page *ipage, pgoff_t index, bool new_i_size)
+> @@ -398,8 +399,14 @@ struct page *get_new_data_page(struct inode *inode,
+>  	int err;
+>  repeat:
+>  	page = grab_cache_page(mapping, index);
+> -	if (!page)
+> +	if (!page) {
+> +		/*
+> +		 * before exiting, we should make sure ipage will be released
+> +		 * if any error occur.
+> +		 */
+> +		f2fs_put_page(ipage, 1);
+>  		return ERR_PTR(-ENOMEM);
+> +	}
+> 
+>  	set_new_dnode(&dn, inode, ipage, NULL, 0);
+>  	err = f2fs_reserve_block(&dn, index);
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index a13ffcc..79d18d5 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -360,6 +360,10 @@ int make_empty_inline_dir(struct inode *inode, struct inode *parent,
+>  	return 0;
+>  }
+> 
+> +/*
+> + * NOTE: ipage is grabbed by caller, but if any error occurs, we should
+> + * release ipage in this function.
+> + */
+>  static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
+>  				struct f2fs_inline_dentry *inline_dentry)
+>  {
+> @@ -369,8 +373,10 @@ static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
+>  	int err;
+> 
+>  	page = grab_cache_page(dir->i_mapping, 0);
+> -	if (!page)
+> +	if (!page) {
+> +		f2fs_put_page(ipage, 1);
+>  		return -ENOMEM;
+> +	}
+> 
+>  	set_new_dnode(&dn, dir, ipage, NULL, 0);
+>  	err = f2fs_reserve_block(&dn, 0);
+> @@ -434,8 +440,9 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *name,
+>  						slots, NR_INLINE_DENTRY);
+>  	if (bit_pos >= NR_INLINE_DENTRY) {
+>  		err = f2fs_convert_inline_dir(dir, ipage, dentry_blk);
+> -		if (!err)
+> -			err = -EAGAIN;
+> +		if (err)
+> +			return err;
+> +		err = -EAGAIN;
+>  		goto out;
+>  	}
+> 
+> --
+> 2.4.2
+> 
+> 
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 ------------------------------------------------------------------------------
