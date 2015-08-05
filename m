@@ -1,13 +1,13 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH] f2fs: invalidate temporary meta page
-Date: Wed, 05 Aug 2015 17:26:33 +0800
-Message-ID: <00a001d0cf60$ea45fe10$bed1fa30$@samsung.com>
-References: <00e801d0c921$647ad660$2d708320$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH v2] f2fs: shrink free_nids entries
+Date: Wed, 05 Aug 2015 17:27:29 +0800
+Message-ID: <00a101d0cf61$0b20ca20$21625e60$@samsung.com>
+References: <00e701d0c920$f9add580$ed098080$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <00e801d0c921$647ad660$2d708320$@samsung.com>
+In-reply-to: <00e701d0c920$f9add580$ed098080$@samsung.com>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
@@ -20,139 +20,130 @@ Any comments?
 
 > -----Original Message-----
 > From: Chao Yu [mailto:chao2.yu@samsung.com]
-> Sent: Tuesday, July 28, 2015 6:37 PM
+> Sent: Tuesday, July 28, 2015 6:34 PM
 > To: Jaegeuk Kim
 > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH] f2fs: invalidate temporary meta page
+> Subject: [f2fs-dev] [PATCH v2] f2fs: shrink free_nids entries
 > 
-> To avoid meeting garbage data in next free node block at the end of warm
-> node chain when doing recovery, we will try to zero out that invalid block.
-> 
-> If the device is not support discard, our way for zeroing out block is:
-> grabbing a temporary zeroed page in meta inode, then, issue write request
-> with this page.
-> 
-> But, we forget to release that temporary page, so our memory usage will
-> increase without gaining any hit ratio benefit, so it's better to free it
-> for saving memory.
+> This patch introduces __count_free_nids/try_to_free_nids and registers
+> them in slab shrinker for shrinking under memory pressure.
 > 
 > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 > ---
->  fs/f2fs/checkpoint.c | 13 ++++++++++++-
->  fs/f2fs/f2fs.h       |  2 +-
->  fs/f2fs/recovery.c   | 11 ++++++++++-
->  fs/f2fs/segment.c    |  9 ++++++---
->  4 files changed, 29 insertions(+), 6 deletions(-)
+> v2:
+>  * fix wrong bug_on in try_to_free_nids.
 > 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index 6fb696d..84e0dfe 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -888,12 +888,15 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control
-> *cpc)
->  	__u32 crc32 = 0;
->  	int i;
->  	int cp_payload_blks = __cp_payload(sbi);
-> +	block_t discard_blk = NEXT_FREE_BLKADDR(sbi, curseg);
-> +	bool invalidate = false;
+>  fs/f2fs/f2fs.h     |  1 +
+>  fs/f2fs/node.c     | 28 ++++++++++++++++++++++++++++
+>  fs/f2fs/segment.c  |  3 +++
+>  fs/f2fs/shrinker.c | 14 ++++++++++++++
+>  4 files changed, 46 insertions(+)
 > 
->  	/*
->  	 * This avoids to conduct wrong roll-forward operations and uses
->  	 * metapages, so should be called prior to sync_meta_pages below.
->  	 */
-> -	discard_next_dnode(sbi, NEXT_FREE_BLKADDR(sbi, curseg));
-> +	if (discard_next_dnode(sbi, discard_blk))
-> +		invalidate = true;
-> 
->  	/* Flush all the NAT/SIT pages */
->  	while (get_pages(sbi, F2FS_DIRTY_META)) {
-> @@ -1022,6 +1025,14 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control
-> *cpc)
->  	/* wait for previous submitted meta pages writeback */
->  	wait_on_all_pages_writeback(sbi);
-> 
-> +	/*
-> +	 * invalidate meta page which is used temporarily for zeroing out
-> +	 * block at the end of warm node chain.
-> +	 */
-> +	if (invalidate)
-> +		invalidate_mapping_pages(META_MAPPING(sbi), discard_blk,
-> +								discard_blk);
-> +
->  	release_dirty_inode(sbi);
-> 
->  	if (unlikely(f2fs_cp_error(sbi)))
 > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 5d1f88c..0a6b9f1 100644
+> index 58b05b5..a8e07cd 100644
 > --- a/fs/f2fs/f2fs.h
 > +++ b/fs/f2fs/f2fs.h
-> @@ -1714,7 +1714,7 @@ void invalidate_blocks(struct f2fs_sb_info *, block_t);
->  void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
->  void clear_prefree_segments(struct f2fs_sb_info *, struct cp_control *);
->  void release_discard_addrs(struct f2fs_sb_info *);
-> -void discard_next_dnode(struct f2fs_sb_info *, block_t);
-> +bool discard_next_dnode(struct f2fs_sb_info *, block_t);
->  int npages_for_summary_flush(struct f2fs_sb_info *, bool);
->  void allocate_new_segments(struct f2fs_sb_info *);
->  int f2fs_trim_fs(struct f2fs_sb_info *, struct fstrim_range *);
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index 24a8c1d..07a36e4 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -561,11 +561,20 @@ out:
+> @@ -1682,6 +1682,7 @@ int sync_node_pages(struct f2fs_sb_info *, nid_t, struct writeback_control
+> *);
+>  bool alloc_nid(struct f2fs_sb_info *, nid_t *);
+>  void alloc_nid_done(struct f2fs_sb_info *, nid_t);
+>  void alloc_nid_failed(struct f2fs_sb_info *, nid_t);
+> +int try_to_free_nids(struct f2fs_sb_info *, int);
+>  void recover_inline_xattr(struct inode *, struct page *);
+>  void recover_xattr_data(struct inode *, struct page *, block_t);
+>  int recover_inode_page(struct f2fs_sb_info *, struct page *);
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index ac91107..6e10c2a 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1635,6 +1635,34 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
+>  		kmem_cache_free(free_nid_slab, i);
+>  }
 > 
->  	clear_sbi_flag(sbi, SBI_POR_DOING);
->  	if (err) {
-> -		discard_next_dnode(sbi, blkaddr);
-> +		bool invalidate = false;
+> +int try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink)
+> +{
+> +	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> +	struct free_nid *i, *next;
+> +	int nr = nr_shrink;
 > +
-> +		if (discard_next_dnode(sbi, blkaddr))
-> +			invalidate = true;
-> 
->  		/* Flush all the NAT/SIT pages */
->  		while (get_pages(sbi, F2FS_DIRTY_META))
->  			sync_meta_pages(sbi, META, LONG_MAX);
+> +	if (!mutex_trylock(&nm_i->build_lock))
+> +		return 0;
 > +
-> +		/* invalidate temporary meta page */
-> +		if (invalidate)
-> +			invalidate_mapping_pages(META_MAPPING(sbi),
-> +							blkaddr, blkaddr);
+> +	spin_lock(&nm_i->free_nid_list_lock);
+> +	list_for_each_entry_safe(i, next, &nm_i->free_nid_list, list) {
+> +		if (nr_shrink <= 0 || nm_i->fcnt <= NAT_ENTRY_PER_BLOCK)
+> +			break;
+> +		if (i->state == NID_ALLOC)
+> +			continue;
+> +		__del_from_free_nid_list(nm_i, i);
+> +		nm_i->fcnt--;
+> +		spin_unlock(&nm_i->free_nid_list_lock);
+> +		kmem_cache_free(free_nid_slab, i);
+> +		nr_shrink--;
+> +		spin_lock(&nm_i->free_nid_list_lock);
+> +	}
+> +	spin_unlock(&nm_i->free_nid_list_lock);
+> +	mutex_unlock(&nm_i->build_lock);
 > +
->  		set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
->  		mutex_unlock(&sbi->cp_mutex);
->  	} else if (need_writecp) {
+> +	return nr - nr_shrink;
+> +}
+> +
+>  void recover_inline_xattr(struct inode *inode, struct page *page)
+>  {
+>  	void *src_addr, *dst_addr;
 > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 4712dbc..1ad3cf3 100644
+> index 509a2c4..4712dbc 100644
 > --- a/fs/f2fs/segment.c
 > +++ b/fs/f2fs/segment.c
-> @@ -517,7 +517,7 @@ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
->  	return blkdev_issue_discard(sbi->sb->s_bdev, start, len, GFP_NOFS, 0);
+> @@ -317,6 +317,9 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+>  	if (!available_free_memory(sbi, NAT_ENTRIES))
+>  		try_to_free_nats(sbi, NAT_ENTRY_PER_BLOCK);
+> 
+> +	if (!available_free_memory(sbi, FREE_NIDS))
+> +		try_to_free_nids(sbi, NAT_ENTRY_PER_BLOCK * FREE_NID_PAGES);
+> +
+>  	/* checkpoint is the only way to shrink partial cached entries */
+>  	if (!available_free_memory(sbi, NAT_ENTRIES) ||
+>  			excess_prefree_segs(sbi) ||
+> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+> index 9aa4235..da0d8e0 100644
+> --- a/fs/f2fs/shrinker.c
+> +++ b/fs/f2fs/shrinker.c
+> @@ -23,6 +23,13 @@ static unsigned long __count_nat_entries(struct f2fs_sb_info *sbi)
+>  	return NM_I(sbi)->nat_cnt - NM_I(sbi)->dirty_nat_cnt;
 >  }
 > 
-> -void discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
-> +bool discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
+> +static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
+> +{
+> +	if (NM_I(sbi)->fcnt > NAT_ENTRY_PER_BLOCK)
+> +		return NM_I(sbi)->fcnt - NAT_ENTRY_PER_BLOCK;
+> +	return 0;
+> +}
+> +
+>  static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
 >  {
->  	int err = -ENOTSUPP;
+>  	return sbi->total_ext_tree + atomic_read(&sbi->total_ext_node);
+> @@ -53,6 +60,9 @@ unsigned long f2fs_shrink_count(struct shrinker *shrink,
+>  		/* shrink clean nat cache entries */
+>  		count += __count_nat_entries(sbi);
 > 
-> @@ -527,13 +527,16 @@ void discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
->  		unsigned int offset = GET_BLKOFF_FROM_SEG0(sbi, blkaddr);
+> +		/* count free nids cache entries */
+> +		count += __count_free_nids(sbi);
+> +
+>  		spin_lock(&f2fs_list_lock);
+>  		p = p->next;
+>  		mutex_unlock(&sbi->umount_mutex);
+> @@ -97,6 +107,10 @@ unsigned long f2fs_shrink_scan(struct shrinker *shrink,
+>  		if (freed < nr)
+>  			freed += try_to_free_nats(sbi, nr - freed);
 > 
->  		if (f2fs_test_bit(offset, se->discard_map))
-> -			return;
-> +			return false;
-> 
->  		err = f2fs_issue_discard(sbi, blkaddr, 1);
->  	}
-> 
-> -	if (err)
-> +	if (err) {
->  		update_meta_page(sbi, NULL, blkaddr);
-> +		return true;
-> +	}
-> +	return false;
->  }
-> 
->  static void __add_discard_entry(struct f2fs_sb_info *sbi,
+> +		/* shrink free nids cache entries */
+> +		if (freed < nr)
+> +			freed += try_to_free_nids(sbi, nr - freed);
+> +
+>  		spin_lock(&f2fs_list_lock);
+>  		p = p->next;
+>  		list_move_tail(&sbi->s_list, &f2fs_list);
 > --
 > 2.4.2
 > 
