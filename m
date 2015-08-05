@@ -1,163 +1,158 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH v2] f2fs: fix to release inode
-	page	in	get_new_data_page
-Date: Wed, 05 Aug 2015 17:25:12 +0800
-Message-ID: <009f01d0cf60$b96a5cf0$2c3f16d0$@samsung.com>
-References: <00f501d0be1d$e89f08d0$b9dd1a70$@samsung.com>
-	<001701d0cdec$d74ba820$85e2f860$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH] f2fs: invalidate temporary meta page
+Date: Wed, 05 Aug 2015 17:26:33 +0800
+Message-ID: <00a001d0cf60$ea45fe10$bed1fa30$@samsung.com>
+References: <00e801d0c921$647ad660$2d708320$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZMuxU-0008Ec-Sj
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 05 Aug 2015 09:26:00 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZMuxS-0005Vj-Ui
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 05 Aug 2015 09:26:00 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NSL012DERIOM240@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 05 Aug 2015 18:25:52 +0900 (KST)
-In-reply-to: <001701d0cdec$d74ba820$85e2f860$@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <00e801d0c921$647ad660$2d708320$@samsung.com>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi Jaegeuk,
 
-How about using v3 instead of v2 since it fixes the same type issue
-in f2fs_convert_inline_dir?
-
-Thanks,
+Any comments?
 
 > -----Original Message-----
 > From: Chao Yu [mailto:chao2.yu@samsung.com]
-> Sent: Monday, August 03, 2015 9:03 PM
-> To: 'Jaegeuk Kim'
+> Sent: Tuesday, July 28, 2015 6:37 PM
+> To: Jaegeuk Kim
 > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to release inode page in get_new_data_page
+> Subject: [f2fs-dev] [PATCH] f2fs: invalidate temporary meta page
 > 
-> >From c0f2abda489150d5d458aaae9026f1243daea604 Mon Sep 17 00:00:00 2001
-> From: Chao Yu <chao2.yu@samsung.com>
-> Date: Tue, 14 Jul 2015 18:14:06 +0800
-> Subject: [PATCH v3] f2fs: fix to release inode page correctly
+> To avoid meeting garbage data in next free node block at the end of warm
+> node chain when doing recovery, we will try to zero out that invalid block.
 > 
-> In following call path, we will pass a locked and referenced ipage
-> pointer to get_new_data_page:
->  - init_inode_metadata
->   - make_empty_dir
->    - get_new_data_page
+> If the device is not support discard, our way for zeroing out block is:
+> grabbing a temporary zeroed page in meta inode, then, issue write request
+> with this page.
 > 
-> There are two exit paths in get_new_data_page when error occurs:
-> 1) grab_cache_page fails, ipage will not be released;
-> 2) f2fs_reserve_block fails, ipage will be released in callee.
-> 
-> So, it's not consistent for error handling in get_new_data_page.
-> 
-> For f2fs_reserve_block, it's not very easy to change the rule
-> of error handling, since it's already complicated.
-> 
-> Here we deside to choose an easy way to fix this issue:
-> If any error occur in get_new_data_page, we will ensure releasing
-> ipage in this function.
-> 
-> The same issue is in f2fs_convert_inline_dir, fix that too.
+> But, we forget to release that temporary page, so our memory usage will
+> increase without gaining any hit ratio benefit, so it's better to free it
+> for saving memory.
 > 
 > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 > ---
-> v3:
->  * fix the same issue in f2fs_convert_inline_dir.
+>  fs/f2fs/checkpoint.c | 13 ++++++++++++-
+>  fs/f2fs/f2fs.h       |  2 +-
+>  fs/f2fs/recovery.c   | 11 ++++++++++-
+>  fs/f2fs/segment.c    |  9 ++++++---
+>  4 files changed, 29 insertions(+), 6 deletions(-)
 > 
->  fs/f2fs/data.c   | 11 +++++++++--
->  fs/f2fs/inline.c | 13 ++++++++++---
->  2 files changed, 19 insertions(+), 5 deletions(-)
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 6fb696d..84e0dfe 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -888,12 +888,15 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control
+> *cpc)
+>  	__u32 crc32 = 0;
+>  	int i;
+>  	int cp_payload_blks = __cp_payload(sbi);
+> +	block_t discard_blk = NEXT_FREE_BLKADDR(sbi, curseg);
+> +	bool invalidate = false;
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index e58562e..5da0529 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -387,7 +387,8 @@ repeat:
->   *
->   * Also, caller should grab and release a rwsem by calling f2fs_lock_op() and
->   * f2fs_unlock_op().
-> - * Note that, ipage is set only by make_empty_dir.
-> + * Note that, ipage is set only by make_empty_dir, and if any error occur,
-> + * ipage should be released by this function.
->   */
->  struct page *get_new_data_page(struct inode *inode,
->  		struct page *ipage, pgoff_t index, bool new_i_size)
-> @@ -398,8 +399,14 @@ struct page *get_new_data_page(struct inode *inode,
->  	int err;
->  repeat:
->  	page = grab_cache_page(mapping, index);
-> -	if (!page)
-> +	if (!page) {
-> +		/*
-> +		 * before exiting, we should make sure ipage will be released
-> +		 * if any error occur.
-> +		 */
-> +		f2fs_put_page(ipage, 1);
->  		return ERR_PTR(-ENOMEM);
-> +	}
+>  	/*
+>  	 * This avoids to conduct wrong roll-forward operations and uses
+>  	 * metapages, so should be called prior to sync_meta_pages below.
+>  	 */
+> -	discard_next_dnode(sbi, NEXT_FREE_BLKADDR(sbi, curseg));
+> +	if (discard_next_dnode(sbi, discard_blk))
+> +		invalidate = true;
 > 
->  	set_new_dnode(&dn, inode, ipage, NULL, 0);
->  	err = f2fs_reserve_block(&dn, index);
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index a13ffcc..79d18d5 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -360,6 +360,10 @@ int make_empty_inline_dir(struct inode *inode, struct inode *parent,
->  	return 0;
+>  	/* Flush all the NAT/SIT pages */
+>  	while (get_pages(sbi, F2FS_DIRTY_META)) {
+> @@ -1022,6 +1025,14 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control
+> *cpc)
+>  	/* wait for previous submitted meta pages writeback */
+>  	wait_on_all_pages_writeback(sbi);
+> 
+> +	/*
+> +	 * invalidate meta page which is used temporarily for zeroing out
+> +	 * block at the end of warm node chain.
+> +	 */
+> +	if (invalidate)
+> +		invalidate_mapping_pages(META_MAPPING(sbi), discard_blk,
+> +								discard_blk);
+> +
+>  	release_dirty_inode(sbi);
+> 
+>  	if (unlikely(f2fs_cp_error(sbi)))
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 5d1f88c..0a6b9f1 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1714,7 +1714,7 @@ void invalidate_blocks(struct f2fs_sb_info *, block_t);
+>  void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
+>  void clear_prefree_segments(struct f2fs_sb_info *, struct cp_control *);
+>  void release_discard_addrs(struct f2fs_sb_info *);
+> -void discard_next_dnode(struct f2fs_sb_info *, block_t);
+> +bool discard_next_dnode(struct f2fs_sb_info *, block_t);
+>  int npages_for_summary_flush(struct f2fs_sb_info *, bool);
+>  void allocate_new_segments(struct f2fs_sb_info *);
+>  int f2fs_trim_fs(struct f2fs_sb_info *, struct fstrim_range *);
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index 24a8c1d..07a36e4 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -561,11 +561,20 @@ out:
+> 
+>  	clear_sbi_flag(sbi, SBI_POR_DOING);
+>  	if (err) {
+> -		discard_next_dnode(sbi, blkaddr);
+> +		bool invalidate = false;
+> +
+> +		if (discard_next_dnode(sbi, blkaddr))
+> +			invalidate = true;
+> 
+>  		/* Flush all the NAT/SIT pages */
+>  		while (get_pages(sbi, F2FS_DIRTY_META))
+>  			sync_meta_pages(sbi, META, LONG_MAX);
+> +
+> +		/* invalidate temporary meta page */
+> +		if (invalidate)
+> +			invalidate_mapping_pages(META_MAPPING(sbi),
+> +							blkaddr, blkaddr);
+> +
+>  		set_ckpt_flags(sbi->ckpt, CP_ERROR_FLAG);
+>  		mutex_unlock(&sbi->cp_mutex);
+>  	} else if (need_writecp) {
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 4712dbc..1ad3cf3 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -517,7 +517,7 @@ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
+>  	return blkdev_issue_discard(sbi->sb->s_bdev, start, len, GFP_NOFS, 0);
 >  }
 > 
-> +/*
-> + * NOTE: ipage is grabbed by caller, but if any error occurs, we should
-> + * release ipage in this function.
-> + */
->  static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
->  				struct f2fs_inline_dentry *inline_dentry)
+> -void discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
+> +bool discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
 >  {
-> @@ -369,8 +373,10 @@ static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
->  	int err;
+>  	int err = -ENOTSUPP;
 > 
->  	page = grab_cache_page(dir->i_mapping, 0);
-> -	if (!page)
-> +	if (!page) {
-> +		f2fs_put_page(ipage, 1);
->  		return -ENOMEM;
-> +	}
+> @@ -527,13 +527,16 @@ void discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  		unsigned int offset = GET_BLKOFF_FROM_SEG0(sbi, blkaddr);
 > 
->  	set_new_dnode(&dn, dir, ipage, NULL, 0);
->  	err = f2fs_reserve_block(&dn, 0);
-> @@ -434,8 +440,9 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *name,
->  						slots, NR_INLINE_DENTRY);
->  	if (bit_pos >= NR_INLINE_DENTRY) {
->  		err = f2fs_convert_inline_dir(dir, ipage, dentry_blk);
-> -		if (!err)
-> -			err = -EAGAIN;
-> +		if (err)
-> +			return err;
-> +		err = -EAGAIN;
->  		goto out;
+>  		if (f2fs_test_bit(offset, se->discard_map))
+> -			return;
+> +			return false;
+> 
+>  		err = f2fs_issue_discard(sbi, blkaddr, 1);
 >  	}
 > 
+> -	if (err)
+> +	if (err) {
+>  		update_meta_page(sbi, NULL, blkaddr);
+> +		return true;
+> +	}
+> +	return false;
+>  }
+> 
+>  static void __add_discard_entry(struct f2fs_sb_info *sbi,
 > --
 > 2.4.2
 > 
@@ -168,6 +163,3 @@ Thanks,
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-
-------------------------------------------------------------------------------
