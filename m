@@ -1,106 +1,114 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/4] f2fs: report EINVAL for unalignment direct IO
-Date: Fri, 07 Aug 2015 18:39:32 +0800
-Message-ID: <017f01d0d0fd$7f0917b0$7d1b4710$@samsung.com>
+Subject: [PATCH 3/4] f2fs: handle error of f2fs_iget correctly
+Date: Fri, 07 Aug 2015 18:41:02 +0800
+Message-ID: <018001d0d0fd$a8f47240$fadd56c0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Yunlei He <heyunlei@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi all
+In recover_orphan_inode, if f2fs_iget failed, we change to report the
+error number to its caller instead of bug_on.
 
-This patch is submitted by Yunlei He originally, but it's not complete one,
-so I modified it and add some description, then resubmit it.
-
->From 3f8de7fe93354215b9b12293302a0a999cf3888a Mon Sep 17 00:00:00 2001
-From: Yunlei He <heyunlei@huawei.com>
-Date: Wed, 29 Jul 2015 15:10:24 +0800
-Subject: [PATCH 2/4] f2fs: report EINVAL for unalignment direct IO
-
-We run ltp testcase with f2fs and obtain a TFAIL in diotest4, the result in detail is
-as fallow:
-
-dio04
-
-<<<test_start>>>
-tag=dio04 stime=1432278894
-cmdline="diotest4"
-contacts=""
-analysis=exit
-<<<test_output>>>
-diotest4    1  TPASS  :  Negative Offset
-diotest4    2  TPASS  :  removed
-diotest4    3  TFAIL  :  diotest4.c:129: write allows odd count.returns 1: Success
-diotest4    4  TFAIL  :  diotest4.c:183: Odd count of read and write
-diotest4    5  TPASS  :  Read beyond the file size
-......
-
-the result of ext4 with same environment:
-
-dio04
-
-<<<test_start>>>
-tag=dio04 stime=1432259643
-cmdline="diotest4"
-contacts=""
-analysis=exit
-<<<test_output>>>
-diotest4    1  TPASS  :  Negative Offset
-diotest4    2  TPASS  :  removed
-diotest4    3  TPASS  :  Odd count of read and write
-diotest4    4  TPASS  :  Read beyond the file size
-......
-
-The reason is that when triggering DIO in f2fs, we will return zero value
-in ->direct_IO if writer's buffer offset, file offset and transfer size is
-not alignment to block size of filesystem, resulting in falling back into
-buffered write instead of returning -EINVAL.
-
-This patch fixes that problem by returning correct error number for above
-case, and removing the judgement condition in check_direct_IO to make sure
-the verification will be enabled for direct reader too.
-
-Besides, Jaegeuk Kim pointed out that there is expectional cases we should
-always make direct-io falling back into buffered write, such as dio in
-encrypted file.
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-[Chao Yu make small change and add detail description in commit message]
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ fs/f2fs/checkpoint.c | 25 ++++++++++++++++++-------
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/super.c      |  4 +++-
+ 3 files changed, 22 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 4fabdd4..7ea8eda 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1494,9 +1494,6 @@ static int check_direct_IO(struct inode *inode, struct iov_iter *iter,
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index c311176..e2def90 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -468,22 +468,28 @@ void remove_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ 	__remove_ino_entry(sbi, ino, ORPHAN_INO);
+ }
+ 
+-static void recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
++static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
  {
- 	unsigned blocksize_mask = inode->i_sb->s_blocksize - 1;
+-	struct inode *inode = f2fs_iget(sbi->sb, ino);
+-	f2fs_bug_on(sbi, IS_ERR(inode));
++	struct inode *inode;
++
++	inode = f2fs_iget(sbi->sb, ino);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++
+ 	clear_nlink(inode);
  
--	if (iov_iter_rw(iter) == READ)
--		return 0;
--
- 	if (offset & blocksize_mask)
- 		return -EINVAL;
+ 	/* truncate all the data during iput */
+ 	iput(inode);
++	return 0;
+ }
  
-@@ -1525,8 +1522,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
- 		return 0;
+-void recover_orphan_inodes(struct f2fs_sb_info *sbi)
++int recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ {
+ 	block_t start_blk, orphan_blocks, i, j;
++	int err;
  
--	if (check_direct_IO(inode, iter, offset))
--		return 0;
-+	err = check_direct_IO(inode, iter, offset);
+ 	if (!is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG))
+-		return;
++		return 0;
+ 
+ 	set_sbi_flag(sbi, SBI_POR_DOING);
+ 
+@@ -499,14 +505,19 @@ void recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 		orphan_blk = (struct f2fs_orphan_block *)page_address(page);
+ 		for (j = 0; j < le32_to_cpu(orphan_blk->entry_count); j++) {
+ 			nid_t ino = le32_to_cpu(orphan_blk->ino[j]);
+-			recover_orphan_inode(sbi, ino);
++			err = recover_orphan_inode(sbi, ino);
++			if (err) {
++				f2fs_put_page(page, 1);
++				clear_sbi_flag(sbi, SBI_POR_DOING);
++				return err;
++			}
+ 		}
+ 		f2fs_put_page(page, 1);
+ 	}
+ 	/* clear Orphan Flag */
+ 	clear_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG);
+ 	clear_sbi_flag(sbi, SBI_POR_DOING);
+-	return;
++	return 0;
+ }
+ 
+ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 311960c..4a6f69b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1750,7 +1750,7 @@ int acquire_orphan_inode(struct f2fs_sb_info *);
+ void release_orphan_inode(struct f2fs_sb_info *);
+ void add_orphan_inode(struct f2fs_sb_info *, nid_t);
+ void remove_orphan_inode(struct f2fs_sb_info *, nid_t);
+-void recover_orphan_inodes(struct f2fs_sb_info *);
++int recover_orphan_inodes(struct f2fs_sb_info *);
+ int get_valid_checkpoint(struct f2fs_sb_info *);
+ void update_dirty_page(struct inode *, struct page *);
+ void add_dirty_dir_inode(struct inode *);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 12eb69d..e5efb53 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1246,7 +1246,9 @@ try_onemore:
+ 	f2fs_join_shrinker(sbi);
+ 
+ 	/* if there are nt orphan nodes free them */
+-	recover_orphan_inodes(sbi);
++	err = recover_orphan_inodes(sbi);
 +	if (err)
-+		return err;
++		goto free_node_inode;
  
- 	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
- 
+ 	/* read root inode and dentry */
+ 	root = f2fs_iget(sb, F2FS_ROOT_INO(sbi));
 -- 
 2.4.2
