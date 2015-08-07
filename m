@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
 Subject: Re: Data lost in Android app for not write new checkpoint
-Date: Fri, 07 Aug 2015 17:18:24 +0800
-Message-ID: <017101d0d0f2$2038f0d0$60aad270$@samsung.com>
+Date: Fri, 07 Aug 2015 17:50:21 +0800
+Message-ID: <017201d0d0f6$9fa7f060$def7d120$@samsung.com>
 References: <55BADD52.9060901@huawei.com>
 	<01a401d0cb7e$bc483130$34d89390$@samsung.com>
 	<55C0BB25.1070208@huawei.com>
@@ -13,22 +13,22 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZNdoF-0002sF-5Z
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1ZNeJN-00065o-Gw
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Aug 2015 09:19:27 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
+	Fri, 07 Aug 2015 09:51:37 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZNdoB-0007u0-FT
+	(Exim 4.76) id 1ZNeJL-0000FO-Cy
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Aug 2015 09:19:27 +0000
+	Fri, 07 Aug 2015 09:51:37 +0000
 Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
+	by mailout4.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NSP00L9FGK4NC00@mailout2.samsung.com> for
+	2014)) with ESMTP id <0NSP02J4ZI1S04E0@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Aug 2015 18:19:16 +0900 (KST)
-In-reply-to: <55C44F8D.9030005@huawei.com>
+	Fri, 07 Aug 2015 18:51:28 +0900 (KST)
+In-reply-to: 
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -42,211 +42,19 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: 'He YunLei' <heyunlei@huawei.com>
 Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-> -----Original Message-----
-> From: He YunLei [mailto:heyunlei@huawei.com]
-> Sent: Friday, August 07, 2015 2:26 PM
-> To: Chao Yu
-> Cc: 'Bintian'; 'Jaegeuk Kim'; cm224.lee@samsung.com; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] Data lost in Android app for not write new checkpoint
-> 
-> On 2015/8/6 18:17, Chao Yu wrote:
-> >> -----Original Message-----
-> >> From: He YunLei [mailto:heyunlei@huawei.com]
-> >> Sent: Tuesday, August 04, 2015 9:16 PM
-> >> To: Chao Yu
-> >> Cc: 'Bintian'; 'Jaegeuk Kim'; cm224.lee@samsung.com; linux-f2fs-devel@lists.sourceforge.net
-> >> Subject: Re: [f2fs-dev] Data lost in Android app for not write new checkpoint
-> >>
-> >> On 2015/7/31 18:49, Chao Yu wrote:
-> >>> Hi Bintian,
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: He YunLei [mailto:heyunlei@huawei.com]
-> >>>> Sent: Friday, July 31, 2015 10:29 AM
-> >>>> To: linux-f2fs-devel@lists.sourceforge.net; Jaegeuk Kim
-> >>>> Cc: Chao Yu; cm224.lee@samsung.com; Bintian
-> >>>> Subject: [f2fs-dev] Data lost in Android app for not write new checkpoint
-> >>>>
-> >>>> Hi all,
-> >>>> 	Recently I did some test with f2fs on my Android phone, and found a problem
-> >>>> which I didn't know how to tackle it.
-> >>>> 	I use my Android phone with /data partition formatted  by mkfs.f2fs. When the
-> >>>> phone just started, I check the f2fs status by reading the file
-> /sys/kernel/debug/f2fs/status
-> >>>> in debugfs.
-> >>>>
-> >>>> CP calls: 10
-> >>>> GC calls: 19 (BG: 19)
-> >>>>      - data segments : 19 (19)
-> >>>>      - node segments : 0 (0)
-> >>>>
-> >>>> 	We can see /data partition has done 10 times write_checkpoint since f2fs is mounted
-> >>>> on the phone, it also has triggered 19 times background GC.
-> >>>>
-> >>>> ******
-> >>>>
-> >>>> Here I took some photos consecutively, and check the file /sys/kernel/debug/f2fs/status
-> again
-> >>>>
-> >>>> ******
-> >>>>
-> >>>> CP calls: 10
-> >>>> GC calls: 20 (BG: 20)
-> >>>>      - data segments : 20 (20)
-> >>>>      - node segments : 0 (0)
-> >>>>
-> >>>> 	there is no change in CP calls number and background GC doesn't write new checkpoint.
-> >>>> if then a sudden power failure or system crash occur, the photos will be lost when the
-> phone
-> >>>> restart, and a sync before crash will avoid the data lost.
-> >>>> 	I think this problem is bad for user experience of using Android phone with f2fs.
-> >>>> How do we deal with such situation? I wish you and other developers in this list could
-> help
-> >>>> me in a correct way.
-> >>>
-> >>> IMO, it's better to figure out whether this is a bug of f2fs first or not.
-> >>>
-> >>> You can enable some traces in f2fs to see whether fsync is called or not.
-> >>>
-> >>> enable trace by:
-> >>> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_sync_file_enter/enable
-> >>> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_sync_file_exit/enable
-> >>> print trace by:
-> >>> cat /sys/kernel/debug/tracing/trace
-> >>>
-> >>> If fsync is not be called, I think in ext4 there must be the same problem,
-> >>> but I guess fortunately journal commit thread save its data since it commit
-> >>> transaction per 5 second by default. You can try to configure (commit=nrsec)
-> >>> it with larger value for verification the issue with ext4 filesystem.
-> >>>
-> >>
-> >> I enable the event xxx_sync_file_enter both in f2fs and ext4, and find neither of
-> >> them was triggered by photo files.
-> >>
-> >> Then I try f2fs_writepages and ext4_da_write_pages:
-> >>
-> >>      ino     file_name
-> >>
-> >>      65573   IMG_20150804_031619.jpg
-> >>      65575   IMG_20150804_031619_1.jpg
-> >>      65576   IMG_20150804_031620.jpg
-> >>      65577   IMG_20150804_031620_1.jpg
-> >>
-> >>    ext4_da_write_pages: dev 259,0 ino 65573 b_blocknr 0 b_size 0 b_state 0x0000 first_page
-> 0
-> >> io_done 0 pages_written 0 sync_mode 0
-> >>    ext4_da_write_pages: dev 259,0 ino 65575 b_blocknr 0 b_size 2408448 b_state 0x0221
-> first_page
-> >> 0 io_done 1 pages_written 588 sync_mode 0
-> >>    ext4_da_write_pages: dev 259,0 ino 65575 b_blocknr 0 b_size 0 b_state 0x0000 first_page
-> 0
-> >> io_done 0 pages_written 0 sync_mode 0
-> >>    ext4_da_write_pages: dev 259,0 ino 65576 b_blocknr 0 b_size 2428928 b_state 0x0221
-> first_page
-> >> 0 io_done 1 pages_written 593 sync_mode 0
-> >>    ext4_da_write_pages: dev 259,0 ino 65576 b_blocknr 0 b_size 0 b_state 0x0000 first_page
-> 0
-> >> io_done 0 pages_written 0 sync_mode 0
-> >>    ext4_da_write_pages: dev 259,0 ino 65577 b_blocknr 0 b_size 2383872 b_state 0x0221
-> first_page
-> >> 0 io_done 1 pages_written 582 sync_mode 0
-> >>    ext4_da_write_pages: dev 259,0 ino 65577 b_blocknr 0 b_size 0 b_state 0x0000 first_page
-> 0
-> >> io_done 0 pages_written 0 sync_mode 0
-> >>
-> >> f2fs_writepages doesn't appear in the test of f2fs
-> >
-> > Weird, was IO triggered from DIO/reclaim path? As Jaegeuk said, it's better
-> > to check the IOs in block layer.
-> >
->    I am sorry that I leave out f2fs_writepages message for the reason of huge trace log. I repeat
-> the test
-> several times and now make sure f2fs_writepages is triggered but very little compare to ext4.
-> 
->    Another problem is that roll_forward recovery  can just resume writeback files users fsynced ,
-> not including
-> files whose pages written back by bdi flusher ?
+> Since we don't know when the data will be flushed and also what part of
+> file will be flushed, at the time of abnormal pow-cut, the data/metadata
+> of flushed file can be partial in device. So I don't think it's not
 
-Yes, f2fs only recover files fsynced, not those flushed.
+Should be:
 
-> 
-> >>
-> >> I also try modify commit=300(default 5), but it doesn't work. Maybe somewhere else in ext4
-> >> launch the ext4_da_write_pages operation.
-> >
-> > Maybe it's triggered by bdi flusher, can you try to configure parameters
-> > under /proc/sys/vm/ e.g. dirty_writeback_centisecs/dirty_background_ratio
-> > for delaying ->writepages in ext4?
-> >
-> >>
-> >> At the end, I try to mount f2fs with disable_roll_forward, when system reboot, the f2fs is
-> >> inconsistent,
-> >> there are several failed check items in fsck.
-> >
-> > Can you share the log?
-> 
-> The log is below:
-> 
-> [FSCK] Unreachable nat entries                        [Fail] [0x64b]
-> [FSCK] SIT valid block bitmap checking                [Fail]
-> [FSCK] Hard link checking for regular file            [Ok..] [0x0]
-> [FSCK] valid_block_count matching with CP             [Ok..] [0x579b6]
-> [FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0x7b0]
-> [FSCK] valid_node_count matcing with CP (nat lookup)  [Fail] [0xdfb]
-> [FSCK] valid_inode_count matched with CP              [Ok..] [0x664]
-> [FSCK] free segment_count matched with CP             [Ok..] [0x238]
-> [FSCK] next block offset is free                      [Ok..]
-> [FSCK] other corrupted bugs                           [Fail]
+of flushed file can be partial in device. So I don't think it's
 
-Can you share us more detail information of fsck fixing log? that would be
-helpful. :)
+My bad, sorry about that.
 
-> 
-> I repeat the test about 5 times, the fsck failed just one time.
-> When I use disable_roll_forward mount option, I find some photos don't lose occasionally.
-> There are also some incomplete photo files exit on my photo.  Does roll_forward recovery
-> think pages written back by bdi flusher is unreliable, and clean them ?
+> possible for us to recover this kind of file with current fsync/recovery
+> policy of f2fs.
 
-Since we don't know when the data will be flushed and also what part of
-file will be flushed, at the time of abnormal pow-cut, the data/metadata
-of flushed file can be partial in device. So I don't think it's not
-possible for us to recover this kind of file with current fsync/recovery
-policy of f2fs.
-
-Thanks,
-
-> 
-> Thanks,
-> He
-> 
-> >
-> > Thanks,
-> >
-> >>
-> >> Thanks,
-> >> He
-> >>
-> >>> As a quick thought, maybe we can add one commit data thread, periodically
-> >>> writebacking user data written by user previously, then do checkpoint for
-> >>> persistence.
-> >>>
-> >>> So by this way, at most, we just lose our data for last configured time of
-> >>> commit period.
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>> He
-> >>>
-> >>>
-> >>>
-> >>> .
-> >>>
-> >
-> >
-> > .
-> >
 
 
 ------------------------------------------------------------------------------
