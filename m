@@ -1,188 +1,208 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 4/4] f2fs: remove inmem radix tree
-Date: Fri, 07 Aug 2015 18:42:09 +0800
-Message-ID: <018101d0d0fd$d01959d0$704c0d70$@samsung.com>
+From: He YunLei <heyunlei@huawei.com>
+Subject: Re: Data lost in Android app for not write new checkpoint
+Date: Fri, 7 Aug 2015 14:26:21 +0800
+Message-ID: <55C44F8D.9030005@huawei.com>
+References: <55BADD52.9060901@huawei.com>
+	<01a401d0cb7e$bc483130$34d89390$@samsung.com>
+	<55C0BB25.1070208@huawei.com>
+	<012201d0d031$3baddf90$b3099eb0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1ZNb7G-0001jg-Mp
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 07 Aug 2015 06:26:54 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZNb79-0003XF-LW
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 07 Aug 2015 06:26:54 +0000
+In-Reply-To: <012201d0d031$3baddf90$b3099eb0$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Previously, we use radix tree to index all registered page entries for
-atomic file, but now we only use radix tree to see whether current page
-is indexed or not, since the other user of radix tree is gone in commit
-042b7816aaeb ("f2fs: remove unnecessary call to invalidate inmemory pages").
+On 2015/8/6 18:17, Chao Yu wrote:
+>> -----Original Message-----
+>> From: He YunLei [mailto:heyunlei@huawei.com]
+>> Sent: Tuesday, August 04, 2015 9:16 PM
+>> To: Chao Yu
+>> Cc: 'Bintian'; 'Jaegeuk Kim'; cm224.lee@samsung.com; linux-f2fs-devel@lists.sourceforge.net
+>> Subject: Re: [f2fs-dev] Data lost in Android app for not write new checkpoint
+>>
+>> On 2015/7/31 18:49, Chao Yu wrote:
+>>> Hi Bintian,
+>>>
+>>>> -----Original Message-----
+>>>> From: He YunLei [mailto:heyunlei@huawei.com]
+>>>> Sent: Friday, July 31, 2015 10:29 AM
+>>>> To: linux-f2fs-devel@lists.sourceforge.net; Jaegeuk Kim
+>>>> Cc: Chao Yu; cm224.lee@samsung.com; Bintian
+>>>> Subject: [f2fs-dev] Data lost in Android app for not write new checkpoint
+>>>>
+>>>> Hi all,
+>>>> 	Recently I did some test with f2fs on my Android phone, and found a problem
+>>>> which I didn't know how to tackle it.
+>>>> 	I use my Android phone with /data partition formatted  by mkfs.f2fs. When the
+>>>> phone just started, I check the f2fs status by reading the file /sys/kernel/debug/f2fs/status
+>>>> in debugfs.
+>>>>
+>>>> CP calls: 10
+>>>> GC calls: 19 (BG: 19)
+>>>>      - data segments : 19 (19)
+>>>>      - node segments : 0 (0)
+>>>>
+>>>> 	We can see /data partition has done 10 times write_checkpoint since f2fs is mounted
+>>>> on the phone, it also has triggered 19 times background GC.
+>>>>
+>>>> ******
+>>>>
+>>>> Here I took some photos consecutively, and check the file /sys/kernel/debug/f2fs/status again
+>>>>
+>>>> ******
+>>>>
+>>>> CP calls: 10
+>>>> GC calls: 20 (BG: 20)
+>>>>      - data segments : 20 (20)
+>>>>      - node segments : 0 (0)
+>>>>
+>>>> 	there is no change in CP calls number and background GC doesn't write new checkpoint.
+>>>> if then a sudden power failure or system crash occur, the photos will be lost when the phone
+>>>> restart, and a sync before crash will avoid the data lost.
+>>>> 	I think this problem is bad for user experience of using Android phone with f2fs.
+>>>> How do we deal with such situation? I wish you and other developers in this list could help
+>>>> me in a correct way.
+>>>
+>>> IMO, it's better to figure out whether this is a bug of f2fs first or not.
+>>>
+>>> You can enable some traces in f2fs to see whether fsync is called or not.
+>>>
+>>> enable trace by:
+>>> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_sync_file_enter/enable
+>>> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_sync_file_exit/enable
+>>> print trace by:
+>>> cat /sys/kernel/debug/tracing/trace
+>>>
+>>> If fsync is not be called, I think in ext4 there must be the same problem,
+>>> but I guess fortunately journal commit thread save its data since it commit
+>>> transaction per 5 second by default. You can try to configure (commit=nrsec)
+>>> it with larger value for verification the issue with ext4 filesystem.
+>>>
+>>
+>> I enable the event xxx_sync_file_enter both in f2fs and ext4, and find neither of
+>> them was triggered by photo files.
+>>
+>> Then I try f2fs_writepages and ext4_da_write_pages:
+>>
+>>      ino     file_name
+>>
+>>      65573   IMG_20150804_031619.jpg
+>>      65575   IMG_20150804_031619_1.jpg
+>>      65576   IMG_20150804_031620.jpg
+>>      65577   IMG_20150804_031620_1.jpg
+>>
+>>    ext4_da_write_pages: dev 259,0 ino 65573 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0
+>> io_done 0 pages_written 0 sync_mode 0
+>>    ext4_da_write_pages: dev 259,0 ino 65575 b_blocknr 0 b_size 2408448 b_state 0x0221 first_page
+>> 0 io_done 1 pages_written 588 sync_mode 0
+>>    ext4_da_write_pages: dev 259,0 ino 65575 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0
+>> io_done 0 pages_written 0 sync_mode 0
+>>    ext4_da_write_pages: dev 259,0 ino 65576 b_blocknr 0 b_size 2428928 b_state 0x0221 first_page
+>> 0 io_done 1 pages_written 593 sync_mode 0
+>>    ext4_da_write_pages: dev 259,0 ino 65576 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0
+>> io_done 0 pages_written 0 sync_mode 0
+>>    ext4_da_write_pages: dev 259,0 ino 65577 b_blocknr 0 b_size 2383872 b_state 0x0221 first_page
+>> 0 io_done 1 pages_written 582 sync_mode 0
+>>    ext4_da_write_pages: dev 259,0 ino 65577 b_blocknr 0 b_size 0 b_state 0x0000 first_page 0
+>> io_done 0 pages_written 0 sync_mode 0
+>>
+>> f2fs_writepages doesn't appear in the test of f2fs
+>
+> Weird, was IO triggered from DIO/reclaim path? As Jaegeuk said, it's better
+> to check the IOs in block layer.
+>
+   I am sorry that I leave out f2fs_writepages message for the reason of huge trace log. I repeat the test
+several times and now make sure f2fs_writepages is triggered but very little compare to ext4.
 
-So in this patch, we try to use one more efficient way:
-Introducing a macro ATOMIC_WRITTEN_PAGE, and setting it as page private
-value to indicate page indexing status. By using this way, we can save
-memory and lookup time.
+   Another problem is that roll_forward recovery  can just resume writeback files users fsynced , not including
+files whose pages written back by bdi flusher ?
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/data.c    | 20 ++++++++++++++++++--
- fs/f2fs/f2fs.h    |  1 -
- fs/f2fs/segment.c | 25 +++++++++----------------
- fs/f2fs/segment.h |  9 +++++++++
- fs/f2fs/super.c   |  1 -
- 5 files changed, 36 insertions(+), 20 deletions(-)
+>>
+>> I also try modify commit=300(default 5), but it doesn't work. Maybe somewhere else in ext4
+>> launch the ext4_da_write_pages operation.
+>
+> Maybe it's triggered by bdi flusher, can you try to configure parameters
+> under /proc/sys/vm/ e.g. dirty_writeback_centisecs/dirty_background_ratio
+> for delaying ->writepages in ext4?
+>
+>>
+>> At the end, I try to mount f2fs with disable_roll_forward, when system reboot, the f2fs is
+>> inconsistent,
+>> there are several failed check items in fsck.
+>
+> Can you share the log?
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7ea8eda..cad9ebe 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1558,6 +1558,11 @@ void f2fs_invalidate_page(struct page *page, unsigned int offset,
- 		else
- 			inode_dec_dirty_pages(inode);
- 	}
-+
-+	/* This is atomic written page, keep Private */
-+	if (IS_ATOMIC_WRITTEN_PAGE(page))
-+		return;
-+
- 	ClearPagePrivate(page);
- }
- 
-@@ -1567,6 +1572,10 @@ int f2fs_release_page(struct page *page, gfp_t wait)
- 	if (PageDirty(page))
- 		return 0;
- 
-+	/* This is atomic written page, keep Private */
-+	if (IS_ATOMIC_WRITTEN_PAGE(page))
-+		return 0;
-+
- 	ClearPagePrivate(page);
- 	return 1;
- }
-@@ -1581,8 +1590,15 @@ static int f2fs_set_data_page_dirty(struct page *page)
- 	SetPageUptodate(page);
- 
- 	if (f2fs_is_atomic_file(inode)) {
--		register_inmem_page(inode, page);
--		return 1;
-+		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
-+			register_inmem_page(inode, page);
-+			return 1;
-+		}
-+		/*
-+		 * Previously, this page has been registered, we just
-+		 * return here.
-+		 */
-+		return 0;
- 	}
- 
- 	if (!PageDirty(page)) {
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4a6f69b..23bfc0c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -424,7 +424,6 @@ struct f2fs_inode_info {
- 	unsigned long long xattr_ver;	/* cp version of xattr modification */
- 	struct inode_entry *dirty_dir;	/* the pointer of dirty dir */
- 
--	struct radix_tree_root inmem_root;	/* radix tree for inmem pages */
- 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
- 	struct mutex inmem_lock;	/* lock for inmemory pages */
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1ad3cf3..cb6c61a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -197,28 +197,20 @@ void register_inmem_page(struct inode *inode, struct page *page)
- {
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct inmem_pages *new;
--	int err;
- 
--	SetPagePrivate(page);
- 	f2fs_trace_pid(page);
- 
-+	set_page_private(page, (unsigned long)ATOMIC_WRITTEN_PAGE);
-+	SetPagePrivate(page);
-+
- 	new = f2fs_kmem_cache_alloc(inmem_entry_slab, GFP_NOFS);
- 
- 	/* add atomic page indices to the list */
- 	new->page = page;
- 	INIT_LIST_HEAD(&new->list);
--retry:
-+
- 	/* increase reference count with clean state */
- 	mutex_lock(&fi->inmem_lock);
--	err = radix_tree_insert(&fi->inmem_root, page->index, new);
--	if (err == -EEXIST) {
--		mutex_unlock(&fi->inmem_lock);
--		kmem_cache_free(inmem_entry_slab, new);
--		return;
--	} else if (err) {
--		mutex_unlock(&fi->inmem_lock);
--		goto retry;
--	}
- 	get_page(page);
- 	list_add_tail(&new->list, &fi->inmem_pages);
- 	inc_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
-@@ -255,8 +247,8 @@ int commit_inmem_pages(struct inode *inode, bool abort)
- 
- 	mutex_lock(&fi->inmem_lock);
- 	list_for_each_entry_safe(cur, tmp, &fi->inmem_pages, list) {
-+		lock_page(cur->page);
- 		if (!abort) {
--			lock_page(cur->page);
- 			if (cur->page->mapping == inode->i_mapping) {
- 				set_page_dirty(cur->page);
- 				f2fs_wait_on_page_writeback(cur->page, DATA);
-@@ -271,12 +263,13 @@ int commit_inmem_pages(struct inode *inode, bool abort)
- 					break;
- 				}
- 			}
--			f2fs_put_page(cur->page, 1);
- 		} else {
- 			trace_f2fs_commit_inmem_page(cur->page, INMEM_DROP);
--			put_page(cur->page);
- 		}
--		radix_tree_delete(&fi->inmem_root, cur->page->index);
-+		set_page_private(cur->page, 0);
-+		ClearPagePrivate(cur->page);
-+		f2fs_put_page(cur->page, 1);
-+
- 		list_del(&cur->list);
- 		kmem_cache_free(inmem_entry_slab, cur);
- 		dec_page_count(F2FS_I_SB(inode), F2FS_INMEM_PAGES);
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 230f9cd..d0bd952 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -177,6 +177,15 @@ struct segment_allocation {
- 	void (*allocate_segment)(struct f2fs_sb_info *, int, bool);
- };
- 
-+/*
-+ * this value is set in page as a private data which indicate that
-+ * the page is atomically written, and it is in inmem_pages list.
-+ */
-+#define ATOMIC_WRITTEN_PAGE		0x0000ffff
-+
-+#define IS_ATOMIC_WRITTEN_PAGE(page)			\
-+		(page_private(page) == (unsigned long)ATOMIC_WRITTEN_PAGE)
-+
- struct inmem_pages {
- 	struct list_head list;
- 	struct page *page;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index e5efb53..4db5cd9 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -423,7 +423,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	fi->i_current_depth = 1;
- 	fi->i_advise = 0;
- 	init_rwsem(&fi->i_sem);
--	INIT_RADIX_TREE(&fi->inmem_root, GFP_NOFS);
- 	INIT_LIST_HEAD(&fi->inmem_pages);
- 	mutex_init(&fi->inmem_lock);
- 
--- 
-2.4.2
+The log is below:
+
+[FSCK] Unreachable nat entries                        [Fail] [0x64b]
+[FSCK] SIT valid block bitmap checking                [Fail]
+[FSCK] Hard link checking for regular file            [Ok..] [0x0]
+[FSCK] valid_block_count matching with CP             [Ok..] [0x579b6]
+[FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0x7b0]
+[FSCK] valid_node_count matcing with CP (nat lookup)  [Fail] [0xdfb]
+[FSCK] valid_inode_count matched with CP              [Ok..] [0x664]
+[FSCK] free segment_count matched with CP             [Ok..] [0x238]
+[FSCK] next block offset is free                      [Ok..]
+[FSCK] other corrupted bugs                           [Fail]
+
+I repeat the test about 5 times, the fsck failed just one time.
+When I use disable_roll_forward mount option, I find some photos don't lose occasionally.
+There are also some incomplete photo files exit on my photo.  Does roll_forward recovery
+think pages written back by bdi flusher is unreliable, and clean them ?
+
+Thanks,
+He
+
+>
+> Thanks,
+>
+>>
+>> Thanks,
+>> He
+>>
+>>> As a quick thought, maybe we can add one commit data thread, periodically
+>>> writebacking user data written by user previously, then do checkpoint for
+>>> persistence.
+>>>
+>>> So by this way, at most, we just lose our data for last configured time of
+>>> commit period.
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Thanks,
+>>>> He
+>>>
+>>>
+>>>
+>>> .
+>>>
+>
+>
+> .
+>
+
+
+------------------------------------------------------------------------------
