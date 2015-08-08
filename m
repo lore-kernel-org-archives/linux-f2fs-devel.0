@@ -1,37 +1,26 @@
-From: Marc Lehmann <schmorp@schmorp.de>
-Subject: general stability of f2fs?
-Date: Sat, 8 Aug 2015 22:50:03 +0200
-Message-ID: <20150808205003.GA6546@schmorp.de>
+From: Nicholas Krause <xerofoify@gmail.com>
+Subject: [PATCH] f2fs:Fix error handling for calls to the
+	function add_free_nid in the file node.c
+Date: Sat,  8 Aug 2015 18:22:20 -0400
+Message-ID: <1439072540-25569-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZOB4G-0007GV-1t
+	(envelope-from <xerofoify@gmail.com>) id 1ZOCVa-0001UZ-SV
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 20:50:12 +0000
-Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZOB4D-0000MM-SG
+	Sat, 08 Aug 2015 22:22:30 +0000
+Received: from mail-io0-f175.google.com ([209.85.223.175])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZOCVZ-00043m-2a
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 20:50:12 +0000
-Received: from [10.0.0.5] (helo=doom.schmorp.de)
-	by mail.nethype.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1ZOB47-0005H2-Bd
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 20:50:03 +0000
-Received: from [10.0.0.1] (helo=cerebro.laendle)
-	by doom.schmorp.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1ZOB47-0004tZ-70
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 20:50:03 +0000
-Received: from root by cerebro.laendle with local (Exim 4.84)
-	(envelope-from <root@schmorp.de>) id 1ZOB47-0001iJ-6R
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 22:50:03 +0200
-Content-Disposition: inline
+	Sat, 08 Aug 2015 22:22:30 +0000
+Received: by iodb91 with SMTP id b91so80573891iod.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sat, 08 Aug 2015 15:22:23 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -41,57 +30,52 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi!
+This fixes error handling for calls to the function add_free_nid
+in the functions __flush_nat_entry_set and build_free_nids to
+properly check if their call to this particular function return
+a error code and if so break out these function's for loops as
+we cannot continue these loops if these function calls fail in
 
-I did some more experiments, and wonder about the general stabiulity of f2fs.
-I have not managed to keep an f2fs filesystem that worked for longer than a
-few days.
+Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+---
+ fs/f2fs/node.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-For example, a few days ago I created an 8TB volume and copied 2TB of data to
-it, which worked until I hot the (very low...) 32k limit on the number of
-subdirectories.
-
-I moved some directoriesd into a single subdirectory, and continued.
-Everything seemed fine.
-
-Today I ran fsck.f2fs on the fs, which found 4 inodes with wrong link counts
-(generally higher than fsck counted). It asked me whether to fix this, which
-I did.
-
-I then did another fsck run, and was greeted with tens of thousands of
-errors:
-
-http://ue.tst.eu/f692bac9abbe4e910787adee18ec52be.txt
-
-Mounting made the box unusable for multiple minutes, probably due to the
-amount of backtraces:
-
-http://ue.tst.eu/6243cc344a943d95a20907ecbc37061f.txt
-
-The data is toast (which is fine, I am still experimenting only), but this,
-the weird write behaviour, the fact that you don#t get signalled on ENOSPC
-make me wonder what the general status of f2fs is.
-
-It *seems* to be in actual use for a number of years now, and I would expect
-small hiccups and problems, so backups would be advised, but this level of
-brokenness (I only tested linux 3.18.14 and 4.1.4) is not something I didn#t
-expect from a fs that is in development for so long.
-
-So I wonder what the general stability epxectation for f2fs is - is it just
-meant to be an experimental fs not used for any data, or am I just unlucky
-and hit so many disastrous bugs by chance?
-
-(It's really too bad, it's the only fs in linux that has stable write
-performance on SMR drives at this time).
-
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 7dd63b7..1a3fb57 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1545,8 +1545,10 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < nats_in_cursum(sum); i++) {
+ 		block_t addr = le32_to_cpu(nat_in_journal(sum, i).block_addr);
+ 		nid = le32_to_cpu(nid_in_journal(sum, i));
+-		if (addr == NULL_ADDR)
+-			add_free_nid(sbi, nid, true);
++		if (addr == NULL_ADDR) {
++			if (add_free_nid(sbi, nid, true) < 0)
++				break;
++		}
+ 		else
+ 			remove_free_nid(nm_i, nid);
+ 	}
+@@ -1879,8 +1881,10 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 		__clear_nat_cache_dirty(NM_I(sbi), ne);
+ 		up_write(&NM_I(sbi)->nat_tree_lock);
+ 
+-		if (nat_get_blkaddr(ne) == NULL_ADDR)
+-			add_free_nid(sbi, nid, false);
++		if (nat_get_blkaddr(ne) == NULL_ADDR) {
++			if (add_free_nid(sbi, nid, false) < 0)
++				break;
++		}
+ 	}
+ 
+ 	if (to_journal)
 -- 
-                The choice of a       Deliantra, the free code+content MORPG
-      -----==-     _GNU_              http://www.deliantra.net
-      ----==-- _       generation
-      ---==---(_)__  __ ____  __      Marc Lehmann
-      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-      -=====/_/_//_/\_,_/ /_/\_\
+2.1.4
+
 
 ------------------------------------------------------------------------------
