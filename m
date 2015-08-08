@@ -1,24 +1,24 @@
 From: Chao Yu <yuchaochina@hotmail.com>
 Subject: Re: [PATCH] f2fs:Fix concurrent access issues in the
 	function recover_dentry
-Date: Sat, 8 Aug 2015 16:26:49 +0800
-Message-ID: <BLU436-SMTP496AF63513591ACCD50621AB720@phx.gbl>
+Date: Sat, 8 Aug 2015 16:30:20 +0800
+Message-ID: <BLU436-SMTP2390F369327E9D83C3DA9CFAB720@phx.gbl>
 References: <1439003569-17358-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0 (Mac OS X Mail 8.0 \(1990.1\))
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1ZNzUM-0005Wq-3o
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchaochina@hotmail.com>) id 1ZNzWW-0005s3-RQ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 08:28:22 +0000
-Received: from blu004-omc1s29.hotmail.com ([65.55.116.40])
+	Sat, 08 Aug 2015 08:30:36 +0000
+Received: from blu004-omc1s5.hotmail.com ([65.55.116.16])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ZNzUL-0000C4-Bd
+	(Exim 4.76) id 1ZNzWU-0000Hm-RF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 08:28:22 +0000
+	Sat, 08 Aug 2015 08:30:36 +0000
 In-Reply-To: <1439003569-17358-1-git-send-email-xerofoify@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,5 +32,46 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Nicholas Krause <xerofoify@gmail.com>
 Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-
-------------------------------------------------------------------------------
+PiBPbiBBdWcgOCwgMjAxNSwgYXQgMTE6MTIgQU0sIE5pY2hvbGFzIEtyYXVzZSA8eGVyb2ZvaWZ5
+QGdtYWlsLmNvbT4gd3JvdGU6Cj4gCj4gVGhpcyBmaXhlcyBjb25jdXJyZW50IGFjY2VzcyBpc3N1
+ZXMgaW4gdGhlIGZ1bmN0aW9uIHJlY292ZXJfZGVudHJ5Cj4gYnkgbG9ja2luZyBhbmQgbG9ja2lu
+ZyBhbm90aGVyIHRoZSBibG9jayBsYWJlbGVkIHJldHJ5IHdpdGggdGhlCj4gZnVuY3Rpb25zIGYy
+ZnNfbG9ja19vcC9mMmZzX3VubG9ja19vcCBvbiBhIHBvaW50ZXIgb2YgdGhlCj4gc3VwZXJibG9j
+ayB1c2VkIGJ5IHRoZSBwYXNzZWQgaW5vZGUgc3RydWN0dXJlIHBvaW50ZXIgYnkgdGhpcwoKUmVj
+b3ZlcnkgYW5kIGNoZWNrcG9pbnQgd2lsbCBibG9jayBlYWNoIG90aGVyIHdpdGggY3BfbXV0ZXgg
+Zmlyc3RseSwKc28gZjJmc19sb2NrX2FsbCBpbiBpdHMgb25seSBjYWxsZXIgY2hlY2twb2ludCBo
+YXZlIG5vIGNoYW5jZSB0byByYWNlCndpdGggYW55IGYyZnNfbG9ja19vcCBpbiByZWNvdmVyeSBw
+cm9jZWR1cmUuCgpJdOKAmXMgbm90IG5lZWRlZCB0byBjYWxsIGYyZnNfbG9ja19vcCBoZXJlLgoK
+VGhhbmtzLAoKPiAKPiBTaWduZWQtb2ZmLWJ5OiBOaWNob2xhcyBLcmF1c2UgPHhlcm9mb2lmeUBn
+bWFpbC5jb20+Cj4gLS0tCj4gZnMvZjJmcy9yZWNvdmVyeS5jIHwgNiArKysrKy0KPiAxIGZpbGUg
+Y2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBh
+L2ZzL2YyZnMvcmVjb3ZlcnkuYyBiL2ZzL2YyZnMvcmVjb3ZlcnkuYwo+IGluZGV4IDI0YThjMWQu
+LmI4NmVhMjkgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9yZWNvdmVyeS5jCj4gKysrIGIvZnMvZjJm
+cy9yZWNvdmVyeS5jCj4gQEAgLTcwLDYgKzcwLDcgQEAgc3RhdGljIHN0cnVjdCBmc3luY19pbm9k
+ZV9lbnRyeSAqZ2V0X2ZzeW5jX2lub2RlKHN0cnVjdCBsaXN0X2hlYWQgKmhlYWQsCj4gc3RhdGlj
+IGludCByZWNvdmVyX2RlbnRyeShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgcGFnZSAqaXBh
+Z2UpCj4gewo+IAlzdHJ1Y3QgZjJmc19pbm9kZSAqcmF3X2lub2RlID0gRjJGU19JTk9ERShpcGFn
+ZSk7Cj4gKwlzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkgPSBGMkZTX0lfU0IoaW5vZGUpOwo+IAlu
+aWRfdCBwaW5vID0gbGUzMl90b19jcHUocmF3X2lub2RlLT5pX3Bpbm8pOwo+IAlzdHJ1Y3QgZjJm
+c19kaXJfZW50cnkgKmRlOwo+IAlzdHJ1Y3QgcXN0ciBuYW1lOwo+IEBAIC05Nyw2ICs5OCw3IEBA
+IHN0YXRpYyBpbnQgcmVjb3Zlcl9kZW50cnkoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IHBh
+Z2UgKmlwYWdlKQo+IAkJZ290byBvdXRfZXJyOwo+IAl9Cj4gcmV0cnk6Cj4gKwlmMmZzX2xvY2tf
+b3Aoc2JpKTsKPiAJZGUgPSBmMmZzX2ZpbmRfZW50cnkoZGlyLCAmbmFtZSwgJnBhZ2UpOwo+IAlp
+ZiAoZGUgJiYgaW5vZGUtPmlfaW5vID09IGxlMzJfdG9fY3B1KGRlLT5pbm8pKQo+IAkJZ290byBv
+dXRfdW5tYXBfcHV0Owo+IEBAIC0xMTcsNiArMTE5LDcgQEAgcmV0cnk6Cj4gCQl9Cj4gCQlmMmZz
+X2RlbGV0ZV9lbnRyeShkZSwgcGFnZSwgZGlyLCBlaW5vZGUpOwo+IAkJaXB1dChlaW5vZGUpOwo+
+ICsJCWYyZnNfdW5sb2NrX29wKHNiaSk7Cj4gCQlnb3RvIHJldHJ5Owo+IAl9Cj4gCWVyciA9IF9f
+ZjJmc19hZGRfbGluayhkaXIsICZuYW1lLCBpbm9kZSwgaW5vZGUtPmlfaW5vLCBpbm9kZS0+aV9t
+b2RlKTsKPiBAQCAtMTI5LDcgKzEzMiw4IEBAIHJldHJ5Ogo+IAkJYWRkX2RpcnR5X2Rpcl9pbm9k
+ZShkaXIpOwo+IAkJc2V0X2lub2RlX2ZsYWcoRjJGU19JKGRpciksIEZJX0RFTEFZX0lQVVQpOwo+
+IAl9Cj4gLQo+ICsKPiArCWYyZnNfdW5sb2NrX29wKHNiaSk7Cj4gCWdvdG8gb3V0Owo+IAo+IG91
+dF91bm1hcF9wdXQ6Cj4gLS0gCj4gMi4xLjQKPiAKPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4
+LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
+b3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9s
+aW51eC1mMmZzLWRldmVsCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
+aXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMu
+c291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
