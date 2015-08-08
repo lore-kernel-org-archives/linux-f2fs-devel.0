@@ -1,25 +1,37 @@
-From: Chao Yu <yuchaochina@hotmail.com>
-Subject: Re: [PATCH] f2fs:Fix concurrent access issues in the
-	function recover_dentry
-Date: Sat, 8 Aug 2015 16:30:20 +0800
-Message-ID: <BLU436-SMTP2390F369327E9D83C3DA9CFAB720@phx.gbl>
-References: <1439003569-17358-1-git-send-email-xerofoify@gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 8.0 \(1990.1\))
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Marc Lehmann <schmorp@schmorp.de>
+Subject: f2fs for SMR drives
+Date: Sat, 8 Aug 2015 15:51:17 +0200
+Message-ID: <20150808135117.GA4594@schmorp.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1ZNzWW-0005s3-RQ
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1ZO4lj-0000wO-Mx
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 08:30:36 +0000
-Received: from blu004-omc1s5.hotmail.com ([65.55.116.16])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ZNzWU-0000Hm-RF
+	Sat, 08 Aug 2015 14:06:39 +0000
+Received: from mail.nethype.de ([5.9.56.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZO4lh-0005ZH-M1
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 08:30:36 +0000
-In-Reply-To: <1439003569-17358-1-git-send-email-xerofoify@gmail.com>
+	Sat, 08 Aug 2015 14:06:39 +0000
+Received: from [10.0.0.5] (helo=doom.schmorp.de)
+	by mail.nethype.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1ZO4Wr-0006Or-CP
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Aug 2015 13:51:17 +0000
+Received: from [10.0.0.1] (helo=cerebro.laendle)
+	by doom.schmorp.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1ZO4Wr-0000fV-7t
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Aug 2015 13:51:17 +0000
+Received: from root by cerebro.laendle with local (Exim 4.84)
+	(envelope-from <root@schmorp.de>) id 1ZO4Wr-0001DW-7I
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Aug 2015 15:51:17 +0200
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,49 +41,136 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Nicholas Krause <xerofoify@gmail.com>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-PiBPbiBBdWcgOCwgMjAxNSwgYXQgMTE6MTIgQU0sIE5pY2hvbGFzIEtyYXVzZSA8eGVyb2ZvaWZ5
-QGdtYWlsLmNvbT4gd3JvdGU6Cj4gCj4gVGhpcyBmaXhlcyBjb25jdXJyZW50IGFjY2VzcyBpc3N1
-ZXMgaW4gdGhlIGZ1bmN0aW9uIHJlY292ZXJfZGVudHJ5Cj4gYnkgbG9ja2luZyBhbmQgbG9ja2lu
-ZyBhbm90aGVyIHRoZSBibG9jayBsYWJlbGVkIHJldHJ5IHdpdGggdGhlCj4gZnVuY3Rpb25zIGYy
-ZnNfbG9ja19vcC9mMmZzX3VubG9ja19vcCBvbiBhIHBvaW50ZXIgb2YgdGhlCj4gc3VwZXJibG9j
-ayB1c2VkIGJ5IHRoZSBwYXNzZWQgaW5vZGUgc3RydWN0dXJlIHBvaW50ZXIgYnkgdGhpcwoKUmVj
-b3ZlcnkgYW5kIGNoZWNrcG9pbnQgd2lsbCBibG9jayBlYWNoIG90aGVyIHdpdGggY3BfbXV0ZXgg
-Zmlyc3RseSwKc28gZjJmc19sb2NrX2FsbCBpbiBpdHMgb25seSBjYWxsZXIgY2hlY2twb2ludCBo
-YXZlIG5vIGNoYW5jZSB0byByYWNlCndpdGggYW55IGYyZnNfbG9ja19vcCBpbiByZWNvdmVyeSBw
-cm9jZWR1cmUuCgpJdOKAmXMgbm90IG5lZWRlZCB0byBjYWxsIGYyZnNfbG9ja19vcCBoZXJlLgoK
-VGhhbmtzLAoKPiAKPiBTaWduZWQtb2ZmLWJ5OiBOaWNob2xhcyBLcmF1c2UgPHhlcm9mb2lmeUBn
-bWFpbC5jb20+Cj4gLS0tCj4gZnMvZjJmcy9yZWNvdmVyeS5jIHwgNiArKysrKy0KPiAxIGZpbGUg
-Y2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdpdCBh
-L2ZzL2YyZnMvcmVjb3ZlcnkuYyBiL2ZzL2YyZnMvcmVjb3ZlcnkuYwo+IGluZGV4IDI0YThjMWQu
-LmI4NmVhMjkgMTAwNjQ0Cj4gLS0tIGEvZnMvZjJmcy9yZWNvdmVyeS5jCj4gKysrIGIvZnMvZjJm
-cy9yZWNvdmVyeS5jCj4gQEAgLTcwLDYgKzcwLDcgQEAgc3RhdGljIHN0cnVjdCBmc3luY19pbm9k
-ZV9lbnRyeSAqZ2V0X2ZzeW5jX2lub2RlKHN0cnVjdCBsaXN0X2hlYWQgKmhlYWQsCj4gc3RhdGlj
-IGludCByZWNvdmVyX2RlbnRyeShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgcGFnZSAqaXBh
-Z2UpCj4gewo+IAlzdHJ1Y3QgZjJmc19pbm9kZSAqcmF3X2lub2RlID0gRjJGU19JTk9ERShpcGFn
-ZSk7Cj4gKwlzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkgPSBGMkZTX0lfU0IoaW5vZGUpOwo+IAlu
-aWRfdCBwaW5vID0gbGUzMl90b19jcHUocmF3X2lub2RlLT5pX3Bpbm8pOwo+IAlzdHJ1Y3QgZjJm
-c19kaXJfZW50cnkgKmRlOwo+IAlzdHJ1Y3QgcXN0ciBuYW1lOwo+IEBAIC05Nyw2ICs5OCw3IEBA
-IHN0YXRpYyBpbnQgcmVjb3Zlcl9kZW50cnkoc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IHBh
-Z2UgKmlwYWdlKQo+IAkJZ290byBvdXRfZXJyOwo+IAl9Cj4gcmV0cnk6Cj4gKwlmMmZzX2xvY2tf
-b3Aoc2JpKTsKPiAJZGUgPSBmMmZzX2ZpbmRfZW50cnkoZGlyLCAmbmFtZSwgJnBhZ2UpOwo+IAlp
-ZiAoZGUgJiYgaW5vZGUtPmlfaW5vID09IGxlMzJfdG9fY3B1KGRlLT5pbm8pKQo+IAkJZ290byBv
-dXRfdW5tYXBfcHV0Owo+IEBAIC0xMTcsNiArMTE5LDcgQEAgcmV0cnk6Cj4gCQl9Cj4gCQlmMmZz
-X2RlbGV0ZV9lbnRyeShkZSwgcGFnZSwgZGlyLCBlaW5vZGUpOwo+IAkJaXB1dChlaW5vZGUpOwo+
-ICsJCWYyZnNfdW5sb2NrX29wKHNiaSk7Cj4gCQlnb3RvIHJldHJ5Owo+IAl9Cj4gCWVyciA9IF9f
-ZjJmc19hZGRfbGluayhkaXIsICZuYW1lLCBpbm9kZSwgaW5vZGUtPmlfaW5vLCBpbm9kZS0+aV9t
-b2RlKTsKPiBAQCAtMTI5LDcgKzEzMiw4IEBAIHJldHJ5Ogo+IAkJYWRkX2RpcnR5X2Rpcl9pbm9k
-ZShkaXIpOwo+IAkJc2V0X2lub2RlX2ZsYWcoRjJGU19JKGRpciksIEZJX0RFTEFZX0lQVVQpOwo+
-IAl9Cj4gLQo+ICsKPiArCWYyZnNfdW5sb2NrX29wKHNiaSk7Cj4gCWdvdG8gb3V0Owo+IAo+IG91
-dF91bm1hcF9wdXQ6Cj4gLS0gCj4gMi4xLjQKPiAKPiAKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
-PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4
-LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
-b3JnZS5uZXQKPiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9s
-aW51eC1mMmZzLWRldmVsCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
-aXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMu
-c291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Hi!
+
+Sorry if this is the wrong address to ask about "user problems".
+
+I am currently investigating various filesystems for use on drive-managed SMR
+drives (e.g. the seagate 8TB disks). These drives have characteristics not
+unlike flash (they want to be written in large batches), but are, of course,
+still quite different.
+
+I initially tried btrfs, ext4, xfs which, not unsurprisingly, failed rather
+miserably after a few hundred GB, down to ~30mb/s (or 20 in case of btrfs).
+
+I also tried nilfs, which should be an almost perfect match for this
+technology, but it performed even worse (I have no clue why, maybe nilfs
+skips sectors when writing, which would explain it).
+
+As a last resort, I tried f2fs, which initially performed absolutely great
+(average write speed ~130mb/s over multiple terabytes).
+
+However, I am running into a number of problems, and wonder if f2fs can
+somehow be configured to work right.
+
+First of all, I did most of my tests on linux-3.18.14, and recently
+switched to 4.1.4. The filesystems were formatted with "-s7", the idea
+being that writes always occur in 256MB blocks as much as possible, and
+most importantly, are freed in 256MB blocks, to keep fragmentation low.
+
+Mount options included noatime or noatime,inline_xattr,inline_data,inline_dentry,flush_merge,extent_cache
+(I suspect 4.1.4 doesn't implement flush_merge yet?).
+
+My first problem considers ENOSPC problem - I was happily able to write to a
+100% utilized filesystem with cp and rsync continuing to write, not receiving
+any error, but no write activity occuring (and the files never ending up on
+the filesystem). Is this a known bug?
+
+My second, much bigger problem, considers defragmentation. For testing,
+I created a 128GB partition and kept writing an assortment of 200kb -
+multiple megabyte files to it. To stress test it, I kept deleting random
+files to create holes. after a while (around 84% utilisation), write
+performance went down to less than 1MB/s, and is at this leve ever since
+for this filesystem.
+
+I kept the filesystem idle for a night to hope for defragmentation, but
+nothing happened. Suspecting in-place-updates to be the culprit, I tried
+various configurations in the hope of disabling them (such as setting
+ipu_policy to 4 or 8, and/or setting min_ipu_util to 0 or 100), but that
+also doesn't seem to have any effect whatsoever.
+
+>From the description of f2fs, it seems to be quite close to ideal for these
+drives, as it should be possible to write mostly linearly, and keep
+fragmentation low by freeing big sequentials sections of data.
+
+Pity that it's so close and then fails so miserably after performing so
+admirably initially - can anything be done about this, in way of
+configuration, or is my understanding of how f2fs writes and garbage collects
+flawed?
+
+Here is the output of /sys/kernel/debug/f2fs/status for the filesysstem in
+question. This was after keeping it idle for a night, then unmounting and
+remounting the volume. Before the unmount, it had very high values for in
+the GC calls section, but no reads have been observed during the night,
+just writes (using dstat -Dsdx).
+
+   =====[ partition info(dm-9). #1 ]=====
+   [SB: 1] [CP: 2] [SIT: 6] [NAT: 114] [SSA: 130] [MAIN: 65275(OverProv:2094 Resv:1456)]
+
+   Utilization: 84% (27320244 valid blocks)
+     - Node: 31936 (Inode: 5027, Other: 26909)
+     - Data: 27288308
+     - Inline_data Inode: 0
+     - Inline_dentry Inode: 0
+
+   Main area: 65275 segs, 9325 secs 9325 zones
+     - COLD  data: 12063, 1723, 1723
+     - WARM  data: 12075, 1725, 1725
+     - HOT   data: 65249, 9321, 9321
+     - Dir   dnode: 65269, 9324, 9324
+     - File   dnode: 24455, 3493, 3493
+     - Indir nodes: 65260, 9322, 9322
+
+     - Valid: 52278
+     - Dirty: 9
+     - Prefree: 0
+     - Free: 12988 (126)
+
+   CP calls: 10843
+   GC calls: 91 (BG: 11)
+     - data segments : 21 (0)
+     - node segments : 70 (0)
+   Try to move 30355 blocks (BG: 0)
+     - data blocks : 7360 (0)
+     - node blocks : 22995 (0)
+
+   Extent Hit Ratio: 8267 / 24892
+
+   Extent Tree Count: 3130
+
+   Extent Node Count: 3138
+
+   Balancing F2FS Async:
+     - inmem:    0, wb:    0
+     - nodes:    0 in 5672
+     - dents:    0 in dirs:   0
+     - meta:    0 in 3567
+     - NATs:         0/     9757
+     - SITs:         0/    65275
+     - free_nids:       868
+
+   Distribution of User Blocks: [ valid | invalid | free ]
+     [------------------------------------------||--------]
+
+   IPU: 0 blocks
+   SSR: 0 blocks in 0 segments
+   LFS: 49114 blocks in 95 segments
+
+   BDF: 64, avg. vblocks: 1254
+
+   Memory: 48948 KB
+     - static: 11373 KB
+     - cached: 619 KB
+     - paged : 36956 KB
+
+-- 
+                The choice of a       Deliantra, the free code+content MORPG
+      -----==-     _GNU_              http://www.deliantra.net
+      ----==-- _       generation
+      ---==---(_)__  __ ____  __      Marc Lehmann
+      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+      -=====/_/_//_/\_,_/ /_/\_\
+
+------------------------------------------------------------------------------
