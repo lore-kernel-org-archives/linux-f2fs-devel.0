@@ -1,35 +1,26 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: Data lost in Android app for not write new checkpoint
-Date: Fri, 07 Aug 2015 17:50:21 +0800
-Message-ID: <017201d0d0f6$9fa7f060$def7d120$@samsung.com>
-References: <55BADD52.9060901@huawei.com>
-	<01a401d0cb7e$bc483130$34d89390$@samsung.com>
-	<55C0BB25.1070208@huawei.com>
-	<012201d0d031$3baddf90$b3099eb0$@samsung.com>
-	<55C44F8D.9030005@huawei.com>
+From: Nicholas Krause <xerofoify@gmail.com>
+Subject: [PATCH] f2fs:Fix concurrent access issues in the
+	function recover_dentry
+Date: Fri,  7 Aug 2015 23:12:49 -0400
+Message-ID: <1439003569-17358-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZNeJN-00065o-Gw
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <xerofoify@gmail.com>) id 1ZNuZA-0003id-FW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Aug 2015 09:51:37 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZNeJL-0000FO-Cy
+	Sat, 08 Aug 2015 03:13:00 +0000
+Received: from mail-ig0-f169.google.com ([209.85.213.169])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZNuZ9-0008Ha-Qa
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Aug 2015 09:51:37 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NSP02J4ZI1S04E0@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 07 Aug 2015 18:51:28 +0900 (KST)
-In-reply-to: 
-Content-language: zh-cn
+	Sat, 08 Aug 2015 03:13:00 +0000
+Received: by igr7 with SMTP id 7so41944462igr.0
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 07 Aug 2015 20:12:54 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,22 +30,59 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'He YunLei' <heyunlei@huawei.com>
-Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-> Since we don't know when the data will be flushed and also what part of
-> file will be flushed, at the time of abnormal pow-cut, the data/metadata
-> of flushed file can be partial in device. So I don't think it's not
+This fixes concurrent access issues in the function recover_dentry
+by locking and locking another the block labeled retry with the
+functions f2fs_lock_op/f2fs_unlock_op on a pointer of the
+superblock used by the passed inode structure pointer by this
 
-Should be:
+Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+---
+ fs/f2fs/recovery.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-of flushed file can be partial in device. So I don't think it's
-
-My bad, sorry about that.
-
-> possible for us to recover this kind of file with current fsync/recovery
-> policy of f2fs.
-
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 24a8c1d..b86ea29 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -70,6 +70,7 @@ static struct fsync_inode_entry *get_fsync_inode(struct list_head *head,
+ static int recover_dentry(struct inode *inode, struct page *ipage)
+ {
+ 	struct f2fs_inode *raw_inode = F2FS_INODE(ipage);
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	nid_t pino = le32_to_cpu(raw_inode->i_pino);
+ 	struct f2fs_dir_entry *de;
+ 	struct qstr name;
+@@ -97,6 +98,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage)
+ 		goto out_err;
+ 	}
+ retry:
++	f2fs_lock_op(sbi);
+ 	de = f2fs_find_entry(dir, &name, &page);
+ 	if (de && inode->i_ino == le32_to_cpu(de->ino))
+ 		goto out_unmap_put;
+@@ -117,6 +119,7 @@ retry:
+ 		}
+ 		f2fs_delete_entry(de, page, dir, einode);
+ 		iput(einode);
++		f2fs_unlock_op(sbi);
+ 		goto retry;
+ 	}
+ 	err = __f2fs_add_link(dir, &name, inode, inode->i_ino, inode->i_mode);
+@@ -129,7 +132,8 @@ retry:
+ 		add_dirty_dir_inode(dir);
+ 		set_inode_flag(F2FS_I(dir), FI_DELAY_IPUT);
+ 	}
+-
++
++	f2fs_unlock_op(sbi);
+ 	goto out;
+ 
+ out_unmap_put:
+-- 
+2.1.4
 
 
 ------------------------------------------------------------------------------
