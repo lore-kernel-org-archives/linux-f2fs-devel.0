@@ -1,26 +1,37 @@
-From: Nicholas Krause <xerofoify@gmail.com>
-Subject: [PATCH] f2fs:Fix error handling for calls to various
-	functions in the function recover_inline_data
-Date: Sat,  8 Aug 2015 11:27:09 -0400
-Message-ID: <1439047629-27995-1-git-send-email-xerofoify@gmail.com>
+From: Marc Lehmann <schmorp@schmorp.de>
+Subject: general stability of f2fs?
+Date: Sat, 8 Aug 2015 22:50:03 +0200
+Message-ID: <20150808205003.GA6546@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <xerofoify@gmail.com>) id 1ZO61m-0008Gy-PV
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1ZOB4G-0007GV-1t
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 15:27:18 +0000
-Received: from mail-ig0-f170.google.com ([209.85.213.170])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ZO61m-0001KF-0G
+	Sat, 08 Aug 2015 20:50:12 +0000
+Received: from mail.nethype.de ([5.9.56.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZOB4D-0000MM-SG
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Aug 2015 15:27:18 +0000
-Received: by igbpg9 with SMTP id pg9so47478226igb.0
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 08 Aug 2015 08:27:12 -0700 (PDT)
+	Sat, 08 Aug 2015 20:50:12 +0000
+Received: from [10.0.0.5] (helo=doom.schmorp.de)
+	by mail.nethype.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1ZOB47-0005H2-Bd
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Aug 2015 20:50:03 +0000
+Received: from [10.0.0.1] (helo=cerebro.laendle)
+	by doom.schmorp.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1ZOB47-0004tZ-70
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Aug 2015 20:50:03 +0000
+Received: from root by cerebro.laendle with local (Exim 4.84)
+	(envelope-from <root@schmorp.de>) id 1ZOB47-0001iJ-6R
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Aug 2015 22:50:03 +0200
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,45 +41,57 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-This fixes error handling for calls to various functions in the
-function  recover_inline_data to check if these particular functions
-either return a error code or the boolean value false to signal their
-caller they have failed internally and if this arises return false
-to signal failure immediately to the caller of recover_inline_data
-as we cannot continue after failures to calling either the function
-truncate_inline_inode or truncate_blocks.
+Hi!
 
-Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
----
- fs/f2fs/inline.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I did some more experiments, and wonder about the general stabiulity of f2fs.
+I have not managed to keep an f2fs filesystem that worked for longer than a
+few days.
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index a13ffcc..0ddab9b 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -274,12 +274,14 @@ process_inline:
- 	if (f2fs_has_inline_data(inode)) {
- 		ipage = get_node_page(sbi, inode->i_ino);
- 		f2fs_bug_on(sbi, IS_ERR(ipage));
--		truncate_inline_inode(ipage, 0);
-+		if (!truncate_inline_inode(ipage, 0))
-+			return false;
- 		f2fs_clear_inline_inode(inode);
- 		update_inode(inode, ipage);
- 		f2fs_put_page(ipage, 1);
- 	} else if (ri && (ri->i_inline & F2FS_INLINE_DATA)) {
--		truncate_blocks(inode, 0, false);
-+		if (truncate_blocks(inode, 0, false))
-+			return false;
- 		goto process_inline;
- 	}
- 	return false;
+For example, a few days ago I created an 8TB volume and copied 2TB of data to
+it, which worked until I hot the (very low...) 32k limit on the number of
+subdirectories.
+
+I moved some directoriesd into a single subdirectory, and continued.
+Everything seemed fine.
+
+Today I ran fsck.f2fs on the fs, which found 4 inodes with wrong link counts
+(generally higher than fsck counted). It asked me whether to fix this, which
+I did.
+
+I then did another fsck run, and was greeted with tens of thousands of
+errors:
+
+http://ue.tst.eu/f692bac9abbe4e910787adee18ec52be.txt
+
+Mounting made the box unusable for multiple minutes, probably due to the
+amount of backtraces:
+
+http://ue.tst.eu/6243cc344a943d95a20907ecbc37061f.txt
+
+The data is toast (which is fine, I am still experimenting only), but this,
+the weird write behaviour, the fact that you don#t get signalled on ENOSPC
+make me wonder what the general status of f2fs is.
+
+It *seems* to be in actual use for a number of years now, and I would expect
+small hiccups and problems, so backups would be advised, but this level of
+brokenness (I only tested linux 3.18.14 and 4.1.4) is not something I didn#t
+expect from a fs that is in development for so long.
+
+So I wonder what the general stability epxectation for f2fs is - is it just
+meant to be an experimental fs not used for any data, or am I just unlucky
+and hit so many disastrous bugs by chance?
+
+(It's really too bad, it's the only fs in linux that has stable write
+performance on SMR drives at this time).
+
 -- 
-2.1.4
-
+                The choice of a       Deliantra, the free code+content MORPG
+      -----==-     _GNU_              http://www.deliantra.net
+      ----==-- _       generation
+      ---==---(_)__  __ ____  __      Marc Lehmann
+      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+      -=====/_/_//_/\_,_/ /_/\_\
 
 ------------------------------------------------------------------------------
