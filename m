@@ -1,26 +1,26 @@
 From: Nicholas Krause <xerofoify@gmail.com>
-Subject: [PATCH] f2fs:Fix error handling in the function
-	recover_inline_data
-Date: Sun,  9 Aug 2015 16:12:07 -0400
-Message-ID: <1439151127-28063-1-git-send-email-xerofoify@gmail.com>
+Subject: [PATCH] f2fs:Fix incorrect return statement in the
+	function f2fs_ioc_release_volatile_write
+Date: Sun,  9 Aug 2015 23:12:38 -0400
+Message-ID: <1439176358-27664-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <xerofoify@gmail.com>) id 1ZOWx8-0008GX-57
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <xerofoify@gmail.com>) id 1ZOdW7-0001fa-SE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 09 Aug 2015 20:12:18 +0000
-Received: from mail-ig0-f179.google.com ([209.85.213.179])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ZOWx6-0000R4-5z
+	Mon, 10 Aug 2015 03:12:51 +0000
+Received: from mail-io0-f171.google.com ([209.85.223.171])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZOdW5-0000G1-Tz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 09 Aug 2015 20:12:18 +0000
-Received: by igfj19 with SMTP id j19so38548624igf.1
+	Mon, 10 Aug 2015 03:12:51 +0000
+Received: by ioii16 with SMTP id i16so157523708ioi.0
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 09 Aug 2015 13:12:10 -0700 (PDT)
+	Sun, 09 Aug 2015 20:12:44 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,31 +33,33 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This fixes error handling in the function recover_inline_data
-to check if the function call to truncate_inline_inode has
-failed by returning false and if so return immediately to the
-caller of recover_inline_data by returning false to signal a
-internal failure had occurred when calling this particular function.
+This fixes the incorrect return statement at the end of the function
+f2fs_ioc_release_volatile_write's body for returning zero as this is
+incorrect due to the function call before this return statement to
+the function punch_hole being able to fail and we should return this
+function's return fail directly in order to signal to callers of the
+function f2fs_ioc_release_volatile if a failure arises with this call
+to punch_hole.
 
 Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
 ---
- fs/f2fs/inline.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/file.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index a13ffcc..e237c44 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -274,7 +274,8 @@ process_inline:
- 	if (f2fs_has_inline_data(inode)) {
- 		ipage = get_node_page(sbi, inode->i_ino);
- 		f2fs_bug_on(sbi, IS_ERR(ipage));
--		truncate_inline_inode(ipage, 0);
-+		if (!truncate_inline_inode(ipage, 0))
-+			return false;
- 		f2fs_clear_inline_inode(inode);
- 		update_inode(inode, ipage);
- 		f2fs_put_page(ipage, 1);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index b0f38c3..ec323b4 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1369,8 +1369,7 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
+ 	if (!f2fs_is_first_block_written(inode))
+ 		return truncate_partial_data_page(inode, 0, true);
+ 
+-	punch_hole(inode, 0, F2FS_BLKSIZE);
+-	return 0;
++	return punch_hole(inode, 0, F2FS_BLKSIZE);
+ }
+ 
+ static int f2fs_ioc_abort_volatile_write(struct file *filp)
 -- 
 2.1.4
 
