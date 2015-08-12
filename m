@@ -1,58 +1,36 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH] f2fs: do not write any node pages related to
-	orphan inodes
-Date: Wed, 12 Aug 2015 17:45:28 +0800
-Message-ID: <00b901d0d4e3$b9a4e2c0$2ceea840$@samsung.com>
-References: <1439330562-17646-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH] MAINTAINERS: add myself as a dedicated reviewer of f2fs
+Date: Wed, 12 Aug 2015 17:47:08 +0800
+Message-ID: <00bb01d0d4e3$fee6fd00$fcb4f700$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1439330562-17646-1-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+I volunteer to be a dedicated reviewer of f2fs, add my email address in
+maintainship entry of f2fs.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, August 12, 2015 6:03 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH] f2fs: do not write any node pages related to orphan inodes
-> 
-> We should not write node pages when deleting orphan inodes.
-> In order to do that, we can eaisly set POR_DOING flag earlier before entering
-> orphan inode routine.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-If no error occurs in recover_orphan_inodes, it will clear SBI_POR_DOING before
-return, so our protect region is broken since we remove SBI_POR_DOING setting in
-the beginning of recover_fsync_data.
-
-How about removing all SBI_POR_DOING related ops in recover_orphan_inodes?
-
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/recovery.c | 3 ---
->  fs/f2fs/super.c    | 6 +++++-
->  2 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index d2ef0c9..cdcca7c 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -545,9 +545,6 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
-> 
->  	INIT_LIST_HEAD(&inode_list);
-> 
-> -	/* step #1: find fsynced inode numbers */
-
-Nitpick, this makes the left comment "/* step #2: recover data */" looks
-strange, how about modifying the left one too?
-
-Thanks,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cbf6113..bb5e3a9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4406,6 +4406,7 @@ F:	include/linux/fscache*.h
+ F2FS FILE SYSTEM
+ M:	Jaegeuk Kim <jaegeuk@kernel.org>
+ M:	Changman Lee <cm224.lee@samsung.com>
++R:	Chao Yu <chao2.yu@samsung.com>
+ L:	linux-f2fs-devel@lists.sourceforge.net
+ W:	http://en.wikipedia.org/wiki/F2FS
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+-- 
+2.4.2
