@@ -1,71 +1,114 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: f2fs: callers take care of the page from bio error
-Date: Wed, 12 Aug 2015 13:40:10 +0300
-Message-ID: <20150812104009.GB22571@mwanda>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: do not write any node pages related
+ to orphan inodes
+Date: Wed, 12 Aug 2015 10:10:41 -0700
+Message-ID: <20150812171041.GA27478@jaegeuk-mac02.mot.com>
+References: <1439330562-17646-1-git-send-email-jaegeuk@kernel.org>
+ <00b901d0d4e3$b9a4e2c0$2ceea840$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <dan.carpenter@oracle.com>) id 1ZPTSQ-0000ci-HY
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 12 Aug 2015 10:40:30 +0000
-Received: from userp1040.oracle.com ([156.151.31.81])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ZPTSO-0007d7-KT
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 12 Aug 2015 10:40:30 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <00b901d0d4e3$b9a4e2c0$2ceea840$@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello Jaegeuk Kim,
+Chang log from v1:
+ - remove inappropriate remained flag ops suggested by Chao
 
-The patch 86531d6b84bc: "f2fs: callers take care of the page from bio
-error" from Jul 15, 2015, leads to the following static checker
-warning:
+Thanks,
 
-	fs/f2fs/node.c:1042 ra_node_page()
-	warn: 'err' can be either negative or positive
+>From 8ab2c8bacedb74d35dfe481d43a8fb1291650c39 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Tue, 11 Aug 2015 12:45:39 -0700
+Subject: [PATCH] f2fs: do not write any node pages related to orphan inodes
 
-fs/f2fs/node.c
-  1025  void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
-  1026  {
-  1027          struct page *apage;
-  1028          int err;
-  1029  
-  1030          apage = find_get_page(NODE_MAPPING(sbi), nid);
-  1031          if (apage && PageUptodate(apage)) {
-  1032                  f2fs_put_page(apage, 0);
-  1033                  return;
-  1034          }
-  1035          f2fs_put_page(apage, 0);
-  1036  
-  1037          apage = grab_cache_page(NODE_MAPPING(sbi), nid);
-  1038          if (!apage)
-  1039                  return;
-  1040  
-  1041          err = read_node_page(apage, READA);
-  1042          f2fs_put_page(apage, err ? 1 : 0);
+We should not write node pages when deleting orphan inodes.
+In order to do that, we can eaisly set POR_DOING flag earlier before entering
+orphan inode routine.
 
-In the old code we took errors into consideration but now we treat them
-as LOCKED_PAGE.  Is that intentional?  A lot of the other callers in
-that patch still check for errors...
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/checkpoint.c | 4 ----
+ fs/f2fs/recovery.c   | 4 +---
+ fs/f2fs/super.c      | 6 +++++-
+ 3 files changed, 6 insertions(+), 8 deletions(-)
 
-  1043  }
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 0958c83..890e4d4 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -497,8 +497,6 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	if (!is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG))
+ 		return 0;
+ 
+-	set_sbi_flag(sbi, SBI_POR_DOING);
+-
+ 	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
+ 	orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
+ 
+@@ -514,7 +512,6 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 			err = recover_orphan_inode(sbi, ino);
+ 			if (err) {
+ 				f2fs_put_page(page, 1);
+-				clear_sbi_flag(sbi, SBI_POR_DOING);
+ 				return err;
+ 			}
+ 		}
+@@ -522,7 +519,6 @@ int recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	}
+ 	/* clear Orphan Flag */
+ 	clear_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG);
+-	clear_sbi_flag(sbi, SBI_POR_DOING);
+ 	return 0;
+ }
+ 
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index d2ef0c9..faec2ca 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -545,14 +545,12 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
+ 
+ 	INIT_LIST_HEAD(&inode_list);
+ 
+-	/* step #1: find fsynced inode numbers */
+-	set_sbi_flag(sbi, SBI_POR_DOING);
+-
+ 	/* prevent checkpoint */
+ 	mutex_lock(&sbi->cp_mutex);
+ 
+ 	blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+ 
++	/* step #1: find fsynced inode numbers */
+ 	err = find_fsync_dnodes(sbi, &inode_list);
+ 	if (err)
+ 		goto out;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4db5cd9..cfe3f95 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1165,7 +1165,9 @@ try_onemore:
+ 	mutex_init(&sbi->writepages);
+ 	mutex_init(&sbi->cp_mutex);
+ 	init_rwsem(&sbi->node_write);
+-	clear_sbi_flag(sbi, SBI_POR_DOING);
++
++	/* disallow all the data/node/meta page writes */
++	set_sbi_flag(sbi, SBI_POR_DOING);
+ 	spin_lock_init(&sbi->stat_lock);
+ 
+ 	init_rwsem(&sbi->read_io.io_rwsem);
+@@ -1309,6 +1311,8 @@ try_onemore:
+ 			goto free_kobj;
+ 		}
+ 	}
++	/* recover_fsync_data() cleared this already */
++	clear_sbi_flag(sbi, SBI_POR_DOING);
+ 
+ 	/*
+ 	 * If filesystem is not mounted as read-only then
+-- 
+2.1.1
 
-regards,
-dan carpenter
-
-------------------------------------------------------------------------------
