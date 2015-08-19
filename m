@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 3/9] f2fs: fix incorrect mapping for bmap
-Date: Wed, 19 Aug 2015 19:11:19 +0800
-Message-ID: <017701d0da6f$de5127f0$9af377d0$@samsung.com>
+Subject: [PATCH 4/9] f2fs: add largest/cached stat in extent cache
+Date: Wed, 19 Aug 2015 19:12:20 +0800
+Message-ID: <017801d0da70$02e2ba70$08a82f50$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,188 +12,139 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-The test step is like below:
-1. touch file
-2. truncate -s $((1024*1024)) file
-3. fallocate -o 0 -l $((1024*1024)) file
-4. fibmap.f2fs file
-
-Our result of fibmap.f2fs showed below is not correct:
-
-file_pos   start_blk     end_blk        blks
-       0    -937166132    -937166132           1
-    4096    -937166132    -937166132           1
-    8192    -937166132    -937166132           1
-   12288    -937166132    -937166132           1
-   16384    -937166132    -937166132           1
-   20480    -937166132    -937166132           1
-...
- 1040384    -937166132    -937166132           1
- 1044480    -937166132    -937166132           1
-
-This is because f2fs_map_blocks will return with no error when meeting
-a hole or preallocated block, the caller __get_data_block will map the
-uninitialized variable value to bh->b_blocknr.
-
-Unfortunately generic_block_bmap will neither check the return value of
-get_data() nor check mapping info of buffer_head, result in returning
-the random block address.
-
-After fixing the issue, our result shows correctly:
-
-file_pos   start_blk     end_blk        blks
-       0           0           0         256
+This patch adds to stat the hit count of largest/cached node for showing
+in debugfs.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c | 48 ++++++++++++++++++++++++++++++++++++------------
- fs/f2fs/f2fs.h |  6 ++++++
- 2 files changed, 42 insertions(+), 12 deletions(-)
+ fs/f2fs/debug.c        |  9 +++++++--
+ fs/f2fs/extent_cache.c | 14 +++++++++-----
+ fs/f2fs/f2fs.h         |  8 +++++++-
+ 3 files changed, 23 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 91d4243..2371e69 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -661,7 +661,7 @@ out:
-  *     c. give the block addresses to blockdev
-  */
- static int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
--			int create, bool fiemap)
-+						int create, int flag)
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index bc215fd..1a1a4c6 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -33,6 +33,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 	int i;
+ 
+ 	/* validation check of the segment numbers */
++	si->hit_largest = atomic_read(&sbi->read_hit_largest);
++	si->hit_cached = atomic_read(&sbi->read_hit_cached);
+ 	si->hit_ext = atomic_read(&sbi->read_hit_ext);
+ 	si->total_ext = atomic_read(&sbi->total_hit_ext);
+ 	si->ext_tree = sbi->total_ext_tree;
+@@ -279,8 +281,9 @@ static int stat_show(struct seq_file *s, void *v)
+ 				si->bg_data_blks);
+ 		seq_printf(s, "  - node blocks : %d (%d)\n", si->node_blks,
+ 				si->bg_node_blks);
+-		seq_printf(s, "\nExtent Hit Ratio: %d / %d\n",
+-			   si->hit_ext, si->total_ext);
++		seq_printf(s, "\nExtent Hit Ratio: L1-1:%d L1-2:%d L2:%d / %d\n",
++				si->hit_largest, si->hit_cached,
++				si->hit_ext, si->total_ext);
+ 		seq_printf(s, "\nExtent Tree Count: %d\n", si->ext_tree);
+ 		seq_printf(s, "\nExtent Node Count: %d\n", si->ext_node);
+ 		seq_puts(s, "\nBalancing F2FS Async:\n");
+@@ -371,6 +374,8 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi)
+ 
+ 	atomic_set(&sbi->total_hit_ext, 0);
+ 	atomic_set(&sbi->read_hit_ext, 0);
++	atomic_set(&sbi->read_hit_largest, 0);
++	atomic_set(&sbi->read_hit_cached, 0);
+ 
+ 	atomic_set(&sbi->inline_xattr, 0);
+ 	atomic_set(&sbi->inline_inode, 0);
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index cea5813..5cf217f 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -81,8 +81,8 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode)
+ 	return et;
+ }
+ 
+-static struct extent_node *__lookup_extent_tree(struct extent_tree *et,
+-							unsigned int fofs)
++static struct extent_node *__lookup_extent_tree(struct f2fs_sb_info *sbi,
++				struct extent_tree *et, unsigned int fofs)
  {
- 	unsigned int maxblocks = map->m_len;
- 	struct dnode_of_data dn;
-@@ -695,8 +695,19 @@ static int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 			err = 0;
- 		goto unlock_out;
- 	}
--	if (dn.data_blkaddr == NEW_ADDR && !fiemap)
--		goto put_out;
-+	if (dn.data_blkaddr == NEW_ADDR) {
-+		if (flag == F2FS_GET_BLOCK_BMAP) {
-+			err = -ENOENT;
-+			goto put_out;
-+		} else if (flag == F2FS_GET_BLOCK_READ ||
-+				flag == F2FS_GET_BLOCK_DIO) {
-+			goto put_out;
+ 	struct rb_node *node = et->root.rb_node;
+ 	struct extent_node *en = et->cached_en;
+@@ -90,8 +90,10 @@ static struct extent_node *__lookup_extent_tree(struct extent_tree *et,
+ 	if (en) {
+ 		struct extent_info *cei = &en->ei;
+ 
+-		if (cei->fofs <= fofs && cei->fofs + cei->len > fofs)
++		if (cei->fofs <= fofs && cei->fofs + cei->len > fofs) {
++			stat_inc_cached_node_hit(sbi);
+ 			return en;
 +		}
-+		/*
-+		 * if it is in fiemap call path (flag = F2FS_GET_BLOCK_FIEMAP),
-+		 * mark it as mapped and unwritten block.
-+		 */
-+	}
- 
- 	if (dn.data_blkaddr != NULL_ADDR) {
- 		map->m_flags = F2FS_MAP_MAPPED;
-@@ -711,6 +722,8 @@ static int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 		map->m_flags = F2FS_MAP_NEW | F2FS_MAP_MAPPED;
- 		map->m_pblk = dn.data_blkaddr;
- 	} else {
-+		if (flag == F2FS_GET_BLOCK_BMAP)
-+			err = -ENOENT;
- 		goto put_out;
  	}
  
-@@ -733,7 +746,9 @@ get_next:
- 				err = 0;
- 			goto unlock_out;
- 		}
--		if (dn.data_blkaddr == NEW_ADDR && !fiemap)
-+
-+		if (dn.data_blkaddr == NEW_ADDR &&
-+				flag != F2FS_GET_BLOCK_FIEMAP)
- 			goto put_out;
- 
- 		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-@@ -775,7 +790,7 @@ out:
- }
- 
- static int __get_data_block(struct inode *inode, sector_t iblock,
--			struct buffer_head *bh, int create, bool fiemap)
-+			struct buffer_head *bh, int create, int flag)
- {
- 	struct f2fs_map_blocks map;
- 	int ret;
-@@ -783,7 +798,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
- 	map.m_lblk = iblock;
- 	map.m_len = bh->b_size >> inode->i_blkbits;
- 
--	ret = f2fs_map_blocks(inode, &map, create, fiemap);
-+	ret = f2fs_map_blocks(inode, &map, create, flag);
- 	if (!ret) {
- 		map_bh(bh, inode->i_sb, map.m_pblk);
- 		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
-@@ -793,15 +808,23 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
- }
- 
- static int get_data_block(struct inode *inode, sector_t iblock,
-+			struct buffer_head *bh_result, int create, int flag)
-+{
-+	return __get_data_block(inode, iblock, bh_result, create, flag);
-+}
-+
-+static int get_data_block_dio(struct inode *inode, sector_t iblock,
- 			struct buffer_head *bh_result, int create)
- {
--	return __get_data_block(inode, iblock, bh_result, create, false);
-+	return __get_data_block(inode, iblock, bh_result, create,
-+						F2FS_GET_BLOCK_DIO);
- }
- 
--static int get_data_block_fiemap(struct inode *inode, sector_t iblock,
-+static int get_data_block_bmap(struct inode *inode, sector_t iblock,
- 			struct buffer_head *bh_result, int create)
- {
--	return __get_data_block(inode, iblock, bh_result, create, true);
-+	return __get_data_block(inode, iblock, bh_result, create,
-+						F2FS_GET_BLOCK_BMAP);
- }
- 
- static inline sector_t logical_to_blk(struct inode *inode, loff_t offset)
-@@ -845,7 +868,8 @@ next:
- 	memset(&map_bh, 0, sizeof(struct buffer_head));
- 	map_bh.b_size = len;
- 
--	ret = get_data_block_fiemap(inode, start_blk, &map_bh, 0);
-+	ret = get_data_block(inode, start_blk, &map_bh, 0,
-+					F2FS_GET_BLOCK_FIEMAP);
- 	if (ret)
+ 	while (node) {
+@@ -280,10 +282,11 @@ static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+ 		*ei = et->largest;
+ 		ret = true;
+ 		stat_inc_read_hit(sbi);
++		stat_inc_largest_node_hit(sbi);
  		goto out;
- 
-@@ -1630,7 +1654,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	if (iov_iter_rw(iter) == WRITE)
- 		__allocate_data_blocks(inode, offset, count);
- 
--	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block);
-+	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
- 	if (err < 0 && iov_iter_rw(iter) == WRITE)
- 		f2fs_write_failed(mapping, offset + count);
- 
-@@ -1718,7 +1742,7 @@ static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
- 		if (err)
- 			return err;
  	}
--	return generic_block_bmap(mapping, block, get_data_block);
-+	return generic_block_bmap(mapping, block, get_data_block_bmap);
- }
  
- const struct address_space_operations f2fs_dblock_aops = {
+-	en = __lookup_extent_tree(et, pgofs);
++	en = __lookup_extent_tree(sbi, et, pgofs);
+ 	if (en) {
+ 		*ei = en->ei;
+ 		spin_lock(&sbi->extent_lock);
+@@ -313,7 +316,8 @@ out:
+  * tree must stay unchanged between lookup and insertion.
+  */
+ static struct extent_node *__lookup_extent_tree_ret(struct extent_tree *et,
+-				unsigned int fofs, struct extent_node **prev_ex,
++				unsigned int fofs,
++				struct extent_node **prev_ex,
+ 				struct extent_node **next_ex,
+ 				struct rb_node ***insert_p,
+ 				struct rb_node **insert_parent)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8be7ef0..7a62f6c 100644
+index 7a62f6c..632cc37 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -378,6 +378,12 @@ struct f2fs_map_blocks {
- 	unsigned int m_flags;
- };
- 
-+/* for flag in get_data_block */
-+#define F2FS_GET_BLOCK_READ		0
-+#define F2FS_GET_BLOCK_DIO		1
-+#define F2FS_GET_BLOCK_FIEMAP		2
-+#define F2FS_GET_BLOCK_BMAP		3
-+
- /*
-  * i_advise uses FADVISE_XXX_BIT. We can add additional hints later.
-  */
+@@ -794,6 +794,8 @@ struct f2fs_sb_info {
+ 	atomic_t inplace_count;		/* # of inplace update */
+ 	atomic_t total_hit_ext;			/* # of lookup extent cache */
+ 	atomic_t read_hit_ext;			/* # of hit extent cache */
++	atomic_t read_hit_largest;		/* # of hit largest extent node */
++	atomic_t read_hit_cached;		/* # of hit cached extent node */
+ 	atomic_t inline_xattr;			/* # of inline_xattr inodes */
+ 	atomic_t inline_inode;			/* # of inline_data inodes */
+ 	atomic_t inline_dir;			/* # of inline_dentry inodes */
+@@ -1839,7 +1841,7 @@ struct f2fs_stat_info {
+ 	struct f2fs_sb_info *sbi;
+ 	int all_area_segs, sit_area_segs, nat_area_segs, ssa_area_segs;
+ 	int main_area_segs, main_area_sections, main_area_zones;
+-	int hit_ext, total_ext, ext_tree, ext_node;
++	int hit_largest, hit_cached, hit_ext, total_ext, ext_tree, ext_node;
+ 	int ndirty_node, ndirty_dent, ndirty_dirs, ndirty_meta;
+ 	int nats, dirty_nats, sits, dirty_sits, fnids;
+ 	int total_count, utilization;
+@@ -1877,6 +1879,8 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+ #define stat_dec_dirty_dir(sbi)		((sbi)->n_dirty_dirs--)
+ #define stat_inc_total_hit(sbi)		(atomic_inc(&(sbi)->total_hit_ext))
+ #define stat_inc_read_hit(sbi)		(atomic_inc(&(sbi)->read_hit_ext))
++#define stat_inc_largest_node_hit(sbi)	(atomic_inc(&(sbi)->read_hit_largest))
++#define stat_inc_cached_node_hit(sbi)	(atomic_inc(&(sbi)->read_hit_cached))
+ #define stat_inc_inline_xattr(inode)					\
+ 	do {								\
+ 		if (f2fs_has_inline_xattr(inode))			\
+@@ -1957,6 +1961,8 @@ void f2fs_destroy_root_stats(void);
+ #define stat_dec_dirty_dir(sbi)
+ #define stat_inc_total_hit(sb)
+ #define stat_inc_read_hit(sb)
++#define stat_inc_largest_node_hit(sbi)
++#define stat_inc_cached_node_hit(sbi)
+ #define stat_inc_inline_xattr(inode)
+ #define stat_dec_inline_xattr(inode)
+ #define stat_inc_inline_inode(inode)
 -- 
 2.4.2
