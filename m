@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 7/9] f2fs: split __insert_extent_tree_ret for readability
-Date: Wed, 19 Aug 2015 19:15:09 +0800
-Message-ID: <017b01d0da70$69d01020$3d703060$@samsung.com>
+Subject: [PATCH 8/9] f2fs: lookup neighbor extent nodes for merging later
+Date: Wed, 19 Aug 2015 19:16:09 +0800
+Message-ID: <017c01d0da70$9d13feb0$d73bfc10$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,120 +12,98 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch splits __insert_extent_tree_ret into __try_merge_extent_node &
-__insert_extent_tree for code readability.
+In __lookup_extent_tree_ret we will not try to find neighbor nodes if
+we find the target node, in this condition, we will lost the chance to
+merge the new mapping with exist extent node later.
+
+So our extent cache of inode will be fragmented after overwrite exist
+file, we can see the number of extent node increases intensively in
+following test case:
+
+dd if=/dev/zero of=/mnt/f2fs/4m bs=4K count=1024
+
+Extent Cache:
+  - Hit Count: L1-1:0 L1-2:0 L2:0
+  - Hit Ratio: 0% (0 / 3072)
+  - Inner Struct Count: tree: 1, node: 1
+
+dd if=/dev/zero of=/mnt/f2fs/4m bs=4K count=1024 conv=notrunc
+
+Extent Cache:
+  - Hit Count: L1-1:2048 L1-2:0 L2:0
+  - Hit Ratio: 33% (2048 / 6144)
+  - Inner Struct Count: tree: 1, node: 961
+
+This patch fixes to lookup neighbors of target node for further
+merging.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/extent_cache.c | 49 +++++++++++++++++++++++++++++--------------------
- 1 file changed, 29 insertions(+), 20 deletions(-)
+ fs/f2fs/extent_cache.c | 34 ++++++++++++++++++++++++++++------
+ 1 file changed, 28 insertions(+), 6 deletions(-)
 
 diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 5b6139f..ab26728 100644
+index ab26728..dcfeb43 100644
 --- a/fs/f2fs/extent_cache.c
 +++ b/fs/f2fs/extent_cache.c
-@@ -294,29 +294,22 @@ static struct extent_node *__lookup_extent_tree_ret(struct extent_tree *et,
- 	return NULL;
- }
- 
--static struct extent_node *__insert_extent_tree_ret(struct f2fs_sb_info *sbi,
-+static struct extent_node *__try_merge_extent_node(struct f2fs_sb_info *sbi,
- 				struct extent_tree *et, struct extent_info *ei,
- 				struct extent_node **den,
- 				struct extent_node *prev_ex,
--				struct extent_node *next_ex,
--				struct rb_node **insert_p,
--				struct rb_node *insert_parent)
-+				struct extent_node *next_ex)
+@@ -254,13 +254,21 @@ static struct extent_node *__lookup_extent_tree_ret(struct extent_tree *et,
  {
--	struct rb_node **p = &et->root.rb_node;
--	struct rb_node *parent = NULL;
- 	struct extent_node *en = NULL;
--	int merged = 0;
+ 	struct rb_node **pnode = &et->root.rb_node;
+ 	struct rb_node *parent = NULL, *tmp_node;
+-	struct extent_node *en;
++	struct extent_node *en = et->cached_en;
  
- 	if (prev_ex && __is_back_mergeable(ei, &prev_ex->ei)) {
--		f2fs_bug_on(sbi, !den);
--		merged = 1;
- 		prev_ex->ei.len += ei->len;
- 		ei = &prev_ex->ei;
- 		en = prev_ex;
- 	}
+-	if (et->cached_en) {
+-		struct extent_info *cei = &et->cached_en->ei;
++	*insert_p = NULL;
++	*insert_parent = NULL;
++	*prev_ex = NULL;
++	*next_ex = NULL;
 +
- 	if (next_ex && __is_front_mergeable(ei, &next_ex->ei)) {
--		f2fs_bug_on(sbi, !den);
--		if (merged++) {
-+		if (en) {
- 			__detach_extent_node(sbi, et, prev_ex);
- 			*den = prev_ex;
- 		}
-@@ -325,8 +318,23 @@ static struct extent_node *__insert_extent_tree_ret(struct f2fs_sb_info *sbi,
- 		next_ex->ei.len += ei->len;
- 		en = next_ex;
- 	}
--	if (merged)
--		goto update_out;
++	if (RB_EMPTY_ROOT(&et->root))
++		return NULL;
 +
 +	if (en) {
-+		if (en->ei.len > et->largest.len)
-+			et->largest = en->ei;
-+		et->cached_en = en;
-+	}
-+	return en;
-+}
-+
-+static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
-+				struct extent_tree *et, struct extent_info *ei,
-+				struct rb_node **insert_p,
-+				struct rb_node *insert_parent)
-+{
-+	struct rb_node **p = &et->root.rb_node;
-+	struct rb_node *parent = NULL;
-+	struct extent_node *en = NULL;
++		struct extent_info *cei = &en->ei;
  
- 	if (insert_p && insert_parent) {
- 		parent = insert_parent;
-@@ -349,7 +357,7 @@ do_insert:
- 	en = __attach_extent_node(sbi, et, ei, parent, p);
- 	if (!en)
- 		return NULL;
--update_out:
-+
- 	if (en->ei.len > et->largest.len)
- 		et->largest = en->ei;
- 	et->cached_en = en;
-@@ -401,8 +409,7 @@ static bool f2fs_update_extent_tree(struct inode *inode, pgoff_t fofs,
- 		if (fofs - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
- 			set_extent_info(&ei, dei.fofs, dei.blk,
- 						fofs - dei.fofs);
--			en1 = __insert_extent_tree_ret(sbi, et, &ei, NULL,
--						NULL, NULL, NULL, NULL);
-+			en1 = __insert_extent_tree(sbi, et, &ei, NULL, NULL);
- 		}
- 
- 		/* insert right part of split extent into cache */
-@@ -410,8 +417,7 @@ static bool f2fs_update_extent_tree(struct inode *inode, pgoff_t fofs,
- 		if (endofs - fofs >= F2FS_MIN_EXTENT_LEN) {
- 			set_extent_info(&ei, fofs + 1,
- 				fofs - dei.fofs + dei.blk + 1, endofs - fofs);
--			en2 = __insert_extent_tree_ret(sbi, et, &ei, NULL,
--						NULL, NULL, NULL, NULL);
-+			en2 = __insert_extent_tree(sbi, et, &ei, NULL, NULL);
- 		}
+ 		if (cei->fofs <= fofs && cei->fofs + cei->len > fofs)
+-			return et->cached_en;
++			goto lookup_neighbors;
  	}
  
-@@ -419,8 +425,11 @@ update_extent:
- 	/* 3. update extent in extent cache */
- 	if (blkaddr) {
- 		set_extent_info(&ei, fofs, blkaddr, 1);
--		en3 = __insert_extent_tree_ret(sbi, et, &ei, &den,
--				prev_ex, next_ex, insert_p, insert_parent);
-+		en3 = __try_merge_extent_node(sbi, et, &ei, &den,
-+						prev_ex, next_ex);
-+		if (!en3)
-+			en3 = __insert_extent_tree(sbi, et, &ei,
-+						insert_p, insert_parent);
+ 	while (*pnode) {
+@@ -272,7 +280,7 @@ static struct extent_node *__lookup_extent_tree_ret(struct extent_tree *et,
+ 		else if (fofs >= en->ei.fofs + en->ei.len)
+ 			pnode = &(*pnode)->rb_right;
+ 		else
+-			return en;
++			goto lookup_neighbors;
+ 	}
  
- 		/* give up extent_cache, if split and small updates happen */
- 		if (dei.len >= 1 &&
+ 	*insert_p = pnode;
+@@ -290,8 +298,22 @@ static struct extent_node *__lookup_extent_tree_ret(struct extent_tree *et,
+ 		tmp_node = rb_prev(parent);
+ 	*prev_ex = tmp_node ?
+ 		rb_entry(tmp_node, struct extent_node, rb_node) : NULL;
+-
+ 	return NULL;
++
++lookup_neighbors:
++	if (fofs == en->ei.fofs) {
++		/* lookup prev node for merging backward later */
++		tmp_node = rb_prev(&en->rb_node);
++		*prev_ex = tmp_node ?
++			rb_entry(tmp_node, struct extent_node, rb_node) : NULL;
++	}
++	if (fofs == en->ei.fofs + en->ei.len - 1) {
++		/* lookup next node for merging frontward later */
++		tmp_node = rb_next(&en->rb_node);
++		*next_ex = tmp_node ?
++			rb_entry(tmp_node, struct extent_node, rb_node) : NULL;
++	}
++	return en;
+ }
+ 
+ static struct extent_node *__try_merge_extent_node(struct f2fs_sb_info *sbi,
 -- 
 2.4.2
