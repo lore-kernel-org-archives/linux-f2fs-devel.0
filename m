@@ -1,44 +1,20 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 2/2] f2fs: avoid garbage collecting already
- moved	node blocks
-Date: Thu, 20 Aug 2015 17:05:23 +0800
-Message-ID: <01b701d0db27$8c68f2c0$a53ad840$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: handle failed bio allocation
+Date: Thu, 20 Aug 2015 17:08:24 +0800
+Message-ID: <01b801d0db27$e8b9e9d0$ba2dbd70$@samsung.com>
 References: <1439593751-21879-1-git-send-email-jaegeuk@kernel.org>
-	<1439593751-21879-2-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZSLoe-0007lM-Dj
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 20 Aug 2015 09:07:20 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZSLoc-0007Eh-EN
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 20 Aug 2015 09:07:20 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NTD018S8INHHQ70@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 20 Aug 2015 18:06:53 +0900 (KST)
-In-reply-to: <1439593751-21879-2-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <1439593751-21879-1-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
@@ -46,13 +22,58 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-deve
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 2/2] f2fs: avoid garbage collecting already moved node blocks
+> Subject: [f2fs-dev] [PATCH 1/2] f2fs: handle failed bio allocation
 > 
-> If node blocks were already moved, we don't need to move them again.
+> As the below comment of bio_alloc_bioset, f2fs can allocate multiple bios at the
+> same time. So, we can't guarantee that bio is allocated all the time.
+> 
+> "
+>  *   When @bs is not NULL, if %__GFP_WAIT is set then bio_alloc will always be
+>  *   able to allocate a bio. This is due to the mempool guarantees. To make this
+>  *   work, callers must never allocate more than 1 bio at a time from this pool.
+>  *   Callers that need to allocate more than 1 bio must always submit the
+>  *   previously allocated bio for IO before attempting to allocate a new one.
+>  *   Failure to do so can cause deadlocks under memory pressure.
+> "
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/data.c    |  3 +--
+>  fs/f2fs/f2fs.h    | 15 +++++++++++++++
+>  fs/f2fs/segment.c | 14 +++++++++++---
+>  3 files changed, 27 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index cad9ebe..726e58b 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -90,8 +90,7 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
+>  {
+>  	struct bio *bio;
+> 
+> -	/* No failure on bio allocation */
+> -	bio = bio_alloc(GFP_NOIO, npages);
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+How about using __GFP_NOFAIL flag to avoid failing in bio_alloc instead
+of adding opencode endless loop in code?
 
+We can see the reason in this commit 	647757197cd3
+("mm: clarify __GFP_NOFAIL deprecation status ")
 
-------------------------------------------------------------------------------
+"__GFP_NOFAIL is documented as a deprecated flag since commit
+478352e789f5 ("mm: add comment about deprecation of __GFP_NOFAIL").
+
+This has discouraged people from using it but in some cases an opencoded
+endless loop around allocator has been used instead. So the allocator
+is not aware of the de facto __GFP_NOFAIL allocation because this
+information was not communicated properly.
+
+Let's make clear that if the allocation context really cannot afford
+failure because there is no good failure policy then using __GFP_NOFAIL
+is preferable to opencoding the loop outside of the allocator."
+
+BTW, I found that f2fs_kmem_cache_alloc also could be replaced, we could
+fix them together.
+
+Thanks,
+
