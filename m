@@ -1,67 +1,134 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [PATCH 2/9] f2fs: avoid unneeded initializing when converting
- inline dentry
-Date: Fri, 21 Aug 2015 20:58:46 +0800
-Message-ID: <021901d0dc11$34e67e60$9eb37b20$@samsung.com>
-References: <017601d0da6f$bcb555d0$36200170$@samsung.com>
- <20150820171718.GC42028@jaegeuk-mac02.mot-mobility.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150820171718.GC42028@jaegeuk-mac02.mot-mobility.com>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Chao Yu <yuchaochina@hotmail.com>
+Subject: Re: [PATCH 5/5] f2fs: check the node block address of
+	newly allocated nid
+Date: Fri, 21 Aug 2015 22:59:42 +0800
+Message-ID: <BLU436-SMTP23321A93A08CF5FB1E72680AB650@phx.gbl>
+References: <1439887589-35190-1-git-send-email-jaegeuk@kernel.org>
+	<1439887589-35190-5-git-send-email-jaegeuk@kernel.org>
+	<01bb01d0db28$61844ea0$248cebe0$@samsung.com>
+	<20150820153523.GA42028@jaegeuk-mac02.mot-mobility.com>
+	<021501d0dc0f$d365f900$7a31eb00$@samsung.com>
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2102\))
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchaochina@hotmail.com>) id 1ZSnuV-0005oL-6t
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 21 Aug 2015 15:07:15 +0000
+Received: from blu004-omc1s15.hotmail.com ([65.55.116.26])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ZSnuT-0003ob-TT
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 21 Aug 2015 15:07:15 +0000
+In-Reply-To: <021501d0dc0f$d365f900$7a31eb00$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
-
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Friday, August 21, 2015 1:17 AM
-> To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 2/9] f2fs: avoid unneeded initializing when converting inline dentry
-> 
-> Hi Chao,
-> 
-> On Wed, Aug 19, 2015 at 07:10:19PM +0800, Chao Yu wrote:
-> > When converting inline dentry, we will zero out target dentry page before
-> > duplicating data of inline dentry into target page, it become overhead
-> > since inline dentry size is not small.
-> >
-> > So this patch tries to remove unneeded initializing in the space of target
-> > dentry page.
-> >
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/inline.c | 15 ++++++++++++++-
-> >  1 file changed, 14 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> > index 79d18d5..e4da0d7 100644
-> > --- a/fs/f2fs/inline.c
-> > +++ b/fs/f2fs/inline.c
-> > @@ -384,17 +384,30 @@ static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
-> >  		goto out;
-> >
-> >  	f2fs_wait_on_page_writeback(page, DATA);
-> > -	zero_user_segment(page, 0, PAGE_CACHE_SIZE);
-> > +	zero_user_segment(page, MAX_INLINE_DATA, PAGE_CACHE_SIZE);
-> >
-> >  	dentry_blk = kmap_atomic(page);
-> >
-> >  	/* copy data from inline dentry block to new dentry block */
-> >  	memcpy(dentry_blk->dentry_bitmap, inline_dentry->dentry_bitmap,
-> >  					INLINE_DENTRY_BITMAP_SIZE);
-> > +	memset(dentry_blk->dentry_bitmap + INLINE_DENTRY_BITMAP_SIZE, 0,
-> > +			SIZE_OF_DENTRY_BITMAP - INLINE_DENTRY_BITMAP_SIZE);
-> 
-> Setting zeros for bitmap would be enough.
-> It doesn't need to copy or set zeros for reserved, dentries, and filename slots.
-
-Oh, you're right, I will fix it. :)
-
-Thanks
+PiBPbiBBdWcgMjEsIDIwMTUsIGF0IDg6NDggUE0sIENoYW8gWXUgPGNoYW8yLnl1QHNhbXN1bmcu
+Y29tPiB3cm90ZToKPiAKPiBIaSBKYWVnZXVrLAo+IAo+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
+LS0tLQo+PiBGcm9tOiBKYWVnZXVrIEtpbSBbbWFpbHRvOmphZWdldWtAa2VybmVsLm9yZ10KPj4g
+U2VudDogVGh1cnNkYXksIEF1Z3VzdCAyMCwgMjAxNSAxMTozNSBQTQo+PiBUbzogQ2hhbyBZdQo+
+PiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtZnNkZXZlbEB2Z2VyLmtl
+cm5lbC5vcmc7Cj4+IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4+IFN1
+YmplY3Q6IFJlOiBbZjJmcy1kZXZdIFtQQVRDSCA1LzVdIGYyZnM6IGNoZWNrIHRoZSBub2RlIGJs
+b2NrIGFkZHJlc3Mgb2YgbmV3bHkgYWxsb2NhdGVkIG5pZAo+PiAKPj4gT24gVGh1LCBBdWcgMjAs
+IDIwMTUgYXQgMDU6MTI6MDNQTSArMDgwMCwgQ2hhbyBZdSB3cm90ZToKPj4+IEhpIEphZWdldWss
+Cj4+PiAKPj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+Pj4+IEZyb206IEphZWdldWsg
+S2ltIFttYWlsdG86amFlZ2V1a0BrZXJuZWwub3JnXQo+Pj4+IFNlbnQ6IFR1ZXNkYXksIEF1Z3Vz
+dCAxOCwgMjAxNSA0OjQ2IFBNCj4+Pj4gVG86IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
+IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOwo+Pj4+IGxpbnV4LWYyZnMtZGV2ZWxAbGlz
+dHMuc291cmNlZm9yZ2UubmV0Cj4+Pj4gQ2M6IEphZWdldWsgS2ltCj4+Pj4gU3ViamVjdDogW2Yy
+ZnMtZGV2XSBbUEFUQ0ggNS81XSBmMmZzOiBjaGVjayB0aGUgbm9kZSBibG9jayBhZGRyZXNzIG9m
+IG5ld2x5IGFsbG9jYXRlZCBuaWQKPj4+PiAKPj4+PiBUaGlzIHBhdGNoIGFkZHMgYSByb3V0aW5l
+IHdoaWNoIGNoZWNrcyB0aGUgYmxvY2sgYWRkcmVzcyBvZiBuZXdseSBhbGxvY2F0ZWQgbmlkLgo+
+Pj4+IElmIGFuIG5pZCBoYXMgYWxyZWFkeSBhbGxvY2F0ZWQgYnkgb3RoZXIgdGhyZWFkIGR1ZSB0
+byBzdWJ0bGUgZGF0YSByYWNlcywgaXQKPj4+PiB3aWxsIHJlc3VsdCBpbiBmaWxlc3lzdGVtIGNv
+cnJ1cHRpb24uCj4+Pj4gU28sIGl0IG5lZWRzIHRvIGNoZWNrIHdoZXRoZXIgaXRzIGJsb2NrIGFk
+ZHJlc3Mgd2FzIGFscmVhZHkgYWxsb2NhdGVkIG9yIG5vdAo+Pj4+IGluIHByaW9yIHRvIG5pZCBh
+bGxvY2F0aW9uIGFzIHRoZSBsYXN0IGNoYW5jZS4KPj4+PiAKPj4+PiBTaWduZWQtb2ZmLWJ5OiBK
+YWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3JnPgo+Pj4+IC0tLQo+Pj4+IGZzL2YyZnMvbm9k
+ZS5jIHwgOSArKysrKysrKysKPj4+PiAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspCj4+
+Pj4gCj4+Pj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvbm9kZS5jIGIvZnMvZjJmcy9ub2RlLmMKPj4+
+PiBpbmRleCAzY2MzMmI4Li42YmVmNWEyIDEwMDY0NAo+Pj4+IC0tLSBhL2ZzL2YyZnMvbm9kZS5j
+Cj4+Pj4gKysrIGIvZnMvZjJmcy9ub2RlLmMKPj4+PiBAQCAtMTU3Myw2ICsxNTczLDggQEAgcmV0
+cnk6Cj4+Pj4gCj4+Pj4gCS8qIFdlIHNob3VsZCBub3QgdXNlIHN0YWxlIGZyZWUgbmlkcyBjcmVh
+dGVkIGJ5IGJ1aWxkX2ZyZWVfbmlkcyAqLwo+Pj4+IAlpZiAobm1faS0+ZmNudCAmJiAhb25fYnVp
+bGRfZnJlZV9uaWRzKG5tX2kpKSB7Cj4+Pj4gKwkJc3RydWN0IG5vZGVfaW5mbyBuaTsKPj4+PiAr
+Cj4+Pj4gCQlmMmZzX2J1Z19vbihzYmksIGxpc3RfZW1wdHkoJm5tX2ktPmZyZWVfbmlkX2xpc3Qp
+KTsKPj4+PiAJCWxpc3RfZm9yX2VhY2hfZW50cnkoaSwgJm5tX2ktPmZyZWVfbmlkX2xpc3QsIGxp
+c3QpCj4+Pj4gCQkJaWYgKGktPnN0YXRlID09IE5JRF9ORVcpCj4+Pj4gQEAgLTE1ODMsNiArMTU4
+NSwxMyBAQCByZXRyeToKPj4+PiAJCWktPnN0YXRlID0gTklEX0FMTE9DOwo+Pj4+IAkJbm1faS0+
+ZmNudC0tOwo+Pj4+IAkJc3Bpbl91bmxvY2soJm5tX2ktPmZyZWVfbmlkX2xpc3RfbG9jayk7Cj4+
+Pj4gKwo+Pj4+ICsJCS8qIGNoZWNrIG5pZCBpcyBhbGxvY2F0ZWQgYWxyZWFkeSAqLwo+Pj4+ICsJ
+CWdldF9ub2RlX2luZm8oc2JpLCAqbmlkLCAmbmkpOwo+Pj4+ICsJCWlmIChuaS5ibGtfYWRkciAh
+PSBOVUxMX0FERFIpIHsKPj4+IAo+Pj4gSSBkaWRuJ3QgZ2V0IGl0LCB3aHkgZnJlZSBuaWQgaXMg
+d2l0aCBub24tTlVMTCBibGthZGRyPwo+Pj4gQ291bGQgeW91IHBsZWFzZSBleHBsYWluIG1vcmUg
+YWJvdXQgdGhpcz8KPj4gCj4+IEFzIEkgd3JvdGUgaW4gdGhlIGRlc2NyaXB0aW9uLCBJJ3ZlIGJl
+ZW4gc3VmZmVyaW5nIGZyb20gd3JvbmdseSBhZGRlZCBmcmVlIG5pZHMKPj4gd2hpY2ggcmVzdWx0
+cyBpbiBmcyBjb3JydXB0aW9uLiBJIHN1c3BlY3Qgc29tZXdoYXQgcmFjZSBjb25kaXRpb24gaW4K
+Pj4gYnVpbGRfZnJlZV9uaWRzLCBidXQgaXQgaXMgdmVyeSBzdWJ0bGUgdG8gZmlndXJlIG91dCBl
+eGFjdGx5Lgo+PiBTbywgSSB3cm90ZSB0aGlzIHBhdGNoIHRvIGZpeCB0aGF0Lgo+PiAKPj4gVGhl
+IGNvbmNlcm4gd291bGQgYmUgcGVyZm9ybWFuY2UgcmVnYXJkaW5nIHRvIGNvbGQgY2FjaGUgbWlz
+cyBhdCBhbiBOQVQgZW50cnkuCj4+IEhvd2V2ZXIsIEkgZXhwZWN0IHRoYXQgaXQgd291bGQgYmUg
+dG9sZXJhYmxlIHNpbmNlIGdldF9ub2RlX2luZm8gd2lsbCBiZSBjYWxsZWQKPj4gYWZ0ZXIgYWxs
+b2NfbmlkIGxhdGVyLgo+IAo+IEFmdGVyIGludmVzdGlnYXRpbmcsIEkgdGhpbmsgSSBjYW4gcmVw
+cm9kdWNlIHRoaXMgYnVnOgo+IAo+IDEuIHRvdWNoIGEgKG5pZCA9IDQpICYgdG91Y2ggYiAobmlk
+ID0gNSkKPiAyLiBzeW5jCj4gMy4gcm0gYSAmIHJtIGIKPiBhKSBybSBhIHRvIG1ha2UgbmV4dF9z
+Y2FuX25pZCA9IDQuCj4gYikgSSBjaGFuZ2UgdGhlIGxvZ2ljYWwgb2YgZjJmcyBjb2RlIG1ha2lu
+ZyByZW1vdmVfaW5vZGVfcGFnZSBmYWlsZWQgd2hlbgo+IGZpbGUgYiBpcyBiZWluZyByZW1vdmVk
+LCBzbyBmaWxlIGIncyBuYXQgZW50cnkgaXMgbm90IHNldCBkaXJ0eTsKPiA0LiBzeW5jCj4gNS4g
+dG91Y2ggMTgxNSBmaWxlcwo+IDYuIGVjaG8gMyA+IC9wcm9jL3N5cy92bS9kcm9wX2NhY2hlcwo+
+IGRyb3AgY2xlYW4gbmF0IGVudHJ5IG9mIGlub2RlIChuaWQ6NSksIGl0IG1ha2VzIHdlIGNhbiBw
+YXNzIGJsa2FkZHIKPiB2ZXJpZmljYXRpb24gaW4gYWRkX2ZyZWVfbmlkOgo+IAlpZiAoYnVpbGQp
+IHsKPiAJCS8qIGRvIG5vdCBhZGQgYWxsb2NhdGVkIG5pZHMgKi8KPiAKPiA3LiB0b3VjaCBjCj4g
+YmVjYXVzZSB0aGVyZSBpcyBubyBmcmVlIG5pZHMgaW4gY2FjaGUsIHdlIHRyeSB0byBidWlsZCBj
+YWNoZSBieSB0d28gc3RlcHM6Cj4gYSkgYnVpbGQgbmlkcyBieSBsb2FkaW5nIGZyb20gbmF0IHBh
+Z2VzOwo+IGIpIGJ1aWxkIG5pZHMgYnkgbG9hZGluZyBmcm9tIGN1cnNlZyBhbmQgdHJ5IHRvIHVu
+bG9hZCBuaWRzIHdoaWNoIGhhcyB2YWxpZAo+IGJsa2FkZHIgaW4gY3Vyc2VnLgo+IAo+IHVuZm9y
+dHVuYXRlbHksIG91ciBidWlsZCBvcGVyYXRpb24gaXMgbm90IGF0b21pYywgc28gYWZ0ZXIgc3Rl
+cCBhKSwgbmlkOjUKCkFmdGVyIHJldGhpbmtpbmcgYWJvdXQgdGhpcyBpc3N1ZSBvbiB0aGUgd2F5
+IGNvbWluZyBiYWNrIGhvbWUsIEkgZmluZCB0aGF0Cml0IHNlZW1zIG5vdCByaWdodCBoZXJlLCBi
+ZWNhdXNlIHdlIHdpbGwgdHJ5IHRvIGNoZWNrIGJ1aWxkX2xvY2sgc3RhdHVzIGluCm9uX2J1aWxk
+X2ZyZWVfbmlkcywgYWxsb2NhdGlvbiB3aWxsIG5vdCBoYXBwZW4gZHVyaW5nIGJ1aWxkaW5nIGZy
+ZWUgbmlkCmNhY2hlLiBJIG1pc3NlZCB0aGF0IHByZXZpb3VzbHkuCgpTb3JyeSBmb3IgbXkgd3Jv
+bmcgY29uY2x1c2lvbiwgcGxlYXNlIGlnbm9yZSB0aGVtLiA6KAoKSeKAmWQgbGlrZSB0byByZWlu
+dmVzdGlnYXRlIHRoaXMgaXNzdWUuCgpUaGFua3MsCgo+IHNob3VsZCBiZSBpbiBmcmVlIG5pZHMg
+Y2FjaGUgYW5kIGl0IHNob3VsZCBiZSByZW1vdmVkIGluIHN0ZXAgYikuIFNvIGFsbAo+IGZyZWUg
+bmlkcyBhbGxvY2F0ZWQgYmV0d2VlbiBzdGVwIGEpIGFuZCBzdGVwIGIpIGNhbiBiZSByaXNreSBv
+ZiBpbmNvcnJlY3QKPiBhbGxvY2F0aW9uLgo+IAo+IElmIEknbSBub3QgbWlzcyBzb21ldGhpbmcs
+IHRoZSByb290IGNhc3VlIGxvb2tzIGxpa2Ugb3VyIHJlY2VudCBjaGFuZ2U6Cj4gYWxsb2NhdGUg
+ZnJlZSBuaWQgYWdncmVzc2l2ZWx5Lgo+IAo+IFRoYW5rcywKPj4gCj4+PiAKPj4+PiArCQkJYWxs
+b2NfbmlkX2RvbmUoc2JpLCAqbmlkKTsKPj4+IAo+Pj4gV2lsbCBhbm90aGVyIHRocmVhZCBjYWxs
+IGFsbG9jX25pZF9kb25lIHRvbywgbWFraW5nIHRoaXMgZnJlZSBuaWQgYmVpbmcKPj4+IHJlbGVh
+c2VkIGFnYWluPwo+PiAKPj4gTm8sIGl0cyBzdGF0ZSBiZWNhbWUgTklEX0FMTE9DLCBzbyBubyBv
+dGhlciB0aHJlYWQgY2FuIHBpY2sgdGhpcyB1cCB0aWxsCj4+IGFsbG9jX25pZF9kb25lIGlzIGNh
+bGxlZC4KPj4gCj4+IFRoYW5rcywKPj4gCj4+PiAKPj4+IFRoYW5rcywKPj4+IAo+Pj4+ICsJCQln
+b3RvIHJldHJ5Owo+Pj4+ICsJCX0KPj4+PiAJCXJldHVybiB0cnVlOwo+Pj4+IAl9Cj4+Pj4gCXNw
+aW5fdW5sb2NrKCZubV9pLT5mcmVlX25pZF9saXN0X2xvY2spOwo+Pj4+IC0tCj4+Pj4gMi4xLjEK
+Pj4+PiAKPj4+PiAKPj4+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPj4+PiBfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+Pj4+IExpbnV4LWYyZnMtZGV2ZWwg
+bWFpbGluZyBsaXN0Cj4+Pj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQK
+Pj4+PiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1m
+MmZzLWRldmVsCj4gCj4gCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaW51eC1mMmZzLWRldmVsIG1haWxp
+bmcgbGlzdAo+IExpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cj4gaHR0cHM6
+Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAoK
+Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRl
+dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9s
+aXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
