@@ -1,86 +1,160 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2 2/9] f2fs: avoid unneeded initializing when
- converting inline dentry
-Date: Mon, 24 Aug 2015 17:36:25 +0800
-Message-ID: <001801d0de50$74c630c0$5e529240$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 5/5] f2fs: check the node block address of newly
+ allocated nid
+Date: Mon, 24 Aug 2015 17:38:37 +0800
+Message-ID: <001901d0de50$c3b40810$4b1c1830$@samsung.com>
+References: <1439887589-35190-1-git-send-email-jaegeuk@kernel.org>
+ <1439887589-35190-5-git-send-email-jaegeuk@kernel.org>
+ <01bb01d0db28$61844ea0$248cebe0$@samsung.com>
+ <20150820153523.GA42028@jaegeuk-mac02.mot-mobility.com>
+ <021501d0dc0f$d365f900$7a31eb00$@samsung.com>
+ <BLU436-SMTP23321A93A08CF5FB1E72680AB650@phx.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZToBu-000554-OS
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 09:37:22 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZToBs-0006KH-IJ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 09:37:22 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NTK02VFUYQ048A0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 18:37:13 +0900 (KST)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <BLU436-SMTP23321A93A08CF5FB1E72680AB650@phx.gbl>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When converting inline dentry, we will zero out target dentry page before
-duplicating data of inline dentry into target page, it become overhead
-since inline dentry size is not small.
+Hi Jaegeuk,
 
-So this patch tries to remove unneeded initializing in the space of target
-dentry page.
+> -----Original Message-----
+> From: Chao Yu [mailto:yuchaochina@hotmail.com]
+> Sent: Friday, August 21, 2015 11:00 PM
+> To: Chao Yu
+> Cc: Jaegeuk Kim; linux-fsdevel@vger.kernel.org; linux-kernel@vger.ker=
+nel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 5/5] f2fs: check the node block addres=
+s of newly allocated nid
+>=20
+> > On Aug 21, 2015, at 8:48 PM, Chao Yu <chao2.yu@samsung.com> wrote:
+> >
+> > Hi Jaegeuk,
+> >
+> >> -----Original Message-----
+> >> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> >> Sent: Thursday, August 20, 2015 11:35 PM
+> >> To: Chao Yu
+> >> Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> >> linux-f2fs-devel@lists.sourceforge.net
+> >> Subject: Re: [f2fs-dev] [PATCH 5/5] f2fs: check the node block add=
+ress of newly allocated
+> nid
+> >>
+> >> On Thu, Aug 20, 2015 at 05:12:03PM +0800, Chao Yu wrote:
+> >>> Hi Jaegeuk,
+> >>>
+> >>>> -----Original Message-----
+> >>>> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> >>>> Sent: Tuesday, August 18, 2015 4:46 PM
+> >>>> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> >>>> linux-f2fs-devel@lists.sourceforge.net
+> >>>> Cc: Jaegeuk Kim
+> >>>> Subject: [f2fs-dev] [PATCH 5/5] f2fs: check the node block addre=
+ss of newly allocated nid
+> >>>>
+> >>>> This patch adds a routine which checks the block address of newl=
+y allocated nid.
+> >>>> If an nid has already allocated by other thread due to subtle da=
+ta races, it
+> >>>> will result in filesystem corruption.
+> >>>> So, it needs to check whether its block address was already allo=
+cated or not
+> >>>> in prior to nid allocation as the last chance.
+> >>>>
+> >>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>>> ---
+> >>>> fs/f2fs/node.c | 9 +++++++++
+> >>>> 1 file changed, 9 insertions(+)
+> >>>>
+> >>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> >>>> index 3cc32b8..6bef5a2 100644
+> >>>> --- a/fs/f2fs/node.c
+> >>>> +++ b/fs/f2fs/node.c
+> >>>> @@ -1573,6 +1573,8 @@ retry:
+> >>>>
+> >>>> 	/* We should not use stale free nids created by build_free_nids=
+ */
+> >>>> 	if (nm_i->fcnt && !on_build_free_nids(nm_i)) {
+> >>>> +		struct node_info ni;
+> >>>> +
+> >>>> 		f2fs_bug_on(sbi, list_empty(&nm_i->free_nid_list));
+> >>>> 		list_for_each_entry(i, &nm_i->free_nid_list, list)
+> >>>> 			if (i->state =3D=3D NID_NEW)
+> >>>> @@ -1583,6 +1585,13 @@ retry:
+> >>>> 		i->state =3D NID_ALLOC;
+> >>>> 		nm_i->fcnt--;
+> >>>> 		spin_unlock(&nm_i->free_nid_list_lock);
+> >>>> +
+> >>>> +		/* check nid is allocated already */
+> >>>> +		get_node_info(sbi, *nid, &ni);
+> >>>> +		if (ni.blk_addr !=3D NULL_ADDR) {
+> >>>
+> >>> I didn't get it, why free nid is with non-NULL blkaddr?
+> >>> Could you please explain more about this?
+> >>
+> >> As I wrote in the description, I've been suffering from wrongly ad=
+ded free nids
+> >> which results in fs corruption. I suspect somewhat race condition =
+in
+> >> build_free_nids, but it is very subtle to figure out exactly.
+> >> So, I wrote this patch to fix that.
+> >>
+> >> The concern would be performance regarding to cold cache miss at a=
+n NAT entry.
+> >> However, I expect that it would be tolerable since get_node_info w=
+ill be called
+> >> after alloc_nid later.
+> >
+> > After investigating, I think I can reproduce this bug:
+> >
+> > 1. touch a (nid =3D 4) & touch b (nid =3D 5)
+> > 2. sync
+> > 3. rm a & rm b
+> > a) rm a to make next_scan_nid =3D 4.
+> > b) I change the logical of f2fs code making remove_inode_page faile=
+d when
+> > file b is being removed, so file b's nat entry is not set dirty;
+> > 4. sync
+> > 5. touch 1815 files
+> > 6. echo 3 > /proc/sys/vm/drop_caches
+> > drop clean nat entry of inode (nid:5), it makes we can pass blkaddr
+> > verification in add_free_nid:
+> > 	if (build) {
+> > 		/* do not add allocated nids */
+> >
+> > 7. touch c
+> > because there is no free nids in cache, we try to build cache by tw=
+o steps:
+> > a) build nids by loading from nat pages;
+> > b) build nids by loading from curseg and try to unload nids which h=
+as valid
+> > blkaddr in curseg.
+> >
+> > unfortunately, our build operation is not atomic, so after step a),=
+ nid:5
+>=20
+> After rethinking about this issue on the way coming back home, I find=
+ that
+> it seems not right here, because we will try to check build_lock stat=
+us in
+> on_build_free_nids, allocation will not happen during building free n=
+id
+> cache. I missed that previously.
+>=20
+> Sorry for my wrong conclusion, please ignore them. :(
+>=20
+> I=E2=80=99d like to reinvestigate this issue.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
-v2:
- - remove unneeded memcpy/memset suggested by Jaegeuk Kim.
- fs/f2fs/inline.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+I reinvestigate this issue and find one possible call path for reproduc=
+ing this
+issue, and I wrote patches for fxing, can you please help to review the=
+ following
+patches?
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 79d18d5..3d143be 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -384,13 +384,21 @@ static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
- 		goto out;
- 
- 	f2fs_wait_on_page_writeback(page, DATA);
--	zero_user_segment(page, 0, PAGE_CACHE_SIZE);
-+	zero_user_segment(page, MAX_INLINE_DATA, PAGE_CACHE_SIZE);
- 
- 	dentry_blk = kmap_atomic(page);
- 
- 	/* copy data from inline dentry block to new dentry block */
- 	memcpy(dentry_blk->dentry_bitmap, inline_dentry->dentry_bitmap,
- 					INLINE_DENTRY_BITMAP_SIZE);
-+	memset(dentry_blk->dentry_bitmap + INLINE_DENTRY_BITMAP_SIZE, 0,
-+			SIZE_OF_DENTRY_BITMAP - INLINE_DENTRY_BITMAP_SIZE);
-+	/*
-+	 * we do not need to zero out remainder part of dentry and filename
-+	 * field, since we have used bitmap for marking the usage status of
-+	 * them, besides, we can also ignore copying/zeroing reserved space
-+	 * of dentry block, because them haven't been used so far.
-+	 */
- 	memcpy(dentry_blk->dentry, inline_dentry->dentry,
- 			sizeof(struct f2fs_dir_entry) * NR_INLINE_DENTRY);
- 	memcpy(dentry_blk->filename, inline_dentry->filename,
--- 
-2.4.2
-
-
-
-------------------------------------------------------------------------------
+Thanks,
