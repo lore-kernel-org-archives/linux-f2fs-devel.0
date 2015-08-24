@@ -1,24 +1,25 @@
 From: Zhang Zhen <zhenzhang.zhang@huawei.com>
-Subject: [PATCH] fs/f2fs: atomically set inode->i_flags
-Date: Mon, 24 Aug 2015 11:28:36 +0800
-Message-ID: <55DA8F64.3060307@huawei.com>
-References: <55DA845C.2020700@huawei.com>
+Subject: [PATCH] fs/f2fs: replace open coded nofail allocation in
+	__add_ino_entry
+Date: Mon, 24 Aug 2015 11:39:55 +0800
+Message-ID: <55DA920B.9040706@huawei.com>
+References: <1440386638-40325-1-git-send-email-zhenzhang.zhang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhenzhang.zhang@huawei.com>) id 1ZTiRU-0003zG-6H
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zhenzhang.zhang@huawei.com>) id 1ZTicY-000868-OB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 03:29:04 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ZTiRQ-0003MC-4D
+	Mon, 24 Aug 2015 03:40:30 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZTicR-0003ZC-PM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 03:29:04 +0000
-In-Reply-To: <55DA845C.2020700@huawei.com>
+	Mon, 24 Aug 2015 03:40:30 +0000
+In-Reply-To: <1440386638-40325-1-git-send-email-zhenzhang.zhang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,44 +32,38 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, cm224.lee@samsung.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-According to commit 5f16f3225b06 ("ext4: atomically set inode->i_flags in
-ext4_set_inode_flags()").
+__add_ino_entry is looping around the allocation request and minics
+__GFP_NOFAIL behavior without any allocation fallback strategy.
+Here remove the open coded loop and replace it with __GFP_NOFAIL.
 
 Signed-off-by: Zhang Zhen <zhenzhang.zhang@huawei.com>
 ---
- fs/f2fs/inode.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/f2fs/checkpoint.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 2550868..141ca63 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -12,7 +12,6 @@
- #include <linux/f2fs_fs.h>
- #include <linux/buffer_head.h>
- #include <linux/writeback.h>
--#include <linux/bitops.h>
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index b70bbe1..d62363b 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -337,12 +337,7 @@ retry:
 
- #include "f2fs.h"
- #include "node.h"
-@@ -34,8 +33,8 @@ void f2fs_set_inode_flags(struct inode *inode)
- 		new_fl |= S_NOATIME;
- 	if (flags & FS_DIRSYNC_FL)
- 		new_fl |= S_DIRSYNC;
--	set_mask_bits(&inode->i_flags,
--			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC, new_fl);
-+	inode_set_flags(inode, new_fl,
-+			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC);
- }
-
- static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+ 	e = radix_tree_lookup(&im->ino_root, ino);
+ 	if (!e) {
+-		e = kmem_cache_alloc(ino_entry_slab, GFP_ATOMIC);
+-		if (!e) {
+-			spin_unlock(&im->ino_lock);
+-			radix_tree_preload_end();
+-			goto retry;
+-		}
++		e = kmem_cache_alloc(ino_entry_slab, GFP_ATOMIC|__GFP_NOFAIL);
+ 		if (radix_tree_insert(&im->ino_root, ino, e)) {
+ 			spin_unlock(&im->ino_lock);
+ 			kmem_cache_free(ino_entry_slab, e);
 -- 
 1.9.1
 
 
 .
-
-
 
 
 
