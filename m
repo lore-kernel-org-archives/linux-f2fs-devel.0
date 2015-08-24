@@ -1,24 +1,24 @@
 From: Zhang Zhen <zhenzhang.zhang@huawei.com>
 Subject: [PATCH] fs/f2fs: atomically set inode->i_flags
-Date: Mon, 24 Aug 2015 10:41:32 +0800
-Message-ID: <55DA845C.2020700@huawei.com>
-References: <1440383887-31795-1-git-send-email-zhenzhang.zhang@huawei.com>
+Date: Mon, 24 Aug 2015 11:28:36 +0800
+Message-ID: <55DA8F64.3060307@huawei.com>
+References: <55DA845C.2020700@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhenzhang.zhang@huawei.com>) id 1ZThi2-0002oe-DO
+	(envelope-from <zhenzhang.zhang@huawei.com>) id 1ZTiRU-0003zG-6H
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 02:42:06 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ZThhw-00044x-Rp
+	Mon, 24 Aug 2015 03:29:04 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZTiRQ-0003MC-4D
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 02:42:06 +0000
-In-Reply-To: <1440383887-31795-1-git-send-email-zhenzhang.zhang@huawei.com>
+	Mon, 24 Aug 2015 03:29:04 +0000
+In-Reply-To: <55DA845C.2020700@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,7 +28,7 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk.kim@samsung.com
+To: jaegeuk@kernel.org, cm224.lee@samsung.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
 According to commit 5f16f3225b06 ("ext4: atomically set inode->i_flags in
@@ -67,6 +67,8 @@ index 2550868..141ca63 100644
 
 
 .
+
+
 
 
 
