@@ -1,28 +1,28 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/2] f2fs: handle f2fs_truncate error correctly
-Date: Mon, 24 Aug 2015 17:39:42 +0800
-Message-ID: <001a01d0de50$e6830300$b3890900$@samsung.com>
+Subject: [PATCH 2/2] f2fs: fix to release inode correctly
+Date: Mon, 24 Aug 2015 17:40:45 +0800
+Message-ID: <001b01d0de51$0b369c70$21a3d550$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZToEy-00027w-P0
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1ZToFy-0005ML-HD
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 09:40:32 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZToEx-0006Jp-Kt
+	Mon, 24 Aug 2015 09:41:34 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZToFw-0006Sj-JI
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 09:40:32 +0000
+	Mon, 24 Aug 2015 09:41:34 +0000
 Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
+	by mailout2.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NTK00OM5YVC9L00@mailout3.samsung.com> for
+	2014)) with ESMTP id <0NTK02LEWYWY8UD0@mailout2.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Aug 2015 18:40:24 +0900 (KST)
+	Mon, 24 Aug 2015 18:41:25 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -36,82 +36,189 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch fixes to return error number of f2fs_truncate, so that we
-can handle the error correctly in callers.
+In following call stack, if unfortunately we lose all chances to truncate
+inode page in remove_inode_page, eventually we will add the nid allocated
+previously into free nid cache, this nid is with NID_NEW status and with
+NEW_ADDR in its blkaddr pointer:
+
+ - f2fs_create
+  - f2fs_add_link
+   - __f2fs_add_link
+    - init_inode_metadata
+     - new_inode_page
+      - new_node_page
+       - set_node_addr(, NEW_ADDR)
+     - f2fs_init_acl   failed
+     - remove_inode_page  failed
+  - handle_failed_inode
+   - remove_inode_page  failed
+   - iput
+    - f2fs_evict_inode
+     - remove_inode_page  failed
+     - alloc_nid_failed   cache a nid with valid blkaddr: NEW_ADDR
+
+This may not only cause resource leak of previous inode, but also may cause
+incorrect use of the previous blkaddr which is located in NO.nid node entry
+when this nid is reused by others.
+
+This patch tries to add this inode to orphan list if we fail to truncate
+inode, so that we can obtain a second chance to release it in orphan
+recovery flow.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/f2fs.h |  2 +-
- fs/f2fs/file.c | 26 +++++++++++++++++---------
- 2 files changed, 18 insertions(+), 10 deletions(-)
+ fs/f2fs/f2fs.h  |  2 +-
+ fs/f2fs/inode.c | 53 ++++++++++++++++++++++++++++++++++++++++++++++-------
+ fs/f2fs/node.c  | 14 +++++++++-----
+ 3 files changed, 56 insertions(+), 13 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ece5e70..806439f 100644
+index 806439f..69827ee 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1595,7 +1595,7 @@ static inline bool f2fs_may_extent_tree(struct inode *inode)
- int f2fs_sync_file(struct file *, loff_t, loff_t, int);
- void truncate_data_blocks(struct dnode_of_data *);
- int truncate_blocks(struct inode *, u64, bool);
--void f2fs_truncate(struct inode *, bool);
-+int f2fs_truncate(struct inode *, bool);
- int f2fs_getattr(struct vfsmount *, struct dentry *, struct kstat *);
- int f2fs_setattr(struct dentry *, struct iattr *);
- int truncate_hole(struct inode *, pgoff_t, pgoff_t);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 7faafb5..86a5c76 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -579,24 +579,30 @@ out:
- 	return err;
- }
+@@ -1687,7 +1687,7 @@ int get_dnode_of_data(struct dnode_of_data *, pgoff_t, int);
+ int truncate_inode_blocks(struct inode *, pgoff_t);
+ int truncate_xattr_node(struct inode *, struct page *);
+ int wait_on_node_pages_writeback(struct f2fs_sb_info *, nid_t);
+-void remove_inode_page(struct inode *);
++int remove_inode_page(struct inode *);
+ struct page *new_inode_page(struct inode *);
+ struct page *new_node_page(struct dnode_of_data *, unsigned int, struct page *);
+ void ra_node_page(struct f2fs_sb_info *, nid_t);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index d1b03d0..35aae65 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -317,6 +317,7 @@ void f2fs_evict_inode(struct inode *inode)
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	nid_t xnid = fi->i_xattr_nid;
++	int err = 0;
  
--void f2fs_truncate(struct inode *inode, bool lock)
-+int f2fs_truncate(struct inode *inode, bool lock)
- {
-+	int err;
-+
- 	if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
- 				S_ISLNK(inode->i_mode)))
--		return;
-+		return 0;
+ 	/* some remained atomic pages should discarded */
+ 	if (f2fs_is_atomic_file(inode))
+@@ -342,11 +343,13 @@ void f2fs_evict_inode(struct inode *inode)
+ 	i_size_write(inode, 0);
  
- 	trace_f2fs_truncate(inode);
+ 	if (F2FS_HAS_BLOCKS(inode))
+-		f2fs_truncate(inode, true);
++		err = f2fs_truncate(inode, true);
  
- 	/* we should check inline_data size */
- 	if (f2fs_has_inline_data(inode) && !f2fs_may_inline_data(inode)) {
--		if (f2fs_convert_inline_inode(inode))
--			return;
-+		err = f2fs_convert_inline_inode(inode);
-+		if (err)
-+			return err;
+-	f2fs_lock_op(sbi);
+-	remove_inode_page(inode);
+-	f2fs_unlock_op(sbi);
++	if (!err) {
++		f2fs_lock_op(sbi);
++		err = remove_inode_page(inode);
++		f2fs_unlock_op(sbi);
++	}
+ 
+ 	sb_end_intwrite(inode->i_sb);
+ no_delete:
+@@ -362,9 +365,26 @@ no_delete:
+ 	if (is_inode_flag_set(fi, FI_UPDATE_WRITE))
+ 		add_dirty_inode(sbi, inode->i_ino, UPDATE_INO);
+ 	if (is_inode_flag_set(fi, FI_FREE_NID)) {
+-		alloc_nid_failed(sbi, inode->i_ino);
++		if (err && err != -ENOENT)
++			alloc_nid_done(sbi, inode->i_ino);
++		else
++			alloc_nid_failed(sbi, inode->i_ino);
+ 		clear_inode_flag(fi, FI_FREE_NID);
  	}
++
++	if (err && err != -ENOENT) {
++		if (!exist_written_data(sbi, inode->i_ino, ORPHAN_INO)) {
++			/*
++			 * get here because we failed to release resource
++			 * of inode previously, reminder our user to run fsck
++			 * for fixing.
++			 */
++			set_sbi_flag(sbi, SBI_NEED_FSCK);
++			f2fs_msg(sbi->sb, KERN_WARNING,
++				"inode (ino:%lu) resource leak, run fsck "
++				"to fix this issue!", inode->i_ino);
++		}
++	}
+ out_clear:
+ #ifdef CONFIG_F2FS_FS_ENCRYPTION
+ 	if (fi->i_crypt_info)
+@@ -377,6 +397,7 @@ out_clear:
+ void handle_failed_inode(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	int err = 0;
  
--	if (!truncate_blocks(inode, i_size_read(inode), lock)) {
--		inode->i_mtime = inode->i_ctime = CURRENT_TIME;
--		mark_inode_dirty(inode);
--	}
-+	err = truncate_blocks(inode, i_size_read(inode), lock);
+ 	clear_nlink(inode);
+ 	make_bad_inode(inode);
+@@ -384,9 +405,27 @@ void handle_failed_inode(struct inode *inode)
+ 
+ 	i_size_write(inode, 0);
+ 	if (F2FS_HAS_BLOCKS(inode))
+-		f2fs_truncate(inode, false);
++		err = f2fs_truncate(inode, false);
++
++	if (!err)
++		err = remove_inode_page(inode);
+ 
+-	remove_inode_page(inode);
++	/*
++	 * if we skip truncate_node in remove_inode_page bacause we failed
++	 * before, it's better to find another way to release resource of
++	 * this inode (e.g. valid block count, node block or nid). Here we
++	 * choose to add this inode to orphan list, so that we can call iput
++	 * for releasing in orphan recovery flow.
++	 *
++	 * Note: we should add inode to orphan list before f2fs_unlock_op()
++	 * so we can prevent losing this orphan when encoutering checkpoint
++	 * and following suddenly power-off.
++	 */
++	if (err && err != -ENOENT) {
++		err = acquire_orphan_inode(sbi);
++		if (!err)
++			add_orphan_inode(sbi, inode->i_ino);
++	}
+ 
+ 	set_inode_flag(F2FS_I(inode), FI_FREE_NID);
+ 	f2fs_unlock_op(sbi);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 0867325..27d1a74 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -902,17 +902,20 @@ int truncate_xattr_node(struct inode *inode, struct page *page)
+  * Caller should grab and release a rwsem by calling f2fs_lock_op() and
+  * f2fs_unlock_op().
+  */
+-void remove_inode_page(struct inode *inode)
++int remove_inode_page(struct inode *inode)
+ {
+ 	struct dnode_of_data dn;
++	int err;
+ 
+ 	set_new_dnode(&dn, inode, NULL, NULL, inode->i_ino);
+-	if (get_dnode_of_data(&dn, 0, LOOKUP_NODE))
+-		return;
++	err = get_dnode_of_data(&dn, 0, LOOKUP_NODE);
 +	if (err)
 +		return err;
-+
-+	inode->i_mtime = inode->i_ctime = CURRENT_TIME;
-+	mark_inode_dirty(inode);
+ 
+-	if (truncate_xattr_node(inode, dn.inode_page)) {
++	err = truncate_xattr_node(inode, dn.inode_page);
++	if (err) {
+ 		f2fs_put_dnode(&dn);
+-		return;
++		return err;
+ 	}
+ 
+ 	/* remove potential inline_data blocks */
+@@ -926,6 +929,7 @@ void remove_inode_page(struct inode *inode)
+ 
+ 	/* will put inode & node pages */
+ 	truncate_node(&dn);
 +	return 0;
  }
  
- int f2fs_getattr(struct vfsmount *mnt,
-@@ -656,7 +662,9 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 
- 		if (attr->ia_size <= i_size_read(inode)) {
- 			truncate_setsize(inode, attr->ia_size);
--			f2fs_truncate(inode, true);
-+			err = f2fs_truncate(inode, true);
-+			if (err)
-+				return err;
- 			f2fs_balance_fs(F2FS_I_SB(inode));
- 		} else {
- 			/*
+ struct page *new_inode_page(struct inode *inode)
 -- 
 2.4.2
 
