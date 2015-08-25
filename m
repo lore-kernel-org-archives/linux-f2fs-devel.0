@@ -1,26 +1,28 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: fix to release inode correctly
-Date: Tue, 25 Aug 2015 15:17:36 -0700
-Message-ID: <20150825221736.GA12070@jaegeuk-mac02.mot.com>
-References: <001b01d0de51$0b369c70$21a3d550$@samsung.com>
-	<20150824165423.GC2837@jaegeuk-mac02.mot-mobility.com>
-	<000001d0ded7$1aa9e0a0$4ffda1e0$@samsung.com>
+Subject: Re: [PATCH 9/9] f2fs: update extent tree in batches
+Date: Tue, 25 Aug 2015 15:26:30 -0700
+Message-ID: <20150825222630.GB12070@jaegeuk-mac02.mot.com>
+References: <017d01d0da71$5780e8d0$0682ba70$@samsung.com>
+	<20150820174738.GD42028@jaegeuk-mac02.mot-mobility.com>
+	<021801d0dc10$a4d36810$ee7a3830$@samsung.com>
+	<000101d0df19$4aa94c90$dffbe5b0$@samsung.com>
+	<001001d0df1a$ecc3e7f0$c64bb7d0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZUMXL-00011N-2n
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZUMfv-0005wx-Lk
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Aug 2015 22:17:47 +0000
+	Tue, 25 Aug 2015 22:26:39 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZUMXJ-0006wI-Mr for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 25 Aug 2015 22:17:46 +0000
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZUMfu-00006N-Jj for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 25 Aug 2015 22:26:39 +0000
 Content-Disposition: inline
-In-Reply-To: <000001d0ded7$1aa9e0a0$4ffda1e0$@samsung.com>
+In-Reply-To: <001001d0df1a$ecc3e7f0$c64bb7d0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,51 +35,80 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <chao2.yu@samsung.com>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Aug 25, 2015 at 09:39:55AM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
+On Tue, Aug 25, 2015 at 05:45:53PM +0800, Chao Yu wrote:
 > > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Tuesday, August 25, 2015 12:54 AM
-> > To: Chao Yu
-> > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH 2/2] f2fs: fix to release inode correctly
+> > From: Chao Yu [mailto:chao2.yu@samsung.com]
+> > Sent: Tuesday, August 25, 2015 5:34 PM
+> > To: 'Jaegeuk Kim'
+> > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> > Subject: Re: [f2fs-dev] [PATCH 9/9] f2fs: update extent tree in batches
+> > 
+> > > -----Original Message-----
+> > > From: Chao Yu [mailto:chao2.yu@samsung.com]
+> > > Sent: Friday, August 21, 2015 8:55 PM
+> > > To: 'Jaegeuk Kim'
+> > > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> > > Subject: Re: [f2fs-dev] [PATCH 9/9] f2fs: update extent tree in batches
+> > >
+> > > Hi Jaegeuk,
+> > >
+> > > > -----Original Message-----
+> > > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > > Sent: Friday, August 21, 2015 1:48 AM
+> > > > To: Chao Yu
+> > > > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > > Subject: Re: [PATCH 9/9] f2fs: update extent tree in batches
+> > > >
+> > > > Hi Chao,
+> > > >
+> > > > On Wed, Aug 19, 2015 at 07:21:48PM +0800, Chao Yu wrote:
+> > > > > This patch introduce a new helper f2fs_update_extent_tree_range
+> > > > > which can update extent nodes in extent tree in batches.
+> > > > >
+> > > > > Now, we use the function to invalidate blocks in batches instead of
+> > > > > invalidating them one by one when truncating blocks.
+> > > >
+> > > > IMO, it's not clear the benefit of this patch in terms of performance and code
+> > > > readability versus risky code changes.
+> > >
+> > > This is only used in truncate path, IMO, in theory, we can gain benefit from
+> > > this batch mode operation when truncating frequently.
+> > >
+> > > I will test the patch for numbers.
+> > 
+> > Since in batched operation is only used in truncation path, I only stat data
+> > in that path. And I add below function to test for stating time count.
+> > 
+> > uint64_t rdtsc(void)
+> > {
+> > 	uint32_t lo, hi;
+> > 	__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
+> > 	return (uint64_t)hi << 32 | lo;
+> > }
+> > 
+> > My test environment is: ubuntu, intel i7-3770, 16G memory, 256g micron ssd.
 > > 
 > 
-> [snip]
+> Sorry, it's out of format.
 > 
-> > > +	 * if we skip truncate_node in remove_inode_page bacause we failed
-> > > +	 * before, it's better to find another way to release resource of
-> > > +	 * this inode (e.g. valid block count, node block or nid). Here we
-> > > +	 * choose to add this inode to orphan list, so that we can call iput
-> > > +	 * for releasing in orphan recovery flow.
-> > > +	 *
-> > > +	 * Note: we should add inode to orphan list before f2fs_unlock_op()
-> > > +	 * so we can prevent losing this orphan when encoutering checkpoint
-> > > +	 * and following suddenly power-off.
-> > > +	 */
-> > > +	if (err && err != -ENOENT) {
-> > > +		err = acquire_orphan_inode(sbi);
-> > > +		if (!err)
-> > > +			add_orphan_inode(sbi, inode->i_ino);
-> > 
-> > 		Need this too?
-> > 
-> > 		if (err)
-> > 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+> a) Removing 128MB file which has one extent node mapping whole range of file:
+> 1. dd if=/dev/zero  of=/mnt/f2fs/128M bs=1M count=128
+> 2. sync
+> 3. rm /mnt/f2fs/128M
+> 				count		total		average
+> f2fs_update_extent_tree_range	33		3321		100.63
+> f2fs_update_extent_cache	32768		7651022		233.49
 > 
-> We have another chance to release inode resource in following path:
->  - handle_failed_inode
->   - iput
->    - f2fs_evict_inode
->     - f2fs_truncate
->     - remove_inode_page
-> 
-> So I choose to set SBI_NEED_FSCK in the end of f2fs_evict_inode.
+> b) fsstress:
+> fsstress -d /mnt/f2fs -l 5 -n 100 -p 20
+> 				count		total		average
+> f2fs_update_extent_tree_range	1868		1073762		574.82
+> f2fs_update_extent_cache	31518		11495827	364.74
 
-Oh, got it. :)
+So, the remaining concern is risky big code changes.
+Let me take time to review and test this for a while.
+Thank you for the work. :)
 
-> 
-> Thanks,
+Thanks,
 
 ------------------------------------------------------------------------------
