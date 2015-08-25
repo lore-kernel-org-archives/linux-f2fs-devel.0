@@ -1,46 +1,59 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: fix to release inode correctly
-Date: Mon, 24 Aug 2015 15:52:46 -0700
-Message-ID: <20150824225105.GA8056@jaegeuk-mac02.mot.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [PATCH 2/2] f2fs: fix to release inode correctly
+Date: Tue, 25 Aug 2015 09:39:55 +0800
+Message-ID: <000001d0ded7$1aa9e0a0$4ffda1e0$@samsung.com>
 References: <001b01d0de51$0b369c70$21a3d550$@samsung.com>
  <20150824165423.GC2837@jaegeuk-mac02.mot-mobility.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20150824165423.GC2837@jaegeuk-mac02.mot-mobility.com>
+In-reply-to: <20150824165423.GC2837@jaegeuk-mac02.mot-mobility.com>
+Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+Hi Jaegeuk,
 
-On Mon, Aug 24, 2015 at 09:54:23AM -0700, Jaegeuk Kim wrote:
-> On Mon, Aug 24, 2015 at 05:40:45PM +0800, Chao Yu wrote:
-> > In following call stack, if unfortunately we lose all chances to truncate
-> > inode page in remove_inode_page, eventually we will add the nid allocated
-> > previously into free nid cache, this nid is with NID_NEW status and with
-> > NEW_ADDR in its blkaddr pointer:
-> > 
-> >  - f2fs_create
-> >   - f2fs_add_link
-> >    - __f2fs_add_link
-> >     - init_inode_metadata
-> >      - new_inode_page
-> >       - new_node_page
-> >        - set_node_addr(, NEW_ADDR)
-> >      - f2fs_init_acl   failed
-> >      - remove_inode_page  failed
-> >   - handle_failed_inode
-> >    - remove_inode_page  failed
-> >    - iput
-> >     - f2fs_evict_inode
-> >      - remove_inode_page  failed
-> >      - alloc_nid_failed   cache a nid with valid blkaddr: NEW_ADDR
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Tuesday, August 25, 2015 12:54 AM
+> To: Chao Yu
+> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/2] f2fs: fix to release inode correctly
+> 
 
-Unfortunately, this couldn't fix my bug case.
-I'm still struggling to find out something tho.
-Meanwhile, let's stay with both of the patches.
+[snip]
+
+> > +	 * if we skip truncate_node in remove_inode_page bacause we failed
+> > +	 * before, it's better to find another way to release resource of
+> > +	 * this inode (e.g. valid block count, node block or nid). Here we
+> > +	 * choose to add this inode to orphan list, so that we can call iput
+> > +	 * for releasing in orphan recovery flow.
+> > +	 *
+> > +	 * Note: we should add inode to orphan list before f2fs_unlock_op()
+> > +	 * so we can prevent losing this orphan when encoutering checkpoint
+> > +	 * and following suddenly power-off.
+> > +	 */
+> > +	if (err && err != -ENOENT) {
+> > +		err = acquire_orphan_inode(sbi);
+> > +		if (!err)
+> > +			add_orphan_inode(sbi, inode->i_ino);
+> 
+> 		Need this too?
+> 
+> 		if (err)
+> 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+
+We have another chance to release inode resource in following path:
+ - handle_failed_inode
+  - iput
+   - f2fs_evict_inode
+    - f2fs_truncate
+    - remove_inode_page
+
+So I choose to set SBI_NEED_FSCK in the end of f2fs_evict_inode.
 
 Thanks,
