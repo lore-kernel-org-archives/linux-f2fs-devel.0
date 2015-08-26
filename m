@@ -1,81 +1,112 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: fix to release inode correctly
-Date: Tue, 25 Aug 2015 15:40:25 -0700
-Message-ID: <20150825224025.GC12070@jaegeuk-mac02.mot.com>
-References: <001b01d0de51$0b369c70$21a3d550$@samsung.com>
- <20150824165423.GC2837@jaegeuk-mac02.mot-mobility.com>
- <20150824225105.GA8056@jaegeuk-mac02.mot.com>
- <000001d0df00$bd37d010$37a77030$@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 9/9] f2fs: update extent tree in batches
+Date: Wed, 26 Aug 2015 20:33:22 +0800
+Message-ID: <001901d0dffb$7d382040$77a860c0$@samsung.com>
+References: <017d01d0da71$5780e8d0$0682ba70$@samsung.com>
+ <20150820174738.GD42028@jaegeuk-mac02.mot-mobility.com>
+ <021801d0dc10$a4d36810$ee7a3830$@samsung.com>
+ <000101d0df19$4aa94c90$dffbe5b0$@samsung.com>
+ <001001d0df1a$ecc3e7f0$c64bb7d0$@samsung.com>
+ <20150825222630.GB12070@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <000001d0df00$bd37d010$37a77030$@samsung.com>
+In-reply-to: <20150825222630.GB12070@jaegeuk-mac02.mot.com>
+Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Aug 25, 2015 at 02:38:00PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Wednesday, August 26, 2015 6:27 AM
+> To: Chao Yu
+> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 9/9] f2fs: update extent tree in batches
 > 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Tuesday, August 25, 2015 6:53 AM
-> > To: Chao Yu
-> > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> > Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: fix to release inode correctly
-> > 
-> > Hi Chao,
-> > 
-> > On Mon, Aug 24, 2015 at 09:54:23AM -0700, Jaegeuk Kim wrote:
-> > > On Mon, Aug 24, 2015 at 05:40:45PM +0800, Chao Yu wrote:
-> > > > In following call stack, if unfortunately we lose all chances to truncate
-> > > > inode page in remove_inode_page, eventually we will add the nid allocated
-> > > > previously into free nid cache, this nid is with NID_NEW status and with
-> > > > NEW_ADDR in its blkaddr pointer:
+> On Tue, Aug 25, 2015 at 05:45:53PM +0800, Chao Yu wrote:
+> > > -----Original Message-----
+> > > From: Chao Yu [mailto:chao2.yu@samsung.com]
+> > > Sent: Tuesday, August 25, 2015 5:34 PM
+> > > To: 'Jaegeuk Kim'
+> > > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> > > Subject: Re: [f2fs-dev] [PATCH 9/9] f2fs: update extent tree in batches
+> > >
+> > > > -----Original Message-----
+> > > > From: Chao Yu [mailto:chao2.yu@samsung.com]
+> > > > Sent: Friday, August 21, 2015 8:55 PM
+> > > > To: 'Jaegeuk Kim'
+> > > > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> > > > Subject: Re: [f2fs-dev] [PATCH 9/9] f2fs: update extent tree in batches
 > > > >
-> > > >  - f2fs_create
-> > > >   - f2fs_add_link
-> > > >    - __f2fs_add_link
-> > > >     - init_inode_metadata
-> > > >      - new_inode_page
-> > > >       - new_node_page
-> > > >        - set_node_addr(, NEW_ADDR)
-> > > >      - f2fs_init_acl   failed
-> > > >      - remove_inode_page  failed
-> > > >   - handle_failed_inode
-> > > >    - remove_inode_page  failed
-> > > >    - iput
-> > > >     - f2fs_evict_inode
-> > > >      - remove_inode_page  failed
-> > > >      - alloc_nid_failed   cache a nid with valid blkaddr: NEW_ADDR
-> > 
-> > Unfortunately, this couldn't fix my bug case.
+> > > > Hi Jaegeuk,
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > > > Sent: Friday, August 21, 2015 1:48 AM
+> > > > > To: Chao Yu
+> > > > > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > > > Subject: Re: [PATCH 9/9] f2fs: update extent tree in batches
+> > > > >
+> > > > > Hi Chao,
+> > > > >
+> > > > > On Wed, Aug 19, 2015 at 07:21:48PM +0800, Chao Yu wrote:
+> > > > > > This patch introduce a new helper f2fs_update_extent_tree_range
+> > > > > > which can update extent nodes in extent tree in batches.
+> > > > > >
+> > > > > > Now, we use the function to invalidate blocks in batches instead of
+> > > > > > invalidating them one by one when truncating blocks.
+> > > > >
+> > > > > IMO, it's not clear the benefit of this patch in terms of performance and code
+> > > > > readability versus risky code changes.
+> > > >
+> > > > This is only used in truncate path, IMO, in theory, we can gain benefit from
+> > > > this batch mode operation when truncating frequently.
+> > > >
+> > > > I will test the patch for numbers.
+> > >
+> > > Since in batched operation is only used in truncation path, I only stat data
+> > > in that path. And I add below function to test for stating time count.
+> > >
+> > > uint64_t rdtsc(void)
+> > > {
+> > > 	uint32_t lo, hi;
+> > > 	__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
+> > > 	return (uint64_t)hi << 32 | lo;
+> > > }
+> > >
+> > > My test environment is: ubuntu, intel i7-3770, 16G memory, 256g micron ssd.
+> > >
+> >
+> > Sorry, it's out of format.
+> >
+> > a) Removing 128MB file which has one extent node mapping whole range of file:
+> > 1. dd if=/dev/zero  of=/mnt/f2fs/128M bs=1M count=128
+> > 2. sync
+> > 3. rm /mnt/f2fs/128M
+> > 				count		total		average
+> > f2fs_update_extent_tree_range	33		3321		100.63
+> > f2fs_update_extent_cache	32768		7651022		233.49
+> >
+> > b) fsstress:
+> > fsstress -d /mnt/f2fs -l 5 -n 100 -p 20
+> > 				count		total		average
+> > f2fs_update_extent_tree_range	1868		1073762		574.82
+> > f2fs_update_extent_cache	31518		11495827	364.74
 > 
-> Another thing I note is that: we do not cover free_nid_list_lock with build_lock,
-> so when we are building free nid cache, we can change the status of free nid
-> cache, so I guess it is one possible suspect who cause our nid issue.
+> So, the remaining concern is risky big code changes.
+> Let me take time to review and test this for a while.
 
-But, when building the free nids, it doesn't add any candidate if there is
-an existing entry in the list which might be set as NID_ALLOC.
+Thank you! :)
 
-> 
-> And, could you share me the information for reproducing the nid reallocation
-> issue? So I can reproduce in my environment for invistigating.
+> Thank you for the work. :)
 
-Sure. I've running ubuntu on virtualbox equipped with an 8GB virtual partition
-with 1GB main memory.
-The issue occurs during sometimes xfstests, or sometimes fsstress which fills up
-the partition to 100%.
-With my quick fix, I couldn't meet that bug for two days run.
+I wrote a v2 patch, I update performance data newly tested and
+description in commit log of that patch.
 
 Thanks,
 
-> 
-> > I'm still struggling to find out something tho.
-> > Meanwhile, let's stay with both of the patches.
-> 
-> OK.
 > 
 > Thanks,
