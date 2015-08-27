@@ -1,84 +1,130 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: fix to release inode correctly
-Date: Wed, 26 Aug 2015 20:46:11 +0800
-Message-ID: <002a01d0dffd$48366a30$d8a33e90$@samsung.com>
-References: <001b01d0de51$0b369c70$21a3d550$@samsung.com>
- <20150824165423.GC2837@jaegeuk-mac02.mot-mobility.com>
- <20150824225105.GA8056@jaegeuk-mac02.mot.com>
- <000001d0df00$bd37d010$37a77030$@samsung.com>
- <20150825224025.GC12070@jaegeuk-mac02.mot.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: mkoffice.ro PostMaster <root@mkoffice.ro>
+Subject: Error sending message
+	[1440659402718.b75ffb90.360.92acef.mkoffice] from [mkoffice.ro]
+Date: Thu, 27 Aug 2015 10:53:19 +0300
+Message-ID: <E1ZUsFp-0007g6-QF@sfs-ml-2.v29.ch3.sourceforge.com>
+Content-Type: multipart/mixed; boundary="===============1543879722154407387=="
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <root@mkoffice.ro>) id 1ZUsFp-0007fz-0W
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 27 Aug 2015 08:09:49 +0000
+Received: from mkoffice.ro ([89.46.130.227])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZUsFn-0001zq-HR for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 27 Aug 2015 08:09:48 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+
+--===============1543879722154407387==
+
+[<00>] XMail bounce: Rcpt=[rm@mkoffice.eu];Error=[The maximum number of delivery attempts has been reached]
+
+
+[<01>] Error sending message [1440659402718.b75ffb90.360.92acef.mkoffice] from [mkoffice.ro].
+
+ID:        <SC7CE8>
+Mail From: <linux-f2fs-devel@lists.sourceforge.net>
+Rcpt To:   <rm@mkoffice.eu>
+Server:    <ASPMX.L.GOOGLE.COM."
+>>
+<<
+ErrCode   = -152
+ErrString = End of socket stream data
+SMAIL SMTP-Send MX = "ALT1.ASPMX.L.GOOGLE.COM." SMTP = "mkoffice.ro" From = "linux-f2fs-devel@lists.sourceforge.net" To = "rm@mkoffice.eu" Failed !
+SMTP-Error = "421-4.7.0 [89.46.130.227      15] Our system has detected an unusual rate of> [ASPMX.L.GOOGLE.COM."
+>>
+<<
+ErrCode   = -152
+ErrString = End of socket stream data
+SMAIL SMTP-Send MX = "ALT1.ASPMX.L.GOOGLE.COM]
+
+
+[<02>] The reason of the delivery failure was:
+
+The maximum number of delivery attempts has been reached
+
+
+[<05>] Here is listed the initial part of the message:
+
+X-Deliver-To: rm@mkoffice.ro
+Reply-To: vanzari@mkoffice.ro
+Reply-To: office@mkoffice.ro
+Received: from localhost by mkoffice.ro
+	with SpamAssassin (version 3.4.1);
+	Thu, 27 Aug 2015 10:10:02 +0300
+From: <nonen22pp@gmail.com>, <gorskova32@gmail.com>, <mamontova260@gmail.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+To: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+Subject: *****SPAM***** =?utf-8?B?0JrQu9C40LXQvdGC0YHQutC40LUg0LHQsNC30Ysg0KLQtdC7ICs3OTEzMzkxMzgzNyBFbWFpbDogbWFtb250b3ZhMjYwQGdtYWlsLmNvbSDQo9C30L3QsNC50YLQtSDQv9C+0LTRgNC+0LHQvdC10LUhISE=?=
+Date: Thu, 27 Aug 2015 09:06:04 +0200
+Message-Id: <201508270706.t7R73SbU027956@CDN5>
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on mkoffice.ro
+X-Spam-Flag: YES
+X-Spam-Level: *********************
+X-Spam-ASN: AS16276 178.32.0.0/15
+X-Spam-Status: Yes, score=21.9 required=6.0
+X-Spam-Scores: DKIM_ADSP_CUSTOM_MED=0.001,FREEMAIL_FORGED_FROMDOMAIN=0.172,
+	FREEMAIL_FROM=0.001,FREEMAIL_REPLYTO=1,FREEMAIL_REPLYTO_END_DIGIT=0.25,
+	FSL_HELO_NON_FQDN_1=0.001,HEADER_FROM_DIFFERENT_DOMAINS=0.027,
+	NML_ADSP_CUSTOM_MED=1.2,RCVD_IN_BL_SPAMCOP_NET=1.246,
+	RCVD_IN_BRBL_LASTEXT=1.644,RCVD_IN_MSPIKE_BL=0.01,RCVD_IN_MSPIKE_L5=3.099,
+	RCVD_IN_PSBL=2.7,RCVD_IN_RP_RNBL=1.284,RCVD_IN_SORBS_HTTP=2.499,
+	RCVD_IN_SORBS_SOCKS=2.443,RCVD_IN_SORBS_WEB=0.614,RCVD_IN_XBL=0.724,
+	SPF_SOFTFAIL=0.972,SPOOFED_FREEM_REPTO=2,T_PDS_FROM_2_EMAILS=0.01
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="----------=_55DEB7CA.36A37010"
+
+This is a multi-part message in MIME format.
+
+------------=_55DEB7CA.36A37010
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+Spam detection software, running on the system "mkoffice.ro",
+has identified this incoming email as possible spam.  The original
+message has been attached to this so you can view it or label
+similar future email.  If you have any questions, see
+root@mkoffice.ro for details.
+
+Content preview:  Klientskie bazi tel +79133913837 Email: mamontova260@gmail.com
+   Соберем для Вас по интернет базу данных потенциальных клиентов для Вашего
+   Бизнеса. По базе можно звонить писать слать факсы email вести любые прямые
+
+
+--===============1543879722154407387==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20150825224025.GC12070@jaegeuk-mac02.mot.com>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Disposition: inline
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, August 26, 2015 6:40 AM
-> To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: fix to release inode correctly
-> 
-> On Tue, Aug 25, 2015 at 02:38:00PM +0800, Chao Yu wrote:
-> > Hi Jaegeuk,
-> >
-> > > -----Original Message-----
-> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > Sent: Tuesday, August 25, 2015 6:53 AM
-> > > To: Chao Yu
-> > > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> > > Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: fix to release inode correctly
-> > >
-> > > Hi Chao,
-> > >
-> > > On Mon, Aug 24, 2015 at 09:54:23AM -0700, Jaegeuk Kim wrote:
-> > > > On Mon, Aug 24, 2015 at 05:40:45PM +0800, Chao Yu wrote:
-> > > > > In following call stack, if unfortunately we lose all chances to truncate
-> > > > > inode page in remove_inode_page, eventually we will add the nid allocated
-> > > > > previously into free nid cache, this nid is with NID_NEW status and with
-> > > > > NEW_ADDR in its blkaddr pointer:
-> > > > >
-> > > > >  - f2fs_create
-> > > > >   - f2fs_add_link
-> > > > >    - __f2fs_add_link
-> > > > >     - init_inode_metadata
-> > > > >      - new_inode_page
-> > > > >       - new_node_page
-> > > > >        - set_node_addr(, NEW_ADDR)
-> > > > >      - f2fs_init_acl   failed
-> > > > >      - remove_inode_page  failed
-> > > > >   - handle_failed_inode
-> > > > >    - remove_inode_page  failed
-> > > > >    - iput
-> > > > >     - f2fs_evict_inode
-> > > > >      - remove_inode_page  failed
-> > > > >      - alloc_nid_failed   cache a nid with valid blkaddr: NEW_ADDR
-> > >
-> > > Unfortunately, this couldn't fix my bug case.
-> >
-> > Another thing I note is that: we do not cover free_nid_list_lock with build_lock,
-> > so when we are building free nid cache, we can change the status of free nid
-> > cache, so I guess it is one possible suspect who cause our nid issue.
-> 
-> But, when building the free nids, it doesn't add any candidate if there is
-> an existing entry in the list which might be set as NID_ALLOC.
-> 
-> >
-> > And, could you share me the information for reproducing the nid reallocation
-> > issue? So I can reproduce in my environment for invistigating.
-> 
-> Sure. I've running ubuntu on virtualbox equipped with an 8GB virtual partition
-> with 1GB main memory.
-> The issue occurs during sometimes xfstests, or sometimes fsstress which fills up
-> the partition to 100%.
-> With my quick fix, I couldn't meet that bug for two days run.
+------------------------------------------------------------------------------
 
-Thank you for the hint, :) I'm trying to reproduce the issue.
+--===============1543879722154407387==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Thanks,
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+--===============1543879722154407387==--
