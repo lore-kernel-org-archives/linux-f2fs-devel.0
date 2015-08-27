@@ -1,19 +1,19 @@
 From: mkoffice.ro PostMaster <root@mkoffice.ro>
 Subject: Error sending message
-	[1440659402718.b75ffb90.360.92acef.mkoffice] from [mkoffice.ro]
-Date: Thu, 27 Aug 2015 10:53:19 +0300
-Message-ID: <E1ZUsFp-0007g6-QF@sfs-ml-2.v29.ch3.sourceforge.com>
-Content-Type: multipart/mixed; boundary="===============1543879722154407387=="
+	[1440659402721.b757fb90.360.92acf1.mkoffice] from [mkoffice.ro]
+Date: Thu, 27 Aug 2015 10:53:17 +0300
+Message-ID: <E1ZUsFr-0001UZ-8t@sfs-ml-3.v29.ch3.sourceforge.com>
+Content-Type: multipart/mixed; boundary="===============4547489796629682683=="
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <root@mkoffice.ro>) id 1ZUsFp-0007fz-0W
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <root@mkoffice.ro>) id 1ZUsFo-0001US-Sp
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 27 Aug 2015 08:09:49 +0000
+	Thu, 27 Aug 2015 08:09:48 +0000
 Received: from mkoffice.ro ([89.46.130.227])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZUsFn-0001zq-HR for linux-f2fs-devel@lists.sourceforge.net;
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZUsFn-00006N-5z for linux-f2fs-devel@lists.sourceforge.net;
 	Thu, 27 Aug 2015 08:09:48 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -26,28 +26,28 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 
---===============1543879722154407387==
+--===============4547489796629682683==
 
-[<00>] XMail bounce: Rcpt=[rm@mkoffice.eu];Error=[The maximum number of delivery attempts has been reached]
+[<00>] XMail bounce: Rcpt=[cg@c-response.com];Error=[The maximum number of delivery attempts has been reached]
 
 
-[<01>] Error sending message [1440659402718.b75ffb90.360.92acef.mkoffice] from [mkoffice.ro].
+[<01>] Error sending message [1440659402721.b757fb90.360.92acf1.mkoffice] from [mkoffice.ro].
 
 ID:        <SC7CE8>
 Mail From: <linux-f2fs-devel@lists.sourceforge.net>
-Rcpt To:   <rm@mkoffice.eu>
-Server:    <ASPMX.L.GOOGLE.COM."
+Rcpt To:   <cg@c-response.com>
+Server:    <aspmx.l.google.com."
 >>
 <<
 ErrCode   = -152
 ErrString = End of socket stream data
-SMAIL SMTP-Send MX = "ALT1.ASPMX.L.GOOGLE.COM." SMTP = "mkoffice.ro" From = "linux-f2fs-devel@lists.sourceforge.net" To = "rm@mkoffice.eu" Failed !
-SMTP-Error = "421-4.7.0 [89.46.130.227      15] Our system has detected an unusual rate of> [ASPMX.L.GOOGLE.COM."
+SMAIL SMTP-Send MX = "alt1.aspmx.l.google.com." SMTP = "mkoffice.ro" From = "linux-f2fs-devel@lists.sourceforge.net" To = "cg@c-response.com" Failed !
+SMTP-Error = "421-4.7.0 [89.46.130.227      15] Our system has detected an unusual rate of> [aspmx.l.google.com."
 >>
 <<
 ErrCode   = -152
 ErrString = End of socket stream data
-SMAIL SMTP-Send MX = "ALT1.ASPMX.L.GOOGLE.COM]
+SMAIL SMTP-Send MX = "alt1.aspmx.l.google.com]
 
 
 [<02>] The reason of the delivery failure was:
@@ -57,7 +57,7 @@ The maximum number of delivery attempts has been reached
 
 [<05>] Here is listed the initial part of the message:
 
-X-Deliver-To: rm@mkoffice.ro
+X-Deliver-To: cg@mkoffice.ro
 Reply-To: vanzari@mkoffice.ro
 Reply-To: office@mkoffice.ro
 Received: from localhost by mkoffice.ro
@@ -108,7 +108,7 @@ Content preview:  Klientskie bazi tel +79133913837 Email: mamontova260@gmail.com
    Бизнеса. По базе можно звонить писать слать факсы email вести любые прямые
 
 
---===============1543879722154407387==
+--===============4547489796629682683==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -116,7 +116,7 @@ Content-Disposition: inline
 
 ------------------------------------------------------------------------------
 
---===============1543879722154407387==
+--===============4547489796629682683==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -127,4 +127,4 @@ Linux-f2fs-devel mailing list
 Linux-f2fs-devel@lists.sourceforge.net
 https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
---===============1543879722154407387==--
+--===============4547489796629682683==--
