@@ -1,22 +1,31 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] f2fs: upset segment_info repair
-Date: Mon, 31 Aug 2015 17:15:10 +0800
-Message-ID: <1441012510-28607-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH] f2fs: upset segment_info repair
+Date: Tue, 01 Sep 2015 11:14:51 +0800
+Message-ID: <004601d0e464$78f63bd0$6ae2b370$@samsung.com>
+References: <1441012510-28607-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1ZWLSn-0006BF-RI
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1ZWc31-0000z1-Vb
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 31 Aug 2015 09:33:17 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ZWLSj-000192-FQ
+	Tue, 01 Sep 2015 03:15:47 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZWc2y-00087S-BE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 31 Aug 2015 09:33:17 +0000
+	Tue, 01 Sep 2015 03:15:47 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0NTZ00JIHAE0XBA0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 01 Sep 2015 12:15:36 +0900 (KST)
+In-reply-to: <1441012510-28607-1-git-send-email-heyunlei@huawei.com>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,36 +35,28 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: chao2.yu@samsung.com, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: 'Yunlei He' <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-upset segment_info like this:
+> -----Original Message-----
+> From: Yunlei He [mailto:heyunlei@huawei.com]
+> Sent: Monday, August 31, 2015 5:15 PM
+> To: chao2.yu@samsung.com; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Cc: bintian.wang@huawei.com; Yunlei He
+> Subject: [f2fs-dev][PATCH] f2fs: upset segment_info repair
+> 
+> upset segment_info like this:
+> 
+> 276000|161 0|0   4|70  3|0   3|0   0|0   0|91  4|0   4|232 4|39
+> 276104|0   4|0   4|1   4|0   4|0   4|280 4|0   4|42  4|262 4|38
+> 276204|179 4|89  4|39  4|24  4|0   4|96  4|3   4|428 4|0   4|118
+> 276304|112 4|97  4|0   4|0   4|0   4|68  4|0   4|0   4|86  4|138
+> 276404|0   4|0   0|166 5|39  4|101 0|111
+> 
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
 
-276000|161 0|0   4|70  3|0   3|0   0|0   0|91  4|0   4|232 4|39
-276104|0   4|0   4|1   4|0   4|0   4|280 4|0   4|42  4|262 4|38
-276204|179 4|89  4|39  4|24  4|0   4|96  4|3   4|428 4|0   4|118
-276304|112 4|97  4|0   4|0   4|0   4|68  4|0   4|0   4|86  4|138
-276404|0   4|0   0|166 5|39  4|101 0|111
+Looks good to me.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index cfe3f95..f794781 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -693,7 +693,7 @@ static int segment_info_seq_show(struct seq_file *seq, void *offset)
- 		struct seg_entry *se = get_seg_entry(sbi, i);
- 
- 		if ((i % 10) == 0)
--			seq_printf(seq, "%-5d", i);
-+			seq_printf(seq, "%-10d", i);
- 		seq_printf(seq, "%d|%-3u", se->type,
- 					get_valid_blocks(sbi, i, 1));
- 		if ((i % 10) == 9 || i == (total_segs - 1))
--- 
-1.9.1
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
 
 ------------------------------------------------------------------------------
