@@ -1,62 +1,181 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: upset segment_info repair
-Date: Tue, 01 Sep 2015 11:14:51 +0800
-Message-ID: <004601d0e464$78f63bd0$6ae2b370$@samsung.com>
-References: <1441012510-28607-1-git-send-email-heyunlei@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] f2fs updates for v4.3
+Date: Wed, 2 Sep 2015 11:53:44 -0700
+Message-ID: <20150902185202.GA40646@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZWc31-0000z1-Vb
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Sep 2015 03:15:47 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZWc2y-00087S-BE
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Sep 2015 03:15:47 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NTZ00JIHAE0XBA0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Sep 2015 12:15:36 +0900 (KST)
-In-reply-to: <1441012510-28607-1-git-send-email-heyunlei@huawei.com>
-Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Yunlei He' <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-> -----Original Message-----
-> From: Yunlei He [mailto:heyunlei@huawei.com]
-> Sent: Monday, August 31, 2015 5:15 PM
-> To: chao2.yu@samsung.com; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Cc: bintian.wang@huawei.com; Yunlei He
-> Subject: [f2fs-dev][PATCH] f2fs: upset segment_info repair
-> 
-> upset segment_info like this:
-> 
-> 276000|161 0|0   4|70  3|0   3|0   0|0   0|91  4|0   4|232 4|39
-> 276104|0   4|0   4|1   4|0   4|0   4|280 4|0   4|42  4|262 4|38
-> 276204|179 4|89  4|39  4|24  4|0   4|96  4|3   4|428 4|0   4|118
-> 276304|112 4|97  4|0   4|0   4|0   4|68  4|0   4|0   4|86  4|138
-> 276404|0   4|0   0|166 5|39  4|101 0|111
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Hi Linus,
 
-Looks good to me.
+Could you please pull the below f2fs updates?
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+Thank you so much,
 
+The following changes since commit 6c84461c0cb0db3f4f56695ac9944451b34bf431:
 
-------------------------------------------------------------------------------
+  Merge tag 'pci-v4.2-fixes-1' of git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci (2015-08-04 09:27:19 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-4.3
+
+for you to fetch changes up to 01a5ad827a36e36f45e1fdb96903ea115f759865:
+
+  f2fs: upset segment_info repair (2015-09-01 14:45:27 -0700)
+
+----------------------------------------------------------------
+The major work includes fixing and enhancing the existing extent_cache feature,
+which has been well settling down so far and now it becomes a default mount
+option accordingly.
+
+Also, this version newly registers a f2fs memory shrinker to reclaim several
+objects consumed by a couple of data structures in order to avoid memory
+pressures.
+
+Another new feature is to add ioctl(F2FS_GARBAGE_COLLECT) which triggers a
+cleaning job explicitly by users.
+
+Most of the other patches are to fix bugs occurred in the corner cases across
+the whole code area.
+
+----------------------------------------------------------------
+Chao Yu (43):
+      f2fs: fix to record dirty page count for symlink
+      MAINTAINERS: add missed trace file for f2fs
+      f2fs: restrict multimedia filename
+      f2fs: enhance multithread performance
+      f2fs: fix to update page flag
+      f2fs: maintain extent cache in separated file
+      f2fs: add new ioctl F2FS_IOC_GARBAGE_COLLECT
+      f2fs: warm up cold page after mmaped write
+      f2fs: cleanup write_orphan_inodes
+      f2fs: correct return value of ->setxattr
+      f2fs: expose f2fs_write_cache_pages
+      f2fs: stat inline xattr inode number
+      f2fs: use atomic_t to record hit ratio info of extent cache
+      f2fs: reduce region of cp_rwsem covered in f2fs_do_collapse
+      f2fs: fix double lock in handle_failed_inode
+      f2fs: skip writing in ->writepages when no dirty pages exist
+      f2fs: fix to wait all atomic written pages writeback
+      f2fs: convert inline data before set atomic/volatile flag
+      f2fs: fix inline data/dentry stat number leak
+      f2fs: fix to build free nids from readaheaded nat pages
+      f2fs: freeze filesystem when fail to update meta page due to IO error
+      f2fs: fix to release inode page correctly
+      f2fs: invalidate temporary meta page
+      f2fs: recover invalid/reserved block address for fsynced file
+      f2fs: report error of fill_zero
+      f2fs: report EINVAL for unalignment direct IO
+      f2fs: remove inmem radix tree
+      f2fs: handle error of f2fs_iget correctly
+      MAINTAINERS: add myself as a dedicated reviewer of f2fs
+      f2fs: avoid clear valid page
+      f2fs: shrink free_nids entries
+      f2fs: add annotation for space utilization of regular/inline dentry
+      f2fs: fix incorrect mapping for bmap
+      f2fs: add largest/cached stat in extent cache
+      f2fs: adjust showing of extent cache stat
+      f2fs: kill dead code in __insert_extent_tree
+      f2fs: split __insert_extent_tree_ret for readability
+      f2fs: lookup neighbor extent nodes for merging later
+      f2fs: avoid unneeded initializing when converting inline dentry
+      f2fs: handle f2fs_truncate error correctly
+      f2fs: fix to release inode correctly
+      f2fs: update extent tree in batches
+      f2fs: avoid accessing NULL pointer in f2fs_drop_largest_extent
+
+Fan Li (5):
+      f2fs: don't try to split extents shorter than F2FS_MIN_EXTENT_LEN
+      f2fs: add new interfaces for extent tree
+      f2fs: change the timing of f2fs_wait_on_page_writeback
+      f2fs: use extent cache to optimize f2fs_reserve_block
+      f2fs: fix to update cached_en of extent tree properly
+
+Jaegeuk Kim (30):
+      f2fs: avoid freed stat information
+      f2fs: avoid to use failed inode immediately
+      f2fs: convert inline_data for various fallocate
+      f2fs: fix wrong block address calculation for a split extent
+      f2fs: update on-disk extents even under extent_cache
+      f2fs: set cached_en after checking finally
+      f2fs: introduce a shrinker for mounted fs
+      f2fs: shrink nat_cache entries
+      f2fs: shrink extent_cache entries
+      f2fs: add noextent_cache mount option
+      f2fs: use extent_cache by default
+      f2fs: check the largest extent at look-up time
+      f2fs: shrink unreferenced extent_caches first
+      f2fs: use a page temporarily for encrypted gced page
+      f2fs: callers take care of the page from bio error
+      f2fs: handle error cases in commit_inmem_pages
+      f2fs: do not assign a new segment for dio under space shortage
+      f2fs: avoid a build warning
+      f2fs: do not write any node pages related to orphan inodes
+      f2fs: skip checkpoint if there is no dirty and prefree segments
+      f2fs: increase the number of max hard links
+      f2fs: handle failed bio allocation
+      f2fs: avoid garbage collecting already moved node blocks
+      f2fs: reuse nids more aggressively
+      f2fs: fix to cover lock_op for update_inode_page
+      f2fs: retry gc if one section is not successfully reclaimed
+      f2fs: go out for insert_inode_locked failure
+      f2fs: check the node block address of newly allocated nid
+      f2fs: use __GFP_NOFAIL to avoid infinite loop
+      f2fs: fix wrong pointer access during try_to_free_nids
+
+Junesung Lee (1):
+      f2fs: fix typo
+
+Liu Xue (1):
+      f2fs: unify f2fs_bug_on when check blocks and segment
+
+Markus Elfring (1):
+      f2fs crypto: delete an unnecessary check before the function call "key_put"
+
+Nicholas Krause (1):
+      f2fs: make the function check_dnode have a return type of bool and change it's name to is_alive
+
+Tiezhu Yang (1):
+      f2fs: optimize f2fs_write_cache_pages
+
+Yunlei He (1):
+      f2fs: upset segment_info repair
+
+Zhang Zhen (1):
+      f2fs: atomically set inode->i_flags
+
+ Documentation/filesystems/f2fs.txt |   4 +-
+ MAINTAINERS                        |   2 +
+ fs/f2fs/Kconfig                    |   2 +-
+ fs/f2fs/Makefile                   |   1 +
+ fs/f2fs/checkpoint.c               |  93 ++--
+ fs/f2fs/crypto_key.c               |   3 +-
+ fs/f2fs/data.c                     | 953 +++++++++----------------------------
+ fs/f2fs/debug.c                    |  30 +-
+ fs/f2fs/dir.c                      |   4 +-
+ fs/f2fs/extent_cache.c             | 791 ++++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h                     | 134 ++++--
+ fs/f2fs/file.c                     | 185 +++++--
+ fs/f2fs/gc.c                       |  81 ++--
+ fs/f2fs/gc.h                       |   6 +
+ fs/f2fs/inline.c                   |  23 +-
+ fs/f2fs/inode.c                    |  97 ++--
+ fs/f2fs/namei.c                    |  21 +-
+ fs/f2fs/node.c                     |  86 +++-
+ fs/f2fs/recovery.c                 |  43 +-
+ fs/f2fs/segment.c                  |  78 +--
+ fs/f2fs/segment.h                  |  55 +--
+ fs/f2fs/shrinker.c                 | 139 ++++++
+ fs/f2fs/super.c                    |  65 ++-
+ fs/f2fs/xattr.c                    |   5 +-
+ include/linux/f2fs_fs.h            |  16 +-
+ include/trace/events/f2fs.h        |  12 +-
+ 26 files changed, 1903 insertions(+), 1026 deletions(-)
+ create mode 100644 fs/f2fs/extent_cache.c
+ create mode 100644 fs/f2fs/shrinker.c
