@@ -1,26 +1,22 @@
-From: Nicholas Krause <xerofoify@gmail.com>
-Subject: [PATCH RESEND] f2fs:Fix incorrect return statement in
-	the function f2fs_ioc_release_volatile_write
-Date: Sun,  6 Sep 2015 08:28:46 -0400
-Message-ID: <1441542526-11916-1-git-send-email-xerofoify@gmail.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: add a judgment in add_discard_addrs
+Date: Tue, 8 Sep 2015 18:51:13 +0800
+Message-ID: <1441709473-21297-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <xerofoify@gmail.com>) id 1ZYZ44-0002j1-DX
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1ZZGTg-0006ht-9O
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 06 Sep 2015 12:28:56 +0000
-Received: from mail-io0-f169.google.com ([209.85.223.169])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ZYZ43-0005sM-Ou
+	Tue, 08 Sep 2015 10:50:16 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZZGTb-0007f5-Dp
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 06 Sep 2015 12:28:56 +0000
-Received: by ioii196 with SMTP id i196so65070354ioi.3
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 06 Sep 2015 05:28:50 -0700 (PDT)
+	Tue, 08 Sep 2015 10:50:16 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,38 +26,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: chao2.yu@samsung.com, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This fixes the incorrect return statement at the end of the function
-f2fs_ioc_release_volatile_write's body for returning zero as this is
-incorrect due to the function call before this return statement to
-the function punch_hole being able to fail and we should return this
-function's return fail directly in order to signal to callers of the
-function f2fs_ioc_release_volatile if a failure arises with this call
-to punch_hole fails.
+CP_DISCARD traverse all segments in fstrim_range to add small discards,
+it is better to select entry->len bigger than trim_minlen.
 
-Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/file.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/f2fs/segment.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b0f38c3..ec323b4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1369,8 +1369,7 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
- 	if (!f2fs_is_first_block_written(inode))
- 		return truncate_partial_data_page(inode, 0, true);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 78e6d06..a0dab7a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -599,7 +599,8 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 			break;
  
--	punch_hole(inode, 0, F2FS_BLKSIZE);
--	return 0;
-+	return punch_hole(inode, 0, F2FS_BLKSIZE);
+ 		end = __find_rev_next_zero_bit(dmap, max_blocks, start + 1);
+-		__add_discard_entry(sbi, cpc, se, start, end);
++		if(force && cpc->trim_minlen >= (end - start))
++			__add_discard_entry(sbi, cpc, se, start, end);
+ 	}
  }
  
- static int f2fs_ioc_abort_volatile_write(struct file *filp)
 -- 
-2.1.4
+1.9.1
 
 
 ------------------------------------------------------------------------------
