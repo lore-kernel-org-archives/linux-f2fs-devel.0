@@ -1,30 +1,27 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: [PATCH] f2fs: optimize code of
-	f2fs_update_extent_tree_range
-Date: Wed, 09 Sep 2015 10:26:50 +0800
-Message-ID: <000001d0eaa7$122161c0$36642540$@samsung.com>
+From: He YunLei <heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: add a judgment in add_discard_addrs
+Date: Wed, 9 Sep 2015 10:32:32 +0800
+Message-ID: <55EF9A40.3080902@huawei.com>
+References: <1441709473-21297-1-git-send-email-heyunlei@huawei.com>
+	<001d01d0ea27$9d4c6cc0$d7e54640$@samsung.com>
+	<55EF74FB.8050600@huawei.com>
+	<005a01d0ea9c$8fee9600$afcbc200$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fanofcode.li@samsung.com>) id 1ZZV6o-0004Ra-8p
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1ZZVBy-0000LP-6N
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Sep 2015 02:27:38 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZZV6l-0006t4-Pi
+	Wed, 09 Sep 2015 02:32:58 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZZVBs-00070Q-U7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Sep 2015 02:27:38 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NUE01YNL1HNQN50@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Sep 2015 11:27:28 +0900 (KST)
-Content-language: en-us
+	Wed, 09 Sep 2015 02:32:58 +0000
+In-Reply-To: <005a01d0ea9c$8fee9600$afcbc200$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,268 +31,83 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-
-Fix two potential problems:
-1. when largest extent needs to be invalidated, it will be reset in  
-   __drop_largest_extent, which makes __is_extent_same after always
-   return false, and largest extent unchanged. Now we update it properly.
-
-2. When extent is split and the latter part remains in tree, next_en 
-   should be the latter part instead of next extent of original extent.
-   It will cause merge failure if there is in-place update, although
-   there is not, I think this fix will still makes codes less ambiguous.
-
-This patch also simpfies codes of invalidating extents, and optimizes the
-procedues that split extent into two.
-
-
-Signed-off-by: Fan li <fanofcode.li@samsung.com>
----
- fs/f2fs/extent_cache.c |  150
-+++++++++++++++++++-----------------------------
- 1 file changed, 58 insertions(+), 92 deletions(-)
-
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 997ac86..b95cfb3 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -399,7 +399,7 @@ unsigned int f2fs_update_extent_tree_range(struct inode
-*inode,
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
--	struct extent_node *en = NULL, *en1 = NULL, *en2 = NULL, *en3 =
-NULL;
-+	struct extent_node *en = NULL, *en1 = NULL;
- 	struct extent_node *prev_en = NULL, *next_en = NULL;
- 	struct extent_info ei, dei, prev;
- 	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-@@ -419,9 +419,6 @@ unsigned int f2fs_update_extent_tree_range(struct inode
-*inode,
- 	prev = et->largest;
- 	dei.len = 0;
- 
--	/* we do not guarantee that the largest extent is cached all the
-time */
--	__drop_largest_extent(inode, fofs);
--
- 	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
- 	en = __lookup_extent_tree_ret(et, fofs, &prev_en, &next_en,
- 					&insert_p, &insert_parent);
-@@ -441,114 +438,83 @@ unsigned int f2fs_update_extent_tree_range(struct
-inode *inode,
- 
- 	/* 2. invlidate all extent nodes in range [fofs, fofs + len - 1] */
- 	while (en) {
--		struct rb_node *node;
-+		struct rb_node *node = NULL;
-+		int parts = 0;	/* # of parts current extent split into */
-+		unsigned int org_end;
- 
- 		if (pos >= end)
- 			break;
- 
- 		dei = en->ei;
--		en1 = en2 = NULL;
-+		next_en = en1 = NULL;
- 
--		node = rb_next(&en->rb_node);
-+		f2fs_bug_on(sbi, pos < dei.fofs || pos >= dei.fofs +
-dei.len);
- 
--		/*
--		 * 2.1 there are four cases when we invalidate blkaddr in
-extent
--		 * node, |V: valid address, X: will be invalidated|
--		 */
--		/* case#1, invalidate right part of extent node |VVVVVXXXXX|
-*/
--		if (pos > dei.fofs && end >= dei.fofs + dei.len) {
-+		__drop_largest_extent(inode, pos);
-+
-+		if (pos > dei.fofs && pos - dei.fofs >= F2FS_MIN_EXTENT_LEN)
-{
- 			en->ei.len = pos - dei.fofs;
-+			parts = 1;
-+		}
- 
--			if (en->ei.len < F2FS_MIN_EXTENT_LEN) {
--				__detach_extent_node(sbi, et, en);
--				insert_p = NULL;
--				insert_parent = NULL;
--				goto update;
-+		org_end = dei.fofs + dei.len;
-+		if (end < org_end &&
-+			org_end - end >= F2FS_MIN_EXTENT_LEN) {
-+			if (parts) {
-+				set_extent_info(&ei, end,
-+						end - dei.fofs + dei.blk,
-+						org_end - end);
-+				en1 = __insert_extent_tree(sbi, et, &ei,
-+							NULL, NULL);
-+				next_en = en1;
-+			} else {
-+				en->ei.fofs = end;
-+				en->ei.blk += end - dei.fofs;
-+				en->ei.len -= end - dei.fofs;
-+				next_en = en;
- 			}
--
--			if (__is_extent_same(&dei, &et->largest))
--				et->largest = en->ei;
--			goto next;
-+			parts++;
- 		}
- 
--		/* case#2, invalidate left part of extent node |XXXXXVVVVV|
-*/
--		if (pos <= dei.fofs && end < dei.fofs + dei.len) {
--			en->ei.fofs = end;
--			en->ei.blk += end - dei.fofs;
--			en->ei.len -= end - dei.fofs;
--
--			if (en->ei.len < F2FS_MIN_EXTENT_LEN) {
--				__detach_extent_node(sbi, et, en);
--				insert_p = NULL;
--				insert_parent = NULL;
--				goto update;
--			}
-+		if (!next_en) {
-+			node = rb_next(&en->rb_node);
-+			next_en = node ?
-+				rb_entry(node, struct extent_node, rb_node)
-+				: NULL;
-+		}
- 
--			if (__is_extent_same(&dei, &et->largest))
-+		if (parts) {
-+			if (en->ei.len > et->largest.len)
- 				et->largest = en->ei;
--			goto next;
-+		} else {
-+			__detach_extent_node(sbi, et, en);
- 		}
- 
--		__detach_extent_node(sbi, et, en);
--
- 		/*
--		 * if we remove node in rb-tree, our parent node pointer may
--		 * point the wrong place, discard them.
-+		 * if original extent is split into zero or two parts,
-extent
-+		 * tree has been altered by deletion or insertion, therefore
-+		 * invalidate pointers regard to tree.
- 		 */
--		insert_p = NULL;
--		insert_parent = NULL;
--
--		/* case#3, invalidate entire extent node |XXXXXXXXXX| */
--		if (pos <= dei.fofs && end >= dei.fofs + dei.len) {
--			if (__is_extent_same(&dei, &et->largest))
--				et->largest.len = 0;
--			goto update;
-+		if (parts != 1) {
-+			insert_p = NULL;
-+			insert_parent = NULL;
- 		}
- 
--		/*
--		 * case#4, invalidate data in the middle of extent node
--		 * |VVVXXXXVVV|
--		 */
--		if (dei.len > F2FS_MIN_EXTENT_LEN) {
--			unsigned int endofs;
--
--			/*  insert left part of split extent into cache */
--			if (pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
--				set_extent_info(&ei, dei.fofs, dei.blk,
--							pos - dei.fofs);
--				en1 = __insert_extent_tree(sbi, et, &ei,
--								NULL, NULL);
--			}
--
--			/* insert right part of split extent into cache */
--			endofs = dei.fofs + dei.len;
--			if (endofs - end >= F2FS_MIN_EXTENT_LEN) {
--				set_extent_info(&ei, end,
--						end - dei.fofs + dei.blk,
--						endofs - end);
--				en2 = __insert_extent_tree(sbi, et, &ei,
--								NULL, NULL);
--			}
--		}
--update:
--		/* 2.2 update in global extent list */
-+		/* update in global extent list */
- 		spin_lock(&sbi->extent_lock);
--		if (en && !list_empty(&en->list))
-+		if (!parts && !list_empty(&en->list))
- 			list_del(&en->list);
- 		if (en1)
- 			list_add_tail(&en1->list, &sbi->extent_list);
--		if (en2)
--			list_add_tail(&en2->list, &sbi->extent_list);
- 		spin_unlock(&sbi->extent_lock);
- 
--		/* 2.3 release extent node */
--		if (en)
-+		/* release extent node */
-+		if (!parts)
- 			kmem_cache_free(extent_node_slab, en);
--next:
--		en = node ? rb_entry(node, struct extent_node, rb_node) :
-NULL;
--		next_en = en;
--		if (en)
--			pos = en->ei.fofs;
-+
-+		en = next_en;
-+		if (next_en)
-+			pos = next_en->ei.fofs;
- 	}
- 
- update_extent:
-@@ -557,10 +523,10 @@ update_extent:
- 		struct extent_node *den = NULL;
- 
- 		set_extent_info(&ei, fofs, blkaddr, len);
--		en3 = __try_merge_extent_node(sbi, et, &ei, &den,
-+		en1 = __try_merge_extent_node(sbi, et, &ei, &den,
- 							prev_en, next_en);
--		if (!en3)
--			en3 = __insert_extent_tree(sbi, et, &ei,
-+		if (!en1)
-+			en1 = __insert_extent_tree(sbi, et, &ei,
- 						insert_p, insert_parent);
- 
- 		/* give up extent_cache, if split and small updates happen
-*/
-@@ -572,11 +538,11 @@ update_extent:
- 		}
- 
- 		spin_lock(&sbi->extent_lock);
--		if (en3) {
--			if (list_empty(&en3->list))
--				list_add_tail(&en3->list,
-&sbi->extent_list);
-+		if (en1) {
-+			if (list_empty(&en1->list))
-+				list_add_tail(&en1->list,
-&sbi->extent_list);
- 			else
--				list_move_tail(&en3->list,
-&sbi->extent_list);
-+				list_move_tail(&en1->list,
-&sbi->extent_list);
- 		}
- 		if (den && !list_empty(&den->list))
- 			list_del(&den->list);
--- 
-1.7.9.5
-
+On 2015/9/9 9:11, Chao Yu wrote:
+>> -----Original Message-----
+>> From: He YunLei [mailto:heyunlei@huawei.com]
+>> Sent: Wednesday, September 09, 2015 7:54 AM
+>> To: Chao Yu
+>> Cc: jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net; bintian.wang@huawei.com
+>> Subject: Re: [f2fs-dev] [PATCH] f2fs: add a judgment in add_discard_addrs
+>>
+>> On 2015/9/8 19:14, Chao Yu wrote:
+>>> Hi Yunlei,
+>>>
+>>>> -----Original Message-----
+>>>> From: Yunlei He [mailto:heyunlei@huawei.com]
+>>>> Sent: Tuesday, September 08, 2015 6:51 PM
+>>>> To: chao2.yu@samsung.com; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
+>>>> Cc: bintian.wang@huawei.com; Yunlei He
+>>>> Subject: [f2fs-dev] [PATCH] f2fs: add a judgment in add_discard_addrs
+>>>>
+>>>> CP_DISCARD traverse all segments in fstrim_range to add small discards,
+>>>> it is better to select entry->len bigger than trim_minlen.
+>>>
+>>> If we mount with 'discard' option, f2fs will trigger real-time discard
+>>> when do checkpoint. If we add judgment condition here, fragmented invalid
+>>> blocks will not be discarded since we stop adding them in pending list
+>>> through __add_discard_entry.
+>>
+>> This judgment condition is only valid for cp reason CP_DISCARD, and has no influence
+>> to other checkpoint. The process of fstrim adds all invalid blocks in pending list and
+>> deletes entries which len < trim_minlen when issue discard. Can we do the selection
+>> when added?
+>
+> __add_discard_entry will try to merge small discards in pending list, and merged discard
+> may be the eligible candidate, so we'd better not skip that.
+>
+Yeah, I got it. But I think the probability of merge will not be too high.
+Thanks,
+> Thanks,
+>
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>>> ---
+>>>>    fs/f2fs/segment.c | 3 ++-
+>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 78e6d06..a0dab7a 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -599,7 +599,8 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control
+>>>> *cpc)
+>>>>    			break;
+>>>>
+>>>>    		end = __find_rev_next_zero_bit(dmap, max_blocks, start + 1);
+>>>> -		__add_discard_entry(sbi, cpc, se, start, end);
+>>>> +		if(force && cpc->trim_minlen >= (end - start))
+>>>> +			__add_discard_entry(sbi, cpc, se, start, end);
+>>>>    	}
+>>>>    }
+>>>>
+>>>> --
+>>>> 1.9.1
+>>>
+>>>
+>>>
+>
+>
+> .
+>
 
 
 ------------------------------------------------------------------------------
