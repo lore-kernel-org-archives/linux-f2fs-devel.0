@@ -1,30 +1,22 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: [PATCH v2] f2fs: optimize code of
- f2fs_update_extent_tree_range
-Date: Thu, 10 Sep 2015 16:48:22 +0800
-Message-ID: <001901d0eba5$88749fa0$995ddee0$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs crypto: allocate buffer for decrypting
+	filename
+Date: Thu, 10 Sep 2015 18:47:42 -0700
+Message-ID: <1441936062-69511-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fanofcode.li@samsung.com>) id 1ZZxXf-0002lL-8t
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZaDRj-00067Q-Lf
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Sep 2015 08:49:15 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZZxXc-0003N7-Hw
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Sep 2015 08:49:15 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NUG02CUODTP2M90@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 10 Sep 2015 17:49:03 +0900 (KST)
-Content-language: en-us
+	Fri, 11 Sep 2015 01:48:11 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZaDRg-0000Ez-2h for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 11 Sep 2015 01:48:11 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,276 +26,73 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org
 
-Fix 3 potential problems:
-1. when largest extent needs to be invalidated, it will be reset in
-   __drop_largest_extent, which makes __is_extent_same after always
-   return false, and largest extent unchanged. Now we update it properly.
+We got dentry pages from high_mem, and its address space directly goes into the
+decryption path via f2fs_fname_disk_to_usr.
+But, sg_init_one assumes the address is not from high_mem, so we can get this
+panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
 
-2. when extent is split and the latter part remains in tree, next_en
-   should be the latter part instead of next extent of original extent.
-   It will cause merge failure if there is in-place update, although
-   there is not, I think this fix will still makes codes less ambiguous.
+kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
+Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+...
+ (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
+ (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
+ (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
+ (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
+ (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
+ (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
+ (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
+ (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
+ (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
+ (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
+ (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
 
-3. now we update extent in range, fofs may not be on the largest 
-    extent if the new extent overlaps with it. so add a new function 
-    to drop largest extent properly.
-
-This patch also simpfies codes of invalidating extents, and optimizes
-the procedues that split extent into two.
-
-
-Signed-off-by: Fan li <fanofcode.li@samsung.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/extent_cache.c |  161 +++++++++++++++++++++---------------------------
- 1 file changed, 70 insertions(+), 91 deletions(-)
+ fs/f2fs/dir.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 997ac86..cbd1108 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -163,6 +163,15 @@ static void __drop_largest_extent(struct inode *inode, pgoff_t fofs)
- 		largest->len = 0;
- }
-
-+static void __drop_largest_extent_range(struct inode *inode,
-+						pgoff_t fofs, unsigned int len)
-+{
-+	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
-+
-+	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs)
-+		largest->len = 0;
-+}
-+
- void f2fs_drop_largest_extent(struct inode *inode, pgoff_t fofs)
- {
- 	if (!f2fs_may_extent_tree(inode))
-@@ -399,7 +408,7 @@ unsigned int f2fs_update_extent_tree_range(struct inode *inode,
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
--	struct extent_node *en = NULL, *en1 = NULL, *en2 = NULL, *en3 = NULL;
-+	struct extent_node *en = NULL, *en1 = NULL;
- 	struct extent_node *prev_en = NULL, *next_en = NULL;
- 	struct extent_info ei, dei, prev;
- 	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-@@ -419,8 +428,11 @@ unsigned int f2fs_update_extent_tree_range(struct inode *inode,
- 	prev = et->largest;
- 	dei.len = 0;
-
--	/* we do not guarantee that the largest extent is cached all the time */
--	__drop_largest_extent(inode, fofs);
-+	/*
-+	 * drop largest extent before lookup, in case it's already
-+	 * been shrunk from extent tree
-+	 */
-+	__drop_largest_extent_range(inode, fofs, len);
-
- 	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
- 	en = __lookup_extent_tree_ret(et, fofs, &prev_en, &next_en,
-@@ -441,114 +453,81 @@ unsigned int f2fs_update_extent_tree_range(struct inode *inode,
-
- 	/* 2. invlidate all extent nodes in range [fofs, fofs + len - 1] */
- 	while (en) {
--		struct rb_node *node;
-+		struct rb_node *node = NULL;
-+		int parts = 0;	/* # of parts current extent split into */
-+		unsigned int org_end;
-
- 		if (pos >= end)
- 			break;
-
- 		dei = en->ei;
--		en1 = en2 = NULL;
-+		next_en = en1 = NULL;
-
--		node = rb_next(&en->rb_node);
-+		f2fs_bug_on(sbi, pos < dei.fofs || pos >= dei.fofs + dei.len);
-
--		/*
--		 * 2.1 there are four cases when we invalidate blkaddr in extent
--		 * node, |V: valid address, X: will be invalidated|
--		 */
--		/* case#1, invalidate right part of extent node |VVVVVXXXXX| */
--		if (pos > dei.fofs && end >= dei.fofs + dei.len) {
-+		if (pos > dei.fofs && pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
- 			en->ei.len = pos - dei.fofs;
-+			parts = 1;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 8f15fc1..f3fe1a1 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -788,8 +788,9 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 			d_type = DT_UNKNOWN;
+ 
+ 		/* encrypted case */
+-		de_name.name = d->filename[bit_pos];
+ 		de_name.len = le16_to_cpu(de->name_len);
++		de_name.name = kmalloc(de_name.len, GFP_NOFS);
++		memcpy(de_name.name, d->filename[bit_pos], de_name.len);
+ 
+ 		if (f2fs_encrypted_inode(d->inode)) {
+ 			int save_len = fstr->len;
+@@ -799,13 +800,18 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 							&de_name, fstr);
+ 			de_name = *fstr;
+ 			fstr->len = save_len;
+-			if (ret < 0)
++			if (ret < 0) {
++				kfree(de_name.name);
+ 				return true;
++			}
+ 		}
+ 
+ 		if (!dir_emit(ctx, de_name.name, de_name.len,
+-					le32_to_cpu(de->ino), d_type))
++					le32_to_cpu(de->ino), d_type)) {
++			kfree(de_name.name);
+ 			return true;
 +		}
-
--			if (en->ei.len < F2FS_MIN_EXTENT_LEN) {
--				__detach_extent_node(sbi, et, en);
--				insert_p = NULL;
--				insert_parent = NULL;
--				goto update;
-+		org_end = dei.fofs + dei.len;
-+		if (end < org_end &&
-+			org_end - end >= F2FS_MIN_EXTENT_LEN) {
-+			if (parts) {
-+				set_extent_info(&ei, end,
-+						end - dei.fofs + dei.blk,
-+						org_end - end);
-+				en1 = __insert_extent_tree(sbi, et, &ei,
-+							NULL, NULL);
-+				next_en = en1;
-+			} else {
-+				en->ei.fofs = end;
-+				en->ei.blk += end - dei.fofs;
-+				en->ei.len -= end - dei.fofs;
-+				next_en = en;
- 			}
--
--			if (__is_extent_same(&dei, &et->largest))
--				et->largest = en->ei;
--			goto next;
-+			parts++;
- 		}
-
--		/* case#2, invalidate left part of extent node |XXXXXVVVVV| */
--		if (pos <= dei.fofs && end < dei.fofs + dei.len) {
--			en->ei.fofs = end;
--			en->ei.blk += end - dei.fofs;
--			en->ei.len -= end - dei.fofs;
--
--			if (en->ei.len < F2FS_MIN_EXTENT_LEN) {
--				__detach_extent_node(sbi, et, en);
--				insert_p = NULL;
--				insert_parent = NULL;
--				goto update;
--			}
-+		if (!next_en) {
-+			node = rb_next(&en->rb_node);
-+			next_en = node ?
-+				rb_entry(node, struct extent_node, rb_node)
-+				: NULL;
-+		}
-
--			if (__is_extent_same(&dei, &et->largest))
-+		if (parts) {
-+			if (en->ei.len > et->largest.len)
- 				et->largest = en->ei;
--			goto next;
-+		} else {
-+			__detach_extent_node(sbi, et, en);
- 		}
-
--		__detach_extent_node(sbi, et, en);
--
- 		/*
--		 * if we remove node in rb-tree, our parent node pointer may
--		 * point the wrong place, discard them.
-+		 * if original extent is split into zero or two parts, extent
-+		 * tree has been altered by deletion or insertion, therefore
-+		 * invalidate pointers regard to tree.
- 		 */
--		insert_p = NULL;
--		insert_parent = NULL;
--
--		/* case#3, invalidate entire extent node |XXXXXXXXXX| */
--		if (pos <= dei.fofs && end >= dei.fofs + dei.len) {
--			if (__is_extent_same(&dei, &et->largest))
--				et->largest.len = 0;
--			goto update;
-+		if (parts != 1) {
-+			insert_p = NULL;
-+			insert_parent = NULL;
- 		}
-
--		/*
--		 * case#4, invalidate data in the middle of extent node
--		 * |VVVXXXXVVV|
--		 */
--		if (dei.len > F2FS_MIN_EXTENT_LEN) {
--			unsigned int endofs;
--
--			/*  insert left part of split extent into cache */
--			if (pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
--				set_extent_info(&ei, dei.fofs, dei.blk,
--							pos - dei.fofs);
--				en1 = __insert_extent_tree(sbi, et, &ei,
--								NULL, NULL);
--			}
--
--			/* insert right part of split extent into cache */
--			endofs = dei.fofs + dei.len;
--			if (endofs - end >= F2FS_MIN_EXTENT_LEN) {
--				set_extent_info(&ei, end,
--						end - dei.fofs + dei.blk,
--						endofs - end);
--				en2 = __insert_extent_tree(sbi, et, &ei,
--								NULL, NULL);
--			}
--		}
--update:
--		/* 2.2 update in global extent list */
-+		/* update in global extent list */
- 		spin_lock(&sbi->extent_lock);
--		if (en && !list_empty(&en->list))
-+		if (!parts && !list_empty(&en->list))
- 			list_del(&en->list);
- 		if (en1)
- 			list_add_tail(&en1->list, &sbi->extent_list);
--		if (en2)
--			list_add_tail(&en2->list, &sbi->extent_list);
- 		spin_unlock(&sbi->extent_lock);
-
--		/* 2.3 release extent node */
--		if (en)
-+		/* release extent node */
-+		if (!parts)
- 			kmem_cache_free(extent_node_slab, en);
--next:
--		en = node ? rb_entry(node, struct extent_node, rb_node) : NULL;
--		next_en = en;
--		if (en)
--			pos = en->ei.fofs;
-+
-+		en = next_en;
-+		if (next_en)
-+			pos = next_en->ei.fofs;
- 	}
-
- update_extent:
-@@ -557,10 +536,10 @@ update_extent:
- 		struct extent_node *den = NULL;
-
- 		set_extent_info(&ei, fofs, blkaddr, len);
--		en3 = __try_merge_extent_node(sbi, et, &ei, &den,
-+		en1 = __try_merge_extent_node(sbi, et, &ei, &den,
- 							prev_en, next_en);
--		if (!en3)
--			en3 = __insert_extent_tree(sbi, et, &ei,
-+		if (!en1)
-+			en1 = __insert_extent_tree(sbi, et, &ei,
- 						insert_p, insert_parent);
-
- 		/* give up extent_cache, if split and small updates happen */
-@@ -572,11 +551,11 @@ update_extent:
- 		}
-
- 		spin_lock(&sbi->extent_lock);
--		if (en3) {
--			if (list_empty(&en3->list))
--				list_add_tail(&en3->list, &sbi->extent_list);
-+		if (en1) {
-+			if (list_empty(&en1->list))
-+				list_add_tail(&en1->list, &sbi->extent_list);
- 			else
--				list_move_tail(&en3->list, &sbi->extent_list);
-+				list_move_tail(&en1->list, &sbi->extent_list);
- 		}
- 		if (den && !list_empty(&den->list))
- 			list_del(&den->list);
---
-1.7.9.5
-
++		kfree(de_name.name);
+ 
+ 		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+ 		ctx->pos = start_pos + bit_pos;
+-- 
+2.1.1
 
 
 ------------------------------------------------------------------------------
-Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
-Get real-time metrics from all of your servers, apps and tools
-in one place.
-SourceForge users - Click here to start your Free Trial of Datadog now!
-http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
