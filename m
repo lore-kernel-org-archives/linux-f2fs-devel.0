@@ -1,96 +1,110 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs crypto: allocate buffer for decrypting filename
-Date: Fri, 11 Sep 2015 15:45:50 -0700
-Message-ID: <20150911224550.GA73045@jaegeuk-mac02.mot.com>
-References: <1441936062-69511-1-git-send-email-jaegeuk@kernel.org>
+From: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Subject: [PATCH 00/39] drop null test before destroy functions
+Date: Sun, 13 Sep 2015 14:14:53 +0200
+Message-ID: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1441936062-69511-1-git-send-email-jaegeuk@kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, dccp-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, ecryptfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, HPDD-discuss-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ocfs2-devel-N0ozoZBvEnrZJqsBc5GL+g@public.gmane.org, Carolyn Wyborny <carolyn.wyborny-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-nilfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Don Skidmore <donald.c.skidmore-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-atm-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Jesse Brandeburg <jesse.brandeburg-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, Matthew Vick <matthew.vick-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, intel-wired-lan-qjLDD68F18P21nG7glBr7A@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mitch Williams <mitch.a.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Chao Yu <chao2.yu-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-raid-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-bcache-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shannon Nelson <shannon.nelson-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TaqPxH82wqD4g@public.gmane.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Change log from v1:
- o fix wrong pointer assignment
+Recent commits to kernel/git/torvalds/linux.git have made the following
+functions able to tolerate NULL arguments:
 
->From a0f3577cab882adc70d71e733d62c48aab61c3a4 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Thu, 3 Sep 2015 13:38:23 -0700
-Subject: [PATCH] f2fs crypto: allocate buffer for decrypting filename
+kmem_cache_destroy (commit 3942d29918522)
+mempool_destroy (commit 4e3ca3e033d1)
+dma_pool_destroy (commit 44d7175da6ea)
 
-We got dentry pages from high_mem, and its address space directly goes into the
-decryption path via f2fs_fname_disk_to_usr.
-But, sg_init_one assumes the address is not from high_mem, so we can get this
-panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+These patches remove the associated NULL tests for the files that I found
+easy to compile test.  If these changes are OK, I will address the
+remainder later.
 
-kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
-Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-...
- (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
- (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
- (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
- (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
- (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
- (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
- (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
- (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
- (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
- (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
- (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/dir.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 8f15fc1..cce512c 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -773,6 +773,7 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 	unsigned int bit_pos;
- 	struct f2fs_dir_entry *de = NULL;
- 	struct f2fs_str de_name = FSTR_INIT(NULL, 0);
-+	char *name = NULL;
- 
- 	bit_pos = ((unsigned long)ctx->pos % d->max);
- 
-@@ -788,8 +789,10 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 			d_type = DT_UNKNOWN;
- 
- 		/* encrypted case */
--		de_name.name = d->filename[bit_pos];
- 		de_name.len = le16_to_cpu(de->name_len);
-+		name = kmalloc(de_name.len, GFP_NOFS);
-+		memcpy(name, d->filename[bit_pos], de_name.len);
-+		de_name.name = name;
- 
- 		if (f2fs_encrypted_inode(d->inode)) {
- 			int save_len = fstr->len;
-@@ -799,13 +802,18 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 							&de_name, fstr);
- 			de_name = *fstr;
- 			fstr->len = save_len;
--			if (ret < 0)
-+			if (ret < 0) {
-+				kfree(name);
- 				return true;
-+			}
- 		}
- 
- 		if (!dir_emit(ctx, de_name.name, de_name.len,
--					le32_to_cpu(de->ino), d_type))
-+					le32_to_cpu(de->ino), d_type)) {
-+			kfree(name);
- 			return true;
-+		}
-+		kfree(name);
- 
- 		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
- 		ctx->pos = start_pos + bit_pos;
--- 
-2.1.1
+ arch/x86/kvm/mmu.c                                 |    6 --
+ block/bio-integrity.c                              |    7 --
+ block/bio.c                                        |    7 --
+ block/blk-core.c                                   |    3 -
+ block/elevator.c                                   |    3 -
+ drivers/atm/he.c                                   |    7 --
+ drivers/block/aoe/aoedev.c                         |    3 -
+ drivers/block/drbd/drbd_main.c                     |   21 ++-----
+ drivers/block/pktcdvd.c                            |    3 -
+ drivers/block/rbd.c                                |    6 --
+ drivers/dma/dmaengine.c                            |    6 --
+ drivers/firmware/google/gsmi.c                     |    3 -
+ drivers/gpu/drm/i915/i915_dma.c                    |   19 ++----
+ drivers/iommu/amd_iommu_init.c                     |    7 --
+ drivers/md/bcache/bset.c                           |    3 -
+ drivers/md/bcache/request.c                        |    3 -
+ drivers/md/bcache/super.c                          |    9 +--
+ drivers/md/dm-bufio.c                              |    3 -
+ drivers/md/dm-cache-target.c                       |    3 -
+ drivers/md/dm-crypt.c                              |    6 --
+ drivers/md/dm-io.c                                 |    3 -
+ drivers/md/dm-log-userspace-base.c                 |    3 -
+ drivers/md/dm-region-hash.c                        |    4 -
+ drivers/md/dm.c                                    |   13 +---
+ drivers/md/multipath.c                             |    3 -
+ drivers/md/raid1.c                                 |    6 --
+ drivers/md/raid10.c                                |    9 +--
+ drivers/md/raid5.c                                 |    3 -
+ drivers/mtd/nand/nandsim.c                         |    3 -
+ drivers/mtd/ubi/attach.c                           |    4 -
+ drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c      |    3 -
+ drivers/staging/lustre/lustre/llite/super25.c      |   16 +----
+ drivers/staging/lustre/lustre/obdclass/genops.c    |   24 ++------
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |    6 --
+ drivers/staging/rdma/hfi1/user_sdma.c              |    3 -
+ drivers/thunderbolt/ctl.c                          |    3 -
+ drivers/usb/gadget/udc/bdc/bdc_core.c              |    3 -
+ drivers/usb/gadget/udc/gr_udc.c                    |    3 -
+ drivers/usb/gadget/udc/mv_u3d_core.c               |    3 -
+ drivers/usb/gadget/udc/mv_udc_core.c               |    3 -
+ drivers/usb/host/fotg210-hcd.c                     |   12 +---
+ drivers/usb/host/fusbh200-hcd.c                    |   12 +---
+ drivers/usb/host/whci/init.c                       |    3 -
+ drivers/usb/host/xhci-mem.c                        |   12 +---
+ fs/btrfs/backref.c                                 |    3 -
+ fs/btrfs/delayed-inode.c                           |    3 -
+ fs/btrfs/delayed-ref.c                             |   12 +---
+ fs/btrfs/disk-io.c                                 |    3 -
+ fs/btrfs/extent_io.c                               |    6 --
+ fs/btrfs/extent_map.c                              |    3 -
+ fs/btrfs/file.c                                    |    3 -
+ fs/btrfs/inode.c                                   |   18 ++----
+ fs/btrfs/ordered-data.c                            |    3 -
+ fs/dlm/memory.c                                    |    6 --
+ fs/ecryptfs/main.c                                 |    3 -
+ fs/ext4/crypto.c                                   |    9 +--
+ fs/ext4/extents_status.c                           |    3 -
+ fs/ext4/mballoc.c                                  |    3 -
+ fs/f2fs/crypto.c                                   |    9 +--
+ fs/gfs2/main.c                                     |   29 ++--------
+ fs/jbd2/journal.c                                  |   15 +----
+ fs/jbd2/revoke.c                                   |   12 +---
+ fs/jbd2/transaction.c                              |    6 --
+ fs/jffs2/malloc.c                                  |   27 +++------
+ fs/nfsd/nfscache.c                                 |    6 --
+ fs/nilfs2/super.c                                  |   12 +---
+ fs/ocfs2/dlm/dlmlock.c                             |    3 -
+ fs/ocfs2/dlm/dlmmaster.c                           |   16 +----
+ fs/ocfs2/super.c                                   |   18 ++----
+ fs/ocfs2/uptodate.c                                |    3 -
+ lib/debugobjects.c                                 |    3 -
+ net/core/sock.c                                    |   12 +---
+ net/dccp/ackvec.c                                  |   12 +---
+ net/dccp/ccid.c                                    |    3 -
+ net/sunrpc/sched.c                                 |   12 +---
+ 75 files changed, 180 insertions(+), 381 deletions(-)
