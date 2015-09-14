@@ -1,56 +1,37 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 37/39] f2fs crypto: drop null test before destroy functions
-Date: Sun, 13 Sep 2015 14:15:30 +0200
-Message-ID: <1442146532-9100-38-git-send-email-Julia.Lawall@lip6.fr>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: Re: [PATCH 00/39] drop null test before destroy functions
+Date: Mon, 14 Sep 2015 13:55:06 +0200
+Message-ID: <55F6B59A.4040104@users.sourceforge.net>
 References: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: 7bit
+Return-path: <ecryptfs-owner@vger.kernel.org>
 In-Reply-To: <1442146532-9100-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: sergey.senozhatsky@gmail.com, kernel-janitors@vger.kernel.org, Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Sender: ecryptfs-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org
+Cc: iommu@lists.linux-foundation.org, dccp@vger.kernel.org, dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, ecryptfs@vger.kernel.org, dmaengine@vger.kernel.org, sergey.senozhatsky@gmail.com, Dan Williams <dan.j.williams@intel.com>, cluster-devel@redhat.com, intel-wired-lan@lists.osuosl.org, Mitch Williams <mitch.a.williams@intel.com>, John Ronciak <john.ronciak@intel.com>, Matthew Vick <matthew.vick@intel.com>, Don Skidmore <donald.c.skidmore@intel.com>, Carolyn Wyborny <carolyn.wyborny@intel.com>, Shannon Nelson <shannon.nelson@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, linux-nfs@vger.kernel.org, linux-raid@vger.kernel.org, netdev@vger.kernel.org, linux-atm-general@lists.sourceforge.net, linux-btrfs@vger.kernel.org, linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, linux-usb@vger.kernel.orglinux
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Remove unneeded NULL test.
+> Recent commits to kernel/git/torvalds/linux.git have made the following
+> functions able to tolerate NULL arguments:
+>
+> kmem_cache_destroy (commit 3942d29918522)
+> mempool_destroy (commit 4e3ca3e033d1)
+> dma_pool_destroy (commit 44d7175da6ea)
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+How do you think about to extend an other SmPL script?
 
-// <smpl>
-@@ expression x; @@
--if (x != NULL)
-  \(kmem_cache_destroy\|mempool_destroy\|dma_pool_destroy\)(x);
-// </smpl>
+Related topic:
+scripts/coccinelle/free: Delete NULL test before freeing functions
+https://systeme.lip6.fr/pipermail/cocci/2015-May/001960.html
+https://www.mail-archive.com/cocci@systeme.lip6.fr/msg01855.html
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
----
- fs/f2fs/crypto.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+> If these changes are OK, I will address the remainder later.
 
-diff --git a/fs/f2fs/crypto.c b/fs/f2fs/crypto.c
-index 4a62ef1..3c27f04 100644
---- a/fs/f2fs/crypto.c
-+++ b/fs/f2fs/crypto.c
-@@ -183,8 +183,7 @@ static void f2fs_crypto_destroy(void)
- 	list_for_each_entry_safe(pos, n, &f2fs_free_crypto_ctxs, free_list)
- 		kmem_cache_free(f2fs_crypto_ctx_cachep, pos);
- 	INIT_LIST_HEAD(&f2fs_free_crypto_ctxs);
--	if (f2fs_bounce_page_pool)
--		mempool_destroy(f2fs_bounce_page_pool);
-+	mempool_destroy(f2fs_bounce_page_pool);
- 	f2fs_bounce_page_pool = NULL;
- }
- 
-@@ -240,10 +239,8 @@ void f2fs_exit_crypto(void)
- 
- 	if (f2fs_read_workqueue)
- 		destroy_workqueue(f2fs_read_workqueue);
--	if (f2fs_crypto_ctx_cachep)
--		kmem_cache_destroy(f2fs_crypto_ctx_cachep);
--	if (f2fs_crypt_info_cachep)
--		kmem_cache_destroy(f2fs_crypt_info_cachep);
-+	kmem_cache_destroy(f2fs_crypto_ctx_cachep);
-+	kmem_cache_destroy(f2fs_crypt_info_cachep);
- }
- 
- int __init f2fs_init_crypto(void)
+Would anybody like to reuse my general SmPL approach for similar source
+code clean-up?
+
+Regards,
+Markus
