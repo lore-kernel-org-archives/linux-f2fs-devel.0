@@ -1,95 +1,94 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] fs/f2fs: avoid redundant convert of inline
- inode
-Date: Tue, 15 Sep 2015 13:33:33 -0700
-Message-ID: <20150915203333.GB82556@jaegeuk-mac02>
-References: <1442300909-34483-1-git-send-email-zhenzhang.zhang@huawei.com>
-	<55F7C453.2050000@huawei.com>
+Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write performance
+Date: Tue, 15 Sep 2015 14:20:44 -0700
+Message-ID: <20150915212044.GA84514@jaegeuk-mac02.mot.com>
+References: <000001d0ec5d$0bbd1880$23374980$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Zbwv9-0008Cl-9S
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Sep 2015 20:33:43 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Zbwv8-00055M-2h for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Sep 2015 20:33:43 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <55F7C453.2050000@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Zhang Zhen <zhenzhang.zhang@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <000001d0ec5d$0bbd1880$23374980$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Zhang,
+Hi Chao,
 
-On Tue, Sep 15, 2015 at 03:10:11PM +0800, Zhang Zhen wrote:
-> Encrypted inode for regular file should not have inline_data.
-> Here we check encrypted inode before convert of inline inode
-> to avoid redundant convert.
+On Fri, Sep 11, 2015 at 02:41:53PM +0800, Chao Yu wrote:
+> When dio writes perform concurrently, our performace will be low because of
+> Thread A's allocation of multi continuous blocks will be break by Thread B,
+> there are two cases as below:
+>  - In Thread B, we may change current segment to a new segment for LFS
+>    allocation if we dio write in the beginning of the file.
+>  - In Thread B, we may allocate blocks in the middle of Thread A's
+>    allocation, which make blocks which allocated in Thread A being
+>    discontinuous.
+> 
+> This patch adds writepages mutex lock to make block allocation in dio write
+> atomic to avoid above issues.
+> 
+> Test environment:
+> ubuntu os with linux kernel 4.2+, intel i7-3770, 16g memory,
+> 32g kingston sd card.
+> 
+> fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs --filesize=256m --size=16m --bs=2m --direct=1
+> --numjobs=10
+> 
+> before:
+>   WRITE: io=163840KB, aggrb=3145KB/s, minb=314KB/s, maxb=411KB/s, mint=39836msec, maxt=52083msec
+> 
+> patched:
+>   WRITE: io=163840KB, aggrb=10033KB/s, minb=1003KB/s, maxb=1124KB/s, mint=14565msec, maxt=16329msec
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/data.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index a737ca5..a0a5849 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1536,7 +1536,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+>  	struct file *file = iocb->ki_filp;
+>  	struct address_space *mapping = file->f_mapping;
+>  	struct inode *inode = mapping->host;
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	size_t count = iov_iter_count(iter);
+> +	int rw = iov_iter_rw(iter);
+>  	int err;
+>  
+>  	/* we don't need to use inline_data strictly */
+> @@ -1555,12 +1557,17 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+>  
+>  	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+>  
+> -	if (iov_iter_rw(iter) == WRITE)
+> +	if (rw == WRITE) {
+> +		mutex_lock(&sbi->writepages);
 
-When a new file is created in an encrypted dir, it does not set inline_data,
-which returns false for the below f2fs_has_inline_data() all the time.
-So, I don't think there happens any redundant conversion.
+Why do we have to share sbi->writepages?
+
+>  		__allocate_data_blocks(inode, offset, count);
+
+If the problem lies on the misaligned blocks, how about calling mutex_unlock
+here?
 
 Thanks,
 
-> 
-> Signed-off-by: Zhang Zhen <zhenzhang.zhang@huawei.com>
-> ---
->  fs/f2fs/data.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index a82abe9..ec2270a 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1535,6 +1535,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
->  	size_t count = iov_iter_count(iter);
->  	int err;
-> 
-> +	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> +		return 0;
-> +
->  	/* we don't need to use inline_data strictly */
->  	if (f2fs_has_inline_data(inode)) {
->  		err = f2fs_convert_inline_inode(inode);
-> @@ -1542,9 +1545,6 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
->  			return err;
->  	}
-> 
-> -	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> -		return 0;
-> -
->  	err = check_direct_IO(inode, iter, offset);
->  	if (err)
->  		return err;
+> +	}
+>  
+>  	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
+> -	if (err < 0 && iov_iter_rw(iter) == WRITE)
+> -		f2fs_write_failed(mapping, offset + count);
+> +	if (rw == WRITE) {
+> +		mutex_unlock(&sbi->writepages);
+> +		if (err)
+> +			f2fs_write_failed(mapping, offset + count);
+> +	}
+>  
+>  	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
+>  
 > -- 
-> 1.9.1
-> 
-> 
-> .
-> 
-> 
-> 
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
+> 2.4.2
