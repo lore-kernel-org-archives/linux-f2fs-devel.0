@@ -1,136 +1,370 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/7] f2fs: do in batches truncation in truncate_hole
-Date: Wed, 16 Sep 2015 11:01:12 -0700
-Message-ID: <20150916180112.GB99097@jaegeuk-mac02.mot.com>
-References: <00f201d0ec5c$8274e670$875eb350$@samsung.com>
+Subject: Re: [PATCH v2] f2fs: optimize code of
+ f2fs_update_extent_tree_range
+Date: Wed, 16 Sep 2015 11:03:33 -0700
+Message-ID: <20150916180333.GC99097@jaegeuk-mac02.mot.com>
+References: <001901d0eba5$88749fa0$995ddee0$@samsung.com>
+	<20150915183646.GA82556@jaegeuk-mac02>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZcH3e-0002R5-GT
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 16 Sep 2015 18:03:50 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZcH3c-000813-RL for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 16 Sep 2015 18:03:50 +0000
 Content-Disposition: inline
-In-Reply-To: <00f201d0ec5c$8274e670$875eb350$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20150915183646.GA82556@jaegeuk-mac02>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Fan Li <fanofcode.li@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chao,
+Hi Fan,
 
-How about changing the original patch slightly like below?
-
- o don't have to use index variable
- o should not skip the entire dnode indices, when one of them is -ENOENT
+It seems that it'd good to write the first patch like this.
 
 ---
- fs/f2fs/file.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ fs/f2fs/extent_cache.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 180b838..e8536a8 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -739,33 +739,32 @@ static int fill_zero(struct inode *inode, pgoff_t index,
- 
- int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end)
- {
--	pgoff_t count, index = pg_start;
-+	pgoff_t count;
- 	int err;
- 
--	while (index < pg_end) {
-+	while (pg_start < pg_end) {
- 		struct dnode_of_data dn;
- 		pgoff_t end_offset;
- 
- 		set_new_dnode(&dn, inode, NULL, NULL, 0);
--		err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
-+		err = get_dnode_of_data(&dn, pg_start, LOOKUP_NODE);
- 		if (err) {
- 			if (err == -ENOENT) {
--				index = PGOFS_OF_NEXT_DNODE(index,
--							F2FS_I(inode));
-+				pg_start++;
- 				continue;
- 			}
- 			return err;
- 		}
- 
- 		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
--		count = min(end_offset - dn.ofs_in_node, pg_end - index);
-+		count = min(end_offset - dn.ofs_in_node, pg_end - pg_start);
- 
- 		f2fs_bug_on(F2FS_I_SB(inode), count == 0 || count > end_offset);
- 
- 		truncate_data_blocks_range(&dn, count);
- 		f2fs_put_dnode(&dn);
- 
--		index += count;
-+		pg_start += count;
- 	}
- 	return 0;
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 63068b7..9911717 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -155,11 +155,12 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+ 	return count - et->count;
  }
+ 
+-static void __drop_largest_extent(struct inode *inode, pgoff_t fofs)
++static void __drop_largest_extent(struct inode *inode,
++					pgoff_t fofs, unsigned int len)
+ {
+ 	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
+ 
+-	if (largest->fofs <= fofs && largest->fofs + largest->len > fofs)
++	if (largest->fofs < fofs + len && largest->fofs + largest->len > fofs)
+ 		largest->len = 0;
+ }
+ 
+@@ -168,7 +169,7 @@ void f2fs_drop_largest_extent(struct inode *inode, pgoff_t fofs)
+ 	if (!f2fs_may_extent_tree(inode))
+ 		return;
+ 
+-	__drop_largest_extent(inode, fofs);
++	__drop_largest_extent(inode, fofs, 1);
+ }
+ 
+ void f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
+@@ -422,7 +423,7 @@ static unsigned int f2fs_update_extent_tree_range(struct inode *inode,
+ 	dei.len = 0;
+ 
+ 	/* we do not guarantee that the largest extent is cached all the time */
+-	__drop_largest_extent(inode, fofs);
++	__drop_largest_extent(inode, fofs, len);
+ 
+ 	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
+ 	en = __lookup_extent_tree_ret(et, fofs, &prev_en, &next_en,
 -- 
 2.1.1
 
-On Fri, Sep 11, 2015 at 02:38:05PM +0800, Chao Yu wrote:
-> truncate_data_blocks_range can do in batches truncation which makes all
-> changes in dnode page content, dnode page status, extent cache, block
-> count updating together.
+On Tue, Sep 15, 2015 at 11:36:46AM -0700, Jaegeuk Kim wrote:
+> Hi Fan,
 > 
-> But previously, truncate_hole() always truncates one block in dnode page
-> at a time by invoking truncate_data_blocks_range(,1), which make thing
-> slow.
+> On Thu, Sep 10, 2015 at 04:48:22PM +0800, Fan Li wrote:
+> > Fix 3 potential problems:
+> > 1. when largest extent needs to be invalidated, it will be reset in
+> >    __drop_largest_extent, which makes __is_extent_same after always
+> >    return false, and largest extent unchanged. Now we update it properly.
+> > 
+> > 2. when extent is split and the latter part remains in tree, next_en
+> >    should be the latter part instead of next extent of original extent.
+> >    It will cause merge failure if there is in-place update, although
+> >    there is not, I think this fix will still makes codes less ambiguous.
+> > 
+> > 3. now we update extent in range, fofs may not be on the largest 
+> >     extent if the new extent overlaps with it. so add a new function 
+> >     to drop largest extent properly.
+> > 
+> > This patch also simpfies codes of invalidating extents, and optimizes
+> > the procedues that split extent into two.
+> > 
+> > 
+> > Signed-off-by: Fan li <fanofcode.li@samsung.com>
+> > ---
+> >  fs/f2fs/extent_cache.c |  161 +++++++++++++++++++++---------------------------
+> >  1 file changed, 70 insertions(+), 91 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> > index 997ac86..cbd1108 100644
+> > --- a/fs/f2fs/extent_cache.c
+> > +++ b/fs/f2fs/extent_cache.c
+> > @@ -163,6 +163,15 @@ static void __drop_largest_extent(struct inode *inode, pgoff_t fofs)
+> >  		largest->len = 0;
+> >  }
+> > 
+> > +static void __drop_largest_extent_range(struct inode *inode,
+> > +						pgoff_t fofs, unsigned int len)
+> > +{
+> > +	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
+> > +
+> > +	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs)
+> > +		largest->len = 0;
+> > +}
+> > +
+> >  void f2fs_drop_largest_extent(struct inode *inode, pgoff_t fofs)
+> >  {
+> >  	if (!f2fs_may_extent_tree(inode))
+> > @@ -399,7 +408,7 @@ unsigned int f2fs_update_extent_tree_range(struct inode *inode,
+> >  {
+> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >  	struct extent_tree *et = F2FS_I(inode)->extent_tree;
+> > -	struct extent_node *en = NULL, *en1 = NULL, *en2 = NULL, *en3 = NULL;
+> > +	struct extent_node *en = NULL, *en1 = NULL;
+> >  	struct extent_node *prev_en = NULL, *next_en = NULL;
+> >  	struct extent_info ei, dei, prev;
+> >  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> > @@ -419,8 +428,11 @@ unsigned int f2fs_update_extent_tree_range(struct inode *inode,
+> >  	prev = et->largest;
+> >  	dei.len = 0;
+> > 
+> > -	/* we do not guarantee that the largest extent is cached all the time */
+> > -	__drop_largest_extent(inode, fofs);
+> > +	/*
+> > +	 * drop largest extent before lookup, in case it's already
+> > +	 * been shrunk from extent tree
+> > +	 */
+> > +	__drop_largest_extent_range(inode, fofs, len);
 > 
-> This patch changes truncate_hole() to do in batches truncation for all
-> target blocks in one direct node inside truncate_data_blocks_range, which
-> can make our punch hole operation in ->fallocate more efficent.
+> Could you write for the above fix as a sepearte patch?
 > 
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> ---
->  fs/f2fs/file.c | 20 +++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
+> > 
+> >  	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
+> >  	en = __lookup_extent_tree_ret(et, fofs, &prev_en, &next_en,
+> > @@ -441,114 +453,81 @@ unsigned int f2fs_update_extent_tree_range(struct inode *inode,
+> > 
+> >  	/* 2. invlidate all extent nodes in range [fofs, fofs + len - 1] */
+> >  	while (en) {
+> > -		struct rb_node *node;
+> > +		struct rb_node *node = NULL;
+> > +		int parts = 0;	/* # of parts current extent split into */
+> > +		unsigned int org_end;
+> > 
+> >  		if (pos >= end)
+> >  			break;
+> > 
+> >  		dei = en->ei;
+> > -		en1 = en2 = NULL;
+> > +		next_en = en1 = NULL;
+> > 
+> > -		node = rb_next(&en->rb_node);
+> > +		f2fs_bug_on(sbi, pos < dei.fofs || pos >= dei.fofs + dei.len);
+> > 
+> > -		/*
+> > -		 * 2.1 there are four cases when we invalidate blkaddr in extent
+> > -		 * node, |V: valid address, X: will be invalidated|
+> > -		 */
+> > -		/* case#1, invalidate right part of extent node |VVVVVXXXXX| */
+> > -		if (pos > dei.fofs && end >= dei.fofs + dei.len) {
+> > +		if (pos > dei.fofs && pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
+> >  			en->ei.len = pos - dei.fofs;
+> > +			parts = 1;
+> > +		}
+> > 
+> > -			if (en->ei.len < F2FS_MIN_EXTENT_LEN) {
+> > -				__detach_extent_node(sbi, et, en);
+> > -				insert_p = NULL;
+> > -				insert_parent = NULL;
+> > -				goto update;
+> > +		org_end = dei.fofs + dei.len;
+> > +		if (end < org_end &&
+> > +			org_end - end >= F2FS_MIN_EXTENT_LEN) {
+> > +			if (parts) {
+> > +				set_extent_info(&ei, end,
+> > +						end - dei.fofs + dei.blk,
+> > +						org_end - end);
+> > +				en1 = __insert_extent_tree(sbi, et, &ei,
+> > +							NULL, NULL);
+> > +				next_en = en1;
 > 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index b2fab9e..ac97f78 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -738,23 +738,33 @@ static int fill_zero(struct inode *inode, pgoff_t index,
->  
->  int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end)
->  {
-> -	pgoff_t index;
-> +	pgoff_t count, index = pg_start;
->  	int err;
->  
-> -	for (index = pg_start; index < pg_end; index++) {
-> +	while (index < pg_end) {
->  		struct dnode_of_data dn;
-> +		pgoff_t end_offset;
->  
->  		set_new_dnode(&dn, inode, NULL, NULL, 0);
->  		err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
->  		if (err) {
-> -			if (err == -ENOENT)
-> +			if (err == -ENOENT) {
-> +				index = PGOFS_OF_NEXT_DNODE(index,
-> +							F2FS_I(inode));
->  				continue;
-> +			}
->  			return err;
->  		}
->  
-> -		if (dn.data_blkaddr != NULL_ADDR)
-> -			truncate_data_blocks_range(&dn, 1);
-> +		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-> +		count = min(end_offset - dn.ofs_in_node, pg_end - index);
-> +
-> +		f2fs_bug_on(F2FS_I_SB(inode), count == 0 || count > end_offset);
-> +
-> +		truncate_data_blocks_range(&dn, count);
->  		f2fs_put_dnode(&dn);
-> +
-> +		index += count;
->  	}
->  	return 0;
->  }
-> -- 
-> 2.4.2
+> Here, don't we need to set prev_en like:
+>                                 prev_en = en;
+> 
+> Thanks,
+> 
+> > +			} else {
+> > +				en->ei.fofs = end;
+> > +				en->ei.blk += end - dei.fofs;
+> > +				en->ei.len -= end - dei.fofs;
+> > +				next_en = en;
+> >  			}
+> > -
+> > -			if (__is_extent_same(&dei, &et->largest))
+> > -				et->largest = en->ei;
+> > -			goto next;
+> > +			parts++;
+> >  		}
+> > 
+> > -		/* case#2, invalidate left part of extent node |XXXXXVVVVV| */
+> > -		if (pos <= dei.fofs && end < dei.fofs + dei.len) {
+> > -			en->ei.fofs = end;
+> > -			en->ei.blk += end - dei.fofs;
+> > -			en->ei.len -= end - dei.fofs;
+> > -
+> > -			if (en->ei.len < F2FS_MIN_EXTENT_LEN) {
+> > -				__detach_extent_node(sbi, et, en);
+> > -				insert_p = NULL;
+> > -				insert_parent = NULL;
+> > -				goto update;
+> > -			}
+> > +		if (!next_en) {
+> > +			node = rb_next(&en->rb_node);
+> > +			next_en = node ?
+> > +				rb_entry(node, struct extent_node, rb_node)
+> > +				: NULL;
+> > +		}
+> > 
+> > -			if (__is_extent_same(&dei, &et->largest))
+> > +		if (parts) {
+> > +			if (en->ei.len > et->largest.len)
+> >  				et->largest = en->ei;
+> > -			goto next;
+> > +		} else {
+> > +			__detach_extent_node(sbi, et, en);
+> >  		}
+> > 
+> > -		__detach_extent_node(sbi, et, en);
+> > -
+> >  		/*
+> > -		 * if we remove node in rb-tree, our parent node pointer may
+> > -		 * point the wrong place, discard them.
+> > +		 * if original extent is split into zero or two parts, extent
+> > +		 * tree has been altered by deletion or insertion, therefore
+> > +		 * invalidate pointers regard to tree.
+> >  		 */
+> > -		insert_p = NULL;
+> > -		insert_parent = NULL;
+> > -
+> > -		/* case#3, invalidate entire extent node |XXXXXXXXXX| */
+> > -		if (pos <= dei.fofs && end >= dei.fofs + dei.len) {
+> > -			if (__is_extent_same(&dei, &et->largest))
+> > -				et->largest.len = 0;
+> > -			goto update;
+> > +		if (parts != 1) {
+> > +			insert_p = NULL;
+> > +			insert_parent = NULL;
+> >  		}
+> > 
+> > -		/*
+> > -		 * case#4, invalidate data in the middle of extent node
+> > -		 * |VVVXXXXVVV|
+> > -		 */
+> > -		if (dei.len > F2FS_MIN_EXTENT_LEN) {
+> > -			unsigned int endofs;
+> > -
+> > -			/*  insert left part of split extent into cache */
+> > -			if (pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
+> > -				set_extent_info(&ei, dei.fofs, dei.blk,
+> > -							pos - dei.fofs);
+> > -				en1 = __insert_extent_tree(sbi, et, &ei,
+> > -								NULL, NULL);
+> > -			}
+> > -
+> > -			/* insert right part of split extent into cache */
+> > -			endofs = dei.fofs + dei.len;
+> > -			if (endofs - end >= F2FS_MIN_EXTENT_LEN) {
+> > -				set_extent_info(&ei, end,
+> > -						end - dei.fofs + dei.blk,
+> > -						endofs - end);
+> > -				en2 = __insert_extent_tree(sbi, et, &ei,
+> > -								NULL, NULL);
+> > -			}
+> > -		}
+> > -update:
+> > -		/* 2.2 update in global extent list */
+> > +		/* update in global extent list */
+> >  		spin_lock(&sbi->extent_lock);
+> > -		if (en && !list_empty(&en->list))
+> > +		if (!parts && !list_empty(&en->list))
+> >  			list_del(&en->list);
+> >  		if (en1)
+> >  			list_add_tail(&en1->list, &sbi->extent_list);
+> > -		if (en2)
+> > -			list_add_tail(&en2->list, &sbi->extent_list);
+> >  		spin_unlock(&sbi->extent_lock);
+> > 
+> > -		/* 2.3 release extent node */
+> > -		if (en)
+> > +		/* release extent node */
+> > +		if (!parts)
+> >  			kmem_cache_free(extent_node_slab, en);
+> > -next:
+> > -		en = node ? rb_entry(node, struct extent_node, rb_node) : NULL;
+> > -		next_en = en;
+> > -		if (en)
+> > -			pos = en->ei.fofs;
+> > +
+> > +		en = next_en;
+> > +		if (next_en)
+> > +			pos = next_en->ei.fofs;
+> >  	}
+> > 
+> >  update_extent:
+> > @@ -557,10 +536,10 @@ update_extent:
+> >  		struct extent_node *den = NULL;
+> > 
+> >  		set_extent_info(&ei, fofs, blkaddr, len);
+> > -		en3 = __try_merge_extent_node(sbi, et, &ei, &den,
+> > +		en1 = __try_merge_extent_node(sbi, et, &ei, &den,
+> >  							prev_en, next_en);
+> > -		if (!en3)
+> > -			en3 = __insert_extent_tree(sbi, et, &ei,
+> > +		if (!en1)
+> > +			en1 = __insert_extent_tree(sbi, et, &ei,
+> >  						insert_p, insert_parent);
+> > 
+> >  		/* give up extent_cache, if split and small updates happen */
+> > @@ -572,11 +551,11 @@ update_extent:
+> >  		}
+> > 
+> >  		spin_lock(&sbi->extent_lock);
+> > -		if (en3) {
+> > -			if (list_empty(&en3->list))
+> > -				list_add_tail(&en3->list, &sbi->extent_list);
+> > +		if (en1) {
+> > +			if (list_empty(&en1->list))
+> > +				list_add_tail(&en1->list, &sbi->extent_list);
+> >  			else
+> > -				list_move_tail(&en3->list, &sbi->extent_list);
+> > +				list_move_tail(&en1->list, &sbi->extent_list);
+> >  		}
+> >  		if (den && !list_empty(&den->list))
+> >  			list_del(&den->list);
+> > --
+> > 1.7.9.5
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+------------------------------------------------------------------------------
+Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
+Get real-time metrics from all of your servers, apps and tools
+in one place.
+SourceForge users - Click here to start your Free Trial of Datadog now!
+http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
