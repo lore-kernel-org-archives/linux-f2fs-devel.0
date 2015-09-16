@@ -1,26 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: optimize code of
- f2fs_update_extent_tree_range
-Date: Wed, 16 Sep 2015 11:03:33 -0700
-Message-ID: <20150916180333.GC99097@jaegeuk-mac02.mot.com>
-References: <001901d0eba5$88749fa0$995ddee0$@samsung.com>
-	<20150915183646.GA82556@jaegeuk-mac02>
+Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write
+	performance
+Date: Wed, 16 Sep 2015 11:12:30 -0700
+Message-ID: <20150916181230.GD99097@jaegeuk-mac02.mot.com>
+References: <000001d0ec5d$0bbd1880$23374980$@samsung.com>
+	<20150915212044.GA84514@jaegeuk-mac02.mot.com>
+	<000a01d0f068$c46012c0$4d203840$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZcH3e-0002R5-GT
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZcHCB-0006uJ-VC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Sep 2015 18:03:50 +0000
+	Wed, 16 Sep 2015 18:12:39 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZcH3c-000813-RL for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Sep 2015 18:03:50 +0000
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZcHCA-0003Tr-MR for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 16 Sep 2015 18:12:39 +0000
 Content-Disposition: inline
-In-Reply-To: <20150915183646.GA82556@jaegeuk-mac02>
+In-Reply-To: <000a01d0f068$c46012c0$4d203840$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,337 +31,155 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Fan Li <fanofcode.li@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Fan,
+Hi Chao,
 
-It seems that it'd good to write the first patch like this.
-
----
- fs/f2fs/extent_cache.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 63068b7..9911717 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -155,11 +155,12 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
- 	return count - et->count;
- }
- 
--static void __drop_largest_extent(struct inode *inode, pgoff_t fofs)
-+static void __drop_largest_extent(struct inode *inode,
-+					pgoff_t fofs, unsigned int len)
- {
- 	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
- 
--	if (largest->fofs <= fofs && largest->fofs + largest->len > fofs)
-+	if (largest->fofs < fofs + len && largest->fofs + largest->len > fofs)
- 		largest->len = 0;
- }
- 
-@@ -168,7 +169,7 @@ void f2fs_drop_largest_extent(struct inode *inode, pgoff_t fofs)
- 	if (!f2fs_may_extent_tree(inode))
- 		return;
- 
--	__drop_largest_extent(inode, fofs);
-+	__drop_largest_extent(inode, fofs, 1);
- }
- 
- void f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
-@@ -422,7 +423,7 @@ static unsigned int f2fs_update_extent_tree_range(struct inode *inode,
- 	dei.len = 0;
- 
- 	/* we do not guarantee that the largest extent is cached all the time */
--	__drop_largest_extent(inode, fofs);
-+	__drop_largest_extent(inode, fofs, len);
- 
- 	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
- 	en = __lookup_extent_tree_ret(et, fofs, &prev_en, &next_en,
--- 
-2.1.1
-
-On Tue, Sep 15, 2015 at 11:36:46AM -0700, Jaegeuk Kim wrote:
-> Hi Fan,
+On Wed, Sep 16, 2015 at 06:15:55PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> On Thu, Sep 10, 2015 at 04:48:22PM +0800, Fan Li wrote:
-> > Fix 3 potential problems:
-> > 1. when largest extent needs to be invalidated, it will be reset in
-> >    __drop_largest_extent, which makes __is_extent_same after always
-> >    return false, and largest extent unchanged. Now we update it properly.
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Wednesday, September 16, 2015 5:21 AM
+> > To: Chao Yu
+> > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write performance
 > > 
-> > 2. when extent is split and the latter part remains in tree, next_en
-> >    should be the latter part instead of next extent of original extent.
-> >    It will cause merge failure if there is in-place update, although
-> >    there is not, I think this fix will still makes codes less ambiguous.
+> > Hi Chao,
 > > 
-> > 3. now we update extent in range, fofs may not be on the largest 
-> >     extent if the new extent overlaps with it. so add a new function 
-> >     to drop largest extent properly.
+> > On Fri, Sep 11, 2015 at 02:41:53PM +0800, Chao Yu wrote:
+> > > When dio writes perform concurrently, our performace will be low because of
+> > > Thread A's allocation of multi continuous blocks will be break by Thread B,
+> > > there are two cases as below:
+> > >  - In Thread B, we may change current segment to a new segment for LFS
+> > >    allocation if we dio write in the beginning of the file.
+> > >  - In Thread B, we may allocate blocks in the middle of Thread A's
+> > >    allocation, which make blocks which allocated in Thread A being
+> > >    discontinuous.
+> > >
+> > > This patch adds writepages mutex lock to make block allocation in dio write
+> > > atomic to avoid above issues.
+> > >
+> > > Test environment:
+> > > ubuntu os with linux kernel 4.2+, intel i7-3770, 16g memory,
+> > > 32g kingston sd card.
+> > >
+> > > fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
+> > --filesize=256m --size=16m --bs=2m --direct=1
+> > > --numjobs=10
+> > >
+> > > before:
+> > >   WRITE: io=163840KB, aggrb=3145KB/s, minb=314KB/s, maxb=411KB/s, mint=39836msec,
+> > maxt=52083msec
+> > >
+> > > patched:
+> > >   WRITE: io=163840KB, aggrb=10033KB/s, minb=1003KB/s, maxb=1124KB/s, mint=14565msec,
+> > maxt=16329msec
+> > >
+> > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > ---
+> > >  fs/f2fs/data.c | 13 ++++++++++---
+> > >  1 file changed, 10 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > index a737ca5..a0a5849 100644
+> > > --- a/fs/f2fs/data.c
+> > > +++ b/fs/f2fs/data.c
+> > > @@ -1536,7 +1536,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+> > >  	struct file *file = iocb->ki_filp;
+> > >  	struct address_space *mapping = file->f_mapping;
+> > >  	struct inode *inode = mapping->host;
+> > > +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> > >  	size_t count = iov_iter_count(iter);
+> > > +	int rw = iov_iter_rw(iter);
+> > >  	int err;
+> > >
+> > >  	/* we don't need to use inline_data strictly */
+> > > @@ -1555,12 +1557,17 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
+> > *iter,
+> > >
+> > >  	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+> > >
+> > > -	if (iov_iter_rw(iter) == WRITE)
+> > > +	if (rw == WRITE) {
+> > > +		mutex_lock(&sbi->writepages);
 > > 
-> > This patch also simpfies codes of invalidating extents, and optimizes
-> > the procedues that split extent into two.
-> > 
-> > 
-> > Signed-off-by: Fan li <fanofcode.li@samsung.com>
-> > ---
-> >  fs/f2fs/extent_cache.c |  161 +++++++++++++++++++++---------------------------
-> >  1 file changed, 70 insertions(+), 91 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> > index 997ac86..cbd1108 100644
-> > --- a/fs/f2fs/extent_cache.c
-> > +++ b/fs/f2fs/extent_cache.c
-> > @@ -163,6 +163,15 @@ static void __drop_largest_extent(struct inode *inode, pgoff_t fofs)
-> >  		largest->len = 0;
-> >  }
-> > 
-> > +static void __drop_largest_extent_range(struct inode *inode,
-> > +						pgoff_t fofs, unsigned int len)
-> > +{
-> > +	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
-> > +
-> > +	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs)
-> > +		largest->len = 0;
-> > +}
-> > +
-> >  void f2fs_drop_largest_extent(struct inode *inode, pgoff_t fofs)
-> >  {
-> >  	if (!f2fs_may_extent_tree(inode))
-> > @@ -399,7 +408,7 @@ unsigned int f2fs_update_extent_tree_range(struct inode *inode,
-> >  {
-> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >  	struct extent_tree *et = F2FS_I(inode)->extent_tree;
-> > -	struct extent_node *en = NULL, *en1 = NULL, *en2 = NULL, *en3 = NULL;
-> > +	struct extent_node *en = NULL, *en1 = NULL;
-> >  	struct extent_node *prev_en = NULL, *next_en = NULL;
-> >  	struct extent_info ei, dei, prev;
-> >  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-> > @@ -419,8 +428,11 @@ unsigned int f2fs_update_extent_tree_range(struct inode *inode,
-> >  	prev = et->largest;
-> >  	dei.len = 0;
-> > 
-> > -	/* we do not guarantee that the largest extent is cached all the time */
-> > -	__drop_largest_extent(inode, fofs);
-> > +	/*
-> > +	 * drop largest extent before lookup, in case it's already
-> > +	 * been shrunk from extent tree
-> > +	 */
-> > +	__drop_largest_extent_range(inode, fofs, len);
+> > Why do we have to share sbi->writepages?
 > 
-> Could you write for the above fix as a sepearte patch?
+> The root cause of this issue is that: in f2fs, we have no suitable
+> dispatcher which can do the following things as an atomic operation:
+> a) allocate position(s) in flash device for current block(s);
+> b) submit user data in allocated position(s) in block layer.
+> 
+> Without the dispatcher, we will suffer performance issue in following
+> scenario:
+> Thread A		Thread B		Thread C
+> allocate pos+1
+> 			allocate pos+2
+> 						allocate pos+3
+> submit pos+1
+> 						submit pos+3
+> 			submit pos+2
+> 
+> Our final submitting series will: pos+1, pos+3, pos+2, this makes f2fs
+> running into non-LFS mode, therefore resulting in bad performance.
+> 
+> writepages mutex lock supply us with a good solution for above issue.
+> It not only make the allocating and submitting pair executing atomically,
+> but also reduce the fragmentation for one file since we submit blocks
+> belong to single inode as continuous as possible.
+> 
+> So here I choose to use writepages mutex lock to fix the performance
+> issue caused by both dio write vs dio write and dio write vs buffered
+> write.
+
+Understood, but the concern was the multi-thread performance as you mentioned.
+If one thread throws a big dio request, anybody cannot write at all?
+How about adding some limits likewise f2fs_write_data_pages whieh is for example
+nr_pages_to_write?
+
+Thanks,
+
+> 
+> If I'm missing something, please correct me.
 > 
 > > 
-> >  	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
-> >  	en = __lookup_extent_tree_ret(et, fofs, &prev_en, &next_en,
-> > @@ -441,114 +453,81 @@ unsigned int f2fs_update_extent_tree_range(struct inode *inode,
+> > >  		__allocate_data_blocks(inode, offset, count);
 > > 
-> >  	/* 2. invlidate all extent nodes in range [fofs, fofs + len - 1] */
-> >  	while (en) {
-> > -		struct rb_node *node;
-> > +		struct rb_node *node = NULL;
-> > +		int parts = 0;	/* # of parts current extent split into */
-> > +		unsigned int org_end;
-> > 
-> >  		if (pos >= end)
-> >  			break;
-> > 
-> >  		dei = en->ei;
-> > -		en1 = en2 = NULL;
-> > +		next_en = en1 = NULL;
-> > 
-> > -		node = rb_next(&en->rb_node);
-> > +		f2fs_bug_on(sbi, pos < dei.fofs || pos >= dei.fofs + dei.len);
-> > 
-> > -		/*
-> > -		 * 2.1 there are four cases when we invalidate blkaddr in extent
-> > -		 * node, |V: valid address, X: will be invalidated|
-> > -		 */
-> > -		/* case#1, invalidate right part of extent node |VVVVVXXXXX| */
-> > -		if (pos > dei.fofs && end >= dei.fofs + dei.len) {
-> > +		if (pos > dei.fofs && pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
-> >  			en->ei.len = pos - dei.fofs;
-> > +			parts = 1;
-> > +		}
-> > 
-> > -			if (en->ei.len < F2FS_MIN_EXTENT_LEN) {
-> > -				__detach_extent_node(sbi, et, en);
-> > -				insert_p = NULL;
-> > -				insert_parent = NULL;
-> > -				goto update;
-> > +		org_end = dei.fofs + dei.len;
-> > +		if (end < org_end &&
-> > +			org_end - end >= F2FS_MIN_EXTENT_LEN) {
-> > +			if (parts) {
-> > +				set_extent_info(&ei, end,
-> > +						end - dei.fofs + dei.blk,
-> > +						org_end - end);
-> > +				en1 = __insert_extent_tree(sbi, et, &ei,
-> > +							NULL, NULL);
-> > +				next_en = en1;
+> > If the problem lies on the misaligned blocks, how about calling mutex_unlock
+> > here?
 > 
-> Here, don't we need to set prev_en like:
->                                 prev_en = en;
+> When changing to unlock here, I got regression when testing with following command:
+> fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs --filesize=256m --size=4m --bs=64k --direct=1
+> --numjobs=20
+> 
+> unlock here:
+>   WRITE: io=81920KB, aggrb=5802KB/s, minb=290KB/s, maxb=292KB/s, mint=14010msec, maxt=14119msec
+> unlock after dio finished:
+>   WRITE: io=81920KB, aggrb=6088KB/s, minb=304KB/s, maxb=1081KB/s, mint=3786msec, maxt=13454msec
+> 
+> So how about keep it in original place in this patch?
 > 
 > Thanks,
-> 
-> > +			} else {
-> > +				en->ei.fofs = end;
-> > +				en->ei.blk += end - dei.fofs;
-> > +				en->ei.len -= end - dei.fofs;
-> > +				next_en = en;
-> >  			}
-> > -
-> > -			if (__is_extent_same(&dei, &et->largest))
-> > -				et->largest = en->ei;
-> > -			goto next;
-> > +			parts++;
-> >  		}
 > > 
-> > -		/* case#2, invalidate left part of extent node |XXXXXVVVVV| */
-> > -		if (pos <= dei.fofs && end < dei.fofs + dei.len) {
-> > -			en->ei.fofs = end;
-> > -			en->ei.blk += end - dei.fofs;
-> > -			en->ei.len -= end - dei.fofs;
-> > -
-> > -			if (en->ei.len < F2FS_MIN_EXTENT_LEN) {
-> > -				__detach_extent_node(sbi, et, en);
-> > -				insert_p = NULL;
-> > -				insert_parent = NULL;
-> > -				goto update;
-> > -			}
-> > +		if (!next_en) {
-> > +			node = rb_next(&en->rb_node);
-> > +			next_en = node ?
-> > +				rb_entry(node, struct extent_node, rb_node)
-> > +				: NULL;
-> > +		}
+> > Thanks,
 > > 
-> > -			if (__is_extent_same(&dei, &et->largest))
-> > +		if (parts) {
-> > +			if (en->ei.len > et->largest.len)
-> >  				et->largest = en->ei;
-> > -			goto next;
-> > +		} else {
-> > +			__detach_extent_node(sbi, et, en);
-> >  		}
-> > 
-> > -		__detach_extent_node(sbi, et, en);
-> > -
-> >  		/*
-> > -		 * if we remove node in rb-tree, our parent node pointer may
-> > -		 * point the wrong place, discard them.
-> > +		 * if original extent is split into zero or two parts, extent
-> > +		 * tree has been altered by deletion or insertion, therefore
-> > +		 * invalidate pointers regard to tree.
-> >  		 */
-> > -		insert_p = NULL;
-> > -		insert_parent = NULL;
-> > -
-> > -		/* case#3, invalidate entire extent node |XXXXXXXXXX| */
-> > -		if (pos <= dei.fofs && end >= dei.fofs + dei.len) {
-> > -			if (__is_extent_same(&dei, &et->largest))
-> > -				et->largest.len = 0;
-> > -			goto update;
-> > +		if (parts != 1) {
-> > +			insert_p = NULL;
-> > +			insert_parent = NULL;
-> >  		}
-> > 
-> > -		/*
-> > -		 * case#4, invalidate data in the middle of extent node
-> > -		 * |VVVXXXXVVV|
-> > -		 */
-> > -		if (dei.len > F2FS_MIN_EXTENT_LEN) {
-> > -			unsigned int endofs;
-> > -
-> > -			/*  insert left part of split extent into cache */
-> > -			if (pos - dei.fofs >= F2FS_MIN_EXTENT_LEN) {
-> > -				set_extent_info(&ei, dei.fofs, dei.blk,
-> > -							pos - dei.fofs);
-> > -				en1 = __insert_extent_tree(sbi, et, &ei,
-> > -								NULL, NULL);
-> > -			}
-> > -
-> > -			/* insert right part of split extent into cache */
-> > -			endofs = dei.fofs + dei.len;
-> > -			if (endofs - end >= F2FS_MIN_EXTENT_LEN) {
-> > -				set_extent_info(&ei, end,
-> > -						end - dei.fofs + dei.blk,
-> > -						endofs - end);
-> > -				en2 = __insert_extent_tree(sbi, et, &ei,
-> > -								NULL, NULL);
-> > -			}
-> > -		}
-> > -update:
-> > -		/* 2.2 update in global extent list */
-> > +		/* update in global extent list */
-> >  		spin_lock(&sbi->extent_lock);
-> > -		if (en && !list_empty(&en->list))
-> > +		if (!parts && !list_empty(&en->list))
-> >  			list_del(&en->list);
-> >  		if (en1)
-> >  			list_add_tail(&en1->list, &sbi->extent_list);
-> > -		if (en2)
-> > -			list_add_tail(&en2->list, &sbi->extent_list);
-> >  		spin_unlock(&sbi->extent_lock);
-> > 
-> > -		/* 2.3 release extent node */
-> > -		if (en)
-> > +		/* release extent node */
-> > +		if (!parts)
-> >  			kmem_cache_free(extent_node_slab, en);
-> > -next:
-> > -		en = node ? rb_entry(node, struct extent_node, rb_node) : NULL;
-> > -		next_en = en;
-> > -		if (en)
-> > -			pos = en->ei.fofs;
-> > +
-> > +		en = next_en;
-> > +		if (next_en)
-> > +			pos = next_en->ei.fofs;
-> >  	}
-> > 
-> >  update_extent:
-> > @@ -557,10 +536,10 @@ update_extent:
-> >  		struct extent_node *den = NULL;
-> > 
-> >  		set_extent_info(&ei, fofs, blkaddr, len);
-> > -		en3 = __try_merge_extent_node(sbi, et, &ei, &den,
-> > +		en1 = __try_merge_extent_node(sbi, et, &ei, &den,
-> >  							prev_en, next_en);
-> > -		if (!en3)
-> > -			en3 = __insert_extent_tree(sbi, et, &ei,
-> > +		if (!en1)
-> > +			en1 = __insert_extent_tree(sbi, et, &ei,
-> >  						insert_p, insert_parent);
-> > 
-> >  		/* give up extent_cache, if split and small updates happen */
-> > @@ -572,11 +551,11 @@ update_extent:
-> >  		}
-> > 
-> >  		spin_lock(&sbi->extent_lock);
-> > -		if (en3) {
-> > -			if (list_empty(&en3->list))
-> > -				list_add_tail(&en3->list, &sbi->extent_list);
-> > +		if (en1) {
-> > +			if (list_empty(&en1->list))
-> > +				list_add_tail(&en1->list, &sbi->extent_list);
-> >  			else
-> > -				list_move_tail(&en3->list, &sbi->extent_list);
-> > +				list_move_tail(&en1->list, &sbi->extent_list);
-> >  		}
-> >  		if (den && !list_empty(&den->list))
-> >  			list_del(&den->list);
-> > --
-> > 1.7.9.5
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > > +	}
+> > >
+> > >  	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
+> > > -	if (err < 0 && iov_iter_rw(iter) == WRITE)
+> > > -		f2fs_write_failed(mapping, offset + count);
+> > > +	if (rw == WRITE) {
+> > > +		mutex_unlock(&sbi->writepages);
+> > > +		if (err)
+> > > +			f2fs_write_failed(mapping, offset + count);
+> > > +	}
+> > >
+> > >  	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
+> > >
+> > > --
+> > > 2.4.2
 
 ------------------------------------------------------------------------------
 Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
