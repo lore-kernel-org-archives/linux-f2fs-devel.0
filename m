@@ -1,129 +1,102 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write
-	performance
-Date: Thu, 17 Sep 2015 20:52:10 +0800
-Message-ID: <00a001d0f147$c505ad40$4f1107c0$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 5/7] f2fs: enhance multithread dio write
+ performance
+Date: Thu, 17 Sep 2015 20:53:22 +0800
+Message-ID: <00a101d0f147$f07c62c0$d1752840$@samsung.com>
 References: <000001d0ec5d$0bbd1880$23374980$@samsung.com>
-	<20150915212044.GA84514@jaegeuk-mac02.mot.com>
-	<000a01d0f068$c46012c0$4d203840$@samsung.com>
-	<20150916181230.GD99097@jaegeuk-mac02.mot.com>
+ <20150915212044.GA84514@jaegeuk-mac02.mot.com>
+ <000a01d0f068$c46012c0$4d203840$@samsung.com> <55FA0BDB.5090104@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZcYgS-0003qT-Mj
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Sep 2015 12:53:04 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZcYgQ-0004Xz-3u
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Sep 2015 12:53:04 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NUT00UZ9NS6TT20@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Sep 2015 21:52:54 +0900 (KST)
-In-reply-to: <20150916181230.GD99097@jaegeuk-mac02.mot.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <55FA0BDB.5090104@huawei.com>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'He YunLei' <heyunlei@huawei.com>
+Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+Hi Yunlei,
 
 > -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Thursday, September 17, 2015 2:13 AM
+> From: He YunLei [mailto:heyunlei@huawei.com]
+> Sent: Thursday, September 17, 2015 8:40 AM
 > To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write performance
+> Cc: 'Jaegeuk Kim'; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 5/7] f2fs: enhance multithread dio write performance
 > 
-> Hi Chao,
-> 
-> On Wed, Sep 16, 2015 at 06:15:55PM +0800, Chao Yu wrote:
+> On 2015/9/16 18:15, Chao Yu wrote:
 > > Hi Jaegeuk,
 > >
-> > > -----Original Message-----
-> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > Sent: Wednesday, September 16, 2015 5:21 AM
-> > > To: Chao Yu
-> > > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > > Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write performance
-> > >
-> > > Hi Chao,
-> > >
-> > > On Fri, Sep 11, 2015 at 02:41:53PM +0800, Chao Yu wrote:
-> > > > When dio writes perform concurrently, our performace will be low because of
-> > > > Thread A's allocation of multi continuous blocks will be break by Thread B,
-> > > > there are two cases as below:
-> > > >  - In Thread B, we may change current segment to a new segment for LFS
-> > > >    allocation if we dio write in the beginning of the file.
-> > > >  - In Thread B, we may allocate blocks in the middle of Thread A's
-> > > >    allocation, which make blocks which allocated in Thread A being
-> > > >    discontinuous.
-> > > >
-> > > > This patch adds writepages mutex lock to make block allocation in dio write
-> > > > atomic to avoid above issues.
-> > > >
-> > > > Test environment:
-> > > > ubuntu os with linux kernel 4.2+, intel i7-3770, 16g memory,
-> > > > 32g kingston sd card.
-> > > >
-> > > > fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
-> > > --filesize=256m --size=16m --bs=2m --direct=1
-> > > > --numjobs=10
-> > > >
-> > > > before:
-> > > >   WRITE: io=163840KB, aggrb=3145KB/s, minb=314KB/s, maxb=411KB/s, mint=39836msec,
-> > > maxt=52083msec
-> > > >
-> > > > patched:
-> > > >   WRITE: io=163840KB, aggrb=10033KB/s, minb=1003KB/s, maxb=1124KB/s, mint=14565msec,
-> > > maxt=16329msec
-> > > >
-> > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > > > ---
-> > > >  fs/f2fs/data.c | 13 ++++++++++---
-> > > >  1 file changed, 10 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > > > index a737ca5..a0a5849 100644
-> > > > --- a/fs/f2fs/data.c
-> > > > +++ b/fs/f2fs/data.c
-> > > > @@ -1536,7 +1536,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
+> >> -----Original Message-----
+> >> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> >> Sent: Wednesday, September 16, 2015 5:21 AM
+> >> To: Chao Yu
+> >> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> >> Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write performance
+> >>
+> >> Hi Chao,
+> >>
+> >> On Fri, Sep 11, 2015 at 02:41:53PM +0800, Chao Yu wrote:
+> >>> When dio writes perform concurrently, our performace will be low because of
+> >>> Thread A's allocation of multi continuous blocks will be break by Thread B,
+> >>> there are two cases as below:
+> >>>   - In Thread B, we may change current segment to a new segment for LFS
+> >>>     allocation if we dio write in the beginning of the file.
+> >>>   - In Thread B, we may allocate blocks in the middle of Thread A's
+> >>>     allocation, which make blocks which allocated in Thread A being
+> >>>     discontinuous.
+> >>>
+> >>> This patch adds writepages mutex lock to make block allocation in dio write
+> >>> atomic to avoid above issues.
+> >>>
+> >>> Test environment:
+> >>> ubuntu os with linux kernel 4.2+, intel i7-3770, 16g memory,
+> >>> 32g kingston sd card.
+> >>>
+> >>> fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
+> >> --filesize=256m --size=16m --bs=2m --direct=1
+> >>> --numjobs=10
+> >>>
+> >>> before:
+> >>>    WRITE: io=163840KB, aggrb=3145KB/s, minb=314KB/s, maxb=411KB/s, mint=39836msec,
+> >> maxt=52083msec
+> >>>
+> >>> patched:
+> >>>    WRITE: io=163840KB, aggrb=10033KB/s, minb=1003KB/s, maxb=1124KB/s, mint=14565msec,
+> >> maxt=16329msec
+> >>>
+> >>> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> >>> ---
+> >>>   fs/f2fs/data.c | 13 ++++++++++---
+> >>>   1 file changed, 10 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> >>> index a737ca5..a0a5849 100644
+> >>> --- a/fs/f2fs/data.c
+> >>> +++ b/fs/f2fs/data.c
+> >>> @@ -1536,7 +1536,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
 > *iter,
-> > > >  	struct file *file = iocb->ki_filp;
-> > > >  	struct address_space *mapping = file->f_mapping;
-> > > >  	struct inode *inode = mapping->host;
-> > > > +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> > > >  	size_t count = iov_iter_count(iter);
-> > > > +	int rw = iov_iter_rw(iter);
-> > > >  	int err;
-> > > >
-> > > >  	/* we don't need to use inline_data strictly */
-> > > > @@ -1555,12 +1557,17 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
-> > > *iter,
-> > > >
-> > > >  	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
-> > > >
-> > > > -	if (iov_iter_rw(iter) == WRITE)
-> > > > +	if (rw == WRITE) {
-> > > > +		mutex_lock(&sbi->writepages);
-> > >
-> > > Why do we have to share sbi->writepages?
+> >>>   	struct file *file = iocb->ki_filp;
+> >>>   	struct address_space *mapping = file->f_mapping;
+> >>>   	struct inode *inode = mapping->host;
+> >>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >>>   	size_t count = iov_iter_count(iter);
+> >>> +	int rw = iov_iter_rw(iter);
+> >>>   	int err;
+> >>>
+> >>>   	/* we don't need to use inline_data strictly */
+> >>> @@ -1555,12 +1557,17 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
+> >> *iter,
+> >>>
+> >>>   	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+> >>>
+> >>> -	if (iov_iter_rw(iter) == WRITE)
+> >>> +	if (rw == WRITE) {
+> >>> +		mutex_lock(&sbi->writepages);
+> >>
+> >> Why do we have to share sbi->writepages?
 > >
 > > The root cause of this issue is that: in f2fs, we have no suitable
 > > dispatcher which can do the following things as an atomic operation:
@@ -151,36 +124,14 @@ Hi Jaegeuk,
 > > So here I choose to use writepages mutex lock to fix the performance
 > > issue caused by both dio write vs dio write and dio write vs buffered
 > > write.
-> 
-> Understood, but the concern was the multi-thread performance as you mentioned.
-> If one thread throws a big dio request, anybody cannot write at all?
-
-Buffered write will not be stopped, but actually my way completely stops the
-concurrency of multithreads which are doing dio writes, for aspect of improving
-concurrency, moving mutex_unlock below __allocate_data_blocks is a good solution
-so far.
-
-> How about adding some limits likewise f2fs_write_data_pages whieh is for example
-> nr_pages_to_write?
-
-Could you share more details about your idea?
-
-As Yunlei reported, there is performance regression issue, so how about
-holding this patch and let me do some investigation?
-
-Thanks,
-
-> 
-> Thanks,
-> 
 > >
 > > If I'm missing something, please correct me.
 > >
-> > >
-> > > >  		__allocate_data_blocks(inode, offset, count);
-> > >
-> > > If the problem lies on the misaligned blocks, how about calling mutex_unlock
-> > > here?
+> >>
+> >>>   		__allocate_data_blocks(inode, offset, count);
+> >>
+> >> If the problem lies on the misaligned blocks, how about calling mutex_unlock
+> >> here?
 > >
 > > When changing to unlock here, I got regression when testing with following command:
 > > fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
@@ -188,38 +139,67 @@ Thanks,
 > > --numjobs=20
 > >
 > > unlock here:
-> >   WRITE: io=81920KB, aggrb=5802KB/s, minb=290KB/s, maxb=292KB/s, mint=14010msec,
+> >    WRITE: io=81920KB, aggrb=5802KB/s, minb=290KB/s, maxb=292KB/s, mint=14010msec,
 > maxt=14119msec
 > > unlock after dio finished:
-> >   WRITE: io=81920KB, aggrb=6088KB/s, minb=304KB/s, maxb=1081KB/s, mint=3786msec,
+> >    WRITE: io=81920KB, aggrb=6088KB/s, minb=304KB/s, maxb=1081KB/s, mint=3786msec,
 > maxt=13454msec
 > >
 > > So how about keep it in original place in this patch?
+> 
+> Does share writepages mutex lock have an effect on cache write? Here is AndroBench result on
+> my phone:
+> 
+> Before patch:
+> 				1R1W               8R8W               16R16W
+> Sequential Write               161.31             163.85              154.67
+> Random  Write                   9.48               17.66               18.09
+> 
+> 
+> After patch:
+> 				1R1W               8R8W               16R16W
+> Sequential Write               159.61             157.24              160.11
+> Random  Write                   9.17               8.51                8.8
+
+Thanks for your report, I will do the investigation.
+
+Thanks,
+
+> 
+> Unit:Mb/s, File size: 64M, Buffer size: 4k
+> 
 > >
 > > Thanks,
-> > >
-> > > Thanks,
-> > >
-> > > > +	}
-> > > >
-> > > >  	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
-> > > > -	if (err < 0 && iov_iter_rw(iter) == WRITE)
-> > > > -		f2fs_write_failed(mapping, offset + count);
-> > > > +	if (rw == WRITE) {
-> > > > +		mutex_unlock(&sbi->writepages);
-> > > > +		if (err)
-> > > > +			f2fs_write_failed(mapping, offset + count);
-> > > > +	}
-> > > >
-> > > >  	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
-> > > >
-> > > > --
-> > > > 2.4.2
-
-
-------------------------------------------------------------------------------
-Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
-Get real-time metrics from all of your servers, apps and tools
-in one place.
-SourceForge users - Click here to start your Free Trial of Datadog now!
-http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
+> >>
+> >> Thanks,
+> >>
+> >>> +	}
+> >>>
+> >>>   	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
+> >>> -	if (err < 0 && iov_iter_rw(iter) == WRITE)
+> >>> -		f2fs_write_failed(mapping, offset + count);
+> >>> +	if (rw == WRITE) {
+> >>> +		mutex_unlock(&sbi->writepages);
+> >>> +		if (err)
+> >>> +			f2fs_write_failed(mapping, offset + count);
+> >>> +	}
+> >>>
+> >>>   	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
+> >>>
+> >>> --
+> >>> 2.4.2
+> >
+> >
+> > ------------------------------------------------------------------------------
+> > Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
+> > Get real-time metrics from all of your servers, apps and tools
+> > in one place.
+> > SourceForge users - Click here to start your Free Trial of Datadog now!
+> > http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >
+> > .
+> >
