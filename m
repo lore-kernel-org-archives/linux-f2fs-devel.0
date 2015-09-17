@@ -1,79 +1,69 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2 2/7] f2fs: do in batches truncation in truncate_hole
-Date: Thu, 17 Sep 2015 20:22:44 +0800
-Message-ID: <009b01d0f143$a68066c0$f3813440$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH v4] f2fs crypto: allocate buffer for decrypting
+ filename
+Date: Thu, 17 Sep 2015 20:24:27 +0800
+Message-ID: <009c01d0f143$eb324ef0$c196ecd0$@samsung.com>
+References: <1441936062-69511-1-git-send-email-jaegeuk@kernel.org>
+ <20150911224550.GA73045@jaegeuk-mac02.mot.com>
+ <20150915165215.GA82346@jaegeuk-mac02.mot.com>
+ <000901d0f068$1a1bd100$4e537300$@samsung.com>
+ <20150916175715.GA99097@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <20150916175715.GA99097@jaegeuk-mac02.mot.com>
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Sender: stable-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-truncate_data_blocks_range can do in batches truncation which makes all
-changes in dnode page content, dnode page status, extent cache, block
-count updating together.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Thursday, September 17, 2015 1:57 AM
+> To: Chao Yu
+> Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net; stable@vger.kernel.org
+> Subject: Re: [f2fs-dev] [PATCH v4] f2fs crypto: allocate buffer for decrypting filename
+> 
+> Thanks Chao,
+> 
+> Change log from v3:
+>   o enhance the code with proper error handling
+> 
+> Change log from v1:
+>   o fix wrong pointer assignment
+> 
+> Chang log from v2:
+>   o add one more missing call path: f2fs_encrypted_follow_link
+> 
+> From efdbbbb4c9bb6519e3c10ec5081a2dcdbaca81d2 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Thu, 3 Sep 2015 13:38:23 -0700
+> Subject: [PATCH] f2fs crypto: allocate buffer for decrypting filename
+> 
+> We got dentry pages from high_mem, and its address space directly goes into the
+> decryption path via f2fs_fname_disk_to_usr.
+> But, sg_init_one assumes the address is not from high_mem, so we can get this
+> panic since it doesn't call kmap_high but kunmap_high is triggered at the end.
+> 
+> kernel BUG at ../../../../../../kernel/mm/highmem.c:290!
+> Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+> ...
+>  (kunmap_high+0xb0/0xb8) from [<c0114534>] (__kunmap_atomic+0xa0/0xa4)
+>  (__kunmap_atomic+0xa0/0xa4) from [<c035f028>] (blkcipher_walk_done+0x128/0x1ec)
+>  (blkcipher_walk_done+0x128/0x1ec) from [<c0366c24>] (crypto_cbc_decrypt+0xc0/0x170)
+>  (crypto_cbc_decrypt+0xc0/0x170) from [<c0367148>] (crypto_cts_decrypt+0xc0/0x114)
+>  (crypto_cts_decrypt+0xc0/0x114) from [<c035ea98>] (async_decrypt+0x40/0x48)
+>  (async_decrypt+0x40/0x48) from [<c032ca34>] (f2fs_fname_disk_to_usr+0x124/0x304)
+>  (f2fs_fname_disk_to_usr+0x124/0x304) from [<c03056fc>] (f2fs_fill_dentries+0xac/0x188)
+>  (f2fs_fill_dentries+0xac/0x188) from [<c03059c8>] (f2fs_readdir+0x1f0/0x300)
+>  (f2fs_readdir+0x1f0/0x300) from [<c0218054>] (vfs_readdir+0x90/0xb4)
+>  (vfs_readdir+0x90/0xb4) from [<c0218418>] (SyS_getdents64+0x64/0xcc)
+>  (SyS_getdents64+0x64/0xcc) from [<c0105ba0>] (ret_fast_syscall+0x0/0x30)
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-But previously, truncate_hole() always truncates one block in dnode page
-at a time by invoking truncate_data_blocks_range(,1), which make thing
-slow.
-
-This patch changes truncate_hole() to do in batches truncation for all
-target blocks in one direct node inside truncate_data_blocks_range, which
-can make our punch hole operation in ->fallocate more efficent.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
-v2:
- changing slightly like below which is suggested by Jaegeuk:
- o don't have to use index variable
- o should not skip the entire dnode indices, when one of them is -ENOENT
- fs/f2fs/file.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 27a789c..6702157 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -739,23 +739,31 @@ static int fill_zero(struct inode *inode, pgoff_t index,
- 
- int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end)
- {
--	pgoff_t index;
- 	int err;
- 
--	for (index = pg_start; index < pg_end; index++) {
-+	while (pg_start < pg_end) {
- 		struct dnode_of_data dn;
-+		pgoff_t end_offset, count;
- 
- 		set_new_dnode(&dn, inode, NULL, NULL, 0);
--		err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
-+		err = get_dnode_of_data(&dn, pg_start, LOOKUP_NODE);
- 		if (err) {
--			if (err == -ENOENT)
-+			if (err == -ENOENT) {
-+				pg_start++;
- 				continue;
-+			}
- 			return err;
- 		}
- 
--		if (dn.data_blkaddr != NULL_ADDR)
--			truncate_data_blocks_range(&dn, 1);
-+		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+		count = min(end_offset - dn.ofs_in_node, pg_end - pg_start);
-+
-+		f2fs_bug_on(F2FS_I_SB(inode), count == 0 || count > end_offset);
-+
-+		truncate_data_blocks_range(&dn, count);
- 		f2fs_put_dnode(&dn);
-+
-+		pg_start += count;
- 	}
- 	return 0;
- }
--- 
-2.5.2
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
