@@ -1,19 +1,22 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: cover number of dirty node pages
- under	node_write lock
-Date: Thu, 17 Sep 2015 19:43:35 +0800
-Message-ID: <009801d0f13e$32babe70$98303b50$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: no need to lock for update_inode_page
+	all the time
+Date: Thu, 17 Sep 2015 20:19:06 +0800
+Message-ID: <009901d0f143$28f593b0$7ae0bb10$@samsung.com>
 References: <1442336146-82492-1-git-send-email-jaegeuk@kernel.org>
+ <1442336146-82492-2-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1442336146-82492-1-git-send-email-jaegeuk@kernel.org>
+In-reply-to: <1442336146-82492-2-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
@@ -21,10 +24,56 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 1/2] f2fs: cover number of dirty node pages under node_write lock
+> Subject: [f2fs-dev] [PATCH 2/2] f2fs: no need to lock for update_inode_page all the time
 > 
-> This number is referenced by checkpoint under node_write lock.
+> As comment says, we don't need to call f2fs_lock_op in write_inode to prevent
+> from producing dirty node pages all the time.
+> That happens only when there is not enough free sections and we can avoid that
+> by calling balance_fs in prior to that.
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/inode.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 35aae65..0fc4d02 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -296,16 +296,12 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
+>  		return 0;
+> 
+>  	/*
+> -	 * We need to lock here to prevent from producing dirty node pages
+> +	 * We need to balance fs here to prevent from producing dirty node pages
+>  	 * during the urgent cleaning time when runing out of free sections.
+>  	 */
+> -	f2fs_lock_op(sbi);
+> -	update_inode_page(inode);
+> -	f2fs_unlock_op(sbi);
+> -
+> -	if (wbc)
+> -		f2fs_balance_fs(sbi);
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+f2fs_balance_fs was moved here intentionally by Jin Xu in commit 92c4342fb72a
+("f2fs: avoid writing inode redundantly when creating a file") to avoid
+redundantly inode page submitting, I was confused since I didn't know all
+history here. So, should we change the position of f2fs_balance_fs?
+
+Thanks,
+
+> +	f2fs_balance_fs(sbi);
+> 
+> +	update_inode_page(inode);
+>  	return 0;
+>  }
+> 
+> --
+> 2.1.1
+> 
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
