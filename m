@@ -1,36 +1,28 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write
-	performance
-Date: Fri, 18 Sep 2015 16:49:45 +0800
-Message-ID: <00c901d0f1ef$191eefc0$4b5ccf40$@samsung.com>
-References: <000001d0ec5d$0bbd1880$23374980$@samsung.com>
-	<20150915212044.GA84514@jaegeuk-mac02.mot.com>
-	<000a01d0f068$c46012c0$4d203840$@samsung.com>
-	<20150916181230.GD99097@jaegeuk-mac02.mot.com>
-	<00a001d0f147$c505ad40$4f1107c0$@samsung.com>
-	<20150917174714.GA5355@jaegeuk-mac02.mot.com>
+Subject: [PATCH v2 1/7] f2fs: reorganize f2fs_map_blocks
+Date: Fri, 18 Sep 2015 16:51:51 +0800
+Message-ID: <00ca01d0f1ef$5b231d10$11695730$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZcrNe-0008Oy-Rv
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1ZcrPc-0004z4-4C
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Sep 2015 08:50:54 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZcrNc-0001vV-JI
+	Fri, 18 Sep 2015 08:52:56 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZcrPa-0001Hj-8a
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Sep 2015 08:50:54 +0000
+	Fri, 18 Sep 2015 08:52:56 +0000
 Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
+	by mailout2.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NUV02DL176N1W10@mailout4.samsung.com> for
+	2014)) with ESMTP id <0NUV01QOR7BKQS40@mailout2.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Sep 2015 17:50:45 +0900 (KST)
-In-reply-to: <20150917174714.GA5355@jaegeuk-mac02.mot.com>
+	Fri, 18 Sep 2015 17:52:32 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -41,205 +33,161 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+In this patch, we try to reorganize f2fs_map_blocks to make block mapping
+flow more clear by using following structure:
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Friday, September 18, 2015 1:49 AM
-> To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write performance
-> 
-> Hi Chao,
-> 
-> On Thu, Sep 17, 2015 at 08:52:10PM +0800, Chao Yu wrote:
-> > Hi Jaegeuk,
-> >
-> > > -----Original Message-----
-> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > Sent: Thursday, September 17, 2015 2:13 AM
-> > > To: Chao Yu
-> > > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > > Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write performance
-> > >
-> > > Hi Chao,
-> > >
-> > > On Wed, Sep 16, 2015 at 06:15:55PM +0800, Chao Yu wrote:
-> > > > Hi Jaegeuk,
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > > > Sent: Wednesday, September 16, 2015 5:21 AM
-> > > > > To: Chao Yu
-> > > > > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > > > > Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write performance
-> > > > >
-> > > > > Hi Chao,
-> > > > >
-> > > > > On Fri, Sep 11, 2015 at 02:41:53PM +0800, Chao Yu wrote:
-> > > > > > When dio writes perform concurrently, our performace will be low because of
-> > > > > > Thread A's allocation of multi continuous blocks will be break by Thread B,
-> > > > > > there are two cases as below:
-> > > > > >  - In Thread B, we may change current segment to a new segment for LFS
-> > > > > >    allocation if we dio write in the beginning of the file.
-> > > > > >  - In Thread B, we may allocate blocks in the middle of Thread A's
-> > > > > >    allocation, which make blocks which allocated in Thread A being
-> > > > > >    discontinuous.
-> > > > > >
-> > > > > > This patch adds writepages mutex lock to make block allocation in dio write
-> > > > > > atomic to avoid above issues.
-> > > > > >
-> > > > > > Test environment:
-> > > > > > ubuntu os with linux kernel 4.2+, intel i7-3770, 16g memory,
-> > > > > > 32g kingston sd card.
-> > > > > >
-> > > > > > fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
-> > > > > --filesize=256m --size=16m --bs=2m --direct=1
-> > > > > > --numjobs=10
-> > > > > >
-> > > > > > before:
-> > > > > >   WRITE: io=163840KB, aggrb=3145KB/s, minb=314KB/s, maxb=411KB/s, mint=39836msec,
-> > > > > maxt=52083msec
-> > > > > >
-> > > > > > patched:
-> > > > > >   WRITE: io=163840KB, aggrb=10033KB/s, minb=1003KB/s, maxb=1124KB/s, mint=14565msec,
-> > > > > maxt=16329msec
-> > > > > >
-> > > > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > > > > > ---
-> > > > > >  fs/f2fs/data.c | 13 ++++++++++---
-> > > > > >  1 file changed, 10 insertions(+), 3 deletions(-)
-> > > > > >
-> > > > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > > > > > index a737ca5..a0a5849 100644
-> > > > > > --- a/fs/f2fs/data.c
-> > > > > > +++ b/fs/f2fs/data.c
-> > > > > > @@ -1536,7 +1536,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
-> > > *iter,
-> > > > > >  	struct file *file = iocb->ki_filp;
-> > > > > >  	struct address_space *mapping = file->f_mapping;
-> > > > > >  	struct inode *inode = mapping->host;
-> > > > > > +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> > > > > >  	size_t count = iov_iter_count(iter);
-> > > > > > +	int rw = iov_iter_rw(iter);
-> > > > > >  	int err;
-> > > > > >
-> > > > > >  	/* we don't need to use inline_data strictly */
-> > > > > > @@ -1555,12 +1557,17 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
-> > > > > *iter,
-> > > > > >
-> > > > > >  	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
-> > > > > >
-> > > > > > -	if (iov_iter_rw(iter) == WRITE)
-> > > > > > +	if (rw == WRITE) {
-> > > > > > +		mutex_lock(&sbi->writepages);
-> > > > >
-> > > > > Why do we have to share sbi->writepages?
-> > > >
-> > > > The root cause of this issue is that: in f2fs, we have no suitable
-> > > > dispatcher which can do the following things as an atomic operation:
-> > > > a) allocate position(s) in flash device for current block(s);
-> > > > b) submit user data in allocated position(s) in block layer.
-> > > >
-> > > > Without the dispatcher, we will suffer performance issue in following
-> > > > scenario:
-> > > > Thread A		Thread B		Thread C
-> > > > allocate pos+1
-> > > > 			allocate pos+2
-> > > > 						allocate pos+3
-> > > > submit pos+1
-> > > > 						submit pos+3
-> > > > 			submit pos+2
-> > > >
-> > > > Our final submitting series will: pos+1, pos+3, pos+2, this makes f2fs
-> > > > running into non-LFS mode, therefore resulting in bad performance.
-> > > >
-> > > > writepages mutex lock supply us with a good solution for above issue.
-> > > > It not only make the allocating and submitting pair executing atomically,
-> > > > but also reduce the fragmentation for one file since we submit blocks
-> > > > belong to single inode as continuous as possible.
-> > > >
-> > > > So here I choose to use writepages mutex lock to fix the performance
-> > > > issue caused by both dio write vs dio write and dio write vs buffered
-> > > > write.
-> > >
-> > > Understood, but the concern was the multi-thread performance as you mentioned.
-> > > If one thread throws a big dio request, anybody cannot write at all?
-> >
-> > Buffered write will not be stopped, but actually my way completely stops the
-> > concurrency of multithreads which are doing dio writes, for aspect of improving
-> > concurrency, moving mutex_unlock below __allocate_data_blocks is a good solution
-> > so far.
-> >
-> > > How about adding some limits likewise f2fs_write_data_pages whieh is for example
-> > > nr_pages_to_write?
-> >
-> > Could you share more details about your idea?
-> >
-> > As Yunlei reported, there is performance regression issue, so how about
-> > holding this patch and let me do some investigation?
-> 
-> It seems there is a mutex overhead when handling a bunch of 4KB small dios.
-> Hmm, I meant, how about serializing pretty long-sized dios only?
+/* check status of mapping */
 
-Oh, I got it, thanks for the idea. :)
+if (unmapped) {
+	/* blkaddr == NULL_ADDR || blkaddr == NEW_ADDR */
 
-I will take time to have a test.
+	if (create) {
+		/* write path, handle dio write case here */
+		alloc_and_map;
+	} else {
+		/*
+		 * handle read cases from all call paths:
+		 *     1. generic read;
+		 *     2. dio read;
+		 *     3. fiemap;
+		 *     4. bmap
+		 */
+	}
+}
 
-Thanks,
+/* map buffer_header */
 
-> 
-> >
-> > Thanks,
-> >
-> > >
-> > > Thanks,
-> > >
-> > > >
-> > > > If I'm missing something, please correct me.
-> > > >
-> > > > >
-> > > > > >  		__allocate_data_blocks(inode, offset, count);
-> > > > >
-> > > > > If the problem lies on the misaligned blocks, how about calling mutex_unlock
-> > > > > here?
-> > > >
-> > > > When changing to unlock here, I got regression when testing with following command:
-> > > > fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
-> > > --filesize=256m --size=4m --bs=64k --direct=1
-> > > > --numjobs=20
-> > > >
-> > > > unlock here:
-> > > >   WRITE: io=81920KB, aggrb=5802KB/s, minb=290KB/s, maxb=292KB/s, mint=14010msec,
-> > > maxt=14119msec
-> > > > unlock after dio finished:
-> > > >   WRITE: io=81920KB, aggrb=6088KB/s, minb=304KB/s, maxb=1081KB/s, mint=3786msec,
-> > > maxt=13454msec
-> > > >
-> > > > So how about keep it in original place in this patch?
-> > > >
-> > > > Thanks,
-> > > > >
-> > > > > Thanks,
-> > > > >
-> > > > > > +	}
-> > > > > >
-> > > > > >  	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
-> > > > > > -	if (err < 0 && iov_iter_rw(iter) == WRITE)
-> > > > > > -		f2fs_write_failed(mapping, offset + count);
-> > > > > > +	if (rw == WRITE) {
-> > > > > > +		mutex_unlock(&sbi->writepages);
-> > > > > > +		if (err)
-> > > > > > +			f2fs_write_failed(mapping, offset + count);
-> > > > > > +	}
-> > > > > >
-> > > > > >  	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
-> > > > > >
-> > > > > > --
-> > > > > > 2.4.2
+Besides, this patch handles the missing case correctly for dio write:
+When we fail in __allocate_data_blocks, then in f2fs_map_blocks, we will
+not allocate blocks correctly for preallocated blocks, but returning with
+an unmapped buffer head, which will result in failure of dio write.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+v2:
+ o fix incorrect judgment condition pointed out by Fan Li.
+ fs/f2fs/data.c | 84 ++++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 44 insertions(+), 40 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 681373e..883b649 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -596,40 +596,36 @@ static int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 			err = 0;
+ 		goto unlock_out;
+ 	}
+-	if (dn.data_blkaddr == NEW_ADDR) {
+-		if (flag == F2FS_GET_BLOCK_BMAP) {
+-			err = -ENOENT;
+-			goto put_out;
+-		} else if (flag == F2FS_GET_BLOCK_READ ||
+-				flag == F2FS_GET_BLOCK_DIO) {
+-			goto put_out;
++
++	if (dn.data_blkaddr == NEW_ADDR || dn.data_blkaddr == NULL_ADDR) {
++		if (create) {
++			err = __allocate_data_block(&dn);
++			if (err)
++				goto put_out;
++			allocated = true;
++			map->m_flags = F2FS_MAP_NEW;
++		} else {
++			if (flag != F2FS_GET_BLOCK_FIEMAP ||
++						dn.data_blkaddr != NEW_ADDR) {
++				if (flag == F2FS_GET_BLOCK_BMAP)
++					err = -ENOENT;
++				goto put_out;
++			}
++
++			/*
++			 * preallocated unwritten block should be mapped
++			 * for fiemap.
++			 */
++			if (dn.data_blkaddr == NEW_ADDR)
++				map->m_flags = F2FS_MAP_UNWRITTEN;
+ 		}
+-		/*
+-		 * if it is in fiemap call path (flag = F2FS_GET_BLOCK_FIEMAP),
+-		 * mark it as mapped and unwritten block.
+-		 */
+ 	}
+ 
+-	if (dn.data_blkaddr != NULL_ADDR) {
+-		map->m_flags = F2FS_MAP_MAPPED;
+-		map->m_pblk = dn.data_blkaddr;
+-		if (dn.data_blkaddr == NEW_ADDR)
+-			map->m_flags |= F2FS_MAP_UNWRITTEN;
+-	} else if (create) {
+-		err = __allocate_data_block(&dn);
+-		if (err)
+-			goto put_out;
+-		allocated = true;
+-		map->m_flags = F2FS_MAP_NEW | F2FS_MAP_MAPPED;
+-		map->m_pblk = dn.data_blkaddr;
+-	} else {
+-		if (flag == F2FS_GET_BLOCK_BMAP)
+-			err = -ENOENT;
+-		goto put_out;
+-	}
++	map->m_flags |= F2FS_MAP_MAPPED;
++	map->m_pblk = dn.data_blkaddr;
++	map->m_len = 1;
+ 
+ 	end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
+-	map->m_len = 1;
+ 	dn.ofs_in_node++;
+ 	pgofs++;
+ 
+@@ -648,23 +644,31 @@ get_next:
+ 			goto unlock_out;
+ 		}
+ 
+-		if (dn.data_blkaddr == NEW_ADDR &&
+-				flag != F2FS_GET_BLOCK_FIEMAP)
+-			goto put_out;
+-
+ 		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
+ 	}
+ 
+ 	if (maxblocks > map->m_len) {
+ 		block_t blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
+-		if (blkaddr == NULL_ADDR && create) {
+-			err = __allocate_data_block(&dn);
+-			if (err)
+-				goto sync_out;
+-			allocated = true;
+-			map->m_flags |= F2FS_MAP_NEW;
+-			blkaddr = dn.data_blkaddr;
++
++		if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR) {
++			if (create) {
++				err = __allocate_data_block(&dn);
++				if (err)
++					goto sync_out;
++				allocated = true;
++				map->m_flags |= F2FS_MAP_NEW;
++				blkaddr = dn.data_blkaddr;
++			} else {
++				/*
++				 * we only merge preallocated unwritten blocks
++				 * for fiemap.
++				 */
++				if (flag != F2FS_GET_BLOCK_FIEMAP ||
++						blkaddr != NEW_ADDR)
++					goto sync_out;
++			}
+ 		}
++
+ 		/* Give more consecutive addresses for the readahead */
+ 		if ((map->m_pblk != NEW_ADDR &&
+ 				blkaddr == (map->m_pblk + ofs)) ||
+-- 
+2.5.2
+
 
 
 ------------------------------------------------------------------------------
