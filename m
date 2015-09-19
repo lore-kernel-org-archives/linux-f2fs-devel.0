@@ -1,8 +1,8 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 3/3] f2fs: disallow switch extent_cache option
-	dynamically
-Date: Fri, 18 Sep 2015 16:55:26 +0800
-Message-ID: <00cd01d0f1ef$db65bd20$92313760$@samsung.com>
+From: Nicholas Krause <xerofoify@gmail.com>
+Subject: [PATCH RESEND] f2fs:Fix error handling for calls to the
+	function add_free_nid in the file node.c
+Date: Sat, 19 Sep 2015 11:03:47 -0400
+Message-ID: <1442675027-25695-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,21 +10,17 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZcrSq-0002u0-MZ
+	(envelope-from <xerofoify@gmail.com>) id 1ZdJgE-0004tT-Da
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Sep 2015 08:56:16 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZcrSo-0005d4-H7
+	Sat, 19 Sep 2015 15:03:58 +0000
+Received: from mail-ig0-f175.google.com ([209.85.213.175])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ZdJgC-0007vi-PB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Sep 2015 08:56:16 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NUV01L6K7HJKX30@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 18 Sep 2015 17:56:07 +0900 (KST)
-Content-language: zh-cn
+	Sat, 19 Sep 2015 15:03:58 +0000
+Received: by igcpb10 with SMTP id pb10so53906244igc.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sat, 19 Sep 2015 08:03:51 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,48 +30,52 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Swith extent_cache option dynamically when remount may casue consistency
-issue between extent cache and dnode page. Fix in this patch to avoid
-that condition.
+This fixes error handling for calls to the function add_free_nid
+in the functions __flush_nat_entry_set and build_free_nids to
+properly check if their call to this particular function return
+a error code and if so break out these function's for loops as
+we cannot continue these loops if these function calls fail in
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
 ---
- fs/f2fs/super.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/f2fs/node.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f794781..16442ec 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -742,6 +742,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	int err, active_logs;
- 	bool need_restart_gc = false;
- 	bool need_stop_gc = false;
-+	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 7dd63b7..1a3fb57 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1545,8 +1545,10 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < nats_in_cursum(sum); i++) {
+ 		block_t addr = le32_to_cpu(nat_in_journal(sum, i).block_addr);
+ 		nid = le32_to_cpu(nid_in_journal(sum, i));
+-		if (addr == NULL_ADDR)
+-			add_free_nid(sbi, nid, true);
++		if (addr == NULL_ADDR) {
++			if (add_free_nid(sbi, nid, true) < 0)
++				break;
++		}
+ 		else
+ 			remove_free_nid(nm_i, nid);
+ 	}
+@@ -1879,8 +1881,10 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 		__clear_nat_cache_dirty(NM_I(sbi), ne);
+ 		up_write(&NM_I(sbi)->nat_tree_lock);
  
- 	sync_filesystem(sb);
+-		if (nat_get_blkaddr(ne) == NULL_ADDR)
+-			add_free_nid(sbi, nid, false);
++		if (nat_get_blkaddr(ne) == NULL_ADDR) {
++			if (add_free_nid(sbi, nid, false) < 0)
++				break;
++		}
+ 	}
  
-@@ -767,6 +768,14 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	if (f2fs_readonly(sb) && (*flags & MS_RDONLY))
- 		goto skip;
- 
-+	/* disallow enable/disable extent_cache dynamically */
-+	if (no_extent_cache == !!test_opt(sbi, EXTENT_CACHE)) {
-+		err = -EINVAL;
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+				"switch extent_cache option is not allowed");
-+		goto restore_opts;
-+	}
-+
- 	/*
- 	 * We stop the GC thread if FS is mounted as RO
- 	 * or if background_gc = off is passed in mount
+ 	if (to_journal)
 -- 
-2.5.2
-
+2.1.4
 
 
 ------------------------------------------------------------------------------
