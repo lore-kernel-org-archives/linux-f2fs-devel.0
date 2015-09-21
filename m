@@ -1,70 +1,89 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: f2fs: reorganize f2fs_map_blocks
-Date: Mon, 21 Sep 2015 19:25:08 +0300
-Message-ID: <20150921162508.GD5648@mwanda>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 1/3] f2fs: introduce __try_update_largest_extent
+Date: Mon, 21 Sep 2015 11:40:02 -0700
+Message-ID: <20150921184002.GA20551@jaegeuk-mac02.mot.com>
+References: <00cb01d0f1ef$8886fc90$9994f5b0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <dan.carpenter@oracle.com>) id 1Ze3uG-00085k-Ae
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Sep 2015 16:25:32 +0000
-Received: from userp1040.oracle.com ([156.151.31.81])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1Ze3uC-0004zV-9V
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Sep 2015 16:25:32 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: chao2.yu@samsung.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <00cb01d0f1ef$8886fc90$9994f5b0$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello Chao Yu,
+Hi Chao,
 
-The patch bce86a6c64a7: "f2fs: reorganize f2fs_map_blocks" from Sep
-11, 2015, leads to the following static checker warning:
+On Fri, Sep 18, 2015 at 04:53:07PM +0800, Chao Yu wrote:
+> This patch adds a new helper __try_update_largest_extent for cleanup.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/extent_cache.c | 14 +++++---------
+>  fs/f2fs/f2fs.h         |  7 +++++++
+>  2 files changed, 12 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> index c9d1cfd..31d5b48 100644
+> --- a/fs/f2fs/extent_cache.c
+> +++ b/fs/f2fs/extent_cache.c
+> @@ -351,8 +351,7 @@ static struct extent_node *__try_merge_extent_node(struct f2fs_sb_info *sbi,
+>  	}
+>  
+>  	if (en) {
+> -		if (en->ei.len > et->largest.len)
+> -			et->largest = en->ei;
+> +		__try_update_largest_extent(&et->largest, &en->ei);
+>  		et->cached_en = en;
+>  	}
+>  	return en;
+> @@ -389,8 +388,7 @@ do_insert:
+>  	if (!en)
+>  		return NULL;
+>  
+> -	if (en->ei.len > et->largest.len)
+> -		et->largest = en->ei;
+> +	__try_update_largest_extent(&et->largest, &en->ei);
+>  	et->cached_en = en;
+>  	return en;
+>  }
+> @@ -476,12 +474,10 @@ static unsigned int f2fs_update_extent_tree_range(struct inode *inode,
+>  				: NULL;
+>  		}
+>  
+> -		if (parts) {
+> -			if (en->ei.len > et->largest.len)
+> -				et->largest = en->ei;
+> -		} else {
+> +		if (parts)
+> +			__try_update_largest_extent(&et->largest, &en->ei);
+> +		else
+>  			__detach_extent_node(sbi, et, en);
+> -		}
+>  
+>  		/*
+>  		 * if original extent is split into zero or two parts, extent
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index dbceb35..3342619 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -498,6 +498,13 @@ static inline bool __is_front_mergeable(struct extent_info *cur,
+>  	return __is_extent_mergeable(cur, front);
+>  }
+>  
+> +static inline void __try_update_largest_extent(struct extent_info *largest,
+> +						struct extent_info *cur)
 
-	fs/f2fs/data.c:653 f2fs_map_blocks()
-	warn: was || intended here instead of &&?
+How about __try_update_largest_extent(et, en) ?
 
-fs/f2fs/data.c
-   650          if (maxblocks > map->m_len) {
-   651                  block_t blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
-   652  
-   653                  if (blkaddr == NEW_ADDR && blkaddr == NULL_ADDR) {
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Impossible condition.
-
-   654                          if (create) {
-   655                                  err = __allocate_data_block(&dn);
-   656                                  if (err)
-   657                                          goto sync_out;
-   658                                  allocated = true;
-   659                                  map->m_flags |= F2FS_MAP_NEW;
-   660                                  blkaddr = dn.data_blkaddr;
-   661                          } else {
-   662                                  /*
-   663                                   * we only merge preallocated unwritten blocks
-   664                                   * for fiemap.
-   665                                   */
-   666                                  if (flag != F2FS_GET_BLOCK_FIEMAP ||
-   667                                                  blkaddr != NEW_ADDR)
-   668                                          goto sync_out;
-   669                          }
-   670                  }
-
-regards,
-dan carpenter
-
-------------------------------------------------------------------------------
+> +{
+> +	if (cur->len > largest->len)
+> +		*largest = *cur;
+> +}
+> +
+>  struct f2fs_nm_info {
+>  	block_t nat_blkaddr;		/* base disk address of NAT */
+>  	nid_t max_nid;			/* maximum possible node ids */
+> -- 
+> 2.5.2
