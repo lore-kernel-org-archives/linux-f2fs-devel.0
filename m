@@ -1,267 +1,143 @@
-From: Marc Lehmann <schmorp@schmorp.de>
-Subject: SMR drive test 2; 128GB partition;
- no obvious corruption, much more sane behaviour, weird
- overprovisioning
-Date: Mon, 21 Sep 2015 11:58:06 +0200
-Message-ID: <20150921095806.GA6809@schmorp.de>
-References: <20150808205003.GA6546@schmorp.de>
-	<20150810203106.GA4575@jaegeuk-mac02>
-	<20150920235901.GA7017@schmorp.de>
-	<20150921081748.GA5637@schmorp.de>
-	<20150921081937.GA5718@schmorp.de>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH] f2fs: fix to handle io error in ->direct_IO
+Date: Mon, 21 Sep 2015 20:17:52 +0800
+Message-ID: <005f01d0f467$a71626c0$f5427440$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZdxrS-0002j1-Oe
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Sep 2015 09:58:14 +0000
-Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZdxrQ-0005t3-M7
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Sep 2015 09:58:14 +0000
-Received: from [10.0.0.5] (helo=doom.schmorp.de)
-	by mail.nethype.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1ZdxrK-0002yJ-Da
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Sep 2015 09:58:06 +0000
-Received: from [10.0.0.1] (helo=cerebro.laendle)
-	by doom.schmorp.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1ZdxrK-0002TZ-8r
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Sep 2015 09:58:06 +0000
-Received: from root by cerebro.laendle with local (Exim 4.84)
-	(envelope-from <root@schmorp.de>) id 1ZdxrK-0001mh-8I
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Sep 2015 11:58:06 +0200
-Content-Disposition: inline
-In-Reply-To: <20150921081937.GA5718@schmorp.de>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Second test - we're getting there:
+Here is a oops reported as following message when testing generic/019 of
+xfstest:
 
-Summary: looks much better, no obvious corruption (but fsck still gives
-tens of thousands of [FIX] messages), performance somewhat as expected,
-but a 138GB partition can only store 71.5GB of data (avg filesize 2.2MB)
-and f2fs doesn't seem to do visible background GC.
+ ------------[ cut here ]------------
+ kernel BUG at /home/yuchao/git/f2fs-dev/segment.c:882!
+ invalid opcode: 0000 [#1] SMP
+ Modules linked in: zram lz4_compress lz4_decompress f2fs(O) ip6table_filter ip6_tables ebtable_nat ebtables nf_conntrack_ipv4
+nf_def
+ CPU: 2 PID: 25441 Comm: fio Tainted: G           O    4.3.0-rc1+ #6
+ Hardware name: Hewlett-Packard HP Z220 CMT Workstation/1790, BIOS K51 v01.61 05/16/2013
+ task: ffff8803f4e85580 ti: ffff8803fd61c000 task.ti: ffff8803fd61c000
+ RIP: 0010:[<ffffffffa0784981>]  [<ffffffffa0784981>] new_curseg+0x321/0x330 [f2fs]
+ RSP: 0018:ffff8803fd61f918  EFLAGS: 00010246
+ RAX: 00000000000007ed RBX: 0000000000000224 RCX: 000000000000001f
+ RDX: 0000000000000800 RSI: ffffffffffffffff RDI: ffff8803f56f4300
+ RBP: ffff8803fd61f978 R08: 0000000000000000 R09: 0000000000000000
+ R10: 0000000000000024 R11: ffff8800d23bbd78 R12: ffff8800d0ef0000
+ R13: 0000000000000224 R14: 0000000000000000 R15: 0000000000000001
+ FS:  00007f827ff85700(0000) GS:ffff88041ea80000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: ffffffffff600000 CR3: 00000003fef17000 CR4: 00000000001406e0
+ Stack:
+  000007ea00000002 0000000100000001 ffff8803f6456248 000007ed0000002b
+  0000000000000224 ffff880404d1aa20 ffff8803fd61f9c8 ffff8800d0ef0000
+  ffff8803f6456248 0000000000000001 00000000ffffffff ffffffffa078f358
+ Call Trace:
+  [<ffffffffa0785b87>] allocate_segment_by_default+0x1a7/0x1f0 [f2fs]
+  [<ffffffffa078322c>] allocate_data_block+0x17c/0x360 [f2fs]
+  [<ffffffffa0779521>] __allocate_data_block+0x131/0x1d0 [f2fs]
+  [<ffffffffa077a995>] f2fs_direct_IO+0x4b5/0x580 [f2fs]
+  [<ffffffff811510ae>] generic_file_direct_write+0xae/0x160
+  [<ffffffff811518f5>] __generic_file_write_iter+0xd5/0x1f0
+  [<ffffffff81151e07>] generic_file_write_iter+0xf7/0x200
+  [<ffffffff81319e38>] ? apparmor_file_permission+0x18/0x20
+  [<ffffffffa0768480>] ? f2fs_fallocate+0x1190/0x1190 [f2fs]
+  [<ffffffffa07684c6>] f2fs_file_write_iter+0x46/0x90 [f2fs]
+  [<ffffffff8120b4fe>] aio_run_iocb+0x1ee/0x290
+  [<ffffffff81700f7e>] ? mutex_lock+0x1e/0x50
+  [<ffffffff8120a1d7>] ? aio_read_events+0x207/0x2b0
+  [<ffffffff8120b913>] do_io_submit+0x373/0x630
+  [<ffffffff8120a4f6>] ? SyS_io_getevents+0x56/0xb0
+  [<ffffffff8120bbe0>] SyS_io_submit+0x10/0x20
+  [<ffffffff81703857>] entry_SYSCALL_64_fastpath+0x12/0x6a
+ Code: 45 c8 48 8b 78 10 e8 9f 23 bf e0 41 8b 8c 24 cc 03 00 00 89 c7 31 d2 89 c6 89 d8 29 df f7 f1 29 d1 39 cf 0f 83 be fd ff ff eb
+ RIP  [<ffffffffa0784981>] new_curseg+0x321/0x330 [f2fs]
+  RSP <ffff8803fd61f918>
+ ---[ end trace 2e577d7f711ddb86 ]---
 
-For this test, changed a bunch of parameters:
+The reason is that: in the test of generic/019, we will trigger a manmade
+IO error in block layer through debugfs, after that, prefree segment will
+no longer be freed, because we always skip doing gc or checkpoint when
+there occurs an IO error.
 
-    1. partition size
+Meanwhile fio with aio engine generated a large number of direct IOs,
+which continue allocating spaces in free segment until we run out of them,
+eventually, results in panic in new_curseg as no more free segment was
+found.
 
-       128GiB instead of 512GiB (not ideal, but I wanted this test to be
-       quick)
+So, this patch changes to return EIO in direct_IO for this condition.
 
-    2. mkfs options
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-        mkfs.f2fs -lTEST -o5 -s128 -t0 -a0 # change: -o5 -a0
-
-    3. mount options
-
-        mount -t f2fs -onoatime,flush_merge,active_logs=2,no_heap
-        # change: no inline_* options, no extent_cache, but no_heap + active_logs=2
-
-First of all, the discrepancy between utilization in the status file, du
-and df is quite large:
-
-    Filesystem                Size  Used Avail Use% Mounted on
-    /dev/mapper/vg_test-test  128G  106G   22G  84% /mnt
-
-    # du -skc /mnt
-    51674268        /mnt
-    51674268        total
-
-    Utilization: 67% (13168028 valid blocks)
-
-So ~52GB of files take up ~106GB of the partition, which is 84% of the
-total size, yet it's only utilized by 67%.
-
-Second, and subjectively, the filesystem was much more responsive during
-the test- find almost instantly give ssome output, instead of having to
-wait for half a minute, and find|rm is much faster as well. find also
-reads data at ~2mb/s, while in the previous test, it was 0.7MB/s (which
-can be good or bad, but it looks good).
-
-At 6.7GB free (df: 95%, status: 91%, du: 70/128GiB) I paused rsync. The disk
-then did some heavy read/write for a short while, and the Dirty: count
-reduced:
-
-http://ue.tst.eu/d61a7017786dc6ebf5be2f7e2d2006d7.txt
-
-I continued, and the disk afterwards did almost the same amount of reading
-as it was writing, with short intzermittent write-only periods for a fe
-seconds each. Rsync itself was noticably slower, so I guess f2fs finally
-ran out of space and did garbage collect.
-
-This is exactly the behaviour I did expect of f2fs, but this is the first
-time I actually saw it.
-
-Pausing didn't result in any activity.
-
-At 6.3GB free, disk write speed went down to 1MB/s with intermittent
-phases of 100MB/s write only, or 50MB/s read + 50MB/s write (but rsync was
-transferring about 100kb/s at this point only, so no real progress was
-made).
-
-After about 10 minutes I paused rsync again, still at 6.3GB free (df
-reporting 96% in use, status 91% and du 52% (71.5GB))
-
-I must admit I don't understand these ratios - df vs. status can easily
-be explained by overprovisioning, but the fact that a 138GB (128GiB)
-partition can only hold 72GB of data with very few small files is not
-looking good to me:
-
-    # df -H /mnt
-    Filesystem                Size  Used Avail Use% Mounted on
-    /dev/mapper/vg_test-test  138G  130G  6.3G  96% /mnt
-    # du -skc /mnt
-    71572620        /mnt
-
-I wonder what this means, too:
-
-    MAIN: 65152(OverProv:27009 Resv:26624)
-
-Surely this doesn't mean that 27009 of 65152 segments are for
-overprovisioning? That would explain the bad values for due, but then, I
-did specify -o5, not -o45 or so.
-
-status at that point was:
-
-    http://ue.tst.eu/f869dfb6ac7b4d52966e8eb012b81d2a.txt
-
-Anyways, I did more thinning to regain free space by deleting every 10th
-file. That went reasonably slow, the disk was contantly reading + writing at
-high speed, so I guess it was busy garbage colelcting, as it should.
-
-status after deleting, with completely idle disk:
-
-    http://ue.tst.eu/1831202bc94d9cd521cfcefc938d2095.txt
-
-    /dev/mapper/vg_test-test  138G  123G   15G  90% /mnt
-
-I waited a few minutes, but there was no further activity. I then unpaused
-the rsync, which proceeded with good speed again.
-
-At 11GB free, rsync effectively stopped, and the disk went to ~1MB/s wrtite
-mode aagin. Pausing rsync didn't cause I/O to stop this time, it continued
-for a few minutes.
-
-I waited for 2 minutes with no disk I/O, unpaused rsync, and the disk
-immediately went into 1MB/s write mode againh, with rsync not really
-getting any data through though.
-
-It's as if f2fs only tried to clean up when there is write data. I would
-expect a highly fragmented f2fs to be very busy garbage collecting, but
-apparently, not so, it just idles, and when a program wants to write,
-fails to perform. Maybe I need to give it more time than two minutes, but
-then, I wouldn't see a point in delaying to garbage collect if it has to
-be done anyways.
-
-In any case, no progress possible, I deleted more files again, this time
-every 5th file, which went reasonably fast,
-
-status after delete:
-
-    http://ue.tst.eu/fb3287adf4cc109c88b89f6120c9e4a6.txt
-
-    /dev/mapper/vg_test-test  138G  114G   23G  84% /mnt
-
-rsync writing was reasonably fast down to 18GB, when rsync stopped making
-much profgress (<100kb/s), but the disk wasn't in "1MB/s mode" but instead in
-40MB/s read+write, which looks reasonable to me, as the disk was probably
-quite fargmented at this point:
-
-    http://ue.tst.eu/fb3287adf4cc109c88b89f6120c9e4a6.txt
-
-However, when pausing rsync, f2fs immediatelly ceased doing anything again,
-so even though clearly there is a need for clean up activities, f2fs doesn't
-do them.
-
-To state this more clearly: My expectation is that when f2fs runs out of
-immediatelly usable space for writing, it should do GC. That means that
-when rsync is very slow and the disk is very fragmented, even when I pause
-rsync, f2fs should GC at full speed until it has a reasonable amount of
-usable free space again. Instead, it apparently just sits idle until some
-program generates write data.
-
-At this point, I unmounted the filesystem and "fsck.f2fs -f"'ed it. The
-report looked good:
-
-    [FSCK] Unreachable nat entries                        [Ok..] [0x0]
-    [FSCK] SIT valid block bitmap checking                [Ok..]
-    [FSCK] Hard link checking for regular file            [Ok..] [0x0]
-    [FSCK] valid_block_count matching with CP             [Ok..] [0xe8b623]
-    [FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0xa58a]
-    [FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0xa58a]
-    [FSCK] valid_inode_count matched with CP              [Ok..] [0x7800]
-    [FSCK] free segment_count matched with CP             [Ok..] [0x8a17]
-    [FSCK] next block offset is free                      [Ok..]
-    [FSCK] fixing SIT types
-
-However, there were about 30000 messages like these:
-
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdf6] 0 -> 1
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdf7] 0 -> 1
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdf8] 0 -> 1
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdf9] 0 -> 1
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfa] 0 -> 1
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfb] 0 -> 1
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfc] 0 -> 1
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfd] 0 -> 1
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfe] 0 -> 1
-    [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdff] 0 -> 1
-    [FSCK] other corrupted bugs                           [Ok..]
-
-That's not promising, why does it think it needs to fix anything?
-
-I mounted the partition again. Listing the files was very fast. I deleted all
-the files and ran rsync for a while. It seems the partition completely
-recovered. This is the empty state btw.:
-
-   Filesystem                Size  Used Avail Use% Mounted on
-   /dev/mapper/vg_test-test  138G   57G   80G  42% /mnt
-
-So, all the pathological behaviour is gone (no 20kb/s write speed blocking
-the disk for hours, more importantly, no obvious filesystem corruption,
-although the fsck messages need explanation).
-
-Moreso, the behaviour, while still confusing (weird du vs. df, no background
-activity), at least seems to be in line with what I expect - fragmentation
-kills performance, but f2fs seems capable of recovering.
-
-So here is my wishlist:
-
-1. the overprovisioning values seems to be completely out of this world. I'm
-prepared top give up maybe 50GB of my 8TB disk for this, but not more.
-
-2. even though ~40% of space is not used by file data, f2fs still becomes
-extremely slow. this can't be right.
-
-3. why does f2fs sit idle on a highly fragmented filesystem, why does it not
-do background garbage collect at maximum I/O speed, so the filesystem is
-ready when the next writes come?
-
-Greetings, and good night :)
-
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8b86d02..a0ea1f8 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -524,6 +524,9 @@ static void __allocate_data_blocks(struct inode *inode, loff_t offset,
+ 		while (dn.ofs_in_node < end_offset && len) {
+ 			block_t blkaddr;
+ 
++			if (unlikely(f2fs_cp_error(sbi)))
++				goto sync_out;
++
+ 			blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
+ 			if (blkaddr == NULL_ADDR || blkaddr == NEW_ADDR) {
+ 				if (__allocate_data_block(&dn))
+@@ -566,6 +569,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ {
+ 	unsigned int maxblocks = map->m_len;
+ 	struct dnode_of_data dn;
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	int mode = create ? ALLOC_NODE : LOOKUP_NODE_RA;
+ 	pgoff_t pgofs, end_offset;
+ 	int err = 0, ofs = 1;
+@@ -599,6 +603,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 
+ 	if (dn.data_blkaddr == NEW_ADDR || dn.data_blkaddr == NULL_ADDR) {
+ 		if (create) {
++			if (unlikely(f2fs_cp_error(sbi))) {
++				err = -EIO;
++				goto put_out;
++			}
+ 			err = __allocate_data_block(&dn);
+ 			if (err)
+ 				goto put_out;
+@@ -652,6 +660,10 @@ get_next:
+ 
+ 		if (blkaddr == NEW_ADDR || blkaddr == NULL_ADDR) {
+ 			if (create) {
++				if (unlikely(f2fs_cp_error(sbi))) {
++					err = -EIO;
++					goto sync_out;
++				}
+ 				err = __allocate_data_block(&dn);
+ 				if (err)
+ 					goto sync_out;
+@@ -1569,10 +1581,16 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+ 
+ 	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+ 
+-	if (iov_iter_rw(iter) == WRITE)
++	if (iov_iter_rw(iter) == WRITE) {
+ 		__allocate_data_blocks(inode, offset, count);
++		if (unlikely(f2fs_cp_error(F2FS_I_SB(inode)))) {
++			err = -EIO;
++			goto out;
++		}
++	}
+ 
+ 	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
++out:
+ 	if (err < 0 && iov_iter_rw(iter) == WRITE)
+ 		f2fs_write_failed(mapping, offset + count);
+ 
 -- 
-                The choice of a       Deliantra, the free code+content MORPG
-      -----==-     _GNU_              http://www.deliantra.net
-      ----==-- _       generation
-      ---==---(_)__  __ ____  __      Marc Lehmann
-      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-      -=====/_/_//_/\_,_/ /_/\_\
-
-------------------------------------------------------------------------------
+2.5.2
