@@ -1,25 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH RESEND] f2fs:Fix error handling for calls to
- the function add_free_nid in the file node.c
-Date: Mon, 21 Sep 2015 11:47:23 -0700
-Message-ID: <20150921184723.GC20551@jaegeuk-mac02.mot.com>
-References: <1442675027-25695-1-git-send-email-xerofoify@gmail.com>
+Subject: Re: Possible Bug in move_encrypted_block
+Date: Mon, 21 Sep 2015 11:51:22 -0700
+Message-ID: <20150921185122.GD20551@jaegeuk-mac02.mot.com>
+References: <55FD9D08.5050501@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Ze67W-0006ny-Ew
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Ze6BO-0002uz-JM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Sep 2015 18:47:22 +0000
+	Mon, 21 Sep 2015 18:51:22 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Ze67V-0006kW-EI for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Sep 2015 18:47:22 +0000
+	id 1Ze6BN-0006sN-SR for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 21 Sep 2015 18:51:22 +0000
 Content-Disposition: inline
-In-Reply-To: <1442675027-25695-1-git-send-email-xerofoify@gmail.com>
+In-Reply-To: <55FD9D08.5050501@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,62 +28,27 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Nicholas Krause <xerofoify@gmail.com>
+To: nick <xerofoify@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hello,
+Hi,
 
-On Sat, Sep 19, 2015 at 11:03:47AM -0400, Nicholas Krause wrote:
-> This fixes error handling for calls to the function add_free_nid
-> in the functions __flush_nat_entry_set and build_free_nids to
-> properly check if their call to this particular function return
-> a error code and if so break out these function's for loops as
-> we cannot continue these loops if these function calls fail in
-> 
-> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
-> ---
->  fs/f2fs/node.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 7dd63b7..1a3fb57 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1545,8 +1545,10 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
->  	for (i = 0; i < nats_in_cursum(sum); i++) {
->  		block_t addr = le32_to_cpu(nat_in_journal(sum, i).block_addr);
->  		nid = le32_to_cpu(nid_in_journal(sum, i));
-> -		if (addr == NULL_ADDR)
-> -			add_free_nid(sbi, nid, true);
-> +		if (addr == NULL_ADDR) {
-> +			if (add_free_nid(sbi, nid, true) < 0)
-> +				break;
+On Sat, Sep 19, 2015 at 01:36:08PM -0400, nick wrote:
+> Greetings Jaeguek and others.
+> Below are the lines fora possible bug in  move_encrypted_block:
+> err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
+>         if (err)
+>                 goto out;
+> Also calls of get_dnode_of_data need to hold the semaphone for the superblock
+> this call is being done on to avoid concurrent access on data being received
 
-This is not an error case, which we must not break here.
-
-> +		}
->  		else
->  			remove_free_nid(nm_i, nid);
->  	}
-> @@ -1879,8 +1881,10 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
->  		__clear_nat_cache_dirty(NM_I(sbi), ne);
->  		up_write(&NM_I(sbi)->nat_tree_lock);
->  
-> -		if (nat_get_blkaddr(ne) == NULL_ADDR)
-> -			add_free_nid(sbi, nid, false);
-> +		if (nat_get_blkaddr(ne) == NULL_ADDR) {
-> +			if (add_free_nid(sbi, nid, false) < 0)
-> +				break;
-
-ditto.
+IIUC, the f2fs_lock_op() is not neeeded here. Do you mean this?
+To be honest, I can't catch your point.
 
 Thanks,
 
-> +		}
->  	}
->  
->  	if (to_journal)
-> -- 
-> 2.1.4
+> here from the superblock and file system on disk. In addition unless I get a
+> reply to this I will not be sending in a bug fix for this.
+> Nick
 
 ------------------------------------------------------------------------------
