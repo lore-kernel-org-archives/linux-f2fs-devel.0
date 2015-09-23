@@ -2,37 +2,37 @@ From: Chao Yu <chao2.yu@samsung.com>
 Subject: Re: SMR drive test 2; 128GB partition;
  no obvious corruption, much more sane behaviour, weird
  overprovisioning
-Date: Wed, 23 Sep 2015 16:55:57 +0800
-Message-ID: <011201d0f5dd$c3a4f650$4aeee2f0$@samsung.com>
+Date: Wed, 23 Sep 2015 17:10:21 +0800
+Message-ID: <011d01d0f5df$c54267c0$4fc73740$@samsung.com>
 References: <20150808205003.GA6546@schmorp.de>
 	<20150810203106.GA4575@jaegeuk-mac02>
 	<20150920235901.GA7017@schmorp.de>
 	<20150921081748.GA5637@schmorp.de> <20150921081937.GA5718@schmorp.de>
 	<20150921095806.GA6809@schmorp.de>
 	<20150923011239.GA32520@jaegeuk-mac02.mot.com>
-	<20150923041523.GB4946@schmorp.de> <20150923060037.GA6667@schmorp.de>
+	<20150923041523.GB4946@schmorp.de> <20150923060636.GA6807@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZefrK-00076F-M4
+	(envelope-from <chao2.yu@samsung.com>) id 1Zeg53-0001Xc-I1
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 08:57:02 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZefrI-0004co-BU
+	Wed, 23 Sep 2015 09:11:13 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1Zeg51-0000Ca-Jk
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 08:57:02 +0000
+	Wed, 23 Sep 2015 09:11:13 +0000
 Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
+	by mailout4.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NV4012Y3GUH0R40@mailout1.samsung.com> for
+	2014)) with ESMTP id <0NV4008AFHI6NC50@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 17:56:41 +0900 (KST)
-In-reply-to: <20150923060037.GA6667@schmorp.de>
+	Wed, 23 Sep 2015 18:11:02 +0900 (KST)
+In-reply-to: <20150923060636.GA6807@schmorp.de>
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -48,136 +48,38 @@ Cc: linux-f2fs-devel@lists.sourceforge.net
 
 Hi Marc,
 
-> -----Original Message-----
-> From: Marc Lehmann [mailto:schmorp@schmorp.de]
-> Sent: Wednesday, September 23, 2015 2:01 PM
-> To: Jaegeuk Kim
-> Cc: linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] SMR drive test 2; 128GB partition; no obvious corruption, much more
-> sane behaviour, weird overprovisioning
-> 
-> On Wed, Sep 23, 2015 at 06:15:24AM +0200, Marc Lehmann <schmorp@schmorp.de> wrote:
-> > > However, when I tried to do mkfs.f2fs with the same options, I got about 18GB.
-> > > Could you share the mkfs.f2fs messages and fsck.f2fs -d3 as well?
-> >
-> > When I re-ran the mkfs.f2fs, I got:
-> 
-> I get the feeling I did something idiotic, but for the life of it, I don't
-> know what. I see the mkfs.f2fs in my test log, I see it in my command
-> history, but for the life of it, I can't reproduce it.
-> 
-> So let's disregard this and go to the next test - I redid the 128G partitipn
-> test, with 6 active logs, no -o and -s64:
-> 
->    mkfs.f2fs -lTEST -s64 -t0 -a0
-> 
-> This allowed me to arrive at this state, at which rsync stopped making
-> progress:
-> 
->    root@shag:/sys/fs/f2fs/dm-1# df -H /mnt
->    Filesystem                Size  Used Avail Use% Mounted on
->    /dev/mapper/vg_test-test  138G  137G  803k 100% /mnt
-> 
-> This would be about perfect (I even got ENOSPC for the first
-> time!). However, when I do my "delete every nth file":
-> 
->    /dev/mapper/vg_test-test  138G  135G  1.8G  99% /mnt
-> 
-> The disk still sits mostly idle. I did verify that "sync" indeed reduces
-> Pre-Free to 0, and I do see some activity every ~30s now, though:
-> 
-> http://ue.tst.eu/ac1ec447de214edc4e007623da2dda72.txt (see the dsk/sde
-> columns).
-> 
-> If I start writing, I guess I trigger the foreground gc:
-> 
-> http://ue.tst.eu/1dfbac9166552a95551855000d820ce9.txt
-> 
-> The first few lines there are some background gc activity (I guess), then I
-> started an rsync to write data - net/total shows the data rsync transfers.
-> After that, there is constant ~40mb read/write activity, but very little
-> actual write data gets to the disk (rsync makes progress at <100kb/s).
-> 
-> At some point I stop rsync (the single line line with 0/0 for sde read
-> write, after the second header), followed by sync a second later. Sync
-> does it's job, and then there is no activity for a bit, until I start
-> rsync again, which immediatelly triggers the 40/40 mode, and makes little
-> progress.
-> 
-> So little to no gc activity, even though the filesystem really needs some
-> GC activity at this point.
-> 
-> If I play around with gc_* like this:
-> 
->    echo 1 >gc_idle
->    echo 1000 >gc_max_sleep_time
->    echo 5000 >gc_no_gc_sleep_time
+The max hardlink number was increased to 0xffffffff by Jaegeuk in 4.3 rc1
+Kernel, we can use it directly through backport.
 
-One thing I note is that gc_min_sleep_time is not be set in your script,
-so in some condition gc may still do the sleep with gc_min_sleep_time (30
-seconds by default) instead of gc_max_sleep_time which we expect.
+>From a6db67f06fd9f6b1ddb11bcf4d7e8e8a86908d01 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Mon, 10 Aug 2015 15:01:12 -0700
+Subject: [PATCH] f2fs: increase the number of max hard links
 
-So setting gc_min_sleep_time/gc_max_sleep_time as a pair is a better way
-of controlling sleeping time of gc.
+This patch increases the number of maximum hard links for one file.
 
-> 
-> Then I get a lot more activity:
-> 
-> http://ue.tst.eu/f05ee3ff52dc7814ee8352cc2d67f364.txt
-> 
-> But still, as you can see, a lot of the time the disk and the cpu are
-> idle.
-> 
-> In any case, I think I am getting somewhere - until now all my tests ended in
-> unusable filesystem sooner or later, this is the firts one which shows mostly
-> expected behaviour.
-> 
-> Maybe -s128 (or -s256) with which I did my previous tests are problematic?
-> Maybe the active_logs=2 caused problems (but I only used this option recently)?
-> 
-> And the previous problems can be explaioned by using inline_dentry and/or
-> extent_cache.
-> 
-> Anyway, this behaviour is what I would expect, mostly.
-> 
-> Now, I could go with -s64 (128MB segments still span 4-7 zones with this
-> disk). Or maybe something uneven, such as -s90, if that doesn't cause
-> problems.
-> 
-> Also, if it were possible to tune the gc to be more aggressive when idle
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In 4.3 rc1 kernel, we have add a new ioctl to trigger in batches gc, maybe
-we can use it as one option.
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 23bfc0c..8308488 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -321,7 +321,7 @@ enum {
+ 					 */
+ };
+ 
+-#define F2FS_LINK_MAX		32000	/* maximum link count per file */
++#define F2FS_LINK_MAX	0xffffffff	/* maximum link count per file */
+ 
+ #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
+ 
+-- 
+2.5.2
 
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?
-id=c1c1b58359d45e1a9f236ce5a40d50720c07c70e
-
-Thanks,
-
-> (and mostly off if the disk is free), and possibly, if the loss of space
-> by metadata could br reduced, I'd risk f2fs in production in one system
-> here.
-> 
-> Greetings,
-> 
-> --
->                 The choice of a       Deliantra, the free code+content MORPG
->       -----==-     _GNU_              http://www.deliantra.net
->       ----==-- _       generation
->       ---==---(_)__  __ ____  __      Marc Lehmann
->       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
->       -=====/_/_//_/\_,_/ /_/\_\
-> 
-> ------------------------------------------------------------------------------
-> Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
-> Get real-time metrics from all of your servers, apps and tools
-> in one place.
-> SourceForge users - Click here to start your Free Trial of Datadog now!
-> http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 ------------------------------------------------------------------------------
