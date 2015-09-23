@@ -1,29 +1,33 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: fix incorrect bimodal calculation
-Date: Wed, 23 Sep 2015 09:25:43 +0800
-Message-ID: <010701d0f59e$dcc573b0$96505b10$@samsung.com>
+From: Marc Lehmann <schmorp@schmorp.de>
+Subject: Re: SMR drive test 3: full 8TB partition, mount problems,
+ fsck error after delete
+Date: Wed, 23 Sep 2015 05:50:32 +0200
+Message-ID: <20150923035032.GA4946@schmorp.de>
+References: <20150808205003.GA6546@schmorp.de>
+	<20150810203106.GA4575@jaegeuk-mac02>
+	<20150920235901.GA7017@schmorp.de>
+	<20150921081748.GA5637@schmorp.de>
+	<20150921081937.GA5718@schmorp.de>
+	<20150921095806.GA6809@schmorp.de>
+	<20150922202202.GA2456@schmorp.de>
+	<20150922230850.GB31427@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZeYpP-0002u1-9v
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1Zeb4t-0008Vw-0o
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 01:26:35 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZeYpN-0002Hn-E6
+	Wed, 23 Sep 2015 03:50:43 +0000
+Received: from mail.nethype.de ([5.9.56.24])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1Zeb4q-00050o-Uh
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 01:26:35 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NV300LASVXE3TC0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 10:26:25 +0900 (KST)
-Content-language: zh-cn
+	Wed, 23 Sep 2015 03:50:42 +0000
+Content-Disposition: inline
+In-Reply-To: <20150922230850.GB31427@jaegeuk-mac02.mot.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,40 +38,82 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-In update_sit_info, we use div_u64 to handle 'u64 divide u64' case, but
-div_u64 can only handle 32-bits divisor, so our divisor with u64 type
-passed to div_u64 will overflow, result in the wrong calculation when
-show debug info of f2fs as below:
+On Tue, Sep 22, 2015 at 04:08:50PM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> Could you check without -o1, since I merged a patch to calculate the best
+> overprovision at runtime in f2fs-tools.
 
-BDF: 464, avg. vblocks: 23509
-(BDF should never exceed 100)
+I assume I have it, as git pull didn't give me any updates.
 
-So change to use div64_u64 to handle this case correctly.
+> For example, if you set 1%, we need to reserve 100 sections to do cleaning at
+> the worse case. That's why you cannot see the reserved area as just 1% over
+> total space.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok, I tried with -o1, -o5, and no -o switch at all:
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index ebfcc40..615a307 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -118,7 +118,7 @@ static void update_sit_info(struct f2fs_sb_info *sbi)
- 		}
- 	}
- 	dist = div_u64(MAIN_SECS(sbi) * hblks_per_sec * hblks_per_sec, 100);
--	si->bimodal = div_u64(bimodal, dist);
-+	si->bimodal = div64_u64(bimodal, dist);
- 	if (si->dirty_count)
- 		si->avg_vblocks = div_u64(total_vblocks, ndirty);
- 	else
+   switch df -h "Used"
+   -o1    126GiB
+   -o5    384GiB
+   ""     126GiB
+
+So indeed, the manpage (which says -o5 is the default) doesn't match the behaviour.
+
+With -s1 instead of -s128, I get:
+
+   75GiB
+
+100 sections at -s128 would be 25G, so I wonder what the remaining 101GiB
+are (or the remaining 75GiB).
+
+Don't get me wrong, a "default" ext4 gives me a lot less initial space,
+but that's why I don't use ext4. XFS (which has a lot more on-disk data
+structures) gives me a 100GB more space, which is not something to be
+trifled with. If f2fs absolutely needs this space, it has to be, but at
+the moment, it feels excessive.
+
+I'm also ok with having to wait for gc when the disk is almost completely
+full. The issue I have at this point is that f2fs reserves a LOT of space,
+and long before the disk even near getting full, it basically stops
+working. That's the point where I would have to wait for the GC, but f2fs
+just seems to sit idle.
+
+> >    F2FS-fs (dm-18): Failed to initialize F2FS segment manager
+> >    (http://data.plan9.de/f2fs-mount-failure.txt)
+> 
+> I think the below patch should resolve this issue.
+
+Sounds cool!
+
+> > After this, df showed 185GB in use, which is more like 3%, not 1% - again
+> > overprovisioning seems to be out of bounds.
+> 
+> Actually, 185GB should include FS metadata as well as reserved or overprovision
+> space. It would be good to check the on-disk layout by fsck.f2fs.
+
+That's a lot of metadata for an empty filesystem.
+
+> >    [ASSERT] (get_current_sit_page: 803) ret >= 0
+> >    [Exit 255] 
+> 
+> Actually, this doesn't report f2fs inconsistency.
+> Instead, these two errors are from lseek64() and read() failures in dev_read():
+> lib/libf2fs_io.c.
+> 
+> Maybe ENOMEM? Can you check the errno of this function?
+
+That's very strange, if the kernel fails, I would expect some dmesg
+output, but the fs was mountable before and after.
+
+Unfortunately, I already went onwards with the next test.
+
 -- 
-2.5.2
-
-
+                The choice of a       Deliantra, the free code+content MORPG
+      -----==-     _GNU_              http://www.deliantra.net
+      ----==-- _       generation
+      ---==---(_)__  __ ____  __      Marc Lehmann
+      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+      -=====/_/_//_/\_,_/ /_/\_\
 
 ------------------------------------------------------------------------------
 Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
