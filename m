@@ -1,66 +1,53 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH RESEND] f2fs:Fix concurrent access issue in the function
- recover_dentry
-Date: Wed, 23 Sep 2015 13:37:49 -0700
-Message-ID: <20150923203749.GA36564@jaegeuk-mac02.mot.com>
-References: <1443037550-3627-1-git-send-email-xerofoify@gmail.com>
+Subject: Re: [PATCH] f2fs: fix to correct freed section number during gc
+Date: Wed, 23 Sep 2015 14:08:51 -0700
+Message-ID: <20150923210851.GB36564@jaegeuk-mac02.mot.com>
+References: <00d601d0f539$3d893e90$b89bbbb0$@samsung.com>
+ <20150922225352.GA31427@jaegeuk-mac02.mot.com>
+ <012601d0f5e8$5315a690$f940f3b0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1443037550-3627-1-git-send-email-xerofoify@gmail.com>
+In-Reply-To: <012601d0f5e8$5315a690$f940f3b0$@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Krause <xerofoify@gmail.com>
-Cc: cm224.lee@samsung.com, chao2.yu@samsung.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Sep 23, 2015 at 03:45:50PM -0400, Nicholas Krause wrote:
-> This fixes a concurrent access in the function recover_dentry by
-> locking the superblock representation in memory with f2fs_lock_op
-> before calling the function __f2fs_add_link and unlocking the
-> superblock afterwards with f2fs_unlock_op in order to avoid
-> concurrent access here as neither recover_dentry nor its callers
+Hi Chao,
 
-It doesn't need to do this.
-IIRC, this was explained twice by Chao.
-Please, do not ignore any opinions.
+On Wed, Sep 23, 2015 at 06:11:36PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Wednesday, September 23, 2015 6:54 AM
+> > To: Chao Yu
+> > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH] f2fs: fix to correct freed section number during gc
+> > 
+> > Hi Chao,
+> > 
+> > On Tue, Sep 22, 2015 at 09:18:18PM +0800, Chao Yu wrote:
+> > > We pass 'nfree' to has_not_enough_free_secs to check whether there is
+> > > enough free section, but 'nfree' indicates the number of segment gced,
+> > > should alter the value to section number.
+> > 
+> > Yeah, but I think we need to increase nfree only when an entire section is gced
+> > completely, since sometimes nfree can be increased across sections.
+> 
+> Agree, I will fix that.
+> 
+> Still have one question, for foreground gc, why would we give up retry writing
+> out pages of last victim, but trying to select another victim for cleanup?
+> Will new introduced method cause long latency for caller than before?
 
-Thanks,
+Hmm. Very occasionally, I've seen that gc goes into an infinite loop to clean up
+one victim. In order to avoid that, I added giving up and then doing gc again.
+I think there is no problem in normal cases. Even in an abnormal case, I expect
+that next victim would be selected again because that should have lowest moving
+cost.
 
 > 
-> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
-> ---
->  fs/f2fs/recovery.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-> index faec2ca..6bb03f8 100644
-> --- a/fs/f2fs/recovery.c
-> +++ b/fs/f2fs/recovery.c
-> @@ -70,6 +70,7 @@ static struct fsync_inode_entry *get_fsync_inode(struct list_head *head,
->  static int recover_dentry(struct inode *inode, struct page *ipage)
->  {
->  	struct f2fs_inode *raw_inode = F2FS_INODE(ipage);
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	nid_t pino = le32_to_cpu(raw_inode->i_pino);
->  	struct f2fs_dir_entry *de;
->  	struct qstr name;
-> @@ -119,9 +120,15 @@ retry:
->  		iput(einode);
->  		goto retry;
->  	}
-> +
-> +
-> +	f2fs_lock_op(sbi);
->  	err = __f2fs_add_link(dir, &name, inode, inode->i_ino, inode->i_mode);
-> -	if (err)
-> +	if (err) {
-> +		f2fs_unlock_op(sbi);
->  		goto out_err;
-> +	}
-> +	f2fs_unlock_op(sbi);
->  
->  	if (is_inode_flag_set(F2FS_I(dir), FI_DELAY_IPUT)) {
->  		iput(dir);
-> -- 
-> 2.1.4
+> Thanks,
