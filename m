@@ -2,8 +2,8 @@ From: Marc Lehmann <schmorp@schmorp.de>
 Subject: Re: SMR drive test 2; 128GB partition;
  no obvious corruption, much more sane behaviour, weird
  overprovisioning
-Date: Wed, 23 Sep 2015 06:15:24 +0200
-Message-ID: <20150923041523.GB4946@schmorp.de>
+Date: Wed, 23 Sep 2015 08:00:37 +0200
+Message-ID: <20150923060037.GA6667@schmorp.de>
 References: <20150808205003.GA6546@schmorp.de>
 	<20150810203106.GA4575@jaegeuk-mac02>
 	<20150920235901.GA7017@schmorp.de>
@@ -11,23 +11,24 @@ References: <20150808205003.GA6546@schmorp.de>
 	<20150921081937.GA5718@schmorp.de>
 	<20150921095806.GA6809@schmorp.de>
 	<20150923011239.GA32520@jaegeuk-mac02.mot.com>
+	<20150923041523.GB4946@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZebSv-0006o9-7Q
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1Zed6m-0001R2-0b
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 04:15:33 +0000
+	Wed, 23 Sep 2015 06:00:48 +0000
 Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZebSt-0002sn-IQ
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1Zed6j-0008HL-BC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 04:15:33 +0000
+	Wed, 23 Sep 2015 06:00:47 +0000
 Content-Disposition: inline
-In-Reply-To: <20150923011239.GA32520@jaegeuk-mac02.mot.com>
+In-Reply-To: <20150923041523.GB4946@schmorp.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -40,110 +41,92 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Sep 22, 2015 at 06:12:39PM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> Hmm. Is it necessary to reduce the number of active_logs?
-
-I don't know, the documentation isn't very forthcoming with details :)
-
-In any case, this is just for testing. My rationale was that multiple logs
-probably means that there are multiple sequential write zones. Reducing those
-
-Only two logs would help the disk. Probably. Maybe.
-
-> increase the GC overheads significantly.
-
-Can you elaborate? I do get a speed improvement with only two logs, but of
-course, GC time is an impoprtant factor, so maybe more logs would be a
-necessary trade-off.
-
-> And, you can use inline_data in v4.2.
-
-I think I did - the documentation says inline_data is the default.
-
-> >     Filesystem                Size  Used Avail Use% Mounted on
-> >     /dev/mapper/vg_test-test  128G  106G   22G  84% /mnt
-> > 
-> >     # du -skc /mnt
-> >     51674268        /mnt
-> >     51674268        total
-> > 
-> >     Utilization: 67% (13168028 valid blocks)
+On Wed, Sep 23, 2015 at 06:15:24AM +0200, Marc Lehmann <schmorp@schmorp.de> wrote:
+> > However, when I tried to do mkfs.f2fs with the same options, I got about 18GB.
+> > Could you share the mkfs.f2fs messages and fsck.f2fs -d3 as well?
 > 
-> Ok. I could retrieve the on-disk layout from the below log.
-> In the log, the overprovision area is set as about 54GB.
-> However, when I tried to do mkfs.f2fs with the same options, I got about 18GB.
-> Could you share the mkfs.f2fs messages and fsck.f2fs -d3 as well?
+> When I re-ran the mkfs.f2fs, I got:
 
-When I re-ran the mkfs.f2fs, I got:
+I get the feeling I did something idiotic, but for the life of it, I don't
+know what. I see the mkfs.f2fs in my test log, I see it in my command
+history, but for the life of it, I can't reproduce it.
 
+So let's disregard this and go to the next test - I redid the 128G partitipn
+test, with 6 active logs, no -o and -s64:
+
+   mkfs.f2fs -lTEST -s64 -t0 -a0
+
+This allowed me to arrive at this state, at which rsync stopped making
+progress:
+
+   root@shag:/sys/fs/f2fs/dm-1# df -H /mnt
    Filesystem                Size  Used Avail Use% Mounted on
-   /dev/mapper/vg_test-test  138G   20G  118G  14% /mnt
+   /dev/mapper/vg_test-test  138G  137G  803k 100% /mnt
 
-I didn't note down the overhead in my test, the df I had was when the disk
-was filled, so it possibly changed(?) at runtime?
+This would be about perfect (I even got ENOSPC for the first
+time!). However, when I do my "delete every nth file":
 
-(I tried debians mkfs.f2fs, but it gave identical results).
+   /dev/mapper/vg_test-test  138G  135G  1.8G  99% /mnt
 
-I'll redo the 128GiB test and see if I can get similar results.
+The disk still sits mostly idle. I did verify that "sync" indeed reduces
+Pre-Free to 0, and I do see some activity every ~30s now, though:
 
-> > However, when pausing rsync, f2fs immediatelly ceased doing anything again,
-> > so even though clearly there is a need for clean up activities, f2fs doesn't
-> > do them.
-> 
-> It seems that why f2fs didn't do gc was that all the sections were traversed
-> by background gc. In order to reset that, it needs to trigger checkpoint, but 
-> it couldn't meet the condition in background.
-> 
-> How about calling "sync" before leaving the system as idle?
-> Or, you can check decreasing the number in /sys/fs/f2fs/xxx/reclaim_segments to
-> 256 or 512?
+http://ue.tst.eu/ac1ec447de214edc4e007623da2dda72.txt (see the dsk/sde
+columns).
 
-Will try next time. I distinctly remember that sync didn't do anything to
-pre-free and free, though.
+If I start writing, I guess I trigger the foreground gc:
 
-> > 1. the overprovisioning values seems to be completely out of this world. I'm
-> > prepared top give up maybe 50GB of my 8TB disk for this, but not more.
-> 
-> Maybe, it needs to check with other filesystems' *available* spaces.
-> Since, many of them hide additional FS metadata initially.
+http://ue.tst.eu/1dfbac9166552a95551855000d820ce9.txt
 
-I habitually do comparefree space between filesystems. While f2fs is better
-than ext4 with default settings (and even with some tuning), ext4 is quite
-known to have excessive preallocated metadata requirements.
+The first few lines there are some background gc activity (I guess), then I
+started an rsync to write data - net/total shows the data rsync transfers.
+After that, there is constant ~40mb read/write activity, but very little
+actual write data gets to the disk (rsync makes progress at <100kb/s).
 
-As mentioned in my other mail, XFS for example has 100GB more free
-space than f2fs on the full 8TB device, and from memory I expect other
-filesystems without fixed inode numbers (practically all of them) to be
-similar.
+At some point I stop rsync (the single line line with 0/0 for sde read
+write, after the second header), followed by sync a second later. Sync
+does it's job, and then there is no activity for a bit, until I start
+rsync again, which immediatelly triggers the 40/40 mode, and makes little
+progress.
 
-> > 3. why does f2fs sit idle on a highly fragmented filesystem, why does it not
-> > do background garbage collect at maximum I/O speed, so the filesystem is
-> > ready when the next writes come?
-> 
-> I suspect the section size is too large comparing to the whole partition size,
-> which number is only 509. Each GC selects a victim in a unit of section and
-> background GC would not select again for the previously visited ones.
-> So, I think GC is easy to traverse whole sections, and go to bed since there
-> is no new victims. So, I think checkpoint, "sync", resets whole history and
-> makes background GC conduct its job again.
+So little to no gc activity, even though the filesystem really needs some
+GC activity at this point.
 
-The large section size is of course the whole point of the exercise, as
-hopefully this causes the GC to do larger sequential writes. It's clear
-that this is not a perfect match for these SMR drives, but the goal is to
-have acceptable performance, faster than a few megabytes/s. And indeed,
-when the GC runs, it get quite good I/O performance in my test (deleteing
-every nth file makes comparatively small holes, so the GC has to copy most
-of the section).
+If I play around with gc_* like this:
 
-Now, the other thing is that the GC, whgen it triggers, isn't very
-aggressive - when I saw it, it was doing something every 10-15 seconds,
-with the system being idle, when it should be more or less completely busy.
+   echo 1 >gc_idle
+   echo 1000 >gc_max_sleep_time
+   echo 5000 >gc_no_gc_sleep_time
 
-I am aware that "idle" is a difficult to inmpossible condition to detect
-- maybe this could be made more tunable (I tried to play around with the
-gc_*_time values, but probably due to lack of documentation. I didn't get
-very far, and couldn't correlate the behaviour I saw with the settings I
-made).
+Then I get a lot more activity:
+
+http://ue.tst.eu/f05ee3ff52dc7814ee8352cc2d67f364.txt
+
+But still, as you can see, a lot of the time the disk and the cpu are
+idle.
+
+In any case, I think I am getting somewhere - until now all my tests ended in
+unusable filesystem sooner or later, this is the firts one which shows mostly
+expected behaviour.
+
+Maybe -s128 (or -s256) with which I did my previous tests are problematic?
+Maybe the active_logs=2 caused problems (but I only used this option recently)?
+
+And the previous problems can be explaioned by using inline_dentry and/or
+extent_cache.
+
+Anyway, this behaviour is what I would expect, mostly.
+
+Now, I could go with -s64 (128MB segments still span 4-7 zones with this
+disk). Or maybe something uneven, such as -s90, if that doesn't cause
+problems.
+
+Also, if it were possible to tune the gc to be more aggressive when idle
+(and mostly off if the disk is free), and possibly, if the loss of space
+by metadata could br reduced, I'd risk f2fs in production in one system
+here.
+
+Greetings,
 
 -- 
                 The choice of a       Deliantra, the free code+content MORPG
