@@ -1,31 +1,31 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: SMR drive test 3: full 8TB partition, mount problems,
- fsck error after delete
-Date: Tue, 22 Sep 2015 16:08:50 -0700
-Message-ID: <20150922230850.GB31427@jaegeuk-mac02.mot.com>
+Subject: Re: SMR drive test 2; 128GB partition;
+ no obvious corruption, much more sane behaviour, weird
+ overprovisioning
+Date: Tue, 22 Sep 2015 18:12:39 -0700
+Message-ID: <20150923011239.GA32520@jaegeuk-mac02.mot.com>
 References: <20150808205003.GA6546@schmorp.de>
 	<20150810203106.GA4575@jaegeuk-mac02>
 	<20150920235901.GA7017@schmorp.de>
 	<20150921081748.GA5637@schmorp.de>
 	<20150921081937.GA5718@schmorp.de>
 	<20150921095806.GA6809@schmorp.de>
-	<20150922202202.GA2456@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZeWgH-0007YF-Cb
+	(envelope-from <jaegeuk@kernel.org>) id 1ZeYc7-0002VE-JR
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Sep 2015 23:09:01 +0000
+	Wed, 23 Sep 2015 01:12:51 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZeWgF-0003B2-Rx for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 22 Sep 2015 23:09:01 +0000
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZeYc5-0001xx-N8 for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 23 Sep 2015 01:12:51 +0000
 Content-Disposition: inline
-In-Reply-To: <20150922202202.GA2456@schmorp.de>
+In-Reply-To: <20150921095806.GA6809@schmorp.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,87 +38,262 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Marc Lehmann <schmorp@schmorp.de>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Thank you for the test.
-
-On Tue, Sep 22, 2015 at 10:22:02PM +0200, Marc Lehmann wrote:
-> Third test, using the full device, on linux 4.2.1
+On Mon, Sep 21, 2015 at 11:58:06AM +0200, Marc Lehmann wrote:
+> Second test - we're getting there:
 > 
->    mkfs.f2fs -l COLD1 -o1 -a0 -d1 -s128 /dev/mapper/xmnt-cold1
-
-Could you check without -o1, since I merged a patch to calculate the best
-overprovision at runtime in f2fs-tools.
-Originally, even if you set a specific overprovision ratio, mkfs.f2fs calculates
-the real space again.
-For example, if you set 1%, we need to reserve 100 sections to do cleaning at
-the worse case. That's why you cannot see the reserved area as just 1% over
-total space.
-
->    mount -tf2fs -onoatime,flush_merge,active_logs=2,no_heap /dev/mapper/xmnt-cold1 /cold1
+> Summary: looks much better, no obvious corruption (but fsck still gives
+> tens of thousands of [FIX] messages), performance somewhat as expected,
+> but a 138GB partition can only store 71.5GB of data (avg filesize 2.2MB)
+> and f2fs doesn't seem to do visible background GC.
 > 
-> Unfortunately, mount failed with. The kernel showed that a high order
-> allocation could not be satisfied:
+> For this test, changed a bunch of parameters:
 > 
->    mount: page allocation failure: order:7, mode:0x40d0
->    ...
->    F2FS-fs (dm-18): Failed to initialize F2FS segment manager
->    (http://data.plan9.de/f2fs-mount-failure.txt)
+>     1. partition size
+> 
+>        128GiB instead of 512GiB (not ideal, but I wanted this test to be
+>        quick)
+> 
+>     2. mkfs options
+> 
+>         mkfs.f2fs -lTEST -o5 -s128 -t0 -a0 # change: -o5 -a0
 
-I think the below patch should resolve this issue.
+Please, check without -o5.
 
 > 
-> I think this memory management is a real problem - the server was booted
-> about 20 minutes earlier and had 23GB free ram (used for cache). I was able
-> to mount it by dropping the page cache, but clearly this shouldn't be
-> neccessary.
+>     3. mount options
 > 
-> After this, df showed 185GB in use, which is more like 3%, not 1% - again
-> overprovisioning seems to be out of bounds.
+>         mount -t f2fs -onoatime,flush_merge,active_logs=2,no_heap
+>         # change: no inline_* options, no extent_cache, but no_heap + active_logs=2
 
-Actually, 185GB should include FS metadata as well as reserved or overprovision
-space. It would be good to check the on-disk layout by fsck.f2fs.
-
-> 
-> I started copying files with tar|tar, after 10GB, I restarted, which started
-> to overwrite the existing 10GB files.
-> 
-> Unfortunately, this time the GC kicked in every 10-20 seconds, slowing down
-> writing times. I don't know what triggered it this time, but I am quite sure
-> at less than 1% utilisation it shouldn't feel the need to gc while the disk
-> is busy writing.
-> 
-> After 90GB were written, I decided to simulate a disk problem by deleting
-> the device (to avoid any corruption issues the disk itself might have):
-> 
->    echo 1 >/sys/block/sde/device/delete
-> 
-> After rescanning the device, I used fsck.f2fs on it, and it failed quickly:
-> 
->    Info: superblock features = 0 : 
->    Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
->    Info: total FS sectors = 15628050432 (7630884 MB)
->    Info: CKPT version = 2
->    [ASSERT] (restore_node_summary: 688) ret >= 0
->    [Exit 255] 
-> 
-> Re-running it with -f failed differently, but also quickly:
-> 
->    Info: superblock features = 0 : 
->    Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
->    Info: total FS sectors = 15628050432 (7630884 MB)
->    Info: CKPT version = 2
->    [ASSERT] (get_current_sit_page: 803) ret >= 0
->    [Exit 255] 
-
-Actually, this doesn't report f2fs inconsistency.
-Instead, these two errors are from lseek64() and read() failures in dev_read():
-lib/libf2fs_io.c.
-
-Maybe ENOMEM? Can you check the errno of this function?
-
-Thanks,
+Hmm. Is it necessary to reduce the number of active_logs? Only two logs would
+increase the GC overheads significantly.
+And, you can use inline_data in v4.2.
+In v4.3, I expect extent_cache will be stable and usable.
 
 > 
-> I'll reformat and try without any simulated problems.
+> First of all, the discrepancy between utilization in the status file, du
+> and df is quite large:
+> 
+>     Filesystem                Size  Used Avail Use% Mounted on
+>     /dev/mapper/vg_test-test  128G  106G   22G  84% /mnt
+> 
+>     # du -skc /mnt
+>     51674268        /mnt
+>     51674268        total
+> 
+>     Utilization: 67% (13168028 valid blocks)
+
+Ok. I could retrieve the on-disk layout from the below log.
+In the log, the overprovision area is set as about 54GB.
+However, when I tried to do mkfs.f2fs with the same options, I got about 18GB.
+Could you share the mkfs.f2fs messages and fsck.f2fs -d3 as well?
+
+> 
+> So ~52GB of files take up ~106GB of the partition, which is 84% of the
+> total size, yet it's only utilized by 67%.
+> 
+> Second, and subjectively, the filesystem was much more responsive during
+> the test- find almost instantly give ssome output, instead of having to
+> wait for half a minute, and find|rm is much faster as well. find also
+> reads data at ~2mb/s, while in the previous test, it was 0.7MB/s (which
+> can be good or bad, but it looks good).
+> 
+> At 6.7GB free (df: 95%, status: 91%, du: 70/128GiB) I paused rsync. The disk
+> then did some heavy read/write for a short while, and the Dirty: count
+> reduced:
+> 
+> http://ue.tst.eu/d61a7017786dc6ebf5be2f7e2d2006d7.txt
+> 
+> I continued, and the disk afterwards did almost the same amount of reading
+> as it was writing, with short intzermittent write-only periods for a fe
+> seconds each. Rsync itself was noticably slower, so I guess f2fs finally
+> ran out of space and did garbage collect.
+> 
+> This is exactly the behaviour I did expect of f2fs, but this is the first
+> time I actually saw it.
+> 
+> Pausing didn't result in any activity.
+> 
+> At 6.3GB free, disk write speed went down to 1MB/s with intermittent
+> phases of 100MB/s write only, or 50MB/s read + 50MB/s write (but rsync was
+> transferring about 100kb/s at this point only, so no real progress was
+> made).
+> 
+> After about 10 minutes I paused rsync again, still at 6.3GB free (df
+> reporting 96% in use, status 91% and du 52% (71.5GB))
+> 
+> I must admit I don't understand these ratios - df vs. status can easily
+> be explained by overprovisioning, but the fact that a 138GB (128GiB)
+> partition can only hold 72GB of data with very few small files is not
+> looking good to me:
+> 
+>     # df -H /mnt
+>     Filesystem                Size  Used Avail Use% Mounted on
+>     /dev/mapper/vg_test-test  138G  130G  6.3G  96% /mnt
+>     # du -skc /mnt
+>     71572620        /mnt
+> 
+> I wonder what this means, too:
+> 
+>     MAIN: 65152(OverProv:27009 Resv:26624)
+
+Yeah, that's the hint that overprovision area occupies 54GB abnormally.
+I think there is something wrong on your mkfs.f2fs when calculating reserved
+space. It needs to take a look at mkfs.f2fs log.
+
+> 
+> Surely this doesn't mean that 27009 of 65152 segments are for
+> overprovisioning? That would explain the bad values for due, but then, I
+> did specify -o5, not -o45 or so.
+> 
+> status at that point was:
+> 
+>     http://ue.tst.eu/f869dfb6ac7b4d52966e8eb012b81d2a.txt
+> 
+> Anyways, I did more thinning to regain free space by deleting every 10th
+> file. That went reasonably slow, the disk was contantly reading + writing at
+> high speed, so I guess it was busy garbage colelcting, as it should.
+> 
+> status after deleting, with completely idle disk:
+> 
+>     http://ue.tst.eu/1831202bc94d9cd521cfcefc938d2095.txt
+> 
+>     /dev/mapper/vg_test-test  138G  123G   15G  90% /mnt
+> 
+> I waited a few minutes, but there was no further activity. I then unpaused
+> the rsync, which proceeded with good speed again.
+> 
+> At 11GB free, rsync effectively stopped, and the disk went to ~1MB/s wrtite
+> mode aagin. Pausing rsync didn't cause I/O to stop this time, it continued
+> for a few minutes.
+> 
+> I waited for 2 minutes with no disk I/O, unpaused rsync, and the disk
+> immediately went into 1MB/s write mode againh, with rsync not really
+> getting any data through though.
+> 
+> It's as if f2fs only tried to clean up when there is write data. I would
+> expect a highly fragmented f2fs to be very busy garbage collecting, but
+> apparently, not so, it just idles, and when a program wants to write,
+> fails to perform. Maybe I need to give it more time than two minutes, but
+> then, I wouldn't see a point in delaying to garbage collect if it has to
+> be done anyways.
+> 
+> In any case, no progress possible, I deleted more files again, this time
+> every 5th file, which went reasonably fast,
+> 
+> status after delete:
+> 
+>     http://ue.tst.eu/fb3287adf4cc109c88b89f6120c9e4a6.txt
+> 
+>     /dev/mapper/vg_test-test  138G  114G   23G  84% /mnt
+> 
+> rsync writing was reasonably fast down to 18GB, when rsync stopped making
+> much profgress (<100kb/s), but the disk wasn't in "1MB/s mode" but instead in
+> 40MB/s read+write, which looks reasonable to me, as the disk was probably
+> quite fargmented at this point:
+> 
+>     http://ue.tst.eu/fb3287adf4cc109c88b89f6120c9e4a6.txt
+> 
+> However, when pausing rsync, f2fs immediatelly ceased doing anything again,
+> so even though clearly there is a need for clean up activities, f2fs doesn't
+> do them.
+
+It seems that why f2fs didn't do gc was that all the sections were traversed
+by background gc. In order to reset that, it needs to trigger checkpoint, but 
+it couldn't meet the condition in background.
+
+How about calling "sync" before leaving the system as idle?
+Or, you can check decreasing the number in /sys/fs/f2fs/xxx/reclaim_segments to
+256 or 512?
+
+> 
+> To state this more clearly: My expectation is that when f2fs runs out of
+> immediatelly usable space for writing, it should do GC. That means that
+> when rsync is very slow and the disk is very fragmented, even when I pause
+> rsync, f2fs should GC at full speed until it has a reasonable amount of
+> usable free space again. Instead, it apparently just sits idle until some
+> program generates write data.
+> 
+> At this point, I unmounted the filesystem and "fsck.f2fs -f"'ed it. The
+> report looked good:
+> 
+>     [FSCK] Unreachable nat entries                        [Ok..] [0x0]
+>     [FSCK] SIT valid block bitmap checking                [Ok..]
+>     [FSCK] Hard link checking for regular file            [Ok..] [0x0]
+>     [FSCK] valid_block_count matching with CP             [Ok..] [0xe8b623]
+>     [FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0xa58a]
+>     [FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0xa58a]
+>     [FSCK] valid_inode_count matched with CP              [Ok..] [0x7800]
+>     [FSCK] free segment_count matched with CP             [Ok..] [0x8a17]
+>     [FSCK] next block offset is free                      [Ok..]
+>     [FSCK] fixing SIT types
+> 
+> However, there were about 30000 messages like these:
+> 
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdf6] 0 -> 1
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdf7] 0 -> 1
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdf8] 0 -> 1
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdf9] 0 -> 1
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfa] 0 -> 1
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfb] 0 -> 1
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfc] 0 -> 1
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfd] 0 -> 1
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdfe] 0 -> 1
+>     [FIX] (check_sit_types:1056)  --> Wrong segment type [0xfdff] 0 -> 1
+>     [FSCK] other corrupted bugs                           [Ok..]
+> 
+> That's not promising, why does it think it needs to fix anything?
+
+I need to take a look at the fsck.f2fs when handling there are two active logs.
+Anyway, this doesn't break the core FS consistency, so you can ignore them.
+
+> 
+> I mounted the partition again. Listing the files was very fast. I deleted all
+> the files and ran rsync for a while. It seems the partition completely
+> recovered. This is the empty state btw.:
+> 
+>    Filesystem                Size  Used Avail Use% Mounted on
+>    /dev/mapper/vg_test-test  138G   57G   80G  42% /mnt
+> 
+> So, all the pathological behaviour is gone (no 20kb/s write speed blocking
+> the disk for hours, more importantly, no obvious filesystem corruption,
+> although the fsck messages need explanation).
+> 
+> Moreso, the behaviour, while still confusing (weird du vs. df, no background
+> activity), at least seems to be in line with what I expect - fragmentation
+> kills performance, but f2fs seems capable of recovering.
+> 
+> So here is my wishlist:
+> 
+> 1. the overprovisioning values seems to be completely out of this world. I'm
+> prepared top give up maybe 50GB of my 8TB disk for this, but not more.
+
+Maybe, it needs to check with other filesystems' *available* spaces.
+Since, many of them hide additional FS metadata initially.
+
+> 
+> 2. even though ~40% of space is not used by file data, f2fs still becomes
+> extremely slow. this can't be right.
+
+I think it was due to the wrong overprovision space.
+It needs to check that number first.
+
+> 
+> 3. why does f2fs sit idle on a highly fragmented filesystem, why does it not
+> do background garbage collect at maximum I/O speed, so the filesystem is
+> ready when the next writes come?
+
+I suspect the section size is too large comparing to the whole partition size,
+which number is only 509. Each GC selects a victim in a unit of section and
+background GC would not select again for the previously visited ones.
+So, I think GC is easy to traverse whole sections, and go to bed since there
+is no new victims. So, I think checkpoint, "sync", resets whole history and
+makes background GC conduct its job again.
+
+Thank you, :)
+
+> 
+> Greetings, and good night :)
 > 
 > -- 
 >                 The choice of a       Deliantra, the free code+content MORPG
@@ -134,88 +309,9 @@ Thanks,
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
->From d495b00a2f04c0ec5e6c6d95c9e66bdba45b174c Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Tue, 22 Sep 2015 13:50:47 -0700
-Subject: [PATCH] f2fs: use vmalloc to handle -ENOMEM error
-
-This patch introduces f2fs_kvmalloc to avoid -ENOMEM during mount.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h    | 11 +++++++++++
- fs/f2fs/segment.c |  9 ++++-----
- 2 files changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 79c38ad..553529d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -19,6 +19,7 @@
- #include <linux/magic.h>
- #include <linux/kobject.h>
- #include <linux/sched.h>
-+#include <linux/vmalloc.h>
- #include <linux/bio.h>
- 
- #ifdef CONFIG_F2FS_CHECK_FS
-@@ -1579,6 +1580,16 @@ static inline bool f2fs_may_extent_tree(struct inode *inode)
- 	return S_ISREG(mode);
- }
- 
-+static inline void *f2fs_kvmalloc(size_t size, gfp_t flags)
-+{
-+	void *ret;
-+
-+	ret = kmalloc(size, flags | __GFP_NOWARN);
-+	if (!ret)
-+		ret = __vmalloc(size, flags, PAGE_KERNEL);
-+	return ret;
-+}
-+
- #define get_inode_mode(i) \
- 	((is_inode_flag_set(F2FS_I(i), FI_ACL_MODE)) ? \
- 	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 78e6d06..13567ad 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -14,7 +14,6 @@
- #include <linux/blkdev.h>
- #include <linux/prefetch.h>
- #include <linux/kthread.h>
--#include <linux/vmalloc.h>
- #include <linux/swap.h>
- 
- #include "f2fs.h"
-@@ -2028,12 +2027,12 @@ static int build_free_segmap(struct f2fs_sb_info *sbi)
- 	SM_I(sbi)->free_info = free_i;
- 
- 	bitmap_size = f2fs_bitmap_size(MAIN_SEGS(sbi));
--	free_i->free_segmap = kmalloc(bitmap_size, GFP_KERNEL);
-+	free_i->free_segmap = f2fs_kvmalloc(bitmap_size, GFP_KERNEL);
- 	if (!free_i->free_segmap)
- 		return -ENOMEM;
- 
- 	sec_bitmap_size = f2fs_bitmap_size(MAIN_SECS(sbi));
--	free_i->free_secmap = kmalloc(sec_bitmap_size, GFP_KERNEL);
-+	free_i->free_secmap = f2fs_kvmalloc(sec_bitmap_size, GFP_KERNEL);
- 	if (!free_i->free_secmap)
- 		return -ENOMEM;
- 
-@@ -2348,8 +2347,8 @@ static void destroy_free_segmap(struct f2fs_sb_info *sbi)
- 	if (!free_i)
- 		return;
- 	SM_I(sbi)->free_info = NULL;
--	kfree(free_i->free_segmap);
--	kfree(free_i->free_secmap);
-+	kvfree(free_i->free_segmap);
-+	kvfree(free_i->free_secmap);
- 	kfree(free_i);
- }
- 
--- 
-2.1.1
-
-
 ------------------------------------------------------------------------------
+Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
+Get real-time metrics from all of your servers, apps and tools
+in one place.
+SourceForge users - Click here to start your Free Trial of Datadog now!
+http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
