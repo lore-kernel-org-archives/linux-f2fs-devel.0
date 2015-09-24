@@ -1,19 +1,9 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: SMR drive test 2; 128GB partition;
- no obvious corruption, much more sane behaviour, weird
- overprovisioning
-Date: Thu, 24 Sep 2015 10:51:31 -0700
-Message-ID: <20150924175131.GC40291@jaegeuk-mac02>
-References: <20150808205003.GA6546@schmorp.de>
-	<20150810203106.GA4575@jaegeuk-mac02>
-	<20150920235901.GA7017@schmorp.de>
-	<20150921081748.GA5637@schmorp.de>
-	<20150921081937.GA5718@schmorp.de>
-	<20150921095806.GA6809@schmorp.de>
-	<20150923011239.GA32520@jaegeuk-mac02.mot.com>
-	<20150923041523.GB4946@schmorp.de>
-	<20150923212931.GC36564@jaegeuk-mac02.mot.com>
-	<20150923232414.GC3463@schmorp.de>
+Subject: Re: write performance difference 3.18.21/4.2.1
+Date: Thu, 24 Sep 2015 11:28:36 -0700
+Message-ID: <20150924182836.GD40291@jaegeuk-mac02>
+References: <20150923215850.GC2360@schmorp.de>
+	<20150923231103.GA3463@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -21,15 +11,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ZfAgI-0002ZH-4S
+	(envelope-from <jaegeuk@kernel.org>) id 1ZfBGA-0003yW-0l
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Sep 2015 17:51:42 +0000
+	Thu, 24 Sep 2015 18:28:46 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1ZfAgG-0001f6-61 for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Sep 2015 17:51:42 +0000
+	id 1ZfBG9-0002kb-1G for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 24 Sep 2015 18:28:46 +0000
 Content-Disposition: inline
-In-Reply-To: <20150923232414.GC3463@schmorp.de>
+In-Reply-To: <20150923231103.GA3463@schmorp.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -42,96 +32,58 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Marc Lehmann <schmorp@schmorp.de>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Sep 24, 2015 at 01:24:14AM +0200, Marc Lehmann wrote:
-> On Wed, Sep 23, 2015 at 02:29:31PM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> > > Can you elaborate? I do get a speed improvement with only two logs, but of
-> > > course, GC time is an impoprtant factor, so maybe more logs would be a
-> > > necessary trade-off.
-> > 
-> > This will help you to understand more precisely.
+On Thu, Sep 24, 2015 at 01:11:03AM +0200, Marc Lehmann wrote:
+> I tried twice with the same options, on linux 3.8.21 and 4.2.1, and write
+> performance is very different on these kernels (I rebooted every time in
+> between).
 > 
-> Thanks, will read more thoroughly, but that means I probably do want two logs.
-> Regarding your elaboration:
+> On 3.18.21, the source raid is hardly able to keep up with the write
+> speed, f2fs basically writes at more or less full disk speed, for extended
+> periods of time. As mentiopned earlier, average write speed was 103MB/s
+> over the whole 2.1TB, with f2fs being idle a lot of that time, so actual
+> write speed would be higher.
 > 
-> > One GC needs to move whole valid blocks inside a section, so if the section
-> > size is too large, every GC is likely to show very long latency.
-> > In addion, we need more overprovision space too.
+> On 4.2.1, same mkfs+mount options, performance is 5-10 times less, i.e.
+> <<100MB/s (and more like 20MB/s for extendesd stretches):
 > 
-> That wouldn't increase the overhead in general though, because the
-> overhead depends on how much space is free in each section.
+> http://ue.tst.eu/43a8f7ae96ac770dc45ac8f1e3b0c479.txt
+> (see the dsk/sde columns)
+> 
+> First there is a "good" stretch with >100MB/s, then it starts to degrade.
+> Another difference is the frequent read activity, which is mostly absent on
+> 3.18.21.
+> 
+> The log starts after only 20GB had been written. Here is the status output
+> at 25GB:
+> 
+> http://ue.tst.eu/734f7883107ee4dabff77602db92310b.txt
 
-Surely, it depends on workloads.
+It seems about 700MB were moved by background GC.
 
 > 
-> > And, if the number of logs is small, GC can suffer from moving hot and cold
-> > data blocks which represents somewhat temporal locality.
-> 
-> I am somewhat skeptical of this for (on of my) my usage(s) (archival),
-> because there is absolutely no way to know in advance what is hot and what
-> is cold. Example: a file might be deleted, but there is no way in advance
-> to know which it will be. The only thing I know is that files never get
-> modified after written once (but often replaced). In another of of my
-> usages, files do get modified, but there is no way to know in advance
-> which it will be, and they will only ever be modified once (after initial
-> allocation).
-> 
-> So I am very suspicious of both static and dynamic attempts to seperate
-> data into hot/cold. You can't know from file extensions, and you can't
-> know from past modification history.
+> Any idea why 4.2.1 performs so much worse than 3.8.21?
 
-Yes, regarding to userdata, we cannot determine the hotness of every data
-actually.
+One thing that we can try is to run the latest f2fs source in v3.18.
+This branch supports f2fs for v3.18.
 
-> The only applicability of hot/cold I can see is filesystem metadata and
-> directories (files get moved/renamed/added), and afaics, f2fs already does
-> that.
+http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/log/?h=linux-3.18
 
-It does all the time. But, what I'm curious is the effect of splitting
-directories and files explicitly. If we use two logs, f2fs only splits metadata
-and their data.
-But, if we use 4 logs at least, it splits each of metadata and data according to
-their origins, directory or user file.
+Could you check out this branch and then copy the following files into your
+v3.18 kernel?
 
-For example, if I can represent blocks like:
+- fs/f2fs/*
+- include/linux/f2fs_fs.h
+- include/trace/event/f2fs.h
 
- D : dentry block
- U : user block
- I : directory inode
- F : file inode,
- O : obsolete
-
-1) in 2 logs, each section can consist of
-  DDUUUUUDDUUUUU     IFFFFIFFFFFF
-
-2) in 4 logs,
-   DDDD     UUUUUUUUUUU     II        FFFFFFFFFF
-
-Then, if we rename files or delete files,
-1) in 2 logs,
-  OOUUUUUODUUUUDD    IOOOOIFFOOFI
-
-2) in 4 logs,
-  OOODDD      OOOOOUUUOUUU      OOIII      OOOOFFOOFFFF
-
-So, I expect, we can reduce the number of valid blocks if we use 4 logs.
-
-Surely, if workloads produce mostly a huge number of data blocks, I think two
-logs are enough. Using more logs would not show a big impact.
+And, if possible, could you share the status output of both of v3.18 and v4.2?
 
 Thanks,
 
 > 
-> > Of course, these numbers highly depend on storage speed and workloads, so
-> > it needs to be tuned up.
-> 
-> From your original comment, I assumed that the gc somehow needs more logs
-> to be more efficient for some internal reason, but it seems since it is
-> mostly a matter of section size (which I want to have "unreasonably" large),
-> which means potentially a lot of valid data has to be moved, and hot/cold
-> data, which I am very skeptical about.
-> 
-> (I think hot/cold works absolutely splendid for normal desktop uses and
-> most forms of /home, though).
+> (Note, if that is the difference between "filesystem works" (4.2.1?) and
+> "filesystem doesn't work" (3.18.21) then that might be it - still, that
+> would mean f2fs performs worse than traditional filesystems on these
+> disks).
 > 
 > -- 
 >                 The choice of a       Deliantra, the free code+content MORPG
@@ -140,5 +92,16 @@ Thanks,
 >       ---==---(_)__  __ ____  __      Marc Lehmann
 >       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
 >       -=====/_/_//_/\_,_/ /_/\_\
+> 
+> ------------------------------------------------------------------------------
+> Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
+> Get real-time metrics from all of your servers, apps and tools
+> in one place.
+> SourceForge users - Click here to start your Free Trial of Datadog now!
+> http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
