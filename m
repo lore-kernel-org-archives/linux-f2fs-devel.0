@@ -1,21 +1,35 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] fsck.f2fs: check sit types for node or data only
-Date: Thu, 24 Sep 2015 09:55:49 -0700
-Message-ID: <1443113749-40220-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: SMR drive test 2; 128GB partition;
+ no obvious corruption, much more sane behaviour, weird
+ overprovisioning
+Date: Thu, 24 Sep 2015 10:21:01 -0700
+Message-ID: <20150924172100.GA40291@jaegeuk-mac02>
+References: <20150920235901.GA7017@schmorp.de>
+	<20150921081748.GA5637@schmorp.de>
+	<20150921081937.GA5718@schmorp.de>
+	<20150921095806.GA6809@schmorp.de>
+	<20150923011239.GA32520@jaegeuk-mac02.mot.com>
+	<20150923041523.GB4946@schmorp.de>
+	<20150923060037.GA6667@schmorp.de>
+	<011201d0f5dd$c3a4f650$4aeee2f0$@samsung.com>
+	<20150923233022.GD3463@schmorp.de>
+	<20150923234323.GF3463@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Zf9oN-00018q-9S
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZfACn-0001YA-2t
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Sep 2015 16:55:59 +0000
+	Thu, 24 Sep 2015 17:21:13 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Zf9oM-0008OL-8m for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Sep 2015 16:55:59 +0000
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZfACl-0007OD-Bu for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 24 Sep 2015 17:21:13 +0000
+Content-Disposition: inline
+In-Reply-To: <20150923234323.GF3463@schmorp.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,56 +39,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Marc Lehmann <schmorp@schmorp.de>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Previously, check_sit_types didn't handle different numbers of active logs and
-SSR cases. But, it didn't cause any problem since fixing sit types is harmless.
-Nevertheless, we still don't need to change them all.
+On Thu, Sep 24, 2015 at 01:43:24AM +0200, Marc Lehmann wrote:
+> On Thu, Sep 24, 2015 at 01:30:22AM +0200, Marc Lehmann <schmorp@schmorp.de> wrote:
+> > > One thing I note is that gc_min_sleep_time is not be set in your script,
+> > > so in some condition gc may still do the sleep with gc_min_sleep_time (30
+> > > seconds by default) instead of gc_max_sleep_time which we expect.
+> > 
+> > Ah, sorry, I actually set gc_min_sleep_time to 100, but forgot to include
+> > it.
+> 
+> Sorry, that sounded confusing - I set it to 100 in previous tests, and forgot
+> to include it, so it was running with 30000. When experimenting, I actually
+> do get the gc to do more frequent operations now.
+> 
+> Is there any obvious harm setting it to a very low value (such as 100 or 10)?
+> 
+> I assume all it does is have less time buffer between the last operation
+> and the gc starting. When I write in batches, or when I know the fs will be
+> idle, there shouldn't be any harm, performance wise, of letting it work all
+> the time.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/fsck.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+Yeah, I don't think it does matter with very small time periods, since the timer
+is set after background GC is done.
+But, we use msecs_to_jiffies(), so hope not to use something like 10 ms, since
+each backgroudn GC conducts reading victim blocks into page cache and then just
+sets them as dirty.
+That indicates, after a while, we hope flusher will write them all to disk and
+finally we got a free section.
+So, IMO, we need to give some time slots to flusher as well.
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 70efce6..d3b5dd4 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -18,21 +18,19 @@ static inline int f2fs_set_main_bitmap(struct f2fs_sb_info *sbi, u32 blk,
- {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
- 	struct seg_entry *se;
-+	int fix = 0;
- 
- 	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk));
--	if (se->type != type) {
--		if (type == CURSEG_WARM_DATA) {
--			if (se->type != CURSEG_COLD_DATA) {
--				DBG(1, "Wrong segment type [0x%x] %x -> %x",
--						GET_SEGNO(sbi, blk), se->type,
--						CURSEG_WARM_DATA);
--				se->type = CURSEG_WARM_DATA;
--			}
--		} else {
--			DBG(1, "Wrong segment type [0x%x] %x -> %x",
-+	if (se->type < 0 || se->type >= NO_CHECK_TYPE)
-+		fix = 1;
-+	else if (IS_DATASEG(se->type) != IS_DATASEG(type))
-+		fix = 1;
-+
-+	/* just check data and node types */
-+	if (fix) {
-+		DBG(1, "Wrong segment type [0x%x] %x -> %x",
- 				GET_SEGNO(sbi, blk), se->type, type);
--			se->type = type;
--		}
-+		se->type = type;
- 	}
- 	return f2fs_set_bit(BLKOFF_FROM_MAIN(sbi, blk), fsck->main_area_bitmap);
- }
--- 
-2.1.1
+For example, if write bandwidth is 30MB/s and section size is 128MB, it needs
+about 4secs to write one section.
+So, how about setting
+ - gc_min_time to 1~2 secs,
+ - gc_max_time to 3~4 secs,
+ - gc_idle_time to 10 secs,
+ - reclaim_segments to 64 (sync when 1 section becomes prefree)
 
+Thanks,
+
+> 
+> -- 
+>                 The choice of a       Deliantra, the free code+content MORPG
+>       -----==-     _GNU_              http://www.deliantra.net
+>       ----==-- _       generation
+>       ---==---(_)__  __ ____  __      Marc Lehmann
+>       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+>       -=====/_/_//_/\_,_/ /_/\_\
 
 ------------------------------------------------------------------------------
