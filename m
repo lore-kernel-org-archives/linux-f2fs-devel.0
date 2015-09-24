@@ -1,36 +1,21 @@
-From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: SMR drive test 2; 128GB partition;
- no obvious corruption, much more sane behaviour, weird
- overprovisioning
-Date: Thu, 24 Sep 2015 01:43:24 +0200
-Message-ID: <20150923234323.GF3463@schmorp.de>
-References: <20150810203106.GA4575@jaegeuk-mac02>
-	<20150920235901.GA7017@schmorp.de>
-	<20150921081748.GA5637@schmorp.de>
-	<20150921081937.GA5718@schmorp.de>
-	<20150921095806.GA6809@schmorp.de>
-	<20150923011239.GA32520@jaegeuk-mac02.mot.com>
-	<20150923041523.GB4946@schmorp.de>
-	<20150923060037.GA6667@schmorp.de>
-	<011201d0f5dd$c3a4f650$4aeee2f0$@samsung.com>
-	<20150923233022.GD3463@schmorp.de>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] fsck.f2fs: check sit types for node or data only
+Date: Thu, 24 Sep 2015 09:55:49 -0700
+Message-ID: <1443113749-40220-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZethE-0004ME-Am
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Zf9oN-00018q-9S
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 23:43:32 +0000
-Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZethD-0005zU-2P
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Sep 2015 23:43:32 +0000
-Content-Disposition: inline
-In-Reply-To: <20150923233022.GD3463@schmorp.de>
+	Thu, 24 Sep 2015 16:55:59 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Zf9oM-0008OL-8m for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 24 Sep 2015 16:55:59 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -40,39 +25,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On Thu, Sep 24, 2015 at 01:30:22AM +0200, Marc Lehmann <schmorp@schmorp.de> wrote:
-> > One thing I note is that gc_min_sleep_time is not be set in your script,
-> > so in some condition gc may still do the sleep with gc_min_sleep_time (30
-> > seconds by default) instead of gc_max_sleep_time which we expect.
-> 
-> Ah, sorry, I actually set gc_min_sleep_time to 100, but forgot to include
-> it.
+Previously, check_sit_types didn't handle different numbers of active logs and
+SSR cases. But, it didn't cause any problem since fixing sit types is harmless.
+Nevertheless, we still don't need to change them all.
 
-Sorry, that sounded confusing - I set it to 100 in previous tests, and forgot
-to include it, so it was running with 30000. When experimenting, I actually
-do get the gc to do more frequent operations now.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fsck/fsck.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-Is there any obvious harm setting it to a very low value (such as 100 or 10)?
-
-I assume all it does is have less time buffer between the last operation
-and the gc starting. When I write in batches, or when I know the fs will be
-idle, there shouldn't be any harm, performance wise, of letting it work all
-the time.
-
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 70efce6..d3b5dd4 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -18,21 +18,19 @@ static inline int f2fs_set_main_bitmap(struct f2fs_sb_info *sbi, u32 blk,
+ {
+ 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
+ 	struct seg_entry *se;
++	int fix = 0;
+ 
+ 	se = get_seg_entry(sbi, GET_SEGNO(sbi, blk));
+-	if (se->type != type) {
+-		if (type == CURSEG_WARM_DATA) {
+-			if (se->type != CURSEG_COLD_DATA) {
+-				DBG(1, "Wrong segment type [0x%x] %x -> %x",
+-						GET_SEGNO(sbi, blk), se->type,
+-						CURSEG_WARM_DATA);
+-				se->type = CURSEG_WARM_DATA;
+-			}
+-		} else {
+-			DBG(1, "Wrong segment type [0x%x] %x -> %x",
++	if (se->type < 0 || se->type >= NO_CHECK_TYPE)
++		fix = 1;
++	else if (IS_DATASEG(se->type) != IS_DATASEG(type))
++		fix = 1;
++
++	/* just check data and node types */
++	if (fix) {
++		DBG(1, "Wrong segment type [0x%x] %x -> %x",
+ 				GET_SEGNO(sbi, blk), se->type, type);
+-			se->type = type;
+-		}
++		se->type = type;
+ 	}
+ 	return f2fs_set_bit(BLKOFF_FROM_MAIN(sbi, blk), fsck->main_area_bitmap);
+ }
 -- 
-                The choice of a       Deliantra, the free code+content MORPG
-      -----==-     _GNU_              http://www.deliantra.net
-      ----==-- _       generation
-      ---==---(_)__  __ ____  __      Marc Lehmann
-      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-      -=====/_/_//_/\_,_/ /_/\_\
+2.1.1
+
 
 ------------------------------------------------------------------------------
-Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
-Get real-time metrics from all of your servers, apps and tools
-in one place.
-SourceForge users - Click here to start your Free Trial of Datadog now!
-http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
