@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2] f2fs: fix to correct freed section number during gc
-Date: Fri, 25 Sep 2015 17:50:55 +0800
-Message-ID: <01c001d0f777$c4c973d0$4e5c5b70$@samsung.com>
+Subject: [PATCH] f2fs: remove unneeded f2fs_{,un}lock_op in do_recover_data()
+Date: Fri, 25 Sep 2015 17:54:56 +0800
+Message-ID: <01c101d0f778$5455cdf0$fd0169d0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,72 +12,42 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch fixes to maintain the right section count freed in garbage
-collecting when triggering a foreground gc.
-
-Besides, when a foreground gc is running on current selected section, once
-we fail to gc one segment, it's better to abandon gcing the left segments
-in current section, because anyway we will select next victim for
-foreground gc, so gc on the left segments in previous section will become
-overhead and also cause the long latency for caller.
+Protecting recovery flow by using cp_rwsem is not needed, since we have
+prevent triggering any checkpoint by locking cp_mutex previously.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
-v2:
- o avoid calc the wrong value when freed segments across sections.
- fs/f2fs/gc.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ fs/f2fs/recovery.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e932740..256ebd4 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -802,7 +802,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi)
- 	unsigned int segno = NULL_SEGNO;
- 	unsigned int i;
- 	int gc_type = BG_GC;
--	int nfree = 0;
-+	int sec_freed = 0, seg_freed;
- 	int ret = -1;
- 	struct cp_control cpc;
- 	struct gc_inode_list gc_list = {
-@@ -817,7 +817,7 @@ gc_more:
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		goto stop;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index acc21f2..c5daec5 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -383,15 +383,11 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	start = start_bidx_of_node(ofs_of_node(page), fi);
+ 	end = start + ADDRS_PER_PAGE(page, fi);
  
--	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, nfree)) {
-+	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, sec_freed)) {
- 		gc_type = FG_GC;
- 		if (__get_victim(sbi, &segno, gc_type) || prefree_segments(sbi))
- 			write_checkpoint(sbi, &cpc);
-@@ -833,13 +833,25 @@ gc_more:
- 		ra_meta_pages(sbi, GET_SUM_BLOCK(sbi, segno), sbi->segs_per_sec,
- 								META_SSA);
+-	f2fs_lock_op(sbi);
+-
+ 	set_new_dnode(&dn, inode, NULL, NULL, 0);
  
--	for (i = 0; i < sbi->segs_per_sec; i++)
--		nfree += do_garbage_collect(sbi, segno + i, &gc_list, gc_type);
-+	for (i = 0, seg_freed = 0; i < sbi->segs_per_sec; i++) {
-+		/*
-+		 * for FG_GC case, halt gcing left segments once failed one
-+		 * of segments in selected section to avoid long latency.
-+		 */
-+		if (!do_garbage_collect(sbi, segno + i, &gc_list, gc_type) &&
-+				gc_type == FG_GC)
-+			break;
-+		if (gc_type == FG_GC)
-+			seg_freed++;
-+	}
-+
-+	if (seg_freed == sbi->segs_per_sec)
-+		sec_freed++;
+ 	err = get_dnode_of_data(&dn, start, ALLOC_NODE);
+-	if (err) {
+-		f2fs_unlock_op(sbi);
++	if (err)
+ 		goto out;
+-	}
  
- 	if (gc_type == FG_GC)
- 		sbi->cur_victim_sec = NULL_SEGNO;
+ 	f2fs_wait_on_page_writeback(dn.node_page, NODE);
  
--	if (has_not_enough_free_secs(sbi, nfree))
-+	if (has_not_enough_free_secs(sbi, sec_freed))
- 		goto gc_more;
- 
- 	if (gc_type == FG_GC)
+@@ -456,7 +452,6 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 	set_page_dirty(dn.node_page);
+ err:
+ 	f2fs_put_dnode(&dn);
+-	f2fs_unlock_op(sbi);
+ out:
+ 	f2fs_msg(sbi->sb, KERN_NOTICE,
+ 		"recover_data: ino = %lx, recovered = %d blocks, err = %d",
 -- 
 2.5.2
