@@ -1,28 +1,36 @@
 From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: write performance difference 3.18.21/4.2.1
-Date: Fri, 25 Sep 2015 01:27:20 +0200
-Message-ID: <20150924232720.GA2892@schmorp.de>
-References: <20150923215850.GC2360@schmorp.de>
-	<20150923231103.GA3463@schmorp.de>
-	<20150924182836.GD40291@jaegeuk-mac02>
-	<20150924232025.GA2242@schmorp.de>
+Subject: Re: SMR drive test 2; 128GB partition;
+ no obvious corruption, much more sane behaviour, weird
+ overprovisioning
+Date: Fri, 25 Sep 2015 07:42:25 +0200
+Message-ID: <20150925054225.GB486@schmorp.de>
+References: <20150920235901.GA7017@schmorp.de>
+	<20150921081748.GA5637@schmorp.de>
+	<20150921081937.GA5718@schmorp.de>
+	<20150921095806.GA6809@schmorp.de>
+	<20150923011239.GA32520@jaegeuk-mac02.mot.com>
+	<20150923041523.GB4946@schmorp.de>
+	<20150923060037.GA6667@schmorp.de>
+	<20150923220823.GE36564@jaegeuk-mac02.mot.com>
+	<20150923233937.GE3463@schmorp.de>
+	<20150924172749.GB40291@jaegeuk-mac02>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZfFvE-0007kD-KB
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1ZfLmE-0006F5-Ux
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Sep 2015 23:27:28 +0000
+	Fri, 25 Sep 2015 05:42:34 +0000
 Received: from mail.nethype.de ([5.9.56.24])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZfFvC-0006pc-Mc
+	(Exim 4.76) id 1ZfLmD-0000Jz-60
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Sep 2015 23:27:28 +0000
+	Fri, 25 Sep 2015 05:42:34 +0000
 Content-Disposition: inline
-In-Reply-To: <20150924232025.GA2242@schmorp.de>
+In-Reply-To: <20150924172749.GB40291@jaegeuk-mac02>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,42 +43,42 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Sep 25, 2015 at 01:20:25AM +0200, Marc Lehmann <schmorp@schmorp.de>=
- wrote:
-> On Thu, Sep 24, 2015 at 11:28:36AM -0700, Jaegeuk Kim <jaegeuk@kernel.org=
-> wrote:
-> > > The log starts after only 20GB had been written. Here is the status o=
-utput
-> > > at 25GB:
-> > > =
+On Thu, Sep 24, 2015 at 10:27:49AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> > In the end, I might settle with -s64, and currently do tests with -s90.
+> 
+> Got it. But why -s90? :)
 
-> > > http://ue.tst.eu/734f7883107ee4dabff77602db92310b.txt
-> > =
+He :) It's a nothing-special number between 64 and 128, that's all.
 
-> > It seems about 700MB were moved by background GC.
+> I just pushed the patches to master branch in f2fs-tools.git.
+> Could you pull them and check them?
 
-And before rebooting I did another sync, which took 130s, using 100% system
-time. This is the status output afterward:
+Got them, last patch was the "check sit types" change.
 
-http://ue.tst.eu/6d0398c4184fdbef059e90a6bf454241.txt
+> I added one more patch to avoid harmless sit_type fixes previously you reported.
+> 
+> And, for the 8TB case, let me check again. It seems that we need to handle under
+> 1% overprovision ratio. (e.g., 0.5%)
 
-Is it normal that f2fs takes this long for a sync? What happens when,
-during shutdown, there is a timeout during umount and systemd shuts down
-anyway, or the fs doesn't get unmounted, will there be data loss because
-of rolling back?
+That might make me potentially very happy. But my main concern at the
+moment is stability - even when you have a backup, restoring 8TB will take
+days, and backups are never uptodate.
 
-I am a bit concerned, because the filesystem was sitting idle for hours,
-and I expect a crash at that point to not lose any data due to reverting
-to a=A0checkpoint.
+It would be nice to be able to control it more from the user side though.
 
--- =
+For example, I have not yet reached 0.0% free with f2fs. That's fine, I don't
+plan9 to, but I need to know at which percentage should I stop, which is
+something I can only really find out with experiments.
 
+And just filling these 8TB disks takes days, so the question is, can I
+simulate near-full behaviour with smaller partitions.
+
+-- 
                 The choice of a       Deliantra, the free code+content MORPG
-      -----=3D=3D-     _GNU_              http://www.deliantra.net
-      ----=3D=3D-- _       generation
-      ---=3D=3D---(_)__  __ ____  __      Marc Lehmann
-      --=3D=3D---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-      -=3D=3D=3D=3D=3D/_/_//_/\_,_/ /_/\_\
+      -----==-     _GNU_              http://www.deliantra.net
+      ----==-- _       generation
+      ---==---(_)__  __ ____  __      Marc Lehmann
+      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+      -=====/_/_//_/\_,_/ /_/\_\
 
----------------------------------------------------------------------------=
----
+------------------------------------------------------------------------------
