@@ -1,28 +1,35 @@
-From: Chao Yu <yuchaochina@hotmail.com>
-Subject: Re: [PATCH] f2fs: fix to correct freed section number
-	during gc
-Date: Fri, 25 Sep 2015 20:43:57 +0800
-Message-ID: <BLU436-SMTP146E56621F24747C61FF419AB420@phx.gbl>
-References: <00d601d0f539$3d893e90$b89bbbb0$@samsung.com>
-	<20150922225352.GA31427@jaegeuk-mac02.mot.com>
-	<012601d0f5e8$5315a690$f940f3b0$@samsung.com>
-	<20150923210851.GB36564@jaegeuk-mac02.mot.com>
-Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2102\))
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: SMR drive test 2; 128GB partition;
+ no obvious corruption, much more sane behaviour, weird
+ overprovisioning
+Date: Fri, 25 Sep 2015 10:45:46 -0700
+Message-ID: <20150925174546.GA6269@jaegeuk-mac02.mot.com>
+References: <20150921081748.GA5637@schmorp.de>
+	<20150921081937.GA5718@schmorp.de>
+	<20150921095806.GA6809@schmorp.de>
+	<20150923011239.GA32520@jaegeuk-mac02.mot.com>
+	<20150923041523.GB4946@schmorp.de>
+	<20150923060037.GA6667@schmorp.de>
+	<20150923220823.GE36564@jaegeuk-mac02.mot.com>
+	<20150923233937.GE3463@schmorp.de>
+	<20150924172749.GB40291@jaegeuk-mac02>
+	<20150925054225.GB486@schmorp.de>
+Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1ZfSMm-0000et-SA
+	(envelope-from <jaegeuk@kernel.org>) id 1ZfX4G-0004eF-Nh
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Sep 2015 12:44:44 +0000
-Received: from blu004-omc1s11.hotmail.com ([65.55.116.22])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ZfSMm-0006Z8-20
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Sep 2015 12:44:44 +0000
-In-Reply-To: <20150923210851.GB36564@jaegeuk-mac02.mot.com>
+	Fri, 25 Sep 2015 17:45:56 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZfX4F-0006kf-GK for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 25 Sep 2015 17:45:56 +0000
+Content-Disposition: inline
+In-Reply-To: <20150925054225.GB486@schmorp.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,67 +39,161 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Marc Lehmann <schmorp@schmorp.de>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
-
-> On Sep 24, 2015, at 5:08 AM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+On Fri, Sep 25, 2015 at 07:42:25AM +0200, Marc Lehmann wrote:
+> On Thu, Sep 24, 2015 at 10:27:49AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> > > In the end, I might settle with -s64, and currently do tests with -s90.
+> > 
+> > Got it. But why -s90? :)
 > 
-> Hi Chao,
-> 
-> On Wed, Sep 23, 2015 at 06:11:36PM +0800, Chao Yu wrote:
->> Hi Jaegeuk,
->> 
->>> -----Original Message-----
->>> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
->>> Sent: Wednesday, September 23, 2015 6:54 AM
->>> To: Chao Yu
->>> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
->>> Subject: Re: [PATCH] f2fs: fix to correct freed section number during gc
->>> 
->>> Hi Chao,
->>> 
->>> On Tue, Sep 22, 2015 at 09:18:18PM +0800, Chao Yu wrote:
->>>> We pass 'nfree' to has_not_enough_free_secs to check whether there is
->>>> enough free section, but 'nfree' indicates the number of segment gced,
->>>> should alter the value to section number.
->>> 
->>> Yeah, but I think we need to increase nfree only when an entire section is gced
->>> completely, since sometimes nfree can be increased across sections.
->> 
->> Agree, I will fix that.
->> 
->> Still have one question, for foreground gc, why would we give up retry writing
->> out pages of last victim, but trying to select another victim for cleanup?
->> Will new introduced method cause long latency for caller than before?
-> 
-> Hmm. Very occasionally, I've seen that gc goes into an infinite loop to clean up
-> one victim. In order to avoid that, I added giving up and then doing gc again.
-> I think there is no problem in normal cases. Even in an abnormal case, I expect
-> that next victim would be selected again because that should have lowest moving
-> cost.
+> He :) It's a nothing-special number between 64 and 128, that's all.
 
-Got it, thanks for your explanation! :)
+Oh, then, I don't think that is a good magic number.
+It seems that you decided to use -s64, so it'd better to keep it to address
+any perf results.
 
-I have sent the v2 patch, please help to review.
+> > I just pushed the patches to master branch in f2fs-tools.git.
+> > Could you pull them and check them?
+> 
+> Got them, last patch was the "check sit types" change.
+> 
+> > I added one more patch to avoid harmless sit_type fixes previously you reported.
+> > 
+> > And, for the 8TB case, let me check again. It seems that we need to handle under
+> > 1% overprovision ratio. (e.g., 0.5%)
+> 
+> That might make me potentially very happy. But my main concern at the
+> moment is stability - even when you have a backup, restoring 8TB will take
+> days, and backups are never uptodate.
+> 
+> It would be nice to be able to control it more from the user side though.
+> 
+> For example, I have not yet reached 0.0% free with f2fs. That's fine, I don't
+> plan9 to, but I need to know at which percentage should I stop, which is
+> something I can only really find out with experiments.
+> 
+> And just filling these 8TB disks takes days, so the question is, can I
+> simulate near-full behaviour with smaller partitions.
+
+Why not? :)
+I think the behavior should be same. And, it'd good to set small sections
+in order to see it more clearly.
+
+Anyway, I wrote a patch to consider under 1% for large partitions.
+
+ section  ovp ratio  ovp size
+
+For 8TB,
+ -s1    : 0.07%   -> 10GB
+ -s32   : 0.39%   -> 65GB
+ -s64   : 0.55%   -> 92GB
+ -s128  : 0.78%   -> 132GB
+
+For 128GB,
+ -s1    : 0.55%   -> 1.4GB
+ -s32   : 3.14%   -> 8GB
+ -s64   : 4.45%   -> 12GB
+ -s128  : 6.32%   -> 17GB
+
+Let me test this patch for a while, and then push into our git.
 
 Thanks,
 
-> 
->> 
->> Thanks,
-> 
-> ------------------------------------------------------------------------------
-> Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
-> Get real-time metrics from all of your servers, apps and tools
-> in one place.
-> SourceForge users - Click here to start your Free Trial of Datadog now!
-> http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>From 2cdb04b52f202e931e370564396366d44bd4d1e2 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Fri, 25 Sep 2015 09:31:04 -0700
+Subject: [PATCH] mkfs.f2fs: support <1% overprovision ratio
+
+Big partition size needs uner 1% overprovision space to acquire more space.
+
+    section  ovp ratio  ovp size
+For 8TB,
+    -s1    : 0.07%     -> 10GB
+    -s32   : 0.39%     -> 65GB
+    -s64   : 0.55%     -> 92GB
+    -s128  : 0.78%     -> 132GB
+
+For 128GB,
+    -s1    : 0.55%     -> 1.4GB
+    -s32   : 3.14%     -> 8GB
+    -s64   : 4.45%     -> 12GB
+    -s128  : 6.32%     -> 17GB
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ include/f2fs_fs.h       |  2 +-
+ mkfs/f2fs_format.c      | 12 ++++++------
+ mkfs/f2fs_format_main.c |  2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 38a774c..359deec 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -225,7 +225,7 @@ enum f2fs_config_func {
+ struct f2fs_configuration {
+ 	u_int32_t sector_size;
+ 	u_int32_t reserved_segments;
+-	u_int32_t overprovision;
++	double overprovision;
+ 	u_int32_t cur_seg[6];
+ 	u_int32_t segs_per_sec;
+ 	u_int32_t secs_per_zone;
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 2d4ab09..176bdea 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -155,19 +155,19 @@ static void configure_extension_list(void)
+ 	free(config.extension_list);
+ }
+ 
+-static u_int32_t get_best_overprovision(void)
++static double get_best_overprovision(void)
+ {
+-	u_int32_t reserved, ovp, candidate, end, diff, space;
+-	u_int32_t max_ovp = 0, max_space = 0;
++	double reserved, ovp, candidate, end, diff, space;
++	double max_ovp = 0, max_space = 0;
+ 
+ 	if (get_sb(segment_count_main) < 256) {
+ 		candidate = 10;
+ 		end = 95;
+ 		diff = 5;
+ 	} else {
+-		candidate = 1;
++		candidate = 0.01;
+ 		end = 10;
+-		diff = 1;
++		diff = 0.01;
+ 	}
+ 
+ 	for (; candidate <= end; candidate += diff) {
+@@ -533,7 +533,7 @@ static int f2fs_write_check_point_pack(void)
+ 	set_cp(overprov_segment_count, get_cp(overprov_segment_count) +
+ 			get_cp(rsvd_segment_count));
+ 
+-	MSG(0, "Info: Overprovision ratio = %u%%\n", config.overprovision);
++	MSG(0, "Info: Overprovision ratio = %.3lf%%\n", config.overprovision);
+ 	MSG(0, "Info: Overprovision segments = %u (GC reserved = %u)\n",
+ 					get_cp(overprov_segment_count),
+ 					config.reserved_segments);
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index fc612d8..2ea809c 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -99,7 +99,7 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 			config.vol_label = optarg;
+ 			break;
+ 		case 'o':
+-			config.overprovision = atoi(optarg);
++			config.overprovision = atof(optarg);
+ 			break;
+ 		case 'O':
+ 			parse_feature(strdup(optarg));
+-- 
+2.1.1
 
 
 ------------------------------------------------------------------------------
