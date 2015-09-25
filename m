@@ -1,27 +1,26 @@
 From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: sync/umount hang on 3.18.21, 1.4TB gone after crash
-Date: Fri, 25 Sep 2015 08:01:21 +0200
-Message-ID: <20150925060121.GD486@schmorp.de>
-References: <20150923215850.GC2360@schmorp.de>
-	<20150924185023.GE40291@jaegeuk-mac02>
-	<20150925060018.GC486@schmorp.de>
+Subject: Re: write performance difference 3.18.21/4.2.1
+Date: Fri, 25 Sep 2015 08:50:57 +0200
+Message-ID: <20150925065057.GA2638@schmorp.de>
+References: <20150924175131.GC40291@jaegeuk-mac02>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZfM4X-0006TX-Lf
+	(envelope-from <schmorp@schmorp.de>) id 1ZfMqY-0007yr-KS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Sep 2015 06:01:29 +0000
+	Fri, 25 Sep 2015 06:51:06 +0000
 Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZfM4W-0002d3-0m
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZfMqX-0002XB-DO
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 25 Sep 2015 06:01:29 +0000
+	Fri, 25 Sep 2015 06:51:06 +0000
 Content-Disposition: inline
-In-Reply-To: <20150925060018.GC486@schmorp.de>
+In-Reply-To: <20150924175131.GC40291@jaegeuk-mac02>
+	<20150924182836.GD40291@jaegeuk-mac02>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,18 +33,41 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Sep 25, 2015 at 08:00:19AM +0200, Marc Lehmann <schmorp@schmorp.de> wrote:
-> On Thu, Sep 24, 2015 at 11:50:23AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> > > When I came back after ~10 hours, I found a number of hung task messages
-> > > in syslog, and when I entered sync, sync was consuming 100% system time.
-> > 
-> > Hmm, at this time, it would be good to check what process is stuck through
-> > sysrq.
-> 
-> It was only intermittently, but here they are.
+On Thu, Sep 24, 2015 at 11:28:36AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> One thing that we can try is to run the latest f2fs source in v3.18.
+> This branch supports f2fs for v3.18.
 
-I meant "here are backtraces from the stuck process", from syslog, not via
-sysrq of course.
+Ok, please bear with me, the last time I built my own kernel was during
+the 2.4 timeframe, and this is a ubuntu kernel. What I did is this:
+
+   git clone -b linux-3.18 git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
+   cd f2fs/fs/f2fs
+   rsync -avPR include/linux/f2fs_fs.h include/trace/events/f2fs.h /usr/src/linux-headers-3.18.21-031821/.
+   make -C /lib/modules/3.18.21-031821-generic/build/ M=$PWD modules modules_install
+
+I then rmmod f2fs/insmod the resulting module, and tried to mount my
+existing f2fs fs for a quick test, but got a null ptr exception on "mount":
+
+http://ue.tst.eu/e4628dcee97324e580da1bafad938052.txt
+
+Probably caused me not building a full kernel, but recreating how ubuntu
+build their kernels on a debian system isn't something I look forward to.
+
+> For example, if I can represent blocks like:
+[number of logs discussion]
+
+Thanks for this explanation - two logs doesn't look so bad, from a
+locality viewpoint (not a big issue for flash, but a big issue for
+rotational devices - I also realised I can't use dmcache as dmcache, even
+in writethrough mode, writes back all data after an unclean shutdown,
+which would positively kill the disk).
+
+Since whatever speed difference I saw with two logs wasn't big, you
+completely sold me on 6 logs, or 4 (especially if it seepds up the gc,
+which I haven't much tested yet). Two logs was merely a test anyway (the
+same with no_heap, I don't know what it does, but I thought it is worth
+a try, as metadata + data nearer together is better than having them at
+opposite ends of the log or so).
 
 -- 
                 The choice of a       Deliantra, the free code+content MORPG
