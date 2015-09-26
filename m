@@ -1,36 +1,33 @@
 From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: SMR drive test 2; 128GB partition;
- no obvious corruption, much more sane behaviour, weird
- overprovisioning
-Date: Sat, 26 Sep 2015 15:53:53 +0200
-Message-ID: <20150926135353.GA9860@schmorp.de>
-References: <20150923011239.GA32520@jaegeuk-mac02.mot.com>
-	<20150923041523.GB4946@schmorp.de>
-	<20150923060037.GA6667@schmorp.de>
-	<20150923220823.GE36564@jaegeuk-mac02.mot.com>
-	<20150923233937.GE3463@schmorp.de>
-	<20150924172749.GB40291@jaegeuk-mac02>
-	<20150925054225.GB486@schmorp.de>
-	<20150925174546.GA6269@jaegeuk-mac02.mot.com>
-	<20150926033249.GB4311@schmorp.de>
-	<20150926073655.GB13619@jaegeuk-mac02.hsd1.ca.comcast.net>
+Subject: Re: write performance difference 3.18.21/git f2fs
+Date: Sat, 26 Sep 2015 15:59:57 +0200
+Message-ID: <20150926135957.GB9860@schmorp.de>
+References: <20150925182646.GB6998@jaegeuk-mac02>
+	<20150925182646.GB6998@jaegeuk-mac02>
+	<20150925182034.GA6998@jaegeuk-mac02>
+	<20150925182034.GA6998@jaegeuk-mac02>
+	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
+	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
+	<20150926032218.GA4311@schmorp.de>
+	<20150926052551.GA2243@schmorp.de>
+	<20150926075253.GD13619@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZfpvP-0005DJ-Og
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1Zfq1F-0007X4-Kt
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 13:54:03 +0000
+	Sat, 26 Sep 2015 14:00:05 +0000
 Received: from mail.nethype.de ([5.9.56.24])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZfpvN-00088N-QG
+	(Exim 4.76) id 1Zfq1E-0008QU-46
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 13:54:03 +0000
+	Sat, 26 Sep 2015 14:00:05 +0000
 Content-Disposition: inline
-In-Reply-To: <20150926073655.GB13619@jaegeuk-mac02.hsd1.ca.comcast.net>
+In-Reply-To: <20150926075253.GD13619@jaegeuk-mac02.hsd1.ca.comcast.net>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -43,100 +40,23 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Sat, Sep 26, 2015 at 12:36:55AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> > Care to share why? :)
-> 
-> Mostly, in the flash storages, it is multiple 2MB normally. :)
+On Sat, Sep 26, 2015 at 12:52:53AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> > Just for fun I'll start doing a -s64 run.
 
-Well, any value of -s gives me a multiple of 2MB, no? :)
+(which had the same result).
 
-> > Is there anysthing specially good for numbers of two? Or do you just want top
-> > reduce the number of changed variables?
-> 
-> IMO, likewise flash storages, it needs to investigate the raw device
-> characteristics.
+> Okay, so before finding bad commits, if possible, can you get block traces?
 
-Keep in mind that I don't use it for flash, but smr drives.
+If you can teach me how to, sure!
 
-We already know the raw device characteristics, basically, the zones are
-between 15 and 40 or so MB in size (on the seagate 8tb drive), and they
-likely don't have "even" sizes at all.
+In the meantime, maybe what happened is that f2fs leaves some gaps (e.g.
+for alignment) when writing now, and didn't in 3.18? That would somehow
+explain what I see.
 
-It's also by far not easy to benchmark these things, the disks can
-buffer up to 25GB of random writes (and then might need several hours of
-cleanup). Failing a linear write incurs a 0.6-1.6s penalty, to be paid
-much later. It's a shame that none of the drive companies actually release
-any usable info on their drives.
-
-These guys made a hole into the disk and devised a lot of benchmarks to
-find out the characteristics of these drives.
-
-https://www.usenix.org/system/files/conference/fast15/fast15-paper-aghayev.pdf
-
-So, the strategy for a fs would be to write linearly, most of the time,
-without any gaps. f2fs (at least in 3.18.x) manages to do that very
-nicely, which is why I really try to get it working.
-
-But for writing once, any value of -s would probably suffice. There are
-two problems when the disk gets full:
-
-a) ipu writes. the drive can't do, so gc might be cheaper.
-b) reuse of sections - if sections are reasonably large, if one gets freed
-and reused, it should be large to guarantee large linear writes again.
-
-b) is the reason behind me trying large values of -s.
-
-Since I know that f2fs is the only fs that I tested that can have a sustained
-write performance on these drives that is near the physical drive
-characteristics, all that needs to be done is to see how f2fs performs after
-it starts gc'ing.
-
-That's why I am so interested in disk full conditions - writing the disk
-linearly once is easy, I can just write a tar to the device. Ensuring that
-writes are large linear after deleting and cleaning up is harder.
-
-nilfs is a good example - it should fit smr drives perfectly, until they
-are nearly full, after which nilfs still matches smr drives perfectly,
-but waiting for 8TB to be shuffled around to delete some files can take
-days.  More surprising is that nilfs phenomenally fails with these drives,
-performance wise, for reaosns I haven't investigated (my guess is that
-nilfs leaves gaps).
-
-> I think this can be used for SMR too.
-
-You can run any blockdevice operation on these drives, but the results
-from flashbench will be close to meaningless for them. For example, you
-can't distinguish betwene a nonaligned write causing a read-modify write
-from an aligned large write, or a partial write, by access time, as they
-will probably all have similar access times.
-
-> I think there might be some hints for section size at first and performance
-> variation as well.
-
-I think you confuse these drives with flash drives - while they share some
-characteristics, they are completely unlike flash. There is no translation
-layer, there is no need for wear leveling, zones have widely varying
-sizes, appending can be expensive or cheap, depending on the write size.
-
-What these drives need is primarily large linear writes without gaps, and
-secondarily any optimisations for rotational media apply. (And for that, f2fs
-performs unexpectedly good, given it wasn't meant for rotational media).
-
-Now, if f2fs can be made to (mostly) work bug-free, but with the
-characteristics of 3.18.21, and the gc can ensure that reasonably big
-areas spanning multiple zones will be reused, then f2fs will be the _ONLY_ fs
-able to take care of drive managed smr disks efficiently.
-
-Specifically, these filesystems do NOT work well with these drives:
-
-nilfs, zfs, btrfs, ext4, xfs
-
-And modifications for these filesystems are either far away in the
-future, or not targetted at drive managed disks (ext4 already has some
-modifications, but they are clearly not very suitable for actual drives,
-assuming these drives have a fast area near the start of the disk, which
-isn't the case). But these disks are not uncommon (seagate is shipping by
-the millions), and will stay with us for quite a while.
+Except that with the 3.18 code, there is virtually no read access while
+writing to the disk for hours. With f2fs git, there is a small 16kb read
+every half a minute or so, and after a while, a lot of "reading a few
+mb/s, while writing a few mb/s".
 
 -- 
                 The choice of a       Deliantra, the free code+content MORPG
