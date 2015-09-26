@@ -1,46 +1,28 @@
-From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: write performance difference 3.18.21/git f2fs
-Date: Sat, 26 Sep 2015 07:57:09 +0200
-Message-ID: <20150926055709.GA2387@schmorp.de>
-References: <20150925182646.GB6998@jaegeuk-mac02>
-	<20150925182646.GB6998@jaegeuk-mac02>
-	<20150925182034.GA6998@jaegeuk-mac02>
-	<20150925182034.GA6998@jaegeuk-mac02>
-	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
-	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
-	<20150926032218.GA4311@schmorp.de>
-	<20150926052551.GA2243@schmorp.de>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: sync/umount hang on 3.18.21, 1.4TB gone after crash
+Date: Sat, 26 Sep 2015 00:27:08 -0700
+Message-ID: <20150926072708.GA13619@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <20150923215850.GC2360@schmorp.de>
+	<20150924185023.GE40291@jaegeuk-mac02>
+	<20150925060018.GC486@schmorp.de>
+	<20150925184202.GD6998@jaegeuk-mac02>
+	<20150926030833.GC3669@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZfiU2-0001T6-1H
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Zfjt9-0005Nc-Ga
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 05:57:18 +0000
-Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZfiU1-0002jU-3M
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 05:57:18 +0000
-Received: from [10.0.0.5] (helo=doom.schmorp.de)
-	by mail.nethype.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1ZfiTu-0007em-Sk
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 05:57:10 +0000
-Received: from [10.0.0.1] (helo=cerebro.laendle)
-	by doom.schmorp.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1ZfiTt-0008S9-Gq
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 05:57:09 +0000
-Received: from root by cerebro.laendle with local (Exim 4.84)
-	(envelope-from <root@schmorp.de>) id 1ZfiTt-0000dH-GC
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 07:57:09 +0200
+	Sat, 26 Sep 2015 07:27:19 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Zfjt7-0005T7-Vq for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 26 Sep 2015 07:27:19 +0000
 Content-Disposition: inline
-In-Reply-To: <20150926052551.GA2243@schmorp.de>
+In-Reply-To: <20150926030833.GC3669@schmorp.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -50,19 +32,158 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Marc Lehmann <schmorp@schmorp.de>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Sat, Sep 26, 2015 at 07:25:51AM +0200, Marc Lehmann <schmorp@schmorp.de> wrote:
-> Just for fun I'll start doing a -s64 run.
+On Sat, Sep 26, 2015 at 05:08:33AM +0200, Marc Lehmann wrote:
+> On Fri, Sep 25, 2015 at 11:42:02AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> > AFAIK, there-in *commit* means syncing metadata, not userdata. Doesn't it?
+> 
+> In general, no, they commit userdata, even if not necessarily at the same
+> time. ext* for example has three modes, and the default commits userdata
+> before the corresponding metadata (data=ordered).
 
-Same thing with -s64.
+Well, when I take a look at other filesystems, filemap_flush is called in some
+specific cases such as release_file, rename, and transaction stuffs.
 
--- 
-                The choice of a       Deliantra, the free code+content MORPG
-      -----==-     _GNU_              http://www.deliantra.net
-      ----==-- _       generation
-      ---==---(_)__  __ ____  __      Marc Lehmann
-      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-      -=====/_/_//_/\_,_/ /_/\_\
+> 
+> But even when you relax this (data=writeback), a few minutes after a file is
+> written, both userdata and metadata are there (usually after 30s). Data that
+> was just being wirtten is generally mixed, but that's an easy to handle
+> trade-off.
+
+I think that should be done by flusher not by filesystem.
+
+> (and then there is data=journal, which should get perfectly ordered
+> behaviour for both, at high cost, and flushoncommit).
+> 
+> Early (linux) versions of XFS were more like a brutal version of writeback
+> - files recently written before a crash were frequently filled with zero
+> bytes (something I haven't seen with irix, which frequently crashed :).
+> But they somehow made it work - I was a frequent victim of zero-filled
+> files, but for many years it didn't happen for me. So while I don't know
+> if it's a guarantee, in practise, file data is there together with the
+> metadata, and usually within the writeback period configured in the kernel
+> (+ whatever time it takes to write out the data, which cna be substantial,
+> but can also be limited in /proc/sys/vm, especially dirty_bytes and
+> dirty_background_bytes).
+
+I think that's why btrfs/xfs/ext4 call filemap_flush at release_file, which
+means data blocks are flushed when all open files are closed.
+Then, xfs and ext4 support metadata journalling, so recent changes also could be
+recovered.
+
+> Note also that filesystems often special case write + rename over old
+> file, and carious other cases, to give a good user experience.
+
+The filemap_flush includes also rename case too.
+
+> So for traditional filesystems, /proc/sys/vm/dirty_bytes + dirty_expire
+> gives a pretty good way of defining a) how much data is lost and b) within
+> which timeframe. Such filesystems also have their own setting for metadata
+> commit, but they are generally within the timeframe of a few seconds to
+> half a minute.
+> 
+> It does not have the nice "exact version of a point in time" qualities you
+> can get from log-based file system, but they give quite nice guarantees in
+> practise - if a file was half-written, it does not have it's full length
+> but corrupted data inside for example.
+
+Indeed, xfs and ext4 have a metadata journalling which gives a good user
+experience in terms of sudden power-offs.
+For now, f2fs recovers only fsynced files after power-cut, so that's
+somewhat different weak point. But, later I think f2fs is also able to support
+that too.
+
+> For things like database files, this could be an issue, as indeed you
+> don't control the order of things written, but programs *know* about this
+> problem and fsync accordingly (and the kernel has extra support for these
+> things, as in sync_page_range and so on).
+> 
+> So, in general, filesystems only commit metadata, but the kernel commits
+> userdata on its own, and as extra feature, "good" filesystems such
+> as xfs or ext* have extra logic to commit userdata before committing
+> corresponding metadata (or after).
+
+Okay.
+
+> Note also that with most journal-based filesystems, commit just forces the
+> issue, both metadata and userdata usually hit the disk much earlier.
+> 
+> In addition, the issue at hand is f2fs losing metadata, not userdata,
+> as all data had been written to the device hours before tghe crash. The
+> userdata was all there, but the filesystem forgot to how to access it.
+
+Yeah, so I think it would be better to do periodic checkpoint, and filemap_flush
+for release_file and rename stuffs.
+
+> 
+> > So, even if you saw no data loss, filesystem doesn't guarantee all the data were
+> > completely recovered, since sync or fsync was not called for that file.
+> 
+> No, but I feel fairly confident that a file written over a minutes ago
+> on a box that is sitting idle for a minute is still there after a crash,
+> barring hardware faults.
+> 
+> Now, I am not neecessarily criticing f2fs here, after all, the problem at
+> hand is f2fs _hanging_, which is clearly a bug. I don't know how well f2fs
+> performs with this bug fixed, regarding data loss.
+> 
+> Also, f2fs is a different beast - syncs can take a veeery long time on f2fs
+> compared to xfs or ext4, and maybe that is due to the design of f2fs (I
+> suppose so, but you can correct me). In which case it might not be such a
+> good idea to commit every 30s. Maybe my performance problem was because
+> f2fs committed every 30s.
+
+Normally the checkpointing time is not so high. So, maybe there are something
+else like flushing data, dentries, or huge number of prefree entries maybe.
+If possible, it needs to take a look at f2fs stat before sync.
+
+> 
+> > I think you need to tune the system-wide parameters related to flusher mentioned
+> > by Chao for your workloads.
+> 
+> I already do configure these extensively, according to my workload. On the
+> box I did my recent tests:
+> 
+>    vm.dirty_ratio = 80
+>    vm.dirty_background_ratio = 4
+>    vm.dirty_writeback_centisecs = 100
+>    vm.dirty_expire_centisecs = 100
+> 
+> These are pretty aggressive. The reason is that the box has 32GB of ram, and
+> with default values it is not uncommon to get 10-20gb of dirty data before a
+> writeback, which then more or less freezes everything and can take a long
+> time. So the above values don't wait long to write userdata, and make sure a
+> process generating lots of dirty blocks can't freeze the system.
+> 
+> Speciifcally, in the case of tar writing files, tar will start blocking after
+> only ~1.3GB of dirty data.
+> 
+> That means with a "conventional" filesystem, I lose at most 1.3GB of data
+> + less than 30s, on a crash.
+> 
+> > And, we need to expect periodic checkpoints are able to recover the previously
+> > flushed data.
+> 
+> Yes, I would consider this a must, however, again, I can accept if f2fs
+> needs much higher "commit" intervals than other filesystems (say, 10
+> minutes), if that is needed to make it performant.
+> 
+> But some form of fixed timeframe is needed, I tzhink, whether it's seconds
+> or minutes.
+
+Will consider that.
+
+Thanks,
+
+> 
+> -- 
+>                 The choice of a       Deliantra, the free code+content MORPG
+>       -----==-     _GNU_              http://www.deliantra.net
+>       ----==-- _       generation
+>       ---==---(_)__  __ ____  __      Marc Lehmann
+>       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+>       -=====/_/_//_/\_,_/ /_/\_\
 
 ------------------------------------------------------------------------------
