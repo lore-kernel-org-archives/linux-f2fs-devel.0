@@ -1,35 +1,30 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: SMR drive test 2; 128GB partition;
- no obvious corruption, much more sane behaviour, weird
- overprovisioning
-Date: Sat, 26 Sep 2015 00:36:55 -0700
-Message-ID: <20150926073655.GB13619@jaegeuk-mac02.hsd1.ca.comcast.net>
-References: <20150921095806.GA6809@schmorp.de>
-	<20150923011239.GA32520@jaegeuk-mac02.mot.com>
-	<20150923041523.GB4946@schmorp.de>
-	<20150923060037.GA6667@schmorp.de>
-	<20150923220823.GE36564@jaegeuk-mac02.mot.com>
-	<20150923233937.GE3463@schmorp.de>
-	<20150924172749.GB40291@jaegeuk-mac02>
-	<20150925054225.GB486@schmorp.de>
-	<20150925174546.GA6269@jaegeuk-mac02.mot.com>
-	<20150926033249.GB4311@schmorp.de>
+Subject: Re: write performance difference 3.18.21/4.2.1
+Date: Sat, 26 Sep 2015 00:48:01 -0700
+Message-ID: <20150926074801.GC13619@jaegeuk-mac02.hsd1.ca.comcast.net>
+References: <20150925182646.GB6998@jaegeuk-mac02>
+	<20150925182646.GB6998@jaegeuk-mac02>
+	<20150925182034.GA6998@jaegeuk-mac02>
+	<20150925182034.GA6998@jaegeuk-mac02>
+	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
+	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
+	<20150926032218.GA4311@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Zfk2b-0005cy-SR
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZfkDL-00049y-Iq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 07:37:05 +0000
+	Sat, 26 Sep 2015 07:48:11 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Zfk2a-0005gO-Hv for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 07:37:05 +0000
+	id 1ZfkDK-00060H-6D for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 26 Sep 2015 07:48:11 +0000
 Content-Disposition: inline
-In-Reply-To: <20150926033249.GB4311@schmorp.de>
+In-Reply-To: <20150926032218.GA4311@schmorp.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -42,73 +37,57 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Marc Lehmann <schmorp@schmorp.de>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Sat, Sep 26, 2015 at 05:32:53AM +0200, Marc Lehmann wrote:
-> On Fri, Sep 25, 2015 at 10:45:46AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> > > He :) It's a nothing-special number between 64 and 128, that's all.
+On Sat, Sep 26, 2015 at 05:22:18AM +0200, Marc Lehmann wrote:
+> On Fri, Sep 25, 2015 at 05:47:12PM +0800, Chao Yu <chao2.yu@samsung.com> wrote:
+> > Please revert the commit 7c5e466755ff ("f2fs: readahead cp payload
+> > pages when mount") since in this commit we try to access invalid
+> > SIT_I(sbi)->sit_base_addr which should be inited later.
+> 
+> Wow, you are fast. To make it short, the new module loads and mounts. Since
+> systemd failed to clear the dmcache again, I need to wait a few hours for it
+> to write back before testing. On the plus side, this gives a fairly high
+> chance of fragmented memory, so I can test the code that avoids oom on mount
+> as well :)
+> 
+> > > Since whatever speed difference I saw with two logs wasn't big, you
+> > > completely sold me on 6 logs, or 4 (especially if it seepds up the gc,
+> > > which I haven't much tested yet). Two logs was merely a test anyway (the
+> > > same with no_heap, I don't know what it does, but I thought it is worth
+> > > a try, as metadata + data nearer together is better than having them at
+> > > opposite ends of the log or so).
 > > 
-> > Oh, then, I don't think that is a good magic number.
+> > If the section size is pretty large, no_heap would be enough. The original
+> > intention was to provide more contiguous space for data only so that a big
+> > file could have a large extent instead of splitting by its metadata.
 > 
-> Care to share why? :)
+> Great, so no_heap it is.
+> 
+> Also, I was thinking a bit more on the active_logs issue.
+> 
+> The problem with SMR drives and too many logs is not just locality,
+> but the fatc that appending data, unlike as with flash, requires a
+> read-modify-write cycle. Likewise, I am pretty sure the disk can't keep
+> 6 open write fragments in memory - maybe it can only keep one, so every
+> metadata write might cause a RMW cycle again, because it's not big enough
+> to fill a full zone (17-30MB).
+> 
+> So, hmm, well, separating the metadata that frequently changes
+> (directories) form the rest is necessary for the GC to not have to copy
+> almost all data block, but otherwise, it's nice if everything else clumps
+> together.
+> 
+> (likewise, stat information probably changes a lot more often than file
+> data, e.g. chown -R user . will change stat data regardless of whether the
+> files already belong to a user, and it would be nice if that menas the
+> data blocks can be kept untouched. Similar, renames).
+> 
+> What would you recommend for this case?
 
-Mostly, in the flash storages, it is multiple 2MB normally. :)
+Hmm, from the device side, IMO, it's not a big concern for the number of open
+zones, since f2fs normally tries to merge data and node IOs separately in order
+to submit a big IO at once.
+So, in my sense, it is not a big deal to use more logs.
 
-> 
-> > It seems that you decided to use -s64, so it'd better to keep it to address
-> > any perf results.
-> 
-> Is there anysthing specially good for numbers of two? Or do you just want top
-> reduce the number of changed variables?
-
-IMO, likewise flash storages, it needs to investigate the raw device
-characteristics.
-
-I think this can be used for SMR too.
-
-https://github.com/bradfa/flashbench
-
-I think there might be some hints for section size at first and performance
-variation as well.
-
-> I'f yes, should I do the 3.18.21 test with -s90 (as the 3.18.21 and 4.2.1
-> tests before), or with -s64?
-> 
-> > > And just filling these 8TB disks takes days, so the question is, can I
-> > > simulate near-full behaviour with smaller partitions.
-> > 
-> > Why not? :)
-> > I think the behavior should be same. And, it'd good to set small sections
-> > in order to see it more clearly.
-> 
-> The section size is a critical parameter for these drives. Also, the data
-> mix is the same for 8TB and smaller partitions (in these tests, which were
-> meantr to be the first round of tests only anyway).
-> 
-> So a smaller section size compared to the full partition test, I think,
-> would result in very different behaviour. Likewise, if a small partition
-> has comparatively more (or absolutely less) overprovision (and/or reserved
-> space), this again might cause different behaviour.
-> 
-> At least to me, it's not obvious what a good comparable overprovision ratio
-> is to test full device behaviour on a smaller partition.
-> 
-> Also, section sizes vary by a factor fo two over the device, so what might
-> work fine with -s64 in the middle of the disk, might work badly at the end.
-> 
-> Likewise, since the files don't get larger, the GC might do a much better
-> job at -s64 than at -s128 (almost certainly, actually).
-> 
-> As a thought experiment, what happens when I use -s8 or a similar small size?
-> If the GC writes linearly, there won't be too many RMW cycles. But is that
-> guaranteed even with an aging filesystem?
-> 
-> If yes, then the best -s number might be 1. Because all I rely on is
-> mostly linear batched large writes, not so much large batched reads.
-> 
-> That is, unfortunately, not something I can easily test.
-> 
-> > Let me test this patch for a while, and then push into our git.
-> 
-> Thanks, will do so, then.
 > 
 > -- 
 >                 The choice of a       Deliantra, the free code+content MORPG
@@ -117,5 +96,11 @@ variation as well.
 >       ---==---(_)__  __ ____  __      Marc Lehmann
 >       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
 >       -=====/_/_//_/\_,_/ /_/\_\
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
