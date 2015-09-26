@@ -1,44 +1,36 @@
 From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: write performance difference 3.18.21/4.2.1
-Date: Sat, 26 Sep 2015 05:22:18 +0200
-Message-ID: <20150926032218.GA4311@schmorp.de>
-References: <20150925182646.GB6998@jaegeuk-mac02>
+Subject: Re: SMR drive test 2; 128GB partition;
+ no obvious corruption, much more sane behaviour, weird
+ overprovisioning
+Date: Sat, 26 Sep 2015 05:32:53 +0200
+Message-ID: <20150926033249.GB4311@schmorp.de>
+References: <20150921081937.GA5718@schmorp.de>
+	<20150921095806.GA6809@schmorp.de>
+	<20150923011239.GA32520@jaegeuk-mac02.mot.com>
+	<20150923041523.GB4946@schmorp.de>
+	<20150923060037.GA6667@schmorp.de>
+	<20150923220823.GE36564@jaegeuk-mac02.mot.com>
+	<20150923233937.GE3463@schmorp.de>
+	<20150924172749.GB40291@jaegeuk-mac02>
+	<20150925054225.GB486@schmorp.de>
+	<20150925174546.GA6269@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1Zfg4B-0007Lz-Fr
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1ZfgER-0008Af-R3
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 03:22:27 +0000
+	Sat, 26 Sep 2015 03:33:03 +0000
 Received: from mail.nethype.de ([5.9.56.24])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1Zfg49-0007k8-F5
+	(Exim 4.76) id 1ZfgEQ-00080b-7o
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 03:22:27 +0000
-Received: from [10.0.0.5] (helo=doom.schmorp.de)
-	by mail.nethype.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1Zfg42-0002Uo-Be
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 03:22:18 +0000
-Received: from [10.0.0.1] (helo=cerebro.laendle)
-	by doom.schmorp.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1Zfg42-0002eZ-72
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 03:22:18 +0000
-Received: from root by cerebro.laendle with local (Exim 4.84)
-	(envelope-from <root@schmorp.de>) id 1Zfg42-00019s-6M
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 05:22:18 +0200
+	Sat, 26 Sep 2015 03:33:03 +0000
 Content-Disposition: inline
-In-Reply-To: <20150925182646.GB6998@jaegeuk-mac02>
-	<20150925182646.GB6998@jaegeuk-mac02>
-	<20150925182034.GA6998@jaegeuk-mac02>
-	<20150925182034.GA6998@jaegeuk-mac02>
-	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
-	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
+In-Reply-To: <20150925174546.GA6269@jaegeuk-mac02.mot.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -48,52 +40,62 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Sep 25, 2015 at 05:47:12PM +0800, Chao Yu <chao2.yu@samsung.com> wrote:
-> Please revert the commit 7c5e466755ff ("f2fs: readahead cp payload
-> pages when mount") since in this commit we try to access invalid
-> SIT_I(sbi)->sit_base_addr which should be inited later.
-
-Wow, you are fast. To make it short, the new module loads and mounts. Since
-systemd failed to clear the dmcache again, I need to wait a few hours for it
-to write back before testing. On the plus side, this gives a fairly high
-chance of fragmented memory, so I can test the code that avoids oom on mount
-as well :)
-
-> > Since whatever speed difference I saw with two logs wasn't big, you
-> > completely sold me on 6 logs, or 4 (especially if it seepds up the gc,
-> > which I haven't much tested yet). Two logs was merely a test anyway (the
-> > same with no_heap, I don't know what it does, but I thought it is worth
-> > a try, as metadata + data nearer together is better than having them at
-> > opposite ends of the log or so).
+On Fri, Sep 25, 2015 at 10:45:46AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> > He :) It's a nothing-special number between 64 and 128, that's all.
 > 
-> If the section size is pretty large, no_heap would be enough. The original
-> intention was to provide more contiguous space for data only so that a big
-> file could have a large extent instead of splitting by its metadata.
+> Oh, then, I don't think that is a good magic number.
 
-Great, so no_heap it is.
+Care to share why? :)
 
-Also, I was thinking a bit more on the active_logs issue.
+> It seems that you decided to use -s64, so it'd better to keep it to address
+> any perf results.
 
-The problem with SMR drives and too many logs is not just locality,
-but the fatc that appending data, unlike as with flash, requires a
-read-modify-write cycle. Likewise, I am pretty sure the disk can't keep
-6 open write fragments in memory - maybe it can only keep one, so every
-metadata write might cause a RMW cycle again, because it's not big enough
-to fill a full zone (17-30MB).
+Is there anysthing specially good for numbers of two? Or do you just want top
+reduce the number of changed variables?
 
-So, hmm, well, separating the metadata that frequently changes
-(directories) form the rest is necessary for the GC to not have to copy
-almost all data block, but otherwise, it's nice if everything else clumps
-together.
+I'f yes, should I do the 3.18.21 test with -s90 (as the 3.18.21 and 4.2.1
+tests before), or with -s64?
 
-(likewise, stat information probably changes a lot more often than file
-data, e.g. chown -R user . will change stat data regardless of whether the
-files already belong to a user, and it would be nice if that menas the
-data blocks can be kept untouched. Similar, renames).
+> > And just filling these 8TB disks takes days, so the question is, can I
+> > simulate near-full behaviour with smaller partitions.
+> 
+> Why not? :)
+> I think the behavior should be same. And, it'd good to set small sections
+> in order to see it more clearly.
 
-What would you recommend for this case?
+The section size is a critical parameter for these drives. Also, the data
+mix is the same for 8TB and smaller partitions (in these tests, which were
+meantr to be the first round of tests only anyway).
+
+So a smaller section size compared to the full partition test, I think,
+would result in very different behaviour. Likewise, if a small partition
+has comparatively more (or absolutely less) overprovision (and/or reserved
+space), this again might cause different behaviour.
+
+At least to me, it's not obvious what a good comparable overprovision ratio
+is to test full device behaviour on a smaller partition.
+
+Also, section sizes vary by a factor fo two over the device, so what might
+work fine with -s64 in the middle of the disk, might work badly at the end.
+
+Likewise, since the files don't get larger, the GC might do a much better
+job at -s64 than at -s128 (almost certainly, actually).
+
+As a thought experiment, what happens when I use -s8 or a similar small size?
+If the GC writes linearly, there won't be too many RMW cycles. But is that
+guaranteed even with an aging filesystem?
+
+If yes, then the best -s number might be 1. Because all I rely on is
+mostly linear batched large writes, not so much large batched reads.
+
+That is, unfortunately, not something I can easily test.
+
+> Let me test this patch for a while, and then push into our git.
+
+Thanks, will do so, then.
 
 -- 
                 The choice of a       Deliantra, the free code+content MORPG
