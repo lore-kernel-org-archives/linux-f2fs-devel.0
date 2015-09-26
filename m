@@ -1,26 +1,36 @@
-From: Nicholas Krause <xerofoify@gmail.com>
-Subject: [PATCH RESEND #2] f2fs:Fix incorrect return statement in
-	the function f2fs_ioc_release_volatile_write
-Date: Sat, 26 Sep 2015 09:37:51 -0400
-Message-ID: <1443274671-18077-1-git-send-email-xerofoify@gmail.com>
+From: Marc Lehmann <schmorp@schmorp.de>
+Subject: Re: SMR drive test 2; 128GB partition;
+ no obvious corruption, much more sane behaviour, weird
+ overprovisioning
+Date: Sat, 26 Sep 2015 15:53:53 +0200
+Message-ID: <20150926135353.GA9860@schmorp.de>
+References: <20150923011239.GA32520@jaegeuk-mac02.mot.com>
+	<20150923041523.GB4946@schmorp.de>
+	<20150923060037.GA6667@schmorp.de>
+	<20150923220823.GE36564@jaegeuk-mac02.mot.com>
+	<20150923233937.GE3463@schmorp.de>
+	<20150924172749.GB40291@jaegeuk-mac02>
+	<20150925054225.GB486@schmorp.de>
+	<20150925174546.GA6269@jaegeuk-mac02.mot.com>
+	<20150926033249.GB4311@schmorp.de>
+	<20150926073655.GB13619@jaegeuk-mac02.hsd1.ca.comcast.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <xerofoify@gmail.com>) id 1Zfpfu-000726-GY
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1ZfpvP-0005DJ-Og
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 13:38:02 +0000
-Received: from mail-ig0-f182.google.com ([209.85.213.182])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1Zfpfs-0000vn-Pm
+	Sat, 26 Sep 2015 13:54:03 +0000
+Received: from mail.nethype.de ([5.9.56.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZfpvN-00088N-QG
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Sep 2015 13:38:02 +0000
-Received: by igcpb10 with SMTP id pb10so29117548igc.1
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 26 Sep 2015 06:37:55 -0700 (PDT)
+	Sat, 26 Sep 2015 13:54:03 +0000
+Content-Disposition: inline
+In-Reply-To: <20150926073655.GB13619@jaegeuk-mac02.hsd1.ca.comcast.net>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,39 +40,110 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This fixes the incorrect return statement at the end of the function
-f2fs_ioc_release_volatile_write's body for returning zero as this is
-incorrect due to the function call before this return statement to
-the function punch_hole being able to fail and we should return this
-function's return fail directly in order to signal to callers of the
-function f2fs_ioc_release_volatile if a failure arises with this call
-to punch_hole fails.
+On Sat, Sep 26, 2015 at 12:36:55AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> > Care to share why? :)
+> 
+> Mostly, in the flash storages, it is multiple 2MB normally. :)
 
-Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/file.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Well, any value of -s gives me a multiple of 2MB, no? :)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b0f38c3..ec323b4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1369,8 +1369,7 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
- 	if (!f2fs_is_first_block_written(inode))
- 		return truncate_partial_data_page(inode, 0, true);
- 
--	punch_hole(inode, 0, F2FS_BLKSIZE);
--	return 0;
-+	return punch_hole(inode, 0, F2FS_BLKSIZE);
- }
- 
- static int f2fs_ioc_abort_volatile_write(struct file *filp)
+> > Is there anysthing specially good for numbers of two? Or do you just want top
+> > reduce the number of changed variables?
+> 
+> IMO, likewise flash storages, it needs to investigate the raw device
+> characteristics.
+
+Keep in mind that I don't use it for flash, but smr drives.
+
+We already know the raw device characteristics, basically, the zones are
+between 15 and 40 or so MB in size (on the seagate 8tb drive), and they
+likely don't have "even" sizes at all.
+
+It's also by far not easy to benchmark these things, the disks can
+buffer up to 25GB of random writes (and then might need several hours of
+cleanup). Failing a linear write incurs a 0.6-1.6s penalty, to be paid
+much later. It's a shame that none of the drive companies actually release
+any usable info on their drives.
+
+These guys made a hole into the disk and devised a lot of benchmarks to
+find out the characteristics of these drives.
+
+https://www.usenix.org/system/files/conference/fast15/fast15-paper-aghayev.pdf
+
+So, the strategy for a fs would be to write linearly, most of the time,
+without any gaps. f2fs (at least in 3.18.x) manages to do that very
+nicely, which is why I really try to get it working.
+
+But for writing once, any value of -s would probably suffice. There are
+two problems when the disk gets full:
+
+a) ipu writes. the drive can't do, so gc might be cheaper.
+b) reuse of sections - if sections are reasonably large, if one gets freed
+and reused, it should be large to guarantee large linear writes again.
+
+b) is the reason behind me trying large values of -s.
+
+Since I know that f2fs is the only fs that I tested that can have a sustained
+write performance on these drives that is near the physical drive
+characteristics, all that needs to be done is to see how f2fs performs after
+it starts gc'ing.
+
+That's why I am so interested in disk full conditions - writing the disk
+linearly once is easy, I can just write a tar to the device. Ensuring that
+writes are large linear after deleting and cleaning up is harder.
+
+nilfs is a good example - it should fit smr drives perfectly, until they
+are nearly full, after which nilfs still matches smr drives perfectly,
+but waiting for 8TB to be shuffled around to delete some files can take
+days.  More surprising is that nilfs phenomenally fails with these drives,
+performance wise, for reaosns I haven't investigated (my guess is that
+nilfs leaves gaps).
+
+> I think this can be used for SMR too.
+
+You can run any blockdevice operation on these drives, but the results
+from flashbench will be close to meaningless for them. For example, you
+can't distinguish betwene a nonaligned write causing a read-modify write
+from an aligned large write, or a partial write, by access time, as they
+will probably all have similar access times.
+
+> I think there might be some hints for section size at first and performance
+> variation as well.
+
+I think you confuse these drives with flash drives - while they share some
+characteristics, they are completely unlike flash. There is no translation
+layer, there is no need for wear leveling, zones have widely varying
+sizes, appending can be expensive or cheap, depending on the write size.
+
+What these drives need is primarily large linear writes without gaps, and
+secondarily any optimisations for rotational media apply. (And for that, f2fs
+performs unexpectedly good, given it wasn't meant for rotational media).
+
+Now, if f2fs can be made to (mostly) work bug-free, but with the
+characteristics of 3.18.21, and the gc can ensure that reasonably big
+areas spanning multiple zones will be reused, then f2fs will be the _ONLY_ fs
+able to take care of drive managed smr disks efficiently.
+
+Specifically, these filesystems do NOT work well with these drives:
+
+nilfs, zfs, btrfs, ext4, xfs
+
+And modifications for these filesystems are either far away in the
+future, or not targetted at drive managed disks (ext4 already has some
+modifications, but they are clearly not very suitable for actual drives,
+assuming these drives have a fast area near the start of the disk, which
+isn't the case). But these disks are not uncommon (seagate is shipping by
+the millions), and will stay with us for quite a while.
+
 -- 
-2.1.4
-
+                The choice of a       Deliantra, the free code+content MORPG
+      -----==-     _GNU_              http://www.deliantra.net
+      ----==-- _       generation
+      ---==---(_)__  __ ____  __      Marc Lehmann
+      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+      -=====/_/_//_/\_,_/ /_/\_\
 
 ------------------------------------------------------------------------------
