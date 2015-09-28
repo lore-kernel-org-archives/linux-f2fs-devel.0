@@ -1,30 +1,24 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: fix to update {m,
-	c}time correctly when truncating larger
-Date: Mon, 28 Sep 2015 17:46:01 +0800
-Message-ID: <006f01d0f9d2$94c9dcd0$be5d9670$@samsung.com>
+From: Yaowei Bai <bywxiaobai@163.com>
+Subject: [PATCH 08/17] fs/f2fs: remove unnecessary new_valid_dev
+	check
+Date: Mon, 28 Sep 2015 21:55:02 +0800
+Message-ID: <1443448502-5331-1-git-send-email-bywxiaobai@163.com>
+References: <1443446807-4838-1-git-send-email-bywxiaobai@163.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZgV1H-0004wQ-Vt
+	(envelope-from <bywxiaobai@163.com>) id 1ZgYvr-00061d-Nd
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Sep 2015 09:46:51 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZgV1G-0000Nk-Ia
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Sep 2015 09:46:51 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NVD02VFESHM0Y90@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Sep 2015 18:46:43 +0900 (KST)
-Content-language: zh-cn
+	Mon, 28 Sep 2015 13:57:31 +0000
+Received: from m12-18.163.com ([220.181.12.18])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZgYvn-0002c3-Af for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Sep 2015 13:57:31 +0000
+In-Reply-To: <1443446807-4838-1-git-send-email-bywxiaobai@163.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,47 +28,33 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: viro@zeniv.linux.org.uk, jaegeuk@kernel.org, cm224.lee@samsung.com, chao2.yu@samsung.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch fixes to update ctime and atime correctly when truncating
-larger in ->setattr.
+As new_valid_dev always returns 1, so !new_valid_dev check is not
+needed, remove it.
 
-The bug is reported by xfstest generic/313 as below:
-
-generic/313 2s ... - output mismatch (see ./results/generic/313.out.bad)
-    --- tests/generic/313.out   2015-08-04 15:28:53.430798882 +0800
-    +++ results/generic/313.out.bad   2015-09-28 17:04:27.294278016 +0800
-    @@ -1,2 +1,4 @@
-     QA output created by 313
-     Silence is golden
-    +ctime not updated after truncate up
-    +mtime not updated after truncate up
-    ...
-    (Run 'diff -u tests/generic/313.out tests/generic/313.out.bad'  to see the entire diff)
-Ran: generic/313
-Failures: generic/313
-Failed 1 of 1 tests
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Yaowei Bai <bywxiaobai@163.com>
 ---
- fs/f2fs/file.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/namei.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c365f66..06898f1 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -681,6 +681,7 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 			 * larger than i_size.
- 			 */
- 			truncate_setsize(inode, attr->ia_size);
-+			inode->i_mtime = inode->i_ctime = CURRENT_TIME;
- 		}
- 	}
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index a680bf3..c87ec52 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -478,9 +478,6 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
+ 	struct inode *inode;
+ 	int err = 0;
  
+-	if (!new_valid_dev(rdev))
+-		return -EINVAL;
+-
+ 	f2fs_balance_fs(sbi);
+ 
+ 	inode = f2fs_new_inode(dir, mode);
 -- 
-2.5.2
+1.9.1
 
 
 
