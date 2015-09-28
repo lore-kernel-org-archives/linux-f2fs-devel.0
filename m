@@ -1,83 +1,81 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v3] f2fs: fix to correct freed section number during gc
-Date: Mon, 28 Sep 2015 17:42:24 +0800
-Message-ID: <006e01d0f9d2$126cc130$37464390$@samsung.com>
+Subject: [PATCH] f2fs: fix to update {m,
+	c}time correctly when truncating larger
+Date: Mon, 28 Sep 2015 17:46:01 +0800
+Message-ID: <006f01d0f9d2$94c9dcd0$be5d9670$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1ZgV1H-0004wQ-Vt
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Sep 2015 09:46:51 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZgV1G-0000Nk-Ia
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Sep 2015 09:46:51 +0000
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0NVD02VFESHM0Y90@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Sep 2015 18:46:43 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch fixes to maintain the right section count freed in garbage
-collecting when triggering a foreground gc.
+This patch fixes to update ctime and atime correctly when truncating
+larger in ->setattr.
 
-Besides, when a foreground gc is running on current selected section, once
-we fail to gc one segment, it's better to abandon gcing the left segments
-in current section, because anyway we will select next victim for
-foreground gc, so gc on the left segments in previous section will become
-overhead and also cause the long latency for caller.
+The bug is reported by xfstest generic/313 as below:
+
+generic/313 2s ... - output mismatch (see ./results/generic/313.out.bad)
+    --- tests/generic/313.out   2015-08-04 15:28:53.430798882 +0800
+    +++ results/generic/313.out.bad   2015-09-28 17:04:27.294278016 +0800
+    @@ -1,2 +1,4 @@
+     QA output created by 313
+     Silence is golden
+    +ctime not updated after truncate up
+    +mtime not updated after truncate up
+    ...
+    (Run 'diff -u tests/generic/313.out tests/generic/313.out.bad'  to see the entire diff)
+Ran: generic/313
+Failures: generic/313
+Failed 1 of 1 tests
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
-v2:
- o avoid calc the wrong value when freed segments across sections.
-v3:
- o cleanup code suggested by Jaegeuk Kim.
- fs/f2fs/gc.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ fs/f2fs/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e932740..6f435ba 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -802,7 +802,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi)
- 	unsigned int segno = NULL_SEGNO;
- 	unsigned int i;
- 	int gc_type = BG_GC;
--	int nfree = 0;
-+	int sec_freed = 0;
- 	int ret = -1;
- 	struct cp_control cpc;
- 	struct gc_inode_list gc_list = {
-@@ -817,7 +817,7 @@ gc_more:
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		goto stop;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c365f66..06898f1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -681,6 +681,7 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 			 * larger than i_size.
+ 			 */
+ 			truncate_setsize(inode, attr->ia_size);
++			inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+ 		}
+ 	}
  
--	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, nfree)) {
-+	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, sec_freed)) {
- 		gc_type = FG_GC;
- 		if (__get_victim(sbi, &segno, gc_type) || prefree_segments(sbi))
- 			write_checkpoint(sbi, &cpc);
-@@ -833,13 +833,23 @@ gc_more:
- 		ra_meta_pages(sbi, GET_SUM_BLOCK(sbi, segno), sbi->segs_per_sec,
- 								META_SSA);
- 
--	for (i = 0; i < sbi->segs_per_sec; i++)
--		nfree += do_garbage_collect(sbi, segno + i, &gc_list, gc_type);
-+	for (i = 0; i < sbi->segs_per_sec; i++) {
-+		/*
-+		 * for FG_GC case, halt gcing left segments once failed one
-+		 * of segments in selected section to avoid long latency.
-+		 */
-+		if (!do_garbage_collect(sbi, segno + i, &gc_list, gc_type) &&
-+				gc_type == FG_GC)
-+			break;
-+	}
-+
-+	if (i == sbi->segs_per_sec && gc_type == FG_GC)
-+		sec_freed++;
- 
- 	if (gc_type == FG_GC)
- 		sbi->cur_victim_sec = NULL_SEGNO;
- 
--	if (has_not_enough_free_secs(sbi, nfree))
-+	if (has_not_enough_free_secs(sbi, sec_freed))
- 		goto gc_more;
- 
- 	if (gc_type == FG_GC)
 -- 
 2.5.2
+
+
+
+------------------------------------------------------------------------------
