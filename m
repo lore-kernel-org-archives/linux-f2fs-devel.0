@@ -1,36 +1,48 @@
 From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: SMR drive test 2; 128GB partition;
- no obvious corruption, much more sane behaviour, weird
- overprovisioning
-Date: Tue, 29 Sep 2015 09:36:25 +0200
-Message-ID: <20150929073625.GB6395@schmorp.de>
-References: <20150923060037.GA6667@schmorp.de>
-	<20150923220823.GE36564@jaegeuk-mac02.mot.com>
-	<20150923233937.GE3463@schmorp.de>
-	<20150924172749.GB40291@jaegeuk-mac02>
-	<20150925054225.GB486@schmorp.de>
-	<20150925174546.GA6269@jaegeuk-mac02.mot.com>
-	<20150926033249.GB4311@schmorp.de>
-	<20150926073655.GB13619@jaegeuk-mac02.hsd1.ca.comcast.net>
-	<20150926135353.GA9860@schmorp.de>
-	<20150928183352.GB16945@jaegeuk-mac02.mot.com>
+Subject: Re: write performance difference 3.18.21/git f2fs
+Date: Tue, 29 Sep 2015 13:02:04 +0200
+Message-ID: <20150929110204.GA7608@schmorp.de>
+References: <20150925182646.GB6998@jaegeuk-mac02>
+	<20150925182034.GA6998@jaegeuk-mac02>
+	<20150925182034.GA6998@jaegeuk-mac02>
+	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
+	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
+	<20150926032218.GA4311@schmorp.de>
+	<20150926052551.GA2243@schmorp.de>
+	<20150926075253.GD13619@jaegeuk-mac02.hsd1.ca.comcast.net>
+	<20150926135957.GB9860@schmorp.de>
+	<20150928175944.GA16945@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZgpSl-0002Bo-Eo
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1Zgsfo-0002rv-LR
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Sep 2015 07:36:35 +0000
+	Tue, 29 Sep 2015 11:02:16 +0000
 Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZgpSj-0007ZF-BV
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1Zgsfk-0002bG-Na
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Sep 2015 07:36:35 +0000
+	Tue, 29 Sep 2015 11:02:16 +0000
+Received: from [10.0.0.5] (helo=doom.schmorp.de)
+	by mail.nethype.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1Zgsfd-0001PZ-Bp
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Sep 2015 11:02:05 +0000
+Received: from [10.0.0.1] (helo=cerebro.laendle)
+	by doom.schmorp.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1Zgsfc-0008Jp-Vu
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Sep 2015 11:02:04 +0000
+Received: from root by cerebro.laendle with local (Exim 4.84)
+	(envelope-from <root@schmorp.de>) id 1Zgsfc-000246-VL
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 29 Sep 2015 13:02:04 +0200
 Content-Disposition: inline
-In-Reply-To: <20150928183352.GB16945@jaegeuk-mac02.mot.com>
+In-Reply-To: <20150928175944.GA16945@jaegeuk-mac02.mot.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -40,84 +52,90 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Sep 28, 2015 at 11:33:52AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> Hmm. It seems that SMR has 20~25GB cache to absorb random writes with a big
-> block map. Then, it uses a static allocation, which is a kind of very early
-> stage of FTL shapes though.
+On Mon, Sep 28, 2015 at 10:59:44AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> In order to verify this also, could you retrieve the following logs?
 
-Yes, very sucky. For my previous tests, though, the cache is essentially
-irrelevant, and only makes it harder to diagnose problems (it is very
-helpful under light load, though).
+First thing, the allocation-failure-on-mount is still in the backported 3.18
+f2fs module. If it's supposed to be gone in that version, it's not working:
 
-> Comparing to flash, it seems that SMR degrades the performance significantly
-> due to internal cleaning overhead, so I could understand that it needs to
-> control IO patterns very carefully.
+http://ue.tst.eu/a1bc4796012bd7191ab2ada566d4cd22.txt
 
-Yes, basically every write that ends (in time) before the zone boundary
-requires RMW. Even writes that cross the zone boundary might require RMW as
-the disk can probably only overwrite the zone partially once before having to
-rewrite it fully again.
+And here are traces and descriptions. The traces all start directly after
+mount, my test script is http://data.plan9.de/f2fstest
 
-Since basically every write ends within a zone, the only way to keep
-performance is to have very large sequential writes crossing multiple
-zones, in multiple chunks, quick enough so the disk doesn't consider the
-write as finished. Large meaning 100MB+.
+(event tracing is cool btw., thanks for showing me :)
 
-> So, how about testing -s20, which comes resasonble to me?
+################ -s1, f2fs git ##############################################
 
-I can test with -s20, but I fail to see why that is reasonable: -s20 menas
-40MB, which isn't even as large as a single large zone, so spells desaster
-in my book, basically causing a RMW cycle for every single section.
-(Hopefully I just don't understand f2fs well enough).
+   /opt/f2fs-tools/sbin/mkfs.f2fs -lTEST -s1 -t0 -a0 /dev/vg_test/test
+   mount -t f2fs -onoatime,flush_merge,no_heap /dev/vg_test/test /mnt
 
-In any acse, if -s20 if reasonable, then I would assume -s1 would also
-reasonable, as both cause sections to be not larger than a zone.
+For the fist ~120GB, performance was solid (100MB/s+), but much worse than
+stock 3.18.21 (with -s64!).
 
-> > characteristics of 3.18.21, and the gc can ensure that reasonably big
-> > areas spanning multiple zones will be reused, then f2fs will be the _ONLY_ fs
-> > able to take care of drive managed smr disks efficiently.
-> 
-> Hmm. The f2fs has been deployed on smartphones for a couple of years so far.
-> The main stuffs here would be about tuning it with SMR drives.
+3.1.8.21 regularly reached >190MB/s regularly (at least near the beginning
+of the disk) then was idle in between writes, as the source wasn't fast
+enough to keep up. With the backport, tar was almost never idle, and if,
+then not for long, so it could just keep up. (Just keeping up with the
+read speed of a 6-disk raid is very good, but I know f2fs can do much
+better :)
 
-Well, I don't want to sound too negative, and honestly, now that I gathered
-more experience with f2fs I do start to consider it for a lot more than
-originally anticipated (I will try to replace ext4 with it for a database
-partiton on an ssd, and I do think f2fs might be a possible replacement for
-traditional fs's on rotationel media as well).
+At the 122GB mark, it started to slow down, being consistently <100MB/s
 
-However, it's clearly far from stable - the amuount of data corruption I got
-with documented options was enourmous, and the fact that causes sync to hang
-and freeze the fs in 3.18.21 is a serious show-stopper.
+At 127GB, it was <<20MB/s, and I stopped.
 
-You would expect that it doesn't work fine, out of the box, with SMR
-drives, but the reality is that all my early tests showed that f2fs works
-fine (compared to other filesystems even stellar!) on SMR drives, but
-isn't stable itself, independ on the drive technology. Only the later
-kernels fail to perform with SMR drives, and that might or might not be
-fixable.
+Most of the time, the test was write-I/O-bound.
 
-> It's the time for me to take a look at pretty big partitions. :)
+http://data.plan9.de/f2fs.s1.trace.xz
 
-I also have no issues when large partitions pose a problem for f2fs - I
-am confident that this can be fixed. Can't wait to use it for some 40TB
-partitions and see how it performs in practise :)
+################ -s64, f2fs 3.18.21 #########################################
 
-In fact, I think f2fs + dmcache (with google modifications) + traditional
-rotational drives might deliver absolutely superior performance to XFS,
-which is my current workhorse for such partitions.
+As contrast I then did a test with the original f2fs module, and -s64.
+Throughput was up to 202MB/s, almost continously. At the 100GB mark, it
+slowed down to maybe 170MB/s peak, which might well be the speed of the
+platters.
 
-(One would hope fsck times could be improved for this, though, although
-they are not particularly bad at this time).
+I stopped at 217GB.
 
-> Oh, anyway, have you tried just -s1 for fun?
+I have a 12GB mbuffer between the read-tar and the write-tar, configured to
+write minimum bursts of ~120MB. At no time was the buffer filled at >2%,
+while with the -s1, f2fs git case, it was basically always >2%.
 
-Will also try and see how it performs with the first hundred GB or so.
+The trace includes a few minutes after tar was stopped.
 
-Then I will get the traces.
+http://data.plan9.de/f2fs.s64.3.18.trace.xz
+
+################ -s64, f2fs git #############################################
+
+The direct equivalent of the previous test, but with f2fs git.
+
+Almost from the very beginning, it was often write-bound, but could still
+keep up.
+
+At around 70GB, it mostly stopped being able to keep up, and the read
+tar overtook the write tar. At 139GB, performance degraded to <2MB/s. I
+stopped at 147GB.
+
+So mostly, behaviour was the same as with -s1, excedpt it took longer to
+slow down.
+
+http://data.plan9.de/f2fs.s64.trace.xz
+
+################ -s20, f2fs git #############################################
+
+By special request, here is the test with -s20.
+
+Surprisingly, this stopped being able to cope at the 40GB mark, but I didn't
+wait very long after the previous test, maybe that influenced it. I stopped
+at 63GB.
+
+http://data.plan9.de/f2fs.s20.trace.xz
+
+#############################################################################
+
+I hope to find time to look at these traces myself later this day.
 
 -- 
                 The choice of a       Deliantra, the free code+content MORPG
