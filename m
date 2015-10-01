@@ -1,9 +1,8 @@
 From: Marc Lehmann <schmorp@schmorp.de>
 Subject: Re: write performance difference 3.18.21/git f2fs
-Date: Thu, 1 Oct 2015 14:11:20 +0200
-Message-ID: <20151001121120.GA7340@schmorp.de>
-References: <20150925182034.GA6998@jaegeuk-mac02>
-	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
+Date: Thu, 1 Oct 2015 20:51:24 +0200
+Message-ID: <20151001185124.GA9803@schmorp.de>
+References: <01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
 	<01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
 	<20150926032218.GA4311@schmorp.de>
 	<20150926052551.GA2243@schmorp.de>
@@ -12,23 +11,38 @@ References: <20150925182034.GA6998@jaegeuk-mac02>
 	<20150928175944.GA16945@jaegeuk-mac02.mot.com>
 	<20150929110204.GA7608@schmorp.de>
 	<20150929231310.GA6010@jaegeuk-mac02.mot.com>
+	<20151001121120.GA7340@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1Zhchv-0007V2-6c
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1Zhix3-00055b-TT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 01 Oct 2015 12:11:31 +0000
+	Thu, 01 Oct 2015 18:51:33 +0000
 Received: from mail.nethype.de ([5.9.56.24])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1Zhcht-0003dI-Bg
+	(Exim 4.76) id 1Zhix1-0000Ej-JY
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 01 Oct 2015 12:11:31 +0000
+	Thu, 01 Oct 2015 18:51:33 +0000
+Received: from [10.0.0.5] (helo=doom.schmorp.de)
+	by mail.nethype.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1Zhiwu-00005O-Fr
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 01 Oct 2015 18:51:24 +0000
+Received: from [10.0.0.1] (helo=cerebro.laendle)
+	by doom.schmorp.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1Zhiwu-0002Hu-6Z
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 01 Oct 2015 18:51:24 +0000
+Received: from root by cerebro.laendle with local (Exim 4.84)
+	(envelope-from <root@schmorp.de>) id 1Zhiwu-0002ay-61
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 01 Oct 2015 20:51:24 +0200
 Content-Disposition: inline
-In-Reply-To: <20150929231310.GA6010@jaegeuk-mac02.mot.com>
+In-Reply-To: <20151001121120.GA7340@schmorp.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,45 +52,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Sep 29, 2015 at 04:13:10PM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> > First thing, the allocation-failure-on-mount is still in the backported 3.18
-> > f2fs module. If it's supposed to be gone in that version, it's not working:
-> > 
-> > http://ue.tst.eu/a1bc4796012bd7191ab2ada566d4cd22.txt
-> 
-> Oops, it seems I missed some other allocations too.
-> Could you pull the v3.18 again? I changed the patch.
+On Thu, Oct 01, 2015 at 02:11:20PM +0200, Marc Lehmann <schmorp@schmorp.de> wrote:
+> WOW, THAT HELPED A LOT. While the peak throughput seems quite a bit lower
 
-Hmm, I don't see any relevant change in the log, but I will use the newest
-version.
+Ok, for completeness, here is the full log and a description of what was
+going on.
 
-> > (event tracing is cool btw., thanks for showing me :)
-> 
-> Thank you for the below traces.
-> I have two suspicious things from the traces where:
-> 
-> 1. several inline_data conversion of existing files
-> Could you test -o noinline_data and share its trace too?
+http://data.plan9.de/f2fs.s64.noinline.full.trace.xz
 
-WOW, THAT HELPED A LOT. While the peak throughput seems quite a bit lower
-than 3.18 stock (seems, because this might be caused by less peaky, more
-smooth, writes - I am only looking at it with my eyes), it could keep up
-with the reading side easily, and performance didn't degrade so far. The
-test continues, but here is the trace for the first 368GB:
+status at the end + some idle time
+http://ue.tst.eu/d16cf98c72fe9ecbac178ded47a21396.txt
 
-http://data.plan9.de/f2fs.s64.noinline.trace.xz
+It was faster than the reader till roughtly the 1.2TB mark, after
+which it acquired longish episodes of being <<50MB/s (for example,
+around 481842.363964), and also periods of ~20kb/s, due to many small
+WRITE_SYNC's in a row (e.g. at 482329.101222 and 490189.681438,
+http://ue.tst.eu/cc94978eafc736422437a4ab35862c12.txt). The small
+WRITE_SYNCs did not always result in this behaviour by the disk, though.
 
-I had a cursory look at the previous traces, and didn't see any obvious
-problem (if anything, git f2fs seems to leave fewer gaps). However, both
-versions do leave quite a few gaps.
+After that, it was generally write-I/O bound.
 
-I wanted to look at reordering, which might be a problem, too, but didn't
-get to that.
+Also, the gc seemed to have kicked in at around that time, which is kind
+of counterproductive. I increased the gc_* values in /sys, but don't know
+if that had any effect.
 
-Obviously, inline_data was the culprit for the especially bad performance.
+Most importantly, f2fs always recovered and had periods of much faster
+writes (>= 120MB/s), so it's not the case that f2fs somehow saturates the
+internal cache and then becomes slow forever.
+
+Overall, the throughput was 83MB/s, which is 20% worse than stock 3.18, but
+still way beyond what any other filesystem could do.
+
+Also, writing 1TB in a single session, with somewhat reduced speed
+afterwards, would be enough for my purposes, i.e. I can live with that
+(still, gigabit speeds would be nice of course, as that is the data rate I
+often deal with).
+
+Notwithstanding any other improvements you might implement, f2fs has now
+officially become my choice for SMR drives, the only remaining thing
+needed is to convince me of its stability - it seems getting a kernel
+with truly stable f2fs is a bit of a game of chance still, but I guess
+confidence will come with more tests and actualy using it in production,
+which I will do soon.
 
 -- 
                 The choice of a       Deliantra, the free code+content MORPG
