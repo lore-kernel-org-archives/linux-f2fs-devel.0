@@ -1,108 +1,90 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: write performance difference 3.18.21/git f2fs
-Date: Fri, 2 Oct 2015 09:46:45 -0700
-Message-ID: <20151002164645.GA2446@jaegeuk-mac02.mot.com>
-References: <01bf01d0f777$45df5ee0$d19e1ca0$@samsung.com>
-	<20150926032218.GA4311@schmorp.de>
-	<20150926052551.GA2243@schmorp.de>
-	<20150926075253.GD13619@jaegeuk-mac02.hsd1.ca.comcast.net>
-	<20150926135957.GB9860@schmorp.de>
-	<20150928175944.GA16945@jaegeuk-mac02.mot.com>
-	<20150929110204.GA7608@schmorp.de>
-	<20150929231310.GA6010@jaegeuk-mac02.mot.com>
-	<20151001121120.GA7340@schmorp.de>
-	<20151001185124.GA9803@schmorp.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Zi3Ue-0004iC-Ll
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 02 Oct 2015 16:47:36 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Zi3Ud-0000d2-Af for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 02 Oct 2015 16:47:36 +0000
-Content-Disposition: inline
-In-Reply-To: <20151001185124.GA9803@schmorp.de>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Marc Lehmann <schmorp@schmorp.de>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs: merge meta writes as many possible
+Date: Fri,  2 Oct 2015 09:47:50 -0700
+Message-ID: <1443804470-2541-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Oct 01, 2015 at 08:51:24PM +0200, Marc Lehmann wrote:
-> On Thu, Oct 01, 2015 at 02:11:20PM +0200, Marc Lehmann <schmorp@schmorp.de> wrote:
-> > WOW, THAT HELPED A LOT. While the peak throughput seems quite a bit lower
-> 
-> Ok, for completeness, here is the full log and a description of what was
-> going on.
-> 
-> http://data.plan9.de/f2fs.s64.noinline.full.trace.xz
+This patch tries to merge IOs as many as possible when background flusher
+conducts flushing the dirty meta pages.
 
-Now, I can see much clean patterns.
+[Before]
 
-> status at the end + some idle time
-> http://ue.tst.eu/d16cf98c72fe9ecbac178ded47a21396.txt
-> 
-> It was faster than the reader till roughtly the 1.2TB mark, after
-> which it acquired longish episodes of being <<50MB/s (for example,
-> around 481842.363964), and also periods of ~20kb/s, due to many small
-> WRITE_SYNC's in a row (e.g. at 482329.101222 and 490189.681438,
-> http://ue.tst.eu/cc94978eafc736422437a4ab35862c12.txt). The small
-> WRITE_SYNCs did not always result in this behaviour by the disk, though.
+...
+2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 124320, size = 4096
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 124560, size = 32768
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 95720, size = 987136
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123928, size = 4096
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123944, size = 8192
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123968, size = 45056
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 124064, size = 4096
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 97648, size = 1007616
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123776, size = 8192
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123800, size = 32768
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 124624, size = 4096
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 99616, size = 921600
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123608, size = 4096
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123624, size = 77824
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123792, size = 4096
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123864, size = 32768
+...
 
-Hmm, this is because of FS metadata flushes in background.
-I pushed one patch, can you get it through v3.18 branch?
+[After]
 
-> After that, it was generally write-I/O bound.
-> 
-> Also, the gc seemed to have kicked in at around that time, which is kind
-> of counterproductive. I increased the gc_* values in /sys, but don't know
-> if that had any effect.
-> 
-> Most importantly, f2fs always recovered and had periods of much faster
-> writes (>= 120MB/s), so it's not the case that f2fs somehow saturates the
-> internal cache and then becomes slow forever.
-> 
-> Overall, the throughput was 83MB/s, which is 20% worse than stock 3.18, but
-> still way beyond what any other filesystem could do.
+...
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 92168, size = 892928
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 93912, size = 753664
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 95384, size = 716800
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 96784, size = 712704
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 104160, size = 364544
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 104872, size = 356352
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 105568, size = 278528
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 106112, size = 319488
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 106736, size = 258048
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 107240, size = 270336
+f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 107768, size = 180224
+...
 
-Cool.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/checkpoint.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> Also, writing 1TB in a single session, with somewhat reduced speed
-> afterwards, would be enough for my purposes, i.e. I can live with that
-> (still, gigabit speeds would be nice of course, as that is the data rate I
-> often deal with).
-> 
-> Notwithstanding any other improvements you might implement, f2fs has now
-> officially become my choice for SMR drives, the only remaining thing
-> needed is to convince me of its stability - it seems getting a kernel
-> with truly stable f2fs is a bit of a game of chance still, but I guess
-> confidence will come with more tests and actualy using it in production,
-> which I will do soon.
-> 
-> -- 
->                 The choice of a       Deliantra, the free code+content MORPG
->       -----==-     _GNU_              http://www.deliantra.net
->       ----==-- _       generation
->       ---==---(_)__  __ ____  __      Marc Lehmann
->       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
->       -=====/_/_//_/\_,_/ /_/\_\
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index ff53405..da5ee7e 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -257,7 +257,7 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
+ 						long nr_to_write)
+ {
+ 	struct address_space *mapping = META_MAPPING(sbi);
+-	pgoff_t index = 0, end = LONG_MAX;
++	pgoff_t index = 0, end = LONG_MAX, prev = LONG_MAX;
+ 	struct pagevec pvec;
+ 	long nwritten = 0;
+ 	struct writeback_control wbc = {
+@@ -277,6 +277,11 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
+ 		for (i = 0; i < nr_pages; i++) {
+ 			struct page *page = pvec.pages[i];
+ 
++			if (prev == LONG_MAX)
++				prev = page->index - 1;
++			if (nr_to_write != LONG_MAX && page->index != prev + 1)
++				break;
++
+ 			lock_page(page);
+ 
+ 			if (unlikely(page->mapping != mapping)) {
+@@ -297,6 +302,7 @@ continue_unlock:
+ 				break;
+ 			}
+ 			nwritten++;
++			prev = page->index;
+ 			if (unlikely(nwritten >= nr_to_write))
+ 				break;
+ 		}
+-- 
+2.1.1
