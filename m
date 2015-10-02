@@ -1,90 +1,99 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: merge meta writes as many possible
-Date: Fri,  2 Oct 2015 09:47:50 -0700
-Message-ID: <1443804470-2541-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Subject: Re: 100% system time hang with git f2fs
+Date: Fri, 2 Oct 2015 09:51:24 -0700
+Message-ID: <20151002165124.GA2586@jaegeuk-mac02>
+References: <20150926032218.GA4311@schmorp.de>
+	<20150926052551.GA2243@schmorp.de>
+	<20150926075253.GD13619@jaegeuk-mac02.hsd1.ca.comcast.net>
+	<20150926135957.GB9860@schmorp.de>
+	<20150928175944.GA16945@jaegeuk-mac02.mot.com>
+	<20150929110204.GA7608@schmorp.de>
+	<20150929231310.GA6010@jaegeuk-mac02.mot.com>
+	<20151001121120.GA7340@schmorp.de>
+	<20151001185124.GA9803@schmorp.de>
+	<20151002085340.GA3105@schmorp.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Zi3YS-0004qD-3u
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 02 Oct 2015 16:51:32 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Zi3YR-0007BO-6w for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 02 Oct 2015 16:51:32 +0000
+Content-Disposition: inline
+In-Reply-To: <20151002085340.GA3105@schmorp.de>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Marc Lehmann <schmorp@schmorp.de>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This patch tries to merge IOs as many as possible when background flusher
-conducts flushing the dirty meta pages.
+On Fri, Oct 02, 2015 at 10:53:40AM +0200, Marc Lehmann wrote:
+> On Thu, Oct 01, 2015 at 08:51:24PM +0200, Marc Lehmann <schmorp@schmorp.de> wrote:
+> > Ok, for completeness, here is the full log and a description of what was
+> > going on.
+> 
+> Ok, so I did a fsck, which took one hour, which is not very good, but I
+> don't use fsck very often. It didn't find any problems (everything Ok).
+> 
+> However, I have a freeze. When I mount the volume, start a du on it, and after
+> a while do:
 
-[Before]
+How was your scenario?
+Did you delete device before, or just plain mount and umount?
 
-...
-2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 124320, size = 4096
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 124560, size = 32768
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 95720, size = 987136
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123928, size = 4096
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123944, size = 8192
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123968, size = 45056
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 124064, size = 4096
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 97648, size = 1007616
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123776, size = 8192
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123800, size = 32768
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 124624, size = 4096
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 99616, size = 921600
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123608, size = 4096
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123624, size = 77824
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123792, size = 4096
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 123864, size = 32768
-...
+>    echo 3 >/proc/sys/vm/drop_caches
+> 
+> Then this process hangs with 100% sys time. /proc/../stack gives no usable
+> backtrace.
 
-[After]
+This should be shrinker is stuck on mutex. I suspect a deadlock.
+Can you do this, if you meet this again?
 
-...
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 92168, size = 892928
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 93912, size = 753664
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 95384, size = 716800
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 96784, size = 712704
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 104160, size = 364544
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 104872, size = 356352
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 105568, size = 278528
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 106112, size = 319488
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 106736, size = 258048
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 107240, size = 270336
-f2fs_submit_write_bio: dev = (8,18), WRITE_SYNC(MP), META, sector = 107768, size = 180224
-...
+# echo l > /proc/sysrq-trigger
+# echo w > /proc/sysrq-trigger
+# demsg
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/checkpoint.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index ff53405..da5ee7e 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -257,7 +257,7 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
- 						long nr_to_write)
- {
- 	struct address_space *mapping = META_MAPPING(sbi);
--	pgoff_t index = 0, end = LONG_MAX;
-+	pgoff_t index = 0, end = LONG_MAX, prev = LONG_MAX;
- 	struct pagevec pvec;
- 	long nwritten = 0;
- 	struct writeback_control wbc = {
-@@ -277,6 +277,11 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
- 
-+			if (prev == LONG_MAX)
-+				prev = page->index - 1;
-+			if (nr_to_write != LONG_MAX && page->index != prev + 1)
-+				break;
-+
- 			lock_page(page);
- 
- 			if (unlikely(page->mapping != mapping)) {
-@@ -297,6 +302,7 @@ continue_unlock:
- 				break;
- 			}
- 			nwritten++;
-+			prev = page->index;
- 			if (unlikely(nwritten >= nr_to_write))
- 				break;
- 		}
--- 
-2.1.1
+> 
+> umount on the f2fs volume also hangs:
+> 
+>    [<ffffffff8139ba03>] call_rwsem_down_write_failed+0x13/0x20
+>    [<ffffffff8118086d>] unregister_shrinker+0x1d/0x70
+>    [<ffffffff811e7911>] deactivate_locked_super+0x41/0x60
+>    [<ffffffff811e7eee>] deactivate_super+0x4e/0x70
+>    [<ffffffff81204733>] cleanup_mnt+0x43/0x90
+>    [<ffffffff812047d2>] __cleanup_mnt+0x12/0x20
+>    [<ffffffff8108e8a4>] task_work_run+0xc4/0xe0
+>    [<ffffffff81012fa7>] do_notify_resume+0x97/0xb0
+>    [<ffffffff8178896f>] int_signal+0x12/0x17
+>    [<ffffffffffffffff>] 0xffffffffffffffff
+> 
+> -- 
+>                 The choice of a       Deliantra, the free code+content MORPG
+>       -----==-     _GNU_              http://www.deliantra.net
+>       ----==-- _       generation
+>       ---==---(_)__  __ ____  __      Marc Lehmann
+>       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+>       -=====/_/_//_/\_,_/ /_/\_\
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+------------------------------------------------------------------------------
