@@ -1,8 +1,9 @@
 From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: 100% system time hang with git f2fs
-Date: Sat, 3 Oct 2015 08:29:09 +0200
-Message-ID: <20151003062909.GA2318@schmorp.de>
-References: <20150926052551.GA2243@schmorp.de>
+Subject: Re: near disk full performance (full 8TB)
+Date: Sun, 4 Oct 2015 11:40:41 +0200
+Message-ID: <20151004094041.GA3177@schmorp.de>
+References: <20150926032218.GA4311@schmorp.de>
+	<20150926052551.GA2243@schmorp.de>
 	<20150926075253.GD13619@jaegeuk-mac02.hsd1.ca.comcast.net>
 	<20150926135957.GB9860@schmorp.de>
 	<20150928175944.GA16945@jaegeuk-mac02.mot.com>
@@ -10,25 +11,24 @@ References: <20150926052551.GA2243@schmorp.de>
 	<20150929231310.GA6010@jaegeuk-mac02.mot.com>
 	<20151001121120.GA7340@schmorp.de>
 	<20151001185124.GA9803@schmorp.de>
-	<20151002085340.GA3105@schmorp.de>
-	<20151002165124.GA2586@jaegeuk-mac02>
+	<20151002164645.GA2446@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZiGJq-0005Ge-TD
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1Zifml-0001zT-Ub
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 03 Oct 2015 06:29:18 +0000
+	Sun, 04 Oct 2015 09:40:51 +0000
 Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZiGJp-0006JF-6m
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1Zifmj-00072x-RF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 03 Oct 2015 06:29:18 +0000
+	Sun, 04 Oct 2015 09:40:51 +0000
 Content-Disposition: inline
-In-Reply-To: <20151002165124.GA2586@jaegeuk-mac02>
+In-Reply-To: <20151002164645.GA2446@jaegeuk-mac02.mot.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -41,31 +41,59 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Oct 02, 2015 at 09:51:24AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> > However, I have a freeze. When I mount the volume, start a du on it, and after
-> > a while do:
-> 
-> How was your scenario?
-> Did you delete device before, or just plain mount and umount?
+On Fri, Oct 02, 2015 at 09:46:45AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> Hmm, this is because of FS metadata flushes in background.
+> I pushed one patch, can you get it through v3.18 branch?
 
-After writing >2TB to it, I let it idle/gc for a while, then unmounted. Then
-did a fsck and mount, and let it idle for the night. On the next day, I did a
-du for a speed test, relaised I hadn't dropped the caches, interrupted the
-du, and then trie drop_caches with the result.
+I continued to write the same ~2TB data set to the disk, with the same
+kernel module, giving me 85MB/s and 66MB/s throughput, respectively. This
+was due to extended periods where write performance was around 30-40MB/s,
+followed by shorter periods where it was >100MB/s. After using
+"disable_ext_identify", this *seemed* to improve somewhat. I did this on
+the theory that the zones near the end of the device (assuming f2fs would
+roughly fill from the beginning) get larger, causing more pressure on
+the disk (which has only 128MB of RAM to combine writes), but the result
+wasn't conclusive either wayy.
 
-> This should be shrinker is stuck on mutex. I suspect a deadlock.
-> Can you do this, if you meet this again?
+For the fourth set, which wouldn't fully fit, I choose pdfs (larger
+average filesize), and used the new kernel, either of which might have
+helped.
 
-Will do. Btw, I already mentioned that /proc/*/stack didn't give a useful
-backtrace. Since it was apparently running, I thought maybe run cat
-/.../stack in a loop, and indeed, after a minute, I got one backtrace out
-of it (the process doing the echo):
+I configured f2fs like this:
 
-http://ue.tst.eu/2562aec1c51d4bad3d7b8b83380956a7.txt
+   echo 16 >ipu_policy
+   echo 100 >min_ipu_util
+   echo 100000 >reclaim_segments
+   echo 1 >gc_idle
+   echo   500 >gc_min_sleep_time
+   echo 90000 >gc_max_sleep_time
+   echo 30000 >gc_no_gc_sleep_time
 
-Maybe that is already useful? It indeed mentions the shrinker.
+Performance was ok'ish (as during the whole test) till about 200GB were
+left out of 8.1 (metric) TB.
 
-(I did this after my mail, so didn't include it).
+I started to make a trace around the 197GB mark:
+
+http://data.plan9.de/f2fs.near_full.xz
+
+status at beginning: http://ue.tst.eu/a4fc2a2522f3e372c7e92255cad1f3c3.txt
+rsync was writing at this point, and I think you can see GC activity.
+
+at 173851.953639, I ^S'ed rsync, which, due to -v, would cause it to pause
+after a file. there was regular (probably GC) activity, but most of the
+time, the disk was again idle, something I simply wouldn't expect from the
+GC config (see next mail).
+
+status after pausing rsync: http://ue.tst.eu/26c170d7d9f946d60926a5cdca814bbe.txt
+
+I unpaused rsync at 174004.438302
+status before unpausing rsync: http://ue.tst.eu/cc22fafa0efcb1cadae5a3849dff873b.txt
+
+At 174186.324000, speed went down to ~2MB/s, and looking at the traces, it
+seems f2fs is writing random 2MB segments, which would explain the speed.
+
+I stopped at this point and started to prepare this mail. I could see
+constant but very low activity afterwards, roughly every 30s.
 
 -- 
                 The choice of a       Deliantra, the free code+content MORPG
