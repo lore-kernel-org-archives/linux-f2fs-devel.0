@@ -1,37 +1,24 @@
-From: Marc Lehmann <schmorp@schmorp.de>
-Subject: more gc experiences
-Date: Sun, 4 Oct 2015 14:49:24 +0200
-Message-ID: <20151004124923.GC3697@schmorp.de>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH v3 7/7] f2fs: xattr simplifications
+Date: Sun,  4 Oct 2015 19:18:54 +0200
+Message-ID: <1443979134-7279-8-git-send-email-agruenba@redhat.com>
+References: <1443979134-7279-1-git-send-email-agruenba@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ZiijM-0008Sz-60
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <agruenba@redhat.com>) id 1Zimwj-0007Ju-OC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 04 Oct 2015 12:49:32 +0000
-Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZiijK-0001SP-KA
+	Sun, 04 Oct 2015 17:19:37 +0000
+Received: from mx1.redhat.com ([209.132.183.28])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1Zimwi-00014q-Tk
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 04 Oct 2015 12:49:32 +0000
-Received: from [10.0.0.5] (helo=doom.schmorp.de)
-	by mail.nethype.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1ZiijE-0002kz-Ar
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 04 Oct 2015 12:49:24 +0000
-Received: from [10.0.0.1] (helo=cerebro.laendle)
-	by doom.schmorp.de with esmtp (Exim 4.84)
-	(envelope-from <schmorp@schmorp.de>) id 1ZiijE-0002el-1o
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 04 Oct 2015 12:49:24 +0000
-Received: from root by cerebro.laendle with local (Exim 4.84)
-	(envelope-from <root@schmorp.de>) id 1ZiijE-000149-18
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 04 Oct 2015 14:49:24 +0200
-Content-Disposition: inline
+	Sun, 04 Oct 2015 17:19:37 +0000
+In-Reply-To: <1443979134-7279-1-git-send-email-agruenba@redhat.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -41,70 +28,78 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Still working on my nearly full volume.
+Now that the xattr handler is passed to the xattr handler operations, we
+have access to the attribute name prefix, so simplify
+f2fs_xattr_generic_list.
 
-After stopping at ~180GB free due to low performance, I reconfigured the GC
-so it runs more often and let it run for less than two hours.
+Also, f2fs_xattr_advise_list is only ever called for
+f2fs_xattr_advise_handler; there is no need to double check for that.
 
-   echo   500 >gc_min_sleep_time
-   echo   500 >gc_max_sleep_time
-   echo   500 >gc_no_gc_sleep_time
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Changman Lee <cm224.lee@samsung.com>
+Cc: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
+---
+ fs/f2fs/xattr.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-status before/after:
-http://ue.tst.eu/dc80b74b69bbb431f51d731d8b075324.txt
-http://ue.tst.eu/821be8e5c227653a90596c1503b84567.txt
-
-During GC I had a steady 45MB/read + 45MB/write. The number of Dirty segments
-didn't reduce very much, but that is likely due to the structure of the data:
-
-Apart from fs metadata, I also did rsync without -H, followed by rsync with
--H. The latter replaces physical file copies that rsync created by hardlinks,
-if they were hardlinks in the source. The source had a moderate anmount of
-hardlinked files.
-
-Since this probably created nicely spread holes all over the data, it's
-expected that the GC has to copy a lot of data (at -s64), so overall, during
-this time, the GC seemed to work very fine.
-
-After that, I "stopped" the GC again and started the rsync, which then
-proceeded to copy another 110GB (ending up at 70GB free), where the
-performance again became unusably slow.
-
-I then decided to give F2FS_IOC_GARBAGE_COLLECT a try with the following
-script, and found some issues:
-
-http://ue.tst.eu/9723851c87bb35e5899534123a5af497.txt
-
-The first problem is that the ioctl seems to return instantly and
-successfully when the bg garbage collect thread runs. Or at leats, thats my
-theory: the sympton was that most of the time calls took 1-4 seconds, but
-regularly (presumably when the kernel gc runs), the call returned within
-microseconds.
-
-This causes unnecessary high CPU usage - I think the call should just wait
-for the GC lock in that case, or (less preferably) somehow signal this
-third condition so the user code can do something else.
-
-Which brings us to the next problem - calling the GC ioctl in a loop quickly
-generated 23GB of dirty pages, which then more or less locked up the box - no
-login was possible for 6 minutes after I killed the GC script, no nfs
-operations took place.
-
-While this is a shortcoming with linux in general, it highlights the
-principal problem of not having any rate control in f2fs's gc - basically,
-the user has to guess when the GC is done, and when the next round can
-start, which is, in general, impossible, as only the fs knows the real I/O
-load. Or in other words, here, again, the script would have to contain a
-magic delay, just like gc_min_sleep_time, after each round.
-
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index e643173..862368a 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -30,33 +30,27 @@ static size_t f2fs_xattr_generic_list(const struct xattr_handler *handler,
+ 		const char *name, size_t len)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(dentry->d_sb);
+-	int total_len, prefix_len = 0;
+-	const char *prefix = NULL;
++	int total_len, prefix_len;
+ 
+ 	switch (handler->flags) {
+ 	case F2FS_XATTR_INDEX_USER:
+ 		if (!test_opt(sbi, XATTR_USER))
+ 			return -EOPNOTSUPP;
+-		prefix = XATTR_USER_PREFIX;
+-		prefix_len = XATTR_USER_PREFIX_LEN;
+ 		break;
+ 	case F2FS_XATTR_INDEX_TRUSTED:
+ 		if (!capable(CAP_SYS_ADMIN))
+ 			return -EPERM;
+-		prefix = XATTR_TRUSTED_PREFIX;
+-		prefix_len = XATTR_TRUSTED_PREFIX_LEN;
+ 		break;
+ 	case F2FS_XATTR_INDEX_SECURITY:
+-		prefix = XATTR_SECURITY_PREFIX;
+-		prefix_len = XATTR_SECURITY_PREFIX_LEN;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
++	prefix_len = strlen(handler->prefix);
+ 	total_len = prefix_len + len + 1;
+ 	if (list && total_len <= list_size) {
+-		memcpy(list, prefix, prefix_len);
++		memcpy(list, handler->prefix, prefix_len);
+ 		memcpy(list + prefix_len, name, len);
+ 		list[prefix_len + len] = '\0';
+ 	}
+@@ -123,9 +117,6 @@ static size_t f2fs_xattr_advise_list(const struct xattr_handler *handler,
+ 	const char *xname = F2FS_SYSTEM_ADVISE_PREFIX;
+ 	size_t size;
+ 
+-	if (handler->flags != F2FS_XATTR_INDEX_ADVISE)
+-		return 0;
+-
+ 	size = strlen(xname) + 1;
+ 	if (list && size <= list_size)
+ 		memcpy(list, xname, size);
 -- 
-                The choice of a       Deliantra, the free code+content MORPG
-      -----==-     _GNU_              http://www.deliantra.net
-      ----==-- _       generation
-      ---==---(_)__  __ ____  __      Marc Lehmann
-      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-      -=====/_/_//_/\_,_/ /_/\_\
+2.5.0
+
 
 ------------------------------------------------------------------------------
