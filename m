@@ -1,34 +1,38 @@
 From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: near disk full performance (full 8TB)
-Date: Sun, 4 Oct 2015 11:40:41 +0200
-Message-ID: <20151004094041.GA3177@schmorp.de>
-References: <20150926032218.GA4311@schmorp.de>
-	<20150926052551.GA2243@schmorp.de>
-	<20150926075253.GD13619@jaegeuk-mac02.hsd1.ca.comcast.net>
-	<20150926135957.GB9860@schmorp.de>
-	<20150928175944.GA16945@jaegeuk-mac02.mot.com>
-	<20150929110204.GA7608@schmorp.de>
-	<20150929231310.GA6010@jaegeuk-mac02.mot.com>
-	<20151001121120.GA7340@schmorp.de>
-	<20151001185124.GA9803@schmorp.de>
-	<20151002164645.GA2446@jaegeuk-mac02.mot.com>
+Subject: assumptions and misconceptions about f2fs behaviour,
+	please correct
+Date: Sun, 4 Oct 2015 11:54:30 +0200
+Message-ID: <20151004095429.GB3177@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1Zifml-0001zT-Ub
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1Zig06-0006Oh-Ti
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 04 Oct 2015 09:40:51 +0000
+	Sun, 04 Oct 2015 09:54:38 +0000
 Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1Zifmj-00072x-RF
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1Zig05-0004yE-26
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 04 Oct 2015 09:40:51 +0000
+	Sun, 04 Oct 2015 09:54:38 +0000
+Received: from [10.0.0.5] (helo=doom.schmorp.de)
+	by mail.nethype.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1Zifzy-0005x1-BC
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 04 Oct 2015 09:54:30 +0000
+Received: from [10.0.0.1] (helo=cerebro.laendle)
+	by doom.schmorp.de with esmtp (Exim 4.84)
+	(envelope-from <schmorp@schmorp.de>) id 1Zifzy-0003Hy-1t
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 04 Oct 2015 09:54:30 +0000
+Received: from root by cerebro.laendle with local (Exim 4.84)
+	(envelope-from <root@schmorp.de>) id 1Zifzy-0000rv-1O
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 04 Oct 2015 11:54:30 +0200
 Content-Disposition: inline
-In-Reply-To: <20151002164645.GA2446@jaegeuk-mac02.mot.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,62 +42,63 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Oct 02, 2015 at 09:46:45AM -0700, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> Hmm, this is because of FS metadata flushes in background.
-> I pushed one patch, can you get it through v3.18 branch?
+Hi!
 
-I continued to write the same ~2TB data set to the disk, with the same
-kernel module, giving me 85MB/s and 66MB/s throughput, respectively. This
-was due to extended periods where write performance was around 30-40MB/s,
-followed by shorter periods where it was >100MB/s. After using
-"disable_ext_identify", this *seemed* to improve somewhat. I did this on
-the theory that the zones near the end of the device (assuming f2fs would
-roughly fill from the beginning) get larger, causing more pressure on
-the disk (which has only 128MB of RAM to combine writes), but the result
-wasn't conclusive either wayy.
+In this mail I describe what I would expect of f2fs in general, and the gc
+in particular. I already know my expectations or assumptions are partially
+incorrect, and will note so when I know of it. The idea of this mail is
+both to correct me in my understanding (if you would be so nice :), and
+also explain my expectations and motivation in more detail.
 
-For the fourth set, which wouldn't fully fit, I choose pdfs (larger
-average filesize), and used the new kernel, either of which might have
-helped.
+General f2fs behaviour:
 
-I configured f2fs like this:
+ Expectation: f2fs logs need not be consecutive, so it can GC sections
+   relatively independently and, with suitable configuration, it
+   will always free whole sections (e.g. 128MB at -s64) and reuse
+   them for writing. This would mitigate the SMR problemxs, because,
+   assuming continous writing to the fs, it would write whole sections
+   consecutively, which would span multiple zones.
 
-   echo 16 >ipu_policy
-   echo 100 >min_ipu_util
-   echo 100000 >reclaim_segments
-   echo 1 >gc_idle
-   echo   500 >gc_min_sleep_time
-   echo 90000 >gc_max_sleep_time
-   echo 30000 >gc_no_gc_sleep_time
+   Reality: quite obviously f2fs reuses space in roughly 2MB chunks, most
+   likely on a segment basis.
 
-Performance was ok'ish (as during the whole test) till about 200GB were
-left out of 8.1 (metric) TB.
+(background) GC:
 
-I started to make a trace around the 197GB mark:
+ Expectation/Blind Guessing: While there is nothing to GC, the GC will sleep
+   for gc_no_gc_sleep_time intervals (it may be woken up for other reasons).
 
-http://data.plan9.de/f2fs.near_full.xz
+   When there is something to GC, then the GC will check if the filesystem
+   is idle (by unknown means, e.g. by checking if there was activity within
+   a certain time, or whether there is activity at the moment it checks).
 
-status at beginning: http://ue.tst.eu/a4fc2a2522f3e372c7e92255cad1f3c3.txt
-rsync was writing at this point, and I think you can see GC activity.
+   If the fs is idle, it would GC one section (or something similar), then
+   sleep for gc_min_sleep_time.
 
-at 173851.953639, I ^S'ed rsync, which, due to -v, would cause it to pause
-after a file. there was regular (probably GC) activity, but most of the
-time, the disk was again idle, something I simply wouldn't expect from the
-GC config (see next mail).
+   If the fs is busy, it would GC one section (or something similar), then
+   sleep for gc_max_sleep_time.
 
-status after pausing rsync: http://ue.tst.eu/26c170d7d9f946d60926a5cdca814bbe.txt
+   Ignoring slight variations, the expected behaviour would be for the GC
+   to GC a bit every gc_min_sleep_time+time_it_takes_for_IO when idle, or
+   longer when the fs is busy.
 
-I unpaused rsync at 174004.438302
-status before unpausing rsync: http://ue.tst.eu/cc22fafa0efcb1cadae5a3849dff873b.txt
+   As a result, ideal settings would be 0 for gc_min_sleep_time
+   and something high (potentially very high, such as an hour) for
+   gc_max_sleep_time.
 
-At 174186.324000, speed went down to ~2MB/s, and looking at the traces, it
-seems f2fs is writing random 2MB segments, which would explain the speed.
+ Reality: If I understood you correctly, the GC will just queue writes
+   whether there are already outstanding writes or not, it has no notion
+   of when one GC iteration is finished, so gc_min_sleep_time has to be
+   long enough for the writes to finish. Since this is impossible (the
+   time is obviously not fixed and gc_min_sleep_time is a constant), there
+   is no way to run GC with maximum speed during fs idle times (unless one
+   writes a separate program to force GC when idle time is detected by
+   some means).
 
-I stopped at this point and started to prepare this mail. I could see
-constant but very low activity afterwards, roughly every 30s.
+   Also, quite obviously, even when the fs is completely idle, the GC will
+   typically sleep for gc_max_sleep_time, so it seems "idle fs" is not the
+   concept that influences the time between gc activity.
 
 -- 
                 The choice of a       Deliantra, the free code+content MORPG
