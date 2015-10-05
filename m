@@ -1,154 +1,124 @@
-From: Chao Yu <yuchaochina@hotmail.com>
-Subject: Re: more gc / gc script refinements
-Date: Mon, 5 Oct 2015 23:02:42 +0800
-Message-ID: <COL402-EAS402AD3DF23BC5CB748EDBCFAB480@phx.gbl>
-References: <20151004124923.GC3697@schmorp.de>
-	<20151005072548.GA2504@schmorp.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1Zj7Hy-0005t3-RV
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 05 Oct 2015 15:02:54 +0000
-Received: from col004-omc1s10.hotmail.com ([65.55.34.20])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1Zj7Hx-0007Uf-ID
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 05 Oct 2015 15:02:54 +0000
-In-Reply-To: <20151005072548.GA2504@schmorp.de>
-Content-Language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Marc Lehmann' <schmorp@schmorp.de>, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/3] f2fs: introduce background_gc=sync mount option
+Date: Mon,  5 Oct 2015 15:43:58 -0700
+Message-ID: <1444085040-12843-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-> -----Original Message-----
-> From: Marc Lehmann [mailto:schmorp@schmorp.de]
-> Sent: Monday, October 05, 2015 3:26 PM
-> To: linux-f2fs-devel@lists.sourceforge.net; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] more gc / gc script refinements
-> 
-> After I successfully filled the disk, it was time to see hope f2fs recovers
-> from this bad situation, by deleting a lot of files and filling it again.
-> 
-> To ease the load on the gc, but still present a bit of a challenge, I
-> deleted the first 12000 files out of every 80000 files (directory order), in the hope
-> that this carves out comparatively big chunks.
-> 
-> I started with "Dirty: 30k" and "Free: 45k" and ended up with
-> "Dirty: 216k" and "Free: 968k", which to me seems to indicate it kind of
-> worked, although I am not suire how contiguous this free space really is
-> (I oriignally hoped this would be in the form of mostly free sections).
-> 
-> Then I worked on my GC script. Since the box became mostly unusable by just
-> calling the GC, I first tried this refinement:
-> 
-> http://ue.tst.eu/38809274b56fe9b161492f09b5411071.txt
-> 
-> (Used like "script </mountpoint" btw.)
-> 
-> Or in other words, only call the GC if there is less than 2GB of dirty
-> pages. For lower values than 2GB the GC often didn't run at all for 10-20
-> seconds.
-> 
-> This helped a lot, but the box was still noticably sluggish, and I
-> realised why the current GC I/O implementation is wrong - the purpose of
-> the cache is (among other uses, such as being the normal way to do I/O) to
-> cache recently-requested data in the hope that it will be reused.
-> 
-> However, in the case of the GC, unless the data was in the cache before,
-> chances that this data is required later are just as low as for the rest of
-> the device, and in general, much lower then the data that was in the cache
-> before f2fs evicted it.
-> 
-> Moreso, a lot of stress is put on the page cache because of the f2fs gc
-> treating it as normal data and leaving it in the cache and up to the
-> kernel to write out the pages.
+This patch introduce background_gc=sync enabling synchronous cleaning in
+background.
 
-IMO, the reason of the behavior is a) keeping gced pages in cache as we look
-forward further hits; b) as we know, kworker will flush all pages belong to
-one inode together, we expect that inode's pages cached from multiple background
-gc can be merged, and then be flushed with continuous block address, which
-can improve the read performance afterward.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ Documentation/filesystems/f2fs.txt |  3 ++-
+ fs/f2fs/f2fs.h                     |  1 +
+ fs/f2fs/gc.c                       |  2 +-
+ fs/f2fs/segment.h                  |  4 +++-
+ fs/f2fs/super.c                    | 21 +++++++++++++++------
+ 5 files changed, 22 insertions(+), 9 deletions(-)
 
-> 
-> What the GC should do is minimize the impact of the GC on the rest of the
-> system, by immediately flushing the data out and expiring the pages.
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index e2d5105..b102b43 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -102,7 +102,8 @@ background_gc=%s       Turn on/off cleaning operations, namely garbage
+                        collection, triggered in background when I/O subsystem is
+                        idle. If background_gc=on, it will turn on the garbage
+                        collection and if background_gc=off, garbage collection
+-                       will be truned off.
++                       will be truned off. If background_gc=sync, it will turn
++                       on synchronous garbage collection running in background.
+                        Default value for this option is on. So garbage
+                        collection is on by default.
+ disable_roll_forward   Disable the roll-forward recovery routine
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 18e5902..00bd470 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -53,6 +53,7 @@
+ #define F2FS_MOUNT_NOBARRIER		0x00000800
+ #define F2FS_MOUNT_FASTBOOT		0x00001000
+ #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
++#define F2FS_MOUNT_FORCE_FG_GC		0x00004000
+ 
+ #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
+ #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 830d277..e627c19 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -78,7 +78,7 @@ static int gc_thread_func(void *data)
+ 		stat_inc_bggc_count(sbi);
+ 
+ 		/* if return value is not zero, no victim was selected */
+-		if (f2fs_gc(sbi, false))
++		if (f2fs_gc(sbi, test_opt(sbi, FORCE_FG_GC)))
+ 			wait_ms = gc_th->no_gc_sleep_time;
+ 
+ 		/* balancing f2fs's metadata periodically */
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index a294da7..e9afb58 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -137,10 +137,12 @@ enum {
+ /*
+  * BG_GC means the background cleaning job.
+  * FG_GC means the on-demand cleaning job.
++ * FORCE_FG_GC means on-demand cleaning job in background.
+  */
+ enum {
+ 	BG_GC = 0,
+-	FG_GC
++	FG_GC,
++	FORCE_FG_GC,
+ };
+ 
+ /* for a function parameter to select a victim segment */
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 16442ec..ba058d0 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -292,11 +292,16 @@ static int parse_options(struct super_block *sb, char *options)
+ 
+ 			if (!name)
+ 				return -ENOMEM;
+-			if (strlen(name) == 2 && !strncmp(name, "on", 2))
++			if (strlen(name) == 2 && !strncmp(name, "on", 2)) {
+ 				set_opt(sbi, BG_GC);
+-			else if (strlen(name) == 3 && !strncmp(name, "off", 3))
++				clear_opt(sbi, FORCE_FG_GC);
++			} else if (strlen(name) == 3 && !strncmp(name, "off", 3)) {
+ 				clear_opt(sbi, BG_GC);
+-			else {
++				clear_opt(sbi, FORCE_FG_GC);
++			} else if (strlen(name) == 4 && !strncmp(name, "sync", 4)) {
++				set_opt(sbi, BG_GC);
++				set_opt(sbi, FORCE_FG_GC);
++			} else {
+ 				kfree(name);
+ 				return -EINVAL;
+ 			}
+@@ -631,10 +636,14 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(root->d_sb);
+ 
+-	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, BG_GC))
+-		seq_printf(seq, ",background_gc=%s", "on");
+-	else
++	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, BG_GC)) {
++		if (test_opt(sbi, FORCE_FG_GC))
++			seq_printf(seq, ",background_gc=%s", "sync");
++		else
++			seq_printf(seq, ",background_gc=%s", "on");
++	} else {
+ 		seq_printf(seq, ",background_gc=%s", "off");
++	}
+ 	if (test_opt(sbi, DISABLE_ROLL_FORWARD))
+ 		seq_puts(seq, ",disable_roll_forward");
+ 	if (test_opt(sbi, DISCARD))
+-- 
+2.1.1
 
-I think f2fs should support us more flexible method of triggering gc, mostly
-like supporting sync/async gc ioctl command.
-1) synchronous gc: all gced pages should be persistent in device after ioctl
-returns successfully.
-2) asynchronous gc: we don't guarantee all gced pages will be persistent
-after ioctl returns successfully.
-
-In your scenario, I think gc flow can easily be controlled with:
-
-while (n) {
-	ioctl gc with sync mode
-}
-syncfs or ioctl write_checkpoint
-
-I wrote and sent the patches for supporting synchronous gc and supporting
-triggering checkpoint by ioctl, I hope that can be helpful once we get
-Jaegeuk's Ack.
-
-Thanks,
-
-> 
-> To improve the situaiton somewhat I decided to experiment with fdatasync
-> on the block device and/or a directory handle, but ended up calling syncfs
-> on the f2fs fs after every gc call, because fdatasync etc. seemed to be
-> the equivalent of syncfs anyway:
-> 
-> http://ue.tst.eu/325b6ba70b1abe814dc6a5cb6c02730e.txt
-> 
-> The effect of syncfs was to make I/O a lot more "chunky" - first everything
-> was read, then everything was written (dstat output, btw., this is 1 second
-> intervals as always, but I never mentioned it - sorry):
-> 
-> http://ue.tst.eu/9a552a4f41a4863133d3eceb90f1ec87.txt
-> 
-> Without it, read and write happen "at the same time" (when sampled with 1
-> second intervals).
-> 
-> This increased the average throughput considerably, from around 45MB
-> read+write/s to 66MB/s. Whether this actually increased the GC process at
-> all I don't know, because syncfs of course forces a sync on the fs, with
-> its own overhead.
-> 
-> So while this is a rather heavy-handed approach, the major result was that
-> the amount of dirty pages is notably reduced (it never reaches 1GB), and
-> the box is much more usable during this time.
-> 
-> Right now, after about 9 hours, I am at "Dirty: 44k", and will start
-> writing to the device soon.
-> 
-> In any case, it seems f2fs seems to hold up quite nicely near disk full
-> conditions, and does recover nicely as well.
-> 
-> --
->                 The choice of a       Deliantra, the free code+content MORPG
->       -----==-     _GNU_              http://www.deliantra.net
->       ----==-- _       generation
->       ---==---(_)__  __ ____  __      Marc Lehmann
->       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
->       -=====/_/_//_/\_,_/ /_/\_\
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
