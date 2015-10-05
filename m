@@ -1,124 +1,149 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/3] f2fs: introduce background_gc=sync mount option
-Date: Mon,  5 Oct 2015 15:43:58 -0700
-Message-ID: <1444085040-12843-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Subject: [PATCH 3/3] f2fs: introduce a periodic checkpoint flow
+Date: Mon,  5 Oct 2015 15:44:00 -0700
+Message-ID: <1444085040-12843-3-git-send-email-jaegeuk@kernel.org>
+References: <1444085040-12843-1-git-send-email-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ZjEUY-0002Ie-Sm
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 05 Oct 2015 22:44:22 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1ZjEUX-00075y-Vi for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 05 Oct 2015 22:44:22 +0000
+In-Reply-To: <1444085040-12843-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch introduce background_gc=sync enabling synchronous cleaning in
-background.
+This patch introduces a periodic checkpoint feature.
+Note that, this is not enforcing to conduct checkpoints very strictly in terms
+of trigger timing, instead just hope to help user experiences.
+The default value is 60 seconds.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- Documentation/filesystems/f2fs.txt |  3 ++-
- fs/f2fs/f2fs.h                     |  1 +
- fs/f2fs/gc.c                       |  2 +-
- fs/f2fs/segment.h                  |  4 +++-
- fs/f2fs/super.c                    | 21 +++++++++++++++------
- 5 files changed, 22 insertions(+), 9 deletions(-)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 6 ++++++
+ fs/f2fs/checkpoint.c                    | 3 +++
+ fs/f2fs/f2fs.h                          | 2 ++
+ fs/f2fs/segment.c                       | 4 +++-
+ fs/f2fs/super.c                         | 3 +++
+ 5 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index e2d5105..b102b43 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -102,7 +102,8 @@ background_gc=%s       Turn on/off cleaning operations, namely garbage
-                        collection, triggered in background when I/O subsystem is
-                        idle. If background_gc=on, it will turn on the garbage
-                        collection and if background_gc=off, garbage collection
--                       will be truned off.
-+                       will be truned off. If background_gc=sync, it will turn
-+                       on synchronous garbage collection running in background.
-                        Default value for this option is on. So garbage
-                        collection is on by default.
- disable_roll_forward   Disable the roll-forward recovery routine
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index 2c4cc42..e066281d 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -80,3 +80,9 @@ Date:		February 2015
+ Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+ Description:
+ 		 Controls the trimming rate in batch mode.
++
++What:		/sys/fs/f2fs/<disk>/cp_interval
++Date:		October 2015
++Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
++Description:
++		 Controls the checkpoint timing.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index da5ee7e..70a4780 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1120,6 +1120,9 @@ void write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	if (cpc->reason == CP_RECOVERY)
+ 		f2fs_msg(sbi->sb, KERN_NOTICE,
+ 			"checkpoint: version = %llx", ckpt_ver);
++
++	/* do checkpoint periodically */
++	sbi->cp_expires = round_jiffies_up(jiffies + HZ * sbi->cp_interval);
+ out:
+ 	mutex_unlock(&sbi->cp_mutex);
+ 	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 18e5902..00bd470 100644
+index 00bd470..aad4720 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -53,6 +53,7 @@
- #define F2FS_MOUNT_NOBARRIER		0x00000800
- #define F2FS_MOUNT_FASTBOOT		0x00001000
- #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
-+#define F2FS_MOUNT_FORCE_FG_GC		0x00004000
+@@ -124,6 +124,7 @@ enum {
+ 		(SM_I(sbi)->trim_sections * (sbi)->segs_per_sec)
+ #define BATCHED_TRIM_BLOCKS(sbi)	\
+ 		(BATCHED_TRIM_SEGMENTS(sbi) << (sbi)->log_blocks_per_seg)
++#define DEF_CP_INTERVAL			60	/* 60 secs */
  
- #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
- #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 830d277..e627c19 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -78,7 +78,7 @@ static int gc_thread_func(void *data)
- 		stat_inc_bggc_count(sbi);
+ struct cp_control {
+ 	int reason;
+@@ -734,6 +735,7 @@ struct f2fs_sb_info {
+ 	struct rw_semaphore node_write;		/* locking node writes */
+ 	struct mutex writepages;		/* mutex for writepages() */
+ 	wait_queue_head_t cp_wait;
++	long cp_expires, cp_interval;		/* next expected periodic cp */
  
- 		/* if return value is not zero, no victim was selected */
--		if (f2fs_gc(sbi, false))
-+		if (f2fs_gc(sbi, test_opt(sbi, FORCE_FG_GC)))
- 			wait_ms = gc_th->no_gc_sleep_time;
+ 	struct inode_management im[MAX_INO_ENTRY];      /* manage inode cache */
  
- 		/* balancing f2fs's metadata periodically */
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index a294da7..e9afb58 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -137,10 +137,12 @@ enum {
- /*
-  * BG_GC means the background cleaning job.
-  * FG_GC means the on-demand cleaning job.
-+ * FORCE_FG_GC means on-demand cleaning job in background.
-  */
- enum {
- 	BG_GC = 0,
--	FG_GC
-+	FG_GC,
-+	FORCE_FG_GC,
- };
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6b8edf2..1d86a35 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -15,6 +15,7 @@
+ #include <linux/prefetch.h>
+ #include <linux/kthread.h>
+ #include <linux/swap.h>
++#include <linux/timer.h>
  
- /* for a function parameter to select a victim segment */
+ #include "f2fs.h"
+ #include "segment.h"
+@@ -315,7 +316,8 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 	/* checkpoint is the only way to shrink partial cached entries */
+ 	if (!available_free_memory(sbi, NAT_ENTRIES) ||
+ 			excess_prefree_segs(sbi) ||
+-			!available_free_memory(sbi, INO_ENTRIES))
++			!available_free_memory(sbi, INO_ENTRIES) ||
++			jiffies > sbi->cp_expires)
+ 		f2fs_sync_fs(sbi->sb, true);
+ }
+ 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 16442ec..ba058d0 100644
+index ba058d0..e275634 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -292,11 +292,16 @@ static int parse_options(struct super_block *sb, char *options)
+@@ -215,6 +215,7 @@ F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, min_fsync_blocks, min_fsync_blocks);
+ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search, max_victim_search);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
++F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, cp_interval);
  
- 			if (!name)
- 				return -ENOMEM;
--			if (strlen(name) == 2 && !strncmp(name, "on", 2))
-+			if (strlen(name) == 2 && !strncmp(name, "on", 2)) {
- 				set_opt(sbi, BG_GC);
--			else if (strlen(name) == 3 && !strncmp(name, "off", 3))
-+				clear_opt(sbi, FORCE_FG_GC);
-+			} else if (strlen(name) == 3 && !strncmp(name, "off", 3)) {
- 				clear_opt(sbi, BG_GC);
--			else {
-+				clear_opt(sbi, FORCE_FG_GC);
-+			} else if (strlen(name) == 4 && !strncmp(name, "sync", 4)) {
-+				set_opt(sbi, BG_GC);
-+				set_opt(sbi, FORCE_FG_GC);
-+			} else {
- 				kfree(name);
- 				return -EINVAL;
- 			}
-@@ -631,10 +636,14 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(root->d_sb);
+ #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+ static struct attribute *f2fs_attrs[] = {
+@@ -231,6 +232,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(max_victim_search),
+ 	ATTR_LIST(dir_level),
+ 	ATTR_LIST(ram_thresh),
++	ATTR_LIST(cp_interval),
+ 	NULL,
+ };
  
--	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, BG_GC))
--		seq_printf(seq, ",background_gc=%s", "on");
--	else
-+	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, BG_GC)) {
-+		if (test_opt(sbi, FORCE_FG_GC))
-+			seq_printf(seq, ",background_gc=%s", "sync");
-+		else
-+			seq_printf(seq, ",background_gc=%s", "on");
-+	} else {
- 		seq_printf(seq, ",background_gc=%s", "off");
-+	}
- 	if (test_opt(sbi, DISABLE_ROLL_FORWARD))
- 		seq_puts(seq, ",disable_roll_forward");
- 	if (test_opt(sbi, DISCARD))
+@@ -1014,6 +1016,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 		atomic_set(&sbi->nr_pages[i], 0);
+ 
+ 	sbi->dir_level = DEF_DIR_LEVEL;
++	sbi->cp_interval = DEF_CP_INTERVAL;
+ 	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+ 
+ 	INIT_LIST_HEAD(&sbi->s_list);
 -- 
 2.1.1
 
+
+------------------------------------------------------------------------------
