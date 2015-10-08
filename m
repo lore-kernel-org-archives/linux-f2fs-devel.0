@@ -1,267 +1,223 @@
-From: Chao Yu <yuchaochina@hotmail.com>
-Subject: Re: more gc / gc script refinements
-Date: Wed, 7 Oct 2015 20:32:53 +0800
-Message-ID: <COL402-EAS61B999EAD73B51384664EDAB360@phx.gbl>
-References: <20151004124923.GC3697@schmorp.de>
-	<20151005072548.GA2504@schmorp.de>
-	<COL402-EAS402AD3DF23BC5CB748EDBCFAB480@phx.gbl>
-	<20151005231642.GC7635@jaegeuk-mac02.mot.com>
-	<COL402-EAS353392C7223EDEFCCE5A97FAB370@phx.gbl>
-	<20151006234450.GC18417@jaegeuk-mac02.mot.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH] f2fs crypto: fix racing of accessing encrypted page among
+ different competitors
+Date: Thu, 08 Oct 2015 20:50:39 +0800
+Message-ID: <019001d101c8$07899880$169cc980$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchaochina@hotmail.com>) id 1Zjnu7-00075j-Mt
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 07 Oct 2015 12:33:07 +0000
-Received: from col004-omc1s17.hotmail.com ([65.55.34.27])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1Zjnu5-0001eK-Qb
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 07 Oct 2015 12:33:07 +0000
-In-Reply-To: <20151006234450.GC18417@jaegeuk-mac02.mot.com>
-Content-Language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: 'Marc Lehmann' <schmorp@schmorp.de>, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, October 07, 2015 7:45 AM
-> To: Chao Yu
-> Cc: 'Marc Lehmann'; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] more gc / gc script refinements
-> 
-> On Wed, Oct 07, 2015 at 12:41:45AM +0800, Chao Yu wrote:
-> > Hi Jaegeuk,
-> >
-> > > -----Original Message-----
-> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > Sent: Tuesday, October 06, 2015 7:17 AM
-> > > To: Chao Yu
-> > > Cc: 'Marc Lehmann'; linux-f2fs-devel@lists.sourceforge.net
-> > > Subject: Re: [f2fs-dev] more gc / gc script refinements
-> > >
-> > > Thanks Chao,
-> > >
-> > > On Mon, Oct 05, 2015 at 11:02:42PM +0800, Chao Yu wrote:
-> > > > > -----Original Message-----
-> > > > > From: Marc Lehmann [mailto:schmorp@schmorp.de]
-> > > > > Sent: Monday, October 05, 2015 3:26 PM
-> > > > > To: linux-f2fs-devel@lists.sourceforge.net; linux-f2fs-devel@lists.sourceforge.net
-> > > > > Subject: Re: [f2fs-dev] more gc / gc script refinements
-> > > > >
-> > > > > After I successfully filled the disk, it was time to see hope f2fs recovers
-> > > > > from this bad situation, by deleting a lot of files and filling it again.
-> > > > >
-> > > > > To ease the load on the gc, but still present a bit of a challenge, I
-> > > > > deleted the first 12000 files out of every 80000 files (directory order), in the hope
-> > > > > that this carves out comparatively big chunks.
-> > > > >
-> > > > > I started with "Dirty: 30k" and "Free: 45k" and ended up with
-> > > > > "Dirty: 216k" and "Free: 968k", which to me seems to indicate it kind of
-> > > > > worked, although I am not suire how contiguous this free space really is
-> > > > > (I oriignally hoped this would be in the form of mostly free sections).
-> > > > >
-> > > > > Then I worked on my GC script. Since the box became mostly unusable by just
-> > > > > calling the GC, I first tried this refinement:
-> > > > >
-> > > > > http://ue.tst.eu/38809274b56fe9b161492f09b5411071.txt
-> > > > >
-> > > > > (Used like "script </mountpoint" btw.)
-> > > > >
-> > > > > Or in other words, only call the GC if there is less than 2GB of dirty
-> > > > > pages. For lower values than 2GB the GC often didn't run at all for 10-20
-> > > > > seconds.
-> > > > >
-> > > > > This helped a lot, but the box was still noticably sluggish, and I
-> > > > > realised why the current GC I/O implementation is wrong - the purpose of
-> > > > > the cache is (among other uses, such as being the normal way to do I/O) to
-> > > > > cache recently-requested data in the hope that it will be reused.
-> > > > >
-> > > > > However, in the case of the GC, unless the data was in the cache before,
-> > > > > chances that this data is required later are just as low as for the rest of
-> > > > > the device, and in general, much lower then the data that was in the cache
-> > > > > before f2fs evicted it.
-> > > > >
-> > > > > Moreso, a lot of stress is put on the page cache because of the f2fs gc
-> > > > > treating it as normal data and leaving it in the cache and up to the
-> > > > > kernel to write out the pages.
-> > > >
-> > > > IMO, the reason of the behavior is a) keeping gced pages in cache as we look
-> > > > forward further hits; b) as we know, kworker will flush all pages belong to
-> > > > one inode together, we expect that inode's pages cached from multiple background
-> > > > gc can be merged, and then be flushed with continuous block address, which
-> > > > can improve the read performance afterward.
-> > >
-> > > Agreed to this.
-> > >
-> > > > >
-> > > > > What the GC should do is minimize the impact of the GC on the rest of the
-> > > > > system, by immediately flushing the data out and expiring the pages.
-> > > >
-> > > > I think f2fs should support us more flexible method of triggering gc, mostly
-> > > > like supporting sync/async gc ioctl command.
-> > > > 1) synchronous gc: all gced pages should be persistent in device after ioctl
-> > > > returns successfully.
-> > > > 2) asynchronous gc: we don't guarantee all gced pages will be persistent
-> > > > after ioctl returns successfully.
-> > >
-> > > Yeah, agreed.
-> > >
-> > > I wrote some other patches on top of Chao's patches.
-> > > We can do "background_gc=sync" and "/sys/fs/f2fs/dev/cp_interval".
-> >
-> > Nice! The usage is more easy and convenient than the way of ioctl.
-> > I think that can really be helpful for Marc.
-> >
-> > > Currently, I'm not quite convincing that we need to flush use data periodically.
-> >
-> > IMHO, I prefer to support data flush functionality in f2fs, the reason is that:
-> > a) In order to keep the consistency and integrity of user data, kworker flush
-> > and periodical checkpoint are hard to be controlled and cooperated because
-> > kworker and checkpoint can't be aware of each other, on the contrary, configurable
-> > inner periodical data flush + checkpoint can supply more flexible way to keep
-> > persistent of user data (e.g. config period time as n second, so at least we will
-> > lost the user data in recent n second).
-> > b) User can choose more options in log level:
-> >  - periodical data flush + checkpoint supply us with better integrity but worse
-> > performance since in the period we can merge less dirty data for writebacking.
-> >  - kworker flush + periodical checkpoint supply us with better performance as
-> > dirty pages can merged well, but worse integrity of user data as data didn't
-> > flushed before cp will be unrecoverable forever.
-> > With this functionality, f2fs will become more configurable, and it should be
-> > suitable for more workload (especially in strong demand on user data integrity).
-> >
-> > So I hope we can add this feature in our pending list. How do you think?
-> 
-> I guess you can understand my concern which is a kind of redundunt flushers
-> between VFS and f2fs. We already have several sysfs entries to control
-> system-wide dirty pages and throttling IO strategies through VFS.
+>From 0211c6ed82440891b3369851d079f6c69b432b6c Mon Sep 17 00:00:00 2001
+From: Chao Yu <chao2.yu@samsung.com>
+Date: Thu, 8 Oct 2015 13:27:34 +0800
+Subject: [PATCH] f2fs crypto: fix racing of accessing encrypted page among
+ different competitors
 
-I can understand that.
+Since we use different page cache (normally inode's page cache for R/W
+and meta inode's page cache for GC) to cache the same physical block
+which is belong to an encrypted inode. Writeback of these two page
+cache should be exclusive, but now we didn't handle writeback state
+well, so there may be potential racing problem:
 
-> I agreed that, if we can control our flush timings, we can do something more
-> for better IO behaviors. However, if users want more stable data, they need to
-> first take a look at system-wide configurations, not something special in f2fs
-> independently.
+a)
+kworker:				f2fs_gc:
+ - f2fs_write_data_pages
+  - f2fs_write_data_page
+   - do_write_data_page
+    - write_data_page
+     - f2fs_submit_page_mbio
+(page#1 in inode's page cache was queued
+in f2fs bio cache, and be ready to write
+to new blkaddr)
+					 - gc_data_segment
+					  - move_encrypted_block
+					   - pagecache_get_page
+					(page#2 in meta inode's page cache
+					was cached with the invalid datas
+					of physical block located in new
+					blkaddr)
+					   - f2fs_submit_page_mbio
+					(page#1 was submitted, later, page#2
+					with invalid data will be submitted)
 
-Yeah, but as we know, that's global configurations, each configuration we set on
-VM can impact other fs, so this way has its boundedness.
+b)
+f2fs_gc:
+ - gc_data_segment
+  - move_encrypted_block
+   - f2fs_submit_page_mbio
+(page#1 in meta inode's page cache was
+queued in f2fs bio cache, and be ready
+to write to new blkaddr)
+					user thread:
+					 - f2fs_write_begin
+					  - f2fs_submit_page_bio
+					(we submit the request to block layer
+					to update page#2 in inode's page cache
+					with physical block located in new
+					blkaddr, so here we may read gabbage
+					data from new blkaddr since GC hasn't
+					writebacked the page#1 yet)
 
-In brief, what I think is it's not bad thing to arm f2fs with different weapons
-like other fs (e.g. ext4), Once we couldn't destroy enemy with AK47, we can
-try with M16. :)
+This patch fixes above potential racing problem for encrypted inode.
 
-> 
-> Of course, I have no objection to add this feature in our pending list.
-> Oh, it would be good to make a wiki linked with [1] to describe pending
-> items too.
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c    | 20 +++++++++++---------
+ fs/f2fs/f2fs.h    |  1 +
+ fs/f2fs/file.c    |  5 +++++
+ fs/f2fs/gc.c      | 13 ++++++++++---
+ fs/f2fs/segment.c | 17 +++++++++++++++++
+ 5 files changed, 44 insertions(+), 12 deletions(-)
 
-Ah, thanks for remindering that! :) I have add this feature in planned list
-in link [1].
-
-Thanks,
-
-> 
-> [1] https://en.wikipedia.org/wiki/F2FS
-> 
-> Thanks,
-> 
-> >
-> > Thanks,
-> >
-> > > At least, I expect cp_interval could enhance user experiences quite well.
-> > >
-> > > >
-> > > > In your scenario, I think gc flow can easily be controlled with:
-> > > >
-> > > > while (n) {
-> > > > 	ioctl gc with sync mode
-> > > > }
-> > > > syncfs or ioctl write_checkpoint
-> > > >
-> > > > I wrote and sent the patches for supporting synchronous gc and supporting
-> > > > triggering checkpoint by ioctl, I hope that can be helpful once we get
-> > > > Jaegeuk's Ack.
-> > >
-> > > Thanks for the patches, :)
-> >
-> > Thank you for the quick response! :)
-> >
-> > Thanks,
-> >
-> > >
-> > > >
-> > > > Thanks,
-> > > >
-> > > > >
-> > > > > To improve the situaiton somewhat I decided to experiment with fdatasync
-> > > > > on the block device and/or a directory handle, but ended up calling syncfs
-> > > > > on the f2fs fs after every gc call, because fdatasync etc. seemed to be
-> > > > > the equivalent of syncfs anyway:
-> > > > >
-> > > > > http://ue.tst.eu/325b6ba70b1abe814dc6a5cb6c02730e.txt
-> > > > >
-> > > > > The effect of syncfs was to make I/O a lot more "chunky" - first everything
-> > > > > was read, then everything was written (dstat output, btw., this is 1 second
-> > > > > intervals as always, but I never mentioned it - sorry):
-> > > > >
-> > > > > http://ue.tst.eu/9a552a4f41a4863133d3eceb90f1ec87.txt
-> > > > >
-> > > > > Without it, read and write happen "at the same time" (when sampled with 1
-> > > > > second intervals).
-> > > > >
-> > > > > This increased the average throughput considerably, from around 45MB
-> > > > > read+write/s to 66MB/s. Whether this actually increased the GC process at
-> > > > > all I don't know, because syncfs of course forces a sync on the fs, with
-> > > > > its own overhead.
-> > > > >
-> > > > > So while this is a rather heavy-handed approach, the major result was that
-> > > > > the amount of dirty pages is notably reduced (it never reaches 1GB), and
-> > > > > the box is much more usable during this time.
-> > > > >
-> > > > > Right now, after about 9 hours, I am at "Dirty: 44k", and will start
-> > > > > writing to the device soon.
-> > > > >
-> > > > > In any case, it seems f2fs seems to hold up quite nicely near disk full
-> > > > > conditions, and does recover nicely as well.
-> > > > >
-> > > > > --
-> > > > >                 The choice of a       Deliantra, the free code+content MORPG
-> > > > >       -----==-     _GNU_              http://www.deliantra.net
-> > > > >       ----==-- _       generation
-> > > > >       ---==---(_)__  __ ____  __      Marc Lehmann
-> > > > >       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-> > > > >       -=====/_/_//_/\_,_/ /_/\_\
-> > > > >
-> > > > > ------------------------------------------------------------------------------
-> > > > > _______________________________________________
-> > > > > Linux-f2fs-devel mailing list
-> > > > > Linux-f2fs-devel@lists.sourceforge.net
-> > > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > > >
-> > > > ------------------------------------------------------------------------------
-> > > > _______________________________________________
-> > > > Linux-f2fs-devel mailing list
-> > > > Linux-f2fs-devel@lists.sourceforge.net
-> > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
-Full-scale, agent-less Infrastructure Monitoring from a single dashboard
-Integrate with 40+ ManageEngine ITSM Solutions for complete visibility
-Physical-Virtual-Cloud Infrastructure monitoring from one console
-Real user monitoring with APM Insights and performance trend reports 
-Learn More http://pubads.g.doubleclick.net/gampad/clk?id=247754911&iu=/4140
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 40a0102..d791bd3 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -954,21 +954,14 @@ submit_and_realloc:
+ 
+ 			if (f2fs_encrypted_inode(inode) &&
+ 					S_ISREG(inode->i_mode)) {
+-				struct page *cpage;
+ 
+ 				ctx = f2fs_get_crypto_ctx(inode);
+ 				if (IS_ERR(ctx))
+ 					goto set_error_page;
+ 
+ 				/* wait the page to be moved by cleaning */
+-				cpage = find_lock_page(
+-						META_MAPPING(F2FS_I_SB(inode)),
+-						block_nr);
+-				if (cpage) {
+-					f2fs_wait_on_page_writeback(cpage,
+-									DATA);
+-					f2fs_put_page(cpage, 1);
+-				}
++				f2fs_wait_on_encrypted_page_writeback(
++						F2FS_I_SB(inode), block_nr);
+ 			}
+ 
+ 			bio = bio_alloc(GFP_KERNEL,
+@@ -1059,6 +1052,11 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 	}
+ 
+ 	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode)) {
++
++		/* wait for GCed encrypted page writeback */
++		f2fs_wait_on_encrypted_page_writeback(F2FS_I_SB(inode),
++							fio->blk_addr);
++
+ 		fio->encrypted_page = f2fs_encrypt(inode, fio->page);
+ 		if (IS_ERR(fio->encrypted_page)) {
+ 			err = PTR_ERR(fio->encrypted_page);
+@@ -1446,6 +1444,10 @@ put_next:
+ 
+ 	f2fs_wait_on_page_writeback(page, DATA);
+ 
++	/* wait for GCed encrypted page writeback */
++	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
++		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
++
+ 	if (len == PAGE_CACHE_SIZE)
+ 		goto out_update;
+ 	if (PageUptodate(page))
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a7522a4..dc4d30b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1778,6 +1778,7 @@ void f2fs_replace_block(struct f2fs_sb_info *, struct dnode_of_data *,
+ void allocate_data_block(struct f2fs_sb_info *, struct page *,
+ 		block_t, block_t *, struct f2fs_summary *, int);
+ void f2fs_wait_on_page_writeback(struct page *, enum page_type);
++void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *, block_t);
+ void write_data_summaries(struct f2fs_sb_info *, block_t);
+ void write_node_summaries(struct f2fs_sb_info *, block_t);
+ int lookup_journal_in_cursum(struct f2fs_summary_block *,
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index e2d9910..1d2df88 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -87,6 +87,11 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
+ mapped:
+ 	/* fill the page */
+ 	f2fs_wait_on_page_writeback(page, DATA);
++
++	/* wait for GCed encrypted page writeback */
++	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
++		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
++
+ 	/* if gced page is attached, don't write to cold segment */
+ 	clear_cold_data(page);
+ out:
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index e7cec86..2493fd6 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -559,14 +559,21 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+ 	if (err)
+ 		goto out;
+ 
+-	if (unlikely(dn.data_blkaddr == NULL_ADDR))
++	if (unlikely(dn.data_blkaddr == NULL_ADDR)) {
++		ClearPageUptodate(page);
+ 		goto put_out;
++	}
++
++	/*
++	 * don't cache encrypted data into meta inode until previous dirty
++	 * data were writebacked to avoid racing between GC and flush.
++	 */
++	f2fs_wait_on_page_writeback(page, DATA);
+ 
+ 	get_node_info(fio.sbi, dn.nid, &ni);
+ 	set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
+ 
+ 	/* read page */
+-	fio.page = page;
+ 	fio.blk_addr = dn.data_blkaddr;
+ 
+ 	fio.encrypted_page = pagecache_get_page(META_MAPPING(fio.sbi),
+@@ -589,7 +596,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+ 		goto put_page_out;
+ 
+ 	set_page_dirty(fio.encrypted_page);
+-	f2fs_wait_on_page_writeback(fio.encrypted_page, META);
++	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA);
+ 	if (clear_page_dirty_for_io(fio.encrypted_page))
+ 		dec_page_count(fio.sbi, F2FS_DIRTY_META);
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 3c546eb..d5d760c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1462,6 +1462,23 @@ void f2fs_wait_on_page_writeback(struct page *page,
+ 	}
+ }
+ 
++void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *sbi,
++							block_t blkaddr)
++{
++	struct page *cpage;
++
++	if (blkaddr == NEW_ADDR)
++		return;
++
++	f2fs_bug_on(sbi, blkaddr == NULL_ADDR);
++
++	cpage = find_lock_page(META_MAPPING(sbi), blkaddr);
++	if (cpage) {
++		f2fs_wait_on_page_writeback(cpage, DATA);
++		f2fs_put_page(cpage, 1);
++	}
++}
++
+ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+-- 
+2.5.2
