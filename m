@@ -1,31 +1,29 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 1/2] f2fs: add F2FS_GOING_DOWN_METAFLUSH to
-	test	power-failure
-Date: Mon, 12 Oct 2015 17:01:29 +0800
-Message-ID: <020e01d104cc$af078480$0d168d80$@samsung.com>
-References: <1444350566-37795-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/5] f2fs: add a tracepoint for
+	f2fs_read_data_pages
+Date: Mon, 12 Oct 2015 17:02:26 +0800
+Message-ID: <020f01d104cc$cf35e3f0$6da1abd0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZlYzt-0006og-GI
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1ZlZ0l-0004YK-Ps
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Oct 2015 09:02:21 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZlYzr-0002TP-IQ
+	Mon, 12 Oct 2015 09:03:15 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZlZ0j-0006St-3L
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Oct 2015 09:02:21 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
+	Mon, 12 Oct 2015 09:03:15 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout4.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NW301QW4NOX7X60@mailout3.samsung.com> for
+	2014)) with ESMTP id <0NW300FTBNRYCF60@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Oct 2015 18:02:11 +0900 (KST)
-In-reply-to: <1444350566-37795-1-git-send-email-jaegeuk@kernel.org>
+	Mon, 12 Oct 2015 18:03:05 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -36,72 +34,72 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Friday, October 09, 2015 8:29 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 1/2] f2fs: add F2FS_GOING_DOWN_METAFLUSH to test power-failure
-> 
-> This patch introduces F2FS_GOING_DOWN_METAFLUSH which flushes meta pages like
-> SSA blocks and then blocks all the writes.
-> This can be used by power-failure tests.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+This patch adds a tracepoint for f2fs_read_data_pages to trace when pages
+are readahead by VFS.
 
-Good idea! I test power-failure case by changing src/godown to use new
-macro, until now, I didn't catch any consistent problem. :)
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c              |  3 +++
+ include/trace/events/f2fs.h | 26 ++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index d4f1c74..2285376 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1032,6 +1032,9 @@ static int f2fs_read_data_pages(struct file *file,
+ 			struct list_head *pages, unsigned nr_pages)
+ {
+ 	struct inode *inode = file->f_mapping->host;
++	struct page *page = list_entry(pages->prev, struct page, lru);
++
++	trace_f2fs_readpages(inode, page, nr_pages);
+ 
+ 	/* If the file has inline data, skip readpages */
+ 	if (f2fs_has_inline_data(inode))
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 7de751d..00b4a63 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -1028,6 +1028,32 @@ TRACE_EVENT(f2fs_writepages,
+ 		__entry->for_sync)
+ );
+ 
++TRACE_EVENT(f2fs_readpages,
++
++	TP_PROTO(struct inode *inode, struct page *page, unsigned int nrpage),
++
++	TP_ARGS(inode, page, nrpage),
++
++	TP_STRUCT__entry(
++		__field(dev_t,	dev)
++		__field(ino_t,	ino)
++		__field(pgoff_t,	start)
++		__field(unsigned int,	nrpage)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->ino	= inode->i_ino;
++		__entry->start	= page->index;
++		__entry->nrpage	= nrpage;
++	),
++
++	TP_printk("dev = (%d,%d), ino = %lu, start = %lu nrpage = %u",
++		show_dev_ino(__entry),
++		(unsigned long)__entry->start,
++		__entry->nrpage)
++);
++
+ TRACE_EVENT(f2fs_write_checkpoint,
+ 
+ 	TP_PROTO(struct super_block *sb, int reason, char *msg),
+-- 
+2.5.2
 
-Thanks,
-
-> ---
->  fs/f2fs/f2fs.h | 1 +
->  fs/f2fs/file.c | 4 ++++
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index aad4720..f05ae22 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -250,6 +250,7 @@ static inline bool __has_cursum_space(struct f2fs_summary_block *sum, int
-> size,
->  #define F2FS_GOING_DOWN_FULLSYNC	0x0	/* going down with full sync */
->  #define F2FS_GOING_DOWN_METASYNC	0x1	/* going down with metadata */
->  #define F2FS_GOING_DOWN_NOSYNC		0x2	/* going down */
-> +#define F2FS_GOING_DOWN_METAFLUSH	0x3	/* going down with meta flush */
-> 
->  #if defined(__KERNEL__) && defined(CONFIG_COMPAT)
->  /*
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index b3985a6..6d3cfd5 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1498,6 +1498,10 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
->  	case F2FS_GOING_DOWN_NOSYNC:
->  		f2fs_stop_checkpoint(sbi);
->  		break;
-> +	case F2FS_GOING_DOWN_METAFLUSH:
-> +		sync_meta_pages(sbi, META, LONG_MAX);
-> +		f2fs_stop_checkpoint(sbi);
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
-> --
-> 2.1.1
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 ------------------------------------------------------------------------------
