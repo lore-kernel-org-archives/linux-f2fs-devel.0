@@ -1,105 +1,145 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/5] f2fs: add a tracepoint for
-	f2fs_read_data_pages
-Date: Mon, 12 Oct 2015 17:02:26 +0800
-Message-ID: <020f01d104cc$cf35e3f0$6da1abd0$@samsung.com>
+Subject: [PATCH 2/5] f2fs: don't tag REQ_META for temporary non-meta pages
+Date: Mon, 12 Oct 2015 17:04:21 +0800
+Message-ID: <021001d104cd$14196370$3c4c2a50$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZlZ0l-0004YK-Ps
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Oct 2015 09:03:15 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZlZ0j-0006St-3L
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Oct 2015 09:03:15 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NW300FTBNRYCF60@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Oct 2015 18:03:05 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds a tracepoint for f2fs_read_data_pages to trace when pages
-are readahead by VFS.
+In recovery or checkpoint flow, we grab pages temperarily in meta inode's
+mapping for caching temperary data, actually, datas in these pages were
+not meta data of f2fs, but still we tag them with REQ_META flag. However,
+lower device like eMMC may do some optimization for data of such type.
+So in order to avoid wrong optimization, we'd better remove such flag
+for temperary non-meta pages.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c              |  3 +++
- include/trace/events/f2fs.h | 26 ++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+ fs/f2fs/checkpoint.c | 20 +++++++++++++++++++-
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/node.c       |  2 +-
+ fs/f2fs/recovery.c   |  4 ++--
+ fs/f2fs/segment.c    |  3 +++
+ 5 files changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d4f1c74..2285376 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1032,6 +1032,9 @@ static int f2fs_read_data_pages(struct file *file,
- 			struct list_head *pages, unsigned nr_pages)
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 0a9ec42..60a9599 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -47,7 +47,8 @@ repeat:
+ /*
+  * We guarantee no failure on the returned page.
+  */
+-struct page *get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index)
++static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
++							bool is_meta)
  {
- 	struct inode *inode = file->f_mapping->host;
-+	struct page *page = list_entry(pages->prev, struct page, lru);
+ 	struct address_space *mapping = META_MAPPING(sbi);
+ 	struct page *page;
+@@ -58,6 +59,9 @@ struct page *get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index)
+ 		.blk_addr = index,
+ 		.encrypted_page = NULL,
+ 	};
 +
-+	trace_f2fs_readpages(inode, page, nr_pages);
++	if (unlikely(!is_meta))
++		fio.rw &= ~REQ_META;
+ repeat:
+ 	page = grab_cache_page(mapping, index);
+ 	if (!page) {
+@@ -91,6 +95,17 @@ out:
+ 	return page;
+ }
  
- 	/* If the file has inline data, skip readpages */
- 	if (f2fs_has_inline_data(inode))
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 7de751d..00b4a63 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -1028,6 +1028,32 @@ TRACE_EVENT(f2fs_writepages,
- 		__entry->for_sync)
- );
++struct page *get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index)
++{
++	return __get_meta_page(sbi, index, true);
++}
++
++/* for POR only */
++struct page *get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index)
++{
++	return __get_meta_page(sbi, index, false);
++}
++
+ bool is_valid_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type)
+ {
+ 	switch (type) {
+@@ -137,6 +152,9 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages, int type
+ 		.encrypted_page = NULL,
+ 	};
  
-+TRACE_EVENT(f2fs_readpages,
++	if (unlikely(type == META_POR))
++		fio.rw &= ~REQ_META;
 +
-+	TP_PROTO(struct inode *inode, struct page *page, unsigned int nrpage),
-+
-+	TP_ARGS(inode, page, nrpage),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(ino_t,	ino)
-+		__field(pgoff_t,	start)
-+		__field(unsigned int,	nrpage)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= inode->i_sb->s_dev;
-+		__entry->ino	= inode->i_ino;
-+		__entry->start	= page->index;
-+		__entry->nrpage	= nrpage;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %lu, start = %lu nrpage = %u",
-+		show_dev_ino(__entry),
-+		(unsigned long)__entry->start,
-+		__entry->nrpage)
-+);
-+
- TRACE_EVENT(f2fs_write_checkpoint,
+ 	for (; nrpages-- > 0; blkno++) {
  
- 	TP_PROTO(struct super_block *sb, int reason, char *msg),
+ 		if (!is_valid_blkaddr(sbi, blkno, type))
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6ba5a59..6c0e83c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1806,6 +1806,7 @@ void destroy_segment_manager_caches(void);
+  */
+ struct page *grab_meta_page(struct f2fs_sb_info *, pgoff_t);
+ struct page *get_meta_page(struct f2fs_sb_info *, pgoff_t);
++struct page *get_tmp_page(struct f2fs_sb_info *, pgoff_t);
+ bool is_valid_blkaddr(struct f2fs_sb_info *, block_t, int);
+ int ra_meta_pages(struct f2fs_sb_info *, block_t, int, int);
+ void ra_meta_pages_cond(struct f2fs_sb_info *, pgoff_t);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 4d9bedf..c61dfb6 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1807,7 +1807,7 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 		ra_meta_pages(sbi, addr, nrpages, META_POR);
+ 
+ 		for (idx = addr; idx < addr + nrpages; idx++) {
+-			struct page *page = get_meta_page(sbi, idx);
++			struct page *page = get_tmp_page(sbi, idx);
+ 
+ 			rn = F2FS_NODE(page);
+ 			sum_entry->nid = rn->footer.nid;
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index c5daec5..75dbc07 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -188,7 +188,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ 		if (!is_valid_blkaddr(sbi, blkaddr, META_POR))
+ 			return 0;
+ 
+-		page = get_meta_page(sbi, blkaddr);
++		page = get_tmp_page(sbi, blkaddr);
+ 
+ 		if (cp_ver != cpver_of_node(page))
+ 			break;
+@@ -480,7 +480,7 @@ static int recover_data(struct f2fs_sb_info *sbi,
+ 
+ 		ra_meta_pages_cond(sbi, blkaddr);
+ 
+-		page = get_meta_page(sbi, blkaddr);
++		page = get_tmp_page(sbi, blkaddr);
+ 
+ 		if (cp_ver != cpver_of_node(page)) {
+ 			f2fs_put_page(page, 1);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 581a9af..13aa7a6 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1317,6 +1317,9 @@ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page)
+ 		.encrypted_page = NULL,
+ 	};
+ 
++	if (unlikely(page->index >= MAIN_BLKADDR(sbi)))
++		fio.rw &= ~REQ_META;
++
+ 	set_page_writeback(page);
+ 	f2fs_submit_page_mbio(&fio);
+ }
 -- 
 2.5.2
-
-
-
-------------------------------------------------------------------------------
