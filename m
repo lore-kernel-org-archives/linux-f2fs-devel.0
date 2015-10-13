@@ -1,203 +1,252 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 1/2] f2fs: add F2FS_GOING_DOWN_METAFLUSH to
- test power-failure
-Date: Tue, 13 Oct 2015 11:30:03 +0800
-Message-ID: <024a01d10567$8cc13e20$a643ba60$@samsung.com>
-References: <1444350566-37795-1-git-send-email-jaegeuk@kernel.org>
-	<020e01d104cc$af078480$0d168d80$@samsung.com>
-	<20151012203711.GA55804@jaegeuk-mac02.mot.com>
+Subject: RE: [PATCH] f2fs crypto: fix racing of accessing encrypted page among
+ different competitors
+Date: Tue, 13 Oct 2015 14:01:10 +0800
+Message-ID: <025a01d1057c$a6f59150$f4e0b3f0$@samsung.com>
+References: <019001d101c8$07899880$169cc980$@samsung.com>
+ <20151012210004.GB55804@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZlqIu-0000ga-6q
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 13 Oct 2015 03:31:08 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZlqIr-0003HE-U6
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 13 Oct 2015 03:31:08 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NW501K1C339XQ90@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 13 Oct 2015 12:30:53 +0900 (KST)
-In-reply-to: <20151012203711.GA55804@jaegeuk-mac02.mot.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20151012210004.GB55804@jaegeuk-mac02.mot.com>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Tuesday, October 13, 2015 4:37 AM
+> Sent: Tuesday, October 13, 2015 5:00 AM
 > To: Chao Yu
-> Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: add F2FS_GOING_DOWN_METAFLUSH to test power-failure
+> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] f2fs crypto: fix racing of accessing encrypted page among different
+> competitors
 > 
-> On Mon, Oct 12, 2015 at 05:01:29PM +0800, Chao Yu wrote:
-> > > -----Original Message-----
-> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > Sent: Friday, October 09, 2015 8:29 AM
-> > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > > linux-f2fs-devel@lists.sourceforge.net
-> > > Cc: Jaegeuk Kim
-> > > Subject: [f2fs-dev] [PATCH 1/2] f2fs: add F2FS_GOING_DOWN_METAFLUSH to test power-failure
-> > >
-> > > This patch introduces F2FS_GOING_DOWN_METAFLUSH which flushes meta pages like
-> > > SSA blocks and then blocks all the writes.
-> > > This can be used by power-failure tests.
-> > >
-> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> On Thu, Oct 08, 2015 at 08:50:39PM +0800, Chao Yu wrote:
+> > >From 0211c6ed82440891b3369851d079f6c69b432b6c Mon Sep 17 00:00:00 2001
+> > From: Chao Yu <chao2.yu@samsung.com>
+> > Date: Thu, 8 Oct 2015 13:27:34 +0800
+> > Subject: [PATCH] f2fs crypto: fix racing of accessing encrypted page among
+> >  different competitors
 > >
-> > Good idea! I test power-failure case by changing src/godown to use new
-> > macro, until now, I didn't catch any consistent problem. :)
+> > Since we use different page cache (normally inode's page cache for R/W
+> > and meta inode's page cache for GC) to cache the same physical block
+> > which is belong to an encrypted inode. Writeback of these two page
+> > cache should be exclusive, but now we didn't handle writeback state
+> > well, so there may be potential racing problem:
 > >
-> > Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+> > a)
+> > kworker:				f2fs_gc:
+> >  - f2fs_write_data_pages
+> >   - f2fs_write_data_page
+> >    - do_write_data_page
+> >     - write_data_page
+> >      - f2fs_submit_page_mbio
+> > (page#1 in inode's page cache was queued
+> > in f2fs bio cache, and be ready to write
+> > to new blkaddr)
+> > 					 - gc_data_segment
+> > 					  - move_encrypted_block
+> > 					   - pagecache_get_page
+> > 					(page#2 in meta inode's page cache
+> > 					was cached with the invalid datas
+> > 					of physical block located in new
+> > 					blkaddr)
+> > 					   - f2fs_submit_page_mbio
+> > 					(page#1 was submitted, later, page#2
+> > 					with invalid data will be submitted)
+> >
+> > b)
+> > f2fs_gc:
+> >  - gc_data_segment
+> >   - move_encrypted_block
+> >    - f2fs_submit_page_mbio
+> > (page#1 in meta inode's page cache was
+> > queued in f2fs bio cache, and be ready
+> > to write to new blkaddr)
+> > 					user thread:
+> > 					 - f2fs_write_begin
+> > 					  - f2fs_submit_page_bio
+> > 					(we submit the request to block layer
+> > 					to update page#2 in inode's page cache
+> > 					with physical block located in new
+> > 					blkaddr, so here we may read gabbage
+> > 					data from new blkaddr since GC hasn't
+> > 					writebacked the page#1 yet)
+> >
+> > This patch fixes above potential racing problem for encrypted inode.
+> >
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/data.c    | 20 +++++++++++---------
+> >  fs/f2fs/f2fs.h    |  1 +
+> >  fs/f2fs/file.c    |  5 +++++
+> >  fs/f2fs/gc.c      | 13 ++++++++++---
+> >  fs/f2fs/segment.c | 17 +++++++++++++++++
+> >  5 files changed, 44 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 40a0102..d791bd3 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -954,21 +954,14 @@ submit_and_realloc:
+> >
+> >  			if (f2fs_encrypted_inode(inode) &&
+> >  					S_ISREG(inode->i_mode)) {
+> > -				struct page *cpage;
+> >
+> >  				ctx = f2fs_get_crypto_ctx(inode);
+> >  				if (IS_ERR(ctx))
+> >  					goto set_error_page;
+> >
+> >  				/* wait the page to be moved by cleaning */
+> > -				cpage = find_lock_page(
+> > -						META_MAPPING(F2FS_I_SB(inode)),
+> > -						block_nr);
+> > -				if (cpage) {
+> > -					f2fs_wait_on_page_writeback(cpage,
+> > -									DATA);
+> > -					f2fs_put_page(cpage, 1);
+> > -				}
+> > +				f2fs_wait_on_encrypted_page_writeback(
+> > +						F2FS_I_SB(inode), block_nr);
+> >  			}
+> >
+> >  			bio = bio_alloc(GFP_KERNEL,
+> > @@ -1059,6 +1052,11 @@ int do_write_data_page(struct f2fs_io_info *fio)
+> >  	}
+> >
+> >  	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode)) {
+> > +
+> > +		/* wait for GCed encrypted page writeback */
+> > +		f2fs_wait_on_encrypted_page_writeback(F2FS_I_SB(inode),
+> > +							fio->blk_addr);
+> > +
+> >  		fio->encrypted_page = f2fs_encrypt(inode, fio->page);
+> >  		if (IS_ERR(fio->encrypted_page)) {
+> >  			err = PTR_ERR(fio->encrypted_page);
+> > @@ -1446,6 +1444,10 @@ put_next:
+> >
+> >  	f2fs_wait_on_page_writeback(page, DATA);
+> >
+> > +	/* wait for GCed encrypted page writeback */
+> > +	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+> > +		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
+> > +
+> >  	if (len == PAGE_CACHE_SIZE)
+> >  		goto out_update;
+> >  	if (PageUptodate(page))
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index a7522a4..dc4d30b 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1778,6 +1778,7 @@ void f2fs_replace_block(struct f2fs_sb_info *, struct dnode_of_data
+> *,
+> >  void allocate_data_block(struct f2fs_sb_info *, struct page *,
+> >  		block_t, block_t *, struct f2fs_summary *, int);
+> >  void f2fs_wait_on_page_writeback(struct page *, enum page_type);
+> > +void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *, block_t);
+> >  void write_data_summaries(struct f2fs_sb_info *, block_t);
+> >  void write_node_summaries(struct f2fs_sb_info *, block_t);
+> >  int lookup_journal_in_cursum(struct f2fs_summary_block *,
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index e2d9910..1d2df88 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -87,6 +87,11 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
+> >  mapped:
+> >  	/* fill the page */
+> >  	f2fs_wait_on_page_writeback(page, DATA);
+> > +
+> > +	/* wait for GCed encrypted page writeback */
+> > +	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+> > +		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
+> > +
+> >  	/* if gced page is attached, don't write to cold segment */
+> >  	clear_cold_data(page);
+> >  out:
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index e7cec86..2493fd6 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -559,14 +559,21 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+> >  	if (err)
+> >  		goto out;
+> >
+> > -	if (unlikely(dn.data_blkaddr == NULL_ADDR))
+> > +	if (unlikely(dn.data_blkaddr == NULL_ADDR)) {
+> > +		ClearPageUptodate(page);
+> >  		goto put_out;
+> > +	}
+> > +
+> > +	/*
+> > +	 * don't cache encrypted data into meta inode until previous dirty
+> > +	 * data were writebacked to avoid racing between GC and flush.
+> > +	 */
+> > +	f2fs_wait_on_page_writeback(page, DATA);
+> >
+> >  	get_node_info(fio.sbi, dn.nid, &ni);
+> >  	set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
+> >
+> >  	/* read page */
+> > -	fio.page = page;
 > 
-> Yeah, I could reproduce the original issue with xfstests like below too.
-> (Added "-n" to issue METAFLUSH in godown.)
+> Let's remain just to make sure.
 
-Ah, looks good! Thanks for sharing me this test. :)
+OK.
+
+> 
+> >  	fio.blk_addr = dn.data_blkaddr;
+> >
+> >  	fio.encrypted_page = pagecache_get_page(META_MAPPING(fio.sbi),
+> > @@ -589,7 +596,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+> >  		goto put_page_out;
+> >
+> >  	set_page_dirty(fio.encrypted_page);
+> > -	f2fs_wait_on_page_writeback(fio.encrypted_page, META);
+> > +	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA);
+> 
+> Why DATA?
+
+This is because we only submit the encrypted page in to DATA type bio
+cache, so we should check whether the page is cached or not in DATA
+type bio, rather than META type cache. Right?
 
 Thanks,
 
 > 
-> ---
->  tests/f2fs/002     | 85 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tests/f2fs/002.out |  5 ++++
->  tests/f2fs/group   |  1 +
->  3 files changed, 91 insertions(+)
->  create mode 100755 tests/f2fs/002
->  create mode 100644 tests/f2fs/002.out
-> 
-> diff --git a/tests/f2fs/002 b/tests/f2fs/002
-> new file mode 100755
-> index 0000000..f3decbd
-> --- /dev/null
-> +++ b/tests/f2fs/002
-> @@ -0,0 +1,85 @@
-> +#! /bin/bash
-> +# FS QA Test No. f2fs/002
-> +#
-> +# This test detects a f2fs-specific issue which is resolved by:
-> +#    f2fs: fix SSA updates resulting in corruption
-> +# The purpose is to check whether filesystem metadata becomes inconsistent
-> +# after fcollapse was called.
-> +#
-> +#-----------------------------------------------------------------------
-> +# Copyright (c) 2015 Jaegeuk Kim.  All Rights Reserved.
-> +#
-> +# This program is free software; you can redistribute it and/or
-> +# modify it under the terms of the GNU General Public License as
-> +# published by the Free Software Foundation.
-> +#
-> +# This program is distributed in the hope that it would be useful,
-> +# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +# GNU General Public License for more details.
-> +#
-> +# You should have received a copy of the GNU General Public License
-> +# along with this program; if not, write the Free Software Foundation,
-> +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-> +#
-> +#-----------------------------------------------------------------------
-> +#
-> +
-> +seq=`basename $0`
-> +seqres=$RESULT_DIR/$seq
-> +echo "QA output created by $seq"
-> +
-> +here=`pwd`
-> +tmp=/tmp/$$
-> +status=1	# failure is the default!
-> +trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
-> +
-> +# get standard environment, filters and checks
-> +. ./common/rc
-> +. ./common/filter
-> +. ./common/log
-> +. ./common/punch
-> +
-> +# real QA test starts here
-> +_supported_fs f2fs
-> +_supported_os Linux
-> +
-> +rm -f $seqres.full
-> +rm -f $tmp.log
-> +
-> +_require_scratch
-> +_require_scratch_shutdown
-> +_require_xfs_io_command "fcollapse"
-> +
-> +_scratch_mkfs > /dev/null 2>&1
-> +
-> +# collapse without sync
-> +_run_test()
-> +{
-> +	testfile=$SCRATCH_MNT/$1.$seq.$$
-> +
-> +	_scratch_mount
-> +
-> +	$XFS_IO_PROG -f -c "pwrite 0 5m" -c fsync $testfile > /dev/null
-> +	[ $1 -eq 1 ] && sync
-> +	$XFS_IO_PROG -c "fcollapse 64k 2m" $testfile > /dev/null
-> +
-> +	echo "godown"
-> +	src/godown -v -n $SCRATCH_MNT >> $seqres.full
-> +
-> +	echo "unmount"
-> +	umount $SCRATCH_MNT
-> +
-> +	# curious if FS consistent at start
-> +	_check_scratch_fs $SCRATCH_DEV
-> +	[ $? -ne 0 ] && _fatal "fsck failed"
-> +}
-> +
-> +# run without sync
-> +_run_test 0
-> +
-> +# run with sync
-> +_run_test 1
-> +
-> +status=0
-> +exit
-> diff --git a/tests/f2fs/002.out b/tests/f2fs/002.out
-> new file mode 100644
-> index 0000000..bbbf710
-> --- /dev/null
-> +++ b/tests/f2fs/002.out
-> @@ -0,0 +1,5 @@
-> +QA output created by 002
-> +godown
-> +unmount
-> +godown
-> +unmount
-> diff --git a/tests/f2fs/group b/tests/f2fs/group
-> index daba9a3..ff2305b 100644
-> --- a/tests/f2fs/group
-> +++ b/tests/f2fs/group
-> @@ -4,3 +4,4 @@
->  # - comment line before each group is "new" description
->  #
->  001 auto quick rw
-> +002 auto quick rw
-> --
-> 2.1.1
-
-
-------------------------------------------------------------------------------
+> >  	if (clear_page_dirty_for_io(fio.encrypted_page))
+> >  		dec_page_count(fio.sbi, F2FS_DIRTY_META);
+> >
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 3c546eb..d5d760c 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1462,6 +1462,23 @@ void f2fs_wait_on_page_writeback(struct page *page,
+> >  	}
+> >  }
+> >
+> > +void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *sbi,
+> > +							block_t blkaddr)
+> > +{
+> > +	struct page *cpage;
+> > +
+> > +	if (blkaddr == NEW_ADDR)
+> > +		return;
+> > +
+> > +	f2fs_bug_on(sbi, blkaddr == NULL_ADDR);
+> > +
+> > +	cpage = find_lock_page(META_MAPPING(sbi), blkaddr);
+> > +	if (cpage) {
+> > +		f2fs_wait_on_page_writeback(cpage, DATA);
+> > +		f2fs_put_page(cpage, 1);
+> > +	}
+> > +}
+> > +
+> >  static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+> >  {
+> >  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> > --
+> > 2.5.2
