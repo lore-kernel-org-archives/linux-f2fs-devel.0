@@ -1,152 +1,274 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: add a tracepoint for background gc
-Date: Tue, 13 Oct 2015 10:03:08 -0700
-Message-ID: <20151013170308.GB60592@jaegeuk-mac02.mot.com>
-References: <1444085040-12843-1-git-send-email-jaegeuk@kernel.org>
- <1444085040-12843-2-git-send-email-jaegeuk@kernel.org>
- <5618B96A.50205@huawei.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [PATCH] f2fs crypto: fix racing of accessing encrypted page among
+ different competitors
+Date: Wed, 14 Oct 2015 16:21:09 +0800
+Message-ID: <02c401d10659$678b3f50$36a1bdf0$@samsung.com>
+References: <019001d101c8$07899880$169cc980$@samsung.com>
+ <20151012210004.GB55804@jaegeuk-mac02.mot.com>
+ <025a01d1057c$a6f59150$f4e0b3f0$@samsung.com>
+ <20151013164904.GA60592@jaegeuk-mac02.mot.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5618B96A.50205@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: He YunLei <heyunlei@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20151013164904.GA60592@jaegeuk-mac02.mot.com>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Sat, Oct 10, 2015 at 03:08:26PM +0800, He YunLei wrote:
-> On 2015/10/6 6:43, Jaegeuk Kim wrote:
-> > This patch introduces a tracepoint to monitor background gc behaviors.
-> >
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >   fs/f2fs/gc.c                |  3 +++
-> >   include/trace/events/f2fs.h | 28 ++++++++++++++++++++++++++++
-> >   2 files changed, 31 insertions(+)
-> >
-> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > index e627c19..e7cec86 100644
-> > --- a/fs/f2fs/gc.c
-> > +++ b/fs/f2fs/gc.c
-> > @@ -77,6 +77,9 @@ static int gc_thread_func(void *data)
-> >
-> >   		stat_inc_bggc_count(sbi);
-> >
-> > +		trace_f2fs_background_gc(sbi->sb, wait_ms,
-> > +				prefree_segments(sbi), free_segments(sbi));
-> > +
-> >   		/* if return value is not zero, no victim was selected */
-> >   		if (f2fs_gc(sbi, test_opt(sbi, FORCE_FG_GC)))
-> >   			wait_ms = gc_th->no_gc_sleep_time;
-> > diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-> > index 6aa63d9..7de751d 100644
-> > --- a/include/trace/events/f2fs.h
-> > +++ b/include/trace/events/f2fs.h
-> > @@ -514,6 +514,34 @@ TRACE_EVENT(f2fs_map_blocks,
-> >   		__entry->ret)
-> >   );
-> >
-> > +TRACE_EVENT(f2fs_background_gc,
-> > +
-> > +	TP_PROTO(struct super_block *sb, long wait_ms,
-> > +			unsigned int prefree, unsigned int free),
-> > +
-> > +	TP_ARGS(sb, wait_ms, prefree, free),
-> > +
-> > +	TP_STRUCT__entry(
-> > +		__field(dev_t,	dev)
-> > +		__field(long,	wait_ms)
-> > +		__field(unsigned int,	prefree)
-> > +		__field(unsigned int,	free)
-> > +	),
-> > +
-> > +	TP_fast_assign(
-> > +		__entry->dev		= sb->s_dev;
-> > +		__entry->wait_ms	= wait_ms;
-> > +		__entry->prefree	= prefree;
-> > +		__entry->free		= free;
-> > +	),
-> > +
-> > +	TP_printk("dev = (%d,%d), wait_ms = %ld, prefree = %u, free = %u",
-> > +		show_dev(__entry),
-> > +		__entry->wait_ms,
-> > +		__entry->prefree,
-> > +		__entry->free)
-> > +);
-> > +
-> hi,
->      I open f2fs_background_gc and f2fs_get_victim trace points, first, the partition has no dirty segment, so no victim is
-> selected, wait_ms is equal to 300s.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Wednesday, October 14, 2015 12:52 AM
+> To: Chao Yu
+> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] f2fs crypto: fix racing of accessing encrypted page among different
+> competitors
 > 
->      f2fs_gc-8:33-2827  [001] ....  5014.608396: f2fs_background_gc: dev = (8,33), wait_ms = 300000, prefree = 0, free = 73
->      f2fs_gc-8:33-2827  [000] ....  5314.793436: f2fs_background_gc: dev = (8,33), wait_ms = 300000, prefree = 0, free = 73
+> On Tue, Oct 13, 2015 at 02:01:10PM +0800, Chao Yu wrote:
+> > > -----Original Message-----
+> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > Sent: Tuesday, October 13, 2015 5:00 AM
+> > > To: Chao Yu
+> > > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > > Subject: Re: [PATCH] f2fs crypto: fix racing of accessing encrypted page among different
+> > > competitors
+> > >
+> > > On Thu, Oct 08, 2015 at 08:50:39PM +0800, Chao Yu wrote:
+> > > > >From 0211c6ed82440891b3369851d079f6c69b432b6c Mon Sep 17 00:00:00 2001
+> > > > From: Chao Yu <chao2.yu@samsung.com>
+> > > > Date: Thu, 8 Oct 2015 13:27:34 +0800
+> > > > Subject: [PATCH] f2fs crypto: fix racing of accessing encrypted page among
+> > > >  different competitors
+> > > >
+> > > > Since we use different page cache (normally inode's page cache for R/W
+> > > > and meta inode's page cache for GC) to cache the same physical block
+> > > > which is belong to an encrypted inode. Writeback of these two page
+> > > > cache should be exclusive, but now we didn't handle writeback state
+> > > > well, so there may be potential racing problem:
+> > > >
+> > > > a)
+> > > > kworker:				f2fs_gc:
+> > > >  - f2fs_write_data_pages
+> > > >   - f2fs_write_data_page
+> > > >    - do_write_data_page
+> > > >     - write_data_page
+> > > >      - f2fs_submit_page_mbio
+> > > > (page#1 in inode's page cache was queued
+> > > > in f2fs bio cache, and be ready to write
+> > > > to new blkaddr)
+> > > > 					 - gc_data_segment
+> > > > 					  - move_encrypted_block
+> > > > 					   - pagecache_get_page
+> > > > 					(page#2 in meta inode's page cache
+> > > > 					was cached with the invalid datas
+> > > > 					of physical block located in new
+> > > > 					blkaddr)
+> > > > 					   - f2fs_submit_page_mbio
+> > > > 					(page#1 was submitted, later, page#2
+> > > > 					with invalid data will be submitted)
+> > > >
+> > > > b)
+> > > > f2fs_gc:
+> > > >  - gc_data_segment
+> > > >   - move_encrypted_block
+> > > >    - f2fs_submit_page_mbio
+> > > > (page#1 in meta inode's page cache was
+> > > > queued in f2fs bio cache, and be ready
+> > > > to write to new blkaddr)
+> > > > 					user thread:
+> > > > 					 - f2fs_write_begin
+> > > > 					  - f2fs_submit_page_bio
+> > > > 					(we submit the request to block layer
+> > > > 					to update page#2 in inode's page cache
+> > > > 					with physical block located in new
+> > > > 					blkaddr, so here we may read gabbage
+> > > > 					data from new blkaddr since GC hasn't
+> > > > 					writebacked the page#1 yet)
+> > > >
+> > > > This patch fixes above potential racing problem for encrypted inode.
+> > > >
+> > > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > > ---
+> > > >  fs/f2fs/data.c    | 20 +++++++++++---------
+> > > >  fs/f2fs/f2fs.h    |  1 +
+> > > >  fs/f2fs/file.c    |  5 +++++
+> > > >  fs/f2fs/gc.c      | 13 ++++++++++---
+> > > >  fs/f2fs/segment.c | 17 +++++++++++++++++
+> > > >  5 files changed, 44 insertions(+), 12 deletions(-)
+> > > >
+> > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > > index 40a0102..d791bd3 100644
+> > > > --- a/fs/f2fs/data.c
+> > > > +++ b/fs/f2fs/data.c
+> > > > @@ -954,21 +954,14 @@ submit_and_realloc:
+> > > >
+> > > >  			if (f2fs_encrypted_inode(inode) &&
+> > > >  					S_ISREG(inode->i_mode)) {
+> > > > -				struct page *cpage;
+> > > >
+> > > >  				ctx = f2fs_get_crypto_ctx(inode);
+> > > >  				if (IS_ERR(ctx))
+> > > >  					goto set_error_page;
+> > > >
+> > > >  				/* wait the page to be moved by cleaning */
+> > > > -				cpage = find_lock_page(
+> > > > -						META_MAPPING(F2FS_I_SB(inode)),
+> > > > -						block_nr);
+> > > > -				if (cpage) {
+> > > > -					f2fs_wait_on_page_writeback(cpage,
+> > > > -									DATA);
+> > > > -					f2fs_put_page(cpage, 1);
+> > > > -				}
+> > > > +				f2fs_wait_on_encrypted_page_writeback(
+> > > > +						F2FS_I_SB(inode), block_nr);
+> > > >  			}
+> > > >
+> > > >  			bio = bio_alloc(GFP_KERNEL,
+> > > > @@ -1059,6 +1052,11 @@ int do_write_data_page(struct f2fs_io_info *fio)
+> > > >  	}
+> > > >
+> > > >  	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode)) {
+> > > > +
+> > > > +		/* wait for GCed encrypted page writeback */
+> > > > +		f2fs_wait_on_encrypted_page_writeback(F2FS_I_SB(inode),
+> > > > +							fio->blk_addr);
+> > > > +
+> > > >  		fio->encrypted_page = f2fs_encrypt(inode, fio->page);
+> > > >  		if (IS_ERR(fio->encrypted_page)) {
+> > > >  			err = PTR_ERR(fio->encrypted_page);
+> > > > @@ -1446,6 +1444,10 @@ put_next:
+> > > >
+> > > >  	f2fs_wait_on_page_writeback(page, DATA);
+> > > >
+> > > > +	/* wait for GCed encrypted page writeback */
+> > > > +	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+> > > > +		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
+> > > > +
+> > > >  	if (len == PAGE_CACHE_SIZE)
+> > > >  		goto out_update;
+> > > >  	if (PageUptodate(page))
+> > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > > index a7522a4..dc4d30b 100644
+> > > > --- a/fs/f2fs/f2fs.h
+> > > > +++ b/fs/f2fs/f2fs.h
+> > > > @@ -1778,6 +1778,7 @@ void f2fs_replace_block(struct f2fs_sb_info *, struct dnode_of_data
+> > > *,
+> > > >  void allocate_data_block(struct f2fs_sb_info *, struct page *,
+> > > >  		block_t, block_t *, struct f2fs_summary *, int);
+> > > >  void f2fs_wait_on_page_writeback(struct page *, enum page_type);
+> > > > +void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *, block_t);
+> > > >  void write_data_summaries(struct f2fs_sb_info *, block_t);
+> > > >  void write_node_summaries(struct f2fs_sb_info *, block_t);
+> > > >  int lookup_journal_in_cursum(struct f2fs_summary_block *,
+> > > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > > index e2d9910..1d2df88 100644
+> > > > --- a/fs/f2fs/file.c
+> > > > +++ b/fs/f2fs/file.c
+> > > > @@ -87,6 +87,11 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
+> > > >  mapped:
+> > > >  	/* fill the page */
+> > > >  	f2fs_wait_on_page_writeback(page, DATA);
+> > > > +
+> > > > +	/* wait for GCed encrypted page writeback */
+> > > > +	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+> > > > +		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
+> > > > +
+> > > >  	/* if gced page is attached, don't write to cold segment */
+> > > >  	clear_cold_data(page);
+> > > >  out:
+> > > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > > > index e7cec86..2493fd6 100644
+> > > > --- a/fs/f2fs/gc.c
+> > > > +++ b/fs/f2fs/gc.c
+> > > > @@ -559,14 +559,21 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+> > > >  	if (err)
+> > > >  		goto out;
+> > > >
+> > > > -	if (unlikely(dn.data_blkaddr == NULL_ADDR))
+> > > > +	if (unlikely(dn.data_blkaddr == NULL_ADDR)) {
+> > > > +		ClearPageUptodate(page);
+> > > >  		goto put_out;
+> > > > +	}
+> > > > +
+> > > > +	/*
+> > > > +	 * don't cache encrypted data into meta inode until previous dirty
+> > > > +	 * data were writebacked to avoid racing between GC and flush.
+> > > > +	 */
+> > > > +	f2fs_wait_on_page_writeback(page, DATA);
+> > > >
+> > > >  	get_node_info(fio.sbi, dn.nid, &ni);
+> > > >  	set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
+> > > >
+> > > >  	/* read page */
+> > > > -	fio.page = page;
+> > >
+> > > Let's remain just to make sure.
+> >
+> > OK.
+> >
+> > >
+> > > >  	fio.blk_addr = dn.data_blkaddr;
+> > > >
+> > > >  	fio.encrypted_page = pagecache_get_page(META_MAPPING(fio.sbi),
+> > > > @@ -589,7 +596,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+> > > >  		goto put_page_out;
+> > > >
+> > > >  	set_page_dirty(fio.encrypted_page);
+> > > > -	f2fs_wait_on_page_writeback(fio.encrypted_page, META);
+> > > > +	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA);
+> > >
+> > > Why DATA?
+> >
+> > This is because we only submit the encrypted page in to DATA type bio
+> > cache, so we should check whether the page is cached or not in DATA
+> > type bio, rather than META type cache. Right?
 > 
->      then I made the partition satisfied the condition of has_enough_invalid_blocks, gc can get a victim and do garbage collection, wait_ms = 30s
+> Oh, right, type was DATA. :)
+> I'll test this patch with adding the above initialization.
+
+OK, thanks :)
+
+Thanks,
+
 > 
->      f2fs_gc-8:33-2827  [001] ....  5614.978486: f2fs_background_gc: dev = (8,33), wait_ms = 30000, prefree = 0, free = 54
->      f2fs_gc-8:33-2827  [001] ....  5614.978538: f2fs_get_victim: dev = (8,33), type = No TYPE, policy = (Background GC, LFS-mode, Cost-Benefit), victim = 441 ofs_unit = 1, pre_victim_secno = -1, prefree = 0, free = 54
->      f2fs_gc-8:33-2827  [000] ....  5644.996989: f2fs_background_gc: dev = (8,33), wait_ms = 30000, prefree = 0, free = 54
->      f2fs_gc-8:33-2827  [000] ....  5644.997027: f2fs_get_victim: dev = (8,33), type = No TYPE, policy = (Background GC, LFS-mode, Cost-Benefit), victim = 97 ofs_unit = 1, pre_victim_secno = -1, prefree = 0, free = 54
+> Thanks,
 > 
->      when there no dirty segments left, I think wait_ms could turn back to 300s
-> 
->      f2fs_gc-8:33-2827  [000] ....  6305.596205: f2fs_background_gc: dev = (8,33), wait_ms = 30000, prefree = 1, free = 64
->      f2fs_gc-8:33-2827  [001] ....  6605.781281: f2fs_background_gc: dev = (8,33), wait_ms = 30000, prefree = 0, free = 65
->      f2fs_gc-8:33-2827  [000] ....  6905.966301: f2fs_background_gc: dev = (8,33), wait_ms = 30000, prefree = 0, free = 65
->      f2fs_gc-8:33-2827  [001] ....  7206.151344: f2fs_background_gc: dev = (8,33), wait_ms = 30000, prefree = 0, free = 65
-> 	
->      here, background gc triggers every 300s, but wait_ms is still 30s, I don't know why?
-
-Oh, it's due to the tracepoint timing.
-In gc_thread_func(),
-	do {
-		wait with wait_ms = 300s
-
-		decrease_sleep_time(&wait_ms); -> wait_ms = 30s
-		tracepoint with wait_ms = 30s
-
-		after f2fs_gc() call, wait_ms becomes 300s again.
-	}
-
-So, this patch should fix that.
-
->From 84e4214f0868ae77771837d0ed4cc6eff10738ba Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Tue, 13 Oct 2015 10:00:53 -0700
-Subject: [PATCH] f2fs: relocate the tracepoint for background_gc
-
-Once f2fs_gc is done, wait_ms is changed once more.
-So, its tracepoint would be located after it.
-
-Reported-by: He YunLei <heyunlei@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/gc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index af7c24c..fedbf67 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -77,13 +77,13 @@ static int gc_thread_func(void *data)
- 
- 		stat_inc_bggc_count(sbi);
- 
--		trace_f2fs_background_gc(sbi->sb, wait_ms,
--				prefree_segments(sbi), free_segments(sbi));
--
- 		/* if return value is not zero, no victim was selected */
- 		if (f2fs_gc(sbi, test_opt(sbi, FORCE_FG_GC)))
- 			wait_ms = gc_th->no_gc_sleep_time;
- 
-+		trace_f2fs_background_gc(sbi->sb, wait_ms,
-+				prefree_segments(sbi), free_segments(sbi));
-+
- 		/* balancing f2fs's metadata periodically */
- 		f2fs_balance_fs_bg(sbi);
- 
--- 
-2.1.1
-
-
+> >
+> > Thanks,
+> >
+> > >
+> > > >  	if (clear_page_dirty_for_io(fio.encrypted_page))
+> > > >  		dec_page_count(fio.sbi, F2FS_DIRTY_META);
+> > > >
+> > > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > > > index 3c546eb..d5d760c 100644
+> > > > --- a/fs/f2fs/segment.c
+> > > > +++ b/fs/f2fs/segment.c
+> > > > @@ -1462,6 +1462,23 @@ void f2fs_wait_on_page_writeback(struct page *page,
+> > > >  	}
+> > > >  }
+> > > >
+> > > > +void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *sbi,
+> > > > +							block_t blkaddr)
+> > > > +{
+> > > > +	struct page *cpage;
+> > > > +
+> > > > +	if (blkaddr == NEW_ADDR)
+> > > > +		return;
+> > > > +
+> > > > +	f2fs_bug_on(sbi, blkaddr == NULL_ADDR);
+> > > > +
+> > > > +	cpage = find_lock_page(META_MAPPING(sbi), blkaddr);
+> > > > +	if (cpage) {
+> > > > +		f2fs_wait_on_page_writeback(cpage, DATA);
+> > > > +		f2fs_put_page(cpage, 1);
+> > > > +	}
+> > > > +}
+> > > > +
+> > > >  static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+> > > >  {
+> > > >  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> > > > --
+> > > > 2.5.2
