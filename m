@@ -1,21 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: fix leakage of inmemory atomic pages
-Date: Wed, 21 Oct 2015 20:03:43 -0700
-Message-ID: <1445483024-49724-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: don't need to submit bio on error case
+Date: Wed, 21 Oct 2015 20:03:44 -0700
+Message-ID: <1445483024-49724-2-git-send-email-jaegeuk@kernel.org>
+References: <1445483024-49724-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1Zp6B3-0001ra-QG
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Zp6Bc-0005cU-6Y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 22 Oct 2015 03:04:29 +0000
+	Thu, 22 Oct 2015 03:05:04 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1Zp6Ax-00064S-2j for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 22 Oct 2015 03:04:29 +0000
+	id 1Zp6BR-00065P-8F for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 22 Oct 2015 03:05:04 +0000
+In-Reply-To: <1445483024-49724-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,36 +30,30 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If we got failure during commit_atomic_write, abort_volatile_write will be
-called, but will not drop the inmemory pages due to no FI_ATOMIC_FILE.
-Actually, there is no reason to check the flag in abort_volatile_write.
+If commit_atomic_write is failed, we don't need to submit any bio.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 91c51a6..a197215 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1443,13 +1443,9 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
- 
- 	f2fs_balance_fs(F2FS_I_SB(inode));
- 
--	if (f2fs_is_atomic_file(inode)) {
--		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
--		commit_inmem_pages(inode, true);
--	}
--
--	if (f2fs_is_volatile_file(inode))
--		clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
-+	clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
-+	clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
-+	commit_inmem_pages(inode, true);
- 
- 	mnt_drop_write_file(filp);
- 	return ret;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7835e41..7efd96ad 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -249,11 +249,11 @@ int commit_inmem_pages(struct inode *inode, bool abort)
+ 				trace_f2fs_commit_inmem_page(cur->page, INMEM);
+ 				fio.page = cur->page;
+ 				err = do_write_data_page(&fio);
+-				submit_bio = true;
+ 				if (err) {
+ 					unlock_page(cur->page);
+ 					break;
+ 				}
++				submit_bio = true;
+ 			}
+ 		} else {
+ 			trace_f2fs_commit_inmem_page(cur->page, INMEM_DROP);
 -- 
 2.1.1
 
