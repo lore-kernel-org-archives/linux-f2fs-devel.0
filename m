@@ -1,61 +1,65 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: next-20151021 - compile error in  fs/f2fs/checkpoint.c
-Date: Thu, 22 Oct 2015 09:47:22 +0800
-Message-ID: <02fe01d10c6b$b5cab610$21602230$@samsung.com>
-References: <37662.1445450735@turing-police.cc.vt.edu>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/2] f2fs: fix leakage of inmemory atomic pages
+Date: Wed, 21 Oct 2015 20:03:43 -0700
+Message-ID: <1445483024-49724-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <37662.1445450735@turing-police.cc.vt.edu>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Valdis Kletnieks' <Valdis.Kletnieks@vt.edu>, 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Changman Lee' <cm224.lee@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1Zp6B3-0001ra-QG
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 22 Oct 2015 03:04:29 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1Zp6Ax-00064S-2j for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 22 Oct 2015 03:04:29 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Hello,
+If we got failure during commit_atomic_write, abort_volatile_write will be
+called, but will not drop the inmemory pages due to no FI_ATOMIC_FILE.
+Actually, there is no reason to check the flag in abort_volatile_write.
 
-> -----Original Message-----
-> From: Valdis Kletnieks [mailto:Valdis.Kletnieks@vt.edu]
-> Sent: Thursday, October 22, 2015 2:06 AM
-> To: Chao Yu; Jaegeuk Kim; Changman Lee
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: next-20151021 - compile error in fs/f2fs/checkpoint.c
-> 
-> Building next-20151021 dies with this error:
-> 
->   CC [M]  fs/f2fs/checkpoint.o
-> fs/f2fs/checkpoint.c: In function 'get_valid_checkpoint':
-> fs/f2fs/checkpoint.c:707:3: error: too few arguments to function 'ra_meta_pages'
->    ra_meta_pages(sbi, cp_blk_no + 1, cp_blks - 1, META_CP);
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/file.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-Above invoking is added in commit ("f2fs: readahead cp payload pages
-when mount") at ~9/12/2015, but sadly it's complete wrong due to my fault,
-so it is removed in our dev-test branch by Jaegeuk at ~9/26/2015. I can't
-remember the time when this commit is removed from dev branch which is for
--next branch. I have checked next-20151022, this commit is gone, I think
-the last -next will not make any trouble to you. Could you check that?
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 91c51a6..a197215 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1443,13 +1443,9 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+ 
+ 	f2fs_balance_fs(F2FS_I_SB(inode));
+ 
+-	if (f2fs_is_atomic_file(inode)) {
+-		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
+-		commit_inmem_pages(inode, true);
+-	}
+-
+-	if (f2fs_is_volatile_file(inode))
+-		clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
++	clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
++	clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
++	commit_inmem_pages(inode, true);
+ 
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+-- 
+2.1.1
 
->    ^
-> fs/f2fs/checkpoint.c:143:5: note: declared here
->  int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
->      ^
-> scripts/Makefile.build:258: recipe for target 'fs/f2fs/checkpoint.o' failed
-> make[2]: *** [fs/f2fs/checkpoint.o] Error 1
-> 
-> Looks like this commit:
-> 
-> commit 26879fb101f28c554294eaf25ac7817a2825b180
-> Author: Chao Yu <chao2.yu@samsung.com>
-> Date:   Mon Oct 12 17:05:59 2015 +0800
-> 
->     f2fs: support lower priority asynchronous readahead in ra_meta_pages
-> 
-> missed updating one call.  Apparently this wasn't compile-tested before
-> being pushed upstream?
 
-When this commit was updated in Jaegeuk's tree, above invoking in
-fs/f2fs/checkpoint.c:707 was gone.
-
-Thanks,
+------------------------------------------------------------------------------
