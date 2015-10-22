@@ -1,291 +1,339 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: refactor __find_rev_next_{zero}_bit
-Date: Thu, 22 Oct 2015 09:36:23 -0700
-Message-ID: <20151022163623.GA51514@jaegeuk-mac02.mot.com>
-References: <1445462203-44072-1-git-send-email-jaegeuk@kernel.org>
- <20151021222933.GA46426@jaegeuk-mac02.mot.com>
- <031b01d10cbc$41897f10$c49c7d30$@samsung.com>
+Subject: Re: [PATCH] f2fs: support file defragment
+Date: Thu, 22 Oct 2015 11:11:44 -0700
+Message-ID: <20151022181144.GA52889@jaegeuk-mac02.mot.com>
+References: <032001d10cc1$294f0140$7bed03c0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <031b01d10cbc$41897f10$c49c7d30$@samsung.com>
+In-Reply-To: <032001d10cc1$294f0140$7bed03c0$@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+Hi,
 
-On Thu, Oct 22, 2015 at 07:24:01PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
+On Thu, Oct 22, 2015 at 07:59:14PM +0800, Chao Yu wrote:
+> This patch introduces a new ioctl F2FS_IOC_DEFRAGMENT to support file
+> defragment in a specified range of regular file.
 > 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Thursday, October 22, 2015 6:30 AM
-> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Subject: Re: [f2fs-dev] [PATCH] f2fs: refactor __find_rev_next_{zero}_bit
-> > 
-> > On Wed, Oct 21, 2015 at 02:16:43PM -0700, Jaegeuk Kim wrote:
-> > > This patch refactors __find_rev_next_{zero}_bit which was disabled previously
-> > > due to bugs.
+> This ioctl can be used in very limited workload: if user expects high
+> sequential read performance in randomly written file, this interface
+> can be used for defragmentation, after that file can be written as
+> continuous as possible in the device.
 > 
-> Actually I didn't know the history here, could you please explain details
-> about the bugs? then I can do the review.
+> Meanwhile, it has side-effect, it will make holes in segments where
+> blocks located originally, so it's better to trigger GC to eliminate
+> fragment in segments.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/data.c |   6 +-
+>  fs/f2fs/f2fs.h |   8 +++
+>  fs/f2fs/file.c | 200 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 213 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 972eab7..5bb375a 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -566,7 +566,7 @@ out:
+>   *     b. do not use extent cache for better performance
+>   *     c. give the block addresses to blockdev
+>   */
+> -static int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+> +int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  						int create, int flag)
+>  {
+>  	unsigned int maxblocks = map->m_len;
+> @@ -1354,6 +1354,10 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+>  			available_free_memory(sbi, DIRTY_DENTS))
+>  		goto skip_write;
+>  
+> +	/* skip writing during file defragment */
+> +	if (is_inode_flag_set(F2FS_I(inode), FI_DO_DEFRAG))
+> +		goto skip_write;
+> +
+>  	/* during POR, we don't need to trigger writepage at all. */
+>  	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+>  		goto skip_write;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 9db5500..068813c 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -234,6 +234,7 @@ static inline bool __has_cursum_space(struct f2fs_summary_block *sum, int size,
+>  #define F2FS_IOC_ABORT_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 5)
+>  #define F2FS_IOC_GARBAGE_COLLECT	_IO(F2FS_IOCTL_MAGIC, 6)
+>  #define F2FS_IOC_WRITE_CHECKPOINT	_IO(F2FS_IOCTL_MAGIC, 7)
+> +#define F2FS_IOC_DEFRAGMENT		_IO(F2FS_IOCTL_MAGIC, 8)
+>  
+>  #define F2FS_IOC_SET_ENCRYPTION_POLICY					\
+>  		_IOR('f', 19, struct f2fs_encryption_policy)
+> @@ -260,6 +261,11 @@ static inline bool __has_cursum_space(struct f2fs_summary_block *sum, int size,
+>  #define F2FS_IOC32_SETFLAGS             FS_IOC32_SETFLAGS
+>  #endif
+>  
+> +struct f2fs_defragment {
+> +	u64 start;
+> +	u64 len;
+> +};
+> +
+>  /*
+>   * For INODE and NODE manager
+>   */
+> @@ -1416,6 +1422,7 @@ enum {
+>  	FI_DROP_CACHE,		/* drop dirty page cache */
+>  	FI_DATA_EXIST,		/* indicate data exists */
+>  	FI_INLINE_DOTS,		/* indicate inline dot dentries */
+> +	FI_DO_DEFRAG,		/* indicate defragment is running */
+>  };
+>  
+>  static inline void set_inode_flag(struct f2fs_inode_info *fi, int flag)
+> @@ -1847,6 +1854,7 @@ struct page *find_data_page(struct inode *, pgoff_t);
+>  struct page *get_lock_data_page(struct inode *, pgoff_t, bool);
+>  struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
+>  int do_write_data_page(struct f2fs_io_info *);
+> +int f2fs_map_blocks(struct inode *, struct f2fs_map_blocks *, int, int);
+>  int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
+>  void f2fs_invalidate_page(struct page *, unsigned int, unsigned int);
+>  int f2fs_release_page(struct page *, gfp_t);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index a197215..ad59694 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -1646,6 +1646,204 @@ static int f2fs_ioc_write_checkpoint(struct file *filp, unsigned long arg)
+>  	return 0;
+>  }
+>  
+> +static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+> +					struct file *filp,
+> +					struct f2fs_defragment *range)
+> +{
+> +	struct inode *inode = file_inode(filp);
+> +	struct f2fs_map_blocks map;
+> +	struct extent_info ei;
+> +	pgoff_t pg_start, pg_end;
+> +	unsigned int blk_per_seg = 1 << sbi->log_blocks_per_seg;
+> +	unsigned int total = 0, sec_num;
+> +	unsigned int pages_per_sec = sbi->segs_per_sec *
+> +					(1 << sbi->log_blocks_per_seg);
+> +	block_t blk_end = 0;
+> +	bool fragmented = false;
+> +	int err = 0;
+> +
+> +	pg_start = range->start >> PAGE_CACHE_SHIFT;
+> +	pg_end = (range->start + range->len) >> PAGE_CACHE_SHIFT;
+> +
+> +	f2fs_balance_fs(sbi);
+> +
+> +	mutex_lock(&inode->i_mutex);
+> +
+> +	/* writeback all dirty pages in the range */
+> +	err = filemap_write_and_wait_range(inode->i_mapping, range->start,
+> +						range->start + range->len);
+> +	if (err)
+> +		goto out;
+> +
+> +	/*
+> +	 * lookup mapping info in extent cache, skip defragmenting if physical
+> +	 * block addresses are continuous.
+> +	 */
+> +	if (f2fs_lookup_extent_cache(inode, pg_start, &ei)) {
+> +		if (ei.fofs + ei.len >= pg_end)
+> +			goto out;
+> +	}
+> +
+> +	map.m_lblk = pg_start;
+> +	map.m_len = pg_end - pg_start;
+> +
+> +	/*
+> +	 * lookup mapping info in dnode page cache, skip defragmenting if all
+> +	 * physical block addresses are continuous even if there are hole(s)
+> +	 * in logical blocks.
+> +	 */
+> +	while (map.m_lblk < pg_end) {
+> +		map.m_flags = 0;
+> +		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
 
-When I disabled the existing function by:
+How about using f2fs_fiemap to get the extent information?
 
-commit e19ef527aa32f057710ec842fe656bffc263b0bb
-Author: Jaegeuk Kim <jaegeuk@kernel.org>
-Date:   Mon May 18 11:45:15 2015 -0700
+> +		if (err)
+> +			goto out;
+> +
+> +		if (!(map.m_flags & F2FS_MAP_FLAGS)) {
+> +			map.m_lblk++;
+> +			map.m_len--;
+> +			continue;
+> +		}
+> +
+> +		if (blk_end && blk_end != map.m_pblk) {
+> +			fragmented = true;
+> +			break;
+> +		}
+> +		blk_end = map.m_pblk + map.m_len;
+> +
+> +		map.m_lblk += map.m_len;
+> +		map.m_len = pg_end - map.m_lblk;
+> +	}
+> +
+> +	if (!fragmented)
+> +		goto out;
+> +
+> +	map.m_lblk = pg_start;
+> +	map.m_len = pg_end - pg_start;
+> +
+> +	sec_num = (map.m_len + pages_per_sec - 1) / pages_per_sec;
+> +
+> +	if (has_not_enough_free_secs(sbi, sec_num))
 
-    f2fs: avoid buggy functions
+Later, ->writepage will handle this?
 
-I found a mismatch of results between the existing __find_rev_next_bit and
-f2fs_test_bit work. I remember it happened on __find_rev_next_bit sometimes
-by xfstests which include trim_fs.
-(I didn't get an error from __find_rev_zero_bit though.)
+> +		goto out;
+> +
+> +	while (map.m_lblk < pg_end) {
+> +		pgoff_t idx;
+> +		int cnt = 0;
 
-Since I have no time to investigate the bug in more detail at that time, I
-just disabled it. But, now I'm trying to refactor the flow to fix this.
+What about this?
+
+	for_each_extents(extent_info) {
+		page = get_lock_data_page(inode, idx, true);
+
+		set_page_dirty(page);
+	}
+	filemap_fdatawrite();
 
 Thanks,
 
-> 
-> Thanks,
-> 
-> > >
-> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > ---
-> > >  fs/f2fs/segment.c | 106 +++++++++++++++++++++++++-----------------------------
-> > >  1 file changed, 49 insertions(+), 57 deletions(-)
-> > >
-> > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > > index f37c212..50afc93 100644
-> > > --- a/fs/f2fs/segment.c
-> > > +++ b/fs/f2fs/segment.c
-> > > @@ -29,6 +29,21 @@ static struct kmem_cache *discard_entry_slab;
-> > >  static struct kmem_cache *sit_entry_set_slab;
-> > >  static struct kmem_cache *inmem_entry_slab;
-> > >
-> > > +static unsigned long __reverse_ulong(unsigned char *str)
-> > > +{
-> > > +	unsigned long tmp = 0;
-> > > +	int shift = 24, idx = 0;
-> > > +
-> > > +#if BITS_PER_LONG == 64
-> > > +	shift = 56;
-> > > +#endif
-> > > +	while (shift >= 0) {
-> > > +		tmp |= (unsigned long)str[idx++] << shift;
-> > > +		shift -= BITS_PER_BYTE;
-> > > +	}
-> > > +	return tmp;
-> > > +}
-> > > +
-> > >  /*
-> > >   * __reverse_ffs is copied from include/asm-generic/bitops/__ffs.h since
-> > >   * MSB and LSB are reversed in a byte by f2fs_set_bit.
-> > > @@ -38,27 +53,31 @@ static inline unsigned long __reverse_ffs(unsigned long word)
-> > >  	int num = 0;
-> > >
-> > >  #if BITS_PER_LONG == 64
-> > > -	if ((word & 0xffffffff) == 0) {
-> > > +	if ((word & 0xffffffff00000000) == 0)
-> > 
-> > I fixed the sparse warning by modifying:
-> > 	if ((word & 0xffffffff00000000UL) == 0)
-> > 
-> > Thanks,
-> > 
-> > >  		num += 32;
-> > > +	else
-> > >  		word >>= 32;
-> > > -	}
-> > >  #endif
-> > > -	if ((word & 0xffff) == 0) {
-> > > +	if ((word & 0xffff0000) == 0)
-> > >  		num += 16;
-> > > +	else
-> > >  		word >>= 16;
-> > > -	}
-> > > -	if ((word & 0xff) == 0) {
-> > > +
-> > > +	if ((word & 0xff00) == 0)
-> > >  		num += 8;
-> > > +	else
-> > >  		word >>= 8;
-> > > -	}
-> > > +
-> > >  	if ((word & 0xf0) == 0)
-> > >  		num += 4;
-> > >  	else
-> > >  		word >>= 4;
-> > > +
-> > >  	if ((word & 0xc) == 0)
-> > >  		num += 2;
-> > >  	else
-> > >  		word >>= 2;
-> > > +
-> > >  	if ((word & 0x2) == 0)
-> > >  		num += 1;
-> > >  	return num;
-> > > @@ -68,26 +87,16 @@ static inline unsigned long __reverse_ffs(unsigned long word)
-> > >   * __find_rev_next(_zero)_bit is copied from lib/find_next_bit.c because
-> > >   * f2fs_set_bit makes MSB and LSB reversed in a byte.
-> > >   * Example:
-> > > - *                             LSB <--> MSB
-> > > - *   f2fs_set_bit(0, bitmap) => 0000 0001
-> > > - *   f2fs_set_bit(7, bitmap) => 1000 0000
-> > > + *                             MSB <--> LSB
-> > > + *   f2fs_set_bit(0, bitmap) => 1000 0000
-> > > + *   f2fs_set_bit(7, bitmap) => 0000 0001
-> > >   */
-> > >  static unsigned long __find_rev_next_bit(const unsigned long *addr,
-> > >  			unsigned long size, unsigned long offset)
-> > >  {
-> > > -	while (!f2fs_test_bit(offset, (unsigned char *)addr))
-> > > -		offset++;
-> > > -
-> > > -	if (offset > size)
-> > > -		offset = size;
-> > > -
-> > > -	return offset;
-> > > -#if 0
-> > >  	const unsigned long *p = addr + BIT_WORD(offset);
-> > >  	unsigned long result = offset & ~(BITS_PER_LONG - 1);
-> > >  	unsigned long tmp;
-> > > -	unsigned long mask, submask;
-> > > -	unsigned long quot, rest;
-> > >
-> > >  	if (offset >= size)
-> > >  		return size;
-> > > @@ -97,14 +106,9 @@ static unsigned long __find_rev_next_bit(const unsigned long *addr,
-> > >  	if (!offset)
-> > >  		goto aligned;
-> > >
-> > > -	tmp = *(p++);
-> > > -	quot = (offset >> 3) << 3;
-> > > -	rest = offset & 0x7;
-> > > -	mask = ~0UL << quot;
-> > > -	submask = (unsigned char)(0xff << rest) >> rest;
-> > > -	submask <<= quot;
-> > > -	mask &= submask;
-> > > -	tmp &= mask;
-> > > +	tmp = __reverse_ulong((unsigned char *)p);
-> > > +	tmp &= ~0UL >> offset;
-> > > +
-> > >  	if (size < BITS_PER_LONG)
-> > >  		goto found_first;
-> > >  	if (tmp)
-> > > @@ -112,42 +116,34 @@ static unsigned long __find_rev_next_bit(const unsigned long *addr,
-> > >
-> > >  	size -= BITS_PER_LONG;
-> > >  	result += BITS_PER_LONG;
-> > > +	p++;
-> > >  aligned:
-> > >  	while (size & ~(BITS_PER_LONG-1)) {
-> > > -		tmp = *(p++);
-> > > +		tmp = __reverse_ulong((unsigned char *)p);
-> > >  		if (tmp)
-> > >  			goto found_middle;
-> > >  		result += BITS_PER_LONG;
-> > >  		size -= BITS_PER_LONG;
-> > > +		p++;
-> > >  	}
-> > >  	if (!size)
-> > >  		return result;
-> > > -	tmp = *p;
-> > > +
-> > > +	tmp = __reverse_ulong((unsigned char *)p);
-> > >  found_first:
-> > > -	tmp &= (~0UL >> (BITS_PER_LONG - size));
-> > > -	if (tmp == 0UL)		/* Are any bits set? */
-> > > +	tmp &= (~0UL << (BITS_PER_LONG - size));
-> > > +	if (!tmp)		/* Are any bits set? */
-> > >  		return result + size;   /* Nope. */
-> > >  found_middle:
-> > >  	return result + __reverse_ffs(tmp);
-> > > -#endif
-> > >  }
-> > >
-> > >  static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
-> > >  			unsigned long size, unsigned long offset)
-> > >  {
-> > > -	while (f2fs_test_bit(offset, (unsigned char *)addr))
-> > > -		offset++;
-> > > -
-> > > -	if (offset > size)
-> > > -		offset = size;
-> > > -
-> > > -	return offset;
-> > > -#if 0
-> > >  	const unsigned long *p = addr + BIT_WORD(offset);
-> > >  	unsigned long result = offset & ~(BITS_PER_LONG - 1);
-> > >  	unsigned long tmp;
-> > > -	unsigned long mask, submask;
-> > > -	unsigned long quot, rest;
-> > >
-> > >  	if (offset >= size)
-> > >  		return size;
-> > > @@ -157,40 +153,36 @@ static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
-> > >  	if (!offset)
-> > >  		goto aligned;
-> > >
-> > > -	tmp = *(p++);
-> > > -	quot = (offset >> 3) << 3;
-> > > -	rest = offset & 0x7;
-> > > -	mask = ~(~0UL << quot);
-> > > -	submask = (unsigned char)~((unsigned char)(0xff << rest) >> rest);
-> > > -	submask <<= quot;
-> > > -	mask += submask;
-> > > -	tmp |= mask;
-> > > +	tmp = __reverse_ulong((unsigned char *)p);
-> > > +	tmp |= ~((~0UL << offset) >> offset);
-> > > +
-> > >  	if (size < BITS_PER_LONG)
-> > >  		goto found_first;
-> > > -	if (~tmp)
-> > > +	if (tmp != ~0UL)
-> > >  		goto found_middle;
-> > >
-> > >  	size -= BITS_PER_LONG;
-> > >  	result += BITS_PER_LONG;
-> > > +	p++;
-> > >  aligned:
-> > >  	while (size & ~(BITS_PER_LONG - 1)) {
-> > > -		tmp = *(p++);
-> > > -		if (~tmp)
-> > > +		tmp = __reverse_ulong((unsigned char *)p);
-> > > +		if (tmp != ~0UL)
-> > >  			goto found_middle;
-> > >  		result += BITS_PER_LONG;
-> > >  		size -= BITS_PER_LONG;
-> > > +		p++;
-> > >  	}
-> > >  	if (!size)
-> > >  		return result;
-> > > -	tmp = *p;
-> > >
-> > > +	tmp = __reverse_ulong((unsigned char *)p);
-> > >  found_first:
-> > > -	tmp |= ~0UL << size;
-> > > -	if (tmp == ~0UL)        /* Are any bits zero? */
-> > > +	tmp |= ~(~0UL << (BITS_PER_LONG - size));
-> > > +	if (tmp == ~0UL)	/* Are any bits zero? */
-> > >  		return result + size;   /* Nope. */
-> > >  found_middle:
-> > >  	return result + __reverse_ffz(tmp);
-> > > -#endif
-> > >  }
-> > >
-> > >  void register_inmem_page(struct inode *inode, struct page *page)
-> > > --
-> > > 2.1.1
-> > 
-> > ------------------------------------------------------------------------------
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> +
+> +do_map:
+> +		map.m_flags = 0;
+> +		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
+> +		if (err)
+> +			goto out;
+> +
+> +		if (!(map.m_flags & F2FS_MAP_FLAGS)) {
+> +			map.m_lblk++;
+> +			continue;
+> +		}
+> +
+> +		set_inode_flag(F2FS_I(inode), FI_DO_DEFRAG);
+> +
+> +		idx = map.m_lblk;
+> +		while (idx < map.m_lblk + map.m_len && cnt < blk_per_seg) {
+> +			struct address_space *mapping = inode->i_mapping;
+> +			struct page *page;
+> +
+> +			page = find_or_create_page(mapping, idx, GFP_NOFS);
+> +			if (!page) {
+> +				err = -ENOMEM;
+> +				goto out;
+> +			}
+> +
+> +			f2fs_wait_on_page_writeback(page, DATA);
+> +
+> +			if (!PageUptodate(page)) {
+> +				err = mapping->a_ops->readpage(filp, page);
+> +				if (unlikely(err)) {
+> +					f2fs_put_page(page, 0);
+> +					goto out;
+> +				}
+> +
+> +				lock_page_killable(page);
+> +
+> +				if (!PageUptodate(page)) {
+> +					f2fs_put_page(page, 1);
+> +					err = -EIO;
+> +					goto out;
+> +				}
+> +			}
+> +			set_page_dirty(page);
+> +			f2fs_put_page(page, 1);
+> +
+> +			idx++;
+> +			cnt++;
+> +			total++;
+> +		}
+> +
+> +		map.m_lblk = idx;
+> +		map.m_len = pg_end - idx;
+> +
+> +		if (idx < pg_end && cnt < blk_per_seg)
+> +			goto do_map;
+> +
+> +		clear_inode_flag(F2FS_I(inode), FI_DO_DEFRAG);
+> +
+> +		err = filemap_fdatawrite(inode->i_mapping);
+> +		if (err)
+> +			goto out;
+> +	}
+> +out:
+> +	mutex_unlock(&inode->i_mutex);
+> +	if (!err)
+> +		range->len = (u64)total << PAGE_CACHE_SHIFT;
+> +	return err;
+> +}
+> +
+> +static int f2fs_ioc_defragment(struct file *filp, unsigned long arg)
+> +{
+> +	struct inode *inode = file_inode(filp);
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> +	struct f2fs_defragment range;
+> +	int err;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return -EPERM;
+> +
+> +	if (!S_ISREG(inode->i_mode))
+> +		return -EINVAL;
+> +
+> +	err = mnt_want_write_file(filp);
+> +	if (err)
+> +		return err;
+> +
+> +	if (f2fs_readonly(sbi->sb)) {
+> +		err = -EROFS;
+> +		goto out;
+> +	}
+> +
+> +	if (copy_from_user(&range, (struct f2fs_defragment __user *)arg,
+> +							sizeof(range))) {
+> +		err = -EFAULT;
+> +		goto out;
+> +	}
+> +
+> +	/* verify alignment of offset & size */
+> +	if (range.start & (F2FS_BLKSIZE - 1) ||
+> +		range.len & (F2FS_BLKSIZE - 1)) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	err = f2fs_defragment_range(sbi, filp, &range);
+> +	if (err < 0)
+> +		goto out;
+> +
+> +	if (copy_to_user((struct f2fs_defragment __user *)arg, &range,
+> +							sizeof(range)))
+> +		err = -EFAULT;
+> +out:
+> +	mnt_drop_write_file(filp);
+> +	return err;
+> +}
+> +
+>  long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  {
+>  	switch (cmd) {
+> @@ -1679,6 +1877,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  		return f2fs_ioc_gc(filp, arg);
+>  	case F2FS_IOC_WRITE_CHECKPOINT:
+>  		return f2fs_ioc_write_checkpoint(filp, arg);
+> +	case F2FS_IOC_DEFRAGMENT:
+> +		return f2fs_ioc_defragment(filp, arg);
+>  	default:
+>  		return -ENOTTY;
+>  	}
+> -- 
+> 2.6.1
