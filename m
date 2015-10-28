@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2] f2fs: support file defragment
-Date: Tue, 27 Oct 2015 09:53:45 +0800
-Message-ID: <012101d1105a$68d33bf0$3a79b3d0$@samsung.com>
+Subject: [PATCH 1/2] f2fs: report error of f2fs_create_root_stats
+Date: Wed, 28 Oct 2015 17:55:18 +0800
+Message-ID: <01aa01d11166$d88de7d0$89a9b770$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,304 +12,86 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch introduces a new ioctl F2FS_IOC_DEFRAGMENT to support file
-defragment in a specified range of regular file.
-
-This ioctl can be used in very limited workload: if user expects high
-sequential read performance in randomly written file, this interface
-can be used for defragmentation, after that file can be written as
-continuous as possible in the device.
-
-Meanwhile, it has side-effect, it will make holes in segments where
-blocks located originally, so it's better to trigger GC to eliminate
-fragment in segments.
+f2fs_create_root_stats can fail due to no memory, report it to user.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
-v2:
- - check IPU policy in advance.
- - use get_lock_data_page suggested by Jaegeuk.
- fs/f2fs/data.c |   6 +-
- fs/f2fs/f2fs.h |   8 +++
- fs/f2fs/file.c | 195 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 208 insertions(+), 1 deletion(-)
+ fs/f2fs/debug.c | 7 +++++--
+ fs/f2fs/f2fs.h  | 4 ++--
+ fs/f2fs/super.c | 6 +++++-
+ 3 files changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 180cdbf..14a4d24 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -566,7 +566,7 @@ out:
-  *     b. do not use extent cache for better performance
-  *     c. give the block addresses to blockdev
-  */
--static int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
-+int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 						int create, int flag)
- {
- 	unsigned int maxblocks = map->m_len;
-@@ -1354,6 +1354,10 @@ static int f2fs_write_data_pages(struct address_space *mapping,
- 			available_free_memory(sbi, DIRTY_DENTS))
- 		goto skip_write;
- 
-+	/* skip writing during file defragment */
-+	if (is_inode_flag_set(F2FS_I(inode), FI_DO_DEFRAG))
-+		goto skip_write;
-+
- 	/* during POR, we don't need to trigger writepage at all. */
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
- 		goto skip_write;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9db5500..068813c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -234,6 +234,7 @@ static inline bool __has_cursum_space(struct f2fs_summary_block *sum, int size,
- #define F2FS_IOC_ABORT_VOLATILE_WRITE	_IO(F2FS_IOCTL_MAGIC, 5)
- #define F2FS_IOC_GARBAGE_COLLECT	_IO(F2FS_IOCTL_MAGIC, 6)
- #define F2FS_IOC_WRITE_CHECKPOINT	_IO(F2FS_IOCTL_MAGIC, 7)
-+#define F2FS_IOC_DEFRAGMENT		_IO(F2FS_IOCTL_MAGIC, 8)
- 
- #define F2FS_IOC_SET_ENCRYPTION_POLICY					\
- 		_IOR('f', 19, struct f2fs_encryption_policy)
-@@ -260,6 +261,11 @@ static inline bool __has_cursum_space(struct f2fs_summary_block *sum, int size,
- #define F2FS_IOC32_SETFLAGS             FS_IOC32_SETFLAGS
- #endif
- 
-+struct f2fs_defragment {
-+	u64 start;
-+	u64 len;
-+};
-+
- /*
-  * For INODE and NODE manager
-  */
-@@ -1416,6 +1422,7 @@ enum {
- 	FI_DROP_CACHE,		/* drop dirty page cache */
- 	FI_DATA_EXIST,		/* indicate data exists */
- 	FI_INLINE_DOTS,		/* indicate inline dot dentries */
-+	FI_DO_DEFRAG,		/* indicate defragment is running */
- };
- 
- static inline void set_inode_flag(struct f2fs_inode_info *fi, int flag)
-@@ -1847,6 +1854,7 @@ struct page *find_data_page(struct inode *, pgoff_t);
- struct page *get_lock_data_page(struct inode *, pgoff_t, bool);
- struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
- int do_write_data_page(struct f2fs_io_info *);
-+int f2fs_map_blocks(struct inode *, struct f2fs_map_blocks *, int, int);
- int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
- void f2fs_invalidate_page(struct page *, unsigned int, unsigned int);
- int f2fs_release_page(struct page *, gfp_t);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a197215..2f39298 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1646,6 +1646,199 @@ static int f2fs_ioc_write_checkpoint(struct file *filp, unsigned long arg)
- 	return 0;
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 478e5d5..b0966f3 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -406,20 +406,23 @@ void f2fs_destroy_stats(struct f2fs_sb_info *sbi)
+ 	kfree(si);
  }
  
-+static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
-+					struct file *filp,
-+					struct f2fs_defragment *range)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct f2fs_map_blocks map;
-+	struct extent_info ei;
-+	pgoff_t pg_start, pg_end;
-+	unsigned int blk_per_seg = 1 << sbi->log_blocks_per_seg;
-+	unsigned int total = 0, sec_num;
-+	unsigned int pages_per_sec = sbi->segs_per_sec *
-+					(1 << sbi->log_blocks_per_seg);
-+	block_t blk_end = 0;
-+	bool fragmented = false;
-+	int err;
-+
-+	/* if in-place-update policy is enabled, don't waste time here */
-+	if (need_inplace_update(inode))
-+		return -EINVAL;
-+
-+	pg_start = range->start >> PAGE_CACHE_SHIFT;
-+	pg_end = (range->start + range->len) >> PAGE_CACHE_SHIFT;
-+
-+	f2fs_balance_fs(sbi);
-+
-+	mutex_lock(&inode->i_mutex);
-+
-+	/* writeback all dirty pages in the range */
-+	err = filemap_write_and_wait_range(inode->i_mapping, range->start,
-+						range->start + range->len);
-+	if (err)
-+		goto out;
-+
-+	/*
-+	 * lookup mapping info in extent cache, skip defragmenting if physical
-+	 * block addresses are continuous.
-+	 */
-+	if (f2fs_lookup_extent_cache(inode, pg_start, &ei)) {
-+		if (ei.fofs + ei.len >= pg_end)
-+			goto out;
-+	}
-+
-+	map.m_lblk = pg_start;
-+	map.m_len = pg_end - pg_start;
-+
-+	/*
-+	 * lookup mapping info in dnode page cache, skip defragmenting if all
-+	 * physical block addresses are continuous even if there are hole(s)
-+	 * in logical blocks.
-+	 */
-+	while (map.m_lblk < pg_end) {
-+		map.m_flags = 0;
-+		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
-+		if (err)
-+			goto out;
-+
-+		if (!(map.m_flags & F2FS_MAP_FLAGS)) {
-+			map.m_lblk++;
-+			map.m_len--;
-+			continue;
-+		}
-+
-+		if (blk_end && blk_end != map.m_pblk) {
-+			fragmented = true;
-+			break;
-+		}
-+		blk_end = map.m_pblk + map.m_len;
-+
-+		map.m_lblk += map.m_len;
-+		map.m_len = pg_end - map.m_lblk;
-+	}
-+
-+	if (!fragmented)
-+		goto out;
-+
-+	map.m_lblk = pg_start;
-+	map.m_len = pg_end - pg_start;
-+
-+	sec_num = (map.m_len + pages_per_sec - 1) / pages_per_sec;
-+
-+	/*
-+	 * make sure there are enough free section for LFS allocation, this can
-+	 * avoid defragment running in SSR mode when free section are allocated
-+	 * intensively
-+	 */
-+	if (has_not_enough_free_secs(sbi, sec_num)) {
-+		err = -EAGAIN;
-+		goto out;
-+	}
-+
-+	while (map.m_lblk < pg_end) {
-+		pgoff_t idx;
-+		int cnt = 0;
-+
-+do_map:
-+		map.m_flags = 0;
-+		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
-+		if (err)
-+			goto clear_out;
-+
-+		if (!(map.m_flags & F2FS_MAP_FLAGS)) {
-+			map.m_lblk++;
-+			continue;
-+		}
-+
-+		set_inode_flag(F2FS_I(inode), FI_DO_DEFRAG);
-+
-+		idx = map.m_lblk;
-+		while (idx < map.m_lblk + map.m_len && cnt < blk_per_seg) {
-+			struct page *page;
-+
-+			page = get_lock_data_page(inode, idx, true);
-+			if (IS_ERR(page)) {
-+				err = PTR_ERR(page);
-+				goto clear_out;
-+			}
-+
-+			set_page_dirty(page);
-+			f2fs_put_page(page, 1);
-+
-+			idx++;
-+			cnt++;
-+			total++;
-+		}
-+
-+		map.m_lblk = idx;
-+		map.m_len = pg_end - idx;
-+
-+		if (idx < pg_end && cnt < blk_per_seg)
-+			goto do_map;
-+
-+		clear_inode_flag(F2FS_I(inode), FI_DO_DEFRAG);
-+
-+		err = filemap_fdatawrite(inode->i_mapping);
-+		if (err)
-+			goto out;
-+	}
-+clear_out:
-+	clear_inode_flag(F2FS_I(inode), FI_DO_DEFRAG);
-+out:
-+	mutex_unlock(&inode->i_mutex);
-+	if (!err)
-+		range->len = (u64)total << PAGE_CACHE_SHIFT;
-+	return err;
-+}
-+
-+static int f2fs_ioc_defragment(struct file *filp, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(filp);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct f2fs_defragment range;
-+	int err;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+
-+	err = mnt_want_write_file(filp);
-+	if (err)
-+		return err;
-+
-+	if (f2fs_readonly(sbi->sb)) {
-+		err = -EROFS;
-+		goto out;
-+	}
-+
-+	if (copy_from_user(&range, (struct f2fs_defragment __user *)arg,
-+							sizeof(range))) {
-+		err = -EFAULT;
-+		goto out;
-+	}
-+
-+	/* verify alignment of offset & size */
-+	if (range.start & (F2FS_BLKSIZE - 1) ||
-+		range.len & (F2FS_BLKSIZE - 1)) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	err = f2fs_defragment_range(sbi, filp, &range);
-+	if (err < 0)
-+		goto out;
-+
-+	if (copy_to_user((struct f2fs_defragment __user *)arg, &range,
-+							sizeof(range)))
-+		err = -EFAULT;
-+out:
-+	mnt_drop_write_file(filp);
-+	return err;
-+}
-+
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+-void __init f2fs_create_root_stats(void)
++int __init f2fs_create_root_stats(void)
  {
- 	switch (cmd) {
-@@ -1679,6 +1872,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_gc(filp, arg);
- 	case F2FS_IOC_WRITE_CHECKPOINT:
- 		return f2fs_ioc_write_checkpoint(filp, arg);
-+	case F2FS_IOC_DEFRAGMENT:
-+		return f2fs_ioc_defragment(filp, arg);
- 	default:
- 		return -ENOTTY;
+ 	struct dentry *file;
+ 
+ 	f2fs_debugfs_root = debugfs_create_dir("f2fs", NULL);
+ 	if (!f2fs_debugfs_root)
+-		return;
++		return -ENOMEM;
+ 
+ 	file = debugfs_create_file("status", S_IRUGO, f2fs_debugfs_root,
+ 			NULL, &stat_fops);
+ 	if (!file) {
+ 		debugfs_remove(f2fs_debugfs_root);
+ 		f2fs_debugfs_root = NULL;
++		return -ENOMEM;
  	}
++
++	return 0;
+ }
+ 
+ void f2fs_destroy_root_stats(void)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d630a4d..5f21f7c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1989,7 +1989,7 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
+ 
+ int f2fs_build_stats(struct f2fs_sb_info *);
+ void f2fs_destroy_stats(struct f2fs_sb_info *);
+-void __init f2fs_create_root_stats(void);
++int __init f2fs_create_root_stats(void);
+ void f2fs_destroy_root_stats(void);
+ #else
+ #define stat_inc_cp_count(si)
+@@ -2017,7 +2017,7 @@ void f2fs_destroy_root_stats(void);
+ 
+ static inline int f2fs_build_stats(struct f2fs_sb_info *sbi) { return 0; }
+ static inline void f2fs_destroy_stats(struct f2fs_sb_info *sbi) { }
+-static inline void __init f2fs_create_root_stats(void) { }
++static inline int __init f2fs_create_root_stats(void) { }
+ static inline void f2fs_destroy_root_stats(void) { }
+ #endif
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 13c821f..9d0ea11 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1479,10 +1479,14 @@ static int __init init_f2fs_fs(void)
+ 	err = register_filesystem(&f2fs_fs_type);
+ 	if (err)
+ 		goto free_shrinker;
+-	f2fs_create_root_stats();
++	err = f2fs_create_root_stats();
++	if (err)
++		goto free_filesystem;
+ 	f2fs_proc_root = proc_mkdir("fs/f2fs", NULL);
+ 	return 0;
+ 
++free_filesystem:
++	unregister_filesystem(&f2fs_fs_type);
+ free_shrinker:
+ 	unregister_shrinker(&f2fs_shrinker_info);
+ free_crypto:
 -- 
 2.6.1
