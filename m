@@ -1,34 +1,30 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: Re: [PATCH] f2fs: refactor __find_rev_next_{zero}_bit
-Date: Fri, 06 Nov 2015 13:41:30 +0800
-Message-ID: <001201d11855$e863dac0$b92b9040$@samsung.com>
-References: <1445462203-44072-1-git-send-email-jaegeuk@kernel.org>
-	<20151021222933.GA46426@jaegeuk-mac02.mot.com>
-	<031b01d10cbc$41897f10$c49c7d30$@samsung.com>
-	<20151022163623.GA51514@jaegeuk-mac02.mot.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH] mkfs.f2fs: introduce -b option to support
+ specified fs size formating
+Date: Tue, 10 Nov 2015 16:48:21 +0800
+Message-ID: <01ab01d11b94$a3231470$e9693d50$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fanofcode.li@samsung.com>) id 1ZuZnE-0000QM-1W
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1Zw4c0-0002MC-2P
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Nov 2015 05:42:32 +0000
+	Tue, 10 Nov 2015 08:49:08 +0000
 Received: from mailout4.samsung.com ([203.254.224.34])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZuZnB-0001nn-IU
+	(Exim 4.76) id 1Zw4by-0003Fs-8v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Nov 2015 05:42:32 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	Tue, 10 Nov 2015 08:49:08 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
 	by mailout4.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NXD00U6JP6LQF00@mailout4.samsung.com> for
+	2014)) with ESMTP id <0NXL0098MCH1HS10@mailout4.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 06 Nov 2015 14:42:22 +0900 (KST)
-In-reply-to: <20151022163623.GA51514@jaegeuk-mac02.mot.com>
-Content-language: en-us
+	Tue, 10 Nov 2015 17:48:58 +0900 (KST)
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,297 +34,100 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Chao Yu' <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-In bitmaps of f2fs, bytes are sorted in ascending order, but bits in a byte are sorted 
-in descending order. It seems to be the reason why __reverse_ulong is needed.
+This patch introduces a new option '-b', with this option user can specify
+required fs size for formating. _scratch_mkfs_sized in xfstest is one of
+user cases.
 
-May I ask why f2fs bitmap apply such order?
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ include/f2fs_fs.h       | 1 +
+ lib/libf2fs.c           | 9 +++++++--
+ mkfs/f2fs_format_main.c | 6 +++++-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Friday, October 23, 2015 12:36 AM
-> To: Chao Yu
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH] f2fs: refactor __find_rev_next_{zero}_bit
-> 
-> Hi Chao,
-> 
-> On Thu, Oct 22, 2015 at 07:24:01PM +0800, Chao Yu wrote:
-> > Hi Jaegeuk,
-> >
-> > > -----Original Message-----
-> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > > Sent: Thursday, October 22, 2015 6:30 AM
-> > > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > > linux-f2fs-devel@lists.sourceforge.net
-> > > Subject: Re: [f2fs-dev] [PATCH] f2fs: refactor
-> > > __find_rev_next_{zero}_bit
-> > >
-> > > On Wed, Oct 21, 2015 at 02:16:43PM -0700, Jaegeuk Kim wrote:
-> > > > This patch refactors __find_rev_next_{zero}_bit which was disabled
-> > > > previously due to bugs.
-> >
-> > Actually I didn't know the history here, could you please explain
-> > details about the bugs? then I can do the review.
-> 
-> When I disabled the existing function by:
-> 
-> commit e19ef527aa32f057710ec842fe656bffc263b0bb
-> Author: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date:   Mon May 18 11:45:15 2015 -0700
-> 
->     f2fs: avoid buggy functions
-> 
-> I found a mismatch of results between the existing __find_rev_next_bit and f2fs_test_bit work. I remember it happened on
-> __find_rev_next_bit sometimes by xfstests which include trim_fs.
-> (I didn't get an error from __find_rev_zero_bit though.)
-> 
-> Since I have no time to investigate the bug in more detail at that time, I just disabled it. But, now I'm trying to refactor the
-flow to fix
-> this.
-> 
-> Thanks,
-> 
-> >
-> > Thanks,
-> >
-> > > >
-> > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > ---
-> > > >  fs/f2fs/segment.c | 106
-> > > > +++++++++++++++++++++++++-----------------------------
-> > > >  1 file changed, 49 insertions(+), 57 deletions(-)
-> > > >
-> > > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c index
-> > > > f37c212..50afc93 100644
-> > > > --- a/fs/f2fs/segment.c
-> > > > +++ b/fs/f2fs/segment.c
-> > > > @@ -29,6 +29,21 @@ static struct kmem_cache *discard_entry_slab;
-> > > > static struct kmem_cache *sit_entry_set_slab;  static struct
-> > > > kmem_cache *inmem_entry_slab;
-> > > >
-> > > > +static unsigned long __reverse_ulong(unsigned char *str) {
-> > > > +	unsigned long tmp = 0;
-> > > > +	int shift = 24, idx = 0;
-> > > > +
-> > > > +#if BITS_PER_LONG == 64
-> > > > +	shift = 56;
-> > > > +#endif
-> > > > +	while (shift >= 0) {
-> > > > +		tmp |= (unsigned long)str[idx++] << shift;
-> > > > +		shift -= BITS_PER_BYTE;
-> > > > +	}
-> > > > +	return tmp;
-> > > > +}
-> > > > +
-> > > >  /*
-> > > >   * __reverse_ffs is copied from include/asm-generic/bitops/__ffs.h since
-> > > >   * MSB and LSB are reversed in a byte by f2fs_set_bit.
-> > > > @@ -38,27 +53,31 @@ static inline unsigned long __reverse_ffs(unsigned long word)
-> > > >  	int num = 0;
-> > > >
-> > > >  #if BITS_PER_LONG == 64
-> > > > -	if ((word & 0xffffffff) == 0) {
-> > > > +	if ((word & 0xffffffff00000000) == 0)
-> > >
-> > > I fixed the sparse warning by modifying:
-> > > 	if ((word & 0xffffffff00000000UL) == 0)
-> > >
-> > > Thanks,
-> > >
-> > > >  		num += 32;
-> > > > +	else
-> > > >  		word >>= 32;
-> > > > -	}
-> > > >  #endif
-> > > > -	if ((word & 0xffff) == 0) {
-> > > > +	if ((word & 0xffff0000) == 0)
-> > > >  		num += 16;
-> > > > +	else
-> > > >  		word >>= 16;
-> > > > -	}
-> > > > -	if ((word & 0xff) == 0) {
-> > > > +
-> > > > +	if ((word & 0xff00) == 0)
-> > > >  		num += 8;
-> > > > +	else
-> > > >  		word >>= 8;
-> > > > -	}
-> > > > +
-> > > >  	if ((word & 0xf0) == 0)
-> > > >  		num += 4;
-> > > >  	else
-> > > >  		word >>= 4;
-> > > > +
-> > > >  	if ((word & 0xc) == 0)
-> > > >  		num += 2;
-> > > >  	else
-> > > >  		word >>= 2;
-> > > > +
-> > > >  	if ((word & 0x2) == 0)
-> > > >  		num += 1;
-> > > >  	return num;
-> > > > @@ -68,26 +87,16 @@ static inline unsigned long __reverse_ffs(unsigned long word)
-> > > >   * __find_rev_next(_zero)_bit is copied from lib/find_next_bit.c because
-> > > >   * f2fs_set_bit makes MSB and LSB reversed in a byte.
-> > > >   * Example:
-> > > > - *                             LSB <--> MSB
-> > > > - *   f2fs_set_bit(0, bitmap) => 0000 0001
-> > > > - *   f2fs_set_bit(7, bitmap) => 1000 0000
-> > > > + *                             MSB <--> LSB
-> > > > + *   f2fs_set_bit(0, bitmap) => 1000 0000
-> > > > + *   f2fs_set_bit(7, bitmap) => 0000 0001
-> > > >   */
-> > > >  static unsigned long __find_rev_next_bit(const unsigned long *addr,
-> > > >  			unsigned long size, unsigned long offset)  {
-> > > > -	while (!f2fs_test_bit(offset, (unsigned char *)addr))
-> > > > -		offset++;
-> > > > -
-> > > > -	if (offset > size)
-> > > > -		offset = size;
-> > > > -
-> > > > -	return offset;
-> > > > -#if 0
-> > > >  	const unsigned long *p = addr + BIT_WORD(offset);
-> > > >  	unsigned long result = offset & ~(BITS_PER_LONG - 1);
-> > > >  	unsigned long tmp;
-> > > > -	unsigned long mask, submask;
-> > > > -	unsigned long quot, rest;
-> > > >
-> > > >  	if (offset >= size)
-> > > >  		return size;
-> > > > @@ -97,14 +106,9 @@ static unsigned long __find_rev_next_bit(const unsigned long *addr,
-> > > >  	if (!offset)
-> > > >  		goto aligned;
-> > > >
-> > > > -	tmp = *(p++);
-> > > > -	quot = (offset >> 3) << 3;
-> > > > -	rest = offset & 0x7;
-> > > > -	mask = ~0UL << quot;
-> > > > -	submask = (unsigned char)(0xff << rest) >> rest;
-> > > > -	submask <<= quot;
-> > > > -	mask &= submask;
-> > > > -	tmp &= mask;
-> > > > +	tmp = __reverse_ulong((unsigned char *)p);
-> > > > +	tmp &= ~0UL >> offset;
-> > > > +
-> > > >  	if (size < BITS_PER_LONG)
-> > > >  		goto found_first;
-> > > >  	if (tmp)
-> > > > @@ -112,42 +116,34 @@ static unsigned long
-> > > > __find_rev_next_bit(const unsigned long *addr,
-> > > >
-> > > >  	size -= BITS_PER_LONG;
-> > > >  	result += BITS_PER_LONG;
-> > > > +	p++;
-> > > >  aligned:
-> > > >  	while (size & ~(BITS_PER_LONG-1)) {
-> > > > -		tmp = *(p++);
-> > > > +		tmp = __reverse_ulong((unsigned char *)p);
-> > > >  		if (tmp)
-> > > >  			goto found_middle;
-> > > >  		result += BITS_PER_LONG;
-> > > >  		size -= BITS_PER_LONG;
-> > > > +		p++;
-> > > >  	}
-> > > >  	if (!size)
-> > > >  		return result;
-> > > > -	tmp = *p;
-> > > > +
-> > > > +	tmp = __reverse_ulong((unsigned char *)p);
-> > > >  found_first:
-> > > > -	tmp &= (~0UL >> (BITS_PER_LONG - size));
-> > > > -	if (tmp == 0UL)		/* Are any bits set? */
-> > > > +	tmp &= (~0UL << (BITS_PER_LONG - size));
-> > > > +	if (!tmp)		/* Are any bits set? */
-> > > >  		return result + size;   /* Nope. */
-> > > >  found_middle:
-> > > >  	return result + __reverse_ffs(tmp); -#endif  }
-> > > >
-> > > >  static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
-> > > >  			unsigned long size, unsigned long offset)  {
-> > > > -	while (f2fs_test_bit(offset, (unsigned char *)addr))
-> > > > -		offset++;
-> > > > -
-> > > > -	if (offset > size)
-> > > > -		offset = size;
-> > > > -
-> > > > -	return offset;
-> > > > -#if 0
-> > > >  	const unsigned long *p = addr + BIT_WORD(offset);
-> > > >  	unsigned long result = offset & ~(BITS_PER_LONG - 1);
-> > > >  	unsigned long tmp;
-> > > > -	unsigned long mask, submask;
-> > > > -	unsigned long quot, rest;
-> > > >
-> > > >  	if (offset >= size)
-> > > >  		return size;
-> > > > @@ -157,40 +153,36 @@ static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
-> > > >  	if (!offset)
-> > > >  		goto aligned;
-> > > >
-> > > > -	tmp = *(p++);
-> > > > -	quot = (offset >> 3) << 3;
-> > > > -	rest = offset & 0x7;
-> > > > -	mask = ~(~0UL << quot);
-> > > > -	submask = (unsigned char)~((unsigned char)(0xff << rest) >> rest);
-> > > > -	submask <<= quot;
-> > > > -	mask += submask;
-> > > > -	tmp |= mask;
-> > > > +	tmp = __reverse_ulong((unsigned char *)p);
-> > > > +	tmp |= ~((~0UL << offset) >> offset);
-> > > > +
-> > > >  	if (size < BITS_PER_LONG)
-> > > >  		goto found_first;
-> > > > -	if (~tmp)
-> > > > +	if (tmp != ~0UL)
-> > > >  		goto found_middle;
-> > > >
-> > > >  	size -= BITS_PER_LONG;
-> > > >  	result += BITS_PER_LONG;
-> > > > +	p++;
-> > > >  aligned:
-> > > >  	while (size & ~(BITS_PER_LONG - 1)) {
-> > > > -		tmp = *(p++);
-> > > > -		if (~tmp)
-> > > > +		tmp = __reverse_ulong((unsigned char *)p);
-> > > > +		if (tmp != ~0UL)
-> > > >  			goto found_middle;
-> > > >  		result += BITS_PER_LONG;
-> > > >  		size -= BITS_PER_LONG;
-> > > > +		p++;
-> > > >  	}
-> > > >  	if (!size)
-> > > >  		return result;
-> > > > -	tmp = *p;
-> > > >
-> > > > +	tmp = __reverse_ulong((unsigned char *)p);
-> > > >  found_first:
-> > > > -	tmp |= ~0UL << size;
-> > > > -	if (tmp == ~0UL)        /* Are any bits zero? */
-> > > > +	tmp |= ~(~0UL << (BITS_PER_LONG - size));
-> > > > +	if (tmp == ~0UL)	/* Are any bits zero? */
-> > > >  		return result + size;   /* Nope. */
-> > > >  found_middle:
-> > > >  	return result + __reverse_ffz(tmp); -#endif  }
-> > > >
-> > > >  void register_inmem_page(struct inode *inode, struct page *page)
-> > > > --
-> > > > 2.1.1
-> > >
-> > > --------------------------------------------------------------------
-> > > ---------- _______________________________________________
-> > > Linux-f2fs-devel mailing list
-> > > Linux-f2fs-devel@lists.sourceforge.net
-> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 359deec..dedc143 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -223,6 +223,7 @@ enum f2fs_config_func {
+ };
+ 
+ struct f2fs_configuration {
++	u_int64_t fs_size;
+ 	u_int32_t sector_size;
+ 	u_int32_t reserved_segments;
+ 	double overprovision;
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 33a82aa..e755f20 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -347,6 +347,7 @@ int f2fs_crc_valid(u_int32_t blk_crc, void *buf, int len)
+  */
+ void f2fs_init_configuration(struct f2fs_configuration *c)
+ {
++	c->fs_size = 0;
+ 	c->total_sectors = 0;
+ 	c->sector_size = DEFAULT_SECTOR_SIZE;
+ 	c->sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
+@@ -473,15 +474,19 @@ int f2fs_get_device_info(struct f2fs_configuration *c)
+ 			MSG(0, "\tError: Cannot get the device size\n");
+ 			return -1;
+ 		}
+-		c->total_sectors /= c->sector_size;
+ #else
+ 		if (ioctl(fd, BLKGETSIZE, &total_sectors) < 0) {
+ 			MSG(0, "\tError: Cannot get the device size\n");
+ 			return -1;
+ 		}
+-		total_sectors /= c->sector_size;
+ 		c->total_sectors = total_sectors;
+ #endif
++		if (c->fs_size && c->fs_size < c->total_sectors)
++			c->total_sectors = (c->fs_size + c->sector_size - 1) /
++								c->sector_size;
++		else
++			c->total_sectors /= c->sector_size;
++
+ 		if (ioctl(fd, HDIO_GETGEO, &geom) < 0)
+ 			c->start_sector = 0;
+ 		else
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 2ea809c..07f101f 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -29,6 +29,7 @@ static void mkfs_usage()
+ 	MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
+ 	MSG(0, "[options]:\n");
+ 	MSG(0, "  -a heap-based allocation [default:1]\n");
++	MSG(0, "  -b file system size\n");
+ 	MSG(0, "  -d debug level [default:0]\n");
+ 	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
+ 	MSG(0, "  -l label\n");
+@@ -73,7 +74,7 @@ static void parse_feature(char *features)
+ 
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+-	static const char *option_string = "qa:d:e:l:o:O:s:z:t:";
++	static const char *option_string = "qa:b:d:e:l:o:O:s:z:t:";
+ 	int32_t option=0;
+ 
+ 	while ((option = getopt(argc,argv,option_string)) != EOF) {
+@@ -84,6 +85,9 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		case 'a':
+ 			config.heap = atoi(optarg);
+ 			break;
++		case 'b':
++			config.fs_size = atoll(optarg);
++			break;
+ 		case 'd':
+ 			config.dbg_lv = atoi(optarg);
+ 			break;
+-- 
+2.6.1
+
 
 
 ------------------------------------------------------------------------------
