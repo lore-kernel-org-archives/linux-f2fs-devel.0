@@ -1,33 +1,26 @@
-From: Chao Yu <chao2.yu@samsung.com>
+From: Marc Lehmann <schmorp@schmorp.de>
 Subject: Re: f2fs stability problems keep me from testing
-Date: Thu, 19 Nov 2015 09:29:29 +0800
-Message-ID: <008e01d12269$d210c580$76325080$@samsung.com>
+Date: Thu, 19 Nov 2015 02:42:19 +0100
+Message-ID: <20151119014219.GA6973@schmorp.de>
 References: <20151117172430.GA6945@schmorp.de>
 	<004b01d121e8$10563730$3102a590$@samsung.com>
-	<20151119003840.GA5692@schmorp.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZzE3I-00024i-H1
+	(envelope-from <schmorp@schmorp.de>) id 1ZzEF2-0002PK-Nh
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Nov 2015 01:30:20 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZzE3F-0004X7-Dl
+	Thu, 19 Nov 2015 01:42:28 +0000
+Received: from mail.nethype.de ([5.9.56.24])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZzEF0-0004yF-NE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Nov 2015 01:30:20 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NY1003NHG5ZZU50@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Nov 2015 10:30:05 +0900 (KST)
-In-reply-to: <20151119003840.GA5692@schmorp.de>
-Content-language: zh-cn
+	Thu, 19 Nov 2015 01:42:28 +0000
+Content-Disposition: inline
+In-Reply-To: <004b01d121e8$10563730$3102a590$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,53 +30,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Marc Lehmann' <schmorp@schmorp.de>
+To: Chao Yu <chao2.yu@samsung.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-SGksCgo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tCj4gRnJvbTogTWFyYyBMZWhtYW5uIFtt
-YWlsdG86c2NobW9ycEBzY2htb3JwLmRlXQo+IFNlbnQ6IFRodXJzZGF5LCBOb3ZlbWJlciAxOSwg
-MjAxNSA4OjM5IEFNCj4gVG86IENoYW8gWXUKPiBDYzogbGludXgtZjJmcy1kZXZlbEBsaXN0cy5z
-b3VyY2Vmb3JnZS5uZXQKPiBTdWJqZWN0OiBSZTogW2YyZnMtZGV2XSBmMmZzIHN0YWJpbGl0eSBw
-cm9ibGVtcyBrZWVwIG1lIGZyb20gdGVzdGluZwo+IAo+IE9uIFdlZCwgTm92IDE4LCAyMDE1IGF0
-IDA2OjAwOjQwUE0gKzA4MDAsIENoYW8gWXUgPGNoYW8yLnl1QHNhbXN1bmcuY29tPiB3cm90ZToK
-PiA+IENvdWxkIHlvdSBzaGFyZSBtb3JlIGluZm8gYWJvdXQgdGhpcyBpc3N1ZT8gbGlrZSBtb3Vu
-dCBvcHRpb24sIGZzY2sgZGF0YSwKPiA+IHN0YXQgaW5mbyBhYm91dCB0aGUgdHdvIGZpbGVzIGlm
-IHRoZXkgc3RpbGwgZXhpc3QuCj4gCj4gU3VyZSwgdGhlIG1vdW50IG9wdGlvbnMgYXJlIChta2Zz
-LmYyZnMgLXM2NCAtdDAgLWEwIGJ0dykuCj4gCj4gICAgLW9ub2lubGluZV9kYXRhLG5vYXRpbWUs
-Zmx1c2hfbWVyZ2Usbm9faGVhcAo+IAo+IEkgcmFuIGZzY2ssIGFuZCBpdCBoYXZlIGFsbCAiT2si
-IG1lc3NhZ2VzLCBJIGNhbiBydW4gaXQgYWdhaW4sIGJ1dCB3b3VsZAo+IGF2b2lkIGl0IGlmIGFs
-bCB5b3Ugd2FudCBpcyB0byBrbm93IHdoZXRoZXIgZnNjayBzaG93cyBhIHByb2JsZW0sIGJ1dCBj
-YW4gcnVuCj4gaXQgYWdhaW4gaWYgaXQgaXMgb2YgYW55IGludGVyZXN0ICh0aGUgZGlzayBpcyBp
-biBuZWFyLWNvbnN0YW50IHVzZSk6CgpUaGFua3MgZm9yIGluZm8geW91ciBzaGFyaW5nLgoKSWYg
-ZnNjayBzaG93cyBub3RoaW5nIHByb2JsZW0gaW4gdGhlIGRpc2ssIHN0aWxsIGNhbid0IHNlZSAn
-L2NvbGQxL3ZhcicgaW4KZGlyZWN0b3J5ICcvY29sZDEnIG5vdz8KClRoYW5rcywKCj4gCj4gVGhl
-IHR3byBkaXJlY3RvcmllcyBoYXZlIG5vdCBjaGFuZ2VkIHNpbmNlIHRoZW46Cj4gCj4gICAgIyBz
-dGF0IC9jb2xkMQo+ICAgICAgRmlsZTog4oCYL2NvbGQx4oCZCj4gICAgICBTaXplOiA0MDk2ICAg
-ICAgICAgICAgQmxvY2tzOiAxNiAgICAgICAgIElPIEJsb2NrOiA0MDk2ICAgZGlyZWN0b3J5Cj4g
-ICAgRGV2aWNlOiBmYzExaC82NDUyOWQgICAgSW5vZGU6IDMgICAgICAgICAgIExpbmtzOiAzCj4g
-ICAgQWNjZXNzOiAoMDc1NS9kcnd4ci14ci14KSAgVWlkOiAoICAgIDAvICAgIHJvb3QpICAgR2lk
-OiAoICAgIDAvICAgIHJvb3QpCj4gICAgQWNjZXNzOiAyMDE1LTExLTE0IDAyOjQ0OjQyLjAwMDAw
-MDAwMCArMDEwMAo+ICAgIE1vZGlmeTogMjAxNS0xMS0xNyAwMjozNjo1Mi40ODAzODIxMDUgKzAx
-MDAKPiAgICBDaGFuZ2U6IDIwMTUtMTEtMTcgMDI6MzY6NTIuNDgwMzgyMTA1ICswMTAwCj4gICAg
-IyBzdGF0IC9jb2xkMS92YXIKPiAgICAgIEZpbGU6IOKAmC9jb2xkMS92YXLigJkKPiAgICAgIFNp
-emU6IDQwOTYgICAgICAgICAgICBCbG9ja3M6IDE2ICAgICAgICAgSU8gQmxvY2s6IDQwOTYgICBk
-aXJlY3RvcnkKPiAgICBEZXZpY2U6IGZjMTFoLzY0NTI5ZCAgICBJbm9kZTogOTU2ODY1ICAgICAg
-TGlua3M6IDMKPiAgICBBY2Nlc3M6ICgwNzExL2Ryd3gtLXgtLXgpICBVaWQ6ICggICAgMC8gICAg
-cm9vdCkgICBHaWQ6ICggICAgMC8gICAgcm9vdCkKPiAgICBBY2Nlc3M6IDIwMTUtMTEtMTQgMjA6
-MzM6NTYuMDE0OTI2MDg0ICswMTAwCj4gICAgTW9kaWZ5OiAyMDE1LTExLTE0IDIwOjMzOjU2LjAx
-NDkyNjA4NCArMDEwMAo+ICAgIENoYW5nZTogMjAxNS0xMS0xNCAyMDozMzo1OC4yODY5MTcxNjIg
-KzAxMDAKPiAgICAgQmlydGg6IC0KPiAKPiBOZWl0aGVyIHRoZWlyIGNvbnRlbnRzOgo+IAo+ICAg
-IC9jb2xkMToKPiAgICB0b3RhbCA4Cj4gICAgZHJ3eC0teC0teCAzIHJvb3Qgcm9vdCA0MDk2IE5v
-diAxNCAyMDozMyB2YXIKPiAKPiAgICAvY29sZDEvdmFyOgo+ICAgIHRvdGFsIDgKPiAgICBkcnd4
-LS14LS14IDMgcm9vdCByb290IDQwOTYgTm92IDE0IDIwOjMzIGxpYgo+IAo+IC0tCj4gICAgICAg
-ICAgICAgICAgIFRoZSBjaG9pY2Ugb2YgYSAgICAgICBEZWxpYW50cmEsIHRoZSBmcmVlIGNvZGUr
-Y29udGVudCBNT1JQRwo+ICAgICAgIC0tLS0tPT0tICAgICBfR05VXyAgICAgICAgICAgICAgaHR0
-cDovL3d3dy5kZWxpYW50cmEubmV0Cj4gICAgICAgLS0tLT09LS0gXyAgICAgICBnZW5lcmF0aW9u
-Cj4gICAgICAgLS0tPT0tLS0oXylfXyAgX18gX19fXyAgX18gICAgICBNYXJjIExlaG1hbm4KPiAg
-ICAgICAtLT09LS0tLyAvIF8gXC8gLy8gL1wgXC8gLyAgICAgIHNjaG1vcnBAc2NobW9ycC5kZQo+
-ICAgICAgIC09PT09PS9fL18vL18vXF8sXy8gL18vXF9cCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYy
-ZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
-ZnMtZGV2ZWwK
+On Wed, Nov 18, 2015 at 06:00:40PM +0800, Chao Yu <chao2.yu@samsung.com> wrote:
+> I ran fsck, and it have all "Ok" messages, I can run it again, but would
+
+Anyways, here is the fsck output - it was made after the reboot, a fsck, and
+two mounts, I think (also, kernel was upgraded).
+
+PS: there is a typo ("matcing", don't know if it's still in git).
+
+   Info: sector size = 512
+   Info: total sectors = 15628050432 (7630884 MB)
+   Info: MKFS version
+     "Linux version 3.18.21-031821-generic (kernel@gloin) (gcc version 4.8.4 (Ubuntu 4.8.4-2ubuntu1~14.04) ) #201509020527 SMP Wed Sep 2 05:29:06 UTC 2015"
+   Info: FSCK version
+     from "Linux version 3.18.24-031824-generic (kernel@gomeisa) (gcc version 4.9.2 (Ubuntu 4.9.2-10ubuntu13) ) #201511031331 SMP Tue Nov 3 18:33:52 UTC 2015"
+       to "Linux version 3.18.24-031824-generic (kernel@gomeisa) (gcc version 4.9.2 (Ubuntu 4.9.2-10ubuntu13) ) #201511031331 SMP Tue Nov 3 18:33:52 UTC 2015"
+   Info: superblock features = 0 : 
+   Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+   Info: total FS sectors = 15628050432 (7630884 MB)
+   Info: CKPT version = 14c2
+   Info: checkpoint state = 5 :  compacted_summary unmount
+
+   [FSCK] Unreachable nat entries                        [Ok..] [0x0]
+   [FSCK] SIT valid block bitmap checking                [Ok..]
+   [FSCK] Hard link checking for regular file            [Ok..] [0x0]
+   [FSCK] valid_block_count matching with CP             [Ok..] [0x24dad5a5]
+   [FSCK] valid_node_count matcing with CP (de lookup)   [Ok..] [0x9773e]
+   [FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0x9773e]
+   [FSCK] valid_inode_count matched with CP              [Ok..] [0x21bc]
+   [FSCK] free segment_count matched with CP             [Ok..] [0x27ab81]
+   [FSCK] next block offset is free                      [Ok..]
+   [FSCK] fixing SIT types
+   [FSCK] other corrupted bugs                           [Ok..]
+
+   Done.
+
+-- 
+                The choice of a       Deliantra, the free code+content MORPG
+      -----==-     _GNU_              http://www.deliantra.net
+      ----==-- _       generation
+      ---==---(_)__  __ ____  __      Marc Lehmann
+      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+      -=====/_/_//_/\_,_/ /_/\_\
+
+------------------------------------------------------------------------------
