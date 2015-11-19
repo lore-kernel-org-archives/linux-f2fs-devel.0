@@ -1,31 +1,26 @@
-From: Chao Yu <chao2.yu@samsung.com>
+From: Marc Lehmann <schmorp@schmorp.de>
 Subject: Re: f2fs stability problems keep me from testing
-Date: Wed, 18 Nov 2015 18:00:40 +0800
-Message-ID: <004b01d121e8$10563730$3102a590$@samsung.com>
+Date: Thu, 19 Nov 2015 01:38:40 +0100
+Message-ID: <20151119003840.GA5692@schmorp.de>
 References: <20151117172430.GA6945@schmorp.de>
+	<004b01d121e8$10563730$3102a590$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1ZyzYN-00024g-P5
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1ZzDFR-0000Pn-PS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 18 Nov 2015 10:01:27 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ZyzYK-00075v-8T
+	Thu, 19 Nov 2015 00:38:49 +0000
+Received: from mail.nethype.de ([5.9.56.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ZzDFP-0004EO-R9
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 18 Nov 2015 10:01:27 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NY00049W964S2C0@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 18 Nov 2015 19:01:16 +0900 (KST)
-In-reply-to: <20151117172430.GA6945@schmorp.de>
-Content-language: zh-cn
+	Thu, 19 Nov 2015 00:38:49 +0000
+Content-Disposition: inline
+In-Reply-To: <004b01d121e8$10563730$3102a590$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,95 +30,44 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Marc Lehmann' <schmorp@schmorp.de>, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
-
-> -----Original Message-----
-> From: Marc Lehmann [mailto:schmorp@schmorp.de]
-> Sent: Wednesday, November 18, 2015 1:25 AM
-> To: linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] f2fs stability problems keep me from testing
-> 
-> Hi!
-> 
-> I have trouble executing the tests I wanted to run with the current 3.18
-> checkout. This morning, the box was completely unresponsive - I had to
-> reboot, not knowing the cause (the only difference is that f2fs is in more
-> or less production use for a few days).
-> 
-> An hour ago, I was awake when similar problems started - interactive
-> login was impossible, but I was able to execute a few commands in an open
-> shell, which make me suspect f2fs to be the culprit. Both times, the
-> f2fs filesystem was streaming video at low speed (<1mb/s) with no other
-> activity.
-> 
-> Anyway, here are the four experiments I did, after finding out that the
-> problem seems to the the f2fs fs (the other 4 filesystems on the box were
-> responsive, as was the underlying disk itself).
-> 
-> 1. ls /cold1, find /cold1 (/cold1 is the f2fs mountpoint) gave empty results
->    here is an strace of find /cold1:
-> 
->    openat(AT_FDCWD, "/cold1", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC) = 5
->    fchdir(5)                               = 0
->    getdents(5, /* 0 entries */, 32768)     = 0
->    close(5)                                = 0
-> 
->    so /cold1 is an empty directory. not good.
-> 
-> 2. so no files in /cold1, let's see what happens when I list /cold1/var, a
->    directory known to exist:
-> 
->    openat(AT_FDCWD, "/cold1/var", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC) = 5
->    fchdir(5)                               = 0
->    getdents(5, /* 0 entries */, 32768)     = 0
->    close(5)                                = 0
-> 
->    so f2fs knowsn that /cold1/var exists, but readdir gives no results. very
->    troubling.
-
-Could you share more info about this issue? like mount option, fsck data,
-stat info about the two files if they still exist.
-
-Thanks,
-
-> 
-> 3. "sync&" - this did hang, with no apparent activity
-> 
-> 4. cat /proc/<sync-pid>/task/*stack:
-> 
->    [<ffffffff8121d4d8>] sync_inodes_sb+0xa8/0x1c0
->    [<ffffffff81224249>] sync_inodes_one_sb+0x19/0x20
->    [<ffffffff811f6192>] iterate_supers+0xb2/0x110
->    [<ffffffff812244d5>] sys_sync+0x35/0x90
->    [<ffffffff817a684d>] system_call_fastpath+0x16/0x1b
->    [<ffffffffffffffff>] 0xffffffffffffffff
-> 
-> 5. dmesg showed no related messages whatsoever - it still had the kernel
->    messages generated from boot, and nothing else.
-> 
-> 6. at this point I lost my shell and control over the box completely, and had to be rebooted
-> 
-> So something in the current f2fs tree (I checked that
-> /sys/fs/f2fs/dm-17/ra_nid_pages exists, so it is a more or less current
-> shapshot) is still locking up and/or returning corrupt data. If it was
-> a simple locking failure, though, I would expect readdir and other
-> operations to also block, not return bad data.
-> 
-> --
->                 The choice of a       Deliantra, the free code+content MORPG
->       -----==-     _GNU_              http://www.deliantra.net
->       ----==-- _       generation
->       ---==---(_)__  __ ____  __      Marc Lehmann
->       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
->       -=====/_/_//_/\_,_/ /_/\_\
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-
-------------------------------------------------------------------------------
+T24gV2VkLCBOb3YgMTgsIDIwMTUgYXQgMDY6MDA6NDBQTSArMDgwMCwgQ2hhbyBZdSA8Y2hhbzIu
+eXVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IENvdWxkIHlvdSBzaGFyZSBtb3JlIGluZm8gYWJvdXQg
+dGhpcyBpc3N1ZT8gbGlrZSBtb3VudCBvcHRpb24sIGZzY2sgZGF0YSwKPiBzdGF0IGluZm8gYWJv
+dXQgdGhlIHR3byBmaWxlcyBpZiB0aGV5IHN0aWxsIGV4aXN0LgoKU3VyZSwgdGhlIG1vdW50IG9w
+dGlvbnMgYXJlIChta2ZzLmYyZnMgLXM2NCAtdDAgLWEwIGJ0dykuCgogICAtb25vaW5saW5lX2Rh
+dGEsbm9hdGltZSxmbHVzaF9tZXJnZSxub19oZWFwCgpJIHJhbiBmc2NrLCBhbmQgaXQgaGF2ZSBh
+bGwgIk9rIiBtZXNzYWdlcywgSSBjYW4gcnVuIGl0IGFnYWluLCBidXQgd291bGQKYXZvaWQgaXQg
+aWYgYWxsIHlvdSB3YW50IGlzIHRvIGtub3cgd2hldGhlciBmc2NrIHNob3dzIGEgcHJvYmxlbSwg
+YnV0IGNhbiBydW4KaXQgYWdhaW4gaWYgaXQgaXMgb2YgYW55IGludGVyZXN0ICh0aGUgZGlzayBp
+cyBpbiBuZWFyLWNvbnN0YW50IHVzZSk6CgpUaGUgdHdvIGRpcmVjdG9yaWVzIGhhdmUgbm90IGNo
+YW5nZWQgc2luY2UgdGhlbjoKCiAgICMgc3RhdCAvY29sZDEKICAgICBGaWxlOiDigJgvY29sZDHi
+gJkKICAgICBTaXplOiA0MDk2ICAgICAgICAgICAgQmxvY2tzOiAxNiAgICAgICAgIElPIEJsb2Nr
+OiA0MDk2ICAgZGlyZWN0b3J5CiAgIERldmljZTogZmMxMWgvNjQ1MjlkICAgIElub2RlOiAzICAg
+ICAgICAgICBMaW5rczogMwogICBBY2Nlc3M6ICgwNzU1L2Ryd3hyLXhyLXgpICBVaWQ6ICggICAg
+MC8gICAgcm9vdCkgICBHaWQ6ICggICAgMC8gICAgcm9vdCkKICAgQWNjZXNzOiAyMDE1LTExLTE0
+IDAyOjQ0OjQyLjAwMDAwMDAwMCArMDEwMAogICBNb2RpZnk6IDIwMTUtMTEtMTcgMDI6MzY6NTIu
+NDgwMzgyMTA1ICswMTAwCiAgIENoYW5nZTogMjAxNS0xMS0xNyAwMjozNjo1Mi40ODAzODIxMDUg
+KzAxMDAKICAgIyBzdGF0IC9jb2xkMS92YXIKICAgICBGaWxlOiDigJgvY29sZDEvdmFy4oCZCiAg
+ICAgU2l6ZTogNDA5NiAgICAgICAgICAgIEJsb2NrczogMTYgICAgICAgICBJTyBCbG9jazogNDA5
+NiAgIGRpcmVjdG9yeQogICBEZXZpY2U6IGZjMTFoLzY0NTI5ZCAgICBJbm9kZTogOTU2ODY1ICAg
+ICAgTGlua3M6IDMKICAgQWNjZXNzOiAoMDcxMS9kcnd4LS14LS14KSAgVWlkOiAoICAgIDAvICAg
+IHJvb3QpICAgR2lkOiAoICAgIDAvICAgIHJvb3QpCiAgIEFjY2VzczogMjAxNS0xMS0xNCAyMDoz
+Mzo1Ni4wMTQ5MjYwODQgKzAxMDAKICAgTW9kaWZ5OiAyMDE1LTExLTE0IDIwOjMzOjU2LjAxNDky
+NjA4NCArMDEwMAogICBDaGFuZ2U6IDIwMTUtMTEtMTQgMjA6MzM6NTguMjg2OTE3MTYyICswMTAw
+CiAgICBCaXJ0aDogLQoKTmVpdGhlciB0aGVpciBjb250ZW50czoKCiAgIC9jb2xkMToKICAgdG90
+YWwgOAogICBkcnd4LS14LS14IDMgcm9vdCByb290IDQwOTYgTm92IDE0IDIwOjMzIHZhcgoKICAg
+L2NvbGQxL3ZhcjoKICAgdG90YWwgOAogICBkcnd4LS14LS14IDMgcm9vdCByb290IDQwOTYgTm92
+IDE0IDIwOjMzIGxpYgoKLS0gCiAgICAgICAgICAgICAgICBUaGUgY2hvaWNlIG9mIGEgICAgICAg
+RGVsaWFudHJhLCB0aGUgZnJlZSBjb2RlK2NvbnRlbnQgTU9SUEcKICAgICAgLS0tLS09PS0gICAg
+IF9HTlVfICAgICAgICAgICAgICBodHRwOi8vd3d3LmRlbGlhbnRyYS5uZXQKICAgICAgLS0tLT09
+LS0gXyAgICAgICBnZW5lcmF0aW9uCiAgICAgIC0tLT09LS0tKF8pX18gIF9fIF9fX18gIF9fICAg
+ICAgTWFyYyBMZWhtYW5uCiAgICAgIC0tPT0tLS0vIC8gXyBcLyAvLyAvXCBcLyAvICAgICAgc2No
+bW9ycEBzY2htb3JwLmRlCiAgICAgIC09PT09PS9fL18vL18vXF8sXy8gL18vXF9cCgotLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0
+cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
+dGluZm8vbGludXgtZjJmcy1kZXZlbAo=
