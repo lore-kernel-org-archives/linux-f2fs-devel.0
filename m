@@ -1,24 +1,26 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [RFC PATCH V2 1/2] mkfs.f2fs: add helper strtrim()
- to trim string's space
-Date: Sat, 28 Nov 2015 11:53:36 +0800
-Message-ID: <56592540.6070806@kernel.org>
+Subject: Re: [RFC PATCH V3 2/2] mkfs.f2fs: avoid dumplicate
+ extensions
+Date: Sat, 28 Nov 2015 12:00:16 +0800
+Message-ID: <565926D0.7050600@kernel.org>
 References: <1448705988-29484-1-git-send-email-shengyong1@huawei.com>
+	<1448705988-29484-2-git-send-email-shengyong1@huawei.com>
+	<56591A80.8030709@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1a2Wa4-000646-3u
+	(envelope-from <chao@kernel.org>) id 1a2WgV-0006Dx-PK
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 28 Nov 2015 03:53:48 +0000
+	Sat, 28 Nov 2015 04:00:27 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1a2Wa3-0001FL-0O for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 28 Nov 2015 03:53:48 +0000
-In-Reply-To: <1448705988-29484-1-git-send-email-shengyong1@huawei.com>
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1a2WgU-0003Nm-Rv for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 28 Nov 2015 04:00:27 +0000
+In-Reply-To: <56591A80.8030709@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,70 +33,89 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Sheng Yong <shengyong1@huawei.com>, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 11/28/15 6:19 PM, Sheng Yong wrote:
-> Add a helper function strtrim() to trim space both at the beginning and end
-> of a string.
-
-I'm not sure we should add more logic when processing user defined extension string.
-
-How about waiting for Jaegeuk's opinion?
-
-Thanks,
-
+On 11/28/15 11:07 AM, Sheng Yong wrote:
+> Before copying an user specified extension to extension_list, check if it
+> is already in the list.
 > 
 > Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 > ---
->  include/f2fs_fs.h |  1 +
->  lib/libf2fs.c     | 24 ++++++++++++++++++++++++
->  2 files changed, 25 insertions(+)
+>  mkfs/f2fs_format.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> index 359deec..e85b2d0 100644
-> --- a/include/f2fs_fs.h
-> +++ b/include/f2fs_fs.h
-> @@ -768,6 +768,7 @@ enum {
->  
->  extern void ASCIIToUNICODE(u_int16_t *, u_int8_t *);
->  extern int log_base_2(u_int32_t);
-> +extern void strtrim(char **str);
->  extern unsigned int addrs_per_inode(struct f2fs_inode *);
->  
->  extern int get_bits_in_byte(unsigned char n);
-> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-> index 83d1296..e901289 100644
-> --- a/lib/libf2fs.c
-> +++ b/lib/libf2fs.c
-> @@ -48,6 +48,30 @@ int log_base_2(u_int32_t num)
->  	return ret;
->  }
->  
-> +void strtrim(char **str)
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index 176bdea..0a621ae 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -118,6 +118,21 @@ const char *media_ext_lists[] = {
+>  	NULL
+>  };
+> 
+> +static bool is_extension_exist(const char *name, const int len)
 > +{
-> +	int len = strlen(*str);
-> +	char *head = *str;
-> +	char *tail = *str + len - 1;
+> +	int i, ret;
 > +
-> +	while (head != tail) {
-> +		if (*head == ' ')
-> +			head++;
-> +		else {
-> +			*str = head;
-> +			break;
-> +		}
+> +	for (i = 0; i < F2FS_MAX_EXTENSION; i++) {
+
+i < last_extension_position_in_list ?
+
+> +		char *ext = (char *) sb.extension_list[i];
+> +		ret = strcmp(ext, name);
+
+if (!strcmp(ext, name))
+	return 1;
+
+> +
+> +		if (ret == 0)
+> +			return 1;
 > +	}
 > +
-> +	while (tail != head) {
-> +		if (*tail == ' ') {
-> +			*tail = '\0';
-> +			tail--;
-> +		} else
-> +			break;
-> +	}
+> +	return 0;
 > +}
 > +
->  /*
->   * f2fs bit operations
->   */
+>  static void configure_extension_list(void)
+>  {
+>  	const char **extlist = media_ext_lists;
+> @@ -143,8 +158,14 @@ static void configure_extension_list(void)
+>  	/* add user ext list */
+>  	ue = strtok(ext_str, ",");
+>  	while (ue != NULL) {
+> +		strtrim(&ue);
+>  		name_len = strlen(ue);
+> -		memcpy(sb.extension_list[i++], ue, name_len);
+> +		if (name_len > 7) {
+
+Shouldn't this be fixed in another patch?
+
+How about:
+
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 176bdea..78612e4 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -144,7 +144,12 @@ static void configure_extension_list(void)
+ 	ue = strtok(ext_str, ",");
+ 	while (ue != NULL) {
+ 		name_len = strlen(ue);
++		if (name_len >= 8) {
++			MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
++			goto next;
++		}
+ 		memcpy(sb.extension_list[i++], ue, name_len);
++next:
+ 		ue = strtok(NULL, ",");
+ 		if (i >= F2FS_MAX_EXTENSION)
+ 			break;
+
+Thanks,
+
+> +			MSG(0, "\tError: Extension '%s' too long\n", ue);
+> +			exit(1);
+> +		}
+> +		if (!is_extension_exist(ue, name_len))
+> +			memcpy(sb.extension_list[i++], ue, name_len);
+>  		ue = strtok(NULL, ",");
+>  		if (i >= F2FS_MAX_EXTENSION)
+>  			break;
 > 
 
 ------------------------------------------------------------------------------
