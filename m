@@ -1,27 +1,23 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [RFC PATCH V3 2/2] mkfs.f2fs: avoid dumplicate
-	extensions
-Date: Sat, 28 Nov 2015 12:19:24 +0800
-Message-ID: <56592B4C.1080100@huawei.com>
-References: <1448705988-29484-1-git-send-email-shengyong1@huawei.com>
-	<1448705988-29484-2-git-send-email-shengyong1@huawei.com>
-	<56591A80.8030709@huawei.com> <565926D0.7050600@kernel.org>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [f2fs-linux 3.10][PATCH] f2fs: Fix a system panic caused
+	by f2fs_follow_link
+Date: Sat, 28 Nov 2015 14:38:40 +0800
+Message-ID: <1448692720-16658-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1a2WzP-0006yU-5b
+	(envelope-from <heyunlei@huawei.com>) id 1a2Z8N-00021N-E8
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 28 Nov 2015 04:19:59 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1a2WzM-0003rf-0Z
+	Sat, 28 Nov 2015 06:37:23 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1a2Z8F-0004W7-ON
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 28 Nov 2015 04:19:59 +0000
-In-Reply-To: <565926D0.7050600@kernel.org>
+	Sat, 28 Nov 2015 06:37:23 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,105 +27,45 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, chao2.yu@samsung.com
+Cc: Shuoran Liu <liushuoran@huawei.com>
 
+In linux 3.10, we can not make sure the return value of nd_get_link function
+is valid. So this patch add a check before use it.
 
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Shuoran Liu <liushuoran@huawei.com>
 
-On 11/28/2015 12:00 PM, Chao Yu wrote:
-> On 11/28/15 11:07 AM, Sheng Yong wrote:
->> Before copying an user specified extension to extension_list, check if it
->> is already in the list.
->>
->> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
->> ---
->>  mkfs/f2fs_format.c | 23 ++++++++++++++++++++++-
->>  1 file changed, 22 insertions(+), 1 deletion(-)
->>
->> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
->> index 176bdea..0a621ae 100644
->> --- a/mkfs/f2fs_format.c
->> +++ b/mkfs/f2fs_format.c
->> @@ -118,6 +118,21 @@ const char *media_ext_lists[] = {
->>  	NULL
->>  };
->>
->> +static bool is_extension_exist(const char *name, const int len)
->> +{
->> +	int i, ret;
->> +
->> +	for (i = 0; i < F2FS_MAX_EXTENSION; i++) {
-> 
-> i < last_extension_position_in_list ?
-Then we have to define a new global variable or add a new parameter
-to pass the last position in the function.
-> 
->> +		char *ext = (char *) sb.extension_list[i];
->> +		ret = strcmp(ext, name);
-> 
-> if (!strcmp(ext, name))
-> 	return 1;
-> 
->> +
->> +		if (ret == 0)
->> +			return 1;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  static void configure_extension_list(void)
->>  {
->>  	const char **extlist = media_ext_lists;
->> @@ -143,8 +158,14 @@ static void configure_extension_list(void)
->>  	/* add user ext list */
->>  	ue = strtok(ext_str, ",");
->>  	while (ue != NULL) {
->> +		strtrim(&ue);
->>  		name_len = strlen(ue);
->> -		memcpy(sb.extension_list[i++], ue, name_len);
->> +		if (name_len > 7) {
-> 
-> Shouldn't this be fixed in another patch?
-This is much better than what I did :)
+---
+ fs/f2fs/namei.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-thanks,
-Sheng
-> 
-> How about:
-> 
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 176bdea..78612e4 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -144,7 +144,12 @@ static void configure_extension_list(void)
->  	ue = strtok(ext_str, ",");
->  	while (ue != NULL) {
->  		name_len = strlen(ue);
-> +		if (name_len >= 8) {
-> +			MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
-> +			goto next;
-> +		}
->  		memcpy(sb.extension_list[i++], ue, name_len);
-> +next:
->  		ue = strtok(NULL, ",");
->  		if (i >= F2FS_MAX_EXTENSION)
->  			break;
-> 
-> Thanks,
-> 
->> +			MSG(0, "\tError: Extension '%s' too long\n", ue);
->> +			exit(1);
->> +		}
->> +		if (!is_extension_exist(ue, name_len))
->> +			memcpy(sb.extension_list[i++], ue, name_len);
->>  		ue = strtok(NULL, ",");
->>  		if (i >= F2FS_MAX_EXTENSION)
->>  			break;
->>
-> 
-> .
-> 
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 336d43d..bfaec10 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -319,13 +319,18 @@ fail:
+ static void *f2fs_follow_link(struct dentry *dentry, struct nameidata *nd)
+ {
+ 	struct page *page;
++	char *link;
+ 
+ 	page = page_follow_link_light(dentry, nd);
+ 	if (IS_ERR(page))
+ 		return page;
+ 
++	link = nd_get_link(nd);
++	if (IS_ERR(link))
++		return link;
++
+ 	/* this is broken symlink case */
+-	if (*nd_get_link(nd) == 0) {
++	if (*link == 0) {
+ 		kunmap(page);
+ 		page_cache_release(page);
+ 		return ERR_PTR(-ENOENT);
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
