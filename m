@@ -1,22 +1,26 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH V3 1/2] mkfs.f2fs: avoid dumplicate extensions
-Date: Mon, 30 Nov 2015 10:41:06 +0000
-Message-ID: <1448880067-9629-1-git-send-email-shengyong1@huawei.com>
+Subject: Re: [PATCH V3 2/2] mkfs.f2fs: skip extension name that
+	is too long
+Date: Mon, 30 Nov 2015 10:58:08 +0800
+Message-ID: <565BBB40.3010206@huawei.com>
+References: <1448880067-9629-1-git-send-email-shengyong1@huawei.com>
+	<1448880067-9629-2-git-send-email-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1a3EdE-00076F-Ly
+	(envelope-from <shengyong1@huawei.com>) id 1a3Efg-0007AP-8K
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 30 Nov 2015 02:56:00 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1a3EdB-0004Ce-Bb
+	Mon, 30 Nov 2015 02:58:32 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1a3Efc-00071q-9y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 30 Nov 2015 02:56:00 +0000
+	Mon, 30 Nov 2015 02:58:32 +0000
+In-Reply-To: <1448880067-9629-2-git-send-email-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,57 +33,45 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: chao2.yu@samsung.com, jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Before copying an user specified extension to extension_list, check if it
-is already in the list. User specified extensions are delimitted by token
-either ',' or ' '.
+Hi, Chao Yu, Jaegeuk
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- mkfs/f2fs_format.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+I'm not sure if it is ok to send this patch out by me. If I did it the
+wrong way, please ignore this patch.
 
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 176bdea..a29d7ef 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -118,6 +118,19 @@ const char *media_ext_lists[] = {
- 	NULL
- };
- 
-+static bool is_extension_exist(const char *name)
-+{
-+	int i;
-+
-+	for (i = 0; i < F2FS_MAX_EXTENSION; i++) {
-+		char *ext = (char *)sb.extension_list[i];
-+		if (!strcmp(ext, name))
-+			return 1;
-+	}
-+
-+	return 0;
-+}
-+
- static void configure_extension_list(void)
- {
- 	const char **extlist = media_ext_lists;
-@@ -141,11 +154,12 @@ static void configure_extension_list(void)
- 		return;
- 
- 	/* add user ext list */
--	ue = strtok(ext_str, ",");
-+	ue = strtok(ext_str, ", ");
- 	while (ue != NULL) {
- 		name_len = strlen(ue);
--		memcpy(sb.extension_list[i++], ue, name_len);
--		ue = strtok(NULL, ",");
-+		if (!is_extension_exist(ue))
-+			memcpy(sb.extension_list[i++], ue, name_len);
-+		ue = strtok(NULL, ", ");
- 		if (i >= F2FS_MAX_EXTENSION)
- 			break;
- 	}
--- 
-1.9.1
+thanks,
+Sheng
+
+On 11/30/2015 6:41 PM, Sheng Yong wrote:
+> From: Chao Yu <chao2.yu@samsung.com>
+> 
+> The length of extension name has a limit of 8 bytes. If an extension
+> exceeds the limitation, it will not be added to the extension_list.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+> ---
+>  mkfs/f2fs_format.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index a29d7ef..212df60 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -157,8 +157,13 @@ static void configure_extension_list(void)
+>  	ue = strtok(ext_str, ", ");
+>  	while (ue != NULL) {
+>  		name_len = strlen(ue);
+> +		if (name_len >= 8) {
+> +			MSG(0, "\tWarn: Extension name (%s) is too long\n", ue);
+> +			goto next;
+> +		}
+>  		if (!is_extension_exist(ue))
+>  			memcpy(sb.extension_list[i++], ue, name_len);
+> +next:
+>  		ue = strtok(NULL, ", ");
+>  		if (i >= F2FS_MAX_EXTENSION)
+>  			break;
+> 
 
 
 ------------------------------------------------------------------------------
