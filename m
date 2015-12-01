@@ -1,82 +1,51 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: fix to convert inline inode in ->setattr
-Date: Tue, 01 Dec 2015 11:36:16 +0800
-Message-ID: <000001d12be9$87054960$950fdc20$@samsung.com>
+Subject: [PATCH 1/3] f2fs: clean up error path in f2fs_readdir
+Date: Tue, 01 Dec 2015 11:41:50 +0800
+Message-ID: <000101d12bea$4ea0d5c0$ebe28140$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1a3bkY-00031V-6a
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Dec 2015 03:37:06 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1a3bkW-0003oy-F7
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Dec 2015 03:37:06 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NYN019Q8U17RW30@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Dec 2015 12:36:56 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In commit 3c4541452748 ("f2fs: do not trim preallocated blocks when
-truncating after i_size"), in order to follow the regulation: "truncate(x)
-where x > i_size will not trim all blocks past i_size." like other file
-systems, in ->setattr we invoked truncate_setsize instead of f2fs_truncate
-to avoid unneeded block trimming in such case, but forgot to call
-f2fs_convert_inline_inode keep consistency of inline data conversion rule.
-
-This patch fixes to convert inline data if necessary.
+No logic changes, just clean up the error path.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/file.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/f2fs/dir.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 96e4e04..a018ed3 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -686,6 +686,14 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
- 			 * larger than i_size.
- 			 */
- 			truncate_setsize(inode, attr->ia_size);
-+
-+			/* should convert inline inode here */
-+			if (f2fs_has_inline_data(inode) &&
-+					!f2fs_may_inline_data(inode)) {
-+				err = f2fs_convert_inline_inode(inode);
-+				if (err)
-+					return err;
-+			}
- 			inode->i_mtime = inode->i_ctime = CURRENT_TIME;
- 		}
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 9de898d..6554fd5 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -867,18 +867,15 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
+ 
+ 		make_dentry_ptr(inode, &d, (void *)dentry_blk, 1);
+ 
+-		if (f2fs_fill_dentries(ctx, &d, n * NR_DENTRY_IN_BLOCK, &fstr))
+-			goto stop;
++		if (f2fs_fill_dentries(ctx, &d, n * NR_DENTRY_IN_BLOCK, &fstr)) {
++			kunmap(dentry_page);
++			f2fs_put_page(dentry_page, 1);
++			break;
++		}
+ 
+ 		ctx->pos = (n + 1) * NR_DENTRY_IN_BLOCK;
+ 		kunmap(dentry_page);
+ 		f2fs_put_page(dentry_page, 1);
+-		dentry_page = NULL;
+-	}
+-stop:
+-	if (dentry_page && !IS_ERR(dentry_page)) {
+-		kunmap(dentry_page);
+-		f2fs_put_page(dentry_page, 1);
  	}
+ out:
+ 	f2fs_fname_crypto_free_buffer(&fstr);
 -- 
 2.6.3
-
-
-
-------------------------------------------------------------------------------
-Go from Idea to Many App Stores Faster with Intel(R) XDK
-Give your users amazing mobile app experiences with Intel(R) XDK.
-Use one codebase in this all-in-one HTML5 development environment.
-Design, debug & build mobile apps & 2D/3D high-impact games for multiple OSs.
-http://pubads.g.doubleclick.net/gampad/clk?id=254741911&iu=/4140
