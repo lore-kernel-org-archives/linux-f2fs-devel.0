@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/3] f2fs: clean up error path in f2fs_readdir
-Date: Tue, 01 Dec 2015 11:41:50 +0800
-Message-ID: <000101d12bea$4ea0d5c0$ebe28140$@samsung.com>
+Subject: [PATCH 2/3] f2fs: clean up code with __has_cursum_space
+Date: Tue, 01 Dec 2015 11:42:54 +0800
+Message-ID: <000201d12bea$7cdbdb60$76939220$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,40 +12,32 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-No logic changes, just clean up the error path.
+Clean up codes in lookup_journal_in_cursum() with __has_cursum_space().
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/dir.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ fs/f2fs/segment.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 9de898d..6554fd5 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -867,18 +867,15 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 
- 		make_dentry_ptr(inode, &d, (void *)dentry_blk, 1);
- 
--		if (f2fs_fill_dentries(ctx, &d, n * NR_DENTRY_IN_BLOCK, &fstr))
--			goto stop;
-+		if (f2fs_fill_dentries(ctx, &d, n * NR_DENTRY_IN_BLOCK, &fstr)) {
-+			kunmap(dentry_page);
-+			f2fs_put_page(dentry_page, 1);
-+			break;
-+		}
- 
- 		ctx->pos = (n + 1) * NR_DENTRY_IN_BLOCK;
- 		kunmap(dentry_page);
- 		f2fs_put_page(dentry_page, 1);
--		dentry_page = NULL;
--	}
--stop:
--	if (dentry_page && !IS_ERR(dentry_page)) {
--		kunmap(dentry_page);
--		f2fs_put_page(dentry_page, 1);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index ed2c5de..74c4748 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1740,13 +1740,13 @@ int lookup_journal_in_cursum(struct f2fs_summary_block *sum, int type,
+ 			if (le32_to_cpu(nid_in_journal(sum, i)) == val)
+ 				return i;
+ 		}
+-		if (alloc && nats_in_cursum(sum) < NAT_JOURNAL_ENTRIES)
++		if (alloc && __has_cursum_space(sum, 1, NAT_JOURNAL))
+ 			return update_nats_in_cursum(sum, 1);
+ 	} else if (type == SIT_JOURNAL) {
+ 		for (i = 0; i < sits_in_cursum(sum); i++)
+ 			if (le32_to_cpu(segno_in_journal(sum, i)) == val)
+ 				return i;
+-		if (alloc && sits_in_cursum(sum) < SIT_JOURNAL_ENTRIES)
++		if (alloc && __has_cursum_space(sum, 1, SIT_JOURNAL))
+ 			return update_sits_in_cursum(sum, 1);
  	}
- out:
- 	f2fs_fname_crypto_free_buffer(&fstr);
+ 	return -1;
 -- 
 2.6.3
