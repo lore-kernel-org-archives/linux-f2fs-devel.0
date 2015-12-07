@@ -1,92 +1,35 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/3] f2fs: enhance the bit operation for SSR
-Date: Mon,  7 Dec 2015 14:53:23 -0800
-Message-ID: <1449528805-89661-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 3/3] f2fs: use lock_buffer when changing superblock
+Date: Mon,  7 Dec 2015 14:53:25 -0800
+Message-ID: <1449528805-89661-3-git-send-email-jaegeuk@kernel.org>
+References: <1449528805-89661-1-git-send-email-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1449528805-89661-1-git-send-email-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch enhances the existing bit operation when f2fs allocates SSR
-blocks.
+When modifying sb contents, we need to use lock its buffer.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.c | 50 ++++++++++++++++++++------------------------------
- 1 file changed, 20 insertions(+), 30 deletions(-)
+ fs/f2fs/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 74c4748..5fa519f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -132,47 +132,37 @@ static unsigned long __find_rev_next_zero_bit(const unsigned long *addr,
- 			unsigned long size, unsigned long offset)
- {
- 	const unsigned long *p = addr + BIT_WORD(offset);
--	unsigned long result = offset & ~(BITS_PER_LONG - 1);
-+	unsigned long result = size;
- 	unsigned long tmp;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index a018ed3..a16dfe9 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1591,7 +1591,9 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
+ 		return err;
  
- 	if (offset >= size)
- 		return size;
+ 	/* update superblock with uuid */
++	lock_buffer(sbi->raw_super_buf);
+ 	generate_random_uuid(sbi->raw_super->encrypt_pw_salt);
++	unlock_buffer(sbi->raw_super_buf);
  
--	size -= result;
-+	size -= (offset & ~(BITS_PER_LONG - 1));
- 	offset %= BITS_PER_LONG;
--	if (!offset)
--		goto aligned;
--
--	tmp = __reverse_ulong((unsigned char *)p);
--	tmp |= ~((~0UL << offset) >> offset);
--
--	if (size < BITS_PER_LONG)
--		goto found_first;
--	if (tmp != ~0UL)
--		goto found_middle;
--
--	size -= BITS_PER_LONG;
--	result += BITS_PER_LONG;
--	p++;
--aligned:
--	while (size & ~(BITS_PER_LONG - 1)) {
-+
-+	while (1) {
-+		if (*p == ~0UL)
-+			goto pass;
-+
- 		tmp = __reverse_ulong((unsigned char *)p);
-+
-+		if (offset)
-+			tmp |= ~0UL << (BITS_PER_LONG - offset);
-+		if (size < BITS_PER_LONG)
-+			tmp |= ~0UL >> size;
- 		if (tmp != ~0UL)
--			goto found_middle;
--		result += BITS_PER_LONG;
-+			goto found;
-+pass:
-+		if (size <= BITS_PER_LONG)
-+			break;
- 		size -= BITS_PER_LONG;
-+		offset = 0;
- 		p++;
- 	}
--	if (!size)
--		return result;
--
--	tmp = __reverse_ulong((unsigned char *)p);
--found_first:
--	tmp |= ~(~0UL << (BITS_PER_LONG - size));
--	if (tmp == ~0UL)	/* Are any bits zero? */
--		return result + size;   /* Nope. */
--found_middle:
--	return result + __reverse_ffz(tmp);
-+	return result;
-+found:
-+	return result - size + __reverse_ffz(tmp);
- }
+ 	err = f2fs_commit_super(sbi, false);
  
- void register_inmem_page(struct inode *inode, struct page *page)
 -- 
 2.4.9 (Apple Git-60)
