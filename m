@@ -1,104 +1,63 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/3] f2fs: refactor f2fs_commit_super
-Date: Mon,  7 Dec 2015 14:53:24 -0800
-Message-ID: <1449528805-89661-2-git-send-email-jaegeuk@kernel.org>
-References: <1449528805-89661-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 1/3] common/rc: support f2fs for
+ _scratch_mkfs_sized
+Date: Mon, 7 Dec 2015 16:08:13 -0800
+Message-ID: <20151208000813.GA91868@jaegeuk.local>
+References: <1449267345-79400-1-git-send-email-jaegeuk@kernel.org>
+ <5662E283.6090900@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1a64f6-0003YR-1j
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Dec 2015 22:53:40 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1a64f5-0003ID-C0 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Dec 2015 22:53:40 +0000
-In-Reply-To: <1449528805-89661-1-git-send-email-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <fstests-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5662E283.6090900@kernel.org>
+Sender: fstests-owner@vger.kernel.org
+To: Chao Yu <chao@kernel.org>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Previously, f2fs_commit_super hacks the bh->blocknr to write the broken
-alternate superblock.
-Instead of it, we should use the correct logic to retrieve its buffer head
-with locking it appropriately.
+Hi Chao,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/super.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+On Sat, Dec 05, 2015 at 09:11:31PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 12/5/15 6:15 AM, Jaegeuk Kim wrote:
+> > The mkfs.f2fs has an option to build a certain sized filesystem by giving
+> > the number of sectors.
+> > 
+> > So, this patch adds to use that.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  common/rc | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/common/rc b/common/rc
+> > index 4c2f42c..ef913b4 100644
+> > --- a/common/rc
+> > +++ b/common/rc
+> > @@ -739,6 +739,10 @@ _scratch_mkfs_sized()
+> >  	$MKFS_REISER4_PROG $MKFS_OPTIONS -y -b $blocksize $SCRATCH_DEV \
+> >  			   `expr $fssize / 1024`
+> >  	;;
+> > +    f2fs)
+> > +	# mkfs.f2fs requires # of sectors as an input for the size
+> > +	$MKFS_F2FS_PROG $MKFS_OPTIONS $SCRATCH_DEV `expr $fssize / 512`
+> 
+> In mkfs.f2fs, we will calculate fs size based on real sector size of block
+> device and the input sectors, so if sector size of block device is not 512, our
+> fs size calculated will be incorrect.
+> 
+> How about fixing it for supporting different sector size?
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index bd7e9c6..dbf16ad 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1099,27 +1099,35 @@ out:
- int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
- {
- 	struct buffer_head *sbh = sbi->raw_super_buf;
--	sector_t block = sbh->b_blocknr;
-+	struct buffer_head *bh;
- 	int err;
- 
- 	/* write back-up superblock first */
--	sbh->b_blocknr = block ? 0 : 1;
--	mark_buffer_dirty(sbh);
--	err = sync_dirty_buffer(sbh);
-+	bh = sb_getblk(sbi->sb, sbh->b_blocknr ? 0 : 1);
-+	if (!bh)
-+		return -EIO;
- 
--	sbh->b_blocknr = block;
-+	lock_buffer(bh);
-+	memcpy(bh->b_data, sbh->b_data, sbh->b_size);
-+	WARN_ON(sbh->b_size != F2FS_BLKSIZE);
-+	set_buffer_uptodate(bh);
-+	set_buffer_dirty(bh);
-+	unlock_buffer(bh);
-+
-+	/* it's rare case, we can do fua all the time */
-+	err = __sync_dirty_buffer(bh, WRITE_FLUSH_FUA);
-+	brelse(bh);
- 
- 	/* if we are in recovery path, skip writing valid superblock */
- 	if (recover || err)
--		goto out;
-+		return err;
- 
- 	/* write current valid superblock */
--	mark_buffer_dirty(sbh);
--	err = sync_dirty_buffer(sbh);
--out:
--	clear_buffer_write_io_error(sbh);
--	set_buffer_uptodate(sbh);
--	return err;
-+	lock_buffer(sbh);
-+	set_buffer_dirty(sbh);
-+	unlock_buffer(sbh);
-+
-+	return __sync_dirty_buffer(sbh, WRITE_FLUSH_FUA);
- }
- 
- static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
--- 
-2.4.9 (Apple Git-60)
+Sure, I'll resend v2.
 
+Thanks,
 
-------------------------------------------------------------------------------
-Go from Idea to Many App Stores Faster with Intel(R) XDK
-Give your users amazing mobile app experiences with Intel(R) XDK.
-Use one codebase in this all-in-one HTML5 development environment.
-Design, debug & build mobile apps & 2D/3D high-impact games for multiple OSs.
-http://pubads.g.doubleclick.net/gampad/clk?id=254741911&iu=/4140
+> 
+> Thanks,
+> 
+> > +	;;
+> >      *)
+> >  	_notrun "Filesystem $FSTYP not supported in _scratch_mkfs_sized"
+> >  	;;
+> > 
