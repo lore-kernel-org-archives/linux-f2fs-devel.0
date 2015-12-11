@@ -1,21 +1,32 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs-tools: add library version info
-Date: Wed,  9 Dec 2015 11:12:56 -0800
-Message-ID: <1449688376-3311-1-git-send-email-jaegeuk@kernel.org>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH] back-up raw_super in sbi
+Date: Fri, 11 Dec 2015 15:02:13 +0800
+Message-ID: <03b901d133e1$f8f85ee0$eae91ca0$@samsung.com>
+References: <015901d13248$a4c568d0$ee503a70$@samsung.com>
+	<5667D4FD.7060703@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1a6kAs-0001rG-AK
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1a7Hje-00028l-Mq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Dec 2015 19:13:14 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1a6kAr-00054n-73 for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Dec 2015 19:13:14 +0000
+	Fri, 11 Dec 2015 07:03:22 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1a7HjZ-0000aV-8Q
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 11 Dec 2015 07:03:22 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout2.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0NZ602EQ2M8CXQ30@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 11 Dec 2015 16:03:01 +0900 (KST)
+In-reply-to: <5667D4FD.7060703@huawei.com>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -25,82 +36,70 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Kai-Chung Yan <seamlikok@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Hans-Christoph Steiner <hans@eds.org>
+To: 'He YunLei' <heyunlei@huawei.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: hebiao6@huawei.com, stuart.li@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-This patch gives the version info for two libraries.
+Hi all,
 
-mkfs/libf2fs_format.la
-lib/libf2fs.la
+> -----Original Message-----
+> From: He YunLei [mailto:heyunlei@huawei.com]
+> Sent: Wednesday, December 09, 2015 3:15 PM
+> To: Chao Yu
+> Cc: 'Jaegeuk Kim'; linux-f2fs-devel@lists.sourceforge.net; hebiao6@huawei.com;
+> stuart.li@huawei.com
+> Subject: Re: [f2fs-dev] [PATCH] back-up raw_super in sbi
+> 
+> On 2015/12/9 14:11, Chao Yu wrote:
+> > Hi,
+> >
+> >> -----Original Message-----
+> >> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> >> Sent: Wednesday, December 09, 2015 2:19 AM
+> >> To: Yunlei He
+> >> Cc: linux-f2fs-devel@lists.sourceforge.net; chao2.yu@samsung.com; hebiao6@huawei.com;
+> >> stuart.li@huawei.com
+> >> Subject: Re: [f2fs-dev] [PATCH] back-up raw_super in sbi
+> >>
+> >> Hi Yunlei,
+> >>
+> >> On Tue, Dec 08, 2015 at 09:17:13PM +0800, Yunlei He wrote:
+> >>> write_checkpoint() tries to get cp_blkaddr from superblock buffer,
+> >>> if the buffer happen to be destroied by something else, it may
+> >
+> > Yunlei,
+> >
+> > You mean hacking in memory? could you share more about process of destroying?
+> 
+> I do some test on kernel version 3.10 like this:
+> 
+> with mounted f2fs partition, use dd to erase the first sb
+> 
+> dd if=/dev/zero of=/dev/sdx bs=4k count=1
+> 
+> then sync, and the system will panic.
+> 
+> the log added in function do_checkpoint show:
+> 
+> heyunlei:start_blk = 0
+> 
+> So maybe dd dirty the super block buffer stored in sbi.
 
-The versioning rule should be:
+Ah, I can understand your concerns now, thanks for your explanation! :)
 
-1. Start with version information of '0:0:0' for each libtool library.
-2. Update the version information only immediately before a public release of
-   your software. More frequent updates are unnecessary, and only guarantee
-   that the current interface number gets larger faster.
-2. If the library source code has changed at all since the last update, then
-   increment revision (c:r:a) becomes (c:r+1:a).
-3. If any interfaces have been added, removed, or changed since the last update,
-   increment current, and set revision to 0.
-4. If any interfaces have been added since the last public release, then
-   increment age.
-5. If any interfaces have been removed or changed since the last public release,
-   then set age to 0.
+> 
+> But, in latest dev branch, it has no problem, I don't know why.
 
-quoted from:
-http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
+I do the test with latest dev branch, it shows warning dmesg info as
+F2FS_CHECK_FS is off. I think it has problem actually.
 
-Cc: Hans-Christoph Steiner <hans@eds.org>
-Cc: Kai-Chung Yan <seamlikok@gmail.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- configure.ac     | 10 ++++++++++
- lib/Makefile.am  |  1 +
- mkfs/Makefile.am |  3 ++-
- 3 files changed, 13 insertions(+), 1 deletion(-)
+> >> Need to consider f2fs_commit_super and kfree() in put_super.
+> >
+> > How about releasing grabbed block buffer 'sbi->raw_super_buf' since we
+> > already had one copy of it?
 
-diff --git a/configure.ac b/configure.ac
-index b18ee4d..280a0d3 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -90,4 +90,14 @@ AC_CONFIG_FILES([
- 	tools/Makefile
- ])
- 
-+# export library version info for mkfs/libf2fs_format_la
-+AC_SUBST(FMT_CURRENT, 0)
-+AC_SUBST(FMT_REVISION, 0)
-+AC_SUBST(FMT_AGE, 0)
-+
-+# export library version info for lib/libf2fs_la
-+AC_SUBST(LIBF2FS_CURRENT, 0)
-+AC_SUBST(LIBF2FS_REVISION, 0)
-+AC_SUBST(LIBF2FS_AGE, 0)
-+
- AC_OUTPUT
-diff --git a/lib/Makefile.am b/lib/Makefile.am
-index a6b304c..37b8d57 100644
---- a/lib/Makefile.am
-+++ b/lib/Makefile.am
-@@ -5,3 +5,4 @@ lib_LTLIBRARIES = libf2fs.la
- libf2fs_la_SOURCES = libf2fs.c libf2fs_io.c
- libf2fs_la_CFLAGS = -Wall
- libf2fs_la_CPPFLAGS = -I$(top_srcdir)/include
-+libf2fs_la_LDFLAGS = -version-info $(LIBF2FS_CURRENT):$(LIBF2FS_REVISION):$(LIBF2FS_AGE)
-diff --git a/mkfs/Makefile.am b/mkfs/Makefile.am
-index 8969a04..8b4c16c 100644
---- a/mkfs/Makefile.am
-+++ b/mkfs/Makefile.am
-@@ -10,4 +10,5 @@ lib_LTLIBRARIES = libf2fs_format.la
- libf2fs_format_la_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c
- libf2fs_format_la_CFLAGS = -DWITH_BLKDISCARD
- libf2fs_format_la_CPPFLAGS = -I$(top_srcdir)/include
--libf2fs_format_la_LDFLAGS = -luuid -L$(top_srcdir)/lib -lf2fs
-+libf2fs_format_la_LDFLAGS = -luuid -L$(top_srcdir)/lib -lf2fs \
-+	-version-info $(FMT_CURRENT):$(FMT_REVISION):$(FMT_AGE)
--- 
-2.4.9 (Apple Git-60)
+Hi Jaegeuk, Yunlei,
+
+Any thoughts?
 
 
 ------------------------------------------------------------------------------
