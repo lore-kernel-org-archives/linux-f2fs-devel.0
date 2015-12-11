@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/2] f2fs: clean up node page updating flow
-Date: Fri, 11 Dec 2015 16:08:22 +0800
-Message-ID: <03ba01d133eb$331a2e60$994e8b20$@samsung.com>
+Subject: [PATCH 2/2] f2fs: do more integrity verification for superblock
+Date: Fri, 11 Dec 2015 16:09:23 +0800
+Message-ID: <03bb01d133eb$5628a350$0279e9f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,77 +12,134 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If read_node_page return LOCKED_PAGE, in its caller it's better a) skip
-unneeded 'Update' flag and mapping info verfication; b) check nid value
-stored in footer structure of node page.
+Do more sanity check for superblock during ->mount.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/node.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ fs/f2fs/super.c | 98 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 7bcbc6e..d842b19 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1063,12 +1063,13 @@ repeat:
- 	if (err < 0) {
- 		f2fs_put_page(page, 1);
- 		return ERR_PTR(err);
--	} else if (err != LOCKED_PAGE) {
--		lock_page(page);
-+	} else if (err == LOCKED_PAGE) {
-+		goto page_hit;
- 	}
- 
--	if (unlikely(!PageUptodate(page) || nid != nid_of_node(page))) {
--		ClearPageUptodate(page);
-+	lock_page(page);
-+
-+	if (unlikely(!PageUptodate(page))) {
- 		f2fs_put_page(page, 1);
- 		return ERR_PTR(-EIO);
- 	}
-@@ -1076,6 +1077,8 @@ repeat:
- 		f2fs_put_page(page, 1);
- 		goto repeat;
- 	}
-+page_hit:
-+	f2fs_bug_on(sbi, nid != nid_of_node(page));
- 	return page;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 5434186..624fc2c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -926,6 +926,79 @@ static loff_t max_file_size(unsigned bits)
+ 	return result;
  }
  
-@@ -1114,24 +1117,25 @@ repeat:
- 	end = start + MAX_RA_NODE;
- 	end = min(end, NIDS_PER_BLOCK);
- 	for (i = start + 1; i < end; i++) {
--		nid = get_nid(parent, i, false);
--		if (!nid)
-+		nid_t tnid = get_nid(parent, i, false);
-+		if (!tnid)
- 			continue;
--		ra_node_page(sbi, nid);
-+		ra_node_page(sbi, tnid);
- 	}
- 
- 	blk_finish_plug(&plug);
- 
- 	lock_page(page);
-+	if (unlikely(!PageUptodate(page))) {
-+		f2fs_put_page(page, 1);
-+		return ERR_PTR(-EIO);
++static inline bool sanity_check_area_boundary(struct super_block *sb,
++					struct f2fs_super_block *raw_super)
++{
++	u32 segment0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
++	u32 cp_blkaddr = le32_to_cpu(raw_super->cp_blkaddr);
++	u32 sit_blkaddr = le32_to_cpu(raw_super->sit_blkaddr);
++	u32 nat_blkaddr = le32_to_cpu(raw_super->nat_blkaddr);
++	u32 ssa_blkaddr = le32_to_cpu(raw_super->ssa_blkaddr);
++	u32 main_blkaddr = le32_to_cpu(raw_super->main_blkaddr);
++	u32 segment_count_ckpt = le32_to_cpu(raw_super->segment_count_ckpt);
++	u32 segment_count_sit = le32_to_cpu(raw_super->segment_count_sit);
++	u32 segment_count_nat = le32_to_cpu(raw_super->segment_count_nat);
++	u32 segment_count_ssa = le32_to_cpu(raw_super->segment_count_ssa);
++	u32 segment_count_main = le32_to_cpu(raw_super->segment_count_main);
++	u32 segment_count = le32_to_cpu(raw_super->segment_count);
++	u32 log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
++
++	if (segment0_blkaddr != cp_blkaddr) {
++		f2fs_msg(sb, KERN_INFO,
++			"Mismatch start address, segment0(%u) cp_blkaddr(%u)",
++			segment0_blkaddr, cp_blkaddr);
++		return true;
 +	}
- 	if (unlikely(page->mapping != NODE_MAPPING(sbi))) {
- 		f2fs_put_page(page, 1);
- 		goto repeat;
++
++	if (cp_blkaddr + (segment_count_ckpt << log_blocks_per_seg) !=
++							sit_blkaddr) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong CP boundary, start(%u) end(%u) blocks(%u)",
++			cp_blkaddr, sit_blkaddr,
++			segment_count_ckpt << log_blocks_per_seg);
++		return true;
++	}
++
++	if (sit_blkaddr + (segment_count_sit << log_blocks_per_seg) !=
++							nat_blkaddr) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong SIT boundary, start(%u) end(%u) blocks(%u)",
++			sit_blkaddr, nat_blkaddr,
++			segment_count_sit << log_blocks_per_seg);
++		return true;
++	}
++
++	if (nat_blkaddr + (segment_count_nat << log_blocks_per_seg) !=
++							ssa_blkaddr) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong NAT boundary, start(%u) end(%u) blocks(%u)",
++			nat_blkaddr, ssa_blkaddr,
++			segment_count_nat << log_blocks_per_seg);
++		return true;
++	}
++
++	if (ssa_blkaddr + (segment_count_ssa << log_blocks_per_seg) !=
++							main_blkaddr) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong SSA boundary, start(%u) end(%u) blocks(%u)",
++			ssa_blkaddr, main_blkaddr,
++			segment_count_ssa << log_blocks_per_seg);
++		return true;
++	}
++
++	if (main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
++				(segment_count + 1) << log_blocks_per_seg) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong MAIN_AREA boundary, start(%u) end(%u) blocks(%u)",
++			main_blkaddr,
++			(segment_count + 1) << log_blocks_per_seg,
++			segment_count_main << log_blocks_per_seg);
++		return true;
++	}
++
++	return false;
++}
++
+ static int sanity_check_raw_super(struct super_block *sb,
+ 			struct f2fs_super_block *raw_super)
+ {
+@@ -955,6 +1028,14 @@ static int sanity_check_raw_super(struct super_block *sb,
+ 		return 1;
  	}
- page_hit:
--	if (unlikely(!PageUptodate(page))) {
--		f2fs_put_page(page, 1);
--		return ERR_PTR(-EIO);
--	}
-+	f2fs_bug_on(sbi, nid != nid_of_node(page));
- 	return page;
+ 
++	/* check log blocks per segment */
++	if (le32_to_cpu(raw_super->log_blocks_per_seg) != 9) {
++		f2fs_msg(sb, KERN_INFO,
++			"Invalid log blocks per segment (%u)\n",
++			le32_to_cpu(raw_super->log_blocks_per_seg));
++		return 1;
++	}
++
+ 	/* Currently, support 512/1024/2048/4096 bytes sector size */
+ 	if (le32_to_cpu(raw_super->log_sectorsize) >
+ 				F2FS_MAX_LOG_SECTOR_SIZE ||
+@@ -973,6 +1054,23 @@ static int sanity_check_raw_super(struct super_block *sb,
+ 			le32_to_cpu(raw_super->log_sectorsize));
+ 		return 1;
+ 	}
++
++	/* check reserved ino info */
++	if (le32_to_cpu(raw_super->node_ino) != 1 ||
++		le32_to_cpu(raw_super->meta_ino) != 2 ||
++		le32_to_cpu(raw_super->root_ino) != 3) {
++		f2fs_msg(sb, KERN_INFO,
++			"Invalid Fs Meta Ino: node(%u) meta(%u) root(%u)",
++			le32_to_cpu(raw_super->node_ino),
++			le32_to_cpu(raw_super->meta_ino),
++			le32_to_cpu(raw_super->root_ino));
++		return 1;
++	}
++
++	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
++	if (sanity_check_area_boundary(sb, raw_super))
++		return 1;
++
+ 	return 0;
  }
  
 -- 
