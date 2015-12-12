@@ -1,24 +1,21 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/6] fsck.f2fs: sanity_check for extent_cache
-	entry
-Date: Fri, 11 Dec 2015 16:00:10 -0800
-Message-ID: <1449878414-41254-2-git-send-email-jaegeuk@kernel.org>
-References: <1449878414-41254-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/6] libf2fs: enhance the bit operations
+Date: Fri, 11 Dec 2015 16:00:09 -0800
+Message-ID: <1449878414-41254-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1a7Xbv-0006lT-IY
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1a7Xbt-0005g5-Lw
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 12 Dec 2015 00:00:27 +0000
+	Sat, 12 Dec 2015 00:00:25 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1a7Xbu-00039C-7s for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 12 Dec 2015 00:00:27 +0000
-In-Reply-To: <1449878414-41254-1-git-send-email-jaegeuk@kernel.org>
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1a7Xbs-000740-At for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 12 Dec 2015 00:00:25 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,295 +28,263 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch adds to check the stored extent_cache entry is consistent or not.
+This patch modifies the existing bit operations.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/fsck.c | 87 +++++++++++++++++++++++++++++++++++++++++++++++--------------
- fsck/fsck.h | 17 +++++++++---
- fsck/main.c |  2 +-
- 3 files changed, 82 insertions(+), 24 deletions(-)
+ fsck/fsck.c       |  12 +++----
+ include/f2fs_fs.h |  23 ++++++++++--
+ lib/libf2fs.c     | 104 ++++++++++++++++++++++++------------------------------
+ 3 files changed, 73 insertions(+), 66 deletions(-)
 
 diff --git a/fsck/fsck.c b/fsck/fsck.c
-index c81dde9..adc61d2 100644
+index c71f225..c81dde9 100644
 --- a/fsck/fsck.c
 +++ b/fsck/fsck.c
-@@ -468,7 +468,8 @@ out:
- 
- int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 		u32 nid, u8 *name, enum FILE_TYPE ftype, enum NODE_TYPE ntype,
--		u32 *blk_cnt, struct child_info *child)
-+		u32 *blk_cnt, struct child_info *child,
-+		struct extent_info *i_ext)
- {
- 	struct node_info ni;
- 	struct f2fs_node *node_blk = NULL;
-@@ -487,19 +488,19 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 			f2fs_set_main_bitmap(sbi, ni.blk_addr,
- 							CURSEG_WARM_NODE);
- 			fsck_chk_dnode_blk(sbi, inode, nid, ftype, node_blk,
--					blk_cnt, child, &ni);
-+					blk_cnt, child, &ni, i_ext);
- 			break;
- 		case TYPE_INDIRECT_NODE:
- 			f2fs_set_main_bitmap(sbi, ni.blk_addr,
- 							CURSEG_COLD_NODE);
- 			fsck_chk_idnode_blk(sbi, inode, ftype, node_blk,
--					blk_cnt, child);
-+					blk_cnt, child, i_ext);
- 			break;
- 		case TYPE_DOUBLE_INDIRECT_NODE:
- 			f2fs_set_main_bitmap(sbi, ni.blk_addr,
- 							CURSEG_COLD_NODE);
- 			fsck_chk_didnode_blk(sbi, inode, ftype, node_blk,
--					blk_cnt, child);
-+					blk_cnt, child, i_ext);
- 			break;
- 		default:
- 			ASSERT(0);
-@@ -512,6 +513,26 @@ err:
- 	return -EINVAL;
+@@ -820,7 +820,7 @@ static void convert_encrypted_name(unsigned char *name, int len,
  }
  
-+static void update_i_extent(struct extent_info *i_ext, block_t blkaddr)
+ static void print_dentry(__u32 depth, __u8 *name,
+-		unsigned long *bitmap,
++		unsigned char *bitmap,
+ 		struct f2fs_dir_entry *dentry,
+ 		int max, int idx, int last_blk, int encrypted)
+ {
+@@ -837,7 +837,7 @@ static void print_dentry(__u32 depth, __u8 *name,
+ 	name_len = le16_to_cpu(dentry[idx].name_len);
+ 	next_idx = idx + (name_len + F2FS_SLOT_LEN - 1) / F2FS_SLOT_LEN;
+ 
+-	bit_offset = find_next_bit(bitmap, max, next_idx);
++	bit_offset = find_next_bit_le(bitmap, max, next_idx);
+ 	if (bit_offset >= max && last_blk)
+ 		last_de = 1;
+ 
+@@ -889,7 +889,7 @@ static int f2fs_check_hash_code(struct f2fs_dir_entry *dentry,
+ }
+ 
+ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
+-			unsigned long *bitmap,
++			unsigned char *bitmap,
+ 			struct f2fs_dir_entry *dentry,
+ 			__u8 (*filenames)[F2FS_SLOT_LEN],
+ 			int max, int last_blk, int encrypted)
+@@ -946,7 +946,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
+ 
+ 		ftype = dentry[i].file_type;
+ 		if ((ftype <= F2FS_FT_UNKNOWN || ftype > F2FS_FT_LAST_FILE_TYPE)) {
+-			ASSERT_MSG("Bad dentry 0x%x with unexpected ftype 0x%x", i, ftype);
++			ASSERT_MSG("Bad dentry 0x%x with unexpected ftype 0x%x", ino, ftype);
+ 			if (config.fix_on) {
+ 				FIX_MSG("Clear bad dentry 0x%x with bad ftype 0x%x",
+ 					i, ftype);
+@@ -1036,7 +1036,7 @@ int fsck_chk_inline_dentries(struct f2fs_sb_info *sbi,
+ 
+ 	fsck->dentry_depth++;
+ 	dentries = __chk_dentries(sbi, child,
+-			(unsigned long *)de_blk->dentry_bitmap,
++			de_blk->dentry_bitmap,
+ 			de_blk->dentry, de_blk->filename,
+ 			NR_INLINE_DENTRY, 1,
+ 			file_is_encrypt(node_blk->i.i_advise));
+@@ -1068,7 +1068,7 @@ int fsck_chk_dentry_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
+ 
+ 	fsck->dentry_depth++;
+ 	dentries = __chk_dentries(sbi, child,
+-			(unsigned long *)de_blk->dentry_bitmap,
++			de_blk->dentry_bitmap,
+ 			de_blk->dentry, de_blk->filename,
+ 			NR_DENTRY_IN_BLOCK, last_blk, encrypted);
+ 
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index a448d61..6fd4c80 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -320,6 +320,23 @@ struct f2fs_configuration {
+ 			})
+ 
+ /*
++ * Copied from include/linux/kernel.h
++ */
++#define __round_mask(x, y)	((__typeof__(x))((y)-1))
++#define round_down(x, y)	((x) & ~__round_mask(x, y))
++#define min(x, y) ({				\
++	typeof(x) _min1 = (x);			\
++	typeof(y) _min2 = (y);			\
++	(void) (&_min1 == &_min2);		\
++	_min1 < _min2 ? _min1 : _min2; })
++
++#define max(x, y) ({				\
++	typeof(x) _max1 = (x);			\
++	typeof(y) _max2 = (y);			\
++	(void) (&_max1 == &_max2);		\
++	_max1 > _max2 ? _max1 : _max2; })
++
++/*
+  * Copied from fs/f2fs/f2fs.h
+  */
+ #define	NR_CURSEG_DATA_TYPE	(3)
+@@ -834,8 +851,10 @@ extern int test_bit(unsigned int nr, const void * addr);
+ extern int f2fs_test_bit(unsigned int, const char *);
+ extern int f2fs_set_bit(unsigned int, char *);
+ extern int f2fs_clear_bit(unsigned int, char *);
+-extern unsigned long find_next_bit(const unsigned long *,
+-				unsigned long, unsigned long);
++extern unsigned long find_next_bit_le(const unsigned char *, unsigned long,
++		unsigned long);
++extern unsigned long find_next_zero_bit_le(const unsigned char *, unsigned long,
++		unsigned long);
+ 
+ extern u_int32_t f2fs_cal_crc32(u_int32_t, void *, int);
+ extern int f2fs_crc_valid(u_int32_t blk_crc, void *buf, int len);
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 0ac9994..307ad56 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -75,10 +75,10 @@ int get_bits_in_byte(unsigned char n)
+ 	return bits_in_byte[n];
+ }
+ 
+-int set_bit(unsigned int nr,void * addr)
++int set_bit(unsigned int nr, void *addr)
+ {
+-	int             mask, retval;
+-	unsigned char   *ADDR = (unsigned char *) addr;
++	int mask, retval;
++	unsigned char *ADDR = (unsigned char *)addr;
+ 
+ 	ADDR += nr >> 3;
+ 	mask = 1 << ((nr & 0x07));
+@@ -87,10 +87,10 @@ int set_bit(unsigned int nr,void * addr)
+ 	return retval;
+ }
+ 
+-int clear_bit(unsigned int nr, void * addr)
++int clear_bit(unsigned int nr, void *addr)
+ {
+-	int             mask, retval;
+-	unsigned char   *ADDR = (unsigned char *) addr;
++	int mask, retval;
++	unsigned char *ADDR = (unsigned char *)addr;
+ 
+ 	ADDR += nr >> 3;
+ 	mask = 1 << ((nr & 0x07));
+@@ -99,7 +99,7 @@ int clear_bit(unsigned int nr, void * addr)
+ 	return retval;
+ }
+ 
+-int test_bit(unsigned int nr, const void * addr)
++int test_bit(unsigned int nr, const void *addr)
+ {
+ 	const __u32 *p = (const __u32 *)addr;
+ 
+@@ -142,24 +142,10 @@ int f2fs_clear_bit(unsigned int nr, char *addr)
+ 	return ret;
+ }
+ 
+-static inline unsigned long __ffs(unsigned long word)
++static inline unsigned long __ffs(unsigned char word)
+ {
+ 	int num = 0;
+ 
+-#if BITS_PER_LONG == 64
+-	if ((word & 0xffffffff) == 0) {
+-		num += 32;
+-		word >>= 32;
+-	}
+-#endif
+-	if ((word & 0xffff) == 0) {
+-		num += 16;
+-		word >>= 16;
+-	}
+-	if ((word & 0xff) == 0) {
+-		num += 8;
+-		word >>= 8;
+-	}
+ 	if ((word & 0xf) == 0) {
+ 		num += 4;
+ 		word >>= 4;
+@@ -173,43 +159,45 @@ static inline unsigned long __ffs(unsigned long word)
+ 	return num;
+ }
+ 
+-unsigned long find_next_bit(const unsigned long *addr, unsigned long size,
+-                unsigned long offset)
++/* Copied from linux/lib/find_bit.c */
++#define BITMAP_FIRST_BYTE_MASK(start) (0xff << ((start) & (BITS_PER_BYTE - 1)))
++
++static unsigned long _find_next_bit_le(const unsigned char *addr,
++		unsigned long nbits, unsigned long start, char invert)
 +{
-+	block_t end_addr;
++	unsigned char tmp;
 +
-+	if (!i_ext)
-+		return;
++	if (!nbits || start >= nbits)
++		return nbits;
 +
-+	end_addr = i_ext->ext.blk_addr + i_ext->ext.len;
++	tmp = addr[start / BITS_PER_BYTE] ^ invert;
 +
-+	/* TODO: check its file offset later */
-+	if (blkaddr >= i_ext->ext.blk_addr && blkaddr < end_addr) {
-+		unsigned int offset = blkaddr - i_ext->ext.blk_addr;
++	/* Handle 1st word. */
++	tmp &= BITMAP_FIRST_BYTE_MASK(start);
++	start = round_down(start, BITS_PER_BYTE);
 +
-+		if (f2fs_set_bit(offset, i_ext->map))
-+			i_ext->fail = 1;
-+		else
-+			i_ext->len--;
++	while (!tmp) {
++		start += BITS_PER_BYTE;
++		if (start >= nbits)
++			return nbits;
++
++		tmp = addr[start / BITS_PER_BYTE] ^ invert;
 +	}
++
++	return min(start + __ffs(tmp), nbits);
 +}
 +
- /* start with valid nid and blkaddr */
- void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 		enum FILE_TYPE ftype, struct f2fs_node *node_blk,
-@@ -522,6 +543,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	enum NODE_TYPE ntype;
- 	u32 i_links = le32_to_cpu(node_blk->i.i_links);
- 	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
-+	struct extent_info i_extent;
- 	unsigned int idx = 0;
- 	int need_fix = 0;
- 	int ret;
-@@ -619,16 +641,28 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 		}
- 	}
- 
-+	i_extent.ext = node_blk->i.i_ext;
-+	i_extent.len = le32_to_cpu(i_extent.ext.len);
-+	i_extent.fail = 0;
-+	if (i_extent.len) {
-+		/* max 126KB */
-+		i_extent.map = calloc(i_extent.len, 1);
-+		ASSERT(i_extent.map != NULL);
-+	}
++unsigned long find_next_bit_le(const unsigned char *addr, unsigned long size,
++		unsigned long offset)
++{
++	return _find_next_bit_le(addr, size, offset, 0);
++}
 +
- 	/* check data blocks in inode */
- 	for (idx = 0; idx < ADDRS_PER_INODE(&node_blk->i); idx++) {
--		if (le32_to_cpu(node_blk->i.i_addr[idx]) != 0) {
-+		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[idx]);
 +
-+		if (blkaddr != 0) {
- 			ret = fsck_chk_data_blk(sbi,
--					le32_to_cpu(node_blk->i.i_addr[idx]),
-+					blkaddr,
- 					&child, (i_blocks == *blk_cnt),
- 					ftype, nid, idx, ni->version,
- 					file_is_encrypt(node_blk->i.i_advise));
- 			if (!ret) {
- 				*blk_cnt = *blk_cnt + 1;
-+				update_i_extent(&i_extent, blkaddr);
- 			} else if (config.fix_on) {
- 				node_blk->i.i_addr[idx] = 0;
- 				need_fix = 1;
-@@ -639,6 +673,8 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 
- 	/* check node blocks in inode */
- 	for (idx = 0; idx < 5; idx++) {
-+		block_t blkaddr = le32_to_cpu(node_blk->i.i_nid[idx]);
-+
- 		if (idx == 0 || idx == 1)
- 			ntype = TYPE_DIRECT_NODE;
- 		else if (idx == 2 || idx == 3)
-@@ -648,10 +684,11 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 		else
- 			ASSERT(0);
- 
--		if (le32_to_cpu(node_blk->i.i_nid[idx]) != 0) {
-+		if (blkaddr != 0) {
- 			ret = fsck_chk_node_blk(sbi, &node_blk->i,
--					le32_to_cpu(node_blk->i.i_nid[idx]),
--					NULL, ftype, ntype, blk_cnt, &child);
-+					blkaddr,
-+					NULL, ftype, ntype, blk_cnt, &child,
-+					&i_extent);
- 			if (!ret) {
- 				*blk_cnt = *blk_cnt + 1;
- 			} else if (config.fix_on) {
-@@ -661,6 +698,12 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 			}
- 		}
- 	}
-+	if (i_extent.len || i_extent.fail) {
-+		ASSERT_MSG("ino: 0x%x has wrong ext: untouched=%d, overlap=%d",
-+					nid, i_extent.len, i_extent.fail);
-+		if (config.fix_on)
-+			need_fix = 1;
-+	}
- check:
- 	if (i_blocks != *blk_cnt) {
- 		ASSERT_MSG("ino: 0x%x has i_blocks: %08"PRIx64", "
-@@ -729,21 +772,25 @@ skip_blkcnt_fix:
- 
- int fsck_chk_dnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 		u32 nid, enum FILE_TYPE ftype, struct f2fs_node *node_blk,
--		u32 *blk_cnt, struct child_info *child, struct node_info *ni)
-+		u32 *blk_cnt, struct child_info *child, struct node_info *ni,
-+		struct extent_info *i_ext)
++unsigned long find_next_zero_bit_le(const unsigned char *addr,
++		unsigned long size, unsigned long offset)
  {
- 	int idx, ret;
- 	int need_fix = 0;
- 
- 	for (idx = 0; idx < ADDRS_PER_BLOCK; idx++) {
--		if (le32_to_cpu(node_blk->dn.addr[idx]) == 0x0)
-+		block_t blkaddr = le32_to_cpu(node_blk->dn.addr[idx]);
-+
-+		if (blkaddr == 0x0)
- 			continue;
- 		ret = fsck_chk_data_blk(sbi,
--			le32_to_cpu(node_blk->dn.addr[idx]),
--			child, le64_to_cpu(inode->i_blocks) == *blk_cnt, ftype,
-+			blkaddr, child,
-+			le64_to_cpu(inode->i_blocks) == *blk_cnt, ftype,
- 			nid, idx, ni->version,
- 			file_is_encrypt(inode->i_advise));
- 		if (!ret) {
- 			*blk_cnt = *blk_cnt + 1;
-+			update_i_extent(i_ext, blkaddr);
- 		} else if (config.fix_on) {
- 			node_blk->dn.addr[idx] = 0;
- 			need_fix = 1;
-@@ -759,7 +806,7 @@ int fsck_chk_dnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 
- int fsck_chk_idnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 		enum FILE_TYPE ftype, struct f2fs_node *node_blk, u32 *blk_cnt,
--		struct child_info *child)
-+		struct child_info *child, struct extent_info *i_ext)
- {
- 	int ret;
- 	int i = 0;
-@@ -769,7 +816,8 @@ int fsck_chk_idnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 			continue;
- 		ret = fsck_chk_node_blk(sbi, inode,
- 				le32_to_cpu(node_blk->in.nid[i]), NULL,
--				ftype, TYPE_DIRECT_NODE, blk_cnt, child);
-+				ftype, TYPE_DIRECT_NODE, blk_cnt, child,
-+				i_ext);
- 		if (!ret)
- 			*blk_cnt = *blk_cnt + 1;
- 		else if (ret == -EINVAL)
-@@ -780,7 +828,7 @@ int fsck_chk_idnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 
- int fsck_chk_didnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 		enum FILE_TYPE ftype, struct f2fs_node *node_blk, u32 *blk_cnt,
--		struct child_info *child)
-+		struct child_info *child, struct extent_info *i_ext)
- {
- 	int i = 0;
- 	int ret = 0;
-@@ -790,7 +838,8 @@ int fsck_chk_didnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- 			continue;
- 		ret = fsck_chk_node_blk(sbi, inode,
- 				le32_to_cpu(node_blk->in.nid[i]), NULL,
--				ftype, TYPE_INDIRECT_NODE, blk_cnt, child);
-+				ftype, TYPE_INDIRECT_NODE, blk_cnt, child,
-+				i_ext);
- 		if (!ret)
- 			*blk_cnt = *blk_cnt + 1;
- 		else if (ret == -EINVAL)
-@@ -999,7 +1048,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 		blk_cnt = 1;
- 		ret = fsck_chk_node_blk(sbi,
- 				NULL, le32_to_cpu(dentry[i].ino), name,
--				ftype, TYPE_INODE, &blk_cnt, NULL);
-+				ftype, TYPE_INODE, &blk_cnt, NULL, NULL);
- 
- 		if (ret && config.fix_on) {
- 			int j;
-@@ -1165,7 +1214,7 @@ void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
- 			blk_cnt = 1;
- 			ret = fsck_chk_node_blk(sbi, NULL, ino, NULL,
- 					F2FS_FT_ORPHAN, TYPE_INODE, &blk_cnt,
--					NULL);
-+					NULL, NULL);
- 			if (!ret)
- 				new_blk->ino[new_entry_count++] =
- 							orphan_blk->ino[j];
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 37a25ba..20dfe6b 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -25,6 +25,13 @@ struct child_info {
- 	u8 dots;
- };
- 
-+struct extent_info {
-+	struct f2fs_extent ext;
-+	char *map;
-+	int len;
-+	int fail;
-+};
-+
- struct f2fs_fsck {
- 	struct f2fs_sb_info sbi;
- 
-@@ -88,16 +95,18 @@ enum seg_type {
- extern void fsck_chk_orphan_node(struct f2fs_sb_info *);
- extern int fsck_chk_node_blk(struct f2fs_sb_info *, struct f2fs_inode *, u32,
- 		u8 *, enum FILE_TYPE, enum NODE_TYPE, u32 *,
--		struct child_info *);
-+		struct child_info *, struct extent_info *);
- extern void fsck_chk_inode_blk(struct f2fs_sb_info *, u32, enum FILE_TYPE,
- 		struct f2fs_node *, u32 *, struct node_info *);
- extern int fsck_chk_dnode_blk(struct f2fs_sb_info *, struct f2fs_inode *,
- 		u32, enum FILE_TYPE, struct f2fs_node *, u32 *,
--		struct child_info *, struct node_info *);
-+		struct child_info *, struct node_info *, struct extent_info *);
- extern int fsck_chk_idnode_blk(struct f2fs_sb_info *, struct f2fs_inode *,
--		enum FILE_TYPE, struct f2fs_node *, u32 *, struct child_info *);
-+		enum FILE_TYPE, struct f2fs_node *, u32 *, struct child_info *,
-+		struct extent_info *);
- extern int fsck_chk_didnode_blk(struct f2fs_sb_info *, struct f2fs_inode *,
--		enum FILE_TYPE, struct f2fs_node *, u32 *, struct child_info *);
-+		enum FILE_TYPE, struct f2fs_node *, u32 *, struct child_info *,
-+		struct extent_info *);
- extern int fsck_chk_data_blk(struct f2fs_sb_info *sbi, u32, struct child_info *,
- 		int, enum FILE_TYPE, u32, u16, u8, int);
- extern int fsck_chk_dentry_blk(struct f2fs_sb_info *, u32, struct child_info *,
-diff --git a/fsck/main.c b/fsck/main.c
-index 3db4a44..6b0d97e 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -155,7 +155,7 @@ static void do_fsck(struct f2fs_sb_info *sbi)
- 	/* Traverse all block recursively from root inode */
- 	blk_cnt = 1;
- 	fsck_chk_node_blk(sbi, NULL, sbi->root_ino_num, (u8 *)"/",
--			F2FS_FT_DIR, TYPE_INODE, &blk_cnt, NULL);
-+			F2FS_FT_DIR, TYPE_INODE, &blk_cnt, NULL, NULL);
- 	fsck_verify(sbi);
- 	fsck_free(sbi);
+-        const unsigned long *p = addr + BIT_WORD(offset);
+-        unsigned long result = offset & ~(BITS_PER_LONG-1);
+-        unsigned long tmp;
+-
+-        if (offset >= size)
+-                return size;
+-        size -= result;
+-        offset %= BITS_PER_LONG;
+-        if (offset) {
+-                tmp = *(p++);
+-                tmp &= (~0UL << offset);
+-                if (size < BITS_PER_LONG)
+-                        goto found_first;
+-                if (tmp)
+-                        goto found_middle;
+-                size -= BITS_PER_LONG;
+-                result += BITS_PER_LONG;
+-        }
+-        while (size & ~(BITS_PER_LONG-1)) {
+-                if ((tmp = *(p++)))
+-                        goto found_middle;
+-                result += BITS_PER_LONG;
+-                size -= BITS_PER_LONG;
+-        }
+-        if (!size)
+-                return result;
+-        tmp = *p;
+-
+-found_first:
+-        tmp &= (~0UL >> (BITS_PER_LONG - size));
+-        if (tmp == 0UL)		/* Are any bits set? */
+-                return result + size;   /* Nope. */
+-found_middle:
+-        return result + __ffs(tmp);
++	return _find_next_bit_le(addr, size, offset, 0xff);
  }
+ 
+ /*
 -- 
 2.5.4 (Apple Git-61)
 
