@@ -1,288 +1,327 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 5/7] f2fs: enhance multithread dio write
- performance
-Date: Fri, 11 Dec 2015 18:26:06 +0800
-Message-ID: <03ca01d133fe$78a90e70$69fb2b50$@samsung.com>
-References: <000001d0ec5d$0bbd1880$23374980$@samsung.com>
- <20150915212044.GA84514@jaegeuk-mac02.mot.com>
- <000a01d0f068$c46012c0$4d203840$@samsung.com> <55FA0BDB.5090104@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 2/6] fsck.f2fs: sanity_check for extent_cache
+	entry
+Date: Fri, 11 Dec 2015 16:00:10 -0800
+Message-ID: <1449878414-41254-2-git-send-email-jaegeuk@kernel.org>
+References: <1449878414-41254-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <55FA0BDB.5090104@huawei.com>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'He YunLei' <heyunlei@huawei.com>
-Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1a7Xbv-0006lT-IY
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 12 Dec 2015 00:00:27 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1a7Xbu-00039C-7s for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 12 Dec 2015 00:00:27 +0000
+In-Reply-To: <1449878414-41254-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Hi Yunlei,
+This patch adds to check the stored extent_cache entry is consistent or not.
 
-> -----Original Message-----
-> From: He YunLei [mailto:heyunlei@huawei.com]
-> Sent: Thursday, September 17, 2015 8:40 AM
-> To: Chao Yu
-> Cc: 'Jaegeuk Kim'; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 5/7] f2fs: enhance multithread dio write performance
-> 
-> On 2015/9/16 18:15, Chao Yu wrote:
-> > Hi Jaegeuk,
-> >
-> >> -----Original Message-----
-> >> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> >> Sent: Wednesday, September 16, 2015 5:21 AM
-> >> To: Chao Yu
-> >> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> >> Subject: Re: [PATCH 5/7] f2fs: enhance multithread dio write performance
-> >>
-> >> Hi Chao,
-> >>
-> >> On Fri, Sep 11, 2015 at 02:41:53PM +0800, Chao Yu wrote:
-> >>> When dio writes perform concurrently, our performace will be low because of
-> >>> Thread A's allocation of multi continuous blocks will be break by Thread B,
-> >>> there are two cases as below:
-> >>>   - In Thread B, we may change current segment to a new segment for LFS
-> >>>     allocation if we dio write in the beginning of the file.
-> >>>   - In Thread B, we may allocate blocks in the middle of Thread A's
-> >>>     allocation, which make blocks which allocated in Thread A being
-> >>>     discontinuous.
-> >>>
-> >>> This patch adds writepages mutex lock to make block allocation in dio write
-> >>> atomic to avoid above issues.
-> >>>
-> >>> Test environment:
-> >>> ubuntu os with linux kernel 4.2+, intel i7-3770, 16g memory,
-> >>> 32g kingston sd card.
-> >>>
-> >>> fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
-> >> --filesize=256m --size=16m --bs=2m --direct=1
-> >>> --numjobs=10
-> >>>
-> >>> before:
-> >>>    WRITE: io=163840KB, aggrb=3145KB/s, minb=314KB/s, maxb=411KB/s, mint=39836msec,
-> >> maxt=52083msec
-> >>>
-> >>> patched:
-> >>>    WRITE: io=163840KB, aggrb=10033KB/s, minb=1003KB/s, maxb=1124KB/s, mint=14565msec,
-> >> maxt=16329msec
-> >>>
-> >>> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> >>> ---
-> >>>   fs/f2fs/data.c | 13 ++++++++++---
-> >>>   1 file changed, 10 insertions(+), 3 deletions(-)
-> >>>
-> >>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >>> index a737ca5..a0a5849 100644
-> >>> --- a/fs/f2fs/data.c
-> >>> +++ b/fs/f2fs/data.c
-> >>> @@ -1536,7 +1536,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
-> *iter,
-> >>>   	struct file *file = iocb->ki_filp;
-> >>>   	struct address_space *mapping = file->f_mapping;
-> >>>   	struct inode *inode = mapping->host;
-> >>> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >>>   	size_t count = iov_iter_count(iter);
-> >>> +	int rw = iov_iter_rw(iter);
-> >>>   	int err;
-> >>>
-> >>>   	/* we don't need to use inline_data strictly */
-> >>> @@ -1555,12 +1557,17 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
-> >> *iter,
-> >>>
-> >>>   	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
-> >>>
-> >>> -	if (iov_iter_rw(iter) == WRITE)
-> >>> +	if (rw == WRITE) {
-> >>> +		mutex_lock(&sbi->writepages);
-> >>
-> >> Why do we have to share sbi->writepages?
-> >
-> > The root cause of this issue is that: in f2fs, we have no suitable
-> > dispatcher which can do the following things as an atomic operation:
-> > a) allocate position(s) in flash device for current block(s);
-> > b) submit user data in allocated position(s) in block layer.
-> >
-> > Without the dispatcher, we will suffer performance issue in following
-> > scenario:
-> > Thread A		Thread B		Thread C
-> > allocate pos+1
-> > 			allocate pos+2
-> > 						allocate pos+3
-> > submit pos+1
-> > 						submit pos+3
-> > 			submit pos+2
-> >
-> > Our final submitting series will: pos+1, pos+3, pos+2, this makes f2fs
-> > running into non-LFS mode, therefore resulting in bad performance.
-> >
-> > writepages mutex lock supply us with a good solution for above issue.
-> > It not only make the allocating and submitting pair executing atomically,
-> > but also reduce the fragmentation for one file since we submit blocks
-> > belong to single inode as continuous as possible.
-> >
-> > So here I choose to use writepages mutex lock to fix the performance
-> > issue caused by both dio write vs dio write and dio write vs buffered
-> > write.
-> >
-> > If I'm missing something, please correct me.
-> >
-> >>
-> >>>   		__allocate_data_blocks(inode, offset, count);
-> >>
-> >> If the problem lies on the misaligned blocks, how about calling mutex_unlock
-> >> here?
-> >
-> > When changing to unlock here, I got regression when testing with following command:
-> > fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
-> --filesize=256m --size=4m --bs=64k --direct=1
-> > --numjobs=20
-> >
-> > unlock here:
-> >    WRITE: io=81920KB, aggrb=5802KB/s, minb=290KB/s, maxb=292KB/s, mint=14010msec,
-> maxt=14119msec
-> > unlock after dio finished:
-> >    WRITE: io=81920KB, aggrb=6088KB/s, minb=304KB/s, maxb=1081KB/s, mint=3786msec,
-> maxt=13454msec
-> >
-> > So how about keep it in original place in this patch?
-> 
-> Does share writepages mutex lock have an effect on cache write? Here is AndroBench result on
-> my phone:
-> 
-> Before patch:
-> 				1R1W               8R8W               16R16W
-> Sequential Write               161.31             163.85              154.67
-> Random  Write                   9.48               17.66               18.09
-> 
-> 
-> After patch:
-> 				1R1W               8R8W               16R16W
-> Sequential Write               159.61             157.24              160.11
-> Random  Write                   9.17               8.51                8.8
-> 
-> Unit:Mb/s, File size: 64M, Buffer size: 4k
-
-Could you help to test the following patch?
-
->From 0abff8a16bf87076ec70a7c1b8da913000e9c3b7 Mon Sep 17 00:00:00 2001
-From: Chao Yu <chao2.yu@samsung.com>
-Date: Wed, 21 Oct 2015 15:12:07 +0800
-Subject: [PATCH v2] f2fs: enhance multithread dio write performance
-
-When dio writes perform concurrently, our performace will be low because of
-Thread A's allocation of multi continuous blocks will be break by Thread B,
-there are two cases as below:
- - In Thread B, we may change current segment to a new segment for LFS
-   allocation if we dio write in the beginning of the file.
- - In Thread B, we may allocate blocks in the middle of Thread A's
-   allocation, which make blocks allocated in Thread A being inconsecutive.
-
-This patch adds writepages mutex lock to make block allocation in dio write
-atomic to avoid above issues.
-
-Test environment:
-ubuntu os with linux kernel 4.4-rc4, intel i7-3770, 16g memory,
-32g kingston sd card.
-
-fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs --filesize=256m --size=16m --bs=2m --direct=1
---numjobs=10
-
-before:
-  WRITE: io=163840KB, aggrb=5125KB/s, minb=512KB/s, maxb=776KB/s, mint=21105msec, maxt=31967msec
-patched:
-  WRITE: io=163840KB, aggrb=10424KB/s, minb=1042KB/s, maxb=1172KB/s, mint=13975msec, maxt=15717msec
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
-v2:
- - only serialize block allocation.
- - do not serialize small dio.
- fs/f2fs/data.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ fsck/fsck.c | 87 +++++++++++++++++++++++++++++++++++++++++++++++--------------
+ fsck/fsck.h | 17 +++++++++---
+ fsck/main.c |  2 +-
+ 3 files changed, 82 insertions(+), 24 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 90a2ffe..c01d113 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1566,7 +1566,10 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	struct file *file = iocb->ki_filp;
- 	struct address_space *mapping = file->f_mapping;
- 	struct inode *inode = mapping->host;
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	size_t count = iov_iter_count(iter);
-+	int rw = iov_iter_rw(iter);
-+	bool serialized = (F2FS_BYTES_TO_BLK(count) >= 64);
- 	int err;
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index c81dde9..adc61d2 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -468,7 +468,8 @@ out:
  
- 	/* we don't need to use inline_data strictly */
-@@ -1583,10 +1586,14 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	if (err)
- 		return err;
+ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 		u32 nid, u8 *name, enum FILE_TYPE ftype, enum NODE_TYPE ntype,
+-		u32 *blk_cnt, struct child_info *child)
++		u32 *blk_cnt, struct child_info *child,
++		struct extent_info *i_ext)
+ {
+ 	struct node_info ni;
+ 	struct f2fs_node *node_blk = NULL;
+@@ -487,19 +488,19 @@ int fsck_chk_node_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 			f2fs_set_main_bitmap(sbi, ni.blk_addr,
+ 							CURSEG_WARM_NODE);
+ 			fsck_chk_dnode_blk(sbi, inode, nid, ftype, node_blk,
+-					blk_cnt, child, &ni);
++					blk_cnt, child, &ni, i_ext);
+ 			break;
+ 		case TYPE_INDIRECT_NODE:
+ 			f2fs_set_main_bitmap(sbi, ni.blk_addr,
+ 							CURSEG_COLD_NODE);
+ 			fsck_chk_idnode_blk(sbi, inode, ftype, node_blk,
+-					blk_cnt, child);
++					blk_cnt, child, i_ext);
+ 			break;
+ 		case TYPE_DOUBLE_INDIRECT_NODE:
+ 			f2fs_set_main_bitmap(sbi, ni.blk_addr,
+ 							CURSEG_COLD_NODE);
+ 			fsck_chk_didnode_blk(sbi, inode, ftype, node_blk,
+-					blk_cnt, child);
++					blk_cnt, child, i_ext);
+ 			break;
+ 		default:
+ 			ASSERT(0);
+@@ -512,6 +513,26 @@ err:
+ 	return -EINVAL;
+ }
  
--	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
-+	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
++static void update_i_extent(struct extent_info *i_ext, block_t blkaddr)
++{
++	block_t end_addr;
++
++	if (!i_ext)
++		return;
++
++	end_addr = i_ext->ext.blk_addr + i_ext->ext.len;
++
++	/* TODO: check its file offset later */
++	if (blkaddr >= i_ext->ext.blk_addr && blkaddr < end_addr) {
++		unsigned int offset = blkaddr - i_ext->ext.blk_addr;
++
++		if (f2fs_set_bit(offset, i_ext->map))
++			i_ext->fail = 1;
++		else
++			i_ext->len--;
++	}
++}
++
+ /* start with valid nid and blkaddr */
+ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 		enum FILE_TYPE ftype, struct f2fs_node *node_blk,
+@@ -522,6 +543,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 	enum NODE_TYPE ntype;
+ 	u32 i_links = le32_to_cpu(node_blk->i.i_links);
+ 	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
++	struct extent_info i_extent;
+ 	unsigned int idx = 0;
+ 	int need_fix = 0;
+ 	int ret;
+@@ -619,16 +641,28 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 		}
+ 	}
  
--	if (iov_iter_rw(iter) == WRITE) {
-+	if (rw == WRITE) {
-+		if (serialized)
-+			mutex_lock(&sbi->writepages);
- 		__allocate_data_blocks(inode, offset, count);
-+		if (serialized)
-+			mutex_unlock(&sbi->writepages);
- 		if (unlikely(f2fs_cp_error(F2FS_I_SB(inode)))) {
- 			err = -EIO;
- 			goto out;
-@@ -1595,10 +1602,10 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
++	i_extent.ext = node_blk->i.i_ext;
++	i_extent.len = le32_to_cpu(i_extent.ext.len);
++	i_extent.fail = 0;
++	if (i_extent.len) {
++		/* max 126KB */
++		i_extent.map = calloc(i_extent.len, 1);
++		ASSERT(i_extent.map != NULL);
++	}
++
+ 	/* check data blocks in inode */
+ 	for (idx = 0; idx < ADDRS_PER_INODE(&node_blk->i); idx++) {
+-		if (le32_to_cpu(node_blk->i.i_addr[idx]) != 0) {
++		block_t blkaddr = le32_to_cpu(node_blk->i.i_addr[idx]);
++
++		if (blkaddr != 0) {
+ 			ret = fsck_chk_data_blk(sbi,
+-					le32_to_cpu(node_blk->i.i_addr[idx]),
++					blkaddr,
+ 					&child, (i_blocks == *blk_cnt),
+ 					ftype, nid, idx, ni->version,
+ 					file_is_encrypt(node_blk->i.i_advise));
+ 			if (!ret) {
+ 				*blk_cnt = *blk_cnt + 1;
++				update_i_extent(&i_extent, blkaddr);
+ 			} else if (config.fix_on) {
+ 				node_blk->i.i_addr[idx] = 0;
+ 				need_fix = 1;
+@@ -639,6 +673,8 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
  
- 	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
- out:
--	if (err < 0 && iov_iter_rw(iter) == WRITE)
-+	if (err < 0 && rw == WRITE)
- 		f2fs_write_failed(mapping, offset + count);
+ 	/* check node blocks in inode */
+ 	for (idx = 0; idx < 5; idx++) {
++		block_t blkaddr = le32_to_cpu(node_blk->i.i_nid[idx]);
++
+ 		if (idx == 0 || idx == 1)
+ 			ntype = TYPE_DIRECT_NODE;
+ 		else if (idx == 2 || idx == 3)
+@@ -648,10 +684,11 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 		else
+ 			ASSERT(0);
  
--	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
-+	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
+-		if (le32_to_cpu(node_blk->i.i_nid[idx]) != 0) {
++		if (blkaddr != 0) {
+ 			ret = fsck_chk_node_blk(sbi, &node_blk->i,
+-					le32_to_cpu(node_blk->i.i_nid[idx]),
+-					NULL, ftype, ntype, blk_cnt, &child);
++					blkaddr,
++					NULL, ftype, ntype, blk_cnt, &child,
++					&i_extent);
+ 			if (!ret) {
+ 				*blk_cnt = *blk_cnt + 1;
+ 			} else if (config.fix_on) {
+@@ -661,6 +698,12 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
+ 			}
+ 		}
+ 	}
++	if (i_extent.len || i_extent.fail) {
++		ASSERT_MSG("ino: 0x%x has wrong ext: untouched=%d, overlap=%d",
++					nid, i_extent.len, i_extent.fail);
++		if (config.fix_on)
++			need_fix = 1;
++	}
+ check:
+ 	if (i_blocks != *blk_cnt) {
+ 		ASSERT_MSG("ino: 0x%x has i_blocks: %08"PRIx64", "
+@@ -729,21 +772,25 @@ skip_blkcnt_fix:
  
- 	return err;
+ int fsck_chk_dnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 		u32 nid, enum FILE_TYPE ftype, struct f2fs_node *node_blk,
+-		u32 *blk_cnt, struct child_info *child, struct node_info *ni)
++		u32 *blk_cnt, struct child_info *child, struct node_info *ni,
++		struct extent_info *i_ext)
+ {
+ 	int idx, ret;
+ 	int need_fix = 0;
+ 
+ 	for (idx = 0; idx < ADDRS_PER_BLOCK; idx++) {
+-		if (le32_to_cpu(node_blk->dn.addr[idx]) == 0x0)
++		block_t blkaddr = le32_to_cpu(node_blk->dn.addr[idx]);
++
++		if (blkaddr == 0x0)
+ 			continue;
+ 		ret = fsck_chk_data_blk(sbi,
+-			le32_to_cpu(node_blk->dn.addr[idx]),
+-			child, le64_to_cpu(inode->i_blocks) == *blk_cnt, ftype,
++			blkaddr, child,
++			le64_to_cpu(inode->i_blocks) == *blk_cnt, ftype,
+ 			nid, idx, ni->version,
+ 			file_is_encrypt(inode->i_advise));
+ 		if (!ret) {
+ 			*blk_cnt = *blk_cnt + 1;
++			update_i_extent(i_ext, blkaddr);
+ 		} else if (config.fix_on) {
+ 			node_blk->dn.addr[idx] = 0;
+ 			need_fix = 1;
+@@ -759,7 +806,7 @@ int fsck_chk_dnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 
+ int fsck_chk_idnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 		enum FILE_TYPE ftype, struct f2fs_node *node_blk, u32 *blk_cnt,
+-		struct child_info *child)
++		struct child_info *child, struct extent_info *i_ext)
+ {
+ 	int ret;
+ 	int i = 0;
+@@ -769,7 +816,8 @@ int fsck_chk_idnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 			continue;
+ 		ret = fsck_chk_node_blk(sbi, inode,
+ 				le32_to_cpu(node_blk->in.nid[i]), NULL,
+-				ftype, TYPE_DIRECT_NODE, blk_cnt, child);
++				ftype, TYPE_DIRECT_NODE, blk_cnt, child,
++				i_ext);
+ 		if (!ret)
+ 			*blk_cnt = *blk_cnt + 1;
+ 		else if (ret == -EINVAL)
+@@ -780,7 +828,7 @@ int fsck_chk_idnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 
+ int fsck_chk_didnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 		enum FILE_TYPE ftype, struct f2fs_node *node_blk, u32 *blk_cnt,
+-		struct child_info *child)
++		struct child_info *child, struct extent_info *i_ext)
+ {
+ 	int i = 0;
+ 	int ret = 0;
+@@ -790,7 +838,8 @@ int fsck_chk_didnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
+ 			continue;
+ 		ret = fsck_chk_node_blk(sbi, inode,
+ 				le32_to_cpu(node_blk->in.nid[i]), NULL,
+-				ftype, TYPE_INDIRECT_NODE, blk_cnt, child);
++				ftype, TYPE_INDIRECT_NODE, blk_cnt, child,
++				i_ext);
+ 		if (!ret)
+ 			*blk_cnt = *blk_cnt + 1;
+ 		else if (ret == -EINVAL)
+@@ -999,7 +1048,7 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
+ 		blk_cnt = 1;
+ 		ret = fsck_chk_node_blk(sbi,
+ 				NULL, le32_to_cpu(dentry[i].ino), name,
+-				ftype, TYPE_INODE, &blk_cnt, NULL);
++				ftype, TYPE_INODE, &blk_cnt, NULL, NULL);
+ 
+ 		if (ret && config.fix_on) {
+ 			int j;
+@@ -1165,7 +1214,7 @@ void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
+ 			blk_cnt = 1;
+ 			ret = fsck_chk_node_blk(sbi, NULL, ino, NULL,
+ 					F2FS_FT_ORPHAN, TYPE_INODE, &blk_cnt,
+-					NULL);
++					NULL, NULL);
+ 			if (!ret)
+ 				new_blk->ino[new_entry_count++] =
+ 							orphan_blk->ino[j];
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 37a25ba..20dfe6b 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -25,6 +25,13 @@ struct child_info {
+ 	u8 dots;
+ };
+ 
++struct extent_info {
++	struct f2fs_extent ext;
++	char *map;
++	int len;
++	int fail;
++};
++
+ struct f2fs_fsck {
+ 	struct f2fs_sb_info sbi;
+ 
+@@ -88,16 +95,18 @@ enum seg_type {
+ extern void fsck_chk_orphan_node(struct f2fs_sb_info *);
+ extern int fsck_chk_node_blk(struct f2fs_sb_info *, struct f2fs_inode *, u32,
+ 		u8 *, enum FILE_TYPE, enum NODE_TYPE, u32 *,
+-		struct child_info *);
++		struct child_info *, struct extent_info *);
+ extern void fsck_chk_inode_blk(struct f2fs_sb_info *, u32, enum FILE_TYPE,
+ 		struct f2fs_node *, u32 *, struct node_info *);
+ extern int fsck_chk_dnode_blk(struct f2fs_sb_info *, struct f2fs_inode *,
+ 		u32, enum FILE_TYPE, struct f2fs_node *, u32 *,
+-		struct child_info *, struct node_info *);
++		struct child_info *, struct node_info *, struct extent_info *);
+ extern int fsck_chk_idnode_blk(struct f2fs_sb_info *, struct f2fs_inode *,
+-		enum FILE_TYPE, struct f2fs_node *, u32 *, struct child_info *);
++		enum FILE_TYPE, struct f2fs_node *, u32 *, struct child_info *,
++		struct extent_info *);
+ extern int fsck_chk_didnode_blk(struct f2fs_sb_info *, struct f2fs_inode *,
+-		enum FILE_TYPE, struct f2fs_node *, u32 *, struct child_info *);
++		enum FILE_TYPE, struct f2fs_node *, u32 *, struct child_info *,
++		struct extent_info *);
+ extern int fsck_chk_data_blk(struct f2fs_sb_info *sbi, u32, struct child_info *,
+ 		int, enum FILE_TYPE, u32, u16, u8, int);
+ extern int fsck_chk_dentry_blk(struct f2fs_sb_info *, u32, struct child_info *,
+diff --git a/fsck/main.c b/fsck/main.c
+index 3db4a44..6b0d97e 100644
+--- a/fsck/main.c
++++ b/fsck/main.c
+@@ -155,7 +155,7 @@ static void do_fsck(struct f2fs_sb_info *sbi)
+ 	/* Traverse all block recursively from root inode */
+ 	blk_cnt = 1;
+ 	fsck_chk_node_blk(sbi, NULL, sbi->root_ino_num, (u8 *)"/",
+-			F2FS_FT_DIR, TYPE_INODE, &blk_cnt, NULL);
++			F2FS_FT_DIR, TYPE_INODE, &blk_cnt, NULL, NULL);
+ 	fsck_verify(sbi);
+ 	fsck_free(sbi);
  }
 -- 
-2.6.3
+2.5.4 (Apple Git-61)
 
 
-> 
-> >
-> > Thanks,
-> >>
-> >> Thanks,
-> >>
-> >>> +	}
-> >>>
-> >>>   	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
-> >>> -	if (err < 0 && iov_iter_rw(iter) == WRITE)
-> >>> -		f2fs_write_failed(mapping, offset + count);
-> >>> +	if (rw == WRITE) {
-> >>> +		mutex_unlock(&sbi->writepages);
-> >>> +		if (err)
-> >>> +			f2fs_write_failed(mapping, offset + count);
-> >>> +	}
-> >>>
-> >>>   	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
-> >>>
-> >>> --
-> >>> 2.4.2
-> >
-> >
-> > ------------------------------------------------------------------------------
-> > Monitor Your Dynamic Infrastructure at Any Scale With Datadog!
-> > Get real-time metrics from all of your servers, apps and tools
-> > in one place.
-> > SourceForge users - Click here to start your Free Trial of Datadog now!
-> > http://pubads.g.doubleclick.net/gampad/clk?id=241902991&iu=/4140
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >
-> > .
-> >
+------------------------------------------------------------------------------
