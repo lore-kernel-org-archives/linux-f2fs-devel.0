@@ -1,31 +1,29 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: fix to update variable correctly when
- skip a unmapped block
-Date: Mon, 14 Dec 2015 18:05:13 +0800
-Message-ID: <005f01d13657$043d5cc0$0cb81640$@samsung.com>
-References: <004f01d13640$ceab8890$6c0299b0$@samsung.com>
+Subject: [PATCH] mkfs.f2fs: fix to calculate left space of
+ checkpoint page correctly
+Date: Mon, 14 Dec 2015 18:06:59 +0800
+Message-ID: <006001d13657$41c7c1c0$c5574540$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1a8Q16-000219-37
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1a8Q2t-0007xN-KJ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 14 Dec 2015 10:06:04 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1a8Q13-0003Qz-8M
+	Mon, 14 Dec 2015 10:07:55 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1a8Q2r-0004HC-Lu
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 14 Dec 2015 10:06:04 +0000
+	Mon, 14 Dec 2015 10:07:55 +0000
 Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
+	by mailout2.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NZC026G2EPO75B0@mailout4.samsung.com> for
+	2014)) with ESMTP id <0NZC029IYESKYPE0@mailout2.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 14 Dec 2015 19:05:53 +0900 (KST)
-In-reply-to: <004f01d13640$ceab8890$6c0299b0$@samsung.com>
+	Mon, 14 Dec 2015 19:07:36 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -36,21 +34,36 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Fan Li' <fanofcode.li@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-> -----Original Message-----
-> From: Fan Li [mailto:fanofcode.li@samsung.com]
-> Sent: Monday, December 14, 2015 3:26 PM
-> To: 'Jaegeuk Kim'
-> Cc: linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH] f2fs: fix to update variable correctly when skip a unmapped block
-> 
-> map.m_len should be reduced after skip a block
-> 
-> Signed-off-by: Fan li <fanofcode.li@samsung.com>
+We reserved one segment for NAT region at least, so when formatting
+fs, calculated maximum size of left space in CP page should be:
+CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64 (size of
+reserved NAT bitmap).
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+Fix the incorrect calculated size to avoid potential overflow bug here.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ mkfs/f2fs_format.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index c4b17de..a2f33f9 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -220,7 +220,7 @@ static int f2fs_prepare_super_block(void)
+ 	 * When sit is too large, we should expand cp area. It requires more pages for cp.
+ 	 */
+ 	if (max_sit_bitmap_size >
+-			(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 65)) {
++			(CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1 - 64)) {
+ 		max_nat_bitmap_size = CHECKSUM_OFFSET - sizeof(struct f2fs_checkpoint) + 1;
+ 		set_sb(cp_payload, F2FS_BLK_ALIGN(max_sit_bitmap_size));
+ 	} else {
+-- 
+2.6.3
 
 
 
