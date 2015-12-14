@@ -1,91 +1,248 @@
-From: Andrei Borzenkov <arvidjaar@gmail.com>
-Subject: Re: [PATCH v3] F2FS support
-Date: Mon, 14 Dec 2015 11:28:26 +0300
-Message-ID: <566E7DAA.4010202@gmail.com>
-References: <1427185140-41120-1-git-send-email-jaegeuk@kernel.org>
-	<20150403224908.GB25673@jaegeuk-mac02.mot.com>
-	<20151119212824.GA11666@jaegeuk.local>
-Reply-To: The development of GNU GRUB <grub-devel@gnu.org>
+From: He YunLei <heyunlei@huawei.com>
+Subject: Re: [PATCH] back-up raw_super in sbi
+Date: Mon, 14 Dec 2015 17:56:49 +0800
+Message-ID: <566E9261.8040702@huawei.com>
+References: <1449580633-17880-1-git-send-email-heyunlei@huawei.com>
+	<20151208181902.GA10025@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org>
-In-Reply-To: <20151119212824.GA11666@jaegeuk.local>
-List-Unsubscribe: <https://lists.gnu.org/mailman/options/grub-devel>,
-	<mailto:grub-devel-request@gnu.org?subject=unsubscribe>
-List-Archive: <http://lists.gnu.org/archive/html/grub-devel>
-List-Post: <mailto:grub-devel@gnu.org>
-List-Help: <mailto:grub-devel-request@gnu.org?subject=help>
-List-Subscribe: <https://lists.gnu.org/mailman/listinfo/grub-devel>,
-	<mailto:grub-devel-request@gnu.org?subject=subscribe>
-Errors-To: grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org
-Sender: grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org
-To: The development of GNU GRUB <grub-devel@gnu.org>, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1a8Psk-0001dT-Kq
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 14 Dec 2015 09:57:26 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1a8Psg-00034P-Aj
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 14 Dec 2015 09:57:26 +0000
+In-Reply-To: <20151208181902.GA10025@jaegeuk.local>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: hebiao6@huawei.com, stuart.li@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-MjAuMTEuMjAxNSAwMDoyOCwgSmFlZ2V1ayBLaW0g0L/QuNGI0LXRgjoKPiBIZWxsbywKPiAKPiBD
-aGFuZ2UgbG9nIGZyb20gdjI6Cj4gIG8gRW5oYW5jZSB0aGUgY29kZSBxdWFsaXR5IHN1Z2dlc3Rl
-ZCBieSBBbmRyZWkKPiAKPiBTb3JyeSBmb3IgdGhlIGxvbmcgZGVsYXkuCj4gQ291bGQgeW91IHBs
-ZWFzZSBjaGVjayB0aGlzIHBhdGNoPwo+IAo+IFRoYW5rIHlvdSBzbyBtdWNoLAo+IAoKVGhhbmsg
-eW91IGZvciBjb250aW51aW5nIHRvIHdvcmsgb24gaXQhCgouLi4KCj4gKwo+ICtzdGF0aWMgaW5s
-aW5lIGludAo+ICtncnViX2dlbmVyaWNfdGVzdF9iaXQgKGludCBuciwgY29uc3QgZ3J1Yl91aW50
-MzJfdCAqYWRkcikKPiArewo+ICsgIHJldHVybiAxVUwgJiAoYWRkcltuciAvIDMyXSA+PiAobnIg
-JiAzMSkpOwo+ICt9Cj4gKwoKQXMgYWxyZWFkeSBkaXNjdXNzZWQgdGhpcyBjb2RlIGlzIHdyb25n
-IG9uIGJpZy1lbmRpYW4gcGxhdGZvcm0uIE9uLWRpc2sKYml0bWFwIGlzIGxpdHRsZS1lbmRpYW4g
-YW5kIGtlcm5lbCBleHBsaWNpdGx5IHVzZXMgdGVzdF9iaXRfbGUoKSBoZXJlLgoKPiArc3RhdGlj
-IGlubGluZSBjaGFyICoKPiArX19pbmxpbmVfYWRkciAoc3RydWN0IGdydWJfZjJmc19pbm9kZSAq
-aW5vZGUpCj4gK3sKPiArICByZXR1cm4gKGNoYXIgKikmaW5vZGUtPmlfYWRkclsxXTsKPiArfQo+
-ICsKPiArc3RhdGljIGlubGluZSBncnViX3VpbnQ2NF90Cj4gK2dydWJfZjJmc19maWxlX3NpemUg
-KHN0cnVjdCBncnViX2YyZnNfaW5vZGUgKmlub2RlKQo+ICt7Cj4gKyAgcmV0dXJuIGdydWJfbGVf
-dG9fY3B1NjQgKGlub2RlLT5pX3NpemUpOwo+ICt9Cj4gKwo+ICtzdGF0aWMgaW5saW5lIGdydWJf
-dWludDMyX3QKPiArX19zdGFydF9jcF9hZGRyIChzdHJ1Y3QgZ3J1Yl9mMmZzX2RhdGEgKmRhdGEp
-Cj4gK3sKPiArICBzdHJ1Y3QgZ3J1Yl9mMmZzX2NoZWNrcG9pbnQgKmNrcHQgPSAmZGF0YS0+Y2tw
-dDsKPiArICBncnViX3VpbnQ2NF90IGNrcHRfdmVyc2lvbiA9IGdydWJfbGVfdG9fY3B1NjQgKGNr
-cHQtPmNoZWNrcG9pbnRfdmVyKTsKPiArICBncnViX3VpbnQzMl90IHN0YXJ0X2FkZHIgPSBkYXRh
-LT5jcF9ibGthZGRyOwo+ICsKPiArICBpZiAoIShja3B0X3ZlcnNpb24gJiAxKSkKClRoaXMgY2Fu
-IHVzZSBncnViX2NwdV90b19sZTY0X2NvbXBpbGVfdGltZSAoMSkKCi4uLgoKPiArc3RhdGljIGlu
-bGluZSBpbnQKPiArZ3J1Yl9mMmZzX3Rlc3RfYml0IChncnViX3VpbnQzMl90IG5yLCBjb25zdCBj
-aGFyICpwKQo+ICt7Cj4gKyAgaW50IG1hc2s7Cj4gKwo+ICsgIHAgKz0gKG5yID4+IDMpOwo+ICsg
-IG1hc2sgPSAxIDw8ICg3IC0gKG5yICYgMHgwNykpOwo+ICsgIHJldHVybiAobWFzayAmICpwKSAh
-PSAwOwoKVGhpcyBpcyByZWFsbHkganVzdCAicmV0dXJuIG1hc2sgJiAqcCIuCgo+ICt9Cj4gKwo+
-ICtzdGF0aWMgaW50Cj4gK2dydWJfZjJmc19zYW5pdHlfY2hlY2tfc2IgKHN0cnVjdCBncnViX2Yy
-ZnNfc3VwZXJibG9jayAqc2IpCj4gK3sKPiArICBncnViX3VpbnQzMl90IGxvZ19zZWN0b3JzaXpl
-LCBsb2dfc2VjdG9yc19wZXJfYmxvY2s7Cj4gKwo+ICsgIGlmIChzYi0+bWFnaWMgIT0gZ3J1Yl9j
-cHVfdG9fbGUzMl9jb21waWxlX3RpbWUgKEYyRlNfU1VQRVJfTUFHSUMpKQo+ICsgICAgcmV0dXJu
-IC0xOwo+ICsKPiArICBpZiAoc2ItPmxvZ19ibG9ja3NpemUgIT0gZ3J1Yl9jcHVfdG9fbGUzMl9j
-b21waWxlX3RpbWUgKEYyRlNfQkxLX0JJVFMpKQo+ICsgICAgcmV0dXJuIC0xOwo+ICsKPiArICBs
-b2dfc2VjdG9yc2l6ZSA9IGdydWJfbGVfdG9fY3B1MzIgKHNiLT5sb2dfc2VjdG9yc2l6ZSk7Cj4g
-KyAgbG9nX3NlY3RvcnNfcGVyX2Jsb2NrID0gZ3J1Yl9sZV90b19jcHUzMiAoc2ItPmxvZ19zZWN0
-b3JzX3Blcl9ibG9jayk7Cj4gKwo+ICsgIGlmIChsb2dfc2VjdG9yc2l6ZSA+IEYyRlNfTUFYX0xP
-R19TRUNUT1JfU0laRSkKPiArICAgIHJldHVybiAtMTsKPiArCj4gKyAgaWYgKGxvZ19zZWN0b3Jz
-aXplIDwgRjJGU19NSU5fTE9HX1NFQ1RPUl9TSVpFKQo+ICsgICAgcmV0dXJuIC0xOwo+ICsKPiAr
-ICBpZiAobG9nX3NlY3RvcnNfcGVyX2Jsb2NrICsgbG9nX3NlY3RvcnNpemUgIT0gRjJGU19NQVhf
-TE9HX1NFQ1RPUl9TSVpFKQoKVGhpcyBzb3VuZHMgbGlrZSBpdCBzaG91bGQgYWN0dWFsbHkgYmUg
-RjJGU19CTEtfQklUUzsgYXQgbGVhc3QgYXNzdW1pbmcKdGhhdCBGMkZTX01BWF9MT0dfU0VDVE9S
-X1NJWkUgbWF5IGRpZmZlciBmcm9tIEYyRlNfQkxLX0JJVFMuCgouLi4KCj4gKwo+ICtzdGF0aWMg
-Z3J1Yl9zc2l6ZV90Cj4gK2dydWJfZjJmc19yZWFkX2ZpbGUgKGdydWJfZnNoZWxwX25vZGVfdCBu
-b2RlLAo+ICsJCWdydWJfZGlza19yZWFkX2hvb2tfdCByZWFkX2hvb2ssIHZvaWQgKnJlYWRfaG9v
-a19kYXRhLAo+ICsJCWdydWJfb2ZmX3QgcG9zLCBncnViX3NpemVfdCBsZW4sIGNoYXIgKmJ1ZikK
-PiArewo+ICsgIHN0cnVjdCBncnViX2YyZnNfaW5vZGUgKmlub2RlID0gJm5vZGUtPmlub2RlLmk7
-Cj4gKyAgZ3J1Yl9vZmZfdCBmaWxlc2l6ZSA9IGdydWJfZjJmc19maWxlX3NpemUgKGlub2RlKTsK
-PiArICBjaGFyICppbmxpbmVfYWRkciA9IF9faW5saW5lX2FkZHIgKGlub2RlKTsKPiArCj4gKyAg
-aWYgKGlub2RlLT5pX2lubGluZSAmIEYyRlNfSU5MSU5FX0RBVEEpCj4gKyAgICB7Cj4gKyAgICAg
-IGlmIChwb3MgPiBmaWxlc2l6ZSB8fCBmaWxlc2l6ZSA+IE1BWF9JTkxJTkVfREFUQSkKPiArICAg
-ICAgICB7Cj4gKyAgICAgICAgICBncnViX2Vycm9yIChHUlVCX0VSUl9CQURfRlMsICJjb3JydXB0
-ZWQgaW5saW5lX2RhdGE6IG5lZWQgZnNjayIpOwoKClNvcnJ5IGZvciBjb25mdXNpb24sIG15IGZh
-dWx0LiBwb3MgPiBmaWxlc2l6ZSB3YXMgT0ssIGJ1dCBmaWxlc2l6ZSA+Ck1BWF9JTkxJTkVfREFU
-QSBub3QuCgouLi4KCj4gKwo+ICsvKiBUT0RPOiBta2ZzLmYyZnMgc3RvcmVzIGxhYmVsIGluIGEg
-d3Jvbmcgd2F5LiBTaG91bGQgYmUgZml4ZWQuICovCj4gK3N0YXRpYyB2b2lkCj4gK2dydWJfZjJm
-c191bmljb2RlX3RvX2FzY2lpIChncnViX3VpbnQ4X3QgKm91dF9idWYsIGdydWJfdWludDE2X3Qg
-KmluX2J1ZikKPiArewo+ICsgIGdydWJfdWludDE2X3QgKnBjaFRlbXBQdHIgPSBpbl9idWY7Cj4g
-KyAgZ3J1Yl91aW50OF90ICpwd1RlbXBQdHIgPSBvdXRfYnVmOwo+ICsKPiArICB3aGlsZSAoKnBj
-aFRlbXBQdHIgIT0gJ1wwJykKPiArICAgIHsKPiArICAgICAgKnB3VGVtcFB0ciA9IChncnViX3Vp
-bnQ4X3QpICpwY2hUZW1wUHRyOwo+ICsgICAgICBwY2hUZW1wUHRyKys7Cj4gKyAgICAgIHB3VGVt
-cFB0cisrOwo+ICsgICAgfQo+ICsgICpwd1RlbXBQdHIgPSAnXDAnOwo+ICsgIHJldHVybjsKPiAr
-fQoKU29ycnksIEkgZG8gbm90IHNlZSBob3cgaXQgY2FuIHdvcmsgb24gYm90aCBiaWcgYW5kIGxp
-dHRsZSBlbmRpYW4KcGxhdGZvcm1zLiBXaGF0IGJ5dGUgb3JkZXIgaXMgdXNlZCBmb3Igb24tZGlz
-ayBsYWJlbD8gV2h5IGNhbm5vdCB5b3UgdXNlCmdydWJfdXRmMTZfdG9fdXRmOCBhcyBJIGFza2Vk
-IGxhc3QgdGltZT8KCkFsc28gcGxlYXNlIGFkZCBidW5kYXJ5IGNoZWNrLCBkbyBub3QgcmVseSBv
-biBjb3JyZWN0IGNvbnRlbnQuCgoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCkdydWItZGV2ZWwgbWFpbGluZyBsaXN0CkdydWItZGV2ZWxAZ251Lm9yZwpo
-dHRwczovL2xpc3RzLmdudS5vcmcvbWFpbG1hbi9saXN0aW5mby9ncnViLWRldmVsCg==
+On 2015/12/9 2:19, Jaegeuk Kim wrote:
+> Hi Yunlei,
+>
+> On Tue, Dec 08, 2015 at 09:17:13PM +0800, Yunlei He wrote:
+>> write_checkpoint() tries to get cp_blkaddr from superblock buffer,
+>> if the buffer happen to be destroied by something else, it may
+>> bring in unpredictable effect on f2fs.
+>>
+>> this patch fix it by back-up a raw_super copy.
+>>
+>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>> ---
+>>   fs/f2fs/checkpoint.c |  3 ++-
+>>   fs/f2fs/f2fs.h       | 10 ++++++++++
+>>   fs/f2fs/node.c       |  2 +-
+>>   fs/f2fs/super.c      | 12 ++++++++----
+>>   4 files changed, 21 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index f661d80..1e342fd 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -276,13 +276,14 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
+>>   						long nr_to_write)
+>>   {
+>>   	struct address_space *mapping = META_MAPPING(sbi);
+>> -	pgoff_t index = 0, end = LONG_MAX, prev = LONG_MAX;
+>> +	pgoff_t index, end = LONG_MAX, prev = LONG_MAX;
+>>   	struct pagevec pvec;
+>>   	long nwritten = 0;
+>>   	struct writeback_control wbc = {
+>>   		.for_reclaim = 0,
+>>   	};
+>>
+>> +	index = __start_cp_addr(sbi);
+>
+> No need to do this.
+>
+>>   	pagevec_init(&pvec, 0);
+>>
+>>   	while (index <= end) {
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 0052ae8..6afb56c 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1167,6 +1167,16 @@ static inline block_t __start_sum_addr(struct f2fs_sb_info *sbi)
+>>   	return le32_to_cpu(F2FS_CKPT(sbi)->cp_pack_start_sum);
+>>   }
+>>
+>> +static inline block_t __start_main_addr(struct f2fs_sb_info *sbi)
+>> +{
+>> +	return le32_to_cpu(F2FS_RAW_SUPER(sbi)->main_blkaddr);
+>> +}
+>> +
+>> +static inline block_t __start_sum_addr(struct f2fs_sb_info *sbi)
+>> +{
+>> +	return le32_to_cpu(F2FS_CKPT(sbi)->cp_pack_start_sum);
+>> +}
+>> +
+>
+> Ditto.
+>
+>>   static inline bool inc_valid_node_count(struct f2fs_sb_info *sbi,
+>>   						struct inode *inode)
+>>   {
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index 7bcbc6e..7d2b0bb 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -1161,7 +1161,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, nid_t ino,
+>>   	pagevec_init(&pvec, 0);
+>>
+>>   next_step:
+>> -	index = 0;
+>> +	index = __start_main_addr(sbi);
+>
+> No, its index is for nid.
+>
+>>   	end = LONG_MAX;
+>>
+>>   	while (index <= end) {
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index bd7e9c6..d394711 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -1040,6 +1040,9 @@ static int read_raw_super_block(struct super_block *sb,
+>>   	struct f2fs_super_block *super;
+>>   	int err = 0;
+>>
+>> +	super = kzalloc(sizeof(struct f2fs_super_block), GFP_KERNEL);
+>> +	if (!super)
+>> +		return -ENOMEM;
+>>   retry:
+>>   	buffer = sb_bread(sb, block);
+>>   	if (!buffer) {
+>> @@ -1055,9 +1058,8 @@ retry:
+>>   		}
+>>   	}
+>>
+>> -	super = (struct f2fs_super_block *)
+>> -		((char *)(buffer)->b_data + F2FS_SUPER_OFFSET);
+>> -
+>> +	memcpy(super, buffer->b_data + F2FS_SUPER_OFFSET,
+>> +					sizeof(struct f2fs_super_block));
+>>   	/* sanity checking of raw super */
+>>   	if (sanity_check_raw_super(sb, super)) {
+>>   		brelse(buffer);
+>> @@ -1090,8 +1092,10 @@ retry:
+>>
+>>   out:
+>>   	/* No valid superblock */
+>> -	if (!*raw_super)
+>> +	if (!*raw_super) {
+>> +		kfree(super);
+>>   		return err;
+>> +	}
+>
+> Need to consider f2fs_commit_super and kfree() in put_super.
+
+We also need to consider f2fs_fill_super error processing procedure:
+
+@@ -1388,6 +1388,7 @@ free_options:
+         kfree(options);
+  free_sb_buf:
+         brelse(raw_super_buf);
++       kfree(raw_super);
+	
+>
+> Could you check out this patch?
+>
+> ---
+>   fs/f2fs/super.c | 18 ++++++++++++++----
+>   1 file changed, 14 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index dbf16ad..8541c93 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -567,6 +567,7 @@ static void f2fs_put_super(struct super_block *sb)
+>
+>   	sb->s_fs_info = NULL;
+>   	brelse(sbi->raw_super_buf);
+> +	kfree(sbi->raw_super);
+>   	kfree(sbi);
+>   }
+>
+> @@ -1040,6 +1041,9 @@ static int read_raw_super_block(struct super_block *sb,
+>   	struct f2fs_super_block *super;
+>   	int err = 0;
+>
+> +	super = kzalloc(sizeof(struct f2fs_super_block), GFP_KERNEL);
+> +	if (!super)
+> +		return -ENOMEM;
+>   retry:
+>   	buffer = sb_bread(sb, block);
+>   	if (!buffer) {
+> @@ -1055,8 +1059,7 @@ retry:
+>   		}
+>   	}
+>
+> -	super = (struct f2fs_super_block *)
+> -		((char *)(buffer)->b_data + F2FS_SUPER_OFFSET);
+> +	memcpy(super, buffer->b_data + F2FS_SUPER_OFFSET, sizeof(*super));
+>
+>   	/* sanity checking of raw super */
+>   	if (sanity_check_raw_super(sb, super)) {
+> @@ -1090,14 +1093,17 @@ retry:
+>
+>   out:
+>   	/* No valid superblock */
+> -	if (!*raw_super)
+> +	if (!*raw_super) {
+> +		kfree(super);
+>   		return err;
+> +	}
+>
+>   	return 0;
+>   }
+>
+>   int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
+>   {
+> +	struct f2fs_super_block *super = F2FS_RAW_SUPER(sbi);
+>   	struct buffer_head *sbh = sbi->raw_super_buf;
+>   	struct buffer_head *bh;
+>   	int err;
+> @@ -1108,7 +1114,7 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
+>   		return -EIO;
+>
+>   	lock_buffer(bh);
+> -	memcpy(bh->b_data, sbh->b_data, sbh->b_size);
+> +	memcpy(bh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super));
+>   	WARN_ON(sbh->b_size != F2FS_BLKSIZE);
+>   	set_buffer_uptodate(bh);
+>   	set_buffer_dirty(bh);
+> @@ -1124,6 +1130,10 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
+>
+>   	/* write current valid superblock */
+>   	lock_buffer(sbh);
+> +	if (memcmp(sbh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super))) {
+> +		f2fs_msg(sbi->sb, KERN_INFO, "Write modified valid superblock");
+> +		memcpy(sbh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super));
+> +	}
+>   	set_buffer_dirty(sbh);
+>   	unlock_buffer(sbh);
+>
+>
+It looks good to me, but can we releasing grabbed block buffer 'sbi->raw_super_buf'
+as Chao Yu said.
+
+Thanks.
+Yunlei
+
+
+------------------------------------------------------------------------------
