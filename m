@@ -1,105 +1,114 @@
-From: Hans-Christoph Steiner <hans@eds.org>
-Subject: Re: [PATCH] f2fs-tools: add library version info
-Date: Tue, 15 Dec 2015 16:28:38 +0100
-Message-ID: <567031A6.8020302@eds.org>
-References: <1449688376-3311-1-git-send-email-jaegeuk@kernel.org>
-	<CAKxyyfaR77Ej_=P7JWDZgx5HMc1K10JDn7Eqzrw7LBMgxnF0LA@mail.gmail.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 7/8] f2fs: introduce new option for controlling
+ data flush
+Date: Wed, 16 Dec 2015 00:07:04 +0800
+Message-ID: <56703AA8.3000607@kernel.org>
+References: <00fa01d136fa$7c028980$74079c80$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <hans@eds.org>) id 1a8rp8-0007sU-St
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 15:47:34 +0000
-Received: from out1-smtp.messagingengine.com ([66.111.4.25])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1a8rp6-0001jU-PW
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 15:47:34 +0000
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailout.nyi.internal (Postfix) with ESMTP id 00DAE21395
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 15 Dec 2015 10:28:40 -0500 (EST)
-In-Reply-To: <CAKxyyfaR77Ej_=P7JWDZgx5HMc1K10JDn7Eqzrw7LBMgxnF0LA@mail.gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: =?UTF-8?B?5q635ZWf6IGw?= <seamlikok@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <00fa01d136fa$7c028980$74079c80$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Ckl0IHdvdWxkIGJlIGdyZWF0IHRvIGhhdmUgdGhlIGZ1bGwgdmVyc2lvbmVkIHNoYXJlZCBsaWJy
-YXJ5LCBidXQgaWYKaXQnbGwgbWFrZSB0aGluZ3MgbW92ZSBmYXN0ZXIsIHdlIGNhbiBzb2x2ZSBv
-dXIgQW5kcm9pZCBTREsgaXNzdWVzIHdpdGgKb25seSBhIHN0YXRpYyBsaWJyYXJ5LiAgVGhlbiB0
-aGUgc2hhcmVkIGxpYnJhcnkgY2FuIGNvbWUgbGF0ZXIuCgouaGMKCuaut+WVn+iBsDoKPiBIaSBL
-aW0sCj4gCj4gTWF5YmUgd2UgY2FuIGZvcmdldCBhYm91dCB0aGUgdmVyc2lvbmluZyBmb3Igbm93
-LiBMaWJ0b29sJ3MgdmVyc2lvbmluZwo+IG1lY2hhbmlzbSBpcyBhIGxpdHRsZSBiaXQgY29tcGxp
-Y2F0ZWQgYW5kIGFkZGluZyB0aGUgdmVyc2lvbiB0byBTT05BTUUKPiB3aWxsIGxpa2VseSBjYXVz
-ZSBiaWcgb3Igc21hbGwgcHJvYmxlbXMgZm9yIHNvIG1hbnkgZG93bnN0cmVhbQo+IHByb2plY3Rz
-Lgo+IAo+IFdoeSBkb24ndCB3ZSBzaW1wbHkgYWRkIHRoZSBsaWJmMmZzX2Zvcm1hdD8gVGhhdCB3
-b24ndCBodXJ0IGFueXdheS4gOikKPiAKPiBSZWdhcmRzLAo+IEthaS1DaHVuZyBZYW4KPiAKPiAy
-MDE1LTEyLTEwIDM6MTIgR01UKzA4OjAwIEphZWdldWsgS2ltIDxqYWVnZXVrQGtlcm5lbC5vcmc+
-Ogo+PiBUaGlzIHBhdGNoIGdpdmVzIHRoZSB2ZXJzaW9uIGluZm8gZm9yIHR3byBsaWJyYXJpZXMu
-Cj4+Cj4+IG1rZnMvbGliZjJmc19mb3JtYXQubGEKPj4gbGliL2xpYmYyZnMubGEKPj4KPj4gVGhl
-IHZlcnNpb25pbmcgcnVsZSBzaG91bGQgYmU6Cj4+Cj4+IDEuIFN0YXJ0IHdpdGggdmVyc2lvbiBp
-bmZvcm1hdGlvbiBvZiAnMDowOjAnIGZvciBlYWNoIGxpYnRvb2wgbGlicmFyeS4KPj4gMi4gVXBk
-YXRlIHRoZSB2ZXJzaW9uIGluZm9ybWF0aW9uIG9ubHkgaW1tZWRpYXRlbHkgYmVmb3JlIGEgcHVi
-bGljIHJlbGVhc2Ugb2YKPj4gICAgeW91ciBzb2Z0d2FyZS4gTW9yZSBmcmVxdWVudCB1cGRhdGVz
-IGFyZSB1bm5lY2Vzc2FyeSwgYW5kIG9ubHkgZ3VhcmFudGVlCj4+ICAgIHRoYXQgdGhlIGN1cnJl
-bnQgaW50ZXJmYWNlIG51bWJlciBnZXRzIGxhcmdlciBmYXN0ZXIuCj4+IDIuIElmIHRoZSBsaWJy
-YXJ5IHNvdXJjZSBjb2RlIGhhcyBjaGFuZ2VkIGF0IGFsbCBzaW5jZSB0aGUgbGFzdCB1cGRhdGUs
-IHRoZW4KPj4gICAgaW5jcmVtZW50IHJldmlzaW9uIChjOnI6YSkgYmVjb21lcyAoYzpyKzE6YSku
-Cj4+IDMuIElmIGFueSBpbnRlcmZhY2VzIGhhdmUgYmVlbiBhZGRlZCwgcmVtb3ZlZCwgb3IgY2hh
-bmdlZCBzaW5jZSB0aGUgbGFzdCB1cGRhdGUsCj4+ICAgIGluY3JlbWVudCBjdXJyZW50LCBhbmQg
-c2V0IHJldmlzaW9uIHRvIDAuCj4+IDQuIElmIGFueSBpbnRlcmZhY2VzIGhhdmUgYmVlbiBhZGRl
-ZCBzaW5jZSB0aGUgbGFzdCBwdWJsaWMgcmVsZWFzZSwgdGhlbgo+PiAgICBpbmNyZW1lbnQgYWdl
-Lgo+PiA1LiBJZiBhbnkgaW50ZXJmYWNlcyBoYXZlIGJlZW4gcmVtb3ZlZCBvciBjaGFuZ2VkIHNp
-bmNlIHRoZSBsYXN0IHB1YmxpYyByZWxlYXNlLAo+PiAgICB0aGVuIHNldCBhZ2UgdG8gMC4KPj4K
-Pj4gcXVvdGVkIGZyb206Cj4+IGh0dHA6Ly93d3cuZ251Lm9yZy9zb2Z0d2FyZS9saWJ0b29sL21h
-bnVhbC9odG1sX25vZGUvVXBkYXRpbmctdmVyc2lvbi1pbmZvLmh0bWwjVXBkYXRpbmctdmVyc2lv
-bi1pbmZvCj4+Cj4+IENjOiBIYW5zLUNocmlzdG9waCBTdGVpbmVyIDxoYW5zQGVkcy5vcmc+Cj4+
-IENjOiBLYWktQ2h1bmcgWWFuIDxzZWFtbGlrb2tAZ21haWwuY29tPgo+PiBTaWduZWQtb2ZmLWJ5
-OiBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3JnPgo+PiAtLS0KPj4gIGNvbmZpZ3VyZS5h
-YyAgICAgfCAxMCArKysrKysrKysrCj4+ICBsaWIvTWFrZWZpbGUuYW0gIHwgIDEgKwo+PiAgbWtm
-cy9NYWtlZmlsZS5hbSB8ICAzICsrLQo+PiAgMyBmaWxlcyBjaGFuZ2VkLCAxMyBpbnNlcnRpb25z
-KCspLCAxIGRlbGV0aW9uKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9jb25maWd1cmUuYWMgYi9jb25m
-aWd1cmUuYWMKPj4gaW5kZXggYjE4ZWU0ZC4uMjgwYTBkMyAxMDA2NDQKPj4gLS0tIGEvY29uZmln
-dXJlLmFjCj4+ICsrKyBiL2NvbmZpZ3VyZS5hYwo+PiBAQCAtOTAsNCArOTAsMTQgQEAgQUNfQ09O
-RklHX0ZJTEVTKFsKPj4gICAgICAgICB0b29scy9NYWtlZmlsZQo+PiAgXSkKPj4KPj4gKyMgZXhw
-b3J0IGxpYnJhcnkgdmVyc2lvbiBpbmZvIGZvciBta2ZzL2xpYmYyZnNfZm9ybWF0X2xhCj4+ICtB
-Q19TVUJTVChGTVRfQ1VSUkVOVCwgMCkKPj4gK0FDX1NVQlNUKEZNVF9SRVZJU0lPTiwgMCkKPj4g
-K0FDX1NVQlNUKEZNVF9BR0UsIDApCj4+ICsKPj4gKyMgZXhwb3J0IGxpYnJhcnkgdmVyc2lvbiBp
-bmZvIGZvciBsaWIvbGliZjJmc19sYQo+PiArQUNfU1VCU1QoTElCRjJGU19DVVJSRU5ULCAwKQo+
-PiArQUNfU1VCU1QoTElCRjJGU19SRVZJU0lPTiwgMCkKPj4gK0FDX1NVQlNUKExJQkYyRlNfQUdF
-LCAwKQo+PiArCj4+ICBBQ19PVVRQVVQKPj4gZGlmZiAtLWdpdCBhL2xpYi9NYWtlZmlsZS5hbSBi
-L2xpYi9NYWtlZmlsZS5hbQo+PiBpbmRleCBhNmIzMDRjLi4zN2I4ZDU3IDEwMDY0NAo+PiAtLS0g
-YS9saWIvTWFrZWZpbGUuYW0KPj4gKysrIGIvbGliL01ha2VmaWxlLmFtCj4+IEBAIC01LDMgKzUs
-NCBAQCBsaWJfTFRMSUJSQVJJRVMgPSBsaWJmMmZzLmxhCj4+ICBsaWJmMmZzX2xhX1NPVVJDRVMg
-PSBsaWJmMmZzLmMgbGliZjJmc19pby5jCj4+ICBsaWJmMmZzX2xhX0NGTEFHUyA9IC1XYWxsCj4+
-ICBsaWJmMmZzX2xhX0NQUEZMQUdTID0gLUkkKHRvcF9zcmNkaXIpL2luY2x1ZGUKPj4gK2xpYmYy
-ZnNfbGFfTERGTEFHUyA9IC12ZXJzaW9uLWluZm8gJChMSUJGMkZTX0NVUlJFTlQpOiQoTElCRjJG
-U19SRVZJU0lPTik6JChMSUJGMkZTX0FHRSkKPj4gZGlmZiAtLWdpdCBhL21rZnMvTWFrZWZpbGUu
-YW0gYi9ta2ZzL01ha2VmaWxlLmFtCj4+IGluZGV4IDg5NjlhMDQuLjhiNGMxNmMgMTAwNjQ0Cj4+
-IC0tLSBhL21rZnMvTWFrZWZpbGUuYW0KPj4gKysrIGIvbWtmcy9NYWtlZmlsZS5hbQo+PiBAQCAt
-MTAsNCArMTAsNSBAQCBsaWJfTFRMSUJSQVJJRVMgPSBsaWJmMmZzX2Zvcm1hdC5sYQo+PiAgbGli
-ZjJmc19mb3JtYXRfbGFfU09VUkNFUyA9IGYyZnNfZm9ybWF0X21haW4uYyBmMmZzX2Zvcm1hdC5j
-IGYyZnNfZm9ybWF0X3V0aWxzLmMKPj4gIGxpYmYyZnNfZm9ybWF0X2xhX0NGTEFHUyA9IC1EV0lU
-SF9CTEtESVNDQVJECj4+ICBsaWJmMmZzX2Zvcm1hdF9sYV9DUFBGTEFHUyA9IC1JJCh0b3Bfc3Jj
-ZGlyKS9pbmNsdWRlCj4+IC1saWJmMmZzX2Zvcm1hdF9sYV9MREZMQUdTID0gLWx1dWlkIC1MJCh0
-b3Bfc3JjZGlyKS9saWIgLWxmMmZzCj4+ICtsaWJmMmZzX2Zvcm1hdF9sYV9MREZMQUdTID0gLWx1
-dWlkIC1MJCh0b3Bfc3JjZGlyKS9saWIgLWxmMmZzIFwKPj4gKyAgICAgICAtdmVyc2lvbi1pbmZv
-ICQoRk1UX0NVUlJFTlQpOiQoRk1UX1JFVklTSU9OKTokKEZNVF9BR0UpCj4+IC0tCj4+IDIuNC45
-IChBcHBsZSBHaXQtNjApCj4+Cj4gCj4gCj4gCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZl
-bCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0
-cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZl
-bAo=
+Hi Jaegeuk,
+
+The 7, 8 patches could not be merged on current dev-test branch due to I
+generate them on incorrect base line. I will rebase and resent them tomorrow,
+sorry for the noisy.
+
+Thanks,
+
+On 12/15/15 1:35 PM, Chao Yu wrote:
+> Add a new option 'data_flush' to enable/disable data flush functionality
+> in checkpoint.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  Documentation/filesystems/f2fs.txt | 2 ++
+>  fs/f2fs/checkpoint.c               | 2 +-
+>  fs/f2fs/f2fs.h                     | 1 +
+>  fs/f2fs/super.c                    | 7 +++++++
+>  4 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+> index 8088bd9..727373e 100644
+> --- a/Documentation/filesystems/f2fs.txt
+> +++ b/Documentation/filesystems/f2fs.txt
+> @@ -151,6 +151,8 @@ noextent_cache         Disable an extent cache based on rb-tree explicitly, see
+>                         the above extent_cache mount option.
+>  noinline_data          Disable the inline data feature, inline data feature is
+>                         enabled by default.
+> +data_flush             Enable data flushing during checkpoint in order to
+> +                       persist data of regular and symlink.
+>  
+>  ================================================================================
+>  DEBUGFS ENTRIES
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index a73909c..2fdf271 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -855,7 +855,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  
+>  retry_flush_datas:
+>  	/* write all the dirty data pages */
+> -	if (get_pages(sbi, F2FS_DIRTY_DATAS)) {
+> +	if (test_opt(sbi, DATA_FLUSH) && get_pages(sbi, F2FS_DIRTY_DATAS)) {
+>  		sync_dirty_inodes(sbi, FILE_INODE);
+>  		if (unlikely(f2fs_cp_error(sbi))) {
+>  			err = -EIO;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 4d44732..ee1f0a8 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -54,6 +54,7 @@
+>  #define F2FS_MOUNT_FASTBOOT		0x00001000
+>  #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
+>  #define F2FS_MOUNT_FORCE_FG_GC		0x00004000
+> +#define F2FS_MOUNT_DATA_FLUSH		0x00008000
+>  
+>  #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
+>  #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 051bce6..694e092 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -67,6 +67,7 @@ enum {
+>  	Opt_extent_cache,
+>  	Opt_noextent_cache,
+>  	Opt_noinline_data,
+> +	Opt_data_flush,
+>  	Opt_nodiscard,
+>  	Opt_err,
+>  };
+> @@ -92,6 +93,7 @@ static match_table_t f2fs_tokens = {
+>  	{Opt_extent_cache, "extent_cache"},
+>  	{Opt_noextent_cache, "noextent_cache"},
+>  	{Opt_noinline_data, "noinline_data"},
+> +	{Opt_data_flush, "data_flush"},
+>  	{Opt_nodiscard, "nodiscard"},
+>  	{Opt_err, NULL},
+>  };
+> @@ -411,6 +413,9 @@ static int parse_options(struct super_block *sb, char *options)
+>  		case Opt_noinline_data:
+>  			clear_opt(sbi, INLINE_DATA);
+>  			break;
+> +		case Opt_data_flush:
+> +			clear_opt(sbi, DATA_FLUSH);
+> +			break;
+>  		default:
+>  			f2fs_msg(sb, KERN_ERR,
+>  				"Unrecognized mount option \"%s\" or missing value",
+> @@ -694,6 +699,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+>  		seq_puts(seq, ",extent_cache");
+>  	else
+>  		seq_puts(seq, ",noextent_cache");
+> +	if (test_opt(sbi, DATA_FLUSH))
+> +		seq_puts(seq, ",data_flush");
+>  	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
+>  
+>  	return 0;
+> 
