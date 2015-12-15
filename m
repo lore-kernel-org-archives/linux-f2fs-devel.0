@@ -1,148 +1,40 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2 2/2] f2fs: do more integrity verification for superblock
-Date: Tue, 15 Dec 2015 09:58:18 +0800
-Message-ID: <00eb01d136dc$2a299bd0$7e7cd370$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: add symbol to avoid any confusion with tools
+Date: Mon, 14 Dec 2015 19:11:19 -0800
+Message-ID: <1450149079-59118-1-git-send-email-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Do more sanity check for superblock during ->mount.
+This patch adds MAX_VOLUME_NAME to sync with f2fs-tools.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
-v2:
- o fix incorrect check for main_blkaddr.
- fs/f2fs/super.c | 98 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+ include/linux/f2fs_fs.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index dbf16ad..a6f2bed 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -918,6 +918,79 @@ static loff_t max_file_size(unsigned bits)
- 	return result;
- }
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 25c6324..e59c3be 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -51,6 +51,7 @@
+ #define MAX_ACTIVE_DATA_LOGS	8
  
-+static inline bool sanity_check_area_boundary(struct super_block *sb,
-+					struct f2fs_super_block *raw_super)
-+{
-+	u32 segment0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
-+	u32 cp_blkaddr = le32_to_cpu(raw_super->cp_blkaddr);
-+	u32 sit_blkaddr = le32_to_cpu(raw_super->sit_blkaddr);
-+	u32 nat_blkaddr = le32_to_cpu(raw_super->nat_blkaddr);
-+	u32 ssa_blkaddr = le32_to_cpu(raw_super->ssa_blkaddr);
-+	u32 main_blkaddr = le32_to_cpu(raw_super->main_blkaddr);
-+	u32 segment_count_ckpt = le32_to_cpu(raw_super->segment_count_ckpt);
-+	u32 segment_count_sit = le32_to_cpu(raw_super->segment_count_sit);
-+	u32 segment_count_nat = le32_to_cpu(raw_super->segment_count_nat);
-+	u32 segment_count_ssa = le32_to_cpu(raw_super->segment_count_ssa);
-+	u32 segment_count_main = le32_to_cpu(raw_super->segment_count_main);
-+	u32 segment_count = le32_to_cpu(raw_super->segment_count);
-+	u32 log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
-+
-+	if (segment0_blkaddr != cp_blkaddr) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Mismatch start address, segment0(%u) cp_blkaddr(%u)",
-+			segment0_blkaddr, cp_blkaddr);
-+		return true;
-+	}
-+
-+	if (cp_blkaddr + (segment_count_ckpt << log_blocks_per_seg) !=
-+							sit_blkaddr) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Wrong CP boundary, start(%u) end(%u) blocks(%u)",
-+			cp_blkaddr, sit_blkaddr,
-+			segment_count_ckpt << log_blocks_per_seg);
-+		return true;
-+	}
-+
-+	if (sit_blkaddr + (segment_count_sit << log_blocks_per_seg) !=
-+							nat_blkaddr) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Wrong SIT boundary, start(%u) end(%u) blocks(%u)",
-+			sit_blkaddr, nat_blkaddr,
-+			segment_count_sit << log_blocks_per_seg);
-+		return true;
-+	}
-+
-+	if (nat_blkaddr + (segment_count_nat << log_blocks_per_seg) !=
-+							ssa_blkaddr) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Wrong NAT boundary, start(%u) end(%u) blocks(%u)",
-+			nat_blkaddr, ssa_blkaddr,
-+			segment_count_nat << log_blocks_per_seg);
-+		return true;
-+	}
-+
-+	if (ssa_blkaddr + (segment_count_ssa << log_blocks_per_seg) !=
-+							main_blkaddr) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Wrong SSA boundary, start(%u) end(%u) blocks(%u)",
-+			ssa_blkaddr, main_blkaddr,
-+			segment_count_ssa << log_blocks_per_seg);
-+		return true;
-+	}
-+
-+	if (main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
-+		segment0_blkaddr + (segment_count << log_blocks_per_seg)) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Wrong MAIN_AREA boundary, start(%u) end(%u) blocks(%u)",
-+			main_blkaddr,
-+			segment0_blkaddr + (segment_count << log_blocks_per_seg),
-+			segment_count_main << log_blocks_per_seg);
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static int sanity_check_raw_super(struct super_block *sb,
- 			struct f2fs_super_block *raw_super)
- {
-@@ -947,6 +1020,14 @@ static int sanity_check_raw_super(struct super_block *sb,
- 		return 1;
- 	}
+ #define VERSION_LEN	256
++#define MAX_VOLUME_NAME		512
  
-+	/* check log blocks per segment */
-+	if (le32_to_cpu(raw_super->log_blocks_per_seg) != 9) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Invalid log blocks per segment (%u)\n",
-+			le32_to_cpu(raw_super->log_blocks_per_seg));
-+		return 1;
-+	}
-+
- 	/* Currently, support 512/1024/2048/4096 bytes sector size */
- 	if (le32_to_cpu(raw_super->log_sectorsize) >
- 				F2FS_MAX_LOG_SECTOR_SIZE ||
-@@ -965,6 +1046,23 @@ static int sanity_check_raw_super(struct super_block *sb,
- 			le32_to_cpu(raw_super->log_sectorsize));
- 		return 1;
- 	}
-+
-+	/* check reserved ino info */
-+	if (le32_to_cpu(raw_super->node_ino) != 1 ||
-+		le32_to_cpu(raw_super->meta_ino) != 2 ||
-+		le32_to_cpu(raw_super->root_ino) != 3) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Invalid Fs Meta Ino: node(%u) meta(%u) root(%u)",
-+			le32_to_cpu(raw_super->node_ino),
-+			le32_to_cpu(raw_super->meta_ino),
-+			le32_to_cpu(raw_super->root_ino));
-+		return 1;
-+	}
-+
-+	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
-+	if (sanity_check_area_boundary(sb, raw_super))
-+		return 1;
-+
- 	return 0;
- }
- 
+ /*
+  * For superblock
+@@ -84,7 +85,7 @@ struct f2fs_super_block {
+ 	__le32 node_ino;		/* node inode number */
+ 	__le32 meta_ino;		/* meta inode number */
+ 	__u8 uuid[16];			/* 128-bit uuid for volume */
+-	__le16 volume_name[512];	/* volume name */
++	__le16 volume_name[MAX_VOLUME_NAME];	/* volume name */
+ 	__le32 extension_count;		/* # of extensions below */
+ 	__u8 extension_list[F2FS_MAX_EXTENSION][8];	/* extension array */
+ 	__le32 cp_payload;
 -- 
-2.6.3
+2.5.4 (Apple Git-61)
