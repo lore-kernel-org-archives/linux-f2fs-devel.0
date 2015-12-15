@@ -1,104 +1,136 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 7/8] f2fs: introduce new option for controlling data flush
-Date: Tue, 15 Dec 2015 13:35:21 +0800
-Message-ID: <00fa01d136fa$7c028980$74079c80$@samsung.com>
+Subject: [PATCH 8/8] f2fs: fix to avoid deadlock between
+ checkpoint and writepages
+Date: Tue, 15 Dec 2015 13:36:08 +0800
+Message-ID: <00fb01d136fa$97e29d70$c7a7d850$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1a8iIH-000146-3p
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 15 Dec 2015 05:37:01 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1a8iIF-0007UZ-JM
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 15 Dec 2015 05:37:01 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0NZD02FBVWX34VD0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 15 Dec 2015 14:36:48 +0900 (KST)
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Add a new option 'data_flush' to enable/disable data flush functionality
-in checkpoint.
+This patch fixes to move f2fs_balance_fs out of sbi->writepages'
+coverage to avoid potential ABBA deadlock which was found by lockdep:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&sbi->writepages);
+                                lock(&sbi->cp_mutex);
+                                lock(&sbi->writepages);
+   lock(&sbi->cp_mutex);
+
+  *** DEADLOCK ***
+
+stack of CPU0:
+[<ffffffff810b8dd1>] __lock_acquire+0x1321/0x1770
+[<ffffffff810b92d7>] lock_acquire+0xb7/0x130
+[<ffffffff817ad082>] mutex_lock_nested+0x52/0x380
+[<ffffffffa07b767b>] f2fs_balance_fs+0x8b/0xa0 [f2fs]
+[<ffffffffa07afb5b>] f2fs_write_data_page+0x33b/0x460 [f2fs]
+[<ffffffffa07ab79a>] __f2fs_writepage+0x1a/0x50 [f2fs]
+[<ffffffffa07ac693>] T.1541+0x293/0x560 [f2fs]
+[<ffffffffa07aca8c>] f2fs_write_data_pages+0x12c/0x230 [f2fs]
+[<ffffffff8118adb3>] do_writepages+0x23/0x40
+[<ffffffff8117c545>] __filemap_fdatawrite_range+0xb5/0xf0
+[<ffffffff8117c623>] filemap_write_and_wait_range+0xa3/0xd0
+[<ffffffffa079cc20>] f2fs_symlink+0x180/0x300 [f2fs]
+[<ffffffff81208187>] vfs_symlink+0xb7/0xe0
+[<ffffffff8120acc5>] SyS_symlinkat+0xc5/0x100
+[<ffffffff81205ad6>] SyS_symlink+0x16/0x20
+[<ffffffff817b15d7>] entry_SYSCALL_64_fastpath+0x12/0x6f
+
+stack of CPU1
+[<ffffffff810b92d7>] lock_acquire+0xb7/0x130
+[<ffffffff817ad082>] mutex_lock_nested+0x52/0x380
+[<ffffffffa07aca7e>] f2fs_write_data_pages+0x11e/0x230 [f2fs]
+[<ffffffff8118adb3>] do_writepages+0x23/0x40
+[<ffffffff8117c545>] __filemap_fdatawrite_range+0xb5/0xf0
+[<ffffffff8117c9ef>] filemap_fdatawrite+0x1f/0x30
+[<ffffffffa07a728d>] sync_dirty_inodes+0x4d/0xd0 [f2fs]
+[<ffffffffa07a7381>] block_operations+0x71/0x160 [f2fs]
+[<ffffffffa07a85f8>] write_checkpoint+0xe8/0xbb0 [f2fs]
+[<ffffffffa07a043f>] f2fs_sync_fs+0x8f/0xf0 [f2fs]
+[<ffffffffa07b63af>] f2fs_balance_fs_bg+0x6f/0xd0 [f2fs]
+[<ffffffffa07b1c97>] f2fs_write_node_pages+0x57/0x150 [f2fs]
+[<ffffffff8118adb3>] do_writepages+0x23/0x40
+[<ffffffff8122c9ed>] __writeback_single_inode+0x6d/0x3d0
+[<ffffffff8122ec87>] writeback_sb_inodes+0x2c7/0x520
+[<ffffffff8122f193>] wb_writeback+0x133/0x330
+[<ffffffff8122f478>] wb_do_writeback+0xe8/0x270
+[<ffffffff8122f680>] wb_workfn+0x80/0x1f0
+[<ffffffff81081a1c>] process_one_work+0x20c/0x5c0
+[<ffffffff81083c62>] worker_thread+0x132/0x5f0
+[<ffffffff8108918e>] kthread+0xde/0x100
+[<ffffffff817b193f>] ret_from_fork+0x3f/0x70
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- Documentation/filesystems/f2fs.txt | 2 ++
- fs/f2fs/checkpoint.c               | 2 +-
- fs/f2fs/f2fs.h                     | 1 +
- fs/f2fs/super.c                    | 7 +++++++
- 4 files changed, 11 insertions(+), 1 deletion(-)
+ fs/f2fs/data.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 8088bd9..727373e 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -151,6 +151,8 @@ noextent_cache         Disable an extent cache based on rb-tree explicitly, see
-                        the above extent_cache mount option.
- noinline_data          Disable the inline data feature, inline data feature is
-                        enabled by default.
-+data_flush             Enable data flushing during checkpoint in order to
-+                       persist data of regular and symlink.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 2e97057..985671d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -506,7 +506,6 @@ static void __allocate_data_blocks(struct inode *inode, loff_t offset,
+ 	u64 end_offset;
  
- ================================================================================
- DEBUGFS ENTRIES
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index a73909c..2fdf271 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -855,7 +855,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 	while (len) {
+-		f2fs_balance_fs(sbi);
+ 		f2fs_lock_op(sbi);
  
- retry_flush_datas:
- 	/* write all the dirty data pages */
--	if (get_pages(sbi, F2FS_DIRTY_DATAS)) {
-+	if (test_opt(sbi, DATA_FLUSH) && get_pages(sbi, F2FS_DIRTY_DATAS)) {
- 		sync_dirty_inodes(sbi, FILE_INODE);
- 		if (unlikely(f2fs_cp_error(sbi))) {
- 			err = -EIO;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4d44732..ee1f0a8 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -54,6 +54,7 @@
- #define F2FS_MOUNT_FASTBOOT		0x00001000
- #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
- #define F2FS_MOUNT_FORCE_FG_GC		0x00004000
-+#define F2FS_MOUNT_DATA_FLUSH		0x00008000
+ 		/* When reading holes, we need its node page */
+@@ -1186,7 +1185,7 @@ out:
+ 	if (err)
+ 		ClearPageUptodate(page);
+ 	unlock_page(page);
+-	if (need_balance_fs)
++	if (need_balance_fs && !test_opt(sbi, DATA_FLUSH))
+ 		f2fs_balance_fs(sbi);
+ 	if (wbc->for_reclaim) {
+ 		f2fs_submit_merged_bio(sbi, DATA, WRITE);
+@@ -1617,6 +1616,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+ 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
  
- #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
- #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 051bce6..694e092 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -67,6 +67,7 @@ enum {
- 	Opt_extent_cache,
- 	Opt_noextent_cache,
- 	Opt_noinline_data,
-+	Opt_data_flush,
- 	Opt_nodiscard,
- 	Opt_err,
- };
-@@ -92,6 +93,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_extent_cache, "extent_cache"},
- 	{Opt_noextent_cache, "noextent_cache"},
- 	{Opt_noinline_data, "noinline_data"},
-+	{Opt_data_flush, "data_flush"},
- 	{Opt_nodiscard, "nodiscard"},
- 	{Opt_err, NULL},
- };
-@@ -411,6 +413,9 @@ static int parse_options(struct super_block *sb, char *options)
- 		case Opt_noinline_data:
- 			clear_opt(sbi, INLINE_DATA);
- 			break;
-+		case Opt_data_flush:
-+			clear_opt(sbi, DATA_FLUSH);
-+			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
-@@ -694,6 +699,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",extent_cache");
- 	else
- 		seq_puts(seq, ",noextent_cache");
-+	if (test_opt(sbi, DATA_FLUSH))
-+		seq_puts(seq, ",data_flush");
- 	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
- 
- 	return 0;
+ 	if (rw == WRITE) {
++		f2fs_balance_fs(sbi);
++
+ 		if (serialized)
+ 			mutex_lock(&sbi->writepages);
+ 		__allocate_data_blocks(inode, offset, count);
 -- 
 2.6.3
+
+
+
+------------------------------------------------------------------------------
