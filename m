@@ -1,30 +1,30 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 8/8] f2fs: fix to avoid deadlock between
- checkpoint and writepages
-Date: Tue, 15 Dec 2015 13:36:08 +0800
-Message-ID: <00fb01d136fa$97e29d70$c7a7d850$@samsung.com>
+From: Andrei Borzenkov <arvidjaar@gmail.com>
+Subject: Re: [PATCH v4] F2FS support
+Date: Tue, 15 Dec 2015 11:34:24 +0300
+Message-ID: <566FD090.1080906@gmail.com>
+References: <1427185140-41120-1-git-send-email-jaegeuk@kernel.org>
+	<20150403224908.GB25673@jaegeuk-mac02.mot.com>
+	<20151119212824.GA11666@jaegeuk.local> <566E7DAA.4010202@gmail.com>
+	<20151215003421.GD48918@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1a8iIH-000146-3p
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <arvidjaar@gmail.com>) id 1a8l45-0001gk-PF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 05:37:01 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1a8iIF-0007UZ-JM
+	Tue, 15 Dec 2015 08:34:33 +0000
+Received: from mail-lb0-f169.google.com ([209.85.217.169])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1a8l44-0003IW-UM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 05:37:01 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NZD02FBVWX34VD0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 14:36:48 +0900 (KST)
-Content-language: zh-cn
+	Tue, 15 Dec 2015 08:34:33 +0000
+Received: by mail-lb0-f169.google.com with SMTP id cs9so1048217lbb.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 15 Dec 2015 00:34:32 -0800 (PST)
+In-Reply-To: <20151215003421.GD48918@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,102 +35,24 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: The development of GNU GRUB <grub-devel@gnu.org>, linux-f2fs-devel@lists.sourceforge.net
 
-This patch fixes to move f2fs_balance_fs out of sbi->writepages'
-coverage to avoid potential ABBA deadlock which was found by lockdep:
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&sbi->writepages);
-                                lock(&sbi->cp_mutex);
-                                lock(&sbi->writepages);
-   lock(&sbi->cp_mutex);
-
-  *** DEADLOCK ***
-
-stack of CPU0:
-[<ffffffff810b8dd1>] __lock_acquire+0x1321/0x1770
-[<ffffffff810b92d7>] lock_acquire+0xb7/0x130
-[<ffffffff817ad082>] mutex_lock_nested+0x52/0x380
-[<ffffffffa07b767b>] f2fs_balance_fs+0x8b/0xa0 [f2fs]
-[<ffffffffa07afb5b>] f2fs_write_data_page+0x33b/0x460 [f2fs]
-[<ffffffffa07ab79a>] __f2fs_writepage+0x1a/0x50 [f2fs]
-[<ffffffffa07ac693>] T.1541+0x293/0x560 [f2fs]
-[<ffffffffa07aca8c>] f2fs_write_data_pages+0x12c/0x230 [f2fs]
-[<ffffffff8118adb3>] do_writepages+0x23/0x40
-[<ffffffff8117c545>] __filemap_fdatawrite_range+0xb5/0xf0
-[<ffffffff8117c623>] filemap_write_and_wait_range+0xa3/0xd0
-[<ffffffffa079cc20>] f2fs_symlink+0x180/0x300 [f2fs]
-[<ffffffff81208187>] vfs_symlink+0xb7/0xe0
-[<ffffffff8120acc5>] SyS_symlinkat+0xc5/0x100
-[<ffffffff81205ad6>] SyS_symlink+0x16/0x20
-[<ffffffff817b15d7>] entry_SYSCALL_64_fastpath+0x12/0x6f
-
-stack of CPU1
-[<ffffffff810b92d7>] lock_acquire+0xb7/0x130
-[<ffffffff817ad082>] mutex_lock_nested+0x52/0x380
-[<ffffffffa07aca7e>] f2fs_write_data_pages+0x11e/0x230 [f2fs]
-[<ffffffff8118adb3>] do_writepages+0x23/0x40
-[<ffffffff8117c545>] __filemap_fdatawrite_range+0xb5/0xf0
-[<ffffffff8117c9ef>] filemap_fdatawrite+0x1f/0x30
-[<ffffffffa07a728d>] sync_dirty_inodes+0x4d/0xd0 [f2fs]
-[<ffffffffa07a7381>] block_operations+0x71/0x160 [f2fs]
-[<ffffffffa07a85f8>] write_checkpoint+0xe8/0xbb0 [f2fs]
-[<ffffffffa07a043f>] f2fs_sync_fs+0x8f/0xf0 [f2fs]
-[<ffffffffa07b63af>] f2fs_balance_fs_bg+0x6f/0xd0 [f2fs]
-[<ffffffffa07b1c97>] f2fs_write_node_pages+0x57/0x150 [f2fs]
-[<ffffffff8118adb3>] do_writepages+0x23/0x40
-[<ffffffff8122c9ed>] __writeback_single_inode+0x6d/0x3d0
-[<ffffffff8122ec87>] writeback_sb_inodes+0x2c7/0x520
-[<ffffffff8122f193>] wb_writeback+0x133/0x330
-[<ffffffff8122f478>] wb_do_writeback+0xe8/0x270
-[<ffffffff8122f680>] wb_workfn+0x80/0x1f0
-[<ffffffff81081a1c>] process_one_work+0x20c/0x5c0
-[<ffffffff81083c62>] worker_thread+0x132/0x5f0
-[<ffffffff8108918e>] kthread+0xde/0x100
-[<ffffffff817b193f>] ret_from_fork+0x3f/0x70
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/data.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2e97057..985671d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -506,7 +506,6 @@ static void __allocate_data_blocks(struct inode *inode, loff_t offset,
- 	u64 end_offset;
- 
- 	while (len) {
--		f2fs_balance_fs(sbi);
- 		f2fs_lock_op(sbi);
- 
- 		/* When reading holes, we need its node page */
-@@ -1186,7 +1185,7 @@ out:
- 	if (err)
- 		ClearPageUptodate(page);
- 	unlock_page(page);
--	if (need_balance_fs)
-+	if (need_balance_fs && !test_opt(sbi, DATA_FLUSH))
- 		f2fs_balance_fs(sbi);
- 	if (wbc->for_reclaim) {
- 		f2fs_submit_merged_bio(sbi, DATA, WRITE);
-@@ -1617,6 +1616,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
- 
- 	if (rw == WRITE) {
-+		f2fs_balance_fs(sbi);
-+
- 		if (serialized)
- 			mutex_lock(&sbi->writepages);
- 		__allocate_data_blocks(inode, offset, count);
--- 
-2.6.3
-
-
-
-------------------------------------------------------------------------------
+MTUuMTIuMjAxNSAwMzozNCwgSmFlZ2V1ayBLaW0g0L/QuNGI0LXRgjoKPiBDaGFuZ2UgbG9nIGZy
+b20gdjM6Cj4gIG8gYWRkIGdydWJfdGVzdF9iaXRfbGUoKQouLi4KCj4gKwo+ICtzdGF0aWMgaW5s
+aW5lIGludAo+ICtncnViX2YyZnNfdGVzdF9iaXRfbGUgKGludCBuciwgY29uc3QgZ3J1Yl91aW50
+OF90ICphZGRyKQo+ICt7Cj4gKyAgY29uc3QgZ3J1Yl9pbnQzMl90ICpwID0gKGNvbnN0IGdydWJf
+aW50MzJfdCAqKWFkZHI7Cj4gKwo+ICsgIG5yID0gbnIgXiAwOwoKSXQgZG9lcyBub3RoaW5nLgoK
+PiArCj4gKyAgcmV0dXJuIHBbbnIgPj4gNV0gJiAoMSA8PCAobnIgJiAzMSkpOwo+ICt9CgpXZWxs
+LCB5b3Ugc3RpbGwgbWlzcyB0aGUgcG9pbnQgLSBpZiB5b3UgYXJlIHdvcmtpbmcgd2l0aCBpbnRl
+Z2VycyB5b3UKbXVzdCBzaGlmdCBkaWZmZXJlbnRseSBkZXBlbmRpbmcgb24gd2hldGhlciB3ZSBh
+cmUgcnVubmluZyBiaWcgb3IgbGl0dGxlCmVuZGlhbi4KCkJ1dCBhcyBJIG1lbnRpb25lZCBiZWZv
+cmUsIHdlIGtub3cgdGhhdCBiaXRtYXAgaXMgbGl0dGxlIGVuZGlhbiBzbyB3ZQpjYW4gd29yayB3
+aXRoIGJ5dGVzIGFuZCBiZSBpbmRlcGVuZGVudCBvZiBieXRlIG9yZGVyLiBDb3VsZCB5b3UgdGVz
+dCBpZgp0aGlzIHdvcmtzIGZvciB5b3U6CgpzdGF0aWMgaW5saW5lIGludApncnViX2YyZnNfdGVz
+dF9iaXRfbGUgKGludCBuciwgY29uc3QgZ3J1Yl91aW50OF90ICphZGRyKQp7CiAgcmV0dXJuIGFk
+ZHJbbnIgPj4gM10gJiAoMSA8PCAobnIgJiA3KSk7Cn0KCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYy
+ZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
+bmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
+ZnMtZGV2ZWwK
