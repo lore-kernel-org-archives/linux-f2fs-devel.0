@@ -1,8 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 1/8] f2fs: rename {add,remove,release}_dirty_inode to
- {add,remove,release}_ino_entry
-Date: Tue, 15 Dec 2015 13:29:47 +0800
-Message-ID: <00f001d136f9$b478fe80$1d6afb80$@samsung.com>
+Subject: [PATCH 2/8] f2fs: introduce dirty list node in inode info
+Date: Tue, 15 Dec 2015 13:30:45 +0800
+Message-ID: <00f501d136f9$d73c60b0$85b52210$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -13,122 +12,200 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-remove_dirty_dir_inode will be renamed to remove_dirty_inode as a generic
-function in following patch for removing directory/regular/symlink inode
-in global dirty list.
+Add a new dirt list node member in inode info for linking the inode to
+global dirty list in superblock, instead of old implementation which
+allocate slab cache memory as an entry to inode.
 
-Here rename ino management related functions for readability, also in
-order to avoid name conflict.
+It avoids memory pressure due to slab cache allocation, and also makes
+codes more clean.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/checkpoint.c | 8 ++++----
- fs/f2fs/f2fs.h       | 6 +++---
- fs/f2fs/file.c       | 4 ++--
- fs/f2fs/inode.c      | 4 ++--
- fs/f2fs/super.c      | 2 +-
- 5 files changed, 12 insertions(+), 12 deletions(-)
+ fs/f2fs/checkpoint.c | 54 +++++++++++++++++-----------------------------------
+ fs/f2fs/debug.c      |  1 -
+ fs/f2fs/f2fs.h       | 10 ++--------
+ fs/f2fs/super.c      |  1 +
+ 4 files changed, 20 insertions(+), 46 deletions(-)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index f661d80..b839f5f 100644
+index b839f5f..1aca402 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -410,13 +410,13 @@ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
- 	spin_unlock(&im->ino_lock);
+@@ -722,25 +722,23 @@ fail_no_cp:
+ 	return -EINVAL;
  }
  
--void add_dirty_inode(struct f2fs_sb_info *sbi, nid_t ino, int type)
-+void add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+-static int __add_dirty_inode(struct inode *inode, struct inode_entry *new)
++static void __add_dirty_inode(struct inode *inode)
  {
- 	/* add new dirty ino entry into list */
- 	__add_ino_entry(sbi, ino, type);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 
+-	if (is_inode_flag_set(F2FS_I(inode), FI_DIRTY_DIR))
+-		return -EEXIST;
++	if (is_inode_flag_set(fi, FI_DIRTY_DIR))
++		return;
+ 
+-	set_inode_flag(F2FS_I(inode), FI_DIRTY_DIR);
+-	F2FS_I(inode)->dirty_dir = new;
+-	list_add_tail(&new->list, &sbi->dir_inode_list);
++	set_inode_flag(fi, FI_DIRTY_DIR);
++	list_add_tail(&fi->dirty_list, &sbi->dir_inode_list);
+ 	stat_inc_dirty_dir(sbi);
+-	return 0;
++	return;
  }
  
--void remove_dirty_inode(struct f2fs_sb_info *sbi, nid_t ino, int type)
-+void remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+ void update_dirty_page(struct inode *inode, struct page *page)
  {
- 	/* remove dirty ino entry from list */
- 	__remove_ino_entry(sbi, ino, type);
-@@ -434,7 +434,7 @@ bool exist_written_data(struct f2fs_sb_info *sbi, nid_t ino, int mode)
- 	return e ? true : false;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct inode_entry *new;
+-	int ret = 0;
+ 
+ 	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
+ 			!S_ISLNK(inode->i_mode))
+@@ -751,17 +749,11 @@ void update_dirty_page(struct inode *inode, struct page *page)
+ 		goto out;
+ 	}
+ 
+-	new = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+-	new->inode = inode;
+-	INIT_LIST_HEAD(&new->list);
+-
+ 	spin_lock(&sbi->dir_inode_lock);
+-	ret = __add_dirty_inode(inode, new);
++	__add_dirty_inode(inode);
+ 	inode_inc_dirty_pages(inode);
+ 	spin_unlock(&sbi->dir_inode_lock);
+ 
+-	if (ret)
+-		kmem_cache_free(inode_entry_slab, new);
+ out:
+ 	SetPagePrivate(page);
+ 	f2fs_trace_pid(page);
+@@ -770,25 +762,16 @@ out:
+ void add_dirty_dir_inode(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct inode_entry *new =
+-			f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+-	int ret = 0;
+-
+-	new->inode = inode;
+-	INIT_LIST_HEAD(&new->list);
+ 
+ 	spin_lock(&sbi->dir_inode_lock);
+-	ret = __add_dirty_inode(inode, new);
++	__add_dirty_inode(inode);
+ 	spin_unlock(&sbi->dir_inode_lock);
+-
+-	if (ret)
+-		kmem_cache_free(inode_entry_slab, new);
  }
  
--void release_dirty_inode(struct f2fs_sb_info *sbi)
-+void release_ino_entry(struct f2fs_sb_info *sbi)
+ void remove_dirty_dir_inode(struct inode *inode)
  {
- 	struct ino_entry *e, *tmp;
- 	int i;
-@@ -1081,7 +1081,7 @@ static void do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		invalidate_mapping_pages(META_MAPPING(sbi), discard_blk,
- 								discard_blk);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct inode_entry *entry;
++	struct f2fs_inode_info *fi = F2FS_I(inode);
  
--	release_dirty_inode(sbi);
-+	release_ino_entry(sbi);
+ 	if (!S_ISDIR(inode->i_mode))
+ 		return;
+@@ -800,17 +783,14 @@ void remove_dirty_dir_inode(struct inode *inode)
+ 		return;
+ 	}
  
+-	entry = F2FS_I(inode)->dirty_dir;
+-	list_del(&entry->list);
+-	F2FS_I(inode)->dirty_dir = NULL;
+-	clear_inode_flag(F2FS_I(inode), FI_DIRTY_DIR);
++	list_del_init(&fi->dirty_list);
++	clear_inode_flag(fi, FI_DIRTY_DIR);
+ 	stat_dec_dirty_dir(sbi);
+ 	spin_unlock(&sbi->dir_inode_lock);
+-	kmem_cache_free(inode_entry_slab, entry);
+ 
+ 	/* Only from the recovery routine */
+-	if (is_inode_flag_set(F2FS_I(inode), FI_DELAY_IPUT)) {
+-		clear_inode_flag(F2FS_I(inode), FI_DELAY_IPUT);
++	if (is_inode_flag_set(fi, FI_DELAY_IPUT)) {
++		clear_inode_flag(fi, FI_DELAY_IPUT);
+ 		iput(inode);
+ 	}
+ }
+@@ -818,8 +798,8 @@ void remove_dirty_dir_inode(struct inode *inode)
+ void sync_dirty_dir_inodes(struct f2fs_sb_info *sbi)
+ {
+ 	struct list_head *head;
+-	struct inode_entry *entry;
+ 	struct inode *inode;
++	struct f2fs_inode_info *fi;
+ retry:
  	if (unlikely(f2fs_cp_error(sbi)))
  		return;
+@@ -831,8 +811,8 @@ retry:
+ 		spin_unlock(&sbi->dir_inode_lock);
+ 		return;
+ 	}
+-	entry = list_entry(head->next, struct inode_entry, list);
+-	inode = igrab(entry->inode);
++	fi = list_entry(head->next, struct f2fs_inode_info, dirty_list);
++	inode = igrab(&fi->vfs_inode);
+ 	spin_unlock(&sbi->dir_inode_lock);
+ 	if (inode) {
+ 		filemap_fdatawrite(inode->i_mapping);
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 8ce2fe3..f4a7b9e 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -189,7 +189,6 @@ get_cache:
+ 	si->cache_mem += NM_I(sbi)->dirty_nat_cnt *
+ 					sizeof(struct nat_entry_set);
+ 	si->cache_mem += si->inmem_pages * sizeof(struct inmem_pages);
+-	si->cache_mem += sbi->n_dirty_dirs * sizeof(struct inode_entry);
+ 	for (i = 0; i <= UPDATE_INO; i++)
+ 		si->cache_mem += sbi->im[i].ino_num * sizeof(struct ino_entry);
+ 	si->cache_mem += sbi->total_ext_tree * sizeof(struct extent_tree);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4d1587b..4be54e6 100644
+index 4be54e6..aea5620 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1820,9 +1820,9 @@ bool is_valid_blkaddr(struct f2fs_sb_info *, block_t, int);
- int ra_meta_pages(struct f2fs_sb_info *, block_t, int, int, bool);
- void ra_meta_pages_cond(struct f2fs_sb_info *, pgoff_t);
- long sync_meta_pages(struct f2fs_sb_info *, enum page_type, long);
--void add_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
--void remove_dirty_inode(struct f2fs_sb_info *, nid_t, int type);
--void release_dirty_inode(struct f2fs_sb_info *);
-+void add_ino_entry(struct f2fs_sb_info *, nid_t, int type);
-+void remove_ino_entry(struct f2fs_sb_info *, nid_t, int type);
-+void release_ino_entry(struct f2fs_sb_info *);
- bool exist_written_data(struct f2fs_sb_info *, nid_t, int);
- int acquire_orphan_inode(struct f2fs_sb_info *);
- void release_orphan_inode(struct f2fs_sb_info *);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 9949d0f..c6d909e 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -275,10 +275,10 @@ sync_nodes:
- 		goto out;
+@@ -158,13 +158,7 @@ struct ino_entry {
+ 	nid_t ino;		/* inode number */
+ };
  
- 	/* once recovery info is written, don't need to tack this */
--	remove_dirty_inode(sbi, ino, APPEND_INO);
-+	remove_ino_entry(sbi, ino, APPEND_INO);
- 	clear_inode_flag(fi, FI_APPEND_WRITE);
- flush_out:
--	remove_dirty_inode(sbi, ino, UPDATE_INO);
-+	remove_ino_entry(sbi, ino, UPDATE_INO);
- 	clear_inode_flag(fi, FI_UPDATE_WRITE);
- 	ret = f2fs_issue_flush(sbi);
- out:
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 97e20de..3d2fe59 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -357,9 +357,9 @@ no_delete:
- 	if (xnid)
- 		invalidate_mapping_pages(NODE_MAPPING(sbi), xnid, xnid);
- 	if (is_inode_flag_set(fi, FI_APPEND_WRITE))
--		add_dirty_inode(sbi, inode->i_ino, APPEND_INO);
-+		add_ino_entry(sbi, inode->i_ino, APPEND_INO);
- 	if (is_inode_flag_set(fi, FI_UPDATE_WRITE))
--		add_dirty_inode(sbi, inode->i_ino, UPDATE_INO);
-+		add_ino_entry(sbi, inode->i_ino, UPDATE_INO);
- 	if (is_inode_flag_set(fi, FI_FREE_NID)) {
- 		if (err && err != -ENOENT)
- 			alloc_nid_done(sbi, inode->i_ino);
+-/*
+- * for the list of directory inodes or gc inodes.
+- * NOTE: there are two slab users for this structure, if we add/modify/delete
+- * fields in structure for one of slab users, it may affect fields or size of
+- * other one, in this condition, it's better to split both of slab and related
+- * data structure.
+- */
++/* for the list of inodes to be GCed */
+ struct inode_entry {
+ 	struct list_head list;	/* list head */
+ 	struct inode *inode;	/* vfs inode pointer */
+@@ -441,8 +435,8 @@ struct f2fs_inode_info {
+ 	unsigned int clevel;		/* maximum level of given file name */
+ 	nid_t i_xattr_nid;		/* node id that contains xattrs */
+ 	unsigned long long xattr_ver;	/* cp version of xattr modification */
+-	struct inode_entry *dirty_dir;	/* the pointer of dirty dir */
+ 
++	struct list_head dirty_list;	/* linked in global dirty list */
+ 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
+ 	struct mutex inmem_lock;	/* lock for inmemory pages */
+ 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 2b1a324..f7e9384 100644
+index f7e9384..b6c1ac9 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -553,7 +553,7 @@ static void f2fs_put_super(struct super_block *sb)
- 	 * normally superblock is clean, so we need to release this.
- 	 * In addition, EIO will skip do checkpoint, we need this as well.
- 	 */
--	release_dirty_inode(sbi);
-+	release_ino_entry(sbi);
- 	release_discard_addrs(sbi);
+@@ -437,6 +437,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	fi->i_current_depth = 1;
+ 	fi->i_advise = 0;
+ 	init_rwsem(&fi->i_sem);
++	INIT_LIST_HEAD(&fi->dirty_list);
+ 	INIT_LIST_HEAD(&fi->inmem_pages);
+ 	mutex_init(&fi->inmem_lock);
  
- 	f2fs_leave_shrinker(sbi);
 -- 
 2.6.3
