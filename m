@@ -1,114 +1,110 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 7/8] f2fs: introduce new option for controlling
- data flush
-Date: Wed, 16 Dec 2015 00:07:04 +0800
-Message-ID: <56703AA8.3000607@kernel.org>
-References: <00fa01d136fa$7c028980$74079c80$@samsung.com>
+From: Jaegeuk Kim <jaegeuk.kim@gmail.com>
+Subject: Re: [PATCH] f2fs-tools: add library version info
+Date: Tue, 15 Dec 2015 09:11:29 -0800
+Message-ID: <CAOtxgycmD1Fz=YSm2Ow83CLMU=s5=5aFN9CGFRG4grE0cxKahA@mail.gmail.com>
+References: <1449688376-3311-1-git-send-email-jaegeuk@kernel.org>
+	<CAKxyyfaR77Ej_=P7JWDZgx5HMc1K10JDn7Eqzrw7LBMgxnF0LA@mail.gmail.com>
+	<567031A6.8020302@eds.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <00fa01d136fa$7c028980$74079c80$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk.kim@gmail.com>) id 1a8t8S-0003W8-9T
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 15 Dec 2015 17:11:36 +0000
+Received: from mail-qk0-f175.google.com ([209.85.220.175])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1a8t8Q-00056Q-KP
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 15 Dec 2015 17:11:36 +0000
+Received: by mail-qk0-f175.google.com with SMTP id p187so23318859qkd.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 15 Dec 2015 09:11:34 -0800 (PST)
+In-Reply-To: <567031A6.8020302@eds.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Hans-Christoph Steiner <hans@eds.org>
+Cc: =?UTF-8?B?5q635ZWf6IGw?= <seamlikok@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Jaegeuk,
-
-The 7, 8 patches could not be merged on current dev-test branch due to I
-generate them on incorrect base line. I will rebase and resent them tomorrow,
-sorry for the noisy.
-
-Thanks,
-
-On 12/15/15 1:35 PM, Chao Yu wrote:
-> Add a new option 'data_flush' to enable/disable data flush functionality
-> in checkpoint.
-> 
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> ---
->  Documentation/filesystems/f2fs.txt | 2 ++
->  fs/f2fs/checkpoint.c               | 2 +-
->  fs/f2fs/f2fs.h                     | 1 +
->  fs/f2fs/super.c                    | 7 +++++++
->  4 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index 8088bd9..727373e 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -151,6 +151,8 @@ noextent_cache         Disable an extent cache based on rb-tree explicitly, see
->                         the above extent_cache mount option.
->  noinline_data          Disable the inline data feature, inline data feature is
->                         enabled by default.
-> +data_flush             Enable data flushing during checkpoint in order to
-> +                       persist data of regular and symlink.
->  
->  ================================================================================
->  DEBUGFS ENTRIES
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index a73909c..2fdf271 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -855,7 +855,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
->  
->  retry_flush_datas:
->  	/* write all the dirty data pages */
-> -	if (get_pages(sbi, F2FS_DIRTY_DATAS)) {
-> +	if (test_opt(sbi, DATA_FLUSH) && get_pages(sbi, F2FS_DIRTY_DATAS)) {
->  		sync_dirty_inodes(sbi, FILE_INODE);
->  		if (unlikely(f2fs_cp_error(sbi))) {
->  			err = -EIO;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 4d44732..ee1f0a8 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -54,6 +54,7 @@
->  #define F2FS_MOUNT_FASTBOOT		0x00001000
->  #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
->  #define F2FS_MOUNT_FORCE_FG_GC		0x00004000
-> +#define F2FS_MOUNT_DATA_FLUSH		0x00008000
->  
->  #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
->  #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 051bce6..694e092 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -67,6 +67,7 @@ enum {
->  	Opt_extent_cache,
->  	Opt_noextent_cache,
->  	Opt_noinline_data,
-> +	Opt_data_flush,
->  	Opt_nodiscard,
->  	Opt_err,
->  };
-> @@ -92,6 +93,7 @@ static match_table_t f2fs_tokens = {
->  	{Opt_extent_cache, "extent_cache"},
->  	{Opt_noextent_cache, "noextent_cache"},
->  	{Opt_noinline_data, "noinline_data"},
-> +	{Opt_data_flush, "data_flush"},
->  	{Opt_nodiscard, "nodiscard"},
->  	{Opt_err, NULL},
->  };
-> @@ -411,6 +413,9 @@ static int parse_options(struct super_block *sb, char *options)
->  		case Opt_noinline_data:
->  			clear_opt(sbi, INLINE_DATA);
->  			break;
-> +		case Opt_data_flush:
-> +			clear_opt(sbi, DATA_FLUSH);
-> +			break;
->  		default:
->  			f2fs_msg(sb, KERN_ERR,
->  				"Unrecognized mount option \"%s\" or missing value",
-> @@ -694,6 +699,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
->  		seq_puts(seq, ",extent_cache");
->  	else
->  		seq_puts(seq, ",noextent_cache");
-> +	if (test_opt(sbi, DATA_FLUSH))
-> +		seq_puts(seq, ",data_flush");
->  	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
->  
->  	return 0;
-> 
+SGVsbG8sCgpDb29sLCBJIGFsc28gdGhpbmsgaXQgd291bGQgYmUgZ29vZCB0byBzdXBwb3J0IHZl
+cnNpb25zIHRvIGxpYnMuCkkgZG9uJ3QgZXhwZWN0IHRoYXQgbGlicyBhcmUgbGlrZWx5IHRvIG1v
+dmUgc28gZmFzdC4KClRoYW5rcywKCjIwMTUtMTItMTUgNzoyOCBHTVQtMDg6MDAgSGFucy1DaHJp
+c3RvcGggU3RlaW5lciA8aGFuc0BlZHMub3JnPjoKPgo+IEl0IHdvdWxkIGJlIGdyZWF0IHRvIGhh
+dmUgdGhlIGZ1bGwgdmVyc2lvbmVkIHNoYXJlZCBsaWJyYXJ5LCBidXQgaWYKPiBpdCdsbCBtYWtl
+IHRoaW5ncyBtb3ZlIGZhc3Rlciwgd2UgY2FuIHNvbHZlIG91ciBBbmRyb2lkIFNESyBpc3N1ZXMg
+d2l0aAo+IG9ubHkgYSBzdGF0aWMgbGlicmFyeS4gIFRoZW4gdGhlIHNoYXJlZCBsaWJyYXJ5IGNh
+biBjb21lIGxhdGVyLgo+Cj4gLmhjCj4KPiDmrrfllZ/ogbA6Cj4+IEhpIEtpbSwKPj4KPj4gTWF5
+YmUgd2UgY2FuIGZvcmdldCBhYm91dCB0aGUgdmVyc2lvbmluZyBmb3Igbm93LiBMaWJ0b29sJ3Mg
+dmVyc2lvbmluZwo+PiBtZWNoYW5pc20gaXMgYSBsaXR0bGUgYml0IGNvbXBsaWNhdGVkIGFuZCBh
+ZGRpbmcgdGhlIHZlcnNpb24gdG8gU09OQU1FCj4+IHdpbGwgbGlrZWx5IGNhdXNlIGJpZyBvciBz
+bWFsbCBwcm9ibGVtcyBmb3Igc28gbWFueSBkb3duc3RyZWFtCj4+IHByb2plY3RzLgo+Pgo+PiBX
+aHkgZG9uJ3Qgd2Ugc2ltcGx5IGFkZCB0aGUgbGliZjJmc19mb3JtYXQ/IFRoYXQgd29uJ3QgaHVy
+dCBhbnl3YXkuIDopCj4+Cj4+IFJlZ2FyZHMsCj4+IEthaS1DaHVuZyBZYW4KPj4KPj4gMjAxNS0x
+Mi0xMCAzOjEyIEdNVCswODowMCBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3JnPjoKPj4+
+IFRoaXMgcGF0Y2ggZ2l2ZXMgdGhlIHZlcnNpb24gaW5mbyBmb3IgdHdvIGxpYnJhcmllcy4KPj4+
+Cj4+PiBta2ZzL2xpYmYyZnNfZm9ybWF0LmxhCj4+PiBsaWIvbGliZjJmcy5sYQo+Pj4KPj4+IFRo
+ZSB2ZXJzaW9uaW5nIHJ1bGUgc2hvdWxkIGJlOgo+Pj4KPj4+IDEuIFN0YXJ0IHdpdGggdmVyc2lv
+biBpbmZvcm1hdGlvbiBvZiAnMDowOjAnIGZvciBlYWNoIGxpYnRvb2wgbGlicmFyeS4KPj4+IDIu
+IFVwZGF0ZSB0aGUgdmVyc2lvbiBpbmZvcm1hdGlvbiBvbmx5IGltbWVkaWF0ZWx5IGJlZm9yZSBh
+IHB1YmxpYyByZWxlYXNlIG9mCj4+PiAgICB5b3VyIHNvZnR3YXJlLiBNb3JlIGZyZXF1ZW50IHVw
+ZGF0ZXMgYXJlIHVubmVjZXNzYXJ5LCBhbmQgb25seSBndWFyYW50ZWUKPj4+ICAgIHRoYXQgdGhl
+IGN1cnJlbnQgaW50ZXJmYWNlIG51bWJlciBnZXRzIGxhcmdlciBmYXN0ZXIuCj4+PiAyLiBJZiB0
+aGUgbGlicmFyeSBzb3VyY2UgY29kZSBoYXMgY2hhbmdlZCBhdCBhbGwgc2luY2UgdGhlIGxhc3Qg
+dXBkYXRlLCB0aGVuCj4+PiAgICBpbmNyZW1lbnQgcmV2aXNpb24gKGM6cjphKSBiZWNvbWVzIChj
+OnIrMTphKS4KPj4+IDMuIElmIGFueSBpbnRlcmZhY2VzIGhhdmUgYmVlbiBhZGRlZCwgcmVtb3Zl
+ZCwgb3IgY2hhbmdlZCBzaW5jZSB0aGUgbGFzdCB1cGRhdGUsCj4+PiAgICBpbmNyZW1lbnQgY3Vy
+cmVudCwgYW5kIHNldCByZXZpc2lvbiB0byAwLgo+Pj4gNC4gSWYgYW55IGludGVyZmFjZXMgaGF2
+ZSBiZWVuIGFkZGVkIHNpbmNlIHRoZSBsYXN0IHB1YmxpYyByZWxlYXNlLCB0aGVuCj4+PiAgICBp
+bmNyZW1lbnQgYWdlLgo+Pj4gNS4gSWYgYW55IGludGVyZmFjZXMgaGF2ZSBiZWVuIHJlbW92ZWQg
+b3IgY2hhbmdlZCBzaW5jZSB0aGUgbGFzdCBwdWJsaWMgcmVsZWFzZSwKPj4+ICAgIHRoZW4gc2V0
+IGFnZSB0byAwLgo+Pj4KPj4+IHF1b3RlZCBmcm9tOgo+Pj4gaHR0cDovL3d3dy5nbnUub3JnL3Nv
+ZnR3YXJlL2xpYnRvb2wvbWFudWFsL2h0bWxfbm9kZS9VcGRhdGluZy12ZXJzaW9uLWluZm8uaHRt
+bCNVcGRhdGluZy12ZXJzaW9uLWluZm8KPj4+Cj4+PiBDYzogSGFucy1DaHJpc3RvcGggU3RlaW5l
+ciA8aGFuc0BlZHMub3JnPgo+Pj4gQ2M6IEthaS1DaHVuZyBZYW4gPHNlYW1saWtva0BnbWFpbC5j
+b20+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3JnPgo+
+Pj4gLS0tCj4+PiAgY29uZmlndXJlLmFjICAgICB8IDEwICsrKysrKysrKysKPj4+ICBsaWIvTWFr
+ZWZpbGUuYW0gIHwgIDEgKwo+Pj4gIG1rZnMvTWFrZWZpbGUuYW0gfCAgMyArKy0KPj4+ICAzIGZp
+bGVzIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPj4+Cj4+PiBkaWZm
+IC0tZ2l0IGEvY29uZmlndXJlLmFjIGIvY29uZmlndXJlLmFjCj4+PiBpbmRleCBiMThlZTRkLi4y
+ODBhMGQzIDEwMDY0NAo+Pj4gLS0tIGEvY29uZmlndXJlLmFjCj4+PiArKysgYi9jb25maWd1cmUu
+YWMKPj4+IEBAIC05MCw0ICs5MCwxNCBAQCBBQ19DT05GSUdfRklMRVMoWwo+Pj4gICAgICAgICB0
+b29scy9NYWtlZmlsZQo+Pj4gIF0pCj4+Pgo+Pj4gKyMgZXhwb3J0IGxpYnJhcnkgdmVyc2lvbiBp
+bmZvIGZvciBta2ZzL2xpYmYyZnNfZm9ybWF0X2xhCj4+PiArQUNfU1VCU1QoRk1UX0NVUlJFTlQs
+IDApCj4+PiArQUNfU1VCU1QoRk1UX1JFVklTSU9OLCAwKQo+Pj4gK0FDX1NVQlNUKEZNVF9BR0Us
+IDApCj4+PiArCj4+PiArIyBleHBvcnQgbGlicmFyeSB2ZXJzaW9uIGluZm8gZm9yIGxpYi9saWJm
+MmZzX2xhCj4+PiArQUNfU1VCU1QoTElCRjJGU19DVVJSRU5ULCAwKQo+Pj4gK0FDX1NVQlNUKExJ
+QkYyRlNfUkVWSVNJT04sIDApCj4+PiArQUNfU1VCU1QoTElCRjJGU19BR0UsIDApCj4+PiArCj4+
+PiAgQUNfT1VUUFVUCj4+PiBkaWZmIC0tZ2l0IGEvbGliL01ha2VmaWxlLmFtIGIvbGliL01ha2Vm
+aWxlLmFtCj4+PiBpbmRleCBhNmIzMDRjLi4zN2I4ZDU3IDEwMDY0NAo+Pj4gLS0tIGEvbGliL01h
+a2VmaWxlLmFtCj4+PiArKysgYi9saWIvTWFrZWZpbGUuYW0KPj4+IEBAIC01LDMgKzUsNCBAQCBs
+aWJfTFRMSUJSQVJJRVMgPSBsaWJmMmZzLmxhCj4+PiAgbGliZjJmc19sYV9TT1VSQ0VTID0gbGli
+ZjJmcy5jIGxpYmYyZnNfaW8uYwo+Pj4gIGxpYmYyZnNfbGFfQ0ZMQUdTID0gLVdhbGwKPj4+ICBs
+aWJmMmZzX2xhX0NQUEZMQUdTID0gLUkkKHRvcF9zcmNkaXIpL2luY2x1ZGUKPj4+ICtsaWJmMmZz
+X2xhX0xERkxBR1MgPSAtdmVyc2lvbi1pbmZvICQoTElCRjJGU19DVVJSRU5UKTokKExJQkYyRlNf
+UkVWSVNJT04pOiQoTElCRjJGU19BR0UpCj4+PiBkaWZmIC0tZ2l0IGEvbWtmcy9NYWtlZmlsZS5h
+bSBiL21rZnMvTWFrZWZpbGUuYW0KPj4+IGluZGV4IDg5NjlhMDQuLjhiNGMxNmMgMTAwNjQ0Cj4+
+PiAtLS0gYS9ta2ZzL01ha2VmaWxlLmFtCj4+PiArKysgYi9ta2ZzL01ha2VmaWxlLmFtCj4+PiBA
+QCAtMTAsNCArMTAsNSBAQCBsaWJfTFRMSUJSQVJJRVMgPSBsaWJmMmZzX2Zvcm1hdC5sYQo+Pj4g
+IGxpYmYyZnNfZm9ybWF0X2xhX1NPVVJDRVMgPSBmMmZzX2Zvcm1hdF9tYWluLmMgZjJmc19mb3Jt
+YXQuYyBmMmZzX2Zvcm1hdF91dGlscy5jCj4+PiAgbGliZjJmc19mb3JtYXRfbGFfQ0ZMQUdTID0g
+LURXSVRIX0JMS0RJU0NBUkQKPj4+ICBsaWJmMmZzX2Zvcm1hdF9sYV9DUFBGTEFHUyA9IC1JJCh0
+b3Bfc3JjZGlyKS9pbmNsdWRlCj4+PiAtbGliZjJmc19mb3JtYXRfbGFfTERGTEFHUyA9IC1sdXVp
+ZCAtTCQodG9wX3NyY2RpcikvbGliIC1sZjJmcwo+Pj4gK2xpYmYyZnNfZm9ybWF0X2xhX0xERkxB
+R1MgPSAtbHV1aWQgLUwkKHRvcF9zcmNkaXIpL2xpYiAtbGYyZnMgXAo+Pj4gKyAgICAgICAtdmVy
+c2lvbi1pbmZvICQoRk1UX0NVUlJFTlQpOiQoRk1UX1JFVklTSU9OKTokKEZNVF9BR0UpCj4+PiAt
+LQo+Pj4gMi40LjkgKEFwcGxlIEdpdC02MCkKPj4+Cj4+Cj4+Cj4+CgotLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGlu
+dXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vm
+b3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGlu
+dXgtZjJmcy1kZXZlbAo=
