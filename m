@@ -1,58 +1,85 @@
-From: Andrei Borzenkov <arvidjaar@gmail.com>
-Subject: Re: [PATCH v4] F2FS support
-Date: Tue, 15 Dec 2015 11:34:24 +0300
-Message-ID: <566FD090.1080906@gmail.com>
-References: <1427185140-41120-1-git-send-email-jaegeuk@kernel.org>
-	<20150403224908.GB25673@jaegeuk-mac02.mot.com>
-	<20151119212824.GA11666@jaegeuk.local> <566E7DAA.4010202@gmail.com>
-	<20151215003421.GD48918@jaegeuk.local>
+From: Fan Li <fanofcode.li@samsung.com>
+Subject: [f2fs-dev] [PATCH] f2fs: fix to reset variable correctlly
+Date: Tue, 15 Dec 2015 17:02:41 +0800
+Message-ID: <006301d13717$7325fd20$5971f760$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <arvidjaar@gmail.com>) id 1a8l45-0001gk-PF
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 08:34:33 +0000
-Received: from mail-lb0-f169.google.com ([209.85.217.169])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1a8l44-0003IW-UM
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 08:34:33 +0000
-Received: by mail-lb0-f169.google.com with SMTP id cs9so1048217lbb.1
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Tue, 15 Dec 2015 00:34:32 -0800 (PST)
-In-Reply-To: <20151215003421.GD48918@jaegeuk.local>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: The development of GNU GRUB <grub-devel@gnu.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: en-us
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-MTUuMTIuMjAxNSAwMzozNCwgSmFlZ2V1ayBLaW0g0L/QuNGI0LXRgjoKPiBDaGFuZ2UgbG9nIGZy
-b20gdjM6Cj4gIG8gYWRkIGdydWJfdGVzdF9iaXRfbGUoKQouLi4KCj4gKwo+ICtzdGF0aWMgaW5s
-aW5lIGludAo+ICtncnViX2YyZnNfdGVzdF9iaXRfbGUgKGludCBuciwgY29uc3QgZ3J1Yl91aW50
-OF90ICphZGRyKQo+ICt7Cj4gKyAgY29uc3QgZ3J1Yl9pbnQzMl90ICpwID0gKGNvbnN0IGdydWJf
-aW50MzJfdCAqKWFkZHI7Cj4gKwo+ICsgIG5yID0gbnIgXiAwOwoKSXQgZG9lcyBub3RoaW5nLgoK
-PiArCj4gKyAgcmV0dXJuIHBbbnIgPj4gNV0gJiAoMSA8PCAobnIgJiAzMSkpOwo+ICt9CgpXZWxs
-LCB5b3Ugc3RpbGwgbWlzcyB0aGUgcG9pbnQgLSBpZiB5b3UgYXJlIHdvcmtpbmcgd2l0aCBpbnRl
-Z2VycyB5b3UKbXVzdCBzaGlmdCBkaWZmZXJlbnRseSBkZXBlbmRpbmcgb24gd2hldGhlciB3ZSBh
-cmUgcnVubmluZyBiaWcgb3IgbGl0dGxlCmVuZGlhbi4KCkJ1dCBhcyBJIG1lbnRpb25lZCBiZWZv
-cmUsIHdlIGtub3cgdGhhdCBiaXRtYXAgaXMgbGl0dGxlIGVuZGlhbiBzbyB3ZQpjYW4gd29yayB3
-aXRoIGJ5dGVzIGFuZCBiZSBpbmRlcGVuZGVudCBvZiBieXRlIG9yZGVyLiBDb3VsZCB5b3UgdGVz
-dCBpZgp0aGlzIHdvcmtzIGZvciB5b3U6CgpzdGF0aWMgaW5saW5lIGludApncnViX2YyZnNfdGVz
-dF9iaXRfbGUgKGludCBuciwgY29uc3QgZ3J1Yl91aW50OF90ICphZGRyKQp7CiAgcmV0dXJuIGFk
-ZHJbbnIgPj4gM10gJiAoMSA8PCAobnIgJiA3KSk7Cn0KCgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYy
-ZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2Uu
-bmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYy
-ZnMtZGV2ZWwK
+f2fs_map_blocks will set m_flags and m_len to 0, so we don't need to
+reset m_flags ourselves, but have to reset m_len to correct value
+before use it again.
+
+Signed-off-by: Fan li <fanofcode.li@samsung.com>
+---
+ fs/f2fs/file.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9949d0f..2c8050c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1700,7 +1700,6 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	map.m_lblk = pg_start;
+-	map.m_len = pg_end - pg_start;
+ 
+ 	/*
+ 	 * lookup mapping info in dnode page cache, skip defragmenting if all
+@@ -1708,14 +1707,13 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 	 * in logical blocks.
+ 	 */
+ 	while (map.m_lblk < pg_end) {
+-		map.m_flags = 0;
++		map.m_len = pg_end - map.m_lblk;
+ 		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
+ 		if (err)
+ 			goto out;
+ 
+ 		if (!(map.m_flags & F2FS_MAP_FLAGS)) {
+ 			map.m_lblk++;
+-			map.m_len--;
+ 			continue;
+ 		}
+ 
+@@ -1726,7 +1724,6 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 		blk_end = map.m_pblk + map.m_len;
+ 
+ 		map.m_lblk += map.m_len;
+-		map.m_len = pg_end - map.m_lblk;
+ 	}
+ 
+ 	if (!fragmented)
+@@ -1752,14 +1749,13 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 		int cnt = 0;
+ 
+ do_map:
+-		map.m_flags = 0;
++		map.m_len = pg_end - map.m_lblk;
+ 		err = f2fs_map_blocks(inode, &map, 0, F2FS_GET_BLOCK_READ);
+ 		if (err)
+ 			goto clear_out;
+ 
+ 		if (!(map.m_flags & F2FS_MAP_FLAGS)) {
+ 			map.m_lblk++;
+-			map.m_len--;
+ 			continue;
+ 		}
+ 
+@@ -1784,7 +1780,6 @@ do_map:
+ 		}
+ 
+ 		map.m_lblk = idx;
+-		map.m_len = pg_end - idx;
+ 
+ 		if (idx < pg_end && cnt < blk_per_seg)
+ 			goto do_map;
+-- 
+1.7.9.5
