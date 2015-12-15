@@ -1,59 +1,121 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/3] mkfs.f2fs: remove extent_cache entry for
-	parent directory
-Date: Tue, 15 Dec 2015 13:19:32 -0800
-Message-ID: <1450214374-65696-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH 5/8] f2fs: support data flush in checkpoint
+Date: Tue, 15 Dec 2015 13:58:42 -0800
+Message-ID: <20151215215842.GA66113@jaegeuk.local>
+References: <00f801d136fa$324a5070$96def150$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1a8x0Z-0004rr-Js
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 21:19:43 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1a8x0Y-0004GG-Ns for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 21:19:43 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <00f801d136fa$324a5070$96def150$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Currently, directory should not have any extent cache entry.
-Otherwise, fsck.f2fs will trigger a false-alarmed report.
+Hi Chao,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- mkfs/f2fs_format.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, Dec 15, 2015 at 01:33:18PM +0800, Chao Yu wrote:
+> Previously, when finishing a checkpoint, we only keep consistency of all fs
+> meta info including meta inode, node inode, dentry page of directory inode,
+> so, after a sudden power cut, f2fs can recover from last checkpoint with
+> full directory structure.
+> 
+> But during checkpoint, we didn't flush dirty pages of regular and symlink
+> inode, so such dirty datas still in memory will be lost in that moment of
+> power off.
+> 
+> In order to reduce the chance of lost data, this patch tries to flush user
+> data before starting a checkpoint. So user's data written between two
+> checkpoint which may not be fsynced could be saved.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/checkpoint.c | 11 +++++++++++
+>  fs/f2fs/f2fs.h       |  5 +++++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index f33c4d7..217571f 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -849,6 +849,17 @@ static int block_operations(struct f2fs_sb_info *sbi)
+>  
+>  	blk_start_plug(&plug);
+>  
+> +retry_flush_datas:
+> +	/* write all the dirty data pages */
+> +	if (get_pages(sbi, F2FS_DIRTY_DATAS)) {
+> +		sync_dirty_inodes(sbi, FILE_INODE);
+> +		if (unlikely(f2fs_cp_error(sbi))) {
+> +			err = -EIO;
+> +			goto out;
+> +		}
+> +		goto retry_flush_datas;
+> +	}
+> +
 
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index fff74a9..98a6bce 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -769,8 +769,8 @@ static int f2fs_write_root_inode(void)
- 	raw_node->i.i_addr[0] = cpu_to_le32(data_blk_nor);
- 
- 	raw_node->i.i_ext.fofs = 0;
--	raw_node->i.i_ext.blk_addr = cpu_to_le32(data_blk_nor);
--	raw_node->i.i_ext.len = cpu_to_le32(1);
-+	raw_node->i.i_ext.blk_addr = 0;
-+	raw_node->i.i_ext.len = 0;
- 
- 	main_area_node_seg_blk_offset = get_sb(main_blkaddr);
- 	main_area_node_seg_blk_offset += config.cur_seg[CURSEG_HOT_NODE] *
--- 
-2.5.4 (Apple Git-61)
+Please don't do like this; our checkpoint should be different from system sync.
+I don't want to increase the checkpoint latency at all even in f2fs_gc as well.
 
+I think that something like this would be better.
 
-------------------------------------------------------------------------------
+In f2fs_balance_fs_bg(),
+	if (!avaliable_free_memory() || ...) {
+		if (test_opt(DATA_FLUSH))
+			sync_dirty_inodes(FILE_INODE);
+		f2fs_sync_fs();
+	}
+
+Please add its mount option with a disabled one first.
+
+>  retry_flush_dents:
+>  	f2fs_lock_all(sbi);
+>  	/* write all the dirty dentry pages */
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index d8bef3c..2477b2f5 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -648,6 +648,7 @@ struct f2fs_sm_info {
+>  enum count_type {
+>  	F2FS_WRITEBACK,
+>  	F2FS_DIRTY_DENTS,
+> +	F2FS_DIRTY_DATAS,
+
+This should be F2FS_DIRTY_DATA.
+
+And, it'd better to merge this part into your previous patch:
+ "f2fs: record dirty status of regular/symlink inodes"
+
+I'll do that, so please check it out later from dev-test.
+
+>  	F2FS_DIRTY_NODES,
+>  	F2FS_DIRTY_META,
+>  	F2FS_INMEM_PAGES,
+> @@ -1068,6 +1069,8 @@ static inline void inode_inc_dirty_pages(struct inode *inode)
+>  	atomic_inc(&F2FS_I(inode)->dirty_pages);
+>  	if (S_ISDIR(inode->i_mode))
+>  		inc_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DENTS);
+> +	else
+> +		inc_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DATAS);
+
+ditto.
+
+>  }
+>  
+>  static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
+> @@ -1085,6 +1088,8 @@ static inline void inode_dec_dirty_pages(struct inode *inode)
+>  
+>  	if (S_ISDIR(inode->i_mode))
+>  		dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DENTS);
+> +	else
+> +		dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DATAS);
+
+ditto.
+
+>  }
+>  
+>  static inline int get_pages(struct f2fs_sb_info *sbi, int count_type)
+> -- 
+> 2.6.3
+> 
