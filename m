@@ -1,138 +1,104 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 6/8] f2fs: stat dirty regular/symlink inodes
-Date: Tue, 15 Dec 2015 13:34:32 +0800
-Message-ID: <00f901d136fa$5de94e70$19bbeb50$@samsung.com>
+Subject: [PATCH 7/8] f2fs: introduce new option for controlling data flush
+Date: Tue, 15 Dec 2015 13:35:21 +0800
+Message-ID: <00fa01d136fa$7c028980$74079c80$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1a8iGd-0003u2-SN
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 05:35:19 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1a8iGc-0007S4-NI
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 05:35:19 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NZD029AAWUK2WC0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 14:35:11 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Add to stat dirty regular and symlink inode for showing in debugfs.
+Add a new option 'data_flush' to enable/disable data flush functionality
+in checkpoint.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/checkpoint.c | 4 ++++
- fs/f2fs/debug.c      | 4 ++++
- fs/f2fs/f2fs.h       | 8 +++++++-
- 3 files changed, 15 insertions(+), 1 deletion(-)
+ Documentation/filesystems/f2fs.txt | 2 ++
+ fs/f2fs/checkpoint.c               | 2 +-
+ fs/f2fs/f2fs.h                     | 1 +
+ fs/f2fs/super.c                    | 7 +++++++
+ 4 files changed, 11 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 8088bd9..727373e 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -151,6 +151,8 @@ noextent_cache         Disable an extent cache based on rb-tree explicitly, see
+                        the above extent_cache mount option.
+ noinline_data          Disable the inline data feature, inline data feature is
+                        enabled by default.
++data_flush             Enable data flushing during checkpoint in order to
++                       persist data of regular and symlink.
+ 
+ ================================================================================
+ DEBUGFS ENTRIES
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 217571f..a73909c 100644
+index a73909c..2fdf271 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -735,6 +735,8 @@ static void __add_dirty_inode(struct inode *inode, enum inode_type type)
- 	list_add_tail(&fi->dirty_list, &sbi->inode_list[type]);
- 	if (type == DIR_INODE)
- 		stat_inc_dirty_dir(sbi);
-+	else
-+		stat_inc_dirty_file(sbi);
- }
+@@ -855,7 +855,7 @@ static int block_operations(struct f2fs_sb_info *sbi)
  
- static void __remove_dirty_inode(struct inode *inode, enum inode_type type)
-@@ -751,6 +753,8 @@ static void __remove_dirty_inode(struct inode *inode, enum inode_type type)
- 	clear_inode_flag(fi, flag);
- 	if (type == DIR_INODE)
- 		stat_dec_dirty_dir(sbi);
-+	else
-+		stat_dec_dirty_file(sbi);
- }
- 
- void update_dirty_page(struct inode *inode, struct page *page)
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index f4a7b9e..80a40dd 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -42,7 +42,9 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 	si->ext_node = atomic_read(&sbi->total_ext_node);
- 	si->ndirty_node = get_pages(sbi, F2FS_DIRTY_NODES);
- 	si->ndirty_dent = get_pages(sbi, F2FS_DIRTY_DENTS);
-+	si->ndirty_data = get_pages(sbi, F2FS_DIRTY_DATAS);
- 	si->ndirty_dirs = sbi->n_dirty_dirs;
-+	si->ndirty_files = sbi->n_dirty_files;
- 	si->ndirty_meta = get_pages(sbi, F2FS_DIRTY_META);
- 	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
- 	si->wb_pages = get_pages(sbi, F2FS_WRITEBACK);
-@@ -298,6 +300,8 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->ndirty_node, si->node_pages);
- 		seq_printf(s, "  - dents: %4d in dirs:%4d\n",
- 			   si->ndirty_dent, si->ndirty_dirs);
-+		seq_printf(s, "  - datas: %4d in files:%4d\n",
-+			   si->ndirty_data, si->ndirty_files);
- 		seq_printf(s, "  - meta: %4d in %4d\n",
- 			   si->ndirty_meta, si->meta_pages);
- 		seq_printf(s, "  - NATs: %9d/%9d\n  - SITs: %9d/%9d\n",
+ retry_flush_datas:
+ 	/* write all the dirty data pages */
+-	if (get_pages(sbi, F2FS_DIRTY_DATAS)) {
++	if (test_opt(sbi, DATA_FLUSH) && get_pages(sbi, F2FS_DIRTY_DATAS)) {
+ 		sync_dirty_inodes(sbi, FILE_INODE);
+ 		if (unlikely(f2fs_cp_error(sbi))) {
+ 			err = -EIO;
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2477b2f5..4d44732 100644
+index 4d44732..ee1f0a8 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -818,6 +818,7 @@ struct f2fs_sb_info {
- 	atomic_t inline_dir;			/* # of inline_dentry inodes */
- 	int bg_gc;				/* background gc calls */
- 	unsigned int n_dirty_dirs;		/* # of dir inodes */
-+	unsigned int n_dirty_files;		/* # of regular/symlink inodes */
- #endif
- 	unsigned int last_victim[2];		/* last victim segment # */
- 	spinlock_t stat_lock;			/* lock for stat operations */
-@@ -1892,7 +1893,8 @@ struct f2fs_stat_info {
- 	unsigned long long hit_largest, hit_cached, hit_rbtree;
- 	unsigned long long hit_total, total_ext;
- 	int ext_tree, ext_node;
--	int ndirty_node, ndirty_dent, ndirty_dirs, ndirty_meta;
-+	int ndirty_node, ndirty_meta;
-+	int ndirty_dent, ndirty_dirs, ndirty_data, ndirty_files;
- 	int nats, dirty_nats, sits, dirty_sits, fnids;
- 	int total_count, utilization;
- 	int bg_gc, inmem_pages, wb_pages;
-@@ -1927,6 +1929,8 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
- #define stat_inc_bggc_count(sbi)	((sbi)->bg_gc++)
- #define stat_inc_dirty_dir(sbi)		((sbi)->n_dirty_dirs++)
- #define stat_dec_dirty_dir(sbi)		((sbi)->n_dirty_dirs--)
-+#define stat_inc_dirty_file(sbi)	((sbi)->n_dirty_files++)
-+#define stat_dec_dirty_file(sbi)	((sbi)->n_dirty_files--)
- #define stat_inc_total_hit(sbi)		(atomic64_inc(&(sbi)->total_hit_ext))
- #define stat_inc_rbtree_node_hit(sbi)	(atomic64_inc(&(sbi)->read_hit_rbtree))
- #define stat_inc_largest_node_hit(sbi)	(atomic64_inc(&(sbi)->read_hit_largest))
-@@ -2009,6 +2013,8 @@ void f2fs_destroy_root_stats(void);
- #define stat_inc_bggc_count(si)
- #define stat_inc_dirty_dir(sbi)
- #define stat_dec_dirty_dir(sbi)
-+#define stat_inc_dirty_file(sbi)
-+#define stat_dec_dirty_file(sbi)
- #define stat_inc_total_hit(sb)
- #define stat_inc_rbtree_node_hit(sb)
- #define stat_inc_largest_node_hit(sbi)
+@@ -54,6 +54,7 @@
+ #define F2FS_MOUNT_FASTBOOT		0x00001000
+ #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
+ #define F2FS_MOUNT_FORCE_FG_GC		0x00004000
++#define F2FS_MOUNT_DATA_FLUSH		0x00008000
+ 
+ #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
+ #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 051bce6..694e092 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -67,6 +67,7 @@ enum {
+ 	Opt_extent_cache,
+ 	Opt_noextent_cache,
+ 	Opt_noinline_data,
++	Opt_data_flush,
+ 	Opt_nodiscard,
+ 	Opt_err,
+ };
+@@ -92,6 +93,7 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_extent_cache, "extent_cache"},
+ 	{Opt_noextent_cache, "noextent_cache"},
+ 	{Opt_noinline_data, "noinline_data"},
++	{Opt_data_flush, "data_flush"},
+ 	{Opt_nodiscard, "nodiscard"},
+ 	{Opt_err, NULL},
+ };
+@@ -411,6 +413,9 @@ static int parse_options(struct super_block *sb, char *options)
+ 		case Opt_noinline_data:
+ 			clear_opt(sbi, INLINE_DATA);
+ 			break;
++		case Opt_data_flush:
++			clear_opt(sbi, DATA_FLUSH);
++			break;
+ 		default:
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Unrecognized mount option \"%s\" or missing value",
+@@ -694,6 +699,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 		seq_puts(seq, ",extent_cache");
+ 	else
+ 		seq_puts(seq, ",noextent_cache");
++	if (test_opt(sbi, DATA_FLUSH))
++		seq_puts(seq, ",data_flush");
+ 	seq_printf(seq, ",active_logs=%u", sbi->active_logs);
+ 
+ 	return 0;
 -- 
 2.6.3
-
-
-
-------------------------------------------------------------------------------
