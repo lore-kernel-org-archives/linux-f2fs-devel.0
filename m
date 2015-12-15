@@ -1,31 +1,27 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: fix to reset variable correctlly
-Date: Tue, 15 Dec 2015 17:41:56 +0800
-Message-ID: <010e01d1371c$f0e31180$d2a93480$@samsung.com>
-References: <006301d13717$7325fd20$5971f760$@samsung.com>
+From: =?UTF-8?B?5q635ZWf6IGw?= <seamlikok@gmail.com>
+Subject: Re: [PATCH] f2fs-tools: add library version info
+Date: Tue, 15 Dec 2015 20:19:34 +0800
+Message-ID: <CAKxyyfaR77Ej_=P7JWDZgx5HMc1K10JDn7Eqzrw7LBMgxnF0LA@mail.gmail.com>
+References: <1449688376-3311-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1a8m8A-000475-8Z
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <seamlikok@gmail.com>) id 1a8oaJ-0007Ho-2b
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 09:42:50 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1a8m88-0007mR-TS
+	Tue, 15 Dec 2015 12:20:03 +0000
+Received: from mail-qk0-f171.google.com ([209.85.220.171])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1a8oaF-0004sg-Lt
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 09:42:50 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NZE020WC8A97DB0@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 18:42:41 +0900 (KST)
-In-reply-to: <006301d13717$7325fd20$5971f760$@samsung.com>
-Content-language: zh-cn
+	Tue, 15 Dec 2015 12:20:03 +0000
+Received: by mail-qk0-f171.google.com with SMTP id k189so9195847qkc.0
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Tue, 15 Dec 2015 04:19:59 -0800 (PST)
+In-Reply-To: <1449688376-3311-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,23 +31,71 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Fan Li' <fanofcode.li@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Hans-Christoph Steiner <hans@eds.org>, linux-f2fs-devel@lists.sourceforge.net
 
-> -----Original Message-----
-> From: Fan Li [mailto:fanofcode.li@samsung.com]
-> Sent: Tuesday, December 15, 2015 5:03 PM
-> To: 'Jaegeuk Kim'
-> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH] f2fs: fix to reset variable correctlly
-> 
-> f2fs_map_blocks will set m_flags and m_len to 0, so we don't need to
-> reset m_flags ourselves, but have to reset m_len to correct value
-> before use it again.
-> 
-> Signed-off-by: Fan li <fanofcode.li@samsung.com>
-
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-
-
-------------------------------------------------------------------------------
+SGkgS2ltLAoKTWF5YmUgd2UgY2FuIGZvcmdldCBhYm91dCB0aGUgdmVyc2lvbmluZyBmb3Igbm93
+LiBMaWJ0b29sJ3MgdmVyc2lvbmluZwptZWNoYW5pc20gaXMgYSBsaXR0bGUgYml0IGNvbXBsaWNh
+dGVkIGFuZCBhZGRpbmcgdGhlIHZlcnNpb24gdG8gU09OQU1FCndpbGwgbGlrZWx5IGNhdXNlIGJp
+ZyBvciBzbWFsbCBwcm9ibGVtcyBmb3Igc28gbWFueSBkb3duc3RyZWFtCnByb2plY3RzLgoKV2h5
+IGRvbid0IHdlIHNpbXBseSBhZGQgdGhlIGxpYmYyZnNfZm9ybWF0PyBUaGF0IHdvbid0IGh1cnQg
+YW55d2F5LiA6KQoKUmVnYXJkcywKS2FpLUNodW5nIFlhbgoKMjAxNS0xMi0xMCAzOjEyIEdNVCsw
+ODowMCBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3JnPjoKPiBUaGlzIHBhdGNoIGdpdmVz
+IHRoZSB2ZXJzaW9uIGluZm8gZm9yIHR3byBsaWJyYXJpZXMuCj4KPiBta2ZzL2xpYmYyZnNfZm9y
+bWF0LmxhCj4gbGliL2xpYmYyZnMubGEKPgo+IFRoZSB2ZXJzaW9uaW5nIHJ1bGUgc2hvdWxkIGJl
+Ogo+Cj4gMS4gU3RhcnQgd2l0aCB2ZXJzaW9uIGluZm9ybWF0aW9uIG9mICcwOjA6MCcgZm9yIGVh
+Y2ggbGlidG9vbCBsaWJyYXJ5Lgo+IDIuIFVwZGF0ZSB0aGUgdmVyc2lvbiBpbmZvcm1hdGlvbiBv
+bmx5IGltbWVkaWF0ZWx5IGJlZm9yZSBhIHB1YmxpYyByZWxlYXNlIG9mCj4gICAgeW91ciBzb2Z0
+d2FyZS4gTW9yZSBmcmVxdWVudCB1cGRhdGVzIGFyZSB1bm5lY2Vzc2FyeSwgYW5kIG9ubHkgZ3Vh
+cmFudGVlCj4gICAgdGhhdCB0aGUgY3VycmVudCBpbnRlcmZhY2UgbnVtYmVyIGdldHMgbGFyZ2Vy
+IGZhc3Rlci4KPiAyLiBJZiB0aGUgbGlicmFyeSBzb3VyY2UgY29kZSBoYXMgY2hhbmdlZCBhdCBh
+bGwgc2luY2UgdGhlIGxhc3QgdXBkYXRlLCB0aGVuCj4gICAgaW5jcmVtZW50IHJldmlzaW9uIChj
+OnI6YSkgYmVjb21lcyAoYzpyKzE6YSkuCj4gMy4gSWYgYW55IGludGVyZmFjZXMgaGF2ZSBiZWVu
+IGFkZGVkLCByZW1vdmVkLCBvciBjaGFuZ2VkIHNpbmNlIHRoZSBsYXN0IHVwZGF0ZSwKPiAgICBp
+bmNyZW1lbnQgY3VycmVudCwgYW5kIHNldCByZXZpc2lvbiB0byAwLgo+IDQuIElmIGFueSBpbnRl
+cmZhY2VzIGhhdmUgYmVlbiBhZGRlZCBzaW5jZSB0aGUgbGFzdCBwdWJsaWMgcmVsZWFzZSwgdGhl
+bgo+ICAgIGluY3JlbWVudCBhZ2UuCj4gNS4gSWYgYW55IGludGVyZmFjZXMgaGF2ZSBiZWVuIHJl
+bW92ZWQgb3IgY2hhbmdlZCBzaW5jZSB0aGUgbGFzdCBwdWJsaWMgcmVsZWFzZSwKPiAgICB0aGVu
+IHNldCBhZ2UgdG8gMC4KPgo+IHF1b3RlZCBmcm9tOgo+IGh0dHA6Ly93d3cuZ251Lm9yZy9zb2Z0
+d2FyZS9saWJ0b29sL21hbnVhbC9odG1sX25vZGUvVXBkYXRpbmctdmVyc2lvbi1pbmZvLmh0bWwj
+VXBkYXRpbmctdmVyc2lvbi1pbmZvCj4KPiBDYzogSGFucy1DaHJpc3RvcGggU3RlaW5lciA8aGFu
+c0BlZHMub3JnPgo+IENjOiBLYWktQ2h1bmcgWWFuIDxzZWFtbGlrb2tAZ21haWwuY29tPgo+IFNp
+Z25lZC1vZmYtYnk6IEphZWdldWsgS2ltIDxqYWVnZXVrQGtlcm5lbC5vcmc+Cj4gLS0tCj4gIGNv
+bmZpZ3VyZS5hYyAgICAgfCAxMCArKysrKysrKysrCj4gIGxpYi9NYWtlZmlsZS5hbSAgfCAgMSAr
+Cj4gIG1rZnMvTWFrZWZpbGUuYW0gfCAgMyArKy0KPiAgMyBmaWxlcyBjaGFuZ2VkLCAxMyBpbnNl
+cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4KPiBkaWZmIC0tZ2l0IGEvY29uZmlndXJlLmFjIGIv
+Y29uZmlndXJlLmFjCj4gaW5kZXggYjE4ZWU0ZC4uMjgwYTBkMyAxMDA2NDQKPiAtLS0gYS9jb25m
+aWd1cmUuYWMKPiArKysgYi9jb25maWd1cmUuYWMKPiBAQCAtOTAsNCArOTAsMTQgQEAgQUNfQ09O
+RklHX0ZJTEVTKFsKPiAgICAgICAgIHRvb2xzL01ha2VmaWxlCj4gIF0pCj4KPiArIyBleHBvcnQg
+bGlicmFyeSB2ZXJzaW9uIGluZm8gZm9yIG1rZnMvbGliZjJmc19mb3JtYXRfbGEKPiArQUNfU1VC
+U1QoRk1UX0NVUlJFTlQsIDApCj4gK0FDX1NVQlNUKEZNVF9SRVZJU0lPTiwgMCkKPiArQUNfU1VC
+U1QoRk1UX0FHRSwgMCkKPiArCj4gKyMgZXhwb3J0IGxpYnJhcnkgdmVyc2lvbiBpbmZvIGZvciBs
+aWIvbGliZjJmc19sYQo+ICtBQ19TVUJTVChMSUJGMkZTX0NVUlJFTlQsIDApCj4gK0FDX1NVQlNU
+KExJQkYyRlNfUkVWSVNJT04sIDApCj4gK0FDX1NVQlNUKExJQkYyRlNfQUdFLCAwKQo+ICsKPiAg
+QUNfT1VUUFVUCj4gZGlmZiAtLWdpdCBhL2xpYi9NYWtlZmlsZS5hbSBiL2xpYi9NYWtlZmlsZS5h
+bQo+IGluZGV4IGE2YjMwNGMuLjM3YjhkNTcgMTAwNjQ0Cj4gLS0tIGEvbGliL01ha2VmaWxlLmFt
+Cj4gKysrIGIvbGliL01ha2VmaWxlLmFtCj4gQEAgLTUsMyArNSw0IEBAIGxpYl9MVExJQlJBUklF
+UyA9IGxpYmYyZnMubGEKPiAgbGliZjJmc19sYV9TT1VSQ0VTID0gbGliZjJmcy5jIGxpYmYyZnNf
+aW8uYwo+ICBsaWJmMmZzX2xhX0NGTEFHUyA9IC1XYWxsCj4gIGxpYmYyZnNfbGFfQ1BQRkxBR1Mg
+PSAtSSQodG9wX3NyY2RpcikvaW5jbHVkZQo+ICtsaWJmMmZzX2xhX0xERkxBR1MgPSAtdmVyc2lv
+bi1pbmZvICQoTElCRjJGU19DVVJSRU5UKTokKExJQkYyRlNfUkVWSVNJT04pOiQoTElCRjJGU19B
+R0UpCj4gZGlmZiAtLWdpdCBhL21rZnMvTWFrZWZpbGUuYW0gYi9ta2ZzL01ha2VmaWxlLmFtCj4g
+aW5kZXggODk2OWEwNC4uOGI0YzE2YyAxMDA2NDQKPiAtLS0gYS9ta2ZzL01ha2VmaWxlLmFtCj4g
+KysrIGIvbWtmcy9NYWtlZmlsZS5hbQo+IEBAIC0xMCw0ICsxMCw1IEBAIGxpYl9MVExJQlJBUklF
+UyA9IGxpYmYyZnNfZm9ybWF0LmxhCj4gIGxpYmYyZnNfZm9ybWF0X2xhX1NPVVJDRVMgPSBmMmZz
+X2Zvcm1hdF9tYWluLmMgZjJmc19mb3JtYXQuYyBmMmZzX2Zvcm1hdF91dGlscy5jCj4gIGxpYmYy
+ZnNfZm9ybWF0X2xhX0NGTEFHUyA9IC1EV0lUSF9CTEtESVNDQVJECj4gIGxpYmYyZnNfZm9ybWF0
+X2xhX0NQUEZMQUdTID0gLUkkKHRvcF9zcmNkaXIpL2luY2x1ZGUKPiAtbGliZjJmc19mb3JtYXRf
+bGFfTERGTEFHUyA9IC1sdXVpZCAtTCQodG9wX3NyY2RpcikvbGliIC1sZjJmcwo+ICtsaWJmMmZz
+X2Zvcm1hdF9sYV9MREZMQUdTID0gLWx1dWlkIC1MJCh0b3Bfc3JjZGlyKS9saWIgLWxmMmZzIFwK
+PiArICAgICAgIC12ZXJzaW9uLWluZm8gJChGTVRfQ1VSUkVOVCk6JChGTVRfUkVWSVNJT04pOiQo
+Rk1UX0FHRSkKPiAtLQo+IDIuNC45IChBcHBsZSBHaXQtNjApCj4KCgoKLS0gCi8qCiog5q635ZWf
+6IGwIHwgS2FpLUNodW5nIFlhbgoqIOS4gOeUn+WPquWQkeecn+eQhuiIh+Wmu+WtkOS9jumgrQoq
+IEZ1bGwtdGltZSBzdHVkZW50IG9mIE5hdGlvbmFsIFRhaWNodW5nIFVuaXZlcnNpdHkgb2YgRWR1
+Y2F0aW9uCiogTGlua2VkSW46IDxodHRwczovL2xpbmtlZGluLmNvbS9pbi9zZWFtbGlrPgoqIEJs
+b2c6IDxzZWFtbGlrLmxvZ2Rvd24uY29tPgoqLwoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2
+ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0
+dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2
+ZWwK
