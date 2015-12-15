@@ -1,22 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] mkfs.f2fs: fix storing volume label correctly in
-	utf16
-Date: Mon, 14 Dec 2015 16:35:53 -0800
-Message-ID: <1450139753-56845-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: do more integrity verification for
+	superblock
+Date: Mon, 14 Dec 2015 16:55:38 -0800
+Message-ID: <20151215005538.GA57132@jaegeuk.local>
+References: <03bb01d133eb$5628a350$0279e9f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1a8db2-00024w-6M
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1a8du8-0005M7-UI
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 00:36:04 +0000
+	Tue, 15 Dec 2015 00:55:48 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1a8db1-0001p9-0y for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Dec 2015 00:36:04 +0000
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1a8du6-0006Ux-AH for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 15 Dec 2015 00:55:48 +0000
+Content-Disposition: inline
+In-Reply-To: <03bb01d133eb$5628a350$0279e9f0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,290 +29,164 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch fixes to store volume label as utf16 correctly.
+Hi Chao,
 
-Many conversion codes are copied from exfat-tools.
+I also got superblock failure.
+It seems that your patch doesn't handle correctly if segment0_blkaddr is not
+zero.
+Please see below.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/mount.c       |  11 ++++
- include/f2fs_fs.h  |   7 ++-
- lib/libf2fs.c      | 177 ++++++++++++++++++++++++++++++++++++++++++++++++++---
- mkfs/f2fs_format.c |   4 +-
- 4 files changed, 186 insertions(+), 13 deletions(-)
+On Fri, Dec 11, 2015 at 04:09:23PM +0800, Chao Yu wrote:
+> Do more sanity check for superblock during ->mount.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/super.c | 98 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 98 insertions(+)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 5434186..624fc2c 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -926,6 +926,79 @@ static loff_t max_file_size(unsigned bits)
+>  	return result;
+>  }
+>  
+> +static inline bool sanity_check_area_boundary(struct super_block *sb,
+> +					struct f2fs_super_block *raw_super)
+> +{
+> +	u32 segment0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
+> +	u32 cp_blkaddr = le32_to_cpu(raw_super->cp_blkaddr);
+> +	u32 sit_blkaddr = le32_to_cpu(raw_super->sit_blkaddr);
+> +	u32 nat_blkaddr = le32_to_cpu(raw_super->nat_blkaddr);
+> +	u32 ssa_blkaddr = le32_to_cpu(raw_super->ssa_blkaddr);
+> +	u32 main_blkaddr = le32_to_cpu(raw_super->main_blkaddr);
+> +	u32 segment_count_ckpt = le32_to_cpu(raw_super->segment_count_ckpt);
+> +	u32 segment_count_sit = le32_to_cpu(raw_super->segment_count_sit);
+> +	u32 segment_count_nat = le32_to_cpu(raw_super->segment_count_nat);
+> +	u32 segment_count_ssa = le32_to_cpu(raw_super->segment_count_ssa);
+> +	u32 segment_count_main = le32_to_cpu(raw_super->segment_count_main);
+> +	u32 segment_count = le32_to_cpu(raw_super->segment_count);
+> +	u32 log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
+> +
+> +	if (segment0_blkaddr != cp_blkaddr) {
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Mismatch start address, segment0(%u) cp_blkaddr(%u)",
+> +			segment0_blkaddr, cp_blkaddr);
+> +		return true;
+> +	}
+> +
+> +	if (cp_blkaddr + (segment_count_ckpt << log_blocks_per_seg) !=
+> +							sit_blkaddr) {
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Wrong CP boundary, start(%u) end(%u) blocks(%u)",
+> +			cp_blkaddr, sit_blkaddr,
+> +			segment_count_ckpt << log_blocks_per_seg);
+> +		return true;
+> +	}
+> +
+> +	if (sit_blkaddr + (segment_count_sit << log_blocks_per_seg) !=
+> +							nat_blkaddr) {
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Wrong SIT boundary, start(%u) end(%u) blocks(%u)",
+> +			sit_blkaddr, nat_blkaddr,
+> +			segment_count_sit << log_blocks_per_seg);
+> +		return true;
+> +	}
+> +
+> +	if (nat_blkaddr + (segment_count_nat << log_blocks_per_seg) !=
+> +							ssa_blkaddr) {
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Wrong NAT boundary, start(%u) end(%u) blocks(%u)",
+> +			nat_blkaddr, ssa_blkaddr,
+> +			segment_count_nat << log_blocks_per_seg);
+> +		return true;
+> +	}
+> +
+> +	if (ssa_blkaddr + (segment_count_ssa << log_blocks_per_seg) !=
+> +							main_blkaddr) {
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Wrong SSA boundary, start(%u) end(%u) blocks(%u)",
+> +			ssa_blkaddr, main_blkaddr,
+> +			segment_count_ssa << log_blocks_per_seg);
+> +		return true;
+> +	}
+> +
+> +	if (main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
+> +				(segment_count + 1) << log_blocks_per_seg) {
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index e773471..d34c704 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -99,6 +99,14 @@ void print_node_info(struct f2fs_node *node_block)
- 	}
- }
- 
-+static void DISP_label(u_int16_t *name)
-+{
-+	char buffer[MAX_VOLUME_NAME];
-+
-+	utf16_to_utf8(buffer, name, MAX_VOLUME_NAME, MAX_VOLUME_NAME);
-+	printf("%-30s" "\t\t[%s]\n", "volum_name", buffer);
-+}
-+
- void print_raw_sb_info(struct f2fs_super_block *sb)
- {
- 	if (!config.dbg_lv)
-@@ -111,6 +119,9 @@ void print_raw_sb_info(struct f2fs_super_block *sb)
- 
- 	DISP_u32(sb, magic);
- 	DISP_u32(sb, major_ver);
-+
-+	DISP_label(sb->volume_name);
-+
- 	DISP_u32(sb, minor_ver);
- 	DISP_u32(sb, log_sectorsize);
- 	DISP_u32(sb, log_sectors_per_block);
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 29ff9fe..4927d24 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -398,6 +398,8 @@ enum {
- 
- #define F2FS_FEATURE_ENCRYPT	0x0001
- 
-+#define MAX_VOLUME_NAME		512
-+
- /*
-  * For superblock
-  */
-@@ -430,7 +432,7 @@ struct f2fs_super_block {
- 	__le32 node_ino;		/* node inode number */
- 	__le32 meta_ino;		/* meta inode number */
- 	__u8 uuid[16];			/* 128-bit uuid for volume */
--	__le16 volume_name[512];	/* volume name */
-+	__le16 volume_name[MAX_VOLUME_NAME];	/* volume name */
- 	__le32 extension_count;		/* # of extensions below */
- 	__u8 extension_list[F2FS_MAX_EXTENSION][8];	/* extension array */
- 	__le32 cp_payload;
-@@ -847,7 +849,8 @@ enum {
- 	SSR
- };
- 
--extern void ASCIIToUNICODE(u_int16_t *, u_int8_t *);
-+extern int utf8_to_utf16(u_int16_t *, const char *, size_t, size_t);
-+extern int utf16_to_utf8(char *, const u_int16_t *, size_t, size_t);
- extern int log_base_2(u_int32_t);
- extern unsigned int addrs_per_inode(struct f2fs_inode *);
- 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 307ad56..1802d9c 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -23,18 +23,177 @@
- 
- #include <f2fs_fs.h>
- 
--void ASCIIToUNICODE(u_int16_t *out_buf, u_int8_t *in_buf)
-+/*
-+ * UTF conversion codes are Copied from exfat tools.
-+ */
-+static const char *utf8_to_wchar(const char *input, wchar_t *wc,
-+		size_t insize)
-+{
-+	if ((input[0] & 0x80) == 0 && insize >= 1) {
-+		*wc = (wchar_t) input[0];
-+		return input + 1;
-+	}
-+	if ((input[0] & 0xe0) == 0xc0 && insize >= 2) {
-+		*wc = (((wchar_t) input[0] & 0x1f) << 6) |
-+		       ((wchar_t) input[1] & 0x3f);
-+		return input + 2;
-+	}
-+	if ((input[0] & 0xf0) == 0xe0 && insize >= 3) {
-+		*wc = (((wchar_t) input[0] & 0x0f) << 12) |
-+		      (((wchar_t) input[1] & 0x3f) << 6) |
-+		       ((wchar_t) input[2] & 0x3f);
-+		return input + 3;
-+	}
-+	if ((input[0] & 0xf8) == 0xf0 && insize >= 4) {
-+		*wc = (((wchar_t) input[0] & 0x07) << 18) |
-+		      (((wchar_t) input[1] & 0x3f) << 12) |
-+		      (((wchar_t) input[2] & 0x3f) << 6) |
-+		       ((wchar_t) input[3] & 0x3f);
-+		return input + 4;
-+	}
-+	if ((input[0] & 0xfc) == 0xf8 && insize >= 5) {
-+		*wc = (((wchar_t) input[0] & 0x03) << 24) |
-+		      (((wchar_t) input[1] & 0x3f) << 18) |
-+		      (((wchar_t) input[2] & 0x3f) << 12) |
-+		      (((wchar_t) input[3] & 0x3f) << 6) |
-+		       ((wchar_t) input[4] & 0x3f);
-+		return input + 5;
-+	}
-+	if ((input[0] & 0xfe) == 0xfc && insize >= 6) {
-+		*wc = (((wchar_t) input[0] & 0x01) << 30) |
-+		      (((wchar_t) input[1] & 0x3f) << 24) |
-+		      (((wchar_t) input[2] & 0x3f) << 18) |
-+		      (((wchar_t) input[3] & 0x3f) << 12) |
-+		      (((wchar_t) input[4] & 0x3f) << 6) |
-+		       ((wchar_t) input[5] & 0x3f);
-+		return input + 6;
-+	}
-+	return NULL;
-+}
-+
-+static u_int16_t *wchar_to_utf16(u_int16_t *output, wchar_t wc, size_t outsize)
-+{
-+	if (wc <= 0xffff) {
-+		if (outsize == 0)
-+			return NULL;
-+		output[0] = cpu_to_le16(wc);
-+		return output + 1;
-+	}
-+	if (outsize < 2)
-+		return NULL;
-+	wc -= 0x10000;
-+	output[0] = cpu_to_le16(0xd800 | ((wc >> 10) & 0x3ff));
-+	output[1] = cpu_to_le16(0xdc00 | (wc & 0x3ff));
-+	return output + 2;
-+}
-+
-+int utf8_to_utf16(u_int16_t *output, const char *input, size_t outsize,
-+		size_t insize)
-+{
-+	const char *inp = input;
-+	u_int16_t *outp = output;
-+	wchar_t wc;
-+
-+	while (inp - input < insize && *inp) {
-+		inp = utf8_to_wchar(inp, &wc, insize - (inp - input));
-+		if (inp == NULL) {
-+			DBG(0, "illegal UTF-8 sequence\n");
-+			return -EILSEQ;
-+		}
-+		outp = wchar_to_utf16(outp, wc, outsize - (outp - output));
-+		if (outp == NULL) {
-+			DBG(0, "name is too long\n");
-+			return -ENAMETOOLONG;
-+		}
-+	}
-+	*outp = cpu_to_le16(0);
-+	return 0;
-+}
-+
-+static const u_int16_t *utf16_to_wchar(const u_int16_t *input, wchar_t *wc,
-+		size_t insize)
-+{
-+	if ((le16_to_cpu(input[0]) & 0xfc00) == 0xd800) {
-+		if (insize < 2 || (le16_to_cpu(input[1]) & 0xfc00) != 0xdc00)
-+			return NULL;
-+		*wc = ((wchar_t) (le16_to_cpu(input[0]) & 0x3ff) << 10);
-+		*wc |= (le16_to_cpu(input[1]) & 0x3ff);
-+		*wc += 0x10000;
-+		return input + 2;
-+	} else {
-+		*wc = le16_to_cpu(*input);
-+		return input + 1;
-+	}
-+}
-+
-+static char *wchar_to_utf8(char *output, wchar_t wc, size_t outsize)
- {
--	u_int8_t *pchTempPtr = in_buf;
--	u_int16_t *pwTempPtr = out_buf;
-+	if (wc <= 0x7f) {
-+		if (outsize < 1)
-+			return NULL;
-+		*output++ = (char) wc;
-+	} else if (wc <= 0x7ff) {
-+		if (outsize < 2)
-+			return NULL;
-+		*output++ = 0xc0 | (wc >> 6);
-+		*output++ = 0x80 | (wc & 0x3f);
-+	} else if (wc <= 0xffff) {
-+		if (outsize < 3)
-+			return NULL;
-+		*output++ = 0xe0 | (wc >> 12);
-+		*output++ = 0x80 | ((wc >> 6) & 0x3f);
-+		*output++ = 0x80 | (wc & 0x3f);
-+	} else if (wc <= 0x1fffff) {
-+		if (outsize < 4)
-+			return NULL;
-+		*output++ = 0xf0 | (wc >> 18);
-+		*output++ = 0x80 | ((wc >> 12) & 0x3f);
-+		*output++ = 0x80 | ((wc >> 6) & 0x3f);
-+		*output++ = 0x80 | (wc & 0x3f);
-+	} else if (wc <= 0x3ffffff) {
-+		if (outsize < 5)
-+			return NULL;
-+		*output++ = 0xf8 | (wc >> 24);
-+		*output++ = 0x80 | ((wc >> 18) & 0x3f);
-+		*output++ = 0x80 | ((wc >> 12) & 0x3f);
-+		*output++ = 0x80 | ((wc >> 6) & 0x3f);
-+		*output++ = 0x80 | (wc & 0x3f);
-+	} else if (wc <= 0x7fffffff) {
-+		if (outsize < 6)
-+			return NULL;
-+		*output++ = 0xfc | (wc >> 30);
-+		*output++ = 0x80 | ((wc >> 24) & 0x3f);
-+		*output++ = 0x80 | ((wc >> 18) & 0x3f);
-+		*output++ = 0x80 | ((wc >> 12) & 0x3f);
-+		*output++ = 0x80 | ((wc >> 6) & 0x3f);
-+		*output++ = 0x80 | (wc & 0x3f);
-+	} else
-+		return NULL;
-+
-+	return output;
-+}
- 
--	while (*pchTempPtr != '\0') {
--		*pwTempPtr = (u_int16_t)*pchTempPtr;
--		pchTempPtr++;
--		pwTempPtr++;
-+int utf16_to_utf8(char *output, const u_int16_t *input, size_t outsize,
-+		size_t insize)
-+{
-+	const u_int16_t *inp = input;
-+	char *outp = output;
-+	wchar_t wc;
-+
-+	while (inp - input < insize && le16_to_cpu(*inp)) {
-+		inp = utf16_to_wchar(inp, &wc, insize - (inp - input));
-+		if (inp == NULL) {
-+			DBG(0, "illegal UTF-16 sequence\n");
-+			return -EILSEQ;
-+		}
-+		outp = wchar_to_utf8(outp, wc, outsize - (outp - output));
-+		if (outp == NULL) {
-+			DBG(0, "name is too long\n");
-+			return -ENAMETOOLONG;
-+		}
- 	}
--	*pwTempPtr = '\0';
--	return;
-+	*outp = '\0';
-+	return 0;
- }
- 
- int log_base_2(u_int32_t num)
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index a2f33f9..fff74a9 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -291,8 +291,8 @@ static int f2fs_prepare_super_block(void)
- 
- 	uuid_generate(sb->uuid);
- 
--	ASCIIToUNICODE(sb->volume_name, (u_int8_t *)config.vol_label);
--
-+	utf8_to_utf16(sb->volume_name, (const char *)config.vol_label,
-+				MAX_VOLUME_NAME, strlen(config.vol_label));
- 	set_sb(node_ino, 1);
- 	set_sb(meta_ino, 2);
- 	set_sb(root_ino, 3);
--- 
-2.5.4 (Apple Git-61)
+This should be
+		segment_count << log_blocks_per_seg + segment0_blkaddr) {
 
+
+=========================================================================
+                           '- main_blkaddr
+    `- segment0_blkaddr
+                           |-------------- segment_count_main ----------|
+
+    |-------------------------- segment_count --------------------------|
+
+
+Thanks,
+
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Wrong MAIN_AREA boundary, start(%u) end(%u) blocks(%u)",
+> +			main_blkaddr,
+> +			(segment_count + 1) << log_blocks_per_seg,
+> +			segment_count_main << log_blocks_per_seg);
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+>  static int sanity_check_raw_super(struct super_block *sb,
+>  			struct f2fs_super_block *raw_super)
+>  {
+> @@ -955,6 +1028,14 @@ static int sanity_check_raw_super(struct super_block *sb,
+>  		return 1;
+>  	}
+>  
+> +	/* check log blocks per segment */
+> +	if (le32_to_cpu(raw_super->log_blocks_per_seg) != 9) {
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Invalid log blocks per segment (%u)\n",
+> +			le32_to_cpu(raw_super->log_blocks_per_seg));
+> +		return 1;
+> +	}
+> +
+>  	/* Currently, support 512/1024/2048/4096 bytes sector size */
+>  	if (le32_to_cpu(raw_super->log_sectorsize) >
+>  				F2FS_MAX_LOG_SECTOR_SIZE ||
+> @@ -973,6 +1054,23 @@ static int sanity_check_raw_super(struct super_block *sb,
+>  			le32_to_cpu(raw_super->log_sectorsize));
+>  		return 1;
+>  	}
+> +
+> +	/* check reserved ino info */
+> +	if (le32_to_cpu(raw_super->node_ino) != 1 ||
+> +		le32_to_cpu(raw_super->meta_ino) != 2 ||
+> +		le32_to_cpu(raw_super->root_ino) != 3) {
+> +		f2fs_msg(sb, KERN_INFO,
+> +			"Invalid Fs Meta Ino: node(%u) meta(%u) root(%u)",
+> +			le32_to_cpu(raw_super->node_ino),
+> +			le32_to_cpu(raw_super->meta_ino),
+> +			le32_to_cpu(raw_super->root_ino));
+> +		return 1;
+> +	}
+> +
+> +	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
+> +	if (sanity_check_area_boundary(sb, raw_super))
+> +		return 1;
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.6.3
+> 
 
 ------------------------------------------------------------------------------
