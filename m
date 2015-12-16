@@ -1,182 +1,134 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 5/8] f2fs: support data flush in checkpoint
-Date: Wed, 16 Dec 2015 10:33:10 +0800
-Message-ID: <013301d137aa$32cbcc80$98636580$@samsung.com>
-References: <00f801d136fa$324a5070$96def150$@samsung.com>
-	<20151215215842.GA66113@jaegeuk.local>
+Subject: RE: [PATCH 8/8] f2fs: fix to avoid deadlock between checkpoint and
+ writepages
+Date: Wed, 16 Dec 2015 10:34:22 +0800
+Message-ID: <013401d137aa$5e657350$1b3059f0$@samsung.com>
+References: <00fb01d136fa$97e29d70$c7a7d850$@samsung.com>
+ <20151215220128.GB66113@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1a91uq-0002P4-KU
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Dec 2015 02:34:08 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1a91un-0002Vk-HD
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Dec 2015 02:34:08 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NZF00Y7CJ40QA80@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 16 Dec 2015 11:33:52 +0900 (KST)
-In-reply-to: <20151215215842.GA66113@jaegeuk.local>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20151215220128.GB66113@jaegeuk.local>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, December 16, 2015 5:59 AM
+> Sent: Wednesday, December 16, 2015 6:01 AM
 > To: Chao Yu
 > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 5/8] f2fs: support data flush in checkpoint
+> Subject: Re: [PATCH 8/8] f2fs: fix to avoid deadlock between checkpoint and writepages
 > 
 > Hi Chao,
 > 
-> On Tue, Dec 15, 2015 at 01:33:18PM +0800, Chao Yu wrote:
-> > Previously, when finishing a checkpoint, we only keep consistency of all fs
-> > meta info including meta inode, node inode, dentry page of directory inode,
-> > so, after a sudden power cut, f2fs can recover from last checkpoint with
-> > full directory structure.
+> On Tue, Dec 15, 2015 at 01:36:08PM +0800, Chao Yu wrote:
+> > This patch fixes to move f2fs_balance_fs out of sbi->writepages'
+> > coverage to avoid potential ABBA deadlock which was found by lockdep:
 > >
-> > But during checkpoint, we didn't flush dirty pages of regular and symlink
-> > inode, so such dirty datas still in memory will be lost in that moment of
-> > power off.
+> >   Possible unsafe locking scenario:
 > >
-> > In order to reduce the chance of lost data, this patch tries to flush user
-> > data before starting a checkpoint. So user's data written between two
-> > checkpoint which may not be fsynced could be saved.
+> >         CPU0                    CPU1
+> >         ----                    ----
+> >    lock(&sbi->writepages);
+> >                                 lock(&sbi->cp_mutex);
+> >                                 lock(&sbi->writepages);
+> >    lock(&sbi->cp_mutex);
 > >
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/checkpoint.c | 11 +++++++++++
-> >  fs/f2fs/f2fs.h       |  5 +++++
-> >  2 files changed, 16 insertions(+)
-> >
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index f33c4d7..217571f 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -849,6 +849,17 @@ static int block_operations(struct f2fs_sb_info *sbi)
-> >
-> >  	blk_start_plug(&plug);
-> >
-> > +retry_flush_datas:
-> > +	/* write all the dirty data pages */
-> > +	if (get_pages(sbi, F2FS_DIRTY_DATAS)) {
-> > +		sync_dirty_inodes(sbi, FILE_INODE);
-> > +		if (unlikely(f2fs_cp_error(sbi))) {
-> > +			err = -EIO;
-> > +			goto out;
-> > +		}
-> > +		goto retry_flush_datas;
-> > +	}
-> > +
+> >   *** DEADLOCK ***
 > 
-> Please don't do like this; our checkpoint should be different from system sync.
-> I don't want to increase the checkpoint latency at all even in f2fs_gc as well.
+> I expect it will be fine if syncing is done by f2fs_balance_fs_bg().
 
-Alright.
-
-Since flushing dirty data definitely increasing our latency of the interface,
-so what I thought was that let user take responsibility for risk of potential
-longer latency once user choose to mount with data_flush option.
-
-Now, look into this implementation, it seems that adding flushing operation
-into checkpoint looks advancing rashly, it spreads random potential long
-latency everywhere.
-
-> 
-> I think that something like this would be better.
-
-I will follow that currently. :)
-
-> 
-> In f2fs_balance_fs_bg(),
-> 	if (!avaliable_free_memory() || ...) {
-> 		if (test_opt(DATA_FLUSH))
-> 			sync_dirty_inodes(FILE_INODE);
-> 		f2fs_sync_fs();
-> 	}
-> 
-> Please add its mount option with a disabled one first.
-
-OK, I will do that.
-
-> 
-> >  retry_flush_dents:
-> >  	f2fs_lock_all(sbi);
-> >  	/* write all the dirty dentry pages */
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index d8bef3c..2477b2f5 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -648,6 +648,7 @@ struct f2fs_sm_info {
-> >  enum count_type {
-> >  	F2FS_WRITEBACK,
-> >  	F2FS_DIRTY_DENTS,
-> > +	F2FS_DIRTY_DATAS,
-> 
-> This should be F2FS_DIRTY_DATA.
-> 
-> And, it'd better to merge this part into your previous patch:
->  "f2fs: record dirty status of regular/symlink inodes"
-> 
-> I'll do that, so please check it out later from dev-test.
-
-Thanks for doing this, still I will resend the patches for the people
-who wants to comment on them.
+Yes, I will drop this patch.
 
 Thanks,
 
 > 
-> >  	F2FS_DIRTY_NODES,
-> >  	F2FS_DIRTY_META,
-> >  	F2FS_INMEM_PAGES,
-> > @@ -1068,6 +1069,8 @@ static inline void inode_inc_dirty_pages(struct inode *inode)
-> >  	atomic_inc(&F2FS_I(inode)->dirty_pages);
-> >  	if (S_ISDIR(inode->i_mode))
-> >  		inc_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DENTS);
-> > +	else
-> > +		inc_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DATAS);
+> Thanks,
 > 
-> ditto.
-> 
-> >  }
 > >
-> >  static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
-> > @@ -1085,6 +1088,8 @@ static inline void inode_dec_dirty_pages(struct inode *inode)
+> > stack of CPU0:
+> > [<ffffffff810b8dd1>] __lock_acquire+0x1321/0x1770
+> > [<ffffffff810b92d7>] lock_acquire+0xb7/0x130
+> > [<ffffffff817ad082>] mutex_lock_nested+0x52/0x380
+> > [<ffffffffa07b767b>] f2fs_balance_fs+0x8b/0xa0 [f2fs]
+> > [<ffffffffa07afb5b>] f2fs_write_data_page+0x33b/0x460 [f2fs]
+> > [<ffffffffa07ab79a>] __f2fs_writepage+0x1a/0x50 [f2fs]
+> > [<ffffffffa07ac693>] T.1541+0x293/0x560 [f2fs]
+> > [<ffffffffa07aca8c>] f2fs_write_data_pages+0x12c/0x230 [f2fs]
+> > [<ffffffff8118adb3>] do_writepages+0x23/0x40
+> > [<ffffffff8117c545>] __filemap_fdatawrite_range+0xb5/0xf0
+> > [<ffffffff8117c623>] filemap_write_and_wait_range+0xa3/0xd0
+> > [<ffffffffa079cc20>] f2fs_symlink+0x180/0x300 [f2fs]
+> > [<ffffffff81208187>] vfs_symlink+0xb7/0xe0
+> > [<ffffffff8120acc5>] SyS_symlinkat+0xc5/0x100
+> > [<ffffffff81205ad6>] SyS_symlink+0x16/0x20
+> > [<ffffffff817b15d7>] entry_SYSCALL_64_fastpath+0x12/0x6f
 > >
-> >  	if (S_ISDIR(inode->i_mode))
-> >  		dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DENTS);
-> > +	else
-> > +		dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_DATAS);
-> 
-> ditto.
-> 
-> >  }
+> > stack of CPU1
+> > [<ffffffff810b92d7>] lock_acquire+0xb7/0x130
+> > [<ffffffff817ad082>] mutex_lock_nested+0x52/0x380
+> > [<ffffffffa07aca7e>] f2fs_write_data_pages+0x11e/0x230 [f2fs]
+> > [<ffffffff8118adb3>] do_writepages+0x23/0x40
+> > [<ffffffff8117c545>] __filemap_fdatawrite_range+0xb5/0xf0
+> > [<ffffffff8117c9ef>] filemap_fdatawrite+0x1f/0x30
+> > [<ffffffffa07a728d>] sync_dirty_inodes+0x4d/0xd0 [f2fs]
+> > [<ffffffffa07a7381>] block_operations+0x71/0x160 [f2fs]
+> > [<ffffffffa07a85f8>] write_checkpoint+0xe8/0xbb0 [f2fs]
+> > [<ffffffffa07a043f>] f2fs_sync_fs+0x8f/0xf0 [f2fs]
+> > [<ffffffffa07b63af>] f2fs_balance_fs_bg+0x6f/0xd0 [f2fs]
+> > [<ffffffffa07b1c97>] f2fs_write_node_pages+0x57/0x150 [f2fs]
+> > [<ffffffff8118adb3>] do_writepages+0x23/0x40
+> > [<ffffffff8122c9ed>] __writeback_single_inode+0x6d/0x3d0
+> > [<ffffffff8122ec87>] writeback_sb_inodes+0x2c7/0x520
+> > [<ffffffff8122f193>] wb_writeback+0x133/0x330
+> > [<ffffffff8122f478>] wb_do_writeback+0xe8/0x270
+> > [<ffffffff8122f680>] wb_workfn+0x80/0x1f0
+> > [<ffffffff81081a1c>] process_one_work+0x20c/0x5c0
+> > [<ffffffff81083c62>] worker_thread+0x132/0x5f0
+> > [<ffffffff8108918e>] kthread+0xde/0x100
+> > [<ffffffff817b193f>] ret_from_fork+0x3f/0x70
 > >
-> >  static inline int get_pages(struct f2fs_sb_info *sbi, int count_type)
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/data.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 2e97057..985671d 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -506,7 +506,6 @@ static void __allocate_data_blocks(struct inode *inode, loff_t offset,
+> >  	u64 end_offset;
+> >
+> >  	while (len) {
+> > -		f2fs_balance_fs(sbi);
+> >  		f2fs_lock_op(sbi);
+> >
+> >  		/* When reading holes, we need its node page */
+> > @@ -1186,7 +1185,7 @@ out:
+> >  	if (err)
+> >  		ClearPageUptodate(page);
+> >  	unlock_page(page);
+> > -	if (need_balance_fs)
+> > +	if (need_balance_fs && !test_opt(sbi, DATA_FLUSH))
+> >  		f2fs_balance_fs(sbi);
+> >  	if (wbc->for_reclaim) {
+> >  		f2fs_submit_merged_bio(sbi, DATA, WRITE);
+> > @@ -1617,6 +1616,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+> >  	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+> >
+> >  	if (rw == WRITE) {
+> > +		f2fs_balance_fs(sbi);
+> > +
+> >  		if (serialized)
+> >  			mutex_lock(&sbi->writepages);
+> >  		__allocate_data_blocks(inode, offset, count);
 > > --
 > > 2.6.3
 > >
-
-
-------------------------------------------------------------------------------
