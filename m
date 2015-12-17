@@ -1,24 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] defrag.f2fs: return error if there is no
-	space
-Date: Thu, 17 Dec 2015 09:23:03 -0800
-Message-ID: <1450372983-84005-2-git-send-email-jaegeuk@kernel.org>
-References: <1450372983-84005-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/2] defrag.f2fs: eliminate unexpected journal
+	entries
+Date: Thu, 17 Dec 2015 09:23:02 -0800
+Message-ID: <1450372983-84005-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1a9cGr-0003W8-En
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1a9cGp-0000gS-Sh
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Dec 2015 17:23:17 +0000
+	Thu, 17 Dec 2015 17:23:15 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1a9cGm-0002IS-RD for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Dec 2015 17:23:17 +0000
-In-Reply-To: <1450372983-84005-1-git-send-email-jaegeuk@kernel.org>
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1a9cGl-0002UU-8Y for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 17 Dec 2015 17:23:15 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,75 +29,61 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch checks whether there is a space or not to allocate new blocks.
+When moving data or node blocks, it changes current segment information
+dynamtically. Meanwhile, its journal entry space is recovered by old
+stale data.
+This patch makes sure that its journal space is zeroed out.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/mount.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ fsck/defrag.c | 1 +
+ fsck/fsck.h   | 1 +
+ fsck/mount.c  | 8 ++++++++
+ 3 files changed, 10 insertions(+)
 
+diff --git a/fsck/defrag.c b/fsck/defrag.c
+index 7ca7260..7abc0bf 100644
+--- a/fsck/defrag.c
++++ b/fsck/defrag.c
+@@ -90,6 +90,7 @@ int f2fs_defragment(struct f2fs_sb_info *sbi, u64 from, u64 len, u64 to, int lef
+ 
+ 	/* update curseg info; can update sit->types */
+ 	move_curseg_info(sbi, to);
++	zero_journal_entries(sbi);
+ 	write_curseg_info(sbi);
+ 
+ 	/* flush dirty sit entries */
+diff --git a/fsck/fsck.h b/fsck/fsck.h
+index 1464146..3870948 100644
+--- a/fsck/fsck.h
++++ b/fsck/fsck.h
+@@ -135,6 +135,7 @@ extern int f2fs_do_mount(struct f2fs_sb_info *);
+ extern void f2fs_do_umount(struct f2fs_sb_info *);
+ 
+ extern void flush_journal_entries(struct f2fs_sb_info *);
++extern void zero_journal_entries(struct f2fs_sb_info *);
+ extern void flush_sit_entries(struct f2fs_sb_info *);
+ extern void move_curseg_info(struct f2fs_sb_info *, u64);
+ extern void write_curseg_info(struct f2fs_sb_info *);
 diff --git a/fsck/mount.c b/fsck/mount.c
-index 735ed90..4b38df8 100644
+index 8418dcc..735ed90 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -11,6 +11,20 @@
- #include "fsck.h"
- #include <locale.h>
+@@ -1446,6 +1446,14 @@ void move_curseg_info(struct f2fs_sb_info *sbi, u64 from)
+ 	}
+ }
  
-+static u32 get_free_segments(struct f2fs_sb_info *sbi)
++void zero_journal_entries(struct f2fs_sb_info *sbi)
 +{
-+	u32 i, free_segs = 0;
++	int i;
 +
-+	for (i = 0; i < TOTAL_SEGS(sbi); i++) {
-+		struct seg_entry *se = get_seg_entry(sbi, i);
-+
-+		if (se->valid_blocks == 0x0 &&
-+				!IS_CUR_SEGNO(sbi, i, NO_CHECK_TYPE))
-+			free_segs++;
-+	}
-+	return free_segs;
++	for (i = 0; i < NO_CHECK_TYPE; i++)
++		CURSEG_I(sbi, i)->sum_blk->n_nats = 0;
 +}
 +
- void print_inode_info(struct f2fs_inode *inode, int name)
+ void write_curseg_info(struct f2fs_sb_info *sbi)
  {
- 	unsigned int i = 0;
-@@ -1376,6 +1390,9 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
- 	u32 segno;
- 	u64 offset;
- 
-+	if (get_free_segments(sbi) <= SM_I(sbi)->reserved_segments + 1)
-+		return -1;
-+
- 	while (*to >= SM_I(sbi)->main_blkaddr &&
- 			*to < F2FS_RAW_SUPER(sbi)->block_count) {
- 		segno = GET_SEGNO(sbi, *to);
-@@ -1543,10 +1560,8 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
  	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	block_t orphan_blks = 0;
--	u32 free_segs = 0;
- 	unsigned long long cp_blk_no;
- 	u32 flags = CP_UMOUNT_FLAG;
--	unsigned int segno;
- 	int i, ret;
- 	u_int32_t crc = 0;
- 
-@@ -1557,14 +1572,7 @@ void write_checkpoint(struct f2fs_sb_info *sbi)
- 
- 	set_cp(ckpt_flags, flags);
- 
--	for (segno = 0; segno < TOTAL_SEGS(sbi); segno++) {
--		struct seg_entry *se = get_seg_entry(sbi, segno);
--
--		if (se->valid_blocks == 0x0 &&
--				!IS_CUR_SEGNO(sbi, segno, NO_CHECK_TYPE))
--			free_segs++;
--	}
--	set_cp(free_segment_count, free_segs);
-+	set_cp(free_segment_count, get_free_segments(sbi));
- 	set_cp(cp_pack_total_block_count, 8 + orphan_blks + get_sb(cp_payload));
- 
- 	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, cp, CHECKSUM_OFFSET);
 -- 
 2.5.4 (Apple Git-61)
 
