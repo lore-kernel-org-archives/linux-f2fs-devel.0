@@ -1,23 +1,21 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] fsck.f2fs: fix losing journal entries
-Date: Mon, 21 Dec 2015 09:44:52 -0800
-Message-ID: <1450719892-10731-2-git-send-email-jaegeuk@kernel.org>
-References: <1450719892-10731-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/2] defrag.f2fs: fix missing SSA updates
+Date: Mon, 21 Dec 2015 09:44:51 -0800
+Message-ID: <1450719892-10731-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aB4WB-0007hy-GV
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aB4W6-00048X-1c
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Dec 2015 17:45:07 +0000
+	Mon, 21 Dec 2015 17:45:02 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aB4W6-0005oA-46 for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Dec 2015 17:45:07 +0000
-In-Reply-To: <1450719892-10731-1-git-send-email-jaegeuk@kernel.org>
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aB4W5-0004Rd-0B for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 21 Dec 2015 17:45:02 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,42 +28,41 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If fsck.f2fs reports a bug, move_curseg_info tries to change the current
-segment info.
-When it changes the new summary block, it overwrites the existing journal
-entries.
-This patch fixes it not to overwrite journal entry space.
+Previously SSA is updated if it is not included in current segment info.
+But, defrag.f2fs doesn't handle current segment info during the process, and
+instead lastly update the whole current segment info at a time.
+So, we need to update summary entries all the time.
+Otherwise, we can lose the SSA entry.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/mount.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fsck/mount.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/fsck/mount.c b/fsck/mount.c
-index d2f1432..fe68f37 100644
+index 79611e5..d2f1432 100644
 --- a/fsck/mount.c
 +++ b/fsck/mount.c
-@@ -1438,6 +1438,7 @@ void move_curseg_info(struct f2fs_sb_info *sbi, u64 from)
- 	/* update summary blocks having nullified journal entries */
- 	for (i = 0; i < NO_CHECK_TYPE; i++) {
- 		struct curseg_info *curseg = CURSEG_I(sbi, i);
-+		struct f2fs_summary_block buf;
- 		u32 old_segno;
- 		u64 ssa_blk, to;
+@@ -761,13 +761,16 @@ void update_sum_entry(struct f2fs_sb_info *sbi, block_t blk_addr,
+ 	sum_blk->footer.entry_type = IS_NODESEG(se->type) ? SUM_TYPE_NODE :
+ 							SUM_TYPE_DATA;
  
-@@ -1457,9 +1458,11 @@ void move_curseg_info(struct f2fs_sb_info *sbi, u64 from)
- 
- 		/* update new segno */
- 		ssa_blk = GET_SUM_BLKADDR(sbi, curseg->segno);
--		ret = dev_read_block(curseg->sum_blk, ssa_blk);
-+		ret = dev_read_block(&buf, ssa_blk);
+-	if (type == SEG_TYPE_NODE || type == SEG_TYPE_DATA ||
+-					type == SEG_TYPE_MAX) {
++	/* write SSA all the time */
++	if (type < SEG_TYPE_MAX) {
+ 		u64 ssa_blk = GET_SUM_BLKADDR(sbi, segno);
+ 		ret = dev_write_block(sum_blk, ssa_blk);
  		ASSERT(ret >= 0);
- 
-+		memcpy(curseg->sum_blk, &buf, SUM_ENTRIES_SIZE);
+-		free(sum_blk);
+ 	}
 +
- 		/* update se->types */
- 		reset_curseg(sbi, i);
++	if (type == SEG_TYPE_NODE || type == SEG_TYPE_DATA ||
++					type == SEG_TYPE_MAX)
++		free(sum_blk);
+ }
  
+ static void restore_curseg_summaries(struct f2fs_sb_info *sbi)
 -- 
 2.5.4 (Apple Git-61)
 
