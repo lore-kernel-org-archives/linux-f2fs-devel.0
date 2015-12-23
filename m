@@ -1,182 +1,191 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: speed up shrinking extent tree entries
-Date: Wed, 23 Dec 2015 17:52:56 +0800
-Message-ID: <010e01d13d67$cfc2a1e0$6f47e5a0$@samsung.com>
-References: <1450755521-20015-1-git-send-email-jaegeuk@kernel.org>
- <1450755521-20015-2-git-send-email-jaegeuk@kernel.org>
- <00bd01d13c78$8a2afc30$9e80f490$@samsung.com> <56794358.8030801@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 2/4 v2] f2fs: avoid unnecessary f2fs_gc for
+ dir operations
+Date: Wed, 23 Dec 2015 10:54:53 -0800
+Message-ID: <20151223185453.GA30505@jaegeuk.local>
+References: <1450832388-29118-1-git-send-email-jaegeuk@kernel.org>
+ <1450832388-29118-2-git-send-email-jaegeuk@kernel.org>
+ <010101d13d31$cdc1d860$69458920$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <56794358.8030801@huawei.com>
-Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: 'He YunLei' <heyunlei@huawei.com>
-Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <010101d13d31$cdc1d860$69458920$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-> -----Original Message-----
-> From: He YunLei [mailto:heyunlei@huawei.com]
-> Sent: Tuesday, December 22, 2015 8:35 PM
-> To: Chao Yu
-> Cc: 'Jaegeuk Kim'; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: speed up shrinking extent tree entries
-> 
-> On 2015/12/22 13:20, Chao Yu wrote:
-> > Hi Jaegeuk,
-> >
-> > We should update &total_zombie_tree whenever removing unreferenced
-> > extent tree during shrinking:
-> > - f2fs_shrink_extent_tree
-> > if (!atomic_read(&et->refcount)) {
-> > 	...
-> > 	atomic_dec(&sbi->total_ext_tree);
-> > 	atomic_dec(&sbi->total_zombie_tree);
-> > 	...
-> > }
-> >
-> > Other parts look good to me. :)
-> >
-> > Reviewed-by: Chao Yu <chao2.yu@samsung.com>
-> >
-> > Thanks,
-> >
-> >> -----Original Message-----
-> >> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> >> Sent: Tuesday, December 22, 2015 11:39 AM
-> >> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> >> linux-f2fs-devel@lists.sourceforge.net
-> >> Cc: Jaegeuk Kim
-> >> Subject: [f2fs-dev] [PATCH 2/2] f2fs: speed up shrinking extent tree entries
-> >>
-> >> If there is no candidates for shrinking slab entries, we don't need to traverse
-> >> any trees at all.
-> >>
-> >> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >> ---
-> >>   fs/f2fs/extent_cache.c | 12 ++++++++++++
-> >>   fs/f2fs/f2fs.h         |  1 +
-> >>   fs/f2fs/shrinker.c     |  2 +-
-> >>   3 files changed, 14 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> >> index 0e97d6af..32693af 100644
-> >> --- a/fs/f2fs/extent_cache.c
-> >> +++ b/fs/f2fs/extent_cache.c
-> >> @@ -71,6 +71,8 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode)
-> >>   		atomic_set(&et->refcount, 0);
-> >>   		et->count = 0;
-> >>   		atomic_inc(&sbi->total_ext_tree);
-> >> +	} else {
-> >> +		atomic_dec(&sbi->total_zombie_tree);
-> >>   	}
-> >>   	atomic_inc(&et->refcount);
-> >>   	up_write(&sbi->extent_tree_lock);
-> >> @@ -547,10 +549,14 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
-> >> nr_shrink)
-> >>   	unsigned int found;
-> >>   	unsigned int node_cnt = 0, tree_cnt = 0;
-> >>   	int remained;
-> >> +	bool do_free = false;
-> >>
-> >>   	if (!test_opt(sbi, EXTENT_CACHE))
-> >>   		return 0;
-> >>
-> >> +	if (!atomic_read(&sbi->total_zombie_tree))
-> >> +		goto free_node;
-> >> +
-> >>   	if (!down_write_trylock(&sbi->extent_tree_lock))
-> >>   		goto out;
-> >>
-> >> @@ -580,6 +586,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
-> >> nr_shrink)
-> >>   	}
-> >>   	up_write(&sbi->extent_tree_lock);
-> >>
-> >> +free_node:
-> >>   	/* 2. remove LRU extent entries */
-> >>   	if (!down_write_trylock(&sbi->extent_tree_lock))
-> >>   		goto out;
-> >> @@ -591,9 +598,13 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
-> >> nr_shrink)
-> >>   		if (!remained--)
-> >>   			break;
-> >>   		list_del_init(&en->list);
-> >> +		do_free = true;
-> >>   	}
-> >>   	spin_unlock(&sbi->extent_lock);
-> >>
-> >> +	if (do_free == false)
-> >> +		goto unlock_out;
-> >> +
-> >>   	/*
-> >>   	 * reset ino for searching victims from beginning of global extent tree.
-> >>   	 */
-> >> @@ -651,6 +662,7 @@ void f2fs_destroy_extent_tree(struct inode *inode)
-> >>
-> >>   	if (inode->i_nlink && !is_bad_inode(inode) && et->count) {
-> >>   		atomic_dec(&et->refcount);
-> >> +		atomic_dec(&sbi->total_zombie_tree);
-> >>   		return;
-> >>   	}
-> Hi,all
-> 	here, sbi->total_ext_tree-- also should change to
-> 	atomic_dec(&sbi->total_ext_tree);
+Chang log from v1:
+ - add more cases
 
-Yunlei,
+>From 9fea6346f5dd2992525e853e27a4fe899d122379 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Tue, 22 Dec 2015 11:56:08 -0800
+Subject: [PATCH] f2fs: avoid unnecessary f2fs_gc for dir operations
 
-Seems not right.
+The f2fs_balance_fs doesn't need to cover f2fs_new_inode or f2fs_find_entry
+works.
 
-Thanks,
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/namei.c | 34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
-> Thanks,
-> 
-> >>
-> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >> index a7f6191..90fb970 100644
-> >> --- a/fs/f2fs/f2fs.h
-> >> +++ b/fs/f2fs/f2fs.h
-> >> @@ -763,6 +763,7 @@ struct f2fs_sb_info {
-> >>   	struct list_head extent_list;		/* lru list for shrinker */
-> >>   	spinlock_t extent_lock;			/* locking extent lru list */
-> >>   	atomic_t total_ext_tree;		/* extent tree count */
-> >> +	atomic_t total_zombie_tree;		/* extent zombie tree count */
-> >>   	atomic_t total_ext_node;		/* extent info count */
-> >>
-> >>   	/* basic filesystem units */
-> >> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-> >> index a11e099..93606f2 100644
-> >> --- a/fs/f2fs/shrinker.c
-> >> +++ b/fs/f2fs/shrinker.c
-> >> @@ -32,7 +32,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
-> >>
-> >>   static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
-> >>   {
-> >> -	return atomic_read(&sbi->total_ext_tree) +
-> >> +	return atomic_read(&sbi->total_zombie_tree) +
-> >>   				atomic_read(&sbi->total_ext_node);
-> >>   }
-> >>
-> >> --
-> >> 2.5.4 (Apple Git-61)
-> >>
-> >>
-> >> ------------------------------------------------------------------------------
-> >> _______________________________________________
-> >> Linux-f2fs-devel mailing list
-> >> Linux-f2fs-devel@lists.sourceforge.net
-> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >
-> >
-> > ------------------------------------------------------------------------------
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >
-> > .
-> >
-
-
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 2c32110..e4588f7 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -128,8 +128,6 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	nid_t ino = 0;
+ 	int err;
+ 
+-	f2fs_balance_fs(sbi);
+-
+ 	inode = f2fs_new_inode(dir, mode);
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+@@ -142,6 +140,8 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 	ino = inode->i_ino;
+ 
++	f2fs_balance_fs(sbi);
++
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+@@ -288,12 +288,13 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	int err = -ENOENT;
+ 
+ 	trace_f2fs_unlink_enter(dir, dentry);
+-	f2fs_balance_fs(sbi);
+ 
+ 	de = f2fs_find_entry(dir, &dentry->d_name, &page);
+ 	if (!de)
+ 		goto fail;
+ 
++	f2fs_balance_fs(sbi);
++
+ 	f2fs_lock_op(sbi);
+ 	err = acquire_orphan_inode(sbi);
+ 	if (err) {
+@@ -341,8 +342,6 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	if (len > dir->i_sb->s_blocksize)
+ 		return -ENAMETOOLONG;
+ 
+-	f2fs_balance_fs(sbi);
+-
+ 	inode = f2fs_new_inode(dir, S_IFLNK | S_IRWXUGO);
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+@@ -353,6 +352,8 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 		inode->i_op = &f2fs_symlink_inode_operations;
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 
++	f2fs_balance_fs(sbi);
++
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+@@ -433,8 +434,6 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	struct inode *inode;
+ 	int err;
+ 
+-	f2fs_balance_fs(sbi);
+-
+ 	inode = f2fs_new_inode(dir, S_IFDIR | mode);
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+@@ -444,6 +443,8 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
+ 
++	f2fs_balance_fs(sbi);
++
+ 	set_inode_flag(F2FS_I(inode), FI_INC_LINK);
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+@@ -481,8 +482,6 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
+ 	struct inode *inode;
+ 	int err = 0;
+ 
+-	f2fs_balance_fs(sbi);
+-
+ 	inode = f2fs_new_inode(dir, mode);
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+@@ -490,6 +489,8 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
+ 	init_special_inode(inode, inode->i_mode, rdev);
+ 	inode->i_op = &f2fs_special_inode_operations;
+ 
++	f2fs_balance_fs(sbi);
++
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+@@ -516,9 +517,6 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+ 	struct inode *inode;
+ 	int err;
+ 
+-	if (!whiteout)
+-		f2fs_balance_fs(sbi);
+-
+ 	inode = f2fs_new_inode(dir, mode);
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+@@ -530,6 +528,8 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+ 		inode->i_op = &f2fs_file_inode_operations;
+ 		inode->i_fop = &f2fs_file_operations;
+ 		inode->i_mapping->a_ops = &f2fs_dblock_aops;
++
++		f2fs_balance_fs(sbi);
+ 	}
+ 
+ 	f2fs_lock_op(sbi);
+@@ -604,8 +604,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		goto out;
+ 	}
+ 
+-	f2fs_balance_fs(sbi);
+-
+ 	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+ 	if (!old_entry)
+ 		goto out;
+@@ -635,6 +633,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		if (!new_entry)
+ 			goto out_whiteout;
+ 
++		f2fs_balance_fs(sbi);
++
+ 		f2fs_lock_op(sbi);
+ 
+ 		err = acquire_orphan_inode(sbi);
+@@ -666,6 +666,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		update_inode_page(old_inode);
+ 		update_inode_page(new_inode);
+ 	} else {
++		f2fs_balance_fs(sbi);
++
+ 		f2fs_lock_op(sbi);
+ 
+ 		err = f2fs_add_link(new_dentry, old_inode);
+@@ -763,8 +765,6 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 								new_inode)))
+ 		return -EPERM;
+ 
+-	f2fs_balance_fs(sbi);
+-
+ 	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+ 	if (!old_entry)
+ 		goto out;
+@@ -807,6 +807,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 			goto out_new_dir;
+ 	}
+ 
++	f2fs_balance_fs(sbi);
++
+ 	f2fs_lock_op(sbi);
+ 
+ 	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
+-- 
+2.5.4 (Apple Git-61)
