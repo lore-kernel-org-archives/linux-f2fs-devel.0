@@ -1,23 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/4] f2fs: call f2fs_balance_fs only when node
-	was changed
-Date: Tue, 22 Dec 2015 16:59:48 -0800
-Message-ID: <1450832388-29118-4-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/4] f2fs: avoid unnecessary f2fs_gc for dir
+	operations
+Date: Tue, 22 Dec 2015 16:59:46 -0800
+Message-ID: <1450832388-29118-2-git-send-email-jaegeuk@kernel.org>
 References: <1450832388-29118-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aBXmb-0007FW-B1
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aBXmY-0003yz-Uf
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Dec 2015 01:00:01 +0000
+	Wed, 23 Dec 2015 00:59:58 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aBXma-0005bu-9F for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Dec 2015 01:00:01 +0000
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aBXmY-0006Y2-1K for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 23 Dec 2015 00:59:58 +0000
 In-Reply-To: <1450832388-29118-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,200 +31,87 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If user tries to update or read data, we don't need to call f2fs_balance_fs
-which triggers f2fs_gc, which increases unnecessary long latency.
+The f2fs_balance_fs doesn't need to cover f2fs_new_inode or f2fs_find_entry
+works.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c   | 19 ++++++++++++++++---
- fs/f2fs/file.c   | 26 +++++++++-----------------
- fs/f2fs/inline.c |  4 ++++
- 3 files changed, 29 insertions(+), 20 deletions(-)
+ fs/f2fs/namei.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a7a9a05..8f8f8b0 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -509,7 +509,6 @@ static void __allocate_data_blocks(struct inode *inode, loff_t offset,
- 	u64 end_offset;
- 
- 	while (len) {
--		f2fs_balance_fs(sbi);
- 		f2fs_lock_op(sbi);
- 
- 		/* When reading holes, we need its node page */
-@@ -542,6 +541,9 @@ static void __allocate_data_blocks(struct inode *inode, loff_t offset,
- 
- 		f2fs_put_dnode(&dn);
- 		f2fs_unlock_op(sbi);
-+
-+		if (dn.node_changed)
-+			f2fs_balance_fs(sbi);
- 	}
- 	return;
- 
-@@ -551,6 +553,8 @@ sync_out:
- 	f2fs_put_dnode(&dn);
- out:
- 	f2fs_unlock_op(sbi);
-+	if (dn.node_changed)
-+		f2fs_balance_fs(sbi);
- 	return;
- }
- 
-@@ -1410,8 +1414,6 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 
- 	trace_f2fs_write_begin(inode, pos, len, flags);
- 
--	f2fs_balance_fs(sbi);
--
- 	/*
- 	 * We should check this at this moment to avoid deadlock on inode page
- 	 * and #0 page. The locking rule for inline_data conversion should be:
-@@ -1461,6 +1463,17 @@ put_next:
- 	f2fs_put_dnode(&dn);
- 	f2fs_unlock_op(sbi);
- 
-+	if (dn.node_changed && has_not_enough_free_secs(sbi, 0)) {
-+		unlock_page(page);
-+		f2fs_balance_fs(sbi);
-+		lock_page(page);
-+		if (page->mapping != mapping) {
-+			/* The page got truncated from under us */
-+			f2fs_put_page(page, 1);
-+			goto repeat;
-+		}
-+	}
-+
- 	f2fs_wait_on_page_writeback(page, DATA);
- 
- 	/* wait for GCed encrypted page writeback */
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 10ed357..dbc08bb 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -40,8 +40,6 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
- 	struct dnode_of_data dn;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 2c32110..8d2616f 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -128,8 +128,6 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	nid_t ino = 0;
  	int err;
  
 -	f2fs_balance_fs(sbi);
 -
- 	sb_start_pagefault(inode->i_sb);
- 
- 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
-@@ -57,6 +55,9 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
- 	f2fs_put_dnode(&dn);
- 	f2fs_unlock_op(sbi);
- 
-+	if (dn.node_changed)
-+		f2fs_balance_fs(sbi);
-+
- 	file_update_time(vma->vm_file);
- 	lock_page(page);
- 	if (unlikely(page->mapping != inode->i_mapping ||
-@@ -233,9 +234,6 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 		goto out;
- 	}
- go_write:
--	/* guarantee free sections for fsync */
--	f2fs_balance_fs(sbi);
--
- 	/*
- 	 * Both of fdatasync() and fsync() are able to be recovered from
- 	 * sudden-power-off.
-@@ -267,6 +265,8 @@ sync_nodes:
- 	if (need_inode_block_update(sbi, ino)) {
- 		mark_inode_dirty_sync(inode);
- 		f2fs_write_inode(inode, NULL);
-+
-+		f2fs_balance_fs(sbi);
- 		goto sync_nodes;
- 	}
- 
-@@ -946,8 +946,6 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
- 	if (offset & (F2FS_BLKSIZE - 1) || len & (F2FS_BLKSIZE - 1))
- 		return -EINVAL;
- 
--	f2fs_balance_fs(F2FS_I_SB(inode));
--
- 	ret = f2fs_convert_inline_inode(inode);
- 	if (ret)
- 		return ret;
-@@ -994,8 +992,6 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
- 	if (ret)
- 		return ret;
- 
--	f2fs_balance_fs(sbi);
--
- 	ret = f2fs_convert_inline_inode(inode);
- 	if (ret)
- 		return ret;
-@@ -1105,12 +1101,12 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
- 	if (offset & (F2FS_BLKSIZE - 1) || len & (F2FS_BLKSIZE - 1))
- 		return -EINVAL;
- 
--	f2fs_balance_fs(sbi);
--
- 	ret = f2fs_convert_inline_inode(inode);
- 	if (ret)
- 		return ret;
+ 	inode = f2fs_new_inode(dir, mode);
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+@@ -142,6 +140,8 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 	ino = inode->i_ino;
  
 +	f2fs_balance_fs(sbi);
 +
- 	ret = truncate_blocks(inode, i_size_read(inode), true);
- 	if (ret)
- 		return ret;
-@@ -1153,8 +1149,6 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
- 	loff_t off_start, off_end;
- 	int ret = 0;
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+@@ -288,12 +288,13 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+ 	int err = -ENOENT;
  
+ 	trace_f2fs_unlink_enter(dir, dentry);
 -	f2fs_balance_fs(sbi);
--
- 	ret = inode_newsize_ok(inode, (len + offset));
- 	if (ret)
- 		return ret;
-@@ -1163,6 +1157,8 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
- 	if (ret)
- 		return ret;
+ 
+ 	de = f2fs_find_entry(dir, &dentry->d_name, &page);
+ 	if (!de)
+ 		goto fail;
  
 +	f2fs_balance_fs(sbi);
 +
- 	pg_start = ((unsigned long long) offset) >> PAGE_CACHE_SHIFT;
- 	pg_end = ((unsigned long long) offset + len) >> PAGE_CACHE_SHIFT;
+ 	f2fs_lock_op(sbi);
+ 	err = acquire_orphan_inode(sbi);
+ 	if (err) {
+@@ -341,8 +342,6 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	if (len > dir->i_sb->s_blocksize)
+ 		return -ENAMETOOLONG;
  
-@@ -1350,8 +1346,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- 	if (!inode_owner_or_capable(inode))
- 		return -EACCES;
- 
--	f2fs_balance_fs(F2FS_I_SB(inode));
+-	f2fs_balance_fs(sbi);
 -
- 	if (f2fs_is_atomic_file(inode))
- 		return 0;
+ 	inode = f2fs_new_inode(dir, S_IFLNK | S_IRWXUGO);
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+@@ -353,6 +352,8 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 		inode->i_op = &f2fs_symlink_inode_operations;
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
  
-@@ -1438,8 +1432,6 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
- 	if (ret)
- 		return ret;
++	f2fs_balance_fs(sbi);
++
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
+ 	if (err)
+@@ -433,8 +434,6 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	struct inode *inode;
+ 	int err;
  
--	f2fs_balance_fs(F2FS_I_SB(inode));
+-	f2fs_balance_fs(sbi);
 -
- 	clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
- 	clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
- 	commit_inmem_pages(inode, true);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 8090854..c24e5d9 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -202,6 +202,10 @@ out:
- 	f2fs_unlock_op(sbi);
+ 	inode = f2fs_new_inode(dir, S_IFDIR | mode);
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+@@ -444,6 +443,8 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+ 	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
  
- 	f2fs_put_page(page, 1);
++	f2fs_balance_fs(sbi);
 +
-+	if (dn.node_changed)
-+		f2fs_balance_fs(sbi);
-+
- 	return err;
- }
- 
+ 	set_inode_flag(F2FS_I(inode), FI_INC_LINK);
+ 	f2fs_lock_op(sbi);
+ 	err = f2fs_add_link(dentry, inode);
 -- 
 2.5.4 (Apple Git-61)
 
