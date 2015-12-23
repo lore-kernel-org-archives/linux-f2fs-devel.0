@@ -1,83 +1,182 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/2] f2fs: don't convert inline inode when
- inline_data option is disable
-Date: Wed, 23 Dec 2015 17:51:35 +0800
-Message-ID: <010d01d13d67$9a0eebd0$ce2cc370$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: speed up shrinking extent tree entries
+Date: Wed, 23 Dec 2015 17:52:56 +0800
+Message-ID: <010e01d13d67$cfc2a1e0$6f47e5a0$@samsung.com>
+References: <1450755521-20015-1-git-send-email-jaegeuk@kernel.org>
+ <1450755521-20015-2-git-send-email-jaegeuk@kernel.org>
+ <00bd01d13c78$8a2afc30$9e80f490$@samsung.com> <56794358.8030801@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aBg5w-0002VW-Br
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Dec 2015 09:52:32 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aBg5u-0000oW-Fx
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Dec 2015 09:52:32 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NZT009T1231T9E0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Dec 2015 18:52:14 +0900 (KST)
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-reply-to: <56794358.8030801@huawei.com>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: 'He YunLei' <heyunlei@huawei.com>
+Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If inline_data option is disable, when truncating an inline inode with
-size which is not exceed maxinum inline size, we should not convert
-inline inode to regular one to avoid the overhead of synchronizing
-conversion.
+> -----Original Message-----
+> From: He YunLei [mailto:heyunlei@huawei.com]
+> Sent: Tuesday, December 22, 2015 8:35 PM
+> To: Chao Yu
+> Cc: 'Jaegeuk Kim'; linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: speed up shrinking extent tree entries
+> 
+> On 2015/12/22 13:20, Chao Yu wrote:
+> > Hi Jaegeuk,
+> >
+> > We should update &total_zombie_tree whenever removing unreferenced
+> > extent tree during shrinking:
+> > - f2fs_shrink_extent_tree
+> > if (!atomic_read(&et->refcount)) {
+> > 	...
+> > 	atomic_dec(&sbi->total_ext_tree);
+> > 	atomic_dec(&sbi->total_zombie_tree);
+> > 	...
+> > }
+> >
+> > Other parts look good to me. :)
+> >
+> > Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+> >
+> > Thanks,
+> >
+> >> -----Original Message-----
+> >> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> >> Sent: Tuesday, December 22, 2015 11:39 AM
+> >> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> >> linux-f2fs-devel@lists.sourceforge.net
+> >> Cc: Jaegeuk Kim
+> >> Subject: [f2fs-dev] [PATCH 2/2] f2fs: speed up shrinking extent tree entries
+> >>
+> >> If there is no candidates for shrinking slab entries, we don't need to traverse
+> >> any trees at all.
+> >>
+> >> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >> ---
+> >>   fs/f2fs/extent_cache.c | 12 ++++++++++++
+> >>   fs/f2fs/f2fs.h         |  1 +
+> >>   fs/f2fs/shrinker.c     |  2 +-
+> >>   3 files changed, 14 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> >> index 0e97d6af..32693af 100644
+> >> --- a/fs/f2fs/extent_cache.c
+> >> +++ b/fs/f2fs/extent_cache.c
+> >> @@ -71,6 +71,8 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode)
+> >>   		atomic_set(&et->refcount, 0);
+> >>   		et->count = 0;
+> >>   		atomic_inc(&sbi->total_ext_tree);
+> >> +	} else {
+> >> +		atomic_dec(&sbi->total_zombie_tree);
+> >>   	}
+> >>   	atomic_inc(&et->refcount);
+> >>   	up_write(&sbi->extent_tree_lock);
+> >> @@ -547,10 +549,14 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
+> >> nr_shrink)
+> >>   	unsigned int found;
+> >>   	unsigned int node_cnt = 0, tree_cnt = 0;
+> >>   	int remained;
+> >> +	bool do_free = false;
+> >>
+> >>   	if (!test_opt(sbi, EXTENT_CACHE))
+> >>   		return 0;
+> >>
+> >> +	if (!atomic_read(&sbi->total_zombie_tree))
+> >> +		goto free_node;
+> >> +
+> >>   	if (!down_write_trylock(&sbi->extent_tree_lock))
+> >>   		goto out;
+> >>
+> >> @@ -580,6 +586,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
+> >> nr_shrink)
+> >>   	}
+> >>   	up_write(&sbi->extent_tree_lock);
+> >>
+> >> +free_node:
+> >>   	/* 2. remove LRU extent entries */
+> >>   	if (!down_write_trylock(&sbi->extent_tree_lock))
+> >>   		goto out;
+> >> @@ -591,9 +598,13 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
+> >> nr_shrink)
+> >>   		if (!remained--)
+> >>   			break;
+> >>   		list_del_init(&en->list);
+> >> +		do_free = true;
+> >>   	}
+> >>   	spin_unlock(&sbi->extent_lock);
+> >>
+> >> +	if (do_free == false)
+> >> +		goto unlock_out;
+> >> +
+> >>   	/*
+> >>   	 * reset ino for searching victims from beginning of global extent tree.
+> >>   	 */
+> >> @@ -651,6 +662,7 @@ void f2fs_destroy_extent_tree(struct inode *inode)
+> >>
+> >>   	if (inode->i_nlink && !is_bad_inode(inode) && et->count) {
+> >>   		atomic_dec(&et->refcount);
+> >> +		atomic_dec(&sbi->total_zombie_tree);
+> >>   		return;
+> >>   	}
+> Hi,all
+> 	here, sbi->total_ext_tree-- also should change to
+> 	atomic_dec(&sbi->total_ext_tree);
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/inline.c | 3 ---
- fs/f2fs/namei.c  | 2 +-
- 2 files changed, 1 insertion(+), 4 deletions(-)
+Yunlei,
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index c24e5d9..5ffbd16 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -16,9 +16,6 @@
- 
- bool f2fs_may_inline_data(struct inode *inode)
- {
--	if (!test_opt(F2FS_I_SB(inode), INLINE_DATA))
--		return false;
--
- 	if (f2fs_is_atomic_file(inode))
- 		return false;
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 8d2616f..8655dc8 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -60,7 +60,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode))
- 		f2fs_set_encrypted_inode(inode);
- 
--	if (f2fs_may_inline_data(inode))
-+	if (test_opt(sbi, INLINE_DATA) && f2fs_may_inline_data(inode))
- 		set_inode_flag(F2FS_I(inode), FI_INLINE_DATA);
- 	if (f2fs_may_inline_dentry(inode))
- 		set_inode_flag(F2FS_I(inode), FI_INLINE_DENTRY);
--- 
-2.6.3
+Seems not right.
+
+Thanks,
+
+> Thanks,
+> 
+> >>
+> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >> index a7f6191..90fb970 100644
+> >> --- a/fs/f2fs/f2fs.h
+> >> +++ b/fs/f2fs/f2fs.h
+> >> @@ -763,6 +763,7 @@ struct f2fs_sb_info {
+> >>   	struct list_head extent_list;		/* lru list for shrinker */
+> >>   	spinlock_t extent_lock;			/* locking extent lru list */
+> >>   	atomic_t total_ext_tree;		/* extent tree count */
+> >> +	atomic_t total_zombie_tree;		/* extent zombie tree count */
+> >>   	atomic_t total_ext_node;		/* extent info count */
+> >>
+> >>   	/* basic filesystem units */
+> >> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+> >> index a11e099..93606f2 100644
+> >> --- a/fs/f2fs/shrinker.c
+> >> +++ b/fs/f2fs/shrinker.c
+> >> @@ -32,7 +32,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
+> >>
+> >>   static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
+> >>   {
+> >> -	return atomic_read(&sbi->total_ext_tree) +
+> >> +	return atomic_read(&sbi->total_zombie_tree) +
+> >>   				atomic_read(&sbi->total_ext_node);
+> >>   }
+> >>
+> >> --
+> >> 2.5.4 (Apple Git-61)
+> >>
+> >>
+> >> ------------------------------------------------------------------------------
+> >> _______________________________________________
+> >> Linux-f2fs-devel mailing list
+> >> Linux-f2fs-devel@lists.sourceforge.net
+> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >
+> >
+> > ------------------------------------------------------------------------------
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >
+> > .
+> >
 
 
-
-------------------------------------------------------------------------------
