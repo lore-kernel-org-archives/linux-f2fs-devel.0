@@ -1,125 +1,222 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/4] f2fs: avoid f2fs_lock_op in f2fs_write_begin
-Date: Wed, 23 Dec 2015 18:15:19 -0800
-Message-ID: <1450923320-41113-3-git-send-email-jaegeuk@kernel.org>
-References: <1450923320-41113-1-git-send-email-jaegeuk@kernel.org>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/4 v2] f2fs: avoid unnecessary f2fs_gc for dir
+ operations
+Date: Thu, 24 Dec 2015 11:30:55 +0800
+Message-ID: <014601d13dfb$9a3debd0$ceb9c370$@samsung.com>
+References: <1450832388-29118-1-git-send-email-jaegeuk@kernel.org>
+ <1450832388-29118-2-git-send-email-jaegeuk@kernel.org>
+ <010101d13d31$cdc1d860$69458920$@samsung.com>
+ <20151223185453.GA30505@jaegeuk.local>
+ <013801d13deb$2ba86480$82f92d80$@samsung.com>
+ <20151224021311.GA40333@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aBvRF-0007nD-MI
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Dec 2015 02:15:33 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aBvRE-0006Ml-Tz for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Dec 2015 02:15:33 +0000
-In-Reply-To: <1450923320-41113-1-git-send-email-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20151224021311.GA40333@jaegeuk.local>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If f2fs_write_begin is to update data, we can bypass calling f2fs_lock_op() in
-order to avoid the checkpoint latency in the write syscall.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Thursday, December 24, 2015 10:13 AM
+> To: Chao Yu
+> Cc: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 2/4 v2] f2fs: avoid unnecessary f2fs_gc for dir operations
+> 
+> Hi Chao,
+> 
+> Right.
+> But, in the rename path, we still need to do f2fs_balance_fs, since it produces
+> another dirty node page in the mean time.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/data.c | 43 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 34 insertions(+), 9 deletions(-)
+That's right.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 49092da..d53cf4f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1418,10 +1418,16 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 	pgoff_t index = page->index;
- 	struct dnode_of_data dn;
- 	struct page *ipage;
-+	bool locked = false;
-+	struct extent_info ei;
- 	int err = 0;
- 
--	f2fs_lock_op(sbi);
--
-+	if (f2fs_has_inline_data(inode) ||
-+			(pos & PAGE_CACHE_MASK) >= i_size_read(inode)) {
-+		f2fs_lock_op(sbi);
-+		locked = true;
-+	}
-+restart:
- 	/* check inline_data */
- 	ipage = get_node_page(sbi, inode->i_ino);
- 	if (IS_ERR(ipage)) {
-@@ -1436,22 +1442,41 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 			read_inline_data(page, ipage);
- 			set_inode_flag(F2FS_I(inode), FI_DATA_EXIST);
- 			sync_inode_page(&dn);
--			goto done;
- 		} else {
- 			err = f2fs_convert_inline_page(&dn, page);
- 			if (err)
--				goto err_out;
-+				goto out;
-+			err = f2fs_get_block(&dn, index);
-+		}
-+	} else if (locked) {
-+		err = f2fs_get_block(&dn, index);
-+	} else {
-+		if (f2fs_lookup_extent_cache(inode, index, &ei)) {
-+			dn.data_blkaddr = ei.blk + index - ei.fofs;
-+		} else {
-+			bool restart = false;
-+
-+			/* hole case */
-+			err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
-+			if (err || (!err && dn.data_blkaddr == NULL_ADDR))
-+				restart = true;
-+			if (restart) {
-+				f2fs_put_dnode(&dn);
-+				f2fs_lock_op(sbi);
-+				locked = true;
-+				goto restart;
-+			}
- 		}
- 	}
--	err = f2fs_get_block(&dn, index);
--done:
-+
- 	/* convert_inline_page can make node_changed */
- 	*blk_addr = dn.data_blkaddr;
- 	*node_changed = dn.node_changed;
--err_out:
-+out:
- 	f2fs_put_dnode(&dn);
- unlock_out:
--	f2fs_unlock_op(sbi);
-+	if (locked)
-+		f2fs_unlock_op(sbi);
- 	return err;
- }
- 
-@@ -1488,7 +1513,7 @@ repeat:
- 
- 	*pagep = page;
- 
--	err = prepare_write_begin(sbi, page, pos + len,
-+	err = prepare_write_begin(sbi, page, pos,  len,
- 					&blkaddr, &need_balance);
- 	if (err)
- 		goto fail;
--- 
-2.5.4 (Apple Git-61)
+> 
+> How about this?
+> 
+> From bbc5bf8f6c940cd75a4d71ce40ce4bd3f647a823 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Tue, 22 Dec 2015 11:56:08 -0800
+> Subject: [PATCH] f2fs: avoid unnecessary f2fs_gc for dir operations
+> 
+> The f2fs_balance_fs doesn't need to cover f2fs_new_inode or f2fs_find_entry
+> works.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
-------------------------------------------------------------------------------
+Thanks,
+
+> ---
+>  fs/f2fs/namei.c | 34 ++++++++++++++++++----------------
+>  1 file changed, 18 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 2c32110..4e27c5c 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -128,8 +128,6 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t
+> mode,
+>  	nid_t ino = 0;
+>  	int err;
+> 
+> -	f2fs_balance_fs(sbi);
+> -
+>  	inode = f2fs_new_inode(dir, mode);
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+> @@ -142,6 +140,8 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t
+> mode,
+>  	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+>  	ino = inode->i_ino;
+> 
+> +	f2fs_balance_fs(sbi);
+> +
+>  	f2fs_lock_op(sbi);
+>  	err = f2fs_add_link(dentry, inode);
+>  	if (err)
+> @@ -288,12 +288,13 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+>  	int err = -ENOENT;
+> 
+>  	trace_f2fs_unlink_enter(dir, dentry);
+> -	f2fs_balance_fs(sbi);
+> 
+>  	de = f2fs_find_entry(dir, &dentry->d_name, &page);
+>  	if (!de)
+>  		goto fail;
+> 
+> +	f2fs_balance_fs(sbi);
+> +
+>  	f2fs_lock_op(sbi);
+>  	err = acquire_orphan_inode(sbi);
+>  	if (err) {
+> @@ -341,8 +342,6 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+>  	if (len > dir->i_sb->s_blocksize)
+>  		return -ENAMETOOLONG;
+> 
+> -	f2fs_balance_fs(sbi);
+> -
+>  	inode = f2fs_new_inode(dir, S_IFLNK | S_IRWXUGO);
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+> @@ -353,6 +352,8 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+>  		inode->i_op = &f2fs_symlink_inode_operations;
+>  	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+> 
+> +	f2fs_balance_fs(sbi);
+> +
+>  	f2fs_lock_op(sbi);
+>  	err = f2fs_add_link(dentry, inode);
+>  	if (err)
+> @@ -433,8 +434,6 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t
+> mode)
+>  	struct inode *inode;
+>  	int err;
+> 
+> -	f2fs_balance_fs(sbi);
+> -
+>  	inode = f2fs_new_inode(dir, S_IFDIR | mode);
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+> @@ -444,6 +443,8 @@ static int f2fs_mkdir(struct inode *dir, struct dentry *dentry, umode_t
+> mode)
+>  	inode->i_mapping->a_ops = &f2fs_dblock_aops;
+>  	mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_HIGH_ZERO);
+> 
+> +	f2fs_balance_fs(sbi);
+> +
+>  	set_inode_flag(F2FS_I(inode), FI_INC_LINK);
+>  	f2fs_lock_op(sbi);
+>  	err = f2fs_add_link(dentry, inode);
+> @@ -481,8 +482,6 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
+>  	struct inode *inode;
+>  	int err = 0;
+> 
+> -	f2fs_balance_fs(sbi);
+> -
+>  	inode = f2fs_new_inode(dir, mode);
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+> @@ -490,6 +489,8 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
+>  	init_special_inode(inode, inode->i_mode, rdev);
+>  	inode->i_op = &f2fs_special_inode_operations;
+> 
+> +	f2fs_balance_fs(sbi);
+> +
+>  	f2fs_lock_op(sbi);
+>  	err = f2fs_add_link(dentry, inode);
+>  	if (err)
+> @@ -516,9 +517,6 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+>  	struct inode *inode;
+>  	int err;
+> 
+> -	if (!whiteout)
+> -		f2fs_balance_fs(sbi);
+> -
+>  	inode = f2fs_new_inode(dir, mode);
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+> @@ -532,6 +530,8 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
+>  		inode->i_mapping->a_ops = &f2fs_dblock_aops;
+>  	}
+> 
+> +	f2fs_balance_fs(sbi);
+> +
+>  	f2fs_lock_op(sbi);
+>  	err = acquire_orphan_inode(sbi);
+>  	if (err)
+> @@ -604,8 +604,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  		goto out;
+>  	}
+> 
+> -	f2fs_balance_fs(sbi);
+> -
+>  	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+>  	if (!old_entry)
+>  		goto out;
+> @@ -635,6 +633,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  		if (!new_entry)
+>  			goto out_whiteout;
+> 
+> +		f2fs_balance_fs(sbi);
+> +
+>  		f2fs_lock_op(sbi);
+> 
+>  		err = acquire_orphan_inode(sbi);
+> @@ -666,6 +666,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  		update_inode_page(old_inode);
+>  		update_inode_page(new_inode);
+>  	} else {
+> +		f2fs_balance_fs(sbi);
+> +
+>  		f2fs_lock_op(sbi);
+> 
+>  		err = f2fs_add_link(new_dentry, old_inode);
+> @@ -763,8 +765,6 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry
+> *old_dentry,
+>  								new_inode)))
+>  		return -EPERM;
+> 
+> -	f2fs_balance_fs(sbi);
+> -
+>  	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+>  	if (!old_entry)
+>  		goto out;
+> @@ -807,6 +807,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry
+> *old_dentry,
+>  			goto out_new_dir;
+>  	}
+> 
+> +	f2fs_balance_fs(sbi);
+> +
+>  	f2fs_lock_op(sbi);
+> 
+>  	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
+> --
+> 2.5.4 (Apple Git-61)
