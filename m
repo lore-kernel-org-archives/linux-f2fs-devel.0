@@ -1,82 +1,50 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 4/5] f2fs: support data flush in ioctl
-Date: Thu, 24 Dec 2015 18:10:25 +0800
-Message-ID: <016701d13e33$676f0bc0$364d2340$@samsung.com>
+Subject: [PATCH 5/5] f2fs: clean up f2fs_ioc_write_checkpoint
+Date: Thu, 24 Dec 2015 18:11:32 +0800
+Message-ID: <016801d13e33$8f150a30$ad3f1e90$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aC2rc-0005IT-Ny
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Dec 2015 10:11:16 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aC2rb-00020o-8v
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Dec 2015 10:11:16 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NZU01066XMGKCC0@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Dec 2015 19:11:07 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Sometimes user want to sync all data belong to superblock into storage
-for persistence, 'syncfs' syscall is one option, still f2fs supports
-similar one through ioctl, difference is that sb releted kworker is
-online for writebacking concurrently.
+Use f2fs_sync_fs to clean up codes in f2fs_ioc_write_checkpoint.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/file.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/f2fs/file.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a60d088..91997a5 100644
+index 91997a5..b75037b 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -1621,6 +1621,7 @@ static int f2fs_ioc_write_checkpoint(struct file *filp, unsigned long arg)
+@@ -1619,7 +1619,6 @@ static int f2fs_ioc_write_checkpoint(struct file *filp, unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(filp);
  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct cp_control cpc;
+-	struct cp_control cpc;
  	int err;
-+	int flush_data;
+ 	int flush_data;
  
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
-@@ -1628,6 +1629,15 @@ static int f2fs_ioc_write_checkpoint(struct file *filp, unsigned long arg)
- 	if (f2fs_readonly(sbi->sb))
- 		return -EROFS;
+@@ -1638,13 +1637,7 @@ static int f2fs_ioc_write_checkpoint(struct file *filp, unsigned long arg)
+ 			return err;
+ 	}
  
-+	if (get_user(flush_data, (__u32 __user *)arg))
-+		return -EFAULT;
-+
-+	if (flush_data) {
-+		err = sync_dirty_inodes(sbi, FILE_INODE);
-+		if (err)
-+			return err;
-+	}
-+
- 	cpc.reason = __get_cp_reason(sbi);
+-	cpc.reason = __get_cp_reason(sbi);
+-
+-	mutex_lock(&sbi->gc_mutex);
+-	err = write_checkpoint(sbi, &cpc);
+-	mutex_unlock(&sbi->gc_mutex);
+-
+-	return err;
++	return f2fs_sync_fs(sbi->sb, 1);
+ }
  
- 	mutex_lock(&sbi->gc_mutex);
+ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
 -- 
 2.6.3
-
-
-
-------------------------------------------------------------------------------
