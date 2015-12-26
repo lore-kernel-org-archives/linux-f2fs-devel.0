@@ -1,25 +1,25 @@
-From: He YunLei <heyunlei@huawei.com>
-Subject: Re: [PATCH] f2fs: add a segment and section num check in
- sanity_check_raw_super
-Date: Sat, 26 Dec 2015 10:55:45 +0800
-Message-ID: <567E01B1.5090207@huawei.com>
-References: <1451097979-4589-1-git-send-email-heyunlei@huawei.com>
+From: Marc Lehmann <schmorp@schmorp.de>
+Subject: Re: [PATCH 3/5] f2fs: report readonly status in ->fsync
+Date: Sat, 26 Dec 2015 07:32:58 +0100
+Message-ID: <20151226063258.GA4641@schmorp.de>
+References: <016601d13e33$0ecdfd50$2c69f7f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1aCf1u-0005cE-53
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1aCiQN-0002Oj-Jo
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Dec 2015 02:56:26 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aCf1q-0006ZK-SF
+	Sat, 26 Dec 2015 06:33:55 +0000
+Received: from mail.nethype.de ([5.9.56.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aCiQL-0006NC-Ox
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Dec 2015 02:56:26 +0000
-In-Reply-To: <1451097979-4589-1-git-send-email-heyunlei@huawei.com>
+	Sat, 26 Dec 2015 06:33:55 +0000
+Content-Disposition: inline
+In-Reply-To: <016601d13e33$0ecdfd50$2c69f7f0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,44 +29,31 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2015/12/26 10:46, Yunlei He wrote:
-> This patch add a mismatch check between segment and section in
-> sanity_check_raw_super.
->
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->   fs/f2fs/super.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index c3070c1..b51a690 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1036,6 +1036,17 @@ static int sanity_check_raw_super(struct super_block *sb,
->   		return 1;
->   	}
->
-> +	/* check seg # corresponding to sec # */
-> +	if (le32_to_cpu(raw_super->segment_count)
-> +			* le32_to_cpu(raw_super->segs_per_sec)
+On Thu, Dec 24, 2015 at 06:07:25PM +0800, Chao Yu <chao2.yu@samsung.com> wrote:
+> Report readonly status of filesystem during fsync.
 
-I am sorry that here is :
-			/ le32_to_cpu(raw_super->segs_per_sec)
-> +				!= le32_to_cpu(raw_super->section_count)) {
-> +		f2fs_msg(sb, KERN_INFO,
-> +			"Mismatch seg num (%u) and sec num (%u) \n",
-> +			le32_to_cpu(raw_super->segment_count),
-> +			le32_to_cpu(raw_super->section_count));
-> +		return 1;
-> +	}
-> +
->   	/* Currently, support 512/1024/2048/4096 bytes sector size */
->   	if (le32_to_cpu(raw_super->log_sectorsize) >
->   				F2FS_MAX_LOG_SECTOR_SIZE ||
->
+If this means that fsync returns EROFS when used on a file on a read-only
+filesystem., then this looks buggy - EROFS is not documented for
+fsync (only as "fd is bound to a special file which does not support
+synchronization") for this condition, and I don't think other filesystems
+do that (just tried xfs).
 
+It also doesn't quite make sense - fsync should only fail when the file
+couldn't be synced, but in most (probably all) cases, the file is already
+synchronised, otherwise the filesystem shouldn't be RO.
+
+I only looked at the diff, so if I missed the context and my reasoning
+doesn't apply, forgive and ignore me :)
+
+-- 
+                The choice of a       Deliantra, the free code+content MORPG
+      -----==-     _GNU_              http://www.deliantra.net
+      ----==-- _       generation
+      ---==---(_)__  __ ____  __      Marc Lehmann
+      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+      -=====/_/_//_/\_,_/ /_/\_\
 
 ------------------------------------------------------------------------------
