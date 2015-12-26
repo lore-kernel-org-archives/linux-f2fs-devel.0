@@ -1,29 +1,26 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: [PATCH] f2fs: fix bugs and simplify codes of f2fs_fiemap
-Date: Sat, 26 Dec 2015 18:07:41 +0800
-Message-ID: <001601d13fc5$588bd000$09a37000$@samsung.com>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH] f2fs: add a max block count for
+ f2fs_map_blocks
+Date: Sat, 26 Dec 2015 21:21:00 +0800
+Message-ID: <567E943C.6050905@kernel.org>
+References: <1451033257-2087-1-git-send-email-heyunlei@huawei.com>
+	<018a01d13ef6$63c58120$2b508360$@samsung.com>
+	<567D17B7.7060308@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fanofcode.li@samsung.com>) id 1aClm1-0007OH-JN
+	(envelope-from <chao@kernel.org>) id 1aComg-0003YL-EX
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Dec 2015 10:08:29 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aCllz-0000xf-Lz
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Dec 2015 10:08:29 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0NZY00IBOMTVJH90@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Dec 2015 19:08:20 +0900 (KST)
-Content-language: en-us
+	Sat, 26 Dec 2015 13:21:22 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aCome-0002RR-Pw for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 26 Dec 2015 13:21:22 +0000
+In-Reply-To: <567D17B7.7060308@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,141 +30,114 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: liuxue <liuxueliu.liu@huawei.com>, 'Yunlei He' <heyunlei@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
 
-fix bugs:
-1. len could be updated incorrectly when start+len is beyond isize.
-2. If there is a hole consisting of more than two blocks, it could
-   fail to add FIEMAP_EXTENT_LAST flag for the last extent.
-3. If there is an extent beyond isize, when we search extents in a range 
-   that ends at isize, it will also return the extent beyond isize,
-   which is outside the range.
+Hi,
 
-Signed-off-by: Fan li <fanofcode.li@samsung.com>
----
- fs/f2fs/data.c |   80 +++++++++++++++++++-------------------------------------
- 1 file changed, 27 insertions(+), 53 deletions(-)
+On 12/25/15 6:17 PM, liuxue wrote:
+> On 2015/12/25 17:25, Chao Yu wrote:
+>> Hi,
+>>
+>>> -----Original Message-----
+>>> From: Yunlei He [mailto:heyunlei@huawei.com]
+>>> Sent: Friday, December 25, 2015 4:48 PM
+>>> To: linux-f2fs-devel@lists.sourceforge.net; jaegeuk@kernel.org; chao2.yu@samsung.com
+>>> Cc: bintian.wang@huawei.com; Yunlei He; Xue Liu
+>>> Subject: [PATCH] f2fs: add a max block count for f2fs_map_blocks
+>>>
+>>> This patch adds a max block count for f2fs_map_blocks
+>>
+>> Maximum file size should be limited by sb->s_maxbytes which was inited
+>> in max_file_size(), so logical block index should not exceed the value
+>> calculated with maxbytes, why would we limit logical block index with
+>> another value?
+>>
+>> Thanks,
+>>
+> 
+> Hi,
+> Trinity test program will send a block number as parameter into ioctl_fibmap, which will be used in
+> get_node_path(), when the block number large than f2fs max blocks, it will trigger kernel bug.
+> So we judge the block number in f2fs_map_blocks(), which reference ext4:
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 5c43b2d..d67c599 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -783,7 +783,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	loff_t isize = i_size_read(inode);
- 	u64 logical = 0, phys = 0, size = 0;
- 	u32 flags = 0;
--	bool past_eof = false, whole_file = false;
- 	int ret = 0;
- 
- 	ret = fiemap_check_flags(fieinfo, FIEMAP_FLAG_SYNC);
-@@ -797,17 +796,18 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	}
- 
- 	mutex_lock(&inode->i_mutex);
-+	if (start >= isize)
-+		goto out;
- 
--	if (len >= isize) {
--		whole_file = true;
--		len = isize;
--	}
-+	if (start + len > isize)
-+		len = isize - start;
- 
- 	if (logical_to_blk(inode, len) == 0)
- 		len = blk_to_logical(inode, 1);
- 
- 	start_blk = logical_to_blk(inode, start);
- 	last_blk = logical_to_blk(inode, start + len - 1);
-+
- next:
- 	memset(&map_bh, 0, sizeof(struct buffer_head));
- 	map_bh.b_size = len;
-@@ -819,59 +819,33 @@ next:
- 
- 	/* HOLE */
- 	if (!buffer_mapped(&map_bh)) {
--		start_blk++;
--
--		if (!past_eof && blk_to_logical(inode, start_blk) >= isize)
--			past_eof = 1;
--
--		if (past_eof && size) {
--			flags |= FIEMAP_EXTENT_LAST;
--			ret = fiemap_fill_next_extent(fieinfo, logical,
--					phys, size, flags);
--		} else if (size) {
--			ret = fiemap_fill_next_extent(fieinfo, logical,
--					phys, size, flags);
--			size = 0;
--		}
-+		/* Go through holes util pass the EOF */
-+		if (blk_to_logical(inode, start_blk++) < isize)
-+			goto prep_next;
-+		/* Found a hole beyond isize means no more extents.
-+		 * Note that the premise is that filesystems don't
-+		 * punch holes beyond isize and keep size unchanged.
-+		 */
-+		flags |= FIEMAP_EXTENT_LAST;
-+	}
- 
--		/* if we have holes up to/past EOF then we're done */
--		if (start_blk > last_blk || past_eof || ret)
--			goto out;
--	} else {
--		if (start_blk > last_blk && !whole_file) {
--			ret = fiemap_fill_next_extent(fieinfo, logical,
--					phys, size, flags);
--			goto out;
--		}
-+	if (size)
-+		ret = fiemap_fill_next_extent(fieinfo, logical,
-+				phys, size, flags);
- 
--		/*
--		 * if size != 0 then we know we already have an extent
--		 * to add, so add it.
--		 */
--		if (size) {
--			ret = fiemap_fill_next_extent(fieinfo, logical,
--					phys, size, flags);
--			if (ret)
--				goto out;
--		}
-+	if (start_blk > last_blk || ret)
-+		goto out;
- 
--		logical = blk_to_logical(inode, start_blk);
--		phys = blk_to_logical(inode, map_bh.b_blocknr);
--		size = map_bh.b_size;
--		flags = 0;
--		if (buffer_unwritten(&map_bh))
--			flags = FIEMAP_EXTENT_UNWRITTEN;
-+	logical = blk_to_logical(inode, start_blk);
-+	phys = blk_to_logical(inode, map_bh.b_blocknr);
-+	size = map_bh.b_size;
-+	flags = 0;
-+	if (buffer_unwritten(&map_bh))
-+		flags = FIEMAP_EXTENT_UNWRITTEN;
- 
--		start_blk += logical_to_blk(inode, size);
-+	start_blk += logical_to_blk(inode, size);
- 
--		/*
--		 * If we are past the EOF, then we need to make sure as
--		 * soon as we find a hole that the last extent we found
--		 * is marked with FIEMAP_EXTENT_LAST
--		 */
--		if (!past_eof && logical + size >= isize)
--			past_eof = true;
--	}
-+prep_next:
- 	cond_resched();
- 	if (fatal_signal_pending(current))
- 		ret = -EINTR;
--- 
-1.7.9.5
+Thanks for the explanation, and this makes sense to me, it's better to add above
+message in commit log.
 
+> 
+> file: fs/ext4/inode.c
+> function: ext4_map_blocks()
+> 
+>      /* We can handle the block number less than EXT_MAX_BLOCKS */
+>      if (unlikely(map->m_lblk >= EXT_MAX_BLOCKS))
+>          return -EFSCORRUPTED;
+> 
+> 
+>>>
+>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>> Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
+>>> ---
+>>>   fs/f2fs/data.c | 4 ++++
+>>>   fs/f2fs/f2fs.h | 3 +++
+>>>   2 files changed, 7 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index e34b1bd..2a16c867 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -578,6 +578,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+
+As you mentioned, this bug will only be triggered in bmap, so how about checking
+upper boundary in get_data_block_bmap? Since we could remain bug_on in
+get_node_path for other call paths to check whether this is a bug of VFS or not.
+
+>>>   	map->m_len = 0;
+>>>   	map->m_flags = 0;
+>>>
+>>> +	/* We can handle the block number less than F2FS_MAX_BLOCKS */
+>>> +	if (unlikely(map->m_lblk >= F2FS_MAX_BLOCKS))
+>>> +		return -EUCLEAN;
+
+EFBIG ?
+
+>>> +
+>>>   	/* it only supports block size == page size */
+>>>   	pgofs =	(pgoff_t)map->m_lblk;
+>>>
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index 19beabe..911c99b 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -331,6 +331,9 @@ enum {
+>>>
+>>>   #define F2FS_LINK_MAX	0xffffffff	/* maximum link count per file */
+>>>
+>>> +
+>>> +#define F2FS_MAX_BLOCKS 0x3F015AFF      /* maximum block count per file */
+
+Can you introduce F2FS_MAX_BLOCKS with calculation detail of constant
+'0x3F015AFF', moreover need to exclude reserved space for inline xattr.
+
+Thanks,
+
+>>> +
+>>>   #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
+>>>
+>>>   /* vector size for gang look-up from extent cache that consists of radix tree */
+>>> --
+>>> 1.9.1
+>>
+>>
+>>
+>> .
+>
+> 
+> 
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
 
 ------------------------------------------------------------------------------
