@@ -1,27 +1,23 @@
-From: He YunLei <heyunlei@huawei.com>
-Subject: Re: [PATCH] f2fs: add a max block count for
-	f2fs_map_blocks
-Date: Mon, 28 Dec 2015 21:03:52 +0800
-Message-ID: <56813338.7090809@huawei.com>
-References: <1451033257-2087-1-git-send-email-heyunlei@huawei.com>
-	<018a01d13ef6$63c58120$2b508360$@samsung.com>
-	<567D17B7.7060308@huawei.com> <567E943C.6050905@kernel.org>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v2] f2fs: add a max block check for
+	get_data_block_bmap
+Date: Mon, 28 Dec 2015 21:48:32 +0800
+Message-ID: <1451310512-11210-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1aDXUH-0003pi-0L
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1aDY8y-0000Uv-Db
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Dec 2015 13:05:21 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aDXUB-0006bB-S3
+	Mon, 28 Dec 2015 13:47:24 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aDY8s-0004h0-Ez
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Dec 2015 13:05:20 +0000
-In-Reply-To: <567E943C.6050905@kernel.org>
+	Mon, 28 Dec 2015 13:47:24 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,128 +27,64 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, chao2.yu@samsung.com
 
-On 2015/12/26 21:21, Chao Yu wrote:
-> Hi,
->
-> On 12/25/15 6:17 PM, liuxue wrote:
->> On 2015/12/25 17:25, Chao Yu wrote:
->>> Hi,
->>>
->>>> -----Original Message-----
->>>> From: Yunlei He [mailto:heyunlei@huawei.com]
->>>> Sent: Friday, December 25, 2015 4:48 PM
->>>> To: linux-f2fs-devel@lists.sourceforge.net; jaegeuk@kernel.org; chao2.yu@samsung.com
->>>> Cc: bintian.wang@huawei.com; Yunlei He; Xue Liu
->>>> Subject: [PATCH] f2fs: add a max block count for f2fs_map_blocks
->>>>
->>>> This patch adds a max block count for f2fs_map_blocks
->>>
->>> Maximum file size should be limited by sb->s_maxbytes which was inited
->>> in max_file_size(), so logical block index should not exceed the value
->>> calculated with maxbytes, why would we limit logical block index with
->>> another value?
->>>
->>> Thanks,
->>>
->>
->> Hi,
->> Trinity test program will send a block number as parameter into ioctl_fibmap, which will be used in
->> get_node_path(), when the block number large than f2fs max blocks, it will trigger kernel bug.
->> So we judge the block number in f2fs_map_blocks(), which reference ext4:
->
-> Thanks for the explanation, and this makes sense to me, it's better to add above
-> message in commit log.
->
->>
->> file: fs/ext4/inode.c
->> function: ext4_map_blocks()
->>
->>       /* We can handle the block number less than EXT_MAX_BLOCKS */
->>       if (unlikely(map->m_lblk >= EXT_MAX_BLOCKS))
->>           return -EFSCORRUPTED;
->>
->>
->>>>
->>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>>> Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
->>>> ---
->>>>    fs/f2fs/data.c | 4 ++++
->>>>    fs/f2fs/f2fs.h | 3 +++
->>>>    2 files changed, 7 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>> index e34b1bd..2a16c867 100644
->>>> --- a/fs/f2fs/data.c
->>>> +++ b/fs/f2fs/data.c
->>>> @@ -578,6 +578,10 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->
-> As you mentioned, this bug will only be triggered in bmap, so how about checking
-> upper boundary in get_data_block_bmap? Since we could remain bug_on in
-> get_node_path for other call paths to check whether this is a bug of VFS or not.
->
-yeah, change here maybe influence dio and fiemap.
->>>>    	map->m_len = 0;
->>>>    	map->m_flags = 0;
->>>>
->>>> +	/* We can handle the block number less than F2FS_MAX_BLOCKS */
->>>> +	if (unlikely(map->m_lblk >= F2FS_MAX_BLOCKS))
->>>> +		return -EUCLEAN;
->
-> EFBIG ?
+This patch adds a max block check for get_data_block_bmap.
 
-yeah, EFBIG is better.
->
->>>> +
->>>>    	/* it only supports block size == page size */
->>>>    	pgofs =	(pgoff_t)map->m_lblk;
->>>>
->>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>> index 19beabe..911c99b 100644
->>>> --- a/fs/f2fs/f2fs.h
->>>> +++ b/fs/f2fs/f2fs.h
->>>> @@ -331,6 +331,9 @@ enum {
->>>>
->>>>    #define F2FS_LINK_MAX	0xffffffff	/* maximum link count per file */
->>>>
->>>> +
->>>> +#define F2FS_MAX_BLOCKS 0x3F015AFF      /* maximum block count per file */
->
-> Can you introduce F2FS_MAX_BLOCKS with calculation detail of constant
-> '0x3F015AFF', moreover need to exclude reserved space for inline xattr.
->
-> Thanks,
+Trinity test program will send a block number as parameter into
+ioctl_fibmap, which will be used in get_node_path(), when the block
+number large than f2fs max blocks, it will trigger kernel bug.
 
-I will send version v2 use max_file_size() function.
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
+---
+ fs/f2fs/data.c  | 4 ++++
+ fs/f2fs/f2fs.h  | 1 +
+ fs/f2fs/super.c | 2 +-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
-Thanks,
-
->
->>>> +
->>>>    #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
->>>>
->>>>    /* vector size for gang look-up from extent cache that consists of radix tree */
->>>> --
->>>> 1.9.1
->>>
->>>
->>>
->>> .
->>
->>
->>
->>
->> ------------------------------------------------------------------------------
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>
->
-> .
->
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index e34b1bd..51cbf68 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -741,6 +741,10 @@ static int get_data_block_dio(struct inode *inode, sector_t iblock,
+ static int get_data_block_bmap(struct inode *inode, sector_t iblock,
+ 			struct buffer_head *bh_result, int create)
+ {
++	/* Block number less than F2FS MAX BLOCKS */
++	if (unlikely(iblock > max_file_size(0)))
++		return -EFBIG;
++
+ 	return __get_data_block(inode, iblock, bh_result, create,
+ 						F2FS_GET_BLOCK_BMAP);
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 19beabe..e248b8da 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1724,6 +1724,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+  * super.c
+  */
+ int f2fs_commit_super(struct f2fs_sb_info *, bool);
++loff_t max_file_size(unsigned bits);
+ int f2fs_sync_fs(struct super_block *, int);
+ extern __printf(3, 4)
+ void f2fs_msg(struct super_block *, const char *, const char *, ...);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c3070c1..4075402 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -906,7 +906,7 @@ static const struct export_operations f2fs_export_ops = {
+ 	.get_parent = f2fs_get_parent,
+ };
+ 
+-static loff_t max_file_size(unsigned bits)
++loff_t max_file_size(unsigned bits)
+ {
+ 	loff_t result = (DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS);
+ 	loff_t leaf_count = ADDRS_PER_BLOCK;
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
