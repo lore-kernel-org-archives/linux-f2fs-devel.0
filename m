@@ -1,22 +1,32 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH] fsck.f2fs: fix double free invalid checkpoint
-Date: Mon, 28 Dec 2015 11:33:22 +0000
-Message-ID: <1451302402-21642-1-git-send-email-shengyong1@huawei.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH 3/5] f2fs: report readonly status in ->fsync
+Date: Mon, 28 Dec 2015 17:59:19 +0800
+Message-ID: <006c01d14156$83ab2780$8b017680$@samsung.com>
+References: <016601d13e33$0ecdfd50$2c69f7f0$@samsung.com>
+	<20151226063258.GA4641@schmorp.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1aDOoP-0006LQ-7b
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1aDUb5-0002Oh-QW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Dec 2015 03:49:33 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aDOoI-00025r-6s
+	Mon, 28 Dec 2015 10:00:11 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aDUb2-0007J6-Tr
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Dec 2015 03:49:33 +0000
+	Mon, 28 Dec 2015 10:00:11 +0000
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O0202CW4BS03I30@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Dec 2015 19:00:00 +0900 (KST)
+In-reply-to: <20151226063258.GA4641@schmorp.de>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,47 +36,61 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: 'Marc Lehmann' <schmorp@schmorp.de>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-The invalid checkpoin is freed in validate_checkpoint().
+> -----Original Message-----
+> From: Marc Lehmann [mailto:schmorp@schmorp.de]
+> Sent: Saturday, December 26, 2015 2:33 PM
+> To: Chao Yu
+> Cc: linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 3/5] f2fs: report readonly status in ->fsync
+> 
+> On Thu, Dec 24, 2015 at 06:07:25PM +0800, Chao Yu <chao2.yu@samsung.com> wrote:
+> > Report readonly status of filesystem during fsync.
+> 
+> If this means that fsync returns EROFS when used on a file on a read-only
+> filesystem., then this looks buggy - EROFS is not documented for
+> fsync (only as "fd is bound to a special file which does not support
+> synchronization") for this condition, and I don't think other filesystems
+> do that (just tried xfs).
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- fsck/mount.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Yes.
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index fe68f37..7533926 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -469,11 +469,8 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 		cur_page = cp2;
- 		sbi->cur_cp = 2;
- 		version = cp2_version;
--	} else {
--		free(cp1);
--		free(cp2);
-+	} else
- 		goto fail_no_cp;
--	}
- 
- 	MSG(0, "Info: CKPT version = %llx\n", version);
- 
-@@ -495,8 +492,10 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 			memcpy(ckpt + i * blk_size, cur_page, blk_size);
- 		}
- 	}
--	free(cp1);
--	free(cp2);
-+	if (cp1)
-+		free(cp1);
-+	if (cp2)
-+		free(cp2);
- 	return 0;
- 
- fail_no_cp:
--- 
-1.9.1
+> 
+> It also doesn't quite make sense - fsync should only fail when the file
+> couldn't be synced, but in most (probably all) cases, the file is already
+> synchronised, otherwise the filesystem shouldn't be RO.
+
+Agreed,
+
+One situation here is if '.' or '..' in dentry page of directory inode was
+missing (corrupted directory), once fsck found this kind of inode exist in
+the image, it will mark inode with F2FS_INLINE_DOTS flag, after that f2fs
+will try to recover it to normal one if user touch such inode in ->lookup,
+so the dirty data was generated even in a readonly fs.
+
+Actually even for above case, it would be better to avoid generating dirty
+data rather than stop user fsync in a readonly fs.
+
+Hi Jaegeuk, could you help to drop this patch?
+
+And one more thing is how do you think of moving inline dot recovery into
+fsck?
+
+Thanks,
+
+> 
+> I only looked at the diff, so if I missed the context and my reasoning
+> doesn't apply, forgive and ignore me :)
+> 
+> --
+>                 The choice of a       Deliantra, the free code+content MORPG
+>       -----==-     _GNU_              http://www.deliantra.net
+>       ----==-- _       generation
+>       ---==---(_)__  __ ____  __      Marc Lehmann
+>       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+>       -=====/_/_//_/\_,_/ /_/\_\
 
 
 ------------------------------------------------------------------------------
