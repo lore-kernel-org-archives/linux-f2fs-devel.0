@@ -1,135 +1,99 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 3/3] f2fs: load largest extent all the time
-Date: Tue, 29 Dec 2015 17:23:55 +0800
-Message-ID: <00ce01d1421a$bebd3970$3c37ac50$@samsung.com>
-References: <1451345497-65784-1-git-send-email-jaegeuk@kernel.org>
- <1451345497-65784-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: introduce F2FS_MAX_BLOCKS
+Date: Tue, 29 Dec 2015 17:48:04 +0800
+Message-ID: <00cf01d1421e$24391d70$6cab5850$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1451345497-65784-3-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+Introduce a macro named F2FS_MAX_BLOCKS to indicate maximum block index
+in f2fs, it could be used to avoid unneeded calculation in runtime.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Tuesday, December 29, 2015 7:32 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 3/3] f2fs: load largest extent all the time
-> 
-> Otherwise, we can get mismatched largest extent information.
-> 
-> One example is:
-> 1. mount f2fs w/ extent_cache
-> 2. make a small extent
-> 3. umount
-> 4. mount f2fs w/o extent_cache
-> 5. update the largest extent
-> 6. umount
-> 7. mount f2fs w/ extent_cache
-> 8. get the old extent made by #2
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c          |  2 +-
+ fs/f2fs/f2fs.h          |  1 -
+ fs/f2fs/super.c         | 19 ++-----------------
+ include/linux/f2fs_fs.h |  5 +++++
+ 4 files changed, 8 insertions(+), 19 deletions(-)
 
-Good catch!
-
-It's a pity to drop it since it may provide some help if we
-can reuse it.
-
-Thanks,
-
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/extent_cache.c | 18 +++++++++++++-----
->  fs/f2fs/f2fs.h         |  2 +-
->  fs/f2fs/inode.c        |  3 ++-
->  3 files changed, 16 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index e7b6548..23e7c82 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -166,20 +166,27 @@ static void __drop_largest_extent(struct inode *inode,
->  		largest->len = 0;
->  }
-> 
-> -void f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
-> +/* return true, if inode page is changed */
-> +bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
->  {
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	struct extent_tree *et;
->  	struct extent_node *en;
->  	struct extent_info ei;
-> 
-> -	if (!f2fs_may_extent_tree(inode))
-> -		return;
-> +	if (!f2fs_may_extent_tree(inode)) {
-> +		/* drop largest extent */
-> +		if (i_ext && i_ext->len) {
-> +			i_ext->len = 0;
-> +			return true;
-> +		}
-> +		return false;
-> +	}
-> 
->  	et = __grab_extent_tree(inode);
-> 
-> -	if (!i_ext || le32_to_cpu(i_ext->len) < F2FS_MIN_EXTENT_LEN)
-> -		return;
-> +	if (!i_ext || !i_ext->len)
-> +		return false;
-> 
->  	set_extent_info(&ei, le32_to_cpu(i_ext->fofs),
->  		le32_to_cpu(i_ext->blk), le32_to_cpu(i_ext->len));
-> @@ -196,6 +203,7 @@ void f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
->  	}
->  out:
->  	write_unlock(&et->lock);
-> +	return false;
->  }
-> 
->  static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index e04b2be..a339508 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2083,7 +2083,7 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *);
->   * extent_cache.c
->   */
->  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *, int);
-> -void f2fs_init_extent_tree(struct inode *, struct f2fs_extent *);
-> +bool f2fs_init_extent_tree(struct inode *, struct f2fs_extent *);
->  unsigned int f2fs_destroy_extent_node(struct inode *);
->  void f2fs_destroy_extent_tree(struct inode *);
->  bool f2fs_lookup_extent_cache(struct inode *, pgoff_t, struct extent_info *);
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index ec3fb32..e955008 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -138,7 +138,8 @@ static int do_read_inode(struct inode *inode)
->  	fi->i_pino = le32_to_cpu(ri->i_pino);
->  	fi->i_dir_level = ri->i_dir_level;
-> 
-> -	f2fs_init_extent_tree(inode, &ri->i_ext);
-> +	if (f2fs_init_extent_tree(inode, &ri->i_ext))
-> +		set_page_dirty(node_page);
-> 
->  	get_inline_info(fi, ri);
-> 
-> --
-> 2.5.4 (Apple Git-61)
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7175d33..a366a4c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -762,7 +762,7 @@ static int get_data_block_bmap(struct inode *inode, sector_t iblock,
+ 			struct buffer_head *bh_result, int create)
+ {
+ 	/* Block number less than F2FS MAX BLOCKS */
+-	if (unlikely(iblock > max_file_size(0)))
++	if (unlikely(iblock > F2FS_MAX_BLOCKS))
+ 		return -EFBIG;
+ 
+ 	return __get_data_block(inode, iblock, bh_result, create,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9ba6a09..95c6f38 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1731,7 +1731,6 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+  * super.c
+  */
+ int f2fs_commit_super(struct f2fs_sb_info *, bool);
+-loff_t max_file_size(unsigned bits);
+ int f2fs_sync_fs(struct super_block *, int);
+ extern __printf(3, 4)
+ void f2fs_msg(struct super_block *, const char *, const char *, ...);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f474355..5f7e632 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -909,24 +909,9 @@ static const struct export_operations f2fs_export_ops = {
+ 	.get_parent = f2fs_get_parent,
+ };
+ 
+-loff_t max_file_size(unsigned bits)
++static loff_t max_file_size(unsigned bits)
+ {
+-	loff_t result = (DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS);
+-	loff_t leaf_count = ADDRS_PER_BLOCK;
+-
+-	/* two direct node blocks */
+-	result += (leaf_count * 2);
+-
+-	/* two indirect node blocks */
+-	leaf_count *= NIDS_PER_BLOCK;
+-	result += (leaf_count * 2);
+-
+-	/* one double indirect node block */
+-	leaf_count *= NIDS_PER_BLOCK;
+-	result += leaf_count;
+-
+-	result <<= bits;
+-	return result;
++	return ((loff_t)F2FS_MAX_BLOCKS << bits);
+ }
+ 
+ static inline bool sanity_check_area_boundary(struct super_block *sb,
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index e59c3be..814c471 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -189,6 +189,11 @@ struct f2fs_extent {
+ #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
+ #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
+ 
++#define F2FS_MAX_BLOCKS		((DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS) + \
++				ADDRS_PER_BLOCK * 2 + ADDRS_PER_BLOCK * \
++				NIDS_PER_BLOCK * 2 + ADDRS_PER_BLOCK * \
++				NIDS_PER_BLOCK * NIDS_PER_BLOCK)
++
+ #define MAX_INLINE_DATA		(sizeof(__le32) * (DEF_ADDRS_PER_INODE - \
+ 						F2FS_INLINE_XATTR_ADDRS - 1))
+ 
+-- 
+2.6.3
