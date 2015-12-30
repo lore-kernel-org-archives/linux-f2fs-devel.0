@@ -1,31 +1,29 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: init variable total_zombie_tree
-Date: Wed, 30 Dec 2015 17:01:48 +0800
-Message-ID: <00ee01d142e0$d1fc5ea0$75f51be0$@samsung.com>
-References: <1451460488-16730-1-git-send-email-heyunlei@huawei.com>
+From: Fan Li <fanofcode.li@samsung.com>
+Subject: [PATCH 2/3] f2fs: support finding extents after isize
+Date: Wed, 30 Dec 2015 17:17:23 +0800
+Message-ID: <000d01d142e2$fab05fc0$f0111f40$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aECeY-0000fK-QH
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fanofcode.li@samsung.com>) id 1aECtW-0005Rk-T5
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Dec 2015 09:02:42 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aECeW-00042k-V0
+	Wed, 30 Dec 2015 09:18:10 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aECtV-0001N3-0m
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Dec 2015 09:02:42 +0000
+	Wed, 30 Dec 2015 09:18:10 +0000
 Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
+	by mailout1.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O0502MEMYG4FD10@mailout4.samsung.com> for
+	2014)) with ESMTP id <0O0500WPCZ61WL50@mailout1.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Dec 2015 18:02:32 +0900 (KST)
-In-reply-to: <1451460488-16730-1-git-send-email-heyunlei@huawei.com>
-Content-language: zh-cn
+	Wed, 30 Dec 2015 18:18:01 +0900 (KST)
+Content-language: en-us
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,47 +33,51 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Yunlei He' <heyunlei@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Yunlei,
+f2fs allows preallocation beyond isize, but f2fs_fiemap only look up
+extents within isize. Therefore add this support.
 
-> -----Original Message-----
-> From: Yunlei He [mailto:heyunlei@huawei.com]
-> Sent: Wednesday, December 30, 2015 3:28 PM
-> To: linux-f2fs-devel@lists.sourceforge.net; jaegeuk@kernel.org; chao2.yu@samsung.com
-> Cc: bintian.wang@huawei.com; Yunlei He
-> Subject: [f2fs-dev][PATCH] f2fs: init variable total_zombie_tree
-> 
-> This patch init total_zombie_tree in init_extent_cache_info.
+Note: It's possible that there are holes after isize, for example,
+fallocate  multiple discontinuous extents after isize with 
+FALLOC_FL_KEEP_SIZE set. Since I can tell no differences between 
+EOF and holes from return of get_data_block, I'm afaid this patch
+can't support such scenarios. 
 
-Sorry, seems I mislead you, I meant it's better let Jaegeuk to fix the
-issue in his original patch, not in the patch you replied.
 
-Anyway, this patch looks good to me. :)
+Signed-off-by: Fan li <fanofcode.li@samsung.com>
+---
+ fs/f2fs/data.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Thanks,
-
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/extent_cache.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index 23e7c82..b37184f 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -737,6 +737,7 @@ void init_extent_cache_info(struct f2fs_sb_info *sbi)
->  	INIT_LIST_HEAD(&sbi->extent_list);
->  	spin_lock_init(&sbi->extent_lock);
->  	atomic_set(&sbi->total_ext_tree, 0);
-> +	atomic_set(&sbi->total_zombie_tree, 0);
->  	atomic_set(&sbi->total_ext_node, 0);
->  }
-> 
-> --
-> 1.9.1
-
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a9a4d89..f89cf07 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -798,12 +798,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	isize = i_size_read(inode);
+ 
+ 	mutex_lock(&inode->i_mutex);
+-	if (start >= isize)
+-		goto out;
+-
+-	if (start + len > isize)
+-		len = isize - start;
+-
+ 	if (logical_to_blk(inode, len) == 0)
+ 		len = blk_to_logical(inode, 1);
+ 
+@@ -829,6 +823,7 @@ next:
+ 		 * punch holes beyond isize and keep size unchanged.
+ 		 */
+ 		flags |= FIEMAP_EXTENT_LAST;
++		last_blk = start_blk - 1;
+ 	}
+ 
+ 	if (size)
+-- 
+1.7.9.5
 
 
 ------------------------------------------------------------------------------
