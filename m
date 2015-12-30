@@ -1,143 +1,114 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: load largest extent all the time
-Date: Tue, 29 Dec 2015 16:59:56 -0800
-Message-ID: <20151230005956.GF13809@jaegeuk.local>
-References: <1451345497-65784-1-git-send-email-jaegeuk@kernel.org>
- <1451345497-65784-3-git-send-email-jaegeuk@kernel.org>
- <00ce01d1421a$bebd3970$3c37ac50$@samsung.com>
+Subject: Re: [PATCH v2] f2fs: add a max block check for
+ get_data_block_bmap
+Date: Tue, 29 Dec 2015 17:09:05 -0800
+Message-ID: <20151230010905.GG13809@jaegeuk.local>
+References: <1451310512-11210-1-git-send-email-heyunlei@huawei.com>
+	<00d001d1421e$e7ed3670$b7c7a350$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aE5GN-0004PS-38
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Dec 2015 01:09:15 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aE5GL-0001F6-J4 for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Dec 2015 01:09:15 +0000
 Content-Disposition: inline
-In-Reply-To: <00ce01d1421a$bebd3970$3c37ac50$@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
+In-Reply-To: <00d001d1421e$e7ed3670$b7c7a350$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chao,
-
-On Tue, Dec 29, 2015 at 05:23:55PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
+On Tue, Dec 29, 2015 at 05:53:40PM +0800, Chao Yu wrote:
+> Hi all,
 > 
 > > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Tuesday, December 29, 2015 7:32 AM
-> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH 3/3] f2fs: load largest extent all the time
+> > From: Yunlei He [mailto:heyunlei@huawei.com]
+> > Sent: Monday, December 28, 2015 9:49 PM
+> > To: linux-f2fs-devel@lists.sourceforge.net; jaegeuk@kernel.org; chao2.yu@samsung.com
+> > Cc: bintian.wang@huawei.com; Yunlei He; Xue Liu
+> > Subject: [f2fs-dev][PATCH v2] f2fs: add a max block check for get_data_block_bmap
 > > 
-> > Otherwise, we can get mismatched largest extent information.
+> > This patch adds a max block check for get_data_block_bmap.
 > > 
-> > One example is:
-> > 1. mount f2fs w/ extent_cache
-> > 2. make a small extent
-> > 3. umount
-> > 4. mount f2fs w/o extent_cache
-> > 5. update the largest extent
-> > 6. umount
-> > 7. mount f2fs w/ extent_cache
-> > 8. get the old extent made by #2
+> > Trinity test program will send a block number as parameter into
+> > ioctl_fibmap, which will be used in get_node_path(), when the block
+> > number large than f2fs max blocks, it will trigger kernel bug.
+> > 
+> > Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> > Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
+> > ---
+> >  fs/f2fs/data.c  | 4 ++++
+> >  fs/f2fs/f2fs.h  | 1 +
+> >  fs/f2fs/super.c | 2 +-
+> >  3 files changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index e34b1bd..51cbf68 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -741,6 +741,10 @@ static int get_data_block_dio(struct inode *inode, sector_t iblock,
+> >  static int get_data_block_bmap(struct inode *inode, sector_t iblock,
+> >  			struct buffer_head *bh_result, int create)
+> >  {
+> > +	/* Block number less than F2FS MAX BLOCKS */
+> > +	if (unlikely(iblock > max_file_size(0)))
 > 
-> Good catch!
-> 
-> It's a pity to drop it since it may provide some help if we
-> can reuse it.
+> Should be iblock >= max_file_size(0).
 
-Indeed, but I expect it's not a common case.
+I fixed that directly.
 
 Thanks,
 
 > 
 > Thanks,
 > 
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/extent_cache.c | 18 +++++++++++++-----
-> >  fs/f2fs/f2fs.h         |  2 +-
-> >  fs/f2fs/inode.c        |  3 ++-
-> >  3 files changed, 16 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> > index e7b6548..23e7c82 100644
-> > --- a/fs/f2fs/extent_cache.c
-> > +++ b/fs/f2fs/extent_cache.c
-> > @@ -166,20 +166,27 @@ static void __drop_largest_extent(struct inode *inode,
-> >  		largest->len = 0;
+> > +		return -EFBIG;
+> > +
+> >  	return __get_data_block(inode, iblock, bh_result, create,
+> >  						F2FS_GET_BLOCK_BMAP);
 > >  }
-> > 
-> > -void f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
-> > +/* return true, if inode page is changed */
-> > +bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
-> >  {
-> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> >  	struct extent_tree *et;
-> >  	struct extent_node *en;
-> >  	struct extent_info ei;
-> > 
-> > -	if (!f2fs_may_extent_tree(inode))
-> > -		return;
-> > +	if (!f2fs_may_extent_tree(inode)) {
-> > +		/* drop largest extent */
-> > +		if (i_ext && i_ext->len) {
-> > +			i_ext->len = 0;
-> > +			return true;
-> > +		}
-> > +		return false;
-> > +	}
-> > 
-> >  	et = __grab_extent_tree(inode);
-> > 
-> > -	if (!i_ext || le32_to_cpu(i_ext->len) < F2FS_MIN_EXTENT_LEN)
-> > -		return;
-> > +	if (!i_ext || !i_ext->len)
-> > +		return false;
-> > 
-> >  	set_extent_info(&ei, le32_to_cpu(i_ext->fofs),
-> >  		le32_to_cpu(i_ext->blk), le32_to_cpu(i_ext->len));
-> > @@ -196,6 +203,7 @@ void f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
-> >  	}
-> >  out:
-> >  	write_unlock(&et->lock);
-> > +	return false;
-> >  }
-> > 
-> >  static bool f2fs_lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
 > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index e04b2be..a339508 100644
+> > index 19beabe..e248b8da 100644
 > > --- a/fs/f2fs/f2fs.h
 > > +++ b/fs/f2fs/f2fs.h
-> > @@ -2083,7 +2083,7 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *);
-> >   * extent_cache.c
+> > @@ -1724,6 +1724,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+> >   * super.c
 > >   */
-> >  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *, int);
-> > -void f2fs_init_extent_tree(struct inode *, struct f2fs_extent *);
-> > +bool f2fs_init_extent_tree(struct inode *, struct f2fs_extent *);
-> >  unsigned int f2fs_destroy_extent_node(struct inode *);
-> >  void f2fs_destroy_extent_tree(struct inode *);
-> >  bool f2fs_lookup_extent_cache(struct inode *, pgoff_t, struct extent_info *);
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index ec3fb32..e955008 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -138,7 +138,8 @@ static int do_read_inode(struct inode *inode)
-> >  	fi->i_pino = le32_to_cpu(ri->i_pino);
-> >  	fi->i_dir_level = ri->i_dir_level;
+> >  int f2fs_commit_super(struct f2fs_sb_info *, bool);
+> > +loff_t max_file_size(unsigned bits);
+> >  int f2fs_sync_fs(struct super_block *, int);
+> >  extern __printf(3, 4)
+> >  void f2fs_msg(struct super_block *, const char *, const char *, ...);
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index c3070c1..4075402 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -906,7 +906,7 @@ static const struct export_operations f2fs_export_ops = {
+> >  	.get_parent = f2fs_get_parent,
+> >  };
 > > 
-> > -	f2fs_init_extent_tree(inode, &ri->i_ext);
-> > +	if (f2fs_init_extent_tree(inode, &ri->i_ext))
-> > +		set_page_dirty(node_page);
-> > 
-> >  	get_inline_info(fi, ri);
-> > 
+> > -static loff_t max_file_size(unsigned bits)
+> > +loff_t max_file_size(unsigned bits)
+> >  {
+> >  	loff_t result = (DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS);
+> >  	loff_t leaf_count = ADDRS_PER_BLOCK;
 > > --
-> > 2.5.4 (Apple Git-61)
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 1.9.1
+> 
+
+------------------------------------------------------------------------------
