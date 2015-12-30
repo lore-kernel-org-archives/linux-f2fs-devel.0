@@ -1,25 +1,25 @@
-From: He YunLei <heyunlei@huawei.com>
-Subject: Re: [PATCH 1/2] f2fs: use atomic variable for
-	total_extent_tree
-Date: Tue, 29 Dec 2015 19:11:21 +0800
-Message-ID: <56826A59.3020105@huawei.com>
-References: <1450755521-20015-1-git-send-email-jaegeuk@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: support revoking atomic written
+	pages
+Date: Tue, 29 Dec 2015 16:05:13 -0800
+Message-ID: <20151230000513.GA13809@jaegeuk.local>
+References: <00a901d141e6$e42ec950$ac8c5bf0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1aDsC5-0001Yb-LM
+	(envelope-from <jaegeuk@kernel.org>) id 1aE4GY-0002YS-Da
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Dec 2015 11:11:57 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aDsBx-0006Js-Gt
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 29 Dec 2015 11:11:57 +0000
-In-Reply-To: <1450755521-20015-1-git-send-email-jaegeuk@kernel.org>
+	Wed, 30 Dec 2015 00:05:22 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aE4GX-0003gH-0y for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Dec 2015 00:05:22 +0000
+Content-Disposition: inline
+In-Reply-To: <00a901d141e6$e42ec950$ac8c5bf0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,130 +29,90 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2015/12/22 11:38, Jaegeuk Kim wrote:
-> It would be better to use atomic variable for total_extent_tree.
->
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->   fs/f2fs/debug.c        | 5 +++--
->   fs/f2fs/extent_cache.c | 8 ++++----
->   fs/f2fs/f2fs.h         | 2 +-
->   fs/f2fs/node.c         | 3 ++-
->   fs/f2fs/shrinker.c     | 3 ++-
->   5 files changed, 12 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> index bb307e6..ed5dfcc 100644
-> --- a/fs/f2fs/debug.c
-> +++ b/fs/f2fs/debug.c
-> @@ -38,7 +38,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
->   	si->hit_rbtree = atomic64_read(&sbi->read_hit_rbtree);
->   	si->hit_total = si->hit_largest + si->hit_cached + si->hit_rbtree;
->   	si->total_ext = atomic64_read(&sbi->total_hit_ext);
-> -	si->ext_tree = sbi->total_ext_tree;
-> +	si->ext_tree = atomic_read(&sbi->total_ext_tree);
->   	si->ext_node = atomic_read(&sbi->total_ext_node);
->   	si->ndirty_node = get_pages(sbi, F2FS_DIRTY_NODES);
->   	si->ndirty_dent = get_pages(sbi, F2FS_DIRTY_DENTS);
-> @@ -193,7 +193,8 @@ get_cache:
->   	si->cache_mem += si->inmem_pages * sizeof(struct inmem_pages);
->   	for (i = 0; i <= UPDATE_INO; i++)
->   		si->cache_mem += sbi->im[i].ino_num * sizeof(struct ino_entry);
-> -	si->cache_mem += sbi->total_ext_tree * sizeof(struct extent_tree);
-> +	si->cache_mem += atomic_read(&sbi->total_ext_tree) *
-> +						sizeof(struct extent_tree);
->   	si->cache_mem += atomic_read(&sbi->total_ext_node) *
->   						sizeof(struct extent_node);
->
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index e86e9f1e..0e97d6af 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -70,7 +70,7 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode)
->   		rwlock_init(&et->lock);
->   		atomic_set(&et->refcount, 0);
->   		et->count = 0;
-> -		sbi->total_ext_tree++;
-> +		atomic_inc(&sbi->total_ext_tree);
->   	}
->   	atomic_inc(&et->refcount);
->   	up_write(&sbi->extent_tree_lock);
-> @@ -570,7 +570,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
->
->   				radix_tree_delete(root, et->ino);
->   				kmem_cache_free(extent_tree_slab, et);
-> -				sbi->total_ext_tree--;
-> +				atomic_dec(&sbi->total_ext_tree);
->   				tree_cnt++;
->
->   				if (node_cnt + tree_cnt >= nr_shrink)
-> @@ -663,7 +663,7 @@ void f2fs_destroy_extent_tree(struct inode *inode)
->   	f2fs_bug_on(sbi, atomic_read(&et->refcount) || et->count);
->   	radix_tree_delete(&sbi->extent_tree_root, inode->i_ino);
->   	kmem_cache_free(extent_tree_slab, et);
-> -	sbi->total_ext_tree--;
-> +	atomic_dec(&sbi->total_ext_tree);
->   	up_write(&sbi->extent_tree_lock);
->
->   	F2FS_I(inode)->extent_tree = NULL;
-> @@ -715,7 +715,7 @@ void init_extent_cache_info(struct f2fs_sb_info *sbi)
->   	init_rwsem(&sbi->extent_tree_lock);
->   	INIT_LIST_HEAD(&sbi->extent_list);
->   	spin_lock_init(&sbi->extent_lock);
-> -	sbi->total_ext_tree = 0;
-> +	atomic_set(&sbi->total_ext_tree, 0);
-Hi,
-	here we'd better to init total_zombie_tree:
-	atomic_set(&sbi->total_zombie_tree, 0);
-Thanks,
->   	atomic_set(&sbi->total_ext_node, 0);
->   }
->
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 19beabe..a7f6191 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -762,7 +762,7 @@ struct f2fs_sb_info {
->   	struct rw_semaphore extent_tree_lock;	/* locking extent radix tree */
->   	struct list_head extent_list;		/* lru list for shrinker */
->   	spinlock_t extent_lock;			/* locking extent lru list */
-> -	int total_ext_tree;			/* extent tree count */
-> +	atomic_t total_ext_tree;		/* extent tree count */
->   	atomic_t total_ext_node;		/* extent info count */
->
->   	/* basic filesystem units */
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index d842b19..6cc8ac7 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -65,7 +65,8 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
->   				sizeof(struct ino_entry)) >> PAGE_CACHE_SHIFT;
->   		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
->   	} else if (type == EXTENT_CACHE) {
-> -		mem_size = (sbi->total_ext_tree * sizeof(struct extent_tree) +
-> +		mem_size = (atomic_read(&sbi->total_ext_tree) *
-> +				sizeof(struct extent_tree) +
->   				atomic_read(&sbi->total_ext_node) *
->   				sizeof(struct extent_node)) >> PAGE_CACHE_SHIFT;
->   		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
-> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-> index da0d8e0..a11e099 100644
-> --- a/fs/f2fs/shrinker.c
-> +++ b/fs/f2fs/shrinker.c
-> @@ -32,7 +32,8 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
->
->   static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
->   {
-> -	return sbi->total_ext_tree + atomic_read(&sbi->total_ext_node);
-> +	return atomic_read(&sbi->total_ext_tree) +
-> +				atomic_read(&sbi->total_ext_node);
->   }
->
->   unsigned long f2fs_shrink_count(struct shrinker *shrink,
->
+Hi Chao,
+
+On Tue, Dec 29, 2015 at 11:12:36AM +0800, Chao Yu wrote:
+> f2fs support atomic write with following semantics:
+> 1. open db file
+> 2. ioctl start atomic write
+> 3. (write db file) * n
+> 4. ioctl commit atomic write
+> 5. close db file
+> 
+> With this flow we can avoid file becoming corrupted when abnormal power
+> cut, because we hold data of transaction in referenced pages linked in
+> inmem_pages list of inode, but without setting them dirty, so these data
+> won't be persisted unless we commit them in step 4.
+> 
+> But we should still hold journal db file in memory by using volatile write,
+> because our semantics of 'atomic write support' is not full, in step 4, we
+> could be fail to submit all dirty data of transaction, once partial dirty
+> data was committed in storage, db file should be corrupted, in this case,
+> we should use journal db to recover the original data in db file.
+
+Originally, IOC_ABORT_VOLATILE_WRITE was supposed to handle commit failures,
+since database should get its error literally.
+
+So, the only thing that we need to do is keeping journal data for further db
+recovery. But, unfortunately, it seems that something is missing in the
+current implementation.
+
+So simply how about this?
+
+A possible flow would be:
+1. write journal data to volatile space
+2. write db data to atomic space
+3. in the error case, call ioc_abort_volatile_writes for both journal and db
+ - flush/fsync journal data to disk
+ - drop atomic data, and will be recovered by database with journal
+
+>From cb33fc8bc30981c370ec70fe68871130109793ec Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Tue, 29 Dec 2015 15:46:33 -0800
+Subject: [PATCH] f2fs: fix f2fs_ioc_abort_volatile_write
+
+There are two rules to handle aborting volatile or atomic writes.
+
+1. drop atomic writes
+ - we don't need to keep any stale db data.
+
+2. write journal data
+ - we should keep the journal data with fsync for db recovery.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/file.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 91f576a..d16438a 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1433,9 +1433,16 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+ 	if (ret)
+ 		return ret;
+ 
+-	clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
+-	clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
+-	commit_inmem_pages(inode, true);
++	if (f2fs_is_atomic_file(inode)) {
++		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
++		commit_inmem_pages(inode, true);
++	}
++	if (f2fs_is_volatile_file(inode)) {
++		clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
++		ret = commit_inmem_pages(inode, false);
++		if (!ret)
++			ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
++	}
+ 
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+-- 
+2.6.3
 
 
 ------------------------------------------------------------------------------
