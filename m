@@ -1,73 +1,98 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix to stop recovering dot dentries in a readonly
- fs
-Date: Tue, 29 Dec 2015 16:44:28 -0800
-Message-ID: <20151230004428.GC13809@jaegeuk.local>
-References: <006f01d14158$63fa4a90$2beedfb0$@samsung.com>
- <20151228225350.GC61500@jaegeuk.local>
- <00c601d14202$016a0c30$043e2490$@samsung.com>
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: early check broken symlink length
+ in the encrypted case
+Date: Tue, 29 Dec 2015 16:45:56 -0800
+Message-ID: <20151230004556.GD13809@jaegeuk.local>
+References: <1451345497-65784-1-git-send-email-jaegeuk@kernel.org>
+ <00a701d141db$c2f7d480$48e77d80$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <00c601d14202$016a0c30$043e2490$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <00a701d141db$c2f7d480$48e77d80$@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi Chao,
 
-On Tue, Dec 29, 2015 at 02:26:53PM +0800, Chao Yu wrote:
+On Tue, Dec 29, 2015 at 09:52:49AM +0800, Chao Yu wrote:
 > Hi Jaegeuk,
 > 
 > > -----Original Message-----
 > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Tuesday, December 29, 2015 6:54 AM
-> > To: Chao Yu
-> > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH] f2fs: fix to stop recovering dot dentries in a readonly fs
+> > Sent: Tuesday, December 29, 2015 7:32 AM
+> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > linux-f2fs-devel@lists.sourceforge.net
+> > Cc: Jaegeuk Kim
+> > Subject: [f2fs-dev] [PATCH 1/3] f2fs: early check broken symlink length in the encrypted case
 > > 
-> > Hi Chao,
+> > If link is broken, its len is zero, and we don't need to move forward.
 > > 
-> > On Mon, Dec 28, 2015 at 06:12:45PM +0800, Chao Yu wrote:
-> > > If filesystem is readonly, don't recover inline dot inode.
-> > >
-> > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > > ---
-> > >  fs/f2fs/namei.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> > > index 5cc4128..b4a5836 100644
-> > > --- a/fs/f2fs/namei.c
-> > > +++ b/fs/f2fs/namei.c
-> > > @@ -269,7 +269,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
-> > >  	if (IS_ERR(inode))
-> > >  		return ERR_CAST(inode);
-> > >
-> > > -	if (f2fs_has_inline_dots(inode)) {
-> > > +	if (f2fs_has_inline_dots(inode) && !f2fs_readonly(dir->i_sb)) {
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/namei.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
 > > 
-> > We need to return -EROFS if f2fs is readonly?
+> > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> > index fb41c80..5cc4128 100644
+> > --- a/fs/f2fs/namei.c
+> > +++ b/fs/f2fs/namei.c
+> > @@ -931,7 +931,7 @@ static const char *f2fs_encrypted_follow_link(struct dentry *dentry, void
+> > **cook
+> >  {
+> >  	struct page *cpage = NULL;
+> >  	char *caddr, *paddr = NULL;
+> > -	struct f2fs_str cstr;
+> > +	struct f2fs_str cstr = FSTR_INIT(NULL, 0);
+> >  	struct f2fs_str pstr = FSTR_INIT(NULL, 0);
+> >  	struct inode *inode = d_inode(dentry);
+> >  	struct f2fs_encrypted_symlink_data *sd;
+> > @@ -952,6 +952,12 @@ static const char *f2fs_encrypted_follow_link(struct dentry *dentry, void
+> > **cook
+> >  	/* Symlink is encrypted */
+> >  	sd = (struct f2fs_encrypted_symlink_data *)caddr;
+> >  	cstr.len = le16_to_cpu(sd->len);
+> > +
+> > +	/* this is broken symlink case */
+> > +	if (cstr.len == 0) {
 > 
-> In a readonly mountpoint, we should still allow user to stat file/dir in
-> directory structure, rather than returning -EROFS when trying to recover,
-> Right?
+> This case seems rare, can we add unlikely here?
 
-As you suggested, we'd better remain some kernel messages. ;)
+Agreed.
+Will change them.
 
 Thanks,
 
 > 
+> > +		res = -ENOENT;
+> > +		goto errout;
+> > +	}
+> >  	cstr.name = kmalloc(cstr.len, GFP_NOFS);
+> >  	if (!cstr.name) {
+> >  		res = -ENOMEM;
+> > @@ -960,7 +966,7 @@ static const char *f2fs_encrypted_follow_link(struct dentry *dentry, void
+> > **cook
+> >  	memcpy(cstr.name, sd->encrypted_path, cstr.len);
+> > 
+> >  	/* this is broken symlink case */
+> > -	if (cstr.name[0] == 0 && cstr.len == 0) {
+> > +	if (cstr.name[0] == 0) {
+> 
+> ditto.
+> 
 > Thanks,
 > 
+> >  		res = -ENOENT;
+> >  		goto errout;
+> >  	}
+> > --
+> > 2.5.4 (Apple Git-61)
 > > 
-> > Thanks,
 > > 
-> > >  		err = __recover_dot_dentries(inode, dir->i_ino);
-> > >  		if (err)
-> > >  			goto err_out;
-> > > --
-> > > 2.6.3
-> > >
+> > ------------------------------------------------------------------------------
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
