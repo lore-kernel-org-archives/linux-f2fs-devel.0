@@ -1,134 +1,148 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 3/5] f2fs: report readonly status in ->fsync
-Date: Wed, 30 Dec 2015 14:46:03 +0800
-Message-ID: <00e201d142cd$d75c14c0$86143e40$@samsung.com>
-References: <016601d13e33$0ecdfd50$2c69f7f0$@samsung.com>
-	<20151226063258.GA4641@schmorp.de>
-	<006c01d14156$83ab2780$8b017680$@samsung.com>
-	<20151228224340.GA61500@jaegeuk.local>
-	<00c501d14201$3d7f79e0$b87e6da0$@samsung.com>
-	<20151230003246.GB13809@jaegeuk.local>
+Subject: RE: [PATCH] f2fs: introduce F2FS_MAX_BLOCKS
+Date: Wed, 30 Dec 2015 14:47:29 +0800
+Message-ID: <00e301d142ce$119af840$34d0e8c0$@samsung.com>
+References: <00cf01d1421e$24391d70$6cab5850$@samsung.com>
+ <20151230011411.GH13809@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aEAX5-0005ps-J4
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Dec 2015 06:46:51 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aEAX4-0004Bi-DU
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Dec 2015 06:46:51 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O0501OISS5UWI60@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Dec 2015 15:46:42 +0900 (KST)
-In-reply-to: <20151230003246.GB13809@jaegeuk.local>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20151230011411.GH13809@jaegeuk.local>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: 'Marc Lehmann' <schmorp@schmorp.de>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi Jaegeuk,
 
 > -----Original Message-----
 > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Wednesday, December 30, 2015 8:33 AM
+> Sent: Wednesday, December 30, 2015 9:14 AM
 > To: Chao Yu
-> Cc: 'Marc Lehmann'; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 3/5] f2fs: report readonly status in ->fsync
+> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] f2fs: introduce F2FS_MAX_BLOCKS
 > 
 > Hi Chao,
 > 
+> On Tue, Dec 29, 2015 at 05:48:04PM +0800, Chao Yu wrote:
+> > Introduce a macro named F2FS_MAX_BLOCKS to indicate maximum block index
+> > in f2fs, it could be used to avoid unneeded calculation in runtime.
+> 
+> It's not so different from previous one.
+
+Yes, just save some time of calculation in max_file_size if it is
+used in bmap frequently.
+
+> 
+> How about adding something like:
+> 
+> static loff_t max_file_size(unsigned bits)
+
+@bits will no longer be used, how about remove this parameter?
+
+> {
+> }
+> 
 > ...
 > 
-> > > > And one more thing is how do you think of moving inline dot recovery into
-> > > > fsck?
-> > >
-> > > Hmm, we can't move that part entirely into fsck regarding to backward
-> > > compatibility.
-> >
-> > IMO, dynamical repair could be optional, not a must. Because when touching
-> > such incomplete directory in ->lookup, we could leave some dmesg to remind
-> > user to repair. Or if user found this issue by himself, also he could
-> > repair it by using fsck. So this shouldn't case a backward compatibility
-> > issue, or am I missing something?
-> 
-> Hmm, it seems that maybe I misunderstood your *moving it into fsck*.
+> sbi->max_file_blocks = max_file_size(0);
 
-What I mean is 1) enable repair ability in fsck, 2) keep repair in kernel
-side optionally. For compatibility, we leave dmesg for user when touch this
-kind of dir if we choose to disable repair in kernel.
-
-> Anyway, I'm fine to add kernel messages as well.
-
-OK, will do it in ("f2fs: fix to stop recovering dot dentries in a readonly fs")
-
-> And, in any case, the only way to fix this case is to run fsck at first.
-> One approach, as I implemented, is to set a flag and then repair it at runtime.
-> 
-> The other one is to repair by fsck, as you suggested.
-> In this case, my concern is that current fsck is working without allocating
-> blocks, since it is a little bit risky right now.
-> For example, if there is no valid user block, not free space, fsck should handle
-> ENOSPC while changing the existing disk, which has not been fully validated so
-> far.
-
-That' right.
-
-> 
-> Ah, otherwise, we can activate inline_dentry by fsck for this special case, once
-> inline_dentry in f2fs becomes pretty much stable later. :)
-
-Or we can active inline_data for file which has i_size less than MAX_INLINE_SIZE.
-
-That will be cool to use inline_dentry by default! :)
+If max_file_size return max block index of file, how about rename it to
+max_file_blocks() for readability?
 
 Thanks,
 
+> sb->max_file_size =
+> 	sbi->max_file_blocks << le32_to_cpu(raw_super->log_blocksize);
+> 
+> ...
 > 
 > Thanks,
 > 
 > >
-> > > We can add that in fsck, but it needs another block
-> > > allocation part which we need to handle -ENOSPC in fsck as well.
+> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > ---
+> >  fs/f2fs/data.c          |  2 +-
+> >  fs/f2fs/f2fs.h          |  1 -
+> >  fs/f2fs/super.c         | 19 ++-----------------
+> >  include/linux/f2fs_fs.h |  5 +++++
+> >  4 files changed, 8 insertions(+), 19 deletions(-)
 > >
-> > That's right, is it possible to do defragment (gc) if there is no
-> > more space when allocating block?
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 7175d33..a366a4c 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -762,7 +762,7 @@ static int get_data_block_bmap(struct inode *inode, sector_t iblock,
+> >  			struct buffer_head *bh_result, int create)
+> >  {
+> >  	/* Block number less than F2FS MAX BLOCKS */
+> > -	if (unlikely(iblock > max_file_size(0)))
+> > +	if (unlikely(iblock > F2FS_MAX_BLOCKS))
+> >  		return -EFBIG;
 > >
-> > Thanks,
+> >  	return __get_data_block(inode, iblock, bh_result, create,
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 9ba6a09..95c6f38 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1731,7 +1731,6 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode
+> *inode)
+> >   * super.c
+> >   */
+> >  int f2fs_commit_super(struct f2fs_sb_info *, bool);
+> > -loff_t max_file_size(unsigned bits);
+> >  int f2fs_sync_fs(struct super_block *, int);
+> >  extern __printf(3, 4)
+> >  void f2fs_msg(struct super_block *, const char *, const char *, ...);
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index f474355..5f7e632 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -909,24 +909,9 @@ static const struct export_operations f2fs_export_ops = {
+> >  	.get_parent = f2fs_get_parent,
+> >  };
 > >
-> > >
-> > > Thanks,
-> > >
-> > > >
-> > > > Thanks,
-> > > >
-> > > > >
-> > > > > I only looked at the diff, so if I missed the context and my reasoning
-> > > > > doesn't apply, forgive and ignore me :)
-> > > > >
-> > > > > --
-> > > > >                 The choice of a       Deliantra, the free code+content MORPG
-> > > > >       -----==-     _GNU_              http://www.deliantra.net
-> > > > >       ----==-- _       generation
-> > > > >       ---==---(_)__  __ ____  __      Marc Lehmann
-> > > > >       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-> > > > >       -=====/_/_//_/\_,_/ /_/\_\
-
-
-------------------------------------------------------------------------------
+> > -loff_t max_file_size(unsigned bits)
+> > +static loff_t max_file_size(unsigned bits)
+> >  {
+> > -	loff_t result = (DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS);
+> > -	loff_t leaf_count = ADDRS_PER_BLOCK;
+> > -
+> > -	/* two direct node blocks */
+> > -	result += (leaf_count * 2);
+> > -
+> > -	/* two indirect node blocks */
+> > -	leaf_count *= NIDS_PER_BLOCK;
+> > -	result += (leaf_count * 2);
+> > -
+> > -	/* one double indirect node block */
+> > -	leaf_count *= NIDS_PER_BLOCK;
+> > -	result += leaf_count;
+> > -
+> > -	result <<= bits;
+> > -	return result;
+> > +	return ((loff_t)F2FS_MAX_BLOCKS << bits);
+> >  }
+> >
+> >  static inline bool sanity_check_area_boundary(struct super_block *sb,
+> > diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> > index e59c3be..814c471 100644
+> > --- a/include/linux/f2fs_fs.h
+> > +++ b/include/linux/f2fs_fs.h
+> > @@ -189,6 +189,11 @@ struct f2fs_extent {
+> >  #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
+> >  #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
+> >
+> > +#define F2FS_MAX_BLOCKS		((DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS) + \
+> > +				ADDRS_PER_BLOCK * 2 + ADDRS_PER_BLOCK * \
+> > +				NIDS_PER_BLOCK * 2 + ADDRS_PER_BLOCK * \
+> > +				NIDS_PER_BLOCK * NIDS_PER_BLOCK)
+> > +
+> >  #define MAX_INLINE_DATA		(sizeof(__le32) * (DEF_ADDRS_PER_INODE - \
+> >  						F2FS_INLINE_XATTR_ADDRS - 1))
+> >
+> > --
+> > 2.6.3
+> >
