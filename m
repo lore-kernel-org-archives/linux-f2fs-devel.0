@@ -1,162 +1,156 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: support revoking atomic written
- pages
-Date: Wed, 30 Dec 2015 23:35:20 +0800
-Message-ID: <5683F9B8.2020300@kernel.org>
-References: <00a901d141e6$e42ec950$ac8c5bf0$@samsung.com>
- <20151230000513.GA13809@jaegeuk.local>
- <00dc01d142a2$5920ec00$0b62c400$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: introduce F2FS_MAX_BLOCKS
+Date: Wed, 30 Dec 2015 10:06:47 -0800
+Message-ID: <20151230180647.GA28564@jaegeuk.local>
+References: <00cf01d1421e$24391d70$6cab5850$@samsung.com>
+ <20151230011411.GH13809@jaegeuk.local>
+ <00e301d142ce$119af840$34d0e8c0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <00dc01d142a2$5920ec00$0b62c400$@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <00e301d142ce$119af840$34d0e8c0$@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 12/30/15 9:34 AM, Chao Yu wrote:
+Hi Chao,
+
+On Wed, Dec 30, 2015 at 02:47:29PM +0800, Chao Yu wrote:
 > Hi Jaegeuk,
 > 
->> -----Original Message-----
->> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
->> Sent: Wednesday, December 30, 2015 8:05 AM
->> To: Chao Yu
->> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH 2/2] f2fs: support revoking atomic written pages
->>
->> Hi Chao,
->>
->> On Tue, Dec 29, 2015 at 11:12:36AM +0800, Chao Yu wrote:
->>> f2fs support atomic write with following semantics:
->>> 1. open db file
->>> 2. ioctl start atomic write
->>> 3. (write db file) * n
->>> 4. ioctl commit atomic write
->>> 5. close db file
->>>
->>> With this flow we can avoid file becoming corrupted when abnormal power
->>> cut, because we hold data of transaction in referenced pages linked in
->>> inmem_pages list of inode, but without setting them dirty, so these data
->>> won't be persisted unless we commit them in step 4.
->>>
->>> But we should still hold journal db file in memory by using volatile write,
->>> because our semantics of 'atomic write support' is not full, in step 4, we
->>> could be fail to submit all dirty data of transaction, once partial dirty
->>> data was committed in storage, db file should be corrupted, in this case,
->>> we should use journal db to recover the original data in db file.
->>
->> Originally, IOC_ABORT_VOLATILE_WRITE was supposed to handle commit failures,
->> since database should get its error literally.
->>
->> So, the only thing that we need to do is keeping journal data for further db
->> recovery.
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Wednesday, December 30, 2015 9:14 AM
+> > To: Chao Yu
+> > Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH] f2fs: introduce F2FS_MAX_BLOCKS
+> > 
+> > Hi Chao,
+> > 
+> > On Tue, Dec 29, 2015 at 05:48:04PM +0800, Chao Yu wrote:
+> > > Introduce a macro named F2FS_MAX_BLOCKS to indicate maximum block index
+> > > in f2fs, it could be used to avoid unneeded calculation in runtime.
+> > 
+> > It's not so different from previous one.
 > 
-> IMO, if we really support *atomic* interface, we don't need any journal data
-> kept by user, because f2fs already have it in its storage since we always
-> trigger OPU for pages written in atomic-write opened file, f2fs can easily try
-> to revoke (replace old to new in metadata) when any failure exist in atomic
-> write process.
+> Yes, just save some time of calculation in max_file_size if it is
+> used in bmap frequently.
 > 
-> But in current design, we still hold journal data in memory for recovering for
-> *rare* failure case. I think there are several issues:
-> a) most of time, we are in concurrent scenario, so if large number of journal
-> db files were opened simultaneously, we are under big memory pressure.
-> b) If we are out of memory, reclaimer tries to write page of journal db into
-> disk, it will destroy db file.
-> c) Though, we have journal db file, we will face failure of recovering db file
-> from journal db due to ENOMEM or EIO, then db file will be corrupted.
-> d) Recovery flow will make data page dirty, triggering both data stream and
-> metadata stream, there should be more IOs than in inner revoking in
-> atomic-interface.
-> e) Moreover, there should be a hole between 1) commit fail and 2) abort write &
-> recover, checkpoint will persist the corrupt data in db file, following abnormal
-> power-cut will leave that data in disk.
+> > 
+> > How about adding something like:
+> > 
+> > static loff_t max_file_size(unsigned bits)
 > 
-> With revoking supported design, we can not solve all above issues, we will still
-> face the same issue like c), but it will be a big improve if we can apply this
-> in our interface, since it provide a way to fix the issue a) b) d). And also for
-> e) case, we try to rescue data in first time that our revoking operation would be
-> protected by f2fs_lock_op to avoid checkpoint + power-cut.
+> @bits will no longer be used, how about remove this parameter?
 > 
-> If you don't want to have a big change in this interface or recovery flow, how
-> about keep them both, and add a mount option to control inner recovery flow?
+> > {
+> > }
+> > 
+> > ...
+> > 
+> > sbi->max_file_blocks = max_file_size(0);
+> 
+> If max_file_size return max block index of file, how about rename it to
+> max_file_blocks() for readability?
 
-Or introduce F2FS_IOC_COMMIT_ATOMIC_WRITE_V2 for revoking supported interface?
-
-> 
-> How do you think? :)
-> 
-> Thanks,
-> 
->> But, unfortunately, it seems that something is missing in the
->> current implementation.
->>
->> So simply how about this?
->>
->> A possible flow would be:
->> 1. write journal data to volatile space
->> 2. write db data to atomic space
->> 3. in the error case, call ioc_abort_volatile_writes for both journal and db
->>  - flush/fsync journal data to disk
->>  - drop atomic data, and will be recovered by database with journal
->>
->> From cb33fc8bc30981c370ec70fe68871130109793ec Mon Sep 17 00:00:00 2001
->> From: Jaegeuk Kim <jaegeuk@kernel.org>
->> Date: Tue, 29 Dec 2015 15:46:33 -0800
->> Subject: [PATCH] f2fs: fix f2fs_ioc_abort_volatile_write
->>
->> There are two rules to handle aborting volatile or atomic writes.
->>
->> 1. drop atomic writes
->>  - we don't need to keep any stale db data.
->>
->> 2. write journal data
->>  - we should keep the journal data with fsync for db recovery.
->>
->> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->> ---
->>  fs/f2fs/file.c | 13 ++++++++++---
->>  1 file changed, 10 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index 91f576a..d16438a 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -1433,9 +1433,16 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
->>  	if (ret)
->>  		return ret;
->>
->> -	clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
->> -	clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
->> -	commit_inmem_pages(inode, true);
->> +	if (f2fs_is_atomic_file(inode)) {
->> +		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
->> +		commit_inmem_pages(inode, true);
->> +	}
->> +	if (f2fs_is_volatile_file(inode)) {
->> +		clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
->> +		ret = commit_inmem_pages(inode, false);
-
-Any more inmem pages exist here? Shouldn't these page have been released above?
+Fairly agreed.
 
 Thanks,
 
->> +		if (!ret)
->> +			ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
->> +	}
->>
->>  	mnt_drop_write_file(filp);
->>  	return ret;
->> --
->> 2.6.3
 > 
+> Thanks,
 > 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+> > sb->max_file_size =
+> > 	sbi->max_file_blocks << le32_to_cpu(raw_super->log_blocksize);
+> > 
+> > ...
+> > 
+> > Thanks,
+> > 
+> > >
+> > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > ---
+> > >  fs/f2fs/data.c          |  2 +-
+> > >  fs/f2fs/f2fs.h          |  1 -
+> > >  fs/f2fs/super.c         | 19 ++-----------------
+> > >  include/linux/f2fs_fs.h |  5 +++++
+> > >  4 files changed, 8 insertions(+), 19 deletions(-)
+> > >
+> > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > index 7175d33..a366a4c 100644
+> > > --- a/fs/f2fs/data.c
+> > > +++ b/fs/f2fs/data.c
+> > > @@ -762,7 +762,7 @@ static int get_data_block_bmap(struct inode *inode, sector_t iblock,
+> > >  			struct buffer_head *bh_result, int create)
+> > >  {
+> > >  	/* Block number less than F2FS MAX BLOCKS */
+> > > -	if (unlikely(iblock > max_file_size(0)))
+> > > +	if (unlikely(iblock > F2FS_MAX_BLOCKS))
+> > >  		return -EFBIG;
+> > >
+> > >  	return __get_data_block(inode, iblock, bh_result, create,
+> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > index 9ba6a09..95c6f38 100644
+> > > --- a/fs/f2fs/f2fs.h
+> > > +++ b/fs/f2fs/f2fs.h
+> > > @@ -1731,7 +1731,6 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode
+> > *inode)
+> > >   * super.c
+> > >   */
+> > >  int f2fs_commit_super(struct f2fs_sb_info *, bool);
+> > > -loff_t max_file_size(unsigned bits);
+> > >  int f2fs_sync_fs(struct super_block *, int);
+> > >  extern __printf(3, 4)
+> > >  void f2fs_msg(struct super_block *, const char *, const char *, ...);
+> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > index f474355..5f7e632 100644
+> > > --- a/fs/f2fs/super.c
+> > > +++ b/fs/f2fs/super.c
+> > > @@ -909,24 +909,9 @@ static const struct export_operations f2fs_export_ops = {
+> > >  	.get_parent = f2fs_get_parent,
+> > >  };
+> > >
+> > > -loff_t max_file_size(unsigned bits)
+> > > +static loff_t max_file_size(unsigned bits)
+> > >  {
+> > > -	loff_t result = (DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS);
+> > > -	loff_t leaf_count = ADDRS_PER_BLOCK;
+> > > -
+> > > -	/* two direct node blocks */
+> > > -	result += (leaf_count * 2);
+> > > -
+> > > -	/* two indirect node blocks */
+> > > -	leaf_count *= NIDS_PER_BLOCK;
+> > > -	result += (leaf_count * 2);
+> > > -
+> > > -	/* one double indirect node block */
+> > > -	leaf_count *= NIDS_PER_BLOCK;
+> > > -	result += leaf_count;
+> > > -
+> > > -	result <<= bits;
+> > > -	return result;
+> > > +	return ((loff_t)F2FS_MAX_BLOCKS << bits);
+> > >  }
+> > >
+> > >  static inline bool sanity_check_area_boundary(struct super_block *sb,
+> > > diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> > > index e59c3be..814c471 100644
+> > > --- a/include/linux/f2fs_fs.h
+> > > +++ b/include/linux/f2fs_fs.h
+> > > @@ -189,6 +189,11 @@ struct f2fs_extent {
+> > >  #define F2FS_DATA_EXIST		0x08	/* file inline data exist flag */
+> > >  #define F2FS_INLINE_DOTS	0x10	/* file having implicit dot dentries */
+> > >
+> > > +#define F2FS_MAX_BLOCKS		((DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS) + \
+> > > +				ADDRS_PER_BLOCK * 2 + ADDRS_PER_BLOCK * \
+> > > +				NIDS_PER_BLOCK * 2 + ADDRS_PER_BLOCK * \
+> > > +				NIDS_PER_BLOCK * NIDS_PER_BLOCK)
+> > > +
+> > >  #define MAX_INLINE_DATA		(sizeof(__le32) * (DEF_ADDRS_PER_INODE - \
+> > >  						F2FS_INLINE_XATTR_ADDRS - 1))
+> > >
+> > > --
+> > > 2.6.3
+> > >
