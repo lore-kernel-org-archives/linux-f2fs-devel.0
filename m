@@ -1,167 +1,134 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: use atomic variable for
-	total_extent_tree
-Date: Wed, 30 Dec 2015 14:44:56 +0800
-Message-ID: <00e101d142cd$b53ce1d0$1fb6a570$@samsung.com>
-References: <1450755521-20015-1-git-send-email-jaegeuk@kernel.org>
- <56826A59.3020105@huawei.com>
+Subject: Re: [PATCH 3/5] f2fs: report readonly status in ->fsync
+Date: Wed, 30 Dec 2015 14:46:03 +0800
+Message-ID: <00e201d142cd$d75c14c0$86143e40$@samsung.com>
+References: <016601d13e33$0ecdfd50$2c69f7f0$@samsung.com>
+	<20151226063258.GA4641@schmorp.de>
+	<006c01d14156$83ab2780$8b017680$@samsung.com>
+	<20151228224340.GA61500@jaegeuk.local>
+	<00c501d14201$3d7f79e0$b87e6da0$@samsung.com>
+	<20151230003246.GB13809@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <56826A59.3020105@huawei.com>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1aEAX5-0005ps-J4
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Dec 2015 06:46:51 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aEAX4-0004Bi-DU
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Dec 2015 06:46:51 +0000
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O0501OISS5UWI60@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 30 Dec 2015 15:46:42 +0900 (KST)
+In-reply-to: <20151230003246.GB13809@jaegeuk.local>
 Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: 'He YunLei' <heyunlei@huawei.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
-
-Hi Yunlei,
-
-Thanks for your report, but the fix should be done in another patch. :)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: 'Marc Lehmann' <schmorp@schmorp.de>, linux-f2fs-devel@lists.sourceforge.net
 
 Hi Jaegeuk,
 
-We should add to init total_zombie_tree in ("f2fs: speed up shrinking
-extent tree entries") as Yunlei reported.
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Wednesday, December 30, 2015 8:33 AM
+> To: Chao Yu
+> Cc: 'Marc Lehmann'; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 3/5] f2fs: report readonly status in ->fsync
+> 
+> Hi Chao,
+> 
+> ...
+> 
+> > > > And one more thing is how do you think of moving inline dot recovery into
+> > > > fsck?
+> > >
+> > > Hmm, we can't move that part entirely into fsck regarding to backward
+> > > compatibility.
+> >
+> > IMO, dynamical repair could be optional, not a must. Because when touching
+> > such incomplete directory in ->lookup, we could leave some dmesg to remind
+> > user to repair. Or if user found this issue by himself, also he could
+> > repair it by using fsck. So this shouldn't case a backward compatibility
+> > issue, or am I missing something?
+> 
+> Hmm, it seems that maybe I misunderstood your *moving it into fsck*.
+
+What I mean is 1) enable repair ability in fsck, 2) keep repair in kernel
+side optionally. For compatibility, we leave dmesg for user when touch this
+kind of dir if we choose to disable repair in kernel.
+
+> Anyway, I'm fine to add kernel messages as well.
+
+OK, will do it in ("f2fs: fix to stop recovering dot dentries in a readonly fs")
+
+> And, in any case, the only way to fix this case is to run fsck at first.
+> One approach, as I implemented, is to set a flag and then repair it at runtime.
+> 
+> The other one is to repair by fsck, as you suggested.
+> In this case, my concern is that current fsck is working without allocating
+> blocks, since it is a little bit risky right now.
+> For example, if there is no valid user block, not free space, fsck should handle
+> ENOSPC while changing the existing disk, which has not been fully validated so
+> far.
+
+That' right.
+
+> 
+> Ah, otherwise, we can activate inline_dentry by fsck for this special case, once
+> inline_dentry in f2fs becomes pretty much stable later. :)
+
+Or we can active inline_data for file which has i_size less than MAX_INLINE_SIZE.
+
+That will be cool to use inline_dentry by default! :)
 
 Thanks,
 
-> -----Original Message-----
-> From: He YunLei [mailto:heyunlei@huawei.com]
-> Sent: Tuesday, December 29, 2015 7:11 PM
-> To: Jaegeuk Kim
-> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: use atomic variable for total_extent_tree
 > 
-> On 2015/12/22 11:38, Jaegeuk Kim wrote:
-> > It would be better to use atomic variable for total_extent_tree.
-> >
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >   fs/f2fs/debug.c        | 5 +++--
-> >   fs/f2fs/extent_cache.c | 8 ++++----
-> >   fs/f2fs/f2fs.h         | 2 +-
-> >   fs/f2fs/node.c         | 3 ++-
-> >   fs/f2fs/shrinker.c     | 3 ++-
-> >   5 files changed, 12 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> > index bb307e6..ed5dfcc 100644
-> > --- a/fs/f2fs/debug.c
-> > +++ b/fs/f2fs/debug.c
-> > @@ -38,7 +38,7 @@ static void update_general_status(struct f2fs_sb_info *sbi)
-> >   	si->hit_rbtree = atomic64_read(&sbi->read_hit_rbtree);
-> >   	si->hit_total = si->hit_largest + si->hit_cached + si->hit_rbtree;
-> >   	si->total_ext = atomic64_read(&sbi->total_hit_ext);
-> > -	si->ext_tree = sbi->total_ext_tree;
-> > +	si->ext_tree = atomic_read(&sbi->total_ext_tree);
-> >   	si->ext_node = atomic_read(&sbi->total_ext_node);
-> >   	si->ndirty_node = get_pages(sbi, F2FS_DIRTY_NODES);
-> >   	si->ndirty_dent = get_pages(sbi, F2FS_DIRTY_DENTS);
-> > @@ -193,7 +193,8 @@ get_cache:
-> >   	si->cache_mem += si->inmem_pages * sizeof(struct inmem_pages);
-> >   	for (i = 0; i <= UPDATE_INO; i++)
-> >   		si->cache_mem += sbi->im[i].ino_num * sizeof(struct ino_entry);
-> > -	si->cache_mem += sbi->total_ext_tree * sizeof(struct extent_tree);
-> > +	si->cache_mem += atomic_read(&sbi->total_ext_tree) *
-> > +						sizeof(struct extent_tree);
-> >   	si->cache_mem += atomic_read(&sbi->total_ext_node) *
-> >   						sizeof(struct extent_node);
-> >
-> > diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> > index e86e9f1e..0e97d6af 100644
-> > --- a/fs/f2fs/extent_cache.c
-> > +++ b/fs/f2fs/extent_cache.c
-> > @@ -70,7 +70,7 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode)
-> >   		rwlock_init(&et->lock);
-> >   		atomic_set(&et->refcount, 0);
-> >   		et->count = 0;
-> > -		sbi->total_ext_tree++;
-> > +		atomic_inc(&sbi->total_ext_tree);
-> >   	}
-> >   	atomic_inc(&et->refcount);
-> >   	up_write(&sbi->extent_tree_lock);
-> > @@ -570,7 +570,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int
-> nr_shrink)
-> >
-> >   				radix_tree_delete(root, et->ino);
-> >   				kmem_cache_free(extent_tree_slab, et);
-> > -				sbi->total_ext_tree--;
-> > +				atomic_dec(&sbi->total_ext_tree);
-> >   				tree_cnt++;
-> >
-> >   				if (node_cnt + tree_cnt >= nr_shrink)
-> > @@ -663,7 +663,7 @@ void f2fs_destroy_extent_tree(struct inode *inode)
-> >   	f2fs_bug_on(sbi, atomic_read(&et->refcount) || et->count);
-> >   	radix_tree_delete(&sbi->extent_tree_root, inode->i_ino);
-> >   	kmem_cache_free(extent_tree_slab, et);
-> > -	sbi->total_ext_tree--;
-> > +	atomic_dec(&sbi->total_ext_tree);
-> >   	up_write(&sbi->extent_tree_lock);
-> >
-> >   	F2FS_I(inode)->extent_tree = NULL;
-> > @@ -715,7 +715,7 @@ void init_extent_cache_info(struct f2fs_sb_info *sbi)
-> >   	init_rwsem(&sbi->extent_tree_lock);
-> >   	INIT_LIST_HEAD(&sbi->extent_list);
-> >   	spin_lock_init(&sbi->extent_lock);
-> > -	sbi->total_ext_tree = 0;
-> > +	atomic_set(&sbi->total_ext_tree, 0);
-> Hi,
-> 	here we'd better to init total_zombie_tree:
-> 	atomic_set(&sbi->total_zombie_tree, 0);
 > Thanks,
-> >   	atomic_set(&sbi->total_ext_node, 0);
-> >   }
-> >
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 19beabe..a7f6191 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -762,7 +762,7 @@ struct f2fs_sb_info {
-> >   	struct rw_semaphore extent_tree_lock;	/* locking extent radix tree */
-> >   	struct list_head extent_list;		/* lru list for shrinker */
-> >   	spinlock_t extent_lock;			/* locking extent lru list */
-> > -	int total_ext_tree;			/* extent tree count */
-> > +	atomic_t total_ext_tree;		/* extent tree count */
-> >   	atomic_t total_ext_node;		/* extent info count */
-> >
-> >   	/* basic filesystem units */
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index d842b19..6cc8ac7 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -65,7 +65,8 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
-> >   				sizeof(struct ino_entry)) >> PAGE_CACHE_SHIFT;
-> >   		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
-> >   	} else if (type == EXTENT_CACHE) {
-> > -		mem_size = (sbi->total_ext_tree * sizeof(struct extent_tree) +
-> > +		mem_size = (atomic_read(&sbi->total_ext_tree) *
-> > +				sizeof(struct extent_tree) +
-> >   				atomic_read(&sbi->total_ext_node) *
-> >   				sizeof(struct extent_node)) >> PAGE_CACHE_SHIFT;
-> >   		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
-> > diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-> > index da0d8e0..a11e099 100644
-> > --- a/fs/f2fs/shrinker.c
-> > +++ b/fs/f2fs/shrinker.c
-> > @@ -32,7 +32,8 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
-> >
-> >   static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
-> >   {
-> > -	return sbi->total_ext_tree + atomic_read(&sbi->total_ext_node);
-> > +	return atomic_read(&sbi->total_ext_tree) +
-> > +				atomic_read(&sbi->total_ext_node);
-> >   }
-> >
-> >   unsigned long f2fs_shrink_count(struct shrinker *shrink,
-> >
 > 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >
+> > > We can add that in fsck, but it needs another block
+> > > allocation part which we need to handle -ENOSPC in fsck as well.
+> >
+> > That's right, is it possible to do defragment (gc) if there is no
+> > more space when allocating block?
+> >
+> > Thanks,
+> >
+> > >
+> > > Thanks,
+> > >
+> > > >
+> > > > Thanks,
+> > > >
+> > > > >
+> > > > > I only looked at the diff, so if I missed the context and my reasoning
+> > > > > doesn't apply, forgive and ignore me :)
+> > > > >
+> > > > > --
+> > > > >                 The choice of a       Deliantra, the free code+content MORPG
+> > > > >       -----==-     _GNU_              http://www.deliantra.net
+> > > > >       ----==-- _       generation
+> > > > >       ---==---(_)__  __ ____  __      Marc Lehmann
+> > > > >       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+> > > > >       -=====/_/_//_/\_,_/ /_/\_\
 
+
+------------------------------------------------------------------------------
