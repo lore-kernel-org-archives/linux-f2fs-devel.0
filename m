@@ -1,29 +1,33 @@
-From: He YunLei <heyunlei@huawei.com>
-Subject: Re: [PATCH] f2fs: add a segment and section num check in
- sanity_check_raw_super
-Date: Thu, 31 Dec 2015 09:02:21 +0800
-Message-ID: <56847E9D.9030809@huawei.com>
-References: <1451097979-4589-1-git-send-email-heyunlei@huawei.com>
-	<567E01B1.5090207@huawei.com>
-	<20151228231056.GA65529@jaegeuk.local>
-	<5681DAB0.9020902@huawei.com>
-	<20151229014657.GA66567@jaegeuk.local>
+From: Fan Li <fanofcode.li@samsung.com>
+Subject: Re: [PATCH 1/3] f2fs: avoid calling i_size_read when
+ it's unnecessary
+Date: Thu, 31 Dec 2015 10:53:32 +0800
+Message-ID: <001801d14376$8592b000$90b81000$@samsung.com>
+References: <000c01d142df$24fdd450$6ef97cf0$@samsung.com>
+	<20151230182739.GC28564@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1aERdq-0000L3-7g
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fanofcode.li@samsung.com>) id 1aETNj-0000SC-SK
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 31 Dec 2015 01:02:58 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aERdj-0005xX-Rl
+	Thu, 31 Dec 2015 02:54:27 +0000
+Received: from mailout1.samsung.com ([203.254.224.24])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aETNh-0006NZ-Ve
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 31 Dec 2015 01:02:58 +0000
-In-Reply-To: <20151229014657.GA66567@jaegeuk.local>
+	Thu, 31 Dec 2015 02:54:27 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout1.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O0701RLFC296V50@mailout1.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 31 Dec 2015 11:54:09 +0900 (KST)
+In-reply-to: <20151230182739.GC28564@jaegeuk.local>
+Content-language: en-us
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,78 +37,65 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2015/12/29 9:46, Jaegeuk Kim wrote:
-> Hi Yunlei,
->
-> Could you send a v2 for this?
->
+
+
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Thursday, December 31, 2015 2:28 AM
+> To: Fan Li
+> Cc: linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: avoid calling i_size_read when it's unnecessary
+> 
+> Hi Fan,
+> 
+> On Wed, Dec 30, 2015 at 04:49:56PM +0800, Fan Li wrote:
+> > i_size_read does more than reading a value, it's best that we use it
+> > only when we need it.
+> >
+> > Signed-off-by: Fan li <fanofcode.li@samsung.com>
+> > ---
+> >  fs/f2fs/data.c |    4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index d67c599..a9a4d89
+> > 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -780,7 +780,7 @@ int f2fs_fiemap(struct inode *inode, struct
+> > fiemap_extent_info *fieinfo,  {
+> >  	struct buffer_head map_bh;
+> >  	sector_t start_blk, last_blk;
+> > -	loff_t isize = i_size_read(inode);
+> > +	loff_t isize;
+> >  	u64 logical = 0, phys = 0, size = 0;
+> >  	u32 flags = 0;
+> >  	int ret = 0;
+> > @@ -795,6 +795,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+> >  			return ret;
+> >  	}
+> >
+> > +	isize = i_size_read(inode);
+> 
+> It seems that we need to get isize after grabbing i_mutex below in order to avoid data race.
+
+See if I got this right, isize should remain unchanged during the entire procedure, so we need
+to add i_mutex upon it, and since there is already a i_mutex,  we can get inode->i_size
+directly instead of calling i_read_size.
+Is that right?
+
+> 
 > Thanks,
-Hi Kim,
-
-    OK! I have sent it.
-
-Thanks,
->
-> On Tue, Dec 29, 2015 at 08:58:24AM +0800, He YunLei wrote:
->> On 2015/12/29 7:10, Jaegeuk Kim wrote:
->>> Hi Yunlei,
->>>
->>> On Sat, Dec 26, 2015 at 10:55:45AM +0800, He YunLei wrote:
->>>> On 2015/12/26 10:46, Yunlei He wrote:
->>>>> This patch add a mismatch check between segment and section in
->>>>> sanity_check_raw_super.
->>>>>
->>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>>>> ---
->>>>>   fs/f2fs/super.c | 11 +++++++++++
->>>>>   1 file changed, 11 insertions(+)
->>>>>
->>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>> index c3070c1..b51a690 100644
->>>>> --- a/fs/f2fs/super.c
->>>>> +++ b/fs/f2fs/super.c
->>>>> @@ -1036,6 +1036,17 @@ static int sanity_check_raw_super(struct super_block *sb,
->>>>>   		return 1;
->>>>>   	}
->>>>>
->>>>> +	/* check seg # corresponding to sec # */
->>>>> +	if (le32_to_cpu(raw_super->segment_count)
->>>
->>> 			raw_super->segment_count_main ?
->>>
->>> Thanks,
->>
->> yes, you are right, mistake also in f2fs_msg.
->>
->>>
->>>>> +			* le32_to_cpu(raw_super->segs_per_sec)
->>>>
->>>> I am sorry that here is :
->>>> 			/ le32_to_cpu(raw_super->segs_per_sec)
->>>>> +				!= le32_to_cpu(raw_super->section_count)) {
->>>>> +		f2fs_msg(sb, KERN_INFO,
->>>>> +			"Mismatch seg num (%u) and sec num (%u) \n",
->>>>> +			le32_to_cpu(raw_super->segment_count),
->> here is also need change:
->> 			le32_to_cpu(raw_super->segment_count_main),
->> Thanks,
->>>>> +			le32_to_cpu(raw_super->section_count));
->>>>> +		return 1;
->>>>> +	}
->>>>> +
->>>>>   	/* Currently, support 512/1024/2048/4096 bytes sector size */
->>>>>   	if (le32_to_cpu(raw_super->log_sectorsize) >
->>>>>   				F2FS_MAX_LOG_SECTOR_SIZE ||
->>>>>
->>>
->>> .
->>>
->
-> .
->
+> 
+> > +
+> >  	mutex_lock(&inode->i_mutex);
+> >  	if (start >= isize)
+> >  		goto out;
+> > --
+> > 1.7.9.5
+> >
 
 
 ------------------------------------------------------------------------------
