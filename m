@@ -1,174 +1,110 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: support revoking atomic written
- pages
-Date: Wed, 30 Dec 2015 11:43:15 -0800
-Message-ID: <20151230194315.GE28564@jaegeuk.local>
-References: <00a901d141e6$e42ec950$ac8c5bf0$@samsung.com>
- <20151230000513.GA13809@jaegeuk.local>
- <00dc01d142a2$5920ec00$0b62c400$@samsung.com>
- <5683F9B8.2020300@kernel.org>
+From: He YunLei <heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: add a segment and section num check in
+ sanity_check_raw_super
+Date: Thu, 31 Dec 2015 09:02:21 +0800
+Message-ID: <56847E9D.9030809@huawei.com>
+References: <1451097979-4589-1-git-send-email-heyunlei@huawei.com>
+	<567E01B1.5090207@huawei.com>
+	<20151228231056.GA65529@jaegeuk.local>
+	<5681DAB0.9020902@huawei.com>
+	<20151229014657.GA66567@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5683F9B8.2020300@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1aERdq-0000L3-7g
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 31 Dec 2015 01:02:58 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aERdj-0005xX-Rl
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 31 Dec 2015 01:02:58 +0000
+In-Reply-To: <20151229014657.GA66567@jaegeuk.local>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, Dec 30, 2015 at 11:35:20PM +0800, Chao Yu wrote:
-> On 12/30/15 9:34 AM, Chao Yu wrote:
-> > Hi Jaegeuk,
-> > 
-> >> -----Original Message-----
-> >> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> >> Sent: Wednesday, December 30, 2015 8:05 AM
-> >> To: Chao Yu
-> >> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> >> Subject: Re: [PATCH 2/2] f2fs: support revoking atomic written pages
-> >>
-> >> Hi Chao,
-> >>
-> >> On Tue, Dec 29, 2015 at 11:12:36AM +0800, Chao Yu wrote:
-> >>> f2fs support atomic write with following semantics:
-> >>> 1. open db file
-> >>> 2. ioctl start atomic write
-> >>> 3. (write db file) * n
-> >>> 4. ioctl commit atomic write
-> >>> 5. close db file
-> >>>
-> >>> With this flow we can avoid file becoming corrupted when abnormal power
-> >>> cut, because we hold data of transaction in referenced pages linked in
-> >>> inmem_pages list of inode, but without setting them dirty, so these data
-> >>> won't be persisted unless we commit them in step 4.
-> >>>
-> >>> But we should still hold journal db file in memory by using volatile write,
-> >>> because our semantics of 'atomic write support' is not full, in step 4, we
-> >>> could be fail to submit all dirty data of transaction, once partial dirty
-> >>> data was committed in storage, db file should be corrupted, in this case,
-> >>> we should use journal db to recover the original data in db file.
-> >>
-> >> Originally, IOC_ABORT_VOLATILE_WRITE was supposed to handle commit failures,
-> >> since database should get its error literally.
-> >>
-> >> So, the only thing that we need to do is keeping journal data for further db
-> >> recovery.
-> > 
-> > IMO, if we really support *atomic* interface, we don't need any journal data
-> > kept by user, because f2fs already have it in its storage since we always
-> > trigger OPU for pages written in atomic-write opened file, f2fs can easily try
-> > to revoke (replace old to new in metadata) when any failure exist in atomic
-> > write process.
-> > 
-> > But in current design, we still hold journal data in memory for recovering for
-> > *rare* failure case. I think there are several issues:
-> > a) most of time, we are in concurrent scenario, so if large number of journal
-> > db files were opened simultaneously, we are under big memory pressure.
-> > b) If we are out of memory, reclaimer tries to write page of journal db into
-> > disk, it will destroy db file.
-> > c) Though, we have journal db file, we will face failure of recovering db file
-> > from journal db due to ENOMEM or EIO, then db file will be corrupted.
-> > d) Recovery flow will make data page dirty, triggering both data stream and
-> > metadata stream, there should be more IOs than in inner revoking in
-> > atomic-interface.
-> > e) Moreover, there should be a hole between 1) commit fail and 2) abort write &
-> > recover, checkpoint will persist the corrupt data in db file, following abnormal
-> > power-cut will leave that data in disk.
-> > 
-> > With revoking supported design, we can not solve all above issues, we will still
-> > face the same issue like c), but it will be a big improve if we can apply this
-> > in our interface, since it provide a way to fix the issue a) b) d). And also for
-> > e) case, we try to rescue data in first time that our revoking operation would be
-> > protected by f2fs_lock_op to avoid checkpoint + power-cut.
-> > 
-> > If you don't want to have a big change in this interface or recovery flow, how
-> > about keep them both, and add a mount option to control inner recovery flow?
-> 
-> Or introduce F2FS_IOC_COMMIT_ATOMIC_WRITE_V2 for revoking supported interface?
-> 
-> > 
-> > How do you think? :)
-> > 
-> > Thanks,
-> > 
-> >> But, unfortunately, it seems that something is missing in the
-> >> current implementation.
-> >>
-> >> So simply how about this?
-> >>
-> >> A possible flow would be:
-> >> 1. write journal data to volatile space
-> >> 2. write db data to atomic space
-> >> 3. in the error case, call ioc_abort_volatile_writes for both journal and db
-> >>  - flush/fsync journal data to disk
-> >>  - drop atomic data, and will be recovered by database with journal
-> >>
-> >> From cb33fc8bc30981c370ec70fe68871130109793ec Mon Sep 17 00:00:00 2001
-> >> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> >> Date: Tue, 29 Dec 2015 15:46:33 -0800
-> >> Subject: [PATCH] f2fs: fix f2fs_ioc_abort_volatile_write
-> >>
-> >> There are two rules to handle aborting volatile or atomic writes.
-> >>
-> >> 1. drop atomic writes
-> >>  - we don't need to keep any stale db data.
-> >>
-> >> 2. write journal data
-> >>  - we should keep the journal data with fsync for db recovery.
-> >>
-> >> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >> ---
-> >>  fs/f2fs/file.c | 13 ++++++++++---
-> >>  1 file changed, 10 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> >> index 91f576a..d16438a 100644
-> >> --- a/fs/f2fs/file.c
-> >> +++ b/fs/f2fs/file.c
-> >> @@ -1433,9 +1433,16 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
-> >>  	if (ret)
-> >>  		return ret;
-> >>
-> >> -	clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
-> >> -	clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
-> >> -	commit_inmem_pages(inode, true);
-> >> +	if (f2fs_is_atomic_file(inode)) {
-> >> +		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
-> >> +		commit_inmem_pages(inode, true);
-> >> +	}
-> >> +	if (f2fs_is_volatile_file(inode)) {
-> >> +		clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
-> >> +		ret = commit_inmem_pages(inode, false);
-> 
-> Any more inmem pages exist here? Shouldn't these page have been released above?
+On 2015/12/29 9:46, Jaegeuk Kim wrote:
+> Hi Yunlei,
+>
+> Could you send a v2 for this?
+>
+> Thanks,
+Hi Kim,
 
-Oh, this should be like:
-
-if (f2fs_is_volatile_file(inode)) {
-	clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
-	ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
-}
+    OK! I have sent it.
 
 Thanks,
+>
+> On Tue, Dec 29, 2015 at 08:58:24AM +0800, He YunLei wrote:
+>> On 2015/12/29 7:10, Jaegeuk Kim wrote:
+>>> Hi Yunlei,
+>>>
+>>> On Sat, Dec 26, 2015 at 10:55:45AM +0800, He YunLei wrote:
+>>>> On 2015/12/26 10:46, Yunlei He wrote:
+>>>>> This patch add a mismatch check between segment and section in
+>>>>> sanity_check_raw_super.
+>>>>>
+>>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>>>> ---
+>>>>>   fs/f2fs/super.c | 11 +++++++++++
+>>>>>   1 file changed, 11 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>> index c3070c1..b51a690 100644
+>>>>> --- a/fs/f2fs/super.c
+>>>>> +++ b/fs/f2fs/super.c
+>>>>> @@ -1036,6 +1036,17 @@ static int sanity_check_raw_super(struct super_block *sb,
+>>>>>   		return 1;
+>>>>>   	}
+>>>>>
+>>>>> +	/* check seg # corresponding to sec # */
+>>>>> +	if (le32_to_cpu(raw_super->segment_count)
+>>>
+>>> 			raw_super->segment_count_main ?
+>>>
+>>> Thanks,
+>>
+>> yes, you are right, mistake also in f2fs_msg.
+>>
+>>>
+>>>>> +			* le32_to_cpu(raw_super->segs_per_sec)
+>>>>
+>>>> I am sorry that here is :
+>>>> 			/ le32_to_cpu(raw_super->segs_per_sec)
+>>>>> +				!= le32_to_cpu(raw_super->section_count)) {
+>>>>> +		f2fs_msg(sb, KERN_INFO,
+>>>>> +			"Mismatch seg num (%u) and sec num (%u) \n",
+>>>>> +			le32_to_cpu(raw_super->segment_count),
+>> here is also need change:
+>> 			le32_to_cpu(raw_super->segment_count_main),
+>> Thanks,
+>>>>> +			le32_to_cpu(raw_super->section_count));
+>>>>> +		return 1;
+>>>>> +	}
+>>>>> +
+>>>>>   	/* Currently, support 512/1024/2048/4096 bytes sector size */
+>>>>>   	if (le32_to_cpu(raw_super->log_sectorsize) >
+>>>>>   				F2FS_MAX_LOG_SECTOR_SIZE ||
+>>>>>
+>>>
+>>> .
+>>>
+>
+> .
+>
 
-> 
-> Thanks,
-> 
-> >> +		if (!ret)
-> >> +			ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
-> >> +	}
-> >>
-> >>  	mnt_drop_write_file(filp);
-> >>  	return ret;
-> >> --
-> >> 2.6.3
-> > 
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > 
+
+------------------------------------------------------------------------------
