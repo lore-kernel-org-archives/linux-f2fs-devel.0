@@ -1,27 +1,29 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/3] f2fs: avoid calling i_size_read when
- it's unnecessary
-Date: Thu, 31 Dec 2015 19:07:45 -0800
-Message-ID: <20160101030745.GA6673@jaegeuk.local>
-References: <000c01d142df$24fdd450$6ef97cf0$@samsung.com>
-	<20151230182739.GC28564@jaegeuk.local>
-	<001801d14376$8592b000$90b81000$@samsung.com>
+Subject: Re: [PATCH 2/2] f2fs: support revoking atomic written
+	pages
+Date: Thu, 31 Dec 2015 19:50:24 -0800
+Message-ID: <20160101035024.GB6673@jaegeuk.local>
+References: <00a901d141e6$e42ec950$ac8c5bf0$@samsung.com>
+	<20151230000513.GA13809@jaegeuk.local>
+	<00dc01d142a2$5920ec00$0b62c400$@samsung.com>
+	<20151230194102.GD28564@jaegeuk.local>
+	<011701d143ac$183be770$48b3b650$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aEq4J-0002Fz-1M
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aEqja-0006hf-DU
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 01 Jan 2016 03:07:55 +0000
+	Fri, 01 Jan 2016 03:50:34 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aEq4H-0002qs-8l for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 01 Jan 2016 03:07:55 +0000
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aEqjY-0007Zh-DF for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 01 Jan 2016 03:50:34 +0000
 Content-Disposition: inline
-In-Reply-To: <001801d14376$8592b000$90b81000$@samsung.com>
+In-Reply-To: <011701d143ac$183be770$48b3b650$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,73 +33,254 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Fan Li <fanofcode.li@samsung.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Fan,
+Hi Chao,
 
-On Thu, Dec 31, 2015 at 10:53:32AM +0800, Fan Li wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Thursday, December 31, 2015 2:28 AM
-> > To: Fan Li
-> > Cc: linux-f2fs-devel@lists.sourceforge.net
-> > Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: avoid calling i_size_read when it's unnecessary
-> > 
-> > Hi Fan,
-> > 
-> > On Wed, Dec 30, 2015 at 04:49:56PM +0800, Fan Li wrote:
-> > > i_size_read does more than reading a value, it's best that we use it
-> > > only when we need it.
-> > >
-> > > Signed-off-by: Fan li <fanofcode.li@samsung.com>
-> > > ---
-> > >  fs/f2fs/data.c |    4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index d67c599..a9a4d89
-> > > 100644
-> > > --- a/fs/f2fs/data.c
-> > > +++ b/fs/f2fs/data.c
-> > > @@ -780,7 +780,7 @@ int f2fs_fiemap(struct inode *inode, struct
-> > > fiemap_extent_info *fieinfo,  {
-> > >  	struct buffer_head map_bh;
-> > >  	sector_t start_blk, last_blk;
-> > > -	loff_t isize = i_size_read(inode);
-> > > +	loff_t isize;
-> > >  	u64 logical = 0, phys = 0, size = 0;
-> > >  	u32 flags = 0;
-> > >  	int ret = 0;
-> > > @@ -795,6 +795,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> > >  			return ret;
-> > >  	}
-> > >
-> > > +	isize = i_size_read(inode);
-> > 
-> > It seems that we need to get isize after grabbing i_mutex below in order to avoid data race.
-> 
-> See if I got this right, isize should remain unchanged during the entire procedure, so we need
-> to add i_mutex upon it, and since there is already a i_mutex,  we can get inode->i_size
-> directly instead of calling i_read_size.
-> Is that right?
+...
 
-Right, but I prefer to use i_size_read consistently.
-TOH, I'm not convincing why you're treating this as a so costly operation.
+> > > > On Tue, Dec 29, 2015 at 11:12:36AM +0800, Chao Yu wrote:
+> > > > > f2fs support atomic write with following semantics:
+> > > > > 1. open db file
+> > > > > 2. ioctl start atomic write
+> > > > > 3. (write db file) * n
+> > > > > 4. ioctl commit atomic write
+> > > > > 5. close db file
+> > > > >
+> > > > > With this flow we can avoid file becoming corrupted when abnormal power
+> > > > > cut, because we hold data of transaction in referenced pages linked in
+> > > > > inmem_pages list of inode, but without setting them dirty, so these data
+> > > > > won't be persisted unless we commit them in step 4.
+> > > > >
+> > > > > But we should still hold journal db file in memory by using volatile write,
+> > > > > because our semantics of 'atomic write support' is not full, in step 4, we
+> > > > > could be fail to submit all dirty data of transaction, once partial dirty
+> > > > > data was committed in storage, db file should be corrupted, in this case,
+> > > > > we should use journal db to recover the original data in db file.
+> > > >
+> > > > Originally, IOC_ABORT_VOLATILE_WRITE was supposed to handle commit failures,
+> > > > since database should get its error literally.
+> > > >
+> > > > So, the only thing that we need to do is keeping journal data for further db
+> > > > recovery.
+> > >
+> > > IMO, if we really support *atomic* interface, we don't need any journal data
+> > > kept by user, because f2fs already have it in its storage since we always
+> > > trigger OPU for pages written in atomic-write opened file, f2fs can easily try
+> > > to revoke (replace old to new in metadata) when any failure exist in atomic
+> > > write process.
+> > 
+> > Yeah, so current design does not fully support atomic writes. IOWs, volatile
+> > writes for journal files should be used together to minimize sqlite change as
+> > much as possible.
+> > 
+> > > But in current design, we still hold journal data in memory for recovering for
+> > > *rare* failure case. I think there are several issues:
+> > > a) most of time, we are in concurrent scenario, so if large number of journal
+> > > db files were opened simultaneously, we are under big memory pressure.
+> > 
+> > In current android, I've seen that this is not a big concern. Even there is
+> > memory pressure, f2fs flushes volatile pages.
+> 
+> When I change to redirty all volatile pages in ->writepage, android seems go
+> into an infinite loop when doing recovery flow of f2fs data partition in startup.
+> 
+> if (f2fs_is_volatile_file(inode))
+> 	goto redirty_out;
+
+Where did you put this? It doesn't flush at all? Why?
+Practically, the peak amount of journal writes depend on how many transactions
+are processing concurrently.
+I mean, in-memory pages are dropped at the end of every transaction.
+You can check the number of pages through f2fs_stat on your phone.
+
+> I didn't dig details, but I think there may be a little risk for this design.
+> 
+> > 
+> > > b) If we are out of memory, reclaimer tries to write page of journal db into
+> > > disk, it will destroy db file.
+> > 
+> > I don't understand. Could you elaborate why journal writes can corrupt db?
+> 
+> Normally, we keep pages of journal in memory, but partial page in journal
+> will be write out to device by reclaimer when out of memory. So this journal
+> may have valid data in its log head, but with corrupted data, then after
+> abnormal powe-cut, recovery with this journal before a transaction will
+> destroy db. Right?
+
+Just think about sqlite without this feature.
+Broken journal is pretty normal case for sqlite.
+
+> > 
+> > > c) Though, we have journal db file, we will face failure of recovering db file
+> > > from journal db due to ENOMEM or EIO, then db file will be corrupted.
+> > 
+> > Do you mean the failure of recovering db with a complete journal?
+> > Why do we have to handle that? That's a database stuff, IMO.
+> 
+> Yes, just list for indicating we will face the same issue which is hard to 
+> handle both in original design and new design, so the inner revoking failure
+> issue would not be a weak point or flaw of new design.
+> 
+> > 
+> > > d) Recovery flow will make data page dirty, triggering both data stream and
+> > > metadata stream, there should be more IOs than in inner revoking in
+> > > atomic-interface.
+> > 
+> > Well, do you mean there is no need to recover db after revoking?
+> 
+> Yes, revoking make the same effect like the recovery of sqlite, so after
+> revoking, recovery is no need.
+
+Logically, it doesn't make sense. If there is a valid journal file, it should
+redo the previous transaction. No?
+
+> One more case is that user can send a command to abort current transaction,
+> it should be happened before atomic_commit operation, which could easily
+> handle with abort_commit ioctl.
+> 
+> > 
+> > > e) Moreover, there should be a hole between 1) commit fail and 2) abort write &
+> > > recover, checkpoint will persist the corrupt data in db file, following abnormal
+> > > power-cut will leave that data in disk.
+> > 
+> > Yes, in that case, database should recover corrupted db with its journal file.
+> 
+> Journal could be corrupted as I descripted in b).
+
+Okay, so what I'm thinking is like this.
+It seems there are two corruption cases after journal writes.
+
+1. power cut during atomic writes
+ - broken journal file and clean db file -> give up
+ - luckily, valid journal file and clean db file -> recover db
+
+2. error during atomic writes
+ a. power-cut before abort completion
+  - broken journal file and broken db file -> revoking is needed!
+
+ b. after abort
+  - valid journal file and broken db file -> recover db (likewise plain sqlite)
+
+Indeed, in the 2.a. case, we need revoking; I guess that's what you mentioned.
+But, I think, even if revoking is done, we should notify an error to abort and
+recover db by 2.b.
+
+Something like this after successful revoking.
+
+1. power cut during atomic writes
+ - broken journal file and clean db file -> give up
+ - luckily, valid journal file and clean db file -> recover db
+
+2. error during atomic writes w/ revoking
+ a. power-cut before abort completion
+  - broken journal file and clean db file -> give up
+  - luckily, valid journal file and clean db file -> recover db
+
+ b. after abort
+  - valid journal file and clean db file -> recover db
+
+Let me verify these scenarios first. :)
 
 Thanks,
 
+> > 
+> > > With revoking supported design, we can not solve all above issues, we will still
+> > > face the same issue like c), but it will be a big improve if we can apply this
+> > > in our interface, since it provide a way to fix the issue a) b) d). And also for
+> > > e) case, we try to rescue data in first time that our revoking operation would be
+> > > protected by f2fs_lock_op to avoid checkpoint + power-cut.
+> > >
+> > > If you don't want to have a big change in this interface or recovery flow, how
+> > > about keep them both, and add a mount option to control inner recovery flow?
+> > 
+> > Hmm, okay. I believe the current design is fine for sqlite in android.
+> 
+> I believe new design will enhance in memory usage and error handling of sqlite
+> in android, and hope this can be applied. But, I can understand that if you
+> were considerring about risk control and backward compatibility, since this
+> change affects all atomic related ioctls.
+> 
+> > For other databases, I can understand that they can use atomic_write without
+> > journal control, which is a sort of stand-alone atomic_write.
+> > 
+> > It'd better to add a new ioctl for that, but before adding it, can we find
+> > any usecase for this feature? (e.g., postgresql, mysql, mariadb, couchdb?)
+> 
+> You mean investigating or we can only start when there is a clear commercial
+> demand ?
+> 
+> > Then, I expect that we can define a more appropriate and powerful ioctl.
+> 
+> Agreed :)
+> 
+> Thanks,
 > 
 > > 
 > > Thanks,
 > > 
-> > > +
-> > >  	mutex_lock(&inode->i_mutex);
-> > >  	if (start >= isize)
-> > >  		goto out;
-> > > --
-> > > 1.7.9.5
+> > >
+> > > How do you think? :)
+> > >
+> > > Thanks,
+> > >
+> > > > But, unfortunately, it seems that something is missing in the
+> > > > current implementation.
+> > > >
+> > > > So simply how about this?
+> > > >
+> > > > A possible flow would be:
+> > > > 1. write journal data to volatile space
+> > > > 2. write db data to atomic space
+> > > > 3. in the error case, call ioc_abort_volatile_writes for both journal and db
+> > > >  - flush/fsync journal data to disk
+> > > >  - drop atomic data, and will be recovered by database with journal
+> > > >
+> > > > From cb33fc8bc30981c370ec70fe68871130109793ec Mon Sep 17 00:00:00 2001
+> > > > From: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > > Date: Tue, 29 Dec 2015 15:46:33 -0800
+> > > > Subject: [PATCH] f2fs: fix f2fs_ioc_abort_volatile_write
+> > > >
+> > > > There are two rules to handle aborting volatile or atomic writes.
+> > > >
+> > > > 1. drop atomic writes
+> > > >  - we don't need to keep any stale db data.
+> > > >
+> > > > 2. write journal data
+> > > >  - we should keep the journal data with fsync for db recovery.
+> > > >
+> > > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > > > ---
+> > > >  fs/f2fs/file.c | 13 ++++++++++---
+> > > >  1 file changed, 10 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > > > index 91f576a..d16438a 100644
+> > > > --- a/fs/f2fs/file.c
+> > > > +++ b/fs/f2fs/file.c
+> > > > @@ -1433,9 +1433,16 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+> > > >  	if (ret)
+> > > >  		return ret;
+> > > >
+> > > > -	clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
+> > > > -	clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
+> > > > -	commit_inmem_pages(inode, true);
+> > > > +	if (f2fs_is_atomic_file(inode)) {
+> > > > +		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
+> > > > +		commit_inmem_pages(inode, true);
+> > > > +	}
+> > > > +	if (f2fs_is_volatile_file(inode)) {
+> > > > +		clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
+> > > > +		ret = commit_inmem_pages(inode, false);
+> > > > +		if (!ret)
+> > > > +			ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
+> > > > +	}
+> > > >
+> > > >  	mnt_drop_write_file(filp);
+> > > >  	return ret;
+> > > > --
+> > > > 2.6.3
 > > >
 
 ------------------------------------------------------------------------------
