@@ -1,122 +1,187 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [PATCH] f2fs: introduce max_file_blocks in sbi
-Date: Mon, 04 Jan 2016 13:56:34 +0800
-Message-ID: <005b01d146b4$c256c8a0$470459e0$@samsung.com>
-References: <011601d14395$95f64d70$c1e2e850$@samsung.com>
- <20160104054316.GA18570@jaegeuk-2.local>
+From: Fan Li <fanofcode.li@samsung.com>
+Subject: Re: [PATCH 2/3] f2fs: support finding extents after isize
+Date: Mon, 04 Jan 2016 13:57:27 +0800
+Message-ID: <002d01d146b4$e27808b0$a7681a10$@samsung.com>
+References: <000d01d142e2$fab05fc0$f0111f40$@samsung.com>
+	<5683DBD5.1050509@kernel.org>
+	<001901d1437c$9b4b15d0$d1e14170$@samsung.com>
+	<011501d14395$6127a030$2376e090$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20160104054316.GA18570@jaegeuk-2.local>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fanofcode.li@samsung.com>) id 1aFy9x-0000hQ-36
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 04 Jan 2016 05:58:25 +0000
+Received: from mailout3.samsung.com ([203.254.224.33])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aFy9v-0000HO-3G
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 04 Jan 2016 05:58:24 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout3.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O0E034YZZ8VJ3B0@mailout3.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 04 Jan 2016 14:58:12 +0900 (KST)
+In-reply-to: <011501d14395$6127a030$2376e090$@samsung.com>
+Content-language: en-us
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Chao Yu' <chao2.yu@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+
 
 > -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Monday, January 04, 2016 1:43 PM
-> To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] f2fs: introduce max_file_blocks in sbi
+> From: Chao Yu [mailto:chao2.yu@samsung.com]
+> Sent: Thursday, December 31, 2015 2:34 PM
+> To: 'Fan Li'; 'Jaegeuk Kim'
+> Cc: linux-f2fs-devel@lists.sourceforge.net
+> Subject: RE: [f2fs-dev] [PATCH 2/3] f2fs: support finding extents after isize
 > 
-> Hi Chao,
+> > -----Original Message-----
+> > From: Fan Li [mailto:fanofcode.li@samsung.com]
+> > Sent: Thursday, December 31, 2015 11:37 AM
+> > To: 'Chao Yu'; 'Jaegeuk Kim'
+> > Cc: linux-f2fs-devel@lists.sourceforge.net
+> > Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: support finding extents
+> > after isize
+> >
+> >
+> >
+> > > -----Original Message-----
+> > > From: Chao Yu [mailto:chao@kernel.org]
+> > > Sent: Wednesday, December 30, 2015 9:28 PM
+> > > To: Fan Li; 'Jaegeuk Kim'
+> > > Cc: linux-f2fs-devel@lists.sourceforge.net
+> > > Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: support finding extents
+> > > after isize
+> > >
+> > > Hi,
+> > >
+> > > On 12/30/15 5:17 PM, Fan Li wrote:
+> > > > f2fs allows preallocation beyond isize, but f2fs_fiemap only look
+> > > > up extents within isize. Therefore add this support.
+> > > >
+> > > > Note: It's possible that there are holes after isize, for example,
+> > > > fallocate  multiple discontinuous extents after isize with
+> > > > FALLOC_FL_KEEP_SIZE set. Since I can tell no differences between
+> > > > EOF and holes from return of get_data_block, I'm afaid this patch
+> > > > can't support such scenarios.
+> > >
+> > > As you mentioned, preallocated block beyond isize can be allocated
+> > > in f2fs, and we are trying
+> > to support mapping extents across
+> > > whole data space of inode, so why we treat theses extents inside
+> > > i_size and outside i_size
+> > separately? IMO, instead using i_size, we
+> > > should use max blocks as boundary.
+> > >
+> > > Most important, this interface still can't support finding all
+> > > extents after i_size, which
+> > looks buggy for our user.
+> >
+> > Notice that this issue exists before my patch, by adding this patch,
+> > at least now it can support more scenarios such as  fallocate a range
+> > right after isize. I'd say it's an improvement.
 > 
-> On Thu, Dec 31, 2015 at 02:35:37PM +0800, Chao Yu wrote:
-> > Introduce max_file_blocks in sbi to store max block index of file in f2fs,
-> > it could be used to avoid unneeded calculation of max block index in
-> > runtime.
-> >
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/data.c  | 2 +-
-> >  fs/f2fs/f2fs.h  | 2 +-
-> >  fs/f2fs/super.c | 7 ++++---
-> >  3 files changed, 6 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 5a71017..73b7a8f 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -762,7 +762,7 @@ static int get_data_block_bmap(struct inode *inode, sector_t iblock,
-> >  			struct buffer_head *bh_result, int create)
-> >  {
-> >  	/* Block number less than F2FS MAX BLOCKS */
-> > -	if (unlikely(iblock >= max_file_size(0)))
-> > +	if (unlikely(iblock >= F2FS_I_SB(inode)->max_file_blocks))
-> >  		return -EFBIG;
-> >
-> >  	return __get_data_block(inode, iblock, bh_result, create,
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 9ba6a09..520d8f2 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -786,6 +786,7 @@ struct f2fs_sb_info {
-> >  	unsigned int total_node_count;		/* total node block count */
-> >  	unsigned int total_valid_node_count;	/* valid node block count */
-> >  	unsigned int total_valid_inode_count;	/* valid inode count */
-> > +	unsigned int max_file_blocks;		/* max block index of file */
+> Nope, what I'm talking about is *correctness* of our ->fiemap interface, but you're trying to avoid it by saying "support more
+cases,
+> it's an improvement". That doesn't make any sense to me, since correctness issue still not be fixed.
+
+I'm not sure what you mean by avoiding, I think the comment and reply I written has already stated the issue and 
+limitation of this patch.
+Now there are two suggestions:
+1. support one more scenario, and all old scenarios are dealt like before, but it still can't support discontinuous extent after
+isize.
+2. support all scenarios, but sacrifice performance for lots of common scenarios by checking about 10^9 blocks.
+
+I think we can all agree both ideas have their flaws.
+The only divergence is that I vote the first, and you the second. I think the most important thing is that it works fluently in most
+scenarios, and you think is that it works in every scenarios even it's very slow.
+
+I think my method is more pratical, but balance between performance and utility seems to be an Eternal problem.
+
 > 
-> I found a overflow bug here and fixed this in my git.
-> This should be loff_t, otherwise it goes about 300 MB.
-
-Sorry, it's my bad.
-Thanks for fixing this. :)
-
-Thanks,
-
+> >
+> > use max blocks as boundary would get us the precise result, but it
+> > also means after we reach the EOF, we still need to look up every
+> > block between the EOF and  sb-> s_maxbytes to make sure the EOF is
+> > true, that's about 4TB or 10^9 blocks.
+> > And it affects all scenarios where the search range covers the last
+> > extent in the file, not just extents beyond isize. I think this price
+> > is too high to pay.
+> 
+> That's another performance issue.
+> 
+> >
+> > I was hoping that I can make f2fs_map_block return an EOF to solve
+> > this problem some time later, or anyone have a better idea?
+> 
+> At least we can seek valid dnode block like the way llseek use.
+> 
+> In addition, for most cases, few of i_nid[5] in f2fs_inode will be NULL, we could skip searching all dnode block in such
+non-allocated
+> indirect node, instead of searching dnode block f2fs_map_block one by one.
 > 
 > Thanks,
 > 
-> 
-> >  	int active_logs;			/* # of active logs */
-> >  	int dir_level;				/* directory level */
-> >  	int serialized_dio_pages;		/* serialized direct IO pages */
-> > @@ -1731,7 +1732,6 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode
-> *inode)
-> >   * super.c
-> >   */
-> >  int f2fs_commit_super(struct f2fs_sb_info *, bool);
-> > -loff_t max_file_size(unsigned bits);
-> >  int f2fs_sync_fs(struct super_block *, int);
-> >  extern __printf(3, 4)
-> >  void f2fs_msg(struct super_block *, const char *, const char *, ...);
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index f474355..4e5bbd4 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -909,7 +909,7 @@ static const struct export_operations f2fs_export_ops = {
-> >  	.get_parent = f2fs_get_parent,
-> >  };
 > >
-> > -loff_t max_file_size(unsigned bits)
-> > +static loff_t max_file_blocks(void)
-> >  {
-> >  	loff_t result = (DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS);
-> >  	loff_t leaf_count = ADDRS_PER_BLOCK;
-> > @@ -925,7 +925,6 @@ loff_t max_file_size(unsigned bits)
-> >  	leaf_count *= NIDS_PER_BLOCK;
-> >  	result += leaf_count;
+> > >
+> > > Thanks,
+> > >
+> > > >
+> > > >
+> > > > Signed-off-by: Fan li <fanofcode.li@samsung.com>
+> > > > ---
+> > > >  fs/f2fs/data.c |    7 +------
+> > > >  1 file changed, 1 insertion(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index
+> > > > a9a4d89..f89cf07
+> > > > 100644
+> > > > --- a/fs/f2fs/data.c
+> > > > +++ b/fs/f2fs/data.c
+> > > > @@ -798,12 +798,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+> > > >  	isize = i_size_read(inode);
+> > > >
+> > > >  	mutex_lock(&inode->i_mutex);
+> > > > -	if (start >= isize)
+> > > > -		goto out;
+> > > > -
+> > > > -	if (start + len > isize)
+> > > > -		len = isize - start;
+> > > > -
+> > > >  	if (logical_to_blk(inode, len) == 0)
+> > > >  		len = blk_to_logical(inode, 1);
+> > > >
+> > > > @@ -829,6 +823,7 @@ next:
+> > > >  		 * punch holes beyond isize and keep size unchanged.
+> > > >  		 */
+> > > >  		flags |= FIEMAP_EXTENT_LAST;
+> > > > +		last_blk = start_blk - 1;
+> > > >  	}
+> > > >
+> > > >  	if (size)
+> > > >
 > >
-> > -	result <<= bits;
-> >  	return result;
-> >  }
 > >
-> > @@ -1281,7 +1280,9 @@ try_onemore:
-> >  	if (err)
-> >  		goto free_options;
-> >
-> > -	sb->s_maxbytes = max_file_size(le32_to_cpu(raw_super->log_blocksize));
-> > +	sbi->max_file_blocks = max_file_blocks();
-> > +	sb->s_maxbytes = sbi->max_file_blocks <<
-> > +				le32_to_cpu(raw_super->log_blocksize);
-> >  	sb->s_max_links = F2FS_LINK_MAX;
-> >  	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
-> >
-> > --
-> > 2.6.3
-> >
+> > ----------------------------------------------------------------------
+> > -------- _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+
+------------------------------------------------------------------------------
