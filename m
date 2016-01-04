@@ -1,192 +1,104 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/3] f2fs: cover more area with nat_tree_lock
-Date: Sat,  2 Jan 2016 17:26:05 -0800
-Message-ID: <1451784366-14261-2-git-send-email-jaegeuk@kernel.org>
-References: <1451784366-14261-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: introduce max_file_blocks in sbi
+Date: Sun, 3 Jan 2016 21:43:16 -0800
+Message-ID: <20160104054316.GA18570@jaegeuk-2.local>
+References: <011601d14395$95f64d70$c1e2e850$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aFXR4-0000SK-JJ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Jan 2016 01:26:18 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aFXR3-0007Yb-N5 for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Jan 2016 01:26:18 +0000
-In-Reply-To: <1451784366-14261-1-git-send-email-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <011601d14395$95f64d70$c1e2e850$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-There was a subtle bug on nat cache management which incurs wrong nid allocation
-or wrong block addresses when try_to_free_nats is triggered heavily.
-This patch enlarges the previous coverage of nat_tree_lock to avoid data race.
+Hi Chao,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/node.c | 29 ++++++++++++-----------------
- 1 file changed, 12 insertions(+), 17 deletions(-)
+On Thu, Dec 31, 2015 at 02:35:37PM +0800, Chao Yu wrote:
+> Introduce max_file_blocks in sbi to store max block index of file in f2fs,
+> it could be used to avoid unneeded calculation of max block index in
+> runtime.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/data.c  | 2 +-
+>  fs/f2fs/f2fs.h  | 2 +-
+>  fs/f2fs/super.c | 7 ++++---
+>  3 files changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 5a71017..73b7a8f 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -762,7 +762,7 @@ static int get_data_block_bmap(struct inode *inode, sector_t iblock,
+>  			struct buffer_head *bh_result, int create)
+>  {
+>  	/* Block number less than F2FS MAX BLOCKS */
+> -	if (unlikely(iblock >= max_file_size(0)))
+> +	if (unlikely(iblock >= F2FS_I_SB(inode)->max_file_blocks))
+>  		return -EFBIG;
+>  
+>  	return __get_data_block(inode, iblock, bh_result, create,
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 9ba6a09..520d8f2 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -786,6 +786,7 @@ struct f2fs_sb_info {
+>  	unsigned int total_node_count;		/* total node block count */
+>  	unsigned int total_valid_node_count;	/* valid node block count */
+>  	unsigned int total_valid_inode_count;	/* valid inode count */
+> +	unsigned int max_file_blocks;		/* max block index of file */
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 669c44e..4dab09f 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -262,13 +262,11 @@ static void cache_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid,
- {
- 	struct nat_entry *e;
- 
--	down_write(&nm_i->nat_tree_lock);
- 	e = __lookup_nat_cache(nm_i, nid);
- 	if (!e) {
- 		e = grab_nat_entry(nm_i, nid);
- 		node_info_from_raw_nat(&e->ni, ne);
- 	}
--	up_write(&nm_i->nat_tree_lock);
- }
- 
- static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
-@@ -380,6 +378,8 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
- 
- 	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
- 
-+	down_write(&nm_i->nat_tree_lock);
-+
- 	/* Check current segment summary */
- 	mutex_lock(&curseg->curseg_mutex);
- 	i = lookup_journal_in_cursum(sum, NAT_JOURNAL, nid, 0);
-@@ -400,6 +400,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
- cache:
- 	/* cache nat entry */
- 	cache_nat_entry(NM_I(sbi), nid, &ne);
-+	up_write(&nm_i->nat_tree_lock);
- }
- 
- /*
-@@ -1459,13 +1460,10 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
- 
- 	if (build) {
- 		/* do not add allocated nids */
--		down_read(&nm_i->nat_tree_lock);
- 		ne = __lookup_nat_cache(nm_i, nid);
--		if (ne &&
--			(!get_nat_flag(ne, IS_CHECKPOINTED) ||
-+		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
- 				nat_get_blkaddr(ne) != NULL_ADDR))
- 			allocated = true;
--		up_read(&nm_i->nat_tree_lock);
- 		if (allocated)
- 			return 0;
- 	}
-@@ -1551,6 +1549,8 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
- 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
- 							META_NAT, true);
- 
-+	down_read(&nm_i->nat_tree_lock);
-+
- 	while (1) {
- 		struct page *page = get_current_nat_page(sbi, nid);
- 
-@@ -1579,6 +1579,7 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
- 			remove_free_nid(nm_i, nid);
- 	}
- 	mutex_unlock(&curseg->curseg_mutex);
-+	up_read(&nm_i->nat_tree_lock);
- 
- 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
- 					nm_i->ra_nid_pages, META_NAT, false);
-@@ -1861,14 +1862,12 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 
- 		raw_ne = nat_in_journal(sum, i);
- 
--		down_write(&nm_i->nat_tree_lock);
- 		ne = __lookup_nat_cache(nm_i, nid);
- 		if (!ne) {
- 			ne = grab_nat_entry(nm_i, nid);
- 			node_info_from_raw_nat(&ne->ni, &raw_ne);
- 		}
- 		__set_nat_cache_dirty(nm_i, ne);
--		up_write(&nm_i->nat_tree_lock);
- 	}
- 	update_nats_in_cursum(sum, -i);
- 	mutex_unlock(&curseg->curseg_mutex);
-@@ -1902,7 +1901,6 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 	struct f2fs_nat_block *nat_blk;
- 	struct nat_entry *ne, *cur;
- 	struct page *page = NULL;
--	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 
- 	/*
- 	 * there are two steps to flush nat entries:
-@@ -1939,12 +1937,8 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 			raw_ne = &nat_blk->entries[nid - start_nid];
- 		}
- 		raw_nat_from_node_info(raw_ne, &ne->ni);
--
--		down_write(&NM_I(sbi)->nat_tree_lock);
- 		nat_reset_flag(ne);
- 		__clear_nat_cache_dirty(NM_I(sbi), ne);
--		up_write(&NM_I(sbi)->nat_tree_lock);
--
- 		if (nat_get_blkaddr(ne) == NULL_ADDR)
- 			add_free_nid(sbi, nid, false);
- 	}
-@@ -1956,9 +1950,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 
- 	f2fs_bug_on(sbi, set->entry_cnt);
- 
--	down_write(&nm_i->nat_tree_lock);
- 	radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
--	up_write(&nm_i->nat_tree_lock);
- 	kmem_cache_free(nat_entry_set_slab, set);
- }
- 
-@@ -1978,6 +1970,9 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
- 
- 	if (!nm_i->dirty_nat_cnt)
- 		return;
-+
-+	down_write(&nm_i->nat_tree_lock);
-+
- 	/*
- 	 * if there are no enough space in journal to store dirty nat
- 	 * entries, remove all entries from journal and merge them
-@@ -1986,7 +1981,6 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
- 	if (!__has_cursum_space(sum, nm_i->dirty_nat_cnt, NAT_JOURNAL))
- 		remove_nats_in_journal(sbi);
- 
--	down_write(&nm_i->nat_tree_lock);
- 	while ((found = __gang_lookup_nat_set(nm_i,
- 					set_idx, SETVEC_SIZE, setvec))) {
- 		unsigned idx;
-@@ -1995,12 +1989,13 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
- 			__adjust_nat_entry_set(setvec[idx], &sets,
- 							MAX_NAT_JENTRIES(sum));
- 	}
--	up_write(&nm_i->nat_tree_lock);
- 
- 	/* flush dirty nats in nat entry set */
- 	list_for_each_entry_safe(set, tmp, &sets, set_list)
- 		__flush_nat_entry_set(sbi, set);
- 
-+	up_write(&nm_i->nat_tree_lock);
-+
- 	f2fs_bug_on(sbi, nm_i->dirty_nat_cnt);
- }
- 
--- 
-2.6.3
+I found a overflow bug here and fixed this in my git.
+This should be loff_t, otherwise it goes about 300 MB.
+
+Thanks,
 
 
-------------------------------------------------------------------------------
+>  	int active_logs;			/* # of active logs */
+>  	int dir_level;				/* directory level */
+>  	int serialized_dio_pages;		/* serialized direct IO pages */
+> @@ -1731,7 +1732,6 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+>   * super.c
+>   */
+>  int f2fs_commit_super(struct f2fs_sb_info *, bool);
+> -loff_t max_file_size(unsigned bits);
+>  int f2fs_sync_fs(struct super_block *, int);
+>  extern __printf(3, 4)
+>  void f2fs_msg(struct super_block *, const char *, const char *, ...);
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index f474355..4e5bbd4 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -909,7 +909,7 @@ static const struct export_operations f2fs_export_ops = {
+>  	.get_parent = f2fs_get_parent,
+>  };
+>  
+> -loff_t max_file_size(unsigned bits)
+> +static loff_t max_file_blocks(void)
+>  {
+>  	loff_t result = (DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS);
+>  	loff_t leaf_count = ADDRS_PER_BLOCK;
+> @@ -925,7 +925,6 @@ loff_t max_file_size(unsigned bits)
+>  	leaf_count *= NIDS_PER_BLOCK;
+>  	result += leaf_count;
+>  
+> -	result <<= bits;
+>  	return result;
+>  }
+>  
+> @@ -1281,7 +1280,9 @@ try_onemore:
+>  	if (err)
+>  		goto free_options;
+>  
+> -	sb->s_maxbytes = max_file_size(le32_to_cpu(raw_super->log_blocksize));
+> +	sbi->max_file_blocks = max_file_blocks();
+> +	sb->s_maxbytes = sbi->max_file_blocks <<
+> +				le32_to_cpu(raw_super->log_blocksize);
+>  	sb->s_max_links = F2FS_LINK_MAX;
+>  	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
+>  
+> -- 
+> 2.6.3
+> 
