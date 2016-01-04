@@ -1,33 +1,34 @@
 From: Fan Li <fanofcode.li@samsung.com>
-Subject: Re: [PATCH 2/3] f2fs: support finding extents after isize
-Date: Mon, 04 Jan 2016 13:57:27 +0800
-Message-ID: <002d01d146b4$e27808b0$a7681a10$@samsung.com>
-References: <000d01d142e2$fab05fc0$f0111f40$@samsung.com>
-	<5683DBD5.1050509@kernel.org>
-	<001901d1437c$9b4b15d0$d1e14170$@samsung.com>
-	<011501d14395$6127a030$2376e090$@samsung.com>
+Subject: Re: [PATCH 1/3] f2fs: avoid calling i_size_read when
+ it's unnecessary
+Date: Mon, 04 Jan 2016 14:13:02 +0800
+Message-ID: <002e01d146b7$0d33c0b0$279b4210$@samsung.com>
+References: <000c01d142df$24fdd450$6ef97cf0$@samsung.com>
+	<20151230182739.GC28564@jaegeuk.local>
+	<001801d14376$8592b000$90b81000$@samsung.com>
+	<20160101030745.GA6673@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fanofcode.li@samsung.com>) id 1aFy9x-0000hQ-36
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fanofcode.li@samsung.com>) id 1aFyOu-0007Qa-Pm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 04 Jan 2016 05:58:25 +0000
+	Mon, 04 Jan 2016 06:13:52 +0000
 Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aFy9v-0000HO-3G
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aFyOs-0003DD-ND
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 04 Jan 2016 05:58:24 +0000
+	Mon, 04 Jan 2016 06:13:52 +0000
 Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
 	by mailout3.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O0E034YZZ8VJ3B0@mailout3.samsung.com> for
+	2014)) with ESMTP id <0O0E034O8ZYPJ3D0@mailout3.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 04 Jan 2016 14:58:12 +0900 (KST)
-In-reply-to: <011501d14395$6127a030$2376e090$@samsung.com>
+	Mon, 04 Jan 2016 15:13:42 +0900 (KST)
+In-reply-to: <20160101030745.GA6673@jaegeuk.local>
 Content-language: en-us
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -38,102 +39,77 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Chao Yu' <chao2.yu@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
 
 
 > -----Original Message-----
-> From: Chao Yu [mailto:chao2.yu@samsung.com]
-> Sent: Thursday, December 31, 2015 2:34 PM
-> To: 'Fan Li'; 'Jaegeuk Kim'
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Friday, January 01, 2016 11:08 AM
+> To: Fan Li
 > Cc: linux-f2fs-devel@lists.sourceforge.net
-> Subject: RE: [f2fs-dev] [PATCH 2/3] f2fs: support finding extents after isize
+> Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: avoid calling i_size_read when it's unnecessary
 > 
-> > -----Original Message-----
-> > From: Fan Li [mailto:fanofcode.li@samsung.com]
-> > Sent: Thursday, December 31, 2015 11:37 AM
-> > To: 'Chao Yu'; 'Jaegeuk Kim'
-> > Cc: linux-f2fs-devel@lists.sourceforge.net
-> > Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: support finding extents
-> > after isize
-> >
+> Hi Fan,
+> 
+> On Thu, Dec 31, 2015 at 10:53:32AM +0800, Fan Li wrote:
 > >
 > >
 > > > -----Original Message-----
-> > > From: Chao Yu [mailto:chao@kernel.org]
-> > > Sent: Wednesday, December 30, 2015 9:28 PM
-> > > To: Fan Li; 'Jaegeuk Kim'
+> > > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > > Sent: Thursday, December 31, 2015 2:28 AM
+> > > To: Fan Li
 > > > Cc: linux-f2fs-devel@lists.sourceforge.net
-> > > Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: support finding extents
-> > > after isize
+> > > Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: avoid calling i_size_read
+> > > when it's unnecessary
 > > >
-> > > Hi,
+> > > Hi Fan,
 > > >
-> > > On 12/30/15 5:17 PM, Fan Li wrote:
-> > > > f2fs allows preallocation beyond isize, but f2fs_fiemap only look
-> > > > up extents within isize. Therefore add this support.
+> > > On Wed, Dec 30, 2015 at 04:49:56PM +0800, Fan Li wrote:
+> > > > i_size_read does more than reading a value, it's best that we use
+> > > > it only when we need it.
 > > > >
-> > > > Note: It's possible that there are holes after isize, for example,
-> > > > fallocate  multiple discontinuous extents after isize with
-> > > > FALLOC_FL_KEEP_SIZE set. Since I can tell no differences between
-> > > > EOF and holes from return of get_data_block, I'm afaid this patch
-> > > > can't support such scenarios.
+> > > > Signed-off-by: Fan li <fanofcode.li@samsung.com>
+> > > > ---
+> > > >  fs/f2fs/data.c |    4 +++-
+> > > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index
+> > > > d67c599..a9a4d89
+> > > > 100644
+> > > > --- a/fs/f2fs/data.c
+> > > > +++ b/fs/f2fs/data.c
+> > > > @@ -780,7 +780,7 @@ int f2fs_fiemap(struct inode *inode, struct
+> > > > fiemap_extent_info *fieinfo,  {
+> > > >  	struct buffer_head map_bh;
+> > > >  	sector_t start_blk, last_blk;
+> > > > -	loff_t isize = i_size_read(inode);
+> > > > +	loff_t isize;
+> > > >  	u64 logical = 0, phys = 0, size = 0;
+> > > >  	u32 flags = 0;
+> > > >  	int ret = 0;
+> > > > @@ -795,6 +795,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+> > > >  			return ret;
+> > > >  	}
+> > > >
+> > > > +	isize = i_size_read(inode);
 > > >
-> > > As you mentioned, preallocated block beyond isize can be allocated
-> > > in f2fs, and we are trying
-> > to support mapping extents across
-> > > whole data space of inode, so why we treat theses extents inside
-> > > i_size and outside i_size
-> > separately? IMO, instead using i_size, we
-> > > should use max blocks as boundary.
-> > >
-> > > Most important, this interface still can't support finding all
-> > > extents after i_size, which
-> > looks buggy for our user.
+> > > It seems that we need to get isize after grabbing i_mutex below in order to avoid data race.
 > >
-> > Notice that this issue exists before my patch, by adding this patch,
-> > at least now it can support more scenarios such as  fallocate a range
-> > right after isize. I'd say it's an improvement.
+> > See if I got this right, isize should remain unchanged during the
+> > entire procedure, so we need to add i_mutex upon it, and since there
+> > is already a i_mutex,  we can get inode->i_size directly instead of calling i_read_size.
+> > Is that right?
 > 
-> Nope, what I'm talking about is *correctness* of our ->fiemap interface, but you're trying to avoid it by saying "support more
-cases,
-> it's an improvement". That doesn't make any sense to me, since correctness issue still not be fixed.
+> Right, but I prefer to use i_size_read consistently.
+> TOH, I'm not convincing why you're treating this as a so costly operation.
 
-I'm not sure what you mean by avoiding, I think the comment and reply I written has already stated the issue and 
-limitation of this patch.
-Now there are two suggestions:
-1. support one more scenario, and all old scenarios are dealt like before, but it still can't support discontinuous extent after
-isize.
-2. support all scenarios, but sacrifice performance for lots of common scenarios by checking about 10^9 blocks.
+Yes, the difference between i_size_read and assignment is very small. I just think it's best
+to squeeze every bit of performance out of codes.
 
-I think we can all agree both ideas have their flaws.
-The only divergence is that I vote the first, and you the second. I think the most important thing is that it works fluently in most
-scenarios, and you think is that it works in every scenarios even it's very slow.
+If the consistence is a more pressing issue, then i_size_read it is.
 
-I think my method is more pratical, but balance between performance and utility seems to be an Eternal problem.
-
-> 
-> >
-> > use max blocks as boundary would get us the precise result, but it
-> > also means after we reach the EOF, we still need to look up every
-> > block between the EOF and  sb-> s_maxbytes to make sure the EOF is
-> > true, that's about 4TB or 10^9 blocks.
-> > And it affects all scenarios where the search range covers the last
-> > extent in the file, not just extents beyond isize. I think this price
-> > is too high to pay.
-> 
-> That's another performance issue.
-> 
-> >
-> > I was hoping that I can make f2fs_map_block return an EOF to solve
-> > this problem some time later, or anyone have a better idea?
-> 
-> At least we can seek valid dnode block like the way llseek use.
-> 
-> In addition, for most cases, few of i_nid[5] in f2fs_inode will be NULL, we could skip searching all dnode block in such
-non-allocated
-> indirect node, instead of searching dnode block f2fs_map_block one by one.
 > 
 > Thanks,
 > 
@@ -141,47 +117,13 @@ non-allocated
 > > >
 > > > Thanks,
 > > >
-> > > >
-> > > >
-> > > > Signed-off-by: Fan li <fanofcode.li@samsung.com>
-> > > > ---
-> > > >  fs/f2fs/data.c |    7 +------
-> > > >  1 file changed, 1 insertion(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index
-> > > > a9a4d89..f89cf07
-> > > > 100644
-> > > > --- a/fs/f2fs/data.c
-> > > > +++ b/fs/f2fs/data.c
-> > > > @@ -798,12 +798,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> > > >  	isize = i_size_read(inode);
-> > > >
+> > > > +
 > > > >  	mutex_lock(&inode->i_mutex);
-> > > > -	if (start >= isize)
-> > > > -		goto out;
-> > > > -
-> > > > -	if (start + len > isize)
-> > > > -		len = isize - start;
-> > > > -
-> > > >  	if (logical_to_blk(inode, len) == 0)
-> > > >  		len = blk_to_logical(inode, 1);
+> > > >  	if (start >= isize)
+> > > >  		goto out;
+> > > > --
+> > > > 1.7.9.5
 > > > >
-> > > > @@ -829,6 +823,7 @@ next:
-> > > >  		 * punch holes beyond isize and keep size unchanged.
-> > > >  		 */
-> > > >  		flags |= FIEMAP_EXTENT_LAST;
-> > > > +		last_blk = start_blk - 1;
-> > > >  	}
-> > > >
-> > > >  	if (size)
-> > > >
-> >
-> >
-> > ----------------------------------------------------------------------
-> > -------- _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
 ------------------------------------------------------------------------------
