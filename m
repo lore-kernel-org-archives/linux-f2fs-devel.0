@@ -1,105 +1,32 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/3] f2fs: support finding extents after isize
-Date: Tue, 5 Jan 2016 10:11:14 -0800
-Message-ID: <20160105181114.GC2618@jaegeuk>
-References: <5683DBD5.1050509@kernel.org>
-	<001901d1437c$9b4b15d0$d1e14170$@samsung.com>
-	<011501d14395$6127a030$2376e090$@samsung.com>
-	<002d01d146b4$e27808b0$a7681a10$@samsung.com>
-	<20160104065544.GB18606@jaegeuk-2.local>
-	<004001d146e1$10dc8b50$3295a1f0$@samsung.com>
-	<20160104231416.GA22498@jaegeuk-2.local>
-	<000401d14762$13b7ba30$3b272e90$@samsung.com>
-	<20160105030805.GB23478@jaegeuk-2.local>
-	<000d01d14789$eb83f380$c28bda80$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aGW4o-000238-PA
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 05 Jan 2016 18:11:22 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aGW4n-00014s-KO for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 05 Jan 2016 18:11:22 +0000
-Content-Disposition: inline
-In-Reply-To: <000d01d14789$eb83f380$c28bda80$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Fan Li <fanofcode.li@samsung.com>
-Cc: @jaegeuk-2.local, linux-f2fs-devel@lists.sourceforge.net
+From: mchristi@redhat.com
+Subject: [PATCH 00/35 v2] separate operations from flags in the bio/request structs
+Date: Tue,  5 Jan 2016 14:53:03 -0600
+Message-ID: <1452027218-32303-1-git-send-email-mchristi@redhat.com>
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, konrad.wilk@oracle.com, drbd-dev@lists.linbit.com, philipp.reisner@linbit.com, lars.ellenberg@linbit.com, linux-raid@vger.kernel.org, dm-devel@redhat.com, linux-fsdevel@vger.kernel.org, linux-bcache@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, linux-mtd@lists.infradead.org, target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, osd-dev@open-osd.org, xfs@oss.sgi.com, ocfs2-devel@oss.oracle.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi,
+The following patches begin to cleanup the request->cmd_flags and
+bio->bi_rw mess. We currently use cmd_flags to specify the operation,
+attributes and state of the request. For bi_rw we use it for similar
+info and also the priority but then also have another bi_flags field
+for state. At some point, we abused them so much we just made cmd_flags
+64 bits, so we could add more.
 
-...
+The following patches seperate the operation (read, write discard,
+flush, etc) from cmd_flags/bi_rw.
 
-> > > > > > > > Nope, what I'm talking about is *correctness* of our
-> > > > > > > > ->fiemap interface, but you're trying to avoid it by saying
-> > > > > > > > "support more
-> > > > > > > cases,
-> > > > > > > > it's an improvement". That doesn't make any sense to me, since correctness issue still not be fixed.
-> > > > > > >
-> > > > > > > I'm not sure what you mean by avoiding, I think the comment
-> > > > > > > and reply I written has already stated the issue and limitation of this patch.
-> > > > > > > Now there are two suggestions:
-> > > > > > > 1. support one more scenario, and all old scenarios are dealt
-> > > > > > > like before, but it still can't support discontinuous extent after isize.
-> > > > > > > 2. support all scenarios, but sacrifice performance for lots of common scenarios by checking about 10^9 blocks.
-> > > > > >
-> > > > > > IMO, we can think about #2 whether there is an efficient way.
-> > > > > >
-> > > > > > How many cases does this incur?
-> > > > > > One is fallocate with keeping i_size, ana other?
-> > > > > >
-> > > > > > How about adding FADVISE_OVER_ISIZE to represent inode has blocks beyond i_size?
-> > > > > > Then, we can set this flag in fallocate and reset it in f2fs_truncate.
-> > > > >
-> > > > > I have a similar idea that add an actual size which marks the end
-> > > > > of last extent, so we can know if the current extent is the last one, even without searching for extents behind.
-> > > >
-> > > > Where do you want to store that size in disk?
-> > >
-> > > I'm still not very confident about this idea, so I didn't really think
-> > > that through yet, inode may be a proper place.
-> > > Or we just write a special function to find it, and call it only when
-> > > fiemap is called and disk size isn't initiated yet. After all this isn't frequently-used.
-> > >
-> > > >
-> > > > > But there is a problem I still can't figure out,  after truncate
-> > > > > an extent at the end of file beyond isize , how do I know where
-> > > > > the new last extent ends or if there are still extents beyond isize? after all, the extents beyond isize could be
-> discontinuous.
-> > > >
-> > > > So, that's why I proposed a flag instead of a kind of i_disksize.
-> > > > We can just set the flag, only if a file *may* have a extent beyond i_size in fallocate, and unset it through f2fs_truncate.
-> > > > Moreover, I don't expect that this happens so frequently.
-> > >
-> > > if flag could indicate "may", will i_disksize do a better job in the same way?
-> > > let i_disksize be the end of the last extent that *may* exist beyond
-> > > i_size, set it also in fallocate,when truncate, if the length is still
-> > > beyond isize, we set the new length as i_disksize, so in worse scenario we won't have to search up to s_maxbytes.
-> > 
-> > My real concern is that there no space for i_disksize.
-> 
-> I see. How about combine both ideas, use flag as you propose, and if fiemap ever needs to 
-> look up the last extent beyond isize, we calculate i_disksize first and cache it in f2fs_inode_info, 
-> use it to determine the last extent.
-> 
-> This way we don't have to look up all blocks up to s_maxbytes, and need no extra space in disk.
+This patchset was made against linux-next from today Jan 5 2016.
+(git tag next-20160105).
 
-Looks good to me.
+v2.
 
-Thanks,
+1. Dropped arguments from submit_bio, and had callers setup
+bio.
+2. Add REQ_OP_FLUSH for request_fn users and renamed REQ_FLUSH
+to REQ_PREFLUSH for make_request_fn users.
+3. Dropped bio/rq_data_dir functions, and added a op_is_write
+function instead.
 
-------------------------------------------------------------------------------
+
