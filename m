@@ -1,191 +1,142 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 2/3] f2fs: support finding extents after isize
-Date: Tue, 05 Jan 2016 17:36:40 +0800
-Message-ID: <00a301d1479c$accb9b30$0662d190$@samsung.com>
-References: <000d01d142e2$fab05fc0$f0111f40$@samsung.com>
-	<5683DBD5.1050509@kernel.org>
-	<001901d1437c$9b4b15d0$d1e14170$@samsung.com>
-	<011501d14395$6127a030$2376e090$@samsung.com>
-	<002d01d146b4$e27808b0$a7681a10$@samsung.com>
-	<20160104065544.GB18606@jaegeuk-2.local>
-	<009801d14767$fba23410$f2e69c30$@samsung.com>
-	<20160105032953.GA863@jaegeuk>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: check the page status filled from
+ disk
+Date: Tue, 5 Jan 2016 09:48:30 -0800
+Message-ID: <20160105174830.GA2618@jaegeuk>
+References: <1451784366-14261-1-git-send-email-jaegeuk@kernel.org>
+ <00a101d1479c$02ae9080$080bb180$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aGO3U-0001My-W4
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 05 Jan 2016 09:37:29 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aGO3T-0007QO-I0
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 05 Jan 2016 09:37:28 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O0H02C934267C30@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 05 Jan 2016 18:37:20 +0900 (KST)
-In-reply-to: <20160105032953.GA863@jaegeuk>
-Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <00a101d1479c$02ae9080$080bb180$@samsung.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Tuesday, January 05, 2016 11:30 AM
-> To: Chao Yu
-> Cc: 'Fan Li'; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: support finding extents after isize
-> 
-> Hi,
-> 
-> ...
-> 
-> > > > > Nope, what I'm talking about is *correctness* of our ->fiemap interface, but you're
-> trying
-> > > to avoid it by saying "support more
-> > > > cases,
-> > > > > it's an improvement". That doesn't make any sense to me, since correctness issue still
-> not
-> > > be fixed.
-> > > >
-> > > > I'm not sure what you mean by avoiding, I think the comment and reply I written has already
-> > > stated the issue and
-> > > > limitation of this patch.
-> > > > Now there are two suggestions:
-> > > > 1. support one more scenario, and all old scenarios are dealt like before, but it still
-> can't
-> > > support discontinuous extent after
-> > > > isize.
-> > > > 2. support all scenarios, but sacrifice performance for lots of common scenarios by checking
-> > > about 10^9 blocks.
-> > >
-> > > IMO, we can think about #2 whether there is an efficient way.
-> > >
-> > > How many cases does this incur?
-> > > One is fallocate with keeping i_size, ana other?
-> >
-> > AFAIK, no more.
-> >
-> > >
-> > > How about adding FADVISE_OVER_ISIZE to represent inode has blocks beyond i_size?
-> > > Then, we can set this flag in fallocate and reset it in f2fs_truncate.
-> >
-> > Append write in such inode could destroy this convention, right?
-> 
-> Right, but we have another chance to reset the flag, when fiemap checks the end
-> of allocated space.
+Hi Chao,
 
-Agreed, :)
+On Tue, Jan 05, 2016 at 05:31:51PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Sunday, January 03, 2016 9:26 AM
+> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > linux-f2fs-devel@lists.sourceforge.net
+> > Cc: Jaegeuk Kim
+> > Subject: [f2fs-dev] [PATCH 1/3] f2fs: check the page status filled from disk
+> > 
+> > After reading a page, we need to check whether there is any error.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/data.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 89a978c..11b2111 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -448,6 +448,14 @@ repeat:
+> > 
+> >  		/* wait for read completion */
+> >  		lock_page(page);
+> > +		if (unlikely(!PageUptodate(page))) {
+> > +			f2fs_put_page(page, 1);
+> > +			return ERR_PTR(-EIO);
+> 
+> There is a convention in get_new_data_page, anyway we should release ipage
+> if there is any error occurs, but I think it will be ok to return directly
+> since it seems impossible the new dentry page has its real block address.
 
-Thanks,
+Makes sense, but definitely ipage should be put. :)
 
 > 
-> Thanks,
+> To avoid any bug here or wrong usage, how about add bug_on as following patch?
 > 
-> >
-> > Thanks,
-> >
-> > >
-> > > Thanks,
-> > >
-> > > >
-> > > > I think we can all agree both ideas have their flaws.
-> > > > The only divergence is that I vote the first, and you the second. I think the most important
-> > > thing is that it works fluently in most
-> > > > scenarios, and you think is that it works in every scenarios even it's very slow.
-> > > >
-> > > > I think my method is more pratical, but balance between performance and utility seems
-> to be
-> > > an Eternal problem.
-> > > >
-> > > > >
-> > > > > >
-> > > > > > use max blocks as boundary would get us the precise result, but it
-> > > > > > also means after we reach the EOF, we still need to look up every
-> > > > > > block between the EOF and  sb-> s_maxbytes to make sure the EOF is
-> > > > > > true, that's about 4TB or 10^9 blocks.
-> > > > > > And it affects all scenarios where the search range covers the last
-> > > > > > extent in the file, not just extents beyond isize. I think this price
-> > > > > > is too high to pay.
-> > > > >
-> > > > > That's another performance issue.
-> > > > >
-> > > > > >
-> > > > > > I was hoping that I can make f2fs_map_block return an EOF to solve
-> > > > > > this problem some time later, or anyone have a better idea?
-> > > > >
-> > > > > At least we can seek valid dnode block like the way llseek use.
-> > > > >
-> > > > > In addition, for most cases, few of i_nid[5] in f2fs_inode will be NULL, we could skip
-> searching
-> > > all dnode block in such
-> > > > non-allocated
-> > > > > indirect node, instead of searching dnode block f2fs_map_block one by one.
-> > > > >
-> > > > > Thanks,
-> > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > Thanks,
-> > > > > > >
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > Signed-off-by: Fan li <fanofcode.li@samsung.com>
-> > > > > > > > ---
-> > > > > > > >  fs/f2fs/data.c |    7 +------
-> > > > > > > >  1 file changed, 1 insertion(+), 6 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index
-> > > > > > > > a9a4d89..f89cf07
-> > > > > > > > 100644
-> > > > > > > > --- a/fs/f2fs/data.c
-> > > > > > > > +++ b/fs/f2fs/data.c
-> > > > > > > > @@ -798,12 +798,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info
-> > > *fieinfo,
-> > > > > > > >  	isize = i_size_read(inode);
-> > > > > > > >
-> > > > > > > >  	mutex_lock(&inode->i_mutex);
-> > > > > > > > -	if (start >= isize)
-> > > > > > > > -		goto out;
-> > > > > > > > -
-> > > > > > > > -	if (start + len > isize)
-> > > > > > > > -		len = isize - start;
-> > > > > > > > -
-> > > > > > > >  	if (logical_to_blk(inode, len) == 0)
-> > > > > > > >  		len = blk_to_logical(inode, 1);
-> > > > > > > >
-> > > > > > > > @@ -829,6 +823,7 @@ next:
-> > > > > > > >  		 * punch holes beyond isize and keep size unchanged.
-> > > > > > > >  		 */
-> > > > > > > >  		flags |= FIEMAP_EXTENT_LAST;
-> > > > > > > > +		last_blk = start_blk - 1;
-> > > > > > > >  	}
-> > > > > > > >
-> > > > > > > >  	if (size)
-> > > > > > > >
-> > > > > >
-> > > > > >
-> > > > > > ----------------------------------------------------------------------
-> > > > > > -------- _______________________________________________
-> > > > > > Linux-f2fs-devel mailing list
-> > > > > > Linux-f2fs-devel@lists.sourceforge.net
-> > > > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >From d92f0f34493b27ef28da67c446d552ce721b5d6f Mon Sep 17 00:00:00 2001
+> From: Chao Yu <chao2.yu@samsung.com>
+> Date: Tue, 5 Jan 2016 15:28:56 +0800
+> Subject: [PATCH] f2fs: add f2fs_bug_on in get_new_data_page
+> 
+> In get_new_data_page, locked inode page should not be hold before
+> get_read_data_page, this patch adds f2fs_bug_on to detect this
+> condition.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/data.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 48f0bd3..2c5e3f6 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -440,6 +440,8 @@ repeat:
+>  		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
+>  		SetPageUptodate(page);
+>  	} else {
+> +		f2fs_bug_on(F2FS_I_SB(inode), ipage);
+> +
+>  		f2fs_put_page(page, 1);
+>  
+>  		page = get_read_data_page(inode, index, READ_SYNC, true);
+> -- 
+> 2.6.3
+> 
+> 
+> > +		}
+> > +		if (unlikely(page->mapping != mapping)) {
+> > +			f2fs_put_page(page, 1);
+> > +			goto repeat;
+> > +		}
+> 
+> How about use get_lock_data_page to avoid duplicated code?
 
+Agreed.
 
-------------------------------------------------------------------------------
+How about this?
+
+>From fef77fb244a706491e8e4c46cb245e99e22003c3 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Fri, 1 Jan 2016 22:03:47 -0800
+Subject: [PATCH] f2fs: check the page status filled from disk
+
+After reading a page, we need to check whether there is any error.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 89a978c..89d633a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -442,12 +442,16 @@ repeat:
+ 	} else {
+ 		f2fs_put_page(page, 1);
+ 
+-		page = get_read_data_page(inode, index, READ_SYNC, true);
+-		if (IS_ERR(page))
+-			goto repeat;
++		f2fs_bug_on(F2FS_I_SB(inode), ipage);
+ 
+-		/* wait for read completion */
+-		lock_page(page);
++		page = get_lock_data_page(inode, index, true);
++		if (IS_ERR(page)) {
++			if (PTR_ERR(page) == -EIO) {
++				f2fs_put_page(ipage, 1);
++				return page;
++			}
++			goto repeat;
++		}
+ 	}
+ got_it:
+ 	if (new_i_size && i_size_read(inode) <
+-- 
+2.6.3
+
