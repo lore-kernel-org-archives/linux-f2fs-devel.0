@@ -1,150 +1,112 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 2/2] f2fs: introduce __get_node_page to reuse common code
-Date: Tue, 05 Jan 2016 16:52:46 +0800
-Message-ID: <009f01d14796$93e06c00$bba14400$@samsung.com>
+Subject: Re: [PATCH 1/2] f2fs: check node id earily when
+	readahead	NAT page
+Date: Tue, 05 Jan 2016 17:10:26 +0800
+Message-ID: <00a001d14799$025f1850$071d48f0$@samsung.com>
+References: <009e01d14796$5f09a870$1d1cf950$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1aGNe8-0000bP-6K
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 05 Jan 2016 09:11:16 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aGNe6-0006k4-4C
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 05 Jan 2016 09:11:16 +0000
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout2.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O0H02VBD2TDX4A0@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 05 Jan 2016 18:11:06 +0900 (KST)
+In-reply-to: <009e01d14796$5f09a870$1d1cf950$@samsung.com>
 Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-There are duplicated code in between get_node_page and get_node_page_ra,
-introduce __get_node_page to includes common parts of these two, and
-export get_node_page and get_node_page_ra by reusing __get_node_page.
+Hi Jaegeuk,
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/node.c | 88 +++++++++++++++++++++++-----------------------------------
- 1 file changed, 35 insertions(+), 53 deletions(-)
+This patch adds check for some missing cases in ("f2fs: return early
+when trying to read null nid "). Merging into that patch or merging
+separately is ok to me.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index c1ddf3d..5a2d800 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1060,56 +1060,35 @@ void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
- 	f2fs_put_page(apage, err ? 1 : 0);
- }
- 
--struct page *get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid)
-+/*
-+ * readahead MAX_RA_NODE number of node pages.
-+ */
-+void ra_node_pages(struct page *parent, int start)
- {
--	struct page *page;
--	int err;
-+	struct f2fs_sb_info *sbi = F2FS_P_SB(parent);
-+	struct blk_plug plug;
-+	int i, end;
-+	nid_t nid;
- 
--	if (!nid)
--		return ERR_PTR(-ENOENT);
--	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
--repeat:
--	page = grab_cache_page(NODE_MAPPING(sbi), nid);
--	if (!page)
--		return ERR_PTR(-ENOMEM);
-+	blk_start_plug(&plug);
- 
--	err = read_node_page(page, READ_SYNC);
--	if (err < 0) {
--		f2fs_put_page(page, 1);
--		return ERR_PTR(err);
--	} else if (err == LOCKED_PAGE) {
--		goto page_hit;
-+	/* Then, try readahead for siblings of the desired node */
-+	end = start + MAX_RA_NODE;
-+	end = min(end, NIDS_PER_BLOCK);
-+	for (i = start; i < end; i++) {
-+		nid = get_nid(parent, i, false);
-+		ra_node_page(sbi, nid);
- 	}
- 
--	lock_page(page);
--
--	if (unlikely(!PageUptodate(page))) {
--		f2fs_put_page(page, 1);
--		return ERR_PTR(-EIO);
--	}
--	if (unlikely(page->mapping != NODE_MAPPING(sbi))) {
--		f2fs_put_page(page, 1);
--		goto repeat;
--	}
--page_hit:
--	f2fs_bug_on(sbi, nid != nid_of_node(page));
--	return page;
-+	blk_finish_plug(&plug);
- }
- 
--/*
-- * Return a locked page for the desired node page.
-- * And, readahead MAX_RA_NODE number of node pages.
-- */
--struct page *get_node_page_ra(struct page *parent, int start)
-+struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
-+					struct page *parent, int start)
- {
--	struct f2fs_sb_info *sbi = F2FS_P_SB(parent);
--	struct blk_plug plug;
- 	struct page *page;
--	int err, i, end;
--	nid_t nid;
-+	int err;
- 
--	/* First, try getting the desired direct node. */
--	nid = get_nid(parent, start, false);
- 	if (!nid)
- 		return ERR_PTR(-ENOENT);
- 	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
-@@ -1126,21 +1105,11 @@ repeat:
- 		goto page_hit;
- 	}
- 
--	blk_start_plug(&plug);
--
--	/* Then, try readahead for siblings of the desired node */
--	end = start + MAX_RA_NODE;
--	end = min(end, NIDS_PER_BLOCK);
--	for (i = start + 1; i < end; i++) {
--		nid_t tnid;
--
--		tnid = get_nid(parent, i, false);
--		ra_node_page(sbi, tnid);
--	}
--
--	blk_finish_plug(&plug);
-+	if (parent)
-+		ra_node_pages(parent, start + 1);
- 
- 	lock_page(page);
-+
- 	if (unlikely(!PageUptodate(page))) {
- 		f2fs_put_page(page, 1);
- 		return ERR_PTR(-EIO);
-@@ -1154,6 +1123,19 @@ page_hit:
- 	return page;
- }
- 
-+struct page *get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid)
-+{
-+	return __get_node_page(sbi, nid, NULL, 0);
-+}
-+
-+struct page *get_node_page_ra(struct page *parent, int start)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_P_SB(parent);
-+	nid_t nid = get_nid(parent, start, false);
-+
-+	return __get_node_page(sbi, nid, parent, start);
-+}
-+
- void sync_inode_page(struct dnode_of_data *dn)
- {
- 	if (IS_INODE(dn->node_page) || dn->inode_page == dn->node_page) {
--- 
-2.6.3
+Thanks,
+
+> -----Original Message-----
+> From: Chao Yu [mailto:chao2.yu@samsung.com]
+> Sent: Tuesday, January 05, 2016 4:52 PM
+> To: Jaegeuk Kim
+> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] [PATCH 1/2] f2fs: check node id earily when readahead NAT page
+> 
+> Add node id check in ra_node_page and get_node_page_ra like get_node_page.
+> 
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/node.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 6d5f548..c1ddf3d 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1041,6 +1041,10 @@ void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
+>  	struct page *apage;
+>  	int err;
+> 
+> +	if (!nid)
+> +		return;
+> +	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
+> +
+>  	apage = find_get_page(NODE_MAPPING(sbi), nid);
+>  	if (apage && PageUptodate(apage)) {
+>  		f2fs_put_page(apage, 0);
+> @@ -1108,6 +1112,7 @@ struct page *get_node_page_ra(struct page *parent, int start)
+>  	nid = get_nid(parent, start, false);
+>  	if (!nid)
+>  		return ERR_PTR(-ENOENT);
+> +	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
+>  repeat:
+>  	page = grab_cache_page(NODE_MAPPING(sbi), nid);
+>  	if (!page)
+> @@ -1127,9 +1132,9 @@ repeat:
+>  	end = start + MAX_RA_NODE;
+>  	end = min(end, NIDS_PER_BLOCK);
+>  	for (i = start + 1; i < end; i++) {
+> -		nid_t tnid = get_nid(parent, i, false);
+> -		if (!tnid)
+> -			continue;
+> +		nid_t tnid;
+> +
+> +		tnid = get_nid(parent, i, false);
+>  		ra_node_page(sbi, tnid);
+>  	}
+> 
+> --
+> 2.6.3
+> 
+> 
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+
+------------------------------------------------------------------------------
