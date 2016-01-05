@@ -1,43 +1,19 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH 1/3] f2fs: check the page status filled from
-	disk
-Date: Tue, 05 Jan 2016 17:31:51 +0800
-Message-ID: <00a101d1479c$02ae9080$080bb180$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/3] f2fs: cover more area with nat_tree_lock
+Date: Tue, 05 Jan 2016 17:33:31 +0800
+Message-ID: <00a201d1479c$3e48be40$bada3ac0$@samsung.com>
 References: <1451784366-14261-1-git-send-email-jaegeuk@kernel.org>
+ <1451784366-14261-2-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aGNyy-0000rF-KB
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 05 Jan 2016 09:32:48 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aGNyw-0007I4-LC
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 05 Jan 2016 09:32:48 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O0H02HQQ3U12D10@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 05 Jan 2016 18:32:39 +0900 (KST)
-In-reply-to: <1451784366-14261-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1451784366-14261-2-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi Jaegeuk,
 
@@ -47,75 +23,172 @@ Hi Jaegeuk,
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 1/3] f2fs: check the page status filled from disk
+> Subject: [f2fs-dev] [PATCH 2/3] f2fs: cover more area with nat_tree_lock
 > 
-> After reading a page, we need to check whether there is any error.
+> There was a subtle bug on nat cache management which incurs wrong nid allocation
+> or wrong block addresses when try_to_free_nats is triggered heavily.
+> This patch enlarges the previous coverage of nat_tree_lock to avoid data race.
+
+Have you figured out how this happen? I'm curious about this issue,
+since still I can't reproduce it and find any clue by reviewing code
+so far.
+
+Thanks,
+
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/data.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  fs/f2fs/node.c | 29 ++++++++++++-----------------
+>  1 file changed, 12 insertions(+), 17 deletions(-)
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 89a978c..11b2111 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -448,6 +448,14 @@ repeat:
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 669c44e..4dab09f 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -262,13 +262,11 @@ static void cache_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid,
+>  {
+>  	struct nat_entry *e;
 > 
->  		/* wait for read completion */
->  		lock_page(page);
-> +		if (unlikely(!PageUptodate(page))) {
-> +			f2fs_put_page(page, 1);
-> +			return ERR_PTR(-EIO);
-
-There is a convention in get_new_data_page, anyway we should release ipage
-if there is any error occurs, but I think it will be ok to return directly
-since it seems impossible the new dentry page has its real block address.
-
-To avoid any bug here or wrong usage, how about add bug_on as following patch?
-
->From d92f0f34493b27ef28da67c446d552ce721b5d6f Mon Sep 17 00:00:00 2001
-From: Chao Yu <chao2.yu@samsung.com>
-Date: Tue, 5 Jan 2016 15:28:56 +0800
-Subject: [PATCH] f2fs: add f2fs_bug_on in get_new_data_page
-
-In get_new_data_page, locked inode page should not be hold before
-get_read_data_page, this patch adds f2fs_bug_on to detect this
-condition.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/data.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 48f0bd3..2c5e3f6 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -440,6 +440,8 @@ repeat:
- 		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
- 		SetPageUptodate(page);
- 	} else {
-+		f2fs_bug_on(F2FS_I_SB(inode), ipage);
-+
- 		f2fs_put_page(page, 1);
- 
- 		page = get_read_data_page(inode, index, READ_SYNC, true);
--- 
-2.6.3
-
-
-> +		}
-> +		if (unlikely(page->mapping != mapping)) {
-> +			f2fs_put_page(page, 1);
-> +			goto repeat;
-> +		}
-
-How about use get_lock_data_page to avoid duplicated code?
-
+> -	down_write(&nm_i->nat_tree_lock);
+>  	e = __lookup_nat_cache(nm_i, nid);
+>  	if (!e) {
+>  		e = grab_nat_entry(nm_i, nid);
+>  		node_info_from_raw_nat(&e->ni, ne);
 >  	}
->  got_it:
->  	if (new_i_size && i_size_read(inode) <
+> -	up_write(&nm_i->nat_tree_lock);
+>  }
+> 
+>  static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+> @@ -380,6 +378,8 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info
+> *ni)
+> 
+>  	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
+> 
+> +	down_write(&nm_i->nat_tree_lock);
+> +
+>  	/* Check current segment summary */
+>  	mutex_lock(&curseg->curseg_mutex);
+>  	i = lookup_journal_in_cursum(sum, NAT_JOURNAL, nid, 0);
+> @@ -400,6 +400,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info
+> *ni)
+>  cache:
+>  	/* cache nat entry */
+>  	cache_nat_entry(NM_I(sbi), nid, &ne);
+> +	up_write(&nm_i->nat_tree_lock);
+>  }
+> 
+>  /*
+> @@ -1459,13 +1460,10 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
+> 
+>  	if (build) {
+>  		/* do not add allocated nids */
+> -		down_read(&nm_i->nat_tree_lock);
+>  		ne = __lookup_nat_cache(nm_i, nid);
+> -		if (ne &&
+> -			(!get_nat_flag(ne, IS_CHECKPOINTED) ||
+> +		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
+>  				nat_get_blkaddr(ne) != NULL_ADDR))
+>  			allocated = true;
+> -		up_read(&nm_i->nat_tree_lock);
+>  		if (allocated)
+>  			return 0;
+>  	}
+> @@ -1551,6 +1549,8 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
+>  	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
+>  							META_NAT, true);
+> 
+> +	down_read(&nm_i->nat_tree_lock);
+> +
+>  	while (1) {
+>  		struct page *page = get_current_nat_page(sbi, nid);
+> 
+> @@ -1579,6 +1579,7 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
+>  			remove_free_nid(nm_i, nid);
+>  	}
+>  	mutex_unlock(&curseg->curseg_mutex);
+> +	up_read(&nm_i->nat_tree_lock);
+> 
+>  	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+>  					nm_i->ra_nid_pages, META_NAT, false);
+> @@ -1861,14 +1862,12 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+> 
+>  		raw_ne = nat_in_journal(sum, i);
+> 
+> -		down_write(&nm_i->nat_tree_lock);
+>  		ne = __lookup_nat_cache(nm_i, nid);
+>  		if (!ne) {
+>  			ne = grab_nat_entry(nm_i, nid);
+>  			node_info_from_raw_nat(&ne->ni, &raw_ne);
+>  		}
+>  		__set_nat_cache_dirty(nm_i, ne);
+> -		up_write(&nm_i->nat_tree_lock);
+>  	}
+>  	update_nats_in_cursum(sum, -i);
+>  	mutex_unlock(&curseg->curseg_mutex);
+> @@ -1902,7 +1901,6 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  	struct f2fs_nat_block *nat_blk;
+>  	struct nat_entry *ne, *cur;
+>  	struct page *page = NULL;
+> -	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> 
+>  	/*
+>  	 * there are two steps to flush nat entries:
+> @@ -1939,12 +1937,8 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  			raw_ne = &nat_blk->entries[nid - start_nid];
+>  		}
+>  		raw_nat_from_node_info(raw_ne, &ne->ni);
+> -
+> -		down_write(&NM_I(sbi)->nat_tree_lock);
+>  		nat_reset_flag(ne);
+>  		__clear_nat_cache_dirty(NM_I(sbi), ne);
+> -		up_write(&NM_I(sbi)->nat_tree_lock);
+> -
+>  		if (nat_get_blkaddr(ne) == NULL_ADDR)
+>  			add_free_nid(sbi, nid, false);
+>  	}
+> @@ -1956,9 +1950,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> 
+>  	f2fs_bug_on(sbi, set->entry_cnt);
+> 
+> -	down_write(&nm_i->nat_tree_lock);
+>  	radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+> -	up_write(&nm_i->nat_tree_lock);
+>  	kmem_cache_free(nat_entry_set_slab, set);
+>  }
+> 
+> @@ -1978,6 +1970,9 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+> 
+>  	if (!nm_i->dirty_nat_cnt)
+>  		return;
+> +
+> +	down_write(&nm_i->nat_tree_lock);
+> +
+>  	/*
+>  	 * if there are no enough space in journal to store dirty nat
+>  	 * entries, remove all entries from journal and merge them
+> @@ -1986,7 +1981,6 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+>  	if (!__has_cursum_space(sum, nm_i->dirty_nat_cnt, NAT_JOURNAL))
+>  		remove_nats_in_journal(sbi);
+> 
+> -	down_write(&nm_i->nat_tree_lock);
+>  	while ((found = __gang_lookup_nat_set(nm_i,
+>  					set_idx, SETVEC_SIZE, setvec))) {
+>  		unsigned idx;
+> @@ -1995,12 +1989,13 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+>  			__adjust_nat_entry_set(setvec[idx], &sets,
+>  							MAX_NAT_JENTRIES(sum));
+>  	}
+> -	up_write(&nm_i->nat_tree_lock);
+> 
+>  	/* flush dirty nats in nat entry set */
+>  	list_for_each_entry_safe(set, tmp, &sets, set_list)
+>  		__flush_nat_entry_set(sbi, set);
+> 
+> +	up_write(&nm_i->nat_tree_lock);
+> +
+>  	f2fs_bug_on(sbi, nm_i->dirty_nat_cnt);
+>  }
+> 
 > --
 > 2.6.3
 > 
@@ -125,6 +198,3 @@ How about use get_lock_data_page to avoid duplicated code?
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-
-------------------------------------------------------------------------------
