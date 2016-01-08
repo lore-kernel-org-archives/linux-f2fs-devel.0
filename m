@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2 1/2] f2fs: check node id earily when readaheading node page
-Date: Fri, 08 Jan 2016 20:13:37 +0800
-Message-ID: <005801d14a0e$1b2433d0$516c9b70$@samsung.com>
+Subject: [PATCH 1/3] f2fs: recognize encrypted data in f2fs_fiemap
+Date: Fri, 08 Jan 2016 20:19:27 +0800
+Message-ID: <005901d14a0e$eb9c9480$c2d5bd80$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,51 +12,31 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Add node id check in ra_node_page and get_node_page_ra like get_node_page.
+This patch fixes to teach f2fs_fiemap to recognize encrypted data.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
-v2:
- - fix wrong title of commit log: NAT page -> node page.
----
- fs/f2fs/node.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 6d5f548..c1ddf3d 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1041,6 +1041,10 @@ void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
- 	struct page *apage;
- 	int err;
- 
-+	if (!nid)
-+		return;
-+	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
-+
- 	apage = find_get_page(NODE_MAPPING(sbi), nid);
- 	if (apage && PageUptodate(apage)) {
- 		f2fs_put_page(apage, 0);
-@@ -1108,6 +1112,7 @@ struct page *get_node_page_ra(struct page *parent, int start)
- 	nid = get_nid(parent, start, false);
- 	if (!nid)
- 		return ERR_PTR(-ENOENT);
-+	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
- repeat:
- 	page = grab_cache_page(NODE_MAPPING(sbi), nid);
- 	if (!page)
-@@ -1127,9 +1132,9 @@ repeat:
- 	end = start + MAX_RA_NODE;
- 	end = min(end, NIDS_PER_BLOCK);
- 	for (i = start + 1; i < end; i++) {
--		nid_t tnid = get_nid(parent, i, false);
--		if (!tnid)
--			continue;
-+		nid_t tnid;
-+
-+		tnid = get_nid(parent, i, false);
- 		ra_node_page(sbi, tnid);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 3001f9c..5249de8 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -833,9 +833,13 @@ next:
+ 		flags |= FIEMAP_EXTENT_LAST;
  	}
  
+-	if (size)
++	if (size) {
++		if (f2fs_encrypted_inode(inode))
++			flags |= FIEMAP_EXTENT_DATA_ENCRYPTED;
++
+ 		ret = fiemap_fill_next_extent(fieinfo, logical,
+ 				phys, size, flags);
++	}
+ 
+ 	if (start_blk > last_blk || ret)
+ 		goto out;
 -- 
 2.6.3
