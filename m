@@ -1,8 +1,7 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/3] f2fs: remove redundant calls
-Date: Thu,  7 Jan 2016 17:36:35 -0800
-Message-ID: <1452216996-9689-2-git-send-email-jaegeuk@kernel.org>
-References: <1452216996-9689-1-git-send-email-jaegeuk@kernel.org>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] mkfs.f2fs: introduce zone align for main area
+Date: Fri, 8 Jan 2016 10:25:29 +0800
+Message-ID: <1452219929-15360-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,14 +9,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aHLyx-0004ok-OV
+	(envelope-from <heyunlei@huawei.com>) id 1aHMim-0005z3-Na
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 08 Jan 2016 01:36:47 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aHLyx-0003PF-0n for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 08 Jan 2016 01:36:47 +0000
-In-Reply-To: <1452216996-9689-1-git-send-email-jaegeuk@kernel.org>
+	Fri, 08 Jan 2016 02:24:08 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aHMig-0004gr-E6
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 08 Jan 2016 02:24:08 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,39 +26,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, chao2.yu@samsung.com
 
-This patch removes redundant calls.
+This patch calculate main area begin from a new zone,
+avoid misalign if segments per zone is not 1.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Shuoran Liu <liushuoran@huawei.com>
 ---
- fs/f2fs/file.c | 3 ---
- 1 file changed, 3 deletions(-)
+ mkfs/f2fs_format.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index e3d32f6..69bc65f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -267,8 +267,6 @@ sync_nodes:
- 	if (need_inode_block_update(sbi, ino)) {
- 		mark_inode_dirty_sync(inode);
- 		f2fs_write_inode(inode, NULL);
--
--		f2fs_balance_fs(sbi);
- 		goto sync_nodes;
- 	}
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 66d7342..00c4b64 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -126,7 +126,8 @@ static int f2fs_prepare_super_block(void)
+ 	u_int32_t sit_segments;
+ 	u_int32_t blocks_for_sit, blocks_for_nat, blocks_for_ssa;
+ 	u_int32_t total_valid_blks_available;
+-	u_int64_t zone_align_start_offset, diff, total_meta_segments;
++	u_int64_t zone_align_start_offset, diff;
++	u_int64_t total_meta_zones, total_meta_segments;
+ 	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
+ 	u_int32_t max_nat_bitmap_size, max_nat_segments;
+ 	u_int32_t total_zones;
+@@ -259,16 +260,16 @@ static int f2fs_prepare_super_block(void)
+ 		set_sb(segment_count_ssa, get_sb(segment_count_ssa) +
+ 			(config.segs_per_zone - diff));
  
-@@ -484,7 +482,6 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 						F2FS_I(dn->inode)) + ofs;
- 		f2fs_update_extent_cache_range(dn, fofs, 0, len);
- 		dec_valid_block_count(sbi, dn->inode, nr_free);
--		set_page_dirty(dn->node_page);
- 		sync_inode_page(dn);
- 	}
- 	dn->ofs_in_node = ofs;
+-	set_sb(main_blkaddr, get_sb(ssa_blkaddr) + get_sb(segment_count_ssa) *
+-			 config.blks_per_seg);
++	total_meta_zones = ZONE_ALIGN(total_meta_segments *
++						config.blks_per_seg);
+ 
+-	set_sb(segment_count_main, get_sb(segment_count) -
+-			(get_sb(segment_count_ckpt) +
+-			 get_sb(segment_count_sit) +
+-			 get_sb(segment_count_nat) +
+-			 get_sb(segment_count_ssa)));
++	set_sb(main_blkaddr, get_sb(segment0_blkaddr) + total_meta_zones *
++						config.segs_per_zone * config.blks_per_seg);
++
++	total_zones = get_sb(segment_count) / (config.segs_per_zone) -
++							total_meta_zones;
+ 
+-	set_sb(section_count, get_sb(segment_count_main) / config.segs_per_sec);
++	set_sb(section_count, total_zones * config.secs_per_zone);
+ 
+ 	set_sb(segment_count_main, get_sb(section_count) * config.segs_per_sec);
+ 
+@@ -297,7 +298,6 @@ static int f2fs_prepare_super_block(void)
+ 	set_sb(meta_ino, 2);
+ 	set_sb(root_ino, 3);
+ 
+-	total_zones = get_sb(segment_count_main) / (config.segs_per_zone);
+ 	if (total_zones <= 6) {
+ 		MSG(1, "\tError: %d zones: Need more zones \
+ 			by shrinking zone size\n", total_zones);
 -- 
-2.6.3
+1.9.1
 
 
 ------------------------------------------------------------------------------
