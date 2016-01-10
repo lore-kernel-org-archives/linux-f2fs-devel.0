@@ -1,36 +1,81 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: should unset atomic flag after successful commit
-Date: Sat,  9 Jan 2016 17:10:01 -0800
-Message-ID: <1452388201-26706-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Mike Christie <michaelc@cs.wisc.edu>
+Subject: Re: [dm-devel] [PATCH 02/35] block: add REQ_OP definitions and
+	bi_op/op fields
+Date: Sat, 09 Jan 2016 19:21:12 -0600
+Message-ID: <5691B208.9060001@cs.wisc.edu>
+References: <1452027218-32303-1-git-send-email-mchristi@redhat.com>
+	<1452027218-32303-3-git-send-email-mchristi@redhat.com>
+	<20160109133716.GB26660@infradead.org>
+	<5691AC2E.2050403@cs.wisc.edu>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <xfs-bounces@oss.sgi.com>
+In-Reply-To: <5691AC2E.2050403@cs.wisc.edu>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: device-mapper development <dm-devel@redhat.com>, mchristi@redhat.com
+Cc: linux-raid@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-scsi@vger.kernel.org, konrad.wilk@oracle.com, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, linux-block@vger.kernel.org, linux-bcache@vger.kernel.org, target-devel@vger.kernel.org, linux-mtd@lists.infradead.org, osd-dev@open-osd.org, linux-fsdevel@vger.kernel.org, lars.ellenberg@linbit.com, philipp.reisner@linbit.com, drbd-dev@lists.linbit.com, ocfs2-devel@oss.oracle.com, linux-btrfs@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If there is an error during commit, we should keep the flag in order to
-abort it.
+On 01/09/2016 06:56 PM, Mike Christie wrote:
+> On 01/09/2016 07:37 AM, Christoph Hellwig wrote:
+>> Seems like this is missing REQ_OP_FLUSH, which still hides as a write?
+>>
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Oh yeah, to answer the second part of your question, REQ_OP_FLUSH is
+only a flush operation like what request_fn drivers wanted.
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index dfaed51..db0b2cb 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1374,10 +1374,10 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
- 		return ret;
- 
- 	if (f2fs_is_atomic_file(inode)) {
--		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
- 		ret = commit_inmem_pages(inode, false);
- 		if (ret)
- 			goto err_out;
-+		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
- 	}
- 
- 	ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
--- 
-2.6.3
+REQ_PREFLUSH can be set with a REQ_OP_WRITE bio when filesystems want to
+do both.
+
+There is then the case where filesystems and blkdev_issue_flush could
+just want to request a flush. I left them as a REQ_PREFLUSH with
+REQ_OP_WRITE set, so there would be a single code path.
+
+> 
+> I might have misunderstood what you wanted or am misunderstanding you now.
+> 
+> I did not change the flush related code until the last patches. I added
+> REQ_OP_FLUSH in patch:
+> 
+> [PATCH 33/35] block, drivers: add REQ_OP_FLUSH operation
+> commit 18dea20363ba245a47bc1bb54f6465b8a05b19af
+> Author: Mike Christie <mchristi@redhat.com>
+> Date:   Tue Jan 5 21:02:17 2016 -0600
+> 
+>     block, drivers: add REQ_OP_FLUSH operation
+> 
+> 
+> and I added the REQ_PREFLUSH flag in
+> 
+> 
+> [PATCH 35/35] block, drivers, fs: rename REQ_FLUSH to REQ_PREFLUSH
+> commit 303dc6a7cc3673065538ba041562fcd833a619af
+> Author: Mike Christie <mchristi@redhat.com>
+> Date:   Thu Jan 7 18:17:03 2016 -0600
+> 
+>     block, drivers, fs: rename REQ_FLUSH to REQ_PREFLUSH
+> 
+> 
+> I did them in separate patches, because I was not sure if they were
+> correct with what you requested before, and because they were a little
+> more tricky because of how request_fn drivers, make_request_fn drivers,
+> and dm-multipath handle flushes differently.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
