@@ -1,64 +1,45 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix wrong memory condition check
-Date: Sat,  9 Jan 2016 16:15:22 -0800
-Message-ID: <1452384922-26144-1-git-send-email-jaegeuk@kernel.org>
+From: Mike Christie <michaelc@cs.wisc.edu>
+Subject: Re: [PATCH 01/35] block/fs/drivers: remove rw argument from submit_bio
+Date: Sat, 09 Jan 2016 18:43:32 -0600
+Message-ID: <5691A934.8020000@cs.wisc.edu>
+References: <1452027218-32303-1-git-send-email-mchristi@redhat.com>
+	<1452027218-32303-2-git-send-email-mchristi@redhat.com>
+	<20160109133409.GA26660@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aI3fP-0007PT-CX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 10 Jan 2016 00:15:31 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aI3fO-00061P-Jl for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 10 Jan 2016 00:15:31 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Return-path: <xfs-bounces@oss.sgi.com>
+In-Reply-To: <20160109133409.GA26660@infradead.org>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: Christoph Hellwig <hch@infradead.org>, mchristi@redhat.com
+Cc: linux-bcache@vger.kernel.org, linux-block@vger.kernel.org, xfs@oss.sgi.com, ocfs2-devel@oss.oracle.com, linux-scsi@vger.kernel.org, konrad.wilk@oracle.com, linux-kernel@vger.kernel.org, philipp.reisner@linbit.com, linux-f2fs-devel@lists.sourceforge.net, linux-raid@vger.kernel.org, dm-devel@redhat.com, target-devel@vger.kernel.org, linux-mtd@lists.infradead.org, osd-dev@open-osd.org, linux-fsdevel@vger.kernel.org, lars.ellenberg@linbit.com, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, drbd-dev@lists.linbit.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch fixes wrong decision for avaliable_free_memory.
-The return valus is already set as false, so we should consider true condition
-below only.
+On 01/09/2016 07:34 AM, Christoph Hellwig wrote:
+>>  				count);
+>> > diff --git a/block/blk-flush.c b/block/blk-flush.c
+>> > index 9c423e5..e092e13 100644
+>> > --- a/block/blk-flush.c
+>> > +++ b/block/blk-flush.c
+>> > @@ -484,8 +484,9 @@ int blkdev_issue_flush(struct block_device *bdev, gfp_t gfp_mask,
+>> >  
+>> >  	bio = bio_alloc(gfp_mask, 0);
+>> >  	bio->bi_bdev = bdev;
+>> > +	bio->bi_rw |= WRITE_FLUSH;
+> Shouldn't the |= be a = here and in many other places?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/node.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yeah, I was trying to merge bi_rw and bio_flags. I am not going to send
+that. I will fix up the patchset.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index c091b75..342597a 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -71,8 +71,8 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
- 				sizeof(struct extent_node)) >> PAGE_CACHE_SHIFT;
- 		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 1);
- 	} else {
--		if (sbi->sb->s_bdi->wb.dirty_exceeded)
--			return false;
-+		if (!sbi->sb->s_bdi->wb.dirty_exceeded)
-+			return true;
- 	}
- 	return res;
- }
--- 
-2.6.3
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
