@@ -1,83 +1,309 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: Consolidated file encryption interface/semantics?
-Date: Tue, 12 Jan 2016 10:36:20 +1100
-Message-ID: <20160111233620.GB6033@dastard>
-References: <56943319.9080802@nod.at>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/2] f2fs: detect idle time depending on user
+ behavior
+Date: Mon, 11 Jan 2016 15:45:31 -0800
+Message-ID: <20160111234531.GA33825@jaegeuk.granlibakkenguest>
+References: <1452302963-23312-1-git-send-email-jaegeuk@kernel.org>
+	<1452302963-23312-2-git-send-email-jaegeuk@kernel.org>
+	<003501d14c3f$f7c4de60$e74e9b20$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aIm9d-0005VR-QS
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 11 Jan 2016 23:45:41 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aIm9c-0003Nx-9o for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 11 Jan 2016 23:45:41 +0000
 Content-Disposition: inline
-In-Reply-To: <56943319.9080802@nod.at>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Richard Weinberger <richard@nod.at>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <003501d14c3f$f7c4de60$e74e9b20$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Jan 11, 2016 at 11:56:25PM +0100, Richard Weinberger wrote:
-> Hi!
+Hi Chao,
+
+On Mon, Jan 11, 2016 at 03:15:36PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> I consider adding file encryption to UBIFS.
-> While looking into ext4 and f2fs I realized that both
-> use the same data structures/concepts.
+> > -----Original Message-----
+> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> > Sent: Saturday, January 09, 2016 9:29 AM
+> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> > linux-f2fs-devel@lists.sourceforge.net
+> > Cc: Jaegeuk Kim
+> > Subject: [f2fs-dev] [PATCH 2/2] f2fs: detect idle time depending on user behavior
+> > 
+> > This patch adds last time that user requested filesystem operations.
+> > This information is used to detect whether system is idle or not later.
+> 
+> Seems there are some missing cases:
+> - xattr
+> - tmpfile
+> - ioctl
 
-When the ext4 code was first posted, I noted that 90% of the
-implementation was not ext4 specific at all. I asked that the
-encryption part of it be lifted to fs/ and the API made generic so
-that it can be shared without needing to copy and re-review
-encryption code (which is notoriously hard to get right) when others
-implement the same fucntionality. This was considered SEP.
+Agreed.
+Thanks,
 
-> f2fs copy&pasted a lot from ext4.
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  Documentation/ABI/testing/sysfs-fs-f2fs |  6 ++++++
+> >  fs/f2fs/data.c                          |  1 +
+> >  fs/f2fs/dir.c                           |  3 +++
+> >  fs/f2fs/f2fs.h                          | 15 +++++++++++++++
+> >  fs/f2fs/file.c                          |  4 ++++
+> >  fs/f2fs/gc.c                            |  1 -
+> >  fs/f2fs/gc.h                            |  8 --------
+> >  fs/f2fs/segment.c                       |  2 +-
+> >  fs/f2fs/super.c                         |  4 ++++
+> >  9 files changed, 34 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs
+> > b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > index 0345f2d..e5200f3 100644
+> > --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> > +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > @@ -87,6 +87,12 @@ Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+> >  Description:
+> >  		 Controls the checkpoint timing.
+> > 
+> > +What:		/sys/fs/f2fs/<disk>/idle_interval
+> > +Date:		January 2016
+> > +Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+> > +Description:
+> > +		 Controls the idle timing.
+> > +
+> >  What:		/sys/fs/f2fs/<disk>/ra_nid_pages
+> >  Date:		October 2015
+> >  Contact:	"Chao Yu" <chao2.yu@samsung.com>
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index a3bce12..ac9e7c6 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -1596,6 +1596,7 @@ static int f2fs_write_end(struct file *file,
+> >  	}
+> > 
+> >  	f2fs_put_page(page, 1);
+> > +	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> >  	return copied;
+> >  }
+> > 
+> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> > index 29bb8dd..216dd87 100644
+> > --- a/fs/f2fs/dir.c
+> > +++ b/fs/f2fs/dir.c
+> > @@ -636,6 +636,7 @@ fail:
+> >  	f2fs_put_page(dentry_page, 1);
+> >  out:
+> >  	f2fs_fname_free_filename(&fname);
+> > +	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
+> >  	return err;
+> >  }
+> > 
+> > @@ -701,6 +702,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+> >  	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
+> >  	int i;
+> > 
+> > +	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
+> > +
+> >  	if (f2fs_has_inline_dentry(dir))
+> >  		return f2fs_delete_inline_entry(dentry, page, dir, inode);
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 603266c..ef6e666 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -21,6 +21,7 @@
+> >  #include <linux/sched.h>
+> >  #include <linux/vmalloc.h>
+> >  #include <linux/bio.h>
+> > +#include <linux/blkdev.h>
+> > 
+> >  #ifdef CONFIG_F2FS_CHECK_FS
+> >  #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
+> > @@ -126,6 +127,7 @@ enum {
+> >  #define BATCHED_TRIM_BLOCKS(sbi)	\
+> >  		(BATCHED_TRIM_SEGMENTS(sbi) << (sbi)->log_blocks_per_seg)
+> >  #define DEF_CP_INTERVAL			60	/* 60 secs */
+> > +#define DEF_IDLE_INTERVAL		120	/* 2 mins */
+> > 
+> >  struct cp_control {
+> >  	int reason;
+> > @@ -723,6 +725,7 @@ enum {
+> > 
+> >  enum {
+> >  	CP_TIME,
+> > +	REQ_TIME,
+> >  	MAX_TIME,
+> >  };
+> > 
+> > @@ -856,6 +859,18 @@ static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
+> >  	return jiffies > sbi->last_time[type] + interval;
+> >  }
+> > 
+> > +static inline bool is_idle(struct f2fs_sb_info *sbi)
+> > +{
+> > +	struct block_device *bdev = sbi->sb->s_bdev;
+> > +	struct request_queue *q = bdev_get_queue(bdev);
+> > +	struct request_list *rl = &q->root_rl;
+> > +
+> > +	if (rl->count[BLK_RW_SYNC] || rl->count[BLK_RW_ASYNC])
+> > +		return 0;
+> > +
+> > +	return f2fs_time_over(sbi, REQ_TIME);
+> > +}
+> > +
+> >  /*
+> >   * Inline functions
+> >   */
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index ff06827..dfaed51 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -96,6 +96,7 @@ mapped:
+> >  	clear_cold_data(page);
+> >  out:
+> >  	sb_end_pagefault(inode->i_sb);
+> > +	f2fs_update_time(sbi, REQ_TIME);
+> >  	return block_page_mkwrite_return(err);
+> >  }
+> > 
+> > @@ -280,6 +281,7 @@ flush_out:
+> >  	remove_ino_entry(sbi, ino, UPDATE_INO);
+> >  	clear_inode_flag(fi, FI_UPDATE_WRITE);
+> >  	ret = f2fs_issue_flush(sbi);
+> > +	f2fs_update_time(sbi, REQ_TIME);
+> >  out:
+> >  	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
+> >  	f2fs_trace_ios(NULL, 1);
+> > @@ -485,6 +487,7 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+> >  	}
+> >  	dn->ofs_in_node = ofs;
+> > 
+> > +	f2fs_update_time(sbi, REQ_TIME);
+> >  	trace_f2fs_truncate_data_blocks_range(dn->inode, dn->nid,
+> >  					 dn->ofs_in_node, nr_free);
+> >  	return nr_free;
+> > @@ -1236,6 +1239,7 @@ static long f2fs_fallocate(struct file *file, int mode,
+> >  	if (!ret) {
+> >  		inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+> >  		mark_inode_dirty(inode);
+> > +		f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> >  	}
+> > 
+> >  out:
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index c09be33..f610c2a 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -16,7 +16,6 @@
+> >  #include <linux/kthread.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/freezer.h>
+> > -#include <linux/blkdev.h>
+> > 
+> >  #include "f2fs.h"
+> >  #include "node.h"
+> > diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+> > index b4a65be..a993967 100644
+> > --- a/fs/f2fs/gc.h
+> > +++ b/fs/f2fs/gc.h
+> > @@ -100,11 +100,3 @@ static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
+> >  		return true;
+> >  	return false;
+> >  }
+> > -
+> > -static inline int is_idle(struct f2fs_sb_info *sbi)
+> > -{
+> > -	struct block_device *bdev = sbi->sb->s_bdev;
+> > -	struct request_queue *q = bdev_get_queue(bdev);
+> > -	struct request_list *rl = &q->root_rl;
+> > -	return !(rl->count[BLK_RW_SYNC]) && !(rl->count[BLK_RW_ASYNC]);
+> > -}
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index fed23d5..d8ad1ab 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -293,7 +293,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+> >  	if (!available_free_memory(sbi, NAT_ENTRIES) ||
+> >  			excess_prefree_segs(sbi) ||
+> >  			!available_free_memory(sbi, INO_ENTRIES) ||
+> > -			f2fs_time_over(sbi, CP_TIME)) {
+> > +			(is_idle(sbi) && f2fs_time_over(sbi, CP_TIME))) {
+> >  		if (test_opt(sbi, DATA_FLUSH))
+> >  			sync_dirty_inodes(sbi, FILE_INODE);
+> >  		f2fs_sync_fs(sbi->sb, true);
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 787047f..3bf990b 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -219,6 +219,7 @@ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ra_nid_pages, ra_nid_pages);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search, max_victim_search);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+> > 
+> >  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+> >  static struct attribute *f2fs_attrs[] = {
+> > @@ -237,6 +238,7 @@ static struct attribute *f2fs_attrs[] = {
+> >  	ATTR_LIST(ram_thresh),
+> >  	ATTR_LIST(ra_nid_pages),
+> >  	ATTR_LIST(cp_interval),
+> > +	ATTR_LIST(idle_interval),
+> >  	NULL,
+> >  };
+> > 
+> > @@ -1123,6 +1125,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+> > 
+> >  	sbi->dir_level = DEF_DIR_LEVEL;
+> >  	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
+> > +	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
+> >  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+> > 
+> >  	INIT_LIST_HEAD(&sbi->s_list);
+> > @@ -1468,6 +1471,7 @@ try_onemore:
+> >  	}
+> > 
+> >  	f2fs_update_time(sbi, CP_TIME);
+> > +	f2fs_update_time(sbi, REQ_TIME);
+> >  	return 0;
+> > 
+> >  free_kobj:
+> > --
+> > 2.6.3
+> > 
+> > 
+> > ------------------------------------------------------------------------------
+> > Site24x7 APM Insight: Get Deep Visibility into Application Performance
+> > APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+> > Monitor end-to-end web transactions and take corrective actions now
+> > Troubleshoot faster and improve end-user experience. Signup Now!
+> > http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
+> > _______________________________________________
+> > Linux-f2fs-devel mailing list
+> > Linux-f2fs-devel@lists.sourceforge.net
+> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
-Yes, they did, even though I asked them not to, but to instead pull
-all the code that is non-ext4 specific up to the VFS first and then
-use that. Again, this was considered SEP.
-
-> Before I do the next copy&paste, I'd to ask whether it would make sense
-> to more parts of the ioctl() interface out to VFS?
-
-Yes, unfortunately you're the first "somebody else" who is going to
-have to deal with this problem. It's not just the API - most of the
-encryption implementation is also copy and pasted, too.
-
-This simply hasn't got to the top of my list of stuff to do for XFS
-yet, so I haven't started down this path yet. However, if you do
-start on the hard work  to pull all this stuff up into the VFS and
-generic helpers, I'll do what I can to get the necessary parts of
-XFS working with it as well....
-
-[snip]
-
-> So, the data structures are identical and AFAIK also the supported cipher modes are.
-> But as both use their own ioctls having a single tool to control file encryption
-> can be error prone in future.
-> Interestingly the current ioctls for ext4 and f2fs resolve to the same integers,
-> is this on purpose? :)
-
-Yes, so that when someone factors it all into a generic
-implementation the new "FS_IOC*" ioctl API will be binary compatible
-with the existing ext4 and f2fs ioctl implementations and the
-existing userspace tools will just continue to work.
-
-> Wouldn't it be worthwhile having exactly the same ioctls such that util-linux could offer
-> a decent file encryption tool which can be used by all file systems with file encryption
-> support?
-
-Yes, it should have been done that way in the first place.
-
-> Another thing are semantics, ext4 implemented a policy which controls
-> under which conditions encrypted files are allowed to be unlinked, moved, etc...
-> f2fs adopted these from ext4. But can't we do that in VFS or at least
-> agree one a policy and document it? :-)
-
-Yes, we should. Having a single set of policies implemented and
-enforced at the VFS is how this should be done. Users will
-absolutely hate us if per-file encryption devolves into APIs and
-policies that differ between filesystems.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+------------------------------------------------------------------------------
+Site24x7 APM Insight: Get Deep Visibility into Application Performance
+APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+Monitor end-to-end web transactions and take corrective actions now
+Troubleshoot faster and improve end-user experience. Signup Now!
+http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
