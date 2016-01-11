@@ -1,107 +1,83 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: should unset atomic flag after
- successful commit
-Date: Mon, 11 Jan 2016 15:32:19 -0800
-Message-ID: <20160111233219.GA32106@jaegeuk.granlibakkenguest>
-References: <1452388201-26706-1-git-send-email-jaegeuk@kernel.org>
-	<003601d14c41$4f884190$ee98c4b0$@samsung.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: Consolidated file encryption interface/semantics?
+Date: Tue, 12 Jan 2016 10:36:20 +1100
+Message-ID: <20160111233620.GB6033@dastard>
+References: <56943319.9080802@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aIlwq-00064P-KR
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 11 Jan 2016 23:32:28 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aIlwp-00030B-EP for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 11 Jan 2016 23:32:28 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <003601d14c41$4f884190$ee98c4b0$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <56943319.9080802@nod.at>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+On Mon, Jan 11, 2016 at 11:56:25PM +0100, Richard Weinberger wrote:
+> Hi!
+> 
+> I consider adding file encryption to UBIFS.
+> While looking into ext4 and f2fs I realized that both
+> use the same data structures/concepts.
 
-On Mon, Jan 11, 2016 at 03:25:11PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Sunday, January 10, 2016 9:10 AM
-> > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Cc: Jaegeuk Kim
-> > Subject: [f2fs-dev] [PATCH] f2fs: should unset atomic flag after successful commit
-> > 
-> > If there is an error during commit, we should keep the flag in order to
-> > abort it.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/file.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index dfaed51..db0b2cb 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -1374,10 +1374,10 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
-> >  		return ret;
-> > 
-> >  	if (f2fs_is_atomic_file(inode)) {
-> > -		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
-> 
-> It was added in 6282adbf932c ("f2fs: call set_page_dirty to attach i_wb for
-> cgroup ") to avoid panic in kernel with writeback supported cgroup. We
-> should keep it here.
-> 
-> >  		ret = commit_inmem_pages(inode, false);
-> >  		if (ret)
-> >  			goto err_out;
-> > +		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
-> 
-> How about setting atomic flag if there occurs an error during committing.
+When the ext4 code was first posted, I noted that 90% of the
+implementation was not ext4 specific at all. I asked that the
+encryption part of it be lifted to fs/ and the API made generic so
+that it can be shared without needing to copy and re-review
+encryption code (which is notoriously hard to get right) when others
+implement the same fucntionality. This was considered SEP.
 
-Got your point.
-Thanks,
+> f2fs copy&pasted a lot from ext4.
 
-> 
-> Thanks,
-> 
-> >  	}
-> > 
-> >  	ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
-> > --
-> > 2.6.3
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > Site24x7 APM Insight: Get Deep Visibility into Application Performance
-> > APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-> > Monitor end-to-end web transactions and take corrective actions now
-> > Troubleshoot faster and improve end-user experience. Signup Now!
-> > http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Yes, they did, even though I asked them not to, but to instead pull
+all the code that is non-ext4 specific up to the VFS first and then
+use that. Again, this was considered SEP.
 
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
+> Before I do the next copy&paste, I'd to ask whether it would make sense
+> to more parts of the ioctl() interface out to VFS?
+
+Yes, unfortunately you're the first "somebody else" who is going to
+have to deal with this problem. It's not just the API - most of the
+encryption implementation is also copy and pasted, too.
+
+This simply hasn't got to the top of my list of stuff to do for XFS
+yet, so I haven't started down this path yet. However, if you do
+start on the hard work  to pull all this stuff up into the VFS and
+generic helpers, I'll do what I can to get the necessary parts of
+XFS working with it as well....
+
+[snip]
+
+> So, the data structures are identical and AFAIK also the supported cipher modes are.
+> But as both use their own ioctls having a single tool to control file encryption
+> can be error prone in future.
+> Interestingly the current ioctls for ext4 and f2fs resolve to the same integers,
+> is this on purpose? :)
+
+Yes, so that when someone factors it all into a generic
+implementation the new "FS_IOC*" ioctl API will be binary compatible
+with the existing ext4 and f2fs ioctl implementations and the
+existing userspace tools will just continue to work.
+
+> Wouldn't it be worthwhile having exactly the same ioctls such that util-linux could offer
+> a decent file encryption tool which can be used by all file systems with file encryption
+> support?
+
+Yes, it should have been done that way in the first place.
+
+> Another thing are semantics, ext4 implemented a policy which controls
+> under which conditions encrypted files are allowed to be unlinked, moved, etc...
+> f2fs adopted these from ext4. But can't we do that in VFS or at least
+> agree one a policy and document it? :-)
+
+Yes, we should. Having a single set of policies implemented and
+enforced at the VFS is how this should be done. Users will
+absolutely hate us if per-file encryption devolves into APIs and
+policies that differ between filesystems.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
