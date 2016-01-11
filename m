@@ -1,37 +1,163 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [dm-devel] [PATCH 02/35] block: add REQ_OP definitions and
- bi_op/op fields
-Date: Sat, 9 Jan 2016 23:15:58 -0800
-Message-ID: <20160110071558.GB12831@infradead.org>
-References: <1452027218-32303-1-git-send-email-mchristi@redhat.com>
- <1452027218-32303-3-git-send-email-mchristi@redhat.com>
- <20160109133716.GB26660@infradead.org>
- <5691AC2E.2050403@cs.wisc.edu>
- <5691B208.9060001@cs.wisc.edu>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: introduce time and interval facility
+Date: Mon, 11 Jan 2016 15:12:39 +0800
+Message-ID: <003401d14c3f$8fb66140$af2323c0$@samsung.com>
+References: <1452302963-23312-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-bcache-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5691B208.9060001@cs.wisc.edu>
-Sender: linux-bcache-owner@vger.kernel.org
-To: Mike Christie <michaelc@cs.wisc.edu>
-Cc: device-mapper development <dm-devel@redhat.com>, mchristi@redhat.com, linux-bcache@vger.kernel.org, linux-block@vger.kernel.org, xfs@oss.sgi.com, linux-scsi@vger.kernel.org, konrad.wilk@oracle.com, linux-kernel@vger.kernel.org, philipp.reisner@linbit.com, linux-f2fs-devel@lists.sourceforge.net, linux-raid@vger.kernel.org, ocfs2-devel@oss.oracle.com, target-devel@vger.kernel.org, linux-mtd@lists.infradead.org, osd-dev@open-osd.org, linux-fsdevel@vger.kernel.org, lars.ellenberg@linbit.com, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, drbd-dev@lists.linbit.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1452302963-23312-1-git-send-email-jaegeuk@kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Sat, Jan 09, 2016 at 07:21:12PM -0600, Mike Christie wrote:
-> Oh yeah, to answer the second part of your question, REQ_OP_FLUSH is
-> only a flush operation like what request_fn drivers wanted.
+Hi Jaegeuk,
 
-And that's the odd part that trips me up.
-
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Saturday, January 09, 2016 9:29 AM
+> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
+> linux-f2fs-devel@lists.sourceforge.net
+> Cc: Jaegeuk Kim
+> Subject: [f2fs-dev] [PATCH 1/2] f2fs: introduce time and interval facility
 > 
-> REQ_PREFLUSH can be set with a REQ_OP_WRITE bio when filesystems want to
-> do both.
+> This patch adds time and interval arrays to store some timing variables.
 > 
-> There is then the case where filesystems and blkdev_issue_flush could
-> just want to request a flush. I left them as a REQ_PREFLUSH with
-> REQ_OP_WRITE set, so there would be a single code path.
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c |  2 +-
+>  fs/f2fs/f2fs.h       | 21 ++++++++++++++++++++-
+>  fs/f2fs/segment.c    |  2 +-
+>  fs/f2fs/super.c      |  7 +++----
+>  4 files changed, 25 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 5dbafd5..3842af9 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1139,7 +1139,7 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  			"checkpoint: version = %llx", ckpt_ver);
+> 
+>  	/* do checkpoint periodically */
+> -	sbi->cp_expires = round_jiffies_up(jiffies + HZ * sbi->cp_interval);
+> +	f2fs_update_time(sbi, CP_TIME);
+>  	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
+>  out:
+>  	mutex_unlock(&sbi->cp_mutex);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index ae0007d..603266c 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -721,6 +721,11 @@ enum {
+>  	SBI_POR_DOING,				/* recovery is doing or not */
+>  };
+> 
+> +enum {
+> +	CP_TIME,
+> +	MAX_TIME,
+> +};
+> +
+>  struct f2fs_sb_info {
+>  	struct super_block *sb;			/* pointer to VFS super block */
+>  	struct proc_dir_entry *s_proc;		/* proc entry */
+> @@ -747,7 +752,8 @@ struct f2fs_sb_info {
+>  	struct rw_semaphore node_write;		/* locking node writes */
+>  	struct mutex writepages;		/* mutex for writepages() */
+>  	wait_queue_head_t cp_wait;
+> -	long cp_expires, cp_interval;		/* next expected periodic cp */
+> +	unsigned long last_time[MAX_TIME];	/* to store time in jiffies */
+> +	long interval_time[MAX_TIME];		/* to store thresholds */
+> 
+>  	struct inode_management im[MAX_INO_ENTRY];      /* manage inode cache */
+> 
+> @@ -837,6 +843,19 @@ struct f2fs_sb_info {
+>  	unsigned int shrinker_run_no;
+>  };
+> 
+> +static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
+> +{
+> +	sbi->last_time[type] = jiffies;
+> +}
+> +
+> +static inline bool f2fs_time_over(struct f2fs_sb_info *sbi, int type)
+> +{
+> +	struct timespec ts = {sbi->interval_time[type], 0};
+> +	unsigned long interval = timespec_to_jiffies(&ts);
+> +
+> +	return jiffies > sbi->last_time[type] + interval;
 
-But the pure flush without data transfer case is pretty different,
-so it seems rather odd to handle it like that.  But I suspec we could
-just fix that up later.
+How about using time_after like checkpatch.pl recommended?
+
+WARNING: Comparing jiffies is almost always wrong; prefer time_after, time_before and friends
+#70: FILE: fs/f2fs/f2fs.h:856:
++       return jiffies > sbi->last_time[type] + interval;
+
+Thanks,
+
+> +}
+> +
+>  /*
+>   * Inline functions
+>   */
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index c7bbc91..fed23d5 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -293,7 +293,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+>  	if (!available_free_memory(sbi, NAT_ENTRIES) ||
+>  			excess_prefree_segs(sbi) ||
+>  			!available_free_memory(sbi, INO_ENTRIES) ||
+> -			jiffies > sbi->cp_expires) {
+> +			f2fs_time_over(sbi, CP_TIME)) {
+>  		if (test_opt(sbi, DATA_FLUSH))
+>  			sync_dirty_inodes(sbi, FILE_INODE);
+>  		f2fs_sync_fs(sbi->sb, true);
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index f5cc790..787047f 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -218,7 +218,7 @@ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+>  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ra_nid_pages, ra_nid_pages);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search, max_victim_search);
+>  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+> -F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, cp_interval);
+> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+> 
+>  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+>  static struct attribute *f2fs_attrs[] = {
+> @@ -1122,7 +1122,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+>  		atomic_set(&sbi->nr_pages[i], 0);
+> 
+>  	sbi->dir_level = DEF_DIR_LEVEL;
+> -	sbi->cp_interval = DEF_CP_INTERVAL;
+> +	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
+>  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+> 
+>  	INIT_LIST_HEAD(&sbi->s_list);
+> @@ -1467,8 +1467,7 @@ try_onemore:
+>  		f2fs_commit_super(sbi, true);
+>  	}
+> 
+> -	sbi->cp_expires = round_jiffies_up(jiffies);
+> -
+> +	f2fs_update_time(sbi, CP_TIME);
+>  	return 0;
+> 
+>  free_kobj:
+> --
+> 2.6.3
+> 
+> 
+> ------------------------------------------------------------------------------
+> Site24x7 APM Insight: Get Deep Visibility into Application Performance
+> APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+> Monitor end-to-end web transactions and take corrective actions now
+> Troubleshoot faster and improve end-user experience. Signup Now!
+> http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
