@@ -1,76 +1,43 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH] f2fs: should unset atomic flag after successful
-	commit
-Date: Mon, 11 Jan 2016 15:25:11 +0800
-Message-ID: <003601d14c41$4f884190$ee98c4b0$@samsung.com>
-References: <1452388201-26706-1-git-send-email-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1452388201-26706-1-git-send-email-jaegeuk@kernel.org>
-Content-language: zh-cn
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: mchristi@redhat.com
+Subject: [PATCH 00/35 v3] eparate operations from flags in the bio/request structs
+Date: Mon, 11 Jan 2016 14:20:58 -0600
+Message-ID: <1452543693-4440-1-git-send-email-mchristi@redhat.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, konrad.wilk@oracle.com, drbd-dev@lists.linbit.com, philipp.reisner@linbit.com, lars.ellenberg@linbit.com, linux-raid@vger.kernel.org, dm-devel@redhat.com, linux-fsdevel@vger.kernel.org, linux-bcache@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, linux-mtd@lists.infradead.org, target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, osd-dev@open-osd.org, xfs@oss.sgi.com, ocfs2-devel@oss.oracle.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+The following patches begin to cleanup the request->cmd_flags and
+bio->bi_rw mess. We currently use cmd_flags to specify the operation,
+attributes and state of the request. For bi_rw we use it for similar
+info and also the priority but then also have another bi_flags field
+for state. At some point, we abused them so much we just made cmd_flags
+64 bits, so we could add more.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Sunday, January 10, 2016 9:10 AM
-> To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
-> linux-f2fs-devel@lists.sourceforge.net
-> Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH] f2fs: should unset atomic flag after successful commit
-> 
-> If there is an error during commit, we should keep the flag in order to
-> abort it.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index dfaed51..db0b2cb 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1374,10 +1374,10 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->  		return ret;
-> 
->  	if (f2fs_is_atomic_file(inode)) {
-> -		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
+The following patches seperate the operation (read, write discard,
+flush, etc) from cmd_flags/bi_rw.
 
-It was added in 6282adbf932c ("f2fs: call set_page_dirty to attach i_wb for
-cgroup ") to avoid panic in kernel with writeback supported cgroup. We
-should keep it here.
+This patchset was made against linux-next from today Jan 11 2016.
+(git tag next-20160111).
 
->  		ret = commit_inmem_pages(inode, false);
->  		if (ret)
->  			goto err_out;
-> +		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
+I put a git tree here:
+https://github.com/mikechristie/linux-kernel.git
 
-How about setting atomic flag if there occurs an error during committing.
+v3:
 
-Thanks,
+1. Used "=" instead of "|="  to setup bio bi_rw.
+2. Removed __get_request cmd_flags compat code.
+3. Merged initial dm related changes requested by Mike Snitzer.
+4. Fixed ubd kbuild errors in flush related patches.
+5. Fix 80 char col issues in several patches.
+6. Fix issue with one of the btrfs patches where it looks like I reverted
+a patch when trying to fix a merge error.
 
->  	}
-> 
->  	ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
-> --
-> 2.6.3
-> 
-> 
-> ------------------------------------------------------------------------------
-> Site24x7 APM Insight: Get Deep Visibility into Application Performance
-> APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-> Monitor end-to-end web transactions and take corrective actions now
-> Troubleshoot faster and improve end-user experience. Signup Now!
-> http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+v2
 
+1. Dropped arguments from submit_bio, and had callers setup
+bio.
+2. Add REQ_OP_FLUSH for request_fn users and renamed REQ_FLUSH
+to REQ_PREFLUSH for make_request_fn users.
+3. Dropped bio/rq_data_dir functions, and added a op_is_write
+function instead.
