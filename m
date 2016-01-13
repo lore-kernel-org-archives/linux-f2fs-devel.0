@@ -1,346 +1,173 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH v2] f2fs: serialize block allocation of dio
- writes to enhance multithread performance
-Date: Wed, 13 Jan 2016 20:13:36 +0800
-Message-ID: <00f501d14dfb$ec78e110$c56aa330$@samsung.com>
-References: <00c801d14204$5bb4e820$131eb860$@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] f2fs updates for v4.5
+Date: Wed, 13 Jan 2016 14:23:53 -0800
+Message-ID: <20160113222353.GA51737@jaegeuk.gateway>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <00c801d14204$5bb4e820$131eb860$@samsung.com>
-Content-language: zh-cn
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+Hi Linus,
 
-> -----Original Message-----
-> From: Chao Yu [mailto:chao2.yu@samsung.com]
-> Sent: Tuesday, December 29, 2015 2:44 PM
-> To: Jaegeuk Kim
-> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH v2] f2fs: serialize block allocation of dio writes to enhance
-> multithread performance
-> 
-> When performing big dio writes concurrently, our performace will be low
-> because of Thread A's allocation of multi continuous blocks will be
-> interrupted by Thread B, there are two cases as below:
->  - In Thread B, we may change current segment to a new segment for LFS
->    allocation if we dio write in the beginning of the file.
->  - In Thread B, we may allocate blocks in the middle of Thread A's
->    allocation, which make blocks allocated in Thread A being inconsecutive.
-> 
-> This patch adds writepages mutex lock to make block allocation in dio write
-> being atomic to avoid above issues.
-> 
-> Test environment 1:
-> ubuntu os with linux kernel 4.4-rc4, intel i7-3770, 16g memory,
-> 32g kingston sd card.
-> 
-> fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
-> --filesize=256m --size=16m --bs=2m --direct=1
-> --numjobs=10
-> 
-> before:
->   WRITE: io=163840KB, aggrb=5125KB/s, minb=512KB/s, maxb=776KB/s, mint=21105msec,
-> maxt=31967msec
-> patched:
->   WRITE: io=163840KB, aggrb=10424KB/s, minb=1042KB/s, maxb=1172KB/s, mint=13975msec,
-> maxt=15717msec
-> 
-> Test environment 2:
-> Note4 eMMC
-> 
-> fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/data/test/
-> --filesize=256m --size=64m --bs=2m --direct=1
-> --numjobs=16
-> 
-> before:
->   WRITE: io=1024.0MB, aggrb=103583KB/s, minb=6473KB/s, maxb=8806KB/s, mint=7442msec,
-> maxt=10123msec
-> patched:
->   WRITE: io=1024.0MB, aggrb=124860KB/s, minb=7803KB/s, maxb=9315KB/s, mint=7035msec,
-> maxt=8398msec
-> 
-> As Yunlei He reported when he test with current patch:
-> "Does share writepages mutex lock have an effect on cache write?
-> Here is AndroBench result on my phone:
-> 
-> Before patch:
-> 			1R1W		8R8W		16R16W
-> Sequential Write	161.31		163.85		154.67
-> Random  Write		9.48		17.66		18.09
-> 
-> After patch:
-> 			1R1W		8R8W		16R16W
-> Sequential Write	159.61		157.24		160.11
-> Random  Write		9.17		8.51		8.8
-> 
-> Unit:Mb/s, File size: 64M, Buffer size: 4k"
-> 
-> The turth is androidbench uses single thread with dio write to test performance
-> of sequential write, and use multi-threads with dio write to test performance
-> of random write. so we can not see any improvement in sequentail write test
-> since serializing dio page allocation can only improve performance in
-> multi-thread scenario, and there is a regression in multi-thread test with 4k
-> dio write, this is because grabbing sbi->writepages lock for serializing block
-> allocation stop the concurrency, so that less small dio bios could be merged,
-> moreover, when there are huge number of small dio writes, grabbing mutex lock
-> per dio increases the overhead.
-
-Since the whole DIOs in Androbench are IPU, so in mutex_lock/allocate_block/
-mutex_unlock actually we didn't allocating blocks, but blocking the concurrency
-by grabing sbi->writepages.
-
-How about grabbing sbi->writepages when it needs to allocate block(s) like
-following patch?
-
----
- fs/f2fs/data.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 51 insertions(+), 7 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ac9e7c6..4439a85 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -458,6 +458,44 @@ got_it:
- 	return page;
- }
- 
-+static bool __need_allocate_blocks(struct inode *inode, loff_t offset,
-+								size_t count)
-+{
-+	struct dnode_of_data dn;
-+	pgoff_t start = F2FS_BYTES_TO_BLK(offset);
-+	pgoff_t end = start + F2FS_BYTES_TO_BLK(count);
-+	pgoff_t end_offset;
-+
-+	while (start < end) {
-+		int ret;
-+
-+		set_new_dnode(&dn, inode, NULL, NULL, 0);
-+		ret = get_dnode_of_data(&dn, start, LOOKUP_NODE);
-+		if (ret == -ENOENT) {
-+			return true;
-+		} else if (ret) {
-+			return ret;
-+		}
-+
-+		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+
-+		while (dn.ofs_in_node < end_offset && start < end) {
-+			block_t blkaddr;
-+
-+			blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
-+			if (blkaddr == NULL_ADDR || blkaddr == NEW_ADDR) {
-+				f2fs_put_dnode(&dn);
-+				return true;
-+			}
-+			start++;
-+			dn.ofs_in_node++;
-+		}
-+
-+		f2fs_put_dnode(&dn);
-+	}
-+	return false
-+}
-+
- static int __allocate_data_block(struct dnode_of_data *dn)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-@@ -1620,7 +1658,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	struct file *file = iocb->ki_filp;
- 	struct address_space *mapping = file->f_mapping;
- 	struct inode *inode = mapping->host;
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	size_t count = iov_iter_count(iter);
-+	int rw = iov_iter_rw(iter);
- 	int err;
- 
- 	/* we don't need to use inline_data strictly */
-@@ -1635,20 +1675,24 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	if (err)
- 		return err;
- 
--	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
-+	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
- 
--	if (iov_iter_rw(iter) == WRITE) {
--		err = __allocate_data_blocks(inode, offset, count);
--		if (err)
--			goto out;
-+	if (rw == WRITE) {
-+		if (__need_allocate_blocks(inode, offset, count) > 0) {
-+			mutex_lock(&sbi->writepages);
-+			err = __allocate_data_blocks(inode, offset, count);
-+			mutex_unlock(&sbi->writepages);
-+			if (err)
-+				goto out;
-+		}
- 	}
- 
- 	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
- out:
--	if (err < 0 && iov_iter_rw(iter) == WRITE)
-+	if (err < 0 && rw == WRITE)
- 		f2fs_write_failed(mapping, offset + count);
- 
--	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
-+	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
- 
- 	return err;
- }
--- 
-2.6.3
+Could you please pull this?
 
 Thanks,
 
-> 
-> After all, serializing dio could only be used for concurrent scenario of
-> big dio, so this patch also introduces a threshold in sysfs to provide user
-> the interface of defining 'a big dio' with specified page number, which could
-> be used to control wthether serialize or not that kind of dio with specified
-> page number.
-> 
-> The optimization works in rare scenario.
-> 
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> ---
-> v2:
->  - merge another related patch into this one.
-> ---
->  Documentation/ABI/testing/sysfs-fs-f2fs | 12 ++++++++++++
->  fs/f2fs/data.c                          | 17 +++++++++++++----
->  fs/f2fs/f2fs.h                          |  3 +++
->  fs/f2fs/super.c                         |  3 +++
->  4 files changed, 31 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs
-> b/Documentation/ABI/testing/sysfs-fs-f2fs
-> index 0345f2d..560a4f1 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -92,3 +92,15 @@ Date:		October 2015
->  Contact:	"Chao Yu" <chao2.yu@samsung.com>
->  Description:
->  		 Controls the count of nid pages to be readaheaded.
-> +
-> +What:		/sys/fs/f2fs/<disk>/serialized_dio_pages
-> +Date:		December 2015
-> +Contact:	"Chao Yu" <chao2.yu@samsung.com>
-> +Description:
-> +		 It is a threshold with the unit of page size.
-> +                 If DIO page count is equal or big than the threshold,
-> +                 whole process of block address allocation of dio pages
-> +                 will become atomic like buffered write.
-> +                 It is used to maximize bandwidth utilization in the
-> +                 scenario of concurrent write with dio vs buffered or
-> +                 dio vs dio.
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 8a89810..d506a0e 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1619,7 +1619,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
->  	struct file *file = iocb->ki_filp;
->  	struct address_space *mapping = file->f_mapping;
->  	struct inode *inode = mapping->host;
-> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	size_t count = iov_iter_count(iter);
-> +	int rw = iov_iter_rw(iter);
->  	int err;
-> 
->  	/* we don't need to use inline_data strictly */
-> @@ -1634,20 +1636,27 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
->  	if (err)
->  		return err;
-> 
-> -	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
-> +	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
-> +
-> +	if (rw == WRITE) {
-> +		bool serialized = (F2FS_BYTES_TO_BLK(count) >=
-> +						sbi->serialized_dio_pages);
-> 
-> -	if (iov_iter_rw(iter) == WRITE) {
-> +		if (serialized)
-> +			mutex_lock(&sbi->writepages);
->  		err = __allocate_data_blocks(inode, offset, count);
-> +		if (serialized)
-> +			mutex_unlock(&sbi->writepages);
->  		if (err)
->  			goto out;
->  	}
-> 
->  	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
->  out:
-> -	if (err < 0 && iov_iter_rw(iter) == WRITE)
-> +	if (err < 0 && rw == WRITE)
->  		f2fs_write_failed(mapping, offset + count);
-> 
-> -	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
-> +	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
-> 
->  	return err;
->  }
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index a339508..293dc4e 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -333,6 +333,8 @@ enum {
-> 
->  #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
-> 
-> +#define DEF_SERIALIZED_DIO_PAGES	64	/* default serialized dio pages */
-> +
->  /* vector size for gang look-up from extent cache that consists of radix tree */
->  #define EXT_TREE_VEC_SIZE	64
-> 
-> @@ -784,6 +786,7 @@ struct f2fs_sb_info {
->  	unsigned int total_valid_inode_count;	/* valid inode count */
->  	int active_logs;			/* # of active logs */
->  	int dir_level;				/* directory level */
-> +	int serialized_dio_pages;		/* serialized direct IO pages */
-> 
->  	block_t user_block_count;		/* # of user blocks */
->  	block_t total_valid_block_count;	/* # of valid blocks */
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index a2e3a8f..4a2e51e 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -218,6 +218,7 @@ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
->  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ra_nid_pages, ra_nid_pages);
->  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search, max_victim_search);
->  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
-> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, serialized_dio_pages, serialized_dio_pages);
->  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, cp_interval);
-> 
->  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
-> @@ -234,6 +235,7 @@ static struct attribute *f2fs_attrs[] = {
->  	ATTR_LIST(min_fsync_blocks),
->  	ATTR_LIST(max_victim_search),
->  	ATTR_LIST(dir_level),
-> +	ATTR_LIST(serialized_dio_pages),
->  	ATTR_LIST(ram_thresh),
->  	ATTR_LIST(ra_nid_pages),
->  	ATTR_LIST(cp_interval),
-> @@ -1125,6 +1127,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
->  		atomic_set(&sbi->nr_pages[i], 0);
-> 
->  	sbi->dir_level = DEF_DIR_LEVEL;
-> +	sbi->serialized_dio_pages = DEF_SERIALIZED_DIO_PAGES;
->  	sbi->cp_interval = DEF_CP_INTERVAL;
->  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
-> 
-> --
-> 2.6.3
-> 
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+The following changes since commit fb39cbda147082a2e7dc4e2b5f3298448295e3c4:
+
+  Merge branch 'libnvdimm-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm (2015-12-04 11:30:45 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-4.5
+
+for you to fetch changes up to 447135a86659c646017b8e707c1243c186bf2dff:
+
+  f2fs: should unset atomic flag after successful commit (2016-01-11 15:56:44 -0800)
+
+----------------------------------------------------------------
+Regarding to the new features, this patch series adds two ioctls to control
+cached data and fragmented files.
+And, the other most parts are trying to fix missing error cases and bugs that
+we have not covered so far. The specific changes are summarized below.
+
+= Enhancement =
+ - support an ioctl to execute online file defragmentation
+ - support an ioctl to flush cached data
+ - speed up shrinkg extent_cache entries
+ - handle broken superblock
+ - refector dirty inode management infra
+ - revisit f2fs_map_blocks to handle more cases
+ - reduce global lock coverage
+ - add detecting user's idle time
+
+= Major bug fix =
+ - fix data race condition on cached nat entries
+ - fix error cases of volatile and atomic writes
+
+----------------------------------------------------------------
+Chao Yu (40):
+      f2fs: report error of f2fs_create_root_stats
+      f2fs: commit atomic written page in LFS mode
+      f2fs: support file defragment
+      f2fs: fix memory leak of kobject in error path of fill_super
+      f2fs: fix to enable missing ioctl interfaces in ->compat_ioctl
+      f2fs: fix to remove directory inode from dirty list
+      f2fs: clear page uptodate when dropping cache for atomic write
+      f2fs: fix to report error in f2fs_readdir
+      f2fs: clean up error path in f2fs_readdir
+      f2fs: clean up code with __has_cursum_space
+      f2fs: clean up argument of recover_data
+      f2fs: kill f2fs_drop_largest_extent
+      f2fs: use sbi->blocks_per_seg to avoid unnecessary calculation
+      f2fs: fix to convert inline inode in ->setattr
+      f2fs: clean up node page updating flow
+      f2fs: do more integrity verification for superblock
+      f2fs: rename {add,remove,release}_dirty_inode to {add,remove,release}_ino_entry
+      f2fs: introduce dirty list node in inode info
+      f2fs: introduce __remove_dirty_inode
+      f2fs: don't grab super block buffer header all the time
+      f2fs: introduce __f2fs_commit_super
+      f2fs: record dirty status of regular/symlink inode
+      f2fs: introduce new option for controlling data flush
+      f2fs: stat dirty regular/symlink inodes
+      f2fs: support data flush in background
+      f2fs: add a tracepoint for sync_dirty_inodes
+      f2fs: reduce covered region of sbi->cp_rwsem in f2fs_map_blocks
+      f2fs: report error of do_checkpoint
+      f2fs: don't convert inline inode when inline_data option is disable
+      f2fs: add missing f2fs_balance_fs in __recover_dot_dentries
+      f2fs: let user being aware of IO error
+      f2fs: clean up f2fs_ioc_write_checkpoint
+      f2fs: fix to skip recovering dot dentries in a readonly fs
+      f2fs crypto: check CONFIG_F2FS_FS_XATTR for encrypted symlink
+      f2fs: introduce max_file_blocks in sbi
+      f2fs: check node id earily when readaheading node page
+      f2fs: introduce __get_node_page to reuse common code
+      f2fs: recognize encrypted data in f2fs_fiemap
+      f2fs: use atomic type for node count in extent tree
+      f2fs: skip releasing nodes in chindless extent tree
+
+Fan Li (7):
+      f2fs: optimize __find_rev_next_bit
+      f2fs: write only the pages in range during defragment
+      f2fs: fix to update variable correctly when skip a unmapped block
+      f2fs: fix to reset variable correctlly
+      f2fs: optimize the flow of f2fs_map_blocks
+      f2fs: fix bugs and simplify codes of f2fs_fiemap
+      f2fs: read isize while holding i_mutex in fiemap
+
+Jaegeuk Kim (37):
+      f2fs: avoid deadlock in f2fs_shrink_extent_tree
+      f2fs: do not recover from previous remained wrong dnodes
+      f2fs: enhance the bit operation for SSR
+      f2fs: refactor f2fs_commit_super
+      f2fs: use lock_buffer when changing superblock
+      f2fs: add symbol to avoid any confusion with tools
+      f2fs: relocate tracepoint of write_checkpoint
+      f2fs: use atomic variable for total_extent_tree
+      f2fs: speed up shrinking extent tree entries
+      f2fs: check inline_data flag at converting time
+      f2fs: avoid unnecessary f2fs_gc for dir operations
+      f2fs: record node block allocation in dnode_of_data
+      f2fs: call f2fs_balance_fs only when node was changed
+      f2fs: introduce prepare_write_begin to clean up
+      f2fs: return early when trying to read null nid
+      f2fs: avoid f2fs_lock_op in f2fs_write_begin
+      f2fs: declare static function
+      f2fs: early check broken symlink length in the encrypted case
+      f2fs: use i_size_read to get i_size
+      f2fs: load largest extent all the time
+      f2fs: fix f2fs_ioc_abort_volatile_write
+      f2fs: remove f2fs_bug_on in terms of max_depth
+      f2fs: write pending bios when cp_error is set
+      f2fs: use IPU for fdatasync
+      f2fs: monitor zombie_tree count
+      f2fs: introduce zombie list for fast shrinking extent trees
+      f2fs: cover more area with nat_tree_lock
+      Revert "f2fs: check the node block address of newly allocated nid"
+      f2fs: check the page status filled from disk
+      f2fs: avoid unnecessary f2fs_balance_fs calls
+      f2fs: remove redundant calls
+      f2fs: clean up f2fs_balance_fs
+      f2fs: introduce time and interval facility
+      f2fs: detect idle time depending on user behavior
+      f2fs: monitor the number of background checkpoint
+      f2fs: fix wrong memory condition check
+      f2fs: should unset atomic flag after successful commit
+
+Masanari Iida (1):
+      Doc: f2fs: Fix typos in Documentation/filesystems/f2fs.txt
+
+Yunlei He (2):
+      f2fs: backup raw_super in sbi
+      f2fs: add a max block check for get_data_block_bmap
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |   6 +
+ Documentation/filesystems/f2fs.txt      |  10 +-
+ fs/f2fs/checkpoint.c                    | 177 ++++++++-------
+ fs/f2fs/data.c                          | 377 ++++++++++++++++++--------------
+ fs/f2fs/debug.c                         |  29 ++-
+ fs/f2fs/dir.c                           |  38 ++--
+ fs/f2fs/extent_cache.c                  | 122 ++++++-----
+ fs/f2fs/f2fs.h                          | 142 ++++++++----
+ fs/f2fs/file.c                          | 344 +++++++++++++++++++++++------
+ fs/f2fs/gc.c                            |   9 +-
+ fs/f2fs/gc.h                            |   8 -
+ fs/f2fs/inline.c                        |   9 +-
+ fs/f2fs/inode.c                         |  28 +--
+ fs/f2fs/namei.c                         |  59 +++--
+ fs/f2fs/node.c                          | 170 +++++++-------
+ fs/f2fs/node.h                          |   6 +-
+ fs/f2fs/recovery.c                      |  40 +++-
+ fs/f2fs/segment.c                       | 122 +++++------
+ fs/f2fs/shrinker.c                      |   3 +-
+ fs/f2fs/super.c                         | 253 +++++++++++++++------
+ fs/f2fs/xattr.c                         |   3 +-
+ include/linux/f2fs_fs.h                 |   3 +-
+ include/trace/events/f2fs.h             |  38 ++++
+ 23 files changed, 1266 insertions(+), 730 deletions(-)
