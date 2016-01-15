@@ -1,435 +1,508 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: support revoking atomic written
- pages
-Date: Thu, 14 Jan 2016 16:03:18 -0800
-Message-ID: <20160115000318.GA56929@jaegeuk.gateway>
-References: <20151230000513.GA13809@jaegeuk.local>
-	<00dc01d142a2$5920ec00$0b62c400$@samsung.com>
-	<20151230194102.GD28564@jaegeuk.local>
-	<011701d143ac$183be770$48b3b650$@samsung.com>
-	<20160101035024.GB6673@jaegeuk.local> <56866D6F.7040509@kernel.org>
-	<005701d14a0d$030ed8f0$092c8ad0$@samsung.com>
-	<20160108194306.GA17518@jaegeuk.aosp>
-	<20160113011742.GA44670@jaegeuk.gateway>
-	<00d801d14dc0$0ccb1370$26613a50$@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH v2] f2fs: serialize block allocation of dio
+ writes to enhance multithread performance
+Date: Fri, 15 Jan 2016 16:51:37 +0800
+Message-ID: <016301d14f72$0a449d70$1ecdd850$@samsung.com>
+References: <00c801d14204$5bb4e820$131eb860$@samsung.com>
+ <00f501d14dfb$ec78e110$c56aa330$@samsung.com>
+ <20160114235409.GC54633@jaegeuk.gateway>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aJrrW-0006ao-HN
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Jan 2016 00:03:30 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aJrrU-0007VA-Jc for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Jan 2016 00:03:30 +0000
-Content-Disposition: inline
-In-Reply-To: <00d801d14dc0$0ccb1370$26613a50$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20160114235409.GC54633@jaegeuk.gateway>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+Hi Jaegeuk,
 
-On Wed, Jan 13, 2016 at 01:05:01PM +0800, Chao Yu wrote:
-> Hi Jaegeuk,
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Friday, January 15, 2016 7:54 AM
+> To: Chao Yu
+> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH v2] f2fs: serialize block allocation of dio writes to enhance
+> multithread performance
 > 
-> > -----Original Message-----
-> > From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> > Sent: Wednesday, January 13, 2016 9:18 AM
-> > To: Chao Yu
-> > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> > Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: support revoking atomic written pages
-> > 
-> > Hi Chao,
-> > 
-> > I just injected -EIO for one page among two pages in total into database file.
-> > Then, I tested valid and invalid journal file to see how sqlite recovers the
-> > transaction.
-> > 
-> > Interestingly, if journal is valid, database file is recovered, as I could see
-> > the transaction result even after it shows EIO.
-> > But, in the invalid journal case, somehow it drops database changes.
+> Hi Chao,
 > 
-> If journal has valid data in its header and corrupted data in its body, sqlite will
-> recover db file from corrupted journal file, then db file will be corrupted.
-> So what you mean is: after recovery, db file still be fine? or sqlite fails to
-> recover due to drop data in journal since the header of journal is not valid?
+> On Wed, Jan 13, 2016 at 08:13:36PM +0800, Chao Yu wrote:
+> > Hi Jaegeuk,
+> >
+> > > -----Original Message-----
+> > > From: Chao Yu [mailto:chao2.yu@samsung.com]
+> > > Sent: Tuesday, December 29, 2015 2:44 PM
+> > > To: Jaegeuk Kim
+> > > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> > > Subject: [f2fs-dev] [PATCH v2] f2fs: serialize block allocation of dio writes to enhance
+> > > multithread performance
+> > >
+> > > When performing big dio writes concurrently, our performace will be low
+> > > because of Thread A's allocation of multi continuous blocks will be
+> > > interrupted by Thread B, there are two cases as below:
+> > >  - In Thread B, we may change current segment to a new segment for LFS
+> > >    allocation if we dio write in the beginning of the file.
+> > >  - In Thread B, we may allocate blocks in the middle of Thread A's
+> > >    allocation, which make blocks allocated in Thread A being inconsecutive.
+> > >
+> > > This patch adds writepages mutex lock to make block allocation in dio write
+> > > being atomic to avoid above issues.
+> > >
+> > > Test environment 1:
+> > > ubuntu os with linux kernel 4.4-rc4, intel i7-3770, 16g memory,
+> > > 32g kingston sd card.
+> > >
+> > > fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/mnt/f2fs
+> > > --filesize=256m --size=16m --bs=2m --direct=1
+> > > --numjobs=10
+> > >
+> > > before:
+> > >   WRITE: io=163840KB, aggrb=5125KB/s, minb=512KB/s, maxb=776KB/s, mint=21105msec,
+> > > maxt=31967msec
+> > > patched:
+> > >   WRITE: io=163840KB, aggrb=10424KB/s, minb=1042KB/s, maxb=1172KB/s, mint=13975msec,
+> > > maxt=15717msec
+> > >
+> > > Test environment 2:
+> > > Note4 eMMC
+> > >
+> > > fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/data/test/
+> > > --filesize=256m --size=64m --bs=2m --direct=1
+> > > --numjobs=16
+> > >
+> > > before:
+> > >   WRITE: io=1024.0MB, aggrb=103583KB/s, minb=6473KB/s, maxb=8806KB/s, mint=7442msec,
+> > > maxt=10123msec
+> > > patched:
+> > >   WRITE: io=1024.0MB, aggrb=124860KB/s, minb=7803KB/s, maxb=9315KB/s, mint=7035msec,
+> > > maxt=8398msec
+> > >
+> > > As Yunlei He reported when he test with current patch:
+> > > "Does share writepages mutex lock have an effect on cache write?
+> > > Here is AndroBench result on my phone:
+> > >
+> > > Before patch:
+> > > 			1R1W		8R8W		16R16W
+> > > Sequential Write	161.31		163.85		154.67
+> > > Random  Write		9.48		17.66		18.09
+> > >
+> > > After patch:
+> > > 			1R1W		8R8W		16R16W
+> > > Sequential Write	159.61		157.24		160.11
+> > > Random  Write		9.17		8.51		8.8
+> > >
+> > > Unit:Mb/s, File size: 64M, Buffer size: 4k"
+> > >
+> > > The turth is androidbench uses single thread with dio write to test performance
+> > > of sequential write, and use multi-threads with dio write to test performance
+> > > of random write. so we can not see any improvement in sequentail write test
+> > > since serializing dio page allocation can only improve performance in
+> > > multi-thread scenario, and there is a regression in multi-thread test with 4k
+> > > dio write, this is because grabbing sbi->writepages lock for serializing block
+> > > allocation stop the concurrency, so that less small dio bios could be merged,
+> > > moreover, when there are huge number of small dio writes, grabbing mutex lock
+> > > per dio increases the overhead.
+> >
+> > Since the whole DIOs in Androbench are IPU, so in mutex_lock/allocate_block/
+> > mutex_unlock actually we didn't allocating blocks, but blocking the concurrency
+> > by grabing sbi->writepages.
+> 
+> Hmm, DIO doesn't grab writepages.
 
-In the above case, I think I made broken journal header. At the same time, I
-broke database file too, but I could see that database file is recovered
-likewise roll-back. I couldn't find corruption of database.
+Yep, writepages mutex lock has not been added in ->direct_IO yet.
 
-Okay, I'll test again by corrupting journal body with valid header.
+Previously, I'm intended to add this lock into ->direct_IO, but as Yunlei
+reported, there would be a regression when he tested that patch with
+Androbench.
+
+So, what I said above is try to explain the reason why it caused a
+regression.
+
+Below is test result which I test current v2 patch ("f2fs: serialize block
+allocation of dio writes to enhance multithread performance") in Note4.
+
+a) DIO Append Write:
+IO size: 4K
+fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/data/test/ --filesize=16m --size=16m --bs=4k --direct=1
+--numjobs=32
+		serialize all		serialize none
+threshold	1 			2
+1		45637			42753
+2		40101			39263
+3		44423			34576
+4		43426			38701
+5		39730			39000
+6		39927			40870
+7		41845			38099
+8		41936			37691
+average		42128.125		38869.125
+
+IO size: 128K
+fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/data/test/ --filesize=32m --size=32m --bs=128k --direct=1
+--numjobs=32
+		serialize all		serialize none
+threshold	32 			33
+1		133712			105660
+2		134899			113765
+3		134969			100669
+4		134157			117711
+5		134657			114988
+6		134277			112871
+7		134761			116651
+8		133270			118764
+average		134337.75		112634.875
+
+IO size: 2M
+fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/data/test/ --filesize=64m --size=64m --bs=2m --direct=1
+--numjobs=32
+		serialize all		serialize none
+threshold	512 			513
+1		133542			128572
+2		133934			130843
+3		132714			130566
+4		132437			130663
+5		133068			130826
+6		132362			132120
+7		134149			129645
+8		132975			130080
+average		133147.625		130414.375
+
+IO size: 4K-1024K
+fio --name seqw --ioengine=sync --invalidate=1 --rw=write --directory=/data/test/ --filesize=32m --size=32m --bsrang=4k-1024k
+--direct=1 --numjobs=32
+		serialize all		serialize partial	serialize none
+threshold	1 			33			257
+1		118724			101922			109226
+2		114174			108503			108435
+3		115673			109890			106605
+4		111824			112762			114648
+5		110144			102300			115253
+6		108626			107063			113963
+7		114824			113469			108234
+8		102610			110609			109397
+average		112074.875		108314.75		110720.125
+
+b) DIO Random Overwrite:
+IO size: 4K
+fio --name randw --ioengine=sync --invalidate=1 --rw=randwrite --directory=/data/test/ --filesize=64m --size=16m --bs=4k --direct=1
+--numjobs=32
+		serialize all		serialize none
+threshold	1 			2
+1		17454			17340
+2		16266			17829
+3		17167			17286
+4		16746			17578
+5		17250			18148
+6		17260			17589
+7		17146			16568
+8		17106			17725
+average		17049.375		17507.875
+
+IO size: 16K
+fio --name randw --ioengine=sync --invalidate=1 --rw=randwrite --directory=/data/test/ --filesize=64m --size=16m --bs=32k --direct=1
+--numjobs=32
+		serialize all		serialize none
+threshold	8 			9
+1		47779			39845
+2		34887			42638
+3		46987			42380
+4		45138			46500
+5		41862			49044
+6		40061			49643
+7		42729			43647
+8		40441			46030
+average		42485.5			44965.875
+
+IO size: 4K-1024K
+fio --name randw --ioengine=sync --invalidate=1 --rw=randwrite --directory=/data/test/ --filesize=64m --size=16m --bsrang=4k-1024k
+--direct=1 --numjobs=32
+		serialize all		serialize partial	serialize none
+threshold	1 			33			257
+1		91235			95528			80236
+2		90882			86887			94293
+3		83446			92117			89710
+4		89083			84344			92902
+5		94335			85906			94487
+6		84371			95779			89399
+7		95597			87964			89264
+8		94352			94394			92374
+average		90412.625		90364.875		90333.125
+
+We can see in all cases of append DIO write, serialization of DIOs will
+lead to better performance, so how do you think of adding writepages lock
+when writing offset is larger than isize?
+
+> And, if we need to check every time, we can lose the bandwidth on every new
+> appending writes.
+> 
+> How about adding a condition to check whether we need to allocate or not?
+> 
+> For example,
+> 	if (i_size == calculated i_blocks && offset < i_size)
+> 		skip allocation;
+
+Yeah, that could be a faster way, I will take this. And I expect 'fallocate
+after isize' case or 'punch inside isize' case will be rare one, then our
+judgment condition will be accurate most of the time. :)
 
 Thanks,
 
 > 
 > Thanks,
 > 
-> > I'm not sure it was because I just skip second page write of database file tho.
-> > (I added random bytes into journal pages.)
-> > I'll break the database file with more random bytes likewise what I did for
-> > journal.
-> > 
+> >
+> > How about grabbing sbi->writepages when it needs to allocate block(s) like
+> > following patch?
+> >
+> > ---
+> >  fs/f2fs/data.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++++-------
+> >  1 file changed, 51 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index ac9e7c6..4439a85 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -458,6 +458,44 @@ got_it:
+> >  	return page;
+> >  }
+> >
+> > +static bool __need_allocate_blocks(struct inode *inode, loff_t offset,
+> > +								size_t count)
+> > +{
+> > +	struct dnode_of_data dn;
+> > +	pgoff_t start = F2FS_BYTES_TO_BLK(offset);
+> > +	pgoff_t end = start + F2FS_BYTES_TO_BLK(count);
+> > +	pgoff_t end_offset;
+> > +
+> > +	while (start < end) {
+> > +		int ret;
+> > +
+> > +		set_new_dnode(&dn, inode, NULL, NULL, 0);
+> > +		ret = get_dnode_of_data(&dn, start, LOOKUP_NODE);
+> > +		if (ret == -ENOENT) {
+> > +			return true;
+> > +		} else if (ret) {
+> > +			return ret;
+> > +		}
+> > +
+> > +		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
+> > +
+> > +		while (dn.ofs_in_node < end_offset && start < end) {
+> > +			block_t blkaddr;
+> > +
+> > +			blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
+> > +			if (blkaddr == NULL_ADDR || blkaddr == NEW_ADDR) {
+> > +				f2fs_put_dnode(&dn);
+> > +				return true;
+> > +			}
+> > +			start++;
+> > +			dn.ofs_in_node++;
+> > +		}
+> > +
+> > +		f2fs_put_dnode(&dn);
+> > +	}
+> > +	return false
+> > +}
+> > +
+> >  static int __allocate_data_block(struct dnode_of_data *dn)
+> >  {
+> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+> > @@ -1620,7 +1658,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+> >  	struct file *file = iocb->ki_filp;
+> >  	struct address_space *mapping = file->f_mapping;
+> >  	struct inode *inode = mapping->host;
+> > +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >  	size_t count = iov_iter_count(iter);
+> > +	int rw = iov_iter_rw(iter);
+> >  	int err;
+> >
+> >  	/* we don't need to use inline_data strictly */
+> > @@ -1635,20 +1675,24 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
+> *iter,
+> >  	if (err)
+> >  		return err;
+> >
+> > -	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+> > +	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+> >
+> > -	if (iov_iter_rw(iter) == WRITE) {
+> > -		err = __allocate_data_blocks(inode, offset, count);
+> > -		if (err)
+> > -			goto out;
+> > +	if (rw == WRITE) {
+> > +		if (__need_allocate_blocks(inode, offset, count) > 0) {
+> > +			mutex_lock(&sbi->writepages);
+> > +			err = __allocate_data_blocks(inode, offset, count);
+> > +			mutex_unlock(&sbi->writepages);
+> > +			if (err)
+> > +				goto out;
+> > +		}
+> >  	}
+> >
+> >  	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
+> >  out:
+> > -	if (err < 0 && iov_iter_rw(iter) == WRITE)
+> > +	if (err < 0 && rw == WRITE)
+> >  		f2fs_write_failed(mapping, offset + count);
+> >
+> > -	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
+> > +	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
+> >
+> >  	return err;
+> >  }
+> > --
+> > 2.6.3
+> >
 > > Thanks,
-> > 
-> > On Fri, Jan 08, 2016 at 11:43:06AM -0800, Jaegeuk Kim wrote:
-> > > On Fri, Jan 08, 2016 at 08:05:52PM +0800, Chao Yu wrote:
-> > > > Hi Jaegeuk,
-> > > >
-> > > > Any progress on this patch?
+> >
 > > >
-> > > Swamped. Will do.
+> > > After all, serializing dio could only be used for concurrent scenario of
+> > > big dio, so this patch also introduces a threshold in sysfs to provide user
+> > > the interface of defining 'a big dio' with specified page number, which could
+> > > be used to control wthether serialize or not that kind of dio with specified
+> > > page number.
 > > >
-> > > Thanks,
+> > > The optimization works in rare scenario.
 > > >
-> > > >
-> > > > Thanks,
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Chao Yu [mailto:chao@kernel.org]
-> > > > > Sent: Friday, January 01, 2016 8:14 PM
-> > > > > To: Jaegeuk Kim
-> > > > > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> > > > > Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: support revoking atomic written pages
-> > > > >
-> > > > > Hi Jaegeuk,
-> > > > >
-> > > > > On 1/1/16 11:50 AM, Jaegeuk Kim wrote:
-> > > > > > Hi Chao,
-> > > > > >
-> > > > > > ...
-> > > > > >
-> > > > > >>>>> On Tue, Dec 29, 2015 at 11:12:36AM +0800, Chao Yu wrote:
-> > > > > >>>>>> f2fs support atomic write with following semantics:
-> > > > > >>>>>> 1. open db file
-> > > > > >>>>>> 2. ioctl start atomic write
-> > > > > >>>>>> 3. (write db file) * n
-> > > > > >>>>>> 4. ioctl commit atomic write
-> > > > > >>>>>> 5. close db file
-> > > > > >>>>>>
-> > > > > >>>>>> With this flow we can avoid file becoming corrupted when abnormal power
-> > > > > >>>>>> cut, because we hold data of transaction in referenced pages linked in
-> > > > > >>>>>> inmem_pages list of inode, but without setting them dirty, so these data
-> > > > > >>>>>> won't be persisted unless we commit them in step 4.
-> > > > > >>>>>>
-> > > > > >>>>>> But we should still hold journal db file in memory by using volatile write,
-> > > > > >>>>>> because our semantics of 'atomic write support' is not full, in step 4, we
-> > > > > >>>>>> could be fail to submit all dirty data of transaction, once partial dirty
-> > > > > >>>>>> data was committed in storage, db file should be corrupted, in this case,
-> > > > > >>>>>> we should use journal db to recover the original data in db file.
-> > > > > >>>>>
-> > > > > >>>>> Originally, IOC_ABORT_VOLATILE_WRITE was supposed to handle commit failures,
-> > > > > >>>>> since database should get its error literally.
-> > > > > >>>>>
-> > > > > >>>>> So, the only thing that we need to do is keeping journal data for further db
-> > > > > >>>>> recovery.
-> > > > > >>>>
-> > > > > >>>> IMO, if we really support *atomic* interface, we don't need any journal data
-> > > > > >>>> kept by user, because f2fs already have it in its storage since we always
-> > > > > >>>> trigger OPU for pages written in atomic-write opened file, f2fs can easily try
-> > > > > >>>> to revoke (replace old to new in metadata) when any failure exist in atomic
-> > > > > >>>> write process.
-> > > > > >>>
-> > > > > >>> Yeah, so current design does not fully support atomic writes. IOWs, volatile
-> > > > > >>> writes for journal files should be used together to minimize sqlite change as
-> > > > > >>> much as possible.
-> > > > > >>>
-> > > > > >>>> But in current design, we still hold journal data in memory for recovering for
-> > > > > >>>> *rare* failure case. I think there are several issues:
-> > > > > >>>> a) most of time, we are in concurrent scenario, so if large number of journal
-> > > > > >>>> db files were opened simultaneously, we are under big memory pressure.
-> > > > > >>>
-> > > > > >>> In current android, I've seen that this is not a big concern. Even there is
-> > > > > >>> memory pressure, f2fs flushes volatile pages.
-> > > > > >>
-> > > > > >> When I change to redirty all volatile pages in ->writepage, android seems go
-> > > > > >> into an infinite loop when doing recovery flow of f2fs data partition in startup.
-> > > > > >>
-> > > > > >> if (f2fs_is_volatile_file(inode))
-> > > > > >> 	goto redirty_out;
-> > > > > >
-> > > > > > Where did you put this? It doesn't flush at all? Why?
-> > > > >
-> > > > > Original place in ->writepage, just remove two other conditions.
-> > > > >
-> > > > > To avoid potential random writebacking of dirty page in journal which
-> > > > > cause unpredicted corrupting in journal.
-> > > > >
-> > > > > > Practically, the peak amount of journal writes depend on how many transactions
-> > > > > > are processing concurrently.
-> > > > > > I mean, in-memory pages are dropped at the end of every transaction.
-> > > > > > You can check the number of pages through f2fs_stat on your phone.
-> > > > > >
-> > > > > >> I didn't dig details, but I think there may be a little risk for this design.
-> > > > > >>
-> > > > > >>>
-> > > > > >>>> b) If we are out of memory, reclaimer tries to write page of journal db into
-> > > > > >>>> disk, it will destroy db file.
-> > > > > >>>
-> > > > > >>> I don't understand. Could you elaborate why journal writes can corrupt db?
-> > > > > >>
-> > > > > >> Normally, we keep pages of journal in memory, but partial page in journal
-> > > > > >> will be write out to device by reclaimer when out of memory. So this journal
-> > > > > >> may have valid data in its log head, but with corrupted data, then after
-> > > > > >> abnormal powe-cut, recovery with this journal before a transaction will
-> > > > > >> destroy db. Right?
-> > > > > >
-> > > > > > Just think about sqlite without this feature.
-> > > > > > Broken journal is pretty normal case for sqlite.
-> > > > >
-> > > > > Maybe, if it is caused by bug or design issue of software, no matter db system
-> > > > > or filesystem, we should try our best to fix it to avoid generating broken journals.
-> > > > >
-> > > > > >
-> > > > > >>>
-> > > > > >>>> c) Though, we have journal db file, we will face failure of recovering db file
-> > > > > >>>> from journal db due to ENOMEM or EIO, then db file will be corrupted.
-> > > > > >>>
-> > > > > >>> Do you mean the failure of recovering db with a complete journal?
-> > > > > >>> Why do we have to handle that? That's a database stuff, IMO.
-> > > > > >>
-> > > > > >> Yes, just list for indicating we will face the same issue which is hard to
-> > > > > >> handle both in original design and new design, so the inner revoking failure
-> > > > > >> issue would not be a weak point or flaw of new design.
-> > > > > >>
-> > > > > >>>
-> > > > > >>>> d) Recovery flow will make data page dirty, triggering both data stream and
-> > > > > >>>> metadata stream, there should be more IOs than in inner revoking in
-> > > > > >>>> atomic-interface.
-> > > > > >>>
-> > > > > >>> Well, do you mean there is no need to recover db after revoking?
-> > > > > >>
-> > > > > >> Yes, revoking make the same effect like the recovery of sqlite, so after
-> > > > > >> revoking, recovery is no need.
-> > > > > >
-> > > > > > Logically, it doesn't make sense. If there is a valid journal file, it should
-> > > > > > redo the previous transaction. No?
-> > > > >
-> > > > > As we know, in sqlite, before we commit a transaction, we will use journal to
-> > > > > record original data of pages which will be updated in following transaction, so
-> > > > > in following if a) abnormal power-cut, b) commit error, c) redo command was
-> > > > > triggered by user, we will recover db with journal.
-> > > > >
-> > > > > Ideally, if we support atomic write interface, in there should always return two
-> > > > > status in atomic write interface: success or fail. If success, transaction was
-> > > > > committed, otherwise, it looks like nothing happened, user will be told
-> > > > > transaction was failed. Then, journals in sqlite could no longer be used,
-> > > > > eventually no journal, no recovery.
-> > > > >
-> > > > > The only thing we should concern is inner failure (e.g. ENOMEM, ENOSPC) of
-> > > > > revoking in commit interface since it could destroy db file permanently w/o
-> > > > > journal. IMO, some optimization could be done for these cases:
-> > > > > 1. ENOMEM: enable retrying or mark accessed flag in page in advance.
-> > > > > 2. ENOSPC: preallocate blocks for node blocks and data blocks.
-> > > > >
-> > > > > These optimizations couldn't guarantee no failure in revoking operation
-> > > > > completely, luckily, those are not common cases, and they also happen in sqlite
-> > > > > w/o atomic feature.
-> > > > >
-> > > > > One more possible proposal is: if we support reflink feature like ocfs2/xfs, I
-> > > > > guess we can optimize DB like:
-> > > > > 1. reflink db to db.ref
-> > > > > 2. do transaction in db.ref
-> > > > >    - failed, rm db.ref
-> > > > >    - power-cut rm db.ref
-> > > > > 3. rename db.ref to db
-> > > > >
-> > > > > >
-> > > > > >> One more case is that user can send a command to abort current transaction,
-> > > > > >> it should be happened before atomic_commit operation, which could easily
-> > > > > >> handle with abort_commit ioctl.
-> > > > > >>
-> > > > > >>>
-> > > > > >>>> e) Moreover, there should be a hole between 1) commit fail and 2) abort write &
-> > > > > >>>> recover, checkpoint will persist the corrupt data in db file, following abnormal
-> > > > > >>>> power-cut will leave that data in disk.
-> > > > > >>>
-> > > > > >>> Yes, in that case, database should recover corrupted db with its journal file.
-> > > > > >>
-> > > > > >> Journal could be corrupted as I descripted in b).
-> > > > > >
-> > > > > > Okay, so what I'm thinking is like this.
-> > > > > > It seems there are two corruption cases after journal writes.
-> > > > > >
-> > > > > > 1. power cut during atomic writes
-> > > > > >  - broken journal file and clean db file -> give up
-> > > > > >  - luckily, valid journal file and clean db file -> recover db
-> > > > > >
-> > > > > > 2. error during atomic writes
-> > > > > >  a. power-cut before abort completion
-> > > > > >   - broken journal file and broken db file -> revoking is needed!
-> > > > > >
-> > > > > >  b. after abort
-> > > > > >   - valid journal file and broken db file -> recover db (likewise plain sqlite)
-> > > > > >
-> > > > > > Indeed, in the 2.a. case, we need revoking; I guess that's what you mentioned.
-> > > > > > But, I think, even if revoking is done, we should notify an error to abort and
-> > > > > > recover db by 2.b.
-> > > > > >
-> > > > > > Something like this after successful revoking.
-> > > > > >
-> > > > > > 1. power cut during atomic writes
-> > > > > >  - broken journal file and clean db file -> give up
-> > > > > >  - luckily, valid journal file and clean db file -> recover db
-> > > > > >
-> > > > > > 2. error during atomic writes w/ revoking
-> > > > > >  a. power-cut before abort completion
-> > > > > >   - broken journal file and clean db file -> give up
-> > > > > >   - luckily, valid journal file and clean db file -> recover db
-> > > > > >
-> > > > > >  b. after abort
-> > > > > >   - valid journal file and clean db file -> recover db
-> > > > >
-> > > > > That's right.
-> > > > >
-> > > > > >
-> > > > > > Let me verify these scenarios first. :)
-> > > > >
-> > > > > OK. :)
-> > > > >
-> > > > > Thanks,
-> > > > >
-> > > > > >
-> > > > > > Thanks,
-> > > > > >
-> > > > > >>>
-> > > > > >>>> With revoking supported design, we can not solve all above issues, we will still
-> > > > > >>>> face the same issue like c), but it will be a big improve if we can apply this
-> > > > > >>>> in our interface, since it provide a way to fix the issue a) b) d). And also for
-> > > > > >>>> e) case, we try to rescue data in first time that our revoking operation would be
-> > > > > >>>> protected by f2fs_lock_op to avoid checkpoint + power-cut.
-> > > > > >>>>
-> > > > > >>>> If you don't want to have a big change in this interface or recovery flow, how
-> > > > > >>>> about keep them both, and add a mount option to control inner recovery flow?
-> > > > > >>>
-> > > > > >>> Hmm, okay. I believe the current design is fine for sqlite in android.
-> > > > > >>
-> > > > > >> I believe new design will enhance in memory usage and error handling of sqlite
-> > > > > >> in android, and hope this can be applied. But, I can understand that if you
-> > > > > >> were considerring about risk control and backward compatibility, since this
-> > > > > >> change affects all atomic related ioctls.
-> > > > > >>
-> > > > > >>> For other databases, I can understand that they can use atomic_write without
-> > > > > >>> journal control, which is a sort of stand-alone atomic_write.
-> > > > > >>>
-> > > > > >>> It'd better to add a new ioctl for that, but before adding it, can we find
-> > > > > >>> any usecase for this feature? (e.g., postgresql, mysql, mariadb, couchdb?)
-> > > > > >>
-> > > > > >> You mean investigating or we can only start when there is a clear commercial
-> > > > > >> demand ?
-> > > > > >>
-> > > > > >>> Then, I expect that we can define a more appropriate and powerful ioctl.
-> > > > > >>
-> > > > > >> Agreed :)
-> > > > > >>
-> > > > > >> Thanks,
-> > > > > >>
-> > > > > >>>
-> > > > > >>> Thanks,
-> > > > > >>>
-> > > > > >>>>
-> > > > > >>>> How do you think? :)
-> > > > > >>>>
-> > > > > >>>> Thanks,
-> > > > > >>>>
-> > > > > >>>>> But, unfortunately, it seems that something is missing in the
-> > > > > >>>>> current implementation.
-> > > > > >>>>>
-> > > > > >>>>> So simply how about this?
-> > > > > >>>>>
-> > > > > >>>>> A possible flow would be:
-> > > > > >>>>> 1. write journal data to volatile space
-> > > > > >>>>> 2. write db data to atomic space
-> > > > > >>>>> 3. in the error case, call ioc_abort_volatile_writes for both journal and db
-> > > > > >>>>>  - flush/fsync journal data to disk
-> > > > > >>>>>  - drop atomic data, and will be recovered by database with journal
-> > > > > >>>>>
-> > > > > >>>>> From cb33fc8bc30981c370ec70fe68871130109793ec Mon Sep 17 00:00:00 2001
-> > > > > >>>>> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > > >>>>> Date: Tue, 29 Dec 2015 15:46:33 -0800
-> > > > > >>>>> Subject: [PATCH] f2fs: fix f2fs_ioc_abort_volatile_write
-> > > > > >>>>>
-> > > > > >>>>> There are two rules to handle aborting volatile or atomic writes.
-> > > > > >>>>>
-> > > > > >>>>> 1. drop atomic writes
-> > > > > >>>>>  - we don't need to keep any stale db data.
-> > > > > >>>>>
-> > > > > >>>>> 2. write journal data
-> > > > > >>>>>  - we should keep the journal data with fsync for db recovery.
-> > > > > >>>>>
-> > > > > >>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > > > >>>>> ---
-> > > > > >>>>>  fs/f2fs/file.c | 13 ++++++++++---
-> > > > > >>>>>  1 file changed, 10 insertions(+), 3 deletions(-)
-> > > > > >>>>>
-> > > > > >>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > > > > >>>>> index 91f576a..d16438a 100644
-> > > > > >>>>> --- a/fs/f2fs/file.c
-> > > > > >>>>> +++ b/fs/f2fs/file.c
-> > > > > >>>>> @@ -1433,9 +1433,16 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
-> > > > > >>>>>  	if (ret)
-> > > > > >>>>>  		return ret;
-> > > > > >>>>>
-> > > > > >>>>> -	clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
-> > > > > >>>>> -	clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
-> > > > > >>>>> -	commit_inmem_pages(inode, true);
-> > > > > >>>>> +	if (f2fs_is_atomic_file(inode)) {
-> > > > > >>>>> +		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
-> > > > > >>>>> +		commit_inmem_pages(inode, true);
-> > > > > >>>>> +	}
-> > > > > >>>>> +	if (f2fs_is_volatile_file(inode)) {
-> > > > > >>>>> +		clear_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
-> > > > > >>>>> +		ret = commit_inmem_pages(inode, false);
-> > > > > >>>>> +		if (!ret)
-> > > > > >>>>> +			ret = f2fs_sync_file(filp, 0, LLONG_MAX, 0);
-> > > > > >>>>> +	}
-> > > > > >>>>>
-> > > > > >>>>>  	mnt_drop_write_file(filp);
-> > > > > >>>>>  	return ret;
-> > > > > >>>>> --
-> > > > > >>>>> 2.6.3
-> > > > > >>>>
-> > > > > >
-> > > > > > ------------------------------------------------------------------------------
-> > > > > > _______________________________________________
-> > > > > > Linux-f2fs-devel mailing list
-> > > > > > Linux-f2fs-devel@lists.sourceforge.net
-> > > > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > > > > >
-> > > > >
-> > > > > ------------------------------------------------------------------------------
-> > > > > _______________________________________________
-> > > > > Linux-f2fs-devel mailing list
-> > > > > Linux-f2fs-devel@lists.sourceforge.net
-> > > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> > > ---
+> > > v2:
+> > >  - merge another related patch into this one.
+> > > ---
+> > >  Documentation/ABI/testing/sysfs-fs-f2fs | 12 ++++++++++++
+> > >  fs/f2fs/data.c                          | 17 +++++++++++++----
+> > >  fs/f2fs/f2fs.h                          |  3 +++
+> > >  fs/f2fs/super.c                         |  3 +++
+> > >  4 files changed, 31 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs
+> > > b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > > index 0345f2d..560a4f1 100644
+> > > --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> > > +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > > @@ -92,3 +92,15 @@ Date:		October 2015
+> > >  Contact:	"Chao Yu" <chao2.yu@samsung.com>
+> > >  Description:
+> > >  		 Controls the count of nid pages to be readaheaded.
+> > > +
+> > > +What:		/sys/fs/f2fs/<disk>/serialized_dio_pages
+> > > +Date:		December 2015
+> > > +Contact:	"Chao Yu" <chao2.yu@samsung.com>
+> > > +Description:
+> > > +		 It is a threshold with the unit of page size.
+> > > +                 If DIO page count is equal or big than the threshold,
+> > > +                 whole process of block address allocation of dio pages
+> > > +                 will become atomic like buffered write.
+> > > +                 It is used to maximize bandwidth utilization in the
+> > > +                 scenario of concurrent write with dio vs buffered or
+> > > +                 dio vs dio.
+> > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > > index 8a89810..d506a0e 100644
+> > > --- a/fs/f2fs/data.c
+> > > +++ b/fs/f2fs/data.c
+> > > @@ -1619,7 +1619,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
+> *iter,
+> > >  	struct file *file = iocb->ki_filp;
+> > >  	struct address_space *mapping = file->f_mapping;
+> > >  	struct inode *inode = mapping->host;
+> > > +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> > >  	size_t count = iov_iter_count(iter);
+> > > +	int rw = iov_iter_rw(iter);
+> > >  	int err;
+> > >
+> > >  	/* we don't need to use inline_data strictly */
+> > > @@ -1634,20 +1636,27 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter
+> *iter,
+> > >  	if (err)
+> > >  		return err;
+> > >
+> > > -	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+> > > +	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+> > > +
+> > > +	if (rw == WRITE) {
+> > > +		bool serialized = (F2FS_BYTES_TO_BLK(count) >=
+> > > +						sbi->serialized_dio_pages);
+> > >
+> > > -	if (iov_iter_rw(iter) == WRITE) {
+> > > +		if (serialized)
+> > > +			mutex_lock(&sbi->writepages);
+> > >  		err = __allocate_data_blocks(inode, offset, count);
+> > > +		if (serialized)
+> > > +			mutex_unlock(&sbi->writepages);
+> > >  		if (err)
+> > >  			goto out;
+> > >  	}
+> > >
+> > >  	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
+> > >  out:
+> > > -	if (err < 0 && iov_iter_rw(iter) == WRITE)
+> > > +	if (err < 0 && rw == WRITE)
+> > >  		f2fs_write_failed(mapping, offset + count);
+> > >
+> > > -	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
+> > > +	trace_f2fs_direct_IO_exit(inode, offset, count, rw, err);
+> > >
+> > >  	return err;
+> > >  }
+> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > index a339508..293dc4e 100644
+> > > --- a/fs/f2fs/f2fs.h
+> > > +++ b/fs/f2fs/f2fs.h
+> > > @@ -333,6 +333,8 @@ enum {
+> > >
+> > >  #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
+> > >
+> > > +#define DEF_SERIALIZED_DIO_PAGES	64	/* default serialized dio pages */
+> > > +
+> > >  /* vector size for gang look-up from extent cache that consists of radix tree */
+> > >  #define EXT_TREE_VEC_SIZE	64
+> > >
+> > > @@ -784,6 +786,7 @@ struct f2fs_sb_info {
+> > >  	unsigned int total_valid_inode_count;	/* valid inode count */
+> > >  	int active_logs;			/* # of active logs */
+> > >  	int dir_level;				/* directory level */
+> > > +	int serialized_dio_pages;		/* serialized direct IO pages */
+> > >
+> > >  	block_t user_block_count;		/* # of user blocks */
+> > >  	block_t total_valid_block_count;	/* # of valid blocks */
+> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > index a2e3a8f..4a2e51e 100644
+> > > --- a/fs/f2fs/super.c
+> > > +++ b/fs/f2fs/super.c
+> > > @@ -218,6 +218,7 @@ F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ram_thresh, ram_thresh);
+> > >  F2FS_RW_ATTR(NM_INFO, f2fs_nm_info, ra_nid_pages, ra_nid_pages);
+> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search, max_victim_search);
+> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+> > > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, serialized_dio_pages, serialized_dio_pages);
+> > >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, cp_interval);
+> > >
+> > >  #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+> > > @@ -234,6 +235,7 @@ static struct attribute *f2fs_attrs[] = {
+> > >  	ATTR_LIST(min_fsync_blocks),
+> > >  	ATTR_LIST(max_victim_search),
+> > >  	ATTR_LIST(dir_level),
+> > > +	ATTR_LIST(serialized_dio_pages),
+> > >  	ATTR_LIST(ram_thresh),
+> > >  	ATTR_LIST(ra_nid_pages),
+> > >  	ATTR_LIST(cp_interval),
+> > > @@ -1125,6 +1127,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+> > >  		atomic_set(&sbi->nr_pages[i], 0);
+> > >
+> > >  	sbi->dir_level = DEF_DIR_LEVEL;
+> > > +	sbi->serialized_dio_pages = DEF_SERIALIZED_DIO_PAGES;
+> > >  	sbi->cp_interval = DEF_CP_INTERVAL;
+> > >  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+> > >
+> > > --
+> > > 2.6.3
+> > >
+> > >
 > > >
 > > > ------------------------------------------------------------------------------
-> > > Site24x7 APM Insight: Get Deep Visibility into Application Performance
-> > > APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-> > > Monitor end-to-end web transactions and take corrective actions now
-> > > Troubleshoot faster and improve end-user experience. Signup Now!
-> > > http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
 > > > _______________________________________________
 > > > Linux-f2fs-devel mailing list
 > > > Linux-f2fs-devel@lists.sourceforge.net
 > > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
