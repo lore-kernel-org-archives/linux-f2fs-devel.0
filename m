@@ -1,112 +1,136 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [PATCH 1/2] f2fs: flush dirty nat entries when exceeding threshold
-Date: Mon, 18 Jan 2016 11:13:08 +0800
-Message-ID: <019c01d1519e$3fe1a490$bfa4edb0$@samsung.com>
-References: <017d01d15041$7fad3890$7f07a9b0$@samsung.com>
- <20160116202958.GA67230@jaegeuk>
+Subject: [PATCH v2 1/4] f2fs: relocate is_merged_page
+Date: Mon, 18 Jan 2016 18:24:59 +0800
+Message-ID: <01ab01d151da$9b9b1f50$d2d15df0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20160116202958.GA67230@jaegeuk>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+Operations in is_merged_page is related to inner bio cache, move it to
+data.c.
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Sunday, January 17, 2016 4:30 AM
-> To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 1/2] f2fs: flush dirty nat entries when exceeding threshold
-> 
-> Hi Chao,
-> 
-> On Sat, Jan 16, 2016 at 05:36:40PM +0800, Chao Yu wrote:
-> > When testing f2fs with xfstest, generic/251 is stuck for long time,
-> > the case uses below serials to obtain fresh released space in device,
-> > in order to preparing for following fstrim test.
-> >
-> > 1. rm -rf /mnt/dir
-> > 2. mkdir /mnt/dir/
-> > 3. cp -axT `pwd`/ /mnt/dir/
-> > 4. goto 1
-> >
-> > During preparing step, all nat entries will be cached in nat cache,
-> > most of them are dirty entries with invalid blkaddr, which means
-> > nodes related to these entries have been truncated, and they could
-> > be reused after the dirty entries been checkpointed.
-> >
-> > However, there was no checkpoint been triggered, so nid allocators
-> > (e.g. mkdir, creat) will run into long journey of iterating all NAT
-> > pages, looking for free nids in alloc_nid->build_free_nids.
-> >
-> > Here, we give another chance to f2fs_balance_fs_bg to do checkpoint
-> > to flush nat entries for reusing in free nid cache when dirty entry
-> > count exceeds 10% of max count.
-> >
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  fs/f2fs/node.h    | 8 ++++++++
-> >  fs/f2fs/segment.c | 3 ++-
-> >  2 files changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-> > index d4d1f63..630c62d 100644
-> > --- a/fs/f2fs/node.h
-> > +++ b/fs/f2fs/node.h
-> > @@ -25,6 +25,8 @@
-> >  /* control the memory footprint threshold (10MB per 1GB ram) */
-> >  #define DEF_RAM_THRESHOLD	10
-> >
-> > +#define DEF_DIRTY_NAT_THRESHOLD		10	/* 10% over max nid */
-> > +
-> >  /* vector size for gang look-up from nat cache that consists of radix tree */
-> >  #define NATVEC_SIZE	64
-> >  #define SETVEC_SIZE	32
-> > @@ -117,6 +119,12 @@ static inline void raw_nat_from_node_info(struct f2fs_nat_entry *raw_ne,
-> >  	raw_ne->version = ni->version;
-> >  }
-> >
-> > +static inline bool excess_dirty_nats(struct f2fs_sb_info *sbi)
-> > +{
-> > +	return NM_I(sbi)->dirty_nat_cnt >=
-> > +			NM_I(sbi)->max_nid * DEF_DIRTY_NAT_THRESHOLD / 100;
-> 
-> Need to add a sysfs entry?
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c    | 38 ++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h    |  1 +
+ fs/f2fs/segment.c | 38 --------------------------------------
+ 3 files changed, 39 insertions(+), 38 deletions(-)
 
-Agreed, let me export the sysfs entry in another patch, distinguishing with
-current bug fixing patch.
-
-Thanks,
-
-> 
-> Thanks,
-> 
-> > +}
-> > +
-> >  enum mem_type {
-> >  	FREE_NIDS,	/* indicates the free nid list */
-> >  	NAT_ENTRIES,	/* indicates the cached nat entry */
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 5904a41..68800e6 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -291,8 +291,9 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
-> >
-> >  	/* checkpoint is the only way to shrink partial cached entries */
-> >  	if (!available_free_memory(sbi, NAT_ENTRIES) ||
-> > -			excess_prefree_segs(sbi) ||
-> >  			!available_free_memory(sbi, INO_ENTRIES) ||
-> > +			excess_prefree_segs(sbi) ||
-> > +			excess_dirty_nats(sbi) ||
-> >  			(is_idle(sbi) && f2fs_time_over(sbi, CP_TIME))) {
-> >  		if (test_opt(sbi, DATA_FLUSH))
-> >  			sync_dirty_inodes(sbi, FILE_INODE);
-> > --
-> > 2.6.3
-> >
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index ac9e7c6..b118055 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -116,6 +116,44 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
+ 	io->bio = NULL;
+ }
+ 
++bool is_merged_page(struct f2fs_sb_info *sbi, struct page *page,
++							enum page_type type)
++{
++	enum page_type btype = PAGE_TYPE_OF_BIO(type);
++	struct f2fs_bio_info *io = &sbi->write_io[btype];
++	struct bio_vec *bvec;
++	struct page *target;
++	int i;
++
++	down_read(&io->io_rwsem);
++	if (!io->bio) {
++		up_read(&io->io_rwsem);
++		return false;
++	}
++
++	bio_for_each_segment_all(bvec, io->bio, i) {
++
++		if (bvec->bv_page->mapping) {
++			target = bvec->bv_page;
++		} else {
++			struct f2fs_crypto_ctx *ctx;
++
++			/* encrypted page */
++			ctx = (struct f2fs_crypto_ctx *)page_private(
++								bvec->bv_page);
++			target = ctx->w.control_page;
++		}
++
++		if (page == target) {
++			up_read(&io->io_rwsem);
++			return true;
++		}
++	}
++
++	up_read(&io->io_rwsem);
++	return false;
++}
++
+ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
+ 				enum page_type type, int rw)
+ {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 2c0e478..79cadd3 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1882,6 +1882,7 @@ void destroy_checkpoint_caches(void);
+ /*
+  * data.c
+  */
++bool is_merged_page(struct f2fs_sb_info *, struct page *, enum page_type);
+ void f2fs_submit_merged_bio(struct f2fs_sb_info *, enum page_type, int);
+ int f2fs_submit_page_bio(struct f2fs_io_info *);
+ void f2fs_submit_page_mbio(struct f2fs_io_info *);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5904a41..e16235b 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1415,44 +1415,6 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
+ 	f2fs_update_extent_cache(dn);
+ }
+ 
+-static inline bool is_merged_page(struct f2fs_sb_info *sbi,
+-					struct page *page, enum page_type type)
+-{
+-	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+-	struct f2fs_bio_info *io = &sbi->write_io[btype];
+-	struct bio_vec *bvec;
+-	struct page *target;
+-	int i;
+-
+-	down_read(&io->io_rwsem);
+-	if (!io->bio) {
+-		up_read(&io->io_rwsem);
+-		return false;
+-	}
+-
+-	bio_for_each_segment_all(bvec, io->bio, i) {
+-
+-		if (bvec->bv_page->mapping) {
+-			target = bvec->bv_page;
+-		} else {
+-			struct f2fs_crypto_ctx *ctx;
+-
+-			/* encrypted page */
+-			ctx = (struct f2fs_crypto_ctx *)page_private(
+-								bvec->bv_page);
+-			target = ctx->w.control_page;
+-		}
+-
+-		if (page == target) {
+-			up_read(&io->io_rwsem);
+-			return true;
+-		}
+-	}
+-
+-	up_read(&io->io_rwsem);
+-	return false;
+-}
+-
+ void f2fs_wait_on_page_writeback(struct page *page,
+ 				enum page_type type)
+ {
+-- 
+2.6.3
