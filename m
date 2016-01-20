@@ -1,30 +1,26 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 3/3] f2fs: remove unneeded pointer conversion for
-	cleanup
-Date: Tue, 19 Jan 2016 18:55:27 +0800
-Message-ID: <001901d152a7$ffe1a8d0$ffa4fa70$@samsung.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: [oops, 4.4-rc8] warn + oops during generic/204
+Date: Thu, 21 Jan 2016 08:31:02 +1100
+Message-ID: <20160120213102.GF20456@dastard>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aLTxU-0007SO-LY
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <david@fromorbit.com>) id 1aM0Mt-000187-55
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Jan 2016 10:56:20 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aLTxT-0005rJ-1b
+	Wed, 20 Jan 2016 21:32:43 +0000
+Received: from ipmail04.adl6.internode.on.net ([150.101.137.141])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aM0Mr-000664-5m for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 20 Jan 2016 21:32:43 +0000
+Received: from dave by dastard with local (Exim 4.80)
+	(envelope-from <david@fromorbit.com>) id 1aM0LG-0001On-7F
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Jan 2016 10:56:20 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O1701AKZ516AKE0@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 19 Jan 2016 19:56:11 +0900 (KST)
-Content-language: zh-cn
+	Thu, 21 Jan 2016 08:31:02 +1100
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,314 +30,149 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-There are unneeded pointer conversion in following call stack:
- - at position a, inode was been converted to f2fs_file_info.
- - at position b, f2fs_file_info was been converted to inode again.
+Hi f2fs folks,
 
- - truncate_blocks(inode,..)
-  - fi = F2FS_I(inode)		---a
-  - ADDRS_PER_PAGE(node_page, fi)
-   - addrs_per_inode(fi)
-    - inode = &fi->vfs_inode	---b
-    - f2fs_has_inline_xattr(inode)
-     - fi = F2FS_I(inode)
-     - is_inode_flag_set(fi,..)
+I just ran xfstests on f2fs using defaults and a pair of 4GB ram
+disks for the test and scratch devices, and it hard locked the
+machine with this failure in generic/204:
 
-This patch alters ADDRS_PER_PAGE and addrs_per_inode to accept
-parameter with type of inode pointer, and uses them to clean up
-codes.
+[  125.141471] run fstests generic/204 at 2016-01-21 08:24:22
+[  127.582183] ------------[ cut here ]------------
+[  127.583225] WARNING: CPU: 10 PID: 1224 at fs/f2fs/segment.c:916 new_curseg+0x296/0x380()
+[  127.584904] Modules linked in:
+[  127.585558] CPU: 10 PID: 1224 Comm: kworker/u32:3 Not tainted 4.4.0-rc8-dgc+ #631
+[  127.587057] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Debian-1.8.2-1 04/01/2014
+[  127.589329] Workqueue: writeback wb_workfn (flush-1:1)
+[  127.590966]  ffffffff82251760 ffff88042a163888 ffffffff817a25b9 0000000000000000
+[  127.593762]  ffff88042a1638c0 ffffffff810aa006 0000000000000002 0000000000000001
+[  127.596839]  ffff8804260e1800 000000000000002d ffff880429e4a800 ffff88042a1638d0
+[  127.599825] Call Trace:
+[  127.600832]  [<ffffffff817a25b9>] dump_stack+0x4b/0x72
+[  127.602821]  [<ffffffff810aa006>] warn_slowpath_common+0x86/0xc0
+[  127.605184]  [<ffffffff810aa0fa>] warn_slowpath_null+0x1a/0x20
+[  127.607337]  [<ffffffff816ee4b6>] new_curseg+0x296/0x380
+[  127.608980]  [<ffffffff816ee91d>] allocate_segment_by_default+0x1dd/0x1e0
+[  127.611439]  [<ffffffff816eec6d>] allocate_data_block+0x15d/0x2e0
+[  127.613590]  [<ffffffff816eefad>] do_write_page+0x1bd/0x280
+[  127.615503]  [<ffffffff816ef0f3>] write_node_page+0x23/0x30
+[  127.617443]  [<ffffffff816e7ce5>] f2fs_write_node_page+0x125/0x240
+[  127.619483]  [<ffffffff816e9b31>] sync_node_pages+0x401/0x600
+[  127.621388]  [<ffffffff816e9e38>] f2fs_write_node_pages+0x108/0x130
+[  127.623451]  [<ffffffff811941c1>] do_writepages+0x21/0x30
+[  127.625205]  [<ffffffff811feb25>] __writeback_single_inode+0x45/0x330
+[  127.627304]  [<ffffffff811ff2bb>] writeback_sb_inodes+0x25b/0x4d0
+[  127.629214]  [<ffffffff811ff788>] wb_writeback+0xf8/0x2d0
+[  127.630862]  [<ffffffff8120251e>] wb_workfn+0xfe/0x3b0
+[  127.632464]  [<ffffffff81dcba7e>] ? _raw_spin_unlock_irq+0xe/0x30
+[  127.634289]  [<ffffffff810cedfb>] ? finish_task_switch+0x8b/0x220
+[  127.636069]  [<ffffffff810c17ce>] process_one_work+0x14e/0x410
+[  127.637877]  [<ffffffff810c1dde>] worker_thread+0x4e/0x460
+[  127.639569]  [<ffffffff810c1d90>] ? rescuer_thread+0x300/0x300
+[  127.641284]  [<ffffffff810c1d90>] ? rescuer_thread+0x300/0x300
+[  127.642925]  [<ffffffff810c7176>] kthread+0xe6/0x100
+[  127.644325]  [<ffffffff810c7090>] ? kthread_create_on_node+0x190/0x190
+[  127.646032]  [<ffffffff81dcc30f>] ret_from_fork+0x3f/0x70
+[  127.647504]  [<ffffffff810c7090>] ? kthread_create_on_node+0x190/0x190
+[  127.649285] ---[ end trace 2107b831b703fa3a ]---
+[  127.650532] ------------[ cut here ]------------
+[  127.651780] WARNING: CPU: 10 PID: 1224 at fs/f2fs/segment.c:955 new_curseg+0x358/0x380()
+[  127.653918] Modules linked in:
+[  127.654752] CPU: 10 PID: 1224 Comm: kworker/u32:3 Tainted: G        W       4.4.0-rc8-dgc+ #631
+[  127.657046] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Debian-1.8.2-1 04/01/2014
+[  127.659372] Workqueue: writeback wb_workfn (flush-1:1)
+[  127.660791]  ffffffff82251760 ffff88042a163888 ffffffff817a25b9 0000000000000000
+[  127.662825]  ffff88042a1638c0 ffffffff810aa006 000000000000002d 0000000000000001
+[  127.664791]  ffff8804260e1800 ffff880429e4a800 ffff8804260e1800 ffff88042a1638d0
+[  127.666679] Call Trace:
+[  127.667287]  [<ffffffff817a25b9>] dump_stack+0x4b/0x72
+[  127.668562]  [<ffffffff810aa006>] warn_slowpath_common+0x86/0xc0
+[  127.670025]  [<ffffffff810aa0fa>] warn_slowpath_null+0x1a/0x20
+[  127.671455]  [<ffffffff816ee578>] new_curseg+0x358/0x380
+[  127.672761]  [<ffffffff816ee91d>] allocate_segment_by_default+0x1dd/0x1e0
+[  127.674397]  [<ffffffff816eec6d>] allocate_data_block+0x15d/0x2e0
+[  127.675918]  [<ffffffff816eefad>] do_write_page+0x1bd/0x280
+[  127.677254]  [<ffffffff816ef0f3>] write_node_page+0x23/0x30
+[  127.678510]  [<ffffffff816e7ce5>] f2fs_write_node_page+0x125/0x240
+[  127.679930]  [<ffffffff816e9b31>] sync_node_pages+0x401/0x600
+[  127.681264]  [<ffffffff816e9e38>] f2fs_write_node_pages+0x108/0x130
+[  127.682729]  [<ffffffff811941c1>] do_writepages+0x21/0x30
+[  127.684009]  [<ffffffff811feb25>] __writeback_single_inode+0x45/0x330
+[  127.685532]  [<ffffffff811ff2bb>] writeback_sb_inodes+0x25b/0x4d0
+[  127.686913]  [<ffffffff811ff788>] wb_writeback+0xf8/0x2d0
+[  127.688223]  [<ffffffff8120251e>] wb_workfn+0xfe/0x3b0
+[  127.689370]  [<ffffffff81dcba7e>] ? _raw_spin_unlock_irq+0xe/0x30
+[  127.690696]  [<ffffffff810cedfb>] ? finish_task_switch+0x8b/0x220
+[  127.692054]  [<ffffffff810c17ce>] process_one_work+0x14e/0x410
+[  127.693361]  [<ffffffff810c1dde>] worker_thread+0x4e/0x460
+[  127.694569]  [<ffffffff810c1d90>] ? rescuer_thread+0x300/0x300
+[  127.695905]  [<ffffffff810c1d90>] ? rescuer_thread+0x300/0x300
+[  127.697110]  [<ffffffff810c7176>] kthread+0xe6/0x100
+[  127.698083]  [<ffffffff810c7090>] ? kthread_create_on_node+0x190/0x190
+[  127.699388]  [<ffffffff81dcc30f>] ret_from_fork+0x3f/0x70
+[  127.700484]  [<ffffffff810c7090>] ? kthread_create_on_node+0x190/0x190
+[  127.701743] ---[ end trace 2107b831b703fa3b ]---
+[  127.702644] BUG: unable to handle kernel NULL pointer dereference at           (null)
+[  127.704234] IP: [<ffffffff816ec3d8>] update_sit_entry+0xe8/0x270
+[  127.705434] PGD 0 
+[  127.705859] Oops: 0000 [#1] PREEMPT SMP 
+[  127.706687] Modules linked in:
+[  127.707323] CPU: 10 PID: 1224 Comm: kworker/u32:3 Tainted: G        W       4.4.0-rc8-dgc+ #631
+[  127.709037] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Debian-1.8.2-1 04/01/2014
+[  127.710743] Workqueue: writeback wb_workfn (flush-1:1)
+[  127.711798] task: ffff88042a144580 ti: ffff88042a160000 task.ti: ffff88042a160000
+[  127.713260] RIP: 0010:[<ffffffff816ec3d8>]  [<ffffffff816ec3d8>] update_sit_entry+0xe8/0x270
+[  127.714921] RSP: 0018:ffff88042a163908  EFLAGS: 00010202
+[  127.715952] RAX: 0000000000000000 RBX: ffff8804260e1800 RCX: 0000000000000007
+[  127.717389] RDX: ffff8800ba868540 RSI: 0000000000000000 RDI: 0000000000000001
+[  127.718768] RBP: ffff88042a163948 R08: ffff88042a163a19 R09: ffff880429e4a800
+[  127.720157] R10: 0000000000000000 R11: ffff8800ba8680c0 R12: ffff8800bb1849d8
+[  127.721530] R13: 0000000000000080 R14: 0000000000000001 R15: 000000000000002d
+[  127.722902] FS:  0000000000000000(0000) GS:ffff88043fd40000(0000) knlGS:0000000000000000
+[  127.724469] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+[  127.725579] CR2: 0000000000000000 CR3: 0000000002371000 CR4: 00000000000006e0
+[  127.726961] Stack:
+[  127.727376]  0000002dbb00f980 ffff8800ba868540 0000000000000000 ffff8804260e1800
+[  127.728892]  0000000000006a00 0000000000003e40 ffff8800bb00f980 0000000000000004
+[  127.730411]  ffff88042a163970 ffffffff816edd94 0000000000000180 ffff8804260e1800
+[  127.731918] Call Trace:
+[  127.732403]  [<ffffffff816edd94>] refresh_sit_entry+0x24/0xc0
+[  127.733539]  [<ffffffff816eec7e>] allocate_data_block+0x16e/0x2e0
+[  127.734724]  [<ffffffff816eefad>] do_write_page+0x1bd/0x280
+[  127.735810]  [<ffffffff816ef0f3>] write_node_page+0x23/0x30
+[  127.736898]  [<ffffffff816e7ce5>] f2fs_write_node_page+0x125/0x240
+[  127.738103]  [<ffffffff816e9b31>] sync_node_pages+0x401/0x600
+[  127.739241]  [<ffffffff816e9e38>] f2fs_write_node_pages+0x108/0x130
+[  127.740462]  [<ffffffff811941c1>] do_writepages+0x21/0x30
+[  127.741520]  [<ffffffff811feb25>] __writeback_single_inode+0x45/0x330
+[  127.742787]  [<ffffffff811ff2bb>] writeback_sb_inodes+0x25b/0x4d0
+[  127.743977]  [<ffffffff811ff788>] wb_writeback+0xf8/0x2d0
+[  127.745063]  [<ffffffff8120251e>] wb_workfn+0xfe/0x3b0
+[  127.746070]  [<ffffffff81dcba7e>] ? _raw_spin_unlock_irq+0xe/0x30
+[  127.747245]  [<ffffffff810cedfb>] ? finish_task_switch+0x8b/0x220
+[  127.748469]  [<ffffffff810c17ce>] process_one_work+0x14e/0x410
+[  127.749472]  [<ffffffff810c1dde>] worker_thread+0x4e/0x460
+[  127.750419]  [<ffffffff810c1d90>] ? rescuer_thread+0x300/0x300
+[  127.751429]  [<ffffffff810c1d90>] ? rescuer_thread+0x300/0x300
+[  127.752464]  [<ffffffff810c7176>] kthread+0xe6/0x100
+[  127.753324]  [<ffffffff810c7090>] ? kthread_create_on_node+0x190/0x190
+[  127.754449]  [<ffffffff81dcc30f>] ret_from_fork+0x3f/0x70
+[  127.755384]  [<ffffffff810c7090>] ? kthread_create_on_node+0x190/0x190
+[  127.756513] Code: 44 24 30 48 8b 53 38 48 8b 12 48 89 82 a8 00 00 00 44 89 e8 41 bd 01 00 00 00 c1 e8 03 41 d3 e5 48 89 c6 49 03 74 24 08 45 85 f6 <0f> be 16 0f 8e  
+[  127.760859] RIP  [<ffffffff816ec3d8>] update_sit_entry+0xe8/0x270
+[  127.761929]  RSP <ffff88042a163908>
+[  127.762537] CR2: 0000000000000000
+[  127.763118] ---[ end trace 2107b831b703fa3c ]---
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/data.c          |  5 ++---
- fs/f2fs/extent_cache.c  |  3 +--
- fs/f2fs/f2fs.h          | 14 +++++++-------
- fs/f2fs/file.c          | 11 +++++------
- fs/f2fs/gc.c            |  8 ++++----
- fs/f2fs/node.c          |  8 ++++----
- fs/f2fs/recovery.c      | 10 ++++------
- include/linux/f2fs_fs.h |  6 +++---
- 8 files changed, 30 insertions(+), 35 deletions(-)
+It's completely repeatable.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 284a123..ea72e8b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -461,7 +461,6 @@ got_it:
- static int __allocate_data_block(struct dnode_of_data *dn)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
--	struct f2fs_inode_info *fi = F2FS_I(dn->inode);
- 	struct f2fs_summary sum;
- 	struct node_info ni;
- 	int seg = CURSEG_WARM_DATA;
-@@ -489,7 +488,7 @@ alloc:
- 	set_data_blkaddr(dn);
- 
- 	/* update i_size */
--	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
-+	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), dn->inode) +
- 							dn->ofs_in_node;
- 	if (i_size_read(dn->inode) < ((loff_t)(fofs + 1) << PAGE_CACHE_SHIFT))
- 		i_size_write(dn->inode,
-@@ -556,7 +555,7 @@ next_dnode:
- 		goto unlock_out;
- 	}
- 
--	end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+	end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 
- next_block:
- 	blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index ccd5c63..b484b268 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -701,7 +701,6 @@ bool f2fs_lookup_extent_cache(struct inode *inode, pgoff_t pgofs,
- 
- void f2fs_update_extent_cache(struct dnode_of_data *dn)
- {
--	struct f2fs_inode_info *fi = F2FS_I(dn->inode);
- 	pgoff_t fofs;
- 
- 	if (!f2fs_may_extent_tree(dn->inode))
-@@ -710,7 +709,7 @@ void f2fs_update_extent_cache(struct dnode_of_data *dn)
- 	f2fs_bug_on(F2FS_I_SB(dn->inode), dn->data_blkaddr == NEW_ADDR);
- 
- 
--	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
-+	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), dn->inode) +
- 							dn->ofs_in_node;
- 
- 	if (f2fs_update_extent_tree_range(dn->inode, fofs, dn->data_blkaddr, 1))
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2c0e478..2062f96 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1525,9 +1525,9 @@ static inline int f2fs_has_inline_xattr(struct inode *inode)
- 	return is_inode_flag_set(F2FS_I(inode), FI_INLINE_XATTR);
- }
- 
--static inline unsigned int addrs_per_inode(struct f2fs_inode_info *fi)
-+static inline unsigned int addrs_per_inode(struct inode *inode)
- {
--	if (f2fs_has_inline_xattr(&fi->vfs_inode))
-+	if (f2fs_has_inline_xattr(inode))
- 		return DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS;
- 	return DEF_ADDRS_PER_INODE;
- }
-@@ -1683,10 +1683,10 @@ static inline void *f2fs_kvzalloc(size_t size, gfp_t flags)
- 	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
- 
- /* get offset of first page in next direct node */
--#define PGOFS_OF_NEXT_DNODE(pgofs, fi)				\
--	((pgofs < ADDRS_PER_INODE(fi)) ? ADDRS_PER_INODE(fi) :	\
--	(pgofs - ADDRS_PER_INODE(fi) + ADDRS_PER_BLOCK) /	\
--	ADDRS_PER_BLOCK * ADDRS_PER_BLOCK + ADDRS_PER_INODE(fi))
-+#define PGOFS_OF_NEXT_DNODE(pgofs, inode)				\
-+	((pgofs < ADDRS_PER_INODE(inode)) ? ADDRS_PER_INODE(inode) :	\
-+	(pgofs - ADDRS_PER_INODE(inode) + ADDRS_PER_BLOCK) /	\
-+	ADDRS_PER_BLOCK * ADDRS_PER_BLOCK + ADDRS_PER_INODE(inode))
- 
- /*
-  * file.c
-@@ -1904,7 +1904,7 @@ int f2fs_release_page(struct page *, gfp_t);
-  */
- int start_gc_thread(struct f2fs_sb_info *);
- void stop_gc_thread(struct f2fs_sb_info *);
--block_t start_bidx_of_node(unsigned int, struct f2fs_inode_info *);
-+block_t start_bidx_of_node(unsigned int, struct inode *);
- int f2fs_gc(struct f2fs_sb_info *, bool);
- void build_gc_manager(struct f2fs_sb_info *);
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 18ddb1e..2a81748 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -358,15 +358,14 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
- 		} else if (err == -ENOENT) {
- 			/* direct node does not exists */
- 			if (whence == SEEK_DATA) {
--				pgofs = PGOFS_OF_NEXT_DNODE(pgofs,
--							F2FS_I(inode));
-+				pgofs = PGOFS_OF_NEXT_DNODE(pgofs, inode);
- 				continue;
- 			} else {
- 				goto found;
- 			}
- 		}
- 
--		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 
- 		/* find data/hole in dnode block */
- 		for (; dn.ofs_in_node < end_offset;
-@@ -480,7 +479,7 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 		 * we will invalidate all blkaddr in the whole range.
- 		 */
- 		fofs = start_bidx_of_node(ofs_of_node(dn->node_page),
--						F2FS_I(dn->inode)) + ofs;
-+							dn->inode) + ofs;
- 		f2fs_update_extent_cache_range(dn, fofs, 0, len);
- 		dec_valid_block_count(sbi, dn->inode, nr_free);
- 		sync_inode_page(dn);
-@@ -568,7 +567,7 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
- 		goto out;
- 	}
- 
--	count = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+	count = ADDRS_PER_PAGE(dn.node_page, inode);
- 
- 	count -= dn.ofs_in_node;
- 	f2fs_bug_on(sbi, count < 0);
-@@ -768,7 +767,7 @@ int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end)
- 			return err;
- 		}
- 
--		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 		count = min(end_offset - dn.ofs_in_node, pg_end - pg_start);
- 
- 		f2fs_bug_on(F2FS_I_SB(inode), count == 0 || count > end_offset);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index f610c2a..b0346bb 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -483,7 +483,7 @@ next_step:
-  * as indirect or double indirect node blocks, are given, it must be a caller's
-  * bug.
-  */
--block_t start_bidx_of_node(unsigned int node_ofs, struct f2fs_inode_info *fi)
-+block_t start_bidx_of_node(unsigned int node_ofs, struct inode *inode)
- {
- 	unsigned int indirect_blks = 2 * NIDS_PER_BLOCK + 4;
- 	unsigned int bidx;
-@@ -500,7 +500,7 @@ block_t start_bidx_of_node(unsigned int node_ofs, struct f2fs_inode_info *fi)
- 		int dec = (node_ofs - indirect_blks - 3) / (NIDS_PER_BLOCK + 1);
- 		bidx = node_ofs - 5 - dec;
- 	}
--	return bidx * ADDRS_PER_BLOCK + ADDRS_PER_INODE(fi);
-+	return bidx * ADDRS_PER_BLOCK + ADDRS_PER_INODE(inode);
- }
- 
- static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-@@ -719,7 +719,7 @@ next_step:
- 				continue;
- 			}
- 
--			start_bidx = start_bidx_of_node(nofs, F2FS_I(inode));
-+			start_bidx = start_bidx_of_node(nofs, inode);
- 			data_page = get_read_data_page(inode,
- 					start_bidx + ofs_in_node, READA, true);
- 			if (IS_ERR(data_page)) {
-@@ -735,7 +735,7 @@ next_step:
- 		/* phase 3 */
- 		inode = find_gc_inode(gc_list, dni.ino);
- 		if (inode) {
--			start_bidx = start_bidx_of_node(nofs, F2FS_I(inode))
-+			start_bidx = start_bidx_of_node(nofs, inode)
- 								+ ofs_in_node;
- 			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
- 				move_encrypted_block(inode, start_bidx);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 342597a..1954b6c 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -407,10 +407,10 @@ cache:
-  * The maximum depth is four.
-  * Offset[0] will have raw inode offset.
-  */
--static int get_node_path(struct f2fs_inode_info *fi, long block,
-+static int get_node_path(struct inode *inode, long block,
- 				int offset[4], unsigned int noffset[4])
- {
--	const long direct_index = ADDRS_PER_INODE(fi);
-+	const long direct_index = ADDRS_PER_INODE(inode);
- 	const long direct_blks = ADDRS_PER_BLOCK;
- 	const long dptrs_per_blk = NIDS_PER_BLOCK;
- 	const long indirect_blks = ADDRS_PER_BLOCK * NIDS_PER_BLOCK;
-@@ -498,7 +498,7 @@ int get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
- 	int level, i;
- 	int err = 0;
- 
--	level = get_node_path(F2FS_I(dn->inode), index, offset, noffset);
-+	level = get_node_path(dn->inode, index, offset, noffset);
- 
- 	nids[0] = dn->inode->i_ino;
- 	npage[0] = dn->inode_page;
-@@ -792,7 +792,7 @@ int truncate_inode_blocks(struct inode *inode, pgoff_t from)
- 
- 	trace_f2fs_truncate_inode_blocks_enter(inode, from);
- 
--	level = get_node_path(F2FS_I(inode), from, offset, noffset);
-+	level = get_node_path(inode, from, offset, noffset);
- restart:
- 	page = get_node_page(sbi, inode->i_ino);
- 	if (IS_ERR(page)) {
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 589b20b..d88531f 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -350,8 +350,7 @@ got_it:
- 		inode = dn->inode;
- 	}
- 
--	bidx = start_bidx_of_node(offset, F2FS_I(inode)) +
--			le16_to_cpu(sum.ofs_in_node);
-+	bidx = start_bidx_of_node(offset, inode) + le16_to_cpu(sum.ofs_in_node);
- 
- 	/*
- 	 * if inode page is locked, unlock temporarily, but its reference
-@@ -386,10 +385,9 @@ truncate_out:
- static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 					struct page *page, block_t blkaddr)
- {
--	struct f2fs_inode_info *fi = F2FS_I(inode);
--	unsigned int start, end;
- 	struct dnode_of_data dn;
- 	struct node_info ni;
-+	unsigned int start, end;
- 	int err = 0, recovered = 0;
- 
- 	/* step 1: recover xattr */
-@@ -409,8 +407,8 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 		goto out;
- 
- 	/* step 3: recover data indices */
--	start = start_bidx_of_node(ofs_of_node(page), fi);
--	end = start + ADDRS_PER_PAGE(page, fi);
-+	start = start_bidx_of_node(ofs_of_node(page), inode);
-+	end = start + ADDRS_PER_PAGE(page, inode);
- 
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
- 
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index e59c3be..f4c266c 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -170,12 +170,12 @@ struct f2fs_extent {
- #define F2FS_INLINE_XATTR_ADDRS	50	/* 200 bytes for inline xattrs */
- #define DEF_ADDRS_PER_INODE	923	/* Address Pointers in an Inode */
- #define DEF_NIDS_PER_INODE	5	/* Node IDs in an Inode */
--#define ADDRS_PER_INODE(fi)	addrs_per_inode(fi)
-+#define ADDRS_PER_INODE(inode)	addrs_per_inode(inode)
- #define ADDRS_PER_BLOCK		1018	/* Address Pointers in a Direct Block */
- #define NIDS_PER_BLOCK		1018	/* Node IDs in an Indirect Block */
- 
--#define ADDRS_PER_PAGE(page, fi)	\
--	(IS_INODE(page) ? ADDRS_PER_INODE(fi) : ADDRS_PER_BLOCK)
-+#define ADDRS_PER_PAGE(page, inode)	\
-+	(IS_INODE(page) ? ADDRS_PER_INODE(inode) : ADDRS_PER_BLOCK)
- 
- #define	NODE_DIR1_BLOCK		(DEF_ADDRS_PER_INODE + 1)
- #define	NODE_DIR2_BLOCK		(DEF_ADDRS_PER_INODE + 2)
+Cheers,
+
+Dave.
 -- 
-2.6.3
-
-
+Dave Chinner
+david@fromorbit.com
 
 ------------------------------------------------------------------------------
 Site24x7 APM Insight: Get Deep Visibility into Application Performance
