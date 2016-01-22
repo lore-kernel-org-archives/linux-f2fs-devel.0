@@ -1,138 +1,45 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [oops, 4.4-rc8] warn + oops during generic/204
-Date: Fri, 22 Jan 2016 17:27:36 +0800
-Message-ID: <00b501d154f7$39fc8200$adf58600$@samsung.com>
-References: <20160120213102.GF20456@dastard>
-	<008501d15441$68c7d870$3a578950$@samsung.com>
-	<20160122015259.GB53329@jaegeuk>
+Subject: [PATCH 1/2] f2fs: correct search area in get_new_segment
+Date: Fri, 22 Jan 2016 17:42:06 +0800
+Message-ID: <00b601d154f9$4036ad10$c0a40730$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aMY14-0002ez-Ae
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 22 Jan 2016 09:28:26 +0000
-Received: from mailout1.samsung.com ([203.254.224.24])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aMY11-0002fi-J1
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 22 Jan 2016 09:28:26 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout1.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O1C01D3QKYFFZ90@mailout1.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 22 Jan 2016 18:28:15 +0900 (KST)
-In-reply-to: <20160122015259.GB53329@jaegeuk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: 'Dave Chinner' <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Friday, January 22, 2016 9:53 AM
-> To: Chao Yu
-> Cc: 'Dave Chinner'; linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [oops, 4.4-rc8] warn + oops during generic/204
-> 
-> On Thu, Jan 21, 2016 at 07:46:10PM +0800, Chao Yu wrote:
-> > Hi Dave,
-> >
-> > > -----Original Message-----
-> > > From: Dave Chinner [mailto:david@fromorbit.com]
-> > > Sent: Thursday, January 21, 2016 5:31 AM
-> > > To: linux-f2fs-devel@lists.sourceforge.net
-> > > Subject: [f2fs-dev] [oops, 4.4-rc8] warn + oops during generic/204
-> > >
-> > > Hi f2fs folks,
-> > >
-> > > I just ran xfstests on f2fs using defaults and a pair of 4GB ram
-> > > disks for the test and scratch devices, and it hard locked the
-> > > machine with this failure in generic/204:
-> >
-> > Thanks for your report! :)
-> >
-> > Hi all,
-> >
-> > We didn't handle well with the case of inline data storm which floods
-> > full disk. Actually the reason is: if we have 10M free space, and user
-> > fillings the disk with ~10M inline data, then in memory there are ~10M
-> > dirty inline datas and ~10M dirty inodes, once inodes were writebacked
-> > before inline datas, all free space will be occupied, then we have to
-> > write these dirty inline datas to ovp area which doesn't have enough
-> > space there normally.
-> 
-> Well, I think the user block count was wrong which is determined by mkfs.f2fs.
-> When writing inline_data, gc should activate to reclaim the space, but it
-> seems it couldn't do that cause there is no victim.
-> So, when taking a look at mkfs, I suspect that the number of total user blocks
-> does not consider our current segments, which is 6 by default.
-> IOWs, we gave more blocks to users, which turns out actually gc couldn't get a
-> victim from them in this case.
-> 
-> I could reproduce this issue, and once I reduced the number by 6 segments,
-> I could avoid the issue.
-> 
-> Here the change of f2fs-tools.
-> 
-> From 411166a44009bb138eca937376863e9ce673278a Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Thu, 21 Jan 2016 05:16:37 -0800
-> Subject: [PATCH] mkfs.f2fs: adjust current segments for total usable blocks
-> 
-> When calculating total number of user blocks, we should reserve the current
-> segments.
+get_new_segment starts from current segment position, tries to search a
+free segment among its right neighbors locate in same section.
 
-generic/015 generic/077 generic/251 will fail after applying this patch,
-I haven't look the details though, I suspect it hits "Too small size"
-case.
+But previously our search area was set as [current segment, max segment],
+which means we have to search to more bits in free_segmap bitmap for some
+worse cases. So here we correct the search area to [current segment, last
+segment in section] to avoid unnecessary searching.
 
-Thanks,
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/segment.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  mkfs/f2fs_format.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 2c81ecc..b25a490 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -474,7 +474,12 @@ static int f2fs_write_check_point_pack(void)
-> 
->  	/* main segments - reserved segments - (node + data segments) */
->  	set_cp(free_segment_count, get_sb(segment_count_main) - 6);
-> -	set_cp(user_block_count, ((get_cp(free_segment_count) + 6 -
-> +	if (get_cp(free_segment_count) <= get_cp(overprov_segment_count)) {
-> +		MSG(0, "Error: Too small size\n");
-> +		goto free_sum_compact;
-> +	}
-> +
-> +	set_cp(user_block_count, ((get_cp(free_segment_count) -
->  			get_cp(overprov_segment_count)) * config.blks_per_seg));
->  	/* cp page (2), data summaries (1), node summaries (3) */
->  	set_cp(cp_pack_total_block_count, 6 + get_sb(cp_payload));
-> --
-> 2.6.3
-
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5904a41..75413e2 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -873,9 +873,8 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+ 
+ 	if (!new_sec && ((*newseg + 1) % sbi->segs_per_sec)) {
+ 		segno = find_next_zero_bit(free_i->free_segmap,
+-					MAIN_SEGS(sbi), *newseg + 1);
+-		if (segno - *newseg < sbi->segs_per_sec -
+-					(*newseg % sbi->segs_per_sec))
++				(hint + 1) * sbi->segs_per_sec, *newseg + 1);
++		if (segno < (hint + 1) * sbi->segs_per_sec)
+ 			goto got_it;
+ 	}
+ find_other_zone:
+-- 
+2.7.0.2.g1b0b6dd
