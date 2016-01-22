@@ -1,31 +1,24 @@
-From: Chao Yu <chao2.yu@samsung.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: [oops, 4.4-rc8] warn + oops during generic/204
-Date: Thu, 21 Jan 2016 19:46:10 +0800
-Message-ID: <008501d15441$68c7d870$3a578950$@samsung.com>
+Date: Fri, 22 Jan 2016 09:42:14 +0800
+Message-ID: <20160122014214.GA53329@jaegeuk>
 References: <20160120213102.GF20456@dastard>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aMDhd-0002Tm-C4
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aMQkM-0000Eh-5f
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Jan 2016 11:47:01 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aMDha-00027C-Eb
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Jan 2016 11:47:01 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O1A01ZP5WQ2SE80@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Jan 2016 20:46:50 +0900 (KST)
-In-reply-to: <20160120213102.GF20456@dastard>
-Content-language: zh-cn
+	Fri, 22 Jan 2016 01:42:42 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aMQkK-0006cF-Cj for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 22 Jan 2016 01:42:41 +0000
+Content-Disposition: inline
+In-Reply-To: <20160120213102.GF20456@dastard>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,213 +28,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Dave Chinner' <david@fromorbit.com>, linux-f2fs-devel@lists.sourceforge.net
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
 Hi Dave,
 
-> -----Original Message-----
-> From: Dave Chinner [mailto:david@fromorbit.com]
-> Sent: Thursday, January 21, 2016 5:31 AM
-> To: linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [oops, 4.4-rc8] warn + oops during generic/204
-> 
+Thank you for pointing this out.
+Actually I turned off 204 in my test cases, so I couldn't get this before.
+
+I think mkfs.f2fs calculates the number of blocks for users incorrectly.
+Let us investigate and resolve this issue.
+
+Thanks,
+
+On Thu, Jan 21, 2016 at 08:31:02AM +1100, Dave Chinner wrote:
 > Hi f2fs folks,
 > 
 > I just ran xfstests on f2fs using defaults and a pair of 4GB ram
 > disks for the test and scratch devices, and it hard locked the
 > machine with this failure in generic/204:
-
-Thanks for your report! :)
-
-Hi all,
-
-We didn't handle well with the case of inline data storm which floods
-full disk. Actually the reason is: if we have 10M free space, and user
-fillings the disk with ~10M inline data, then in memory there are ~10M
-dirty inline datas and ~10M dirty inodes, once inodes were writebacked
-before inline datas, all free space will be occupied, then we have to
-write these dirty inline datas to ovp area which doesn't have enough
-space there normally.
-
-IMO, one solution could be: when writebacking node pages, we could
-verify the number of dirty inline data pages, if there are too many of
-them (which may potentially cause running out of free space), merging
-data of inline pages into inode pages with enough number.
-
-Or better ideas? :)
-
----
- fs/f2fs/checkpoint.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/f2fs/f2fs.h       |  6 +++++-
- fs/f2fs/inline.c     |  3 +++
- fs/f2fs/segment.c    |  3 +++
- fs/f2fs/segment.h    |  9 +++++++++
- 5 files changed, 69 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index c75b148..b95deb1 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -844,6 +844,55 @@ retry:
- 	goto retry;
- }
- 
-+int sync_inline_inode_page(struct f2fs_sb_info *sbi)
-+{
-+	struct list_head *head;
-+	struct inode *inode;
-+	struct f2fs_inode_info *fi;
-+
-+retry:
-+	if (!get_pages(sbi, F2FS_DIRTY_INLINE))
-+		return 0;
-+
-+	if (!has_inline_data_exceeded(sbi))
-+		return 0;
-+
-+	if (unlikely(f2fs_cp_error(sbi)))
-+		return -EIO;
-+
-+	spin_lock(&sbi->inode_lock[FILE_INODE]);
-+	head = &sbi->inode_list[FILE_INODE];
-+	if (list_empty(head)) {
-+		spin_unlock(&sbi->inode_lock[FILE_INODE]);
-+		return 0;
-+	}
-+
-+	fi = list_entry(head->next, struct f2fs_inode_info, dirty_list);
-+	inode = igrab(&fi->vfs_inode);
-+	spin_unlock(&sbi->inode_lock[FILE_INODE]);
-+
-+	if (inode) {
-+		if (f2fs_has_inline_data(inode))
-+			filemap_fdatawrite(inode->i_mapping);
-+
-+		spin_lock(&sbi->inode_lock[FILE_INODE]);
-+		if (is_inode_flag_set(fi, FI_DIRTY_FILE))
-+			list_move_tail(&fi->dirty_list,
-+					&sbi->inode_list[FILE_INODE]);
-+		spin_unlock(&sbi->inode_lock[FILE_INODE]);
-+
-+		iput(inode);
-+	} else {
-+		/*
-+		 * We should submit bio, since it exists several
-+		 * wribacking dentry pages in the freeing inode.
-+		 */
-+		f2fs_submit_merged_bio(sbi, DATA, WRITE);
-+		cond_resched();
-+	}
-+	goto retry;
-+}
-+
- /*
-  * Freeze all the FS-operations for checkpoint.
-  */
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 456e478..dc7f679 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -654,6 +654,7 @@ enum count_type {
- 	F2FS_WRITEBACK,
- 	F2FS_DIRTY_DENTS,
- 	F2FS_DIRTY_DATA,
-+	F2FS_DIRTY_INLINE,
- 	F2FS_DIRTY_NODES,
- 	F2FS_DIRTY_META,
- 	F2FS_INMEM_PAGES,
-@@ -1103,12 +1104,14 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
- 	atomic_inc(&sbi->nr_pages[count_type]);
- 	set_sbi_flag(sbi, SBI_IS_DIRTY);
- }
--
-+static inline int f2fs_has_inline_data(struct inode *inode);
- static inline void inode_inc_dirty_pages(struct inode *inode)
- {
- 	atomic_inc(&F2FS_I(inode)->dirty_pages);
- 	inc_page_count(F2FS_I_SB(inode), S_ISDIR(inode->i_mode) ?
- 				F2FS_DIRTY_DENTS : F2FS_DIRTY_DATA);
-+	if (f2fs_has_inline_data(inode))
-+		inc_page_count(F2FS_I_SB(inode), F2FS_DIRTY_INLINE);
- }
- 
- static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
-@@ -1875,6 +1878,7 @@ void update_dirty_page(struct inode *, struct page *);
- void add_dirty_dir_inode(struct inode *);
- void remove_dirty_inode(struct inode *);
- int sync_dirty_inodes(struct f2fs_sb_info *, enum inode_type);
-+int sync_inline_inode_page(struct f2fs_sb_info *);
- int write_checkpoint(struct f2fs_sb_info *, struct cp_control *);
- void init_ino_entry_info(struct f2fs_sb_info *);
- int __init create_checkpoint_caches(void);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index c3f0b7d..2b3068b 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -162,6 +162,7 @@ no_update:
- clear_out:
- 	stat_dec_inline_inode(dn->inode);
- 	f2fs_clear_inline_inode(dn->inode);
-+	dec_page_count(F2FS_I_SB(dn->inode), F2FS_DIRTY_INLINE);
- 	sync_inode_page(dn);
- 	f2fs_put_dnode(dn);
- 	return 0;
-@@ -232,6 +233,8 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
- 	set_inode_flag(F2FS_I(inode), FI_APPEND_WRITE);
- 	set_inode_flag(F2FS_I(inode), FI_DATA_EXIST);
- 
-+	dec_page_count(F2FS_I_SB(inode), F2FS_DIRTY_INLINE);
-+
- 	sync_inode_page(&dn);
- 	f2fs_put_dnode(&dn);
- 	return 0;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 070988b..9dbd748 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -290,6 +290,9 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
- 	if (!available_free_memory(sbi, FREE_NIDS))
- 		try_to_free_nids(sbi, NAT_ENTRY_PER_BLOCK * FREE_NID_PAGES);
- 
-+	/* sync dirty pages of inline inode to inode page */
-+	sync_inline_inode_page(sbi);
-+
- 	/* checkpoint is the only way to shrink partial cached entries */
- 	if (!available_free_memory(sbi, NAT_ENTRIES) ||
- 			!available_free_memory(sbi, INO_ENTRIES) ||
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index ee44d34..e0d984dd 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -482,6 +482,15 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi, int freed)
- 						reserved_sections(sbi));
- }
- 
-+static inline bool has_inline_data_exceeded(struct f2fs_sb_info *sbi)
-+{
-+	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
-+	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
-+	int inline_secs = get_blocktype_secs(sbi, F2FS_DIRTY_INLINE);
-+
-+	return free_sections(sbi) <= (node_secs + 2 * dent_secs + inline_secs);
-+}
-+
- static inline bool excess_prefree_segs(struct f2fs_sb_info *sbi)
- {
- 	return prefree_segments(sbi) > SM_I(sbi)->rec_prefree_segments;
--- 
-2.7.0.2.g1b0b6dd
-
-Thanks,
-
 > 
 > [  125.141471] run fstests generic/204 at 2016-01-21 08:24:22
 > [  127.582183] ------------[ cut here ]------------
 > [  127.583225] WARNING: CPU: 10 PID: 1224 at fs/f2fs/segment.c:916 new_curseg+0x296/0x380()
 > [  127.584904] Modules linked in:
 > [  127.585558] CPU: 10 PID: 1224 Comm: kworker/u32:3 Not tainted 4.4.0-rc8-dgc+ #631
-> [  127.587057] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Debian-1.8.2-1
-> 04/01/2014
+> [  127.587057] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Debian-1.8.2-1 04/01/2014
 > [  127.589329] Workqueue: writeback wb_workfn (flush-1:1)
 > [  127.590966]  ffffffff82251760 ffff88042a163888 ffffffff817a25b9 0000000000000000
 > [  127.593762]  ffff88042a1638c0 ffffffff810aa006 0000000000000002 0000000000000001
@@ -277,10 +89,8 @@ Thanks,
 > [  127.650532] ------------[ cut here ]------------
 > [  127.651780] WARNING: CPU: 10 PID: 1224 at fs/f2fs/segment.c:955 new_curseg+0x358/0x380()
 > [  127.653918] Modules linked in:
-> [  127.654752] CPU: 10 PID: 1224 Comm: kworker/u32:3 Tainted: G        W       4.4.0-rc8-dgc+
-> #631
-> [  127.657046] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Debian-1.8.2-1
-> 04/01/2014
+> [  127.654752] CPU: 10 PID: 1224 Comm: kworker/u32:3 Tainted: G        W       4.4.0-rc8-dgc+ #631
+> [  127.657046] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Debian-1.8.2-1 04/01/2014
 > [  127.659372] Workqueue: writeback wb_workfn (flush-1:1)
 > [  127.660791]  ffffffff82251760 ffff88042a163888 ffffffff817a25b9 0000000000000000
 > [  127.662825]  ffff88042a1638c0 ffffffff810aa006 000000000000002d 0000000000000001
@@ -315,17 +125,14 @@ Thanks,
 > [  127.701743] ---[ end trace 2107b831b703fa3b ]---
 > [  127.702644] BUG: unable to handle kernel NULL pointer dereference at           (null)
 > [  127.704234] IP: [<ffffffff816ec3d8>] update_sit_entry+0xe8/0x270
-> [  127.705434] PGD 0
-> [  127.705859] Oops: 0000 [#1] PREEMPT SMP
+> [  127.705434] PGD 0 
+> [  127.705859] Oops: 0000 [#1] PREEMPT SMP 
 > [  127.706687] Modules linked in:
-> [  127.707323] CPU: 10 PID: 1224 Comm: kworker/u32:3 Tainted: G        W       4.4.0-rc8-dgc+
-> #631
-> [  127.709037] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Debian-1.8.2-1
-> 04/01/2014
+> [  127.707323] CPU: 10 PID: 1224 Comm: kworker/u32:3 Tainted: G        W       4.4.0-rc8-dgc+ #631
+> [  127.709037] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Debian-1.8.2-1 04/01/2014
 > [  127.710743] Workqueue: writeback wb_workfn (flush-1:1)
 > [  127.711798] task: ffff88042a144580 ti: ffff88042a160000 task.ti: ffff88042a160000
-> [  127.713260] RIP: 0010:[<ffffffff816ec3d8>]  [<ffffffff816ec3d8>]
-> update_sit_entry+0xe8/0x270
+> [  127.713260] RIP: 0010:[<ffffffff816ec3d8>]  [<ffffffff816ec3d8>] update_sit_entry+0xe8/0x270
 > [  127.714921] RSP: 0018:ffff88042a163908  EFLAGS: 00010202
 > [  127.715952] RAX: 0000000000000000 RBX: ffff8804260e1800 RCX: 0000000000000007
 > [  127.717389] RDX: ffff8800ba868540 RSI: 0000000000000000 RDI: 0000000000000001
@@ -362,8 +169,7 @@ Thanks,
 > [  127.753324]  [<ffffffff810c7090>] ? kthread_create_on_node+0x190/0x190
 > [  127.754449]  [<ffffffff81dcc30f>] ret_from_fork+0x3f/0x70
 > [  127.755384]  [<ffffffff810c7090>] ? kthread_create_on_node+0x190/0x190
-> [  127.756513] Code: 44 24 30 48 8b 53 38 48 8b 12 48 89 82 a8 00 00 00 44 89 e8 41 bd 01 00
-> 00 00 c1 e8 03 41 d3 e5 48 89 c6 49 03 74 24 08 45 85 f6 <0f> be 16 0f 8e
+> [  127.756513] Code: 44 24 30 48 8b 53 38 48 8b 12 48 89 82 a8 00 00 00 44 89 e8 41 bd 01 00 00 00 c1 e8 03 41 d3 e5 48 89 c6 49 03 74 24 08 45 85 f6 <0f> be 16 0f 8e  
 > [  127.760859] RIP  [<ffffffff816ec3d8>] update_sit_entry+0xe8/0x270
 > [  127.761929]  RSP <ffff88042a163908>
 > [  127.762537] CR2: 0000000000000000
@@ -374,7 +180,7 @@ Thanks,
 > Cheers,
 > 
 > Dave.
-> --
+> -- 
 > Dave Chinner
 > david@fromorbit.com
 > 
@@ -388,7 +194,6 @@ Thanks,
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
 
 ------------------------------------------------------------------------------
 Site24x7 APM Insight: Get Deep Visibility into Application Performance
