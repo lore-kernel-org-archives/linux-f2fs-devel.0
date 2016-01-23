@@ -1,7 +1,7 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/4] f2fs: remove needless condition check
-Date: Sat, 23 Jan 2016 12:16:44 -0800
-Message-ID: <1453580206-61937-2-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 4/4] f2fs: use writepages->lock for WB_SYNC_ALL
+Date: Sat, 23 Jan 2016 12:16:46 -0800
+Message-ID: <1453580206-61937-4-git-send-email-jaegeuk@kernel.org>
 References: <1453580206-61937-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +10,13 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aN4cM-00027g-2a
+	(envelope-from <jaegeuk@kernel.org>) id 1aN4cV-00028d-W2
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 23 Jan 2016 20:17:06 +0000
+	Sat, 23 Jan 2016 20:17:15 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aN4cL-0004wv-Ek for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 23 Jan 2016 20:17:06 +0000
+	id 1aN4cV-0004xJ-At for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 23 Jan 2016 20:17:15 +0000
 In-Reply-To: <1453580206-61937-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,32 +30,28 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch removes needless condition variable.
+If there are many writepages calls by multiple threads in background, we don't
+need to serialize to merge all the bios, since it's background.
+In such the case, it'd better to run writepages concurrently.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b118055..9a8edeb 100644
+index 7d9f1d9..8d0d9ec 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1477,13 +1477,9 @@ restart:
- 		if (f2fs_lookup_extent_cache(inode, index, &ei)) {
- 			dn.data_blkaddr = ei.blk + index - ei.fofs;
- 		} else {
--			bool restart = false;
--
- 			/* hole case */
- 			err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
--			if (err || (!err && dn.data_blkaddr == NULL_ADDR))
--				restart = true;
--			if (restart) {
-+			if (err || (!err && dn.data_blkaddr == NULL_ADDR)) {
- 				f2fs_put_dnode(&dn);
- 				f2fs_lock_op(sbi);
- 				locked = true;
+@@ -1403,7 +1403,7 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+ 
+ 	diff = nr_pages_to_write(sbi, DATA, wbc);
+ 
+-	if (!S_ISDIR(inode->i_mode)) {
++	if (!S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_ALL) {
+ 		mutex_lock(&sbi->writepages);
+ 		locked = true;
+ 	}
 -- 
 2.6.3
 
