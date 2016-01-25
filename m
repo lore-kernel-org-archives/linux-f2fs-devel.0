@@ -1,351 +1,181 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH v2 2/4] f2fs: introduce
-	f2fs_submit_merged_bio_cond
-Date: Mon, 25 Jan 2016 17:50:21 +0800
-Message-ID: <000f01d15755$e6955cc0$b3c01640$@samsung.com>
-References: <01ac01d151db$0659ef60$130dce20$@samsung.com>
-	<20160123202151.GA62021@jaegeuk.hsd1.ca.comcast.net>
+From: Ilya Dryomov <idryomov@gmail.com>
+Subject: Re: [PATCH 16/26] libceph: Use skcipher
+Date: Mon, 25 Jan 2016 17:18:47 +0100
+Message-ID: <CAOi1vP9jmMYHR21UeAO175susZ5V74vcXyoxwayBVSTFHxjhBQ@mail.gmail.com>
+References: <20160124131021.GA31153@gondor.apana.org.au>
+	<E1aNKYy-0008E6-GI@gondolin.me.apana.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aNdnv-0001HX-IM
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 25 Jan 2016 09:51:23 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aNdns-0007xZ-8d
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 25 Jan 2016 09:51:23 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O1I00XBU616PZ90@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 25 Jan 2016 18:51:06 +0900 (KST)
-In-reply-to: <20160123202151.GA62021@jaegeuk.hsd1.ca.comcast.net>
-Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: multipart/mixed; boundary=001a1147799e7aa950052a2aecaa
+Return-path: <ecryptfs-owner@vger.kernel.org>
+In-Reply-To: <E1aNKYy-0008E6-GI@gondolin.me.apana.org.au>
+Sender: ecryptfs-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, devel@driverdev.osuosl.org, dm-devel@redhat.com, linux-wireless@vger.kernel.org, linux-cifs@vger.kernel.org, ecryptfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nfs@vger.kernel.org, keyrings@vger.kernel.org, linux-bluetooth@vger.kernel.org, Ceph Development <ceph-devel@vger.kernel.org>, linux-wpan@vger.kernel.org, linux-afs@lists.infradead.org, Lars Ellenberg <drbd-dev@lists.linbit.com>, open-iscsi@googlegroups.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+--001a1147799e7aa950052a2aecaa
+Content-Type: text/plain; charset=UTF-8
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Sunday, January 24, 2016 4:22 AM
-> To: Chao Yu
-> Cc: linux-f2fs-devel@lists.sourceforge.net; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v2 2/4] f2fs: introduce f2fs_submit_merged_bio_cond
-> 
-> Hi Chao,
-> 
-> Could you review this patch again?
+On Sun, Jan 24, 2016 at 2:18 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> This patch replaces uses of blkcipher with skcipher.
+>
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> ---
+>
+>  net/ceph/crypto.c |   97 +++++++++++++++++++++++++++++++-----------------------
+>  1 file changed, 56 insertions(+), 41 deletions(-)
 
-I did the review, but found nothing, and also I couldn't reproduce this
-issue.
+Could you get rid of ivsize instead of assigning to it - see the
+attached diff?
 
-> I just got a panic from this patch.
-> I have not much time to dig this, so couldn't remain more specific info.
-> Let me test this later.
+Otherwise:
 
-OK, if there is some dmesg info, please share with me. :)
+Acked-by: Ilya Dryomov <idryomov@gmail.com>
 
 Thanks,
 
-> 
-> Thanks,
-> 
-> On Mon, Jan 18, 2016 at 06:28:11PM +0800, Chao Yu wrote:
-> > f2fs use single bio buffer per type data (META/NODE/DATA) for caching
-> > writes locating in continuous block address as many as possible, after
-> > submitting, these writes may be still cached in bio buffer, so we have
-> > to flush cached writes in bio buffer by calling f2fs_submit_merged_bio.
-> >
-> > Unfortunately, in the scenario of high concurrency, bio buffer could be
-> > flushed by someone else before we submit it as below reasons:
-> > a) there is no space in bio buffer.
-> > b) add a request of different type (SYNC, ASYNC).
-> > c) add a discontinuous block address.
-> >
-> > For this condition, f2fs_submit_merged_bio will be devastating, because
-> > it could break the following merging of writes in bio buffer, split one
-> > big bio into two smaller one.
-> >
-> > This patch introduces f2fs_submit_merged_bio_cond which can do a
-> > conditional submitting with bio buffer, before submitting it will judge
-> > whether:
-> >  - page in DATA type bio buffer is matching with specified page;
-> >  - page in DATA type bio buffer is belong to specified inode;
-> >  - page in NODE type bio buffer is belong to specified inode;
-> > If there is no eligible page in bio buffer, we will skip submitting step,
-> > result in gaining more chance to merge consecutive block IOs in bio cache.
-> >
-> > Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> > ---
-> >  v2:
-> >  - update comments.
-> >  - split ("f2fs: relocate is_merged_page ") from this patch.
-> > ---
-> >  fs/f2fs/checkpoint.c |  7 ++++-
-> >  fs/f2fs/data.c       | 74 +++++++++++++++++++++++++++++++++++++++-------------
-> >  fs/f2fs/f2fs.h       |  3 ++-
-> >  fs/f2fs/node.c       | 15 ++++++++---
-> >  fs/f2fs/segment.c    |  6 ++---
-> >  5 files changed, 79 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index 3842af9..c75b148 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -235,10 +235,15 @@ static int f2fs_write_meta_page(struct page *page,
-> >  	f2fs_wait_on_page_writeback(page, META);
-> >  	write_meta_page(sbi, page);
-> >  	dec_page_count(sbi, F2FS_DIRTY_META);
-> > +
-> > +	if (wbc->for_reclaim)
-> > +		f2fs_submit_merged_bio_cond(sbi, NULL, page, 0, META, WRITE);
-> > +
-> >  	unlock_page(page);
-> >
-> > -	if (wbc->for_reclaim || unlikely(f2fs_cp_error(sbi)))
-> > +	if (unlikely(f2fs_cp_error(sbi)))
-> >  		f2fs_submit_merged_bio(sbi, META, WRITE);
-> > +
-> >  	return 0;
-> >
-> >  redirty_out:
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index b118055..19e9924 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -116,20 +116,18 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
-> >  	io->bio = NULL;
-> >  }
-> >
-> > -bool is_merged_page(struct f2fs_sb_info *sbi, struct page *page,
-> > -							enum page_type type)
-> > +static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
-> > +						struct page *page, nid_t ino)
-> >  {
-> > -	enum page_type btype = PAGE_TYPE_OF_BIO(type);
-> > -	struct f2fs_bio_info *io = &sbi->write_io[btype];
-> >  	struct bio_vec *bvec;
-> >  	struct page *target;
-> >  	int i;
-> >
-> > -	down_read(&io->io_rwsem);
-> > -	if (!io->bio) {
-> > -		up_read(&io->io_rwsem);
-> > +	if (!io->bio)
-> >  		return false;
-> > -	}
-> > +
-> > +	if (!inode && !page && !ino)
-> > +		return true;
-> >
-> >  	bio_for_each_segment_all(bvec, io->bio, i) {
-> >
-> > @@ -144,18 +142,34 @@ bool is_merged_page(struct f2fs_sb_info *sbi, struct page *page,
-> >  			target = ctx->w.control_page;
-> >  		}
-> >
-> > -		if (page == target) {
-> > -			up_read(&io->io_rwsem);
-> > +		if (inode && inode == target->mapping->host)
-> > +			return true;
-> > +		if (page && page == target)
-> > +			return true;
-> > +		if (ino && ino == ino_of_node(target))
-> >  			return true;
-> > -		}
-> >  	}
-> >
-> > -	up_read(&io->io_rwsem);
-> >  	return false;
-> >  }
-> >
-> > -void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
-> > -				enum page_type type, int rw)
-> > +static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
-> > +						struct page *page, nid_t ino,
-> > +						enum page_type type)
-> > +{
-> > +	enum page_type btype = PAGE_TYPE_OF_BIO(type);
-> > +	struct f2fs_bio_info *io = &sbi->write_io[btype];
-> > +	bool ret;
-> > +
-> > +	down_read(&io->io_rwsem);
-> > +	ret = __has_merged_page(io, inode, page, ino);
-> > +	up_read(&io->io_rwsem);
-> > +	return ret;
-> > +}
-> > +
-> > +static void __f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
-> > +				struct inode *inode, struct page *page,
-> > +				nid_t ino, enum page_type type, int rw)
-> >  {
-> >  	enum page_type btype = PAGE_TYPE_OF_BIO(type);
-> >  	struct f2fs_bio_info *io;
-> > @@ -164,6 +178,9 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
-> >
-> >  	down_write(&io->io_rwsem);
-> >
-> > +	if (!__has_merged_page(io, inode, page, ino))
-> > +		goto out;
-> > +
-> >  	/* change META to META_FLUSH in the checkpoint procedure */
-> >  	if (type >= META_FLUSH) {
-> >  		io->fio.type = META_FLUSH;
-> > @@ -173,9 +190,24 @@ void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi,
-> >  			io->fio.rw = WRITE_FLUSH_FUA | REQ_META | REQ_PRIO;
-> >  	}
-> >  	__submit_merged_bio(io);
-> > +out:
-> >  	up_write(&io->io_rwsem);
-> >  }
-> >
-> > +void f2fs_submit_merged_bio(struct f2fs_sb_info *sbi, enum page_type type,
-> > +									int rw)
-> > +{
-> > +	__f2fs_submit_merged_bio(sbi, NULL, NULL, 0, type, rw);
-> > +}
-> > +
-> > +void f2fs_submit_merged_bio_cond(struct f2fs_sb_info *sbi,
-> > +				struct inode *inode, struct page *page,
-> > +				nid_t ino, enum page_type type, int rw)
-> > +{
-> > +	if (has_merged_page(sbi, inode, page, ino, type))
-> > +		__f2fs_submit_merged_bio(sbi, inode, page, ino, type, rw);
-> > +}
-> > +
-> >  /*
-> >   * Fill the locked page with data located in the block address.
-> >   * Return unlocked page.
-> > @@ -1215,12 +1247,18 @@ out:
-> >  	inode_dec_dirty_pages(inode);
-> >  	if (err)
-> >  		ClearPageUptodate(page);
-> > +
-> > +	if (wbc->for_reclaim) {
-> > +		f2fs_submit_merged_bio_cond(sbi, NULL, page, 0, DATA, WRITE);
-> > +		remove_dirty_inode(inode);
-> > +	}
-> > +
-> >  	unlock_page(page);
-> >  	f2fs_balance_fs(sbi, need_balance_fs);
-> > -	if (wbc->for_reclaim || unlikely(f2fs_cp_error(sbi))) {
-> > +
-> > +	if (unlikely(f2fs_cp_error(sbi)))
-> >  		f2fs_submit_merged_bio(sbi, DATA, WRITE);
-> > -		remove_dirty_inode(inode);
-> > -	}
-> > +
-> >  	return 0;
-> >
-> >  redirty_out:
-> > @@ -1407,7 +1445,7 @@ static int f2fs_write_data_pages(struct address_space *mapping,
-> >  		locked = true;
-> >  	}
-> >  	ret = f2fs_write_cache_pages(mapping, wbc, __f2fs_writepage, mapping);
-> > -	f2fs_submit_merged_bio(sbi, DATA, WRITE);
-> > +	f2fs_submit_merged_bio_cond(sbi, inode, NULL, 0, DATA, WRITE);
-> >  	if (locked)
-> >  		mutex_unlock(&sbi->writepages);
-> >
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 79cadd3..6c413b1e 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -1882,8 +1882,9 @@ void destroy_checkpoint_caches(void);
-> >  /*
-> >   * data.c
-> >   */
-> > -bool is_merged_page(struct f2fs_sb_info *, struct page *, enum page_type);
-> >  void f2fs_submit_merged_bio(struct f2fs_sb_info *, enum page_type, int);
-> > +void f2fs_submit_merged_bio_cond(struct f2fs_sb_info *, struct inode *,
-> > +				struct page *, nid_t, enum page_type, int);
-> >  int f2fs_submit_page_bio(struct f2fs_io_info *);
-> >  void f2fs_submit_page_mbio(struct f2fs_io_info *);
-> >  void set_data_blkaddr(struct dnode_of_data *);
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index 342597a..851a80b 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -1258,8 +1258,13 @@ continue_unlock:
-> >  		goto next_step;
-> >  	}
-> >
-> > -	if (wrote)
-> > -		f2fs_submit_merged_bio(sbi, NODE, WRITE);
-> > +	if (wrote) {
-> > +		if (ino)
-> > +			f2fs_submit_merged_bio_cond(sbi, NULL, NULL,
-> > +							ino, NODE, WRITE);
-> > +		else
-> > +			f2fs_submit_merged_bio(sbi, NODE, WRITE);
-> > +	}
-> >  	return nwritten;
-> >  }
-> >
-> > @@ -1356,9 +1361,13 @@ static int f2fs_write_node_page(struct page *page,
-> >  	set_node_addr(sbi, &ni, fio.blk_addr, is_fsync_dnode(page));
-> >  	dec_page_count(sbi, F2FS_DIRTY_NODES);
-> >  	up_read(&sbi->node_write);
-> > +
-> > +	if (wbc->for_reclaim)
-> > +		f2fs_submit_merged_bio_cond(sbi, NULL, page, 0, NODE, WRITE);
-> > +
-> >  	unlock_page(page);
-> >
-> > -	if (wbc->for_reclaim || unlikely(f2fs_cp_error(sbi)))
-> > +	if (unlikely(f2fs_cp_error(sbi)))
-> >  		f2fs_submit_merged_bio(sbi, NODE, WRITE);
-> >
-> >  	return 0;
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index e16235b..0246acc 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -253,7 +253,8 @@ int commit_inmem_pages(struct inode *inode, bool abort)
-> >  	if (!abort) {
-> >  		f2fs_unlock_op(sbi);
-> >  		if (submit_bio)
-> > -			f2fs_submit_merged_bio(sbi, DATA, WRITE);
-> > +			f2fs_submit_merged_bio_cond(sbi, inode, NULL, 0,
-> > +								DATA, WRITE);
-> >  	}
-> >  	return err;
-> >  }
-> > @@ -1421,8 +1422,7 @@ void f2fs_wait_on_page_writeback(struct page *page,
-> >  	if (PageWriteback(page)) {
-> >  		struct f2fs_sb_info *sbi = F2FS_P_SB(page);
-> >
-> > -		if (is_merged_page(sbi, page, type))
-> > -			f2fs_submit_merged_bio(sbi, type, WRITE);
-> > +		f2fs_submit_merged_bio_cond(sbi, NULL, page, 0, type, WRITE);
-> >  		wait_on_page_writeback(page);
-> >  	}
-> >  }
-> > --
-> > 2.6.3
-> >
+                Ilya
 
+--001a1147799e7aa950052a2aecaa
+Content-Type: text/plain; charset=US-ASCII; name="skcipher-ivsize.diff"
+Content-Disposition: attachment; filename="skcipher-ivsize.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_iju6gmbs0
 
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
+ZGlmZiAtLWdpdCBhL25ldC9jZXBoL2NyeXB0by5jIGIvbmV0L2NlcGgvY3J5cHRvLmMKaW5kZXgg
+NDJlODY0OWM2ZTc5Li5kYjI4NDdhYzVmMTIgMTAwNjQ0Ci0tLSBhL25ldC9jZXBoL2NyeXB0by5j
+CisrKyBiL25ldC9jZXBoL2NyeXB0by5jCkBAIC00LDcgKzQsOCBAQAogI2luY2x1ZGUgPGxpbnV4
+L2Vyci5oPgogI2luY2x1ZGUgPGxpbnV4L3NjYXR0ZXJsaXN0Lmg+CiAjaW5jbHVkZSA8bGludXgv
+c2xhYi5oPgotI2luY2x1ZGUgPGNyeXB0by9oYXNoLmg+CisjaW5jbHVkZSA8Y3J5cHRvL2Flcy5o
+PgorI2luY2x1ZGUgPGNyeXB0by9za2NpcGhlci5oPgogI2luY2x1ZGUgPGxpbnV4L2tleS10eXBl
+Lmg+CiAKICNpbmNsdWRlIDxrZXlzL2NlcGgtdHlwZS5oPgpAQCAtNzksOSArODAsOSBAQCBpbnQg
+Y2VwaF9jcnlwdG9fa2V5X3VuYXJtb3Ioc3RydWN0IGNlcGhfY3J5cHRvX2tleSAqa2V5LCBjb25z
+dCBjaGFyICppbmtleSkKIAlyZXR1cm4gMDsKIH0KIAotc3RhdGljIHN0cnVjdCBjcnlwdG9fYmxr
+Y2lwaGVyICpjZXBoX2NyeXB0b19hbGxvY19jaXBoZXIodm9pZCkKK3N0YXRpYyBzdHJ1Y3QgY3J5
+cHRvX3NrY2lwaGVyICpjZXBoX2NyeXB0b19hbGxvY19jaXBoZXIodm9pZCkKIHsKLQlyZXR1cm4g
+Y3J5cHRvX2FsbG9jX2Jsa2NpcGhlcigiY2JjKGFlcykiLCAwLCBDUllQVE9fQUxHX0FTWU5DKTsK
+KwlyZXR1cm4gY3J5cHRvX2FsbG9jX3NrY2lwaGVyKCJjYmMoYWVzKSIsIDAsIENSWVBUT19BTEdf
+QVNZTkMpOwogfQogCiBzdGF0aWMgY29uc3QgdTggKmFlc19pdiA9ICh1OCAqKUNFUEhfQUVTX0lW
+OwpAQCAtMTYyLDExICsxNjMsMTAgQEAgc3RhdGljIGludCBjZXBoX2Flc19lbmNyeXB0KGNvbnN0
+IHZvaWQgKmtleSwgaW50IGtleV9sZW4sCiB7CiAJc3RydWN0IHNjYXR0ZXJsaXN0IHNnX2luWzJd
+LCBwcmVhbGxvY19zZzsKIAlzdHJ1Y3Qgc2dfdGFibGUgc2dfb3V0OwotCXN0cnVjdCBjcnlwdG9f
+YmxrY2lwaGVyICp0Zm0gPSBjZXBoX2NyeXB0b19hbGxvY19jaXBoZXIoKTsKLQlzdHJ1Y3QgYmxr
+Y2lwaGVyX2Rlc2MgZGVzYyA9IHsgLnRmbSA9IHRmbSwgLmZsYWdzID0gMCB9OworCXN0cnVjdCBj
+cnlwdG9fc2tjaXBoZXIgKnRmbSA9IGNlcGhfY3J5cHRvX2FsbG9jX2NpcGhlcigpOworCVNLQ0lQ
+SEVSX1JFUVVFU1RfT05fU1RBQ0socmVxLCB0Zm0pOwogCWludCByZXQ7Ci0Jdm9pZCAqaXY7Ci0J
+aW50IGl2c2l6ZTsKKwljaGFyIGl2W0FFU19CTE9DS19TSVpFXTsKIAlzaXplX3QgemVyb19wYWRk
+aW5nID0gKDB4MTAgLSAoc3JjX2xlbiAmIDB4MGYpKTsKIAljaGFyIHBhZFsxNl07CiAKQEAgLTE4
+NCwxMCArMTg0LDEzIEBAIHN0YXRpYyBpbnQgY2VwaF9hZXNfZW5jcnlwdChjb25zdCB2b2lkICpr
+ZXksIGludCBrZXlfbGVuLAogCWlmIChyZXQpCiAJCWdvdG8gb3V0X3RmbTsKIAotCWNyeXB0b19i
+bGtjaXBoZXJfc2V0a2V5KCh2b2lkICopdGZtLCBrZXksIGtleV9sZW4pOwotCWl2ID0gY3J5cHRv
+X2Jsa2NpcGhlcl9jcnQodGZtKS0+aXY7Ci0JaXZzaXplID0gY3J5cHRvX2Jsa2NpcGhlcl9pdnNp
+emUodGZtKTsKLQltZW1jcHkoaXYsIGFlc19pdiwgaXZzaXplKTsKKwljcnlwdG9fc2tjaXBoZXJf
+c2V0a2V5KCh2b2lkICopdGZtLCBrZXksIGtleV9sZW4pOworCW1lbWNweShpdiwgYWVzX2l2LCBB
+RVNfQkxPQ0tfU0laRSk7CisKKwlza2NpcGhlcl9yZXF1ZXN0X3NldF90Zm0ocmVxLCB0Zm0pOwor
+CXNrY2lwaGVyX3JlcXVlc3Rfc2V0X2NhbGxiYWNrKHJlcSwgMCwgTlVMTCwgTlVMTCk7CisJc2tj
+aXBoZXJfcmVxdWVzdF9zZXRfY3J5cHQocmVxLCBzZ19pbiwgc2dfb3V0LnNnbCwKKwkJCQkgICBz
+cmNfbGVuICsgemVyb19wYWRkaW5nLCBpdik7CiAKIAkvKgogCXByaW50X2hleF9kdW1wKEtFUk5f
+RVJSLCAiZW5jIGtleTogIiwgRFVNUF9QUkVGSVhfTk9ORSwgMTYsIDEsCkBAIC0xOTcsOCArMjAw
+LDggQEAgc3RhdGljIGludCBjZXBoX2Flc19lbmNyeXB0KGNvbnN0IHZvaWQgKmtleSwgaW50IGtl
+eV9sZW4sCiAJcHJpbnRfaGV4X2R1bXAoS0VSTl9FUlIsICJlbmMgcGFkOiAiLCBEVU1QX1BSRUZJ
+WF9OT05FLCAxNiwgMSwKIAkJCXBhZCwgemVyb19wYWRkaW5nLCAxKTsKIAkqLwotCXJldCA9IGNy
+eXB0b19ibGtjaXBoZXJfZW5jcnlwdCgmZGVzYywgc2dfb3V0LnNnbCwgc2dfaW4sCi0JCQkJICAg
+ICBzcmNfbGVuICsgemVyb19wYWRkaW5nKTsKKwlyZXQgPSBjcnlwdG9fc2tjaXBoZXJfZW5jcnlw
+dChyZXEpOworCXNrY2lwaGVyX3JlcXVlc3RfemVybyhyZXEpOwogCWlmIChyZXQgPCAwKSB7CiAJ
+CXByX2VycigiY2VwaF9hZXNfY3J5cHQgZmFpbGVkICVkXG4iLCByZXQpOwogCQlnb3RvIG91dF9z
+ZzsKQEAgLTIxMSw3ICsyMTQsNyBAQCBzdGF0aWMgaW50IGNlcGhfYWVzX2VuY3J5cHQoY29uc3Qg
+dm9pZCAqa2V5LCBpbnQga2V5X2xlbiwKIG91dF9zZzoKIAl0ZWFyZG93bl9zZ3RhYmxlKCZzZ19v
+dXQpOwogb3V0X3RmbToKLQljcnlwdG9fZnJlZV9ibGtjaXBoZXIodGZtKTsKKwljcnlwdG9fZnJl
+ZV9za2NpcGhlcih0Zm0pOwogCXJldHVybiByZXQ7CiB9CiAKQEAgLTIyMiwxMSArMjI1LDEwIEBA
+IHN0YXRpYyBpbnQgY2VwaF9hZXNfZW5jcnlwdDIoY29uc3Qgdm9pZCAqa2V5LCBpbnQga2V5X2xl
+biwgdm9pZCAqZHN0LAogewogCXN0cnVjdCBzY2F0dGVybGlzdCBzZ19pblszXSwgcHJlYWxsb2Nf
+c2c7CiAJc3RydWN0IHNnX3RhYmxlIHNnX291dDsKLQlzdHJ1Y3QgY3J5cHRvX2Jsa2NpcGhlciAq
+dGZtID0gY2VwaF9jcnlwdG9fYWxsb2NfY2lwaGVyKCk7Ci0Jc3RydWN0IGJsa2NpcGhlcl9kZXNj
+IGRlc2MgPSB7IC50Zm0gPSB0Zm0sIC5mbGFncyA9IDAgfTsKKwlzdHJ1Y3QgY3J5cHRvX3NrY2lw
+aGVyICp0Zm0gPSBjZXBoX2NyeXB0b19hbGxvY19jaXBoZXIoKTsKKwlTS0NJUEhFUl9SRVFVRVNU
+X09OX1NUQUNLKHJlcSwgdGZtKTsKIAlpbnQgcmV0OwotCXZvaWQgKml2OwotCWludCBpdnNpemU7
+CisJY2hhciBpdltBRVNfQkxPQ0tfU0laRV07CiAJc2l6ZV90IHplcm9fcGFkZGluZyA9ICgweDEw
+IC0gKChzcmMxX2xlbiArIHNyYzJfbGVuKSAmIDB4MGYpKTsKIAljaGFyIHBhZFsxNl07CiAKQEAg
+LTI0NSwxMCArMjQ3LDEzIEBAIHN0YXRpYyBpbnQgY2VwaF9hZXNfZW5jcnlwdDIoY29uc3Qgdm9p
+ZCAqa2V5LCBpbnQga2V5X2xlbiwgdm9pZCAqZHN0LAogCWlmIChyZXQpCiAJCWdvdG8gb3V0X3Rm
+bTsKIAotCWNyeXB0b19ibGtjaXBoZXJfc2V0a2V5KCh2b2lkICopdGZtLCBrZXksIGtleV9sZW4p
+OwotCWl2ID0gY3J5cHRvX2Jsa2NpcGhlcl9jcnQodGZtKS0+aXY7Ci0JaXZzaXplID0gY3J5cHRv
+X2Jsa2NpcGhlcl9pdnNpemUodGZtKTsKLQltZW1jcHkoaXYsIGFlc19pdiwgaXZzaXplKTsKKwlj
+cnlwdG9fc2tjaXBoZXJfc2V0a2V5KCh2b2lkICopdGZtLCBrZXksIGtleV9sZW4pOworCW1lbWNw
+eShpdiwgYWVzX2l2LCBBRVNfQkxPQ0tfU0laRSk7CisKKwlza2NpcGhlcl9yZXF1ZXN0X3NldF90
+Zm0ocmVxLCB0Zm0pOworCXNrY2lwaGVyX3JlcXVlc3Rfc2V0X2NhbGxiYWNrKHJlcSwgMCwgTlVM
+TCwgTlVMTCk7CisJc2tjaXBoZXJfcmVxdWVzdF9zZXRfY3J5cHQocmVxLCBzZ19pbiwgc2dfb3V0
+LnNnbCwKKwkJCQkgICBzcmMxX2xlbiArIHNyYzJfbGVuICsgemVyb19wYWRkaW5nLCBpdik7CiAK
+IAkvKgogCXByaW50X2hleF9kdW1wKEtFUk5fRVJSLCAiZW5jICBrZXk6ICIsIERVTVBfUFJFRklY
+X05PTkUsIDE2LCAxLApAQCAtMjYwLDggKzI2NSw4IEBAIHN0YXRpYyBpbnQgY2VwaF9hZXNfZW5j
+cnlwdDIoY29uc3Qgdm9pZCAqa2V5LCBpbnQga2V5X2xlbiwgdm9pZCAqZHN0LAogCXByaW50X2hl
+eF9kdW1wKEtFUk5fRVJSLCAiZW5jICBwYWQ6ICIsIERVTVBfUFJFRklYX05PTkUsIDE2LCAxLAog
+CQkJcGFkLCB6ZXJvX3BhZGRpbmcsIDEpOwogCSovCi0JcmV0ID0gY3J5cHRvX2Jsa2NpcGhlcl9l
+bmNyeXB0KCZkZXNjLCBzZ19vdXQuc2dsLCBzZ19pbiwKLQkJCQkgICAgIHNyYzFfbGVuICsgc3Jj
+Ml9sZW4gKyB6ZXJvX3BhZGRpbmcpOworCXJldCA9IGNyeXB0b19za2NpcGhlcl9lbmNyeXB0KHJl
+cSk7CisJc2tjaXBoZXJfcmVxdWVzdF96ZXJvKHJlcSk7CiAJaWYgKHJldCA8IDApIHsKIAkJcHJf
+ZXJyKCJjZXBoX2Flc19jcnlwdDIgZmFpbGVkICVkXG4iLCByZXQpOwogCQlnb3RvIG91dF9zZzsK
+QEAgLTI3NCw3ICsyNzksNyBAQCBzdGF0aWMgaW50IGNlcGhfYWVzX2VuY3J5cHQyKGNvbnN0IHZv
+aWQgKmtleSwgaW50IGtleV9sZW4sIHZvaWQgKmRzdCwKIG91dF9zZzoKIAl0ZWFyZG93bl9zZ3Rh
+YmxlKCZzZ19vdXQpOwogb3V0X3RmbToKLQljcnlwdG9fZnJlZV9ibGtjaXBoZXIodGZtKTsKKwlj
+cnlwdG9fZnJlZV9za2NpcGhlcih0Zm0pOwogCXJldHVybiByZXQ7CiB9CiAKQEAgLTI4NCwxMSAr
+Mjg5LDEwIEBAIHN0YXRpYyBpbnQgY2VwaF9hZXNfZGVjcnlwdChjb25zdCB2b2lkICprZXksIGlu
+dCBrZXlfbGVuLAogewogCXN0cnVjdCBzZ190YWJsZSBzZ19pbjsKIAlzdHJ1Y3Qgc2NhdHRlcmxp
+c3Qgc2dfb3V0WzJdLCBwcmVhbGxvY19zZzsKLQlzdHJ1Y3QgY3J5cHRvX2Jsa2NpcGhlciAqdGZt
+ID0gY2VwaF9jcnlwdG9fYWxsb2NfY2lwaGVyKCk7Ci0Jc3RydWN0IGJsa2NpcGhlcl9kZXNjIGRl
+c2MgPSB7IC50Zm0gPSB0Zm0gfTsKKwlzdHJ1Y3QgY3J5cHRvX3NrY2lwaGVyICp0Zm0gPSBjZXBo
+X2NyeXB0b19hbGxvY19jaXBoZXIoKTsKKwlTS0NJUEhFUl9SRVFVRVNUX09OX1NUQUNLKHJlcSwg
+dGZtKTsKIAljaGFyIHBhZFsxNl07Ci0Jdm9pZCAqaXY7Ci0JaW50IGl2c2l6ZTsKKwljaGFyIGl2
+W0FFU19CTE9DS19TSVpFXTsKIAlpbnQgcmV0OwogCWludCBsYXN0X2J5dGU7CiAKQEAgLTMwMiwx
+MCArMzA2LDEzIEBAIHN0YXRpYyBpbnQgY2VwaF9hZXNfZGVjcnlwdChjb25zdCB2b2lkICprZXks
+IGludCBrZXlfbGVuLAogCWlmIChyZXQpCiAJCWdvdG8gb3V0X3RmbTsKIAotCWNyeXB0b19ibGtj
+aXBoZXJfc2V0a2V5KCh2b2lkICopdGZtLCBrZXksIGtleV9sZW4pOwotCWl2ID0gY3J5cHRvX2Js
+a2NpcGhlcl9jcnQodGZtKS0+aXY7Ci0JaXZzaXplID0gY3J5cHRvX2Jsa2NpcGhlcl9pdnNpemUo
+dGZtKTsKLQltZW1jcHkoaXYsIGFlc19pdiwgaXZzaXplKTsKKwljcnlwdG9fc2tjaXBoZXJfc2V0
+a2V5KCh2b2lkICopdGZtLCBrZXksIGtleV9sZW4pOworCW1lbWNweShpdiwgYWVzX2l2LCBBRVNf
+QkxPQ0tfU0laRSk7CisKKwlza2NpcGhlcl9yZXF1ZXN0X3NldF90Zm0ocmVxLCB0Zm0pOworCXNr
+Y2lwaGVyX3JlcXVlc3Rfc2V0X2NhbGxiYWNrKHJlcSwgMCwgTlVMTCwgTlVMTCk7CisJc2tjaXBo
+ZXJfcmVxdWVzdF9zZXRfY3J5cHQocmVxLCBzZ19pbi5zZ2wsIHNnX291dCwKKwkJCQkgICBzcmNf
+bGVuLCBpdik7CiAKIAkvKgogCXByaW50X2hleF9kdW1wKEtFUk5fRVJSLCAiZGVjIGtleTogIiwg
+RFVNUF9QUkVGSVhfTk9ORSwgMTYsIDEsCkBAIC0zMTMsNyArMzIwLDggQEAgc3RhdGljIGludCBj
+ZXBoX2Flc19kZWNyeXB0KGNvbnN0IHZvaWQgKmtleSwgaW50IGtleV9sZW4sCiAJcHJpbnRfaGV4
+X2R1bXAoS0VSTl9FUlIsICJkZWMgIGluOiAiLCBEVU1QX1BSRUZJWF9OT05FLCAxNiwgMSwKIAkJ
+ICAgICAgIHNyYywgc3JjX2xlbiwgMSk7CiAJKi8KLQlyZXQgPSBjcnlwdG9fYmxrY2lwaGVyX2Rl
+Y3J5cHQoJmRlc2MsIHNnX291dCwgc2dfaW4uc2dsLCBzcmNfbGVuKTsKKwlyZXQgPSBjcnlwdG9f
+c2tjaXBoZXJfZGVjcnlwdChyZXEpOworCXNrY2lwaGVyX3JlcXVlc3RfemVybyhyZXEpOwogCWlm
+IChyZXQgPCAwKSB7CiAJCXByX2VycigiY2VwaF9hZXNfZGVjcnlwdCBmYWlsZWQgJWRcbiIsIHJl
+dCk7CiAJCWdvdG8gb3V0X3NnOwpAQCAtMzM4LDcgKzM0Niw3IEBAIHN0YXRpYyBpbnQgY2VwaF9h
+ZXNfZGVjcnlwdChjb25zdCB2b2lkICprZXksIGludCBrZXlfbGVuLAogb3V0X3NnOgogCXRlYXJk
+b3duX3NndGFibGUoJnNnX2luKTsKIG91dF90Zm06Ci0JY3J5cHRvX2ZyZWVfYmxrY2lwaGVyKHRm
+bSk7CisJY3J5cHRvX2ZyZWVfc2tjaXBoZXIodGZtKTsKIAlyZXR1cm4gcmV0OwogfQogCkBAIC0z
+NDksMTEgKzM1NywxMCBAQCBzdGF0aWMgaW50IGNlcGhfYWVzX2RlY3J5cHQyKGNvbnN0IHZvaWQg
+KmtleSwgaW50IGtleV9sZW4sCiB7CiAJc3RydWN0IHNnX3RhYmxlIHNnX2luOwogCXN0cnVjdCBz
+Y2F0dGVybGlzdCBzZ19vdXRbM10sIHByZWFsbG9jX3NnOwotCXN0cnVjdCBjcnlwdG9fYmxrY2lw
+aGVyICp0Zm0gPSBjZXBoX2NyeXB0b19hbGxvY19jaXBoZXIoKTsKLQlzdHJ1Y3QgYmxrY2lwaGVy
+X2Rlc2MgZGVzYyA9IHsgLnRmbSA9IHRmbSB9OworCXN0cnVjdCBjcnlwdG9fc2tjaXBoZXIgKnRm
+bSA9IGNlcGhfY3J5cHRvX2FsbG9jX2NpcGhlcigpOworCVNLQ0lQSEVSX1JFUVVFU1RfT05fU1RB
+Q0socmVxLCB0Zm0pOwogCWNoYXIgcGFkWzE2XTsKLQl2b2lkICppdjsKLQlpbnQgaXZzaXplOwor
+CWNoYXIgaXZbQUVTX0JMT0NLX1NJWkVdOwogCWludCByZXQ7CiAJaW50IGxhc3RfYnl0ZTsKIApA
+QCAtMzY4LDEwICszNzUsMTMgQEAgc3RhdGljIGludCBjZXBoX2Flc19kZWNyeXB0Mihjb25zdCB2
+b2lkICprZXksIGludCBrZXlfbGVuLAogCWlmIChyZXQpCiAJCWdvdG8gb3V0X3RmbTsKIAotCWNy
+eXB0b19ibGtjaXBoZXJfc2V0a2V5KCh2b2lkICopdGZtLCBrZXksIGtleV9sZW4pOwotCWl2ID0g
+Y3J5cHRvX2Jsa2NpcGhlcl9jcnQodGZtKS0+aXY7Ci0JaXZzaXplID0gY3J5cHRvX2Jsa2NpcGhl
+cl9pdnNpemUodGZtKTsKLQltZW1jcHkoaXYsIGFlc19pdiwgaXZzaXplKTsKKwljcnlwdG9fc2tj
+aXBoZXJfc2V0a2V5KCh2b2lkICopdGZtLCBrZXksIGtleV9sZW4pOworCW1lbWNweShpdiwgYWVz
+X2l2LCBBRVNfQkxPQ0tfU0laRSk7CisKKwlza2NpcGhlcl9yZXF1ZXN0X3NldF90Zm0ocmVxLCB0
+Zm0pOworCXNrY2lwaGVyX3JlcXVlc3Rfc2V0X2NhbGxiYWNrKHJlcSwgMCwgTlVMTCwgTlVMTCk7
+CisJc2tjaXBoZXJfcmVxdWVzdF9zZXRfY3J5cHQocmVxLCBzZ19pbi5zZ2wsIHNnX291dCwKKwkJ
+CQkgICBzcmNfbGVuLCBpdik7CiAKIAkvKgogCXByaW50X2hleF9kdW1wKEtFUk5fRVJSLCAiZGVj
+ICBrZXk6ICIsIERVTVBfUFJFRklYX05PTkUsIDE2LCAxLApAQCAtMzc5LDcgKzM4OSw4IEBAIHN0
+YXRpYyBpbnQgY2VwaF9hZXNfZGVjcnlwdDIoY29uc3Qgdm9pZCAqa2V5LCBpbnQga2V5X2xlbiwK
+IAlwcmludF9oZXhfZHVtcChLRVJOX0VSUiwgImRlYyAgIGluOiAiLCBEVU1QX1BSRUZJWF9OT05F
+LCAxNiwgMSwKIAkJICAgICAgIHNyYywgc3JjX2xlbiwgMSk7CiAJKi8KLQlyZXQgPSBjcnlwdG9f
+YmxrY2lwaGVyX2RlY3J5cHQoJmRlc2MsIHNnX291dCwgc2dfaW4uc2dsLCBzcmNfbGVuKTsKKwly
+ZXQgPSBjcnlwdG9fc2tjaXBoZXJfZGVjcnlwdChyZXEpOworCXNrY2lwaGVyX3JlcXVlc3RfemVy
+byhyZXEpOwogCWlmIChyZXQgPCAwKSB7CiAJCXByX2VycigiY2VwaF9hZXNfZGVjcnlwdCBmYWls
+ZWQgJWRcbiIsIHJldCk7CiAJCWdvdG8gb3V0X3NnOwpAQCAtNDE1LDcgKzQyNiw3IEBAIHN0YXRp
+YyBpbnQgY2VwaF9hZXNfZGVjcnlwdDIoY29uc3Qgdm9pZCAqa2V5LCBpbnQga2V5X2xlbiwKIG91
+dF9zZzoKIAl0ZWFyZG93bl9zZ3RhYmxlKCZzZ19pbik7CiBvdXRfdGZtOgotCWNyeXB0b19mcmVl
+X2Jsa2NpcGhlcih0Zm0pOworCWNyeXB0b19mcmVlX3NrY2lwaGVyKHRmbSk7CiAJcmV0dXJuIHJl
+dDsKIH0KIAo=
+--001a1147799e7aa950052a2aecaa--
