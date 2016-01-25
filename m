@@ -1,14 +1,14 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 1/2] f2fs: avoid multiple node page writes due
- to	inline_data
-Date: Mon, 25 Jan 2016 17:42:40 +0800
-Message-ID: <000d01d15754$dca6e6d0$95f4b470$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 2/2] f2fs: fix to overcome inline_data floods
+Date: Mon, 25 Jan 2016 17:49:06 +0800
+Message-ID: <000e01d15755$bb6b1990$32414cb0$@samsung.com>
 References: <1453580148-61861-1-git-send-email-jaegeuk@kernel.org>
+ <1453580148-61861-2-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-reply-to: <1453580148-61861-1-git-send-email-jaegeuk@kernel.org>
+In-reply-to: <1453580148-61861-2-git-send-email-jaegeuk@kernel.org>
 Content-language: zh-cn
 Sender: linux-fsdevel-owner@vger.kernel.org
 To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
@@ -23,68 +23,48 @@ Hi Jaegeuk,
 > To: linux-kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org;
 > linux-f2fs-devel@lists.sourceforge.net
 > Cc: Jaegeuk Kim
-> Subject: [f2fs-dev] [PATCH 1/2] f2fs: avoid multiple node page writes due to inline_data
+> Subject: [f2fs-dev] [PATCH 2/2] f2fs: fix to overcome inline_data floods
 > 
-> The sceanrio is:
-> 1. create fully node blocks
-> 2. flush node blocks
-> 3. write inline_data for all the node blocks again
-> 4. flush node blocks redundantly
+> The scenario is:
+> 1. create lots of node blocks
+> 2. sync
+> 3. write lots of inline_data
+> -> got panic due to no free space
+> 
+> In that case, we should flush node blocks when writing inline_data in #3,
+> and trigger gc as well.
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  fs/f2fs/data.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
+>  fs/f2fs/gc.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 8d0d9ec..011456e 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1622,14 +1622,22 @@ static int f2fs_write_end(struct file *file,
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 0204433..8686231 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -838,8 +838,15 @@ gc_more:
 > 
->  	trace_f2fs_write_end(inode, pos, len, copied);
-> 
-> -	set_page_dirty(page);
-> -
->  	if (pos + copied > i_size_read(inode)) {
->  		i_size_write(inode, pos + copied);
->  		mark_inode_dirty(inode);
-> -		update_inode_page(inode);
->  	}
-> 
-> +	if (f2fs_has_inline_data(inode) &&
-> +			is_inode_flag_set(F2FS_I(inode), FI_DATA_EXIST)) {
-> +		int err = f2fs_write_inline_data(inode, page);
+>  	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, sec_freed)) {
+>  		gc_type = FG_GC;
+> +		/*
+> +		 * If there is no victim and no prefree segment but still not
+> +		 * enough free sections, we should flush dent/node blocks and do
+> +		 * garbage collections.
+> +		 */
+>  		if (__get_victim(sbi, &segno, gc_type) || prefree_segments(sbi))
+>  			write_checkpoint(sbi, &cpc);
+> +		else if (has_not_enough_free_secs(sbi, 0))
 
-Oh, I'm sure this can fix that issue, but IMO:
-a) this implementation has side-effect, it triggers inline data copying
-between data page and node page whenever user write inline datas, so if
-user updates inline data frequently, write-through approach would cause
-memory copy overhead.
-b) inline storm should be a rare case, as we didn't get any report about
-problem for long time until Dave's, and write_end is a hot path, I think
-it's better to be cautious to change our inline data cache policy for
-fixing a rare issue in hot path.
-
-What about delaying the merge operation? like:
-1) as I proposed before, merging inline page into inode page when
-detecting free_sections <= (node_secs + 2 * dent_secs + inline_secs).
-2) merge inline page into inode page before writeback inode page in
-sync_node_pages.
+I think this condition make checkpoint been triggered more frequently,
+could we trigger cp when dent/node block exceed some threshold?
 
 Thanks,
 
-> +		if (err)
-> +			set_page_dirty(page);
-> +	} else {
-> +		set_page_dirty(page);
-> +	}
-> +
-> +	f2fs_write_inode(inode, NULL);
-> +
->  	f2fs_put_page(page, 1);
->  	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
->  	return copied;
+> +			write_checkpoint(sbi, &cpc);
+>  	}
+> 
+>  	if (segno == NULL_SEGNO && !__get_victim(sbi, &segno, gc_type))
 > --
 > 2.6.3
 > 
