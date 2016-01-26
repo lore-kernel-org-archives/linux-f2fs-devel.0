@@ -1,29 +1,22 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2 3/3] f2fs: remove unneeded pointer conversion
-Date: Tue, 26 Jan 2016 15:39:35 +0800
-Message-ID: <009401d1580c$cc958d60$65c0a820$@samsung.com>
+From: Liu Shuoran <liushuoran@huawei.com>
+Subject: [PATCH] Introduce lifetime write IO statistics
+Date: Tue, 26 Jan 2016 15:40:38 +0800
+Message-ID: <1453794038-189520-1-git-send-email-liushuoran@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aNyEp-0006So-Gh
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <liushuoran@huawei.com>) id 1aNyFY-00053s-EG
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 26 Jan 2016 07:40:31 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aNyEn-00086d-Na
+	Tue, 26 Jan 2016 07:41:16 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aNyFT-00042o-HW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 26 Jan 2016 07:40:31 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O1J01XOJUN6NO70@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 26 Jan 2016 16:40:22 +0900 (KST)
-Content-language: zh-cn
+	Tue, 26 Jan 2016 07:41:16 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,318 +26,209 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-There are redundant pointer conversion in following call stack:
- - at position a, inode was been converted to f2fs_file_info.
- - at position b, f2fs_file_info was been converted to inode again.
+This patch introduces lifetime IO write statistics exposed to the sysfs interface.
+The write IO amount is obtained from block layer, accumulated in the file system and
+stored in the hot node summary of checkpoint.
 
- - truncate_blocks(inode,..)
-  - fi = F2FS_I(inode)		---a
-  - ADDRS_PER_PAGE(node_page, fi)
-   - addrs_per_inode(fi)
-    - inode = &fi->vfs_inode	---b
-    - f2fs_has_inline_xattr(inode)
-     - fi = F2FS_I(inode)
-     - is_inode_flag_set(fi,..)
-
-In order to avoid unneeded conversion, alter ADDRS_PER_PAGE and
-addrs_per_inode to acept parameter with type of inode pointer.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Shuoran Liu <liushuoran@huawei.com>
+Signed-off-by: Pengyang Hou <houpengyang@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
+ fs/f2fs/checkpoint.c    | 12 ++++++++++++
+ fs/f2fs/f2fs.h          | 11 +++++++++++
+ fs/f2fs/super.c         | 35 +++++++++++++++++++++++++++++++++++
+ include/linux/f2fs_fs.h | 14 +++++++++++++-
+ 4 files changed, 71 insertions(+), 1 deletion(-)
 
- V2:
- - rebase on last dev-test.
-
- fs/f2fs/data.c          |  5 ++---
- fs/f2fs/extent_cache.c  |  5 ++---
- fs/f2fs/f2fs.h          | 14 +++++++-------
- fs/f2fs/file.c          | 11 +++++------
- fs/f2fs/gc.c            |  8 ++++----
- fs/f2fs/node.c          |  8 ++++----
- fs/f2fs/recovery.c      | 10 ++++------
- include/linux/f2fs_fs.h |  6 +++---
- 8 files changed, 31 insertions(+), 36 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2f8ecfe..0956219 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -498,7 +498,6 @@ got_it:
- static int __allocate_data_block(struct dnode_of_data *dn)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
--	struct f2fs_inode_info *fi = F2FS_I(dn->inode);
- 	struct f2fs_summary sum;
- 	struct node_info ni;
- 	int seg = CURSEG_WARM_DATA;
-@@ -526,7 +525,7 @@ alloc:
- 	set_data_blkaddr(dn);
- 
- 	/* update i_size */
--	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
-+	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), dn->inode) +
- 							dn->ofs_in_node;
- 	if (i_size_read(dn->inode) < ((loff_t)(fofs + 1) << PAGE_CACHE_SHIFT))
- 		i_size_write(dn->inode,
-@@ -593,7 +592,7 @@ next_dnode:
- 		goto unlock_out;
- 	}
- 
--	end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+	end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 
- next_block:
- 	blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 7dbf691..4168207 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -700,7 +700,6 @@ bool f2fs_lookup_extent_cache(struct inode *inode, pgoff_t pgofs,
- 
- void f2fs_update_extent_cache(struct dnode_of_data *dn)
- {
--	struct f2fs_inode_info *fi = F2FS_I(dn->inode);
- 	pgoff_t fofs;
- 
- 	if (!f2fs_may_extent_tree(dn->inode))
-@@ -708,8 +707,8 @@ void f2fs_update_extent_cache(struct dnode_of_data *dn)
- 
- 	f2fs_bug_on(F2FS_I_SB(dn->inode), dn->data_blkaddr == NEW_ADDR);
- 
--	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), fi) +
--							dn->ofs_in_node;
-+	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), dn->inode) +
-+								dn->ofs_in_node;
- 
- 	if (f2fs_update_extent_tree_range(dn->inode, fofs, dn->data_blkaddr, 1))
- 		sync_inode_page(dn);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0bbbfed..4bcc512 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1528,9 +1528,9 @@ static inline int f2fs_has_inline_xattr(struct inode *inode)
- 	return is_inode_flag_set(F2FS_I(inode), FI_INLINE_XATTR);
- }
- 
--static inline unsigned int addrs_per_inode(struct f2fs_inode_info *fi)
-+static inline unsigned int addrs_per_inode(struct inode *inode)
- {
--	if (f2fs_has_inline_xattr(&fi->vfs_inode))
-+	if (f2fs_has_inline_xattr(inode))
- 		return DEF_ADDRS_PER_INODE - F2FS_INLINE_XATTR_ADDRS;
- 	return DEF_ADDRS_PER_INODE;
- }
-@@ -1684,10 +1684,10 @@ static inline void *f2fs_kvzalloc(size_t size, gfp_t flags)
- 	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
- 
- /* get offset of first page in next direct node */
--#define PGOFS_OF_NEXT_DNODE(pgofs, fi)				\
--	((pgofs < ADDRS_PER_INODE(fi)) ? ADDRS_PER_INODE(fi) :	\
--	(pgofs - ADDRS_PER_INODE(fi) + ADDRS_PER_BLOCK) /	\
--	ADDRS_PER_BLOCK * ADDRS_PER_BLOCK + ADDRS_PER_INODE(fi))
-+#define PGOFS_OF_NEXT_DNODE(pgofs, inode)				\
-+	((pgofs < ADDRS_PER_INODE(inode)) ? ADDRS_PER_INODE(inode) :	\
-+	(pgofs - ADDRS_PER_INODE(inode) + ADDRS_PER_BLOCK) /	\
-+	ADDRS_PER_BLOCK * ADDRS_PER_BLOCK + ADDRS_PER_INODE(inode))
- 
- /*
-  * file.c
-@@ -1906,7 +1906,7 @@ int f2fs_release_page(struct page *, gfp_t);
-  */
- int start_gc_thread(struct f2fs_sb_info *);
- void stop_gc_thread(struct f2fs_sb_info *);
--block_t start_bidx_of_node(unsigned int, struct f2fs_inode_info *);
-+block_t start_bidx_of_node(unsigned int, struct inode *);
- int f2fs_gc(struct f2fs_sb_info *, bool);
- void build_gc_manager(struct f2fs_sb_info *);
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b19617e..f2b14e3 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -358,15 +358,14 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
- 		} else if (err == -ENOENT) {
- 			/* direct node does not exists */
- 			if (whence == SEEK_DATA) {
--				pgofs = PGOFS_OF_NEXT_DNODE(pgofs,
--							F2FS_I(inode));
-+				pgofs = PGOFS_OF_NEXT_DNODE(pgofs, inode);
- 				continue;
- 			} else {
- 				goto found;
- 			}
- 		}
- 
--		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 
- 		/* find data/hole in dnode block */
- 		for (; dn.ofs_in_node < end_offset;
-@@ -480,7 +479,7 @@ int truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 		 * we will invalidate all blkaddr in the whole range.
- 		 */
- 		fofs = start_bidx_of_node(ofs_of_node(dn->node_page),
--						F2FS_I(dn->inode)) + ofs;
-+							dn->inode) + ofs;
- 		f2fs_update_extent_cache_range(dn, fofs, 0, len);
- 		dec_valid_block_count(sbi, dn->inode, nr_free);
- 		sync_inode_page(dn);
-@@ -568,7 +567,7 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
- 		goto out;
- 	}
- 
--	count = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+	count = ADDRS_PER_PAGE(dn.node_page, inode);
- 
- 	count -= dn.ofs_in_node;
- 	f2fs_bug_on(sbi, count < 0);
-@@ -768,7 +767,7 @@ int truncate_hole(struct inode *inode, pgoff_t pg_start, pgoff_t pg_end)
- 			return err;
- 		}
- 
--		end_offset = ADDRS_PER_PAGE(dn.node_page, F2FS_I(inode));
-+		end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
- 		count = min(end_offset - dn.ofs_in_node, pg_end - pg_start);
- 
- 		f2fs_bug_on(F2FS_I_SB(inode), count == 0 || count > end_offset);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index d57245d..c958321 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -469,7 +469,7 @@ next_step:
-  * as indirect or double indirect node blocks, are given, it must be a caller's
-  * bug.
-  */
--block_t start_bidx_of_node(unsigned int node_ofs, struct f2fs_inode_info *fi)
-+block_t start_bidx_of_node(unsigned int node_ofs, struct inode *inode)
- {
- 	unsigned int indirect_blks = 2 * NIDS_PER_BLOCK + 4;
- 	unsigned int bidx;
-@@ -486,7 +486,7 @@ block_t start_bidx_of_node(unsigned int node_ofs, struct f2fs_inode_info *fi)
- 		int dec = (node_ofs - indirect_blks - 3) / (NIDS_PER_BLOCK + 1);
- 		bidx = node_ofs - 5 - dec;
- 	}
--	return bidx * ADDRS_PER_BLOCK + ADDRS_PER_INODE(fi);
-+	return bidx * ADDRS_PER_BLOCK + ADDRS_PER_INODE(inode);
- }
- 
- static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-@@ -705,7 +705,7 @@ next_step:
- 				continue;
- 			}
- 
--			start_bidx = start_bidx_of_node(nofs, F2FS_I(inode));
-+			start_bidx = start_bidx_of_node(nofs, inode);
- 			data_page = get_read_data_page(inode,
- 					start_bidx + ofs_in_node, READA, true);
- 			if (IS_ERR(data_page)) {
-@@ -721,7 +721,7 @@ next_step:
- 		/* phase 3 */
- 		inode = find_gc_inode(gc_list, dni.ino);
- 		if (inode) {
--			start_bidx = start_bidx_of_node(nofs, F2FS_I(inode))
-+			start_bidx = start_bidx_of_node(nofs, inode)
- 								+ ofs_in_node;
- 			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
- 				move_encrypted_block(inode, start_bidx);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 94a6755..97a4695 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -407,10 +407,10 @@ cache:
-  * The maximum depth is four.
-  * Offset[0] will have raw inode offset.
-  */
--static int get_node_path(struct f2fs_inode_info *fi, long block,
-+static int get_node_path(struct inode *inode, long block,
- 				int offset[4], unsigned int noffset[4])
- {
--	const long direct_index = ADDRS_PER_INODE(fi);
-+	const long direct_index = ADDRS_PER_INODE(inode);
- 	const long direct_blks = ADDRS_PER_BLOCK;
- 	const long dptrs_per_blk = NIDS_PER_BLOCK;
- 	const long indirect_blks = ADDRS_PER_BLOCK * NIDS_PER_BLOCK;
-@@ -498,7 +498,7 @@ int get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
- 	int level, i;
- 	int err = 0;
- 
--	level = get_node_path(F2FS_I(dn->inode), index, offset, noffset);
-+	level = get_node_path(dn->inode, index, offset, noffset);
- 
- 	nids[0] = dn->inode->i_ino;
- 	npage[0] = dn->inode_page;
-@@ -792,7 +792,7 @@ int truncate_inode_blocks(struct inode *inode, pgoff_t from)
- 
- 	trace_f2fs_truncate_inode_blocks_enter(inode, from);
- 
--	level = get_node_path(F2FS_I(inode), from, offset, noffset);
-+	level = get_node_path(inode, from, offset, noffset);
- restart:
- 	page = get_node_page(sbi, inode->i_ino);
- 	if (IS_ERR(page)) {
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 5a8fd4a..5045dd6 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -350,8 +350,7 @@ got_it:
- 		inode = dn->inode;
- 	}
- 
--	bidx = start_bidx_of_node(offset, F2FS_I(inode)) +
--			le16_to_cpu(sum.ofs_in_node);
-+	bidx = start_bidx_of_node(offset, inode) + le16_to_cpu(sum.ofs_in_node);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 3842af9..998de47 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -921,6 +921,10 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	int cp_payload_blks = __cp_payload(sbi);
+ 	block_t discard_blk = NEXT_FREE_BLKADDR(sbi, curseg);
+ 	bool invalidate = false;
++	struct super_block *sb = sbi->sb;
++	struct curseg_info *seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
++	u64 kbytes_written;
++
  
  	/*
- 	 * if inode page is locked, unlock temporarily, but its reference
-@@ -386,10 +385,9 @@ truncate_out:
- static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 					struct page *page, block_t blkaddr)
+ 	 * This avoids to conduct wrong roll-forward operations and uses
+@@ -1034,6 +1038,14 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	write_data_summaries(sbi, start_blk);
+ 	start_blk += data_sum_blocks;
++
++	/* Record write statistics in the hot node summary */
++	kbytes_written = sbi->kbytes_written;
++	if (sb->s_bdev->bd_part)
++		kbytes_written += BD_PART_WRITTEN(sbi);
++
++	seg_i->sum_blk->info.kbytes_written = cpu_to_le64(kbytes_written);
++
+ 	if (__remain_node_summaries(cpc->reason)) {
+ 		write_node_summaries(sbi, start_blk);
+ 		start_blk += NR_CURSEG_NODE_TYPE;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ff79054..cee5fab0 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -844,8 +844,19 @@ struct f2fs_sb_info {
+ 	struct list_head s_list;
+ 	struct mutex umount_mutex;
+ 	unsigned int shrinker_run_no;
++
++	/* For write statistics */
++	u64 sectors_written_start;
++	u64 kbytes_written;
+ };
+ 
++/* For write statistics. Suppose sector size is 512 bytes,
++ * and the return value is in kbytes. s is of struct f2fs_sb_info.
++ */
++#define BD_PART_WRITTEN(s)						 \
++(((u64)part_stat_read(s->sb->s_bdev->bd_part, sectors[1]) -		 \
++		s->sectors_written_start) >> 1)
++
+ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
  {
--	struct f2fs_inode_info *fi = F2FS_I(inode);
--	unsigned int start, end;
- 	struct dnode_of_data dn;
- 	struct node_info ni;
-+	unsigned int start, end;
- 	int err = 0, recovered = 0;
+ 	sbi->last_time[type] = jiffies;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3bf990b..7ed10f1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -126,6 +126,19 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
+ 	return NULL;
+ }
  
- 	/* step 1: recover xattr */
-@@ -409,8 +407,8 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 		goto out;
++static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
++		struct f2fs_sb_info *sbi, char *buf)
++{
++	struct super_block *sb = sbi->sb;
++
++	if (!sb->s_bdev->bd_part)
++		return snprintf(buf, PAGE_SIZE, "0\n");
++
++	return snprintf(buf, PAGE_SIZE, "%llu\n",
++		(unsigned long long)(sbi->kbytes_written +
++			BD_PART_WRITTEN(sbi)));
++}
++
+ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+ 			struct f2fs_sb_info *sbi, char *buf)
+ {
+@@ -204,6 +217,9 @@ static struct f2fs_attr f2fs_attr_##_name = {			\
+ 		f2fs_sbi_show, f2fs_sbi_store,			\
+ 		offsetof(struct struct_name, elname))
  
- 	/* step 3: recover data indices */
--	start = start_bidx_of_node(ofs_of_node(page), fi);
--	end = start + ADDRS_PER_PAGE(page, fi);
-+	start = start_bidx_of_node(ofs_of_node(page), inode);
-+	end = start + ADDRS_PER_PAGE(page, inode);
++#define F2FS_GENERAL_RO_ATTR(name) \
++static struct f2fs_attr f2fs_attr_##name = __ATTR(name, 0444, name##_show, NULL)
++
+ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
+ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
+ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
+@@ -220,6 +236,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search, max_victim_search);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
++F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
  
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
+ #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+ static struct attribute *f2fs_attrs[] = {
+@@ -239,6 +256,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(ra_nid_pages),
+ 	ATTR_LIST(cp_interval),
+ 	ATTR_LIST(idle_interval),
++	ATTR_LIST(lifetime_write_kbytes),
+ 	NULL,
+ };
  
+@@ -766,6 +784,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	bool need_stop_gc = false;
+ 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
+ 
++	if (*flags & MS_RDONLY) {
++		set_opt(sbi, FASTBOOT);
++		set_sbi_flag(sbi, SBI_IS_DIRTY);
++	}
++
+ 	sync_filesystem(sb);
+ 
+ 	/*
+@@ -1242,6 +1265,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	bool retry = true, need_fsck = false;
+ 	char *options = NULL;
+ 	int recovery, i, valid_super_block;
++	struct curseg_info *seg_i;
+ 
+ try_onemore:
+ 	err = -EINVAL;
+@@ -1372,6 +1396,17 @@ try_onemore:
+ 		goto free_nm;
+ 	}
+ 
++	/* For write statistics */
++	if (sb->s_bdev->bd_part)
++		sbi->sectors_written_start =
++			(u64)part_stat_read(sb->s_bdev->bd_part, sectors[1]);
++
++	/* Read accumulated write IO statistics if exists */
++	seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
++	if(__exist_node_summaries(sbi))
++		sbi->kbytes_written =
++			le64_to_cpu(seg_i->sum_blk->info.kbytes_written);
++
+ 	build_gc_manager(sbi);
+ 
+ 	/* get an inode for node space */
 diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index e59c3be..f4c266c 100644
+index e59c3be..67aa01d 100644
 --- a/include/linux/f2fs_fs.h
 +++ b/include/linux/f2fs_fs.h
-@@ -170,12 +170,12 @@ struct f2fs_extent {
- #define F2FS_INLINE_XATTR_ADDRS	50	/* 200 bytes for inline xattrs */
- #define DEF_ADDRS_PER_INODE	923	/* Address Pointers in an Inode */
- #define DEF_NIDS_PER_INODE	5	/* Node IDs in an Inode */
--#define ADDRS_PER_INODE(fi)	addrs_per_inode(fi)
-+#define ADDRS_PER_INODE(inode)	addrs_per_inode(inode)
- #define ADDRS_PER_BLOCK		1018	/* Address Pointers in a Direct Block */
- #define NIDS_PER_BLOCK		1018	/* Node IDs in an Indirect Block */
+@@ -358,6 +358,12 @@ struct summary_footer {
+ 				sizeof(struct sit_journal_entry))
+ #define SIT_JOURNAL_RESERVED	((SUM_JOURNAL_SIZE - 2) %\
+ 				sizeof(struct sit_journal_entry))
++
++/* Reserved area should make size of f2fs_extra_info equals to
++ * that of nat_journal and sit_journal.
++ */
++#define EXTRA_INFO_RESERVED	(SUM_JOURNAL_SIZE - 2 - 8)
++
+ /*
+  * frequently updated NAT/SIT entries can be stored in the spare area in
+  * summary blocks
+@@ -387,6 +393,11 @@ struct sit_journal {
+ 	__u8 reserved[SIT_JOURNAL_RESERVED];
+ } __packed;
  
--#define ADDRS_PER_PAGE(page, fi)	\
--	(IS_INODE(page) ? ADDRS_PER_INODE(fi) : ADDRS_PER_BLOCK)
-+#define ADDRS_PER_PAGE(page, inode)	\
-+	(IS_INODE(page) ? ADDRS_PER_INODE(inode) : ADDRS_PER_BLOCK)
- 
- #define	NODE_DIR1_BLOCK		(DEF_ADDRS_PER_INODE + 1)
- #define	NODE_DIR2_BLOCK		(DEF_ADDRS_PER_INODE + 2)
++struct f2fs_extra_info {
++	__le64 kbytes_written;
++	__u8 reserved[EXTRA_INFO_RESERVED];
++} __packed;
++
+ /* 4KB-sized summary block structure */
+ struct f2fs_summary_block {
+ 	struct f2fs_summary entries[ENTRIES_IN_SUM];
+@@ -394,10 +405,11 @@ struct f2fs_summary_block {
+ 		__le16 n_nats;
+ 		__le16 n_sits;
+ 	};
+-	/* spare area is used by NAT or SIT journals */
++	/* spare area is used by NAT or SIT journals or extra info */
+ 	union {
+ 		struct nat_journal nat_j;
+ 		struct sit_journal sit_j;
++		struct f2fs_extra_info info;
+ 	};
+ 	struct summary_footer footer;
+ } __packed;
 -- 
-2.7.0.2.g1b0b6dd
-
+1.9.1
 
 
 ------------------------------------------------------------------------------
