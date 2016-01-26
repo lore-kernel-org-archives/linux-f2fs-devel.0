@@ -1,22 +1,30 @@
-From: Liu Shuoran <liushuoran@huawei.com>
-Subject: [PATCH] Introduce lifetime write IO statistics
-Date: Tue, 26 Jan 2016 15:40:38 +0800
-Message-ID: <1453794038-189520-1-git-send-email-liushuoran@huawei.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH 1/2] f2fs: introduce get_next_page_offset to
+	speed up SEEK_DATA
+Date: Tue, 26 Jan 2016 15:40:44 +0800
+Message-ID: <009501d1580d$050f8f60$0f2eae20$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <liushuoran@huawei.com>) id 1aNyFY-00053s-EG
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1aNyGH-00031G-JT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 26 Jan 2016 07:41:16 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aNyFT-00042o-HW
+	Tue, 26 Jan 2016 07:42:01 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aNyGF-000888-Ub
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 26 Jan 2016 07:41:16 +0000
+	Tue, 26 Jan 2016 07:42:01 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O1J02Z5WUPSNC50@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 26 Jan 2016 16:41:52 +0900 (KST)
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,209 +34,130 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch introduces lifetime IO write statistics exposed to the sysfs interface.
-The write IO amount is obtained from block layer, accumulated in the file system and
-stored in the hot node summary of checkpoint.
+When seeking data in ->llseek, if we encounter a big hole which covers
+several dnode pages, we will try to seek data from index of page which
+is the first page of next dnode page, at most we could skip searching
+(ADDRS_PER_BLOCK - 1) pages.
 
-Signed-off-by: Shuoran Liu <liushuoran@huawei.com>
-Signed-off-by: Pengyang Hou <houpengyang@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+However it's still not efficient, because if our indirect/double-indirect
+pointer are NULL, there are no dnode page locate in the tree indirect/
+double-indirect pointer point to, it's not necessary to search the whole
+region.
+
+This patch introduces get_next_page_offset to calculate next page offset
+based on current searching level and max searching level returned from
+get_dnode_of_data, with this, we could skip searching the entire area
+indirect or double-indirect node block is not exist.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/checkpoint.c    | 12 ++++++++++++
- fs/f2fs/f2fs.h          | 11 +++++++++++
- fs/f2fs/super.c         | 35 +++++++++++++++++++++++++++++++++++
- include/linux/f2fs_fs.h | 14 +++++++++++++-
- 4 files changed, 71 insertions(+), 1 deletion(-)
+ fs/f2fs/f2fs.h |  3 +++
+ fs/f2fs/file.c |  2 +-
+ fs/f2fs/node.c | 37 ++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 40 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 3842af9..998de47 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -921,6 +921,10 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	int cp_payload_blks = __cp_payload(sbi);
- 	block_t discard_blk = NEXT_FREE_BLKADDR(sbi, curseg);
- 	bool invalidate = false;
-+	struct super_block *sb = sbi->sb;
-+	struct curseg_info *seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
-+	u64 kbytes_written;
-+
- 
- 	/*
- 	 * This avoids to conduct wrong roll-forward operations and uses
-@@ -1034,6 +1038,14 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	write_data_summaries(sbi, start_blk);
- 	start_blk += data_sum_blocks;
-+
-+	/* Record write statistics in the hot node summary */
-+	kbytes_written = sbi->kbytes_written;
-+	if (sb->s_bdev->bd_part)
-+		kbytes_written += BD_PART_WRITTEN(sbi);
-+
-+	seg_i->sum_blk->info.kbytes_written = cpu_to_le64(kbytes_written);
-+
- 	if (__remain_node_summaries(cpc->reason)) {
- 		write_node_summaries(sbi, start_blk);
- 		start_blk += NR_CURSEG_NODE_TYPE;
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ff79054..cee5fab0 100644
+index 4bcc512..3e1ba0a 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -844,8 +844,19 @@ struct f2fs_sb_info {
- 	struct list_head s_list;
- 	struct mutex umount_mutex;
- 	unsigned int shrinker_run_no;
-+
-+	/* For write statistics */
-+	u64 sectors_written_start;
-+	u64 kbytes_written;
+@@ -552,6 +552,8 @@ struct dnode_of_data {
+ 	unsigned int ofs_in_node;	/* data offset in the node page */
+ 	bool inode_page_locked;		/* inode page is locked or not */
+ 	bool node_changed;		/* is node block changed */
++	char cur_level;			/* level of hole node page */
++	char max_level;			/* level of current page located */
+ 	block_t	data_blkaddr;		/* block address of the node block */
  };
  
-+/* For write statistics. Suppose sector size is 512 bytes,
-+ * and the return value is in kbytes. s is of struct f2fs_sb_info.
-+ */
-+#define BD_PART_WRITTEN(s)						 \
-+(((u64)part_stat_read(s->sb->s_bdev->bd_part, sectors[1]) -		 \
-+		s->sectors_written_start) >> 1)
-+
- static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
- {
- 	sbi->last_time[type] = jiffies;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 3bf990b..7ed10f1 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -126,6 +126,19 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
- 	return NULL;
+@@ -1783,6 +1785,7 @@ int need_dentry_mark(struct f2fs_sb_info *, nid_t);
+ bool is_checkpointed_node(struct f2fs_sb_info *, nid_t);
+ bool need_inode_block_update(struct f2fs_sb_info *, nid_t);
+ void get_node_info(struct f2fs_sb_info *, nid_t, struct node_info *);
++pgoff_t get_next_page_offset(struct dnode_of_data *, pgoff_t);
+ int get_dnode_of_data(struct dnode_of_data *, pgoff_t, int);
+ int truncate_inode_blocks(struct inode *, pgoff_t);
+ int truncate_xattr_node(struct inode *, struct page *);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index f2b14e3..2d73f14 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -358,7 +358,7 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
+ 		} else if (err == -ENOENT) {
+ 			/* direct node does not exists */
+ 			if (whence == SEEK_DATA) {
+-				pgofs = PGOFS_OF_NEXT_DNODE(pgofs, inode);
++				pgofs = get_next_page_offset(&dn, pgofs);
+ 				continue;
+ 			} else {
+ 				goto found;
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 97a4695..77a35f9 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -403,6 +403,37 @@ cache:
+ 	up_write(&nm_i->nat_tree_lock);
  }
  
-+static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
-+		struct f2fs_sb_info *sbi, char *buf)
++pgoff_t get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs)
 +{
-+	struct super_block *sb = sbi->sb;
++	const long direct_index = ADDRS_PER_INODE(dn->inode);
++	const long direct_blks = ADDRS_PER_BLOCK;
++	const long indirect_blks = ADDRS_PER_BLOCK * NIDS_PER_BLOCK;
++	unsigned int skipped_unit = ADDRS_PER_BLOCK;
++	int cur_level = dn->cur_level;
++	int max_level = dn->max_level;
++	pgoff_t base = 0;
 +
-+	if (!sb->s_bdev->bd_part)
-+		return snprintf(buf, PAGE_SIZE, "0\n");
++	if (!dn->max_level)
++		return pgofs + 1;
 +
-+	return snprintf(buf, PAGE_SIZE, "%llu\n",
-+		(unsigned long long)(sbi->kbytes_written +
-+			BD_PART_WRITTEN(sbi)));
-+}
++	while (max_level-- > cur_level)
++		skipped_unit *= NIDS_PER_BLOCK;
 +
- static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 			struct f2fs_sb_info *sbi, char *buf)
- {
-@@ -204,6 +217,9 @@ static struct f2fs_attr f2fs_attr_##_name = {			\
- 		f2fs_sbi_show, f2fs_sbi_store,			\
- 		offsetof(struct struct_name, elname))
- 
-+#define F2FS_GENERAL_RO_ATTR(name) \
-+static struct f2fs_attr f2fs_attr_##name = __ATTR(name, 0444, name##_show, NULL)
-+
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
- F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
-@@ -220,6 +236,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search, max_victim_search);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-+F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
- 
- #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
- static struct attribute *f2fs_attrs[] = {
-@@ -239,6 +256,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(ra_nid_pages),
- 	ATTR_LIST(cp_interval),
- 	ATTR_LIST(idle_interval),
-+	ATTR_LIST(lifetime_write_kbytes),
- 	NULL,
- };
- 
-@@ -766,6 +784,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool need_stop_gc = false;
- 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
- 
-+	if (*flags & MS_RDONLY) {
-+		set_opt(sbi, FASTBOOT);
-+		set_sbi_flag(sbi, SBI_IS_DIRTY);
++	switch (dn->max_level) {
++	case 3:
++		base += 2 * indirect_blks;
++	case 2:
++		base += 2 * direct_blks;
++	case 1:
++		base += direct_index;
++		break;
++	default:
++		f2fs_bug_on(F2FS_I_SB(dn->inode), 1);
 +	}
 +
- 	sync_filesystem(sb);
- 
- 	/*
-@@ -1242,6 +1265,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	bool retry = true, need_fsck = false;
- 	char *options = NULL;
- 	int recovery, i, valid_super_block;
-+	struct curseg_info *seg_i;
- 
- try_onemore:
- 	err = -EINVAL;
-@@ -1372,6 +1396,17 @@ try_onemore:
- 		goto free_nm;
- 	}
- 
-+	/* For write statistics */
-+	if (sb->s_bdev->bd_part)
-+		sbi->sectors_written_start =
-+			(u64)part_stat_read(sb->s_bdev->bd_part, sectors[1]);
-+
-+	/* Read accumulated write IO statistics if exists */
-+	seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
-+	if(__exist_node_summaries(sbi))
-+		sbi->kbytes_written =
-+			le64_to_cpu(seg_i->sum_blk->info.kbytes_written);
-+
- 	build_gc_manager(sbi);
- 
- 	/* get an inode for node space */
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index e59c3be..67aa01d 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -358,6 +358,12 @@ struct summary_footer {
- 				sizeof(struct sit_journal_entry))
- #define SIT_JOURNAL_RESERVED	((SUM_JOURNAL_SIZE - 2) %\
- 				sizeof(struct sit_journal_entry))
-+
-+/* Reserved area should make size of f2fs_extra_info equals to
-+ * that of nat_journal and sit_journal.
-+ */
-+#define EXTRA_INFO_RESERVED	(SUM_JOURNAL_SIZE - 2 - 8)
++	return ((pgofs - base) / skipped_unit + 1) * skipped_unit + base;
++}
 +
  /*
-  * frequently updated NAT/SIT entries can be stored in the spare area in
-  * summary blocks
-@@ -387,6 +393,11 @@ struct sit_journal {
- 	__u8 reserved[SIT_JOURNAL_RESERVED];
- } __packed;
+  * The maximum depth is four.
+  * Offset[0] will have raw inode offset.
+@@ -495,7 +526,7 @@ int get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
+ 	int offset[4];
+ 	unsigned int noffset[4];
+ 	nid_t nids[4];
+-	int level, i;
++	int level, i = 0;
+ 	int err = 0;
  
-+struct f2fs_extra_info {
-+	__le64 kbytes_written;
-+	__u8 reserved[EXTRA_INFO_RESERVED];
-+} __packed;
-+
- /* 4KB-sized summary block structure */
- struct f2fs_summary_block {
- 	struct f2fs_summary entries[ENTRIES_IN_SUM];
-@@ -394,10 +405,11 @@ struct f2fs_summary_block {
- 		__le16 n_nats;
- 		__le16 n_sits;
- 	};
--	/* spare area is used by NAT or SIT journals */
-+	/* spare area is used by NAT or SIT journals or extra info */
- 	union {
- 		struct nat_journal nat_j;
- 		struct sit_journal sit_j;
-+		struct f2fs_extra_info info;
- 	};
- 	struct summary_footer footer;
- } __packed;
+ 	level = get_node_path(dn->inode, index, offset, noffset);
+@@ -585,6 +616,10 @@ release_pages:
+ release_out:
+ 	dn->inode_page = NULL;
+ 	dn->node_page = NULL;
++	if (err == -ENOENT) {
++		dn->cur_level = i;
++		dn->max_level = level;
++	}
+ 	return err;
+ }
+ 
 -- 
-1.9.1
+2.7.0.2.g1b0b6dd
+
 
 
 ------------------------------------------------------------------------------
