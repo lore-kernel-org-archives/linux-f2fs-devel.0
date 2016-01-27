@@ -1,24 +1,29 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: remove vlist in extent node
-Date: Wed, 27 Jan 2016 13:38:23 -0800
-Message-ID: <20160127213823.GA62463@jaegeuk.gateway>
-References: <00db01d158ea$22b98470$682c8d50$@samsung.com>
+Subject: Re: [PATCH] Introduce lifetime write IO statistics
+Date: Wed, 27 Jan 2016 14:26:52 -0800
+Message-ID: <20160127222652.GB62463@jaegeuk.gateway>
+References: <1453794038-189520-1-git-send-email-liushuoran@huawei.com>
+	<00a101d1581b$6a7ad090$3f7071b0$@samsung.com>
+	<56A7468A.5050600@huawei.com>
+	<00c801d158d3$4507ae10$cf170a30$@samsung.com>
+	<56A87462.7010502@huawei.com>
+	<00da01d158e9$f170a290$d451e7b0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aOXnN-0001eh-Qu
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aOYYJ-0008Dx-RW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 27 Jan 2016 21:38:33 +0000
+	Wed, 27 Jan 2016 22:27:03 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aOXnM-00074o-GY for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 27 Jan 2016 21:38:33 +0000
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1aOYYH-0005tX-Si for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 27 Jan 2016 22:27:03 +0000
 Content-Disposition: inline
-In-Reply-To: <00db01d158ea$22b98470$682c8d50$@samsung.com>
+In-Reply-To: <00da01d158e9$f170a290$d451e7b0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,238 +34,311 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <chao2.yu@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
 Hi Chao,
 
-Hmm. The original patch was just going under testing, and we couldn't post
-them since there is a kernel panic issue.
-This patch seems quite better approach, so I think we can integrate both of
-the patches together.
+On Wed, Jan 27, 2016 at 06:02:37PM +0800, Chao Yu wrote:
+> > -----Original Message-----
+> > From: Shuoran [mailto:liushuoran@huawei.com]
+> > Sent: Wednesday, January 27, 2016 3:40 PM
+> > To: Chao Yu
+> > Cc: jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> > Subject: Re: [f2fs-dev] [PATCH] Introduce lifetime write IO statistics
+> > 
+> > On 2016/1/27 15:20, Chao Yu wrote:
+> > >> -----Original Message-----
+> > >> From: Shuoran [mailto:liushuoran@huawei.com]
+> > >> Sent: Tuesday, January 26, 2016 6:12 PM
+> > >> To: Chao Yu
+> > >> Cc: jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> > >> Subject: Re: [f2fs-dev] [PATCH] Introduce lifetime write IO statistics
+> > >>
+> > >> On 2016/1/26 17:24, Chao Yu wrote:
+> > >>> Hi,
+> > >>>
+> > >>>> -----Original Message-----
+> > >>>> From: Liu Shuoran [mailto:liushuoran@huawei.com]
+> > >>>> Sent: Tuesday, January 26, 2016 3:41 PM
+> > >>>> To: jaegeuk@kernel.org
+> > >>>> Cc: linux-f2fs-devel@lists.sourceforge.net
+> > >>>> Subject: [f2fs-dev] [PATCH] Introduce lifetime write IO statistics
+> > >>>>
+> > >>>> This patch introduces lifetime IO write statistics exposed to the sysfs interface.
+> > >>>> The write IO amount is obtained from block layer, accumulated in the file system and
+> > >>>> stored in the hot node summary of checkpoint.
+> > >>>>
+> > >>>> Signed-off-by: Shuoran Liu <liushuoran@huawei.com>
+> > >>>> Signed-off-by: Pengyang Hou <houpengyang@huawei.com>
+> > >>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > >>>> ---
+> > >>>>    fs/f2fs/checkpoint.c    | 12 ++++++++++++
+> > >>>>    fs/f2fs/f2fs.h          | 11 +++++++++++
+> > >>>>    fs/f2fs/super.c         | 35 +++++++++++++++++++++++++++++++++++
+> > >>>>    include/linux/f2fs_fs.h | 14 +++++++++++++-
+> > >>>>    4 files changed, 71 insertions(+), 1 deletion(-)
+> > >>>>
+> > >>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > >>>> index 3842af9..998de47 100644
+> > >>>> --- a/fs/f2fs/checkpoint.c
+> > >>>> +++ b/fs/f2fs/checkpoint.c
+> > >>>> @@ -921,6 +921,10 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control
+> > >> *cpc)
+> > >>>>    	int cp_payload_blks = __cp_payload(sbi);
+> > >>>>    	block_t discard_blk = NEXT_FREE_BLKADDR(sbi, curseg);
+> > >>>>    	bool invalidate = false;
+> > >>>> +	struct super_block *sb = sbi->sb;
+> > >>>> +	struct curseg_info *seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
+> > >>>> +	u64 kbytes_written;
+> > >>>> +
+> > >>>>
+> > >>>>    	/*
+> > >>>>    	 * This avoids to conduct wrong roll-forward operations and uses
+> > >>>> @@ -1034,6 +1038,14 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control
+> > >>>> *cpc)
+> > >>>>
+> > >>>>    	write_data_summaries(sbi, start_blk);
+> > >>>>    	start_blk += data_sum_blocks;
+> > >>>> +
+> > >>>> +	/* Record write statistics in the hot node summary */
+> > >>>> +	kbytes_written = sbi->kbytes_written;
+> > >>>> +	if (sb->s_bdev->bd_part)
+> > >>>> +		kbytes_written += BD_PART_WRITTEN(sbi);
+> > >>>> +
+> > >>>> +	seg_i->sum_blk->info.kbytes_written = cpu_to_le64(kbytes_written);
+> > >>>> +
+> > >>>>    	if (__remain_node_summaries(cpc->reason)) {
+> > >>>>    		write_node_summaries(sbi, start_blk);
+> > >>>>    		start_blk += NR_CURSEG_NODE_TYPE;
+> > >>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > >>>> index ff79054..cee5fab0 100644
+> > >>>> --- a/fs/f2fs/f2fs.h
+> > >>>> +++ b/fs/f2fs/f2fs.h
+> > >>>> @@ -844,8 +844,19 @@ struct f2fs_sb_info {
+> > >>>>    	struct list_head s_list;
+> > >>>>    	struct mutex umount_mutex;
+> > >>>>    	unsigned int shrinker_run_no;
+> > >>>> +
+> > >>>> +	/* For write statistics */
+> > >>>> +	u64 sectors_written_start;
+> > >>>> +	u64 kbytes_written;
+> > >>>>    };
+> > >>>>
+> > >>>> +/* For write statistics. Suppose sector size is 512 bytes,
+> > >>>> + * and the return value is in kbytes. s is of struct f2fs_sb_info.
+> > >>>> + */
+> > >>>> +#define BD_PART_WRITTEN(s)						 \
+> > >>>> +(((u64)part_stat_read(s->sb->s_bdev->bd_part, sectors[1]) -		 \
+> > >>>> +		s->sectors_written_start) >> 1)
+> > >>>> +
+> > >>>>    static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
+> > >>>>    {
+> > >>>>    	sbi->last_time[type] = jiffies;
+> > >>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > >>>> index 3bf990b..7ed10f1 100644
+> > >>>> --- a/fs/f2fs/super.c
+> > >>>> +++ b/fs/f2fs/super.c
+> > >>>> @@ -126,6 +126,19 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int
+> > >>>> struct_type)
+> > >>>>    	return NULL;
+> > >>>>    }
+> > >>>>
+> > >>>> +static ssize_t lifetime_write_kbytes_show(struct f2fs_attr *a,
+> > >>>> +		struct f2fs_sb_info *sbi, char *buf)
+> > >>>> +{
+> > >>>> +	struct super_block *sb = sbi->sb;
+> > >>>> +
+> > >>>> +	if (!sb->s_bdev->bd_part)
+> > >>>> +		return snprintf(buf, PAGE_SIZE, "0\n");
+> > >>>> +
+> > >>>> +	return snprintf(buf, PAGE_SIZE, "%llu\n",
+> > >>>> +		(unsigned long long)(sbi->kbytes_written +
+> > >>>> +			BD_PART_WRITTEN(sbi)));
+> > >>>> +}
+> > >>>> +
+> > >>>>    static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
+> > >>>>    			struct f2fs_sb_info *sbi, char *buf)
+> > >>>>    {
+> > >>>> @@ -204,6 +217,9 @@ static struct f2fs_attr f2fs_attr_##_name = {			\
+> > >>>>    		f2fs_sbi_show, f2fs_sbi_store,			\
+> > >>>>    		offsetof(struct struct_name, elname))
+> > >>>>
+> > >>>> +#define F2FS_GENERAL_RO_ATTR(name) \
+> > >>>> +static struct f2fs_attr f2fs_attr_##name = __ATTR(name, 0444, name##_show, NULL)
+> > >>>> +
+> > >>>>    F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
+> > >>>>    F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
+> > >>>>    F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
+> > >>>> @@ -220,6 +236,7 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search,
+> > >>>> max_victim_search);
+> > >>>>    F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
+> > >>>>    F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
+> > >>>>    F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+> > >>>> +F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
+> > >>>>
+> > >>>>    #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
+> > >>>>    static struct attribute *f2fs_attrs[] = {
+> > >>>> @@ -239,6 +256,7 @@ static struct attribute *f2fs_attrs[] = {
+> > >>>>    	ATTR_LIST(ra_nid_pages),
+> > >>>>    	ATTR_LIST(cp_interval),
+> > >>>>    	ATTR_LIST(idle_interval),
+> > >>>> +	ATTR_LIST(lifetime_write_kbytes),
+> > >>>>    	NULL,
+> > >>>>    };
+> > >>>>
+> > >>>> @@ -766,6 +784,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > >>>>    	bool need_stop_gc = false;
+> > >>>>    	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
+> > >>>>
+> > >>>> +	if (*flags & MS_RDONLY) {
+> > >>>> +		set_opt(sbi, FASTBOOT);
+> > >>> Need to recover to original mode, otherwise it may change option user
+> > >>> set.
+> > >> Yes, maybe I can bring forward the action of saving old mount options.
+> > >>>> +		set_sbi_flag(sbi, SBI_IS_DIRTY);
+> > >>>> +	}
+> > >>>> +
+> > >>>>    	sync_filesystem(sb);
+> > >>>>
+> > >>>>    	/*
+> > >>>> @@ -1242,6 +1265,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int
+> > >> silent)
+> > >>>>    	bool retry = true, need_fsck = false;
+> > >>>>    	char *options = NULL;
+> > >>>>    	int recovery, i, valid_super_block;
+> > >>>> +	struct curseg_info *seg_i;
+> > >>>>
+> > >>>>    try_onemore:
+> > >>>>    	err = -EINVAL;
+> > >>>> @@ -1372,6 +1396,17 @@ try_onemore:
+> > >>>>    		goto free_nm;
+> > >>>>    	}
+> > >>>>
+> > >>>> +	/* For write statistics */
+> > >>>> +	if (sb->s_bdev->bd_part)
+> > >>>> +		sbi->sectors_written_start =
+> > >>>> +			(u64)part_stat_read(sb->s_bdev->bd_part, sectors[1]);
+> > >>>> +
+> > >>>> +	/* Read accumulated write IO statistics if exists */
+> > >>>> +	seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
+> > >>> Why not CURSEG_WARM_DATA?
+> > >> Data summary might be compacted. So only hot/warm/cold node summary is
+> > >> available, and we just picked hot node summary.
+> > > Oh, you're right, warm data journal would not be persisted if data
+> > > summaries are compacted, my mistake.
+> > >
+> > > Wouldn't be better to persist this stat number into super block like
+> > > ext4?
+> > >
+> > > Thanks,
+> > 
+> > I think super block in F2FS is not updated as frequent as that in Ext4
+> > (there are several places invoking ext4_commit_super, while few invoking
+> > f2fs_commit_super), although in this design the statistics is not
+> > updated very frequently either. Another concern is that, to some extent,
+> > the super blocks of f2fs is not supposed to update except for a few
+> > cases. So the stat is better stored in the checkpoint, and we just tried
+> > very hard finding a spare place.
+> 
+> Got it, so the key point is preventing generating additional IO.
+> 
+> If update points of stat in your approach is enough, so for
+> 1) umount case: commit sb approach causes two more blocks updating.
+> 2) remount case: commit sb approach causes one less blocks updating when
+> FASTBOOT is disabled.
+> 
+> Not a big degression. :)
+> 
+> IMO, maybe it's better to use journal log in data segments to store
+> checkpoint related data, maybe more nats/sits entries.
+> 
+> And another thing is I'm in doubt that whether it is enough to use cp +
+> data journal to update stat, since abnormal pow-cut after a normal cp would
+> make us losing all stats saved before.
 
-So, how about this patch?
-Hope you don't mind this.
+Pros and Cons.
+IMO, we don't need to guarantee up-to-date information to users. If users wants
+to keep that in high accuracy, they simply can set fastboot.
 
 Thanks,
 
->From a7844e0438db9ea9d12b7c0c40b655c3371bd6c9 Mon Sep 17 00:00:00 2001
-From: Hou Pengyang <houpengyang@huawei.com>
-Date: Tue, 26 Jan 2016 12:56:26 +0000
-Subject: [PATCH] f2fs: improve shrink performance of extent nodes
-
-On the worst case, we need to scan the whole radix tree and every rb-tree to
-free the victimed extent_nodes when shrinking.
-
-Pengyang initially introduced a victim_list to record the victimed extent_nodes,
-and free these extent_nodes by just scanning a list.
-
-Later, Chao Yu enhances the original patch to improve memory footprint by
-removing victim list.
-
-The policy of lru list shrinking becomes:
-1) lock lru list's lock
-2) trylock extent tree's lock
-3) remove extent node from lru list
-4) unlock lru list's lock
-5) do shrink
-6) repeat 1) to 5)
-
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/extent_cache.c | 87 +++++++++++++++++++++-----------------------------
- fs/f2fs/f2fs.h         |  1 +
- 2 files changed, 37 insertions(+), 51 deletions(-)
-
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index aae99f2..759b1b1 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -33,6 +33,7 @@ static struct extent_node *__attach_extent_node(struct f2fs_sb_info *sbi,
- 
- 	en->ei = *ei;
- 	INIT_LIST_HEAD(&en->list);
-+	en->et = et;
- 
- 	rb_link_node(&en->rb_node, parent, p);
- 	rb_insert_color(&en->rb_node, &et->root);
-@@ -63,8 +64,8 @@ static void __release_extent_node(struct f2fs_sb_info *sbi,
- 			struct extent_tree *et, struct extent_node *en)
- {
- 	spin_lock(&sbi->extent_lock);
--	if (!list_empty(&en->list))
--		list_del_init(&en->list);
-+	f2fs_bug_on(sbi, list_empty(&en->list));
-+	list_del_init(&en->list);
- 	spin_unlock(&sbi->extent_lock);
- 
- 	__detach_extent_node(sbi, et, en);
-@@ -147,7 +148,7 @@ static struct extent_node *__init_extent_tree(struct f2fs_sb_info *sbi,
- }
- 
- static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
--					struct extent_tree *et, bool free_all)
-+					struct extent_tree *et)
- {
- 	struct rb_node *node, *next;
- 	struct extent_node *en;
-@@ -157,11 +158,7 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
- 	while (node) {
- 		next = rb_next(node);
- 		en = rb_entry(node, struct extent_node, rb_node);
--
--		if (free_all)
--			__release_extent_node(sbi, et, en);
--		else if (list_empty(&en->list))
--			__detach_extent_node(sbi, et, en);
-+		__release_extent_node(sbi, et, en);
- 		node = next;
- 	}
- 
-@@ -532,7 +529,7 @@ static unsigned int f2fs_update_extent_tree_range(struct inode *inode,
- 	}
- 
- 	if (is_inode_flag_set(F2FS_I(inode), FI_NO_EXTENT))
--		__free_extent_tree(sbi, et, true);
-+		__free_extent_tree(sbi, et);
- 
- 	write_unlock(&et->lock);
- 
-@@ -541,14 +538,10 @@ static unsigned int f2fs_update_extent_tree_range(struct inode *inode,
- 
- unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
- {
--	struct extent_tree *treevec[EXT_TREE_VEC_SIZE];
- 	struct extent_tree *et, *next;
--	struct extent_node *en, *tmp;
--	unsigned long ino = F2FS_ROOT_INO(sbi);
--	unsigned int found;
-+	struct extent_node *en;
- 	unsigned int node_cnt = 0, tree_cnt = 0;
- 	int remained;
--	bool do_free = false;
- 
- 	if (!test_opt(sbi, EXTENT_CACHE))
- 		return 0;
-@@ -561,11 +554,11 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
- 
- 	/* 1. remove unreferenced extent tree */
- 	list_for_each_entry_safe(et, next, &sbi->zombie_list, list) {
--		if (atomic_read(&et->node_cnt)) {
--			write_lock(&et->lock);
--			node_cnt += __free_extent_tree(sbi, et, true);
--			write_unlock(&et->lock);
--		}
-+		write_lock(&et->lock);
-+		node_cnt += __free_extent_tree(sbi, et);
-+		write_unlock(&et->lock);
-+		if (atomic_read(&et->node_cnt) > 0)
-+			goto unlock_out;
- 
- 		list_del_init(&et->list);
- 		radix_tree_delete(&sbi->extent_tree_root, et->ino);
-@@ -587,42 +580,29 @@ free_node:
- 	remained = nr_shrink - (node_cnt + tree_cnt);
- 
- 	spin_lock(&sbi->extent_lock);
--	list_for_each_entry_safe(en, tmp, &sbi->extent_list, list) {
--		if (!remained--)
-+	for (; remained > 0; remained--) {
-+		if (list_empty(&sbi->extent_list))
- 			break;
--		list_del_init(&en->list);
--		do_free = true;
--	}
--	spin_unlock(&sbi->extent_lock);
--
--	if (do_free == false)
--		goto unlock_out;
--
--	/*
--	 * reset ino for searching victims from beginning of global extent tree.
--	 */
--	ino = F2FS_ROOT_INO(sbi);
--
--	while ((found = radix_tree_gang_lookup(&sbi->extent_tree_root,
--				(void **)treevec, ino, EXT_TREE_VEC_SIZE))) {
--		unsigned i;
--
--		ino = treevec[found - 1]->ino + 1;
--		for (i = 0; i < found; i++) {
--			struct extent_tree *et = treevec[i];
-+		en = list_first_entry(&sbi->extent_list,
-+					struct extent_node, list);
-+		et = en->et;
-+		if (!write_trylock(&et->lock)) {
-+			/* refresh this extent node's position in extent list */
-+			list_move_tail(&en->list, &sbi->extent_list);
-+			continue;
-+		}
- 
--			if (!atomic_read(&et->node_cnt))
--				continue;
-+		list_del_init(&en->list);
-+		spin_unlock(&sbi->extent_lock);
- 
--			if (write_trylock(&et->lock)) {
--				node_cnt += __free_extent_tree(sbi, et, false);
--				write_unlock(&et->lock);
--			}
-+		__detach_extent_node(sbi, et, en);
- 
--			if (node_cnt + tree_cnt >= nr_shrink)
--				goto unlock_out;
--		}
-+		write_unlock(&et->lock);
-+		node_cnt++;
-+		spin_lock(&sbi->extent_lock);
- 	}
-+	spin_unlock(&sbi->extent_lock);
-+
- unlock_out:
- 	up_write(&sbi->extent_tree_lock);
- out:
-@@ -641,7 +621,7 @@ unsigned int f2fs_destroy_extent_node(struct inode *inode)
- 		return 0;
- 
- 	write_lock(&et->lock);
--	node_cnt = __free_extent_tree(sbi, et, true);
-+	node_cnt = __free_extent_tree(sbi, et);
- 	write_unlock(&et->lock);
- 
- 	return node_cnt;
-@@ -666,10 +646,15 @@ void f2fs_destroy_extent_tree(struct inode *inode)
- 	}
- 
- 	/* free all extent info belong to this extent tree */
-+free_more:
- 	node_cnt = f2fs_destroy_extent_node(inode);
- 
- 	/* delete extent tree entry in radix tree */
- 	down_write(&sbi->extent_tree_lock);
-+	if (atomic_read(&et->node_cnt) > 0) {
-+		up_write(&sbi->extent_tree_lock);
-+		goto free_more;
-+	}
- 	f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
- 	radix_tree_delete(&sbi->extent_tree_root, inode->i_ino);
- 	kmem_cache_free(extent_tree_slab, et);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c4e723b..4e7eab9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -354,6 +354,7 @@ struct extent_node {
- 	struct rb_node rb_node;		/* rb node located in rb-tree */
- 	struct list_head list;		/* node in global extent list of sbi */
- 	struct extent_info ei;		/* extent info */
-+	struct extent_tree *et;		/* extent tree pointer */
- };
- 
- struct extent_tree {
--- 
-2.6.3
-
+> 
+> Thanks,
+> 
+> > 
+> > >>> Thanks,
+> > >>>
+> > >>>> +	if(__exist_node_summaries(sbi))
+> > >>>> +		sbi->kbytes_written =
+> > >>>> +			le64_to_cpu(seg_i->sum_blk->info.kbytes_written);
+> > >>>> +
+> > >>>>    	build_gc_manager(sbi);
+> > >>>>
+> > >>>>    	/* get an inode for node space */
+> > >>>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> > >>>> index e59c3be..67aa01d 100644
+> > >>>> --- a/include/linux/f2fs_fs.h
+> > >>>> +++ b/include/linux/f2fs_fs.h
+> > >>>> @@ -358,6 +358,12 @@ struct summary_footer {
+> > >>>>    				sizeof(struct sit_journal_entry))
+> > >>>>    #define SIT_JOURNAL_RESERVED	((SUM_JOURNAL_SIZE - 2) %\
+> > >>>>    				sizeof(struct sit_journal_entry))
+> > >>>> +
+> > >>>> +/* Reserved area should make size of f2fs_extra_info equals to
+> > >>>> + * that of nat_journal and sit_journal.
+> > >>>> + */
+> > >>>> +#define EXTRA_INFO_RESERVED	(SUM_JOURNAL_SIZE - 2 - 8)
+> > >>>> +
+> > >>>>    /*
+> > >>>>     * frequently updated NAT/SIT entries can be stored in the spare area in
+> > >>>>     * summary blocks
+> > >>>> @@ -387,6 +393,11 @@ struct sit_journal {
+> > >>>>    	__u8 reserved[SIT_JOURNAL_RESERVED];
+> > >>>>    } __packed;
+> > >>>>
+> > >>>> +struct f2fs_extra_info {
+> > >>>> +	__le64 kbytes_written;
+> > >>>> +	__u8 reserved[EXTRA_INFO_RESERVED];
+> > >>>> +} __packed;
+> > >>>> +
+> > >>>>    /* 4KB-sized summary block structure */
+> > >>>>    struct f2fs_summary_block {
+> > >>>>    	struct f2fs_summary entries[ENTRIES_IN_SUM];
+> > >>>> @@ -394,10 +405,11 @@ struct f2fs_summary_block {
+> > >>>>    		__le16 n_nats;
+> > >>>>    		__le16 n_sits;
+> > >>>>    	};
+> > >>>> -	/* spare area is used by NAT or SIT journals */
+> > >>>> +	/* spare area is used by NAT or SIT journals or extra info */
+> > >>>>    	union {
+> > >>>>    		struct nat_journal nat_j;
+> > >>>>    		struct sit_journal sit_j;
+> > >>>> +		struct f2fs_extra_info info;
+> > >>>>    	};
+> > >>>>    	struct summary_footer footer;
+> > >>>>    } __packed;
+> > >>>> --
+> > >>>> 1.9.1
+> > >>>>
+> > >>>>
+> > >>>> ------------------------------------------------------------------------------
+> > >>>> Site24x7 APM Insight: Get Deep Visibility into Application Performance
+> > >>>> APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+> > >>>> Monitor end-to-end web transactions and take corrective actions now
+> > >>>> Troubleshoot faster and improve end-user experience. Signup Now!
+> > >>>> http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
+> > >>>> _______________________________________________
+> > >>>> Linux-f2fs-devel mailing list
+> > >>>> Linux-f2fs-devel@lists.sourceforge.net
+> > >>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > >>> .
+> > >>>
+> > >
+> > >
+> > > .
+> > >
+> > 
+> 
 
 ------------------------------------------------------------------------------
 Site24x7 APM Insight: Get Deep Visibility into Application Performance
