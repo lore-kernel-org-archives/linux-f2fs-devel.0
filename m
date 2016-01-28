@@ -1,22 +1,32 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] fsck.f2fs: avoid fix ssa in some case
-Date: Thu, 28 Jan 2016 16:18:16 +0800
-Message-ID: <1453969096-11522-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [PATCH] f2fs: fix endianness of on-disk
+	summary_footer
+Date: Thu, 28 Jan 2016 16:31:57 +0800
+Message-ID: <00f401d159a6$72523b50$56f6b1f0$@samsung.com>
+References: <1453981226-18858-1-git-send-email-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1aOhlG-0005mF-3Y
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1aOi0V-0003CG-GK
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Jan 2016 08:17:02 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aOhlB-0006fv-7U
+	Thu, 28 Jan 2016 08:32:47 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aOi0T-00089A-IX
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 28 Jan 2016 08:17:02 +0000
+	Thu, 28 Jan 2016 08:32:47 +0000
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O1N01MWHMEDNE10@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 28 Jan 2016 17:32:37 +0900 (KST)
+In-reply-to: <1453981226-18858-1-git-send-email-shengyong1@huawei.com>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,102 +36,46 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: chao2.yu@samsung.com, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: 'Sheng Yong' <shengyong1@huawei.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-In some case, we need confirm node or data blkaddr is ok at first,
-and then fix the conflict in ssa block. If the node blkaddr happen to
-locate in data type segment caused by something error, may be we 'd
-better ignore it, and it's same with data blkaddr.
+Hi Sheng,
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fsck/fsck.c | 34 +++++++++++++++++++++++++---------
- 1 file changed, 25 insertions(+), 9 deletions(-)
+> -----Original Message-----
+> From: Sheng Yong [mailto:shengyong1@huawei.com]
+> Sent: Thursday, January 28, 2016 7:40 PM
+> To: jaegeuk@kernel.org
+> Cc: chao2.yu@samsung.com; linux-f2fs-devel@lists.sourceforge.net; shengyong1@huawei.com
+> Subject: [PATCH] f2fs: fix endianness of on-disk summary_footer
+> 
+> Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index e7dd02f..fd82bef 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -129,6 +129,7 @@ static int is_valid_ssa_node_blk(struct f2fs_sb_info *sbi, u32 nid,
- {
- 	struct f2fs_summary_block *sum_blk;
- 	struct f2fs_summary *sum_entry;
-+	struct seg_entry * se;
- 	u32 segno, offset;
- 	int need_fix = 0, ret = 0;
- 	int type;
-@@ -145,9 +146,16 @@ static int is_valid_ssa_node_blk(struct f2fs_sb_info *sbi, u32 nid,
- 			ret = -EINVAL;
- 			goto out;
- 		}
--		FIX_MSG("Summary footer indicates a node segment: 0x%x", segno);
--		sum_blk->footer.entry_type = SUM_TYPE_NODE;
-+
- 		need_fix = 1;
-+		se = get_seg_entry(sbi, segno);
-+		if(se->type >= 3 && se->type <= 5) {
-+			FIX_MSG("Summary footer indicates a node segment: 0x%x", segno);
-+			sum_blk->footer.entry_type = SUM_TYPE_NODE;
-+		} else {
-+			ret = -EINVAL;
-+			goto out;
-+		}
- 	}
- 
- 	sum_entry = &(sum_blk->entries[offset]);
-@@ -235,6 +243,7 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- {
- 	struct f2fs_summary_block *sum_blk;
- 	struct f2fs_summary *sum_entry;
-+	struct seg_entry * se;
- 	u32 segno, offset;
- 	int need_fix = 0, ret = 0;
- 	int type;
-@@ -251,9 +260,16 @@ static int is_valid_ssa_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 			ret = -EINVAL;
- 			goto out;
- 		}
--		FIX_MSG("Summary footer indicates a data segment: 0x%x", segno);
--		sum_blk->footer.entry_type = SUM_TYPE_DATA;
-+
- 		need_fix = 1;
-+		se = get_seg_entry(sbi, segno);
-+		if (se->type >=0 && se->type <= 2) {
-+			FIX_MSG("Summary footer indicates a data segment: 0x%x", segno);
-+			sum_blk->footer.entry_type = SUM_TYPE_DATA;
-+		} else {
-+			ret = -EINVAL;
-+			goto out;
-+		}
- 	}
- 
- 	sum_entry = &(sum_blk->entries[offset]);
-@@ -352,11 +368,6 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
- 		return -EINVAL;
- 	}
- 
--	if (is_valid_ssa_node_blk(sbi, nid, ni->blk_addr)) {
--		ASSERT_MSG("summary node block is not valid. [0x%x]", nid);
--		return -EINVAL;
--	}
--
- 	ret = dev_read_block(node_blk, ni->blk_addr);
- 	ASSERT(ret >= 0);
- 
-@@ -427,6 +438,11 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
- 		ASSERT_MSG("orphan or xattr nid is duplicated [0x%x]\n",
- 				nid);
- 
-+	if (is_valid_ssa_node_blk(sbi, nid, ni->blk_addr)) {
-+		ASSERT_MSG("summary node block is not valid. [0x%x]", nid);
-+		return -EINVAL;
-+	}
-+
- 	if (f2fs_test_sit_bitmap(sbi, ni->blk_addr) == 0)
- 		ASSERT_MSG("SIT bitmap is 0x0. blk_addr[0x%x]",
- 				ni->blk_addr);
--- 
-1.9.1
+Nice catch!
+
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+
+Thanks,
+
+> ---
+>  include/linux/f2fs_fs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+> index 25c6324..2863274 100644
+> --- a/include/linux/f2fs_fs.h
+> +++ b/include/linux/f2fs_fs.h
+> @@ -344,7 +344,7 @@ struct f2fs_summary {
+> 
+>  struct summary_footer {
+>  	unsigned char entry_type;	/* SUM_TYPE_XXX */
+> -	__u32 check_sum;		/* summary checksum */
+> +	__le32 check_sum;		/* summary checksum */
+>  } __packed;
+> 
+>  #define SUM_JOURNAL_SIZE	(F2FS_BLKSIZE - SUM_FOOTER_SIZE -\
+> --
+> 1.9.1
+
 
 
 ------------------------------------------------------------------------------
