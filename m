@@ -1,8 +1,7 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH 2/4] f2fs-tools: fix endianness of on-disk
-	check_sum in summary_footer
-Date: Sat, 30 Jan 2016 09:16:37 +0000
-Message-ID: <1454145399-30713-3-git-send-email-shengyong1@huawei.com>
+Subject: [RFC PATCH 4/4] fsck.f2fs: check ino of an inode
+Date: Sat, 30 Jan 2016 09:16:39 +0000
+Message-ID: <1454145399-30713-5-git-send-email-shengyong1@huawei.com>
 References: <1454145399-30713-1-git-send-email-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,15 +9,15 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1aPKQN-0002uf-NG
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <shengyong1@huawei.com>) id 1aPKQM-0005LZ-Gp
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 30 Jan 2016 01:34:03 +0000
+	Sat, 30 Jan 2016 01:34:02 +0000
 Received: from szxga02-in.huawei.com ([119.145.14.65])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aPKQJ-0002OE-EB
+	(Exim 4.76) id 1aPKQJ-0002OF-DW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 30 Jan 2016 01:34:03 +0000
+	Sat, 30 Jan 2016 01:34:02 +0000
 In-Reply-To: <1454145399-30713-1-git-send-email-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,24 +31,31 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, chao2.yu@samsung.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- include/f2fs_fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If the node is an inode, its ino in the nat entry should be equal to the
+ino in its node footer. Otherwise, we drop the file.
 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 2ab9f49..1b02d16 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -677,7 +677,7 @@ struct f2fs_summary {
- 
- struct summary_footer {
- 	unsigned char entry_type;	/* SUM_TYPE_XXX */
--	__u32 check_sum;		/* summary checksum */
-+	__le32 check_sum;		/* summary checksum */
- } __attribute__((packed));
- 
- #define SUM_JOURNAL_SIZE	(F2FS_BLKSIZE - SUM_FOOTER_SIZE -\
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
+---
+ fsck/fsck.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index c018d3a..312583e 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -372,6 +372,11 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
+ 				le32_to_cpu(node_blk->footer.ino));
+ 		return -EINVAL;
+ 	}
++	if (ntype == TYPE_INODE && ni->ino != node_blk->footer.ino) {
++		ASSERT_MSG("nid[0x%x] TYPE_INODE nat_entry->ino[0x%x] footer.ino[0x%x]",
++				nid, ni->ino, le32_to_cpu(node_blk->footer.ino));
++		return -EINVAL;
++	}
+ 	if (ntype != TYPE_INODE &&
+ 			node_blk->footer.nid == node_blk->footer.ino) {
+ 		ASSERT_MSG("nid[0x%x] footer.nid[0x%x] footer.ino[0x%x]",
 -- 
 1.9.1
 
