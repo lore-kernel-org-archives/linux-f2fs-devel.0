@@ -1,35 +1,67 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/3] f2fs: fix conflict on page->private usage
-Date: Fri, 29 Jan 2016 16:52:38 -0800
-Message-ID: <1454115158-81227-3-git-send-email-jaegeuk@kernel.org>
-References: <1454115158-81227-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/3] f2fs: wait on page's writeback in writepages path
+Date: Fri, 29 Jan 2016 16:52:36 -0800
+Message-ID: <1454115158-81227-1-git-send-email-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1454115158-81227-1-git-send-email-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch fixes confilct on page->private value between f2fs_trace_pid and
-atomic page.
+Likewise f2fs_write_cache_pages, let's do for node and meta pages too.
+Especially, for node blocks, we should do this before marking its fsync
+and dentry flags.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/checkpoint.c | 4 +++-
+ fs/f2fs/node.c       | 5 +++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index ee44d34..cd7111b 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -183,7 +183,7 @@ struct segment_allocation {
-  * this value is set in page as a private data which indicate that
-  * the page is atomically written, and it is in inmem_pages list.
-  */
--#define ATOMIC_WRITTEN_PAGE		0x0000ffff
-+#define ATOMIC_WRITTEN_PAGE		((unsigned long)-1)
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 112e19f..96d606d 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -232,7 +232,6 @@ static int f2fs_write_meta_page(struct page *page,
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		goto redirty_out;
  
- #define IS_ATOMIC_WRITTEN_PAGE(page)			\
- 		(page_private(page) == (unsigned long)ATOMIC_WRITTEN_PAGE)
+-	f2fs_wait_on_page_writeback(page, META, true);
+ 	write_meta_page(sbi, page);
+ 	dec_page_count(sbi, F2FS_DIRTY_META);
+ 	unlock_page(page);
+@@ -315,6 +314,9 @@ continue_unlock:
+ 				goto continue_unlock;
+ 			}
+ 
++			f2fs_wait_on_page_writeback(page, META, true);
++
++			BUG_ON(PageWriteback(page));
+ 			if (!clear_page_dirty_for_io(page))
+ 				goto continue_unlock;
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index eae8977..511c0e7 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1297,6 +1297,9 @@ continue_unlock:
+ 				continue;
+ 			}
+ 
++			f2fs_wait_on_page_writeback(page, NODE, true);
++
++			BUG_ON(PageWriteback(page));
+ 			if (!clear_page_dirty_for_io(page))
+ 				goto continue_unlock;
+ 
+@@ -1402,8 +1405,6 @@ static int f2fs_write_node_page(struct page *page,
+ 	if (unlikely(f2fs_cp_error(sbi)))
+ 		goto redirty_out;
+ 
+-	f2fs_wait_on_page_writeback(page, NODE, true);
+-
+ 	/* get old block addr of this node page */
+ 	nid = nid_of_node(page);
+ 	f2fs_bug_on(sbi, page->index != nid);
 -- 
 2.6.3
