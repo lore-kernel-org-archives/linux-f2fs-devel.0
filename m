@@ -1,24 +1,24 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/3] f2fs: flush bios to handle cp_error in
-	put_super
-Date: Fri, 29 Jan 2016 16:52:37 -0800
-Message-ID: <1454115158-81227-2-git-send-email-jaegeuk@kernel.org>
-References: <1454115158-81227-1-git-send-email-jaegeuk@kernel.org>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [RFC PATCH 3/4] fsck.f2fs: check ino of an used nat entry
+Date: Sat, 30 Jan 2016 09:16:38 +0000
+Message-ID: <1454145399-30713-4-git-send-email-shengyong1@huawei.com>
+References: <1454145399-30713-1-git-send-email-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aPJmT-0007NE-Ev
+	(envelope-from <shengyong1@huawei.com>) id 1aPKQM-0008P1-D3
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 30 Jan 2016 00:52:49 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aPJmS-0001Ts-Ph for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 30 Jan 2016 00:52:49 +0000
-In-Reply-To: <1454115158-81227-1-git-send-email-jaegeuk@kernel.org>
+	Sat, 30 Jan 2016 01:34:02 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aPKQJ-0000DQ-81
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 30 Jan 2016 01:34:02 +0000
+In-Reply-To: <1454145399-30713-1-git-send-email-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,37 +28,36 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org, chao2.yu@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Sometimes, if cp_error is set, there remains under-writeback pages, resulting in
-kernel hang in put_super.
+If a nid is valid, the ino in its nat entry should record its parent nid.
+However if the ino is zero, we should drop the node.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
 ---
- fs/f2fs/super.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fsck/fsck.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9962021..aa2d3d9 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -582,6 +582,13 @@ static void f2fs_put_super(struct super_block *sb)
- 	f2fs_leave_shrinker(sbi);
- 	mutex_unlock(&sbi->umount_mutex);
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 4fbb56d..c018d3a 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -342,6 +342,11 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
+ 	}
  
-+	/* our cp_error case, we can wait for any writeback page */
-+	if (get_pages(sbi, F2FS_WRITEBACK)) {
-+		f2fs_submit_merged_bio(sbi, DATA, WRITE);
-+		f2fs_submit_merged_bio(sbi, NODE, WRITE);
-+		f2fs_submit_merged_bio(sbi, META, WRITE);
+ 	get_node_info(sbi, nid, ni);
++	if (ni->ino == 0) {
++		ASSERT_MSG("nid[0x%x] ino is 0", nid);
++		return -EINVAL;
 +	}
 +
- 	iput(sbi->node_inode);
- 	iput(sbi->meta_inode);
- 
+ 	if (ni->blk_addr == NEW_ADDR) {
+ 		ASSERT_MSG("nid is NEW_ADDR. [0x%x]", nid);
+ 		return -EINVAL;
 -- 
-2.6.3
+1.9.1
 
 
 ------------------------------------------------------------------------------
