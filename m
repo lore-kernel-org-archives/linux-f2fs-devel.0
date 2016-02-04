@@ -1,33 +1,27 @@
-From: Fan Li <fanofcode.li@samsung.com>
+From: Junling Zheng <zhengjunling@huawei.com>
 Subject: Re: [PATCH v2] f2fs-tools: set segment_count in super
  block correctly
-Date: Thu, 04 Feb 2016 17:33:55 +0800
-Message-ID: <001c01d15f2f$4caad220$e6007660$@samsung.com>
+Date: Thu, 4 Feb 2016 17:53:16 +0800
+Message-ID: <56B31F8C.8050800@huawei.com>
 References: <000c01d15e44$0401d0f0$0c0572d0$@samsung.com>
 	<56B2BCCB.3080308@huawei.com>
+	<001c01d15f2f$4caad220$e6007660$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fanofcode.li@samsung.com>) id 1aRGJa-0003lr-IX
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zhengjunling@huawei.com>) id 1aRGbq-0003Z0-NQ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Feb 2016 09:35:02 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aRGJY-0000Lz-LV
+	Thu, 04 Feb 2016 09:53:54 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aRGbk-0004km-2w
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Feb 2016 09:35:02 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O20003OVNY46X50@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Feb 2016 18:34:52 +0900 (KST)
-In-reply-to: <56B2BCCB.3080308@huawei.com>
-Content-language: en-us
+	Thu, 04 Feb 2016 09:53:54 +0000
+In-Reply-To: <001c01d15f2f$4caad220$e6007660$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,76 +31,84 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Junling Zheng' <zhengjunling@huawei.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>, heyunlei@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Fan Li <fanofcode.li@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
+On 2016/2/4 17:33, Fan Li wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Junling Zheng [mailto:zhengjunling@huawei.com]
+>> Sent: Thursday, February 04, 2016 10:52 AM
+>> To: Fan Li; 'Jaegeuk Kim'; heyunlei@huawei.com
+>> Cc: linux-f2fs-devel@lists.sourceforge.net
+>> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in super block correctly
+>>
+>> On 2016/2/3 13:29, Fan Li wrote:
+>>> Now f2fs will check statistics recorded in super block in
+>>> sanity_check_area_boundary() during mount,if number of segments per
+>>> section is greater than 1, and the disk space isn't aligned with
+>>> section,
+>>
+>> Hi Fan, Hi Kim:
+>>
+>> I'm uncertain about which unit the disk space should be aligned with? section or zone?
+>>
+>> It looks like commit "e9dfbbb"(mkfs.f2fs: introduce zone align for main area)
+>>
+>> from Yunlei had changed the aligning unit from section to zone.
+>>
+>> So, should segment_count in superblock be aligned with zone rather than section?
+> 
+> I'm afraid that my codes of mkfs is too old, it doesn't contain this patch, and it still
+> uses section size to align main area.
+> 
 
+Yeah, this patch is contained on dev branch, not yet on master:)
 
-> -----Original Message-----
-> From: Junling Zheng [mailto:zhengjunling@huawei.com]
-> Sent: Thursday, February 04, 2016 10:52 AM
-> To: Fan Li; 'Jaegeuk Kim'; heyunlei@huawei.com
-> Cc: linux-f2fs-devel@lists.sourceforge.net
-> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in super block correctly
+> Of course if main area should be aligned with zone, the following patch should be
+> modified accordingly.
 > 
-> On 2016/2/3 13:29, Fan Li wrote:
-> > Now f2fs will check statistics recorded in super block in
-> > sanity_check_area_boundary() during mount,if number of segments per
-> > section is greater than 1, and the disk space isn't aligned with
-> > section,
+>>
+>> Thanks,
+>>
+>> Junling
+>>
+>>> mount will fail due to following condition:
+>>>
+>>> main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
+>>> 		segment0_blkaddr + (segment_count << log_blocks_per_seg)
+>>>
+>>> this is because when the length of main area isn't aligned with
+>>> section, mkfs didn't add the number of excess segments to
+>>> segment_count_main, but add it to segment_count.
+>>> Here align segment_count with section size first to prevent such problem.
+>>>
+>>> Signed-off-by: Fan Li <fanofcode.li@samsung.com>
+>>> ---
+>>>  mkfs/f2fs_format.c |    3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c index
+>>> 66d7342..3366302 100644
+>>> --- a/mkfs/f2fs_format.c
+>>> +++ b/mkfs/f2fs_format.c
+>>> @@ -174,7 +174,8 @@ static int f2fs_prepare_super_block(void)
+>>>         }
+>>>
+>>>         set_sb(segment_count, (config.total_sectors * config.sector_size -
+>>> -                               zone_align_start_offset) / segment_size_bytes);
+>>> +                               zone_align_start_offset) / segment_size_bytes /
+>>> +                               config.segs_per_sec *
+>>> + config.segs_per_sec);
+>>>
+>>>         set_sb(segment0_blkaddr, zone_align_start_offset / blk_size_bytes);
+>>>         sb->cp_blkaddr = sb->segment0_blkaddr;
+>>>
+>>
 > 
-> Hi Fan, Hi Kim:
 > 
-> I'm uncertain about which unit the disk space should be aligned with? section or zone?
 > 
-> It looks like commit "e9dfbbb"(mkfs.f2fs: introduce zone align for main area)
-> 
-> from Yunlei had changed the aligning unit from section to zone.
-> 
-> So, should segment_count in superblock be aligned with zone rather than section?
-
-I'm afraid that my codes of mkfs is too old, it doesn't contain this patch, and it still
-uses section size to align main area.
-
-Of course if main area should be aligned with zone, the following patch should be
-modified accordingly.
-
-> 
-> Thanks,
-> 
-> Junling
-> 
-> > mount will fail due to following condition:
-> >
-> > main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
-> > 		segment0_blkaddr + (segment_count << log_blocks_per_seg)
-> >
-> > this is because when the length of main area isn't aligned with
-> > section, mkfs didn't add the number of excess segments to
-> > segment_count_main, but add it to segment_count.
-> > Here align segment_count with section size first to prevent such problem.
-> >
-> > Signed-off-by: Fan Li <fanofcode.li@samsung.com>
-> > ---
-> >  mkfs/f2fs_format.c |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c index
-> > 66d7342..3366302 100644
-> > --- a/mkfs/f2fs_format.c
-> > +++ b/mkfs/f2fs_format.c
-> > @@ -174,7 +174,8 @@ static int f2fs_prepare_super_block(void)
-> >         }
-> >
-> >         set_sb(segment_count, (config.total_sectors * config.sector_size -
-> > -                               zone_align_start_offset) / segment_size_bytes);
-> > +                               zone_align_start_offset) / segment_size_bytes /
-> > +                               config.segs_per_sec *
-> > + config.segs_per_sec);
-> >
-> >         set_sb(segment0_blkaddr, zone_align_start_offset / blk_size_bytes);
-> >         sb->cp_blkaddr = sb->segment0_blkaddr;
-> >
+> .
 > 
 
 
