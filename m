@@ -1,30 +1,25 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: [PATCH] f2fs: avoid unnecessary search while finding
-	victim in gc
-Date: Wed, 03 Feb 2016 16:21:57 +0800
-Message-ID: <000d01d15e5c$08ba6310$1a2f2930$@samsung.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [PATCH v2] f2fs-tools: set segment_count in super
+ block correctly
+Date: Thu, 4 Feb 2016 10:51:55 +0800
+Message-ID: <56B2BCCB.3080308@huawei.com>
+References: <000c01d15e44$0401d0f0$0c0572d0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fanofcode.li@samsung.com>) id 1aQsi5-00082u-A3
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zhengjunling@huawei.com>) id 1aRA29-0005eG-Lx
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 03 Feb 2016 08:22:45 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aQsi3-0006Vz-1y
+	Thu, 04 Feb 2016 02:52:37 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aRA23-0004Al-E7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 03 Feb 2016 08:22:45 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O1Y01NB0PXGMA70@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 03 Feb 2016 17:22:35 +0900 (KST)
-Content-language: en-us
+	Thu, 04 Feb 2016 02:52:37 +0000
+In-Reply-To: <000c01d15e44$0401d0f0$0c0572d0$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,99 +29,59 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+To: Fan Li <fanofcode.li@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>, heyunlei@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-variable nsearched in get_victim_by_default() indicates the number of
-dirty segments we already checked. There are 2 problems about the way
-it updates:
-1. When p.ofs_unit is greater than 1, the victim we find consists
-   of multiple segments, possibly more than 1 dirty segment. 
-   But nsearched always increases by 1.
-2. If segments have been found but not been chosen, nsearched won't
-   increase. So even we have checked all dirty segments, nsearched
-   may still less than p.max_search.
-All these problems could cause unnecessary search after all dirty
-segments have already been checked.
+On 2016/2/3 13:29, Fan Li wrote:
+> Now f2fs will check statistics recorded in super block in 
+> sanity_check_area_boundary() during mount,if number of segments per 
+> section is greater than 1, and the disk space isn't aligned with section,
 
-Signed-off-by: Fan li <fanofcode.li@samsung.com>
----
- fs/f2fs/gc.c |   33 +++++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 8 deletions(-)
+Hi Fan, Hi Kim:
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index c958321..47ade35 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -245,6 +245,18 @@ static inline unsigned int get_gc_cost(struct f2fs_sb_info *sbi,
- 		return get_cb_cost(sbi, segno);
- }
- 
-+static unsigned int count_bits(const unsigned long *addr,
-+				unsigned int offset, unsigned int len)
-+{
-+	unsigned int end = offset + len, sum = 0;
-+
-+	while (offset < end) {
-+		if (test_bit(offset++, addr))
-+			++sum;
-+	}
-+	return sum;
-+}
-+
- /*
-  * This function is called from two paths.
-  * One is garbage collection and the other is SSR segment selection.
-@@ -260,7 +272,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 	struct victim_sel_policy p;
- 	unsigned int secno, max_cost;
- 	unsigned int last_segment = MAIN_SEGS(sbi);
--	int nsearched = 0;
-+	unsigned int nsearched = 0;
- 
- 	mutex_lock(&dirty_i->seglist_lock);
- 
-@@ -295,26 +307,31 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 		}
- 
- 		p.offset = segno + p.ofs_unit;
--		if (p.ofs_unit > 1)
-+		if (p.ofs_unit > 1) {
- 			p.offset -= segno % p.ofs_unit;
-+			nsearched += count_bits(p.dirty_segmap,
-+						p.offset - p.ofs_unit,
-+						p.ofs_unit);
-+		} else {
-+			nsearched++;
-+		}
-+
- 
- 		secno = GET_SECNO(sbi, segno);
- 
- 		if (sec_usage_check(sbi, secno))
--			continue;
-+			goto next;
- 		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
--			continue;
-+			goto next;
- 
- 		cost = get_gc_cost(sbi, segno, &p);
- 
- 		if (p.min_cost > cost) {
- 			p.min_segno = segno;
- 			p.min_cost = cost;
--		} else if (unlikely(cost == max_cost)) {
--			continue;
- 		}
--
--		if (nsearched++ >= p.max_search) {
-+next:
-+		if (nsearched >= p.max_search) {
- 			sbi->last_victim[p.gc_mode] = segno;
- 			break;
- 		}
--- 
-1.7.9.5
+I'm uncertain about which unit the disk space should be aligned with? section or zone?
+
+It looks like commit "e9dfbbb"(mkfs.f2fs: introduce zone align for main area)
+
+from Yunlei had changed the aligning unit from section to zone.
+
+So, should segment_count in superblock be aligned with zone rather than section?
+
+Thanks,
+
+Junling
+
+> mount will fail due to following condition:
+> 
+> main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
+> 		segment0_blkaddr + (segment_count << log_blocks_per_seg)
+> 
+> this is because when the length of main area isn't aligned with section, 
+> mkfs didn't add the number of excess segments to segment_count_main, but 
+> add it to segment_count. 
+> Here align segment_count with section size first to prevent such problem.
+> 
+> Signed-off-by: Fan Li <fanofcode.li@samsung.com>
+> ---
+>  mkfs/f2fs_format.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+> index 66d7342..3366302 100644
+> --- a/mkfs/f2fs_format.c
+> +++ b/mkfs/f2fs_format.c
+> @@ -174,7 +174,8 @@ static int f2fs_prepare_super_block(void)
+>         }
+> 
+>         set_sb(segment_count, (config.total_sectors * config.sector_size -
+> -                               zone_align_start_offset) / segment_size_bytes);
+> +                               zone_align_start_offset) / segment_size_bytes /
+> +                               config.segs_per_sec * config.segs_per_sec);
+> 
+>         set_sb(segment0_blkaddr, zone_align_start_offset / blk_size_bytes);
+>         sb->cp_blkaddr = sb->segment0_blkaddr;
+> 
+
 
 
 ------------------------------------------------------------------------------
@@ -134,4 +89,4 @@ Site24x7 APM Insight: Get Deep Visibility into Application Performance
 APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
 Monitor end-to-end web transactions and take corrective actions now
 Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=267308311&iu=/4140
+http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
