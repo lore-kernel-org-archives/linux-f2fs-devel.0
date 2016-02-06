@@ -1,121 +1,161 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: Re: [PATCH v2] f2fs-tools: set segment_count in super
- block correctly
-Date: Thu, 4 Feb 2016 17:53:16 +0800
-Message-ID: <56B31F8C.8050800@huawei.com>
-References: <000c01d15e44$0401d0f0$0c0572d0$@samsung.com>
-	<56B2BCCB.3080308@huawei.com>
-	<001c01d15f2f$4caad220$e6007660$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhengjunling@huawei.com>) id 1aRGbq-0003Z0-NQ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Feb 2016 09:53:54 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aRGbk-0004km-2w
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Feb 2016 09:53:54 +0000
-In-Reply-To: <001c01d15f2f$4caad220$e6007660$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Fan Li <fanofcode.li@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>, heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/2] f2fs: move dio preallocation into f2fs_file_write_iter
+Date: Fri,  5 Feb 2016 18:53:25 -0800
+Message-ID: <1454727206-13615-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2016/2/4 17:33, Fan Li wrote:
-> 
-> 
->> -----Original Message-----
->> From: Junling Zheng [mailto:zhengjunling@huawei.com]
->> Sent: Thursday, February 04, 2016 10:52 AM
->> To: Fan Li; 'Jaegeuk Kim'; heyunlei@huawei.com
->> Cc: linux-f2fs-devel@lists.sourceforge.net
->> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in super block correctly
->>
->> On 2016/2/3 13:29, Fan Li wrote:
->>> Now f2fs will check statistics recorded in super block in
->>> sanity_check_area_boundary() during mount,if number of segments per
->>> section is greater than 1, and the disk space isn't aligned with
->>> section,
->>
->> Hi Fan, Hi Kim:
->>
->> I'm uncertain about which unit the disk space should be aligned with? section or zone?
->>
->> It looks like commit "e9dfbbb"(mkfs.f2fs: introduce zone align for main area)
->>
->> from Yunlei had changed the aligning unit from section to zone.
->>
->> So, should segment_count in superblock be aligned with zone rather than section?
-> 
-> I'm afraid that my codes of mkfs is too old, it doesn't contain this patch, and it still
-> uses section size to align main area.
-> 
+This patch moves preallocation code for direct IOs into f2fs_file_write_iter.
 
-Yeah, this patch is contained on dev branch, not yet on master:)
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 38 +++++++++++++++++---------------------
+ fs/f2fs/f2fs.h |  2 ++
+ fs/f2fs/file.c | 22 ++++++++++++++++++++--
+ 3 files changed, 39 insertions(+), 23 deletions(-)
 
-> Of course if main area should be aligned with zone, the following patch should be
-> modified accordingly.
-> 
->>
->> Thanks,
->>
->> Junling
->>
->>> mount will fail due to following condition:
->>>
->>> main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
->>> 		segment0_blkaddr + (segment_count << log_blocks_per_seg)
->>>
->>> this is because when the length of main area isn't aligned with
->>> section, mkfs didn't add the number of excess segments to
->>> segment_count_main, but add it to segment_count.
->>> Here align segment_count with section size first to prevent such problem.
->>>
->>> Signed-off-by: Fan Li <fanofcode.li@samsung.com>
->>> ---
->>>  mkfs/f2fs_format.c |    3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c index
->>> 66d7342..3366302 100644
->>> --- a/mkfs/f2fs_format.c
->>> +++ b/mkfs/f2fs_format.c
->>> @@ -174,7 +174,8 @@ static int f2fs_prepare_super_block(void)
->>>         }
->>>
->>>         set_sb(segment_count, (config.total_sectors * config.sector_size -
->>> -                               zone_align_start_offset) / segment_size_bytes);
->>> +                               zone_align_start_offset) / segment_size_bytes /
->>> +                               config.segs_per_sec *
->>> + config.segs_per_sec);
->>>
->>>         set_sb(segment0_blkaddr, zone_align_start_offset / blk_size_bytes);
->>>         sb->cp_blkaddr = sb->segment0_blkaddr;
->>>
->>
-> 
-> 
-> 
-> .
-> 
-
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 9ae43a7..b95e28e 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -564,16 +564,24 @@ alloc:
+ 	return 0;
+ }
+ 
+-static int __allocate_data_blocks(struct inode *inode, loff_t offset,
+-							size_t count)
++ssize_t f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+ {
++	struct inode *inode = file_inode(iocb->ki_filp);
+ 	struct f2fs_map_blocks map;
++	ssize_t ret = 0;
+ 
+-	map.m_lblk = F2FS_BYTES_TO_BLK(offset);
+-	map.m_len = F2FS_BYTES_TO_BLK(count);
++	map.m_lblk = F2FS_BYTES_TO_BLK(iocb->ki_pos);
++	map.m_len = F2FS_BYTES_TO_BLK(iov_iter_count(from));
+ 	map.m_next_pgofs = NULL;
+ 
+-	return f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_DIO);
++	if (iocb->ki_flags & IOCB_DIRECT &&
++		!(f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))) {
++		ret = f2fs_convert_inline_inode(inode);
++		if (ret)
++			return ret;
++		ret = f2fs_map_blocks(inode, &map, 1, F2FS_GET_BLOCK_PRE_DIO);
++	}
++	return ret;
+ }
+ 
+ /*
+@@ -670,7 +678,8 @@ next_block:
+ 		map->m_len = 1;
+ 	} else if ((map->m_pblk != NEW_ADDR &&
+ 			blkaddr == (map->m_pblk + ofs)) ||
+-			(map->m_pblk == NEW_ADDR && blkaddr == NEW_ADDR)) {
++			(map->m_pblk == NEW_ADDR && blkaddr == NEW_ADDR) ||
++			flag == F2FS_GET_BLOCK_PRE_DIO) {
+ 		ofs++;
+ 		map->m_len++;
+ 	} else {
+@@ -1614,34 +1623,21 @@ static int check_direct_IO(struct inode *inode, struct iov_iter *iter,
+ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+ 			      loff_t offset)
+ {
+-	struct file *file = iocb->ki_filp;
+-	struct address_space *mapping = file->f_mapping;
++	struct address_space *mapping = iocb->ki_filp->f_mapping;
+ 	struct inode *inode = mapping->host;
+ 	size_t count = iov_iter_count(iter);
+ 	int err;
+ 
+-	/* we don't need to use inline_data strictly */
+-	err = f2fs_convert_inline_inode(inode);
++	err = check_direct_IO(inode, iter, offset);
+ 	if (err)
+ 		return err;
+ 
+ 	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+ 		return 0;
+ 
+-	err = check_direct_IO(inode, iter, offset);
+-	if (err)
+-		return err;
+-
+ 	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+ 
+-	if (iov_iter_rw(iter) == WRITE) {
+-		err = __allocate_data_blocks(inode, offset, count);
+-		if (err)
+-			goto out;
+-	}
+-
+ 	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
+-out:
+ 	if (err < 0 && iov_iter_rw(iter) == WRITE)
+ 		f2fs_write_failed(mapping, offset + count);
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5f98236..4451791 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -391,6 +391,7 @@ struct f2fs_map_blocks {
+ #define F2FS_GET_BLOCK_DIO		1
+ #define F2FS_GET_BLOCK_FIEMAP		2
+ #define F2FS_GET_BLOCK_BMAP		3
++#define F2FS_GET_BLOCK_PRE_DIO		4
+ 
+ /*
+  * i_advise uses FADVISE_XXX_BIT. We can add additional hints later.
+@@ -1905,6 +1906,7 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *);
+ void set_data_blkaddr(struct dnode_of_data *);
+ int reserve_new_block(struct dnode_of_data *);
+ int f2fs_get_block(struct dnode_of_data *, pgoff_t);
++ssize_t f2fs_preallocate_blocks(struct kiocb *, struct iov_iter *);
+ int f2fs_reserve_block(struct dnode_of_data *, pgoff_t);
+ struct page *get_read_data_page(struct inode *, pgoff_t, int, bool);
+ struct page *find_data_page(struct inode *, pgoff_t);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 50fa296..3ffb6c1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1873,14 +1873,32 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 
+ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+-	struct inode *inode = file_inode(iocb->ki_filp);
++	struct file *file = iocb->ki_filp;
++	struct inode *inode = file_inode(file);
++	ssize_t ret;
+ 
+ 	if (f2fs_encrypted_inode(inode) &&
+ 				!f2fs_has_encryption_key(inode) &&
+ 				f2fs_get_encryption_info(inode))
+ 		return -EACCES;
+ 
+-	return generic_file_write_iter(iocb, from);
++	mutex_lock(&inode->i_mutex);
++	ret = generic_write_checks(iocb, from);
++	if (ret > 0) {
++		ret = f2fs_preallocate_blocks(iocb, from);
++		if (!ret)
++			ret = __generic_file_write_iter(iocb, from);
++	}
++	mutex_unlock(&inode->i_mutex);
++
++	if (ret > 0) {
++		ssize_t err;
++
++		err = generic_write_sync(file, iocb->ki_pos - ret, ret);
++		if (err < 0)
++			ret = err;
++	}
++	return ret;
+ }
+ 
+ #ifdef CONFIG_COMPAT
+-- 
+2.6.3
