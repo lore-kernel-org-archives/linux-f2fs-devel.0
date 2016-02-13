@@ -1,24 +1,24 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/3] f2fs crypto: sync with ext4's fname padding
-Date: Fri, 12 Feb 2016 18:56:34 -0800
-Message-ID: <1455332195-76333-2-git-send-email-jaegeuk@kernel.org>
-References: <1455332195-76333-1-git-send-email-jaegeuk@kernel.org>
+From: "Marcelline Adala" <postmaster@rcs-moscow.ru >
+Subject: HELLO...
+Date: Sat, 13 Feb 2016 09:29:38 -0800
+Message-ID: <D9AD78B8-2E95-42BC-9692-12E1E2C36975@mail.rcs-moscow.ru>
+Reply-To: marcelline.adala@yandex.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aUQO6-0003az-MS
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <postmaster@rcs-moscow.ru>) id 1aUmKh-0006u5-Vy
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 13 Feb 2016 02:56:46 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aUQO5-0001oO-V3
+	Sun, 14 Feb 2016 02:22:44 +0000
+Received: from mail.rcs-moscow.ru ([87.245.132.51])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aUmKg-0002JB-4Y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 13 Feb 2016 02:56:46 +0000
-In-Reply-To: <1455332195-76333-1-git-send-email-jaegeuk@kernel.org>
+	Sun, 14 Feb 2016 02:22:43 +0000
+Content-Description: Mail message body
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,44 +28,31 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-This patch fixes wrong adoption on fname padding.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/crypto_fname.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/crypto_fname.c b/fs/f2fs/crypto_fname.c
-index 905c065..73741fb 100644
---- a/fs/f2fs/crypto_fname.c
-+++ b/fs/f2fs/crypto_fname.c
-@@ -267,13 +267,13 @@ int f2fs_fname_crypto_alloc_buffer(struct inode *inode,
- 				   u32 ilen, struct f2fs_str *crypto_str)
- {
- 	unsigned int olen;
--	int padding = 16;
-+	int padding = 32;
- 	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
- 
- 	if (ci)
- 		padding = 4 << (ci->ci_flags & F2FS_POLICY_FLAGS_PAD_MASK);
--	if (padding < F2FS_CRYPTO_BLOCK_SIZE)
--		padding = F2FS_CRYPTO_BLOCK_SIZE;
-+	if (ilen < F2FS_CRYPTO_BLOCK_SIZE)
-+		ilen = F2FS_CRYPTO_BLOCK_SIZE;
- 	olen = f2fs_fname_crypto_round_up(ilen, padding);
- 	crypto_str->len = olen;
- 	if (olen < F2FS_FNAME_CRYPTO_DIGEST_SIZE * 2)
--- 
-2.6.3
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+SGkgRGVhciwKCkknbSBNYXJjZWxsaW5lIEFkYWxhLCBJIGFtIGEgTmF0aW9uYWwgb2YgRnJhbmNl
+IGFuZCBJIGxpdmUgaW4gQWJpZGphbiwgQ290ZSBk4oCZSXZvaXJlLiBJ4oCZbSBjb250YWN0aW5n
+IGJlY2F1c2UgSSB3YW50IHRvIGJlIHlvdXIgZnJpZW5kIGFuZCBjb25maWRlIGluIHlvdSBiZWNh
+dXNlIEkgaGF2ZSBpbiBteSBwb3NzZXNzaW9uIG5vdyAxODYuMTMgS2lsb2dyYW1zIG9mIEdvbGQg
+RHVzdCwgUXVhbGl0eTogMjMgY2FyYXQsIHB1cml0eSA5MiUgdGhhdCBJIGluaGVyaXRlZCBmcm9t
+IG15IGxhdGUgbW90aGVyIHdoaWNoIEkgd2FudCB0byBzaGlwIHRvIHlvdXIgY291bnRyeSBhbmQg
+c2VsbCBmb3IgaW52ZXN0bWVudCBpbiB5b3VyIGNvdW50cnkgYmVjYXVzZSBJIHdhbnQgdG8gbGVh
+dmUgQ290ZSBkJ0l2b2lyZSBhbmQgcmVsb2NhdGUgdG8geW91ciBjb3VudHJ5IHRvIGNvbnRpbnVl
+IG15IGVkdWNhdGlvbiBpbiB5b3VyIGNvdW50cnkuIEkgd2FudCB5b3UgdG8gc3RhbmQgYnkgbWUg
+YXMgbXkgdHV0b3IgYW5kIHNoaXAgdGhpcyBHb2xkIER1c3QgdG8geW91ciBjb3VudHJ5IGFuZCBz
+ZWxsIGZvciBpbnZlc3RtZW50IGluIHlvdXIgIGNvdW50cnkuCgpOb3RlIHRoYXQgSSBhbSB3cml0
+aW5nIHlvdSB0aGlzIGVtYWlsIHB1cmVseSBvbiB0aGUgZ3JvdW5kIG9mIHRydXN0IGJlY2F1c2Ug
+SSBkb27igJl0IGtub3cgeW91IGFuZCB3ZSBoYXZlIG5vdCBtZXQgYmVmb3JlLiBJIGZvdW5kIHlv
+dSBoZXJlIGFuZCBteSBtaW5kIGNvbnZpbmNlZCBtZSB0aGF0IEkgY2FuIHRydXN0IHlvdS4gV2Fp
+dGluZyB0byBoZWFyIGZyb20geW91LgoKTXkgYmVzdCByZWdhcmRzIHRvIHlvdS4KCllvdXJzIFRy
+dWx5LAoKTWFyY2VsbGluZSBBZGFsYQoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTaXRlMjR4NyBB
+UE0gSW5zaWdodDogR2V0IERlZXAgVmlzaWJpbGl0eSBpbnRvIEFwcGxpY2F0aW9uIFBlcmZvcm1h
+bmNlCkFQTSArIE1vYmlsZSBBUE0gKyBSVU06IE1vbml0b3IgMyBBcHAgaW5zdGFuY2VzIGF0IGp1
+c3QgJDM1L01vbnRoCk1vbml0b3IgZW5kLXRvLWVuZCB3ZWIgdHJhbnNhY3Rpb25zIGFuZCB0YWtl
+IGNvcnJlY3RpdmUgYWN0aW9ucyBub3cKVHJvdWJsZXNob290IGZhc3RlciBhbmQgaW1wcm92ZSBl
+bmQtdXNlciBleHBlcmllbmNlLiBTaWdudXAgTm93IQpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xp
+Y2submV0L2dhbXBhZC9jbGs/aWQ9MjcyNDg3MTUxJml1PS80MTQwCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
+aXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMu
+c291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
