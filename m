@@ -1,24 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 5/5] f2fs crypto: add missing locking for
-	keyring_key access
-Date: Mon,  8 Feb 2016 17:34:17 -0800
-Message-ID: <1454981657-25473-5-git-send-email-jaegeuk@kernel.org>
-References: <1454981657-25473-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/3] f2fs: use correct errno
+Date: Fri, 12 Feb 2016 18:56:33 -0800
+Message-ID: <1455332195-76333-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aSxCK-0005YI-Ru
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aUQO4-0003ah-UO
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 09 Feb 2016 01:34:32 +0000
+	Sat, 13 Feb 2016 02:56:44 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1aSxCK-0003bc-4M for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 09 Feb 2016 01:34:32 +0000
-In-Reply-To: <1454981657-25473-1-git-send-email-jaegeuk@kernel.org>
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1aUQO4-0002Bw-2p
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 13 Feb 2016 02:56:44 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,46 +27,28 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch adopts:
-	ext4 crypto: add missing locking for keyring_key access
+This patch is to fix misused error number.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/crypto_key.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/crypto_key.c b/fs/f2fs/crypto_key.c
-index 2d491ee..9094fca 100644
---- a/fs/f2fs/crypto_key.c
-+++ b/fs/f2fs/crypto_key.c
-@@ -202,9 +202,11 @@ retry:
- 		res = -ENOKEY;
- 		goto out;
- 	}
-+	down_read(&keyring_key->sem);
- 	ukp = user_key_payload(keyring_key);
- 	if (ukp->datalen != sizeof(struct f2fs_encryption_key)) {
- 		res = -EINVAL;
-+		up_read(&keyring_key->sem);
- 		goto out;
- 	}
- 	master_key = (struct f2fs_encryption_key *)ukp->data;
-@@ -215,10 +217,12 @@ retry:
- 				"f2fs: key size incorrect: %d\n",
- 				master_key->size);
- 		res = -ENOKEY;
-+		up_read(&keyring_key->sem);
- 		goto out;
- 	}
- 	res = f2fs_derive_key_aes(ctx.nonce, master_key->raw,
- 				  raw_key);
-+	up_read(&keyring_key->sem);
- 	if (res)
- 		goto out;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 57a5f7b..47fbb72 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -505,7 +505,7 @@ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
  
+ bool discard_next_dnode(struct f2fs_sb_info *sbi, block_t blkaddr)
+ {
+-	int err = -ENOTSUPP;
++	int err = -EOPNOTSUPP;
+ 
+ 	if (test_opt(sbi, DISCARD)) {
+ 		struct seg_entry *se = get_seg_entry(sbi,
 -- 
 2.6.3
 
