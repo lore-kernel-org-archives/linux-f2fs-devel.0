@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 3/7] f2fs: reorder nat cache lock in cache_nat_entry
-Date: Sun, 14 Feb 2016 18:53:33 +0800
-Message-ID: <00fc01d16716$0a657de0$1f3079a0$@samsung.com>
+Subject: [PATCH 4/7] f2fs: enhance IO path with block plug
+Date: Sun, 14 Feb 2016 18:54:33 +0800
+Message-ID: <00fd01d16716$2d14e2e0$873ea8a0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -12,87 +12,111 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In cache_nat_entry, if we fail to hit nat cache, we try to load nat
-entries from journal of current segment cache or NAT pages for updating,
-during the whole updating process, write lock of nat_tree_lock will be
-held to avoid inconsistent condition.
-
-But this way may cause low efficient when updating nat cache, because it
-serializes accessing in journal cache or reading NAT pages.
-
-Here, we reorder lock and update flow like below:
-
- - get_node_info
-  - down_read(nat_tree_lock)
-  - lookup nat cache --- hit -> unlock & return
-  - lookup journal cache --- hit -> unlock & goto update
-  - up_read(nat_tree_lock)
-update:
-  - down_write(nat_tree_lock)
-  - cache_nat_entry
-   - lookup nat cache --- nohit -> update
-  - up_write(nat_tree_lock)
+Try to use block plug in more place as below to let process cache bios
+as much as possbile, in order to reduce lock overhead of queue in IO
+scheduler.
+1) sync_meta_pages
+2) ra_meta_pages
+3) f2fs_balance_fs_bg
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/node.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ fs/f2fs/checkpoint.c | 12 ++++++++----
+ fs/f2fs/segment.c    |  9 +++++++--
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 94b8016..966176b 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -257,15 +257,20 @@ static struct nat_entry *grab_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid)
- 	return new;
- }
- 
--static void cache_nat_entry(struct f2fs_nm_info *nm_i, nid_t nid,
-+static void cache_nat_entry(struct f2fs_sb_info *sbi, nid_t nid,
- 						struct f2fs_nat_entry *ne)
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index c6d4259..359a805 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -143,7 +143,6 @@ bool is_valid_blkaddr(struct f2fs_sb_info *sbi, block_t blkaddr, int type)
+ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 							int type, bool sync)
  {
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct nat_entry *e;
+-	block_t prev_blk_addr = 0;
+ 	struct page *page;
+ 	block_t blkno = start;
+ 	struct f2fs_io_info fio = {
+@@ -152,10 +151,12 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 		.rw = sync ? (READ_SYNC | REQ_META | REQ_PRIO) : READA,
+ 		.encrypted_page = NULL,
+ 	};
++	struct blk_plug plug;
  
- 	e = __lookup_nat_cache(nm_i, nid);
- 	if (!e) {
- 		e = grab_nat_entry(nm_i, nid);
- 		node_info_from_raw_nat(&e->ni, ne);
-+	} else {
-+		f2fs_bug_on(sbi, nat_get_ino(e) != ne->ino ||
-+				nat_get_blkaddr(e) != ne->block_addr ||
-+				nat_get_version(e) != ne->version);
+ 	if (unlikely(type == META_POR))
+ 		fio.rw &= ~REQ_META;
+ 
++	blk_start_plug(&plug);
+ 	for (; nrpages-- > 0; blkno++) {
+ 
+ 		if (!is_valid_blkaddr(sbi, blkno, type))
+@@ -174,9 +175,6 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
+ 			/* get sit block addr */
+ 			fio.blk_addr = current_sit_addr(sbi,
+ 					blkno * SIT_ENTRY_PER_BLOCK);
+-			if (blkno != start && prev_blk_addr + 1 != fio.blk_addr)
+-				goto out;
+-			prev_blk_addr = fio.blk_addr;
+ 			break;
+ 		case META_SSA:
+ 		case META_CP:
+@@ -201,6 +199,7 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
  	}
+ out:
+ 	f2fs_submit_merged_bio(sbi, META, READ);
++	blk_finish_plug(&plug);
+ 	return blkno - start;
  }
  
-@@ -371,15 +376,12 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
- 		ni->ino = nat_get_ino(e);
- 		ni->blk_addr = nat_get_blkaddr(e);
- 		ni->version = nat_get_version(e);
--	}
--	up_read(&nm_i->nat_tree_lock);
--	if (e)
-+		up_read(&nm_i->nat_tree_lock);
- 		return;
-+	}
+@@ -287,9 +286,12 @@ long sync_meta_pages(struct f2fs_sb_info *sbi, enum page_type type,
+ 	struct writeback_control wbc = {
+ 		.for_reclaim = 0,
+ 	};
++	struct blk_plug plug;
  
- 	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
+ 	pagevec_init(&pvec, 0);
  
--	down_write(&nm_i->nat_tree_lock);
--
- 	/* Check current segment summary */
- 	down_read(&curseg->journal_rwsem);
- 	i = lookup_journal_in_cursum(journal, NAT_JOURNAL, nid, 0);
-@@ -398,8 +400,10 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
- 	node_info_from_raw_nat(ni, &ne);
- 	f2fs_put_page(page, 1);
- cache:
-+	up_read(&nm_i->nat_tree_lock);
- 	/* cache nat entry */
--	cache_nat_entry(NM_I(sbi), nid, &ne);
-+	down_write(&nm_i->nat_tree_lock);
-+	cache_nat_entry(sbi, nid, &ne);
- 	up_write(&nm_i->nat_tree_lock);
++	blk_start_plug(&plug);
++
+ 	while (index <= end) {
+ 		int i, nr_pages;
+ 		nr_pages = pagevec_lookup_tag(&pvec, mapping, &index,
+@@ -342,6 +344,8 @@ stop:
+ 	if (nwritten)
+ 		f2fs_submit_merged_bio(sbi, type, WRITE);
+ 
++	blk_finish_plug(&plug);
++
+ 	return nwritten;
  }
  
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7cb9a54..5d0e6e6 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -370,8 +370,13 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 			excess_prefree_segs(sbi) ||
+ 			excess_dirty_nats(sbi) ||
+ 			(is_idle(sbi) && f2fs_time_over(sbi, CP_TIME))) {
+-		if (test_opt(sbi, DATA_FLUSH))
++		if (test_opt(sbi, DATA_FLUSH)) {
++			struct blk_plug plug;
++
++			blk_start_plug(&plug);
+ 			sync_dirty_inodes(sbi, FILE_INODE);
++			blk_finish_plug(&plug);
++		}
+ 		f2fs_sync_fs(sbi->sb, true);
+ 		stat_inc_bg_cp_count(sbi->stat_info);
+ 	}
+@@ -2189,7 +2194,7 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ 	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+ 	unsigned int i, start, end;
+ 	unsigned int readed, start_blk = 0;
+-	int nrpages = MAX_BIO_BLOCKS(sbi);
++	int nrpages = MAX_BIO_BLOCKS(sbi) * 8;
+ 
+ 	do {
+ 		readed = ra_meta_pages(sbi, start_blk, nrpages, META_SIT, true);
 -- 
 2.7.0.2.g1b0b6dd
