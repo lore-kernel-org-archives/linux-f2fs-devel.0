@@ -1,93 +1,227 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: RE: [f2fs-dev] [PATCH 5/7] f2fs crypto: set up encryption info for new
- inodes in f2fs_inherit_context()
-Date: Mon, 15 Feb 2016 17:03:51 +0800
-Message-ID: <013601d167cf$e3e37180$abaa5480$@samsung.com>
-References: <00fe01d16716$5ec0a540$1c41efc0$@samsung.com>
+Subject: [PATCH] f2fs crypto: avoid unneeded memory allocation when
+ {en/de}crypting symlink
+Date: Mon, 15 Feb 2016 17:54:26 +0800
+Message-ID: <013701d167d6$f2fa0970$d8ee1c50$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <00fe01d16716$5ec0a540$1c41efc0$@samsung.com>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: tytso@mit.edu, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+This patch adopts f2fs with codes of ext4, it removes unneeded memory
+allocation in creating/accessing path of symlink.
 
-Please ignore this patch because it incurs deadlock as below:
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/crypto_fname.c | 21 +++++++++------
+ fs/f2fs/f2fs.h         |  1 +
+ fs/f2fs/namei.c        | 72 ++++++++++++++++++++++++--------------------------
+ 3 files changed, 48 insertions(+), 46 deletions(-)
 
- bit_wait_io+0x1f/0x60
- __wait_on_bit_lock+0x5c/0xb0
- __lock_page+0xba/0xd0
- pagecache_get_page+0x187/0x230
- __get_node_page+0x7d/0x200 [f2fs]
- get_node_page+0x12/0x20 [f2fs]
- read_all_xattrs+0x213/0x330 [f2fs]
- f2fs_getxattr+0x86/0x140 [f2fs]
- _f2fs_get_encryption_info+0xb4/0x4d0 [f2fs]
- f2fs_inherit_context+0xf8/0x100 [f2fs]
- init_inode_metadata+0xb3/0x410 [f2fs]
- __f2fs_add_link+0x2e1/0x650 [f2fs]
- f2fs_mkdir+0xdb/0x180 [f2fs]
- vfs_mkdir+0xe5/0x160
- SyS_mkdirat+0xb8/0xf0
- SyS_mkdir+0x19/0x20
- entry_SYSCALL_64_fastpath+0x12/0x6f
-
-Thanks,
-
-> -----Original Message-----
-> From: Chao Yu [mailto:chao2.yu@samsung.com]
-> Sent: Sunday, February 14, 2016 6:56 PM
-> To: Jaegeuk Kim
-> Cc: tytso@mit.edu; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Subject: [f2fs-dev] [PATCH 5/7] f2fs crypto: set up encryption info for new inodes in
-> f2fs_inherit_context()
-> 
-> This patch syncs f2fs with commit 555570295532 ("ext4 crypto: set up
-> encryption info for new inodes in ext4_inherit_context()") from ext4.
-> 
-> Set up the encryption information for newly created inodes immediately
-> after they inherit their encryption context from their parent
-> directories.
-> 
-> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
-> ---
->  fs/f2fs/crypto_policy.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/crypto_policy.c b/fs/f2fs/crypto_policy.c
-> index d4a96af..0fb08b0 100644
-> --- a/fs/f2fs/crypto_policy.c
-> +++ b/fs/f2fs/crypto_policy.c
-> @@ -203,7 +203,10 @@ int f2fs_inherit_context(struct inode *parent, struct inode *child,
->  			F2FS_KEY_DESCRIPTOR_SIZE);
-> 
->  	get_random_bytes(ctx.nonce, F2FS_KEY_DERIVATION_NONCE_SIZE);
-> -	return f2fs_setxattr(child, F2FS_XATTR_INDEX_ENCRYPTION,
-> +	res = f2fs_setxattr(child, F2FS_XATTR_INDEX_ENCRYPTION,
->  				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT, &ctx,
->  				sizeof(ctx), ipage, XATTR_CREATE);
-> +	if (!res)
-> +		res = f2fs_get_encryption_info(child);
-> +	return res;
->  }
-> --
-> 2.7.0.2.g1b0b6dd
-> 
-> 
-> 
-> ------------------------------------------------------------------------------
-> Site24x7 APM Insight: Get Deep Visibility into Application Performance
-> APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-> Monitor end-to-end web transactions and take corrective actions now
-> Troubleshoot faster and improve end-user experience. Signup Now!
-> http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+diff --git a/fs/f2fs/crypto_fname.c b/fs/f2fs/crypto_fname.c
+index 73741fb..6dfdc97 100644
+--- a/fs/f2fs/crypto_fname.c
++++ b/fs/f2fs/crypto_fname.c
+@@ -257,6 +257,18 @@ u32 f2fs_fname_crypto_round_up(u32 size, u32 blksize)
+ 	return ((size + blksize - 1) / blksize) * blksize;
+ }
+ 
++unsigned f2fs_fname_encrypted_size(struct inode *inode, u32 ilen)
++{
++	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
++	int padding = 32;
++
++	if (ci)
++		padding = 4 << (ci->ci_flags & F2FS_POLICY_FLAGS_PAD_MASK);
++	if (ilen < F2FS_CRYPTO_BLOCK_SIZE)
++		ilen = F2FS_CRYPTO_BLOCK_SIZE;
++	return f2fs_fname_crypto_round_up(ilen, padding);
++}
++
+ /**
+  * f2fs_fname_crypto_alloc_obuff() -
+  *
+@@ -266,15 +278,8 @@ u32 f2fs_fname_crypto_round_up(u32 size, u32 blksize)
+ int f2fs_fname_crypto_alloc_buffer(struct inode *inode,
+ 				   u32 ilen, struct f2fs_str *crypto_str)
+ {
+-	unsigned int olen;
+-	int padding = 32;
+-	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
++	unsigned int olen = f2fs_fname_encrypted_size(inode, ilen);
+ 
+-	if (ci)
+-		padding = 4 << (ci->ci_flags & F2FS_POLICY_FLAGS_PAD_MASK);
+-	if (ilen < F2FS_CRYPTO_BLOCK_SIZE)
+-		ilen = F2FS_CRYPTO_BLOCK_SIZE;
+-	olen = f2fs_fname_crypto_round_up(ilen, padding);
+ 	crypto_str->len = olen;
+ 	if (olen < F2FS_FNAME_CRYPTO_DIGEST_SIZE * 2)
+ 		olen = F2FS_FNAME_CRYPTO_DIGEST_SIZE * 2;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c4c7bf1..fc302ea 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2225,6 +2225,7 @@ int _f2fs_get_encryption_info(struct inode *inode);
+ /* crypto_fname.c */
+ bool f2fs_valid_filenames_enc_mode(uint32_t);
+ u32 f2fs_fname_crypto_round_up(u32, u32);
++unsigned f2fs_fname_encrypted_size(struct inode *, u32);
+ int f2fs_fname_crypto_alloc_buffer(struct inode *, u32, struct f2fs_str *);
+ int f2fs_fname_disk_to_usr(struct inode *, f2fs_hash_t *,
+ 			const struct f2fs_str *, struct f2fs_str *);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 6f944e5..fcc8c26 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -345,13 +345,23 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
+ 	struct inode *inode;
+ 	size_t len = strlen(symname);
+-	size_t p_len;
+-	char *p_str;
+-	struct f2fs_str disk_link = FSTR_INIT(NULL, 0);
++	struct f2fs_str disk_link = FSTR_INIT((char *)symname, len + 1);
+ 	struct f2fs_encrypted_symlink_data *sd = NULL;
+ 	int err;
+ 
+-	if (len > dir->i_sb->s_blocksize)
++	if (f2fs_encrypted_inode(dir)) {
++		err = f2fs_get_encryption_info(dir);
++		if (err)
++			return err;
++
++		if (!f2fs_encrypted_inode(dir))
++			return -EPERM;
++
++		disk_link.len = (f2fs_fname_encrypted_size(dir, len) +
++				sizeof(struct f2fs_encrypted_symlink_data));
++	}
++
++	if (disk_link.len > dir->i_sb->s_blocksize)
+ 		return -ENAMETOOLONG;
+ 
+ 	inode = f2fs_new_inode(dir, S_IFLNK | S_IRWXUGO);
+@@ -374,42 +384,36 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	f2fs_unlock_op(sbi);
+ 	alloc_nid_done(sbi, inode->i_ino);
+ 
+-	if (f2fs_encrypted_inode(dir)) {
++	if (f2fs_encrypted_inode(inode)) {
+ 		struct qstr istr = QSTR_INIT(symname, len);
++		struct f2fs_str ostr;
+ 
+-		err = f2fs_get_encryption_info(inode);
+-		if (err)
++		sd = kzalloc(disk_link.len, GFP_NOFS);
++		if (!sd) {
++			err = -ENOMEM;
+ 			goto err_out;
++		}
+ 
+-		err = f2fs_fname_crypto_alloc_buffer(inode, len, &disk_link);
++		err = f2fs_get_encryption_info(inode);
+ 		if (err)
+ 			goto err_out;
+ 
+-		err = f2fs_fname_usr_to_disk(inode, &istr, &disk_link);
+-		if (err < 0)
+-			goto err_out;
+-
+-		p_len = encrypted_symlink_data_len(disk_link.len) + 1;
+-
+-		if (p_len > dir->i_sb->s_blocksize) {
+-			err = -ENAMETOOLONG;
++		if (!f2fs_encrypted_inode(inode)) {
++			err = -EPERM;
+ 			goto err_out;
+ 		}
+ 
+-		sd = kzalloc(p_len, GFP_NOFS);
+-		if (!sd) {
+-			err = -ENOMEM;
++		ostr.name = sd->encrypted_path;
++		ostr.len = disk_link.len;
++		err = f2fs_fname_usr_to_disk(inode, &istr, &ostr);
++		if (err < 0)
+ 			goto err_out;
+-		}
+-		memcpy(sd->encrypted_path, disk_link.name, disk_link.len);
+-		sd->len = cpu_to_le16(disk_link.len);
+-		p_str = (char *)sd;
+-	} else {
+-		p_len = len + 1;
+-		p_str = (char *)symname;
++
++		sd->len = cpu_to_le16(ostr.len);
++		disk_link.name = (char *)sd;
+ 	}
+ 
+-	err = page_symlink(inode, p_str, p_len);
++	err = page_symlink(inode, disk_link.name, disk_link.len);
+ 
+ err_out:
+ 	d_instantiate(dentry, inode);
+@@ -425,7 +429,8 @@ err_out:
+ 	 * performance regression.
+ 	 */
+ 	if (!err) {
+-		filemap_write_and_wait_range(inode->i_mapping, 0, p_len - 1);
++		filemap_write_and_wait_range(inode->i_mapping, 0,
++							disk_link.len - 1);
+ 
+ 		if (IS_DIRSYNC(dir))
+ 			f2fs_sync_fs(sbi->sb, 1);
+@@ -434,7 +439,6 @@ err_out:
+ 	}
+ 
+ 	kfree(sd);
+-	f2fs_fname_crypto_free_buffer(&disk_link);
+ 	return err;
+ out:
+ 	handle_failed_inode(inode);
+@@ -966,6 +970,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+ 
+ 	/* Symlink is encrypted */
+ 	sd = (struct f2fs_encrypted_symlink_data *)caddr;
++	cstr.name = sd->encrypted_path;
+ 	cstr.len = le16_to_cpu(sd->len);
+ 
+ 	/* this is broken symlink case */
+@@ -973,12 +978,6 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+ 		res = -ENOENT;
+ 		goto errout;
+ 	}
+-	cstr.name = kmalloc(cstr.len, GFP_NOFS);
+-	if (!cstr.name) {
+-		res = -ENOMEM;
+-		goto errout;
+-	}
+-	memcpy(cstr.name, sd->encrypted_path, cstr.len);
+ 
+ 	/* this is broken symlink case */
+ 	if (unlikely(cstr.name[0] == 0)) {
+@@ -1000,8 +999,6 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+ 	if (res < 0)
+ 		goto errout;
+ 
+-	kfree(cstr.name);
+-
+ 	paddr = pstr.name;
+ 
+ 	/* Null-terminate the name */
+@@ -1011,7 +1008,6 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+ 	set_delayed_call(done, kfree_link, paddr);
+ 	return paddr;
+ errout:
+-	kfree(cstr.name);
+ 	f2fs_fname_crypto_free_buffer(&pstr);
+ 	page_cache_release(cpage);
+ 	return ERR_PTR(res);
+-- 
+2.7.0
