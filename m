@@ -1,67 +1,93 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH 7/7] f2fs crypto: handle unexpected lack of encryption keys
-Date: Sun, 14 Feb 2016 18:58:35 +0800
-Message-ID: <010001d16716$bfda6f00$3f8f4d00$@samsung.com>
+Subject: RE: [f2fs-dev] [PATCH 5/7] f2fs crypto: set up encryption info for new
+ inodes in f2fs_inherit_context()
+Date: Mon, 15 Feb 2016 17:03:51 +0800
+Message-ID: <013601d167cf$e3e37180$abaa5480$@samsung.com>
+References: <00fe01d16716$5ec0a540$1c41efc0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <00fe01d16716$5ec0a540$1c41efc0$@samsung.com>
 Content-language: zh-cn
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, tytso@mit.edu
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: tytso@mit.edu, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch syncs f2fs with commit abdd438b26b4 ("ext4 crypto: handle
-unexpected lack of encryption keys") from ext4.
+Hi Jaegeuk,
 
-Fix up attempts by users to try to write to a file when they don't
-have access to the encryption key.
+Please ignore this patch because it incurs deadlock as below:
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- fs/f2fs/crypto_policy.c | 3 ++-
- fs/f2fs/file.c          | 6 +++++-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ bit_wait_io+0x1f/0x60
+ __wait_on_bit_lock+0x5c/0xb0
+ __lock_page+0xba/0xd0
+ pagecache_get_page+0x187/0x230
+ __get_node_page+0x7d/0x200 [f2fs]
+ get_node_page+0x12/0x20 [f2fs]
+ read_all_xattrs+0x213/0x330 [f2fs]
+ f2fs_getxattr+0x86/0x140 [f2fs]
+ _f2fs_get_encryption_info+0xb4/0x4d0 [f2fs]
+ f2fs_inherit_context+0xf8/0x100 [f2fs]
+ init_inode_metadata+0xb3/0x410 [f2fs]
+ __f2fs_add_link+0x2e1/0x650 [f2fs]
+ f2fs_mkdir+0xdb/0x180 [f2fs]
+ vfs_mkdir+0xe5/0x160
+ SyS_mkdirat+0xb8/0xf0
+ SyS_mkdir+0x19/0x20
+ entry_SYSCALL_64_fastpath+0x12/0x6f
 
-diff --git a/fs/f2fs/crypto_policy.c b/fs/f2fs/crypto_policy.c
-index 0fb08b0..4d7d7ff 100644
---- a/fs/f2fs/crypto_policy.c
-+++ b/fs/f2fs/crypto_policy.c
-@@ -192,7 +192,8 @@ int f2fs_inherit_context(struct inode *parent, struct inode *child,
- 		return res;
- 
- 	ci = F2FS_I(parent)->i_crypt_info;
--	BUG_ON(ci == NULL);
-+	if (ci == NULL)
-+		return -ENOKEY;
- 
- 	ctx.format = F2FS_ENCRYPTION_CONTEXT_FORMAT_V1;
- 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 05f5f2f..8dea195 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -424,6 +424,8 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 		err = f2fs_get_encryption_info(inode);
- 		if (err)
- 			return 0;
-+		if (!f2fs_encrypted_inode(inode))
-+			return -ENOKEY;
- 	}
- 
- 	/* we don't need to use inline_data strictly */
-@@ -443,7 +445,9 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
- 	if (!ret && f2fs_encrypted_inode(inode)) {
- 		ret = f2fs_get_encryption_info(inode);
- 		if (ret)
--			ret = -EACCES;
-+			return -EACCES;
-+		if (!f2fs_encrypted_inode(inode))
-+			return -ENOKEY;
- 	}
- 	return ret;
- }
--- 
-2.7.0.2.g1b0b6dd
+Thanks,
+
+> -----Original Message-----
+> From: Chao Yu [mailto:chao2.yu@samsung.com]
+> Sent: Sunday, February 14, 2016 6:56 PM
+> To: Jaegeuk Kim
+> Cc: tytso@mit.edu; linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net
+> Subject: [f2fs-dev] [PATCH 5/7] f2fs crypto: set up encryption info for new inodes in
+> f2fs_inherit_context()
+> 
+> This patch syncs f2fs with commit 555570295532 ("ext4 crypto: set up
+> encryption info for new inodes in ext4_inherit_context()") from ext4.
+> 
+> Set up the encryption information for newly created inodes immediately
+> after they inherit their encryption context from their parent
+> directories.
+> 
+> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  fs/f2fs/crypto_policy.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/crypto_policy.c b/fs/f2fs/crypto_policy.c
+> index d4a96af..0fb08b0 100644
+> --- a/fs/f2fs/crypto_policy.c
+> +++ b/fs/f2fs/crypto_policy.c
+> @@ -203,7 +203,10 @@ int f2fs_inherit_context(struct inode *parent, struct inode *child,
+>  			F2FS_KEY_DESCRIPTOR_SIZE);
+> 
+>  	get_random_bytes(ctx.nonce, F2FS_KEY_DERIVATION_NONCE_SIZE);
+> -	return f2fs_setxattr(child, F2FS_XATTR_INDEX_ENCRYPTION,
+> +	res = f2fs_setxattr(child, F2FS_XATTR_INDEX_ENCRYPTION,
+>  				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT, &ctx,
+>  				sizeof(ctx), ipage, XATTR_CREATE);
+> +	if (!res)
+> +		res = f2fs_get_encryption_info(child);
+> +	return res;
+>  }
+> --
+> 2.7.0.2.g1b0b6dd
+> 
+> 
+> 
+> ------------------------------------------------------------------------------
+> Site24x7 APM Insight: Get Deep Visibility into Application Performance
+> APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+> Monitor end-to-end web transactions and take corrective actions now
+> Troubleshoot faster and improve end-user experience. Signup Now!
+> http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
