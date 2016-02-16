@@ -1,23 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/8] fs crypto: add policy.c to handle contexts
-Date: Mon, 15 Feb 2016 18:13:07 -0800
-Message-ID: <1455588792-87825-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 4/8] fs crypto: add keyinfo.c to handle
+	permissions
+Date: Mon, 15 Feb 2016 18:13:08 -0800
+Message-ID: <1455588792-87825-4-git-send-email-jaegeuk@kernel.org>
 References: <1455588792-87825-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aVVAT-00086u-Qr
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aVVAV-0004cf-R1
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 16 Feb 2016 02:15:09 +0000
+	Tue, 16 Feb 2016 02:15:11 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aVVAS-0006DX-MD
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1aVVAU-0001R7-Hz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 16 Feb 2016 02:15:09 +0000
+	Tue, 16 Feb 2016 02:15:11 +0000
 In-Reply-To: <1455588792-87825-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,305 +32,341 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu
 Cc: Ildar Muslukhov <muslukhovi@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>
 
-This patch adds policy.c supporting context management.
+This patch adds keyinfo.c supporting key management.
 
-1. For ioctls:
- - fscrypt_process_policy
- - fscrypt_get_policy
-
-2. For context permission
- - fscrypt_has_permitted_context
- - fscrypt_inherit_context
+ - fscrypt_get_encryption_info
+ - fscrypt_free_encryption_info
 
 Signed-off-by: Michael Halcrow <mhalcrow@google.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Ildar Muslukhov <muslukhovi@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/crypto/policy.c       | 229 +++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fscrypto.h |  30 +++++++
- 2 files changed, 259 insertions(+)
- create mode 100644 fs/crypto/policy.c
+ fs/crypto/keyinfo.c      | 278 +++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fscrypto.h |  22 ++++
+ 2 files changed, 300 insertions(+)
+ create mode 100644 fs/crypto/keyinfo.c
 
-diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
 new file mode 100644
-index 0000000..0f9961e
+index 0000000..c662103
 --- /dev/null
-+++ b/fs/crypto/policy.c
-@@ -0,0 +1,229 @@
++++ b/fs/crypto/keyinfo.c
+@@ -0,0 +1,278 @@
 +/*
-+ * Encryption policy functions for per-file encryption support.
++ * key management facility for FS encryption support.
 + *
 + * Copyright (C) 2015, Google, Inc.
-+ * Copyright (C) 2015, Motorola Mobility.
 + *
-+ * Written by Michael Halcrow, 2015.
-+ * Modified by Jaegeuk Kim, 2015.
++ * This contains encryption key functions.
++ *
++ * Written by Michael Halcrow, Ildar Muslukhov, and Uday Savagaonkar, 2015.
 + */
 +
++#include <keys/encrypted-type.h>
++#include <keys/user-type.h>
 +#include <linux/random.h>
-+#include <linux/string.h>
++#include <linux/scatterlist.h>
++#include <uapi/linux/keyctl.h>
++#include <crypto/hash.h>
 +#include <linux/fscrypto.h>
 +
-+static int inode_has_encryption_context(struct inode *inode)
++static void derive_crypt_complete(struct crypto_async_request *req, int rc)
 +{
-+	if (!inode->i_sb->s_cop->get_context)
-+		return 0;
-+	return (inode->i_sb->s_cop->get_context(inode, NULL, 0L) > 0);
++	struct fscrypt_completion_result *ecr = req->data;
++
++	if (rc == -EINPROGRESS)
++		return;
++
++	ecr->res = rc;
++	complete(&ecr->completion);
 +}
-+
-+/*
-+ * check whether the policy is consistent with the encryption context
-+ * for the inode
-+ */
-+static int is_encryption_context_consistent_with_policy(struct inode *inode,
-+				const struct fscrypt_policy *policy)
-+{
-+	struct fscrypt_context ctx;
-+	int res;
-+
-+	if (!inode->i_sb->s_cop->get_context)
-+		return 0;
-+
-+	res = inode->i_sb->s_cop->get_context(inode, &ctx, sizeof(ctx));
-+	if (res != sizeof(ctx))
-+		return 0;
-+
-+	return (memcmp(ctx.master_key_descriptor, policy->master_key_descriptor,
-+			FS_KEY_DESCRIPTOR_SIZE) == 0 &&
-+			(ctx.flags == policy->flags) &&
-+			(ctx.contents_encryption_mode ==
-+			 policy->contents_encryption_mode) &&
-+			(ctx.filenames_encryption_mode ==
-+			 policy->filenames_encryption_mode));
-+}
-+
-+static int create_encryption_context_from_policy(struct inode *inode,
-+				const struct fscrypt_policy *policy)
-+{
-+	struct fscrypt_context ctx;
-+	int res;
-+
-+	if (!inode->i_sb->s_cop->set_context)
-+		return -EOPNOTSUPP;
-+
-+	if (inode->i_sb->s_cop->prepare_context) {
-+		res = inode->i_sb->s_cop->prepare_context(inode);
-+		if (res)
-+			return res;
-+	}
-+
-+	ctx.format = FS_ENCRYPTION_CONTEXT_FORMAT_V1;
-+	memcpy(ctx.master_key_descriptor, policy->master_key_descriptor,
-+					FS_KEY_DESCRIPTOR_SIZE);
-+
-+	if (!fscrypt_valid_contents_enc_mode(
-+				policy->contents_encryption_mode)) {
-+		printk(KERN_WARNING
-+		       "%s: Invalid contents encryption mode %d\n", __func__,
-+			policy->contents_encryption_mode);
-+		return -EINVAL;
-+	}
-+
-+	if (!fscrypt_valid_filenames_enc_mode(
-+				policy->filenames_encryption_mode)) {
-+		printk(KERN_WARNING
-+			"%s: Invalid filenames encryption mode %d\n", __func__,
-+			policy->filenames_encryption_mode);
-+		return -EINVAL;
-+	}
-+
-+	if (policy->flags & ~FS_POLICY_FLAGS_VALID)
-+		return -EINVAL;
-+
-+	ctx.contents_encryption_mode = policy->contents_encryption_mode;
-+	ctx.filenames_encryption_mode = policy->filenames_encryption_mode;
-+	ctx.flags = policy->flags;
-+	BUILD_BUG_ON(sizeof(ctx.nonce) != FS_KEY_DERIVATION_NONCE_SIZE);
-+	get_random_bytes(ctx.nonce, FS_KEY_DERIVATION_NONCE_SIZE);
-+
-+	return inode->i_sb->s_cop->set_context(inode, &ctx, sizeof(ctx), NULL);
-+}
-+
-+int fscrypt_process_policy(struct inode *inode,
-+				const struct fscrypt_policy *policy)
-+{
-+	if (policy->version != 0)
-+		return -EINVAL;
-+
-+	if (!inode_has_encryption_context(inode)) {
-+		if (!inode->i_sb->s_cop->empty_dir)
-+			return -EOPNOTSUPP;
-+		if (!inode->i_sb->s_cop->empty_dir(inode))
-+			return -ENOTEMPTY;
-+		return create_encryption_context_from_policy(inode, policy);
-+	}
-+
-+	if (is_encryption_context_consistent_with_policy(inode, policy))
-+		return 0;
-+
-+	printk(KERN_WARNING "%s: Policy inconsistent with encryption context\n",
-+	       __func__);
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL(fscrypt_process_policy);
-+
-+int fscrypt_get_policy(struct inode *inode, struct fscrypt_policy *policy)
-+{
-+	struct fscrypt_context ctx;
-+	int res;
-+
-+	if (!inode->i_sb->s_cop->get_context ||
-+			!inode->i_sb->s_cop->is_encrypted(inode))
-+		return -ENODATA;
-+
-+	res = inode->i_sb->s_cop->get_context(inode, &ctx, sizeof(ctx));
-+	if (res != sizeof(ctx))
-+		return -ENODATA;
-+	if (ctx.format != FS_ENCRYPTION_CONTEXT_FORMAT_V1)
-+		return -EINVAL;
-+
-+	policy->version = 0;
-+	policy->contents_encryption_mode = ctx.contents_encryption_mode;
-+	policy->filenames_encryption_mode = ctx.filenames_encryption_mode;
-+	policy->flags = ctx.flags;
-+	memcpy(&policy->master_key_descriptor, ctx.master_key_descriptor,
-+				FS_KEY_DESCRIPTOR_SIZE);
-+	return 0;
-+}
-+EXPORT_SYMBOL(fscrypt_get_policy);
-+
-+int fscrypt_has_permitted_context(struct inode *parent, struct inode *child)
-+{
-+	struct fscrypt_info *parent_ci, *child_ci;
-+	int res;
-+
-+	if ((parent == NULL) || (child == NULL)) {
-+		printk(KERN_ERR	"parent %p child %p\n", parent, child);
-+		BUG_ON(1);
-+	}
-+
-+	/* no restrictions if the parent directory is not encrypted */
-+	if (!parent->i_sb->s_cop->is_encrypted(parent))
-+		return 1;
-+	/* if the child directory is not encrypted, this is always a problem */
-+	if (!parent->i_sb->s_cop->is_encrypted(child))
-+		return 0;
-+	res = fscrypt_get_encryption_info(parent);
-+	if (res)
-+		return 0;
-+	res = fscrypt_get_encryption_info(child);
-+	if (res)
-+		return 0;
-+	parent_ci = parent->i_crypt_info;
-+	child_ci = child->i_crypt_info;
-+	if (!parent_ci && !child_ci)
-+		return 1;
-+	if (!parent_ci || !child_ci)
-+		return 0;
-+
-+	return (memcmp(parent_ci->ci_master_key,
-+			child_ci->ci_master_key,
-+			FS_KEY_DESCRIPTOR_SIZE) == 0 &&
-+		(parent_ci->ci_data_mode == child_ci->ci_data_mode) &&
-+		(parent_ci->ci_filename_mode == child_ci->ci_filename_mode) &&
-+		(parent_ci->ci_flags == child_ci->ci_flags));
-+}
-+EXPORT_SYMBOL(fscrypt_has_permitted_context);
 +
 +/**
-+ * fscrypt_inherit_context() - Sets a child context from its parent
-+ * @parent: Parent inode from which the context is inherited.
-+ * @child:  Child inode that inherits the context from @parent.
-+ * @fs_data:  private data given by FS.
-+ * @preload:  preload child i_crypt_info
++ * derive_key_aes() - Derive a key using AES-128-ECB
++ * @deriving_key: Encryption key used for derivation.
++ * @source_key:   Source key to which to apply derivation.
++ * @derived_key:  Derived key.
 + *
-+ * Return: Zero on success, non-zero otherwise
++ * Return: Zero on success; non-zero otherwise.
 + */
-+int fscrypt_inherit_context(struct inode *parent, struct inode *child,
-+						void *fs_data, bool preload)
++static int derive_key_aes(char deriving_key[FS_AES_128_ECB_KEY_SIZE],
++				char source_key[FS_AES_256_XTS_KEY_SIZE],
++				char derived_key[FS_AES_256_XTS_KEY_SIZE])
 +{
++	int res = 0;
++	struct ablkcipher_request *req = NULL;
++	DECLARE_FS_COMPLETION_RESULT(ecr);
++	struct scatterlist src_sg, dst_sg;
++	struct crypto_ablkcipher *tfm = crypto_alloc_ablkcipher("ecb(aes)", 0,
++								0);
++
++	if (IS_ERR(tfm)) {
++		res = PTR_ERR(tfm);
++		tfm = NULL;
++		goto out;
++	}
++	crypto_ablkcipher_set_flags(tfm, CRYPTO_TFM_REQ_WEAK_KEY);
++	req = ablkcipher_request_alloc(tfm, GFP_NOFS);
++	if (!req) {
++		res = -ENOMEM;
++		goto out;
++	}
++	ablkcipher_request_set_callback(req,
++			CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
++			derive_crypt_complete, &ecr);
++	res = crypto_ablkcipher_setkey(tfm, deriving_key,
++					FS_AES_128_ECB_KEY_SIZE);
++	if (res < 0)
++		goto out;
++
++	sg_init_one(&src_sg, source_key, FS_AES_256_XTS_KEY_SIZE);
++	sg_init_one(&dst_sg, derived_key, FS_AES_256_XTS_KEY_SIZE);
++	ablkcipher_request_set_crypt(req, &src_sg, &dst_sg,
++					FS_AES_256_XTS_KEY_SIZE, NULL);
++	res = crypto_ablkcipher_encrypt(req);
++	if (res == -EINPROGRESS || res == -EBUSY) {
++		wait_for_completion(&ecr.completion);
++		res = ecr.res;
++	}
++out:
++	if (req)
++		ablkcipher_request_free(req);
++	if (tfm)
++		crypto_free_ablkcipher(tfm);
++	return res;
++}
++
++static void put_crypt_info(struct fscrypt_info *ci)
++{
++	if (!ci)
++		return;
++
++	if (ci->ci_keyring_key)
++		key_put(ci->ci_keyring_key);
++	crypto_free_ablkcipher(ci->ci_ctfm);
++	kmem_cache_free(fscrypt_info_cachep, ci);
++}
++
++int get_crypt_info(struct inode *inode)
++{
++	struct fscrypt_info *crypt_info;
++	char full_key_descriptor[FS_KEY_DESC_PREFIX_SIZE +
++				(FS_KEY_DESCRIPTOR_SIZE * 2) + 1];
++	struct key *keyring_key = NULL;
++	struct fscrypt_key *master_key;
 +	struct fscrypt_context ctx;
-+	struct fscrypt_info *ci;
++	const struct user_key_payload *ukp;
++	struct crypto_ablkcipher *ctfm;
++	const char *cipher_str;
++	char raw_key[FS_MAX_KEY_SIZE];
++	char mode;
 +	int res;
 +
-+	if (!parent->i_sb->s_cop->set_context)
-+		return -EOPNOTSUPP;
-+
-+	res = fscrypt_get_encryption_info(parent);
-+	if (res < 0)
++	res = fscrypt_initialize();
++	if (res)
 +		return res;
 +
-+	ci = parent->i_crypt_info;
-+	if (ci == NULL)
-+		return -ENOKEY;
++	if (!inode->i_sb->s_cop->get_context)
++		return -EOPNOTSUPP;
++retry:
++	crypt_info = ACCESS_ONCE(inode->i_crypt_info);
++	if (crypt_info) {
++		if (!crypt_info->ci_keyring_key ||
++				key_validate(crypt_info->ci_keyring_key) == 0)
++			return 0;
++		fscrypt_put_encryption_info(inode, crypt_info);
++		goto retry;
++	}
 +
-+	ctx.format = FS_ENCRYPTION_CONTEXT_FORMAT_V1;
-+	if (fscrypt_dummy_context_enabled(parent)) {
++	res = inode->i_sb->s_cop->get_context(inode, &ctx, sizeof(ctx));
++	if (res < 0) {
++		if (!fscrypt_dummy_context_enabled(inode))
++			return res;
 +		ctx.contents_encryption_mode = FS_ENCRYPTION_MODE_AES_256_XTS;
 +		ctx.filenames_encryption_mode = FS_ENCRYPTION_MODE_AES_256_CTS;
 +		ctx.flags = 0;
-+		memset(ctx.master_key_descriptor, 0x42, FS_KEY_DESCRIPTOR_SIZE);
-+		res = 0;
-+	} else {
-+		ctx.contents_encryption_mode = ci->ci_data_mode;
-+		ctx.filenames_encryption_mode = ci->ci_filename_mode;
-+		ctx.flags = ci->ci_flags;
-+		memcpy(ctx.master_key_descriptor, ci->ci_master_key,
-+				FS_KEY_DESCRIPTOR_SIZE);
++	} else if (res != sizeof(ctx)) {
++		return -EINVAL;
 +	}
-+	get_random_bytes(ctx.nonce, FS_KEY_DERIVATION_NONCE_SIZE);
-+	res = parent->i_sb->s_cop->set_context(child, &ctx,
-+						sizeof(ctx), fs_data);
++	res = 0;
++
++	crypt_info = kmem_cache_alloc(fscrypt_info_cachep, GFP_NOFS);
++	if (!crypt_info)
++		return -ENOMEM;
++
++	crypt_info->ci_flags = ctx.flags;
++	crypt_info->ci_data_mode = ctx.contents_encryption_mode;
++	crypt_info->ci_filename_mode = ctx.filenames_encryption_mode;
++	crypt_info->ci_ctfm = NULL;
++	crypt_info->ci_keyring_key = NULL;
++	memcpy(crypt_info->ci_master_key, ctx.master_key_descriptor,
++				sizeof(crypt_info->ci_master_key));
++	if (S_ISREG(inode->i_mode))
++		mode = crypt_info->ci_data_mode;
++	else if (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode))
++		mode = crypt_info->ci_filename_mode;
++	else
++		BUG();
++
++	switch (mode) {
++	case FS_ENCRYPTION_MODE_AES_256_XTS:
++		cipher_str = "xts(aes)";
++		break;
++	case FS_ENCRYPTION_MODE_AES_256_CTS:
++		cipher_str = "cts(cbc(aes))";
++		break;
++	default:
++		printk_once(KERN_WARNING
++			    "%s: unsupported key mode %d (ino %u)\n",
++			    __func__, mode, (unsigned) inode->i_ino);
++		res = -ENOKEY;
++		goto out;
++	}
++	if (fscrypt_dummy_context_enabled(inode)) {
++		memset(raw_key, 0x42, FS_AES_256_XTS_KEY_SIZE);
++		goto got_key;
++	}
++	memcpy(full_key_descriptor, FS_KEY_DESC_PREFIX,
++					FS_KEY_DESC_PREFIX_SIZE);
++	sprintf(full_key_descriptor + FS_KEY_DESC_PREFIX_SIZE,
++					"%*phN", FS_KEY_DESCRIPTOR_SIZE,
++					ctx.master_key_descriptor);
++	full_key_descriptor[FS_KEY_DESC_PREFIX_SIZE +
++					(2 * FS_KEY_DESCRIPTOR_SIZE)] = '\0';
++	keyring_key = request_key(&key_type_logon, full_key_descriptor, NULL);
++	if (IS_ERR(keyring_key)) {
++		res = PTR_ERR(keyring_key);
++		keyring_key = NULL;
++		goto out;
++	}
++	crypt_info->ci_keyring_key = keyring_key;
++	if (keyring_key->type != &key_type_logon) {
++		printk_once(KERN_WARNING
++				"%s: key type must be logon\n", __func__);
++		res = -ENOKEY;
++		goto out;
++	}
++	down_read(&keyring_key->sem);
++	ukp = user_key_payload(keyring_key);
++	if (ukp->datalen != sizeof(struct fscrypt_key)) {
++		res = -EINVAL;
++		up_read(&keyring_key->sem);
++		goto out;
++	}
++	master_key = (struct fscrypt_key *)ukp->data;
++	BUILD_BUG_ON(FS_AES_128_ECB_KEY_SIZE != FS_KEY_DERIVATION_NONCE_SIZE);
++
++	if (master_key->size != FS_AES_256_XTS_KEY_SIZE) {
++		printk_once(KERN_WARNING
++				"%s: key size incorrect: %d\n",
++				__func__, master_key->size);
++		res = -ENOKEY;
++		up_read(&keyring_key->sem);
++		goto out;
++	}
++	res = derive_key_aes(ctx.nonce, master_key->raw, raw_key);
++	up_read(&keyring_key->sem);
 +	if (res)
-+		return res;
-+	return preload ? fscrypt_get_encryption_info(child): 0;
++		goto out;
++got_key:
++	ctfm = crypto_alloc_ablkcipher(cipher_str, 0, 0);
++	if (!ctfm || IS_ERR(ctfm)) {
++		res = ctfm ? PTR_ERR(ctfm) : -ENOMEM;
++		printk(KERN_DEBUG
++		       "%s: error %d (inode %u) allocating crypto tfm\n",
++		       __func__, res, (unsigned) inode->i_ino);
++		goto out;
++	}
++	crypt_info->ci_ctfm = ctfm;
++	crypto_ablkcipher_clear_flags(ctfm, ~0);
++	crypto_tfm_set_flags(crypto_ablkcipher_tfm(ctfm),
++					CRYPTO_TFM_REQ_WEAK_KEY);
++	res = crypto_ablkcipher_setkey(ctfm, raw_key, fscrypt_key_size(mode));
++	if (res)
++		goto out;
++
++	memzero_explicit(raw_key, sizeof(raw_key));
++	if (cmpxchg(&inode->i_crypt_info, NULL, crypt_info) != NULL) {
++		put_crypt_info(crypt_info);
++		goto retry;
++	}
++	return 0;
++
++out:
++	if (res == -ENOKEY)
++		res = 0;
++	put_crypt_info(crypt_info);
++	memzero_explicit(raw_key, sizeof(raw_key));
++	return res;
 +}
-+EXPORT_SYMBOL(fscrypt_inherit_context);
++
++void fscrypt_put_encryption_info(struct inode *inode, struct fscrypt_info *ci)
++{
++	struct fscrypt_info *prev;
++
++	if (ci == NULL)
++		ci = ACCESS_ONCE(inode->i_crypt_info);
++	if (ci == NULL)
++		return;
++
++	prev = cmpxchg(&inode->i_crypt_info, ci, NULL);
++	if (prev != ci)
++		return;
++
++	put_crypt_info(ci);
++}
++EXPORT_SYMBOL(fscrypt_put_encryption_info);
++
++int fscrypt_get_encryption_info(struct inode *inode)
++{
++	struct fscrypt_info *ci = inode->i_crypt_info;
++
++	if (!ci ||
++		(ci->ci_keyring_key &&
++		 (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
++					       (1 << KEY_FLAG_REVOKED) |
++					       (1 << KEY_FLAG_DEAD)))))
++		return get_crypt_info(inode);
++	return 0;
++}
++EXPORT_SYMBOL(fscrypt_get_encryption_info);
 diff --git a/include/linux/fscrypto.h b/include/linux/fscrypto.h
-index 0a82f91..e17c6a4 100644
+index e17c6a4..4d17e10 100644
 --- a/include/linux/fscrypto.h
 +++ b/include/linux/fscrypto.h
-@@ -250,6 +250,12 @@ void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *, struct bio *);
- void fscrypt_pullback_bio_page(struct page **, bool);
- void fscrypt_restore_control_page(struct page *);
- int fscrypt_zeroout_range(struct inode *, pgoff_t, sector_t, unsigned int);
+@@ -256,6 +256,11 @@ int fscrypt_process_policy(struct inode *, const struct fscrypt_policy *);
+ int fscrypt_get_policy(struct inode *, struct fscrypt_policy *);
+ int fscrypt_has_permitted_context(struct inode *, struct inode *);
+ int fscrypt_inherit_context(struct inode *, struct inode *, void *, bool);
 +
-+/* policy.c */
-+int fscrypt_process_policy(struct inode *, const struct fscrypt_policy *);
-+int fscrypt_get_policy(struct inode *, struct fscrypt_policy *);
-+int fscrypt_has_permitted_context(struct inode *, struct inode *);
-+int fscrypt_inherit_context(struct inode *, struct inode *, void *, bool);
++/* keyinfo.c */
++int get_crypt_info(struct inode *);
++int fscrypt_get_encryption_info(struct inode *);
++void fscrypt_put_encryption_info(struct inode *, struct fscrypt_info *);
  #else
  /* crypto.c */
  static inline struct fscrypt_ctx *fscrypt_get_ctx(struct inode *i)
-@@ -293,5 +299,29 @@ static inline int fscrypt_zeroout_range(struct inode *i, pgoff_t p,
+@@ -323,5 +328,22 @@ static inline int fscrypt_inherit_context(struct inode *p, struct inode *i,
  {
  	return -EOPNOTSUPP;
  }
 +
-+/* policy.c */
-+static inline int fscrypt_process_policy(struct inode *i,
-+				const struct fscrypt_policy *p)
++/* keyinfo.c */
++static inline int get_crypt_info(struct inode *i)
 +{
 +	return -EOPNOTSUPP;
 +}
 +
-+static inline int fscrypt_get_policy(struct inode *i, struct fscrypt_policy *p)
++static inline int fscrypt_get_encryption_info(struct inode *i)
 +{
 +	return -EOPNOTSUPP;
 +}
 +
-+static inline int fscrypt_has_permitted_context(struct inode *p,
-+				struct inode *i)
++static inline void fscrypt_put_encryption_info(struct inode *i,
++					struct fscrypt_info *f)
 +{
-+	return 0;
-+}
-+
-+static inline int fscrypt_inherit_context(struct inode *p, struct inode *i,
-+				void *v, bool b)
-+{
-+	return -EOPNOTSUPP;
++	return;
 +}
  #endif
  #endif	/* _LINUX_FSCRYPTO_H */
