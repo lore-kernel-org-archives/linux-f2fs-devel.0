@@ -1,227 +1,622 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs crypto: avoid unneeded memory allocation when
- {en/de}crypting symlink
-Date: Mon, 15 Feb 2016 17:54:26 +0800
-Message-ID: <013701d167d6$f2fa0970$d8ee1c50$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 2/8] fs crypto: add crypto.c for encrypt/decrypt functions
+Date: Mon, 15 Feb 2016 18:13:06 -0800
+Message-ID: <1455588792-87825-2-git-send-email-jaegeuk@kernel.org>
+References: <1455588792-87825-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <1455588792-87825-1-git-send-email-jaegeuk@kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Ildar Muslukhov <ildarm@google.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adopts f2fs with codes of ext4, it removes unneeded memory
-allocation in creating/accessing path of symlink.
+This patch adds crypto.c supporting encrypting and decrypting functions.
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+1. IO preparation:
+  - fscrypt_get_ctx / fscrypt_release_ctx
+
+2. before IOs:
+  - fscrypt_encrypt_page
+  - fscrypt_decrypt_page
+  - fscrypt_zeroout_range
+
+3. after IOs:
+  - fscrypt_decrypt_bio_pages
+  - fscrypt_pullback_bio_page
+  - fscrypt_restore_control_page
+
+Signed-off-by: Michael Halcrow <mhalcrow@google.com>
+Signed-off-by: Ildar Muslukhov <ildarm@google.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/crypto_fname.c | 21 +++++++++------
- fs/f2fs/f2fs.h         |  1 +
- fs/f2fs/namei.c        | 72 ++++++++++++++++++++++++--------------------------
- 3 files changed, 48 insertions(+), 46 deletions(-)
+ fs/crypto/crypto.c       | 508 +++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fscrypto.h |  59 ++++++
+ 2 files changed, 567 insertions(+)
+ create mode 100644 fs/crypto/crypto.c
 
-diff --git a/fs/f2fs/crypto_fname.c b/fs/f2fs/crypto_fname.c
-index 73741fb..6dfdc97 100644
---- a/fs/f2fs/crypto_fname.c
-+++ b/fs/f2fs/crypto_fname.c
-@@ -257,6 +257,18 @@ u32 f2fs_fname_crypto_round_up(u32 size, u32 blksize)
- 	return ((size + blksize - 1) / blksize) * blksize;
- }
- 
-+unsigned f2fs_fname_encrypted_size(struct inode *inode, u32 ilen)
-+{
-+	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
-+	int padding = 32;
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+new file mode 100644
+index 0000000..62a52d2
+--- /dev/null
++++ b/fs/crypto/crypto.c
+@@ -0,0 +1,508 @@
++/*
++ * This contains encryption functions for per-file encryption.
++ *
++ * Copyright (C) 2015, Google, Inc.
++ * Copyright (C) 2015, Motorola Mobility
++ *
++ * Written by Michael Halcrow, 2014.
++ *
++ * Filename encryption additions
++ *	Uday Savagaonkar, 2014
++ * Encryption policy handling additions
++ *	Ildar Muslukhov, 2014
++ * Add fscrypt_pullback_bio_page()
++ *	Jaegeuk Kim, 2015.
++ *
++ * This has not yet undergone a rigorous security audit.
++ *
++ * The usage of AES-XTS should conform to recommendations in NIST
++ * Special Publication 800-38E and IEEE P1619/D16.
++ */
 +
-+	if (ci)
-+		padding = 4 << (ci->ci_flags & F2FS_POLICY_FLAGS_PAD_MASK);
-+	if (ilen < F2FS_CRYPTO_BLOCK_SIZE)
-+		ilen = F2FS_CRYPTO_BLOCK_SIZE;
-+	return f2fs_fname_crypto_round_up(ilen, padding);
++#include <linux/crypto.h>
++#include <linux/ecryptfs.h>
++#include <linux/pagemap.h>
++#include <linux/mempool.h>
++#include <linux/module.h>
++#include <linux/scatterlist.h>
++#include <linux/ratelimit.h>
++#include <linux/bio.h>
++#include <linux/fscrypto.h>
++
++static unsigned int num_prealloc_crypto_pages = 32;
++static unsigned int num_prealloc_crypto_ctxs = 128;
++
++module_param(num_prealloc_crypto_pages, uint, 0444);
++MODULE_PARM_DESC(num_prealloc_crypto_pages,
++		"Number of crypto pages to preallocate");
++module_param(num_prealloc_crypto_ctxs, uint, 0444);
++MODULE_PARM_DESC(num_prealloc_crypto_ctxs,
++		"Number of crypto contexts to preallocate");
++
++static mempool_t *fscrypt_bounce_page_pool = NULL;
++
++static LIST_HEAD(fscrypt_free_ctxs);
++static DEFINE_SPINLOCK(fscrypt_ctx_lock);
++
++static struct workqueue_struct *fscrypt_read_workqueue;
++static DEFINE_MUTEX(fscrypt_init_mutex);
++
++static struct kmem_cache *fscrypt_ctx_cachep;
++struct kmem_cache *fscrypt_info_cachep;
++
++/**
++ * fscrypt_release_ctx() - Releases an encryption context
++ * @ctx: The encryption context to release.
++ *
++ * If the encryption context was allocated from the pre-allocated pool, returns
++ * it to that pool. Else, frees it.
++ *
++ * If there's a bounce page in the context, this frees that.
++ */
++void fscrypt_release_ctx(struct fscrypt_ctx *ctx)
++{
++	unsigned long flags;
++
++	if (ctx->flags & FS_WRITE_PATH_FL && ctx->w.bounce_page) {
++		mempool_free(ctx->w.bounce_page, fscrypt_bounce_page_pool);
++		ctx->w.bounce_page = NULL;
++	}
++	ctx->w.control_page = NULL;
++	if (ctx->flags & FS_CTX_REQUIRES_FREE_ENCRYPT_FL) {
++		kmem_cache_free(fscrypt_ctx_cachep, ctx);
++	} else {
++		spin_lock_irqsave(&fscrypt_ctx_lock, flags);
++		list_add(&ctx->free_list, &fscrypt_free_ctxs);
++		spin_unlock_irqrestore(&fscrypt_ctx_lock, flags);
++	}
++}
++EXPORT_SYMBOL(fscrypt_release_ctx);
++
++/**
++ * fscrypt_get_ctx() - Gets an encryption context
++ * @inode:       The inode for which we are doing the crypto
++ *
++ * Allocates and initializes an encryption context.
++ *
++ * Return: An allocated and initialized encryption context on success; error
++ * value or NULL otherwise.
++ */
++struct fscrypt_ctx *fscrypt_get_ctx(struct inode *inode)
++{
++	struct fscrypt_ctx *ctx = NULL;
++	struct fscrypt_info *ci = inode->i_crypt_info;
++	unsigned long flags;
++
++	if (ci == NULL)
++		return ERR_PTR(-ENOKEY);
++
++	/*
++	 * We first try getting the ctx from a free list because in
++	 * the common case the ctx will have an allocated and
++	 * initialized crypto tfm, so it's probably a worthwhile
++	 * optimization. For the bounce page, we first try getting it
++	 * from the kernel allocator because that's just about as fast
++	 * as getting it from a list and because a cache of free pages
++	 * should generally be a "last resort" option for a filesystem
++	 * to be able to do its job.
++	 */
++	spin_lock_irqsave(&fscrypt_ctx_lock, flags);
++	ctx = list_first_entry_or_null(&fscrypt_free_ctxs,
++					struct fscrypt_ctx, free_list);
++	if (ctx)
++		list_del(&ctx->free_list);
++	spin_unlock_irqrestore(&fscrypt_ctx_lock, flags);
++	if (!ctx) {
++		ctx = kmem_cache_zalloc(fscrypt_ctx_cachep, GFP_NOFS);
++		if (!ctx)
++			return ERR_PTR(-ENOMEM);
++		ctx->flags |= FS_CTX_REQUIRES_FREE_ENCRYPT_FL;
++	} else {
++		ctx->flags &= ~FS_CTX_REQUIRES_FREE_ENCRYPT_FL;
++	}
++	ctx->flags &= ~FS_WRITE_PATH_FL;
++	return ctx;
++}
++EXPORT_SYMBOL(fscrypt_get_ctx);
++
++/**
++ * fscrypt_complete() - The completion callback for page encryption
++ * @req: The asynchronous encryption request context
++ * @res: The result of the encryption operation
++ */
++static void fscrypt_complete(struct crypto_async_request *req, int res)
++{
++	struct fscrypt_completion_result *ecr = req->data;
++
++	if (res == -EINPROGRESS)
++		return;
++	ecr->res = res;
++	complete(&ecr->completion);
 +}
 +
- /**
-  * f2fs_fname_crypto_alloc_obuff() -
-  *
-@@ -266,15 +278,8 @@ u32 f2fs_fname_crypto_round_up(u32 size, u32 blksize)
- int f2fs_fname_crypto_alloc_buffer(struct inode *inode,
- 				   u32 ilen, struct f2fs_str *crypto_str)
- {
--	unsigned int olen;
--	int padding = 32;
--	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
-+	unsigned int olen = f2fs_fname_encrypted_size(inode, ilen);
- 
--	if (ci)
--		padding = 4 << (ci->ci_flags & F2FS_POLICY_FLAGS_PAD_MASK);
--	if (ilen < F2FS_CRYPTO_BLOCK_SIZE)
--		ilen = F2FS_CRYPTO_BLOCK_SIZE;
--	olen = f2fs_fname_crypto_round_up(ilen, padding);
- 	crypto_str->len = olen;
- 	if (olen < F2FS_FNAME_CRYPTO_DIGEST_SIZE * 2)
- 		olen = F2FS_FNAME_CRYPTO_DIGEST_SIZE * 2;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c4c7bf1..fc302ea 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2225,6 +2225,7 @@ int _f2fs_get_encryption_info(struct inode *inode);
- /* crypto_fname.c */
- bool f2fs_valid_filenames_enc_mode(uint32_t);
- u32 f2fs_fname_crypto_round_up(u32, u32);
-+unsigned f2fs_fname_encrypted_size(struct inode *, u32);
- int f2fs_fname_crypto_alloc_buffer(struct inode *, u32, struct f2fs_str *);
- int f2fs_fname_disk_to_usr(struct inode *, f2fs_hash_t *,
- 			const struct f2fs_str *, struct f2fs_str *);
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 6f944e5..fcc8c26 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -345,13 +345,23 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
- 	struct inode *inode;
- 	size_t len = strlen(symname);
--	size_t p_len;
--	char *p_str;
--	struct f2fs_str disk_link = FSTR_INIT(NULL, 0);
-+	struct f2fs_str disk_link = FSTR_INIT((char *)symname, len + 1);
- 	struct f2fs_encrypted_symlink_data *sd = NULL;
- 	int err;
- 
--	if (len > dir->i_sb->s_blocksize)
-+	if (f2fs_encrypted_inode(dir)) {
-+		err = f2fs_get_encryption_info(dir);
-+		if (err)
-+			return err;
++typedef enum {
++	FS_DECRYPT = 0,
++	FS_ENCRYPT,
++} fscrypt_direction_t;
 +
-+		if (!f2fs_encrypted_inode(dir))
-+			return -EPERM;
++static int do_page_crypto(struct inode *inode,
++			fscrypt_direction_t rw, pgoff_t index,
++			struct page *src_page, struct page *dest_page)
++{
++	u8 xts_tweak[FS_XTS_TWEAK_SIZE];
++	struct ablkcipher_request *req = NULL;
++	DECLARE_FS_COMPLETION_RESULT(ecr);
++	struct scatterlist dst, src;
++	struct fscrypt_info *ci = inode->i_crypt_info;
++	struct crypto_ablkcipher *tfm = ci->ci_ctfm;
++	int res = 0;
 +
-+		disk_link.len = (f2fs_fname_encrypted_size(dir, len) +
-+				sizeof(struct f2fs_encrypted_symlink_data));
++	req = ablkcipher_request_alloc(tfm, GFP_NOFS);
++	if (!req) {
++		printk_ratelimited(KERN_ERR
++				"%s: crypto_request_alloc() failed\n",
++				__func__);
++		return -ENOMEM;
 +	}
 +
-+	if (disk_link.len > dir->i_sb->s_blocksize)
- 		return -ENAMETOOLONG;
- 
- 	inode = f2fs_new_inode(dir, S_IFLNK | S_IRWXUGO);
-@@ -374,42 +384,36 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
- 	f2fs_unlock_op(sbi);
- 	alloc_nid_done(sbi, inode->i_ino);
- 
--	if (f2fs_encrypted_inode(dir)) {
-+	if (f2fs_encrypted_inode(inode)) {
- 		struct qstr istr = QSTR_INIT(symname, len);
-+		struct f2fs_str ostr;
- 
--		err = f2fs_get_encryption_info(inode);
--		if (err)
-+		sd = kzalloc(disk_link.len, GFP_NOFS);
-+		if (!sd) {
-+			err = -ENOMEM;
- 			goto err_out;
-+		}
- 
--		err = f2fs_fname_crypto_alloc_buffer(inode, len, &disk_link);
-+		err = f2fs_get_encryption_info(inode);
- 		if (err)
- 			goto err_out;
- 
--		err = f2fs_fname_usr_to_disk(inode, &istr, &disk_link);
--		if (err < 0)
--			goto err_out;
--
--		p_len = encrypted_symlink_data_len(disk_link.len) + 1;
--
--		if (p_len > dir->i_sb->s_blocksize) {
--			err = -ENAMETOOLONG;
-+		if (!f2fs_encrypted_inode(inode)) {
-+			err = -EPERM;
- 			goto err_out;
- 		}
- 
--		sd = kzalloc(p_len, GFP_NOFS);
--		if (!sd) {
--			err = -ENOMEM;
-+		ostr.name = sd->encrypted_path;
-+		ostr.len = disk_link.len;
-+		err = f2fs_fname_usr_to_disk(inode, &istr, &ostr);
-+		if (err < 0)
- 			goto err_out;
--		}
--		memcpy(sd->encrypted_path, disk_link.name, disk_link.len);
--		sd->len = cpu_to_le16(disk_link.len);
--		p_str = (char *)sd;
--	} else {
--		p_len = len + 1;
--		p_str = (char *)symname;
++	ablkcipher_request_set_callback(
++		req, CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
++		fscrypt_complete, &ecr);
 +
-+		sd->len = cpu_to_le16(ostr.len);
-+		disk_link.name = (char *)sd;
- 	}
- 
--	err = page_symlink(inode, p_str, p_len);
-+	err = page_symlink(inode, disk_link.name, disk_link.len);
- 
- err_out:
- 	d_instantiate(dentry, inode);
-@@ -425,7 +429,8 @@ err_out:
- 	 * performance regression.
- 	 */
- 	if (!err) {
--		filemap_write_and_wait_range(inode->i_mapping, 0, p_len - 1);
-+		filemap_write_and_wait_range(inode->i_mapping, 0,
-+							disk_link.len - 1);
- 
- 		if (IS_DIRSYNC(dir))
- 			f2fs_sync_fs(sbi->sb, 1);
-@@ -434,7 +439,6 @@ err_out:
- 	}
- 
- 	kfree(sd);
--	f2fs_fname_crypto_free_buffer(&disk_link);
- 	return err;
- out:
- 	handle_failed_inode(inode);
-@@ -966,6 +970,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 
- 	/* Symlink is encrypted */
- 	sd = (struct f2fs_encrypted_symlink_data *)caddr;
-+	cstr.name = sd->encrypted_path;
- 	cstr.len = le16_to_cpu(sd->len);
- 
- 	/* this is broken symlink case */
-@@ -973,12 +978,6 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 		res = -ENOENT;
- 		goto errout;
- 	}
--	cstr.name = kmalloc(cstr.len, GFP_NOFS);
--	if (!cstr.name) {
--		res = -ENOMEM;
--		goto errout;
--	}
--	memcpy(cstr.name, sd->encrypted_path, cstr.len);
- 
- 	/* this is broken symlink case */
- 	if (unlikely(cstr.name[0] == 0)) {
-@@ -1000,8 +999,6 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 	if (res < 0)
- 		goto errout;
- 
--	kfree(cstr.name);
--
- 	paddr = pstr.name;
- 
- 	/* Null-terminate the name */
-@@ -1011,7 +1008,6 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 	set_delayed_call(done, kfree_link, paddr);
- 	return paddr;
- errout:
--	kfree(cstr.name);
- 	f2fs_fname_crypto_free_buffer(&pstr);
- 	page_cache_release(cpage);
- 	return ERR_PTR(res);
++	BUILD_BUG_ON(FS_XTS_TWEAK_SIZE < sizeof(index));
++	memcpy(xts_tweak, &inode->i_ino, sizeof(index));
++	memset(&xts_tweak[sizeof(index)], 0,
++			FS_XTS_TWEAK_SIZE - sizeof(index));
++
++	sg_init_table(&dst, 1);
++	sg_set_page(&dst, dest_page, PAGE_CACHE_SIZE, 0);
++	sg_init_table(&src, 1);
++	sg_set_page(&src, src_page, PAGE_CACHE_SIZE, 0);
++	ablkcipher_request_set_crypt(req, &src, &dst, PAGE_CACHE_SIZE,
++					xts_tweak);
++	if (rw == FS_DECRYPT)
++		res = crypto_ablkcipher_decrypt(req);
++	else
++		res = crypto_ablkcipher_encrypt(req);
++	if (res == -EINPROGRESS || res == -EBUSY) {
++		BUG_ON(req->base.data != &ecr);
++		wait_for_completion(&ecr.completion);
++		res = ecr.res;
++	}
++	ablkcipher_request_free(req);
++	if (res) {
++		printk_ratelimited(KERN_ERR
++			"%s: crypto_ablkcipher_encrypt() returned %d\n",
++			__func__, res);
++		return res;
++	}
++	return 0;
++}
++
++static struct page *alloc_bounce_page(struct fscrypt_ctx *ctx)
++{
++	ctx->w.bounce_page = mempool_alloc(fscrypt_bounce_page_pool,
++							GFP_NOWAIT);
++	if (ctx->w.bounce_page == NULL)
++		return ERR_PTR(-ENOMEM);
++	ctx->flags |= FS_WRITE_PATH_FL;
++	return ctx->w.bounce_page;
++}
++
++/**
++ * fscypt_encrypt_page() - Encrypts a page
++ * @inode:          The inode for which the encryption should take place
++ * @plaintext_page: The page to encrypt. Must be locked.
++ *
++ * Allocates a ciphertext page and encrypts plaintext_page into it using the ctx
++ * encryption context.
++ *
++ * Called on the page write path.  The caller must call
++ * fscrypt_restore_control_page() on the returned ciphertext page to
++ * release the bounce buffer and the encryption context.
++ *
++ * Return: An allocated page with the encrypted content on success. Else, an
++ * error value or NULL.
++ */
++struct page *fscrypt_encrypt_page(struct inode *inode,
++				struct page *plaintext_page)
++{
++	struct fscrypt_ctx *ctx;
++	struct page *ciphertext_page = NULL;
++	int err;
++
++	BUG_ON(!PageLocked(plaintext_page));
++
++	ctx = fscrypt_get_ctx(inode);
++	if (IS_ERR(ctx))
++		return (struct page *)ctx;
++
++	/* The encryption operation will require a bounce page. */
++	ciphertext_page = alloc_bounce_page(ctx);
++	if (IS_ERR(ciphertext_page))
++		goto errout;
++
++	ctx->w.control_page = plaintext_page;
++	err = do_page_crypto(inode, FS_ENCRYPT, plaintext_page->index,
++					plaintext_page, ciphertext_page);
++	if (err) {
++		ciphertext_page = ERR_PTR(err);
++		goto errout;
++	}
++	SetPagePrivate(ciphertext_page);
++	set_page_private(ciphertext_page, (unsigned long)ctx);
++	lock_page(ciphertext_page);
++	return ciphertext_page;
++
++errout:
++	fscrypt_release_ctx(ctx);
++	return ciphertext_page;
++}
++EXPORT_SYMBOL(fscrypt_encrypt_page);
++
++/**
++ * f2crypt_decrypt_page() - Decrypts a page in-place
++ * @page: The page to decrypt. Must be locked.
++ *
++ * Decrypts page in-place using the ctx encryption context.
++ *
++ * Called from the read completion callback.
++ *
++ * Return: Zero on success, non-zero otherwise.
++ */
++int fscrypt_decrypt_page(struct page *page)
++{
++	BUG_ON(!PageLocked(page));
++
++	return do_page_crypto(page->mapping->host,
++			FS_DECRYPT, page->index, page, page);
++}
++EXPORT_SYMBOL(fscrypt_decrypt_page);
++
++int fscrypt_zeroout_range(struct inode *inode, pgoff_t lblk,
++				sector_t pblk, unsigned int len)
++{
++	struct fscrypt_ctx *ctx;
++	struct page *ciphertext_page = NULL;
++	struct bio *bio;
++	int ret, err = 0;
++
++	BUG_ON(inode->i_sb->s_blocksize != PAGE_CACHE_SIZE);
++
++	ctx = fscrypt_get_ctx(inode);
++	if (IS_ERR(ctx))
++		return PTR_ERR(ctx);
++
++	ciphertext_page = alloc_bounce_page(ctx);
++	if (IS_ERR(ciphertext_page)) {
++		err = PTR_ERR(ciphertext_page);
++		goto errout;
++	}
++
++	while (len--) {
++		err = do_page_crypto(inode, FS_ENCRYPT, lblk,
++						ZERO_PAGE(0), ciphertext_page);
++		if (err)
++			goto errout;
++
++		bio = bio_alloc(GFP_KERNEL, 1);
++		if (!bio) {
++			err = -ENOMEM;
++			goto errout;
++		}
++		bio->bi_bdev = inode->i_sb->s_bdev;
++		bio->bi_iter.bi_sector =
++			pblk << (inode->i_sb->s_blocksize_bits - 9);;
++		ret = bio_add_page(bio, ciphertext_page,
++					inode->i_sb->s_blocksize, 0);
++		if (ret != inode->i_sb->s_blocksize) {
++			/* should never happen! */
++			WARN_ON(1);
++			bio_put(bio);
++			err = -EIO;
++			goto errout;
++		}
++		err = submit_bio_wait(WRITE, bio);
++		if ((err == 0) && bio->bi_error)
++			err = -EIO;
++		bio_put(bio);
++		if (err)
++			goto errout;
++		lblk++;
++		pblk++;
++	}
++	err = 0;
++errout:
++	fscrypt_release_ctx(ctx);
++	return err;
++}
++EXPORT_SYMBOL(fscrypt_zeroout_range);
++
++/*
++ * Call fscrypt_decrypt_page on every single page, reusing the encryption
++ * context.
++ */
++static void completion_pages(struct work_struct *work)
++{
++	struct fscrypt_ctx *ctx =
++		container_of(work, struct fscrypt_ctx, r.work);
++	struct bio *bio = ctx->r.bio;
++	struct bio_vec *bv;
++	int i;
++
++	bio_for_each_segment_all(bv, bio, i) {
++		struct page *page = bv->bv_page;
++		int ret = fscrypt_decrypt_page(page);
++
++		if (ret) {
++			WARN_ON_ONCE(1);
++			SetPageError(page);
++		} else {
++			SetPageUptodate(page);
++		}
++		unlock_page(page);
++	}
++	fscrypt_release_ctx(ctx);
++	bio_put(bio);
++}
++
++void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *ctx, struct bio *bio)
++{
++	INIT_WORK(&ctx->r.work, completion_pages);
++	ctx->r.bio = bio;
++	queue_work(fscrypt_read_workqueue, &ctx->r.work);
++}
++EXPORT_SYMBOL(fscrypt_decrypt_bio_pages);
++
++void fscrypt_pullback_bio_page(struct page **page, bool restore)
++{
++	struct fscrypt_ctx *ctx;
++	struct page *bounce_page;
++
++	/* The bounce data pages are unmapped. */
++	if ((*page)->mapping)
++		return;
++
++	/* The bounce data page is unmapped. */
++	bounce_page = *page;
++	ctx = (struct fscrypt_ctx *)page_private(bounce_page);
++
++	/* restore control page */
++	*page = ctx->w.control_page;
++
++	if (restore)
++		fscrypt_restore_control_page(bounce_page);
++}
++EXPORT_SYMBOL(fscrypt_pullback_bio_page);
++
++void fscrypt_restore_control_page(struct page *page)
++{
++	struct fscrypt_ctx *ctx;
++
++	ctx = (struct fscrypt_ctx *)page_private(page);
++	set_page_private(page, (unsigned long)NULL);
++	ClearPagePrivate(page);
++	unlock_page(page);
++	fscrypt_release_ctx(ctx);
++}
++EXPORT_SYMBOL(fscrypt_restore_control_page);
++
++static void fscrypt_destroy(void)
++{
++	struct fscrypt_ctx *pos, *n;
++
++	list_for_each_entry_safe(pos, n, &fscrypt_free_ctxs, free_list)
++		kmem_cache_free(fscrypt_ctx_cachep, pos);
++	INIT_LIST_HEAD(&fscrypt_free_ctxs);
++	if (fscrypt_bounce_page_pool)
++		mempool_destroy(fscrypt_bounce_page_pool);
++	fscrypt_bounce_page_pool = NULL;
++}
++
++/**
++ * fscrypt_initialize() - allocate major buffers for fs encryption.
++ *
++ * We only call this when we start accessing encrypted files, since it
++ * results in memory getting allocated that wouldn't otherwise be used.
++ *
++ * Return: Zero on success, non-zero otherwise.
++ */
++int fscrypt_initialize(void)
++{
++	int i, res = -ENOMEM;
++
++	if (fscrypt_bounce_page_pool)
++		return 0;
++
++	mutex_lock(&fscrypt_init_mutex);
++	if (fscrypt_bounce_page_pool)
++		goto already_initialized;
++
++	for (i = 0; i < num_prealloc_crypto_ctxs; i++) {
++		struct fscrypt_ctx *ctx;
++
++		ctx = kmem_cache_zalloc(fscrypt_ctx_cachep, GFP_NOFS);
++		if (!ctx)
++			goto fail;
++		list_add(&ctx->free_list, &fscrypt_free_ctxs);
++	}
++
++	fscrypt_bounce_page_pool =
++		mempool_create_page_pool(num_prealloc_crypto_pages, 0);
++	if (!fscrypt_bounce_page_pool)
++		goto fail;
++
++already_initialized:
++	mutex_unlock(&fscrypt_init_mutex);
++	return 0;
++fail:
++	fscrypt_destroy();
++	mutex_unlock(&fscrypt_init_mutex);
++	return res;
++}
++EXPORT_SYMBOL(fscrypt_initialize);
++
++/**
++ * fscrypt_init() - Set up for fs encryption.
++ */
++int __init fscrypt_init(void)
++{
++	fscrypt_read_workqueue = alloc_workqueue("fscrypt_read_queue",
++							WQ_HIGHPRI, 0);
++	if (!fscrypt_read_workqueue)
++		goto fail;
++
++	fscrypt_ctx_cachep = KMEM_CACHE(fscrypt_ctx, SLAB_RECLAIM_ACCOUNT);
++	if (!fscrypt_ctx_cachep)
++		goto fail_free_queue;
++
++	fscrypt_info_cachep = KMEM_CACHE(fscrypt_info, SLAB_RECLAIM_ACCOUNT);
++	if (!fscrypt_info_cachep)
++		goto fail_free_ctx;
++
++	return 0;
++
++fail_free_ctx:
++	kmem_cache_destroy(fscrypt_ctx_cachep);
++fail_free_queue:
++	destroy_workqueue(fscrypt_read_workqueue);
++fail:
++	return -ENOMEM;
++}
++module_init(fscrypt_init)
++
++/**
++ * fscrypt_exit() - Shutdown the fs encryption system
++ */
++void __exit fscrypt_exit(void)
++{
++	fscrypt_destroy();
++
++	if (fscrypt_read_workqueue)
++		destroy_workqueue(fscrypt_read_workqueue);
++	if (fscrypt_ctx_cachep)
++		kmem_cache_destroy(fscrypt_ctx_cachep);
++	if (fscrypt_info_cachep)
++		kmem_cache_destroy(fscrypt_info_cachep);
++}
++module_exit(fscrypt_exit);
+diff --git a/include/linux/fscrypto.h b/include/linux/fscrypto.h
+index 4a9b33b..0a82f91 100644
+--- a/include/linux/fscrypto.h
++++ b/include/linux/fscrypto.h
+@@ -235,4 +235,63 @@ static inline int fscrypt_has_encryption_key(struct inode *inode)
+ 	return 0;
+ #endif
+ }
++
++/* crypto.c */
++extern struct kmem_cache *fscrypt_info_cachep;
++int fscrypt_initialize(void);
++
++#ifdef CONFIG_FS_ENCRYPTION
++/* crypto.c */
++struct fscrypt_ctx *fscrypt_get_ctx(struct inode *);
++void fscrypt_release_ctx(struct fscrypt_ctx *);
++struct page *fscrypt_encrypt_page(struct inode *, struct page *);
++int fscrypt_decrypt_page(struct page *);
++void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *, struct bio *);
++void fscrypt_pullback_bio_page(struct page **, bool);
++void fscrypt_restore_control_page(struct page *);
++int fscrypt_zeroout_range(struct inode *, pgoff_t, sector_t, unsigned int);
++#else
++/* crypto.c */
++static inline struct fscrypt_ctx *fscrypt_get_ctx(struct inode *i)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
++
++static inline void fscrypt_release_ctx(struct fscrypt_ctx *c)
++{
++	return;
++}
++
++static inline struct page *fscrypt_encrypt_page(struct inode *i, struct page *p)
++{
++	return ERR_PTR(-EOPNOTSUPP);
++}
++
++static inline int fscrypt_decrypt_page(struct page *p)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *c,
++						struct bio *b)
++{
++	return;
++}
++
++static inline void fscrypt_pullback_bio_page(struct page **p, bool b)
++{
++	return;
++}
++
++static inline void fscrypt_restore_control_page(struct page *p)
++{
++	return;
++}
++
++static inline int fscrypt_zeroout_range(struct inode *i, pgoff_t p,
++					sector_t s, unsigned int f)
++{
++	return -EOPNOTSUPP;
++}
++#endif
+ #endif	/* _LINUX_FSCRYPTO_H */
 -- 
-2.7.0
+2.6.3
+
