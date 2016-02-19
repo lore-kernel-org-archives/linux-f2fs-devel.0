@@ -1,427 +1,403 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH] f2fs: fix to convert inline directory correctly
-Date: Fri, 19 Feb 2016 17:51:20 +0800
-Message-ID: <01cf01d16afb$2e249520$8a6dbf60$@samsung.com>
+Subject: [PATCH v2 2/7] f2fs: split journal cache from curseg cache
+Date: Fri, 19 Feb 2016 18:08:46 +0800
+Message-ID: <01d001d16afd$9db9ba80$d92d2f80$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aWhjT-0003gQ-KQ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Feb 2016 09:52:15 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aWhjQ-0004MV-Vs
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Feb 2016 09:52:15 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O2S00BF3GQGE660@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Feb 2016 18:52:05 +0900 (KST)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-language: zh-cn
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-With below serials, we will lose parts of dirents:
+In curseg cache, f2fs caches two different parts:
+ - datas of current summay block, i.e. summary entries, footer info.
+ - journal info, i.e. sparse nat/sit entries or io stat info.
 
-1) mount f2fs with inline_dentry option
-2) echo 1 > /sys/fs/f2fs/sdX/dir_level
-3) mkdir dir
-4) touch 180 files named [001-180] in dir
-5) touch 181 in dir
-6) echo 3 > /proc/sys/vm/drop_caches
-7) ll dir
+With this approach, 1) it may cause higher lock contention when we access
+or update both of the parts of cache since we use the same mutex lock
+curseg_mutex to protect the cache. 2) current summary block with last
+journal info will be writebacked into device as a normal summary block
+when flushing, however, we treat journal info as valid one only in current
+summary, so most normal summary blocks contain junk journal data, it wastes
+remaining space of summary block.
 
-ls: cannot access 2: No such file or directory
-ls: cannot access 4: No such file or directory
-ls: cannot access 5: No such file or directory
-ls: cannot access 6: No such file or directory
-ls: cannot access 8: No such file or directory
-ls: cannot access 9: No such file or directory
-...
-total 360
-drwxr-xr-x 2 root root 4096 Feb 19 15:12 ./
-drwxr-xr-x 3 root root 4096 Feb 19 15:11 ../
--rw-r--r-- 1 root root    0 Feb 19 15:12 1
--rw-r--r-- 1 root root    0 Feb 19 15:12 10
--rw-r--r-- 1 root root    0 Feb 19 15:12 100
--????????? ? ?    ?       ?            ? 101
--????????? ? ?    ?       ?            ? 102
--????????? ? ?    ?       ?            ? 103
-...
+So, in order to fix above issues, we split curseg cache into two parts:
+a) current summary block, protected by original mutex lock curseg_mutex
+b) journal cache, protected by newly introduced r/w semaphore journal_rwsem
 
-The reason is: when doing the inline dir conversion, we didn't consider
-that directory has hierarchical hash structure which can be configured
-through sysfs interface 'dir_level'.
-
-By default, dir_level of directory inode is 0, it means we have one bucket
-in hash table located in first level, all dirents will be hashed in this
-bucket, so it has no problem for us to do the duplication simply between
-inline dentry page and converted normal dentry page.
-
-However, if we configured dir_level with the value N (greater than 0), it
-will expand the bucket number of first level hash table by 2^N - 1, it
-hashs dirents into different buckets according their hash value, if we
-still move all dirents to first bucket, it makes incorrent locating for
-inline dirents, the result is, although we can iterate all dirents through
-->readdir, we can't stat some of them in ->lookup which based on hash
-table searching.
-
-This patch fixes this issue by rehashing dirents into correct position
-when converting inline directory.
+When loading curseg cache during ->mount, we store summary info and
+journal info into different caches; When doing checkpoint, we combine
+datas of two cache into current summary block for persisting.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
- fs/f2fs/data.c          |  2 --
- fs/f2fs/dir.c           | 87 ++++++++++++++++++++++++---------------------
- fs/f2fs/f2fs.h          |  4 ++-
- fs/f2fs/inline.c        | 94 ++++++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/f2fs_fs.h |  2 ++
- 5 files changed, 144 insertions(+), 45 deletions(-)
+v2:
+ - description of commit log was not so detailed, update it.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d3a6cd0..6baabf5 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -505,8 +505,6 @@ struct page *get_new_data_page(struct inode *inode,
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/node.c       | 26 ++++++++--------
+ fs/f2fs/segment.c    | 85 +++++++++++++++++++++++++++++++++++++---------------
+ fs/f2fs/segment.h    |  2 ++
+ 4 files changed, 77 insertions(+), 38 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 3cdcdaf..c6d4259 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1051,7 +1051,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	if (sb->s_bdev->bd_part)
+ 		kbytes_written += BD_PART_WRITTEN(sbi);
+ 
+-	seg_i->sum_blk->journal.info.kbytes_written = cpu_to_le64(kbytes_written);
++	seg_i->journal->info.kbytes_written = cpu_to_le64(kbytes_written);
+ 
+ 	if (__remain_node_summaries(cpc->reason)) {
+ 		write_node_summaries(sbi, start_blk);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 8230e35..94b8016 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -354,7 +354,7 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = curseg->journal;
+ 	nid_t start_nid = START_NID(nid);
+ 	struct f2fs_nat_block *nat_blk;
+ 	struct page *page = NULL;
+@@ -381,13 +381,13 @@ void get_node_info(struct f2fs_sb_info *sbi, nid_t nid, struct node_info *ni)
+ 	down_write(&nm_i->nat_tree_lock);
+ 
+ 	/* Check current segment summary */
+-	mutex_lock(&curseg->curseg_mutex);
++	down_read(&curseg->journal_rwsem);
+ 	i = lookup_journal_in_cursum(journal, NAT_JOURNAL, nid, 0);
+ 	if (i >= 0) {
+ 		ne = nat_in_journal(journal, i);
+ 		node_info_from_raw_nat(ni, &ne);
+ 	}
+-	mutex_unlock(&curseg->curseg_mutex);
++	up_read(&curseg->journal_rwsem);
+ 	if (i >= 0)
+ 		goto cache;
+ 
+@@ -1613,7 +1613,7 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = curseg->journal;
+ 	int i = 0;
+ 	nid_t nid = nm_i->next_scan_nid;
+ 
+@@ -1645,7 +1645,7 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
+ 	nm_i->next_scan_nid = nid;
+ 
+ 	/* find free nids from current sum_pages */
+-	mutex_lock(&curseg->curseg_mutex);
++	down_read(&curseg->journal_rwsem);
+ 	for (i = 0; i < nats_in_cursum(journal); i++) {
+ 		block_t addr;
+ 
+@@ -1656,7 +1656,7 @@ static void build_free_nids(struct f2fs_sb_info *sbi)
+ 		else
+ 			remove_free_nid(nm_i, nid);
+ 	}
+-	mutex_unlock(&curseg->curseg_mutex);
++	up_read(&curseg->journal_rwsem);
+ 	up_read(&nm_i->nat_tree_lock);
+ 
+ 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+@@ -1920,10 +1920,10 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = curseg->journal;
+ 	int i;
+ 
+-	mutex_lock(&curseg->curseg_mutex);
++	down_write(&curseg->journal_rwsem);
+ 	for (i = 0; i < nats_in_cursum(journal); i++) {
+ 		struct nat_entry *ne;
+ 		struct f2fs_nat_entry raw_ne;
+@@ -1939,7 +1939,7 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+ 		__set_nat_cache_dirty(nm_i, ne);
+ 	}
+ 	update_nats_in_cursum(journal, -i);
+-	mutex_unlock(&curseg->curseg_mutex);
++	up_write(&curseg->journal_rwsem);
+ }
+ 
+ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+@@ -1964,7 +1964,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 					struct nat_entry_set *set)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = curseg->journal;
+ 	nid_t start_nid = set->set * NAT_ENTRY_PER_BLOCK;
+ 	bool to_journal = true;
+ 	struct f2fs_nat_block *nat_blk;
+@@ -1980,7 +1980,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 		to_journal = false;
+ 
+ 	if (to_journal) {
+-		mutex_lock(&curseg->curseg_mutex);
++		down_write(&curseg->journal_rwsem);
  	} else {
+ 		page = get_next_nat_page(sbi, start_nid);
+ 		nat_blk = page_address(page);
+@@ -2013,7 +2013,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	if (to_journal)
+-		mutex_unlock(&curseg->curseg_mutex);
++		up_write(&curseg->journal_rwsem);
+ 	else
  		f2fs_put_page(page, 1);
  
--		/* if ipage exists, blkaddr should be NEW_ADDR */
--		f2fs_bug_on(F2FS_I_SB(inode), ipage);
- 		page = get_lock_data_page(inode, index, true);
- 		if (IS_ERR(page))
- 			return page;
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index aa06700..0fe877d 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -48,7 +48,6 @@ unsigned char f2fs_filetype_table[F2FS_FT_MAX] = {
- 	[F2FS_FT_SYMLINK]	= DT_LNK,
- };
- 
--#define S_SHIFT 12
- static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
- 	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
- 	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
-@@ -64,6 +63,13 @@ void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
- 	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
+@@ -2030,7 +2030,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = curseg->journal;
+ 	struct nat_entry_set *setvec[SETVEC_SIZE];
+ 	struct nat_entry_set *set, *tmp;
+ 	unsigned int found;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 5902a67..7cb9a54 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -917,6 +917,31 @@ static void write_sum_page(struct f2fs_sb_info *sbi,
+ 	update_meta_page(sbi, (void *)sum_blk, blk_addr);
  }
  
-+unsigned char get_de_type(struct f2fs_dir_entry *de)
++static void write_current_sum_page(struct f2fs_sb_info *sbi,
++						int type, block_t blk_addr)
 +{
-+	if (de->file_type < F2FS_FT_MAX)
-+		return f2fs_filetype_table[de->file_type];
-+	return DT_UNKNOWN;
++	struct curseg_info *curseg = CURSEG_I(sbi, type);
++	struct page *page = grab_meta_page(sbi, blk_addr);
++	struct f2fs_summary_block *src = curseg->sum_blk;
++	struct f2fs_summary_block *dst;
++
++	dst = (struct f2fs_summary_block *)page_address(page);
++
++	mutex_lock(&curseg->curseg_mutex);
++
++	down_read(&curseg->journal_rwsem);
++	memcpy(&dst->journal, curseg->journal, SUM_JOURNAL_SIZE);
++	up_read(&curseg->journal_rwsem);
++
++	memcpy(dst->entries, src->entries, SUM_ENTRY_SIZE);
++	memcpy(&dst->footer, &src->footer, SUM_FOOTER_SIZE);
++
++	mutex_unlock(&curseg->curseg_mutex);
++
++	set_page_dirty(page);
++	f2fs_put_page(page, 1);
 +}
 +
- static unsigned long dir_block_index(unsigned int level,
- 				int dir_level, unsigned int idx)
+ static int is_next_segment_free(struct f2fs_sb_info *sbi, int type)
  {
-@@ -519,11 +525,7 @@ void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
- 	}
+ 	struct curseg_info *curseg = CURSEG_I(sbi, type);
+@@ -1539,12 +1564,11 @@ static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+ 
+ 	/* Step 1: restore nat cache */
+ 	seg_i = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	memcpy(&seg_i->sum_blk->journal.n_nats, kaddr, SUM_JOURNAL_SIZE);
++	memcpy(seg_i->journal, kaddr, SUM_JOURNAL_SIZE);
+ 
+ 	/* Step 2: restore sit cache */
+ 	seg_i = CURSEG_I(sbi, CURSEG_COLD_DATA);
+-	memcpy(&seg_i->sum_blk->journal.n_sits, kaddr + SUM_JOURNAL_SIZE,
+-						SUM_JOURNAL_SIZE);
++	memcpy(seg_i->journal, kaddr + SUM_JOURNAL_SIZE, SUM_JOURNAL_SIZE);
+ 	offset = 2 * SUM_JOURNAL_SIZE;
+ 
+ 	/* Step 3: restore summary entries */
+@@ -1640,7 +1664,14 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ 	/* set uncompleted segment to curseg */
+ 	curseg = CURSEG_I(sbi, type);
+ 	mutex_lock(&curseg->curseg_mutex);
+-	memcpy(curseg->sum_blk, sum, PAGE_CACHE_SIZE);
++
++	/* update journal info */
++	down_write(&curseg->journal_rwsem);
++	memcpy(curseg->journal, &sum->journal, SUM_JOURNAL_SIZE);
++	up_write(&curseg->journal_rwsem);
++
++	memcpy(curseg->sum_blk->entries, sum->entries, SUM_ENTRY_SIZE);
++	memcpy(&curseg->sum_blk->footer, &sum->footer, SUM_FOOTER_SIZE);
+ 	curseg->next_segno = segno;
+ 	reset_curseg(sbi, type, 0);
+ 	curseg->alloc_type = ckpt->alloc_type[type];
+@@ -1695,13 +1726,12 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 
+ 	/* Step 1: write nat cache */
+ 	seg_i = CURSEG_I(sbi, CURSEG_HOT_DATA);
+-	memcpy(kaddr, &seg_i->sum_blk->journal.n_nats, SUM_JOURNAL_SIZE);
++	memcpy(kaddr, seg_i->journal, SUM_JOURNAL_SIZE);
+ 	written_size += SUM_JOURNAL_SIZE;
+ 
+ 	/* Step 2: write sit cache */
+ 	seg_i = CURSEG_I(sbi, CURSEG_COLD_DATA);
+-	memcpy(kaddr + written_size, &seg_i->sum_blk->journal.n_sits,
+-						SUM_JOURNAL_SIZE);
++	memcpy(kaddr + written_size, seg_i->journal, SUM_JOURNAL_SIZE);
+ 	written_size += SUM_JOURNAL_SIZE;
+ 
+ 	/* Step 3: write summary entries */
+@@ -1747,12 +1777,8 @@ static void write_normal_summaries(struct f2fs_sb_info *sbi,
+ 	else
+ 		end = type + NR_CURSEG_NODE_TYPE;
+ 
+-	for (i = type; i < end; i++) {
+-		struct curseg_info *sum = CURSEG_I(sbi, i);
+-		mutex_lock(&sum->curseg_mutex);
+-		write_sum_page(sbi, sum->sum_blk, blkaddr + (i - type));
+-		mutex_unlock(&sum->curseg_mutex);
+-	}
++	for (i = type; i < end; i++)
++		write_current_sum_page(sbi, i, blkaddr + (i - type));
  }
  
--/*
-- * Caller should grab and release a rwsem by calling f2fs_lock_op() and
-- * f2fs_unlock_op().
-- */
--int __f2fs_add_link(struct inode *dir, const struct qstr *name,
-+int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 				struct inode *inode, nid_t ino, umode_t mode)
+ void write_data_summaries(struct f2fs_sb_info *sbi, block_t start_blk)
+@@ -1889,9 +1915,10 @@ static void add_sits_in_set(struct f2fs_sb_info *sbi)
+ static void remove_sits_in_journal(struct f2fs_sb_info *sbi)
  {
- 	unsigned int bit_pos;
-@@ -536,28 +538,11 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
- 	struct f2fs_dentry_block *dentry_blk = NULL;
- 	struct f2fs_dentry_ptr d;
- 	struct page *page = NULL;
--	struct fscrypt_name fname;
--	struct qstr new_name;
--	int slots, err;
--
--	err = fscrypt_setup_filename(dir, name, 0, &fname);
--	if (err)
--		return err;
--
--	new_name.name = fname_name(&fname);
--	new_name.len = fname_len(&fname);
--
--	if (f2fs_has_inline_dentry(dir)) {
--		err = f2fs_add_inline_entry(dir, &new_name, inode, ino, mode);
--		if (!err || err != -EAGAIN)
--			goto out;
--		else
--			err = 0;
--	}
-+	int slots, err = 0;
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = curseg->journal;
+ 	int i;
  
- 	level = 0;
--	slots = GET_DENTRY_SLOTS(new_name.len);
--	dentry_hash = f2fs_dentry_hash(&new_name);
-+	slots = GET_DENTRY_SLOTS(new_name->len);
-+	dentry_hash = f2fs_dentry_hash(new_name);
- 
- 	current_depth = F2FS_I(dir)->i_current_depth;
- 	if (F2FS_I(dir)->chash == dentry_hash) {
-@@ -566,10 +551,8 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
++	down_write(&curseg->journal_rwsem);
+ 	for (i = 0; i < sits_in_cursum(journal); i++) {
+ 		unsigned int segno;
+ 		bool dirtied;
+@@ -1903,6 +1930,7 @@ static void remove_sits_in_journal(struct f2fs_sb_info *sbi)
+ 			add_sit_entry(segno, &SM_I(sbi)->sit_entry_set);
  	}
+ 	update_sits_in_cursum(journal, -i);
++	up_write(&curseg->journal_rwsem);
+ }
  
- start:
--	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH)) {
--		err = -ENOSPC;
--		goto out;
--	}
-+	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH))
-+		return -ENOSPC;
+ /*
+@@ -1914,13 +1942,12 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	unsigned long *bitmap = sit_i->dirty_sentries_bitmap;
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = curseg->journal;
+ 	struct sit_entry_set *ses, *tmp;
+ 	struct list_head *head = &SM_I(sbi)->sit_entry_set;
+ 	bool to_journal = true;
+ 	struct seg_entry *se;
  
- 	/* Increase the depth, if required */
- 	if (level == current_depth)
-@@ -583,10 +566,8 @@ start:
+-	mutex_lock(&curseg->curseg_mutex);
+ 	mutex_lock(&sit_i->sentry_lock);
  
- 	for (block = bidx; block <= (bidx + nblock - 1); block++) {
- 		dentry_page = get_new_data_page(dir, NULL, block, true);
--		if (IS_ERR(dentry_page)) {
--			err = PTR_ERR(dentry_page);
--			goto out;
--		}
-+		if (IS_ERR(dentry_page))
-+			return PTR_ERR(dentry_page);
+ 	if (!sit_i->dirty_sentries)
+@@ -1957,7 +1984,9 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 			!__has_cursum_space(journal, ses->entry_cnt, SIT_JOURNAL))
+ 			to_journal = false;
  
- 		dentry_blk = kmap(dentry_page);
- 		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
-@@ -606,7 +587,7 @@ add_dentry:
- 
- 	if (inode) {
- 		down_write(&F2FS_I(inode)->i_sem);
--		page = init_inode_metadata(inode, dir, &new_name, NULL);
-+		page = init_inode_metadata(inode, dir, new_name, NULL);
- 		if (IS_ERR(page)) {
- 			err = PTR_ERR(page);
- 			goto fail;
-@@ -616,7 +597,7 @@ add_dentry:
- 	}
- 
- 	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
--	f2fs_update_dentry(ino, mode, &d, &new_name, dentry_hash, bit_pos);
-+	f2fs_update_dentry(ino, mode, &d, new_name, dentry_hash, bit_pos);
- 
- 	set_page_dirty(dentry_page);
- 
-@@ -638,7 +619,34 @@ fail:
- 	}
- 	kunmap(dentry_page);
- 	f2fs_put_page(dentry_page, 1);
--out:
-+
-+	return err;
-+}
-+
-+/*
-+ * Caller should grab and release a rwsem by calling f2fs_lock_op() and
-+ * f2fs_unlock_op().
-+ */
-+int __f2fs_add_link(struct inode *dir, const struct qstr *name,
-+				struct inode *inode, nid_t ino, umode_t mode)
-+{
-+	struct fscrypt_name fname;
-+	struct qstr new_name;
-+	int err;
-+
-+	err = fscrypt_setup_filename(dir, name, 0, &fname);
-+	if (err)
-+		return err;
-+
-+	new_name.name = fname_name(&fname);
-+	new_name.len = fname_len(&fname);
-+
-+	err = -EAGAIN;
-+	if (f2fs_has_inline_dentry(dir))
-+		err = f2fs_add_inline_entry(dir, &new_name, inode, ino, mode);
-+	if (err == -EAGAIN)
-+		err = f2fs_add_regular_entry(dir, &new_name, inode, ino, mode);
-+
- 	fscrypt_free_filename(&fname);
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
- 	return err;
-@@ -802,10 +810,7 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 			continue;
+-		if (!to_journal) {
++		if (to_journal) {
++			down_write(&curseg->journal_rwsem);
++		} else {
+ 			page = get_next_sit_page(sbi, start_segno);
+ 			raw_sit = page_address(page);
+ 		}
+@@ -1993,7 +2022,9 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 			ses->entry_cnt--;
  		}
  
--		if (de->file_type < F2FS_FT_MAX)
--			d_type = f2fs_filetype_table[de->file_type];
--		else
--			d_type = DT_UNKNOWN;
-+		d_type = get_de_type(de);
+-		if (!to_journal)
++		if (to_journal)
++			up_write(&curseg->journal_rwsem);
++		else
+ 			f2fs_put_page(page, 1);
  
- 		de_name.name = d->filename[bit_pos];
- 		de_name.len = le16_to_cpu(de->name_len);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4d759f3..8fc17c0 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1706,7 +1706,7 @@ struct dentry *f2fs_get_parent(struct dentry *child);
-  */
- extern unsigned char f2fs_filetype_table[F2FS_FT_MAX];
- void set_de_type(struct f2fs_dir_entry *, umode_t);
--
-+unsigned char get_de_type(struct f2fs_dir_entry *);
- struct f2fs_dir_entry *find_target_dentry(struct fscrypt_name *,
- 			f2fs_hash_t, int *, struct f2fs_dentry_ptr *);
- bool f2fs_fill_dentries(struct dir_context *, struct f2fs_dentry_ptr *,
-@@ -1727,6 +1727,8 @@ void f2fs_set_link(struct inode *, struct f2fs_dir_entry *,
- int update_dent_inode(struct inode *, struct inode *, const struct qstr *);
- void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *,
- 			const struct qstr *, f2fs_hash_t , unsigned int);
-+int f2fs_add_regular_entry(struct inode *, const struct qstr *,
-+						struct inode *, nid_t, umode_t);
- int __f2fs_add_link(struct inode *, const struct qstr *, struct inode *, nid_t,
- 			umode_t);
- void f2fs_delete_entry(struct f2fs_dir_entry *, struct page *, struct inode *,
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index d27347e..f651083 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -371,7 +371,7 @@ int make_empty_inline_dir(struct inode *inode, struct inode *parent,
-  * NOTE: ipage is grabbed by caller, but if any error occurs, we should
-  * release ipage in this function.
-  */
--static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
-+static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
- 				struct f2fs_inline_dentry *inline_dentry)
+ 		f2fs_bug_on(sbi, ses->entry_cnt);
+@@ -2008,7 +2039,6 @@ out:
+ 			add_discard_addrs(sbi, cpc);
+ 	}
+ 	mutex_unlock(&sit_i->sentry_lock);
+-	mutex_unlock(&curseg->curseg_mutex);
+ 
+ 	set_prefree_as_free_segments(sbi);
+ }
+@@ -2140,6 +2170,11 @@ static int build_curseg(struct f2fs_sb_info *sbi)
+ 		array[i].sum_blk = kzalloc(PAGE_CACHE_SIZE, GFP_KERNEL);
+ 		if (!array[i].sum_blk)
+ 			return -ENOMEM;
++		init_rwsem(&array[i].journal_rwsem);
++		array[i].journal = kzalloc(sizeof(struct f2fs_journal),
++							GFP_KERNEL);
++		if (!array[i].journal)
++			return -ENOMEM;
+ 		array[i].segno = NULL_SEGNO;
+ 		array[i].next_blkoff = 0;
+ 	}
+@@ -2150,7 +2185,7 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
  {
- 	struct page *page;
-@@ -432,6 +432,98 @@ out:
- 	return err;
+ 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
+-	struct f2fs_journal *journal = &curseg->sum_blk->journal;
++	struct f2fs_journal *journal = curseg->journal;
+ 	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+ 	unsigned int i, start, end;
+ 	unsigned int readed, start_blk = 0;
+@@ -2168,16 +2203,16 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ 			struct f2fs_sit_entry sit;
+ 			struct page *page;
+ 
+-			mutex_lock(&curseg->curseg_mutex);
++			down_read(&curseg->journal_rwsem);
+ 			for (i = 0; i < sits_in_cursum(journal); i++) {
+ 				if (le32_to_cpu(segno_in_journal(journal, i))
+ 								== start) {
+ 					sit = sit_in_journal(journal, i);
+-					mutex_unlock(&curseg->curseg_mutex);
++					up_read(&curseg->journal_rwsem);
+ 					goto got_it;
+ 				}
+ 			}
+-			mutex_unlock(&curseg->curseg_mutex);
++			up_read(&curseg->journal_rwsem);
+ 
+ 			page = get_current_sit_page(sbi, start);
+ 			sit_blk = (struct f2fs_sit_block *)page_address(page);
+@@ -2412,8 +2447,10 @@ static void destroy_curseg(struct f2fs_sb_info *sbi)
+ 	if (!array)
+ 		return;
+ 	SM_I(sbi)->curseg_array = NULL;
+-	for (i = 0; i < NR_CURSEG_TYPE; i++)
++	for (i = 0; i < NR_CURSEG_TYPE; i++) {
+ 		kfree(array[i].sum_blk);
++		kfree(array[i].journal);
++	}
+ 	kfree(array);
  }
  
-+static int f2fs_add_inline_entries(struct inode *dir,
-+			struct f2fs_inline_dentry *inline_dentry)
-+{
-+	struct f2fs_dentry_ptr d;
-+	unsigned long bit_pos = 0;
-+	int err = 0;
-+
-+	make_dentry_ptr(NULL, &d, (void *)inline_dentry, 2);
-+
-+	while (bit_pos < d.max) {
-+		struct f2fs_dir_entry *de;
-+		struct qstr new_name;
-+		nid_t ino;
-+		umode_t fake_mode;
-+
-+		if (!test_bit_le(bit_pos, d.bitmap)) {
-+			bit_pos++;
-+			continue;
-+		}
-+
-+		de = &d.dentry[bit_pos];
-+		new_name.name = d.filename[bit_pos];
-+		new_name.len = de->name_len;
-+
-+		ino = le32_to_cpu(de->ino);
-+		fake_mode = get_de_type(de) << S_SHIFT;
-+
-+		err = f2fs_add_regular_entry(dir, &new_name, NULL,
-+							ino, fake_mode);
-+		if (err)
-+			goto punch_dentry_pages;
-+
-+		if (unlikely(!de->name_len))
-+			d.max = -1;
-+
-+		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-+	}
-+	return 0;
-+punch_dentry_pages:
-+	truncate_inode_pages(&dir->i_data, 0);
-+	truncate_blocks(dir, 0, false);
-+	remove_dirty_inode(dir);
-+	return err;
-+}
-+
-+static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
-+				struct f2fs_inline_dentry *inline_dentry)
-+{
-+	struct f2fs_inline_dentry *backup_dentry;
-+	int err;
-+
-+	backup_dentry = kmalloc(sizeof(struct f2fs_inline_dentry),
-+							GFP_F2FS_ZERO);
-+	if (!backup_dentry)
-+		return -ENOMEM;
-+
-+	memcpy(backup_dentry, inline_dentry, MAX_INLINE_DATA);
-+	truncate_inline_inode(ipage, 0);
-+
-+	unlock_page(ipage);
-+
-+	err = f2fs_add_inline_entries(dir, backup_dentry);
-+	if (err)
-+		goto recover;
-+
-+	lock_page(ipage);
-+
-+	stat_dec_inline_dir(dir);
-+	clear_inode_flag(F2FS_I(dir), FI_INLINE_DENTRY);
-+	update_inode(dir, ipage);
-+	kfree(backup_dentry);
-+	return 0;
-+recover:
-+	lock_page(ipage);
-+	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA);
-+	i_size_write(dir, MAX_INLINE_DATA);
-+	update_inode(dir, ipage);
-+	f2fs_put_page(ipage, 1);
-+
-+	kfree(backup_dentry);
-+	return err;
-+}
-+
-+static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
-+				struct f2fs_inline_dentry *inline_dentry)
-+{
-+	if (!F2FS_I(dir)->i_dir_level)
-+		return f2fs_move_inline_dirents(dir, ipage, inline_dentry);
-+	else
-+		return f2fs_move_rehashed_dirents(dir, ipage, inline_dentry);
-+}
-+
- int f2fs_add_inline_entry(struct inode *dir, const struct qstr *name,
- 			struct inode *inode, nid_t ino, umode_t mode)
- {
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 9eb215a..71a9ba8 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -508,4 +508,6 @@ enum {
- 	F2FS_FT_MAX
- };
- 
-+#define S_SHIFT 12
-+
- #endif  /* _LINUX_F2FS_FS_H */
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 2f1a422..975c33d 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -258,6 +258,8 @@ struct victim_selection {
+ struct curseg_info {
+ 	struct mutex curseg_mutex;		/* lock for consistency */
+ 	struct f2fs_summary_block *sum_blk;	/* cached summary block */
++	struct rw_semaphore journal_rwsem;	/* protect journal area */
++	struct f2fs_journal *journal;		/* cached journal info */
+ 	unsigned char alloc_type;		/* current allocation type */
+ 	unsigned int segno;			/* current segment number */
+ 	unsigned short next_blkoff;		/* next block offset to write */
 -- 
 2.7.0
-
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
