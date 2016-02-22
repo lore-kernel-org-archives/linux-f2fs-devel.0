@@ -1,86 +1,76 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: remain last victim segment number
-	ascending order
-Date: Mon, 22 Feb 2016 09:44:38 -0800
-Message-ID: <1456163078-15523-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH v6] F2FS support
+Date: Mon, 22 Feb 2016 10:21:49 -0800
+Message-ID: <20160222182149.GC10875@jaegeuk.gateway>
+References: <1427185140-41120-1-git-send-email-jaegeuk@kernel.org>
+	<20150403224908.GB25673@jaegeuk-mac02.mot.com>
+	<20151119212824.GA11666@jaegeuk.local> <566E7DAA.4010202@gmail.com>
+	<20151215003421.GD48918@jaegeuk.local>
+	<20151215181439.GA60773@jaegeuk.local>
+	<20160108194132.GA17464@jaegeuk.aosp> <56CAD406.3030508@gmail.com>
+Reply-To: The development of GNU GRUB <grub-devel@gnu.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aXuXM-00088Y-3G
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 22 Feb 2016 17:44:44 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aXuXL-0005S3-82
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 22 Feb 2016 17:44:44 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org>
+Content-Disposition: inline
+In-Reply-To: <56CAD406.3030508@gmail.com>
+List-Unsubscribe: <https://lists.gnu.org/mailman/options/grub-devel>,
+	<mailto:grub-devel-request@gnu.org?subject=unsubscribe>
+List-Archive: <http://lists.gnu.org/archive/html/grub-devel>
+List-Post: <mailto:grub-devel@gnu.org>
+List-Help: <mailto:grub-devel-request@gnu.org?subject=help>
+List-Subscribe: <https://lists.gnu.org/mailman/listinfo/grub-devel>,
+	<mailto:grub-devel-request@gnu.org?subject=subscribe>
+Errors-To: grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org
+Sender: grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org
+To: Andrei Borzenkov <arvidjaar@gmail.com>
+Cc: The development of GNU GRUB <grub-devel@gnu.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch avoids to remain inefficient victim segment number selected by
-a victim.
-
-For example, if all the dirty segments has same valid blocks, we can get
-the victim segments descending order due to keeping wrong last segment number.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/gc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 47ade35..c013534 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -270,7 +270,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- {
- 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
- 	struct victim_sel_policy p;
--	unsigned int secno, max_cost;
-+	unsigned int secno, max_cost, last_victim;
- 	unsigned int last_segment = MAIN_SEGS(sbi);
- 	unsigned int nsearched = 0;
- 
-@@ -285,6 +285,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 	if (p.max_search == 0)
- 		goto out;
- 
-+	last_victim = sbi->last_victim[p.gc_mode];
- 	if (p.alloc_mode == LFS && gc_type == FG_GC) {
- 		p.min_segno = check_bg_victims(sbi);
- 		if (p.min_segno != NULL_SEGNO)
-@@ -332,7 +333,10 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 		}
- next:
- 		if (nsearched >= p.max_search) {
--			sbi->last_victim[p.gc_mode] = segno;
-+			if (!sbi->last_victim[p.gc_mode] && segno <= last_victim)
-+				sbi->last_victim[p.gc_mode] = last_victim + 1;
-+			else
-+				sbi->last_victim[p.gc_mode] = segno + 1;
- 			break;
- 		}
- 	}
--- 
-2.6.3
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+SGkgQW5kcmVpLAoKSSdsbCBzZW5kIHY3IHdoaWNoIGFkZHJlc3NlcyB5b3VyIGNvbW1lbnQuCgpU
+aGFua3MsCgpPbiBNb24sIEZlYiAyMiwgMjAxNiBhdCAxMjoyNToyNlBNICswMzAwLCBBbmRyZWkg
+Qm9yemVua292IHdyb3RlOgo+IDA4LjAxLjIwMTYgMjI6NDEsIEphZWdldWsgS2ltINC/0LjRiNC1
+0YI6Cj4gPiBDaGFuZ2UgbG9nIGZyb20gdjU6Cj4gPiAgbyBmaXggYnVpbGQgd2FybmluZyBmb3Ig
+QVJNLCByZXBvcnRlZCBieSBNaWNoYWVsIFppbW1lcm1hbm4KPiA+IAo+ID4gVGhhbmtzIHRvIE1p
+Y2hhZWwgZm9yIHRlc3RpbmcgdGhpcyBwYXRjaC4KPiA+IAo+ID4gLS0gPjggLS0KPiA+IEZyb20g
+Mjg0ZmQ2NjY2MmE2ZDVlMDc3NzBjYzAyMWM4ZjU5YjUzODQ3MWMzNSBNb24gU2VwIDE3IDAwOjAw
+OjAwIDIwMDEKPiA+IEZyb206IEphZWdldWsgS2ltIDxqYWVnZXVrQGtlcm5lbC5vcmc+Cj4gPiBE
+YXRlOiBUdWUsIDE3IE5vdiAyMDE1IDEyOjQ1OjEzIC0wODAwCj4gPiBTdWJqZWN0OiBbUEFUQ0hd
+IEYyRlMgc3VwcG9ydAo+ID4gCj4gPiAiRjJGUyAoRmxhc2gtRnJpZW5kbHkgRmlsZSBTeXN0ZW0p
+IGlzIGZsYXNoLWZyaWVuZGx5IGZpbGUgc3lzdGVtIHdoaWNoIHdhcyBtZXJnZWQKPiA+IGludG8g
+TGludXgga2VybmVsIHYzLjggaW4gMjAxMy4KPiA+IAo+ID4gVGhlIG1vdGl2ZSBmb3IgRjJGUyB3
+YXMgdG8gYnVpbGQgYSBmaWxlIHN5c3RlbSB0aGF0IGZyb20gdGhlIHN0YXJ0LCB0YWtlcyBpbnRv
+Cj4gPiBhY2NvdW50IHRoZSBjaGFyYWN0ZXJpc3RpY3Mgb2YgTkFORCBmbGFzaCBtZW1vcnktYmFz
+ZWQgc3RvcmFnZSBkZXZpY2VzIChzdWNoIGFzCj4gPiBzb2xpZC1zdGF0ZSBkaXNrcywgZU1NQywg
+YW5kIFNEIGNhcmRzKS4KPiA+IAo+ID4gRjJGUyB3YXMgZGVzaWduZWQgb24gYSBiYXNpcyBvZiBh
+IGxvZy1zdHJ1Y3R1cmVkIGZpbGUgc3lzdGVtIGFwcHJvYWNoLCB3aGljaAo+ID4gcmVtZWRpZXMg
+c29tZSBrbm93biBpc3N1ZXMgb2YgdGhlIG9sZGVyIGxvZyBzdHJ1Y3R1cmVkIGZpbGUgc3lzdGVt
+cywgc3VjaCBhcwo+ID4gdGhlIHNub3diYWxsIGVmZmVjdCBvZiB3YW5kZXJpbmcgdHJlZXMgYW5k
+IGhpZ2ggY2xlYW5pbmcgb3ZlcmhlYWQuIEluIGFkZGl0aW9uLAo+ID4gc2luY2UgYSBOQU5ELWJh
+c2VkIHN0b3JhZ2UgZGV2aWNlIHNob3dzIGRpZmZlcmVudCBjaGFyYWN0ZXJpc3RpY3MgYWNjb3Jk
+aW5nIHRvCj4gPiBpdHMgaW50ZXJuYWwgZ2VvbWV0cnkgb3IgZmxhc2ggbWVtb3J5IG1hbmFnZW1l
+bnQgc2NoZW1lIChzdWNoIGFzIHRoZSBGbGFzaAo+ID4gVHJhbnNsYXRpb24gTGF5ZXIgb3IgRlRM
+KSwgaXQgc3VwcG9ydHMgdmFyaW91cyBwYXJhbWV0ZXJzIG5vdCBvbmx5IGZvcgo+ID4gY29uZmln
+dXJpbmcgb24tZGlzayBsYXlvdXQsIGJ1dCBhbHNvIGZvciBzZWxlY3RpbmcgYWxsb2NhdGlvbiBh
+bmQgY2xlYW5pbmcKPiA+IGFsZ29yaXRobS4iLCBxdW90ZSBieSBodHRwczovL2VuLndpa2lwZWRp
+YS5vcmcvd2lraS9GMkZTLgo+ID4gCj4gPiBUaGUgc291cmNlIGNvZGVzIGZvciBGMkZTIGFyZSBh
+dmFpbGFibGUgZnJvbToKPiA+IAo+ID4gaHR0cDovL2dpdC5rZXJuZWwub3JnL2NnaXQvbGludXgv
+a2VybmVsL2dpdC9qYWVnZXVrL2YyZnMuZ2l0Cj4gPiBodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvY2dp
+dC9saW51eC9rZXJuZWwvZ2l0L2phZWdldWsvZjJmcy10b29scy5naXQKPiA+IAo+IAo+IFNvcnJ5
+IGZvciBkZWxheS4gSSdtIGZpbmUgd2l0aCBpdCAod2l0aCBzaW5nbGUgbml0cGljaywgc2VlIGJl
+bG93KTsKPiBWbGFkaW1pciBoYXMgZmluYWwgd29yZCB3aGV0aGVyIHRoaXMgY2FuIGJlIGNvbW1p
+dHRlZC4KPiAuLi4KPiAKPiA+ICtzdGF0aWMgZ3J1Yl9zc2l6ZV90Cj4gPiArZ3J1Yl9mMmZzX3Jl
+YWRfZmlsZSAoZ3J1Yl9mc2hlbHBfbm9kZV90IG5vZGUsCj4gPiArCQlncnViX2Rpc2tfcmVhZF9o
+b29rX3QgcmVhZF9ob29rLCB2b2lkICpyZWFkX2hvb2tfZGF0YSwKPiA+ICsJCWdydWJfb2ZmX3Qg
+cG9zLCBncnViX3NpemVfdCBsZW4sIGNoYXIgKmJ1ZikKPiA+ICt7Cj4gPiArICBzdHJ1Y3QgZ3J1
+Yl9mMmZzX2lub2RlICppbm9kZSA9ICZub2RlLT5pbm9kZS5pOwo+ID4gKyAgZ3J1Yl9vZmZfdCBm
+aWxlc2l6ZSA9IGdydWJfZjJmc19maWxlX3NpemUgKGlub2RlKTsKPiA+ICsgIGNoYXIgKmlubGlu
+ZV9hZGRyID0gX19pbmxpbmVfYWRkciAoaW5vZGUpOwo+ID4gKwo+ID4gKyAgaWYgKGlub2RlLT5p
+X2lubGluZSAmIEYyRlNfSU5MSU5FX0RBVEEpCj4gPiArICAgIHsKPiA+ICsgICAgICBpZiAocG9z
+ID4gZmlsZXNpemUgfHwgZmlsZXNpemUgPiBNQVhfSU5MSU5FX0RBVEEpCj4gCj4gR1JVQiBjaGVj
+a3MgdGhhdCBwb3MgPCBmaWxlc2l6ZSBiZWZvcmUgY2FsbGluZyBpbnRvIGZzIHNvIHRoaXMgaXMK
+PiByZWR1bmRhbnQuIEFuZCBmaWxlc2l6ZSBjaGVjayBpcyBzdGF0aWMgc28gY2FuIGJlIGRvbmUg
+aW4gLT5vcGVuLgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KR3J1Yi1kZXZlbCBtYWlsaW5nIGxpc3QKR3J1Yi1kZXZlbEBnbnUub3JnCmh0dHBzOi8vbGlz
+dHMuZ251Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2dydWItZGV2ZWwK
