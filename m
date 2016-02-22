@@ -1,22 +1,32 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH] fsck.f2fs: check nat_entry->ino for all nodes
-Date: Mon, 22 Feb 2016 17:01:15 +0000
-Message-ID: <1456160475-544-1-git-send-email-shengyong1@huawei.com>
+From: Andrei Borzenkov <arvidjaar@gmail.com>
+Subject: Re: [PATCH v6] F2FS support
+Date: Mon, 22 Feb 2016 12:25:26 +0300
+Message-ID: <56CAD406.3030508@gmail.com>
+References: <1427185140-41120-1-git-send-email-jaegeuk@kernel.org>
+	<20150403224908.GB25673@jaegeuk-mac02.mot.com>
+	<20151119212824.GA11666@jaegeuk.local> <566E7DAA.4010202@gmail.com>
+	<20151215003421.GD48918@jaegeuk.local>
+	<20151215181439.GA60773@jaegeuk.local>
+	<20160108194132.GA17464@jaegeuk.aosp>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1aXmfD-00015Q-2S
+	(envelope-from <arvidjaar@gmail.com>) id 1aXmkL-0001UT-88
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 22 Feb 2016 09:20:19 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aXmf9-00067V-8s
+	Mon, 22 Feb 2016 09:25:37 +0000
+Received: from mail-lb0-f169.google.com ([209.85.217.169])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aXmkJ-00040u-9p
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 22 Feb 2016 09:20:19 +0000
+	Mon, 22 Feb 2016 09:25:37 +0000
+Received: by mail-lb0-f169.google.com with SMTP id bc4so78358585lbc.2
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 22 Feb 2016 01:25:35 -0800 (PST)
+In-Reply-To: <20160108194132.GA17464@jaegeuk.aosp>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,43 +36,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao2.yu@samsung.com, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: The development of GNU GRUB <grub-devel@gnu.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Commit 843f5b9388c4652a ("fsck.f2fs: check ino of an inode") checks
-nat_entry->ino for inode. However, the checking is irrelevant to node
-type, and if ino of other kinds of nodes gets corrupted, fsck.f2fs
-cannot detect it. This patch fixes the commit.
-
-Fixes: 843f5b9388c4652a ("fsck.f2fs: check ino of an inode")
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
-This is against dev branch.
----
- fsck/fsck.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 6451595..2d07629 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -383,8 +383,8 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
- 				le32_to_cpu(node_blk->footer.ino));
- 		return -EINVAL;
- 	}
--	if (ntype == TYPE_INODE && ni->ino != node_blk->footer.ino) {
--		ASSERT_MSG("nid[0x%x] TYPE_INODE nat_entry->ino[0x%x] footer.ino[0x%x]",
-+	if (ni->ino != node_blk->footer.ino) {
-+		ASSERT_MSG("nid[0x%x] nat_entry->ino[0x%x] footer.ino[0x%x]",
- 				nid, ni->ino, le32_to_cpu(node_blk->footer.ino));
- 		return -EINVAL;
- 	}
--- 
-2.7.1
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+MDguMDEuMjAxNiAyMjo0MSwgSmFlZ2V1ayBLaW0g0L/QuNGI0LXRgjoKPiBDaGFuZ2UgbG9nIGZy
+b20gdjU6Cj4gIG8gZml4IGJ1aWxkIHdhcm5pbmcgZm9yIEFSTSwgcmVwb3J0ZWQgYnkgTWljaGFl
+bCBaaW1tZXJtYW5uCj4gCj4gVGhhbmtzIHRvIE1pY2hhZWwgZm9yIHRlc3RpbmcgdGhpcyBwYXRj
+aC4KPiAKPiAtLSA+OCAtLQo+IEZyb20gMjg0ZmQ2NjY2MmE2ZDVlMDc3NzBjYzAyMWM4ZjU5YjUz
+ODQ3MWMzNSBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDEKPiBGcm9tOiBKYWVnZXVrIEtpbSA8amFl
+Z2V1a0BrZXJuZWwub3JnPgo+IERhdGU6IFR1ZSwgMTcgTm92IDIwMTUgMTI6NDU6MTMgLTA4MDAK
+PiBTdWJqZWN0OiBbUEFUQ0hdIEYyRlMgc3VwcG9ydAo+IAo+ICJGMkZTIChGbGFzaC1GcmllbmRs
+eSBGaWxlIFN5c3RlbSkgaXMgZmxhc2gtZnJpZW5kbHkgZmlsZSBzeXN0ZW0gd2hpY2ggd2FzIG1l
+cmdlZAo+IGludG8gTGludXgga2VybmVsIHYzLjggaW4gMjAxMy4KPiAKPiBUaGUgbW90aXZlIGZv
+ciBGMkZTIHdhcyB0byBidWlsZCBhIGZpbGUgc3lzdGVtIHRoYXQgZnJvbSB0aGUgc3RhcnQsIHRh
+a2VzIGludG8KPiBhY2NvdW50IHRoZSBjaGFyYWN0ZXJpc3RpY3Mgb2YgTkFORCBmbGFzaCBtZW1v
+cnktYmFzZWQgc3RvcmFnZSBkZXZpY2VzIChzdWNoIGFzCj4gc29saWQtc3RhdGUgZGlza3MsIGVN
+TUMsIGFuZCBTRCBjYXJkcykuCj4gCj4gRjJGUyB3YXMgZGVzaWduZWQgb24gYSBiYXNpcyBvZiBh
+IGxvZy1zdHJ1Y3R1cmVkIGZpbGUgc3lzdGVtIGFwcHJvYWNoLCB3aGljaAo+IHJlbWVkaWVzIHNv
+bWUga25vd24gaXNzdWVzIG9mIHRoZSBvbGRlciBsb2cgc3RydWN0dXJlZCBmaWxlIHN5c3RlbXMs
+IHN1Y2ggYXMKPiB0aGUgc25vd2JhbGwgZWZmZWN0IG9mIHdhbmRlcmluZyB0cmVlcyBhbmQgaGln
+aCBjbGVhbmluZyBvdmVyaGVhZC4gSW4gYWRkaXRpb24sCj4gc2luY2UgYSBOQU5ELWJhc2VkIHN0
+b3JhZ2UgZGV2aWNlIHNob3dzIGRpZmZlcmVudCBjaGFyYWN0ZXJpc3RpY3MgYWNjb3JkaW5nIHRv
+Cj4gaXRzIGludGVybmFsIGdlb21ldHJ5IG9yIGZsYXNoIG1lbW9yeSBtYW5hZ2VtZW50IHNjaGVt
+ZSAoc3VjaCBhcyB0aGUgRmxhc2gKPiBUcmFuc2xhdGlvbiBMYXllciBvciBGVEwpLCBpdCBzdXBw
+b3J0cyB2YXJpb3VzIHBhcmFtZXRlcnMgbm90IG9ubHkgZm9yCj4gY29uZmlndXJpbmcgb24tZGlz
+ayBsYXlvdXQsIGJ1dCBhbHNvIGZvciBzZWxlY3RpbmcgYWxsb2NhdGlvbiBhbmQgY2xlYW5pbmcK
+PiBhbGdvcml0aG0uIiwgcXVvdGUgYnkgaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvRjJG
+Uy4KPiAKPiBUaGUgc291cmNlIGNvZGVzIGZvciBGMkZTIGFyZSBhdmFpbGFibGUgZnJvbToKPiAK
+PiBodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2phZWdldWsvZjJm
+cy5naXQKPiBodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2phZWdl
+dWsvZjJmcy10b29scy5naXQKPiAKClNvcnJ5IGZvciBkZWxheS4gSSdtIGZpbmUgd2l0aCBpdCAo
+d2l0aCBzaW5nbGUgbml0cGljaywgc2VlIGJlbG93KTsKVmxhZGltaXIgaGFzIGZpbmFsIHdvcmQg
+d2hldGhlciB0aGlzIGNhbiBiZSBjb21taXR0ZWQuCi4uLgoKPiArc3RhdGljIGdydWJfc3NpemVf
+dAo+ICtncnViX2YyZnNfcmVhZF9maWxlIChncnViX2ZzaGVscF9ub2RlX3Qgbm9kZSwKPiArCQln
+cnViX2Rpc2tfcmVhZF9ob29rX3QgcmVhZF9ob29rLCB2b2lkICpyZWFkX2hvb2tfZGF0YSwKPiAr
+CQlncnViX29mZl90IHBvcywgZ3J1Yl9zaXplX3QgbGVuLCBjaGFyICpidWYpCj4gK3sKPiArICBz
+dHJ1Y3QgZ3J1Yl9mMmZzX2lub2RlICppbm9kZSA9ICZub2RlLT5pbm9kZS5pOwo+ICsgIGdydWJf
+b2ZmX3QgZmlsZXNpemUgPSBncnViX2YyZnNfZmlsZV9zaXplIChpbm9kZSk7Cj4gKyAgY2hhciAq
+aW5saW5lX2FkZHIgPSBfX2lubGluZV9hZGRyIChpbm9kZSk7Cj4gKwo+ICsgIGlmIChpbm9kZS0+
+aV9pbmxpbmUgJiBGMkZTX0lOTElORV9EQVRBKQo+ICsgICAgewo+ICsgICAgICBpZiAocG9zID4g
+ZmlsZXNpemUgfHwgZmlsZXNpemUgPiBNQVhfSU5MSU5FX0RBVEEpCgpHUlVCIGNoZWNrcyB0aGF0
+IHBvcyA8IGZpbGVzaXplIGJlZm9yZSBjYWxsaW5nIGludG8gZnMgc28gdGhpcyBpcwpyZWR1bmRh
+bnQuIEFuZCBmaWxlc2l6ZSBjaGVjayBpcyBzdGF0aWMgc28gY2FuIGJlIGRvbmUgaW4gLT5vcGVu
+LgoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpTaXRlMjR4NyBBUE0gSW5zaWdodDogR2V0IERlZXAg
+VmlzaWJpbGl0eSBpbnRvIEFwcGxpY2F0aW9uIFBlcmZvcm1hbmNlCkFQTSArIE1vYmlsZSBBUE0g
+KyBSVU06IE1vbml0b3IgMyBBcHAgaW5zdGFuY2VzIGF0IGp1c3QgJDM1L01vbnRoCk1vbml0b3Ig
+ZW5kLXRvLWVuZCB3ZWIgdHJhbnNhY3Rpb25zIGFuZCB0YWtlIGNvcnJlY3RpdmUgYWN0aW9ucyBu
+b3cKVHJvdWJsZXNob290IGZhc3RlciBhbmQgaW1wcm92ZSBlbmQtdXNlciBleHBlcmllbmNlLiBT
+aWdudXAgTm93IQpodHRwOi8vcHViYWRzLmcuZG91YmxlY2xpY2submV0L2dhbXBhZC9jbGs/aWQ9
+MjcyNDg3MTUxJml1PS80MTQwCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxA
+bGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3Rz
+L2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
