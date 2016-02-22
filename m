@@ -1,7 +1,7 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2] f2fs: fix to convert inline directory correctly
-Date: Mon, 22 Feb 2016 18:29:18 +0800
-Message-ID: <004601d16d5b$faefdc10$f0cf9430$@samsung.com>
+Subject: [PATCH 1/5] f2fs: fix the wrong stat count of calling gc
+Date: Mon, 22 Feb 2016 18:32:13 +0800
+Message-ID: <004701d16d5c$62e1f790$28a5e6b0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -12,373 +12,46 @@ To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-With below serials, we will lose parts of dirents:
+With a partition which was formated as multi segments in one section,
+we stated incorrectly for count of gc operation.
 
-1) mount f2fs with inline_dentry option
-2) echo 1 > /sys/fs/f2fs/sdX/dir_level
-3) mkdir dir
-4) touch 180 files named [1-180] in dir
-5) touch 181 in dir
-6) echo 3 > /proc/sys/vm/drop_caches
-7) ll dir
+e.g., for a partition with segs_per_sec = 4
 
-ls: cannot access 2: No such file or directory
-ls: cannot access 4: No such file or directory
-ls: cannot access 5: No such file or directory
-ls: cannot access 6: No such file or directory
-ls: cannot access 8: No such file or directory
-ls: cannot access 9: No such file or directory
-...
-total 360
-drwxr-xr-x 2 root root 4096 Feb 19 15:12 ./
-drwxr-xr-x 3 root root 4096 Feb 19 15:11 ../
--rw-r--r-- 1 root root    0 Feb 19 15:12 1
--rw-r--r-- 1 root root    0 Feb 19 15:12 10
--rw-r--r-- 1 root root    0 Feb 19 15:12 100
--????????? ? ?    ?       ?            ? 101
--????????? ? ?    ?       ?            ? 102
--????????? ? ?    ?       ?            ? 103
-...
+cat /sys/kernel/debug/f2fs/status
 
-The reason is: when doing the inline dir conversion, we didn't consider
-that directory has hierarchical hash structure which can be configured
-through sysfs interface 'dir_level'.
+GC calls: 208 (BG: 7)
+  - data segments : 104 (52)
+  - node segments : 104 (24)
 
-By default, dir_level of directory inode is 0, it means we have one bucket
-in hash table located in first level, all dirents will be hashed in this
-bucket, so it has no problem for us to do the duplication simply between
-inline dentry page and converted normal dentry page.
-
-However, if we configured dir_level with the value N (greater than 0), it
-will expand the bucket number of first level hash table by 2^N - 1, it
-hashs dirents into different buckets according their hash value, if we
-still move all dirents to first bucket, it makes incorrent locating for
-inline dirents, the result is, although we can iterate all dirents through
-->readdir, we can't stat some of them in ->lookup which based on hash
-table searching.
-
-This patch fixes this issue by rehashing dirents into correct position
-when converting inline directory.
+GC called count should be (104 (data segs) + 104 (node segs)) / 4 = 52,
+rather than 208. Fix it.
 
 Signed-off-by: Chao Yu <chao2.yu@samsung.com>
 ---
+ fs/f2fs/gc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-v2:
-- get rid of removal of f2fs_bug_on in get_new_data_page.
-
- fs/f2fs/dir.c           | 87 ++++++++++++++++++++++++---------------------
- fs/f2fs/f2fs.h          |  4 ++-
- fs/f2fs/inline.c        | 94 ++++++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/f2fs_fs.h |  2 ++
- 4 files changed, 144 insertions(+), 43 deletions(-)
-
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index aa06700..0fe877d 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -48,7 +48,6 @@ unsigned char f2fs_filetype_table[F2FS_FT_MAX] = {
- 	[F2FS_FT_SYMLINK]	= DT_LNK,
- };
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 47ade35..6b2d704 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -816,7 +816,6 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 								gc_type);
  
--#define S_SHIFT 12
- static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
- 	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
- 	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
-@@ -64,6 +63,13 @@ void set_de_type(struct f2fs_dir_entry *de, umode_t mode)
- 	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
+ 		stat_inc_seg_count(sbi, type, gc_type);
+-		stat_inc_call_count(sbi->stat_info);
+ 
+ 		f2fs_put_page(sum_page, 0);
+ 	}
+@@ -841,6 +840,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 			if (get_valid_blocks(sbi, start_segno++, 1) == 0)
+ 				seg_freed++;
+ 	}
++
++	stat_inc_call_count(sbi->stat_info);
++
+ 	return seg_freed;
  }
  
-+unsigned char get_de_type(struct f2fs_dir_entry *de)
-+{
-+	if (de->file_type < F2FS_FT_MAX)
-+		return f2fs_filetype_table[de->file_type];
-+	return DT_UNKNOWN;
-+}
-+
- static unsigned long dir_block_index(unsigned int level,
- 				int dir_level, unsigned int idx)
- {
-@@ -519,11 +525,7 @@ void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
- 	}
- }
- 
--/*
-- * Caller should grab and release a rwsem by calling f2fs_lock_op() and
-- * f2fs_unlock_op().
-- */
--int __f2fs_add_link(struct inode *dir, const struct qstr *name,
-+int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 				struct inode *inode, nid_t ino, umode_t mode)
- {
- 	unsigned int bit_pos;
-@@ -536,28 +538,11 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
- 	struct f2fs_dentry_block *dentry_blk = NULL;
- 	struct f2fs_dentry_ptr d;
- 	struct page *page = NULL;
--	struct fscrypt_name fname;
--	struct qstr new_name;
--	int slots, err;
--
--	err = fscrypt_setup_filename(dir, name, 0, &fname);
--	if (err)
--		return err;
--
--	new_name.name = fname_name(&fname);
--	new_name.len = fname_len(&fname);
--
--	if (f2fs_has_inline_dentry(dir)) {
--		err = f2fs_add_inline_entry(dir, &new_name, inode, ino, mode);
--		if (!err || err != -EAGAIN)
--			goto out;
--		else
--			err = 0;
--	}
-+	int slots, err = 0;
- 
- 	level = 0;
--	slots = GET_DENTRY_SLOTS(new_name.len);
--	dentry_hash = f2fs_dentry_hash(&new_name);
-+	slots = GET_DENTRY_SLOTS(new_name->len);
-+	dentry_hash = f2fs_dentry_hash(new_name);
- 
- 	current_depth = F2FS_I(dir)->i_current_depth;
- 	if (F2FS_I(dir)->chash == dentry_hash) {
-@@ -566,10 +551,8 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
- 	}
- 
- start:
--	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH)) {
--		err = -ENOSPC;
--		goto out;
--	}
-+	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH))
-+		return -ENOSPC;
- 
- 	/* Increase the depth, if required */
- 	if (level == current_depth)
-@@ -583,10 +566,8 @@ start:
- 
- 	for (block = bidx; block <= (bidx + nblock - 1); block++) {
- 		dentry_page = get_new_data_page(dir, NULL, block, true);
--		if (IS_ERR(dentry_page)) {
--			err = PTR_ERR(dentry_page);
--			goto out;
--		}
-+		if (IS_ERR(dentry_page))
-+			return PTR_ERR(dentry_page);
- 
- 		dentry_blk = kmap(dentry_page);
- 		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
-@@ -606,7 +587,7 @@ add_dentry:
- 
- 	if (inode) {
- 		down_write(&F2FS_I(inode)->i_sem);
--		page = init_inode_metadata(inode, dir, &new_name, NULL);
-+		page = init_inode_metadata(inode, dir, new_name, NULL);
- 		if (IS_ERR(page)) {
- 			err = PTR_ERR(page);
- 			goto fail;
-@@ -616,7 +597,7 @@ add_dentry:
- 	}
- 
- 	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
--	f2fs_update_dentry(ino, mode, &d, &new_name, dentry_hash, bit_pos);
-+	f2fs_update_dentry(ino, mode, &d, new_name, dentry_hash, bit_pos);
- 
- 	set_page_dirty(dentry_page);
- 
-@@ -638,7 +619,34 @@ fail:
- 	}
- 	kunmap(dentry_page);
- 	f2fs_put_page(dentry_page, 1);
--out:
-+
-+	return err;
-+}
-+
-+/*
-+ * Caller should grab and release a rwsem by calling f2fs_lock_op() and
-+ * f2fs_unlock_op().
-+ */
-+int __f2fs_add_link(struct inode *dir, const struct qstr *name,
-+				struct inode *inode, nid_t ino, umode_t mode)
-+{
-+	struct fscrypt_name fname;
-+	struct qstr new_name;
-+	int err;
-+
-+	err = fscrypt_setup_filename(dir, name, 0, &fname);
-+	if (err)
-+		return err;
-+
-+	new_name.name = fname_name(&fname);
-+	new_name.len = fname_len(&fname);
-+
-+	err = -EAGAIN;
-+	if (f2fs_has_inline_dentry(dir))
-+		err = f2fs_add_inline_entry(dir, &new_name, inode, ino, mode);
-+	if (err == -EAGAIN)
-+		err = f2fs_add_regular_entry(dir, &new_name, inode, ino, mode);
-+
- 	fscrypt_free_filename(&fname);
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
- 	return err;
-@@ -802,10 +810,7 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 			continue;
- 		}
- 
--		if (de->file_type < F2FS_FT_MAX)
--			d_type = f2fs_filetype_table[de->file_type];
--		else
--			d_type = DT_UNKNOWN;
-+		d_type = get_de_type(de);
- 
- 		de_name.name = d->filename[bit_pos];
- 		de_name.len = le16_to_cpu(de->name_len);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4d759f3..8fc17c0 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1706,7 +1706,7 @@ struct dentry *f2fs_get_parent(struct dentry *child);
-  */
- extern unsigned char f2fs_filetype_table[F2FS_FT_MAX];
- void set_de_type(struct f2fs_dir_entry *, umode_t);
--
-+unsigned char get_de_type(struct f2fs_dir_entry *);
- struct f2fs_dir_entry *find_target_dentry(struct fscrypt_name *,
- 			f2fs_hash_t, int *, struct f2fs_dentry_ptr *);
- bool f2fs_fill_dentries(struct dir_context *, struct f2fs_dentry_ptr *,
-@@ -1727,6 +1727,8 @@ void f2fs_set_link(struct inode *, struct f2fs_dir_entry *,
- int update_dent_inode(struct inode *, struct inode *, const struct qstr *);
- void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *,
- 			const struct qstr *, f2fs_hash_t , unsigned int);
-+int f2fs_add_regular_entry(struct inode *, const struct qstr *,
-+						struct inode *, nid_t, umode_t);
- int __f2fs_add_link(struct inode *, const struct qstr *, struct inode *, nid_t,
- 			umode_t);
- void f2fs_delete_entry(struct f2fs_dir_entry *, struct page *, struct inode *,
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 3e3bc26..2046251 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -357,7 +357,7 @@ int make_empty_inline_dir(struct inode *inode, struct inode *parent,
-  * NOTE: ipage is grabbed by caller, but if any error occurs, we should
-  * release ipage in this function.
-  */
--static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
-+static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
- 				struct f2fs_inline_dentry *inline_dentry)
- {
- 	struct page *page;
-@@ -418,6 +418,98 @@ out:
- 	return err;
- }
- 
-+static int f2fs_add_inline_entries(struct inode *dir,
-+			struct f2fs_inline_dentry *inline_dentry)
-+{
-+	struct f2fs_dentry_ptr d;
-+	unsigned long bit_pos = 0;
-+	int err = 0;
-+
-+	make_dentry_ptr(NULL, &d, (void *)inline_dentry, 2);
-+
-+	while (bit_pos < d.max) {
-+		struct f2fs_dir_entry *de;
-+		struct qstr new_name;
-+		nid_t ino;
-+		umode_t fake_mode;
-+
-+		if (!test_bit_le(bit_pos, d.bitmap)) {
-+			bit_pos++;
-+			continue;
-+		}
-+
-+		de = &d.dentry[bit_pos];
-+		new_name.name = d.filename[bit_pos];
-+		new_name.len = de->name_len;
-+
-+		ino = le32_to_cpu(de->ino);
-+		fake_mode = get_de_type(de) << S_SHIFT;
-+
-+		err = f2fs_add_regular_entry(dir, &new_name, NULL,
-+							ino, fake_mode);
-+		if (err)
-+			goto punch_dentry_pages;
-+
-+		if (unlikely(!de->name_len))
-+			d.max = -1;
-+
-+		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-+	}
-+	return 0;
-+punch_dentry_pages:
-+	truncate_inode_pages(&dir->i_data, 0);
-+	truncate_blocks(dir, 0, false);
-+	remove_dirty_inode(dir);
-+	return err;
-+}
-+
-+static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
-+				struct f2fs_inline_dentry *inline_dentry)
-+{
-+	struct f2fs_inline_dentry *backup_dentry;
-+	int err;
-+
-+	backup_dentry = kmalloc(sizeof(struct f2fs_inline_dentry),
-+							GFP_F2FS_ZERO);
-+	if (!backup_dentry)
-+		return -ENOMEM;
-+
-+	memcpy(backup_dentry, inline_dentry, MAX_INLINE_DATA);
-+	truncate_inline_inode(ipage, 0);
-+
-+	unlock_page(ipage);
-+
-+	err = f2fs_add_inline_entries(dir, backup_dentry);
-+	if (err)
-+		goto recover;
-+
-+	lock_page(ipage);
-+
-+	stat_dec_inline_dir(dir);
-+	clear_inode_flag(F2FS_I(dir), FI_INLINE_DENTRY);
-+	update_inode(dir, ipage);
-+	kfree(backup_dentry);
-+	return 0;
-+recover:
-+	lock_page(ipage);
-+	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA);
-+	i_size_write(dir, MAX_INLINE_DATA);
-+	update_inode(dir, ipage);
-+	f2fs_put_page(ipage, 1);
-+
-+	kfree(backup_dentry);
-+	return err;
-+}
-+
-+static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
-+				struct f2fs_inline_dentry *inline_dentry)
-+{
-+	if (!F2FS_I(dir)->i_dir_level)
-+		return f2fs_move_inline_dirents(dir, ipage, inline_dentry);
-+	else
-+		return f2fs_move_rehashed_dirents(dir, ipage, inline_dentry);
-+}
-+
- int f2fs_add_inline_entry(struct inode *dir, const struct qstr *name,
- 			struct inode *inode, nid_t ino, umode_t mode)
- {
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 9eb215a..71a9ba8 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -508,4 +508,6 @@ enum {
- 	F2FS_FT_MAX
- };
- 
-+#define S_SHIFT 12
-+
- #endif  /* _LINUX_F2FS_FS_H */
 -- 
 2.7.0
