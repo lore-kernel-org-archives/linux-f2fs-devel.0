@@ -1,22 +1,24 @@
 From: Junling Zheng <zhengjunling@huawei.com>
-Subject: [RFC PATCH 1/2] libf2fs: limit the total size up to 16T
-Date: Tue, 23 Feb 2016 21:43:41 +0800
-Message-ID: <1456235022-31652-1-git-send-email-zhengjunling@huawei.com>
+Subject: [RFC PATCH 2/2] f2fs-tools: redefine MAX_SIT_BITMAP_SIZE
+Date: Tue, 23 Feb 2016 21:43:42 +0800
+Message-ID: <1456235022-31652-2-git-send-email-zhengjunling@huawei.com>
+References: <1456235022-31652-1-git-send-email-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhengjunling@huawei.com>) id 1aYDQv-0000VN-Q4
+	(envelope-from <zhengjunling@huawei.com>) id 1aYDQv-0000VS-Ts
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Tue, 23 Feb 2016 13:55:21 +0000
-Received: from [119.145.14.66] (helo=szxga03-in.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aYDQu-0003zI-04
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aYDQr-0002ql-SB
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Tue, 23 Feb 2016 13:55:21 +0000
+In-Reply-To: <1456235022-31652-1-git-send-email-zhengjunling@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,31 +30,35 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, chao2.yu@samsung.com
 
-F2FS can support 16T bytes at most. Limit the config.total_sectors
-so that most parameters calculated according to it in sb/cp can be
-limited correctly too.
+During mkfs, segment_count_sit is calculated using ALIGN and
+SEG_ALIGN, which are both upward. Then, in some extreme scenarios,
+such as 16TB, sit_ver_bitmap_bytesize got from segment_count_sit
+will exceed MAX_SIT_BITMAP_SIZE, which is calculated in a downward
+method.
+
+Unify the two calculating methods and redefine MAX_SIT_BITMAP_SIZE
+to prevent sit_ver_bitmap_bytesize overflowing.
 
 Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
 ---
- lib/libf2fs.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ include/f2fs_fs.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 5eb5c33..a8ad324 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -640,6 +640,11 @@ int f2fs_get_device_info(struct f2fs_configuration *c)
- 		c->total_sectors = wanted_total_sectors;
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index b58aa74..3a1d2d1 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -642,7 +642,9 @@ struct f2fs_nat_block {
+  * disk is 16 TB and it equals to 16 * 1024 * 1024 / 2 segments.
+  */
+ #define F2FS_MAX_SEGMENT       ((16 * 1024 * 1024) / 2)
+-#define MAX_SIT_BITMAP_SIZE    ((F2FS_MAX_SEGMENT / SIT_ENTRY_PER_BLOCK) / 8)
++#define MAX_SIT_BITMAP_SIZE    (SEG_ALIGN(ALIGN(F2FS_MAX_SEGMENT, \
++						SIT_ENTRY_PER_BLOCK)) * \
++						config.blks_per_seg / 8)
  
- 	}
-+	if (c->total_sectors * c->sector_size >
-+		(u_int64_t)F2FS_MAX_SEGMENT * 2 * 1024 * 1024) {
-+		MSG(0, "\tError: F2FS can support 16TB at most!!!\n");
-+		return -1;
-+	}
- 	MSG(0, "Info: sector size = %u\n", c->sector_size);
- 	MSG(0, "Info: total sectors = %"PRIu64" (%"PRIu64" MB)\n",
- 				c->total_sectors, (c->total_sectors *
+ /*
+  * Note that f2fs_sit_entry->vblocks has the following bit-field information.
 -- 
 1.9.1
 
