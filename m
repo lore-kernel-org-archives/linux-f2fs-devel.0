@@ -1,26 +1,26 @@
-From: He YunLei <heyunlei@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid hungtask problem caused by
- losing wake_up
-Date: Tue, 23 Feb 2016 15:02:40 +0800
-Message-ID: <56CC0410.50103@huawei.com>
-References: <1456200476-9811-1-git-send-email-heyunlei@huawei.com>
-	<009501d16dfd$52a518c0$f7ef4a40$@samsung.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [RFC PATCH v2] mkfs.f2fs: recalculate sit_segments
+ by max_sit_bitmap_size
+Date: Tue, 23 Feb 2016 15:19:54 +0800
+Message-ID: <56CC081A.3060503@huawei.com>
+References: <1456199214-4865-1-git-send-email-zhengjunling@huawei.com>
+	<009401d16dfb$24924680$6db6d380$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1aY70D-0002Oe-Ug
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zhengjunling@huawei.com>) id 1aY7Ge-0005pX-Kd
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 23 Feb 2016 07:03:21 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aY70A-0005Ny-Nc
+	Tue, 23 Feb 2016 07:20:20 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aY7GZ-0006bh-R5
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 23 Feb 2016 07:03:21 +0000
-In-Reply-To: <009501d16dfd$52a518c0$f7ef4a40$@samsung.com>
+	Tue, 23 Feb 2016 07:20:20 +0000
+In-Reply-To: <009401d16dfb$24924680$6db6d380$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,80 +30,131 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: 'Biao He' <hebiao6@huawei.com>
+To: Chao Yu <chao2.yu@samsung.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2016/2/23 13:44, Chao Yu wrote:
-> Hi Yunlei,
-Hi Chao,
->
+On 2016/2/23 13:28, Chao Yu wrote:
+> Hi all,
+> 
 >> -----Original Message-----
->> From: Yunlei He [mailto:heyunlei@huawei.com]
->> Sent: Tuesday, February 23, 2016 12:08 PM
->> To: chao2.yu@samsung.com; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
->> Cc: bintian.wang@huawei.com; Yunlei He; Biao He
->> Subject: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
+>> From: Junling Zheng [mailto:zhengjunling@huawei.com]
+>> Sent: Tuesday, February 23, 2016 11:47 AM
+>> To: linux-f2fs-devel@lists.sourceforge.net; jaegeuk@kernel.org
+>> Subject: [f2fs-dev] [RFC PATCH v2] mkfs.f2fs: recalculate sit_segments by max_sit_bitmap_size
 >>
->> The D state of wait_on_all_pages_writeback should be waken by
->> function f2fs_write_end_io when all writeback pages have been
->> succesfully written to device. It's possible that wake_up comes
->> between get_pages and io_schedule. Maybe in this case it will
->> lost wake_up and still in D state even if all pages have been
->> write back to device, and finally, the whole system will be into
->> the hungtask state.
->
-> I haven't encountered such issue so far, do you suffer this in real
-> world?
->
-yes, I have encounter it, the whole file system is blocked at function
-wait_on_all_pages_writeback beyond 120s when write cp, and no error reported
-by storage device driver.
+>> In most cases, sit_bitmap_size is smaller than MAX_SIT_BITMAP_SIZE.
 >>
->>                  if (!get_pages(sbi, F2FS_WRITEBACK))
->>                           break;
->> 					<---------  wake_up
->
-> wake_up will put all tasks linked in sbi->cp_wait on run-queue, so
-> here it should be save to call io_schedule, after being rescheduled,
-> it will get the chance to check above condition to break out.
->
-> Thanks,
-
-Here, we just doubt something weird may cause wait_on_all_pages_writeback
-could not be waken. Wake_up trigger only one time by last bio's end_io
-function, if the thread happen to miss it, the thread will be in D state
-forever. So we change the code to make wait_on_all_pages_writeback awaken
-periodically, then check the condition.
-
->
->>                  io_schedule();
+>> However, in some extreme scenarios, such as 16TB, sit_bitmap_size
+>> could be larger than MAX_SIT_BITMAP_SIZE.
 >>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> Signed-off-by: Biao He <hebiao6@huawei.com>
+>> In this case, we should recalculate the sit_segments through
+>> max_sit_bitmap_size to prevent sit_ver_bitmap_bytesize got from
+>> segment_count_sit in f2fs_write_check_point_pack() being over
+>> MAX_SIT_BITMAP_SIZE.
+>>
+>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
 >> ---
->>   fs/f2fs/checkpoint.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>  mkfs/f2fs_format.c | 23 ++++++++++++++++-------
+>>  1 file changed, 16 insertions(+), 7 deletions(-)
 >>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 2bac8a1..f55355d 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -920,7 +920,7 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
->>   		if (!get_pages(sbi, F2FS_WRITEBACK))
->>   			break;
+>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+>> index 645c2aa..3a050e0 100644
+>> --- a/mkfs/f2fs_format.c
+>> +++ b/mkfs/f2fs_format.c
+>> @@ -191,6 +191,22 @@ static int f2fs_prepare_super_block(void)
 >>
->> -		io_schedule();
->> +		io_schedule_timeout(5*HZ);
->>   	}
->>   	finish_wait(&sbi->cp_wait, &wait);
->>   }
+>>  	sit_segments = SEG_ALIGN(blocks_for_sit);
+>>
+>> +	/*
+>> +	 * In most cases, sit_bitmap_size is smaller than MAX_SIT_BITMAP_SIZE.
+>> +	 * However, in an extreme scenario(16TB), sit_bitmap_size could be larger
+>> +	 * than MAX_SIT_BITMAP_SIZE. Thus, we should recalculate the sit_segments
+>> +	 * to prevent sit_ver_bitmap_bytesize got from segment_count_sit in
+>> +	 * f2fs_write_check_point_pack() being over MAX_SIT_BITMAP_SIZE.
+>> +	 */
+>> +	sit_bitmap_size = (sit_segments << log_blks_per_seg) / 8;
+>> +
+>> +	if (sit_bitmap_size > MAX_SIT_BITMAP_SIZE) {
+>> +		max_sit_bitmap_size = MAX_SIT_BITMAP_SIZE;
+>> +		sit_segments = max_sit_bitmap_size * 8 >> log_blks_per_seg;
+>> +		blocks_for_sit = sit_segments << log_blks_per_seg;
+>> +	} else
+> 
+> Still the minor coding style problem.
+> 
+
+Do you mean the "else" also needs {} even though it has only one sentence?
+
+> IMO, maybe it would be better to limit config.total_sectors with 16TB at
+> very beginning, so more fields in sb like block_count, segment_count could
+> be set correctly when we try to format a huge size image. Right?
+> 
+
+Limiting the disk at very beginning means not starting from 0 sector?
+Does it amount to reducing the size of disk to keep sit_bitmap_size smaller
+than MAX_SIT_BITMAP_SIZE? It looks to be helpful:)
+
+Indeed, the data in sb have no problem. Just the difference of calculating
+methods between sit_bitmap_size and MAX_SIT_BITMAP_SIZE:
+
+F2FS_MAX_SEGMENT:
+    16 * 1024 * 1024 / 2 = 8388608
+max blocks_for_sit:
+    ALIGN(F2FS_MAX_SEGMENT, SIT_ENTRY_PER_BLOCK) = 152521	// Upward here, not all blocks are used, some are redundant.
+max sit_segments:
+    ALIGN(blocks_for_sit, config.blks_per_seg) = 298		// Upward here, not all segments are used, some are redundant.
+max segment_count_sit:
+    sit_segments * 2 = 596
+max sit_ver_bitmap_bytesize:
+    ((segment_count_sit / 2) << log_blocks_per_seg) / 8 = 19072	// Here, bitmap size is too large because of the redundant blocks and segments.
+
+However, MAX_SIT_BITMAP_SIZE is defined as:
+    ((F2FS_MAX_SEGMENT / SIT_ENTRY_PER_BLOCK) / 8) = 19065	// Downward here, abandon the redundant segments.
+
+So, the best way is to unify the two calculating method:)
+
+Thanks,
+
+> Thanks,
+> 
+>> +		max_sit_bitmap_size = sit_bitmap_size;
+>> +
+>>  	set_sb(segment_count_sit, sit_segments * 2);
+>>
+>>  	set_sb(nat_blkaddr, get_sb(sit_blkaddr) + get_sb(segment_count_sit) *
+>> @@ -208,13 +224,6 @@ static int f2fs_prepare_super_block(void)
+>>  	 * This number resizes NAT bitmap area in a CP page.
+>>  	 * So the threshold is determined not to overflow one CP page
+>>  	 */
+>> -	sit_bitmap_size = ((get_sb(segment_count_sit) / 2) <<
+>> -				log_blks_per_seg) / 8;
+>> -
+>> -	if (sit_bitmap_size > MAX_SIT_BITMAP_SIZE)
+>> -		max_sit_bitmap_size = MAX_SIT_BITMAP_SIZE;
+>> -	else
+>> -		max_sit_bitmap_size = sit_bitmap_size;
+>>
+>>  	/*
+>>  	 * It should be reserved minimum 1 segment for nat.
 >> --
 >> 1.9.1
->
->
->
+>>
+>>
+>> ------------------------------------------------------------------------------
+>> Site24x7 APM Insight: Get Deep Visibility into Application Performance
+>> APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+>> Monitor end-to-end web transactions and take corrective actions now
+>> Troubleshoot faster and improve end-user experience. Signup Now!
+>> http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
 > .
->
+> 
+
 
 
 ------------------------------------------------------------------------------
