@@ -1,27 +1,22 @@
-From: He YunLei <heyunlei@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid hungtask problem caused by
- losing wake_up
-Date: Tue, 23 Feb 2016 19:45:39 +0800
-Message-ID: <56CC4663.704@huawei.com>
-References: <1456200476-9811-1-git-send-email-heyunlei@huawei.com>
-	<009501d16dfd$52a518c0$f7ef4a40$@samsung.com>
-	<56CC0410.50103@huawei.com> <56CC2714.7040901@kernel-upstream.org>
+From: Sheng Yong <shengyong1@huawei.com>
+Subject: [RFC PATCH] fsck.f2fs: fix corrupted nat entry [0]
+Date: Tue, 23 Feb 2016 19:45:32 +0800
+Message-ID: <1456227932-29567-1-git-send-email-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1aYBQE-0003sn-5x
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <shengyong1@huawei.com>) id 1aYBQM-0006Up-3Z
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 23 Feb 2016 11:46:30 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aYBQ8-0002UI-FW
+	Tue, 23 Feb 2016 11:46:38 +0000
+Received: from [119.145.14.66] (helo=szxga03-in.huawei.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aYBQH-0007rC-Da
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 23 Feb 2016 11:46:30 +0000
-In-Reply-To: <56CC2714.7040901@kernel-upstream.org>
+	Tue, 23 Feb 2016 11:46:38 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,122 +26,45 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Shawn Lin <shawn.lin@kernel-upstream.org>, Chao Yu <chao2.yu@samsung.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: 'Biao He' <hebiao6@huawei.com>, shawn.lin@rock-chips.com
+To: jaegeuk@kernel.org, chao2.yu@samsung.com, linux-f2fs-devel@lists.sourceforge.net
+Cc: chengyinchao@huawei.com
 
-On 2016/2/23 17:32, Shawn Lin wrote:
-> On 2016/2/23 15:02, He YunLei wrote:
->> On 2016/2/23 13:44, Chao Yu wrote:
->>> Hi Yunlei,
->> Hi Chao,
->>>
->>>> -----Original Message-----
->>>> From: Yunlei He [mailto:heyunlei@huawei.com]
->>>> Sent: Tuesday, February 23, 2016 12:08 PM
->>>> To: chao2.yu@samsung.com; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
->>>> Cc: bintian.wang@huawei.com; Yunlei He; Biao He
->>>> Subject: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
->>>>
->>>> The D state of wait_on_all_pages_writeback should be waken by
->>>> function f2fs_write_end_io when all writeback pages have been
->>>> succesfully written to device. It's possible that wake_up comes
->>>> between get_pages and io_schedule. Maybe in this case it will
->>>> lost wake_up and still in D state even if all pages have been
->>>> write back to device, and finally, the whole system will be into
->>>> the hungtask state.
->>>
->>> I haven't encountered such issue so far, do you suffer this in real
->>> world?
->>>
->> yes, I have encounter it, the whole file system is blocked at function
->> wait_on_all_pages_writeback beyond 120s when write cp, and no error reported
->> by storage device driver.
->
-Hi Shawn,
-> Hi YunLei
->
-> Interesting...
-> How to prove the page isn't been locked by storage block layer which
-> doesn't finish the related bio?
->
-> I suffer that case before, but then I solve it by seting a timer to
-> break my mmc driver while missing some important interrupts(chip
-> problem) for data-transfer to finish the io queue by mmcqd.
->
-Thanks for your review, I has replied Chao about the info of f2fs_sb_info,
-and from the info we can make sure the block layer and device driver are
-both ok.
+The first nat entry must be null. If it is corrupted, we set its bit in
+nat_area_bitmap, without increasing valid_nat_entry_cnt, fsck_verify will
+nullify it at last.
 
-> Another thing,
-> why making 5HZ for timeout? why not 10HZ ,15HZ...
-> io_schedule_timeout(5*HZ);
->
+Reported-by: Cheng Yinchao <chengyinchao@huawei.com>
+Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+---
+ fsck/mount.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-We choose 5HZ in our test, maybe other value is more reasonable.
-
->>>>
->>>>                   if (!get_pages(sbi, F2FS_WRITEBACK))
->>>>                            break;
->>>>                     <---------  wake_up
->>>
->>> wake_up will put all tasks linked in sbi->cp_wait on run-queue, so
->>> here it should be save to call io_schedule, after being rescheduled,
->>> it will get the chance to check above condition to break out.
->>>
->>> Thanks,
->>
->> Here, we just doubt something weird may cause wait_on_all_pages_writeback
->> could not be waken. Wake_up trigger only one time by last bio's end_io
->> function, if the thread happen to miss it, the thread will be in D state
->> forever. So we change the code to make wait_on_all_pages_writeback awaken
->> periodically, then check the condition.
->>
->>>
->>>>                   io_schedule();
->>>>
->>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>>> Signed-off-by: Biao He <hebiao6@huawei.com>
->>>> ---
->>>>    fs/f2fs/checkpoint.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>> index 2bac8a1..f55355d 100644
->>>> --- a/fs/f2fs/checkpoint.c
->>>> +++ b/fs/f2fs/checkpoint.c
->>>> @@ -920,7 +920,7 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
->>>>            if (!get_pages(sbi, F2FS_WRITEBACK))
->>>>                break;
->>>>
->>>> -        io_schedule();
->>>> +        io_schedule_timeout(5*HZ);
->>>>        }
->>>>        finish_wait(&sbi->cp_wait, &wait);
->>>>    }
->>>> --
->>>> 1.9.1
->>>
->>>
->>>
->>> .
->>>
->>
->>
->> ------------------------------------------------------------------------------
->> Site24x7 APM Insight: Get Deep Visibility into Application Performance
->> APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
->> Monitor end-to-end web transactions and take corrective actions now
->> Troubleshoot faster and improve end-user experience. Signup Now!
->> http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>
->
->
-> .
->
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 4c807f9..ec040c8 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -1683,7 +1683,18 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
+ 						&nat_block->entries[i]);
+ 				if (ni.blk_addr == 0)
+ 					continue;
+-				ASSERT(nid + i != 0x0);
++				if (nid + i == 0) {
++					/*
++					 * nat entry [0] must be null.  If
++					 * it is corrupted, set its bit in
++					 * nat_area_bitmap, fsck_verify will
++					 * nullify it
++					 */
++					ASSERT_MSG("Invalid nat entry[0]: blk_addr[0x%x]\n",
++						ni.blk_addr);
++					config.fix_on = 1;
++					fsck->chk.valid_nat_entry_cnt--;
++				}
+ 
+ 				DBG(3, "nid[0x%8x] addr[0x%16x] ino[0x%8x]\n",
+ 					nid + i, ni.blk_addr, ni.ino);
+-- 
+2.7.1
 
 
 ------------------------------------------------------------------------------
