@@ -1,140 +1,166 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: [PATCH v2] f2fs crypto: fix incorrect positioning for GCing encrypted
- data page
-Date: Tue, 23 Feb 2016 17:52:43 +0800
-Message-ID: <009801d16e20$08659960$1930cc20$@samsung.com>
+From: He YunLei <heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: avoid hungtask problem caused by
+ losing wake_up
+Date: Tue, 23 Feb 2016 19:36:12 +0800
+Message-ID: <56CC442C.1050202@huawei.com>
+References: <1456200476-9811-1-git-send-email-heyunlei@huawei.com>
+	<009501d16dfd$52a518c0$f7ef4a40$@samsung.com>
+	<56CC0410.50103@huawei.com>
+	<009601d16e1a$e198af20$a4ca0d60$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1aYBHJ-00030y-HH
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 23 Feb 2016 11:37:17 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aYBHC-0002Az-3S
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 23 Feb 2016 11:37:17 +0000
+In-Reply-To: <009601d16e1a$e198af20$a4ca0d60$@samsung.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao2.yu@samsung.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: 'Biao He' <hebiao6@huawei.com>
 
-For now, flow of GCing an encrypted data page:
-1) try to grab meta page in meta inode's mapping with index of old block
-address of that data page
-2) load data of ciphertext into meta page
-3) allocate new block address
-4) write the meta page into new block address
-5) update block address pointer in direct node page.
+On 2016/2/23 17:15, Chao Yu wrote:
+Hi Chao,
 
-Other reader/writer will use f2fs_wait_on_encrypted_page_writeback to
-check and wait on GCed encrypted data cached in meta page writebacked
-in order to avoid inconsistence among data page cache, meta page cache
-and data on-disk when updating.
+> Hi Yunlei,
+>
+>> -----Original Message-----
+>> From: He YunLei [mailto:heyunlei@huawei.com]
+>> Sent: Tuesday, February 23, 2016 3:03 PM
+>> To: Chao Yu; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
+>> Cc: bintian.wang@huawei.com; 'Biao He'
+>> Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
+>>
+>> On 2016/2/23 13:44, Chao Yu wrote:
+>>> Hi Yunlei,
+>> Hi Chao,
+>>>
+>>>> -----Original Message-----
+>>>> From: Yunlei He [mailto:heyunlei@huawei.com]
+>>>> Sent: Tuesday, February 23, 2016 12:08 PM
+>>>> To: chao2.yu@samsung.com; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
+>>>> Cc: bintian.wang@huawei.com; Yunlei He; Biao He
+>>>> Subject: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
+>>>>
+>>>> The D state of wait_on_all_pages_writeback should be waken by
+>>>> function f2fs_write_end_io when all writeback pages have been
+>>>> succesfully written to device. It's possible that wake_up comes
+>>>> between get_pages and io_schedule. Maybe in this case it will
+>>>> lost wake_up and still in D state even if all pages have been
+>>>> write back to device, and finally, the whole system will be into
+>>>> the hungtask state.
+>>>
+>>> I haven't encountered such issue so far, do you suffer this in real
+>>> world?
+>>>
+>> yes, I have encounter it, the whole file system is blocked at function
+>> wait_on_all_pages_writeback beyond 120s when write cp, and no error reported
+>> by storage device driver.
+>
+> Could this reproducible? If it could, could you please share the details.
+> And did this occur in a huge size f2fs image?
+>
+>>>>
+>>>>                   if (!get_pages(sbi, F2FS_WRITEBACK))
+>>>>                            break;
+>>>> 					<---------  wake_up
+>>>
+>>> wake_up will put all tasks linked in sbi->cp_wait on run-queue, so
+>>> here it should be save to call io_schedule, after being rescheduled,
+>>> it will get the chance to check above condition to break out.
+>>>
+>>> Thanks,
+>>
+>> Here, we just doubt something weird may cause wait_on_all_pages_writeback
+>> could not be waken. Wake_up trigger only one time by last bio's end_io
+>> function, if the thread happen to miss it, the thread will be in D state
+>> forever. So we change the code to make wait_on_all_pages_writeback awaken
+>> periodically, then check the condition.
+>
+> Got it.
+>
+> The patch can fix issue that checkpointer will wait forever in case of
+> write_end_io was failed to call wake_up for some reason.
+>
+> But I doubt more that the reason we are stuck is there are remained pages
+> cached in bio buffer without being submitted. To make sure, maybe in
+> wait_on_all_pages_writeback we could add print info to see whether
+> sbi->write_io[].bio is valid or not.
+>
+We use tool dump f2fs_sb_info information and find that:
 
-However, we will use new block address updated in step 5) as an index to
-lookup meta page in inner bio buffer. That would be wrong, and we will
-never find the GCing meta page, since we use the old block address as
-index of that page in step 1).
+	write_io[DATA].bio = 0;
+	write_io[NODE].bio = 0;
+	write_io[META].bio = 0;
 
-This patch fixes the issue by adjust the order of step 1) and step 3),
-and in step 1) grab page with index generated in step 3).
+	nr_pages[F2FS_WRITEBACK] = 0;
+	nr_pages[F2FS_DIRTY_DENTS] = 0;
+	nr_pages[F2FS_DIRTY_NODES] = 13;
+	nr_pages[F2FS_DIRTY_META] = 0;
+	nr_pages[F2FS_INMEM_PAGES] = 0;
 
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
----
- v2:
- - fix to recover data page to old block address when error occurs.
+So we believe that the block device is ok!
 
- fs/f2fs/f2fs.h    |  2 ++
- fs/f2fs/gc.c      | 25 +++++++++++++++++--------
- fs/f2fs/segment.c |  3 +--
- 3 files changed, 20 insertions(+), 10 deletions(-)
+Thanks,
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b57dee6..a7197b3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1821,6 +1821,8 @@ void write_meta_page(struct f2fs_sb_info *, struct page *);
- void write_node_page(unsigned int, struct f2fs_io_info *);
- void write_data_page(struct dnode_of_data *, struct f2fs_io_info *);
- void rewrite_data_page(struct f2fs_io_info *);
-+void __f2fs_replace_block(struct f2fs_sb_info *, struct f2fs_summary *,
-+					block_t, block_t, bool, bool);
- void f2fs_replace_block(struct f2fs_sb_info *, struct dnode_of_data *,
- 				block_t, block_t, unsigned char, bool, bool);
- void allocate_data_block(struct f2fs_sb_info *, struct page *,
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 4af3d80..c7cb1e6 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -549,6 +549,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
- 	struct f2fs_summary sum;
- 	struct node_info ni;
- 	struct page *page;
-+	block_t newaddr;
- 	int err;
- 
- 	/* do not read out */
-@@ -579,12 +580,15 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
- 	fio.page = page;
- 	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
- 
--	fio.encrypted_page = pagecache_get_page(META_MAPPING(fio.sbi),
--					fio.new_blkaddr,
--					FGP_LOCK|FGP_CREAT,
--					GFP_NOFS);
--	if (!fio.encrypted_page)
--		goto put_out;
-+	allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
-+							&sum, CURSEG_COLD_DATA);
-+
-+	fio.encrypted_page = pagecache_get_page(META_MAPPING(fio.sbi), newaddr,
-+					FGP_LOCK | FGP_CREAT, GFP_NOFS);
-+	if (!fio.encrypted_page) {
-+		err = -ENOMEM;
-+		goto recover_block;
-+	}
- 
- 	err = f2fs_submit_page_bio(&fio);
- 	if (err)
-@@ -593,6 +597,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
- 	/* write page */
- 	lock_page(fio.encrypted_page);
- 
-+	err = -EIO;
- 	if (unlikely(!PageUptodate(fio.encrypted_page)))
- 		goto put_page_out;
- 	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi)))
-@@ -607,9 +612,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
- 
- 	/* allocate block address */
- 	f2fs_wait_on_page_writeback(dn.node_page, NODE, true);
--	allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &fio.new_blkaddr,
--							&sum, CURSEG_COLD_DATA);
-+
- 	fio.rw = WRITE_SYNC;
-+	fio.new_blkaddr = newaddr;
- 	f2fs_submit_page_mbio(&fio);
- 
- 	dn.data_blkaddr = fio.new_blkaddr;
-@@ -620,6 +625,10 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
- 		set_inode_flag(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
- put_page_out:
- 	f2fs_put_page(fio.encrypted_page, 1);
-+recover_block:
-+	if (err)
-+		__f2fs_replace_block(fio.sbi, &sum, newaddr, fio.old_blkaddr,
-+								true, true);
- put_out:
- 	f2fs_put_dnode(&dn);
- out:
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index d8e13b0..639c4ff 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1439,8 +1439,7 @@ void rewrite_data_page(struct f2fs_io_info *fio)
- 	f2fs_submit_page_mbio(fio);
- }
- 
--static void __f2fs_replace_block(struct f2fs_sb_info *sbi,
--				struct f2fs_summary *sum,
-+void __f2fs_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 				block_t old_blkaddr, block_t new_blkaddr,
- 				bool recover_curseg, bool recover_newaddr)
- {
--- 
-2.7.0
+> Thanks,
+>
+>>
+>>>
+>>>>                   io_schedule();
+>>>>
+>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>>> Signed-off-by: Biao He <hebiao6@huawei.com>
+>>>> ---
+>>>>    fs/f2fs/checkpoint.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>>> index 2bac8a1..f55355d 100644
+>>>> --- a/fs/f2fs/checkpoint.c
+>>>> +++ b/fs/f2fs/checkpoint.c
+>>>> @@ -920,7 +920,7 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
+>>>>    		if (!get_pages(sbi, F2FS_WRITEBACK))
+>>>>    			break;
+>>>>
+>>>> -		io_schedule();
+>>>> +		io_schedule_timeout(5*HZ);
+>>>>    	}
+>>>>    	finish_wait(&sbi->cp_wait, &wait);
+>>>>    }
+>>>> --
+>>>> 1.9.1
+>>>
+>>>
+>>>
+>>> .
+>>>
+>
+>
+>
+> .
+>
+
+
+------------------------------------------------------------------------------
+Site24x7 APM Insight: Get Deep Visibility into Application Performance
+APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+Monitor end-to-end web transactions and take corrective actions now
+Troubleshoot faster and improve end-user experience. Signup Now!
+http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
