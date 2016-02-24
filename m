@@ -1,161 +1,189 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: Re: [PATCH v2] f2fs-tools: set segment_count in super
- block correctly
-Date: Wed, 24 Feb 2016 16:33:57 +0800
-Message-ID: <56CD6AF5.3050202@huawei.com>
-References: <000c01d15e44$0401d0f0$0c0572d0$@samsung.com>
-	<56B2BCCB.3080308@huawei.com>
-	<001c01d15f2f$4caad220$e6007660$@samsung.com>
-	<20160206040823.GA15207@jaegeuk.gateway>
-	<002501d16ed9$1d80bd70$58823850$@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: [PATCH 1/3] f2fs: introduce f2fs_update_data_blkaddr for cleanup
+Date: Wed, 24 Feb 2016 17:16:47 +0800
+Message-ID: <00e401d16ee4$2d5159c0$87f40d40$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhengjunling@huawei.com>) id 1aYUti-0005V1-ND
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Feb 2016 08:34:14 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aYUte-0006Jc-Qn
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Feb 2016 08:34:14 +0000
-In-Reply-To: <002501d16ed9$1d80bd70$58823850$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Fan Li <fanofcode.li@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Fan,
+Add a new help f2fs_update_data_blkaddr to clean up redundant codes.
 
-On 2016/2/24 15:57, Fan Li wrote:
-> 
-> 
->> -----Original Message-----
->> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
->> Sent: Saturday, February 06, 2016 12:08 PM
->> To: Fan Li
->> Cc: 'Junling Zheng'; heyunlei@huawei.com; linux-f2fs-devel@lists.sourceforge.net
->> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in super block correctly
->>
->> Hi Fan,
->>
->> Could you resubmit the final patch?
->> I'll remove the previous patch merged into dev branch.
-> 
-> I think removing the patch would be sufficient enough.
-> Sorry for the trouble. It's my first time to acquire the code of f2fs-tools,
-> There seems to be a mistake.
-> 
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+ fs/f2fs/data.c         |  9 +++++++--
+ fs/f2fs/extent_cache.c |  9 ++++++---
+ fs/f2fs/f2fs.h         |  1 +
+ fs/f2fs/file.c         | 15 +++------------
+ fs/f2fs/gc.c           |  4 +---
+ fs/f2fs/inline.c       |  2 --
+ fs/f2fs/segment.c      |  6 ++----
+ 7 files changed, 20 insertions(+), 26 deletions(-)
 
-However, it seems that the problem you mentioned before still exists.
-
-Now, segment_count_main is aligned with zone size, but segment_count not, which may cause:
-
-main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
-	segment0_blkaddr + (segment_count << log_blocks_per_seg)
-
-then, mount will fail.
-
-So, we still need to align segment_count with zone size:)
-
-Thanks,
-
->>
->> Thanks,
->>
->> On Thu, Feb 04, 2016 at 05:33:55PM +0800, Fan Li wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Junling Zheng [mailto:zhengjunling@huawei.com]
->>>> Sent: Thursday, February 04, 2016 10:52 AM
->>>> To: Fan Li; 'Jaegeuk Kim'; heyunlei@huawei.com
->>>> Cc: linux-f2fs-devel@lists.sourceforge.net
->>>> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in
->>>> super block correctly
->>>>
->>>> On 2016/2/3 13:29, Fan Li wrote:
->>>>> Now f2fs will check statistics recorded in super block in
->>>>> sanity_check_area_boundary() during mount,if number of segments
->>>>> per section is greater than 1, and the disk space isn't aligned
->>>>> with section,
->>>>
->>>> Hi Fan, Hi Kim:
->>>>
->>>> I'm uncertain about which unit the disk space should be aligned with? section or zone?
->>>>
->>>> It looks like commit "e9dfbbb"(mkfs.f2fs: introduce zone align for
->>>> main area)
->>>>
->>>> from Yunlei had changed the aligning unit from section to zone.
->>>>
->>>> So, should segment_count in superblock be aligned with zone rather than section?
->>>
->>> I'm afraid that my codes of mkfs is too old, it doesn't contain this
->>> patch, and it still uses section size to align main area.
->>>
->>> Of course if main area should be aligned with zone, the following
->>> patch should be modified accordingly.
->>>
->>>>
->>>> Thanks,
->>>>
->>>> Junling
->>>>
->>>>> mount will fail due to following condition:
->>>>>
->>>>> main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
->>>>> 		segment0_blkaddr + (segment_count << log_blocks_per_seg)
->>>>>
->>>>> this is because when the length of main area isn't aligned with
->>>>> section, mkfs didn't add the number of excess segments to
->>>>> segment_count_main, but add it to segment_count.
->>>>> Here align segment_count with section size first to prevent such problem.
->>>>>
->>>>> Signed-off-by: Fan Li <fanofcode.li@samsung.com>
->>>>> ---
->>>>>  mkfs/f2fs_format.c |    3 ++-
->>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c index
->>>>> 66d7342..3366302 100644
->>>>> --- a/mkfs/f2fs_format.c
->>>>> +++ b/mkfs/f2fs_format.c
->>>>> @@ -174,7 +174,8 @@ static int f2fs_prepare_super_block(void)
->>>>>         }
->>>>>
->>>>>         set_sb(segment_count, (config.total_sectors * config.sector_size -
->>>>> -                               zone_align_start_offset) / segment_size_bytes);
->>>>> +                               zone_align_start_offset) / segment_size_bytes /
->>>>> +                               config.segs_per_sec *
->>>>> + config.segs_per_sec);
->>>>>
->>>>>         set_sb(segment0_blkaddr, zone_align_start_offset / blk_size_bytes);
->>>>>         sb->cp_blkaddr = sb->segment0_blkaddr;
->>>>>
->>>>
->>>
-> 
-> 
-> .
-> 
-
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index a6e7133..060c5f7 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -295,6 +295,13 @@ void set_data_blkaddr(struct dnode_of_data *dn)
+ 		dn->node_changed = true;
+ }
+ 
++void f2fs_update_data_blkaddr(struct dnode_of_data *dn, block_t blkaddr)
++{
++	dn->data_blkaddr = blkaddr;
++	set_data_blkaddr(dn);
++	f2fs_update_extent_cache(dn);
++}
++
+ int reserve_new_block(struct dnode_of_data *dn)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+@@ -1105,8 +1112,6 @@ int do_write_data_page(struct f2fs_io_info *fio)
+ 		trace_f2fs_do_write_data_page(page, IPU);
+ 	} else {
+ 		write_data_page(&dn, fio);
+-		set_data_blkaddr(&dn);
+-		f2fs_update_extent_cache(&dn);
+ 		trace_f2fs_do_write_data_page(page, OPU);
+ 		set_inode_flag(F2FS_I(inode), FI_APPEND_WRITE);
+ 		if (page->index == 0)
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 071a1b1..c859bb0 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -674,17 +674,20 @@ bool f2fs_lookup_extent_cache(struct inode *inode, pgoff_t pgofs,
+ void f2fs_update_extent_cache(struct dnode_of_data *dn)
+ {
+ 	pgoff_t fofs;
++	block_t blkaddr;
+ 
+ 	if (!f2fs_may_extent_tree(dn->inode))
+ 		return;
+ 
+-	f2fs_bug_on(F2FS_I_SB(dn->inode), dn->data_blkaddr == NEW_ADDR);
+-
++	if (dn->data_blkaddr == NEW_ADDR)
++		blkaddr = NULL_ADDR;
++	else
++		blkaddr = dn->data_blkaddr;
+ 
+ 	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), dn->inode) +
+ 								dn->ofs_in_node;
+ 
+-	if (f2fs_update_extent_tree_range(dn->inode, fofs, dn->data_blkaddr, 1))
++	if (f2fs_update_extent_tree_range(dn->inode, fofs, blkaddr, 1))
+ 		sync_inode_page(dn);
+ }
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a7197b3..6e88a66 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1876,6 +1876,7 @@ void f2fs_submit_merged_bio_cond(struct f2fs_sb_info *, struct inode *,
+ int f2fs_submit_page_bio(struct f2fs_io_info *);
+ void f2fs_submit_page_mbio(struct f2fs_io_info *);
+ void set_data_blkaddr(struct dnode_of_data *);
++void f2fs_update_data_blkaddr(struct dnode_of_data *, block_t);
+ int reserve_new_block(struct dnode_of_data *);
+ int f2fs_get_block(struct dnode_of_data *, pgoff_t);
+ ssize_t f2fs_preallocate_blocks(struct kiocb *, struct iov_iter *);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index aa30ff0..935a60a 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -858,10 +858,8 @@ static int __exchange_data_block(struct inode *inode, pgoff_t src,
+ 	} else {
+ 		new_addr = dn.data_blkaddr;
+ 		if (!is_checkpointed_data(sbi, new_addr)) {
+-			dn.data_blkaddr = NULL_ADDR;
+ 			/* do not invalidate this block address */
+-			set_data_blkaddr(&dn);
+-			f2fs_update_extent_cache(&dn);
++			f2fs_update_data_blkaddr(&dn, NULL_ADDR);
+ 			do_replace = true;
+ 		}
+ 		f2fs_put_dnode(&dn);
+@@ -912,9 +910,7 @@ static int __exchange_data_block(struct inode *inode, pgoff_t src,
+ 
+ err_out:
+ 	if (!get_dnode_of_data(&dn, src, LOOKUP_NODE)) {
+-		dn.data_blkaddr = new_addr;
+-		set_data_blkaddr(&dn);
+-		f2fs_update_extent_cache(&dn);
++		f2fs_update_data_blkaddr(&dn, new_addr);
+ 		f2fs_put_dnode(&dn);
+ 	}
+ 	return ret;
+@@ -1054,12 +1050,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 
+ 			if (dn.data_blkaddr != NEW_ADDR) {
+ 				invalidate_blocks(sbi, dn.data_blkaddr);
+-
+-				dn.data_blkaddr = NEW_ADDR;
+-				set_data_blkaddr(&dn);
+-
+-				dn.data_blkaddr = NULL_ADDR;
+-				f2fs_update_extent_cache(&dn);
++				f2fs_update_data_blkaddr(&dn, NEW_ADDR);
+ 			}
+ 			f2fs_put_dnode(&dn);
+ 			f2fs_unlock_op(sbi);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 5368a6b..d0b80ab 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -621,9 +621,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+ 	fio.new_blkaddr = newaddr;
+ 	f2fs_submit_page_mbio(&fio);
+ 
+-	dn.data_blkaddr = fio.new_blkaddr;
+-	set_data_blkaddr(&dn);
+-	f2fs_update_extent_cache(&dn);
++	f2fs_update_data_blkaddr(&dn, newaddr);
+ 	set_inode_flag(F2FS_I(inode), FI_APPEND_WRITE);
+ 	if (page->index == 0)
+ 		set_inode_flag(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index a89ca37..f0c6aca 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -133,8 +133,6 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+ 	set_page_writeback(page);
+ 	fio.old_blkaddr = dn->data_blkaddr;
+ 	write_data_page(dn, &fio);
+-	set_data_blkaddr(dn);
+-	f2fs_update_extent_cache(dn);
+ 	f2fs_wait_on_page_writeback(page, DATA, true);
+ 	if (dirty)
+ 		inode_dec_dirty_pages(dn->inode);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 639c4ff..6f16b39 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1429,7 +1429,7 @@ void write_data_page(struct dnode_of_data *dn, struct f2fs_io_info *fio)
+ 	get_node_info(sbi, dn->nid, &ni);
+ 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
+ 	do_write_page(&sum, fio);
+-	dn->data_blkaddr = fio->new_blkaddr;
++	f2fs_update_data_blkaddr(dn, fio->new_blkaddr);
+ }
+ 
+ void rewrite_data_page(struct f2fs_io_info *fio)
+@@ -1518,9 +1518,7 @@ void f2fs_replace_block(struct f2fs_sb_info *sbi, struct dnode_of_data *dn,
+ 	__f2fs_replace_block(sbi, &sum, old_addr, new_addr,
+ 					recover_curseg, recover_newaddr);
+ 
+-	dn->data_blkaddr = new_addr;
+-	set_data_blkaddr(dn);
+-	f2fs_update_extent_cache(dn);
++	f2fs_update_data_blkaddr(dn, new_addr);
+ }
+ 
+ void f2fs_wait_on_page_writeback(struct page *page,
+-- 
+2.7.0
