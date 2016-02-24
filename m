@@ -1,297 +1,46 @@
-From: "hebiao (G)" <hebiao6@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid hungtask problem caused by
- losing wake_up
-Date: Wed, 24 Feb 2016 09:45:48 +0000
-Message-ID: <0F0234076C344444BEA001AACCA4A9D5ED6BC5@SZXEMI504-MBS.china.huawei.com>
-References: <1456200476-9811-1-git-send-email-heyunlei@huawei.com>
-	<009501d16dfd$52a518c0$f7ef4a40$@samsung.com>
-	<56CC0410.50103@huawei.com>
-	<009601d16e1a$e198af20$a4ca0d60$@samsung.com>
-	<56CC442C.1050202@huawei.com>
-	<00c401d16eb6$14754cf0$3d5fe6d0$@samsung.com>
-	<56CD5C72.7040305@huawei.com>
-	<00e301d16eda$383ca740$a8b5f5c0$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <hebiao6@huawei.com>) id 1aYW1l-0008DO-UP
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Feb 2016 09:46:37 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aYW1T-00057E-Sh
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Feb 2016 09:46:26 +0000
-In-Reply-To: <00e301d16eda$383ca740$a8b5f5c0$@samsung.com>
-Content-Language: zh-CN
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>, heyunlei <heyunlei@huawei.com>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+From: mchristi@redhat.com
+Subject: [PATCH 00/35 v4] separate operations from flags in the bio/request structs
+Date: Wed, 24 Feb 2016 13:47:37 -0600
+Message-ID: <1456343292-14535-1-git-send-email-mchristi@redhat.com>
+Return-path: <linux-bcache-owner@vger.kernel.org>
+Sender: linux-bcache-owner@vger.kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, konrad.wilk@oracle.com, drbd-dev@lists.linbit.com, philipp.reisner@linbit.com, lars.ellenberg@linbit.com, linux-raid@vger.kernel.org, dm-devel@redhat.com, linux-fsdevel@vger.kernel.org, linux-bcache@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, linux-mtd@lists.infradead.org, target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, osd-dev@open-osd.org, xfs@oss.sgi.com, ocfs2-devel@oss.oracle.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Chao,
+The following patches begin to cleanup the request->cmd_flags and
+bio->bi_rw mess. We currently use cmd_flags to specify the operation,
+attributes and state of the request. For bi_rw we use it for similar
+info and also the priority but then also have another bi_flags field
+for state. At some point, we abused them so much we just made cmd_flags
+64 bits, so we could add more.
 
-> -----Original Message-----
-> From: Chao Yu [mailto:chao2.yu@samsung.com]
-> Sent: Wednesday, February 24, 2016 4:05 PM
-> To: heyunlei; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Cc: Wangbintian; hebiao (G)
-> Subject: RE: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing
-> wake_up
-> 
-> Hi Yunlei,
-> 
-> > -----Original Message-----
-> > From: He YunLei [mailto:heyunlei@huawei.com]
-> > Sent: Wednesday, February 24, 2016 3:32 PM
-> > To: Chao Yu; jaegeuk@kernel.org;
-> > linux-f2fs-devel@lists.sourceforge.net
-> > Cc: bintian.wang@huawei.com; 'Biao He'
-> > Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by
-> > losing wake_up
-> >
-> > On 2016/2/24 11:46, Chao Yu wrote:
-> > > Hi Yunlei,
-> > >
-> > >> -----Original Message-----
-> > >> From: He YunLei [mailto:heyunlei@huawei.com]
-> > >> Sent: Tuesday, February 23, 2016 7:36 PM
-> > >> To: Chao Yu; jaegeuk@kernel.org;
-> > >> linux-f2fs-devel@lists.sourceforge.net
-> > >> Cc: bintian.wang@huawei.com; 'Biao He'
-> > >> Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused
-> > >> by losing wake_up
-> > >>
-> > >> On 2016/2/23 17:15, Chao Yu wrote:
-> > >> Hi Chao,
-> > >>
-> > >>> Hi Yunlei,
-> > >>>
-> > >>>> -----Original Message-----
-> > >>>> From: He YunLei [mailto:heyunlei@huawei.com]
-> > >>>> Sent: Tuesday, February 23, 2016 3:03 PM
-> > >>>> To: Chao Yu; jaegeuk@kernel.org;
-> > >>>> linux-f2fs-devel@lists.sourceforge.net
-> > >>>> Cc: bintian.wang@huawei.com; 'Biao He'
-> > >>>> Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem
-> > >>>> caused by losing wake_up
-> > >>>>
-> > >>>> On 2016/2/23 13:44, Chao Yu wrote:
-> > >>>>> Hi Yunlei,
-> > >>>> Hi Chao,
-> > >>>>>
-> > >>>>>> -----Original Message-----
-> > >>>>>> From: Yunlei He [mailto:heyunlei@huawei.com]
-> > >>>>>> Sent: Tuesday, February 23, 2016 12:08 PM
-> > >>>>>> To: chao2.yu@samsung.com; jaegeuk@kernel.org;
-> > >>>>>> linux-f2fs-devel@lists.sourceforge.net
-> > >>>>>> Cc: bintian.wang@huawei.com; Yunlei He; Biao He
-> > >>>>>> Subject: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused
-> > >>>>>> by losing wake_up
-> > >>>>>>
-> > >>>>>> The D state of wait_on_all_pages_writeback should be waken by
-> > >>>>>> function f2fs_write_end_io when all writeback pages have been
-> > >>>>>> succesfully written to device. It's possible that wake_up comes
-> > >>>>>> between get_pages and io_schedule. Maybe in this case it will
-> > >>>>>> lost wake_up and still in D state even if all pages have been
-> > >>>>>> write back to device, and finally, the whole system will be
-> > >>>>>> into the hungtask state.
-> > >>>>>
-> > >>>>> I haven't encountered such issue so far, do you suffer this in
-> > >>>>> real world?
-> > >>>>>
-> > >>>> yes, I have encounter it, the whole file system is blocked at
-> > >>>> function wait_on_all_pages_writeback beyond 120s when write cp,
-> > >>>> and no error reported by storage device driver.
-> > >>>
-> > >>> Could this reproducible? If it could, could you please share the details.
-> > >>> And did this occur in a huge size f2fs image?
-> > >>>
-> > >>>>>>
-> > >>>>>>                    if (!get_pages(sbi, F2FS_WRITEBACK))
-> > >>>>>>                             break;
-> > >>>>>> 					<---------  wake_up
-> > >>>>>
-> > >>>>> wake_up will put all tasks linked in sbi->cp_wait on run-queue,
-> > >>>>> so here it should be save to call io_schedule, after being
-> > >>>>> rescheduled, it will get the chance to check above condition to break
-> out.
-> > >>>>>
-> > >>>>> Thanks,
-> > >>>>
-> > >>>> Here, we just doubt something weird may cause
-> > >>>> wait_on_all_pages_writeback could not be waken. Wake_up trigger
-> > >>>> only one time by last bio's end_io function, if the thread happen
-> > >>>> to miss it, the thread will be in D state forever. So we change
-> > >>>> the code to make wait_on_all_pages_writeback awaken periodically,
-> then check the condition.
-> > >>>
-> > >>> Got it.
-> > >>>
-> > >>> The patch can fix issue that checkpointer will wait forever in
-> > >>> case of write_end_io was failed to call wake_up for some reason.
-> > >
-> > > I found one possible case:
-> > >
-> > > CPU0:					CPU1:
-> > >   - write_checkpoint
-> > >    - do_checkpoint
-> > >     - wait_on_all_pages_writeback
-> > > 					 - f2fs_write_end_io
-> > > 					  - wake_up
-> > > 					this is last writebacked page, but
-> > > 					no sleeper in sbi->cp_wait wait
-> > > 					queue, wake_up is not been called.
-> > >      - prepare_to_wait(TASK_UNINTERRUPTIBLE)
-> > >      Here, current task is been preempted,
-> > >      but there will be no waker to wake up
-> > >      this task since last write_end_io
-> > >      has been called before. So current
-> > >      task will sleep forever.
-> > >      - io_schedule
-> > >
-> > > How do you think of it?
-> > Hi Chao,
-> >
-> > Here, current task add itself into wait queue at first, and then check
-> > the condition whether write back page is zero. So, in the above
-> > situation, current task is been preempted in -
-> > prepare_to_wait(TASK_UNINTERRUPTIBLE),
-> > current task will not sleep for the write back page is zero.
-> 
-> Oh, I meant:
-> 
->  - prepare_to_wait(TASK_UNINTERRUPTIBLE)
->  - Preempt
->  - if (!get_pages(sbi, F2FS_WRITEBACK)) break;    or maybe preempt here
->  - io_schedule
->  - finish_wait
-> 
-> Even there is no more writeback state page, also preemption can happen
-> before finish_wait, after that, once the task was been switched out, as it was
-> set as TASK_UNINTERRUPTIBLE, there is no chance to schedule it again.
-> 
-> Thanks,
-> 
-First, according to our hungtask stack, we can confirm we are in io_schedule.
+The following patches seperate the operation (read, write discard,
+flush, etc) from cmd_flags/bi_rw.
 
-Secondly, from my point of view, it is safe to preempt regardless of the task's state. It will 
-eventually reschedule. You can see kernel\sched\core.c :: __schedule. If PREEMPT_ACTIVE 
-is set, the current task will be put back to the run queue.
+This patchset was made against linux-next from today Feb 24 2016
+(git tag next-20160224).
 
-> >
-> > Thanks,
-> > >
-> > > And if this is right, following patch can fix this issue.
-> > >
-> > > ---
-> > >   fs/f2fs/checkpoint.c | 14 +++++++++-----
-> > >   fs/f2fs/data.c       |  9 +++++++--
-> > >   fs/f2fs/f2fs.h       |  3 ++-
-> > >   fs/f2fs/super.c      |  1 +
-> > >   4 files changed, 19 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c index
-> > > 9d277f8..9446c3d 100644
-> > > --- a/fs/f2fs/checkpoint.c
-> > > +++ b/fs/f2fs/checkpoint.c
-> > > @@ -914,15 +914,19 @@ static void wait_on_all_pages_writeback(struct
-> f2fs_sb_info *sbi)
-> > >   {
-> > >   	DEFINE_WAIT(wait);
-> > >
-> > > -	for (;;) {
-> > > -		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
-> > > +	spin_lock(&sbi->cp_wb_lock);
-> > >
-> > > -		if (!get_pages(sbi, F2FS_WRITEBACK))
-> > > -			break;
-> > > +	while (get_pages(sbi, F2FS_WRITEBACK)) {
-> > > +		prepare_to_wait(&sbi->cp_wait, &wait,
-> TASK_UNINTERRUPTIBLE);
-> > >
-> > > +		spin_unlock(&sbi->cp_wb_lock);
-> > >   		io_schedule();
-> > > +		spin_lock(&sbi->cp_wb_lock);
-> > > +
-> > > +		finish_wait(&sbi->cp_wait, &wait);
-> > >   	}
-> > > -	finish_wait(&sbi->cp_wait, &wait);
-> > > +
-> > > +	spin_unlock(&sbi->cp_wb_lock);
-> > >   }
-> > >
-> > >   static int do_checkpoint(struct f2fs_sb_info *sbi, struct
-> > > cp_control *cpc) diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index
-> > > e5c762b..e31deb97 100644
-> > > --- a/fs/f2fs/data.c
-> > > +++ b/fs/f2fs/data.c
-> > > @@ -59,6 +59,7 @@ static void f2fs_write_end_io(struct bio *bio)
-> > >   {
-> > >   	struct f2fs_sb_info *sbi = bio->bi_private;
-> > >   	struct bio_vec *bvec;
-> > > +	unsigned long flags;
-> > >   	int i;
-> > >
-> > >   	bio_for_each_segment_all(bvec, bio, i) { @@ -74,8 +75,12 @@
-> > > static void f2fs_write_end_io(struct bio *bio)
-> > >   		dec_page_count(sbi, F2FS_WRITEBACK);
-> > >   	}
-> > >
-> > > -	if (!get_pages(sbi, F2FS_WRITEBACK) && wq_has_sleeper(&sbi->cp_wait))
-> > > -		wake_up(&sbi->cp_wait);
-> > > +	if (!get_pages(sbi, F2FS_WRITEBACK)) {
-> > > +		spin_lock_irqsave(&sbi->cp_wb_lock, flags);
-> > > +		if (wq_has_sleeper(&sbi->cp_wait))
-> > > +			wake_up(&sbi->cp_wait);
-> > > +		spin_unlock_irqrestore(&sbi->cp_wb_lock, flags);
-> > > +	}
-> > >
-> > >   	bio_put(bio);
-> > >   }
-> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h index 0d25430..fd47984
-> > > 100644
-> > > --- a/fs/f2fs/f2fs.h
-> > > +++ b/fs/f2fs/f2fs.h
-> > > @@ -727,7 +727,8 @@ struct f2fs_sb_info {
-> > >   	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
-> > >   	struct rw_semaphore node_write;		/* locking node writes */
-> > >   	struct mutex writepages;		/* mutex for writepages() */
-> > > -	wait_queue_head_t cp_wait;
-> > > +	wait_queue_head_t cp_wait;		/* for wait pages writeback */
-> > > +	spinlock_t cp_wb_lock;			/* for protect cp_wait */
-> > >   	unsigned long last_time[MAX_TIME];	/* to store time in jiffies */
-> > >   	long interval_time[MAX_TIME];		/* to store thresholds */
-> > >
-> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c index
-> > > 7b62016..5316c7a 100644
-> > > --- a/fs/f2fs/super.c
-> > > +++ b/fs/f2fs/super.c
-> > > @@ -1374,6 +1374,7 @@ try_onemore:
-> > >
-> > >   	init_rwsem(&sbi->cp_rwsem);
-> > >   	init_waitqueue_head(&sbi->cp_wait);
-> > > +	spin_lock_init(&sbi->cp_wb_lock);
-> > >   	init_sb_info(sbi);
-> > >
-> > >   	/* get an inode for meta space */
-> > >
-> 
+I put a git tree here:
+https://github.com/mikechristie/linux-kernel.git
 
+v4:
+1. Rebased to current linux-next tree.
 
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+v3:
+
+1. Used "=" instead of "|="  to setup bio bi_rw.
+2. Removed __get_request cmd_flags compat code.
+3. Merged initial dm related changes requested by Mike Snitzer.
+4. Fixed ubd kbuild errors in flush related patches.
+5. Fix 80 char col issues in several patches.
+6. Fix issue with one of the btrfs patches where it looks like I reverted
+a patch when trying to fix a merge error.
+
+v2
+
+1. Dropped arguments from submit_bio, and had callers setup
+bio.
+2. Add REQ_OP_FLUSH for request_fn users and renamed REQ_FLUSH
+to REQ_PREFLUSH for make_request_fn users.
+3. Dropped bio/rq_data_dir functions, and added a op_is_write
+function instead.
