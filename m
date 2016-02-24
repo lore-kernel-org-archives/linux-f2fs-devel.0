@@ -1,38 +1,29 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: avoid hungtask problem caused by
- losing wake_up
-Date: Wed, 24 Feb 2016 16:05:20 +0800
-Message-ID: <00e301d16eda$383ca740$a8b5f5c0$@samsung.com>
-References: <1456200476-9811-1-git-send-email-heyunlei@huawei.com>
-	<009501d16dfd$52a518c0$f7ef4a40$@samsung.com>
-	<56CC0410.50103@huawei.com>
-	<009601d16e1a$e198af20$a4ca0d60$@samsung.com>
-	<56CC442C.1050202@huawei.com>
-	<00c401d16eb6$14754cf0$3d5fe6d0$@samsung.com>
-	<56CD5C72.7040305@huawei.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [PATCH v2] f2fs-tools: set segment_count in super
+ block correctly
+Date: Wed, 24 Feb 2016 16:33:57 +0800
+Message-ID: <56CD6AF5.3050202@huawei.com>
+References: <000c01d15e44$0401d0f0$0c0572d0$@samsung.com>
+	<56B2BCCB.3080308@huawei.com>
+	<001c01d15f2f$4caad220$e6007660$@samsung.com>
+	<20160206040823.GA15207@jaegeuk.gateway>
+	<002501d16ed9$1d80bd70$58823850$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aYUSv-000662-I7
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zhengjunling@huawei.com>) id 1aYUti-0005V1-ND
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Feb 2016 08:06:33 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aYUSt-0004vg-4i
+	Wed, 24 Feb 2016 08:34:14 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aYUte-0006Jc-Qn
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Feb 2016 08:06:33 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O310228WL6A2130@mailout3.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Feb 2016 17:06:10 +0900 (KST)
-In-reply-to: <56CD5C72.7040305@huawei.com>
-Content-language: zh-cn
+	Wed, 24 Feb 2016 08:34:14 +0000
+In-Reply-To: <002501d16ed9$1d80bd70$58823850$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -42,227 +33,123 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'He YunLei' <heyunlei@huawei.com>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: 'Biao He' <hebiao6@huawei.com>
+To: Fan Li <fanofcode.li@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Yunlei,
+Hi, Fan,
 
-> -----Original Message-----
-> From: He YunLei [mailto:heyunlei@huawei.com]
-> Sent: Wednesday, February 24, 2016 3:32 PM
-> To: Chao Yu; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> Cc: bintian.wang@huawei.com; 'Biao He'
-> Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
+On 2016/2/24 15:57, Fan Li wrote:
 > 
-> On 2016/2/24 11:46, Chao Yu wrote:
-> > Hi Yunlei,
-> >
-> >> -----Original Message-----
-> >> From: He YunLei [mailto:heyunlei@huawei.com]
-> >> Sent: Tuesday, February 23, 2016 7:36 PM
-> >> To: Chao Yu; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> >> Cc: bintian.wang@huawei.com; 'Biao He'
-> >> Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
-> >>
-> >> On 2016/2/23 17:15, Chao Yu wrote:
-> >> Hi Chao,
-> >>
-> >>> Hi Yunlei,
-> >>>
-> >>>> -----Original Message-----
-> >>>> From: He YunLei [mailto:heyunlei@huawei.com]
-> >>>> Sent: Tuesday, February 23, 2016 3:03 PM
-> >>>> To: Chao Yu; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> >>>> Cc: bintian.wang@huawei.com; 'Biao He'
-> >>>> Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
-> >>>>
-> >>>> On 2016/2/23 13:44, Chao Yu wrote:
-> >>>>> Hi Yunlei,
-> >>>> Hi Chao,
-> >>>>>
-> >>>>>> -----Original Message-----
-> >>>>>> From: Yunlei He [mailto:heyunlei@huawei.com]
-> >>>>>> Sent: Tuesday, February 23, 2016 12:08 PM
-> >>>>>> To: chao2.yu@samsung.com; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> >>>>>> Cc: bintian.wang@huawei.com; Yunlei He; Biao He
-> >>>>>> Subject: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
-> >>>>>>
-> >>>>>> The D state of wait_on_all_pages_writeback should be waken by
-> >>>>>> function f2fs_write_end_io when all writeback pages have been
-> >>>>>> succesfully written to device. It's possible that wake_up comes
-> >>>>>> between get_pages and io_schedule. Maybe in this case it will
-> >>>>>> lost wake_up and still in D state even if all pages have been
-> >>>>>> write back to device, and finally, the whole system will be into
-> >>>>>> the hungtask state.
-> >>>>>
-> >>>>> I haven't encountered such issue so far, do you suffer this in real
-> >>>>> world?
-> >>>>>
-> >>>> yes, I have encounter it, the whole file system is blocked at function
-> >>>> wait_on_all_pages_writeback beyond 120s when write cp, and no error reported
-> >>>> by storage device driver.
-> >>>
-> >>> Could this reproducible? If it could, could you please share the details.
-> >>> And did this occur in a huge size f2fs image?
-> >>>
-> >>>>>>
-> >>>>>>                    if (!get_pages(sbi, F2FS_WRITEBACK))
-> >>>>>>                             break;
-> >>>>>> 					<---------  wake_up
-> >>>>>
-> >>>>> wake_up will put all tasks linked in sbi->cp_wait on run-queue, so
-> >>>>> here it should be save to call io_schedule, after being rescheduled,
-> >>>>> it will get the chance to check above condition to break out.
-> >>>>>
-> >>>>> Thanks,
-> >>>>
-> >>>> Here, we just doubt something weird may cause wait_on_all_pages_writeback
-> >>>> could not be waken. Wake_up trigger only one time by last bio's end_io
-> >>>> function, if the thread happen to miss it, the thread will be in D state
-> >>>> forever. So we change the code to make wait_on_all_pages_writeback awaken
-> >>>> periodically, then check the condition.
-> >>>
-> >>> Got it.
-> >>>
-> >>> The patch can fix issue that checkpointer will wait forever in case of
-> >>> write_end_io was failed to call wake_up for some reason.
-> >
-> > I found one possible case:
-> >
-> > CPU0:					CPU1:
-> >   - write_checkpoint
-> >    - do_checkpoint
-> >     - wait_on_all_pages_writeback
-> > 					 - f2fs_write_end_io
-> > 					  - wake_up
-> > 					this is last writebacked page, but
-> > 					no sleeper in sbi->cp_wait wait
-> > 					queue, wake_up is not been called.
-> >      - prepare_to_wait(TASK_UNINTERRUPTIBLE)
-> >      Here, current task is been preempted,
-> >      but there will be no waker to wake up
-> >      this task since last write_end_io
-> >      has been called before. So current
-> >      task will sleep forever.
-> >      - io_schedule
-> >
-> > How do you think of it?
-> Hi Chao,
 > 
-> Here, current task add itself into wait queue at first, and then check the
-> condition whether write back page is zero. So, in the above situation,
-> current task is been preempted in - prepare_to_wait(TASK_UNINTERRUPTIBLE),
-> current task will not sleep for the write back page is zero.
+>> -----Original Message-----
+>> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+>> Sent: Saturday, February 06, 2016 12:08 PM
+>> To: Fan Li
+>> Cc: 'Junling Zheng'; heyunlei@huawei.com; linux-f2fs-devel@lists.sourceforge.net
+>> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in super block correctly
+>>
+>> Hi Fan,
+>>
+>> Could you resubmit the final patch?
+>> I'll remove the previous patch merged into dev branch.
+> 
+> I think removing the patch would be sufficient enough.
+> Sorry for the trouble. It's my first time to acquire the code of f2fs-tools,
+> There seems to be a mistake.
+> 
 
-Oh, I meant:
+However, it seems that the problem you mentioned before still exists.
 
- - prepare_to_wait(TASK_UNINTERRUPTIBLE)
- - Preempt
- - if (!get_pages(sbi, F2FS_WRITEBACK)) break;    or maybe preempt here
- - io_schedule
- - finish_wait
+Now, segment_count_main is aligned with zone size, but segment_count not, which may cause:
 
-Even there is no more writeback state page, also preemption can happen before
-finish_wait, after that, once the task was been switched out, as it was set as
-TASK_UNINTERRUPTIBLE, there is no chance to schedule it again.
+main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
+	segment0_blkaddr + (segment_count << log_blocks_per_seg)
+
+then, mount will fail.
+
+So, we still need to align segment_count with zone size:)
 
 Thanks,
 
+>>
+>> Thanks,
+>>
+>> On Thu, Feb 04, 2016 at 05:33:55PM +0800, Fan Li wrote:
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Junling Zheng [mailto:zhengjunling@huawei.com]
+>>>> Sent: Thursday, February 04, 2016 10:52 AM
+>>>> To: Fan Li; 'Jaegeuk Kim'; heyunlei@huawei.com
+>>>> Cc: linux-f2fs-devel@lists.sourceforge.net
+>>>> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in
+>>>> super block correctly
+>>>>
+>>>> On 2016/2/3 13:29, Fan Li wrote:
+>>>>> Now f2fs will check statistics recorded in super block in
+>>>>> sanity_check_area_boundary() during mount,if number of segments
+>>>>> per section is greater than 1, and the disk space isn't aligned
+>>>>> with section,
+>>>>
+>>>> Hi Fan, Hi Kim:
+>>>>
+>>>> I'm uncertain about which unit the disk space should be aligned with? section or zone?
+>>>>
+>>>> It looks like commit "e9dfbbb"(mkfs.f2fs: introduce zone align for
+>>>> main area)
+>>>>
+>>>> from Yunlei had changed the aligning unit from section to zone.
+>>>>
+>>>> So, should segment_count in superblock be aligned with zone rather than section?
+>>>
+>>> I'm afraid that my codes of mkfs is too old, it doesn't contain this
+>>> patch, and it still uses section size to align main area.
+>>>
+>>> Of course if main area should be aligned with zone, the following
+>>> patch should be modified accordingly.
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>> Junling
+>>>>
+>>>>> mount will fail due to following condition:
+>>>>>
+>>>>> main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
+>>>>> 		segment0_blkaddr + (segment_count << log_blocks_per_seg)
+>>>>>
+>>>>> this is because when the length of main area isn't aligned with
+>>>>> section, mkfs didn't add the number of excess segments to
+>>>>> segment_count_main, but add it to segment_count.
+>>>>> Here align segment_count with section size first to prevent such problem.
+>>>>>
+>>>>> Signed-off-by: Fan Li <fanofcode.li@samsung.com>
+>>>>> ---
+>>>>>  mkfs/f2fs_format.c |    3 ++-
+>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c index
+>>>>> 66d7342..3366302 100644
+>>>>> --- a/mkfs/f2fs_format.c
+>>>>> +++ b/mkfs/f2fs_format.c
+>>>>> @@ -174,7 +174,8 @@ static int f2fs_prepare_super_block(void)
+>>>>>         }
+>>>>>
+>>>>>         set_sb(segment_count, (config.total_sectors * config.sector_size -
+>>>>> -                               zone_align_start_offset) / segment_size_bytes);
+>>>>> +                               zone_align_start_offset) / segment_size_bytes /
+>>>>> +                               config.segs_per_sec *
+>>>>> + config.segs_per_sec);
+>>>>>
+>>>>>         set_sb(segment0_blkaddr, zone_align_start_offset / blk_size_bytes);
+>>>>>         sb->cp_blkaddr = sb->segment0_blkaddr;
+>>>>>
+>>>>
+>>>
 > 
-> Thanks,
-> >
-> > And if this is right, following patch can fix this issue.
-> >
-> > ---
-> >   fs/f2fs/checkpoint.c | 14 +++++++++-----
-> >   fs/f2fs/data.c       |  9 +++++++--
-> >   fs/f2fs/f2fs.h       |  3 ++-
-> >   fs/f2fs/super.c      |  1 +
-> >   4 files changed, 19 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index 9d277f8..9446c3d 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -914,15 +914,19 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
-> >   {
-> >   	DEFINE_WAIT(wait);
-> >
-> > -	for (;;) {
-> > -		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
-> > +	spin_lock(&sbi->cp_wb_lock);
-> >
-> > -		if (!get_pages(sbi, F2FS_WRITEBACK))
-> > -			break;
-> > +	while (get_pages(sbi, F2FS_WRITEBACK)) {
-> > +		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
-> >
-> > +		spin_unlock(&sbi->cp_wb_lock);
-> >   		io_schedule();
-> > +		spin_lock(&sbi->cp_wb_lock);
-> > +
-> > +		finish_wait(&sbi->cp_wait, &wait);
-> >   	}
-> > -	finish_wait(&sbi->cp_wait, &wait);
-> > +
-> > +	spin_unlock(&sbi->cp_wb_lock);
-> >   }
-> >
-> >   static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index e5c762b..e31deb97 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -59,6 +59,7 @@ static void f2fs_write_end_io(struct bio *bio)
-> >   {
-> >   	struct f2fs_sb_info *sbi = bio->bi_private;
-> >   	struct bio_vec *bvec;
-> > +	unsigned long flags;
-> >   	int i;
-> >
-> >   	bio_for_each_segment_all(bvec, bio, i) {
-> > @@ -74,8 +75,12 @@ static void f2fs_write_end_io(struct bio *bio)
-> >   		dec_page_count(sbi, F2FS_WRITEBACK);
-> >   	}
-> >
-> > -	if (!get_pages(sbi, F2FS_WRITEBACK) && wq_has_sleeper(&sbi->cp_wait))
-> > -		wake_up(&sbi->cp_wait);
-> > +	if (!get_pages(sbi, F2FS_WRITEBACK)) {
-> > +		spin_lock_irqsave(&sbi->cp_wb_lock, flags);
-> > +		if (wq_has_sleeper(&sbi->cp_wait))
-> > +			wake_up(&sbi->cp_wait);
-> > +		spin_unlock_irqrestore(&sbi->cp_wb_lock, flags);
-> > +	}
-> >
-> >   	bio_put(bio);
-> >   }
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 0d25430..fd47984 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -727,7 +727,8 @@ struct f2fs_sb_info {
-> >   	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
-> >   	struct rw_semaphore node_write;		/* locking node writes */
-> >   	struct mutex writepages;		/* mutex for writepages() */
-> > -	wait_queue_head_t cp_wait;
-> > +	wait_queue_head_t cp_wait;		/* for wait pages writeback */
-> > +	spinlock_t cp_wb_lock;			/* for protect cp_wait */
-> >   	unsigned long last_time[MAX_TIME];	/* to store time in jiffies */
-> >   	long interval_time[MAX_TIME];		/* to store thresholds */
-> >
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 7b62016..5316c7a 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -1374,6 +1374,7 @@ try_onemore:
-> >
-> >   	init_rwsem(&sbi->cp_rwsem);
-> >   	init_waitqueue_head(&sbi->cp_wait);
-> > +	spin_lock_init(&sbi->cp_wb_lock);
-> >   	init_sb_info(sbi);
-> >
-> >   	/* get an inode for meta space */
-> >
+> 
+> .
+> 
 
 
 
