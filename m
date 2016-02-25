@@ -1,8 +1,8 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 08/10] f2fs crypto: migrate into vfs's crypto
+Subject: [PATCH 10/10] ext4 crypto: migrate into vfs's crypto
 	engine
-Date: Thu, 25 Feb 2016 11:26:06 -0800
-Message-ID: <1456428368-41527-9-git-send-email-jaegeuk@kernel.org>
+Date: Thu, 25 Feb 2016 11:26:08 -0800
+Message-ID: <1456428368-41527-11-git-send-email-jaegeuk@kernel.org>
 References: <1456428368-41527-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,15 +10,15 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aZ1Z5-00054D-AD
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aZ1ZB-0003qK-E6
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Feb 2016 19:27:07 +0000
+	Thu, 25 Feb 2016 19:27:13 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aZ1Z3-0007Kf-Di
+	(Exim 4.76) id 1aZ1Z9-0007L7-Ac
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Feb 2016 19:27:07 +0000
+	Thu, 25 Feb 2016 19:27:13 +0000
 In-Reply-To: <1456428368-41527-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -33,41 +33,48 @@ To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-deve
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
 This patch removes the most parts of internal crypto codes.
-And then, it modifies some f2fs-specific crypt codes to use the generic
+And then, it modifies and adds some ext4-specific crypt codes to use the generic
 facility.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/Kconfig         |  10 +-
- fs/f2fs/Makefile        |   2 -
- fs/f2fs/crypto.c        | 473 ------------------------------------------------
- fs/f2fs/crypto_fname.c  | 446 ---------------------------------------------
- fs/f2fs/crypto_key.c    | 267 ---------------------------
- fs/f2fs/crypto_policy.c | 210 ---------------------
- fs/f2fs/data.c          |  31 ++--
- fs/f2fs/dir.c           |  46 ++---
- fs/f2fs/f2fs.h          | 151 +---------------
- fs/f2fs/f2fs_crypto.h   | 151 ----------------
- fs/f2fs/file.c          |  36 ++--
- fs/f2fs/inline.c        |   4 +-
- fs/f2fs/inode.c         |   5 +-
- fs/f2fs/namei.c         |  56 +++---
- fs/f2fs/super.c         |  55 ++++--
- 15 files changed, 127 insertions(+), 1816 deletions(-)
- delete mode 100644 fs/f2fs/crypto.c
- delete mode 100644 fs/f2fs/crypto_fname.c
- delete mode 100644 fs/f2fs/crypto_key.c
- delete mode 100644 fs/f2fs/crypto_policy.c
- delete mode 100644 fs/f2fs/f2fs_crypto.h
+ fs/ext4/Kconfig         |  12 +-
+ fs/ext4/Makefile        |   2 -
+ fs/ext4/crypto.c        | 525 ------------------------------------------------
+ fs/ext4/crypto_fname.c  | 470 -------------------------------------------
+ fs/ext4/crypto_key.c    | 276 -------------------------
+ fs/ext4/crypto_policy.c | 229 ---------------------
+ fs/ext4/dir.c           |  28 +--
+ fs/ext4/ext4.h          | 172 ++++------------
+ fs/ext4/ext4_crypto.h   | 159 ---------------
+ fs/ext4/file.c          |  10 +-
+ fs/ext4/ialloc.c        |   7 +-
+ fs/ext4/inline.c        |  14 +-
+ fs/ext4/inode.c         |   8 +-
+ fs/ext4/ioctl.c         |  20 +-
+ fs/ext4/namei.c         | 120 +++++------
+ fs/ext4/page-io.c       |  13 +-
+ fs/ext4/readpage.c      |  45 +----
+ fs/ext4/super.c         |  85 +++++++-
+ fs/ext4/symlink.c       |  33 ++-
+ 19 files changed, 249 insertions(+), 1979 deletions(-)
+ delete mode 100644 fs/ext4/crypto.c
+ delete mode 100644 fs/ext4/crypto_fname.c
+ delete mode 100644 fs/ext4/crypto_key.c
+ delete mode 100644 fs/ext4/crypto_policy.c
+ delete mode 100644 fs/ext4/ext4_crypto.h
 
-diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
-index b0a9dc9..e7fbde6 100644
---- a/fs/f2fs/Kconfig
-+++ b/fs/f2fs/Kconfig
-@@ -76,15 +76,7 @@ config F2FS_FS_ENCRYPTION
- 	bool "F2FS Encryption"
- 	depends on F2FS_FS
- 	depends on F2FS_FS_XATTR
+diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+index b46e9fc..c3aaf6a 100644
+--- a/fs/ext4/Kconfig
++++ b/fs/ext4/Kconfig
+@@ -99,17 +99,9 @@ config EXT4_FS_SECURITY
+ 	  extended attributes for file security labels, say N.
+ 
+ config EXT4_ENCRYPTION
+-	tristate "Ext4 Encryption"
++	bool "Ext4 Encryption"
+ 	depends on EXT4_FS
 -	select CRYPTO_AES
 -	select CRYPTO_CBC
 -	select CRYPTO_ECB
@@ -79,33 +86,30 @@ index b0a9dc9..e7fbde6 100644
 -	select ENCRYPTED_KEYS
 +	depends on FS_ENCRYPTION
  	help
- 	  Enable encryption of f2fs files and directories.  This
+ 	  Enable encryption of ext4 files and directories.  This
  	  feature is similar to ecryptfs, but it is more memory
-diff --git a/fs/f2fs/Makefile b/fs/f2fs/Makefile
-index 08e101e..ca949ea 100644
---- a/fs/f2fs/Makefile
-+++ b/fs/f2fs/Makefile
-@@ -7,5 +7,3 @@ f2fs-$(CONFIG_F2FS_STAT_FS) += debug.o
- f2fs-$(CONFIG_F2FS_FS_XATTR) += xattr.o
- f2fs-$(CONFIG_F2FS_FS_POSIX_ACL) += acl.o
- f2fs-$(CONFIG_F2FS_IO_TRACE) += trace.o
--f2fs-$(CONFIG_F2FS_FS_ENCRYPTION) += crypto_policy.o crypto.o \
+diff --git a/fs/ext4/Makefile b/fs/ext4/Makefile
+index f52cf54..354103f 100644
+--- a/fs/ext4/Makefile
++++ b/fs/ext4/Makefile
+@@ -12,5 +12,3 @@ ext4-y	:= balloc.o bitmap.o dir.o file.o fsync.o ialloc.o inode.o page-io.o \
+ 
+ ext4-$(CONFIG_EXT4_FS_POSIX_ACL)	+= acl.o
+ ext4-$(CONFIG_EXT4_FS_SECURITY)		+= xattr_security.o
+-ext4-$(CONFIG_EXT4_FS_ENCRYPTION)	+= crypto_policy.o crypto.o \
 -		crypto_key.o crypto_fname.o
-diff --git a/fs/f2fs/crypto.c b/fs/f2fs/crypto.c
+diff --git a/fs/ext4/crypto.c b/fs/ext4/crypto.c
 deleted file mode 100644
-index 3ef3786..0000000
---- a/fs/f2fs/crypto.c
+index 38f7562..0000000
+--- a/fs/ext4/crypto.c
 +++ /dev/null
-@@ -1,473 +0,0 @@
+@@ -1,525 +0,0 @@
 -/*
-- * linux/fs/f2fs/crypto.c
-- *
-- * Copied from linux/fs/ext4/crypto.c
+- * linux/fs/ext4/crypto.c
 - *
 - * Copyright (C) 2015, Google, Inc.
-- * Copyright (C) 2015, Motorola Mobility
 - *
-- * This contains encryption functions for f2fs
+- * This contains encryption functions for ext4
 - *
 - * Written by Michael Halcrow, 2014.
 - *
@@ -113,15 +117,13 @@ index 3ef3786..0000000
 - *	Uday Savagaonkar, 2014
 - * Encryption policy handling additions
 - *	Ildar Muslukhov, 2014
-- * Remove ext4_encrypted_zeroout(),
-- *   add f2fs_restore_and_release_control_page()
-- *	Jaegeuk Kim, 2015.
 - *
 - * This has not yet undergone a rigorous security audit.
 - *
 - * The usage of AES-XTS should conform to recommendations in NIST
 - * Special Publication 800-38E and IEEE P1619/D16.
 - */
+-
 -#include <crypto/hash.h>
 -#include <crypto/sha.h>
 -#include <keys/user-type.h>
@@ -138,11 +140,8 @@ index 3ef3786..0000000
 -#include <linux/random.h>
 -#include <linux/scatterlist.h>
 -#include <linux/spinlock_types.h>
--#include <linux/f2fs_fs.h>
--#include <linux/ratelimit.h>
--#include <linux/bio.h>
 -
--#include "f2fs.h"
+-#include "ext4_extents.h"
 -#include "xattr.h"
 -
 -/* Encryption added and removed here! (L: */
@@ -152,24 +151,21 @@ index 3ef3786..0000000
 -
 -module_param(num_prealloc_crypto_pages, uint, 0444);
 -MODULE_PARM_DESC(num_prealloc_crypto_pages,
--		"Number of crypto pages to preallocate");
+-		 "Number of crypto pages to preallocate");
 -module_param(num_prealloc_crypto_ctxs, uint, 0444);
 -MODULE_PARM_DESC(num_prealloc_crypto_ctxs,
--		"Number of crypto contexts to preallocate");
+-		 "Number of crypto contexts to preallocate");
 -
--static mempool_t *f2fs_bounce_page_pool;
+-static mempool_t *ext4_bounce_page_pool;
 -
--static LIST_HEAD(f2fs_free_crypto_ctxs);
--static DEFINE_SPINLOCK(f2fs_crypto_ctx_lock);
+-static LIST_HEAD(ext4_free_crypto_ctxs);
+-static DEFINE_SPINLOCK(ext4_crypto_ctx_lock);
 -
--static struct workqueue_struct *f2fs_read_workqueue;
--static DEFINE_MUTEX(crypto_init);
--
--static struct kmem_cache *f2fs_crypto_ctx_cachep;
--struct kmem_cache *f2fs_crypt_info_cachep;
+-static struct kmem_cache *ext4_crypto_ctx_cachep;
+-struct kmem_cache *ext4_crypt_info_cachep;
 -
 -/**
-- * f2fs_release_crypto_ctx() - Releases an encryption context
+- * ext4_release_crypto_ctx() - Releases an encryption context
 - * @ctx: The encryption context to release.
 - *
 - * If the encryption context was allocated from the pre-allocated pool, returns
@@ -177,26 +173,25 @@ index 3ef3786..0000000
 - *
 - * If there's a bounce page in the context, this frees that.
 - */
--void f2fs_release_crypto_ctx(struct f2fs_crypto_ctx *ctx)
+-void ext4_release_crypto_ctx(struct ext4_crypto_ctx *ctx)
 -{
 -	unsigned long flags;
 -
--	if (ctx->flags & F2FS_WRITE_PATH_FL && ctx->w.bounce_page) {
--		mempool_free(ctx->w.bounce_page, f2fs_bounce_page_pool);
--		ctx->w.bounce_page = NULL;
--	}
+-	if (ctx->flags & EXT4_WRITE_PATH_FL && ctx->w.bounce_page)
+-		mempool_free(ctx->w.bounce_page, ext4_bounce_page_pool);
+-	ctx->w.bounce_page = NULL;
 -	ctx->w.control_page = NULL;
--	if (ctx->flags & F2FS_CTX_REQUIRES_FREE_ENCRYPT_FL) {
--		kmem_cache_free(f2fs_crypto_ctx_cachep, ctx);
+-	if (ctx->flags & EXT4_CTX_REQUIRES_FREE_ENCRYPT_FL) {
+-		kmem_cache_free(ext4_crypto_ctx_cachep, ctx);
 -	} else {
--		spin_lock_irqsave(&f2fs_crypto_ctx_lock, flags);
--		list_add(&ctx->free_list, &f2fs_free_crypto_ctxs);
--		spin_unlock_irqrestore(&f2fs_crypto_ctx_lock, flags);
+-		spin_lock_irqsave(&ext4_crypto_ctx_lock, flags);
+-		list_add(&ctx->free_list, &ext4_free_crypto_ctxs);
+-		spin_unlock_irqrestore(&ext4_crypto_ctx_lock, flags);
 -	}
 -}
 -
 -/**
-- * f2fs_get_crypto_ctx() - Gets an encryption context
+- * ext4_get_crypto_ctx() - Gets an encryption context
 - * @inode:       The inode for which we are doing the crypto
 - *
 - * Allocates and initializes an encryption context.
@@ -204,11 +199,12 @@ index 3ef3786..0000000
 - * Return: An allocated and initialized encryption context on success; error
 - * value or NULL otherwise.
 - */
--struct f2fs_crypto_ctx *f2fs_get_crypto_ctx(struct inode *inode)
+-struct ext4_crypto_ctx *ext4_get_crypto_ctx(struct inode *inode)
 -{
--	struct f2fs_crypto_ctx *ctx = NULL;
+-	struct ext4_crypto_ctx *ctx = NULL;
+-	int res = 0;
 -	unsigned long flags;
--	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
+-	struct ext4_crypt_info *ci = EXT4_I(inode)->i_crypt_info;
 -
 -	if (ci == NULL)
 -		return ERR_PTR(-ENOKEY);
@@ -223,190 +219,134 @@ index 3ef3786..0000000
 -	 * should generally be a "last resort" option for a filesystem
 -	 * to be able to do its job.
 -	 */
--	spin_lock_irqsave(&f2fs_crypto_ctx_lock, flags);
--	ctx = list_first_entry_or_null(&f2fs_free_crypto_ctxs,
--					struct f2fs_crypto_ctx, free_list);
+-	spin_lock_irqsave(&ext4_crypto_ctx_lock, flags);
+-	ctx = list_first_entry_or_null(&ext4_free_crypto_ctxs,
+-				       struct ext4_crypto_ctx, free_list);
 -	if (ctx)
 -		list_del(&ctx->free_list);
--	spin_unlock_irqrestore(&f2fs_crypto_ctx_lock, flags);
+-	spin_unlock_irqrestore(&ext4_crypto_ctx_lock, flags);
 -	if (!ctx) {
--		ctx = kmem_cache_zalloc(f2fs_crypto_ctx_cachep, GFP_NOFS);
--		if (!ctx)
--			return ERR_PTR(-ENOMEM);
--		ctx->flags |= F2FS_CTX_REQUIRES_FREE_ENCRYPT_FL;
+-		ctx = kmem_cache_zalloc(ext4_crypto_ctx_cachep, GFP_NOFS);
+-		if (!ctx) {
+-			res = -ENOMEM;
+-			goto out;
+-		}
+-		ctx->flags |= EXT4_CTX_REQUIRES_FREE_ENCRYPT_FL;
 -	} else {
--		ctx->flags &= ~F2FS_CTX_REQUIRES_FREE_ENCRYPT_FL;
+-		ctx->flags &= ~EXT4_CTX_REQUIRES_FREE_ENCRYPT_FL;
 -	}
--	ctx->flags &= ~F2FS_WRITE_PATH_FL;
+-	ctx->flags &= ~EXT4_WRITE_PATH_FL;
+-
+-out:
+-	if (res) {
+-		if (!IS_ERR_OR_NULL(ctx))
+-			ext4_release_crypto_ctx(ctx);
+-		ctx = ERR_PTR(res);
+-	}
 -	return ctx;
 -}
 -
--/*
-- * Call f2fs_decrypt on every single page, reusing the encryption
-- * context.
+-struct workqueue_struct *ext4_read_workqueue;
+-static DEFINE_MUTEX(crypto_init);
+-
+-/**
+- * ext4_exit_crypto() - Shutdown the ext4 encryption system
 - */
--static void completion_pages(struct work_struct *work)
+-void ext4_exit_crypto(void)
 -{
--	struct f2fs_crypto_ctx *ctx =
--		container_of(work, struct f2fs_crypto_ctx, r.work);
--	struct bio *bio = ctx->r.bio;
--	struct bio_vec *bv;
--	int i;
+-	struct ext4_crypto_ctx *pos, *n;
 -
--	bio_for_each_segment_all(bv, bio, i) {
--		struct page *page = bv->bv_page;
--		int ret = f2fs_decrypt(page);
--
--		if (ret) {
--			WARN_ON_ONCE(1);
--			SetPageError(page);
--		} else
--			SetPageUptodate(page);
--		unlock_page(page);
--	}
--	f2fs_release_crypto_ctx(ctx);
--	bio_put(bio);
--}
--
--void f2fs_end_io_crypto_work(struct f2fs_crypto_ctx *ctx, struct bio *bio)
--{
--	INIT_WORK(&ctx->r.work, completion_pages);
--	ctx->r.bio = bio;
--	queue_work(f2fs_read_workqueue, &ctx->r.work);
--}
--
--static void f2fs_crypto_destroy(void)
--{
--	struct f2fs_crypto_ctx *pos, *n;
--
--	list_for_each_entry_safe(pos, n, &f2fs_free_crypto_ctxs, free_list)
--		kmem_cache_free(f2fs_crypto_ctx_cachep, pos);
--	INIT_LIST_HEAD(&f2fs_free_crypto_ctxs);
--	if (f2fs_bounce_page_pool)
--		mempool_destroy(f2fs_bounce_page_pool);
--	f2fs_bounce_page_pool = NULL;
+-	list_for_each_entry_safe(pos, n, &ext4_free_crypto_ctxs, free_list)
+-		kmem_cache_free(ext4_crypto_ctx_cachep, pos);
+-	INIT_LIST_HEAD(&ext4_free_crypto_ctxs);
+-	if (ext4_bounce_page_pool)
+-		mempool_destroy(ext4_bounce_page_pool);
+-	ext4_bounce_page_pool = NULL;
+-	if (ext4_read_workqueue)
+-		destroy_workqueue(ext4_read_workqueue);
+-	ext4_read_workqueue = NULL;
+-	if (ext4_crypto_ctx_cachep)
+-		kmem_cache_destroy(ext4_crypto_ctx_cachep);
+-	ext4_crypto_ctx_cachep = NULL;
+-	if (ext4_crypt_info_cachep)
+-		kmem_cache_destroy(ext4_crypt_info_cachep);
+-	ext4_crypt_info_cachep = NULL;
 -}
 -
 -/**
-- * f2fs_crypto_initialize() - Set up for f2fs encryption.
+- * ext4_init_crypto() - Set up for ext4 encryption.
 - *
 - * We only call this when we start accessing encrypted files, since it
 - * results in memory getting allocated that wouldn't otherwise be used.
 - *
 - * Return: Zero on success, non-zero otherwise.
 - */
--int f2fs_crypto_initialize(void)
+-int ext4_init_crypto(void)
 -{
 -	int i, res = -ENOMEM;
 -
--	if (f2fs_bounce_page_pool)
--		return 0;
--
 -	mutex_lock(&crypto_init);
--	if (f2fs_bounce_page_pool)
+-	if (ext4_read_workqueue)
 -		goto already_initialized;
--
--	for (i = 0; i < num_prealloc_crypto_ctxs; i++) {
--		struct f2fs_crypto_ctx *ctx;
--
--		ctx = kmem_cache_zalloc(f2fs_crypto_ctx_cachep, GFP_KERNEL);
--		if (!ctx)
--			goto fail;
--		list_add(&ctx->free_list, &f2fs_free_crypto_ctxs);
--	}
--
--	/* must be allocated at the last step to avoid race condition above */
--	f2fs_bounce_page_pool =
--		mempool_create_page_pool(num_prealloc_crypto_pages, 0);
--	if (!f2fs_bounce_page_pool)
+-	ext4_read_workqueue = alloc_workqueue("ext4_crypto", WQ_HIGHPRI, 0);
+-	if (!ext4_read_workqueue)
 -		goto fail;
 -
+-	ext4_crypto_ctx_cachep = KMEM_CACHE(ext4_crypto_ctx,
+-					    SLAB_RECLAIM_ACCOUNT);
+-	if (!ext4_crypto_ctx_cachep)
+-		goto fail;
+-
+-	ext4_crypt_info_cachep = KMEM_CACHE(ext4_crypt_info,
+-					    SLAB_RECLAIM_ACCOUNT);
+-	if (!ext4_crypt_info_cachep)
+-		goto fail;
+-
+-	for (i = 0; i < num_prealloc_crypto_ctxs; i++) {
+-		struct ext4_crypto_ctx *ctx;
+-
+-		ctx = kmem_cache_zalloc(ext4_crypto_ctx_cachep, GFP_NOFS);
+-		if (!ctx) {
+-			res = -ENOMEM;
+-			goto fail;
+-		}
+-		list_add(&ctx->free_list, &ext4_free_crypto_ctxs);
+-	}
+-
+-	ext4_bounce_page_pool =
+-		mempool_create_page_pool(num_prealloc_crypto_pages, 0);
+-	if (!ext4_bounce_page_pool) {
+-		res = -ENOMEM;
+-		goto fail;
+-	}
 -already_initialized:
 -	mutex_unlock(&crypto_init);
 -	return 0;
 -fail:
--	f2fs_crypto_destroy();
+-	ext4_exit_crypto();
 -	mutex_unlock(&crypto_init);
 -	return res;
 -}
 -
--/**
-- * f2fs_exit_crypto() - Shutdown the f2fs encryption system
-- */
--void f2fs_exit_crypto(void)
+-void ext4_restore_control_page(struct page *data_page)
 -{
--	f2fs_crypto_destroy();
--
--	if (f2fs_read_workqueue)
--		destroy_workqueue(f2fs_read_workqueue);
--	if (f2fs_crypto_ctx_cachep)
--		kmem_cache_destroy(f2fs_crypto_ctx_cachep);
--	if (f2fs_crypt_info_cachep)
--		kmem_cache_destroy(f2fs_crypt_info_cachep);
--}
--
--int __init f2fs_init_crypto(void)
--{
--	int res = -ENOMEM;
--
--	f2fs_read_workqueue = alloc_workqueue("f2fs_crypto", WQ_HIGHPRI, 0);
--	if (!f2fs_read_workqueue)
--		goto fail;
--
--	f2fs_crypto_ctx_cachep = KMEM_CACHE(f2fs_crypto_ctx,
--						SLAB_RECLAIM_ACCOUNT);
--	if (!f2fs_crypto_ctx_cachep)
--		goto fail;
--
--	f2fs_crypt_info_cachep = KMEM_CACHE(f2fs_crypt_info,
--						SLAB_RECLAIM_ACCOUNT);
--	if (!f2fs_crypt_info_cachep)
--		goto fail;
--
--	return 0;
--fail:
--	f2fs_exit_crypto();
--	return res;
--}
--
--void f2fs_restore_and_release_control_page(struct page **page)
--{
--	struct f2fs_crypto_ctx *ctx;
--	struct page *bounce_page;
--
--	/* The bounce data pages are unmapped. */
--	if ((*page)->mapping)
--		return;
--
--	/* The bounce data page is unmapped. */
--	bounce_page = *page;
--	ctx = (struct f2fs_crypto_ctx *)page_private(bounce_page);
--
--	/* restore control page */
--	*page = ctx->w.control_page;
--
--	f2fs_restore_control_page(bounce_page);
--}
--
--void f2fs_restore_control_page(struct page *data_page)
--{
--	struct f2fs_crypto_ctx *ctx =
--		(struct f2fs_crypto_ctx *)page_private(data_page);
+-	struct ext4_crypto_ctx *ctx =
+-		(struct ext4_crypto_ctx *)page_private(data_page);
 -
 -	set_page_private(data_page, (unsigned long)NULL);
 -	ClearPagePrivate(data_page);
 -	unlock_page(data_page);
--	f2fs_release_crypto_ctx(ctx);
+-	ext4_release_crypto_ctx(ctx);
 -}
 -
 -/**
-- * f2fs_crypt_complete() - The completion callback for page encryption
+- * ext4_crypt_complete() - The completion callback for page encryption
 - * @req: The asynchronous encryption request context
 - * @res: The result of the encryption operation
 - */
--static void f2fs_crypt_complete(struct crypto_async_request *req, int res)
+-static void ext4_crypt_complete(struct crypto_async_request *req, int res)
 -{
--	struct f2fs_completion_result *ecr = req->data;
+-	struct ext4_completion_result *ecr = req->data;
 -
 -	if (res == -EINPROGRESS)
 -		return;
@@ -415,47 +355,48 @@ index 3ef3786..0000000
 -}
 -
 -typedef enum {
--	F2FS_DECRYPT = 0,
--	F2FS_ENCRYPT,
--} f2fs_direction_t;
+-	EXT4_DECRYPT = 0,
+-	EXT4_ENCRYPT,
+-} ext4_direction_t;
 -
--static int f2fs_page_crypto(struct inode *inode,
--				f2fs_direction_t rw,
--				pgoff_t index,
--				struct page *src_page,
--				struct page *dest_page)
+-static int ext4_page_crypto(struct inode *inode,
+-			    ext4_direction_t rw,
+-			    pgoff_t index,
+-			    struct page *src_page,
+-			    struct page *dest_page)
+-
 -{
--	u8 xts_tweak[F2FS_XTS_TWEAK_SIZE];
+-	u8 xts_tweak[EXT4_XTS_TWEAK_SIZE];
 -	struct ablkcipher_request *req = NULL;
--	DECLARE_F2FS_COMPLETION_RESULT(ecr);
+-	DECLARE_EXT4_COMPLETION_RESULT(ecr);
 -	struct scatterlist dst, src;
--	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
+-	struct ext4_crypt_info *ci = EXT4_I(inode)->i_crypt_info;
 -	struct crypto_ablkcipher *tfm = ci->ci_ctfm;
 -	int res = 0;
 -
 -	req = ablkcipher_request_alloc(tfm, GFP_NOFS);
 -	if (!req) {
 -		printk_ratelimited(KERN_ERR
--				"%s: crypto_request_alloc() failed\n",
--				__func__);
+-				   "%s: crypto_request_alloc() failed\n",
+-				   __func__);
 -		return -ENOMEM;
 -	}
 -	ablkcipher_request_set_callback(
 -		req, CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
--		f2fs_crypt_complete, &ecr);
+-		ext4_crypt_complete, &ecr);
 -
--	BUILD_BUG_ON(F2FS_XTS_TWEAK_SIZE < sizeof(index));
+-	BUILD_BUG_ON(EXT4_XTS_TWEAK_SIZE < sizeof(index));
 -	memcpy(xts_tweak, &index, sizeof(index));
 -	memset(&xts_tweak[sizeof(index)], 0,
--			F2FS_XTS_TWEAK_SIZE - sizeof(index));
+-	       EXT4_XTS_TWEAK_SIZE - sizeof(index));
 -
 -	sg_init_table(&dst, 1);
 -	sg_set_page(&dst, dest_page, PAGE_CACHE_SIZE, 0);
 -	sg_init_table(&src, 1);
 -	sg_set_page(&src, src_page, PAGE_CACHE_SIZE, 0);
 -	ablkcipher_request_set_crypt(req, &src, &dst, PAGE_CACHE_SIZE,
--					xts_tweak);
--	if (rw == F2FS_DECRYPT)
+-				     xts_tweak);
+-	if (rw == EXT4_DECRYPT)
 -		res = crypto_ablkcipher_decrypt(req);
 -	else
 -		res = crypto_ablkcipher_encrypt(req);
@@ -465,7 +406,8 @@ index 3ef3786..0000000
 -	}
 -	ablkcipher_request_free(req);
 -	if (res) {
--		printk_ratelimited(KERN_ERR
+-		printk_ratelimited(
+-			KERN_ERR
 -			"%s: crypto_ablkcipher_encrypt() returned %d\n",
 -			__func__, res);
 -		return res;
@@ -473,17 +415,17 @@ index 3ef3786..0000000
 -	return 0;
 -}
 -
--static struct page *alloc_bounce_page(struct f2fs_crypto_ctx *ctx)
+-static struct page *alloc_bounce_page(struct ext4_crypto_ctx *ctx)
 -{
--	ctx->w.bounce_page = mempool_alloc(f2fs_bounce_page_pool, GFP_NOWAIT);
+-	ctx->w.bounce_page = mempool_alloc(ext4_bounce_page_pool, GFP_NOWAIT);
 -	if (ctx->w.bounce_page == NULL)
 -		return ERR_PTR(-ENOMEM);
--	ctx->flags |= F2FS_WRITE_PATH_FL;
+-	ctx->flags |= EXT4_WRITE_PATH_FL;
 -	return ctx->w.bounce_page;
 -}
 -
 -/**
-- * f2fs_encrypt() - Encrypts a page
+- * ext4_encrypt() - Encrypts a page
 - * @inode:          The inode for which the encryption should take place
 - * @plaintext_page: The page to encrypt. Must be locked.
 - *
@@ -491,50 +433,46 @@ index 3ef3786..0000000
 - * encryption context.
 - *
 - * Called on the page write path.  The caller must call
-- * f2fs_restore_control_page() on the returned ciphertext page to
+- * ext4_restore_control_page() on the returned ciphertext page to
 - * release the bounce buffer and the encryption context.
 - *
 - * Return: An allocated page with the encrypted content on success. Else, an
 - * error value or NULL.
 - */
--struct page *f2fs_encrypt(struct inode *inode,
+-struct page *ext4_encrypt(struct inode *inode,
 -			  struct page *plaintext_page)
 -{
--	struct f2fs_crypto_ctx *ctx;
+-	struct ext4_crypto_ctx *ctx;
 -	struct page *ciphertext_page = NULL;
 -	int err;
 -
 -	BUG_ON(!PageLocked(plaintext_page));
 -
--	ctx = f2fs_get_crypto_ctx(inode);
+-	ctx = ext4_get_crypto_ctx(inode);
 -	if (IS_ERR(ctx))
--		return (struct page *)ctx;
+-		return (struct page *) ctx;
 -
 -	/* The encryption operation will require a bounce page. */
 -	ciphertext_page = alloc_bounce_page(ctx);
 -	if (IS_ERR(ciphertext_page))
--		goto err_out;
--
+-		goto errout;
 -	ctx->w.control_page = plaintext_page;
--	err = f2fs_page_crypto(inode, F2FS_ENCRYPT, plaintext_page->index,
--					plaintext_page, ciphertext_page);
+-	err = ext4_page_crypto(inode, EXT4_ENCRYPT, plaintext_page->index,
+-			       plaintext_page, ciphertext_page);
 -	if (err) {
 -		ciphertext_page = ERR_PTR(err);
--		goto err_out;
+-	errout:
+-		ext4_release_crypto_ctx(ctx);
+-		return ciphertext_page;
 -	}
--
 -	SetPagePrivate(ciphertext_page);
 -	set_page_private(ciphertext_page, (unsigned long)ctx);
 -	lock_page(ciphertext_page);
 -	return ciphertext_page;
--
--err_out:
--	f2fs_release_crypto_ctx(ctx);
--	return ciphertext_page;
 -}
 -
 -/**
-- * f2fs_decrypt() - Decrypts a page in-place
+- * ext4_decrypt() - Decrypts a page in-place
 - * @ctx:  The encryption context.
 - * @page: The page to decrypt. Must be locked.
 - *
@@ -544,55 +482,172 @@ index 3ef3786..0000000
 - *
 - * Return: Zero on success, non-zero otherwise.
 - */
--int f2fs_decrypt(struct page *page)
+-int ext4_decrypt(struct page *page)
 -{
 -	BUG_ON(!PageLocked(page));
 -
--	return f2fs_page_crypto(page->mapping->host,
--				F2FS_DECRYPT, page->index, page, page);
+-	return ext4_page_crypto(page->mapping->host,
+-				EXT4_DECRYPT, page->index, page, page);
 -}
 -
--bool f2fs_valid_contents_enc_mode(uint32_t mode)
+-int ext4_encrypted_zeroout(struct inode *inode, ext4_lblk_t lblk,
+-			   ext4_fsblk_t pblk, ext4_lblk_t len)
 -{
--	return (mode == F2FS_ENCRYPTION_MODE_AES_256_XTS);
+-	struct ext4_crypto_ctx	*ctx;
+-	struct page		*ciphertext_page = NULL;
+-	struct bio		*bio;
+-	int			ret, err = 0;
+-
+-#if 0
+-	ext4_msg(inode->i_sb, KERN_CRIT,
+-		 "ext4_encrypted_zeroout ino %lu lblk %u len %u",
+-		 (unsigned long) inode->i_ino, lblk, len);
+-#endif
+-
+-	BUG_ON(inode->i_sb->s_blocksize != PAGE_CACHE_SIZE);
+-
+-	ctx = ext4_get_crypto_ctx(inode);
+-	if (IS_ERR(ctx))
+-		return PTR_ERR(ctx);
+-
+-	ciphertext_page = alloc_bounce_page(ctx);
+-	if (IS_ERR(ciphertext_page)) {
+-		err = PTR_ERR(ciphertext_page);
+-		goto errout;
+-	}
+-
+-	while (len--) {
+-		err = ext4_page_crypto(inode, EXT4_ENCRYPT, lblk,
+-				       ZERO_PAGE(0), ciphertext_page);
+-		if (err)
+-			goto errout;
+-
+-		bio = bio_alloc(GFP_KERNEL, 1);
+-		if (!bio) {
+-			err = -ENOMEM;
+-			goto errout;
+-		}
+-		bio->bi_bdev = inode->i_sb->s_bdev;
+-		bio->bi_iter.bi_sector =
+-			pblk << (inode->i_sb->s_blocksize_bits - 9);
+-		ret = bio_add_page(bio, ciphertext_page,
+-				   inode->i_sb->s_blocksize, 0);
+-		if (ret != inode->i_sb->s_blocksize) {
+-			/* should never happen! */
+-			ext4_msg(inode->i_sb, KERN_ERR,
+-				 "bio_add_page failed: %d", ret);
+-			WARN_ON(1);
+-			bio_put(bio);
+-			err = -EIO;
+-			goto errout;
+-		}
+-		err = submit_bio_wait(WRITE, bio);
+-		if ((err == 0) && bio->bi_error)
+-			err = -EIO;
+-		bio_put(bio);
+-		if (err)
+-			goto errout;
+-		lblk++; pblk++;
+-	}
+-	err = 0;
+-errout:
+-	ext4_release_crypto_ctx(ctx);
+-	return err;
+-}
+-
+-bool ext4_valid_contents_enc_mode(uint32_t mode)
+-{
+-	return (mode == EXT4_ENCRYPTION_MODE_AES_256_XTS);
 -}
 -
 -/**
-- * f2fs_validate_encryption_key_size() - Validate the encryption key size
+- * ext4_validate_encryption_key_size() - Validate the encryption key size
 - * @mode: The key mode.
 - * @size: The key size to validate.
 - *
 - * Return: The validated key size for @mode. Zero if invalid.
 - */
--uint32_t f2fs_validate_encryption_key_size(uint32_t mode, uint32_t size)
+-uint32_t ext4_validate_encryption_key_size(uint32_t mode, uint32_t size)
 -{
--	if (size == f2fs_encryption_key_size(mode))
+-	if (size == ext4_encryption_key_size(mode))
 -		return size;
 -	return 0;
 -}
-diff --git a/fs/f2fs/crypto_fname.c b/fs/f2fs/crypto_fname.c
-deleted file mode 100644
-index 6dfdc97..0000000
---- a/fs/f2fs/crypto_fname.c
-+++ /dev/null
-@@ -1,446 +0,0 @@
+-
 -/*
-- * linux/fs/f2fs/crypto_fname.c
-- *
-- * Copied from linux/fs/ext4/crypto.c
+- * Validate dentries for encrypted directories to make sure we aren't
+- * potentially caching stale data after a key has been added or
+- * removed.
+- */
+-static int ext4_d_revalidate(struct dentry *dentry, unsigned int flags)
+-{
+-	struct inode *dir = d_inode(dentry->d_parent);
+-	struct ext4_crypt_info *ci = EXT4_I(dir)->i_crypt_info;
+-	int dir_has_key, cached_with_key;
+-
+-	if (!ext4_encrypted_inode(dir))
+-		return 0;
+-
+-	if (ci && ci->ci_keyring_key &&
+-	    (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
+-					  (1 << KEY_FLAG_REVOKED) |
+-					  (1 << KEY_FLAG_DEAD))))
+-		ci = NULL;
+-
+-	/* this should eventually be an flag in d_flags */
+-	cached_with_key = dentry->d_fsdata != NULL;
+-	dir_has_key = (ci != NULL);
+-
+-	/*
+-	 * If the dentry was cached without the key, and it is a
+-	 * negative dentry, it might be a valid name.  We can't check
+-	 * if the key has since been made available due to locking
+-	 * reasons, so we fail the validation so ext4_lookup() can do
+-	 * this check.
+-	 *
+-	 * We also fail the validation if the dentry was created with
+-	 * the key present, but we no longer have the key, or vice versa.
+-	 */
+-	if ((!cached_with_key && d_is_negative(dentry)) ||
+-	    (!cached_with_key && dir_has_key) ||
+-	    (cached_with_key && !dir_has_key)) {
+-#if 0				/* Revalidation debug */
+-		char buf[80];
+-		char *cp = simple_dname(dentry, buf, sizeof(buf));
+-
+-		if (IS_ERR(cp))
+-			cp = (char *) "???";
+-		pr_err("revalidate: %s %p %d %d %d\n", cp, dentry->d_fsdata,
+-		       cached_with_key, d_is_negative(dentry),
+-		       dir_has_key);
+-#endif
+-		return 0;
+-	}
+-	return 1;
+-}
+-
+-const struct dentry_operations ext4_encrypted_d_ops = {
+-	.d_revalidate = ext4_d_revalidate,
+-};
+diff --git a/fs/ext4/crypto_fname.c b/fs/ext4/crypto_fname.c
+deleted file mode 100644
+index 2fbef8a..0000000
+--- a/fs/ext4/crypto_fname.c
++++ /dev/null
+@@ -1,470 +0,0 @@
+-/*
+- * linux/fs/ext4/crypto_fname.c
 - *
 - * Copyright (C) 2015, Google, Inc.
-- * Copyright (C) 2015, Motorola Mobility
 - *
-- * This contains functions for filename crypto management in f2fs
+- * This contains functions for filename crypto management in ext4
 - *
 - * Written by Uday Savagaonkar, 2014.
 - *
-- * Adjust f2fs dentry structure
-- *	Jaegeuk Kim, 2015.
-- *
 - * This has not yet undergone a rigorous security audit.
+- *
 - */
+-
 -#include <crypto/hash.h>
 -#include <crypto/sha.h>
 -#include <keys/encrypted-type.h>
@@ -606,19 +661,17 @@ index 6dfdc97..0000000
 -#include <linux/random.h>
 -#include <linux/scatterlist.h>
 -#include <linux/spinlock_types.h>
--#include <linux/f2fs_fs.h>
--#include <linux/ratelimit.h>
 -
--#include "f2fs.h"
--#include "f2fs_crypto.h"
+-#include "ext4.h"
+-#include "ext4_crypto.h"
 -#include "xattr.h"
 -
 -/**
-- * f2fs_dir_crypt_complete() -
+- * ext4_dir_crypt_complete() -
 - */
--static void f2fs_dir_crypt_complete(struct crypto_async_request *req, int res)
+-static void ext4_dir_crypt_complete(struct crypto_async_request *req, int res)
 -{
--	struct f2fs_completion_result *ecr = req->data;
+-	struct ext4_completion_result *ecr = req->data;
 -
 -	if (res == -EINPROGRESS)
 -		return;
@@ -626,46 +679,48 @@ index 6dfdc97..0000000
 -	complete(&ecr->completion);
 -}
 -
--bool f2fs_valid_filenames_enc_mode(uint32_t mode)
+-bool ext4_valid_filenames_enc_mode(uint32_t mode)
 -{
--	return (mode == F2FS_ENCRYPTION_MODE_AES_256_CTS);
+-	return (mode == EXT4_ENCRYPTION_MODE_AES_256_CTS);
 -}
 -
 -static unsigned max_name_len(struct inode *inode)
 -{
 -	return S_ISLNK(inode->i_mode) ? inode->i_sb->s_blocksize :
--					F2FS_NAME_LEN;
+-		EXT4_NAME_LEN;
 -}
 -
 -/**
-- * f2fs_fname_encrypt() -
+- * ext4_fname_encrypt() -
 - *
 - * This function encrypts the input filename, and returns the length of the
 - * ciphertext. Errors are returned as negative numbers.  We trust the caller to
 - * allocate sufficient memory to oname string.
 - */
--static int f2fs_fname_encrypt(struct inode *inode,
--			const struct qstr *iname, struct f2fs_str *oname)
+-static int ext4_fname_encrypt(struct inode *inode,
+-			      const struct qstr *iname,
+-			      struct ext4_str *oname)
 -{
 -	u32 ciphertext_len;
 -	struct ablkcipher_request *req = NULL;
--	DECLARE_F2FS_COMPLETION_RESULT(ecr);
--	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
+-	DECLARE_EXT4_COMPLETION_RESULT(ecr);
+-	struct ext4_crypt_info *ci = EXT4_I(inode)->i_crypt_info;
 -	struct crypto_ablkcipher *tfm = ci->ci_ctfm;
 -	int res = 0;
--	char iv[F2FS_CRYPTO_BLOCK_SIZE];
+-	char iv[EXT4_CRYPTO_BLOCK_SIZE];
 -	struct scatterlist src_sg, dst_sg;
--	int padding = 4 << (ci->ci_flags & F2FS_POLICY_FLAGS_PAD_MASK);
+-	int padding = 4 << (ci->ci_flags & EXT4_POLICY_FLAGS_PAD_MASK);
 -	char *workbuf, buf[32], *alloc_buf = NULL;
 -	unsigned lim = max_name_len(inode);
 -
 -	if (iname->len <= 0 || iname->len > lim)
 -		return -EIO;
 -
--	ciphertext_len = (iname->len < F2FS_CRYPTO_BLOCK_SIZE) ?
--		F2FS_CRYPTO_BLOCK_SIZE : iname->len;
--	ciphertext_len = f2fs_fname_crypto_round_up(ciphertext_len, padding);
--	ciphertext_len = (ciphertext_len > lim) ? lim : ciphertext_len;
+-	ciphertext_len = (iname->len < EXT4_CRYPTO_BLOCK_SIZE) ?
+-		EXT4_CRYPTO_BLOCK_SIZE : iname->len;
+-	ciphertext_len = ext4_fname_crypto_round_up(ciphertext_len, padding);
+-	ciphertext_len = (ciphertext_len > lim)
+-			? lim : ciphertext_len;
 -
 -	if (ciphertext_len <= sizeof(buf)) {
 -		workbuf = buf;
@@ -679,14 +734,14 @@ index 6dfdc97..0000000
 -	/* Allocate request */
 -	req = ablkcipher_request_alloc(tfm, GFP_NOFS);
 -	if (!req) {
--		printk_ratelimited(KERN_ERR
--			"%s: crypto_request_alloc() failed\n", __func__);
+-		printk_ratelimited(
+-		    KERN_ERR "%s: crypto_request_alloc() failed\n", __func__);
 -		kfree(alloc_buf);
 -		return -ENOMEM;
 -	}
 -	ablkcipher_request_set_callback(req,
--			CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
--			f2fs_dir_crypt_complete, &ecr);
+-		CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
+-		ext4_dir_crypt_complete, &ecr);
 -
 -	/* Copy the input */
 -	memcpy(workbuf, iname->name, iname->len);
@@ -694,7 +749,7 @@ index 6dfdc97..0000000
 -		memset(workbuf + iname->len, 0, ciphertext_len - iname->len);
 -
 -	/* Initialize IV */
--	memset(iv, 0, F2FS_CRYPTO_BLOCK_SIZE);
+-	memset(iv, 0, EXT4_CRYPTO_BLOCK_SIZE);
 -
 -	/* Create encryption request */
 -	sg_init_one(&src_sg, workbuf, ciphertext_len);
@@ -708,50 +763,56 @@ index 6dfdc97..0000000
 -	kfree(alloc_buf);
 -	ablkcipher_request_free(req);
 -	if (res < 0) {
--		printk_ratelimited(KERN_ERR
--				"%s: Error (error code %d)\n", __func__, res);
+-		printk_ratelimited(
+-		    KERN_ERR "%s: Error (error code %d)\n", __func__, res);
 -	}
 -	oname->len = ciphertext_len;
 -	return res;
 -}
 -
 -/*
-- * f2fs_fname_decrypt()
+- * ext4_fname_decrypt()
 - *	This function decrypts the input filename, and returns
 - *	the length of the plaintext.
 - *	Errors are returned as negative numbers.
 - *	We trust the caller to allocate sufficient memory to oname string.
 - */
--static int f2fs_fname_decrypt(struct inode *inode,
--			const struct f2fs_str *iname, struct f2fs_str *oname)
+-static int ext4_fname_decrypt(struct inode *inode,
+-			      const struct ext4_str *iname,
+-			      struct ext4_str *oname)
 -{
+-	struct ext4_str tmp_in[2], tmp_out[1];
 -	struct ablkcipher_request *req = NULL;
--	DECLARE_F2FS_COMPLETION_RESULT(ecr);
+-	DECLARE_EXT4_COMPLETION_RESULT(ecr);
 -	struct scatterlist src_sg, dst_sg;
--	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
+-	struct ext4_crypt_info *ci = EXT4_I(inode)->i_crypt_info;
 -	struct crypto_ablkcipher *tfm = ci->ci_ctfm;
 -	int res = 0;
--	char iv[F2FS_CRYPTO_BLOCK_SIZE];
+-	char iv[EXT4_CRYPTO_BLOCK_SIZE];
 -	unsigned lim = max_name_len(inode);
 -
 -	if (iname->len <= 0 || iname->len > lim)
 -		return -EIO;
 -
+-	tmp_in[0].name = iname->name;
+-	tmp_in[0].len = iname->len;
+-	tmp_out[0].name = oname->name;
+-
 -	/* Allocate request */
 -	req = ablkcipher_request_alloc(tfm, GFP_NOFS);
 -	if (!req) {
--		printk_ratelimited(KERN_ERR
--			"%s: crypto_request_alloc() failed\n",  __func__);
+-		printk_ratelimited(
+-		    KERN_ERR "%s: crypto_request_alloc() failed\n",  __func__);
 -		return -ENOMEM;
 -	}
 -	ablkcipher_request_set_callback(req,
 -		CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
--		f2fs_dir_crypt_complete, &ecr);
+-		ext4_dir_crypt_complete, &ecr);
 -
 -	/* Initialize IV */
--	memset(iv, 0, F2FS_CRYPTO_BLOCK_SIZE);
+-	memset(iv, 0, EXT4_CRYPTO_BLOCK_SIZE);
 -
--	/* Create decryption request */
+-	/* Create encryption request */
 -	sg_init_one(&src_sg, iname->name, iname->len);
 -	sg_init_one(&dst_sg, oname->name, oname->len);
 -	ablkcipher_request_set_crypt(req, &src_sg, &dst_sg, iname->len, iv);
@@ -762,9 +823,9 @@ index 6dfdc97..0000000
 -	}
 -	ablkcipher_request_free(req);
 -	if (res < 0) {
--		printk_ratelimited(KERN_ERR
--			"%s: Error in f2fs_fname_decrypt (error code %d)\n",
--			__func__, res);
+-		printk_ratelimited(
+-		    KERN_ERR "%s: Error in ext4_fname_encrypt (error code %d)\n",
+-		    __func__, res);
 -		return res;
 -	}
 -
@@ -776,7 +837,7 @@ index 6dfdc97..0000000
 -	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
 -
 -/**
-- * f2fs_fname_encode_digest() -
+- * ext4_fname_encode_digest() -
 - *
 - * Encodes the input digest using characters from the set [a-zA-Z0-9_+].
 - * The encoded string is roughly 4/3 times the size of the input string.
@@ -826,55 +887,55 @@ index 6dfdc97..0000000
 -}
 -
 -/**
-- * f2fs_fname_crypto_round_up() -
+- * ext4_fname_crypto_round_up() -
 - *
 - * Return: The next multiple of block size
 - */
--u32 f2fs_fname_crypto_round_up(u32 size, u32 blksize)
+-u32 ext4_fname_crypto_round_up(u32 size, u32 blksize)
 -{
--	return ((size + blksize - 1) / blksize) * blksize;
+-	return ((size+blksize-1)/blksize)*blksize;
 -}
 -
--unsigned f2fs_fname_encrypted_size(struct inode *inode, u32 ilen)
+-unsigned ext4_fname_encrypted_size(struct inode *inode, u32 ilen)
 -{
--	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
+-	struct ext4_crypt_info *ci = EXT4_I(inode)->i_crypt_info;
 -	int padding = 32;
 -
 -	if (ci)
--		padding = 4 << (ci->ci_flags & F2FS_POLICY_FLAGS_PAD_MASK);
--	if (ilen < F2FS_CRYPTO_BLOCK_SIZE)
--		ilen = F2FS_CRYPTO_BLOCK_SIZE;
--	return f2fs_fname_crypto_round_up(ilen, padding);
+-		padding = 4 << (ci->ci_flags & EXT4_POLICY_FLAGS_PAD_MASK);
+-	if (ilen < EXT4_CRYPTO_BLOCK_SIZE)
+-		ilen = EXT4_CRYPTO_BLOCK_SIZE;
+-	return ext4_fname_crypto_round_up(ilen, padding);
 -}
 -
--/**
-- * f2fs_fname_crypto_alloc_obuff() -
+-/*
+- * ext4_fname_crypto_alloc_buffer() -
 - *
 - * Allocates an output buffer that is sufficient for the crypto operation
 - * specified by the context and the direction.
 - */
--int f2fs_fname_crypto_alloc_buffer(struct inode *inode,
--				   u32 ilen, struct f2fs_str *crypto_str)
+-int ext4_fname_crypto_alloc_buffer(struct inode *inode,
+-				   u32 ilen, struct ext4_str *crypto_str)
 -{
--	unsigned int olen = f2fs_fname_encrypted_size(inode, ilen);
+-	unsigned int olen = ext4_fname_encrypted_size(inode, ilen);
 -
 -	crypto_str->len = olen;
--	if (olen < F2FS_FNAME_CRYPTO_DIGEST_SIZE * 2)
--		olen = F2FS_FNAME_CRYPTO_DIGEST_SIZE * 2;
+-	if (olen < EXT4_FNAME_CRYPTO_DIGEST_SIZE*2)
+-		olen = EXT4_FNAME_CRYPTO_DIGEST_SIZE*2;
 -	/* Allocated buffer can hold one more character to null-terminate the
 -	 * string */
--	crypto_str->name = kmalloc(olen + 1, GFP_NOFS);
+-	crypto_str->name = kmalloc(olen+1, GFP_NOFS);
 -	if (!(crypto_str->name))
 -		return -ENOMEM;
 -	return 0;
 -}
 -
 -/**
-- * f2fs_fname_crypto_free_buffer() -
+- * ext4_fname_crypto_free_buffer() -
 - *
 - * Frees the buffer allocated for crypto operation.
 - */
--void f2fs_fname_crypto_free_buffer(struct f2fs_str *crypto_str)
+-void ext4_fname_crypto_free_buffer(struct ext4_str *crypto_str)
 -{
 -	if (!crypto_str)
 -		return;
@@ -883,66 +944,83 @@ index 6dfdc97..0000000
 -}
 -
 -/**
-- * f2fs_fname_disk_to_usr() - converts a filename from disk space to user space
+- * ext4_fname_disk_to_usr() - converts a filename from disk space to user space
 - */
--int f2fs_fname_disk_to_usr(struct inode *inode,
--			f2fs_hash_t *hash,
--			const struct f2fs_str *iname,
--			struct f2fs_str *oname)
+-int _ext4_fname_disk_to_usr(struct inode *inode,
+-			    struct dx_hash_info *hinfo,
+-			    const struct ext4_str *iname,
+-			    struct ext4_str *oname)
 -{
--	const struct qstr qname = FSTR_TO_QSTR(iname);
 -	char buf[24];
 -	int ret;
 -
--	if (is_dot_dotdot(&qname)) {
--		oname->name[0] = '.';
--		oname->name[iname->len - 1] = '.';
--		oname->len = iname->len;
--		return oname->len;
+-	if (iname->len < 3) {
+-		/*Check for . and .. */
+-		if (iname->name[0] == '.' && iname->name[iname->len-1] == '.') {
+-			oname->name[0] = '.';
+-			oname->name[iname->len-1] = '.';
+-			oname->len = iname->len;
+-			return oname->len;
+-		}
 -	}
--	if (iname->len < F2FS_CRYPTO_BLOCK_SIZE) {
--		printk("encrypted inode too small");
+-	if (iname->len < EXT4_CRYPTO_BLOCK_SIZE) {
+-		EXT4_ERROR_INODE(inode, "encrypted inode too small");
 -		return -EUCLEAN;
 -	}
--	if (F2FS_I(inode)->i_crypt_info)
--		return f2fs_fname_decrypt(inode, iname, oname);
+-	if (EXT4_I(inode)->i_crypt_info)
+-		return ext4_fname_decrypt(inode, iname, oname);
 -
--	if (iname->len <= F2FS_FNAME_CRYPTO_DIGEST_SIZE) {
+-	if (iname->len <= EXT4_FNAME_CRYPTO_DIGEST_SIZE) {
 -		ret = digest_encode(iname->name, iname->len, oname->name);
 -		oname->len = ret;
 -		return ret;
 -	}
--	if (hash) {
--		memcpy(buf, hash, 4);
--		memset(buf + 4, 0, 4);
+-	if (hinfo) {
+-		memcpy(buf, &hinfo->hash, 4);
+-		memcpy(buf+4, &hinfo->minor_hash, 4);
 -	} else
 -		memset(buf, 0, 8);
 -	memcpy(buf + 8, iname->name + iname->len - 16, 16);
 -	oname->name[0] = '_';
--	ret = digest_encode(buf, 24, oname->name + 1);
+-	ret = digest_encode(buf, 24, oname->name+1);
 -	oname->len = ret + 1;
 -	return ret + 1;
 -}
 -
+-int ext4_fname_disk_to_usr(struct inode *inode,
+-			   struct dx_hash_info *hinfo,
+-			   const struct ext4_dir_entry_2 *de,
+-			   struct ext4_str *oname)
+-{
+-	struct ext4_str iname = {.name = (unsigned char *) de->name,
+-				 .len = de->name_len };
+-
+-	return _ext4_fname_disk_to_usr(inode, hinfo, &iname, oname);
+-}
+-
+-
 -/**
-- * f2fs_fname_usr_to_disk() - converts a filename from user space to disk space
+- * ext4_fname_usr_to_disk() - converts a filename from user space to disk space
 - */
--int f2fs_fname_usr_to_disk(struct inode *inode,
--			const struct qstr *iname,
--			struct f2fs_str *oname)
+-int ext4_fname_usr_to_disk(struct inode *inode,
+-			   const struct qstr *iname,
+-			   struct ext4_str *oname)
 -{
 -	int res;
--	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
+-	struct ext4_crypt_info *ci = EXT4_I(inode)->i_crypt_info;
 -
--	if (is_dot_dotdot(iname)) {
--		oname->name[0] = '.';
--		oname->name[iname->len - 1] = '.';
--		oname->len = iname->len;
--		return oname->len;
+-	if (iname->len < 3) {
+-		/*Check for . and .. */
+-		if (iname->name[0] == '.' &&
+-				iname->name[iname->len-1] == '.') {
+-			oname->name[0] = '.';
+-			oname->name[iname->len-1] = '.';
+-			oname->len = iname->len;
+-			return oname->len;
+-		}
 -	}
--
 -	if (ci) {
--		res = f2fs_fname_encrypt(inode, iname, oname);
+-		res = ext4_fname_encrypt(inode, iname, oname);
 -		return res;
 -	}
 -	/* Without a proper key, a user is not allowed to modify the filenames
@@ -951,30 +1029,33 @@ index 6dfdc97..0000000
 -	return -EACCES;
 -}
 -
--int f2fs_fname_setup_filename(struct inode *dir, const struct qstr *iname,
--			      int lookup, struct f2fs_filename *fname)
+-int ext4_fname_setup_filename(struct inode *dir, const struct qstr *iname,
+-			      int lookup, struct ext4_filename *fname)
 -{
--	struct f2fs_crypt_info *ci;
+-	struct ext4_crypt_info *ci;
 -	int ret = 0, bigname = 0;
 -
--	memset(fname, 0, sizeof(struct f2fs_filename));
+-	memset(fname, 0, sizeof(struct ext4_filename));
 -	fname->usr_fname = iname;
 -
--	if (!f2fs_encrypted_inode(dir) || is_dot_dotdot(iname)) {
--		fname->disk_name.name = (unsigned char *)iname->name;
+-	if (!ext4_encrypted_inode(dir) ||
+-	    ((iname->name[0] == '.') &&
+-	     ((iname->len == 1) ||
+-	      ((iname->name[1] == '.') && (iname->len == 2))))) {
+-		fname->disk_name.name = (unsigned char *) iname->name;
 -		fname->disk_name.len = iname->len;
 -		return 0;
 -	}
--	ret = f2fs_get_encryption_info(dir);
+-	ret = ext4_get_encryption_info(dir);
 -	if (ret)
 -		return ret;
--	ci = F2FS_I(dir)->i_crypt_info;
+-	ci = EXT4_I(dir)->i_crypt_info;
 -	if (ci) {
--		ret = f2fs_fname_crypto_alloc_buffer(dir, iname->len,
+-		ret = ext4_fname_crypto_alloc_buffer(dir, iname->len,
 -						     &fname->crypto_buf);
 -		if (ret < 0)
 -			return ret;
--		ret = f2fs_fname_encrypt(dir, iname, &fname->crypto_buf);
+-		ret = ext4_fname_encrypt(dir, iname, &fname->crypto_buf);
 -		if (ret < 0)
 -			goto errout;
 -		fname->disk_name.name = fname->crypto_buf.name;
@@ -997,62 +1078,61 @@ index 6dfdc97..0000000
 -	if (fname->crypto_buf.name == NULL)
 -		return -ENOMEM;
 -	ret = digest_decode(iname->name + bigname, iname->len - bigname,
--				fname->crypto_buf.name);
+-			    fname->crypto_buf.name);
 -	if (ret < 0) {
 -		ret = -ENOENT;
 -		goto errout;
 -	}
 -	fname->crypto_buf.len = ret;
 -	if (bigname) {
--		memcpy(&fname->hash, fname->crypto_buf.name, 4);
+-		memcpy(&fname->hinfo.hash, fname->crypto_buf.name, 4);
+-		memcpy(&fname->hinfo.minor_hash, fname->crypto_buf.name + 4, 4);
 -	} else {
 -		fname->disk_name.name = fname->crypto_buf.name;
 -		fname->disk_name.len = fname->crypto_buf.len;
 -	}
 -	return 0;
 -errout:
--	f2fs_fname_crypto_free_buffer(&fname->crypto_buf);
+-	kfree(fname->crypto_buf.name);
+-	fname->crypto_buf.name = NULL;
 -	return ret;
 -}
 -
--void f2fs_fname_free_filename(struct f2fs_filename *fname)
+-void ext4_fname_free_filename(struct ext4_filename *fname)
 -{
 -	kfree(fname->crypto_buf.name);
 -	fname->crypto_buf.name = NULL;
 -	fname->usr_fname = NULL;
 -	fname->disk_name.name = NULL;
 -}
-diff --git a/fs/f2fs/crypto_key.c b/fs/f2fs/crypto_key.c
+diff --git a/fs/ext4/crypto_key.c b/fs/ext4/crypto_key.c
 deleted file mode 100644
-index 9094fca..0000000
---- a/fs/f2fs/crypto_key.c
+index 9a16d1e..0000000
+--- a/fs/ext4/crypto_key.c
 +++ /dev/null
-@@ -1,267 +0,0 @@
+@@ -1,276 +0,0 @@
 -/*
-- * linux/fs/f2fs/crypto_key.c
-- *
-- * Copied from linux/fs/f2fs/crypto_key.c
+- * linux/fs/ext4/crypto_key.c
 - *
 - * Copyright (C) 2015, Google, Inc.
 - *
-- * This contains encryption key functions for f2fs
+- * This contains encryption key functions for ext4
 - *
 - * Written by Michael Halcrow, Ildar Muslukhov, and Uday Savagaonkar, 2015.
 - */
+-
 -#include <keys/encrypted-type.h>
 -#include <keys/user-type.h>
 -#include <linux/random.h>
 -#include <linux/scatterlist.h>
 -#include <uapi/linux/keyctl.h>
--#include <crypto/hash.h>
--#include <linux/f2fs_fs.h>
 -
--#include "f2fs.h"
+-#include "ext4.h"
 -#include "xattr.h"
 -
 -static void derive_crypt_complete(struct crypto_async_request *req, int rc)
 -{
--	struct f2fs_completion_result *ecr = req->data;
+-	struct ext4_completion_result *ecr = req->data;
 -
 -	if (rc == -EINPROGRESS)
 -		return;
@@ -1062,20 +1142,20 @@ index 9094fca..0000000
 -}
 -
 -/**
-- * f2fs_derive_key_aes() - Derive a key using AES-128-ECB
+- * ext4_derive_key_aes() - Derive a key using AES-128-ECB
 - * @deriving_key: Encryption key used for derivation.
 - * @source_key:   Source key to which to apply derivation.
 - * @derived_key:  Derived key.
 - *
 - * Return: Zero on success; non-zero otherwise.
 - */
--static int f2fs_derive_key_aes(char deriving_key[F2FS_AES_128_ECB_KEY_SIZE],
--				char source_key[F2FS_AES_256_XTS_KEY_SIZE],
--				char derived_key[F2FS_AES_256_XTS_KEY_SIZE])
+-static int ext4_derive_key_aes(char deriving_key[EXT4_AES_128_ECB_KEY_SIZE],
+-			       char source_key[EXT4_AES_256_XTS_KEY_SIZE],
+-			       char derived_key[EXT4_AES_256_XTS_KEY_SIZE])
 -{
 -	int res = 0;
 -	struct ablkcipher_request *req = NULL;
--	DECLARE_F2FS_COMPLETION_RESULT(ecr);
+-	DECLARE_EXT4_COMPLETION_RESULT(ecr);
 -	struct scatterlist src_sg, dst_sg;
 -	struct crypto_ablkcipher *tfm = crypto_alloc_ablkcipher("ecb(aes)", 0,
 -								0);
@@ -1095,19 +1175,19 @@ index 9094fca..0000000
 -			CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
 -			derive_crypt_complete, &ecr);
 -	res = crypto_ablkcipher_setkey(tfm, deriving_key,
--				F2FS_AES_128_ECB_KEY_SIZE);
+-				       EXT4_AES_128_ECB_KEY_SIZE);
 -	if (res < 0)
 -		goto out;
--
--	sg_init_one(&src_sg, source_key, F2FS_AES_256_XTS_KEY_SIZE);
--	sg_init_one(&dst_sg, derived_key, F2FS_AES_256_XTS_KEY_SIZE);
+-	sg_init_one(&src_sg, source_key, EXT4_AES_256_XTS_KEY_SIZE);
+-	sg_init_one(&dst_sg, derived_key, EXT4_AES_256_XTS_KEY_SIZE);
 -	ablkcipher_request_set_crypt(req, &src_sg, &dst_sg,
--					F2FS_AES_256_XTS_KEY_SIZE, NULL);
+-				     EXT4_AES_256_XTS_KEY_SIZE, NULL);
 -	res = crypto_ablkcipher_encrypt(req);
 -	if (res == -EINPROGRESS || res == -EBUSY) {
 -		wait_for_completion(&ecr.completion);
 -		res = ecr.res;
 -	}
+-
 -out:
 -	if (req)
 -		ablkcipher_request_free(req);
@@ -1116,71 +1196,82 @@ index 9094fca..0000000
 -	return res;
 -}
 -
--static void f2fs_free_crypt_info(struct f2fs_crypt_info *ci)
+-void ext4_free_crypt_info(struct ext4_crypt_info *ci)
 -{
 -	if (!ci)
 -		return;
 -
--	key_put(ci->ci_keyring_key);
+-	if (ci->ci_keyring_key)
+-		key_put(ci->ci_keyring_key);
 -	crypto_free_ablkcipher(ci->ci_ctfm);
--	kmem_cache_free(f2fs_crypt_info_cachep, ci);
+-	kmem_cache_free(ext4_crypt_info_cachep, ci);
 -}
 -
--void f2fs_free_encryption_info(struct inode *inode, struct f2fs_crypt_info *ci)
+-void ext4_free_encryption_info(struct inode *inode,
+-			       struct ext4_crypt_info *ci)
 -{
--	struct f2fs_inode_info *fi = F2FS_I(inode);
--	struct f2fs_crypt_info *prev;
+-	struct ext4_inode_info *ei = EXT4_I(inode);
+-	struct ext4_crypt_info *prev;
 -
 -	if (ci == NULL)
--		ci = ACCESS_ONCE(fi->i_crypt_info);
+-		ci = ACCESS_ONCE(ei->i_crypt_info);
 -	if (ci == NULL)
 -		return;
--	prev = cmpxchg(&fi->i_crypt_info, ci, NULL);
+-	prev = cmpxchg(&ei->i_crypt_info, ci, NULL);
 -	if (prev != ci)
 -		return;
 -
--	f2fs_free_crypt_info(ci);
+-	ext4_free_crypt_info(ci);
 -}
 -
--int _f2fs_get_encryption_info(struct inode *inode)
+-int _ext4_get_encryption_info(struct inode *inode)
 -{
--	struct f2fs_inode_info *fi = F2FS_I(inode);
--	struct f2fs_crypt_info *crypt_info;
--	char full_key_descriptor[F2FS_KEY_DESC_PREFIX_SIZE +
--				(F2FS_KEY_DESCRIPTOR_SIZE * 2) + 1];
+-	struct ext4_inode_info *ei = EXT4_I(inode);
+-	struct ext4_crypt_info *crypt_info;
+-	char full_key_descriptor[EXT4_KEY_DESC_PREFIX_SIZE +
+-				 (EXT4_KEY_DESCRIPTOR_SIZE * 2) + 1];
 -	struct key *keyring_key = NULL;
--	struct f2fs_encryption_key *master_key;
--	struct f2fs_encryption_context ctx;
+-	struct ext4_encryption_key *master_key;
+-	struct ext4_encryption_context ctx;
 -	const struct user_key_payload *ukp;
+-	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
 -	struct crypto_ablkcipher *ctfm;
 -	const char *cipher_str;
--	char raw_key[F2FS_MAX_KEY_SIZE];
+-	char raw_key[EXT4_MAX_KEY_SIZE];
 -	char mode;
 -	int res;
 -
--	res = f2fs_crypto_initialize();
--	if (res)
--		return res;
+-	if (!ext4_read_workqueue) {
+-		res = ext4_init_crypto();
+-		if (res)
+-			return res;
+-	}
+-
 -retry:
--	crypt_info = ACCESS_ONCE(fi->i_crypt_info);
+-	crypt_info = ACCESS_ONCE(ei->i_crypt_info);
 -	if (crypt_info) {
 -		if (!crypt_info->ci_keyring_key ||
--				key_validate(crypt_info->ci_keyring_key) == 0)
+-		    key_validate(crypt_info->ci_keyring_key) == 0)
 -			return 0;
--		f2fs_free_encryption_info(inode, crypt_info);
+-		ext4_free_encryption_info(inode, crypt_info);
 -		goto retry;
 -	}
 -
--	res = f2fs_getxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
--				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT,
--				&ctx, sizeof(ctx), NULL);
--	if (res < 0)
--		return res;
--	else if (res != sizeof(ctx))
+-	res = ext4_xattr_get(inode, EXT4_XATTR_INDEX_ENCRYPTION,
+-				 EXT4_XATTR_NAME_ENCRYPTION_CONTEXT,
+-				 &ctx, sizeof(ctx));
+-	if (res < 0) {
+-		if (!DUMMY_ENCRYPTION_ENABLED(sbi))
+-			return res;
+-		ctx.contents_encryption_mode = EXT4_ENCRYPTION_MODE_AES_256_XTS;
+-		ctx.filenames_encryption_mode =
+-			EXT4_ENCRYPTION_MODE_AES_256_CTS;
+-		ctx.flags = 0;
+-	} else if (res != sizeof(ctx))
 -		return -EINVAL;
 -	res = 0;
 -
--	crypt_info = kmem_cache_alloc(f2fs_crypt_info_cachep, GFP_NOFS);
+-	crypt_info = kmem_cache_alloc(ext4_crypt_info_cachep, GFP_KERNEL);
 -	if (!crypt_info)
 -		return -ENOMEM;
 -
@@ -1190,36 +1281,38 @@ index 9094fca..0000000
 -	crypt_info->ci_ctfm = NULL;
 -	crypt_info->ci_keyring_key = NULL;
 -	memcpy(crypt_info->ci_master_key, ctx.master_key_descriptor,
--				sizeof(crypt_info->ci_master_key));
+-	       sizeof(crypt_info->ci_master_key));
 -	if (S_ISREG(inode->i_mode))
 -		mode = crypt_info->ci_data_mode;
 -	else if (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode))
 -		mode = crypt_info->ci_filename_mode;
 -	else
 -		BUG();
--
 -	switch (mode) {
--	case F2FS_ENCRYPTION_MODE_AES_256_XTS:
+-	case EXT4_ENCRYPTION_MODE_AES_256_XTS:
 -		cipher_str = "xts(aes)";
 -		break;
--	case F2FS_ENCRYPTION_MODE_AES_256_CTS:
+-	case EXT4_ENCRYPTION_MODE_AES_256_CTS:
 -		cipher_str = "cts(cbc(aes))";
 -		break;
 -	default:
 -		printk_once(KERN_WARNING
--			    "f2fs: unsupported key mode %d (ino %u)\n",
+-			    "ext4: unsupported key mode %d (ino %u)\n",
 -			    mode, (unsigned) inode->i_ino);
 -		res = -ENOKEY;
 -		goto out;
 -	}
--
--	memcpy(full_key_descriptor, F2FS_KEY_DESC_PREFIX,
--					F2FS_KEY_DESC_PREFIX_SIZE);
--	sprintf(full_key_descriptor + F2FS_KEY_DESC_PREFIX_SIZE,
--					"%*phN", F2FS_KEY_DESCRIPTOR_SIZE,
--					ctx.master_key_descriptor);
--	full_key_descriptor[F2FS_KEY_DESC_PREFIX_SIZE +
--					(2 * F2FS_KEY_DESCRIPTOR_SIZE)] = '\0';
+-	if (DUMMY_ENCRYPTION_ENABLED(sbi)) {
+-		memset(raw_key, 0x42, EXT4_AES_256_XTS_KEY_SIZE);
+-		goto got_key;
+-	}
+-	memcpy(full_key_descriptor, EXT4_KEY_DESC_PREFIX,
+-	       EXT4_KEY_DESC_PREFIX_SIZE);
+-	sprintf(full_key_descriptor + EXT4_KEY_DESC_PREFIX_SIZE,
+-		"%*phN", EXT4_KEY_DESCRIPTOR_SIZE,
+-		ctx.master_key_descriptor);
+-	full_key_descriptor[EXT4_KEY_DESC_PREFIX_SIZE +
+-			    (2 * EXT4_KEY_DESCRIPTOR_SIZE)] = '\0';
 -	keyring_key = request_key(&key_type_logon, full_key_descriptor, NULL);
 -	if (IS_ERR(keyring_key)) {
 -		res = PTR_ERR(keyring_key);
@@ -1228,34 +1321,35 @@ index 9094fca..0000000
 -	}
 -	crypt_info->ci_keyring_key = keyring_key;
 -	if (keyring_key->type != &key_type_logon) {
--		printk_once(KERN_WARNING "f2fs: key type must be logon\n");
+-		printk_once(KERN_WARNING
+-			    "ext4: key type must be logon\n");
 -		res = -ENOKEY;
 -		goto out;
 -	}
 -	down_read(&keyring_key->sem);
 -	ukp = user_key_payload(keyring_key);
--	if (ukp->datalen != sizeof(struct f2fs_encryption_key)) {
+-	if (ukp->datalen != sizeof(struct ext4_encryption_key)) {
 -		res = -EINVAL;
 -		up_read(&keyring_key->sem);
 -		goto out;
 -	}
--	master_key = (struct f2fs_encryption_key *)ukp->data;
--	BUILD_BUG_ON(F2FS_AES_128_ECB_KEY_SIZE !=
--				F2FS_KEY_DERIVATION_NONCE_SIZE);
--	if (master_key->size != F2FS_AES_256_XTS_KEY_SIZE) {
+-	master_key = (struct ext4_encryption_key *)ukp->data;
+-	BUILD_BUG_ON(EXT4_AES_128_ECB_KEY_SIZE !=
+-		     EXT4_KEY_DERIVATION_NONCE_SIZE);
+-	if (master_key->size != EXT4_AES_256_XTS_KEY_SIZE) {
 -		printk_once(KERN_WARNING
--				"f2fs: key size incorrect: %d\n",
--				master_key->size);
+-			    "ext4: key size incorrect: %d\n",
+-			    master_key->size);
 -		res = -ENOKEY;
 -		up_read(&keyring_key->sem);
 -		goto out;
 -	}
--	res = f2fs_derive_key_aes(ctx.nonce, master_key->raw,
+-	res = ext4_derive_key_aes(ctx.nonce, master_key->raw,
 -				  raw_key);
 -	up_read(&keyring_key->sem);
 -	if (res)
 -		goto out;
--
+-got_key:
 -	ctfm = crypto_alloc_ablkcipher(cipher_str, 0, 0);
 -	if (!ctfm || IS_ERR(ctfm)) {
 -		res = ctfm ? PTR_ERR(ctfm) : -ENOMEM;
@@ -1269,62 +1363,58 @@ index 9094fca..0000000
 -	crypto_tfm_set_flags(crypto_ablkcipher_tfm(ctfm),
 -			     CRYPTO_TFM_REQ_WEAK_KEY);
 -	res = crypto_ablkcipher_setkey(ctfm, raw_key,
--					f2fs_encryption_key_size(mode));
+-				       ext4_encryption_key_size(mode));
 -	if (res)
 -		goto out;
--
 -	memzero_explicit(raw_key, sizeof(raw_key));
--	if (cmpxchg(&fi->i_crypt_info, NULL, crypt_info) != NULL) {
--		f2fs_free_crypt_info(crypt_info);
+-	if (cmpxchg(&ei->i_crypt_info, NULL, crypt_info) != NULL) {
+-		ext4_free_crypt_info(crypt_info);
 -		goto retry;
 -	}
 -	return 0;
 -
 -out:
--	if (res == -ENOKEY && !S_ISREG(inode->i_mode))
+-	if (res == -ENOKEY)
 -		res = 0;
--
--	f2fs_free_crypt_info(crypt_info);
+-	ext4_free_crypt_info(crypt_info);
 -	memzero_explicit(raw_key, sizeof(raw_key));
 -	return res;
 -}
 -
--int f2fs_has_encryption_key(struct inode *inode)
+-int ext4_has_encryption_key(struct inode *inode)
 -{
--	struct f2fs_inode_info *fi = F2FS_I(inode);
+-	struct ext4_inode_info *ei = EXT4_I(inode);
 -
--	return (fi->i_crypt_info != NULL);
+-	return (ei->i_crypt_info != NULL);
 -}
-diff --git a/fs/f2fs/crypto_policy.c b/fs/f2fs/crypto_policy.c
+diff --git a/fs/ext4/crypto_policy.c b/fs/ext4/crypto_policy.c
 deleted file mode 100644
-index 596f024..0000000
---- a/fs/f2fs/crypto_policy.c
+index ad05069..0000000
+--- a/fs/ext4/crypto_policy.c
 +++ /dev/null
-@@ -1,210 +0,0 @@
+@@ -1,229 +0,0 @@
 -/*
-- * copied from linux/fs/ext4/crypto_policy.c
+- * linux/fs/ext4/crypto_policy.c
 - *
 - * Copyright (C) 2015, Google, Inc.
-- * Copyright (C) 2015, Motorola Mobility.
 - *
-- * This contains encryption policy functions for f2fs with some modifications
-- * to support f2fs-specific xattr APIs.
+- * This contains encryption policy functions for ext4
 - *
 - * Written by Michael Halcrow, 2015.
-- * Modified by Jaegeuk Kim, 2015.
 - */
+-
 -#include <linux/random.h>
 -#include <linux/string.h>
 -#include <linux/types.h>
--#include <linux/f2fs_fs.h>
 -
--#include "f2fs.h"
+-#include "ext4_jbd2.h"
+-#include "ext4.h"
 -#include "xattr.h"
 -
--static int f2fs_inode_has_encryption_context(struct inode *inode)
+-static int ext4_inode_has_encryption_context(struct inode *inode)
 -{
--	int res = f2fs_getxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
--			F2FS_XATTR_NAME_ENCRYPTION_CONTEXT, NULL, 0, NULL);
+-	int res = ext4_xattr_get(inode, EXT4_XATTR_INDEX_ENCRYPTION,
+-				 EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, NULL, 0);
 -	return (res > 0);
 -}
 -
@@ -1332,80 +1422,94 @@ index 596f024..0000000
 - * check whether the policy is consistent with the encryption context
 - * for the inode
 - */
--static int f2fs_is_encryption_context_consistent_with_policy(
--	struct inode *inode, const struct f2fs_encryption_policy *policy)
+-static int ext4_is_encryption_context_consistent_with_policy(
+-	struct inode *inode, const struct ext4_encryption_policy *policy)
 -{
--	struct f2fs_encryption_context ctx;
--	int res = f2fs_getxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
--				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT, &ctx,
--				sizeof(ctx), NULL);
--
+-	struct ext4_encryption_context ctx;
+-	int res = ext4_xattr_get(inode, EXT4_XATTR_INDEX_ENCRYPTION,
+-				 EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, &ctx,
+-				 sizeof(ctx));
 -	if (res != sizeof(ctx))
 -		return 0;
--
 -	return (memcmp(ctx.master_key_descriptor, policy->master_key_descriptor,
--				F2FS_KEY_DESCRIPTOR_SIZE) == 0 &&
--			(ctx.flags == policy->flags) &&
--			(ctx.contents_encryption_mode ==
--			 policy->contents_encryption_mode) &&
--			(ctx.filenames_encryption_mode ==
--			 policy->filenames_encryption_mode));
+-			EXT4_KEY_DESCRIPTOR_SIZE) == 0 &&
+-		(ctx.flags ==
+-		 policy->flags) &&
+-		(ctx.contents_encryption_mode ==
+-		 policy->contents_encryption_mode) &&
+-		(ctx.filenames_encryption_mode ==
+-		 policy->filenames_encryption_mode));
 -}
 -
--static int f2fs_create_encryption_context_from_policy(
--	struct inode *inode, const struct f2fs_encryption_policy *policy)
+-static int ext4_create_encryption_context_from_policy(
+-	struct inode *inode, const struct ext4_encryption_policy *policy)
 -{
--	struct f2fs_encryption_context ctx;
+-	struct ext4_encryption_context ctx;
+-	handle_t *handle;
+-	int res, res2;
 -
--	ctx.format = F2FS_ENCRYPTION_CONTEXT_FORMAT_V1;
+-	res = ext4_convert_inline_data(inode);
+-	if (res)
+-		return res;
+-
+-	ctx.format = EXT4_ENCRYPTION_CONTEXT_FORMAT_V1;
 -	memcpy(ctx.master_key_descriptor, policy->master_key_descriptor,
--			F2FS_KEY_DESCRIPTOR_SIZE);
--
--	if (!f2fs_valid_contents_enc_mode(policy->contents_encryption_mode)) {
+-	       EXT4_KEY_DESCRIPTOR_SIZE);
+-	if (!ext4_valid_contents_enc_mode(policy->contents_encryption_mode)) {
 -		printk(KERN_WARNING
 -		       "%s: Invalid contents encryption mode %d\n", __func__,
 -			policy->contents_encryption_mode);
 -		return -EINVAL;
 -	}
--
--	if (!f2fs_valid_filenames_enc_mode(policy->filenames_encryption_mode)) {
+-	if (!ext4_valid_filenames_enc_mode(policy->filenames_encryption_mode)) {
 -		printk(KERN_WARNING
 -		       "%s: Invalid filenames encryption mode %d\n", __func__,
 -			policy->filenames_encryption_mode);
 -		return -EINVAL;
 -	}
--
--	if (policy->flags & ~F2FS_POLICY_FLAGS_VALID)
+-	if (policy->flags & ~EXT4_POLICY_FLAGS_VALID)
 -		return -EINVAL;
--
 -	ctx.contents_encryption_mode = policy->contents_encryption_mode;
 -	ctx.filenames_encryption_mode = policy->filenames_encryption_mode;
 -	ctx.flags = policy->flags;
--	BUILD_BUG_ON(sizeof(ctx.nonce) != F2FS_KEY_DERIVATION_NONCE_SIZE);
--	get_random_bytes(ctx.nonce, F2FS_KEY_DERIVATION_NONCE_SIZE);
+-	BUILD_BUG_ON(sizeof(ctx.nonce) != EXT4_KEY_DERIVATION_NONCE_SIZE);
+-	get_random_bytes(ctx.nonce, EXT4_KEY_DERIVATION_NONCE_SIZE);
 -
--	return f2fs_setxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
--			F2FS_XATTR_NAME_ENCRYPTION_CONTEXT, &ctx,
--			sizeof(ctx), NULL, XATTR_CREATE);
+-	handle = ext4_journal_start(inode, EXT4_HT_MISC,
+-				    ext4_jbd2_credits_xattr(inode));
+-	if (IS_ERR(handle))
+-		return PTR_ERR(handle);
+-	res = ext4_xattr_set(inode, EXT4_XATTR_INDEX_ENCRYPTION,
+-			     EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, &ctx,
+-			     sizeof(ctx), 0);
+-	if (!res) {
+-		ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
+-		res = ext4_mark_inode_dirty(handle, inode);
+-		if (res)
+-			EXT4_ERROR_INODE(inode, "Failed to mark inode dirty");
+-	}
+-	res2 = ext4_journal_stop(handle);
+-	if (!res)
+-		res = res2;
+-	return res;
 -}
 -
--int f2fs_process_policy(const struct f2fs_encryption_policy *policy,
+-int ext4_process_policy(const struct ext4_encryption_policy *policy,
 -			struct inode *inode)
 -{
 -	if (policy->version != 0)
 -		return -EINVAL;
 -
--	if (!S_ISDIR(inode->i_mode))
--		return -EINVAL;
--
--	if (!f2fs_inode_has_encryption_context(inode)) {
--		if (!f2fs_empty_dir(inode))
+-	if (!ext4_inode_has_encryption_context(inode)) {
+-		if (!S_ISDIR(inode->i_mode))
+-			return -EINVAL;
+-		if (!ext4_empty_dir(inode))
 -			return -ENOTEMPTY;
--		return f2fs_create_encryption_context_from_policy(inode,
+-		return ext4_create_encryption_context_from_policy(inode,
 -								  policy);
 -	}
 -
--	if (f2fs_is_encryption_context_consistent_with_policy(inode, policy))
+-	if (ext4_is_encryption_context_consistent_with_policy(inode, policy))
 -		return 0;
 -
 -	printk(KERN_WARNING "%s: Policy inconsistent with encryption context\n",
@@ -1413,646 +1517,504 @@ index 596f024..0000000
 -	return -EINVAL;
 -}
 -
--int f2fs_get_policy(struct inode *inode, struct f2fs_encryption_policy *policy)
+-int ext4_get_policy(struct inode *inode, struct ext4_encryption_policy *policy)
 -{
--	struct f2fs_encryption_context ctx;
--	int res;
+-	struct ext4_encryption_context ctx;
 -
--	if (!f2fs_encrypted_inode(inode))
--		return -ENODATA;
--
--	res = f2fs_getxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
--				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT,
--				&ctx, sizeof(ctx), NULL);
+-	int res = ext4_xattr_get(inode, EXT4_XATTR_INDEX_ENCRYPTION,
+-				 EXT4_XATTR_NAME_ENCRYPTION_CONTEXT,
+-				 &ctx, sizeof(ctx));
 -	if (res != sizeof(ctx))
--		return -ENODATA;
--	if (ctx.format != F2FS_ENCRYPTION_CONTEXT_FORMAT_V1)
+-		return -ENOENT;
+-	if (ctx.format != EXT4_ENCRYPTION_CONTEXT_FORMAT_V1)
 -		return -EINVAL;
--
 -	policy->version = 0;
 -	policy->contents_encryption_mode = ctx.contents_encryption_mode;
 -	policy->filenames_encryption_mode = ctx.filenames_encryption_mode;
 -	policy->flags = ctx.flags;
 -	memcpy(&policy->master_key_descriptor, ctx.master_key_descriptor,
--			F2FS_KEY_DESCRIPTOR_SIZE);
+-	       EXT4_KEY_DESCRIPTOR_SIZE);
 -	return 0;
 -}
 -
--int f2fs_is_child_context_consistent_with_parent(struct inode *parent,
--						struct inode *child)
+-int ext4_is_child_context_consistent_with_parent(struct inode *parent,
+-						 struct inode *child)
 -{
--	struct f2fs_crypt_info *parent_ci, *child_ci;
+-	struct ext4_crypt_info *parent_ci, *child_ci;
 -	int res;
 -
 -	if ((parent == NULL) || (child == NULL)) {
 -		pr_err("parent %p child %p\n", parent, child);
--		BUG_ON(1);
+-		WARN_ON(1);	/* Should never happen */
+-		return 0;
 -	}
--
 -	/* no restrictions if the parent directory is not encrypted */
--	if (!f2fs_encrypted_inode(parent))
+-	if (!ext4_encrypted_inode(parent))
 -		return 1;
 -	/* if the child directory is not encrypted, this is always a problem */
--	if (!f2fs_encrypted_inode(child))
+-	if (!ext4_encrypted_inode(child))
 -		return 0;
--	res = f2fs_get_encryption_info(parent);
+-	res = ext4_get_encryption_info(parent);
 -	if (res)
 -		return 0;
--	res = f2fs_get_encryption_info(child);
+-	res = ext4_get_encryption_info(child);
 -	if (res)
 -		return 0;
--	parent_ci = F2FS_I(parent)->i_crypt_info;
--	child_ci = F2FS_I(child)->i_crypt_info;
+-	parent_ci = EXT4_I(parent)->i_crypt_info;
+-	child_ci = EXT4_I(child)->i_crypt_info;
 -	if (!parent_ci && !child_ci)
 -		return 1;
 -	if (!parent_ci || !child_ci)
 -		return 0;
 -
 -	return (memcmp(parent_ci->ci_master_key,
--			child_ci->ci_master_key,
--			F2FS_KEY_DESCRIPTOR_SIZE) == 0 &&
+-		       child_ci->ci_master_key,
+-		       EXT4_KEY_DESCRIPTOR_SIZE) == 0 &&
 -		(parent_ci->ci_data_mode == child_ci->ci_data_mode) &&
 -		(parent_ci->ci_filename_mode == child_ci->ci_filename_mode) &&
 -		(parent_ci->ci_flags == child_ci->ci_flags));
 -}
 -
 -/**
-- * f2fs_inherit_context() - Sets a child context from its parent
+- * ext4_inherit_context() - Sets a child context from its parent
 - * @parent: Parent inode from which the context is inherited.
 - * @child:  Child inode that inherits the context from @parent.
 - *
 - * Return: Zero on success, non-zero otherwise
 - */
--int f2fs_inherit_context(struct inode *parent, struct inode *child,
--						struct page *ipage)
+-int ext4_inherit_context(struct inode *parent, struct inode *child)
 -{
--	struct f2fs_encryption_context ctx;
--	struct f2fs_crypt_info *ci;
+-	struct ext4_encryption_context ctx;
+-	struct ext4_crypt_info *ci;
 -	int res;
 -
--	res = f2fs_get_encryption_info(parent);
+-	res = ext4_get_encryption_info(parent);
 -	if (res < 0)
 -		return res;
--
--	ci = F2FS_I(parent)->i_crypt_info;
+-	ci = EXT4_I(parent)->i_crypt_info;
 -	if (ci == NULL)
 -		return -ENOKEY;
 -
--	ctx.format = F2FS_ENCRYPTION_CONTEXT_FORMAT_V1;
--
--	ctx.contents_encryption_mode = ci->ci_data_mode;
--	ctx.filenames_encryption_mode = ci->ci_filename_mode;
--	ctx.flags = ci->ci_flags;
--	memcpy(ctx.master_key_descriptor, ci->ci_master_key,
--			F2FS_KEY_DESCRIPTOR_SIZE);
--
--	get_random_bytes(ctx.nonce, F2FS_KEY_DERIVATION_NONCE_SIZE);
--	return f2fs_setxattr(child, F2FS_XATTR_INDEX_ENCRYPTION,
--				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT, &ctx,
--				sizeof(ctx), ipage, XATTR_CREATE);
+-	ctx.format = EXT4_ENCRYPTION_CONTEXT_FORMAT_V1;
+-	if (DUMMY_ENCRYPTION_ENABLED(EXT4_SB(parent->i_sb))) {
+-		ctx.contents_encryption_mode = EXT4_ENCRYPTION_MODE_AES_256_XTS;
+-		ctx.filenames_encryption_mode =
+-			EXT4_ENCRYPTION_MODE_AES_256_CTS;
+-		ctx.flags = 0;
+-		memset(ctx.master_key_descriptor, 0x42,
+-		       EXT4_KEY_DESCRIPTOR_SIZE);
+-		res = 0;
+-	} else {
+-		ctx.contents_encryption_mode = ci->ci_data_mode;
+-		ctx.filenames_encryption_mode = ci->ci_filename_mode;
+-		ctx.flags = ci->ci_flags;
+-		memcpy(ctx.master_key_descriptor, ci->ci_master_key,
+-		       EXT4_KEY_DESCRIPTOR_SIZE);
+-	}
+-	get_random_bytes(ctx.nonce, EXT4_KEY_DERIVATION_NONCE_SIZE);
+-	res = ext4_xattr_set(child, EXT4_XATTR_INDEX_ENCRYPTION,
+-			     EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, &ctx,
+-			     sizeof(ctx), 0);
+-	if (!res) {
+-		ext4_set_inode_flag(child, EXT4_INODE_ENCRYPT);
+-		ext4_clear_inode_state(child, EXT4_STATE_MAY_INLINE_DATA);
+-		res = ext4_get_encryption_info(child);
+-	}
+-	return res;
 -}
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9643d88..e5c762b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -34,9 +34,9 @@ static void f2fs_read_end_io(struct bio *bio)
- 
- 	if (f2fs_bio_encrypted(bio)) {
- 		if (bio->bi_error) {
--			f2fs_release_crypto_ctx(bio->bi_private);
-+			fscrypt_release_ctx(bio->bi_private);
- 		} else {
--			f2fs_end_io_crypto_work(bio->bi_private, bio);
-+			fscrypt_decrypt_bio_pages(bio->bi_private, bio);
- 			return;
- 		}
- 	}
-@@ -64,7 +64,7 @@ static void f2fs_write_end_io(struct bio *bio)
- 	bio_for_each_segment_all(bvec, bio, i) {
- 		struct page *page = bvec->bv_page;
- 
--		f2fs_restore_and_release_control_page(&page);
-+		fscrypt_pullback_bio_page(&page, true);
- 
- 		if (unlikely(bio->bi_error)) {
- 			set_bit(AS_EIO, &page->mapping->flags);
-@@ -129,16 +129,10 @@ static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
- 
- 	bio_for_each_segment_all(bvec, io->bio, i) {
- 
--		if (bvec->bv_page->mapping) {
-+		if (bvec->bv_page->mapping)
- 			target = bvec->bv_page;
--		} else {
--			struct f2fs_crypto_ctx *ctx;
--
--			/* encrypted page */
--			ctx = (struct f2fs_crypto_ctx *)page_private(
--								bvec->bv_page);
--			target = ctx->w.control_page;
--		}
-+		else
-+			target = fscrypt_control_page(bvec->bv_page);
- 
- 		if (inode && inode == target->mapping->host)
- 			return true;
-@@ -220,7 +214,8 @@ void f2fs_flush_merged_bios(struct f2fs_sb_info *sbi)
- int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- {
- 	struct bio *bio;
--	struct page *page = fio->encrypted_page ? fio->encrypted_page : fio->page;
-+	struct page *page = fio->encrypted_page ?
-+			fio->encrypted_page : fio->page;
- 
- 	trace_f2fs_submit_page_bio(page, fio);
- 	f2fs_trace_ios(fio, 0);
-@@ -992,12 +987,12 @@ submit_and_realloc:
- 			bio = NULL;
- 		}
- 		if (bio == NULL) {
--			struct f2fs_crypto_ctx *ctx = NULL;
-+			struct fscrypt_ctx *ctx = NULL;
- 
- 			if (f2fs_encrypted_inode(inode) &&
- 					S_ISREG(inode->i_mode)) {
- 
--				ctx = f2fs_get_crypto_ctx(inode);
-+				ctx = fscrypt_get_ctx(inode);
- 				if (IS_ERR(ctx))
- 					goto set_error_page;
- 
-@@ -1010,7 +1005,7 @@ submit_and_realloc:
- 				min_t(int, nr_pages, BIO_MAX_PAGES));
- 			if (!bio) {
- 				if (ctx)
--					f2fs_release_crypto_ctx(ctx);
-+					fscrypt_release_ctx(ctx);
- 				goto set_error_page;
- 			}
- 			bio->bi_bdev = bdev;
-@@ -1102,7 +1097,7 @@ int do_write_data_page(struct f2fs_io_info *fio)
- 		f2fs_wait_on_encrypted_page_writeback(F2FS_I_SB(inode),
- 							fio->old_blkaddr);
- 
--		fio->encrypted_page = f2fs_encrypt(inode, fio->page);
-+		fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page);
- 		if (IS_ERR(fio->encrypted_page)) {
- 			err = PTR_ERR(fio->encrypted_page);
- 			goto out_writepage;
-@@ -1608,7 +1603,7 @@ repeat:
- 
- 		/* avoid symlink page */
- 		if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode)) {
--			err = f2fs_decrypt(page);
-+			err = fscrypt_decrypt_page(page);
- 			if (err)
- 				goto fail;
- 		}
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 8f09da0..aa06700 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -77,7 +77,7 @@ static unsigned long dir_block_index(unsigned int level,
- }
- 
- static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
--				struct f2fs_filename *fname,
-+				struct fscrypt_name *fname,
- 				f2fs_hash_t namehash,
- 				int *max_slots,
- 				struct page **res_page)
-@@ -103,15 +103,15 @@ static struct f2fs_dir_entry *find_in_block(struct page *dentry_page,
- 	return de;
- }
- 
--struct f2fs_dir_entry *find_target_dentry(struct f2fs_filename *fname,
-+struct f2fs_dir_entry *find_target_dentry(struct fscrypt_name *fname,
- 			f2fs_hash_t namehash, int *max_slots,
- 			struct f2fs_dentry_ptr *d)
- {
- 	struct f2fs_dir_entry *de;
- 	unsigned long bit_pos = 0;
- 	int max_len = 0;
--	struct f2fs_str de_name = FSTR_INIT(NULL, 0);
--	struct f2fs_str *name = &fname->disk_name;
-+	struct fscrypt_str de_name = FSTR_INIT(NULL, 0);
-+	struct fscrypt_str *name = &fname->disk_name;
- 
- 	if (max_slots)
- 		*max_slots = 0;
-@@ -157,7 +157,7 @@ found:
- 
- static struct f2fs_dir_entry *find_in_level(struct inode *dir,
- 					unsigned int level,
--					struct f2fs_filename *fname,
-+					struct fscrypt_name *fname,
- 					struct page **res_page)
- {
- 	struct qstr name = FSTR_TO_QSTR(&fname->disk_name);
-@@ -218,12 +218,12 @@ struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
- 	struct f2fs_dir_entry *de = NULL;
- 	unsigned int max_depth;
- 	unsigned int level;
--	struct f2fs_filename fname;
-+	struct fscrypt_name fname;
- 	int err;
- 
- 	*res_page = NULL;
- 
--	err = f2fs_fname_setup_filename(dir, child, 1, &fname);
-+	err = fscrypt_setup_filename(dir, child, 1, &fname);
- 	if (err)
- 		return NULL;
- 
-@@ -251,7 +251,7 @@ struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
- 			break;
- 	}
- out:
--	f2fs_fname_free_filename(&fname);
-+	fscrypt_free_filename(&fname);
- 	return de;
- }
- 
-@@ -413,7 +413,7 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
- 			goto put_error;
- 
- 		if (f2fs_encrypted_inode(dir) && f2fs_may_encrypt(inode)) {
--			err = f2fs_inherit_context(dir, inode, page);
-+			err = fscrypt_inherit_context(dir, inode, page, false);
- 			if (err)
- 				goto put_error;
- 		}
-@@ -536,11 +536,11 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
- 	struct f2fs_dentry_block *dentry_blk = NULL;
- 	struct f2fs_dentry_ptr d;
- 	struct page *page = NULL;
--	struct f2fs_filename fname;
-+	struct fscrypt_name fname;
- 	struct qstr new_name;
- 	int slots, err;
- 
--	err = f2fs_fname_setup_filename(dir, name, 0, &fname);
-+	err = fscrypt_setup_filename(dir, name, 0, &fname);
- 	if (err)
- 		return err;
- 
-@@ -639,7 +639,7 @@ fail:
- 	kunmap(dentry_page);
- 	f2fs_put_page(dentry_page, 1);
- out:
--	f2fs_fname_free_filename(&fname);
-+	fscrypt_free_filename(&fname);
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
- 	return err;
- }
-@@ -781,12 +781,12 @@ bool f2fs_empty_dir(struct inode *dir)
- }
- 
- bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
--				unsigned int start_pos, struct f2fs_str *fstr)
-+			unsigned int start_pos, struct fscrypt_str *fstr)
- {
- 	unsigned char d_type = DT_UNKNOWN;
- 	unsigned int bit_pos;
- 	struct f2fs_dir_entry *de = NULL;
--	struct f2fs_str de_name = FSTR_INIT(NULL, 0);
-+	struct fscrypt_str de_name = FSTR_INIT(NULL, 0);
- 
- 	bit_pos = ((unsigned long)ctx->pos % d->max);
- 
-@@ -820,8 +820,9 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 
- 			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
- 
--			ret = f2fs_fname_disk_to_usr(d->inode, &de->hash_code,
--							&de_name, fstr);
-+			ret = fscrypt_fname_disk_to_usr(d->inode,
-+						(u32)de->hash_code, 0,
-+						&de_name, fstr);
- 			kfree(de_name.name);
- 			if (ret < 0)
- 				return true;
-@@ -849,16 +850,15 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 	struct file_ra_state *ra = &file->f_ra;
- 	unsigned int n = ((unsigned long)ctx->pos / NR_DENTRY_IN_BLOCK);
- 	struct f2fs_dentry_ptr d;
--	struct f2fs_str fstr = FSTR_INIT(NULL, 0);
+diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+index 33f5e2a..0852a96 100644
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -109,11 +109,11 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
+ 	struct super_block *sb = inode->i_sb;
+ 	struct buffer_head *bh = NULL;
+ 	int dir_has_error = 0;
+-	struct ext4_str fname_crypto_str = {.name = NULL, .len = 0};
 +	struct fscrypt_str fstr = FSTR_INIT(NULL, 0);
- 	int err = 0;
  
- 	if (f2fs_encrypted_inode(inode)) {
--		err = f2fs_get_encryption_info(inode);
--		if (err)
+ 	if (ext4_encrypted_inode(inode)) {
+-		err = ext4_get_encryption_info(inode);
+-		if (err && err != -ENOKEY)
 +		err = fscrypt_get_encryption_info(inode);
-+		if (err && err != -EOPNOTSUPP)
++		if (err && err != -ENOKEY && err != -EOPNOTSUPP)
  			return err;
+ 	}
  
--		err = f2fs_fname_crypto_alloc_buffer(inode, F2FS_NAME_LEN,
--								&fstr);
-+		err = fscrypt_fname_alloc_buffer(inode, F2FS_NAME_LEN, &fstr);
+@@ -139,8 +139,7 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
+ 	}
+ 
+ 	if (ext4_encrypted_inode(inode)) {
+-		err = ext4_fname_crypto_alloc_buffer(inode, EXT4_NAME_LEN,
+-						     &fname_crypto_str);
++		err = fscrypt_fname_alloc_buffer(inode, EXT4_NAME_LEN, &fstr);
  		if (err < 0)
  			return err;
  	}
-@@ -898,14 +898,14 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 		f2fs_put_page(dentry_page, 1);
- 	}
- out:
--	f2fs_fname_crypto_free_buffer(&fstr);
-+	fscrypt_fname_free_buffer(&fstr);
- 	return err;
- }
+@@ -248,16 +247,19 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
+ 					    get_dtype(sb, de->file_type)))
+ 						goto done;
+ 				} else {
+-					int save_len = fname_crypto_str.len;
++					int save_len = fstr.len;
++					struct fscrypt_str de_name =
++							FSTR_INIT(de->name,
++								de->name_len);
  
- static int f2fs_dir_open(struct inode *inode, struct file *filp)
+ 					/* Directory is encrypted */
+-					err = ext4_fname_disk_to_usr(inode,
+-						NULL, de, &fname_crypto_str);
+-					fname_crypto_str.len = save_len;
++					err = fscrypt_fname_disk_to_usr(inode,
++						0, 0, &de_name, &fstr);
++					fstr.len = save_len;
+ 					if (err < 0)
+ 						goto errout;
+ 					if (!dir_emit(ctx,
+-					    fname_crypto_str.name, err,
++					    fstr.name, err,
+ 					    le32_to_cpu(de->inode),
+ 					    get_dtype(sb, de->file_type)))
+ 						goto done;
+@@ -276,7 +278,7 @@ done:
+ 	err = 0;
+ errout:
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+-	ext4_fname_crypto_free_buffer(&fname_crypto_str);
++	fscrypt_fname_free_buffer(&fstr);
+ #endif
+ 	brelse(bh);
+ 	return err;
+@@ -427,7 +429,7 @@ void ext4_htree_free_dir_info(struct dir_private_info *p)
+ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
+ 			     __u32 minor_hash,
+ 			    struct ext4_dir_entry_2 *dirent,
+-			    struct ext4_str *ent_name)
++			    struct fscrypt_str *ent_name)
  {
- 	if (f2fs_encrypted_inode(inode))
--		return f2fs_get_encryption_info(inode) ? -EACCES : 0;
+ 	struct rb_node **p, *parent = NULL;
+ 	struct fname *fname, *new_fn;
+@@ -604,7 +606,7 @@ finished:
+ static int ext4_dir_open(struct inode * inode, struct file * filp)
+ {
+ 	if (ext4_encrypted_inode(inode))
+-		return ext4_get_encryption_info(inode) ? -EACCES : 0;
 +		return fscrypt_get_encryption_info(inode) ? -EACCES : 0;
  	return 0;
  }
  
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e43ab17..4128d1e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -22,6 +22,7 @@
- #include <linux/vmalloc.h>
- #include <linux/bio.h>
- #include <linux/blkdev.h>
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 157b458..2bf9e9f 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -32,6 +32,7 @@
+ #include <linux/percpu_counter.h>
+ #include <linux/ratelimit.h>
+ #include <crypto/hash.h>
 +#include <linux/fscrypto.h>
- 
- #ifdef CONFIG_F2FS_CHECK_FS
- #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
-@@ -233,12 +234,9 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
- #define F2FS_IOC_WRITE_CHECKPOINT	_IO(F2FS_IOCTL_MAGIC, 7)
- #define F2FS_IOC_DEFRAGMENT		_IO(F2FS_IOCTL_MAGIC, 8)
- 
--#define F2FS_IOC_SET_ENCRYPTION_POLICY					\
--		_IOR('f', 19, struct f2fs_encryption_policy)
--#define F2FS_IOC_GET_ENCRYPTION_PWSALT					\
--		_IOW('f', 20, __u8[16])
--#define F2FS_IOC_GET_ENCRYPTION_POLICY					\
--		_IOW('f', 21, struct f2fs_encryption_policy)
-+#define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
-+#define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
-+#define F2FS_IOC_GET_ENCRYPTION_PWSALT	FS_IOC_GET_ENCRYPTION_PWSALT
- 
- /*
-  * should be same as XFS_IOC_GOINGDOWN.
-@@ -268,25 +266,6 @@ struct f2fs_defragment {
-  * For INODE and NODE manager
-  */
- /* for directory operations */
--struct f2fs_str {
--	unsigned char *name;
--	u32 len;
--};
--
--struct f2fs_filename {
--	const struct qstr *usr_fname;
--	struct f2fs_str disk_name;
--	f2fs_hash_t hash;
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
--	struct f2fs_str crypto_buf;
--#endif
--};
--
--#define FSTR_INIT(n, l)		{ .name = n, .len = l }
--#define FSTR_TO_QSTR(f)		QSTR_INIT((f)->name, (f)->len)
--#define fname_name(p)		((p)->disk_name.name)
--#define fname_len(p)		((p)->disk_name.len)
--
- struct f2fs_dentry_ptr {
- 	struct inode *inode;
- 	const void *bitmap;
-@@ -414,15 +393,6 @@ struct f2fs_map_blocks {
- #define file_enc_name(inode)	is_file(inode, FADVISE_ENC_NAME_BIT)
- #define file_set_enc_name(inode) set_file(inode, FADVISE_ENC_NAME_BIT)
+ #include <linux/falloc.h>
+ #ifdef __KERNEL__
+ #include <linux/compat.h>
+@@ -592,15 +593,6 @@ enum {
+ #define EXT4_FREE_BLOCKS_NOFREE_FIRST_CLUSTER	0x0010
+ #define EXT4_FREE_BLOCKS_NOFREE_LAST_CLUSTER	0x0020
  
 -/* Encryption algorithms */
--#define F2FS_ENCRYPTION_MODE_INVALID		0
--#define F2FS_ENCRYPTION_MODE_AES_256_XTS	1
--#define F2FS_ENCRYPTION_MODE_AES_256_GCM	2
--#define F2FS_ENCRYPTION_MODE_AES_256_CBC	3
--#define F2FS_ENCRYPTION_MODE_AES_256_CTS	4
+-#define EXT4_ENCRYPTION_MODE_INVALID		0
+-#define EXT4_ENCRYPTION_MODE_AES_256_XTS	1
+-#define EXT4_ENCRYPTION_MODE_AES_256_GCM	2
+-#define EXT4_ENCRYPTION_MODE_AES_256_CBC	3
+-#define EXT4_ENCRYPTION_MODE_AES_256_CTS	4
 -
--#include "f2fs_crypto.h"
+-#include "ext4_crypto.h"
 -
- #define DEF_DIR_LEVEL		0
+ /*
+  * ioctl commands
+  */
+@@ -622,9 +614,9 @@ enum {
+ #define EXT4_IOC_RESIZE_FS		_IOW('f', 16, __u64)
+ #define EXT4_IOC_SWAP_BOOT		_IO('f', 17)
+ #define EXT4_IOC_PRECACHE_EXTENTS	_IO('f', 18)
+-#define EXT4_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct ext4_encryption_policy)
+-#define EXT4_IOC_GET_ENCRYPTION_PWSALT	_IOW('f', 20, __u8[16])
+-#define EXT4_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct ext4_encryption_policy)
++#define EXT4_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
++#define EXT4_IOC_GET_ENCRYPTION_PWSALT	FS_IOC_GET_ENCRYPTION_PWSALT
++#define EXT4_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
  
- struct f2fs_inode_info {
-@@ -446,13 +416,7 @@ struct f2fs_inode_info {
- 	struct list_head dirty_list;	/* linked in global dirty list */
- 	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
- 	struct mutex inmem_lock;	/* lock for inmemory pages */
--
- 	struct extent_tree *extent_tree;	/* cached extent_tree entry */
--
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
+ #ifndef FS_IOC_FSGETXATTR
+ /* Until the uapi changes get merged for project quota... */
+@@ -1048,10 +1040,6 @@ struct ext4_inode_info {
+ 	/* Precomputed uuid+inum+igen checksum for seeding inode checksums */
+ 	__u32 i_csum_seed;
+ 
+-#ifdef CONFIG_EXT4_FS_ENCRYPTION
 -	/* Encryption params */
--	struct f2fs_crypt_info *i_crypt_info;
+-	struct ext4_crypt_info *i_crypt_info;
 -#endif
+ 	kprojid_t i_projid;
  };
  
- static inline void get_extent_info(struct extent_info *ext,
-@@ -1743,10 +1707,10 @@ struct dentry *f2fs_get_parent(struct dentry *child);
- extern unsigned char f2fs_filetype_table[F2FS_FT_MAX];
- void set_de_type(struct f2fs_dir_entry *, umode_t);
- 
--struct f2fs_dir_entry *find_target_dentry(struct f2fs_filename *,
-+struct f2fs_dir_entry *find_target_dentry(struct fscrypt_name *,
- 			f2fs_hash_t, int *, struct f2fs_dentry_ptr *);
- bool f2fs_fill_dentries(struct dir_context *, struct f2fs_dentry_ptr *,
--			unsigned int, struct f2fs_str *);
-+			unsigned int, struct fscrypt_str *);
- void do_make_empty_dir(struct inode *, struct inode *,
- 			struct f2fs_dentry_ptr *);
- struct page *init_inode_metadata(struct inode *, struct inode *,
-@@ -2122,7 +2086,7 @@ int f2fs_convert_inline_inode(struct inode *);
- int f2fs_write_inline_data(struct inode *, struct page *);
- bool recover_inline_data(struct inode *, struct page *);
- struct f2fs_dir_entry *find_in_inline_dir(struct inode *,
--				struct f2fs_filename *, struct page **);
-+				struct fscrypt_name *, struct page **);
- struct f2fs_dir_entry *f2fs_parent_inline_dir(struct inode *, struct page **);
- int make_empty_inline_dir(struct inode *inode, struct inode *, struct page *);
- int f2fs_add_inline_entry(struct inode *, const struct qstr *, struct inode *,
-@@ -2131,7 +2095,7 @@ void f2fs_delete_inline_entry(struct f2fs_dir_entry *, struct page *,
- 						struct inode *, struct inode *);
- bool f2fs_empty_inline_dir(struct inode *);
- int f2fs_read_inline_dir(struct file *, struct dir_context *,
--						struct f2fs_str *);
-+						struct fscrypt_str *);
- int f2fs_inline_data_fiemap(struct inode *,
- 		struct fiemap_extent_info *, __u64, __u64);
- 
-@@ -2161,13 +2125,9 @@ void destroy_extent_cache(void);
+@@ -1593,15 +1581,6 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
  /*
-  * crypto support
+  * Returns true if the inode is inode is encrypted
   */
--static inline int f2fs_encrypted_inode(struct inode *inode)
-+static inline bool f2fs_encrypted_inode(struct inode *inode)
- {
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
- 	return file_is_encrypt(inode);
--#else
--	return 0;
--#endif
- }
- 
- static inline void f2fs_set_encrypted_inode(struct inode *inode)
-@@ -2179,20 +2139,12 @@ static inline void f2fs_set_encrypted_inode(struct inode *inode)
- 
- static inline bool f2fs_bio_encrypted(struct bio *bio)
- {
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
--	return unlikely(bio->bi_private != NULL);
--#else
--	return false;
--#endif
-+	return bio->bi_private != NULL;
- }
- 
- static inline int f2fs_sb_has_crypto(struct super_block *sb)
- {
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
- 	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_ENCRYPT);
--#else
--	return 0;
--#endif
- }
- 
- static inline bool f2fs_may_encrypt(struct inode *inode)
-@@ -2205,87 +2157,4 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
- 	return 0;
- #endif
- }
--
--/* crypto_policy.c */
--int f2fs_is_child_context_consistent_with_parent(struct inode *,
--							struct inode *);
--int f2fs_inherit_context(struct inode *, struct inode *, struct page *);
--int f2fs_process_policy(const struct f2fs_encryption_policy *, struct inode *);
--int f2fs_get_policy(struct inode *, struct f2fs_encryption_policy *);
--
--/* crypt.c */
--extern struct kmem_cache *f2fs_crypt_info_cachep;
--bool f2fs_valid_contents_enc_mode(uint32_t);
--uint32_t f2fs_validate_encryption_key_size(uint32_t, uint32_t);
--struct f2fs_crypto_ctx *f2fs_get_crypto_ctx(struct inode *);
--void f2fs_release_crypto_ctx(struct f2fs_crypto_ctx *);
--struct page *f2fs_encrypt(struct inode *, struct page *);
--int f2fs_decrypt(struct page *);
--void f2fs_end_io_crypto_work(struct f2fs_crypto_ctx *, struct bio *);
--
--/* crypto_key.c */
--void f2fs_free_encryption_info(struct inode *, struct f2fs_crypt_info *);
--int _f2fs_get_encryption_info(struct inode *inode);
--
--/* crypto_fname.c */
--bool f2fs_valid_filenames_enc_mode(uint32_t);
--u32 f2fs_fname_crypto_round_up(u32, u32);
--unsigned f2fs_fname_encrypted_size(struct inode *, u32);
--int f2fs_fname_crypto_alloc_buffer(struct inode *, u32, struct f2fs_str *);
--int f2fs_fname_disk_to_usr(struct inode *, f2fs_hash_t *,
--			const struct f2fs_str *, struct f2fs_str *);
--int f2fs_fname_usr_to_disk(struct inode *, const struct qstr *,
--			struct f2fs_str *);
--
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
--void f2fs_restore_and_release_control_page(struct page **);
--void f2fs_restore_control_page(struct page *);
--
--int __init f2fs_init_crypto(void);
--int f2fs_crypto_initialize(void);
--void f2fs_exit_crypto(void);
--
--int f2fs_has_encryption_key(struct inode *);
--
--static inline int f2fs_get_encryption_info(struct inode *inode)
+-static inline int ext4_encrypted_inode(struct inode *inode)
 -{
--	struct f2fs_crypt_info *ci = F2FS_I(inode)->i_crypt_info;
--
--	if (!ci ||
--		(ci->ci_keyring_key &&
--		 (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
--					       (1 << KEY_FLAG_REVOKED) |
--					       (1 << KEY_FLAG_DEAD)))))
--		return _f2fs_get_encryption_info(inode);
+-#ifdef CONFIG_EXT4_FS_ENCRYPTION
+-	return ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT);
+-#else
 -	return 0;
+-#endif
 -}
 -
--void f2fs_fname_crypto_free_buffer(struct f2fs_str *);
--int f2fs_fname_setup_filename(struct inode *, const struct qstr *,
--				int lookup, struct f2fs_filename *);
--void f2fs_fname_free_filename(struct f2fs_filename *);
+ #define NEXT_ORPHAN(inode) EXT4_I(inode)->i_dtime
+ 
+ /*
+@@ -2065,10 +2044,10 @@ struct dx_hash_info
+ 
+ struct ext4_filename {
+ 	const struct qstr *usr_fname;
+-	struct ext4_str disk_name;
++	struct fscrypt_str disk_name;
+ 	struct dx_hash_info hinfo;
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+-	struct ext4_str crypto_buf;
++	struct fscrypt_str crypto_buf;
+ #endif
+ };
+ 
+@@ -2279,131 +2258,60 @@ extern unsigned ext4_free_clusters_after_init(struct super_block *sb,
+ 					      struct ext4_group_desc *gdp);
+ ext4_fsblk_t ext4_inode_to_goal_block(struct inode *);
+ 
+-/* crypto_policy.c */
+-int ext4_is_child_context_consistent_with_parent(struct inode *parent,
+-						 struct inode *child);
+-int ext4_inherit_context(struct inode *parent, struct inode *child);
+-void ext4_to_hex(char *dst, char *src, size_t src_size);
+-int ext4_process_policy(const struct ext4_encryption_policy *policy,
+-			struct inode *inode);
+-int ext4_get_policy(struct inode *inode,
+-		    struct ext4_encryption_policy *policy);
+-
+-/* crypto.c */
+-extern struct kmem_cache *ext4_crypt_info_cachep;
+-bool ext4_valid_contents_enc_mode(uint32_t mode);
+-uint32_t ext4_validate_encryption_key_size(uint32_t mode, uint32_t size);
+-extern struct workqueue_struct *ext4_read_workqueue;
+-struct ext4_crypto_ctx *ext4_get_crypto_ctx(struct inode *inode);
+-void ext4_release_crypto_ctx(struct ext4_crypto_ctx *ctx);
+-void ext4_restore_control_page(struct page *data_page);
+-struct page *ext4_encrypt(struct inode *inode,
+-			  struct page *plaintext_page);
+-int ext4_decrypt(struct page *page);
+-int ext4_encrypted_zeroout(struct inode *inode, ext4_lblk_t lblk,
+-			   ext4_fsblk_t pblk, ext4_lblk_t len);
+-extern const struct dentry_operations ext4_encrypted_d_ops;
+-
+-#ifdef CONFIG_EXT4_FS_ENCRYPTION
+-int ext4_init_crypto(void);
+-void ext4_exit_crypto(void);
+ static inline int ext4_sb_has_crypto(struct super_block *sb)
+ {
+ 	return ext4_has_feature_encrypt(sb);
+ }
 -#else
--static inline void f2fs_restore_and_release_control_page(struct page **p) { }
--static inline void f2fs_restore_control_page(struct page *p) { }
--
--static inline int __init f2fs_init_crypto(void) { return 0; }
--static inline void f2fs_exit_crypto(void) { }
--
--static inline int f2fs_has_encryption_key(struct inode *i) { return 0; }
--static inline int f2fs_get_encryption_info(struct inode *i) { return 0; }
--static inline void f2fs_fname_crypto_free_buffer(struct f2fs_str *p) { }
--
--static inline int f2fs_fname_setup_filename(struct inode *dir,
--					const struct qstr *iname,
--					int lookup, struct f2fs_filename *fname)
+-static inline int ext4_init_crypto(void) { return 0; }
+-static inline void ext4_exit_crypto(void) { }
+-static inline int ext4_sb_has_crypto(struct super_block *sb)
++
++static inline bool ext4_encrypted_inode(struct inode *inode)
+ {
+-	return 0;
++	return ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT);
+ }
+-#endif
+ 
+-/* crypto_fname.c */
+-bool ext4_valid_filenames_enc_mode(uint32_t mode);
+-u32 ext4_fname_crypto_round_up(u32 size, u32 blksize);
+-unsigned ext4_fname_encrypted_size(struct inode *inode, u32 ilen);
+-int ext4_fname_crypto_alloc_buffer(struct inode *inode,
+-				   u32 ilen, struct ext4_str *crypto_str);
+-int _ext4_fname_disk_to_usr(struct inode *inode,
+-			    struct dx_hash_info *hinfo,
+-			    const struct ext4_str *iname,
+-			    struct ext4_str *oname);
+-int ext4_fname_disk_to_usr(struct inode *inode,
+-			   struct dx_hash_info *hinfo,
+-			   const struct ext4_dir_entry_2 *de,
+-			   struct ext4_str *oname);
+-int ext4_fname_usr_to_disk(struct inode *inode,
+-			   const struct qstr *iname,
+-			   struct ext4_str *oname);
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+-void ext4_fname_crypto_free_buffer(struct ext4_str *crypto_str);
+-int ext4_fname_setup_filename(struct inode *dir, const struct qstr *iname,
+-			      int lookup, struct ext4_filename *fname);
+-void ext4_fname_free_filename(struct ext4_filename *fname);
+-#else
+-static inline
+-int ext4_setup_fname_crypto(struct inode *inode)
 -{
--	memset(fname, 0, sizeof(struct f2fs_filename));
+-	return 0;
+-}
+-static inline void ext4_fname_crypto_free_buffer(struct ext4_str *p) { }
+ static inline int ext4_fname_setup_filename(struct inode *dir,
+-				     const struct qstr *iname,
+-				     int lookup, struct ext4_filename *fname)
++			const struct qstr *iname,
++			int lookup, struct ext4_filename *fname)
+ {
 -	fname->usr_fname = iname;
--	fname->disk_name.name = (unsigned char *)iname->name;
+-	fname->disk_name.name = (unsigned char *) iname->name;
 -	fname->disk_name.len = iname->len;
 -	return 0;
 -}
--
--static inline void f2fs_fname_free_filename(struct f2fs_filename *fname) { }
+-static inline void ext4_fname_free_filename(struct ext4_filename *fname) { }
 -#endif
+-
++	struct fscrypt_name name;
++	int err;
+ 
+-/* crypto_key.c */
+-void ext4_free_crypt_info(struct ext4_crypt_info *ci);
+-void ext4_free_encryption_info(struct inode *inode, struct ext4_crypt_info *ci);
+-int _ext4_get_encryption_info(struct inode *inode);
++	memset(fname, 0, sizeof(struct ext4_filename));
+ 
+-#ifdef CONFIG_EXT4_FS_ENCRYPTION
+-int ext4_has_encryption_key(struct inode *inode);
++	err = fscrypt_setup_filename(dir, iname, lookup, &name);
+ 
+-static inline int ext4_get_encryption_info(struct inode *inode)
+-{
+-	struct ext4_crypt_info *ci = EXT4_I(inode)->i_crypt_info;
+-
+-	if (!ci ||
+-	    (ci->ci_keyring_key &&
+-	     (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
+-					   (1 << KEY_FLAG_REVOKED) |
+-					   (1 << KEY_FLAG_DEAD)))))
+-		return _ext4_get_encryption_info(inode);
+-	return 0;
++	fname->usr_fname = name.usr_fname;
++	fname->disk_name = name.disk_name;
++	fname->hinfo.hash = name.hash;
++	fname->hinfo.minor_hash = name.minor_hash;
++	fname->crypto_buf = name.crypto_buf;
++	return err;
+ }
+ 
+-static inline struct ext4_crypt_info *ext4_encryption_info(struct inode *inode)
++static inline void ext4_fname_free_filename(struct ext4_filename *fname)
+ {
+-	return EXT4_I(inode)->i_crypt_info;
+-}
++	struct fscrypt_name name;
+ 
+-#else
+-static inline int ext4_has_encryption_key(struct inode *inode)
+-{
+-	return 0;
++	name.crypto_buf = fname->crypto_buf;
++	fscrypt_free_filename(&name);
++
++	fname->crypto_buf.name = NULL;
++	fname->usr_fname = NULL;
++	fname->disk_name.name = NULL;
+ }
+-static inline int ext4_get_encryption_info(struct inode *inode)
++#else
++static inline int ext4_fname_setup_filename(struct inode *dir,
++		const struct qstr *iname,
++		int lookup, struct ext4_filename *fname)
+ {
++	fname->usr_fname = iname;
++	fname->disk_name.name = (unsigned char *) iname->name;
++	fname->disk_name.len = iname->len;
+ 	return 0;
+ }
+-static inline struct ext4_crypt_info *ext4_encryption_info(struct inode *inode)
+-{
+-	return NULL;
+-}
++static inline void ext4_fname_free_filename(struct ext4_filename *fname) { }
  #endif
-diff --git a/fs/f2fs/f2fs_crypto.h b/fs/f2fs/f2fs_crypto.h
+ 
+-
+ /* dir.c */
+ extern int __ext4_check_dir_entry(const char *, unsigned int, struct inode *,
+ 				  struct file *,
+@@ -2416,7 +2324,7 @@ extern int __ext4_check_dir_entry(const char *, unsigned int, struct inode *,
+ extern int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
+ 				__u32 minor_hash,
+ 				struct ext4_dir_entry_2 *dirent,
+-				struct ext4_str *ent_name);
++				struct fscrypt_str *ent_name);
+ extern void ext4_htree_free_dir_info(struct dir_private_info *p);
+ extern int ext4_find_dest_de(struct inode *dir, struct inode *inode,
+ 			     struct buffer_head *bh,
+@@ -2601,7 +2509,7 @@ extern int ext4_generic_delete_entry(handle_t *handle,
+ 				     void *entry_buf,
+ 				     int buf_size,
+ 				     int csum_size);
+-extern int ext4_empty_dir(struct inode *inode);
++extern bool ext4_empty_dir(struct inode *inode);
+ 
+ /* resize.c */
+ extern int ext4_group_add(struct super_block *sb,
+@@ -3083,7 +2991,7 @@ extern int ext4_delete_inline_entry(handle_t *handle,
+ 				    struct ext4_dir_entry_2 *de_del,
+ 				    struct buffer_head *bh,
+ 				    int *has_inline_data);
+-extern int empty_inline_dir(struct inode *dir, int *has_inline_data);
++extern bool empty_inline_dir(struct inode *dir, int *has_inline_data);
+ extern struct buffer_head *ext4_get_first_inline_block(struct inode *inode,
+ 					struct ext4_dir_entry_2 **parent_de,
+ 					int *retval);
+diff --git a/fs/ext4/ext4_crypto.h b/fs/ext4/ext4_crypto.h
 deleted file mode 100644
-index c2c1c2b..0000000
---- a/fs/f2fs/f2fs_crypto.h
+index ac7d4e8..0000000
+--- a/fs/ext4/ext4_crypto.h
 +++ /dev/null
-@@ -1,151 +0,0 @@
+@@ -1,159 +0,0 @@
 -/*
-- * linux/fs/f2fs/f2fs_crypto.h
-- *
-- * Copied from linux/fs/ext4/ext4_crypto.h
+- * linux/fs/ext4/ext4_crypto.h
 - *
 - * Copyright (C) 2015, Google, Inc.
 - *
-- * This contains encryption header content for f2fs
+- * This contains encryption header content for ext4
 - *
 - * Written by Michael Halcrow, 2015.
-- * Modified by Jaegeuk Kim, 2015.
 - */
--#ifndef _F2FS_CRYPTO_H
--#define _F2FS_CRYPTO_H
+-
+-#ifndef _EXT4_CRYPTO_H
+-#define _EXT4_CRYPTO_H
 -
 -#include <linux/fs.h>
 -
--#define F2FS_KEY_DESCRIPTOR_SIZE	8
+-#define EXT4_KEY_DESCRIPTOR_SIZE 8
 -
 -/* Policy provided via an ioctl on the topmost directory */
--struct f2fs_encryption_policy {
+-struct ext4_encryption_policy {
 -	char version;
 -	char contents_encryption_mode;
 -	char filenames_encryption_mode;
 -	char flags;
--	char master_key_descriptor[F2FS_KEY_DESCRIPTOR_SIZE];
+-	char master_key_descriptor[EXT4_KEY_DESCRIPTOR_SIZE];
 -} __attribute__((__packed__));
 -
--#define F2FS_ENCRYPTION_CONTEXT_FORMAT_V1	1
--#define F2FS_KEY_DERIVATION_NONCE_SIZE		16
+-#define EXT4_ENCRYPTION_CONTEXT_FORMAT_V1 1
+-#define EXT4_KEY_DERIVATION_NONCE_SIZE 16
 -
--#define F2FS_POLICY_FLAGS_PAD_4		0x00
--#define F2FS_POLICY_FLAGS_PAD_8		0x01
--#define F2FS_POLICY_FLAGS_PAD_16	0x02
--#define F2FS_POLICY_FLAGS_PAD_32	0x03
--#define F2FS_POLICY_FLAGS_PAD_MASK	0x03
--#define F2FS_POLICY_FLAGS_VALID		0x03
+-#define EXT4_POLICY_FLAGS_PAD_4		0x00
+-#define EXT4_POLICY_FLAGS_PAD_8		0x01
+-#define EXT4_POLICY_FLAGS_PAD_16	0x02
+-#define EXT4_POLICY_FLAGS_PAD_32	0x03
+-#define EXT4_POLICY_FLAGS_PAD_MASK	0x03
+-#define EXT4_POLICY_FLAGS_VALID		0x03
 -
 -/**
 - * Encryption context for inode
@@ -2061,50 +2023,51 @@ index c2c1c2b..0000000
 - *  1 byte: Protector format (1 = this version)
 - *  1 byte: File contents encryption mode
 - *  1 byte: File names encryption mode
-- *  1 byte: Flags
+- *  1 byte: Reserved
 - *  8 bytes: Master Key descriptor
 - *  16 bytes: Encryption Key derivation nonce
 - */
--struct f2fs_encryption_context {
+-struct ext4_encryption_context {
 -	char format;
 -	char contents_encryption_mode;
 -	char filenames_encryption_mode;
 -	char flags;
--	char master_key_descriptor[F2FS_KEY_DESCRIPTOR_SIZE];
--	char nonce[F2FS_KEY_DERIVATION_NONCE_SIZE];
+-	char master_key_descriptor[EXT4_KEY_DESCRIPTOR_SIZE];
+-	char nonce[EXT4_KEY_DERIVATION_NONCE_SIZE];
 -} __attribute__((__packed__));
 -
 -/* Encryption parameters */
--#define F2FS_XTS_TWEAK_SIZE 16
--#define F2FS_AES_128_ECB_KEY_SIZE 16
--#define F2FS_AES_256_GCM_KEY_SIZE 32
--#define F2FS_AES_256_CBC_KEY_SIZE 32
--#define F2FS_AES_256_CTS_KEY_SIZE 32
--#define F2FS_AES_256_XTS_KEY_SIZE 64
--#define F2FS_MAX_KEY_SIZE 64
+-#define EXT4_XTS_TWEAK_SIZE 16
+-#define EXT4_AES_128_ECB_KEY_SIZE 16
+-#define EXT4_AES_256_GCM_KEY_SIZE 32
+-#define EXT4_AES_256_CBC_KEY_SIZE 32
+-#define EXT4_AES_256_CTS_KEY_SIZE 32
+-#define EXT4_AES_256_XTS_KEY_SIZE 64
+-#define EXT4_MAX_KEY_SIZE 64
 -
--#define F2FS_KEY_DESC_PREFIX "f2fs:"
--#define F2FS_KEY_DESC_PREFIX_SIZE 5
+-#define EXT4_KEY_DESC_PREFIX "ext4:"
+-#define EXT4_KEY_DESC_PREFIX_SIZE 5
 -
--struct f2fs_encryption_key {
--	__u32 mode;
--	char raw[F2FS_MAX_KEY_SIZE];
--	__u32 size;
+-/* This is passed in from userspace into the kernel keyring */
+-struct ext4_encryption_key {
+-        __u32 mode;
+-        char raw[EXT4_MAX_KEY_SIZE];
+-        __u32 size;
 -} __attribute__((__packed__));
 -
--struct f2fs_crypt_info {
+-struct ext4_crypt_info {
 -	char		ci_data_mode;
 -	char		ci_filename_mode;
 -	char		ci_flags;
 -	struct crypto_ablkcipher *ci_ctfm;
 -	struct key	*ci_keyring_key;
--	char		ci_master_key[F2FS_KEY_DESCRIPTOR_SIZE];
+-	char		ci_master_key[EXT4_KEY_DESCRIPTOR_SIZE];
 -};
 -
--#define F2FS_CTX_REQUIRES_FREE_ENCRYPT_FL             0x00000001
--#define F2FS_WRITE_PATH_FL			      0x00000002
+-#define EXT4_CTX_REQUIRES_FREE_ENCRYPT_FL             0x00000001
+-#define EXT4_WRITE_PATH_FL			      0x00000002
 -
--struct f2fs_crypto_ctx {
+-struct ext4_crypto_ctx {
 -	union {
 -		struct {
 -			struct page *bounce_page;       /* Ciphertext page */
@@ -2117,43 +2080,49 @@ index c2c1c2b..0000000
 -		struct list_head free_list;     /* Free list */
 -	};
 -	char flags;                      /* Flags */
+-	char mode;                       /* Encryption mode for tfm */
 -};
 -
--struct f2fs_completion_result {
+-struct ext4_completion_result {
 -	struct completion completion;
 -	int res;
 -};
 -
--#define DECLARE_F2FS_COMPLETION_RESULT(ecr) \
--	struct f2fs_completion_result ecr = { \
+-#define DECLARE_EXT4_COMPLETION_RESULT(ecr) \
+-	struct ext4_completion_result ecr = { \
 -		COMPLETION_INITIALIZER((ecr).completion), 0 }
 -
--static inline int f2fs_encryption_key_size(int mode)
+-static inline int ext4_encryption_key_size(int mode)
 -{
 -	switch (mode) {
--	case F2FS_ENCRYPTION_MODE_AES_256_XTS:
--		return F2FS_AES_256_XTS_KEY_SIZE;
--	case F2FS_ENCRYPTION_MODE_AES_256_GCM:
--		return F2FS_AES_256_GCM_KEY_SIZE;
--	case F2FS_ENCRYPTION_MODE_AES_256_CBC:
--		return F2FS_AES_256_CBC_KEY_SIZE;
--	case F2FS_ENCRYPTION_MODE_AES_256_CTS:
--		return F2FS_AES_256_CTS_KEY_SIZE;
+-	case EXT4_ENCRYPTION_MODE_AES_256_XTS:
+-		return EXT4_AES_256_XTS_KEY_SIZE;
+-	case EXT4_ENCRYPTION_MODE_AES_256_GCM:
+-		return EXT4_AES_256_GCM_KEY_SIZE;
+-	case EXT4_ENCRYPTION_MODE_AES_256_CBC:
+-		return EXT4_AES_256_CBC_KEY_SIZE;
+-	case EXT4_ENCRYPTION_MODE_AES_256_CTS:
+-		return EXT4_AES_256_CTS_KEY_SIZE;
 -	default:
 -		BUG();
 -	}
 -	return 0;
 -}
 -
--#define F2FS_FNAME_NUM_SCATTER_ENTRIES	4
--#define F2FS_CRYPTO_BLOCK_SIZE		16
--#define F2FS_FNAME_CRYPTO_DIGEST_SIZE	32
+-#define EXT4_FNAME_NUM_SCATTER_ENTRIES	4
+-#define EXT4_CRYPTO_BLOCK_SIZE		16
+-#define EXT4_FNAME_CRYPTO_DIGEST_SIZE	32
+-
+-struct ext4_str {
+-	unsigned char *name;
+-	u32 len;
+-};
 -
 -/**
 - * For encrypted symlinks, the ciphertext length is stored at the beginning
 - * of the string in little-endian format.
 - */
--struct f2fs_encrypted_symlink_data {
+-struct ext4_encrypted_symlink_data {
 -	__le16 len;
 -	char encrypted_path[1];
 -} __attribute__((__packed__));
@@ -2164,437 +2133,879 @@ index c2c1c2b..0000000
 - */
 -static inline u32 encrypted_symlink_data_len(u32 l)
 -{
--	return (l + sizeof(struct f2fs_encrypted_symlink_data) - 1);
+-	if (l < EXT4_CRYPTO_BLOCK_SIZE)
+-		l = EXT4_CRYPTO_BLOCK_SIZE;
+-	return (l + sizeof(struct ext4_encrypted_symlink_data) - 1);
 -}
--#endif	/* _F2FS_CRYPTO_H */
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ffa1ec2..f326764 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -421,7 +421,7 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 	int err;
+-
+-#endif	/* _EXT4_CRYPTO_H */
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 474f1a4..a6f69ff 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -329,10 +329,10 @@ static int ext4_file_mmap(struct file *file, struct vm_area_struct *vma)
+ 	struct inode *inode = file->f_mapping->host;
  
- 	if (f2fs_encrypted_inode(inode)) {
--		err = f2fs_get_encryption_info(inode);
-+		err = fscrypt_get_encryption_info(inode);
+ 	if (ext4_encrypted_inode(inode)) {
+-		int err = ext4_get_encryption_info(inode);
++		int err = fscrypt_get_encryption_info(inode);
  		if (err)
  			return 0;
- 		if (!f2fs_encrypted_inode(inode))
-@@ -443,7 +443,7 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
- 	int ret = generic_file_open(inode, filp);
- 
- 	if (!ret && f2fs_encrypted_inode(inode)) {
--		ret = f2fs_get_encryption_info(inode);
+-		if (ext4_encryption_info(inode) == NULL)
++		if (!fscrypt_has_encryption_key(inode))
+ 			return -ENOKEY;
+ 	}
+ 	file_accessed(file);
+@@ -388,14 +388,14 @@ static int ext4_file_open(struct inode * inode, struct file * filp)
+ 		}
+ 	}
+ 	if (ext4_encrypted_inode(inode)) {
+-		ret = ext4_get_encryption_info(inode);
 +		ret = fscrypt_get_encryption_info(inode);
  		if (ret)
  			return -EACCES;
- 		if (!f2fs_encrypted_inode(inode))
-@@ -526,7 +526,8 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
- truncate_out:
- 	f2fs_wait_on_page_writeback(page, DATA, true);
- 	zero_user(page, offset, PAGE_CACHE_SIZE - offset);
--	if (!cache_only || !f2fs_encrypted_inode(inode) || !S_ISREG(inode->i_mode))
-+	if (!cache_only || !f2fs_encrypted_inode(inode) ||
-+					!S_ISREG(inode->i_mode))
- 		set_page_dirty(page);
- 	f2fs_put_page(page, 1);
- 	return 0;
-@@ -674,7 +675,7 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+-		if (ext4_encryption_info(inode) == NULL)
++		if (!fscrypt_has_encryption_key(inode))
+ 			return -ENOKEY;
+ 	}
+ 	if (ext4_encrypted_inode(dir) &&
+-	    !ext4_is_child_context_consistent_with_parent(dir, inode)) {
++			!fscrypt_has_permitted_context(dir, inode)) {
+ 		ext4_warning(inode->i_sb,
+ 			     "Inconsistent encryption contexts: %lu/%lu\n",
+ 			     (unsigned long) dir->i_ino,
+diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+index acc0ad5..edfa7f5 100644
+--- a/fs/ext4/ialloc.c
++++ b/fs/ext4/ialloc.c
+@@ -767,10 +767,10 @@ struct inode *__ext4_new_inode(handle_t *handle, struct inode *dir,
+ 	if ((ext4_encrypted_inode(dir) ||
+ 	     DUMMY_ENCRYPTION_ENABLED(EXT4_SB(dir->i_sb))) &&
+ 	    (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode))) {
+-		err = ext4_get_encryption_info(dir);
++		err = fscrypt_get_encryption_info(dir);
+ 		if (err)
+ 			return ERR_PTR(err);
+-		if (ext4_encryption_info(dir) == NULL)
++		if (!fscrypt_has_encryption_key(dir))
+ 			return ERR_PTR(-EPERM);
+ 		if (!handle)
+ 			nblocks += EXT4_DATA_TRANS_BLOCKS(dir->i_sb);
+@@ -1115,7 +1115,8 @@ got:
+ 	}
  
- 	if (attr->ia_valid & ATTR_SIZE) {
- 		if (f2fs_encrypted_inode(inode) &&
--				f2fs_get_encryption_info(inode))
-+				fscrypt_get_encryption_info(inode))
- 			return -EACCES;
+ 	if (encrypt) {
+-		err = ext4_inherit_context(dir, inode);
++		/* give pointer to avoid set_context with journal ops. */
++		err = fscrypt_inherit_context(dir, inode, &encrypt, true);
+ 		if (err)
+ 			goto fail_free_drop;
+ 	}
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index dfe3b9b..1572c39 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1325,7 +1325,7 @@ int htree_inlinedir_to_tree(struct file *dir_file,
+ 	struct ext4_iloc iloc;
+ 	void *dir_buf = NULL;
+ 	struct ext4_dir_entry_2 fake;
+-	struct ext4_str tmp_str;
++	struct fscrypt_str tmp_str;
  
- 		if (attr->ia_size <= i_size_read(inode)) {
-@@ -1529,39 +1530,30 @@ static bool uuid_is_nonzero(__u8 u[16])
- 
- static int f2fs_ioc_set_encryption_policy(struct file *filp, unsigned long arg)
- {
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
--	struct f2fs_encryption_policy policy;
-+	struct fscrypt_policy policy;
- 	struct inode *inode = file_inode(filp);
- 
--	if (copy_from_user(&policy, (struct f2fs_encryption_policy __user *)arg,
--				sizeof(policy)))
-+	if (copy_from_user(&policy, (struct fscrypt_policy __user *)arg,
-+							sizeof(policy)))
- 		return -EFAULT;
- 
- 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
--	return f2fs_process_policy(&policy, inode);
--#else
--	return -EOPNOTSUPP;
--#endif
-+	return fscrypt_process_policy(inode, &policy);
+ 	ret = ext4_get_inode_loc(inode, &iloc);
+ 	if (ret)
+@@ -1739,20 +1739,20 @@ ext4_get_inline_entry(struct inode *inode,
+ 	return (struct ext4_dir_entry_2 *)(inline_pos + offset);
  }
  
- static int f2fs_ioc_get_encryption_policy(struct file *filp, unsigned long arg)
+-int empty_inline_dir(struct inode *dir, int *has_inline_data)
++bool empty_inline_dir(struct inode *dir, int *has_inline_data)
  {
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
--	struct f2fs_encryption_policy policy;
-+	struct fscrypt_policy policy;
- 	struct inode *inode = file_inode(filp);
- 	int err;
+ 	int err, inline_size;
+ 	struct ext4_iloc iloc;
+ 	void *inline_pos;
+ 	unsigned int offset;
+ 	struct ext4_dir_entry_2 *de;
+-	int ret = 1;
++	bool ret = true;
  
--	err = f2fs_get_policy(inode, &policy);
-+	err = fscrypt_get_policy(inode, &policy);
- 	if (err)
- 		return err;
+ 	err = ext4_get_inode_loc(dir, &iloc);
+ 	if (err) {
+ 		EXT4_ERROR_INODE(dir, "error %d getting inode %lu block",
+ 				 err, dir->i_ino);
+-		return 1;
++		return true;
+ 	}
  
--	if (copy_to_user((struct f2fs_encryption_policy __user *)arg, &policy,
--							sizeof(policy)))
-+	if (copy_to_user((struct fscrypt_policy __user *)arg, &policy, sizeof(policy)))
- 		return -EFAULT;
- 	return 0;
--#else
--	return -EOPNOTSUPP;
--#endif
+ 	down_read(&EXT4_I(dir)->xattr_sem);
+@@ -1766,7 +1766,7 @@ int empty_inline_dir(struct inode *dir, int *has_inline_data)
+ 		ext4_warning(dir->i_sb,
+ 			     "bad inline directory (dir #%lu) - no `..'",
+ 			     dir->i_ino);
+-		ret = 1;
++		ret = true;
+ 		goto out;
+ 	}
+ 
+@@ -1784,11 +1784,11 @@ int empty_inline_dir(struct inode *dir, int *has_inline_data)
+ 				     dir->i_ino, le32_to_cpu(de->inode),
+ 				     le16_to_cpu(de->rec_len), de->name_len,
+ 				     inline_size);
+-			ret = 1;
++			ret = true;
+ 			goto out;
+ 		}
+ 		if (le32_to_cpu(de->inode)) {
+-			ret = 0;
++			ret = false;
+ 			goto out;
+ 		}
+ 		offset += ext4_rec_len_from_disk(de->rec_len, inline_size);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 9cc57c3..1315f05 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -389,7 +389,7 @@ int ext4_issue_zeroout(struct inode *inode, ext4_lblk_t lblk, ext4_fsblk_t pblk,
+ 	int ret;
+ 
+ 	if (ext4_encrypted_inode(inode))
+-		return ext4_encrypted_zeroout(inode, lblk, pblk, len);
++		return fscrypt_zeroout_range(inode, lblk, pblk, len);
+ 
+ 	ret = sb_issue_zeroout(inode->i_sb, pblk, len, GFP_NOFS);
+ 	if (ret > 0)
+@@ -1009,7 +1009,7 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
+ 	if (unlikely(err))
+ 		page_zero_new_buffers(page, from, to);
+ 	else if (decrypt)
+-		err = ext4_decrypt(page);
++		err = fscrypt_decrypt_page(page);
+ 	return err;
  }
- 
- static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
-@@ -1873,8 +1865,8 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t ret;
- 
- 	if (f2fs_encrypted_inode(inode) &&
--				!f2fs_has_encryption_key(inode) &&
--				f2fs_get_encryption_info(inode))
-+				!fscrypt_has_encryption_key(inode) &&
-+				fscrypt_get_encryption_info(inode))
- 		return -EACCES;
- 
- 	inode_lock(inode);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 1c00f2c..358214e 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -277,7 +277,7 @@ process_inline:
- }
- 
- struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
--			struct f2fs_filename *fname, struct page **res_page)
-+			struct fscrypt_name *fname, struct page **res_page)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
- 	struct f2fs_inline_dentry *inline_dentry;
-@@ -535,7 +535,7 @@ bool f2fs_empty_inline_dir(struct inode *dir)
- }
- 
- int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
--				struct f2fs_str *fstr)
-+				struct fscrypt_str *fstr)
- {
- 	struct inode *inode = file_inode(file);
- 	struct f2fs_inline_dentry *inline_dentry = NULL;
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index d447707..cb269c4 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -389,10 +389,7 @@ no_delete:
+ #endif
+@@ -3544,9 +3544,9 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+ 		if (S_ISREG(inode->i_mode) &&
+ 		    ext4_encrypted_inode(inode)) {
+ 			/* We expect the key to be set. */
+-			BUG_ON(!ext4_has_encryption_key(inode));
++			BUG_ON(!fscrypt_has_encryption_key(inode));
+ 			BUG_ON(blocksize != PAGE_CACHE_SIZE);
+-			WARN_ON_ONCE(ext4_decrypt(page));
++			WARN_ON_ONCE(fscrypt_decrypt_page(page));
  		}
  	}
- out_clear:
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
--	if (fi->i_crypt_info)
--		f2fs_free_encryption_info(inode, fi->i_crypt_info);
--#endif
-+	fscrypt_put_encryption_info(inode, NULL);
- 	clear_inode(inode);
+ 	if (ext4_should_journal_data(inode)) {
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index a99b010..a0720c7 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -767,19 +767,13 @@ resizefs_out:
+ 		return ext4_ext_precache(inode);
+ 	case EXT4_IOC_SET_ENCRYPTION_POLICY: {
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+-		struct ext4_encryption_policy policy;
+-		int err = 0;
++		struct fscrypt_policy policy;
+ 
+ 		if (copy_from_user(&policy,
+-				   (struct ext4_encryption_policy __user *)arg,
+-				   sizeof(policy))) {
+-			err = -EFAULT;
+-			goto encryption_policy_out;
+-		}
+-
+-		err = ext4_process_policy(&policy, inode);
+-encryption_policy_out:
+-		return err;
++				   (struct fscrypt_policy __user *)arg,
++				   sizeof(policy)))
++			return -EFAULT;
++		return fscrypt_process_policy(inode, &policy);
+ #else
+ 		return -EOPNOTSUPP;
+ #endif
+@@ -822,12 +816,12 @@ encryption_policy_out:
+ 	}
+ 	case EXT4_IOC_GET_ENCRYPTION_POLICY: {
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+-		struct ext4_encryption_policy policy;
++		struct fscrypt_policy policy;
+ 		int err = 0;
+ 
+ 		if (!ext4_encrypted_inode(inode))
+ 			return -ENOENT;
+-		err = ext4_get_policy(inode, &policy);
++		err = fscrypt_get_policy(inode, &policy);
+ 		if (err)
+ 			return err;
+ 		if (copy_to_user((void __user *)arg, &policy, sizeof(policy)))
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 48e4b89..9cab638 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -612,19 +612,21 @@ static struct stats dx_show_leaf(struct inode *dir,
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+ 				int len;
+ 				char *name;
+-				struct ext4_str fname_crypto_str
+-					= {.name = NULL, .len = 0};
++				struct fscrypt_str fname_crypto_str =
++					FSTR_INIT(NULL, 0);
++				struct qstr istr =
++					QSTR_INIT(de->name, de->name_len);
+ 				int res = 0;
+ 
+ 				name  = de->name;
+ 				len = de->name_len;
+ 				if (ext4_encrypted_inode(inode))
+-					res = ext4_get_encryption_info(dir);
++					res = fscrypt_get_encryption_info(dir);
+ 				if (res) {
+ 					printk(KERN_WARNING "Error setting up"
+ 					       " fname crypto: %d\n", res);
+ 				}
+-				if (ctx == NULL) {
++				if (!fscrypt_has_encryption_key(inode)) {
+ 					/* Directory is not encrypted */
+ 					ext4fs_dirhash(de->name,
+ 						de->name_len, &h);
+@@ -633,9 +635,12 @@ static struct stats dx_show_leaf(struct inode *dir,
+ 					       (unsigned) ((char *) de
+ 							   - base));
+ 				} else {
++					struct fscrypt_str de_name =
++						FSTR_INIT(name, len);
++
+ 					/* Directory is encrypted */
+-					res = ext4_fname_crypto_alloc_buffer(
+-						ctx, de->name_len,
++					res = fscrypt_fname_alloc_buffer(
++						inode, len,
+ 						&fname_crypto_str);
+ 					if (res < 0) {
+ 						printk(KERN_WARNING "Error "
+@@ -644,8 +649,9 @@ static struct stats dx_show_leaf(struct inode *dir,
+ 							"crypto\n");
+ 						ctx = NULL;
+ 					}
+-					res = ext4_fname_disk_to_usr(ctx, NULL, de,
+-							&fname_crypto_str);
++					res = fscrypt_fname_disk_to_usr(inode,
++						0, 0, &de_name,
++						&fname_crypto_str);
+ 					if (res < 0) {
+ 						printk(KERN_WARNING "Error "
+ 							"converting filename "
+@@ -662,8 +668,8 @@ static struct stats dx_show_leaf(struct inode *dir,
+ 					printk("%*.s:(E)%x.%u ", len, name,
+ 					       h.hash, (unsigned) ((char *) de
+ 								   - base));
+-					ext4_fname_crypto_free_buffer(
+-						&fname_crypto_str);
++					fscrypt_fname_free_buffer(
++							&fname_crypto_str);
+ 				}
+ #else
+ 				int len = de->name_len;
+@@ -952,7 +958,7 @@ static int htree_dirblock_to_tree(struct file *dir_file,
+ 	struct buffer_head *bh;
+ 	struct ext4_dir_entry_2 *de, *top;
+ 	int err = 0, count = 0;
+-	struct ext4_str fname_crypto_str = {.name = NULL, .len = 0}, tmp_str;
++	struct fscrypt_str fname_crypto_str = FSTR_INIT(NULL, 0), tmp_str;
+ 
+ 	dxtrace(printk(KERN_INFO "In htree dirblock_to_tree: block %lu\n",
+ 							(unsigned long)block));
+@@ -967,12 +973,12 @@ static int htree_dirblock_to_tree(struct file *dir_file,
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+ 	/* Check if the directory is encrypted */
+ 	if (ext4_encrypted_inode(dir)) {
+-		err = ext4_get_encryption_info(dir);
++		err = fscrypt_get_encryption_info(dir);
+ 		if (err < 0) {
+ 			brelse(bh);
+ 			return err;
+ 		}
+-		err = ext4_fname_crypto_alloc_buffer(dir, EXT4_NAME_LEN,
++		err = fscrypt_fname_alloc_buffer(dir, EXT4_NAME_LEN,
+ 						     &fname_crypto_str);
+ 		if (err < 0) {
+ 			brelse(bh);
+@@ -1003,10 +1009,13 @@ static int htree_dirblock_to_tree(struct file *dir_file,
+ 				   &tmp_str);
+ 		} else {
+ 			int save_len = fname_crypto_str.len;
++			struct fscrypt_str de_name = FSTR_INIT(de->name,
++								de->name_len);
+ 
+ 			/* Directory is encrypted */
+-			err = ext4_fname_disk_to_usr(dir, hinfo, de,
+-						     &fname_crypto_str);
++			err = fscrypt_fname_disk_to_usr(dir, hinfo->hash,
++					hinfo->minor_hash, &de_name,
++					&fname_crypto_str);
+ 			if (err < 0) {
+ 				count = err;
+ 				goto errout;
+@@ -1025,7 +1034,7 @@ static int htree_dirblock_to_tree(struct file *dir_file,
+ errout:
+ 	brelse(bh);
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+-	ext4_fname_crypto_free_buffer(&fname_crypto_str);
++	fscrypt_fname_free_buffer(&fname_crypto_str);
+ #endif
+ 	return count;
+ }
+@@ -1050,7 +1059,7 @@ int ext4_htree_fill_tree(struct file *dir_file, __u32 start_hash,
+ 	int count = 0;
+ 	int ret, err;
+ 	__u32 hashval;
+-	struct ext4_str tmp_str;
++	struct fscrypt_str tmp_str;
+ 
+ 	dxtrace(printk(KERN_DEBUG "In htree_fill_tree, start hash: %x:%x\n",
+ 		       start_hash, start_minor_hash));
+@@ -1558,26 +1567,23 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
+ 	struct ext4_dir_entry_2 *de;
+ 	struct buffer_head *bh;
+ 
+-       if (ext4_encrypted_inode(dir)) {
+-               int res = ext4_get_encryption_info(dir);
++	if (ext4_encrypted_inode(dir)) {
++		int res = fscrypt_get_encryption_info(dir);
+ 
+ 		/*
+-		 * This should be a properly defined flag for
+-		 * dentry->d_flags when we uplift this to the VFS.
+-		 * d_fsdata is set to (void *) 1 if if the dentry is
++		 * DCACHE_ENCRYPTED_WITH_KEY is set if the dentry is
+ 		 * created while the directory was encrypted and we
+ 		 * don't have access to the key.
+ 		 */
+-	       dentry->d_fsdata = NULL;
+-	       if (ext4_encryption_info(dir))
+-		       dentry->d_fsdata = (void *) 1;
+-	       d_set_d_op(dentry, &ext4_encrypted_d_ops);
+-	       if (res && res != -ENOKEY)
+-		       return ERR_PTR(res);
+-       }
++		if (fscrypt_has_encryption_key(dir))
++			fscrypt_set_encrypted_dentry(dentry);
++		fscrypt_set_d_op(dentry);
++		if (res && res != -ENOKEY)
++			return ERR_PTR(res);
++	}
+ 
+-	if (dentry->d_name.len > EXT4_NAME_LEN)
+-		return ERR_PTR(-ENAMETOOLONG);
++       if (dentry->d_name.len > EXT4_NAME_LEN)
++	       return ERR_PTR(-ENAMETOOLONG);
+ 
+ 	bh = ext4_find_entry(dir, &dentry->d_name, &de, NULL);
+ 	if (IS_ERR(bh))
+@@ -1604,11 +1610,9 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
+ 		}
+ 		if (!IS_ERR(inode) && ext4_encrypted_inode(dir) &&
+ 		    (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) &&
+-		    !ext4_is_child_context_consistent_with_parent(dir,
+-								  inode)) {
++		    !fscrypt_has_permitted_context(dir, inode)) {
+ 			int nokey = ext4_encrypted_inode(inode) &&
+-				!ext4_encryption_info(inode);
+-
++				!fscrypt_has_encryption_key(inode);
+ 			iput(inode);
+ 			if (nokey)
+ 				return ERR_PTR(-ENOKEY);
+@@ -2685,13 +2689,13 @@ out_stop:
+ /*
+  * routine to check that the specified directory is empty (for rmdir)
+  */
+-int ext4_empty_dir(struct inode *inode)
++bool ext4_empty_dir(struct inode *inode)
+ {
+ 	unsigned int offset;
+ 	struct buffer_head *bh;
+ 	struct ext4_dir_entry_2 *de, *de1;
+ 	struct super_block *sb;
+-	int err = 0;
++	bool err = false;
+ 
+ 	if (ext4_has_inline_data(inode)) {
+ 		int has_inline_data = 1;
+@@ -2704,11 +2708,11 @@ int ext4_empty_dir(struct inode *inode)
+ 	sb = inode->i_sb;
+ 	if (inode->i_size < EXT4_DIR_REC_LEN(1) + EXT4_DIR_REC_LEN(2)) {
+ 		EXT4_ERROR_INODE(inode, "invalid size");
+-		return 1;
++		return true;
+ 	}
+ 	bh = ext4_read_dirblock(inode, 0, EITHER);
+ 	if (IS_ERR(bh))
+-		return 1;
++		return true;
+ 
+ 	de = (struct ext4_dir_entry_2 *) bh->b_data;
+ 	de1 = ext4_next_entry(de, sb->s_blocksize);
+@@ -2717,7 +2721,7 @@ int ext4_empty_dir(struct inode *inode)
+ 			strcmp(".", de->name) || strcmp("..", de1->name)) {
+ 		ext4_warning_inode(inode, "directory missing '.' and/or '..'");
+ 		brelse(bh);
+-		return 1;
++		return true;
+ 	}
+ 	offset = ext4_rec_len_from_disk(de->rec_len, sb->s_blocksize) +
+ 		 ext4_rec_len_from_disk(de1->rec_len, sb->s_blocksize);
+@@ -2730,7 +2734,7 @@ int ext4_empty_dir(struct inode *inode)
+ 			lblock = offset >> EXT4_BLOCK_SIZE_BITS(sb);
+ 			bh = ext4_read_dirblock(inode, lblock, EITHER);
+ 			if (IS_ERR(bh))
+-				return 1;
++				return true;
+ 			de = (struct ext4_dir_entry_2 *) bh->b_data;
+ 		}
+ 		if (ext4_check_dir_entry(inode, NULL, de, bh,
+@@ -2742,13 +2746,13 @@ int ext4_empty_dir(struct inode *inode)
+ 		}
+ 		if (le32_to_cpu(de->inode)) {
+ 			brelse(bh);
+-			return 0;
++			return false;
+ 		}
+ 		offset += ext4_rec_len_from_disk(de->rec_len, sb->s_blocksize);
+ 		de = ext4_next_entry(de, sb->s_blocksize);
+ 	}
+ 	brelse(bh);
+-	return 1;
++	return true;
  }
  
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 01b9ef6..748022e 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -169,7 +169,7 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
- 	int err;
- 
- 	if (f2fs_encrypted_inode(dir) &&
--		!f2fs_is_child_context_consistent_with_parent(dir, inode))
-+			!fscrypt_has_permitted_context(dir, inode))
- 		return -EPERM;
- 
- 	f2fs_balance_fs(sbi, true);
-@@ -345,20 +345,20 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
- 	struct inode *inode;
- 	size_t len = strlen(symname);
--	struct f2fs_str disk_link = FSTR_INIT((char *)symname, len + 1);
--	struct f2fs_encrypted_symlink_data *sd = NULL;
-+	struct fscrypt_str disk_link = FSTR_INIT((char *)symname, len + 1);
+ /*
+@@ -3071,8 +3075,8 @@ static int ext4_symlink(struct inode *dir,
+ 	int err, len = strlen(symname);
+ 	int credits;
+ 	bool encryption_required;
+-	struct ext4_str disk_link;
+-	struct ext4_encrypted_symlink_data *sd = NULL;
++	struct fscrypt_str disk_link;
 +	struct fscrypt_symlink_data *sd = NULL;
- 	int err;
  
- 	if (f2fs_encrypted_inode(dir)) {
--		err = f2fs_get_encryption_info(dir);
+ 	disk_link.len = len + 1;
+ 	disk_link.name = (char *) symname;
+@@ -3080,13 +3084,13 @@ static int ext4_symlink(struct inode *dir,
+ 	encryption_required = (ext4_encrypted_inode(dir) ||
+ 			       DUMMY_ENCRYPTION_ENABLED(EXT4_SB(dir->i_sb)));
+ 	if (encryption_required) {
+-		err = ext4_get_encryption_info(dir);
 +		err = fscrypt_get_encryption_info(dir);
  		if (err)
  			return err;
- 
--		if (!f2fs_encrypted_inode(dir))
+-		if (ext4_encryption_info(dir) == NULL)
 +		if (!fscrypt_has_encryption_key(dir))
  			return -EPERM;
- 
--		disk_link.len = (f2fs_fname_encrypted_size(dir, len) +
--				sizeof(struct f2fs_encrypted_symlink_data));
+-		disk_link.len = (ext4_fname_encrypted_size(dir, len) +
+-				 sizeof(struct ext4_encrypted_symlink_data));
 +		disk_link.len = (fscrypt_fname_encrypted_size(dir, len) +
-+				sizeof(struct fscrypt_symlink_data));
- 	}
++				 sizeof(struct fscrypt_symlink_data));
+ 		sd = kzalloc(disk_link.len, GFP_KERNEL);
+ 		if (!sd)
+ 			return -ENOMEM;
+@@ -3134,13 +3138,12 @@ static int ext4_symlink(struct inode *dir,
  
- 	if (disk_link.len > dir->i_sb->s_blocksize)
-@@ -386,7 +386,7 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
+ 	if (encryption_required) {
+ 		struct qstr istr;
+-		struct ext4_str ostr;
++		struct fscrypt_str ostr =
++			FSTR_INIT(sd->encrypted_path, disk_link.len);
  
- 	if (f2fs_encrypted_inode(inode)) {
- 		struct qstr istr = QSTR_INIT(symname, len);
--		struct f2fs_str ostr;
-+		struct fscrypt_str ostr;
- 
- 		sd = kzalloc(disk_link.len, GFP_NOFS);
- 		if (!sd) {
-@@ -394,18 +394,18 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
- 			goto err_out;
- 		}
- 
--		err = f2fs_get_encryption_info(inode);
-+		err = fscrypt_get_encryption_info(inode);
- 		if (err)
- 			goto err_out;
- 
--		if (!f2fs_encrypted_inode(inode)) {
-+		if (!fscrypt_has_encryption_key(inode)) {
- 			err = -EPERM;
- 			goto err_out;
- 		}
- 
- 		ostr.name = sd->encrypted_path;
- 		ostr.len = disk_link.len;
--		err = f2fs_fname_usr_to_disk(inode, &istr, &ostr);
+ 		istr.name = (const unsigned char *) symname;
+ 		istr.len = len;
+-		ostr.name = sd->encrypted_path;
+-		ostr.len = disk_link.len;
+-		err = ext4_fname_usr_to_disk(inode, &istr, &ostr);
 +		err = fscrypt_fname_usr_to_disk(inode, &istr, &ostr);
  		if (err < 0)
- 			goto err_out;
- 
-@@ -586,7 +586,7 @@ out:
- static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- {
- 	if (f2fs_encrypted_inode(dir)) {
--		int err = f2fs_get_encryption_info(dir);
-+		int err = fscrypt_get_encryption_info(dir);
- 		if (err)
- 			return err;
- 	}
-@@ -616,8 +616,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	int err = -ENOENT;
- 
- 	if ((old_dir != new_dir) && f2fs_encrypted_inode(new_dir) &&
--		!f2fs_is_child_context_consistent_with_parent(new_dir,
--							old_inode)) {
-+			!fscrypt_has_permitted_context(new_dir, old_inode)) {
- 		err = -EPERM;
- 		goto out;
- 	}
-@@ -797,11 +796,9 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	int err = -ENOENT;
- 
- 	if ((f2fs_encrypted_inode(old_dir) || f2fs_encrypted_inode(new_dir)) &&
--		(old_dir != new_dir) &&
--		(!f2fs_is_child_context_consistent_with_parent(new_dir,
--								old_inode) ||
--		!f2fs_is_child_context_consistent_with_parent(old_dir,
--								new_inode)))
-+			(old_dir != new_dir) &&
-+			(!fscrypt_has_permitted_context(new_dir, old_inode) ||
-+			 !fscrypt_has_permitted_context(old_dir, new_inode)))
+ 			goto err_drop_inode;
+ 		sd->len = cpu_to_le16(ostr.len);
+@@ -3229,7 +3232,7 @@ static int ext4_link(struct dentry *old_dentry,
+ 	if (inode->i_nlink >= EXT4_LINK_MAX)
+ 		return -EMLINK;
+ 	if (ext4_encrypted_inode(dir) &&
+-	    !ext4_is_child_context_consistent_with_parent(dir, inode))
++			!fscrypt_has_permitted_context(dir, inode))
  		return -EPERM;
  
- 	old_entry = f2fs_find_entry(old_dir, &old_dentry->d_name, &old_page);
-@@ -963,16 +960,15 @@ static int f2fs_rename2(struct inode *old_dir, struct dentry *old_dentry,
- 	return f2fs_rename(old_dir, old_dentry, new_dir, new_dentry, flags);
+        if ((ext4_test_inode_flag(dir, EXT4_INODE_PROJINHERIT)) &&
+@@ -3552,8 +3555,7 @@ static int ext4_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	if ((old.dir != new.dir) &&
+ 	    ext4_encrypted_inode(new.dir) &&
+-	    !ext4_is_child_context_consistent_with_parent(new.dir,
+-							  old.inode)) {
++	    !fscrypt_has_permitted_context(new.dir, old.inode)) {
+ 		retval = -EPERM;
+ 		goto end_rename;
+ 	}
+@@ -3725,10 +3727,8 @@ static int ext4_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	if ((ext4_encrypted_inode(old_dir) ||
+ 	     ext4_encrypted_inode(new_dir)) &&
+ 	    (old_dir != new_dir) &&
+-	    (!ext4_is_child_context_consistent_with_parent(new_dir,
+-							   old.inode) ||
+-	     !ext4_is_child_context_consistent_with_parent(old_dir,
+-							   new.inode)))
++	    (!fscrypt_has_permitted_context(new_dir, old.inode) ||
++	     !fscrypt_has_permitted_context(old_dir, new.inode)))
+ 		return -EPERM;
+ 
+ 	if ((ext4_test_inode_flag(new_dir, EXT4_INODE_PROJINHERIT) &&
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index 090b349..0a094f4 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -23,6 +23,7 @@
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+ #include <linux/mm.h>
++#include <linux/fscrypto.h>
+ 
+ #include "ext4_jbd2.h"
+ #include "xattr.h"
+@@ -66,7 +67,6 @@ static void ext4_finish_bio(struct bio *bio)
+ 		struct page *page = bvec->bv_page;
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+ 		struct page *data_page = NULL;
+-		struct ext4_crypto_ctx *ctx = NULL;
+ #endif
+ 		struct buffer_head *bh, *head;
+ 		unsigned bio_start = bvec->bv_offset;
+@@ -81,8 +81,7 @@ static void ext4_finish_bio(struct bio *bio)
+ 		if (!page->mapping) {
+ 			/* The bounce data pages are unmapped. */
+ 			data_page = page;
+-			ctx = (struct ext4_crypto_ctx *)page_private(data_page);
+-			page = ctx->w.control_page;
++			fscrypt_pullback_bio_page(&page, false);
+ 		}
+ #endif
+ 
+@@ -112,8 +111,8 @@ static void ext4_finish_bio(struct bio *bio)
+ 		local_irq_restore(flags);
+ 		if (!under_io) {
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+-			if (ctx)
+-				ext4_restore_control_page(data_page);
++			if (data_page)
++				fscrypt_restore_control_page(data_page);
+ #endif
+ 			end_page_writeback(page);
+ 		}
+@@ -484,7 +483,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 
+ 	if (ext4_encrypted_inode(inode) && S_ISREG(inode->i_mode) &&
+ 	    nr_to_submit) {
+-		data_page = ext4_encrypt(inode, page);
++		data_page = fscrypt_encrypt_page(inode, page);
+ 		if (IS_ERR(data_page)) {
+ 			ret = PTR_ERR(data_page);
+ 			data_page = NULL;
+@@ -514,7 +513,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 	if (ret) {
+ 	out:
+ 		if (data_page)
+-			ext4_restore_control_page(data_page);
++			fscrypt_restore_control_page(data_page);
+ 		printk_ratelimited(KERN_ERR "%s: ret = %d\n", __func__, ret);
+ 		redirty_page_for_writepage(wbc, page);
+ 		do {
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index 5dc5e95..a1d388c 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -46,37 +46,6 @@
+ 
+ #include "ext4.h"
+ 
+-/*
+- * Call ext4_decrypt on every single page, reusing the encryption
+- * context.
+- */
+-static void completion_pages(struct work_struct *work)
+-{
+-#ifdef CONFIG_EXT4_FS_ENCRYPTION
+-	struct ext4_crypto_ctx *ctx =
+-		container_of(work, struct ext4_crypto_ctx, r.work);
+-	struct bio	*bio	= ctx->r.bio;
+-	struct bio_vec	*bv;
+-	int		i;
+-
+-	bio_for_each_segment_all(bv, bio, i) {
+-		struct page *page = bv->bv_page;
+-
+-		int ret = ext4_decrypt(page);
+-		if (ret) {
+-			WARN_ON_ONCE(1);
+-			SetPageError(page);
+-		} else
+-			SetPageUptodate(page);
+-		unlock_page(page);
+-	}
+-	ext4_release_crypto_ctx(ctx);
+-	bio_put(bio);
+-#else
+-	BUG();
+-#endif
+-}
+-
+ static inline bool ext4_bio_encrypted(struct bio *bio)
+ {
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+@@ -104,14 +73,10 @@ static void mpage_end_io(struct bio *bio)
+ 	int i;
+ 
+ 	if (ext4_bio_encrypted(bio)) {
+-		struct ext4_crypto_ctx *ctx = bio->bi_private;
+-
+ 		if (bio->bi_error) {
+-			ext4_release_crypto_ctx(ctx);
++			fscrypt_release_ctx(bio->bi_private);
+ 		} else {
+-			INIT_WORK(&ctx->r.work, completion_pages);
+-			ctx->r.bio = bio;
+-			queue_work(ext4_read_workqueue, &ctx->r.work);
++			fscrypt_decrypt_bio_pages(bio->bi_private, bio);
+ 			return;
+ 		}
+ 	}
+@@ -275,11 +240,11 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 			bio = NULL;
+ 		}
+ 		if (bio == NULL) {
+-			struct ext4_crypto_ctx *ctx = NULL;
++			struct fscrypt_ctx *ctx = NULL;
+ 
+ 			if (ext4_encrypted_inode(inode) &&
+ 			    S_ISREG(inode->i_mode)) {
+-				ctx = ext4_get_crypto_ctx(inode);
++				ctx = fscrypt_get_ctx(inode);
+ 				if (IS_ERR(ctx))
+ 					goto set_error_page;
+ 			}
+@@ -287,7 +252,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
+ 				min_t(int, nr_pages, BIO_MAX_PAGES));
+ 			if (!bio) {
+ 				if (ctx)
+-					ext4_release_crypto_ctx(ctx);
++					fscrypt_release_ctx(ctx);
+ 				goto set_error_page;
+ 			}
+ 			bio->bi_bdev = bdev;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 3ed01ec..bbd2045 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -947,9 +947,6 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
+ 	atomic_set(&ei->i_ioend_count, 0);
+ 	atomic_set(&ei->i_unwritten, 0);
+ 	INIT_WORK(&ei->i_rsv_conversion_work, ext4_end_io_rsv_work);
+-#ifdef CONFIG_EXT4_FS_ENCRYPTION
+-	ei->i_crypt_info = NULL;
+-#endif
+ 	return &ei->vfs_inode;
  }
  
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
- static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+@@ -1028,8 +1025,7 @@ void ext4_clear_inode(struct inode *inode)
+ 		EXT4_I(inode)->jinode = NULL;
+ 	}
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+-	if (EXT4_I(inode)->i_crypt_info)
+-		ext4_free_encryption_info(inode, EXT4_I(inode)->i_crypt_info);
++	fscrypt_put_encryption_info(inode, NULL);
+ #endif
+ }
+ 
+@@ -1096,6 +1092,83 @@ static int bdev_try_to_free_page(struct super_block *sb, struct page *page,
+ 	return try_to_free_buffers(page);
+ }
+ 
++#ifdef CONFIG_EXT4_FS_ENCRYPTION
++static int ext4_get_context(struct inode *inode, void *ctx, size_t len)
++{
++	return ext4_xattr_get(inode, EXT4_XATTR_INDEX_ENCRYPTION,
++				 EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, ctx, len);
++}
++
++static int ext4_prepare_context(struct inode *inode)
++{
++	return ext4_convert_inline_data(inode);
++}
++
++static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
++							void *fs_data)
++{
++	handle_t *handle;
++	int res, res2;
++
++	/* fs_data is null when internally used. */
++	if (fs_data) {
++		res  = ext4_xattr_set(inode, EXT4_XATTR_INDEX_ENCRYPTION,
++				EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, ctx,
++				len, 0);
++		if (!res) {
++			ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
++			ext4_clear_inode_state(inode,
++					EXT4_STATE_MAY_INLINE_DATA);
++		}
++		return res;
++	}
++
++	handle = ext4_journal_start(inode, EXT4_HT_MISC,
++			ext4_jbd2_credits_xattr(inode));
++	if (IS_ERR(handle))
++		return PTR_ERR(handle);
++
++	res = ext4_xattr_set(inode, EXT4_XATTR_INDEX_ENCRYPTION,
++			EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, ctx,
++			len, 0);
++	if (!res) {
++		ext4_set_inode_flag(inode, EXT4_INODE_ENCRYPT);
++		res = ext4_mark_inode_dirty(handle, inode);
++		if (res)
++			EXT4_ERROR_INODE(inode, "Failed to mark inode dirty");
++	}
++	res2 = ext4_journal_stop(handle);
++	if (!res)
++		res = res2;
++	return res;
++}
++
++static int ext4_dummy_context(struct inode *inode)
++{
++	return DUMMY_ENCRYPTION_ENABLED(EXT4_SB(inode->i_sb));
++}
++
++static unsigned ext4_max_namelen(struct inode *inode)
++{
++	return S_ISLNK(inode->i_mode) ? inode->i_sb->s_blocksize :
++		EXT4_NAME_LEN;
++}
++
++static struct fscrypt_operations ext4_cryptops = {
++	.get_context		= ext4_get_context,
++	.prepare_context	= ext4_prepare_context,
++	.set_context		= ext4_set_context,
++	.dummy_context		= ext4_dummy_context,
++	.is_encrypted		= ext4_encrypted_inode,
++	.empty_dir		= ext4_empty_dir,
++	.max_namelen		= ext4_max_namelen,
++};
++#else
++static struct fscrypt_operations ext4_cryptops = {
++	.is_encrypted		= ext4_encrypted_inode,
++};
++#endif
++
+ #ifdef CONFIG_QUOTA
+ static char *quotatypes[] = INITQFNAMES;
+ #define QTYPE2NAME(t) (quotatypes[t])
+@@ -3686,6 +3759,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_op = &ext4_sops;
+ 	sb->s_export_op = &ext4_export_ops;
+ 	sb->s_xattr = ext4_xattr_handlers;
++	sb->s_cop = &ext4_cryptops;
+ #ifdef CONFIG_QUOTA
+ 	sb->dq_op = &ext4_quota_operations;
+ 	if (ext4_has_feature_quota(sb))
+@@ -5391,7 +5465,6 @@ out5:
+ 
+ static void __exit ext4_exit_fs(void)
+ {
+-	ext4_exit_crypto();
+ 	ext4_destroy_lazyinit_thread();
+ 	unregister_as_ext2();
+ 	unregister_as_ext3();
+diff --git a/fs/ext4/symlink.c b/fs/ext4/symlink.c
+index 6f7ee30..710c011a 100644
+--- a/fs/ext4/symlink.c
++++ b/fs/ext4/symlink.c
+@@ -22,23 +22,22 @@
+ #include "ext4.h"
+ #include "xattr.h"
+ 
+-#ifdef CONFIG_EXT4_FS_ENCRYPTION
+ static const char *ext4_encrypted_get_link(struct dentry *dentry,
  					   struct inode *inode,
  					   struct delayed_call *done)
  {
  	struct page *cpage = NULL;
  	char *caddr, *paddr = NULL;
--	struct f2fs_str cstr = FSTR_INIT(NULL, 0);
--	struct f2fs_str pstr = FSTR_INIT(NULL, 0);
--	struct f2fs_encrypted_symlink_data *sd;
-+	struct fscrypt_str cstr = FSTR_INIT(NULL, 0);
-+	struct fscrypt_str pstr = FSTR_INIT(NULL, 0);
+-	struct ext4_str cstr, pstr;
+-	struct ext4_encrypted_symlink_data *sd;
++	struct fscrypt_str cstr, pstr;
 +	struct fscrypt_symlink_data *sd;
  	loff_t size = min_t(loff_t, i_size_read(inode), PAGE_SIZE - 1);
- 	u32 max_size = inode->i_sb->s_blocksize;
  	int res;
-@@ -980,7 +976,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+-	u32 plen, max_size = inode->i_sb->s_blocksize;
++	u32 max_size = inode->i_sb->s_blocksize;
+ 
  	if (!dentry)
  		return ERR_PTR(-ECHILD);
  
--	res = f2fs_get_encryption_info(inode);
+-	res = ext4_get_encryption_info(inode);
 +	res = fscrypt_get_encryption_info(inode);
  	if (res)
  		return ERR_PTR(res);
  
-@@ -991,7 +987,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 	caddr[size] = 0;
+@@ -54,30 +53,29 @@ static const char *ext4_encrypted_get_link(struct dentry *dentry,
+ 	}
  
  	/* Symlink is encrypted */
--	sd = (struct f2fs_encrypted_symlink_data *)caddr;
+-	sd = (struct ext4_encrypted_symlink_data *)caddr;
 +	sd = (struct fscrypt_symlink_data *)caddr;
  	cstr.name = sd->encrypted_path;
- 	cstr.len = le16_to_cpu(sd->len);
- 
-@@ -1007,17 +1003,16 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 		goto errout;
- 	}
- 
--	if ((cstr.len + sizeof(struct f2fs_encrypted_symlink_data) - 1) >
--								max_size) {
-+	if ((cstr.len + sizeof(struct fscrypt_symlink_data) - 1) > max_size) {
+ 	cstr.len  = le16_to_cpu(sd->len);
+ 	if ((cstr.len +
+-	     sizeof(struct ext4_encrypted_symlink_data) - 1) >
++	     sizeof(struct fscrypt_symlink_data) - 1) >
+ 	    max_size) {
  		/* Symlink data on the disk is corrupted */
- 		res = -EIO;
+ 		res = -EFSCORRUPTED;
  		goto errout;
  	}
--	res = f2fs_fname_crypto_alloc_buffer(inode, cstr.len, &pstr);
+-	plen = (cstr.len < EXT4_FNAME_CRYPTO_DIGEST_SIZE*2) ?
+-		EXT4_FNAME_CRYPTO_DIGEST_SIZE*2 : cstr.len;
+-	paddr = kmalloc(plen + 1, GFP_NOFS);
+-	if (!paddr) {
+-		res = -ENOMEM;
++
 +	res = fscrypt_fname_alloc_buffer(inode, cstr.len, &pstr);
- 	if (res)
++	if (res)
  		goto errout;
- 
--	res = f2fs_fname_disk_to_usr(inode, NULL, &cstr, &pstr);
+-	}
+-	pstr.name = paddr;
+-	pstr.len = plen;
+-	res = _ext4_fname_disk_to_usr(inode, NULL, &cstr, &pstr);
++
 +	res = fscrypt_fname_disk_to_usr(inode, 0, 0, &cstr, &pstr);
  	if (res < 0)
  		goto errout;
- 
-@@ -1030,7 +1025,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 	set_delayed_call(done, kfree_link, paddr);
- 	return paddr;
- errout:
--	f2fs_fname_crypto_free_buffer(&pstr);
-+	fscrypt_fname_free_buffer(&pstr);
- 	page_cache_release(cpage);
- 	return ERR_PTR(res);
- }
-@@ -1047,7 +1042,6 @@ const struct inode_operations f2fs_encrypted_symlink_inode_operations = {
++
++	paddr = pstr.name;
++
+ 	/* Null-terminate the name */
+-	if (res <= plen)
++	if (res <= pstr.len)
+ 		paddr[res] = '\0';
+ 	if (cpage)
+ 		page_cache_release(cpage);
+@@ -99,7 +97,6 @@ const struct inode_operations ext4_encrypted_symlink_inode_operations = {
+ 	.listxattr	= ext4_listxattr,
  	.removexattr	= generic_removexattr,
- #endif
  };
 -#endif
  
- const struct inode_operations f2fs_dir_inode_operations = {
- 	.create		= f2fs_create,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 579372d9..7b62016 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -470,10 +470,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 
- 	/* Will be used by directory only */
- 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
--
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
--	fi->i_crypt_info = NULL;
--#endif
- 	return &fi->vfs_inode;
- }
- 
-@@ -507,11 +503,7 @@ static int f2fs_drop_inode(struct inode *inode)
- 
- 			sb_end_intwrite(inode->i_sb);
- 
--#ifdef CONFIG_F2FS_FS_ENCRYPTION
--			if (F2FS_I(inode)->i_crypt_info)
--				f2fs_free_encryption_info(inode,
--					F2FS_I(inode)->i_crypt_info);
--#endif
-+			fscrypt_put_encryption_info(inode, NULL);
- 			spin_lock(&inode->i_lock);
- 			atomic_dec(&inode->i_count);
- 		}
-@@ -891,6 +883,41 @@ static struct super_operations f2fs_sops = {
- 	.remount_fs	= f2fs_remount,
- };
- 
-+#ifdef CONFIG_F2FS_FS_ENCRYPTION
-+static int f2fs_get_context(struct inode *inode, void *ctx, size_t len)
-+{
-+	return f2fs_getxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
-+				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT,
-+				ctx, len, NULL);
-+}
-+
-+static int f2fs_set_context(struct inode *inode, const void *ctx, size_t len,
-+							void *fs_data)
-+{
-+	return f2fs_setxattr(inode, F2FS_XATTR_INDEX_ENCRYPTION,
-+				F2FS_XATTR_NAME_ENCRYPTION_CONTEXT,
-+				ctx, len, fs_data, XATTR_CREATE);
-+}
-+
-+static unsigned f2fs_max_namelen(struct inode *inode)
-+{
-+	return S_ISLNK(inode->i_mode) ?
-+			inode->i_sb->s_blocksize : F2FS_NAME_LEN;
-+}
-+
-+static struct fscrypt_operations f2fs_cryptops = {
-+	.get_context	= f2fs_get_context,
-+	.set_context	= f2fs_set_context,
-+	.is_encrypted	= f2fs_encrypted_inode,
-+	.empty_dir	= f2fs_empty_dir,
-+	.max_namelen	= f2fs_max_namelen,
-+};
-+#else
-+static struct fscrypt_operations f2fs_cryptops = {
-+	.is_encrypted	= f2fs_encrypted_inode,
-+};
-+#endif
-+
- static struct inode *f2fs_nfs_get_inode(struct super_block *sb,
- 		u64 ino, u32 generation)
- {
-@@ -1314,6 +1341,7 @@ try_onemore:
- 	get_random_bytes(&sbi->s_next_generation, sizeof(u32));
- 
- 	sb->s_op = &f2fs_sops;
-+	sb->s_cop = &f2fs_cryptops;
- 	sb->s_xattr = f2fs_xattr_handlers;
- 	sb->s_export_op = &f2fs_export_ops;
- 	sb->s_magic = F2FS_SUPER_MAGIC;
-@@ -1619,13 +1647,9 @@ static int __init init_f2fs_fs(void)
- 		err = -ENOMEM;
- 		goto free_extent_cache;
- 	}
--	err = f2fs_init_crypto();
--	if (err)
--		goto free_kset;
--
- 	err = register_shrinker(&f2fs_shrinker_info);
- 	if (err)
--		goto free_crypto;
-+		goto free_kset;
- 
- 	err = register_filesystem(&f2fs_fs_type);
- 	if (err)
-@@ -1640,8 +1664,6 @@ free_filesystem:
- 	unregister_filesystem(&f2fs_fs_type);
- free_shrinker:
- 	unregister_shrinker(&f2fs_shrinker_info);
--free_crypto:
--	f2fs_exit_crypto();
- free_kset:
- 	kset_unregister(f2fs_kset);
- free_extent_cache:
-@@ -1664,7 +1686,6 @@ static void __exit exit_f2fs_fs(void)
- 	f2fs_destroy_root_stats();
- 	unregister_shrinker(&f2fs_shrinker_info);
- 	unregister_filesystem(&f2fs_fs_type);
--	f2fs_exit_crypto();
- 	destroy_extent_cache();
- 	destroy_checkpoint_caches();
- 	destroy_segment_manager_caches();
+ const struct inode_operations ext4_symlink_inode_operations = {
+ 	.readlink	= generic_readlink,
 -- 
 2.6.3
 
