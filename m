@@ -1,316 +1,123 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 03/10] fs crypto: add policy.c to handle contexts
-Date: Thu, 25 Feb 2016 11:26:01 -0800
-Message-ID: <1456428368-41527-4-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 06/10] fs crypto: add Makefile and Kconfig
+Date: Thu, 25 Feb 2016 11:26:04 -0800
+Message-ID: <1456428368-41527-7-git-send-email-jaegeuk@kernel.org>
 References: <1456428368-41527-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aZ1Yy-0001TA-SK
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 25 Feb 2016 19:27:00 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1aZ1Yy-0007KT-03
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 25 Feb 2016 19:27:00 +0000
 In-Reply-To: <1456428368-41527-1-git-send-email-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>, Ildar Muslukhov <muslukhovi@gmail.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Arnd Bergmann <arnd@arndb.de>
 
-This patch adds policy.c supporting context management.
+This patch adds a facility to enable per-file encryption.
 
-1. For ioctls:
- - fscrypt_process_policy
- - fscrypt_get_policy
+Arnd fixes a missing CONFIG_BLOCK check in the original patch.
+"The newly added generic crypto abstraction for file systems operates
+on 'struct bio' objects, which do not exist when CONFIG_BLOCK is
+disabled:
 
-2. For context permission
- - fscrypt_has_permitted_context
- - fscrypt_inherit_context
+fs/crypto/crypto.c: In function 'fscrypt_zeroout_range':
+fs/crypto/crypto.c:308:9: error: implicit declaration of function 'bio_alloc' [-Werror=implicit-function-declaration]
 
-Signed-off-by: Michael Halcrow <mhalcrow@google.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Ildar Muslukhov <muslukhovi@gmail.com>
+This adds a Kconfig dependency that prevents FS_ENCRYPTION from being
+enabled without BLOCK."
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/crypto/policy.c       | 229 +++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fscrypto.h |  30 +++++++
- 2 files changed, 259 insertions(+)
- create mode 100644 fs/crypto/policy.c
+ fs/Kconfig         |  2 ++
+ fs/Makefile        |  1 +
+ fs/crypto/Kconfig  | 17 +++++++++++++++++
+ fs/crypto/Makefile |  2 ++
+ 4 files changed, 22 insertions(+)
+ create mode 100644 fs/crypto/Kconfig
+ create mode 100644 fs/crypto/Makefile
 
-diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 9adee0d..9d75767 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -84,6 +84,8 @@ config MANDATORY_FILE_LOCKING
+ 
+ 	  To the best of my knowledge this is dead code that no one cares about.
+ 
++source "fs/crypto/Kconfig"
++
+ source "fs/notify/Kconfig"
+ 
+ source "fs/quota/Kconfig"
+diff --git a/fs/Makefile b/fs/Makefile
+index 79f5225..47571e2 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_EVENTFD)		+= eventfd.o
+ obj-$(CONFIG_USERFAULTFD)	+= userfaultfd.o
+ obj-$(CONFIG_AIO)               += aio.o
+ obj-$(CONFIG_FS_DAX)		+= dax.o
++obj-y				+= crypto/
+ obj-$(CONFIG_FILE_LOCKING)      += locks.o
+ obj-$(CONFIG_COMPAT)		+= compat.o compat_ioctl.o
+ obj-$(CONFIG_BINFMT_AOUT)	+= binfmt_aout.o
+diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
 new file mode 100644
-index 0000000..0f9961e
+index 0000000..9bea124e
 --- /dev/null
-+++ b/fs/crypto/policy.c
-@@ -0,0 +1,229 @@
-+/*
-+ * Encryption policy functions for per-file encryption support.
-+ *
-+ * Copyright (C) 2015, Google, Inc.
-+ * Copyright (C) 2015, Motorola Mobility.
-+ *
-+ * Written by Michael Halcrow, 2015.
-+ * Modified by Jaegeuk Kim, 2015.
-+ */
-+
-+#include <linux/random.h>
-+#include <linux/string.h>
-+#include <linux/fscrypto.h>
-+
-+static int inode_has_encryption_context(struct inode *inode)
-+{
-+	if (!inode->i_sb->s_cop->get_context)
-+		return 0;
-+	return (inode->i_sb->s_cop->get_context(inode, NULL, 0L) > 0);
-+}
-+
-+/*
-+ * check whether the policy is consistent with the encryption context
-+ * for the inode
-+ */
-+static int is_encryption_context_consistent_with_policy(struct inode *inode,
-+				const struct fscrypt_policy *policy)
-+{
-+	struct fscrypt_context ctx;
-+	int res;
-+
-+	if (!inode->i_sb->s_cop->get_context)
-+		return 0;
-+
-+	res = inode->i_sb->s_cop->get_context(inode, &ctx, sizeof(ctx));
-+	if (res != sizeof(ctx))
-+		return 0;
-+
-+	return (memcmp(ctx.master_key_descriptor, policy->master_key_descriptor,
-+			FS_KEY_DESCRIPTOR_SIZE) == 0 &&
-+			(ctx.flags == policy->flags) &&
-+			(ctx.contents_encryption_mode ==
-+			 policy->contents_encryption_mode) &&
-+			(ctx.filenames_encryption_mode ==
-+			 policy->filenames_encryption_mode));
-+}
-+
-+static int create_encryption_context_from_policy(struct inode *inode,
-+				const struct fscrypt_policy *policy)
-+{
-+	struct fscrypt_context ctx;
-+	int res;
-+
-+	if (!inode->i_sb->s_cop->set_context)
-+		return -EOPNOTSUPP;
-+
-+	if (inode->i_sb->s_cop->prepare_context) {
-+		res = inode->i_sb->s_cop->prepare_context(inode);
-+		if (res)
-+			return res;
-+	}
-+
-+	ctx.format = FS_ENCRYPTION_CONTEXT_FORMAT_V1;
-+	memcpy(ctx.master_key_descriptor, policy->master_key_descriptor,
-+					FS_KEY_DESCRIPTOR_SIZE);
-+
-+	if (!fscrypt_valid_contents_enc_mode(
-+				policy->contents_encryption_mode)) {
-+		printk(KERN_WARNING
-+		       "%s: Invalid contents encryption mode %d\n", __func__,
-+			policy->contents_encryption_mode);
-+		return -EINVAL;
-+	}
-+
-+	if (!fscrypt_valid_filenames_enc_mode(
-+				policy->filenames_encryption_mode)) {
-+		printk(KERN_WARNING
-+			"%s: Invalid filenames encryption mode %d\n", __func__,
-+			policy->filenames_encryption_mode);
-+		return -EINVAL;
-+	}
-+
-+	if (policy->flags & ~FS_POLICY_FLAGS_VALID)
-+		return -EINVAL;
-+
-+	ctx.contents_encryption_mode = policy->contents_encryption_mode;
-+	ctx.filenames_encryption_mode = policy->filenames_encryption_mode;
-+	ctx.flags = policy->flags;
-+	BUILD_BUG_ON(sizeof(ctx.nonce) != FS_KEY_DERIVATION_NONCE_SIZE);
-+	get_random_bytes(ctx.nonce, FS_KEY_DERIVATION_NONCE_SIZE);
-+
-+	return inode->i_sb->s_cop->set_context(inode, &ctx, sizeof(ctx), NULL);
-+}
-+
-+int fscrypt_process_policy(struct inode *inode,
-+				const struct fscrypt_policy *policy)
-+{
-+	if (policy->version != 0)
-+		return -EINVAL;
-+
-+	if (!inode_has_encryption_context(inode)) {
-+		if (!inode->i_sb->s_cop->empty_dir)
-+			return -EOPNOTSUPP;
-+		if (!inode->i_sb->s_cop->empty_dir(inode))
-+			return -ENOTEMPTY;
-+		return create_encryption_context_from_policy(inode, policy);
-+	}
-+
-+	if (is_encryption_context_consistent_with_policy(inode, policy))
-+		return 0;
-+
-+	printk(KERN_WARNING "%s: Policy inconsistent with encryption context\n",
-+	       __func__);
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL(fscrypt_process_policy);
-+
-+int fscrypt_get_policy(struct inode *inode, struct fscrypt_policy *policy)
-+{
-+	struct fscrypt_context ctx;
-+	int res;
-+
-+	if (!inode->i_sb->s_cop->get_context ||
-+			!inode->i_sb->s_cop->is_encrypted(inode))
-+		return -ENODATA;
-+
-+	res = inode->i_sb->s_cop->get_context(inode, &ctx, sizeof(ctx));
-+	if (res != sizeof(ctx))
-+		return -ENODATA;
-+	if (ctx.format != FS_ENCRYPTION_CONTEXT_FORMAT_V1)
-+		return -EINVAL;
-+
-+	policy->version = 0;
-+	policy->contents_encryption_mode = ctx.contents_encryption_mode;
-+	policy->filenames_encryption_mode = ctx.filenames_encryption_mode;
-+	policy->flags = ctx.flags;
-+	memcpy(&policy->master_key_descriptor, ctx.master_key_descriptor,
-+				FS_KEY_DESCRIPTOR_SIZE);
-+	return 0;
-+}
-+EXPORT_SYMBOL(fscrypt_get_policy);
-+
-+int fscrypt_has_permitted_context(struct inode *parent, struct inode *child)
-+{
-+	struct fscrypt_info *parent_ci, *child_ci;
-+	int res;
-+
-+	if ((parent == NULL) || (child == NULL)) {
-+		printk(KERN_ERR	"parent %p child %p\n", parent, child);
-+		BUG_ON(1);
-+	}
-+
-+	/* no restrictions if the parent directory is not encrypted */
-+	if (!parent->i_sb->s_cop->is_encrypted(parent))
-+		return 1;
-+	/* if the child directory is not encrypted, this is always a problem */
-+	if (!parent->i_sb->s_cop->is_encrypted(child))
-+		return 0;
-+	res = fscrypt_get_encryption_info(parent);
-+	if (res)
-+		return 0;
-+	res = fscrypt_get_encryption_info(child);
-+	if (res)
-+		return 0;
-+	parent_ci = parent->i_crypt_info;
-+	child_ci = child->i_crypt_info;
-+	if (!parent_ci && !child_ci)
-+		return 1;
-+	if (!parent_ci || !child_ci)
-+		return 0;
-+
-+	return (memcmp(parent_ci->ci_master_key,
-+			child_ci->ci_master_key,
-+			FS_KEY_DESCRIPTOR_SIZE) == 0 &&
-+		(parent_ci->ci_data_mode == child_ci->ci_data_mode) &&
-+		(parent_ci->ci_filename_mode == child_ci->ci_filename_mode) &&
-+		(parent_ci->ci_flags == child_ci->ci_flags));
-+}
-+EXPORT_SYMBOL(fscrypt_has_permitted_context);
-+
-+/**
-+ * fscrypt_inherit_context() - Sets a child context from its parent
-+ * @parent: Parent inode from which the context is inherited.
-+ * @child:  Child inode that inherits the context from @parent.
-+ * @fs_data:  private data given by FS.
-+ * @preload:  preload child i_crypt_info
-+ *
-+ * Return: Zero on success, non-zero otherwise
-+ */
-+int fscrypt_inherit_context(struct inode *parent, struct inode *child,
-+						void *fs_data, bool preload)
-+{
-+	struct fscrypt_context ctx;
-+	struct fscrypt_info *ci;
-+	int res;
-+
-+	if (!parent->i_sb->s_cop->set_context)
-+		return -EOPNOTSUPP;
-+
-+	res = fscrypt_get_encryption_info(parent);
-+	if (res < 0)
-+		return res;
-+
-+	ci = parent->i_crypt_info;
-+	if (ci == NULL)
-+		return -ENOKEY;
-+
-+	ctx.format = FS_ENCRYPTION_CONTEXT_FORMAT_V1;
-+	if (fscrypt_dummy_context_enabled(parent)) {
-+		ctx.contents_encryption_mode = FS_ENCRYPTION_MODE_AES_256_XTS;
-+		ctx.filenames_encryption_mode = FS_ENCRYPTION_MODE_AES_256_CTS;
-+		ctx.flags = 0;
-+		memset(ctx.master_key_descriptor, 0x42, FS_KEY_DESCRIPTOR_SIZE);
-+		res = 0;
-+	} else {
-+		ctx.contents_encryption_mode = ci->ci_data_mode;
-+		ctx.filenames_encryption_mode = ci->ci_filename_mode;
-+		ctx.flags = ci->ci_flags;
-+		memcpy(ctx.master_key_descriptor, ci->ci_master_key,
-+				FS_KEY_DESCRIPTOR_SIZE);
-+	}
-+	get_random_bytes(ctx.nonce, FS_KEY_DERIVATION_NONCE_SIZE);
-+	res = parent->i_sb->s_cop->set_context(child, &ctx,
-+						sizeof(ctx), fs_data);
-+	if (res)
-+		return res;
-+	return preload ? fscrypt_get_encryption_info(child): 0;
-+}
-+EXPORT_SYMBOL(fscrypt_inherit_context);
-diff --git a/include/linux/fscrypto.h b/include/linux/fscrypto.h
-index 09fbcfb..5b18b89 100644
---- a/include/linux/fscrypto.h
-+++ b/include/linux/fscrypto.h
-@@ -251,6 +251,12 @@ void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *, struct bio *);
- void fscrypt_pullback_bio_page(struct page **, bool);
- void fscrypt_restore_control_page(struct page *);
- int fscrypt_zeroout_range(struct inode *, pgoff_t, sector_t, unsigned int);
-+
-+/* policy.c */
-+int fscrypt_process_policy(struct inode *, const struct fscrypt_policy *);
-+int fscrypt_get_policy(struct inode *, struct fscrypt_policy *);
-+int fscrypt_has_permitted_context(struct inode *, struct inode *);
-+int fscrypt_inherit_context(struct inode *, struct inode *, void *, bool);
- #else
- /* crypto.c */
- static inline struct fscrypt_ctx *fscrypt_get_ctx(struct inode *i)
-@@ -294,5 +300,29 @@ static inline int fscrypt_zeroout_range(struct inode *i, pgoff_t p,
- {
- 	return -EOPNOTSUPP;
- }
-+
-+/* policy.c */
-+static inline int fscrypt_process_policy(struct inode *i,
-+				const struct fscrypt_policy *p)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline int fscrypt_get_policy(struct inode *i, struct fscrypt_policy *p)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline int fscrypt_has_permitted_context(struct inode *p,
-+				struct inode *i)
-+{
-+	return 0;
-+}
-+
-+static inline int fscrypt_inherit_context(struct inode *p, struct inode *i,
-+				void *v, bool b)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif
- #endif	/* _LINUX_FSCRYPTO_H */
++++ b/fs/crypto/Kconfig
+@@ -0,0 +1,17 @@
++config FS_ENCRYPTION
++	bool "FS Encryption (Per-file encryption)"
++	depends on BLOCK
++	select CRYPTO_AES
++	select CRYPTO_CBC
++	select CRYPTO_ECB
++	select CRYPTO_XTS
++	select CRYPTO_CTS
++	select CRYPTO_CTR
++	select CRYPTO_SHA256
++	select KEYS
++	select ENCRYPTED_KEYS
++	help
++	  Enable encryption of files and directories.  This
++	  feature is similar to ecryptfs, but it is more memory
++	  efficient since it avoids caching the encrypted and
++	  decrypted pages in the page cache.
+diff --git a/fs/crypto/Makefile b/fs/crypto/Makefile
+new file mode 100644
+index 0000000..f9f68cd
+--- /dev/null
++++ b/fs/crypto/Makefile
+@@ -0,0 +1,2 @@
++obj-y += fname.o
++obj-$(CONFIG_FS_ENCRYPTION)	+= crypto.o policy.o keyinfo.o
 -- 
 2.6.3
+
+
+------------------------------------------------------------------------------
+Site24x7 APM Insight: Get Deep Visibility into Application Performance
+APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+Monitor end-to-end web transactions and take corrective actions now
+Troubleshoot faster and improve end-user experience. Signup Now!
+http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
