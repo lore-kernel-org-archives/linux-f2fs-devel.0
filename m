@@ -1,23 +1,23 @@
-From: Liu Xue <liuxueliu.liu@huawei.com>
-Subject: [RFC PATCH] fsck.f2fs: check valid values for dot
-	dentries
-Date: Fri, 26 Feb 2016 06:42:13 +0000
-Message-ID: <1456468933-21881-1-git-send-email-liuxueliu.liu@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: avoid hungtask problem caused by
+	f2fs_balance_fs
+Date: Fri, 26 Feb 2016 15:13:39 +0800
+Message-ID: <1456470819-30481-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <liuxueliu.liu@huawei.com>) id 1aZC78-0001DF-6W
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1aZCZ5-0001L2-Nm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 06:42:58 +0000
-Received: from [119.145.14.65] (helo=szxga02-in.huawei.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aZC73-0004En-7T
+	Fri, 26 Feb 2016 07:11:51 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aZCYy-0007sg-VS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 06:42:58 +0000
+	Fri, 26 Feb 2016 07:11:51 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,145 +27,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+To: chao2.yu@samsung.com, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Check valid values for '.' and '..', such as ino, hash_code, and the
-number of dot or dotdot in the directory.
+I came across a hungtask problem as below:
 
-Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
-Signed-off-by: Yong Sheng <shengyong1@huawei.com>
+INFO: task 962 blocked for more than 120 s.
+
+Call trace:
+[<ffffffc000085a24>] __switch_to+0x74/0x8c
+[<ffffffc000dd1434>] __schedule+0x3b4/0x8f4
+[<ffffffc000dd1998>] schedule+0x24/0x68
+[<ffffffc000dd1e80>] schedule_preempt_disabled+0x10/0x24
+[<ffffffc000dd04b4>] __mutex_lock_slowpath+0x154/0x26c
+[<ffffffc000dd0610>] mutex_lock+0x44/0x64
+[<ffffffc0003471d0>] f2fs_balance_fs+0x78/0x94
+[<ffffffc00032ca00>] f2fs_create+0x30/0x1d4
+[<ffffffc0001a5e40>] vfs_create+0xc8/0xf8
+[<ffffffc0001a7a34>] do_last.isra.43+0x608/0xc44
+[<ffffffc0001a8118>] path_openat.isra.44+0xa8/0x4b0
+[<ffffffc0001a92dc>] do_filp_open+0x2c/0x98
+[<ffffffc000198da0>] do_sys_open+0x104/0x1c8
+[<ffffffc000198e98>] SyS_openat+0xc/0x18
+
+Besides, there are also lots of other operations were blocked
+by gc_mutex like here.
+
+The comments said we should do GC or end up with checkpoint, if there
+are so many dirty dir/node pages without enough free segments. But should
+all theads wait for gc if the condition is not satisfied? Maybe if someone
+is gcing, they can by pass it.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fsck/fsck.c | 78 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- fsck/fsck.h |  2 ++
- 2 files changed, 79 insertions(+), 1 deletion(-)
+ fs/f2fs/segment.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 809c78d..3e37a58 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -553,6 +553,8 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	enum NODE_TYPE ntype;
- 	u32 i_links = le32_to_cpu(node_blk->i.i_links);
- 	u64 i_blocks = le64_to_cpu(node_blk->i.i_blocks);
-+	child.p_ino = nid;
-+	child.pp_ino = le32_to_cpu(node_blk->i.i_pino);
- 	struct extent_info i_extent;
- 	unsigned int idx = 0;
- 	int need_fix = 0;
-@@ -787,6 +789,8 @@ int fsck_chk_dnode_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *inode,
- {
- 	int idx, ret;
- 	int need_fix = 0;
-+	child->p_ino = nid;
-+	child->pp_ino = le32_to_cpu(inode->i_pino);
- 
- 	for (idx = 0; idx < ADDRS_PER_BLOCK; idx++) {
- 		block_t blkaddr = le32_to_cpu(node_blk->dn.addr[idx]);
-@@ -979,6 +983,60 @@ static int f2fs_check_hash_code(struct f2fs_dir_entry *dentry,
- 	return 0;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 6f16b39..48ce7ab 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -345,8 +345,8 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+ 	 * We should do GC or end up with checkpoint, if there are so many dirty
+ 	 * dir/node pages without enough free segments.
+ 	 */
+-	if (has_not_enough_free_secs(sbi, 0)) {
+-		mutex_lock(&sbi->gc_mutex);
++	if (has_not_enough_free_secs(sbi, 0) &&
++					mutex_trylock(&sbi->gc_mutex)) {
+ 		f2fs_gc(sbi, false);
+ 	}
  }
- 
-+static int __chk_dots_dentries(struct f2fs_sb_info *sbi,
-+			       struct f2fs_dir_entry *dentry,
-+			       struct child_info *child,
-+			       u8 *name, int len,
-+			       __u8 (*filename)[F2FS_SLOT_LEN],
-+			       int encrypted)
-+{
-+	int fixed = 0;
-+
-+	if ((name[0] == '.' && len == 1)) {
-+		if (le32_to_cpu(dentry->ino) != child->p_ino) {
-+			ASSERT_MSG("Bad inode number[0x%x] for '.', parent_ino is [0x%x]\n",
-+				le32_to_cpu(dentry->ino), child->p_ino);
-+			dentry->ino = cpu_to_le32(child->p_ino);
-+			fixed = 1;
-+		}
-+	}
-+
-+	if (name[0] == '.' && name[1] == '.' && len == 2) {
-+		if (child->p_ino == F2FS_ROOT_INO(sbi)) {
-+			if (le32_to_cpu(dentry->ino) != F2FS_ROOT_INO(sbi)) {
-+				ASSERT_MSG("Bad inode number[0x%x] for '..'\n",
-+					le32_to_cpu(dentry->ino));
-+				dentry->ino = cpu_to_le32(F2FS_ROOT_INO(sbi));
-+				fixed = 1;
-+			}
-+		} else if (le32_to_cpu(dentry->ino) != child->pp_ino) {
-+			ASSERT_MSG("Bad inode number[0x%x] for '..', parent parent ino is [0x%x]\n",
-+				le32_to_cpu(dentry->ino), child->pp_ino);
-+			dentry->ino = cpu_to_le32(child->pp_ino);
-+			fixed = 1;
-+		}
-+	}
-+
-+	if (f2fs_check_hash_code(dentry, name, len, encrypted))
-+		fixed = 1;
-+
-+	if (name[len] != '\0') {
-+		ASSERT_MSG("'.' is not NULL terminated\n");
-+		name[len] = '\0';
-+		memcpy(*filename, name, len);
-+		fixed = 1;
-+	}
-+	return fixed;
-+}
-+
-+static void nullify_dentry(struct f2fs_dir_entry *dentry, int offs,
-+			   __u8 (*filename)[F2FS_SLOT_LEN], u8 **bitmap)
-+{
-+	memset(dentry, 0, sizeof(struct f2fs_dir_entry));
-+	test_and_clear_bit_le(offs, *bitmap);
-+	memset(*filename, 0, F2FS_SLOT_LEN);
-+}
-+
- static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 			u8 *bitmap, struct f2fs_dir_entry *dentry,
- 			__u8 (*filenames)[F2FS_SLOT_LEN],
-@@ -1068,9 +1126,27 @@ static int __chk_dentries(struct f2fs_sb_info *sbi, struct child_info *child,
- 			if ((name[0] == '.' && name_len == 1) ||
- 				(name[0] == '.' && name[1] == '.' &&
- 							name_len == 2)) {
-+				ret = __chk_dots_dentries(sbi, &dentry[i],
-+					child, name, name_len, &filenames[i],
-+					encrypted);
-+				switch (ret) {
-+				case 1:
-+					fixed = 1;
-+				case 0:
-+					child->dots++;
-+					break;
-+				}
-+
-+				if (child->dots > 2) {
-+					ASSERT_MSG("More than one '.' or '..', should delete the extra one\n");
-+					nullify_dentry(&dentry[i], i,
-+						       &filenames[i], &bitmap);
-+					child->dots--;
-+					fixed = 1;
-+				}
-+
- 				i++;
- 				free(name);
--				child->dots++;
- 				continue;
- 			}
- 		}
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 2ac3ee2..5d06b2f 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -30,6 +30,8 @@ struct child_info {
- 	u32 links;
- 	u32 files;
- 	u8 dots;
-+	u32 p_ino;		/*parent ino*/
-+	u32 pp_ino;		/*parent parent ino*/
- };
- 
- struct extent_info {
 -- 
-1.8.5.2
+1.9.1
 
 
 ------------------------------------------------------------------------------
