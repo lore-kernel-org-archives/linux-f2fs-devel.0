@@ -1,23 +1,32 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] f2fs: avoid hungtask problem caused by
-	f2fs_balance_fs
-Date: Fri, 26 Feb 2016 15:13:39 +0800
-Message-ID: <1456470819-30481-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: Re: [RFC PATCH] f2fs: recovery missing dot dentries in
+	root	directory
+Date: Fri, 26 Feb 2016 19:37:36 +0800
+Message-ID: <000701d1708a$2eee4520$8ccacf60$@samsung.com>
+References: <1456468763-21662-1-git-send-email-liuxueliu.liu@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1aZCZ5-0001L2-Nm
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1aZGj5-00010J-Gm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 07:11:51 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aZCYy-0007sg-VS
+	Fri, 26 Feb 2016 11:38:27 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aZGj2-0004bw-Vj
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 07:11:51 +0000
+	Fri, 26 Feb 2016 11:38:27 +0000
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O3500L5YKBFLZC0@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 26 Feb 2016 20:38:16 +0900 (KST)
+In-reply-to: <1456468763-21662-1-git-send-email-liuxueliu.liu@huawei.com>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,58 +36,22 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: chao2.yu@samsung.com, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: 'Liu Xue' <liuxueliu.liu@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
 
-I came across a hungtask problem as below:
+> -----Original Message-----
+> From: Liu Xue [mailto:liuxueliu.liu@huawei.com]
+> Sent: Friday, February 26, 2016 2:39 PM
+> To: linux-f2fs-devel@lists.sourceforge.net; jaegeuk@kernel.org
+> Subject: [f2fs-dev] [RFC PATCH] f2fs: recovery missing dot dentries in root directory
+> 
+> If f2fs was corrupted with missing dot dentries in root dirctory,
+> it needs to recover them after fsck.f2fs set F2FS_INLINE_DOTS flag
+> in directory inode when fsck.f2fs detects missing dot dentries.
+> 
+> Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
+> Signed-off-by: Yong Sheng <shengyong1@huawei.com>
 
-INFO: task 962 blocked for more than 120 s.
-
-Call trace:
-[<ffffffc000085a24>] __switch_to+0x74/0x8c
-[<ffffffc000dd1434>] __schedule+0x3b4/0x8f4
-[<ffffffc000dd1998>] schedule+0x24/0x68
-[<ffffffc000dd1e80>] schedule_preempt_disabled+0x10/0x24
-[<ffffffc000dd04b4>] __mutex_lock_slowpath+0x154/0x26c
-[<ffffffc000dd0610>] mutex_lock+0x44/0x64
-[<ffffffc0003471d0>] f2fs_balance_fs+0x78/0x94
-[<ffffffc00032ca00>] f2fs_create+0x30/0x1d4
-[<ffffffc0001a5e40>] vfs_create+0xc8/0xf8
-[<ffffffc0001a7a34>] do_last.isra.43+0x608/0xc44
-[<ffffffc0001a8118>] path_openat.isra.44+0xa8/0x4b0
-[<ffffffc0001a92dc>] do_filp_open+0x2c/0x98
-[<ffffffc000198da0>] do_sys_open+0x104/0x1c8
-[<ffffffc000198e98>] SyS_openat+0xc/0x18
-
-Besides, there are also lots of other operations were blocked
-by gc_mutex like here.
-
-The comments said we should do GC or end up with checkpoint, if there
-are so many dirty dir/node pages without enough free segments. But should
-all theads wait for gc if the condition is not satisfied? Maybe if someone
-is gcing, they can by pass it.
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/segment.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 6f16b39..48ce7ab 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -345,8 +345,8 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- 	 * We should do GC or end up with checkpoint, if there are so many dirty
- 	 * dir/node pages without enough free segments.
- 	 */
--	if (has_not_enough_free_secs(sbi, 0)) {
--		mutex_lock(&sbi->gc_mutex);
-+	if (has_not_enough_free_secs(sbi, 0) &&
-+					mutex_trylock(&sbi->gc_mutex)) {
- 		f2fs_gc(sbi, false);
- 	}
- }
--- 
-1.9.1
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
 
 
 ------------------------------------------------------------------------------
