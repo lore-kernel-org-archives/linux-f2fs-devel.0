@@ -1,32 +1,22 @@
-From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [RFC PATCH] fsck.f2fs: check valid values for
-	dot	dentries
-Date: Fri, 26 Feb 2016 19:38:40 +0800
-Message-ID: <000801d1708a$543285d0$fc979170$@samsung.com>
-References: <1456468933-21881-1-git-send-email-liuxueliu.liu@huawei.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: [RFC PATCH] fsck.f2fs: calculate the total size correctly
+Date: Fri, 26 Feb 2016 20:05:27 +0800
+Message-ID: <1456488327-20407-1-git-send-email-zhengjunling@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aZGk4-0000qU-3B
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zhengjunling@huawei.com>) id 1aZHKg-0004Lx-5u
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 11:39:28 +0000
-Received: from mailout2.samsung.com ([203.254.224.25])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aZGk2-000085-MH
+	Fri, 26 Feb 2016 12:17:18 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1aZHKW-00054P-1s
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 11:39:28 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout2.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O3501G8YKDI4ZB0@mailout2.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 20:39:19 +0900 (KST)
-In-reply-to: <1456468933-21881-1-git-send-email-liuxueliu.liu@huawei.com>
-Content-language: zh-cn
+	Fri, 26 Feb 2016 12:17:18 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,21 +26,31 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Liu Xue' <liuxueliu.liu@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, chao2.yu@samsung.com
 
-> -----Original Message-----
-> From: Liu Xue [mailto:liuxueliu.liu@huawei.com]
-> Sent: Friday, February 26, 2016 2:42 PM
-> To: linux-f2fs-devel@lists.sourceforge.net; jaegeuk@kernel.org
-> Subject: [f2fs-dev] [RFC PATCH] fsck.f2fs: check valid values for dot dentries
-> 
-> Check valid values for '.' and '..', such as ino, hash_code, and the
-> number of dot or dotdot in the directory.
-> 
-> Signed-off-by: Xue Liu <liuxueliu.liu@huawei.com>
-> Signed-off-by: Yong Sheng <shengyong1@huawei.com>
+Correctly calculate the total FS size in init_sb_info, for sector
+size may not be 512 bytes.
 
-Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+---
+ fsck/mount.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 4c807f9..3adaa8a 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -367,7 +367,7 @@ int init_sb_info(struct f2fs_sb_info *sbi)
+ 
+ 	total_sectors = get_sb(block_count) << sbi->log_sectors_per_block;
+ 	MSG(0, "Info: total FS sectors = %"PRIu64" (%"PRIu64" MB)\n",
+-				total_sectors, total_sectors >> 11);
++				total_sectors, total_sectors * config.sector_size >> 20);
+ 	return 0;
+ }
+ 
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
