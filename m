@@ -1,17 +1,8 @@
 From: Chao Yu <chao2.yu@samsung.com>
-Subject: Re: [PATCH] f2fs: avoid hungtask problem caused by
- losing wake_up
-Date: Fri, 26 Feb 2016 09:15:59 +0800
-Message-ID: <016a01d17033$63d10220$2b730660$@samsung.com>
-References: <1456200476-9811-1-git-send-email-heyunlei@huawei.com>
-	<009501d16dfd$52a518c0$f7ef4a40$@samsung.com>
-	<56CC0410.50103@huawei.com>
-	<009601d16e1a$e198af20$a4ca0d60$@samsung.com>
-	<56CC442C.1050202@huawei.com>
-	<00c401d16eb6$14754cf0$3d5fe6d0$@samsung.com>
-	<56CEAEE7.2060501@huawei.com>
-	<013101d16fb0$ceb54b10$6c1fe130$@samsung.com>
-	<20160225190310.GB38418@jaegeuk.gateway>
+Subject: [PATCH v2 1/2] f2fs: fix to avoid deadlock when merging
+	inline data
+Date: Fri, 26 Feb 2016 09:33:04 +0800
+Message-ID: <016b01d17035$cc056be0$641043a0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -19,21 +10,20 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao2.yu@samsung.com>) id 1aZ71p-0005tX-7Z
+	(envelope-from <chao2.yu@samsung.com>) id 1aZ7IS-0006MU-M4
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 01:17:09 +0000
-Received: from mailout3.samsung.com ([203.254.224.33])
+	Fri, 26 Feb 2016 01:34:20 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1aZ71l-0006QC-Cu
+	(Exim 4.76) id 1aZ7IQ-0006u3-SS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 01:17:09 +0000
-Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
-	by mailout3.samsung.com
+	Fri, 26 Feb 2016 01:34:20 +0000
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout2.samsung.com
 	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0O3401656RK54D00@mailout3.samsung.com> for
+	2014)) with ESMTP id <0O3401QGUSC5DM00@mailout2.samsung.com> for
 	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 10:16:57 +0900 (KST)
-In-reply-to: <20160225190310.GB38418@jaegeuk.gateway>
+	Fri, 26 Feb 2016 10:34:11 +0900 (KST)
 Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -44,107 +34,113 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: 'Biao He' <hebiao6@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+When testing with fsstress, kworker and user threads were both blocked:
 
-> -----Original Message-----
-> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
-> Sent: Friday, February 26, 2016 3:03 AM
-> To: Chao Yu
-> Cc: 'He YunLei'; linux-f2fs-devel@lists.sourceforge.net; bintian.wang@huawei.com; 'Biao He'
-> Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
-> 
-> Hi all,
-> 
-> On Thu, Feb 25, 2016 at 05:41:26PM +0800, Chao Yu wrote:
-> > Hi Yunlei,
-> >
-> > > -----Original Message-----
-> > > From: He YunLei [mailto:heyunlei@huawei.com]
-> > > Sent: Thursday, February 25, 2016 3:36 PM
-> > > To: Chao Yu; jaegeuk@kernel.org; linux-f2fs-devel@lists.sourceforge.net
-> > > Cc: bintian.wang@huawei.com; 'Biao He'
-> > > Subject: Re: [f2fs-dev] [PATCH] f2fs: avoid hungtask problem caused by losing wake_up
-> > >
-> > > On 2016/2/24 11:46, Chao Yu wrote:
-> > > >>> > >
-> > > >>> > >But I doubt more that the reason we are stuck is there are remained pages
-> > > >>> > >cached in bio buffer without being submitted. To make sure, maybe in
-> > > >>> > >wait_on_all_pages_writeback we could add print info to see whether
-> > > >>> > >sbi->write_io[].bio is valid or not.
-> > > >>> > >
-> > > >> >We use tool dump f2fs_sb_info information and find that:
-> > > >> >
-> > > >> >	write_io[DATA].bio = 0;
-> > > >> >	write_io[NODE].bio = 0;
-> > > >> >	write_io[META].bio = 0;
-> > > >> >
-> > > >> >	nr_pages[F2FS_WRITEBACK] = 0;
-> > > >> >	nr_pages[F2FS_DIRTY_DENTS] = 0;
-> > > >> >	nr_pages[F2FS_DIRTY_NODES] = 13;
-> > > > Weird, dirty nodes count should be 0.
-> > > >
-> > > > Thanks
-> > > >
-> > > Hi Chao,
-> > >
-> > > In our code,
-> > >
-> > > 1524 static int f2fs_write_end(struct file *file,
-> > > 1525                         struct address_space *mapping,
-> > > 1526                         loff_t pos, unsigned len, unsigned copied,
-> > > 1527                         struct page *page, void *fsdata)
-> > > 1528 {
-> > > 1529         struct inode *inode = page->mapping->host;
-> > > 1530
-> > > 1531         trace_f2fs_write_end(inode, pos, len, copied);
-> > > 1532
-> > > 1533         set_page_dirty(page);
-> > > 1534
-> > > 1535         if (pos + copied > i_size_read(inode)) {
-> > > 1536                 i_size_write(inode, pos + copied);
-> > > 1537                 mark_inode_dirty(inode);
-> > > 1538                 update_inode_page(inode);
-> > > 1539         }
-> > > 1540
-> > > 1541         f2fs_put_page(page, 1);
-> > > 1542         return copied;
-> > > 1543 }
-> > >
-> > > Here update_inode_page(inode) has been removed by Kim, maybe here could
-> > > result dirty node page is not zero.
-> >
-> > As your hint, I found an issue in f2fs_write_inode which may be related to
-> > our problem. I wrote a patch for fixing.
-> 
-> I just remember out that this has no problem, since we only need to disallow
-> writing node pages during checkpoint.
-> 
-> IOW, write_inode or any other functions can update node pages during checkpoint,
-> and then f2fs will flush them after checkpoint.
+INFO: task kworker/u16:1:16580 blocked for more than 120 seconds.
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+kworker/u16:1   D ffff8803f2595390     0 16580      2 0x00000000
+Workqueue: writeback bdi_writeback_workfn (flush-251:0)
+ ffff8802730e5760 0000000000000046 ffff880274729fc0 0000000000012440
+ ffff8802730e5fd8 ffff8802730e4010 0000000000012440 0000000000012440
+ ffff8802730e5fd8 0000000000012440 ffff880274729fc0 ffff88026eb50000
+Call Trace:
+ [<ffffffff816fe9d9>] schedule+0x29/0x70
+ [<ffffffff816ff895>] rwsem_down_read_failed+0xa5/0xf9
+ [<ffffffff81378584>] call_rwsem_down_read_failed+0x14/0x30
+ [<ffffffffa0694feb>] f2fs_write_data_page+0x31b/0x420 [f2fs]
+ [<ffffffffa0690f1a>] __f2fs_writepage+0x1a/0x50 [f2fs]
+ [<ffffffffa06922a0>] f2fs_write_data_pages+0xe0/0x290 [f2fs]
+ [<ffffffff811473b3>] do_writepages+0x23/0x40
+ [<ffffffff811cc3ee>] __writeback_single_inode+0x4e/0x250
+ [<ffffffff811cd4f1>] writeback_sb_inodes+0x2c1/0x470
+ [<ffffffff811cd73e>] __writeback_inodes_wb+0x9e/0xd0
+ [<ffffffff811cda0b>] wb_writeback+0x1fb/0x2d0
+ [<ffffffff811cdb7c>] wb_do_writeback+0x9c/0x220
+ [<ffffffff811ce232>] bdi_writeback_workfn+0x72/0x1c0
+ [<ffffffff8106b74e>] process_one_work+0x1de/0x5b0
+ [<ffffffff8106e78f>] worker_thread+0x11f/0x3e0
+ [<ffffffff810750ce>] kthread+0xde/0xf0
+ [<ffffffff817093f8>] ret_from_fork+0x58/0x90
 
-Sounds reasonable to me. :)
+fsstress thread stack:
+ [<ffffffff81139f0e>] sleep_on_page+0xe/0x20
+ [<ffffffff81139ef7>] __lock_page+0x67/0x70
+ [<ffffffff8113b100>] find_lock_page+0x50/0x80
+ [<ffffffff8113b24f>] find_or_create_page+0x3f/0xb0
+ [<ffffffffa06983a9>] sync_node_pages+0x259/0x810 [f2fs]
+ [<ffffffffa068d874>] write_checkpoint+0x1a4/0xce0 [f2fs]
+ [<ffffffffa0686b0c>] f2fs_sync_fs+0x7c/0xd0 [f2fs]
+ [<ffffffffa067c813>] f2fs_sync_file+0x143/0x5f0 [f2fs]
+ [<ffffffff811d301b>] vfs_fsync_range+0x2b/0x40
+ [<ffffffff811d304c>] vfs_fsync+0x1c/0x20
+ [<ffffffff811d3291>] do_fsync+0x41/0x70
+ [<ffffffff811d32d3>] SyS_fdatasync+0x13/0x20
+ [<ffffffff817094a2>] system_call_fastpath+0x16/0x1b
+ [<ffffffffffffffff>] 0xffffffffffffffff
 
-Thanks,
+The reason of this issue is:
+CPU0:					CPU1:
+ - f2fs_write_data_pages
+					 - f2fs_sync_fs
+					  - write_checkpoint
+					   - block_operations
+					    - f2fs_lock_all
+					     - down_write(sbi->cp_rwsem)
+  - lock_page(page)
+  - f2fs_write_data_page
+					    - sync_node_pages
+					     - flush_inline_data
+					      - pagecache_get_page(page, GFP_LOCK)
+   - f2fs_lock_op
+    - down_read(sbi->cp_rwsem)
 
-> 
-> Thanks,
-> 
-> >
-> > Thanks,
-> >
-> > >
-> > > Thanks,
-> > >
-> > > >> >	nr_pages[F2FS_DIRTY_META] = 0;
-> > > >> >	nr_pages[F2FS_INMEM_PAGES] = 0;
-> > > >> >
-> > > >> >So we believe that the block device is ok!
-> > > >> >
-> > > >> >Thanks,
-> >
+This patch alters to use trylock_page in flush_inline_data to fix this ABBA
+deadlock issue.
+
+Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+---
+v2:
+ - fix the wrong error handling.
+
+ fs/f2fs/node.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 7b613dd..d714b60 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1203,10 +1203,13 @@ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
+ 	if (!inode)
+ 		return;
+ 
+-	page = pagecache_get_page(inode->i_mapping, 0, FGP_LOCK|FGP_NOWAIT, 0);
++	page = pagecache_get_page(inode->i_mapping, 0, FGP_NOWAIT, 0);
+ 	if (!page)
+ 		goto iput_out;
+ 
++	if (!trylock_page(page))
++		goto release_out;
++
+ 	if (!PageUptodate(page))
+ 		goto page_out;
+ 
+@@ -1221,7 +1224,9 @@ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
+ 	else
+ 		set_page_dirty(page);
+ page_out:
+-	f2fs_put_page(page, 1);
++	unlock_page(page);
++release_out:
++	f2fs_put_page(page, 0);
+ iput_out:
+ 	iput(inode);
+ }
+-- 
+2.7.0
+
 
 
 ------------------------------------------------------------------------------
