@@ -1,100 +1,153 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: avoid hungtask problem caused by
- f2fs_balance_fs
-Date: Fri, 26 Feb 2016 23:54:02 +0800
-Message-ID: <56D0751A.8090402@kernel.org>
-References: <1456470819-30481-1-git-send-email-heyunlei@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs crypto: fix incorrect positioning for GCing
+ encrypted data page
+Date: Fri, 26 Feb 2016 11:50:44 -0800
+Message-ID: <20160226195044.GA54334@jaegeuk.gateway>
+References: <009801d16e20$08659960$1930cc20$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1aZKil-0003z2-Sv
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 15:54:23 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aZKik-0003uJ-1G
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Feb 2016 15:54:23 +0000
-In-Reply-To: <1456470819-30481-1-git-send-email-heyunlei@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, chao2.yu@samsung.com, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <009801d16e20$08659960$1930cc20$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao2.yu@samsung.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yunlei,
+Hi Chao,
 
-On 2016/2/26 15:13, Yunlei He wrote:
-> I came across a hungtask problem as below:
+On Tue, Feb 23, 2016 at 05:52:43PM +0800, Chao Yu wrote:
+> For now, flow of GCing an encrypted data page:
+> 1) try to grab meta page in meta inode's mapping with index of old block
+> address of that data page
+> 2) load data of ciphertext into meta page
+> 3) allocate new block address
+> 4) write the meta page into new block address
+> 5) update block address pointer in direct node page.
 > 
-> INFO: task 962 blocked for more than 120 s.
+> Other reader/writer will use f2fs_wait_on_encrypted_page_writeback to
+> check and wait on GCed encrypted data cached in meta page writebacked
+> in order to avoid inconsistence among data page cache, meta page cache
+> and data on-disk when updating.
 > 
-> Call trace:
-> [<ffffffc000085a24>] __switch_to+0x74/0x8c
-> [<ffffffc000dd1434>] __schedule+0x3b4/0x8f4
-> [<ffffffc000dd1998>] schedule+0x24/0x68
-> [<ffffffc000dd1e80>] schedule_preempt_disabled+0x10/0x24
-> [<ffffffc000dd04b4>] __mutex_lock_slowpath+0x154/0x26c
-> [<ffffffc000dd0610>] mutex_lock+0x44/0x64
-> [<ffffffc0003471d0>] f2fs_balance_fs+0x78/0x94
-> [<ffffffc00032ca00>] f2fs_create+0x30/0x1d4
-> [<ffffffc0001a5e40>] vfs_create+0xc8/0xf8
-> [<ffffffc0001a7a34>] do_last.isra.43+0x608/0xc44
-> [<ffffffc0001a8118>] path_openat.isra.44+0xa8/0x4b0
-> [<ffffffc0001a92dc>] do_filp_open+0x2c/0x98
-> [<ffffffc000198da0>] do_sys_open+0x104/0x1c8
-> [<ffffffc000198e98>] SyS_openat+0xc/0x18
+> However, we will use new block address updated in step 5) as an index to
+> lookup meta page in inner bio buffer. That would be wrong, and we will
+> never find the GCing meta page, since we use the old block address as
+> index of that page in step 1).
 > 
-> Besides, there are also lots of other operations were blocked
-> by gc_mutex like here.
+> This patch fixes the issue by adjust the order of step 1) and step 3),
+> and in step 1) grab page with index generated in step 3).
 > 
-> The comments said we should do GC or end up with checkpoint, if there
-> are so many dirty dir/node pages without enough free segments. But should
-> all theads wait for gc if the condition is not satisfied? Maybe if someone
-> is gcing, they can by pass it.
+> Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+> ---
+>  v2:
+>  - fix to recover data page to old block address when error occurs.
+> 
+>  fs/f2fs/f2fs.h    |  2 ++
+>  fs/f2fs/gc.c      | 25 +++++++++++++++++--------
+>  fs/f2fs/segment.c |  3 +--
+>  3 files changed, 20 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index b57dee6..a7197b3 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1821,6 +1821,8 @@ void write_meta_page(struct f2fs_sb_info *, struct page *);
+>  void write_node_page(unsigned int, struct f2fs_io_info *);
+>  void write_data_page(struct dnode_of_data *, struct f2fs_io_info *);
+>  void rewrite_data_page(struct f2fs_io_info *);
+> +void __f2fs_replace_block(struct f2fs_sb_info *, struct f2fs_summary *,
+> +					block_t, block_t, bool, bool);
+>  void f2fs_replace_block(struct f2fs_sb_info *, struct dnode_of_data *,
+>  				block_t, block_t, unsigned char, bool, bool);
+>  void allocate_data_block(struct f2fs_sb_info *, struct page *,
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 4af3d80..c7cb1e6 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -549,6 +549,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+>  	struct f2fs_summary sum;
+>  	struct node_info ni;
+>  	struct page *page;
+> +	block_t newaddr;
+>  	int err;
+>  
+>  	/* do not read out */
+> @@ -579,12 +580,15 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+>  	fio.page = page;
+>  	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+>  
+> -	fio.encrypted_page = pagecache_get_page(META_MAPPING(fio.sbi),
+> -					fio.new_blkaddr,
+> -					FGP_LOCK|FGP_CREAT,
+> -					GFP_NOFS);
+> -	if (!fio.encrypted_page)
+> -		goto put_out;
+> +	allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &newaddr,
+> +							&sum, CURSEG_COLD_DATA);
+> +
+> +	fio.encrypted_page = pagecache_get_page(META_MAPPING(fio.sbi), newaddr,
+> +					FGP_LOCK | FGP_CREAT, GFP_NOFS);
+> +	if (!fio.encrypted_page) {
+> +		err = -ENOMEM;
+> +		goto recover_block;
+> +	}
+>  
+>  	err = f2fs_submit_page_bio(&fio);
+>  	if (err)
+> @@ -593,6 +597,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+>  	/* write page */
+>  	lock_page(fio.encrypted_page);
+>  
+> +	err = -EIO;
 
-I don't think so, once there is one thread goes into GC flow, if we don't block
-all other foreground gc threads here, these concurrent threads may generate more
-dirty node/dentry pages, which can easily lead sync_node_pages in GC or
-checkpoint runs out of free sections.
+I found out that this will trigger error all the time, even in the successful
+case.
+I'll move assigning this to the below error cases only.
 
 Thanks,
 
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/segment.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+
+>  	if (unlikely(!PageUptodate(fio.encrypted_page)))
+>  		goto put_page_out;
+>  	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi)))
+> @@ -607,9 +612,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+>  
+>  	/* allocate block address */
+>  	f2fs_wait_on_page_writeback(dn.node_page, NODE, true);
+> -	allocate_data_block(fio.sbi, NULL, fio.old_blkaddr, &fio.new_blkaddr,
+> -							&sum, CURSEG_COLD_DATA);
+> +
+>  	fio.rw = WRITE_SYNC;
+> +	fio.new_blkaddr = newaddr;
+>  	f2fs_submit_page_mbio(&fio);
+>  
+>  	dn.data_blkaddr = fio.new_blkaddr;
+> @@ -620,6 +625,10 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+>  		set_inode_flag(F2FS_I(inode), FI_FIRST_BLOCK_WRITTEN);
+>  put_page_out:
+>  	f2fs_put_page(fio.encrypted_page, 1);
+> +recover_block:
+> +	if (err)
+> +		__f2fs_replace_block(fio.sbi, &sum, newaddr, fio.old_blkaddr,
+> +								true, true);
+>  put_out:
+>  	f2fs_put_dnode(&dn);
+>  out:
 > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 6f16b39..48ce7ab 100644
+> index d8e13b0..639c4ff 100644
 > --- a/fs/f2fs/segment.c
 > +++ b/fs/f2fs/segment.c
-> @@ -345,8 +345,8 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
->  	 * We should do GC or end up with checkpoint, if there are so many dirty
->  	 * dir/node pages without enough free segments.
->  	 */
-> -	if (has_not_enough_free_secs(sbi, 0)) {
-> -		mutex_lock(&sbi->gc_mutex);
-> +	if (has_not_enough_free_secs(sbi, 0) &&
-> +					mutex_trylock(&sbi->gc_mutex)) {
->  		f2fs_gc(sbi, false);
->  	}
+> @@ -1439,8 +1439,7 @@ void rewrite_data_page(struct f2fs_io_info *fio)
+>  	f2fs_submit_page_mbio(fio);
 >  }
+>  
+> -static void __f2fs_replace_block(struct f2fs_sb_info *sbi,
+> -				struct f2fs_summary *sum,
+> +void __f2fs_replace_block(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>  				block_t old_blkaddr, block_t new_blkaddr,
+>  				bool recover_curseg, bool recover_newaddr)
+>  {
+> -- 
+> 2.7.0
 > 
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
