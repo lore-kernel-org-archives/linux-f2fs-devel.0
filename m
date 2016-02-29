@@ -1,63 +1,106 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: [RFC PATCH v2] fsck.f2fs: calculate the total size
-	correctly
-Date: Sat, 27 Feb 2016 10:43:08 +0800
-Message-ID: <1456540988-27358-1-git-send-email-zhengjunling@huawei.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH 06/10] fs crypto: add Makefile and Kconfig
+Date: Sun, 28 Feb 2016 21:39:39 -0800
+Message-ID: <56D3D99B.9090907@infradead.org>
+References: <1456428368-41527-1-git-send-email-jaegeuk@kernel.org>
+ <1456428368-41527-7-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhengjunling@huawei.com>) id 1aZV22-0003ED-LP
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 27 Feb 2016 02:54:58 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aZV1w-0004xZ-EE
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 27 Feb 2016 02:54:58 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, chao2.yu@samsung.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1456428368-41527-7-git-send-email-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu
+Cc: Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Correctly calculate the total FS size in init_sb_info(), for sector
-size may not be 512 bytes.
+On 02/25/16 11:26, Jaegeuk Kim wrote:
+> This patch adds a facility to enable per-file encryption.
+> 
+> Arnd fixes a missing CONFIG_BLOCK check in the original patch.
+> "The newly added generic crypto abstraction for file systems operates
+> on 'struct bio' objects, which do not exist when CONFIG_BLOCK is
+> disabled:
+> 
+> fs/crypto/crypto.c: In function 'fscrypt_zeroout_range':
+> fs/crypto/crypto.c:308:9: error: implicit declaration of function 'bio_alloc' [-Werror=implicit-function-declaration]
+> 
+> This adds a Kconfig dependency that prevents FS_ENCRYPTION from being
+> enabled without BLOCK."
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/Kconfig         |  2 ++
+>  fs/Makefile        |  1 +
+>  fs/crypto/Kconfig  | 17 +++++++++++++++++
+>  fs/crypto/Makefile |  2 ++
+>  4 files changed, 22 insertions(+)
+>  create mode 100644 fs/crypto/Kconfig
+>  create mode 100644 fs/crypto/Makefile
+> 
+> diff --git a/fs/Kconfig b/fs/Kconfig
+> index 9adee0d..9d75767 100644
+> --- a/fs/Kconfig
+> +++ b/fs/Kconfig
+> @@ -84,6 +84,8 @@ config MANDATORY_FILE_LOCKING
+>  
+>  	  To the best of my knowledge this is dead code that no one cares about.
+>  
+> +source "fs/crypto/Kconfig"
+> +
+>  source "fs/notify/Kconfig"
+>  
+>  source "fs/quota/Kconfig"
+> diff --git a/fs/Makefile b/fs/Makefile
+> index 79f5225..47571e2 100644
+> --- a/fs/Makefile
+> +++ b/fs/Makefile
+> @@ -30,6 +30,7 @@ obj-$(CONFIG_EVENTFD)		+= eventfd.o
+>  obj-$(CONFIG_USERFAULTFD)	+= userfaultfd.o
+>  obj-$(CONFIG_AIO)               += aio.o
+>  obj-$(CONFIG_FS_DAX)		+= dax.o
+> +obj-y				+= crypto/
+>  obj-$(CONFIG_FILE_LOCKING)      += locks.o
+>  obj-$(CONFIG_COMPAT)		+= compat.o compat_ioctl.o
+>  obj-$(CONFIG_BINFMT_AOUT)	+= binfmt_aout.o
+> diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+> new file mode 100644
+> index 0000000..9bea124e
+> --- /dev/null
+> +++ b/fs/crypto/Kconfig
+> @@ -0,0 +1,17 @@
+> +config FS_ENCRYPTION
+> +	bool "FS Encryption (Per-file encryption)"
+> +	depends on BLOCK
 
-Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
----
- fsck/mount.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+	depends on CRYPTO
+since all of the CRYPTO_xxx below also depend on CRYPTO.
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 4c807f9..7f4b85a 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -367,7 +367,8 @@ int init_sb_info(struct f2fs_sb_info *sbi)
- 
- 	total_sectors = get_sb(block_count) << sbi->log_sectors_per_block;
- 	MSG(0, "Info: total FS sectors = %"PRIu64" (%"PRIu64" MB)\n",
--				total_sectors, total_sectors >> 11);
-+				total_sectors, total_sectors >>
-+						(20 - get_sb(log_sectorsize)));
- 	return 0;
- }
- 
+> +	select CRYPTO_AES
+> +	select CRYPTO_CBC
+> +	select CRYPTO_ECB
+> +	select CRYPTO_XTS
+> +	select CRYPTO_CTS
+> +	select CRYPTO_CTR
+> +	select CRYPTO_SHA256
+> +	select KEYS
+> +	select ENCRYPTED_KEYS
+> +	help
+> +	  Enable encryption of files and directories.  This
+> +	  feature is similar to ecryptfs, but it is more memory
+> +	  efficient since it avoids caching the encrypted and
+> +	  decrypted pages in the page cache.
+> diff --git a/fs/crypto/Makefile b/fs/crypto/Makefile
+> new file mode 100644
+> index 0000000..f9f68cd
+> --- /dev/null
+> +++ b/fs/crypto/Makefile
+> @@ -0,0 +1,2 @@
+> +obj-y += fname.o
+> +obj-$(CONFIG_FS_ENCRYPTION)	+= crypto.o policy.o keyinfo.o
+> 
+
+
 -- 
-1.9.1
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+~Randy
