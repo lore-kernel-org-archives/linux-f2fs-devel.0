@@ -1,205 +1,35 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: Re: [PATCH v2] f2fs-tools: set segment_count in super
- block correctly
-Date: Tue, 1 Mar 2016 14:27:17 +0800
-Message-ID: <56D53645.7020705@huawei.com>
-References: <000c01d15e44$0401d0f0$0c0572d0$@samsung.com>
-	<56B2BCCB.3080308@huawei.com>
-	<001c01d15f2f$4caad220$e6007660$@samsung.com>
-	<20160206040823.GA15207@jaegeuk.gateway>
-	<002501d16ed9$1d80bd70$58823850$@samsung.com>
-	<56CD6AF5.3050202@huawei.com>
-	<000001d1737f$75cdd6c0$61698440$@samsung.com>
+From: Chao Yu <chao2.yu@samsung.com>
+Subject: RE: [PATCH] f2fs: mutex can't be used by down_write_nest_lock()
+Date: Tue, 01 Mar 2016 16:59:39 +0800
+Message-ID: <00d101d17398$dbbaca10$93305e30$@samsung.com>
+References: <1456532725-4126-1-git-send-email-yang.shi@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhengjunling@huawei.com>) id 1aadmN-0008UL-K8
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Mar 2016 06:27:31 +0000
-Received: from [119.145.14.65] (helo=szxga02-in.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1aadmJ-0001Yw-5E
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Mar 2016 06:27:31 +0000
-In-Reply-To: <000001d1737f$75cdd6c0$61698440$@samsung.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Fan Li <fanofcode.li@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1456532725-4126-1-git-send-email-yang.shi@linaro.org>
+Content-language: zh-cn
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Yang Shi' <yang.shi@linaro.org>, jaegeuk@kernel.org, cm224.lee@samsung.com, tglx@linutronix.de, rostedt@goodmis.org, bigeasy@linutronix.de
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-rt-users@vger.kernel.org, linaro-kernel@lists.linaro.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Fan,
+Hi Yang,
 
-On 2016/3/1 13:58, Fan Li wrote:
+> -----Original Message-----
+> From: Yang Shi [mailto:yang.shi@linaro.org]
+> Sent: Saturday, February 27, 2016 8:25 AM
+> To: jaegeuk@kernel.org; cm224.lee@samsung.com; chao2.yu@samsung.com; tglx@linutronix.de;
+> rostedt@goodmis.org; bigeasy@linutronix.de
+> Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net;
+> linux-fsdevel@vger.kernel.org; linux-rt-users@vger.kernel.org;
+> linaro-kernel@lists.linaro.org; yang.shi@linaro.org
+> Subject: [PATCH] f2fs: mutex can't be used by down_write_nest_lock()
 > 
-> 
->> -----Original Message-----
->> From: Junling Zheng [mailto:zhengjunling@huawei.com]
->> Sent: Wednesday, February 24, 2016 4:34 PM
->> To: Fan Li; 'Jaegeuk Kim'
->> Cc: heyunlei@huawei.com; linux-f2fs-devel@lists.sourceforge.net
->> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in super block correctly
->>
->> Hi, Fan,
->>
->> On 2016/2/24 15:57, Fan Li wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
->>>> Sent: Saturday, February 06, 2016 12:08 PM
->>>> To: Fan Li
->>>> Cc: 'Junling Zheng'; heyunlei@huawei.com;
->>>> linux-f2fs-devel@lists.sourceforge.net
->>>> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in
->>>> super block correctly
->>>>
->>>> Hi Fan,
->>>>
->>>> Could you resubmit the final patch?
->>>> I'll remove the previous patch merged into dev branch.
->>>
->>> I think removing the patch would be sufficient enough.
->>> Sorry for the trouble. It's my first time to acquire the code of
->>> f2fs-tools, There seems to be a mistake.
->>>
->>
->> However, it seems that the problem you mentioned before still exists.
->>
->> Now, segment_count_main is aligned with zone size, but segment_count not, which may cause:
->>
->> main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
->> 	segment0_blkaddr + (segment_count << log_blocks_per_seg)
->>
->> then, mount will fail.
->>
->> So, we still need to align segment_count with zone size:)
-> 
-> According to new mkfs codes, segment_count has already been aligned with zone:
-> 	set_sb(segment_count, (config.total_sectors * config.sector_size -
-> 				zone_align_start_offset) / segment_size_bytes /
-> 				config.segs_per_zone * config.segs_per_zone);
-> 
-> It seems to be OK. What's your test parameters?
-> 
+> fsf2_lock_all() calls down_write_nest_lock() to acquire a rw_sem and check
 
-Sorry, there was a misunderstanding in my words and I also misunderstood your previous reply:(
+Nitpick, f2fs_lock_all().
 
-Currently in the latest code, segment_count has not been aligned with zone yet:
+Anyway, this patch looks good to me.
 
-        set_sb(segment_count, (config.total_sectors * config.sector_size -
-                                zone_align_start_offset) / segment_size_bytes);
-
-The patch Kim removed was your previous patch, which aligned segment_count with section size,
-
-so I mean that you should resubmit the final patch, which aligns segment_count with zone size:)
-
-Thanks,
-
->>
->> Thanks,
->>
->>>>
->>>> Thanks,
->>>>
->>>> On Thu, Feb 04, 2016 at 05:33:55PM +0800, Fan Li wrote:
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Junling Zheng [mailto:zhengjunling@huawei.com]
->>>>>> Sent: Thursday, February 04, 2016 10:52 AM
->>>>>> To: Fan Li; 'Jaegeuk Kim'; heyunlei@huawei.com
->>>>>> Cc: linux-f2fs-devel@lists.sourceforge.net
->>>>>> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in
->>>>>> super block correctly
->>>>>>
->>>>>> On 2016/2/3 13:29, Fan Li wrote:
->>>>>>> Now f2fs will check statistics recorded in super block in
->>>>>>> sanity_check_area_boundary() during mount,if number of segments
->>>>>>> per section is greater than 1, and the disk space isn't aligned
->>>>>>> with section,
->>>>>>
->>>>>> Hi Fan, Hi Kim:
->>>>>>
->>>>>> I'm uncertain about which unit the disk space should be aligned with? section or zone?
->>>>>>
->>>>>> It looks like commit "e9dfbbb"(mkfs.f2fs: introduce zone align for
->>>>>> main area)
->>>>>>
->>>>>> from Yunlei had changed the aligning unit from section to zone.
->>>>>>
->>>>>> So, should segment_count in superblock be aligned with zone rather than section?
->>>>>
->>>>> I'm afraid that my codes of mkfs is too old, it doesn't contain this
->>>>> patch, and it still uses section size to align main area.
->>>>>
->>>>> Of course if main area should be aligned with zone, the following
->>>>> patch should be modified accordingly.
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>> Junling
->>>>>>
->>>>>>> mount will fail due to following condition:
->>>>>>>
->>>>>>> main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
->>>>>>> 		segment0_blkaddr + (segment_count << log_blocks_per_seg)
->>>>>>>
->>>>>>> this is because when the length of main area isn't aligned with
->>>>>>> section, mkfs didn't add the number of excess segments to
->>>>>>> segment_count_main, but add it to segment_count.
->>>>>>> Here align segment_count with section size first to prevent such problem.
->>>>>>>
->>>>>>> Signed-off-by: Fan Li <fanofcode.li@samsung.com>
->>>>>>> ---
->>>>>>>  mkfs/f2fs_format.c |    3 ++-
->>>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c index
->>>>>>> 66d7342..3366302 100644
->>>>>>> --- a/mkfs/f2fs_format.c
->>>>>>> +++ b/mkfs/f2fs_format.c
->>>>>>> @@ -174,7 +174,8 @@ static int f2fs_prepare_super_block(void)
->>>>>>>         }
->>>>>>>
->>>>>>>         set_sb(segment_count, (config.total_sectors * config.sector_size -
->>>>>>> -                               zone_align_start_offset) / segment_size_bytes);
->>>>>>> +                               zone_align_start_offset) / segment_size_bytes /
->>>>>>> +                               config.segs_per_sec *
->>>>>>> + config.segs_per_sec);
->>>>>>>
->>>>>>>         set_sb(segment0_blkaddr, zone_align_start_offset / blk_size_bytes);
->>>>>>>         sb->cp_blkaddr = sb->segment0_blkaddr;
->>>>>>>
->>>>>>
->>>>>
->>>
->>>
->>> .
->>>
->>
-> 
-> 
-> 
-> .
-> 
-
-
-
-------------------------------------------------------------------------------
-Site24x7 APM Insight: Get Deep Visibility into Application Performance
-APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
-Monitor end-to-end web transactions and take corrective actions now
-Troubleshoot faster and improve end-user experience. Signup Now!
-http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
+Reviewed-by: Chao Yu <chao2.yu@samsung.com>
