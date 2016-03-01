@@ -1,27 +1,37 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 06/10] fs crypto: add Makefile and Kconfig
-Date: Mon, 29 Feb 2016 18:04:47 -0800
-Message-ID: <20160301020447.GB60850@jaegeuk.hsd1.ca.comcast.net>
-References: <1456428368-41527-1-git-send-email-jaegeuk@kernel.org>
-	<1456428368-41527-7-git-send-email-jaegeuk@kernel.org>
-	<56D3D99B.9090907@infradead.org>
+From: Fan Li <fanofcode.li@samsung.com>
+Subject: Re: [PATCH v2] f2fs-tools: set segment_count in super
+ block correctly
+Date: Tue, 01 Mar 2016 13:58:20 +0800
+Message-ID: <000001d1737f$75cdd6c0$61698440$@samsung.com>
+References: <000c01d15e44$0401d0f0$0c0572d0$@samsung.com>
+	<56B2BCCB.3080308@huawei.com>
+	<001c01d15f2f$4caad220$e6007660$@samsung.com>
+	<20160206040823.GA15207@jaegeuk.gateway>
+	<002501d16ed9$1d80bd70$58823850$@samsung.com>
+	<56CD6AF5.3050202@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aaZgG-0001et-Jj
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fanofcode.li@samsung.com>) id 1aadL0-0002Ex-Iy
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Mar 2016 02:04:56 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aaZgF-0008UL-FE
+	Tue, 01 Mar 2016 05:59:14 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aadKy-0005Lr-CT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 01 Mar 2016 02:04:56 +0000
-Content-Disposition: inline
-In-Reply-To: <56D3D99B.9090907@infradead.org>
+	Tue, 01 Mar 2016 05:59:14 +0000
+Received: from epcpsbgm1new.samsung.com (epcpsbgm1 [203.254.230.26])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O3C032TFJA2D5C0@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 01 Mar 2016 14:59:04 +0900 (KST)
+In-reply-to: <56CD6AF5.3050202@huawei.com>
+Content-language: en-us
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,106 +41,145 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, tytso@mit.edu, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-f2fs-devel@lists.sourceforge.net
+To: 'Junling Zheng' <zhengjunling@huawei.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Sun, Feb 28, 2016 at 09:39:39PM -0800, Randy Dunlap wrote:
-> On 02/25/16 11:26, Jaegeuk Kim wrote:
-> > This patch adds a facility to enable per-file encryption.
-> > 
-> > Arnd fixes a missing CONFIG_BLOCK check in the original patch.
-> > "The newly added generic crypto abstraction for file systems operates
-> > on 'struct bio' objects, which do not exist when CONFIG_BLOCK is
-> > disabled:
-> > 
-> > fs/crypto/crypto.c: In function 'fscrypt_zeroout_range':
-> > fs/crypto/crypto.c:308:9: error: implicit declaration of function 'bio_alloc' [-Werror=implicit-function-declaration]
-> > 
-> > This adds a Kconfig dependency that prevents FS_ENCRYPTION from being
-> > enabled without BLOCK."
-> > 
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/Kconfig         |  2 ++
-> >  fs/Makefile        |  1 +
-> >  fs/crypto/Kconfig  | 17 +++++++++++++++++
-> >  fs/crypto/Makefile |  2 ++
-> >  4 files changed, 22 insertions(+)
-> >  create mode 100644 fs/crypto/Kconfig
-> >  create mode 100644 fs/crypto/Makefile
-> > 
-> > diff --git a/fs/Kconfig b/fs/Kconfig
-> > index 9adee0d..9d75767 100644
-> > --- a/fs/Kconfig
-> > +++ b/fs/Kconfig
-> > @@ -84,6 +84,8 @@ config MANDATORY_FILE_LOCKING
-> >  
-> >  	  To the best of my knowledge this is dead code that no one cares about.
-> >  
-> > +source "fs/crypto/Kconfig"
-> > +
-> >  source "fs/notify/Kconfig"
-> >  
-> >  source "fs/quota/Kconfig"
-> > diff --git a/fs/Makefile b/fs/Makefile
-> > index 79f5225..47571e2 100644
-> > --- a/fs/Makefile
-> > +++ b/fs/Makefile
-> > @@ -30,6 +30,7 @@ obj-$(CONFIG_EVENTFD)		+= eventfd.o
-> >  obj-$(CONFIG_USERFAULTFD)	+= userfaultfd.o
-> >  obj-$(CONFIG_AIO)               += aio.o
-> >  obj-$(CONFIG_FS_DAX)		+= dax.o
-> > +obj-y				+= crypto/
-> >  obj-$(CONFIG_FILE_LOCKING)      += locks.o
-> >  obj-$(CONFIG_COMPAT)		+= compat.o compat_ioctl.o
-> >  obj-$(CONFIG_BINFMT_AOUT)	+= binfmt_aout.o
-> > diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
-> > new file mode 100644
-> > index 0000000..9bea124e
-> > --- /dev/null
-> > +++ b/fs/crypto/Kconfig
-> > @@ -0,0 +1,17 @@
-> > +config FS_ENCRYPTION
-> > +	bool "FS Encryption (Per-file encryption)"
-> > +	depends on BLOCK
-> 
-> 	depends on CRYPTO
 
-This complains recursive dependency limitations, and I checked out that below
-ENCRYPTED_KEYS in security/keys/Kconfig selects CRYPTO.
 
-Thanks,
+> -----Original Message-----
+> From: Junling Zheng [mailto:zhengjunling@huawei.com]
+> Sent: Wednesday, February 24, 2016 4:34 PM
+> To: Fan Li; 'Jaegeuk Kim'
+> Cc: heyunlei@huawei.com; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in super block correctly
+> 
+> Hi, Fan,
+> 
+> On 2016/2/24 15:57, Fan Li wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> >> Sent: Saturday, February 06, 2016 12:08 PM
+> >> To: Fan Li
+> >> Cc: 'Junling Zheng'; heyunlei@huawei.com;
+> >> linux-f2fs-devel@lists.sourceforge.net
+> >> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in
+> >> super block correctly
+> >>
+> >> Hi Fan,
+> >>
+> >> Could you resubmit the final patch?
+> >> I'll remove the previous patch merged into dev branch.
+> >
+> > I think removing the patch would be sufficient enough.
+> > Sorry for the trouble. It's my first time to acquire the code of
+> > f2fs-tools, There seems to be a mistake.
+> >
+> 
+> However, it seems that the problem you mentioned before still exists.
+> 
+> Now, segment_count_main is aligned with zone size, but segment_count not, which may cause:
+> 
+> main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
+> 	segment0_blkaddr + (segment_count << log_blocks_per_seg)
+> 
+> then, mount will fail.
+> 
+> So, we still need to align segment_count with zone size:)
 
-> since all of the CRYPTO_xxx below also depend on CRYPTO.
+According to new mkfs codes, segment_count has already been aligned with zone:
+	set_sb(segment_count, (config.total_sectors * config.sector_size -
+				zone_align_start_offset) / segment_size_bytes /
+				config.segs_per_zone * config.segs_per_zone);
+
+It seems to be OK. What's your test parameters?
+
 > 
-> > +	select CRYPTO_AES
-> > +	select CRYPTO_CBC
-> > +	select CRYPTO_ECB
-> > +	select CRYPTO_XTS
-> > +	select CRYPTO_CTS
-> > +	select CRYPTO_CTR
-> > +	select CRYPTO_SHA256
-> > +	select KEYS
-> > +	select ENCRYPTED_KEYS
-> > +	help
-> > +	  Enable encryption of files and directories.  This
-> > +	  feature is similar to ecryptfs, but it is more memory
-> > +	  efficient since it avoids caching the encrypted and
-> > +	  decrypted pages in the page cache.
-> > diff --git a/fs/crypto/Makefile b/fs/crypto/Makefile
-> > new file mode 100644
-> > index 0000000..f9f68cd
-> > --- /dev/null
-> > +++ b/fs/crypto/Makefile
-> > @@ -0,0 +1,2 @@
-> > +obj-y += fname.o
-> > +obj-$(CONFIG_FS_ENCRYPTION)	+= crypto.o policy.o keyinfo.o
-> > 
+> Thanks,
 > 
+> >>
+> >> Thanks,
+> >>
+> >> On Thu, Feb 04, 2016 at 05:33:55PM +0800, Fan Li wrote:
+> >>>
+> >>>
+> >>>> -----Original Message-----
+> >>>> From: Junling Zheng [mailto:zhengjunling@huawei.com]
+> >>>> Sent: Thursday, February 04, 2016 10:52 AM
+> >>>> To: Fan Li; 'Jaegeuk Kim'; heyunlei@huawei.com
+> >>>> Cc: linux-f2fs-devel@lists.sourceforge.net
+> >>>> Subject: Re: [f2fs-dev] [PATCH v2] f2fs-tools: set segment_count in
+> >>>> super block correctly
+> >>>>
+> >>>> On 2016/2/3 13:29, Fan Li wrote:
+> >>>>> Now f2fs will check statistics recorded in super block in
+> >>>>> sanity_check_area_boundary() during mount,if number of segments
+> >>>>> per section is greater than 1, and the disk space isn't aligned
+> >>>>> with section,
+> >>>>
+> >>>> Hi Fan, Hi Kim:
+> >>>>
+> >>>> I'm uncertain about which unit the disk space should be aligned with? section or zone?
+> >>>>
+> >>>> It looks like commit "e9dfbbb"(mkfs.f2fs: introduce zone align for
+> >>>> main area)
+> >>>>
+> >>>> from Yunlei had changed the aligning unit from section to zone.
+> >>>>
+> >>>> So, should segment_count in superblock be aligned with zone rather than section?
+> >>>
+> >>> I'm afraid that my codes of mkfs is too old, it doesn't contain this
+> >>> patch, and it still uses section size to align main area.
+> >>>
+> >>> Of course if main area should be aligned with zone, the following
+> >>> patch should be modified accordingly.
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>> Junling
+> >>>>
+> >>>>> mount will fail due to following condition:
+> >>>>>
+> >>>>> main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
+> >>>>> 		segment0_blkaddr + (segment_count << log_blocks_per_seg)
+> >>>>>
+> >>>>> this is because when the length of main area isn't aligned with
+> >>>>> section, mkfs didn't add the number of excess segments to
+> >>>>> segment_count_main, but add it to segment_count.
+> >>>>> Here align segment_count with section size first to prevent such problem.
+> >>>>>
+> >>>>> Signed-off-by: Fan Li <fanofcode.li@samsung.com>
+> >>>>> ---
+> >>>>>  mkfs/f2fs_format.c |    3 ++-
+> >>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c index
+> >>>>> 66d7342..3366302 100644
+> >>>>> --- a/mkfs/f2fs_format.c
+> >>>>> +++ b/mkfs/f2fs_format.c
+> >>>>> @@ -174,7 +174,8 @@ static int f2fs_prepare_super_block(void)
+> >>>>>         }
+> >>>>>
+> >>>>>         set_sb(segment_count, (config.total_sectors * config.sector_size -
+> >>>>> -                               zone_align_start_offset) / segment_size_bytes);
+> >>>>> +                               zone_align_start_offset) / segment_size_bytes /
+> >>>>> +                               config.segs_per_sec *
+> >>>>> + config.segs_per_sec);
+> >>>>>
+> >>>>>         set_sb(segment0_blkaddr, zone_align_start_offset / blk_size_bytes);
+> >>>>>         sb->cp_blkaddr = sb->segment0_blkaddr;
+> >>>>>
+> >>>>
+> >>>
+> >
+> >
+> > .
+> >
 > 
-> -- 
-> ~Randy
+
+
 
 ------------------------------------------------------------------------------
 Site24x7 APM Insight: Get Deep Visibility into Application Performance
