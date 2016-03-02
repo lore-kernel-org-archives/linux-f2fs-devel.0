@@ -1,85 +1,120 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH RT 14/17] f2fs: Mutex cant be used by down_write_nest_lock()
-Date: Wed, 02 Mar 2016 10:44:47 -0500
-Message-ID: <20160302154502.045854886@goodmis.org>
-References: <20160302154433.638594715@goodmis.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: Use crypto crc32 functions
+Date: Wed, 2 Mar 2016 10:21:36 -0800
+Message-ID: <20160302182136.GB9395@jaegeuk.gateway>
+References: <1456787577-59946-1-git-send-email-kmok@cyngn.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Return-path: <linux-rt-users-owner@vger.kernel.org>
-Content-Disposition: inline; filename=0014-f2fs-Mutex-can-t-be-used-by-down_write_nest_lock.patch
-Sender: linux-rt-users-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, John Kacur <jkacur@redhat.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Yang Shi <yang.shi@linaro.org>, cm224.lee@samsung.com, chao2.yu@samsung.com, linaro-kernel@lists.linaro.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1abBP7-0001a8-LQ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Mar 2016 18:21:45 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1abBP6-0000Jw-B4
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Mar 2016 18:21:45 +0000
+Content-Disposition: inline
+In-Reply-To: <1456787577-59946-1-git-send-email-kmok@cyngn.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Keith Mok <ek9852@gmail.com>
+Cc: Keith Mok <kmok@cyngn.com>, linux-f2fs-devel@lists.sourceforge.net
 
-3.14.61-rt64-rc1 stable review patch.
-If anyone has any objections, please let me know.
+Hi Keith,
 
-------------------
+> +static inline __u32 f2fs_crc32(struct f2fs_sb_info *sbi, const void *address,
+> +			   unsigned int length)
+> +{
+> +	struct {
+> +		struct shash_desc shash;
+> +		char ctx[4];
+> +	} desc;
+> +	int err;
+> +
+> +	BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver) != sizeof(desc.ctx));
 
-From: Yang Shi <yang.shi@linaro.org>
+I can't accept this and the below BUG_ON, since this hits during the checkpoint
+procedure which is very critical for entire filesystem.
+How about calling back the original method for the error cases?
 
-fsf2_lock_all() calls down_write_nest_lock() to acquire a rw_sem and check
-a mutex, but down_write_nest_lock() is designed for two rw_sem accoring to the
-comment in include/linux/rwsem.h. And, other than f2fs, it is just called in
-mm/mmap.c with two rwsem.
+Thanks,
 
-So, it looks it is used wrongly by f2fs. And, it causes the below compile
-warning on -rt kernel too.
+> +
+> +	desc.shash.tfm = sbi->s_chksum_driver;
+> +	desc.shash.flags = 0;
+> +	*(u32 *)desc.ctx = F2FS_SUPER_MAGIC;
+> +
+> +	err = crypto_shash_update(&desc.shash, address, length);
+> +	BUG_ON(err);
+> +
+> +	return *(__u32 *)desc.ctx;
+> +}
+> +
+> +static inline bool f2fs_crc_valid(struct f2fs_sb_info *sbi, __u32 blk_crc,
+> +				  void *buf, size_t buf_size)
+> +{
+> +	return f2fs_crc32(sbi, buf, buf_size) == blk_crc;
+> +}
+> +
+>  static inline struct f2fs_inode_info *F2FS_I(struct inode *inode)
+>  {
+>  	return container_of(inode, struct f2fs_inode_info, vfs_inode);
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 6134832..9630865 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -574,6 +574,8 @@ static void f2fs_put_super(struct super_block *sb)
+>  	wait_for_completion(&sbi->s_kobj_unregister);
+>  
+>  	sb->s_fs_info = NULL;
+> +	if (sbi->s_chksum_driver)
+> +		crypto_free_shash(sbi->s_chksum_driver);
+>  	kfree(sbi->raw_super);
+>  	kfree(sbi);
+>  }
+> @@ -1254,6 +1256,15 @@ try_onemore:
+>  	if (!sbi)
+>  		return -ENOMEM;
+>  
+> +	/* Load the checksum driver */
+> +	sbi->s_chksum_driver = crypto_alloc_shash("crc32", 0, 0);
+> +	if (IS_ERR(sbi->s_chksum_driver)) {
+> +		f2fs_msg(sb, KERN_ERR, "Cannot load crc32 driver.");
+> +		err = PTR_ERR(sbi->s_chksum_driver);
+> +		sbi->s_chksum_driver = NULL;
+> +		goto free_sbi;
+> +	}
+> +
+>  	/* set a block size */
+>  	if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
+>  		f2fs_msg(sb, KERN_ERR, "unable to set blocksize");
+> @@ -1506,6 +1517,8 @@ free_options:
+>  free_sb_buf:
+>  	kfree(raw_super);
+>  free_sbi:
+> +	if (sbi->s_chksum_driver)
+> +		crypto_free_shash(sbi->s_chksum_driver);
+>  	kfree(sbi);
+>  
+>  	/* give only one another chance */
+> -- 
+> 2.5.1
 
-In file included from fs/f2fs/xattr.c:25:0:
-fs/f2fs/f2fs.h: In function 'f2fs_lock_all':
-fs/f2fs/f2fs.h:962:34: warning: passing argument 2 of 'down_write_nest_lock' from
-		       incompatible pointer type [-Wincompatible-pointer-types]
-  f2fs_down_write(&sbi->cp_rwsem, &sbi->cp_mutex);
-                                  ^
-
-The nest annotation was anyway bogus as nested annotations for lockdep are
-only required if one nests two locks of the same lock class, which is not the
-case here.
-
-Signed-off-by: Yang Shi <yang.shi@linaro.org>
-Cc: cm224.lee@samsung.com
-Cc: chao2.yu@samsung.com
-Cc: linaro-kernel@lists.linaro.org
-Cc: linux-rt-users@vger.kernel.org
-Cc: bigeasy@linutronix.de
-Cc: rostedt@goodmis.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org
-Cc: jaegeuk@kernel.org
-Link: http://lkml.kernel.org/r/1456532725-4126-1-git-send-email-yang.shi@linaro.org
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
----
- fs/f2fs/f2fs.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index fc3c558cb4f3..36c2cd00cfa9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -22,10 +22,8 @@
- 
- #ifdef CONFIG_F2FS_CHECK_FS
- #define f2fs_bug_on(condition)	BUG_ON(condition)
--#define f2fs_down_write(x, y)	down_write_nest_lock(x, y)
- #else
- #define f2fs_bug_on(condition)
--#define f2fs_down_write(x, y)	down_write(x)
- #endif
- 
- /*
-@@ -590,7 +588,7 @@ static inline void f2fs_unlock_op(struct f2fs_sb_info *sbi)
- 
- static inline void f2fs_lock_all(struct f2fs_sb_info *sbi)
- {
--	f2fs_down_write(&sbi->cp_rwsem, &sbi->cp_mutex);
-+	down_write(&sbi->cp_rwsem);
- }
- 
- static inline void f2fs_unlock_all(struct f2fs_sb_info *sbi)
--- 
-2.7.0
-
-
+------------------------------------------------------------------------------
+Site24x7 APM Insight: Get Deep Visibility into Application Performance
+APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+Monitor end-to-end web transactions and take corrective actions now
+Troubleshoot faster and improve end-user experience. Signup Now!
+http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
