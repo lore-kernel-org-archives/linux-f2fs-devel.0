@@ -1,22 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH v3 00/10] File-level Encryption Support by VFS
-Date: Wed,  2 Mar 2016 10:31:08 -0800
-Message-ID: <1456943478-11107-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 01/10] fs crypto: add basic definitions for
+	per-file encryption
+Date: Wed,  2 Mar 2016 10:31:09 -0800
+Message-ID: <1456943478-11107-2-git-send-email-jaegeuk@kernel.org>
+References: <1456943478-11107-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1abBYv-0001w0-7Y
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1abBYw-0000vQ-AS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Mar 2016 18:31:53 +0000
+	Wed, 02 Mar 2016 18:31:54 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1abBYt-0000cJ-C5
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1abBYv-0003H6-7Y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Mar 2016 18:31:53 +0000
+	Wed, 02 Mar 2016 18:31:54 +0000
+In-Reply-To: <1456943478-11107-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,88 +32,323 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Change log from v2:
- - add missing Kconfig
- - support module compilation
- - change some data types to u8
+This patch adds definitions for per-file encryption used by ext4 and f2fs.
 
-Jaegeuk Kim (10):
-  fs crypto: add basic definitions for per-file encryption
-  fs crypto: add crypto.c for encrypt/decrypt functions
-  fs crypto: add policy.c to handle contexts
-  fs crypto: add keyinfo.c to handle permissions
-  fs crypto: add fname.c to support filename encryption
-  fs crypto: add Makefile and Kconfig
-  fs crypto: add dentry revalidation facility in crypto
-  f2fs crypto: migrate into vfs's crypto engine
-  f2fs crypto: sync ext4_lookup and ext4_file_open
-  ext4 crypto: migrate into vfs's crypto engine
-
- fs/Kconfig               |   2 +
- fs/Makefile              |   1 +
- fs/crypto/Kconfig        |  18 ++
- fs/crypto/Makefile       |   3 +
- fs/crypto/crypto.c       | 556 +++++++++++++++++++++++++++++++++++++++++++++++
- fs/crypto/fname.c        | 427 ++++++++++++++++++++++++++++++++++++
- fs/crypto/keyinfo.c      | 278 ++++++++++++++++++++++++
- fs/crypto/policy.c       | 229 +++++++++++++++++++
- fs/ext4/Kconfig          |  12 +-
- fs/ext4/Makefile         |   2 -
- fs/ext4/crypto.c         | 525 --------------------------------------------
- fs/ext4/crypto_fname.c   | 470 ---------------------------------------
- fs/ext4/crypto_key.c     | 276 -----------------------
- fs/ext4/crypto_policy.c  | 229 -------------------
- fs/ext4/dir.c            |  26 ++-
- fs/ext4/ext4.h           | 195 ++++++-----------
- fs/ext4/ext4_crypto.h    | 159 --------------
- fs/ext4/file.c           |  10 +-
- fs/ext4/ialloc.c         |   7 +-
- fs/ext4/inline.c         |  14 +-
- fs/ext4/inode.c          |   8 +-
- fs/ext4/ioctl.c          |  20 +-
- fs/ext4/namei.c          | 120 +++++-----
- fs/ext4/page-io.c        |  13 +-
- fs/ext4/readpage.c       |  45 +---
- fs/ext4/super.c          |  85 +++++++-
- fs/ext4/symlink.c        |  33 ++-
- fs/f2fs/Kconfig          |  10 +-
- fs/f2fs/Makefile         |   2 -
- fs/f2fs/crypto.c         | 473 ----------------------------------------
- fs/f2fs/crypto_fname.c   | 446 -------------------------------------
- fs/f2fs/crypto_key.c     | 267 -----------------------
- fs/f2fs/crypto_policy.c  | 210 ------------------
- fs/f2fs/data.c           |  31 ++-
- fs/f2fs/dir.c            |  46 ++--
- fs/f2fs/f2fs.h           | 172 +++------------
- fs/f2fs/f2fs_crypto.h    | 151 -------------
- fs/f2fs/file.c           |  40 ++--
- fs/f2fs/inline.c         |   4 +-
- fs/f2fs/inode.c          |   5 +-
- fs/f2fs/namei.c          |  79 ++++---
- fs/f2fs/super.c          |  55 +++--
- include/linux/dcache.h   |   2 +
- include/linux/fs.h       |   8 +
- include/linux/fscrypto.h | 433 ++++++++++++++++++++++++++++++++++++
- include/uapi/linux/fs.h  |  18 ++
- 46 files changed, 2423 insertions(+), 3792 deletions(-)
- create mode 100644 fs/crypto/Kconfig
- create mode 100644 fs/crypto/Makefile
- create mode 100644 fs/crypto/crypto.c
- create mode 100644 fs/crypto/fname.c
- create mode 100644 fs/crypto/keyinfo.c
- create mode 100644 fs/crypto/policy.c
- delete mode 100644 fs/ext4/crypto.c
- delete mode 100644 fs/ext4/crypto_fname.c
- delete mode 100644 fs/ext4/crypto_key.c
- delete mode 100644 fs/ext4/crypto_policy.c
- delete mode 100644 fs/ext4/ext4_crypto.h
- delete mode 100644 fs/f2fs/crypto.c
- delete mode 100644 fs/f2fs/crypto_fname.c
- delete mode 100644 fs/f2fs/crypto_key.c
- delete mode 100644 fs/f2fs/crypto_policy.c
- delete mode 100644 fs/f2fs/f2fs_crypto.h
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ include/linux/fs.h       |   8 ++
+ include/linux/fscrypto.h | 239 +++++++++++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fs.h  |  18 ++++
+ 3 files changed, 265 insertions(+)
  create mode 100644 include/linux/fscrypto.h
 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ae68100..28fc121 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -53,6 +53,8 @@ struct swap_info_struct;
+ struct seq_file;
+ struct workqueue_struct;
+ struct iov_iter;
++struct fscrypt_info;
++struct fscrypt_operations;
+ 
+ extern void __init inode_init(void);
+ extern void __init inode_init_early(void);
+@@ -678,6 +680,10 @@ struct inode {
+ 	struct hlist_head	i_fsnotify_marks;
+ #endif
+ 
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
++	struct fscrypt_info	*i_crypt_info;
++#endif
++
+ 	void			*i_private; /* fs or device private pointer */
+ };
+ 
+@@ -1323,6 +1329,8 @@ struct super_block {
+ #endif
+ 	const struct xattr_handler **s_xattr;
+ 
++	const struct fscrypt_operations	*s_cop;
++
+ 	struct hlist_bl_head	s_anon;		/* anonymous dentries for (nfs) exporting */
+ 	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
+ 	struct block_device	*s_bdev;
+diff --git a/include/linux/fscrypto.h b/include/linux/fscrypto.h
+new file mode 100644
+index 0000000..4d83f08
+--- /dev/null
++++ b/include/linux/fscrypto.h
+@@ -0,0 +1,239 @@
++/*
++ * General per-file encryption definition
++ *
++ * Copyright (C) 2015, Google, Inc.
++ *
++ * Written by Michael Halcrow, 2015.
++ * Modified by Jaegeuk Kim, 2015.
++ */
++
++#ifndef _LINUX_FSCRYPTO_H
++#define _LINUX_FSCRYPTO_H
++
++#include <linux/key.h>
++#include <linux/fs.h>
++#include <linux/mm.h>
++#include <linux/bio.h>
++#include <linux/dcache.h>
++#include <uapi/linux/fs.h>
++
++#define FS_KEY_DERIVATION_NONCE_SIZE		16
++#define FS_ENCRYPTION_CONTEXT_FORMAT_V1		1
++
++#define FS_POLICY_FLAGS_PAD_4		0x00
++#define FS_POLICY_FLAGS_PAD_8		0x01
++#define FS_POLICY_FLAGS_PAD_16		0x02
++#define FS_POLICY_FLAGS_PAD_32		0x03
++#define FS_POLICY_FLAGS_PAD_MASK	0x03
++#define FS_POLICY_FLAGS_VALID		0x03
++
++/* Encryption algorithms */
++#define FS_ENCRYPTION_MODE_INVALID		0
++#define FS_ENCRYPTION_MODE_AES_256_XTS		1
++#define FS_ENCRYPTION_MODE_AES_256_GCM		2
++#define FS_ENCRYPTION_MODE_AES_256_CBC		3
++#define FS_ENCRYPTION_MODE_AES_256_CTS		4
++
++/**
++ * Encryption context for inode
++ *
++ * Protector format:
++ *  1 byte: Protector format (1 = this version)
++ *  1 byte: File contents encryption mode
++ *  1 byte: File names encryption mode
++ *  1 byte: Flags
++ *  8 bytes: Master Key descriptor
++ *  16 bytes: Encryption Key derivation nonce
++ */
++struct fscrypt_context {
++	u8 format;
++	u8 contents_encryption_mode;
++	u8 filenames_encryption_mode;
++	u8 flags;
++	u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++	u8 nonce[FS_KEY_DERIVATION_NONCE_SIZE];
++} __packed;
++
++/* Encryption parameters */
++#define FS_XTS_TWEAK_SIZE		16
++#define FS_AES_128_ECB_KEY_SIZE		16
++#define FS_AES_256_GCM_KEY_SIZE		32
++#define FS_AES_256_CBC_KEY_SIZE		32
++#define FS_AES_256_CTS_KEY_SIZE		32
++#define FS_AES_256_XTS_KEY_SIZE		64
++#define FS_MAX_KEY_SIZE			64
++
++#define FS_KEY_DESC_PREFIX		"fscrypt:"
++#define FS_KEY_DESC_PREFIX_SIZE		8
++
++/* This is passed in from userspace into the kernel keyring */
++struct fscrypt_key {
++	u32 mode;
++	u8 raw[FS_MAX_KEY_SIZE];
++	u32 size;
++} __packed;
++
++struct fscrypt_info {
++	u8 ci_data_mode;
++	u8 ci_filename_mode;
++	u8 ci_flags;
++	struct crypto_ablkcipher *ci_ctfm;
++	struct key *ci_keyring_key;
++	u8 ci_master_key[FS_KEY_DESCRIPTOR_SIZE];
++};
++
++#define FS_CTX_REQUIRES_FREE_ENCRYPT_FL		0x00000001
++#define FS_WRITE_PATH_FL			0x00000002
++
++struct fscrypt_ctx {
++	union {
++		struct {
++			struct page *bounce_page;	/* Ciphertext page */
++			struct page *control_page;	/* Original page  */
++		} w;
++		struct {
++			struct bio *bio;
++			struct work_struct work;
++		} r;
++		struct list_head free_list;	/* Free list */
++	};
++	u8 flags;				/* Flags */
++	u8 mode;				/* Encryption mode for tfm */
++};
++
++struct fscrypt_completion_result {
++	struct completion completion;
++	int res;
++};
++
++#define DECLARE_FS_COMPLETION_RESULT(ecr) \
++	struct fscrypt_completion_result ecr = { \
++		COMPLETION_INITIALIZER((ecr).completion), 0 }
++
++static inline int fscrypt_key_size(int mode)
++{
++	switch (mode) {
++	case FS_ENCRYPTION_MODE_AES_256_XTS:
++		return FS_AES_256_XTS_KEY_SIZE;
++	case FS_ENCRYPTION_MODE_AES_256_GCM:
++		return FS_AES_256_GCM_KEY_SIZE;
++	case FS_ENCRYPTION_MODE_AES_256_CBC:
++		return FS_AES_256_CBC_KEY_SIZE;
++	case FS_ENCRYPTION_MODE_AES_256_CTS:
++		return FS_AES_256_CTS_KEY_SIZE;
++	default:
++		BUG();
++	}
++	return 0;
++}
++
++#define FS_FNAME_NUM_SCATTER_ENTRIES	4
++#define FS_CRYPTO_BLOCK_SIZE		16
++#define FS_FNAME_CRYPTO_DIGEST_SIZE	32
++
++/**
++ * For encrypted symlinks, the ciphertext length is stored at the beginning
++ * of the string in little-endian format.
++ */
++struct fscrypt_symlink_data {
++	__le16 len;
++	char encrypted_path[1];
++} __packed;
++
++/**
++ * This function is used to calculate the disk space required to
++ * store a filename of length l in encrypted symlink format.
++ */
++static inline u32 fscrypt_symlink_data_len(u32 l)
++{
++	if (l < FS_CRYPTO_BLOCK_SIZE)
++		l = FS_CRYPTO_BLOCK_SIZE;
++	return (l + sizeof(struct fscrypt_symlink_data) - 1);
++}
++
++struct fscrypt_str {
++	unsigned char *name;
++	u32 len;
++};
++
++struct fscrypt_name {
++	const struct qstr *usr_fname;
++	struct fscrypt_str disk_name;
++	u32 hash;
++	u32 minor_hash;
++	struct fscrypt_str crypto_buf;
++};
++
++#define FSTR_INIT(n, l)		{ .name = n, .len = l }
++#define FSTR_TO_QSTR(f)		QSTR_INIT((f)->name, (f)->len)
++#define fname_name(p)		((p)->disk_name.name)
++#define fname_len(p)		((p)->disk_name.len)
++
++/*
++ * crypto opertions for filesystems
++ */
++struct fscrypt_operations {
++	int (*get_context)(struct inode *, void *, size_t);
++	int (*prepare_context)(struct inode *);
++	int (*set_context)(struct inode *, const void *, size_t, void *);
++	int (*dummy_context)(struct inode *);
++	bool (*is_encrypted)(struct inode *);
++	bool (*empty_dir)(struct inode *);
++	unsigned (*max_namelen)(struct inode *);
++};
++
++static inline bool fscrypt_dummy_context_enabled(struct inode *inode)
++{
++	if (inode->i_sb->s_cop->dummy_context &&
++				inode->i_sb->s_cop->dummy_context(inode))
++		return true;
++	return false;
++}
++
++static inline bool fscrypt_valid_contents_enc_mode(u32 mode)
++{
++	return (mode == FS_ENCRYPTION_MODE_AES_256_XTS);
++}
++
++static inline bool fscrypt_valid_filenames_enc_mode(u32 mode)
++{
++	return (mode == FS_ENCRYPTION_MODE_AES_256_CTS);
++}
++
++static inline u32 fscrypt_validate_encryption_key_size(u32 mode, u32 size)
++{
++	if (size == fscrypt_key_size(mode))
++		return size;
++	return 0;
++}
++
++static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
++{
++	if (str->len == 1 && str->name[0] == '.')
++		return true;
++
++	if (str->len == 2 && str->name[0] == '.' && str->name[1] == '.')
++		return true;
++
++	return false;
++}
++
++static inline struct page *fscrypt_control_page(struct page *page)
++{
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
++	return ((struct fscrypt_ctx *)page_private(page))->w.control_page;
++#else
++	WARN_ON_ONCE(1);
++	return ERR_PTR(-EINVAL);
++#endif
++}
++
++static inline int fscrypt_has_encryption_key(struct inode *inode)
++{
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
++	return (inode->i_crypt_info != NULL);
++#else
++	return 0;
++#endif
++}
++#endif	/* _LINUX_FSCRYPTO_H */
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 149bec8..fd8b77e 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -247,6 +247,24 @@ struct fsxattr {
+ #define FS_IOC_FSSETXATTR		_IOW ('X', 32, struct fsxattr)
+ 
+ /*
++ * File system encryption support
++ */
++/* Policy provided via an ioctl on the topmost directory */
++#define FS_KEY_DESCRIPTOR_SIZE	8
++
++struct fscrypt_policy {
++	u8 version;
++	u8 contents_encryption_mode;
++	u8 filenames_encryption_mode;
++	u8 flags;
++	u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
++} __packed;
++
++#define FS_IOC_SET_ENCRYPTION_POLICY	_IOR('f', 19, struct fscrypt_policy)
++#define FS_IOC_GET_ENCRYPTION_PWSALT	_IOW('f', 20, __u8[16])
++#define FS_IOC_GET_ENCRYPTION_POLICY	_IOW('f', 21, struct fscrypt_policy)
++
++/*
+  * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
+  *
+  * Note: for historical reasons, these flags were originally used and
 -- 
 2.6.3
 
