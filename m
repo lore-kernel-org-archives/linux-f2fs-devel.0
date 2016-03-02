@@ -1,28 +1,27 @@
 From: Keith Mok <ek9852@gmail.com>
-Subject: Re: [PATCH] f2fs: Use crypto crc32 functions
-Date: Wed, 2 Mar 2016 12:01:02 -0800
-Message-ID: <CAHjoi4evE_eAq1OgrUo8AC3=vnZ-zH6xKDeLpgendeYN6Ak37w@mail.gmail.com>
+Subject: [PATCH v2] f2fs: Use cryptoapi crc32 functions
+Date: Wed,  2 Mar 2016 12:04:24 -0800
+Message-ID: <1456949064-11409-1-git-send-email-kmok@cyngn.com>
 References: <1456787577-59946-1-git-send-email-kmok@cyngn.com>
-	<20160302182136.GB9395@jaegeuk.gateway>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ek9852@gmail.com>) id 1abCxL-00056z-T5
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <ek9852@gmail.com>) id 1abD1X-0005Ko-3P
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Mar 2016 20:01:11 +0000
-Received: from mail-yw0-f176.google.com ([209.85.161.176])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1abCxI-000746-1e
+	Wed, 02 Mar 2016 20:05:31 +0000
+Received: from mail-pf0-f175.google.com ([209.85.192.175])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1abD1W-0003ND-51
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Mar 2016 20:01:11 +0000
-Received: by mail-yw0-f176.google.com with SMTP id e63so185987697ywc.3
+	Wed, 02 Mar 2016 20:05:31 +0000
+Received: by mail-pf0-f175.google.com with SMTP id 63so10215562pfe.3
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 02 Mar 2016 12:01:08 -0800 (PST)
-In-Reply-To: <20160302182136.GB9395@jaegeuk.gateway>
+	Wed, 02 Mar 2016 12:05:30 -0800 (PST)
+In-Reply-To: <1456787577-59946-1-git-send-email-kmok@cyngn.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,92 +31,188 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Keith Mok <kmok@cyngn.com>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, Keith Mok <ek9852@gmail.com>
 
-Will update the first BUG_ON by using SHASH_DESC_ON_STACK.
+From: Keith Mok <ek9852@gmail.com>
 
+The crc function is done bit by bit.
+Optimize this by use cryptoapi
+crc32 function which is backed by h/w acceleration.
 
-2016-03-02 10:21 GMT-08:00 Jaegeuk Kim <jaegeuk@kernel.org>:
-> Hi Keith,
->
->> +static inline __u32 f2fs_crc32(struct f2fs_sb_info *sbi, const void *address,
->> +                        unsigned int length)
->> +{
->> +     struct {
->> +             struct shash_desc shash;
->> +             char ctx[4];
->> +     } desc;
->> +     int err;
->> +
->> +     BUG_ON(crypto_shash_descsize(sbi->s_chksum_driver) != sizeof(desc.ctx));
->
-> I can't accept this and the below BUG_ON, since this hits during the checkpoint
-> procedure which is very critical for entire filesystem.
-> How about calling back the original method for the error cases?
->
-> Thanks,
->
->> +
->> +     desc.shash.tfm = sbi->s_chksum_driver;
->> +     desc.shash.flags = 0;
->> +     *(u32 *)desc.ctx = F2FS_SUPER_MAGIC;
->> +
->> +     err = crypto_shash_update(&desc.shash, address, length);
->> +     BUG_ON(err);
->> +
->> +     return *(__u32 *)desc.ctx;
->> +}
->> +
->> +static inline bool f2fs_crc_valid(struct f2fs_sb_info *sbi, __u32 blk_crc,
->> +                               void *buf, size_t buf_size)
->> +{
->> +     return f2fs_crc32(sbi, buf, buf_size) == blk_crc;
->> +}
->> +
->>  static inline struct f2fs_inode_info *F2FS_I(struct inode *inode)
->>  {
->>       return container_of(inode, struct f2fs_inode_info, vfs_inode);
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index 6134832..9630865 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -574,6 +574,8 @@ static void f2fs_put_super(struct super_block *sb)
->>       wait_for_completion(&sbi->s_kobj_unregister);
->>
->>       sb->s_fs_info = NULL;
->> +     if (sbi->s_chksum_driver)
->> +             crypto_free_shash(sbi->s_chksum_driver);
->>       kfree(sbi->raw_super);
->>       kfree(sbi);
->>  }
->> @@ -1254,6 +1256,15 @@ try_onemore:
->>       if (!sbi)
->>               return -ENOMEM;
->>
->> +     /* Load the checksum driver */
->> +     sbi->s_chksum_driver = crypto_alloc_shash("crc32", 0, 0);
->> +     if (IS_ERR(sbi->s_chksum_driver)) {
->> +             f2fs_msg(sb, KERN_ERR, "Cannot load crc32 driver.");
->> +             err = PTR_ERR(sbi->s_chksum_driver);
->> +             sbi->s_chksum_driver = NULL;
->> +             goto free_sbi;
->> +     }
->> +
->>       /* set a block size */
->>       if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
->>               f2fs_msg(sb, KERN_ERR, "unable to set blocksize");
->> @@ -1506,6 +1517,8 @@ free_options:
->>  free_sb_buf:
->>       kfree(raw_super);
->>  free_sbi:
->> +     if (sbi->s_chksum_driver)
->> +             crypto_free_shash(sbi->s_chksum_driver);
->>       kfree(sbi);
->>
->>       /* give only one another chance */
->> --
->> 2.5.1
+Signed-off-by: Keith Mok <ek9852@gmail.com>
+---
+ fs/f2fs/Kconfig      |  2 ++
+ fs/f2fs/checkpoint.c |  6 +++---
+ fs/f2fs/f2fs.h       | 48 +++++++++++++++++++++++++++---------------------
+ fs/f2fs/super.c      | 13 +++++++++++++
+ 4 files changed, 45 insertions(+), 24 deletions(-)
+
+diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+index b0a9dc9..f8b0e6f 100644
+--- a/fs/f2fs/Kconfig
++++ b/fs/f2fs/Kconfig
+@@ -1,6 +1,8 @@
+ config F2FS_FS
+ 	tristate "F2FS filesystem support"
+ 	depends on BLOCK
++	select CRYPTO
++	select CRYPTO_CRC32
+ 	help
+ 	  F2FS is based on Log-structured File System (LFS), which supports
+ 	  versatile "flash-friendly" features. The design has been focused on
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 3842af9..1dfaf47 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -621,7 +621,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 		goto invalid_cp1;
+ 
+ 	crc = le32_to_cpu(*((__le32 *)((unsigned char *)cp_block + crc_offset)));
+-	if (!f2fs_crc_valid(crc, cp_block, crc_offset))
++	if (!f2fs_crc_valid(sbi, crc, cp_block, crc_offset))
+ 		goto invalid_cp1;
+ 
+ 	pre_version = cur_cp_version(cp_block);
+@@ -636,7 +636,7 @@ static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
+ 		goto invalid_cp2;
+ 
+ 	crc = le32_to_cpu(*((__le32 *)((unsigned char *)cp_block + crc_offset)));
+-	if (!f2fs_crc_valid(crc, cp_block, crc_offset))
++	if (!f2fs_crc_valid(sbi, crc, cp_block, crc_offset))
+ 		goto invalid_cp2;
+ 
+ 	cur_version = cur_cp_version(cp_block);
+@@ -1008,7 +1008,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	get_sit_bitmap(sbi, __bitmap_ptr(sbi, SIT_BITMAP));
+ 	get_nat_bitmap(sbi, __bitmap_ptr(sbi, NAT_BITMAP));
+ 
+-	crc32 = f2fs_crc32(ckpt, le32_to_cpu(ckpt->checksum_offset));
++	crc32 = f2fs_crc32(sbi, ckpt, le32_to_cpu(ckpt->checksum_offset));
+ 	*((__le32 *)((unsigned char *)ckpt +
+ 				le32_to_cpu(ckpt->checksum_offset)))
+ 				= cpu_to_le32(crc32);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ff79054..df1c305a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -22,6 +22,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/bio.h>
+ #include <linux/blkdev.h>
++#include <crypto/hash.h>
+ 
+ #ifdef CONFIG_F2FS_CHECK_FS
+ #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
+@@ -84,27 +85,6 @@ struct f2fs_mount_info {
+ #define F2FS_CLEAR_FEATURE(sb, mask)					\
+ 	F2FS_SB(sb)->raw_super->feature &= ~cpu_to_le32(mask)
+ 
+-#define CRCPOLY_LE 0xedb88320
+-
+-static inline __u32 f2fs_crc32(void *buf, size_t len)
+-{
+-	unsigned char *p = (unsigned char *)buf;
+-	__u32 crc = F2FS_SUPER_MAGIC;
+-	int i;
+-
+-	while (len--) {
+-		crc ^= *p++;
+-		for (i = 0; i < 8; i++)
+-			crc = (crc >> 1) ^ ((crc & 1) ? CRCPOLY_LE : 0);
+-	}
+-	return crc;
+-}
+-
+-static inline bool f2fs_crc_valid(__u32 blk_crc, void *buf, size_t buf_size)
+-{
+-	return f2fs_crc32(buf, buf_size) == blk_crc;
+-}
+-
+ /*
+  * For checkpoint manager
+  */
+@@ -844,6 +824,9 @@ struct f2fs_sb_info {
+ 	struct list_head s_list;
+ 	struct mutex umount_mutex;
+ 	unsigned int shrinker_run_no;
++
++	/* Reference to checksum algorithm driver via cryptoapi */
++	struct crypto_shash *s_chksum_driver;
+ };
+ 
+ static inline void f2fs_update_time(struct f2fs_sb_info *sbi, int type)
+@@ -874,6 +857,29 @@ static inline bool is_idle(struct f2fs_sb_info *sbi)
+ /*
+  * Inline functions
+  */
++static inline u32 f2fs_crc32(struct f2fs_sb_info *sbi, const void *address,
++			   unsigned int length)
++{
++	SHASH_DESC_ON_STACK(shash, sbi->s_chksum_driver);
++	u32 *ctx = (u32 *)shash_desc_ctx(shash);
++	int err;
++
++	shash->tfm = sbi->s_chksum_driver;
++	shash->flags = 0;
++	*ctx = F2FS_SUPER_MAGIC;
++
++	err = crypto_shash_update(shash, address, length);
++	BUG_ON(err);
++
++	return *ctx;
++}
++
++static inline bool f2fs_crc_valid(struct f2fs_sb_info *sbi, __u32 blk_crc,
++				  void *buf, size_t buf_size)
++{
++	return f2fs_crc32(sbi, buf, buf_size) == blk_crc;
++}
++
+ static inline struct f2fs_inode_info *F2FS_I(struct inode *inode)
+ {
+ 	return container_of(inode, struct f2fs_inode_info, vfs_inode);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 6134832..9630865 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -574,6 +574,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 	wait_for_completion(&sbi->s_kobj_unregister);
+ 
+ 	sb->s_fs_info = NULL;
++	if (sbi->s_chksum_driver)
++		crypto_free_shash(sbi->s_chksum_driver);
+ 	kfree(sbi->raw_super);
+ 	kfree(sbi);
+ }
+@@ -1254,6 +1256,15 @@ try_onemore:
+ 	if (!sbi)
+ 		return -ENOMEM;
+ 
++	/* Load the checksum driver */
++	sbi->s_chksum_driver = crypto_alloc_shash("crc32", 0, 0);
++	if (IS_ERR(sbi->s_chksum_driver)) {
++		f2fs_msg(sb, KERN_ERR, "Cannot load crc32 driver.");
++		err = PTR_ERR(sbi->s_chksum_driver);
++		sbi->s_chksum_driver = NULL;
++		goto free_sbi;
++	}
++
+ 	/* set a block size */
+ 	if (unlikely(!sb_set_blocksize(sb, F2FS_BLKSIZE))) {
+ 		f2fs_msg(sb, KERN_ERR, "unable to set blocksize");
+@@ -1506,6 +1517,8 @@ free_options:
+ free_sb_buf:
+ 	kfree(raw_super);
+ free_sbi:
++	if (sbi->s_chksum_driver)
++		crypto_free_shash(sbi->s_chksum_driver);
+ 	kfree(sbi);
+ 
+ 	/* give only one another chance */
+-- 
+2.5.1
+
 
 ------------------------------------------------------------------------------
 Site24x7 APM Insight: Get Deep Visibility into Application Performance
