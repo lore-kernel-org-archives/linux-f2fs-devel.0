@@ -1,18 +1,18 @@
 From: Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH RT 19/22] f2fs: Mutex cant be used by down_write_nest_lock()
-Date: Wed, 02 Mar 2016 10:09:18 -0500
-Message-ID: <20160302151113.554132593@goodmis.org>
-References: <20160302150859.204542604@goodmis.org>
+Subject: [PATCH RT 17/20] f2fs: Mutex cant be used by down_write_nest_lock()
+Date: Wed, 02 Mar 2016 10:37:15 -0500
+Message-ID: <20160302153717.345586196@goodmis.org>
+References: <20160302153658.995489487@goodmis.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline; filename=0019-f2fs-Mutex-can-t-be-used-by-down_write_nest_lock.patch
+Content-Disposition: inline; filename=0017-f2fs-Mutex-can-t-be-used-by-down_write_nest_lock.patch
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-rt-users <linux-rt-users@vger.kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, John Kacur <jkacur@redhat.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Yang Shi <yang.shi@linaro.org>, cm224.lee@samsung.com, chao2.yu@samsung.com, linaro-kernel@lists.linaro.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-4.1.15-rt18-rc1 stable review patch.
+3.18.27-rt27-rc1 stable review patch.
 If anyone has any objections, please let me know.
 
 ------------------
@@ -56,7 +56,7 @@ Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
  1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8de34ab6d5b1..4e80270703a4 100644
+index 8171e80b2ee9..5bb02f8e1f06 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
 @@ -22,7 +22,6 @@
@@ -68,14 +68,14 @@ index 8de34ab6d5b1..4e80270703a4 100644
  #define f2fs_bug_on(sbi, condition)					\
  	do {								\
 @@ -31,7 +30,6 @@
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);		\
+ 			sbi->need_fsck = true;				\
  		}							\
  	} while (0)
 -#define f2fs_down_write(x, y)	down_write(x)
  #endif
  
  /*
-@@ -838,7 +836,7 @@ static inline void f2fs_unlock_op(struct f2fs_sb_info *sbi)
+@@ -699,7 +697,7 @@ static inline void f2fs_unlock_op(struct f2fs_sb_info *sbi)
  
  static inline void f2fs_lock_all(struct f2fs_sb_info *sbi)
  {
