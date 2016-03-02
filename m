@@ -1,24 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 02/10] fs crypto: add crypto.c for
-	encrypt/decrypt functions
-Date: Wed,  2 Mar 2016 10:31:10 -0800
-Message-ID: <1456943478-11107-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 03/10] fs crypto: add policy.c to handle contexts
+Date: Wed,  2 Mar 2016 10:31:11 -0800
+Message-ID: <1456943478-11107-4-git-send-email-jaegeuk@kernel.org>
 References: <1456943478-11107-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1abBZ0-0003EK-Jw
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1abBZ5-0001wl-C8
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Mar 2016 18:31:58 +0000
+	Wed, 02 Mar 2016 18:32:03 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1abBYx-0000ca-RQ
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1abBZ4-0004VN-6d
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Mar 2016 18:31:58 +0000
+	Wed, 02 Mar 2016 18:32:03 +0000
 In-Reply-To: <1456943478-11107-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,611 +29,307 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Ildar Muslukhov <ildarm@google.com>, Michael Halcrow <mhalcrow@google.com>
+Cc: Ildar Muslukhov <muslukhovi@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Michael Halcrow <mhalcrow@google.com>
 
-This patch adds crypto.c supporting encrypting and decrypting functions.
+This patch adds policy.c supporting context management.
 
-1. IO preparation:
-  - fscrypt_get_ctx / fscrypt_release_ctx
+1. For ioctls:
+ - fscrypt_process_policy
+ - fscrypt_get_policy
 
-2. before IOs:
-  - fscrypt_encrypt_page
-  - fscrypt_decrypt_page
-  - fscrypt_zeroout_range
-
-3. after IOs:
-  - fscrypt_decrypt_bio_pages
-  - fscrypt_pullback_bio_page
-  - fscrypt_restore_control_page
+2. For context permission
+ - fscrypt_has_permitted_context
+ - fscrypt_inherit_context
 
 Signed-off-by: Michael Halcrow <mhalcrow@google.com>
-Signed-off-by: Ildar Muslukhov <ildarm@google.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Ildar Muslukhov <muslukhovi@gmail.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/crypto/crypto.c       | 507 +++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/fscrypto.h |  60 ++++++
- 2 files changed, 567 insertions(+)
- create mode 100644 fs/crypto/crypto.c
+ fs/crypto/policy.c       | 229 +++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fscrypto.h |  32 +++++++
+ 2 files changed, 261 insertions(+)
+ create mode 100644 fs/crypto/policy.c
 
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
 new file mode 100644
-index 0000000..928a34b
+index 0000000..0f9961e
 --- /dev/null
-+++ b/fs/crypto/crypto.c
-@@ -0,0 +1,507 @@
++++ b/fs/crypto/policy.c
+@@ -0,0 +1,229 @@
 +/*
-+ * This contains encryption functions for per-file encryption.
++ * Encryption policy functions for per-file encryption support.
 + *
 + * Copyright (C) 2015, Google, Inc.
-+ * Copyright (C) 2015, Motorola Mobility
++ * Copyright (C) 2015, Motorola Mobility.
 + *
-+ * Written by Michael Halcrow, 2014.
-+ *
-+ * Filename encryption additions
-+ *	Uday Savagaonkar, 2014
-+ * Encryption policy handling additions
-+ *	Ildar Muslukhov, 2014
-+ * Add fscrypt_pullback_bio_page()
-+ *	Jaegeuk Kim, 2015.
-+ *
-+ * This has not yet undergone a rigorous security audit.
-+ *
-+ * The usage of AES-XTS should conform to recommendations in NIST
-+ * Special Publication 800-38E and IEEE P1619/D16.
++ * Written by Michael Halcrow, 2015.
++ * Modified by Jaegeuk Kim, 2015.
 + */
 +
-+#include <linux/crypto.h>
-+#include <linux/ecryptfs.h>
-+#include <linux/pagemap.h>
-+#include <linux/mempool.h>
-+#include <linux/module.h>
-+#include <linux/scatterlist.h>
-+#include <linux/ratelimit.h>
-+#include <linux/bio.h>
++#include <linux/random.h>
++#include <linux/string.h>
 +#include <linux/fscrypto.h>
 +
-+static unsigned int num_prealloc_crypto_pages = 32;
-+static unsigned int num_prealloc_crypto_ctxs = 128;
-+
-+module_param(num_prealloc_crypto_pages, uint, 0444);
-+MODULE_PARM_DESC(num_prealloc_crypto_pages,
-+		"Number of crypto pages to preallocate");
-+module_param(num_prealloc_crypto_ctxs, uint, 0444);
-+MODULE_PARM_DESC(num_prealloc_crypto_ctxs,
-+		"Number of crypto contexts to preallocate");
-+
-+static mempool_t *fscrypt_bounce_page_pool = NULL;
-+
-+static LIST_HEAD(fscrypt_free_ctxs);
-+static DEFINE_SPINLOCK(fscrypt_ctx_lock);
-+
-+static struct workqueue_struct *fscrypt_read_workqueue;
-+static DEFINE_MUTEX(fscrypt_init_mutex);
-+
-+static struct kmem_cache *fscrypt_ctx_cachep;
-+struct kmem_cache *fscrypt_info_cachep;
-+
-+/**
-+ * fscrypt_release_ctx() - Releases an encryption context
-+ * @ctx: The encryption context to release.
-+ *
-+ * If the encryption context was allocated from the pre-allocated pool, returns
-+ * it to that pool. Else, frees it.
-+ *
-+ * If there's a bounce page in the context, this frees that.
-+ */
-+void fscrypt_release_ctx(struct fscrypt_ctx *ctx)
++static int inode_has_encryption_context(struct inode *inode)
 +{
-+	unsigned long flags;
-+
-+	if (ctx->flags & FS_WRITE_PATH_FL && ctx->w.bounce_page) {
-+		mempool_free(ctx->w.bounce_page, fscrypt_bounce_page_pool);
-+		ctx->w.bounce_page = NULL;
-+	}
-+	ctx->w.control_page = NULL;
-+	if (ctx->flags & FS_CTX_REQUIRES_FREE_ENCRYPT_FL) {
-+		kmem_cache_free(fscrypt_ctx_cachep, ctx);
-+	} else {
-+		spin_lock_irqsave(&fscrypt_ctx_lock, flags);
-+		list_add(&ctx->free_list, &fscrypt_free_ctxs);
-+		spin_unlock_irqrestore(&fscrypt_ctx_lock, flags);
-+	}
++	if (!inode->i_sb->s_cop->get_context)
++		return 0;
++	return (inode->i_sb->s_cop->get_context(inode, NULL, 0L) > 0);
 +}
-+EXPORT_SYMBOL(fscrypt_release_ctx);
-+
-+/**
-+ * fscrypt_get_ctx() - Gets an encryption context
-+ * @inode:       The inode for which we are doing the crypto
-+ *
-+ * Allocates and initializes an encryption context.
-+ *
-+ * Return: An allocated and initialized encryption context on success; error
-+ * value or NULL otherwise.
-+ */
-+struct fscrypt_ctx *fscrypt_get_ctx(struct inode *inode)
-+{
-+	struct fscrypt_ctx *ctx = NULL;
-+	struct fscrypt_info *ci = inode->i_crypt_info;
-+	unsigned long flags;
-+
-+	if (ci == NULL)
-+		return ERR_PTR(-ENOKEY);
-+
-+	/*
-+	 * We first try getting the ctx from a free list because in
-+	 * the common case the ctx will have an allocated and
-+	 * initialized crypto tfm, so it's probably a worthwhile
-+	 * optimization. For the bounce page, we first try getting it
-+	 * from the kernel allocator because that's just about as fast
-+	 * as getting it from a list and because a cache of free pages
-+	 * should generally be a "last resort" option for a filesystem
-+	 * to be able to do its job.
-+	 */
-+	spin_lock_irqsave(&fscrypt_ctx_lock, flags);
-+	ctx = list_first_entry_or_null(&fscrypt_free_ctxs,
-+					struct fscrypt_ctx, free_list);
-+	if (ctx)
-+		list_del(&ctx->free_list);
-+	spin_unlock_irqrestore(&fscrypt_ctx_lock, flags);
-+	if (!ctx) {
-+		ctx = kmem_cache_zalloc(fscrypt_ctx_cachep, GFP_NOFS);
-+		if (!ctx)
-+			return ERR_PTR(-ENOMEM);
-+		ctx->flags |= FS_CTX_REQUIRES_FREE_ENCRYPT_FL;
-+	} else {
-+		ctx->flags &= ~FS_CTX_REQUIRES_FREE_ENCRYPT_FL;
-+	}
-+	ctx->flags &= ~FS_WRITE_PATH_FL;
-+	return ctx;
-+}
-+EXPORT_SYMBOL(fscrypt_get_ctx);
-+
-+/**
-+ * fscrypt_complete() - The completion callback for page encryption
-+ * @req: The asynchronous encryption request context
-+ * @res: The result of the encryption operation
-+ */
-+static void fscrypt_complete(struct crypto_async_request *req, int res)
-+{
-+	struct fscrypt_completion_result *ecr = req->data;
-+
-+	if (res == -EINPROGRESS)
-+		return;
-+	ecr->res = res;
-+	complete(&ecr->completion);
-+}
-+
-+typedef enum {
-+	FS_DECRYPT = 0,
-+	FS_ENCRYPT,
-+} fscrypt_direction_t;
-+
-+static int do_page_crypto(struct inode *inode,
-+			fscrypt_direction_t rw, pgoff_t index,
-+			struct page *src_page, struct page *dest_page)
-+{
-+	u8 xts_tweak[FS_XTS_TWEAK_SIZE];
-+	struct ablkcipher_request *req = NULL;
-+	DECLARE_FS_COMPLETION_RESULT(ecr);
-+	struct scatterlist dst, src;
-+	struct fscrypt_info *ci = inode->i_crypt_info;
-+	struct crypto_ablkcipher *tfm = ci->ci_ctfm;
-+	int res = 0;
-+
-+	req = ablkcipher_request_alloc(tfm, GFP_NOFS);
-+	if (!req) {
-+		printk_ratelimited(KERN_ERR
-+				"%s: crypto_request_alloc() failed\n",
-+				__func__);
-+		return -ENOMEM;
-+	}
-+
-+	ablkcipher_request_set_callback(
-+		req, CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
-+		fscrypt_complete, &ecr);
-+
-+	BUILD_BUG_ON(FS_XTS_TWEAK_SIZE < sizeof(index));
-+	memcpy(xts_tweak, &inode->i_ino, sizeof(index));
-+	memset(&xts_tweak[sizeof(index)], 0,
-+			FS_XTS_TWEAK_SIZE - sizeof(index));
-+
-+	sg_init_table(&dst, 1);
-+	sg_set_page(&dst, dest_page, PAGE_CACHE_SIZE, 0);
-+	sg_init_table(&src, 1);
-+	sg_set_page(&src, src_page, PAGE_CACHE_SIZE, 0);
-+	ablkcipher_request_set_crypt(req, &src, &dst, PAGE_CACHE_SIZE,
-+					xts_tweak);
-+	if (rw == FS_DECRYPT)
-+		res = crypto_ablkcipher_decrypt(req);
-+	else
-+		res = crypto_ablkcipher_encrypt(req);
-+	if (res == -EINPROGRESS || res == -EBUSY) {
-+		BUG_ON(req->base.data != &ecr);
-+		wait_for_completion(&ecr.completion);
-+		res = ecr.res;
-+	}
-+	ablkcipher_request_free(req);
-+	if (res) {
-+		printk_ratelimited(KERN_ERR
-+			"%s: crypto_ablkcipher_encrypt() returned %d\n",
-+			__func__, res);
-+		return res;
-+	}
-+	return 0;
-+}
-+
-+static struct page *alloc_bounce_page(struct fscrypt_ctx *ctx)
-+{
-+	ctx->w.bounce_page = mempool_alloc(fscrypt_bounce_page_pool,
-+							GFP_NOWAIT);
-+	if (ctx->w.bounce_page == NULL)
-+		return ERR_PTR(-ENOMEM);
-+	ctx->flags |= FS_WRITE_PATH_FL;
-+	return ctx->w.bounce_page;
-+}
-+
-+/**
-+ * fscypt_encrypt_page() - Encrypts a page
-+ * @inode:          The inode for which the encryption should take place
-+ * @plaintext_page: The page to encrypt. Must be locked.
-+ *
-+ * Allocates a ciphertext page and encrypts plaintext_page into it using the ctx
-+ * encryption context.
-+ *
-+ * Called on the page write path.  The caller must call
-+ * fscrypt_restore_control_page() on the returned ciphertext page to
-+ * release the bounce buffer and the encryption context.
-+ *
-+ * Return: An allocated page with the encrypted content on success. Else, an
-+ * error value or NULL.
-+ */
-+struct page *fscrypt_encrypt_page(struct inode *inode,
-+				struct page *plaintext_page)
-+{
-+	struct fscrypt_ctx *ctx;
-+	struct page *ciphertext_page = NULL;
-+	int err;
-+
-+	BUG_ON(!PageLocked(plaintext_page));
-+
-+	ctx = fscrypt_get_ctx(inode);
-+	if (IS_ERR(ctx))
-+		return (struct page *)ctx;
-+
-+	/* The encryption operation will require a bounce page. */
-+	ciphertext_page = alloc_bounce_page(ctx);
-+	if (IS_ERR(ciphertext_page))
-+		goto errout;
-+
-+	ctx->w.control_page = plaintext_page;
-+	err = do_page_crypto(inode, FS_ENCRYPT, plaintext_page->index,
-+					plaintext_page, ciphertext_page);
-+	if (err) {
-+		ciphertext_page = ERR_PTR(err);
-+		goto errout;
-+	}
-+	SetPagePrivate(ciphertext_page);
-+	set_page_private(ciphertext_page, (unsigned long)ctx);
-+	lock_page(ciphertext_page);
-+	return ciphertext_page;
-+
-+errout:
-+	fscrypt_release_ctx(ctx);
-+	return ciphertext_page;
-+}
-+EXPORT_SYMBOL(fscrypt_encrypt_page);
-+
-+/**
-+ * f2crypt_decrypt_page() - Decrypts a page in-place
-+ * @page: The page to decrypt. Must be locked.
-+ *
-+ * Decrypts page in-place using the ctx encryption context.
-+ *
-+ * Called from the read completion callback.
-+ *
-+ * Return: Zero on success, non-zero otherwise.
-+ */
-+int fscrypt_decrypt_page(struct page *page)
-+{
-+	BUG_ON(!PageLocked(page));
-+
-+	return do_page_crypto(page->mapping->host,
-+			FS_DECRYPT, page->index, page, page);
-+}
-+EXPORT_SYMBOL(fscrypt_decrypt_page);
-+
-+int fscrypt_zeroout_range(struct inode *inode, pgoff_t lblk,
-+				sector_t pblk, unsigned int len)
-+{
-+	struct fscrypt_ctx *ctx;
-+	struct page *ciphertext_page = NULL;
-+	struct bio *bio;
-+	int ret, err = 0;
-+
-+	BUG_ON(inode->i_sb->s_blocksize != PAGE_CACHE_SIZE);
-+
-+	ctx = fscrypt_get_ctx(inode);
-+	if (IS_ERR(ctx))
-+		return PTR_ERR(ctx);
-+
-+	ciphertext_page = alloc_bounce_page(ctx);
-+	if (IS_ERR(ciphertext_page)) {
-+		err = PTR_ERR(ciphertext_page);
-+		goto errout;
-+	}
-+
-+	while (len--) {
-+		err = do_page_crypto(inode, FS_ENCRYPT, lblk,
-+						ZERO_PAGE(0), ciphertext_page);
-+		if (err)
-+			goto errout;
-+
-+		bio = bio_alloc(GFP_KERNEL, 1);
-+		if (!bio) {
-+			err = -ENOMEM;
-+			goto errout;
-+		}
-+		bio->bi_bdev = inode->i_sb->s_bdev;
-+		bio->bi_iter.bi_sector =
-+			pblk << (inode->i_sb->s_blocksize_bits - 9);
-+		ret = bio_add_page(bio, ciphertext_page,
-+					inode->i_sb->s_blocksize, 0);
-+		if (ret != inode->i_sb->s_blocksize) {
-+			/* should never happen! */
-+			WARN_ON(1);
-+			bio_put(bio);
-+			err = -EIO;
-+			goto errout;
-+		}
-+		err = submit_bio_wait(WRITE, bio);
-+		if ((err == 0) && bio->bi_error)
-+			err = -EIO;
-+		bio_put(bio);
-+		if (err)
-+			goto errout;
-+		lblk++;
-+		pblk++;
-+	}
-+	err = 0;
-+errout:
-+	fscrypt_release_ctx(ctx);
-+	return err;
-+}
-+EXPORT_SYMBOL(fscrypt_zeroout_range);
 +
 +/*
-+ * Call fscrypt_decrypt_page on every single page, reusing the encryption
-+ * context.
++ * check whether the policy is consistent with the encryption context
++ * for the inode
 + */
-+static void completion_pages(struct work_struct *work)
++static int is_encryption_context_consistent_with_policy(struct inode *inode,
++				const struct fscrypt_policy *policy)
 +{
-+	struct fscrypt_ctx *ctx =
-+		container_of(work, struct fscrypt_ctx, r.work);
-+	struct bio *bio = ctx->r.bio;
-+	struct bio_vec *bv;
-+	int i;
++	struct fscrypt_context ctx;
++	int res;
 +
-+	bio_for_each_segment_all(bv, bio, i) {
-+		struct page *page = bv->bv_page;
-+		int ret = fscrypt_decrypt_page(page);
-+
-+		if (ret) {
-+			WARN_ON_ONCE(1);
-+			SetPageError(page);
-+		} else {
-+			SetPageUptodate(page);
-+		}
-+		unlock_page(page);
-+	}
-+	fscrypt_release_ctx(ctx);
-+	bio_put(bio);
-+}
-+
-+void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *ctx, struct bio *bio)
-+{
-+	INIT_WORK(&ctx->r.work, completion_pages);
-+	ctx->r.bio = bio;
-+	queue_work(fscrypt_read_workqueue, &ctx->r.work);
-+}
-+EXPORT_SYMBOL(fscrypt_decrypt_bio_pages);
-+
-+void fscrypt_pullback_bio_page(struct page **page, bool restore)
-+{
-+	struct fscrypt_ctx *ctx;
-+	struct page *bounce_page;
-+
-+	/* The bounce data pages are unmapped. */
-+	if ((*page)->mapping)
-+		return;
-+
-+	/* The bounce data page is unmapped. */
-+	bounce_page = *page;
-+	ctx = (struct fscrypt_ctx *)page_private(bounce_page);
-+
-+	/* restore control page */
-+	*page = ctx->w.control_page;
-+
-+	if (restore)
-+		fscrypt_restore_control_page(bounce_page);
-+}
-+EXPORT_SYMBOL(fscrypt_pullback_bio_page);
-+
-+void fscrypt_restore_control_page(struct page *page)
-+{
-+	struct fscrypt_ctx *ctx;
-+
-+	ctx = (struct fscrypt_ctx *)page_private(page);
-+	set_page_private(page, (unsigned long)NULL);
-+	ClearPagePrivate(page);
-+	unlock_page(page);
-+	fscrypt_release_ctx(ctx);
-+}
-+EXPORT_SYMBOL(fscrypt_restore_control_page);
-+
-+static void fscrypt_destroy(void)
-+{
-+	struct fscrypt_ctx *pos, *n;
-+
-+	list_for_each_entry_safe(pos, n, &fscrypt_free_ctxs, free_list)
-+		kmem_cache_free(fscrypt_ctx_cachep, pos);
-+	INIT_LIST_HEAD(&fscrypt_free_ctxs);
-+	mempool_destroy(fscrypt_bounce_page_pool);
-+	fscrypt_bounce_page_pool = NULL;
-+}
-+
-+/**
-+ * fscrypt_initialize() - allocate major buffers for fs encryption.
-+ *
-+ * We only call this when we start accessing encrypted files, since it
-+ * results in memory getting allocated that wouldn't otherwise be used.
-+ *
-+ * Return: Zero on success, non-zero otherwise.
-+ */
-+int fscrypt_initialize(void)
-+{
-+	int i, res = -ENOMEM;
-+
-+	if (fscrypt_bounce_page_pool)
++	if (!inode->i_sb->s_cop->get_context)
 +		return 0;
 +
-+	mutex_lock(&fscrypt_init_mutex);
-+	if (fscrypt_bounce_page_pool)
-+		goto already_initialized;
++	res = inode->i_sb->s_cop->get_context(inode, &ctx, sizeof(ctx));
++	if (res != sizeof(ctx))
++		return 0;
 +
-+	for (i = 0; i < num_prealloc_crypto_ctxs; i++) {
-+		struct fscrypt_ctx *ctx;
++	return (memcmp(ctx.master_key_descriptor, policy->master_key_descriptor,
++			FS_KEY_DESCRIPTOR_SIZE) == 0 &&
++			(ctx.flags == policy->flags) &&
++			(ctx.contents_encryption_mode ==
++			 policy->contents_encryption_mode) &&
++			(ctx.filenames_encryption_mode ==
++			 policy->filenames_encryption_mode));
++}
 +
-+		ctx = kmem_cache_zalloc(fscrypt_ctx_cachep, GFP_NOFS);
-+		if (!ctx)
-+			goto fail;
-+		list_add(&ctx->free_list, &fscrypt_free_ctxs);
++static int create_encryption_context_from_policy(struct inode *inode,
++				const struct fscrypt_policy *policy)
++{
++	struct fscrypt_context ctx;
++	int res;
++
++	if (!inode->i_sb->s_cop->set_context)
++		return -EOPNOTSUPP;
++
++	if (inode->i_sb->s_cop->prepare_context) {
++		res = inode->i_sb->s_cop->prepare_context(inode);
++		if (res)
++			return res;
 +	}
 +
-+	fscrypt_bounce_page_pool =
-+		mempool_create_page_pool(num_prealloc_crypto_pages, 0);
-+	if (!fscrypt_bounce_page_pool)
-+		goto fail;
++	ctx.format = FS_ENCRYPTION_CONTEXT_FORMAT_V1;
++	memcpy(ctx.master_key_descriptor, policy->master_key_descriptor,
++					FS_KEY_DESCRIPTOR_SIZE);
 +
-+already_initialized:
-+	mutex_unlock(&fscrypt_init_mutex);
-+	return 0;
-+fail:
-+	fscrypt_destroy();
-+	mutex_unlock(&fscrypt_init_mutex);
-+	return res;
++	if (!fscrypt_valid_contents_enc_mode(
++				policy->contents_encryption_mode)) {
++		printk(KERN_WARNING
++		       "%s: Invalid contents encryption mode %d\n", __func__,
++			policy->contents_encryption_mode);
++		return -EINVAL;
++	}
++
++	if (!fscrypt_valid_filenames_enc_mode(
++				policy->filenames_encryption_mode)) {
++		printk(KERN_WARNING
++			"%s: Invalid filenames encryption mode %d\n", __func__,
++			policy->filenames_encryption_mode);
++		return -EINVAL;
++	}
++
++	if (policy->flags & ~FS_POLICY_FLAGS_VALID)
++		return -EINVAL;
++
++	ctx.contents_encryption_mode = policy->contents_encryption_mode;
++	ctx.filenames_encryption_mode = policy->filenames_encryption_mode;
++	ctx.flags = policy->flags;
++	BUILD_BUG_ON(sizeof(ctx.nonce) != FS_KEY_DERIVATION_NONCE_SIZE);
++	get_random_bytes(ctx.nonce, FS_KEY_DERIVATION_NONCE_SIZE);
++
++	return inode->i_sb->s_cop->set_context(inode, &ctx, sizeof(ctx), NULL);
 +}
-+EXPORT_SYMBOL(fscrypt_initialize);
++
++int fscrypt_process_policy(struct inode *inode,
++				const struct fscrypt_policy *policy)
++{
++	if (policy->version != 0)
++		return -EINVAL;
++
++	if (!inode_has_encryption_context(inode)) {
++		if (!inode->i_sb->s_cop->empty_dir)
++			return -EOPNOTSUPP;
++		if (!inode->i_sb->s_cop->empty_dir(inode))
++			return -ENOTEMPTY;
++		return create_encryption_context_from_policy(inode, policy);
++	}
++
++	if (is_encryption_context_consistent_with_policy(inode, policy))
++		return 0;
++
++	printk(KERN_WARNING "%s: Policy inconsistent with encryption context\n",
++	       __func__);
++	return -EINVAL;
++}
++EXPORT_SYMBOL(fscrypt_process_policy);
++
++int fscrypt_get_policy(struct inode *inode, struct fscrypt_policy *policy)
++{
++	struct fscrypt_context ctx;
++	int res;
++
++	if (!inode->i_sb->s_cop->get_context ||
++			!inode->i_sb->s_cop->is_encrypted(inode))
++		return -ENODATA;
++
++	res = inode->i_sb->s_cop->get_context(inode, &ctx, sizeof(ctx));
++	if (res != sizeof(ctx))
++		return -ENODATA;
++	if (ctx.format != FS_ENCRYPTION_CONTEXT_FORMAT_V1)
++		return -EINVAL;
++
++	policy->version = 0;
++	policy->contents_encryption_mode = ctx.contents_encryption_mode;
++	policy->filenames_encryption_mode = ctx.filenames_encryption_mode;
++	policy->flags = ctx.flags;
++	memcpy(&policy->master_key_descriptor, ctx.master_key_descriptor,
++				FS_KEY_DESCRIPTOR_SIZE);
++	return 0;
++}
++EXPORT_SYMBOL(fscrypt_get_policy);
++
++int fscrypt_has_permitted_context(struct inode *parent, struct inode *child)
++{
++	struct fscrypt_info *parent_ci, *child_ci;
++	int res;
++
++	if ((parent == NULL) || (child == NULL)) {
++		printk(KERN_ERR	"parent %p child %p\n", parent, child);
++		BUG_ON(1);
++	}
++
++	/* no restrictions if the parent directory is not encrypted */
++	if (!parent->i_sb->s_cop->is_encrypted(parent))
++		return 1;
++	/* if the child directory is not encrypted, this is always a problem */
++	if (!parent->i_sb->s_cop->is_encrypted(child))
++		return 0;
++	res = fscrypt_get_encryption_info(parent);
++	if (res)
++		return 0;
++	res = fscrypt_get_encryption_info(child);
++	if (res)
++		return 0;
++	parent_ci = parent->i_crypt_info;
++	child_ci = child->i_crypt_info;
++	if (!parent_ci && !child_ci)
++		return 1;
++	if (!parent_ci || !child_ci)
++		return 0;
++
++	return (memcmp(parent_ci->ci_master_key,
++			child_ci->ci_master_key,
++			FS_KEY_DESCRIPTOR_SIZE) == 0 &&
++		(parent_ci->ci_data_mode == child_ci->ci_data_mode) &&
++		(parent_ci->ci_filename_mode == child_ci->ci_filename_mode) &&
++		(parent_ci->ci_flags == child_ci->ci_flags));
++}
++EXPORT_SYMBOL(fscrypt_has_permitted_context);
 +
 +/**
-+ * fscrypt_init() - Set up for fs encryption.
++ * fscrypt_inherit_context() - Sets a child context from its parent
++ * @parent: Parent inode from which the context is inherited.
++ * @child:  Child inode that inherits the context from @parent.
++ * @fs_data:  private data given by FS.
++ * @preload:  preload child i_crypt_info
++ *
++ * Return: Zero on success, non-zero otherwise
 + */
-+int __init fscrypt_init(void)
++int fscrypt_inherit_context(struct inode *parent, struct inode *child,
++						void *fs_data, bool preload)
 +{
-+	fscrypt_read_workqueue = alloc_workqueue("fscrypt_read_queue",
-+							WQ_HIGHPRI, 0);
-+	if (!fscrypt_read_workqueue)
-+		goto fail;
++	struct fscrypt_context ctx;
++	struct fscrypt_info *ci;
++	int res;
 +
-+	fscrypt_ctx_cachep = KMEM_CACHE(fscrypt_ctx, SLAB_RECLAIM_ACCOUNT);
-+	if (!fscrypt_ctx_cachep)
-+		goto fail_free_queue;
++	if (!parent->i_sb->s_cop->set_context)
++		return -EOPNOTSUPP;
 +
-+	fscrypt_info_cachep = KMEM_CACHE(fscrypt_info, SLAB_RECLAIM_ACCOUNT);
-+	if (!fscrypt_info_cachep)
-+		goto fail_free_ctx;
++	res = fscrypt_get_encryption_info(parent);
++	if (res < 0)
++		return res;
 +
-+	return 0;
++	ci = parent->i_crypt_info;
++	if (ci == NULL)
++		return -ENOKEY;
 +
-+fail_free_ctx:
-+	kmem_cache_destroy(fscrypt_ctx_cachep);
-+fail_free_queue:
-+	destroy_workqueue(fscrypt_read_workqueue);
-+fail:
-+	return -ENOMEM;
++	ctx.format = FS_ENCRYPTION_CONTEXT_FORMAT_V1;
++	if (fscrypt_dummy_context_enabled(parent)) {
++		ctx.contents_encryption_mode = FS_ENCRYPTION_MODE_AES_256_XTS;
++		ctx.filenames_encryption_mode = FS_ENCRYPTION_MODE_AES_256_CTS;
++		ctx.flags = 0;
++		memset(ctx.master_key_descriptor, 0x42, FS_KEY_DESCRIPTOR_SIZE);
++		res = 0;
++	} else {
++		ctx.contents_encryption_mode = ci->ci_data_mode;
++		ctx.filenames_encryption_mode = ci->ci_filename_mode;
++		ctx.flags = ci->ci_flags;
++		memcpy(ctx.master_key_descriptor, ci->ci_master_key,
++				FS_KEY_DESCRIPTOR_SIZE);
++	}
++	get_random_bytes(ctx.nonce, FS_KEY_DERIVATION_NONCE_SIZE);
++	res = parent->i_sb->s_cop->set_context(child, &ctx,
++						sizeof(ctx), fs_data);
++	if (res)
++		return res;
++	return preload ? fscrypt_get_encryption_info(child): 0;
 +}
-+module_init(fscrypt_init)
-+
-+/**
-+ * fscrypt_exit() - Shutdown the fs encryption system
-+ */
-+void __exit fscrypt_exit(void)
-+{
-+	fscrypt_destroy();
-+
-+	if (fscrypt_read_workqueue)
-+		destroy_workqueue(fscrypt_read_workqueue);
-+	kmem_cache_destroy(fscrypt_ctx_cachep);
-+	kmem_cache_destroy(fscrypt_info_cachep);
-+}
-+module_exit(fscrypt_exit);
-+
-+MODULE_LICENSE("GPL");
++EXPORT_SYMBOL(fscrypt_inherit_context);
 diff --git a/include/linux/fscrypto.h b/include/linux/fscrypto.h
-index 4d83f08..63211f9 100644
+index 63211f9..880c81b 100644
 --- a/include/linux/fscrypto.h
 +++ b/include/linux/fscrypto.h
-@@ -236,4 +236,64 @@ static inline int fscrypt_has_encryption_key(struct inode *inode)
- 	return 0;
+@@ -251,6 +251,13 @@ extern void fscrypt_pullback_bio_page(struct page **, bool);
+ extern void fscrypt_restore_control_page(struct page *);
+ extern int fscrypt_zeroout_range(struct inode *, pgoff_t, sector_t,
+ 						unsigned int);
++/* policy.c */
++extern int fscrypt_process_policy(struct inode *,
++					const struct fscrypt_policy *);
++extern int fscrypt_get_policy(struct inode *, struct fscrypt_policy *);
++extern int fscrypt_has_permitted_context(struct inode *, struct inode *);
++extern int fscrypt_inherit_context(struct inode *, struct inode *,
++					void *, bool);
  #endif
+ 
+ /* crypto.c */
+@@ -296,4 +303,29 @@ static inline int fscrypt_notsupp_zeroout_range(struct inode *i, pgoff_t p,
+ {
+ 	return -EOPNOTSUPP;
  }
 +
-+#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
-+/* crypto.c */
-+extern struct kmem_cache *fscrypt_info_cachep;
-+int fscrypt_initialize(void);
-+
-+extern struct fscrypt_ctx *fscrypt_get_ctx(struct inode *);
-+extern void fscrypt_release_ctx(struct fscrypt_ctx *);
-+extern struct page *fscrypt_encrypt_page(struct inode *, struct page *);
-+extern int fscrypt_decrypt_page(struct page *);
-+extern void fscrypt_decrypt_bio_pages(struct fscrypt_ctx *, struct bio *);
-+extern void fscrypt_pullback_bio_page(struct page **, bool);
-+extern void fscrypt_restore_control_page(struct page *);
-+extern int fscrypt_zeroout_range(struct inode *, pgoff_t, sector_t,
-+						unsigned int);
-+#endif
-+
-+/* crypto.c */
-+static inline struct fscrypt_ctx *fscrypt_notsupp_get_ctx(struct inode *i)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+
-+static inline void fscrypt_notsupp_release_ctx(struct fscrypt_ctx *c)
-+{
-+	return;
-+}
-+
-+static inline struct page *fscrypt_notsupp_encrypt_page(struct inode *i,
-+						struct page *p)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+
-+static inline int fscrypt_notsupp_decrypt_page(struct page *p)
++/* policy.c */
++static inline int fscrypt_notsupp_process_policy(struct inode *i,
++				const struct fscrypt_policy *p)
 +{
 +	return -EOPNOTSUPP;
 +}
 +
-+static inline void fscrypt_notsupp_decrypt_bio_pages(struct fscrypt_ctx *c,
-+						struct bio *b)
++static inline int fscrypt_notsupp_get_policy(struct inode *i,
++				struct fscrypt_policy *p)
 +{
-+	return;
++	return -EOPNOTSUPP;
 +}
 +
-+static inline void fscrypt_notsupp_pullback_bio_page(struct page **p, bool b)
++static inline int fscrypt_notsupp_has_permitted_context(struct inode *p,
++				struct inode *i)
 +{
-+	return;
++	return 0;
 +}
 +
-+static inline void fscrypt_notsupp_restore_control_page(struct page *p)
-+{
-+	return;
-+}
-+
-+static inline int fscrypt_notsupp_zeroout_range(struct inode *i, pgoff_t p,
-+					sector_t s, unsigned int f)
++static inline int fscrypt_notsupp_inherit_context(struct inode *p,
++				struct inode *i, void *v, bool b)
 +{
 +	return -EOPNOTSUPP;
 +}
