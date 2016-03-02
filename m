@@ -1,39 +1,123 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: mutex can't be used by down_write_nest_lock()
-Date: Wed, 2 Mar 2016 10:22:46 -0800
-Message-ID: <20160302182246.GC9395@jaegeuk.gateway>
-References: <1456532725-4126-1-git-send-email-yang.shi@linaro.org>
- <00d101d17398$dbbaca10$93305e30$@samsung.com>
+Subject: [PATCH v3 00/10] File-level Encryption Support by VFS
+Date: Wed,  2 Mar 2016 10:31:08 -0800
+Message-ID: <1456943478-11107-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <00d101d17398$dbbaca10$93305e30$@samsung.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: 'Yang Shi' <yang.shi@linaro.org>, cm224.lee@samsung.com, tglx@linutronix.de, rostedt@goodmis.org, bigeasy@linutronix.de, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-rt-users@vger.kernel.org, linaro-kernel@lists.linaro.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1abBYv-0001w0-7Y
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Mar 2016 18:31:53 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1abBYt-0000cJ-C5
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Mar 2016 18:31:53 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On Tue, Mar 01, 2016 at 04:59:39PM +0800, Chao Yu wrote:
-> Hi Yang,
-> 
-> > -----Original Message-----
-> > From: Yang Shi [mailto:yang.shi@linaro.org]
-> > Sent: Saturday, February 27, 2016 8:25 AM
-> > To: jaegeuk@kernel.org; cm224.lee@samsung.com; chao2.yu@samsung.com; tglx@linutronix.de;
-> > rostedt@goodmis.org; bigeasy@linutronix.de
-> > Cc: linux-kernel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net;
-> > linux-fsdevel@vger.kernel.org; linux-rt-users@vger.kernel.org;
-> > linaro-kernel@lists.linaro.org; yang.shi@linaro.org
-> > Subject: [PATCH] f2fs: mutex can't be used by down_write_nest_lock()
-> > 
-> > fsf2_lock_all() calls down_write_nest_lock() to acquire a rw_sem and check
+Change log from v2:
+ - add missing Kconfig
+ - support module compilation
+ - change some data types to u8
 
-Fixed, and merged. :)
+Jaegeuk Kim (10):
+  fs crypto: add basic definitions for per-file encryption
+  fs crypto: add crypto.c for encrypt/decrypt functions
+  fs crypto: add policy.c to handle contexts
+  fs crypto: add keyinfo.c to handle permissions
+  fs crypto: add fname.c to support filename encryption
+  fs crypto: add Makefile and Kconfig
+  fs crypto: add dentry revalidation facility in crypto
+  f2fs crypto: migrate into vfs's crypto engine
+  f2fs crypto: sync ext4_lookup and ext4_file_open
+  ext4 crypto: migrate into vfs's crypto engine
 
-> 
-> Nitpick, f2fs_lock_all().
-> 
-> Anyway, this patch looks good to me.
-> 
-> Reviewed-by: Chao Yu <chao2.yu@samsung.com>
+ fs/Kconfig               |   2 +
+ fs/Makefile              |   1 +
+ fs/crypto/Kconfig        |  18 ++
+ fs/crypto/Makefile       |   3 +
+ fs/crypto/crypto.c       | 556 +++++++++++++++++++++++++++++++++++++++++++++++
+ fs/crypto/fname.c        | 427 ++++++++++++++++++++++++++++++++++++
+ fs/crypto/keyinfo.c      | 278 ++++++++++++++++++++++++
+ fs/crypto/policy.c       | 229 +++++++++++++++++++
+ fs/ext4/Kconfig          |  12 +-
+ fs/ext4/Makefile         |   2 -
+ fs/ext4/crypto.c         | 525 --------------------------------------------
+ fs/ext4/crypto_fname.c   | 470 ---------------------------------------
+ fs/ext4/crypto_key.c     | 276 -----------------------
+ fs/ext4/crypto_policy.c  | 229 -------------------
+ fs/ext4/dir.c            |  26 ++-
+ fs/ext4/ext4.h           | 195 ++++++-----------
+ fs/ext4/ext4_crypto.h    | 159 --------------
+ fs/ext4/file.c           |  10 +-
+ fs/ext4/ialloc.c         |   7 +-
+ fs/ext4/inline.c         |  14 +-
+ fs/ext4/inode.c          |   8 +-
+ fs/ext4/ioctl.c          |  20 +-
+ fs/ext4/namei.c          | 120 +++++-----
+ fs/ext4/page-io.c        |  13 +-
+ fs/ext4/readpage.c       |  45 +---
+ fs/ext4/super.c          |  85 +++++++-
+ fs/ext4/symlink.c        |  33 ++-
+ fs/f2fs/Kconfig          |  10 +-
+ fs/f2fs/Makefile         |   2 -
+ fs/f2fs/crypto.c         | 473 ----------------------------------------
+ fs/f2fs/crypto_fname.c   | 446 -------------------------------------
+ fs/f2fs/crypto_key.c     | 267 -----------------------
+ fs/f2fs/crypto_policy.c  | 210 ------------------
+ fs/f2fs/data.c           |  31 ++-
+ fs/f2fs/dir.c            |  46 ++--
+ fs/f2fs/f2fs.h           | 172 +++------------
+ fs/f2fs/f2fs_crypto.h    | 151 -------------
+ fs/f2fs/file.c           |  40 ++--
+ fs/f2fs/inline.c         |   4 +-
+ fs/f2fs/inode.c          |   5 +-
+ fs/f2fs/namei.c          |  79 ++++---
+ fs/f2fs/super.c          |  55 +++--
+ include/linux/dcache.h   |   2 +
+ include/linux/fs.h       |   8 +
+ include/linux/fscrypto.h | 433 ++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fs.h  |  18 ++
+ 46 files changed, 2423 insertions(+), 3792 deletions(-)
+ create mode 100644 fs/crypto/Kconfig
+ create mode 100644 fs/crypto/Makefile
+ create mode 100644 fs/crypto/crypto.c
+ create mode 100644 fs/crypto/fname.c
+ create mode 100644 fs/crypto/keyinfo.c
+ create mode 100644 fs/crypto/policy.c
+ delete mode 100644 fs/ext4/crypto.c
+ delete mode 100644 fs/ext4/crypto_fname.c
+ delete mode 100644 fs/ext4/crypto_key.c
+ delete mode 100644 fs/ext4/crypto_policy.c
+ delete mode 100644 fs/ext4/ext4_crypto.h
+ delete mode 100644 fs/f2fs/crypto.c
+ delete mode 100644 fs/f2fs/crypto_fname.c
+ delete mode 100644 fs/f2fs/crypto_key.c
+ delete mode 100644 fs/f2fs/crypto_policy.c
+ delete mode 100644 fs/f2fs/f2fs_crypto.h
+ create mode 100644 include/linux/fscrypto.h
+
+-- 
+2.6.3
+
+
+------------------------------------------------------------------------------
+Site24x7 APM Insight: Get Deep Visibility into Application Performance
+APM + Mobile APM + RUM: Monitor 3 App instances at just $35/Month
+Monitor end-to-end web transactions and take corrective actions now
+Troubleshoot faster and improve end-user experience. Signup Now!
+http://pubads.g.doubleclick.net/gampad/clk?id=272487151&iu=/4140
