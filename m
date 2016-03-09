@@ -1,42 +1,59 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: declare static functions
-Date: Tue,  8 Mar 2016 10:32:53 -0800
-Message-ID: <1457461973-49976-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: clean up opened code with f2fs_update_dentry
+Date: Wed, 9 Mar 2016 22:07:28 +0800
+Message-ID: <56E02E20.2060302@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Just to avoid sparse warnings.
+From: Chao Yu <chao@kernel.org>
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Just clean up opened code with existing function, no logic change.
+
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/node.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/dir.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 7b805f7..771166d 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1101,7 +1101,7 @@ void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
- /*
-  * readahead MAX_RA_NODE number of node pages.
-  */
--void ra_node_pages(struct page *parent, int start)
-+static void ra_node_pages(struct page *parent, int start)
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index da77e45..e37e0d5 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -347,24 +347,14 @@ int update_dent_inode(struct inode *inode, struct inode *to,
+ void do_make_empty_dir(struct inode *inode, struct inode *parent,
+ 					struct f2fs_dentry_ptr *d)
  {
- 	struct f2fs_sb_info *sbi = F2FS_P_SB(parent);
- 	struct blk_plug plug;
-@@ -1121,7 +1121,7 @@ void ra_node_pages(struct page *parent, int start)
- 	blk_finish_plug(&plug);
+-	struct f2fs_dir_entry *de;
+-
+-	de = &d->dentry[0];
+-	de->name_len = cpu_to_le16(1);
+-	de->hash_code = 0;
+-	de->ino = cpu_to_le32(inode->i_ino);
+-	memcpy(d->filename[0], ".", 1);
+-	set_de_type(de, inode->i_mode);
++	struct qstr dot = QSTR_INIT(".", 1);
++	struct qstr dotdot = QSTR_INIT("..", 2);
+
+-	de = &d->dentry[1];
+-	de->hash_code = 0;
+-	de->name_len = cpu_to_le16(2);
+-	de->ino = cpu_to_le32(parent->i_ino);
+-	memcpy(d->filename[1], "..", 2);
+-	set_de_type(de, parent->i_mode);
++	/* update dirent of "." */
++	f2fs_update_dentry(inode->i_ino, inode->i_mode, d, &dot, 0, 0);
+
+-	test_and_set_bit_le(0, (void *)d->bitmap);
+-	test_and_set_bit_le(1, (void *)d->bitmap);
++	/* update dirent of ".." */
++	f2fs_update_dentry(parent->i_ino, parent->i_mode, d, &dotdot, 0, 1);
  }
- 
--struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
-+static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
- 					struct page *parent, int start)
- {
- 	struct page *page;
--- 
-2.6.3
 
+ static int make_empty_dir(struct inode *inode,
+-- 
+2.7.2
