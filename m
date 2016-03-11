@@ -1,8 +1,8 @@
 From: Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH 2/8] f2fs: remove checing inline data flag for
-	f2fs_write_data_page
-Date: Fri, 11 Mar 2016 11:28:27 +0800
-Message-ID: <1457666907-14393-1-git-send-email-shawn.lin@rock-chips.com>
+Subject: [PATCH 3/8] f2fs: check inline flag ahead for
+	f2fs_read_inline_data
+Date: Fri, 11 Mar 2016 11:28:34 +0800
+Message-ID: <1457666914-14434-1-git-send-email-shawn.lin@rock-chips.com>
 References: <1457666880-14311-1-git-send-email-shawn.lin@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,14 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shawn.lin@rock-chips.com>) id 1aeDsX-0003vP-Jz
+	(envelope-from <shawn.lin@rock-chips.com>) id 1aeDsh-0003w6-0b
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 11 Mar 2016 03:36:41 +0000
-Received: from lucky1.263xmail.com ([211.157.147.130])
+	Fri, 11 Mar 2016 03:36:51 +0000
+Received: from lucky1.263xmail.com ([211.157.147.131])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aeDsW-0007Y2-Ql
+	(Exim 4.76) id 1aeDsg-0007YD-0Y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 11 Mar 2016 03:36:41 +0000
+	Fri, 11 Mar 2016 03:36:50 +0000
 In-Reply-To: <1457666880-14311-1-git-send-email-shawn.lin@rock-chips.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,30 +32,41 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: Shawn Lin <shawn.lin@rock-chips.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Remove the f2fs_has_inline_data for f2fs_write_data_page,
-and let f2fs_write_inline_data take over gatekeeper of
-checking inline data flag.
+No matter inline data flag is set or not, get_node_page is
+going work now. But actually we can avoid it by puting the
+check of inline data flag in advance to save this cpu cycle.
 
 Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
 ---
 
- fs/f2fs/data.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/f2fs/inline.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index e5c762b..38c834e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1192,8 +1192,7 @@ write:
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 0926eab..69a4806 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -81,17 +81,15 @@ int f2fs_read_inline_data(struct inode *inode, struct page *page)
+ {
+ 	struct page *ipage;
  
- 	err = -EAGAIN;
- 	f2fs_lock_op(sbi);
--	if (f2fs_has_inline_data(inode))
--		err = f2fs_write_inline_data(inode, page);
-+	err = f2fs_write_inline_data(inode, page);
- 	if (err == -EAGAIN)
- 		err = do_write_data_page(&fio);
- 	f2fs_unlock_op(sbi);
++	if (!f2fs_has_inline_data(inode))
++		return -EAGAIN;
++
+ 	ipage = get_node_page(F2FS_I_SB(inode), inode->i_ino);
+ 	if (IS_ERR(ipage)) {
+ 		unlock_page(page);
+ 		return PTR_ERR(ipage);
+ 	}
+ 
+-	if (!f2fs_has_inline_data(inode)) {
+-		f2fs_put_page(ipage, 1);
+-		return -EAGAIN;
+-	}
+-
+ 	if (page->index)
+ 		zero_user_segment(page, 0, PAGE_CACHE_SIZE);
+ 	else
 -- 
 2.3.7
 
