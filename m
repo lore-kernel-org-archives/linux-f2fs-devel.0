@@ -1,184 +1,89 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 01/10] fs crypto: add basic definitions for per-file
- encryption
-Date: Fri, 11 Mar 2016 10:50:20 -0800
-Message-ID: <20160311185020.GA62857@jaegeuk.gateway>
-References: <1456428368-41527-1-git-send-email-jaegeuk@kernel.org>
- <1456428368-41527-2-git-send-email-jaegeuk@kernel.org>
- <56D3DA02.4010705@infradead.org>
- <20160301013536.GA60850@jaegeuk.hsd1.ca.comcast.net>
- <CAA9_cmfCU1piC9wQr0z=z7gHEmOOEiZu595JOJHod2Y1EgDw8Q@mail.gmail.com>
+Subject: [PATCH 1/2] f2fs: submit node page write bios when
+	really required
+Date: Fri, 11 Mar 2016 16:14:36 -0800
+Message-ID: <1457741677-67046-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAA9_cmfCU1piC9wQr0z=z7gHEmOOEiZu595JOJHod2Y1EgDw8Q@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Theodore Ts'o <tytso@mit.edu>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aeXCh-0003Vu-Nv
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 12 Mar 2016 00:14:47 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1aeXCg-0000Nb-0t
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 12 Mar 2016 00:14:47 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Hi Dan,
+If many threads calls fsync with data writes, we don't need to flush every
+bios having node page writes.
+The f2fs_wait_on_page_writeback will flush its bios when the page is really
+needed.
 
-On Thu, Mar 10, 2016 at 09:00:25PM -0800, Dan Williams wrote:
-> On Mon, Feb 29, 2016 at 5:35 PM, Jaegeuk Kim <jaegeuk@kernel.org> wro=
-te:
-> > On Sun, Feb 28, 2016 at 09:41:22PM -0800, Randy Dunlap wrote:
-> >> On 02/25/16 11:25, Jaegeuk Kim wrote:
-> >> > This patch adds definitions for per-file encryption used by ext4=
- and f2fs.
-> >> >
-> >> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >> > ---
-> >> >  include/linux/fs.h       |   8 ++
-> >> >  include/linux/fscrypto.h | 239 ++++++++++++++++++++++++++++++++=
-+++++++++++++++
-> >> >  include/uapi/linux/fs.h  |  18 ++++
-> >> >  3 files changed, 265 insertions(+)
-> >> >  create mode 100644 include/linux/fscrypto.h
-> >> >
-> >> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> >> > index ae68100..d8f57cf 100644
-> >> > --- a/include/linux/fs.h
-> >> > +++ b/include/linux/fs.h
-> >> > @@ -53,6 +53,8 @@ struct swap_info_struct;
-> >> >  struct seq_file;
-> >> >  struct workqueue_struct;
-> >> >  struct iov_iter;
-> >> > +struct fscrypt_info;
-> >> > +struct fscrypt_operations;
-> >> >
-> >> >  extern void __init inode_init(void);
-> >> >  extern void __init inode_init_early(void);
-> >> > @@ -678,6 +680,10 @@ struct inode {
-> >> >     struct hlist_head       i_fsnotify_marks;
-> >> >  #endif
-> >> >
-> >> > +#ifdef CONFIG_FS_ENCRYPTION
-> >> > +   struct fscrypt_info     *i_crypt_info;
-> >> > +#endif
-> >> > +
-> >> >     void                    *i_private; /* fs or device private =
-pointer */
-> >> >  };
-> >> >
-> >> > @@ -1323,6 +1329,8 @@ struct super_block {
-> >> >  #endif
-> >> >     const struct xattr_handler **s_xattr;
-> >> >
-> >> > +   const struct fscrypt_operations *s_cop;
-> >> > +
-> >> >     struct hlist_bl_head    s_anon;         /* anonymous dentrie=
-s for (nfs) exporting */
-> >> >     struct list_head        s_mounts;       /* list of mounts; _=
-not_ for fs use */
-> >> >     struct block_device     *s_bdev;
-> >> > diff --git a/include/linux/fscrypto.h b/include/linux/fscrypto.h
-> >> > new file mode 100644
-> >> > index 0000000..b0aed92
-> >> > --- /dev/null
-> >> > +++ b/include/linux/fscrypto.h
-> >> > @@ -0,0 +1,239 @@
-> >> > +/*
-> >> > + * General per-file encryption definition
-> >> > + *
-> >> > + * Copyright (C) 2015, Google, Inc.
-> >> > + *
-> >> > + * Written by Michael Halcrow, 2015.
-> >> > + * Modified by Jaegeuk Kim, 2015.
-> >> > + */
-> >> > +
-> >> > +#ifndef _LINUX_FSCRYPTO_H
-> >> > +#define _LINUX_FSCRYPTO_H
-> >> > +
-> >> > +#include <linux/key.h>
-> >> > +#include <linux/fs.h>
-> >> > +#include <linux/mm.h>
-> >> > +#include <linux/bio.h>
-> >> > +#include <linux/dcache.h>
-> >> > +#include <uapi/linux/fs.h>
-> >> > +
-> >> > +#define FS_KEY_DERIVATION_NONCE_SIZE               16
-> >> > +#define FS_ENCRYPTION_CONTEXT_FORMAT_V1            1
-> >> > +
-> >> > +#define FS_POLICY_FLAGS_PAD_4              0x00
-> >> > +#define FS_POLICY_FLAGS_PAD_8              0x01
-> >> > +#define FS_POLICY_FLAGS_PAD_16             0x02
-> >> > +#define FS_POLICY_FLAGS_PAD_32             0x03
-> >> > +#define FS_POLICY_FLAGS_PAD_MASK   0x03
-> >> > +#define FS_POLICY_FLAGS_VALID              0x03
-> >> > +
-> >> > +/* Encryption algorithms */
-> >> > +#define FS_ENCRYPTION_MODE_INVALID         0
-> >> > +#define FS_ENCRYPTION_MODE_AES_256_XTS             1
-> >> > +#define FS_ENCRYPTION_MODE_AES_256_GCM             2
-> >> > +#define FS_ENCRYPTION_MODE_AES_256_CBC             3
-> >> > +#define FS_ENCRYPTION_MODE_AES_256_CTS             4
-> >> > +
-> >> > +/**
-> >> > + * Encryption context for inode
-> >> > + *
-> >> > + * Protector format:
-> >> > + *  1 byte: Protector format (1 =3D this version)
-> >> > + *  1 byte: File contents encryption mode
-> >> > + *  1 byte: File names encryption mode
-> >> > + *  1 byte: Flags
-> >> > + *  8 bytes: Master Key descriptor
-> >> > + *  16 bytes: Encryption Key derivation nonce
-> >> > + */
-> >> > +struct fscrypt_context {
-> >> > +   char format;
-> >> > +   char contents_encryption_mode;
-> >> > +   char filenames_encryption_mode;
-> >> > +   char flags;
-> >> > +   char master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
-> >> > +   char nonce[FS_KEY_DERIVATION_NONCE_SIZE];
-> >>
-> >> how about u8 instead of char?
-> >
-> > It seems that it needs to user u8 instead of char for other variabl=
-es as well.
-> > I'll take a look at all the usages.
->=20
-> I think it needs to be __u8 otherwise I get this in a userspace progr=
-am:
->=20
-> In file included from test/blk_namespaces.c:17:0:
-> /usr/include/linux/fs.h:256:2: error: unknown type name =E2=80=98u8=E2=
-=80=99
->   u8 version;
->   ^
-> /usr/include/linux/fs.h:257:2: error: unknown type name =E2=80=98u8=E2=
-=80=99
->   u8 contents_encryption_mode;
->   ^
-> /usr/include/linux/fs.h:258:2: error: unknown type name =E2=80=98u8=E2=
-=80=99
->   u8 filenames_encryption_mode;
->   ^
-> /usr/include/linux/fs.h:259:2: error: unknown type name =E2=80=98u8=E2=
-=80=99
->   u8 flags;
->   ^
-> /usr/include/linux/fs.h:260:2: error: unknown type name =E2=80=98u8=E2=
-=80=99
->   u8 master_key_descriptor[FS_KEY_DESCRIPTOR_SIZE];
->   ^
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/node.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-I realized that it needs to use __u8 as an exportable data type which c=
-an be
-seen by user-space programs.
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 771166d..118321b 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1236,7 +1236,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, nid_t ino,
+ 	pgoff_t index, end;
+ 	struct pagevec pvec;
+ 	int step = ino ? 2 : 0;
+-	int nwritten = 0, wrote = 0;
++	int nwritten = 0;
+ 
+ 	pagevec_init(&pvec, 0);
+ 
+@@ -1326,8 +1326,6 @@ continue_unlock:
+ 
+ 			if (NODE_MAPPING(sbi)->a_ops->writepage(page, wbc))
+ 				unlock_page(page);
+-			else
+-				wrote++;
+ 
+ 			if (--wbc->nr_to_write == 0)
+ 				break;
+@@ -1345,14 +1343,6 @@ continue_unlock:
+ 		step++;
+ 		goto next_step;
+ 	}
+-
+-	if (wrote) {
+-		if (ino)
+-			f2fs_submit_merged_bio_cond(sbi, NULL, NULL,
+-							ino, NODE, WRITE);
+-		else
+-			f2fs_submit_merged_bio(sbi, NODE, WRITE);
+-	}
+ 	return nwritten;
+ }
+ 
+-- 
+2.6.3
 
-So, IMO, only fscrypt_policy should be exportable, and other structures=
- need
-to use u8.
 
-Let me know, if I'm missing something.
-
-Thanks,
---
-To unsubscribe from this list: send the line "unsubscribe linux-fsdevel=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+------------------------------------------------------------------------------
+Transform Data into Opportunity.
+Accelerate data analysis in your applications with
+Intel Data Analytics Acceleration Library.
+Click to learn more.
+http://pubads.g.doubleclick.net/gampad/clk?id=278785111&iu=/4140
