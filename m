@@ -1,23 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: submit node page write bios when
-	really required
-Date: Fri, 11 Mar 2016 16:14:36 -0800
-Message-ID: <1457741677-67046-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: avoid writepage lock when many threads
+	call fsync
+Date: Fri, 11 Mar 2016 16:14:37 -0800
+Message-ID: <1457741677-67046-2-git-send-email-jaegeuk@kernel.org>
+References: <1457741677-67046-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aeXCh-0003Vu-Nv
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aeXCh-0004D0-No
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Sat, 12 Mar 2016 00:14:47 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aeXCg-0000Nb-0t
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1aeXCh-0006uU-39
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Sat, 12 Mar 2016 00:14:47 +0000
+In-Reply-To: <1457741677-67046-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,53 +32,28 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If many threads calls fsync with data writes, we don't need to flush every
-bios having node page writes.
-The f2fs_wait_on_page_writeback will flush its bios when the page is really
-needed.
+If many threads try to write small number of data and fsync, we should avoid
+writepages lock contention.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/node.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ fs/f2fs/data.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 771166d..118321b 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1236,7 +1236,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, nid_t ino,
- 	pgoff_t index, end;
- 	struct pagevec pvec;
- 	int step = ino ? 2 : 0;
--	int nwritten = 0, wrote = 0;
-+	int nwritten = 0;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index e5c762b..fb75699 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1400,7 +1400,8 @@ static int f2fs_write_data_pages(struct address_space *mapping,
  
- 	pagevec_init(&pvec, 0);
+ 	diff = nr_pages_to_write(sbi, DATA, wbc);
  
-@@ -1326,8 +1326,6 @@ continue_unlock:
- 
- 			if (NODE_MAPPING(sbi)->a_ops->writepage(page, wbc))
- 				unlock_page(page);
--			else
--				wrote++;
- 
- 			if (--wbc->nr_to_write == 0)
- 				break;
-@@ -1345,14 +1343,6 @@ continue_unlock:
- 		step++;
- 		goto next_step;
+-	if (!S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_ALL) {
++	if (!S_ISDIR(inode->i_mode) && wbc->sync_mode == WB_SYNC_ALL &&
++			!is_inode_flag_set(F2FS_I(inode), FI_NEED_IPU)) {
+ 		mutex_lock(&sbi->writepages);
+ 		locked = true;
  	}
--
--	if (wrote) {
--		if (ino)
--			f2fs_submit_merged_bio_cond(sbi, NULL, NULL,
--							ino, NODE, WRITE);
--		else
--			f2fs_submit_merged_bio(sbi, NODE, WRITE);
--	}
- 	return nwritten;
- }
- 
 -- 
 2.6.3
 
