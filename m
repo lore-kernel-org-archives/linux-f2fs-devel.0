@@ -1,139 +1,78 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [GIT PULL] f2fs updates for v4.6
-Date: Thu, 17 Mar 2016 22:00:18 -0700
-Message-ID: <20160318050018.GA97010@jaegeuk.hsd1.ca.comcast.net>
-References: <20160318005803.GA96629@jaegeuk.gateway>
- <CA+55aFxQnvWro5snYgRWu+A557+ZgY2Gxsj4MXmPYS-TOzKBLw@mail.gmail.com>
+From: Matthias Prager <linux@matthiasprager.de>
+Subject: [BUG] f2fs: mounting with kernel >= 4.5.0 fails
+Date: Sun, 20 Mar 2016 22:53:19 +0100
+Message-ID: <56EF1BCF.5010809@matthiasprager.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxQnvWro5snYgRWu+A557+ZgY2Gxsj4MXmPYS-TOzKBLw@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <linux@matthiasprager.de>) id 1ahlaJ-0002gj-VS
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 20 Mar 2016 22:12:31 +0000
+Received: from dd15408.kasserver.com ([85.13.136.168])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ahlaI-0007h1-GT
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 20 Mar 2016 22:12:31 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Matthias Prager <linux@matthiasprager.de>
 
-On Thu, Mar 17, 2016 at 07:32:34PM -0700, Linus Torvalds wrote:
-> On Thu, Mar 17, 2016 at 5:58 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> >
-> > Note that, I did cherry-pick one patch and add another patch to resolve the
-> > conflict against recent crypto changes.
-> 
-> *please* don't do things like this!
+Hello,
 
-My apologies.
-I'll definitely keep in mind.
+since kernel 4.5.0 I'm unable to mount f2fs filesystems with costom
+section sizes.
 
-And, thank you for explaining what I did so insanely.
-I can understand how I made a mistake which makes the git history much uglier
-as well as unnecessary commits which make it much harder to investigate any
-problem.
+I use 1 GiB section sizes (for smr-hdds). A filesystem created with the
+command:
 
-Let me undo my recent unnecessary extra work and add a single commit that
-migrates the crypto codes.
-Then, let me repost a pull request later again.
-Sorry for the confusion.
+> mkfs.f2fs -l test2 -o 0 -a 0 -s 9 /dev/sdj
 
-Thanks,
+fails to mount in kernel 4.5.0 with the following dmesg output (3TB hdd):
+> [  263.898973] F2FS-fs (sdj): Wrong MAIN_AREA boundary, start(1502208) end(732566528) blocks(731063808)
+> [  263.898977] F2FS-fs (sdj): Can't find valid F2FS filesystem in 1th superblock
+> [  263.899142] F2FS-fs (sdj): Wrong MAIN_AREA boundary, start(1502208) end(732566528) blocks(731063808)
+> [  263.899144] F2FS-fs (sdj): Can't find valid F2FS filesystem in 2th superblock
+> [  263.899148] F2FS-fs (sdj): Wrong MAIN_AREA boundary, start(1502208) end(732566528) blocks(731063808)
+> [  263.899150] F2FS-fs (sdj): Can't find valid F2FS filesystem in 1th superblock
+> [  263.899152] F2FS-fs (sdj): Wrong MAIN_AREA boundary, start(1502208) end(732566528) blocks(731063808)
+> [  263.899154] F2FS-fs (sdj): Can't find valid F2FS filesystem in 2th superblock
 
-> 
-> Now I have a conflict _anyway_, and because you added extra commits it
-> ends up being just messier. Git notices that you renamed
-> fs/f2fs/crypto_fname.c into fs/crypto/fname.c, and sees that different
-> people did different things, so now your "merge resolution" conflicts
-> with the changes I already merged to the original file from the crypto
-> tree.
-> 
-> Yes, yes, since you also did that "f2fs: Use skcipher", the resolution
-> now is to just throw the extra merge resolution away, but it's
-> literally just messier and more work for me, because it makes even
-> less sense than it would have done to just do the merge resolution
-> directly.
-> 
-> I do *not* want maintainers of two different trees trying to resolve
-> things against each other ahead of time. It makes no sense, and it
-> makes the history make no sense.
-> 
-> Now, if a merge ends up being really painful, I might ask you to help
-> resolve a merge, but quite frankly, that is very very rare.
-> 
-> I'd much *much* rather see you just do stuff that makes sense for your
-> tree. In particular, you really should have done that "move file" as a
-> single file move commit, and just left it at that. Instead, your tree
-> does something insane:
-> 
->  - first it cherry-picks the change from the crypto tree
-> 
->  - then it *copies* the old file to fs/crypto/fname.c, and changes the
-> naming to match.
-> 
->  - at this point nothing actually *uses* the new file or new naming at all.
-> 
->  - then it "resolves the merge conflict" by re-doing *AGAIN* that
-> crypto change that it shouldn't have cared about in the first place
-> 
->  - then it removes the old file and switches to the new naming in the users
-> 
-> That makes no sense what-so-ever.
-> 
-> What would have been *sensible* would have been to split it up in a
-> *natural* way:
-> 
->  - move the file to a new subdirectory in one commit (together with
-> the Makefile/Kconfig stuff that enables it)
-> 
->  - change the naming to match the new location in another.
-> 
-> or even just do it all in one single step. And at no point worry about
-> the fact that the crypto tree did something unrelated to your work.
-> 
-> You should aim to make the changes make sense in *your* tree. Not copy
-> and create files that aren't used until the next stage. Not pre-merge
-> with another completely unrelated tree.
-> 
-> Now you actually did extra work apparently to "help", but what it
-> caused was for me to have to try to figure out those crazy steps, and
-> it made the history just uglier.
-> 
-> And note that even if I didn't have a conflict (git didn't notice that
-> there were a few other files that moved too, because the renaming made
-> the file contents too different), I would still have preferred to
-> simply do the conflict resolution at the time of the merge, rather
-> than have it pre-done.
-> 
-> Put another way: you doing the "pre-merge" resolution ends up making
-> my merge simpler from a purely technical standpoint, but it also makes
-> the history make very little sense. I'd much rather have the history
-> make sense, and then in the actual *merge* when the f2fs tree really
-> meets the crypto tree updates, the resolution fixes things up (and
-> then the resolution makes sense within those confines too).
-> 
-> And never add files that aren't even used. Now we literally have this
-> insane situation that commit 7690143802f1 ("fs crypto: add crypto.c
-> for encrypt/decrypt functions") adds a new directory, and a new file
-> in it, but there is absolutely nothing that references that new file.
-> So it's all completely empty work.
-> 
-> Then later, you add the Makefile and Kconfig rules to start building
-> the files, but still nothing *uses* it.
-> 
-> And then, after that, you have one commit that removes the old code,
-> and switches over to the new code.
-> 
-> Not only does none of this make ANY SENSE WHAT-SO-EVER, but it's a
-> complete nightmare if something breaks. The point you *notice* that
-> things break is when you switch over the new code, but that isn't
-> actually when the new code happens, so now you have this situation
-> where the commit that introduces the breakage basically silently
-> introduces all that old code that was never actually used - but it's
-> not shown in that commit!
-> 
-> This is why I think you should have just renamed the files one by one,
-> and actually started using them as you go along. See? Not only would
-> it make more sense, but when a problem happens, you actually see what
-> causes it, instead of it being a "oh, we switched over to that
-> completely different code that had never been used by anything at all
-> before".
-> 
->                  Linus
+It makes no difference whether the fs is created using kernel 4.5.0 or
+earlier kernels (f2fs-tools are version 1.6.0 from gentoo stable, I
+tested kernels 4.1.19, 4.3.3 and 4.4.6).
+
+Using the command:
+
+> mkfs.f2fs -l test2 -o 0 -a 0 /dev/sdj
+
+instead (without the '-s 9' parameter), the fs is mountable with kernel
+4.5.0 without any issues.
+
+(The other parameters make no difference - i.e. 'mkfs.f2fs /dev/sdj' is
+fine for kernel 4.5.0, 'mkfs.f2fs -s 9 /dev/sdj' is not. Different
+custom sections sizes don't seem to make a difference.)
+
+Is there a real problem with the fs or are the newly introduced checks
+in kernel 4.5 simply buggy?
+
+---
+Matthias
+
+------------------------------------------------------------------------------
+Transform Data into Opportunity.
+Accelerate data analysis in your applications with
+Intel Data Analytics Acceleration Library.
+Click to learn more.
+http://pubads.g.doubleclick.net/gampad/clk?id=278785231&iu=/4140
