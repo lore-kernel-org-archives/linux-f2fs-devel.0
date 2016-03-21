@@ -1,27 +1,29 @@
-From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: f2fs bug: Unable to mount big volumes in kernel 4.5
-Date: Mon, 21 Mar 2016 11:30:38 +0100
-Message-ID: <20160321103032.GA2739@schmorp.de>
-References: <56EEC766.2030503@davizone.at>
-	<20160320224654.GB4752@jaegeuk.hsd1.ca.comcast.net>
-	<00d401d18320$75f94e80$61ebeb80$@samsung.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] f2fs: support access control via key
+	management
+Date: Mon, 21 Mar 2016 08:39:38 -0700
+Message-ID: <20160321153938.GB27230@infradead.org>
+References: <1457571168-56724-1-git-send-email-jaegeuk@kernel.org>
+	<20160315072422.GB11669@infradead.org>
+	<20160315163725.GA78436@jaegeuk.gateway>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1ahxLQ-00028X-UD
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from
+	<BATV+e8622a914439b518f42a+4593+infradead.org+hch@bombadil.srs.infradead.org>)
+	id 1ai1vo-000882-Ip for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 21 Mar 2016 15:39:48 +0000
+Received: from bombadil.infradead.org ([198.137.202.9])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ai1vl-0001sk-Iq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Mar 2016 10:45:56 +0000
-Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ahxLP-0007TE-0W
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Mar 2016 10:45:56 +0000
+	Mon, 21 Mar 2016 15:39:48 +0000
 Content-Disposition: inline
-In-Reply-To: <00d401d18320$75f94e80$61ebeb80$@samsung.com>
+In-Reply-To: <20160315163725.GA78436@jaegeuk.gateway>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,35 +33,29 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao2.yu@samsung.com>
-Cc: 'Jaegeuk Kim' <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Mar 21, 2016 at 11:18:35AM +0800, Chao Yu <chao2.yu@samsung.com> wrote:
-> > As you pointed out, it seems there is a bug in sanity check routine, which
-> > doesn't cover the large section case.
+On Tue, Mar 15, 2016 at 09:37:25AM -0700, Jaegeuk Kim wrote:
+> I agree that I must follow FS convention here.
+> But, in order to make this clear out, could you please elaborate why this is not
+> allowed?
 > 
-> Actually, there is a bug in f2fs-tools 1.6.0, it will trigger sanity check failure
-> in f2fs kernel module since in mkfs.f2fs we will align segment_count and
-> segment_count_main with different size if parameter -s or -z is configured larger
-> than 1.
+> I wrote this patch totally based on per-file encryption in which users cannot
+> access their files if they have no right key.
+> The only difference is that this controls user access with a key only, neither
+> encrypting file data nor dentries.
 > 
-> Following commit in dev branch of f2fs-tools has fixed this issue, could you test this
-> patch firstly?
-> ("mkfs.f2fs: set segment_count in super block correctly")
+> This was initiated by UX in android letting nobody be able to access the files
+> that owner wants to protect by passcode or fingerprint.
+> 
+> Does it make no sense to support this by filesystems?
 
-Stupid question from my side, does that mean we have to reformat existing
-volumes? Because mkfs clearly won't fix existing volumes, so fixing mkfs
-will not fix the issue.
+I don't think it does.  But if you want to argue for it you should
 
-A fix in the f2fs or fsck.f2fs would be needed for existing volumes.
-
--- 
-                The choice of a       Deliantra, the free code+content MORPG
-      -----==-     _GNU_              http://www.deliantra.net
-      ----==-- _       generation
-      ---==---(_)__  __ ____  __      Marc Lehmann
-      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-      -=====/_/_//_/\_,_/ /_/\_\
+ a) support it in the VFS
+ b) document the exact semantics
+ c) ensure linux-man and linux-api are on the Cc list.
 
 ------------------------------------------------------------------------------
 Transform Data into Opportunity.
