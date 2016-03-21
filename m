@@ -1,26 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [GIT PULL] f2fs updates for v4.6
-Date: Mon, 21 Mar 2016 11:45:20 -0700
-Message-ID: <20160321184520.GA8199@jaegeuk.gateway>
-References: <20160320225859.GA5047@jaegeuk.hsd1.ca.comcast.net>
-	<CA+55aFzuS39yE8_3U_UTF6i1hQorLA7upEP1zPK-31iOYwRQfQ@mail.gmail.com>
+Subject: [PATCH 1/2] f2fs: cover large section in sanity check of
+	super
+Date: Mon, 21 Mar 2016 11:56:04 -0700
+Message-ID: <1458586565-8827-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ai4pZ-0002br-Pp
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ai4zw-0007Xn-Mb
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Mar 2016 18:45:33 +0000
+	Mon, 21 Mar 2016 18:56:16 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ai4pU-0006Sg-8h
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ai4zv-0004nm-KL
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Mar 2016 18:45:33 +0000
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzuS39yE8_3U_UTF6i1hQorLA7upEP1zPK-31iOYwRQfQ@mail.gmail.com>
+	Mon, 21 Mar 2016 18:56:16 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,32 +27,64 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, "stable 4 . 5+" <stable@vger.kernel.org>
 
-On Mon, Mar 21, 2016 at 11:09:45AM -0700, Linus Torvalds wrote:
-> On Sun, Mar 20, 2016 at 3:58 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> >
-> > I made another pull request which removes the previous wrong commits and adds
-> > a single commit to migrate the f2fs crypto into fs/crypto.
-> 
-> Ok, merged.  Please double-check the end result, but since most of the
-> skcipher update was literally to just change "ablk" to "sk", the merge
-> seems to have been pretty trivial.
-> 
-> It all compiles for me, but since I don't use f2fs, I have nothing to test.
+This patch fixes the bug which does not cover a large section case when checking
+the sanity of superblock.
 
-Thank you very much for the merge.
-I got the merged branch, and started testing f2fs.
+Reported-by: Matthias Prager <linux@matthiasprager.de>
+Reported-by: David Gnedt <david.gnedt@davizone.at>
+Cc: stable 4.5+ <stable@vger.kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/super.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-Thanks,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 15bb81f..fc9147f 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1000,6 +1000,7 @@ static inline bool sanity_check_area_boundary(struct super_block *sb,
+ 	u32 segment_count_main = le32_to_cpu(raw_super->segment_count_main);
+ 	u32 segment_count = le32_to_cpu(raw_super->segment_count);
+ 	u32 log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
++	u32 segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
+ 
+ 	if (segment0_blkaddr != cp_blkaddr) {
+ 		f2fs_msg(sb, KERN_INFO,
+@@ -1044,12 +1045,26 @@ static inline bool sanity_check_area_boundary(struct super_block *sb,
+ 		return true;
+ 	}
+ 
+-	if (main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
++	if (segs_per_sec == 1 &&
++		main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
+ 		segment0_blkaddr + (segment_count << log_blocks_per_seg)) {
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Wrong MAIN_AREA boundary, start(%u) end(%u) blocks(%u)",
+ 			main_blkaddr,
+-			segment0_blkaddr + (segment_count << log_blocks_per_seg),
++			segment0_blkaddr +
++			(segment_count << log_blocks_per_seg),
++			segment_count_main << log_blocks_per_seg);
++		return true;
++	}
++
++	if (segs_per_sec > 1 &&
++		main_blkaddr + (segment_count_main << log_blocks_per_seg) >
++		segment0_blkaddr + (segment_count << log_blocks_per_seg)) {
++		f2fs_msg(sb, KERN_INFO,
++			"Wrong MAIN_AREA boundary in large section, start(%u) end(%u) blocks(%u)",
++			main_blkaddr,
++			segment0_blkaddr +
++			(segment_count << log_blocks_per_seg),
+ 			segment_count_main << log_blocks_per_seg);
+ 		return true;
+ 	}
+-- 
+2.6.3
 
-> 
-> (It's not pushed out quite yet - I'm still test-building everything
-> else, so if you pull my tree and don't see the merge, wait a few
-> minutes and it should be there).
-> 
->                 Linus
 
 ------------------------------------------------------------------------------
 Transform Data into Opportunity.
