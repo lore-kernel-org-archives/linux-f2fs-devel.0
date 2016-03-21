@@ -1,24 +1,26 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: show current mount status
-Date: Mon, 21 Mar 2016 11:56:05 -0700
-Message-ID: <1458586565-8827-2-git-send-email-jaegeuk@kernel.org>
-References: <1458586565-8827-1-git-send-email-jaegeuk@kernel.org>
+From: David Gnedt <david.gnedt@davizone.at>
+Subject: Re: f2fs bug: Unable to mount big volumes in kernel 4.5
+Date: Mon, 21 Mar 2016 21:58:15 +0100
+Message-ID: <56F06067.2060404@davizone.at>
+References: <56EEC766.2030503@davizone.at>
+	<20160320224654.GB4752@jaegeuk.hsd1.ca.comcast.net>
+	<00d401d18320$75f94e80$61ebeb80$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ai4zw-0007Xh-Fa
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <david.gnedt@davizone.at>) id 1ai7G9-0004Jb-Iu
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Mar 2016 18:56:16 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ai4zv-0004sI-QP
+	Mon, 21 Mar 2016 21:21:09 +0000
+Received: from mail.platinumzone24.at ([88.198.159.93])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ai7G8-0001Gw-6T
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Mar 2016 18:56:16 +0000
-In-Reply-To: <1458586565-8827-1-git-send-email-jaegeuk@kernel.org>
+	Mon, 21 Mar 2016 21:21:09 +0000
+In-Reply-To: <00d401d18320$75f94e80$61ebeb80$@samsung.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,35 +30,73 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao2.yu@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Matthias Prager' <linux@matthiasprager.de>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This patch remains the current mount status to f2fs status info.
+Hello,
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/debug.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> Following commit in dev branch of f2fs-tools has fixed this issue, could you
+test this
+> patch firstly?
+> ("mkfs.f2fs: set segment_count in super block correctly")
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 4fb6ef8..ff8730e 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -216,8 +216,9 @@ static int stat_show(struct seq_file *s, void *v)
- 	list_for_each_entry(si, &f2fs_stat_list, stat_list) {
- 		update_general_status(si->sbi);
- 
--		seq_printf(s, "\n=====[ partition info(%pg). #%d ]=====\n",
--			si->sbi->sb->s_bdev, i++);
-+		seq_printf(s, "\n=====[ partition info(%pg). #%d, %s]=====\n",
-+			si->sbi->sb->s_bdev, i++,
-+			f2fs_readonly(si->sbi->sb) ? "RO": "RW");
- 		seq_printf(s, "[SB: 1] [CP: 2] [SIT: %d] [NAT: %d] ",
- 			   si->sit_area_segs, si->nat_area_segs);
- 		seq_printf(s, "[SSA: %d] [MAIN: %d",
--- 
-2.6.3
+Sorry, I cannot recreate the volume on the 8TB Seagate drive right now, but I
+did a test with a loopback device of equal size.
 
+Should I be worried about the changes in mkfs.f2fs since 1.6.0? Would it be
+suggested to recreate the filesystem? Or is it maybe possible to manually fix it?
+If it is really only the alignment, I think it shouldn't matter for SMR drives,
+as they are not using constant size zones anyway, so misalignment cannot be
+avoided with f2fs.
+
+>> Could you test the attached patch?
+
+I did a roundup test of all kernel/f2fs-tools version I thought that make sense.
+I hope the patch will be included in upcoming mainline kernels.
+
+Short summary:
+--------------
+Filesystems created with a recent dev version of f2fs-tools work without any
+problems and don't need the f2fs kernel patch.
+Filesystems created with older f2fs-tools need the f2fs kernel patch to mount
+correctly.
+I guess that is exactly what everyone expected to be the outcome.
+
+Full details:
+-------------
+f2fs-tools D:  release 1.6.0 (Seagate SMR drive)
+f2fs-tools L1: release 1.6.0 (Loopback)
+f2fs-tools L2: 2016-01-08 mkfs.f2fs: introduce zone align for main area (Loopback)
+f2fs-tools L3: 2016-03-16 mkfs.f2fs: set segment_count in super block correctly
+(Loopback)
+
+Test procedure:
+$ truncate -s 8001559724032 f2fs-tools-1.6.0.img
+$ losetup -f f2fs-tools-1.6.0.img
+$ mkfs.f2fs -s64 -t0 -a0 /dev/loop0
+$ mount -t f2fs -onoinline_data,noatime,flush_merge,no_heap,ro /dev/loop0 /mnt
+$ umount /mnt
+
+Kernel: Linux 4.4.6 x86_64
+f2fs-tools D:  Works
+f2fs-tools L1: Works
+f2fs-tools L2: Works
+f2fs-tools L3: Works
+
+Kernel: Linux 4.5.0 x86_64
+f2fs-tools D:  Failed -> Same errors as before
+f2fs-tools L1: Failed -> Same errors as before
+f2fs-tools L2: Failed -> Same errors as before
+f2fs-tools L3: Works
+
+Kernel: Linux 4.5.0+patch x86_64
+f2fs-tools D:  Works
+f2fs-tools L1: Works
+f2fs-tools L2: Works
+f2fs-tools L3: Works
+
+Best regards,
+David Gnedt
 
 ------------------------------------------------------------------------------
 Transform Data into Opportunity.
