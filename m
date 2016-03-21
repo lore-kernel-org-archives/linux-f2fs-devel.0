@@ -1,23 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: cover large section in sanity check of
-	super
-Date: Mon, 21 Mar 2016 11:56:04 -0700
-Message-ID: <1458586565-8827-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: show current mount status
+Date: Mon, 21 Mar 2016 11:56:05 -0700
+Message-ID: <1458586565-8827-2-git-send-email-jaegeuk@kernel.org>
+References: <1458586565-8827-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ai4zw-0007Xn-Mb
+	(envelope-from <jaegeuk@kernel.org>) id 1ai4zw-0007Xh-Fa
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Mon, 21 Mar 2016 18:56:16 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ai4zv-0004nm-KL
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ai4zv-0004sI-QP
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Mon, 21 Mar 2016 18:56:16 +0000
+In-Reply-To: <1458586565-8827-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,60 +29,31 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, "stable 4 . 5+" <stable@vger.kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch fixes the bug which does not cover a large section case when checking
-the sanity of superblock.
+This patch remains the current mount status to f2fs status info.
 
-Reported-by: Matthias Prager <linux@matthiasprager.de>
-Reported-by: David Gnedt <david.gnedt@davizone.at>
-Cc: stable 4.5+ <stable@vger.kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/super.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ fs/f2fs/debug.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 15bb81f..fc9147f 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1000,6 +1000,7 @@ static inline bool sanity_check_area_boundary(struct super_block *sb,
- 	u32 segment_count_main = le32_to_cpu(raw_super->segment_count_main);
- 	u32 segment_count = le32_to_cpu(raw_super->segment_count);
- 	u32 log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
-+	u32 segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 4fb6ef8..ff8730e 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -216,8 +216,9 @@ static int stat_show(struct seq_file *s, void *v)
+ 	list_for_each_entry(si, &f2fs_stat_list, stat_list) {
+ 		update_general_status(si->sbi);
  
- 	if (segment0_blkaddr != cp_blkaddr) {
- 		f2fs_msg(sb, KERN_INFO,
-@@ -1044,12 +1045,26 @@ static inline bool sanity_check_area_boundary(struct super_block *sb,
- 		return true;
- 	}
- 
--	if (main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
-+	if (segs_per_sec == 1 &&
-+		main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
- 		segment0_blkaddr + (segment_count << log_blocks_per_seg)) {
- 		f2fs_msg(sb, KERN_INFO,
- 			"Wrong MAIN_AREA boundary, start(%u) end(%u) blocks(%u)",
- 			main_blkaddr,
--			segment0_blkaddr + (segment_count << log_blocks_per_seg),
-+			segment0_blkaddr +
-+			(segment_count << log_blocks_per_seg),
-+			segment_count_main << log_blocks_per_seg);
-+		return true;
-+	}
-+
-+	if (segs_per_sec > 1 &&
-+		main_blkaddr + (segment_count_main << log_blocks_per_seg) >
-+		segment0_blkaddr + (segment_count << log_blocks_per_seg)) {
-+		f2fs_msg(sb, KERN_INFO,
-+			"Wrong MAIN_AREA boundary in large section, start(%u) end(%u) blocks(%u)",
-+			main_blkaddr,
-+			segment0_blkaddr +
-+			(segment_count << log_blocks_per_seg),
- 			segment_count_main << log_blocks_per_seg);
- 		return true;
- 	}
+-		seq_printf(s, "\n=====[ partition info(%pg). #%d ]=====\n",
+-			si->sbi->sb->s_bdev, i++);
++		seq_printf(s, "\n=====[ partition info(%pg). #%d, %s]=====\n",
++			si->sbi->sb->s_bdev, i++,
++			f2fs_readonly(si->sbi->sb) ? "RO": "RW");
+ 		seq_printf(s, "[SB: 1] [CP: 2] [SIT: %d] [NAT: %d] ",
+ 			   si->sit_area_segs, si->nat_area_segs);
+ 		seq_printf(s, "[SSA: %d] [MAIN: %d",
 -- 
 2.6.3
 
