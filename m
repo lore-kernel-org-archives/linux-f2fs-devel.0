@@ -1,27 +1,35 @@
-From: Matthias Prager <linux@matthiasprager.de>
+From: Chao Yu <chao2.yu@samsung.com>
 Subject: Re: f2fs bug: Unable to mount big volumes in kernel 4.5
-Date: Mon, 21 Mar 2016 23:56:02 +0100
-Message-ID: <56F07C02.2020106@matthiasprager.de>
+Date: Tue, 22 Mar 2016 11:37:53 +0800
+Message-ID: <013e01d183ec$5142ae20$f3c80a60$@samsung.com>
 References: <56EEC766.2030503@davizone.at>
 	<20160320224654.GB4752@jaegeuk.hsd1.ca.comcast.net>
 	<00d401d18320$75f94e80$61ebeb80$@samsung.com>
-	<56F06067.2060404@davizone.at>
+	<20160321103032.GA2739@schmorp.de>
+	<20160321160359.GB6196@jaegeuk.gateway>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <linux@matthiasprager.de>) id 1ai8k9-000780-2R
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao2.yu@samsung.com>) id 1aiD9e-0000hH-Qp
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Mar 2016 22:56:13 +0000
-Received: from dd15408.kasserver.com ([85.13.136.168])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ai8k7-00042o-NP
+	Tue, 22 Mar 2016 03:38:50 +0000
+Received: from mailout2.samsung.com ([203.254.224.25])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aiD9c-0001cN-PP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 21 Mar 2016 22:56:13 +0000
-In-Reply-To: <56F06067.2060404@davizone.at>
+	Tue, 22 Mar 2016 03:38:50 +0000
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout2.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0O4F0015E8SHCL50@mailout2.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 22 Mar 2016 12:38:41 +0900 (KST)
+In-reply-to: <20160321160359.GB6196@jaegeuk.gateway>
+Content-language: zh-cn
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,86 +39,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: David Gnedt <david.gnedt@davizone.at>, Chao Yu <chao2.yu@samsung.com>, 'Jaegeuk Kim' <jaegeuk@kernel.org>
+To: 'Jaegeuk Kim' <jaegeuk@kernel.org>, 'Marc Lehmann' <schmorp@schmorp.de>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hello everyone,
+Hi Jaegeuk,
 
-if there really is a suboptimal/faulty alignment being done by
-f2fs-tools <=1.6.0 (and I haven't done the math, so I'm just assuming),
-wouldn't it be prudent to include a modified kernel patch, which allows
-for mounting of older filesystems, but puts out a warning in dmesg which
-advises the user to run fsck.f2fs some time in the future?
+> -----Original Message-----
+> From: Jaegeuk Kim [mailto:jaegeuk@kernel.org]
+> Sent: Tuesday, March 22, 2016 12:04 AM
+> To: Marc Lehmann
+> Cc: Chao Yu; linux-f2fs-devel@lists.sourceforge.net
+> Subject: Re: [f2fs-dev] f2fs bug: Unable to mount big volumes in kernel 4.5
+> 
+> On Mon, Mar 21, 2016 at 11:30:38AM +0100, Marc Lehmann wrote:
+> > On Mon, Mar 21, 2016 at 11:18:35AM +0800, Chao Yu <chao2.yu@samsung.com> wrote:
+> > > > As you pointed out, it seems there is a bug in sanity check routine, which
+> > > > doesn't cover the large section case.
+> > >
+> > > Actually, there is a bug in f2fs-tools 1.6.0, it will trigger sanity check failure
+> > > in f2fs kernel module since in mkfs.f2fs we will align segment_count and
+> > > segment_count_main with different size if parameter -s or -z is configured larger
+> > > than 1.
+> > >
+> > > Following commit in dev branch of f2fs-tools has fixed this issue, could you test this
+> > > patch firstly?
+> > > ("mkfs.f2fs: set segment_count in super block correctly")
+> >
+> > Stupid question from my side, does that mean we have to reformat existing
+> > volumes? Because mkfs clearly won't fix existing volumes, so fixing mkfs
+> > will not fix the issue.
+> 
+> Exactly.
+> The f2fs patch should be merged to take into account such the backward
+> compatibility.
 
----
-Matthias
+Agreed.
 
-Am 21.03.2016 um 21:58 schrieb David Gnedt:
-> Hello,
+> And, I don't think wrong segment_count hurts the f2fs behavior.
+
+Now, we use segment_count to check our last blkaddr, if we ignore correctness
+of segment_count, our boundary checked should be wrong.
+
+So how about enabling fsck.f2fs ability of repairing incorrect value of
+segment_count, and for f2fs module, warn our user to run fsck if we detect
+such error?
+
+Thanks,
+
 > 
->> Following commit in dev branch of f2fs-tools has fixed this issue, could you
-> test this
->> patch firstly?
->> ("mkfs.f2fs: set segment_count in super block correctly")
+> Thanks,
 > 
-> Sorry, I cannot recreate the volume on the 8TB Seagate drive right now, but I
-> did a test with a loopback device of equal size.
-> 
-> Should I be worried about the changes in mkfs.f2fs since 1.6.0? Would it be
-> suggested to recreate the filesystem? Or is it maybe possible to manually fix it?
-> If it is really only the alignment, I think it shouldn't matter for SMR drives,
-> as they are not using constant size zones anyway, so misalignment cannot be
-> avoided with f2fs.
-> 
->>> Could you test the attached patch?
-> 
-> I did a roundup test of all kernel/f2fs-tools version I thought that make sense.
-> I hope the patch will be included in upcoming mainline kernels.
-> 
-> Short summary:
-> --------------
-> Filesystems created with a recent dev version of f2fs-tools work without any
-> problems and don't need the f2fs kernel patch.
-> Filesystems created with older f2fs-tools need the f2fs kernel patch to mount
-> correctly.
-> I guess that is exactly what everyone expected to be the outcome.
-> 
-> Full details:
-> -------------
-> f2fs-tools D:  release 1.6.0 (Seagate SMR drive)
-> f2fs-tools L1: release 1.6.0 (Loopback)
-> f2fs-tools L2: 2016-01-08 mkfs.f2fs: introduce zone align for main area (Loopback)
-> f2fs-tools L3: 2016-03-16 mkfs.f2fs: set segment_count in super block correctly
-> (Loopback)
-> 
-> Test procedure:
-> $ truncate -s 8001559724032 f2fs-tools-1.6.0.img
-> $ losetup -f f2fs-tools-1.6.0.img
-> $ mkfs.f2fs -s64 -t0 -a0 /dev/loop0
-> $ mount -t f2fs -onoinline_data,noatime,flush_merge,no_heap,ro /dev/loop0 /mnt
-> $ umount /mnt
-> 
-> Kernel: Linux 4.4.6 x86_64
-> f2fs-tools D:  Works
-> f2fs-tools L1: Works
-> f2fs-tools L2: Works
-> f2fs-tools L3: Works
-> 
-> Kernel: Linux 4.5.0 x86_64
-> f2fs-tools D:  Failed -> Same errors as before
-> f2fs-tools L1: Failed -> Same errors as before
-> f2fs-tools L2: Failed -> Same errors as before
-> f2fs-tools L3: Works
-> 
-> Kernel: Linux 4.5.0+patch x86_64
-> f2fs-tools D:  Works
-> f2fs-tools L1: Works
-> f2fs-tools L2: Works
-> f2fs-tools L3: Works
-> 
-> Best regards,
-> David Gnedt
-> 
+> >
+> > A fix in the f2fs or fsck.f2fs would be needed for existing volumes.
+> >
+> > --
+> >                 The choice of a       Deliantra, the free code+content MORPG
+> >       -----==-     _GNU_              http://www.deliantra.net
+> >       ----==-- _       generation
+> >       ---==---(_)__  __ ____  __      Marc Lehmann
+> >       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+> >       -=====/_/_//_/\_,_/ /_/\_\
 
 
 ------------------------------------------------------------------------------
