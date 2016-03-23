@@ -1,22 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/7] fsck.f2fs: introduce -p option to check meta
-Date: Wed, 23 Mar 2016 13:41:15 -0700
-Message-ID: <1458765681-24123-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 7/7] fsck.f2fs: check sanity of superblock and
+	fix any misalignment
+Date: Wed, 23 Mar 2016 13:41:21 -0700
+Message-ID: <1458765681-24123-7-git-send-email-jaegeuk@kernel.org>
+References: <1458765681-24123-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aipat-0008Di-5a
+	(envelope-from <jaegeuk@kernel.org>) id 1aipb0-0008EX-I6
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Mar 2016 20:41:31 +0000
+	Wed, 23 Mar 2016 20:41:38 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aipar-0002lt-Ot
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1aipaz-00021Q-JP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Mar 2016 20:41:31 +0000
+	Wed, 23 Mar 2016 20:41:38 +0000
+In-Reply-To: <1458765681-24123-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,224 +32,149 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-From: Sheng Yong <shengyong1@huawei.com>
+This patch detects any corrupted superblock and fix misalignment when it finds,
+which is synced with the f2fs kernel module.
 
-This patch introduces a new option '-p' to do more checks on NAT/SIT areas.
-'-p' has 2 levels: level 1 has the same sematics as '-a'; level 2 checks
-NAT/SIT counters to see if they matches the status in SB and CP.
-
-A new function, fsck_chk_meta, is called by '-p 1' to implement these
-comparsion. If errors are detected, fix_on is set, which means fsck will
-do a 'fsck -f' immediately.
-
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/fsck.c       | 59 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fsck/fsck.h       |  7 +++++++
- fsck/main.c       | 39 +++++++++++++++++++++++++++++++++---
- fsck/mount.c      |  4 ++--
- include/f2fs_fs.h |  1 +
- 5 files changed, 105 insertions(+), 5 deletions(-)
+ fsck/mount.c | 103 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 101 insertions(+), 2 deletions(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index c68eae7..fede8e1 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1517,6 +1517,65 @@ void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
- 	free(new_blk);
+diff --git a/fsck/mount.c b/fsck/mount.c
+index 37a0025..67c681e 100644
+--- a/fsck/mount.c
++++ b/fsck/mount.c
+@@ -265,7 +265,90 @@ void print_sb_state(struct f2fs_super_block *sb)
+ 	MSG(0, "\n");
  }
  
-+int fsck_chk_meta(struct f2fs_sb_info *sbi)
+-int sanity_check_raw_super(struct f2fs_super_block *sb)
++static inline int sanity_check_area_boundary(struct f2fs_super_block *sb,
++							u64 offset)
 +{
-+	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
-+	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
-+	struct seg_entry *se;
-+	unsigned int sit_valid_segs = 0, sit_node_blks = 0;
-+	unsigned int i;
++	u32 segment0_blkaddr = get_sb(segment0_blkaddr);
++	u32 cp_blkaddr = get_sb(cp_blkaddr);
++	u32 sit_blkaddr = get_sb(sit_blkaddr);
++	u32 nat_blkaddr = get_sb(nat_blkaddr);
++	u32 ssa_blkaddr = get_sb(ssa_blkaddr);
++	u32 main_blkaddr = get_sb(main_blkaddr);
++	u32 segment_count_ckpt = get_sb(segment_count_ckpt);
++	u32 segment_count_sit = get_sb(segment_count_sit);
++	u32 segment_count_nat = get_sb(segment_count_nat);
++	u32 segment_count_ssa = get_sb(segment_count_ssa);
++	u32 segment_count_main = get_sb(segment_count_main);
++	u32 segment_count = get_sb(segment_count);
++	u32 log_blocks_per_seg = get_sb(log_blocks_per_seg);
++	u64 main_end_blkaddr = main_blkaddr +
++				(segment_count_main << log_blocks_per_seg);
++	u64 seg_end_blkaddr = segment0_blkaddr +
++				(segment_count << log_blocks_per_seg);
 +
-+	/* 1. check sit usage with CP: curseg is lost? */
-+	for (i = 0; i < TOTAL_SEGS(sbi); i++) {
-+		se = get_seg_entry(sbi, i);
-+		if (se->valid_blocks != 0)
-+			sit_valid_segs++;
-+		else if (IS_CUR_SEGNO(sbi, i, NO_CHECK_TYPE)) {
-+			/* curseg has not been written back to device */
-+			MSG(1, "\tInfo: curseg %u is counted in valid segs\n", i);
-+			sit_valid_segs++;
-+		}
-+		if (IS_NODESEG(se->type))
-+			sit_node_blks += se->valid_blocks;
-+	}
-+	if (fsck->chk.sit_free_segs + sit_valid_segs != TOTAL_SEGS(sbi)) {
-+		ASSERT_MSG("SIT usage does not match: sit_free_segs %u, "
-+				"sit_valid_segs %u, total_segs %u",
-+			fsck->chk.sit_free_segs, sit_valid_segs,
-+			TOTAL_SEGS(sbi));
-+		return -EINVAL;
++	if (segment0_blkaddr != cp_blkaddr) {
++		MSG(0, "\tMismatch segment0(%u) cp_blkaddr(%u)\n",
++				segment0_blkaddr, cp_blkaddr);
++		return -1;
 +	}
 +
-+	/* 2. check node count */
-+	if (fsck->chk.valid_nat_entry_cnt != sit_node_blks) {
-+		ASSERT_MSG("node count does not match: valid_nat_entry_cnt %u,"
-+			" sit_node_blks %u",
-+			fsck->chk.valid_nat_entry_cnt, sit_node_blks);
-+		return -EINVAL;
++	if (cp_blkaddr + (segment_count_ckpt << log_blocks_per_seg) !=
++							sit_blkaddr) {
++		MSG(0, "\tWrong CP boundary, start(%u) end(%u) blocks(%u)\n",
++			cp_blkaddr, sit_blkaddr,
++			segment_count_ckpt << log_blocks_per_seg);
++		return -1;
 +	}
 +
-+	/* 3. check SIT with CP */
-+	if (fsck->chk.sit_free_segs != le32_to_cpu(cp->free_segment_count)) {
-+		ASSERT_MSG("free segs does not match: sit_free_segs %u, "
-+				"free_segment_count %u",
-+				fsck->chk.sit_free_segs,
-+				le32_to_cpu(cp->free_segment_count));
-+		return -EINVAL;
++	if (sit_blkaddr + (segment_count_sit << log_blocks_per_seg) !=
++							nat_blkaddr) {
++		MSG(0, "\tWrong SIT boundary, start(%u) end(%u) blocks(%u)\n",
++			sit_blkaddr, nat_blkaddr,
++			segment_count_sit << log_blocks_per_seg);
++		return -1;
 +	}
 +
-+	/* 4. check NAT with CP */
-+	if (fsck->chk.valid_nat_entry_cnt !=
-+					le32_to_cpu(cp->valid_node_count)) {
-+		ASSERT_MSG("valid node does not match: valid_nat_entry_cnt %u,"
-+				" valid_node_count %u",
-+				fsck->chk.valid_nat_entry_cnt,
-+				le32_to_cpu(cp->valid_node_count));
-+		return -EINVAL;
++	if (nat_blkaddr + (segment_count_nat << log_blocks_per_seg) !=
++							ssa_blkaddr) {
++		MSG(0, "\tWrong NAT boundary, start(%u) end(%u) blocks(%u)\n",
++			nat_blkaddr, ssa_blkaddr,
++			segment_count_nat << log_blocks_per_seg);
++		return -1;
 +	}
 +
++	if (ssa_blkaddr + (segment_count_ssa << log_blocks_per_seg) !=
++							main_blkaddr) {
++		MSG(0, "\tWrong SSA boundary, start(%u) end(%u) blocks(%u)\n",
++			ssa_blkaddr, main_blkaddr,
++			segment_count_ssa << log_blocks_per_seg);
++		return -1;
++	}
++
++	if (main_end_blkaddr > seg_end_blkaddr) {
++		MSG(0, "\tWrong MAIN_AREA, start(%u) end(%u) block(%u)\n",
++			main_blkaddr,
++			segment0_blkaddr +
++				(segment_count << log_blocks_per_seg),
++			segment_count_main << log_blocks_per_seg);
++		return -1;
++	} else if (main_end_blkaddr < seg_end_blkaddr) {
++		int err;
++
++		set_sb(segment_count, (main_end_blkaddr -
++				segment0_blkaddr) >> log_blocks_per_seg);
++
++		err = dev_write(sb, offset, sizeof(struct f2fs_super_block));
++		MSG(0, "Info: Fix alignment: %s, start(%u) end(%u) block(%u)\n",
++			err ? "failed": "done",
++			main_blkaddr,
++			segment0_blkaddr +
++				(segment_count << log_blocks_per_seg),
++			segment_count_main << log_blocks_per_seg);
++	}
 +	return 0;
 +}
 +
- void fsck_init(struct f2fs_sb_info *sbi)
++int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
  {
- 	struct f2fs_fsck *fsck = F2FS_FSCK(sbi);
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 45e4366..f03efb8 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -15,6 +15,12 @@
+ 	unsigned int blocksize;
  
- #define FSCK_UNMATCHED_EXTENT		0x00000001
+@@ -279,6 +362,15 @@ int sanity_check_raw_super(struct f2fs_super_block *sb)
+ 	if (F2FS_BLKSIZE != blocksize)
+ 		return -1;
  
-+enum {
-+	PREEN_MODE_0,
-+	PREEN_MODE_1,
-+	PREEN_MODE_MAX
-+};
++	/* check log blocks per segment */
++	if (get_sb(log_blocks_per_seg) != 9)
++		return -1;
 +
- /* fsck.c */
- struct orphan_info {
- 	u32 nr_inodes;
-@@ -119,6 +125,7 @@ extern int fsck_chk_dentry_blk(struct f2fs_sb_info *, u32, struct child_info *,
- 		int, int);
- int fsck_chk_inline_dentries(struct f2fs_sb_info *, struct f2fs_node *,
- 		struct child_info *);
-+int fsck_chk_meta(struct f2fs_sb_info *sbi);
++	if (get_sb(log_sectorsize) > F2FS_MAX_LOG_SECTOR_SIZE ||
++			get_sb(log_sectorsize) < F2FS_MIN_LOG_SECTOR_SIZE)
++		return -1;
++
++	/* Currently, support 512/1024/2048/4096 bytes sector size */
+ 	if (get_sb(log_sectorsize) > F2FS_MAX_LOG_SECTOR_SIZE ||
+ 			get_sb(log_sectorsize) < F2FS_MIN_LOG_SECTOR_SIZE)
+ 		return -1;
+@@ -287,6 +379,13 @@ int sanity_check_raw_super(struct f2fs_super_block *sb)
+ 						F2FS_MAX_LOG_SECTOR_SIZE)
+ 		return -1;
  
- void print_cp_state(u32);
- extern void print_node_info(struct f2fs_node *);
-diff --git a/fsck/main.c b/fsck/main.c
-index 0e23c81..93008a5 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -22,7 +22,7 @@ void fsck_usage()
- 	MSG(0, "  -a check/fix potential corruption, reported by f2fs\n");
- 	MSG(0, "  -d debug level [default:0]\n");
- 	MSG(0, "  -f check/fix entire partition\n");
--	MSG(0, "  -p preen mode [default is same as -a]\n");
-+	MSG(0, "  -p preen mode [default:0 the same as -a [0|1]]\n");
- 	MSG(0, "  -t show directory tree [-d -1]\n");
- 	exit(1);
++	/* check reserved ino info */
++	if (get_sb(node_ino) != 1 || get_sb(meta_ino) != 2 ||
++					get_sb(root_ino) != 3)
++		return -1;
++
++	if (sanity_check_area_boundary(sb, offset))
++		return -1;
+ 	return 0;
  }
-@@ -58,16 +58,30 @@ void f2fs_parse_options(int argc, char *argv[])
- 	char *prog = basename(argv[0]);
  
- 	if (!strcmp("fsck.f2fs", prog)) {
--		const char *option_string = "ad:fpt";
-+		const char *option_string = "ad:fp:t";
+@@ -304,7 +403,7 @@ int validate_super_block(struct f2fs_sb_info *sbi, int block)
+ 	if (dev_read(sbi->raw_super, offset, sizeof(struct f2fs_super_block)))
+ 		return -1;
  
- 		config.func = FSCK;
- 		while ((option = getopt(argc, argv, option_string)) != EOF) {
- 			switch (option) {
- 			case 'a':
--			case 'p':
- 				config.auto_fix = 1;
- 				MSG(0, "Info: Fix the reported corruption.\n");
- 				break;
-+			case 'p':
-+				/* preen mode has different levels:
-+				 *  0: default level, the same as -a
-+				 *  1: check meta
-+				 */
-+				config.preen_mode = atoi(optarg);
-+				if (config.preen_mode < 0)
-+					config.preen_mode = PREEN_MODE_0;
-+				else if (config.preen_mode >= PREEN_MODE_MAX)
-+					config.preen_mode = PREEN_MODE_MAX - 1;
-+				if (config.preen_mode == PREEN_MODE_0)
-+					config.auto_fix = 1;
-+				MSG(0, "Info: Fix the reported corruption in "
-+					"preen mode %d\n", config.preen_mode);
-+				break;
- 			case 'd':
- 				config.dbg_lv = atoi(optarg);
- 				MSG(0, "Info: Debug level = %d\n",
-@@ -213,6 +227,25 @@ static void do_fsck(struct f2fs_sb_info *sbi)
- 
- 	print_cp_state(flag);
- 
-+	if (!config.fix_on && !config.bug_on) {
-+		switch (config.preen_mode) {
-+		case PREEN_MODE_1:
-+			if (fsck_chk_meta(sbi)) {
-+				MSG(0, "[FSCK] F2FS metadata   [Fail]");
-+				MSG(0, "\tError: meta does not match, "
-+					"force check all\n");
-+			} else {
-+				MSG(0, "[FSCK] F2FS metadata   [Ok..]");
-+				fsck_free(sbi);
-+				return;
-+			}
-+
-+			if (!config.ro)
-+				config.fix_on = 1;
-+			break;
-+		}
-+	}
-+
- 	fsck_chk_orphan_node(sbi);
- 
- 	/* Traverse all block recursively from root inode */
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 153055e..af1e0c3 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1749,12 +1749,12 @@ int f2fs_do_mount(struct f2fs_sb_info *sbi)
- 
- 	print_ckpt_info(sbi);
- 
--	if (config.auto_fix) {
-+	if (config.auto_fix || config.preen_mode) {
- 		u32 flag = get_cp(ckpt_flags);
- 
- 		if (flag & CP_FSCK_FLAG)
- 			config.fix_on = 1;
--		else
-+		else if (!config.preen_mode)
- 			return 1;
- 	}
- 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 0046be6..330cbe5 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -251,6 +251,7 @@ struct f2fs_configuration {
- 	int fix_on;
- 	int bug_on;
- 	int auto_fix;
-+	int preen_mode;
- 	int ro;
- 	__le32 feature;			/* defined features */
- 
+-	if (!sanity_check_raw_super(sbi->raw_super)) {
++	if (!sanity_check_raw_super(sbi->raw_super, offset)) {
+ 		/* get kernel version */
+ 		if (config.kd >= 0) {
+ 			dev_read_version(config.version, 0, VERSION_LEN);
 -- 
 2.6.3
 
