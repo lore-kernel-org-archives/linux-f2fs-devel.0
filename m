@@ -1,25 +1,30 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/7] fsck.f2fs: count the number of inodes during
-	building nat_area_bitmap
-Date: Wed, 23 Mar 2016 13:41:16 -0700
-Message-ID: <1458765681-24123-2-git-send-email-jaegeuk@kernel.org>
-References: <1458765681-24123-1-git-send-email-jaegeuk@kernel.org>
+From: Marc Lehmann <schmorp@schmorp.de>
+Subject: Re: f2fs bug: Unable to mount big volumes in kernel 4.5
+Date: Wed, 23 Mar 2016 22:00:10 +0100
+Message-ID: <20160323205204.GB4443@schmorp.de>
+References: <56EEC766.2030503@davizone.at>
+	<20160320224654.GB4752@jaegeuk.hsd1.ca.comcast.net>
+	<00d401d18320$75f94e80$61ebeb80$@samsung.com>
+	<56F06067.2060404@davizone.at> <56F07C02.2020106@matthiasprager.de>
+	<20160322203613.GA14498@jaegeuk.gateway>
+	<56F29214.9040001@davizone.at> <56F2C755.5060402@matthiasprager.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aipat-0003qc-KG
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <schmorp@schmorp.de>) id 1aipt9-00055N-7i
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Mar 2016 20:41:31 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aipas-0000Tk-Qa
+	Wed, 23 Mar 2016 21:00:23 +0000
+Received: from mail.nethype.de ([5.9.56.24])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1aipt7-0003SV-F0
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 23 Mar 2016 20:41:31 +0000
-In-Reply-To: <1458765681-24123-1-git-send-email-jaegeuk@kernel.org>
+	Wed, 23 Mar 2016 21:00:23 +0000
+Content-Disposition: inline
+In-Reply-To: <56F2C755.5060402@matthiasprager.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,88 +34,49 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Matthias Prager <linux@matthiasprager.de>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, David Gnedt <david.gnedt@davizone.at>, linux-f2fs-devel@lists.sourceforge.net
 
-From: Sheng Yong <shengyong1@huawei.com>
+On Wed, Mar 23, 2016 at 05:41:57PM +0100, Matthias Prager <linux@matthiasprager.de> wrote:
+> detail. Writing on a read-only fs is a no go! There usually is a reason
+> why someone mounts an filesystem read-only and f2fs should not simply
+> ignore such a flag.
 
-The nid and ino of an inode are the same. So during building
-nat_area_bitmap, we can know which nat entry represents an
-inode, thus, we can count the number of inodes.
+Hmm, no.
 
-Then in fsck_chk_meta, the amount of inodes can be compared
-with that recorded in CP.
+Even an unusual case is enough, such as mounting it read-only for data
+recovery because the underlying device dies on writes (quite likely for
+ssds, the primary target for f2fs).
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fsck/fsck.c  |  8 ++++++++
- fsck/fsck.h  |  1 +
- fsck/mount.c | 10 ++++++++++
- 3 files changed, 19 insertions(+)
+However, other linux filesystems either replay their journal on readonly
+mounts, or even *require* a replay (most have a flag to prevent that,
+but that might not help data recovery). In fact, my example above can
+relatively easily worked around using device mapper and a temporary
+snapshot volume for writes.
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index fede8e1..7100397 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1573,6 +1573,14 @@ int fsck_chk_meta(struct f2fs_sb_info *sbi)
- 		return -EINVAL;
- 	}
- 
-+	if (fsck->nat_valid_inode_cnt != le32_to_cpu(cp->valid_inode_count)) {
-+		ASSERT_MSG("valid inode does not match: nat_valid_inode_cnt %u,"
-+				" valid_inode_count %u",
-+				fsck->nat_valid_inode_cnt,
-+				le32_to_cpu(cp->valid_inode_count));
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index f03efb8..da4e6ad 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -76,6 +76,7 @@ struct f2fs_fsck {
- 	u32 nr_nat_entries;
- 
- 	u32 dentry_depth;
-+	u32 nat_valid_inode_cnt;
- };
- 
- #define BLOCK_SZ		4096
-diff --git a/fsck/mount.c b/fsck/mount.c
-index af1e0c3..4f907ef 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1679,6 +1679,11 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
- 			if (lookup_nat_in_journal(sbi, nid + i,
- 							&raw_nat) >= 0) {
- 				node_info_from_raw_nat(&ni, &raw_nat);
-+				if (ni.ino == (nid + i) && ni.blk_addr != 0) {
-+					fsck->nat_valid_inode_cnt++;
-+					DBG(3, "ino[0x%8x] maybe is inode\n",
-+								ni.ino);
-+				}
- 				if (ni.blk_addr != 0x0) {
- 					f2fs_set_bit(nid + i,
- 							fsck->nat_area_bitmap);
-@@ -1689,6 +1694,11 @@ void build_nat_area_bitmap(struct f2fs_sb_info *sbi)
- 			} else {
- 				node_info_from_raw_nat(&ni,
- 						&nat_block->entries[i]);
-+				if (ni.ino == (nid + i) && ni.blk_addr != 0) {
-+					fsck->nat_valid_inode_cnt++;
-+					DBG(3, "ino[0x%8x] maybe is inode\n",
-+								ni.ino);
-+				}
- 				if (ni.blk_addr == 0)
- 					continue;
- 				if (nid + i == 0) {
+So, the "ro" mount flag in linux does not mean "do not write to the
+backing store", and did not have that meaning for a long time, so it's
+fine for f2fs to write even for ro mounts.
+
+That means the correct behaviour for f2fs is to write unless "norecovery"
+has been specified, which already exists for this purpose on f2fs.
+
+Different behaviour would put f2fs at odds with other existing
+filesystems, which write on "ro" mounts to gain integrity.
+
+Even better would be if there was a "force" or similar option which would
+allow me to mount filesystems with possibly bad superblock data. This
+could even be rolled into the existing "norecovery" switch, which, when
+given, could try to mount even if the superblock has (some amount of) bad
+data.
+
 -- 
-2.6.3
-
+                The choice of a       Deliantra, the free code+content MORPG
+      -----==-     _GNU_              http://www.deliantra.net
+      ----==-- _       generation
+      ---==---(_)__  __ ____  __      Marc Lehmann
+      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
+      -=====/_/_//_/\_,_/ /_/\_\
 
 ------------------------------------------------------------------------------
 Transform Data into Opportunity.
