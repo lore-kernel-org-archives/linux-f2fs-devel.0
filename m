@@ -1,140 +1,99 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/4] f2fs: give -EINVAL for norecovery and rw
-	mount
-Date: Wed, 23 Mar 2016 18:31:27 -0700
-Message-ID: <1458783087-32233-4-git-send-email-jaegeuk@kernel.org>
-References: <1458783087-32233-1-git-send-email-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aiu7h-00076g-MS
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Mar 2016 01:31:41 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aiu7g-0007t4-TN
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Mar 2016 01:31:41 +0000
-In-Reply-To: <1458783087-32233-1-git-send-email-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Subject: [PATCH] f2fs: treat as a normal umount when remounting ro
+Date: Thu, 24 Mar 2016 12:59:52 -0700
+Message-ID: <1458849592-34163-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Once detecting something to recover, f2fs should stop mounting, given norecovery
-and rw mount options.
+When user remounts f2fs as read-only, we can mark the checkpoint as umount.
+Moreover, if we umounted the partition successfully, we don't need to proceed
+the roll-forward recovery at all.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/f2fs.h     |  2 +-
- fs/f2fs/recovery.c | 11 +++++++----
- fs/f2fs/super.c    | 14 ++++++++++++--
- 3 files changed, 20 insertions(+), 7 deletions(-)
+ fs/f2fs/super.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 286e917..5dcc04e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1907,7 +1907,7 @@ void build_gc_manager(struct f2fs_sb_info *);
- /*
-  * recovery.c
-  */
--int recover_fsync_data(struct f2fs_sb_info *);
-+int recover_fsync_data(struct f2fs_sb_info *, bool);
- bool space_for_roll_forward(struct f2fs_sb_info *);
- 
- /*
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 0b30cd2..e87f071 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -551,12 +551,13 @@ next:
- 	return err;
- }
- 
--int recover_fsync_data(struct f2fs_sb_info *sbi)
-+int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- {
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
- 	struct list_head inode_list;
- 	block_t blkaddr;
- 	int err;
-+	int ret = 0;
- 	bool need_writecp = false;
- 
- 	fsync_entry_slab = f2fs_kmem_cache_create("f2fs_fsync_inode_entry",
-@@ -573,11 +574,13 @@ int recover_fsync_data(struct f2fs_sb_info *sbi)
- 
- 	/* step #1: find fsynced inode numbers */
- 	err = find_fsync_dnodes(sbi, &inode_list);
--	if (err)
-+	if (err || list_empty(&inode_list))
- 		goto out;
- 
--	if (list_empty(&inode_list))
-+	if (check_only) {
-+		ret = 1;
- 		goto out;
-+	}
- 
- 	need_writecp = true;
- 
-@@ -625,5 +628,5 @@ out:
- 	} else {
- 		mutex_unlock(&sbi->cp_mutex);
- 	}
--	return err;
-+	return ret ? ret: err;
- }
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5718187..abc0d75 100644
+index abc0d75..2e6b7bf 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -1562,14 +1562,24 @@ try_onemore:
- 		if (need_fsck)
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+@@ -791,11 +791,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	org_mount_opt = sbi->mount_opt;
+ 	active_logs = sbi->active_logs;
  
--		err = recover_fsync_data(sbi);
--		if (err) {
-+		err = recover_fsync_data(sbi, false);
-+		if (err < 0) {
- 			need_fsck = true;
- 			f2fs_msg(sb, KERN_ERR,
- 				"Cannot recover all fsync data errno=%ld", err);
+-	if (*flags & MS_RDONLY) {
+-		set_opt(sbi, FASTBOOT);
+-		set_sbi_flag(sbi, SBI_IS_DIRTY);
+-	}
+-
+ 	/* recover superblocks we couldn't write due to previous RO mount */
+ 	if (!(*flags & MS_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
+ 		err = f2fs_commit_super(sbi, false);
+@@ -805,8 +800,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 			clear_sbi_flag(sbi, SBI_NEED_SB_WRITE);
+ 	}
+ 
+-	sync_filesystem(sb);
+-
+ 	sbi->mount_opt.opt = 0;
+ 	default_options(sbi);
+ 
+@@ -838,7 +831,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	if ((*flags & MS_RDONLY) || !test_opt(sbi, BG_GC)) {
+ 		if (sbi->gc_thread) {
+ 			stop_gc_thread(sbi);
+-			f2fs_sync_fs(sb, 1);
+ 			need_restart_gc = true;
+ 		}
+ 	} else if (!sbi->gc_thread) {
+@@ -848,6 +840,15 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		need_stop_gc = true;
+ 	}
+ 
++	if (*flags & MS_RDONLY) {
++		sync_inodes_sb(sb);
++
++		set_sbi_flag(sbi, SBI_IS_DIRTY);
++		set_sbi_flag(sbi, SBI_IS_CLOSE);
++		f2fs_sync_fs(sb, 1);
++		clear_sbi_flag(sbi, SBI_IS_CLOSE);
++	}
++
+ 	/*
+ 	 * We stop issue flush thread if FS is mounted as RO
+ 	 * or if flush_merge is not passed in mount option.
+@@ -1548,13 +1549,14 @@ try_onemore:
+ 		goto free_proc;
+ 
+ 	/* recover fsynced data */
++	if (is_set_ckpt_flags(sbi->ckpt, CP_UMOUNT_FLAG))
++		goto skip_recovery;
++
+ 	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
+ 		/*
+-		 * mount should be failed, when device has readonly mode, and
+-		 * previous checkpoint was not done by clean system shutdown.
++		 * mount should be failed, when device has readonly mode.
+ 		 */
+-		if (bdev_read_only(sb->s_bdev) &&
+-				!is_set_ckpt_flags(sbi->ckpt, CP_UMOUNT_FLAG)) {
++		if (bdev_read_only(sb->s_bdev)) {
+ 			err = -EROFS;
  			goto free_kobj;
  		}
-+	} else {
-+		err = recover_fsync_data(sbi, true);
-+
-+		if (!f2fs_readonly(sb) && err > 0) {
-+			err = -EINVAL;
-+			f2fs_msg(sb, KERN_ERR,
-+				"Need to recover fsync data");
-+			goto free_kobj;
-+		}
+@@ -1579,7 +1581,7 @@ try_onemore:
+ 			goto free_kobj;
+ 		}
  	}
-+
+-
++skip_recovery:
  	/* recover_fsync_data() cleared this already */
  	clear_sbi_flag(sbi, SBI_POR_DOING);
  
 -- 
 2.6.3
 
-
-------------------------------------------------------------------------------
-Transform Data into Opportunity.
-Accelerate data analysis in your applications with
-Intel Data Analytics Acceleration Library.
-Click to learn more.
-http://pubads.g.doubleclick.net/gampad/clk?id=278785351&iu=/4140
