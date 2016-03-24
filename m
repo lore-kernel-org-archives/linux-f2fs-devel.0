@@ -1,213 +1,45 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/4] f2fs: cover large section in sanity check of super
-Date: Wed, 23 Mar 2016 18:31:24 -0700
-Message-ID: <1458783087-32233-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
+Subject: [PATCH 2/4] f2fs: give RO message when recovering superblock
+Date: Wed, 23 Mar 2016 18:31:25 -0700
+Message-ID: <1458783087-32233-2-git-send-email-jaegeuk@kernel.org>
+References: <1458783087-32233-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1458783087-32233-1-git-send-email-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, "stable 4 . 5+" <stable@vger.kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch fixes the bug which does not cover a large section case when checking
-the sanity of superblock.
-If f2fs detects misalignment, it will fix the superblock during the mount time,
-so it doesn't need to trigger fsck.f2fs further.
+When one of superblocks is missing, f2fs recovers it with the valid one.
+But, even if f2fs is mounted as RO, we'd better notify that too.
 
-Reported-by: Matthias Prager <linux@matthiasprager.de>
-Reported-by: David Gnedt <david.gnedt@davizone.at>
-Cc: stable 4.5+ <stable@vger.kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/super.c | 102 ++++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 65 insertions(+), 37 deletions(-)
+ fs/f2fs/super.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 15bb81f..5afb4a6 100644
+index 5afb4a6..742fc48 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -984,9 +984,25 @@ static loff_t max_file_blocks(void)
- 	return result;
- }
- 
-+static int __f2fs_commit_super(struct buffer_head *bh,
-+			struct f2fs_super_block *super)
-+{
-+	lock_buffer(bh);
-+	if (super)
-+		memcpy(bh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super));
-+	set_buffer_uptodate(bh);
-+	set_buffer_dirty(bh);
-+	unlock_buffer(bh);
-+
-+	/* it's rare case, we can do fua all the time */
-+	return __sync_dirty_buffer(bh, WRITE_FLUSH_FUA);
-+}
-+
- static inline bool sanity_check_area_boundary(struct super_block *sb,
--					struct f2fs_super_block *raw_super)
-+					struct buffer_head *bh)
- {
-+	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
-+					(bh->b_data + F2FS_SUPER_OFFSET);
- 	u32 segment0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
- 	u32 cp_blkaddr = le32_to_cpu(raw_super->cp_blkaddr);
- 	u32 sit_blkaddr = le32_to_cpu(raw_super->sit_blkaddr);
-@@ -1000,6 +1016,10 @@ static inline bool sanity_check_area_boundary(struct super_block *sb,
- 	u32 segment_count_main = le32_to_cpu(raw_super->segment_count_main);
- 	u32 segment_count = le32_to_cpu(raw_super->segment_count);
- 	u32 log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
-+	u64 main_end_blkaddr = main_blkaddr +
-+				(segment_count_main << log_blocks_per_seg);
-+	u64 seg_end_blkaddr = segment0_blkaddr +
-+				(segment_count << log_blocks_per_seg);
- 
- 	if (segment0_blkaddr != cp_blkaddr) {
- 		f2fs_msg(sb, KERN_INFO,
-@@ -1044,22 +1064,45 @@ static inline bool sanity_check_area_boundary(struct super_block *sb,
- 		return true;
- 	}
- 
--	if (main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
--		segment0_blkaddr + (segment_count << log_blocks_per_seg)) {
-+	if (main_end_blkaddr > seg_end_blkaddr) {
- 		f2fs_msg(sb, KERN_INFO,
--			"Wrong MAIN_AREA boundary, start(%u) end(%u) blocks(%u)",
-+			"Wrong MAIN_AREA boundary, start(%u) end(%u) block(%u)",
- 			main_blkaddr,
--			segment0_blkaddr + (segment_count << log_blocks_per_seg),
-+			segment0_blkaddr +
-+				(segment_count << log_blocks_per_seg),
- 			segment_count_main << log_blocks_per_seg);
- 		return true;
-+	} else if (main_end_blkaddr < seg_end_blkaddr) {
-+		int err = 0;
-+		char *res;
-+
-+		/* fix in-memory information all the time */
-+		raw_super->segment_count = cpu_to_le32((main_end_blkaddr -
-+				segment0_blkaddr) >> log_blocks_per_seg);
-+
-+		if (f2fs_readonly(sb) || bdev_read_only(sb->s_bdev)) {
-+			res = "internally";
-+		} else {
-+			err = __f2fs_commit_super(bh, NULL);
-+			res = err ? "failed" : "done";
-+		}
-+		f2fs_msg(sb, KERN_INFO,
-+			"Fix alignment : %s, start(%u) end(%u) block(%u)",
-+			res, main_blkaddr,
-+			segment0_blkaddr +
-+				(segment_count << log_blocks_per_seg),
-+			segment_count_main << log_blocks_per_seg);
-+		if (err)
-+			return true;
- 	}
--
- 	return false;
- }
- 
- static int sanity_check_raw_super(struct super_block *sb,
--			struct f2fs_super_block *raw_super)
-+				struct buffer_head *bh)
- {
-+	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
-+					(bh->b_data + F2FS_SUPER_OFFSET);
- 	unsigned int blocksize;
- 
- 	if (F2FS_SUPER_MAGIC != le32_to_cpu(raw_super->magic)) {
-@@ -1126,7 +1169,7 @@ static int sanity_check_raw_super(struct super_block *sb,
- 	}
- 
- 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
--	if (sanity_check_area_boundary(sb, raw_super))
-+	if (sanity_check_area_boundary(sb, bh))
- 		return 1;
- 
- 	return 0;
-@@ -1202,7 +1245,7 @@ static int read_raw_super_block(struct super_block *sb,
- {
- 	int block;
- 	struct buffer_head *bh;
--	struct f2fs_super_block *super, *buf;
-+	struct f2fs_super_block *super;
- 	int err = 0;
- 
- 	super = kzalloc(sizeof(struct f2fs_super_block), GFP_KERNEL);
-@@ -1218,11 +1261,8 @@ static int read_raw_super_block(struct super_block *sb,
- 			continue;
- 		}
- 
--		buf = (struct f2fs_super_block *)
--				(bh->b_data + F2FS_SUPER_OFFSET);
--
- 		/* sanity checking of raw super */
--		if (sanity_check_raw_super(sb, buf)) {
-+		if (sanity_check_raw_super(sb, bh)) {
- 			f2fs_msg(sb, KERN_ERR,
- 				"Can't find valid F2FS filesystem in %dth superblock",
- 				block + 1);
-@@ -1232,7 +1272,8 @@ static int read_raw_super_block(struct super_block *sb,
- 		}
- 
- 		if (!*raw_super) {
--			memcpy(super, buf, sizeof(*super));
-+			memcpy(super, bh->b_data + F2FS_SUPER_OFFSET,
-+							sizeof(*super));
- 			*valid_super_block = block;
- 			*raw_super = super;
- 		}
-@@ -1252,42 +1293,29 @@ static int read_raw_super_block(struct super_block *sb,
- 	return err;
- }
- 
--static int __f2fs_commit_super(struct f2fs_sb_info *sbi, int block)
-+int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
- {
--	struct f2fs_super_block *super = F2FS_RAW_SUPER(sbi);
+@@ -1298,6 +1298,9 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
  	struct buffer_head *bh;
  	int err;
  
--	bh = sb_getblk(sbi->sb, block);
-+	/* write back-up superblock first */
-+	bh = sb_getblk(sbi->sb, sbi->valid_super_block ? 0: 1);
++	if (f2fs_readonly(sbi->sb) || bdev_read_only(sbi->sb->s_bdev))
++		return -EROFS;
++
+ 	/* write back-up superblock first */
+ 	bh = sb_getblk(sbi->sb, sbi->valid_super_block ? 0: 1);
  	if (!bh)
- 		return -EIO;
--
--	lock_buffer(bh);
--	memcpy(bh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super));
--	set_buffer_uptodate(bh);
--	set_buffer_dirty(bh);
--	unlock_buffer(bh);
--
--	/* it's rare case, we can do fua all the time */
--	err = __sync_dirty_buffer(bh, WRITE_FLUSH_FUA);
-+	err = __f2fs_commit_super(bh, F2FS_RAW_SUPER(sbi));
- 	brelse(bh);
+@@ -1565,7 +1568,7 @@ try_onemore:
+ 	kfree(options);
  
--	return err;
--}
--
--int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
--{
--	int err;
--
--	/* write back-up superblock first */
--	err = __f2fs_commit_super(sbi, sbi->valid_super_block ? 0 : 1);
--
- 	/* if we are in recovery path, skip writing valid superblock */
- 	if (recover || err)
- 		return err;
- 
- 	/* write current valid superblock */
--	return __f2fs_commit_super(sbi, sbi->valid_super_block);
-+	bh = sb_getblk(sbi->sb, sbi->valid_super_block);
-+	if (!bh)
-+		return -EIO;
-+	err = __f2fs_commit_super(bh, F2FS_RAW_SUPER(sbi));
-+	brelse(bh);
-+	return err;
- }
- 
- static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* recover broken superblock */
+-	if (recovery && !f2fs_readonly(sb) && !bdev_read_only(sb->s_bdev)) {
++	if (recovery) {
+ 		err = f2fs_commit_super(sbi, true);
+ 		f2fs_msg(sb, KERN_INFO,
+ 			"Try to recover %dth superblock, ret: %ld",
 -- 
 2.6.3
