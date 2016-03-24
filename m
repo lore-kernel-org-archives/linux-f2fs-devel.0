@@ -1,116 +1,213 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: f2fs bug: Unable to mount big volumes in kernel 4.5
-Date: Wed, 23 Mar 2016 18:29:23 -0700
-Message-ID: <20160324012923.GA24644@jaegeuk.gateway>
-References: <56EEC766.2030503@davizone.at>
-	<20160320224654.GB4752@jaegeuk.hsd1.ca.comcast.net>
-	<00d401d18320$75f94e80$61ebeb80$@samsung.com>
-	<56F06067.2060404@davizone.at> <56F07C02.2020106@matthiasprager.de>
-	<20160322203613.GA14498@jaegeuk.gateway>
-	<56F29214.9040001@davizone.at> <56F2C755.5060402@matthiasprager.de>
-	<20160323205204.GB4443@schmorp.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aiu5d-0005Zn-7t
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Mar 2016 01:29:33 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aiu5b-00030Y-Ql
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Mar 2016 01:29:33 +0000
-Content-Disposition: inline
-In-Reply-To: <20160323205204.GB4443@schmorp.de>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Marc Lehmann <schmorp@schmorp.de>
-Cc: David Gnedt <david.gnedt@davizone.at>, Matthias Prager <linux@matthiasprager.de>, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH 1/4] f2fs: cover large section in sanity check of super
+Date: Wed, 23 Mar 2016 18:31:24 -0700
+Message-ID: <1458783087-32233-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, "stable 4 . 5+" <stable@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Mar 23, 2016 at 10:00:10PM +0100, Marc Lehmann wrote:
-> On Wed, Mar 23, 2016 at 05:41:57PM +0100, Matthias Prager <linux@matthiasprager.de> wrote:
-> > detail. Writing on a read-only fs is a no go! There usually is a reason
-> > why someone mounts an filesystem read-only and f2fs should not simply
-> > ignore such a flag.
-> 
-> Hmm, no.
-> 
-> Even an unusual case is enough, such as mounting it read-only for data
-> recovery because the underlying device dies on writes (quite likely for
-> ssds, the primary target for f2fs).
-> 
-> However, other linux filesystems either replay their journal on readonly
-> mounts, or even *require* a replay (most have a flag to prevent that,
-> but that might not help data recovery). In fact, my example above can
-> relatively easily worked around using device mapper and a temporary
-> snapshot volume for writes.
-> 
-> So, the "ro" mount flag in linux does not mean "do not write to the
-> backing store", and did not have that meaning for a long time, so it's
-> fine for f2fs to write even for ro mounts.
-> 
-> That means the correct behaviour for f2fs is to write unless "norecovery"
-> has been specified, which already exists for this purpose on f2fs.
+This patch fixes the bug which does not cover a large section case when checking
+the sanity of superblock.
+If f2fs detects misalignment, it will fix the superblock during the mount time,
+so it doesn't need to trigger fsck.f2fs further.
 
-Well. IMO, we have to deal with fixing inconsistency and doing recovery
-separately.
+Reported-by: Matthias Prager <linux@matthiasprager.de>
+Reported-by: David Gnedt <david.gnedt@davizone.at>
+Cc: stable 4.5+ <stable@vger.kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/super.c | 102 ++++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 65 insertions(+), 37 deletions(-)
 
-In terms of recovery, I agree that we must do it no matter how fs is mounted.
-The only missing part in f2fs is that, we need to throw an error, if there is
-something to recover under read-write and norecovery mount likewise ext4.
-
-Regarding to fixing inconsistency dynamically, it seems depending on filesystems
-according to how severely it can corrupt the underlying on-disk layout.
-For example, I could see that btrfs conducts btrfs_recover_relocation only
-when read-write mount, while doing btrfs_replay_log all the time.
-
-Back to our cases, I think fixing superblock just depends on our policy.
-Initially, I added f2fs_commit_super to recover the broken superblock
-optionally, since we have no problem to mount with the alternate valid
-superblock.
-
-In the case of misaligned end address, it also doesn't need to fix it at
-read-only mount, since it has nothing to do with read operations.
-That is only used to check the boundary bug when writing blocks.
-
-Lastly, when considerting RO to RW case as you pointed out, I think we need to
-handle that in f2fs_remount by adding a superblock flag likewise ext4.
-
-Let me submit some patches for them.
-
-Thanks,
-
-> Different behaviour would put f2fs at odds with other existing
-> filesystems, which write on "ro" mounts to gain integrity.
-> 
-> Even better would be if there was a "force" or similar option which would
-> allow me to mount filesystems with possibly bad superblock data. This
-> could even be rolled into the existing "norecovery" switch, which, when
-> given, could try to mount even if the superblock has (some amount of) bad
-> data.
-> 
-> -- 
->                 The choice of a       Deliantra, the free code+content MORPG
->       -----==-     _GNU_              http://www.deliantra.net
->       ----==-- _       generation
->       ---==---(_)__  __ ____  __      Marc Lehmann
->       --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
->       -=====/_/_//_/\_,_/ /_/\_\
-
-------------------------------------------------------------------------------
-Transform Data into Opportunity.
-Accelerate data analysis in your applications with
-Intel Data Analytics Acceleration Library.
-Click to learn more.
-http://pubads.g.doubleclick.net/gampad/clk?id=278785351&iu=/4140
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 15bb81f..5afb4a6 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -984,9 +984,25 @@ static loff_t max_file_blocks(void)
+ 	return result;
+ }
+ 
++static int __f2fs_commit_super(struct buffer_head *bh,
++			struct f2fs_super_block *super)
++{
++	lock_buffer(bh);
++	if (super)
++		memcpy(bh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super));
++	set_buffer_uptodate(bh);
++	set_buffer_dirty(bh);
++	unlock_buffer(bh);
++
++	/* it's rare case, we can do fua all the time */
++	return __sync_dirty_buffer(bh, WRITE_FLUSH_FUA);
++}
++
+ static inline bool sanity_check_area_boundary(struct super_block *sb,
+-					struct f2fs_super_block *raw_super)
++					struct buffer_head *bh)
+ {
++	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
++					(bh->b_data + F2FS_SUPER_OFFSET);
+ 	u32 segment0_blkaddr = le32_to_cpu(raw_super->segment0_blkaddr);
+ 	u32 cp_blkaddr = le32_to_cpu(raw_super->cp_blkaddr);
+ 	u32 sit_blkaddr = le32_to_cpu(raw_super->sit_blkaddr);
+@@ -1000,6 +1016,10 @@ static inline bool sanity_check_area_boundary(struct super_block *sb,
+ 	u32 segment_count_main = le32_to_cpu(raw_super->segment_count_main);
+ 	u32 segment_count = le32_to_cpu(raw_super->segment_count);
+ 	u32 log_blocks_per_seg = le32_to_cpu(raw_super->log_blocks_per_seg);
++	u64 main_end_blkaddr = main_blkaddr +
++				(segment_count_main << log_blocks_per_seg);
++	u64 seg_end_blkaddr = segment0_blkaddr +
++				(segment_count << log_blocks_per_seg);
+ 
+ 	if (segment0_blkaddr != cp_blkaddr) {
+ 		f2fs_msg(sb, KERN_INFO,
+@@ -1044,22 +1064,45 @@ static inline bool sanity_check_area_boundary(struct super_block *sb,
+ 		return true;
+ 	}
+ 
+-	if (main_blkaddr + (segment_count_main << log_blocks_per_seg) !=
+-		segment0_blkaddr + (segment_count << log_blocks_per_seg)) {
++	if (main_end_blkaddr > seg_end_blkaddr) {
+ 		f2fs_msg(sb, KERN_INFO,
+-			"Wrong MAIN_AREA boundary, start(%u) end(%u) blocks(%u)",
++			"Wrong MAIN_AREA boundary, start(%u) end(%u) block(%u)",
+ 			main_blkaddr,
+-			segment0_blkaddr + (segment_count << log_blocks_per_seg),
++			segment0_blkaddr +
++				(segment_count << log_blocks_per_seg),
+ 			segment_count_main << log_blocks_per_seg);
+ 		return true;
++	} else if (main_end_blkaddr < seg_end_blkaddr) {
++		int err = 0;
++		char *res;
++
++		/* fix in-memory information all the time */
++		raw_super->segment_count = cpu_to_le32((main_end_blkaddr -
++				segment0_blkaddr) >> log_blocks_per_seg);
++
++		if (f2fs_readonly(sb) || bdev_read_only(sb->s_bdev)) {
++			res = "internally";
++		} else {
++			err = __f2fs_commit_super(bh, NULL);
++			res = err ? "failed" : "done";
++		}
++		f2fs_msg(sb, KERN_INFO,
++			"Fix alignment : %s, start(%u) end(%u) block(%u)",
++			res, main_blkaddr,
++			segment0_blkaddr +
++				(segment_count << log_blocks_per_seg),
++			segment_count_main << log_blocks_per_seg);
++		if (err)
++			return true;
+ 	}
+-
+ 	return false;
+ }
+ 
+ static int sanity_check_raw_super(struct super_block *sb,
+-			struct f2fs_super_block *raw_super)
++				struct buffer_head *bh)
+ {
++	struct f2fs_super_block *raw_super = (struct f2fs_super_block *)
++					(bh->b_data + F2FS_SUPER_OFFSET);
+ 	unsigned int blocksize;
+ 
+ 	if (F2FS_SUPER_MAGIC != le32_to_cpu(raw_super->magic)) {
+@@ -1126,7 +1169,7 @@ static int sanity_check_raw_super(struct super_block *sb,
+ 	}
+ 
+ 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
+-	if (sanity_check_area_boundary(sb, raw_super))
++	if (sanity_check_area_boundary(sb, bh))
+ 		return 1;
+ 
+ 	return 0;
+@@ -1202,7 +1245,7 @@ static int read_raw_super_block(struct super_block *sb,
+ {
+ 	int block;
+ 	struct buffer_head *bh;
+-	struct f2fs_super_block *super, *buf;
++	struct f2fs_super_block *super;
+ 	int err = 0;
+ 
+ 	super = kzalloc(sizeof(struct f2fs_super_block), GFP_KERNEL);
+@@ -1218,11 +1261,8 @@ static int read_raw_super_block(struct super_block *sb,
+ 			continue;
+ 		}
+ 
+-		buf = (struct f2fs_super_block *)
+-				(bh->b_data + F2FS_SUPER_OFFSET);
+-
+ 		/* sanity checking of raw super */
+-		if (sanity_check_raw_super(sb, buf)) {
++		if (sanity_check_raw_super(sb, bh)) {
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Can't find valid F2FS filesystem in %dth superblock",
+ 				block + 1);
+@@ -1232,7 +1272,8 @@ static int read_raw_super_block(struct super_block *sb,
+ 		}
+ 
+ 		if (!*raw_super) {
+-			memcpy(super, buf, sizeof(*super));
++			memcpy(super, bh->b_data + F2FS_SUPER_OFFSET,
++							sizeof(*super));
+ 			*valid_super_block = block;
+ 			*raw_super = super;
+ 		}
+@@ -1252,42 +1293,29 @@ static int read_raw_super_block(struct super_block *sb,
+ 	return err;
+ }
+ 
+-static int __f2fs_commit_super(struct f2fs_sb_info *sbi, int block)
++int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
+ {
+-	struct f2fs_super_block *super = F2FS_RAW_SUPER(sbi);
+ 	struct buffer_head *bh;
+ 	int err;
+ 
+-	bh = sb_getblk(sbi->sb, block);
++	/* write back-up superblock first */
++	bh = sb_getblk(sbi->sb, sbi->valid_super_block ? 0: 1);
+ 	if (!bh)
+ 		return -EIO;
+-
+-	lock_buffer(bh);
+-	memcpy(bh->b_data + F2FS_SUPER_OFFSET, super, sizeof(*super));
+-	set_buffer_uptodate(bh);
+-	set_buffer_dirty(bh);
+-	unlock_buffer(bh);
+-
+-	/* it's rare case, we can do fua all the time */
+-	err = __sync_dirty_buffer(bh, WRITE_FLUSH_FUA);
++	err = __f2fs_commit_super(bh, F2FS_RAW_SUPER(sbi));
+ 	brelse(bh);
+ 
+-	return err;
+-}
+-
+-int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
+-{
+-	int err;
+-
+-	/* write back-up superblock first */
+-	err = __f2fs_commit_super(sbi, sbi->valid_super_block ? 0 : 1);
+-
+ 	/* if we are in recovery path, skip writing valid superblock */
+ 	if (recover || err)
+ 		return err;
+ 
+ 	/* write current valid superblock */
+-	return __f2fs_commit_super(sbi, sbi->valid_super_block);
++	bh = sb_getblk(sbi->sb, sbi->valid_super_block);
++	if (!bh)
++		return -EIO;
++	err = __f2fs_commit_super(bh, F2FS_RAW_SUPER(sbi));
++	brelse(bh);
++	return err;
+ }
+ 
+ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+-- 
+2.6.3
