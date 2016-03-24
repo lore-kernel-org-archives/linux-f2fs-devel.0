@@ -1,24 +1,34 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: treat as a normal umount when remounting ro
-Date: Thu, 24 Mar 2016 12:59:52 -0700
-Message-ID: <1458849592-34163-1-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs: treat as a normal umount when remounting ro
+Date: Thu, 24 Mar 2016 13:45:13 -0700
+Message-ID: <20160324204513.GA36798@jaegeuk.gateway>
+References: <1458849592-34163-1-git-send-email-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1458849592-34163-1-git-send-email-jaegeuk@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Change log from v1:
+ - fix wrong roll-forward disable
+
+>From b7950b49f94d865b184070fffa5bc1530e58ac1c Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Thu, 24 Mar 2016 10:29:39 -0700
+Subject: [PATCH] f2fs: treat as a normal umount when remounting ro
+
 When user remounts f2fs as read-only, we can mark the checkpoint as umount.
-Moreover, if we umounted the partition successfully, we don't need to proceed
-the roll-forward recovery at all.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/super.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ fs/f2fs/super.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index abc0d75..2e6b7bf 100644
+index abc0d75..254c7a5 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
 @@ -791,11 +791,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
@@ -66,34 +76,6 @@ index abc0d75..2e6b7bf 100644
  	/*
  	 * We stop issue flush thread if FS is mounted as RO
  	 * or if flush_merge is not passed in mount option.
-@@ -1548,13 +1549,14 @@ try_onemore:
- 		goto free_proc;
- 
- 	/* recover fsynced data */
-+	if (is_set_ckpt_flags(sbi->ckpt, CP_UMOUNT_FLAG))
-+		goto skip_recovery;
-+
- 	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
- 		/*
--		 * mount should be failed, when device has readonly mode, and
--		 * previous checkpoint was not done by clean system shutdown.
-+		 * mount should be failed, when device has readonly mode.
- 		 */
--		if (bdev_read_only(sb->s_bdev) &&
--				!is_set_ckpt_flags(sbi->ckpt, CP_UMOUNT_FLAG)) {
-+		if (bdev_read_only(sb->s_bdev)) {
- 			err = -EROFS;
- 			goto free_kobj;
- 		}
-@@ -1579,7 +1581,7 @@ try_onemore:
- 			goto free_kobj;
- 		}
- 	}
--
-+skip_recovery:
- 	/* recover_fsync_data() cleared this already */
- 	clear_sbi_flag(sbi, SBI_POR_DOING);
- 
 -- 
 2.6.3
 
