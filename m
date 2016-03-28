@@ -1,33 +1,22 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [GIT PULL] f2fs updates for v4.6
-Date: Sat, 26 Mar 2016 16:55:35 -0400
-Message-ID: <20160326205535.GE4539@thunk.org>
-References: <20160320225859.GA5047@jaegeuk.hsd1.ca.comcast.net>
-	<CA+55aFzuS39yE8_3U_UTF6i1hQorLA7upEP1zPK-31iOYwRQfQ@mail.gmail.com>
-	<20160321184520.GA8199@jaegeuk.gateway>
-	<20160326061007.GA24620@zzz>
-	<20160326085606.GA41603@jaegeuk.hsd1.ca.comcast.net>
-	<20160326134748.GA971@zzz>
-	<CA+55aFwXQ+DVz-vFJf-ohYWwOHMWg4tKNS4CNdQ5pocZ1OHtVQ@mail.gmail.com>
-	<20160326204125.GD4539@thunk.org>
-	<CA+55aFyh6Kjnb+=M5b-V7zY9nakzGfNyNwJf4VZHeQ5cOQRmKw@mail.gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: fix stale nids in an indirect node block
+Date: Mon, 28 Mar 2016 10:41:38 -0700
+Message-ID: <1459186898-44288-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tytso@thunk.org>) id 1ajvFL-0005G1-Ih
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1akbAd-0007IH-Ky
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Mar 2016 20:55:47 +0000
-Received: from imap.thunk.org ([74.207.234.97])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ajvFI-0004lV-CC
+	Mon, 28 Mar 2016 17:41:43 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1akbAc-0003q0-Lw
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 26 Mar 2016 20:55:47 +0000
-Content-Disposition: inline
-In-Reply-To: <CA+55aFyh6Kjnb+=M5b-V7zY9nakzGfNyNwJf4VZHeQ5cOQRmKw@mail.gmail.com>
+	Mon, 28 Mar 2016 17:41:43 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,39 +26,81 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Eric Biggers <ebiggers3@gmail.com>, Michael Halcrow <mhalcrow@google.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On Sat, Mar 26, 2016 at 01:48:23PM -0700, Linus Torvalds wrote:
-> > BTW, as far as switching ext4 to use the shared code in fs/crypto ---
-> > I'm hoping to get that done for the next merge window.  There are a 2
-> > or 3 patches to fix some recently discovered bugs that I'll need to
-> > push into the fs/crypto code, but I'll take care of that for the next
-> > development cycle.
-> 
-> No worries. Considering this mistake (which happily seems to have an
-> innocent explanation for it) it would be good to have it verified that
-> the shared code does actually work for you, so that we don't end up in
-> the unhappy situation that the code got split up in order to be
-> shared, but some random detail choice then made it not actually work
-> for ext4 after all..
+In truncate_inode_blocks, we can get some stale node block addresses in
+the following scenario.
 
-Oh, for sure.  One of the things I plan to do is to make sure that a
-file system created using the *current* ext4 encryption code is
-properly readable using the new fs/crypto code.  I'll also run a full
-regression test run using xfstests as well.
+1. ipage = get_node_page(ino)
+2. unlock_page(ipage)
+3. trundate_dnode()
+ - invalidates all the data indices
+ - truncate node block
+4. lock_page(ipage) and then failed, goto restart
+5. -ENOMEM or -EIO between #1 and #3
 
-That's one of the reasons why I wasn't going to even try to get it
-done for this merge window (even if you weren't going to be closing
-the merge window tomorrow).  I just didn't have the time to do a good
-job, and it made sense to let the f2fs code go in first, and then
-convert ext4 afterwards.
+In this case, we already invalidate node block, but its indirect block still
+has its nid.
 
-						- Ted
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/node.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 118321b..780ce68 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -832,7 +832,7 @@ int truncate_inode_blocks(struct inode *inode, pgoff_t from)
+ 	trace_f2fs_truncate_inode_blocks_enter(inode, from);
+ 
+ 	level = get_node_path(inode, from, offset, noffset);
+-restart:
++
+ 	page = get_node_page(sbi, inode->i_ino);
+ 	if (IS_ERR(page)) {
+ 		trace_f2fs_truncate_inode_blocks_exit(inode, PTR_ERR(page));
+@@ -840,7 +840,7 @@ restart:
+ 	}
+ 
+ 	set_new_dnode(&dn, inode, page, NULL, 0);
+-	unlock_page(page);
++	dn.inode_page_locked = true;
+ 
+ 	ri = F2FS_INODE(page);
+ 	switch (level) {
+@@ -895,22 +895,16 @@ skip_partial:
+ 			goto fail;
+ 		if (offset[1] == 0 &&
+ 				ri->i_nid[offset[0] - NODE_DIR1_BLOCK]) {
+-			lock_page(page);
+-			if (unlikely(page->mapping != NODE_MAPPING(sbi))) {
+-				f2fs_put_page(page, 1);
+-				goto restart;
+-			}
+ 			f2fs_wait_on_page_writeback(page, NODE, true);
+ 			ri->i_nid[offset[0] - NODE_DIR1_BLOCK] = 0;
+ 			set_page_dirty(page);
+-			unlock_page(page);
+ 		}
+ 		offset[1] = 0;
+ 		offset[0]++;
+ 		nofs += err;
+ 	}
+ fail:
+-	f2fs_put_page(page, 0);
++	f2fs_put_page(page, 1);
+ 	trace_f2fs_truncate_inode_blocks_exit(inode, err);
+ 	return err > 0 ? 0 : err;
+ }
+-- 
+2.6.3
+
 
 ------------------------------------------------------------------------------
 Transform Data into Opportunity.
 Accelerate data analysis in your applications with
 Intel Data Analytics Acceleration Library.
 Click to learn more.
-http://pubads.g.doubleclick.net/gampad/clk?id=278785351&iu=/4140
+http://pubads.g.doubleclick.net/gampad/clk?id=278785471&iu=/4140
