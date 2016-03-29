@@ -1,22 +1,22 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix stale nids in an indirect node block
-Date: Mon, 28 Mar 2016 10:41:38 -0700
-Message-ID: <1459186898-44288-1-git-send-email-jaegeuk@kernel.org>
+From: Shuoran Liu <liushuoran@huawei.com>
+Subject: [PATCH] f2fs: retrieve IO write stat from the right place
+Date: Tue, 29 Mar 2016 18:00:15 +0800
+Message-ID: <1459245615-21023-1-git-send-email-liushuoran@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1akbAd-0007IH-Ky
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <liushuoran@huawei.com>) id 1akqXC-0001tL-8t
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Mar 2016 17:41:43 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1akbAc-0003q0-Lw
+	Tue, 29 Mar 2016 10:06:02 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1akqX3-0005He-Fk
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 28 Mar 2016 17:41:43 +0000
+	Tue, 29 Mar 2016 10:06:02 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,76 +26,37 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: jaegeuk@kernel.org, chao2.yu@samsung.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-In truncate_inode_blocks, we can get some stale node block addresses in
-the following scenario.
+In the following patch,
 
-1. ipage = get_node_page(ino)
-2. unlock_page(ipage)
-3. trundate_dnode()
- - invalidates all the data indices
- - truncate node block
-4. lock_page(ipage) and then failed, goto restart
-5. -ENOMEM or -EIO between #1 and #3
+    f2fs: split journal cache from curseg cache
 
-In this case, we already invalidate node block, but its indirect block still
-has its nid.
+journal cache is split from curseg cache. So IO write statistics should be
+retrived from journal cache but not curseg->sum_blk. Otherwise, it will
+get 0, and the stat is lost.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Shuoran Liu <liushuoran@huawei.com>
 ---
- fs/f2fs/node.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ fs/f2fs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 118321b..780ce68 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -832,7 +832,7 @@ int truncate_inode_blocks(struct inode *inode, pgoff_t from)
- 	trace_f2fs_truncate_inode_blocks_enter(inode, from);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 15bb81f..e2787c8 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1442,7 +1442,7 @@ try_onemore:
+ 	seg_i = CURSEG_I(sbi, CURSEG_HOT_NODE);
+ 	if (__exist_node_summaries(sbi))
+ 		sbi->kbytes_written =
+-			le64_to_cpu(seg_i->sum_blk->journal.info.kbytes_written);
++			le64_to_cpu(seg_i->journal->info.kbytes_written);
  
- 	level = get_node_path(inode, from, offset, noffset);
--restart:
-+
- 	page = get_node_page(sbi, inode->i_ino);
- 	if (IS_ERR(page)) {
- 		trace_f2fs_truncate_inode_blocks_exit(inode, PTR_ERR(page));
-@@ -840,7 +840,7 @@ restart:
- 	}
+ 	build_gc_manager(sbi);
  
- 	set_new_dnode(&dn, inode, page, NULL, 0);
--	unlock_page(page);
-+	dn.inode_page_locked = true;
- 
- 	ri = F2FS_INODE(page);
- 	switch (level) {
-@@ -895,22 +895,16 @@ skip_partial:
- 			goto fail;
- 		if (offset[1] == 0 &&
- 				ri->i_nid[offset[0] - NODE_DIR1_BLOCK]) {
--			lock_page(page);
--			if (unlikely(page->mapping != NODE_MAPPING(sbi))) {
--				f2fs_put_page(page, 1);
--				goto restart;
--			}
- 			f2fs_wait_on_page_writeback(page, NODE, true);
- 			ri->i_nid[offset[0] - NODE_DIR1_BLOCK] = 0;
- 			set_page_dirty(page);
--			unlock_page(page);
- 		}
- 		offset[1] = 0;
- 		offset[0]++;
- 		nofs += err;
- 	}
- fail:
--	f2fs_put_page(page, 0);
-+	f2fs_put_page(page, 1);
- 	trace_f2fs_truncate_inode_blocks_exit(inode, err);
- 	return err > 0 ? 0 : err;
- }
 -- 
-2.6.3
+1.9.1
 
 
 ------------------------------------------------------------------------------
