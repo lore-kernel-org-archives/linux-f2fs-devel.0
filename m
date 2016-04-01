@@ -1,41 +1,35 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] attr: adjust acl_max of f2fs if inline_xattr is set
-Date: Wed, 30 Mar 2016 16:58:19 -0700
-Message-ID: <1459382299-71068-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <fstests-owner@vger.kernel.org>
-Sender: fstests-owner@vger.kernel.org
-To: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: Legal characters in encrypted fscrypto (f2fs/ext4) filename?
+Date: Fri, 1 Apr 2016 01:00:18 -0500
+Message-ID: <20160401060018.GD1323@zzz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, jaegeuk@kernel.org, tytso@mit.edu, mhalcrow@google.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If f2fs gets inline_xattr, it enlarges the whole xattr space, which also enables
-to cover more acl entries up to 531 from 506.
-This patch detects the mount option, inline_xattr, and changes the result of
-_acl_get_max for generic/026.
+Hello,
 
-Fixes: 9f7bf79d0c34 ("attr: add maximum acl count for f2fs")
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- common/attr | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+While reviewing the new filesystem encryption code, I was confused by the
+intended set of legal characters in the printable form of an encrypted filename.
 
-diff --git a/common/attr b/common/attr
-index 0efc26d..ce2d76a 100644
---- a/common/attr
-+++ b/common/attr
-@@ -43,7 +43,12 @@ _acl_get_max()
- 		echo 8191
- 		;;
- 	f2fs)
--		echo 506
-+		_fs_options $TEST_DEV | grep "inline_xattr" >/dev/null 2>&1
-+		if [ $? -eq 0 ]; then
-+			echo 531
-+		else
-+			echo 506
-+		fi
- 		;;
- 	*)
- 		echo 0
--- 
-2.6.3
+According to the actual code in fs/crypto/fname.c, the legal characters are:
+
+	a-zA-Z0-9+,
+
+Alternatively, according to the comment in the same file, the legal characters
+are actually:
+
+	a-zA-Z0-9+_
+
+Still alternatively, according to the design document[1], the legal characters
+are actually:
+
+	a-zA-Z0-9+=
+
+Which one is correct?
+
+[1] https://docs.google.com/document/d/1ft26lUQyuSpiu6VleP70_npaWdRfXFoNnB8JYnykNTg/preview?pref=2&pli=1#
