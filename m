@@ -1,7 +1,8 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 08/13] fscrypto: use standard macros from kernel.h
-Date: Sun,  3 Apr 2016 00:21:59 -0500
-Message-ID: <1459660924-2960-9-git-send-email-ebiggers3@gmail.com>
+Subject: [PATCH 11/13] fscrypto: restrict setting encryption
+	policy to inode owner
+Date: Sun,  3 Apr 2016 00:22:02 -0500
+Message-ID: <1459660924-2960-12-git-send-email-ebiggers3@gmail.com>
 References: <1459660924-2960-1-git-send-email-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -9,18 +10,18 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ebiggers3@gmail.com>) id 1amaVp-0005S9-03
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <ebiggers3@gmail.com>) id 1amaVr-00087V-Dq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Apr 2016 05:23:49 +0000
+	Sun, 03 Apr 2016 05:23:51 +0000
 Received: from mail-ig0-f196.google.com ([209.85.213.196])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1amaVo-0006Xj-BV
+	(Exim 4.76) id 1amaVq-0006Xs-Qm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Apr 2016 05:23:48 +0000
-Received: by mail-ig0-f196.google.com with SMTP id sy18so7646768igc.3
+	Sun, 03 Apr 2016 05:23:51 +0000
+Received: by mail-ig0-f196.google.com with SMTP id mh10so7638483igb.1
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 02 Apr 2016 22:23:48 -0700 (PDT)
+	Sat, 02 Apr 2016 22:23:50 -0700 (PDT)
 In-Reply-To: <1459660924-2960-1-git-send-email-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -34,52 +35,33 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-fsdevel@vger.kernel.org
 Cc: tytso@mit.edu, Eric Biggers <ebiggers3@gmail.com>, mhalcrow@google.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
+On a filesystem with encryption enabled, a user could set an encryption
+policy on any empty directory to which they have readonly access.  This
+is a potential security issue since such a directory might be owned by
+another user, and the new encryption policy may prevent that user from
+creating files in their own directory.
+
+Fix this by requiring inode_owner_or_capable() permission to set an
+encryption policy.
+
 Signed-off-by: Eric Biggers <ebiggers3@gmail.com>
 ---
- fs/crypto/fname.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ fs/crypto/policy.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index cd0eae8..e5c6959 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -14,11 +14,6 @@
- #include <linux/ratelimit.h>
- #include <linux/fscrypto.h>
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index cb5ba27..3f5c275 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -96,6 +96,9 @@ int fscrypt_set_policy(struct inode *inode, const struct fscrypt_policy *policy)
+ {
+ 	int ret = 0;
  
--static u32 size_round_up(size_t size, size_t blksize)
--{
--	return ((size + blksize - 1) / blksize) * blksize;
--}
--
- /**
-  * fname_crypt_complete() - The completion callback for filename encryption and
-  *			    decryption
-@@ -61,10 +56,9 @@ static int fname_encrypt(struct inode *inode,
- 	if (iname->len <= 0 || iname->len > lim)
- 		return -EIO;
- 
--	ciphertext_len = (iname->len < FS_CRYPTO_BLOCK_SIZE) ?
--					FS_CRYPTO_BLOCK_SIZE : iname->len;
--	ciphertext_len = size_round_up(ciphertext_len, padding);
--	ciphertext_len = (ciphertext_len > lim) ? lim : ciphertext_len;
-+	ciphertext_len = max_t(u32, iname->len, FS_CRYPTO_BLOCK_SIZE);
-+	ciphertext_len = round_up(ciphertext_len, padding);
-+	ciphertext_len = min(ciphertext_len, lim);
- 
- 	if (ciphertext_len <= sizeof(buf)) {
- 		workbuf = buf;
-@@ -235,9 +229,8 @@ u32 fscrypt_fname_encrypted_size(struct inode *inode, u32 ilen)
- 
- 	if (ci)
- 		padding = 4 << (ci->ci_flags & FS_POLICY_FLAGS_PAD_MASK);
--	if (ilen < FS_CRYPTO_BLOCK_SIZE)
--		ilen = FS_CRYPTO_BLOCK_SIZE;
--	return size_round_up(ilen, padding);
-+	ilen = max_t(u32, ilen, FS_CRYPTO_BLOCK_SIZE);
-+	return round_up(ilen, padding);
- }
- EXPORT_SYMBOL(fscrypt_fname_encrypted_size);
++	if (!inode_owner_or_capable(inode))
++		return -EACCES;
++
+ 	if (policy->version != 0)
+ 		return -EINVAL;
  
 -- 
 2.7.4
