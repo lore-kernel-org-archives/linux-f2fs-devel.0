@@ -1,9 +1,7 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: Legal characters in encrypted fscrypto (f2fs/ext4)
-	filename?
-Date: Fri, 1 Apr 2016 02:21:21 -0400
-Message-ID: <20160401062121.GC29897@thunk.org>
-References: <20160401060018.GD1323@zzz>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: [PATCH 00/13] fscrypto: cleanups and fixes
+Date: Sun,  3 Apr 2016 00:21:51 -0500
+Message-ID: <1459660924-2960-1-git-send-email-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,16 +9,17 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tytso@thunk.org>) id 1alsSa-00040z-Om
+	(envelope-from <ebiggers3@gmail.com>) id 1amaVj-0000Np-LO
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 01 Apr 2016 06:21:32 +0000
-Received: from imap.thunk.org ([74.207.234.97])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1alsSX-0000HS-9W
+	Sun, 03 Apr 2016 05:23:43 +0000
+Received: from mail-ig0-f194.google.com ([209.85.213.194])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1amaVh-0004CL-Pn
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 01 Apr 2016 06:21:32 +0000
-Content-Disposition: inline
-In-Reply-To: <20160401060018.GD1323@zzz>
+	Sun, 03 Apr 2016 05:23:43 +0000
+Received: by mail-ig0-f194.google.com with SMTP id sy18so7646462igc.3
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sat, 02 Apr 2016 22:23:41 -0700 (PDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,55 +29,45 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: mhalcrow@google.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+Cc: tytso@mit.edu, Eric Biggers <ebiggers3@gmail.com>, mhalcrow@google.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
-On Fri, Apr 01, 2016 at 01:00:18AM -0500, Eric Biggers wrote:
-> Hello,
-> 
-> While reviewing the new filesystem encryption code, I was confused by the
-> intended set of legal characters in the printable form of an encrypted filename.
-> 
-> According to the actual code in fs/crypto/fname.c, the legal characters are:
-> 
-> 	a-zA-Z0-9+,
+This patchset includes various cleanups for the new filesystem encryption
+code as well as some bug fixes for the FS_IOC_SET_ENCRYPTION_POLICY ioctl.
 
-It's not really a question of "legality".  Rather, the base-64
-encoding that we use is merely a presentation layer issue.  It's
-really an implementation detail that does not affect the on-disk
-encoding, and so in fact, it can be changed in different kernel
-versions since the "encrypted filename" is essentially a cookie which
-is presented to the user via readdir(), and which the user can then
-send back to the kernel using, say, the unlink() system call.
+Eric Biggers (13):
+  fscrypto: remove unnecessary includes
+  fscrypto: rename some functions for clarity
+  fscrypto: rename functions to load and unload inode encryption info
+  fscrypto: return bool instead of int where appropriate
+  fscrypto: comment improvements and fixes
+  fscrypto: crypto_alloc_skcipher() always returns an ERR_PTR(), never
+    NULL
+  fscrypto: simplify building key descriptor string
+  fscrypto: use standard macros from kernel.h
+  fscrypto: make fname_encrypt() actually return length of ciphertext
+  fscrypto: restrict setting new policy to empty files and directories
+    only
+  fscrypto: restrict setting encryption policy to inode owner
+  fscrypto: require write access to mount to set encryption policy
+  fscrypto: improve error handling in fscrypt_set_policy()
 
-It's changed over time to avoid potential confusion --- for example
-the traditional base-64 encoding uses a-zA-Z0-9+/ --- but the use of
-'/' causes problem because it's the pathname separator.
+ fs/crypto/crypto.c       |  25 +++++----
+ fs/crypto/fname.c        |  72 ++++++++++++++++----------
+ fs/crypto/keyinfo.c      |  47 ++++++++---------
+ fs/crypto/policy.c       | 131 +++++++++++++++++++++++++++--------------------
+ fs/f2fs/dir.c            |   4 +-
+ fs/f2fs/f2fs.h           |   6 +--
+ fs/f2fs/file.c           |  10 ++--
+ fs/f2fs/inode.c          |   2 +-
+ fs/f2fs/namei.c          |  10 ++--
+ fs/f2fs/super.c          |   2 +-
+ include/linux/fscrypto.h |  81 +++++++++++++++++++++--------
+ 11 files changed, 236 insertions(+), 154 deletions(-)
 
-The fact that the design doc and comments are out of date is
-unfortunate, but ultimately, it really doesn't matter.  
+-- 
+2.7.4
 
-> Alternatively, according to the comment in the same file, the legal characters
-> are actually:
-> 
-> 	a-zA-Z0-9+_
-> 
-> Still alternatively, according to the design document[1], the legal characters
-> are actually:
-> 
-> 	a-zA-Z0-9+=
-
-As I recall the equals sign could cause problems with shell scripts.
-I don't remember the objection to the underscore character.
-
-If you wanted to patch the kernel so that on your system, you used
-a-ZA-Z0-9^@, you wouldn't break compatibility or interoperability.  So
-there really isn't any such thing as "correct".
-
-Cheers,
-
-  	  		     	       - Ted
-			       
 
 ------------------------------------------------------------------------------
 Transform Data into Opportunity.
