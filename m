@@ -1,27 +1,27 @@
 From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH 11/13] fscrypto: restrict setting encryption
-	policy to inode owner
-Date: Sun,  3 Apr 2016 00:22:02 -0500
-Message-ID: <1459660924-2960-12-git-send-email-ebiggers3@gmail.com>
+Subject: [PATCH 12/13] fscrypto: require write access to mount to
+	set encryption policy
+Date: Sun,  3 Apr 2016 00:22:03 -0500
+Message-ID: <1459660924-2960-13-git-send-email-ebiggers3@gmail.com>
 References: <1459660924-2960-1-git-send-email-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ebiggers3@gmail.com>) id 1amaVr-00087V-Dq
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <ebiggers3@gmail.com>) id 1amaVs-0000Ox-GH
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Apr 2016 05:23:51 +0000
+	Sun, 03 Apr 2016 05:23:52 +0000
 Received: from mail-ig0-f196.google.com ([209.85.213.196])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1amaVq-0006Xs-Qm
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1amaVr-0008Li-Lz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Apr 2016 05:23:51 +0000
-Received: by mail-ig0-f196.google.com with SMTP id mh10so7638483igb.1
+	Sun, 03 Apr 2016 05:23:52 +0000
+Received: by mail-ig0-f196.google.com with SMTP id sy18so7646865igc.3
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 02 Apr 2016 22:23:50 -0700 (PDT)
+	Sat, 02 Apr 2016 22:23:51 -0700 (PDT)
 In-Reply-To: <1459660924-2960-1-git-send-email-ebiggers3@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -35,34 +35,96 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-fsdevel@vger.kernel.org
 Cc: tytso@mit.edu, Eric Biggers <ebiggers3@gmail.com>, mhalcrow@google.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
-On a filesystem with encryption enabled, a user could set an encryption
-policy on any empty directory to which they have readonly access.  This
-is a potential security issue since such a directory might be owned by
-another user, and the new encryption policy may prevent that user from
-creating files in their own directory.
-
-Fix this by requiring inode_owner_or_capable() permission to set an
-encryption policy.
+Since setting an encryption policy requires writing data to the
+filesystem, it should be guarded by mnt_want_write/mnt_drop_write.
+Otherwise, a user could cause a write to a readonly or frozen filesystem.
 
 Signed-off-by: Eric Biggers <ebiggers3@gmail.com>
 ---
- fs/crypto/policy.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/crypto/policy.c       | 11 +++++++++--
+ fs/f2fs/file.c           |  2 +-
+ include/linux/fscrypto.h |  4 ++--
+ 3 files changed, 12 insertions(+), 5 deletions(-)
 
 diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
-index cb5ba27..3f5c275 100644
+index 3f5c275..6a767e6 100644
 --- a/fs/crypto/policy.c
 +++ b/fs/crypto/policy.c
-@@ -96,6 +96,9 @@ int fscrypt_set_policy(struct inode *inode, const struct fscrypt_policy *policy)
- {
- 	int ret = 0;
+@@ -11,6 +11,7 @@
+ #include <linux/random.h>
+ #include <linux/string.h>
+ #include <linux/fscrypto.h>
++#include <linux/mount.h>
  
-+	if (!inode_owner_or_capable(inode))
-+		return -EACCES;
-+
+ static bool inode_has_encryption_context(struct inode *inode)
+ {
+@@ -92,9 +93,10 @@ static int create_encryption_context_from_policy(struct inode *inode,
+ 	return inode->i_sb->s_cop->set_context(inode, &ctx, sizeof(ctx), NULL);
+ }
+ 
+-int fscrypt_set_policy(struct inode *inode, const struct fscrypt_policy *policy)
++int fscrypt_set_policy(struct file *file, const struct fscrypt_policy *policy)
+ {
+-	int ret = 0;
++	struct inode *inode = file_inode(file);
++	int ret;
+ 
+ 	if (!inode_owner_or_capable(inode))
+ 		return -EACCES;
+@@ -102,6 +104,10 @@ int fscrypt_set_policy(struct inode *inode, const struct fscrypt_policy *policy)
  	if (policy->version != 0)
  		return -EINVAL;
  
++	ret = mnt_want_write_file(file);
++	if (ret)
++		return ret;
++
+ 	inode_lock(inode);
+ 
+ 	if (!inode_has_encryption_context(inode)) {
+@@ -131,6 +137,7 @@ int fscrypt_set_policy(struct inode *inode, const struct fscrypt_policy *policy)
+ 		ret = -EINVAL;
+ 	}
+ 	inode_unlock(inode);
++	mnt_drop_write_file(file);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(fscrypt_set_policy);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index cf691ae..d4837280 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1542,7 +1542,7 @@ static int f2fs_ioc_set_encryption_policy(struct file *filp, unsigned long arg)
+ 		return -EFAULT;
+ 
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+-	return fscrypt_set_policy(inode, &policy);
++	return fscrypt_set_policy(filp, &policy);
+ }
+ 
+ static int f2fs_ioc_get_encryption_policy(struct file *filp, unsigned long arg)
+diff --git a/include/linux/fscrypto.h b/include/linux/fscrypto.h
+index f29dc8c..130bf23 100644
+--- a/include/linux/fscrypto.h
++++ b/include/linux/fscrypto.h
+@@ -314,7 +314,7 @@ extern void fscrypt_restore_control_page(struct page *);
+ extern int fscrypt_zeroout_range(struct inode *, pgoff_t, sector_t,
+ 						unsigned int);
+ /* policy.c */
+-extern int fscrypt_set_policy(struct inode *, const struct fscrypt_policy *);
++extern int fscrypt_set_policy(struct file *, const struct fscrypt_policy *);
+ extern int fscrypt_get_policy(struct inode *, struct fscrypt_policy *);
+ extern bool fscrypt_has_permitted_context(struct inode *, struct inode *);
+ extern int fscrypt_inherit_context(struct inode *, struct inode *,
+@@ -384,7 +384,7 @@ static inline int fscrypt_notsupp_zeroout_range(struct inode *i, pgoff_t p,
+ }
+ 
+ /* policy.c */
+-static inline int fscrypt_notsupp_set_policy(struct inode *i,
++static inline int fscrypt_notsupp_set_policy(struct file *f,
+ 				const struct fscrypt_policy *p)
+ {
+ 	return -EOPNOTSUPP;
 -- 
 2.7.4
 
