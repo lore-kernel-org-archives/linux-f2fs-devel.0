@@ -1,61 +1,42 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH 02/13] fscrypto: rename some functions for
-	clarity
-Date: Sun, 3 Apr 2016 03:45:05 -0400
-Message-ID: <20160403074505.GG3334@thunk.org>
-References: <1459660924-2960-1-git-send-email-ebiggers3@gmail.com>
-	<1459660924-2960-3-git-send-email-ebiggers3@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] f2fs fixes for v4.6-rc3
+Date: Sun, 3 Apr 2016 22:21:10 -0700
+Message-ID: <20160404052110.GB80122@jaegeuk.ucsc.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tytso@thunk.org>) id 1amcif-0003Kc-AS
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Apr 2016 07:45:13 +0000
-Received: from imap.thunk.org ([74.207.234.97])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1amcie-0007Im-Bd
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Apr 2016 07:45:13 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1459660924-2960-3-git-send-email-ebiggers3@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: mhalcrow@google.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Sun, Apr 03, 2016 at 12:21:53AM -0500, Eric Biggers wrote:
-> Rename fscrypt_complete() to page_crypt_complete().  This callback is
-> specifically for data pages; fscrypto also performs filename encryption.
-> 
-> Rename dir_crypt_complete() to fname_crypt_complete().  This callback is
-> also used for symlink targets, not just directory entries.
-> 
-> Rename fscrypt_process_policy() to fscrypt_set_policy().  The new name
-> better matches the ioctl, and it goes along with fscrypt_get_policy().
-> 
-> Signed-off-by: Eric Biggers <ebiggers3@gmail.com>
+Hi Linus,
 
-I'd really rather not renaming any globally visible functions until
-after ext4 is converted over to use fs/crypto, just to avoid confusion.
+Could you please pull the below commits for v4.6-rc3?
 
-Cheers,
+Thanks,
 
-					- Ted
+The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
-------------------------------------------------------------------------------
-Transform Data into Opportunity.
-Accelerate data analysis in your applications with
-Intel Data Analytics Acceleration Library.
-Click to learn more.
-http://pubads.g.doubleclick.net/gampad/clk?id=278785471&iu=/4140
+  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-linus
+
+for you to fetch changes up to b2dde6fca37e947628b82ae8f35e183ff112d07c:
+
+  f2fs: retrieve IO write stat from the right place (2016-03-30 13:21:16 -0700)
+
+----------------------------------------------------------------
+Jaegeuk Kim (2):
+      f2fs: cover large section in sanity check of super
+      f2fs crypto: fix corrupted symlink in encrypted case
+
+Shuoran Liu (1):
+      f2fs: retrieve IO write stat from the right place
+
+ fs/f2fs/namei.c |  12 +++----
+ fs/f2fs/super.c | 104 +++++++++++++++++++++++++++++++++++---------------------
+ 2 files changed, 72 insertions(+), 44 deletions(-)
