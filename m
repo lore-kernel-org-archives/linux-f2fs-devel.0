@@ -1,24 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/5] f2fs: fix dropping inmemory pages in a wrong
-	time
-Date: Tue, 12 Apr 2016 10:42:38 -0700
-Message-ID: <1460482960-14227-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 5/5] f2fs: remove redundant condition check
+Date: Tue, 12 Apr 2016 10:42:40 -0700
+Message-ID: <1460482960-14227-5-git-send-email-jaegeuk@kernel.org>
 References: <1460482960-14227-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aq2LA-0001Cw-B5
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1aq2LE-0007KW-2z
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Apr 2016 17:43:04 +0000
+	Tue, 12 Apr 2016 17:43:08 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aq2L9-0002k4-Ks
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1aq2LD-00079D-AH
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Apr 2016 17:43:04 +0000
+	Tue, 12 Apr 2016 17:43:08 +0000
 In-Reply-To: <1460482960-14227-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,45 +31,41 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-When one reader closes its file while the other writer is doing atomic writes,
-f2fs_release_file drops atomic data resulting in an empty commit.
-This patch fixes this wrong commit problem by checking openess of the file.
+This patch resolves the redundant condition check reported by David.
 
- Process0                       Process1
- 				open file
- start atomic write
- write data
- read data
-				close file
-				f2fs_release_file()
-				clear atomic data
- commit atomic write
-
-Reported-by: Miao Xie <miaoxie@huawei.com>
+Reported-by: David Binderman <dcb314@hotmail.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ fs/f2fs/checkpoint.c | 2 +-
+ fs/f2fs/data.c       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 90d1157..e10eb61 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1254,6 +1254,14 @@ out:
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 0955312..b92782f 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -211,7 +211,7 @@ void ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index)
+ 	bool readahead = false;
  
- static int f2fs_release_file(struct inode *inode, struct file *filp)
- {
-+	/*
-+	 * f2fs_relase_file is called at every close calls. So we should
-+	 * not drop any inmemory pages by close called by other process.
-+	 */
-+	if (!(filp->f_mode & FMODE_WRITE) ||
-+			atomic_read(&inode->i_writecount) != 1)
-+		return 0;
-+
- 	/* some remained atomic pages should discarded */
- 	if (f2fs_is_atomic_file(inode))
- 		drop_inmem_pages(inode);
+ 	page = find_get_page(META_MAPPING(sbi), index);
+-	if (!page || (page && !PageUptodate(page)))
++	if (!page || !PageUptodate(page))
+ 		readahead = true;
+ 	f2fs_put_page(page, 0);
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5dafb9c..c29bcf4 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1496,7 +1496,7 @@ restart:
+ 		} else {
+ 			/* hole case */
+ 			err = get_dnode_of_data(&dn, index, LOOKUP_NODE);
+-			if (err || (!err && dn.data_blkaddr == NULL_ADDR)) {
++			if (err || dn.data_blkaddr == NULL_ADDR) {
+ 				f2fs_put_dnode(&dn);
+ 				f2fs_lock_op(sbi);
+ 				locked = true;
 -- 
 2.6.3
 
