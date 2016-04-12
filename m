@@ -1,25 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/3] f2fs: use dget_parent and file_dentry in
-	f2fs_file_open
-Date: Tue, 12 Apr 2016 10:27:21 -0700
-Message-ID: <1460482042-14011-2-git-send-email-jaegeuk@kernel.org>
-References: <1460482042-14011-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/3] fscrypto: use dget_parent() in
+	fscrypt_d_revalidate()
+Date: Tue, 12 Apr 2016 10:27:20 -0700
+Message-ID: <1460482042-14011-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1aq26B-0006a9-Mn
+	(envelope-from <jaegeuk@kernel.org>) id 1aq26A-0006Zu-EY
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Apr 2016 17:27:35 +0000
+	Tue, 12 Apr 2016 17:27:34 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1aq26A-0001z7-Tn
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1aq269-0002Gp-Jv
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Apr 2016 17:27:35 +0000
-In-Reply-To: <1460482042-14011-1-git-send-email-jaegeuk@kernel.org>
+	Tue, 12 Apr 2016 17:27:34 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,51 +28,50 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Miklos Szeredi <mszeredi@redhat.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
 
-This patch synced with the below two ext4 crypto fixes together.
+This patch updates fscrypto along with the below ext4 crypto change.
 
-In 4.6-rc1, f2fs newly introduced accessing f_path.dentry which crashes
-overlayfs. To fix, now we need to use file_dentry() to access that field.
-
-Fixes: c0a37d487884 ("ext4: use file_dentry()")
-Fixes: 9dd78d8c9a7b ("ext4: use dget_parent() in ext4_file_open()")
-Cc: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 3d43bcfef5f0 ("ext4 crypto: use dget_parent() in ext4_d_revalidate()")
 Cc: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ fs/crypto/crypto.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 443e077..90d1157 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -441,7 +441,7 @@ static int f2fs_file_mmap(struct file *file, struct vm_area_struct *vma)
- static int f2fs_file_open(struct inode *inode, struct file *filp)
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index 7f58045..58ae0ba 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -345,13 +345,17 @@ EXPORT_SYMBOL(fscrypt_zeroout_range);
+  */
+ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
  {
- 	int ret = generic_file_open(inode, filp);
--	struct inode *dir = filp->f_path.dentry->d_parent->d_inode;
+-	struct inode *dir = d_inode(dentry->d_parent);
+-	struct fscrypt_info *ci = dir->i_crypt_info;
 +	struct dentry *dir;
++	struct fscrypt_info *ci;
+ 	int dir_has_key, cached_with_key;
  
- 	if (!ret && f2fs_encrypted_inode(inode)) {
- 		ret = fscrypt_get_encryption_info(inode);
-@@ -450,9 +450,13 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
- 		if (!fscrypt_has_encryption_key(inode))
- 			return -ENOKEY;
- 	}
--	if (f2fs_encrypted_inode(dir) &&
--			!fscrypt_has_permitted_context(dir, inode))
-+	dir = dget_parent(file_dentry(filp));
-+	if (f2fs_encrypted_inode(d_inode(dir)) &&
-+			!fscrypt_has_permitted_context(d_inode(dir), inode)) {
+-	if (!dir->i_sb->s_cop->is_encrypted(dir))
++	dir = dget_parent(dentry);
++	if (!d_inode(dir)->i_sb->s_cop->is_encrypted(d_inode(dir))) {
 +		dput(dir);
- 		return -EPERM;
+ 		return 0;
 +	}
-+	dput(dir);
- 	return ret;
- }
  
++	ci = d_inode(dir)->i_crypt_info;
+ 	if (ci && ci->ci_keyring_key &&
+ 	    (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
+ 					  (1 << KEY_FLAG_REVOKED) |
+@@ -363,6 +367,7 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	cached_with_key = dentry->d_flags & DCACHE_ENCRYPTED_WITH_KEY;
+ 	spin_unlock(&dentry->d_lock);
+ 	dir_has_key = (ci != NULL);
++	dput(dir);
+ 
+ 	/*
+ 	 * If the dentry was cached without the key, and it is a
 -- 
 2.6.3
 
