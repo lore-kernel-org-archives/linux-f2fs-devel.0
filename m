@@ -1,939 +1,372 @@
-From: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-Subject: Re: [dm-devel] [PATCH 04/42] fs: have submit_bh users pass in op
- and flags separately
-Date: Tue, 19 Apr 2016 01:30:49 +0900 (JST)
-Message-ID: <20160419.013049.606696900629210001.konishi.ryusuke@lab.ntt.co.jp>
-References: <1460716802-2294-1-git-send-email-mchristi@redhat.com>
-	<1460716802-2294-5-git-send-email-mchristi@redhat.com>
+From: Georg Veichtlbauer <georg@veichtlbauer.net>
+Subject: Kernel OOPS in f2fs-stable on ARM
+Date: Fri, 22 Apr 2016 08:58:13 +0200
+Message-ID: <d47e3dc22666855cd3941a9a6808a450@mail.tophosting.at>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-bcache-owner@vger.kernel.org>
-In-Reply-To: <1460716802-2294-5-git-send-email-mchristi@redhat.com>
-Sender: linux-bcache-owner@vger.kernel.org
-To: Mike Christie <mchristi@redhat.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, konrad.wilk@oracle.com, drbd-dev@lists.linbit.com, philipp.reisner@linbit.com, lars.ellenberg@linbit.com, linux-raid@vger.kernel.org, dm-devel@redhat.com, linux-fsdevel@vger.kernel.org, linux-bcache@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, linux-mtd@lists.infradead.org, target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, osd-dev@open-osd.org, xfs@oss.sgi.com, ocfs2-devel@oss.oracle.com
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <georg@veichtlbauer.net>) id 1atVIN-0002Vk-SM
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 22 Apr 2016 07:14:31 +0000
+Received: from smtp.tophosting.at ([217.196.144.210])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1atVIL-0008Ge-96
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 22 Apr 2016 07:14:31 +0000
+Received: from webmail.tophosting.at ([217.196.144.185])
+	by smtp.tophosting.at with esmtpsa
+	(TLS1.0:DHE_RSA_AES_128_CBC_SHA1:128) (Exim 4.80)
+	(envelope-from <georg@veichtlbauer.net>) id 1atV2b-0007oE-Hf
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 22 Apr 2016 08:58:13 +0200
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, 15 Apr 2016 05:39:24 -0500, mchristi@redhat.com wrote:
-> From: Mike Christie <mchristi@redhat.com>
-> 
-> This has submit_bh users pass in the operation and flags separately,
-> so submit_bh_wbc can setup bio->bi_op and bio-bi_rw on the bio that
-> is submitted.
-> 
-> Signed-off-by: Mike Christie <mchristi@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Hannes Reinecke <hare@suse.com>
-> ---
+Hi,
 
-Looks good with regard to nilfs2.
+I am experiencing seemingly random (i.e. the device is in standby mode) 
+reboots after updating to the latest f2fs-stable. It is a ARMv7 device - 
+the source repo is at 
+http://www.github.com/CyanogenMod/android_kernel_sony_apq8064. The 
+problem appeared after 
+https://github.com/CyanogenMod/android_kernel_sony_apq8064/commit/8abb552f64b1e6f7499fac286939fc000fde53ea
 
-Acked-by: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+This happens on multiple devices. Please let me know if I can provide 
+any additional info.
+
+Cheers,
+Georg
 
 
->  drivers/md/bitmap.c         |  4 ++--
->  fs/btrfs/check-integrity.c  | 24 ++++++++++----------
->  fs/btrfs/check-integrity.h  |  2 +-
->  fs/btrfs/disk-io.c          |  4 ++--
->  fs/buffer.c                 | 54 +++++++++++++++++++++++----------------------
->  fs/ext4/balloc.c            |  2 +-
->  fs/ext4/ialloc.c            |  2 +-
->  fs/ext4/inode.c             |  2 +-
->  fs/ext4/mmp.c               |  4 ++--
->  fs/fat/misc.c               |  2 +-
->  fs/gfs2/bmap.c              |  2 +-
->  fs/gfs2/dir.c               |  2 +-
->  fs/gfs2/meta_io.c           |  6 ++---
->  fs/jbd2/commit.c            |  6 ++---
->  fs/jbd2/journal.c           |  8 +++----
->  fs/nilfs2/btnode.c          |  6 ++---
->  fs/nilfs2/btnode.h          |  2 +-
->  fs/nilfs2/btree.c           |  6 +++--
->  fs/nilfs2/gcinode.c         |  5 +++--
->  fs/nilfs2/mdt.c             | 11 ++++-----
->  fs/ntfs/aops.c              |  6 ++---
->  fs/ntfs/compress.c          |  2 +-
->  fs/ntfs/file.c              |  2 +-
->  fs/ntfs/logfile.c           |  2 +-
->  fs/ntfs/mft.c               |  4 ++--
->  fs/ocfs2/buffer_head_io.c   |  8 +++----
->  fs/reiserfs/inode.c         |  4 ++--
->  fs/reiserfs/journal.c       |  6 ++---
->  fs/ufs/util.c               |  2 +-
->  include/linux/buffer_head.h |  9 ++++----
->  30 files changed, 103 insertions(+), 96 deletions(-)
-> 
-> diff --git a/drivers/md/bitmap.c b/drivers/md/bitmap.c
-> index 3fe86b5..8b2e16f 100644
-> --- a/drivers/md/bitmap.c
-> +++ b/drivers/md/bitmap.c
-> @@ -294,7 +294,7 @@ static void write_page(struct bitmap *bitmap, struct page *page, int wait)
->  			atomic_inc(&bitmap->pending_writes);
->  			set_buffer_locked(bh);
->  			set_buffer_mapped(bh);
-> -			submit_bh(WRITE | REQ_SYNC, bh);
-> +			submit_bh(REQ_OP_WRITE, REQ_SYNC, bh);
->  			bh = bh->b_this_page;
->  		}
->  
-> @@ -389,7 +389,7 @@ static int read_page(struct file *file, unsigned long index,
->  			atomic_inc(&bitmap->pending_writes);
->  			set_buffer_locked(bh);
->  			set_buffer_mapped(bh);
-> -			submit_bh(READ, bh);
-> +			submit_bh(REQ_OP_READ, 0, bh);
->  		}
->  		block++;
->  		bh = bh->b_this_page;
-> diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
-> index 9400acd..f82190f 100644
-> --- a/fs/btrfs/check-integrity.c
-> +++ b/fs/btrfs/check-integrity.c
-> @@ -2856,12 +2856,12 @@ static struct btrfsic_dev_state *btrfsic_dev_state_lookup(
->  	return ds;
->  }
->  
-> -int btrfsic_submit_bh(int rw, struct buffer_head *bh)
-> +int btrfsic_submit_bh(int op, int op_flags, struct buffer_head *bh)
->  {
->  	struct btrfsic_dev_state *dev_state;
->  
->  	if (!btrfsic_is_initialized)
-> -		return submit_bh(rw, bh);
-> +		return submit_bh(op, op_flags, bh);
->  
->  	mutex_lock(&btrfsic_mutex);
->  	/* since btrfsic_submit_bh() might also be called before
-> @@ -2870,26 +2870,26 @@ int btrfsic_submit_bh(int rw, struct buffer_head *bh)
->  
->  	/* Only called to write the superblock (incl. FLUSH/FUA) */
->  	if (NULL != dev_state &&
-> -	    (rw & WRITE) && bh->b_size > 0) {
-> +	    (op == REQ_OP_WRITE) && bh->b_size > 0) {
->  		u64 dev_bytenr;
->  
->  		dev_bytenr = 4096 * bh->b_blocknr;
->  		if (dev_state->state->print_mask &
->  		    BTRFSIC_PRINT_MASK_SUBMIT_BIO_BH)
->  			printk(KERN_INFO
-> -			       "submit_bh(rw=0x%x, blocknr=%llu (bytenr %llu),"
-> -			       " size=%zu, data=%p, bdev=%p)\n",
-> -			       rw, (unsigned long long)bh->b_blocknr,
-> +			       "submit_bh(op=0x%x,0x%x, blocknr=%llu "
-> +			       "(bytenr %llu), size=%zu, data=%p, bdev=%p)\n",
-> +			       op, op_flags, (unsigned long long)bh->b_blocknr,
->  			       dev_bytenr, bh->b_size, bh->b_data, bh->b_bdev);
->  		btrfsic_process_written_block(dev_state, dev_bytenr,
->  					      &bh->b_data, 1, NULL,
-> -					      NULL, bh, rw);
-> -	} else if (NULL != dev_state && (rw & REQ_FLUSH)) {
-> +					      NULL, bh, op_flags);
-> +	} else if (NULL != dev_state && (op_flags & REQ_FLUSH)) {
->  		if (dev_state->state->print_mask &
->  		    BTRFSIC_PRINT_MASK_SUBMIT_BIO_BH)
->  			printk(KERN_INFO
-> -			       "submit_bh(rw=0x%x FLUSH, bdev=%p)\n",
-> -			       rw, bh->b_bdev);
-> +			       "submit_bh(op=0x%x,0x%x FLUSH, bdev=%p)\n",
-> +			       op, op_flags, bh->b_bdev);
->  		if (!dev_state->dummy_block_for_bio_bh_flush.is_iodone) {
->  			if ((dev_state->state->print_mask &
->  			     (BTRFSIC_PRINT_MASK_SUBMIT_BIO_BH |
-> @@ -2907,7 +2907,7 @@ int btrfsic_submit_bh(int rw, struct buffer_head *bh)
->  			block->never_written = 0;
->  			block->iodone_w_error = 0;
->  			block->flush_gen = dev_state->last_flush_gen + 1;
-> -			block->submit_bio_bh_rw = rw;
-> +			block->submit_bio_bh_rw = op_flags;
->  			block->orig_bio_bh_private = bh->b_private;
->  			block->orig_bio_bh_end_io.bh = bh->b_end_io;
->  			block->next_in_same_bio = NULL;
-> @@ -2916,7 +2916,7 @@ int btrfsic_submit_bh(int rw, struct buffer_head *bh)
->  		}
->  	}
->  	mutex_unlock(&btrfsic_mutex);
-> -	return submit_bh(rw, bh);
-> +	return submit_bh(op, op_flags, bh);
->  }
->  
->  static void __btrfsic_submit_bio(struct bio *bio)
-> diff --git a/fs/btrfs/check-integrity.h b/fs/btrfs/check-integrity.h
-> index c04e249..f78dff1 100644
-> --- a/fs/btrfs/check-integrity.h
-> +++ b/fs/btrfs/check-integrity.h
-> @@ -20,7 +20,7 @@
->  #define __BTRFS_CHECK_INTEGRITY__
->  
->  #ifdef CONFIG_BTRFS_FS_CHECK_INTEGRITY
-> -int btrfsic_submit_bh(int rw, struct buffer_head *bh);
-> +int btrfsic_submit_bh(int op, int op_flags, struct buffer_head *bh);
->  void btrfsic_submit_bio(struct bio *bio);
->  int btrfsic_submit_bio_wait(struct bio *bio);
->  #else
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 0bd25e4..9a13c85 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -3410,9 +3410,9 @@ static int write_dev_supers(struct btrfs_device *device,
->  		 * to go down lazy.
->  		 */
->  		if (i == 0)
-> -			ret = btrfsic_submit_bh(WRITE_FUA, bh);
-> +			ret = btrfsic_submit_bh(REQ_OP_WRITE, WRITE_FUA, bh);
->  		else
-> -			ret = btrfsic_submit_bh(WRITE_SYNC, bh);
-> +			ret = btrfsic_submit_bh(REQ_OP_WRITE, WRITE_SYNC, bh);
->  		if (ret)
->  			errors++;
->  	}
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 7ed7869..1e1a474 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -45,7 +45,7 @@
->  #include <trace/events/block.h>
->  
->  static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
-> -static int submit_bh_wbc(int rw, struct buffer_head *bh,
-> +static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
->  			 unsigned long bio_flags,
->  			 struct writeback_control *wbc);
->  
-> @@ -1225,7 +1225,7 @@ static struct buffer_head *__bread_slow(struct buffer_head *bh)
->  	} else {
->  		get_bh(bh);
->  		bh->b_end_io = end_buffer_read_sync;
-> -		submit_bh(READ, bh);
-> +		submit_bh(REQ_OP_READ, 0, bh);
->  		wait_on_buffer(bh);
->  		if (buffer_uptodate(bh))
->  			return bh;
-> @@ -1697,7 +1697,7 @@ static int __block_write_full_page(struct inode *inode, struct page *page,
->  	struct buffer_head *bh, *head;
->  	unsigned int blocksize, bbits;
->  	int nr_underway = 0;
-> -	int write_op = (wbc->sync_mode == WB_SYNC_ALL ? WRITE_SYNC : WRITE);
-> +	int write_flags = (wbc->sync_mode == WB_SYNC_ALL ? WRITE_SYNC : 0);
->  
->  	head = create_page_buffers(page, inode,
->  					(1 << BH_Dirty)|(1 << BH_Uptodate));
-> @@ -1786,7 +1786,7 @@ static int __block_write_full_page(struct inode *inode, struct page *page,
->  	do {
->  		struct buffer_head *next = bh->b_this_page;
->  		if (buffer_async_write(bh)) {
-> -			submit_bh_wbc(write_op, bh, 0, wbc);
-> +			submit_bh_wbc(REQ_OP_WRITE, write_flags, bh, 0, wbc);
->  			nr_underway++;
->  		}
->  		bh = next;
-> @@ -1840,7 +1840,7 @@ recover:
->  		struct buffer_head *next = bh->b_this_page;
->  		if (buffer_async_write(bh)) {
->  			clear_buffer_dirty(bh);
-> -			submit_bh_wbc(write_op, bh, 0, wbc);
-> +			submit_bh_wbc(REQ_OP_WRITE, write_flags, bh, 0, wbc);
->  			nr_underway++;
->  		}
->  		bh = next;
-> @@ -2248,7 +2248,7 @@ int block_read_full_page(struct page *page, get_block_t *get_block)
->  		if (buffer_uptodate(bh))
->  			end_buffer_async_read(bh, 1);
->  		else
-> -			submit_bh(READ, bh);
-> +			submit_bh(REQ_OP_READ, 0, bh);
->  	}
->  	return 0;
->  }
-> @@ -2582,7 +2582,7 @@ int nobh_write_begin(struct address_space *mapping,
->  		if (block_start < from || block_end > to) {
->  			lock_buffer(bh);
->  			bh->b_end_io = end_buffer_read_nobh;
-> -			submit_bh(READ, bh);
-> +			submit_bh(REQ_OP_READ, 0, bh);
->  			nr_reads++;
->  		}
->  	}
-> @@ -2949,7 +2949,7 @@ static void end_bio_bh_io_sync(struct bio *bio)
->   * errors, this only handles the "we need to be able to
->   * do IO at the final sector" case.
->   */
-> -void guard_bio_eod(int rw, struct bio *bio)
-> +void guard_bio_eod(int op, struct bio *bio)
->  {
->  	sector_t maxsector;
->  	struct bio_vec *bvec = &bio->bi_io_vec[bio->bi_vcnt - 1];
-> @@ -2979,13 +2979,13 @@ void guard_bio_eod(int rw, struct bio *bio)
->  	bvec->bv_len -= truncated_bytes;
->  
->  	/* ..and clear the end of the buffer for reads */
-> -	if ((rw & RW_MASK) == READ) {
-> +	if (op == REQ_OP_READ) {
->  		zero_user(bvec->bv_page, bvec->bv_offset + bvec->bv_len,
->  				truncated_bytes);
->  	}
->  }
->  
-> -static int submit_bh_wbc(int rw, struct buffer_head *bh,
-> +static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
->  			 unsigned long bio_flags, struct writeback_control *wbc)
->  {
->  	struct bio *bio;
-> @@ -2999,7 +2999,7 @@ static int submit_bh_wbc(int rw, struct buffer_head *bh,
->  	/*
->  	 * Only clear out a write error when rewriting
->  	 */
-> -	if (test_set_buffer_req(bh) && (rw & WRITE))
-> +	if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
->  		clear_buffer_write_io_error(bh);
->  
->  	/*
-> @@ -3022,29 +3022,31 @@ static int submit_bh_wbc(int rw, struct buffer_head *bh,
->  	bio->bi_end_io = end_bio_bh_io_sync;
->  	bio->bi_private = bh;
->  	bio->bi_flags |= bio_flags;
-> +	bio->bi_op = op;
->  
->  	/* Take care of bh's that straddle the end of the device */
-> -	guard_bio_eod(rw, bio);
-> +	guard_bio_eod(op, bio);
->  
->  	if (buffer_meta(bh))
-> -		rw |= REQ_META;
-> +		op_flags |= REQ_META;
->  	if (buffer_prio(bh))
-> -		rw |= REQ_PRIO;
-> -	bio->bi_rw = rw;
-> +		op_flags |= REQ_PRIO;
-> +	bio->bi_rw = op_flags;
->  
->  	submit_bio(bio);
->  	return 0;
->  }
->  
-> -int _submit_bh(int rw, struct buffer_head *bh, unsigned long bio_flags)
-> +int _submit_bh(int op, int op_flags, struct buffer_head *bh,
-> +	       unsigned long bio_flags)
->  {
-> -	return submit_bh_wbc(rw, bh, bio_flags, NULL);
-> +	return submit_bh_wbc(op, op_flags, bh, bio_flags, NULL);
->  }
->  EXPORT_SYMBOL_GPL(_submit_bh);
->  
-> -int submit_bh(int rw, struct buffer_head *bh)
-> +int submit_bh(int op, int op_flags,  struct buffer_head *bh)
->  {
-> -	return submit_bh_wbc(rw, bh, 0, NULL);
-> +	return submit_bh_wbc(op, op_flags, bh, 0, NULL);
->  }
->  EXPORT_SYMBOL(submit_bh);
->  
-> @@ -3086,14 +3088,14 @@ void ll_rw_block(int rw, int nr, struct buffer_head *bhs[])
->  			if (test_clear_buffer_dirty(bh)) {
->  				bh->b_end_io = end_buffer_write_sync;
->  				get_bh(bh);
-> -				submit_bh(WRITE, bh);
-> +				submit_bh(rw, 0, bh);
->  				continue;
->  			}
->  		} else {
->  			if (!buffer_uptodate(bh)) {
->  				bh->b_end_io = end_buffer_read_sync;
->  				get_bh(bh);
-> -				submit_bh(rw, bh);
-> +				submit_bh(rw, 0, bh);
->  				continue;
->  			}
->  		}
-> @@ -3102,7 +3104,7 @@ void ll_rw_block(int rw, int nr, struct buffer_head *bhs[])
->  }
->  EXPORT_SYMBOL(ll_rw_block);
->  
-> -void write_dirty_buffer(struct buffer_head *bh, int rw)
-> +void write_dirty_buffer(struct buffer_head *bh, int op_flags)
->  {
->  	lock_buffer(bh);
->  	if (!test_clear_buffer_dirty(bh)) {
-> @@ -3111,7 +3113,7 @@ void write_dirty_buffer(struct buffer_head *bh, int rw)
->  	}
->  	bh->b_end_io = end_buffer_write_sync;
->  	get_bh(bh);
-> -	submit_bh(rw, bh);
-> +	submit_bh(REQ_OP_WRITE, op_flags, bh);
->  }
->  EXPORT_SYMBOL(write_dirty_buffer);
->  
-> @@ -3120,7 +3122,7 @@ EXPORT_SYMBOL(write_dirty_buffer);
->   * and then start new I/O and then wait upon it.  The caller must have a ref on
->   * the buffer_head.
->   */
-> -int __sync_dirty_buffer(struct buffer_head *bh, int rw)
-> +int __sync_dirty_buffer(struct buffer_head *bh, int op_flags)
->  {
->  	int ret = 0;
->  
-> @@ -3129,7 +3131,7 @@ int __sync_dirty_buffer(struct buffer_head *bh, int rw)
->  	if (test_clear_buffer_dirty(bh)) {
->  		get_bh(bh);
->  		bh->b_end_io = end_buffer_write_sync;
-> -		ret = submit_bh(rw, bh);
-> +		ret = submit_bh(REQ_OP_WRITE, op_flags, bh);
->  		wait_on_buffer(bh);
->  		if (!ret && !buffer_uptodate(bh))
->  			ret = -EIO;
-> @@ -3392,7 +3394,7 @@ int bh_submit_read(struct buffer_head *bh)
->  
->  	get_bh(bh);
->  	bh->b_end_io = end_buffer_read_sync;
-> -	submit_bh(READ, bh);
-> +	submit_bh(REQ_OP_READ, 0, bh);
->  	wait_on_buffer(bh);
->  	if (buffer_uptodate(bh))
->  		return 0;
-> diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-> index fe1f50f..d06823b 100644
-> --- a/fs/ext4/balloc.c
-> +++ b/fs/ext4/balloc.c
-> @@ -470,7 +470,7 @@ ext4_read_block_bitmap_nowait(struct super_block *sb, ext4_group_t block_group)
->  	trace_ext4_read_block_bitmap_load(sb, block_group);
->  	bh->b_end_io = ext4_end_bitmap_read;
->  	get_bh(bh);
-> -	submit_bh(READ | REQ_META | REQ_PRIO, bh);
-> +	submit_bh(REQ_OP_READ, REQ_META | REQ_PRIO, bh);
->  	return bh;
->  verify:
->  	err = ext4_validate_block_bitmap(sb, desc, block_group, bh);
-> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-> index 237b877..0b08abc 100644
-> --- a/fs/ext4/ialloc.c
-> +++ b/fs/ext4/ialloc.c
-> @@ -214,7 +214,7 @@ ext4_read_inode_bitmap(struct super_block *sb, ext4_group_t block_group)
->  	trace_ext4_load_inode_bitmap(sb, block_group);
->  	bh->b_end_io = ext4_end_bitmap_read;
->  	get_bh(bh);
-> -	submit_bh(READ | REQ_META | REQ_PRIO, bh);
-> +	submit_bh(REQ_OP_READ, REQ_META | REQ_PRIO, bh);
->  	wait_on_buffer(bh);
->  	if (!buffer_uptodate(bh)) {
->  		put_bh(bh);
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 981a1fc..f19220b 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4186,7 +4186,7 @@ make_io:
->  		trace_ext4_load_inode(inode);
->  		get_bh(bh);
->  		bh->b_end_io = end_buffer_read_sync;
-> -		submit_bh(READ | REQ_META | REQ_PRIO, bh);
-> +		submit_bh(REQ_OP_READ, REQ_META | REQ_PRIO, bh);
->  		wait_on_buffer(bh);
->  		if (!buffer_uptodate(bh)) {
->  			EXT4_ERROR_INODE_BLOCK(inode, block,
-> diff --git a/fs/ext4/mmp.c b/fs/ext4/mmp.c
-> index 2444527..cef1db4 100644
-> --- a/fs/ext4/mmp.c
-> +++ b/fs/ext4/mmp.c
-> @@ -52,7 +52,7 @@ static int write_mmp_block(struct super_block *sb, struct buffer_head *bh)
->  	lock_buffer(bh);
->  	bh->b_end_io = end_buffer_write_sync;
->  	get_bh(bh);
-> -	submit_bh(WRITE_SYNC | REQ_META | REQ_PRIO, bh);
-> +	submit_bh(REQ_OP_WRITE, WRITE_SYNC | REQ_META | REQ_PRIO, bh);
->  	wait_on_buffer(bh);
->  	sb_end_write(sb);
->  	if (unlikely(!buffer_uptodate(bh)))
-> @@ -88,7 +88,7 @@ static int read_mmp_block(struct super_block *sb, struct buffer_head **bh,
->  	get_bh(*bh);
->  	lock_buffer(*bh);
->  	(*bh)->b_end_io = end_buffer_read_sync;
-> -	submit_bh(READ_SYNC | REQ_META | REQ_PRIO, *bh);
-> +	submit_bh(REQ_OP_READ, READ_SYNC | REQ_META | REQ_PRIO, *bh);
->  	wait_on_buffer(*bh);
->  	if (!buffer_uptodate(*bh)) {
->  		ret = -EIO;
-> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-> index c4589e9..8a86981 100644
-> --- a/fs/fat/misc.c
-> +++ b/fs/fat/misc.c
-> @@ -267,7 +267,7 @@ int fat_sync_bhs(struct buffer_head **bhs, int nr_bhs)
->  	int i, err = 0;
->  
->  	for (i = 0; i < nr_bhs; i++)
-> -		write_dirty_buffer(bhs[i], WRITE);
-> +		write_dirty_buffer(bhs[i], 0);
->  
->  	for (i = 0; i < nr_bhs; i++) {
->  		wait_on_buffer(bhs[i]);
-> diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-> index 24ce1cd..06d79aa 100644
-> --- a/fs/gfs2/bmap.c
-> +++ b/fs/gfs2/bmap.c
-> @@ -285,7 +285,7 @@ static void gfs2_metapath_ra(struct gfs2_glock *gl,
->  		if (trylock_buffer(rabh)) {
->  			if (!buffer_uptodate(rabh)) {
->  				rabh->b_end_io = end_buffer_read_sync;
-> -				submit_bh(READA | REQ_META, rabh);
-> +				submit_bh(REQ_OP_READ, READA | REQ_META, rabh);
->  				continue;
->  			}
->  			unlock_buffer(rabh);
-> diff --git a/fs/gfs2/dir.c b/fs/gfs2/dir.c
-> index 4a01f30..97a7d47 100644
-> --- a/fs/gfs2/dir.c
-> +++ b/fs/gfs2/dir.c
-> @@ -1510,7 +1510,7 @@ static void gfs2_dir_readahead(struct inode *inode, unsigned hsize, u32 index,
->  				continue;
->  			}
->  			bh->b_end_io = end_buffer_read_sync;
-> -			submit_bh(READA | REQ_META, bh);
-> +			submit_bh(REQ_OP_READ, READA | REQ_META, bh);
->  			continue;
->  		}
->  		brelse(bh);
-> diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
-> index f8d33e8..3c63087 100644
-> --- a/fs/gfs2/meta_io.c
-> +++ b/fs/gfs2/meta_io.c
-> @@ -37,8 +37,8 @@ static int gfs2_aspace_writepage(struct page *page, struct writeback_control *wb
->  {
->  	struct buffer_head *bh, *head;
->  	int nr_underway = 0;
-> -	int write_op = REQ_META | REQ_PRIO |
-> -		(wbc->sync_mode == WB_SYNC_ALL ? WRITE_SYNC : WRITE);
-> +	int write_flags = REQ_META | REQ_PRIO |
-> +		(wbc->sync_mode == WB_SYNC_ALL ? WRITE_SYNC : 0);
->  
->  	BUG_ON(!PageLocked(page));
->  	BUG_ON(!page_has_buffers(page));
-> @@ -79,7 +79,7 @@ static int gfs2_aspace_writepage(struct page *page, struct writeback_control *wb
->  	do {
->  		struct buffer_head *next = bh->b_this_page;
->  		if (buffer_async_write(bh)) {
-> -			submit_bh(write_op, bh);
-> +			submit_bh(REQ_OP_WRITE, write_flags, bh);
->  			nr_underway++;
->  		}
->  		bh = next;
-> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-> index 2ad98d6..956bcf0 100644
-> --- a/fs/jbd2/commit.c
-> +++ b/fs/jbd2/commit.c
-> @@ -155,9 +155,9 @@ static int journal_submit_commit_record(journal_t *journal,
->  
->  	if (journal->j_flags & JBD2_BARRIER &&
->  	    !jbd2_has_feature_async_commit(journal))
-> -		ret = submit_bh(WRITE_SYNC | WRITE_FLUSH_FUA, bh);
-> +		ret = submit_bh(REQ_OP_WRITE, WRITE_SYNC | WRITE_FLUSH_FUA, bh);
->  	else
-> -		ret = submit_bh(WRITE_SYNC, bh);
-> +		ret = submit_bh(REQ_OP_WRITE, WRITE_SYNC, bh);
->  
->  	*cbh = bh;
->  	return ret;
-> @@ -714,7 +714,7 @@ start_journal_io:
->  				clear_buffer_dirty(bh);
->  				set_buffer_uptodate(bh);
->  				bh->b_end_io = journal_end_buffer_io_sync;
-> -				submit_bh(WRITE_SYNC, bh);
-> +				submit_bh(REQ_OP_WRITE, WRITE_SYNC, bh);
->  			}
->  			cond_resched();
->  			stats.run.rs_blocks_logged += bufs;
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 435f0b2..6d7e33a 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -1345,15 +1345,15 @@ static int journal_reset(journal_t *journal)
->  	return jbd2_journal_start_thread(journal);
->  }
->  
-> -static int jbd2_write_superblock(journal_t *journal, int write_op)
-> +static int jbd2_write_superblock(journal_t *journal, int write_flags)
->  {
->  	struct buffer_head *bh = journal->j_sb_buffer;
->  	journal_superblock_t *sb = journal->j_superblock;
->  	int ret;
->  
-> -	trace_jbd2_write_superblock(journal, write_op);
-> +	trace_jbd2_write_superblock(journal, write_flags);
->  	if (!(journal->j_flags & JBD2_BARRIER))
-> -		write_op &= ~(REQ_FUA | REQ_FLUSH);
-> +		write_flags &= ~(REQ_FUA | REQ_FLUSH);
->  	lock_buffer(bh);
->  	if (buffer_write_io_error(bh)) {
->  		/*
-> @@ -1373,7 +1373,7 @@ static int jbd2_write_superblock(journal_t *journal, int write_op)
->  	jbd2_superblock_csum_set(journal, sb);
->  	get_bh(bh);
->  	bh->b_end_io = end_buffer_write_sync;
-> -	ret = submit_bh(write_op, bh);
-> +	ret = submit_bh(REQ_OP_WRITE, write_flags, bh);
->  	wait_on_buffer(bh);
->  	if (buffer_write_io_error(bh)) {
->  		clear_buffer_write_io_error(bh);
-> diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
-> index e0c9daf..87baf87 100644
-> --- a/fs/nilfs2/btnode.c
-> +++ b/fs/nilfs2/btnode.c
-> @@ -67,7 +67,7 @@ nilfs_btnode_create_block(struct address_space *btnc, __u64 blocknr)
->  }
->  
->  int nilfs_btnode_submit_block(struct address_space *btnc, __u64 blocknr,
-> -			      sector_t pblocknr, int mode,
-> +			      sector_t pblocknr, int mode, int mode_flags,
->  			      struct buffer_head **pbh, sector_t *submit_ptr)
->  {
->  	struct buffer_head *bh;
-> @@ -100,7 +100,7 @@ int nilfs_btnode_submit_block(struct address_space *btnc, __u64 blocknr,
->  		}
->  	}
->  
-> -	if (mode == READA) {
-> +	if (mode_flags & REQ_RAHEAD) {
->  		if (pblocknr != *submit_ptr + 1 || !trylock_buffer(bh)) {
->  			err = -EBUSY; /* internal code */
->  			brelse(bh);
-> @@ -119,7 +119,7 @@ int nilfs_btnode_submit_block(struct address_space *btnc, __u64 blocknr,
->  	bh->b_blocknr = pblocknr; /* set block address for read */
->  	bh->b_end_io = end_buffer_read_sync;
->  	get_bh(bh);
-> -	submit_bh(mode, bh);
-> +	submit_bh(mode, mode_flags, bh);
->  	bh->b_blocknr = blocknr; /* set back to the given block address */
->  	*submit_ptr = pblocknr;
->  	err = 0;
-> diff --git a/fs/nilfs2/btnode.h b/fs/nilfs2/btnode.h
-> index d876b56..3f93197 100644
-> --- a/fs/nilfs2/btnode.h
-> +++ b/fs/nilfs2/btnode.h
-> @@ -47,7 +47,7 @@ void nilfs_btnode_cache_clear(struct address_space *);
->  struct buffer_head *nilfs_btnode_create_block(struct address_space *btnc,
->  					      __u64 blocknr);
->  int nilfs_btnode_submit_block(struct address_space *, __u64, sector_t, int,
-> -			      struct buffer_head **, sector_t *);
-> +			      int, struct buffer_head **, sector_t *);
->  void nilfs_btnode_delete(struct buffer_head *);
->  int nilfs_btnode_prepare_change_key(struct address_space *,
->  				    struct nilfs_btnode_chkey_ctxt *);
-> diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
-> index 3a3821b..5d6a2c6 100644
-> --- a/fs/nilfs2/btree.c
-> +++ b/fs/nilfs2/btree.c
-> @@ -480,7 +480,8 @@ static int __nilfs_btree_get_block(const struct nilfs_bmap *btree, __u64 ptr,
->  	sector_t submit_ptr = 0;
->  	int ret;
->  
-> -	ret = nilfs_btnode_submit_block(btnc, ptr, 0, READ, &bh, &submit_ptr);
-> +	ret = nilfs_btnode_submit_block(btnc, ptr, 0, REQ_OP_READ, 0, &bh,
-> +					&submit_ptr);
->  	if (ret) {
->  		if (ret != -EEXIST)
->  			return ret;
-> @@ -496,7 +497,8 @@ static int __nilfs_btree_get_block(const struct nilfs_bmap *btree, __u64 ptr,
->  		     n > 0 && i < ra->ncmax; n--, i++) {
->  			ptr2 = nilfs_btree_node_get_ptr(ra->node, i, ra->ncmax);
->  
-> -			ret = nilfs_btnode_submit_block(btnc, ptr2, 0, READA,
-> +			ret = nilfs_btnode_submit_block(btnc, ptr2, 0,
-> +							REQ_OP_READ, REQ_RAHEAD,
->  							&ra_bh, &submit_ptr);
->  			if (likely(!ret || ret == -EEXIST))
->  				brelse(ra_bh);
-> diff --git a/fs/nilfs2/gcinode.c b/fs/nilfs2/gcinode.c
-> index 0224b78..90be270 100644
-> --- a/fs/nilfs2/gcinode.c
-> +++ b/fs/nilfs2/gcinode.c
-> @@ -106,7 +106,7 @@ int nilfs_gccache_submit_read_data(struct inode *inode, sector_t blkoff,
->  	bh->b_blocknr = pbn;
->  	bh->b_end_io = end_buffer_read_sync;
->  	get_bh(bh);
-> -	submit_bh(READ, bh);
-> +	submit_bh(REQ_OP_READ, 0, bh);
->  	if (vbn)
->  		bh->b_blocknr = vbn;
->   out:
-> @@ -143,7 +143,8 @@ int nilfs_gccache_submit_read_node(struct inode *inode, sector_t pbn,
->  	int ret;
->  
->  	ret = nilfs_btnode_submit_block(&NILFS_I(inode)->i_btnode_cache,
-> -					vbn ? : pbn, pbn, READ, out_bh, &pbn);
-> +					vbn ? : pbn, pbn, REQ_OP_READ, 0,
-> +					out_bh, &pbn);
->  	if (ret == -EEXIST) /* internal code (cache hit) */
->  		ret = 0;
->  	return ret;
-> diff --git a/fs/nilfs2/mdt.c b/fs/nilfs2/mdt.c
-> index f6982b9..27aee74 100644
-> --- a/fs/nilfs2/mdt.c
-> +++ b/fs/nilfs2/mdt.c
-> @@ -124,7 +124,7 @@ static int nilfs_mdt_create_block(struct inode *inode, unsigned long block,
->  
->  static int
->  nilfs_mdt_submit_block(struct inode *inode, unsigned long blkoff,
-> -		       int mode, struct buffer_head **out_bh)
-> +		       int mode, int mode_flags, struct buffer_head **out_bh)
->  {
->  	struct buffer_head *bh;
->  	__u64 blknum = 0;
-> @@ -138,7 +138,7 @@ nilfs_mdt_submit_block(struct inode *inode, unsigned long blkoff,
->  	if (buffer_uptodate(bh))
->  		goto out;
->  
-> -	if (mode == READA) {
-> +	if (mode_flags & REQ_RAHEAD) {
->  		if (!trylock_buffer(bh)) {
->  			ret = -EBUSY;
->  			goto failed_bh;
-> @@ -160,7 +160,7 @@ nilfs_mdt_submit_block(struct inode *inode, unsigned long blkoff,
->  
->  	bh->b_end_io = end_buffer_read_sync;
->  	get_bh(bh);
-> -	submit_bh(mode, bh);
-> +	submit_bh(mode, mode_flags, bh);
->  	ret = 0;
->  
->  	trace_nilfs2_mdt_submit_block(inode, inode->i_ino, blkoff, mode);
-> @@ -184,7 +184,7 @@ static int nilfs_mdt_read_block(struct inode *inode, unsigned long block,
->  	int i, nr_ra_blocks = NILFS_MDT_MAX_RA_BLOCKS;
->  	int err;
->  
-> -	err = nilfs_mdt_submit_block(inode, block, READ, &first_bh);
-> +	err = nilfs_mdt_submit_block(inode, block, REQ_OP_READ, 0, &first_bh);
->  	if (err == -EEXIST) /* internal code */
->  		goto out;
->  
-> @@ -194,7 +194,8 @@ static int nilfs_mdt_read_block(struct inode *inode, unsigned long block,
->  	if (readahead) {
->  		blkoff = block + 1;
->  		for (i = 0; i < nr_ra_blocks; i++, blkoff++) {
-> -			err = nilfs_mdt_submit_block(inode, blkoff, READA, &bh);
-> +			err = nilfs_mdt_submit_block(inode, blkoff, REQ_OP_READ,
-> +						     REQ_RAHEAD, &bh);
->  			if (likely(!err || err == -EEXIST))
->  				brelse(bh);
->  			else if (err != -EBUSY)
-> diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
-> index 97768a1..fe251f1 100644
-> --- a/fs/ntfs/aops.c
-> +++ b/fs/ntfs/aops.c
-> @@ -362,7 +362,7 @@ handle_zblock:
->  		for (i = 0; i < nr; i++) {
->  			tbh = arr[i];
->  			if (likely(!buffer_uptodate(tbh)))
-> -				submit_bh(READ, tbh);
-> +				submit_bh(REQ_OP_READ, 0, tbh);
->  			else
->  				ntfs_end_buffer_async_read(tbh, 1);
->  		}
-> @@ -877,7 +877,7 @@ lock_retry_remap:
->  	do {
->  		struct buffer_head *next = bh->b_this_page;
->  		if (buffer_async_write(bh)) {
-> -			submit_bh(WRITE, bh);
-> +			submit_bh(REQ_OP_WRITE, 0, bh);
->  			need_end_writeback = false;
->  		}
->  		bh = next;
-> @@ -1202,7 +1202,7 @@ lock_retry_remap:
->  		BUG_ON(!buffer_mapped(tbh));
->  		get_bh(tbh);
->  		tbh->b_end_io = end_buffer_write_sync;
-> -		submit_bh(WRITE, tbh);
-> +		submit_bh(REQ_OP_WRITE, 0, tbh);
->  	}
->  	/* Synchronize the mft mirror now if not @sync. */
->  	if (is_mft && !sync)
-> diff --git a/fs/ntfs/compress.c b/fs/ntfs/compress.c
-> index f2b5e74..f8eb043 100644
-> --- a/fs/ntfs/compress.c
-> +++ b/fs/ntfs/compress.c
-> @@ -670,7 +670,7 @@ lock_retry_remap:
->  		}
->  		get_bh(tbh);
->  		tbh->b_end_io = end_buffer_read_sync;
-> -		submit_bh(READ, tbh);
-> +		submit_bh(REQ_OP_READ, 0, tbh);
->  	}
->  
->  	/* Wait for io completion on all buffer heads. */
-> diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
-> index 91117ad..d96f0c1 100644
-> --- a/fs/ntfs/file.c
-> +++ b/fs/ntfs/file.c
-> @@ -553,7 +553,7 @@ static inline int ntfs_submit_bh_for_read(struct buffer_head *bh)
->  	lock_buffer(bh);
->  	get_bh(bh);
->  	bh->b_end_io = end_buffer_read_sync;
-> -	return submit_bh(READ, bh);
-> +	return submit_bh(REQ_OP_READ, 0, bh);
->  }
->  
->  /**
-> diff --git a/fs/ntfs/logfile.c b/fs/ntfs/logfile.c
-> index 9d71213..761f12f 100644
-> --- a/fs/ntfs/logfile.c
-> +++ b/fs/ntfs/logfile.c
-> @@ -821,7 +821,7 @@ map_vcn:
->  			 * completed ignore errors afterwards as we can assume
->  			 * that if one buffer worked all of them will work.
->  			 */
-> -			submit_bh(WRITE, bh);
-> +			submit_bh(REQ_OP_WRITE, 0, bh);
->  			if (should_wait) {
->  				should_wait = false;
->  				wait_on_buffer(bh);
-> diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
-> index 37b2501..d15d492 100644
-> --- a/fs/ntfs/mft.c
-> +++ b/fs/ntfs/mft.c
-> @@ -592,7 +592,7 @@ int ntfs_sync_mft_mirror(ntfs_volume *vol, const unsigned long mft_no,
->  			clear_buffer_dirty(tbh);
->  			get_bh(tbh);
->  			tbh->b_end_io = end_buffer_write_sync;
-> -			submit_bh(WRITE, tbh);
-> +			submit_bh(REQ_OP_WRITE, 0, tbh);
->  		}
->  		/* Wait on i/o completion of buffers. */
->  		for (i_bhs = 0; i_bhs < nr_bhs; i_bhs++) {
-> @@ -785,7 +785,7 @@ int write_mft_record_nolock(ntfs_inode *ni, MFT_RECORD *m, int sync)
->  		clear_buffer_dirty(tbh);
->  		get_bh(tbh);
->  		tbh->b_end_io = end_buffer_write_sync;
-> -		submit_bh(WRITE, tbh);
-> +		submit_bh(REQ_OP_WRITE, 0, tbh);
->  	}
->  	/* Synchronize the mft mirror now if not @sync. */
->  	if (!sync && ni->mft_no < vol->mftmirr_size)
-> diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-> index fe50ded..fb775c9 100644
-> --- a/fs/ocfs2/buffer_head_io.c
-> +++ b/fs/ocfs2/buffer_head_io.c
-> @@ -79,7 +79,7 @@ int ocfs2_write_block(struct ocfs2_super *osb, struct buffer_head *bh,
->  
->  	get_bh(bh); /* for end_buffer_write_sync() */
->  	bh->b_end_io = end_buffer_write_sync;
-> -	submit_bh(WRITE, bh);
-> +	submit_bh(REQ_OP_WRITE, 0, bh);
->  
->  	wait_on_buffer(bh);
->  
-> @@ -149,7 +149,7 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
->  		clear_buffer_uptodate(bh);
->  		get_bh(bh); /* for end_buffer_read_sync() */
->  		bh->b_end_io = end_buffer_read_sync;
-> -		submit_bh(READ, bh);
-> +		submit_bh(REQ_OP_READ, 0, bh);
->  	}
->  
->  	for (i = nr; i > 0; i--) {
-> @@ -305,7 +305,7 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
->  			if (validate)
->  				set_buffer_needs_validate(bh);
->  			bh->b_end_io = end_buffer_read_sync;
-> -			submit_bh(READ, bh);
-> +			submit_bh(REQ_OP_READ, 0, bh);
->  			continue;
->  		}
->  	}
-> @@ -419,7 +419,7 @@ int ocfs2_write_super_or_backup(struct ocfs2_super *osb,
->  	get_bh(bh); /* for end_buffer_write_sync() */
->  	bh->b_end_io = end_buffer_write_sync;
->  	ocfs2_compute_meta_ecc(osb->sb, bh->b_data, &di->i_check);
-> -	submit_bh(WRITE, bh);
-> +	submit_bh(REQ_OP_WRITE, 0, bh);
->  
->  	wait_on_buffer(bh);
->  
-> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-> index d5c2e9c..b72c23a 100644
-> --- a/fs/reiserfs/inode.c
-> +++ b/fs/reiserfs/inode.c
-> @@ -2668,7 +2668,7 @@ static int reiserfs_write_full_page(struct page *page,
->  	do {
->  		struct buffer_head *next = bh->b_this_page;
->  		if (buffer_async_write(bh)) {
-> -			submit_bh(WRITE, bh);
-> +			submit_bh(REQ_OP_WRITE, 0, bh);
->  			nr++;
->  		}
->  		put_bh(bh);
-> @@ -2728,7 +2728,7 @@ fail:
->  		struct buffer_head *next = bh->b_this_page;
->  		if (buffer_async_write(bh)) {
->  			clear_buffer_dirty(bh);
-> -			submit_bh(WRITE, bh);
-> +			submit_bh(REQ_OP_WRITE, 0, bh);
->  			nr++;
->  		}
->  		put_bh(bh);
-> diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-> index 2ace90e..6945e71 100644
-> --- a/fs/reiserfs/journal.c
-> +++ b/fs/reiserfs/journal.c
-> @@ -652,7 +652,7 @@ static void submit_logged_buffer(struct buffer_head *bh)
->  		BUG();
->  	if (!buffer_uptodate(bh))
->  		BUG();
-> -	submit_bh(WRITE, bh);
-> +	submit_bh(REQ_OP_WRITE, 0, bh);
->  }
->  
->  static void submit_ordered_buffer(struct buffer_head *bh)
-> @@ -662,7 +662,7 @@ static void submit_ordered_buffer(struct buffer_head *bh)
->  	clear_buffer_dirty(bh);
->  	if (!buffer_uptodate(bh))
->  		BUG();
-> -	submit_bh(WRITE, bh);
-> +	submit_bh(REQ_OP_WRITE, 0, bh);
->  }
->  
->  #define CHUNK_SIZE 32
-> @@ -2269,7 +2269,7 @@ abort_replay:
->  	/* flush out the real blocks */
->  	for (i = 0; i < get_desc_trans_len(desc); i++) {
->  		set_buffer_dirty(real_blocks[i]);
-> -		write_dirty_buffer(real_blocks[i], WRITE);
-> +		write_dirty_buffer(real_blocks[i], 0);
->  	}
->  	for (i = 0; i < get_desc_trans_len(desc); i++) {
->  		wait_on_buffer(real_blocks[i]);
-> diff --git a/fs/ufs/util.c b/fs/ufs/util.c
-> index a409e3e7..f41ad0a 100644
-> --- a/fs/ufs/util.c
-> +++ b/fs/ufs/util.c
-> @@ -118,7 +118,7 @@ void ubh_sync_block(struct ufs_buffer_head *ubh)
->  		unsigned i;
->  
->  		for (i = 0; i < ubh->count; i++)
-> -			write_dirty_buffer(ubh->bh[i], WRITE);
-> +			write_dirty_buffer(ubh->bh[i], 0);
->  
->  		for (i = 0; i < ubh->count; i++)
->  			wait_on_buffer(ubh->bh[i]);
-> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-> index d48daa3..bc9a45d 100644
-> --- a/include/linux/buffer_head.h
-> +++ b/include/linux/buffer_head.h
-> @@ -189,10 +189,11 @@ void unlock_buffer(struct buffer_head *bh);
->  void __lock_buffer(struct buffer_head *bh);
->  void ll_rw_block(int, int, struct buffer_head * bh[]);
->  int sync_dirty_buffer(struct buffer_head *bh);
-> -int __sync_dirty_buffer(struct buffer_head *bh, int rw);
-> -void write_dirty_buffer(struct buffer_head *bh, int rw);
-> -int _submit_bh(int rw, struct buffer_head *bh, unsigned long bio_flags);
-> -int submit_bh(int, struct buffer_head *);
-> +int __sync_dirty_buffer(struct buffer_head *bh, int op_flags);
-> +void write_dirty_buffer(struct buffer_head *bh, int op_flags);
-> +int _submit_bh(int op, int op_flags, struct buffer_head *bh,
-> +	       unsigned long bio_flags);
-> +int submit_bh(int, int, struct buffer_head *);
->  void write_boundary_block(struct block_device *bdev,
->  			sector_t bblock, unsigned blocksize);
->  int bh_uptodate_or_lock(struct buffer_head *bh);
-> -- 
-> 2.7.2
-> 
-> --
-> dm-devel mailing list
-> dm-devel@redhat.com
-> https://www.redhat.com/mailman/listinfo/dm-devel
+
+[11011.154479] ------------[ cut here ]------------
+[11011.158111] kernel BUG at 
+../../../../../../kernel/sony/apq8064/fs/f2fs/inode.c:335!
+[11011.165893] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+[11011.171661] Modules linked in: wlan(C) [last unloaded: wlan]
+[11011.177306] CPU: 3    Tainted: G        WC    
+(3.4.0-cm-ge347aa9-00623-g72f4111 #1)
+[11011.184936] PC is at f2fs_evict_inode+0xe8/0x35c
+[11011.189605] LR is at find_get_pages+0x130/0x160
+[11011.194060] pc : [<c0342200>]    lr : [<c0208004>]    psr: 20000013
+[11011.194060] sp : ec131f08  ip : 00000000  fp : 12c02510
+[11011.205505] r10: 00000000  r9 : ec130000  r8 : c0106044
+[11011.210784] r7 : 00000000  r6 : c0fba758  r5 : edfa0c00  r4 : 
+ec976dc0
+[11011.217223] r3 : 00000001  r2 : 00000002  r1 : ec131e3c  r0 : 
+00000000
+[11011.223785] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  
+Segment user
+[11011.230895] Control: 10c5787d  Table: 8c9f006a  DAC: 00000015
+[11011.236571]
+[11011.236602] PC: 0xc0342180:
+[11011.240844] 2180  e5163008 e1a01004 e5160004 e12fff33 e4963008 
+e3530000 1afffff8 e3c8303f
+[11011.248992] 21a0  e5932004 e2422001 e5832004 e1a0100d e3c13d7f 
+e3c3303f e5933000 e3130002
+[11011.257140] 21c0  0a000000 eb16dd86 e3a02000 e3a03000 e28400d0 
+ebfb3efc e5943028 e5952248
+[11011.265319] 21e0  e1530002 0a00009c e595224c e1530002 0a000099 
+e5943178 e3530000 0a000000
+[11011.273467] 2200  e7f001f2 e1a00004 eb003298 e1a00004 eb007a02 
+e594302c e3530000 0a000001
+[11011.281646] 2220  e3a06000 ea00002f e1a00004 ebfc500c e3500000 
+1afffff9 e5943164 e3130020
+[11011.289794] 2240  1a000002 e3a00005 e2841f59 eb01c6df e5943068 
+e2833001 e5843068 f57ff05f
+[11011.297942] 2260  e3a02000 e3a03000 e1c426f0 f57ff05f e5943068 
+e2833001 e5843068 e5943184
+[11011.306121]
+[11011.306121] LR: 0xc0207f84:
+[11011.310424] 7f84  0a000022 e1a0300c eafffff0 e7890105 e2855001 
+e1550006 0a000017 e59d3008
+[11011.318542] 7fa4  e2842004 e59d1004 e2433001 e0613003 e3530000 
+0a000009 e59d1004 e1a04002
+[11011.326690] 7fc4  e2433001 e2822004 e2811001 e58d1004 e5941000 
+e3510000 1affffca eafffff3
+[11011.334838] 7fe4  e1a04003 e1a02004 e1a0000a e28d1004 eb06c56f 
+e2504000 1affffc4 ebff6a9e
+[11011.343017] 8004  e1a00005 ea000006 e1a00006 ea000004 e5943000 
+e1500003 0affffdb eb002387
+[11011.351165] 8024  eaffffba e28dd014 e8bd8ff0 c0c47ccf e92d4070 
+e1a04002 e1a05003 eb00e075
+[11011.359344] 8044  e2506000 0a00001f e5963024 e3130001 03e04008 
+0a000018 e59d3010 e1a02624
+[11011.367492] 8064  e5960090 e1822a05 e0944003 e2621001 e2a55000 
+e2544001 e1a03624 e2c55000
+[11011.375640]
+[11011.375640] SP: 0xec131e88:
+[11011.379912] 1e88  00000002 00000001 ec976dc0 edfa0c00 c0fba758 
+00000000 c0106044 ec130000
+[11011.388061] 1ea8  00000000 12c02510 00000000 ec131f08 c0208004 
+c0342200 20000013 ffffffff
+[11011.396209] 1ec8  00000000 ffffffff ffffffff c0fba758 00000000 
+c0106044 ec130000 00000000
+[11011.404388] 1ee8  12c02510 c0211de0 ffffffff ffffffff 00000000 
+ec976dc0 edfa0c00 c03421d8
+[11011.412536] 1f08  ec976dc0 ec976e60 c0fba758 00000148 c0106044 
+c0254a88 00000000 ec976dc0
+[11011.420714] 1f28  edc0a500 c024bc8c 5719c47e d5c6f000 ed39ff10 
+ec96be00 d5f7a518 00000012
+[11011.428863] 1f48  d5c6f02e 00000000 ee202080 ec9a54a0 00000000 
+00000002 00000000 00000000
+[11011.437011] 1f68  00002728 bfe01000 000012f4 00000000 5719c47e 
+30ead7d6 5719c47e 30ead7d6
+[11011.445190]
+[11011.445190] R1: 0xec131dbc:
+[11011.449432] 1dbc  c0342200 ec131e80 e7f001f2 00000000 e7100000 
+c08fb0a8 00000000 12c02510
+[11011.457610] 1ddc  c01001e8 00000006 c020d47c 00000004 00000000 
+00030001 c0342200 ec131e40
+[11011.465758] 1dfc  00000000 c101dae0 c020db38 ec976e94 ec131e3c 
+00000000 00000000 00000000
+[11011.473907] 1e1c  0000000e ec976e90 00000000 ec131e90 ec976e94 
+00000000 c0208004 00000002
+[11011.482085] 1e3c  00000000 00000000 c2d27cf4 ffffffff ec131e88 
+ffffffff ec976e90 00000002
+[11011.490234] 1e5c  00000000 ffffffff 00000002 c0f4a9e4 c0342204 
+20000013 c08fb314 00000000
+[11011.498382] 1e7c  c08fb0a8 00000000 ec131e3c 00000002 00000001 
+ec976dc0 edfa0c00 c0fba758
+[11011.506560] 1e9c  00000000 c0106044 ec130000 00000000 12c02510 
+00000000 ec131f08 c0208004
+[11011.514709]
+[11011.514709] R4: 0xec976d40:
+[11011.518981] 6d40  00000000 6f441ecd 00000000 00000000 00000000 
+00000000 00000000 00000000
+[11011.527129] 6d60  00000001 00000411 00000000 00902c00 00000000 
+00000000 ec976d78 ec976d78
+[11011.535277] 6d80  00000000 00000000 00000000 00000000 00000000 
+00000000 c6b02be0 edfa0dec
+[11011.543456] 6da0  ec976da0 ec976da0 00000001 00000000 ec976db0 
+ec976db0 00000000 ec6338c0
+[11011.551604] 6dc0  00058180 00002728 00002728 00001000 ffffffff 
+ffffffff c0a2d400 edfa0800
+[11011.559753] 6de0  ec976e90 ed599570 00006add 00000000 00000000 
+5719c47e 30ead7d6 5719c47e
+[11011.567931] 6e00  30ead7d6 5719c47f 0e5f0101 000b000b 00000000 
+00000000 00000003 00000000
+[11011.576079] 6e20  000012f4 00000000 00000006 00000027 00000001 
+00000000 ec976e38 ec976e38
+[11011.584258]
+[11011.584258] R5: 0xedfa0b80:
+[11011.588500] 0b80  00000000 00000000 00000000 00000000 00000000 
+00000000 00000000 00000000
+[11011.596648] 0ba0  00000000 00000000 00000000 00000000 00000000 
+00000000 00000000 00000000
+[11011.604827] 0bc0  00000000 00000000 00000000 00000000 00000000 
+00000000 00000000 00000000
+[11011.612975] 0be0  00000000 00000000 00000000 00000000 00000000 
+00000000 00000000 00000000
+[11011.621154] 0c00  edfa0800 ed801f80 cf5c7000 00000000 00000001 
+ee1226c0 edbe21b8 ed6a5600
+[11011.629302] 0c20  edfa0c00 00000000 002e4191 00000000 edfa0c00 
+00000002 00000050 002e4191
+[11011.637450] 0c40  002e4191 c2a0a900 00000000 00000000 01020102 
+edfa0c54 edfa0c54 00000000
+[11011.645629] 0c60  edfa0c00 00000000 00176546 00000000 edfa0c00 
+00000000 00000211 00176544
+[11011.653777]
+[11011.653777] R6: 0xc0fba6d8:
+[11011.658019] a6d8  00000006 c0c516a2 00000007 c0c5a20c 00000008 
+c0c655c3 00000009 c0c65657
+[11011.666198] a6f8  0000000a c0c655ca 0000000b c0c655b5 0000000c 
+c0c655e0 0000000d c0c655fc
+[11011.674346] a718  0000000e c0c651e6 0000000f c0c65618 00000010 
+c0c65623 00000011 c0c6562d
+[11011.682525] a738  00000012 c0c6563b 00000013 c0c655ed 00000014 
+c0c6564b 00000015 00000000
+[11011.690673] a758  c0348cb4 c0348c90 c03486bc c03420c4 c034af58 
+c0342118 c0348b68 00000000
+[11011.698821] a778  c03485b8 c034af3c c0343a10 c0343a18 c034b440 
+00000000 c034883c 00000000
+[11011.707000] a798  00000000 00000000 00000000 00000000 00000000 
+c034881c c0a2d9a0 c0fba7c0
+[11011.715148] a7b8  00000000 00000000 c0fba9a4 c0fba98c c0fba974 
+c0fba95c c0fba944 c0fba92c
+[11011.723327]
+[11011.723327] R8: 0xc0105fc4:
+[11011.727630] 5fc4  e31a0602 1a00000a e31a0c07 1a000008 e3570d06 
+e24fee12 3798f107 e28d1008
+[11011.735717] 5fe4  e3a08000 e357080f e2270000 2a000fd2 ea025605 
+e1a02007 e28d1008 e3a00000
+[11011.743896] 6004  eb000889 e28fe014 e1a07000 e28d1008 e3570d06 
+3891000f 3798f107 eaffffef
+[11011.752044] 6024  e5ad0008 e1a02007 e1a0100d e3a00001 eb00087d 
+eaffffb8 e320f000 c0f52d6c
+[11011.760192] 6044  c018e950 c0181aec c010666c c023f688 c023f6f0 
+c023e8f8 c023d998 c019b810
+[11011.768371] 6064  c023e920 c024c888 c024c6c4 c010667c c023e328 
+c019b810 c024c5c0 c023e530
+[11011.776519] 6084  c01c5234 c019b810 c019b810 c023ef44 c018b0e8 
+c02599dc c019b810 c01c52a4
+[11011.784698] 60a4  c01c5664 c019b810 c0187a00 c019b810 c019b810 
+c018fa20 c019b810 c019b810
+[11011.792846]
+[11011.792846] R9: 0xec12ff80:
+[11011.797088] ff80  00000001 00000000 ec12f480 c0d1e635 ec12f6d1 
+ec12f750 ec12ff10 00000000
+[11011.805266] ffa0  00000000 5dd9f7e8 c100dc08 00000000 00000000 
+81a40002 00004e1b 00000000
+[11011.813415] ffc0  ec12f8c0 00000180 00000000 00000000 00000000 
+00000000 00000000 00000000
+[11011.821593] ffe0  00000000 00000000 00000000 00000000 00000000 
+00000000 00000000 00000000
+[11011.829742] 0000  00000002 00000002 00000000 c7902680 c0fac580 
+00000003 00000015 c7902680
+[11011.837890] 0020  c4edaa80 ec130030 edf8d340 edfa9880 ebf57380 
+ec006000 ec131d0c ec131c70
+[11011.846068] 0040  c08f92ac 00000000 00000000 00000000 00000000 
+00000000 01010000 00000000
+[11011.854217] 0060  ab7b3978 00000000 00000000 00000000 00000000 
+00000000 00000000 00000000
+[11011.862395] Process pool-2-thread-1 (pid: 28613, stack limit = 
+0xec1302f0)
+[11011.869231] Stack: (0xec131f08 to 0xec132000)
+[11011.873626] 1f00:                   ec976dc0 ec976e60 c0fba758 
+00000148 c0106044 c0254a88
+[11011.881744] 1f20: 00000000 ec976dc0 edc0a500 c024bc8c 5719c47e 
+d5c6f000 ed39ff10 ec96be00
+[11011.889953] 1f40: d5f7a518 00000012 d5c6f02e 00000000 ee202080 
+ec9a54a0 00000000 00000002
+[11011.898101] 1f60: 00000000 00000000 00002728 bfe01000 000012f4 
+00000000 5719c47e 30ead7d6
+[11011.906280] 1f80: 5719c47e 30ead7d6 5719c47e 30ead7d6 00001000 
+ffffffff b7e155d0 6f9172b0
+[11011.914367] 1fa0: b7c582c8 c0105ec0 b7e155d0 6f9172b0 ffffff9c 
+b7e155d0 00000000 00008180
+[11011.922607] 1fc0: b7e155d0 6f9172b0 b7c582c8 00000148 13109980 
+b7da8db8 00000000 12c02510
+[11011.930755] 1fe0: 13103cd0 ab7b2df0 b6d3a44d b6d430ac 60070010 
+ffffff9c 20202020 20202020
+[11011.938872] [<c0342200>] (f2fs_evict_inode+0xe8/0x35c) from 
+[<c0254a88>] (evict+0x94/0x158)
+[11011.947265] [<c0254a88>] (evict+0x94/0x158) from [<c024bc8c>] 
+(do_unlinkat+0xe8/0x128)
+[11011.955169] [<c024bc8c>] (do_unlinkat+0xe8/0x128) from [<c0105ec0>] 
+(ret_fast_syscall+0x0/0x30)
+[11011.963836] Code: 0a000099 e5943178 e3530000 0a000000 (e7f001f2)
+[11011.969848] ---[ end trace eeef49fbf1e7474d ]---
+[11011.974517] Kernel panic - not syncing: Fatal exception
+[11011.979674] CPU0: stopping
+[11011.982360] [<c010c1a4>] (unwind_backtrace+0x0/0x11c) from 
+[<c010b284>] (handle_IPI+0x108/0x1f0)
+[11011.991180] [<c010b284>] (handle_IPI+0x108/0x1f0) from [<c010054c>] 
+(gic_handle_irq+0x104/0x110)
+[11011.999938] [<c010054c>] (gic_handle_irq+0x104/0x110) from 
+[<c08fb000>] (__irq_svc+0x40/0x70)
+[11012.008453] Exception stack(0xc219fe28 to 0xc219fe70)
+[11012.013427] fe20:                   00000001 c011639c fa002f00 
+00000001 c4ebd000 c0f1e1c0
+[11012.021636] fe40: 00000003 c0f1b000 00000000 00000001 c0a09724 
+03fa2000 f1c1f380 c219fe70
+[11012.029815] fe60: c0177a40 c01c4b3c 20000013 ffffffff
+[11012.034789] [<c08fb000>] (__irq_svc+0x40/0x70) from [<c01c4b3c>] 
+(smp_call_function_many+0x220/0x250)
+[11012.044036] [<c01c4b3c>] (smp_call_function_many+0x220/0x250) from 
+[<c01c4bb0>] (smp_call_function+0x44/0x84)
+[11012.053954] [<c01c4bb0>] (smp_call_function+0x44/0x84) from 
+[<c067c660>] (cpuidle_latency_notify+0x14/0x20)
+[11012.063659] [<c067c660>] (cpuidle_latency_notify+0x14/0x20) from 
+[<c08fc96c>] (notifier_call_chain+0x40/0x68)
+[11012.073516] [<c08fc96c>] (notifier_call_chain+0x40/0x68) from 
+[<c019f8c8>] (__blocking_notifier_call_chain+0x40/0x58)
+[11012.084136] [<c019f8c8>] (__blocking_notifier_call_chain+0x40/0x58) 
+from [<c019f8f4>] (blocking_notifier_call_chain+0x14/0x1c)
+[11012.095519] [<c019f8f4>] (blocking_notifier_call_chain+0x14/0x1c) 
+from [<c01b58b4>] (pm_qos_update_target+0x110/0x124)
+[11012.106200] [<c01b58b4>] (pm_qos_update_target+0x110/0x124) from 
+[<c0694ef0>] (msmsdcc_disable+0x24/0x11c)
+[11012.115844] [<c0694ef0>] (msmsdcc_disable+0x24/0x11c) from 
+[<c067e81c>] (mmc_release_host+0x44/0xa8)
+[11012.124938] [<c067e81c>] (mmc_release_host+0x44/0xa8) from 
+[<c068f5a4>] (mmc_blk_issue_rq+0x57c/0x608)
+[11012.134246] [<c068f5a4>] (mmc_blk_issue_rq+0x57c/0x608) from 
+[<c068f6d8>] (mmc_queue_thread+0xa8/0x124)
+[11012.143615] [<c068f6d8>] (mmc_queue_thread+0xa8/0x124) from 
+[<c019a038>] (kthread+0xa0/0xac)
+[11012.151977] [<c019a038>] (kthread+0xa0/0xac) from [<c01069d0>] 
+(kernel_thread_exit+0x0/0x8)
+[11012.160369] CPU1: stopping
+[11012.160369] &@running_process@cpu0:*mmcqd/0*
+[11012.167327] [<c010c1a4>] (unwind_backtrace+0x0/0x11c) from 
+[<c010b284>] (handle_IPI+0x108/0x1f0)
+[11012.176086] [<c010b284>] (handle_IPI+0x108/0x1f0) from [<c010054c>] 
+(gic_handle_irq+0x104/0x110)
+[11012.184783] [<c010054c>] (gic_handle_irq+0x104/0x110) from 
+[<c08fb000>] (__irq_svc+0x40/0x70)
+[11012.193359] Exception stack(0xc008bf58 to 0xc008bfa0)
+[11012.198394] bf40:                                                     
+   00000000 00000003
+[11012.206481] bf60: c4ec6918 00000000 c4ec6900 00000000 00000001 
+c11b95dc c008a030 c101d838
+[11012.214690] bf80: 00000003 c0f61c40 00000000 c008bfa0 c01508c4 
+c0157170 68000013 ffffffff
+[11012.222869] [<c08fb000>] (__irq_svc+0x40/0x70) from [<c0157170>] 
+(msm_cpuidle_enter+0x40/0x48)
+[11012.231475] [<c0157170>] (msm_cpuidle_enter+0x40/0x48) from 
+[<c067c438>] (cpuidle_enter+0x14/0x18)
+[11012.240356] [<c067c438>] (cpuidle_enter+0x14/0x18) from [<c067c958>] 
+(cpuidle_idle_call+0x1c0/0x364)
+[11012.249511] [<c067c958>] (cpuidle_idle_call+0x1c0/0x364) from 
+[<c0106d9c>] (cpu_idle+0x60/0xec)
+[11012.258208] [<c0106d9c>] (cpu_idle+0x60/0xec) from [<80ae6b34>] 
+(0x80ae6b34)
+[11012.265227] CPU2: stopping
+[11012.265227] &@running_process@cpu1:*swapper/1*
+[11012.272308] [<c010c1a4>] (unwind_backtrace+0x0/0x11c) from 
+[<c010b284>] (handle_IPI+0x108/0x1f0)
+[11012.281127] [<c010b284>] (handle_IPI+0x108/0x1f0) from [<c010054c>] 
+(gic_handle_irq+0x104/0x110)
+[11012.289886] [<c010054c>] (gic_handle_irq+0x104/0x110) from 
+[<c08fb000>] (__irq_svc+0x40/0x70)
+[11012.298339] Exception stack(0xc0095f58 to 0xc0095fa0)
+[11012.303405] 5f40:                                                     
+   00000000 00000003
+[11012.311584] 5f60: c4ed0918 00000000 c4ed0900 00000000 00000002 
+c11b95dc c0094030 c101d838
+[11012.319671] 5f80: 00000003 c0f61c40 00000000 c0095fa0 c01508c4 
+c0157170 60000013 ffffffff
+[11012.327911] [<c08fb000>] (__irq_svc+0x40/0x70) from [<c0157170>] 
+(msm_cpuidle_enter+0x40/0x48)
+[11012.336516] [<c0157170>] (msm_cpuidle_enter+0x40/0x48) from 
+[<c067c438>] (cpuidle_enter+0x14/0x18)
+[11012.345458] [<c067c438>] (cpuidle_enter+0x14/0x18) from [<c067c958>] 
+(cpuidle_idle_call+0x1c0/0x364)
+[11012.354491] [<c067c958>] (cpuidle_idle_call+0x1c0/0x364) from 
+[<c0106d9c>] (cpu_idle+0x60/0xec)
+[11012.363250] [<c0106d9c>] (cpu_idle+0x60/0xec) from [<80ae6b34>] 
+(0x80ae6b34)
+[11012.370269] &@running_process@cpu2:*swapper/2*
+[11012.370269] wcnss_8960: crash shutdown : 0
+[11012.470550] &@panic_name@:*pool-2-thread-1*
+[11012.473968] Rebooting in 5 seconds..
+[11017.478759] Restarting Linux version 3.4.0-cm-ge347aa9-00623-g72f4111 
+(admin@buildbot) (gcc version 4.8 (GCC) ) #1 SMP PREEMPT Thu Apr 21 
+11:46:28 CEST 2016
+[11017.478759]
+[11017.493316]
+[11017.494811] Restarting Linux version 3.4.0-cm-ge347aa9-00623-g72f4111 
+(admin@buildbot) (gcc version 4.8 (GCC) ) #1 SMP PREEMPT Thu Apr 21 
+11:46:28 CEST 2016
+[11017.494811]
+[11017.510680] Going down for restart now
+
+------------------------------------------------------------------------------
+Find and fix application performance issues faster with Applications Manager
+Applications Manager provides deep performance insights into multiple tiers of
+your business applications. It resolves application problems quickly and
+reduces your MTTR. Get your free trial!
+https://ad.doubleclick.net/ddm/clk/302982198;130105516;z
