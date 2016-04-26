@@ -1,75 +1,47 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] resize.f2fs: replace the overprovision
-	calculation method
-Date: Tue, 26 Apr 2016 13:25:08 +0800
-Message-ID: <1461648308-13065-1-git-send-email-heyunlei@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1auvRk-0005xE-3o
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 26 Apr 2016 05:22:04 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1auvRc-000886-E2
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 26 Apr 2016 05:22:04 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao@huawei.com
+From: Michal Hocko <mhocko@kernel.org>
+Subject: [PATCH 0/2] scop GFP_NOFS api
+Date: Tue, 26 Apr 2016 13:56:10 +0200
+Message-ID: <1461671772-1269-1-git-send-email-mhocko@kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+Sender: owner-linux-mm@kvack.org
+To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, xfs@oss.sgi.com, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch replace the overprovision calculation method from
-mkfs tool.
+Hi,
+we have discussed this topic at LSF/MM this year. There was a general
+interest in the scope GFP_NOFS allocation context among some FS
+developers. For those who are not aware of the discussion or the issue
+I am trying to sort out (or at least start in that direction) please
+have a look at patch 1 which adds memalloc_nofs_{save,restore} api
+which basically copies what we have for the scope GFP_NOIO allocation
+context. I haven't converted any of the FS myself because that is way
+beyond my area of expertise but I would be happy to help with further
+changes on the MM front as well as in some more generic code paths.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fsck/resize.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Dave had an idea on how to further improve the reclaim context to be
+less all-or-nothing wrt. GFP_NOFS. In short he was suggesting an opaque
+and FS specific cookie set in the FS allocation context and consumed
+by the FS reclaim context to allow doing some provably save actions
+that would be skipped due to GFP_NOFS normally.  I like this idea and
+I believe we can go that direction regardless of the approach taken here.
+Many filesystems simply need to cleanup their NOFS usage first before
+diving into a more complex changes.
 
-diff --git a/fsck/resize.c b/fsck/resize.c
-index 0803024..d2fd467 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -406,14 +406,19 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
- 	ASSERT(buf);
- 
- 	/* ovp / free segments */
--	set_cp(overprov_segment_count, config.new_overprovision);
- 	set_cp(rsvd_segment_count, config.new_reserved_segments);
-+	set_cp(overprov_segment_count, (get_newsb(segment_count_main) -
-+			get_cp(rsvd_segment_count)) *
-+			config.new_overprovision / 100);
-+	set_cp(overprov_segment_count, get_cp(overprov_segment_count) +
-+						get_cp(rsvd_segment_count));
-+
- 	free_segment_count = get_cp(free_segment_count);
- 	new_segment_count = get_newsb(segment_count_main) -
- 					get_sb(segment_count_main);
- 
- 	set_cp(free_segment_count, free_segment_count + new_segment_count);
--	set_cp(user_block_count, ((get_sb(segment_count_main) -
-+	set_cp(user_block_count, ((get_newsb(segment_count_main) -
- 			get_cp(overprov_segment_count)) * config.blks_per_seg));
- 
- 	if (is_set_ckpt_flags(cp, CP_ORPHAN_PRESENT_FLAG))
--- 
-1.9.1
+The patch 2 is a debugging aid which warns about explicit allocation
+requests from the scope context. This is should help to reduce the
+direct usage of the NOFS flags to bare minimum in favor of the scope
+API. It is not aimed to be merged upstream. I would hope Andrew took it
+into mmotm tree to give it linux-next exposure and allow developers to
+do further cleanups.  There is a new kernel command line parameter which
+has to be used for the debugging to be enabled.
 
+I think the GFP_NOIO should be seeing the same clean up.
 
-------------------------------------------------------------------------------
-Find and fix application performance issues faster with Applications Manager
-Applications Manager provides deep performance insights into multiple tiers of
-your business applications. It resolves application problems quickly and
-reduces your MTTR. Get your free trial!
-https://ad.doubleclick.net/ddm/clk/302982198;130105516;z
+Any feedback is highly appreciated.
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
