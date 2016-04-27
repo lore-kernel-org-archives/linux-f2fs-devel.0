@@ -1,23 +1,23 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: move node pages only in victim section
- during foreground GC
-Date: Wed, 27 Apr 2016 20:08:25 +0800
-Message-ID: <633b0e8b-131b-4c35-ea5d-a4a24cd88207@huawei.com>
+Subject: [PATCH 2/2] f2fs: disable preemption when waiting on all
+ pages writeback
+Date: Wed, 27 Apr 2016 20:12:33 +0800
+Message-ID: <a48d097d-cece-6b4c-d030-c2d07d5329c9@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1avOH7-0006mg-Rk
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1avOLF-0005LG-Mz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 27 Apr 2016 12:09:01 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
+	Wed, 27 Apr 2016 12:13:17 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1avOH0-00075z-R4
+	(Exim 4.76) id 1avOL6-0007LC-Vu
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 27 Apr 2016 12:09:01 +0000
+	Wed, 27 Apr 2016 12:13:17 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,124 +27,124 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, yuchao0@huawei.com
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Chao Yu <yuchao0@huawei.com>
 
 From: Chao Yu <yuchao0@huawei.com>
 
-For foreground GC, we cache node blocks in victim section and set them
-dirty, then we call sync_node_pages to flush these node pages, but
-meanwhile, those node pages which does not locate in victim section
-will be flushed together, so more bandwidth and continuous free space
-would be occupied.
+The following condition can happen in a preemptible kernel, it may cause
+checkpointer hunging.
 
-So for this condition, it's better to leave those unrelated node page
-in cache for further write hit, and let CP or VM to flush them afterward.
+CPU0:					CPU1:
+  - write_checkpoint
+   - do_checkpoint
+    - wait_on_all_pages_writeback
+					 - f2fs_write_end_io
+					  - wake_up
+					this is last writebacked page, but
+					no sleeper in sbi->cp_wait wait
+					queue, wake_up is not been called.
+     - prepare_to_wait(TASK_UNINTERRUPTIBLE)
+     Here, current task can been preempted,
+     but there will be no waker since last
+     write_end_io has bypassed wake_up. So
+     current task will sleep forever.
+     - io_schedule_timeout
+
+Now we use spinlock to create a critical section to guarantee preemption
+being disabled during racing in between wait_on_all_pages_writeback and
+f2fs_write_end_io, so that above condition can be avoided.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-   fs/f2fs/f2fs.h |  1 +
-   fs/f2fs/gc.c   | 25 ++++---------------------
-   fs/f2fs/node.c | 31 +++++++++++++++++++++++++++++++
-   3 files changed, 36 insertions(+), 21 deletions(-)
+  fs/f2fs/checkpoint.c | 14 +++++++++-----
+  fs/f2fs/data.c       |  9 +++++++--
+  fs/f2fs/f2fs.h       |  3 ++-
+  fs/f2fs/super.c      |  1 +
+  4 files changed, 19 insertions(+), 8 deletions(-)
 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index bf040b5..817cda7 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -914,15 +914,19 @@ static void wait_on_all_pages_writeback(struct 
+f2fs_sb_info *sbi)
+  {
+  	DEFINE_WAIT(wait);
+
+-	for (;;) {
++	spin_lock(&sbi->cp_wb_lock);
++
++	while (get_pages(sbi, F2FS_WRITEBACK)) {
+  		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
+
+-		if (!get_pages(sbi, F2FS_WRITEBACK))
+-			break;
++		spin_unlock(&sbi->cp_wb_lock);
++		io_schedule();
++		spin_lock(&sbi->cp_wb_lock);
+
+-		io_schedule_timeout(5*HZ);
++		finish_wait(&sbi->cp_wait, &wait);
+  	}
+-	finish_wait(&sbi->cp_wait, &wait);
++
++	spin_unlock(&sbi->cp_wb_lock);
+  }
+
+  static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 38ce5d6..8faeada 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -59,6 +59,7 @@ static void f2fs_write_end_io(struct bio *bio)
+  {
+  	struct f2fs_sb_info *sbi = bio->bi_private;
+  	struct bio_vec *bvec;
++	unsigned long flags;
+  	int i;
+
+  	bio_for_each_segment_all(bvec, bio, i) {
+@@ -74,8 +75,12 @@ static void f2fs_write_end_io(struct bio *bio)
+  		dec_page_count(sbi, F2FS_WRITEBACK);
+  	}
+
+-	if (!get_pages(sbi, F2FS_WRITEBACK) && wq_has_sleeper(&sbi->cp_wait))
+-		wake_up(&sbi->cp_wait);
++	if (!get_pages(sbi, F2FS_WRITEBACK)) {
++		spin_lock_irqsave(&sbi->cp_wb_lock, flags);
++		if (wq_has_sleeper(&sbi->cp_wait))
++			wake_up(&sbi->cp_wait);
++		spin_unlock_irqrestore(&sbi->cp_wb_lock, flags);
++	}
+
+  	bio_put(bio);
+  }
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1ed7f54..0786a45 100644
+index 0786a45..cf646b3 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1803,6 +1803,7 @@ void ra_node_page(struct f2fs_sb_info *, nid_t);
-   struct page *get_node_page(struct f2fs_sb_info *, pgoff_t);
-   struct page *get_node_page_ra(struct page *, int);
-   void sync_inode_page(struct dnode_of_data *);
-+void move_node_page(struct page *, int);
-   int fsync_node_pages(struct f2fs_sb_info *, nid_t, struct 
-writeback_control *,
-   								bool);
-   int sync_node_pages(struct f2fs_sb_info *, struct writeback_control *);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e820465..19e9faf 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -465,15 +465,7 @@ next_step:
-   			continue;
-   		}
+@@ -725,7 +725,8 @@ struct f2fs_sb_info {
+  	struct rw_semaphore cp_rwsem;		/* blocking FS operations */
+  	struct rw_semaphore node_write;		/* locking node writes */
+  	struct mutex writepages;		/* mutex for writepages() */
+-	wait_queue_head_t cp_wait;
++	wait_queue_head_t cp_wait;		/* for wait pages writeback */
++	spinlock_t cp_wb_lock;			/* for protect cp_wait */
+  	unsigned long last_time[MAX_TIME];	/* to store time in jiffies */
+  	long interval_time[MAX_TIME];		/* to store thresholds */
 
--		/* set page dirty and write it */
--		if (gc_type == FG_GC) {
--			f2fs_wait_on_page_writeback(node_page, NODE, true);
--			set_page_dirty(node_page);
--		} else {
--			if (!PageWriteback(node_page))
--				set_page_dirty(node_page);
--		}
--		f2fs_put_page(node_page, 1);
-+		move_node_page(node_page, gc_type);
-   		stat_inc_node_blk_count(sbi, 1, gc_type);
-   	}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 19a85cf..8b25ac1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1436,6 +1436,7 @@ try_onemore:
 
-@@ -834,18 +826,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
-   		f2fs_put_page(sum_page, 0);
-   	}
+  	init_rwsem(&sbi->cp_rwsem);
+  	init_waitqueue_head(&sbi->cp_wait);
++	spin_lock_init(&sbi->cp_wb_lock);
+  	init_sb_info(sbi);
 
--	if (gc_type == FG_GC) {
--		if (type == SUM_TYPE_NODE) {
--			struct writeback_control wbc = {
--				.sync_mode = WB_SYNC_ALL,
--				.nr_to_write = LONG_MAX,
--				.for_reclaim = 0,
--			};
--			sync_node_pages(sbi, &wbc);
--		} else {
--			f2fs_submit_merged_bio(sbi, DATA, WRITE);
--		}
--	}
-+	if (gc_type == FG_GC)
-+		f2fs_submit_merged_bio(sbi,
-+				(type == SUM_TYPE_NODE) ? NODE : DATA, WRITE);
-
-   	blk_finish_plug(&plug);
-
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index de070a5..f80cfb6 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1222,6 +1222,37 @@ iput_out:
-   	iput(inode);
-   }
-
-+void move_node_page(struct page *node_page, int gc_type)
-+{
-+	if (gc_type == FG_GC) {
-+		struct f2fs_sb_info *sbi = F2FS_P_SB(node_page);
-+		struct writeback_control wbc = {
-+			.sync_mode = WB_SYNC_ALL,
-+			.nr_to_write = 1,
-+			.for_reclaim = 0,
-+		};
-+
-+		set_page_dirty(node_page);
-+		f2fs_wait_on_page_writeback(node_page, NODE, true);
-+
-+		f2fs_bug_on(sbi, PageWriteback(node_page));
-+		if (!clear_page_dirty_for_io(node_page))
-+			goto out_page;
-+
-+		if (NODE_MAPPING(sbi)->a_ops->writepage(node_page, &wbc))
-+			unlock_page(node_page);
-+		goto release_page;
-+	} else {
-+		/* set page dirty and write it */
-+		if (!PageWriteback(node_page))
-+			set_page_dirty(node_page);
-+	}
-+out_page:
-+	unlock_page(node_page);
-+release_page:
-+	f2fs_put_page(node_page, 0);
-+}
-+
-   static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
-   {
-   	pgoff_t index, end;
+  	/* get an inode for meta space */
 -- 
 1.9.1
 
