@@ -1,151 +1,271 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 7/7] f2fs: should check the remaining dentry
- bits
-Date: Wed, 27 Apr 2016 10:40:27 -0700
-Message-ID: <20160427174027.GA32350@jaegeuk.gateway>
-References: <1461629220-16280-1-git-send-email-jaegeuk@kernel.org>
- <1461629220-16280-7-git-send-email-jaegeuk@kernel.org>
- <5720CB1C.10207@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5720CB1C.10207@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Andreas Dilger <adilger@dilger.ca>
+Subject: Re: [PATCH 1.1/2] xfs: abstract PF_FSTRANS to PF_MEMALLOC_NOFS
+Date: Wed, 27 Apr 2016 11:41:51 -0600
+Message-ID: <04798BA8-2157-4611-B4EA-B8BCBA88AEC3@dilger.ca>
+References: <1461671772-1269-2-git-send-email-mhocko@kernel.org> <1461758075-21815-1-git-send-email-mhocko@kernel.org>
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Content-Type: multipart/signed; boundary="Apple-Mail=_E2A13889-F5F8-484A-9C14-046AD6B7906F"; protocol="application/pgp-signature"; micalg=pgp-sha256
+Return-path: <linux-btrfs-owner@vger.kernel.org>
+In-Reply-To: <1461758075-21815-1-git-send-email-mhocko@kernel.org>
+Sender: linux-btrfs-owner@vger.kernel.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Linux MM <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel <cluster-devel@redhat.com>, Linux NFS Mailing List <linux-nfs@vger.kernel.org>, logfs@logfs.org, XFS Developers <xfs@oss.sgi.com>, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Looks better.
-Merged. :)
 
-Thanks,
+--Apple-Mail=_E2A13889-F5F8-484A-9C14-046AD6B7906F
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-On Wed, Apr 27, 2016 at 10:22:20PM +0800, Chao Yu wrote:
-> Hi Jaegeuk, Yunlei,
-> 
-> On 2016/4/26 8:07, Jaegeuk Kim wrote:
-> > Let's consider a race condition between f2fs_add_regular_entry and
-> > find_target_dentry.
-> > 
-> > 1.
-> > - f2fs_add_regular_entry updated len: 24 first.
-> >        |
-> > Bits:  0 0 0 1
-> > Lens: 24 0 0 3 (name: foo)
-> >        |->
-> > - find_target_dentry checks the first bit to find "foo", then ++pointer.
-> > 
-> > 2.
-> > - f2fs_add_regular_entry updates bits.
-> >        |>|>|
-> > Bits:  1 1 1 1
-> > Lens: 24 0 0 3 (name: foo)
-> >          |
-> > - find_target_dentry is checking second bit, but it's len is zero, which
-> > makes the process being terminated.
-> 
-> As Pengyang reminded, there are no racing condition between find_target_dentry
-> and f2fs_add_regular_entry since i_mutex lock make each of operations being
-> atomical. So seems above condition can not happen.
-> 
-> But still we should handle dirent with zero-sized length correctly, as it may
-> cause deadloop. So how do you think of following patch?
-> 
-> From: Chao Yu <yuchao0@huawei.com>
-> Subject: [PATCH] f2fs: be aware of invalid filename length
-> 
-> The filename length in dirent of may become zero-sized after random junk
-> data injection, once encounter such dirent, find_target_dentry or
-> f2fs_add_inline_entries will run into an infinite loop. So let f2fs being
-> aware of that to avoid deadloop.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+On Apr 27, 2016, at 5:54 AM, Michal Hocko <mhocko@kernel.org> wrote:
+>=20
+> From: Michal Hocko <mhocko@suse.com>
+>=20
+> xfs has defined PF_FSTRANS to declare a scope GFP_NOFS semantic quite
+> some time ago. We would like to make this concept more generic and use
+> it for other filesystems as well. Let's start by giving the flag a
+> more genric name PF_MEMALLOC_NOFS which is in line with an exiting
+> PF_MEMALLOC_NOIO already used for the same purpose for GFP_NOIO
+> contexts. Replace all PF_FSTRANS usage from the xfs code in the first
+> step before we introduce a full API for it as xfs uses the flag =
+directly
+> anyway.
+>=20
+> This patch doesn't introduce any functional change.
+>=20
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 > ---
->  fs/f2fs/dir.c    | 14 +++++---------
->  fs/f2fs/inline.c | 14 ++++++--------
->  2 files changed, 11 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index e90380d..3b1c14e 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -101,11 +101,6 @@ static struct f2fs_dir_entry *find_in_block(struct page
-> *dentry_page,
->  	else
->  		kunmap(dentry_page);
-> 
-> -	/*
-> -	 * For the most part, it should be a bug when name_len is zero.
-> -	 * We stop here for figuring out where the bugs has occurred.
-> -	 */
-> -	f2fs_bug_on(F2FS_P_SB(dentry_page), d.max < 0);
->  	return de;
->  }
-> 
-> @@ -130,6 +125,11 @@ struct f2fs_dir_entry *find_target_dentry(struct
-> fscrypt_name *fname,
-> 
->  		de = &d->dentry[bit_pos];
-> 
-> +		if (unlikely(!de->name_len)) {
-> +			bit_pos++;
-> +			continue;
-> +		}
+> Hi,
+> as suggested by Dave, I have split up [1] into two parts. The first =
+one
+> addes a new PF flag which is just an alias to the existing PF_FSTRANS
+> and does all the renaming and the second one to introduce the generic
+> API which only changes the bare minimum in the xfs proper.
+>=20
+> fs/xfs/kmem.c             |  4 ++--
+> fs/xfs/kmem.h             |  2 +-
+> fs/xfs/libxfs/xfs_btree.c |  2 +-
+> fs/xfs/xfs_aops.c         |  6 +++---
+> fs/xfs/xfs_trans.c        | 12 ++++++------
+> include/linux/sched.h     |  2 ++
+> 6 files changed, 15 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/fs/xfs/kmem.c b/fs/xfs/kmem.c
+> index 686ba6fb20dd..73f6ab59c664 100644
+> --- a/fs/xfs/kmem.c
+> +++ b/fs/xfs/kmem.c
+> @@ -80,13 +80,13 @@ kmem_zalloc_large(size_t size, xfs_km_flags_t =
+flags)
+> 	 * context via PF_MEMALLOC_NOIO to prevent memory reclaim =
+re-entering
+> 	 * the filesystem here and potentially deadlocking.
+> 	 */
+> -	if ((current->flags & PF_FSTRANS) || (flags & KM_NOFS))
+> +	if ((current->flags & PF_MEMALLOC_NOFS) || (flags & KM_NOFS))
+> 		noio_flag =3D memalloc_noio_save();
+>=20
+> 	lflags =3D kmem_flags_convert(flags);
+> 	ptr =3D __vmalloc(size, lflags | __GFP_HIGHMEM | __GFP_ZERO, =
+PAGE_KERNEL);
+>=20
+> -	if ((current->flags & PF_FSTRANS) || (flags & KM_NOFS))
+> +	if ((current->flags & PF_MEMALLOC_NOFS) || (flags & KM_NOFS))
+> 		memalloc_noio_restore(noio_flag);
+
+Not really the fault of this patch, but it brings this nasty bit of code =
+into
+the light.  Is all of this machinery still needed given that __vmalloc() =
+can
+accept GFP flags?  If yes, wouldn't it be better to fix __vmalloc() to =
+honor
+the GFP flags instead of working around it in the filesystem code?
+
+Cheers, Andreas
+
+> 	return ptr;
+> diff --git a/fs/xfs/kmem.h b/fs/xfs/kmem.h
+> index d1c66e465ca5..0d83f332e5c2 100644
+> --- a/fs/xfs/kmem.h
+> +++ b/fs/xfs/kmem.h
+> @@ -50,7 +50,7 @@ kmem_flags_convert(xfs_km_flags_t flags)
+> 		lflags =3D GFP_ATOMIC | __GFP_NOWARN;
+> 	} else {
+> 		lflags =3D GFP_KERNEL | __GFP_NOWARN;
+> -		if ((current->flags & PF_FSTRANS) || (flags & KM_NOFS))
+> +		if ((current->flags & PF_MEMALLOC_NOFS) || (flags & =
+KM_NOFS))
+> 			lflags &=3D ~__GFP_FS;
+> 	}
+>=20
+> diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+> index a0eb18ce3ad3..326566f4a131 100644
+> --- a/fs/xfs/libxfs/xfs_btree.c
+> +++ b/fs/xfs/libxfs/xfs_btree.c
+> @@ -2540,7 +2540,7 @@ xfs_btree_split_worker(
+> 	struct xfs_btree_split_args	*args =3D container_of(work,
+> 						struct =
+xfs_btree_split_args, work);
+> 	unsigned long		pflags;
+> -	unsigned long		new_pflags =3D PF_FSTRANS;
+> +	unsigned long		new_pflags =3D PF_MEMALLOC_NOFS;
+>=20
+> 	/*
+> 	 * we are in a transaction context here, but may also be doing =
+work
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index d12dfcfd0cc8..6d816ff0b763 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -124,7 +124,7 @@ xfs_setfilesize_trans_alloc(
+> 	 * We hand off the transaction to the completion thread now, so
+> 	 * clear the flag here.
+> 	 */
+> -	current_restore_flags_nested(&tp->t_pflags, PF_FSTRANS);
+> +	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+> 	return 0;
+> }
+>=20
+> @@ -169,7 +169,7 @@ xfs_setfilesize_ioend(
+> 	 * thus we need to mark ourselves as being in a transaction =
+manually.
+> 	 * Similarly for freeze protection.
+> 	 */
+> -	current_set_flags_nested(&tp->t_pflags, PF_FSTRANS);
+> +	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+> 	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
+>=20
+> 	/* we abort the update if there was an IO error */
+> @@ -979,7 +979,7 @@ xfs_vm_writepage(
+> 	 * Given that we do not allow direct reclaim to call us, we =
+should
+> 	 * never be called while in a filesystem transaction.
+> 	 */
+> -	if (WARN_ON_ONCE(current->flags & PF_FSTRANS))
+> +	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
+> 		goto redirty;
+>=20
+> 	/* Is this page beyond the end of the file? */
+> diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+> index 748b16aff45a..1d247366c733 100644
+> --- a/fs/xfs/xfs_trans.c
+> +++ b/fs/xfs/xfs_trans.c
+> @@ -176,7 +176,7 @@ xfs_trans_reserve(
+> 	bool		rsvd =3D (tp->t_flags & XFS_TRANS_RESERVE) !=3D =
+0;
+>=20
+> 	/* Mark this thread as being in a transaction */
+> -	current_set_flags_nested(&tp->t_pflags, PF_FSTRANS);
+> +	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+>=20
+> 	/*
+> 	 * Attempt to reserve the needed disk blocks by decrementing
+> @@ -186,7 +186,7 @@ xfs_trans_reserve(
+> 	if (blocks > 0) {
+> 		error =3D xfs_mod_fdblocks(tp->t_mountp, =
+-((int64_t)blocks), rsvd);
+> 		if (error !=3D 0) {
+> -			current_restore_flags_nested(&tp->t_pflags, =
+PF_FSTRANS);
+> +			current_restore_flags_nested(&tp->t_pflags, =
+PF_MEMALLOC_NOFS);
+> 			return -ENOSPC;
+> 		}
+> 		tp->t_blk_res +=3D blocks;
+> @@ -263,7 +263,7 @@ xfs_trans_reserve(
+> 		tp->t_blk_res =3D 0;
+> 	}
+>=20
+> -	current_restore_flags_nested(&tp->t_pflags, PF_FSTRANS);
+> +	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+>=20
+> 	return error;
+> }
+> @@ -921,7 +921,7 @@ __xfs_trans_commit(
+>=20
+> 	xfs_log_commit_cil(mp, tp, &commit_lsn, regrant);
+>=20
+> -	current_restore_flags_nested(&tp->t_pflags, PF_FSTRANS);
+> +	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+> 	xfs_trans_free(tp);
+>=20
+> 	/*
+> @@ -951,7 +951,7 @@ __xfs_trans_commit(
+> 		if (commit_lsn =3D=3D -1 && !error)
+> 			error =3D -EIO;
+> 	}
+> -	current_restore_flags_nested(&tp->t_pflags, PF_FSTRANS);
+> +	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+> 	xfs_trans_free_items(tp, NULLCOMMITLSN, !!error);
+> 	xfs_trans_free(tp);
+>=20
+> @@ -1005,7 +1005,7 @@ xfs_trans_cancel(
+> 		xfs_log_done(mp, tp->t_ticket, NULL, false);
+>=20
+> 	/* mark this thread as no longer being in a transaction */
+> -	current_restore_flags_nested(&tp->t_pflags, PF_FSTRANS);
+> +	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+>=20
+> 	xfs_trans_free_items(tp, NULLCOMMITLSN, dirty);
+> 	xfs_trans_free(tp);
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index acfc32b30704..820db8f98bfc 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -2115,6 +2115,8 @@ extern void thread_group_cputime_adjusted(struct =
+task_struct *p, cputime_t *ut,
+> #define PF_FREEZER_SKIP	0x40000000	/* Freezer should not =
+count it as freezable */
+> #define PF_SUSPEND_TASK 0x80000000      /* this thread called =
+freeze_processes and should not be frozen */
+>=20
+> +#define PF_MEMALLOC_NOFS PF_FSTRANS	/* Transition to a more generic =
+GFP_NOFS scope semantic */
 > +
->  		/* encrypted case */
->  		de_name.name = d->filename[bit_pos];
->  		de_name.len = le16_to_cpu(de->name_len);
-> @@ -147,10 +147,6 @@ struct f2fs_dir_entry *find_target_dentry(struct
-> fscrypt_name *fname,
->  			*max_slots = max_len;
->  		max_len = 0;
-> 
-> -		/* remain bug on condition */
-> -		if (unlikely(!de->name_len))
-> -			d->max = -1;
-> -
->  		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
->  	}
-> 
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index 7720565..e61084c 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -303,11 +303,6 @@ struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
->  	else
->  		f2fs_put_page(ipage, 0);
-> 
-> -	/*
-> -	 * For the most part, it should be a bug when name_len is zero.
-> -	 * We stop here for figuring out where the bugs has occurred.
-> -	 */
-> -	f2fs_bug_on(sbi, d.max < 0);
->  	return de;
->  }
-> 
-> @@ -437,6 +432,12 @@ static int f2fs_add_inline_entries(struct inode *dir,
->  		}
-> 
->  		de = &d.dentry[bit_pos];
-> +
-> +		if (unlikely(!de->name_len)) {
-> +			bit_pos++;
-> +			continue;
-> +		}
-> +
->  		new_name.name = d.filename[bit_pos];
->  		new_name.len = de->name_len;
-> 
-> @@ -448,9 +449,6 @@ static int f2fs_add_inline_entries(struct inode *dir,
->  		if (err)
->  			goto punch_dentry_pages;
-> 
-> -		if (unlikely(!de->name_len))
-> -			d.max = -1;
-> -
->  		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
->  	}
->  	return 0;
-> -- 
-> 2.7.2
+> /*
+>  * Only the _current_ task can read/write to tsk->flags, but other
+>  * tasks can access tsk->flags in readonly mode for example
+> --
+> 2.8.0.rc3
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-ext4" =
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_E2A13889-F5F8-484A-9C14-046AD6B7906F
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP using GPGMail
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIVAwUBVyD54HKl2rkXzB/gAQhFgA//ZYuehVpoM5drnP3bbKWtQjn+P6DN/JN+
+Tm6ZVTirAPubH6MoXJ2+c7UHpnxzIRKlauzLQkZih1i3oYUyC58bNJuSeJNmffsY
+QVqB/INiLvJhfSwzzUzJEAZBrrrMp5laltsy4fgc13GqRoeT4wY3IoTb4ZofuC9G
+ij6BiTMALIp6IkhPNk/9Ru5jBqWbcVTMHngMfeYrWRuzKOM7QO58ceqCYM4xsz7n
+QuH/685BricBeQYPxQXaaAM0Gh6LAUd4ctzWFBpJavT+oaJoG7/JLSTUoLU/2W0b
+pGJHCCWpY59eUz1AT13PGTYcCxo6+ta+PRtWX8qEuME5vrsCkfYgUHjkislp3avM
+dahSdlxRLo5Ji4kxUiKS9RATKRfh1G7ucKsUC+PIeaXjfQEGXaihjFFHj0ioHVtl
+vqVlOmxSCSXhwHbvLiwehrb2njBhtfTplbQ1YL370/c00tezhDbDMrp4q1GmuCGJ
+1ewQTTHhixNPogyV5ameP/4oq8CMCztnmGw65/54BCcORcOkgE4Vprwwvi+AOJP4
+DG5SdP+Sj4DdcOHI2MtDjvna9vGLbiINSsu76YPgltbvnQMqp+CUyK9qBoBsXNUi
+Aco5N8PaQWzKloGPDOeVzHdMBononKFf+4wtbaQ0kEUkX0bXdvkSJqxlDsK/6wnE
+05SCP6c8sd4=
+=dU5k
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_E2A13889-F5F8-484A-9C14-046AD6B7906F--
