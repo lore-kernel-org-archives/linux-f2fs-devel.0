@@ -1,180 +1,148 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 4/4] f2fs: fix inode cache leak
-Date: Fri, 29 Apr 2016 20:13:38 +0800
-Message-ID: <1461932018-3272-3-git-send-email-chao@kernel.org>
-References: <1461932018-3272-1-git-send-email-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461932018-3272-1-git-send-email-chao@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 0/2] scop GFP_NOFS api
+Date: Sat, 30 Apr 2016 10:11:38 +1000
+Message-ID: <20160430001138.GO26977@dastard>
+References: <1461671772-1269-1-git-send-email-mhocko@kernel.org>
+ <8737q5ugcx.fsf@notabene.neil.brown.name>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <reiserfs-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <8737q5ugcx.fsf@notabene.neil.brown.name>
+Sender: reiserfs-devel-owner@vger.kernel.org
+To: NeilBrown <mr@neil.brown.name>
+Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, xfs@oss.sgi.com, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On Fri, Apr 29, 2016 at 03:35:42PM +1000, NeilBrown wrote:
+> On Tue, Apr 26 2016, Michal Hocko wrote:
+> 
+> > Hi,
+> > we have discussed this topic at LSF/MM this year. There was a general
+> > interest in the scope GFP_NOFS allocation context among some FS
+> > developers. For those who are not aware of the discussion or the issue
+> > I am trying to sort out (or at least start in that direction) please
+> > have a look at patch 1 which adds memalloc_nofs_{save,restore} api
+> > which basically copies what we have for the scope GFP_NOIO allocation
+> > context. I haven't converted any of the FS myself because that is way
+> > beyond my area of expertise but I would be happy to help with further
+> > changes on the MM front as well as in some more generic code paths.
+> >
+> > Dave had an idea on how to further improve the reclaim context to be
+> > less all-or-nothing wrt. GFP_NOFS. In short he was suggesting an opaque
+> > and FS specific cookie set in the FS allocation context and consumed
+> > by the FS reclaim context to allow doing some provably save actions
+> > that would be skipped due to GFP_NOFS normally.  I like this idea and
+> > I believe we can go that direction regardless of the approach taken here.
+> > Many filesystems simply need to cleanup their NOFS usage first before
+> > diving into a more complex changes.>
+> 
+> This strikes me as over-engineering to work around an unnecessarily
+> burdensome interface.... but without details it is hard to be certain.
+> 
+> Exactly what things happen in "FS reclaim context" which may, or may
+> not, be safe depending on the specific FS allocation context?  Do they
+> need to happen at all?
+> 
+> My research suggests that for most filesystems the only thing that
+> happens in reclaim context that is at all troublesome is the final
+> 'evict()' on an inode.  This needs to flush out dirty pages and sync the
+> inode to storage.  Some time ago we moved most dirty-page writeout out
+> of the reclaim context and into kswapd.  I think this was an excellent
+> advance in simplicity.
 
-When testing f2fs with inline_dentry option, generic/342 reports:
-VFS: Busy inodes after unmount of dm-0. Self-destruct in 5 seconds.  Have a nice day...
+No, we didn't move dirty page writeout to kswapd - we moved it back
+to the background writeback threads where it can be done
+efficiently.  kswapd should almost never do single page writeback
+because of how inefficient it is from an IO perspective, even though
+it can. i.e. if we are doing any significant amount of dirty page
+writeback from memory reclaim (direct, kswapd or otherwise) then
+we've screwed something up.
 
-After rmmod f2fs module, kenrel shows following dmesg:
- =============================================================================
- BUG f2fs_inode_cache (Tainted: G           O   ): Objects remaining in f2fs_inode_cache on __kmem_cache_shutdown()
- -----------------------------------------------------------------------------
+> If we could similarly move evict() into kswapd (and I believe we can)
+> then most file systems would do nothing in reclaim context that
+> interferes with allocation context.
 
- Disabling lock debugging due to kernel taint
- INFO: Slab 0xf51ca0e0 objects=22 used=1 fp=0xd1e6fc60 flags=0x40004080
- CPU: 3 PID: 7455 Comm: rmmod Tainted: G    B      O    4.6.0-rc4+ #16
- Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-  00000086 00000086 d062fe18 c13a83a0 f51ca0e0 d062fe38 d062fea4 c11c7276
-  c1981040 f51ca0e0 00000016 00000001 d1e6fc60 40004080 656a624f 20737463
-  616d6572 6e696e69 6e692067 66326620 6e695f73 5f65646f 68636163 6e6f2065
- Call Trace:
-  [<c13a83a0>] dump_stack+0x5f/0x8f
-  [<c11c7276>] slab_err+0x76/0x80
-  [<c11cbfc0>] ? __kmem_cache_shutdown+0x100/0x2f0
-  [<c11cbfc0>] ? __kmem_cache_shutdown+0x100/0x2f0
-  [<c11cbfe5>] __kmem_cache_shutdown+0x125/0x2f0
-  [<c1198a38>] kmem_cache_destroy+0x158/0x1f0
-  [<c176b43d>] ? mutex_unlock+0xd/0x10
-  [<f8f15aa3>] exit_f2fs_fs+0x4b/0x5a8 [f2fs]
-  [<c10f596c>] SyS_delete_module+0x16c/0x1d0
-  [<c1001b10>] ? do_fast_syscall_32+0x30/0x1c0
-  [<c13c59bf>] ? __this_cpu_preempt_check+0xf/0x20
-  [<c10afa7d>] ? trace_hardirqs_on_caller+0xdd/0x210
-  [<c10ad50b>] ? trace_hardirqs_off+0xb/0x10
-  [<c1001b81>] do_fast_syscall_32+0xa1/0x1c0
-  [<c176d888>] sysenter_past_esp+0x45/0x74
- INFO: Object 0xd1e6d9e0 @offset=6624
- kmem_cache_destroy f2fs_inode_cache: Slab cache still has objects
- CPU: 3 PID: 7455 Comm: rmmod Tainted: G    B      O    4.6.0-rc4+ #16
- Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-  00000286 00000286 d062fef4 c13a83a0 f174b000 d062ff14 d062ff28 c1198ac7
-  c197fe18 f3c5b980 d062ff20 000d04f2 d062ff0c d062ff0c d062ff14 d062ff14
-  f8f20dc0 fffffff5 d062e000 d062ff30 f8f15aa3 d062ff7c c10f596c 73663266
- Call Trace:
-  [<c13a83a0>] dump_stack+0x5f/0x8f
-  [<c1198ac7>] kmem_cache_destroy+0x1e7/0x1f0
-  [<f8f15aa3>] exit_f2fs_fs+0x4b/0x5a8 [f2fs]
-  [<c10f596c>] SyS_delete_module+0x16c/0x1d0
-  [<c1001b10>] ? do_fast_syscall_32+0x30/0x1c0
-  [<c13c59bf>] ? __this_cpu_preempt_check+0xf/0x20
-  [<c10afa7d>] ? trace_hardirqs_on_caller+0xdd/0x210
-  [<c10ad50b>] ? trace_hardirqs_off+0xb/0x10
-  [<c1001b81>] do_fast_syscall_32+0xa1/0x1c0
-  [<c176d888>] sysenter_past_esp+0x45/0x74
+When lots of GFP_NOFS allocation is being done, this already
+happens. The shrinkers that can't run due to context accumulate the
+work on the shrinker structure, and when the shrinker can next run
+(e.g. run from kswapd) it runs all the deferred work from GFP_NOFS
+reclaim contexts.
 
-The reason is: in recovery flow, we use delayed iput mechanism for directory
-which has recovered dentry block. It means the reference of inode will be
-held until last dirty dentry page being writebacked.
+IOWs, we already move shrinker work from direct reclaim to kswapd
+when appropriate.
 
-But when we mount f2fs with inline_dentry option, during recovery, dirent
-may only be recovered into dir inode page rather than dentry page, so there
-are no chance for us to release inode reference in ->writepage when
-writebacking last dentry page.
+> The exceptions include:
+>  - nfs and any filesystem using fscache can block for up to 1 second
+>    in ->releasepage().  They used to block waiting for some IO, but that
+>    caused deadlocks and wasn't really needed.  I left the timeout because
+>    it seemed likely that some throttling would help.  I suspect that a
+>    careful analysis will show that there is sufficient throttling
+>    elsewhere.
+> 
+>  - xfs_qm_shrink_scan is nearly unique among shrinkers in that it waits
+>    for IO so it can free some quotainfo things. 
 
-This patch fixes this issue by obsoleting old mechanism, and call iput
-explicitly pairing iget instead.
+No it's not. evict() can block on IO - waiting for data or inode
+writeback to complete, or even for filesystems to run transactions
+on the inode. Hence the superblock shrinker can and does block in
+inode cache reclaim.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/checkpoint.c | 16 ----------------
- fs/f2fs/f2fs.h       |  2 --
- fs/f2fs/recovery.c   | 15 +++------------
- 3 files changed, 3 insertions(+), 30 deletions(-)
+Indeed, blocking the superblock shrinker in reclaim is a key part of
+balancing inode cache pressure in XFS. If the shrinker starts
+hitting dirty inodes, it blocks on cleaning them, thereby slowing
+the rate of allocation to that which inodes can be cleaned and
+reclaimed. There are also background threads that walk ahead freeing
+clean inodes, but we have to throttle direct reclaim in this manner
+otherwise the allocation pressure vastly outweighs the ability to
+reclaim inodes. if we don't balance this, inode allocation triggers
+the OOM killer because reclaim keeps reporting "no progress being
+made" because dirty inodes are skipped. BY blocking on such inodes,
+the shrinker makes progress (slowly) and reclaim sees that memory is
+being freed and so continues without invoking the OOM killer...
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index bf040b5..dc7bc72 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -786,19 +786,9 @@ void update_dirty_page(struct inode *inode, struct page *page)
- 	f2fs_trace_pid(page);
- }
- 
--void add_dirty_dir_inode(struct inode *inode)
--{
--	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--
--	spin_lock(&sbi->inode_lock[DIR_INODE]);
--	__add_dirty_inode(inode, DIR_INODE);
--	spin_unlock(&sbi->inode_lock[DIR_INODE]);
--}
--
- void remove_dirty_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	enum inode_type type = S_ISDIR(inode->i_mode) ? DIR_INODE : FILE_INODE;
- 
- 	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
-@@ -808,12 +798,6 @@ void remove_dirty_inode(struct inode *inode)
- 	spin_lock(&sbi->inode_lock[type]);
- 	__remove_dirty_inode(inode, type);
- 	spin_unlock(&sbi->inode_lock[type]);
--
--	/* Only from the recovery routine */
--	if (is_inode_flag_set(fi, FI_DELAY_IPUT)) {
--		clear_inode_flag(fi, FI_DELAY_IPUT);
--		iput(inode);
--	}
- }
- 
- int sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0786a45..a87625f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1455,7 +1455,6 @@ enum {
- 	FI_NO_ALLOC,		/* should not allocate any blocks */
- 	FI_FREE_NID,		/* free allocated nide */
- 	FI_UPDATE_DIR,		/* should update inode block for consistency */
--	FI_DELAY_IPUT,		/* used for the recovery */
- 	FI_NO_EXTENT,		/* not to use the extent cache */
- 	FI_INLINE_XATTR,	/* used for inline xattr */
- 	FI_INLINE_DATA,		/* used for inline data*/
-@@ -1886,7 +1885,6 @@ void remove_orphan_inode(struct f2fs_sb_info *, nid_t);
- int recover_orphan_inodes(struct f2fs_sb_info *);
- int get_valid_checkpoint(struct f2fs_sb_info *);
- void update_dirty_page(struct inode *, struct page *);
--void add_dirty_dir_inode(struct inode *);
- void remove_dirty_inode(struct inode *);
- int sync_dirty_inodes(struct f2fs_sb_info *, enum inode_type);
- int write_checkpoint(struct f2fs_sb_info *, struct cp_control *);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 481f94e..395c212 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -116,7 +116,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage)
- 	if (unlikely(name.len > F2FS_NAME_LEN)) {
- 		WARN_ON(1);
- 		err = -ENAMETOOLONG;
--		goto out_err;
-+		goto out_iput;
- 	}
- retry:
- 	de = f2fs_find_entry(dir, &name, &page);
-@@ -142,22 +142,13 @@ retry:
- 		goto retry;
- 	}
- 	err = __f2fs_add_link(dir, &name, inode, inode->i_ino, inode->i_mode);
--	if (err)
--		goto out_err;
--
--	if (is_inode_flag_set(F2FS_I(dir), FI_DELAY_IPUT)) {
--		iput(dir);
--	} else {
--		add_dirty_dir_inode(dir);
--		set_inode_flag(F2FS_I(dir), FI_DELAY_IPUT);
--	}
- 
--	goto out;
-+	goto out_iput;
- 
- out_unmap_put:
- 	f2fs_dentry_kunmap(dir, page);
- 	f2fs_put_page(page, 0);
--out_err:
-+out_iput:
- 	iput(dir);
- out:
- 	f2fs_msg(inode->i_sb, KERN_NOTICE,
+>    If it could be changed
+>    to just schedule the IO without waiting for it then I think this
+>    would be safe to be called in any FS allocation context.  It already
+>    uses a 'trylock' in xfs_dqlock_nowait() to avoid deadlocking
+>    if the lock is held.
+
+We could, but then we have the same problem as the inode cache -
+there's no indication of progress going back to the memory reclaim
+subsystem, nor is reclaim able to throttle memory allocation back to
+the rate at which reclaim is making progress.
+
+There's feedback loops all throughout the XFS reclaim code - it's
+designed specifically that way - I made changes to the shrinker
+infrastructure years ago to enable this. It's no different to the
+dirty page throttling that was done at roughly the same time -
+that's also one big feedback loop controlled by the rate at which
+pages can be cleaned. Indeed, it was designed was based on the same
+premise as all the XFS shrinker code: in steady state conditions
+we can't allocate a resource faster than we can reclaim it, so we
+need to make reclaim as efficient at possible...
+
+> I think you/we would end up with a much simpler system if instead of
+> focussing on the places where GFP_NOFS is used, we focus on places where
+> __GFP_FS is tested, and try to remove them.  If we get rid of enough of
+> them the remainder could just use __GFP_IO.
+
+The problem with this is that a single kswapd thread can't keep up
+with all of the allocation pressure that occurs. e.g. a 20-core
+intel CPU with local memory will be seen as a single node and so
+will have a single kswapd thread to do reclaim. There's a massive
+imbalance between maximum reclaim rate and maximum allocation rate
+in situations like this. If we want memory reclaim to run faster,
+we to be able to do more work *now*, not defer it to a context with
+limited execution resources.
+
+i.e. IMO deferring more work to a single reclaim thread per node is
+going to limit memory reclaim scalability and performance, not
+improve it.
+
+Cheers,
+
+Dave.
 -- 
-2.7.2
+Dave Chinner
+david@fromorbit.com
