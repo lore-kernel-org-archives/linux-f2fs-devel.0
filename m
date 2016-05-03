@@ -1,24 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 04/11] f2fs: use f2fs_grab_cache_page instead of
-	grab_cache_page
-Date: Tue,  3 May 2016 11:21:41 -0700
-Message-ID: <1462299708-67906-4-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 08/11] f2fs: inject ENOSPC failures
+Date: Tue,  3 May 2016 11:21:45 -0700
+Message-ID: <1462299708-67906-8-git-send-email-jaegeuk@kernel.org>
 References: <1462299708-67906-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1axexQ-0008Ta-3D
+	(envelope-from <jaegeuk@kernel.org>) id 1axexW-0008Ut-Sj
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 May 2016 18:22:04 +0000
+	Tue, 03 May 2016 18:22:10 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1axexP-0002m5-7H
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1axexW-0005JY-2x
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 May 2016 18:22:04 +0000
+	Tue, 03 May 2016 18:22:10 +0000
 In-Reply-To: <1462299708-67906-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,108 +31,107 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch converts grab_cache_page to f2fs_grab_cache_page.
+This patch injects ENOSPC failures.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 7 ++++---
- fs/f2fs/inline.c     | 4 ++--
- fs/f2fs/node.c       | 8 ++++----
- 3 files changed, 10 insertions(+), 9 deletions(-)
+ fs/f2fs/checkpoint.c |  7 +++++++
+ fs/f2fs/dir.c        |  4 ++++
+ fs/f2fs/f2fs.h       | 10 ++++++++++
+ fs/f2fs/node.c       |  4 ++++
+ fs/f2fs/super.c      |  4 ++++
+ 5 files changed, 29 insertions(+)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index dc7bc72..ac87cd9 100644
+index ac87cd9..9169dab 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -34,7 +34,7 @@ struct page *grab_meta_page(struct f2fs_sb_info *sbi, pgoff_t index)
- 	struct address_space *mapping = META_MAPPING(sbi);
- 	struct page *page = NULL;
- repeat:
--	page = grab_cache_page(mapping, index);
-+	page = f2fs_grab_cache_page(mapping, index, false);
- 	if (!page) {
- 		cond_resched();
- 		goto repeat;
-@@ -64,7 +64,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 	if (unlikely(!is_meta))
- 		fio.rw &= ~REQ_META;
- repeat:
--	page = grab_cache_page(mapping, index);
-+	page = f2fs_grab_cache_page(mapping, index, false);
- 	if (!page) {
- 		cond_resched();
- 		goto repeat;
-@@ -186,7 +186,8 @@ int ra_meta_pages(struct f2fs_sb_info *sbi, block_t start, int nrpages,
- 			BUG();
- 		}
+@@ -474,6 +474,13 @@ int acquire_orphan_inode(struct f2fs_sb_info *sbi)
+ 	int err = 0;
  
--		page = grab_cache_page(META_MAPPING(sbi), fio.new_blkaddr);
-+		page = f2fs_grab_cache_page(META_MAPPING(sbi),
-+						fio.new_blkaddr, false);
- 		if (!page)
- 			continue;
- 		if (PageUptodate(page)) {
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 33830b2..8a51955 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -161,7 +161,7 @@ int f2fs_convert_inline_inode(struct inode *inode)
- 	if (!f2fs_has_inline_data(inode))
- 		return 0;
+ 	spin_lock(&im->ino_lock);
++
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	if (time_to_inject(FAULT_ORPHAN)) {
++		spin_unlock(&im->ino_lock);
++		return -ENOSPC;
++	}
++#endif
+ 	if (unlikely(im->ino_num >= sbi->max_orphans))
+ 		err = -ENOSPC;
+ 	else
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 6bd0595..50f42be 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -537,6 +537,10 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+ 	}
  
--	page = grab_cache_page(inode->i_mapping, 0);
-+	page = f2fs_grab_cache_page(inode->i_mapping, 0, false);
- 	if (!page)
- 		return -ENOMEM;
+ start:
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	if (time_to_inject(FAULT_DIR_DEPTH))
++		return -ENOSPC;
++#endif
+ 	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH))
+ 		return -ENOSPC;
  
-@@ -358,7 +358,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
- 	struct f2fs_dentry_block *dentry_blk;
- 	int err;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 02c2c96..659fdea 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -41,6 +41,10 @@
+ enum {
+ 	FAULT_KMALLOC,
+ 	FAULT_PAGE_ALLOC,
++	FAULT_ALLOC_NID,
++	FAULT_ORPHAN,
++	FAULT_BLOCK,
++	FAULT_DIR_DEPTH,
+ 	FAULT_MAX,
+ };
  
--	page = grab_cache_page(dir->i_mapping, 0);
-+	page = f2fs_grab_cache_page(dir->i_mapping, 0, false);
- 	if (!page) {
- 		f2fs_put_page(ipage, 1);
- 		return -ENOMEM;
+@@ -1087,6 +1091,12 @@ static inline bool inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 	block_t	valid_block_count;
+ 
+ 	spin_lock(&sbi->stat_lock);
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	if (time_to_inject(FAULT_BLOCK)) {
++		spin_unlock(&sbi->stat_lock);
++		return false;
++	}
++#endif
+ 	valid_block_count =
+ 		sbi->total_valid_block_count + (block_t)count;
+ 	if (unlikely(valid_block_count > sbi->user_block_count)) {
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f80cfb6..af010f5 100644
+index af010f5..78b98db 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -995,7 +995,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
- 	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
- 		return ERR_PTR(-EPERM);
+@@ -1838,6 +1838,10 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct free_nid *i = NULL;
+ retry:
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	if (time_to_inject(FAULT_ALLOC_NID))
++		return false;
++#endif
+ 	if (unlikely(sbi->total_valid_node_count + 1 > nm_i->available_nids))
+ 		return false;
  
--	page = grab_cache_page(NODE_MAPPING(sbi), dn->nid);
-+	page = f2fs_grab_cache_page(NODE_MAPPING(sbi), dn->nid, false);
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -1087,7 +1087,7 @@ void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
- 	if (apage)
- 		return;
- 
--	apage = grab_cache_page(NODE_MAPPING(sbi), nid);
-+	apage = f2fs_grab_cache_page(NODE_MAPPING(sbi), nid, false);
- 	if (!apage)
- 		return;
- 
-@@ -1128,7 +1128,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
- 		return ERR_PTR(-ENOENT);
- 	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
- repeat:
--	page = grab_cache_page(NODE_MAPPING(sbi), nid);
-+	page = f2fs_grab_cache_page(NODE_MAPPING(sbi), nid, false);
- 	if (!page)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -2012,7 +2012,7 @@ int recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 	if (unlikely(old_ni.blk_addr != NULL_ADDR))
- 		return -EINVAL;
- 
--	ipage = grab_cache_page(NODE_MAPPING(sbi), ino);
-+	ipage = f2fs_grab_cache_page(NODE_MAPPING(sbi), ino, false);
- 	if (!ipage)
- 		return -ENOMEM;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1715794..55e8eb0 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -46,6 +46,10 @@ atomic_t f2fs_ops;
+ char *fault_name[FAULT_MAX] = {
+ 	[FAULT_KMALLOC]		= "kmalloc",
+ 	[FAULT_PAGE_ALLOC]	= "page alloc",
++	[FAULT_ALLOC_NID]	= "alloc nid",
++	[FAULT_ORPHAN]		= "orphan",
++	[FAULT_BLOCK]		= "no more block",
++	[FAULT_DIR_DEPTH]	= "too big dir depth",
+ };
+ #endif
  
 -- 
 2.6.3
