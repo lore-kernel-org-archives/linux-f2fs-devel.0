@@ -1,24 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 03/11] f2fs: introduce f2fs_kmalloc to wrap
-	kmalloc
-Date: Tue,  3 May 2016 11:21:40 -0700
-Message-ID: <1462299708-67906-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 09/11] f2fs: revisit error handling flows
+Date: Tue,  3 May 2016 11:21:46 -0700
+Message-ID: <1462299708-67906-9-git-send-email-jaegeuk@kernel.org>
 References: <1462299708-67906-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1axexO-0008TN-GA
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1axexY-0002LO-R9
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 May 2016 18:22:02 +0000
+	Tue, 03 May 2016 18:22:12 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1axexN-0007El-K4
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1axexX-0002mK-R9
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 03 May 2016 18:22:02 +0000
+	Tue, 03 May 2016 18:22:12 +0000
 In-Reply-To: <1462299708-67906-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,94 +31,129 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch adds f2fs_kmalloc.
+This patch fixes a couple of bugs regarding to orphan inodes when handling
+errors.
+
+This tries to
+ - call alloc_nid_done with add_orphan_inode in handle_failed_inode
+ - let truncate blocks in f2fs_evict_inode
+ - not make a bad inode due to i_mode change
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/acl.c    | 4 ++--
- fs/f2fs/dir.c    | 2 +-
- fs/f2fs/f2fs.h   | 5 +++++
- fs/f2fs/gc.c     | 2 +-
- fs/f2fs/inline.c | 2 +-
- 5 files changed, 10 insertions(+), 5 deletions(-)
+ fs/f2fs/dir.c   | 20 ++++++++++++--------
+ fs/f2fs/inode.c | 40 ++++++++++++++++------------------------
+ 2 files changed, 28 insertions(+), 32 deletions(-)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index c8f25f7..d757d79 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -115,7 +115,7 @@ static void *f2fs_acl_to_disk(const struct posix_acl *acl, size_t *size)
- 	struct f2fs_acl_entry *entry;
- 	int i;
- 
--	f2fs_acl = kmalloc(sizeof(struct f2fs_acl_header) + acl->a_count *
-+	f2fs_acl = f2fs_kmalloc(sizeof(struct f2fs_acl_header) + acl->a_count *
- 			sizeof(struct f2fs_acl_entry), GFP_NOFS);
- 	if (!f2fs_acl)
- 		return ERR_PTR(-ENOMEM);
-@@ -175,7 +175,7 @@ static struct posix_acl *__f2fs_get_acl(struct inode *inode, int type,
- 
- 	retval = f2fs_getxattr(inode, name_index, "", NULL, 0, dpage);
- 	if (retval > 0) {
--		value = kmalloc(retval, GFP_F2FS_ZERO);
-+		value = f2fs_kmalloc(retval, GFP_F2FS_ZERO);
- 		if (!value)
- 			return ERR_PTR(-ENOMEM);
- 		retval = f2fs_getxattr(inode, name_index, "", value,
 diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index dbfc1d1..6bd0595 100644
+index 50f42be..5373f33 100644
 --- a/fs/f2fs/dir.c
 +++ b/fs/f2fs/dir.c
-@@ -805,7 +805,7 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 			int save_len = fstr->len;
- 			int ret;
+@@ -391,9 +391,14 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+ 			return page;
  
--			de_name.name = kmalloc(de_name.len, GFP_NOFS);
-+			de_name.name = f2fs_kmalloc(de_name.len, GFP_NOFS);
- 			if (!de_name.name)
- 				return false;
+ 		if (S_ISDIR(inode->i_mode)) {
++			/* in order to handle error case */
++			get_page(page);
+ 			err = make_empty_dir(inode, dir, page);
+-			if (err)
+-				goto error;
++			if (err) {
++				lock_page(page);
++				goto put_error;
++			}
++			put_page(page);
+ 		}
  
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 38aa75c..364d5fd 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1643,6 +1643,11 @@ static inline bool f2fs_may_extent_tree(struct inode *inode)
- 	return S_ISREG(inode->i_mode);
+ 		err = f2fs_init_acl(inode, dir, page, dpage);
+@@ -437,13 +442,12 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+ 	return page;
+ 
+ put_error:
+-	f2fs_put_page(page, 1);
+-error:
+-	/* once the failed inode becomes a bad inode, i_mode is S_IFREG */
++	/* truncate empty dir pages */
+ 	truncate_inode_pages(&inode->i_data, 0);
+-	truncate_blocks(inode, 0, false);
+-	remove_dirty_inode(inode);
+-	remove_inode_page(inode);
++
++	clear_nlink(inode);
++	update_inode(inode, page);
++	f2fs_put_page(page, 1);
+ 	return ERR_PTR(err);
  }
  
-+static inline void *f2fs_kmalloc(size_t size, gfp_t flags)
-+{
-+	return kmalloc(size, flags);
-+}
-+
- static inline void *f2fs_kvmalloc(size_t size, gfp_t flags)
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index cb269c4..f4ac851 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -368,10 +368,7 @@ no_delete:
+ 	if (is_inode_flag_set(fi, FI_UPDATE_WRITE))
+ 		add_ino_entry(sbi, inode->i_ino, UPDATE_INO);
+ 	if (is_inode_flag_set(fi, FI_FREE_NID)) {
+-		if (err && err != -ENOENT)
+-			alloc_nid_done(sbi, inode->i_ino);
+-		else
+-			alloc_nid_failed(sbi, inode->i_ino);
++		alloc_nid_failed(sbi, inode->i_ino);
+ 		clear_inode_flag(fi, FI_FREE_NID);
+ 	}
+ 
+@@ -397,37 +394,32 @@ out_clear:
+ void handle_failed_inode(struct inode *inode)
  {
- 	void *ret;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 19e9faf..38d56f6 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -96,7 +96,7 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
- 	dev_t dev = sbi->sb->s_bdev->bd_dev;
- 	int err = 0;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	int err = 0;
++	struct node_info ni;
  
--	gc_th = kmalloc(sizeof(struct f2fs_gc_kthread), GFP_KERNEL);
-+	gc_th = f2fs_kmalloc(sizeof(struct f2fs_gc_kthread), GFP_KERNEL);
- 	if (!gc_th) {
- 		err = -ENOMEM;
- 		goto out;
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index e61084c..33830b2 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -465,7 +465,7 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
- 	struct f2fs_inline_dentry *backup_dentry;
- 	int err;
+-	clear_nlink(inode);
+-	make_bad_inode(inode);
++	/* don't make bad inode, since it becomes a regular file. */
+ 	unlock_new_inode(inode);
  
--	backup_dentry = kmalloc(sizeof(struct f2fs_inline_dentry),
-+	backup_dentry = f2fs_kmalloc(sizeof(struct f2fs_inline_dentry),
- 							GFP_F2FS_ZERO);
- 	if (!backup_dentry)
- 		return -ENOMEM;
+-	i_size_write(inode, 0);
+-	if (F2FS_HAS_BLOCKS(inode))
+-		err = f2fs_truncate(inode, false);
+-
+-	if (!err)
+-		err = remove_inode_page(inode);
+-
+ 	/*
+-	 * if we skip truncate_node in remove_inode_page bacause we failed
+-	 * before, it's better to find another way to release resource of
+-	 * this inode (e.g. valid block count, node block or nid). Here we
+-	 * choose to add this inode to orphan list, so that we can call iput
+-	 * for releasing in orphan recovery flow.
+-	 *
+ 	 * Note: we should add inode to orphan list before f2fs_unlock_op()
+ 	 * so we can prevent losing this orphan when encoutering checkpoint
+ 	 * and following suddenly power-off.
+ 	 */
+-	if (err && err != -ENOENT) {
+-		err = acquire_orphan_inode(sbi);
+-		if (!err)
++	get_node_info(sbi, inode->i_ino, &ni);
++
++	if (ni.blk_addr != NULL_ADDR) {
++		int err = acquire_orphan_inode(sbi);
++		if (err) {
++			set_sbi_flag(sbi, SBI_NEED_FSCK);
++			f2fs_msg(sbi->sb, KERN_WARNING,
++				"Too many orphan inodes, run fsck to fix.");
++		} else {
+ 			add_orphan_inode(sbi, inode->i_ino);
++		}
++		alloc_nid_done(sbi, inode->i_ino);
++	} else {
++		set_inode_flag(F2FS_I(inode), FI_FREE_NID);
+ 	}
+ 
+-	set_inode_flag(F2FS_I(inode), FI_FREE_NID);
+ 	f2fs_unlock_op(sbi);
+ 
+ 	/* iput will drop the inode object */
 -- 
 2.6.3
 
