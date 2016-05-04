@@ -1,87 +1,61 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 3/4] f2fs: reuse get_extent_info
-Date: Wed,  4 May 2016 23:19:47 +0800
-Message-ID: <1462375188-6493-2-git-send-email-chao@kernel.org>
-References: <1462375188-6493-1-git-send-email-chao@kernel.org>
+From: Mike Christie <mchristi@redhat.com>
+Subject: Re: [PATCH 00/42] v7: separate operations from flags in the
+ bio/request structs
+Date: Wed, 4 May 2016 12:51:59 -0500
+Message-ID: <572A36BF.3070208@redhat.com>
+References: <1460747777-8479-1-git-send-email-mchristi@redhat.com>
+ <x49d1p2c1nx.fsf@segfault.boston.devel.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1axycn-0000Af-Mt
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 May 2016 15:22:05 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1axycl-0005hX-Ui
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 May 2016 15:22:05 +0000
-In-Reply-To: <1462375188-6493-1-git-send-email-chao@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <x49d1p2c1nx.fsf@segfault.boston.devel.redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeff Moyer <jmoyer@redhat.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, konrad.wilk@oracle.com, drbd-dev@lists.linbit.com, philipp.reisner@linbit.com, lars.ellenberg@linbit.com, linux-raid@vger.kernel.org, dm-devel@redhat.com, linux-fsdevel@vger.kernel.org, linux-bcache@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, linux-mtd@lists.infradead.org, target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org, osd-dev@open-osd.org, xfs@oss.sgi.com, ocfs2-devel@oss.oracle.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On 05/03/2016 03:44 PM, Jeff Moyer wrote:
+> mchristi@redhat.com writes:
+> 
+>> The following patches begin to cleanup the request->cmd_flags and
+>> bio->bi_rw mess. We currently use cmd_flags to specify the operation,
+>> attributes and state of the request. For bi_rw we use it for similar
+>> info and also the priority but then also have another bi_flags field
+>> for state. At some point, we abused them so much we just made cmd_flags
+>> 64 bits, so we could add more.
+>>
+>> The following patches seperate the operation (read, write discard,
+>> flush, etc) from cmd_flags/bi_rw.
+>>
+>> This patchset was made against linux-next from today April 15
+>> (git tag next-20160415).
+>>
+>> I put a git tree here:
+>> https://github.com/mikechristie/linux-kernel.git
+>> The patches are in the op branch.
+> 
+> Hi, Mike,
+> 
+> That git tree doesn't seem to exist.  I did manage to apply your patch
+> set on top of next-20160415, though.
+> 
+> So... what testing did you do? ;-) I ran into the following problems
 
-Reuse get_extent_info for readability.
+I normally run xfstests and run it on my daily workstation and laptop. I
+did not do this for every FS this time and hit a regression.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/extent_cache.c | 3 +--
- fs/f2fs/f2fs.h         | 8 ++++----
- 2 files changed, 5 insertions(+), 6 deletions(-)
+What FS were you using?
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index c859bb0..5bfcdb9 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -196,8 +196,7 @@ bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
- 	if (!i_ext || !i_ext->len)
- 		return false;
- 
--	set_extent_info(&ei, le32_to_cpu(i_ext->fofs),
--		le32_to_cpu(i_ext->blk), le32_to_cpu(i_ext->len));
-+	get_extent_info(&ei, i_ext);
- 
- 	write_lock(&et->lock);
- 	if (atomic_read(&et->node_cnt))
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a87625f..99c593f 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -417,11 +417,11 @@ struct f2fs_inode_info {
- };
- 
- static inline void get_extent_info(struct extent_info *ext,
--					struct f2fs_extent i_ext)
-+					struct f2fs_extent *i_ext)
- {
--	ext->fofs = le32_to_cpu(i_ext.fofs);
--	ext->blk = le32_to_cpu(i_ext.blk);
--	ext->len = le32_to_cpu(i_ext.len);
-+	ext->fofs = le32_to_cpu(i_ext->fofs);
-+	ext->blk = le32_to_cpu(i_ext->blk);
-+	ext->len = le32_to_cpu(i_ext->len);
- }
- 
- static inline void set_raw_extent(struct extent_info *ext,
--- 
-2.7.2
+> - git clone fails
+> - yum segfaults
 
 
-------------------------------------------------------------------------------
-Find and fix application performance issues faster with Applications Manager
-Applications Manager provides deep performance insights into multiple tiers of
-your business applications. It resolves application problems quickly and
-reduces your MTTR. Get your free trial!
-https://ad.doubleclick.net/ddm/clk/302982198;130105516;z
+In v7/v6, I missed a new submit_bio call, so I hit issues like the two
+above. I have this fixed in the next version.
+
+> - many blktrace/blkparse issues, including incorrect cpu recorded in
+>   traces, null task names, and blkparse outputting nothing for a trace
+>   file several gigabytes in size.
+
+I will double check for these issues.
