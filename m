@@ -1,23 +1,23 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 4/4] f2fs: shrink size of struct seg_entry
-Date: Wed,  4 May 2016 23:19:48 +0800
-Message-ID: <1462375188-6493-3-git-send-email-chao@kernel.org>
+Subject: [PATCH 3/4] f2fs: reuse get_extent_info
+Date: Wed,  4 May 2016 23:19:47 +0800
+Message-ID: <1462375188-6493-2-git-send-email-chao@kernel.org>
 References: <1462375188-6493-1-git-send-email-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1axycr-0000BA-AK
+	(envelope-from <chao@kernel.org>) id 1axycn-0000Af-Mt
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 May 2016 15:22:09 +0000
+	Wed, 04 May 2016 15:22:05 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1axycp-0007bP-Hq
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1axycl-0005hX-Ui
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 May 2016 15:22:09 +0000
+	Wed, 04 May 2016 15:22:05 +0000
 In-Reply-To: <1462375188-6493-1-git-send-email-chao@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -33,41 +33,48 @@ Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-Restructure struct seg_entry to eliminate holes in it, after that,
-in 32-bits machine, it reduces size from 32 bytes to 24 bytes; in
-64-bits machine, it reduces size from 56 bytes to 40 bytes.
+Reuse get_extent_info for readability.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.h | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/f2fs/extent_cache.c | 3 +--
+ fs/f2fs/f2fs.h         | 8 ++++----
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 975c33d..7a756ff 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -158,16 +158,17 @@ struct victim_sel_policy {
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index c859bb0..5bfcdb9 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -196,8 +196,7 @@ bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext)
+ 	if (!i_ext || !i_ext->len)
+ 		return false;
+ 
+-	set_extent_info(&ei, le32_to_cpu(i_ext->fofs),
+-		le32_to_cpu(i_ext->blk), le32_to_cpu(i_ext->len));
++	get_extent_info(&ei, i_ext);
+ 
+ 	write_lock(&et->lock);
+ 	if (atomic_read(&et->node_cnt))
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a87625f..99c593f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -417,11 +417,11 @@ struct f2fs_inode_info {
  };
  
- struct seg_entry {
--	unsigned short valid_blocks;	/* # of valid blocks */
-+	unsigned int type:6;		/* segment type like CURSEG_XXX_TYPE */
-+	unsigned int valid_blocks:10;	/* # of valid blocks */
-+	unsigned int ckpt_valid_blocks:10;	/* # of valid blocks last cp */
-+	unsigned int padding:6;		/* padding */
- 	unsigned char *cur_valid_map;	/* validity bitmap of blocks */
- 	/*
- 	 * # of valid blocks and the validity bitmap stored in the the last
- 	 * checkpoint pack. This information is used by the SSR mode.
- 	 */
--	unsigned short ckpt_valid_blocks;
--	unsigned char *ckpt_valid_map;
-+	unsigned char *ckpt_valid_map;	/* validity bitmap of blocks last cp */
- 	unsigned char *discard_map;
--	unsigned char type;		/* segment type like CURSEG_XXX_TYPE */
- 	unsigned long long mtime;	/* modification time of the segment */
- };
+ static inline void get_extent_info(struct extent_info *ext,
+-					struct f2fs_extent i_ext)
++					struct f2fs_extent *i_ext)
+ {
+-	ext->fofs = le32_to_cpu(i_ext.fofs);
+-	ext->blk = le32_to_cpu(i_ext.blk);
+-	ext->len = le32_to_cpu(i_ext.len);
++	ext->fofs = le32_to_cpu(i_ext->fofs);
++	ext->blk = le32_to_cpu(i_ext->blk);
++	ext->len = le32_to_cpu(i_ext->len);
+ }
  
+ static inline void set_raw_extent(struct extent_info *ext,
 -- 
 2.7.2
 
