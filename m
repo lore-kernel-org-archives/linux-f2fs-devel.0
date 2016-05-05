@@ -1,154 +1,103 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 11/11] f2fs: retry to truncate blocks in
- -ENOMEM case
-Date: Wed, 4 May 2016 19:59:15 -0700
-Message-ID: <20160505025915.GA72618@jaegeuk.gateway>
-References: <1462299708-67906-1-git-send-email-jaegeuk@kernel.org>
- <1462299708-67906-11-git-send-email-jaegeuk@kernel.org>
- <572AA92F.8090802@huawei.com>
+Subject: Re: Kernel panic in F2FS mount on NVMe SSD.
+Date: Wed, 4 May 2016 20:48:15 -0700
+Message-ID: <20160505034815.GA73673@jaegeuk.gateway>
+References: <D87A37E7A4AA544D853031D9A919C70B168FC5E3@avsrvexchmbx2.microsemi.net>
+	<20160505000958.GA72128@jaegeuk.gateway>
+	<D87A37E7A4AA544D853031D9A919C70B168FC904@avsrvexchmbx2.microsemi.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ayAH3-0007OP-AV
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 May 2016 03:48:25 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ayAH2-0005JU-3y
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 05 May 2016 03:48:25 +0000
 Content-Disposition: inline
-In-Reply-To: <572AA92F.8090802@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Hou Pengyang <houpengyang@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, wangbintian 00221568 <bintian.wang@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <D87A37E7A4AA544D853031D9A919C70B168FC904@avsrvexchmbx2.microsemi.net>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Stephen Bates <stephen.bates@microsemi.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi,
-
-On Thu, May 05, 2016 at 10:00:15AM +0800, Hou Pengyang wrote:
-> On 2016/5/4 2:21, Jaegeuk Kim wrote:
-> >This patch modifies to retry truncating node blocks in -ENOMEM case.
-> >
-> Hi, Kim. in this patch, I think there is NO chance to retry for -ENOMEM.
+On Thu, May 05, 2016 at 02:35:42AM +0000, Stephen Bates wrote:
+> > Hi Stephen,
+> > 
+> > On Wed, May 04, 2016 at 10:47:10PM +0000, Stephen Bates wrote:
+> > > Hi
+> > >
+> > > I have been experimenting with putting F2FS onto a NVMe block device. I
+> > have been hitting a kernel panic on mount and was wondering if anyone on
+> > the list had any ideas what might be causing this. I formatted the NVMe block
+> > device using the f2fs-tools version 1.2.0 with default format settings.  This is
+> > Ubuntu 14.04 running v2.6-rc6 (though I see a similar problem on older
+> > kernels).
+> > 
+> > I think f2fs-tools 1.2.0 is pretty old, since there've made a lot of bug fixes till
+> > 1.6.1 so far.
+> > 
+> > One suspicious thing like this.
+> > 
+> > commit 092e3d9da37796daf439e94141c57886d6fc6e50 "mkfs.f2fs: large
+> > volume support"
+> > 
+> > So could you build the latest one from here?
+> > http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git
 > 
-> This is because if exist_written_data returns false, we can confirm that
-> this inode has been released from orphan radix-tree:
-> f2fs_evict_inode
->  ---> remove_inode_page
->     ---> truncate_node
->         ---> remove_orphan_inode
-> On this condition, err is 0, So it won't enter:
-> if (err && err != -ENOENT)
-> {
->     ...
-> }
-> sequentially, there is no chance to truncate node blocks again.
-> I miss something else?
+> Yes that fixed the mount panic issue, thanks!
+> 
+> > 
+> > And, do you mean kernel v4.6-rc6?
+> 
+> Yes ;-).
+> 
+> > 
+> > Thanks,
+> > 
+> 
+> One thing I did notice is that fallocate() seems slow (5-6 GB/s) compared to other file systems for a 3TiB fallocate() [ext4 performs the same operation in under a second on my system)]. Is this typical/expected for F2FS? Could it be because I have the IO_TRACE and/or _SECURITY set in .config?
 
-When I initially tested fault injection, I could hit that before.
-But, now I can't hit this again. :(
-It seems it was gone while I updated the error flow before.
-Agreed with you, and let me take your change.
+Which fallocate did you test among expand, punch_hole, or something else?
+Let me check that especially.
+Actually, I have not tested its speed considerably, but more focused on
+functionality and stability.
 
-BTW, I even suspect whether this leaking condition happens or not.
-If f2fs_evict_inode deals with inode deletion, that inode should be an orphan
-one. So, we don't need to consider that condition actually.
-
-So, I wrote this patch as well.
-I started stress tests again. :)
+If you're trying to measure FS performance, please turn off:
+- most of Lock Debugging configs (e.g., mutex, spinlock and rw-lock)
+- CONFIG_F2FS_CHECK_FS
+- CONFIG_F2FS_IO_TRACE
 
 Thanks,
 
->From 8c1e4e5ca23410b8f55bbc75d64f75416d486739 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Wed, 4 May 2016 19:48:53 -0700
-Subject: [PATCH] f2fs: don't worry about inode leak in evict_inode
+> 
+> CONFIG_F2FS_FS=m
+> CONFIG_F2FS_STAT_FS=y
+> CONFIG_F2FS_FS_XATTR=y
+> CONFIG_F2FS_FS_POSIX_ACL=y
+> CONFIG_F2FS_FS_SECURITY=y
+> CONFIG_F2FS_CHECK_FS=y
+> # CONFIG_F2FS_FS_ENCRYPTION is not set
+> CONFIG_F2FS_IO_TRACE=y
+> 
+> Stephen
 
-Even if an inode failed to release its blocks, it should be kept in an orphan
-inode list, so it will be released later.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/inode.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
-
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index baf3a2a..689d691 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -377,20 +377,8 @@ no_delete:
- 		alloc_nid_failed(sbi, inode->i_ino);
- 		clear_inode_flag(fi, FI_FREE_NID);
- 	}
--
--	if (err && err != -ENOENT) {
--		if (!exist_written_data(sbi, inode->i_ino, ORPHAN_INO)) {
--			/*
--			 * get here because we failed to release resource
--			 * of inode previously, reminder our user to run fsck
--			 * for fixing.
--			 */
--			set_sbi_flag(sbi, SBI_NEED_FSCK);
--			f2fs_msg(sbi->sb, KERN_WARNING,
--				"inode (ino:%lu) resource leak, run fsck "
--				"to fix this issue!", inode->i_ino);
--		}
--	}
-+	f2fs_bug_on(sbi, err &&
-+		!exist_written_data(sbi, inode->i_ino, ORPHAN_INO));
- out_clear:
- 	fscrypt_put_encryption_info(inode, NULL);
- 	clear_inode(inode);
--- 
-2.6.3
-
-> 
-> How about this patch?
-> 
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -345,6 +345,7 @@ void f2fs_evict_inode(struct inode *inode)
->         set_inode_flag(fi, FI_NO_ALLOC);
->         i_size_write(inode, 0);
-> 
-> +retry:
->         if (F2FS_HAS_BLOCKS(inode))
->                 err = f2fs_truncate(inode, true);
-> 
-> @@ -354,6 +355,11 @@ void f2fs_evict_inode(struct inode *inode)
->                 f2fs_unlock_op(sbi);
->         }
-> 
-> +       if (err == -ENOMEM) {
-> +               err = 0;
-> +               goto retry;
-> +       }
-> +
->         sb_end_intwrite(inode->i_sb);
->  no_delete:
->         stat_dec_inline_xattr(inode);
-> >Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >---
-> >  fs/f2fs/inode.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >
-> >diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> >index f4ac851..5cccd7a 100644
-> >--- a/fs/f2fs/inode.c
-> >+++ b/fs/f2fs/inode.c
-> >@@ -344,7 +344,7 @@ void f2fs_evict_inode(struct inode *inode)
-> >  	sb_start_intwrite(inode->i_sb);
-> >  	set_inode_flag(fi, FI_NO_ALLOC);
-> >  	i_size_write(inode, 0);
-> >-
-> >+retry:
-> >  	if (F2FS_HAS_BLOCKS(inode))
-> >  		err = f2fs_truncate(inode, true);
-> >
-> >@@ -374,6 +374,11 @@ no_delete:
-> >
-> >  	if (err && err != -ENOENT) {
-> >  		if (!exist_written_data(sbi, inode->i_ino, ORPHAN_INO)) {
-> >+			/* give more chances, if ENOMEM case */
-> >+			if (err == -ENOMEM) {
-> >+				err = 0;
-> >+				goto retry;
-> >+			}
-> >  			/*
-> >  			 * get here because we failed to release resource
-> >  			 * of inode previously, reminder our user to run fsck
-> >
-> 
+------------------------------------------------------------------------------
+Find and fix application performance issues faster with Applications Manager
+Applications Manager provides deep performance insights into multiple tiers of
+your business applications. It resolves application problems quickly and
+reduces your MTTR. Get your free trial!
+https://ad.doubleclick.net/ddm/clk/302982198;130105516;z
