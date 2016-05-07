@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: fix inode cache leak
-Date: Sat, 7 May 2016 16:15:05 +0800
-Message-ID: <20160507081505.96424-1-yuchao0@huawei.com>
+Subject: [PATCH] f2fs: introduce f2fs_reserve_blocks to speedup fallocate
+Date: Sat, 7 May 2016 16:16:34 +0800
+Message-ID: <20160507081634.96677-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -10,289 +10,229 @@ To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When testing f2fs with inline_dentry option, generic/342 reports:
-VFS: Busy inodes after unmount of dm-0. Self-destruct in 5 seconds.  Have a nice day...
+Preallocation operation in ->fallocate seems quite slow, since for all
+new preallocated blocks, f2fs will update them one by one in direct nodes,
 
-After rmmod f2fs module, kenrel shows following dmesg:
- =============================================================================
- BUG f2fs_inode_cache (Tainted: G           O   ): Objects remaining in f2fs_inode_cache on __kmem_cache_shutdown()
- -----------------------------------------------------------------------------
+This patch introduces f2fs_reserve_blocks to make all preallocated blocks
+belongs to one direct node updating in batch, so it can save a lot of
+cpu cycle.
 
- Disabling lock debugging due to kernel taint
- INFO: Slab 0xf51ca0e0 objects=22 used=1 fp=0xd1e6fc60 flags=0x40004080
- CPU: 3 PID: 7455 Comm: rmmod Tainted: G    B      O    4.6.0-rc4+ #16
- Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-  00000086 00000086 d062fe18 c13a83a0 f51ca0e0 d062fe38 d062fea4 c11c7276
-  c1981040 f51ca0e0 00000016 00000001 d1e6fc60 40004080 656a624f 20737463
-  616d6572 6e696e69 6e692067 66326620 6e695f73 5f65646f 68636163 6e6f2065
- Call Trace:
-  [<c13a83a0>] dump_stack+0x5f/0x8f
-  [<c11c7276>] slab_err+0x76/0x80
-  [<c11cbfc0>] ? __kmem_cache_shutdown+0x100/0x2f0
-  [<c11cbfc0>] ? __kmem_cache_shutdown+0x100/0x2f0
-  [<c11cbfe5>] __kmem_cache_shutdown+0x125/0x2f0
-  [<c1198a38>] kmem_cache_destroy+0x158/0x1f0
-  [<c176b43d>] ? mutex_unlock+0xd/0x10
-  [<f8f15aa3>] exit_f2fs_fs+0x4b/0x5a8 [f2fs]
-  [<c10f596c>] SyS_delete_module+0x16c/0x1d0
-  [<c1001b10>] ? do_fast_syscall_32+0x30/0x1c0
-  [<c13c59bf>] ? __this_cpu_preempt_check+0xf/0x20
-  [<c10afa7d>] ? trace_hardirqs_on_caller+0xdd/0x210
-  [<c10ad50b>] ? trace_hardirqs_off+0xb/0x10
-  [<c1001b81>] do_fast_syscall_32+0xa1/0x1c0
-  [<c176d888>] sysenter_past_esp+0x45/0x74
- INFO: Object 0xd1e6d9e0 @offset=6624
- kmem_cache_destroy f2fs_inode_cache: Slab cache still has objects
- CPU: 3 PID: 7455 Comm: rmmod Tainted: G    B      O    4.6.0-rc4+ #16
- Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-  00000286 00000286 d062fef4 c13a83a0 f174b000 d062ff14 d062ff28 c1198ac7
-  c197fe18 f3c5b980 d062ff20 000d04f2 d062ff0c d062ff0c d062ff14 d062ff14
-  f8f20dc0 fffffff5 d062e000 d062ff30 f8f15aa3 d062ff7c c10f596c 73663266
- Call Trace:
-  [<c13a83a0>] dump_stack+0x5f/0x8f
-  [<c1198ac7>] kmem_cache_destroy+0x1e7/0x1f0
-  [<f8f15aa3>] exit_f2fs_fs+0x4b/0x5a8 [f2fs]
-  [<c10f596c>] SyS_delete_module+0x16c/0x1d0
-  [<c1001b10>] ? do_fast_syscall_32+0x30/0x1c0
-  [<c13c59bf>] ? __this_cpu_preempt_check+0xf/0x20
-  [<c10afa7d>] ? trace_hardirqs_on_caller+0xdd/0x210
-  [<c10ad50b>] ? trace_hardirqs_off+0xb/0x10
-  [<c1001b81>] do_fast_syscall_32+0xa1/0x1c0
-  [<c176d888>] sysenter_past_esp+0x45/0x74
+In virtual machine, with 32g loop device:
 
-The reason is: in recovery flow, we use delayed iput mechanism for directory
-which has recovered dentry block. It means the reference of inode will be
-held until last dirty dentry page being writebacked.
+1. touch file
+2. time fallocate -l 24G file
 
-But when we mount f2fs with inline_dentry option, during recovery, dirent
-may only be recovered into dir inode page rather than dentry page, so there
-are no chance for us to release inode reference in ->writepage when
-writebacking last dentry page.
+Before:
+real	0m3.881s
+user	0m0.000s
+sys	0m3.881s
 
-We can call paired iget/iput explicityly for inline_dentry case, but for
-non-inline_dentry case, iput will call writeback_single_inode to write all
-data pages synchronously, but during recovery, ->writepages of f2fs skips
-writing all pages, result in losing dirent.
-
-This patch fixes this issue by obsoleting old mechanism, and introduce a
-new dir_list to hold all directory inodes which has recovered datas until
-finishing recovery.
+After:
+real	0m0.054s
+user	0m0.000s
+sys	0m0.041s
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 16 ---------------
- fs/f2fs/f2fs.h       |  2 --
- fs/f2fs/recovery.c   | 56 +++++++++++++++++++++++++++++-----------------------
- 3 files changed, 31 insertions(+), 43 deletions(-)
+ fs/f2fs/data.c              | 87 ++++++++++++++++++++++++++++++++++++++-------
+ fs/f2fs/f2fs.h              |  1 +
+ fs/f2fs/file.c              |  5 +--
+ include/trace/events/f2fs.h | 12 ++++---
+ 4 files changed, 86 insertions(+), 19 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index bf040b5..dc7bc72 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -786,19 +786,9 @@ void update_dirty_page(struct inode *inode, struct page *page)
- 	f2fs_trace_pid(page);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 96b0353..a2e7629 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -278,6 +278,16 @@ alloc_new:
+ 	trace_f2fs_submit_page_mbio(fio->page, fio);
  }
  
--void add_dirty_dir_inode(struct inode *inode)
--{
--	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--
--	spin_lock(&sbi->inode_lock[DIR_INODE]);
--	__add_dirty_inode(inode, DIR_INODE);
--	spin_unlock(&sbi->inode_lock[DIR_INODE]);
--}
--
- void remove_dirty_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	enum inode_type type = S_ISDIR(inode->i_mode) ? DIR_INODE : FILE_INODE;
- 
- 	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
-@@ -808,12 +798,6 @@ void remove_dirty_inode(struct inode *inode)
- 	spin_lock(&sbi->inode_lock[type]);
- 	__remove_dirty_inode(inode, type);
- 	spin_unlock(&sbi->inode_lock[type]);
--
--	/* Only from the recovery routine */
--	if (is_inode_flag_set(fi, FI_DELAY_IPUT)) {
--		clear_inode_flag(fi, FI_DELAY_IPUT);
--		iput(inode);
--	}
- }
- 
- int sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6a48241..38aa75c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1435,7 +1435,6 @@ enum {
- 	FI_NO_ALLOC,		/* should not allocate any blocks */
- 	FI_FREE_NID,		/* free allocated nide */
- 	FI_UPDATE_DIR,		/* should update inode block for consistency */
--	FI_DELAY_IPUT,		/* used for the recovery */
- 	FI_NO_EXTENT,		/* not to use the extent cache */
- 	FI_INLINE_XATTR,	/* used for inline xattr */
- 	FI_INLINE_DATA,		/* used for inline data*/
-@@ -1866,7 +1865,6 @@ void remove_orphan_inode(struct f2fs_sb_info *, nid_t);
- int recover_orphan_inodes(struct f2fs_sb_info *);
- int get_valid_checkpoint(struct f2fs_sb_info *);
- void update_dirty_page(struct inode *, struct page *);
--void add_dirty_dir_inode(struct inode *);
- void remove_dirty_inode(struct inode *);
- int sync_dirty_inodes(struct f2fs_sb_info *, enum inode_type);
- int write_checkpoint(struct f2fs_sb_info *, struct cp_control *);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 58275a2..6901a54 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -89,7 +89,8 @@ static void del_fsync_inode(struct fsync_inode_entry *entry)
- 	kmem_cache_free(fsync_entry_slab, entry);
- }
- 
--static int recover_dentry(struct inode *inode, struct page *ipage)
-+static int recover_dentry(struct inode *inode, struct page *ipage,
-+						struct list_head *dir_list)
- {
- 	struct f2fs_inode *raw_inode = F2FS_INODE(ipage);
- 	nid_t pino = le32_to_cpu(raw_inode->i_pino);
-@@ -97,18 +98,29 @@ static int recover_dentry(struct inode *inode, struct page *ipage)
- 	struct qstr name;
- 	struct page *page;
- 	struct inode *dir, *einode;
-+	struct fsync_inode_entry *entry;
- 	int err = 0;
- 
--	dir = f2fs_iget(inode->i_sb, pino);
--	if (IS_ERR(dir)) {
--		err = PTR_ERR(dir);
--		goto out;
-+	entry = get_fsync_inode(dir_list, pino);
-+	if (!entry) {
-+		dir = f2fs_iget(inode->i_sb, pino);
-+		if (IS_ERR(dir)) {
-+			err = PTR_ERR(dir);
-+			goto out;
-+		}
++void __set_data_blkaddr(struct dnode_of_data *dn)
++{
++	struct f2fs_node *rn = F2FS_NODE(dn->node_page);
++	__le32 *addr_array;
 +
-+		entry = add_fsync_inode(dir_list, dir);
-+		if (!entry) {
-+			err = -ENOMEM;
-+			iput(dir);
-+			goto out;
-+		}
- 	}
- 
--	if (file_enc_name(inode)) {
--		iput(dir);
-+	dir = entry->inode;
++	/* Get physical address of data block */
++	addr_array = blkaddr_in_node(rn);
++	addr_array[dn->ofs_in_node] = cpu_to_le32(dn->data_blkaddr);
++}
 +
-+	if (file_enc_name(inode))
- 		return 0;
--	}
- 
- 	name.len = le32_to_cpu(raw_inode->i_namelen);
- 	name.name = raw_inode->i_name;
-@@ -116,7 +128,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage)
- 	if (unlikely(name.len > F2FS_NAME_LEN)) {
- 		WARN_ON(1);
- 		err = -ENAMETOOLONG;
--		goto out_err;
-+		goto out;
- 	}
- retry:
- 	de = f2fs_find_entry(dir, &name, &page);
-@@ -142,23 +154,12 @@ retry:
- 		goto retry;
- 	}
- 	err = __f2fs_add_link(dir, &name, inode, inode->i_ino, inode->i_mode);
--	if (err)
--		goto out_err;
+ /*
+  * Lock ordering for the change of data block address:
+  * ->data_page
+@@ -286,19 +296,10 @@ alloc_new:
+  */
+ void set_data_blkaddr(struct dnode_of_data *dn)
+ {
+-	struct f2fs_node *rn;
+-	__le32 *addr_array;
+-	struct page *node_page = dn->node_page;
+-	unsigned int ofs_in_node = dn->ofs_in_node;
 -
--	if (is_inode_flag_set(F2FS_I(dir), FI_DELAY_IPUT)) {
--		iput(dir);
--	} else {
--		add_dirty_dir_inode(dir);
--		set_inode_flag(F2FS_I(dir), FI_DELAY_IPUT);
--	}
+-	f2fs_wait_on_page_writeback(node_page, NODE, true);
++	f2fs_wait_on_page_writeback(dn->node_page, NODE, true);
  
- 	goto out;
+-	rn = F2FS_NODE(node_page);
+-
+-	/* Get physical address of data block */
+-	addr_array = blkaddr_in_node(rn);
+-	addr_array[ofs_in_node] = cpu_to_le32(dn->data_blkaddr);
+-	if (set_page_dirty(node_page))
++	__set_data_blkaddr(dn);
++	if (set_page_dirty(dn->node_page))
+ 		dn->node_changed = true;
+ }
  
- out_unmap_put:
- 	f2fs_dentry_kunmap(dir, page);
- 	f2fs_put_page(page, 0);
--out_err:
--	iput(dir);
- out:
- 	f2fs_msg(inode->i_sb, KERN_NOTICE,
- 			"%s: ino = %x, name = %s, dir = %lx, err = %d",
-@@ -503,7 +504,8 @@ out:
+@@ -318,7 +319,7 @@ int reserve_new_block(struct dnode_of_data *dn)
+ 	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
+ 		return -ENOSPC;
+ 
+-	trace_f2fs_reserve_new_block(dn->inode, dn->nid, dn->ofs_in_node);
++	trace_f2fs_reserve_new_block(dn->inode, dn->nid, dn->ofs_in_node, 1);
+ 
+ 	dn->data_blkaddr = NEW_ADDR;
+ 	set_data_blkaddr(dn);
+@@ -343,6 +344,66 @@ int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index)
  	return err;
  }
  
--static int recover_data(struct f2fs_sb_info *sbi, struct list_head *head)
-+static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
-+						struct list_head *dir_list)
- {
- 	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
- 	struct curseg_info *curseg;
-@@ -530,7 +532,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *head)
- 			break;
- 		}
- 
--		entry = get_fsync_inode(head, ino_of_node(page));
-+		entry = get_fsync_inode(inode_list, ino_of_node(page));
- 		if (!entry)
- 			goto next;
- 		/*
-@@ -541,7 +543,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *head)
- 		if (IS_INODE(page))
- 			recover_inode(entry->inode, page);
- 		if (entry->last_dentry == blkaddr) {
--			err = recover_dentry(entry->inode, page);
-+			err = recover_dentry(entry->inode, page, dir_list);
- 			if (err) {
- 				f2fs_put_page(page, 1);
- 				break;
-@@ -569,6 +571,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- {
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
- 	struct list_head inode_list;
-+	struct list_head dir_list;
- 	block_t blkaddr;
- 	int err;
- 	int ret = 0;
-@@ -580,6 +583,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 		return -ENOMEM;
- 
- 	INIT_LIST_HEAD(&inode_list);
-+	INIT_LIST_HEAD(&dir_list);
- 
- 	/* prevent checkpoint */
- 	mutex_lock(&sbi->cp_mutex);
-@@ -599,12 +603,11 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
- 	need_writecp = true;
- 
- 	/* step #2: recover data */
--	err = recover_data(sbi, &inode_list);
-+	err = recover_data(sbi, &inode_list, &dir_list);
- 	if (!err)
- 		f2fs_bug_on(sbi, !list_empty(&inode_list));
- out:
- 	destroy_fsync_dnodes(&inode_list);
--	kmem_cache_destroy(fsync_entry_slab);
- 
- 	/* truncate meta pages to be used by the recovery */
- 	truncate_inode_pages_range(META_MAPPING(sbi),
-@@ -642,5 +645,8 @@ out:
- 	} else {
- 		mutex_unlock(&sbi->cp_mutex);
- 	}
++int f2fs_reserve_blocks(struct dnode_of_data *dn, pgoff_t *start, pgoff_t end)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
++	pgoff_t end_offset, index = *start;
++	unsigned int max_blocks, count = 0, i, ofs_in_node;
++	int err;
 +
-+	destroy_fsync_dnodes(&dir_list);
-+	kmem_cache_destroy(fsync_entry_slab);
- 	return ret ? ret: err;
- }
++	err = get_dnode_of_data(dn, index, ALLOC_NODE);
++	if (err)
++		return err;
++
++	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC))) {
++		err = -EPERM;
++		goto out;
++	}
++
++	end_offset = ADDRS_PER_PAGE(dn->node_page, dn->inode);
++	max_blocks = min(end_offset - dn->ofs_in_node, end - index + 1);
++	ofs_in_node = dn->ofs_in_node;
++
++	for (i = 0; i < max_blocks; i++, ofs_in_node++) {
++		if (datablock_addr(dn->node_page, ofs_in_node) == NULL_ADDR)
++			count++;
++	}
++
++	if (!count)
++		goto out_update;
++
++	if (unlikely(!inc_valid_block_count(sbi, dn->inode, count))) {
++		err = -ENOSPC;
++		goto out;
++	}
++
++	trace_f2fs_reserve_new_block(dn->inode, dn->nid,
++						dn->ofs_in_node, count);
++
++	f2fs_wait_on_page_writeback(dn->node_page, NODE, true);
++
++	for (i = 0; i < max_blocks; i++, dn->ofs_in_node++) {
++		dn->data_blkaddr =
++			datablock_addr(dn->node_page, dn->ofs_in_node);
++
++		if (dn->data_blkaddr == NULL_ADDR) {
++			dn->data_blkaddr = NEW_ADDR;
++			__set_data_blkaddr(dn);
++		}
++	}
++
++	if (set_page_dirty(dn->node_page))
++		dn->node_changed = true;
++
++	mark_inode_dirty(dn->inode);
++	sync_inode_page(dn);
++out_update:
++	*start = index + max_blocks - 1;
++out:
++	f2fs_put_dnode(dn);
++	return err;
++}
++
+ int f2fs_get_block(struct dnode_of_data *dn, pgoff_t index)
+ {
+ 	struct extent_info ei;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 75b0084..5654d0e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1969,6 +1969,7 @@ int reserve_new_block(struct dnode_of_data *);
+ int f2fs_get_block(struct dnode_of_data *, pgoff_t);
+ ssize_t f2fs_preallocate_blocks(struct kiocb *, struct iov_iter *);
+ int f2fs_reserve_block(struct dnode_of_data *, pgoff_t);
++int f2fs_reserve_blocks(struct dnode_of_data *, pgoff_t *, pgoff_t);
+ struct page *get_read_data_page(struct inode *, pgoff_t, int, bool);
+ struct page *find_data_page(struct inode *, pgoff_t);
+ struct page *get_lock_data_page(struct inode *, pgoff_t, bool);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 00af85f..071fe2b 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1226,7 +1226,8 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
+ 			goto noalloc;
+ 
+ 		set_new_dnode(&dn, inode, NULL, NULL, 0);
+-		ret = f2fs_reserve_block(&dn, index);
++		ret = f2fs_reserve_blocks(&dn, &index,
++					off_end ? pg_end : pg_end - 1);
+ 		if (ret)
+ 			break;
+ noalloc:
+@@ -1238,7 +1239,7 @@ noalloc:
+ 			new_size = ((loff_t)index << PAGE_SHIFT) +
+ 								off_end;
+ 		else
+-			new_size += PAGE_SIZE;
++			new_size = (loff_t)index << PAGE_SHIFT;
+ 	}
+ 
+ 	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 0f56584..8b8dd9e 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -696,26 +696,30 @@ TRACE_EVENT(f2fs_direct_IO_exit,
+ 
+ TRACE_EVENT(f2fs_reserve_new_block,
+ 
+-	TP_PROTO(struct inode *inode, nid_t nid, unsigned int ofs_in_node),
++	TP_PROTO(struct inode *inode, nid_t nid, unsigned int ofs_in_node,
++						unsigned int count),
+ 
+-	TP_ARGS(inode, nid, ofs_in_node),
++	TP_ARGS(inode, nid, ofs_in_node, count),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(dev_t,	dev)
+ 		__field(nid_t, nid)
+ 		__field(unsigned int, ofs_in_node)
++		__field(unsigned int, count)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->dev	= inode->i_sb->s_dev;
+ 		__entry->nid	= nid;
+ 		__entry->ofs_in_node = ofs_in_node;
++		__entry->count = count;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), nid = %u, ofs_in_node = %u",
++	TP_printk("dev = (%d,%d), nid = %u, ofs_in_node = %u, count = %u",
+ 		show_dev(__entry),
+ 		(unsigned int)__entry->nid,
+-		__entry->ofs_in_node)
++		__entry->ofs_in_node,
++		__entry->count)
+ );
+ 
+ DECLARE_EVENT_CLASS(f2fs__submit_page_bio,
 -- 
 2.8.2.311.gee88674
