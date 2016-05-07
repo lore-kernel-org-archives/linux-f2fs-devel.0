@@ -1,128 +1,298 @@
-From: NeilBrown <mr@neil.brown.name>
-Subject: Re: [PATCH 0/2] scop GFP_NOFS api
-Date: Fri, 06 May 2016 13:20:38 +1000
-Message-ID: <87poszvpmh.fsf@notabene.neil.brown.name>
-References: <1461671772-1269-1-git-send-email-mhocko@kernel.org> <8737q5ugcx.fsf@notabene.neil.brown.name> <20160430001138.GO26977@dastard> <87r3dmu4cf.fsf@notabene.neil.brown.name> <20160504010004.GX26977@dastard>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: fix inode cache leak
+Date: Sat, 7 May 2016 16:15:05 +0800
+Message-ID: <20160507081505.96424-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160504010004.GX26977@dastard>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, xfs@oss.sgi.com, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
---=-=-=
-Content-Type: text/plain
+When testing f2fs with inline_dentry option, generic/342 reports:
+VFS: Busy inodes after unmount of dm-0. Self-destruct in 5 seconds.  Have a nice day...
 
-On Wed, May 04 2016, Dave Chinner wrote:
+After rmmod f2fs module, kenrel shows following dmesg:
+ =============================================================================
+ BUG f2fs_inode_cache (Tainted: G           O   ): Objects remaining in f2fs_inode_cache on __kmem_cache_shutdown()
+ -----------------------------------------------------------------------------
 
-> FWIW, I don't think making evict() non-blocking is going to be worth
-> the effort here. Making memory reclaim wait on a priority ordered
-> queue while asynchronous reclaim threads run reclaim as efficiently
-> as possible and wakes waiters as it frees the memory the waiters
-> require is a model that has been proven to work in the past, and
-> this appears to me to be the model you are advocating for. I agree
-> that direct reclaim needs to die and be replaced with something
-> entirely more predictable, controllable and less prone to deadlock
-> contexts - you just need to convince the mm developers that it will
-> perform and scale better than what we have now.
->
-> In the mean time, having a slightly more fine grained GFP_NOFS
-> equivalent context will allow us to avoid the worst of the current
-> GFP_NOFS problems with very little extra code.
+ Disabling lock debugging due to kernel taint
+ INFO: Slab 0xf51ca0e0 objects=22 used=1 fp=0xd1e6fc60 flags=0x40004080
+ CPU: 3 PID: 7455 Comm: rmmod Tainted: G    B      O    4.6.0-rc4+ #16
+ Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+  00000086 00000086 d062fe18 c13a83a0 f51ca0e0 d062fe38 d062fea4 c11c7276
+  c1981040 f51ca0e0 00000016 00000001 d1e6fc60 40004080 656a624f 20737463
+  616d6572 6e696e69 6e692067 66326620 6e695f73 5f65646f 68636163 6e6f2065
+ Call Trace:
+  [<c13a83a0>] dump_stack+0x5f/0x8f
+  [<c11c7276>] slab_err+0x76/0x80
+  [<c11cbfc0>] ? __kmem_cache_shutdown+0x100/0x2f0
+  [<c11cbfc0>] ? __kmem_cache_shutdown+0x100/0x2f0
+  [<c11cbfe5>] __kmem_cache_shutdown+0x125/0x2f0
+  [<c1198a38>] kmem_cache_destroy+0x158/0x1f0
+  [<c176b43d>] ? mutex_unlock+0xd/0x10
+  [<f8f15aa3>] exit_f2fs_fs+0x4b/0x5a8 [f2fs]
+  [<c10f596c>] SyS_delete_module+0x16c/0x1d0
+  [<c1001b10>] ? do_fast_syscall_32+0x30/0x1c0
+  [<c13c59bf>] ? __this_cpu_preempt_check+0xf/0x20
+  [<c10afa7d>] ? trace_hardirqs_on_caller+0xdd/0x210
+  [<c10ad50b>] ? trace_hardirqs_off+0xb/0x10
+  [<c1001b81>] do_fast_syscall_32+0xa1/0x1c0
+  [<c176d888>] sysenter_past_esp+0x45/0x74
+ INFO: Object 0xd1e6d9e0 @offset=6624
+ kmem_cache_destroy f2fs_inode_cache: Slab cache still has objects
+ CPU: 3 PID: 7455 Comm: rmmod Tainted: G    B      O    4.6.0-rc4+ #16
+ Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+  00000286 00000286 d062fef4 c13a83a0 f174b000 d062ff14 d062ff28 c1198ac7
+  c197fe18 f3c5b980 d062ff20 000d04f2 d062ff0c d062ff0c d062ff14 d062ff14
+  f8f20dc0 fffffff5 d062e000 d062ff30 f8f15aa3 d062ff7c c10f596c 73663266
+ Call Trace:
+  [<c13a83a0>] dump_stack+0x5f/0x8f
+  [<c1198ac7>] kmem_cache_destroy+0x1e7/0x1f0
+  [<f8f15aa3>] exit_f2fs_fs+0x4b/0x5a8 [f2fs]
+  [<c10f596c>] SyS_delete_module+0x16c/0x1d0
+  [<c1001b10>] ? do_fast_syscall_32+0x30/0x1c0
+  [<c13c59bf>] ? __this_cpu_preempt_check+0xf/0x20
+  [<c10afa7d>] ? trace_hardirqs_on_caller+0xdd/0x210
+  [<c10ad50b>] ? trace_hardirqs_off+0xb/0x10
+  [<c1001b81>] do_fast_syscall_32+0xa1/0x1c0
+  [<c176d888>] sysenter_past_esp+0x45/0x74
 
-You have painted two pictures here.  The first is an ideal which does
-look a lot like the sort of outcome I was aiming for, but is more than a
-small step away.
-The second is a band-aid which would take us in exactly the wrong
-direction.  It makes an interface which people apparently find hard to
-use (or easy to misused) - the setting of __GFP_FS - and makes it more
-complex.  Certainly it would be more powerful, but I think it would also
-be more misused.
+The reason is: in recovery flow, we use delayed iput mechanism for directory
+which has recovered dentry block. It means the reference of inode will be
+held until last dirty dentry page being writebacked.
 
-So I ask myself:  can we take some small steps towards 'A' and thereby
-enable at least the functionality enabled by 'B'?
+But when we mount f2fs with inline_dentry option, during recovery, dirent
+may only be recovered into dir inode page rather than dentry page, so there
+are no chance for us to release inode reference in ->writepage when
+writebacking last dentry page.
 
-A core design principle for me is to enable filesystems to take control
-of their own destiny.   They should have the information available to
-make the decisions they need to make, and the opportunity to carry them
-out.
+We can call paired iget/iput explicityly for inline_dentry case, but for
+non-inline_dentry case, iput will call writeback_single_inode to write all
+data pages synchronously, but during recovery, ->writepages of f2fs skips
+writing all pages, result in losing dirent.
 
-All the places where direct reclaim currently calls into filesystems
-carry the 'gfp' flags so the file system can decide what to do, with one
-exception: evict_inode.  So my first proposal would be to rectify that.
+This patch fixes this issue by obsoleting old mechanism, and introduce a
+new dir_list to hold all directory inodes which has recovered datas until
+finishing recovery.
 
- - redefine .nr_cached_objects and .free_cached_objects so that, if they
-   are defined, they are responsible for s_dentry_lru and s_inode_lru.
-   e.g. super_cache_count *either* calls ->nr_cached_objects *or* makes
-   two calls to list_lru_shrink_count.  This would require exporting
-   prune_dcache_sb and prune_icache_sb but otherwise should be a fairly
-   straight forward change.
-   If nr_cached_objects were defined, super_cache_scan would no longer
-   abort without __GFP_FS - that test would be left to the filesystem.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/checkpoint.c | 16 ---------------
+ fs/f2fs/f2fs.h       |  2 --
+ fs/f2fs/recovery.c   | 56 +++++++++++++++++++++++++++++-----------------------
+ 3 files changed, 31 insertions(+), 43 deletions(-)
 
- - Now any filesystem that wants to can stash it's super_block pointer
-   in current->journal_info while doing memory allocations, and abort
-   any reclaim attempts (release_page, shrinker, nr_cached_objects) if
-   and only if current->journal_info == "my superblock".  This can be
-   done without the core mm code knowing any more than it already does.
-
- - A more sophisticated filesystem might import much of the code for
-   prune_icache_sb() - either by copy/paste or by exporting some vfs
-   internals - and then store an inode pointer in current->journal_info
-   and only abort reclaim which touches that inode.
-
- - if a filesystem happens to know that it will never block in any of
-   these reclaim calls, it can always allow prune_dcache_sb to run, and
-   never needs to use GFP_NOFS.  I think NFS might be close to being
-   able to do this as it flushes everything on last-close.  But that is
-   something that NFS developers can care about (or not) quite
-   independently from mm people.
-
- - Maybe some fs developer will try to enable free_cached_objects to do
-   as much work as possible for every inode, but never deadlock.  It
-   could do its own fs-specfic deadlock detection, or could queue work
-   to a work queue and wait a limited time for it.  Or something.
-   If some filesystem developer comes up with something that works
-   really well, developers of other filesystems might copy it - or not
-   as they choose.
-
-Maybe ->journal_info isn't perfect for this.  It is currently only safe
-for reclaim code to compare it against a known value.  It is not safe to
-dereference it to see if it points to a known value.  That could possibly be
-cleaned up, or another task_struct field could be provided for
-filesystems to track their state.  Or do you find a task_struct field
-unacceptable and there is some reason and that an explicitly passed cookie
-is superior?
-
-My key point is that we shouldn't try to plumb some new abstraction
-through the MM code so there is a new pattern for all filesystems to
-follow.  Rather the mm/vfs should get out of the filesystems' way as much
-as possible and let them innovate independently.
-
-Thanks for your time,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJXLA2GAAoJEDnsnt1WYoG5pUcQALDLvi2Udu2IeOr36ntBOmuZ
-zb6PG2vaTNZFvqSTkhQ8Jjh5UIxvgcSnJPSpOIO9jEK85fou60TABkbta9gs5BlU
-zY3rqkZFtu1wccuHIxzSIOJ5bGXcuUXlvemo7z6CBuROIin1Dja0V4adhBYF6PFy
-qBrGyEPU6QpIsqnx8ur9SBtljDjBiAhwo1rXlZhKlbGMxKiNXPxLTmrVGLLuT+xt
-XYlatMoQRbs2/hV4C7jvaKtHFToTsNLTcq1nun7WeQEkvI0ld2zi1TAJu1sLxQSv
-LbZEBp+uFPT3OeTLS3ed6WoXoNcjIs0R+yXvcFP2pYe7xu6c5ig0B6a2bM/+9/t4
-UmHHya9WMF+zL3H4Zd/F8AlTNGIPe2xNKe+2SCEAOvtfJjytdvCjQtUy8QoxIBEP
-MtvPU8JNxnhtnLPhPHD4LigTvF2uihqXS2PUc7eTrgoWjxFpUE3vb4zrQNA+C0D9
-12ItV4xhSOFmvIQJD3j27seYbz9q00Rnb/mXxG9hWhNybEXGkkLqiy4Eh0lLfvPG
-VhGLI/0YDU0dQESZrdVC9ECULcyiEY8G7sHFMhCMH9hCXLaf5ibomqLRTry1bLk9
-preYi0U2222hV/pZjSs0xA9BAeSyXQLeA0aN9u9A1SilfoMVq/id0ebbjqBCDjsP
-ilYbam7CA1GetVuDHi82
-=thI5
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index bf040b5..dc7bc72 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -786,19 +786,9 @@ void update_dirty_page(struct inode *inode, struct page *page)
+ 	f2fs_trace_pid(page);
+ }
+ 
+-void add_dirty_dir_inode(struct inode *inode)
+-{
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-
+-	spin_lock(&sbi->inode_lock[DIR_INODE]);
+-	__add_dirty_inode(inode, DIR_INODE);
+-	spin_unlock(&sbi->inode_lock[DIR_INODE]);
+-}
+-
+ void remove_dirty_inode(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct f2fs_inode_info *fi = F2FS_I(inode);
+ 	enum inode_type type = S_ISDIR(inode->i_mode) ? DIR_INODE : FILE_INODE;
+ 
+ 	if (!S_ISDIR(inode->i_mode) && !S_ISREG(inode->i_mode) &&
+@@ -808,12 +798,6 @@ void remove_dirty_inode(struct inode *inode)
+ 	spin_lock(&sbi->inode_lock[type]);
+ 	__remove_dirty_inode(inode, type);
+ 	spin_unlock(&sbi->inode_lock[type]);
+-
+-	/* Only from the recovery routine */
+-	if (is_inode_flag_set(fi, FI_DELAY_IPUT)) {
+-		clear_inode_flag(fi, FI_DELAY_IPUT);
+-		iput(inode);
+-	}
+ }
+ 
+ int sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6a48241..38aa75c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1435,7 +1435,6 @@ enum {
+ 	FI_NO_ALLOC,		/* should not allocate any blocks */
+ 	FI_FREE_NID,		/* free allocated nide */
+ 	FI_UPDATE_DIR,		/* should update inode block for consistency */
+-	FI_DELAY_IPUT,		/* used for the recovery */
+ 	FI_NO_EXTENT,		/* not to use the extent cache */
+ 	FI_INLINE_XATTR,	/* used for inline xattr */
+ 	FI_INLINE_DATA,		/* used for inline data*/
+@@ -1866,7 +1865,6 @@ void remove_orphan_inode(struct f2fs_sb_info *, nid_t);
+ int recover_orphan_inodes(struct f2fs_sb_info *);
+ int get_valid_checkpoint(struct f2fs_sb_info *);
+ void update_dirty_page(struct inode *, struct page *);
+-void add_dirty_dir_inode(struct inode *);
+ void remove_dirty_inode(struct inode *);
+ int sync_dirty_inodes(struct f2fs_sb_info *, enum inode_type);
+ int write_checkpoint(struct f2fs_sb_info *, struct cp_control *);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 58275a2..6901a54 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -89,7 +89,8 @@ static void del_fsync_inode(struct fsync_inode_entry *entry)
+ 	kmem_cache_free(fsync_entry_slab, entry);
+ }
+ 
+-static int recover_dentry(struct inode *inode, struct page *ipage)
++static int recover_dentry(struct inode *inode, struct page *ipage,
++						struct list_head *dir_list)
+ {
+ 	struct f2fs_inode *raw_inode = F2FS_INODE(ipage);
+ 	nid_t pino = le32_to_cpu(raw_inode->i_pino);
+@@ -97,18 +98,29 @@ static int recover_dentry(struct inode *inode, struct page *ipage)
+ 	struct qstr name;
+ 	struct page *page;
+ 	struct inode *dir, *einode;
++	struct fsync_inode_entry *entry;
+ 	int err = 0;
+ 
+-	dir = f2fs_iget(inode->i_sb, pino);
+-	if (IS_ERR(dir)) {
+-		err = PTR_ERR(dir);
+-		goto out;
++	entry = get_fsync_inode(dir_list, pino);
++	if (!entry) {
++		dir = f2fs_iget(inode->i_sb, pino);
++		if (IS_ERR(dir)) {
++			err = PTR_ERR(dir);
++			goto out;
++		}
++
++		entry = add_fsync_inode(dir_list, dir);
++		if (!entry) {
++			err = -ENOMEM;
++			iput(dir);
++			goto out;
++		}
+ 	}
+ 
+-	if (file_enc_name(inode)) {
+-		iput(dir);
++	dir = entry->inode;
++
++	if (file_enc_name(inode))
+ 		return 0;
+-	}
+ 
+ 	name.len = le32_to_cpu(raw_inode->i_namelen);
+ 	name.name = raw_inode->i_name;
+@@ -116,7 +128,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage)
+ 	if (unlikely(name.len > F2FS_NAME_LEN)) {
+ 		WARN_ON(1);
+ 		err = -ENAMETOOLONG;
+-		goto out_err;
++		goto out;
+ 	}
+ retry:
+ 	de = f2fs_find_entry(dir, &name, &page);
+@@ -142,23 +154,12 @@ retry:
+ 		goto retry;
+ 	}
+ 	err = __f2fs_add_link(dir, &name, inode, inode->i_ino, inode->i_mode);
+-	if (err)
+-		goto out_err;
+-
+-	if (is_inode_flag_set(F2FS_I(dir), FI_DELAY_IPUT)) {
+-		iput(dir);
+-	} else {
+-		add_dirty_dir_inode(dir);
+-		set_inode_flag(F2FS_I(dir), FI_DELAY_IPUT);
+-	}
+ 
+ 	goto out;
+ 
+ out_unmap_put:
+ 	f2fs_dentry_kunmap(dir, page);
+ 	f2fs_put_page(page, 0);
+-out_err:
+-	iput(dir);
+ out:
+ 	f2fs_msg(inode->i_sb, KERN_NOTICE,
+ 			"%s: ino = %x, name = %s, dir = %lx, err = %d",
+@@ -503,7 +504,8 @@ out:
+ 	return err;
+ }
+ 
+-static int recover_data(struct f2fs_sb_info *sbi, struct list_head *head)
++static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
++						struct list_head *dir_list)
+ {
+ 	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
+ 	struct curseg_info *curseg;
+@@ -530,7 +532,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *head)
+ 			break;
+ 		}
+ 
+-		entry = get_fsync_inode(head, ino_of_node(page));
++		entry = get_fsync_inode(inode_list, ino_of_node(page));
+ 		if (!entry)
+ 			goto next;
+ 		/*
+@@ -541,7 +543,7 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *head)
+ 		if (IS_INODE(page))
+ 			recover_inode(entry->inode, page);
+ 		if (entry->last_dentry == blkaddr) {
+-			err = recover_dentry(entry->inode, page);
++			err = recover_dentry(entry->inode, page, dir_list);
+ 			if (err) {
+ 				f2fs_put_page(page, 1);
+ 				break;
+@@ -569,6 +571,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ {
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_WARM_NODE);
+ 	struct list_head inode_list;
++	struct list_head dir_list;
+ 	block_t blkaddr;
+ 	int err;
+ 	int ret = 0;
+@@ -580,6 +583,7 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 		return -ENOMEM;
+ 
+ 	INIT_LIST_HEAD(&inode_list);
++	INIT_LIST_HEAD(&dir_list);
+ 
+ 	/* prevent checkpoint */
+ 	mutex_lock(&sbi->cp_mutex);
+@@ -599,12 +603,11 @@ int recover_fsync_data(struct f2fs_sb_info *sbi, bool check_only)
+ 	need_writecp = true;
+ 
+ 	/* step #2: recover data */
+-	err = recover_data(sbi, &inode_list);
++	err = recover_data(sbi, &inode_list, &dir_list);
+ 	if (!err)
+ 		f2fs_bug_on(sbi, !list_empty(&inode_list));
+ out:
+ 	destroy_fsync_dnodes(&inode_list);
+-	kmem_cache_destroy(fsync_entry_slab);
+ 
+ 	/* truncate meta pages to be used by the recovery */
+ 	truncate_inode_pages_range(META_MAPPING(sbi),
+@@ -642,5 +645,8 @@ out:
+ 	} else {
+ 		mutex_unlock(&sbi->cp_mutex);
+ 	}
++
++	destroy_fsync_dnodes(&dir_list);
++	kmem_cache_destroy(fsync_entry_slab);
+ 	return ret ? ret: err;
+ }
+-- 
+2.8.2.311.gee88674
