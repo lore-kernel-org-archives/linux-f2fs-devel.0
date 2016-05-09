@@ -1,71 +1,429 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: Kernel panic in F2FS mount on NVMe SSD.
-Date: Mon, 9 May 2016 10:26:08 -0700
-Message-ID: <20160509172608.GB810@jaegeuk.gateway>
-References: <D87A37E7A4AA544D853031D9A919C70B168FC5E3@avsrvexchmbx2.microsemi.net>
-	<20160505000958.GA72128@jaegeuk.gateway>
-	<D87A37E7A4AA544D853031D9A919C70B168FC904@avsrvexchmbx2.microsemi.net>
-	<20160505034815.GA73673@jaegeuk.gateway>
-	<D87A37E7A4AA544D853031D9A919C70B168FD685@avsrvexchmbx2.microsemi.net>
-	<20160507174952.GB92790@jaegeuk.gateway>
-	<D87A37E7A4AA544D853031D9A919C70B16901358@avsrvexchmbx2.microsemi.net>
+Subject: Re: [PATCH 1/6] f2fs: support in batch multi blocks preallocation
+Date: Mon, 9 May 2016 16:00:37 -0700
+Message-ID: <20160509230037.GA6889@jaegeuk.gateway>
+References: <20160509115635.123946-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1azowj-000838-Vq
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 May 2016 17:26:17 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1azowi-0007XO-VK
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 09 May 2016 17:26:17 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <D87A37E7A4AA544D853031D9A919C70B16901358@avsrvexchmbx2.microsemi.net>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Stephen Bates <stephen.bates@microsemi.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+In-Reply-To: <20160509115635.123946-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, May 09, 2016 at 03:35:25PM +0000, Stephen Bates wrote:
-> > 
-> > We could figure out how to improve them. :)
-> > 
-> > I've been preparing two patches under testing right now.
-> >  - f2fs: fallocate data blocks in single locked node page
-> >  - f2fs: read node blocks ahead when truncating blocks
-> > 
-> > Thanks,
+Hi Chao,
+
+On Mon, May 09, 2016 at 07:56:30PM +0800, Chao Yu wrote:
+> This patch introduces reserve_new_blocks to make preallocation of multi
+> blocks as in batch operation, so it can avoid lots of redundant
+> operation, result in better performance.
 > 
-> Let me know when and where I can pull these and I can do some testing too.
+> In virtual machine, with rotational device:
+> 
+> time fallocate -l 32G /mnt/f2fs/file
+> 
+> Before:
+> real	0m4.584s
+> user	0m0.000s
+> sys	0m4.580s
+> 
+> After:
+> real	0m0.292s
+> user	0m0.000s
+> sys	0m0.272s
 
-Okay, Chao Yu gave more improvement, so now I'm starting to do stress tests.
-Once getting some good signs, I'll let you know.
+It's cool.
+Let me add my test results as well.
 
-Meanwhile, you may take a look at any testing patches from:
-http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev
+In x86, with SSD:
+
+time fallocate -l 500G $MNT/testfile
+
+Before : 24.758 s
+After  :  1.604 s
+
+By the way, there is one thing we should consider, which is the ENOSPC case.
+Could you check this out on top of your patch?
+
+If you don't mind, let me integrate this into your patch.
+Let me know.
 
 Thanks,
 
-> 
-> Thanks!
-> 
-> Stephen
+---
+ fs/f2fs/data.c              |  9 +++++----
+ fs/f2fs/f2fs.h              | 20 +++++++++++++-------
+ include/trace/events/f2fs.h |  8 ++++----
+ 3 files changed, 22 insertions(+), 15 deletions(-)
 
-------------------------------------------------------------------------------
-Find and fix application performance issues faster with Applications Manager
-Applications Manager provides deep performance insights into multiple tiers of
-your business applications. It resolves application problems quickly and
-reduces your MTTR. Get your free trial!
-https://ad.doubleclick.net/ddm/clk/302982198;130105516;z
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index ea0abdc..da640e1 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -278,7 +278,7 @@ alloc_new:
+ 	trace_f2fs_submit_page_mbio(fio->page, fio);
+ }
+ 
+-void __set_data_blkaddr(struct dnode_of_data *dn)
++static void __set_data_blkaddr(struct dnode_of_data *dn)
+ {
+ 	struct f2fs_node *rn = F2FS_NODE(dn->node_page);
+ 	__le32 *addr_array;
+@@ -310,7 +310,7 @@ void f2fs_update_data_blkaddr(struct dnode_of_data *dn, block_t blkaddr)
+ }
+ 
+ int reserve_new_blocks(struct dnode_of_data *dn, unsigned int start,
+-							unsigned int count)
++							blkcnt_t count)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+ 	unsigned int ofs_in_node;
+@@ -320,7 +320,7 @@ int reserve_new_blocks(struct dnode_of_data *dn, unsigned int start,
+ 
+ 	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
+ 		return -EPERM;
+-	if (unlikely(!inc_valid_block_count(sbi, dn->inode, count)))
++	if (unlikely(!inc_valid_block_count(sbi, dn->inode, &count)))
+ 		return -ENOSPC;
+ 
+ 	trace_f2fs_reserve_new_blocks(dn->inode, dn->nid,
+@@ -574,6 +574,7 @@ static int __allocate_data_block(struct dnode_of_data *dn)
+ 	struct node_info ni;
+ 	int seg = CURSEG_WARM_DATA;
+ 	pgoff_t fofs;
++	blkcnt_t count = 1;
+ 
+ 	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
+ 		return -EPERM;
+@@ -582,7 +583,7 @@ static int __allocate_data_block(struct dnode_of_data *dn)
+ 	if (dn->data_blkaddr == NEW_ADDR)
+ 		goto alloc;
+ 
+-	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
++	if (unlikely(!inc_valid_block_count(sbi, dn->inode, &count)))
+ 		return -ENOSPC;
+ 
+ alloc:
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 75b0084..00fe63c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1114,7 +1114,7 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
+ }
+ 
+ static inline bool inc_valid_block_count(struct f2fs_sb_info *sbi,
+-				 struct inode *inode, blkcnt_t count)
++				 struct inode *inode, blkcnt_t *count)
+ {
+ 	block_t	valid_block_count;
+ 
+@@ -1126,14 +1126,19 @@ static inline bool inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 	}
+ #endif
+ 	valid_block_count =
+-		sbi->total_valid_block_count + (block_t)count;
++		sbi->total_valid_block_count + (block_t)(*count);
+ 	if (unlikely(valid_block_count > sbi->user_block_count)) {
+-		spin_unlock(&sbi->stat_lock);
+-		return false;
++		*count = sbi->user_block_count - sbi->total_valid_block_count;
++		if (!*count) {
++			spin_unlock(&sbi->stat_lock);
++			return false;
++		}
+ 	}
+-	inode->i_blocks += count;
+-	sbi->total_valid_block_count = valid_block_count;
+-	sbi->alloc_valid_block_count += (block_t)count;
++	/* *count can be recalculated */
++	inode->i_blocks += *count;
++	sbi->total_valid_block_count =
++		sbi->total_valid_block_count + (block_t)(*count);
++	sbi->alloc_valid_block_count += (block_t)(*count);
+ 	spin_unlock(&sbi->stat_lock);
+ 	return true;
+ }
+@@ -1965,6 +1970,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *);
+ void f2fs_submit_page_mbio(struct f2fs_io_info *);
+ void set_data_blkaddr(struct dnode_of_data *);
+ void f2fs_update_data_blkaddr(struct dnode_of_data *, block_t);
++int reserve_new_blocks(struct dnode_of_data *, unsigned int, blkcnt_t);
+ int reserve_new_block(struct dnode_of_data *);
+ int f2fs_get_block(struct dnode_of_data *, pgoff_t);
+ ssize_t f2fs_preallocate_blocks(struct kiocb *, struct iov_iter *);
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 5f927ff..497e6e8 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -697,7 +697,7 @@ TRACE_EVENT(f2fs_direct_IO_exit,
+ TRACE_EVENT(f2fs_reserve_new_blocks,
+ 
+ 	TP_PROTO(struct inode *inode, nid_t nid, unsigned int ofs_in_node,
+-						unsigned int count),
++							blkcnt_t count),
+ 
+ 	TP_ARGS(inode, nid, ofs_in_node, count),
+ 
+@@ -705,7 +705,7 @@ TRACE_EVENT(f2fs_reserve_new_blocks,
+ 		__field(dev_t,	dev)
+ 		__field(nid_t, nid)
+ 		__field(unsigned int, ofs_in_node)
+-		__field(unsigned int, count)
++		__field(blkcnt_t, count)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -715,11 +715,11 @@ TRACE_EVENT(f2fs_reserve_new_blocks,
+ 		__entry->count = count;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), nid = %u, ofs_in_node = %u, count = %u",
++	TP_printk("dev = (%d,%d), nid = %u, ofs_in_node = %u, count = %llu",
+ 		show_dev(__entry),
+ 		(unsigned int)__entry->nid,
+ 		__entry->ofs_in_node,
+-		__entry->count)
++		(unsigned long long)__entry->count)
+ );
+ 
+ DECLARE_EVENT_CLASS(f2fs__submit_page_bio,
+-- 
+2.6.3
+
+
+
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/data.c              | 93 +++++++++++++++++++++++++++++++++------------
+>  include/trace/events/f2fs.h | 14 ++++---
+>  2 files changed, 78 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 369d953..ea0abdc 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -278,6 +278,16 @@ alloc_new:
+>  	trace_f2fs_submit_page_mbio(fio->page, fio);
+>  }
+>  
+> +void __set_data_blkaddr(struct dnode_of_data *dn)
+> +{
+> +	struct f2fs_node *rn = F2FS_NODE(dn->node_page);
+> +	__le32 *addr_array;
+> +
+> +	/* Get physical address of data block */
+> +	addr_array = blkaddr_in_node(rn);
+> +	addr_array[dn->ofs_in_node] = cpu_to_le32(dn->data_blkaddr);
+> +}
+> +
+>  /*
+>   * Lock ordering for the change of data block address:
+>   * ->data_page
+> @@ -286,19 +296,9 @@ alloc_new:
+>   */
+>  void set_data_blkaddr(struct dnode_of_data *dn)
+>  {
+> -	struct f2fs_node *rn;
+> -	__le32 *addr_array;
+> -	struct page *node_page = dn->node_page;
+> -	unsigned int ofs_in_node = dn->ofs_in_node;
+> -
+> -	f2fs_wait_on_page_writeback(node_page, NODE, true);
+> -
+> -	rn = F2FS_NODE(node_page);
+> -
+> -	/* Get physical address of data block */
+> -	addr_array = blkaddr_in_node(rn);
+> -	addr_array[ofs_in_node] = cpu_to_le32(dn->data_blkaddr);
+> -	if (set_page_dirty(node_page))
+> +	f2fs_wait_on_page_writeback(dn->node_page, NODE, true);
+> +	__set_data_blkaddr(dn);
+> +	if (set_page_dirty(dn->node_page))
+>  		dn->node_changed = true;
+>  }
+>  
+> @@ -309,24 +309,53 @@ void f2fs_update_data_blkaddr(struct dnode_of_data *dn, block_t blkaddr)
+>  	f2fs_update_extent_cache(dn);
+>  }
+>  
+> -int reserve_new_block(struct dnode_of_data *dn)
+> +int reserve_new_blocks(struct dnode_of_data *dn, unsigned int start,
+> +							unsigned int count)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+> +	unsigned int ofs_in_node;
+> +
+> +	if (!count)
+> +		return 0;
+>  
+>  	if (unlikely(is_inode_flag_set(F2FS_I(dn->inode), FI_NO_ALLOC)))
+>  		return -EPERM;
+> -	if (unlikely(!inc_valid_block_count(sbi, dn->inode, 1)))
+> +	if (unlikely(!inc_valid_block_count(sbi, dn->inode, count)))
+>  		return -ENOSPC;
+>  
+> -	trace_f2fs_reserve_new_block(dn->inode, dn->nid, dn->ofs_in_node);
+> +	trace_f2fs_reserve_new_blocks(dn->inode, dn->nid,
+> +						dn->ofs_in_node, count);
+> +
+> +	ofs_in_node = dn->ofs_in_node;
+> +	dn->ofs_in_node = start;
+> +
+> +	f2fs_wait_on_page_writeback(dn->node_page, NODE, true);
+> +
+> +	for (; count > 0; dn->ofs_in_node++) {
+> +		block_t blkaddr =
+> +			datablock_addr(dn->node_page, dn->ofs_in_node);
+> +		if (blkaddr == NULL_ADDR) {
+> +			dn->data_blkaddr = NEW_ADDR;
+> +			__set_data_blkaddr(dn);
+> +			count--;
+> +		}
+> +	}
+> +
+> +	dn->ofs_in_node = ofs_in_node;
+> +
+> +	if (set_page_dirty(dn->node_page))
+> +		dn->node_changed = true;
+>  
+> -	dn->data_blkaddr = NEW_ADDR;
+> -	set_data_blkaddr(dn);
+>  	mark_inode_dirty(dn->inode);
+>  	sync_inode_page(dn);
+>  	return 0;
+>  }
+>  
+> +int reserve_new_block(struct dnode_of_data *dn)
+> +{
+> +	return reserve_new_blocks(dn, dn->ofs_in_node, 1);
+> +}
+> +
+>  int f2fs_reserve_block(struct dnode_of_data *dn, pgoff_t index)
+>  {
+>  	bool need_put = dn->inode_page ? false : true;
+> @@ -621,8 +650,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  	struct dnode_of_data dn;
+>  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	int mode = create ? ALLOC_NODE : LOOKUP_NODE_RA;
+> -	pgoff_t pgofs, end_offset;
+> -	int err = 0, ofs = 1;
+> +	pgoff_t pgofs, end_offset, end;
+> +	int err = 0, ofs = 1, prealloc, start;
+>  	struct extent_info ei;
+>  	bool allocated = false;
+>  	block_t blkaddr;
+> @@ -632,6 +661,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+>  
+>  	/* it only supports block size == page size */
+>  	pgofs =	(pgoff_t)map->m_lblk;
+> +	end = pgofs + maxblocks;
+>  
+>  	if (!create && f2fs_lookup_extent_cache(inode, pgofs, &ei)) {
+>  		map->m_pblk = ei.blk + pgofs - ei.fofs;
+> @@ -659,6 +689,8 @@ next_dnode:
+>  		goto unlock_out;
+>  	}
+>  
+> +	prealloc = 0;
+> +	start = dn.ofs_in_node;
+>  	end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
+>  
+>  next_block:
+> @@ -672,7 +704,7 @@ next_block:
+>  			}
+>  			if (flag == F2FS_GET_BLOCK_PRE_AIO) {
+>  				if (blkaddr == NULL_ADDR)
+> -					err = reserve_new_block(&dn);
+> +					prealloc++;
+>  			} else {
+>  				err = __allocate_data_block(&dn);
+>  				if (!err)
+> @@ -700,6 +732,9 @@ next_block:
+>  		}
+>  	}
+>  
+> +	if (flag == F2FS_GET_BLOCK_PRE_AIO)
+> +		goto skip;
+> +
+>  	if (map->m_len == 0) {
+>  		/* preallocated unwritten block should be mapped for fiemap. */
+>  		if (blkaddr == NEW_ADDR)
+> @@ -711,18 +746,28 @@ next_block:
+>  	} else if ((map->m_pblk != NEW_ADDR &&
+>  			blkaddr == (map->m_pblk + ofs)) ||
+>  			(map->m_pblk == NEW_ADDR && blkaddr == NEW_ADDR) ||
+> -			flag == F2FS_GET_BLOCK_PRE_DIO ||
+> -			flag == F2FS_GET_BLOCK_PRE_AIO) {
+> +			flag == F2FS_GET_BLOCK_PRE_DIO) {
+>  		ofs++;
+>  		map->m_len++;
+>  	} else {
+>  		goto sync_out;
+>  	}
+>  
+> +skip:
+>  	dn.ofs_in_node++;
+>  	pgofs++;
+>  
+> -	if (map->m_len < maxblocks) {
+> +	/* preallocate blocks in batch for one dnode page */
+> +	if (flag == F2FS_GET_BLOCK_PRE_AIO &&
+> +			(pgofs == end || dn.ofs_in_node == end_offset)) {
+> +		allocated = false;
+> +		err = reserve_new_blocks(&dn, start, prealloc);
+> +		if (err)
+> +			goto sync_out;
+> +		map->m_len = pgofs - start;
+> +	}
+> +
+> +	if (pgofs < end) {
+>  		if (dn.ofs_in_node < end_offset)
+>  			goto next_block;
+>  
+> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+> index 0f56584..5f927ff 100644
+> --- a/include/trace/events/f2fs.h
+> +++ b/include/trace/events/f2fs.h
+> @@ -694,28 +694,32 @@ TRACE_EVENT(f2fs_direct_IO_exit,
+>  		__entry->ret)
+>  );
+>  
+> -TRACE_EVENT(f2fs_reserve_new_block,
+> +TRACE_EVENT(f2fs_reserve_new_blocks,
+>  
+> -	TP_PROTO(struct inode *inode, nid_t nid, unsigned int ofs_in_node),
+> +	TP_PROTO(struct inode *inode, nid_t nid, unsigned int ofs_in_node,
+> +						unsigned int count),
+>  
+> -	TP_ARGS(inode, nid, ofs_in_node),
+> +	TP_ARGS(inode, nid, ofs_in_node, count),
+>  
+>  	TP_STRUCT__entry(
+>  		__field(dev_t,	dev)
+>  		__field(nid_t, nid)
+>  		__field(unsigned int, ofs_in_node)
+> +		__field(unsigned int, count)
+>  	),
+>  
+>  	TP_fast_assign(
+>  		__entry->dev	= inode->i_sb->s_dev;
+>  		__entry->nid	= nid;
+>  		__entry->ofs_in_node = ofs_in_node;
+> +		__entry->count = count;
+>  	),
+>  
+> -	TP_printk("dev = (%d,%d), nid = %u, ofs_in_node = %u",
+> +	TP_printk("dev = (%d,%d), nid = %u, ofs_in_node = %u, count = %u",
+>  		show_dev(__entry),
+>  		(unsigned int)__entry->nid,
+> -		__entry->ofs_in_node)
+> +		__entry->ofs_in_node,
+> +		__entry->count)
+>  );
+>  
+>  DECLARE_EVENT_CLASS(f2fs__submit_page_bio,
+> -- 
+> 2.8.2.311.gee88674
