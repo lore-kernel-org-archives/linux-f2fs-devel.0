@@ -1,26 +1,30 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 05/11] f2fs: add mount option to select fault
- injection ratio
-Date: Mon, 9 May 2016 20:00:13 +0800
-Message-ID: <c73659fa-5d48-8fc4-d76d-0ba480bfda48@huawei.com>
-References: <1462299708-67906-1-git-send-email-jaegeuk@kernel.org>
- <1462299708-67906-5-git-send-email-jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: introduce f2fs_reserve_blocks to speedup fallocate
+Date: Mon, 9 May 2016 20:03:18 +0800
+Message-ID: <f877ae36-1293-ddc6-aa36-da129d5df836@huawei.com>
+References: <20160507081634.96677-1-yuchao0@huawei.com>
+ <20160507174401.GA92790@jaegeuk.gateway>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1462299708-67906-5-git-send-email-jaegeuk@kernel.org>
+In-Reply-To: <20160507174401.GA92790@jaegeuk.gateway>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi Jaegeuk,
 
-On 2016/5/4 2:21, Jaegeuk Kim wrote:
-> This patch adds a mount option to select fault ratio.
+On 2016/5/8 1:44, Jaegeuk Kim wrote:
+> Hi Chao,
+> 
+> Good catch, but I've been already testing a patch which uses f2fs_map_blocks().
+> We don't need to add whole things redundantly. :)
 
-It's better to add description in documentation for this new mount option.
+Good, your patch looks quite clean especially the size updating part! :)
 
-Anyway, this patchset looks good to me, please add:
+However, I think there are still room of performance improvement, I wrote a
+patch for that based on your patch, could you check that?
 
-Acked-by: Chao Yu <yuchao0@huawei.com>
+Thanks,
