@@ -1,74 +1,116 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: Kernel panic in F2FS mount on NVMe SSD.
-Date: Sat, 7 May 2016 10:49:52 -0700
-Message-ID: <20160507174952.GB92790@jaegeuk.gateway>
-References: <D87A37E7A4AA544D853031D9A919C70B168FC5E3@avsrvexchmbx2.microsemi.net>
-	<20160505000958.GA72128@jaegeuk.gateway>
-	<D87A37E7A4AA544D853031D9A919C70B168FC904@avsrvexchmbx2.microsemi.net>
-	<20160505034815.GA73673@jaegeuk.gateway>
-	<D87A37E7A4AA544D853031D9A919C70B168FD685@avsrvexchmbx2.microsemi.net>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 4/6] f2fs: make atomic/volatile operation exclusive
+Date: Mon, 9 May 2016 19:56:33 +0800
+Message-ID: <20160509115635.123946-4-yuchao0@huawei.com>
+References: <20160509115635.123946-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1az6Ma-0002YH-Pd
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 07 May 2016 17:50:00 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1az6MZ-0005tS-Vx
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 07 May 2016 17:50:00 +0000
-Content-Disposition: inline
-In-Reply-To: <D87A37E7A4AA544D853031D9A919C70B168FD685@avsrvexchmbx2.microsemi.net>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Stephen Bates <stephen.bates@microsemi.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160509115635.123946-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, May 05, 2016 at 05:53:14PM +0000, Stephen Bates wrote:
-> > >
-> > > One thing I did notice is that fallocate() seems slow (5-6 GB/s) compared to
-> > other file systems for a 3TiB fallocate() [ext4 performs the same operation in
-> > under a second on my system)]. Is this typical/expected for F2FS? Could it be
-> > because I have the IO_TRACE and/or _SECURITY set in .config?
-> > 
-> > Which fallocate did you test among expand, punch_hole, or something else?
-> > Let me check that especially.
-> > Actually, I have not tested its speed considerably, but more focused on
-> > functionality and stability.
-> 
-> I just issued a 
-> 
-> fallocate -l 3TiB /mnt/f2fs/tst
-> 
-> right after the mkfs.f2fs call. I am not sure what fallocate() path that excites in the FS. I also (for fun) timed the removal of that file via the rm command and it is also very slow. iostat implies the drive is being read at about 4MB/s while this removal is being performed.  
-> 
-> $ sudo time rm /mnt/f2fs/tst
-> 0.00user 307.62system 6:01.75elapsed 85%CPU (0avgtext+0avgdata 1852maxresident)k
-> 2978552inputs+6332168outputs (1major+80minor)pagefaults 0swaps
+atomic/volatile ioctl interfaces are exposed to user like other file
+operation interface, it needs to make them getting exclusion against
+to each other to avoid potential conflict among these operations
+in concurrent scenario.
 
-We could figure out how to improve them. :)
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/file.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-I've been preparing two patches under testing right now.
- - f2fs: fallocate data blocks in single locked node page
- - f2fs: read node blocks ahead when truncating blocks
-
-Thanks,
-
-------------------------------------------------------------------------------
-Find and fix application performance issues faster with Applications Manager
-Applications Manager provides deep performance insights into multiple tiers of
-your business applications. It resolves application problems quickly and
-reduces your MTTR. Get your free trial!
-https://ad.doubleclick.net/ddm/clk/302982198;130105516;z
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 828b53e..24d7189 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1430,6 +1430,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 	if (ret)
+ 		return ret;
+ 
++	inode_lock(inode);
++
+ 	if (f2fs_is_atomic_file(inode))
+ 		goto out;
+ 
+@@ -1450,6 +1452,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 	if (ret)
+ 		clear_inode_flag(F2FS_I(inode), FI_ATOMIC_FILE);
+ out:
++	inode_unlock(inode);
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+ }
+@@ -1466,6 +1469,8 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 	if (ret)
+ 		return ret;
+ 
++	inode_lock(inode);
++
+ 	if (f2fs_is_volatile_file(inode))
+ 		goto err_out;
+ 
+@@ -1480,6 +1485,7 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 
+ 	ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+ err_out:
++	inode_unlock(inode);
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+ }
+@@ -1496,6 +1502,8 @@ static int f2fs_ioc_start_volatile_write(struct file *filp)
+ 	if (ret)
+ 		return ret;
+ 
++	inode_lock(inode);
++
+ 	if (f2fs_is_volatile_file(inode))
+ 		goto out;
+ 
+@@ -1506,6 +1514,7 @@ static int f2fs_ioc_start_volatile_write(struct file *filp)
+ 	set_inode_flag(F2FS_I(inode), FI_VOLATILE_FILE);
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+ out:
++	inode_unlock(inode);
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+ }
+@@ -1522,6 +1531,8 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
+ 	if (ret)
+ 		return ret;
+ 
++	inode_lock(inode);
++
+ 	if (!f2fs_is_volatile_file(inode))
+ 		goto out;
+ 
+@@ -1532,6 +1543,7 @@ static int f2fs_ioc_release_volatile_write(struct file *filp)
+ 
+ 	ret = punch_hole(inode, 0, F2FS_BLKSIZE);
+ out:
++	inode_unlock(inode);
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+ }
+@@ -1548,6 +1560,8 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+ 	if (ret)
+ 		return ret;
+ 
++	inode_lock(inode);
++
+ 	if (f2fs_is_atomic_file(inode))
+ 		drop_inmem_pages(inode);
+ 	if (f2fs_is_volatile_file(inode)) {
+@@ -1555,6 +1569,8 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
+ 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+ 	}
+ 
++	inode_unlock(inode);
++
+ 	mnt_drop_write_file(filp);
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+ 	return ret;
+-- 
+2.8.2.311.gee88674
