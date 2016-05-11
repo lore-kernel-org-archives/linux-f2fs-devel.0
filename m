@@ -1,23 +1,25 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH 1/4] f2fs: correct return value type of
-	f2fs_fill_super
-Date: Wed, 11 May 2016 17:08:14 +0800
-Message-ID: <1462957697-6900-1-git-send-email-shengyong1@huawei.com>
+Subject: [RFC PATCH 2/4] f2fs: introduce f2fs_fault_info for
+	fault injection
+Date: Wed, 11 May 2016 17:08:15 +0800
+Message-ID: <1462957697-6900-2-git-send-email-shengyong1@huawei.com>
+References: <1462957697-6900-1-git-send-email-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1b0QAg-0001NB-UW
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <shengyong1@huawei.com>) id 1b0QAi-0003Wa-1M
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 11 May 2016 09:11:10 +0000
+	Wed, 11 May 2016 09:11:12 +0000
 Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1b0QAa-0000la-Jt
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1b0QAf-0003jQ-0R
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 11 May 2016 09:11:10 +0000
+	Wed, 11 May 2016 09:11:12 +0000
+In-Reply-To: <1462957697-6900-1-git-send-email-shengyong1@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,41 +32,49 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
+This patch introduces a new struct f2fs_fault_info and a global f2fs_fault
+to save fault injection status.
+
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fs/f2fs/super.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/f2fs/f2fs.h  | 12 ++++++++++++
+ fs/f2fs/super.c |  1 +
+ 2 files changed, 13 insertions(+)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 052f5a8..e18390b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -48,6 +48,18 @@ enum {
+ 	FAULT_MAX,
+ };
+ 
++struct f2fs_fault_info {
++	unsigned int inject_rate;
++	atomic_t inject_ops;
++	unsigned int inject_kmalloc;
++	unsigned int inject_page_alloc;
++	unsigned int inject_nid_alloc;
++	unsigned int inject_orphan;
++	unsigned int inject_block;
++	unsigned int inject_dir_depth;
++};
++
++extern struct f2fs_fault_info f2fs_fault;
+ extern u32 f2fs_fault_rate;
+ extern atomic_t f2fs_ops;
+ extern char *fault_name[FAULT_MAX];
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 28c8992..0e54e84 100644
+index 0e54e84..069dc44 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -1417,7 +1417,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	struct f2fs_sb_info *sbi;
- 	struct f2fs_super_block *raw_super;
- 	struct inode *root;
--	long err;
-+	int err;
- 	bool retry = true, need_fsck = false;
- 	char *options = NULL;
- 	int recovery, i, valid_super_block;
-@@ -1643,7 +1643,7 @@ try_onemore:
- 		if (err < 0) {
- 			need_fsck = true;
- 			f2fs_msg(sb, KERN_ERR,
--				"Cannot recover all fsync data errno=%ld", err);
-+				"Cannot recover all fsync data errno=%d", err);
- 			goto free_kobj;
- 		}
- 	} else {
-@@ -1676,7 +1676,7 @@ try_onemore:
- 	if (recovery) {
- 		err = f2fs_commit_super(sbi, true);
- 		f2fs_msg(sb, KERN_INFO,
--			"Try to recover %dth superblock, ret: %ld",
-+			"Try to recover %dth superblock, ret: %d",
- 			sbi->valid_super_block ? 1 : 2, err);
- 	}
+@@ -40,6 +40,7 @@ static struct kmem_cache *f2fs_inode_cachep;
+ static struct kset *f2fs_kset;
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
++struct f2fs_fault_info f2fs_fault;
+ u32 f2fs_fault_rate = 0;
+ atomic_t f2fs_ops;
  
 -- 
 2.7.1
