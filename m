@@ -1,116 +1,37 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix deadlock when flush inline data
-Date: Wed, 11 May 2016 09:42:22 -0700
-Message-ID: <20160511164222.GA18057@jaegeuk.gateway>
-References: <20160511114844.8380-1-yuchao0@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160511114844.8380-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] f2fs: avoid f2fs_bug_on during recovery
+Date: Wed, 11 May 2016 10:01:09 -0700
+Message-ID: <1462986069-19630-2-git-send-email-jaegeuk@kernel.org>
+References: <1462986069-19630-1-git-send-email-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <1462986069-19630-1-git-send-email-jaegeuk@kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+We don't need to use f2fs_bug_on() to treat with any error case when allocating
+a block during recovery.
 
-On Wed, May 11, 2016 at 07:48:44PM +0800, Chao Yu wrote:
-> Below backtrace info was reported by Yunlei He:
-> 
-> Call Trace:
->  [<ffffffff817a9395>] schedule+0x35/0x80
->  [<ffffffff817abb7d>] rwsem_down_read_failed+0xed/0x130
->  [<ffffffff813c12a8>] call_rwsem_down_read_failed+0x18/0x
->  [<ffffffff817ab1d0>] down_read+0x20/0x30
->  [<ffffffffa02a1a12>] f2fs_evict_inode+0x242/0x3a0 [f2fs]
->  [<ffffffff81217057>] evict+0xc7/0x1a0
->  [<ffffffff81217cd6>] iput+0x196/0x200
->  [<ffffffff812134f9>] __dentry_kill+0x179/0x1e0
->  [<ffffffff812136f9>] dput+0x199/0x1f0
->  [<ffffffff811fe77b>] __fput+0x18b/0x220
->  [<ffffffff811fe84e>] ____fput+0xe/0x10
->  [<ffffffff81097427>] task_work_run+0x77/0x90
->  [<ffffffff81074d62>] exit_to_usermode_loop+0x73/0xa2
->  [<ffffffff81003b7a>] do_syscall_64+0xfa/0x110
->  [<ffffffff817acf65>] entry_SYSCALL64_slow_path+0x25/0x25
-> 
-> Call Trace:
->  [<ffffffff817a9395>] schedule+0x35/0x80
->  [<ffffffff81216dc3>] __wait_on_freeing_inode+0xa3/0xd0
->  [<ffffffff810bc300>] ? autoremove_wake_function+0x40/0x4
->  [<ffffffff8121771d>] find_inode_fast+0x7d/0xb0
->  [<ffffffff8121794a>] ilookup+0x6a/0xd0
->  [<ffffffffa02bc740>] sync_node_pages+0x210/0x650 [f2fs]
->  [<ffffffff8122e690>] ? do_fsync+0x70/0x70
->  [<ffffffffa02b085e>] block_operations+0x9e/0xf0 [f2fs]
->  [<ffffffff8137b795>] ? bio_endio+0x55/0x60
->  [<ffffffffa02b0942>] write_checkpoint+0x92/0xba0 [f2fs]
->  [<ffffffff8117da57>] ? mempool_free_slab+0x17/0x20
->  [<ffffffff8117de8b>] ? mempool_free+0x2b/0x80
->  [<ffffffff8122e690>] ? do_fsync+0x70/0x70
->  [<ffffffffa02a53e3>] f2fs_sync_fs+0x63/0xd0 [f2fs]
->  [<ffffffff8129630f>] ? ext4_sync_fs+0xbf/0x190
->  [<ffffffff8122e6b0>] sync_fs_one_sb+0x20/0x30
->  [<ffffffff812002e9>] iterate_supers+0xb9/0x110
->  [<ffffffff8122e7b5>] sys_sync+0x55/0x90
->  [<ffffffff81003ae9>] do_syscall_64+0x69/0x110
->  [<ffffffff817acf65>] entry_SYSCALL64_slow_path+0x25/0x25
-> 
-> With following excuting serials, we will set inline_node in inode page
-> after inode was unlinked, result in a deadloop described as below:
-> 1. open file
-> 2. write file
-> 3. unlink file
-> 4. write file
-> 5. close file
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/recovery.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Oh, I also tried this scenario before, but it seems I missed something.
-I've seen writepages() was called to clear the flag between #4 and #5, but
-it seems there was a timing difference.
-Anyway, I could reproduce this and confirm that this patch fixed the issue. :)
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 2b25329..6303b2a 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -460,8 +460,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		 */
+ 		if (dest == NEW_ADDR) {
+ 			truncate_data_blocks_range(&dn, 1);
+-			err = reserve_new_block(&dn);
+-			f2fs_bug_on(sbi, err);
++			reserve_new_block(&dn);
+ 			continue;
+ 		}
+ 
+-- 
+2.6.3
 
-Thanks,
-
-> 
-> Thread A				Thread B
->  - dput
->   - iput_final
->    - inode->i_state |= I_FREEING
->    - evict
->     - f2fs_evict_inode
-> 					 - f2fs_sync_fs
-> 					  - write_checkpoint
-> 					   - block_operations
-> 					    - f2fs_lock_all (down_write(cp_rwsem))
->      - f2fs_lock_op (down_read(cp_rwsem))
-> 					    - sync_node_pages
-> 					     - ilookup
-> 					      - find_inode_fast
-> 					       - __wait_on_freeing_inode
-> 					         (wait on I_FREEING clear)
-> 
-> Here, we change to set inline_node flag only for linked inode for fixing.
-> 
-> Reported-by: Yunlei He <heyunlei@huawei.com>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/data.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index eb6ce31..7805736 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1544,7 +1544,8 @@ restart:
->  		if (pos + len <= MAX_INLINE_DATA) {
->  			read_inline_data(page, ipage);
->  			set_inode_flag(F2FS_I(inode), FI_DATA_EXIST);
-> -			set_inline_node(ipage);
-> +			if (inode->i_nlink)
-> +				set_inline_node(ipage);
->  		} else {
->  			err = f2fs_convert_inline_page(&dn, page);
->  			if (err)
-> -- 
-> 2.8.2.311.gee88674
