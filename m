@@ -1,8 +1,7 @@
 From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH 3/4] f2fs: add sysfs interfaces for fault
-	injection
-Date: Wed, 11 May 2016 17:08:16 +0800
-Message-ID: <1462957697-6900-3-git-send-email-shengyong1@huawei.com>
+Subject: [RFC PATCH 4/4] f2fs: move fault injection to sysfs
+Date: Wed, 11 May 2016 17:08:17 +0800
+Message-ID: <1462957697-6900-4-git-send-email-shengyong1@huawei.com>
 References: <1462957697-6900-1-git-send-email-shengyong1@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,13 +9,13 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1b0QAt-0001OH-Jx
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <shengyong1@huawei.com>) id 1b0QAt-0004kg-CO
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Wed, 11 May 2016 09:11:23 +0000
 Received: from [119.145.14.65] (helo=szxga02-in.huawei.com)
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1b0QAs-0007NH-4z
+	(Exim 4.76) id 1b0QAs-0007NI-50
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Wed, 11 May 2016 09:11:23 +0000
 In-Reply-To: <1462957697-6900-1-git-send-email-shengyong1@huawei.com>
@@ -32,147 +31,107 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds a new entry called fault_injection in /sys/fs/f2fs, and
-all injection attributes are placed in this entry.  During initializing
-f2fs module, these inject attributes are created.
+Replace mount option "f2fs_injection" by injection attributes in sysfs.
 
 Signed-off-by: Sheng Yong <shengyong1@huawei.com>
 ---
- fs/f2fs/super.c | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+ fs/f2fs/f2fs.h  | 24 ++++++++++++++++++------
+ fs/f2fs/super.c | 15 ---------------
+ 2 files changed, 18 insertions(+), 21 deletions(-)
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index e18390b..81e3fad 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -60,15 +60,28 @@ struct f2fs_fault_info {
+ };
+ 
+ extern struct f2fs_fault_info f2fs_fault;
+-extern u32 f2fs_fault_rate;
+-extern atomic_t f2fs_ops;
+ extern char *fault_name[FAULT_MAX];
+ 
+ static inline bool time_to_inject(int type)
+ {
+-	atomic_inc(&f2fs_ops);
+-	if (f2fs_fault_rate && (atomic_read(&f2fs_ops) >= f2fs_fault_rate)) {
+-		atomic_set(&f2fs_ops, 0);
++	if (!f2fs_fault.inject_rate)
++		return false;
++	if (type == FAULT_KMALLOC && !f2fs_fault.inject_kmalloc)
++		return false;
++	else if (type == FAULT_PAGE_ALLOC && !f2fs_fault.inject_page_alloc)
++		return false;
++	else if (type == FAULT_ALLOC_NID && !f2fs_fault.inject_nid_alloc)
++		return false;
++	else if (type == FAULT_ORPHAN && !f2fs_fault.inject_orphan)
++		return false;
++	else if (type == FAULT_BLOCK && !f2fs_fault.inject_block)
++		return false;
++	else if (type == FAULT_DIR_DEPTH && !f2fs_fault.inject_dir_depth)
++		return false;
++
++	atomic_inc(&f2fs_fault.inject_ops);
++	if (atomic_read(&f2fs_fault.inject_ops) >= f2fs_fault.inject_rate) {
++		atomic_set(&f2fs_fault.inject_ops, 0);
+ 		printk("%sF2FS-fs : inject %s in %pF\n",
+ 				KERN_INFO,
+ 				fault_name[type],
+@@ -98,7 +111,6 @@ static inline bool time_to_inject(int type)
+ #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
+ #define F2FS_MOUNT_FORCE_FG_GC		0x00004000
+ #define F2FS_MOUNT_DATA_FLUSH		0x00008000
+-#define F2FS_MOUNT_FAULT_INJECTION	0x00010000
+ 
+ #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
+ #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 069dc44..a9066e4 100644
+index a9066e4..1dfd854 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -52,6 +52,12 @@ char *fault_name[FAULT_MAX] = {
- 	[FAULT_BLOCK]		= "no more block",
- 	[FAULT_DIR_DEPTH]	= "too big dir depth",
- };
-+
-+static int f2fs_build_fault_attr(void)
-+{
-+	memset(&f2fs_fault, 0, sizeof(struct f2fs_fault_info));
-+	return 0;
-+}
- #endif
+@@ -41,8 +41,6 @@ static struct kset *f2fs_kset;
  
- /* f2fs-wide shrinker description */
-@@ -119,6 +125,10 @@ enum {
- 	SM_INFO,	/* struct f2fs_sm_info */
- 	NM_INFO,	/* struct f2fs_nm_info */
- 	F2FS_SBI,	/* struct f2fs_sb_info */
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+	FAULT_INFO_RATE,
-+	FAULT_INFO,
-+#endif
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ struct f2fs_fault_info f2fs_fault;
+-u32 f2fs_fault_rate = 0;
+-atomic_t f2fs_ops;
+ 
+ char *fault_name[FAULT_MAX] = {
+ 	[FAULT_KMALLOC]		= "kmalloc",
+@@ -89,7 +87,6 @@ enum {
+ 	Opt_noextent_cache,
+ 	Opt_noinline_data,
+ 	Opt_data_flush,
+-	Opt_fault_injection,
+ 	Opt_err,
  };
  
- struct f2fs_attr {
-@@ -140,6 +150,10 @@ static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
- 		return (unsigned char *)NM_I(sbi);
- 	else if (struct_type == F2FS_SBI)
- 		return (unsigned char *)sbi;
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+	else if (struct_type == FAULT_INFO_RATE || struct_type == FAULT_INFO)
-+		return (unsigned char *)&f2fs_fault;
-+#endif
- 	return NULL;
- }
- 
-@@ -189,6 +203,10 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
- 	ret = kstrtoul(skip_spaces(buf), 0, &t);
- 	if (ret < 0)
- 		return ret;
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+	if (a->struct_type == FAULT_INFO && t > 1)
-+		return -EINVAL;
-+#endif
- 	*ui = t;
- 	return count;
- }
-@@ -254,6 +272,15 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, max_victim_search, max_victim_search);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, dir_level, dir_level);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, cp_interval, interval_time[CP_TIME]);
- F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+F2FS_RW_ATTR(FAULT_INFO_RATE, f2fs_fault_info, inject_rate, inject_rate);
-+F2FS_RW_ATTR(FAULT_INFO, f2fs_fault_info, inject_kmalloc, inject_kmalloc);
-+F2FS_RW_ATTR(FAULT_INFO, f2fs_fault_info, inject_page_alloc, inject_page_alloc);
-+F2FS_RW_ATTR(FAULT_INFO, f2fs_fault_info, inject_nid_alloc, inject_nid_alloc);
-+F2FS_RW_ATTR(FAULT_INFO, f2fs_fault_info, inject_orphan, inject_orphan);
-+F2FS_RW_ATTR(FAULT_INFO, f2fs_fault_info, inject_block, inject_block);
-+F2FS_RW_ATTR(FAULT_INFO, f2fs_fault_info, inject_dir_depth, inject_dir_depth);
-+#endif
- F2FS_GENERAL_RO_ATTR(lifetime_write_kbytes);
- 
- #define ATTR_LIST(name) (&f2fs_attr_##name.attr)
-@@ -290,6 +317,27 @@ static struct kobj_type f2fs_ktype = {
- 	.release	= f2fs_sb_release,
+@@ -115,7 +112,6 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_noextent_cache, "noextent_cache"},
+ 	{Opt_noinline_data, "noinline_data"},
+ 	{Opt_data_flush, "data_flush"},
+-	{Opt_fault_injection, "fault_injection=%u"},
+ 	{Opt_err, NULL},
  };
  
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+/* sysfs for f2fs fault injection */
-+static struct kobject f2fs_fault_inject;
-+
-+static struct attribute *f2fs_fault_attrs[] = {
-+	ATTR_LIST(inject_rate),
-+	ATTR_LIST(inject_kmalloc),
-+	ATTR_LIST(inject_page_alloc),
-+	ATTR_LIST(inject_nid_alloc),
-+	ATTR_LIST(inject_orphan),
-+	ATTR_LIST(inject_block),
-+	ATTR_LIST(inject_dir_depth),
-+	NULL
-+};
-+
-+static struct kobj_type f2fs_fault_ktype = {
-+	.default_attrs	= f2fs_fault_attrs,
-+	.sysfs_ops	= &f2fs_attr_ops,
-+};
-+#endif
-+
- void f2fs_msg(struct super_block *sb, const char *level, const char *fmt, ...)
- {
- 	struct va_format vaf;
-@@ -1798,6 +1846,16 @@ static int __init init_f2fs_fs(void)
- 		err = -ENOMEM;
- 		goto free_extent_cache;
- 	}
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+	f2fs_fault_inject.kset = f2fs_kset;
-+	f2fs_build_fault_attr();
-+	err = kobject_init_and_add(&f2fs_fault_inject, &f2fs_fault_ktype,
-+				NULL, "fault_injection");
-+	if (err) {
-+		f2fs_fault_inject.kset = NULL;
-+		goto free_kset;
-+	}
-+#endif
- 	err = register_shrinker(&f2fs_shrinker_info);
- 	if (err)
- 		goto free_kset;
-@@ -1816,6 +1874,10 @@ free_filesystem:
- free_shrinker:
- 	unregister_shrinker(&f2fs_shrinker_info);
- free_kset:
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+	if (f2fs_fault_inject.kset)
-+		kobject_put(&f2fs_fault_inject);
-+#endif
- 	kset_unregister(f2fs_kset);
- free_extent_cache:
- 	destroy_extent_cache();
-@@ -1842,6 +1904,9 @@ static void __exit exit_f2fs_fs(void)
- 	destroy_segment_manager_caches();
- 	destroy_node_manager_caches();
- 	destroy_inodecache();
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+	kobject_put(&f2fs_fault_inject);
-+#endif
- 	kset_unregister(f2fs_kset);
- 	f2fs_destroy_trace_ios();
- }
+@@ -501,17 +497,6 @@ static int parse_options(struct super_block *sb, char *options)
+ 		case Opt_data_flush:
+ 			set_opt(sbi, DATA_FLUSH);
+ 			break;
+-		case Opt_fault_injection:
+-			if (args->from && match_int(args, &arg))
+-				return -EINVAL;
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+-			f2fs_fault_rate = arg;
+-			atomic_set(&f2fs_ops, 0);
+-#else
+-			f2fs_msg(sb, KERN_INFO,
+-				"FAULT_INJECTION was not selected");
+-#endif
+-			break;
+ 		default:
+ 			f2fs_msg(sb, KERN_ERR,
+ 				"Unrecognized mount option \"%s\" or missing value",
 -- 
 2.7.1
 
