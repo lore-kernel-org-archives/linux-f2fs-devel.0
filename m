@@ -1,144 +1,102 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [RFC PATCH 4/4] f2fs: move fault injection to sysfs
-Date: Wed, 11 May 2016 17:08:17 +0800
-Message-ID: <1462957697-6900-4-git-send-email-shengyong1@huawei.com>
-References: <1462957697-6900-1-git-send-email-shengyong1@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix deadlock when flush inline data
+Date: Wed, 11 May 2016 19:48:44 +0800
+Message-ID: <20160511114844.8380-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1b0QAt-0004kg-CO
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 11 May 2016 09:11:23 +0000
-Received: from [119.145.14.65] (helo=szxga02-in.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1b0QAs-0007NI-50
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 11 May 2016 09:11:23 +0000
-In-Reply-To: <1462957697-6900-1-git-send-email-shengyong1@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Replace mount option "f2fs_injection" by injection attributes in sysfs.
+Below backtrace info was reported by Yunlei He:
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Call Trace:
+ [<ffffffff817a9395>] schedule+0x35/0x80
+ [<ffffffff817abb7d>] rwsem_down_read_failed+0xed/0x130
+ [<ffffffff813c12a8>] call_rwsem_down_read_failed+0x18/0x
+ [<ffffffff817ab1d0>] down_read+0x20/0x30
+ [<ffffffffa02a1a12>] f2fs_evict_inode+0x242/0x3a0 [f2fs]
+ [<ffffffff81217057>] evict+0xc7/0x1a0
+ [<ffffffff81217cd6>] iput+0x196/0x200
+ [<ffffffff812134f9>] __dentry_kill+0x179/0x1e0
+ [<ffffffff812136f9>] dput+0x199/0x1f0
+ [<ffffffff811fe77b>] __fput+0x18b/0x220
+ [<ffffffff811fe84e>] ____fput+0xe/0x10
+ [<ffffffff81097427>] task_work_run+0x77/0x90
+ [<ffffffff81074d62>] exit_to_usermode_loop+0x73/0xa2
+ [<ffffffff81003b7a>] do_syscall_64+0xfa/0x110
+ [<ffffffff817acf65>] entry_SYSCALL64_slow_path+0x25/0x25
+
+Call Trace:
+ [<ffffffff817a9395>] schedule+0x35/0x80
+ [<ffffffff81216dc3>] __wait_on_freeing_inode+0xa3/0xd0
+ [<ffffffff810bc300>] ? autoremove_wake_function+0x40/0x4
+ [<ffffffff8121771d>] find_inode_fast+0x7d/0xb0
+ [<ffffffff8121794a>] ilookup+0x6a/0xd0
+ [<ffffffffa02bc740>] sync_node_pages+0x210/0x650 [f2fs]
+ [<ffffffff8122e690>] ? do_fsync+0x70/0x70
+ [<ffffffffa02b085e>] block_operations+0x9e/0xf0 [f2fs]
+ [<ffffffff8137b795>] ? bio_endio+0x55/0x60
+ [<ffffffffa02b0942>] write_checkpoint+0x92/0xba0 [f2fs]
+ [<ffffffff8117da57>] ? mempool_free_slab+0x17/0x20
+ [<ffffffff8117de8b>] ? mempool_free+0x2b/0x80
+ [<ffffffff8122e690>] ? do_fsync+0x70/0x70
+ [<ffffffffa02a53e3>] f2fs_sync_fs+0x63/0xd0 [f2fs]
+ [<ffffffff8129630f>] ? ext4_sync_fs+0xbf/0x190
+ [<ffffffff8122e6b0>] sync_fs_one_sb+0x20/0x30
+ [<ffffffff812002e9>] iterate_supers+0xb9/0x110
+ [<ffffffff8122e7b5>] sys_sync+0x55/0x90
+ [<ffffffff81003ae9>] do_syscall_64+0x69/0x110
+ [<ffffffff817acf65>] entry_SYSCALL64_slow_path+0x25/0x25
+
+With following excuting serials, we will set inline_node in inode page
+after inode was unlinked, result in a deadloop described as below:
+1. open file
+2. write file
+3. unlink file
+4. write file
+5. close file
+
+Thread A				Thread B
+ - dput
+  - iput_final
+   - inode->i_state |= I_FREEING
+   - evict
+    - f2fs_evict_inode
+					 - f2fs_sync_fs
+					  - write_checkpoint
+					   - block_operations
+					    - f2fs_lock_all (down_write(cp_rwsem))
+     - f2fs_lock_op (down_read(cp_rwsem))
+					    - sync_node_pages
+					     - ilookup
+					      - find_inode_fast
+					       - __wait_on_freeing_inode
+					         (wait on I_FREEING clear)
+
+Here, we change to set inline_node flag only for linked inode for fixing.
+
+Reported-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h  | 24 ++++++++++++++++++------
- fs/f2fs/super.c | 15 ---------------
- 2 files changed, 18 insertions(+), 21 deletions(-)
+ fs/f2fs/data.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index e18390b..81e3fad 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -60,15 +60,28 @@ struct f2fs_fault_info {
- };
- 
- extern struct f2fs_fault_info f2fs_fault;
--extern u32 f2fs_fault_rate;
--extern atomic_t f2fs_ops;
- extern char *fault_name[FAULT_MAX];
- 
- static inline bool time_to_inject(int type)
- {
--	atomic_inc(&f2fs_ops);
--	if (f2fs_fault_rate && (atomic_read(&f2fs_ops) >= f2fs_fault_rate)) {
--		atomic_set(&f2fs_ops, 0);
-+	if (!f2fs_fault.inject_rate)
-+		return false;
-+	if (type == FAULT_KMALLOC && !f2fs_fault.inject_kmalloc)
-+		return false;
-+	else if (type == FAULT_PAGE_ALLOC && !f2fs_fault.inject_page_alloc)
-+		return false;
-+	else if (type == FAULT_ALLOC_NID && !f2fs_fault.inject_nid_alloc)
-+		return false;
-+	else if (type == FAULT_ORPHAN && !f2fs_fault.inject_orphan)
-+		return false;
-+	else if (type == FAULT_BLOCK && !f2fs_fault.inject_block)
-+		return false;
-+	else if (type == FAULT_DIR_DEPTH && !f2fs_fault.inject_dir_depth)
-+		return false;
-+
-+	atomic_inc(&f2fs_fault.inject_ops);
-+	if (atomic_read(&f2fs_fault.inject_ops) >= f2fs_fault.inject_rate) {
-+		atomic_set(&f2fs_fault.inject_ops, 0);
- 		printk("%sF2FS-fs : inject %s in %pF\n",
- 				KERN_INFO,
- 				fault_name[type],
-@@ -98,7 +111,6 @@ static inline bool time_to_inject(int type)
- #define F2FS_MOUNT_EXTENT_CACHE		0x00002000
- #define F2FS_MOUNT_FORCE_FG_GC		0x00004000
- #define F2FS_MOUNT_DATA_FLUSH		0x00008000
--#define F2FS_MOUNT_FAULT_INJECTION	0x00010000
- 
- #define clear_opt(sbi, option)	(sbi->mount_opt.opt &= ~F2FS_MOUNT_##option)
- #define set_opt(sbi, option)	(sbi->mount_opt.opt |= F2FS_MOUNT_##option)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index a9066e4..1dfd854 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -41,8 +41,6 @@ static struct kset *f2fs_kset;
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- struct f2fs_fault_info f2fs_fault;
--u32 f2fs_fault_rate = 0;
--atomic_t f2fs_ops;
- 
- char *fault_name[FAULT_MAX] = {
- 	[FAULT_KMALLOC]		= "kmalloc",
-@@ -89,7 +87,6 @@ enum {
- 	Opt_noextent_cache,
- 	Opt_noinline_data,
- 	Opt_data_flush,
--	Opt_fault_injection,
- 	Opt_err,
- };
- 
-@@ -115,7 +112,6 @@ static match_table_t f2fs_tokens = {
- 	{Opt_noextent_cache, "noextent_cache"},
- 	{Opt_noinline_data, "noinline_data"},
- 	{Opt_data_flush, "data_flush"},
--	{Opt_fault_injection, "fault_injection=%u"},
- 	{Opt_err, NULL},
- };
- 
-@@ -501,17 +497,6 @@ static int parse_options(struct super_block *sb, char *options)
- 		case Opt_data_flush:
- 			set_opt(sbi, DATA_FLUSH);
- 			break;
--		case Opt_fault_injection:
--			if (args->from && match_int(args, &arg))
--				return -EINVAL;
--#ifdef CONFIG_F2FS_FAULT_INJECTION
--			f2fs_fault_rate = arg;
--			atomic_set(&f2fs_ops, 0);
--#else
--			f2fs_msg(sb, KERN_INFO,
--				"FAULT_INJECTION was not selected");
--#endif
--			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index eb6ce31..7805736 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1544,7 +1544,8 @@ restart:
+ 		if (pos + len <= MAX_INLINE_DATA) {
+ 			read_inline_data(page, ipage);
+ 			set_inode_flag(F2FS_I(inode), FI_DATA_EXIST);
+-			set_inline_node(ipage);
++			if (inode->i_nlink)
++				set_inline_node(ipage);
+ 		} else {
+ 			err = f2fs_convert_inline_page(&dn, page);
+ 			if (err)
 -- 
-2.7.1
-
-
-------------------------------------------------------------------------------
-Mobile security can be enabling, not merely restricting. Employees who
-bring their own devices (BYOD) to work are irked by the imposition of MDM
-restrictions. Mobile Device Manager Plus allows you to control only the
-apps on BYO-devices by containerizing them, leaving personal data untouched!
-https://ad.doubleclick.net/ddm/clk/304595813;131938128;j
+2.8.2.311.gee88674
