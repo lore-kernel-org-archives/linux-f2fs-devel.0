@@ -1,93 +1,62 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: Kernel panic in F2FS mount on NVMe SSD.
-Date: Fri, 13 May 2016 17:59:21 -0700
-Message-ID: <20160514005921.GA29412@jaegeuk.gateway>
-References: <D87A37E7A4AA544D853031D9A919C70B168FC5E3@avsrvexchmbx2.microsemi.net>
-	<20160505000958.GA72128@jaegeuk.gateway>
-	<D87A37E7A4AA544D853031D9A919C70B168FC904@avsrvexchmbx2.microsemi.net>
-	<20160505034815.GA73673@jaegeuk.gateway>
-	<D87A37E7A4AA544D853031D9A919C70B168FD685@avsrvexchmbx2.microsemi.net>
-	<20160507174952.GB92790@jaegeuk.gateway>
-	<D87A37E7A4AA544D853031D9A919C70B16901358@avsrvexchmbx2.microsemi.net>
-	<20160509172608.GB810@jaegeuk.gateway>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: fix incorrect error path handling in f2fs_move_rehashed_dirents
+Date: Sat, 14 May 2016 19:03:53 +0800
+Message-ID: <20160514110353.31981-2-yuchao0@huawei.com>
+References: <20160514110353.31981-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1b1NvW-00009b-MW
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 14 May 2016 00:59:30 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1b1NvV-0003ug-NW
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 14 May 2016 00:59:30 +0000
-Content-Disposition: inline
-In-Reply-To: <20160509172608.GB810@jaegeuk.gateway>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Stephen Bates <stephen.bates@microsemi.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160514110353.31981-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello,
+Fix two bugs in error path of f2fs_move_rehashed_dirents:
+ - release dir's inode page if fail to call kmalloc
+ - recover i_current_depth if fail to converting
 
-On Mon, May 09, 2016 at 10:26:08AM -0700, Jaegeuk Kim wrote:
-> On Mon, May 09, 2016 at 03:35:25PM +0000, Stephen Bates wrote:
-> > > 
-> > > We could figure out how to improve them. :)
-> > > 
-> > > I've been preparing two patches under testing right now.
-> > >  - f2fs: fallocate data blocks in single locked node page
-> > >  - f2fs: read node blocks ahead when truncating blocks
-> > > 
-> > > Thanks,
-> > 
-> > Let me know when and where I can pull these and I can do some testing too.
-> 
-> Okay, Chao Yu gave more improvement, so now I'm starting to do stress tests.
-> Once getting some good signs, I'll let you know.
-> 
-> Meanwhile, you may take a look at any testing patches from:
-> http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/inline.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-I think the patches are ready.
-You may be able to test with the above up-to-date branch.
-
-Thanks,
-
-
-> 
-> Thanks,
-> 
-> > 
-> > Thanks!
-> > 
-> > Stephen
-> 
-> ------------------------------------------------------------------------------
-> Find and fix application performance issues faster with Applications Manager
-> Applications Manager provides deep performance insights into multiple tiers of
-> your business applications. It resolves application problems quickly and
-> reduces your MTTR. Get your free trial!
-> https://ad.doubleclick.net/ddm/clk/302982198;130105516;z
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
-Mobile security can be enabling, not merely restricting. Employees who
-bring their own devices (BYOD) to work are irked by the imposition of MDM
-restrictions. Mobile Device Manager Plus allows you to control only the
-apps on BYO-devices by containerizing them, leaving personal data untouched!
-https://ad.doubleclick.net/ddm/clk/304595813;131938128;j
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 60ba7ac..a4bb155 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -464,12 +464,15 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
+ 				struct f2fs_inline_dentry *inline_dentry)
+ {
+ 	struct f2fs_inline_dentry *backup_dentry;
++	struct f2fs_inode_info *fi = F2FS_I(dir);
+ 	int err;
+ 
+ 	backup_dentry = f2fs_kmalloc(sizeof(struct f2fs_inline_dentry),
+ 							GFP_F2FS_ZERO);
+-	if (!backup_dentry)
++	if (!backup_dentry) {
++		f2fs_put_page(ipage, 1);
+ 		return -ENOMEM;
++	}
+ 
+ 	memcpy(backup_dentry, inline_dentry, MAX_INLINE_DATA);
+ 	truncate_inline_inode(ipage, 0);
+@@ -483,13 +486,14 @@ static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
+ 	lock_page(ipage);
+ 
+ 	stat_dec_inline_dir(dir);
+-	clear_inode_flag(F2FS_I(dir), FI_INLINE_DENTRY);
++	clear_inode_flag(fi, FI_INLINE_DENTRY);
+ 	update_inode(dir, ipage);
+ 	kfree(backup_dentry);
+ 	return 0;
+ recover:
+ 	lock_page(ipage);
+ 	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA);
++	fi->i_current_depth = 0;
+ 	i_size_write(dir, MAX_INLINE_DATA);
+ 	update_inode(dir, ipage);
+ 	f2fs_put_page(ipage, 1);
+-- 
+2.8.2.311.gee88674
