@@ -1,23 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/5] f2fs: use percpu_counter for page counters
-Date: Mon, 16 May 2016 15:30:44 -0700
-Message-ID: <1463437847-40412-2-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 3/5] f2fs: use percpu_counter for # of dirty
+	pages in inode
+Date: Mon, 16 May 2016 15:30:45 -0700
+Message-ID: <1463437847-40412-3-git-send-email-jaegeuk@kernel.org>
 References: <1463437847-40412-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1b2R2R-0002BH-UC
+	(envelope-from <jaegeuk@kernel.org>) id 1b2R2S-0002BM-Qw
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 May 2016 22:30:59 +0000
+	Mon, 16 May 2016 22:31:00 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1b2R2P-0005Rj-N6
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1b2R2Q-0000RY-SB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 May 2016 22:30:59 +0000
+	Mon, 16 May 2016 22:31:00 +0000
 In-Reply-To: <1463437847-40412-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,157 +32,99 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch substitutes percpu_counter for atomic_counter when counting
-various types of pages.
+This patch adds percpu_counter for # of dirty pages in inode.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/debug.c |  1 +
- fs/f2fs/f2fs.h  | 12 +++++++-----
- fs/f2fs/super.c | 31 +++++++++++++++++++++++++++----
- 3 files changed, 35 insertions(+), 9 deletions(-)
+ fs/f2fs/f2fs.h  | 10 +++++-----
+ fs/f2fs/file.c  |  2 +-
+ fs/f2fs/super.c |  8 +++++++-
+ 3 files changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 37615b2..2210c7c 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -144,6 +144,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- 	si->base_mem = sizeof(struct f2fs_sb_info) + sbi->sb->s_blocksize;
- 	si->base_mem += 2 * sizeof(struct f2fs_inode_info);
- 	si->base_mem += sizeof(*sbi->ckpt);
-+	si->base_mem += sizeof(struct percpu_counter) * NR_COUNT_TYPE;
- 
- 	/* build sm */
- 	si->base_mem += sizeof(struct f2fs_sm_info);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 24f8170..2851078 100644
+index 2851078..ae978a1 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -833,7 +833,9 @@ struct f2fs_sb_info {
- 	block_t discard_blks;			/* discard command candidats */
- 	block_t last_valid_block_count;		/* for recovery */
- 	u32 s_next_generation;			/* for NFS support */
--	atomic_t nr_pages[NR_COUNT_TYPE];	/* # of pages, see count_type */
-+
-+	/* # of pages, see count_type */
-+	struct percpu_counter nr_pages[NR_COUNT_TYPE];
+@@ -456,7 +456,7 @@ struct f2fs_inode_info {
+ 	/* Use below internally in f2fs*/
+ 	unsigned long flags;		/* use to pass per-file flags */
+ 	struct rw_semaphore i_sem;	/* protect fi info */
+-	atomic_t dirty_pages;		/* # of dirty pages */
++	struct percpu_counter dirty_pages;	/* # of dirty pages */
+ 	f2fs_hash_t chash;		/* hash value of given file name */
+ 	unsigned int clevel;		/* maximum level of given file name */
+ 	nid_t i_xattr_nid;		/* node id that contains xattrs */
+@@ -1186,7 +1186,7 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
  
- 	struct f2fs_mount_info mount_opt;	/* mount options */
- 
-@@ -1178,7 +1180,7 @@ static inline void dec_valid_block_count(struct f2fs_sb_info *sbi,
- 
- static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+ static inline void inode_inc_dirty_pages(struct inode *inode)
  {
--	atomic_inc(&sbi->nr_pages[count_type]);
-+	percpu_counter_inc(&sbi->nr_pages[count_type]);
- 	set_sbi_flag(sbi, SBI_IS_DIRTY);
- }
- 
-@@ -1191,7 +1193,7 @@ static inline void inode_inc_dirty_pages(struct inode *inode)
- 
- static inline void dec_page_count(struct f2fs_sb_info *sbi, int count_type)
- {
--	atomic_dec(&sbi->nr_pages[count_type]);
-+	percpu_counter_dec(&sbi->nr_pages[count_type]);
- }
- 
- static inline void inode_dec_dirty_pages(struct inode *inode)
-@@ -1205,9 +1207,9 @@ static inline void inode_dec_dirty_pages(struct inode *inode)
+-	atomic_inc(&F2FS_I(inode)->dirty_pages);
++	percpu_counter_inc(&F2FS_I(inode)->dirty_pages);
+ 	inc_page_count(F2FS_I_SB(inode), S_ISDIR(inode->i_mode) ?
  				F2FS_DIRTY_DENTS : F2FS_DIRTY_DATA);
  }
+@@ -1202,7 +1202,7 @@ static inline void inode_dec_dirty_pages(struct inode *inode)
+ 			!S_ISLNK(inode->i_mode))
+ 		return;
  
--static inline int get_pages(struct f2fs_sb_info *sbi, int count_type)
-+static inline s64 get_pages(struct f2fs_sb_info *sbi, int count_type)
- {
--	return atomic_read(&sbi->nr_pages[count_type]);
-+	return percpu_counter_sum_positive(&sbi->nr_pages[count_type]);
+-	atomic_dec(&F2FS_I(inode)->dirty_pages);
++	percpu_counter_dec(&F2FS_I(inode)->dirty_pages);
+ 	dec_page_count(F2FS_I_SB(inode), S_ISDIR(inode->i_mode) ?
+ 				F2FS_DIRTY_DENTS : F2FS_DIRTY_DATA);
+ }
+@@ -1212,9 +1212,9 @@ static inline s64 get_pages(struct f2fs_sb_info *sbi, int count_type)
+ 	return percpu_counter_sum_positive(&sbi->nr_pages[count_type]);
  }
  
- static inline int get_dirty_pages(struct inode *inode)
+-static inline int get_dirty_pages(struct inode *inode)
++static inline s64 get_dirty_pages(struct inode *inode)
+ {
+-	return atomic_read(&F2FS_I(inode)->dirty_pages);
++	return percpu_counter_sum_positive(&F2FS_I(inode)->dirty_pages);
+ }
+ 
+ static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index b5e3999..69451b83 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1457,7 +1457,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 		goto out;
+ 
+ 	f2fs_msg(F2FS_I_SB(inode)->sb, KERN_WARNING,
+-		"Unexpected flush for atomic writes: ino=%lu, npages=%u",
++		"Unexpected flush for atomic writes: ino=%lu, npages=%lld",
+ 					inode->i_ino, get_dirty_pages(inode));
+ 	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+ 	if (ret)
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9df6d72..b3030ed 100644
+index b3030ed..56f177b 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -606,6 +606,14 @@ static void f2fs_destroy_inode(struct inode *inode)
- 	call_rcu(&inode->i_rcu, f2fs_i_callback);
- }
+@@ -526,9 +526,13 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
  
-+static void destroy_percpu_info(struct f2fs_sb_info *sbi)
-+{
-+	int i;
-+
-+	for (i = 0; i < NR_COUNT_TYPE; i++)
-+		percpu_counter_destroy(&sbi->nr_pages[i]);
-+}
-+
- static void f2fs_put_super(struct super_block *sb)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -667,6 +675,8 @@ static void f2fs_put_super(struct super_block *sb)
- 	if (sbi->s_chksum_driver)
- 		crypto_free_shash(sbi->s_chksum_driver);
- 	kfree(sbi->raw_super);
-+
-+	destroy_percpu_info(sbi);
- 	kfree(sbi);
- }
+ 	init_once((void *) fi);
  
-@@ -1325,7 +1335,6 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
- static void init_sb_info(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *raw_super = sbi->raw_super;
--	int i;
- 
- 	sbi->log_sectors_per_block =
- 		le32_to_cpu(raw_super->log_sectors_per_block);
-@@ -1345,9 +1354,6 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->cur_victim_sec = NULL_SECNO;
- 	sbi->max_victim_search = DEF_MAX_VICTIM_SEARCH;
- 
--	for (i = 0; i < NR_COUNT_TYPE; i++)
--		atomic_set(&sbi->nr_pages[i], 0);
--
- 	sbi->dir_level = DEF_DIR_LEVEL;
- 	sbi->interval_time[CP_TIME] = DEF_CP_INTERVAL;
- 	sbi->interval_time[REQ_TIME] = DEF_IDLE_INTERVAL;
-@@ -1363,6 +1369,18 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- #endif
- }
- 
-+static int init_percpu_info(struct f2fs_sb_info *sbi)
-+{
-+	int i, err;
-+
-+	for (i = 0; i < NR_COUNT_TYPE; i++) {
-+		err = percpu_counter_init(&sbi->nr_pages[i], 0, GFP_KERNEL);
-+		if (err)
-+			return err;
++	if (percpu_counter_init(&fi->dirty_pages, 0, GFP_NOFS)) {
++		kmem_cache_free(f2fs_inode_cachep, fi);
++		return NULL;
 +	}
-+	return 0;
-+}
 +
- /*
-  * Read f2fs raw super block.
-  * Because we have two copies of super block, so read both of them
-@@ -1553,6 +1571,10 @@ try_onemore:
- 	init_waitqueue_head(&sbi->cp_wait);
- 	init_sb_info(sbi);
+ 	/* Initialize f2fs-specific inode info */
+ 	fi->vfs_inode.i_version = 1;
+-	atomic_set(&fi->dirty_pages, 0);
+ 	fi->i_current_depth = 1;
+ 	fi->i_advise = 0;
+ 	init_rwsem(&fi->i_sem);
+@@ -598,6 +602,8 @@ static void f2fs_dirty_inode(struct inode *inode, int flags)
+ static void f2fs_i_callback(struct rcu_head *head)
+ {
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
++
++	percpu_counter_destroy(&F2FS_I(inode)->dirty_pages);
+ 	kmem_cache_free(f2fs_inode_cachep, F2FS_I(inode));
+ }
  
-+	err = init_percpu_info(sbi);
-+	if (err)
-+		goto free_options;
-+
- 	/* get an inode for meta space */
- 	sbi->meta_inode = f2fs_iget(sb, F2FS_META_INO(sbi));
- 	if (IS_ERR(sbi->meta_inode)) {
-@@ -1755,6 +1777,7 @@ free_meta_inode:
- 	make_bad_inode(sbi->meta_inode);
- 	iput(sbi->meta_inode);
- free_options:
-+	destroy_percpu_info(sbi);
- 	kfree(options);
- free_sb_buf:
- 	kfree(raw_super);
 -- 
 2.6.3
 
