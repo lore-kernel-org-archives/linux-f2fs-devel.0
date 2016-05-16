@@ -1,24 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/5] f2fs: use percpu_counter for # of dirty
-	pages in inode
-Date: Mon, 16 May 2016 15:30:45 -0700
-Message-ID: <1463437847-40412-3-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 5/5] f2fs: use percpu_counter for
+	total_valid_inode_count
+Date: Mon, 16 May 2016 15:30:47 -0700
+Message-ID: <1463437847-40412-5-git-send-email-jaegeuk@kernel.org>
 References: <1463437847-40412-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1b2R2S-0002BM-Qw
+	(envelope-from <jaegeuk@kernel.org>) id 1b2R2V-0002C6-8R
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 May 2016 22:31:00 +0000
+	Mon, 16 May 2016 22:31:03 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1b2R2Q-0000RY-SB
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1b2R2U-00060t-Bi
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 May 2016 22:31:00 +0000
+	Mon, 16 May 2016 22:31:03 +0000
 In-Reply-To: <1463437847-40412-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,99 +32,100 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch adds percpu_counter for # of dirty pages in inode.
+This patch uses percpu_counter to avoid stat_lock.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/f2fs.h  | 10 +++++-----
- fs/f2fs/file.c  |  2 +-
- fs/f2fs/super.c |  8 +++++++-
- 3 files changed, 13 insertions(+), 7 deletions(-)
+ fs/f2fs/f2fs.h  | 18 +++++++-----------
+ fs/f2fs/super.c | 11 ++++++++---
+ 2 files changed, 15 insertions(+), 14 deletions(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2851078..ae978a1 100644
+index 43aa692..c965897 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -456,7 +456,7 @@ struct f2fs_inode_info {
- 	/* Use below internally in f2fs*/
- 	unsigned long flags;		/* use to pass per-file flags */
- 	struct rw_semaphore i_sem;	/* protect fi info */
--	atomic_t dirty_pages;		/* # of dirty pages */
-+	struct percpu_counter dirty_pages;	/* # of dirty pages */
- 	f2fs_hash_t chash;		/* hash value of given file name */
- 	unsigned int clevel;		/* maximum level of given file name */
- 	nid_t i_xattr_nid;		/* node id that contains xattrs */
-@@ -1186,7 +1186,7 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+@@ -822,7 +822,6 @@ struct f2fs_sb_info {
+ 	unsigned int total_sections;		/* total section count */
+ 	unsigned int total_node_count;		/* total node block count */
+ 	unsigned int total_valid_node_count;	/* valid node block count */
+-	unsigned int total_valid_inode_count;	/* valid inode count */
+ 	loff_t max_file_blocks;			/* max block index of file */
+ 	int active_logs;			/* # of active logs */
+ 	int dir_level;				/* directory level */
+@@ -838,6 +837,9 @@ struct f2fs_sb_info {
+ 	/* # of allocated blocks */
+ 	struct percpu_counter alloc_valid_block_count;
  
- static inline void inode_inc_dirty_pages(struct inode *inode)
++	/* valid inode count */
++	struct percpu_counter total_valid_inode_count;
++
+ 	struct f2fs_mount_info mount_opt;	/* mount options */
+ 
+ 	/* for cleaning operations */
+@@ -1343,23 +1345,17 @@ static inline unsigned int valid_node_count(struct f2fs_sb_info *sbi)
+ 
+ static inline void inc_valid_inode_count(struct f2fs_sb_info *sbi)
  {
--	atomic_inc(&F2FS_I(inode)->dirty_pages);
-+	percpu_counter_inc(&F2FS_I(inode)->dirty_pages);
- 	inc_page_count(F2FS_I_SB(inode), S_ISDIR(inode->i_mode) ?
- 				F2FS_DIRTY_DENTS : F2FS_DIRTY_DATA);
- }
-@@ -1202,7 +1202,7 @@ static inline void inode_dec_dirty_pages(struct inode *inode)
- 			!S_ISLNK(inode->i_mode))
- 		return;
- 
--	atomic_dec(&F2FS_I(inode)->dirty_pages);
-+	percpu_counter_dec(&F2FS_I(inode)->dirty_pages);
- 	dec_page_count(F2FS_I_SB(inode), S_ISDIR(inode->i_mode) ?
- 				F2FS_DIRTY_DENTS : F2FS_DIRTY_DATA);
- }
-@@ -1212,9 +1212,9 @@ static inline s64 get_pages(struct f2fs_sb_info *sbi, int count_type)
- 	return percpu_counter_sum_positive(&sbi->nr_pages[count_type]);
+-	spin_lock(&sbi->stat_lock);
+-	f2fs_bug_on(sbi, sbi->total_valid_inode_count == sbi->total_node_count);
+-	sbi->total_valid_inode_count++;
+-	spin_unlock(&sbi->stat_lock);
++	percpu_counter_inc(&sbi->total_valid_inode_count);
  }
  
--static inline int get_dirty_pages(struct inode *inode)
-+static inline s64 get_dirty_pages(struct inode *inode)
+ static inline void dec_valid_inode_count(struct f2fs_sb_info *sbi)
  {
--	return atomic_read(&F2FS_I(inode)->dirty_pages);
-+	return percpu_counter_sum_positive(&F2FS_I(inode)->dirty_pages);
+-	spin_lock(&sbi->stat_lock);
+-	f2fs_bug_on(sbi, !sbi->total_valid_inode_count);
+-	sbi->total_valid_inode_count--;
+-	spin_unlock(&sbi->stat_lock);
++	percpu_counter_dec(&sbi->total_valid_inode_count);
  }
  
- static inline int get_blocktype_secs(struct f2fs_sb_info *sbi, int block_type)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b5e3999..69451b83 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1457,7 +1457,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- 		goto out;
+-static inline unsigned int valid_inode_count(struct f2fs_sb_info *sbi)
++static inline s64 valid_inode_count(struct f2fs_sb_info *sbi)
+ {
+-	return sbi->total_valid_inode_count;
++	return percpu_counter_sum_positive(&sbi->total_valid_inode_count);
+ }
  
- 	f2fs_msg(F2FS_I_SB(inode)->sb, KERN_WARNING,
--		"Unexpected flush for atomic writes: ino=%lu, npages=%u",
-+		"Unexpected flush for atomic writes: ino=%lu, npages=%lld",
- 					inode->i_ino, get_dirty_pages(inode));
- 	ret = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
- 	if (ret)
+ static inline struct page *f2fs_grab_cache_page(struct address_space *mapping,
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b3030ed..56f177b 100644
+index c0fd075..bbfeb6a 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -526,9 +526,13 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 
- 	init_once((void *) fi);
- 
-+	if (percpu_counter_init(&fi->dirty_pages, 0, GFP_NOFS)) {
-+		kmem_cache_free(f2fs_inode_cachep, fi);
-+		return NULL;
-+	}
-+
- 	/* Initialize f2fs-specific inode info */
- 	fi->vfs_inode.i_version = 1;
--	atomic_set(&fi->dirty_pages, 0);
- 	fi->i_current_depth = 1;
- 	fi->i_advise = 0;
- 	init_rwsem(&fi->i_sem);
-@@ -598,6 +602,8 @@ static void f2fs_dirty_inode(struct inode *inode, int flags)
- static void f2fs_i_callback(struct rcu_head *head)
- {
- 	struct inode *inode = container_of(head, struct inode, i_rcu);
-+
-+	percpu_counter_destroy(&F2FS_I(inode)->dirty_pages);
- 	kmem_cache_free(f2fs_inode_cachep, F2FS_I(inode));
+@@ -619,6 +619,7 @@ static void destroy_percpu_info(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < NR_COUNT_TYPE; i++)
+ 		percpu_counter_destroy(&sbi->nr_pages[i]);
+ 	percpu_counter_destroy(&sbi->alloc_valid_block_count);
++	percpu_counter_destroy(&sbi->total_valid_inode_count);
  }
  
+ static void f2fs_put_super(struct super_block *sb)
+@@ -1386,7 +1387,11 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+ 			return err;
+ 	}
+ 
+-	return percpu_counter_init(&sbi->alloc_valid_block_count, 0,
++	err = percpu_counter_init(&sbi->alloc_valid_block_count, 0, GFP_KERNEL);
++	if (err)
++		return err;
++
++	return percpu_counter_init(&sbi->total_valid_inode_count, 0,
+ 								GFP_KERNEL);
+ }
+ 
+@@ -1600,8 +1605,8 @@ try_onemore:
+ 
+ 	sbi->total_valid_node_count =
+ 				le32_to_cpu(sbi->ckpt->valid_node_count);
+-	sbi->total_valid_inode_count =
+-				le32_to_cpu(sbi->ckpt->valid_inode_count);
++	percpu_counter_set(&sbi->total_valid_inode_count,
++				le32_to_cpu(sbi->ckpt->valid_inode_count));
+ 	sbi->user_block_count = le64_to_cpu(sbi->ckpt->user_block_count);
+ 	sbi->total_valid_block_count =
+ 				le64_to_cpu(sbi->ckpt->valid_block_count);
 -- 
 2.6.3
 
