@@ -1,8 +1,8 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 5/5] f2fs: use percpu_counter for
-	total_valid_inode_count
-Date: Mon, 16 May 2016 15:30:47 -0700
-Message-ID: <1463437847-40412-5-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 4/5] f2fs: use percpu_counter for
+	alloc_valid_block_count
+Date: Mon, 16 May 2016 15:30:46 -0700
+Message-ID: <1463437847-40412-4-git-send-email-jaegeuk@kernel.org>
 References: <1463437847-40412-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -11,14 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1b2R2V-0002C6-8R
+	(envelope-from <jaegeuk@kernel.org>) id 1b2R2T-0002Ba-L1
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 May 2016 22:31:03 +0000
+	Mon, 16 May 2016 22:31:01 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1b2R2U-00060t-Bi
+	(Exim 4.76) id 1b2R2S-00060r-LW
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 May 2016 22:31:03 +0000
+	Mon, 16 May 2016 22:31:01 +0000
 In-Reply-To: <1463437847-40412-1-git-send-email-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,100 +32,121 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch uses percpu_counter to avoid stat_lock.
+This patch uses percpu_count for sbi->alloc_valid_block_count.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/f2fs.h  | 18 +++++++-----------
- fs/f2fs/super.c | 11 ++++++++---
- 2 files changed, 15 insertions(+), 14 deletions(-)
+ fs/f2fs/checkpoint.c | 2 +-
+ fs/f2fs/f2fs.h       | 8 +++++---
+ fs/f2fs/recovery.c   | 5 +++--
+ fs/f2fs/super.c      | 7 +++++--
+ 4 files changed, 14 insertions(+), 8 deletions(-)
 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index d04113b..140643d 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1079,7 +1079,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* update user_block_counts */
+ 	sbi->last_valid_block_count = sbi->total_valid_block_count;
+-	sbi->alloc_valid_block_count = 0;
++	percpu_counter_set(&sbi->alloc_valid_block_count, 0);
+ 
+ 	/* Here, we only have one bio having CP pack */
+ 	sync_meta_pages(sbi, META_FLUSH, LONG_MAX);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 43aa692..c965897 100644
+index ae978a1..43aa692 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -822,7 +822,6 @@ struct f2fs_sb_info {
- 	unsigned int total_sections;		/* total section count */
- 	unsigned int total_node_count;		/* total node block count */
- 	unsigned int total_valid_node_count;	/* valid node block count */
--	unsigned int total_valid_inode_count;	/* valid inode count */
- 	loff_t max_file_blocks;			/* max block index of file */
- 	int active_logs;			/* # of active logs */
- 	int dir_level;				/* directory level */
-@@ -838,6 +837,9 @@ struct f2fs_sb_info {
- 	/* # of allocated blocks */
- 	struct percpu_counter alloc_valid_block_count;
+@@ -829,13 +829,14 @@ struct f2fs_sb_info {
  
-+	/* valid inode count */
-+	struct percpu_counter total_valid_inode_count;
-+
+ 	block_t user_block_count;		/* # of user blocks */
+ 	block_t total_valid_block_count;	/* # of valid blocks */
+-	block_t alloc_valid_block_count;	/* # of allocated blocks */
+ 	block_t discard_blks;			/* discard command candidats */
+ 	block_t last_valid_block_count;		/* for recovery */
+ 	u32 s_next_generation;			/* for NFS support */
+ 
+ 	/* # of pages, see count_type */
+ 	struct percpu_counter nr_pages[NR_COUNT_TYPE];
++	/* # of allocated blocks */
++	struct percpu_counter alloc_valid_block_count;
+ 
  	struct f2fs_mount_info mount_opt;	/* mount options */
  
- 	/* for cleaning operations */
-@@ -1343,23 +1345,17 @@ static inline unsigned int valid_node_count(struct f2fs_sb_info *sbi)
- 
- static inline void inc_valid_inode_count(struct f2fs_sb_info *sbi)
- {
--	spin_lock(&sbi->stat_lock);
--	f2fs_bug_on(sbi, sbi->total_valid_inode_count == sbi->total_node_count);
--	sbi->total_valid_inode_count++;
--	spin_unlock(&sbi->stat_lock);
-+	percpu_counter_inc(&sbi->total_valid_inode_count);
+@@ -1161,8 +1162,9 @@ static inline bool inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 	inode->i_blocks += *count;
+ 	sbi->total_valid_block_count =
+ 		sbi->total_valid_block_count + (block_t)(*count);
+-	sbi->alloc_valid_block_count += (block_t)(*count);
+ 	spin_unlock(&sbi->stat_lock);
++
++	percpu_counter_add(&sbi->alloc_valid_block_count, (*count));
+ 	return true;
  }
  
- static inline void dec_valid_inode_count(struct f2fs_sb_info *sbi)
- {
--	spin_lock(&sbi->stat_lock);
--	f2fs_bug_on(sbi, !sbi->total_valid_inode_count);
--	sbi->total_valid_inode_count--;
--	spin_unlock(&sbi->stat_lock);
-+	percpu_counter_dec(&sbi->total_valid_inode_count);
+@@ -1310,11 +1312,11 @@ static inline bool inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 	if (inode)
+ 		inode->i_blocks++;
+ 
+-	sbi->alloc_valid_block_count++;
+ 	sbi->total_valid_node_count++;
+ 	sbi->total_valid_block_count++;
+ 	spin_unlock(&sbi->stat_lock);
+ 
++	percpu_counter_inc(&sbi->alloc_valid_block_count);
+ 	return true;
  }
  
--static inline unsigned int valid_inode_count(struct f2fs_sb_info *sbi)
-+static inline s64 valid_inode_count(struct f2fs_sb_info *sbi)
- {
--	return sbi->total_valid_inode_count;
-+	return percpu_counter_sum_positive(&sbi->total_valid_inode_count);
- }
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 6303b2a..f89b70e 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -49,8 +49,9 @@ static struct kmem_cache *fsync_entry_slab;
  
- static inline struct page *f2fs_grab_cache_page(struct address_space *mapping,
+ bool space_for_roll_forward(struct f2fs_sb_info *sbi)
+ {
+-	if (sbi->last_valid_block_count + sbi->alloc_valid_block_count
+-			> sbi->user_block_count)
++	s64 nalloc = percpu_counter_sum_positive(&sbi->alloc_valid_block_count);
++
++	if (sbi->last_valid_block_count + nalloc > sbi->user_block_count)
+ 		return false;
+ 	return true;
+ }
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c0fd075..bbfeb6a 100644
+index 56f177b..c0fd075 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -619,6 +619,7 @@ static void destroy_percpu_info(struct f2fs_sb_info *sbi)
+@@ -618,6 +618,7 @@ static void destroy_percpu_info(struct f2fs_sb_info *sbi)
+ 
  	for (i = 0; i < NR_COUNT_TYPE; i++)
  		percpu_counter_destroy(&sbi->nr_pages[i]);
- 	percpu_counter_destroy(&sbi->alloc_valid_block_count);
-+	percpu_counter_destroy(&sbi->total_valid_inode_count);
++	percpu_counter_destroy(&sbi->alloc_valid_block_count);
  }
  
  static void f2fs_put_super(struct super_block *sb)
-@@ -1386,7 +1387,11 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+@@ -1384,7 +1385,9 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+ 		if (err)
  			return err;
  	}
- 
--	return percpu_counter_init(&sbi->alloc_valid_block_count, 0,
-+	err = percpu_counter_init(&sbi->alloc_valid_block_count, 0, GFP_KERNEL);
-+	if (err)
-+		return err;
+-	return 0;
 +
-+	return percpu_counter_init(&sbi->total_valid_inode_count, 0,
- 								GFP_KERNEL);
++	return percpu_counter_init(&sbi->alloc_valid_block_count, 0,
++								GFP_KERNEL);
  }
  
-@@ -1600,8 +1605,8 @@ try_onemore:
- 
- 	sbi->total_valid_node_count =
- 				le32_to_cpu(sbi->ckpt->valid_node_count);
--	sbi->total_valid_inode_count =
--				le32_to_cpu(sbi->ckpt->valid_inode_count);
-+	percpu_counter_set(&sbi->total_valid_inode_count,
-+				le32_to_cpu(sbi->ckpt->valid_inode_count));
- 	sbi->user_block_count = le64_to_cpu(sbi->ckpt->user_block_count);
+ /*
+@@ -1603,7 +1606,7 @@ try_onemore:
  	sbi->total_valid_block_count =
  				le64_to_cpu(sbi->ckpt->valid_block_count);
+ 	sbi->last_valid_block_count = sbi->total_valid_block_count;
+-	sbi->alloc_valid_block_count = 0;
++
+ 	for (i = 0; i < NR_INODE_TYPE; i++) {
+ 		INIT_LIST_HEAD(&sbi->inode_list[i]);
+ 		spin_lock_init(&sbi->inode_lock[i]);
 -- 
 2.6.3
 
