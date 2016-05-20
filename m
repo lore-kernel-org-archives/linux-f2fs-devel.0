@@ -1,85 +1,56 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to update dirty page count correctly
-Date: Sat, 21 May 2016 00:11:09 +0800
-Message-ID: <1463760669-3071-1-git-send-email-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Subject: Re: Kernel OOPS in f2fs-stable on ARM
+Date: Sat, 21 May 2016 00:20:30 +0800
+Message-ID: <4bc7dc8c-9e08-b36a-01d0-f2e50d42a4e8@kernel.org>
+References: <d47e3dc22666855cd3941a9a6808a450@mail.tophosting.at>
+	<571CCF50.2070603@kernel.org>
+	<47ad19eec862bf788de5636e58d897b0@mail.tophosting.at>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1b3nAO-0006CU-UH
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 May 2016 16:20:48 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1b3nAO-0007Ej-6f
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 20 May 2016 16:20:48 +0000
+In-Reply-To: <47ad19eec862bf788de5636e58d897b0@mail.tophosting.at>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Georg Veichtlbauer <georg@veichtlbauer.net>, Jaegeuk Kim <jaegeuk@kernel.org>, Hou Pengyang <houpengyang@huawei.com>, Yunlong Song <yunlong.song@huawei.com>, bintian.wang@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+Hi all,
 
-Once we failed to merge inline data into inode page during flushing inline
-inode, we will skip invoking inode_dec_dirty_pages, which makes dirty page
-count incorrect, result in panic in ->evict_inode, Fix it.
+I found a bug related to panic issue in ->evict_inode, I sent a patch for
+fixing, I hope the patch can fix your problem, could you review or test it?
 
-------------[ cut here ]------------
-kernel BUG at /home/yuchao/git/devf2fs/inode.c:336!
-invalid opcode: 0000 [#1] PREEMPT SMP
-CPU: 3 PID: 10004 Comm: umount Tainted: G           O    4.6.0-rc5+ #17
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-task: f0c33000 ti: c5212000 task.ti: c5212000
-EIP: 0060:[<f89aacb5>] EFLAGS: 00010202 CPU: 3
-EIP is at f2fs_evict_inode+0x85/0x490 [f2fs]
-EAX: 00000001 EBX: c4529ea0 ECX: 00000001 EDX: 00000000
-ESI: c0131000 EDI: f89dd0a0 EBP: c5213e9c ESP: c5213e78
- DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
-CR0: 80050033 CR2: b75878c0 CR3: 1a36a700 CR4: 000406f0
-Stack:
- c4529ea0 c4529ef4 c5213e8c c176d45c c4529ef4 00000000 c4529ea0 c4529fac
- f89dd0a0 c5213eb0 c1204a68 c5213ed8 c452a2b4 c6680930 c5213ec0 c1204b64
- c6680d44 c6680620 c5213eec c120588d ee84b000 ee84b5c0 c5214000 ee84b5e0
-Call Trace:
- [<c176d45c>] ? _raw_spin_unlock+0x2c/0x50
- [<c1204a68>] evict+0xa8/0x170
- [<c1204b64>] dispose_list+0x34/0x50
- [<c120588d>] evict_inodes+0x10d/0x130
- [<c11ea941>] generic_shutdown_super+0x41/0xe0
- [<c1185190>] ? unregister_shrinker+0x40/0x50
- [<c1185190>] ? unregister_shrinker+0x40/0x50
- [<c11eac52>] kill_block_super+0x22/0x70
- [<f89af23e>] kill_f2fs_super+0x1e/0x20 [f2fs]
- [<c11eae1d>] deactivate_locked_super+0x3d/0x70
- [<c11eb383>] deactivate_super+0x43/0x60
- [<c1208ec9>] cleanup_mnt+0x39/0x80
- [<c1208f50>] __cleanup_mnt+0x10/0x20
- [<c107d091>] task_work_run+0x71/0x90
- [<c105725a>] exit_to_usermode_loop+0x72/0x9e
- [<c1001c7c>] do_fast_syscall_32+0x19c/0x1c0
- [<c176dd48>] sysenter_past_esp+0x45/0x74
-EIP: [<f89aacb5>] f2fs_evict_inode+0x85/0x490 [f2fs] SS:ESP 0068:c5213e78
----[ end trace d30536330b7fdc58 ]---
+Thanks,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/node.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+On 2016/5/19 0:58, Georg Veichtlbauer wrote:
+> Hi,
+> sorry for the late reply. Unfortunately, that patch did not fix the issue. Many
+> other devices are having this problem, so my fellow CM maintainers start
+> reverting to an old stable release. I'd prefer fixing the issue though.... ideas?
+> Cheers,
+> georg
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index cda7c7c..1f21aae 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1197,6 +1197,7 @@ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
- {
- 	struct inode *inode;
- 	struct page *page;
-+	int ret;
- 
- 	/* should flush inline_data before evict_inode */
- 	inode = ilookup(sbi->sb, ino);
-@@ -1216,9 +1217,9 @@ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
- 	if (!clear_page_dirty_for_io(page))
- 		goto page_out;
- 
--	if (!f2fs_write_inline_data(inode, page))
--		inode_dec_dirty_pages(inode);
--	else
-+	ret = f2fs_write_inline_data(inode, page);
-+	inode_dec_dirty_pages(inode);
-+	if (ret)
- 		set_page_dirty(page);
- page_out:
- 	f2fs_put_page(page, 1);
--- 
-2.7.2
+------------------------------------------------------------------------------
+Mobile security can be enabling, not merely restricting. Employees who
+bring their own devices (BYOD) to work are irked by the imposition of MDM
+restrictions. Mobile Device Manager Plus allows you to control only the
+apps on BYO-devices by containerizing them, leaving personal data untouched!
+https://ad.doubleclick.net/ddm/clk/304595813;131938128;j
