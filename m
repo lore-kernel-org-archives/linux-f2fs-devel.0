@@ -1,92 +1,139 @@
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: Re: [PATCH] f2fs: introduce on-disk layout version checking
- functionality
-Date: Mon, 23 May 2016 13:08:05 -0700
-Message-ID: <1464034085.2658.40.camel@slavad-ubuntu-14.04>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: introduce on-disk layout version
+ checking functionality
+Date: Mon, 23 May 2016 14:13:57 -0700
+Message-ID: <20160523211357.GA17297@jaegeuk.gateway>
 References: <1463679966.3573.4.camel@slavad-ubuntu-14.04>
-	 <20160520075849.GA8067@infradead.org>
-	 <1463769043.2835.30.camel@slavad-ubuntu-14.04>
-	 <20160523082542.GA27833@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160523082542.GA27833@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Vyacheslav.Dubeyko@hgst.com, Cyril.Guyot@hgst.com, Adam.Manzanares@hgst.com, Damien.LeMoal@hgst.com
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1b4xAs-00080I-8K
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 23 May 2016 21:14:06 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1b4xAr-0005Tn-9E
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 23 May 2016 21:14:06 +0000
+Content-Disposition: inline
+In-Reply-To: <1463679966.3573.4.camel@slavad-ubuntu-14.04>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: Cyril.Guyot@hgst.com, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Adam.Manzanares@hgst.com, Damien.LeMoal@hgst.com, Vyacheslav.Dubeyko@hgst.com, linux-fsdevel@vger.kernel.org
 
-On Mon, 2016-05-23 at 01:25 -0700, Christoph Hellwig wrote:
-> On Fri, May 20, 2016 at 11:30:43AM -0700, Viacheslav Dubeyko wrote:
-> > I am not sure that I follow to your point. The F2FS has "feature" field
-> > (__le32 feature) into on-disk superblock (struct f2fs_super_block). The
-> > suggested patch introduces the new F2FS_FEATURE_16TB_SUPPORT flag. And
-> > it looks like as your comment.
-> 
-> It does, but at the same time you also introduce a major version
-> superblock
-> field.
+Hi Slava,
 
-I think that it's some confusion. I didn't introduce any new fields in
-struct f2fs_super_block. The "major_ver" and "minor_ver" fields exist in
-F2FS superblock from the beginning of this file system implementation.
-The content of these two fields are defined during mkfs phase. The
-f2fs_format.c contains such code in f2fs_prepare_super_block():
+On Thu, May 19, 2016 at 10:46:06AM -0700, Viacheslav Dubeyko wrote:
+...
+>  
+> +#ifdef CONFIG_F2FS_16TB_VOLUME_SUPPORT
+> +#define F2FS_MAX_SUPP_MAJOR_VERSION		(2)
+> +#define F2FS_MIN_16TB_VOLUME_SUPPORT_VERSION	(2)
+> +#else
+> +#define F2FS_MAX_SUPP_MAJOR_VERSION		(1)
+> +#endif
+> +
+...
+>  
+> +static int f2fs_check_version_and_features(struct super_block *sb,
+> +					   struct f2fs_super_block *raw_super)
+> +{
+> +	u16 major_ver = le16_to_cpu(raw_super->major_ver);
+> +	u32 feature = le32_to_cpu(raw_super->feature);
+> +
+> +	if (major_ver > F2FS_MAX_SUPP_MAJOR_VERSION) {
 
-set_sb(major_ver, F2FS_MAJOR_VERSION);
-set_sb(minor_ver, F2FS_MINOR_VERSION);
+This means, for example, f2fs driver in v4.8 will deny to mount a partition
+formatted by mkfs.f2fs v3.x, which doesn't make sense, IIUC.
 
-The F2FS_MAJOR_VERSION and F2FS_MINOR_VERSION are defined into
-configure.ac as:
+As Christoph mentioned, how about checking the feature only like this?
 
-m4_define([f2fs_tools_version], m4_esyscmd([sed -n '1p' VERSION | tr -d '\n']))
+1. if the feature is ON,
+ - go 64 bits   , when compiled w/  F2FS_MIN_16TB_VOLUME_SUPPORT
+ - fail to mount, when compiled w/o F2FS_MIN_16TB_VOLUME_SUPPORT
 
-AC_DEFINE([F2FS_MAJOR_VERSION], m4_bpatsubst(f2fs_tools_version,
-                                [\([0-9]*\)\(\w\|\W\)*], [\1]),
-                                [Major version for f2fs-tools])
-AC_DEFINE([F2FS_MINOR_VERSION], m4_bpatsubst(f2fs_tools_version,
-                                [\([0-9]*\).\([0-9]*\)\(\w\|\W\)*], [\2]),
-                                [Minor version for f2fs-tools])
+2. if the feature is OFF,
+ - fail to mount, when compiled w/  F2FS_MIN_16TB_VOLUME_SUPPORT
+ - go 32 bits   , when compiled w/o F2FS_MIN_16TB_VOLUME_SUPPORT
 
-Current version in VERSION file is 1.6.1. So, historically F2FS is using
-version of on-disk layout. The suggested patch simply introduces the
-threshold value F2FS_MAX_SUPP_MAJOR_VERSION with the purpose to refuse
-the mount operation for the case of unsupported version of on-disk
-layout.
-
-> 
-> > So, necessary changes in on-disk layout for 16+TB volumes support will
-> > be incompatible with current available version of F2FS driver. It means
-> > that, anyway, we need to increase version of on-disk layout (major_ver
-> > of struct f2fs_super_block). The presence of superblock's version and
-> > F2FS_FEATURE_16TB_SUPPORT flag will be very useful for consistency
-> > checking by fsck tool.
-> 
-> Why is the feature not enough for that?
-
-First of all, it needs to distinguish two different points. First point,
-we need to increase the on-disk layout version because we are going to
-change on-disk layout in the way that old (current) driver will not
-support. Second point, we need to introduce the new feature flag. But
-features could be different. One feature doesn't need in on-disk layout
-change but another one could require in on-disk layout modification. So,
-we need in version change and new feature introduction for the case of
-necessity to modify the on-disk layout.
-
-So, I think that it's something wrong to have "major_ver" and
-"minor_ver" fields in the superblock, to define these fields during mkfs
-phase and not to check this version during mount operation. First of
-all, to check the on-disk layout version during mount operation is the
-proper activity, from my point of view. Secondly, if we have
-incompatible versions of on-disk layouts then the version should be
-checked at first. And, finally, I believe that feature flag should exist
-for 16TB+ support too. The version is more important for this
-modification but the presence of special feature flag will clearly show
-the support of 16TB+ volumes.
-
-I think that F2FS architecture and code state is the reason why we need
-to increase the on-disk layout version and to introduce feature flag.
+Thoughts?
 
 Thanks,
-Vyacheslav Dubeyko.
+
+> +		f2fs_msg(sb, KERN_CRIT,
+> +			 "Failed to mount volume: "
+> +			 "major version %u, max supported version %u",
+> +			 major_ver,
+> +			 F2FS_MAX_SUPP_MAJOR_VERSION);
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +#ifdef CONFIG_F2FS_16TB_VOLUME_SUPPORT
+> +
+> +	if (major_ver < F2FS_MIN_16TB_VOLUME_SUPPORT_VERSION) {
+> +		if (feature & F2FS_FEATURE_16TB_SUPPORT) {
+> +			f2fs_msg(sb, KERN_CRIT,
+> +				 "Failed to mount corrupted volume. "
+> +				 "Please, check the volume by FSCK utility.");
+> +			return -EOPNOTSUPP;
+> +		}
+> +	} else {
+> +		if (!(feature & F2FS_FEATURE_16TB_SUPPORT)) {
+> +			f2fs_msg(sb, KERN_CRIT,
+> +				 "Failed to mount corrupted volume. "
+> +				 "Please, check the volume by FSCK utility.");
+> +			return -EOPNOTSUPP;
+> +		}
+> +	}
+> +
+> +#else
+> +
+> +	if (feature & F2FS_FEATURE_16TB_SUPPORT) {
+> +		f2fs_msg(sb, KERN_CRIT,
+> +			 "Failed to mount corrupted volume. "
+> +			 "Please, check the volume by FSCK utility.");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +#endif
+> +
+> +	return 0;
+> +}
+> +
+>  static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  {
+>  	struct f2fs_sb_info *sbi;
+> @@ -1360,6 +1407,10 @@ try_onemore:
+>  	if (err)
+>  		goto free_sbi;
+>  
+> +	err = f2fs_check_version_and_features(sb, raw_super);
+> +	if (err)
+> +		goto free_sbi;
+> +
+>  	sb->s_fs_info = sbi;
+>  	default_options(sbi);
+>  	/* parse mount options */
+> -- 
+> 1.9.1
+> 
+> 
+
+------------------------------------------------------------------------------
+Mobile security can be enabling, not merely restricting. Employees who
+bring their own devices (BYOD) to work are irked by the imposition of MDM
+restrictions. Mobile Device Manager Plus allows you to control only the
+apps on BYO-devices by containerizing them, leaving personal data untouched!
+https://ad.doubleclick.net/ddm/clk/304595813;131938128;j
