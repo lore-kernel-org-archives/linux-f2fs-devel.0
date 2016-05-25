@@ -1,70 +1,75 @@
 From: Viacheslav Dubeyko <slava@dubeyko.com>
 Subject: Re: [PATCH] f2fs: introduce on-disk layout version checking
  functionality
-Date: Tue, 24 May 2016 17:53:50 -0700
-Message-ID: <1464137630.2680.17.camel@slavad-ubuntu-14.04>
+Date: Tue, 24 May 2016 18:05:23 -0700
+Message-ID: <1464138323.2680.27.camel@slavad-ubuntu-14.04>
 References: <1463679966.3573.4.camel@slavad-ubuntu-14.04>
-	 <20160520075849.GA8067@infradead.org>
-	 <1463769043.2835.30.camel@slavad-ubuntu-14.04>
-	 <20160523082542.GA27833@infradead.org>
-	 <1464034085.2658.40.camel@slavad-ubuntu-14.04>
-	 <20160524085236.GB8121@infradead.org>
+	 <20160523211357.GA17297@jaegeuk.gateway>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20160524085236.GB8121@infradead.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Vyacheslav.Dubeyko@hgst.com, Cyril.Guyot@hgst.com, Adam.Manzanares@hgst.com, Damien.LeMoal@hgst.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160523211357.GA17297@jaegeuk.gateway>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Vyacheslav.Dubeyko@hgst.com, Cyril.Guyot@hgst.com, Adam.Manzanares@hgst.com, Damien.LeMoal@hgst.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, 2016-05-24 at 01:52 -0700, Christoph Hellwig wrote:
-> On Mon, May 23, 2016 at 01:08:05PM -0700, Viacheslav Dubeyko wrote:
-> > I think that it's some confusion. I didn't introduce any new fields in
-> > struct f2fs_super_block. The "major_ver" and "minor_ver" fields exist in
-> > F2FS superblock from the beginning of this file system implementation.
-> > The content of these two fields are defined during mkfs phase. The
-> > f2fs_format.c contains such code in f2fs_prepare_super_block():
+Hi Jaegeuk,
+
+On Mon, 2016-05-23 at 14:13 -0700, Jaegeuk Kim wrote:
+> Hi Slava,
 > 
-> They exists, but the kernel so far never checked them, and despite
-> that the feature checking works fine worth other f2fs features.
+> On Thu, May 19, 2016 at 10:46:06AM -0700, Viacheslav Dubeyko wrote:
+> ...
+> >  
+> > +#ifdef CONFIG_F2FS_16TB_VOLUME_SUPPORT
+> > +#define F2FS_MAX_SUPP_MAJOR_VERSION		(2)
+> > +#define F2FS_MIN_16TB_VOLUME_SUPPORT_VERSION	(2)
+> > +#else
+> > +#define F2FS_MAX_SUPP_MAJOR_VERSION		(1)
+> > +#endif
+> > +
+> ...
+> >  
+> > +static int f2fs_check_version_and_features(struct super_block *sb,
+> > +					   struct f2fs_super_block *raw_super)
+> > +{
+> > +	u16 major_ver = le16_to_cpu(raw_super->major_ver);
+> > +	u32 feature = le32_to_cpu(raw_super->feature);
+> > +
+> > +	if (major_ver > F2FS_MAX_SUPP_MAJOR_VERSION) {
 > 
-> > Current version in VERSION file is 1.6.1. So, historically F2FS is using
-> > version of on-disk layout. The suggested patch simply introduces the
-> > threshold value F2FS_MAX_SUPP_MAJOR_VERSION with the purpose to refuse
-> > the mount operation for the case of unsupported version of on-disk
-> > layout.
-> 
-> While I've never seen an actual piece of documentation for the fields it
-> seems so far they just document the version of mkfs used to create
-> the file system.  Suddenly overloading them with semantics is just
-> going to create problems.
+> This means, for example, f2fs driver in v4.8 will deny to mount a partition
+> formatted by mkfs.f2fs v3.x, which doesn't make sense, IIUC.
 > 
 
-The best way not to create a problem is to do nothing.
+I didn't catch the point. Maybe, I've missed something but, as far as I
+can judge, f2fs driver v.4.8 will mount as old version of on-disk layout
+as the new one. But right now it doesn't make sense to discuss this
+topic because we haven't consent about ideology of this patch.
 
-The F2FS superblock has "major_ver" and "minor_ver" fields. This
-metadata structure is stored into F2FS volume. So, this two fields
-define the on-disk layout's version. We are trying to change the on-disk
-layout. It means that we need to increase the on-disk layout's version
-number and to check the version number, namely. What's wrong with my
-logic?
-
-> > First of all, it needs to distinguish two different points. First point,
-> > we need to increase the on-disk layout version because we are going to
-> > change on-disk layout in the way that old (current) driver will not
-> > support.
+> As Christoph mentioned, how about checking the feature only like this?
 > 
-> That's exactly what most file systems use feature flags for.
+> 1. if the feature is ON,
+>  - go 64 bits   , when compiled w/  F2FS_MIN_16TB_VOLUME_SUPPORT
+>  - fail to mount, when compiled w/o F2FS_MIN_16TB_VOLUME_SUPPORT
+> 
+> 2. if the feature is OFF,
+>  - fail to mount, when compiled w/  F2FS_MIN_16TB_VOLUME_SUPPORT
+>  - go 32 bits   , when compiled w/o F2FS_MIN_16TB_VOLUME_SUPPORT
+> 
+> Thoughts?
+> 
 
-Frankly speaking, support of 16TB+ volumes is not a "feature" but simple
-bug fix. Because this issue was created during metadata structure
-definitions. And we are trying to fix this issue right now. And this
-issue is on-disk layout related issue. So, the key point here is not a
-feature flag but the on-disk layout's version, from my point of view.
+So, my logic is simple. We are trying to modify the on-disk layout. As a
+result, we need to check the on-disk layout version, from my viewpoint.
+And this modification is not "feature" itself but simple bug fix. And I
+believe that "major_ver", "minor_ver" in F2FS superblock is the on-disk
+layout version.
+
+What do you think? Do you still believe that it should be a feature
+flag?
 
 Thanks,
 Vyacheslav Dubeyko.
-
-
