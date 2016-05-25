@@ -1,221 +1,222 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 08/12] f2fs: avoid unnecessary updating inode during fsync
-Date: Tue, 24 May 2016 17:03:34 -0700
-Message-ID: <1464134619-37015-8-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 02/12] f2fs: introduce f2fs_i_size_write with
+	mark_inode_dirty_sync
+Date: Tue, 24 May 2016 17:03:28 -0700
+Message-ID: <1464134619-37015-2-git-send-email-jaegeuk@kernel.org>
 References: <1464134619-37015-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1b5MIl-0005ez-3h
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 25 May 2016 00:03:55 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1b5MIk-00006Z-1v
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 25 May 2016 00:03:55 +0000
 In-Reply-To: <1464134619-37015-1-git-send-email-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If roll-forward recovery can recover i_size, we don't need to update inode's
-metadata during fsync.
+This patch introduces f2fs_i_size_write() to call mark_inode_dirty_sync() with
+i_size_write().
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c     |  3 +++
- fs/f2fs/f2fs.h     | 23 +++++++++++++++++++++--
- fs/f2fs/file.c     |  4 ++--
- fs/f2fs/inode.c    |  3 +++
- fs/f2fs/node.c     |  9 +++++++--
- fs/f2fs/recovery.c |  3 +++
- fs/f2fs/super.c    |  4 ++++
- 7 files changed, 43 insertions(+), 6 deletions(-)
+ fs/f2fs/data.c     | 10 ++++------
+ fs/f2fs/dir.c      |  2 +-
+ fs/f2fs/f2fs.h     |  6 ++++++
+ fs/f2fs/file.c     | 10 ++++------
+ fs/f2fs/inline.c   |  6 +++---
+ fs/f2fs/recovery.c |  2 +-
+ fs/f2fs/super.c    |  2 +-
+ 7 files changed, 20 insertions(+), 18 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a3dea51..287582e 100644
+index dd46ca8..0dd42b6 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1204,6 +1204,7 @@ static int f2fs_write_data_page(struct page *page,
- 	loff_t i_size = i_size_read(inode);
- 	const pgoff_t end_index = ((unsigned long long) i_size)
- 							>> PAGE_SHIFT;
-+	loff_t psize = (page->index + 1) << PAGE_SHIFT;
- 	unsigned offset = 0;
- 	bool need_balance_fs = false;
- 	int err = 0;
-@@ -1265,6 +1266,8 @@ write:
- 		err = f2fs_write_inline_data(inode, page);
- 	if (err == -EAGAIN)
- 		err = do_write_data_page(&fio);
-+	if (F2FS_I(inode)->last_disk_size < psize)
-+		F2FS_I(inode)->last_disk_size = psize;
- 	f2fs_unlock_op(sbi);
- done:
- 	if (err && err != -ENOENT)
+@@ -564,7 +564,7 @@ struct page *get_new_data_page(struct inode *inode,
+ got_it:
+ 	if (new_i_size && i_size_read(inode) <
+ 				((loff_t)(index + 1) << PAGE_SHIFT)) {
+-		i_size_write(inode, ((loff_t)(index + 1) << PAGE_SHIFT));
++		f2fs_i_size_write(inode, ((loff_t)(index + 1) << PAGE_SHIFT));
+ 		/* Only the directory inode sets new_i_size */
+ 		set_inode_flag(inode, FI_UPDATE_DIR);
+ 	}
+@@ -605,7 +605,7 @@ alloc:
+ 	fofs = start_bidx_of_node(ofs_of_node(dn->node_page), dn->inode) +
+ 							dn->ofs_in_node;
+ 	if (i_size_read(dn->inode) < ((loff_t)(fofs + 1) << PAGE_SHIFT))
+-		i_size_write(dn->inode,
++		f2fs_i_size_write(dn->inode,
+ 				((loff_t)(fofs + 1) << PAGE_SHIFT));
+ 	return 0;
+ }
+@@ -1711,10 +1711,8 @@ static int f2fs_write_end(struct file *file,
+ 
+ 	set_page_dirty(page);
+ 
+-	if (pos + copied > i_size_read(inode)) {
+-		i_size_write(inode, pos + copied);
+-		mark_inode_dirty(inode);
+-	}
++	if (pos + copied > i_size_read(inode))
++		f2fs_i_size_write(inode, pos + copied);
+ 
+ 	f2fs_put_page(page, 1);
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 9fa8d3e..dc4beae 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -686,7 +686,7 @@ void f2fs_drop_nlink(struct inode *dir, struct inode *inode, struct page *page)
+ 	drop_nlink(inode);
+ 	if (S_ISDIR(inode->i_mode)) {
+ 		drop_nlink(inode);
+-		i_size_write(inode, 0);
++		f2fs_i_size_write(inode, 0);
+ 	}
+ 	up_write(&F2FS_I(inode)->i_sem);
+ 	update_inode_page(inode);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6d26b32..917cc9b 100644
+index 9371063..6a5f38b 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -441,6 +441,7 @@ struct f2fs_inode_info {
- 	unsigned int clevel;		/* maximum level of given file name */
- 	nid_t i_xattr_nid;		/* node id that contains xattrs */
- 	unsigned long long xattr_ver;	/* cp version of xattr modification */
-+	loff_t	last_disk_size;		/* lastly written file size */
- 
- 	struct list_head dirty_list;	/* dirty list for dirs and files */
- 	struct list_head gdirty_list;	/* linked in global dirty list */
-@@ -1516,6 +1517,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
- enum {
- 	FI_NEW_INODE,		/* indicate newly allocated inode */
- 	FI_DIRTY_INODE,		/* indicate inode is dirty or not */
-+	FI_AUTO_RECOVER,	/* indicate inode is recoverable */
- 	FI_DIRTY_DIR,		/* indicate directory has dirty pages */
- 	FI_INC_LINK,		/* need to increment i_nlink */
- 	FI_ACL_MODE,		/* indicate acl mode */
-@@ -1590,15 +1592,32 @@ static inline void f2fs_i_links_write(struct inode *inode, bool inc)
- static inline void f2fs_i_blocks_write(struct inode *inode,
- 					blkcnt_t diff, bool add)
- {
-+	bool clean = !is_inode_flag_set(inode, FI_DIRTY_INODE);
-+	bool recover = is_inode_flag_set(inode, FI_AUTO_RECOVER);
-+
- 	inode->i_blocks = add ? inode->i_blocks + diff :
- 				inode->i_blocks - diff;
- 	mark_inode_dirty_sync(inode);
-+	if (clean || recover)
-+		set_inode_flag(inode, FI_AUTO_RECOVER);
+@@ -1556,6 +1556,12 @@ static inline void set_acl_inode(struct inode *inode, umode_t mode)
+ 	set_inode_flag(inode, FI_ACL_MODE);
  }
  
- static inline void f2fs_i_size_write(struct inode *inode, loff_t i_size)
- {
-+	bool clean = !is_inode_flag_set(inode, FI_DIRTY_INODE);
-+	bool recover = is_inode_flag_set(inode, FI_AUTO_RECOVER);
-+
- 	i_size_write(inode, i_size);
- 	mark_inode_dirty_sync(inode);
-+	if (clean || recover)
-+		set_inode_flag(inode, FI_AUTO_RECOVER);
++static inline void f2fs_i_size_write(struct inode *inode, loff_t i_size)
++{
++	i_size_write(inode, i_size);
++	mark_inode_dirty_sync(inode);
 +}
 +
-+static inline bool f2fs_skip_inode_update(struct inode *inode)
-+{
-+	if (!is_inode_flag_set(inode, FI_AUTO_RECOVER))
-+		return false;
-+	return F2FS_I(inode)->last_disk_size == i_size_read(inode);
- }
- 
- static inline void f2fs_i_depth_write(struct inode *inode, unsigned int depth)
-@@ -1932,8 +1951,8 @@ void ra_node_page(struct f2fs_sb_info *, nid_t);
- struct page *get_node_page(struct f2fs_sb_info *, pgoff_t);
- struct page *get_node_page_ra(struct page *, int);
- void move_node_page(struct page *, int);
--int fsync_node_pages(struct f2fs_sb_info *, nid_t, struct writeback_control *,
--								bool);
-+int fsync_node_pages(struct f2fs_sb_info *, struct inode *,
-+			struct writeback_control *, bool);
- int sync_node_pages(struct f2fs_sb_info *, struct writeback_control *);
- bool alloc_nid(struct f2fs_sb_info *, nid_t *);
- void alloc_nid_done(struct f2fs_sb_info *, nid_t);
+ static inline void get_inline_info(struct inode *inode, struct f2fs_inode *ri)
+ {
+ 	if (ri->i_inline & F2FS_INLINE_XATTR)
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6dd64dc..9987a5d 100644
+index e68e5ad..d0f4258 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -208,7 +208,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+@@ -988,7 +988,7 @@ static int f2fs_collapse_range(struct inode *inode, loff_t offset, loff_t len)
+ 
+ 	ret = truncate_blocks(inode, new_size, true);
+ 	if (!ret)
+-		i_size_write(inode, new_size);
++		f2fs_i_size_write(inode, new_size);
+ 
+ 	return ret;
+ }
+@@ -1125,8 +1125,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 
+ out:
+ 	if (!(mode & FALLOC_FL_KEEP_SIZE) && i_size_read(inode) < new_size) {
+-		i_size_write(inode, new_size);
+-		mark_inode_dirty(inode);
++		f2fs_i_size_write(inode, new_size);
+ 		update_inode_page(inode);
  	}
  
- 	/* if the inode is dirty, let's recover all the time */
--	if (!datasync) {
-+	if (!datasync && !f2fs_skip_inode_update(inode)) {
- 		f2fs_write_inode(inode, NULL);
- 		goto go_write;
- 	}
-@@ -251,7 +251,7 @@ go_write:
- 		goto out;
- 	}
- sync_nodes:
--	ret = fsync_node_pages(sbi, ino, &wbc, atomic);
-+	ret = fsync_node_pages(sbi, inode, &wbc, atomic);
- 	if (ret)
- 		goto out;
+@@ -1186,7 +1185,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 	truncate_pagecache(inode, offset);
  
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 6c4d5cc..4502ff5 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -153,6 +153,9 @@ static int do_read_inode(struct inode *inode)
- 	if (__written_first_block(ri))
- 		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
- 
-+	if (!need_inode_block_update(sbi, inode->i_ino))
-+		fi->last_disk_size = inode->i_size;
-+
- 	f2fs_put_page(node_page, 1);
- 
- 	stat_inc_inline_xattr(inode);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index b90125d..d6fd731 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1292,7 +1292,7 @@ continue_unlock:
- 	return last_page;
+ 	if (!ret)
+-		i_size_write(inode, new_size);
++		f2fs_i_size_write(inode, new_size);
+ 	return ret;
  }
  
--int fsync_node_pages(struct f2fs_sb_info *sbi, nid_t ino,
-+int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			struct writeback_control *wbc, bool atomic)
- {
- 	pgoff_t index, end;
-@@ -1300,6 +1300,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, nid_t ino,
- 	int ret = 0;
- 	struct page *last_page = NULL;
- 	bool marked = false;
-+	nid_t ino = inode->i_ino;
+@@ -1235,8 +1234,7 @@ static int expand_inode_data(struct inode *inode, loff_t offset,
+ 	}
  
- 	if (atomic) {
- 		last_page = last_fsync_dnode(sbi, ino);
-@@ -1353,9 +1354,13 @@ continue_unlock:
+ 	if (!(mode & FALLOC_FL_KEEP_SIZE) && i_size_read(inode) < new_size) {
+-		i_size_write(inode, new_size);
+-		mark_inode_dirty(inode);
++		f2fs_i_size_write(inode, new_size);
+ 		update_inode_page(inode);
+ 	}
  
- 			if (!atomic || page == last_page) {
- 				set_fsync_mark(page, 1);
--				if (IS_INODE(page))
-+				if (IS_INODE(page)) {
-+					if (is_inode_flag_set(inode,
-+								FI_DIRTY_INODE))
-+						update_inode(inode, page);
- 					set_dentry_mark(page,
- 						need_dentry_mark(sbi, ino));
-+				}
- 				/*  may be written by other thread */
- 				if (!PageDirty(page))
- 					set_page_dirty(page);
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index c50dee9..7a9bc44 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -340,7 +340,7 @@ int make_empty_inline_dir(struct inode *inode, struct inode *parent,
+ 
+ 	/* update i_size to MAX_INLINE_DATA */
+ 	if (i_size_read(inode) < MAX_INLINE_DATA) {
+-		i_size_write(inode, MAX_INLINE_DATA);
++		f2fs_i_size_write(inode, MAX_INLINE_DATA);
+ 		set_inode_flag(inode, FI_UPDATE_DIR);
+ 	}
+ 	return 0;
+@@ -402,7 +402,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 
+ 	F2FS_I(dir)->i_current_depth = 1;
+ 	if (i_size_read(dir) < PAGE_SIZE) {
+-		i_size_write(dir, PAGE_SIZE);
++		f2fs_i_size_write(dir, PAGE_SIZE);
+ 		set_inode_flag(dir, FI_UPDATE_DIR);
+ 	}
+ 
+@@ -493,7 +493,7 @@ recover:
+ 	lock_page(ipage);
+ 	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA);
+ 	F2FS_I(dir)->i_current_depth = 0;
+-	i_size_write(dir, MAX_INLINE_DATA);
++	f2fs_i_size_write(dir, MAX_INLINE_DATA);
+ 	update_inode(dir, ipage);
+ 	f2fs_put_page(ipage, 1);
+ 
 diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 68c433f..b568b28 100644
+index 3d7216d..2500b6a 100644
 --- a/fs/f2fs/recovery.c
 +++ b/fs/f2fs/recovery.c
-@@ -455,6 +455,9 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 			continue;
- 		}
+@@ -175,7 +175,7 @@ static void recover_inode(struct inode *inode, struct page *page)
+ 	char *name;
  
-+		if ((start + 1) << PAGE_SHIFT > i_size_read(inode))
-+			f2fs_i_size_write(inode, (start + 1) << PAGE_SHIFT);
-+
- 		/*
- 		 * dest is reserved block, invalidate src block
- 		 * and then reserve one new block in dnode page.
+ 	inode->i_mode = le16_to_cpu(raw->i_mode);
+-	i_size_write(inode, le64_to_cpu(raw->i_size));
++	f2fs_i_size_write(inode, le64_to_cpu(raw->i_size));
+ 	inode->i_atime.tv_sec = le64_to_cpu(raw->i_mtime);
+ 	inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
+ 	inode->i_mtime.tv_sec = le64_to_cpu(raw->i_mtime);
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 35fd5f3..e9e81cb 100644
+index 160b15b..d832bf4 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -598,6 +598,9 @@ static void f2fs_dirty_inode(struct inode *inode, int flags)
- 			inode->i_ino == F2FS_META_INO(sbi))
- 		return;
+@@ -568,7 +568,7 @@ static int f2fs_drop_inode(struct inode *inode)
+ 			f2fs_destroy_extent_node(inode);
  
-+	if (is_inode_flag_set(inode, FI_AUTO_RECOVER))
-+		clear_inode_flag(inode, FI_AUTO_RECOVER);
-+
- 	spin_lock(&sbi->inode_lock[DIRTY_META]);
- 	if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
- 		spin_unlock(&sbi->inode_lock[DIRTY_META]);
-@@ -623,6 +626,7 @@ void f2fs_inode_synced(struct inode *inode)
- 	}
- 	list_del_init(&F2FS_I(inode)->gdirty_list);
- 	clear_inode_flag(inode, FI_DIRTY_INODE);
-+	clear_inode_flag(inode, FI_AUTO_RECOVER);
- 	dec_page_count(sbi, F2FS_DIRTY_IMETA);
- 	spin_unlock(&sbi->inode_lock[DIRTY_META]);
- 	stat_dec_dirty_inode(F2FS_I_SB(inode), DIRTY_META);
+ 			sb_start_intwrite(inode->i_sb);
+-			i_size_write(inode, 0);
++			f2fs_i_size_write(inode, 0);
+ 
+ 			if (F2FS_HAS_BLOCKS(inode))
+ 				f2fs_truncate(inode, true);
 -- 
 2.6.3
+
+
+------------------------------------------------------------------------------
+Mobile security can be enabling, not merely restricting. Employees who
+bring their own devices (BYOD) to work are irked by the imposition of MDM
+restrictions. Mobile Device Manager Plus allows you to control only the
+apps on BYO-devices by containerizing them, leaving personal data untouched!
+https://ad.doubleclick.net/ddm/clk/304595813;131938128;j
