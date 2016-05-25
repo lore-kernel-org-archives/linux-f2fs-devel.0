@@ -1,87 +1,51 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Viacheslav Dubeyko <slava@dubeyko.com>
 Subject: Re: [PATCH] f2fs: introduce on-disk layout version checking
  functionality
-Date: Wed, 25 May 2016 10:12:46 -0700
-Message-ID: <20160525171246.GC47096@jaegeuk.gateway>
+Date: Wed, 25 May 2016 10:46:25 -0700
+Message-ID: <1464198385.2648.10.camel@slavad-ubuntu-14.04>
 References: <1463679966.3573.4.camel@slavad-ubuntu-14.04>
- <20160523211357.GA17297@jaegeuk.gateway>
- <1464138323.2680.27.camel@slavad-ubuntu-14.04>
+	 <20160523211357.GA17297@jaegeuk.gateway>
+	 <1464138323.2680.27.camel@slavad-ubuntu-14.04>
+	 <20160525171246.GC47096@jaegeuk.gateway>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1464138323.2680.27.camel@slavad-ubuntu-14.04>
+In-Reply-To: <20160525171246.GC47096@jaegeuk.gateway>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Vyacheslav.Dubeyko@hgst.com, Cyril.Guyot@hgst.com, Adam.Manzanares@hgst.com, Damien.LeMoal@hgst.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello,
+On Wed, 2016-05-25 at 10:12 -0700, Jaegeuk Kim wrote:
 
-On Tue, May 24, 2016 at 06:05:23PM -0700, Viacheslav Dubeyko wrote:
-> Hi Jaegeuk,
+[snipped]
+> > 
+> > So, my logic is simple. We are trying to modify the on-disk layout. As a
+> > result, we need to check the on-disk layout version, from my viewpoint.
+> > And this modification is not "feature" itself but simple bug fix. And I
+> > believe that "major_ver", "minor_ver" in F2FS superblock is the on-disk
+> > layout version.
 > 
-> On Mon, 2016-05-23 at 14:13 -0700, Jaegeuk Kim wrote:
-> > Hi Slava,
-> > 
-> > On Thu, May 19, 2016 at 10:46:06AM -0700, Viacheslav Dubeyko wrote:
-> > ...
-> > >  
-> > > +#ifdef CONFIG_F2FS_16TB_VOLUME_SUPPORT
-> > > +#define F2FS_MAX_SUPP_MAJOR_VERSION		(2)
-> > > +#define F2FS_MIN_16TB_VOLUME_SUPPORT_VERSION	(2)
-> > > +#else
-> > > +#define F2FS_MAX_SUPP_MAJOR_VERSION		(1)
-> > > +#endif
-> > > +
-> > ...
-> > >  
-> > > +static int f2fs_check_version_and_features(struct super_block *sb,
-> > > +					   struct f2fs_super_block *raw_super)
-> > > +{
-> > > +	u16 major_ver = le16_to_cpu(raw_super->major_ver);
-> > > +	u32 feature = le32_to_cpu(raw_super->feature);
-> > > +
-> > > +	if (major_ver > F2FS_MAX_SUPP_MAJOR_VERSION) {
-> > 
-> > This means, for example, f2fs driver in v4.8 will deny to mount a partition
-> > formatted by mkfs.f2fs v3.x, which doesn't make sense, IIUC.
-> > 
+> Hmm, the versions are to indicate f2fs-tools, not on-disk layout something.
+> They are simply growing as whatever reasons such as bug fixes, new features,
+> and so on to provide debugging information.
 > 
-> I didn't catch the point. Maybe, I've missed something but, as far as I
-> can judge, f2fs driver v.4.8 will mount as old version of on-disk layout
-> as the new one. But right now it doesn't make sense to discuss this
-> topic because we haven't consent about ideology of this patch.
-> 
-> > As Christoph mentioned, how about checking the feature only like this?
-> > 
-> > 1. if the feature is ON,
-> >  - go 64 bits   , when compiled w/  F2FS_MIN_16TB_VOLUME_SUPPORT
-> >  - fail to mount, when compiled w/o F2FS_MIN_16TB_VOLUME_SUPPORT
-> > 
-> > 2. if the feature is OFF,
-> >  - fail to mount, when compiled w/  F2FS_MIN_16TB_VOLUME_SUPPORT
-> >  - go 32 bits   , when compiled w/o F2FS_MIN_16TB_VOLUME_SUPPORT
-> > 
-> > Thoughts?
-> > 
-> 
-> So, my logic is simple. We are trying to modify the on-disk layout. As a
-> result, we need to check the on-disk layout version, from my viewpoint.
-> And this modification is not "feature" itself but simple bug fix. And I
-> believe that "major_ver", "minor_ver" in F2FS superblock is the on-disk
-> layout version.
 
-Hmm, the versions are to indicate f2fs-tools, not on-disk layout something.
-They are simply growing as whatever reasons such as bug fixes, new features,
-and so on to provide debugging information.
+OK. If you need to know the version of f2fs-tools then you will try to
+extract the version from f2fs-tools itself. And it is possible to track
+bug fixes and the new features by means of git repository. The every
+release of Linus kernel has own version number. So, again, it's easy to
+track bug fixes and new features by means of Linux kernel git
+repository. Moreover, struct f2fs_super_block has "version" and
+"init_version" fields. These fields store kernel version again. So, it's
+really easy to track kernel version and the rest stuff. It's really
+crappy way to duplicate information in superblock and to store
+f2fs-tools version in the superblock. The really important information
+is the on-disk layout version. And f2fs-tools should follow the on-disk
+layout version namely.
+
+What do you think?
 
 Thanks,
-
-> 
-> What do you think? Do you still believe that it should be a feature
-> flag?
-> 
-> Thanks,
-> Vyacheslav Dubeyko.
-> 
+Vyacheslav Dubeyko.
