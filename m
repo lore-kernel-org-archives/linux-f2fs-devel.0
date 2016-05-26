@@ -1,51 +1,64 @@
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: Re: [PATCH] f2fs: introduce on-disk layout version checking
- functionality
-Date: Wed, 25 May 2016 10:46:25 -0700
-Message-ID: <1464198385.2648.10.camel@slavad-ubuntu-14.04>
-References: <1463679966.3573.4.camel@slavad-ubuntu-14.04>
-	 <20160523211357.GA17297@jaegeuk.gateway>
-	 <1464138323.2680.27.camel@slavad-ubuntu-14.04>
-	 <20160525171246.GC47096@jaegeuk.gateway>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: Return the errno to the caller to avoid using a wrong page
+Date: Thu, 26 May 2016 12:31:19 +0800
+Message-ID: <1464237079-1528-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160525171246.GC47096@jaegeuk.gateway>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Vyacheslav.Dubeyko@hgst.com, Cyril.Guyot@hgst.com, Adam.Manzanares@hgst.com, Damien.LeMoal@hgst.com
+To: jaegeuk@kernel.org, cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, yunlong.song@huawei.com
+Cc: bintian.wang@huawei.com, houpengyang@huawei.com, heyunlei@huawei.com, liushuoran@huawei.com, shiguojun@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, 2016-05-25 at 10:12 -0700, Jaegeuk Kim wrote:
+Commit aaf9607516ed38825268515ef4d773289a44f429 ("f2fs: check node page
+contents all the time") pointed out that "sometimes it was reported that
+its contents was missing", so it checks the page's mapping and contents.
+When "nid != nid_of_node(page)", ERR_PTR(-EIO) will be returned to the
+caller. However, commit e1c51b9f1df2f9efc2ec11488717e40cd12015f9 ("f2fs:
+clean up node page updating flow") moves "nid != nid_of_node(page)" test
+to "f2fs_bug_on(sbi, nid != nid_of_node(page))", this will return a
+wrong page to the caller when F2FS_CHECK_FS is off when "sometimes it
+was reported that its contents was missing" happens.
 
-[snipped]
-> > 
-> > So, my logic is simple. We are trying to modify the on-disk layout. As a
-> > result, we need to check the on-disk layout version, from my viewpoint.
-> > And this modification is not "feature" itself but simple bug fix. And I
-> > believe that "major_ver", "minor_ver" in F2FS superblock is the on-disk
-> > layout version.
-> 
-> Hmm, the versions are to indicate f2fs-tools, not on-disk layout something.
-> They are simply growing as whatever reasons such as bug fixes, new features,
-> and so on to provide debugging information.
-> 
+This patch restores to check node page contents all the time, and
+returns the errno to make the caller known something is wrong and avoid
+to use the page. This patch also moves f2fs_bug_on to its proper location.
 
-OK. If you need to know the version of f2fs-tools then you will try to
-extract the version from f2fs-tools itself. And it is possible to track
-bug fixes and the new features by means of git repository. The every
-release of Linus kernel has own version number. So, again, it's easy to
-track bug fixes and new features by means of Linux kernel git
-repository. Moreover, struct f2fs_super_block has "version" and
-"init_version" fields. These fields store kernel version again. So, it's
-really easy to track kernel version and the rest stuff. It's really
-crappy way to duplicate information in superblock and to store
-f2fs-tools version in the superblock. The really important information
-is the on-disk layout version. And f2fs-tools should follow the on-disk
-layout version namely.
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/node.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-What do you think?
-
-Thanks,
-Vyacheslav Dubeyko.
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 1f21aae..eee56aa 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1149,16 +1149,21 @@ repeat:
+ 
+ 	lock_page(page);
+ 
+-	if (unlikely(!PageUptodate(page))) {
+-		f2fs_put_page(page, 1);
+-		return ERR_PTR(-EIO);
+-	}
++	if (unlikely(!PageUptodate(page)))
++		goto out_err;
++
+ 	if (unlikely(page->mapping != NODE_MAPPING(sbi))) {
+ 		f2fs_put_page(page, 1);
+ 		goto repeat;
+ 	}
+ page_hit:
+-	f2fs_bug_on(sbi, nid != nid_of_node(page));
++	if(nid != nid_of_node(page)) {
++		f2fs_bug_on(sbi, 1);
++		ClearPageUptodate(page);
++out_err:
++		f2fs_put_page(page, 1);
++		return ERR_PTR(-EIO);
++	}
+ 	return page;
+ }
+ 
+-- 
+1.8.5.2
