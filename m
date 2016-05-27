@@ -1,120 +1,99 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/4] f2fs: propagate error given by f2fs_find_entry
-Date: Thu, 26 May 2016 17:25:21 -0700
-Message-ID: <1464308724-71070-1-git-send-email-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 2/4] f2fs: inject to produce some orphan inodes
+Date: Thu, 26 May 2016 17:25:22 -0700
+Message-ID: <1464308724-71070-2-git-send-email-jaegeuk@kernel.org>
+References: <1464308724-71070-1-git-send-email-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1b65ap-00033z-Te
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 27 May 2016 00:25:35 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1b65ap-0000C1-5J
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 27 May 2016 00:25:35 +0000
+In-Reply-To: <1464308724-71070-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
-
-If we get ENOMEM or EIO in f2fs_find_entry, we should stop right away.
-Otherwise, for example, we can get duplicate directory entry by ->chash and
-->clevel.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/dir.c    | 23 ++++++++++++++++-------
- fs/f2fs/inline.c |  4 +++-
- fs/f2fs/namei.c  |  5 +++++
- 3 files changed, 24 insertions(+), 8 deletions(-)
+ fs/f2fs/f2fs.h  | 3 +++
+ fs/f2fs/inode.c | 5 +++++
+ fs/f2fs/super.c | 1 +
+ 3 files changed, 9 insertions(+)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 24d1308..ae37543 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -185,8 +185,13 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
- 		/* no need to allocate new dentry pages to all the indices */
- 		dentry_page = find_data_page(dir, bidx);
- 		if (IS_ERR(dentry_page)) {
--			room = true;
--			continue;
-+			if (PTR_ERR(dentry_page) == -ENOENT) {
-+				room = true;
-+				continue;
-+			} else {
-+				*res_page = dentry_page;
-+				break;
-+			}
- 		}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5daba19..c4697b7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -45,6 +45,7 @@ enum {
+ 	FAULT_ORPHAN,
+ 	FAULT_BLOCK,
+ 	FAULT_DIR_DEPTH,
++	FAULT_EVICT_INODE,
+ 	FAULT_MAX,
+ };
  
- 		de = find_in_block(dentry_page, fname, namehash, &max_slots,
-@@ -223,19 +228,22 @@ struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
- 	struct fscrypt_name fname;
- 	int err;
+@@ -74,6 +75,8 @@ static inline bool time_to_inject(int type)
+ 		return false;
+ 	else if (type == FAULT_DIR_DEPTH && !IS_FAULT_SET(type))
+ 		return false;
++	else if (type == FAULT_EVICT_INODE && !IS_FAULT_SET(type))
++		return false;
  
--	*res_page = NULL;
--
- 	err = fscrypt_setup_filename(dir, child, 1, &fname);
--	if (err)
-+	if (err) {
-+		*res_page = ERR_PTR(-ENOMEM);
- 		return NULL;
-+	}
+ 	atomic_inc(&f2fs_fault.inject_ops);
+ 	if (atomic_read(&f2fs_fault.inject_ops) >= f2fs_fault.inject_rate) {
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index bdd814d..11cb60a 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -345,6 +345,11 @@ void f2fs_evict_inode(struct inode *inode)
+ 	if (inode->i_nlink || is_bad_inode(inode))
+ 		goto no_delete;
  
- 	if (f2fs_has_inline_dentry(dir)) {
-+		*res_page = NULL;
- 		de = find_in_inline_dir(dir, &fname, res_page);
- 		goto out;
- 	}
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	if (time_to_inject(FAULT_EVICT_INODE))
++		goto no_delete;
++#endif
++
+ 	sb_start_intwrite(inode->i_sb);
+ 	set_inode_flag(inode, FI_NO_ALLOC);
+ 	i_size_write(inode, 0);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index a5b5739..27f76819e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -49,6 +49,7 @@ char *fault_name[FAULT_MAX] = {
+ 	[FAULT_ORPHAN]		= "orphan",
+ 	[FAULT_BLOCK]		= "no more block",
+ 	[FAULT_DIR_DEPTH]	= "too big dir depth",
++	[FAULT_EVICT_INODE]	= "evict_inode fail",
+ };
  
--	if (npages == 0)
-+	if (npages == 0) {
-+		*res_page = NULL;
- 		goto out;
-+	}
- 
- 	max_depth = F2FS_I(dir)->i_current_depth;
- 	if (unlikely(max_depth > MAX_DIR_HASH_DEPTH)) {
-@@ -247,8 +255,9 @@ struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
- 	}
- 
- 	for (level = 0; level < max_depth; level++) {
-+		*res_page = NULL;
- 		de = find_in_level(dir, level, &fname, res_page);
--		if (de)
-+		if (de || IS_ERR(*res_page))
- 			break;
- 	}
- out:
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 77c9c24..1eb3043 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -286,8 +286,10 @@ struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
- 	f2fs_hash_t namehash;
- 
- 	ipage = get_node_page(sbi, dir->i_ino);
--	if (IS_ERR(ipage))
-+	if (IS_ERR(ipage)) {
-+		*res_page = ipage;
- 		return NULL;
-+	}
- 
- 	namehash = f2fs_dentry_hash(&name);
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 496f4e3..3f6119e 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -232,6 +232,9 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
- 	if (de) {
- 		f2fs_dentry_kunmap(dir, page);
- 		f2fs_put_page(page, 0);
-+	} else if (IS_ERR(page)) {
-+		err = PTR_ERR(page);
-+		goto out;
- 	} else {
- 		err = __f2fs_add_link(dir, &dot, NULL, dir->i_ino, S_IFDIR);
- 		if (err)
-@@ -242,6 +245,8 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
- 	if (de) {
- 		f2fs_dentry_kunmap(dir, page);
- 		f2fs_put_page(page, 0);
-+	} else if (IS_ERR(page)) {
-+		err = PTR_ERR(page);
- 	} else {
- 		err = __f2fs_add_link(dir, &dotdot, NULL, pino, S_IFDIR);
- 	}
+ static void f2fs_build_fault_attr(unsigned int rate)
 -- 
 2.6.3
+
+
+------------------------------------------------------------------------------
+What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
+patterns at an interface-level. Reveals which users, apps, and protocols are 
+consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
+J-Flow, sFlow and other flows. Make informed decisions using capacity 
+planning reports. https://ad.doubleclick.net/ddm/clk/305295220;132659582;e
