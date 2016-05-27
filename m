@@ -1,79 +1,120 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/4] f2fs: do not skip writing data pages
-Date: Thu, 26 May 2016 17:25:23 -0700
-Message-ID: <1464308724-71070-3-git-send-email-jaegeuk@kernel.org>
-References: <1464308724-71070-1-git-send-email-jaegeuk@kernel.org>
+Subject: [PATCH 1/4] f2fs: propagate error given by f2fs_find_entry
+Date: Thu, 26 May 2016 17:25:21 -0700
+Message-ID: <1464308724-71070-1-git-send-email-jaegeuk@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464308724-71070-1-git-send-email-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-For data pages, let's try to flush as much as possible in background.
-
-On /dev/pmem0,
-
-1. dd if=/dev/zero of=/mnt/test/testfile bs=1M count=2048 conv=fsync
- Before : 800 MB/s
- After  : 1.1 GB/s
-
-2. dd if=/dev/zero of=/mnt/test/testfile bs=1M count=2048
- Before : 1.3 GB/s
- After  : 2.2 GB/s
+If we get ENOMEM or EIO in f2fs_find_entry, we should stop right away.
+Otherwise, for example, we can get duplicate directory entry by ->chash and
+->clevel.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c    | 11 +++++------
- fs/f2fs/segment.h |  4 +---
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ fs/f2fs/dir.c    | 23 ++++++++++++++++-------
+ fs/f2fs/inline.c |  4 +++-
+ fs/f2fs/namei.c  |  5 +++++
+ 3 files changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7132b02..85ceb2b 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1444,7 +1444,6 @@ static int f2fs_write_data_pages(struct address_space *mapping,
- 	struct inode *inode = mapping->host;
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int ret;
--	long diff;
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 24d1308..ae37543 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -185,8 +185,13 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 		/* no need to allocate new dentry pages to all the indices */
+ 		dentry_page = find_data_page(dir, bidx);
+ 		if (IS_ERR(dentry_page)) {
+-			room = true;
+-			continue;
++			if (PTR_ERR(dentry_page) == -ENOENT) {
++				room = true;
++				continue;
++			} else {
++				*res_page = dentry_page;
++				break;
++			}
+ 		}
  
- 	/* deal with chardevs and other special file */
- 	if (!mapping->a_ops->writepage)
-@@ -1469,14 +1468,14 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+ 		de = find_in_block(dentry_page, fname, namehash, &max_slots,
+@@ -223,19 +228,22 @@ struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
+ 	struct fscrypt_name fname;
+ 	int err;
  
- 	trace_f2fs_writepages(mapping->host, wbc, DATA);
- 
--	diff = nr_pages_to_write(sbi, DATA, wbc);
+-	*res_page = NULL;
 -
- 	ret = f2fs_write_cache_pages(mapping, wbc, __f2fs_writepage, mapping);
--	f2fs_submit_merged_bio_cond(sbi, inode, NULL, 0, DATA, WRITE);
-+	/*
-+	 * if some pages were truncated, we cannot guarantee its mapping->host
-+	 * to detect pending bios.
-+	 */
-+	f2fs_submit_merged_bio(sbi, DATA, WRITE);
+ 	err = fscrypt_setup_filename(dir, child, 1, &fname);
+-	if (err)
++	if (err) {
++		*res_page = ERR_PTR(-ENOMEM);
+ 		return NULL;
++	}
  
- 	remove_dirty_inode(inode);
--
--	wbc->nr_to_write = max((long)0, wbc->nr_to_write - diff);
- 	return ret;
+ 	if (f2fs_has_inline_dentry(dir)) {
++		*res_page = NULL;
+ 		de = find_in_inline_dir(dir, &fname, res_page);
+ 		goto out;
+ 	}
  
- skip_write:
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 5d016a1..890bb28d 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -728,9 +728,7 @@ static inline long nr_pages_to_write(struct f2fs_sb_info *sbi, int type,
+-	if (npages == 0)
++	if (npages == 0) {
++		*res_page = NULL;
+ 		goto out;
++	}
  
- 	nr_to_write = wbc->nr_to_write;
+ 	max_depth = F2FS_I(dir)->i_current_depth;
+ 	if (unlikely(max_depth > MAX_DIR_HASH_DEPTH)) {
+@@ -247,8 +255,9 @@ struct f2fs_dir_entry *f2fs_find_entry(struct inode *dir,
+ 	}
  
--	if (type == DATA)
--		desired = 4096;
--	else if (type == NODE)
-+	if (type == NODE)
- 		desired = 3 * max_hw_blocks(sbi);
- 	else
- 		desired = MAX_BIO_BLOCKS(sbi);
+ 	for (level = 0; level < max_depth; level++) {
++		*res_page = NULL;
+ 		de = find_in_level(dir, level, &fname, res_page);
+-		if (de)
++		if (de || IS_ERR(*res_page))
+ 			break;
+ 	}
+ out:
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 77c9c24..1eb3043 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -286,8 +286,10 @@ struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
+ 	f2fs_hash_t namehash;
+ 
+ 	ipage = get_node_page(sbi, dir->i_ino);
+-	if (IS_ERR(ipage))
++	if (IS_ERR(ipage)) {
++		*res_page = ipage;
+ 		return NULL;
++	}
+ 
+ 	namehash = f2fs_dentry_hash(&name);
+ 
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 496f4e3..3f6119e 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -232,6 +232,9 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
+ 	if (de) {
+ 		f2fs_dentry_kunmap(dir, page);
+ 		f2fs_put_page(page, 0);
++	} else if (IS_ERR(page)) {
++		err = PTR_ERR(page);
++		goto out;
+ 	} else {
+ 		err = __f2fs_add_link(dir, &dot, NULL, dir->i_ino, S_IFDIR);
+ 		if (err)
+@@ -242,6 +245,8 @@ static int __recover_dot_dentries(struct inode *dir, nid_t pino)
+ 	if (de) {
+ 		f2fs_dentry_kunmap(dir, page);
+ 		f2fs_put_page(page, 0);
++	} else if (IS_ERR(page)) {
++		err = PTR_ERR(page);
+ 	} else {
+ 		err = __f2fs_add_link(dir, &dotdot, NULL, pino, S_IFDIR);
+ 	}
 -- 
 2.6.3
