@@ -1,68 +1,77 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: Return the errno to the caller to avoid using a
- wrong page
-Date: Fri, 27 May 2016 20:22:04 +0800
-Message-ID: <57483BEC.8020402@huawei.com>
-References: <1464181261-3980-1-git-send-email-yunlong.song@huawei.com>
- <20160525165438.GB47096@jaegeuk.gateway>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: fix to redirty page if fail to gc data
+	page
+Date: Sat, 28 May 2016 08:54:22 +0800
+Message-ID: <2e7be62f-62b3-bb9a-8831-8208d1d9eeb9@huawei.com>
+References: <1463807951-10472-1-git-send-email-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160525165438.GB47096@jaegeuk.gateway>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, bintian.wang@huawei.com, houpengyang@huawei.com, heyunlei@huawei.com, liushuoran@huawei.com, shiguojun@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1b6SWi-0007N3-IA
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 28 May 2016 00:54:52 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1b6SWg-0006uV-0G
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 28 May 2016 00:54:52 +0000
+In-Reply-To: <1463807951-10472-1-git-send-email-chao@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2016/5/26 0:54, Jaegeuk Kim wrote:
-> Hi Yunlong,
+Ping,
+
+On 2016/5/21 13:19, Chao Yu wrote:
+> From: Chao Yu <yuchao0@huawei.com>
 > 
-> Do we have a bug report in terms of this?
+> If we fail to move data page during foreground GC, we should give another
+> chance to writeback that page which was set dirty previously by writer.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/gc.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 38d56f6..ee213a8 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -653,12 +653,15 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
+>  			.page = page,
+>  			.encrypted_page = NULL,
+>  		};
+> +		bool is_dirty = PageDirty(page);
+> +
+>  		set_page_dirty(page);
+>  		f2fs_wait_on_page_writeback(page, DATA, true);
+>  		if (clear_page_dirty_for_io(page))
+>  			inode_dec_dirty_pages(inode);
+>  		set_cold_data(page);
+> -		do_write_data_page(&fio);
+> +		if (do_write_data_page(&fio) && is_dirty)
+> +			set_page_dirty(page);
+>  		clear_cold_data(page);
+>  	}
+>  out:
 > 
 
-Hi Kim,
-    I found the old following patch, you have mentioned one reason why "nid != nid_of_node(page)" in
-that commit message.
 
-http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=3bb5e2c8fe2296ddd9d864dcfb5ee1b77135f3ec
-
-commit 3bb5e2c8fe2296ddd9d864dcfb5ee1b77135f3ec
-Author: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-Date:   Tue Apr 1 17:38:26 2014 +0900
-
-    f2fs: return -EIO when node id is not matched
-
-    During the cleaing of node segments, F2FS can get errored node blocks due to
-    data race between node page lock and its valid bitmap operations.
-    In that case, it needs to return an error to skip such the obsolete block copy.
-
-    Signed-off-by: Jaegeuk Kim <jaegeuk.kim@samsung.com>
-
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index eced8d7..065cd99 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -958,7 +958,7 @@ repeat:
-                goto got_it;
-
-        lock_page(page);
--       if (unlikely(!PageUptodate(page))) {
-+       if (unlikely(!PageUptodate(page) || nid != nid_of_node(page))) {
-                f2fs_put_page(page, 1);
-                return ERR_PTR(-EIO);
-        }
-@@ -967,7 +967,6 @@ repeat:
-                goto repeat;
-        }
- got_it:
--       f2fs_bug_on(nid != nid_of_node(page));
-        mark_page_accessed(page);
-        return page;
- }
-
-
-
--- 
-Thanks,
-Yunlong Song
+------------------------------------------------------------------------------
+What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
+patterns at an interface-level. Reveals which users, apps, and protocols are 
+consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
+J-Flow, sFlow and other flows. Make informed decisions using capacity 
+planning reports. https://ad.doubleclick.net/ddm/clk/305295220;132659582;e
