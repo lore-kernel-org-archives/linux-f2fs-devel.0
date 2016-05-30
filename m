@@ -1,40 +1,21 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix to redirty page if fail to gc data
-	page
-Date: Sat, 28 May 2016 08:54:22 +0800
-Message-ID: <2e7be62f-62b3-bb9a-8831-8208d1d9eeb9@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix to redirty page if fail to gc data page
+Date: Sun, 29 May 2016 19:37:02 -0700
+Message-ID: <20160530023702.GB78763@jaegeuk.hsd1.ca.comcast.net>
 References: <1463807951-10472-1-git-send-email-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1b6SWi-0007N3-IA
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 28 May 2016 00:54:52 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1b6SWg-0006uV-0G
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 28 May 2016 00:54:52 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <1463807951-10472-1-git-send-email-chao@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Ping,
+Hi Chao,
 
-On 2016/5/21 13:19, Chao Yu wrote:
+On Sat, May 21, 2016 at 01:19:11PM +0800, Chao Yu wrote:
 > From: Chao Yu <yuchao0@huawei.com>
 > 
 > If we fail to move data page during foreground GC, we should give another
@@ -63,15 +44,15 @@ On 2016/5/21 13:19, Chao Yu wrote:
 > -		do_write_data_page(&fio);
 > +		if (do_write_data_page(&fio) && is_dirty)
 > +			set_page_dirty(page);
+
+If this page is truncated with -ENOENT, we don't need to set it dirty again.
+I expect that, if we get an error here, do_garbage_collect() would retry FG_GC
+again.
+
+Thanks,
+
 >  		clear_cold_data(page);
 >  	}
 >  out:
-> 
-
-
-------------------------------------------------------------------------------
-What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
-patterns at an interface-level. Reveals which users, apps, and protocols are 
-consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
-J-Flow, sFlow and other flows. Make informed decisions using capacity 
-planning reports. https://ad.doubleclick.net/ddm/clk/305295220;132659582;e
+> -- 
+> 2.7.2
