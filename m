@@ -1,72 +1,147 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix to redirty page if fail to gc data page
-Date: Tue, 31 May 2016 14:10:50 +0800
-Message-ID: <a09543b8-349e-d2cc-0e15-f2bf82d4dcfa@huawei.com>
-References: <1463807951-10472-1-git-send-email-chao@kernel.org>
- <20160530023702.GB78763@jaegeuk.hsd1.ca.comcast.net>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: handle writepage correctly
+Date: Wed,  1 Jun 2016 16:34:15 -0700
+Message-ID: <1464824055-47514-2-git-send-email-jaegeuk@kernel.org>
+References: <1464824055-47514-1-git-send-email-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160530023702.GB78763@jaegeuk.hsd1.ca.comcast.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1b8Fec-0001je-Q0
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 01 Jun 2016 23:34:26 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1b8Feb-0007bg-P5
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 01 Jun 2016 23:34:26 +0000
+In-Reply-To: <1464824055-47514-1-git-send-email-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Hi Jaegeuk,
+Previously, f2fs_write_data_pages() calls __f2fs_writepage() which calls
+f2fs_write_data_page().
+If f2fs_write_data_page() returns AOP_WRITEPAGE_ACTIVATE, __f2fs_writepage()
+calls mapping_set_error(). But, this should not happen at every time, since
+sometimes f2fs_write_data_page() tries to skip writing pages without error.
+For example, volatile_write() gives EIO all the time, as Shuoran Liu pointed
+out.
 
-On 2016/5/30 10:37, Jaegeuk Kim wrote:
-> Hi Chao,
-> 
-> On Sat, May 21, 2016 at 01:19:11PM +0800, Chao Yu wrote:
->> From: Chao Yu <yuchao0@huawei.com>
->>
->> If we fail to move data page during foreground GC, we should give another
->> chance to writeback that page which was set dirty previously by writer.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/gc.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index 38d56f6..ee213a8 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -653,12 +653,15 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
->>  			.page = page,
->>  			.encrypted_page = NULL,
->>  		};
->> +		bool is_dirty = PageDirty(page);
->> +
->>  		set_page_dirty(page);
->>  		f2fs_wait_on_page_writeback(page, DATA, true);
->>  		if (clear_page_dirty_for_io(page))
->>  			inode_dec_dirty_pages(inode);
->>  		set_cold_data(page);
->> -		do_write_data_page(&fio);
->> +		if (do_write_data_page(&fio) && is_dirty)
->> +			set_page_dirty(page);
-> 
-> If this page is truncated with -ENOENT, we don't need to set it dirty again.
+Reported-by: Shuoran Liu <liushuoran@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 44 ++++++++++++++------------------------------
+ 1 file changed, 14 insertions(+), 30 deletions(-)
 
-Agree
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5dcd8db..c9d6fe2 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1241,20 +1241,18 @@ write:
+ 			available_free_memory(sbi, BASE_CHECK))))
+ 		goto redirty_out;
+ 
+-	/* Dentry blocks are controlled by checkpoint */
+-	if (S_ISDIR(inode->i_mode)) {
+-		if (unlikely(f2fs_cp_error(sbi)))
+-			goto redirty_out;
+-		err = do_write_data_page(&fio);
+-		goto done;
+-	}
+-
+ 	/* we should bypass data pages to proceed the kworkder jobs */
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+ 		SetPageError(page);
+ 		goto out;
+ 	}
+ 
++	/* Dentry blocks are controlled by checkpoint */
++	if (S_ISDIR(inode->i_mode)) {
++		err = do_write_data_page(&fio);
++		goto done;
++	}
++
+ 	if (!wbc->for_reclaim)
+ 		need_balance_fs = true;
+ 	else if (has_not_enough_free_secs(sbi, 0))
+@@ -1294,16 +1292,8 @@ out:
+ 
+ redirty_out:
+ 	redirty_page_for_writepage(wbc, page);
+-	return AOP_WRITEPAGE_ACTIVATE;
+-}
+-
+-static int __f2fs_writepage(struct page *page, struct writeback_control *wbc,
+-			void *data)
+-{
+-	struct address_space *mapping = data;
+-	int ret = mapping->a_ops->writepage(page, wbc);
+-	mapping_set_error(mapping, ret);
+-	return ret;
++	unlock_page(page);
++	return err;
+ }
+ 
+ /*
+@@ -1312,8 +1302,7 @@ static int __f2fs_writepage(struct page *page, struct writeback_control *wbc,
+  * warm/hot data page.
+  */
+ static int f2fs_write_cache_pages(struct address_space *mapping,
+-			struct writeback_control *wbc, writepage_t writepage,
+-			void *data)
++					struct writeback_control *wbc)
+ {
+ 	int ret = 0;
+ 	int done = 0;
+@@ -1395,16 +1384,11 @@ continue_unlock:
+ 			if (!clear_page_dirty_for_io(page))
+ 				goto continue_unlock;
+ 
+-			ret = (*writepage)(page, wbc, data);
++			ret = mapping->a_ops->writepage(page, wbc);
+ 			if (unlikely(ret)) {
+-				if (ret == AOP_WRITEPAGE_ACTIVATE) {
+-					unlock_page(page);
+-					ret = 0;
+-				} else {
+-					done_index = page->index + 1;
+-					done = 1;
+-					break;
+-				}
++				done_index = page->index + 1;
++				done = 1;
++				break;
+ 			}
+ 
+ 			if (--wbc->nr_to_write <= 0 &&
+@@ -1459,7 +1443,7 @@ static int f2fs_write_data_pages(struct address_space *mapping,
+ 
+ 	trace_f2fs_writepages(mapping->host, wbc, DATA);
+ 
+-	ret = f2fs_write_cache_pages(mapping, wbc, __f2fs_writepage, mapping);
++	ret = f2fs_write_cache_pages(mapping, wbc);
+ 	/*
+ 	 * if some pages were truncated, we cannot guarantee its mapping->host
+ 	 * to detect pending bios.
+-- 
+2.6.3
 
-> I expect that, if we get an error here, do_garbage_collect() would retry FG_GC
 
-IIRC, you have reworked the FG_GC flows changed from an infinite loop to trying
-do the movement just one time. Here, I think if there are just few of blocks are
-failed to be moved, we can give one more time for retrying. How do you think?
-
-> again.
-> 
-> Thanks,
-> 
->>  		clear_cold_data(page);
->>  	}
->>  out:
->> -- 
->> 2.7.2
-> .
-> 
+------------------------------------------------------------------------------
+What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
+patterns at an interface-level. Reveals which users, apps, and protocols are 
+consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
+J-Flow, sFlow and other flows. Make informed decisions using capacity 
+planning reports. https://ad.doubleclick.net/ddm/clk/305295220;132659582;e
