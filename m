@@ -1,55 +1,54 @@
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: [PATCH 10/21] fs: f2fs: Use ktime_get_real_seconds for
-	sit_info times
-Date: Wed,  8 Jun 2016 22:04:54 -0700
-Message-ID: <1465448705-25055-11-git-send-email-deepa.kernel@gmail.com>
+From: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 00/21] Delete CURRENT_TIME and CURRENT_TIME_SEC macros
+Date: Thu, 09 Jun 2016 10:51:31 +0300
+Message-ID: <87twh294vw.fsf@linux.intel.com>
 References: <1465448705-25055-1-git-send-email-deepa.kernel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-In-Reply-To: <1465448705-25055-1-git-send-email-deepa.kernel@gmail.com>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Changman Lee <cm224.lee@samsung.com>, Chao Yu <chao2.yu@samsung.com>, Arnd Bergmann <arnd@arndb.de>, y2038@lists.linaro.org, linux-f2fs-devel@lists.sourceforge.net, Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
+Return-path: <linux-efi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1465448705-25055-1-git-send-email-deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-efi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Deepa Dinamani <deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, y2038-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Anna Schumaker <anna.schumaker-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>, Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, Benny Halevy <bhalevy-7I+n7zu2hftEKMMhf/gKZA@public.gmane.org>, Boaz Harrosh <ooo-rh7Tgz9RNieUD9Wbbkgo/g@public.gmane.org>, Changman Lee <cm224.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chris Mason <clm-b10kYP2dOMg@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Dave Kleikamp <shaggy-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, David Sterba <dsterba-IBi9RG/b67k@public.gmane.org>, Eric Van Hensbergen <ericvh-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hugh Dickins <hughd-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Ian Kent <raven-PKsaG3nR2I+sTnJN9+BGXg@public.gmane.org>, Jaegeuk Kim <jaegeuk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joern Engel <joern-PCqxUs/MD9bYtjvyW6yDsg@public.gmane.org>, Josef Bacik <jbacik-b10kYP2dOMg@public.gmane.org>, Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Latchesar Ionkov <lucho-OnYtXJJ0/fesTnJN9+BGXg@public.gmane.org>, Matt Fleming <matt-mF/unelCI9GS6iBeEJttW/XRex20P6io@public.gmane.org>, Matthew Garrett <matthew.gar>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Q1VSUkVOVF9USU1FX1NFQyBpcyBub3QgeTIwMzggc2FmZS4KClJlcGxhY2UgdXNlIG9mIENVUlJF
-TlRfVElNRV9TRUMgd2l0aCBrdGltZV9nZXRfcmVhbF9zZWNvbmRzCmluIHNlZ21lbnQgdGltZXN0
-YW1wcyB1c2VkIGJ5IEdDIGFsZ29yaXRobSBpbmNsdWRpbmcgdGhlCnNlZ21lbnQgbXRpbWUgdGlt
-ZXN0YW1wcy4KClNpZ25lZC1vZmYtYnk6IERlZXBhIERpbmFtYW5pIDxkZWVwYS5rZXJuZWxAZ21h
-aWwuY29tPgpDYzogSmFlZ2V1ayBLaW0gPGphZWdldWtAa2VybmVsLm9yZz4KQ2M6IENoYW5nbWFu
-IExlZSA8Y20yMjQubGVlQHNhbXN1bmcuY29tPgpDYzogQ2hhbyBZdSA8Y2hhbzIueXVAc2Ftc3Vu
-Zy5jb20+CkNjOiBsaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldAotLS0KIGZz
-L2YyZnMvc2VnbWVudC5jIHwgMiArLQogZnMvZjJmcy9zZWdtZW50LmggfCA1ICsrKy0tCiAyIGZp
-bGVzIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9mcy9mMmZzL3NlZ21lbnQuYyBiL2ZzL2YyZnMvc2VnbWVudC5jCmluZGV4IDJlNmY1MzcuLmJk
-ZTVkYmQgMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvc2VnbWVudC5jCisrKyBiL2ZzL2YyZnMvc2VnbWVu
-dC5jCkBAIC0yMTIzLDcgKzIxMjMsNyBAQCBzdGF0aWMgaW50IGJ1aWxkX3NpdF9pbmZvKHN0cnVj
-dCBmMmZzX3NiX2luZm8gKnNiaSkKIAlzaXRfaS0+ZGlydHlfc2VudHJpZXMgPSAwOwogCXNpdF9p
-LT5zZW50c19wZXJfYmxvY2sgPSBTSVRfRU5UUllfUEVSX0JMT0NLOwogCXNpdF9pLT5lbGFwc2Vk
-X3RpbWUgPSBsZTY0X3RvX2NwdShzYmktPmNrcHQtPmVsYXBzZWRfdGltZSk7Ci0Jc2l0X2ktPm1v
-dW50ZWRfdGltZSA9IENVUlJFTlRfVElNRV9TRUMudHZfc2VjOworCXNpdF9pLT5tb3VudGVkX3Rp
-bWUgPSBrdGltZV9nZXRfcmVhbF9zZWNvbmRzKCk7CiAJbXV0ZXhfaW5pdCgmc2l0X2ktPnNlbnRy
-eV9sb2NrKTsKIAlyZXR1cm4gMDsKIH0KZGlmZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5oIGIv
-ZnMvZjJmcy9zZWdtZW50LmgKaW5kZXggN2E3NTZmZi4uZGEzZTg3ZiAxMDA2NDQKLS0tIGEvZnMv
-ZjJmcy9zZWdtZW50LmgKKysrIGIvZnMvZjJmcy9zZWdtZW50LmgKQEAgLTY1Miw4ICs2NTIsOSBA
-QCBzdGF0aWMgaW5saW5lIHZvaWQgc2V0X3RvX25leHRfc2l0KHN0cnVjdCBzaXRfaW5mbyAqc2l0
-X2ksIHVuc2lnbmVkIGludCBzdGFydCkKIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBsb25n
-IGdldF9tdGltZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCiB7CiAJc3RydWN0IHNpdF9pbmZv
-ICpzaXRfaSA9IFNJVF9JKHNiaSk7Ci0JcmV0dXJuIHNpdF9pLT5lbGFwc2VkX3RpbWUgKyBDVVJS
-RU5UX1RJTUVfU0VDLnR2X3NlYyAtCi0JCQkJCQlzaXRfaS0+bW91bnRlZF90aW1lOworCXRpbWU2
-NF90IG5vdyA9IGt0aW1lX2dldF9yZWFsX3NlY29uZHMoKTsKKworCXJldHVybiBzaXRfaS0+ZWxh
-cHNlZF90aW1lICsgbm93IC0gc2l0X2ktPm1vdW50ZWRfdGltZTsKIH0KIAogc3RhdGljIGlubGlu
-ZSB2b2lkIHNldF9zdW1tYXJ5KHN0cnVjdCBmMmZzX3N1bW1hcnkgKnN1bSwgbmlkX3QgbmlkLAot
-LSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-ClkyMDM4IG1haWxpbmcgbGlzdApZMjAzOEBsaXN0cy5saW5hcm8ub3JnCmh0dHBzOi8vbGlzdHMu
-bGluYXJvLm9yZy9tYWlsbWFuL2xpc3RpbmZvL3kyMDM4Cg==
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+
+Hi,
+
+Deepa Dinamani <deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
+>  drivers/usb/gadget/function/f_fs.c                 |  2 +-
+>  drivers/usb/gadget/legacy/inode.c                  |  2 +-
+
+for drivers/usb/gadget:
+
+Acked-by: Felipe Balbi <balbi-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJXWSADAAoJEIaOsuA1yqRE3xkP/iQ1fuTIybbV6wTI8KcBipLN
+RYE+b6JJVPFMIpj76aDznk/eZG+CSnwRUAPoPGWs1o7xVqnVGqfLDMWyHLp3pU5C
+NQyphaTDahzkV3cbTbAjbLpcluDKmCmRb++9YyfSyEcFP4HnlpgmIVFM7SinMADk
+OXGwum3/L0HpAs+91j4FORMHiKma5fa5CXmE5aHsM3TSWONWldycLywu9jlF/AyU
+lY83J4AjvL2qii9hWdlxX81+zFZ92Vh9v5vvms8ErPB2w3a75PbM70gaoVM2VOxQ
+kMeLZUiGywrnDv+/RKC+9WX3KiwDsAlTk1rbuDBePE7PbjQmRW/hfRtXcpECXAyG
+LrV9HskF1UIIv8aVyWoR/GwQdO0cdxoW8uBuw+/l7pSHTvfpvl3/sb+VNBH3j2lQ
+aosxpF7QlU08QxWzpPHgrQ7TNbZ0o9zl5aZ8HAhAPt9FZDu1KKHy/EEJ0aI5d25y
+p7aTdxvf2SxMGVo6K1ozZUq/EeXOW061oeOUmDLT1NZWS69g19lGBx/XSWLpqf1b
+V6SK0hpP3QqHajNOsTFfHLuP13zygCZsSQJU1Z4MO3RyawyMsgjCqAKrEHCoF0zL
+rCfYHY+r6PMRmrirPoBdPwdoWB8/i1INydBfU4OqjO/7dRgjhl2iPSUvSOPrhVlu
+g2HkIFwp1Wj8eyUm+JYM
+=tfo4
+-----END PGP SIGNATURE-----
+--=-=-=--
