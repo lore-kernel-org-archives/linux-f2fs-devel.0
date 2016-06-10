@@ -1,63 +1,62 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: check only data or node for summary
-Date: Fri, 10 Jun 2016 14:01:06 -0700
-Message-ID: <20160610210107.74181-1-jaegeuk@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 04/21] fs: Replace CURRENT_TIME with
+	current_fs_time() for inode timestamps
+Date: Sat, 11 Jun 2016 00:23:39 +0200
+Message-ID: <3828814.bejVmX1kJo@wuerfel>
+References: <1465448705-25055-1-git-send-email-deepa.kernel@gmail.com>
+	<1465448705-25055-5-git-send-email-deepa.kernel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bBTYK-00005g-QT
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Jun 2016 21:01:16 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bBTYJ-00078b-Vr
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Jun 2016 21:01:16 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <cluster-devel-bounces@redhat.com>
+In-Reply-To: <1465448705-25055-5-git-send-email-deepa.kernel@gmail.com>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/cluster-devel>
+List-Post: <mailto:cluster-devel@redhat.com>
+List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
+Sender: cluster-devel-bounces@redhat.com
+Errors-To: cluster-devel-bounces@redhat.com
+To: Deepa Dinamani <deepa.kernel@gmail.com>, Mike Marshall <hubcap@omnibond.com>, Nadia Yvette Chambers <nyc@holomorphy.com>, Chao Yu <chao2.yu@samsung.com>, linux-nilfs@vger.kernel.org
+Cc: Latchesar Ionkov <lucho@ionkov.net>, Dave Kleikamp <shaggy@kernel.org>, jfs-discussion@lists.sourceforge.net, Michal Hocko <mhocko@suse.com>, Matt Fleming <matt@codeblueprint.co.uk>, Firo Yang <firogm@gmail.com>, Trond Myklebust <trond.myklebust@primarydata.com>, Alexei Starovoitov <ast@kernel.org>, David Howells <dhowells@redhat.com>, linux-efi@vger.kernel.org, selinux@tycho.nsa.gov, Eric Paris <eparis@parisplace.org>, Matthew Garrett <matthew.garrett@nebula.com>, Jeff Layton <jlayton@poochiereds.net>, linux-f2fs-devel@lists.sourceforge.net, Sean Hefty <sean.hefty@intel.com>, Ian Kent <raven@themaw.net>, linux-cifs@vger.kernel.org, Paul Moore <paul@paul-moore.com>, "David S. Miller" <davem@davemloft.net>, y2038@lists.linaro.org, Anton Vorontsov <anton@enomsg.org>, Hugh Dickins <hu>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-We can check data or node types only for gc, since we allocate different type of
-data/node blocks in a different logs occasionally.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/gc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e1d274c..c2c4ac3 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -806,7 +806,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 		f2fs_put_page(sum_page, 0);
- 
- 		sum = page_address(sum_page);
--		f2fs_bug_on(sbi, type != GET_SUM_TYPE((&sum->footer)));
-+		f2fs_bug_on(sbi, IS_DATASEG(type) !=
-+				IS_DATASEG(GET_SUM_TYPE((&sum->footer))));
- 
- 		/*
- 		 * this is to avoid deadlock:
--- 
-2.8.3
+On Wednesday, June 8, 2016 10:04:48 PM CEST Deepa Dinamani wrote:
+> 
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> Cc: Steve French <sfrench@samba.org>
+> Cc: linux-cifs@vger.kernel.org
+> Cc: samba-technical@lists.samba.org
+> Cc: Joern Engel <joern@logfs.org>
+> Cc: Prasad Joshi <prasadjoshi.linux@gmail.com>
+> Cc: logfs@logfs.org
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Julia Lawall <Julia.Lawall@lip6.fr>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Firo Yang <firogm@gmail.com>
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Changman Lee <cm224.lee@samsung.com>
+> ...
 
 
-------------------------------------------------------------------------------
-What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
-patterns at an interface-level. Reveals which users, apps, and protocols are 
-consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
-J-Flow, sFlow and other flows. Make informed decisions using capacity 
-planning reports. https://ad.doubleclick.net/ddm/clk/305295220;132659582;e
+Hi Deepa,
+
+
+Just FYI, the vger.kernel.org list server and some others
+intentionally reject mails with more than 1024 characters in the
+Cc header, to stop people from cross-posting to too many folks.
+
+I realize that you merged the patch after Linus' comment about
+doing things in fewer steps for the simple conversion, which is
+fine, but then the patch should be obvious enough that you
+don't need to Cc every single maintainer and mailing list.
+
+I've had some cases like this, and I usually remove the people
+that are less likely to reply, leaving one per subsystem.
+Leaving out the cleartext names is another trick you can use
+if you think that you really need to Cc more people than
+allowed ;-)
+
+	Arnd
