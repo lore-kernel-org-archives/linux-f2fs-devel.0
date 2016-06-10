@@ -1,24 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: report error for f2fs_parent_dir
-Date: Fri, 10 Jun 2016 14:01:07 -0700
-Message-ID: <20160610210107.74181-2-jaegeuk@kernel.org>
-References: <20160610210107.74181-1-jaegeuk@kernel.org>
+Subject: [PATCH 1/2] f2fs: check only data or node for summary
+Date: Fri, 10 Jun 2016 14:01:06 -0700
+Message-ID: <20160610210107.74181-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bBTYL-00005n-Qk
+	(envelope-from <jaegeuk@kernel.org>) id 1bBTYK-00005g-QT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Jun 2016 21:01:17 +0000
+	Fri, 10 Jun 2016 21:01:16 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bBTYL-0002PN-3Q
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bBTYJ-00078b-Vr
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 10 Jun 2016 21:01:17 +0000
-In-Reply-To: <20160610210107.74181-1-jaegeuk@kernel.org>
+	Fri, 10 Jun 2016 21:01:16 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,57 +29,28 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If there is no dentry, we can report its error correctly.
+We can check data or node types only for gc, since we allocate different type of
+data/node blocks in a different logs occasionally.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/namei.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ fs/f2fs/gc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 78efe00..618829e 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -662,10 +662,11 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		goto out;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index e1d274c..c2c4ac3 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -806,7 +806,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 		f2fs_put_page(sum_page, 0);
  
- 	if (S_ISDIR(old_inode->i_mode)) {
--		err = -EIO;
- 		old_dir_entry = f2fs_parent_dir(old_inode, &old_dir_page);
--		if (!old_dir_entry)
-+		if (!old_dir_entry) {
-+			err = PTR_ERR(old_dir_page);
- 			goto out_old;
-+		}
- 	}
+ 		sum = page_address(sum_page);
+-		f2fs_bug_on(sbi, type != GET_SUM_TYPE((&sum->footer)));
++		f2fs_bug_on(sbi, IS_DATASEG(type) !=
++				IS_DATASEG(GET_SUM_TYPE((&sum->footer))));
  
- 	if (flags & RENAME_WHITEOUT) {
-@@ -838,19 +839,21 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	/* prepare for updating ".." directory entry info later */
- 	if (old_dir != new_dir) {
- 		if (S_ISDIR(old_inode->i_mode)) {
--			err = -EIO;
- 			old_dir_entry = f2fs_parent_dir(old_inode,
- 							&old_dir_page);
--			if (!old_dir_entry)
-+			if (!old_dir_entry) {
-+				err = PTR_ERR(old_dir_page);
- 				goto out_new;
-+			}
- 		}
- 
- 		if (S_ISDIR(new_inode->i_mode)) {
--			err = -EIO;
- 			new_dir_entry = f2fs_parent_dir(new_inode,
- 							&new_dir_page);
--			if (!new_dir_entry)
-+			if (!new_dir_entry) {
-+				err = PTR_ERR(new_dir_page);
- 				goto out_old_dir;
-+			}
- 		}
- 	}
- 
+ 		/*
+ 		 * this is to avoid deadlock:
 -- 
 2.8.3
 
