@@ -1,54 +1,66 @@
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: [PATCH v2 13/24] fs: f2fs: Use ktime_get_real_seconds for
-	sit_info times
-Date: Sun, 19 Jun 2016 17:27:12 -0700
-Message-ID: <1466382443-11063-14-git-send-email-deepa.kernel@gmail.com>
+From: Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Subject: Re: [PATCH v2 00/24] Delete CURRENT_TIME and
+	CURRENT_TIME_SEC macros
+Date: Mon, 20 Jun 2016 11:03:01 -0700
+Message-ID: <CA+55aFzK2K-7UeQRsWR7ooNHMMbtMFRAF60byR1Gvmbf9XWhbA@mail.gmail.com>
 References: <1466382443-11063-1-git-send-email-deepa.kernel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-In-Reply-To: <1466382443-11063-1-git-send-email-deepa.kernel@gmail.com>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Changman Lee <cm224.lee@samsung.com>, tytso@mit.edu, arnd@arndb.de, y2038@lists.linaro.org, linux-f2fs-devel@lists.sourceforge.net, viro@zeniv.linux.org.uk, Jaegeuk Kim <jaegeuk@kernel.org>, tglx@linutronix.de, torvalds@linux-foundation.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+In-Reply-To: <1466382443-11063-1-git-send-email-deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <http://lists.lustre.org/options.cgi/lustre-devel-lustre.org>,
+	<mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.lustre.org/pipermail/lustre-devel-lustre.org/>
+List-Post: <mailto:lustre-devel-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+List-Help: <mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org>,
+	<mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=subscribe>
+Errors-To: lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org
+Sender: "lustre-devel" <lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+To: Deepa Dinamani <deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Dave Kleikamp <shaggy-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Trond Myklebust <trond.myklebust-7I+n7zu2hftEKMMhf/gKZA@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Chris Mason <clm-b10kYP2dOMg@public.gmane.org>, "adilger.kernel-m1MBpc4rdrD3fQ9qLvQP4Q@public.gmane.org" <adilger.kernel-m1MBpc4rdrD3fQ9qLvQP4Q@public.gmane.org>, buchino-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "Yan,
+	Zheng" <zyan-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, jejb-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, Paul Moore <paul-r2n+y4ga6xFZroRs9YW3xA@public.gmane.org>, Linux SCSI List <linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, y2038-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Ilya Dryomov <idryomov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Changman Lee <cm224.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Mark Fasheh <mfasheh-IBi9RG/b67k@public.gmane.org>, sramars-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>, David Sterba <dsterba-IBi9RG/b67k@public.gmane.org>, Jaegeuk Kim <jaegeuk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, ceph-devel <ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>Linux
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Q1VSUkVOVF9USU1FX1NFQyBpcyBub3QgeTIwMzggc2FmZS4KClJlcGxhY2UgdXNlIG9mIENVUlJF
-TlRfVElNRV9TRUMgd2l0aCBrdGltZV9nZXRfcmVhbF9zZWNvbmRzCmluIHNlZ21lbnQgdGltZXN0
-YW1wcyB1c2VkIGJ5IEdDIGFsZ29yaXRobSBpbmNsdWRpbmcgdGhlCnNlZ21lbnQgbXRpbWUgdGlt
-ZXN0YW1wcy4KClNpZ25lZC1vZmYtYnk6IERlZXBhIERpbmFtYW5pIDxkZWVwYS5rZXJuZWxAZ21h
-aWwuY29tPgpDYzogSmFlZ2V1ayBLaW0gPGphZWdldWtAa2VybmVsLm9yZz4KQ2M6IENoYW5nbWFu
-IExlZSA8Y20yMjQubGVlQHNhbXN1bmcuY29tPgpDYzogbGludXgtZjJmcy1kZXZlbEBsaXN0cy5z
-b3VyY2Vmb3JnZS5uZXQKLS0tCiBmcy9mMmZzL3NlZ21lbnQuYyB8IDIgKy0KIGZzL2YyZnMvc2Vn
-bWVudC5oIHwgNSArKystLQogMiBmaWxlcyBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDMgZGVs
-ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZzL3NlZ21l
-bnQuYwppbmRleCAyNWIxYzQ3Li45YzM1YTIxIDEwMDY0NAotLS0gYS9mcy9mMmZzL3NlZ21lbnQu
-YworKysgYi9mcy9mMmZzL3NlZ21lbnQuYwpAQCAtMjE1Niw3ICsyMTU2LDcgQEAgc3RhdGljIGlu
-dCBidWlsZF9zaXRfaW5mbyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCiAJc2l0X2ktPmRpcnR5
-X3NlbnRyaWVzID0gMDsKIAlzaXRfaS0+c2VudHNfcGVyX2Jsb2NrID0gU0lUX0VOVFJZX1BFUl9C
-TE9DSzsKIAlzaXRfaS0+ZWxhcHNlZF90aW1lID0gbGU2NF90b19jcHUoc2JpLT5ja3B0LT5lbGFw
-c2VkX3RpbWUpOwotCXNpdF9pLT5tb3VudGVkX3RpbWUgPSBDVVJSRU5UX1RJTUVfU0VDLnR2X3Nl
-YzsKKwlzaXRfaS0+bW91bnRlZF90aW1lID0ga3RpbWVfZ2V0X3JlYWxfc2Vjb25kcygpOwogCW11
-dGV4X2luaXQoJnNpdF9pLT5zZW50cnlfbG9jayk7CiAJcmV0dXJuIDA7CiB9CmRpZmYgLS1naXQg
-YS9mcy9mMmZzL3NlZ21lbnQuaCBiL2ZzL2YyZnMvc2VnbWVudC5oCmluZGV4IGQ3NGNjMzMuLjc4
-YmIwMzQgMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvc2VnbWVudC5oCisrKyBiL2ZzL2YyZnMvc2VnbWVu
-dC5oCkBAIC02NjEsOCArNjYxLDkgQEAgc3RhdGljIGlubGluZSB2b2lkIHNldF90b19uZXh0X3Np
-dChzdHJ1Y3Qgc2l0X2luZm8gKnNpdF9pLCB1bnNpZ25lZCBpbnQgc3RhcnQpCiBzdGF0aWMgaW5s
-aW5lIHVuc2lnbmVkIGxvbmcgbG9uZyBnZXRfbXRpbWUoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2Jp
-KQogewogCXN0cnVjdCBzaXRfaW5mbyAqc2l0X2kgPSBTSVRfSShzYmkpOwotCXJldHVybiBzaXRf
-aS0+ZWxhcHNlZF90aW1lICsgQ1VSUkVOVF9USU1FX1NFQy50dl9zZWMgLQotCQkJCQkJc2l0X2kt
-Pm1vdW50ZWRfdGltZTsKKwl0aW1lNjRfdCBub3cgPSBrdGltZV9nZXRfcmVhbF9zZWNvbmRzKCk7
-CisKKwlyZXR1cm4gc2l0X2ktPmVsYXBzZWRfdGltZSArIG5vdyAtIHNpdF9pLT5tb3VudGVkX3Rp
-bWU7CiB9CiAKIHN0YXRpYyBpbmxpbmUgdm9pZCBzZXRfc3VtbWFyeShzdHJ1Y3QgZjJmc19zdW1t
-YXJ5ICpzdW0sIG5pZF90IG5pZCwKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpZMjAzOCBtYWlsaW5nIGxpc3QKWTIwMzhAbGlzdHMubGlu
-YXJvLm9yZwpodHRwczovL2xpc3RzLmxpbmFyby5vcmcvbWFpbG1hbi9saXN0aW5mby95MjAzOAo=
+On Sun, Jun 19, 2016 at 5:26 PM, Deepa Dinamani <deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> The series is aimed at getting rid of CURRENT_TIME and CURRENT_TIME_SEC macros.
+
+This version now looks ok to me.
+
+I do have a comment (or maybe just a RFD) for future work.
+
+It does strike me that once we actually change over the inode times to
+use timespec64, the calling conventions are going to be fairly
+horrendous on most 32-bit architectures.
+
+Gcc handles 8-byte structure returns (on most architectures) by
+returning them as two 32-bit registers (%edx:%eax on x86). But once it
+is timespec64, that will no longer be the case, and the calling
+convention will end up using a pointer to the local stack instead.
+
+So for 32-bit code generation, we *may* want to introduce a new model of doing
+
+    set_inode_time(inode, ATTR_ATIME | ATTR_MTIME);
+
+which basically just does
+
+    inode->i_atime = inode->i_mtime = current_time(inode);
+
+but with a much easier calling convention on 32-bit architectures.
+
+But that is entirely orthogonal to this patch-set, and should be seen
+as a separate issue.
+
+And maybe it doesn't end up helping anyway, but I do think those
+"simple" direct assignments will really generate pretty disgusting
+code on 32-bit architectures.
+
+That whole
+
+    inode->i_atime = inode->i_mtime = CURRENT_TIME;
+
+model really made a lot more sense back in the ancient days when inode
+times were just simply 32-bit seconds (not even timeval structures).
+
+                  Linus
