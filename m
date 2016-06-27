@@ -1,54 +1,69 @@
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: [PATCH v3 14/24] fs: f2fs: Use ktime_get_real_seconds for
-	sit_info times
-Date: Sat, 25 Jun 2016 14:37:38 -0700
-Message-ID: <1466890668-23400-15-git-send-email-deepa.kernel@gmail.com>
-References: <1466890668-23400-1-git-send-email-deepa.kernel@gmail.com>
+From: "Tiezhu Yang" <kernelpatch@126.com>
+Subject: [PATCH] f2fs: remove unnecessary goto statement
+Date: Tue, 28 Jun 2016 07:27:59 +0800 (CST)
+Message-ID: <76d0a86c.637.1559430e066.Coremail.kernelpatch@126.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-In-Reply-To: <1466890668-23400-1-git-send-email-deepa.kernel@gmail.com>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Changman Lee <cm224.lee@samsung.com>, tytso@mit.edu, arnd@arndb.de, y2038@lists.linaro.org, linux-f2fs-devel@lists.sourceforge.net, viro@zeniv.linux.org.uk, Jaegeuk Kim <jaegeuk@kernel.org>, tglx@linutronix.de, torvalds@linux-foundation.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kernelpatch@126.com>) id 1bHfwr-0003IY-QH
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 Jun 2016 23:28:14 +0000
+Received: from m15-43.126.com ([220.181.15.43])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1bHfwp-00048U-VF for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 Jun 2016 23:28:13 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Q1VSUkVOVF9USU1FX1NFQyBpcyBub3QgeTIwMzggc2FmZS4KClJlcGxhY2UgdXNlIG9mIENVUlJF
-TlRfVElNRV9TRUMgd2l0aCBrdGltZV9nZXRfcmVhbF9zZWNvbmRzCmluIHNlZ21lbnQgdGltZXN0
-YW1wcyB1c2VkIGJ5IEdDIGFsZ29yaXRobSBpbmNsdWRpbmcgdGhlCnNlZ21lbnQgbXRpbWUgdGlt
-ZXN0YW1wcy4KClNpZ25lZC1vZmYtYnk6IERlZXBhIERpbmFtYW5pIDxkZWVwYS5rZXJuZWxAZ21h
-aWwuY29tPgpDYzogSmFlZ2V1ayBLaW0gPGphZWdldWtAa2VybmVsLm9yZz4KQ2M6IENoYW5nbWFu
-IExlZSA8Y20yMjQubGVlQHNhbXN1bmcuY29tPgpDYzogbGludXgtZjJmcy1kZXZlbEBsaXN0cy5z
-b3VyY2Vmb3JnZS5uZXQKLS0tCiBmcy9mMmZzL3NlZ21lbnQuYyB8IDIgKy0KIGZzL2YyZnMvc2Vn
-bWVudC5oIHwgNSArKystLQogMiBmaWxlcyBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDMgZGVs
-ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZzL3NlZ21l
-bnQuYwppbmRleCBlM2Y3NThkLi40YWY3ZDVhIDEwMDY0NAotLS0gYS9mcy9mMmZzL3NlZ21lbnQu
-YworKysgYi9mcy9mMmZzL3NlZ21lbnQuYwpAQCAtMjE1OCw3ICsyMTU4LDcgQEAgc3RhdGljIGlu
-dCBidWlsZF9zaXRfaW5mbyhzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCiAJc2l0X2ktPmRpcnR5
-X3NlbnRyaWVzID0gMDsKIAlzaXRfaS0+c2VudHNfcGVyX2Jsb2NrID0gU0lUX0VOVFJZX1BFUl9C
-TE9DSzsKIAlzaXRfaS0+ZWxhcHNlZF90aW1lID0gbGU2NF90b19jcHUoc2JpLT5ja3B0LT5lbGFw
-c2VkX3RpbWUpOwotCXNpdF9pLT5tb3VudGVkX3RpbWUgPSBDVVJSRU5UX1RJTUVfU0VDLnR2X3Nl
-YzsKKwlzaXRfaS0+bW91bnRlZF90aW1lID0ga3RpbWVfZ2V0X3JlYWxfc2Vjb25kcygpOwogCW11
-dGV4X2luaXQoJnNpdF9pLT5zZW50cnlfbG9jayk7CiAJcmV0dXJuIDA7CiB9CmRpZmYgLS1naXQg
-YS9mcy9mMmZzL3NlZ21lbnQuaCBiL2ZzL2YyZnMvc2VnbWVudC5oCmluZGV4IDU3ZDQ1MGYuLjk0
-YWIzMzggMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvc2VnbWVudC5oCisrKyBiL2ZzL2YyZnMvc2VnbWVu
-dC5oCkBAIC02NjEsOCArNjYxLDkgQEAgc3RhdGljIGlubGluZSB2b2lkIHNldF90b19uZXh0X3Np
-dChzdHJ1Y3Qgc2l0X2luZm8gKnNpdF9pLCB1bnNpZ25lZCBpbnQgc3RhcnQpCiBzdGF0aWMgaW5s
-aW5lIHVuc2lnbmVkIGxvbmcgbG9uZyBnZXRfbXRpbWUoc3RydWN0IGYyZnNfc2JfaW5mbyAqc2Jp
-KQogewogCXN0cnVjdCBzaXRfaW5mbyAqc2l0X2kgPSBTSVRfSShzYmkpOwotCXJldHVybiBzaXRf
-aS0+ZWxhcHNlZF90aW1lICsgQ1VSUkVOVF9USU1FX1NFQy50dl9zZWMgLQotCQkJCQkJc2l0X2kt
-Pm1vdW50ZWRfdGltZTsKKwl0aW1lNjRfdCBub3cgPSBrdGltZV9nZXRfcmVhbF9zZWNvbmRzKCk7
-CisKKwlyZXR1cm4gc2l0X2ktPmVsYXBzZWRfdGltZSArIG5vdyAtIHNpdF9pLT5tb3VudGVkX3Rp
-bWU7CiB9CiAKIHN0YXRpYyBpbmxpbmUgdm9pZCBzZXRfc3VtbWFyeShzdHJ1Y3QgZjJmc19zdW1t
-YXJ5ICpzdW0sIG5pZF90IG5pZCwKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpZMjAzOCBtYWlsaW5nIGxpc3QKWTIwMzhAbGlzdHMubGlu
-YXJvLm9yZwpodHRwczovL2xpc3RzLmxpbmFyby5vcmcvbWFpbG1hbi9saXN0aW5mby95MjAzOAo=
+When base_addr is NULL, there is no need to call kzfree,
+it should return -ENOMEM directly. Additionally, it is
+better to initialize variable 'error' with 0.
+
+Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+---
+ fs/f2fs/xattr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 5564e0f..e530254 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -447,7 +447,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 	int found, newsize;
+ 	size_t len;
+ 	__u32 new_hsize;
+-	int error = -ENOMEM;
++	int error = 0;
+ 
+ 	if (name == NULL)
+ 		return -EINVAL;
+@@ -465,7 +465,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 
+ 	base_addr = read_all_xattrs(inode, ipage);
+ 	if (!base_addr)
+-		goto exit;
++		return -ENOMEM;
+ 
+ 	/* find entry with wanted name. */
+ 	here = __find_xattr(base_addr, index, len, name);
+-- 
+1.8.3.1
+------------------------------------------------------------------------------
+Attend Shape: An AT&T Tech Expo July 15-16. Meet us at AT&T Park in San
+Francisco, CA to explore cutting-edge tech and listen to tech luminaries
+present their vision of the future. This family event has something for
+everyone, including kids. Get more information and register today.
+http://sdm.link/attshape
