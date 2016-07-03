@@ -1,24 +1,23 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 2/4] f2fs: fix to detect truncation prior rather
-	than EIO during read
-Date: Sun,  3 Jul 2016 22:05:12 +0800
-Message-ID: <1467554714-5125-2-git-send-email-chao@kernel.org>
+Subject: [PATCH 4/4] f2fs: add nodiscard mount option
+Date: Sun,  3 Jul 2016 22:05:14 +0800
+Message-ID: <1467554714-5125-4-git-send-email-chao@kernel.org>
 References: <1467554714-5125-1-git-send-email-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1bJi3X-00021W-Nd
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1bJi3b-0007lB-Lq
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Jul 2016 14:07:31 +0000
+	Sun, 03 Jul 2016 14:07:35 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bJi3W-00034T-Qw
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bJi3a-00012g-UP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 03 Jul 2016 14:07:31 +0000
+	Sun, 03 Jul 2016 14:07:35 +0000
 In-Reply-To: <1467554714-5125-1-git-send-email-chao@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -34,102 +33,58 @@ Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-In procedure of synchonized read, after sending out the read request, reader
-will try to lock the page for waiting device to finish the read jobs and
-unlock the page, but meanwhile, truncater will race with reader, so after
-reader get lock of the page, it should check page's mapping to detect
-whether someone has truncated the page in advance, then reader has the
-chance to do the retry if truncation was done, otherwise read can be failed
-due to previous condition check.
+This patch adds 'nodiscard' mount option.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c | 16 ++++++++--------
- fs/f2fs/gc.c   |  4 ++--
- fs/f2fs/node.c |  6 +++---
- 3 files changed, 13 insertions(+), 13 deletions(-)
+ Documentation/filesystems/f2fs.txt | 4 +++-
+ fs/f2fs/super.c                    | 4 ++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2bfb4f1..1a4700c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -500,14 +500,14 @@ repeat:
- 
- 	/* wait for read completion */
- 	lock_page(page);
--	if (unlikely(!PageUptodate(page))) {
--		f2fs_put_page(page, 1);
--		return ERR_PTR(-EIO);
--	}
- 	if (unlikely(page->mapping != mapping)) {
- 		f2fs_put_page(page, 1);
- 		goto repeat;
- 	}
-+	if (unlikely(!PageUptodate(page))) {
-+		f2fs_put_page(page, 1);
-+		return ERR_PTR(-EIO);
-+	}
- 	return page;
- }
- 
-@@ -1647,14 +1647,14 @@ repeat:
- 		__submit_bio(sbi, READ_SYNC, bio, DATA);
- 
- 		lock_page(page);
--		if (unlikely(!PageUptodate(page))) {
--			err = -EIO;
--			goto fail;
--		}
- 		if (unlikely(page->mapping != mapping)) {
- 			f2fs_put_page(page, 1);
- 			goto repeat;
- 		}
-+		if (unlikely(!PageUptodate(page))) {
-+			err = -EIO;
-+			goto fail;
-+		}
- 	}
- out_update:
- 	SetPageUptodate(page);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a15ae8a..d888490 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -593,11 +593,11 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
- 	/* write page */
- 	lock_page(fio.encrypted_page);
- 
--	if (unlikely(!PageUptodate(fio.encrypted_page))) {
-+	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi))) {
- 		err = -EIO;
- 		goto put_page_out;
- 	}
--	if (unlikely(fio.encrypted_page->mapping != META_MAPPING(fio.sbi))) {
-+	if (unlikely(!PageUptodate(fio.encrypted_page))) {
- 		err = -EIO;
- 		goto put_page_out;
- 	}
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 729fb1e..69171ce 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1146,13 +1146,13 @@ repeat:
- 
- 	lock_page(page);
- 
--	if (unlikely(!PageUptodate(page)))
--		goto out_err;
--
- 	if (unlikely(page->mapping != NODE_MAPPING(sbi))) {
- 		f2fs_put_page(page, 1);
- 		goto repeat;
- 	}
-+
-+	if (unlikely(!PageUptodate(page)))
-+		goto out_err;
- page_hit:
- 	if(unlikely(nid != nid_of_node(page))) {
- 		f2fs_bug_on(sbi, 1);
+diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
+index 3a5ce24..ecd8080 100644
+--- a/Documentation/filesystems/f2fs.txt
++++ b/Documentation/filesystems/f2fs.txt
+@@ -109,7 +109,9 @@ background_gc=%s       Turn on/off cleaning operations, namely garbage
+ disable_roll_forward   Disable the roll-forward recovery routine
+ norecovery             Disable the roll-forward recovery routine, mounted read-
+                        only (i.e., -o ro,disable_roll_forward)
+-discard                Issue discard/TRIM commands when a segment is cleaned.
++discard/nodiscard      Enable/disable real-time discard in f2fs, if discard is
++                       enabled, f2fs will issue discard/TRIM commands when a
++		       segment is cleaned.
+ no_heap                Disable heap-style segment allocation which finds free
+                        segments for data from the beginning of main area, while
+ 		       for node from the end of main area.
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 512bbb4..7b9b0c9 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -76,6 +76,7 @@ enum {
+ 	Opt_disable_roll_forward,
+ 	Opt_norecovery,
+ 	Opt_discard,
++	Opt_nodiscard,
+ 	Opt_noheap,
+ 	Opt_user_xattr,
+ 	Opt_nouser_xattr,
+@@ -106,6 +107,7 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_disable_roll_forward, "disable_roll_forward"},
+ 	{Opt_norecovery, "norecovery"},
+ 	{Opt_discard, "discard"},
++	{Opt_nodiscard, "nodiscard"},
+ 	{Opt_noheap, "no_heap"},
+ 	{Opt_user_xattr, "user_xattr"},
+ 	{Opt_nouser_xattr, "nouser_xattr"},
+@@ -426,6 +428,8 @@ static int parse_options(struct super_block *sb, char *options)
+ 					"the device does not support discard");
+ 			}
+ 			break;
++		case Opt_nodiscard:
++			clear_opt(sbi, DISCARD);
+ 		case Opt_noheap:
+ 			set_opt(sbi, NOHEAP);
+ 			break;
 -- 
 2.7.2
 
