@@ -1,31 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: fix to avoid data update racing
- between GC and DIO
-Date: Thu, 7 Jul 2016 12:25:13 +0800
-Message-ID: <b2d45146-9873-6822-55a8-75b8e1f4fe12@kernel.org>
+Subject: Re: [PATCH 1/2] f2fs: fix to return correct trimmed
+ block number in FITRIM interface
+Date: Thu, 7 Jul 2016 12:29:02 +0800
+Message-ID: <f72ddb05-7d92-e2aa-94c3-6757dfb28152@kernel.org>
 References: <20160630084248.57469-1-yuchao0@huawei.com>
-	<20160630084248.57469-2-yuchao0@huawei.com>
-	<20160701000311.GA59041@jaegeuk>
-	<55063104-5f88-5781-6da7-6a824ae7993b@huawei.com>
-	<20160706002416.GA74805@jaegeuk>
-	<013cc29d-c1f9-6c0a-a922-beeb221361ec@huawei.com>
-	<20160706223758.GA85815@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1bL0sV-0004gV-KG
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1bL0w7-0003zp-HE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 07 Jul 2016 04:25:31 +0000
+	Thu, 07 Jul 2016 04:29:15 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bL0sS-0006df-7a
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bL0w6-0003Ct-QU
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 07 Jul 2016 04:25:31 +0000
-In-Reply-To: <20160706223758.GA85815@jaegeuk>
+	Thu, 07 Jul 2016 04:29:15 +0000
+In-Reply-To: <20160630084248.57469-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,194 +29,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2016/7/7 6:37, Jaegeuk Kim wrote:
-> On Wed, Jul 06, 2016 at 10:10:57AM +0800, Chao Yu wrote:
->> On 2016/7/6 8:24, Jaegeuk Kim wrote:
->>> On Fri, Jul 01, 2016 at 02:03:17PM +0800, Chao Yu wrote:
->>>> Hi Jaegeuk,
->>>>
->>>> On 2016/7/1 8:03, Jaegeuk Kim wrote:
->>>>> Hi Chao,
->>>>>
->>>>> On Thu, Jun 30, 2016 at 04:42:48PM +0800, Chao Yu wrote:
->>>>>> Datas in file can be operated by GC and DIO simultaneously, so we will
->>>>>> face race case as below:
->>>>>>
->>>>>> For write case:
->>>>>> Thread A				Thread B
->>>>>> - generic_file_direct_write
->>>>>>  - invalidate_inode_pages2_range
->>>>>>  - f2fs_direct_IO
->>>>>>   - do_blockdev_direct_IO
->>>>>>    - do_direct_IO
->>>>>>     - get_more_blocks
->>>>>> 					- f2fs_gc
->>>>>> 					 - do_garbage_collect
->>>>>> 					  - gc_data_segment
->>>>>> 					   - move_data_page
->>>>>> 					    - do_write_data_page
->>>>>> 					    migrate data block to new block address
->>>>>>    - dio_bio_submit
->>>>>>    update user data to old block address
->>>>>>
->>>>>> For read case:
->>>>>> Thread A                                Thread B
->>>>>> - generic_file_direct_write
->>>>>>  - invalidate_inode_pages2_range
->>>>>>  - f2fs_direct_IO
->>>>>>   - do_blockdev_direct_IO
->>>>>>    - do_direct_IO
->>>>>>     - get_more_blocks
->>>>>> 					- f2fs_balance_fs
->>>>>> 					 - f2fs_gc
->>>>>> 					  - do_garbage_collect
->>>>>> 					   - gc_data_segment
->>>>>> 					    - move_data_page
->>>>>> 					     - do_write_data_page
->>>>>> 					     migrate data block to new block address
->>>>>> 					  - write_checkpoint
->>>>>> 					   - do_checkpoint
->>>>>> 					    - clear_prefree_segments
->>>>>> 					     - f2fs_issue_discard
->>>>>>                                              discard old block adress
->>>>>>    - dio_bio_submit
->>>>>>    update user buffer from obsolete block address
->>>>>>
->>>>>> In order to fix this, for one file, we should let DIO and GC getting exclusion
->>>>>> against with each other.
->>>>>>
->>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>> ---
->>>>>>  fs/f2fs/data.c  |  2 ++
->>>>>>  fs/f2fs/f2fs.h  |  1 +
->>>>>>  fs/f2fs/gc.c    | 14 +++++++++++++-
->>>>>>  fs/f2fs/super.c |  1 +
->>>>>>  4 files changed, 17 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>>> index ba4963f..08dc060 100644
->>>>>> --- a/fs/f2fs/data.c
->>>>>> +++ b/fs/f2fs/data.c
->>>>>> @@ -1716,7 +1716,9 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->>>>>>  
->>>>>>  	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
->>>>>>  
->>>>>> +	mutex_lock(&F2FS_I(inode)->dio_mutex);
->>>>>>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
->>>>>> +	mutex_unlock(&F2FS_I(inode)->dio_mutex);
->>>>>
->>>>> This means we need to sacrifice entire parallism even in the normal cases?
->>>>> Can we find another way?
->>>>
->>>> 1. For dio write vs dio write, writer will grab i_mutex before dio_mutex, so
->>>> anyway, concurrent dio writes will be exclusive.
->>>>
->>>> 2. For dio write vs gc, keep using dio_mutex for making them exclusive.
->>>>
->>>> 3. For dio read vs dio read, and dio read vs gc, what about adding dio_rwsem to
->>>> control the parallelism?
->>>>
->>>> 4. For dio write vs dio read, we grab different lock (write grabs dio_mutex,
->>>> read grabs dio_rwsem), so there is no race condition.
->>>
->>> How about adding a flag in a dio inode and avoiding GCs for there-in blocks?
->>
->> Hmm.. IMO, without lock, it's hard to keep the sequence that let GC checking the
->> flag after setting it, right?
-> 
-> Okay, could you add dio_rwsem for now?
-> Later, we may need to take a look at dio_overwrite case to mitigate inode_lock
-> contention likewise xfs. :)
+Hi all,
 
-Sounds good if we can support concurrent overwrite dio! :)
+I think this patch should be wrong, since during fstrim, we should not issue
+discard for prefree segment redundantly.
 
-Let me send v3.
+So, Jaegeuk, could you please drop this patch in your branch?
+
+Sorry for the noise.
 
 Thanks,
 
+On 2016/6/30 16:42, Chao Yu wrote:
+> During tiggering fstrim, in case of issuing discard for prefree segments,
+> we miss acclumulating trimmed block number which will be return to user.
+> Fix it.
 > 
-> Thanks,
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/segment.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
->>>>>
->>>>>>  	if (iov_iter_rw(iter) == WRITE) {
->>>>>>  		if (err > 0)
->>>>>>  			set_inode_flag(inode, FI_UPDATE_WRITE);
->>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>> index bd82b6d..a241576 100644
->>>>>> --- a/fs/f2fs/f2fs.h
->>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>> @@ -474,6 +474,7 @@ struct f2fs_inode_info {
->>>>>>  	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
->>>>>>  	struct mutex inmem_lock;	/* lock for inmemory pages */
->>>>>>  	struct extent_tree *extent_tree;	/* cached extent_tree entry */
->>>>>> +	struct mutex dio_mutex;		/* avoid racing between dio and gc */
->>>>>>  };
->>>>>>  
->>>>>>  static inline void get_extent_info(struct extent_info *ext,
->>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>>> index c2c4ac3..98e3763 100644
->>>>>> --- a/fs/f2fs/gc.c
->>>>>> +++ b/fs/f2fs/gc.c
->>>>>> @@ -744,12 +744,24 @@ next_step:
->>>>>>  		/* phase 3 */
->>>>>>  		inode = find_gc_inode(gc_list, dni.ino);
->>>>>>  		if (inode) {
->>>>>> +			bool locked = false;
->>>>>> +
->>>>>> +			if (S_ISREG(inode->i_mode)) {
->>>>>> +				if (!mutex_trylock(&F2FS_I(inode)->dio_mutex))
->>>>>> +					continue;
->>>>>> +				locked = true;
->>>>>> +			}
->>>>>> +
->>>>>>  			start_bidx = start_bidx_of_node(nofs, inode)
->>>>>>  								+ ofs_in_node;
->>>>>> -			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
->>>>>> +			if (f2fs_encrypted_inode(inode) &&
->>>>>> +							S_ISREG(inode->i_mode))
->>>>>>  				move_encrypted_block(inode, start_bidx);
->>>>>>  			else
->>>>>>  				move_data_page(inode, start_bidx, gc_type);
->>>>>> +			if (locked)
->>>>>> +				mutex_unlock(&F2FS_I(inode)->dio_mutex);
->>>>>> +
->>>>>>  			stat_inc_data_blk_count(sbi, 1, gc_type);
->>>>>>  		}
->>>>>>  	}
->>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>>> index 8c698e1..24aab3f 100644
->>>>>> --- a/fs/f2fs/super.c
->>>>>> +++ b/fs/f2fs/super.c
->>>>>> @@ -575,6 +575,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
->>>>>>  	INIT_LIST_HEAD(&fi->gdirty_list);
->>>>>>  	INIT_LIST_HEAD(&fi->inmem_pages);
->>>>>>  	mutex_init(&fi->inmem_lock);
->>>>>> +	mutex_init(&fi->dio_mutex);
->>>>>>  
->>>>>>  	/* Will be used by directory only */
->>>>>>  	fi->i_dir_level = F2FS_SB(sb)->dir_level;
->>>>>> -- 
->>>>>> 2.8.2.311.gee88674
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
-> 
-> ------------------------------------------------------------------------------
-> Attend Shape: An AT&T Tech Expo July 15-16. Meet us at AT&T Park in San
-> Francisco, CA to explore cutting-edge tech and listen to tech luminaries
-> present their vision of the future. This family event has something for
-> everyone, including kids. Get more information and register today.
-> http://sdm.link/attshape
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 6d16ecf..5dc14d6 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -732,15 +732,20 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  		if (!test_opt(sbi, LFS) || sbi->segs_per_sec == 1) {
+>  			f2fs_issue_discard(sbi, START_BLOCK(sbi, start),
+>  				(end - start) << sbi->log_blocks_per_seg);
+> +			cpc->trimmed +=
+> +				(end - start) << sbi->log_blocks_per_seg;
+>  			continue;
+>  		}
+>  next:
+>  		secno = GET_SECNO(sbi, start);
+>  		start_segno = secno * sbi->segs_per_sec;
+>  		if (!IS_CURSEC(sbi, secno) &&
+> -			!get_valid_blocks(sbi, start, sbi->segs_per_sec))
+> +			!get_valid_blocks(sbi, start, sbi->segs_per_sec)) {
+>  			f2fs_issue_discard(sbi, START_BLOCK(sbi, start_segno),
+>  				sbi->segs_per_sec << sbi->log_blocks_per_seg);
+> +			cpc->trimmed +=
+> +				sbi->segs_per_sec << sbi->log_blocks_per_seg;
+> +		}
+>  
+>  		start = start_segno + sbi->segs_per_sec;
+>  		if (start < end)
 > 
 
 ------------------------------------------------------------------------------
