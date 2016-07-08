@@ -1,267 +1,406 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v3] f2fs: fix to avoid data update racing
- between GC and DIO
-Date: Fri, 8 Jul 2016 23:50:02 +0800
-Message-ID: <5f133653-face-a3ba-9fb4-cd0ac3239099@kernel.org>
-References: <1467866952-10863-1-git-send-email-chao@kernel.org>
-	<20160708031916.GA94348@jaegeuk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1bLY2r-0004Mr-JE
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 08 Jul 2016 15:50:25 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bLY2p-0006du-QC
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 08 Jul 2016 15:50:25 +0000
-In-Reply-To: <20160708031916.GA94348@jaegeuk>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: avoid mark_inode_dirty
+Date: Fri,  8 Jul 2016 10:32:35 -0700
+Message-ID: <20160708173235.98362-2-jaegeuk@kernel.org>
+References: <20160708173235.98362-1-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20160708173235.98362-1-jaegeuk@kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
+Let's check inode's dirtiness before calling mark_inode_dirty.
 
-On 2016/7/8 11:19, Jaegeuk Kim wrote:
-> Hi Chao,
-> 
-> Could you take a look at this in xfstests/generic/013?
-> 
-> [  502.480850] ======================================================
-> [  502.480864] [ INFO: possible circular locking dependency detected ]
-> [  502.480877] 4.7.0-rc1+ #124 Tainted: G           OE  
-> [  502.480886] -------------------------------------------------------
-> [  502.480897] fsstress/10729 is trying to acquire lock:
-> [  502.480906]  (&sb->s_type->i_mutex_key#18){+.+.+.}, at: [<ffffffff81299c3b>] do_blockdev_direct_IO+0x1db/0x2310
-> [  502.480948] 
-> [  502.480948] but task is already holding lock:
-> [  502.480959]  (&fi->dio_rwsem){.+.+.+}, at: [<ffffffffc081e2b1>] f2fs_direct_IO+0xd1/0x3d0 [f2fs]
-> [  502.481003] 
-> [  502.481003] which lock already depends on the new lock.
-> [  502.481003] 
-> [  502.481018] 
-> [  502.481018] the existing dependency chain (in reverse order) is:
-> [  502.481030] 
-> [  502.481030] -> #1 (&fi->dio_rwsem){.+.+.+}:
-> [  502.481054]        [<ffffffff810e51c3>] lock_acquire+0xd3/0x220
-> [  502.481071]        [<ffffffff818d1921>] down_read+0x51/0xa0
-> [  502.481089]        [<ffffffffc081e2b1>] f2fs_direct_IO+0xd1/0x3d0 [f2fs]
-> [  502.481114]        [<ffffffff811c34c7>] generic_file_direct_write+0xa7/0x160
-> [  502.481133]        [<ffffffff811c363d>] __generic_file_write_iter+0xbd/0x1e0
-> [  502.481149]        [<ffffffffc080437b>] f2fs_file_write_iter+0xdb/0x100 [f2fs]
-> [  502.481173]        [<ffffffff81253a88>] __vfs_write+0xc8/0x140
-> [  502.481190]        [<ffffffff81254c55>] vfs_write+0xb5/0x1b0
-> [  502.481205]        [<ffffffff81255fe9>] SyS_write+0x49/0xa0
-> [  502.481220]        [<ffffffff818d4100>] entry_SYSCALL_64_fastpath+0x23/0xc1
-> [  502.481236] 
-> [  502.481236] -> #0 (&sb->s_type->i_mutex_key#18){+.+.+.}:
-> [  502.481264]        [<ffffffff810e481c>] __lock_acquire+0x161c/0x1940
-> [  502.481280]        [<ffffffff810e51c3>] lock_acquire+0xd3/0x220
-> [  502.481296]        [<ffffffff818d1b9a>] down_write+0x5a/0xc0
-> [  502.481312]        [<ffffffff81299c3b>] do_blockdev_direct_IO+0x1db/0x2310
-> [  502.481328]        [<ffffffff8129bdaa>] __blockdev_direct_IO+0x3a/0x40
-> [  502.481344]        [<ffffffffc081e2e4>] f2fs_direct_IO+0x104/0x3d0 [f2fs]
-> [  502.481368]        [<ffffffff811c40a9>] generic_file_read_iter+0x689/0x7e0
-> [  502.481384]        [<ffffffff812545d1>] __vfs_read+0xc1/0x130
-> [  502.481399]        [<ffffffff81254af1>] vfs_read+0x91/0x140
-> [  502.481414]        [<ffffffff81255f49>] SyS_read+0x49/0xa0
-> [  502.481429]        [<ffffffff818d4100>] entry_SYSCALL_64_fastpath+0x23/0xc1
-> [  502.481445] 
-> [  502.481445] other info that might help us debug this:
-> [  502.481445] 
-> [  502.481459]  Possible unsafe locking scenario:
-> [  502.481459] 
-> [  502.481726]        CPU0                    CPU1
-> [  502.481987]        ----                    ----
-> [  502.482242]   lock(&fi->dio_rwsem);
-> [  502.482501]                                lock(&sb->s_type->i_mutex_key#18);
-> [  502.482765]                                lock(&fi->dio_rwsem);
-> [  502.483025]   lock(&sb->s_type->i_mutex_key#18);
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/acl.c          |  2 +-
+ fs/f2fs/dir.c          |  6 +++---
+ fs/f2fs/extent_cache.c |  2 +-
+ fs/f2fs/f2fs.h         | 24 +++++++++++++-----------
+ fs/f2fs/file.c         |  8 ++++----
+ fs/f2fs/inline.c       |  2 +-
+ fs/f2fs/inode.c        |  9 ++++++++-
+ fs/f2fs/namei.c        |  6 +++---
+ fs/f2fs/super.c        | 43 ++++++++++++++++++++++++++-----------------
+ fs/f2fs/xattr.c        |  4 ++--
+ 10 files changed, 62 insertions(+), 44 deletions(-)
 
-Seems we will suffer ABBA deadlock:
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 6a414e7..4dcc9e2 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -384,7 +384,7 @@ int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
+ 	if (error)
+ 		return error;
+ 
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ 
+ 	if (default_acl) {
+ 		error = __f2fs_set_acl(inode, ACL_TYPE_DEFAULT, default_acl,
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 7ba52a0..db4022f 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -300,7 +300,7 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
+ 	set_page_dirty(page);
+ 
+ 	dir->i_mtime = dir->i_ctime = CURRENT_TIME;
+-	mark_inode_dirty_sync(dir);
++	f2fs_mark_inode_dirty_sync(dir);
+ 	f2fs_put_page(page, 1);
+ }
+ 
+@@ -452,7 +452,7 @@ void update_parent_metadata(struct inode *dir, struct inode *inode,
+ 		clear_inode_flag(inode, FI_NEW_INODE);
+ 	}
+ 	dir->i_mtime = dir->i_ctime = CURRENT_TIME;
+-	mark_inode_dirty_sync(dir);
++	f2fs_mark_inode_dirty_sync(dir);
+ 
+ 	if (F2FS_I(dir)->i_current_depth != current_depth)
+ 		f2fs_i_depth_write(dir, current_depth);
+@@ -704,7 +704,7 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	set_page_dirty(page);
+ 
+ 	dir->i_ctime = dir->i_mtime = CURRENT_TIME;
+-	mark_inode_dirty_sync(dir);
++	f2fs_mark_inode_dirty_sync(dir);
+ 
+ 	if (inode)
+ 		f2fs_drop_nlink(dir, inode);
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index e858869..5b4b6d4 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -172,7 +172,7 @@ static void __drop_largest_extent(struct inode *inode,
+ 
+ 	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs) {
+ 		largest->len = 0;
+-		mark_inode_dirty_sync(inode);
++		f2fs_mark_inode_dirty_sync(inode);
+ 	}
+ }
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 2f59888..1190c04 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -526,12 +526,13 @@ static inline bool __is_front_mergeable(struct extent_info *cur,
+ 	return __is_extent_mergeable(cur, front);
+ }
+ 
++extern void f2fs_mark_inode_dirty_sync(struct inode *);
+ static inline void __try_update_largest_extent(struct inode *inode,
+ 			struct extent_tree *et, struct extent_node *en)
+ {
+ 	if (en->ei.len > et->largest.len) {
+ 		et->largest = en->ei;
+-		mark_inode_dirty_sync(inode);
++		f2fs_mark_inode_dirty_sync(inode);
+ 	}
+ }
+ 
+@@ -1571,7 +1572,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 			return;
+ 	case FI_DATA_EXIST:
+ 	case FI_INLINE_DOTS:
+-		mark_inode_dirty_sync(inode);
++		f2fs_mark_inode_dirty_sync(inode);
+ 	}
+ }
+ 
+@@ -1598,7 +1599,7 @@ static inline void set_acl_inode(struct inode *inode, umode_t mode)
+ {
+ 	F2FS_I(inode)->i_acl_mode = mode;
+ 	set_inode_flag(inode, FI_ACL_MODE);
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ }
+ 
+ static inline void f2fs_i_links_write(struct inode *inode, bool inc)
+@@ -1607,7 +1608,7 @@ static inline void f2fs_i_links_write(struct inode *inode, bool inc)
+ 		inc_nlink(inode);
+ 	else
+ 		drop_nlink(inode);
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ }
+ 
+ static inline void f2fs_i_blocks_write(struct inode *inode,
+@@ -1618,7 +1619,7 @@ static inline void f2fs_i_blocks_write(struct inode *inode,
+ 
+ 	inode->i_blocks = add ? inode->i_blocks + diff :
+ 				inode->i_blocks - diff;
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ 	if (clean || recover)
+ 		set_inode_flag(inode, FI_AUTO_RECOVER);
+ }
+@@ -1632,7 +1633,7 @@ static inline void f2fs_i_size_write(struct inode *inode, loff_t i_size)
+ 		return;
+ 
+ 	i_size_write(inode, i_size);
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ 	if (clean || recover)
+ 		set_inode_flag(inode, FI_AUTO_RECOVER);
+ }
+@@ -1647,19 +1648,19 @@ static inline bool f2fs_skip_inode_update(struct inode *inode)
+ static inline void f2fs_i_depth_write(struct inode *inode, unsigned int depth)
+ {
+ 	F2FS_I(inode)->i_current_depth = depth;
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ }
+ 
+ static inline void f2fs_i_xnid_write(struct inode *inode, nid_t xnid)
+ {
+ 	F2FS_I(inode)->i_xattr_nid = xnid;
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ }
+ 
+ static inline void f2fs_i_pino_write(struct inode *inode, nid_t pino)
+ {
+ 	F2FS_I(inode)->i_pino = pino;
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ }
+ 
+ static inline void get_inline_info(struct inode *inode, struct f2fs_inode *ri)
+@@ -1787,13 +1788,13 @@ static inline int is_file(struct inode *inode, int type)
+ static inline void set_file(struct inode *inode, int type)
+ {
+ 	F2FS_I(inode)->i_advise |= type;
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ }
+ 
+ static inline void clear_file(struct inode *inode, int type)
+ {
+ 	F2FS_I(inode)->i_advise &= ~type;
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ }
+ 
+ static inline int f2fs_readonly(struct super_block *sb)
+@@ -1940,6 +1941,7 @@ static inline int f2fs_add_link(struct dentry *dentry, struct inode *inode)
+ /*
+  * super.c
+  */
++int f2fs_inode_dirtied(struct inode *);
+ void f2fs_inode_synced(struct inode *);
+ int f2fs_commit_super(struct f2fs_sb_info *, bool);
+ int f2fs_sync_fs(struct super_block *, int);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 952cbcf..e6b770d 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -265,7 +265,7 @@ sync_nodes:
+ 	}
+ 
+ 	if (need_inode_block_update(sbi, ino)) {
+-		mark_inode_dirty_sync(inode);
++		f2fs_mark_inode_dirty_sync(inode);
+ 		f2fs_write_inode(inode, NULL);
+ 		goto sync_nodes;
+ 	}
+@@ -670,7 +670,7 @@ int f2fs_truncate(struct inode *inode)
+ 		return err;
+ 
+ 	inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ 	return 0;
+ }
+ 
+@@ -760,7 +760,7 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 		}
+ 	}
+ 
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ 	return err;
+ }
+ 
+@@ -1315,7 +1315,7 @@ static long f2fs_fallocate(struct file *file, int mode,
+ 
+ 	if (!ret) {
+ 		inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+-		mark_inode_dirty_sync(inode);
++		f2fs_mark_inode_dirty_sync(inode);
+ 		f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+ 	}
+ 
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 2cd0edc..d411ab6 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -569,7 +569,7 @@ void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	f2fs_put_page(page, 1);
+ 
+ 	dir->i_ctime = dir->i_mtime = CURRENT_TIME;
+-	mark_inode_dirty_sync(dir);
++	f2fs_mark_inode_dirty_sync(dir);
+ 
+ 	if (inode)
+ 		f2fs_drop_nlink(dir, inode);
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 9221ca2..9ac5efc 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -18,6 +18,13 @@
+ 
+ #include <trace/events/f2fs.h>
+ 
++void f2fs_mark_inode_dirty_sync(struct inode *inode)
++{
++	if (f2fs_inode_dirtied(inode))
++		return;
++	mark_inode_dirty_sync(inode);
++}
++
+ void f2fs_set_inode_flags(struct inode *inode)
+ {
+ 	unsigned int flags = F2FS_I(inode)->i_flags;
+@@ -35,7 +42,7 @@ void f2fs_set_inode_flags(struct inode *inode)
+ 		new_fl |= S_DIRSYNC;
+ 	inode_set_flags(inode, new_fl,
+ 			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC);
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ }
+ 
+ static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *ri)
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 4460400..c9ba6d7 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -757,7 +757,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	up_write(&F2FS_I(old_inode)->i_sem);
+ 
+ 	old_inode->i_ctime = CURRENT_TIME;
+-	mark_inode_dirty_sync(old_inode);
++	f2fs_mark_inode_dirty_sync(old_inode);
+ 
+ 	f2fs_delete_entry(old_entry, old_page, old_dir, NULL);
+ 
+@@ -909,7 +909,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		f2fs_i_links_write(old_dir, old_nlink > 0);
+ 		up_write(&F2FS_I(old_dir)->i_sem);
+ 	}
+-	mark_inode_dirty_sync(old_dir);
++	f2fs_mark_inode_dirty_sync(old_dir);
+ 
+ 	/* update directory entry info of new dir inode */
+ 	f2fs_set_link(new_dir, new_entry, new_page, old_inode);
+@@ -924,7 +924,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 		f2fs_i_links_write(new_dir, new_nlink > 0);
+ 		up_write(&F2FS_I(new_dir)->i_sem);
+ 	}
+-	mark_inode_dirty_sync(new_dir);
++	f2fs_mark_inode_dirty_sync(new_dir);
+ 
+ 	f2fs_unlock_op(sbi);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index edd1b35..451dfb4 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -625,29 +625,14 @@ static int f2fs_drop_inode(struct inode *inode)
+ 	return generic_drop_inode(inode);
+ }
+ 
+-/*
+- * f2fs_dirty_inode() is called from __mark_inode_dirty()
+- *
+- * We should call set_dirty_inode to write the dirty inode through write_inode.
+- */
+-static void f2fs_dirty_inode(struct inode *inode, int flags)
++int f2fs_inode_dirtied(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 
+-	if (inode->i_ino == F2FS_NODE_INO(sbi) ||
+-			inode->i_ino == F2FS_META_INO(sbi))
+-		return;
+-
+-	if (flags == I_DIRTY_TIME)
+-		return;
+-
+-	if (is_inode_flag_set(inode, FI_AUTO_RECOVER))
+-		clear_inode_flag(inode, FI_AUTO_RECOVER);
+-
+ 	spin_lock(&sbi->inode_lock[DIRTY_META]);
+ 	if (is_inode_flag_set(inode, FI_DIRTY_INODE)) {
+ 		spin_unlock(&sbi->inode_lock[DIRTY_META]);
+-		return;
++		return 1;
+ 	}
+ 
+ 	set_inode_flag(inode, FI_DIRTY_INODE);
+@@ -656,6 +641,8 @@ static void f2fs_dirty_inode(struct inode *inode, int flags)
+ 	inc_page_count(sbi, F2FS_DIRTY_IMETA);
+ 	stat_inc_dirty_inode(sbi, DIRTY_META);
+ 	spin_unlock(&sbi->inode_lock[DIRTY_META]);
++
++	return 0;
+ }
+ 
+ void f2fs_inode_synced(struct inode *inode)
+@@ -675,6 +662,28 @@ void f2fs_inode_synced(struct inode *inode)
+ 	spin_unlock(&sbi->inode_lock[DIRTY_META]);
+ }
+ 
++/*
++ * f2fs_dirty_inode() is called from __mark_inode_dirty()
++ *
++ * We should call set_dirty_inode to write the dirty inode through write_inode.
++ */
++static void f2fs_dirty_inode(struct inode *inode, int flags)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	if (inode->i_ino == F2FS_NODE_INO(sbi) ||
++			inode->i_ino == F2FS_META_INO(sbi))
++		return;
++
++	if (flags == I_DIRTY_TIME)
++		return;
++
++	if (is_inode_flag_set(inode, FI_AUTO_RECOVER))
++		clear_inode_flag(inode, FI_AUTO_RECOVER);
++
++	f2fs_inode_dirtied(inode);
++}
++
+ static void f2fs_i_callback(struct rcu_head *head)
+ {
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index e530254..5e9aced 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -106,7 +106,7 @@ static int f2fs_xattr_advise_set(const struct xattr_handler *handler,
+ 		return -EINVAL;
+ 
+ 	F2FS_I(inode)->i_advise |= *(char *)value;
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ 	return 0;
+ }
+ 
+@@ -555,7 +555,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 		else
+ 			file_clear_key(inode);
+ 	}
+-	mark_inode_dirty_sync(inode);
++	f2fs_mark_inode_dirty_sync(inode);
+ exit:
+ 	kzfree(base_addr);
+ 	return error;
+-- 
+2.8.3
 
-writer					reader
-- f2fs_file_write_iter
- - down_write(&inode->i_rwsem)
- - __generic_file_write_iter
-  - generic_file_direct_write
-   - f2fs_direct_IO
-					- generic_file_read_iter
-					 - f2fs_direct_IO
-					 - down_read(&fi->dio_rwsem)
-					  - __blockdev_direct_IO
-					   - do_blockdev_direct_IO
-					    - down_write(&inode->i_rwsem)
-					
-    - down_read(&fi->dio_rwsem)
-
-What about splitting dio_rwsem to rdio_rwsem/wdio_rwsem for reader/writer to
-avoid deadlock?
-
-Thanks,
-
-> [  502.483285] 
-> [  502.483285]  *** DEADLOCK ***
-> [  502.483285] 
-> [  502.484018] 1 lock held by fsstress/10729:
-> [  502.484262]  #0:  (&fi->dio_rwsem){.+.+.+}, at: [<ffffffffc081e2b1>] f2fs_direct_IO+0xd1/0x3d0 [f2fs]
-> 
-> Thanks,
-> 
-> On Thu, Jul 07, 2016 at 12:49:12PM +0800, Chao Yu wrote:
->> From: Chao Yu <yuchao0@huawei.com>
->>
->> Datas in file can be operated by GC and DIO simultaneously, so we will
->> face race case as below:
->>
->> For write case:
->> Thread A				Thread B
->> - generic_file_direct_write
->>  - invalidate_inode_pages2_range
->>  - f2fs_direct_IO
->>   - do_blockdev_direct_IO
->>    - do_direct_IO
->>     - get_more_blocks
->> 					- f2fs_gc
->> 					 - do_garbage_collect
->> 					  - gc_data_segment
->> 					   - move_data_page
->> 					    - do_write_data_page
->> 					    migrate data block to new block address
->>    - dio_bio_submit
->>    update user data to old block address
->>
->> For read case:
->> Thread A                                Thread B
->> - generic_file_direct_write
->>  - invalidate_inode_pages2_range
->>  - f2fs_direct_IO
->>   - do_blockdev_direct_IO
->>    - do_direct_IO
->>     - get_more_blocks
->> 					- f2fs_balance_fs
->> 					 - f2fs_gc
->> 					  - do_garbage_collect
->> 					   - gc_data_segment
->> 					    - move_data_page
->> 					     - do_write_data_page
->> 					     migrate data block to new block address
->> 					  - write_checkpoint
->> 					   - do_checkpoint
->> 					    - clear_prefree_segments
->> 					     - f2fs_issue_discard
->>                                              discard old block adress
->>    - dio_bio_submit
->>    update user buffer from obsolete block address
->>
->> In order to fix this, for one file, we should let DIO and GC getting exclusion
->> against with each other.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->> v3: use semaphore to avoid racing in between read dio and write dio.
->>  fs/f2fs/data.c  |  4 ++++
->>  fs/f2fs/f2fs.h  |  1 +
->>  fs/f2fs/gc.c    | 13 +++++++++++++
->>  fs/f2fs/super.c |  1 +
->>  4 files changed, 19 insertions(+)
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index b6fd5bd..19197bb 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -1712,6 +1712,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->>  {
->>  	struct address_space *mapping = iocb->ki_filp->f_mapping;
->>  	struct inode *inode = mapping->host;
->> +	struct f2fs_inode_info *fi = F2FS_I(inode);
->>  	size_t count = iov_iter_count(iter);
->>  	loff_t offset = iocb->ki_pos;
->>  	int err;
->> @@ -1727,7 +1728,10 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->>  
->>  	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
->>  
->> +	down_read(&fi->dio_rwsem);
->>  	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
->> +	up_read(&fi->dio_rwsem);
->> +
->>  	if (iov_iter_rw(iter) == WRITE) {
->>  		if (err > 0)
->>  			set_inode_flag(inode, FI_UPDATE_WRITE);
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index bf9a13a..2e439ec 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -474,6 +474,7 @@ struct f2fs_inode_info {
->>  	struct list_head inmem_pages;	/* inmemory pages managed by f2fs */
->>  	struct mutex inmem_lock;	/* lock for inmemory pages */
->>  	struct extent_tree *extent_tree;	/* cached extent_tree entry */
->> +	struct rw_semaphore dio_rwsem;	/* avoid racing between dio and gc */
->>  };
->>  
->>  static inline void get_extent_info(struct extent_info *ext,
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index c612137..a9bfb8d 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -755,12 +755,25 @@ next_step:
->>  		/* phase 3 */
->>  		inode = find_gc_inode(gc_list, dni.ino);
->>  		if (inode) {
->> +			struct f2fs_inode_info *fi = F2FS_I(inode);
->> +			bool locked = false;
->> +
->> +			if (S_ISREG(inode->i_mode)) {
->> +				if (!down_write_trylock(&fi->dio_rwsem))
->> +					continue;
->> +				locked = true;
->> +			}
->> +
->>  			start_bidx = start_bidx_of_node(nofs, inode)
->>  								+ ofs_in_node;
->>  			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
->>  				move_encrypted_block(inode, start_bidx);
->>  			else
->>  				move_data_page(inode, start_bidx, gc_type);
->> +
->> +			if (locked)
->> +				up_write(&fi->dio_rwsem);
->> +
->>  			stat_inc_data_blk_count(sbi, 1, gc_type);
->>  		}
->>  	}
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index edd1b35..dde57fb 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -579,6 +579,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
->>  	INIT_LIST_HEAD(&fi->gdirty_list);
->>  	INIT_LIST_HEAD(&fi->inmem_pages);
->>  	mutex_init(&fi->inmem_lock);
->> +	init_rwsem(&fi->dio_rwsem);
->>  
->>  	/* Will be used by directory only */
->>  	fi->i_dir_level = F2FS_SB(sb)->dir_level;
->> -- 
->> 2.7.2
-
-------------------------------------------------------------------------------
-Attend Shape: An AT&T Tech Expo July 15-16. Meet us at AT&T Park in San
-Francisco, CA to explore cutting-edge tech and listen to tech luminaries
-present their vision of the future. This family event has something for
-everyone, including kids. Get more information and register today.
-http://sdm.link/attshape
