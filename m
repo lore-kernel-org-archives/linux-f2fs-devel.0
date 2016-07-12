@@ -1,8 +1,8 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: return proper error code
-Date: Tue, 12 Jul 2016 09:45:43 +0800
-Message-ID: <a4172278-7eca-1841-89b2-fddd72a92ba8@huawei.com>
-References: <74f6ce4.4fb.155d71ccc53.Coremail.kernelpatch@126.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [bug report] f2fs: fix to avoid reading out encrypted
+ data in page cache
+Date: Tue, 12 Jul 2016 16:29:39 +0300
+Message-ID: <20160712132938.GA20260@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,15 +10,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1bMmm5-0001Nl-7Q
+	(envelope-from <dan.carpenter@oracle.com>) id 1bMxlO-0006L8-2r
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Jul 2016 01:46:13 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1bMmm1-0006eG-Ml
+	Tue, 12 Jul 2016 13:30:14 +0000
+Received: from aserp1040.oracle.com ([141.146.126.69])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bMxlJ-0005VQ-Il
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 12 Jul 2016 01:46:13 +0000
-In-Reply-To: <74f6ce4.4fb.155d71ccc53.Coremail.kernelpatch@126.com>
+	Tue, 12 Jul 2016 13:30:14 +0000
+Content-Disposition: inline
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,47 +28,60 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Tiezhu Yang <kernelpatch@126.com>, jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: yuchao0@huawei.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2016/7/11 7:20, Tiezhu Yang wrote:
-> When the length of file name is more than F2FS_NAME_LEN,
+Hello Chao Yu,
 
-Seem @name indicates a xattr/key name, not a file name.
+The patch 78682f794479: "f2fs: fix to avoid reading out encrypted
+data in page cache" from Jul 3, 2016, leads to the following static
+checker warning:
 
-Thanks,
+	fs/f2fs/data.c:1123 f2fs_mpage_readpages()
+	error: 'bio' dereferencing possible ERR_PTR()
 
-> it should return -ENAMETOOLONG.
-> 
-> Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
-> ---
->  fs/f2fs/xattr.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-> index 28a5023..b225062 100644
-> --- a/fs/f2fs/xattr.c
-> +++ b/fs/f2fs/xattr.c
-> @@ -364,7 +364,7 @@ int f2fs_getxattr(struct inode *inode, int index, const char *name,
->  
->  	len = strlen(name);
->  	if (len > F2FS_NAME_LEN)
-> -		return -ERANGE;
-> +		return -ENAMETOOLONG;
->  
->  	base_addr = read_all_xattrs(inode, ipage);
->  	if (!base_addr)
-> @@ -458,7 +458,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->  	len = strlen(name);
->  
->  	if (len > F2FS_NAME_LEN)
-> -		return -ERANGE;
-> +		return -ENAMETOOLONG;
->  
->  	if (size > MAX_VALUE_LEN(inode))
->  		return -E2BIG;
-> 
+fs/f2fs/data.c
+  1093                  }
+  1094                  if (bio == NULL) {
+  1095                          bio = f2fs_grab_bio(inode, block_nr, nr_pages);
+  1096                          if (IS_ERR(bio))
+                                    ^^^^^^^^^^
+It's an error pointer.
 
+  1097                                  goto set_error_page;
+  1098                          bio_set_op_attrs(bio, REQ_OP_READ, 0);
+  1099                  }
+  1100  
+  1101                  if (bio_add_page(bio, page, blocksize, 0) < blocksize)
+  1102                          goto submit_and_realloc;
+  1103  
+  1104                  last_block_in_bio = block_nr;
+  1105                  goto next_page;
+  1106  set_error_page:
+  1107                  SetPageError(page);
+  1108                  zero_user_segment(page, 0, PAGE_SIZE);
+  1109                  unlock_page(page);
+  1110                  goto next_page;
+  1111  confused:
+  1112                  if (bio) {
+  1113                          __submit_bio(F2FS_I_SB(inode), bio, DATA);
+  1114                          bio = NULL;
+  1115                  }
+  1116                  unlock_page(page);
+  1117  next_page:
+  1118                  if (pages)
+  1119                          put_page(page);
+  1120          }
+  1121          BUG_ON(pages && !list_empty(pages));
+  1122          if (bio)
+  1123                  __submit_bio(F2FS_I_SB(inode), bio, DATA);
+                                                       ^^^
+Dereferenced.
+
+  1124          return 0;
+
+regards,
+dan carpenter
 
 ------------------------------------------------------------------------------
 What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
