@@ -1,34 +1,40 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 5/5] f2fs: use blk_plug in all the possible paths
-Date: Thu, 14 Jul 2016 20:05:02 -0700
-Message-ID: <20160715030502.GB44979@jaegeuk>
-References: <20160715004629.43143-1-jaegeuk@kernel.org>
- <20160715004629.43143-5-jaegeuk@kernel.org>
- <20160715022132.GA1513@infradead.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: reset default idle interval value
+Date: Fri, 15 Jul 2016 19:25:47 +0800
+Message-ID: <20160715112547.67268-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160715022132.GA1513@infradead.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Jul 14, 2016 at 07:21:32PM -0700, Christoph Hellwig wrote:
-> On Thu, Jul 14, 2016 at 05:46:29PM -0700, Jaegeuk Kim wrote:
-> > The main reason is that blk_start_plug can be used to wake up from low-power
-> > mode before submitting further bios.
-> 
-> Where does that myth come from?
+The default value of idle interval is 2 mins, but for most time when
+screen shutdown, there are still operations during the 2 mins interval,
+and gc's sleep time is about 30 secs to 60 secs, so there is almost no
+chance for GC thread to do garbage collecting.
 
->From kernel guys working on android.
-And, I'm in also doubt they may have done something regarding to power mode
-change, by the fact that I've seen annoying performance jitters comparing to
-ext4's ones all the time in some android products. 
+Set default value of idle interval value from 2 mins to 5 secs for
+fixing.
 
-Frankly speaking, I cannot find a concrete reason to remove plugging entirely,
-since I can't see big performance differences in all my test results in severs
-as well.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 0b616c9..55f1a41 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -164,7 +164,7 @@ enum {
+ #define BATCHED_TRIM_BLOCKS(sbi)	\
+ 		(BATCHED_TRIM_SEGMENTS(sbi) << (sbi)->log_blocks_per_seg)
+ #define DEF_CP_INTERVAL			60	/* 60 secs */
+-#define DEF_IDLE_INTERVAL		120	/* 2 mins */
++#define DEF_IDLE_INTERVAL		5	/* 5 secs */
+ 
+ struct cp_control {
+ 	int reason;
+-- 
+2.8.2.311.gee88674
