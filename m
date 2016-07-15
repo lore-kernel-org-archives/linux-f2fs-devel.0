@@ -1,23 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/5] f2fs: support copy_file_range
-Date: Thu, 14 Jul 2016 17:46:27 -0700
-Message-ID: <20160715004629.43143-3-jaegeuk@kernel.org>
+Subject: [PATCH 4/5] f2fs: add maximum prefree segments
+Date: Thu, 14 Jul 2016 17:46:28 -0700
+Message-ID: <20160715004629.43143-4-jaegeuk@kernel.org>
 References: <20160715004629.43143-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bNrH8-0004dg-P9
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bNrHH-0004XJ-Hk
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Jul 2016 00:46:42 +0000
+	Fri, 15 Jul 2016 00:46:51 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bNrH7-0003UP-UM
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bNrH9-00063k-2e
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Jul 2016 00:46:42 +0000
+	Fri, 15 Jul 2016 00:46:51 +0000
 In-Reply-To: <20160715004629.43143-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,98 +31,42 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch implements copy_file_range in f2fs.
+In 1TB storage, we need to admit 22841 prefree segments, which can consume
+too much segments.
+This patch sets 8GB in max. prefree segments in that case.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+ fs/f2fs/segment.c | 3 +++
+ fs/f2fs/segment.h | 1 +
+ 2 files changed, 4 insertions(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index dd399b3..c529884 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2201,6 +2201,72 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	return ret;
- }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 08f6c0b..e87aa05 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2409,6 +2409,9 @@ int build_segment_manager(struct f2fs_sb_info *sbi)
+ 	sm_info->ssa_blkaddr = le32_to_cpu(raw_super->ssa_blkaddr);
+ 	sm_info->rec_prefree_segments = sm_info->main_segments *
+ 					DEF_RECLAIM_PREFREE_SEGMENTS / 100;
++	if (sm_info->rec_prefree_segments > DEF_MAX_RECLAIM_PREFREE_SEGMENTS)
++		sm_info->rec_prefree_segments = DEF_MAX_RECLAIM_PREFREE_SEGMENTS;
++
+ 	if (!test_opt(sbi, LFS))
+ 		sm_info->ipu_policy = 1 << F2FS_IPU_FSYNC;
+ 	sm_info->min_ipu_util = DEF_MIN_IPU_UTIL;
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 57d450f..b33f73e 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -16,6 +16,7 @@
+ #define NULL_SECNO			((unsigned int)(~0))
  
-+ssize_t f2fs_copy_file_range(struct file *file_in, loff_t pos_in,
-+				struct file *file_out, loff_t pos_out,
-+				size_t len, unsigned int flags)
-+{
-+	struct inode *src = file_inode(file_in);
-+	struct inode *dst = file_inode(file_out);
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(src);
-+	size_t olen = len, dst_max_i_size = 0;
-+	size_t ret;
-+
-+	if (file_in->f_path.mnt != file_out->f_path.mnt ||
-+				src->i_sb != dst->i_sb)
-+		return -EXDEV;
-+
-+	if (unlikely(f2fs_readonly(src->i_sb)))
-+		return -EROFS;
-+
-+	if (S_ISDIR(src->i_mode) || S_ISDIR(dst->i_mode))
-+		return -EISDIR;
-+
-+	inode_lock(src);
-+	if (src != dst)
-+		inode_lock(dst);
-+
-+	ret = -EINVAL;
-+	if (pos_in + len > src->i_size || pos_in + len < pos_in)
-+		goto out_unlock;
-+	if (len == 0)
-+		olen = len = src->i_size - pos_in;
-+	if (pos_in + len == src->i_size)
-+		len = ALIGN(src->i_size, F2FS_BLKSIZE) - pos_in;
-+	if (len == 0) {
-+		ret = 0;
-+		goto out_unlock;
-+	}
-+	if (pos_out + olen > dst->i_size)
-+		dst_max_i_size = pos_out + olen;
-+
-+	/* verify the end result is block aligned */
-+	if (!IS_ALIGNED(pos_in, F2FS_BLKSIZE) ||
-+			!IS_ALIGNED(pos_in + len, F2FS_BLKSIZE) ||
-+			!IS_ALIGNED(pos_out, F2FS_BLKSIZE))
-+		goto out_unlock;
-+
-+	ret = f2fs_convert_inline_inode(src);
-+	if (ret)
-+		goto out_unlock;
-+	ret = f2fs_convert_inline_inode(dst);
-+	if (ret)
-+		goto out_unlock;
-+
-+	f2fs_balance_fs(sbi, true);
-+	f2fs_lock_op(sbi);
-+	ret = __exchange_data_block(src, dst, pos_in, pos_out, len, false);
-+	if (!ret && dst->i_size > dst_max_i_size)
-+		f2fs_i_size_write(dst, dst_max_i_size);
-+	f2fs_unlock_op(sbi);
-+out_unlock:
-+	if (src != dst)
-+		inode_unlock(dst);
-+	inode_unlock(src);
-+	if (!ret)
-+		ret = olen;
-+	return ret;
-+}
-+
- #ifdef CONFIG_COMPAT
- long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
-@@ -2247,6 +2313,7 @@ const struct file_operations f2fs_file_operations = {
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl	= f2fs_compat_ioctl,
- #endif
-+	.copy_file_range = f2fs_copy_file_range,
- 	.splice_read	= generic_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
- };
+ #define DEF_RECLAIM_PREFREE_SEGMENTS	5	/* 5% over total segments */
++#define DEF_MAX_RECLAIM_PREFREE_SEGMENTS	4096	/* 8GB in maximum */
+ 
+ /* L: Logical segment # in volume, R: Relative segment # in main area */
+ #define GET_L2R_SEGNO(free_i, segno)	(segno - free_i->start_segno)
 -- 
 2.8.3
 
