@@ -1,180 +1,335 @@
-From: "hebiao (G)" <hebiao6@huawei.com>
-Subject: RE: [f2fs-dev] [PATCH 3/7] f2fs: drop any block plugging
-Date: Thu, 14 Jul 2016 06:07:22 +0000
-Message-ID: <0F0234076C344444BEA001AACCA4A9D5F2915E@SZXEMI504-MBS.china.huawei.com>
-References: <20160608172444.60371-1-jaegeuk@kernel.org>
- <20160608172444.60371-3-jaegeuk@kernel.org>
- <25e2dc11-3bbc-632a-720a-0d090f77c7d7@huawei.com>
- <20160709163226.GB1837@jaegeuk>
- <ead95e1c-9fe4-9895-0653-90868f865137@huawei.com>
- <20160712170828.GB14203@jaegeuk>
- <0F0234076C344444BEA001AACCA4A9D5F29014@SZXEMI504-MBS.china.huawei.com>
- <20160714023958.GB32551@jaegeuk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20160714023958.GB32551@jaegeuk>
-Content-Language: en-US
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: "Yuchao (T)" <yuchao0@huawei.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, Kongfei <kongfei@hisilicon.com>, "CHEN CHUN YEN (IAN)" <chen.chun.yen@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/5] f2fs: refactor __exchange_data_block for speed up
+Date: Thu, 14 Jul 2016 17:46:25 -0700
+Message-ID: <20160715004629.43143-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-VGhhbmtzIEtpbSwgaXQnbGwgYmUgdmVyeSBtZWFuaW5nZnVsIGluIGJsb2NrIGxheWVyIDotKQ0K
-DQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogSmFlZ2V1ayBLaW0gW21haWx0bzpq
-YWVnZXVrQGtlcm5lbC5vcmddIA0KU2VudDogMjAxNuW5tDfmnIgxNOaXpSAxMDo0MA0KVG86IGhl
-YmlhbyAoRykgPGhlYmlhbzZAaHVhd2VpLmNvbT4NCkNjOiBZdWNoYW8gKFQpIDx5dWNoYW8wQGh1
-YXdlaS5jb20+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1mc2RldmVsQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7IENI
-RU4gQ0hVTiBZRU4gKElBTikgPGNoZW4uY2h1bi55ZW5AaHVhd2VpLmNvbT47IEtvbmdmZWkgPGtv
-bmdmZWlAaGlzaWxpY29uLmNvbT4NClN1YmplY3Q6IFJlOiBbZjJmcy1kZXZdIFtQQVRDSCAzLzdd
-IGYyZnM6IGRyb3AgYW55IGJsb2NrIHBsdWdnaW5nDQoNCkhpIGhlYmlhbywNCg0KT24gV2VkLCBK
-dWwgMTMsIDIwMTYgYXQgMDE6MjE6MTVBTSArMDAwMCwgaGViaWFvIChHKSB3cm90ZToNCj4gSGks
-IEtpbSwNCj4gDQo+IAlZb3UgYXJlIHJpZ2h0LiBJZiBmaWxlIHN5c3RlbSBjYW4gbWVyZ2UgYmlv
-cyBhcyBtdWNoIGFzIHBvc3NpYmxlLiBJdCdzIHZlcnkgaGVscGZ1bCB0byBibG9jayBsYXllci4g
-QnV0IHBsdWdnaW5nIG1lY2hhbmlzbSBoYXMgYSBwcmVjb2duaXRpb24gb2YgSU8gc3RyZWFtIGV4
-Y2VwdCBtZXJnaW5nIGJpb3MuIEZvciBleGFtcGxlLCB3ZSBjYW4gb3V0IHRoZSBsb3ctcG93ZXIg
-bW9kZSBpbiBhZHZhbmNlIHdoZW4geW91IHN0YXJ0IGEgcGx1ZyBhbmQgd2UgY2FuIGluIHRoZSBs
-b3ctcG93ZXIgbW9kZSBvbmx5IHdoZW4geW91IGVuZCBhIHBsdWcgdG8gYXZvaWQgaW4tb3V0IGxv
-dy1wb3dlciBtb2RlIGZyZXF1ZW50bHkuIFNvIEkgd2FudCB0byBrbm93IGlmIHRoZXJlIGlzIGFu
-eSBzaWRlIGVmZmVjdCBpbiBGMkZTIHRvIHJlc2VydmUgdGhlIHBsdWcgbWVjaGFuaXNtID8NCg0K
-T2gsIGRvZXMgYW5kcm9pZCBrZXJuZWwgYWN0IGxpa2UgdGhhdD8NCk5ldmVydGhlbGVzcywgSSds
-bCB0YWtlIGEgbG9vayBhdCBhbnkgcGVyZm9ybWFuY2UgcmVncmVzc2lvbiBpZiBJIGFkZCBwbHVn
-cyBpbiBhbGwgdGhlIElPIHN1Ym1pc3Npb24gYWdhaW4uDQoNClRoYW5rcywNCg0KPiANCj4gLS0t
-LS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmFlZ2V1ayBLaW0gW21haWx0bzpqYWVn
-ZXVrQGtlcm5lbC5vcmddDQo+IFNlbnQ6IDIwMTblubQ35pyIMTPml6UgMTowOA0KPiBUbzogWXVj
-aGFvIChUKSA8eXVjaGFvMEBodWF3ZWkuY29tPg0KPiBDYzogbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IA0KPiBsaW51eC1mMmZzLWRl
-dmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldDsgQ0hFTiBDSFVOIFlFTiAoSUFOKSANCj4gPGNoZW4u
-Y2h1bi55ZW5AaHVhd2VpLmNvbT47IGhlYmlhbyAoRykgPGhlYmlhbzZAaHVhd2VpLmNvbT4NCj4g
-U3ViamVjdDogUmU6IFtmMmZzLWRldl0gW1BBVENIIDMvN10gZjJmczogZHJvcCBhbnkgYmxvY2sg
-cGx1Z2dpbmcNCj4gDQo+IEhpIENoYW8sDQo+IA0KPiBPbiBUdWUsIEp1bCAxMiwgMjAxNiBhdCAw
-OTozODoxMUFNICswODAwLCBDaGFvIFl1IHdyb3RlOg0KPiA+IE9uIDIwMTYvNy8xMCAwOjMyLCBK
-YWVnZXVrIEtpbSB3cm90ZToNCj4gPiA+IE9uIFNhdCwgSnVsIDA5LCAyMDE2IGF0IDEwOjI4OjQ5
-QU0gKzA4MDAsIENoYW8gWXUgd3JvdGU6DQo+ID4gPj4gSGkgSmFlZ2V1aywNCj4gPiA+Pg0KPiA+
-ID4+IE9uIDIwMTYvNi85IDE6MjQsIEphZWdldWsgS2ltIHdyb3RlOg0KPiA+ID4+PiBJbiBmMmZz
-LCB3ZSBkb24ndCBuZWVkIHRvIGtlZXAgYmxvY2sgcGx1Z2dpbmcgZm9yIE5PREUgYW5kIERBVEEg
-DQo+ID4gPj4+IHdyaXRlcywgc2luY2Ugd2UgYWxyZWFkeSBtZXJnZWQgYmlvcyBhcyBtdWNoIGFz
-IHBvc3NpYmxlLg0KPiA+ID4+DQo+ID4gPj4gSU1PLCB3ZSBjYW4gbm90IHJlbW92ZSBibG9jayBw
-bHVnLCB0aGlzIGlzIGJlY2F1c2UgdGhlcmUgYXJlIA0KPiA+ID4+IHN0aWxsIG1hbnkgY29uZGl0
-aW9ucyB3aGljaCBzdG9wcyB1cyBtZXJnaW5nIHIvdyBJT3MgaW50byBvbmUgYmlvIA0KPiA+ID4+
-IGFzIHdlIGV4cGVjdCwgdGhlb3JldGljYWxseSwgYmxvY2sgcGx1ZyBjYW4gaG9sZCBiaW9zIGFz
-IG11Y2ggYXMgDQo+ID4gPj4gcG9zc2libGUsIHRoZW4gc3VibWl0dGluZyB0aGVtIGludG8gcXVl
-dWUgaW4gYmF0Y2gsIGl0IHdpbGwgDQo+ID4gPj4gcmVkdWNlIHJhY2luZyBvZiBncmFiYmluZyBx
-dWV1ZS0+bG9jayBkdXJpbmcgYmlvIHN1Ym1pdHRpbmcsIGlmIA0KPiA+ID4+IHdlIGRyb3AgdGhl
-bSwgd2hlbiBzeW5jaW5nIG5vZGVzIG9yIGZsdXNoaW5nIGRhdGFzLCB3ZSB3aWxsIHN1ZmZlciBt
-b3JlIGxvY2sgcmFjaW5nLg0KPiA+ID4+DQo+ID4gPj4gT3IgdGhlcmUgYXJlIHNvbWV0aGluZyBJ
-IGFtIG1pc3NpbmcsIGRvIHlvdSBzdWZmZXIgYW55IA0KPiA+ID4+IHBlcmZvcm1hbmNlIGlzc3Vl
-IG9uIGJsb2NrIHBsdWc/DQo+ID4gPiANCj4gPiA+IEluIHRoZSBsYXRlc3QgcGF0Y2gsIEkndmUg
-dHVybmVkIG9mZiBwbHVnZ2luZyBmb3JjZWZ1bGx5LCBvbmx5IGlmIA0KPiA+ID4gdGhlIHVuZGVy
-bHlpbmcgZGV2aWNlIGlzIFNNUiBkcml2ZS4NCj4gPiANCj4gPiBHb3QgaXQuDQo+ID4gDQo+ID4g
-PiBBbmQsIHN0aWxsIEkgcmVtb3ZlZCBvdGhlciBibG9jayBwbHVnZ2luZywgc2luY2UgSSBjb3Vs
-ZG4ndCBzZWUgDQo+ID4gPiBhbnkgcGVyZm9ybWFuY2UgcmVncmVzc2lvbi4NCj4gPiANCj4gPiBJ
-IHN1c3BlY3QgdGhhdCBpbiBsb3ctZW5kIG1hY2hpbmUgd2l0aCBzaW5nbGUtcXVldWUgd2hpY2gg
-aXMgdXNlZCBpbiANCj4gPiBibG9jayBsYXllciwgd2Ugd2lsbCBzdWZmZXIgcmVncmVzc2lvbi4N
-Cj4gPiANCj4gPiA+IEV2ZW4gaW4gc29tZSB3b3JrbG9hZHMsIEkgY291bGQgaGF2ZSBzZWVuIHNv
-bWUgaW52ZXJ0ZWQgSU9zIGR1ZSB0byANCj4gPiA+IHJhY2UgY29uZGl0aW9uIGJldHdlZW4gcGx1
-Z2dlZCBhbmQgdW5wbHVnZ2VkIElPcy4NCj4gPiANCj4gPiBGb3IgZGF0YSBwYXRoLCB3aGF0IGFi
-b3V0IGVuYWJsaW5nIGJsb2NrIHBsdWcgZm9yIElQVS9TU1IgPw0KPiANCj4gTm90IHN1cmUuIElQ
-VSBhbmQgU1NSIHdpbGwgcHJvZHVjZSBzbWFsbCAobGlrZWx5IHJhbmRvbSkgd3JpdGVzLg0KPiBX
-aGF0IEknbSBzZWVpbmcgaGVyZSBpcyB0aGF0IHdlIGFscmVhZHkgdHJ5IHRvIG1lcmdlIGJpb3Mg
-YXMgbXVjaCBhcyBwb3NzaWJsZS4NCj4gVGh1cywgSSdtIGluIGRvdWJ0IHdoeSB3ZSBuZWVkIHRv
-IHdhaXQgZm9yIG1lcmdpbmcgdGhlbSBieSBibG9jayBsYXllci4NCj4gSWYgcG9zc2libGUsIGNv
-dWxkIHlvdSBjaGVjayB0aGlzIGluIGFuZHJvaWQ/DQo+IA0KPiBUaGFua3MsDQo+IA0KPiA+ID4+
-Pg0KPiA+ID4+PiBTaWduZWQtb2ZmLWJ5OiBKYWVnZXVrIEtpbSA8amFlZ2V1a0BrZXJuZWwub3Jn
-Pg0KPiA+ID4+PiAtLS0NCj4gPiA+Pj4gIGZzL2YyZnMvY2hlY2twb2ludC5jIHwgIDQgLS0tLQ0K
-PiA+ID4+PiAgZnMvZjJmcy9kYXRhLmMgICAgICAgfCAxNyArKysrKysrKysrLS0tLS0tLQ0KPiA+
-ID4+PiAgZnMvZjJmcy9nYy5jICAgICAgICAgfCAgNSAtLS0tLQ0KPiA+ID4+PiAgZnMvZjJmcy9z
-ZWdtZW50LmMgICAgfCAgNyArLS0tLS0tDQo+ID4gPj4+ICA0IGZpbGVzIGNoYW5nZWQsIDExIGlu
-c2VydGlvbnMoKyksIDIyIGRlbGV0aW9ucygtKQ0KPiA+ID4+Pg0KPiA+ID4+PiBkaWZmIC0tZ2l0
-IGEvZnMvZjJmcy9jaGVja3BvaW50LmMgYi9mcy9mMmZzL2NoZWNrcG9pbnQuYyBpbmRleCANCj4g
-PiA+Pj4gNWRkZDE1Yy4uNDE3OWM3YiAxMDA2NDQNCj4gPiA+Pj4gLS0tIGEvZnMvZjJmcy9jaGVj
-a3BvaW50LmMNCj4gPiA+Pj4gKysrIGIvZnMvZjJmcy9jaGVja3BvaW50LmMNCj4gPiA+Pj4gQEAg
-LTg5NywxMSArODk3LDggQEAgc3RhdGljIGludCBibG9ja19vcGVyYXRpb25zKHN0cnVjdCBmMmZz
-X3NiX2luZm8gKnNiaSkNCj4gPiA+Pj4gIAkJLm5yX3RvX3dyaXRlID0gTE9OR19NQVgsDQo+ID4g
-Pj4+ICAJCS5mb3JfcmVjbGFpbSA9IDAsDQo+ID4gPj4+ICAJfTsNCj4gPiA+Pj4gLQlzdHJ1Y3Qg
-YmxrX3BsdWcgcGx1ZzsNCj4gPiA+Pj4gIAlpbnQgZXJyID0gMDsNCj4gPiA+Pj4gIA0KPiA+ID4+
-PiAtCWJsa19zdGFydF9wbHVnKCZwbHVnKTsNCj4gPiA+Pj4gLQ0KPiA+ID4+PiAgcmV0cnlfZmx1
-c2hfZGVudHM6DQo+ID4gPj4+ICAJZjJmc19sb2NrX2FsbChzYmkpOw0KPiA+ID4+PiAgCS8qIHdy
-aXRlIGFsbCB0aGUgZGlydHkgZGVudHJ5IHBhZ2VzICovIEBAIC05MzgsNyArOTM1LDYgQEANCj4g
-PiA+Pj4gcmV0cnlfZmx1c2hfbm9kZXM6DQo+ID4gPj4+ICAJCWdvdG8gcmV0cnlfZmx1c2hfbm9k
-ZXM7DQo+ID4gPj4+ICAJfQ0KPiA+ID4+PiAgb3V0Og0KPiA+ID4+PiAtCWJsa19maW5pc2hfcGx1
-ZygmcGx1Zyk7DQo+ID4gPj4+ICAJcmV0dXJuIGVycjsNCj4gPiA+Pj4gIH0NCj4gPiA+Pj4gIA0K
-PiA+ID4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9kYXRhLmMgYi9mcy9mMmZzL2RhdGEuYyBpbmRl
-eA0KPiA+ID4+PiAzMGRjNDQ4Li41ZjY1NWQwIDEwMDY0NA0KPiA+ID4+PiAtLS0gYS9mcy9mMmZz
-L2RhdGEuYw0KPiA+ID4+PiArKysgYi9mcy9mMmZzL2RhdGEuYw0KPiA+ID4+PiBAQCAtOTgsMTAg
-Kzk4LDEzIEBAIHN0YXRpYyBzdHJ1Y3QgYmlvICpfX2Jpb19hbGxvYyhzdHJ1Y3QgDQo+ID4gPj4+
-IGYyZnNfc2JfaW5mbyAqc2JpLCBibG9ja190IGJsa19hZGRyLCAgfQ0KPiA+ID4+PiAgDQo+ID4g
-Pj4+ICBzdGF0aWMgaW5saW5lIHZvaWQgX19zdWJtaXRfYmlvKHN0cnVjdCBmMmZzX3NiX2luZm8g
-KnNiaSwgaW50IHJ3LA0KPiA+ID4+PiAtCQkJCQkJc3RydWN0IGJpbyAqYmlvKQ0KPiA+ID4+PiAr
-CQkJc3RydWN0IGJpbyAqYmlvLCBlbnVtIHBhZ2VfdHlwZSB0eXBlKQ0KPiA+ID4+PiAgew0KPiA+
-ID4+PiAtCWlmICghaXNfcmVhZF9pbyhydykpDQo+ID4gPj4+ICsJaWYgKCFpc19yZWFkX2lvKHJ3
-KSkgew0KPiA+ID4+PiAgCQlhdG9taWNfaW5jKCZzYmktPm5yX3diX2Jpb3MpOw0KPiA+ID4+PiAr
-CQlpZiAoY3VycmVudC0+cGx1ZyAmJiAodHlwZSA9PSBEQVRBIHx8IHR5cGUgPT0gTk9ERSkpDQo+
-ID4gPj4+ICsJCQlibGtfZmluaXNoX3BsdWcoY3VycmVudC0+cGx1Zyk7DQo+ID4gPj4+ICsJfQ0K
-PiA+ID4+PiAgCXN1Ym1pdF9iaW8ocncsIGJpbyk7DQo+ID4gPj4+ICB9DQo+ID4gPj4+ICANCj4g
-PiA+Pj4gQEAgLTExNyw3ICsxMjAsNyBAQCBzdGF0aWMgdm9pZCBfX3N1Ym1pdF9tZXJnZWRfYmlv
-KHN0cnVjdCBmMmZzX2Jpb19pbmZvICppbykNCj4gPiA+Pj4gIAllbHNlDQo+ID4gPj4+ICAJCXRy
-YWNlX2YyZnNfc3VibWl0X3dyaXRlX2Jpbyhpby0+c2JpLT5zYiwgZmlvLCBpby0+YmlvKTsNCj4g
-PiA+Pj4gIA0KPiA+ID4+PiAtCV9fc3VibWl0X2Jpbyhpby0+c2JpLCBmaW8tPnJ3LCBpby0+Ymlv
-KTsNCj4gPiA+Pj4gKwlfX3N1Ym1pdF9iaW8oaW8tPnNiaSwgZmlvLT5ydywgaW8tPmJpbywgZmlv
-LT50eXBlKTsNCj4gPiA+Pj4gIAlpby0+YmlvID0gTlVMTDsNCj4gPiA+Pj4gIH0NCj4gPiA+Pj4g
-IA0KPiA+ID4+PiBAQCAtMjM1LDcgKzIzOCw3IEBAIGludCBmMmZzX3N1Ym1pdF9wYWdlX2Jpbyhz
-dHJ1Y3QgZjJmc19pb19pbmZvICpmaW8pDQo+ID4gPj4+ICAJCXJldHVybiAtRUZBVUxUOw0KPiA+
-ID4+PiAgCX0NCj4gPiA+Pj4gIA0KPiA+ID4+PiAtCV9fc3VibWl0X2JpbyhmaW8tPnNiaSwgZmlv
-LT5ydywgYmlvKTsNCj4gPiA+Pj4gKwlfX3N1Ym1pdF9iaW8oZmlvLT5zYmksIGZpby0+cncsIGJp
-bywgZmlvLT50eXBlKTsNCj4gPiA+Pj4gIAlyZXR1cm4gMDsNCj4gPiA+Pj4gIH0NCj4gPiA+Pj4g
-IA0KPiA+ID4+PiBAQCAtMTA0MCw3ICsxMDQzLDcgQEAgZ290X2l0Og0KPiA+ID4+PiAgCQkgKi8N
-Cj4gPiA+Pj4gIAkJaWYgKGJpbyAmJiAobGFzdF9ibG9ja19pbl9iaW8gIT0gYmxvY2tfbnIgLSAx
-KSkgew0KPiA+ID4+PiAgc3VibWl0X2FuZF9yZWFsbG9jOg0KPiA+ID4+PiAtCQkJX19zdWJtaXRf
-YmlvKEYyRlNfSV9TQihpbm9kZSksIFJFQUQsIGJpbyk7DQo+ID4gPj4+ICsJCQlfX3N1Ym1pdF9i
-aW8oRjJGU19JX1NCKGlub2RlKSwgUkVBRCwgYmlvLCBEQVRBKTsNCj4gPiA+Pj4gIAkJCWJpbyA9
-IE5VTEw7DQo+ID4gPj4+ICAJCX0NCj4gPiA+Pj4gIAkJaWYgKGJpbyA9PSBOVUxMKSB7DQo+ID4g
-Pj4+IEBAIC0xMDgzLDcgKzEwODYsNyBAQCBzZXRfZXJyb3JfcGFnZToNCj4gPiA+Pj4gIAkJZ290
-byBuZXh0X3BhZ2U7DQo+ID4gPj4+ICBjb25mdXNlZDoNCj4gPiA+Pj4gIAkJaWYgKGJpbykgew0K
-PiA+ID4+PiAtCQkJX19zdWJtaXRfYmlvKEYyRlNfSV9TQihpbm9kZSksIFJFQUQsIGJpbyk7DQo+
-ID4gPj4+ICsJCQlfX3N1Ym1pdF9iaW8oRjJGU19JX1NCKGlub2RlKSwgUkVBRCwgYmlvLCBEQVRB
-KTsNCj4gPiA+Pj4gIAkJCWJpbyA9IE5VTEw7DQo+ID4gPj4+ICAJCX0NCj4gPiA+Pj4gIAkJdW5s
-b2NrX3BhZ2UocGFnZSk7DQo+ID4gPj4+IEBAIC0xMDkzLDcgKzEwOTYsNyBAQCBuZXh0X3BhZ2U6
-DQo+ID4gPj4+ICAJfQ0KPiA+ID4+PiAgCUJVR19PTihwYWdlcyAmJiAhbGlzdF9lbXB0eShwYWdl
-cykpOw0KPiA+ID4+PiAgCWlmIChiaW8pDQo+ID4gPj4+IC0JCV9fc3VibWl0X2JpbyhGMkZTX0lf
-U0IoaW5vZGUpLCBSRUFELCBiaW8pOw0KPiA+ID4+PiArCQlfX3N1Ym1pdF9iaW8oRjJGU19JX1NC
-KGlub2RlKSwgUkVBRCwgYmlvLCBEQVRBKTsNCj4gPiA+Pj4gIAlyZXR1cm4gMDsNCj4gPiA+Pj4g
-IH0NCj4gPiA+Pj4gIA0KPiA+ID4+PiBkaWZmIC0tZ2l0IGEvZnMvZjJmcy9nYy5jIGIvZnMvZjJm
-cy9nYy5jIGluZGV4IDRhMDMwNzYuLjY3ZmQyODUNCj4gPiA+Pj4gMTAwNjQ0DQo+ID4gPj4+IC0t
-LSBhL2ZzL2YyZnMvZ2MuYw0KPiA+ID4+PiArKysgYi9mcy9mMmZzL2djLmMNCj4gPiA+Pj4gQEAg
-LTc3Nyw3ICs3NzcsNiBAQCBzdGF0aWMgaW50IGRvX2dhcmJhZ2VfY29sbGVjdChzdHJ1Y3QgDQo+
-ID4gPj4+IGYyZnNfc2JfaW5mbyAqc2JpLCAgew0KPiA+ID4+PiAgCXN0cnVjdCBwYWdlICpzdW1f
-cGFnZTsNCj4gPiA+Pj4gIAlzdHJ1Y3QgZjJmc19zdW1tYXJ5X2Jsb2NrICpzdW07DQo+ID4gPj4+
-IC0Jc3RydWN0IGJsa19wbHVnIHBsdWc7DQo+ID4gPj4+ICAJdW5zaWduZWQgaW50IHNlZ25vID0g
-c3RhcnRfc2Vnbm87DQo+ID4gPj4+ICAJdW5zaWduZWQgaW50IGVuZF9zZWdubyA9IHN0YXJ0X3Nl
-Z25vICsgc2JpLT5zZWdzX3Blcl9zZWM7DQo+ID4gPj4+ICAJaW50IHNlZ19mcmVlZCA9IDA7DQo+
-ID4gPj4+IEBAIC03OTUsOCArNzk0LDYgQEAgc3RhdGljIGludCBkb19nYXJiYWdlX2NvbGxlY3Qo
-c3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpLA0KPiA+ID4+PiAgCQl1bmxvY2tfcGFnZShzdW1fcGFn
-ZSk7DQo+ID4gPj4+ICAJfQ0KPiA+ID4+PiAgDQo+ID4gPj4+IC0JYmxrX3N0YXJ0X3BsdWcoJnBs
-dWcpOw0KPiA+ID4+PiAtDQo+ID4gPj4+ICAJZm9yIChzZWdubyA9IHN0YXJ0X3NlZ25vOyBzZWdu
-byA8IGVuZF9zZWdubzsgc2Vnbm8rKykgew0KPiA+ID4+PiAgCQkvKiBmaW5kIHNlZ21lbnQgc3Vt
-bWFyeSBvZiB2aWN0aW0gKi8NCj4gPiA+Pj4gIAkJc3VtX3BhZ2UgPSBmaW5kX2dldF9wYWdlKE1F
-VEFfTUFQUElORyhzYmkpLCBAQCAtODMwLDggKzgyNyw2IA0KPiA+ID4+PiBAQCBzdGF0aWMgaW50
-IGRvX2dhcmJhZ2VfY29sbGVjdChzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmksDQo+ID4gPj4+ICAJ
-CWYyZnNfc3VibWl0X21lcmdlZF9iaW8oc2JpLA0KPiA+ID4+PiAgCQkJCSh0eXBlID09IFNVTV9U
-WVBFX05PREUpID8gTk9ERSA6IERBVEEsIFdSSVRFKTsNCj4gPiA+Pj4gIA0KPiA+ID4+PiAtCWJs
-a19maW5pc2hfcGx1ZygmcGx1Zyk7DQo+ID4gPj4+IC0NCj4gPiA+Pj4gIAlpZiAoZ2NfdHlwZSA9
-PSBGR19HQykgew0KPiA+ID4+PiAgCQl3aGlsZSAoc3RhcnRfc2Vnbm8gPCBlbmRfc2Vnbm8pDQo+
-ID4gPj4+ICAJCQlpZiAoZ2V0X3ZhbGlkX2Jsb2NrcyhzYmksIHN0YXJ0X3NlZ25vKyssIDEpID09
-IDApIGRpZmYgLS1naXQgDQo+ID4gPj4+IGEvZnMvZjJmcy9zZWdtZW50LmMgYi9mcy9mMmZzL3Nl
-Z21lbnQuYyBpbmRleCA3YjU4YmZiLi5lZmYwNDZhDQo+ID4gPj4+IDEwMDY0NA0KPiA+ID4+PiAt
-LS0gYS9mcy9mMmZzL3NlZ21lbnQuYw0KPiA+ID4+PiArKysgYi9mcy9mMmZzL3NlZ21lbnQuYw0K
-PiA+ID4+PiBAQCAtMzc5LDEzICszNzksOCBAQCB2b2lkIGYyZnNfYmFsYW5jZV9mc19iZyhzdHJ1
-Y3QgZjJmc19zYl9pbmZvICpzYmkpDQo+ID4gPj4+ICAJCQlleGNlc3NfcHJlZnJlZV9zZWdzKHNi
-aSkgfHwNCj4gPiA+Pj4gIAkJCWV4Y2Vzc19kaXJ0eV9uYXRzKHNiaSkgfHwNCj4gPiA+Pj4gIAkJ
-CShpc19pZGxlKHNiaSkgJiYgZjJmc190aW1lX292ZXIoc2JpLCBDUF9USU1FKSkpIHsNCj4gPiA+
-Pj4gLQkJaWYgKHRlc3Rfb3B0KHNiaSwgREFUQV9GTFVTSCkpIHsNCj4gPiA+Pj4gLQkJCXN0cnVj
-dCBibGtfcGx1ZyBwbHVnOw0KPiA+ID4+PiAtDQo+ID4gPj4+IC0JCQlibGtfc3RhcnRfcGx1Zygm
-cGx1Zyk7DQo+ID4gPj4+ICsJCWlmICh0ZXN0X29wdChzYmksIERBVEFfRkxVU0gpKQ0KPiA+ID4+
-PiAgCQkJc3luY19kaXJ0eV9pbm9kZXMoc2JpLCBGSUxFX0lOT0RFKTsNCj4gPiA+Pj4gLQkJCWJs
-a19maW5pc2hfcGx1ZygmcGx1Zyk7DQo+ID4gPj4+IC0JCX0NCj4gPiA+Pj4gIAkJZjJmc19zeW5j
-X2ZzKHNiaS0+c2IsIHRydWUpOw0KPiA+ID4+PiAgCQlzdGF0X2luY19iZ19jcF9jb3VudChzYmkt
-PnN0YXRfaW5mbyk7DQo+ID4gPj4+ICAJfQ0KPiA+ID4+Pg0KPiA+ID4gDQo+ID4gPiAuDQo+ID4g
-PiANCg==
+This reduces the elapsed time to do xfstests/generic/017.
+
+Before: 715 s
+After:  458 s
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/file.c | 236 +++++++++++++++++++++++++++++++++++++++++----------------
+ fs/f2fs/node.c |   1 +
+ 2 files changed, 171 insertions(+), 66 deletions(-)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index e6b770d..0d4f1dd 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -889,85 +889,189 @@ static int punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 	return ret;
+ }
+ 
+-static int __exchange_data_block(struct inode *inode, pgoff_t src,
+-					pgoff_t dst, bool full)
++static int __read_out_blkaddrs(struct inode *inode, block_t *blkaddr,
++				int *do_replace, pgoff_t off, pgoff_t len)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct dnode_of_data dn;
+-	block_t new_addr;
+-	bool do_replace = false;
+-	int ret;
++	int ret, done, i;
+ 
++next_dnode:
+ 	set_new_dnode(&dn, inode, NULL, NULL, 0);
+-	ret = get_dnode_of_data(&dn, src, LOOKUP_NODE_RA);
++	ret = get_dnode_of_data(&dn, off, LOOKUP_NODE_RA);
+ 	if (ret && ret != -ENOENT) {
+ 		return ret;
+ 	} else if (ret == -ENOENT) {
+-		new_addr = NULL_ADDR;
+-	} else {
+-		new_addr = dn.data_blkaddr;
+-		if (!is_checkpointed_data(sbi, new_addr)) {
++		if (dn.max_level == 0)
++			return -ENOENT;
++		done = min((pgoff_t)ADDRS_PER_BLOCK - dn.ofs_in_node, len);
++		blkaddr += done;
++		do_replace += done;
++		goto next;
++	}
++
++	done = min((pgoff_t)ADDRS_PER_PAGE(dn.node_page, inode) -
++							dn.ofs_in_node, len);
++	for (i = 0; i < done; i++, blkaddr++, do_replace++, dn.ofs_in_node++) {
++		*blkaddr = datablock_addr(dn.node_page, dn.ofs_in_node);
++		if (!is_checkpointed_data(sbi, *blkaddr)) {
++
++			if (test_opt(sbi, LFS)) {
++				f2fs_put_dnode(&dn);
++				return -ENOTSUPP;
++			}
++
+ 			/* do not invalidate this block address */
+ 			f2fs_update_data_blkaddr(&dn, NULL_ADDR);
+-			do_replace = true;
++			*do_replace = 1;
+ 		}
+-		f2fs_put_dnode(&dn);
+ 	}
++	f2fs_put_dnode(&dn);
++next:
++	len -= done;
++	off += done;
++	if (len)
++		goto next_dnode;
++	return 0;
++}
+ 
+-	if (new_addr == NULL_ADDR)
+-		return full ? truncate_hole(inode, dst, dst + 1) : 0;
++static int __roll_back_blkaddrs(struct inode *inode, block_t *blkaddr,
++				int *do_replace, pgoff_t off, int len)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct dnode_of_data dn;
++	int ret, i;
+ 
+-	if (do_replace) {
+-		struct page *ipage;
+-		struct node_info ni;
++	for (i = 0; i < len; i++, do_replace++, blkaddr++) {
++		if (*do_replace == 0)
++			continue;
+ 
+-		if (test_opt(sbi, LFS)) {
+-			ret = -ENOTSUPP;
+-			goto err_out;
++		set_new_dnode(&dn, inode, NULL, NULL, 0);
++		ret = get_dnode_of_data(&dn, off + i, LOOKUP_NODE_RA);
++		if (ret) {
++			dec_valid_block_count(sbi, inode, 1);
++			invalidate_blocks(sbi, *blkaddr);
++		} else {
++			f2fs_update_data_blkaddr(&dn, *blkaddr);
+ 		}
++		f2fs_put_dnode(&dn);
++	}
++	return 0;
++}
+ 
+-		ipage = get_node_page(sbi, inode->i_ino);
+-		if (IS_ERR(ipage)) {
+-			ret = PTR_ERR(ipage);
+-			goto err_out;
++static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
++			block_t *blkaddr, int *do_replace,
++			pgoff_t src, pgoff_t dst, pgoff_t len, bool full)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(src_inode);
++	pgoff_t i = 0;
++	int ret;
++
++	while (i < len) {
++		if (blkaddr[i] == NULL_ADDR && !full) {
++			i++;
++			continue;
+ 		}
+ 
+-		set_new_dnode(&dn, inode, ipage, NULL, 0);
+-		ret = f2fs_reserve_block(&dn, dst);
+-		if (ret)
+-			goto err_out;
++		if (do_replace[i] || blkaddr[i] == NULL_ADDR) {
++			struct dnode_of_data dn;
++			struct node_info ni;
++			size_t new_size;
++			pgoff_t ilen;
+ 
+-		truncate_data_blocks_range(&dn, 1);
++			set_new_dnode(&dn, dst_inode, NULL, NULL, 0);
++			ret = get_dnode_of_data(&dn, dst + i, ALLOC_NODE);
++			if (ret)
++				return ret;
+ 
+-		get_node_info(sbi, dn.nid, &ni);
+-		f2fs_replace_block(sbi, &dn, dn.data_blkaddr, new_addr,
+-				ni.version, true, false);
+-		f2fs_put_dnode(&dn);
+-	} else {
+-		struct page *psrc, *pdst;
++			get_node_info(sbi, dn.nid, &ni);
++			ilen = min((pgoff_t)
++				ADDRS_PER_PAGE(dn.node_page, dst_inode) -
++						dn.ofs_in_node, len - i);
++			do {
++				dn.data_blkaddr = datablock_addr(dn.node_page,
++								dn.ofs_in_node);
++				truncate_data_blocks_range(&dn, 1);
++
++				if (do_replace[i]) {
++					f2fs_i_blocks_write(src_inode,
++								1, false);
++					f2fs_i_blocks_write(dst_inode,
++								1, true);
++					f2fs_replace_block(sbi, &dn, dn.data_blkaddr,
++					blkaddr[i], ni.version, true, false);
++
++					do_replace[i] = 0;
++				}
++				dn.ofs_in_node++;
++				i++;
++				new_size = (dst + i) << PAGE_SHIFT;
++				if (dst_inode->i_size < new_size)
++					f2fs_i_size_write(dst_inode, new_size);
++			} while ((do_replace[i] || blkaddr[i] == NULL_ADDR) && --ilen);
+ 
+-		psrc = get_lock_data_page(inode, src, true);
+-		if (IS_ERR(psrc))
+-			return PTR_ERR(psrc);
+-		pdst = get_new_data_page(inode, NULL, dst, true);
+-		if (IS_ERR(pdst)) {
++			f2fs_put_dnode(&dn);
++		} else {
++			struct page *psrc, *pdst;
++
++			psrc = get_lock_data_page(src_inode, src + i, true);
++			if (IS_ERR(psrc))
++				return PTR_ERR(psrc);
++			pdst = get_new_data_page(dst_inode, NULL, dst + i,
++								true);
++			if (IS_ERR(pdst)) {
++				f2fs_put_page(psrc, 1);
++				return PTR_ERR(pdst);
++			}
++			f2fs_copy_page(psrc, pdst);
++			set_page_dirty(pdst);
++			f2fs_put_page(pdst, 1);
+ 			f2fs_put_page(psrc, 1);
+-			return PTR_ERR(pdst);
+-		}
+-		f2fs_copy_page(psrc, pdst);
+-		set_page_dirty(pdst);
+-		f2fs_put_page(pdst, 1);
+-		f2fs_put_page(psrc, 1);
+ 
+-		return truncate_hole(inode, src, src + 1);
++			ret = truncate_hole(src_inode, src + i, src + i + 1);
++			if (ret)
++				return ret;
++			i++;
++		}
+ 	}
+ 	return 0;
++}
+ 
+-err_out:
+-	if (!get_dnode_of_data(&dn, src, LOOKUP_NODE)) {
+-		f2fs_update_data_blkaddr(&dn, new_addr);
+-		f2fs_put_dnode(&dn);
++static int __exchange_data_block(struct inode *src_inode,
++			struct inode *dst_inode, pgoff_t src, pgoff_t dst,
++			int len, bool full)
++{
++	block_t *src_blkaddr;
++	int *do_replace;
++	int ret;
++
++	src_blkaddr = f2fs_kvzalloc(sizeof(block_t) * len, GFP_KERNEL);
++	if (!src_blkaddr)
++		return -ENOMEM;
++
++	do_replace = f2fs_kvzalloc(sizeof(int) * len, GFP_KERNEL);
++	if (!do_replace) {
++		kvfree(src_blkaddr);
++		return -ENOMEM;
+ 	}
++
++	ret = __read_out_blkaddrs(src_inode, src_blkaddr, do_replace, src, len);
++	if (ret)
++		goto roll_back;
++
++	ret = __clone_blkaddrs(src_inode, dst_inode, src_blkaddr,
++					do_replace, src, dst, len, full);
++	if (ret)
++		goto roll_back;
++
++	kvfree(src_blkaddr);
++	kvfree(do_replace);
++	return 0;
++
++roll_back:
++	__roll_back_blkaddrs(src_inode, src_blkaddr, do_replace, src, len);
++	kvfree(src_blkaddr);
++	kvfree(do_replace);
+ 	return ret;
+ }
+ 
+@@ -975,16 +1079,12 @@ static int f2fs_do_collapse(struct inode *inode, pgoff_t start, pgoff_t end)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	pgoff_t nrpages = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
+-	int ret = 0;
++	int ret;
+ 
+-	for (; end < nrpages; start++, end++) {
+-		f2fs_balance_fs(sbi, true);
+-		f2fs_lock_op(sbi);
+-		ret = __exchange_data_block(inode, end, start, true);
+-		f2fs_unlock_op(sbi);
+-		if (ret)
+-			break;
+-	}
++	f2fs_balance_fs(sbi, true);
++	f2fs_lock_op(sbi);
++	ret = __exchange_data_block(inode, inode, end, start, nrpages - end, true);
++	f2fs_unlock_op(sbi);
+ 	return ret;
+ }
+ 
+@@ -1173,7 +1273,7 @@ out:
+ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	pgoff_t pg_start, pg_end, delta, nrpages, idx;
++	pgoff_t nr, pg_start, pg_end, delta, idx;
+ 	loff_t new_size;
+ 	int ret = 0;
+ 
+@@ -1208,14 +1308,18 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 	pg_start = offset >> PAGE_SHIFT;
+ 	pg_end = (offset + len) >> PAGE_SHIFT;
+ 	delta = pg_end - pg_start;
+-	nrpages = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
++	idx = (i_size_read(inode) + PAGE_SIZE - 1) / PAGE_SIZE;
++
++	while (!ret && idx > pg_start) {
++		nr = idx - pg_start;
++		if (nr > delta)
++			nr = delta;
++		idx -= nr;
+ 
+-	for (idx = nrpages - 1; idx >= pg_start && idx != -1; idx--) {
+ 		f2fs_lock_op(sbi);
+-		ret = __exchange_data_block(inode, idx, idx + delta, false);
++		ret = __exchange_data_block(inode, inode, idx,
++					idx + delta, nr, false);
+ 		f2fs_unlock_op(sbi);
+-		if (ret)
+-			break;
+ 	}
+ 
+ 	/* write out all moved pages, if possible */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index b841c43..d78f61d 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -649,6 +649,7 @@ release_out:
+ 	if (err == -ENOENT) {
+ 		dn->cur_level = i;
+ 		dn->max_level = level;
++		dn->ofs_in_node = offset[level];
+ 	}
+ 	return err;
+ }
+-- 
+2.8.3
