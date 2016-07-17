@@ -1,24 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/3] f2fs: support clone_file_range
-Date: Sat, 16 Jul 2016 23:24:27 -0700
-Message-ID: <20160717062427.56718-3-jaegeuk@kernel.org>
-References: <20160717062427.56718-1-jaegeuk@kernel.org>
+Subject: [PATCH 1/3] f2fs: avoid memory allocation failure due to
+	a long length
+Date: Sat, 16 Jul 2016 23:24:25 -0700
+Message-ID: <20160717062427.56718-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bOfVG-0000Cf-Op
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bOfVF-0006ya-20
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 17 Jul 2016 06:24:38 +0000
+	Sun, 17 Jul 2016 06:24:37 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bOfVG-0003zn-43
+	(Exim 4.76) id 1bOfVE-0003zl-7j
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 17 Jul 2016 06:24:38 +0000
-In-Reply-To: <20160717062427.56718-1-jaegeuk@kernel.org>
+	Sun, 17 Jul 2016 06:24:37 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,38 +30,79 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch implements clone_file_range in f2fs.
+We need to avoid ENOMEM due to unexpected long length.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/f2fs/file.c | 46 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 18 deletions(-)
 
 diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c2b7e35..37480f3 100644
+index 17b3059..3573b07 100644
 --- a/fs/f2fs/file.c
 +++ b/fs/f2fs/file.c
-@@ -2312,6 +2312,12 @@ ssize_t f2fs_copy_file_range(struct file *file_in, loff_t pos_in,
- 	return ret;
- }
+@@ -1039,33 +1039,43 @@ static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
  
-+int f2fs_clone_file_range(struct file *file_in, loff_t pos_in,
-+		struct file *file_out, loff_t pos_out, u64 len)
-+{
-+	return f2fs_clone_files(file_in, pos_in, file_out, pos_out, len);
-+}
-+
- #ifdef CONFIG_COMPAT
- long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ static int __exchange_data_block(struct inode *src_inode,
+ 			struct inode *dst_inode, pgoff_t src, pgoff_t dst,
+-			int len, bool full)
++			pgoff_t len, bool full)
  {
-@@ -2359,6 +2365,7 @@ const struct file_operations f2fs_file_operations = {
- 	.compat_ioctl	= f2fs_compat_ioctl,
- #endif
- 	.copy_file_range = f2fs_copy_file_range,
-+	.clone_file_range = f2fs_clone_file_range,
- 	.splice_read	= generic_file_splice_read,
- 	.splice_write	= iter_file_splice_write,
- };
+ 	block_t *src_blkaddr;
+ 	int *do_replace;
++	pgoff_t olen;
+ 	int ret;
+ 
+-	src_blkaddr = f2fs_kvzalloc(sizeof(block_t) * len, GFP_KERNEL);
+-	if (!src_blkaddr)
+-		return -ENOMEM;
++	while (len) {
++		olen = min((pgoff_t)4 * ADDRS_PER_BLOCK, len);
+ 
+-	do_replace = f2fs_kvzalloc(sizeof(int) * len, GFP_KERNEL);
+-	if (!do_replace) {
+-		kvfree(src_blkaddr);
+-		return -ENOMEM;
+-	}
++		src_blkaddr = f2fs_kvzalloc(sizeof(block_t) * olen, GFP_KERNEL);
++		if (!src_blkaddr)
++			return -ENOMEM;
+ 
+-	ret = __read_out_blkaddrs(src_inode, src_blkaddr, do_replace, src, len);
+-	if (ret)
+-		goto roll_back;
++		do_replace = f2fs_kvzalloc(sizeof(int) * olen, GFP_KERNEL);
++		if (!do_replace) {
++			kvfree(src_blkaddr);
++			return -ENOMEM;
++		}
+ 
+-	ret = __clone_blkaddrs(src_inode, dst_inode, src_blkaddr,
+-					do_replace, src, dst, len, full);
+-	if (ret)
+-		goto roll_back;
++		ret = __read_out_blkaddrs(src_inode, src_blkaddr,
++					do_replace, src, olen);
++		if (ret)
++			goto roll_back;
+ 
+-	kvfree(src_blkaddr);
+-	kvfree(do_replace);
++		ret = __clone_blkaddrs(src_inode, dst_inode, src_blkaddr,
++					do_replace, src, dst, olen, full);
++		if (ret)
++			goto roll_back;
++
++		src += olen;
++		dst += olen;
++		len -= olen;
++
++		kvfree(src_blkaddr);
++		kvfree(do_replace);
++	}
+ 	return 0;
+ 
+ roll_back:
 -- 
 2.8.3
 
