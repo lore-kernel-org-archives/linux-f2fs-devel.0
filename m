@@ -1,24 +1,24 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH trivial 2/7] f2fs.fsck: fix endianess
-Date: Fri, 15 Jul 2016 20:01:20 +0800
-Message-ID: <1468584085-29090-2-git-send-email-shengyong1@huawei.com>
-References: <1468584085-29090-1-git-send-email-shengyong1@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 3/3] f2fs: support clone_file_range
+Date: Sat, 16 Jul 2016 23:24:27 -0700
+Message-ID: <20160717062427.56718-3-jaegeuk@kernel.org>
+References: <20160717062427.56718-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1bO1tG-0003y1-VO
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bOfVG-0000Cf-Op
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Jul 2016 12:06:46 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1bO1tB-0007vi-Rp
+	Sun, 17 Jul 2016 06:24:38 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bOfVG-0003zn-43
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 15 Jul 2016 12:06:46 +0000
-In-Reply-To: <1468584085-29090-1-git-send-email-shengyong1@huawei.com>
+	Sun, 17 Jul 2016 06:24:38 +0000
+In-Reply-To: <20160717062427.56718-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,55 +28,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+This patch implements clone_file_range in f2fs.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/fsck.c  | 2 +-
- fsck/mount.c | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ fs/f2fs/file.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index c24eb58..8a6373b 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -383,7 +383,7 @@ static int sanity_check_nid(struct f2fs_sb_info *sbi, u32 nid,
- 				le32_to_cpu(node_blk->footer.ino));
- 		return -EINVAL;
- 	}
--	if (ni->ino != node_blk->footer.ino) {
-+	if (ni->ino != le32_to_cpu(node_blk->footer.ino)) {
- 		ASSERT_MSG("nid[0x%x] nat_entry->ino[0x%x] footer.ino[0x%x]",
- 				nid, ni->ino, le32_to_cpu(node_blk->footer.ino));
- 		return -EINVAL;
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 3e3d176..f3b47fd 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -79,9 +79,9 @@ void print_inode_info(struct f2fs_inode *inode, int name)
- 	}
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index c2b7e35..37480f3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2312,6 +2312,12 @@ ssize_t f2fs_copy_file_range(struct file *file_in, loff_t pos_in,
+ 	return ret;
+ }
  
- 	printf("i_ext: fofs:%x blkaddr:%x len:%x\n",
--			inode->i_ext.fofs,
--			inode->i_ext.blk_addr,
--			inode->i_ext.len);
-+			le32_to_cpu(inode->i_ext.fofs),
-+			le32_to_cpu(inode->i_ext.blk_addr),
-+			le32_to_cpu(inode->i_ext.len));
- 
- 	DISP_u32(inode, i_addr[0]);	/* Pointers to data blocks */
- 	DISP_u32(inode, i_addr[1]);	/* Pointers to data blocks */
-@@ -91,7 +91,7 @@ void print_inode_info(struct f2fs_inode *inode, int name)
- 	for (i = 4; i < ADDRS_PER_INODE(inode); i++) {
- 		if (inode->i_addr[i] != 0x0) {
- 			printf("i_addr[0x%x] points data block\r\t\t[0x%4x]\n",
--					i, inode->i_addr[i]);
-+					i, le32_to_cpu(inode->i_addr[i]));
- 			break;
- 		}
- 	}
++int f2fs_clone_file_range(struct file *file_in, loff_t pos_in,
++		struct file *file_out, loff_t pos_out, u64 len)
++{
++	return f2fs_clone_files(file_in, pos_in, file_out, pos_out, len);
++}
++
+ #ifdef CONFIG_COMPAT
+ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+@@ -2359,6 +2365,7 @@ const struct file_operations f2fs_file_operations = {
+ 	.compat_ioctl	= f2fs_compat_ioctl,
+ #endif
+ 	.copy_file_range = f2fs_copy_file_range,
++	.clone_file_range = f2fs_clone_file_range,
+ 	.splice_read	= generic_file_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+ };
 -- 
-2.7.1
+2.8.3
 
 
 ------------------------------------------------------------------------------
