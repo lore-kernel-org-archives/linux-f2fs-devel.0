@@ -1,26 +1,70 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH 5/5] f2fs: use blk_plug in all the possible paths
-Date: Mon, 18 Jul 2016 20:59:52 -0700
-Message-ID: <20160719035952.GB24437@infradead.org>
-References: <20160715004629.43143-1-jaegeuk@kernel.org>
- <20160715004629.43143-5-jaegeuk@kernel.org>
- <20160715022132.GA1513@infradead.org>
- <20160715030502.GB44979@jaegeuk>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 3/3] f2fs: support clone_file_range
+Date: Mon, 18 Jul 2016 21:48:20 -0700
+Message-ID: <20160719044820.GA80986@jaegeuk>
+References: <20160717062427.56718-1-jaegeuk@kernel.org>
+	<20160717062427.56718-3-jaegeuk@kernel.org>
+	<20160719034736.GA4037@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bPMxJ-0003i2-Q5
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 19 Jul 2016 04:48:29 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bPMxI-0008WT-Sl
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 19 Jul 2016 04:48:29 +0000
 Content-Disposition: inline
-In-Reply-To: <20160715030502.GB44979@jaegeuk>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20160719034736.GA4037@infradead.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Jul 14, 2016 at 08:05:02PM -0700, Jaegeuk Kim wrote:
-> >From kernel guys working on android.
+On Mon, Jul 18, 2016 at 08:47:36PM -0700, Christoph Hellwig wrote:
+> On Sat, Jul 16, 2016 at 11:24:27PM -0700, Jaegeuk Kim wrote:
+> > This patch implements clone_file_range in f2fs.
+> 
+> [...]
+> 
+> > +int f2fs_clone_file_range(struct file *file_in, loff_t pos_in,
+> > +		struct file *file_out, loff_t pos_out, u64 len)
+> > +{
+> > +	return f2fs_clone_files(file_in, pos_in, file_out, pos_out, len);
+> > +}
+> > +
+> 
+> Falling back from copy to clone should be done in the VFS.  I look into
+> implementing the fallback, and the code is trivial, but we don't seem
+> to have any useful coverage for copy_file_range yet, so I didn't dare
+> to add it yet.  How did you test copy and clone in f2fs?  And how did
+> you handle the difference in corner cases (e.g. the lacking 0 special
+> case in copy)?
 
-Well, until it's mainline it simply doesn't matter, so NAK to this
-patch.  Tying power behavior to plugs also sounds pretty broken, so we'd
-probably come up with something better if they bothered to actually
-submit their patches upsteam or at least explaining what they want
-to archive.
+Frankly speaking, I confused the behaviors without being aware of corner cases.
+And thus, I dropped the patches already. Instead, I realized that what I did
+was moving a range of blocks from one file to another file. So, I've been
+testing a new ioctl, F2FS_IOC_MOVE_RANGE.
+In terms of coverage, I just did some unit tests only.
+
+Thanks,
+
+------------------------------------------------------------------------------
+What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
+patterns at an interface-level. Reveals which users, apps, and protocols are 
+consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
+J-Flow, sFlow and other flows. Make informed decisions using capacity planning
+reports.http://sdm.link/zohodev2dev
