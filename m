@@ -1,43 +1,75 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 5/5] f2fs: use blk_plug in all the possible paths
-Date: Mon, 18 Jul 2016 22:49:18 -0700
-Message-ID: <20160719054918.GB80986@jaegeuk>
-References: <20160715004629.43143-1-jaegeuk@kernel.org>
- <20160715004629.43143-5-jaegeuk@kernel.org>
- <20160715022132.GA1513@infradead.org>
- <20160715030502.GB44979@jaegeuk>
- <20160719035952.GB24437@infradead.org>
+From: Fengguang Wu <fengguang.wu@intel.com>
+Subject: Re: [kbuild-all] [f2fs:dev-test 63/64]
+ fs/ext4/readpage.o: warning: objtool: mpage_end_io()+0x53: function has
+ unreachable instruction
+Date: Wed, 20 Jul 2016 09:11:23 +0800
+Message-ID: <20160720011123.GM17027@wfg-t540p.sh.intel.com>
+References: <201607192249.hbBy3WQ4%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fengguang.wu@intel.com>) id 1bPg2v-0006lp-Ai
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 20 Jul 2016 01:11:33 +0000
+Received: from mga01.intel.com ([192.55.52.88])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1bPg2t-0005yp-UY for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 20 Jul 2016 01:11:33 +0000
 Content-Disposition: inline
-In-Reply-To: <20160719035952.GB24437@infradead.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <201607192249.hbBy3WQ4%fengguang.wu@intel.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, kbuild-all@01.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Jul 18, 2016 at 08:59:52PM -0700, Christoph Hellwig wrote:
-> On Thu, Jul 14, 2016 at 08:05:02PM -0700, Jaegeuk Kim wrote:
-> > >From kernel guys working on android.
-> 
-> Well, until it's mainline it simply doesn't matter, so NAK to this
-> patch.  Tying power behavior to plugs also sounds pretty broken, so we'd
-> probably come up with something better if they bothered to actually
-> submit their patches upsteam or at least explaining what they want
-> to archive.
+Hi Jaegeuk,
 
-Actually, the initial patch which drops plugs is not mainlined as well.
-So, at this time, I just want to revert it by this patch, since I recognized
-that there might be whatever possible use-cases of plugs in another way someday.
-So for now, I lost the reason to eliminate the plugs.
-
-Moreover, since every filesystems use plugs, f2fs doesn't need to be an
-exceptional case in terms of that (except hm-smr). So, let me sync f2fs
-with other filesystems at this moment.
-
-I totally agree that it'd be best to see their patches upstream, but I've
-witnessed that it becomes a quite tough challenge to them.
+Sorry please ignore this one -- it looks like false warning from old
+gcc 4.4 and 4.6 -- we just enabled old compiler tests triggered
+thousands of these warnings..
 
 Thanks,
+Fengguang
 
+On Tue, Jul 19, 2016 at 10:52:50PM +0800, kbuild test robot wrote:
+>tree:   https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
+>head:   c316708435b53448aee2ecec63fcfe495c2a49a9
+>commit: 99c6af120d9f452ace3d8712b5ec54fac9b3a3ea [63/64] ext4 crypto: migrate into vfs's crypto engine
+>config: x86_64-randconfig-a0-07191719 (attached as .config)
+>compiler: gcc-4.4 (Debian 4.4.7-8) 4.4.7
+>reproduce:
+>        git checkout 99c6af120d9f452ace3d8712b5ec54fac9b3a3ea
+>        # save the attached .config to linux build tree
+>        make ARCH=x86_64
+>
+>All warnings (new ones prefixed by >>):
+>
+>>> fs/ext4/readpage.o: warning: objtool: mpage_end_io()+0x53: function has unreachable instruction
+>
+>---
+>0-DAY kernel test infrastructure                Open Source Technology Center
+>https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+
+>_______________________________________________
+>kbuild-all mailing list
+>kbuild-all@lists.01.org
+>https://lists.01.org/mailman/listinfo/kbuild-all
+
+
+------------------------------------------------------------------------------
+What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
+patterns at an interface-level. Reveals which users, apps, and protocols are 
+consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
+J-Flow, sFlow and other flows. Make informed decisions using capacity planning
+reports.http://sdm.link/zohodev2dev
