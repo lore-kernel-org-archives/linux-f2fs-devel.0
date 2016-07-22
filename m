@@ -1,25 +1,22 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: get victim segment again after new cp
-Date: Thu, 21 Jul 2016 09:44:49 -0700
-Message-ID: <20160721164449.GA812@jaegeuk>
-References: <1469107829-20459-1-git-send-email-heyunlei@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v2] f2fs: get victim segment again after new cp
+Date: Fri, 22 Jul 2016 19:08:31 +0800
+Message-ID: <1469185711-27932-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bQH5l-0003Iw-Th
+	(envelope-from <heyunlei@huawei.com>) id 1bQYHX-0001ww-2p
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Jul 2016 16:44:57 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bQH5j-0002QW-SI
+	Fri, 22 Jul 2016 11:06:15 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1bQYHS-0006hi-3J
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 21 Jul 2016 16:44:57 +0000
-Content-Disposition: inline
-In-Reply-To: <1469107829-20459-1-git-send-email-heyunlei@huawei.com>
+	Fri, 22 Jul 2016 11:06:15 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,31 +26,48 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
-Cc: yuchao@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao@huawei.com
+Cc: heyunlei@huwei.com
 
-Hi Yunlei,
+Previous selected segment may become free after write_checkpoint,
+if we do garbage collect on this segment, and then new_curseg happen
+to reuse it, it may cause f2fs_bug_on as below.
 
-The problem may be the above stale segno.
-How about this?
+	panic+0x154/0x29c
+	do_garbage_collect+0x15c/0xaf4
+	f2fs_gc+0x2dc/0x444
+	f2fs_balance_fs.part.22+0xcc/0x14c
+	f2fs_balance_fs+0x28/0x34
+	f2fs_map_blocks+0x5ec/0x790
+	f2fs_preallocate_blocks+0xe0/0x100
+	f2fs_file_write_iter+0x64/0x11c
+	new_sync_write+0xac/0x11c
+	vfs_write+0x144/0x1e4
+	SyS_write+0x60/0xc0
 
+Here, maybe we check sit and ssa type during reset_curseg. So, we check
+segment is stale or not, and select a new victim to avoid this.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/gc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/f2fs/gc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index de6c41c..8a0ed89 100644
+index de6c41c..ec17096 100644
 --- a/fs/f2fs/gc.c
 +++ b/fs/f2fs/gc.c
-@@ -908,10 +908,12 @@ gc_more:
+@@ -908,10 +908,14 @@ gc_more:
  		 * enough free sections, we should flush dent/node blocks and do
  		 * garbage collections.
  		 */
 -		if (__get_victim(sbi, &segno, gc_type) || prefree_segments(sbi))
 +		if (__get_victim(sbi, &segno, gc_type) || prefree_segments(sbi)) {
-+			segno = NULL_SEGNO;
  			write_checkpoint(sbi, &cpc);
 -		else if (has_not_enough_free_secs(sbi, 0))
++			if(!get_valid_blocks(sbi, segno, sbi->segs_per_sec)
++					|| IS_CURSEC(sbi, segno / sbi->segs_per_sec))
++				segno = NULL_SEGNO;
 +		} else if (has_not_enough_free_secs(sbi, 0)) {
  			write_checkpoint(sbi, &cpc);
 +		}
@@ -61,32 +75,8 @@ index de6c41c..8a0ed89 100644
  
  	if (segno == NULL_SEGNO && !__get_victim(sbi, &segno, gc_type))
 -- 
-2.8.3
+1.9.1
 
-On Thu, Jul 21, 2016 at 09:30:29PM +0800, Yunlei He wrote:
-> previous segment selected may become free after write_checkpoint,
-> so here, we select victim again.
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/gc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index de6c41c..704e2e1 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -914,7 +914,7 @@ gc_more:
->  			write_checkpoint(sbi, &cpc);
->  	}
->  
-> -	if (segno == NULL_SEGNO && !__get_victim(sbi, &segno, gc_type))
-> +	if (!__get_victim(sbi, &segno, gc_type) && segno == NULL_SEGNO)
->  		goto stop;
->  	ret = 0;
->  
-> -- 
-> 1.9.1
 
 ------------------------------------------------------------------------------
 What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
