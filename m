@@ -1,35 +1,79 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [GIT PULL] f2fs for 4.8
-Date: Wed, 27 Jul 2016 14:24:21 -0700
-Message-ID: <20160727212421.GA74234@jaegeuk>
-References: <20160727040800.GA69756@jaegeuk>
- <20160727084101.GA11784@infradead.org>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: not allow to write illegal blkaddr
+Date: Thu, 28 Jul 2016 12:12:38 +0800
+Message-ID: <1469679158-17975-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160727084101.GA11784@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1bSccf-0001uv-FP
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 28 Jul 2016 04:08:37 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1bSccc-0001L0-LJ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 28 Jul 2016 04:08:37 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao@huawei.com
+Cc: heyunlei@huwei.com
 
-On Wed, Jul 27, 2016 at 01:41:01AM -0700, Christoph Hellwig wrote:
-> >  - ioctl to move a range of data between files
-> 
-> Please run this through the linux-api list first.  We had so many
-> problem with random ioctls on random file systems in the past.  Also
-> I know Samsung had an xfs (and maybe ext4?) implementation of this
-> functionality in the past, so it would be extremtly useful to have
-> some discussion on that.
-> 
-> Also didn't this just show up last week for the first time?
+we came across an error as below:
 
-Since I couldn't defend its confident use cases right now, I thought f2fs'd be
-good to support it in order for someone to evaluate it; I expected some
-kv-stores tho.
+[build_nat_area_bitmap:1710] nid[0x    1718] addr[0x         1c18ddc] ino[0x    1718]
+[build_nat_area_bitmap:1710] nid[0x    1719] addr[0x         1c193d5] ino[0x    1719]
+[build_nat_area_bitmap:1710] nid[0x    171a] addr[0x         1c1736e] ino[0x    171a]
+[build_nat_area_bitmap:1710] nid[0x    171b] addr[0x        58b3ee8f] ino[0x815f92ed]
+[build_nat_area_bitmap:1710] nid[0x    171c] addr[0x         fcdc94b] ino[0x49366377]
+[build_nat_area_bitmap:1710] nid[0x    171d] addr[0x        7cd2facf] ino[0xb3c55300]
+[build_nat_area_bitmap:1710] nid[0x    171e] addr[0x        bd4e25d0] ino[0x77c34c09]
 
-Once getting its validation, let me take a look at other file systems to expose
-it into a generic one.
+... ...
 
-Thanks,
+[build_nat_area_bitmap:1710] nid[0x    1718] addr[0x         1c18ddc] ino[0x    1718]
+[build_nat_area_bitmap:1710] nid[0x    1719] addr[0x         1c193d5] ino[0x    1719]
+[build_nat_area_bitmap:1710] nid[0x    171a] addr[0x         1c1736e] ino[0x    171a]
+[build_nat_area_bitmap:1710] nid[0x    171b] addr[0x        58b3ee8f] ino[0x815f92ed]
+[build_nat_area_bitmap:1710] nid[0x    171c] addr[0x         fcdc94b] ino[0x49366377]
+[build_nat_area_bitmap:1710] nid[0x    171d] addr[0x        7cd2facf] ino[0xb3c55300]
+[build_nat_area_bitmap:1710] nid[0x    171e] addr[0x        bd4e25d0] ino[0x77c34c09]
+
+One nat block may be stepped by a data block, so this patch forbid to
+write if the blkaddr is illegal
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/segment.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index b33f73e..87156c7 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -587,8 +587,8 @@ static inline void check_seg_range(struct f2fs_sb_info *sbi, unsigned int segno)
+ 
+ static inline void verify_block_addr(struct f2fs_sb_info *sbi, block_t blk_addr)
+ {
+-	f2fs_bug_on(sbi, blk_addr < SEG0_BLKADDR(sbi)
+-					|| blk_addr >= MAX_BLKADDR(sbi));
++	BUG_ON(blk_addr < SEG0_BLKADDR(sbi)
++			|| blk_addr >= MAX_BLKADDR(sbi));
+ }
+ 
+ /*
+-- 
+1.9.1
+
+
+------------------------------------------------------------------------------
