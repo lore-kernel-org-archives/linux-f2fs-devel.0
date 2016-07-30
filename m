@@ -1,25 +1,21 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: f2fs-tool-1.7.0 build error
-Date: Fri, 29 Jul 2016 10:22:26 -0700
-Message-ID: <20160729172226.GA9499@jaegeuk>
-References: <e617e773-35c8-8eff-e7fe-0c1c798c1213@gmail.com>
+From: Roland Dreier <mv.mattedi@terra.com.br>
+Subject: Re: =?utf-8?q?latest_news?=
+Date: Sat, 30 Jul 2016 14:50:09 +0300
+Message-ID: <000008a24ccb$8f7572cb$167823be$@yandex.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bTBUb-00063A-D6
+	(envelope-from <mv.mattedi@terra.com.br>) id 1bTSmc-0000Qp-4s
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 29 Jul 2016 17:22:37 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bTBUa-0002yE-6J
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 29 Jul 2016 17:22:37 +0000
-Content-Disposition: inline
-In-Reply-To: <e617e773-35c8-8eff-e7fe-0c1c798c1213@gmail.com>
+	Sat, 30 Jul 2016 11:50:22 +0000
+Received: from if10-mail-fb05-mia.mta.terra.com ([98.142.233.72])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1bTSmb-00011N-4e for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 30 Jul 2016 11:50:22 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,88 +25,10 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Perfect Gentleman <perfect007gentleman@gmail.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Uri Yosef <uri.y@variscite.com>, linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>, Christian Daudt <bcm@fixthebug.org>, Mathias Krause <minipli@googlemail.com>
 
-Hello,
+Greetings! 
+Did  you hear the latest news? You should definetely  read more info  here <http://today.sxipay.com/lndnz>
 
-I've fixed up right away.
-
-Thanks,
-
-On Fri, Jul 29, 2016 at 11:22:24AM +0700, Perfect Gentleman wrote:
->  >>> Source configured.
->  >>> Compiling source in 
-> /tmp/portage/sys-fs/f2fs-tools-9999/work/f2fs-tools-9999 ...
-> make -j7
-> make  all-recursive
-> make[1]: Entering directory 
-> '/tmp/portage/sys-fs/f2fs-tools-9999/work/f2fs-tools-9999'
-> Making all in man
-> make[2]: Entering directory 
-> '/tmp/portage/sys-fs/f2fs-tools-9999/work/f2fs-tools-9999/man'
-> make[2]: Nothing to be done for 'all'.
-> make[2]: Leaving directory 
-> '/tmp/portage/sys-fs/f2fs-tools-9999/work/f2fs-tools-9999/man'
-> Making all in lib
-> make[2]: Entering directory 
-> '/tmp/portage/sys-fs/f2fs-tools-9999/work/f2fs-tools-9999/lib'
-> /bin/sh ../libtool  --tag=CC   --mode=compile x86_64-pc-linux-gnu-gcc 
-> -DHAVE_CONFIG_H -I. -I..  -I../include -Wall -march=native -mtune=native 
-> -O2 -pipe -fomit-frame-pointer -fno-stack-protector -c -o 
-> libf2fs_la-libf2fs.lo `test -f 'libf2fs.c' || echo './'`libf2fs.c
-> /bin/sh ../libtool  --tag=CC   --mode=compile x86_64-pc-linux-gnu-gcc 
-> -DHAVE_CONFIG_H -I. -I..  -I../include -Wall -march=native -mtune=native 
-> -O2 -pipe -fomit-frame-pointer -fno-stack-protector -c -o 
-> libf2fs_la-libf2fs_io.lo `test -f 'libf2fs_io.c' || echo './'`libf2fs_io.c
-> /bin/sh ../libtool  --tag=CC   --mode=compile x86_64-pc-linux-gnu-gcc 
-> -DHAVE_CONFIG_H -I. -I..  -I../include -Wall -march=native -mtune=native 
-> -O2 -pipe -fomit-frame-pointer -fno-stack-protector -c -o 
-> libf2fs_la-zbc.lo `test -f 'zbc.c' || echo './'`zbc.c
-> libtool: compile:  x86_64-pc-linux-gnu-gcc -DHAVE_CONFIG_H -I. -I.. 
-> -I../include -Wall -march=native -mtune=native -O2 -pipe 
-> -fomit-frame-pointer -fno-stack-protector -c zbc.c  -fPIC -DPIC -o 
-> .libs/libf2fs_la-zbc.o
-> libtool: compile:  x86_64-pc-linux-gnu-gcc -DHAVE_CONFIG_H -I. -I.. 
-> -I../include -Wall -march=native -mtune=native -O2 -pipe 
-> -fomit-frame-pointer -fno-stack-protector -c libf2fs_io.c  -fPIC -DPIC 
-> -o .libs/libf2fs_la-libf2fs_io.o
-> libtool: compile:  x86_64-pc-linux-gnu-gcc -DHAVE_CONFIG_H -I. -I.. 
-> -I../include -Wall -march=native -mtune=native -O2 -pipe 
-> -fomit-frame-pointer -fno-stack-protector -c libf2fs.c  -fPIC -DPIC -o 
-> .libs/libf2fs_la-libf2fs.o
-> libtool: compile:  x86_64-pc-linux-gnu-gcc -DHAVE_CONFIG_H -I. -I.. 
-> -I../include -Wall -march=native -mtune=native -O2 -pipe 
-> -fomit-frame-pointer -fno-stack-protector -c libf2fs_io.c -o 
-> libf2fs_la-libf2fs_io.o >/dev/null 2>&1
-> libtool: compile:  x86_64-pc-linux-gnu-gcc -DHAVE_CONFIG_H -I. -I.. 
-> -I../include -Wall -march=native -mtune=native -O2 -pipe 
-> -fomit-frame-pointer -fno-stack-protector -c zbc.c -o libf2fs_la-zbc.o 
->  >/dev/null 2>&1
-> libtool: compile:  x86_64-pc-linux-gnu-gcc -DHAVE_CONFIG_H -I. -I.. 
-> -I../include -Wall -march=native -mtune=native -O2 -pipe 
-> -fomit-frame-pointer -fno-stack-protector -c libf2fs.c -o 
-> libf2fs_la-libf2fs.o >/dev/null 2>&1
-> /bin/sh ../libtool  --tag=CC   --mode=link x86_64-pc-linux-gnu-gcc -Wall 
-> -march=native -mtune=native -O2 -pipe -fomit-frame-pointer 
-> -fno-stack-protector -version-info 0:2:1 -Wl,-O1 -Wl,--as-needed -o 
-> libf2fs.la -rpath /lib64 libf2fs_la-libf2fs.lo libf2fs_la-libf2fs_io.lo 
-> libf2fs_la-zbc.lo
-> libtool:   error: AGE '1' is greater than the current interface number '0'
-> libtool:   error: '0:2:1' is not valid version information
-> make[2]: *** [Makefile:411: libf2fs.la] Error 1
-> make[2]: Leaving directory 
-> '/tmp/portage/sys-fs/f2fs-tools-9999/work/f2fs-tools-9999/lib'
-> make[1]: *** [Makefile:415: all-recursive] Error 1
-> make[1]: Leaving directory 
-> '/tmp/portage/sys-fs/f2fs-tools-9999/work/f2fs-tools-9999'
-> make: *** [Makefile:347: all] Error 2
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
+Roland Dreier
 ------------------------------------------------------------------------------
