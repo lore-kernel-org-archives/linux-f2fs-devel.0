@@ -1,60 +1,48 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: allow copying file range only in
-	between regular files
-Date: Thu, 4 Aug 2016 20:13:02 +0800
-Message-ID: <20160804121303.62766-1-yuchao0@huawei.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 37/45] drivers: use req op accessor
+Date: Thu, 4 Aug 2016 08:46:22 -0700
+Message-ID: <20160804154622.GB15656@infradead.org>
+References: <1465155145-10812-1-git-send-email-mchristi@redhat.com>
+	<1465155145-10812-38-git-send-email-mchristi@redhat.com>
+	<CAOxpaSUMsgfTYsL0bL6VCnwxz7bpgpKO-ZfC5J8dFG9PN-hzvg@mail.gmail.com>
+	<87fbe31f-27b3-ff7a-e381-34fc1aad337e@redhat.com>
+	<CAJVOszAd9Eu88P2=QoNVArd0jwDH7KRe=OB82tCNMpjfv9B4KA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1bVHX8-0003cz-HX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Aug 2016 12:13:54 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1bVHX3-0002Yk-Cc
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Aug 2016 12:13:54 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <xfs-bounces@oss.sgi.com>
+Content-Disposition: inline
+In-Reply-To: <CAJVOszAd9Eu88P2=QoNVArd0jwDH7KRe=OB82tCNMpjfv9B4KA@mail.gmail.com>
+List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
+List-Archive: <http://oss.sgi.com/pipermail/xfs>
+List-Post: <mailto:xfs@oss.sgi.com>
+List-Help: <mailto:xfs-request@oss.sgi.com?subject=help>
+List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
+	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
+Errors-To: xfs-bounces@oss.sgi.com
+Sender: xfs-bounces@oss.sgi.com
+To: Shaun Tancheff <shaun.tancheff@seagate.com>
+Cc: philipp.reisner@linbit.com, dm-devel@redhat.com, target-devel@vger.kernel.org, linux-mtd@lists.infradead.org, drbd-dev@lists.linbit.com, linux-scsi@vger.kernel.org, Mike Christie <mchristi@redhat.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, linux-ext4 <linux-ext4@vger.kernel.org>, konrad.wilk@oracle.com, XFS Developers <xfs@oss.sgi.com>, linux-block@vger.kernel.org, linux-bcache@vger.kernel.org, osd-dev@open-osd.org, Ross Zwisler <zwisler@gmail.com>, Jens Axboe <axboe@fb.com>, linux-raid@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-btrfs@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, lars.ellenberg@linbit.com, ocfs2-devel@oss.oracle.com
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Only if two input files are regular files, we allow copying data in
-range of them, otherwise, deny it.
+On Wed, Aug 03, 2016 at 07:30:29PM -0500, Shaun Tancheff wrote:
+> I think the translation in loop.c is suspicious here:
+> 
+>     "if use DIO && not (a flush_flag or discard_flag)"
+> should translate to:
+>     "if use DIO && not ((a flush_flag) || op == discard)"
+> 
+> But in the patch I read:
+>     "if use DIO && ((not a flush_flag) || op == discard)
+> 
+> Which would have DIO && discards follow the AIO path?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Indeed.  Sorry for missing out on your patch, I just sent a fix
+in reply to Dave's other report earlier which is pretty similar to
+yours.
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index be81722..409f0ec 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2162,8 +2162,8 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
- 	if (unlikely(f2fs_readonly(src->i_sb)))
- 		return -EROFS;
- 
--	if (S_ISDIR(src->i_mode) || S_ISDIR(dst->i_mode))
--		return -EISDIR;
-+	if (!S_ISREG(src->i_mode) || !S_ISREG(dst->i_mode))
-+		return -EINVAL;
- 
- 	if (f2fs_encrypted_inode(src) || f2fs_encrypted_inode(dst))
- 		return -EOPNOTSUPP;
--- 
-2.8.2.311.gee88674
-
-
-------------------------------------------------------------------------------
+_______________________________________________
+xfs mailing list
+xfs@oss.sgi.com
+http://oss.sgi.com/mailman/listinfo/xfs
