@@ -1,157 +1,232 @@
-From: "Huang\, Ying" <ying.huang@intel.com>
-Subject: Re: [LKP] [lkp] [f2fs] ec795418c4: fsmark.files_per_sec
-	-36.3% regression
-Date: Thu, 04 Aug 2016 13:36:13 -0700
-Message-ID: <87r3a4b7b6.fsf@yhuang-mobile.sh.intel.com>
-References: <20160718020950.GB4986@yexl-desktop>
-	<87twfmsndf.fsf@yhuang-mobile.sh.intel.com>
-	<87bn18cvuu.fsf_-_@yhuang-mobile.sh.intel.com>
-	<20160804172452.GA12093@jaegeuk>
-	<874m70ctu3.fsf@yhuang-mobile.sh.intel.com>
-	<20160804185251.GA13813@jaegeuk>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: do not use discard_map for non-discard case
+Date: Fri, 5 Aug 2016 17:38:25 +0800
+Message-ID: <f1f77f9c-0b2f-f0eb-3c5d-bb1a206d0895@huawei.com>
+References: <20160804190438.14878-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ying.huang@intel.com>) id 1bVPNM-0002FQ-Kl
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Aug 2016 20:36:20 +0000
-Received: from mga02.intel.com ([134.134.136.20])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1bVPNL-0003QC-H7 for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 04 Aug 2016 20:36:20 +0000
-In-Reply-To: <20160804185251.GA13813@jaegeuk> (Jaegeuk Kim's message of "Thu,
-	4 Aug 2016 11:52:51 -0700")
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, lkp@01.org, kernel test robot <xiaolong.ye@intel.com>, "Huang,
-	Ying" <ying.huang@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160804190438.14878-1-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Jaegeuk Kim <jaegeuk@kernel.org> writes:
+Hi Jaegeuk,
 
-> On Thu, Aug 04, 2016 at 10:44:20AM -0700, Huang, Ying wrote:
->> Jaegeuk Kim <jaegeuk@kernel.org> writes:
->> 
->> > Hi Huang,
->> >
->> > On Thu, Aug 04, 2016 at 10:00:41AM -0700, Huang, Ying wrote:
->> >> Hi, Jaegeuk,
->> >> 
->> >> "Huang, Ying" <ying.huang@intel.com> writes:
->> >> > Hi,
->> >> >
->> >> > I checked the comparison result below and found this is a regression for
->> >> > fsmark.files_per_sec, not fsmark.app_overhead.
->> >> >
->> >> > Best Regards,
->> >> > Huang, Ying
->> >> >
->> >> > kernel test robot <xiaolong.ye@intel.com> writes:
->> >> >
->> >> >> FYI, we noticed a -36.3% regression of fsmark.files_per_sec due to commit:
->> >> >>
->> >> >> commit ec795418c41850056feb956534edf059dc1155d4 ("f2fs: use percpu_rw_semaphore")
->> >> >> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git dev-test
->> >> 
->> >> I found this has been merged by upstream.  Do you have some plan to fix
->> >> it?  Or you think the test itself has some problem?
->> >
->> > Sorry, too busy to take a look at this.
->> > The patch implements percpu_rw_semaphore which is intended to enhance FS
->> > scalability. Since I couldn't see any big regression in my test cases, could you
->> > check any debugging options which may give some overheads?
->> 
->> The kernel config related with F2FS is as follow in our test,
->> 
->> CONFIG_F2FS_FS=m
->> CONFIG_F2FS_STAT_FS=y
->> CONFIG_F2FS_FS_XATTR=y
->> CONFIG_F2FS_FS_POSIX_ACL=y
->> # CONFIG_F2FS_FS_SECURITY is not set
->> # CONFIG_F2FS_CHECK_FS is not set
->> # CONFIG_F2FS_FS_ENCRYPTION is not set
->> # CONFIG_F2FS_IO_TRACE is not set
->> # CONFIG_F2FS_FAULT_INJECTION is not set
->> 
->> What do you think we need to change?  Or do you mean some other
->> debugging options?  Anyway, you can check our kernel config attached.
->> 
->> > Let me recheck this with whole my tests.
->> 
->> Maybe you can try our kernel config?  Or if our kernel config is not
->> reasonable, can you help us to revise it?  The full kernel config we
->> used is attached with the email.
->
-> I could reproduce the fsmark regression in my machine and confirm there is
-> another small regression as well.
-> I'll revert this patch. Thank you.
->
-> [lkp] [f2fs] 3bdad3c7ee: aim7.jobs-per-min -25.3% regression
-> [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
->
-> In terms of the above regression, I could check that _reproduce_ procedure
-> includes mounting filesystem only. Is that correct?
+On 2016/8/5 3:04, Jaegeuk Kim wrote:
+> We don't need to keep discard_map, if f2fs has no discard mount option.
 
-Sorry, our test system failed to generate reproduce steps for aim7.  We
-will implement it.
+In trim_fs path, we will still use discard_map though, right?
 
-- [lkp] [f2fs] 3bdad3c7ee: aim7.jobs-per-min -25.3% regression
+Thanks,
 
-The disk is one 48G ram disk.  The steps for aim7 is,
-
-cat > workfile <<EOF
-FILESIZE: 1M
-POOLSIZE: 10M
-10 disk_cp
-EOF
-
-(
-	echo $HOSTNAME
-	echo disk_cp
-
-	echo 1
-	echo 3000
-	echo 2
-	echo 3000
-	echo 1
-) | ./multitask -t &
-
-
-- [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
-
-The disk is 4 12G ram disk, and setup RAID0 on them via mdadm.  The
-steps for aim7 is,
-
-cat > workfile <<EOF
-FILESIZE: 1M
-POOLSIZE: 10M
-10 sync_disk_rw
-EOF
-
-(
-	echo $HOSTNAME
-	echo sync_disk_rw
-
-	echo 1
-	echo 600
-	echo 2
-	echo 600
-	echo 1
-) | ./multitask -t &
-
-
-Best Regards,
-Huang, Ying
-
-------------------------------------------------------------------------------
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/f2fs.h    |  2 ++
+>  fs/f2fs/segment.c | 87 ++++++++++++++++++++++++++++++++++++++++++++++---------
+>  fs/f2fs/super.c   | 10 +++++++
+>  3 files changed, 86 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 61cb83d..a400715 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2036,6 +2036,8 @@ int lookup_journal_in_cursum(struct f2fs_journal *, int, unsigned int, int);
+>  void flush_sit_entries(struct f2fs_sb_info *, struct cp_control *);
+>  int build_segment_manager(struct f2fs_sb_info *);
+>  void destroy_segment_manager(struct f2fs_sb_info *);
+> +int build_discard_map(struct f2fs_sb_info *);
+> +void destroy_discard_map(struct f2fs_sb_info *);
+>  int __init create_segment_manager_caches(void);
+>  void destroy_segment_manager_caches(void);
+>  
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index a46296f..66822d3 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -660,11 +660,11 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	bool force = (cpc->reason == CP_DISCARD);
+>  	int i;
+>  
+> -	if (se->valid_blocks == max_blocks)
+> +	if (se->valid_blocks == max_blocks || !test_opt(sbi, DISCARD))
+>  		return;
+>  
+>  	if (!force) {
+> -		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
+> +		if (!se->valid_blocks ||
+>  		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
+>  			return;
+>  	}
+> @@ -818,12 +818,14 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+>  	if (del > 0) {
+>  		if (f2fs_test_and_set_bit(offset, se->cur_valid_map))
+>  			f2fs_bug_on(sbi, 1);
+> -		if (!f2fs_test_and_set_bit(offset, se->discard_map))
+> +		if (test_opt(sbi, DISCARD) &&
+> +			!f2fs_test_and_set_bit(offset, se->discard_map))
+>  			sbi->discard_blks--;
+>  	} else {
+>  		if (!f2fs_test_and_clear_bit(offset, se->cur_valid_map))
+>  			f2fs_bug_on(sbi, 1);
+> -		if (f2fs_test_and_clear_bit(offset, se->discard_map))
+> +		if (test_opt(sbi, DISCARD) &&
+> +			f2fs_test_and_clear_bit(offset, se->discard_map))
+>  			sbi->discard_blks++;
+>  	}
+>  	if (!f2fs_test_bit(offset, se->ckpt_valid_map))
+> @@ -2096,6 +2098,55 @@ out:
+>  	set_prefree_as_free_segments(sbi);
+>  }
+>  
+> +static int __init_discard_map(struct f2fs_sb_info *sbi)
+> +{
+> +	struct sit_info *sit_i;
+> +	unsigned int start;
+> +
+> +	if (!test_opt(sbi, DISCARD))
+> +		return 0;
+> +
+> +	sit_i = SIT_I(sbi);
+> +
+> +	for (start = 0; start < MAIN_SEGS(sbi); start++) {
+> +		sit_i->sentries[start].discard_map
+> +				= kzalloc(SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
+> +		if (!sit_i->sentries[start].discard_map)
+> +			return -ENOMEM;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static void __build_discard_map(struct f2fs_sb_info *sbi)
+> +{
+> +	struct sit_info *sit_i;
+> +	unsigned int start;
+> +
+> +	if (!test_opt(sbi, DISCARD))
+> +		return;
+> +
+> +	sit_i = SIT_I(sbi);
+> +
+> +	for (start = 0; start < MAIN_SEGS(sbi); start++) {
+> +		struct seg_entry *se = &sit_i->sentries[start];
+> +
+> +		memcpy(se->discard_map, se->cur_valid_map, SIT_VBLOCK_MAP_SIZE);
+> +		sbi->discard_blks += sbi->blocks_per_seg - se->valid_blocks;
+> +	}
+> +}
+> +
+> +int build_discard_map(struct f2fs_sb_info *sbi)
+> +{
+> +	int err;
+> +
+> +	err = __init_discard_map(sbi);
+> +	if (err)
+> +		return err;
+> +
+> +	__build_discard_map(sbi);
+> +	return 0;
+> +}
+> +
+>  static int build_sit_info(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
+> @@ -2127,14 +2178,14 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
+>  			= kzalloc(SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
+>  		sit_i->sentries[start].ckpt_valid_map
+>  			= kzalloc(SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
+> -		sit_i->sentries[start].discard_map
+> -			= kzalloc(SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
+>  		if (!sit_i->sentries[start].cur_valid_map ||
+> -				!sit_i->sentries[start].ckpt_valid_map ||
+> -				!sit_i->sentries[start].discard_map)
+> +				!sit_i->sentries[start].ckpt_valid_map)
+>  			return -ENOMEM;
+>  	}
+>  
+> +	if (__init_discard_map(sbi))
+> +		return -ENOMEM;
+> +
+>  	sit_i->tmp_map = kzalloc(SIT_VBLOCK_MAP_SIZE, GFP_KERNEL);
+>  	if (!sit_i->tmp_map)
+>  		return -ENOMEM;
+> @@ -2275,10 +2326,6 @@ got_it:
+>  			check_block_count(sbi, start, &sit);
+>  			seg_info_from_raw_sit(se, &sit);
+>  
+> -			/* build discard map only one time */
+> -			memcpy(se->discard_map, se->cur_valid_map, SIT_VBLOCK_MAP_SIZE);
+> -			sbi->discard_blks += sbi->blocks_per_seg - se->valid_blocks;
+> -
+>  			if (sbi->segs_per_sec > 1) {
+>  				struct sec_entry *e = get_sec_entry(sbi, start);
+>  				e->valid_blocks += se->valid_blocks;
+> @@ -2286,6 +2333,9 @@ got_it:
+>  		}
+>  		start_blk += readed;
+>  	} while (start_blk < sit_blk_cnt);
+> +
+> +	/* build discard map only one time */
+> +	__build_discard_map(sbi);
+>  }
+>  
+>  static void init_free_segmap(struct f2fs_sb_info *sbi)
+> @@ -2522,6 +2572,17 @@ static void destroy_free_segmap(struct f2fs_sb_info *sbi)
+>  	kfree(free_i);
+>  }
+>  
+> +void destroy_discard_map(struct f2fs_sb_info *sbi)
+> +{
+> +	struct sit_info *sit_i = SIT_I(sbi);
+> +	unsigned int start;
+> +
+> +	for (start = 0; start < MAIN_SEGS(sbi); start++) {
+> +		kfree(sit_i->sentries[start].discard_map);
+> +		sit_i->sentries[start].discard_map = NULL;
+> +	}
+> +}
+> +
+>  static void destroy_sit_info(struct f2fs_sb_info *sbi)
+>  {
+>  	struct sit_info *sit_i = SIT_I(sbi);
+> @@ -2534,8 +2595,8 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
+>  		for (start = 0; start < MAIN_SEGS(sbi); start++) {
+>  			kfree(sit_i->sentries[start].cur_valid_map);
+>  			kfree(sit_i->sentries[start].ckpt_valid_map);
+> -			kfree(sit_i->sentries[start].discard_map);
+>  		}
+> +		destroy_discard_map(sbi);
+>  	}
+>  	kfree(sit_i->tmp_map);
+>  
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 7f863a6..eec5c95 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1001,6 +1001,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  	bool need_restart_gc = false;
+>  	bool need_stop_gc = false;
+>  	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
+> +	bool no_discard = !test_opt(sbi, DISCARD);
+>  
+>  	/*
+>  	 * Save the old mount options in case we
+> @@ -1079,6 +1080,15 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  		if (err)
+>  			goto restore_gc;
+>  	}
+> +
+> +	/* initialize discard map structure */
+> +	if (no_discard && test_opt(sbi, DISCARD)) {
+> +		err = build_discard_map(sbi);
+> +		if (err)
+> +			goto restore_gc;
+> +	} else if (!no_discard && !test_opt(sbi, DISCARD)) {
+> +		destroy_discard_map(sbi);
+> +	}
+>  skip:
+>  	/* Update the POSIXACL Flag */
+>  	sb->s_flags = (sb->s_flags & ~MS_POSIXACL) |
+> 
