@@ -1,25 +1,31 @@
-From: Jonggyu <i9mpossible@gmail.com>
-Subject: [PATCH] In fs/f2fs/data.c, there is a typo.
-Date: Wed, 10 Aug 2016 20:25:36 +0900
-Message-ID: <1470828336-26120-1-git-send-email-i9mpossible@gmail.com>
+From: "Huang\, Ying" <ying.huang@intel.com>
+Subject: Re: [LKP] [lkp] [f2fs] ec795418c4: fsmark.files_per_sec
+	-36.3% regression
+Date: Thu, 11 Aug 2016 15:49:41 -0700
+Message-ID: <87vaz6yl8a.fsf@yhuang-mobile.sh.intel.com>
+References: <20160718020950.GB4986@yexl-desktop>
+	<87twfmsndf.fsf@yhuang-mobile.sh.intel.com>
+	<87bn18cvuu.fsf_-_@yhuang-mobile.sh.intel.com>
+	<20160804172452.GA12093@jaegeuk>
+	<874m70ctu3.fsf@yhuang-mobile.sh.intel.com>
+	<20160804185251.GA13813@jaegeuk>
+	<87r3a4b7b6.fsf@yhuang-mobile.sh.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <i9mpossible@gmail.com>) id 1bXRdi-0005N9-J7
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <ying.huang@intel.com>) id 1bXynM-0002fz-RN
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 10 Aug 2016 11:25:38 +0000
-Received: from mail-pf0-f193.google.com ([209.85.192.193])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1bXRdh-0001TZ-T2
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 10 Aug 2016 11:25:38 +0000
-Received: by mail-pf0-f193.google.com with SMTP id y134so2716191pfg.3
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 10 Aug 2016 04:25:37 -0700 (PDT)
+	Thu, 11 Aug 2016 22:49:48 +0000
+Received: from mga04.intel.com ([192.55.52.120])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1bXynL-0002MO-Uk for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 11 Aug 2016 22:49:48 +0000
+In-Reply-To: <87r3a4b7b6.fsf@yhuang-mobile.sh.intel.com> (Ying Huang's message
+	of "Thu, 4 Aug 2016 13:36:13 -0700")
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,32 +35,72 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, cm224.lee@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, lkp@01.org, kernel test robot <xiaolong.ye@intel.com>, "Huang,
+	Ying" <ying.huang@intel.com>
 
-I fixed write_cche_pages to write_cache_pages
+Hi, Kim,
 
-Signed-off-by: Jonggyu <i9mpossible@gmail.com>
----
- fs/f2fs/data.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+"Huang, Ying" <ying.huang@intel.com> writes:
+>>
+>> [lkp] [f2fs] 3bdad3c7ee: aim7.jobs-per-min -25.3% regression
+>> [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
+>>
+>> In terms of the above regression, I could check that _reproduce_ procedure
+>> includes mounting filesystem only. Is that correct?
+>
+> Sorry, our test system failed to generate reproduce steps for aim7.  We
+> will implement it.
+>
+> - [lkp] [f2fs] 3bdad3c7ee: aim7.jobs-per-min -25.3% regression
+>
+> The disk is one 48G ram disk.  The steps for aim7 is,
+>
+> cat > workfile <<EOF
+> FILESIZE: 1M
+> POOLSIZE: 10M
+> 10 disk_cp
+> EOF
+>
+> (
+> 	echo $HOSTNAME
+> 	echo disk_cp
+>
+> 	echo 1
+> 	echo 3000
+> 	echo 2
+> 	echo 3000
+> 	echo 1
+> ) | ./multitask -t &
+>
+>
+> - [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
+>
+> The disk is 4 12G ram disk, and setup RAID0 on them via mdadm.  The
+> steps for aim7 is,
+>
+> cat > workfile <<EOF
+> FILESIZE: 1M
+> POOLSIZE: 10M
+> 10 sync_disk_rw
+> EOF
+>
+> (
+> 	echo $HOSTNAME
+> 	echo sync_disk_rw
+>
+> 	echo 1
+> 	echo 600
+> 	echo 2
+> 	echo 600
+> 	echo 1
+> ) | ./multitask -t &
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index d64d2a5..9549ff0 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1326,7 +1326,7 @@ redirty_out:
- }
- 
- /*
-- * This function was copied from write_cche_pages from mm/page-writeback.c.
-+ * This function was copied from write_cache_pages from mm/page-writeback.c.
-  * The major change is making write step of cold data page separately from
-  * warm/hot data page.
-  */
--- 
-1.9.1
+Any update on these 2 regressions?  Is the information is enough for you
+to reproduce?
 
+Best Regards,
+Huang, Ying
 
 ------------------------------------------------------------------------------
 What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
