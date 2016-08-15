@@ -1,25 +1,26 @@
-From: Chao Yu <yuchao0@huawei.com>
+From: Alexander Gordeev <alex@gordick.net>
 Subject: Re: video archive on a microSD card
-Date: Mon, 15 Aug 2016 19:41:13 +0800
-Message-ID: <eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
+Date: Mon, 15 Aug 2016 15:22:52 +0300
+Message-ID: <7021471263772@web16m.yandex.ru>
 References: <146631471002747@web20h.yandex.ru>
 	<281281471258049@web6h.yandex.ru>
+	<eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1bZGXR-0000Ch-43
+	(envelope-from <alex@gordick.net>) id 1bZGuz-0001P7-2q
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Aug 2016 11:58:41 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1bZGXM-0003MA-5U
+	Mon, 15 Aug 2016 12:23:01 +0000
+Received: from forward2m.cmail.yandex.net ([5.255.216.20])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bZGux-0004v7-94
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Aug 2016 11:58:41 +0000
-In-Reply-To: <281281471258049@web6h.yandex.ru>
+	Mon, 15 Aug 2016 12:23:01 +0000
+In-Reply-To: <eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,210 +30,131 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: alex@gordick.net
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Alexander,
-
-On 2016/8/15 18:47, Alexander Gordeev wrote:
-> Hi All,
-> 
-> 12.08.2016, 14:52, "Alexander Gordeev" <alex@gordick.net>:
->> Hi All,
->>
->> I hope I'm writing to the right mailing list. If not please give me directions to the right place.
->> I'm trying to write video archive to a microSD card on an ARM based IP camera. The camera's SDK uses Linux 3.10.
->> The kernel is quite old and F2FS is there since 3.8 AFAIK so it's probably not mature yet. However, I decided to give it a try.
->> The idea is to write video continuously in 5 minute chunks. I also have an index file per each archive chunk file to for faster seeks and a single SQLite database.
->> When utilization is about 95%, the chunks and their indexes from the archive tail are deleted. So it's like a ring buffer. Also the overprovision ratio is the default 5%.
->> It worked quite good for several days with about 95% utilization, but then today it went bad. Writes are taking several seconds quite often as shown by strace.
->> vmstat shows that my process waits for IO most of the time:
->>
->> procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----
->>  r b swpd free buff cache si so bi bo in cs us sy id wa
->>  2 2 0 6352 4 35924 0 0 8 88 562 1316 41 7 0 52
->>  1 2 0 6324 4 35928 0 0 4 44 553 1231 40 8 0 52
->>  1 2 0 6324 4 35928 0 0 0 0 690 1471 36 10 0 54
->>  1 3 0 6296 4 35932 0 0 0 0 530 1242 40 5 0 54
->>  2 2 0 6296 4 35936 0 0 4 48 545 1244 40 6 0 54
->>  1 2 0 6296 4 35940 0 0 4 44 549 1275 39 6 0 55
->>  2 2 0 6288 4 35944 0 0 4 44 563 1315 39 8 0 53
->>  3 2 0 6296 4 35944 0 0 0 0 502 1158 41 2 0 57
->>  1 3 0 6296 4 35952 0 0 8 88 700 1527 40 9 0 51
->>  1 2 0 6296 4 35952 0 0 0 0 482 1141 38 8 0 55
->>  1 2 0 6296 4 35956 0 0 4 44 594 1383 38 13 0 49
->>  1 2 0 6296 4 35956 0 0 0 0 489 1160 37 5 0 58
->>  5 1 0 6268 4 35980 0 0 12 132 704 1565 42 9 0 49
->>  2 1 0 6268 4 35984 0 0 4 44 531 1215 39 10 0 51
->>  3 2 0 6268 4 35992 0 0 8 92 714 1574 36 9 0 55
->>  1 1 0 6268 4 35992 0 0 0 0 485 1163 39 6 0 55
->>  1 1 0 6240 4 36000 0 0 8 92 553 1282 38 9 0 53
->>  1 2 0 6240 4 36000 0 0 0 0 488 1135 39 7 0 54
->>  1 1 0 6240 4 36000 0 0 0 0 552 1264 39 9 0 52
->>  3 1 0 6240 4 36000 0 0 0 0 510 1187 40 6 0 54
->>  1 2 0 6240 4 36004 0 0 4 44 674 1496 43 8 0 49
->>  1 1 0 6240 4 36012 0 0 8 88 572 1373 39 9 0 53
->>  4 1 0 6232 4 36016 0 0 4 48 549 1248 41 4 0 55
->>  3 1 0 6240 4 36016 0 0 0 0 520 1209 36 8 0 55
->>
->> Here is also /sys/kernel/debug/f2fs/status for reference:
->> =====[ partition info(sda). #0 ]=====
->> [SB: 1] [CP: 2] [SIT: 4] [NAT: 118] [SSA: 60] [MAIN: 29646(OverProv:1529 Resv:50)]
->>
->> Utilization: 94% (13597314 valid blocks)
->>   - Node: 16395 (Inode: 2913, Other: 13482)
->>   - Data: 13580919
->>
->> Main area: 29646 segs, 14823 secs 14823 zones
->>   - COLD data: 3468, 1734, 1734
->>   - WARM data: 12954, 6477, 6477
->>   - HOT data: 28105, 14052, 14052
->>   - Dir dnode: 29204, 14602, 14602
->>   - File dnode: 19960, 9980, 9980
->>   - Indir nodes: 29623, 14811, 14811
->>
->>   - Valid: 13615
->>   - Dirty: 13309
->>   - Prefree: 0
->>   - Free: 2722 (763)
->>
->> GC calls: 8622 (BG: 4311)
->>   - data segments : 8560
->>   - node segments : 62
->> Try to move 3552161 blocks
->>   - data blocks : 3540278
->>   - node blocks : 11883
->>
->> Extent Hit Ratio: 49 / 4171
->>
->> Balancing F2FS Async:
->>   - nodes 6 in 141
->>   - dents 0 in dirs: 0
->>   - meta 13 in 346
->>   - NATs 16983 > 29120
->>   - SITs: 17
->>   - free_nids: 1861
->>
->> Distribution of User Blocks: [ valid | invalid | free ]
->>   [-----------------------------------------------|-|--]
->>
->> SSR: 1230719 blocks in 14834 segments
->> LFS: 15150190 blocks in 29589 segments
->>
->> BDF: 89, avg. vblocks: 949
->>
->> Memory: 6754 KB = static: 4763 + cached: 1990
->>
->> Please note that I tried to put all the archive and index files into the cold area using the file extensions mechanism.
->> And indeed I saw numbers close to the total amount of segments in the cold area a couple of days ago.
->> But now the cold area gets smaller very quickly. What am I doing wrong?
-
-How could you know the cold area is getting smaller? if it is looks as you said,
-the behavior of f2fs seems not reasonable.
-
->>
->> Can this be fixed by using a backport from git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-stable.git ?
->> Also I measured the SD card erase block size using flashbench. It seems it is 8MB, not 4MB, as I used here.
->> Can this lead to such serious problems? Is 8MB block safe to hardcode or should I use flashbench every time?
-
-I think 4MB is OK, if we set section size to 8MB, it will make us encountering
-long latency of most operation due to foreground GC in where we may move more
-blocks in one section.
-
->>
->> Please help. Thanks for reading!
-> 
-> I used backported version of f2fs above. It helps a bit, but not much. This is the new status:
-
-Do you use discard mount option? and could you try using fstrim in range of
-whole flash device to see whether performance is recoverable?
-
-Thanks,
-
-> 
-> =====[ partition info(sda). #0, RW]=====
-> [SB: 1] [CP: 2] [SIT: 4] [NAT: 118] [SSA: 60] [MAIN: 29646(OverProv:1529 Resv:50)]
-> 
-> Utilization: 94% (13608114 valid blocks)
->   - Node: 17228 (Inode: 3793, Other: 13435)
->   - Data: 13590886
->   - Inline_xattr Inode: 0
->   - Inline_data Inode: 52
->   - Inline_dentry Inode: 0
->   - Orphan Inode: 0
-> 
-> Main area: 29646 segs, 14823 secs 14823 zones
->   - COLD  data: 11906, 5953, 5953
->   - WARM  data: 11782, 5891, 5891
->   - HOT   data: 11598, 5799, 5799
->   - Dir   dnode: 9418, 4709, 4709
->   - File   dnode: 11833, 5916, 5916
->   - Indir nodes: 11382, 5691, 5691
-> 
->   - Valid: 15671
->   - Dirty: 12904
->   - Prefree: 0
->   - Free: 1071 (27)
-> 
-> CP calls: 3320 (BG: 0)
-> GC calls: 2240 (BG: 1)
->   - data segments : 3866 (1236)
->   - node segments : 243 (0)
-> Try to move 1123706 blocks (BG: 429924)
->   - data blocks : 1012524 (429924)
->   - node blocks : 111182 (0)
-> 
-> Extent Cache:
->   - Hit Count: L1-1:55840 L1-2:14504 L2:1926
->   - Hit Ratio: 3% (72270 / 2221766)
->   - Inner Struct Count: tree: 570(0), node: 3
-> 
-> Balancing F2FS Async:
->   - inmem:    0, wb_bios:    2
->   - nodes:    0 in  239
->   - dents:    0 in dirs:   0 (   0)
->   - datas:  706 in files:   0
->   - meta:    0 in  512
->   - NATs:         0/      117
->   - SITs:         0/    29646
->   - free_nids:      1575
-> 
-> Distribution of User Blocks: [ valid | invalid | free ]
->   [-----------------------------------------------|---|]
-> 
-> IPU: 1960 blocks
-> SSR: 18200 blocks in 71 segments
-> LFS: 2136736 blocks in 4173 segments
-> 
-> BDF: 87, avg. vblocks: 862
-> 
-> Memory: 9437 KB
->   - static: 6385 KB
->   - cached: 47 KB
->   - paged : 3004 KB
-> 
-> 
-> I also have a patch for branch linux-3.10.y. I doesn't build without the patch.
-> 
-> -- 
->  Alexander
-> 
-> ------------------------------------------------------------------------------
-> What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
-> patterns at an interface-level. Reveals which users, apps, and protocols are 
-> consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
-> J-Flow, sFlow and other flows. Make informed decisions using capacity 
-> planning reports. http://sdm.link/zohodev2dev
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-
-
-------------------------------------------------------------------------------
-What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
-patterns at an interface-level. Reveals which users, apps, and protocols are 
-consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
-J-Flow, sFlow and other flows. Make informed decisions using capacity 
-planning reports. http://sdm.link/zohodev2dev
+SGkgQ2hhbywKClRoYW5rcyBmb3IgeW91ciByZXNwb25zZSEKCjE1LjA4LjIwMTYsIDE0OjU4LCAi
+Q2hhbyBZdSIgPHl1Y2hhbzBAaHVhd2VpLmNvbT46Cj4gSGkgQWxleGFuZGVyLAo+Cj4gT24gMjAx
+Ni84LzE1IDE4OjQ3LCBBbGV4YW5kZXIgR29yZGVldiB3cm90ZToKPj4gwqBIaSBBbGwsCj4+Cj4+
+IMKgMTIuMDguMjAxNiwgMTQ6NTIsICJBbGV4YW5kZXIgR29yZGVldiIgPGFsZXhAZ29yZGljay5u
+ZXQ+Ogo+Pj4gwqBIaSBBbGwsCj4+Pgo+Pj4gwqBJIGhvcGUgSSdtIHdyaXRpbmcgdG8gdGhlIHJp
+Z2h0IG1haWxpbmcgbGlzdC4gSWYgbm90IHBsZWFzZSBnaXZlIG1lIGRpcmVjdGlvbnMgdG8gdGhl
+IHJpZ2h0IHBsYWNlLgo+Pj4gwqBJJ20gdHJ5aW5nIHRvIHdyaXRlIHZpZGVvIGFyY2hpdmUgdG8g
+YSBtaWNyb1NEIGNhcmQgb24gYW4gQVJNIGJhc2VkIElQIGNhbWVyYS4gVGhlIGNhbWVyYSdzIFNE
+SyB1c2VzIExpbnV4IDMuMTAuCj4+PiDCoFRoZSBrZXJuZWwgaXMgcXVpdGUgb2xkIGFuZCBGMkZT
+IGlzIHRoZXJlIHNpbmNlIDMuOCBBRkFJSyBzbyBpdCdzIHByb2JhYmx5IG5vdCBtYXR1cmUgeWV0
+LiBIb3dldmVyLCBJIGRlY2lkZWQgdG8gZ2l2ZSBpdCBhIHRyeS4KPj4+IMKgVGhlIGlkZWEgaXMg
+dG8gd3JpdGUgdmlkZW8gY29udGludW91c2x5IGluIDUgbWludXRlIGNodW5rcy4gSSBhbHNvIGhh
+dmUgYW4gaW5kZXggZmlsZSBwZXIgZWFjaCBhcmNoaXZlIGNodW5rIGZpbGUgdG8gZm9yIGZhc3Rl
+ciBzZWVrcyBhbmQgYSBzaW5nbGUgU1FMaXRlIGRhdGFiYXNlLgo+Pj4gwqBXaGVuIHV0aWxpemF0
+aW9uIGlzIGFib3V0IDk1JSwgdGhlIGNodW5rcyBhbmQgdGhlaXIgaW5kZXhlcyBmcm9tIHRoZSBh
+cmNoaXZlIHRhaWwgYXJlIGRlbGV0ZWQuIFNvIGl0J3MgbGlrZSBhIHJpbmcgYnVmZmVyLiBBbHNv
+IHRoZSBvdmVycHJvdmlzaW9uIHJhdGlvIGlzIHRoZSBkZWZhdWx0IDUlLgo+Pj4gwqBJdCB3b3Jr
+ZWQgcXVpdGUgZ29vZCBmb3Igc2V2ZXJhbCBkYXlzIHdpdGggYWJvdXQgOTUlIHV0aWxpemF0aW9u
+LCBidXQgdGhlbiB0b2RheSBpdCB3ZW50IGJhZC4gV3JpdGVzIGFyZSB0YWtpbmcgc2V2ZXJhbCBz
+ZWNvbmRzIHF1aXRlIG9mdGVuIGFzIHNob3duIGJ5IHN0cmFjZS4KPj4+IMKgdm1zdGF0IHNob3dz
+IHRoYXQgbXkgcHJvY2VzcyB3YWl0cyBmb3IgSU8gbW9zdCBvZiB0aGUgdGltZToKPj4+Cj4+PiDC
+oHByb2NzIC0tLS0tLS0tLS0tbWVtb3J5LS0tLS0tLS0tLSAtLS1zd2FwLS0gLS0tLS1pby0tLS0g
+LXN5c3RlbS0tIC0tLS1jcHUtLS0tCj4+PiDCoMKgciBiIHN3cGQgZnJlZSBidWZmIGNhY2hlIHNp
+IHNvIGJpIGJvIGluIGNzIHVzIHN5IGlkIHdhCj4+PiDCoMKgMiAyIDAgNjM1MiA0IDM1OTI0IDAg
+MCA4IDg4IDU2MiAxMzE2IDQxIDcgMCA1Mgo+Pj4gwqDCoDEgMiAwIDYzMjQgNCAzNTkyOCAwIDAg
+NCA0NCA1NTMgMTIzMSA0MCA4IDAgNTIKPj4+IMKgwqAxIDIgMCA2MzI0IDQgMzU5MjggMCAwIDAg
+MCA2OTAgMTQ3MSAzNiAxMCAwIDU0Cj4+PiDCoMKgMSAzIDAgNjI5NiA0IDM1OTMyIDAgMCAwIDAg
+NTMwIDEyNDIgNDAgNSAwIDU0Cj4+PiDCoMKgMiAyIDAgNjI5NiA0IDM1OTM2IDAgMCA0IDQ4IDU0
+NSAxMjQ0IDQwIDYgMCA1NAo+Pj4gwqDCoDEgMiAwIDYyOTYgNCAzNTk0MCAwIDAgNCA0NCA1NDkg
+MTI3NSAzOSA2IDAgNTUKPj4+IMKgwqAyIDIgMCA2Mjg4IDQgMzU5NDQgMCAwIDQgNDQgNTYzIDEz
+MTUgMzkgOCAwIDUzCj4+PiDCoMKgMyAyIDAgNjI5NiA0IDM1OTQ0IDAgMCAwIDAgNTAyIDExNTgg
+NDEgMiAwIDU3Cj4+PiDCoMKgMSAzIDAgNjI5NiA0IDM1OTUyIDAgMCA4IDg4IDcwMCAxNTI3IDQw
+IDkgMCA1MQo+Pj4gwqDCoDEgMiAwIDYyOTYgNCAzNTk1MiAwIDAgMCAwIDQ4MiAxMTQxIDM4IDgg
+MCA1NQo+Pj4gwqDCoDEgMiAwIDYyOTYgNCAzNTk1NiAwIDAgNCA0NCA1OTQgMTM4MyAzOCAxMyAw
+IDQ5Cj4+PiDCoMKgMSAyIDAgNjI5NiA0IDM1OTU2IDAgMCAwIDAgNDg5IDExNjAgMzcgNSAwIDU4
+Cj4+PiDCoMKgNSAxIDAgNjI2OCA0IDM1OTgwIDAgMCAxMiAxMzIgNzA0IDE1NjUgNDIgOSAwIDQ5
+Cj4+PiDCoMKgMiAxIDAgNjI2OCA0IDM1OTg0IDAgMCA0IDQ0IDUzMSAxMjE1IDM5IDEwIDAgNTEK
+Pj4+IMKgwqAzIDIgMCA2MjY4IDQgMzU5OTIgMCAwIDggOTIgNzE0IDE1NzQgMzYgOSAwIDU1Cj4+
+PiDCoMKgMSAxIDAgNjI2OCA0IDM1OTkyIDAgMCAwIDAgNDg1IDExNjMgMzkgNiAwIDU1Cj4+PiDC
+oMKgMSAxIDAgNjI0MCA0IDM2MDAwIDAgMCA4IDkyIDU1MyAxMjgyIDM4IDkgMCA1Mwo+Pj4gwqDC
+oDEgMiAwIDYyNDAgNCAzNjAwMCAwIDAgMCAwIDQ4OCAxMTM1IDM5IDcgMCA1NAo+Pj4gwqDCoDEg
+MSAwIDYyNDAgNCAzNjAwMCAwIDAgMCAwIDU1MiAxMjY0IDM5IDkgMCA1Mgo+Pj4gwqDCoDMgMSAw
+IDYyNDAgNCAzNjAwMCAwIDAgMCAwIDUxMCAxMTg3IDQwIDYgMCA1NAo+Pj4gwqDCoDEgMiAwIDYy
+NDAgNCAzNjAwNCAwIDAgNCA0NCA2NzQgMTQ5NiA0MyA4IDAgNDkKPj4+IMKgwqAxIDEgMCA2MjQw
+IDQgMzYwMTIgMCAwIDggODggNTcyIDEzNzMgMzkgOSAwIDUzCj4+PiDCoMKgNCAxIDAgNjIzMiA0
+IDM2MDE2IDAgMCA0IDQ4IDU0OSAxMjQ4IDQxIDQgMCA1NQo+Pj4gwqDCoDMgMSAwIDYyNDAgNCAz
+NjAxNiAwIDAgMCAwIDUyMCAxMjA5IDM2IDggMCA1NQo+Pj4KPj4+IMKgSGVyZSBpcyBhbHNvIC9z
+eXMva2VybmVsL2RlYnVnL2YyZnMvc3RhdHVzIGZvciByZWZlcmVuY2U6Cj4+PiDCoD09PT09WyBw
+YXJ0aXRpb24gaW5mbyhzZGEpLiAjMCBdPT09PT0KPj4+IMKgW1NCOiAxXSBbQ1A6IDJdIFtTSVQ6
+IDRdIFtOQVQ6IDExOF0gW1NTQTogNjBdIFtNQUlOOiAyOTY0NihPdmVyUHJvdjoxNTI5IFJlc3Y6
+NTApXQo+Pj4KPj4+IMKgVXRpbGl6YXRpb246IDk0JSAoMTM1OTczMTQgdmFsaWQgYmxvY2tzKQo+
+Pj4gwqDCoMKgLSBOb2RlOiAxNjM5NSAoSW5vZGU6IDI5MTMsIE90aGVyOiAxMzQ4MikKPj4+IMKg
+wqDCoC0gRGF0YTogMTM1ODA5MTkKPj4+Cj4+PiDCoE1haW4gYXJlYTogMjk2NDYgc2VncywgMTQ4
+MjMgc2VjcyAxNDgyMyB6b25lcwo+Pj4gwqDCoMKgLSBDT0xEIGRhdGE6IDM0NjgsIDE3MzQsIDE3
+MzQKPj4+IMKgwqDCoC0gV0FSTSBkYXRhOiAxMjk1NCwgNjQ3NywgNjQ3Nwo+Pj4gwqDCoMKgLSBI
+T1QgZGF0YTogMjgxMDUsIDE0MDUyLCAxNDA1Mgo+Pj4gwqDCoMKgLSBEaXIgZG5vZGU6IDI5MjA0
+LCAxNDYwMiwgMTQ2MDIKPj4+IMKgwqDCoC0gRmlsZSBkbm9kZTogMTk5NjAsIDk5ODAsIDk5ODAK
+Pj4+IMKgwqDCoC0gSW5kaXIgbm9kZXM6IDI5NjIzLCAxNDgxMSwgMTQ4MTEKPj4+Cj4+PiDCoMKg
+wqAtIFZhbGlkOiAxMzYxNQo+Pj4gwqDCoMKgLSBEaXJ0eTogMTMzMDkKPj4+IMKgwqDCoC0gUHJl
+ZnJlZTogMAo+Pj4gwqDCoMKgLSBGcmVlOiAyNzIyICg3NjMpCj4+Pgo+Pj4gwqBHQyBjYWxsczog
+ODYyMiAoQkc6IDQzMTEpCj4+PiDCoMKgwqAtIGRhdGEgc2VnbWVudHMgOiA4NTYwCj4+PiDCoMKg
+wqAtIG5vZGUgc2VnbWVudHMgOiA2Mgo+Pj4gwqBUcnkgdG8gbW92ZSAzNTUyMTYxIGJsb2Nrcwo+
+Pj4gwqDCoMKgLSBkYXRhIGJsb2NrcyA6IDM1NDAyNzgKPj4+IMKgwqDCoC0gbm9kZSBibG9ja3Mg
+OiAxMTg4Mwo+Pj4KPj4+IMKgRXh0ZW50IEhpdCBSYXRpbzogNDkgLyA0MTcxCj4+Pgo+Pj4gwqBC
+YWxhbmNpbmcgRjJGUyBBc3luYzoKPj4+IMKgwqDCoC0gbm9kZXMgNiBpbiAxNDEKPj4+IMKgwqDC
+oC0gZGVudHMgMCBpbiBkaXJzOiAwCj4+PiDCoMKgwqAtIG1ldGEgMTMgaW4gMzQ2Cj4+PiDCoMKg
+wqAtIE5BVHMgMTY5ODMgPiAyOTEyMAo+Pj4gwqDCoMKgLSBTSVRzOiAxNwo+Pj4gwqDCoMKgLSBm
+cmVlX25pZHM6IDE4NjEKPj4+Cj4+PiDCoERpc3RyaWJ1dGlvbiBvZiBVc2VyIEJsb2NrczogWyB2
+YWxpZCB8IGludmFsaWQgfCBmcmVlIF0KPj4+IMKgwqDCoFstLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwtfC0tXQo+Pj4KPj4+IMKgU1NSOiAxMjMwNzE5IGJs
+b2NrcyBpbiAxNDgzNCBzZWdtZW50cwo+Pj4gwqBMRlM6IDE1MTUwMTkwIGJsb2NrcyBpbiAyOTU4
+OSBzZWdtZW50cwo+Pj4KPj4+IMKgQkRGOiA4OSwgYXZnLiB2YmxvY2tzOiA5NDkKPj4+Cj4+PiDC
+oE1lbW9yeTogNjc1NCBLQiA9IHN0YXRpYzogNDc2MyArIGNhY2hlZDogMTk5MAo+Pj4KPj4+IMKg
+UGxlYXNlIG5vdGUgdGhhdCBJIHRyaWVkIHRvIHB1dCBhbGwgdGhlIGFyY2hpdmUgYW5kIGluZGV4
+IGZpbGVzIGludG8gdGhlIGNvbGQgYXJlYSB1c2luZyB0aGUgZmlsZSBleHRlbnNpb25zIG1lY2hh
+bmlzbS4KPj4+IMKgQW5kIGluZGVlZCBJIHNhdyBudW1iZXJzIGNsb3NlIHRvIHRoZSB0b3RhbCBh
+bW91bnQgb2Ygc2VnbWVudHMgaW4gdGhlIGNvbGQgYXJlYSBhIGNvdXBsZSBvZiBkYXlzIGFnby4K
+Pj4+IMKgQnV0IG5vdyB0aGUgY29sZCBhcmVhIGdldHMgc21hbGxlciB2ZXJ5IHF1aWNrbHkuIFdo
+YXQgYW0gSSBkb2luZyB3cm9uZz8KPgo+IEhvdyBjb3VsZCB5b3Uga25vdyB0aGUgY29sZCBhcmVh
+IGlzIGdldHRpbmcgc21hbGxlcj8gaWYgaXQgaXMgbG9va3MgYXMgeW91IHNhaWQsCj4gdGhlIGJl
+aGF2aW9yIG9mIGYyZnMgc2VlbXMgbm90IHJlYXNvbmFibGUuCgpJJ20gbm90IHN1cmUgYWJvdXQg
+dGhpcy4gSSBqdXN0IHNhdyBudW1iZXJzIGFmdGVyICJDT0xEIGRhdGE6ICIgIGFib3ZlIHRvIGJl
+IHF1aXRlIGNsb3NlIHRvIHRoZSB0b3RhbCBhbW91bnQgYWZ0ZXIgIk1haW4gYXJlYToiLgpUaGlz
+IGlzIHF1aXRlIHJlYXNvbmFibGUgYmVjYXVzZSBJIHRyaWVkIHRvIHRoZSB2aWRlbyBmaWxlcyBp
+bnRvIHRoZSBjb2xkIGFyZWEuIFNvIHRoZSBjb2xkIGFyZWEgc2hvdWxkIHRha2UgYWxtb3N0IGFs
+bCB0aGUgZGV2aWNlLgpUaGUgaWRlYSBpcyB0byBzZXBhcmF0ZSB2aWRlbyBmaWxlcyBmcm9tIFNR
+TGl0ZSBkYXRhYmFzZSB3cml0ZXMuIEkgZ290IHRvIHRoaXMgaWRlYSB3aGlsZSByZWFkaW5nIHNv
+bWUgZG9jcyBvbiBmMmZzLgoKPj4+IMKgQ2FuIHRoaXMgYmUgZml4ZWQgYnkgdXNpbmcgYSBiYWNr
+cG9ydCBmcm9tIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9q
+YWVnZXVrL2YyZnMtc3RhYmxlLmdpdCA/Cj4+PiDCoEFsc28gSSBtZWFzdXJlZCB0aGUgU0QgY2Fy
+ZCBlcmFzZSBibG9jayBzaXplIHVzaW5nIGZsYXNoYmVuY2guIEl0IHNlZW1zIGl0IGlzIDhNQiwg
+bm90IDRNQiwgYXMgSSB1c2VkIGhlcmUuCj4+PiDCoENhbiB0aGlzIGxlYWQgdG8gc3VjaCBzZXJp
+b3VzIHByb2JsZW1zPyBJcyA4TUIgYmxvY2sgc2FmZSB0byBoYXJkY29kZSBvciBzaG91bGQgSSB1
+c2UgZmxhc2hiZW5jaCBldmVyeSB0aW1lPwo+Cj4gSSB0aGluayA0TUIgaXMgT0ssIGlmIHdlIHNl
+dCBzZWN0aW9uIHNpemUgdG8gOE1CLCBpdCB3aWxsIG1ha2UgdXMgZW5jb3VudGVyaW5nCj4gbG9u
+ZyBsYXRlbmN5IG9mIG1vc3Qgb3BlcmF0aW9uIGR1ZSB0byBmb3JlZ3JvdW5kIEdDIGluIHdoZXJl
+IHdlIG1heSBtb3ZlIG1vcmUKPiBibG9ja3MgaW4gb25lIHNlY3Rpb24uCgpJIHNlZS4gSSB0aG91
+Z2h0IEkgaGF2ZSB0byBhbGlnbiB0aGUgc2VjdGlvbiB0byB0aGUgaW50ZXJuYWwgZmxhc2ggZXJh
+c2UgYmxvY2sgc2l6ZS4KQWN0dWFsbHksIG15IHByb2JsZW0gaXMgdGhlIGluY3JlYXNlZCBsYXRl
+bmN5IGFmdGVyIHNldmVyYWwgZGF5cyBvZiByb3RhdGluZyB0aGUgYXJjaGl2ZSBhIDk1JSB1dGls
+aXphdGlvbi4KCj4+PiDCoFBsZWFzZSBoZWxwLiBUaGFua3MgZm9yIHJlYWRpbmchCj4+Cj4+IMKg
+SSB1c2VkIGJhY2twb3J0ZWQgdmVyc2lvbiBvZiBmMmZzIGFib3ZlLiBJdCBoZWxwcyBhIGJpdCwg
+YnV0IG5vdCBtdWNoLiBUaGlzIGlzIHRoZSBuZXcgc3RhdHVzOgo+Cj4gRG8geW91IHVzZSBkaXNj
+YXJkIG1vdW50IG9wdGlvbj8gYW5kIGNvdWxkIHlvdSB0cnkgdXNpbmcgZnN0cmltIGluIHJhbmdl
+IG9mCj4gd2hvbGUgZmxhc2ggZGV2aWNlIHRvIHNlZSB3aGV0aGVyIHBlcmZvcm1hbmNlIGlzIHJl
+Y292ZXJhYmxlPwoKV2VsbCwgaXQgc2VlbXMgbXkgU0QgY2FyZCBvciBTRCBjb250cm9vbGVyIGRv
+bid0IHN1cHBvcnQgZGlzY2FyZC4gRmlyc3QgSSd2ZSBzZWVuIHRoaXMgd2hlbiBmb3JtYXR0aW5n
+IHRoZSBTRCBjYXJkLgpta2ZzIHRvbGQgbWUsIHRoYXQgdGhlIGRldmljZSBkb2Vzbid0IHN1cHBv
+cnQgZGlzY2FyZC4gVGhlbiBJIHRyaWVkIHRvIHJ1biBibGtkaXNjYXJkIG1hbnVhbGx5LiBVbmZv
+cnR1bmF0ZWx5LCBpdCBmYWlsZWQuCgpCeSB0aGUgd2F5LCBJIGNyZWF0ZSB0aGUgRlMgbGlrZSB0
+aGlzOiBta2ZzLmYyZnMgLXMgMiAtZSAiYXJjLGlkeCIgL2Rldi9zZGExCkFuZCBtb3VudCBpdCBs
+aWtlIHRoaXM6IG1vdW50IC10IGYyZnMgL2Rldi9zZGExIC9zdG9yYWdlL3NkYTEgLW8gbm9kZXYs
+bm9leGVjLG5vc3VpZCxub2F0aW1lLG5vZGlyYXRpbWUsbm91c2VyX3hhdHRyLG5vYWNsCkknZCBi
+ZSBoYXBweSB0byBwcm92aWRlIGFueSBvdGhlciBpbmZvcm1hdGlvbiBmb3IgeW91LgoKLS3CoAog
+QWxleGFuZGVyCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KV2hhdCBOZXRGbG93IEFuYWx5emVyIGNh
+biBkbyBmb3IgeW91PyBNb25pdG9ycyBuZXR3b3JrIGJhbmR3aWR0aCBhbmQgdHJhZmZpYwpwYXR0
+ZXJucyBhdCBhbiBpbnRlcmZhY2UtbGV2ZWwuIFJldmVhbHMgd2hpY2ggdXNlcnMsIGFwcHMsIGFu
+ZCBwcm90b2NvbHMgYXJlIApjb25zdW1pbmcgdGhlIG1vc3QgYmFuZHdpZHRoLiBQcm92aWRlcyBt
+dWx0aS12ZW5kb3Igc3VwcG9ydCBmb3IgTmV0RmxvdywgCkotRmxvdywgc0Zsb3cgYW5kIG90aGVy
+IGZsb3dzLiBNYWtlIGluZm9ybWVkIGRlY2lzaW9ucyB1c2luZyBjYXBhY2l0eSAKcGxhbm5pbmcg
+cmVwb3J0cy4gaHR0cDovL3NkbS5saW5rL3pvaG9kZXYyZGV2Cl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0
+CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291
+cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
