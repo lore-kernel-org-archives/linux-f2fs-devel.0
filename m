@@ -1,88 +1,41 @@
-From: Alexander Gordeev <alex@gordick.net>
-Subject: [PATCH] f2fs: fix build for v3.10
-Date: Mon, 15 Aug 2016 15:57:54 +0300
-Message-ID: <1471265874-6941-1-git-send-email-alex@gordick.net>
-References: <281281471258049@web6h.yandex.ru>
+From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [GIT PULL] [PATCH v4 00/26] Delete CURRENT_TIME
+ and CURRENT_TIME_SEC macros
+Date: Mon, 15 Aug 2016 18:23:12 +0200
+Message-ID: <20160815162312.GA19794@kroah.com>
+References: <1471128518-24075-1-git-send-email-deepa.kernel@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <alex@gordick.net>) id 1bZHiX-0002El-M9
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Aug 2016 13:14:13 +0000
-Received: from forward19p.cmail.yandex.net ([77.88.31.22])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bZHiW-0003If-NG
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 15 Aug 2016 13:14:13 +0000
-Received: from smtp1h.mail.yandex.net (smtp1h.mail.yandex.net
-	[IPv6:2a02:6b8:0:f05::115])
-	by forward19p.cmail.yandex.net (Yandex) with ESMTP id 3EAEF212F2
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 15 Aug 2016 15:58:12 +0300 (MSK)
-In-Reply-To: <281281471258049@web6h.yandex.ru>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Alexander Gordeev <alex@gordick.net>
+Return-path: <lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1471128518-24075-1-git-send-email-deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <http://lists.lustre.org/options.cgi/lustre-devel-lustre.org>,
+	<mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.lustre.org/pipermail/lustre-devel-lustre.org/>
+List-Post: <mailto:lustre-devel-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+List-Help: <mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org>,
+	<mailto:lustre-devel-request-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org?subject=subscribe>
+Errors-To: lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org
+Sender: "lustre-devel" <lustre-devel-bounces-aLEFhgZF4x6X6Mz3xDxJMA@public.gmane.org>
+To: Deepa Dinamani <deepa.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: shaggy-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jfs-discussion-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, trond.myklebust-7I+n7zu2hftEKMMhf/gKZA@public.gmane.org, adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, clm-b10kYP2dOMg@public.gmane.org, adilger.kernel-m1MBpc4rdrD3fQ9qLvQP4Q@public.gmane.org, buchino-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, zyan-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, jejb-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, paul-r2n+y4ga6xFZroRs9YW3xA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, y2038-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, idryomov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cm224.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dushistov-JGs/UdohzUI@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, mfasheh-IBi9RG/b67k@public.gmane.org, sramars-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org, dsterba-IBi9RG/b67k@public.gmane.org, jaegeuk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, elder-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tytso-3s7WtUTddSA@public.gmane.org, sage-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, martin.petersen-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, dedekind1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jbacik-b10kYP2dOMg@public.gmane.org, hiralpat-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, eparis-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, sfrench-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org, linux-audit-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, ocfs2-devel-N0ozoZBvEnonbStXaT1jcA@public.gmane.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-kvfree() first appears in v3.15. f2fs_kvfree() should be used in the backport.
+On Sat, Aug 13, 2016 at 03:48:12PM -0700, Deepa Dinamani wrote:
+> The series is aimed at getting rid of CURRENT_TIME and CURRENT_TIME_SEC macros.
+> The macros are not y2038 safe. There is no plan to transition them into being
+> y2038 safe.
+> ktime_get_* api's can be used in their place. And, these are y2038 safe.
 
-Signed-off-by: Alexander Gordeev <alex@gordick.net>
----
- fs/f2fs/file.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Who are you execting to pull this huge patch series?
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 100594e..74d0523 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1036,7 +1036,7 @@ static int __exchange_data_block(struct inode *src_inode,
- 
- 		do_replace = f2fs_kvzalloc(sizeof(int) * olen, GFP_KERNEL);
- 		if (!do_replace) {
--			kvfree(src_blkaddr);
-+			f2fs_kvfree(src_blkaddr);
- 			return -ENOMEM;
- 		}
- 
-@@ -1054,15 +1054,15 @@ static int __exchange_data_block(struct inode *src_inode,
- 		dst += olen;
- 		len -= olen;
- 
--		kvfree(src_blkaddr);
--		kvfree(do_replace);
-+		f2fs_kvfree(src_blkaddr);
-+		f2fs_kvfree(do_replace);
- 	}
- 	return 0;
- 
- roll_back:
- 	__roll_back_blkaddrs(src_inode, src_blkaddr, do_replace, src, len);
--	kvfree(src_blkaddr);
--	kvfree(do_replace);
-+	f2fs_kvfree(src_blkaddr);
-+	f2fs_kvfree(do_replace);
- 	return ret;
- }
- 
--- 
-2.5.0
+Why not just introduce the new api call, wait for that to be merged, and
+then push the individual patches through the different subsystems?
+After half of those get ignored, then provide a single set of patches
+that can go through Andrew or my trees.
 
+thanks,
 
-------------------------------------------------------------------------------
-What NetFlow Analyzer can do for you? Monitors network bandwidth and traffic
-patterns at an interface-level. Reveals which users, apps, and protocols are 
-consuming the most bandwidth. Provides multi-vendor support for NetFlow, 
-J-Flow, sFlow and other flows. Make informed decisions using capacity 
-planning reports. http://sdm.link/zohodev2dev
+greg k-h
