@@ -1,27 +1,37 @@
-From: Alexander Gordeev <alex@gordick.net>
+From: Chao Yu <chao@kernel.org>
 Subject: Re: video archive on a microSD card
-Date: Wed, 17 Aug 2016 12:47:17 +0300
-Message-ID: <158901471427237@web4g.yandex.ru>
+Date: Wed, 17 Aug 2016 23:54:28 +0800
+Message-ID: <bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
 References: <146631471002747@web20h.yandex.ru>
 	<281281471258049@web6h.yandex.ru>
 	<eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
-	<7021471263772@web16m.yandex.ru>
+	<7021471263772@web16m.yandex.ru> <158901471427237@web4g.yandex.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <alex@gordick.net>) id 1bZxgu-0002JG-IW
+	(envelope-from <chao@kernel.org>) id 1ba3B0-00080q-MR
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 17 Aug 2016 10:03:20 +0000
-Received: from forward1j.cmail.yandex.net ([5.255.227.19])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bZxgp-0004IG-30
+	Wed, 17 Aug 2016 15:54:46 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ba3Az-0000PO-1Z
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 17 Aug 2016 10:03:20 +0000
-In-Reply-To: <7021471263772@web16m.yandex.ru>
+	Wed, 17 Aug 2016 15:54:46 +0000
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id C49502012D
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Wed, 17 Aug 2016 15:54:37 +0000 (UTC)
+Received: from [192.168.1.101] (unknown [49.77.128.92])
+	(using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPSA id 9AB24201C8
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Wed, 17 Aug 2016 15:54:35 +0000 (UTC)
+In-Reply-To: <158901471427237@web4g.yandex.ru>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,156 +41,230 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-SGkgQ2hhbywKCj4gT24gMjAxNi84LzE1IDIwOjIyLCBBbGV4YW5kZXIgR29yZGVldiB3cm90ZToK
-PiA+IDE1LjA4LjIwMTYsIDE0OjU4LCAiQ2hhbyBZdSIgPHl1Y2guLi5AaHVhd2VpLmNvbT46Cj4g
-Pj4gSGkgQWxleGFuZGVyLAo+ID4+Cj4gPj4gT24gMjAxNi84LzE1IDE4OjQ3LCBBbGV4YW5kZXIg
-R29yZGVldiB3cm90ZToKPiA+Pj4gIEhpIEFsbCwKPiA+Pj4KPiA+Pj4gIDEyLjA4LjIwMTYsIDE0
-OjUyLCAiQWxleGFuZGVyIEdvcmRlZXYiIDxhLi4uQGdvcmRpY2submV0PjoKPiA+Pj4+ICBIaSBB
-bGwsCj4gPj4+Pgo+ID4+Pj4gIEkgaG9wZSBJJ20gd3JpdGluZyB0byB0aGUgcmlnaHQgbWFpbGlu
-ZyBsaXN0LiBJZiBub3QgcGxlYXNlIGdpdmUgbWUgCj4gPj4+PiBkaXJlY3Rpb25zIHRvIHRoZSBy
-aWdodCBwbGFjZS4KPiA+Pj4+ICBJJ20gdHJ5aW5nIHRvIHdyaXRlIHZpZGVvIGFyY2hpdmUgdG8g
-YSBtaWNyb1NEIGNhcmQgb24gYW4gQVJNIGJhc2VkIElQIAo+ID4+Pj4gY2FtZXJhLiBUaGUgY2Ft
-ZXJhJ3MgU0RLIHVzZXMgTGludXggMy4xMC4KPiA+Pj4+ICBUaGUga2VybmVsIGlzIHF1aXRlIG9s
-ZCBhbmQgRjJGUyBpcyB0aGVyZSBzaW5jZSAzLjggQUZBSUsgc28gaXQncyAKPiA+Pj4+IHByb2Jh
-Ymx5IG5vdCBtYXR1cmUgeWV0LiBIb3dldmVyLCBJIGRlY2lkZWQgdG8gZ2l2ZSBpdCBhIHRyeS4K
-PiA+Pj4+ICBUaGUgaWRlYSBpcyB0byB3cml0ZSB2aWRlbyBjb250aW51b3VzbHkgaW4gNSBtaW51
-dGUgY2h1bmtzLiBJIGFsc28gaGF2ZSAKPiA+Pj4+IGFuIGluZGV4IGZpbGUgcGVyIGVhY2ggYXJj
-aGl2ZSBjaHVuayBmaWxlIHRvIGZvciBmYXN0ZXIgc2Vla3MgYW5kIGEgc2luZ2xlIAo+ID4+Pj4g
-U1FMaXRlIGRhdGFiYXNlLgo+ID4+Pj4gIFdoZW4gdXRpbGl6YXRpb24gaXMgYWJvdXQgOTUlLCB0
-aGUgY2h1bmtzIGFuZCB0aGVpciBpbmRleGVzIGZyb20gdGhlIAo+ID4+Pj4gYXJjaGl2ZSB0YWls
-IGFyZSBkZWxldGVkLiBTbyBpdCdzIGxpa2UgYSByaW5nIGJ1ZmZlci4gQWxzbyB0aGUgCj4gPj4+
-PiBvdmVycHJvdmlzaW9uIHJhdGlvIGlzIHRoZSBkZWZhdWx0IDUlLgo+ID4+Pj4gIEl0IHdvcmtl
-ZCBxdWl0ZSBnb29kIGZvciBzZXZlcmFsIGRheXMgd2l0aCBhYm91dCA5NSUgdXRpbGl6YXRpb24s
-IGJ1dCAKPiA+Pj4+IHRoZW4gdG9kYXkgaXQgd2VudCBiYWQuIFdyaXRlcyBhcmUgdGFraW5nIHNl
-dmVyYWwgc2Vjb25kcyBxdWl0ZSBvZnRlbiBhcyAKPiA+Pj4+IHNob3duIGJ5IHN0cmFjZS4KPiA+
-Pj4+ICB2bXN0YXQgc2hvd3MgdGhhdCBteSBwcm9jZXNzIHdhaXRzIGZvciBJTyBtb3N0IG9mIHRo
-ZSB0aW1lOgo+ID4+Pj4KPiA+Pj4+ICBwcm9jcyAtLS0tLS0tLS0tLW1lbW9yeS0tLS0tLS0tLS0g
-LS0tc3dhcC0tIC0tLS0taW8tLS0tIC1zeXN0ZW0tLSAKPiA+Pj4+IC0tLS1jcHUtLS0tCj4gPj4+
-PiAgIHIgYiBzd3BkIGZyZWUgYnVmZiBjYWNoZSBzaSBzbyBiaSBibyBpbiBjcyB1cyBzeSBpZCB3
-YQo+ID4+Pj4gICAyIDIgMCA2MzUyIDQgMzU5MjQgMCAwIDggODggNTYyIDEzMTYgNDEgNyAwIDUy
-Cj4gPj4+PiAgIDEgMiAwIDYzMjQgNCAzNTkyOCAwIDAgNCA0NCA1NTMgMTIzMSA0MCA4IDAgNTIK
-PiA+Pj4+ICAgMSAyIDAgNjMyNCA0IDM1OTI4IDAgMCAwIDAgNjkwIDE0NzEgMzYgMTAgMCA1NAo+
-ID4+Pj4gICAxIDMgMCA2Mjk2IDQgMzU5MzIgMCAwIDAgMCA1MzAgMTI0MiA0MCA1IDAgNTQKPiA+
-Pj4+ICAgMiAyIDAgNjI5NiA0IDM1OTM2IDAgMCA0IDQ4IDU0NSAxMjQ0IDQwIDYgMCA1NAo+ID4+
-Pj4gICAxIDIgMCA2Mjk2IDQgMzU5NDAgMCAwIDQgNDQgNTQ5IDEyNzUgMzkgNiAwIDU1Cj4gPj4+
-PiAgIDIgMiAwIDYyODggNCAzNTk0NCAwIDAgNCA0NCA1NjMgMTMxNSAzOSA4IDAgNTMKPiA+Pj4+
-ICAgMyAyIDAgNjI5NiA0IDM1OTQ0IDAgMCAwIDAgNTAyIDExNTggNDEgMiAwIDU3Cj4gPj4+PiAg
-IDEgMyAwIDYyOTYgNCAzNTk1MiAwIDAgOCA4OCA3MDAgMTUyNyA0MCA5IDAgNTEKPiA+Pj4+ICAg
-MSAyIDAgNjI5NiA0IDM1OTUyIDAgMCAwIDAgNDgyIDExNDEgMzggOCAwIDU1Cj4gPj4+PiAgIDEg
-MiAwIDYyOTYgNCAzNTk1NiAwIDAgNCA0NCA1OTQgMTM4MyAzOCAxMyAwIDQ5Cj4gPj4+PiAgIDEg
-MiAwIDYyOTYgNCAzNTk1NiAwIDAgMCAwIDQ4OSAxMTYwIDM3IDUgMCA1OAo+ID4+Pj4gICA1IDEg
-MCA2MjY4IDQgMzU5ODAgMCAwIDEyIDEzMiA3MDQgMTU2NSA0MiA5IDAgNDkKPiA+Pj4+ICAgMiAx
-IDAgNjI2OCA0IDM1OTg0IDAgMCA0IDQ0IDUzMSAxMjE1IDM5IDEwIDAgNTEKPiA+Pj4+ICAgMyAy
-IDAgNjI2OCA0IDM1OTkyIDAgMCA4IDkyIDcxNCAxNTc0IDM2IDkgMCA1NQo+ID4+Pj4gICAxIDEg
-MCA2MjY4IDQgMzU5OTIgMCAwIDAgMCA0ODUgMTE2MyAzOSA2IDAgNTUKPiA+Pj4+ICAgMSAxIDAg
-NjI0MCA0IDM2MDAwIDAgMCA4IDkyIDU1MyAxMjgyIDM4IDkgMCA1Mwo+ID4+Pj4gICAxIDIgMCA2
-MjQwIDQgMzYwMDAgMCAwIDAgMCA0ODggMTEzNSAzOSA3IDAgNTQKPiA+Pj4+ICAgMSAxIDAgNjI0
-MCA0IDM2MDAwIDAgMCAwIDAgNTUyIDEyNjQgMzkgOSAwIDUyCj4gPj4+PiAgIDMgMSAwIDYyNDAg
-NCAzNjAwMCAwIDAgMCAwIDUxMCAxMTg3IDQwIDYgMCA1NAo+ID4+Pj4gICAxIDIgMCA2MjQwIDQg
-MzYwMDQgMCAwIDQgNDQgNjc0IDE0OTYgNDMgOCAwIDQ5Cj4gPj4+PiAgIDEgMSAwIDYyNDAgNCAz
-NjAxMiAwIDAgOCA4OCA1NzIgMTM3MyAzOSA5IDAgNTMKPiA+Pj4+ICAgNCAxIDAgNjIzMiA0IDM2
-MDE2IDAgMCA0IDQ4IDU0OSAxMjQ4IDQxIDQgMCA1NQo+ID4+Pj4gICAzIDEgMCA2MjQwIDQgMzYw
-MTYgMCAwIDAgMCA1MjAgMTIwOSAzNiA4IDAgNTUKPiA+Pj4+Cj4gPj4+PiAgSGVyZSBpcyBhbHNv
-IC9zeXMva2VybmVsL2RlYnVnL2YyZnMvc3RhdHVzIGZvciByZWZlcmVuY2U6Cj4gPj4+PiAgPT09
-PT1bIHBhcnRpdGlvbiBpbmZvKHNkYSkuICMwIF09PT09PQo+ID4+Pj4gIFtTQjogMV0gW0NQOiAy
-XSBbU0lUOiA0XSBbTkFUOiAxMThdIFtTU0E6IDYwXSBbTUFJTjogMjk2NDYoT3ZlclByb3Y6MTUy
-OSAKPiA+Pj4+IFJlc3Y6NTApXQo+ID4+Pj4KPiA+Pj4+ICBVdGlsaXphdGlvbjogOTQlICgxMzU5
-NzMxNCB2YWxpZCBibG9ja3MpCj4gPj4+PiAgICAtIE5vZGU6IDE2Mzk1IChJbm9kZTogMjkxMywg
-T3RoZXI6IDEzNDgyKQo+ID4+Pj4gICAgLSBEYXRhOiAxMzU4MDkxOQo+ID4+Pj4KPiA+Pj4+ICBN
-YWluIGFyZWE6IDI5NjQ2IHNlZ3MsIDE0ODIzIHNlY3MgMTQ4MjMgem9uZXMKPiA+Pj4+ICAgIC0g
-Q09MRCBkYXRhOiAzNDY4LCAxNzM0LCAxNzM0Cj4gPj4+PiAgICAtIFdBUk0gZGF0YTogMTI5NTQs
-IDY0NzcsIDY0NzcKPiA+Pj4+ICAgIC0gSE9UIGRhdGE6IDI4MTA1LCAxNDA1MiwgMTQwNTIKPiA+
-Pj4+ICAgIC0gRGlyIGRub2RlOiAyOTIwNCwgMTQ2MDIsIDE0NjAyCj4gPj4+PiAgICAtIEZpbGUg
-ZG5vZGU6IDE5OTYwLCA5OTgwLCA5OTgwCj4gPj4+PiAgICAtIEluZGlyIG5vZGVzOiAyOTYyMywg
-MTQ4MTEsIDE0ODExCj4gPj4+Pgo+ID4+Pj4gICAgLSBWYWxpZDogMTM2MTUKPiA+Pj4+ICAgIC0g
-RGlydHk6IDEzMzA5Cj4gPj4+PiAgICAtIFByZWZyZWU6IDAKPiA+Pj4+ICAgIC0gRnJlZTogMjcy
-MiAoNzYzKQo+ID4+Pj4KPiA+Pj4+ICBHQyBjYWxsczogODYyMiAoQkc6IDQzMTEpCj4gPj4+PiAg
-ICAtIGRhdGEgc2VnbWVudHMgOiA4NTYwCj4gPj4+PiAgICAtIG5vZGUgc2VnbWVudHMgOiA2Mgo+
-ID4+Pj4gIFRyeSB0byBtb3ZlIDM1NTIxNjEgYmxvY2tzCj4gPj4+PiAgICAtIGRhdGEgYmxvY2tz
-IDogMzU0MDI3OAo+ID4+Pj4gICAgLSBub2RlIGJsb2NrcyA6IDExODgzCj4gPj4+Pgo+ID4+Pj4g
-IEV4dGVudCBIaXQgUmF0aW86IDQ5IC8gNDE3MQo+ID4+Pj4KPiA+Pj4+ICBCYWxhbmNpbmcgRjJG
-UyBBc3luYzoKPiA+Pj4+ICAgIC0gbm9kZXMgNiBpbiAxNDEKPiA+Pj4+ICAgIC0gZGVudHMgMCBp
-biBkaXJzOiAwCj4gPj4+PiAgICAtIG1ldGEgMTMgaW4gMzQ2Cj4gPj4+PiAgICAtIE5BVHMgMTY5
-ODMgPiAyOTEyMAo+ID4+Pj4gICAgLSBTSVRzOiAxNwo+ID4+Pj4gICAgLSBmcmVlX25pZHM6IDE4
-NjEKPiA+Pj4+Cj4gPj4+PiAgRGlzdHJpYnV0aW9uIG9mIFVzZXIgQmxvY2tzOiBbIHZhbGlkIHwg
-aW52YWxpZCB8IGZyZWUgXQo+ID4+Pj4gICAgWy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tfC18LS1dCj4gPj4+Pgo+ID4+Pj4gIFNTUjogMTIzMDcxOSBibG9j
-a3MgaW4gMTQ4MzQgc2VnbWVudHMKPiA+Pj4+ICBMRlM6IDE1MTUwMTkwIGJsb2NrcyBpbiAyOTU4
-OSBzZWdtZW50cwo+ID4+Pj4KPiA+Pj4+ICBCREY6IDg5LCBhdmcuIHZibG9ja3M6IDk0OQo+ID4+
-Pj4KPiA+Pj4+ICBNZW1vcnk6IDY3NTQgS0IgPSBzdGF0aWM6IDQ3NjMgKyBjYWNoZWQ6IDE5OTAK
-PiA+Pj4+Cj4gPj4+PiAgUGxlYXNlIG5vdGUgdGhhdCBJIHRyaWVkIHRvIHB1dCBhbGwgdGhlIGFy
-Y2hpdmUgYW5kIGluZGV4IGZpbGVzIGludG8gdGhlIAo+ID4+Pj4gY29sZCBhcmVhIHVzaW5nIHRo
-ZSBmaWxlIGV4dGVuc2lvbnMgbWVjaGFuaXNtLgo+ID4+Pj4gIEFuZCBpbmRlZWQgSSBzYXcgbnVt
-YmVycyBjbG9zZSB0byB0aGUgdG90YWwgYW1vdW50IG9mIHNlZ21lbnRzIGluIHRoZSAKPiA+Pj4+
-IGNvbGQgYXJlYSBhIGNvdXBsZSBvZiBkYXlzIGFnby4KPiA+Pj4+ICBCdXQgbm93IHRoZSBjb2xk
-IGFyZWEgZ2V0cyBzbWFsbGVyIHZlcnkgcXVpY2tseS4gV2hhdCBhbSBJIGRvaW5nIHdyb25nPwo+
-ID4+Cj4gPj4gSG93IGNvdWxkIHlvdSBrbm93IHRoZSBjb2xkIGFyZWEgaXMgZ2V0dGluZyBzbWFs
-bGVyPyBpZiBpdCBpcyBsb29rcyBhcyB5b3UgCj4gPj4gc2FpZCwKPiA+PiB0aGUgYmVoYXZpb3Ig
-b2YgZjJmcyBzZWVtcyBub3QgcmVhc29uYWJsZS4KPiA+IAo+ID4gSSdtIG5vdCBzdXJlIGFib3V0
-IHRoaXMuIEkganVzdCBzYXcgbnVtYmVycyBhZnRlciAiQ09MRCBkYXRhOiAiICBhYm92ZSB0byBi
-ZSAKPiA+IHF1aXRlIGNsb3NlIHRvIHRoZSB0b3RhbCBhbW91bnQgYWZ0ZXIgIk1haW4gYXJlYToi
-Lgo+IAo+IEhtbS4uIG51bWJlciBhZnRlciAiQ09MRCBkYXRhOiIgbWVhbnMgTm8uIG9mIGN1cnJl
-bnQgY29sZCBzZWdtZW50LCBzZWN0aW9uIGFuZCAKPiB6b25lLgo+IAo+ID4gVGhpcyBpcyBxdWl0
-ZSByZWFzb25hYmxlIGJlY2F1c2UgSSB0cmllZCB0byB0aGUgdmlkZW8gZmlsZXMgaW50byB0aGUg
-Y29sZCAKPiA+IGFyZWEuIFNvIHRoZSBjb2xkIGFyZWEgc2hvdWxkIHRha2UgYWxtb3N0IGFsbCB0
-aGUgZGV2aWNlLgo+ID4gVGhlIGlkZWEgaXMgdG8gc2VwYXJhdGUgdmlkZW8gZmlsZXMgZnJvbSBT
-UUxpdGUgZGF0YWJhc2Ugd3JpdGVzLiBJIGdvdCB0byAKPiA+IHRoaXMgaWRlYSB3aGlsZSByZWFk
-aW5nIHNvbWUgZG9jcyBvbiBmMmZzLgo+IAo+IEkgdGhpbmsgdGhpcyB3b3VsZCBiZSBhIGdvb2Qg
-aWRlYSBpZiBTUUxpdGUgZGIgZmlsZXMgYW5kIGlkeCZ2aWRlbyBmaWxlIGhhdmUKPiBkaWZmZXJl
-bnQgdXBkYXRpbmcgZnJlcXVlbmN5LgoKWWVzLCB0aGVpciB0aW1lcyBvZiBsaWZlIGFyZSBxdWl0
-ZSBkaWZmZXJlbnQgcHJvYmFibHkuIEkgZG9uJ3Qga25vdyBleGFjdGx5IGhvdwpTUUxpdGUgbWFu
-YWdlcyBpdHMgZGIgZmlsZXMuIEkgdGhpbmsgaXQncyBub3QgYXBwZW5kIG9ubHkuIFNvIEkgdGhv
-dWdodCB0aGF0IGl0CndvdWxkIGJlIGEgcmlnaHQgaWRlYSB0byBzZXBhcmF0ZSB0aGUgb3RoZXIg
-ZmlsZXMsIHRoYXQgSSdtIGluIHRvdGFsIGNvbnRyb2wKb2YsIGZyb20gU1FMaXRlIGRiIGZpbGUu
-CgpNeSB2aWRlbyBhcmNoaXZlIGFuZCBpbmRleCBmaWxlcyBhcmUgd3JpdHRlbiBpbiBhcHBlbmQt
-b25seSBtYW5uZXIuIFRoZXkgYXJlCm5ldmVyIG92ZXJ3cml0dGVuLiBUaGV5IGNhbiBvbmx5IGJl
-IGRlbGV0ZWQgd2hlbiB0aGUgYXJjaGl2ZSBpcyByb3RhdGVkLgpQZXIgbXkgdW5kZXJzdGFuZGlu
-ZyBvZiBmMmZzIGludGVybmFscywgaXQgc2hvdWxkIHdyaXRlIHRoZXNlICJjb2xkIiBmaWxlcyBh
-bmQKdXN1YWwgImhvdCIgZmlsZXMgdG8gZGlmZmVyZW50IHNlY3Rpb25zICh0aGF0IHNob3VsZCBt
-YXAgaW50ZXJuYWxseSB0bwpkaWZmZXJlbnQgYWxsb2NhdGlvbiB1bml0cykuIFNvIHRoZSBzZWN0
-aW9ucyB1c2VkIGJ5ICJjb2xkIiBkYXRhIHNob3VsZCBhbG1vc3QKbmV2ZXIgZ2V0ICJkaXJ0eSIg
-YmVjYXVzZSBtb3N0IG9mIHRoZSB0aW1lIGFsbCB0aGVpciBibG9ja3MgYmVjb21lIGZyZWUgYXQK
-dGhlIHNhbWUgdGltZS4gT2YgY291cnNlLCB0aGUgZmlsZXMgYXJlIG5vdCBleGFjdGx5IDRNQiBp
-biBzaXplIHNvIHRoZSBsYXN0CnNlY3Rpb24gb2YgdGhlIGRlbGV0ZWQgZmlsZSB3aWxsIGJlY29t
-ZSBkaXJ0eS4gSWYgaXQgaXMgbW92ZWQgYnkgZ2FyYmFnZQpjb2xsZWN0b3IgYW5kIGJlY29tZXMg
-bWl4ZWQgd2l0aCBmcmVzaCAiY29sZCIgZGF0YSwgdGhlbiBpbmRlZWQgaXQgbWlnaHQgY2F1c2UK
-c29tZSBwcm9ibGVtcywgSSB0aGluay4gV2hhdCBpcyB5b3VyIG9waW5pb24/CgpNYXliZSBkaXNh
-YmxpbmcgZ2FyYmFnZSBjb2xsZWN0aW9uIGZvciAiY29sZCIgZGF0YSBtYXkgaGVscD8KCj4gPj4+
-PiAgQ2FuIHRoaXMgYmUgZml4ZWQgYnkgdXNpbmcgYSBiYWNrcG9ydCBmcm9tIAo+ID4+Pj4gZ2l0
-Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2phZWdldWsvZjJmcy1z
-dGFibGUuZ2l0ID8KPiA+Pj4+ICBBbHNvIEkgbWVhc3VyZWQgdGhlIFNEIGNhcmQgZXJhc2UgYmxv
-Y2sgc2l6ZSB1c2luZyBmbGFzaGJlbmNoLiBJdCBzZWVtcyAKPiA+Pj4+IGl0IGlzIDhNQiwgbm90
-IDRNQiwgYXMgSSB1c2VkIGhlcmUuCj4gPj4+PiAgQ2FuIHRoaXMgbGVhZCB0byBzdWNoIHNlcmlv
-dXMgcHJvYmxlbXM/IElzIDhNQiBibG9jayBzYWZlIHRvIGhhcmRjb2RlIG9yIAo+ID4+Pj4gc2hv
-dWxkIEkgdXNlIGZsYXNoYmVuY2ggZXZlcnkgdGltZT8KPiA+Pgo+ID4+IEkgdGhpbmsgNE1CIGlz
-IE9LLCBpZiB3ZSBzZXQgc2VjdGlvbiBzaXplIHRvIDhNQiwgaXQgd2lsbCBtYWtlIHVzIAo+ID4+
-IGVuY291bnRlcmluZwo+ID4+IGxvbmcgbGF0ZW5jeSBvZiBtb3N0IG9wZXJhdGlvbiBkdWUgdG8g
-Zm9yZWdyb3VuZCBHQyBpbiB3aGVyZSB3ZSBtYXkgbW92ZSBtb3JlCj4gPj4gYmxvY2tzIGluIG9u
-ZSBzZWN0aW9uLgo+ID4gCj4gPiBJIHNlZS4gSSB0aG91Z2h0IEkgaGF2ZSB0byBhbGlnbiB0aGUg
-c2VjdGlvbiB0byB0aGUgaW50ZXJuYWwgZmxhc2ggZXJhc2UgCj4gPiBibG9jayBzaXplLgo+ID4g
-QWN0dWFsbHksIG15IHByb2JsZW0gaXMgdGhlIGluY3JlYXNlZCBsYXRlbmN5IGFmdGVyIHNldmVy
-YWwgZGF5cyBvZiByb3RhdGluZyAKPiA+IHRoZSBhcmNoaXZlIGEgOTUlIHV0aWxpemF0aW9uLgo+
-IAo+ICAgLSBWYWxpZDogMTU2NzEKPiAgIC0gRGlydHk6IDEyOTA0Cj4gICAtIFByZWZyZWU6IDAK
-PiAgIC0gRnJlZTogMTA3MSAoMjcpCj4gCj4gQ1AgY2FsbHM6IDMzMjAgKEJHOiAwKQo+IEdDIGNh
-bGxzOiAyMjQwIChCRzogMSkKPiAgIC0gZGF0YSBzZWdtZW50cyA6IDM4NjYgKDEyMzYpCj4gICAt
-IG5vZGUgc2VnbWVudHMgOiAyNDMgKDApCj4gCj4gSSBjYW4gc2VlIHRoYXQgaW4geW91ciBwYXJ0
-aXRpb24gdGhlcmUgYXJlIGxvdHMgb2YgZGlydHkgc2VnbWVudHMsIGFuZCBmZXcgZnJlZQo+IHNl
-Z21lbnQsIGluIHRoaXMgc3RhdGVtZW50LCB3ZSB3aWxsIGJlIG1vcmUgbGlrZWx5IHRvIHRyaWdn
-ZXIgc3luY2hyb25vdXNseQo+IGZvcmVncm91bmQgZ2FyYmFnZSBjb2xsZWN0aW9uIHdoaWNoIG1h
-eSBsZWFkIHRvIGxvbmcgbGF0ZW5jeS4gQWxzbywgaXQgaXMKPiBpbmRpY2F0ZWQgaW4geW91ICJH
-QyBjYWxscyIgc3RhdGVtZW50LgoKWWVzLCBJIHNlZS4KCj4gQ2FuIHlvdSBkbyBzeW5jaHJvbm91
-c2x5IEdDIHRocm91Z2ggRjJGU19JT0NfR0FSQkFHRV9DT0xMRUNUIGlvY3RsIHdpdGgKPiBwYXJh
-bWV0ZXIgQHN5bmMgd2hpY2ggdmFsdWUgaXMgc2V0IGFzIDEgdW50aWwgZnJlZSBzZWdtZW50cyBz
-aXplIGlzIG1vcmUgY2xvc2UKPiB0byBmcmVlIHNwYWNlIEZTIHNob3cgdG8gdXNlcj8gSSBleHBl
-Y3QgdGhpcyBjYW4gaGVscCB0byByZWNvdmVyIHBlcmZvcm1hbmNlIGluCj4geW91ciBlbnZpb3Ju
-bWVudC4KPiAKPiBJZiB0aGlzIGRvZXMgbm90IGhlbHAsIEkgdGhpbmsgd2Ugc2hvdWxkIGRvIHNv
-bWUgdHJhY2UgaW4gb3JkZXIgdG8gZmluZCBvdXQgdGhlCj4gcm9vdCBjYXVzZSBvZiB3cml0ZSBk
-ZWxheS4KCkknbGwgdHJ5IHRoZSBpb2N0bCwgdGhhbmtzIQoKLS3CoAogQWxleGFuZGVyCgotLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBs
-aXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMv
-bGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+Hi Alexander,
+
+On 2016/8/17 17:47, Alexander Gordeev wrote:
+> Hi Chao,
+> 
+>> On 2016/8/15 20:22, Alexander Gordeev wrote:
+>>> 15.08.2016, 14:58, "Chao Yu" <yuch...@huawei.com>:
+>>>> Hi Alexander,
+>>>>
+>>>> On 2016/8/15 18:47, Alexander Gordeev wrote:
+>>>>>  Hi All,
+>>>>>
+>>>>>  12.08.2016, 14:52, "Alexander Gordeev" <a...@gordick.net>:
+>>>>>>  Hi All,
+>>>>>>
+>>>>>>  I hope I'm writing to the right mailing list. If not please give me 
+>>>>>> directions to the right place.
+>>>>>>  I'm trying to write video archive to a microSD card on an ARM based IP 
+>>>>>> camera. The camera's SDK uses Linux 3.10.
+>>>>>>  The kernel is quite old and F2FS is there since 3.8 AFAIK so it's 
+>>>>>> probably not mature yet. However, I decided to give it a try.
+>>>>>>  The idea is to write video continuously in 5 minute chunks. I also have 
+>>>>>> an index file per each archive chunk file to for faster seeks and a single 
+>>>>>> SQLite database.
+>>>>>>  When utilization is about 95%, the chunks and their indexes from the 
+>>>>>> archive tail are deleted. So it's like a ring buffer. Also the 
+>>>>>> overprovision ratio is the default 5%.
+>>>>>>  It worked quite good for several days with about 95% utilization, but 
+>>>>>> then today it went bad. Writes are taking several seconds quite often as 
+>>>>>> shown by strace.
+>>>>>>  vmstat shows that my process waits for IO most of the time:
+>>>>>>
+>>>>>>  procs -----------memory---------- ---swap-- -----io---- -system-- 
+>>>>>> ----cpu----
+>>>>>>   r b swpd free buff cache si so bi bo in cs us sy id wa
+>>>>>>   2 2 0 6352 4 35924 0 0 8 88 562 1316 41 7 0 52
+>>>>>>   1 2 0 6324 4 35928 0 0 4 44 553 1231 40 8 0 52
+>>>>>>   1 2 0 6324 4 35928 0 0 0 0 690 1471 36 10 0 54
+>>>>>>   1 3 0 6296 4 35932 0 0 0 0 530 1242 40 5 0 54
+>>>>>>   2 2 0 6296 4 35936 0 0 4 48 545 1244 40 6 0 54
+>>>>>>   1 2 0 6296 4 35940 0 0 4 44 549 1275 39 6 0 55
+>>>>>>   2 2 0 6288 4 35944 0 0 4 44 563 1315 39 8 0 53
+>>>>>>   3 2 0 6296 4 35944 0 0 0 0 502 1158 41 2 0 57
+>>>>>>   1 3 0 6296 4 35952 0 0 8 88 700 1527 40 9 0 51
+>>>>>>   1 2 0 6296 4 35952 0 0 0 0 482 1141 38 8 0 55
+>>>>>>   1 2 0 6296 4 35956 0 0 4 44 594 1383 38 13 0 49
+>>>>>>   1 2 0 6296 4 35956 0 0 0 0 489 1160 37 5 0 58
+>>>>>>   5 1 0 6268 4 35980 0 0 12 132 704 1565 42 9 0 49
+>>>>>>   2 1 0 6268 4 35984 0 0 4 44 531 1215 39 10 0 51
+>>>>>>   3 2 0 6268 4 35992 0 0 8 92 714 1574 36 9 0 55
+>>>>>>   1 1 0 6268 4 35992 0 0 0 0 485 1163 39 6 0 55
+>>>>>>   1 1 0 6240 4 36000 0 0 8 92 553 1282 38 9 0 53
+>>>>>>   1 2 0 6240 4 36000 0 0 0 0 488 1135 39 7 0 54
+>>>>>>   1 1 0 6240 4 36000 0 0 0 0 552 1264 39 9 0 52
+>>>>>>   3 1 0 6240 4 36000 0 0 0 0 510 1187 40 6 0 54
+>>>>>>   1 2 0 6240 4 36004 0 0 4 44 674 1496 43 8 0 49
+>>>>>>   1 1 0 6240 4 36012 0 0 8 88 572 1373 39 9 0 53
+>>>>>>   4 1 0 6232 4 36016 0 0 4 48 549 1248 41 4 0 55
+>>>>>>   3 1 0 6240 4 36016 0 0 0 0 520 1209 36 8 0 55
+>>>>>>
+>>>>>>  Here is also /sys/kernel/debug/f2fs/status for reference:
+>>>>>>  =====[ partition info(sda). #0 ]=====
+>>>>>>  [SB: 1] [CP: 2] [SIT: 4] [NAT: 118] [SSA: 60] [MAIN: 29646(OverProv:1529 
+>>>>>> Resv:50)]
+>>>>>>
+>>>>>>  Utilization: 94% (13597314 valid blocks)
+>>>>>>    - Node: 16395 (Inode: 2913, Other: 13482)
+>>>>>>    - Data: 13580919
+>>>>>>
+>>>>>>  Main area: 29646 segs, 14823 secs 14823 zones
+>>>>>>    - COLD data: 3468, 1734, 1734
+>>>>>>    - WARM data: 12954, 6477, 6477
+>>>>>>    - HOT data: 28105, 14052, 14052
+>>>>>>    - Dir dnode: 29204, 14602, 14602
+>>>>>>    - File dnode: 19960, 9980, 9980
+>>>>>>    - Indir nodes: 29623, 14811, 14811
+>>>>>>
+>>>>>>    - Valid: 13615
+>>>>>>    - Dirty: 13309
+>>>>>>    - Prefree: 0
+>>>>>>    - Free: 2722 (763)
+>>>>>>
+>>>>>>  GC calls: 8622 (BG: 4311)
+>>>>>>    - data segments : 8560
+>>>>>>    - node segments : 62
+>>>>>>  Try to move 3552161 blocks
+>>>>>>    - data blocks : 3540278
+>>>>>>    - node blocks : 11883
+>>>>>>
+>>>>>>  Extent Hit Ratio: 49 / 4171
+>>>>>>
+>>>>>>  Balancing F2FS Async:
+>>>>>>    - nodes 6 in 141
+>>>>>>    - dents 0 in dirs: 0
+>>>>>>    - meta 13 in 346
+>>>>>>    - NATs 16983 > 29120
+>>>>>>    - SITs: 17
+>>>>>>    - free_nids: 1861
+>>>>>>
+>>>>>>  Distribution of User Blocks: [ valid | invalid | free ]
+>>>>>>    [-----------------------------------------------|-|--]
+>>>>>>
+>>>>>>  SSR: 1230719 blocks in 14834 segments
+>>>>>>  LFS: 15150190 blocks in 29589 segments
+>>>>>>
+>>>>>>  BDF: 89, avg. vblocks: 949
+>>>>>>
+>>>>>>  Memory: 6754 KB = static: 4763 + cached: 1990
+>>>>>>
+>>>>>>  Please note that I tried to put all the archive and index files into the 
+>>>>>> cold area using the file extensions mechanism.
+>>>>>>  And indeed I saw numbers close to the total amount of segments in the 
+>>>>>> cold area a couple of days ago.
+>>>>>>  But now the cold area gets smaller very quickly. What am I doing wrong?
+>>>>
+>>>> How could you know the cold area is getting smaller? if it is looks as you 
+>>>> said,
+>>>> the behavior of f2fs seems not reasonable.
+>>>
+>>> I'm not sure about this. I just saw numbers after "COLD data: "  above to be 
+>>> quite close to the total amount after "Main area:".
+>>
+>> Hmm.. number after "COLD data:" means No. of current cold segment, section and 
+>> zone.
+>>
+>>> This is quite reasonable because I tried to the video files into the cold 
+>>> area. So the cold area should take almost all the device.
+>>> The idea is to separate video files from SQLite database writes. I got to 
+>>> this idea while reading some docs on f2fs.
+>>
+>> I think this would be a good idea if SQLite db files and idx&video file have
+>> different updating frequency.
+> 
+> Yes, their times of life are quite different probably. I don't know exactly how
+> SQLite manages its db files. I think it's not append only. So I thought that it
+> would be a right idea to separate the other files, that I'm in total control
+> of, from SQLite db file.
+> 
+> My video archive and index files are written in append-only manner. They are
+> never overwritten. They can only be deleted when the archive is rotated.
+
+Will video archive and index file be appended to size which is unaligned to 4k,
+and later, be appended continuously?
+
+> Per my understanding of f2fs internals, it should write these "cold" files and
+> usual "hot" files to different sections (that should map internally to
+> different allocation units). So the sections used by "cold" data should almost
+> never get "dirty" because most of the time all their blocks become free at
+> the same time. Of course, the files are not exactly 4MB in size so the last
+> section of the deleted file will become dirty. If it is moved by garbage
+> collector and becomes mixed with fresh "cold" data, then indeed it might cause
+> some problems, I think. What is your opinion?
+
+If your fs is not fragmented, it may be as what you said, otherwise, SSR will
+still try to reuse invalid block of other temperture segments, then your cold
+data will be fixed with warm data too.
+
+I guess, what you are facing is the latter one:
+SSR: 1230719 blocks in 14834 segments
+
+Maybe we can try to alter updating policy from OPU to IPU for your case to avoid
+performance regression of SSR and more frequently FG-GC:
+
+echo 1 > /sys/fs/f2fs/"yourdevicename"/ipu_policy
+
+Thanks,
+
+> 
+> Maybe disabling garbage collection for "cold" data may help?
+> 
+>>>>>>  Can this be fixed by using a backport from 
+>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-stable.git ?
+>>>>>>  Also I measured the SD card erase block size using flashbench. It seems 
+>>>>>> it is 8MB, not 4MB, as I used here.
+>>>>>>  Can this lead to such serious problems? Is 8MB block safe to hardcode or 
+>>>>>> should I use flashbench every time?
+>>>>
+>>>> I think 4MB is OK, if we set section size to 8MB, it will make us 
+>>>> encountering
+>>>> long latency of most operation due to foreground GC in where we may move more
+>>>> blocks in one section.
+>>>
+>>> I see. I thought I have to align the section to the internal flash erase 
+>>> block size.
+>>> Actually, my problem is the increased latency after several days of rotating 
+>>> the archive a 95% utilization.
+>>
+>>   - Valid: 15671
+>>   - Dirty: 12904
+>>   - Prefree: 0
+>>   - Free: 1071 (27)
+>>
+>> CP calls: 3320 (BG: 0)
+>> GC calls: 2240 (BG: 1)
+>>   - data segments : 3866 (1236)
+>>   - node segments : 243 (0)
+>>
+>> I can see that in your partition there are lots of dirty segments, and few free
+>> segment, in this statement, we will be more likely to trigger synchronously
+>> foreground garbage collection which may lead to long latency. Also, it is
+>> indicated in you "GC calls" statement.
+> 
+> Yes, I see.
+> 
+>> Can you do synchronously GC through F2FS_IOC_GARBAGE_COLLECT ioctl with
+>> parameter @sync which value is set as 1 until free segments size is more close
+>> to free space FS show to user? I expect this can help to recover performance in
+>> your enviornment.
+>>
+>> If this does not help, I think we should do some trace in order to find out the
+>> root cause of write delay.
+> 
+> I'll try the ioctl, thanks!
+> 
+> -- 
+>  Alexander
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+
+------------------------------------------------------------------------------
