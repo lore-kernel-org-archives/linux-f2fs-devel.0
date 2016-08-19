@@ -1,29 +1,22 @@
-From: Alexander Gordeev <alex@gordick.net>
-Subject: Re: video archive on a microSD card
-Date: Fri, 19 Aug 2016 14:56:12 +0300
-Message-ID: <1258721471607772@web12h.yandex.ru>
-References: <146631471002747@web20h.yandex.ru>
-	<281281471258049@web6h.yandex.ru>
-	<eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
-	<7021471263772@web16m.yandex.ru> <158901471427237@web4g.yandex.ru>
-	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
-	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/2] f2fs: clean up foreground GC flow
+Date: Fri, 19 Aug 2016 23:13:46 +0800
+Message-ID: <1471619627-4174-1-git-send-email-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <alex@gordick.net>) id 1baiPP-0002lI-HE
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1balWe-0003BW-5H
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Aug 2016 11:56:23 +0000
-Received: from forward3m.cmail.yandex.net ([5.255.216.21])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1baiPM-0007jb-AN
+	Fri, 19 Aug 2016 15:16:04 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1balWc-0002Td-0s
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Aug 2016 11:56:23 +0000
-In-Reply-To: <20160819024105.GA64207@jaegeuk>
+	Fri, 19 Aug 2016 15:16:04 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,116 +26,75 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGkgSmFlZ2V1aywKCjE5LjA4LjIwMTYsIDA1OjQxLCAiSmFlZ2V1ayBLaW0iIDxqYWVnZXVrQGtl
-cm5lbC5vcmc+Ogo+IMKgSGVsbG8sCj4KPiDCoE9uIFRodSwgQXVnIDE4LCAyMDE2IGF0IDAyOjA0
-OjU1UE0gKzAzMDAsIEFsZXhhbmRlciBHb3JkZWV2IHdyb3RlOgo+Cj4gwqAuLi4KPgo+PiDCoMKg
-Pj4+Pj4+PiDCoMKgSGVyZSBpcyBhbHNvIC9zeXMva2VybmVsL2RlYnVnL2YyZnMvc3RhdHVzIGZv
-ciByZWZlcmVuY2U6Cj4+IMKgwqA+Pj4+Pj4+IMKgwqA9PT09PVsgcGFydGl0aW9uIGluZm8oc2Rh
-KS4gIzAgXT09PT09Cj4+IMKgwqA+Pj4+Pj4+IMKgwqBbU0I6IDFdIFtDUDogMl0gW1NJVDogNF0g
-W05BVDogMTE4XSBbU1NBOiA2MF0gW01BSU46IDI5NjQ2KE92ZXJQcm92OjE1MjkKPj4gwqDCoD4+
-Pj4+Pj4gwqBSZXN2OjUwKV0KPj4gwqDCoD4+Pj4+Pj4KPj4gwqDCoD4+Pj4+Pj4gwqDCoFV0aWxp
-emF0aW9uOiA5NCUgKDEzNTk3MzE0IHZhbGlkIGJsb2NrcykKPj4gwqDCoD4+Pj4+Pj4gwqDCoMKg
-wqAtIE5vZGU6IDE2Mzk1IChJbm9kZTogMjkxMywgT3RoZXI6IDEzNDgyKQo+PiDCoMKgPj4+Pj4+
-PiDCoMKgwqDCoC0gRGF0YTogMTM1ODA5MTkKPj4gwqDCoD4+Pj4+Pj4KPj4gwqDCoD4+Pj4+Pj4g
-wqDCoE1haW4gYXJlYTogMjk2NDYgc2VncywgMTQ4MjMgc2VjcyAxNDgyMyB6b25lcwo+PiDCoMKg
-Pj4+Pj4+PiDCoMKgwqDCoC0gQ09MRCBkYXRhOiAzNDY4LCAxNzM0LCAxNzM0Cj4+IMKgwqA+Pj4+
-Pj4+IMKgwqDCoMKgLSBXQVJNIGRhdGE6IDEyOTU0LCA2NDc3LCA2NDc3Cj4+IMKgwqA+Pj4+Pj4+
-IMKgwqDCoMKgLSBIT1QgZGF0YTogMjgxMDUsIDE0MDUyLCAxNDA1Mgo+PiDCoMKgPj4+Pj4+PiDC
-oMKgwqDCoC0gRGlyIGRub2RlOiAyOTIwNCwgMTQ2MDIsIDE0NjAyCj4+IMKgwqA+Pj4+Pj4+IMKg
-wqDCoMKgLSBGaWxlIGRub2RlOiAxOTk2MCwgOTk4MCwgOTk4MAo+PiDCoMKgPj4+Pj4+PiDCoMKg
-wqDCoC0gSW5kaXIgbm9kZXM6IDI5NjIzLCAxNDgxMSwgMTQ4MTEKPj4gwqDCoD4+Pj4+Pj4KPj4g
-wqDCoD4+Pj4+Pj4gwqDCoMKgwqAtIFZhbGlkOiAxMzYxNQo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDC
-oC0gRGlydHk6IDEzMzA5Cj4+IMKgwqA+Pj4+Pj4+IMKgwqDCoMKgLSBQcmVmcmVlOiAwCj4+IMKg
-wqA+Pj4+Pj4+IMKgwqDCoMKgLSBGcmVlOiAyNzIyICg3NjMpCj4+IMKgwqA+Pj4+Pj4+Cj4+IMKg
-wqA+Pj4+Pj4+IMKgwqBHQyBjYWxsczogODYyMiAoQkc6IDQzMTEpCj4+IMKgwqA+Pj4+Pj4+IMKg
-wqDCoMKgLSBkYXRhIHNlZ21lbnRzIDogODU2MAo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDCoC0gbm9k
-ZSBzZWdtZW50cyA6IDYyCj4+IMKgwqA+Pj4+Pj4+IMKgwqBUcnkgdG8gbW92ZSAzNTUyMTYxIGJs
-b2Nrcwo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDCoC0gZGF0YSBibG9ja3MgOiAzNTQwMjc4Cj4+IMKg
-wqA+Pj4+Pj4+IMKgwqDCoMKgLSBub2RlIGJsb2NrcyA6IDExODgzCj4+IMKgwqA+Pj4+Pj4+Cj4+
-IMKgwqA+Pj4+Pj4+IMKgwqBFeHRlbnQgSGl0IFJhdGlvOiA0OSAvIDQxNzEKPj4gwqDCoD4+Pj4+
-Pj4KPj4gwqDCoD4+Pj4+Pj4gwqDCoEJhbGFuY2luZyBGMkZTIEFzeW5jOgo+PiDCoMKgPj4+Pj4+
-PiDCoMKgwqDCoC0gbm9kZXMgNiBpbiAxNDEKPj4gwqDCoD4+Pj4+Pj4gwqDCoMKgwqAtIGRlbnRz
-IDAgaW4gZGlyczogMAo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDCoC0gbWV0YSAxMyBpbiAzNDYKPj4g
-wqDCoD4+Pj4+Pj4gwqDCoMKgwqAtIE5BVHMgMTY5ODMgPiAyOTEyMAo+PiDCoMKgPj4+Pj4+PiDC
-oMKgwqDCoC0gU0lUczogMTcKPj4gwqDCoD4+Pj4+Pj4gwqDCoMKgwqAtIGZyZWVfbmlkczogMTg2
-MQo+PiDCoMKgPj4+Pj4+Pgo+PiDCoMKgPj4+Pj4+PiDCoMKgRGlzdHJpYnV0aW9uIG9mIFVzZXIg
-QmxvY2tzOiBbIHZhbGlkIHwgaW52YWxpZCB8IGZyZWUgXQo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDC
-oFstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwtfC0tXQo+
-PiDCoMKgPj4+Pj4+Pgo+PiDCoMKgPj4+Pj4+PiDCoMKgU1NSOiAxMjMwNzE5IGJsb2NrcyBpbiAx
-NDgzNCBzZWdtZW50cwo+PiDCoMKgPj4+Pj4+PiDCoMKgTEZTOiAxNTE1MDE5MCBibG9ja3MgaW4g
-Mjk1ODkgc2VnbWVudHMKPj4gwqDCoD4+Pj4+Pj4KPj4gwqDCoD4+Pj4+Pj4gwqDCoEJERjogODks
-IGF2Zy4gdmJsb2NrczogOTQ5Cj4+IMKgwqA+Pj4+Pj4+Cj4+IMKgwqA+Pj4+Pj4+IMKgwqBNZW1v
-cnk6IDY3NTQgS0IgPSBzdGF0aWM6IDQ3NjMgKyBjYWNoZWQ6IDE5OTAKPgo+IMKgLi4uCj4KPj4g
-wqDCoD4+IMKgUGVyIG15IHVuZGVyc3RhbmRpbmcgb2YgZjJmcyBpbnRlcm5hbHMsIGl0IHNob3Vs
-ZCB3cml0ZSB0aGVzZSAiY29sZCIgZmlsZXMgYW5kCj4+IMKgwqA+PiDCoHVzdWFsICJob3QiIGZp
-bGVzIHRvIGRpZmZlcmVudCBzZWN0aW9ucyAodGhhdCBzaG91bGQgbWFwIGludGVybmFsbHkgdG8K
-Pj4gwqDCoD4+IMKgZGlmZmVyZW50IGFsbG9jYXRpb24gdW5pdHMpLiBTbyB0aGUgc2VjdGlvbnMg
-dXNlZCBieSAiY29sZCIgZGF0YSBzaG91bGQgYWxtb3N0Cj4+IMKgwqA+PiDCoG5ldmVyIGdldCAi
-ZGlydHkiIGJlY2F1c2UgbW9zdCBvZiB0aGUgdGltZSBhbGwgdGhlaXIgYmxvY2tzIGJlY29tZSBm
-cmVlIGF0Cj4+IMKgwqA+PiDCoHRoZSBzYW1lIHRpbWUuIE9mIGNvdXJzZSwgdGhlIGZpbGVzIGFy
-ZSBub3QgZXhhY3RseSA0TUIgaW4gc2l6ZSBzbyB0aGUgbGFzdAo+PiDCoMKgPj4gwqBzZWN0aW9u
-IG9mIHRoZSBkZWxldGVkIGZpbGUgd2lsbCBiZWNvbWUgZGlydHkuIElmIGl0IGlzIG1vdmVkIGJ5
-IGdhcmJhZ2UKPj4gwqDCoD4+IMKgY29sbGVjdG9yIGFuZCBiZWNvbWVzIG1peGVkIHdpdGggZnJl
-c2ggImNvbGQiIGRhdGEsIHRoZW4gaW5kZWVkIGl0IG1pZ2h0IGNhdXNlCj4+IMKgwqA+PiDCoHNv
-bWUgcHJvYmxlbXMsIEkgdGhpbmsuIFdoYXQgaXMgeW91ciBvcGluaW9uPwo+PiDCoMKgPgo+PiDC
-oMKgPiBJZiB5b3VyIGZzIGlzIG5vdCBmcmFnbWVudGVkLCBpdCBtYXkgYmUgYXMgd2hhdCB5b3Ug
-c2FpZCwgb3RoZXJ3aXNlLCBTU1Igd2lsbAo+PiDCoMKgPiBzdGlsbCB0cnkgdG8gcmV1c2UgaW52
-YWxpZCBibG9jayBvZiBvdGhlciB0ZW1wZXJ0dXJlIHNlZ21lbnRzLCB0aGVuIHlvdXIgY29sZAo+
-PiDCoMKgPiBkYXRhIHdpbGwgYmUgZml4ZWQgd2l0aCB3YXJtIGRhdGEgdG9vLgo+PiDCoMKgPgo+
-PiDCoMKgPiBJIGd1ZXNzLCB3aGF0IHlvdSBhcmUgZmFjaW5nIGlzIHRoZSBsYXR0ZXIgb25lOgo+
-PiDCoMKgPiBTU1I6IDEyMzA3MTkgYmxvY2tzIGluIDE0ODM0IHNlZ21lbnRzCj4+Cj4+IMKgwqBJ
-IGd1ZXNzLCBJIG5lZWQgdG8gc29tZWhvdyBkaXNhYmxlIGFueSBjbGVhbmluZyBvciBTU1IgZm9y
-IG15IGFyY2hpdmUgYW5kIGluZGV4Cj4+IMKgwqBmaWxlcy4gQnV0IGtlZXAgdGhlIGNsZWFuaW5n
-IGZvciBvdGhlciBkYXRhIGFuZCBub2Rlcy4KPgo+IMKgQ291bGQgeW91IHRlc3QgYSBtb3VudCBv
-cHRpb24sICJtb2RlPWxmcyIsIHRvIGRpc2FibGUgU1NSPwo+IMKgKEkgZ3Vlc3Mgc3FsaXRlIG1h
-eSBzdWZmZXIgZnJvbSBsb2duZXIgbGF0ZW5jeSBkdWUgdG8gR0MgdGhvdWdoLikKPgo+IMKgU2Vl
-bXMgbGlrZSBpdCdzIGNhdXNlZCBieSBTU1Igc3RhcnRpbmcgdG8gbWFrZSB3b3JzZSBiZWZvcmUg
-OTUlIGFzIHlvdSBkZXNjcmliZWQKPiDCoGJlbG93LgoKVGhhbmtzLCBJJ2xsIHJ1biBhIHRlc3Qg
-d2l0aCBhIGNvdXBsZSBvZiBTRCBjYXJkcyBvdmVyIHdlZWtlbmQuClNvIGlmIEkgdW5kZXJzdGFu
-ZCBpdCBjb3JyZWN0bHksIEdDIHdpbGwgbm90IGNhdXNlIHRoZSBwcm9ibGVtcyBkZXNjcmliZWQg
-YmVsb3csIHJpZ2h0PwpJLmUuIGl0IHdpbGwgbm90IG1peCB0aGUgbmV3IGRhdGEgd2l0aCBvbGQg
-ZGF0YSBmcm9tIGRpcnR5IHNlY3Rpb25zPwpMb25nZXIgU1FMaXRlIGxhdGVuY2llcyBzaG91bGQg
-bm90IGJlIGEgcHJvYmxlbSBiZWNhdXNlIHRoZSBkYXRhYmFzZSBpcyB3cml0dGVuIG5vdApmcmVx
-dWVudGx5IGFuZCBhbHNvIGl0IGlzIGFib3V0IDIwMC0yNTBLQiBpbiBzaXplIHVzdWFsbHkuIE1h
-eWJlIGZvcmNpbmcgSVBVIGFzCnN1Z2dlc3RlZCBieSBDaGFvIHdvdWxkIGhlbHAgc3FsaXRlLCBu
-bz8KSG93ZXZlciBsb29rcyBsaWtlIHNldHRpbmcgaXB1X3BvbGljeSB0byAxIGhhcyBubyBlZmZl
-Y3Qgd2hlbiBtb2RlPWxmcy4KVGhlIElQVSBjb3VudGVyIGlzIHN0aWxsIHplcm8gb24gbXkgdGVz
-dCBzeXN0ZW0uCgo+PiDCoMKgSSB0aGluayB0aGUgRlMgY2FuIGdldCBmcmFnbWVudGVkIHF1aXRl
-IGVhc2lseSBvdGhlcndpc2UuIFRoZSBzdGF0dXMgYWJvdmUgaXMKPj4gwqDCoGNhcHR1cmVkIHdo
-ZW4gdGhlIEZTIGFscmVhZHkgaGFzIHByb2JsZW1zLiBJIHRoaW5rIGl0IGNhbiBiZWNvbWUgZnJh
-Z21lbnRlZAo+PiDCoMKgdGhpcyB3YXk6Cj4+IMKgwqAxLiBUaGUgYXJjaGl2ZSBpcyB3cml0dGVu
-IHVudGlsIHRoZSB1dGlsaXphdGlvbiBpcyA5NSUuIEl0IGlzIHdyaXR0ZW4gc2VwYXJhdGVseSBm
-cm9tIG90aGVyCj4+IMKgwqBkYXRhIGFuZCBub2RlcyB0aGFua3MgdG8gdGhlICJjb2xkIiBkYXRh
-IGZlYXR1cmUuCj4+IMKgwqAyLiBBZnRlciBoaXR0aW5nIDk1JSB0aGUgYXJjaGl2ZSBteSBwcm9n
-cmFtIHN0YXJ0cyB0byByb3RhdGUgdGhlIGFyY2hpdmUuIFRoZSByb3RhdGlvbgo+PiDCoMKgcm91
-dGluZSBjaGVja3MgdGhlIGZyZWUgc3BhY2UsIHJlcG9ydGVkIGJ5IHN0YXRmcygpLCBvbmNlIGEg
-bWludXRlLiBJZiBpdCBpcyBiZWxvdyA1JQo+PiDCoMKgb2YgdG90YWwsIHRoZW4gaXQgZGVsZXRl
-cyBzZXZlcmFsIG9sZGVzdCByZWNvcmRzIGluIHRoZSBhcmNoaXZlLgo+PiDCoMKgMy4gVGhlIGxh
-c3QgZGVsZXRlZCByZWNvcmQgbGVhdmVzIGEgZGlydHkgc2VjdGlvbi4gVGhpcyBzZWN0aW9uIGhv
-bGRzIHNldmVyYWwgYmxvY2tzCj4+IMKgwqBmcm9tIGEgcmVjb3JkLCB3aGljaCBub3cgYmVjb21l
-cyB0aGUgb2xkZXN0IG9uZS4KPj4gwqDCoDQuIFRoaXMgc2VjdGlvbiBpcyBtZXJnZWQgd2l0aCBm
-cmVzaCAiY29sZCIgb3IgZXZlbiB3YXJtZXIgZGF0YSBieSBlaXRoZXIgR0MsIG9yCj4+IMKgwqBT
-U1IgaW4gb25lIG9yIG1vcmUgbmV3bHkgdXNlZCBzZWN0aW9ucy4KPj4gwqDCoDUuIFRoZW4gdmVy
-eSBzb29uIHRoZSBuZXcgb2xkZXN0IHJlY29yZCBpcyBhZ2FpbiBkZWxldGVkLiBBbmQgbm93IHdl
-IGhhdmUgb25lCj4+IMKgwqBvciBldmVuIHNldmVyYWwgZGlydHkgc2VjdGlvbnMgZmlsbGVkIHdp
-dGggYmxvY2tzIGZyb20gYSBub3Qgc28gb2xkIHJlY29yZC4gV2hpY2ggYXJlCj4+IMKgwqBhZ2Fp
-biBtZXJnZWQgd2l0aCBvdGhlciByZWNvcmRzLgo+PiDCoMKgNi4gQWxsIHRoZSByZWNvcmRzIGdl
-dCBmcmFnbWVudGVkIGFmdGVyIG9uZSBmdWxsIHJvdGF0aW9uLiBUaGUgZnJhZ21lbnRhdGlvbiBn
-ZXRzCj4+IMKgwqB3b3JzZSBhbmQgd29yc2UuCj4+Cj4+IMKgwqBTbyBJIHRoaW5rIHRoZSBiZXN0
-IHRoaW5nIHRvIGRvIGlzIHRvIGhhdmUgc2VjdGlvbnMgd2l0aCAiY29sZCIgZGF0YSBiZSBjb21w
-bGV0ZWx5Cj4+IMKgwqBvdXQgb2YgYWxsIHRoZSBjbGVhbmluZyBzY2hlbWVzLiBJdCB3aWxsIGNs
-ZWFuIGl0c2VsZiBieSByb3RhdGluZy4KPj4gwqDCoFN0aWxsIG90aGVyIGRhdGEgYW5kIG5vZGVz
-IG1pZ2h0IG5lZWQgdG8gdXNlIHNvbWUgY2xlYW5pbmcgc2NoZW1lcy4KPj4gwqDCoFBsZWFzZSBj
-b3JyZWN0IG1lIGlmIEkgZG9uJ3QgZ2V0IGl0IHJpZ2h0Lgo+Pgo+PiDCoMKgPiBNYXliZSB3ZSBj
-YW4gdHJ5IHRvIGFsdGVyIHVwZGF0aW5nIHBvbGljeSBmcm9tIE9QVSB0byBJUFUgZm9yIHlvdXIg
-Y2FzZSB0byBhdm9pZAo+PiDCoMKgPiBwZXJmb3JtYW5jZSByZWdyZXNzaW9uIG9mIFNTUiBhbmQg
-bW9yZSBmcmVxdWVudGx5IEZHLUdDOgo+PiDCoMKgPgo+PiDCoMKgPiBlY2hvIDEgPiAvc3lzL2Zz
-L2YyZnMvInlvdXJkZXZpY2VuYW1lIi9pcHVfcG9saWN5Cj4+Cj4+IMKgwqBUaGFua3MsIEknbGwg
-dHJ5IGl0IQoKLS3CoArCoEFsZXhhbmRlcgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwg
-bWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBz
-Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+From: Chao Yu <yuchao0@huawei.com>
+
+This patch changes to check valid block number of one GCed section
+directly instead of checking the number in all segments of section
+one by one in order to clean up codes of foreground GC.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/gc.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 8f7fa32..c1599b4 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -815,7 +815,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 	struct blk_plug plug;
+ 	unsigned int segno = start_segno;
+ 	unsigned int end_segno = start_segno + sbi->segs_per_sec;
+-	int seg_freed = 0;
++	int sec_freed = 0;
+ 	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
+ 						SUM_TYPE_DATA : SUM_TYPE_NODE;
+ 
+@@ -871,22 +871,20 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 
+ 	blk_finish_plug(&plug);
+ 
+-	if (gc_type == FG_GC) {
+-		while (start_segno < end_segno)
+-			if (get_valid_blocks(sbi, start_segno++, 1) == 0)
+-				seg_freed++;
+-	}
++	if (gc_type == FG_GC &&
++		get_valid_blocks(sbi, start_segno, sbi->segs_per_sec) == 0)
++		sec_freed = 1;
+ 
+ 	stat_inc_call_count(sbi->stat_info);
+ 
+-	return seg_freed;
++	return sec_freed;
+ }
+ 
+ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync)
+ {
+ 	unsigned int segno;
+ 	int gc_type = sync ? FG_GC : BG_GC;
+-	int sec_freed = 0, seg_freed;
++	int sec_freed = 0;
+ 	int ret = -EINVAL;
+ 	struct cp_control cpc;
+ 	struct gc_inode_list gc_list = {
+@@ -925,9 +923,8 @@ gc_more:
+ 		goto stop;
+ 	ret = 0;
+ 
+-	seg_freed = do_garbage_collect(sbi, segno, &gc_list, gc_type);
+-
+-	if (gc_type == FG_GC && seg_freed == sbi->segs_per_sec)
++	if (do_garbage_collect(sbi, segno, &gc_list, gc_type) &&
++			gc_type == FG_GC)
+ 		sec_freed++;
+ 
+ 	if (gc_type == FG_GC)
+-- 
+2.7.2
+
+
+------------------------------------------------------------------------------
