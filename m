@@ -1,30 +1,29 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Alexander Gordeev <alex@gordick.net>
 Subject: Re: video archive on a microSD card
-Date: Fri, 19 Aug 2016 11:41:05 +0900
-Message-ID: <20160819024105.GA64207@jaegeuk>
+Date: Fri, 19 Aug 2016 14:56:12 +0300
+Message-ID: <1258721471607772@web12h.yandex.ru>
 References: <146631471002747@web20h.yandex.ru>
 	<281281471258049@web6h.yandex.ru>
 	<eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
 	<7021471263772@web16m.yandex.ru> <158901471427237@web4g.yandex.ru>
 	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
-	<1184081471518295@web5m.yandex.ru>
+	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1baZkF-0002Mi-NT
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <alex@gordick.net>) id 1baiPP-0002lI-HE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Aug 2016 02:41:19 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1baZkD-0001xO-OJ
+	Fri, 19 Aug 2016 11:56:23 +0000
+Received: from forward3m.cmail.yandex.net ([5.255.216.21])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1baiPM-0007jb-AN
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 19 Aug 2016 02:41:19 +0000
-Content-Disposition: inline
-In-Reply-To: <1184081471518295@web5m.yandex.ru>
+	Fri, 19 Aug 2016 11:56:23 +0000
+In-Reply-To: <20160819024105.GA64207@jaegeuk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,162 +33,116 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Alexander Gordeev <alex@gordick.net>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hello,
-
-On Thu, Aug 18, 2016 at 02:04:55PM +0300, Alexander Gordeev wrote:
-
-...
-
-> >>>>>>> =A0=A0Here is also /sys/kernel/debug/f2fs/status for reference:
-> >>>>>>> =A0=A0=3D=3D=3D=3D=3D[ partition info(sda). #0 ]=3D=3D=3D=3D=3D
-> >>>>>>> =A0=A0[SB: 1] [CP: 2] [SIT: 4] [NAT: 118] [SSA: 60] [MAIN: 29646(=
-OverProv:1529
-> >>>>>>> =A0Resv:50)]
-> >>>>>>>
-> >>>>>>> =A0=A0Utilization: 94% (13597314 valid blocks)
-> >>>>>>> =A0=A0=A0=A0- Node: 16395 (Inode: 2913, Other: 13482)
-> >>>>>>> =A0=A0=A0=A0- Data: 13580919
-> >>>>>>>
-> >>>>>>> =A0=A0Main area: 29646 segs, 14823 secs 14823 zones
-> >>>>>>> =A0=A0=A0=A0- COLD data: 3468, 1734, 1734
-> >>>>>>> =A0=A0=A0=A0- WARM data: 12954, 6477, 6477
-> >>>>>>> =A0=A0=A0=A0- HOT data: 28105, 14052, 14052
-> >>>>>>> =A0=A0=A0=A0- Dir dnode: 29204, 14602, 14602
-> >>>>>>> =A0=A0=A0=A0- File dnode: 19960, 9980, 9980
-> >>>>>>> =A0=A0=A0=A0- Indir nodes: 29623, 14811, 14811
-> >>>>>>>
-> >>>>>>> =A0=A0=A0=A0- Valid: 13615
-> >>>>>>> =A0=A0=A0=A0- Dirty: 13309
-> >>>>>>> =A0=A0=A0=A0- Prefree: 0
-> >>>>>>> =A0=A0=A0=A0- Free: 2722 (763)
-> >>>>>>>
-> >>>>>>> =A0=A0GC calls: 8622 (BG: 4311)
-> >>>>>>> =A0=A0=A0=A0- data segments : 8560
-> >>>>>>> =A0=A0=A0=A0- node segments : 62
-> >>>>>>> =A0=A0Try to move 3552161 blocks
-> >>>>>>> =A0=A0=A0=A0- data blocks : 3540278
-> >>>>>>> =A0=A0=A0=A0- node blocks : 11883
-> >>>>>>>
-> >>>>>>> =A0=A0Extent Hit Ratio: 49 / 4171
-> >>>>>>>
-> >>>>>>> =A0=A0Balancing F2FS Async:
-> >>>>>>> =A0=A0=A0=A0- nodes 6 in 141
-> >>>>>>> =A0=A0=A0=A0- dents 0 in dirs: 0
-> >>>>>>> =A0=A0=A0=A0- meta 13 in 346
-> >>>>>>> =A0=A0=A0=A0- NATs 16983 > 29120
-> >>>>>>> =A0=A0=A0=A0- SITs: 17
-> >>>>>>> =A0=A0=A0=A0- free_nids: 1861
-> >>>>>>>
-> >>>>>>> =A0=A0Distribution of User Blocks: [ valid | invalid | free ]
-> >>>>>>> =A0=A0=A0=A0[-----------------------------------------------|-|--]
-> >>>>>>>
-> >>>>>>> =A0=A0SSR: 1230719 blocks in 14834 segments
-> >>>>>>> =A0=A0LFS: 15150190 blocks in 29589 segments
-> >>>>>>>
-> >>>>>>> =A0=A0BDF: 89, avg. vblocks: 949
-> >>>>>>>
-> >>>>>>> =A0=A0Memory: 6754 KB =3D static: 4763 + cached: 1990
-
-...
-
-> >> =A0Per my understanding of f2fs internals, it should write these "cold=
-" files and
-> >> =A0usual "hot" files to different sections (that should map internally=
- to
-> >> =A0different allocation units). So the sections used by "cold" data sh=
-ould almost
-> >> =A0never get "dirty" because most of the time all their blocks become =
-free at
-> >> =A0the same time. Of course, the files are not exactly 4MB in size so =
-the last
-> >> =A0section of the deleted file will become dirty. If it is moved by ga=
-rbage
-> >> =A0collector and becomes mixed with fresh "cold" data, then indeed it =
-might cause
-> >> =A0some problems, I think. What is your opinion?
-> >
-> > If your fs is not fragmented, it may be as what you said, otherwise, SS=
-R will
-> > still try to reuse invalid block of other temperture segments, then you=
-r cold
-> > data will be fixed with warm data too.
-> >
-> > I guess, what you are facing is the latter one:
-> > SSR: 1230719 blocks in 14834 segments
-> =
-
-> I guess, I need to somehow disable any cleaning or SSR for my archive and=
- index
-> files. But keep the cleaning for other data and nodes.
-
-Could you test a mount option, "mode=3Dlfs", to disable SSR?
-(I guess sqlite may suffer from logner latency due to GC though.)
-
-Seems like it's caused by SSR starting to make worse before 95% as you desc=
-ribed
-below.
-
-Thanks,
-
-> I think the FS can get fragmented quite easily otherwise. The status abov=
-e is
-> captured when the FS already has problems. I think it can become fragment=
-ed
-> this way:
-> 1. The archive is written until the utilization is 95%. It is written sep=
-arately from other
-> data and nodes thanks to the "cold" data feature.
-> 2. After hitting 95% the archive my program starts to rotate the archive.=
- The rotation
-> routine checks the free space, reported by statfs(), once a minute. If it=
- is below 5%
-> of total, then it deletes several oldest records in the archive.
-> 3. The last deleted record leaves a dirty section. This section holds sev=
-eral blocks
-> from a record, which now becomes the oldest one.
-> 4. This section is merged with fresh "cold" or even warmer data by either=
- GC, or
-> SSR in one or more newly used sections.
-> 5. Then very soon the new oldest record is again deleted. And now we have=
- one
-> or even several dirty sections filled with blocks from a not so old recor=
-d. Which are
-> again merged with other records.
-> 6. All the records get fragmented after one full rotation. The fragmentat=
-ion gets
-> worse and worse.
-> =
-
-> So I think the best thing to do is to have sections with "cold" data be c=
-ompletely
-> out of all the cleaning schemes. It will clean itself by rotating.
-> Still other data and nodes might need to use some cleaning schemes.
-> Please correct me if I don't get it right.
-> =
-
-> > Maybe we can try to alter updating policy from OPU to IPU for your case=
- to avoid
-> > performance regression of SSR and more frequently FG-GC:
-> >
-> > echo 1 > /sys/fs/f2fs/"yourdevicename"/ipu_policy
-> =
-
-> Thanks, I'll try it!
-> =
-
-> --=A0
->  Alexander
-> =
-
-> -------------------------------------------------------------------------=
------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
----------------------------------------------------------------------------=
----
+SGkgSmFlZ2V1aywKCjE5LjA4LjIwMTYsIDA1OjQxLCAiSmFlZ2V1ayBLaW0iIDxqYWVnZXVrQGtl
+cm5lbC5vcmc+Ogo+IMKgSGVsbG8sCj4KPiDCoE9uIFRodSwgQXVnIDE4LCAyMDE2IGF0IDAyOjA0
+OjU1UE0gKzAzMDAsIEFsZXhhbmRlciBHb3JkZWV2IHdyb3RlOgo+Cj4gwqAuLi4KPgo+PiDCoMKg
+Pj4+Pj4+PiDCoMKgSGVyZSBpcyBhbHNvIC9zeXMva2VybmVsL2RlYnVnL2YyZnMvc3RhdHVzIGZv
+ciByZWZlcmVuY2U6Cj4+IMKgwqA+Pj4+Pj4+IMKgwqA9PT09PVsgcGFydGl0aW9uIGluZm8oc2Rh
+KS4gIzAgXT09PT09Cj4+IMKgwqA+Pj4+Pj4+IMKgwqBbU0I6IDFdIFtDUDogMl0gW1NJVDogNF0g
+W05BVDogMTE4XSBbU1NBOiA2MF0gW01BSU46IDI5NjQ2KE92ZXJQcm92OjE1MjkKPj4gwqDCoD4+
+Pj4+Pj4gwqBSZXN2OjUwKV0KPj4gwqDCoD4+Pj4+Pj4KPj4gwqDCoD4+Pj4+Pj4gwqDCoFV0aWxp
+emF0aW9uOiA5NCUgKDEzNTk3MzE0IHZhbGlkIGJsb2NrcykKPj4gwqDCoD4+Pj4+Pj4gwqDCoMKg
+wqAtIE5vZGU6IDE2Mzk1IChJbm9kZTogMjkxMywgT3RoZXI6IDEzNDgyKQo+PiDCoMKgPj4+Pj4+
+PiDCoMKgwqDCoC0gRGF0YTogMTM1ODA5MTkKPj4gwqDCoD4+Pj4+Pj4KPj4gwqDCoD4+Pj4+Pj4g
+wqDCoE1haW4gYXJlYTogMjk2NDYgc2VncywgMTQ4MjMgc2VjcyAxNDgyMyB6b25lcwo+PiDCoMKg
+Pj4+Pj4+PiDCoMKgwqDCoC0gQ09MRCBkYXRhOiAzNDY4LCAxNzM0LCAxNzM0Cj4+IMKgwqA+Pj4+
+Pj4+IMKgwqDCoMKgLSBXQVJNIGRhdGE6IDEyOTU0LCA2NDc3LCA2NDc3Cj4+IMKgwqA+Pj4+Pj4+
+IMKgwqDCoMKgLSBIT1QgZGF0YTogMjgxMDUsIDE0MDUyLCAxNDA1Mgo+PiDCoMKgPj4+Pj4+PiDC
+oMKgwqDCoC0gRGlyIGRub2RlOiAyOTIwNCwgMTQ2MDIsIDE0NjAyCj4+IMKgwqA+Pj4+Pj4+IMKg
+wqDCoMKgLSBGaWxlIGRub2RlOiAxOTk2MCwgOTk4MCwgOTk4MAo+PiDCoMKgPj4+Pj4+PiDCoMKg
+wqDCoC0gSW5kaXIgbm9kZXM6IDI5NjIzLCAxNDgxMSwgMTQ4MTEKPj4gwqDCoD4+Pj4+Pj4KPj4g
+wqDCoD4+Pj4+Pj4gwqDCoMKgwqAtIFZhbGlkOiAxMzYxNQo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDC
+oC0gRGlydHk6IDEzMzA5Cj4+IMKgwqA+Pj4+Pj4+IMKgwqDCoMKgLSBQcmVmcmVlOiAwCj4+IMKg
+wqA+Pj4+Pj4+IMKgwqDCoMKgLSBGcmVlOiAyNzIyICg3NjMpCj4+IMKgwqA+Pj4+Pj4+Cj4+IMKg
+wqA+Pj4+Pj4+IMKgwqBHQyBjYWxsczogODYyMiAoQkc6IDQzMTEpCj4+IMKgwqA+Pj4+Pj4+IMKg
+wqDCoMKgLSBkYXRhIHNlZ21lbnRzIDogODU2MAo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDCoC0gbm9k
+ZSBzZWdtZW50cyA6IDYyCj4+IMKgwqA+Pj4+Pj4+IMKgwqBUcnkgdG8gbW92ZSAzNTUyMTYxIGJs
+b2Nrcwo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDCoC0gZGF0YSBibG9ja3MgOiAzNTQwMjc4Cj4+IMKg
+wqA+Pj4+Pj4+IMKgwqDCoMKgLSBub2RlIGJsb2NrcyA6IDExODgzCj4+IMKgwqA+Pj4+Pj4+Cj4+
+IMKgwqA+Pj4+Pj4+IMKgwqBFeHRlbnQgSGl0IFJhdGlvOiA0OSAvIDQxNzEKPj4gwqDCoD4+Pj4+
+Pj4KPj4gwqDCoD4+Pj4+Pj4gwqDCoEJhbGFuY2luZyBGMkZTIEFzeW5jOgo+PiDCoMKgPj4+Pj4+
+PiDCoMKgwqDCoC0gbm9kZXMgNiBpbiAxNDEKPj4gwqDCoD4+Pj4+Pj4gwqDCoMKgwqAtIGRlbnRz
+IDAgaW4gZGlyczogMAo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDCoC0gbWV0YSAxMyBpbiAzNDYKPj4g
+wqDCoD4+Pj4+Pj4gwqDCoMKgwqAtIE5BVHMgMTY5ODMgPiAyOTEyMAo+PiDCoMKgPj4+Pj4+PiDC
+oMKgwqDCoC0gU0lUczogMTcKPj4gwqDCoD4+Pj4+Pj4gwqDCoMKgwqAtIGZyZWVfbmlkczogMTg2
+MQo+PiDCoMKgPj4+Pj4+Pgo+PiDCoMKgPj4+Pj4+PiDCoMKgRGlzdHJpYnV0aW9uIG9mIFVzZXIg
+QmxvY2tzOiBbIHZhbGlkIHwgaW52YWxpZCB8IGZyZWUgXQo+PiDCoMKgPj4+Pj4+PiDCoMKgwqDC
+oFstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwtfC0tXQo+
+PiDCoMKgPj4+Pj4+Pgo+PiDCoMKgPj4+Pj4+PiDCoMKgU1NSOiAxMjMwNzE5IGJsb2NrcyBpbiAx
+NDgzNCBzZWdtZW50cwo+PiDCoMKgPj4+Pj4+PiDCoMKgTEZTOiAxNTE1MDE5MCBibG9ja3MgaW4g
+Mjk1ODkgc2VnbWVudHMKPj4gwqDCoD4+Pj4+Pj4KPj4gwqDCoD4+Pj4+Pj4gwqDCoEJERjogODks
+IGF2Zy4gdmJsb2NrczogOTQ5Cj4+IMKgwqA+Pj4+Pj4+Cj4+IMKgwqA+Pj4+Pj4+IMKgwqBNZW1v
+cnk6IDY3NTQgS0IgPSBzdGF0aWM6IDQ3NjMgKyBjYWNoZWQ6IDE5OTAKPgo+IMKgLi4uCj4KPj4g
+wqDCoD4+IMKgUGVyIG15IHVuZGVyc3RhbmRpbmcgb2YgZjJmcyBpbnRlcm5hbHMsIGl0IHNob3Vs
+ZCB3cml0ZSB0aGVzZSAiY29sZCIgZmlsZXMgYW5kCj4+IMKgwqA+PiDCoHVzdWFsICJob3QiIGZp
+bGVzIHRvIGRpZmZlcmVudCBzZWN0aW9ucyAodGhhdCBzaG91bGQgbWFwIGludGVybmFsbHkgdG8K
+Pj4gwqDCoD4+IMKgZGlmZmVyZW50IGFsbG9jYXRpb24gdW5pdHMpLiBTbyB0aGUgc2VjdGlvbnMg
+dXNlZCBieSAiY29sZCIgZGF0YSBzaG91bGQgYWxtb3N0Cj4+IMKgwqA+PiDCoG5ldmVyIGdldCAi
+ZGlydHkiIGJlY2F1c2UgbW9zdCBvZiB0aGUgdGltZSBhbGwgdGhlaXIgYmxvY2tzIGJlY29tZSBm
+cmVlIGF0Cj4+IMKgwqA+PiDCoHRoZSBzYW1lIHRpbWUuIE9mIGNvdXJzZSwgdGhlIGZpbGVzIGFy
+ZSBub3QgZXhhY3RseSA0TUIgaW4gc2l6ZSBzbyB0aGUgbGFzdAo+PiDCoMKgPj4gwqBzZWN0aW9u
+IG9mIHRoZSBkZWxldGVkIGZpbGUgd2lsbCBiZWNvbWUgZGlydHkuIElmIGl0IGlzIG1vdmVkIGJ5
+IGdhcmJhZ2UKPj4gwqDCoD4+IMKgY29sbGVjdG9yIGFuZCBiZWNvbWVzIG1peGVkIHdpdGggZnJl
+c2ggImNvbGQiIGRhdGEsIHRoZW4gaW5kZWVkIGl0IG1pZ2h0IGNhdXNlCj4+IMKgwqA+PiDCoHNv
+bWUgcHJvYmxlbXMsIEkgdGhpbmsuIFdoYXQgaXMgeW91ciBvcGluaW9uPwo+PiDCoMKgPgo+PiDC
+oMKgPiBJZiB5b3VyIGZzIGlzIG5vdCBmcmFnbWVudGVkLCBpdCBtYXkgYmUgYXMgd2hhdCB5b3Ug
+c2FpZCwgb3RoZXJ3aXNlLCBTU1Igd2lsbAo+PiDCoMKgPiBzdGlsbCB0cnkgdG8gcmV1c2UgaW52
+YWxpZCBibG9jayBvZiBvdGhlciB0ZW1wZXJ0dXJlIHNlZ21lbnRzLCB0aGVuIHlvdXIgY29sZAo+
+PiDCoMKgPiBkYXRhIHdpbGwgYmUgZml4ZWQgd2l0aCB3YXJtIGRhdGEgdG9vLgo+PiDCoMKgPgo+
+PiDCoMKgPiBJIGd1ZXNzLCB3aGF0IHlvdSBhcmUgZmFjaW5nIGlzIHRoZSBsYXR0ZXIgb25lOgo+
+PiDCoMKgPiBTU1I6IDEyMzA3MTkgYmxvY2tzIGluIDE0ODM0IHNlZ21lbnRzCj4+Cj4+IMKgwqBJ
+IGd1ZXNzLCBJIG5lZWQgdG8gc29tZWhvdyBkaXNhYmxlIGFueSBjbGVhbmluZyBvciBTU1IgZm9y
+IG15IGFyY2hpdmUgYW5kIGluZGV4Cj4+IMKgwqBmaWxlcy4gQnV0IGtlZXAgdGhlIGNsZWFuaW5n
+IGZvciBvdGhlciBkYXRhIGFuZCBub2Rlcy4KPgo+IMKgQ291bGQgeW91IHRlc3QgYSBtb3VudCBv
+cHRpb24sICJtb2RlPWxmcyIsIHRvIGRpc2FibGUgU1NSPwo+IMKgKEkgZ3Vlc3Mgc3FsaXRlIG1h
+eSBzdWZmZXIgZnJvbSBsb2duZXIgbGF0ZW5jeSBkdWUgdG8gR0MgdGhvdWdoLikKPgo+IMKgU2Vl
+bXMgbGlrZSBpdCdzIGNhdXNlZCBieSBTU1Igc3RhcnRpbmcgdG8gbWFrZSB3b3JzZSBiZWZvcmUg
+OTUlIGFzIHlvdSBkZXNjcmliZWQKPiDCoGJlbG93LgoKVGhhbmtzLCBJJ2xsIHJ1biBhIHRlc3Qg
+d2l0aCBhIGNvdXBsZSBvZiBTRCBjYXJkcyBvdmVyIHdlZWtlbmQuClNvIGlmIEkgdW5kZXJzdGFu
+ZCBpdCBjb3JyZWN0bHksIEdDIHdpbGwgbm90IGNhdXNlIHRoZSBwcm9ibGVtcyBkZXNjcmliZWQg
+YmVsb3csIHJpZ2h0PwpJLmUuIGl0IHdpbGwgbm90IG1peCB0aGUgbmV3IGRhdGEgd2l0aCBvbGQg
+ZGF0YSBmcm9tIGRpcnR5IHNlY3Rpb25zPwpMb25nZXIgU1FMaXRlIGxhdGVuY2llcyBzaG91bGQg
+bm90IGJlIGEgcHJvYmxlbSBiZWNhdXNlIHRoZSBkYXRhYmFzZSBpcyB3cml0dGVuIG5vdApmcmVx
+dWVudGx5IGFuZCBhbHNvIGl0IGlzIGFib3V0IDIwMC0yNTBLQiBpbiBzaXplIHVzdWFsbHkuIE1h
+eWJlIGZvcmNpbmcgSVBVIGFzCnN1Z2dlc3RlZCBieSBDaGFvIHdvdWxkIGhlbHAgc3FsaXRlLCBu
+bz8KSG93ZXZlciBsb29rcyBsaWtlIHNldHRpbmcgaXB1X3BvbGljeSB0byAxIGhhcyBubyBlZmZl
+Y3Qgd2hlbiBtb2RlPWxmcy4KVGhlIElQVSBjb3VudGVyIGlzIHN0aWxsIHplcm8gb24gbXkgdGVz
+dCBzeXN0ZW0uCgo+PiDCoMKgSSB0aGluayB0aGUgRlMgY2FuIGdldCBmcmFnbWVudGVkIHF1aXRl
+IGVhc2lseSBvdGhlcndpc2UuIFRoZSBzdGF0dXMgYWJvdmUgaXMKPj4gwqDCoGNhcHR1cmVkIHdo
+ZW4gdGhlIEZTIGFscmVhZHkgaGFzIHByb2JsZW1zLiBJIHRoaW5rIGl0IGNhbiBiZWNvbWUgZnJh
+Z21lbnRlZAo+PiDCoMKgdGhpcyB3YXk6Cj4+IMKgwqAxLiBUaGUgYXJjaGl2ZSBpcyB3cml0dGVu
+IHVudGlsIHRoZSB1dGlsaXphdGlvbiBpcyA5NSUuIEl0IGlzIHdyaXR0ZW4gc2VwYXJhdGVseSBm
+cm9tIG90aGVyCj4+IMKgwqBkYXRhIGFuZCBub2RlcyB0aGFua3MgdG8gdGhlICJjb2xkIiBkYXRh
+IGZlYXR1cmUuCj4+IMKgwqAyLiBBZnRlciBoaXR0aW5nIDk1JSB0aGUgYXJjaGl2ZSBteSBwcm9n
+cmFtIHN0YXJ0cyB0byByb3RhdGUgdGhlIGFyY2hpdmUuIFRoZSByb3RhdGlvbgo+PiDCoMKgcm91
+dGluZSBjaGVja3MgdGhlIGZyZWUgc3BhY2UsIHJlcG9ydGVkIGJ5IHN0YXRmcygpLCBvbmNlIGEg
+bWludXRlLiBJZiBpdCBpcyBiZWxvdyA1JQo+PiDCoMKgb2YgdG90YWwsIHRoZW4gaXQgZGVsZXRl
+cyBzZXZlcmFsIG9sZGVzdCByZWNvcmRzIGluIHRoZSBhcmNoaXZlLgo+PiDCoMKgMy4gVGhlIGxh
+c3QgZGVsZXRlZCByZWNvcmQgbGVhdmVzIGEgZGlydHkgc2VjdGlvbi4gVGhpcyBzZWN0aW9uIGhv
+bGRzIHNldmVyYWwgYmxvY2tzCj4+IMKgwqBmcm9tIGEgcmVjb3JkLCB3aGljaCBub3cgYmVjb21l
+cyB0aGUgb2xkZXN0IG9uZS4KPj4gwqDCoDQuIFRoaXMgc2VjdGlvbiBpcyBtZXJnZWQgd2l0aCBm
+cmVzaCAiY29sZCIgb3IgZXZlbiB3YXJtZXIgZGF0YSBieSBlaXRoZXIgR0MsIG9yCj4+IMKgwqBT
+U1IgaW4gb25lIG9yIG1vcmUgbmV3bHkgdXNlZCBzZWN0aW9ucy4KPj4gwqDCoDUuIFRoZW4gdmVy
+eSBzb29uIHRoZSBuZXcgb2xkZXN0IHJlY29yZCBpcyBhZ2FpbiBkZWxldGVkLiBBbmQgbm93IHdl
+IGhhdmUgb25lCj4+IMKgwqBvciBldmVuIHNldmVyYWwgZGlydHkgc2VjdGlvbnMgZmlsbGVkIHdp
+dGggYmxvY2tzIGZyb20gYSBub3Qgc28gb2xkIHJlY29yZC4gV2hpY2ggYXJlCj4+IMKgwqBhZ2Fp
+biBtZXJnZWQgd2l0aCBvdGhlciByZWNvcmRzLgo+PiDCoMKgNi4gQWxsIHRoZSByZWNvcmRzIGdl
+dCBmcmFnbWVudGVkIGFmdGVyIG9uZSBmdWxsIHJvdGF0aW9uLiBUaGUgZnJhZ21lbnRhdGlvbiBn
+ZXRzCj4+IMKgwqB3b3JzZSBhbmQgd29yc2UuCj4+Cj4+IMKgwqBTbyBJIHRoaW5rIHRoZSBiZXN0
+IHRoaW5nIHRvIGRvIGlzIHRvIGhhdmUgc2VjdGlvbnMgd2l0aCAiY29sZCIgZGF0YSBiZSBjb21w
+bGV0ZWx5Cj4+IMKgwqBvdXQgb2YgYWxsIHRoZSBjbGVhbmluZyBzY2hlbWVzLiBJdCB3aWxsIGNs
+ZWFuIGl0c2VsZiBieSByb3RhdGluZy4KPj4gwqDCoFN0aWxsIG90aGVyIGRhdGEgYW5kIG5vZGVz
+IG1pZ2h0IG5lZWQgdG8gdXNlIHNvbWUgY2xlYW5pbmcgc2NoZW1lcy4KPj4gwqDCoFBsZWFzZSBj
+b3JyZWN0IG1lIGlmIEkgZG9uJ3QgZ2V0IGl0IHJpZ2h0Lgo+Pgo+PiDCoMKgPiBNYXliZSB3ZSBj
+YW4gdHJ5IHRvIGFsdGVyIHVwZGF0aW5nIHBvbGljeSBmcm9tIE9QVSB0byBJUFUgZm9yIHlvdXIg
+Y2FzZSB0byBhdm9pZAo+PiDCoMKgPiBwZXJmb3JtYW5jZSByZWdyZXNzaW9uIG9mIFNTUiBhbmQg
+bW9yZSBmcmVxdWVudGx5IEZHLUdDOgo+PiDCoMKgPgo+PiDCoMKgPiBlY2hvIDEgPiAvc3lzL2Zz
+L2YyZnMvInlvdXJkZXZpY2VuYW1lIi9pcHVfcG9saWN5Cj4+Cj4+IMKgwqBUaGFua3MsIEknbGwg
+dHJ5IGl0IQoKLS3CoArCoEFsZXhhbmRlcgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwg
+bWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBz
+Oi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
