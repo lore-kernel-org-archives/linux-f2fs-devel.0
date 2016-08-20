@@ -1,42 +1,36 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: fix to preallocate block only aligned to 4K
-Date: Sat, 20 Aug 2016 15:12:01 +0800
-Message-ID: <20160820071202.31355-1-yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: fix to do f2fs_balance_fs in f2fs_map_blocks correctly
+Date: Sat, 20 Aug 2016 15:12:02 +0800
+Message-ID: <20160820071202.31355-2-yuchao0@huawei.com>
+References: <20160820071202.31355-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160820071202.31355-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In write_begin(), we skip checking dnode block for preallocating block
-when whole block needs to be updated since we preallocated its block in
-f2fs_preallocate_blocks, for partial updated block, we will still try
-to lock its node and do preallocation in write_begin(), so in
-f2fs_preallocate_blocks we should not preallocate its block.
-
-But previously, the calculation of preallocating block number is
-incorrect, fix it.
+If we preallocate blocks with f2fs_reserve_blocks in f2fs_map_blocks, we
+should call f2fs_balance_fs for checking and reclaiming space, fix it.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/data.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ccb401e..dee3a78 100644
+index dee3a78..040a07a 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -626,7 +626,8 @@ ssize_t f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t ret = 0;
+@@ -784,6 +784,7 @@ skip:
+ 		err = reserve_new_blocks(&dn, prealloc);
+ 		if (err)
+ 			goto sync_out;
++		allocated = dn.node_changed;
  
- 	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
--	map.m_len = F2FS_BYTES_TO_BLK(iov_iter_count(from));
-+	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from)) -
-+								map.m_lblk;
- 	map.m_next_pgofs = NULL;
- 
- 	if (f2fs_encrypted_inode(inode))
+ 		map->m_len += dn.ofs_in_node - ofs_in_node;
+ 		if (prealloc && dn.ofs_in_node != last_ofs_in_node + 1) {
 -- 
 2.8.2.311.gee88674
