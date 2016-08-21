@@ -1,36 +1,35 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: fix to do f2fs_balance_fs in f2fs_map_blocks correctly
-Date: Sat, 20 Aug 2016 15:12:02 +0800
-Message-ID: <20160820071202.31355-2-yuchao0@huawei.com>
-References: <20160820071202.31355-1-yuchao0@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/3] f2fs: check return value of write_checkpoint during fstrim
+Date: Sun, 21 Aug 2016 23:21:29 +0800
+Message-ID: <1471792891-2388-1-git-send-email-chao@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160820071202.31355-1-yuchao0@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If we preallocate blocks with f2fs_reserve_blocks in f2fs_map_blocks, we
-should call f2fs_balance_fs for checking and reclaiming space, fix it.
+From: Chao Yu <yuchao0@huawei.com>
+
+During fstrim, if one of multiple write_checkpoint failed, break off and
+return error number to caller.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/segment.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index dee3a78..040a07a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -784,6 +784,7 @@ skip:
- 		err = reserve_new_blocks(&dn, prealloc);
- 		if (err)
- 			goto sync_out;
-+		allocated = dn.node_changed;
- 
- 		map->m_len += dn.ofs_in_node - ofs_in_node;
- 		if (prealloc && dn.ofs_in_node != last_ofs_in_node + 1) {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index a394012..020767c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1303,6 +1303,8 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 		mutex_lock(&sbi->gc_mutex);
+ 		err = write_checkpoint(sbi, &cpc);
+ 		mutex_unlock(&sbi->gc_mutex);
++		if (err)
++			break;
+ 	}
+ out:
+ 	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
 -- 
-2.8.2.311.gee88674
+2.7.2
