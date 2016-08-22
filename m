@@ -1,62 +1,61 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 3/3] f2fs: remove redundant judgement condition
-	in available_free_memory
-Date: Sun, 21 Aug 2016 23:21:31 +0800
-Message-ID: <1471792891-2388-3-git-send-email-chao@kernel.org>
-References: <1471792891-2388-1-git-send-email-chao@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1bbUbG-0006rr-DR
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 21 Aug 2016 15:23:50 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bbUbF-0003hm-Nd
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 21 Aug 2016 15:23:50 +0000
-In-Reply-To: <1471792891-2388-1-git-send-email-chao@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-
 From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 5/6] f2fs: enable inline_dentry by default
+Date: Mon, 22 Aug 2016 09:49:13 +0800
+Message-ID: <0eea4e00-aa6a-8ea0-db9e-3d289c7fb20b@huawei.com>
+References: <20160509115635.123946-1-yuchao0@huawei.com>
+ <20160509115635.123946-5-yuchao0@huawei.com>
+ <20160509230451.GB7448@jaegeuk.gateway>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160509230451.GB7448@jaegeuk.gateway>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In available_free_memory, there are two same judgement conditions which
-is used for checking NAT excess, remove one of them.
+Hi Jaegeuk,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/node.c | 2 --
- 1 file changed, 2 deletions(-)
+On 2016/5/10 7:04, Jaegeuk Kim wrote:
+> On Mon, May 09, 2016 at 07:56:34PM +0800, Chao Yu wrote:
+>> Make inline_dentry as default mount option to improve space usage and
+>> IO performance in scenario of numerous small directory.
+> 
+> Hmm, I've not much tested this so far.
+> Let me take time to consider this for a while.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f75d197..8a28800 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -54,8 +54,6 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
- 		res = mem_size < ((avail_ram * nm_i->ram_thresh / 100) >> 2);
- 		if (excess_cached_nats(sbi))
- 			res = false;
--		if (nm_i->nat_cnt > DEF_NAT_CACHE_THRESHOLD)
--			res = false;
- 	} else if (type == DIRTY_DENTS) {
- 		if (sbi->sb->s_bdi->wb.dirty_exceeded)
- 			return false;
--- 
-2.7.2
+IMO, this feature is almost stable since I fixed most of bugs which occurs
+during inline conversion. And now I enable this feature by default when I do the
+test with fstest suit and fsstress, I didn't find any more bugs reported by
+those test tools.
 
+How do you think of enabling inline_dentry by default now?
 
-------------------------------------------------------------------------------
+Thanks,
+
+> 
+> Thanks,
+> 
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/super.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 28c8992..4a4f4bd 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -824,6 +824,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+>>  
+>>  	set_opt(sbi, BG_GC);
+>>  	set_opt(sbi, INLINE_DATA);
+>> +	set_opt(sbi, INLINE_DENTRY);
+>>  	set_opt(sbi, EXTENT_CACHE);
+>>  
+>>  #ifdef CONFIG_F2FS_FS_XATTR
+>> -- 
+>> 2.8.2.311.gee88674
+> .
+> 
