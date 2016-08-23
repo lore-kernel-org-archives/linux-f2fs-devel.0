@@ -1,89 +1,73 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: fix to preallocate block only aligned to 4K
-Date: Tue, 23 Aug 2016 16:19:09 -0700
-Message-ID: <20160823231909.GA77787@jaegeuk>
-References: <20160820071202.31355-1-yuchao0@huawei.com>
+Subject: [GIT PULL] f2fs bug fix for 4.8-rc4
+Date: Tue, 23 Aug 2016 16:35:03 -0700
+Message-ID: <20160823233503.GA78328@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bcLDt-00055S-0W
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 23 Aug 2016 23:35:13 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bcLDs-0006zE-10
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 23 Aug 2016 23:35:12 +0000
 Content-Disposition: inline
-In-Reply-To: <20160820071202.31355-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Chao,
+Hi Linus,
 
-There is a bug when ki_pos = 1024, and iov_iter_count(from) = 1024 in xfstests.
-Could you check the below patch to fix your one?
-
----
- fs/f2fs/data.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 37a59f7..7c8e219 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -626,8 +626,12 @@ ssize_t f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t ret = 0;
- 
- 	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
--	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from)) -
--								map.m_lblk;
-+	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from));
-+	if (map.m_len > map.m_lblk)
-+		map.m_len -= map.m_lblk;
-+	else
-+		map.m_len = 0;
-+
- 	map.m_next_pgofs = NULL;
- 
- 	if (f2fs_encrypted_inode(inode))
-@@ -673,6 +677,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
- 	bool allocated = false;
- 	block_t blkaddr;
- 
-+	if (!maxblocks)
-+		return 0;
-+
- 	map->m_len = 0;
- 	map->m_flags = 0;
- 
--- 
-2.8.3
+Could you consider this pull request?
 
 Thanks,
 
-On Sat, Aug 20, 2016 at 03:12:01PM +0800, Chao Yu wrote:
-> In write_begin(), we skip checking dnode block for preallocating block
-> when whole block needs to be updated since we preallocated its block in
-> f2fs_preallocate_blocks, for partial updated block, we will still try
-> to lock its node and do preallocation in write_begin(), so in
-> f2fs_preallocate_blocks we should not preallocate its block.
-> 
-> But previously, the calculation of preallocating block number is
-> incorrect, fix it.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/data.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index ccb401e..dee3a78 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -626,7 +626,8 @@ ssize_t f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->  	ssize_t ret = 0;
->  
->  	map.m_lblk = F2FS_BLK_ALIGN(iocb->ki_pos);
-> -	map.m_len = F2FS_BYTES_TO_BLK(iov_iter_count(from));
-> +	map.m_len = F2FS_BYTES_TO_BLK(iocb->ki_pos + iov_iter_count(from)) -
-> +								map.m_lblk;
->  	map.m_next_pgofs = NULL;
->  
->  	if (f2fs_encrypted_inode(inode))
-> -- 
-> 2.8.2.311.gee88674
+The following changes since commit 3408fef7448ce7d3c926978ee1a511e7707bffba:
+
+  Merge branch 'x86-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2016-08-18 15:09:41 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-v4.8-rc4
+
+for you to fetch changes up to 20a3d61d46e1fb45efa6eb4637c0dcd3f00a14e9:
+
+  f2fs: avoid potential deadlock in f2fs_move_file_range (2016-08-19 11:15:08 +0900)
+
+----------------------------------------------------------------
+Bug/regression fix
+- fsmark regression
+- i_size race condition
+- wrong conditions in f2fs_move_file_range
+
+----------------------------------------------------------------
+Chao Yu (3):
+      Revert "f2fs: move i_size_write in f2fs_write_end"
+      f2fs: allow copying file range only in between regular files
+      f2fs: avoid potential deadlock in f2fs_move_file_range
+
+Jaegeuk Kim (1):
+      Revert "f2fs: use percpu_rw_semaphore"
+
+ fs/f2fs/data.c  |  2 +-
+ fs/f2fs/f2fs.h  | 12 ++++++------
+ fs/f2fs/file.c  | 13 +++++++++----
+ fs/f2fs/node.c  | 47 +++++++++++++++++++++++------------------------
+ fs/f2fs/super.c |  6 +-----
+ 5 files changed, 40 insertions(+), 40 deletions(-)
+
+------------------------------------------------------------------------------
