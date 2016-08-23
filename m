@@ -1,40 +1,76 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next] f2fs: fix non static symbol warning
-Date: Tue, 23 Aug 2016 15:23:59 +0000
-Message-ID: <1471965839-8389-1-git-send-email-weiyj.lk@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/3] f2fs: schedule in between two continous
+ batch discards
+Date: Tue, 23 Aug 2016 09:53:53 -0700
+Message-ID: <20160823165353.GA73835@jaegeuk>
+References: <1471792891-2388-1-git-send-email-chao@kernel.org>
+	<1471792891-2388-2-git-send-email-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>, Chao Yu <yuchao0@huawei.com>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bcExg-0001BM-Q1
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 23 Aug 2016 16:54:04 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bcExd-0002xu-G2
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 23 Aug 2016 16:54:03 +0000
+Content-Disposition: inline
+In-Reply-To: <1471792891-2388-2-git-send-email-chao@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+Hi Chao,
 
-Fixes the following sparse warning:
+On Sun, Aug 21, 2016 at 11:21:30PM +0800, Chao Yu wrote:
+> From: Chao Yu <yuchao0@huawei.com>
+> 
+> In batch discard approach of fstrim will grab/release gc_mutex lock
+> repeatly, it makes contention of the lock becoming more intensive.
+> 
+> So after one batch discards were issued in checkpoint and the lock
+> was released, it's better to do schedule() to increase opportunity
+> of grabbing gc_mutex lock for other competitors.
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/segment.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 020767c..d0f74eb 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1305,6 +1305,8 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+>  		mutex_unlock(&sbi->gc_mutex);
+>  		if (err)
+>  			break;
+> +
+> +		schedule();
 
-fs/f2fs/data.c:969:12: warning:
- symbol 'f2fs_grab_bio' was not declared. Should it be static?
+Hmm, if other thread is already waiting for gc_mutex, we don't need this here.
+In order to avoid long latency, wouldn't it be enough to reduce the batch size?
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- fs/f2fs/data.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks,
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ccb401e..64d1833 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -966,8 +966,8 @@ out:
- 	return ret;
- }
- 
--struct bio *f2fs_grab_bio(struct inode *inode, block_t blkaddr,
--							unsigned nr_pages)
-+static struct bio *f2fs_grab_bio(struct inode *inode, block_t blkaddr,
-+				 unsigned nr_pages)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct fscrypt_ctx *ctx = NULL;
+>  	}
+>  out:
+>  	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
+> -- 
+> 2.7.2
+
+------------------------------------------------------------------------------
