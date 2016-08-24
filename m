@@ -1,89 +1,300 @@
-From: Andrei Borzenkov <arvidjaar@gmail.com>
+From: Michael Zimmermann <sigmaepsilon92@gmail.com>
 Subject: Re: safety of save_env
-Date: Wed, 24 Aug 2016 11:10:19 +0300
-Message-ID: <1a4f93ac-40fd-afd9-25de-84facaf3bbe0@gmail.com>
+Date: Wed, 24 Aug 2016 11:27:19 +0200
+Message-ID: <CAN9vWDKh0C5iRN7xx3XGkfdD1jmi5q3tXQOciKOM7RqO1oURBA@mail.gmail.com>
 References: <CAN9vWDLM7pSmijHAFpgAZRGOVX3BdhESRnrWvx80Btt3teuOEA@mail.gmail.com>
 	<d0fb3d5c-100e-08ec-10be-7697a3922702@gmail.com>
 	<CAN9vWDKdAxb=1edAN0bUcu8V6VmVGf3rL1SCpGBJa2doA_8XUw@mail.gmail.com>
 	<5c877f46-a894-357d-b542-fd5792946ec6@gmail.com>
+	<1a4f93ac-40fd-afd9-25de-84facaf3bbe0@gmail.com>
+Reply-To: The development of GNU GRUB <grub-devel@gnu.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <arvidjaar@gmail.com>) id 1bcTGX-0000vW-E7
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Aug 2016 08:10:29 +0000
-Received: from mail-lf0-f48.google.com ([209.85.215.48])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1bcTGW-0001Vr-9v
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Aug 2016 08:10:29 +0000
-Received: by mail-lf0-f48.google.com with SMTP id g62so6297062lfe.3
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 24 Aug 2016 01:10:28 -0700 (PDT)
-In-Reply-To: <5c877f46-a894-357d-b542-fd5792946ec6@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: grub-devel@gnu.org
+Content-Type: multipart/mixed; boundary="===============6681671066726790779=="
+Return-path: <grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org>
+In-Reply-To: <1a4f93ac-40fd-afd9-25de-84facaf3bbe0@gmail.com>
+List-Unsubscribe: <https://lists.gnu.org/mailman/options/grub-devel>,
+	<mailto:grub-devel-request@gnu.org?subject=unsubscribe>
+List-Archive: <http://lists.gnu.org/archive/html/grub-devel/>
+List-Post: <mailto:grub-devel@gnu.org>
+List-Help: <mailto:grub-devel-request@gnu.org?subject=help>
+List-Subscribe: <https://lists.gnu.org/mailman/listinfo/grub-devel>,
+	<mailto:grub-devel-request@gnu.org?subject=subscribe>
+Errors-To: grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org
+Sender: "Grub-devel" <grub-devel-bounces+gcbgd-grub-devel=m.gmane.org@gnu.org>
+To: The development of GNU GRUB <grub-devel@gnu.org>
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-MjQuMDguMjAxNiAxMDoxNywgQW5kcmVpIEJvcnplbmtvdiDQv9C40YjQtdGCOgo+IDI0LjA4LjIw
-MTYgMDc6MTUsIE1pY2hhZWwgWmltbWVybWFubiDQv9C40YjQtdGCOgo+PiBJIG1lYW4gc2FmZSBp
-biB0aGUgc2Vuc2UgdGhhdCBpdCB3b3VsZCBub3QgZGVzdHJveSBkYXRhIG91dHNpZGUgb2YgdGhh
-dAo+PiBmaWxlIChubyBtYXR0ZXIgaWYgd3JpdGluZyB3YXMgc3VjY2Vzc2Z1bCBvciBub3QpIG9y
-IGV2ZW4gZGVzdHJveS9hZGQKPj4gZXJyb3JzIHRvICB0aGUgZmlsZXN5c3RlbS4oZXh0KiwgZjJm
-cywgZmF0KiwgLi4uKS4KPj4KPiAKPiBJdCBjb21wdXRlcyBibG9jayBsaXN0IG9mIGZpbGUgZGF0
-YSBhbmQgdGhlbiBvdmVyd3JpdGVzIHRoZXNlIGJsb2Nrcy4gSXQKPiB3aWxsIGFib3J0IGlmIGZp
-bGUgaXMgc3BhcnNlLiBJdCBhY3R1YWxseSBldmVuIGRvdWJsZSBjaGVja3MgYmxvY2sgbGlzdAo+
-IGJ5IHJlYWRpbmcgZGlyZWN0bHkgZnJvbSBkaXNrIChieXBhc3NpbmcgZmlsZXN5c3RlbSBkcml2
-ZXIpIGFuZAo+IGNvbXBhcmluZyByZXN1bHRzLgo+IAo+IFNvIGl0IGxvb2tzIHJlYXNvbmFibHkg
-c2FmZSBpbiB0aGF0IGl0IHNob3VsZCBub3Qgd3JpdGUgb3V0c2lkZSBvZiBzcGFjZQo+IGFscmVh
-ZHkgYWxsb2NhdGVkIGZvciBmaWxlIGRhdGEgb24gZGlzay4gSXQgb2J2aW91c2x5IHdpbGwgbm90
-IHdvcmsgZm9yCj4gZmlsZXN5c3RlbSB0aGF0IGNvbXB1dGVzIGNoZWNrc3VtcyBvdmVyIGRhdGEg
-bGlrZSBidHJmcyBvciB6ZnM7IHRoZXNlCj4gZmlsZXN5c3RlbXMgY3VycmVudGx5IGlnbm9yZSBy
-ZWFkIGhvb2tzIHNvIGFsd2F5cyByZXR1cm4gZW1wdHkgYmxvY2sKPiBsaXN0IChsZWFkaW5nIHRv
-IGNvbmZ1c2luZyBlcnJvciBtZXNzYWdlKS4KPiAKPiBGb3Igam91cm5hbGxlZCBmaWxlc3lzdGVt
-cyB0aGVyZSBpcyBub24temVybyBwcm9iYWJpbGl0eSB0aGF0IGpvdXJuYWwKPiByZXBsYXkgd2ls
-bCBjaGFuZ2UgY29udGVudCBvZiB0aG9zZSBibG9ja3MuCj4gCj4gTm90ZSB0aGF0IGl0IGRlcGVu
-ZHMgb24gZXhwbGljaXQgZnMgZHJpdmVyIHN1cHBvcnQ7IGxvb2tpbmcgZS5nLiBhdCBmMmZzCj4g
-cGF0Y2ggaW5saW5lIGRhdGEgYnlwYXNzZXMgcmVhZCBob29rLiBQcm9iYWJseSBub3QgYW4gaXNz
-dWUgZm9yIDEwME0KPiBmaWxlIHRob3VnaC4KPiAKClNwZWFraW5nIGFib3V0IGYyZnMgLSBkb2Vz
-IGl0IHVzZSBjaGVja3N1bXMgZm9yIGRhdGEgb3IgbWV0YWRhdGE/IEluCnBhcnRpY3VsYXIsIGlm
-IHN1cHBvcnRpbmcgYmxvY2sgbGlzdHMgZm9yIGlubGluZSBkYXRhIG1ldGFkYXRhIGNoZWNrc3Vt
-cwptYXkgYmUgYW4gaXNzdWUgdGhlbi4KCkFsc28gSSB1bmRlcnN0YW5kIHRoYXQgaXQgaXMgZGVz
-aWduZWQgZm9yIG1lZGlhIHdoaWNoIG1heSBub3Qgc3VwcG9ydApkaXJlY3Qgc2VjdG9yIHNpemUg
-d3JpdGUsIG9yIGFtIEkgd3Jvbmc/CgpIbW0gLi4uIGlub2RlIGNoZWNrc3VtcyBkbyBtZWFuIHBy
-b2JsZW0gZm9yIGV4dDQgd2l0aCBpbmxpbmUgZGF0YSAobm90CnlldCBpbiBHUlVCIHVwc3RyZWFt
-KS4KCj4+IE9uIFR1ZSwgQXVnIDIzLCAyMDE2IGF0IDk6NTkgUE0sIEFuZHJlaSBCb3J6ZW5rb3Yg
-PGFydmlkamFhckBnbWFpbC5jb20+Cj4+IHdyb3RlOgo+Pgo+Pj4gMjMuMDguMjAxNiAyMTo1MSwg
-TWljaGFlbCBaaW1tZXJtYW5uINC/0LjRiNC10YI6Cj4+Pj4gSGksCj4+Pj4KPj4+PiBob3cgc2Fm
-ZSBpcyB0aGUgdXNhZ2Ugb2Ygc2F2ZV9lbnY/IEknbSBjb25zaWRlcmluZyB3cml0aW5nIGxpa2Ug
-MTAwTUIgdG8KPj4+IGEKPj4+PiBsb29wIGZpbGUgdXNpbmcgdGhlIHRlY2huaXF1ZSB1c2VkIGJ5
-IHRoaXMgY29tbWFuZC4KPj4+Pgo+Pj4KPj4+IERlZmluZSAic2FmZSIuIENvbW1hbmQgaXMgZmls
-ZXN5c3RlbSBhZ25vc3RpYyBhbmQgZXhwZWN0cyBmdWxseQo+Pj4gcHJlYWxsb2NhdGVkIGZpbGU7
-IGl0IHdyaXRlcyBvbiBibG9jayBsZXZlbC4gSXQgYWxzbyBidWlsZHMgZnVsbCBjb250ZW50Cj4+
-PiBvZiBlbnZpcm9ubWVudCBmaWxlIGluIG1lbW9yeSBiZWZvcmUgd3JpdGluZyBpdCBvdXQ7IHNv
-IGl0IG1heSBmYWlsIG9uCj4+PiBzeXN0ZW1zIHdpdGggc21hbGwgYW1vdW50IG9mIG1lbW9yeS4K
-Pj4+Cj4+PiBJdCBhdHRlbXB0cyB0byB2ZXJpZnkgdGhhdCBmaWxlIGNhbiBiZSByZXByZXNlbnRl
-ZCBieSBibG9jayBsaXN0cyBhbmQgaXQKPj4+IGRvZXMgbm90IG92ZXJ3cml0ZSBibG9ja3Mgb3V0
-c2lkZSBvZiBhbGxvY2F0ZWQgZm9yIHRoZSBmaWxlLgo+Pj4KPj4+IF9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+PiBHcnViLWRldmVsIG1haWxpbmcgbGlz
-dAo+Pj4gR3J1Yi1kZXZlbEBnbnUub3JnCj4+PiBodHRwczovL2xpc3RzLmdudS5vcmcvbWFpbG1h
-bi9saXN0aW5mby9ncnViLWRldmVsCj4+Pgo+Pgo+Pgo+Pgo+PiBfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+PiBHcnViLWRldmVsIG1haWxpbmcgbGlzdAo+
-PiBHcnViLWRldmVsQGdudS5vcmcKPj4gaHR0cHM6Ly9saXN0cy5nbnUub3JnL21haWxtYW4vbGlz
-dGluZm8vZ3J1Yi1kZXZlbAo+Pgo+IAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
-aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
-L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+--===============6681671066726790779==
+Content-Type: multipart/alternative; boundary=94eb2c1309d64e5845053acde3a4
+
+--94eb2c1309d64e5845053acde3a4
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+> Note that it depends on explicit fs driver support; looking e.g. at f2fs
+> patch inline data bypasses read hook. Probably not an issue for 100M
+> file though.
+that probably has to be fixed then.
+
+> Speaking about f2fs - does it use checksums for data or metadata? In
+> particular, if supporting block lists for inline data metadata checksums
+> may be an issue then.
+@Jaegeuk Kim
+
+> Also I understand that it is designed for media which may not support
+> direct sector size write, or am I wrong?
+@Jaegeuk Kim
+
+> Hmm ... inode checksums do mean problem for ext4 with inline data (not
+> yet in GRUB upstream).
+Can all the problems you've listed be detected? If so we can just deny
+writing if a specific fs feature is enabled.
+
+
+On Wed, Aug 24, 2016 at 10:10 AM, Andrei Borzenkov <arvidjaar@gmail.com>
+wrote:
+
+> 24.08.2016 10:17, Andrei Borzenkov =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 24.08.2016 07:15, Michael Zimmermann =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> I mean safe in the sense that it would not destroy data outside of tha=
+t
+> >> file (no matter if writing was successful or not) or even destroy/add
+> >> errors to  the filesystem.(ext*, f2fs, fat*, ...).
+> >>
+> >
+> > It computes block list of file data and then overwrites these blocks. I=
+t
+> > will abort if file is sparse. It actually even double checks block list
+> > by reading directly from disk (bypassing filesystem driver) and
+> > comparing results.
+> >
+> > So it looks reasonably safe in that it should not write outside of spac=
+e
+> > already allocated for file data on disk. It obviously will not work for
+> > filesystem that computes checksums over data like btrfs or zfs; these
+> > filesystems currently ignore read hooks so always return empty block
+> > list (leading to confusing error message).
+> >
+> > For journalled filesystems there is non-zero probability that journal
+> > replay will change content of those blocks.
+> >
+> > Note that it depends on explicit fs driver support; looking e.g. at f2f=
+s
+> > patch inline data bypasses read hook. Probably not an issue for 100M
+> > file though.
+> >
+>
+> Speaking about f2fs - does it use checksums for data or metadata? In
+> particular, if supporting block lists for inline data metadata checksums
+> may be an issue then.
+>
+> Also I understand that it is designed for media which may not support
+> direct sector size write, or am I wrong?
+>
+> Hmm ... inode checksums do mean problem for ext4 with inline data (not
+> yet in GRUB upstream).
+>
+> >> On Tue, Aug 23, 2016 at 9:59 PM, Andrei Borzenkov <arvidjaar@gmail.com=
+>
+> >> wrote:
+> >>
+> >>> 23.08.2016 21:51, Michael Zimmermann =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>>> Hi,
+> >>>>
+> >>>> how safe is the usage of save_env? I'm considering writing like 100M=
+B
+> to
+> >>> a
+> >>>> loop file using the technique used by this command.
+> >>>>
+> >>>
+> >>> Define "safe". Command is filesystem agnostic and expects fully
+> >>> preallocated file; it writes on block level. It also builds full
+> content
+> >>> of environment file in memory before writing it out; so it may fail o=
+n
+> >>> systems with small amount of memory.
+> >>>
+> >>> It attempts to verify that file can be represented by block lists and
+> it
+> >>> does not overwrite blocks outside of allocated for the file.
+> >>>
+> >>> _______________________________________________
+> >>> Grub-devel mailing list
+> >>> Grub-devel@gnu.org
+> >>> https://lists.gnu.org/mailman/listinfo/grub-devel
+> >>>
+> >>
+> >>
+> >>
+> >> _______________________________________________
+> >> Grub-devel mailing list
+> >> Grub-devel@gnu.org
+> >> https://lists.gnu.org/mailman/listinfo/grub-devel
+> >>
+> >
+>
+>
+> _______________________________________________
+> Grub-devel mailing list
+> Grub-devel@gnu.org
+> https://lists.gnu.org/mailman/listinfo/grub-devel
+>
+
+--94eb2c1309d64e5845053acde3a4
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">&gt;=C2=A0<span style=3D"font-size:12.8px">Note that it de=
+pends on explicit fs driver support; looking e.g. at f2fs</span><br style=
+=3D"font-size:12.8px"><span style=3D"font-size:12.8px">&gt; patch inline da=
+ta bypasses read hook. Probably not an issue for 100M</span><br style=3D"fo=
+nt-size:12.8px"><span style=3D"font-size:12.8px">&gt; file though.</span><d=
+iv style=3D"font-size:12.8px"></div><div>that probably has to be fixed then=
+.</div><div><br></div><div><span style=3D"font-size:12.8px">&gt; Speaking a=
+bout f2fs - does it use checksums for data or metadata? In</span><br style=
+=3D"font-size:12.8px"><span style=3D"font-size:12.8px">&gt;=C2=A0</span><sp=
+an style=3D"font-size:12.8px">particular, if supporting block lists for inl=
+ine data metadata checksums</span><br style=3D"font-size:12.8px"><span styl=
+e=3D"font-size:12.8px">&gt;=C2=A0</span><span style=3D"font-size:12.8px">ma=
+y be an issue then.</span></div><div>@Jaegeuk Kim</div><div><br style=3D"fo=
+nt-size:12.8px"><span style=3D"font-size:12.8px">&gt; Also I understand tha=
+t it is designed for media which may not support</span><br style=3D"font-si=
+ze:12.8px"><span style=3D"font-size:12.8px">&gt;=C2=A0</span><span style=3D=
+"font-size:12.8px">direct sector size write, or am I wrong?</span></div><di=
+v>@Jaegeuk Kim<span style=3D"font-size:12.8px"><br></span></div><div><br st=
+yle=3D"font-size:12.8px"><span style=3D"font-size:12.8px">&gt; Hmm ... inod=
+e checksums do mean problem for ext4 with inline data (not</span><br style=
+=3D"font-size:12.8px"><span style=3D"font-size:12.8px">&gt; yet in GRUB ups=
+tream).</span><br></div><div><span style=3D"font-size:12.8px">Can all the p=
+roblems you&#39;ve listed be detected? If so we can just deny writing if a =
+specific fs feature is enabled.</span></div><div><br></div></div><div class=
+=3D"gmail_extra"><br><div class=3D"gmail_quote">On Wed, Aug 24, 2016 at 10:=
+10 AM, Andrei Borzenkov <span dir=3D"ltr">&lt;<a href=3D"mailto:arvidjaar@g=
+mail.com" target=3D"_blank">arvidjaar@gmail.com</a>&gt;</span> wrote:<br><b=
+lockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px =
+#ccc solid;padding-left:1ex"><a href=3D"tel:24.08.2016%2010" value=3D"+1240=
+8201610">24.08.2016 10</a>:17, Andrei Borzenkov =D0=BF=D0=B8=D1=88=D0=B5=D1=
+=82:<br>
+<span class=3D"">&gt; <a href=3D"tel:24.08.2016%2007" value=3D"+12408201607=
+">24.08.2016 07</a>:15, Michael Zimmermann =D0=BF=D0=B8=D1=88=D0=B5=D1=82:<=
+br>
+&gt;&gt; I mean safe in the sense that it would not destroy data outside of=
+ that<br>
+&gt;&gt; file (no matter if writing was successful or not) or even destroy/=
+add<br>
+&gt;&gt; errors to=C2=A0 the filesystem.(ext*, f2fs, fat*, ...).<br>
+&gt;&gt;<br>
+&gt;<br>
+&gt; It computes block list of file data and then overwrites these blocks. =
+It<br>
+&gt; will abort if file is sparse. It actually even double checks block lis=
+t<br>
+&gt; by reading directly from disk (bypassing filesystem driver) and<br>
+&gt; comparing results.<br>
+&gt;<br>
+&gt; So it looks reasonably safe in that it should not write outside of spa=
+ce<br>
+&gt; already allocated for file data on disk. It obviously will not work fo=
+r<br>
+&gt; filesystem that computes checksums over data like btrfs or zfs; these<=
+br>
+&gt; filesystems currently ignore read hooks so always return empty block<b=
+r>
+&gt; list (leading to confusing error message).<br>
+&gt;<br>
+&gt; For journalled filesystems there is non-zero probability that journal<=
+br>
+&gt; replay will change content of those blocks.<br>
+&gt;<br>
+&gt; Note that it depends on explicit fs driver support; looking e.g. at f2=
+fs<br>
+&gt; patch inline data bypasses read hook. Probably not an issue for 100M<b=
+r>
+&gt; file though.<br>
+&gt;<br>
+<br>
+</span>Speaking about f2fs - does it use checksums for data or metadata? In=
+<br>
+particular, if supporting block lists for inline data metadata checksums<br=
+>
+may be an issue then.<br>
+<br>
+Also I understand that it is designed for media which may not support<br>
+direct sector size write, or am I wrong?<br>
+<br>
+Hmm ... inode checksums do mean problem for ext4 with inline data (not<br>
+yet in GRUB upstream).<br>
+<div class=3D"HOEnZb"><div class=3D"h5"><br>
+&gt;&gt; On Tue, Aug 23, 2016 at 9:59 PM, Andrei Borzenkov &lt;<a href=3D"m=
+ailto:arvidjaar@gmail.com">arvidjaar@gmail.com</a>&gt;<br>
+&gt;&gt; wrote:<br>
+&gt;&gt;<br>
+&gt;&gt;&gt; 23.08.2016 21:51, Michael Zimmermann =D0=BF=D0=B8=D1=88=D0=B5=
+=D1=82:<br>
+&gt;&gt;&gt;&gt; Hi,<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;&gt; how safe is the usage of save_env? I&#39;m considering wri=
+ting like 100MB to<br>
+&gt;&gt;&gt; a<br>
+&gt;&gt;&gt;&gt; loop file using the technique used by this command.<br>
+&gt;&gt;&gt;&gt;<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; Define &quot;safe&quot;. Command is filesystem agnostic and ex=
+pects fully<br>
+&gt;&gt;&gt; preallocated file; it writes on block level. It also builds fu=
+ll content<br>
+&gt;&gt;&gt; of environment file in memory before writing it out; so it may=
+ fail on<br>
+&gt;&gt;&gt; systems with small amount of memory.<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; It attempts to verify that file can be represented by block li=
+sts and it<br>
+&gt;&gt;&gt; does not overwrite blocks outside of allocated for the file.<b=
+r>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; ______________________________<wbr>_________________<br>
+&gt;&gt;&gt; Grub-devel mailing list<br>
+&gt;&gt;&gt; <a href=3D"mailto:Grub-devel@gnu.org">Grub-devel@gnu.org</a><b=
+r>
+&gt;&gt;&gt; <a href=3D"https://lists.gnu.org/mailman/listinfo/grub-devel" =
+rel=3D"noreferrer" target=3D"_blank">https://lists.gnu.org/mailman/<wbr>lis=
+tinfo/grub-devel</a><br>
+&gt;&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; ______________________________<wbr>_________________<br>
+&gt;&gt; Grub-devel mailing list<br>
+&gt;&gt; <a href=3D"mailto:Grub-devel@gnu.org">Grub-devel@gnu.org</a><br>
+&gt;&gt; <a href=3D"https://lists.gnu.org/mailman/listinfo/grub-devel" rel=
+=3D"noreferrer" target=3D"_blank">https://lists.gnu.org/mailman/<wbr>listin=
+fo/grub-devel</a><br>
+&gt;&gt;<br>
+&gt;<br>
+<br>
+<br>
+______________________________<wbr>_________________<br>
+Grub-devel mailing list<br>
+<a href=3D"mailto:Grub-devel@gnu.org">Grub-devel@gnu.org</a><br>
+<a href=3D"https://lists.gnu.org/mailman/listinfo/grub-devel" rel=3D"norefe=
+rrer" target=3D"_blank">https://lists.gnu.org/mailman/<wbr>listinfo/grub-de=
+vel</a><br>
+</div></div></blockquote></div><br></div>
+
+--94eb2c1309d64e5845053acde3a4--
+
+
+--===============6681671066726790779==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Grub-devel mailing list
+Grub-devel@gnu.org
+https://lists.gnu.org/mailman/listinfo/grub-devel
+
+--===============6681671066726790779==--
