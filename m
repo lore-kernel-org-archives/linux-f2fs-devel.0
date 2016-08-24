@@ -1,118 +1,117 @@
-From: huang ying <huang.ying.caritas@gmail.com>
-Subject: Re: [LKP] [lkp] [f2fs] ec795418c4: fsmark.files_per_sec
-	-36.3% regression
-Date: Wed, 24 Aug 2016 09:51:11 -0700
-Message-ID: <CAC=cRTNtND+5f83p_yBecnx0iB5_6Q6xzbHdeY0tgrVaMRLSRQ@mail.gmail.com>
-References: <20160718020950.GB4986@yexl-desktop>
-	<87twfmsndf.fsf@yhuang-mobile.sh.intel.com>
-	<87bn18cvuu.fsf_-_@yhuang-mobile.sh.intel.com>
-	<20160804172452.GA12093@jaegeuk>
-	<874m70ctu3.fsf@yhuang-mobile.sh.intel.com>
-	<20160804185251.GA13813@jaegeuk>
-	<87r3a4b7b6.fsf@yhuang-mobile.sh.intel.com>
-	<87vaz6yl8a.fsf@yhuang-mobile.sh.intel.com>
-	<20160812012238.GA47037@jaegeuk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <huang.ying.caritas@gmail.com>) id 1bcbOY-0003UB-HU
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Aug 2016 16:51:18 +0000
-Received: from mail-qk0-f194.google.com ([209.85.220.194])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1bcbOX-0000QS-Q7
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 24 Aug 2016 16:51:18 +0000
-Received: by mail-qk0-f194.google.com with SMTP id n66so1580606qkf.0
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 24 Aug 2016 09:51:17 -0700 (PDT)
-In-Reply-To: <20160812012238.GA47037@jaegeuk>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, LKP ML <lkp@01.org>, kernel test robot <xiaolong.ye@intel.com>, "Huang, Ying" <ying.huang@intel.com>
+From: Shaun Tancheff <shaun@tancheff.com>
+Subject: [PATCH v8 0/2 RESEND] Block layer support ZAC/ZBC commands
+Date: Wed, 24 Aug 2016 15:22:50 -0500
+Message-ID: <20160824202250.30271-1-shaun@tancheff.com>
+References: <20160822042010.32416-1-shaun@tancheff.com>
+Return-path: <linux-block-owner@vger.kernel.org>
+In-Reply-To: <20160822042010.32416-1-shaun@tancheff.com>
+Sender: linux-block-owner@vger.kernel.org
+To: linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Shaun Tancheff <shaun@tancheff.com>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Damien Le Moal <damien.lemoal@hgst.com>, Hannes Reinecke <hare@suse.de>, Josh Bingaman <josh.bingaman@seagate.com>, "David S . Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Guenter Roeck <linux@roeck-us.net>, Ming Lei <ming.lei@canonical.com>, Mike Christie <michaelc@cs.wisc.edu>, Keith Busch <keith.busch@intel.com>, Mike Snitzer <snitzer@redhat.com>, Johannes Thumshirn <jthumshirn@suse.de>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Jaegeuk,
+(RESENDING to include f2fs, fs-devel and dm-devel)
 
-On Thu, Aug 11, 2016 at 6:22 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
-> On Thu, Aug 11, 2016 at 03:49:41PM -0700, Huang, Ying wrote:
->> Hi, Kim,
->>
->> "Huang, Ying" <ying.huang@intel.com> writes:
->> >>
->> >> [lkp] [f2fs] 3bdad3c7ee: aim7.jobs-per-min -25.3% regression
->> >> [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
->> >>
->> >> In terms of the above regression, I could check that _reproduce_ procedure
->> >> includes mounting filesystem only. Is that correct?
->> >
->> > Sorry, our test system failed to generate reproduce steps for aim7.  We
->> > will implement it.
->> >
->> > - [lkp] [f2fs] 3bdad3c7ee: aim7.jobs-per-min -25.3% regression
->> >
->> > The disk is one 48G ram disk.  The steps for aim7 is,
->> >
->> > cat > workfile <<EOF
->> > FILESIZE: 1M
->> > POOLSIZE: 10M
->> > 10 disk_cp
->> > EOF
->> >
->> > (
->> >     echo $HOSTNAME
->> >     echo disk_cp
->> >
->> >     echo 1
->> >     echo 3000
->> >     echo 2
->> >     echo 3000
->> >     echo 1
->> > ) | ./multitask -t &
->> >
->> >
->> > - [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
->> >
->> > The disk is 4 12G ram disk, and setup RAID0 on them via mdadm.  The
->> > steps for aim7 is,
->> >
->> > cat > workfile <<EOF
->> > FILESIZE: 1M
->> > POOLSIZE: 10M
->> > 10 sync_disk_rw
->> > EOF
->> >
->> > (
->> >     echo $HOSTNAME
->> >     echo sync_disk_rw
->> >
->> >     echo 1
->> >     echo 600
->> >     echo 2
->> >     echo 600
->> >     echo 1
->> > ) | ./multitask -t &
->>
->> Any update on these 2 regressions?  Is the information is enough for you
->> to reproduce?
->
-> Sorry, I've had no time to dig this due to business travel now.
-> I'll check that when back to US.
+Hi Jens,
 
-Any update?
+This series is based on linus' v4.8-rc2 branch.
 
-Best Regards,
-Huang, Ying
+As Host Aware drives are becoming available we would like to be able
+to make use of such drives. This series is also intended to be
+suitable for use by Host Managed drives.
 
-------------------------------------------------------------------------------
+ZBC [and ZAC] drives add new commands for discovering and working
+with Zones.
+
+Part one of this series expands the bio/request reserved op size from
+3 to 4 bits and then adds op codes for each of the ZBC commands:
+   Report zones, close zone, finish zone, open zone and reset zone.
+
+Part two of this series deals with integrating these new bio/request
+op's with Hannes' zone cache.
+
+This extends the ZBC support up to the block layer allowing direct
+control by file systems or device mapper targets. Also by deferring
+the zone handling to the authoritative subsystem there is an overall
+lower memory usage for holding the active zone information as well
+as clarifying responsible party for maintaining the write pointer
+for each active zone.
+
+By way of example a DM target may have several writes in progress. To sector
+(or lba) for those writes will each depend on the previous write. While the
+drive's write pointer will be updated as writes are completed the DM target
+will be maintaining both where the next write should be scheduled from and
+where the write pointer is based on writes completed w/o errors.
+
+Knowing the drive zone topology enables DM targets and file systems to
+extend their block allocation schemes and issue write pointer resets (or
+discards) that are zone aligned.
+
+A perhaps non-obvious approach is that a conventional drive will
+returns a zone report descriptor with a single large conventional zone.
+This is intended to allow a collection of zoned and non-zoned media to
+be stitched together to provide a file system with a zoned device with
+conventional space mapped to where it is useful.
+
+Patches for util-linux can be found here:
+    git@github.com:stancheff/util-linux.git v2.28.1+biof
+
+    https://github.com/stancheff/util-linux/tree/v2.28.1%2Bbiof
+
+This patch is available here:
+    https://github.com/stancheff/linux/tree/v4.8-rc2%2Bbiof.v8
+
+    git@github.com:stancheff/linux.git v4.8-rc2+biof.v8
+
+v8:
+ - Changed zone report to default to reading from zone cache.
+ - Changed ioctl for zone commands to support forcing a query or command
+   to be sent to media.
+ - Fixed report zones copy to user to work when HARDENED_USERCOPY is enabled
+v7:
+ - Initial support for Hannes' zone cache.
+v6:
+ - Fix page alloc to include DMA flag for ioctl.
+v5:
+ - In sd_setup_zone_action_cmnd, remove unused vars and fix switch indent
+ - In blk-lib fix documentation
+v4:
+ - Rebase on linux-next tag next-20160617.
+ - Change bio flags to bio op's
+ - Dropped ata16 hackery
+V3:
+ - Rebase on Mike Cristie's separate bio operations
+ - Update blkzoned_api.h to include report zones PARTIAL bit.
+ - Use zoned report reserved bit for ata-passthrough flag.
+
+V2:
+ - Changed bi_rw to op_flags clarify sepeartion of bio op from flags.
+ - Fixed memory leak in blkdev_issue_zone_report failing to put_bio().
+ - Documented opt in blkdev_issue_zone_report.
+ - Moved include/uapi/linux/fs.h changes to patch 3
+ - Fixed commit message for first patch in series.
+
+
+Shaun Tancheff (2):
+  Add bio/request flags to issue ZBC/ZAC commands
+  Add ioctl to issue ZBC/ZAC commands via block layer
+
+ MAINTAINERS                       |   9 ++
+ block/blk-lib.c                   |  94 +++++++++++++++++
+ block/ioctl.c                     | 149 +++++++++++++++++++++++++++
+ drivers/scsi/sd.c                 | 121 ++++++++++++++++++++++
+ drivers/scsi/sd.h                 |   1 +
+ include/linux/bio.h               |   8 +-
+ include/linux/blk_types.h         |   7 +-
+ include/linux/blkdev.h            |   1 +
+ include/linux/blkzoned_api.h      |  25 +++++
+ include/uapi/linux/Kbuild         |   1 +
+ include/uapi/linux/blkzoned_api.h | 210 ++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fs.h           |   1 +
+ 12 files changed, 625 insertions(+), 2 deletions(-)
+ create mode 100644 include/linux/blkzoned_api.h
+ create mode 100644 include/uapi/linux/blkzoned_api.h
+
+-- 
+2.9.3
+
