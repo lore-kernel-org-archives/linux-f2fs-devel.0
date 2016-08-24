@@ -1,23 +1,30 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] f2fs bug fix for 4.8-rc4
-Date: Tue, 23 Aug 2016 16:35:03 -0700
-Message-ID: <20160823233503.GA78328@jaegeuk>
+From: Andrei Borzenkov <arvidjaar@gmail.com>
+Subject: Re: safety of save_env
+Date: Wed, 24 Aug 2016 11:10:19 +0300
+Message-ID: <1a4f93ac-40fd-afd9-25de-84facaf3bbe0@gmail.com>
+References: <CAN9vWDLM7pSmijHAFpgAZRGOVX3BdhESRnrWvx80Btt3teuOEA@mail.gmail.com>
+	<d0fb3d5c-100e-08ec-10be-7697a3922702@gmail.com>
+	<CAN9vWDKdAxb=1edAN0bUcu8V6VmVGf3rL1SCpGBJa2doA_8XUw@mail.gmail.com>
+	<5c877f46-a894-357d-b542-fd5792946ec6@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bcLDt-00055S-0W
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <arvidjaar@gmail.com>) id 1bcTGX-0000vW-E7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 23 Aug 2016 23:35:13 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bcLDs-0006zE-10
+	Wed, 24 Aug 2016 08:10:29 +0000
+Received: from mail-lf0-f48.google.com ([209.85.215.48])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1bcTGW-0001Vr-9v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 23 Aug 2016 23:35:12 +0000
-Content-Disposition: inline
+	Wed, 24 Aug 2016 08:10:29 +0000
+Received: by mail-lf0-f48.google.com with SMTP id g62so6297062lfe.3
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Wed, 24 Aug 2016 01:10:28 -0700 (PDT)
+In-Reply-To: <5c877f46-a894-357d-b542-fd5792946ec6@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,47 +34,56 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+To: grub-devel@gnu.org
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Linus,
-
-Could you consider this pull request?
-
-Thanks,
-
-The following changes since commit 3408fef7448ce7d3c926978ee1a511e7707bffba:
-
-  Merge branch 'x86-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2016-08-18 15:09:41 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/for-f2fs-v4.8-rc4
-
-for you to fetch changes up to 20a3d61d46e1fb45efa6eb4637c0dcd3f00a14e9:
-
-  f2fs: avoid potential deadlock in f2fs_move_file_range (2016-08-19 11:15:08 +0900)
-
-----------------------------------------------------------------
-Bug/regression fix
-- fsmark regression
-- i_size race condition
-- wrong conditions in f2fs_move_file_range
-
-----------------------------------------------------------------
-Chao Yu (3):
-      Revert "f2fs: move i_size_write in f2fs_write_end"
-      f2fs: allow copying file range only in between regular files
-      f2fs: avoid potential deadlock in f2fs_move_file_range
-
-Jaegeuk Kim (1):
-      Revert "f2fs: use percpu_rw_semaphore"
-
- fs/f2fs/data.c  |  2 +-
- fs/f2fs/f2fs.h  | 12 ++++++------
- fs/f2fs/file.c  | 13 +++++++++----
- fs/f2fs/node.c  | 47 +++++++++++++++++++++++------------------------
- fs/f2fs/super.c |  6 +-----
- 5 files changed, 40 insertions(+), 40 deletions(-)
-
-------------------------------------------------------------------------------
+MjQuMDguMjAxNiAxMDoxNywgQW5kcmVpIEJvcnplbmtvdiDQv9C40YjQtdGCOgo+IDI0LjA4LjIw
+MTYgMDc6MTUsIE1pY2hhZWwgWmltbWVybWFubiDQv9C40YjQtdGCOgo+PiBJIG1lYW4gc2FmZSBp
+biB0aGUgc2Vuc2UgdGhhdCBpdCB3b3VsZCBub3QgZGVzdHJveSBkYXRhIG91dHNpZGUgb2YgdGhh
+dAo+PiBmaWxlIChubyBtYXR0ZXIgaWYgd3JpdGluZyB3YXMgc3VjY2Vzc2Z1bCBvciBub3QpIG9y
+IGV2ZW4gZGVzdHJveS9hZGQKPj4gZXJyb3JzIHRvICB0aGUgZmlsZXN5c3RlbS4oZXh0KiwgZjJm
+cywgZmF0KiwgLi4uKS4KPj4KPiAKPiBJdCBjb21wdXRlcyBibG9jayBsaXN0IG9mIGZpbGUgZGF0
+YSBhbmQgdGhlbiBvdmVyd3JpdGVzIHRoZXNlIGJsb2Nrcy4gSXQKPiB3aWxsIGFib3J0IGlmIGZp
+bGUgaXMgc3BhcnNlLiBJdCBhY3R1YWxseSBldmVuIGRvdWJsZSBjaGVja3MgYmxvY2sgbGlzdAo+
+IGJ5IHJlYWRpbmcgZGlyZWN0bHkgZnJvbSBkaXNrIChieXBhc3NpbmcgZmlsZXN5c3RlbSBkcml2
+ZXIpIGFuZAo+IGNvbXBhcmluZyByZXN1bHRzLgo+IAo+IFNvIGl0IGxvb2tzIHJlYXNvbmFibHkg
+c2FmZSBpbiB0aGF0IGl0IHNob3VsZCBub3Qgd3JpdGUgb3V0c2lkZSBvZiBzcGFjZQo+IGFscmVh
+ZHkgYWxsb2NhdGVkIGZvciBmaWxlIGRhdGEgb24gZGlzay4gSXQgb2J2aW91c2x5IHdpbGwgbm90
+IHdvcmsgZm9yCj4gZmlsZXN5c3RlbSB0aGF0IGNvbXB1dGVzIGNoZWNrc3VtcyBvdmVyIGRhdGEg
+bGlrZSBidHJmcyBvciB6ZnM7IHRoZXNlCj4gZmlsZXN5c3RlbXMgY3VycmVudGx5IGlnbm9yZSBy
+ZWFkIGhvb2tzIHNvIGFsd2F5cyByZXR1cm4gZW1wdHkgYmxvY2sKPiBsaXN0IChsZWFkaW5nIHRv
+IGNvbmZ1c2luZyBlcnJvciBtZXNzYWdlKS4KPiAKPiBGb3Igam91cm5hbGxlZCBmaWxlc3lzdGVt
+cyB0aGVyZSBpcyBub24temVybyBwcm9iYWJpbGl0eSB0aGF0IGpvdXJuYWwKPiByZXBsYXkgd2ls
+bCBjaGFuZ2UgY29udGVudCBvZiB0aG9zZSBibG9ja3MuCj4gCj4gTm90ZSB0aGF0IGl0IGRlcGVu
+ZHMgb24gZXhwbGljaXQgZnMgZHJpdmVyIHN1cHBvcnQ7IGxvb2tpbmcgZS5nLiBhdCBmMmZzCj4g
+cGF0Y2ggaW5saW5lIGRhdGEgYnlwYXNzZXMgcmVhZCBob29rLiBQcm9iYWJseSBub3QgYW4gaXNz
+dWUgZm9yIDEwME0KPiBmaWxlIHRob3VnaC4KPiAKClNwZWFraW5nIGFib3V0IGYyZnMgLSBkb2Vz
+IGl0IHVzZSBjaGVja3N1bXMgZm9yIGRhdGEgb3IgbWV0YWRhdGE/IEluCnBhcnRpY3VsYXIsIGlm
+IHN1cHBvcnRpbmcgYmxvY2sgbGlzdHMgZm9yIGlubGluZSBkYXRhIG1ldGFkYXRhIGNoZWNrc3Vt
+cwptYXkgYmUgYW4gaXNzdWUgdGhlbi4KCkFsc28gSSB1bmRlcnN0YW5kIHRoYXQgaXQgaXMgZGVz
+aWduZWQgZm9yIG1lZGlhIHdoaWNoIG1heSBub3Qgc3VwcG9ydApkaXJlY3Qgc2VjdG9yIHNpemUg
+d3JpdGUsIG9yIGFtIEkgd3Jvbmc/CgpIbW0gLi4uIGlub2RlIGNoZWNrc3VtcyBkbyBtZWFuIHBy
+b2JsZW0gZm9yIGV4dDQgd2l0aCBpbmxpbmUgZGF0YSAobm90CnlldCBpbiBHUlVCIHVwc3RyZWFt
+KS4KCj4+IE9uIFR1ZSwgQXVnIDIzLCAyMDE2IGF0IDk6NTkgUE0sIEFuZHJlaSBCb3J6ZW5rb3Yg
+PGFydmlkamFhckBnbWFpbC5jb20+Cj4+IHdyb3RlOgo+Pgo+Pj4gMjMuMDguMjAxNiAyMTo1MSwg
+TWljaGFlbCBaaW1tZXJtYW5uINC/0LjRiNC10YI6Cj4+Pj4gSGksCj4+Pj4KPj4+PiBob3cgc2Fm
+ZSBpcyB0aGUgdXNhZ2Ugb2Ygc2F2ZV9lbnY/IEknbSBjb25zaWRlcmluZyB3cml0aW5nIGxpa2Ug
+MTAwTUIgdG8KPj4+IGEKPj4+PiBsb29wIGZpbGUgdXNpbmcgdGhlIHRlY2huaXF1ZSB1c2VkIGJ5
+IHRoaXMgY29tbWFuZC4KPj4+Pgo+Pj4KPj4+IERlZmluZSAic2FmZSIuIENvbW1hbmQgaXMgZmls
+ZXN5c3RlbSBhZ25vc3RpYyBhbmQgZXhwZWN0cyBmdWxseQo+Pj4gcHJlYWxsb2NhdGVkIGZpbGU7
+IGl0IHdyaXRlcyBvbiBibG9jayBsZXZlbC4gSXQgYWxzbyBidWlsZHMgZnVsbCBjb250ZW50Cj4+
+PiBvZiBlbnZpcm9ubWVudCBmaWxlIGluIG1lbW9yeSBiZWZvcmUgd3JpdGluZyBpdCBvdXQ7IHNv
+IGl0IG1heSBmYWlsIG9uCj4+PiBzeXN0ZW1zIHdpdGggc21hbGwgYW1vdW50IG9mIG1lbW9yeS4K
+Pj4+Cj4+PiBJdCBhdHRlbXB0cyB0byB2ZXJpZnkgdGhhdCBmaWxlIGNhbiBiZSByZXByZXNlbnRl
+ZCBieSBibG9jayBsaXN0cyBhbmQgaXQKPj4+IGRvZXMgbm90IG92ZXJ3cml0ZSBibG9ja3Mgb3V0
+c2lkZSBvZiBhbGxvY2F0ZWQgZm9yIHRoZSBmaWxlLgo+Pj4KPj4+IF9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+PiBHcnViLWRldmVsIG1haWxpbmcgbGlz
+dAo+Pj4gR3J1Yi1kZXZlbEBnbnUub3JnCj4+PiBodHRwczovL2xpc3RzLmdudS5vcmcvbWFpbG1h
+bi9saXN0aW5mby9ncnViLWRldmVsCj4+Pgo+Pgo+Pgo+Pgo+PiBfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+PiBHcnViLWRldmVsIG1haWxpbmcgbGlzdAo+
+PiBHcnViLWRldmVsQGdudS5vcmcKPj4gaHR0cHM6Ly9saXN0cy5nbnUub3JnL21haWxtYW4vbGlz
+dGluZm8vZ3J1Yi1kZXZlbAo+Pgo+IAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1h
+aWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczov
+L2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
