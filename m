@@ -1,59 +1,73 @@
-From: Marc Lehmann <schmorp@schmorp.de>
-Subject: Re: [PATCH 1/2] f2fs: detect host-managed SMR by feature
- flag
-Date: Thu, 25 Aug 2016 04:40:08 +0200
-Message-ID: <20160825024008.GB8158@schmorp.de>
-References: <20160614184322.88117-1-jaegeuk@kernel.org>
-	<BY2PR04MB19767501012B2D01073F1AA09F550@BY2PR04MB1976.namprd04.prod.outlook.com>
-	<20160615163246.GA93951@jaegeuk>
-	<CAJVOszCrULuMVwhcoaSnP=noa4SajON2UDyz3pVdG=jSPn0P_A@mail.gmail.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 2/3] f2fs: schedule in between two continous batch
+ discards
+Date: Thu, 25 Aug 2016 17:22:29 +0800
+Message-ID: <bc8702e8-5565-e3de-cefb-48dde02dbd6f@huawei.com>
+References: <1471792891-2388-1-git-send-email-chao@kernel.org>
+ <1471792891-2388-2-git-send-email-chao@kernel.org>
+ <20160823165353.GA73835@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <schmorp@schmorp.de>) id 1bckpw-0003HT-QA
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Aug 2016 02:56:12 +0000
-Received: from mail.nethype.de ([5.9.56.24])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1bckpu-00072n-Rz
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Aug 2016 02:56:12 +0000
-Content-Disposition: inline
-In-Reply-To: <CAJVOszCrULuMVwhcoaSnP=noa4SajON2UDyz3pVdG=jSPn0P_A@mail.gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Shaun Tancheff <shaun@tancheff.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160823165353.GA73835@jaegeuk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Aug 24, 2016 at 03:31:39PM -0500, Shaun Tancheff <shaun.tancheff@seagate.com> wrote:
-> > IIRC, we discussed about HASMR with Marc Lehmann last year, and he gave the
-> > below link which sums up.
-> >
-> > https://urldefense.proofpoint.com/v2/url?u=http-3A__comments.gmane.org_gmane.linux.file-2Dsystems.f2fs_2854&d=CwIBAg&c=IGDlg0lD0b-nebmJJ0Kp8A&r=Wg5NqlNlVTT7Ugl8V50qIHLe856QW0qfG3WVYGOrWzA&m=3Uw29rZTMJsKnUE9bBduFOdp3OiEwJhpgbJ9GmyO_SU&s=YNxrXKMJpd-BPHnYG8ctqg6ct58p2yqO3BRKlbjBO_s&e=
-> > https://urldefense.proofpoint.com/v2/url?u=http-3A__blog.schmorp.de_2015-2D10-2D08-2Dsmr-2Darchive-2Ddrives-2Dfast-2Dnow.html&d=CwIBAg&c=IGDlg0lD0b-nebmJJ0Kp8A&r=Wg5NqlNlVTT7Ugl8V50qIHLe856QW0qfG3WVYGOrWzA&m=3Uw29rZTMJsKnUE9bBduFOdp3OiEwJhpgbJ9GmyO_SU&s=SC_RkdkfDQZTeIccq0o1zE4siI_RgDL4UhiVc1VzENY&e=
+Hi Jaegeuk,
+
+On 2016/8/24 0:53, Jaegeuk Kim wrote:
+> Hi Chao,
 > 
-> I think above applies to 'drive managed' SMR where the upper level
-> has no insight into the underlying zone layout.
+> On Sun, Aug 21, 2016 at 11:21:30PM +0800, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> In batch discard approach of fstrim will grab/release gc_mutex lock
+>> repeatly, it makes contention of the lock becoming more intensive.
+>>
+>> So after one batch discards were issued in checkpoint and the lock
+>> was released, it's better to do schedule() to increase opportunity
+>> of grabbing gc_mutex lock for other competitors.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/segment.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 020767c..d0f74eb 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -1305,6 +1305,8 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+>>  		mutex_unlock(&sbi->gc_mutex);
+>>  		if (err)
+>>  			break;
+>> +
+>> +		schedule();
+> 
+> Hmm, if other thread is already waiting for gc_mutex, we don't need this here.
+> In order to avoid long latency, wouldn't it be enough to reduce the batch size?
 
-That's correct.
+Hmm, when fstrim call mutex_unlock we will pop one blocked locker from FIFO list
+of mutex lock, and wake it up, then fstrimer will try to lock gc_mutex for next
+batch trim, so the popped locker and fstrimer will make a new competition in
+gc_mutex. If fstrimer is running in a big core, and popped locker is running in
+a small core, we can't guarantee popped locker can win the race, and for the
+most of time, fstrimer will win. So in order to reduce starvation of other
+gc_mutext locker, it's better to do schedule() here.
 
--- 
-                The choice of a       Deliantra, the free code+content MORPG
-      -----==-     _GNU_              http://www.deliantra.net
-      ----==-- _       generation
-      ---==---(_)__  __ ____  __      Marc Lehmann
-      --==---/ / _ \/ // /\ \/ /      schmorp@schmorp.de
-      -=====/_/_//_/\_,_/ /_/\_\
+Thanks,
 
-------------------------------------------------------------------------------
+> 
+> Thanks,
+> 
+>>  	}
+>>  out:
+>>  	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
+>> -- 
+>> 2.7.2
+> 
+> .
+> 
