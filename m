@@ -1,25 +1,29 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: fix a bug when using namehash to
- locate dentry bucket
-Date: Thu, 25 Aug 2016 22:13:31 +0800
-Message-ID: <b77fe368-8e6e-3130-1078-b2eb3e2492e4@kernel.org>
-References: <1472128929-86774-1-git-send-email-liushuoran@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/3] f2fs: schedule in between two continous
+ batch discards
+Date: Thu, 25 Aug 2016 09:57:16 -0700
+Message-ID: <20160825165716.GA84318@jaegeuk>
+References: <1471792891-2388-1-git-send-email-chao@kernel.org>
+	<1471792891-2388-2-git-send-email-chao@kernel.org>
+	<20160823165353.GA73835@jaegeuk>
+	<bc8702e8-5565-e3de-cefb-48dde02dbd6f@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1bcvPh-0001lU-Dk
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bcxy2-00052O-SN
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Aug 2016 14:13:49 +0000
+	Thu, 25 Aug 2016 16:57:26 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bcvPf-0006HO-BL
+	(Exim 4.76) id 1bcxy0-00017u-Rn
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Aug 2016 14:13:49 +0000
-In-Reply-To: <1472128929-86774-1-git-send-email-liushuoran@huawei.com>
+	Thu, 25 Aug 2016 16:57:26 +0000
+Content-Disposition: inline
+In-Reply-To: <bc8702e8-5565-e3de-cefb-48dde02dbd6f@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,45 +33,73 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Shuoran Liu <liushuoran@huawei.com>, jaegeuk@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2016/8/25 20:42, Shuoran Liu wrote:
-> In the following scenario,
+Hi Chao,
+
+On Thu, Aug 25, 2016 at 05:22:29PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> 1) we don't have the key and doing a lookup for encrypted file,
-> 2) and the encrypted filename is big name
+> On 2016/8/24 0:53, Jaegeuk Kim wrote:
+> > Hi Chao,
+> > 
+> > On Sun, Aug 21, 2016 at 11:21:30PM +0800, Chao Yu wrote:
+> >> From: Chao Yu <yuchao0@huawei.com>
+> >>
+> >> In batch discard approach of fstrim will grab/release gc_mutex lock
+> >> repeatly, it makes contention of the lock becoming more intensive.
+> >>
+> >> So after one batch discards were issued in checkpoint and the lock
+> >> was released, it's better to do schedule() to increase opportunity
+> >> of grabbing gc_mutex lock for other competitors.
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/segment.c | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> index 020767c..d0f74eb 100644
+> >> --- a/fs/f2fs/segment.c
+> >> +++ b/fs/f2fs/segment.c
+> >> @@ -1305,6 +1305,8 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+> >>  		mutex_unlock(&sbi->gc_mutex);
+> >>  		if (err)
+> >>  			break;
+> >> +
+> >> +		schedule();
+> > 
+> > Hmm, if other thread is already waiting for gc_mutex, we don't need this here.
+> > In order to avoid long latency, wouldn't it be enough to reduce the batch size?
 > 
-> we should use fname->hash as name hash value instead of what is
-> calculated by fname->disk_name. Because in such case,
-> fname->disk_name is empty.
+> Hmm, when fstrim call mutex_unlock we will pop one blocked locker from FIFO list
+> of mutex lock, and wake it up, then fstrimer will try to lock gc_mutex for next
+> batch trim, so the popped locker and fstrimer will make a new competition in
+> gc_mutex.
 
-Your signiture is missing here.
+Before trying to grab gc_mutex by fstrim again, there are already blocked tasks
+waiting for gc_mutex. Hence the next one should be selectec by FIFO, no?
 
-Anyway that's a good catch!
+Thanks,
 
-Acked-by: Chao Yu <yuchao0@huawei.com>
-
-> ---
->  fs/f2fs/dir.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> If fstrimer is running in a big core, and popped locker is running in
+> a small core, we can't guarantee popped locker can win the race, and for the
+> most of time, fstrimer will win. So in order to reduce starvation of other
+> gc_mutext locker, it's better to do schedule() here.
 > 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index 9054aea..b3e6f7f 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -172,7 +172,10 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
->  	int max_slots;
->  	f2fs_hash_t namehash;
->  
-> -	namehash = f2fs_dentry_hash(&name);
-> +	if(fname->hash)
-> +		namehash = cpu_to_le32(fname->hash);
-> +	else
-> +		namehash = f2fs_dentry_hash(&name);
->  
->  	nbucket = dir_buckets(level, F2FS_I(dir)->i_dir_level);
->  	nblock = bucket_blocks(level);
+> Thanks,
 > 
+> > 
+> > Thanks,
+> > 
+> >>  	}
+> >>  out:
+> >>  	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
+> >> -- 
+> >> 2.7.2
+> > 
+> > .
+> > 
 
 ------------------------------------------------------------------------------
