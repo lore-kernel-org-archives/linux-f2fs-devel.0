@@ -1,73 +1,80 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/3] f2fs: schedule in between two continous batch
- discards
-Date: Thu, 25 Aug 2016 17:22:29 +0800
-Message-ID: <bc8702e8-5565-e3de-cefb-48dde02dbd6f@huawei.com>
-References: <1471792891-2388-1-git-send-email-chao@kernel.org>
- <1471792891-2388-2-git-send-email-chao@kernel.org>
- <20160823165353.GA73835@jaegeuk>
+Subject: Re: [PATCH 5/6] f2fs: enable inline_dentry by default
+Date: Thu, 25 Aug 2016 17:23:22 +0800
+Message-ID: <a1505b41-2b74-8098-5bf9-86bbb865993e@huawei.com>
+References: <20160509115635.123946-1-yuchao0@huawei.com>
+ <20160509115635.123946-5-yuchao0@huawei.com>
+ <20160509230451.GB7448@jaegeuk.gateway>
+ <0eea4e00-aa6a-8ea0-db9e-3d289c7fb20b@huawei.com>
+ <20160823165717.GB73835@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160823165353.GA73835@jaegeuk>
+In-Reply-To: <20160823165717.GB73835@jaegeuk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Hi Jaegeuk,
 
-On 2016/8/24 0:53, Jaegeuk Kim wrote:
+On 2016/8/24 0:57, Jaegeuk Kim wrote:
 > Hi Chao,
 > 
-> On Sun, Aug 21, 2016 at 11:21:30PM +0800, Chao Yu wrote:
->> From: Chao Yu <yuchao0@huawei.com>
+> On Mon, Aug 22, 2016 at 09:49:13AM +0800, Chao Yu wrote:
+>> Hi Jaegeuk,
 >>
->> In batch discard approach of fstrim will grab/release gc_mutex lock
->> repeatly, it makes contention of the lock becoming more intensive.
+>> On 2016/5/10 7:04, Jaegeuk Kim wrote:
+>>> On Mon, May 09, 2016 at 07:56:34PM +0800, Chao Yu wrote:
+>>>> Make inline_dentry as default mount option to improve space usage and
+>>>> IO performance in scenario of numerous small directory.
+>>>
+>>> Hmm, I've not much tested this so far.
+>>> Let me take time to consider this for a while.
 >>
->> So after one batch discards were issued in checkpoint and the lock
->> was released, it's better to do schedule() to increase opportunity
->> of grabbing gc_mutex lock for other competitors.
+>> IMO, this feature is almost stable since I fixed most of bugs which occurs
+>> during inline conversion. And now I enable this feature by default when I do the
+>> test with fstest suit and fsstress, I didn't find any more bugs reported by
+>> those test tools.
 >>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/segment.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 020767c..d0f74eb 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -1305,6 +1305,8 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
->>  		mutex_unlock(&sbi->gc_mutex);
->>  		if (err)
->>  			break;
->> +
->> +		schedule();
+>> How do you think of enabling inline_dentry by default now?
 > 
-> Hmm, if other thread is already waiting for gc_mutex, we don't need this here.
-> In order to avoid long latency, wouldn't it be enough to reduce the batch size?
+> Okay, let me start all my tests with this. :)
 
-Hmm, when fstrim call mutex_unlock we will pop one blocked locker from FIFO list
-of mutex lock, and wake it up, then fstrimer will try to lock gc_mutex for next
-batch trim, so the popped locker and fstrimer will make a new competition in
-gc_mutex. If fstrimer is running in a big core, and popped locker is running in
-a small core, we can't guarantee popped locker can win the race, and for the
-most of time, fstrimer will win. So in order to reduce starvation of other
-gc_mutext locker, it's better to do schedule() here.
+Cool, thanks for your support. ;)
 
 Thanks,
 
 > 
-> Thanks,
-> 
->>  	}
->>  out:
->>  	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
->> -- 
->> 2.7.2
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/super.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>> index 28c8992..4a4f4bd 100644
+>>>> --- a/fs/f2fs/super.c
+>>>> +++ b/fs/f2fs/super.c
+>>>> @@ -824,6 +824,7 @@ static void default_options(struct f2fs_sb_info *sbi)
+>>>>  
+>>>>  	set_opt(sbi, BG_GC);
+>>>>  	set_opt(sbi, INLINE_DATA);
+>>>> +	set_opt(sbi, INLINE_DENTRY);
+>>>>  	set_opt(sbi, EXTENT_CACHE);
+>>>>  
+>>>>  #ifdef CONFIG_F2FS_FS_XATTR
+>>>> -- 
+>>>> 2.8.2.311.gee88674
+>>> .
+>>>
 > 
 > .
 > 
