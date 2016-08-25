@@ -1,28 +1,31 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: invalidate inode and data pages if
- inode is no longer used
-Date: Thu, 25 Aug 2016 10:04:06 -0700
-Message-ID: <20160825170406.GA84435@jaegeuk>
-References: <20160825023419.82566-1-jaegeuk@kernel.org>
-	<79f3d1c0-63b6-c0ba-3e50-e75598083cb2@huawei.com>
-	<20160825170037.GB84318@jaegeuk>
+From: Alexander Gordeev <alex@gordick.net>
+Subject: Re: video archive on a microSD card
+Date: Thu, 25 Aug 2016 23:14:03 +0300
+Message-ID: <139021472156043@web27j.yandex.ru>
+References: <146631471002747@web20h.yandex.ru>
+	<281281471258049@web6h.yandex.ru>
+	<eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
+	<7021471263772@web16m.yandex.ru> <158901471427237@web4g.yandex.ru>
+	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
+	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
+	<1258721471607772@web12h.yandex.ru>
+	<324581471899132@web4j.yandex.ru> <20160823211222.GD73835@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bcy4e-0007Ct-6s
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <alex@gordick.net>) id 1bd12T-0007e9-Bv
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Aug 2016 17:04:16 +0000
-Received: from mail.kernel.org ([198.145.29.136])
+	Thu, 25 Aug 2016 20:14:13 +0000
+Received: from forward5p.cmail.yandex.net ([77.88.31.20])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bcy4d-0007Vf-1y
+	(Exim 4.76) id 1bd12R-0005lq-Gj
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Aug 2016 17:04:16 +0000
-Content-Disposition: inline
-In-Reply-To: <20160825170037.GB84318@jaegeuk>
+	Thu, 25 Aug 2016 20:14:13 +0000
+In-Reply-To: <20160823211222.GD73835@jaegeuk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,93 +35,111 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On Thu, Aug 25, 2016 at 10:00:37AM -0700, Jaegeuk Kim wrote:
-> On Thu, Aug 25, 2016 at 07:59:45PM +0800, Chao Yu wrote:
-> > Hi Jaegeuk,
-> > 
-> > On 2016/8/25 10:34, Jaegeuk Kim wrote:
-> > > When a file is closed, let's deactivate inode page to mitigate further memory
-> > > pressure. We can do data pages as well in the corner case of f2fs_drop_inode.
-> > > 
-> > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > > ---
-> > >  fs/f2fs/file.c  | 4 ++++
-> > >  fs/f2fs/super.c | 1 +
-> > >  2 files changed, 5 insertions(+)
-> > > 
-> > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > > index e460211..5f9a6dc 100644
-> > > --- a/fs/f2fs/file.c
-> > > +++ b/fs/f2fs/file.c
-> > > @@ -1465,6 +1465,10 @@ static int f2fs_release_file(struct inode *inode, struct file *filp)
-> > >  		filemap_fdatawrite(inode->i_mapping);
-> > >  		clear_inode_flag(inode, FI_DROP_CACHE);
-> > >  	}
-> > > +
-> > > +	/* deactivate written inode page */
-> > > +	invalidate_mapping_pages(NODE_MAPPING(F2FS_I_SB(inode)),
-> > > +					inode->i_ino, inode->i_ino);
-> > 
-> > Seems if the file was opened by two processes, one process closes this file,
-> > another one will loss page cache of inode. I'm not sure whether this predication
-> > is friendly to user.
-> 
-> No, this only calls when it's the last writer. BTW, I need to add reader case
-> as well. :)
-
-	if (!(filp->f_mode & FMODE_WRITE) ||
-			atomic_read(&inode->i_writecount) != 1)
-	return 0;
-
-So, it drops its inode page only when the last writer is closed.
-
-Thanks,
-
-> 
-> > 
-> > >  	return 0;
-> > >  }
-> > >  
-> > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > > index 7f863a6..f84696d 100644
-> > > --- a/fs/f2fs/super.c
-> > > +++ b/fs/f2fs/super.c
-> > > @@ -618,6 +618,7 @@ static int f2fs_drop_inode(struct inode *inode)
-> > >  			sb_end_intwrite(inode->i_sb);
-> > >  
-> > >  			fscrypt_put_encryption_info(inode, NULL);
-> > > +			invalidate_mapping_pages(inode->i_mapping, 0, -1);
-> > 
-> > Hmm, shouldn't we truncate page cache before f2fs_truncate() like we do in
-> > f2fs_evict?
-> 
-> Then, it needs to be done under i_lock, and IMO, we don't need to wait for
-> writeback here.
-> 
-> Thanks,
-> 
-> > 
-> > Thanks,
-> > 
-> > >  			spin_lock(&inode->i_lock);
-> > >  			atomic_dec(&inode->i_count);
-> > >  		}
-> > > 
-> > 
-> > 
-> > ------------------------------------------------------------------------------
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
+SGkgSmFlZ2V1aywKClRoYW5rcyBmb3IgYWxsIHRoZSBoZWxwIQoKMjQuMDguMjAxNiwgMDA6MTIs
+ICJKYWVnZXVrIEtpbSIgPGphZWdldWtAa2VybmVsLm9yZz46Cj4gT24gTW9uLCBBdWcgMjIsIDIw
+MTYgYXQgMTE6NTI6MTJQTSArMDMwMCwgQWxleGFuZGVyIEdvcmRlZXYgd3JvdGU6Cj4+IMKgSGks
+Cj4+Cj4+IMKgSSByYW4gdGhlIHRlc3Qgb3ZlciB3ZWVrZW5kIGFuZCBJIHRoaW5rIEkgaGF2ZSBz
+b21lIGludGVyZXN0aW5nIHJlc3VsdHMuCj4+IMKgSSB1c2VkIDEgbmV3IFNEIGNhcmQgaW4gb25l
+IGRldmljZSBhbmQgdHdvIGZ1bGx5IHV0aWxpemVkIFNEIGNhcmRzLAo+PiDCoHRoYXQgaGF2ZSBw
+cm9ibGVtcyB3aXRoIHdyaXRlIGxhdGVuY3ksIG9uIHR3byBvdGVyIGRldmljZXMuCj4+IMKgSSBt
+b3VudGVkIGFsbCB0aGUgY2FyZHMgd2l0aCBtb2RlPWxmcy4gVGhlIG5ldyBTRCBjYXJkIGdvdCB1
+dGlsaXplZCBhdCA5NSUgYWZ0ZXIgc29tZSB0aW1lLgo+PiDCoEhlcmUgaXMgdGhlIGN1cnJlbnQg
+c3RhdHVzIGFmdGVyIHRoZSBhcmNoaXZlIGlzIHJvdGF0ZWQgZm9yIHNvbWUgdGltZToKPj4KPj4g
+wqA9PT09PVsgcGFydGl0aW9uIGluZm8oc2RhMSkuICMwLCBSV109PT09PQo+PiDCoFtTQjogMV0g
+W0NQOiAyXSBbU0lUOiAyXSBbTkFUOiA2OF0gW1NTQTogMzBdIFtNQUlOOiAxNTExMihPdmVyUHJv
+djo4MDMgUmVzdjo1MCldCj4+Cj4+IMKgVXRpbGl6YXRpb246IDk0JSAoNjkyOTc2MyB2YWxpZCBi
+bG9ja3MpCj4+IMKgwqDCoC0gTm9kZTogODExMyAoSW5vZGU6IDEyNTUsIE90aGVyOiA2ODU4KQo+
+PiDCoMKgwqAtIERhdGE6IDY5MjE2NTAKPj4gwqDCoMKgLSBJbmxpbmVfeGF0dHIgSW5vZGU6IDAK
+Pj4gwqDCoMKgLSBJbmxpbmVfZGF0YSBJbm9kZTogMQo+PiDCoMKgwqAtIElubGluZV9kZW50cnkg
+SW5vZGU6IDAKPj4gwqDCoMKgLSBPcnBoYW4gSW5vZGU6IDAKPj4KPj4gwqBNYWluIGFyZWE6IDE1
+MTEyIHNlZ3MsIDc1NTYgc2VjcyA3NTU2IHpvbmVzCj4+IMKgwqDCoC0gQ09MRCBkYXRhOiA1MzA2
+LCAyNjUzLCAyNjUzCj4+IMKgwqDCoC0gV0FSTSBkYXRhOiA1MjMzLCAyNjE2LCAyNjE2Cj4+IMKg
+wqDCoC0gSE9UIGRhdGE6IDE1MTAwLCA3NTUwLCA3NTUwCj4+IMKgwqDCoC0gRGlyIGRub2RlOiAx
+NTA5NywgNzU0OCwgNzU0OAo+PiDCoMKgwqAtIEZpbGUgZG5vZGU6IDQ3MDEsIDIzNTAsIDIzNTAK
+Pj4gwqDCoMKgLSBJbmRpciBub2RlczogMTUxMDUsIDc1NTIsIDc1NTIKPj4KPj4gwqDCoMKgLSBW
+YWxpZDogOTcKPj4gwqDCoMKgLSBEaXJ0eTogMTM3OTgKPj4gwqDCoMKgLSBQcmVmcmVlOiAwCj4+
+IMKgwqDCoC0gRnJlZTogMTIxNyAoNjA0KQo+Pgo+PiDCoENQIGNhbGxzOiAyODIgKEJHOiAwKQo+
+PiDCoEdDIGNhbGxzOiAwIChCRzogMCkKPj4gwqDCoMKgLSBkYXRhIHNlZ21lbnRzIDogMCAoMCkK
+Pj4gwqDCoMKgLSBub2RlIHNlZ21lbnRzIDogMCAoMCkKPj4gwqBUcnkgdG8gbW92ZSAwIGJsb2Nr
+cyAoQkc6IDApCj4+IMKgwqDCoC0gZGF0YSBibG9ja3MgOiAwICgwKQo+PiDCoMKgwqAtIG5vZGUg
+YmxvY2tzIDogMCAoMCkKPj4KPj4gwqBFeHRlbnQgQ2FjaGU6Cj4+IMKgwqDCoC0gSGl0IENvdW50
+OiBMMS0xOjMwODQgTDEtMjo0NTYgTDI6MAo+PiDCoMKgwqAtIEhpdCBSYXRpbzogNCUgKDM1NDAg
+LyA4NDAyNikKPj4gwqDCoMKgLSBJbm5lciBTdHJ1Y3QgQ291bnQ6IHRyZWU6IDEyNTIoMCksIG5v
+ZGU6IDAKPj4KPj4gwqBCYWxhbmNpbmcgRjJGUyBBc3luYzoKPj4gwqDCoMKgLSBpbm1lbTogMCwg
+d2JfYmlvczogMAo+PiDCoMKgwqAtIG5vZGVzOiAxMiBpbiAzMAo+PiDCoMKgwqAtIGRlbnRzOiAz
+IGluIGRpcnM6IDIgKCAyKQo+PiDCoMKgwqAtIGRhdGFzOiA0OCBpbiBmaWxlczogMAo+PiDCoMKg
+wqAtIG1ldGE6IDkgaW4gMzQKPj4gwqDCoMKgLSBOQVRzOiAxMC8gMjQ5Cj4+IMKgwqDCoC0gU0lU
+czogMTMvIDE1MTEyCj4+IMKgwqDCoC0gZnJlZV9uaWRzOiAxNzk3Cj4+Cj4+IMKgRGlzdHJpYnV0
+aW9uIG9mIFVzZXIgQmxvY2tzOiBbIHZhbGlkIHwgaW52YWxpZCB8IGZyZWUgXQo+PiDCoMKgwqBb
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS18LS18LV0KPj4K
+Pj4gwqBJUFU6IDAgYmxvY2tzCj4+IMKgU1NSOiAwIGJsb2NrcyBpbiAwIHNlZ21lbnRzCj4+IMKg
+TEZTOiA5MTIxODggYmxvY2tzIGluIDE3ODEgc2VnbWVudHMKPj4KPj4gwqBCREY6IDk0LCBhdmcu
+IHZibG9ja3M6IDk5Ngo+Pgo+PiDCoE1lbW9yeTogMzYwNCBLQgo+PiDCoMKgwqAtIHN0YXRpYzog
+MzI3MCBLQgo+PiDCoMKgwqAtIGNhY2hlZDogNzggS0IKPj4gwqDCoMKgLSBwYWdlZCA6IDI1NiBL
+Qgo+Pgo+PiDCoFRoZSBpbnRlcmVzdGluZyB0aGluZyBoZXJlIGlzIHRoZSB2ZXJ5IHNtYWxsIG51
+bWJlciBvZiB2YWxpZCBhbmQKPj4gwqBhIGh1Z2UgbnVtYmVyIG9mIGRpcnR5IHNlY3Rpb25zLiBJ
+IGRvbid0IHVuZGVyc3RhbmQgdGhpcyBhdCBhbGwuCj4KPiBUaGlzIGlzIHRoZSBudW1iZXIgb2Yg
+ZGlydHkgc2VnbWVudHMsIHNvIGl0IG5lZWRzIHRvIGNvbnNpZGVyIHNlY3Rpb24gYW5kCj4gc2Vn
+bWVudCBhdCB0aGUgc2FtZSB0aW1lOyBhIGRpcnR5IHNlY3Rpb24gY2FuIGNvbnNpc3Qgb2YgdmFs
+aWQgYW5kIGZyZWUKPiBzZWdtZW50cy4KPiBIb3cgYWJvdXRpbmcgdGVzdGluZyAyTUItc2l6ZWQg
+c2VjdGlvbiB3aGljaCBpcyB0aGUgZGVmYXVsdCBvcHRpb24/CgpJIHRyaWVkIHdoYXQgeW91IHNh
+aWQuIFN0aWxsIHRoZSBtYWpvcml0eSBvZiBzZWdtZW50cyBhcmUgZGlydHkgZm9yIHNvbWUgcmVh
+c29uOgoKPT09PT1bIHBhcnRpdGlvbiBpbmZvKHNkYSkuICMwLCBSV109PT09PQpbU0I6IDFdIFtD
+UDogMl0gW1NJVDogNl0gW05BVDogMTE0XSBbU1NBOiAxMTZdIFtNQUlOOiA1OTE0OShPdmVyUHJv
+djozMDAzIFJlc3Y6NDgpXQoKVXRpbGl6YXRpb246IDEwJSAoMzAxMzA5MyB2YWxpZCBibG9ja3Mp
+CiAgLSBOb2RlOiAzNTI4IChJbm9kZTogNTQ4LCBPdGhlcjogMjk4MCkKICAtIERhdGE6IDMwMDk1
+NjUKICAtIElubGluZV94YXR0ciBJbm9kZTogMAogIC0gSW5saW5lX2RhdGEgSW5vZGU6IDAKICAt
+IElubGluZV9kZW50cnkgSW5vZGU6IDAKICAtIE9ycGhhbiBJbm9kZTogMAoKTWFpbiBhcmVhOiA1
+OTE0OSBzZWdzLCA1OTE0OSBzZWNzIDU5MTQ5IHpvbmVzCiAgLSBDT0xEICBkYXRhOiA3MTgzLCA3
+MTgzLCA3MTgzCiAgLSBXQVJNICBkYXRhOiA2NjU0LCA2NjU0LCA2NjU0CiAgLSBIT1QgICBkYXRh
+OiA1OTEzNCwgNTkxMzQsIDU5MTM0CiAgLSBEaXIgICBkbm9kZTogNTkxMjcsIDU5MTI3LCA1OTEy
+NwogIC0gRmlsZSAgIGRub2RlOiA1OTEyNSwgNTkxMjUsIDU5MTI1CiAgLSBJbmRpciBub2Rlczog
+NTkxMjksIDU5MTI5LCA1OTEyOQoKICAtIFZhbGlkOiAzMDAKICAtIERpcnR5OiA2NDM4CiAgLSBQ
+cmVmcmVlOiAwCiAgLSBGcmVlOiA1MjQxMSAoNTI0MTEpCgpDUCBjYWxsczogMTAyMyAoQkc6IDQ3
+MykKR0MgY2FsbHM6IDQ3MCAoQkc6IDQ3MCkKICAtIGRhdGEgc2VnbWVudHMgOiA0NjYgKDQ2NikK
+ICAtIG5vZGUgc2VnbWVudHMgOiA0ICg0KQpUcnkgdG8gbW92ZSAxNTIyMjEgYmxvY2tzIChCRzog
+MTUyMjIxKQogIC0gZGF0YSBibG9ja3MgOiAxNTE0MTcgKDE1MTQxNykKICAtIG5vZGUgYmxvY2tz
+IDogODA0ICg4MDQpCgpFeHRlbnQgQ2FjaGU6CiAgLSBIaXQgQ291bnQ6IEwxLTE6NjI2MiBMMS0y
+OjAgTDI6MAogIC0gSGl0IFJhdGlvOiAyJSAoNjI2MiAvIDI3MzYwNikKICAtIElubmVyIFN0cnVj
+dCBDb3VudDogdHJlZTogMjkyKDApLCBub2RlOiA4CgpCYWxhbmNpbmcgRjJGUyBBc3luYzoKICAt
+IGlubWVtOiAgICAwLCB3Yl9iaW9zOiAgICAwCiAgLSBub2RlczogICAgMCBpbiAgICAwCiAgLSBk
+ZW50czogICAgMCBpbiBkaXJzOiAgIDAgKCAgIDApCiAgLSBkYXRhczogICAgMCBpbiBmaWxlczog
+ICAwCiAgLSBtZXRhOiAgICAwIGluICAgIDAKICAtIE5BVHM6ICAgICAgICAgMC8gICAgICAgNDMK
+ICAtIFNJVHM6ICAgICAgICAgMC8gICAgNTkxNDkKICAtIGZyZWVfbmlkczogICAgICAzNDE0CgpE
+aXN0cmlidXRpb24gb2YgVXNlciBCbG9ja3M6IFsgdmFsaWQgfCBpbnZhbGlkIHwgZnJlZSBdCiAg
+Wy0tLS0tfC0tfC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1dCgpJ
+UFU6IDAgYmxvY2tzClNTUjogMCBibG9ja3MgaW4gMCBzZWdtZW50cwpMRlM6IDM2OTE1NDIgYmxv
+Y2tzIGluIDcyMDggc2VnbWVudHMKCkJERjogOTUsIGF2Zy4gdmJsb2NrczogNDQ0CgpNZW1vcnk6
+IDEyNjYyIEtCCiAgLSBzdGF0aWM6IDEyNTk3IEtCCiAgLSBjYWNoZWQ6IDY0IEtCCiAgLSBwYWdl
+ZCA6IDAgS0IKCgpCdXQgdGhlIGFyY2hpdmUgaXMgd29ya2luZyBwZXJmZWN0bHkgYXMgYmVmb3Jl
+LgoKPj4gwqBTdGlsbCB0aGUgYXJjaGl2ZSBpcyB3b3JraW5nIHBlcmZlY3RseS4gQWxzbyBJIHNl
+ZSwgdGhhdCB0aGVyZSBHQyBpcyBuZXZlcgo+PiDCoGNhbGxlZCwgd2hpY2ggaXMgcHJvYmFibHkg
+YW4gaW5kaWNhdGlvbiBvZiBGUyB3b3JraW5nIGV4YWN0bHkgYXMKPj4gwqB3ZSBleHBlY3RlZC4K
+Pj4gwqBBbHNvIHRoZSBzbWFsbCBudW1iZXIgb2YgY29sZCBzZWN0aW9ucyBkb2VzIG5vdCBtYWtl
+IHByb2JsZW1zLgo+PiDCoFNvLCB3ZWxsLCBpdCB3b3JrcyBwZXJmZWN0IHNvIGZhdC4gQnV0IEkg
+ZG9uJ3QgdW5kZXJzdGFuZCBldmVyeXRoaW5nIGhlcmUuCj4+IMKgSXMgdGhpcyBleHBlY3RlZD8K
+Pgo+IFNvLCBJJ20gaW4gZG91YnQgdGhhdCBkaXJ0eSBzZWN0aW9ucyBjb25zaXN0IG9mIGVudGly
+ZWx5IHZhbGlkIG9yIGZyZWUgc2VnbWVudHMuCj4KPj4gwqBUaGUgb3RoZXIgdHdvIFNEIGNhcmRz
+IHdlcmUgdGVzdGVkIGRpZmZlcmVudGx5LiBPbiBvbmUgb2YgdGhlbSBJIGNhbGxlZAo+PiDCoGlv
+Y3RsKEYyRlNfSU9DX0dBUkJBR0VfQ09MTEVDVCkgZm9yIHNldmVyYWwgaG91cnMuIEFuZCBpbmRl
+ZWQgdGhlIG51bWJlcgo+PiDCoG9mIGRpcnR5IHNlY3RvaW5zIGRyb3BwZWQgY29uc2lkZXJhYmx5
+LiBJdCB3b3JrcyBmaW5lIHNvIGZhci4KPgo+IEl0IG1ha2VzIHNlbnNlIHRoYXQgdmFsaWQgc2Vn
+bWVudHMgaW4gZGlydHkgc2VjdGlvbnMgd291bGQgYmUgbWlncmF0ZWQgdG8KPiBkaWZmZXJlbnQg
+ZnJlZSBzZWN0aW9ucy4KPgo+PiDCoE9uIHRoZSBvdGhlciBTRCBjYXJkIEkgY2FsbGVkIGlvY3Rs
+KEYyRlNfSU9DX0RFRlJBR01FTlQpIGZvciBldmVyeQo+PiDCoGZpbGUgaW4gdGhlIGFyY2hpdmUu
+IEl0IHdvcmtzIGZpbmUgYXMgd2VsbCBub3cuIEJ1dCB0aGUgbnVtYmVyIG9mIGRpcnR5IHNlY3Rp
+b25zCj4+IMKgd2FzIHN0aWxsIHZlcnkgaGlnaCBhdCB0aGUgZW5kIG9mIGRlZnJhZ21lbnRhdGlv
+bi4gSSBkb24ndCB1bmRlcnN0YW5kIHRoaXMKPj4gwqBhcyB3ZWxsLgo+Cj4gVGhpcyBpcyBmb3Ig
+ZGVmcmFnZW1lbnRhdGlvbiB0byB0aGUgZ2l2ZW4gZmlsZSwgd2hpY2ggd291bGQgbm90IG1vdmUg
+YmxvY2tzIGluCj4gb3JkZXIgdG8gZGVjcmVhc2UgdGhlIG51bWJlciBvZiBkaXJ0eSBzZWN0aW9u
+cy4KPiBJIHRoaW5rIGl0J3Mgbm90IG5lY2Vzc2FyeSBmb3IgdGhpcyB3b3JrbG9hZC4KClllcywg
+SSdkIHByZWZlciB0byBub3QgcnVuIG1hbnVhbCBHQyBvciBkZWZyYWdtZW50YXRpb24uIFRoaXMg
+d2FzIGp1c3QgYSB0ZXN0LgoKLS3CoAogQWxleGFuZGVyCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJm
+cy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5u
+ZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJm
+cy1kZXZlbAo=
