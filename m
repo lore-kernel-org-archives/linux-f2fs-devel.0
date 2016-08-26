@@ -1,164 +1,138 @@
-From: Shaun Tancheff <shaun.tancheff@seagate.com>
-Subject: Re: [PATCH v8 1/2 RESEND] Add bio/request flags to issue ZBC/ZAC commands
-Date: Fri, 26 Aug 2016 00:17:48 -0500
-Message-ID: <CAJVOszANdQBrXvpuv1=HCcd2gvZ0jsxyFwAG8HJ=JUFhWodb8Q@mail.gmail.com>
-References: <20160822042010.32416-2-shaun@tancheff.com> <20160824202409.30345-1-shaun@tancheff.com>
- <5b710eda-6445-f42a-72f0-4a1bf843d501@hgst.com>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: fix to set superblock dirty correctly
+Date: Fri, 26 Aug 2016 22:20:18 +0800
+Message-ID: <1472221218-2205-1-git-send-email-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <5b710eda-6445-f42a-72f0-4a1bf843d501@hgst.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Damien Le Moal <damien.lemoal@hgst.com>
-Cc: Shaun Tancheff <shaun@tancheff.com>, linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>, Josh Bingaman <josh.bingaman@seagate.com>, "David S . Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Guenter Roeck <linux@roeck-us.net>, Ming Lei <ming.lei@canonical.com>, Mike Christie <michaelc@cs.wisc.edu>, Keith Busch <keith.busch@intel.com>, Mike Snitzer <snitzer@redhat>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1bdI1s-0008Hx-KN
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 26 Aug 2016 14:22:44 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bdI1r-0002CH-AO
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 26 Aug 2016 14:22:44 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Aug 25, 2016 at 9:31 PM, Damien Le Moal <damien.lemoal@hgst.com> wrote:
->
-> Shaun,
->
-> On 8/25/16 05:24, Shaun Tancheff wrote:
->>
->> (RESENDING to include f2fs, fs-devel and dm-devel)
->>
->> Add op flags to access to zone information as well as open, close
->> and reset zones:
->>   - REQ_OP_ZONE_REPORT - Query zone information (Report zones)
->>   - REQ_OP_ZONE_OPEN - Explicitly open a zone for writing
->>   - REQ_OP_ZONE_CLOSE - Explicitly close a zone
->>   - REQ_OP_ZONE_FINISH - Explicitly finish a zone
->>   - REQ_OP_ZONE_RESET - Reset Write Pointer to start of zone
->>
->> These op flags can be used to create bio's to control zoned devices
->> through the block layer.
->
->
-> I still have a hard time seeing the need for the REQ_OP_ZONE_REPORT
-> operation assuming that the device queue will hold a zone information cache,
-> Hannes RB-tree or your array type, whichever.
->
-> Let's try to think simply here: if the disk user (and FS, a device mapper or
-> an application doing raw disk accesses) wants to access the disk zone
-> information, why would it need to issue a BIO when calling
-> blkdev_lookup_zone would exactly give that information straight out of
-> memory (so much faster) ? I thought hard about this, but cannot think of any
-> value for the BIO-to-disk option. It seems to me to be equivalent to
-> systematically doing a page cache read even if the page cache tells us that
-> the page is up-to-date...
+From: Chao Yu <yuchao0@huawei.com>
 
-Firstly the BIO abstraction here gives a common interface to
-getting the zone information and works even for embedded
-systems that are not willing / convinced to enable
-SCSI_ZBC + BLK_ZONED.
+tests/generic/251 of fstest suit complains us with below message:
 
-Secondly when SCSI_ZBC + BLK_ZONED are enabled it just
-returns from the zone cache [as you can hopefully find
-in the second half of this series]. I did add a 'force' option
-but it's not intended to be used lightly.
+------------[ cut here ]------------
+invalid opcode: 0000 [#1] PREEMPT SMP
+CPU: 2 PID: 7698 Comm: fstrim Tainted: G           O    4.7.0+ #21
+task: e9f4e000 task.stack: e7262000
+EIP: 0060:[<f89fcefe>] EFLAGS: 00010202 CPU: 2
+EIP is at write_checkpoint+0xfde/0x1020 [f2fs]
+EAX: f33eb300 EBX: eecac310 ECX: 00000001 EDX: ffff0001
+ESI: eecac000 EDI: eecac5f0 EBP: e7263dec ESP: e7263d18
+ DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
+CR0: 80050033 CR2: b76ab01c CR3: 2eb89de0 CR4: 000406f0
+Stack:
+ 00000001 a220fb7b e9f4e000 00000002 419ff2d3 b3a05151 00000002 e9f4e5d8
+ e9f4e000 419ff2d3 b3a05151 eecac310 c10b8154 b3a05151 419ff2d3 c10b78bd
+ e9f4e000 e9f4e000 e9f4e5d8 00000001 e9f4e000 ec409000 eecac2cc eecac288
+Call Trace:
+ [<c10b8154>] ? __lock_acquire+0x3c4/0x760
+ [<c10b78bd>] ? mark_held_locks+0x5d/0x80
+ [<f8a10632>] f2fs_trim_fs+0x1c2/0x2e0 [f2fs]
+ [<f89e9f56>] f2fs_ioctl+0x6b6/0x10b0 [f2fs]
+ [<c13d51df>] ? __this_cpu_preempt_check+0xf/0x20
+ [<c10b4281>] ? trace_hardirqs_off_caller+0x91/0x120
+ [<f89e98a0>] ? __exchange_data_block+0xd30/0xd30 [f2fs]
+ [<c120b2e1>] do_vfs_ioctl+0x81/0x7f0
+ [<c11d57c5>] ? kmem_cache_free+0x245/0x2e0
+ [<c1217840>] ? get_unused_fd_flags+0x40/0x40
+ [<c1206eec>] ? putname+0x4c/0x50
+ [<c11f631e>] ? do_sys_open+0x16e/0x1d0
+ [<c1001990>] ? do_fast_syscall_32+0x30/0x1c0
+ [<c13d51df>] ? __this_cpu_preempt_check+0xf/0x20
+ [<c120baa8>] SyS_ioctl+0x58/0x80
+ [<c1001a01>] do_fast_syscall_32+0xa1/0x1c0
+ [<c178cc54>] sysenter_past_esp+0x45/0x74
+EIP: [<f89fcefe>] write_checkpoint+0xfde/0x1020 [f2fs] SS:ESP 0068:e7263d18
+---[ end trace 4de95d7e6b3aa7c6 ]---
 
-Thirdly it is my belief that BIO abstraction is more easily
-adapted to working with [and through] the device mapper
-layer (s).
+The reason is: with below call stack, we will encounter BUG_ON during
+doing fstrim.
 
-Today we both have the issue where if a file system
-supports working with a ZBC device there can be no
-device mapper stacked between the file system and
-the actual zoned device. This is also true of our respective
-device mapper targets.
+Thread A				Thread B
+- write_checkpoint
+ - do_checkpoint
+					- f2fs_write_inode
+					 - update_inode_page
+					  - update_inode
+					   - set_page_dirty
+					    - f2fs_set_node_page_dirty
+					     - inc_page_count
+					      - percpu_counter_inc
+					      - set_sbi_flag(SBI_IS_DIRTY)
+  - clear_sbi_flag(SBI_IS_DIRTY)
 
-It is my current belief that teaching the device mapper
-layer to include REQ_OP_ZONE* operations is relatively
-straight forward and can be done w/o affecting existing
-targets that don't specifically need to operate on zones.
-Something similar to the way flush is handled currently.
-If the target doesn't ask to see zone operations the default
-mapping rules apply.
+Thread C				Thread D
+- f2fs_write_node_page
+ - set_node_addr
+  - __set_nat_cache_dirty
+   - nm_i->dirty_nat_cnt++
+					- do_vfs_ioctl
+					 - f2fs_ioctl
+					  - f2fs_trim_fs
+					   - write_checkpoint
+					    - f2fs_bug_on(nm_i->dirty_nat_cnt)
 
-Examples of why I would like to add REQ_OP_ZONE*
-support to the device mapper:
+Fix it by setting superblock dirty correctly in do_checkpoint and
+f2fs_write_node_page.
 
-I think it would be really neat if I could just to a quick
-dm-linear and put big chunk of SSD in front of dm-zoned
-or dm-zdm as it would be a nice way to boost performance.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 4 ++++
+ fs/f2fs/node.c       | 1 +
+ 2 files changed, 5 insertions(+)
 
-Similarly it enable using dm-linear to stitch together enough
-conventional space with a ZBC drive to see if Dave Chinner's
-XFS proposal from a couple of years ago could work.
-
-> Moreover, issuing a report zone to the disk may return information that is
-> in fact incorrect, as that would not take into account the eventual set of
-> write requests that was dispatched but not yet processed by the disk (some
-> zone write pointer may be reported with a value lower than what the zone
-> cache maintains).
-
-Yes but issuing a zone report to media is not the expected path
-when the zone cache is available. It is there to 'force' a re-sync
-and it is intended that the user of the call knows that the force
-is being applied and wants it to happen. Perhaps I should make
-it two flags? One to force a reply form the device and second
-flag to re-sync the zone cache with the result? There is one
-piece of information that can only be retrieved by going to the
-device and that is the 'non-seq resources' flag and it is only
-used by Host Aware devices ... as far as I understand.
-
-> Dealing (and fixing) these inconsistencies would force an update of the
-> report zone result using the information of the zone cache, which in itself
-> sounds like a good justification of not doing a report zones in the first
-> place.
-
-When report zones is just pulling from the zone cache it should
-not be a problem. So the normal activity [when SCSI_ZBC +
-BLK_ZONED are enabled] should not be introducing any
-inconsistencies.
-
-> I am fine with the other operations, and in fact having a BIO interface for
-> them to send down to the SCSI layer is better than any other method. It will
-> causes them to be seen in sd_init_command, which is the path taken for read
-> and write commands too. So all zone cache information checking and updating
-> can be done in that single place and serialized with a spinlock. Maintenance
-> of the zone cache information becomes very easy.
->
-> Any divergence of the zone cache information with the actual state of the
-> disk will likely cause an error (unaligned write or other). Having a
-> specific report zone BIO option will not help the disk user recover from
-> those. Hannes current implementation make sure that the information of the
-> zone for the failed request is automatically updated. That is enough to
-> maintain the zone cache information uptodate, and a zone information can be
-> marked as "in update" for the user to notice and wait for the refreshed
-> information.
-
-Which is why the zone cache is consider the default authority .. when it
-is available.
-
-Hopefully you will find this use case more compelling:
-
-User issues:
-   # sg_reset_wp --all /dev/sdz
-User then proceeds to run:
-   # mkfs.f2fs -m /dev/sdz
-
-Now quite possibly the zone information is 'out of sync' because the user
-used a ZBC command that we to catch in the zone cache.
-
-Now if mkfs.f2fs does a reports zones with a force it will fix the
-zone cache and everything goes nice and quick.
-
-Since the output of report zones is the same format as the
-ZBC spec [and therefore SG_IO] it should be a stright forward
-change in mkfs.f2fs to call BLKREPORT instead of via SG_IO.
-
-> The ioctl code for reporting zones does not need the specific request op
-> code either. Again, blkdev_lookup_zone can provide zone information, and an
-> emulation of the reporting options filtering is also trivial to implement on
-> top of that, if really required (I do not think that is strongly needed
-> though).
->
-> Without the report zone operation, your patch set size would significantly
-> shrink and merging with Hannes work becomes very easy too.
->
-> Please let me know what you think. If we drop this, we can get a clean and
-> full ZBC support patch set ready in no time at all.
-
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index cd0443d..68c723c 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1153,6 +1153,10 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	clear_prefree_segments(sbi, cpc);
+ 	clear_sbi_flag(sbi, SBI_IS_DIRTY);
+ 
++	/* redirty superblock if node page is updated by ->write_inode */
++	if (get_pages(sbi, F2FS_DIRTY_NODES))
++		set_sbi_flag(sbi, SBI_IS_DIRTY);
++
+ 	return 0;
+ }
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 8a28800..365c6ff 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1597,6 +1597,7 @@ static int f2fs_write_node_page(struct page *page,
+ 	fio.old_blkaddr = ni.blk_addr;
+ 	write_node_page(nid, &fio);
+ 	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
++	set_sbi_flag(sbi, SBI_IS_DIRTY);
+ 	dec_page_count(sbi, F2FS_DIRTY_NODES);
+ 	up_read(&sbi->node_write);
+ 
 -- 
-Regards,
-Shaun Tancheff
+2.7.2
+
+
+------------------------------------------------------------------------------
