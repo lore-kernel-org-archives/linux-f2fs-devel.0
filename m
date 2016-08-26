@@ -1,57 +1,99 @@
-From: Alexander Gordeev <alex@gordick.net>
-Subject: Re: video archive on a microSD card
-Date: Thu, 25 Aug 2016 23:22:41 +0300
-Message-ID: <11601472156561@web22j.yandex.ru>
-References: <146631471002747@web20h.yandex.ru>
-	<281281471258049@web6h.yandex.ru>
-	<eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
-	<7021471263772@web16m.yandex.ru> <158901471427237@web4g.yandex.ru>
-	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
-	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
-	<39941471627359@web1m.yandex.ru> <20160823212727.GE73835@jaegeuk>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 2/3] f2fs: schedule in between two continous batch
+ discards
+Date: Fri, 26 Aug 2016 08:50:50 +0800
+Message-ID: <fa750082-926f-d9e0-d3f5-af8613a173ff@huawei.com>
+References: <1471792891-2388-1-git-send-email-chao@kernel.org>
+ <1471792891-2388-2-git-send-email-chao@kernel.org>
+ <20160823165353.GA73835@jaegeuk>
+ <bc8702e8-5565-e3de-cefb-48dde02dbd6f@huawei.com>
+ <20160825165716.GA84318@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <alex@gordick.net>) id 1bd1An-00081Y-L0
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Aug 2016 20:22:49 +0000
-Received: from forward2m.cmail.yandex.net ([5.255.216.20])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bd1Am-0004jF-NO
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 25 Aug 2016 20:22:49 +0000
-In-Reply-To: <20160823212727.GE73835@jaegeuk>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160825165716.GA84318@jaegeuk>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgSmFlZ2V1aywKCjI0LjA4LjIwMTYsIDAwOjI3LCAiSmFlZ2V1ayBLaW0iIDxqYWVnZXVrQGtl
-cm5lbC5vcmc+Ogo+IEhpLAo+Cj4gVGhpcyBpcyBjYXVzZWQgYnkgbm8gZnJlZSBzZWdtZW50IHRv
-IHdyaXRlIGRhdGEgb3Igbm9kZSBibG9ja3MuCj4gSW4gYm90aCBvZiBjYXNlcywgaGF2ZSB5b3Ug
-dHJpZWQgZmlsZSBkZWZyYWdtZW50YXRpb24/CgpJIHNlZSwgdGhhbmtzIQoKSW4gdGhlIGZpcnN0
-IGNhc2UgSSBkaWRuJ3QgdHJ5IGZpbGUgZGVmcmFnbWVudGF0aW9uIG9yIG1hbnVhbCBHQy4KVGhl
-IHByb2JsZW0gaGFwcGVucyB3aGVuIGEgdHJ5IHRvIGRlbGV0ZSBhIGZpbGUuIEFjdHVhbGx5LCB0
-aGlzCm1pZ2h0IGJlIGEgaGFyZHdhcmUgZmFpbHVyZS4gSSBjYW4gdHJ5IHRvIHJlZm9ybWF0IGFu
-ZCB0ZXN0IGl0LCBpZiB0aGVyZQppcyBubyBtb3JlIHNlbnNpYmxlIGRhdGEsIHRoYXQgd2UgY2Fu
-IGdldCBmcm9tIGl0LgoKSW4gdGhlIHNlY29uZCBjYXNlIGl0IGhhcHBlbmVkIGV4YWN0bHkgZHVy
-aW5nIGRlZnJhZ21lbnRhdGlvbi4KCj4gSSdkIGxpa2UgdG8ga25vdyB3aGV0aGVyIHRoaXMgYnVn
-IGhhcHBlbnMgaW4gbm9ybWFsIGNhc2VzIGFzIHdlbGwuCj4KPiBDYW4geW91IHByb3ZpZGUgZnNj
-ay5mMmZzIG1lc3NhZ2VzPwoKCgo+IE9uIEZyaSwgQXVnIDE5LCAyMDE2IGF0IDA4OjIyOjM5UE0g
-KzAzMDAsIEFsZXhhbmRlciBHb3JkZWV2IHdyb3RlOgo+PiAuLi4KCi0twqAKIEFsZXhhbmRlcgoK
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2
-ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
-c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+Hi Jaegeuk,
+
+On 2016/8/26 0:57, Jaegeuk Kim wrote:
+> Hi Chao,
+> 
+> On Thu, Aug 25, 2016 at 05:22:29PM +0800, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2016/8/24 0:53, Jaegeuk Kim wrote:
+>>> Hi Chao,
+>>>
+>>> On Sun, Aug 21, 2016 at 11:21:30PM +0800, Chao Yu wrote:
+>>>> From: Chao Yu <yuchao0@huawei.com>
+>>>>
+>>>> In batch discard approach of fstrim will grab/release gc_mutex lock
+>>>> repeatly, it makes contention of the lock becoming more intensive.
+>>>>
+>>>> So after one batch discards were issued in checkpoint and the lock
+>>>> was released, it's better to do schedule() to increase opportunity
+>>>> of grabbing gc_mutex lock for other competitors.
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/segment.c | 2 ++
+>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 020767c..d0f74eb 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -1305,6 +1305,8 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+>>>>  		mutex_unlock(&sbi->gc_mutex);
+>>>>  		if (err)
+>>>>  			break;
+>>>> +
+>>>> +		schedule();
+>>>
+>>> Hmm, if other thread is already waiting for gc_mutex, we don't need this here.
+>>> In order to avoid long latency, wouldn't it be enough to reduce the batch size?
+>>
+>> Hmm, when fstrim call mutex_unlock we will pop one blocked locker from FIFO list
+>> of mutex lock, and wake it up, then fstrimer will try to lock gc_mutex for next
+>> batch trim, so the popped locker and fstrimer will make a new competition in
+>> gc_mutex.
+> 
+> Before trying to grab gc_mutex by fstrim again, there are already blocked tasks
+> waiting for gc_mutex. Hence the next one should be selectec by FIFO, no?
+
+The next one which is going to be waked up is selected by FIFO, but the waked
+one is still needs to be race with other mutex lock grabber.
+
+So there is no such guarantee that the waked one must get the lock.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+>> If fstrimer is running in a big core, and popped locker is running in
+>> a small core, we can't guarantee popped locker can win the race, and for the
+>> most of time, fstrimer will win. So in order to reduce starvation of other
+>> gc_mutext locker, it's better to do schedule() here.
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>  	}
+>>>>  out:
+>>>>  	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
+>>>> -- 
+>>>> 2.7.2
+>>>
+>>> .
+>>>
+> 
+> .
+> 
