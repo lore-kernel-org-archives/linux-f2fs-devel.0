@@ -1,30 +1,23 @@
-From: Alexander Gordeev <alex@gordick.net>
-Subject: Re: video archive on a microSD card
-Date: Fri, 26 Aug 2016 19:04:28 +0300
-Message-ID: <86031472227468@web20h.yandex.ru>
-References: <146631471002747@web20h.yandex.ru>
-	<281281471258049@web6h.yandex.ru>
-	<eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
-	<7021471263772@web16m.yandex.ru> <158901471427237@web4g.yandex.ru>
-	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
-	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
-	<39941471627359@web1m.yandex.ru> <20160823212727.GE73835@jaegeuk>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/2] f2fs: do in batch synchronously readahead
+	during GC
+Date: Sat, 27 Aug 2016 00:14:31 +0800
+Message-ID: <1472228072-4555-1-git-send-email-chao@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <alex@gordick.net>) id 1bdJcV-00084g-T5
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1bdJoH-0008RC-Je
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Aug 2016 16:04:39 +0000
-Received: from forward2o.cmail.yandex.net ([37.9.109.243])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bdJcS-0006zJ-Io
+	Fri, 26 Aug 2016 16:16:49 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bdJoF-0001sE-B0
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 26 Aug 2016 16:04:39 +0000
-In-Reply-To: <20160823212727.GE73835@jaegeuk>
+	Fri, 26 Aug 2016 16:16:49 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,169 +27,157 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-SGkgSmFlZ2V1aywKCjI0LjA4LjIwMTYsIDAwOjI3LCAiSmFlZ2V1ayBLaW0iIDxqYWVnZXVrQGtl
-cm5lbC5vcmc+Ogo+IEhpLAo+Cj4gVGhpcyBpcyBjYXVzZWQgYnkgbm8gZnJlZSBzZWdtZW50IHRv
-IHdyaXRlIGRhdGEgb3Igbm9kZSBibG9ja3MuCj4gSW4gYm90aCBvZiBjYXNlcywgaGF2ZSB5b3Ug
-dHJpZWQgZmlsZSBkZWZyYWdtZW50YXRpb24/Cj4gSSdkIGxpa2UgdG8ga25vdyB3aGV0aGVyIHRo
-aXMgYnVnIGhhcHBlbnMgaW4gbm9ybWFsIGNhc2VzIGFzIHdlbGwuCgpKdXN0IGdvdCB0aGlzIGFm
-dGVyIG15IG1haW4gcHJvY2VzcywgdGhhdCB3cml0ZXMgdGhlIHZpZGVvIGFyY2hpdmUsIHdhcwpr
-aWxsZWQgYnkgT09NIGtpbGxlciwgYW5kIHRoZSBzeXN0ZW0gcmVzdGFydGVkIHRoYW5rcyB0bwp2
-bS5wYW5pY19vbl9vb20gKyBrZXJuZWwucGFuaWMuIFRoZW4gcmlnaHQgYWZ0ZXIgdGhlIHJlc3Rh
-cnQgSSBnb3QgdGhpczoKClsgICAyNi44NDU1NTZdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0t
-LS0tLS0tLS0tLQpbICAgMjYuODYxOTg2XSBXQVJOSU5HOiBhdCAvaG9tZS9hbGV4L3dvcmsvczJs
-L2FtYl9TMmxfU0RLXzIuNS9TREsyLjUvczJsX2xpbnV4X3Nkay9hbWJhcmVsbGEva2VybmVsL2xp
-bnV4LTMuMTAvZnMvZjJmcy9zZWdtZW50LmM6ODc2IHVwZGF0ZV9zaXRfZW50cnkrMHgxMTgvMHgy
-MTggW2YyZnNdKCkKWyAgIDI2Ljg4MTk1OV0gTW9kdWxlcyBsaW5rZWQgaW46IG92NDY4OV9taXBp
-KFBPKSBjcmMzMiBmMmZzIHh0X3RjcHVkcCBuZl9jb25udHJhY2tfaXB2NCBuZl9kZWZyYWdfaXB2
-NCB4dF9jb25udHJhY2sgbmZfY29ubnRyYWNrIGlwdGFibGVfZmlsdGVyIGlwX3RhYmxlcyB4X3Rh
-YmxlcyBzZF9tb2QgbW1jX2Jsb2NrIHVzYl9zdG9yYWdlIGV2ZGV2IGJjbWR2ClsgICAyNi45NzEz
-MDFdIENQVTogMCBQSUQ6IDUyNSBDb21tOiB2aWRlb3NlcnZlcmQgVGFpbnRlZDogUCAgICAgICAg
-ICAgTyAzLjEwLjkzICMxClsgICAyNi45OTY0MzhdIFs8ODAwMTI0NDQ+XSAodW53aW5kX2JhY2t0
-cmFjZSsweDAvMHgxMTgpIGZyb20gWzw4MDAxMGNkYz5dIChzaG93X3N0YWNrKzB4MTAvMHgxNCkK
-WyAgIDI3LjAyMTczOF0gWzw4MDAxMGNkYz5dIChzaG93X3N0YWNrKzB4MTAvMHgxNCkgZnJvbSBb
-PDgwMDFkM2M4Pl0gKHdhcm5fc2xvd3BhdGhfY29tbW9uKzB4NGMvMHg2OCkKWyAgIDI3LjA0MTIy
-Nl0gWzw4MDAxZDNjOD5dICh3YXJuX3Nsb3dwYXRoX2NvbW1vbisweDRjLzB4NjgpIGZyb20gWzw4
-MDAxZDQ3ND5dICh3YXJuX3Nsb3dwYXRoX251bGwrMHgxOC8weDIwKQpbICAgMjcuMDY2ODM1XSBb
-PDgwMDFkNDc0Pl0gKHdhcm5fc2xvd3BhdGhfbnVsbCsweDE4LzB4MjApIGZyb20gWzw3ZjRiNjQ3
-Yz5dICh1cGRhdGVfc2l0X2VudHJ5KzB4MTE4LzB4MjE4IFtmMmZzXSkKWyAgIDI3LjEzMzQ2NV0g
-Wzw3ZjRiNjQ3Yz5dICh1cGRhdGVfc2l0X2VudHJ5KzB4MTE4LzB4MjE4IFtmMmZzXSkgZnJvbSBb
-PDdmNGI4MDBjPl0gKHJlZnJlc2hfc2l0X2VudHJ5KzB4MWMvMHhiOCBbZjJmc10pClsgICAyNy4x
-ODgxMzJdIFs8N2Y0YjgwMGM+XSAocmVmcmVzaF9zaXRfZW50cnkrMHgxYy8weGI4IFtmMmZzXSkg
-ZnJvbSBbPDdmNGI5MDNjPl0gKGFsbG9jYXRlX2RhdGFfYmxvY2srMHgyMzgvMHgzMTggW2YyZnNd
-KQpbICAgMjcuMjA5MDYzXSBbPDdmNGI5MDNjPl0gKGFsbG9jYXRlX2RhdGFfYmxvY2srMHgyMzgv
-MHgzMTggW2YyZnNdKSBmcm9tIFs8N2Y0YjkzNDA+XSAoZG9fd3JpdGVfcGFnZSsweDIyNC8weDI3
-MCBbZjJmc10pClsgICAyNy4yNDI4MDddIFs8N2Y0YjkzNDA+XSAoZG9fd3JpdGVfcGFnZSsweDIy
-NC8weDI3MCBbZjJmc10pIGZyb20gWzw3ZjRiOTRiOD5dICh3cml0ZV9kYXRhX3BhZ2UrMHg4Yy8w
-eGE0IFtmMmZzXSkKWyAgIDI3LjI2MDY1MV0gWzw3ZjRiOTRiOD5dICh3cml0ZV9kYXRhX3BhZ2Ur
-MHg4Yy8weGE0IFtmMmZzXSkgZnJvbSBbPDdmNGFmZmY0Pl0gKGRvX3dyaXRlX2RhdGFfcGFnZSsw
-eDEwYy8weDQzMCBbZjJmc10pClsgICAyNy4yODE4NThdIFs8N2Y0YWZmZjQ+XSAoZG9fd3JpdGVf
-ZGF0YV9wYWdlKzB4MTBjLzB4NDMwIFtmMmZzXSkgZnJvbSBbPDdmNGIwNjBjPl0gKGYyZnNfd3Jp
-dGVfZGF0YV9wYWdlKzB4MmY0LzB4NGQ0IFtmMmZzXSkKWyAgIDI3LjMwMjU0NV0gWzw3ZjRiMDYw
-Yz5dIChmMmZzX3dyaXRlX2RhdGFfcGFnZSsweDJmNC8weDRkNCBbZjJmc10pIGZyb20gWzw3ZjRh
-ZDI0Yz5dIChmMmZzX3dyaXRlX2RhdGFfcGFnZXMrMHgyZDgvMHgzZGMgW2YyZnNdKQpbICAgMjcu
-MzE1MDMxXSBbPDdmNGFkMjRjPl0gKGYyZnNfd3JpdGVfZGF0YV9wYWdlcysweDJkOC8weDNkYyBb
-ZjJmc10pIGZyb20gWzw4MDA2NjVmND5dIChfX2ZpbGVtYXBfZmRhdGF3cml0ZV9yYW5nZSsweDYw
-LzB4NjgpClsgICAyNy4zMzM5MjJdIFs8ODAwNjY1ZjQ+XSAoX19maWxlbWFwX2ZkYXRhd3JpdGVf
-cmFuZ2UrMHg2MC8weDY4KSBmcm9tIFs8ODAwNjY2ZjQ+XSAoZmlsZW1hcF93cml0ZV9hbmRfd2Fp
-dF9yYW5nZSsweDM0LzB4NzgpClsgICAyNy4zNjkxODVdIFs8ODAwNjY2ZjQ+XSAoZmlsZW1hcF93
-cml0ZV9hbmRfd2FpdF9yYW5nZSsweDM0LzB4NzgpIGZyb20gWzw3ZjQ5YmJjOD5dIChmMmZzX2Rv
-X3N5bmNfZmlsZSsweGM4LzB4NTZjIFtmMmZzXSkKWyAgIDI3LjM4NDc2Nl0gWzw3ZjQ5YmJjOD5d
-IChmMmZzX2RvX3N5bmNfZmlsZSsweGM4LzB4NTZjIFtmMmZzXSkgZnJvbSBbPDdmNDljMDkwPl0g
-KGYyZnNfc3luY19maWxlKzB4MjQvMHgyYyBbZjJmc10pClsgICAyNy4zOTYzNDhdIFs8N2Y0OWMw
-OTA+XSAoZjJmc19zeW5jX2ZpbGUrMHgyNC8weDJjIFtmMmZzXSkgZnJvbSBbPDgwMGI1ZmRjPl0g
-KHZmc19mc3luYysweDIwLzB4MjgpClsgICAyNy40MDYyMjVdIFs8ODAwYjVmZGM+XSAodmZzX2Zz
-eW5jKzB4MjAvMHgyOCkgZnJvbSBbPDgwMGI2MTQwPl0gKGRvX2ZzeW5jKzB4MjgvMHg0OCkKWyAg
-IDI3LjQxNDg5M10gWzw4MDBiNjE0MD5dIChkb19mc3luYysweDI4LzB4NDgpIGZyb20gWzw4MDAw
-ZTFjMD5dIChyZXRfZmFzdF9zeXNjYWxsKzB4MC8weDM4KQpbICAgMjcuNDI4NzYwXSAtLS1bIGVu
-ZCB0cmFjZSBkOWE1NGQ2MzcwN2RjMTllIF0tLS0KWyAgIDM0LjE3NzQ3N10gLS0tLS0tLS0tLS0t
-WyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tClsgICAzNC4yMDQ1NTldIFdBUk5JTkc6IGF0IC9ob21l
-L2FsZXgvd29yay9zMmwvYW1iX1MybF9TREtfMi41L1NESzIuNS9zMmxfbGludXhfc2RrL2FtYmFy
-ZWxsYS9rZXJuZWwvbGludXgtMy4xMC9mcy9mMmZzL3NlZ21lbnQuYzo4ODEgdXBkYXRlX3NpdF9l
-bnRyeSsweDE2Yy8weDIxOCBbZjJmc10oKQpbICAgMzQuMzE0MTg1XSBNb2R1bGVzIGxpbmtlZCBp
-bjogb3Y0Njg5X21pcGkoUE8pIGNyYzMyIGYyZnMgeHRfdGNwdWRwIG5mX2Nvbm50cmFja19pcHY0
-IG5mX2RlZnJhZ19pcHY0IHh0X2Nvbm50cmFjayBuZl9jb25udHJhY2sgaXB0YWJsZV9maWx0ZXIg
-aXBfdGFibGVzIHhfdGFibGVzIHNkX21vZCBtbWNfYmxvY2sgdXNiX3N0b3JhZ2UgZXZkZXYgYmNt
-ZHYKWyAgIDM0LjQwOTQ2Ml0gQ1BVOiAwIFBJRDogNjEzIENvbW06IHZpZGVvc2VydmVyZCBUYWlu
-dGVkOiBQICAgICAgICBXICBPIDMuMTAuOTMgIzEKWyAgIDM0LjQ3MjAxMV0gWzw4MDAxMjQ0ND5d
-ICh1bndpbmRfYmFja3RyYWNlKzB4MC8weDExOCkgZnJvbSBbPDgwMDEwY2RjPl0gKHNob3dfc3Rh
-Y2srMHgxMC8weDE0KQpbICAgMzQuNTA5MjMyXSBbPDgwMDEwY2RjPl0gKHNob3dfc3RhY2srMHgx
-MC8weDE0KSBmcm9tIFs8ODAwMWQzYzg+XSAod2Fybl9zbG93cGF0aF9jb21tb24rMHg0Yy8weDY4
-KQpbICAgMzQuNTQxMjE1XSBbPDgwMDFkM2M4Pl0gKHdhcm5fc2xvd3BhdGhfY29tbW9uKzB4NGMv
-MHg2OCkgZnJvbSBbPDgwMDFkNDc0Pl0gKHdhcm5fc2xvd3BhdGhfbnVsbCsweDE4LzB4MjApClsg
-ICAzNC42MjE4NzldIFs8ODAwMWQ0NzQ+XSAod2Fybl9zbG93cGF0aF9udWxsKzB4MTgvMHgyMCkg
-ZnJvbSBbPDdmNGI2NGQwPl0gKHVwZGF0ZV9zaXRfZW50cnkrMHgxNmMvMHgyMTggW2YyZnNdKQpb
-ICAgMzQuNjYyMjU2XSBbPDdmNGI2NGQwPl0gKHVwZGF0ZV9zaXRfZW50cnkrMHgxNmMvMHgyMTgg
-W2YyZnNdKSBmcm9tIFs8N2Y0YjgwNTA+XSAocmVmcmVzaF9zaXRfZW50cnkrMHg2MC8weGI4IFtm
-MmZzXSkKWyAgIDM0LjcwMjEyM10gWzw3ZjRiODA1MD5dIChyZWZyZXNoX3NpdF9lbnRyeSsweDYw
-LzB4YjggW2YyZnNdKSBmcm9tIFs8N2Y0YjkwM2M+XSAoYWxsb2NhdGVfZGF0YV9ibG9jaysweDIz
-OC8weDMxOCBbZjJmc10pClsgICAzNC43NDE4NTddIFs8N2Y0YjkwM2M+XSAoYWxsb2NhdGVfZGF0
-YV9ibG9jaysweDIzOC8weDMxOCBbZjJmc10pIGZyb20gWzw3ZjRiOTM0MD5dIChkb193cml0ZV9w
-YWdlKzB4MjI0LzB4MjcwIFtmMmZzXSkKWyAgIDM0LjgwNTA3OV0gWzw3ZjRiOTM0MD5dIChkb193
-cml0ZV9wYWdlKzB4MjI0LzB4MjcwIFtmMmZzXSkgZnJvbSBbPDdmNGI5NGI4Pl0gKHdyaXRlX2Rh
-dGFfcGFnZSsweDhjLzB4YTQgW2YyZnNdKQpbICAgMzQuODQxMzIxXSBbPDdmNGI5NGI4Pl0gKHdy
-aXRlX2RhdGFfcGFnZSsweDhjLzB4YTQgW2YyZnNdKSBmcm9tIFs8N2Y0YWZmZjQ+XSAoZG9fd3Jp
-dGVfZGF0YV9wYWdlKzB4MTBjLzB4NDMwIFtmMmZzXSkKWyAgIDM0LjkwNjQ2NV0gWzw3ZjRhZmZm
-ND5dIChkb193cml0ZV9kYXRhX3BhZ2UrMHgxMGMvMHg0MzAgW2YyZnNdKSBmcm9tIFs8N2Y0YjA2
-MGM+XSAoZjJmc193cml0ZV9kYXRhX3BhZ2UrMHgyZjQvMHg0ZDQgW2YyZnNdKQpbICAgMzQuOTc5
-Nzc5XSBbPDdmNGIwNjBjPl0gKGYyZnNfd3JpdGVfZGF0YV9wYWdlKzB4MmY0LzB4NGQ0IFtmMmZz
-XSkgZnJvbSBbPDdmNGFkMjRjPl0gKGYyZnNfd3JpdGVfZGF0YV9wYWdlcysweDJkOC8weDNkYyBb
-ZjJmc10pClsgICAzNS4wMDkyNTZdIFs8N2Y0YWQyNGM+XSAoZjJmc193cml0ZV9kYXRhX3BhZ2Vz
-KzB4MmQ4LzB4M2RjIFtmMmZzXSkgZnJvbSBbPDgwMDY2NWY0Pl0gKF9fZmlsZW1hcF9mZGF0YXdy
-aXRlX3JhbmdlKzB4NjAvMHg2OCkKWyAgIDM1LjA2OTEwMl0gWzw4MDA2NjVmND5dIChfX2ZpbGVt
-YXBfZmRhdGF3cml0ZV9yYW5nZSsweDYwLzB4NjgpIGZyb20gWzw4MDA2NjZmND5dIChmaWxlbWFw
-X3dyaXRlX2FuZF93YWl0X3JhbmdlKzB4MzQvMHg3OCkKWyAgIDM1LjA5NjY2OV0gWzw4MDA2NjZm
-ND5dIChmaWxlbWFwX3dyaXRlX2FuZF93YWl0X3JhbmdlKzB4MzQvMHg3OCkgZnJvbSBbPDdmNDli
-YmM4Pl0gKGYyZnNfZG9fc3luY19maWxlKzB4YzgvMHg1NmMgW2YyZnNdKQpbICAgMzUuMTE5Mjk4
-XSBbPDdmNDliYmM4Pl0gKGYyZnNfZG9fc3luY19maWxlKzB4YzgvMHg1NmMgW2YyZnNdKSBmcm9t
-IFs8N2Y0OWMwOTA+XSAoZjJmc19zeW5jX2ZpbGUrMHgyNC8weDJjIFtmMmZzXSkKWyAgIDM1LjE0
-Mjk2N10gWzw3ZjQ5YzA5MD5dIChmMmZzX3N5bmNfZmlsZSsweDI0LzB4MmMgW2YyZnNdKSBmcm9t
-IFs8ODAwYjVmZGM+XSAodmZzX2ZzeW5jKzB4MjAvMHgyOCkKWyAgIDM1LjE5NDY0N10gWzw4MDBi
-NWZkYz5dICh2ZnNfZnN5bmMrMHgyMC8weDI4KSBmcm9tIFs8ODAwYjYxNDA+XSAoZG9fZnN5bmMr
-MHgyOC8weDQ4KQpbICAgMzUuMjEzMDQ4XSBbPDgwMGI2MTQwPl0gKGRvX2ZzeW5jKzB4MjgvMHg0
-OCkgZnJvbSBbPDgwMDBlMWMwPl0gKHJldF9mYXN0X3N5c2NhbGwrMHgwLzB4MzgpClsgICAzNS4y
-Mzk0MTJdIC0tLVsgZW5kIHRyYWNlIGQ5YTU0ZDYzNzA3ZGMxOWYgXS0tLQoKCkkgY29uc2lkZXIg
-dGhpcyB0byBiZSBhIG5vcm1hbCBzaXR1YXRpb24uIFRoZSBmaWxlc3lzdGVtIHdhcyBjcmVhdGVk
-CnNldmVyYWwgZGF5cyBhZ28gd2l0aCB0aGUgZGVmYXVsdCBzZWN0aW9uIHNpemUgYW5kIG1vdW50
-ZWQgd2l0aCB0aGVzZQpvcHRpb25zOiBub2Rldixub2V4ZWMsbm9zdWlkLG5vYXRpbWUsbm9kaXJh
-dGltZSxub3VzZXJfeGF0dHIsbm9hY2wsbW9kZT1sZnMKCkhlcmUgaXMgYWxzbyB0aGUgc3RhdHVz
-IHJpZ2h0IGFmdGVyIHRoZSB3YXJuaW5nczoKCj09PT09WyBwYXJ0aXRpb24gaW5mbyhzZGEpLiAj
-MCwgUlddPT09PT0KW1NCOiAxXSBbQ1A6IDJdIFtTSVQ6IDZdIFtOQVQ6IDExNF0gW1NTQTogMTE2
-XSBbTUFJTjogNTkxNDkoT3ZlclByb3Y6MzAwMyBSZXN2OjQ4KV0KClV0aWxpemF0aW9uOiAxOCUg
-KDUzNTc5MDMgdmFsaWQgYmxvY2tzKQogIC0gTm9kZTogNjI3OSAoSW5vZGU6IDk3NiwgT3RoZXI6
-IDUzMDMpCiAgLSBEYXRhOiA1MzUxNjI0CiAgLSBJbmxpbmVfeGF0dHIgSW5vZGU6IDAKICAtIElu
-bGluZV9kYXRhIElub2RlOiAwCiAgLSBJbmxpbmVfZGVudHJ5IElub2RlOiAwCiAgLSBPcnBoYW4g
-SW5vZGU6IDAKCk1haW4gYXJlYTogNTkxNDkgc2VncywgNTkxNDkgc2VjcyA1OTE0OSB6b25lcwog
-IC0gQ09MRCAgZGF0YTogMTIxNjAsIDEyMTYwLCAxMjE2MAogIC0gV0FSTSAgZGF0YTogMTE4Nzgs
-IDExODc4LCAxMTg3OAogIC0gSE9UICAgZGF0YTogNTkxMTcsIDU5MTE3LCA1OTExNwogIC0gRGly
-ICAgZG5vZGU6IDU5MTE4LCA1OTExOCwgNTkxMTgKICAtIEZpbGUgICBkbm9kZTogNTkxMTUsIDU5
-MTE1LCA1OTExNQogIC0gSW5kaXIgbm9kZXM6IDU5MTI5LCA1OTEyOSwgNTkxMjkKCiAgLSBWYWxp
-ZDogMzgwCiAgLSBEaXJ0eTogMTEyMjEKICAtIFByZWZyZWU6IDAKICAtIEZyZWU6IDQ3NTQ4ICg0
-NzU0OCkKCkNQIGNhbGxzOiA0IChCRzogMCkKR0MgY2FsbHM6IDAgKEJHOiAwKQogIC0gZGF0YSBz
-ZWdtZW50cyA6IDAgKDApCiAgLSBub2RlIHNlZ21lbnRzIDogMCAoMCkKVHJ5IHRvIG1vdmUgMCBi
-bG9ja3MgKEJHOiAwKQogIC0gZGF0YSBibG9ja3MgOiAwICgwKQogIC0gbm9kZSBibG9ja3MgOiAw
-ICgwKQoKRXh0ZW50IENhY2hlOgogIC0gSGl0IENvdW50OiBMMS0xOjI2IEwxLTI6MiBMMjoxCiAg
-LSBIaXQgUmF0aW86IDUlICgyOSAvIDU3NCkKICAtIElubmVyIFN0cnVjdCBDb3VudDogdHJlZTog
-OTczKDApLCBub2RlOiAwCgpCYWxhbmNpbmcgRjJGUyBBc3luYzoKICAtIGlubWVtOiAgICAwLCB3
-Yl9iaW9zOiAgICAwCiAgLSBub2RlczogICAgNCBpbiAgICA5CiAgLSBkZW50czogICAgMiBpbiBk
-aXJzOiAgIDIgKCAgIDApCiAgLSBkYXRhczogICAgMCBpbiBmaWxlczogICAwCiAgLSBtZXRhOiAg
-ICAwIGluICAgMjMKICAtIE5BVHM6ICAgICAgICAgMy8gICAgICAxNjcKICAtIFNJVHM6ICAgICAg
-ICAgMy8gICAgNTkxNDkKICAtIGZyZWVfbmlkczogICAgICAzNTg3CgpEaXN0cmlidXRpb24gb2Yg
-VXNlciBCbG9ja3M6IFsgdmFsaWQgfCBpbnZhbGlkIHwgZnJlZSBdCiAgWy0tLS0tLS0tLXwtLXwt
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1dCgpJUFU6IDAgYmxvY2tzClNT
-UjogMCBibG9ja3MgaW4gMCBzZWdtZW50cwpMRlM6IDMzOTQgYmxvY2tzIGluIDcgc2VnbWVudHMK
-CkJERjogOTMsIGF2Zy4gdmJsb2NrczogNDYwCgpNZW1vcnk6IDEyODIwIEtCCiAgLSBzdGF0aWM6
-IDEyNTk3IEtCCiAgLSBjYWNoZWQ6IDk0IEtCCiAgLSBwYWdlZCA6IDEyOCBLQgoKCj4gQ2FuIHlv
-dSBwcm92aWRlIGZzY2suZjJmcyBtZXNzYWdlcz8KClN1cmU6CgpJbmZvOiBzZWN0b3Igc2l6ZSA9
-IDUxMgpJbmZvOiB0b3RhbCBzZWN0b3JzID0gMjQzMjUzMjQ4IChpbiA1MTIgYnl0ZXMpCkluZm86
-IE1LRlMgdmVyc2lvbgogICJMaW51eCB2ZXJzaW9uIDMuMTAuOTMgKGFsZXhAZGViLWkzODYpIChn
-Y2MgdmVyc2lvbiA0LjkuMSAyMDE0MDYyNSAocHJlcmVsZWFzZSkgKGNyb3NzdG9vbC1ORyAtIEFt
-YmFyZWxsYSBMaW5hcm8gTXVsdGlsaWIgR0NDIFtDb3J0ZXhBOSAmIEFSTXY2a10gMjAxNC4wNikg
-KSAjMSBQUkVFTVBUIE1vbiBBdWcgMjIgMTI6MDk6MTMgTVNLIDIwMTYiCkluZm86IEZTQ0sgdmVy
-c2lvbgogIGZyb20gIkxpbnV4IHZlcnNpb24gMy4xMC45MyAoYWxleEBkZWItaTM4NikgKGdjYyB2
-ZXJzaW9uIDQuOS4xIDIwMTQwNjI1IChwcmVyZWxlYXNlKSAoY3Jvc3N0b29sLU5HIC0gQW1iYXJl
-bGxhIExpbmFybyBNdWx0aWxpYiBHQ0MgW0NvcnRleEE5ICYgQVJNdjZrXSAyMDE0LjA2KSApICMx
-IFBSRUVNUFQgTW9uIEF1ZyAyMiAxMjowOToxMyBNU0sgMjAxNiIKICAgIHRvICJMaW51eCB2ZXJz
-aW9uIDMuMTAuOTMgKGFsZXhAZGViLWkzODYpIChnY2MgdmVyc2lvbiA0LjkuMSAyMDE0MDYyNSAo
-cHJlcmVsZWFzZSkgKGNyb3NzdG9vbC1ORyAtIEFtYmFyZWxsYSBMaW5hcm8gTXVsdGlsaWIgR0ND
-IFtDb3J0ZXhBOSAmIEFSTXY2a10gMjAxNC4wNikgKSAjMSBQUkVFTVBUIE1vbiBBdWcgMjIgMTI6
-MDk6MTMgTVNLIDIwMTYiCgpbRlNDS10gVW5yZWFjaGFibGUgbmF0IGVudHJpZXMgICAgICAgICAg
-ICAgICAgICAgICAgICBbT2suLl0gWzB4MF0KW0ZTQ0tdIFNJVCB2YWxpZCBibG9jayBiaXRtYXAg
-Y2hlY2tpbmcgICAgICAgICAgICAgICAgW09rLi5dCltGU0NLXSBIYXJkIGxpbmsgY2hlY2tpbmcg
-Zm9yIHJlZ3VsYXIgZmlsZSAgICAgICAgICAgIFtPay4uXSBbMHgwXQpbRlNDS10gdmFsaWRfYmxv
-Y2tfY291bnQgbWF0Y2hpbmcgd2l0aCBDUCAgICAgICAgICAgICBbT2suLl0gWzB4NTFjMTRmXQpb
-RlNDS10gdmFsaWRfbm9kZV9jb3VudCBtYXRjaW5nIHdpdGggQ1AgKGRlIGxvb2t1cCkgICBbT2su
-Ll0gWzB4MTg4N10KW0ZTQ0tdIHZhbGlkX25vZGVfY291bnQgbWF0Y2luZyB3aXRoIENQIChuYXQg
-bG9va3VwKSAgW09rLi5dIFsweDE4ODddCltGU0NLXSB2YWxpZF9pbm9kZV9jb3VudCBtYXRjaGVk
-IHdpdGggQ1AgICAgICAgICAgICAgIFtPay4uXSBbMHgzZDBdCltGU0NLXSBmcmVlIHNlZ21lbnRf
-Y291bnQgbWF0Y2hlZCB3aXRoIENQICAgICAgICAgICAgIFtPay4uXSBbMHhiOWJjXQpbRlNDS10g
-bmV4dCBibG9jayBvZmZzZXQgaXMgZnJlZSAgICAgICAgICAgICAgICAgICAgICBbT2suLl0KW0ZT
-Q0tdIGZpeGluZyBTSVQgdHlwZXMKW0ZTQ0tdIG90aGVyIGNvcnJ1cHRlZCBidWdzICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgW09rLi5dCgpEb25lLgoKLS3CoAogQWxleGFuZGVyCgotLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0
-cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
-dGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+From: Chao Yu <yuchao0@huawei.com>
+
+In order to enhance performance, we try to readahead node page during
+GC, but before loading node page we should get block address of node page
+which is stored in NAT table, so synchronously read of single NAT page
+block our readahead flow.
+
+f2fs_submit_page_bio: dev = (251,0), ino = 2, page_index = 0xa1e, oldaddr = 0xa1e, newaddr = 0xa1e, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x35e9, oldaddr = 0x72d7a, newaddr = 0x72d7a, rw = READAHEAD ^H, type = NODE
+f2fs_submit_page_bio: dev = (251,0), ino = 2, page_index = 0xc1f, oldaddr = 0xc1f, newaddr = 0xc1f, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x389d, oldaddr = 0x72d7d, newaddr = 0x72d7d, rw = READAHEAD ^H, type = NODE
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x3a82, oldaddr = 0x72d7f, newaddr = 0x72d7f, rw = READAHEAD ^H, type = NODE
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x3bfa, oldaddr = 0x72d86, newaddr = 0x72d86, rw = READAHEAD ^H, type = NODE
+
+This patch adds one phase that do readahead NAT pages in batch before
+readahead node page for more effeciently.
+
+f2fs_submit_page_bio: dev = (251,0), ino = 2, page_index = 0x1952, oldaddr = 0x1952, newaddr = 0x1952, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xc34, oldaddr = 0xc34, newaddr = 0xc34, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xa33, oldaddr = 0xa33, newaddr = 0xa33, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xc30, oldaddr = 0xc30, newaddr = 0xc30, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xc32, oldaddr = 0xc32, newaddr = 0xc32, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xc26, oldaddr = 0xc26, newaddr = 0xc26, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xa2b, oldaddr = 0xa2b, newaddr = 0xa2b, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xc23, oldaddr = 0xc23, newaddr = 0xc23, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xc24, oldaddr = 0xc24, newaddr = 0xc24, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xa10, oldaddr = 0xa10, newaddr = 0xa10, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_mbio: dev = (251,0), ino = 2, page_index = 0xc2c, oldaddr = 0xc2c, newaddr = 0xc2c, rw = READ_SYNC(MP), type = META
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x5db7, oldaddr = 0x6be00, newaddr = 0x6be00, rw = READAHEAD ^H, type = NODE
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x5db9, oldaddr = 0x6be17, newaddr = 0x6be17, rw = READAHEAD ^H, type = NODE
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x5dbc, oldaddr = 0x6be1a, newaddr = 0x6be1a, rw = READAHEAD ^H, type = NODE
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x5dc3, oldaddr = 0x6be20, newaddr = 0x6be20, rw = READAHEAD ^H, type = NODE
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x5dc7, oldaddr = 0x6be24, newaddr = 0x6be24, rw = READAHEAD ^H, type = NODE
+f2fs_submit_page_bio: dev = (251,0), ino = 1, page_index = 0x5dc9, oldaddr = 0x6be25, newaddr = 0x6be25, rw = READAHEAD ^H, type = NODE
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/gc.c | 33 +++++++++++++++++++++++----------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index c1599b4..cdc44a6 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -423,10 +423,10 @@ static int check_valid_map(struct f2fs_sb_info *sbi,
+ static void gc_node_segment(struct f2fs_sb_info *sbi,
+ 		struct f2fs_summary *sum, unsigned int segno, int gc_type)
+ {
+-	bool initial = true;
+ 	struct f2fs_summary *entry;
+ 	block_t start_addr;
+ 	int off;
++	int phase = 0;
+ 
+ 	start_addr = START_BLOCK(sbi, segno);
+ 
+@@ -445,10 +445,18 @@ next_step:
+ 		if (check_valid_map(sbi, segno, off) == 0)
+ 			continue;
+ 
+-		if (initial) {
++		if (phase == 0) {
++			ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), 1,
++							META_NAT, true);
++			continue;
++		}
++
++		if (phase == 1) {
+ 			ra_node_page(sbi, nid);
+ 			continue;
+ 		}
++
++		/* phase == 2 */
+ 		node_page = get_node_page(sbi, nid);
+ 		if (IS_ERR(node_page))
+ 			continue;
+@@ -469,10 +477,8 @@ next_step:
+ 		stat_inc_node_blk_count(sbi, 1, gc_type);
+ 	}
+ 
+-	if (initial) {
+-		initial = false;
++	if (++phase < 3)
+ 		goto next_step;
+-	}
+ }
+ 
+ /*
+@@ -706,6 +712,7 @@ next_step:
+ 		struct node_info dni; /* dnode info for the data */
+ 		unsigned int ofs_in_node, nofs;
+ 		block_t start_bidx;
++		nid_t nid = le32_to_cpu(entry->nid);
+ 
+ 		/* stop BG_GC if there is not enough free sections. */
+ 		if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0))
+@@ -715,7 +722,13 @@ next_step:
+ 			continue;
+ 
+ 		if (phase == 0) {
+-			ra_node_page(sbi, le32_to_cpu(entry->nid));
++			ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), 1,
++							META_NAT, true);
++			continue;
++		}
++
++		if (phase == 1) {
++			ra_node_page(sbi, nid);
+ 			continue;
+ 		}
+ 
+@@ -723,14 +736,14 @@ next_step:
+ 		if (!is_alive(sbi, entry, &dni, start_addr + off, &nofs))
+ 			continue;
+ 
+-		if (phase == 1) {
++		if (phase == 2) {
+ 			ra_node_page(sbi, dni.ino);
+ 			continue;
+ 		}
+ 
+ 		ofs_in_node = le16_to_cpu(entry->ofs_in_node);
+ 
+-		if (phase == 2) {
++		if (phase == 3) {
+ 			inode = f2fs_iget(sb, dni.ino);
+ 			if (IS_ERR(inode) || is_bad_inode(inode))
+ 				continue;
+@@ -756,7 +769,7 @@ next_step:
+ 			continue;
+ 		}
+ 
+-		/* phase 3 */
++		/* phase 4 */
+ 		inode = find_gc_inode(gc_list, dni.ino);
+ 		if (inode) {
+ 			struct f2fs_inode_info *fi = F2FS_I(inode);
+@@ -789,7 +802,7 @@ next_step:
+ 		}
+ 	}
+ 
+-	if (++phase < 4)
++	if (++phase < 5)
+ 		goto next_step;
+ }
+ 
+-- 
+2.7.2
+
+
+------------------------------------------------------------------------------
