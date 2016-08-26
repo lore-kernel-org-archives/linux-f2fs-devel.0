@@ -1,98 +1,127 @@
-From: Damien Le Moal <damien.lemoal@hgst.com>
-Subject: Re: [PATCH v8 1/2 RESEND] Add bio/request flags to issue ZBC/ZAC
- commands
-Date: Fri, 26 Aug 2016 11:31:46 +0900
-Message-ID: <5b710eda-6445-f42a-72f0-4a1bf843d501@hgst.com>
-References: <20160822042010.32416-2-shaun@tancheff.com>
- <20160824202409.30345-1-shaun@tancheff.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/3] f2fs: schedule in between two continous
+ batch discards
+Date: Thu, 25 Aug 2016 19:50:57 -0700
+Message-ID: <20160826025057.GA88444@jaegeuk>
+References: <1471792891-2388-1-git-send-email-chao@kernel.org>
+	<1471792891-2388-2-git-send-email-chao@kernel.org>
+	<20160823165353.GA73835@jaegeuk>
+	<bc8702e8-5565-e3de-cefb-48dde02dbd6f@huawei.com>
+	<20160825165716.GA84318@jaegeuk>
+	<fa750082-926f-d9e0-d3f5-af8613a173ff@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20160824202409.30345-1-shaun@tancheff.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Shaun Tancheff <shaun@tancheff.com>, linux-block@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>, Josh Bingaman <josh.bingaman@seagate.com>, "David S . Miller" <davem@davemloft.net>, Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Guenter Roeck <linux@roeck-us.net>, Ming Lei <ming.lei@canonical.com>, Mike Christie <michaelc@cs.wisc.edu>, Keith Busch <keith.busch@intel.com>, Mike Snitzer <snitzer@redhat.com>, Johannes Thumshirn <jthumshirn@suse.de>, Shaohua Li <shli@fb.com>, Dan Williams <dan.j.williams@intel.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bd7GV-0000Dz-FD
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 26 Aug 2016 02:53:07 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bd7Eg-0006sb-9G
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 26 Aug 2016 02:51:16 +0000
+Content-Disposition: inline
+In-Reply-To: <fa750082-926f-d9e0-d3f5-af8613a173ff@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
+On Fri, Aug 26, 2016 at 08:50:50AM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2016/8/26 0:57, Jaegeuk Kim wrote:
+> > Hi Chao,
+> > 
+> > On Thu, Aug 25, 2016 at 05:22:29PM +0800, Chao Yu wrote:
+> >> Hi Jaegeuk,
+> >>
+> >> On 2016/8/24 0:53, Jaegeuk Kim wrote:
+> >>> Hi Chao,
+> >>>
+> >>> On Sun, Aug 21, 2016 at 11:21:30PM +0800, Chao Yu wrote:
+> >>>> From: Chao Yu <yuchao0@huawei.com>
+> >>>>
+> >>>> In batch discard approach of fstrim will grab/release gc_mutex lock
+> >>>> repeatly, it makes contention of the lock becoming more intensive.
+> >>>>
+> >>>> So after one batch discards were issued in checkpoint and the lock
+> >>>> was released, it's better to do schedule() to increase opportunity
+> >>>> of grabbing gc_mutex lock for other competitors.
+> >>>>
+> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >>>> ---
+> >>>>  fs/f2fs/segment.c | 2 ++
+> >>>>  1 file changed, 2 insertions(+)
+> >>>>
+> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>>> index 020767c..d0f74eb 100644
+> >>>> --- a/fs/f2fs/segment.c
+> >>>> +++ b/fs/f2fs/segment.c
+> >>>> @@ -1305,6 +1305,8 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+> >>>>  		mutex_unlock(&sbi->gc_mutex);
+> >>>>  		if (err)
+> >>>>  			break;
+> >>>> +
+> >>>> +		schedule();
+> >>>
+> >>> Hmm, if other thread is already waiting for gc_mutex, we don't need this here.
+> >>> In order to avoid long latency, wouldn't it be enough to reduce the batch size?
+> >>
+> >> Hmm, when fstrim call mutex_unlock we will pop one blocked locker from FIFO list
+> >> of mutex lock, and wake it up, then fstrimer will try to lock gc_mutex for next
+> >> batch trim, so the popped locker and fstrimer will make a new competition in
+> >> gc_mutex.
+> > 
+> > Before trying to grab gc_mutex by fstrim again, there are already blocked tasks
+> > waiting for gc_mutex. Hence the next one should be selectec by FIFO, no?
+> 
+> The next one which is going to be waked up is selected by FIFO, but the waked
+> one is still needs to be race with other mutex lock grabber.
+> 
+> So there is no such guarantee that the waked one must get the lock.
 
-Shaun,
+Okay, I'll merge this. :)
 
-On 8/25/16 05:24, Shaun Tancheff wrote:
-> (RESENDING to include f2fs, fs-devel and dm-devel)
->
-> Add op flags to access to zone information as well as open, close
-> and reset zones:
->   - REQ_OP_ZONE_REPORT - Query zone information (Report zones)
->   - REQ_OP_ZONE_OPEN - Explicitly open a zone for writing
->   - REQ_OP_ZONE_CLOSE - Explicitly close a zone
->   - REQ_OP_ZONE_FINISH - Explicitly finish a zone
->   - REQ_OP_ZONE_RESET - Reset Write Pointer to start of zone
->
-> These op flags can be used to create bio's to control zoned devices
-> through the block layer.
+Thanks,
 
-I still have a hard time seeing the need for the REQ_OP_ZONE_REPORT 
-operation assuming that the device queue will hold a zone information 
-cache, Hannes RB-tree or your array type, whichever.
+> 
+> Thanks,
+> 
+> > 
+> > Thanks,
+> > 
+> >> If fstrimer is running in a big core, and popped locker is running in
+> >> a small core, we can't guarantee popped locker can win the race, and for the
+> >> most of time, fstrimer will win. So in order to reduce starvation of other
+> >> gc_mutext locker, it's better to do schedule() here.
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>  	}
+> >>>>  out:
+> >>>>  	range->len = F2FS_BLK_TO_BYTES(cpc.trimmed);
+> >>>> -- 
+> >>>> 2.7.2
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
 
-Let's try to think simply here: if the disk user (and FS, a device 
-mapper or an application doing raw disk accesses) wants to access the 
-disk zone information, why would it need to issue a BIO when calling 
-blkdev_lookup_zone would exactly give that information straight out of 
-memory (so much faster) ? I thought hard about this, but cannot think of 
-any value for the BIO-to-disk option. It seems to me to be equivalent to 
-systematically doing a page cache read even if the page cache tells us 
-that the page is up-to-date...
-
-Moreover, issuing a report zone to the disk may return information that 
-is in fact incorrect, as that would not take into account the eventual 
-set of write requests that was dispatched but not yet processed by the 
-disk (some zone write pointer may be reported with a value lower than 
-what the zone cache maintains).
-
-Dealing (and fixing) these inconsistencies would force an update of the 
-report zone result using the information of the zone cache, which in 
-itself sounds like a good justification of not doing a report zones in 
-the first place.
-
-I am fine with the other operations, and in fact having a BIO interface 
-for them to send down to the SCSI layer is better than any other method. 
-It will causes them to be seen in sd_init_command, which is the path 
-taken for read and write commands too. So all zone cache information 
-checking and updating can be done in that single place and serialized 
-with a spinlock. Maintenance of the zone cache information becomes very 
-easy.
-
-Any divergence of the zone cache information with the actual state of 
-the disk will likely cause an error (unaligned write or other). Having a 
-specific report zone BIO option will not help the disk user recover from 
-those. Hannes current implementation make sure that the information of 
-the zone for the failed request is automatically updated. That is enough 
-to maintain the zone cache information uptodate, and a zone information 
-can be marked as "in update" for the user to notice and wait for the 
-refreshed information.
-
-The ioctl code for reporting zones does not need the specific request op 
-code either. Again, blkdev_lookup_zone can provide zone information, and 
-an emulation of the reporting options filtering is also trivial to 
-implement on top of that, if really required (I do not think that is 
-strongly needed though).
-
-Without the report zone operation, your patch set size would 
-significantly shrink and merging with Hannes work becomes very easy too.
-
-Please let me know what you think. If we drop this, we can get a clean 
-and full ZBC support patch set ready in no time at all.
-
-Best regards.
-
--- 
-Damien Le Moal, Ph.D.
-Sr. Manager, System Software Group, HGST Research,
-HGST, a Western Digital brand
-Damien.LeMoal@hgst.com
-(+81) 0466-98-3593 (ext. 513593)
-1 kirihara-cho, Fujisawa,
-Kanagawa, 252-0888 Japan
-www.hgst.com
+------------------------------------------------------------------------------
