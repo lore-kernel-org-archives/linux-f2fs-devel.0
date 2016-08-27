@@ -1,84 +1,102 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: add noinline_dentry mount option
-Date: Fri, 26 Aug 2016 10:11:13 -0700
-Message-ID: <20160826171113.GC88444@jaegeuk>
-References: <20160826010122.79644-1-yuchao0@huawei.com>
+Subject: Re: [LKP] [lkp] [f2fs] ec795418c4: fsmark.files_per_sec -36.3%
+ regression
+Date: Fri, 26 Aug 2016 17:52:57 -0700
+Message-ID: <20160827005257.GD88444@jaegeuk>
+References: <20160718020950.GB4986@yexl-desktop>
+ <87twfmsndf.fsf@yhuang-mobile.sh.intel.com>
+ <87bn18cvuu.fsf_-_@yhuang-mobile.sh.intel.com>
+ <20160804172452.GA12093@jaegeuk>
+ <874m70ctu3.fsf@yhuang-mobile.sh.intel.com>
+ <20160804185251.GA13813@jaegeuk>
+ <87r3a4b7b6.fsf@yhuang-mobile.sh.intel.com>
+ <87vaz6yl8a.fsf@yhuang-mobile.sh.intel.com>
+ <20160812012238.GA47037@jaegeuk>
+ <CAC=cRTNtND+5f83p_yBecnx0iB5_6Q6xzbHdeY0tgrVaMRLSRQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160826010122.79644-1-yuchao0@huawei.com>
+In-Reply-To: <CAC=cRTNtND+5f83p_yBecnx0iB5_6Q6xzbHdeY0tgrVaMRLSRQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: huang ying <huang.ying.caritas@gmail.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>, kernel test robot <xiaolong.ye@intel.com>, LKP ML <lkp@01.org>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+On Wed, Aug 24, 2016 at 09:51:11AM -0700, huang ying wrote:
+> Hi, Jaegeuk,
+> 
+> On Thu, Aug 11, 2016 at 6:22 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+> > On Thu, Aug 11, 2016 at 03:49:41PM -0700, Huang, Ying wrote:
+> >> Hi, Kim,
+> >>
+> >> "Huang, Ying" <ying.huang@intel.com> writes:
+> >> >>
+> >> >> [lkp] [f2fs] 3bdad3c7ee: aim7.jobs-per-min -25.3% regression
+> >> >> [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
+> >> >>
+> >> >> In terms of the above regression, I could check that _reproduce_ procedure
+> >> >> includes mounting filesystem only. Is that correct?
+> >> >
+> >> > Sorry, our test system failed to generate reproduce steps for aim7.  We
+> >> > will implement it.
+> >> >
+> >> > - [lkp] [f2fs] 3bdad3c7ee: aim7.jobs-per-min -25.3% regression
+> >> >
+> >> > The disk is one 48G ram disk.  The steps for aim7 is,
+> >> >
+> >> > cat > workfile <<EOF
+> >> > FILESIZE: 1M
+> >> > POOLSIZE: 10M
+> >> > 10 disk_cp
+> >> > EOF
+> >> >
+> >> > (
+> >> >     echo $HOSTNAME
+> >> >     echo disk_cp
+> >> >
+> >> >     echo 1
+> >> >     echo 3000
+> >> >     echo 2
+> >> >     echo 3000
+> >> >     echo 1
+> >> > ) | ./multitask -t &
+> >> >
+> >> >
+> >> > - [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
+> >> >
+> >> > The disk is 4 12G ram disk, and setup RAID0 on them via mdadm.  The
+> >> > steps for aim7 is,
+> >> >
+> >> > cat > workfile <<EOF
+> >> > FILESIZE: 1M
+> >> > POOLSIZE: 10M
+> >> > 10 sync_disk_rw
+> >> > EOF
+> >> >
+> >> > (
+> >> >     echo $HOSTNAME
+> >> >     echo sync_disk_rw
+> >> >
+> >> >     echo 1
+> >> >     echo 600
+> >> >     echo 2
+> >> >     echo 600
+> >> >     echo 1
+> >> > ) | ./multitask -t &
+> >>
+> >> Any update on these 2 regressions?  Is the information is enough for you
+> >> to reproduce?
+> >
+> > Sorry, I've had no time to dig this due to business travel now.
+> > I'll check that when back to US.
+> 
+> Any update?
 
-I integrated this patch into the original patch which makes inline_dentry by
-default. And, I couldn't find any bug case from my test-cases. :)
+Sorry, how can I get multitask binary?
 
 Thanks,
 
-On Fri, Aug 26, 2016 at 09:01:22AM +0800, Chao Yu wrote:
-> This patch adds noinline_dentry mount option.
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  Documentation/filesystems/f2fs.txt | 1 +
->  fs/f2fs/super.c                    | 7 +++++++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-> index ecd8080..753dd4f 100644
-> --- a/Documentation/filesystems/f2fs.txt
-> +++ b/Documentation/filesystems/f2fs.txt
-> @@ -131,6 +131,7 @@ inline_dentry          Enable the inline dir feature: data in new created
->                         directory entries can be written into inode block. The
->                         space of inode block which is used to store inline
->                         dentries is limited to ~3.4k.
-> +noinline_dentry        Diable the inline dentry feature.
->  flush_merge	       Merge concurrent cache_flush commands as much as possible
->                         to eliminate redundant command issues. If the underlying
->  		       device handles the cache_flush command relatively slowly,
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 7974833..b776414 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -87,6 +87,7 @@ enum {
->  	Opt_inline_xattr,
->  	Opt_inline_data,
->  	Opt_inline_dentry,
-> +	Opt_noinline_dentry,
->  	Opt_flush_merge,
->  	Opt_noflush_merge,
->  	Opt_nobarrier,
-> @@ -118,6 +119,7 @@ static match_table_t f2fs_tokens = {
->  	{Opt_inline_xattr, "inline_xattr"},
->  	{Opt_inline_data, "inline_data"},
->  	{Opt_inline_dentry, "inline_dentry"},
-> +	{Opt_noinline_dentry, "noinline_dentry"},
->  	{Opt_flush_merge, "flush_merge"},
->  	{Opt_noflush_merge, "noflush_merge"},
->  	{Opt_nobarrier, "nobarrier"},
-> @@ -488,6 +490,9 @@ static int parse_options(struct super_block *sb, char *options)
->  		case Opt_inline_dentry:
->  			set_opt(sbi, INLINE_DENTRY);
->  			break;
-> +		case Opt_noinline_dentry:
-> +			clear_opt(sbi, INLINE_DENTRY);
-> +			break;
->  		case Opt_flush_merge:
->  			set_opt(sbi, FLUSH_MERGE);
->  			break;
-> @@ -879,6 +884,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
->  		seq_puts(seq, ",noinline_data");
->  	if (test_opt(sbi, INLINE_DENTRY))
->  		seq_puts(seq, ",inline_dentry");
-> +	else
-> +		seq_puts(seq, ",noinline_dentry");
->  	if (!f2fs_readonly(sbi->sb) && test_opt(sbi, FLUSH_MERGE))
->  		seq_puts(seq, ",flush_merge");
->  	if (test_opt(sbi, NOBARRIER))
-> -- 
-> 2.8.2.311.gee88674
+> Best Regards,
+> Huang, Ying
