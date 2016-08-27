@@ -1,31 +1,25 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: video archive on a microSD card
-Date: Fri, 26 Aug 2016 18:20:32 -0700
-Message-ID: <20160827012032.GG88444@jaegeuk>
-References: <eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
-	<7021471263772@web16m.yandex.ru> <158901471427237@web4g.yandex.ru>
-	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
-	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
-	<1258721471607772@web12h.yandex.ru>
-	<324581471899132@web4j.yandex.ru> <20160823211222.GD73835@jaegeuk>
-	<139021472156043@web27j.yandex.ru>
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: fix to set superblock dirty correctly
+Date: Sat, 27 Aug 2016 09:54:03 +0800
+Message-ID: <7b89baf3-f746-e256-6e84-a046f6960dc0@huawei.com>
+References: <1472221218-2205-1-git-send-email-chao@kernel.org>
+	<20160827010131.GE88444@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bdSIc-00046M-Af
+	(envelope-from <heyunlei@huawei.com>) id 1bdSpc-0004z5-Pz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 27 Aug 2016 01:20:42 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bdSIb-0000mw-4a
+	Sat, 27 Aug 2016 01:54:48 +0000
+Received: from [119.145.14.199] (helo=szxga05-in.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1bdSpW-0004F6-9i
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 27 Aug 2016 01:20:42 +0000
-Content-Disposition: inline
-In-Reply-To: <139021472156043@web27j.yandex.ru>
+	Sat, 27 Aug 2016 01:54:48 +0000
+In-Reply-To: <20160827010131.GE88444@jaegeuk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,246 +29,160 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Alexander Gordeev <alex@gordick.net>
-Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Aug 25, 2016 at 11:14:03PM +0300, Alexander Gordeev wrote:
-> Hi Jaegeuk,
-> =
+Hi all,
 
-> Thanks for all the help!
-> =
+On 2016/8/27 9:01, Jaegeuk Kim wrote:
+> On Fri, Aug 26, 2016 at 10:20:18PM +0800, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> tests/generic/251 of fstest suit complains us with below message:
+>>
+>> ------------[ cut here ]------------
+>> invalid opcode: 0000 [#1] PREEMPT SMP
+>> CPU: 2 PID: 7698 Comm: fstrim Tainted: G           O    4.7.0+ #21
+>> task: e9f4e000 task.stack: e7262000
+>> EIP: 0060:[<f89fcefe>] EFLAGS: 00010202 CPU: 2
+>> EIP is at write_checkpoint+0xfde/0x1020 [f2fs]
+>> EAX: f33eb300 EBX: eecac310 ECX: 00000001 EDX: ffff0001
+>> ESI: eecac000 EDI: eecac5f0 EBP: e7263dec ESP: e7263d18
+>>  DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
+>> CR0: 80050033 CR2: b76ab01c CR3: 2eb89de0 CR4: 000406f0
+>> Stack:
+>>  00000001 a220fb7b e9f4e000 00000002 419ff2d3 b3a05151 00000002 e9f4e5d8
+>>  e9f4e000 419ff2d3 b3a05151 eecac310 c10b8154 b3a05151 419ff2d3 c10b78bd
+>>  e9f4e000 e9f4e000 e9f4e5d8 00000001 e9f4e000 ec409000 eecac2cc eecac288
+>> Call Trace:
+>>  [<c10b8154>] ? __lock_acquire+0x3c4/0x760
+>>  [<c10b78bd>] ? mark_held_locks+0x5d/0x80
+>>  [<f8a10632>] f2fs_trim_fs+0x1c2/0x2e0 [f2fs]
+>>  [<f89e9f56>] f2fs_ioctl+0x6b6/0x10b0 [f2fs]
+>>  [<c13d51df>] ? __this_cpu_preempt_check+0xf/0x20
+>>  [<c10b4281>] ? trace_hardirqs_off_caller+0x91/0x120
+>>  [<f89e98a0>] ? __exchange_data_block+0xd30/0xd30 [f2fs]
+>>  [<c120b2e1>] do_vfs_ioctl+0x81/0x7f0
+>>  [<c11d57c5>] ? kmem_cache_free+0x245/0x2e0
+>>  [<c1217840>] ? get_unused_fd_flags+0x40/0x40
+>>  [<c1206eec>] ? putname+0x4c/0x50
+>>  [<c11f631e>] ? do_sys_open+0x16e/0x1d0
+>>  [<c1001990>] ? do_fast_syscall_32+0x30/0x1c0
+>>  [<c13d51df>] ? __this_cpu_preempt_check+0xf/0x20
+>>  [<c120baa8>] SyS_ioctl+0x58/0x80
+>>  [<c1001a01>] do_fast_syscall_32+0xa1/0x1c0
+>>  [<c178cc54>] sysenter_past_esp+0x45/0x74
+>> EIP: [<f89fcefe>] write_checkpoint+0xfde/0x1020 [f2fs] SS:ESP 0068:e7263d18
+>> ---[ end trace 4de95d7e6b3aa7c6 ]---
+>>
+>> The reason is: with below call stack, we will encounter BUG_ON during
+>> doing fstrim.
+>>
+>> Thread A				Thread B
+>> - write_checkpoint
+>>  - do_checkpoint
+>> 					- f2fs_write_inode
+>> 					 - update_inode_page
+>> 					  - update_inode
+>> 					   - set_page_dirty
+>> 					    - f2fs_set_node_page_dirty
+>> 					     - inc_page_count
+>> 					      - percpu_counter_inc
+>> 					      - set_sbi_flag(SBI_IS_DIRTY)
+>>   - clear_sbi_flag(SBI_IS_DIRTY)
+>>
+>> Thread C				Thread D
+>> - f2fs_write_node_page
+>>  - set_node_addr
+>>   - __set_nat_cache_dirty
+>>    - nm_i->dirty_nat_cnt++
+>> 					- do_vfs_ioctl
+>> 					 - f2fs_ioctl
+>> 					  - f2fs_trim_fs
+>> 					   - write_checkpoint
+>> 					    - f2fs_bug_on(nm_i->dirty_nat_cnt)
+>>
+>> Fix it by setting superblock dirty correctly in do_checkpoint and
+>> f2fs_write_node_page.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/checkpoint.c | 4 ++++
+>>  fs/f2fs/node.c       | 1 +
+>>  2 files changed, 5 insertions(+)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index cd0443d..68c723c 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -1153,6 +1153,10 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>  	clear_prefree_segments(sbi, cpc);
+>>  	clear_sbi_flag(sbi, SBI_IS_DIRTY);
+>>
+>> +	/* redirty superblock if node page is updated by ->write_inode */
+>> +	if (get_pages(sbi, F2FS_DIRTY_NODES))
+>
+> Need to check F2FS_DIRTY_IMETA and F2FS_DIRTY_DENTS as well?
+> And, if we have this, I don't think we need to worry about f2fs_lock_op() for
+> update_inode_page() as well.
+>
+> Thanks,
+Maybe we can add this:
 
-> 24.08.2016, 00:12, "Jaegeuk Kim" <jaegeuk@kernel.org>:
-> > On Mon, Aug 22, 2016 at 11:52:12PM +0300, Alexander Gordeev wrote:
-> >> =A0Hi,
-> >>
-> >> =A0I ran the test over weekend and I think I have some interesting res=
-ults.
-> >> =A0I used 1 new SD card in one device and two fully utilized SD cards,
-> >> =A0that have problems with write latency, on two oter devices.
-> >> =A0I mounted all the cards with mode=3Dlfs. The new SD card got utiliz=
-ed at 95% after some time.
-> >> =A0Here is the current status after the archive is rotated for some ti=
-me:
-> >>
-> >> =A0=3D=3D=3D=3D=3D[ partition info(sda1). #0, RW]=3D=3D=3D=3D=3D
-> >> =A0[SB: 1] [CP: 2] [SIT: 2] [NAT: 68] [SSA: 30] [MAIN: 15112(OverProv:=
-803 Resv:50)]
-> >>
-> >> =A0Utilization: 94% (6929763 valid blocks)
-> >> =A0=A0=A0- Node: 8113 (Inode: 1255, Other: 6858)
-> >> =A0=A0=A0- Data: 6921650
-> >> =A0=A0=A0- Inline_xattr Inode: 0
-> >> =A0=A0=A0- Inline_data Inode: 1
-> >> =A0=A0=A0- Inline_dentry Inode: 0
-> >> =A0=A0=A0- Orphan Inode: 0
-> >>
-> >> =A0Main area: 15112 segs, 7556 secs 7556 zones
-> >> =A0=A0=A0- COLD data: 5306, 2653, 2653
-> >> =A0=A0=A0- WARM data: 5233, 2616, 2616
-> >> =A0=A0=A0- HOT data: 15100, 7550, 7550
-> >> =A0=A0=A0- Dir dnode: 15097, 7548, 7548
-> >> =A0=A0=A0- File dnode: 4701, 2350, 2350
-> >> =A0=A0=A0- Indir nodes: 15105, 7552, 7552
-> >>
-> >> =A0=A0=A0- Valid: 97
-> >> =A0=A0=A0- Dirty: 13798
-> >> =A0=A0=A0- Prefree: 0
-> >> =A0=A0=A0- Free: 1217 (604)
-> >>
-> >> =A0CP calls: 282 (BG: 0)
-> >> =A0GC calls: 0 (BG: 0)
-> >> =A0=A0=A0- data segments : 0 (0)
-> >> =A0=A0=A0- node segments : 0 (0)
-> >> =A0Try to move 0 blocks (BG: 0)
-> >> =A0=A0=A0- data blocks : 0 (0)
-> >> =A0=A0=A0- node blocks : 0 (0)
-> >>
-> >> =A0Extent Cache:
-> >> =A0=A0=A0- Hit Count: L1-1:3084 L1-2:456 L2:0
-> >> =A0=A0=A0- Hit Ratio: 4% (3540 / 84026)
-> >> =A0=A0=A0- Inner Struct Count: tree: 1252(0), node: 0
-> >>
-> >> =A0Balancing F2FS Async:
-> >> =A0=A0=A0- inmem: 0, wb_bios: 0
-> >> =A0=A0=A0- nodes: 12 in 30
-> >> =A0=A0=A0- dents: 3 in dirs: 2 ( 2)
-> >> =A0=A0=A0- datas: 48 in files: 0
-> >> =A0=A0=A0- meta: 9 in 34
-> >> =A0=A0=A0- NATs: 10/ 249
-> >> =A0=A0=A0- SITs: 13/ 15112
-> >> =A0=A0=A0- free_nids: 1797
-> >>
-> >> =A0Distribution of User Blocks: [ valid | invalid | free ]
-> >> =A0=A0=A0[-----------------------------------------------|--|-]
-> >>
-> >> =A0IPU: 0 blocks
-> >> =A0SSR: 0 blocks in 0 segments
-> >> =A0LFS: 912188 blocks in 1781 segments
-> >>
-> >> =A0BDF: 94, avg. vblocks: 996
-> >>
-> >> =A0Memory: 3604 KB
-> >> =A0=A0=A0- static: 3270 KB
-> >> =A0=A0=A0- cached: 78 KB
-> >> =A0=A0=A0- paged : 256 KB
-> >>
-> >> =A0The interesting thing here is the very small number of valid and
-> >> =A0a huge number of dirty sections. I don't understand this at all.
-> >
-> > This is the number of dirty segments, so it needs to consider section a=
-nd
-> > segment at the same time; a dirty section can consist of valid and free
-> > segments.
-> > How abouting testing 2MB-sized section which is the default option?
-> =
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 7c8e219..d32539a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -267,6 +267,9 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
 
-> I tried what you said. Still the majority of segments are dirty for some =
-reason:
-> =
+         down_write(&io->io_rwsem);
 
-> =3D=3D=3D=3D=3D[ partition info(sda). #0, RW]=3D=3D=3D=3D=3D
-> [SB: 1] [CP: 2] [SIT: 6] [NAT: 114] [SSA: 116] [MAIN: 59149(OverProv:3003=
- Resv:48)]
-> =
++       if (!is_read)
++               set_sbi_flag(sbi, SBI_IS_DIRTY);
++
+         if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+             (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags)))
+                 __submit_merged_bio(io);
 
-> Utilization: 10% (3013093 valid blocks)
->   - Node: 3528 (Inode: 548, Other: 2980)
->   - Data: 3009565
->   - Inline_xattr Inode: 0
->   - Inline_data Inode: 0
->   - Inline_dentry Inode: 0
->   - Orphan Inode: 0
-> =
+This is deleted by this patch:
 
-> Main area: 59149 segs, 59149 secs 59149 zones
->   - COLD  data: 7183, 7183, 7183
->   - WARM  data: 6654, 6654, 6654
->   - HOT   data: 59134, 59134, 59134
->   - Dir   dnode: 59127, 59127, 59127
->   - File   dnode: 59125, 59125, 59125
->   - Indir nodes: 59129, 59129, 59129
-> =
+f2fs: use bio count instead of F2FS_WRITEBACK page count
 
->   - Valid: 300
->   - Dirty: 6438
->   - Prefree: 0
->   - Free: 52411 (52411)
-> =
+which one is better?
 
-> CP calls: 1023 (BG: 473)
-> GC calls: 470 (BG: 470)
->   - data segments : 466 (466)
->   - node segments : 4 (4)
-> Try to move 152221 blocks (BG: 152221)
->   - data blocks : 151417 (151417)
->   - node blocks : 804 (804)
-> =
+Thanks.
 
-> Extent Cache:
->   - Hit Count: L1-1:6262 L1-2:0 L2:0
->   - Hit Ratio: 2% (6262 / 273606)
->   - Inner Struct Count: tree: 292(0), node: 8
-> =
 
-> Balancing F2FS Async:
->   - inmem:    0, wb_bios:    0
->   - nodes:    0 in    0
->   - dents:    0 in dirs:   0 (   0)
->   - datas:    0 in files:   0
->   - meta:    0 in    0
->   - NATs:         0/       43
->   - SITs:         0/    59149
->   - free_nids:      3414
-> =
 
-> Distribution of User Blocks: [ valid | invalid | free ]
->   [-----|--|-------------------------------------------]
-> =
-
-> IPU: 0 blocks
-> SSR: 0 blocks in 0 segments
-> LFS: 3691542 blocks in 7208 segments
-> =
-
-> BDF: 95, avg. vblocks: 444
-> =
-
-> Memory: 12662 KB
->   - static: 12597 KB
->   - cached: 64 KB
->   - paged : 0 KB
-> =
-
-> =
-
-> But the archive is working perfectly as before.
-
-Okay, so we need to gather more information about IO traces. :)
-
-Could you get them by:
-
-echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_submit_write_bio/enable
-echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_submit_page_mbio/enable
-echo 1 > /sys/kernel/debug/tracing/tracing_on
-cat /sys/kernel/debug/tracing/trace_pipe
-
-You can get a script in f2fs-tools.git/scripts/tracepoint.sh
-
-Thanks,
-
-> =
-
-> >> =A0Still the archive is working perfectly. Also I see, that there GC i=
-s never
-> >> =A0called, which is probably an indication of FS working exactly as
-> >> =A0we expected.
-> >> =A0Also the small number of cold sections does not make problems.
-> >> =A0So, well, it works perfect so fat. But I don't understand everythin=
-g here.
-> >> =A0Is this expected?
-> >
-> > So, I'm in doubt that dirty sections consist of entirely valid or free =
-segments.
-> >
-> >> =A0The other two SD cards were tested differently. On one of them I ca=
-lled
-> >> =A0ioctl(F2FS_IOC_GARBAGE_COLLECT) for several hours. And indeed the n=
-umber
-> >> =A0of dirty sectoins dropped considerably. It works fine so far.
-> >
-> > It makes sense that valid segments in dirty sections would be migrated =
-to
-> > different free sections.
-> >
-> >> =A0On the other SD card I called ioctl(F2FS_IOC_DEFRAGMENT) for every
-> >> =A0file in the archive. It works fine as well now. But the number of d=
-irty sections
-> >> =A0was still very high at the end of defragmentation. I don't understa=
-nd this
-> >> =A0as well.
-> >
-> > This is for defragementation to the given file, which would not move bl=
-ocks in
-> > order to decrease the number of dirty sections.
-> > I think it's not necessary for this workload.
-> =
-
-> Yes, I'd prefer to not run manual GC or defragmentation. This was just a =
-test.
-> =
-
-> --=A0
->  Alexander
-> =
-
-> -------------------------------------------------------------------------=
------
+>
+>> +		set_sbi_flag(sbi, SBI_IS_DIRTY);
+>> +
+>>  	return 0;
+>>  }
+>>
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index 8a28800..365c6ff 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -1597,6 +1597,7 @@ static int f2fs_write_node_page(struct page *page,
+>>  	fio.old_blkaddr = ni.blk_addr;
+>>  	write_node_page(nid, &fio);
+>>  	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
+>> +	set_sbi_flag(sbi, SBI_IS_DIRTY);
+>>  	dec_page_count(sbi, F2FS_DIRTY_NODES);
+>>  	up_read(&sbi->node_write);
+>>
+>> --
+>> 2.7.2
+>
+> ------------------------------------------------------------------------------
 > _______________________________________________
 > Linux-f2fs-devel mailing list
 > Linux-f2fs-devel@lists.sourceforge.net
 > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>
+> .
+>
 
----------------------------------------------------------------------------=
----
+
+------------------------------------------------------------------------------
