@@ -1,18 +1,11 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Subject: Re: [LKP] [lkp] [f2fs] ec795418c4: fsmark.files_per_sec
- -36.3% regression
-Date: Sat, 27 Aug 2016 10:13:34 +0800
-Message-ID: <20160827021334.eb3xpz57xvo37g5l@wfg-t540p.sh.intel.com>
-References: <87twfmsndf.fsf@yhuang-mobile.sh.intel.com>
-	<87bn18cvuu.fsf_-_@yhuang-mobile.sh.intel.com>
-	<20160804172452.GA12093@jaegeuk>
-	<874m70ctu3.fsf@yhuang-mobile.sh.intel.com>
-	<20160804185251.GA13813@jaegeuk>
-	<87r3a4b7b6.fsf@yhuang-mobile.sh.intel.com>
-	<87vaz6yl8a.fsf@yhuang-mobile.sh.intel.com>
-	<20160812012238.GA47037@jaegeuk>
-	<CAC=cRTNtND+5f83p_yBecnx0iB5_6Q6xzbHdeY0tgrVaMRLSRQ@mail.gmail.com>
-	<20160827005257.GD88444@jaegeuk>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 2/2] f2fs: fix to update node page under
+	cp_rwsem
+Date: Sat, 27 Aug 2016 16:30:30 +0800
+Message-ID: <4a9f9515-c1e2-aab0-d573-c3a4eda6aed7@huawei.com>
+References: <1472228072-4555-1-git-send-email-chao@kernel.org>
+	<1472228072-4555-2-git-send-email-chao@kernel.org>
+	<20160826170455.GB88444@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -20,16 +13,15 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fengguang.wu@intel.com>) id 1bdT8D-0001VR-Au
+	(envelope-from <yuchao0@huawei.com>) id 1bdZ2C-0000Zn-8t
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 27 Aug 2016 02:14:01 +0000
-Received: from mga04.intel.com ([192.55.52.120])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bdT8C-0007bE-A3
+	Sat, 27 Aug 2016 08:32:12 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1bdZ28-0003Kp-HL
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 27 Aug 2016 02:14:01 +0000
-Content-Disposition: inline
-In-Reply-To: <20160827005257.GD88444@jaegeuk>
+	Sat, 27 Aug 2016 08:32:12 +0000
+In-Reply-To: <20160826170455.GB88444@jaegeuk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,48 +31,63 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: LKP ML <lkp@01.org>, huang ying <huang.ying.caritas@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
-
->> >> > - [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
->> >> >
->> >> > The disk is 4 12G ram disk, and setup RAID0 on them via mdadm.  The
->> >> > steps for aim7 is,
->> >> >
->> >> > cat > workfile <<EOF
->> >> > FILESIZE: 1M
->> >> > POOLSIZE: 10M
->> >> > 10 sync_disk_rw
->> >> > EOF
->> >> >
->> >> > (
->> >> >     echo $HOSTNAME
->> >> >     echo sync_disk_rw
->> >> >
->> >> >     echo 1
->> >> >     echo 600
->> >> >     echo 2
->> >> >     echo 600
->> >> >     echo 1
->> >> > ) | ./multitask -t &
->> >>
->> >> Any update on these 2 regressions?  Is the information is enough for you
->> >> to reproduce?
->> >
->> > Sorry, I've had no time to dig this due to business travel now.
->> > I'll check that when back to US.
+On 2016/8/27 1:04, Jaegeuk Kim wrote:
+> On Sat, Aug 27, 2016 at 12:14:32AM +0800, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
 >>
->> Any update?
->
->Sorry, how can I get multitask binary?
+>> Update node page under cp_rwsem in order to keep data consistency
+>> during writting checkpoint.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/inode.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>> index 9ac5efc..1057c73 100644
+>> --- a/fs/f2fs/inode.c
+>> +++ b/fs/f2fs/inode.c
+>> @@ -377,8 +377,11 @@ retry:
+>>  		goto retry;
+>>  	}
+>>  
+>> -	if (err)
+>> +	if (err) {
+>> +		f2fs_lock_op(sbi);
+>>  		update_inode_page(inode);
+>> +		f2fs_unlock_op(sbi);
+>> +	}
+> 
+> Any corner case?
 
-It's part of aim7, which can be downloaded here:
+No, just follow the old rule.
 
-http://nchc.dl.sourceforge.net/project/aimbench/aim-suite7/Initial%20release/s7110.tar.Z
+> Now, it allows updating node page when checkpoint is doing.
+
+Oh, so for current rule, during checkpoint it:
+1. allows updating meta info of inode which is not related to metadata of
+filesystem (e.g. i_size, i_block, i_nlink..)
+2. does not allow updating meta info of inode which is related to metadata of
+filesystem (i_addr, i_nid..)
+
+Is my understanding right?
 
 Thanks,
-Fengguang
+
+> 
+> Thanks,
+> 
+>>  	sb_end_intwrite(inode->i_sb);
+>>  no_delete:
+>>  	stat_dec_inline_xattr(inode);
+>> -- 
+>> 2.7.2
+> 
+> .
+> 
+
 
 ------------------------------------------------------------------------------
