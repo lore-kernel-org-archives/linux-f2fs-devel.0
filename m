@@ -1,75 +1,84 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [LKP] [lkp] [f2fs] ec795418c4: fsmark.files_per_sec -36.3%
- regression
-Date: Mon, 29 Aug 2016 19:30:48 -0700
-Message-ID: <20160830023048.GA2088@jaegeuk>
-References: <87bn18cvuu.fsf_-_@yhuang-mobile.sh.intel.com>
- <20160804172452.GA12093@jaegeuk>
- <874m70ctu3.fsf@yhuang-mobile.sh.intel.com>
- <20160804185251.GA13813@jaegeuk>
- <87r3a4b7b6.fsf@yhuang-mobile.sh.intel.com>
- <87vaz6yl8a.fsf@yhuang-mobile.sh.intel.com>
- <20160812012238.GA47037@jaegeuk>
- <CAC=cRTNtND+5f83p_yBecnx0iB5_6Q6xzbHdeY0tgrVaMRLSRQ@mail.gmail.com>
- <20160827005257.GD88444@jaegeuk>
- <20160827021334.eb3xpz57xvo37g5l@wfg-t540p.sh.intel.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH] fscrypto: fix to null-terminate encrypted
+ filename in fname_encrypt
+Date: Wed, 31 Aug 2016 00:10:32 +0800
+Message-ID: <5b07433c-02f1-8bbb-b7cd-94b0b6bc3b7e@huawei.com>
+References: <1472346808-3213-1-git-send-email-chao@kernel.org>
+ <20160828051330.7kyhhvvxitghshi7@thunk.org>
+ <4a1a7233-a8f5-873a-2895-a259dc0cf717@kernel.org>
+ <81758b43-a82c-0526-8921-cb34d6da1c50@kernel.org>
+ <20160829190803.clqnlfl7qpi7tgsi@thunk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160827021334.eb3xpz57xvo37g5l@wfg-t540p.sh.intel.com>
+In-Reply-To: <20160829190803.clqnlfl7qpi7tgsi@thunk.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: huang ying <huang.ying.caritas@gmail.com>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, LKP ML <lkp@01.org>
+To: Theodore Ts'o <tytso@mit.edu>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello,
+Hi Ted,
 
-On Sat, Aug 27, 2016 at 10:13:34AM +0800, Fengguang Wu wrote:
-> Hi Jaegeuk,
+On 2016/8/30 3:08, Theodore Ts'o wrote:
+> On Mon, Aug 29, 2016 at 10:55:47PM +0800, Chao Yu wrote:
+>> Hi Ted, Jaegeuk,
+>>
+>> Since encryption functionality in ext4/f2fs was exported to vfs as fscrypot
+>> module, more filesystems can use it, I'm not sure, maybe other fs will traverse
+>> encrypted filename directly.
+>>
+>> So, could we set this null character in fname_encrypt in advance in order to
+>> avoid hitting random characters behind target filename when traversing it?
 > 
-> > > >> > - [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
-> > > >> >
-> > > >> > The disk is 4 12G ram disk, and setup RAID0 on them via mdadm.  The
-> > > >> > steps for aim7 is,
-> > > >> >
-> > > >> > cat > workfile <<EOF
-> > > >> > FILESIZE: 1M
-> > > >> > POOLSIZE: 10M
-> > > >> > 10 sync_disk_rw
-> > > >> > EOF
-> > > >> >
-> > > >> > (
-> > > >> >     echo $HOSTNAME
-> > > >> >     echo sync_disk_rw
-> > > >> >
-> > > >> >     echo 1
-> > > >> >     echo 600
-> > > >> >     echo 2
-> > > >> >     echo 600
-> > > >> >     echo 1
-> > > >> > ) | ./multitask -t &
-> > > >>
-> > > >> Any update on these 2 regressions?  Is the information is enough for you
-> > > >> to reproduce?
-> > > >
-> > > > Sorry, I've had no time to dig this due to business travel now.
-> > > > I'll check that when back to US.
-> > > 
-> > > Any update?
-> > 
-> > Sorry, how can I get multitask binary?
+> The encrypted filename is only used by the file system; it's not
+> anything which is visible outside of the file system --- if it does,
+> such as passing it to the security subsystem, it's a bug.
 > 
-> It's part of aim7, which can be downloaded here:
+> Secondly, remember that the encrypted filename is a binary blob, and
+> may contain hex 00 as part of the encrypted filename.  So ***any***
+> code that tries to use NULL termination for the encrypted filename by
+> definition is a bug.  In other words, you must use memcpy, and not
+> strcpy.  If you use strcpy, even if you did add a NUL character to the
+> end of the encrypted filename (which is a bit of a misnomer because it
+> is a binary blob, not an ASCII string, so NUL is really not
+> technically correct), there will be encrypted filenames where strcpy
+> will stop early, because there is a 0x00 byte in the encrypted
+> filename.
 > 
-> http://nchc.dl.sourceforge.net/project/aimbench/aim-suite7/Initial%20release/s7110.tar.Z
+> Hence, other file systems MUST NOT traverse the encrypted filename
+> directly, because treating it as a NUL-terminated string when it is
+> really a binary blob of bits that can include a 0x00 byte is by
+> definition a BUG.
 
-Thank you for the codes.
+Thanks for your detailed explain. :)
 
-I've run this workload on the latest f2fs and compared performance having
-without the reported patch. (1TB nvme SSD, 16 cores, 16GB DRAM)
-Interestingly, I could find slight performance improvement rather than
-regression. :(
-Not sure how to reproduce this.
+I just be misguided by comments of following code:
+
+int fscrypt_fname_alloc_buffer(struct inode *inode,
+				u32 ilen, struct fscrypt_str *crypto_str)
+{
+	unsigned int olen = fscrypt_fname_encrypted_size(inode, ilen);
+
+	crypto_str->len = olen;
+	if (olen < FS_FNAME_CRYPTO_DIGEST_SIZE * 2)
+		olen = FS_FNAME_CRYPTO_DIGEST_SIZE * 2;
+	/*
+	 * Allocated buffer can hold one more character to null-terminate the
+	 * string
+	 */
+	crypto_str->name = kmalloc(olen + 1, GFP_NOFS);
+	if (!(crypto_str->name))
+		return -ENOMEM;
+	return 0;
+}
+EXPORT_SYMBOL(fscrypt_fname_alloc_buffer);
 
 Thanks,
+
+> 
+> Cheers,
+> 
+> 						- Ted
+> 
+> .
+> 
