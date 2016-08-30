@@ -1,84 +1,149 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] fscrypto: fix to null-terminate encrypted
- filename in fname_encrypt
-Date: Wed, 31 Aug 2016 00:10:32 +0800
-Message-ID: <5b07433c-02f1-8bbb-b7cd-94b0b6bc3b7e@huawei.com>
-References: <1472346808-3213-1-git-send-email-chao@kernel.org>
- <20160828051330.7kyhhvvxitghshi7@thunk.org>
- <4a1a7233-a8f5-873a-2895-a259dc0cf717@kernel.org>
- <81758b43-a82c-0526-8921-cb34d6da1c50@kernel.org>
- <20160829190803.clqnlfl7qpi7tgsi@thunk.org>
+Subject: Re: [PATCH v2] f2fs: fix to set superblock dirty correctly
+Date: Wed, 31 Aug 2016 00:13:59 +0800
+Message-ID: <9550925e-de1c-69cd-0762-dca2319da4a9@huawei.com>
+References: <1472390446-2425-1-git-send-email-chao@kernel.org>
+ <20160829164545.GB94184@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160829190803.clqnlfl7qpi7tgsi@thunk.org>
+In-Reply-To: <20160829164545.GB94184@jaegeuk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Ted,
+Hi Jaegeuk,
 
-On 2016/8/30 3:08, Theodore Ts'o wrote:
-> On Mon, Aug 29, 2016 at 10:55:47PM +0800, Chao Yu wrote:
->> Hi Ted, Jaegeuk,
+On 2016/8/30 0:45, Jaegeuk Kim wrote:
+> Hi Chao,
+> 
+> On Sun, Aug 28, 2016 at 09:20:46PM +0800, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
 >>
->> Since encryption functionality in ext4/f2fs was exported to vfs as fscrypot
->> module, more filesystems can use it, I'm not sure, maybe other fs will traverse
->> encrypted filename directly.
+>> tests/generic/251 of fstest suit complains us with below message:
 >>
->> So, could we set this null character in fname_encrypt in advance in order to
->> avoid hitting random characters behind target filename when traversing it?
+>> ------------[ cut here ]------------
+>> invalid opcode: 0000 [#1] PREEMPT SMP
+>> CPU: 2 PID: 7698 Comm: fstrim Tainted: G           O    4.7.0+ #21
+>> task: e9f4e000 task.stack: e7262000
+>> EIP: 0060:[<f89fcefe>] EFLAGS: 00010202 CPU: 2
+>> EIP is at write_checkpoint+0xfde/0x1020 [f2fs]
+>> EAX: f33eb300 EBX: eecac310 ECX: 00000001 EDX: ffff0001
+>> ESI: eecac000 EDI: eecac5f0 EBP: e7263dec ESP: e7263d18
+>>  DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
+>> CR0: 80050033 CR2: b76ab01c CR3: 2eb89de0 CR4: 000406f0
+>> Stack:
+>>  00000001 a220fb7b e9f4e000 00000002 419ff2d3 b3a05151 00000002 e9f4e5d8
+>>  e9f4e000 419ff2d3 b3a05151 eecac310 c10b8154 b3a05151 419ff2d3 c10b78bd
+>>  e9f4e000 e9f4e000 e9f4e5d8 00000001 e9f4e000 ec409000 eecac2cc eecac288
+>> Call Trace:
+>>  [<c10b8154>] ? __lock_acquire+0x3c4/0x760
+>>  [<c10b78bd>] ? mark_held_locks+0x5d/0x80
+>>  [<f8a10632>] f2fs_trim_fs+0x1c2/0x2e0 [f2fs]
+>>  [<f89e9f56>] f2fs_ioctl+0x6b6/0x10b0 [f2fs]
+>>  [<c13d51df>] ? __this_cpu_preempt_check+0xf/0x20
+>>  [<c10b4281>] ? trace_hardirqs_off_caller+0x91/0x120
+>>  [<f89e98a0>] ? __exchange_data_block+0xd30/0xd30 [f2fs]
+>>  [<c120b2e1>] do_vfs_ioctl+0x81/0x7f0
+>>  [<c11d57c5>] ? kmem_cache_free+0x245/0x2e0
+>>  [<c1217840>] ? get_unused_fd_flags+0x40/0x40
+>>  [<c1206eec>] ? putname+0x4c/0x50
+>>  [<c11f631e>] ? do_sys_open+0x16e/0x1d0
+>>  [<c1001990>] ? do_fast_syscall_32+0x30/0x1c0
+>>  [<c13d51df>] ? __this_cpu_preempt_check+0xf/0x20
+>>  [<c120baa8>] SyS_ioctl+0x58/0x80
+>>  [<c1001a01>] do_fast_syscall_32+0xa1/0x1c0
+>>  [<c178cc54>] sysenter_past_esp+0x45/0x74
+>> EIP: [<f89fcefe>] write_checkpoint+0xfde/0x1020 [f2fs] SS:ESP 0068:e7263d18
+>> ---[ end trace 4de95d7e6b3aa7c6 ]---
+>>
+>> The reason is: with below call stack, we will encounter BUG_ON during
+>> doing fstrim.
+>>
+>> Thread A				Thread B
+>> - write_checkpoint
+>>  - do_checkpoint
+>> 					- f2fs_write_inode
+>> 					 - update_inode_page
+>> 					  - update_inode
+>> 					   - set_page_dirty
+>> 					    - f2fs_set_node_page_dirty
+>> 					     - inc_page_count
+>> 					      - percpu_counter_inc
+>> 					      - set_sbi_flag(SBI_IS_DIRTY)
+>>   - clear_sbi_flag(SBI_IS_DIRTY)
+>>
+>> Thread C				Thread D
+>> - f2fs_write_node_page
+>>  - set_node_addr
+>>   - __set_nat_cache_dirty
+>>    - nm_i->dirty_nat_cnt++
+>> 					- do_vfs_ioctl
+>> 					 - f2fs_ioctl
+>> 					  - f2fs_trim_fs
+>> 					   - write_checkpoint
+>> 					    - f2fs_bug_on(nm_i->dirty_nat_cnt)
+>>
+>> Fix it by setting superblock dirty correctly in do_checkpoint and
+>> f2fs_write_node_page.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/checkpoint.c | 8 ++++++++
+>>  fs/f2fs/node.c       | 1 +
+>>  2 files changed, 9 insertions(+)
+>>
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index cd0443d..1864078 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -1153,6 +1153,14 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>  	clear_prefree_segments(sbi, cpc);
+>>  	clear_sbi_flag(sbi, SBI_IS_DIRTY);
+>>  
+>> +	/*
+>> +	 * redirty superblock if metadata like node page or inode cache is
+>> +	 * updated during writting checkpoint.
+>> +	 */
+>> +	if (get_pages(sbi, F2FS_DIRTY_NODES) ||
+>> +			get_pages(sbi, F2FS_DIRTY_IMETA))
+>> +		set_sbi_flag(sbi, SBI_IS_DIRTY);
 > 
-> The encrypted filename is only used by the file system; it's not
-> anything which is visible outside of the file system --- if it does,
-> such as passing it to the security subsystem, it's a bug.
+> How about adding f2fs_bug_on(get_pages(sb, F2FS_DIRTY_DENTS)); ?
+
+That's right, I will add it.
+
 > 
-> Secondly, remember that the encrypted filename is a binary blob, and
-> may contain hex 00 as part of the encrypted filename.  So ***any***
-> code that tries to use NULL termination for the encrypted filename by
-> definition is a bug.  In other words, you must use memcpy, and not
-> strcpy.  If you use strcpy, even if you did add a NUL character to the
-> end of the encrypted filename (which is a bit of a misnomer because it
-> is a binary blob, not an ASCII string, so NUL is really not
-> technically correct), there will be encrypted filenames where strcpy
-> will stop early, because there is a 0x00 byte in the encrypted
-> filename.
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index 8a28800..365c6ff 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -1597,6 +1597,7 @@ static int f2fs_write_node_page(struct page *page,
+>>  	fio.old_blkaddr = ni.blk_addr;
+>>  	write_node_page(nid, &fio);
+>>  	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
+>> +	set_sbi_flag(sbi, SBI_IS_DIRTY);
 > 
-> Hence, other file systems MUST NOT traverse the encrypted filename
-> directly, because treating it as a NUL-terminated string when it is
-> really a binary blob of bits that can include a 0x00 byte is by
-> definition a BUG.
+> It doesn't need to set this, right?
 
-Thanks for your detailed explain. :)
-
-I just be misguided by comments of following code:
-
-int fscrypt_fname_alloc_buffer(struct inode *inode,
-				u32 ilen, struct fscrypt_str *crypto_str)
-{
-	unsigned int olen = fscrypt_fname_encrypted_size(inode, ilen);
-
-	crypto_str->len = olen;
-	if (olen < FS_FNAME_CRYPTO_DIGEST_SIZE * 2)
-		olen = FS_FNAME_CRYPTO_DIGEST_SIZE * 2;
-	/*
-	 * Allocated buffer can hold one more character to null-terminate the
-	 * string
-	 */
-	crypto_str->name = kmalloc(olen + 1, GFP_NOFS);
-	if (!(crypto_str->name))
-		return -ENOMEM;
-	return 0;
-}
-EXPORT_SYMBOL(fscrypt_fname_alloc_buffer);
+Agree, let me resend the patch. :)
 
 Thanks,
 
 > 
-> Cheers,
+> Thanks,
 > 
-> 						- Ted
+>>  	dec_page_count(sbi, F2FS_DIRTY_NODES);
+>>  	up_read(&sbi->node_write);
+>>  
+>> -- 
+>> 2.7.2
 > 
 > .
 > 
