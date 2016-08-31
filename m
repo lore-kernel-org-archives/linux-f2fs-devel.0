@@ -1,107 +1,81 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v3] f2fs: fix to set superblock dirty correctly
-Date: Wed, 31 Aug 2016 10:43:19 +0800
-Message-ID: <20160831024319.19795-1-yuchao0@huawei.com>
+From: Alexander Gordeev <alex@gordick.net>
+Subject: Re: video archive on a microSD card
+Date: Wed, 31 Aug 2016 11:52:00 +0300
+Message-ID: <592891472633520@web8m.yandex.ru>
+References: <146631471002747@web20h.yandex.ru>
+	<281281471258049@web6h.yandex.ru>
+	<eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
+	<7021471263772@web16m.yandex.ru> <158901471427237@web4g.yandex.ru>
+	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
+	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
+	<39941471627359@web1m.yandex.ru>
+	<35301472489424@web15m.yandex.ru> <20160829180020.GF94184@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <alex@gordick.net>) id 1bf1Fi-0004kh-KQ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 31 Aug 2016 08:52:10 +0000
+Received: from forward2p.cmail.yandex.net ([77.88.31.17])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bf1Fg-0003ZL-KJ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 31 Aug 2016 08:52:10 +0000
+In-Reply-To: <20160829180020.GF94184@jaegeuk>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-tests/generic/251 of fstest suit complains us with below message:
-
-------------[ cut here ]------------
-invalid opcode: 0000 [#1] PREEMPT SMP
-CPU: 2 PID: 7698 Comm: fstrim Tainted: G           O    4.7.0+ #21
-task: e9f4e000 task.stack: e7262000
-EIP: 0060:[<f89fcefe>] EFLAGS: 00010202 CPU: 2
-EIP is at write_checkpoint+0xfde/0x1020 [f2fs]
-EAX: f33eb300 EBX: eecac310 ECX: 00000001 EDX: ffff0001
-ESI: eecac000 EDI: eecac5f0 EBP: e7263dec ESP: e7263d18
- DS: 007b ES: 007b FS: 00d8 GS: 0033 SS: 0068
-CR0: 80050033 CR2: b76ab01c CR3: 2eb89de0 CR4: 000406f0
-Stack:
- 00000001 a220fb7b e9f4e000 00000002 419ff2d3 b3a05151 00000002 e9f4e5d8
- e9f4e000 419ff2d3 b3a05151 eecac310 c10b8154 b3a05151 419ff2d3 c10b78bd
- e9f4e000 e9f4e000 e9f4e5d8 00000001 e9f4e000 ec409000 eecac2cc eecac288
-Call Trace:
- [<c10b8154>] ? __lock_acquire+0x3c4/0x760
- [<c10b78bd>] ? mark_held_locks+0x5d/0x80
- [<f8a10632>] f2fs_trim_fs+0x1c2/0x2e0 [f2fs]
- [<f89e9f56>] f2fs_ioctl+0x6b6/0x10b0 [f2fs]
- [<c13d51df>] ? __this_cpu_preempt_check+0xf/0x20
- [<c10b4281>] ? trace_hardirqs_off_caller+0x91/0x120
- [<f89e98a0>] ? __exchange_data_block+0xd30/0xd30 [f2fs]
- [<c120b2e1>] do_vfs_ioctl+0x81/0x7f0
- [<c11d57c5>] ? kmem_cache_free+0x245/0x2e0
- [<c1217840>] ? get_unused_fd_flags+0x40/0x40
- [<c1206eec>] ? putname+0x4c/0x50
- [<c11f631e>] ? do_sys_open+0x16e/0x1d0
- [<c1001990>] ? do_fast_syscall_32+0x30/0x1c0
- [<c13d51df>] ? __this_cpu_preempt_check+0xf/0x20
- [<c120baa8>] SyS_ioctl+0x58/0x80
- [<c1001a01>] do_fast_syscall_32+0xa1/0x1c0
- [<c178cc54>] sysenter_past_esp+0x45/0x74
-EIP: [<f89fcefe>] write_checkpoint+0xfde/0x1020 [f2fs] SS:ESP 0068:e7263d18
----[ end trace 4de95d7e6b3aa7c6 ]---
-
-The reason is: with below call stack, we will encounter BUG_ON during
-doing fstrim.
-
-Thread A				Thread B
-- write_checkpoint
- - do_checkpoint
-					- f2fs_write_inode
-					 - update_inode_page
-					  - update_inode
-					   - set_page_dirty
-					    - f2fs_set_node_page_dirty
-					     - inc_page_count
-					      - percpu_counter_inc
-					      - set_sbi_flag(SBI_IS_DIRTY)
-  - clear_sbi_flag(SBI_IS_DIRTY)
-
-Thread C				Thread D
-- f2fs_write_node_page
- - set_node_addr
-  - __set_nat_cache_dirty
-   - nm_i->dirty_nat_cnt++
-					- do_vfs_ioctl
-					 - f2fs_ioctl
-					  - f2fs_trim_fs
-					   - write_checkpoint
-					    - f2fs_bug_on(nm_i->dirty_nat_cnt)
-
-Fix it by setting superblock dirty correctly in do_checkpoint and
-f2fs_write_node_page.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/checkpoint.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 727e97e..b80dd37 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1154,6 +1154,16 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	clear_sbi_flag(sbi, SBI_IS_DIRTY);
- 	clear_sbi_flag(sbi, SBI_NEED_CP);
- 
-+	/*
-+	 * redirty superblock if metadata like node page or inode cache is
-+	 * updated during writing checkpoint.
-+	 */
-+	if (get_pages(sbi, F2FS_DIRTY_NODES) ||
-+			get_pages(sbi, F2FS_DIRTY_IMETA))
-+		set_sbi_flag(sbi, SBI_IS_DIRTY);
-+
-+	f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_DENTS));
-+
- 	return 0;
- }
- 
--- 
-2.8.2.311.gee88674
+SGkgSmFlZ2V1aywKCjI5LjA4LjIwMTYsIDIxOjAwLCAiSmFlZ2V1ayBLaW0iIDxqYWVnZXVrQGtl
+cm5lbC5vcmc+Ogo+IE9uIE1vbiwgQXVnIDI5LCAyMDE2IGF0IDA3OjUwOjI0UE0gKzAzMDAsIEFs
+ZXhhbmRlciBHb3JkZWV2IHdyb3RlOgo+PiDCoEhpLAo+Pgo+PiDCoEkgaGF2ZSBhbiB1cGRhdGUg
+YWJvdXQgdGhlIGZpcnN0IG9mIHRoZSBidWdzLCB0aGF0IEkgcmVwb3J0ZWQuCj4+Cj4+IMKgMTku
+MDguMjAxNiwgMjA6MjMsICJBbGV4YW5kZXIgR29yZGVldiIgPGFsZXhAZ29yZGljay5uZXQ+Ogo+
+PiDCoD4gSGksCj4+IMKgPgo+PiDCoD4gSSdkIGFsc28gbGlrZSB0byByZXBvcnQgdHdvIGJ1Z3Mu
+IEkgdXNlZCBmMmZzLXN0YWJsZSBicmFuY2ggbGludXgtMy4xMC55Lgo+PiDCoD4gSSdtIHVzaW5n
+IHNvbWUgcHJvcHJpZXRhcnkgbW9kdWxlcyBhbHNvLCBidXQgaW4gbXkgdW5kZXJzdGFuZGluZyB0
+aGV5IHNob3VsZG4ndCBhZmZlY3QgdGhlIGZzLgo+PiDCoD4KPj4gwqA+IDEuIEkgaGF2ZSBhIFNh
+bmRpc2sgMTZHQiBtaWNyb1NESEMgY2FyZCwgdGhhdCBpcyBxdWl0ZSBvbGQgYW5kIG1heSBiZSBh
+dCBpdHMgZW5kIG9mIGxpZmUuCj4+IMKgPiBUaGUgYnVnIGlzIHByb2R1Y2VkIGV2ZXJ5IHRpbWUg
+SSB0cnkgdG8gZGVsZXRlIGFueSBmaWxlIG9uIGl0Lgo+PiDCoD4KPgo+IC4uLgo+Cj4+IMKgQXMg
+eW91IGNhbiBzZWUsIGFmdGVyIHRvIHdhcm5pbmdzIGdvZXMgYW4gb29wcy4gSSB0aGluayBpdCB3
+YXMgb3Zlcmxvb2tlZC4KPj4gwqBCdXQgaXQgbWFrZXMgdGhlIG1vc3QgdHJvdWJsZSB0byBtZS4K
+Pj4KPj4gwqBJIHRyaWVkIHRvIHVuZGVyc3RhbmQgd2hhdCdzIGdvaW5nIG9uLgo+PiDCoEl0IHR1
+cm5zIG91dCB0aGF0IHNlLT5jdXJfdmFsaWRfbWFwIGlzIE5VTEwgaW4gdXBkYXRlX3NpdF9lbnRy
+eSgpLgo+PiDCoFByb2JhYmx5LCB0aGlzIGlzIG5vdCBleHBlY3RlZC4KPgo+IFRoYW5rIHlvdSBm
+b3IgdGhlIGFuYWx5c2lzLiA6KQo+IEl0IHNlZW1zIHRoZSBibGthZGRyIGlzIG91dC1vZi1yYW5n
+ZS4KPiBDYW4geW91IHByaW50IG91dCBpdHMgYmxrYWRkcj8KPgo+IElmIHBvc3NpYmxlLCBjb3Vs
+ZCB5b3UgcHJpbnQgb3V0Ogo+IMKgwqBjdXJzZWctPnNlZ25vLCBjdXJzZWctPm5leHRfYmxrb2Zm
+LGEgY3Vyc2VnLT5uZXh0X3NlZ25vCj4gwqDCoGF0IHRoZSBlbmQgb2YgYWxsb2NhdGVfc2VnbWVu
+dF9ieV9kZWZhdWx0KCk/CgpUaGFuayB5b3UgZm9yIHRoZSBoZWxwIQpIZXJlIGFyZSB0aGUgbmV3
+IHRyYWNlczoKClsgICA0OS4yNzQ2NzhdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0t
+LS0tLQpbICAgNDkuMjgwMjE2XSBXQVJOSU5HOiBhdCAvaG9tZS9hbGV4L3dvcmsvczJsL2FtYl9T
+MmxfU0RLXzIuNS9TREsyLjUvczJsX2xpbnV4X3Nkay9hbWJhcmVsbGEva2VybmVsL2xpbnV4LTMu
+MTAvZnMvZjJmcy9zZWdtZW50LmM6MTEwNSBuZXdfY3Vyc2VnKzB4MjY4LzB4Mzk0IFtmMmZzXSgp
+Ci4uLgpbICAgNDkuNTE4MDU0XSAtLS1bIGVuZCB0cmFjZSA0OWRjYTQ2MmI0Zjk4OGZmIF0tLS0K
+WyAgIDQ5LjUyMjY4OV0gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tClsgICA0
+OS41MjczNzVdIFdBUk5JTkc6IGF0IC9ob21lL2FsZXgvd29yay9zMmwvYW1iX1MybF9TREtfMi41
+L1NESzIuNS9zMmxfbGludXhfc2RrL2FtYmFyZWxsYS9rZXJuZWwvbGludXgtMy4xMC9mcy9mMmZz
+L3NlZ21lbnQuYzoxMTQ0IG5ld19jdXJzZWcrMHgyZjAvMHgzOTQgW2YyZnNdKCkKLi4uClsgICA0
+OS43NjQ4NTNdIC0tLVsgZW5kIHRyYWNlIDQ5ZGNhNDYyYjRmOTg5MDAgXS0tLQpbICAgNDkuODU3
+MzQ0XSAtLS0tLS0gc2Vnbm8gPSA3NTQwLCBuZXh0X2Jsa29mZiA9IDAsIG5leHRfc2Vnbm8gPSA0
+Mjk0OTY3Mjk1IC0tLS0tLS0tClsgICA0OS45MTM2NjRdIC0tLS0tLSBibGthZGRyID0gMzg4OTE1
+MiAtLS0tLS0tLQpbICAgNDkuOTE4MTczXSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBv
+aW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVhbCBhZGRyZXNzIDAwMDAwMDAwCi4uLgoKLS3CoAog
+QWxleGFuZGVyCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
+dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
+b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
