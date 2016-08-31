@@ -1,31 +1,30 @@
-From: Alexander Gordeev <alex@gordick.net>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: video archive on a microSD card
-Date: Wed, 31 Aug 2016 11:52:00 +0300
-Message-ID: <592891472633520@web8m.yandex.ru>
-References: <146631471002747@web20h.yandex.ru>
-	<281281471258049@web6h.yandex.ru>
-	<eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
+Date: Wed, 31 Aug 2016 16:46:33 -0700
+Message-ID: <20160831234633.GA17031@jaegeuk>
+References: <eac97eb4-6b4a-a987-48e9-72680238e50a@huawei.com>
 	<7021471263772@web16m.yandex.ru> <158901471427237@web4g.yandex.ru>
 	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
 	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
-	<39941471627359@web1m.yandex.ru>
-	<35301472489424@web15m.yandex.ru> <20160829180020.GF94184@jaegeuk>
+	<39941471627359@web1m.yandex.ru> <35301472489424@web15m.yandex.ru>
+	<20160829180020.GF94184@jaegeuk> <592891472633520@web8m.yandex.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <alex@gordick.net>) id 1bf1Fi-0004kh-KQ
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bfFDP-0001xB-1Q
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 31 Aug 2016 08:52:10 +0000
-Received: from forward2p.cmail.yandex.net ([77.88.31.17])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bf1Fg-0003ZL-KJ
+	Wed, 31 Aug 2016 23:46:43 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bfFDN-0001Ai-SF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 31 Aug 2016 08:52:10 +0000
-In-Reply-To: <20160829180020.GF94184@jaegeuk>
+	Wed, 31 Aug 2016 23:46:43 +0000
+Content-Disposition: inline
+In-Reply-To: <592891472633520@web8m.yandex.ru>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,47 +34,98 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Alexander Gordeev <alex@gordick.net>
 Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-SGkgSmFlZ2V1aywKCjI5LjA4LjIwMTYsIDIxOjAwLCAiSmFlZ2V1ayBLaW0iIDxqYWVnZXVrQGtl
-cm5lbC5vcmc+Ogo+IE9uIE1vbiwgQXVnIDI5LCAyMDE2IGF0IDA3OjUwOjI0UE0gKzAzMDAsIEFs
-ZXhhbmRlciBHb3JkZWV2IHdyb3RlOgo+PiDCoEhpLAo+Pgo+PiDCoEkgaGF2ZSBhbiB1cGRhdGUg
-YWJvdXQgdGhlIGZpcnN0IG9mIHRoZSBidWdzLCB0aGF0IEkgcmVwb3J0ZWQuCj4+Cj4+IMKgMTku
-MDguMjAxNiwgMjA6MjMsICJBbGV4YW5kZXIgR29yZGVldiIgPGFsZXhAZ29yZGljay5uZXQ+Ogo+
-PiDCoD4gSGksCj4+IMKgPgo+PiDCoD4gSSdkIGFsc28gbGlrZSB0byByZXBvcnQgdHdvIGJ1Z3Mu
-IEkgdXNlZCBmMmZzLXN0YWJsZSBicmFuY2ggbGludXgtMy4xMC55Lgo+PiDCoD4gSSdtIHVzaW5n
-IHNvbWUgcHJvcHJpZXRhcnkgbW9kdWxlcyBhbHNvLCBidXQgaW4gbXkgdW5kZXJzdGFuZGluZyB0
-aGV5IHNob3VsZG4ndCBhZmZlY3QgdGhlIGZzLgo+PiDCoD4KPj4gwqA+IDEuIEkgaGF2ZSBhIFNh
-bmRpc2sgMTZHQiBtaWNyb1NESEMgY2FyZCwgdGhhdCBpcyBxdWl0ZSBvbGQgYW5kIG1heSBiZSBh
-dCBpdHMgZW5kIG9mIGxpZmUuCj4+IMKgPiBUaGUgYnVnIGlzIHByb2R1Y2VkIGV2ZXJ5IHRpbWUg
-SSB0cnkgdG8gZGVsZXRlIGFueSBmaWxlIG9uIGl0Lgo+PiDCoD4KPgo+IC4uLgo+Cj4+IMKgQXMg
-eW91IGNhbiBzZWUsIGFmdGVyIHRvIHdhcm5pbmdzIGdvZXMgYW4gb29wcy4gSSB0aGluayBpdCB3
-YXMgb3Zlcmxvb2tlZC4KPj4gwqBCdXQgaXQgbWFrZXMgdGhlIG1vc3QgdHJvdWJsZSB0byBtZS4K
-Pj4KPj4gwqBJIHRyaWVkIHRvIHVuZGVyc3RhbmQgd2hhdCdzIGdvaW5nIG9uLgo+PiDCoEl0IHR1
-cm5zIG91dCB0aGF0IHNlLT5jdXJfdmFsaWRfbWFwIGlzIE5VTEwgaW4gdXBkYXRlX3NpdF9lbnRy
-eSgpLgo+PiDCoFByb2JhYmx5LCB0aGlzIGlzIG5vdCBleHBlY3RlZC4KPgo+IFRoYW5rIHlvdSBm
-b3IgdGhlIGFuYWx5c2lzLiA6KQo+IEl0IHNlZW1zIHRoZSBibGthZGRyIGlzIG91dC1vZi1yYW5n
-ZS4KPiBDYW4geW91IHByaW50IG91dCBpdHMgYmxrYWRkcj8KPgo+IElmIHBvc3NpYmxlLCBjb3Vs
-ZCB5b3UgcHJpbnQgb3V0Ogo+IMKgwqBjdXJzZWctPnNlZ25vLCBjdXJzZWctPm5leHRfYmxrb2Zm
-LGEgY3Vyc2VnLT5uZXh0X3NlZ25vCj4gwqDCoGF0IHRoZSBlbmQgb2YgYWxsb2NhdGVfc2VnbWVu
-dF9ieV9kZWZhdWx0KCk/CgpUaGFuayB5b3UgZm9yIHRoZSBoZWxwIQpIZXJlIGFyZSB0aGUgbmV3
-IHRyYWNlczoKClsgICA0OS4yNzQ2NzhdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0t
-LS0tLQpbICAgNDkuMjgwMjE2XSBXQVJOSU5HOiBhdCAvaG9tZS9hbGV4L3dvcmsvczJsL2FtYl9T
-MmxfU0RLXzIuNS9TREsyLjUvczJsX2xpbnV4X3Nkay9hbWJhcmVsbGEva2VybmVsL2xpbnV4LTMu
-MTAvZnMvZjJmcy9zZWdtZW50LmM6MTEwNSBuZXdfY3Vyc2VnKzB4MjY4LzB4Mzk0IFtmMmZzXSgp
-Ci4uLgpbICAgNDkuNTE4MDU0XSAtLS1bIGVuZCB0cmFjZSA0OWRjYTQ2MmI0Zjk4OGZmIF0tLS0K
-WyAgIDQ5LjUyMjY4OV0gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tClsgICA0
-OS41MjczNzVdIFdBUk5JTkc6IGF0IC9ob21lL2FsZXgvd29yay9zMmwvYW1iX1MybF9TREtfMi41
-L1NESzIuNS9zMmxfbGludXhfc2RrL2FtYmFyZWxsYS9rZXJuZWwvbGludXgtMy4xMC9mcy9mMmZz
-L3NlZ21lbnQuYzoxMTQ0IG5ld19jdXJzZWcrMHgyZjAvMHgzOTQgW2YyZnNdKCkKLi4uClsgICA0
-OS43NjQ4NTNdIC0tLVsgZW5kIHRyYWNlIDQ5ZGNhNDYyYjRmOTg5MDAgXS0tLQpbICAgNDkuODU3
-MzQ0XSAtLS0tLS0gc2Vnbm8gPSA3NTQwLCBuZXh0X2Jsa29mZiA9IDAsIG5leHRfc2Vnbm8gPSA0
-Mjk0OTY3Mjk1IC0tLS0tLS0tClsgICA0OS45MTM2NjRdIC0tLS0tLSBibGthZGRyID0gMzg4OTE1
-MiAtLS0tLS0tLQpbICAgNDkuOTE4MTczXSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBv
-aW50ZXIgZGVyZWZlcmVuY2UgYXQgdmlydHVhbCBhZGRyZXNzIDAwMDAwMDAwCi4uLgoKLS3CoAog
-QWxleGFuZGVyCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGlu
-dXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vm
-b3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On Wed, Aug 31, 2016 at 11:52:00AM +0300, Alexander Gordeev wrote:
+> Hi Jaegeuk,
+> =
+
+> 29.08.2016, 21:00, "Jaegeuk Kim" <jaegeuk@kernel.org>:
+> > On Mon, Aug 29, 2016 at 07:50:24PM +0300, Alexander Gordeev wrote:
+> >> =A0Hi,
+> >>
+> >> =A0I have an update about the first of the bugs, that I reported.
+> >>
+> >> =A019.08.2016, 20:23, "Alexander Gordeev" <alex@gordick.net>:
+> >> =A0> Hi,
+> >> =A0>
+> >> =A0> I'd also like to report two bugs. I used f2fs-stable branch linux=
+-3.10.y.
+> >> =A0> I'm using some proprietary modules also, but in my understanding =
+they shouldn't affect the fs.
+> >> =A0>
+> >> =A0> 1. I have a Sandisk 16GB microSDHC card, that is quite old and ma=
+y be at its end of life.
+> >> =A0> The bug is produced every time I try to delete any file on it.
+> >> =A0>
+> >
+> > ...
+> >
+> >> =A0As you can see, after to warnings goes an oops. I think it was over=
+looked.
+> >> =A0But it makes the most trouble to me.
+> >>
+> >> =A0I tried to understand what's going on.
+> >> =A0It turns out that se->cur_valid_map is NULL in update_sit_entry().
+> >> =A0Probably, this is not expected.
+> >
+> > Thank you for the analysis. :)
+> > It seems the blkaddr is out-of-range.
+> > Can you print out its blkaddr?
+> >
+> > If possible, could you print out:
+> > =A0=A0curseg->segno, curseg->next_blkoff,a curseg->next_segno
+> > =A0=A0at the end of allocate_segment_by_default()?
+> =
+
+> Thank you for the help!
+> Here are the new traces:
+
+Thank you.
+
+> =
+
+> [   49.274678] ------------[ cut here ]------------
+> [   49.280216] WARNING: at /home/alex/work/s2l/amb_S2l_SDK_2.5/SDK2.5/s2l=
+_linux_sdk/ambarella/kernel/linux-3.10/fs/f2fs/segment.c:1105 new_curseg+0x=
+268/0x394 [f2fs]()
+
+This means there is no free segment.
+Could you print out the below information before this f2fs_bug_on?
+- prefree_segments(sbi)
+- free_segments(sbi)
+
+> ...
+> [   49.518054] ---[ end trace 49dca462b4f988ff ]---
+> [   49.522689] ------------[ cut here ]------------
+> [   49.527375] WARNING: at /home/alex/work/s2l/amb_S2l_SDK_2.5/SDK2.5/s2l=
+_linux_sdk/ambarella/kernel/linux-3.10/fs/f2fs/segment.c:1144 new_curseg+0x=
+2f0/0x394 [f2fs]()
+
+This is caused by the above segno which was -1.
+
+> ...
+> [   49.764853] ---[ end trace 49dca462b4f98900 ]---
+> [   49.857344] ------ segno =3D 7540, next_blkoff =3D 0, next_segno =3D 4=
+294967295 --------
+> [   49.913664] ------ blkaddr =3D 3889152 --------
+> [   49.918173] Unable to handle kernel NULL pointer dereference at virtua=
+l address 00000000
+
+Also, we can see next_segno was -1, which incur no se entry for this segmen=
+t.
+At this moment, I'd really like to see its /sys/kernel/debug/f2fs/status wh=
+ether
+there is really not enough free segments.
+
+Thanks,
+
+> ...
+> =
+
+> --=A0
+>  Alexander
+
+---------------------------------------------------------------------------=
+---
