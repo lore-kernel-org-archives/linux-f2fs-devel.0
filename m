@@ -1,30 +1,30 @@
-From: Alexander Gordeev <alex@gordick.net>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: video archive on a microSD card
-Date: Thu, 01 Sep 2016 22:37:36 +0300
-Message-ID: <116081472758656@web21j.yandex.ru>
-References: <158901471427237@web4g.yandex.ru>
-	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
-	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
-	<39941471627359@web1m.yandex.ru> <35301472489424@web15m.yandex.ru>
-	<20160829180020.GF94184@jaegeuk> <592891472633520@web8m.yandex.ru>
-	<20160831234633.GA17031@jaegeuk>
-	<118511472751607@web30h.yandex.ru> <20160901182509.GA20281@jaegeuk>
+Date: Thu, 1 Sep 2016 13:07:18 -0700
+Message-ID: <20160901200718.GB20281@jaegeuk>
+References: <1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
+	<1258721471607772@web12h.yandex.ru>
+	<324581471899132@web4j.yandex.ru> <20160823211222.GD73835@jaegeuk>
+	<139021472156043@web27j.yandex.ru> <20160827012032.GG88444@jaegeuk>
+	<549571472473386@web20g.yandex.ru> <20160829182359.GG94184@jaegeuk>
+	<9581472749471@web24h.yandex.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <alex@gordick.net>) id 1bfXo2-0004sd-AV
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bfYGm-0002Gw-Tb
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 01 Sep 2016 19:37:46 +0000
-Received: from forward1o.cmail.yandex.net ([37.9.109.84])
+	Thu, 01 Sep 2016 20:07:28 +0000
+Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bfXo0-0007p2-Ho
+	(Exim 4.76) id 1bfYGl-0002rD-HY
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 01 Sep 2016 19:37:46 +0000
-In-Reply-To: <20160901182509.GA20281@jaegeuk>
+	Thu, 01 Sep 2016 20:07:28 +0000
+Content-Disposition: inline
+In-Reply-To: <9581472749471@web24h.yandex.ru>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,119 +34,229 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Alexander Gordeev <alex@gordick.net>
 Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-SGkgLAoKMDEuMDkuMjAxNiwgMjE6MjUsICJKYWVnZXVrIEtpbSIgPGphZWdldWtAa2VybmVsLm9y
-Zz46Cj4gSGVsbG8sCj4KPiBPbiBUaHUsIFNlcCAwMSwgMjAxNiBhdCAwODo0MDowN1BNICswMzAw
-LCBBbGV4YW5kZXIgR29yZGVldiB3cm90ZToKPiAuLi4KPj4gwqA+PiDCoFsgNDkuMjc0Njc4XSAt
-LS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KPj4gwqA+PiDCoFsgNDkuMjgwMjE2
-XSBXQVJOSU5HOiBhdCAvaG9tZS9hbGV4L3dvcmsvczJsL2FtYl9TMmxfU0RLXzIuNS9TREsyLjUv
-czJsX2xpbnV4X3Nkay9hbWJhcmVsbGEva2VybmVsL2xpbnV4LTMuMTAvZnMvZjJmcy9zZWdtZW50
-LmM6MTEwNSBuZXdfY3Vyc2VnKzB4MjY4LzB4Mzk0IFtmMmZzXSgpCj4+IMKgPgo+PiDCoD4gVGhp
-cyBtZWFucyB0aGVyZSBpcyBubyBmcmVlIHNlZ21lbnQuCj4+IMKgPiBDb3VsZCB5b3UgcHJpbnQg
-b3V0IHRoZSBiZWxvdyBpbmZvcm1hdGlvbiBiZWZvcmUgdGhpcyBmMmZzX2J1Z19vbj8KPj4gwqA+
-IC0gcHJlZnJlZV9zZWdtZW50cyhzYmkpCj4+IMKgPiAtIGZyZWVfc2VnbWVudHMoc2JpKQo+PiDC
-oD4KPj4gwqA+PiDCoC4uLgo+PiDCoD4+IMKgWyA0OS41MTgwNTRdIC0tLVsgZW5kIHRyYWNlIDQ5
-ZGNhNDYyYjRmOTg4ZmYgXS0tLQo+PiDCoD4+IMKgWyA0OS41MjI2ODldIC0tLS0tLS0tLS0tLVsg
-Y3V0IGhlcmUgXS0tLS0tLS0tLS0tLQo+PiDCoD4+IMKgWyA0OS41MjczNzVdIFdBUk5JTkc6IGF0
-IC9ob21lL2FsZXgvd29yay9zMmwvYW1iX1MybF9TREtfMi41L1NESzIuNS9zMmxfbGludXhfc2Rr
-L2FtYmFyZWxsYS9rZXJuZWwvbGludXgtMy4xMC9mcy9mMmZzL3NlZ21lbnQuYzoxMTQ0IG5ld19j
-dXJzZWcrMHgyZjAvMHgzOTQgW2YyZnNdKCkKPj4gwqA+Cj4+IMKgPiBUaGlzIGlzIGNhdXNlZCBi
-eSB0aGUgYWJvdmUgc2Vnbm8gd2hpY2ggd2FzIC0xLgo+PiDCoD4KPj4gwqA+PiDCoC4uLgo+PiDC
-oD4+IMKgWyA0OS43NjQ4NTNdIC0tLVsgZW5kIHRyYWNlIDQ5ZGNhNDYyYjRmOTg5MDAgXS0tLQo+
-PiDCoD4+IMKgWyA0OS44NTczNDRdIC0tLS0tLSBzZWdubyA9IDc1NDAsIG5leHRfYmxrb2ZmID0g
-MCwgbmV4dF9zZWdubyA9IDQyOTQ5NjcyOTUgLS0tLS0tLS0KPj4gwqA+PiDCoFsgNDkuOTEzNjY0
-XSAtLS0tLS0gYmxrYWRkciA9IDM4ODkxNTIgLS0tLS0tLS0KPj4gwqA+PiDCoFsgNDkuOTE4MTcz
-XSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmly
-dHVhbCBhZGRyZXNzIDAwMDAwMDAwCj4+IMKgPgo+PiDCoD4gQWxzbywgd2UgY2FuIHNlZSBuZXh0
-X3NlZ25vIHdhcyAtMSwgd2hpY2ggaW5jdXIgbm8gc2UgZW50cnkgZm9yIHRoaXMgc2VnbWVudC4K
-Pj4gwqA+IEF0IHRoaXMgbW9tZW50LCBJJ2QgcmVhbGx5IGxpa2UgdG8gc2VlIGl0cyAvc3lzL2tl
-cm5lbC9kZWJ1Zy9mMmZzL3N0YXR1cyB3aGV0aGVyCj4+IMKgPiB0aGVyZSBpcyByZWFsbHkgbm90
-IGVub3VnaCBmcmVlIHNlZ21lbnRzLgo+Pgo+PiDCoEkgY29sbGVjdGVkIGJvdGggL3N5cy9rZXJu
-ZWwvZGVidWcvZjJmcy9zdGF0dXMgYW5kIG51bWJlcnMgb2YgYmxvY2tzLgo+PiDCoFRoZSBvb3Bz
-IGhhcHBlbnMgb25seSB3aGVuIEkgdHJ5IHRvIGRlbGV0ZSBhbnl0aGluZy4gQWxzbyBpdCBjYW4g
-YmUgY2F1c2VkCj4+IMKgYnkgR0MsIGJ1dCBJIHR1cm5lZCBiYWNrZ3JvdW5kIEdDIG9mZi4gU28g
-SSBtb3VudGVkIHRoZSBmcywgZHVtcGVkIHRoZSBzdGF0dXMKPj4gwqBhbmQgdGhlbiB0cmllZCB0
-byByZW1vdmUgYSBmaWxlLiBIZXJlIGlzIHdoYXQgSSBnb3Q6Cj4+Cj4+IMKgPT09PT1bIHBhcnRp
-dGlvbiBpbmZvKHNkYSkuICMwLCBSV109PT09PQo+PiDCoFtTQjogMV0gW0NQOiAyXSBbU0lUOiAy
-XSBbTkFUOiAzNF0gW1NTQTogMTZdIFtNQUlOOiA3NTQwKE92ZXJQcm92OjQyNCBSZXN2OjUwKV0K
-Pgo+IENvdWxkIHlvdSBjaGVjayB5b3VyIG1rZnMuZjJmcyB2ZXJzaW9uPwo+IEkgd2FudCB0byBj
-aGVjayBvdnAgYW5kIHJlc3YgbnVtYmVycy4KCkkgY3VycmVudGx5IHVzZWQgbWtmcy5mMmZzIGZy
-b20gbXkgYm9hcmQncyBTREsuIEl0IHByaW50cyB0aGlzOgpGMkZTLXRvb2xzOiBta2ZzLmYyZnMg
-VmVyOiAxLjQuMSAoMjAxNS0wMy0wNCkKClNob3VsZCBJIHVwZ3JhZGUgaXQ/CkkgdGhpbmsgdGhl
-IHByb2JsZW0gd2lsbCBnbyBhd2F5IGlmIEkgcmVjcmVhdGUgdGhlIEZTLiBBdCB0aGUgbW9tZW50
-Cml0IHJlcHJvZHVjZXMgZXZlcnkgdGltZS4gSSB3b25kZXIgaWYgd2UgbmVlZCBpdCBhZ2Fpbi4K
-Cj4gWW91IGNhbiBnZXQgdGhlIGxhdGVzdCBvbmUgZnJvbToKPiBodHRwOi8vZ2l0Lmtlcm5lbC5v
-cmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2phZWdldWsvZjJmcy10b29scy5naXQKPgo+PiDCoFV0
-aWxpemF0aW9uOiA5NCUgKDM0NDM3MzkgdmFsaWQgYmxvY2tzKQo+PiDCoMKgwqAtIE5vZGU6IDQ0
-NTggKElub2RlOiAxMTE1LCBPdGhlcjogMzM0MykKPj4gwqDCoMKgLSBEYXRhOiAzNDM5MjgxCj4+
-IMKgwqDCoC0gSW5saW5lX3hhdHRyIElub2RlOiAwCj4+IMKgwqDCoC0gSW5saW5lX2RhdGEgSW5v
-ZGU6IDAKPj4gwqDCoMKgLSBJbmxpbmVfZGVudHJ5IElub2RlOiAwCj4+IMKgwqDCoC0gT3JwaGFu
-IElub2RlOiAwCj4+Cj4+IMKgTWFpbiBhcmVhOiA3NTQwIHNlZ3MsIDM3NzAgc2VjcyAzNzcwIHpv
-bmVzCj4+IMKgwqDCoC0gQ09MRCBkYXRhOiA2MTkyLCAzMDk2LCAzMDk2Cj4+IMKgwqDCoC0gV0FS
-TSBkYXRhOiA2MTg2LCAzMDkzLCAzMDkzCj4+IMKgwqDCoC0gSE9UIGRhdGE6IDYxOTgsIDMwOTks
-IDMwOTkKPj4gwqDCoMKgLSBEaXIgZG5vZGU6IDQ4MzYsIDI0MTgsIDI0MTgKPj4gwqDCoMKgLSBG
-aWxlIGRub2RlOiA1MDAzLCAyNTAxLCAyNTAxCj4+IMKgwqDCoC0gSW5kaXIgbm9kZXM6IDc1MzMs
-IDM3NjYsIDM3NjYKPj4KPj4gwqDCoMKgLSBWYWxpZDogNjcyOAo+PiDCoMKgwqAtIERpcnR5OiA1
-Cj4+IMKgwqDCoC0gUHJlZnJlZTogMAo+PiDCoMKgwqAtIEZyZWU6IDgwNyAoMCkKPgo+IEhlcmUs
-IHdlIGhhdmUgODA3IGZyZWUgc2VnbWVudHMsIGJ1dCBubyBzZWN0aW9uIHRoYXQgd2UgY2FuIHVz
-ZSByaWdodCBub3cuCgpBaCwgSSBzZWUgbm93LgoKPj4gwqBDUCBjYWxsczogMCAoQkc6IDApCj4+
-IMKgR0MgY2FsbHM6IDAgKEJHOiAwKQo+PiDCoMKgwqAtIGRhdGEgc2VnbWVudHMgOiAwICgwKQo+
-PiDCoMKgwqAtIG5vZGUgc2VnbWVudHMgOiAwICgwKQo+PiDCoFRyeSB0byBtb3ZlIDAgYmxvY2tz
-IChCRzogMCkKPj4gwqDCoMKgLSBkYXRhIGJsb2NrcyA6IDAgKDApCj4+IMKgwqDCoC0gbm9kZSBi
-bG9ja3MgOiAwICgwKQo+Pgo+PiDCoEV4dGVudCBDYWNoZToKPj4gwqDCoMKgLSBIaXQgQ291bnQ6
-IEwxLTE6MCBMMS0yOjAgTDI6MAo+PiDCoMKgwqAtIEhpdCBSYXRpbzogMCUgKDAgLyAwKQo+PiDC
-oMKgwqAtIElubmVyIFN0cnVjdCBDb3VudDogdHJlZTogMCgwKSwgbm9kZTogMAo+Pgo+PiDCoEJh
-bGFuY2luZyBGMkZTIEFzeW5jOgo+PiDCoMKgwqAtIGlubWVtOiAwLCB3Yl9iaW9zOiAwCj4+IMKg
-wqDCoC0gbm9kZXM6IDAgaW4gMQo+PiDCoMKgwqAtIGRlbnRzOiAwIGluIGRpcnM6IDAgKCAwKQo+
-PiDCoMKgwqAtIGRhdGFzOiAwIGluIGZpbGVzOiAwCj4+IMKgwqDCoC0gbWV0YTogMCBpbiAxNTUK
-Pj4gwqDCoMKgLSBOQVRzOiAwLyAxCj4+IMKgwqDCoC0gU0lUczogMC8gNzU0MAo+PiDCoMKgwqAt
-IGZyZWVfbmlkczogMzQ5Ngo+Pgo+PiDCoERpc3RyaWJ1dGlvbiBvZiBVc2VyIEJsb2NrczogWyB2
-YWxpZCB8IGludmFsaWQgfCBmcmVlIF0KPj4gwqDCoMKgWy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tfC18LS1dCj4+Cj4+IMKgSVBVOiAwIGJsb2Nrcwo+PiDC
-oFNTUjogMCBibG9ja3MgaW4gMCBzZWdtZW50cwo+PiDCoExGUzogMCBibG9ja3MgaW4gMCBzZWdt
-ZW50cwo+Pgo+PiDCoEJERjogNzgsIGF2Zy4gdmJsb2NrczogNTEwCj4+Cj4+IMKgTWVtb3J5OiAy
-MzI1IEtCCj4+IMKgwqDCoC0gc3RhdGljOiAxNjQ3IEtCCj4+IMKgwqDCoC0gY2FjaGVkOiA1NCBL
-Qgo+PiDCoMKgwqAtIHBhZ2VkIDogNjI0IEtCCj4+Cj4+IMKgWyAxMDcuNTYyMDcwXSAtLS0tLS0g
-YmxrYWRkciA9IDI1OTA2MDYsIHNlLT5jdXJfdmFsaWRfbWFwID0gODQ3N2YwNDAgLS0tLS0tLS0K
-Pj4gwqBbIDEwNy41NzA0MTVdIC0tLS0tLSBibGthZGRyID0gMjU5MDYwNywgc2UtPmN1cl92YWxp
-ZF9tYXAgPSA4NDc3ZjA0MCAtLS0tLS0tLQo+Cj4gLi4uCj4+IMKgWyAxMDguMzM0ODgzXSAtLS0t
-LS0gYmxrYWRkciA9IDI1OTA3MTMsIHNlLT5jdXJfdmFsaWRfbWFwID0gODQ3N2YwNDAgLS0tLS0t
-LS0KPj4gwqBbIDEwOC4zNDE5NjZdIC0tLS0tLSBibGthZGRyID0gMjU5MDcxNCwgc2UtPmN1cl92
-YWxpZF9tYXAgPSA4NDc3ZjA0MCAtLS0tLS0tLQo+PiDCoFsgMTA4LjM0OTA0N10gLS0tLS0tIGJs
-a2FkZHIgPSAyNTkwNzE1LCBzZS0+Y3VyX3ZhbGlkX21hcCA9IDg0NzdmMDQwIC0tLS0tLS0tCj4+
-IMKgWyAxMDguMzU2MDA0XSAtLS0tLS0gYmxrYWRkciA9IDI1OTA3MTYsIHNlLT5jdXJfdmFsaWRf
-bWFwID0gODQ3N2YwNDAgLS0tLS0tLS0KPj4gwqBbIDEwOC4zNjMxMzBdIC0tLS0tLSBibGthZGRy
-ID0gMjU5MDcxNywgc2UtPmN1cl92YWxpZF9tYXAgPSA4NDc3ZjA0MCAtLS0tLS0tLQo+PiDCoFsg
-MTA4LjM3MDIxMF0gLS0tLS0tIGJsa2FkZHIgPSAyNTkwNzE4LCBzZS0+Y3VyX3ZhbGlkX21hcCA9
-IDg0NzdmMDQwIC0tLS0tLS0tCj4+IMKgWyAxMDguMzc3MjQ0XSAtLS0tLS0gcHJlZnJlZV9zZWdt
-ZW50cyA9IDAsIGZyZWVfc2VnbWVudHMgPSA4MDcgLS0tLS0tCj4+IMKgWyAxMDguMzgzNTI2XSAt
-LS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KPj4gwqBbIDEwOC4zODgyMzFdIFdB
-Uk5JTkc6IGF0IC9ob21lL2FsZXgvd29yay9zMmwvczJsX2xpbnV4X3Nkay9hbWJhcmVsbGEva2Vy
-bmVsL2xpbnV4LTMuMTAvZnMvZjJmcy9zZWdtZW50LmM6MTEwNSBuZXdfY3Vyc2VnKzB4MjgwLzB4
-M2I4IFtmMmZzXSgpCj4+IMKgLi4uCj4+IMKgWyAxMDguNjI4OTY1XSAtLS1bIGVuZCB0cmFjZSBj
-NTljZTU5MDZiYjZkOTVlIF0tLS0KPj4gwqBbIDEwOC42MzM1NjNdIC0tLS0tLS0tLS0tLVsgY3V0
-IGhlcmUgXS0tLS0tLS0tLS0tLQo+PiDCoFsgMTA4LjYzODI0MF0gV0FSTklORzogYXQgL2hvbWUv
-YWxleC93b3JrL3MybC9zMmxfbGludXhfc2RrL2FtYmFyZWxsYS9rZXJuZWwvbGludXgtMy4xMC9m
-cy9mMmZzL3NlZ21lbnQuYzoxMTQ0IG5ld19jdXJzZWcrMHgzMDgvMHgzYjggW2YyZnNdKCkKPj4g
-wqAuLi4KPj4gwqBbIDEwOC44Nzg3ODhdIC0tLVsgZW5kIHRyYWNlIGM1OWNlNTkwNmJiNmQ5NWYg
-XS0tLQo+PiDCoFsgMTA4Ljg4NTIwMV0gLS0tLS0tIHNlZ25vID0gNzU0MCwgbmV4dF9ibGtvZmYg
-PSAwLCBuZXh0X3NlZ25vID0gNDI5NDk2NzI5NSAtLS0tLS0tLQo+Cj4gU28sIG5ld19jdXJzZWcg
-ZmFpbGVkIHRvIGZpbmQgYSBmcmVlIHNlY3Rpb24sIGFuZCBnYXZlIDc1NDAgd2hpY2ggaXMgdGhl
-IGVuZAo+IG9mIG1haW4gYXJlYS4gQW5kIHRoZW4sIGl0IHRyaWVkIHRvIGFsbG9jYXRlIHRoYXQg
-TEJBIGFuZCBnb3QgcGFuaWMgZHVlIHRvIHdyb25nCj4gYml0bWFwIHBvc2l0aW9uIHdoZW4gc2V0
-dGluZyBpdHMgU0lUIGJpdG1hcC4KPgo+IEZvciBub3csIHRoZSByb290IGNhdXNlIGlzIGR1ZSB0
-byB6ZXJvIGZyZWUgc2VjdGlvbiwgYW5kIEknZCBsaWtlIHRvIGNoZWNrCj4gd2hldGhlciBvdnAg
-YW5kIHJlc2VydmVkIHNwYWNlIHdlcmUgY29ycmVjdGx5IGFzc2lnbmVkIG9yIG5vdC4KPiBPciwg
-dGhlcmUgd2FzIGEgbWlzc2luZyBmbG93IHdoaWNoIGNvbnN1bWVkIHJlc2VydmVkIHNwYWNlIGVu
-dGlyZWx5IHdpdGhvdXQKPiBhbnkgY2xlYW5pbmcuCgpJIHRoaW5rLCB0aGlzIGlzIHRoZSBTRCBj
-YXJkLCBJIHRyaWVkIHRvIGRlZnJhZ21lbnQgc29tZSB0aW1lIGFnby4KUHJvYmFibHkgSSBzaG91
-bGRuJ3QgZXZlciBkbyBpdC4KU3RpbGwgSU1ITyB0aGUgY29kZSBzaG91bGQgaGFuZGxlIGV2ZW4g
-c3VjaCBjYXNlcy4gRm9yIGV4YW1wbGUsIHNvbWVvbmUKY2FuIGNyYWZ0IGEgRlMsIGFuZCBpdCBt
-aWdodCBtYWtlIGJhZCB0aGluZ3MuLi4KCi0twqAKIEFsZXhhbmRlcgoKLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxp
-bnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNl
-Zm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xp
-bnV4LWYyZnMtZGV2ZWwK
+On Thu, Sep 01, 2016 at 08:04:31PM +0300, Alexander Gordeev wrote:
+> Hi Jaegeuk,
+> =
+
+> 29.08.2016, 21:24, "Jaegeuk Kim" <jaegeuk@kernel.org>:
+> > On Mon, Aug 29, 2016 at 03:23:06PM +0300, Alexander Gordeev wrote:
+> >> =A0Hi Jaegeuk,
+> >>
+> >> =A027.08.2016, 04:20, "Jaegeuk Kim" <jaegeuk@kernel.org>:
+> >> =A0> On Thu, Aug 25, 2016 at 11:14:03PM +0300, Alexander Gordeev wrote:
+> >> =A0>> =A0Hi Jaegeuk,
+> >> =A0>>
+> >> =A0>> =A0Thanks for all the help!
+> >> =A0>>...
+> >> =A0>> =A0> This is the number of dirty segments, so it needs to consid=
+er section and
+> >> =A0>> =A0> segment at the same time; a dirty section can consist of va=
+lid and free
+> >> =A0>> =A0> segments.
+> >> =A0>> =A0> How abouting testing 2MB-sized section which is the default=
+ option?
+> >> =A0>>
+> >> =A0>> =A0I tried what you said. Still the majority of segments are dir=
+ty for some reason:
+> >> =A0>>
+> >> =A0>> =A0=3D=3D=3D=3D=3D[ partition info(sda). #0, RW]=3D=3D=3D=3D=3D
+> >> =A0>> =A0[SB: 1] [CP: 2] [SIT: 6] [NAT: 114] [SSA: 116] [MAIN: 59149(O=
+verProv:3003 Resv:48)]
+> >> =A0>>
+> >> =A0>> =A0Utilization: 10% (3013093 valid blocks)
+> >> =A0>> =A0=A0=A0- Node: 3528 (Inode: 548, Other: 2980)
+> >> =A0>> =A0=A0=A0- Data: 3009565
+> >> =A0>> =A0=A0=A0- Inline_xattr Inode: 0
+> >> =A0>> =A0=A0=A0- Inline_data Inode: 0
+> >> =A0>> =A0=A0=A0- Inline_dentry Inode: 0
+> >> =A0>> =A0=A0=A0- Orphan Inode: 0
+> >> =A0>>
+> >> =A0>> =A0Main area: 59149 segs, 59149 secs 59149 zones
+> >> =A0>> =A0=A0=A0- COLD data: 7183, 7183, 7183
+> >> =A0>> =A0=A0=A0- WARM data: 6654, 6654, 6654
+> >> =A0>> =A0=A0=A0- HOT data: 59134, 59134, 59134
+> >> =A0>> =A0=A0=A0- Dir dnode: 59127, 59127, 59127
+> >> =A0>> =A0=A0=A0- File dnode: 59125, 59125, 59125
+> >> =A0>> =A0=A0=A0- Indir nodes: 59129, 59129, 59129
+> >> =A0>>
+> >> =A0>> =A0=A0=A0- Valid: 300
+> >> =A0>> =A0=A0=A0- Dirty: 6438
+> >> =A0>> =A0=A0=A0- Prefree: 0
+> >> =A0>> =A0=A0=A0- Free: 52411 (52411)
+> >> =A0>>
+> >> =A0>> =A0CP calls: 1023 (BG: 473)
+> >> =A0>> =A0GC calls: 470 (BG: 470)
+> >> =A0>> =A0=A0=A0- data segments : 466 (466)
+> >> =A0>> =A0=A0=A0- node segments : 4 (4)
+> >> =A0>> =A0Try to move 152221 blocks (BG: 152221)
+> >> =A0>> =A0=A0=A0- data blocks : 151417 (151417)
+> >> =A0>> =A0=A0=A0- node blocks : 804 (804)
+> >> =A0>>
+> >> =A0>> =A0Extent Cache:
+> >> =A0>> =A0=A0=A0- Hit Count: L1-1:6262 L1-2:0 L2:0
+> >> =A0>> =A0=A0=A0- Hit Ratio: 2% (6262 / 273606)
+> >> =A0>> =A0=A0=A0- Inner Struct Count: tree: 292(0), node: 8
+> >> =A0>>
+> >> =A0>> =A0Balancing F2FS Async:
+> >> =A0>> =A0=A0=A0- inmem: 0, wb_bios: 0
+> >> =A0>> =A0=A0=A0- nodes: 0 in 0
+> >> =A0>> =A0=A0=A0- dents: 0 in dirs: 0 ( 0)
+> >> =A0>> =A0=A0=A0- datas: 0 in files: 0
+> >> =A0>> =A0=A0=A0- meta: 0 in 0
+> >> =A0>> =A0=A0=A0- NATs: 0/ 43
+> >> =A0>> =A0=A0=A0- SITs: 0/ 59149
+> >> =A0>> =A0=A0=A0- free_nids: 3414
+> >> =A0>>
+> >> =A0>> =A0Distribution of User Blocks: [ valid | invalid | free ]
+> >> =A0>> =A0=A0=A0[-----|--|-------------------------------------------]
+> >> =A0>>
+> >> =A0>> =A0IPU: 0 blocks
+> >> =A0>> =A0SSR: 0 blocks in 0 segments
+> >> =A0>> =A0LFS: 3691542 blocks in 7208 segments
+> >> =A0>>
+> >> =A0>> =A0BDF: 95, avg. vblocks: 444
+> >> =A0>>
+> >> =A0>> =A0Memory: 12662 KB
+> >> =A0>> =A0=A0=A0- static: 12597 KB
+> >> =A0>> =A0=A0=A0- cached: 64 KB
+> >> =A0>> =A0=A0=A0- paged : 0 KB
+> >> =A0>>
+> >> =A0>> =A0But the archive is working perfectly as before.
+> >> =A0>
+> >> =A0> Okay, so we need to gather more information about IO traces. :)
+> >> =A0>
+> >> =A0> Could you get them by:
+> >> =A0>
+> >> =A0> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_submit_write_=
+bio/enable
+> >> =A0> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_submit_page_m=
+bio/enable
+> >> =A0> echo 1 > /sys/kernel/debug/tracing/tracing_on
+> >> =A0> cat /sys/kernel/debug/tracing/trace_pipe
+> >> =A0>
+> >> =A0> You can get a script in f2fs-tools.git/scripts/tracepoint.sh
+> >>
+> >> =A0I collected the trace. It is attached. Thanks!
+> >
+> > Thanks.
+> >
+> > What I've found from your trace are:
+> > - there are two files (ino=3D17690, ino=3D17691) which shared the data =
+log.
+> > - ino=3D17690 writes data sequentiallly, and ino=3D17691 writes small d=
+ata randomly.
+> > - ino=3D17690 writes misaligned 4KB blocks at every around 296KB which =
+produces
+> > =A0dirty segments.
+> >
+> > Could you check all the writes and truncation in your app are aligned t=
+o 4KB?
+> > And, if ino=3D17691 is sqlite, it needs to check whether it is reaaly u=
+sing other
+> > data log.
+> =
+
+> I collected more logs from both kernel tracing and strace and tried to ge=
+t more
+> understanding of this. I think, I get what's wrong now.
+> =
+
+> ino=3D17690 is a video file. ino=3D17691 is not SQLite, it is an index fi=
+le. It is written
+> 24 bytes per frame. Here is a small piece of strace log for writing a sin=
+gle frame:
+> =
+
+> write(19, "...", 4) =3D 4
+> write(19, "...", 4) =3D 4
+> write(19, "...", 2432) =3D 2432
+> write(20, "...", 24) =3D 24
+> =
+
+> First three writes are writing to a video file (4 byte stream id, then 4 =
+byte length
+> and then the actual frame), then the fourth one writes to and index file.=
+ Yes, I know,
+> this looks ugly. :)
+> All the writes are not aligned to 4096, but there are no truncations, only
+> appending.
+> =
+
+> Then, I think, I see f2fs worker thread wakes up about every two seconds =
+to
+> write dirty pages. Unfortunately it seems to write everything collected s=
+o far, even
+> the most recent pages, which are not fully filled yet. I'd say that can n=
+ot be
+> expected, that every app will write data aligned to 4096 bytes. So this m=
+eans
+> more overhead and overwrites even in a more general case. Is it different=
+ in
+> mode=3Dadaptive?
+
+No, the flushing time is controlled by vm, and you can tune that through pr=
+oc.
+And, IMO, even if those are append-only, it'd be worth to split index and m=
+edia
+files into different logs; it seems using the cold log for media file only =
+would
+be recommendable.
+
+> The 296KB size, probably, comes from my bitrate, which is about 142KB/s, =
+times
+> 2 seconds. It is roughly the right size.
+> My video FPS is about 30, so the size of data, written to an index, is ab=
+out 1440
+> in two seconds. This is why it looks like randow writes, I think.
+> =
+
+> Also I see from my new traces, that f2fs_submit_write_bio for other inodes
+> are writing to completely different sectors. Looks like the "cold" data f=
+eature
+> is working good.
+> =
+
+> To conclude:
+> 1. I think I can leave everything as is because (1) there is a small numb=
+er of
+> rewrites and (2) I start rotating the archive at 95% utilization so given=
+ the tiny
+> amount of data in index and sqlite files, this should be ok, I hope.
+
+If both of index and media files are deleted before suffering from cleaning,
+IMO, it'd be fine. You can check the cleaning information in status file.
+
+> 2. But I'd better write both video and index files at 4096 boundary.
+> 3. Or this should be fixed in f2fs. I think, there should be a configurab=
+le amount
+> of time to wait for dirty page to expire. It should be written only after=
+ expiration.
+> Unless a user calls fsync() of course. Is there such a tunable?
+> =
+
+> Does this make sense?
+
+Yeah, I think you can tune flushing timing through proc entries.
+(e.g., /proc/sys/vm/dirty_writeback_centisecs)
+
+Thanks,
+
+> =
+
+> The new traces are attached for reference. They are filtered somewhat
+> for easier side-by-side viewing.
+> =
+
+> Thanks!
+> =
+
+> --=A0
+>  Alexander
+
+
+
+---------------------------------------------------------------------------=
+---
