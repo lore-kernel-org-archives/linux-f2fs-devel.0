@@ -1,47 +1,57 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: set dentry bits on random location in memory
-Date: Wed, 31 Aug 2016 18:08:23 -0700
-Message-ID: <20160901010823.18300-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: forbid to do fstrim if fs has some error
+Date: Thu, 1 Sep 2016 10:14:39 +0800
+Message-ID: <1472696079-7063-1-git-send-email-heyunlei@huawei.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1bfHSS-00051b-Q7
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 01 Sep 2016 02:10:24 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1bfHSN-0005Zd-Cn
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 01 Sep 2016 02:10:24 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: heyunlei@huwei.com
 
-This fixes pointer panic when using inline_dentry, which was triggered when
-backporting to 3.10.
+This patch skip fstrim if sbi set SBI_NEED_FSCK flag
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/dir.c    | 2 +-
- fs/f2fs/inline.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 9316d8a..2fb20fc 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -510,7 +510,7 @@ void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
- 	de->ino = cpu_to_le32(ino);
- 	set_de_type(de, mode);
- 	for (i = 0; i < slots; i++) {
--		test_and_set_bit_le(bit_pos + i, (void *)d->bitmap);
-+		__set_bit_le(bit_pos + i, (void *)d->bitmap);
- 		/* avoid wrong garbage data for readdir */
- 		if (i)
- 			(de + i)->name_len = 0;
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 8a96107..4d526f3 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -566,7 +566,7 @@ void f2fs_delete_inline_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	inline_dentry = inline_data_addr(page);
- 	bit_pos = dentry - inline_dentry->dentry;
- 	for (i = 0; i < slots; i++)
--		test_and_clear_bit_le(bit_pos + i,
-+		__clear_bit_le(bit_pos + i,
- 				&inline_dentry->dentry_bitmap);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 93c5e26..1b62213 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1353,6 +1353,9 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	if (end <= MAIN_BLKADDR(sbi))
+ 		goto out;
  
- 	set_page_dirty(page);
++	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
++		goto out;
++
+ 	/* start/end segment number in main_area */
+ 	start_segno = (start <= MAIN_BLKADDR(sbi)) ? 0 : GET_SEGNO(sbi, start);
+ 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
 -- 
-2.8.3
+1.9.1
+
+
+------------------------------------------------------------------------------
