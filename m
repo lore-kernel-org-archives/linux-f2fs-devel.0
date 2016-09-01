@@ -1,30 +1,29 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: video archive on a microSD card
-Date: Thu, 1 Sep 2016 13:07:18 -0700
-Message-ID: <20160901200718.GB20281@jaegeuk>
+Date: Thu, 1 Sep 2016 13:15:55 -0700
+Message-ID: <20160901201555.GC20281@jaegeuk>
 References: <1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
-	<1258721471607772@web12h.yandex.ru>
-	<324581471899132@web4j.yandex.ru> <20160823211222.GD73835@jaegeuk>
-	<139021472156043@web27j.yandex.ru> <20160827012032.GG88444@jaegeuk>
-	<549571472473386@web20g.yandex.ru> <20160829182359.GG94184@jaegeuk>
-	<9581472749471@web24h.yandex.ru>
+	<39941471627359@web1m.yandex.ru> <35301472489424@web15m.yandex.ru>
+	<20160829180020.GF94184@jaegeuk> <592891472633520@web8m.yandex.ru>
+	<20160831234633.GA17031@jaegeuk> <118511472751607@web30h.yandex.ru>
+	<20160901182509.GA20281@jaegeuk> <116081472758656@web21j.yandex.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bfYGm-0002Gw-Tb
+	(envelope-from <jaegeuk@kernel.org>) id 1bfYPD-0002Uy-Dm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 01 Sep 2016 20:07:28 +0000
+	Thu, 01 Sep 2016 20:16:11 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bfYGl-0002rD-HY
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bfYPC-0005Et-3p
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 01 Sep 2016 20:07:28 +0000
+	Thu, 01 Sep 2016 20:16:11 +0000
 Content-Disposition: inline
-In-Reply-To: <9581472749471@web24h.yandex.ru>
+In-Reply-To: <116081472758656@web21j.yandex.ru>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -37,226 +36,204 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Alexander Gordeev <alex@gordick.net>
 Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On Thu, Sep 01, 2016 at 08:04:31PM +0300, Alexander Gordeev wrote:
-> Hi Jaegeuk,
+On Thu, Sep 01, 2016 at 10:37:36PM +0300, Alexander Gordeev wrote:
+> Hi ,
 > =
 
-> 29.08.2016, 21:24, "Jaegeuk Kim" <jaegeuk@kernel.org>:
-> > On Mon, Aug 29, 2016 at 03:23:06PM +0300, Alexander Gordeev wrote:
-> >> =A0Hi Jaegeuk,
+> 01.09.2016, 21:25, "Jaegeuk Kim" <jaegeuk@kernel.org>:
+> > Hello,
+> >
+> > On Thu, Sep 01, 2016 at 08:40:07PM +0300, Alexander Gordeev wrote:
+> > ...
+> >> =A0>> =A0[ 49.274678] ------------[ cut here ]------------
+> >> =A0>> =A0[ 49.280216] WARNING: at /home/alex/work/s2l/amb_S2l_SDK_2.5/=
+SDK2.5/s2l_linux_sdk/ambarella/kernel/linux-3.10/fs/f2fs/segment.c:1105 new=
+_curseg+0x268/0x394 [f2fs]()
+> >> =A0>
+> >> =A0> This means there is no free segment.
+> >> =A0> Could you print out the below information before this f2fs_bug_on?
+> >> =A0> - prefree_segments(sbi)
+> >> =A0> - free_segments(sbi)
+> >> =A0>
+> >> =A0>> =A0...
+> >> =A0>> =A0[ 49.518054] ---[ end trace 49dca462b4f988ff ]---
+> >> =A0>> =A0[ 49.522689] ------------[ cut here ]------------
+> >> =A0>> =A0[ 49.527375] WARNING: at /home/alex/work/s2l/amb_S2l_SDK_2.5/=
+SDK2.5/s2l_linux_sdk/ambarella/kernel/linux-3.10/fs/f2fs/segment.c:1144 new=
+_curseg+0x2f0/0x394 [f2fs]()
+> >> =A0>
+> >> =A0> This is caused by the above segno which was -1.
+> >> =A0>
+> >> =A0>> =A0...
+> >> =A0>> =A0[ 49.764853] ---[ end trace 49dca462b4f98900 ]---
+> >> =A0>> =A0[ 49.857344] ------ segno =3D 7540, next_blkoff =3D 0, next_s=
+egno =3D 4294967295 --------
+> >> =A0>> =A0[ 49.913664] ------ blkaddr =3D 3889152 --------
+> >> =A0>> =A0[ 49.918173] Unable to handle kernel NULL pointer dereference=
+ at virtual address 00000000
+> >> =A0>
+> >> =A0> Also, we can see next_segno was -1, which incur no se entry for t=
+his segment.
+> >> =A0> At this moment, I'd really like to see its /sys/kernel/debug/f2fs=
+/status whether
+> >> =A0> there is really not enough free segments.
 > >>
-> >> =A027.08.2016, 04:20, "Jaegeuk Kim" <jaegeuk@kernel.org>:
-> >> =A0> On Thu, Aug 25, 2016 at 11:14:03PM +0300, Alexander Gordeev wrote:
-> >> =A0>> =A0Hi Jaegeuk,
-> >> =A0>>
-> >> =A0>> =A0Thanks for all the help!
-> >> =A0>>...
-> >> =A0>> =A0> This is the number of dirty segments, so it needs to consid=
-er section and
-> >> =A0>> =A0> segment at the same time; a dirty section can consist of va=
-lid and free
-> >> =A0>> =A0> segments.
-> >> =A0>> =A0> How abouting testing 2MB-sized section which is the default=
- option?
-> >> =A0>>
-> >> =A0>> =A0I tried what you said. Still the majority of segments are dir=
-ty for some reason:
-> >> =A0>>
-> >> =A0>> =A0=3D=3D=3D=3D=3D[ partition info(sda). #0, RW]=3D=3D=3D=3D=3D
-> >> =A0>> =A0[SB: 1] [CP: 2] [SIT: 6] [NAT: 114] [SSA: 116] [MAIN: 59149(O=
-verProv:3003 Resv:48)]
-> >> =A0>>
-> >> =A0>> =A0Utilization: 10% (3013093 valid blocks)
-> >> =A0>> =A0=A0=A0- Node: 3528 (Inode: 548, Other: 2980)
-> >> =A0>> =A0=A0=A0- Data: 3009565
-> >> =A0>> =A0=A0=A0- Inline_xattr Inode: 0
-> >> =A0>> =A0=A0=A0- Inline_data Inode: 0
-> >> =A0>> =A0=A0=A0- Inline_dentry Inode: 0
-> >> =A0>> =A0=A0=A0- Orphan Inode: 0
-> >> =A0>>
-> >> =A0>> =A0Main area: 59149 segs, 59149 secs 59149 zones
-> >> =A0>> =A0=A0=A0- COLD data: 7183, 7183, 7183
-> >> =A0>> =A0=A0=A0- WARM data: 6654, 6654, 6654
-> >> =A0>> =A0=A0=A0- HOT data: 59134, 59134, 59134
-> >> =A0>> =A0=A0=A0- Dir dnode: 59127, 59127, 59127
-> >> =A0>> =A0=A0=A0- File dnode: 59125, 59125, 59125
-> >> =A0>> =A0=A0=A0- Indir nodes: 59129, 59129, 59129
-> >> =A0>>
-> >> =A0>> =A0=A0=A0- Valid: 300
-> >> =A0>> =A0=A0=A0- Dirty: 6438
-> >> =A0>> =A0=A0=A0- Prefree: 0
-> >> =A0>> =A0=A0=A0- Free: 52411 (52411)
-> >> =A0>>
-> >> =A0>> =A0CP calls: 1023 (BG: 473)
-> >> =A0>> =A0GC calls: 470 (BG: 470)
-> >> =A0>> =A0=A0=A0- data segments : 466 (466)
-> >> =A0>> =A0=A0=A0- node segments : 4 (4)
-> >> =A0>> =A0Try to move 152221 blocks (BG: 152221)
-> >> =A0>> =A0=A0=A0- data blocks : 151417 (151417)
-> >> =A0>> =A0=A0=A0- node blocks : 804 (804)
-> >> =A0>>
-> >> =A0>> =A0Extent Cache:
-> >> =A0>> =A0=A0=A0- Hit Count: L1-1:6262 L1-2:0 L2:0
-> >> =A0>> =A0=A0=A0- Hit Ratio: 2% (6262 / 273606)
-> >> =A0>> =A0=A0=A0- Inner Struct Count: tree: 292(0), node: 8
-> >> =A0>>
-> >> =A0>> =A0Balancing F2FS Async:
-> >> =A0>> =A0=A0=A0- inmem: 0, wb_bios: 0
-> >> =A0>> =A0=A0=A0- nodes: 0 in 0
-> >> =A0>> =A0=A0=A0- dents: 0 in dirs: 0 ( 0)
-> >> =A0>> =A0=A0=A0- datas: 0 in files: 0
-> >> =A0>> =A0=A0=A0- meta: 0 in 0
-> >> =A0>> =A0=A0=A0- NATs: 0/ 43
-> >> =A0>> =A0=A0=A0- SITs: 0/ 59149
-> >> =A0>> =A0=A0=A0- free_nids: 3414
-> >> =A0>>
-> >> =A0>> =A0Distribution of User Blocks: [ valid | invalid | free ]
-> >> =A0>> =A0=A0=A0[-----|--|-------------------------------------------]
-> >> =A0>>
-> >> =A0>> =A0IPU: 0 blocks
-> >> =A0>> =A0SSR: 0 blocks in 0 segments
-> >> =A0>> =A0LFS: 3691542 blocks in 7208 segments
-> >> =A0>>
-> >> =A0>> =A0BDF: 95, avg. vblocks: 444
-> >> =A0>>
-> >> =A0>> =A0Memory: 12662 KB
-> >> =A0>> =A0=A0=A0- static: 12597 KB
-> >> =A0>> =A0=A0=A0- cached: 64 KB
-> >> =A0>> =A0=A0=A0- paged : 0 KB
-> >> =A0>>
-> >> =A0>> =A0But the archive is working perfectly as before.
-> >> =A0>
-> >> =A0> Okay, so we need to gather more information about IO traces. :)
-> >> =A0>
-> >> =A0> Could you get them by:
-> >> =A0>
-> >> =A0> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_submit_write_=
-bio/enable
-> >> =A0> echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_submit_page_m=
-bio/enable
-> >> =A0> echo 1 > /sys/kernel/debug/tracing/tracing_on
-> >> =A0> cat /sys/kernel/debug/tracing/trace_pipe
-> >> =A0>
-> >> =A0> You can get a script in f2fs-tools.git/scripts/tracepoint.sh
+> >> =A0I collected both /sys/kernel/debug/f2fs/status and numbers of block=
+s.
+> >> =A0The oops happens only when I try to delete anything. Also it can be=
+ caused
+> >> =A0by GC, but I turned background GC off. So I mounted the fs, dumped =
+the status
+> >> =A0and then tried to remove a file. Here is what I got:
 > >>
-> >> =A0I collected the trace. It is attached. Thanks!
+> >> =A0=3D=3D=3D=3D=3D[ partition info(sda). #0, RW]=3D=3D=3D=3D=3D
+> >> =A0[SB: 1] [CP: 2] [SIT: 2] [NAT: 34] [SSA: 16] [MAIN: 7540(OverProv:4=
+24 Resv:50)]
 > >
-> > Thanks.
-> >
-> > What I've found from your trace are:
-> > - there are two files (ino=3D17690, ino=3D17691) which shared the data =
-log.
-> > - ino=3D17690 writes data sequentiallly, and ino=3D17691 writes small d=
-ata randomly.
-> > - ino=3D17690 writes misaligned 4KB blocks at every around 296KB which =
-produces
-> > =A0dirty segments.
-> >
-> > Could you check all the writes and truncation in your app are aligned t=
-o 4KB?
-> > And, if ino=3D17691 is sqlite, it needs to check whether it is reaaly u=
-sing other
-> > data log.
+> > Could you check your mkfs.f2fs version?
+> > I want to check ovp and resv numbers.
 > =
 
-> I collected more logs from both kernel tracing and strace and tried to ge=
-t more
-> understanding of this. I think, I get what's wrong now.
+> I currently used mkfs.f2fs from my board's SDK. It prints this:
+> F2FS-tools: mkfs.f2fs Ver: 1.4.1 (2015-03-04)
 > =
 
-> ino=3D17690 is a video file. ino=3D17691 is not SQLite, it is an index fi=
-le. It is written
-> 24 bytes per frame. Here is a small piece of strace log for writing a sin=
-gle frame:
-> =
+> Should I upgrade it?
+> I think the problem will go away if I recreate the FS. At the moment
+> it reproduces every time. I wonder if we need it again.
 
-> write(19, "...", 4) =3D 4
-> write(19, "...", 4) =3D 4
-> write(19, "...", 2432) =3D 2432
-> write(20, "...", 24) =3D 24
-> =
-
-> First three writes are writing to a video file (4 byte stream id, then 4 =
-byte length
-> and then the actual frame), then the fourth one writes to and index file.=
- Yes, I know,
-> this looks ugly. :)
-> All the writes are not aligned to 4096, but there are no truncations, only
-> appending.
-> =
-
-> Then, I think, I see f2fs worker thread wakes up about every two seconds =
-to
-> write dirty pages. Unfortunately it seems to write everything collected s=
-o far, even
-> the most recent pages, which are not fully filled yet. I'd say that can n=
-ot be
-> expected, that every app will write data aligned to 4096 bytes. So this m=
-eans
-> more overhead and overwrites even in a more general case. Is it different=
- in
-> mode=3Dadaptive?
-
-No, the flushing time is controlled by vm, and you can tune that through pr=
-oc.
-And, IMO, even if those are append-only, it'd be worth to split index and m=
-edia
-files into different logs; it seems using the cold log for media file only =
-would
-be recommendable.
-
-> The 296KB size, probably, comes from my bitrate, which is about 142KB/s, =
-times
-> 2 seconds. It is roughly the right size.
-> My video FPS is about 30, so the size of data, written to an index, is ab=
-out 1440
-> in two seconds. This is why it looks like randow writes, I think.
-> =
-
-> Also I see from my new traces, that f2fs_submit_write_bio for other inodes
-> are writing to completely different sectors. Looks like the "cold" data f=
-eature
-> is working good.
-> =
-
-> To conclude:
-> 1. I think I can leave everything as is because (1) there is a small numb=
-er of
-> rewrites and (2) I start rotating the archive at 95% utilization so given=
- the tiny
-> amount of data in index and sqlite files, this should be ok, I hope.
-
-If both of index and media files are deleted before suffering from cleaning,
-IMO, it'd be fine. You can check the cleaning information in status file.
-
-> 2. But I'd better write both video and index files at 4096 boundary.
-> 3. Or this should be fixed in f2fs. I think, there should be a configurab=
-le amount
-> of time to wait for dirty page to expire. It should be written only after=
- expiration.
-> Unless a user calls fsync() of course. Is there such a tunable?
-> =
-
-> Does this make sense?
-
-Yeah, I think you can tune flushing timing through proc entries.
-(e.g., /proc/sys/vm/dirty_writeback_centisecs)
+Yes, please upgrade to the latest version to make sure.
+And, it needs to format it again.
+Seems there is no further information that we can use from the old partitio=
+n.
 
 Thanks,
 
 > =
 
-> The new traces are attached for reference. They are filtered somewhat
-> for easier side-by-side viewing.
+> > You can get the latest one from:
+> > http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git
+> >
+> >> =A0Utilization: 94% (3443739 valid blocks)
+> >> =A0=A0=A0- Node: 4458 (Inode: 1115, Other: 3343)
+> >> =A0=A0=A0- Data: 3439281
+> >> =A0=A0=A0- Inline_xattr Inode: 0
+> >> =A0=A0=A0- Inline_data Inode: 0
+> >> =A0=A0=A0- Inline_dentry Inode: 0
+> >> =A0=A0=A0- Orphan Inode: 0
+> >>
+> >> =A0Main area: 7540 segs, 3770 secs 3770 zones
+> >> =A0=A0=A0- COLD data: 6192, 3096, 3096
+> >> =A0=A0=A0- WARM data: 6186, 3093, 3093
+> >> =A0=A0=A0- HOT data: 6198, 3099, 3099
+> >> =A0=A0=A0- Dir dnode: 4836, 2418, 2418
+> >> =A0=A0=A0- File dnode: 5003, 2501, 2501
+> >> =A0=A0=A0- Indir nodes: 7533, 3766, 3766
+> >>
+> >> =A0=A0=A0- Valid: 6728
+> >> =A0=A0=A0- Dirty: 5
+> >> =A0=A0=A0- Prefree: 0
+> >> =A0=A0=A0- Free: 807 (0)
+> >
+> > Here, we have 807 free segments, but no section that we can use right n=
+ow.
 > =
 
-> Thanks!
+> Ah, I see now.
+> =
+
+> >> =A0CP calls: 0 (BG: 0)
+> >> =A0GC calls: 0 (BG: 0)
+> >> =A0=A0=A0- data segments : 0 (0)
+> >> =A0=A0=A0- node segments : 0 (0)
+> >> =A0Try to move 0 blocks (BG: 0)
+> >> =A0=A0=A0- data blocks : 0 (0)
+> >> =A0=A0=A0- node blocks : 0 (0)
+> >>
+> >> =A0Extent Cache:
+> >> =A0=A0=A0- Hit Count: L1-1:0 L1-2:0 L2:0
+> >> =A0=A0=A0- Hit Ratio: 0% (0 / 0)
+> >> =A0=A0=A0- Inner Struct Count: tree: 0(0), node: 0
+> >>
+> >> =A0Balancing F2FS Async:
+> >> =A0=A0=A0- inmem: 0, wb_bios: 0
+> >> =A0=A0=A0- nodes: 0 in 1
+> >> =A0=A0=A0- dents: 0 in dirs: 0 ( 0)
+> >> =A0=A0=A0- datas: 0 in files: 0
+> >> =A0=A0=A0- meta: 0 in 155
+> >> =A0=A0=A0- NATs: 0/ 1
+> >> =A0=A0=A0- SITs: 0/ 7540
+> >> =A0=A0=A0- free_nids: 3496
+> >>
+> >> =A0Distribution of User Blocks: [ valid | invalid | free ]
+> >> =A0=A0=A0[-----------------------------------------------|-|--]
+> >>
+> >> =A0IPU: 0 blocks
+> >> =A0SSR: 0 blocks in 0 segments
+> >> =A0LFS: 0 blocks in 0 segments
+> >>
+> >> =A0BDF: 78, avg. vblocks: 510
+> >>
+> >> =A0Memory: 2325 KB
+> >> =A0=A0=A0- static: 1647 KB
+> >> =A0=A0=A0- cached: 54 KB
+> >> =A0=A0=A0- paged : 624 KB
+> >>
+> >> =A0[ 107.562070] ------ blkaddr =3D 2590606, se->cur_valid_map =3D 847=
+7f040 --------
+> >> =A0[ 107.570415] ------ blkaddr =3D 2590607, se->cur_valid_map =3D 847=
+7f040 --------
+> >
+> > ...
+> >> =A0[ 108.334883] ------ blkaddr =3D 2590713, se->cur_valid_map =3D 847=
+7f040 --------
+> >> =A0[ 108.341966] ------ blkaddr =3D 2590714, se->cur_valid_map =3D 847=
+7f040 --------
+> >> =A0[ 108.349047] ------ blkaddr =3D 2590715, se->cur_valid_map =3D 847=
+7f040 --------
+> >> =A0[ 108.356004] ------ blkaddr =3D 2590716, se->cur_valid_map =3D 847=
+7f040 --------
+> >> =A0[ 108.363130] ------ blkaddr =3D 2590717, se->cur_valid_map =3D 847=
+7f040 --------
+> >> =A0[ 108.370210] ------ blkaddr =3D 2590718, se->cur_valid_map =3D 847=
+7f040 --------
+> >> =A0[ 108.377244] ------ prefree_segments =3D 0, free_segments =3D 807 =
+------
+> >> =A0[ 108.383526] ------------[ cut here ]------------
+> >> =A0[ 108.388231] WARNING: at /home/alex/work/s2l/s2l_linux_sdk/ambarel=
+la/kernel/linux-3.10/fs/f2fs/segment.c:1105 new_curseg+0x280/0x3b8 [f2fs]()
+> >> =A0...
+> >> =A0[ 108.628965] ---[ end trace c59ce5906bb6d95e ]---
+> >> =A0[ 108.633563] ------------[ cut here ]------------
+> >> =A0[ 108.638240] WARNING: at /home/alex/work/s2l/s2l_linux_sdk/ambarel=
+la/kernel/linux-3.10/fs/f2fs/segment.c:1144 new_curseg+0x308/0x3b8 [f2fs]()
+> >> =A0...
+> >> =A0[ 108.878788] ---[ end trace c59ce5906bb6d95f ]---
+> >> =A0[ 108.885201] ------ segno =3D 7540, next_blkoff =3D 0, next_segno =
+=3D 4294967295 --------
+> >
+> > So, new_curseg failed to find a free section, and gave 7540 which is th=
+e end
+> > of main area. And then, it tried to allocate that LBA and got panic due=
+ to wrong
+> > bitmap position when setting its SIT bitmap.
+> >
+> > For now, the root cause is due to zero free section, and I'd like to ch=
+eck
+> > whether ovp and reserved space were correctly assigned or not.
+> > Or, there was a missing flow which consumed reserved space entirely wit=
+hout
+> > any cleaning.
+> =
+
+> I think, this is the SD card, I tried to defragment some time ago.
+> Probably I shouldn't ever do it.
+> Still IMHO the code should handle even such cases. For example, someone
+> can craft a FS, and it might make bad things...
 > =
 
 > --=A0
 >  Alexander
-
-
 
 ---------------------------------------------------------------------------=
 ---
