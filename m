@@ -1,30 +1,30 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Alexander Gordeev <alex@gordick.net>
 Subject: Re: video archive on a microSD card
-Date: Thu, 1 Sep 2016 11:25:09 -0700
-Message-ID: <20160901182509.GA20281@jaegeuk>
+Date: Thu, 01 Sep 2016 22:37:36 +0300
+Message-ID: <116081472758656@web21j.yandex.ru>
 References: <158901471427237@web4g.yandex.ru>
 	<bd0fc9a6-03d3-e32c-f6c7-f64d4ba8506e@kernel.org>
 	<1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
 	<39941471627359@web1m.yandex.ru> <35301472489424@web15m.yandex.ru>
 	<20160829180020.GF94184@jaegeuk> <592891472633520@web8m.yandex.ru>
-	<20160831234633.GA17031@jaegeuk> <118511472751607@web30h.yandex.ru>
+	<20160831234633.GA17031@jaegeuk>
+	<118511472751607@web30h.yandex.ru> <20160901182509.GA20281@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bfWfv-0005Us-PN
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <alex@gordick.net>) id 1bfXo2-0004sd-AV
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 01 Sep 2016 18:25:19 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bfWft-0008GP-W6
+	Thu, 01 Sep 2016 19:37:46 +0000
+Received: from forward1o.cmail.yandex.net ([37.9.109.84])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bfXo0-0007p2-Ho
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 01 Sep 2016 18:25:19 +0000
-Content-Disposition: inline
-In-Reply-To: <118511472751607@web30h.yandex.ru>
+	Thu, 01 Sep 2016 19:37:46 +0000
+In-Reply-To: <20160901182509.GA20281@jaegeuk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -34,193 +34,119 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Alexander Gordeev <alex@gordick.net>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hello,
-
-On Thu, Sep 01, 2016 at 08:40:07PM +0300, Alexander Gordeev wrote:
-...
-> >> =A0[ 49.274678] ------------[ cut here ]------------
-> >> =A0[ 49.280216] WARNING: at /home/alex/work/s2l/amb_S2l_SDK_2.5/SDK2.5=
-/s2l_linux_sdk/ambarella/kernel/linux-3.10/fs/f2fs/segment.c:1105 new_curse=
-g+0x268/0x394 [f2fs]()
-> >
-> > This means there is no free segment.
-> > Could you print out the below information before this f2fs_bug_on?
-> > - prefree_segments(sbi)
-> > - free_segments(sbi)
-> >
-> >> =A0...
-> >> =A0[ 49.518054] ---[ end trace 49dca462b4f988ff ]---
-> >> =A0[ 49.522689] ------------[ cut here ]------------
-> >> =A0[ 49.527375] WARNING: at /home/alex/work/s2l/amb_S2l_SDK_2.5/SDK2.5=
-/s2l_linux_sdk/ambarella/kernel/linux-3.10/fs/f2fs/segment.c:1144 new_curse=
-g+0x2f0/0x394 [f2fs]()
-> >
-> > This is caused by the above segno which was -1.
-> >
-> >> =A0...
-> >> =A0[ 49.764853] ---[ end trace 49dca462b4f98900 ]---
-> >> =A0[ 49.857344] ------ segno =3D 7540, next_blkoff =3D 0, next_segno =
-=3D 4294967295 --------
-> >> =A0[ 49.913664] ------ blkaddr =3D 3889152 --------
-> >> =A0[ 49.918173] Unable to handle kernel NULL pointer dereference at vi=
-rtual address 00000000
-> >
-> > Also, we can see next_segno was -1, which incur no se entry for this se=
-gment.
-> > At this moment, I'd really like to see its /sys/kernel/debug/f2fs/statu=
-s whether
-> > there is really not enough free segments.
-> =
-
-> I collected both /sys/kernel/debug/f2fs/status and numbers of blocks.
-> The oops happens only when I try to delete anything. Also it can be caused
-> by GC, but I turned background GC off. So I mounted the fs, dumped the st=
-atus
-> and then tried to remove a file. Here is what I got:
-> =
-
-> =3D=3D=3D=3D=3D[ partition info(sda). #0, RW]=3D=3D=3D=3D=3D
-> [SB: 1] [CP: 2] [SIT: 2] [NAT: 34] [SSA: 16] [MAIN: 7540(OverProv:424 Res=
-v:50)]
-
-Could you check your mkfs.f2fs version?
-I want to check ovp and resv numbers.
-
-You can get the latest one from:
-http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git
-
-> Utilization: 94% (3443739 valid blocks)
->   - Node: 4458 (Inode: 1115, Other: 3343)
->   - Data: 3439281
->   - Inline_xattr Inode: 0
->   - Inline_data Inode: 0
->   - Inline_dentry Inode: 0
->   - Orphan Inode: 0
-> =
-
-> Main area: 7540 segs, 3770 secs 3770 zones
->   - COLD  data: 6192, 3096, 3096
->   - WARM  data: 6186, 3093, 3093
->   - HOT   data: 6198, 3099, 3099
->   - Dir   dnode: 4836, 2418, 2418
->   - File   dnode: 5003, 2501, 2501
->   - Indir nodes: 7533, 3766, 3766
-> =
-
->   - Valid: 6728
->   - Dirty: 5
->   - Prefree: 0
->   - Free: 807 (0)
-
-Here, we have 807 free segments, but no section that we can use right now.
-
-> CP calls: 0 (BG: 0)
-> GC calls: 0 (BG: 0)
->   - data segments : 0 (0)
->   - node segments : 0 (0)
-> Try to move 0 blocks (BG: 0)
->   - data blocks : 0 (0)
->   - node blocks : 0 (0)
-> =
-
-> Extent Cache:
->   - Hit Count: L1-1:0 L1-2:0 L2:0
->   - Hit Ratio: 0% (0 / 0)
->   - Inner Struct Count: tree: 0(0), node: 0
-> =
-
-> Balancing F2FS Async:
->   - inmem:    0, wb_bios:    0
->   - nodes:    0 in    1
->   - dents:    0 in dirs:   0 (   0)
->   - datas:    0 in files:   0
->   - meta:    0 in  155
->   - NATs:         0/        1
->   - SITs:         0/     7540
->   - free_nids:      3496
-> =
-
-> Distribution of User Blocks: [ valid | invalid | free ]
->   [-----------------------------------------------|-|--]
-> =
-
-> IPU: 0 blocks
-> SSR: 0 blocks in 0 segments
-> LFS: 0 blocks in 0 segments
-> =
-
-> BDF: 78, avg. vblocks: 510
-> =
-
-> Memory: 2325 KB
->   - static: 1647 KB
->   - cached: 54 KB
->   - paged : 624 KB
-> =
-
-> [  107.562070] ------ blkaddr =3D 2590606, se->cur_valid_map =3D 8477f040=
- --------
-> [  107.570415] ------ blkaddr =3D 2590607, se->cur_valid_map =3D 8477f040=
- --------
-...
-> [  108.334883] ------ blkaddr =3D 2590713, se->cur_valid_map =3D 8477f040=
- --------
-> [  108.341966] ------ blkaddr =3D 2590714, se->cur_valid_map =3D 8477f040=
- --------
-> [  108.349047] ------ blkaddr =3D 2590715, se->cur_valid_map =3D 8477f040=
- --------
-> [  108.356004] ------ blkaddr =3D 2590716, se->cur_valid_map =3D 8477f040=
- --------
-> [  108.363130] ------ blkaddr =3D 2590717, se->cur_valid_map =3D 8477f040=
- --------
-> [  108.370210] ------ blkaddr =3D 2590718, se->cur_valid_map =3D 8477f040=
- --------
-> [  108.377244] ------ prefree_segments =3D 0, free_segments =3D 807 ------
-> [  108.383526] ------------[ cut here ]------------
-> [  108.388231] WARNING: at /home/alex/work/s2l/s2l_linux_sdk/ambarella/ke=
-rnel/linux-3.10/fs/f2fs/segment.c:1105 new_curseg+0x280/0x3b8 [f2fs]()
-> ...
-> [  108.628965] ---[ end trace c59ce5906bb6d95e ]---
-> [  108.633563] ------------[ cut here ]------------
-> [  108.638240] WARNING: at /home/alex/work/s2l/s2l_linux_sdk/ambarella/ke=
-rnel/linux-3.10/fs/f2fs/segment.c:1144 new_curseg+0x308/0x3b8 [f2fs]()
-> ...
-> [  108.878788] ---[ end trace c59ce5906bb6d95f ]---
-> [  108.885201] ------ segno =3D 7540, next_blkoff =3D 0, next_segno =3D 4=
-294967295 --------
-
-So, new_curseg failed to find a free section, and gave 7540 which is the end
-of main area. And then, it tried to allocate that LBA and got panic due to =
-wrong
-bitmap position when setting its SIT bitmap.
-
-For now, the root cause is due to zero free section, and I'd like to check
-whether ovp and reserved space were correctly assigned or not.
-Or, there was a missing flow which consumed reserved space entirely without
-any cleaning.
-
-Thanks,
-
-> [  108.892808] ------ blkaddr =3D 2590719, se->cur_valid_map =3D 8477f040=
- --------
-> [  108.899825] ------ blkaddr =3D 3889152, se->cur_valid_map =3D   (null)=
- --------
-> [  108.906800] Unable to handle kernel NULL pointer dereference at virtua=
-l address 00000000
-> ...
-> [  109.429454] ---[ end trace c59ce5906bb6d960 ]---
-> =
-
-> =
-
-> Thanks!
-> =
-
-> --=A0
->  Alexander
-
----------------------------------------------------------------------------=
----
+SGkgLAoKMDEuMDkuMjAxNiwgMjE6MjUsICJKYWVnZXVrIEtpbSIgPGphZWdldWtAa2VybmVsLm9y
+Zz46Cj4gSGVsbG8sCj4KPiBPbiBUaHUsIFNlcCAwMSwgMjAxNiBhdCAwODo0MDowN1BNICswMzAw
+LCBBbGV4YW5kZXIgR29yZGVldiB3cm90ZToKPiAuLi4KPj4gwqA+PiDCoFsgNDkuMjc0Njc4XSAt
+LS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KPj4gwqA+PiDCoFsgNDkuMjgwMjE2
+XSBXQVJOSU5HOiBhdCAvaG9tZS9hbGV4L3dvcmsvczJsL2FtYl9TMmxfU0RLXzIuNS9TREsyLjUv
+czJsX2xpbnV4X3Nkay9hbWJhcmVsbGEva2VybmVsL2xpbnV4LTMuMTAvZnMvZjJmcy9zZWdtZW50
+LmM6MTEwNSBuZXdfY3Vyc2VnKzB4MjY4LzB4Mzk0IFtmMmZzXSgpCj4+IMKgPgo+PiDCoD4gVGhp
+cyBtZWFucyB0aGVyZSBpcyBubyBmcmVlIHNlZ21lbnQuCj4+IMKgPiBDb3VsZCB5b3UgcHJpbnQg
+b3V0IHRoZSBiZWxvdyBpbmZvcm1hdGlvbiBiZWZvcmUgdGhpcyBmMmZzX2J1Z19vbj8KPj4gwqA+
+IC0gcHJlZnJlZV9zZWdtZW50cyhzYmkpCj4+IMKgPiAtIGZyZWVfc2VnbWVudHMoc2JpKQo+PiDC
+oD4KPj4gwqA+PiDCoC4uLgo+PiDCoD4+IMKgWyA0OS41MTgwNTRdIC0tLVsgZW5kIHRyYWNlIDQ5
+ZGNhNDYyYjRmOTg4ZmYgXS0tLQo+PiDCoD4+IMKgWyA0OS41MjI2ODldIC0tLS0tLS0tLS0tLVsg
+Y3V0IGhlcmUgXS0tLS0tLS0tLS0tLQo+PiDCoD4+IMKgWyA0OS41MjczNzVdIFdBUk5JTkc6IGF0
+IC9ob21lL2FsZXgvd29yay9zMmwvYW1iX1MybF9TREtfMi41L1NESzIuNS9zMmxfbGludXhfc2Rr
+L2FtYmFyZWxsYS9rZXJuZWwvbGludXgtMy4xMC9mcy9mMmZzL3NlZ21lbnQuYzoxMTQ0IG5ld19j
+dXJzZWcrMHgyZjAvMHgzOTQgW2YyZnNdKCkKPj4gwqA+Cj4+IMKgPiBUaGlzIGlzIGNhdXNlZCBi
+eSB0aGUgYWJvdmUgc2Vnbm8gd2hpY2ggd2FzIC0xLgo+PiDCoD4KPj4gwqA+PiDCoC4uLgo+PiDC
+oD4+IMKgWyA0OS43NjQ4NTNdIC0tLVsgZW5kIHRyYWNlIDQ5ZGNhNDYyYjRmOTg5MDAgXS0tLQo+
+PiDCoD4+IMKgWyA0OS44NTczNDRdIC0tLS0tLSBzZWdubyA9IDc1NDAsIG5leHRfYmxrb2ZmID0g
+MCwgbmV4dF9zZWdubyA9IDQyOTQ5NjcyOTUgLS0tLS0tLS0KPj4gwqA+PiDCoFsgNDkuOTEzNjY0
+XSAtLS0tLS0gYmxrYWRkciA9IDM4ODkxNTIgLS0tLS0tLS0KPj4gwqA+PiDCoFsgNDkuOTE4MTcz
+XSBVbmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBvaW50ZXIgZGVyZWZlcmVuY2UgYXQgdmly
+dHVhbCBhZGRyZXNzIDAwMDAwMDAwCj4+IMKgPgo+PiDCoD4gQWxzbywgd2UgY2FuIHNlZSBuZXh0
+X3NlZ25vIHdhcyAtMSwgd2hpY2ggaW5jdXIgbm8gc2UgZW50cnkgZm9yIHRoaXMgc2VnbWVudC4K
+Pj4gwqA+IEF0IHRoaXMgbW9tZW50LCBJJ2QgcmVhbGx5IGxpa2UgdG8gc2VlIGl0cyAvc3lzL2tl
+cm5lbC9kZWJ1Zy9mMmZzL3N0YXR1cyB3aGV0aGVyCj4+IMKgPiB0aGVyZSBpcyByZWFsbHkgbm90
+IGVub3VnaCBmcmVlIHNlZ21lbnRzLgo+Pgo+PiDCoEkgY29sbGVjdGVkIGJvdGggL3N5cy9rZXJu
+ZWwvZGVidWcvZjJmcy9zdGF0dXMgYW5kIG51bWJlcnMgb2YgYmxvY2tzLgo+PiDCoFRoZSBvb3Bz
+IGhhcHBlbnMgb25seSB3aGVuIEkgdHJ5IHRvIGRlbGV0ZSBhbnl0aGluZy4gQWxzbyBpdCBjYW4g
+YmUgY2F1c2VkCj4+IMKgYnkgR0MsIGJ1dCBJIHR1cm5lZCBiYWNrZ3JvdW5kIEdDIG9mZi4gU28g
+SSBtb3VudGVkIHRoZSBmcywgZHVtcGVkIHRoZSBzdGF0dXMKPj4gwqBhbmQgdGhlbiB0cmllZCB0
+byByZW1vdmUgYSBmaWxlLiBIZXJlIGlzIHdoYXQgSSBnb3Q6Cj4+Cj4+IMKgPT09PT1bIHBhcnRp
+dGlvbiBpbmZvKHNkYSkuICMwLCBSV109PT09PQo+PiDCoFtTQjogMV0gW0NQOiAyXSBbU0lUOiAy
+XSBbTkFUOiAzNF0gW1NTQTogMTZdIFtNQUlOOiA3NTQwKE92ZXJQcm92OjQyNCBSZXN2OjUwKV0K
+Pgo+IENvdWxkIHlvdSBjaGVjayB5b3VyIG1rZnMuZjJmcyB2ZXJzaW9uPwo+IEkgd2FudCB0byBj
+aGVjayBvdnAgYW5kIHJlc3YgbnVtYmVycy4KCkkgY3VycmVudGx5IHVzZWQgbWtmcy5mMmZzIGZy
+b20gbXkgYm9hcmQncyBTREsuIEl0IHByaW50cyB0aGlzOgpGMkZTLXRvb2xzOiBta2ZzLmYyZnMg
+VmVyOiAxLjQuMSAoMjAxNS0wMy0wNCkKClNob3VsZCBJIHVwZ3JhZGUgaXQ/CkkgdGhpbmsgdGhl
+IHByb2JsZW0gd2lsbCBnbyBhd2F5IGlmIEkgcmVjcmVhdGUgdGhlIEZTLiBBdCB0aGUgbW9tZW50
+Cml0IHJlcHJvZHVjZXMgZXZlcnkgdGltZS4gSSB3b25kZXIgaWYgd2UgbmVlZCBpdCBhZ2Fpbi4K
+Cj4gWW91IGNhbiBnZXQgdGhlIGxhdGVzdCBvbmUgZnJvbToKPiBodHRwOi8vZ2l0Lmtlcm5lbC5v
+cmcvY2dpdC9saW51eC9rZXJuZWwvZ2l0L2phZWdldWsvZjJmcy10b29scy5naXQKPgo+PiDCoFV0
+aWxpemF0aW9uOiA5NCUgKDM0NDM3MzkgdmFsaWQgYmxvY2tzKQo+PiDCoMKgwqAtIE5vZGU6IDQ0
+NTggKElub2RlOiAxMTE1LCBPdGhlcjogMzM0MykKPj4gwqDCoMKgLSBEYXRhOiAzNDM5MjgxCj4+
+IMKgwqDCoC0gSW5saW5lX3hhdHRyIElub2RlOiAwCj4+IMKgwqDCoC0gSW5saW5lX2RhdGEgSW5v
+ZGU6IDAKPj4gwqDCoMKgLSBJbmxpbmVfZGVudHJ5IElub2RlOiAwCj4+IMKgwqDCoC0gT3JwaGFu
+IElub2RlOiAwCj4+Cj4+IMKgTWFpbiBhcmVhOiA3NTQwIHNlZ3MsIDM3NzAgc2VjcyAzNzcwIHpv
+bmVzCj4+IMKgwqDCoC0gQ09MRCBkYXRhOiA2MTkyLCAzMDk2LCAzMDk2Cj4+IMKgwqDCoC0gV0FS
+TSBkYXRhOiA2MTg2LCAzMDkzLCAzMDkzCj4+IMKgwqDCoC0gSE9UIGRhdGE6IDYxOTgsIDMwOTks
+IDMwOTkKPj4gwqDCoMKgLSBEaXIgZG5vZGU6IDQ4MzYsIDI0MTgsIDI0MTgKPj4gwqDCoMKgLSBG
+aWxlIGRub2RlOiA1MDAzLCAyNTAxLCAyNTAxCj4+IMKgwqDCoC0gSW5kaXIgbm9kZXM6IDc1MzMs
+IDM3NjYsIDM3NjYKPj4KPj4gwqDCoMKgLSBWYWxpZDogNjcyOAo+PiDCoMKgwqAtIERpcnR5OiA1
+Cj4+IMKgwqDCoC0gUHJlZnJlZTogMAo+PiDCoMKgwqAtIEZyZWU6IDgwNyAoMCkKPgo+IEhlcmUs
+IHdlIGhhdmUgODA3IGZyZWUgc2VnbWVudHMsIGJ1dCBubyBzZWN0aW9uIHRoYXQgd2UgY2FuIHVz
+ZSByaWdodCBub3cuCgpBaCwgSSBzZWUgbm93LgoKPj4gwqBDUCBjYWxsczogMCAoQkc6IDApCj4+
+IMKgR0MgY2FsbHM6IDAgKEJHOiAwKQo+PiDCoMKgwqAtIGRhdGEgc2VnbWVudHMgOiAwICgwKQo+
+PiDCoMKgwqAtIG5vZGUgc2VnbWVudHMgOiAwICgwKQo+PiDCoFRyeSB0byBtb3ZlIDAgYmxvY2tz
+IChCRzogMCkKPj4gwqDCoMKgLSBkYXRhIGJsb2NrcyA6IDAgKDApCj4+IMKgwqDCoC0gbm9kZSBi
+bG9ja3MgOiAwICgwKQo+Pgo+PiDCoEV4dGVudCBDYWNoZToKPj4gwqDCoMKgLSBIaXQgQ291bnQ6
+IEwxLTE6MCBMMS0yOjAgTDI6MAo+PiDCoMKgwqAtIEhpdCBSYXRpbzogMCUgKDAgLyAwKQo+PiDC
+oMKgwqAtIElubmVyIFN0cnVjdCBDb3VudDogdHJlZTogMCgwKSwgbm9kZTogMAo+Pgo+PiDCoEJh
+bGFuY2luZyBGMkZTIEFzeW5jOgo+PiDCoMKgwqAtIGlubWVtOiAwLCB3Yl9iaW9zOiAwCj4+IMKg
+wqDCoC0gbm9kZXM6IDAgaW4gMQo+PiDCoMKgwqAtIGRlbnRzOiAwIGluIGRpcnM6IDAgKCAwKQo+
+PiDCoMKgwqAtIGRhdGFzOiAwIGluIGZpbGVzOiAwCj4+IMKgwqDCoC0gbWV0YTogMCBpbiAxNTUK
+Pj4gwqDCoMKgLSBOQVRzOiAwLyAxCj4+IMKgwqDCoC0gU0lUczogMC8gNzU0MAo+PiDCoMKgwqAt
+IGZyZWVfbmlkczogMzQ5Ngo+Pgo+PiDCoERpc3RyaWJ1dGlvbiBvZiBVc2VyIEJsb2NrczogWyB2
+YWxpZCB8IGludmFsaWQgfCBmcmVlIF0KPj4gwqDCoMKgWy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tfC18LS1dCj4+Cj4+IMKgSVBVOiAwIGJsb2Nrcwo+PiDC
+oFNTUjogMCBibG9ja3MgaW4gMCBzZWdtZW50cwo+PiDCoExGUzogMCBibG9ja3MgaW4gMCBzZWdt
+ZW50cwo+Pgo+PiDCoEJERjogNzgsIGF2Zy4gdmJsb2NrczogNTEwCj4+Cj4+IMKgTWVtb3J5OiAy
+MzI1IEtCCj4+IMKgwqDCoC0gc3RhdGljOiAxNjQ3IEtCCj4+IMKgwqDCoC0gY2FjaGVkOiA1NCBL
+Qgo+PiDCoMKgwqAtIHBhZ2VkIDogNjI0IEtCCj4+Cj4+IMKgWyAxMDcuNTYyMDcwXSAtLS0tLS0g
+YmxrYWRkciA9IDI1OTA2MDYsIHNlLT5jdXJfdmFsaWRfbWFwID0gODQ3N2YwNDAgLS0tLS0tLS0K
+Pj4gwqBbIDEwNy41NzA0MTVdIC0tLS0tLSBibGthZGRyID0gMjU5MDYwNywgc2UtPmN1cl92YWxp
+ZF9tYXAgPSA4NDc3ZjA0MCAtLS0tLS0tLQo+Cj4gLi4uCj4+IMKgWyAxMDguMzM0ODgzXSAtLS0t
+LS0gYmxrYWRkciA9IDI1OTA3MTMsIHNlLT5jdXJfdmFsaWRfbWFwID0gODQ3N2YwNDAgLS0tLS0t
+LS0KPj4gwqBbIDEwOC4zNDE5NjZdIC0tLS0tLSBibGthZGRyID0gMjU5MDcxNCwgc2UtPmN1cl92
+YWxpZF9tYXAgPSA4NDc3ZjA0MCAtLS0tLS0tLQo+PiDCoFsgMTA4LjM0OTA0N10gLS0tLS0tIGJs
+a2FkZHIgPSAyNTkwNzE1LCBzZS0+Y3VyX3ZhbGlkX21hcCA9IDg0NzdmMDQwIC0tLS0tLS0tCj4+
+IMKgWyAxMDguMzU2MDA0XSAtLS0tLS0gYmxrYWRkciA9IDI1OTA3MTYsIHNlLT5jdXJfdmFsaWRf
+bWFwID0gODQ3N2YwNDAgLS0tLS0tLS0KPj4gwqBbIDEwOC4zNjMxMzBdIC0tLS0tLSBibGthZGRy
+ID0gMjU5MDcxNywgc2UtPmN1cl92YWxpZF9tYXAgPSA4NDc3ZjA0MCAtLS0tLS0tLQo+PiDCoFsg
+MTA4LjM3MDIxMF0gLS0tLS0tIGJsa2FkZHIgPSAyNTkwNzE4LCBzZS0+Y3VyX3ZhbGlkX21hcCA9
+IDg0NzdmMDQwIC0tLS0tLS0tCj4+IMKgWyAxMDguMzc3MjQ0XSAtLS0tLS0gcHJlZnJlZV9zZWdt
+ZW50cyA9IDAsIGZyZWVfc2VnbWVudHMgPSA4MDcgLS0tLS0tCj4+IMKgWyAxMDguMzgzNTI2XSAt
+LS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KPj4gwqBbIDEwOC4zODgyMzFdIFdB
+Uk5JTkc6IGF0IC9ob21lL2FsZXgvd29yay9zMmwvczJsX2xpbnV4X3Nkay9hbWJhcmVsbGEva2Vy
+bmVsL2xpbnV4LTMuMTAvZnMvZjJmcy9zZWdtZW50LmM6MTEwNSBuZXdfY3Vyc2VnKzB4MjgwLzB4
+M2I4IFtmMmZzXSgpCj4+IMKgLi4uCj4+IMKgWyAxMDguNjI4OTY1XSAtLS1bIGVuZCB0cmFjZSBj
+NTljZTU5MDZiYjZkOTVlIF0tLS0KPj4gwqBbIDEwOC42MzM1NjNdIC0tLS0tLS0tLS0tLVsgY3V0
+IGhlcmUgXS0tLS0tLS0tLS0tLQo+PiDCoFsgMTA4LjYzODI0MF0gV0FSTklORzogYXQgL2hvbWUv
+YWxleC93b3JrL3MybC9zMmxfbGludXhfc2RrL2FtYmFyZWxsYS9rZXJuZWwvbGludXgtMy4xMC9m
+cy9mMmZzL3NlZ21lbnQuYzoxMTQ0IG5ld19jdXJzZWcrMHgzMDgvMHgzYjggW2YyZnNdKCkKPj4g
+wqAuLi4KPj4gwqBbIDEwOC44Nzg3ODhdIC0tLVsgZW5kIHRyYWNlIGM1OWNlNTkwNmJiNmQ5NWYg
+XS0tLQo+PiDCoFsgMTA4Ljg4NTIwMV0gLS0tLS0tIHNlZ25vID0gNzU0MCwgbmV4dF9ibGtvZmYg
+PSAwLCBuZXh0X3NlZ25vID0gNDI5NDk2NzI5NSAtLS0tLS0tLQo+Cj4gU28sIG5ld19jdXJzZWcg
+ZmFpbGVkIHRvIGZpbmQgYSBmcmVlIHNlY3Rpb24sIGFuZCBnYXZlIDc1NDAgd2hpY2ggaXMgdGhl
+IGVuZAo+IG9mIG1haW4gYXJlYS4gQW5kIHRoZW4sIGl0IHRyaWVkIHRvIGFsbG9jYXRlIHRoYXQg
+TEJBIGFuZCBnb3QgcGFuaWMgZHVlIHRvIHdyb25nCj4gYml0bWFwIHBvc2l0aW9uIHdoZW4gc2V0
+dGluZyBpdHMgU0lUIGJpdG1hcC4KPgo+IEZvciBub3csIHRoZSByb290IGNhdXNlIGlzIGR1ZSB0
+byB6ZXJvIGZyZWUgc2VjdGlvbiwgYW5kIEknZCBsaWtlIHRvIGNoZWNrCj4gd2hldGhlciBvdnAg
+YW5kIHJlc2VydmVkIHNwYWNlIHdlcmUgY29ycmVjdGx5IGFzc2lnbmVkIG9yIG5vdC4KPiBPciwg
+dGhlcmUgd2FzIGEgbWlzc2luZyBmbG93IHdoaWNoIGNvbnN1bWVkIHJlc2VydmVkIHNwYWNlIGVu
+dGlyZWx5IHdpdGhvdXQKPiBhbnkgY2xlYW5pbmcuCgpJIHRoaW5rLCB0aGlzIGlzIHRoZSBTRCBj
+YXJkLCBJIHRyaWVkIHRvIGRlZnJhZ21lbnQgc29tZSB0aW1lIGFnby4KUHJvYmFibHkgSSBzaG91
+bGRuJ3QgZXZlciBkbyBpdC4KU3RpbGwgSU1ITyB0aGUgY29kZSBzaG91bGQgaGFuZGxlIGV2ZW4g
+c3VjaCBjYXNlcy4gRm9yIGV4YW1wbGUsIHNvbWVvbmUKY2FuIGNyYWZ0IGEgRlMsIGFuZCBpdCBt
+aWdodCBtYWtlIGJhZCB0aGluZ3MuLi4KCi0twqAKIEFsZXhhbmRlcgoKLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxp
+bnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNl
+Zm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xp
+bnV4LWYyZnMtZGV2ZWwK
