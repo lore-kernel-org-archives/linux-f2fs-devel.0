@@ -1,116 +1,65 @@
-From: Alexander Gordeev <alex@gordick.net>
-Subject: Re: video archive on a microSD card
-Date: Fri, 02 Sep 2016 15:15:12 +0300
-Message-ID: <468961472818512@web12m.yandex.ru>
-References: <1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
-	<1258721471607772@web12h.yandex.ru>
-	<324581471899132@web4j.yandex.ru> <20160823211222.GD73835@jaegeuk>
-	<139021472156043@web27j.yandex.ru> <20160827012032.GG88444@jaegeuk>
-	<549571472473386@web20g.yandex.ru> <20160829182359.GG94184@jaegeuk>
-	<9581472749471@web24h.yandex.ru> <20160901200718.GB20281@jaegeuk>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: merge WRITE bio into previous WRITE_SYNC
+Date: Fri, 2 Sep 2016 11:36:58 -0700
+Message-ID: <20160902183658.GA917@jaegeuk>
+References: <20160827005358.91477-1-jaegeuk@kernel.org>
+ <10d2270d-6226-a269-c8a4-75bedfd0364c@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <alex@gordick.net>) id 1bfnNT-0006Cw-DA
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 02 Sep 2016 12:15:23 +0000
-Received: from forward2j.cmail.yandex.net ([5.255.227.20])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bfnNQ-0004yC-OZ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 02 Sep 2016 12:15:23 +0000
-In-Reply-To: <20160901200718.GB20281@jaegeuk>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <10d2270d-6226-a269-c8a4-75bedfd0364c@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGkgSmFlZ2V1aywKCjAxLjA5LjIwMTYsIDIzOjA3LCAiSmFlZ2V1ayBLaW0iIDxqYWVnZXVrQGtl
-cm5lbC5vcmc+Ogo+IE9uIFRodSwgU2VwIDAxLCAyMDE2IGF0IDA4OjA0OjMxUE0gKzAzMDAsIEFs
-ZXhhbmRlciBHb3JkZWV2IHdyb3RlOgo+PiDCoEhpIEphZWdldWssCj4+Cj4+IMKgMjkuMDguMjAx
-NiwgMjE6MjQsICJKYWVnZXVrIEtpbSIgPGphZWdldWtAa2VybmVsLm9yZz46Cj4+IMKgPiBXaGF0
-IEkndmUgZm91bmQgZnJvbSB5b3VyIHRyYWNlIGFyZToKPj4gwqA+IC0gdGhlcmUgYXJlIHR3byBm
-aWxlcyAoaW5vPTE3NjkwLCBpbm89MTc2OTEpIHdoaWNoIHNoYXJlZCB0aGUgZGF0YSBsb2cuCj4+
-IMKgPiAtIGlubz0xNzY5MCB3cml0ZXMgZGF0YSBzZXF1ZW50aWFsbGx5LCBhbmQgaW5vPTE3Njkx
-IHdyaXRlcyBzbWFsbCBkYXRhIHJhbmRvbWx5Lgo+PiDCoD4gLSBpbm89MTc2OTAgd3JpdGVzIG1p
-c2FsaWduZWQgNEtCIGJsb2NrcyBhdCBldmVyeSBhcm91bmQgMjk2S0Igd2hpY2ggcHJvZHVjZXMK
-Pj4gwqA+IMKgZGlydHkgc2VnbWVudHMuCj4+IMKgPgo+PiDCoD4gQ291bGQgeW91IGNoZWNrIGFs
-bCB0aGUgd3JpdGVzIGFuZCB0cnVuY2F0aW9uIGluIHlvdXIgYXBwIGFyZSBhbGlnbmVkIHRvIDRL
-Qj8KPj4gwqA+IEFuZCwgaWYgaW5vPTE3NjkxIGlzIHNxbGl0ZSwgaXQgbmVlZHMgdG8gY2hlY2sg
-d2hldGhlciBpdCBpcyByZWFhbHkgdXNpbmcgb3RoZXIKPj4gwqA+IGRhdGEgbG9nLgo+Pgo+PiDC
-oEkgY29sbGVjdGVkIG1vcmUgbG9ncyBmcm9tIGJvdGgga2VybmVsIHRyYWNpbmcgYW5kIHN0cmFj
-ZSBhbmQgdHJpZWQgdG8gZ2V0IG1vcmUKPj4gwqB1bmRlcnN0YW5kaW5nIG9mIHRoaXMuIEkgdGhp
-bmssIEkgZ2V0IHdoYXQncyB3cm9uZyBub3cuCj4+Cj4+IMKgaW5vPTE3NjkwIGlzIGEgdmlkZW8g
-ZmlsZS4gaW5vPTE3NjkxIGlzIG5vdCBTUUxpdGUsIGl0IGlzIGFuIGluZGV4IGZpbGUuIEl0IGlz
-IHdyaXR0ZW4KPj4gwqAyNCBieXRlcyBwZXIgZnJhbWUuIEhlcmUgaXMgYSBzbWFsbCBwaWVjZSBv
-ZiBzdHJhY2UgbG9nIGZvciB3cml0aW5nIGEgc2luZ2xlIGZyYW1lOgo+Pgo+PiDCoHdyaXRlKDE5
-LCAiLi4uIiwgNCkgPSA0Cj4+IMKgd3JpdGUoMTksICIuLi4iLCA0KSA9IDQKPj4gwqB3cml0ZSgx
-OSwgIi4uLiIsIDI0MzIpID0gMjQzMgo+PiDCoHdyaXRlKDIwLCAiLi4uIiwgMjQpID0gMjQKPj4K
-Pj4gwqBGaXJzdCB0aHJlZSB3cml0ZXMgYXJlIHdyaXRpbmcgdG8gYSB2aWRlbyBmaWxlICg0IGJ5
-dGUgc3RyZWFtIGlkLCB0aGVuIDQgYnl0ZSBsZW5ndGgKPj4gwqBhbmQgdGhlbiB0aGUgYWN0dWFs
-IGZyYW1lKSwgdGhlbiB0aGUgZm91cnRoIG9uZSB3cml0ZXMgdG8gYW5kIGluZGV4IGZpbGUuIFll
-cywgSSBrbm93LAo+PiDCoHRoaXMgbG9va3MgdWdseS4gOikKPj4gwqBBbGwgdGhlIHdyaXRlcyBh
-cmUgbm90IGFsaWduZWQgdG8gNDA5NiwgYnV0IHRoZXJlIGFyZSBubyB0cnVuY2F0aW9ucywgb25s
-eQo+PiDCoGFwcGVuZGluZy4KPj4KPj4gwqBUaGVuLCBJIHRoaW5rLCBJIHNlZSBmMmZzIHdvcmtl
-ciB0aHJlYWQgd2FrZXMgdXAgYWJvdXQgZXZlcnkgdHdvIHNlY29uZHMgdG8KPj4gwqB3cml0ZSBk
-aXJ0eSBwYWdlcy4gVW5mb3J0dW5hdGVseSBpdCBzZWVtcyB0byB3cml0ZSBldmVyeXRoaW5nIGNv
-bGxlY3RlZCBzbyBmYXIsIGV2ZW4KPj4gwqB0aGUgbW9zdCByZWNlbnQgcGFnZXMsIHdoaWNoIGFy
-ZSBub3QgZnVsbHkgZmlsbGVkIHlldC4gSSdkIHNheSB0aGF0IGNhbiBub3QgYmUKPj4gwqBleHBl
-Y3RlZCwgdGhhdCBldmVyeSBhcHAgd2lsbCB3cml0ZSBkYXRhIGFsaWduZWQgdG8gNDA5NiBieXRl
-cy4gU28gdGhpcyBtZWFucwo+PiDCoG1vcmUgb3ZlcmhlYWQgYW5kIG92ZXJ3cml0ZXMgZXZlbiBp
-biBhIG1vcmUgZ2VuZXJhbCBjYXNlLiBJcyBpdCBkaWZmZXJlbnQgaW4KPj4gwqBtb2RlPWFkYXB0
-aXZlPwo+Cj4gTm8sIHRoZSBmbHVzaGluZyB0aW1lIGlzIGNvbnRyb2xsZWQgYnkgdm0sIGFuZCB5
-b3UgY2FuIHR1bmUgdGhhdCB0aHJvdWdoIHByb2MuCj4gQW5kLCBJTU8sIGV2ZW4gaWYgdGhvc2Ug
-YXJlIGFwcGVuZC1vbmx5LCBpdCdkIGJlIHdvcnRoIHRvIHNwbGl0IGluZGV4IGFuZCBtZWRpYQo+
-IGZpbGVzIGludG8gZGlmZmVyZW50IGxvZ3M7IGl0IHNlZW1zIHVzaW5nIHRoZSBjb2xkIGxvZyBm
-b3IgbWVkaWEgZmlsZSBvbmx5IHdvdWxkCj4gYmUgcmVjb21tZW5kYWJsZS4KPgo+PiDCoFRoZSAy
-OTZLQiBzaXplLCBwcm9iYWJseSwgY29tZXMgZnJvbSBteSBiaXRyYXRlLCB3aGljaCBpcyBhYm91
-dCAxNDJLQi9zLCB0aW1lcwo+PiDCoDIgc2Vjb25kcy4gSXQgaXMgcm91Z2hseSB0aGUgcmlnaHQg
-c2l6ZS4KPj4gwqBNeSB2aWRlbyBGUFMgaXMgYWJvdXQgMzAsIHNvIHRoZSBzaXplIG9mIGRhdGEs
-IHdyaXR0ZW4gdG8gYW4gaW5kZXgsIGlzIGFib3V0IDE0NDAKPj4gwqBpbiB0d28gc2Vjb25kcy4g
-VGhpcyBpcyB3aHkgaXQgbG9va3MgbGlrZSByYW5kb3cgd3JpdGVzLCBJIHRoaW5rLgo+Pgo+PiDC
-oEFsc28gSSBzZWUgZnJvbSBteSBuZXcgdHJhY2VzLCB0aGF0IGYyZnNfc3VibWl0X3dyaXRlX2Jp
-byBmb3Igb3RoZXIgaW5vZGVzCj4+IMKgYXJlIHdyaXRpbmcgdG8gY29tcGxldGVseSBkaWZmZXJl
-bnQgc2VjdG9ycy4gTG9va3MgbGlrZSB0aGUgImNvbGQiIGRhdGEgZmVhdHVyZQo+PiDCoGlzIHdv
-cmtpbmcgZ29vZC4KPj4KPj4gwqBUbyBjb25jbHVkZToKPj4gwqAxLiBJIHRoaW5rIEkgY2FuIGxl
-YXZlIGV2ZXJ5dGhpbmcgYXMgaXMgYmVjYXVzZSAoMSkgdGhlcmUgaXMgYSBzbWFsbCBudW1iZXIg
-b2YKPj4gwqByZXdyaXRlcyBhbmQgKDIpIEkgc3RhcnQgcm90YXRpbmcgdGhlIGFyY2hpdmUgYXQg
-OTUlIHV0aWxpemF0aW9uIHNvIGdpdmVuIHRoZSB0aW55Cj4+IMKgYW1vdW50IG9mIGRhdGEgaW4g
-aW5kZXggYW5kIHNxbGl0ZSBmaWxlcywgdGhpcyBzaG91bGQgYmUgb2ssIEkgaG9wZS4KPgo+IElm
-IGJvdGggb2YgaW5kZXggYW5kIG1lZGlhIGZpbGVzIGFyZSBkZWxldGVkIGJlZm9yZSBzdWZmZXJp
-bmcgZnJvbSBjbGVhbmluZywKPiBJTU8sIGl0J2QgYmUgZmluZS4gWW91IGNhbiBjaGVjayB0aGUg
-Y2xlYW5pbmcgaW5mb3JtYXRpb24gaW4gc3RhdHVzIGZpbGUuCj4KPj4gwqAyLiBCdXQgSSdkIGJl
-dHRlciB3cml0ZSBib3RoIHZpZGVvIGFuZCBpbmRleCBmaWxlcyBhdCA0MDk2IGJvdW5kYXJ5Lgo+
-PiDCoDMuIE9yIHRoaXMgc2hvdWxkIGJlIGZpeGVkIGluIGYyZnMuIEkgdGhpbmssIHRoZXJlIHNo
-b3VsZCBiZSBhIGNvbmZpZ3VyYWJsZSBhbW91bnQKPj4gwqBvZiB0aW1lIHRvIHdhaXQgZm9yIGRp
-cnR5IHBhZ2UgdG8gZXhwaXJlLiBJdCBzaG91bGQgYmUgd3JpdHRlbiBvbmx5IGFmdGVyIGV4cGly
-YXRpb24uCj4+IMKgVW5sZXNzIGEgdXNlciBjYWxscyBmc3luYygpIG9mIGNvdXJzZS4gSXMgdGhl
-cmUgc3VjaCBhIHR1bmFibGU/Cj4+Cj4+IMKgRG9lcyB0aGlzIG1ha2Ugc2Vuc2U/Cj4KPiBZZWFo
-LCBJIHRoaW5rIHlvdSBjYW4gdHVuZSBmbHVzaGluZyB0aW1pbmcgdGhyb3VnaCBwcm9jIGVudHJp
-ZXMuCj4gKGUuZy4sIC9wcm9jL3N5cy92bS9kaXJ0eV93cml0ZWJhY2tfY2VudGlzZWNzKQoKQWZ0
-ZXIgc2VhcmNoaW5nIGZvciBtb3JlIGluZm9ybWF0aW9uIGFib3V0IHdoYXQgL3Byb2Mvc3lzL3Zt
-L2RpcnR5XyoKb3B0aW9ucyBkbywgSSBmb3VuZCB0aGlzIGVtYWlsOiBodHRwczovL2xrbWwub3Jn
-L2xrbWwvMjAxMy85LzEwLzYwMwpOb3cgSSB1bmRlcnN0YW5kIHdoeSB0aGUgZmx1c2ggdGhyZWFk
-IHdyaXRlcyBldmVuIHZlcnkgcmVjZW50IHBhZ2VzLgpJIHdhcyB1bmRlciBhIHdyb25nIGltcHJl
-c3Npb24sIHRoYXQgaXQgY2hlY2tzIHRpbWVzdGFtcHMgb24gYSBwZXIgcGFnZQpiYXNpcywgbm90
-IHBlciBpbm9kZS4gU28gSSB0aG91Z2h0LCB0aGF0IGYyZnMgZG9lcyBpdCBkaWZmZXJlbnRseS4g
-OikgU29ycnkuCgpXZWxsLCBsb29rcyBsaWtlIHRoaXMgY2FzZSBpcyBub3cgY29tcGxldGVseSBj
-bGVhciB0byBldmVyeW9uZS4gUHJvYmFibHksCkkgc2hvdWxkIHdyaXRlIGFuIGFydGljbGUgYWJv
-dXQgdHVuaW5nIGYyZnMgZm9yIHRoaXMgdHlwZSBvZiB3b3JrbG9hZC4gOikKClRoYW5rIHlvdSB2
-ZXJ5IG11Y2ggZm9yIGFsbCB0aGUgaGVscCEKCi0twqAKIEFsZXhhbmRlcgoKLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291
-cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZv
-L2xpbnV4LWYyZnMtZGV2ZWwK
+On Fri, Sep 02, 2016 at 03:33:33PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2016/8/27 8:53, Jaegeuk Kim wrote:
+> > This can avoid bio splits due to different op_flags.
+> 
+> I thought about this, but I think this is not a good idea to increase merging
+> ratio of pages in bio. It breaks the rule of SYNC/ASYNC IO defined by system
+> which indicate degree of IO emergency, finally, some/more non-emergent IO will
+> treated as emergent one by IO scheduler, it will interrupt SYNC IOs in block
+> layer, more seriously, it may make real SYNC IO starvation.
+
+I understand your concern.
+Originally, I tried to avoid breaking a big WRITE_SYNC by a small number of
+WRITE. And, I thought new WRITE can be piggybacked into previous WRITE_SYNC.
+
+IMO, this happens very occassionally since previous pending bio should be
+WRITE_SYNC while a new request is WRITE. Even if this happens, the piggybacked
+size would not exceed over bio's max pages.
+If lots of WRITE come, we won't change at all.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/data.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 7c8e219..c7c2022 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -267,6 +267,11 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+> >  
+> >  	down_write(&io->io_rwsem);
+> >  
+> > +	/* WRITE can be merged into previous WRITE_SYNC */
+> > +	if (io->bio && io->last_block_in_bio == fio->new_blkaddr - 1 &&
+> > +			io->fio.op == fio->op && io->fio.op_flags == WRITE_SYNC)
+> > +		fio->op_flags = WRITE_SYNC;
+> > +
+> >  	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+> >  	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags)))
+> >  		__submit_merged_bio(io);
+> > 
