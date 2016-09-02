@@ -1,50 +1,97 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: merge WRITE bio into previous WRITE_SYNC
-Date: Fri, 2 Sep 2016 15:33:33 +0800
-Message-ID: <10d2270d-6226-a269-c8a4-75bedfd0364c@huawei.com>
-References: <20160827005358.91477-1-jaegeuk@kernel.org>
+From: Alexander Gordeev <alex@gordick.net>
+Subject: Re: video archive on a microSD card
+Date: Fri, 02 Sep 2016 15:05:10 +0300
+Message-ID: <225181472817910@web16m.yandex.ru>
+References: <1184081471518295@web5m.yandex.ru> <20160819024105.GA64207@jaegeuk>
+	<39941471627359@web1m.yandex.ru> <35301472489424@web15m.yandex.ru>
+	<20160829180020.GF94184@jaegeuk> <592891472633520@web8m.yandex.ru>
+	<20160831234633.GA17031@jaegeuk> <118511472751607@web30h.yandex.ru>
+	<20160901182509.GA20281@jaegeuk>
+	<116081472758656@web21j.yandex.ru> <20160901201555.GC20281@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160827005358.91477-1-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <alex@gordick.net>) id 1bfnDk-0005rA-5A
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 02 Sep 2016 12:05:20 +0000
+Received: from forward3m.cmail.yandex.net ([5.255.216.21])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bfnDi-0006a0-Iy
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 02 Sep 2016 12:05:20 +0000
+In-Reply-To: <20160901201555.GC20281@jaegeuk>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-Hi Jaegeuk,
-
-On 2016/8/27 8:53, Jaegeuk Kim wrote:
-> This can avoid bio splits due to different op_flags.
-
-I thought about this, but I think this is not a good idea to increase merging
-ratio of pages in bio. It breaks the rule of SYNC/ASYNC IO defined by system
-which indicate degree of IO emergency, finally, some/more non-emergent IO will
-treated as emergent one by IO scheduler, it will interrupt SYNC IOs in block
-layer, more seriously, it may make real SYNC IO starvation.
-
-Thanks,
-
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/data.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 7c8e219..c7c2022 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -267,6 +267,11 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
->  
->  	down_write(&io->io_rwsem);
->  
-> +	/* WRITE can be merged into previous WRITE_SYNC */
-> +	if (io->bio && io->last_block_in_bio == fio->new_blkaddr - 1 &&
-> +			io->fio.op == fio->op && io->fio.op_flags == WRITE_SYNC)
-> +		fio->op_flags = WRITE_SYNC;
-> +
->  	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
->  	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags)))
->  		__submit_merged_bio(io);
-> 
+SGkgSmFlZ2V1aywKCjAxLjA5LjIwMTYsIDIzOjE2LCAiSmFlZ2V1ayBLaW0iIDxqYWVnZXVrQGtl
+cm5lbC5vcmc+Ogo+IE9uIFRodSwgU2VwIDAxLCAyMDE2IGF0IDEwOjM3OjM2UE0gKzAzMDAsIEFs
+ZXhhbmRlciBHb3JkZWV2IHdyb3RlOgo+PiDCoEhpICwKPj4KPj4gwqAwMS4wOS4yMDE2LCAyMToy
+NSwgIkphZWdldWsgS2ltIiA8amFlZ2V1a0BrZXJuZWwub3JnPjoKPj4gwqA+IEhlbGxvLAo+PiDC
+oD4KPj4gwqA+IE9uIFRodSwgU2VwIDAxLCAyMDE2IGF0IDA4OjQwOjA3UE0gKzAzMDAsIEFsZXhh
+bmRlciBHb3JkZWV2IHdyb3RlOgo+PiDCoD4gLi4uCj4+IMKgPj4gwqA+PiDCoFsgNDkuMjc0Njc4
+XSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KPj4gwqA+PiDCoD4+IMKgWyA0
+OS4yODAyMTZdIFdBUk5JTkc6IGF0IC9ob21lL2FsZXgvd29yay9zMmwvYW1iX1MybF9TREtfMi41
+L1NESzIuNS9zMmxfbGludXhfc2RrL2FtYmFyZWxsYS9rZXJuZWwvbGludXgtMy4xMC9mcy9mMmZz
+L3NlZ21lbnQuYzoxMTA1IG5ld19jdXJzZWcrMHgyNjgvMHgzOTQgW2YyZnNdKCkKPj4gwqA+PiDC
+oD4KPj4gwqA+PiDCoD4gVGhpcyBtZWFucyB0aGVyZSBpcyBubyBmcmVlIHNlZ21lbnQuCj4+IMKg
+Pj4gwqA+IENvdWxkIHlvdSBwcmludCBvdXQgdGhlIGJlbG93IGluZm9ybWF0aW9uIGJlZm9yZSB0
+aGlzIGYyZnNfYnVnX29uPwo+PiDCoD4+IMKgPiAtIHByZWZyZWVfc2VnbWVudHMoc2JpKQo+PiDC
+oD4+IMKgPiAtIGZyZWVfc2VnbWVudHMoc2JpKQo+PiDCoD4+IMKgPgo+PiDCoD4+IMKgPj4gwqAu
+Li4KPj4gwqA+PiDCoD4+IMKgWyA0OS41MTgwNTRdIC0tLVsgZW5kIHRyYWNlIDQ5ZGNhNDYyYjRm
+OTg4ZmYgXS0tLQo+PiDCoD4+IMKgPj4gwqBbIDQ5LjUyMjY4OV0gLS0tLS0tLS0tLS0tWyBjdXQg
+aGVyZSBdLS0tLS0tLS0tLS0tCj4+IMKgPj4gwqA+PiDCoFsgNDkuNTI3Mzc1XSBXQVJOSU5HOiBh
+dCAvaG9tZS9hbGV4L3dvcmsvczJsL2FtYl9TMmxfU0RLXzIuNS9TREsyLjUvczJsX2xpbnV4X3Nk
+ay9hbWJhcmVsbGEva2VybmVsL2xpbnV4LTMuMTAvZnMvZjJmcy9zZWdtZW50LmM6MTE0NCBuZXdf
+Y3Vyc2VnKzB4MmYwLzB4Mzk0IFtmMmZzXSgpCj4+IMKgPj4gwqA+Cj4+IMKgPj4gwqA+IFRoaXMg
+aXMgY2F1c2VkIGJ5IHRoZSBhYm92ZSBzZWdubyB3aGljaCB3YXMgLTEuCj4+IMKgPj4gwqA+Cj4+
+IMKgPj4gwqA+PiDCoC4uLgo+PiDCoD4+IMKgPj4gwqBbIDQ5Ljc2NDg1M10gLS0tWyBlbmQgdHJh
+Y2UgNDlkY2E0NjJiNGY5ODkwMCBdLS0tCj4+IMKgPj4gwqA+PiDCoFsgNDkuODU3MzQ0XSAtLS0t
+LS0gc2Vnbm8gPSA3NTQwLCBuZXh0X2Jsa29mZiA9IDAsIG5leHRfc2Vnbm8gPSA0Mjk0OTY3Mjk1
+IC0tLS0tLS0tCj4+IMKgPj4gwqA+PiDCoFsgNDkuOTEzNjY0XSAtLS0tLS0gYmxrYWRkciA9IDM4
+ODkxNTIgLS0tLS0tLS0KPj4gwqA+PiDCoD4+IMKgWyA0OS45MTgxNzNdIFVuYWJsZSB0byBoYW5k
+bGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdCB2aXJ0dWFsIGFkZHJlc3MgMDAw
+MDAwMDAKPj4gwqA+PiDCoD4KPj4gwqA+PiDCoD4gQWxzbywgd2UgY2FuIHNlZSBuZXh0X3NlZ25v
+IHdhcyAtMSwgd2hpY2ggaW5jdXIgbm8gc2UgZW50cnkgZm9yIHRoaXMgc2VnbWVudC4KPj4gwqA+
+PiDCoD4gQXQgdGhpcyBtb21lbnQsIEknZCByZWFsbHkgbGlrZSB0byBzZWUgaXRzIC9zeXMva2Vy
+bmVsL2RlYnVnL2YyZnMvc3RhdHVzIHdoZXRoZXIKPj4gwqA+PiDCoD4gdGhlcmUgaXMgcmVhbGx5
+IG5vdCBlbm91Z2ggZnJlZSBzZWdtZW50cy4KPj4gwqA+Pgo+PiDCoD4+IMKgSSBjb2xsZWN0ZWQg
+Ym90aCAvc3lzL2tlcm5lbC9kZWJ1Zy9mMmZzL3N0YXR1cyBhbmQgbnVtYmVycyBvZiBibG9ja3Mu
+Cj4+IMKgPj4gwqBUaGUgb29wcyBoYXBwZW5zIG9ubHkgd2hlbiBJIHRyeSB0byBkZWxldGUgYW55
+dGhpbmcuIEFsc28gaXQgY2FuIGJlIGNhdXNlZAo+PiDCoD4+IMKgYnkgR0MsIGJ1dCBJIHR1cm5l
+ZCBiYWNrZ3JvdW5kIEdDIG9mZi4gU28gSSBtb3VudGVkIHRoZSBmcywgZHVtcGVkIHRoZSBzdGF0
+dXMKPj4gwqA+PiDCoGFuZCB0aGVuIHRyaWVkIHRvIHJlbW92ZSBhIGZpbGUuIEhlcmUgaXMgd2hh
+dCBJIGdvdDoKPj4gwqA+Pgo+PiDCoD4+IMKgPT09PT1bIHBhcnRpdGlvbiBpbmZvKHNkYSkuICMw
+LCBSV109PT09PQo+PiDCoD4+IMKgW1NCOiAxXSBbQ1A6IDJdIFtTSVQ6IDJdIFtOQVQ6IDM0XSBb
+U1NBOiAxNl0gW01BSU46IDc1NDAoT3ZlclByb3Y6NDI0IFJlc3Y6NTApXQo+PiDCoD4KPj4gwqA+
+IENvdWxkIHlvdSBjaGVjayB5b3VyIG1rZnMuZjJmcyB2ZXJzaW9uPwo+PiDCoD4gSSB3YW50IHRv
+IGNoZWNrIG92cCBhbmQgcmVzdiBudW1iZXJzLgo+Pgo+PiDCoEkgY3VycmVudGx5IHVzZWQgbWtm
+cy5mMmZzIGZyb20gbXkgYm9hcmQncyBTREsuIEl0IHByaW50cyB0aGlzOgo+PiDCoEYyRlMtdG9v
+bHM6IG1rZnMuZjJmcyBWZXI6IDEuNC4xICgyMDE1LTAzLTA0KQo+Pgo+PiDCoFNob3VsZCBJIHVw
+Z3JhZGUgaXQ/Cj4+IMKgSSB0aGluayB0aGUgcHJvYmxlbSB3aWxsIGdvIGF3YXkgaWYgSSByZWNy
+ZWF0ZSB0aGUgRlMuIEF0IHRoZSBtb21lbnQKPj4gwqBpdCByZXByb2R1Y2VzIGV2ZXJ5IHRpbWUu
+IEkgd29uZGVyIGlmIHdlIG5lZWQgaXQgYWdhaW4uCj4KPiBZZXMsIHBsZWFzZSB1cGdyYWRlIHRv
+IHRoZSBsYXRlc3QgdmVyc2lvbiB0byBtYWtlIHN1cmUuCj4gQW5kLCBpdCBuZWVkcyB0byBmb3Jt
+YXQgaXQgYWdhaW4uCj4gU2VlbXMgdGhlcmUgaXMgbm8gZnVydGhlciBpbmZvcm1hdGlvbiB0aGF0
+IHdlIGNhbiB1c2UgZnJvbSB0aGUgb2xkIHBhcnRpdGlvbi4KCk9rLCB0aGFua3MhIEkgdXBncmFk
+ZWQgZjJmcy10b29scyBhbmQgcmVjcmVhdGVkIHRoZSBGUy4gV29ya3MgZmluZSBzbyBmYXIhClN0
+aWxsIElNSE8gdGhpcyBtaWdodCBiZSBhIHByb2JsZW0sIGlmIHNvbWVvbmUgd2l0aCBhIHNwZWNp
+YWxseSBjcmFmdGVkIEZTIG9uIGEgVVNCCnN0aWNrIGNhbiBjYXVzZSBhIGtlcm5lbCBvb3BzIG9u
+IGFueSBtb2Rlcm4gTGludXggc3lzdGVtLiBJc24ndCBpdD8KCi0twqAKIEFsZXhhbmRlcgoKLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxA
+bGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3Rz
+L2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
