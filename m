@@ -1,65 +1,65 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: fix minor typo
-Date: Mon, 5 Sep 2016 12:28:26 +0800
-Message-ID: <20160905042827.114632-1-yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: fix to detect temporary name of multimedia file
+Date: Mon, 5 Sep 2016 12:28:27 +0800
+Message-ID: <20160905042827.114632-2-yuchao0@huawei.com>
+References: <20160905042827.114632-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1bglWs-0004Xp-Dy
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 05 Sep 2016 04:29:06 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1bglWo-0003FX-Or
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 05 Sep 2016 04:29:06 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160905042827.114632-1-yuchao0@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Correct typo from 'destory' to 'destroy'.
+Some applications may create multimeida file with temporary name like
+'*.jpg.tmp' or '*.mp4.tmp', then rename to '*.jpg' or '*.mp4'.
 
+Now, f2fs can only detect multimedia filename with specified format:
+"filename + '.' + extension", so it will make f2fs missing to detect
+multimedia file with special temporary name, result in failing to set
+cold flag on file.
+
+This patch enhances detection flow for enabling lookup extension in the
+middle of temporary filename.
+
+Reported-by: Xue Liu <liuxueliu.liu@huawei.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/namei.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 93c5e26..ff4b723 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2678,7 +2678,7 @@ int __init create_segment_manager_caches(void)
- 	bio_entry_slab = f2fs_kmem_cache_create("bio_entry",
- 			sizeof(struct bio_entry));
- 	if (!bio_entry_slab)
--		goto destory_discard_entry;
-+		goto destroy_discard_entry;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 73fa356..bfcd9da 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -91,18 +91,23 @@ static int is_multimedia_file(const unsigned char *s, const char *sub)
+ {
+ 	size_t slen = strlen(s);
+ 	size_t sublen = strlen(sub);
++	int i;
  
- 	sit_entry_set_slab = f2fs_kmem_cache_create("sit_entry_set",
- 			sizeof(struct sit_entry_set));
-@@ -2695,7 +2695,7 @@ destroy_sit_entry_set:
- 	kmem_cache_destroy(sit_entry_set_slab);
- destroy_bio_entry:
- 	kmem_cache_destroy(bio_entry_slab);
--destory_discard_entry:
-+destroy_discard_entry:
- 	kmem_cache_destroy(discard_entry_slab);
- fail:
- 	return -ENOMEM;
+ 	/*
+ 	 * filename format of multimedia file should be defined as:
+-	 * "filename + '.' + extension".
++	 * "filename + '.' + extension + (optional: '.' + temp extension)".
+ 	 */
+ 	if (slen < sublen + 2)
+ 		return 0;
+ 
+-	if (s[slen - sublen - 1] != '.')
+-		return 0;
++	for (i = 1; i < slen - sublen; i++) {
++		if (s[i] != '.')
++			continue;
++		if (!strncasecmp(s + i + 1, sub, sublen))
++			return 1;
++	}
+ 
+-	return !strncasecmp(s + slen - sublen, sub, sublen);
++	return 0;
+ }
+ 
+ /*
 -- 
 2.8.2.311.gee88674
-
-
-------------------------------------------------------------------------------
