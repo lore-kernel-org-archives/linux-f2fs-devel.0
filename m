@@ -1,65 +1,90 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] f2fs: check free_sections for defragmentation
-Date: Wed, 7 Sep 2016 21:35:30 +0800
-Message-ID: <33559c8d-fa39-219c-fff5-18e5586957e7@kernel.org>
-References: <20160901204605.21448-1-jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: merge WRITE bio into previous WRITE_SYNC
+Date: Wed, 7 Sep 2016 22:12:17 +0800
+Message-ID: <9c35b994-620f-b633-f3db-4e0622f09cd7@kernel.org>
+References: <20160827005358.91477-1-jaegeuk@kernel.org>
+ <10d2270d-6226-a269-c8a4-75bedfd0364c@huawei.com>
+ <20160902183658.GA917@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1bhd13-0000jl-2o
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 07 Sep 2016 13:35:49 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bhd12-0000j4-5y
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 07 Sep 2016 13:35:49 +0000
-In-Reply-To: <20160901204605.21448-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20160902183658.GA917@jaegeuk>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-On 2016/9/2 4:46, Jaegeuk Kim wrote:
-> Fix wrong condition check for defragmentation of a file.
+On 2016/9/3 2:36, Jaegeuk Kim wrote:
+> On Fri, Sep 02, 2016 at 03:33:33PM +0800, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2016/8/27 8:53, Jaegeuk Kim wrote:
+>>> This can avoid bio splits due to different op_flags.
+>>
+>> I thought about this, but I think this is not a good idea to increase merging
+>> ratio of pages in bio. It breaks the rule of SYNC/ASYNC IO defined by system
+>> which indicate degree of IO emergency, finally, some/more non-emergent IO will
+>> treated as emergent one by IO scheduler, it will interrupt SYNC IOs in block
+>> layer, more seriously, it may make real SYNC IO starvation.
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> I understand your concern.
+> Originally, I tried to avoid breaking a big WRITE_SYNC by a small number of
+
+Hmm.. I'm worry about the opposite case: user triggers small WRITE_SYNC IO
+periodically, meanwhile there are big number of WRITE, with our new approach,
+actually we will increase the number of synchronous WRITE IO obviously because
+we will mix ASYNC/SYNC WRITE into bio cache intensively more than before since
+we drop writepages mutexlock. So I'm afread the result is that it will mislead
+scheduling of block layer.
+
+> WRITE. And, I thought new WRITE can be piggybacked into previous WRITE_SYNC.
 > 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 37c24be..a8aa6fd 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2037,7 +2037,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
->  	 * avoid defragment running in SSR mode when free section are allocated
->  	 * intensively
->  	 */
-> -	if (has_not_enough_free_secs(sbi, sec_num)) {
-> +	if (free_sections(sbi) <= sec_num) {
+> IMO, this happens very occassionally since previous pending bio should be
+> WRITE_SYNC while a new request is WRITE. Even if this happens, the piggybacked
+> size would not exceed over bio's max pages.
+> If lots of WRITE come, we won't change at all.
 
-Why don't we check dirty dentry/node/imeta blocks here? they will be generated
-at any time after f2fs_balance_fs. So, isn't original condition more strict than
-new one?
+I thinks this is related to writeback / blocklayer / cgroup subsystem which use
+this tag frequently, maybe we should Cc their's mailing list for more opinion...
 
-Thanks,
+What's your opinion? :)
 
->  		err = -EAGAIN;
->  		goto out;
->  	}
+thanks,
+
 > 
-
-------------------------------------------------------------------------------
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/data.c | 5 +++++
+>>>  1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 7c8e219..c7c2022 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -267,6 +267,11 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+>>>  
+>>>  	down_write(&io->io_rwsem);
+>>>  
+>>> +	/* WRITE can be merged into previous WRITE_SYNC */
+>>> +	if (io->bio && io->last_block_in_bio == fio->new_blkaddr - 1 &&
+>>> +			io->fio.op == fio->op && io->fio.op_flags == WRITE_SYNC)
+>>> +		fio->op_flags = WRITE_SYNC;
+>>> +
+>>>  	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+>>>  	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags)))
+>>>  		__submit_merged_bio(io);
+>>>
+> 
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
