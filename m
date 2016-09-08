@@ -1,112 +1,57 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: merge WRITE bio into previous WRITE_SYNC
-Date: Fri, 9 Sep 2016 00:09:28 +0800
-Message-ID: <8c635c13-e0eb-5d29-d7c2-1edb9f75d6af@kernel.org>
-References: <20160827005358.91477-1-jaegeuk@kernel.org>
- <10d2270d-6226-a269-c8a4-75bedfd0364c@huawei.com>
- <20160902183658.GA917@jaegeuk>
- <9c35b994-620f-b633-f3db-4e0622f09cd7@kernel.org>
- <20160908002615.GC14665@jaegeuk>
+From: Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH] fscrypto: add authorization check for setting encryption
+ policy
+Date: Thu, 8 Sep 2016 11:20:56 -0700
+Message-ID: <20160908182056.GC132970@google.com>
+References: <1473357429-134444-1-git-send-email-ebiggers@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160908002615.GC14665@jaegeuk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1473357429-134444-1-git-send-email-ebiggers@google.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu, jaegeuk@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2016/9/8 8:26, Jaegeuk Kim wrote:
-> On Wed, Sep 07, 2016 at 10:12:17PM +0800, Chao Yu wrote:
->> On 2016/9/3 2:36, Jaegeuk Kim wrote:
->>> On Fri, Sep 02, 2016 at 03:33:33PM +0800, Chao Yu wrote:
->>>> Hi Jaegeuk,
->>>>
->>>> On 2016/8/27 8:53, Jaegeuk Kim wrote:
->>>>> This can avoid bio splits due to different op_flags.
->>>>
->>>> I thought about this, but I think this is not a good idea to increase merging
->>>> ratio of pages in bio. It breaks the rule of SYNC/ASYNC IO defined by system
->>>> which indicate degree of IO emergency, finally, some/more non-emergent IO will
->>>> treated as emergent one by IO scheduler, it will interrupt SYNC IOs in block
->>>> layer, more seriously, it may make real SYNC IO starvation.
->>>
->>> I understand your concern.
->>> Originally, I tried to avoid breaking a big WRITE_SYNC by a small number of
->>
->> Hmm.. I'm worry about the opposite case: user triggers small WRITE_SYNC IO
->> periodically, meanwhile there are big number of WRITE, with our new approach,
->> actually we will increase the number of synchronous WRITE IO obviously because
->> we will mix ASYNC/SYNC WRITE into bio cache intensively more than before since
->> we drop writepages mutexlock. So I'm afread the result is that it will mislead
->> scheduling of block layer.
->>
->>> WRITE. And, I thought new WRITE can be piggybacked into previous WRITE_SYNC.
->>>
->>> IMO, this happens very occassionally since previous pending bio should be
->>> WRITE_SYNC while a new request is WRITE. Even if this happens, the piggybacked
->>> size would not exceed over bio's max pages.
->>> If lots of WRITE come, we won't change at all.
->>
->> I thinks this is related to writeback / blocklayer / cgroup subsystem which use
->> this tag frequently, maybe we should Cc their's mailing list for more opinion...
+(Fixing Cc list: the F2FS mailing list is
+linux-f2fs-devel@lists.sourceforge.net, not linux-f2fs@vger.kernel.org.)
+
+On Thu, Sep 08, 2016 at 10:57:08AM -0700, Eric Biggers wrote:
+> On an ext4 or f2fs filesystem with file encryption supported, a user
+> could set an encryption policy on any empty directory(*) to which they
+> had readonly access.  This is obviously problematic, since such a
+> directory might be owned by another user and the new encryption policy
+> would prevent that other user from creating files in their own directory
+> (for example).
 > 
-> Except cgroup, since we do not support it yet. :P
-
-Yeap.
-
+> Fix this by requiring inode_owner_or_capable() permission to set an
+> encryption policy.  This means that either the caller must own the file,
+> or the caller must have the capability CAP_FOWNER.
 > 
-> Anyway, I think we'd better verify the effect of this for a while.
-> For example, I'm able to write a simple program to measure fsync latency while
-> a bunch of buffered writes.
-> Meanwhile, I'll put it back to the end of dev-test repo. :)
-
-Sounds good plan. Hoping we will not suffer from regression here. ;)
-
-Thanks,
-
+> (*) Or also on any regular file, for f2fs v4.6 and later and ext4
+>     v4.8-rc1 and later; a separate bug fix is coming for that.
 > 
-> Thanks,
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Cc: stable@vger.kernel.org # 4.1+; check fs/{ext4,f2fs}
+> ---
+>  fs/crypto/policy.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
->>
->> What's your opinion? :)
->>
->> thanks,
->>
->>>
->>> Thanks,
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>> ---
->>>>>  fs/f2fs/data.c | 5 +++++
->>>>>  1 file changed, 5 insertions(+)
->>>>>
->>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>> index 7c8e219..c7c2022 100644
->>>>> --- a/fs/f2fs/data.c
->>>>> +++ b/fs/f2fs/data.c
->>>>> @@ -267,6 +267,11 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
->>>>>  
->>>>>  	down_write(&io->io_rwsem);
->>>>>  
->>>>> +	/* WRITE can be merged into previous WRITE_SYNC */
->>>>> +	if (io->bio && io->last_block_in_bio == fio->new_blkaddr - 1 &&
->>>>> +			io->fio.op == fio->op && io->fio.op_flags == WRITE_SYNC)
->>>>> +		fio->op_flags = WRITE_SYNC;
->>>>> +
->>>>>  	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
->>>>>  	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags)))
->>>>>  		__submit_merged_bio(io);
->>>>>
->>>
->>> ------------------------------------------------------------------------------
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->>>
+> diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+> index 0f9961e..c9800b1 100644
+> --- a/fs/crypto/policy.c
+> +++ b/fs/crypto/policy.c
+> @@ -95,6 +95,9 @@ static int create_encryption_context_from_policy(struct inode *inode,
+>  int fscrypt_process_policy(struct inode *inode,
+>  				const struct fscrypt_policy *policy)
+>  {
+> +	if (!inode_owner_or_capable(inode))
+> +		return -EACCES;
+> +
+>  	if (policy->version != 0)
+>  		return -EINVAL;
+>  
+> -- 
+> 2.8.0.rc3.226.g39d4020
+> 
