@@ -1,90 +1,71 @@
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: merge WRITE bio into previous WRITE_SYNC
-Date: Wed, 7 Sep 2016 22:12:17 +0800
-Message-ID: <9c35b994-620f-b633-f3db-4e0622f09cd7@kernel.org>
-References: <20160827005358.91477-1-jaegeuk@kernel.org>
- <10d2270d-6226-a269-c8a4-75bedfd0364c@huawei.com>
- <20160902183658.GA917@jaegeuk>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: forbid to do fstrim if fs has some
+	error
+Date: Wed, 7 Sep 2016 17:02:25 -0700
+Message-ID: <20160908000225.GA14665@jaegeuk>
+References: <1472696079-7063-1-git-send-email-heyunlei@huawei.com>
+	<177e0232-b89b-1540-f315-c1ca6a92e3ba@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20160902183658.GA917@jaegeuk>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bhmnb-0008Al-JU
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Sep 2016 00:02:35 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bhmna-0000Mv-JJ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 08 Sep 2016 00:02:35 +0000
+Content-Disposition: inline
+In-Reply-To: <177e0232-b89b-1540-f315-c1ca6a92e3ba@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>
+Cc: heyunlei@huwei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2016/9/3 2:36, Jaegeuk Kim wrote:
-> On Fri, Sep 02, 2016 at 03:33:33PM +0800, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> On 2016/8/27 8:53, Jaegeuk Kim wrote:
->>> This can avoid bio splits due to different op_flags.
->>
->> I thought about this, but I think this is not a good idea to increase merging
->> ratio of pages in bio. It breaks the rule of SYNC/ASYNC IO defined by system
->> which indicate degree of IO emergency, finally, some/more non-emergent IO will
->> treated as emergent one by IO scheduler, it will interrupt SYNC IOs in block
->> layer, more seriously, it may make real SYNC IO starvation.
+On Wed, Sep 07, 2016 at 09:24:31PM +0800, Chao Yu wrote:
+> Hi Yunlei,
 > 
-> I understand your concern.
-> Originally, I tried to avoid breaking a big WRITE_SYNC by a small number of
-
-Hmm.. I'm worry about the opposite case: user triggers small WRITE_SYNC IO
-periodically, meanwhile there are big number of WRITE, with our new approach,
-actually we will increase the number of synchronous WRITE IO obviously because
-we will mix ASYNC/SYNC WRITE into bio cache intensively more than before since
-we drop writepages mutexlock. So I'm afread the result is that it will mislead
-scheduling of block layer.
-
-> WRITE. And, I thought new WRITE can be piggybacked into previous WRITE_SYNC.
+> On 2016/9/1 10:14, Yunlei He wrote:
+> > This patch skip fstrim if sbi set SBI_NEED_FSCK flag
+> > 
+> > Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> > ---
+> >  fs/f2fs/segment.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 93c5e26..1b62213 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1353,6 +1353,9 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+> >  	if (end <= MAIN_BLKADDR(sbi))
+> >  		goto out;
+> >  
+> > +	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+> > +		goto out;
 > 
-> IMO, this happens very occassionally since previous pending bio should be
-> WRITE_SYNC while a new request is WRITE. Even if this happens, the piggybacked
-> size would not exceed over bio's max pages.
-> If lots of WRITE come, we won't change at all.
+> IMO, it's better to check this condition in f2fs_ioc_fstrim, and return error
+> number to user, such as EIO?
 
-I thinks this is related to writeback / blocklayer / cgroup subsystem which use
-this tag frequently, maybe we should Cc their's mailing list for more opinion...
+I don't think it's an error case such as EIO, ENOMEM, EINVAL, and so on.
+Instead, It'd be okay to return trimmed size with zero.
+Oh, we'd better give a message to notify like this?
 
-What's your opinion? :)
+	f2fs_msg(sbi->sb, KERN_WARNING,
+		"Found FS corruption, run fsck to fix.");
 
-thanks,
+Thanks,
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/data.c | 5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index 7c8e219..c7c2022 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -267,6 +267,11 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
->>>  
->>>  	down_write(&io->io_rwsem);
->>>  
->>> +	/* WRITE can be merged into previous WRITE_SYNC */
->>> +	if (io->bio && io->last_block_in_bio == fio->new_blkaddr - 1 &&
->>> +			io->fio.op == fio->op && io->fio.op_flags == WRITE_SYNC)
->>> +		fio->op_flags = WRITE_SYNC;
->>> +
->>>  	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
->>>  	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags)))
->>>  		__submit_merged_bio(io);
->>>
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+------------------------------------------------------------------------------
