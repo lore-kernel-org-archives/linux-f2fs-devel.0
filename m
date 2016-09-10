@@ -1,195 +1,104 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: walk around a panic caused by nrpages
- is not zero in clear_inode
-Date: Fri, 9 Sep 2016 18:27:49 -0700
-Message-ID: <20160910012749.GA33194@jaegeuk>
-References: <1473124652-31921-1-git-send-email-heyunlei@huawei.com>
-	<20160907014705.GC10307@jaegeuk>
-	<28bd8111-d4ec-4340-3909-d0bcd3886c90@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1biX5M-000097-2i
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 10 Sep 2016 01:28:00 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1biX5K-0006IN-BI
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 10 Sep 2016 01:27:59 +0000
-Content-Disposition: inline
-In-Reply-To: <28bd8111-d4ec-4340-3909-d0bcd3886c90@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>
-Cc: heyunlei@huwei.com, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH 1/2] f2fs: add common iget in add_fsync_inode
+Date: Fri,  9 Sep 2016 18:45:31 -0700
+Message-ID: <20160910014532.33372-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yunlei,
+There is no functional change.
 
-I just finished to understand how your 4.1 looks like.
-Could you please merge the below patches in terms of roll-forward recovery?
-When I tested with the closest 4.1 that I can make, I could see several bugs
-specially in the error handling paths.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/recovery.c | 43 +++++++++++++++++--------------------------
+ 1 file changed, 17 insertions(+), 26 deletions(-)
 
-1. f2fs: factor out fsync inode entry operations
-2. f2fs: fix inode cache leak
-3. f2fs: report error for f2fs_parent_dir
-4. f2fs: fix to report error number of f2fs_find_entry
-5. f2fs: propagate error given by f2fs_find_entry
-6. f2fs: fix to do security initialization of encrypted inode with original filename
-7. f2fs: add roll-forward recovery process for encrypted dentry
-
-I'll post the below patches soon.
-
-8. f2fs: add common iget in add_fsync_inode
-9. f2fs: avoid ENOMEM during roll-forward recovery
-
-Thanks,
-
-On Wed, Sep 07, 2016 at 10:14:56AM +0800, heyunlei wrote:
-> 
-> Hi, kim
-> On 2016/9/7 9:47, Jaegeuk Kim wrote:
-> > On Tue, Sep 06, 2016 at 09:17:32AM +0800, Yunlei He wrote:
-> > > I came across a panic twice:
-> > > 
-> > > [<ffffffc000088e70>] dump_backtrace+0x0/0x124
-> > > [<ffffffc000088fb4>] show_stack+0x14/0x1c
-> > > [<ffffffc000ce1c38>] dump_stack+0x20/0x28
-> > > [<ffffffc000cdfbd4>] panic+0x13c/0x258
-> > > [<ffffffc0001b2244>] clear_inode+0x8c/0xd4
-> > > [<ffffffc00030575c>] f2fs_evict_inode+0x194/0x3e0
-> > > [<ffffffc0001b30b4>] evict+0xa0/0x1cc
-> > > [<ffffffc0001b399c>] iput+0xe4/0x180
-> > > [<ffffffc0003274fc>] recover_fsync_data+0x6ec/0xe5c
-> > > [<ffffffc00030d420>] f2fs_fill_super+0xa5c/0xb9c
-> > > [<ffffffc00019cd00>] mount_bdev+0x1ac/0x1d4
-> > > [<ffffffc00030b66c>] f2fs_mount+0x14/0x1c
-> > > [<ffffffc00019d5e4>] mount_fs+0x3c/0x1bc
-> > > [<ffffffc0001b7560>] vfs_kern_mount+0x4c/0xf0
-> > > [<ffffffc0001b9970>] do_mount+0x218/0x960
-> > > [<ffffffc0001ba148>] SyS_mount+0x90/0xd0
-> > 
-> > Hmm, could you share the previous recovery messages?
-> 
-> Here is the previous recovery message:
-> 
-> <5>[    8.929199s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4e8, name = packages.xml
-> <5>[    8.930267s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4e8, name = packages.xml, dir = 8d, err = 0
-> <5>[    8.930572s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4e8, recovered = 85 blocks, err = 0
-> <5>[    8.930603s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4e9, name = packages.list.tmp
-> <5>[    8.930603s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4e9, name = packages.list.tmp, dir = 8d, err = 0
-> <5>[    8.930633s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4e9, recovered = 2 blocks, err = 0
-> <5>[    8.930664s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4ea, name = package-restrictions.xml
-> <5>[    8.931243s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4ea, name = package-restrictions.xml, dir = 1a3, err = 0
-> <5>[    8.931243s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4ea, recovered = 0 blocks, err = 0
-> <5>[    8.931274s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 23e, recovered = 0 blocks, err = 0
-> <5>[    8.931274s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 23e, name = entropy.dat
-> <5>[    8.931274s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 23e, recovered = 0 blocks, err = 0
-> <5>[    8.931304s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4eb, name = accounts.xml
-> <5>[    8.931884s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4eb, name = accounts.xml, dir = 248, err = 0
-> <5>[    8.931915s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4eb, recovered = 0 blocks, err = 0
-> <5>[    8.931915s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4ec, name = status.bin
-> <5>[    8.932098s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4ec, name = status.bin, dir = 248, err = 0
-> <5>[    8.932128s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4ec, recovered = 0 blocks, err = 0
-> <5>[    8.932128s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 24b, name = pending.xml
-> <5>[    8.932159s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 24b, recovered = 0 blocks, err = 0
-> <5>[    8.932159s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4ed, name = stats.bin
-> <5>[    8.932342s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4ed, name = stats.bin, dir = 248, err = 0
-> <5>[    8.932373s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4ed, recovered = 0 blocks, err = 0
-> <5>[    8.932373s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4ee, name = runtime-permissions.xml
-> <5>[    8.932556s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4ee, name = runtime-permissions.xml, dir = 1a3, err = 0
-> <5>[    8.932586s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4ee, recovered = 3 blocks, err = 0
-> <5>[    8.932617s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4ef, name = .temp.0TNPDd
-> <5>[    8.932922s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4ef, name = .temp.0TNPDd, dir = 7e, err = 0
-> <5>[    8.932952s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4ef, recovered = 0 blocks, err = 0
-> <5>[    8.932952s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4f0, name = packages.xml
-> <5>[    8.933013s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4f0, name = packages.xml, dir = 8d, err = 0
-> <5>[    8.933105s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4f0, recovered = 85 blocks, err = 0
-> <5>[    8.933135s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4f2, name = packages.list.tmp
-> <5>[    8.933166s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4f2, name = packages.list.tmp, dir = 8d, err = 0
-> <5>[    8.933197s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4f2, recovered = 2 blocks, err = 0
-> <5>[    8.933197s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4f4, name = package-restrictions.xml
-> <5>[    8.933227s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4f4, name = package-restrictions.xml, dir = 1a3, err = 0
-> <5>[    8.933258s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4f4, recovered = 0 blocks, err = 0
-> <5>[    8.933258s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4f8, name = runtime-permissions.xml
-> <5>[    8.933288s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4f8, name = runtime-permissions.xml, dir = 1a3, err = 0
-> <5>[    8.933319s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4f8, recovered = 3 blocks, err = 0
-> <5>[    8.933349s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4f9, name = .temp.t7N4AT
-> <5>[    8.933349s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4f9, name = .temp.t7N4AT, dir = 7e, err = 0
-> <5>[    8.933380s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4f9, recovered = 0 blocks, err = 0
-> <5>[    8.933715s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4fa, name = journal-1732203582.tmp, dir = 26c, err = 0
-> <5>[    8.933715s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4fa, recovered = 0 blocks, err = 0
-> <5>[    8.933746s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4fa, recovered = 0 blocks, err = 0
-> <5>[    8.933746s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4fa, recovered = 0 blocks, err = 0
-> <5>[    8.933746s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4fa, name = journal-1732203582.tmp
-> <5>[    8.933746s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4fa, recovered = 0 blocks, err = 0
-> <5>[    8.933776s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4fd, name = .temp.rIQKTq
-> <5>[    8.933776s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4fd, name = .temp.rIQKTq, dir = 7e, err = 0
-> <5>[    8.933807s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4fd, recovered = 0 blocks, err = 0
-> <5>[    8.933807s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4fe, name = com.android.keyguard_preferences.xml
-> <5>[    8.934295s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4fe, name = com.android.keyguard_preferences.xml, dir = 2a1, err = 0
-> <5>[    8.934326s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4fe, recovered = 0 blocks, err = 0
-> <5>[    8.934326s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 4ff, name = com.android.keyguard_preferences.xml
-> <5>[    8.934356s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_dentry: ino = 4ff, name = com.android.keyguard_preferences.xml, dir = 2a1, err = 0
-> <5>[    8.934387s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_data: ino = 4ff, recovered = 0 blocks, err = 0
-> <5>[    8.934387s][pid:263,cpu4,init]F2FS-fs (mmcblk0p42): recover_inode: ino = 500, name = com.android.providers.media_preferences.xml
-> <4>[    8.934844s][pid:263,cpu4,init]BUG: failure at /fs/inode.c:511/clear_inode()!
-> 
-> one file named com.android.keyguard_preferences.xml enter recover_dentry twice with different ino(4fe vs 4ff).
-> Maybe this error happened when deleted entry previous recovered.
-> 
-> Thanks.
-> 
-> 
-> > In the truncation part, f2fs_evict_inode starts with setting i_size to zero.
-> > So, the only possible way would be caused by enabled cache_only given by an
-> > inline_data case. But the assumption is that inode must have more than 2
-> > i_blocks, which is not normal case though.
-> > 
-> > Can we gather more information to narrow down the root cause?
-> > 
-> > BTW, I found that the below grab_cache_page() should be find_lock_page() to
-> > check its cached page only.
-> > 
-> > > From a584542d25e7dfc91af53a8f4a4866b939d29fef Mon Sep 17 00:00:00 2001
-> > From: Jaegeuk Kim <jaegeuk@kernel.org>
-> > Date: Tue, 6 Sep 2016 15:55:54 -0700
-> > Subject: [PATCH] f2fs: avoid page allocation for truncating partial
-> >  inline_data
-> > 
-> > When truncating cached inline_data, we don't need to allocate a new page
-> > all the time. Instead, it must check its page cache only.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/file.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index a8aa6fd..0144ed4 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -562,7 +562,7 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
-> >  		return 0;
-> > 
-> >  	if (cache_only) {
-> > -		page = f2fs_grab_cache_page(mapping, index, false);
-> > +		page = find_lock_page(mapping, index);
-> >  		if (page && PageUptodate(page))
-> >  			goto truncate_out;
-> >  		f2fs_put_page(page, 1);
-> > 
-
-------------------------------------------------------------------------------
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index ba0fc2e..12692777 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -68,14 +68,20 @@ static struct fsync_inode_entry *get_fsync_inode(struct list_head *head,
+ 	return NULL;
+ }
+ 
+-static struct fsync_inode_entry *add_fsync_inode(struct list_head *head,
+-							struct inode *inode)
++static struct fsync_inode_entry *add_fsync_inode(struct f2fs_sb_info *sbi,
++					struct list_head *head, nid_t ino)
+ {
++	struct inode *inode = f2fs_iget(sbi->sb, ino);
+ 	struct fsync_inode_entry *entry;
+ 
++	if (IS_ERR(inode))
++		return ERR_CAST(inode);
++
+ 	entry = kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+-	if (!entry)
+-		return NULL;
++	if (!entry) {
++		iput(inode);
++		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	entry->inode = inode;
+ 	list_add_tail(&entry->list, head);
+@@ -105,16 +111,10 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
+ 
+ 	entry = get_fsync_inode(dir_list, pino);
+ 	if (!entry) {
+-		dir = f2fs_iget(inode->i_sb, pino);
+-		if (IS_ERR(dir)) {
+-			err = PTR_ERR(dir);
+-			goto out;
+-		}
+-
+-		entry = add_fsync_inode(dir_list, dir);
+-		if (!entry) {
+-			err = -ENOMEM;
+-			iput(dir);
++		entry = add_fsync_inode(F2FS_I_SB(inode), dir_list, pino);
++		if (IS_ERR(entry)) {
++			dir = ERR_CAST(entry);
++			err = PTR_ERR(entry);
+ 			goto out;
+ 		}
+ 	}
+@@ -228,7 +228,6 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ {
+ 	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
+ 	struct curseg_info *curseg;
+-	struct inode *inode;
+ 	struct page *page = NULL;
+ 	block_t blkaddr;
+ 	int err = 0;
+@@ -266,23 +265,15 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ 			 * CP | dnode(F) | inode(DF)
+ 			 * For this case, we should not give up now.
+ 			 */
+-			inode = f2fs_iget(sbi->sb, ino_of_node(page));
+-			if (IS_ERR(inode)) {
+-				err = PTR_ERR(inode);
++			entry = add_fsync_inode(sbi, head, ino_of_node(page));
++			if (IS_ERR(entry)) {
++				err = PTR_ERR(entry);
+ 				if (err == -ENOENT) {
+ 					err = 0;
+ 					goto next;
+ 				}
+ 				break;
+ 			}
+-
+-			/* add this fsync inode to the list */
+-			entry = add_fsync_inode(head, inode);
+-			if (!entry) {
+-				err = -ENOMEM;
+-				iput(inode);
+-				break;
+-			}
+ 		}
+ 		entry->blkaddr = blkaddr;
+ 
+-- 
+2.8.3
