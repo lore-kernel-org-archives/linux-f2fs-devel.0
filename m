@@ -1,41 +1,50 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: [GIT PULL] fscrypto fixes for 4.8-rc6
-Date: Sat, 10 Sep 2016 01:36:43 -0400
-Message-ID: <20160910053643.3hkypkiuxfmra7yd@thunk.org>
+From: Valerie <valeriesimon@lola-aventure.com>
+Subject: =?utf-8?q?Comment_avez-vous_rencontr=C3=A9e?=
+Date: Sun, 11 Sep 2016 10:27:16 +0000
+Message-ID: <a304404838e5e9a27aecf5771421f5eb@lola-aventure.com>
+Reply-To: Valerie <valeriesimon@lola-aventure.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <valeriesimon@lola-aventure.com>) id 1bj1yt-00012l-He
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 11 Sep 2016 10:27:23 +0000
+Received: from [89.163.161.60] (helo=mxs.lola-aventure.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bj1yr-0003WX-EY
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 11 Sep 2016 10:27:23 +0000
+Received: from [192.168.0.112] (webmail[81.163.161.62])
+	by mxs.lola-aventure.com (Postfix) with ESMTP id 2A659293118
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sun, 11 Sep 2016 13:27:15 +0300 (EEST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-The following changes since commit c6935931c1894ff857616ff8549b61236a19148f:
-
-  Linux 4.8-rc5 (2016-09-04 14:31:46 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/for_linus_stable
-
-for you to fetch changes up to ba63f23d69a3a10e7e527a02702023da68ef8a6d:
-
-  fscrypto: require write access to mount to set encryption policy (2016-09-10 01:18:57 -0400)
-
-----------------------------------------------------------------
-Fix some brown-paper-bag bugs for fscrypto, including one one which
-allows a malicious user to set an encryption policy on an empty
-directory which they do not own.
-
-----------------------------------------------------------------
-Eric Biggers (3):
-      fscrypto: add authorization check for setting encryption policy
-      fscrypto: only allow setting encryption policy on directories
-      fscrypto: require write access to mount to set encryption policy
-
- fs/crypto/policy.c       | 41 +++++++++++++++++++++++++++++------------
- fs/ext4/ioctl.c          |  2 +-
- fs/f2fs/file.c           |  9 +--------
- include/linux/fscrypto.h |  5 ++---
- 4 files changed, 33 insertions(+), 24 deletions(-)
+IE91aSBq4oCZYWltZSBs4oCZYWR1bHTDqHJlLiBKZSBs4oCZYWltZSBwbHVzIHF1ZSB0b3V0LCBj
+YXIgaWwgaW1wbGlxdWUgw6AgbGEgZm9pcyBsZXMgbGllbnMgZHUgbWFyaWFnZSBldCBkZXMgc2F1
+dGVyaWVzIGRlcyBwbHVzIGTDqWxpY2lldXNlcy4gCkxlIHRvdXQgYXZlYyBkZXMgcGVyc29ubmVz
+IHF1aSBjb21tZSBtb2kgc29udCBtYXJpw6llcyAhISEgCkplIG5lIG1lIGTDqWZpbmlyYWl0IHBh
+cyBjb21tZSBsaWLDqXLDqWUsIGrigJllbW1lcmRlIGxlcyBmw6ltaW5pc3RlcywgamUgc3VpcyBq
+dXN0ZSB1bmUgam91aXNzZXVzZS4KLWxlYW1hbnRlLmNvbQoKVm9pbMOgIGzigJllbmRyb2l0IG/D
+uSBkZXMgZmVtbWVzIHBvc3QtbW9kZXJuZXMgY29tbWUgbW9pIHPDqXZpc3NlbnQgOiAgICAgICAt
+bGVhbWFudGUuY29tCgoKTm91cyBpbnZpdG9ucyB0b3V0ZSBwZXJzb25uZSBuZSBzb3VoYWl0YW50
+IHBsdXMgcmVjZXZvaXIgZGUgY291cnJpZWwgZGUgbm90cmUgcGFydCDDoCB1dGlsaXNlciBsZSBs
+aWVuIHN1aXZhbnQgOiAtbGVhbWFudGUuY29tL2Rlc2luc2NyaXB0aW9uLmh0bWwKCi0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3Rz
+LnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0
+aW5mby9saW51eC1mMmZzLWRldmVsCg==
