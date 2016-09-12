@@ -1,8 +1,7 @@
-From: Eric Biggers <ebiggers@google.com>
-Subject: [PATCH] fscrypto: improved validation when loading inode
-	encryption metadata
-Date: Mon, 12 Sep 2016 12:24:00 -0700
-Message-ID: <1473708240-39880-1-git-send-email-ebiggers@google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: handle error in recover_orphan_inode
+Date: Mon, 12 Sep 2016 15:32:15 -0700
+Message-ID: <20160912223215.40862-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,17 +9,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ebiggers@google.com>) id 1bjWr7-00047p-9Y
+	(envelope-from <jaegeuk@kernel.org>) id 1bjZm9-00015b-SD
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Sep 2016 19:25:25 +0000
-Received: from mail-pa0-f43.google.com ([209.85.220.43])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1bjWr6-0002Qj-Bi
+	Mon, 12 Sep 2016 22:32:29 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bjZm8-0001jR-W8
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Sep 2016 19:25:25 +0000
-Received: by mail-pa0-f43.google.com with SMTP id le4so96368pab.1
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 12 Sep 2016 12:25:24 -0700 (PDT)
+	Mon, 12 Sep 2016 22:32:29 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,185 +26,57 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fsdevel@vger.kernel.org
-Cc: jaegeuk@kernel.org, linux-ext4@vger.kernel.org, tytso@mit.edu, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-- Validate fscrypt_context.format and fscrypt_context.flags.  If
-  unrecognized values are set, then the kernel may not know how to
-  interpret the encrypted file, so it should fail the operation.
+This patch enhances the error path in recover_orphan_inode.
 
-- Validate that AES_256_XTS is used for contents and that AES_256_CTS is
-  used for filenames.  It was previously possible for the kernel to
-  accept these reversed, though it would have taken manual editing of
-  the block device.  This was not intended.
-
-- Fail cleanly rather than BUG()-ing if a file has an unexpected type.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/crypto/keyinfo.c      | 68 ++++++++++++++++++++++++++++++++----------------
- include/linux/fscrypto.h | 24 -----------------
- 2 files changed, 45 insertions(+), 47 deletions(-)
+ fs/f2fs/checkpoint.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
-index 1ac263e..b5374ef 100644
---- a/fs/crypto/keyinfo.c
-+++ b/fs/crypto/keyinfo.c
-@@ -139,6 +139,38 @@ out:
- 	return res;
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index b80dd37..36073a1 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -531,8 +531,9 @@ void remove_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ {
+ 	struct inode *inode;
++	struct node_info ni;
+ 
+-	inode = f2fs_iget(sbi->sb, ino);
++	inode = f2fs_iget_retry(sbi->sb, ino);
+ 	if (IS_ERR(inode)) {
+ 		/*
+ 		 * there should be a bug that we can't find the entry
+@@ -546,6 +547,23 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ 
+ 	/* truncate all the data during iput */
+ 	iput(inode);
++
++	get_node_info(sbi, ino, &ni);
++
++	/* ENOMEM was fully retried in f2fs_evict_inode. */
++	if (ni.blk_addr != NULL_ADDR) {
++		int err = acquire_orphan_inode(sbi);
++
++		if (err) {
++			set_sbi_flag(sbi, SBI_NEED_FSCK);
++			f2fs_msg(sbi->sb, KERN_WARNING,
++				"%s: orphan failed (ino=%x), run fsck to fix.",
++					__func__, ino);
++			return err;
++		}
++		__add_ino_entry(sbi, ino, ORPHAN_INO);
++		alloc_nid_done(sbi, ino);
++	}
+ 	return 0;
  }
  
-+static int determine_cipher_type(struct fscrypt_info *ci, struct inode *inode,
-+				 const char **cipher_str_ret, int *keysize_ret)
-+{
-+	if (S_ISREG(inode->i_mode)) {
-+		if (ci->ci_data_mode == FS_ENCRYPTION_MODE_AES_256_XTS) {
-+			*cipher_str_ret = "xts(aes)";
-+			*keysize_ret = FS_AES_256_XTS_KEY_SIZE;
-+			return 0;
-+		}
-+		pr_warn_once("fscrypto: unsupported contents encryption mode "
-+			     "%d for inode %lu\n",
-+			     ci->ci_data_mode, inode->i_ino);
-+		return -ENOKEY;
-+	}
-+
-+	if (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) {
-+		if (ci->ci_filename_mode == FS_ENCRYPTION_MODE_AES_256_CTS) {
-+			*cipher_str_ret = "cts(cbc(aes))";
-+			*keysize_ret = FS_AES_256_CTS_KEY_SIZE;
-+			return 0;
-+		}
-+		pr_warn_once("fscrypto: unsupported filenames encryption mode "
-+			     "%d for inode %lu\n",
-+			     ci->ci_filename_mode, inode->i_ino);
-+		return -ENOKEY;
-+	}
-+
-+	pr_warn_once("fscrypto: unsupported file type %d for inode %lu\n",
-+		     (inode->i_mode & S_IFMT), inode->i_ino);
-+	return -ENOKEY;
-+}
-+
- static void put_crypt_info(struct fscrypt_info *ci)
- {
- 	if (!ci)
-@@ -155,8 +187,8 @@ int get_crypt_info(struct inode *inode)
- 	struct fscrypt_context ctx;
- 	struct crypto_skcipher *ctfm;
- 	const char *cipher_str;
-+	int keysize;
- 	u8 raw_key[FS_MAX_KEY_SIZE];
--	u8 mode;
- 	int res;
- 
- 	res = fscrypt_initialize();
-@@ -179,13 +211,19 @@ retry:
- 	if (res < 0) {
- 		if (!fscrypt_dummy_context_enabled(inode))
- 			return res;
-+		ctx.format = FS_ENCRYPTION_CONTEXT_FORMAT_V1;
- 		ctx.contents_encryption_mode = FS_ENCRYPTION_MODE_AES_256_XTS;
- 		ctx.filenames_encryption_mode = FS_ENCRYPTION_MODE_AES_256_CTS;
- 		ctx.flags = 0;
- 	} else if (res != sizeof(ctx)) {
- 		return -EINVAL;
- 	}
--	res = 0;
-+
-+	if (ctx.format != FS_ENCRYPTION_CONTEXT_FORMAT_V1)
-+		return -EINVAL;
-+
-+	if (ctx.flags & ~FS_POLICY_FLAGS_VALID)
-+		return -EINVAL;
- 
- 	crypt_info = kmem_cache_alloc(fscrypt_info_cachep, GFP_NOFS);
- 	if (!crypt_info)
-@@ -198,27 +236,11 @@ retry:
- 	crypt_info->ci_keyring_key = NULL;
- 	memcpy(crypt_info->ci_master_key, ctx.master_key_descriptor,
- 				sizeof(crypt_info->ci_master_key));
--	if (S_ISREG(inode->i_mode))
--		mode = crypt_info->ci_data_mode;
--	else if (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode))
--		mode = crypt_info->ci_filename_mode;
--	else
--		BUG();
--
--	switch (mode) {
--	case FS_ENCRYPTION_MODE_AES_256_XTS:
--		cipher_str = "xts(aes)";
--		break;
--	case FS_ENCRYPTION_MODE_AES_256_CTS:
--		cipher_str = "cts(cbc(aes))";
--		break;
--	default:
--		printk_once(KERN_WARNING
--			    "%s: unsupported key mode %d (ino %u)\n",
--			    __func__, mode, (unsigned) inode->i_ino);
--		res = -ENOKEY;
-+
-+	res = determine_cipher_type(crypt_info, inode, &cipher_str, &keysize);
-+	if (res)
- 		goto out;
--	}
-+
- 	if (fscrypt_dummy_context_enabled(inode)) {
- 		memset(raw_key, 0x42, FS_AES_256_XTS_KEY_SIZE);
- 		goto got_key;
-@@ -253,7 +275,7 @@ got_key:
- 	crypt_info->ci_ctfm = ctfm;
- 	crypto_skcipher_clear_flags(ctfm, ~0);
- 	crypto_skcipher_set_flags(ctfm, CRYPTO_TFM_REQ_WEAK_KEY);
--	res = crypto_skcipher_setkey(ctfm, raw_key, fscrypt_key_size(mode));
-+	res = crypto_skcipher_setkey(ctfm, raw_key, keysize);
- 	if (res)
- 		goto out;
- 
-diff --git a/include/linux/fscrypto.h b/include/linux/fscrypto.h
-index cfa6cde..00813c2 100644
---- a/include/linux/fscrypto.h
-+++ b/include/linux/fscrypto.h
-@@ -111,23 +111,6 @@ struct fscrypt_completion_result {
- 	struct fscrypt_completion_result ecr = { \
- 		COMPLETION_INITIALIZER((ecr).completion), 0 }
- 
--static inline int fscrypt_key_size(int mode)
--{
--	switch (mode) {
--	case FS_ENCRYPTION_MODE_AES_256_XTS:
--		return FS_AES_256_XTS_KEY_SIZE;
--	case FS_ENCRYPTION_MODE_AES_256_GCM:
--		return FS_AES_256_GCM_KEY_SIZE;
--	case FS_ENCRYPTION_MODE_AES_256_CBC:
--		return FS_AES_256_CBC_KEY_SIZE;
--	case FS_ENCRYPTION_MODE_AES_256_CTS:
--		return FS_AES_256_CTS_KEY_SIZE;
--	default:
--		BUG();
--	}
--	return 0;
--}
--
- #define FS_FNAME_NUM_SCATTER_ENTRIES	4
- #define FS_CRYPTO_BLOCK_SIZE		16
- #define FS_FNAME_CRYPTO_DIGEST_SIZE	32
-@@ -202,13 +185,6 @@ static inline bool fscrypt_valid_filenames_enc_mode(u32 mode)
- 	return (mode == FS_ENCRYPTION_MODE_AES_256_CTS);
- }
- 
--static inline u32 fscrypt_validate_encryption_key_size(u32 mode, u32 size)
--{
--	if (size == fscrypt_key_size(mode))
--		return size;
--	return 0;
--}
--
- static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
- {
- 	if (str->len == 1 && str->name[0] == '.')
 -- 
-2.8.0.rc3.226.g39d4020
+2.8.3
 
 
 ------------------------------------------------------------------------------
