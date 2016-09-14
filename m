@@ -1,58 +1,65 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [RFC PATCH] f2fs: preallocate blocks for encrypted file
-Date: Wed, 14 Sep 2016 18:06:55 +0800
-Message-ID: <1473847615-2793-1-git-send-email-heyunlei@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1bk743-0003LG-3E
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 14 Sep 2016 10:05:11 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1bk73z-0001Qi-IU
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 14 Sep 2016 10:05:11 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huwei.com
+From: Eric Biggers <ebiggers@google.com>
+Subject: [PATCH] fscrypto: remove unnecessary includes
+Date: Wed, 14 Sep 2016 13:57:12 -0700
+Message-ID: <1473886634-24627-1-git-send-email-ebiggers@google.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu, jaegeuk@kernel.org, Eric Biggers <ebiggers@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch allow preallocates data blocks for buffered aio writes
-in encrypted file.
+This patch removes some #includes that are clearly not needed, such as a
+reference to ecryptfs, which is unrelated to the new filesystem
+encryption code.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/f2fs/data.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/crypto/crypto.c  | 1 -
+ fs/crypto/fname.c   | 2 --
+ fs/crypto/keyinfo.c | 3 ---
+ 3 files changed, 6 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 3e0ef2d..529e9a2 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -639,9 +639,6 @@ ssize_t f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index c502c11..7c39eab 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -28,7 +28,6 @@
+ #include <linux/dcache.h>
+ #include <linux/namei.h>
+ #include <linux/fscrypto.h>
+-#include <linux/ecryptfs.h>
  
- 	map.m_next_pgofs = NULL;
+ static unsigned int num_prealloc_crypto_pages = 32;
+ static unsigned int num_prealloc_crypto_ctxs = 128;
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index 5d6d491..3108806 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -10,8 +10,6 @@
+  * This has not yet undergone a rigorous security audit.
+  */
  
--	if (f2fs_encrypted_inode(inode))
--		return 0;
--
- 	if (iocb->ki_flags & IOCB_DIRECT) {
- 		ret = f2fs_convert_inline_inode(inode);
- 		if (ret)
+-#include <keys/encrypted-type.h>
+-#include <keys/user-type.h>
+ #include <linux/scatterlist.h>
+ #include <linux/ratelimit.h>
+ #include <linux/fscrypto.h>
+diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+index 1ac263e..58b1c82 100644
+--- a/fs/crypto/keyinfo.c
++++ b/fs/crypto/keyinfo.c
+@@ -8,11 +8,8 @@
+  * Written by Michael Halcrow, Ildar Muslukhov, and Uday Savagaonkar, 2015.
+  */
+ 
+-#include <keys/encrypted-type.h>
+ #include <keys/user-type.h>
+-#include <linux/random.h>
+ #include <linux/scatterlist.h>
+-#include <uapi/linux/keyctl.h>
+ #include <linux/fscrypto.h>
+ 
+ static void derive_crypt_complete(struct crypto_async_request *req, int rc)
 -- 
-1.9.1
+2.8.0.rc3.226.g39d4020
 
-
-------------------------------------------------------------------------------
