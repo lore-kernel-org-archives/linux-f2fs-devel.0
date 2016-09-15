@@ -1,74 +1,242 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [RFC PATCH] f2fs: preallocate blocks for encrypted
- file
-Date: Wed, 14 Sep 2016 16:56:15 -0700
-Message-ID: <20160914235615.GA50095@jaegeuk>
-References: <1473847615-2793-1-git-send-email-heyunlei@huawei.com>
+Subject: Re: [PATCH] fscrypto: make filename crypto functions return 0 on
+ success
+Date: Wed, 14 Sep 2016 17:10:21 -0700
+Message-ID: <20160915001021.GB50095@jaegeuk>
+References: <1473894045-65215-1-git-send-email-ebiggers@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bkK2U-0007rn-Rr
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 14 Sep 2016 23:56:26 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bkK2T-0007mk-1g
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 14 Sep 2016 23:56:26 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ext4-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1473847615-2793-1-git-send-email-heyunlei@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
-Cc: heyunlei@huwei.com, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <1473894045-65215-1-git-send-email-ebiggers@google.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Eric Biggers <ebiggers@google.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Sep 14, 2016 at 06:06:55PM +0800, Yunlei He wrote:
-> This patch allow preallocates data blocks for buffered aio writes
-> in encrypted file.
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/data.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 3e0ef2d..529e9a2 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -639,9 +639,6 @@ ssize_t f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
->  
->  	map.m_next_pgofs = NULL;
->  
-> -	if (f2fs_encrypted_inode(inode))
-> -		return 0;
-> -
+Hi Eric,
 
-Then, it needs to remove the condition in prepare_write_begin() as well.
+On Wed, Sep 14, 2016 at 04:00:45PM -0700, Eric Biggers wrote:
+> Several filename crypto functions: fname_decrypt(),
+> fscrypt_fname_disk_to_usr(), and fscrypt_fname_usr_to_disk(), returned
+> the output length on success or -errno on failure.  However, the output
+> length was redundant with the value written to 'oname->len'.  It is also
+> potentially error-prone to make callers have to check for '< 0' instead
+> of '!= 0'.
+
+At a glance, you missed some places like
+- fscrypt_fname_usr_to_disk() in ext4_symlink() and f2fs_symlink()
+- fscrypt_fname_disk_to_usr() in dx_show_leaf() and f2fs_fill_dentries()
 
 Thanks,
 
->  	if (iocb->ki_flags & IOCB_DIRECT) {
->  		ret = f2fs_convert_inline_inode(inode);
->  		if (ret)
+> Therefore, make these functions return 0 instead of a length, and make
+> the callers who cared about the return value being a length use
+> 'oname->len' instead.
+> 
+> This change also fixes the inconsistency of fname_encrypt() actually
+> already returning 0 on success, not a length like the other filename
+> crypto functions and as documented in its function comment.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/crypto/fname.c | 52 ++++++++++++++++++++++++++++++----------------------
+>  fs/ext4/dir.c     |  5 +++--
+>  fs/ext4/symlink.c |  5 ++---
+>  fs/f2fs/namei.c   |  4 ++--
+>  4 files changed, 37 insertions(+), 29 deletions(-)
+> 
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 6bbc3b1..49fd564 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -35,11 +35,11 @@ static void fname_crypt_complete(struct crypto_async_request *req, int res)
+>  }
+>  
+>  /**
+> - * fname_encrypt() -
+> + * fname_encrypt() - encrypt a filename
+>   *
+> - * This function encrypts the input filename, and returns the length of the
+> - * ciphertext. Errors are returned as negative numbers.  We trust the caller to
+> - * allocate sufficient memory to oname string.
+> + * The caller must have allocated sufficient memory for the @oname string.
+> + *
+> + * Return: 0 on success, -errno on failure
+>   */
+>  static int fname_encrypt(struct inode *inode,
+>  			const struct qstr *iname, struct fscrypt_str *oname)
+> @@ -105,20 +105,22 @@ static int fname_encrypt(struct inode *inode,
+>  	}
+>  	kfree(alloc_buf);
+>  	skcipher_request_free(req);
+> -	if (res < 0)
+> +	if (res < 0) {
+>  		printk_ratelimited(KERN_ERR
+>  				"%s: Error (error code %d)\n", __func__, res);
+> +		return res;
+> +	}
+>  
+>  	oname->len = ciphertext_len;
+> -	return res;
+> +	return 0;
+>  }
+>  
+> -/*
+> - * fname_decrypt()
+> - *	This function decrypts the input filename, and returns
+> - *	the length of the plaintext.
+> - *	Errors are returned as negative numbers.
+> - *	We trust the caller to allocate sufficient memory to oname string.
+> +/**
+> + * fname_decrypt() - decrypt a filename
+> + *
+> + * The caller must have allocated sufficient memory for the @oname string.
+> + *
+> + * Return: 0 on success, -errno on failure
+>   */
+>  static int fname_decrypt(struct inode *inode,
+>  				const struct fscrypt_str *iname,
+> @@ -168,7 +170,7 @@ static int fname_decrypt(struct inode *inode,
+>  	}
+>  
+>  	oname->len = strnlen(oname->name, iname->len);
+> -	return oname->len;
+> +	return 0;
+>  }
+>  
+>  static const char *lookup_table =
+> @@ -279,6 +281,10 @@ EXPORT_SYMBOL(fscrypt_fname_free_buffer);
+>  /**
+>   * fscrypt_fname_disk_to_usr() - converts a filename from disk space to user
+>   * space
+> + *
+> + * The caller must have allocated sufficient memory for the @oname string.
+> + *
+> + * Return: 0 on success, -errno on failure
+>   */
+>  int fscrypt_fname_disk_to_usr(struct inode *inode,
+>  			u32 hash, u32 minor_hash,
+> @@ -287,13 +293,12 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
+>  {
+>  	const struct qstr qname = FSTR_TO_QSTR(iname);
+>  	char buf[24];
+> -	int ret;
+>  
+>  	if (fscrypt_is_dot_dotdot(&qname)) {
+>  		oname->name[0] = '.';
+>  		oname->name[iname->len - 1] = '.';
+>  		oname->len = iname->len;
+> -		return oname->len;
+> +		return 0;
+>  	}
+>  
+>  	if (iname->len < FS_CRYPTO_BLOCK_SIZE)
+> @@ -303,9 +308,9 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
+>  		return fname_decrypt(inode, iname, oname);
+>  
+>  	if (iname->len <= FS_FNAME_CRYPTO_DIGEST_SIZE) {
+> -		ret = digest_encode(iname->name, iname->len, oname->name);
+> -		oname->len = ret;
+> -		return ret;
+> +		oname->len = digest_encode(iname->name, iname->len,
+> +					   oname->name);
+> +		return 0;
+>  	}
+>  	if (hash) {
+>  		memcpy(buf, &hash, 4);
+> @@ -315,15 +320,18 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
+>  	}
+>  	memcpy(buf + 8, iname->name + iname->len - 16, 16);
+>  	oname->name[0] = '_';
+> -	ret = digest_encode(buf, 24, oname->name + 1);
+> -	oname->len = ret + 1;
+> -	return ret + 1;
+> +	oname->len = 1 + digest_encode(buf, 24, oname->name + 1);
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(fscrypt_fname_disk_to_usr);
+>  
+>  /**
+>   * fscrypt_fname_usr_to_disk() - converts a filename from user space to disk
+>   * space
+> + *
+> + * The caller must have allocated sufficient memory for the @oname string.
+> + *
+> + * Return: 0 on success, -errno on failure
+>   */
+>  int fscrypt_fname_usr_to_disk(struct inode *inode,
+>  			const struct qstr *iname,
+> @@ -333,7 +341,7 @@ int fscrypt_fname_usr_to_disk(struct inode *inode,
+>  		oname->name[0] = '.';
+>  		oname->name[iname->len - 1] = '.';
+>  		oname->len = iname->len;
+> -		return oname->len;
+> +		return 0;
+>  	}
+>  	if (inode->i_crypt_info)
+>  		return fname_encrypt(inode, iname, oname);
+> diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+> index 67415e0..4d4b910 100644
+> --- a/fs/ext4/dir.c
+> +++ b/fs/ext4/dir.c
+> @@ -260,11 +260,12 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
+>  					/* Directory is encrypted */
+>  					err = fscrypt_fname_disk_to_usr(inode,
+>  						0, 0, &de_name, &fstr);
+> +					de_name = fstr;
+>  					fstr.len = save_len;
+> -					if (err < 0)
+> +					if (err)
+>  						goto errout;
+>  					if (!dir_emit(ctx,
+> -					    fstr.name, err,
+> +					    de_name.name, de_name.len,
+>  					    le32_to_cpu(de->inode),
+>  					    get_dtype(sb, de->file_type)))
+>  						goto done;
+> diff --git a/fs/ext4/symlink.c b/fs/ext4/symlink.c
+> index 4d83d9e..55aaf30 100644
+> --- a/fs/ext4/symlink.c
+> +++ b/fs/ext4/symlink.c
+> @@ -67,14 +67,13 @@ static const char *ext4_encrypted_get_link(struct dentry *dentry,
+>  		goto errout;
+>  
+>  	res = fscrypt_fname_disk_to_usr(inode, 0, 0, &cstr, &pstr);
+> -	if (res < 0)
+> +	if (res)
+>  		goto errout;
+>  
+>  	paddr = pstr.name;
+>  
+>  	/* Null-terminate the name */
+> -	if (res <= pstr.len)
+> -		paddr[res] = '\0';
+> +	paddr[pstr.len] = '\0';
+>  	if (cpage)
+>  		put_page(cpage);
+>  	set_delayed_call(done, kfree_link, paddr);
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 73fa356..a5468c2 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -1048,7 +1048,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+>  		goto errout;
+>  
+>  	res = fscrypt_fname_disk_to_usr(inode, 0, 0, &cstr, &pstr);
+> -	if (res < 0)
+> +	if (res)
+>  		goto errout;
+>  
+>  	/* this is broken symlink case */
+> @@ -1060,7 +1060,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
+>  	paddr = pstr.name;
+>  
+>  	/* Null-terminate the name */
+> -	paddr[res] = '\0';
+> +	paddr[pstr.len] = '\0';
+>  
+>  	put_page(cpage);
+>  	set_delayed_call(done, kfree_link, paddr);
 > -- 
-> 1.9.1
-> 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
+> 2.8.0.rc3.226.g39d4020
