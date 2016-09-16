@@ -1,42 +1,65 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v2] fscrypto: make filename crypto functions return 0 on
- success
-Date: Thu, 15 Sep 2016 18:12:29 -0400
-Message-ID: <20160915221229.e25o5xw7bhbeixbe@thunk.org>
-References: <1473960529-29158-1-git-send-email-ebiggers@google.com>
- <20160915202401.GB52239@jaegeuk>
+From: Fan Li <fanofcode.li@samsung.com>
+Subject: query about usage of kmap_atomic
+Date: Fri, 16 Sep 2016 14:03:38 +0800
+Message-ID: <000001d20fe0$15f144f0$41d3ced0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160915202401.GB52239@jaegeuk>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Eric Biggers <ebiggers@google.com>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fanofcode.li@samsung.com>) id 1bkmFF-0001PH-P6
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 16 Sep 2016 06:03:29 +0000
+Received: from mailout4.samsung.com ([203.254.224.34])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1bkmFD-0004xq-OX
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 16 Sep 2016 06:03:29 +0000
+Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
+	by mailout4.samsung.com
+	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
+	2014)) with ESMTP id <0ODL02H1W25JB470@mailout4.samsung.com> for
+	linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 16 Sep 2016 15:03:19 +0900 (KST)
+Received: from lifan ([109.123.105.144])
+	by mmp2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
+	64bit
+	(built May 5 2014)) with ESMTPA id <0ODL008Z725BZD10@mmp2.samsung.com>
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 16 Sep 2016 15:03:19 +0900 (KST)
+Content-language: en-us
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Sep 15, 2016 at 01:24:01PM -0700, Jaegeuk Kim wrote:
-> On Thu, Sep 15, 2016 at 10:28:49AM -0700, Eric Biggers wrote:
-> > Several filename crypto functions: fname_decrypt(),
-> > fscrypt_fname_disk_to_usr(), and fscrypt_fname_usr_to_disk(), returned
-> > the output length on success or -errno on failure.  However, the output
-> > length was redundant with the value written to 'oname->len'.  It is also
-> > potentially error-prone to make callers have to check for '< 0' instead
-> > of '!= 0'.
-> > 
-> > Therefore, make these functions return 0 instead of a length, and make
-> > the callers who cared about the return value being a length use
-> > 'oname->len' instead.  For consistency also make other callers check for
-> > a nonzero result rather than a negative result.
-> > 
-> > This change also fixes the inconsistency of fname_encrypt() actually
-> > already returning 0 on success, not a length like the other filename
-> > crypto functions and as documented in its function comment.
-> > 
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> 
-> Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
+In f2fs_copy_page, kmap is used, rather than kmap_atomic, while some codes in
+mm directory use kmap_atomic in scenarios where a whole page is copied.
 
-Thanks, applied.
+How to determine which is better? I searched online and only thing I found is 
+that "code which holds kmap_atomic needs be short and simple".
 
-						- Ted
+So is there any kind of guideline about how to use such function that will 
+disable preemption? 
+Thanks.
+
+static inline void f2fs_copy_page(struct page *src, struct page *dst)
+{
+	char *src_kaddr = kmap(src);
+	char *dst_kaddr = kmap(dst);
+
+	memcpy(dst_kaddr, src_kaddr, PAGE_SIZE);
+	kunmap(dst);
+	kunmap(src);
+}
+
+
+------------------------------------------------------------------------------
