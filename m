@@ -1,69 +1,75 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [RFC PATCH v2] f2fs: preallocate blocks for encrypted
-	file
-Date: Sun, 18 Sep 2016 08:16:56 +0800
-Message-ID: <1474157816-15003-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to avoid slowing down background gc
+Date: Sun, 18 Sep 2016 19:52:27 +0800
+Message-ID: <20160918115227.130658-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1blPhx-0005Qd-Aa
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 18 Sep 2016 00:11:45 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1blPhs-00017i-RD
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 18 Sep 2016 00:11:45 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huwei.com
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch allow preallocates data blocks for buffered aio writes
-in encrypted file.
+Previously, we will choose to speed up background gc when the below
+conditions are both satisfied:
+a. There are a number of invalid blocks
+b. There is not enough free space
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+But, when space utilization is high (utilization > 60%), there will be
+not enough invalid blocks, result in slowing down background gc, after
+then there are more opportunities that triggering foreground gc due to
+high fragmented free space in fs.
+
+Remove condition a) in order to avoid slow down background gc speed in
+a high utilization fs.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/f2fs/gc.h | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 3e0ef2d..932166e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -639,9 +639,6 @@ ssize_t f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index a993967..5d0a19c 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -16,7 +16,6 @@
+ #define DEF_GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
+ #define DEF_GC_THREAD_MAX_SLEEP_TIME	60000
+ #define DEF_GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
+-#define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
+ #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
  
- 	map.m_next_pgofs = NULL;
+ /* Search max. number of dirty segments to select a victim segment */
+@@ -52,11 +51,6 @@ static inline block_t free_user_blocks(struct f2fs_sb_info *sbi)
+ 			<< sbi->log_blocks_per_seg;
+ }
  
--	if (f2fs_encrypted_inode(inode))
--		return 0;
+-static inline block_t limit_invalid_user_blocks(struct f2fs_sb_info *sbi)
+-{
+-	return (long)(sbi->user_block_count * LIMIT_INVALID_BLOCK) / 100;
+-}
 -
- 	if (iocb->ki_flags & IOCB_DIRECT) {
- 		ret = f2fs_convert_inline_inode(inode);
- 		if (ret)
-@@ -1532,8 +1529,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 	 * we already allocated all the blocks, so we don't need to get
- 	 * the block addresses when there is no need to fill the page.
- 	 */
--	if (!f2fs_has_inline_data(inode) && !f2fs_encrypted_inode(inode) &&
--					len == PAGE_SIZE)
-+	if (!f2fs_has_inline_data(inode) && len == PAGE_SIZE)
- 		return 0;
+ static inline block_t limit_free_user_blocks(struct f2fs_sb_info *sbi)
+ {
+ 	block_t reclaimable_user_blocks = sbi->user_block_count -
+@@ -88,15 +82,9 @@ static inline void decrease_sleep_time(struct f2fs_gc_kthread *gc_th,
  
- 	if (f2fs_has_inline_data(inode) ||
+ static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
+ {
+-	block_t invalid_user_blocks = sbi->user_block_count -
+-					written_block_count(sbi);
+ 	/*
+-	 * Background GC is triggered with the following conditions.
+-	 * 1. There are a number of invalid blocks.
+-	 * 2. There is not enough free space.
++	 * Background GC should speed up when there is not enough free blocks
++	 * in total unused (free + invalid) blocks.
+ 	 */
+-	if (invalid_user_blocks > limit_invalid_user_blocks(sbi) &&
+-			free_user_blocks(sbi) < limit_free_user_blocks(sbi))
+-		return true;
+-	return false;
++	return free_user_blocks(sbi) < limit_free_user_blocks(sbi);
+ }
 -- 
-1.9.1
-
-
-------------------------------------------------------------------------------
+2.8.2.311.gee88674
