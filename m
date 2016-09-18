@@ -1,35 +1,23 @@
-From: Fan Li <fanofcode.li@samsung.com>
-Subject: query about usage of kmap_atomic
-Date: Fri, 16 Sep 2016 14:03:38 +0800
-Message-ID: <000001d20fe0$15f144f0$41d3ced0$@samsung.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [RFC PATCH v2] f2fs: preallocate blocks for encrypted
+	file
+Date: Sun, 18 Sep 2016 08:16:56 +0800
+Message-ID: <1474157816-15003-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <fanofcode.li@samsung.com>) id 1bkmFF-0001PH-P6
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1blPhx-0005Qd-Aa
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 16 Sep 2016 06:03:29 +0000
-Received: from mailout4.samsung.com ([203.254.224.34])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1bkmFD-0004xq-OX
+	Sun, 18 Sep 2016 00:11:45 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1blPhs-00017i-RD
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 16 Sep 2016 06:03:29 +0000
-Received: from epcpsbgm2new.samsung.com (epcpsbgm2 [203.254.230.27])
-	by mailout4.samsung.com
-	(Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May 5
-	2014)) with ESMTP id <0ODL02H1W25JB470@mailout4.samsung.com> for
-	linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 16 Sep 2016 15:03:19 +0900 (KST)
-Received: from lifan ([109.123.105.144])
-	by mmp2.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0
-	64bit
-	(built May 5 2014)) with ESMTPA id <0ODL008Z725BZD10@mmp2.samsung.com>
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 16 Sep 2016 15:03:19 +0900 (KST)
-Content-language: en-us
+	Sun, 18 Sep 2016 00:11:45 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,27 +27,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: heyunlei@huwei.com
 
-In f2fs_copy_page, kmap is used, rather than kmap_atomic, while some codes in
-mm directory use kmap_atomic in scenarios where a whole page is copied.
+This patch allow preallocates data blocks for buffered aio writes
+in encrypted file.
 
-How to determine which is better? I searched online and only thing I found is 
-that "code which holds kmap_atomic needs be short and simple".
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/data.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-So is there any kind of guideline about how to use such function that will 
-disable preemption? 
-Thanks.
-
-static inline void f2fs_copy_page(struct page *src, struct page *dst)
-{
-	char *src_kaddr = kmap(src);
-	char *dst_kaddr = kmap(dst);
-
-	memcpy(dst_kaddr, src_kaddr, PAGE_SIZE);
-	kunmap(dst);
-	kunmap(src);
-}
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 3e0ef2d..932166e 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -639,9 +639,6 @@ ssize_t f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *from)
+ 
+ 	map.m_next_pgofs = NULL;
+ 
+-	if (f2fs_encrypted_inode(inode))
+-		return 0;
+-
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+ 		ret = f2fs_convert_inline_inode(inode);
+ 		if (ret)
+@@ -1532,8 +1529,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+ 	 * we already allocated all the blocks, so we don't need to get
+ 	 * the block addresses when there is no need to fill the page.
+ 	 */
+-	if (!f2fs_has_inline_data(inode) && !f2fs_encrypted_inode(inode) &&
+-					len == PAGE_SIZE)
++	if (!f2fs_has_inline_data(inode) && len == PAGE_SIZE)
+ 		return 0;
+ 
+ 	if (f2fs_has_inline_data(inode) ||
+-- 
+1.9.1
 
 
 ------------------------------------------------------------------------------
