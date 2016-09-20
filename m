@@ -1,87 +1,88 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix to avoid slowing down background gc
-Date: Mon, 19 Sep 2016 15:12:11 -0700
-Message-ID: <20160919221211.GC68913@jaegeuk>
-References: <20160918115227.130658-1-yuchao0@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 3/6] f2fs: fix to avoid race condition when updating sbi
+ flag
+Date: Tue, 20 Sep 2016 09:41:32 +0800
+Message-ID: <5129623b-f261-3eb4-d82d-3fedee91644f@huawei.com>
+References: <1474212608-6930-1-git-send-email-chao@kernel.org>
+ <1474212608-6930-3-git-send-email-chao@kernel.org>
+ <20160919214058.GA68913@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160918115227.130658-1-yuchao0@huawei.com>
+In-Reply-To: <20160919214058.GA68913@jaegeuk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Chao,
+Hi Jaegeuk,
 
-On Sun, Sep 18, 2016 at 07:52:27PM +0800, Chao Yu wrote:
-> Previously, we will choose to speed up background gc when the below
-> conditions are both satisfied:
-> a. There are a number of invalid blocks
-> b. There is not enough free space
+On 2016/9/20 5:40, Jaegeuk Kim wrote:
+> Hi Chao,
 > 
-> But, when space utilization is high (utilization > 60%), there will be
-> not enough invalid blocks, result in slowing down background gc, after
-> then there are more opportunities that triggering foreground gc due to
-> high fragmented free space in fs.
+> On Sun, Sep 18, 2016 at 11:30:05PM +0800, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> Making updating of sbi flag atomic by using {test,set,clear}_bit,
+>> otherwise in concurrency scenario, the flag could be updated incorrectly.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/f2fs.h | 10 ++++++----
+>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 9b4bbf2..c30f744b 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -794,7 +794,7 @@ struct f2fs_sb_info {
+>>  	struct proc_dir_entry *s_proc;		/* proc entry */
+>>  	struct f2fs_super_block *raw_super;	/* raw super block pointer */
+>>  	int valid_super_block;			/* valid super block no */
+>> -	int s_flag;				/* flags for sbi */
+>> +	unsigned long s_flag;				/* flags for sbi */
+>>  
+>>  #ifdef CONFIG_F2FS_FS_ENCRYPTION
+>>  	u8 key_prefix[F2FS_KEY_DESC_PREFIX_SIZE];
+>> @@ -1063,17 +1063,19 @@ static inline struct address_space *NODE_MAPPING(struct f2fs_sb_info *sbi)
+>>  
+>>  static inline bool is_sbi_flag_set(struct f2fs_sb_info *sbi, unsigned int type)
+>>  {
+>> -	return sbi->s_flag & (0x01 << type);
+>> +	return test_bit(type, &sbi->s_flag);
+>>  }
+>>  
+>>  static inline void set_sbi_flag(struct f2fs_sb_info *sbi, unsigned int type)
+>>  {
+>> -	sbi->s_flag |= (0x01 << type);
+>> +	if (!test_bit(type, &sbi->s_flag))
+>> +		set_bit(type, &sbi->s_flag);
 > 
-> Remove condition a) in order to avoid slow down background gc speed in
-> a high utilization fs.
+> The set_bit() is enough, no?
 
-There exists a trade-off here: wear-out vs. eager gc for future speed-up.
-How about using a kind of f2fs's dirty level (e.g., BDF)?
+It seems OK to me, let me send v2.
 
 Thanks,
 
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/gc.h | 18 +++---------------
->  1 file changed, 3 insertions(+), 15 deletions(-)
+>>  }
+>>  
+>>  static inline void clear_sbi_flag(struct f2fs_sb_info *sbi, unsigned int type)
+>>  {
+>> -	sbi->s_flag &= ~(0x01 << type);
+>> +	if (test_bit(type, &sbi->s_flag))
+>> +		clear_bit(type, &sbi->s_flag);
 > 
-> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> index a993967..5d0a19c 100644
-> --- a/fs/f2fs/gc.h
-> +++ b/fs/f2fs/gc.h
-> @@ -16,7 +16,6 @@
->  #define DEF_GC_THREAD_MIN_SLEEP_TIME	30000	/* milliseconds */
->  #define DEF_GC_THREAD_MAX_SLEEP_TIME	60000
->  #define DEF_GC_THREAD_NOGC_SLEEP_TIME	300000	/* wait 5 min */
-> -#define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
->  #define LIMIT_FREE_BLOCK	40 /* percentage over invalid + free space */
->  
->  /* Search max. number of dirty segments to select a victim segment */
-> @@ -52,11 +51,6 @@ static inline block_t free_user_blocks(struct f2fs_sb_info *sbi)
->  			<< sbi->log_blocks_per_seg;
->  }
->  
-> -static inline block_t limit_invalid_user_blocks(struct f2fs_sb_info *sbi)
-> -{
-> -	return (long)(sbi->user_block_count * LIMIT_INVALID_BLOCK) / 100;
-> -}
-> -
->  static inline block_t limit_free_user_blocks(struct f2fs_sb_info *sbi)
->  {
->  	block_t reclaimable_user_blocks = sbi->user_block_count -
-> @@ -88,15 +82,9 @@ static inline void decrease_sleep_time(struct f2fs_gc_kthread *gc_th,
->  
->  static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi)
->  {
-> -	block_t invalid_user_blocks = sbi->user_block_count -
-> -					written_block_count(sbi);
->  	/*
-> -	 * Background GC is triggered with the following conditions.
-> -	 * 1. There are a number of invalid blocks.
-> -	 * 2. There is not enough free space.
-> +	 * Background GC should speed up when there is not enough free blocks
-> +	 * in total unused (free + invalid) blocks.
->  	 */
-> -	if (invalid_user_blocks > limit_invalid_user_blocks(sbi) &&
-> -			free_user_blocks(sbi) < limit_free_user_blocks(sbi))
-> -		return true;
-> -	return false;
-> +	return free_user_blocks(sbi) < limit_free_user_blocks(sbi);
->  }
-> -- 
-> 2.8.2.311.gee88674
+> ditto.
+> 
+> Thanks,
+> 
+>>  }
+>>  
+>>  static inline unsigned long long cur_cp_version(struct f2fs_checkpoint *cp)
+>> -- 
+>> 2.7.2
+> 
+> .
+> 
