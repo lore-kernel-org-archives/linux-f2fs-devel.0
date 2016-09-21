@@ -1,22 +1,23 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH] mkfs.f2fs: do not need strdup for parse_feature
-Date: Wed, 21 Sep 2016 18:09:18 +0800
-Message-ID: <1474452558-6490-1-git-send-email-yunlong.song@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: No need to wait for data page writeback by
+	force
+Date: Wed, 21 Sep 2016 18:41:02 +0800
+Message-ID: <1474454462-30527-1-git-send-email-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yunlong.song@huawei.com>) id 1bmeJO-0007IZ-0g
+	(envelope-from <heyunlei@huawei.com>) id 1bmesv-0000M0-EV
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 21 Sep 2016 09:59:30 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1bmeJJ-0003Yq-2y
+	Wed, 21 Sep 2016 10:36:13 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1bmesq-0003Jy-0I
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 21 Sep 2016 09:59:29 +0000
+	Wed, 21 Sep 2016 10:36:13 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,40 +27,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, yunlong.song@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: heyunlei@huwei.com
 
-strdup is useless here, with no free op with its return value.
+No need to wait for data page writeback, wait or not
+can be decided by device.
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- mkfs/f2fs_format_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 8a7b604..40ccdc7 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -60,7 +60,7 @@ static void f2fs_show_info()
- 	MSG(0, "Info: Trim is %s\n", config.trim ? "enabled": "disabled");
- }
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index e78501c..71e4a0f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1658,7 +1658,7 @@ void f2fs_wait_on_encrypted_page_writeback(struct f2fs_sb_info *sbi,
  
--static void parse_feature(char *features)
-+static void parse_feature(const char *features)
- {
- 	if (!strcmp(features, "encrypt")) {
- 		config.feature |= cpu_to_le32(F2FS_FEATURE_ENCRYPT);
-@@ -104,7 +104,7 @@ static void f2fs_parse_options(int argc, char *argv[])
- 			config.overprovision = atof(optarg);
- 			break;
- 		case 'O':
--			parse_feature(strdup(optarg));
-+			parse_feature(optarg);
- 			break;
- 		case 's':
- 			config.segs_per_sec = atoi(optarg);
+ 	cpage = find_lock_page(META_MAPPING(sbi), blkaddr);
+ 	if (cpage) {
+-		f2fs_wait_on_page_writeback(cpage, DATA, true);
++		f2fs_wait_on_page_writeback(cpage, DATA, false);
+ 		f2fs_put_page(cpage, 1);
+ 	}
+ }
 -- 
-1.8.5.2
+1.9.1
 
 
 ------------------------------------------------------------------------------
