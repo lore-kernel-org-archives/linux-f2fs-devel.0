@@ -1,22 +1,40 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: assign return value in f2fs_gc
-Date: Thu, 22 Sep 2016 18:58:36 +0800
-Message-ID: <c2cedc2d-92cd-1592-b548-fb4944839421@huawei.com>
-References: <20160922035458.5002-1-jaegeuk@kernel.org>
+From: Richard Weinberger <richard@nod.at>
+Subject: ext4, f2fs: fscrypt_has_permitted_context() check in file open
+Date: Thu, 22 Sep 2016 14:24:35 +0200
+Message-ID: <6789d30e-f95d-d8bd-cd6e-664a89c0dfd1@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160922035458.5002-1-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2016/9/22 11:54, Jaegeuk Kim wrote:
-> This patch adds a return value of write_checkpoint for f2fs_gc.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Hi!
 
-Please add this in all patches of this serials.
+Both ext4 and f2fs check in the file open code the context of the parent directory too:
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+ext4:
+        if (ext4_encrypted_inode(d_inode(dir)) &&
+                        !fscrypt_has_permitted_context(d_inode(dir), inode)) {
+                ext4_warning(inode->i_sb,
+                             "Inconsistent encryption contexts: %lu/%lu",
+                             (unsigned long) d_inode(dir)->i_ino,
+                             (unsigned long) inode->i_ino);
+                dput(dir);
+                return -EPERM;
+        }
+
+f2fs:
+        if (f2fs_encrypted_inode(d_inode(dir)) &&
+                        !fscrypt_has_permitted_context(d_inode(dir), inode)) {
+                dput(dir);
+                return -EPERM;
+        }
+
+Why do we need this check? AFAIK this situation can never happen unless due to
+a bug in the filesystem code.
+
+Thanks,
+//richard
