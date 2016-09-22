@@ -1,24 +1,22 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/4] f2fs: avoid gc in cp_error case
-Date: Wed, 21 Sep 2016 20:54:57 -0700
-Message-ID: <20160922035458.5002-3-jaegeuk@kernel.org>
-References: <20160922035458.5002-1-jaegeuk@kernel.org>
+From: Richard Weinberger <richard@nod.at>
+Subject: fscrypt: in-place decrypt vs. out-of-place encrypt?
+Date: Thu, 22 Sep 2016 10:49:41 +0200
+Message-ID: <f3f489f1-3ec0-e8c8-d5ae-ea6b9e5d5571@nod.at>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bmv70-0004b5-Ld
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <richard@nod.at>) id 1bmziS-00042X-85
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 22 Sep 2016 03:55:50 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bmv6z-0005ZK-Uj
+	Thu, 22 Sep 2016 08:50:48 +0000
+Received: from b.ns.miles-group.at ([95.130.255.144] helo=radon.swed.at)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bmziQ-0003E6-7j
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 22 Sep 2016 03:55:50 +0000
-In-Reply-To: <20160922035458.5002-1-jaegeuk@kernel.org>
+	Thu, 22 Sep 2016 08:50:48 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,33 +26,25 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, David Gstir <david@sigma-star.at>, linux-ext4@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-Otherwise, we can hit
-	f2fs_bug_on(sbi, !PageUptodate(sum_page));
+Hi!
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/gc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+While reading the fscrypt code I noticed that some functions use the bounce pages
+and some not.
+fscrypt_decrypt_page() and fscrypt_decrypt_bio_pages() work in-place while
+fscrypt_encrypt_page() and fscrypt_zeroout_range() use a bounce page.
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a9a3c9f..b9d6c42 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -847,7 +847,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 
- 	for (segno = start_segno; segno < end_segno; segno++) {
- 
--		if (get_valid_blocks(sbi, segno, 1) == 0)
-+		if (get_valid_blocks(sbi, segno, 1) == 0 ||
-+					unlikely(f2fs_cp_error(sbi)))
- 			goto next;
- 
- 		/* find segment summary of victim */
--- 
-2.8.3
+So, both ext4 and f2fs encrypt data using an extra buffer but decrypt mostly
+in-place without the need of an extra buffer.
+Why that? I'd assume when decryption can be done in-place also encryption is possible
+that way.
 
+I'm working on fscrypt for UBIFS and would like to avoid an extra buffer since memory
+is low on embedded systems.
+
+Thanks,
+//richard
 
 ------------------------------------------------------------------------------
