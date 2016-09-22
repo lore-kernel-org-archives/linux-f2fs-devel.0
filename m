@@ -1,22 +1,25 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: fscrypt: in-place decrypt vs. out-of-place encrypt?
-Date: Thu, 22 Sep 2016 10:49:41 +0200
-Message-ID: <f3f489f1-3ec0-e8c8-d5ae-ea6b9e5d5571@nod.at>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] mkfs.f2fs: do not need strdup for
+	parse_feature
+Date: Thu, 22 Sep 2016 18:43:12 +0800
+Message-ID: <b3777bb5-ab9f-4d56-60a4-e0698c0d4307@huawei.com>
+References: <1474452558-6490-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <richard@nod.at>) id 1bmziS-00042X-85
+	(envelope-from <yuchao0@huawei.com>) id 1bn1Td-0007p4-SL
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 22 Sep 2016 08:50:48 +0000
-Received: from b.ns.miles-group.at ([95.130.255.144] helo=radon.swed.at)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bmziQ-0003E6-7j
+	Thu, 22 Sep 2016 10:43:37 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1bn1Ta-0008NO-9C
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 22 Sep 2016 08:50:48 +0000
+	Thu, 22 Sep 2016 10:43:37 +0000
+In-Reply-To: <1474452558-6490-1-git-send-email-yunlong.song@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,25 +29,15 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, David Gstir <david@sigma-star.at>, linux-ext4@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi!
+On 2016/9/21 18:09, Yunlong Song wrote:
+> strdup is useless here, with no free op with its return value.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 
-While reading the fscrypt code I noticed that some functions use the bounce pages
-and some not.
-fscrypt_decrypt_page() and fscrypt_decrypt_bio_pages() work in-place while
-fscrypt_encrypt_page() and fscrypt_zeroout_range() use a bounce page.
+Acked-by: Chao Yu <yuchao0@huawei.com>
 
-So, both ext4 and f2fs encrypt data using an extra buffer but decrypt mostly
-in-place without the need of an extra buffer.
-Why that? I'd assume when decryption can be done in-place also encryption is possible
-that way.
-
-I'm working on fscrypt for UBIFS and would like to avoid an extra buffer since memory
-is low on embedded systems.
-
-Thanks,
-//richard
 
 ------------------------------------------------------------------------------
