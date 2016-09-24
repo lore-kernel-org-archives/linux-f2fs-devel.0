@@ -1,24 +1,27 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] f2fs: remove redundant value definition
-Date: Sat, 24 Sep 2016 12:29:18 +0800
-Message-ID: <1474691358-17191-2-git-send-email-heyunlei@huawei.com>
-References: <1474691358-17191-1-git-send-email-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 1/2] f2fs: use crc and cp version to
+ determine roll-forward recovery
+Date: Sat, 24 Sep 2016 14:00:41 +0800
+Message-ID: <64ec1af3-f9ca-77ce-9f99-3ceaee48e9f8@huawei.com>
+References: <20160920025504.72524-1-jaegeuk@kernel.org>
+	<6d5c6ce9-b9d6-badd-244a-b6126ce14546@kernel.org>
+	<20160921004554.GB77057@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1bneVh-0008T9-9s
+	(envelope-from <yuchao0@huawei.com>) id 1bng1X-0002iL-Ry
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 24 Sep 2016 04:24:21 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1bneVf-0003zc-Fs
+	Sat, 24 Sep 2016 06:01:19 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1bng1R-0005I6-Vo
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 24 Sep 2016 04:24:21 +0000
-In-Reply-To: <1474691358-17191-1-git-send-email-heyunlei@huawei.com>
+	Sat, 24 Sep 2016 06:01:19 +0000
+In-Reply-To: <20160921004554.GB77057@jaegeuk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,53 +31,70 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huwei.com
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch remove redundant value definition in build_sit_entries
+On 2016/9/21 8:45, Jaegeuk Kim wrote:
+> @@ -259,40 +290,26 @@ static inline void fill_node_footer_blkaddr(struct page *page, block_t blkaddr)
+>  {
+>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(F2FS_P_SB(page));
+>  	struct f2fs_node *rn = F2FS_NODE(page);
+> +	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
+> +	__u64 cp_ver = le64_to_cpu(ckpt->checkpoint_ver);
+> +	__u64 crc;
+>  
+> -	rn->footer.cp_ver = ckpt->checkpoint_ver;
+> +	crc = le32_to_cpu(*((__le32 *)((unsigned char *)ckpt + crc_offset)));
+> +	cp_ver |= (crc << 32);
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/segment.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+How about using '^=' here?
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index e78501c..fbcc172 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2305,6 +2305,8 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_COLD_DATA);
- 	struct f2fs_journal *journal = curseg->journal;
-+	struct seg_entry *se;
-+	struct f2fs_sit_entry sit;
- 	int sit_blk_cnt = SIT_BLK_CNT(sbi);
- 	unsigned int i, start, end;
- 	unsigned int readed, start_blk = 0;
-@@ -2317,11 +2319,10 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
- 		end = (start_blk + readed) * sit_i->sents_per_block;
- 
- 		for (; start < end && start < MAIN_SEGS(sbi); start++) {
--			struct seg_entry *se = &sit_i->sentries[start];
- 			struct f2fs_sit_block *sit_blk;
--			struct f2fs_sit_entry sit;
- 			struct page *page;
- 
-+			se = &sit_i->sentries[start];
- 			page = get_current_sit_page(sbi, start);
- 			sit_blk = (struct f2fs_sit_block *)page_address(page);
- 			sit = sit_blk->entries[SIT_ENTRY_OFFSET(sit_i, start)];
-@@ -2347,8 +2348,6 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
- 
- 	down_read(&curseg->journal_rwsem);
- 	for (i = 0; i < sits_in_cursum(journal); i++) {
--		struct f2fs_sit_entry sit;
--		struct seg_entry *se;
- 		unsigned int old_valid_blocks;
- 
- 		start = le32_to_cpu(segno_in_journal(journal, i));
--- 
-1.9.1
+> +	rn->footer.cp_ver = cpu_to_le64(cp_ver);
+>  	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
+>  }
+>  
+> -static inline nid_t ino_of_node(struct page *node_page)
+> -{
+> -	struct f2fs_node *rn = F2FS_NODE(node_page);
+> -	return le32_to_cpu(rn->footer.ino);
+> -}
+> -
+> -static inline nid_t nid_of_node(struct page *node_page)
+> -{
+> -	struct f2fs_node *rn = F2FS_NODE(node_page);
+> -	return le32_to_cpu(rn->footer.nid);
+> -}
+> -
+> -static inline unsigned int ofs_of_node(struct page *node_page)
+> -{
+> -	struct f2fs_node *rn = F2FS_NODE(node_page);
+> -	unsigned flag = le32_to_cpu(rn->footer.flag);
+> -	return flag >> OFFSET_BIT_SHIFT;
+> -}
+> -
+> -static inline unsigned long long cpver_of_node(struct page *node_page)
+> +static inline bool is_recoverable_dnode(struct page *page)
+>  {
+> -	struct f2fs_node *rn = F2FS_NODE(node_page);
+> -	return le64_to_cpu(rn->footer.cp_ver);
+> -}
+> +	struct f2fs_checkpoint *ckpt = F2FS_CKPT(F2FS_P_SB(page));
+> +	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
+> +	__u64 cp_ver = cur_cp_version(ckpt);
+> +	__u64 crc;
+>  
+> -static inline block_t next_blkaddr_of_node(struct page *node_page)
+> -{
+> -	struct f2fs_node *rn = F2FS_NODE(node_page);
+> -	return le32_to_cpu(rn->footer.next_blkaddr);
+> +	crc = le32_to_cpu(*((__le32 *)((unsigned char *)ckpt + crc_offset)));
+> +	cp_ver |= (crc << 32);
+> +	return cpu_to_le64(cp_ver) == cpver_of_node(page);
+>  }
+
+cpu_to_le64(cp_ver) == cpver_of_node(page) ^ (crc << 32)
+
+Thanks,
 
 
 ------------------------------------------------------------------------------
