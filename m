@@ -1,37 +1,25 @@
-From: "Huang\, Ying" <ying.huang@linux.intel.com>
-Subject: Re: [LKP] [lkp] [f2fs] ec795418c4: fsmark.files_per_sec
-	-36.3% regression
-Date: Mon, 26 Sep 2016 14:26:06 +0800
-Message-ID: <87fuoni3cx.fsf@yhuang-dev.intel.com>
-References: <87bn18cvuu.fsf_-_@yhuang-mobile.sh.intel.com>
-	<20160804172452.GA12093@jaegeuk>
-	<874m70ctu3.fsf@yhuang-mobile.sh.intel.com>
-	<20160804185251.GA13813@jaegeuk>
-	<87r3a4b7b6.fsf@yhuang-mobile.sh.intel.com>
-	<87vaz6yl8a.fsf@yhuang-mobile.sh.intel.com>
-	<20160812012238.GA47037@jaegeuk>
-	<CAC=cRTNtND+5f83p_yBecnx0iB5_6Q6xzbHdeY0tgrVaMRLSRQ@mail.gmail.com>
-	<20160827005257.GD88444@jaegeuk>
-	<20160827021334.eb3xpz57xvo37g5l@wfg-t540p.sh.intel.com>
-	<20160830023048.GA2088@jaegeuk>
-	<87pooqnr4t.fsf@yhuang-mobile.sh.intel.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: fix to recover old fault injection
+	config in ->remount_fs
+Date: Mon, 26 Sep 2016 19:45:06 +0800
+Message-ID: <20160926114506.20974-2-yuchao0@huawei.com>
+References: <20160926114506.20974-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ying.huang@linux.intel.com>) id 1boPMm-0004O5-0G
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1boULt-00022D-OK
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 26 Sep 2016 06:26:16 +0000
-Received: from mga01.intel.com ([192.55.52.88])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1boPMk-0008R9-P9
+	Mon, 26 Sep 2016 11:45:41 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1boULn-0006jK-FK
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 26 Sep 2016 06:26:15 +0000
-In-Reply-To: <87pooqnr4t.fsf@yhuang-mobile.sh.intel.com> (Ying Huang's message
-	of "Tue, 30 Aug 2016 09:44:18 -0700")
+	Mon, 26 Sep 2016 11:45:41 +0000
+In-Reply-To: <20160926114506.20974-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -41,75 +29,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: LKP ML <lkp@01.org>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, Jaegeuk Kim <jaegeuk@kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, huang ying <huang.ying.caritas@gmail.com>
+To: jaegeuk@kernel.org
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi, Jaegeuk,
+In ->remount_fs, we didn't recover original fault injection config if
+we encounter error, fix it.
 
-"Huang, Ying" <ying.huang@intel.com> writes:
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/super.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> Jaegeuk Kim <jaegeuk@kernel.org> writes:
->
->> Hello,
->>
->> On Sat, Aug 27, 2016 at 10:13:34AM +0800, Fengguang Wu wrote:
->>> Hi Jaegeuk,
->>> 
->>> > > >> > - [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
->>> > > >> >
->>> > > >> > The disk is 4 12G ram disk, and setup RAID0 on them via mdadm.  The
->>> > > >> > steps for aim7 is,
->>> > > >> >
->>> > > >> > cat > workfile <<EOF
->>> > > >> > FILESIZE: 1M
->>> > > >> > POOLSIZE: 10M
->>> > > >> > 10 sync_disk_rw
->>> > > >> > EOF
->>> > > >> >
->>> > > >> > (
->>> > > >> >     echo $HOSTNAME
->>> > > >> >     echo sync_disk_rw
->>> > > >> >
->>> > > >> >     echo 1
->>> > > >> >     echo 600
->>> > > >> >     echo 2
->>> > > >> >     echo 600
->>> > > >> >     echo 1
->>> > > >> > ) | ./multitask -t &
->>> > > >>
->>> > > >> Any update on these 2 regressions?  Is the information is enough for you
->>> > > >> to reproduce?
->>> > > >
->>> > > > Sorry, I've had no time to dig this due to business travel now.
->>> > > > I'll check that when back to US.
->>> > > 
->>> > > Any update?
->>> > 
->>> > Sorry, how can I get multitask binary?
->>> 
->>> It's part of aim7, which can be downloaded here:
->>> 
->>> http://nchc.dl.sourceforge.net/project/aimbench/aim-suite7/Initial%20release/s7110.tar.Z
->>
->> Thank you for the codes.
->>
->> I've run this workload on the latest f2fs and compared performance having
->> without the reported patch. (1TB nvme SSD, 16 cores, 16GB DRAM)
->> Interestingly, I could find slight performance improvement rather than
->> regression. :(
->> Not sure how to reproduce this.
->
-> I think the difference lies on disk used.  The ramdisk is used in the
-> original test, but it appears that your memory is too small to setup the
-> RAM disk for test.  So it may be impossible for you to reproduce the
-> test unless you can find more memory :)
->
-> But we can help you to root cause the issue.  What additional data do
-> you want?  perf-profile data before and after the patch?
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index aa35e60..6132b4c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1001,6 +1001,9 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	bool need_restart_gc = false;
+ 	bool need_stop_gc = false;
+ 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	struct f2fs_fault_info ffi = sbi->fault_info;
++#endif
+ 
+ 	/*
+ 	 * Save the old mount options in case we
+@@ -1096,6 +1099,9 @@ restore_gc:
+ restore_opts:
+ 	sbi->mount_opt = org_mount_opt;
+ 	sbi->active_logs = active_logs;
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	sbi->fault_info = ffi;
++#endif
+ 	return err;
+ }
+ 
+-- 
+2.8.2.311.gee88674
 
-Any update to this regression?
-
-Best Regards,
-Huang, Ying
 
 ------------------------------------------------------------------------------
