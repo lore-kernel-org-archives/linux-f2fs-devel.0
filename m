@@ -1,22 +1,23 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: support checkpoint error injection
-Date: Mon, 26 Sep 2016 19:45:55 +0800
-Message-ID: <20160926114555.21195-1-yuchao0@huawei.com>
+From: Chao Yu <chao@kernel.org>
+Subject: [PATCH 1/2] f2fs: fix to commit bio cache after flushing
+	node pages
+Date: Tue, 27 Sep 2016 00:09:52 +0800
+Message-ID: <1474906193-6487-1-git-send-email-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1boUMd-0000D0-VT
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1boYVk-0004He-TP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 26 Sep 2016 11:46:27 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1boUMY-0000xd-N8
+	Mon, 26 Sep 2016 16:12:08 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1boYVj-0002i4-T6
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 26 Sep 2016 11:46:27 +0000
+	Mon, 26 Sep 2016 16:12:08 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,78 +28,68 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds to support checkpoint error injection in f2fs for testing
-fatal error tolerance, it will be useful that it can simulate abnormal
-power off by f2fs itself instead of calling godown ioctl by running apps.
+From: Chao Yu <yuchao0@huawei.com>
+
+In sync_node_pages, we won't check and commit last merged pages in private
+bio cache of f2fs, as these pages were taged as writeback, someone who is
+waiting for writebacking of the page will be blocked until the cache was
+committed by someone else.
+
+We need to commit node type bio cache to avoid potential deadlock or long
+delay of waiting writeback.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h    | 1 +
- fs/f2fs/gc.c      | 5 +++++
- fs/f2fs/segment.c | 5 +++++
- fs/f2fs/super.c   | 1 +
- 4 files changed, 12 insertions(+)
+ fs/f2fs/node.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2545b04..59c97ad 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -47,6 +47,7 @@ enum {
- 	FAULT_DIR_DEPTH,
- 	FAULT_EVICT_INODE,
- 	FAULT_IO,
-+	FAULT_CHECKPOINT,
- 	FAULT_MAX,
- };
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 9faddcd..f73f774 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1416,6 +1416,7 @@ int sync_node_pages(struct f2fs_sb_info *sbi, struct writeback_control *wbc)
+ 	struct pagevec pvec;
+ 	int step = 0;
+ 	int nwritten = 0;
++	int ret = 0;
  
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a5c4175..c9b8a67 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -47,6 +47,11 @@ static int gc_thread_func(void *data)
- 			continue;
- 		}
+ 	pagevec_init(&pvec, 0);
  
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+		if (time_to_inject(sbi, FAULT_CHECKPOINT))
-+			f2fs_stop_checkpoint(sbi, false);
-+#endif
-+
- 		/*
- 		 * [GC triggering condition]
- 		 * 0. GC is not conducted currently.
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index fbcc172..fc886f0 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -345,6 +345,11 @@ int commit_inmem_pages(struct inode *inode)
-  */
- void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- {
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+	if (time_to_inject(sbi, FAULT_CHECKPOINT))
-+		f2fs_stop_checkpoint(sbi, false);
-+#endif
-+
- 	if (!need)
- 		return;
+@@ -1436,7 +1437,8 @@ next_step:
  
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index a06eee4..4d5911b 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -50,6 +50,7 @@ char *fault_name[FAULT_MAX] = {
- 	[FAULT_DIR_DEPTH]	= "too big dir depth",
- 	[FAULT_EVICT_INODE]	= "evict_inode fail",
- 	[FAULT_IO]		= "IO error",
-+	[FAULT_CHECKPOINT]	= "checkpoint error",
- };
+ 			if (unlikely(f2fs_cp_error(sbi))) {
+ 				pagevec_release(&pvec);
+-				return -EIO;
++				ret = -EIO;
++				goto out;
+ 			}
  
- static void f2fs_build_fault_attr(struct f2fs_sb_info *sbi,
+ 			/*
+@@ -1487,6 +1489,8 @@ continue_unlock:
+ 
+ 			if (NODE_MAPPING(sbi)->a_ops->writepage(page, wbc))
+ 				unlock_page(page);
++			else
++				nwritten++;
+ 
+ 			if (--wbc->nr_to_write == 0)
+ 				break;
+@@ -1504,7 +1508,10 @@ continue_unlock:
+ 		step++;
+ 		goto next_step;
+ 	}
+-	return nwritten;
++out:
++	if (nwritten)
++		f2fs_submit_merged_bio(sbi, NODE, WRITE);
++	return ret;
+ }
+ 
+ int wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
 -- 
-2.8.2.311.gee88674
+2.7.2
 
 
 ------------------------------------------------------------------------------
