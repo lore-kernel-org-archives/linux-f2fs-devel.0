@@ -1,50 +1,51 @@
-From: Patricia <patricia@adultere-superbe.com>
-Subject: le mariage et la relation discrete qui va avec
-Date: Wed, 28 Sep 2016 12:16:33 +0000
-Message-ID: <95ec034953e6c0383af27b61678f569c@adultere-superbe.com>
-Reply-To: Patricia <patricia@adultere-superbe.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <patricia@adultere-superbe.com>) id 1bpDms-0003qP-RX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 28 Sep 2016 12:16:36 +0000
-Received: from [89.163.174.142] (helo=mxs.adultere-superbe.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bpDmp-0000HF-2k
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 28 Sep 2016 12:16:34 +0000
-Received: from [192.168.25.115] (webmail-test [81.163.161.63])
-	by mxs.adultere-superbe.com (Postfix) with ESMTP id 9AE4F206D3B
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 28 Sep 2016 15:16:21 +0300 (EEST)
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+From: Eric Biggers <ebiggers@google.com>
+Subject: [PATCH] fscrypto: lock inode while setting encryption policy
+Date: Wed, 28 Sep 2016 11:34:48 -0700
+Message-ID: <1475087688-4048-1-git-send-email-ebiggers@google.com>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, tytso@mit.edu, jaegeuk@kernel.org, richard@nod.at, Eric Biggers <ebiggers@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-IE91aSBq4oCZYWltZSBs4oCZYWR1bHTDqHJlLiBKZSBs4oCZYWltZSBwbHVzIHF1ZSB0b3V0LCBj
-YXIgaWwgaW1wbGlxdWUgw6AgbGEgZm9pcyBsZXMgbGllbnMgZHUgbWFyaWFnZSBldCBkZXMgc2F1
-dGVyaWVzIGRlcyBwbHVzIGTDqWxpY2lldXNlcy4KCiBMZSB0b3V0IGF2ZWMgZGVzIHBlcnNvbm5l
-cyBxdWkgY29tbWUgbW9pIHNvbnQgbWFyacOpZXMgISEhIEplIG5lIG1lIGTDqWZpbmlyYWl0IHBh
-cyBjb21tZSBsaWLDqXLDqWUsIGrigJllbW1lcmRlIGxlcyBmw6ltaW5pc3RlcywgamUgc3VpcyBq
-dXN0ZSB1bmUgam91aXNzZXVzZS4KCi1sZWFtYW50ZS5jb20KClZvaWzDoCBs4oCZZW5kcm9pdCBv
-w7kgZGVzIGZlbW1lcyBwb3N0LW1vZGVybmVzIGNvbW1lIG1vaSBzw6l2aXNzZW50IDogICAgICAg
-LWxlYW1hbnRlLmNvbQoKCk5vdXMgaW52aXRvbnMgdG91dGUgcGVyc29ubmUgbmUgc291aGFpdGFu
-dCBwbHVzIHJlY2V2b2lyIGRlIGNvdXJyaWVsIGRlIG5vdHJlIHBhcnQgw6AgdXRpbGlzZXIgbGUg
-bGllbiBzdWl2YW50IDogLWxlYW1hbnRlLmNvbS9kZXNpbnNjcmlwdGlvbi5odG1sCgotLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0
-cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlz
-dGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+i_rwsem needs to be acquired while setting an encryption policy so that
+concurrent calls to FS_IOC_SET_ENCRYPTION_POLICY are correctly
+serialized (especially the ->get_context() + ->set_context() pair), and
+so that new files cannot be created in the directory during or after the
+->empty_dir() check.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+
+---
+Note: to be applied without conflict, this patch needs the changes from
+v4.8-rc6.
+
+---
+ fs/crypto/policy.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index ed115ac..6865663 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -109,6 +109,8 @@ int fscrypt_process_policy(struct file *filp,
+ 	if (ret)
+ 		return ret;
+ 
++	inode_lock(inode);
++
+ 	if (!inode_has_encryption_context(inode)) {
+ 		if (!S_ISDIR(inode->i_mode))
+ 			ret = -EINVAL;
+@@ -127,6 +129,8 @@ int fscrypt_process_policy(struct file *filp,
+ 		ret = -EINVAL;
+ 	}
+ 
++	inode_unlock(inode);
++
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+ }
+-- 
+2.8.0.rc3.226.g39d4020
+
