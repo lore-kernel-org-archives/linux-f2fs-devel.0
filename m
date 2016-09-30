@@ -1,22 +1,27 @@
-From: "Tiezhu Yang" <kernelpatch@126.com>
-Subject: [PATCH v4 RESEND] f2fs: introduce get_checkpoint_version
- for cleanup
-Date: Fri, 30 Sep 2016 08:24:53 +0800 (CST)
-Message-ID: <d27497e.b0c.157787ac150.Coremail.kernelpatch@126.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 1/2] f2fs: use crc and cp version to
+ determine roll-forward recovery
+Date: Thu, 29 Sep 2016 17:53:00 -0700
+Message-ID: <20160930005300.GC44999@jaegeuk>
+References: <20160920025504.72524-1-jaegeuk@kernel.org>
+	<5b3d81fe-902e-5512-4766-30ad62390373@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kernelpatch@126.com>) id 1bpldQ-0000ls-MO
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bpm4d-0007fL-Nf
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Sep 2016 00:25:04 +0000
-Received: from m15-15.126.com ([220.181.15.15])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1bpldP-0001ov-2S for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Sep 2016 00:25:04 +0000
+	Fri, 30 Sep 2016 00:53:11 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bpm4b-0001ph-QW
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 30 Sep 2016 00:53:11 +0000
+Content-Disposition: inline
+In-Reply-To: <5b3d81fe-902e-5512-4766-30ad62390373@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,106 +31,38 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-There exists almost same codes when get the value of pre_version
-and cur_version in function validate_checkpoint, this patch adds
-get_checkpoint_version to clean up redundant codes.
+On Thu, Sep 29, 2016 at 08:01:32PM +0800, Chao Yu wrote:
+> On 2016/9/20 10:55, Jaegeuk Kim wrote:
+> > Previously, we used cp_version only to detect recoverable dnodes.
+> > In order to avoid same garbage cp_version, we needed to truncate the next
+> > dnode during checkpoint, resulting in additional discard or data write.
+> > If we can distinguish this by using crc in addition to cp_version, we can
+> > remove this overhead.
+> > 
+> > There is backward compatibility concern where it changes node_footer layout.
+> > But, it only affects the direct nodes written after the last checkpoint.
+> > We simply expect that user would change kernel versions back and forth after
+> > stable checkpoint.
+> 
+> Seems with new released v4.8 f2fs, old image with recoverable data could be
+> mounted successfully, but meanwhile all fsynced data which needs to be recovered
+> will be lost w/o any hints?
+> 
+> Could we release a new version mkfs paired with new kernel module, so we can tag
+> image as a new layout one, then new kernel module can recognize the image layout
+> and adjust version suited comparing method with old or new image?
 
-Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
----
- fs/f2fs/checkpoint.c | 66 ++++++++++++++++++++++++++++++----------------------
- 1 file changed, 38 insertions(+), 28 deletions(-)
+Hmm, how about adding a checkpoint flag like CP_CRC_RECOVERY_FLAG?
+Then, we can proceed crc|cp_ver, if the last checkpoint has this flag.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index de8693c..764ed0b 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -663,45 +663,55 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- 	}
- }
- 
--static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
--				block_t cp_addr, unsigned long long *version)
-+static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
-+		struct f2fs_checkpoint **cp_block, struct page **cp_page,
-+		unsigned long long *version)
- {
--	struct page *cp_page_1, *cp_page_2 = NULL;
- 	unsigned long blk_size = sbi->blocksize;
--	struct f2fs_checkpoint *cp_block;
--	unsigned long long cur_version = 0, pre_version = 0;
--	size_t crc_offset;
-+	size_t crc_offset = 0;
- 	__u32 crc = 0;
- 
--	/* Read the 1st cp block in this CP pack */
--	cp_page_1 = get_meta_page(sbi, cp_addr);
-+	*cp_page = get_meta_page(sbi, cp_addr);
-+	*cp_block = (struct f2fs_checkpoint *)page_address(*cp_page);
- 
--	/* get the version number */
--	cp_block = (struct f2fs_checkpoint *)page_address(cp_page_1);
--	crc_offset = le32_to_cpu(cp_block->checksum_offset);
--	if (crc_offset >= blk_size)
--		goto invalid_cp1;
-+	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
-+	if (crc_offset >= blk_size) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"invalid crc_offset: %zu", crc_offset);
-+		return -EINVAL;
-+	}
- 
--	crc = le32_to_cpu(*((__le32 *)((unsigned char *)cp_block + crc_offset)));
--	if (!f2fs_crc_valid(sbi, crc, cp_block, crc_offset))
--		goto invalid_cp1;
-+	crc = le32_to_cpu(*((__le32 *)((unsigned char *)*cp_block
-+							+ crc_offset)));
-+	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
-+		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
-+		return -EINVAL;
-+	}
- 
--	pre_version = cur_cp_version(cp_block);
-+	*version = cur_cp_version(*cp_block);
-+	return 0;
-+}
- 
--	/* Read the 2nd cp block in this CP pack */
--	cp_addr += le32_to_cpu(cp_block->cp_pack_total_block_count) - 1;
--	cp_page_2 = get_meta_page(sbi, cp_addr);
-+static struct page *validate_checkpoint(struct f2fs_sb_info *sbi,
-+				block_t cp_addr, unsigned long long *version)
-+{
-+	struct page *cp_page_1 = NULL, *cp_page_2 = NULL;
-+	struct f2fs_checkpoint *cp_block = NULL;
-+	unsigned long long cur_version = 0, pre_version = 0;
-+	int err;
- 
--	cp_block = (struct f2fs_checkpoint *)page_address(cp_page_2);
--	crc_offset = le32_to_cpu(cp_block->checksum_offset);
--	if (crc_offset >= blk_size)
--		goto invalid_cp2;
-+	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
-+					&cp_page_1, version);
-+	if (err)
-+		goto invalid_cp1;
-+	pre_version = *version;
- 
--	crc = le32_to_cpu(*((__le32 *)((unsigned char *)cp_block + crc_offset)));
--	if (!f2fs_crc_valid(sbi, crc, cp_block, crc_offset))
-+	cp_addr += le32_to_cpu(cp_block->cp_pack_total_block_count) - 1;
-+	err = get_checkpoint_version(sbi, cp_addr, &cp_block,
-+					&cp_page_2, version);
-+	if (err)
- 		goto invalid_cp2;
--
--	cur_version = cur_cp_version(cp_block);
-+	cur_version = *version;
- 
- 	if (cur_version == pre_version) {
- 		*version = cur_version;
--- 
-1.8.3.1
+Any thought?
+
+> 
+> Thanks,
+> 
+> 
+
 ------------------------------------------------------------------------------
