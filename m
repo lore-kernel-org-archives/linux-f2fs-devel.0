@@ -1,53 +1,66 @@
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: [PATCH] fs: f2fs: Use ktime_get_real_seconds for sit_info
-	times
-Date: Sat,  1 Oct 2016 16:31:24 -0700
-Message-ID: <1475364684-6557-1-git-send-email-deepa.kernel@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH] fscrypto: make XTS tweak initialization
+ endian-independent
+Date: Mon, 3 Oct 2016 11:03:40 -0700
+Message-ID: <20161003180340.GA54410@google.com>
+References: <1475258329-146528-1-git-send-email-ebiggers@google.com>
+ <CAFLxGvyCHwWms8wJf1gU0hRj__Q0Z2F2wKuZ3sYNfp8wQ9S4PQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: linux-kernel@vger.kernel.org
-Cc: y2038@lists.linaro.org, Jaegeuk Kim <jaegeuk@kernel.org>, Changman Lee <cm224.lee@samsung.com>, arnd@arndb.de, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAFLxGvyCHwWms8wJf1gU0hRj__Q0Z2F2wKuZ3sYNfp8wQ9S4PQ@mail.gmail.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Richard Weinberger <richard.weinberger@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Theodore Ts'o <tytso@mit.edu>, jaegeuk@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Q1VSUkVOVF9USU1FX1NFQyBpcyBub3QgeTIwMzggc2FmZS4KClJlcGxhY2UgdXNlIG9mIENVUlJF
-TlRfVElNRV9TRUMgd2l0aCBrdGltZV9nZXRfcmVhbF9zZWNvbmRzCmluIHNlZ21lbnQgdGltZXN0
-YW1wcyB1c2VkIGJ5IEdDIGFsZ29yaXRobSBpbmNsdWRpbmcgdGhlCnNlZ21lbnQgbXRpbWUgdGlt
-ZXN0YW1wcy4KClNpZ25lZC1vZmYtYnk6IERlZXBhIERpbmFtYW5pIDxkZWVwYS5rZXJuZWxAZ21h
-aWwuY29tPgpSZXZpZXdlZC1ieTogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4KQ2M6IEph
-ZWdldWsgS2ltIDxqYWVnZXVrQGtlcm5lbC5vcmc+CkNjOiBDaGFuZ21hbiBMZWUgPGNtMjI0Lmxl
-ZUBzYW1zdW5nLmNvbT4KQ2M6IGxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0
-Ci0tLQogZnMvZjJmcy9zZWdtZW50LmMgfCAyICstCiBmcy9mMmZzL3NlZ21lbnQuaCB8IDUgKysr
-LS0KIDIgZmlsZXMgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoKZGlm
-ZiAtLWdpdCBhL2ZzL2YyZnMvc2VnbWVudC5jIGIvZnMvZjJmcy9zZWdtZW50LmMKaW5kZXggYTQ2
-Mjk2Zi4uMzRiYjMwZSAxMDA2NDQKLS0tIGEvZnMvZjJmcy9zZWdtZW50LmMKKysrIGIvZnMvZjJm
-cy9zZWdtZW50LmMKQEAgLTIxNjgsNyArMjE2OCw3IEBAIHN0YXRpYyBpbnQgYnVpbGRfc2l0X2lu
-Zm8oc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQogCXNpdF9pLT5kaXJ0eV9zZW50cmllcyA9IDA7
-CiAJc2l0X2ktPnNlbnRzX3Blcl9ibG9jayA9IFNJVF9FTlRSWV9QRVJfQkxPQ0s7CiAJc2l0X2kt
-PmVsYXBzZWRfdGltZSA9IGxlNjRfdG9fY3B1KHNiaS0+Y2twdC0+ZWxhcHNlZF90aW1lKTsKLQlz
-aXRfaS0+bW91bnRlZF90aW1lID0gQ1VSUkVOVF9USU1FX1NFQy50dl9zZWM7CisJc2l0X2ktPm1v
-dW50ZWRfdGltZSA9IGt0aW1lX2dldF9yZWFsX3NlY29uZHMoKTsKIAltdXRleF9pbml0KCZzaXRf
-aS0+c2VudHJ5X2xvY2spOwogCXJldHVybiAwOwogfQpkaWZmIC0tZ2l0IGEvZnMvZjJmcy9zZWdt
-ZW50LmggYi9mcy9mMmZzL3NlZ21lbnQuaAppbmRleCBiMzNmNzNlLi4yNDIzNzQ5IDEwMDY0NAot
-LS0gYS9mcy9mMmZzL3NlZ21lbnQuaAorKysgYi9mcy9mMmZzL3NlZ21lbnQuaApAQCAtNjYyLDgg
-KzY2Miw5IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBzZXRfdG9fbmV4dF9zaXQoc3RydWN0IHNpdF9p
-bmZvICpzaXRfaSwgdW5zaWduZWQgaW50IHN0YXJ0KQogc3RhdGljIGlubGluZSB1bnNpZ25lZCBs
-b25nIGxvbmcgZ2V0X210aW1lKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKIHsKIAlzdHJ1Y3Qg
-c2l0X2luZm8gKnNpdF9pID0gU0lUX0koc2JpKTsKLQlyZXR1cm4gc2l0X2ktPmVsYXBzZWRfdGlt
-ZSArIENVUlJFTlRfVElNRV9TRUMudHZfc2VjIC0KLQkJCQkJCXNpdF9pLT5tb3VudGVkX3RpbWU7
-CisJdGltZTY0X3Qgbm93ID0ga3RpbWVfZ2V0X3JlYWxfc2Vjb25kcygpOworCisJcmV0dXJuIHNp
-dF9pLT5lbGFwc2VkX3RpbWUgKyBub3cgLSBzaXRfaS0+bW91bnRlZF90aW1lOwogfQogCiBzdGF0
-aWMgaW5saW5lIHZvaWQgc2V0X3N1bW1hcnkoc3RydWN0IGYyZnNfc3VtbWFyeSAqc3VtLCBuaWRf
-dCBuaWQsCi0tIAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KWTIwMzggbWFpbGluZyBsaXN0ClkyMDM4QGxpc3RzLmxpbmFyby5vcmcKaHR0cHM6
-Ly9saXN0cy5saW5hcm8ub3JnL21haWxtYW4vbGlzdGluZm8veTIwMzgK
+On Sat, Oct 01, 2016 at 06:03:31PM +0200, Richard Weinberger wrote:
+> Eric,
+> 
+> On Fri, Sep 30, 2016 at 7:58 PM, Eric Biggers <ebiggers@google.com> wrote:
+> > The XTS tweak (or IV) was initialized differently on little endian and
+> > big endian systems.  Because the ciphertext depends on the XTS tweak, it
+> > was not possible to use an encrypted filesystem created by a little
+> > endian system on a big endian system and vice versa, even if they shared
+> > the same PAGE_SIZE.  Fix this by always using little endian.
+> >
+> > This will break hypothetical big endian users of ext4 or f2fs
+> > encryption.  However, all users we are aware of are little endian, and
+> > it's believed that "real" big endian users are unlikely to exist yet.
+> > So this might as well be fixed now before it's too late.
+> >
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >  fs/crypto/crypto.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+> > index 61057b7d..98f87fe 100644
+> > --- a/fs/crypto/crypto.c
+> > +++ b/fs/crypto/crypto.c
+> > @@ -151,7 +151,10 @@ static int do_page_crypto(struct inode *inode,
+> >                         struct page *src_page, struct page *dest_page,
+> >                         gfp_t gfp_flags)
+> >  {
+> > -       u8 xts_tweak[FS_XTS_TWEAK_SIZE];
+> > +       struct {
+> > +               __le64 index;
+> > +               u8 padding[FS_XTS_TWEAK_SIZE - sizeof(__le64)];
+> > +       } xts_tweak;
+> 
+> While we are here, wouldn't it make sense to rename the variable to "iv"?
+> In aes-xts mode the IV is used as tweak. But it is still an IV and passed
+> as IV parameter to the crypto API.
+> 
+> Especially when other cipher modes are used this is confusing.
+> 
+
+Good idea --- I agree that "iv" is a better name, so as to not tie the code to
+XTS specifically.  But I think the renaming should be a separate patch.
+
+Also, currently this code *is* only supposed to be used for XTS.  There's a bug
+where a specially crafted filesystem can cause this code path to be entered with
+CTS, but I have a patch pending in the ext4 tree to fix that.
+
+Eric
