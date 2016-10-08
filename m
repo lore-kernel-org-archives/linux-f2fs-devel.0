@@ -1,86 +1,116 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH] fscrypto: make XTS tweak initialization
- endian-independent
-Date: Fri, 7 Oct 2016 12:05:02 -0400
-Message-ID: <20161007160502.sdv2rl36e5mjpxct@thunk.org>
-References: <20161005170659.GA110549@google.com>
- <20161005182307.GA1164@google.com>
- <5c01fd8e-95e6-669c-9f9d-30ab5a7af9fd@nod.at>
- <ac10ada8-40fc-e946-7593-efa08eb875d1@nod.at>
- <20161006011714.GT27872@dastard>
- <20161006021625.pothakzxpbztwuwb@thunk.org>
- <20161006222351.GV27872@dastard>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: Re: [PATCH 4/4] f2fs: unify the length of versions
+Date: Sat, 8 Oct 2016 09:08:54 +0800
+Message-ID: <57F84726.9020207@huawei.com>
+References: <1475145517-18366-1-git-send-email-zhengjunling@huawei.com>
+	<1475145517-18366-4-git-send-email-zhengjunling@huawei.com>
+	<20160930162528.GA46477@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161006222351.GV27872@dastard>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: Richard Weinberger <richard@nod.at>, Michael Halcrow <mhalcrow@google.com>, David Gstir <david@sigma-star.at>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, Eric Biggers <ebiggers@google.com>, Anand Jain <anand.jain@oracle.com>, Tyler Hicks <tyhicks@canonical.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zhengjunling@huawei.com>) id 1bsg8c-0006Qs-Qu
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Oct 2016 01:09:18 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1bsg8Z-0000qu-4N
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 08 Oct 2016 01:09:18 +0000
+In-Reply-To: <20160930162528.GA46477@jaegeuk>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Oct 07, 2016 at 09:23:51AM +1100, Dave Chinner wrote:
-> At which point, I have to ask, why not just use dm-crypt and
-> implement a simple "use device key on bio contents if none has been
-> specified by higher layer" mechanism to direct the encryption?  It's
-> simple, you can still offload the crypto to your hardware, requires
-> minimal extra plumbing, and no userspace tooling changes. This
-> allows the user data on a dm-crypt to be encrypted with a user
-> specified key so even is the device key is compromised their data is
-> not (and vice versa).
+On 2016/10/1 0:25, Jaegeuk Kim wrote:
+> On Thu, Sep 29, 2016 at 06:38:37PM +0800, Junling Zheng wrote:
+>> Currently, versions in f2fs_configuration have one more byte, so versions
+>> in f2fs_super_block may not end with '\0', which will cause errors while
+>> printing it in print_raw_sb_info(). Unify the length of versions to fix it.
+> 
+> This is to handle non-zero terminated version characters in f2fs_super_block.
+> What is your point?
+> 
+> Thanks,
+> 
 
-That's what I was suggesting.  There would still have to be a
-userspace tool which specifies which key should be used for which
-file, but the actual userspace changes beyond that are minimal.  We
-have some changes in e2fsck to complain if the "this file encrypted"
-when the encryption feature flag is not set, and so on.
+If version characters are non-zero terminated in f2fs_super_block, it will get
+incorrect results while printing it in print_raw_sb_info():
+...
+DISP("%s", sb, version);
+...
 
-Once Pixel and Pixel XL ship in a few weeks, and the kernel
-repositories are published through AOSP, there will be some prototype
-code for folks to look at --- although I'll be the first to admit it
-is a bit ugly.  We were under a bit of time pressure, and so we took a
-bunch of shortcuts that we knew we would have to clean up (and maybe
-even reimplement) before the technology was ready to go upstream.
+Thanks,
+Junling
 
-But, yes, that's the direction in which I want to evolve the fs/crypto
-code.
+>>
+>> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+>> ---
+>>  include/f2fs_fs.h | 6 +++---
+>>  lib/libf2fs.c     | 4 ++--
+>>  2 files changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+>> index 1345e2d..e666076 100644
+>> --- a/include/f2fs_fs.h
+>> +++ b/include/f2fs_fs.h
+>> @@ -270,9 +270,9 @@ struct f2fs_configuration {
+>>  	u_int64_t target_sectors;
+>>  	u_int32_t sectors_per_blk;
+>>  	u_int32_t blks_per_seg;
+>> -	__u8 init_version[VERSION_LEN + 1];
+>> -	__u8 sb_version[VERSION_LEN + 1];
+>> -	__u8 version[VERSION_LEN + 1];
+>> +	__u8 init_version[VERSION_LEN];
+>> +	__u8 sb_version[VERSION_LEN];
+>> +	__u8 version[VERSION_LEN];
+>>  	char *vol_label;
+>>  	int heap;
+>>  	int32_t fd, kd;
+>> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+>> index 706cc34..0a9436b 100644
+>> --- a/lib/libf2fs.c
+>> +++ b/lib/libf2fs.c
+>> @@ -570,11 +570,11 @@ int f2fs_dev_is_umounted(struct f2fs_configuration *c)
+>>  void get_kernel_version(__u8 *version)
+>>  {
+>>  	int i;
+>> -	for (i = 0; i < VERSION_LEN; i++) {
+>> +	for (i = 0; i < VERSION_LEN - 1; i++) {
+>>  		if (version[i] == '\n')
+>>  			break;
+>>  	}
+>> -	memset(version + i, 0, VERSION_LEN + 1 - i);
+>> +	memset(version + i, 0, VERSION_LEN - i);
+>>  }
+>>  
+>>  int f2fs_get_device_info(struct f2fs_configuration *c)
+>> -- 
+>> 2.7.4
+>>
+>>
+>> ------------------------------------------------------------------------------
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> .
+> 
 
-> As for non-block device filesystems like UBIFS, I'd suggest that
-> their "storage layer" that the filesytem sits on top of could do the
-> same thing - any request that doesn't have a key supplied gets
-> encrypted using the device key. i.e. the filesystem layers use the
-> same implementation, but the underlying storage device implements
-> the encryption interface according to the requirements of the
-> subsystem.
 
-Yes, the right place for this would be in the MTD layer.  I'm not sure
-hardware designers will ever be interested in adding hardware
-accelerated crypto in front of the "raw flash" interface (if they are
-going to do that, why not just throw in the whole FTL and eMMC layers
-as well?), but if it does happen, the MTD layer could handle that as
-well.
 
-> i.e. I don't think we should be trying to implement a single layer
-> that supports both block and non-block filesystems here. However, we
-> can still architect a solution where the filesystem level code is
-> independent of the underlying storage encryption implementation.  In
-> this sort of architecture, the filesystem only does key management
-> and deals with unencrypted data and metadata, whilst the underlying
-> storage layer implements the (hardware accelerated) encryption as
-> the data passes through...
-
-Yep, that's the idea --- with the added twist that the architecture
-should be flexible enough that in some cases, the pieces of the key
-management, currently in fs/crypto, might get moved into to secure
-enclaves, such that even if the attacker completely compromises kernel
-memory, none of cryptographic bits would be available.
-
-Both ARM Trustzone and Intel's SGX are examples of trusted execution
-environments which could be used for this purpose, so this is
-something we'll eventually be able to use and test on x86 developer
-workstations.
-
-Cheers,
-
-						- Ted
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most 
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
