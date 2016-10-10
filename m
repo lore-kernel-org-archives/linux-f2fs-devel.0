@@ -1,26 +1,27 @@
-From: Junling Zheng <zhengjunling@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: [PATCH 4/4] f2fs: unify the length of versions
-Date: Sat, 8 Oct 2016 09:08:54 +0800
-Message-ID: <57F84726.9020207@huawei.com>
+Date: Mon, 10 Oct 2016 09:49:57 -0700
+Message-ID: <20161010164957.GA69914@jaegeuk>
 References: <1475145517-18366-1-git-send-email-zhengjunling@huawei.com>
 	<1475145517-18366-4-git-send-email-zhengjunling@huawei.com>
-	<20160930162528.GA46477@jaegeuk>
+	<20160930162528.GA46477@jaegeuk> <57F84726.9020207@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhengjunling@huawei.com>) id 1bsg8c-0006Qs-Qu
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1btdmC-0002gk-4z
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Oct 2016 01:09:18 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1bsg8Z-0000qu-4N
+	Mon, 10 Oct 2016 16:50:08 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1btdm8-0004Kn-NK
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 08 Oct 2016 01:09:18 +0000
-In-Reply-To: <20160930162528.GA46477@jaegeuk>
+	Mon, 10 Oct 2016 16:50:08 +0000
+Content-Disposition: inline
+In-Reply-To: <57F84726.9020207@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,86 +31,91 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Junling Zheng <zhengjunling@huawei.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2016/10/1 0:25, Jaegeuk Kim wrote:
-> On Thu, Sep 29, 2016 at 06:38:37PM +0800, Junling Zheng wrote:
->> Currently, versions in f2fs_configuration have one more byte, so versions
->> in f2fs_super_block may not end with '\0', which will cause errors while
->> printing it in print_raw_sb_info(). Unify the length of versions to fix it.
+On Sat, Oct 08, 2016 at 09:08:54AM +0800, Junling Zheng wrote:
+> On 2016/10/1 0:25, Jaegeuk Kim wrote:
+> > On Thu, Sep 29, 2016 at 06:38:37PM +0800, Junling Zheng wrote:
+> >> Currently, versions in f2fs_configuration have one more byte, so versions
+> >> in f2fs_super_block may not end with '\0', which will cause errors while
+> >> printing it in print_raw_sb_info(). Unify the length of versions to fix it.
+> > 
+> > This is to handle non-zero terminated version characters in f2fs_super_block.
+> > What is your point?
+> > 
+> > Thanks,
+> > 
 > 
-> This is to handle non-zero terminated version characters in f2fs_super_block.
-> What is your point?
-> 
-> Thanks,
-> 
+> If version characters are non-zero terminated in f2fs_super_block, it will get
+> incorrect results while printing it in print_raw_sb_info():
+> ...
+> DISP("%s", sb, version);
+> ...
 
-If version characters are non-zero terminated in f2fs_super_block, it will get
-incorrect results while printing it in print_raw_sb_info():
-...
-DISP("%s", sb, version);
-...
+Then, I think we need to fix this line to avoid garbage when printing out.
 
 Thanks,
-Junling
 
->>
->> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
->> ---
->>  include/f2fs_fs.h | 6 +++---
->>  lib/libf2fs.c     | 4 ++--
->>  2 files changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
->> index 1345e2d..e666076 100644
->> --- a/include/f2fs_fs.h
->> +++ b/include/f2fs_fs.h
->> @@ -270,9 +270,9 @@ struct f2fs_configuration {
->>  	u_int64_t target_sectors;
->>  	u_int32_t sectors_per_blk;
->>  	u_int32_t blks_per_seg;
->> -	__u8 init_version[VERSION_LEN + 1];
->> -	__u8 sb_version[VERSION_LEN + 1];
->> -	__u8 version[VERSION_LEN + 1];
->> +	__u8 init_version[VERSION_LEN];
->> +	__u8 sb_version[VERSION_LEN];
->> +	__u8 version[VERSION_LEN];
->>  	char *vol_label;
->>  	int heap;
->>  	int32_t fd, kd;
->> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
->> index 706cc34..0a9436b 100644
->> --- a/lib/libf2fs.c
->> +++ b/lib/libf2fs.c
->> @@ -570,11 +570,11 @@ int f2fs_dev_is_umounted(struct f2fs_configuration *c)
->>  void get_kernel_version(__u8 *version)
->>  {
->>  	int i;
->> -	for (i = 0; i < VERSION_LEN; i++) {
->> +	for (i = 0; i < VERSION_LEN - 1; i++) {
->>  		if (version[i] == '\n')
->>  			break;
->>  	}
->> -	memset(version + i, 0, VERSION_LEN + 1 - i);
->> +	memset(version + i, 0, VERSION_LEN - i);
->>  }
->>  
->>  int f2fs_get_device_info(struct f2fs_configuration *c)
->> -- 
->> 2.7.4
->>
->>
->> ------------------------------------------------------------------------------
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 > 
-> .
+> Thanks,
+> Junling
 > 
-
-
+> >>
+> >> Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+> >> ---
+> >>  include/f2fs_fs.h | 6 +++---
+> >>  lib/libf2fs.c     | 4 ++--
+> >>  2 files changed, 5 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+> >> index 1345e2d..e666076 100644
+> >> --- a/include/f2fs_fs.h
+> >> +++ b/include/f2fs_fs.h
+> >> @@ -270,9 +270,9 @@ struct f2fs_configuration {
+> >>  	u_int64_t target_sectors;
+> >>  	u_int32_t sectors_per_blk;
+> >>  	u_int32_t blks_per_seg;
+> >> -	__u8 init_version[VERSION_LEN + 1];
+> >> -	__u8 sb_version[VERSION_LEN + 1];
+> >> -	__u8 version[VERSION_LEN + 1];
+> >> +	__u8 init_version[VERSION_LEN];
+> >> +	__u8 sb_version[VERSION_LEN];
+> >> +	__u8 version[VERSION_LEN];
+> >>  	char *vol_label;
+> >>  	int heap;
+> >>  	int32_t fd, kd;
+> >> diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+> >> index 706cc34..0a9436b 100644
+> >> --- a/lib/libf2fs.c
+> >> +++ b/lib/libf2fs.c
+> >> @@ -570,11 +570,11 @@ int f2fs_dev_is_umounted(struct f2fs_configuration *c)
+> >>  void get_kernel_version(__u8 *version)
+> >>  {
+> >>  	int i;
+> >> -	for (i = 0; i < VERSION_LEN; i++) {
+> >> +	for (i = 0; i < VERSION_LEN - 1; i++) {
+> >>  		if (version[i] == '\n')
+> >>  			break;
+> >>  	}
+> >> -	memset(version + i, 0, VERSION_LEN + 1 - i);
+> >> +	memset(version + i, 0, VERSION_LEN - i);
+> >>  }
+> >>  
+> >>  int f2fs_get_device_info(struct f2fs_configuration *c)
+> >> -- 
+> >> 2.7.4
+> >>
+> >>
+> >> ------------------------------------------------------------------------------
+> >> _______________________________________________
+> >> Linux-f2fs-devel mailing list
+> >> Linux-f2fs-devel@lists.sourceforge.net
+> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
+> > .
+> > 
+> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most 
