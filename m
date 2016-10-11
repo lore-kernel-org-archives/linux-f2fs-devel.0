@@ -1,62 +1,78 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 4/7] f2fs: show pending allocated nids count in debugfs
-Date: Tue, 11 Oct 2016 22:31:33 +0800
-Message-ID: <20161011143136.2107-4-chao@kernel.org>
-References: <20161011143136.2107-1-chao@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161011143136.2107-1-chao@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 1/8] f2fs: clear nlink if fail to add_link
+Date: Tue, 11 Oct 2016 22:56:59 +0800
+Message-ID: <20161011145706.5028-1-chao@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1btyWW-0007ja-Cr
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 11 Oct 2016 14:59:20 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1btyWV-0005Q6-AT
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 11 Oct 2016 14:59:20 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-Add to show pending allocated nids count in debugfs.
+We don't need to keep incomplete created inode in cache, so if we fail to
+add link into directory during new inode creation, it's better to set
+nlink of inode to zero, then we can evict inode immediately. Otherwise
+release of nid belong to inode will be delayed until inode cache is being
+shrunk, it may cause a seemingly endless loop while allocating free nids
+in time of testing generic/269 case of fstest suit.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/debug.c | 7 ++++---
- fs/f2fs/f2fs.h  | 2 +-
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ fs/f2fs/inode.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 9789138..05a70b4 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -74,7 +74,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 	si->dirty_nats = NM_I(sbi)->dirty_nat_cnt;
- 	si->sits = MAIN_SEGS(sbi);
- 	si->dirty_sits = SIT_I(sbi)->dirty_sentries;
--	si->fnids = NM_I(sbi)->free_nid_cnt;
-+	si->free_nids = NM_I(sbi)->free_nid_cnt;
-+	si->alloc_nids = NM_I(sbi)->alloc_nid_cnt;
- 	si->bg_gc = sbi->bg_gc;
- 	si->util_free = (int)(free_user_blocks(sbi) >> sbi->log_blocks_per_seg)
- 		* 100 / (int)(sbi->user_block_count >> sbi->log_blocks_per_seg)
-@@ -325,8 +326,8 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->ndirty_imeta);
- 		seq_printf(s, "  - NATs: %9d/%9d\n  - SITs: %9d/%9d\n",
- 			   si->dirty_nats, si->nats, si->dirty_sits, si->sits);
--		seq_printf(s, "  - free_nids: %9d\n",
--			   si->fnids);
-+		seq_printf(s, "  - free_nids: %9d, alloc_nids: %9d\n",
-+			   si->free_nids, si->alloc_nids);
- 		seq_puts(s, "\nDistribution of User Blocks:");
- 		seq_puts(s, " [ valid | invalid | free ]\n");
- 		seq_puts(s, "  [");
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d6dff15..a726e47 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2206,7 +2206,7 @@ struct f2fs_stat_info {
- 	s64 ndirty_node, ndirty_dent, ndirty_meta, ndirty_data, ndirty_imeta;
- 	s64 inmem_pages;
- 	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
--	int nats, dirty_nats, sits, dirty_sits, fnids;
-+	int nats, dirty_nats, sits, dirty_sits, free_nids, alloc_nids;
- 	int total_count, utilization;
- 	int bg_gc, wb_bios;
- 	int inline_xattr, inline_inode, inline_dir, orphans;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index d736989..34ae03c 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -384,6 +384,8 @@ retry:
+ 		f2fs_lock_op(sbi);
+ 		err = remove_inode_page(inode);
+ 		f2fs_unlock_op(sbi);
++		if (err == -ENOENT)
++			err = 0;
+ 	}
+ 
+ 	/* give more chances, if ENOMEM case */
+@@ -424,6 +426,12 @@ void handle_failed_inode(struct inode *inode)
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct node_info ni;
+ 
++	/*
++	 * clear nlink of inode in order to release resource of inode
++	 * immediately.
++	 */
++	clear_nlink(inode);
++
+ 	/* don't make bad inode, since it becomes a regular file. */
+ 	unlock_new_inode(inode);
+ 
 -- 
 2.10.1
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most 
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
