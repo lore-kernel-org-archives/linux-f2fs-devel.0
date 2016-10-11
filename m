@@ -1,26 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 3/7] f2fs: rename free nid cache operation
-Date: Tue, 11 Oct 2016 10:19:03 -0700
-Message-ID: <20161011171903.GB82199@jaegeuk>
+Subject: Re: [PATCH 4/7] f2fs: show pending allocated nids count
+	in debugfs
+Date: Tue, 11 Oct 2016 10:20:56 -0700
+Message-ID: <20161011172056.GC82199@jaegeuk>
 References: <20161011143136.2107-1-chao@kernel.org>
-	<20161011143136.2107-3-chao@kernel.org>
+	<20161011143136.2107-4-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1bu0i4-0005bO-Fd
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bu0jj-00048f-Sy
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 11 Oct 2016 17:19:24 +0000
+	Tue, 11 Oct 2016 17:21:07 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bu0i2-00021T-8r
+	(Exim 4.76) id 1bu0jj-0002Dl-1A
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 11 Oct 2016 17:19:24 +0000
+	Tue, 11 Oct 2016 17:21:07 +0000
 Content-Disposition: inline
-In-Reply-To: <20161011143136.2107-3-chao@kernel.org>
+In-Reply-To: <20161011143136.2107-4-chao@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,118 +36,59 @@ Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hi Chao,
 
-On Tue, Oct 11, 2016 at 10:31:32PM +0800, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
-> 
-> Rename free nid cache operation for readability, no functionality change.
-
-Well, I don't think this can be a *cache*, since there is no cache-related
-operations such as reordering by cache hit, whereas it is more likely to
-be a singled one-way list.
+This must be merged into original split patch (maybe representing a list array).
 
 Thanks,
 
+On Tue, Oct 11, 2016 at 10:31:33PM +0800, Chao Yu wrote:
+> From: Chao Yu <yuchao0@huawei.com>
+> 
+> Add to show pending allocated nids count in debugfs.
 > 
 > Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > ---
->  fs/f2fs/node.c | 28 +++++++++++++++++-----------
->  1 file changed, 17 insertions(+), 11 deletions(-)
+>  fs/f2fs/debug.c | 7 ++++---
+>  fs/f2fs/f2fs.h  | 2 +-
+>  2 files changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index ea9ff8c..92c9aa4 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1689,13 +1689,19 @@ const struct address_space_operations f2fs_node_aops = {
->  #endif
->  };
->  
-> -static struct free_nid *__lookup_free_nid_list(struct f2fs_nm_info *nm_i,
-> +static struct free_nid *__lookup_free_nid_cache(struct f2fs_nm_info *nm_i,
->  						nid_t n)
->  {
->  	return radix_tree_lookup(&nm_i->free_nid_root, n);
->  }
->  
-> -static void __del_from_free_nid_list(struct f2fs_nm_info *nm_i,
-> +static int __insert_to_free_nid_cache(struct f2fs_nm_info *nm_i,
-> +						struct free_nid *i)
-> +{
-> +	return radix_tree_insert(&nm_i->free_nid_root, i->nid, i);
-> +}
-> +
-> +static void __del_from_free_nid_cache(struct f2fs_nm_info *nm_i,
->  						struct free_nid *i)
->  {
->  	radix_tree_delete(&nm_i->free_nid_root, i->nid);
-> @@ -1763,7 +1769,7 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
->  	}
->  
->  	spin_lock(&nm_i->free_nid_list_lock);
-> -	if (radix_tree_insert(&nm_i->free_nid_root, i->nid, i)) {
-> +	if (__insert_to_free_nid_cache(nm_i, i)) {
->  		spin_unlock(&nm_i->free_nid_list_lock);
->  		radix_tree_preload_end();
->  		kmem_cache_free(free_nid_slab, i);
-> @@ -1782,10 +1788,10 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
->  	bool need_free = false;
->  
->  	spin_lock(&nm_i->free_nid_list_lock);
-> -	i = __lookup_free_nid_list(nm_i, nid);
-> +	i = __lookup_free_nid_cache(nm_i, nid);
->  	if (i && i->state == NID_NEW) {
->  		__remove_nid_from_list(sbi, i, FREE_NID_LIST);
-> -		__del_from_free_nid_list(nm_i, i);
-> +		__del_from_free_nid_cache(nm_i, i);
->  		need_free = true;
->  	}
->  	spin_unlock(&nm_i->free_nid_list_lock);
-> @@ -1922,10 +1928,10 @@ void alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid)
->  	struct free_nid *i;
->  
->  	spin_lock(&nm_i->free_nid_list_lock);
-> -	i = __lookup_free_nid_list(nm_i, nid);
-> +	i = __lookup_free_nid_cache(nm_i, nid);
->  	f2fs_bug_on(sbi, !i);
->  	__remove_nid_from_list(sbi, i, ALLOC_NID_LIST);
-> -	__del_from_free_nid_list(nm_i, i);
-> +	__del_from_free_nid_cache(nm_i, i);
->  	spin_unlock(&nm_i->free_nid_list_lock);
->  
->  	kmem_cache_free(free_nid_slab, i);
-> @@ -1944,13 +1950,13 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
->  		return;
->  
->  	spin_lock(&nm_i->free_nid_list_lock);
-> -	i = __lookup_free_nid_list(nm_i, nid);
-> +	i = __lookup_free_nid_cache(nm_i, nid);
->  	f2fs_bug_on(sbi, !i);
->  
->  	__remove_nid_from_list(sbi, i, ALLOC_NID_LIST);
->  
->  	if (!available_free_memory(sbi, FREE_NIDS)) {
-> -		__del_from_free_nid_list(nm_i, i);
-> +		__del_from_free_nid_cache(nm_i, i);
->  		need_free = true;
->  	} else {
->  		i->state = NID_NEW;
-> @@ -1980,7 +1986,7 @@ int try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink)
->  			break;
->  
->  		__remove_nid_from_list(sbi, i, FREE_NID_LIST);
-> -		__del_from_free_nid_list(nm_i, i);
-> +		__del_from_free_nid_cache(nm_i, i);
->  
->  		kmem_cache_free(free_nid_slab, i);
->  		nr_shrink--;
-> @@ -2368,7 +2374,7 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
->  	spin_lock(&nm_i->free_nid_list_lock);
->  	list_for_each_entry_safe(i, next_i, &nm_i->free_nid_list, list) {
->  		__remove_nid_from_list(sbi, i, FREE_NID_LIST);
-> -		__del_from_free_nid_list(nm_i, i);
-> +		__del_from_free_nid_cache(nm_i, i);
->  		spin_unlock(&nm_i->free_nid_list_lock);
->  		kmem_cache_free(free_nid_slab, i);
->  		spin_lock(&nm_i->free_nid_list_lock);
+> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+> index 9789138..05a70b4 100644
+> --- a/fs/f2fs/debug.c
+> +++ b/fs/f2fs/debug.c
+> @@ -74,7 +74,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+>  	si->dirty_nats = NM_I(sbi)->dirty_nat_cnt;
+>  	si->sits = MAIN_SEGS(sbi);
+>  	si->dirty_sits = SIT_I(sbi)->dirty_sentries;
+> -	si->fnids = NM_I(sbi)->free_nid_cnt;
+> +	si->free_nids = NM_I(sbi)->free_nid_cnt;
+> +	si->alloc_nids = NM_I(sbi)->alloc_nid_cnt;
+>  	si->bg_gc = sbi->bg_gc;
+>  	si->util_free = (int)(free_user_blocks(sbi) >> sbi->log_blocks_per_seg)
+>  		* 100 / (int)(sbi->user_block_count >> sbi->log_blocks_per_seg)
+> @@ -325,8 +326,8 @@ static int stat_show(struct seq_file *s, void *v)
+>  			   si->ndirty_imeta);
+>  		seq_printf(s, "  - NATs: %9d/%9d\n  - SITs: %9d/%9d\n",
+>  			   si->dirty_nats, si->nats, si->dirty_sits, si->sits);
+> -		seq_printf(s, "  - free_nids: %9d\n",
+> -			   si->fnids);
+> +		seq_printf(s, "  - free_nids: %9d, alloc_nids: %9d\n",
+> +			   si->free_nids, si->alloc_nids);
+>  		seq_puts(s, "\nDistribution of User Blocks:");
+>  		seq_puts(s, " [ valid | invalid | free ]\n");
+>  		seq_puts(s, "  [");
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index d6dff15..a726e47 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2206,7 +2206,7 @@ struct f2fs_stat_info {
+>  	s64 ndirty_node, ndirty_dent, ndirty_meta, ndirty_data, ndirty_imeta;
+>  	s64 inmem_pages;
+>  	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
+> -	int nats, dirty_nats, sits, dirty_sits, fnids;
+> +	int nats, dirty_nats, sits, dirty_sits, free_nids, alloc_nids;
+>  	int total_count, utilization;
+>  	int bg_gc, wb_bios;
+>  	int inline_xattr, inline_inode, inline_dir, orphans;
 > -- 
 > 2.10.1
 
