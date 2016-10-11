@@ -1,23 +1,23 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 6/8] f2fs: be aware of extent beyond EOF in fiemap
-Date: Tue, 11 Oct 2016 22:57:04 +0800
-Message-ID: <20161011145706.5028-6-chao@kernel.org>
+Subject: [PATCH 8/8] f2fs: fix error handling in fsync_node_pages
+Date: Tue, 11 Oct 2016 22:57:06 +0800
+Message-ID: <20161011145706.5028-8-chao@kernel.org>
 References: <20161011145706.5028-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1btyWo-00052u-Jx
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1btyX0-00039s-0C
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 11 Oct 2016 14:59:38 +0000
+	Tue, 11 Oct 2016 14:59:50 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1btyWn-0001lh-PF
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1btyWv-0005yu-1o
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 11 Oct 2016 14:59:38 +0000
+	Tue, 11 Oct 2016 14:59:49 +0000
 In-Reply-To: <20161011145706.5028-1-chao@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -33,59 +33,37 @@ Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-f2fs can support fallocating blocks beyond file size without changing the
-size, but ->fiemap of f2fs was restricted and can't detect these extents
-fallocated past EOF, now relieve the restriction.
+In fsync_node_pages, if f2fs was taged with CP_ERROR_FLAG, make sure bio
+cache was flushed before return.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/data.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+ fs/f2fs/node.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index edfd2de..983aa54e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -886,7 +886,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	struct buffer_head map_bh;
- 	sector_t start_blk, last_blk;
- 	pgoff_t next_pgofs;
--	loff_t isize;
- 	u64 logical = 0, phys = 0, size = 0;
- 	u32 flags = 0;
- 	int ret = 0;
-@@ -903,13 +902,6 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 3a393e3..14f137d 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1339,7 +1339,8 @@ retry:
+ 			if (unlikely(f2fs_cp_error(sbi))) {
+ 				f2fs_put_page(last_page, 0);
+ 				pagevec_release(&pvec);
+-				return -EIO;
++				ret = -EIO;
++				goto out;
+ 			}
  
- 	inode_lock(inode);
- 
--	isize = i_size_read(inode);
--	if (start >= isize)
--		goto out;
--
--	if (start + len > isize)
--		len = isize - start;
--
- 	if (logical_to_blk(inode, len) == 0)
- 		len = blk_to_logical(inode, 1);
- 
-@@ -928,13 +920,11 @@ next:
- 	/* HOLE */
- 	if (!buffer_mapped(&map_bh)) {
- 		start_blk = next_pgofs;
--		/* Go through holes util pass the EOF */
--		if (blk_to_logical(inode, start_blk) < isize)
-+
-+		if (blk_to_logical(inode, start_blk) < blk_to_logical(inode,
-+					F2FS_I_SB(inode)->max_file_blocks))
- 			goto prep_next;
--		/* Found a hole beyond isize means no more extents.
--		 * Note that the premise is that filesystems don't
--		 * punch holes beyond isize and keep size unchanged.
--		 */
-+
- 		flags |= FIEMAP_EXTENT_LAST;
+ 			if (!IS_DNODE(page) || !is_cold_node(page))
+@@ -1412,7 +1413,7 @@ continue_unlock:
+ 		unlock_page(last_page);
+ 		goto retry;
  	}
- 
+-
++out:
+ 	if (nwritten)
+ 		f2fs_submit_merged_bio_cond(sbi, NULL, NULL, ino, NODE, WRITE);
+ 	return ret ? -EIO: 0;
 -- 
 2.10.1
 
