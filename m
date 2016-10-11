@@ -1,94 +1,141 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 5/7] f2fs: exclude free nids building and
-	allocation
-Date: Tue, 11 Oct 2016 22:31:34 +0800
-Message-ID: <20161011143136.2107-5-chao@kernel.org>
+Subject: [PATCH 6/7] f2fs: don't interrupt free nids building during nid allocation
+Date: Tue, 11 Oct 2016 22:31:35 +0800
+Message-ID: <20161011143136.2107-6-chao@kernel.org>
 References: <20161011143136.2107-1-chao@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1bty9t-0006qi-Oc
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 11 Oct 2016 14:35:57 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bty9t-000312-1Q
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 11 Oct 2016 14:35:57 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20161011143136.2107-1-chao@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-During nid allocation, it needs to exclude building and allocating flow
-of free nids, this is because while building free nid cache, there are two
-steps: a) load free nids from unused nat entries in NAT pages, b) update
-free nid cache by checking nat journal. The two steps should be atomical,
-otherwise an used nid can be allocated as free one after a) and before b).
-
-This patch adds missing lock which covers build_free_nids in
-unlock_operation and f2fs_balance_fs_bg to avoid that.
+Let build_free_nids support sync/async methods, in allocation flow of nids,
+we use synchronuous method, so that we can avoid looping in alloc_nid when
+free memory is low; in unblock_operations and f2fs_balance_fs_bg we use
+asynchronuous method in where low memory condition can interrupt us.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/node.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/node.c       | 22 ++++++++++------------
+ fs/f2fs/segment.c    |  2 +-
+ 4 files changed, 13 insertions(+), 15 deletions(-)
 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 7e9b504..eacc697 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -987,7 +987,7 @@ static void unblock_operations(struct f2fs_sb_info *sbi)
+ {
+ 	up_write(&sbi->node_write);
+ 
+-	build_free_nids(sbi);
++	build_free_nids(sbi, false);
+ 	f2fs_unlock_all(sbi);
+ }
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a726e47..ce34b5f 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2056,7 +2056,7 @@ void move_node_page(struct page *, int);
+ int fsync_node_pages(struct f2fs_sb_info *, struct inode *,
+ 			struct writeback_control *, bool);
+ int sync_node_pages(struct f2fs_sb_info *, struct writeback_control *);
+-void build_free_nids(struct f2fs_sb_info *);
++void build_free_nids(struct f2fs_sb_info *, bool);
+ bool alloc_nid(struct f2fs_sb_info *, nid_t *);
+ void alloc_nid_done(struct f2fs_sb_info *, nid_t);
+ void alloc_nid_failed(struct f2fs_sb_info *, nid_t);
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 92c9aa4..c68e92d 100644
+index c68e92d..0a9692e 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1824,7 +1824,7 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+@@ -1744,9 +1744,6 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
+ 	struct free_nid *i;
+ 	struct nat_entry *ne;
+ 
+-	if (!available_free_memory(sbi, FREE_NIDS))
+-		return -1;
+-
+ 	/* 0 nid should not be used */
+ 	if (unlikely(nid == 0))
+ 		return 0;
+@@ -1817,14 +1814,12 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 
+ 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
+ 		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
+-		if (blk_addr == NULL_ADDR) {
+-			if (add_free_nid(sbi, start_nid, true) < 0)
+-				break;
+-		}
++		if (blk_addr == NULL_ADDR)
++			add_free_nid(sbi, start_nid, true);
  	}
  }
  
--void build_free_nids(struct f2fs_sb_info *sbi)
-+void __build_free_nids(struct f2fs_sb_info *sbi)
+-void __build_free_nids(struct f2fs_sb_info *sbi)
++void __build_free_nids(struct f2fs_sb_info *sbi, bool sync)
  {
  	struct f2fs_nm_info *nm_i = NM_I(sbi);
  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-@@ -1878,6 +1878,13 @@ void build_free_nids(struct f2fs_sb_info *sbi)
+@@ -1836,6 +1831,9 @@ void __build_free_nids(struct f2fs_sb_info *sbi)
+ 	if (nm_i->free_nid_cnt >= NAT_ENTRY_PER_BLOCK)
+ 		return;
+ 
++	if (!sync && !available_free_memory(sbi, FREE_NIDS))
++		return;
++
+ 	/* readahead nat pages to be scanned */
+ 	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
+ 							META_NAT, true);
+@@ -1878,10 +1876,10 @@ void __build_free_nids(struct f2fs_sb_info *sbi)
  					nm_i->ra_nid_pages, META_NAT, false);
  }
  
-+void build_free_nids(struct f2fs_sb_info *sbi)
-+{
-+	mutex_lock(&NM_I(sbi)->build_lock);
-+	__build_free_nids(sbi);
-+	mutex_unlock(&NM_I(sbi)->build_lock);
-+}
-+
- /*
-  * If this function returns success, caller can obtain a new nid
-  * from second parameter of this function.
-@@ -1913,9 +1920,7 @@ retry:
+-void build_free_nids(struct f2fs_sb_info *sbi)
++void build_free_nids(struct f2fs_sb_info *sbi, bool sync)
+ {
+ 	mutex_lock(&NM_I(sbi)->build_lock);
+-	__build_free_nids(sbi);
++	__build_free_nids(sbi, sync);
+ 	mutex_unlock(&NM_I(sbi)->build_lock);
+ }
+ 
+@@ -1920,7 +1918,7 @@ retry:
  	spin_unlock(&nm_i->free_nid_list_lock);
  
  	/* Let's scan nat pages and its caches to get free nids */
--	mutex_lock(&nm_i->build_lock);
- 	build_free_nids(sbi);
--	mutex_unlock(&nm_i->build_lock);
+-	build_free_nids(sbi);
++	build_free_nids(sbi, true);
  	goto retry;
  }
  
+@@ -2359,7 +2357,7 @@ int build_node_manager(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		return err;
+ 
+-	build_free_nids(sbi);
++	build_free_nids(sbi, true);
+ 	return 0;
+ }
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index fc886f0..7f62dd0 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -380,7 +380,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 	if (!available_free_memory(sbi, FREE_NIDS))
+ 		try_to_free_nids(sbi, MAX_FREE_NIDS);
+ 	else
+-		build_free_nids(sbi);
++		build_free_nids(sbi, false);
+ 
+ 	/* checkpoint is the only way to shrink partial cached entries */
+ 	if (!available_free_memory(sbi, NAT_ENTRIES) ||
 -- 
 2.10.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most 
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
