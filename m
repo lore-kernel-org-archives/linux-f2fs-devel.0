@@ -1,22 +1,28 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix wrong sum_page pointer in f2fs_gc
-Date: Wed, 12 Oct 2016 16:23:04 -0700
-Message-ID: <20161012232304.6667-1-jaegeuk@kernel.org>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH] fscrypto: make XTS tweak initialization
+ endian-independent
+Date: Wed, 12 Oct 2016 23:39:53 -0400
+Message-ID: <20161013033953.sgohuvud5krlupf3@thunk.org>
+References: <1475258329-146528-1-git-send-email-ebiggers@google.com>
+	<CAFLxGvyCHwWms8wJf1gU0hRj__Q0Z2F2wKuZ3sYNfp8wQ9S4PQ@mail.gmail.com>
+	<20161003180340.GA54410@google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1buSrl-00032A-0c
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <tytso@thunk.org>) id 1buWsj-0007N1-7K
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 12 Oct 2016 23:23:17 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1buSrk-0003m9-10
+	Thu, 13 Oct 2016 03:40:33 +0000
+Received: from imap.thunk.org ([74.207.234.97])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1buWsf-0007hb-AA
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 12 Oct 2016 23:23:16 +0000
+	Thu, 13 Oct 2016 03:40:33 +0000
+Content-Disposition: inline
+In-Reply-To: <20161003180340.GA54410@google.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,45 +32,26 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Eric Biggers <ebiggers@google.com>
+Cc: Richard Weinberger <richard.weinberger@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, jaegeuk@kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch fixes using a wrong pointer for sum_page in f2fs_gc.
+On Fri, Sep 30, 2016 at 7:58 PM, Eric Biggers <ebiggers@google.com> wrote:
+> The XTS tweak (or IV) was initialized differently on little endian and
+> big endian systems.  Because the ciphertext depends on the XTS tweak, it
+> was not possible to use an encrypted filesystem created by a little
+> endian system on a big endian system and vice versa, even if they shared
+> the same PAGE_SIZE.  Fix this by always using little endian.
+>
+> This will break hypothetical big endian users of ext4 or f2fs
+> encryption.  However, all users we are aware of are little endian, and
+> it's believed that "real" big endian users are unlikely to exist yet.
+> So this might as well be fixed now before it's too late.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/gc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Thanks, applied.
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e48142f..9c18917 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -854,16 +854,16 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 
- 	for (segno = start_segno; segno < end_segno; segno++) {
- 
--		if (get_valid_blocks(sbi, segno, 1) == 0 ||
--					unlikely(f2fs_cp_error(sbi)))
--			goto next;
--
- 		/* find segment summary of victim */
- 		sum_page = find_get_page(META_MAPPING(sbi),
- 					GET_SUM_BLOCK(sbi, segno));
--		f2fs_bug_on(sbi, !PageUptodate(sum_page));
- 		f2fs_put_page(sum_page, 0);
- 
-+		if (get_valid_blocks(sbi, segno, 1) == 0 ||
-+				!PageUptodate(sum_page) ||
-+				unlikely(f2fs_cp_error(sbi)))
-+			goto next;
-+
- 		sum = page_address(sum_page);
- 		f2fs_bug_on(sbi, type != GET_SUM_TYPE((&sum->footer)));
- 
--- 
-2.8.3
-
+					- Ted
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most 
