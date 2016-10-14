@@ -1,27 +1,24 @@
-From: eduardo <kevingaillard@volage-nina.space>
-Subject: =?utf-8?q?Comment_avez-vous_rencontr=C3=A9e?=
-Date: Thu, 13 Oct 2016 22:43:25 +0000
-Message-ID: <be3d1f26b63b7cb8be56135d7500f232@volage-nina.space>
-Reply-To: eduardo <eduardo@volage-nina.space>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 3/5] libf2fs: avoid garbage printout
+Date: Thu, 13 Oct 2016 17:02:28 -0700
+Message-ID: <20161014000230.59232-3-jaegeuk@kernel.org>
+References: <20161014000230.59232-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kevingaillard@volage-nina.space>) id 1buomA-0005zO-Gw
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bupxg-0005Cn-A7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Oct 2016 22:46:59 +0000
-Received: from [89.163.174.133] (helo=mxs.volage-nina.space)
+	Fri, 14 Oct 2016 00:02:56 +0000
+Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1buom8-0001Rh-Dy
+	(Exim 4.76) id 1bupxf-0003NT-LS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 13 Oct 2016 22:46:58 +0000
-Received: from [192.168.14.115] (webmail-test [81.163.161.48])
-	by mxs.volage-nina.space (Postfix) with ESMTP id 2623321F435
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Fri, 14 Oct 2016 01:43:03 +0300 (EEST)
+	Fri, 14 Oct 2016 00:02:56 +0000
+In-Reply-To: <20161014000230.59232-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,22 +28,42 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-IE91aSBq4oCZYWltZSBs4oCZYWR1bHTDqHJlLiBKZSBs4oCZYWltZSBwbHVzIHF1ZSB0b3V0LCBj
-YXIgaWwgaW1wbGlxdWUgw6AgbGEgZm9pcyBsZXMgbGllbnMgZHUgbWFyaWFnZSBldCBkZXMgc2F1
-dGVyaWVzIGRlcyBwbHVzIGTDqWxpY2lldXNlcy4gCkxlIHRvdXQgYXZlYyBkZXMgcGVyc29ubmVz
-IHF1aSBjb21tZSBtb2kgc29udCBtYXJpw6llcyAhISEgCkplIG5lIG1lIGTDqWZpbmlyYWl0IHBh
-cyBjb21tZSBsaWLDqXLDqWUsIGrigJllbW1lcmRlIGxlcyBmw6ltaW5pc3RlcywgamUgc3VpcyBq
-dXN0ZSB1bmUgam91aXNzZXVzZS4KLXdlYmNhbWhvdC5uZXQKClZvaWzDoCBs4oCZZW5kcm9pdCBv
-w7kgZGVzIGZlbW1lcyBwb3N0LW1vZGVybmVzIGNvbW1lIG1vaSBzw6l2aXNzZW50IDogICAgICAg
-LXdlYmNhbWhvdC5uZXQKCgpOb3VzIGludml0b25zIHRvdXRlIHBlcnNvbm5lIG5lIHNvdWhhaXRh
-bnQgcGx1cyByZWNldm9pciBkZSBjb3VycmllbCBkZSBub3RyZSBwYXJ0IMOgIHV0aWxpc2VyIGxl
-IGxpZW4gc3VpdmFudCA6LWRlc2luc2NyaXB0aW9uLndlYmNhbWhvdC5uZXQKCi0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9m
-IHRoZSB3b3JsZCdzIG1vc3QgCmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoRG90Lm9yZyEgaHR0
-cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2
-ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xp
-c3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+This patch avoids to print garbage data.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ lib/libf2fs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index d3311ca..63cf6d4 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -658,7 +658,7 @@ int f2fs_get_device_info(void)
+ 	struct hd_geometry geom;
+ #ifndef WITH_ANDROID
+ 	sg_io_hdr_t io_hdr;
+-	unsigned char reply_buffer[96];
++	unsigned char reply_buffer[96] = {0};
+ 	unsigned char model_inq[6] = {MODELINQUIRY};
+ #endif
+ 	u_int64_t wanted_total_sectors = c.total_sectors;
+@@ -725,7 +725,7 @@ int f2fs_get_device_info(void)
+ 			int i = 16;
+ 
+ 			MSG(0, "Info: Disk Model: ");
+-			while (reply_buffer[i] != '`')
++			while (reply_buffer[i] != '`' && i < 80)
+ 				printf("%c", reply_buffer[i++]);
+ 			printf("\n");
+ 		}
+-- 
+2.8.3
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most 
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
