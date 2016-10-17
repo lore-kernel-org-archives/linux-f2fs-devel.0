@@ -1,26 +1,23 @@
-From: Eric Biggers <ebiggers@google.com>
-Subject: [PATCH] fscrypto: move ioctl processing more fully into
-	common code
-Date: Mon, 17 Oct 2016 09:54:06 -0700
-Message-ID: <1476723246-47420-1-git-send-email-ebiggers@google.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/3] f2fs: count dirty inodes to flush node pages
+	during checkpoint
+Date: Mon, 17 Oct 2016 14:56:43 -0700
+Message-ID: <20161017215645.435-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ebiggers@google.com>) id 1bwBC8-0003Dg-FH
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bwFzH-0001Rm-VP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Oct 2016 16:55:24 +0000
-Received: from mail-pf0-f177.google.com ([209.85.192.177])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1bwBC7-0001HI-2D
+	Mon, 17 Oct 2016 22:02:27 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bwFzG-0003ej-3d
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 17 Oct 2016 16:55:24 +0000
-Received: by mail-pf0-f177.google.com with SMTP id r16so57751405pfg.1
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Mon, 17 Oct 2016 09:55:23 -0700 (PDT)
+	Mon, 17 Oct 2016 22:02:27 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,272 +27,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fsdevel@vger.kernel.org
-Cc: jaegeuk@kernel.org, linux-ext4@vger.kernel.org, tytso@mit.edu, Eric Biggers <ebiggers@google.com>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Multiple bugs were recently fixed in the "set encryption policy" ioctl.
-To make it clear that fscrypt_process_policy() and fscrypt_get_policy()
-implement ioctls and therefore their implementations must take standard
-security and correctness precautions, rename them to
-fscrypt_ioctl_set_policy() and fscrypt_ioctl_get_policy().  Make the
-latter take in a struct file * to make it consistent with the former.
+If there are a lot of dirty inodes, we need to flush all of them when doing
+checkpoint. So, we need to count this for enough free space.
 
-In addition, make the common functions do the copies to and from
-userspace rather than duplicating this code within each filesystem, and
-memset the policy to 0 to make it clear there is no stack leak.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/crypto/policy.c       | 36 +++++++++++++++++++++++-------------
- fs/ext4/ext4.h           |  4 ++--
- fs/ext4/ioctl.c          | 34 +++++-----------------------------
- fs/f2fs/f2fs.h           |  4 ++--
- fs/f2fs/file.c           | 19 ++-----------------
- include/linux/fscrypto.h | 12 ++++++------
- 6 files changed, 40 insertions(+), 69 deletions(-)
+ fs/f2fs/segment.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
-index 6865663..fa30618 100644
---- a/fs/crypto/policy.c
-+++ b/fs/crypto/policy.c
-@@ -93,16 +93,19 @@ static int create_encryption_context_from_policy(struct inode *inode,
- 	return inode->i_sb->s_cop->set_context(inode, &ctx, sizeof(ctx), NULL);
- }
- 
--int fscrypt_process_policy(struct file *filp,
--				const struct fscrypt_policy *policy)
-+int fscrypt_ioctl_set_policy(struct file *filp, const void __user *arg)
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index fecb856..a6efb5c 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -471,11 +471,12 @@ static inline bool need_SSR(struct f2fs_sb_info *sbi)
  {
-+	struct fscrypt_policy policy;
- 	struct inode *inode = file_inode(filp);
- 	int ret;
+ 	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+ 	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
++	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
  
-+	if (copy_from_user(&policy, arg, sizeof(policy)))
-+		return -EFAULT;
-+
- 	if (!inode_owner_or_capable(inode))
- 		return -EACCES;
+ 	if (test_opt(sbi, LFS))
+ 		return false;
  
--	if (policy->version != 0)
-+	if (policy.version != 0)
- 		return -EINVAL;
- 
- 	ret = mnt_want_write_file(filp);
-@@ -120,9 +123,9 @@ int fscrypt_process_policy(struct file *filp,
- 			ret = -ENOTEMPTY;
- 		else
- 			ret = create_encryption_context_from_policy(inode,
--								    policy);
-+								    &policy);
- 	} else if (!is_encryption_context_consistent_with_policy(inode,
--								 policy)) {
-+								 &policy)) {
- 		printk(KERN_WARNING
- 		       "%s: Policy inconsistent with encryption context\n",
- 		       __func__);
-@@ -134,11 +137,13 @@ int fscrypt_process_policy(struct file *filp,
- 	mnt_drop_write_file(filp);
- 	return ret;
+-	return free_sections(sbi) <= (node_secs + 2 * dent_secs +
++	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+ 						reserved_sections(sbi) + 1);
  }
--EXPORT_SYMBOL(fscrypt_process_policy);
-+EXPORT_SYMBOL(fscrypt_ioctl_set_policy);
  
--int fscrypt_get_policy(struct inode *inode, struct fscrypt_policy *policy)
-+int fscrypt_ioctl_get_policy(struct file *filp, void __user *arg)
+@@ -484,6 +485,7 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
  {
-+	struct inode *inode = file_inode(filp);
- 	struct fscrypt_context ctx;
-+	struct fscrypt_policy policy;
- 	int res;
+ 	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+ 	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
++	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
  
- 	if (!inode->i_sb->s_cop->get_context ||
-@@ -151,15 +156,20 @@ int fscrypt_get_policy(struct inode *inode, struct fscrypt_policy *policy)
- 	if (ctx.format != FS_ENCRYPTION_CONTEXT_FORMAT_V1)
- 		return -EINVAL;
+ 	node_secs += get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
  
--	policy->version = 0;
--	policy->contents_encryption_mode = ctx.contents_encryption_mode;
--	policy->filenames_encryption_mode = ctx.filenames_encryption_mode;
--	policy->flags = ctx.flags;
--	memcpy(&policy->master_key_descriptor, ctx.master_key_descriptor,
-+	memset(&policy, 0, sizeof(policy));
-+
-+	policy.version = 0;
-+	policy.contents_encryption_mode = ctx.contents_encryption_mode;
-+	policy.filenames_encryption_mode = ctx.filenames_encryption_mode;
-+	policy.flags = ctx.flags;
-+	memcpy(policy.master_key_descriptor, ctx.master_key_descriptor,
- 				FS_KEY_DESCRIPTOR_SIZE);
-+
-+	if (copy_to_user(arg, &policy, sizeof(policy)))
-+		return -EFAULT;
- 	return 0;
- }
--EXPORT_SYMBOL(fscrypt_get_policy);
-+EXPORT_SYMBOL(fscrypt_ioctl_get_policy);
+@@ -491,7 +493,8 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
+ 		return false;
  
- int fscrypt_has_permitted_context(struct inode *parent, struct inode *child)
- {
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 282a51b..bd8bc3b 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2338,8 +2338,8 @@ static inline void ext4_fname_free_filename(struct ext4_filename *fname) { }
- #define fscrypt_pullback_bio_page	fscrypt_notsupp_pullback_bio_page
- #define fscrypt_restore_control_page	fscrypt_notsupp_restore_control_page
- #define fscrypt_zeroout_range		fscrypt_notsupp_zeroout_range
--#define fscrypt_process_policy		fscrypt_notsupp_process_policy
--#define fscrypt_get_policy		fscrypt_notsupp_get_policy
-+#define fscrypt_ioctl_set_policy	fscrypt_notsupp_ioctl_set_policy
-+#define fscrypt_ioctl_get_policy	fscrypt_notsupp_ioctl_get_policy
- #define fscrypt_has_permitted_context	fscrypt_notsupp_has_permitted_context
- #define fscrypt_inherit_context		fscrypt_notsupp_inherit_context
- #define fscrypt_get_encryption_info	fscrypt_notsupp_get_encryption_info
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index bf5ae8e..7008386 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -765,22 +765,12 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	}
- 	case EXT4_IOC_PRECACHE_EXTENTS:
- 		return ext4_ext_precache(inode);
--	case EXT4_IOC_SET_ENCRYPTION_POLICY: {
--#ifdef CONFIG_EXT4_FS_ENCRYPTION
--		struct fscrypt_policy policy;
- 
-+	case EXT4_IOC_SET_ENCRYPTION_POLICY:
- 		if (!ext4_has_feature_encrypt(sb))
- 			return -EOPNOTSUPP;
-+		return fscrypt_ioctl_set_policy(filp, (const void __user *)arg);
- 
--		if (copy_from_user(&policy,
--				   (struct fscrypt_policy __user *)arg,
--				   sizeof(policy)))
--			return -EFAULT;
--		return fscrypt_process_policy(filp, &policy);
--#else
--		return -EOPNOTSUPP;
--#endif
--	}
- 	case EXT4_IOC_GET_ENCRYPTION_PWSALT: {
- 		int err, err2;
- 		struct ext4_sb_info *sbi = EXT4_SB(sb);
-@@ -817,23 +807,9 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 			return -EFAULT;
- 		return 0;
- 	}
--	case EXT4_IOC_GET_ENCRYPTION_POLICY: {
--#ifdef CONFIG_EXT4_FS_ENCRYPTION
--		struct fscrypt_policy policy;
--		int err = 0;
--
--		if (!ext4_encrypted_inode(inode))
--			return -ENOENT;
--		err = fscrypt_get_policy(inode, &policy);
--		if (err)
--			return err;
--		if (copy_to_user((void __user *)arg, &policy, sizeof(policy)))
--			return -EFAULT;
--		return 0;
--#else
--		return -EOPNOTSUPP;
--#endif
--	}
-+	case EXT4_IOC_GET_ENCRYPTION_POLICY:
-+		return fscrypt_ioctl_get_policy(filp, (void __user *)arg);
-+
- 	case EXT4_IOC_FSGETXATTR:
- 	{
- 		struct fsxattr fa;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9e8de18..8e94b7b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2453,8 +2453,8 @@ static inline bool f2fs_may_encrypt(struct inode *inode)
- #define fscrypt_pullback_bio_page	fscrypt_notsupp_pullback_bio_page
- #define fscrypt_restore_control_page	fscrypt_notsupp_restore_control_page
- #define fscrypt_zeroout_range		fscrypt_notsupp_zeroout_range
--#define fscrypt_process_policy		fscrypt_notsupp_process_policy
--#define fscrypt_get_policy		fscrypt_notsupp_get_policy
-+#define fscrypt_ioctl_set_policy	fscrypt_notsupp_ioctl_set_policy
-+#define fscrypt_ioctl_get_policy	fscrypt_notsupp_ioctl_get_policy
- #define fscrypt_has_permitted_context	fscrypt_notsupp_has_permitted_context
- #define fscrypt_inherit_context		fscrypt_notsupp_inherit_context
- #define fscrypt_get_encryption_info	fscrypt_notsupp_get_encryption_info
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c786507..f0c83f7 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1752,31 +1752,16 @@ static bool uuid_is_nonzero(__u8 u[16])
- 
- static int f2fs_ioc_set_encryption_policy(struct file *filp, unsigned long arg)
- {
--	struct fscrypt_policy policy;
- 	struct inode *inode = file_inode(filp);
- 
--	if (copy_from_user(&policy, (struct fscrypt_policy __user *)arg,
--							sizeof(policy)))
--		return -EFAULT;
--
- 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
- 
--	return fscrypt_process_policy(filp, &policy);
-+	return fscrypt_ioctl_set_policy(filp, (const void __user *)arg);
+ 	return (free_sections(sbi) + freed) <=
+-		(node_secs + 2 * dent_secs + reserved_sections(sbi) + needed);
++		(node_secs + 2 * dent_secs + imeta_secs +
++		reserved_sections(sbi) + needed);
  }
  
- static int f2fs_ioc_get_encryption_policy(struct file *filp, unsigned long arg)
- {
--	struct fscrypt_policy policy;
--	struct inode *inode = file_inode(filp);
--	int err;
--
--	err = fscrypt_get_policy(inode, &policy);
--	if (err)
--		return err;
--
--	if (copy_to_user((struct fscrypt_policy __user *)arg, &policy, sizeof(policy)))
--		return -EFAULT;
--	return 0;
-+	return fscrypt_ioctl_get_policy(filp, (void __user *)arg);
- }
- 
- static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
-diff --git a/include/linux/fscrypto.h b/include/linux/fscrypto.h
-index ff8b11b..e6e53a3 100644
---- a/include/linux/fscrypto.h
-+++ b/include/linux/fscrypto.h
-@@ -250,8 +250,8 @@ extern void fscrypt_restore_control_page(struct page *);
- extern int fscrypt_zeroout_range(struct inode *, pgoff_t, sector_t,
- 						unsigned int);
- /* policy.c */
--extern int fscrypt_process_policy(struct file *, const struct fscrypt_policy *);
--extern int fscrypt_get_policy(struct inode *, struct fscrypt_policy *);
-+extern int fscrypt_ioctl_set_policy(struct file *, const void __user *);
-+extern int fscrypt_ioctl_get_policy(struct file *, void __user *);
- extern int fscrypt_has_permitted_context(struct inode *, struct inode *);
- extern int fscrypt_inherit_context(struct inode *, struct inode *,
- 					void *, bool);
-@@ -320,14 +320,14 @@ static inline int fscrypt_notsupp_zeroout_range(struct inode *i, pgoff_t p,
- }
- 
- /* policy.c */
--static inline int fscrypt_notsupp_process_policy(struct file *f,
--				const struct fscrypt_policy *p)
-+static inline int fscrypt_notsupp_ioctl_set_policy(struct file *f,
-+				const void __user *arg)
- {
- 	return -EOPNOTSUPP;
- }
- 
--static inline int fscrypt_notsupp_get_policy(struct inode *i,
--				struct fscrypt_policy *p)
-+static inline int fscrypt_notsupp_ioctl_get_policy(struct file *f,
-+				void __user *arg)
- {
- 	return -EOPNOTSUPP;
- }
+ static inline bool excess_prefree_segs(struct f2fs_sb_info *sbi)
 -- 
-2.8.0.rc3.226.g39d4020
+2.8.3
 
 
 ------------------------------------------------------------------------------
