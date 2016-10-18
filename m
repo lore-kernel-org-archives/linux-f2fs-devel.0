@@ -1,140 +1,59 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: use BIO_MAX_PAGES for bio allocation
-Date: Tue, 18 Oct 2016 11:48:36 -0700
-Message-ID: <20161018184836.12886-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH] f2fs: declare static function for
+	__build_free_nids
+Date: Tue, 18 Oct 2016 11:49:07 -0700
+Message-ID: <20161018184907.12961-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1bwZRs-0007ad-KN
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 18 Oct 2016 18:49:16 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1bwZRr-0003Rv-VU
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 18 Oct 2016 18:49:16 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-We don't need to allocate bio partially in order to maximize sequential writes.
+This patch avoids build warning.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/data.c       |  4 +---
- fs/f2fs/node.c       |  3 +--
- fs/f2fs/segment.c    |  4 ++--
- fs/f2fs/segment.h    | 17 +++--------------
- 5 files changed, 8 insertions(+), 22 deletions(-)
+ fs/f2fs/node.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 654f5d7..157b7fd 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -228,7 +228,7 @@ void ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index)
- 	f2fs_put_page(page, 0);
- 
- 	if (readahead)
--		ra_meta_pages(sbi, index, MAX_BIO_BLOCKS(sbi), META_POR, true);
-+		ra_meta_pages(sbi, index, BIO_MAX_PAGES, META_POR, true);
- }
- 
- static int f2fs_write_meta_page(struct page *page,
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 77cd9ac..fe8ce5a 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -307,10 +307,8 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
- 		__submit_merged_bio(io);
- alloc_new:
- 	if (io->bio == NULL) {
--		int bio_blocks = MAX_BIO_BLOCKS(sbi);
--
- 		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
--						bio_blocks, is_read);
-+						BIO_MAX_PAGES, is_read);
- 		io->fio = *fio;
- 	}
- 
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 69c42e2..285e2a5 100644
+index fc8f274..69c42e2 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -2101,7 +2101,6 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
- 	struct f2fs_node *rn;
- 	struct f2fs_summary *sum_entry;
- 	block_t addr;
--	int bio_blocks = MAX_BIO_BLOCKS(sbi);
- 	int i, idx, last_offset, nrpages;
- 
- 	/* scan the node segment */
-@@ -2110,7 +2109,7 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
- 	sum_entry = &sum->entries[0];
- 
- 	for (i = 0; i < last_offset; i += nrpages, addr += nrpages) {
--		nrpages = min(last_offset - i, bio_blocks);
-+		nrpages = min(last_offset - i, BIO_MAX_PAGES);
- 
- 		/* readahead node pages */
- 		ra_meta_pages(sbi, addr, nrpages, META_POR, true);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 7a7e3f1..a21a1a3 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2355,10 +2355,10 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
- 	int sit_blk_cnt = SIT_BLK_CNT(sbi);
- 	unsigned int i, start, end;
- 	unsigned int readed, start_blk = 0;
--	int nrpages = MAX_BIO_BLOCKS(sbi) * 8;
- 
- 	do {
--		readed = ra_meta_pages(sbi, start_blk, nrpages, META_SIT, true);
-+		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
-+							META_SIT, true);
- 
- 		start = start_blk * sit_i->sents_per_block;
- 		end = (start_blk + readed) * sit_i->sents_per_block;
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index a6efb5c..d8ff069 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -102,8 +102,6 @@
- 	(((sector_t)blk_addr) << F2FS_LOG_SECTORS_PER_BLOCK)
- #define SECTOR_TO_BLOCK(sectors)					\
- 	(sectors >> F2FS_LOG_SECTORS_PER_BLOCK)
--#define MAX_BIO_BLOCKS(sbi)						\
--	((int)min((int)max_hw_blocks(sbi), BIO_MAX_PAGES))
- 
- /*
-  * indicate a block allocation direction: RIGHT and LEFT.
-@@ -698,13 +696,6 @@ static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
- 	return false;
+@@ -1808,7 +1808,7 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 	}
  }
  
--static inline unsigned int max_hw_blocks(struct f2fs_sb_info *sbi)
--{
--	struct block_device *bdev = sbi->sb->s_bdev;
--	struct request_queue *q = bdev_get_queue(bdev);
--	return SECTOR_TO_BLOCK(queue_max_sectors(q));
--}
--
- /*
-  * It is very important to gather dirty pages and write at once, so that we can
-  * submit a big bio without interfering other data writes.
-@@ -722,7 +713,7 @@ static inline int nr_pages_to_skip(struct f2fs_sb_info *sbi, int type)
- 	else if (type == NODE)
- 		return 8 * sbi->blocks_per_seg;
- 	else if (type == META)
--		return 8 * MAX_BIO_BLOCKS(sbi);
-+		return 8 * BIO_MAX_PAGES;
- 	else
- 		return 0;
- }
-@@ -739,11 +730,9 @@ static inline long nr_pages_to_write(struct f2fs_sb_info *sbi, int type,
- 		return 0;
- 
- 	nr_to_write = wbc->nr_to_write;
--
-+	desired = BIO_MAX_PAGES;
- 	if (type == NODE)
--		desired = 2 * max_hw_blocks(sbi);
--	else
--		desired = MAX_BIO_BLOCKS(sbi);
-+		desired <<= 1;
- 
- 	wbc->nr_to_write = desired;
- 	return desired - nr_to_write;
+-void __build_free_nids(struct f2fs_sb_info *sbi, bool sync)
++static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
 -- 
 2.8.3
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most 
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
