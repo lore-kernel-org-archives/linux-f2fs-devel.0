@@ -1,44 +1,35 @@
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Subject: Re: [PATCH] fscrypto: move ioctl processing more fully into common code
-Date: Tue, 18 Oct 2016 14:22:07 +0200
-Message-ID: <CAFLxGvz8KV=zzy=fijEuK7qtCivS=A2BBpNvNksv4J06KTSmZw@mail.gmail.com>
+From: Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH] fscrypto: move ioctl processing more fully into common
+ code
+Date: Tue, 18 Oct 2016 09:52:50 -0700
+Message-ID: <20161018165250.GA34034@google.com>
 References: <1476723246-47420-1-git-send-email-ebiggers@google.com>
+ <CAFLxGvz8KV=zzy=fijEuK7qtCivS=A2BBpNvNksv4J06KTSmZw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <1476723246-47420-1-git-send-email-ebiggers@google.com>
+Content-Disposition: inline
+In-Reply-To: <CAFLxGvz8KV=zzy=fijEuK7qtCivS=A2BBpNvNksv4J06KTSmZw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
-To: Eric Biggers <ebiggers@google.com>
+To: Richard Weinberger <richard.weinberger@gmail.com>
 Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Theodore Ts'o <tytso@mit.edu>, jaegeuk@kernel.org, David Gstir <david@sigma-star.at>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Eric,
+On Tue, Oct 18, 2016 at 02:22:07PM +0200, Richard Weinberger wrote:
+> 
+> Hmm, are you sure the change is worth it?
+> The patch basically moves a copy_from/to_user() from ext4/f2fs into fscrypto.
+> 
 
-On Mon, Oct 17, 2016 at 6:54 PM, Eric Biggers <ebiggers@google.com> wrote:
-> Multiple bugs were recently fixed in the "set encryption policy" ioctl.
-> To make it clear that fscrypt_process_policy() and fscrypt_get_policy()
-> implement ioctls and therefore their implementations must take standard
-> security and correctness precautions, rename them to
-> fscrypt_ioctl_set_policy() and fscrypt_ioctl_get_policy().  Make the
-> latter take in a struct file * to make it consistent with the former.
->
-> In addition, make the common functions do the copies to and from
-> userspace rather than duplicating this code within each filesystem, and
-> memset the policy to 0 to make it clear there is no stack leak.
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/crypto/policy.c       | 36 +++++++++++++++++++++++-------------
->  fs/ext4/ext4.h           |  4 ++--
->  fs/ext4/ioctl.c          | 34 +++++-----------------------------
->  fs/f2fs/f2fs.h           |  4 ++--
->  fs/f2fs/file.c           | 19 ++-----------------
->  include/linux/fscrypto.h | 12 ++++++------
->  6 files changed, 40 insertions(+), 69 deletions(-)
+Hi Richard,
 
-Hmm, are you sure the change is worth it?
-The patch basically moves a copy_from/to_user() from ext4/f2fs into fscrypto.
+In my opinion consolidating the copy_from/to_user() is worthwhile by itself.
+The filesystem encryption code should be shared when possible, and right now
+there's no reason for each filesystem to do its own copy_from/to_user().
 
--- 
-Thanks,
-//richard
+The renaming to fscrypt_ioctl_* is also important because it makes it clear that
+the functions implement ioctls.  I've already fixed four bugs in the "set
+policy" ioctl, and I think these bugs would have been more obvious with a
+clearer code organization.
+
+Eric
