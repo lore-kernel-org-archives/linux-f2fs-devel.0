@@ -1,35 +1,140 @@
-From: Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH] fscrypto: move ioctl processing more fully into common
- code
-Date: Tue, 18 Oct 2016 09:52:50 -0700
-Message-ID: <20161018165250.GA34034@google.com>
-References: <1476723246-47420-1-git-send-email-ebiggers@google.com>
- <CAFLxGvz8KV=zzy=fijEuK7qtCivS=A2BBpNvNksv4J06KTSmZw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFLxGvz8KV=zzy=fijEuK7qtCivS=A2BBpNvNksv4J06KTSmZw@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Richard Weinberger <richard.weinberger@gmail.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Theodore Ts'o <tytso@mit.edu>, jaegeuk@kernel.org, David Gstir <david@sigma-star.at>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: use BIO_MAX_PAGES for bio allocation
+Date: Tue, 18 Oct 2016 11:48:36 -0700
+Message-ID: <20161018184836.12886-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Oct 18, 2016 at 02:22:07PM +0200, Richard Weinberger wrote:
-> 
-> Hmm, are you sure the change is worth it?
-> The patch basically moves a copy_from/to_user() from ext4/f2fs into fscrypto.
-> 
+We don't need to allocate bio partially in order to maximize sequential writes.
 
-Hi Richard,
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/data.c       |  4 +---
+ fs/f2fs/node.c       |  3 +--
+ fs/f2fs/segment.c    |  4 ++--
+ fs/f2fs/segment.h    | 17 +++--------------
+ 5 files changed, 8 insertions(+), 22 deletions(-)
 
-In my opinion consolidating the copy_from/to_user() is worthwhile by itself.
-The filesystem encryption code should be shared when possible, and right now
-there's no reason for each filesystem to do its own copy_from/to_user().
-
-The renaming to fscrypt_ioctl_* is also important because it makes it clear that
-the functions implement ioctls.  I've already fixed four bugs in the "set
-policy" ioctl, and I think these bugs would have been more obvious with a
-clearer code organization.
-
-Eric
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 654f5d7..157b7fd 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -228,7 +228,7 @@ void ra_meta_pages_cond(struct f2fs_sb_info *sbi, pgoff_t index)
+ 	f2fs_put_page(page, 0);
+ 
+ 	if (readahead)
+-		ra_meta_pages(sbi, index, MAX_BIO_BLOCKS(sbi), META_POR, true);
++		ra_meta_pages(sbi, index, BIO_MAX_PAGES, META_POR, true);
+ }
+ 
+ static int f2fs_write_meta_page(struct page *page,
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 77cd9ac..fe8ce5a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -307,10 +307,8 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
+-		int bio_blocks = MAX_BIO_BLOCKS(sbi);
+-
+ 		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
+-						bio_blocks, is_read);
++						BIO_MAX_PAGES, is_read);
+ 		io->fio = *fio;
+ 	}
+ 
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 69c42e2..285e2a5 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2101,7 +2101,6 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 	struct f2fs_node *rn;
+ 	struct f2fs_summary *sum_entry;
+ 	block_t addr;
+-	int bio_blocks = MAX_BIO_BLOCKS(sbi);
+ 	int i, idx, last_offset, nrpages;
+ 
+ 	/* scan the node segment */
+@@ -2110,7 +2109,7 @@ int restore_node_summary(struct f2fs_sb_info *sbi,
+ 	sum_entry = &sum->entries[0];
+ 
+ 	for (i = 0; i < last_offset; i += nrpages, addr += nrpages) {
+-		nrpages = min(last_offset - i, bio_blocks);
++		nrpages = min(last_offset - i, BIO_MAX_PAGES);
+ 
+ 		/* readahead node pages */
+ 		ra_meta_pages(sbi, addr, nrpages, META_POR, true);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7a7e3f1..a21a1a3 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2355,10 +2355,10 @@ static void build_sit_entries(struct f2fs_sb_info *sbi)
+ 	int sit_blk_cnt = SIT_BLK_CNT(sbi);
+ 	unsigned int i, start, end;
+ 	unsigned int readed, start_blk = 0;
+-	int nrpages = MAX_BIO_BLOCKS(sbi) * 8;
+ 
+ 	do {
+-		readed = ra_meta_pages(sbi, start_blk, nrpages, META_SIT, true);
++		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
++							META_SIT, true);
+ 
+ 		start = start_blk * sit_i->sents_per_block;
+ 		end = (start_blk + readed) * sit_i->sents_per_block;
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index a6efb5c..d8ff069 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -102,8 +102,6 @@
+ 	(((sector_t)blk_addr) << F2FS_LOG_SECTORS_PER_BLOCK)
+ #define SECTOR_TO_BLOCK(sectors)					\
+ 	(sectors >> F2FS_LOG_SECTORS_PER_BLOCK)
+-#define MAX_BIO_BLOCKS(sbi)						\
+-	((int)min((int)max_hw_blocks(sbi), BIO_MAX_PAGES))
+ 
+ /*
+  * indicate a block allocation direction: RIGHT and LEFT.
+@@ -698,13 +696,6 @@ static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
+ 	return false;
+ }
+ 
+-static inline unsigned int max_hw_blocks(struct f2fs_sb_info *sbi)
+-{
+-	struct block_device *bdev = sbi->sb->s_bdev;
+-	struct request_queue *q = bdev_get_queue(bdev);
+-	return SECTOR_TO_BLOCK(queue_max_sectors(q));
+-}
+-
+ /*
+  * It is very important to gather dirty pages and write at once, so that we can
+  * submit a big bio without interfering other data writes.
+@@ -722,7 +713,7 @@ static inline int nr_pages_to_skip(struct f2fs_sb_info *sbi, int type)
+ 	else if (type == NODE)
+ 		return 8 * sbi->blocks_per_seg;
+ 	else if (type == META)
+-		return 8 * MAX_BIO_BLOCKS(sbi);
++		return 8 * BIO_MAX_PAGES;
+ 	else
+ 		return 0;
+ }
+@@ -739,11 +730,9 @@ static inline long nr_pages_to_write(struct f2fs_sb_info *sbi, int type,
+ 		return 0;
+ 
+ 	nr_to_write = wbc->nr_to_write;
+-
++	desired = BIO_MAX_PAGES;
+ 	if (type == NODE)
+-		desired = 2 * max_hw_blocks(sbi);
+-	else
+-		desired = MAX_BIO_BLOCKS(sbi);
++		desired <<= 1;
+ 
+ 	wbc->nr_to_write = desired;
+ 	return desired - nr_to_write;
+-- 
+2.8.3
