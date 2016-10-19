@@ -1,51 +1,36 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: [RFD] Common userspace tool for fscypto
-Date: Wed, 19 Oct 2016 13:35:54 +0200
-Message-ID: <0bef3877-060e-b722-0354-3a5508219e23@nod.at>
+From: Michael Halcrow <mhalcrow@google.com>
+Subject: Re: [RFD] Common userspace tool for fscypto
+Date: Wed, 19 Oct 2016 10:36:00 -0700
+Message-ID: <CA+POJK10M3_GhP_Ge4qkQF4gSNMUXVr5kem9Ak4EDmVRvRUg7g@mail.gmail.com>
+References: <0bef3877-060e-b722-0354-3a5508219e23@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <richard@nod.at>) id 1bwpAF-0007Ev-Fu
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Oct 2016 11:36:07 +0000
-Received: from b.ns.miles-group.at ([95.130.255.144] helo=radon.swed.at)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1bwpAD-0000vS-Id
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 19 Oct 2016 11:36:07 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: David Gstir <david@sigma-star.at>, Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, kzak@redhat.com, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <0bef3877-060e-b722-0354-3a5508219e23@nod.at>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, kzak@redhat.com, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Eric Biggers <ebiggers@google.com>, David Gstir <david@sigma-star.at>, Ext4 Developers List <linux-ext4@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi!
+On Wed, Oct 19, 2016 at 4:35 AM, Richard Weinberger <richard@nod.at> wrote:
+> Hi!
+>
+> Since file level encryption has more than one user, currently ext4, f2fs and soon ubifs
+> it would be nice to have a single tool to control fscrypto from userspace.
+>
+> For ext4 we have already at least two tools, one as part of e2fsprogs and another
+> one on github[0]. IMHO the latter one is much more user friendly and intuitive to use.
+> I as unable to find the userspace tool for f2fs.
+>
+> That said, what about implementing such a tool as part of util-linux to control
+> fscrypto? We (David and I) would volunteer.
 
-Since file level encryption has more than one user, currently ext4, f2fs and soon ubifs
-it would be nice to have a single tool to control fscrypto from userspace.
+While discussing several changes we have staged for release (we're
+trying to minimize churn by batching a large set of format changes all
+at once), we've recently recognized this need on my team and were
+planning on starting work on exactly what you propose.
 
-For ext4 we have already at least two tools, one as part of e2fsprogs and another
-one on github[0]. IMHO the latter one is much more user friendly and intuitive to use.
-I as unable to find the userspace tool for f2fs.
-
-That said, what about implementing such a tool as part of util-linux to control
-fscrypto? We (David and I) would volunteer.
-
-Thanks,
-//richard
-
-[0] https://github.com/gdelugre/ext4-crypt
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most 
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+> Thanks,
+> //richard
+>
+> [0] https://github.com/gdelugre/ext4-crypt
