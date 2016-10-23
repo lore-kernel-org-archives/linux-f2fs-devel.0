@@ -1,22 +1,28 @@
-From: Christian Hesse <mail@eworm.de>
-Subject: [PATCH 1/1] sload.f2fs: allow to build without libselinux
-Date: Sat, 22 Oct 2016 22:06:54 +0200
-Message-ID: <20161022200654.11193-1-mail@eworm.de>
+From: Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH] f2fs: fix wrong sum_page pointer in f2fs_gc
+Date: Sun, 23 Oct 2016 20:26:15 +0800
+Message-ID: <3a96264b-b187-a5ce-2279-f9edd3748838@kernel.org>
+References: <20161012232304.6667-1-jaegeuk@kernel.org>
+	<faeadd54-7814-41b5-b041-2d0eb819c3f6@huawei.com>
+	<20161013171421.GA6363@jaegeuk>
+	<3ed5607f-0fe6-02cb-8c95-782913e65b5b@kernel.org>
+	<20161014165700.GA67182@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <eworm@leda.eworm.de>) id 1by2pw-0003S7-MK
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1byHrI-0001xm-Rr
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 22 Oct 2016 20:24:12 +0000
-Received: from mx.mylinuxtime.de ([148.251.109.235])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1by2pt-0007do-13
+	Sun, 23 Oct 2016 12:26:36 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1byHrH-0002u0-Sn
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 22 Oct 2016 20:24:12 +0000
+	Sun, 23 Oct 2016 12:26:36 +0000
+In-Reply-To: <20161014165700.GA67182@jaegeuk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,103 +32,71 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Christian Hesse <mail@eworm.de>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Some systems do not have libselinux. Allow to build sload.f2fs without
-support for selinux.
+On 2016/10/15 0:57, Jaegeuk Kim wrote:
+> On Fri, Oct 14, 2016 at 09:25:59PM +0800, Chao Yu wrote:
+>> On 2016/10/14 1:14, Jaegeuk Kim wrote:
+>>> On Thu, Oct 13, 2016 at 06:33:19PM +0800, Chao Yu wrote:
+>>>> Hi Jaegeuk,
+>>>>
+>>>> On 2016/10/13 7:23, Jaegeuk Kim wrote:
+>>>>> This patch fixes using a wrong pointer for sum_page in f2fs_gc.
+>>>>>
+>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> ---
+>>>>>  fs/f2fs/gc.c | 10 +++++-----
+>>>>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>> index e48142f..9c18917 100644
+>>>>> --- a/fs/f2fs/gc.c
+>>>>> +++ b/fs/f2fs/gc.c
+>>>>> @@ -854,16 +854,16 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>>>>  
+>>>>>  	for (segno = start_segno; segno < end_segno; segno++) {
+>>>>>  
+>>>>> -		if (get_valid_blocks(sbi, segno, 1) == 0 ||
+>>>>> -					unlikely(f2fs_cp_error(sbi)))
+>>>>> -			goto next;
+>>>>> -
+>>>>>  		/* find segment summary of victim */
+>>>>>  		sum_page = find_get_page(META_MAPPING(sbi),
+>>>>>  					GET_SUM_BLOCK(sbi, segno));
+>>>>> -		f2fs_bug_on(sbi, !PageUptodate(sum_page));
+>>>>>  		f2fs_put_page(sum_page, 0);
+>>>>>  
+>>>>> +		if (get_valid_blocks(sbi, segno, 1) == 0 ||
+>>>>> +				!PageUptodate(sum_page) ||
+>>>>
+>>>> Why uptodate flag of summary page can be cleared? someone truncates it?
+>>>
+>>> Well, it looks like no problem to remove this, since it will hit
+>>> f2fs_cp_error(). I just intended to handle the above f2fs_bug_on here.
+>>
+>> If summary page becomes non-uptodate, it seems there is a bug in vfs/mm/f2fs,
+>> why not keep it there to detect bug?
+> 
+> I found that the above get_sum_page() loop can give a page which is not uptodate
+> caused by EIO. Then, we would get the above bug_on, if we move f2fs_cp_error()
+> case like this patch.
+> 
+> Thoughts?
 
-Signed-off-by: Christian Hesse <mail@eworm.de>
----
- configure.ac |  4 +++-
- fsck/sload.c | 12 +++++++++++-
- 2 files changed, 14 insertions(+), 2 deletions(-)
+Seems this patch has already been merged into linus' tree...
 
-diff --git a/configure.ac b/configure.ac
-index f519790..7a62328 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -54,7 +54,9 @@ AC_PATH_PROG([LDCONFIG], [ldconfig],
- 
- # Checks for libraries.
- PKG_CHECK_MODULES([libuuid], [uuid])
--PKG_CHECK_MODULES([libselinux], [libselinux])
-+PKG_CHECK_MODULES([libselinux], [libselinux],
-+	[AC_DEFINE([HAVE_LIBSELINUX], [1], [Use libselinux])],
-+	[AC_MSG_NOTICE([libselinux not found])])
- 
- # Checks for header files.
- AC_CHECK_HEADERS([linux/fs.h fcntl.h mntent.h stdlib.h string.h \
-diff --git a/fsck/sload.c b/fsck/sload.c
-index 424e642..662119d 100644
---- a/fsck/sload.c
-+++ b/fsck/sload.c
-@@ -16,8 +16,11 @@
- #include <libgen.h>
- #include <dirent.h>
- #include <mntent.h>
-+
-+#ifdef HAVE_LIBSELINUX
- #include <selinux/selinux.h>
- #include <selinux/label.h>
-+#endif
- 
- #ifdef WITH_ANDROID
- #include <selinux/label.h>
-@@ -110,10 +113,12 @@ static int build_directory(struct f2fs_sb_info *sbi, const char *full_path,
- 		handle_selabel(dentries + i, S_ISDIR(stat.st_mode),
- 							target_out_dir);
- 
-+#ifdef HAVE_LIBSELINUX
- 		if (sehnd && selabel_lookup(sehnd, &dentries[i].secon,
- 					dentries[i].path, stat.st_mode) < 0)
- 			ERR_MSG("Cannot lookup security context for %s\n",
- 						dentries[i].path);
-+#endif
- 
- 		dentries[i].pino = dir_ino;
- 
-@@ -174,6 +179,7 @@ static int build_directory(struct f2fs_sb_info *sbi, const char *full_path,
- 			MSG(1, "Error unknown file type\n");
- 		}
- 
-+#ifdef HAVE_LIBSELINUX
- 		if (dentries[i].secon) {
- 			inode_set_selinux(sbi, dentries[i].ino, dentries[i].secon);
- 			MSG(1, "File = %s \n----->SELinux context = %s\n",
-@@ -184,10 +190,12 @@ static int build_directory(struct f2fs_sb_info *sbi, const char *full_path,
- 					dentries[i].gid, dentries[i].capabilities);
- 		}
- 
-+		free(dentries[i].secon);
-+#endif
-+
- 		free(dentries[i].path);
- 		free(dentries[i].full_path);
- 		free((void *)dentries[i].name);
--		free(dentries[i].secon);
- 	}
- 
- 	free(dentries);
-@@ -218,6 +226,7 @@ int f2fs_sload(struct f2fs_sb_info *sbi, const char *from_dir,
- 		return ret;
- 	}
- 
-+#ifdef HAVE_LIBSELINUX
- 	if (sehnd) {
- 		char *secontext = NULL;
- 
-@@ -233,6 +242,7 @@ int f2fs_sload(struct f2fs_sb_info *sbi, const char *from_dir,
- 		}
- 		free(secontext);
- 	}
-+#endif
- 
- 	/* update curseg info; can update sit->types */
- 	move_curseg_info(sbi, SM_I(sbi)->main_blkaddr);
--- 
-2.10.1
+Anyway, I can understand why you remove f2fs_bug_on & add PageUptodate here, but
+why should we repositon below check?
 
+if (get_valid_blocks(sbi, segno, 1) == 0 ||
+		unlikely(f2fs_cp_error(sbi)))
+
+Thanks,
+
+> 
+> Thanks,
+> 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most 
