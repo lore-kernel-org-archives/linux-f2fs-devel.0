@@ -1,67 +1,45 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [PATCH 1/2] dump/fsck: convert encrypted file name
-Date: Mon, 24 Oct 2016 11:47:06 +0800
-Message-ID: <580D843A.3000208@huawei.com>
-References: <20161024021604.5218-1-shengyong1@huawei.com>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: [RFD] Common userspace tool for fscypto
+Date: Mon, 24 Oct 2016 13:59:57 +0200
+Message-ID: <cdd8d83f-bdc8-df01-1230-8cfb9ec4c8fb@nod.at>
+References: <0bef3877-060e-b722-0354-3a5508219e23@nod.at>
+ <CA+POJK10M3_GhP_Ge4qkQF4gSNMUXVr5kem9Ak4EDmVRvRUg7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1byWEr-0002Av-0b
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Oct 2016 03:47:53 +0000
-Received: from [119.145.14.65] (helo=szxga02-in.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1byWEl-0006Db-Vu
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Oct 2016 03:47:52 +0000
-In-Reply-To: <20161024021604.5218-1-shengyong1@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <CA+POJK10M3_GhP_Ge4qkQF4gSNMUXVr5kem9Ak4EDmVRvRUg7g@mail.gmail.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Michael Halcrow <mhalcrow@google.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, kzak@redhat.com, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Eric Biggers <ebiggers@google.com>, David Gstir <david@sigma-star.at>, Ext4 Developers List <linux-ext4@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi, Jaegeuk,
+Michael,
 
-On 10/24/2016 10:16 AM, Sheng Yong wrote:
-> If fscrypt is enabled, we need to convert the encrypted file name before
-> printing it. So let's export convert_encrypted_name for other functions,
-> and make it returns the length of converted string.
-> This patch also changes the parameter of file_is_encrypt to f2fs_inode.
+On 19.10.2016 19:36, Michael Halcrow wrote:
+> On Wed, Oct 19, 2016 at 4:35 AM, Richard Weinberger <richard@nod.at> wrote:
+>> Hi!
+>>
+>> Since file level encryption has more than one user, currently ext4, f2fs and soon ubifs
+>> it would be nice to have a single tool to control fscrypto from userspace.
+>>
+>> For ext4 we have already at least two tools, one as part of e2fsprogs and another
+>> one on github[0]. IMHO the latter one is much more user friendly and intuitive to use.
+>> I as unable to find the userspace tool for f2fs.
+>>
+>> That said, what about implementing such a tool as part of util-linux to control
+>> fscrypto? We (David and I) would volunteer.
 > 
-[...]
-> -static void convert_encrypted_name(unsigned char *name, int len,
-> +int convert_encrypted_name(unsigned char *name, int len,
->  				unsigned char *new, int encrypted)
->  {
->  	if (!encrypted) {
->  		memcpy(new, name, len);
->  		new[len] = 0;
-> -		return;
-> +		return len;
->  	}
->  
->  	*new = '_';
-> -	digest_encode((const char *)name, 24, (char *)new + 1);
-> +	return digest_encode((const char *)name, 24, (char *)new + 1);
-I'm confused about the parameter "24" here. Why it is not the length of
-the cipher text?
+> While discussing several changes we have staged for release (we're
+> trying to minimize churn by batching a large set of format changes all
+> at once), we've recently recognized this need on my team and were
+> planning on starting work on exactly what you propose.
 
-thanks,
-Sheng
->  }
-[...]
+Can you please some details?
+Will it be GPL? Part of util-linux?
+What features does it have?
+I hope more than just being a wrapper to the ioctls().
 
+Thanks,
+//richard
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most 
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
