@@ -1,25 +1,30 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH 2/2] fsck.f2fs: do not check the first seg in a
-	sec in find_next_free_block
-Date: Mon, 24 Oct 2016 10:16:04 +0800
-Message-ID: <20161024021604.5218-2-shengyong1@huawei.com>
-References: <20161024021604.5218-1-shengyong1@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: fix wrong sum_page pointer in f2fs_gc
+Date: Mon, 24 Oct 2016 10:55:41 +0800
+Message-ID: <039aa77c-a78a-2e56-71fd-a00c0edbb228@huawei.com>
+References: <20161012232304.6667-1-jaegeuk@kernel.org>
+	<faeadd54-7814-41b5-b041-2d0eb819c3f6@huawei.com>
+	<20161013171421.GA6363@jaegeuk>
+	<3ed5607f-0fe6-02cb-8c95-782913e65b5b@kernel.org>
+	<20161014165700.GA67182@jaegeuk>
+	<3a96264b-b187-a5ce-2279-f9edd3748838@kernel.org>
+	<20161023214035.GA63620@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1byUxC-0007dl-QM
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1byVR1-0000ar-CP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Oct 2016 02:25:34 +0000
+	Mon, 24 Oct 2016 02:56:23 +0000
 Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1byUxB-0004Mk-TK
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1byVQw-00013U-Ut
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 24 Oct 2016 02:25:34 +0000
-In-Reply-To: <20161024021604.5218-1-shengyong1@huawei.com>
+	Mon, 24 Oct 2016 02:56:23 +0000
+In-Reply-To: <20161023214035.GA63620@jaegeuk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,31 +34,90 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+To: linux-f2fs-devel@lists.sourceforge.net
 
-The first segment is already checked, so there is no need to check it
-again if we want to make sure the whole section is freed.
+On 2016/10/24 5:40, Jaegeuk Kim wrote:
+> On Sun, Oct 23, 2016 at 08:26:15PM +0800, Chao Yu wrote:
+>> On 2016/10/15 0:57, Jaegeuk Kim wrote:
+>>> On Fri, Oct 14, 2016 at 09:25:59PM +0800, Chao Yu wrote:
+>>>> On 2016/10/14 1:14, Jaegeuk Kim wrote:
+>>>>> On Thu, Oct 13, 2016 at 06:33:19PM +0800, Chao Yu wrote:
+>>>>>> Hi Jaegeuk,
+>>>>>>
+>>>>>> On 2016/10/13 7:23, Jaegeuk Kim wrote:
+>>>>>>> This patch fixes using a wrong pointer for sum_page in f2fs_gc.
+>>>>>>>
+>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>>>> ---
+>>>>>>>  fs/f2fs/gc.c | 10 +++++-----
+>>>>>>>  1 file changed, 5 insertions(+), 5 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>>>> index e48142f..9c18917 100644
+>>>>>>> --- a/fs/f2fs/gc.c
+>>>>>>> +++ b/fs/f2fs/gc.c
+>>>>>>> @@ -854,16 +854,16 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+>>>>>>>  
+>>>>>>>  	for (segno = start_segno; segno < end_segno; segno++) {
+>>>>>>>  
+>>>>>>> -		if (get_valid_blocks(sbi, segno, 1) == 0 ||
+>>>>>>> -					unlikely(f2fs_cp_error(sbi)))
+>>>>>>> -			goto next;
+>>>>>>> -
+>>>>>>>  		/* find segment summary of victim */
+>>>>>>>  		sum_page = find_get_page(META_MAPPING(sbi),
+>>>>>>>  					GET_SUM_BLOCK(sbi, segno));
+>>>>>>> -		f2fs_bug_on(sbi, !PageUptodate(sum_page));
+>>>>>>>  		f2fs_put_page(sum_page, 0);
+>>>>>>>  
+>>>>>>> +		if (get_valid_blocks(sbi, segno, 1) == 0 ||
+>>>>>>> +				!PageUptodate(sum_page) ||
+>>>>>>
+>>>>>> Why uptodate flag of summary page can be cleared? someone truncates it?
+>>>>>
+>>>>> Well, it looks like no problem to remove this, since it will hit
+>>>>> f2fs_cp_error(). I just intended to handle the above f2fs_bug_on here.
+>>>>
+>>>> If summary page becomes non-uptodate, it seems there is a bug in vfs/mm/f2fs,
+>>>> why not keep it there to detect bug?
+>>>
+>>> I found that the above get_sum_page() loop can give a page which is not uptodate
+>>> caused by EIO. Then, we would get the above bug_on, if we move f2fs_cp_error()
+>>> case like this patch.
+>>>
+>>> Thoughts?
+>>
+>> Seems this patch has already been merged into linus' tree...
+> 
+> Yup.
+> 
+>> Anyway, I can understand why you remove f2fs_bug_on & add PageUptodate here, but
+>> why should we repositon below check?
+>>
+>> if (get_valid_blocks(sbi, segno, 1) == 0 ||
+>> 		unlikely(f2fs_cp_error(sbi)))
+> 
+> Given description, this fixes using wrong sum_page pointer by:
+> 
+> next:
+> 	f2fs_put_page(sum_page, 0);
 
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- fsck/mount.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That's right, I'm missing this reference. Thanks for the explanation. :)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index ca7f6dd..0a47bf7 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1573,7 +1573,7 @@ int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
- 			struct seg_entry *se2;
- 			unsigned int i;
- 
--			for (i = 0; i < sbi->segs_per_sec; i++) {
-+			for (i = 1; i < sbi->segs_per_sec; i++) {
- 				se2 = get_seg_entry(sbi, segno + i);
- 				if (se2->valid_blocks)
- 					break;
--- 
-2.10.1
+thanks,
+
+> 
+> Thanks,
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most 
+> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
 
 
 ------------------------------------------------------------------------------
