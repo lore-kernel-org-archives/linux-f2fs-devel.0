@@ -1,71 +1,51 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [RFD] Common userspace tool for fscypto
-Date: Mon, 24 Oct 2016 09:28:39 -0400
-Message-ID: <20161024132839.qbw6u6hkzbbf5jcy@thunk.org>
-References: <0bef3877-060e-b722-0354-3a5508219e23@nod.at>
- <20161024124937.bxohuapjqns3m2dy@ws.net.home>
+From: pascaleus <pascaleus@superbe-adulterines.space>
+Subject: =?utf-8?q?Mari=C3=A9s_pour_avoir_des_aventures?=
+Date: Mon, 24 Oct 2016 19:38:26 +0000
+Message-ID: <533f512ad8446ec979cce4667fd763de@superbe-adulterines.space>
+Reply-To: pascaleus <pascaleus@superbe-adulterines.space>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161024124937.bxohuapjqns3m2dy@ws.net.home>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Karel Zak <kzak@redhat.com>
-Cc: Richard Weinberger <richard@nod.at>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, Eric Biggers <ebiggers@google.com>, David Gstir <david@sigma-star.at>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <pascaleus@superbe-adulterines.space>)
+	id 1byl4O-0003Oj-Lj for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 24 Oct 2016 19:38:05 +0000
+Received: from [89.163.174.149] (helo=mxs.superbe-adulterines.space)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1byl4N-0001b1-AT
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 24 Oct 2016 19:38:04 +0000
+Received: from [192.168.95.115] (unknown  [22.163.161.63])
+	by mxs.superbe-adulterines.space (Postfix) with ESMTP id 804702879A0
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 24 Oct 2016 22:37:56 +0300 (EEST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On Mon, Oct 24, 2016 at 02:49:37PM +0200, Karel Zak wrote:
-> > That said, what about implementing such a tool as part of util-linux to control
-> > fscrypto? We (David and I) would volunteer.
-> 
-> I have nothing against this plan (add to util-linux) if ext4, f2fs and
-> ubifs guys agree too.
-
-Our current plan is to implement it in e2fsprogs since we can more
-quickly iterate over code reviews and code improvements.  At some
-future point I'm happy to transfer it over to util-linux much like
-we've done with blkid and uuid libraries and associated utilities.
-We'll probably also keep a version in e2fsprogs for the long term just
-because upstream e2fsprogs is now integrated into the Android's AOSP
-build infrastructure, and it's probably simpler keep the tool there
-than to try to add Android.mk files and add the necessary helper
-scripts to deal with the fact (a) in the AOSP build system, you have
-to be able to cross-compile packages using Linux, MacOS, and Windows
-as the host OS and (b) Android using the Bionic C library instead of
-glibc.
-
-
-In answer to Richard's other questions, of course it would be released
-under the GPL, and our goals for creating a new fscrypto are (a) make
-it be more user-friendly, (b) support the new file-system level
-encryption features and new algorithms which Michael's team will be
-implementing, including a stronger string-to-key (password hashing)
-algorithm, new encryption modes, data integrity, etc), and (c) not
-have to be tied to backwards compatibility concerns with the e4crypt
-command.  (Since we are just starting a new e2fsprogs 1.44 development
-cycle, we'll have plenty of time to experiment with the UI and make
-incompatible changes before 1.44 gets released and at that point I
-would want to lock down the any option names, etc., for long-term
-backwards compatibility.)
-
-I suspect we'll keep e4crypt around for a while, just because it's a
-handy debugging tool, and in general it's faster to add quick wrapper
-around ioctls for testing purposes than it is to be very thoughtful
-about creating a UI which is both friendly and able to support new
-features in a backwards compatible way.
-
-I also suspect we'll want to put most of the bits that could be
-usefully called from other C programs (e.g., Android's userspace
-stack, and libpam modules) and put it in a new libfscrypto library.
-
-Cheers,
-
-						- Ted
-
-P.S.  If anyone is ever interested in trying to make util-linux build
-using AOSP (which would be cool since every once in a while I wish I
-had some of the util-linux tools purely for debugging purposes, but
-it's a bunch of work and I've never had the time, plus I wasn't at all
-convinced Karel would be willing to accept such changes upstream for
-util-linux), see e2fsprogs's Android.mk files plus the script in
-util/gen-android-files.
+IFNhbHV0IMOgIHRvdXMgIQoKTW9pIGplIGZhaXMgcGFzIGxlcyBjaG9zZXMgw6AgbW9pdGnDqS4g
+UG91ciBtb2ksIGlsIGVzdCBlc3NlbnRpZWwgZOKAmWFsbGVyIHZpdGUgZXQgZGUgZmFpcmUgZW4g
+Z3JhbmQuIApRdWFuZCBqZSBtZSBzdWlzIGluc2NyaXQgc3VyIC1tYXJpZWpldW5lLmJpeiAoZW5s
+ZXZlciBsZXMgdGlyZXN0IGVuIHJlY29waWFudCBsZSBsaWVuKSwgamUgcGVuc2FpcyBwYXMgY2Vw
+ZW5kYW50IHF1ZSBjYSBpcmFpdCBhdXNzaSB2aXRlICEKLW1hcmllamV1bmUuYml6CgpFdXgsIGls
+cyB2b250IHZyYWltZW50IMOgIGZvbmRzICEKRXQgYXZlYyBsYSBxdWFsaXTDqSBlbiBwbHVzLgoK
+Ck5vdXMgaW52aXRvbnMgdG91dGUgcGVyc29ubmUgbmUgc291aGFpdGFudCBwbHVzIHJlY2V2b2ly
+IGRlIGNvdXJyaWVsIGRlIG5vdHJlIHBhcnQgw6AgdXRpbGlzZXIgbGUgbGllbiBzdWl2YW50IDog
+LW1hcmllamV1bmUuYml6L2Rlc2luc2NyaXB0aW9uLmh0bWwKCgotLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29y
+bGQncyBtb3N0IAplbmdhZ2luZyB0ZWNoIHNpdGVzLCBTbGFzaERvdC5vcmchIGh0dHA6Ly9zZG0u
+bGluay9zbGFzaGRvdApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxpbmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3Rz
+LnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0
+aW5mby9saW51eC1mMmZzLWRldmVsCg==
