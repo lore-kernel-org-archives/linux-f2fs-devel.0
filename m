@@ -1,69 +1,34 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH v2 4/9] f2fs: Suppress discard warning message
-	for zoned block devices
-Date: Fri, 28 Oct 2016 17:45:02 +0900
-Message-ID: <1477644307-30115-5-git-send-email-damien.lemoal@wdc.com>
+Subject: [PATCH v2 1/9] f2fs: Add missing break in switch-case
+Date: Fri, 28 Oct 2016 17:44:59 +0900
+Message-ID: <1477644307-30115-2-git-send-email-damien.lemoal@wdc.com>
 References: <1477644307-30115-1-git-send-email-damien.lemoal@wdc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <Damien.LeMoal@wdc.com>) id 1c02o6-0004RO-OX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:46:34 +0000
-Received: from esa2.hgst.iphmx.com ([68.232.143.124])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c02o5-0003fO-TY
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:46:34 +0000
+Content-Type: text/plain
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 In-Reply-To: <1477644307-30115-1-git-send-email-damien.lemoal@wdc.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: Le Moal <damien.lemoal@wdc.com>, Damien, linux-f2fs-devel@lists.sourceforge.net, Shaun Tancheff <shaun@tancheff.com>, Hannes Reinecke <hare@suse.de>, linux-fsdevel@vger.kernel.org
-
-For zoned block devices, discard is replaced by zone reset. So
-do not warn if the device does not supports discard.
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Hannes Reinecke <hare@suse.de>, Shaun Tancheff <shaun@tancheff.com>, Damien Le Moal <damien.lemoal@wdc.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- fs/f2fs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index c6e9b94..2313234 100644
+index 6132b4c..f6379f5 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -412,7 +412,7 @@ static int parse_options(struct super_block *sb, char *options)
- 			q = bdev_get_queue(sb->s_bdev);
- 			if (blk_queue_discard(q)) {
- 				set_opt(sbi, DISCARD);
--			} else {
-+			} else if (!f2fs_sb_mounted_blkzoned(sb)) {
- 				f2fs_msg(sb, KERN_WARNING,
- 					"mounting with \"discard\" option, but "
- 					"the device does not support discard");
+@@ -420,6 +420,7 @@ static int parse_options(struct super_block *sb, char *options)
+ 			break;
+ 		case Opt_nodiscard:
+ 			clear_opt(sbi, DISCARD);
++			break;
+ 		case Opt_noheap:
+ 			set_opt(sbi, NOHEAP);
+ 			break;
 -- 
 2.7.4
 
-Western Digital Corporation (and its subsidiaries) E-mail Confidentiality Notice & Disclaimer:
-
-This e-mail and any files transmitted with it may contain confidential or legally privileged information of WDC and/or its affiliates, and are intended solely for the use of the individual or entity to which they are addressed. If you are not the intended recipient, any disclosure, copying, distribution or any action taken or omitted to be taken in reliance on it, is prohibited. If you have received this e-mail in error, please notify the sender immediately and delete the e-mail in its entirety from your system.
-
-
-------------------------------------------------------------------------------
-The Command Line: Reinvented for Modern Developers
-Did the resurgence of CLI tooling catch you by surprise?
-Reconnect with the command line and become more productive. 
-Learn the new .NET and ASP.NET CLI. Get your free copy!
-http://sdm.link/telerik
