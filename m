@@ -1,7 +1,8 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH 7/7] fsck.f2fs: Check BLKZONED feature on mount
-Date: Fri, 28 Oct 2016 16:57:04 +0900
-Message-ID: <1477641424-12367-9-git-send-email-damien.lemoal@wdc.com>
+Subject: [PATCH 6/7] mkfs.f2fs: Check zoned block devices
+	configuration
+Date: Fri, 28 Oct 2016 16:57:03 +0900
+Message-ID: <1477641424-12367-8-git-send-email-damien.lemoal@wdc.com>
 References: <1477641424-12367-1-git-send-email-damien.lemoal@wdc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,14 +11,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <Damien.LeMoal@wdc.com>) id 1c02Gl-00036t-UP
+	(envelope-from <Damien.LeMoal@wdc.com>) id 1c02Gm-00036y-V3
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Fri, 28 Oct 2016 08:12:08 +0000
 Received: from esa2.hgst.iphmx.com ([68.232.143.124])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c02Gj-0007AL-Le
+	(Exim 4.76) id 1c02Gm-0007AL-35
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:12:07 +0000
+	Fri, 28 Oct 2016 08:12:08 +0000
 In-Reply-To: <1477641424-12367-1-git-send-email-damien.lemoal@wdc.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,32 +32,54 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: Damien Le Moal <damien.lemoal@wdc.com>, Shaun Tancheff <shaun@tancheff.com>, Hannes Reinecke <hare@suse.de>, linux-f2fs-devel@lists.sourceforge.net
 
-The BLKZONED feature is mandatory for host-managed zoned block
-devices. So check that it is set.
+Make sure the drive has enough randomly writeable zones from
+the beginning of the partition to hold the meta data sections.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- fsck/mount.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ mkfs/f2fs_format.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index dead207..6e27a5b 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -394,6 +394,13 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
- 					get_sb(root_ino) != 3)
- 		return -1;
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index b40cd83..93b5c8f 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -183,6 +183,13 @@ static int f2fs_prepare_super_block(void)
  
-+	/* Check zoned block device feature */
-+	if (config.zoned_model == F2FS_ZONED_HM &&
-+	    (!(sb->feature & cpu_to_le32(F2FS_FEATURE_BLKZONED)))) {
-+		MSG(0, "\tMissing zoned block device feature\n");
+ 	MSG(0, "Info: zone aligned segment0 blkaddr: %u\n", get_sb(segment0_blkaddr));
+ 
++	if (config.zoned_mode &&
++	    get_sb(segment0_blkaddr) % config.zone_blocks) {
++		MSG(1, "\tError: Unaligned segment0 block address %u\n",
++		    get_sb(segment0_blkaddr));
 +		return -1;
 +	}
 +
- 	if (sanity_check_area_boundary(sb, offset))
- 		return -1;
- 	return 0;
+ 	set_sb(segment_count_ckpt, F2FS_NUMBER_OF_CHECKPOINT_PACK);
+ 
+ 	set_sb(sit_blkaddr, get_sb(segment0_blkaddr) + get_sb(segment_count_ckpt) *
+@@ -267,6 +274,21 @@ static int f2fs_prepare_super_block(void)
+ 	set_sb(main_blkaddr, get_sb(segment0_blkaddr) + total_meta_zones *
+ 				config.segs_per_zone * config.blks_per_seg);
+ 
++	if (config.zoned_mode) {
++		/*
++		 * Make sure there is enough randomly writeable
++		 * space at the beginning of the disk.
++		 */
++		unsigned long main_blkzone = get_sb(main_blkaddr) / config.zone_blocks;
++
++		if (config.nr_rnd_zones < main_blkzone) {
++			MSG(1, "\tError: Device does not have enough random "
++			    "write zones for F2FS volume (%lu needed)",
++			    main_blkzone);
++			return -1;
++		}
++	}
++
+ 	total_zones = get_sb(segment_count) / (config.segs_per_zone) -
+ 							total_meta_zones;
+ 
 -- 
 2.7.4
 
