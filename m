@@ -1,7 +1,7 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH 8/9] f2fs: Reset sequential zones on zoned block devices
-Date: Fri, 28 Oct 2016 16:55:36 +0900
-Message-ID: <1477641337-12321-9-git-send-email-damien.lemoal@wdc.com>
+Subject: [PATCH 9/9] f2fs: Trace reset zone events
+Date: Fri, 28 Oct 2016 16:55:37 +0900
+Message-ID: <1477641337-12321-10-git-send-email-damien.lemoal@wdc.com>
 References: <1477641337-12321-1-git-send-email-damien.lemoal@wdc.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,109 +12,58 @@ To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Hannes Reinecke <hare@suse.de>, Shaun Tancheff <shaun@tancheff.com>, Damien Le Moal <damien.lemoal@wdc.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-When a zoned block device is mounted, discarding sections
-contained in sequential zones must reset the zone write pointer.
-For sections contained in conventional zones, the regular discard
-is used if the drive supports it.
+Similarly to the regular discard, trace zone reset events.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- fs/f2fs/segment.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 52 insertions(+), 8 deletions(-)
+ fs/f2fs/segment.c           |  1 +
+ include/trace/events/f2fs.h | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index fc886f0..bce79e2 100644
+index bce79e2..064a78b 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -633,15 +633,19 @@ static void f2fs_submit_bio_wait_endio(struct bio *bio)
- }
+@@ -688,6 +688,7 @@ static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
  
- /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
--int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi, sector_t sector,
--		sector_t nr_sects, gfp_t gfp_mask, unsigned long flags)
-+static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
-+					block_t blkstart, block_t blklen)
- {
- 	struct block_device *bdev = sbi->sb->s_bdev;
- 	struct bio *bio = NULL;
- 	int err;
+ 	case BLK_ZONE_TYPE_SEQWRITE_REQ:
+ 	case BLK_ZONE_TYPE_SEQWRITE_PREF:
++		trace_f2fs_issue_reset_zone(sbi->sb, blkstart);
+ 		return blkdev_reset_zones(bdev, sector,
+ 					  nr_sects, GFP_NOFS);
  
--	err = __blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, flags,
--			&bio);
-+	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
-+
-+	err = __blkdev_issue_discard(bdev,
-+				     SECTOR_FROM_BLOCK(blkstart),
-+				     SECTOR_FROM_BLOCK(blklen),
-+				     GFP_NOFS, 0, &bio);
- 	if (!err && bio) {
- 		struct bio_entry *be = __add_bio_entry(sbi, bio);
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 903a091..a2193e3 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -1113,6 +1113,27 @@ TRACE_EVENT(f2fs_issue_discard,
+ 		(unsigned long long)__entry->blklen)
+ );
  
-@@ -654,11 +658,48 @@ int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi, sector_t sector,
- 	return err;
- }
++TRACE_EVENT(f2fs_issue_reset_zone,
++
++	TP_PROTO(struct super_block *sb, block_t blkstart),
++
++	TP_ARGS(sb, blkstart),
++
++	TP_STRUCT__entry(
++		__field(dev_t,	dev)
++		__field(block_t, blkstart)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= sb->s_dev;
++		__entry->blkstart = blkstart;
++	),
++
++	TP_printk("dev = (%d,%d), reset zone at block = 0x%llx",
++		show_dev(__entry),
++		(unsigned long long)__entry->blkstart)
++);
++
+ TRACE_EVENT(f2fs_issue_flush,
  
-+static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
-+					block_t blkstart, block_t blklen)
-+{
-+	sector_t sector = SECTOR_FROM_BLOCK(blkstart);
-+	sector_t nr_sects = SECTOR_FROM_BLOCK(blklen);
-+	struct block_device *bdev = sbi->sb->s_bdev;
-+
-+	if (nr_sects != bdev_zone_size(bdev)) {
-+		f2fs_msg(sbi->sb, KERN_INFO,
-+			 "Unaligned discard attempted (sector %llu + %llu)",
-+			 (unsigned long long)sector,
-+			 (unsigned long long)nr_sects);
-+		return -EIO;
-+	}
-+
-+	/*
-+	 * We need to know the type of the zone: for conventional zones,
-+	 * use regular discard if the drive supports it. For sequential
-+	 * zones, reset the zone write pointer.
-+	 */
-+	switch (get_blkz_type(sbi, blkstart)) {
-+
-+	case BLK_ZONE_TYPE_CONVENTIONAL:
-+		if (!blk_queue_discard(bdev_get_queue(bdev)))
-+			return 0;
-+		return __f2fs_issue_discard_async(sbi, blkstart,
-+						  blklen);
-+
-+	case BLK_ZONE_TYPE_SEQWRITE_REQ:
-+	case BLK_ZONE_TYPE_SEQWRITE_PREF:
-+		return blkdev_reset_zones(bdev, sector,
-+					  nr_sects, GFP_NOFS);
-+
-+	default:
-+		/* Unknown zone type: broken device ? */
-+		return -EIO;
-+	}
-+}
-+
- static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
- 				block_t blkstart, block_t blklen)
- {
--	sector_t start = SECTOR_FROM_BLOCK(blkstart);
--	sector_t len = SECTOR_FROM_BLOCK(blklen);
- 	struct seg_entry *se;
- 	unsigned int offset;
- 	block_t i;
-@@ -670,8 +711,11 @@ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
- 		if (!f2fs_test_and_set_bit(offset, se->discard_map))
- 			sbi->discard_blks--;
- 	}
--	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
--	return __f2fs_issue_discard_async(sbi, start, len, GFP_NOFS, 0);
-+
-+	if (f2fs_sb_mounted_blkzoned(sbi->sb))
-+		return f2fs_issue_discard_zone(sbi, blkstart, blklen);
-+
-+	return __f2fs_issue_discard_async(sbi, blkstart, blklen);
- }
- 
- static void __add_discard_entry(struct f2fs_sb_info *sbi,
+ 	TP_PROTO(struct super_block *sb, unsigned int nobarrier,
 -- 
 2.7.4
 
