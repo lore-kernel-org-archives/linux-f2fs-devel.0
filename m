@@ -1,9 +1,7 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH 1/7] f2fs-tools: Add executable files to
-	.gitignore
-Date: Fri, 28 Oct 2016 16:56:57 +0900
-Message-ID: <1477641424-12367-2-git-send-email-damien.lemoal@wdc.com>
-References: <1477641424-12367-1-git-send-email-damien.lemoal@wdc.com>
+Subject: [PATCH 0/7] f2fs-tools: zoned block device support
+Date: Fri, 28 Oct 2016 16:56:56 +0900
+Message-ID: <1477641424-12367-1-git-send-email-damien.lemoal@wdc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -11,15 +9,14 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <Damien.LeMoal@wdc.com>) id 1c02VV-0005Vh-1d
+	(envelope-from <Damien.LeMoal@wdc.com>) id 1c02VX-0005XR-67
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:27:21 +0000
+	Fri, 28 Oct 2016 08:27:23 +0000
 Received: from esa2.hgst.iphmx.com ([68.232.143.124])
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c02VU-0002i9-1l
+	(Exim 4.76) id 1c02VV-0002i9-6n
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:27:21 +0000
-In-Reply-To: <1477641424-12367-1-git-send-email-damien.lemoal@wdc.com>
+	Fri, 28 Oct 2016 08:27:23 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,26 +29,47 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: Damien Le Moal <damien.lemoal@wdc.com>, Shaun Tancheff <shaun@tancheff.com>, Hannes Reinecke <hare@suse.de>, linux-f2fs-devel@lists.sourceforge.net
 
-Git ignore executables fsck.f2fs, f2fstat, fibmap.f2fs
-and parse.f2fs.
+With the introduction of zoned block device support in the kernel, accessing
+discovering if a block device is zoned and accessing its zone layout information
+does not require using SG_IO anymore. The file /sys/block/<dev>/queue/zoned
+indicates the device zone model and the ioctls BLKREPORTZONE and BLKRESETZONE
+defined in include/uapi/linux/blkzoned.h allow manipulating zones more easily.
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- .gitignore | 4 ++++
- 1 file changed, 4 insertions(+)
+This patch series brings in support for this new interface in place of the
+direct SG_IO-zbc commands. In addition, it enforces some formtating options
+for host-managed zoned block devices and straighten device zone layout checks
+to make sure that the device can be used.
 
-diff --git a/.gitignore b/.gitignore
-index 76473a6..debeffb 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -45,3 +45,7 @@ stamp-h
- stamp-h1
- 
- /mkfs/mkfs.f2fs
-+/fsck/fsck.f2fs
-+/tools/f2fstat
-+/tools/fibmap.f2fs
-+/tools/parse.f2fs
+Finally, as discard does not result in write pointer zone reset, the ioctl
+BLKRESETZONE is used during formatting to properly initialize all sequential
+zones of the device.
+
+Damien Le Moal (7):
+  f2fs-tools: Add executable files to .gitignore
+  f2fs-tools: Use zoned block device terminology
+  f2fs-tools: Introduce support for zoned block devices
+  mkfs.f2fs: Check options for zoned block devices
+  mkfs.f2fs: Reset sequential zones on device discard
+  mkfs.f2fs: Check zoned block devices configuration
+  fsck.f2fs: Check BLKZONED feature on mount
+
+ .gitignore               |   4 +
+ configure.ac             |   2 +-
+ fsck/mount.c             |  11 +-
+ include/f2fs_fs.h        | 111 +++++---
+ lib/Makefile.am          |   2 +-
+ lib/libf2fs.c            |  40 ++-
+ lib/libf2fs_zoned.c      | 296 ++++++++++++++++++++++
+ lib/zbc.c                | 647 -----------------------------------------------
+ lib/zbc.h                | 361 --------------------------
+ mkfs/f2fs_format.c       |  24 +-
+ mkfs/f2fs_format_main.c  |  24 +-
+ mkfs/f2fs_format_utils.c |   2 +
+ 12 files changed, 464 insertions(+), 1060 deletions(-)
+ create mode 100644 lib/libf2fs_zoned.c
+ delete mode 100644 lib/zbc.c
+ delete mode 100644 lib/zbc.h
+
 -- 
 2.7.4
 
