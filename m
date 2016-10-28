@@ -1,75 +1,62 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH v2 6/9] f2fs: Do not allow adaptive mode for
-	host-managed zoned block devices
-Date: Fri, 28 Oct 2016 17:45:04 +0900
-Message-ID: <1477644307-30115-7-git-send-email-damien.lemoal@wdc.com>
-References: <1477644307-30115-1-git-send-email-damien.lemoal@wdc.com>
+Subject: [PATCH v2 0/9] f2fs: Zoned block device support
+Date: Fri, 28 Oct 2016 17:44:58 +0900
+Message-ID: <1477644307-30115-1-git-send-email-damien.lemoal@wdc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <Damien.LeMoal@wdc.com>) id 1c02oF-0007ki-No
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:46:43 +0000
-Received: from esa2.hgst.iphmx.com ([68.232.143.124])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c02oE-0003iL-OQ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:46:43 +0000
-In-Reply-To: <1477644307-30115-1-git-send-email-damien.lemoal@wdc.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: Le Moal <damien.lemoal@wdc.com>, Damien, linux-f2fs-devel@lists.sourceforge.net, Shaun Tancheff <shaun@tancheff.com>, Hannes Reinecke <hare@suse.de>, linux-fsdevel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Hannes Reinecke <hare@suse.de>, Shaun Tancheff <shaun@tancheff.com>, Damien Le Moal <damien.lemoal@wdc.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-The LFS mode is mandatory for host-managed zoned block devices as
-update in place optimizations are not possible for segments in
-sequential zones.
+This series completes support for zoned block devices in f2fs. The core zoned
+block device support was added to Jens linux-block tree, branch for-4.10/block.
+(Please note that patch 1/9 is not specific to this series)
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
----
- fs/f2fs/super.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+The core part of the zoned block device support was already implemented
+by Jaegeuk with the addition of the "lfs" mode and atomic block allocation
+and BIO issuing fixes. The patches in this series build on top of this
+support, adding fixes for section discard and mount options checks.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 2c8a12e..58fd69d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -518,6 +518,13 @@ static int parse_options(struct super_block *sb, char *options)
- 				return -ENOMEM;
- 			if (strlen(name) == 8 &&
- 					!strncmp(name, "adaptive", 8)) {
-+				if (f2fs_sb_mounted_blkzoned(sb)) {
-+					f2fs_msg(sb, KERN_WARNING,
-+						 "adaptive mode is not allowed with "
-+						 "zoned block device feature");
-+					kfree(name);
-+					return -EINVAL;
-+				}
- 				set_opt_mode(sbi, F2FS_MOUNT_ADAPTIVE);
- 			} else if (strlen(name) == 3 &&
- 					!strncmp(name, "lfs", 3)) {
+Whereas older prototype ZBC support patch sets mapped discard to the reset
+write pointer command for zoned block devices, the patches merged in Jens
+for-4.10/block do not and a zone reset must be done with the function
+blkdev_reset_zones. So in f2fs, the function f2fs_issue_discard is modified
+to execute this function when the section to discard is stored in a sequential
+zone. For sections stored in conventional zones, the regular discard operation
+is used if the drive supports it.
+
+This means that the zone type of each section is needed for discard. To avoid
+a costly report zones execution before each section discard, the type of all
+zones of the device is cached in the super block information. This cache is
+initialized at mount time and does not need any update as the zone type of
+zoned block devices is fixed.
+
+For convenience and debugging, tracing of zone reset events is also added
+similarly to the traces for regular discard events.
+
+v2:
+* Fixed compilation error when CONFIG_BLK_DEV_ZONED is disabled
+
+Damien Le Moal (9):
+  f2fs: Add missing break in switch-case
+  f2fs: Use generic zoned block device terminology
+  f2fs: Check zoned block feature for host-managed zoned block devices
+  f2fs: Suppress discard warning message for zoned block devices
+  f2fs: Always enable discard for zoned blocks devices
+  f2fs: Do not allow adaptive mode for host-managed zoned block devices
+  f2fs: Cache zoned block devices zone type
+  f2fs: Reset sequential zones on zoned block devices
+  f2fs: Trace reset zone events
+
+ fs/f2fs/data.c              |   2 +-
+ fs/f2fs/f2fs.h              |  38 +++++++++++----
+ fs/f2fs/segment.c           |  66 +++++++++++++++++++++++----
+ fs/f2fs/super.c             | 109 +++++++++++++++++++++++++++++++++++++++++++-
+ include/trace/events/f2fs.h |  21 +++++++++
+ 5 files changed, 215 insertions(+), 21 deletions(-)
+
 -- 
 2.7.4
 
-Western Digital Corporation (and its subsidiaries) E-mail Confidentiality Notice & Disclaimer:
-
-This e-mail and any files transmitted with it may contain confidential or legally privileged information of WDC and/or its affiliates, and are intended solely for the use of the individual or entity to which they are addressed. If you are not the intended recipient, any disclosure, copying, distribution or any action taken or omitted to be taken in reliance on it, is prohibited. If you have received this e-mail in error, please notify the sender immediately and delete the e-mail in its entirety from your system.
-
-
-------------------------------------------------------------------------------
-The Command Line: Reinvented for Modern Developers
-Did the resurgence of CLI tooling catch you by surprise?
-Reconnect with the command line and become more productive. 
-Learn the new .NET and ASP.NET CLI. Get your free copy!
-http://sdm.link/telerik
