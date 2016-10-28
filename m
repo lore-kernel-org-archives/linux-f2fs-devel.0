@@ -1,8 +1,8 @@
 From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH v2 2/9] f2fs: Use generic zoned block device
-	terminology
-Date: Fri, 28 Oct 2016 17:45:00 +0900
-Message-ID: <1477644307-30115-3-git-send-email-damien.lemoal@wdc.com>
+Subject: [PATCH v2 8/9] f2fs: Reset sequential zones on zoned
+	block devices
+Date: Fri, 28 Oct 2016 17:45:06 +0900
+Message-ID: <1477644307-30115-9-git-send-email-damien.lemoal@wdc.com>
 References: <1477644307-30115-1-git-send-email-damien.lemoal@wdc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -10,15 +10,15 @@ Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <Damien.LeMoal@wdc.com>) id 1c02o5-0004RB-OM
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <Damien.LeMoal@wdc.com>) id 1c02oG-0004aR-Vk
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:46:33 +0000
+	Fri, 28 Oct 2016 08:46:44 +0000
 Received: from esa2.hgst.iphmx.com ([68.232.143.124])
 	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c02o4-0003fO-P4
+	(Exim 4.76) id 1c02oF-0003iL-T5
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:46:33 +0000
+	Fri, 28 Oct 2016 08:46:44 +0000
 In-Reply-To: <1477644307-30115-1-git-send-email-damien.lemoal@wdc.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,71 +32,121 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: Le Moal <damien.lemoal@wdc.com>, Damien, linux-f2fs-devel@lists.sourceforge.net, Shaun Tancheff <shaun@tancheff.com>, Hannes Reinecke <hare@suse.de>, linux-fsdevel@vger.kernel.org
 
-SMR stands for "Shingled Magnetic Recording" which makes sense
-only for hard disk drives (spinning rust). The ZBC/ZAC standards
-enable management of SMR disks, but solid state drives may also
-support those standards. So rename the HMSMR feature to BLKZONED
-to avoid a HDD centric terminology. For the same reason, rename
-f2fs_sb_mounted_hmsmr to f2fs_sb_mounted_blkzoned.
+When a zoned block device is mounted, discarding sections
+contained in sequential zones must reset the zone write pointer.
+For sections contained in conventional zones, the regular discard
+is used if the drive supports it.
 
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 ---
- fs/f2fs/data.c  | 2 +-
- fs/f2fs/f2fs.h  | 6 +++---
- fs/f2fs/super.c | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ fs/f2fs/segment.c | 65 ++++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 57 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9ae194f..803f30f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -110,7 +110,7 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index fc886f0..ee66e08 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -16,6 +16,7 @@
+ #include <linux/kthread.h>
+ #include <linux/swap.h>
+ #include <linux/timer.h>
++#include <linux/timer.h>
+ 
+ #include "f2fs.h"
+ #include "segment.h"
+@@ -633,15 +634,19 @@ static void f2fs_submit_bio_wait_endio(struct bio *bio)
+ }
+ 
+ /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+-int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi, sector_t sector,
+-		sector_t nr_sects, gfp_t gfp_mask, unsigned long flags)
++static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
++					block_t blkstart, block_t blklen)
  {
- 	if (!is_read_io(bio_op(bio))) {
- 		atomic_inc(&sbi->nr_wb_bios);
--		if (f2fs_sb_mounted_hmsmr(sbi->sb) &&
-+		if (f2fs_sb_mounted_blkzoned(sbi->sb) &&
- 			current->plug && (type == DATA || type == NODE))
- 			blk_finish_plug(current->plug);
+ 	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct bio *bio = NULL;
+ 	int err;
+ 
+-	err = __blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, flags,
+-			&bio);
++	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
++
++	err = __blkdev_issue_discard(bdev,
++				     SECTOR_FROM_BLOCK(blkstart),
++				     SECTOR_FROM_BLOCK(blklen),
++				     GFP_NOFS, 0, &bio);
+ 	if (!err && bio) {
+ 		struct bio_entry *be = __add_bio_entry(sbi, bio);
+ 
+@@ -654,11 +659,50 @@ int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi, sector_t sector,
+ 	return err;
+ }
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
++					block_t blkstart, block_t blklen)
++{
++	sector_t sector = SECTOR_FROM_BLOCK(blkstart);
++	sector_t nr_sects = SECTOR_FROM_BLOCK(blklen);
++	struct block_device *bdev = sbi->sb->s_bdev;
++
++	if (nr_sects != bdev_zone_size(bdev)) {
++		f2fs_msg(sbi->sb, KERN_INFO,
++			 "Unaligned discard attempted (sector %llu + %llu)",
++			 (unsigned long long)sector,
++			 (unsigned long long)nr_sects);
++		return -EIO;
++	}
++
++	/*
++	 * We need to know the type of the zone: for conventional zones,
++	 * use regular discard if the drive supports it. For sequential
++	 * zones, reset the zone write pointer.
++	 */
++	switch (get_blkz_type(sbi, blkstart)) {
++
++	case BLK_ZONE_TYPE_CONVENTIONAL:
++		if (!blk_queue_discard(bdev_get_queue(bdev)))
++			return 0;
++		return __f2fs_issue_discard_async(sbi, blkstart,
++						  blklen);
++
++	case BLK_ZONE_TYPE_SEQWRITE_REQ:
++	case BLK_ZONE_TYPE_SEQWRITE_PREF:
++		return blkdev_reset_zones(bdev, sector,
++					  nr_sects, GFP_NOFS);
++
++	default:
++		/* Unknown zone type: broken device ? */
++		return -EIO;
++	}
++}
++#endif
++
+ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
+ 				block_t blkstart, block_t blklen)
+ {
+-	sector_t start = SECTOR_FROM_BLOCK(blkstart);
+-	sector_t len = SECTOR_FROM_BLOCK(blklen);
+ 	struct seg_entry *se;
+ 	unsigned int offset;
+ 	block_t i;
+@@ -670,8 +714,13 @@ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
+ 		if (!f2fs_test_and_set_bit(offset, se->discard_map))
+ 			sbi->discard_blks--;
  	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9e8de18..2fc771a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -103,7 +103,7 @@ struct f2fs_mount_info {
- };
- 
- #define F2FS_FEATURE_ENCRYPT	0x0001
--#define F2FS_FEATURE_HMSMR	0x0002
-+#define F2FS_FEATURE_BLKZONED	0x0002
- 
- #define F2FS_HAS_FEATURE(sb, mask)					\
- 	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-@@ -2412,9 +2412,9 @@ static inline int f2fs_sb_has_crypto(struct super_block *sb)
- 	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_ENCRYPT);
+-	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
+-	return __f2fs_issue_discard_async(sbi, start, len, GFP_NOFS, 0);
++
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (f2fs_sb_mounted_blkzoned(sbi->sb))
++		return f2fs_issue_discard_zone(sbi, blkstart, blklen);
++#endif
++
++	return __f2fs_issue_discard_async(sbi, blkstart, blklen);
  }
  
--static inline int f2fs_sb_mounted_hmsmr(struct super_block *sb)
-+static inline int f2fs_sb_mounted_blkzoned(struct super_block *sb)
- {
--	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_HMSMR);
-+	return F2FS_HAS_FEATURE(sb, F2FS_FEATURE_BLKZONED);
- }
- 
- static inline void set_opt_mode(struct f2fs_sb_info *sbi, unsigned int mt)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f6379f5..a83df29 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -975,7 +975,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	set_opt(sbi, EXTENT_CACHE);
- 	sbi->sb->s_flags |= MS_LAZYTIME;
- 	set_opt(sbi, FLUSH_MERGE);
--	if (f2fs_sb_mounted_hmsmr(sbi->sb)) {
-+	if (f2fs_sb_mounted_blkzoned(sbi->sb)) {
- 		set_opt_mode(sbi, F2FS_MOUNT_LFS);
- 		set_opt(sbi, DISCARD);
- 	} else {
+ static void __add_discard_entry(struct f2fs_sb_info *sbi,
 -- 
 2.7.4
 
