@@ -1,1623 +1,678 @@
-From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH 3/7] f2fs-tools: Introduce support for zoned
-	block devices
-Date: Fri, 28 Oct 2016 16:57:00 +0900
-Message-ID: <1477641424-12367-5-git-send-email-damien.lemoal@wdc.com>
-References: <1477641424-12367-1-git-send-email-damien.lemoal@wdc.com>
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH 8/9] f2fs: Reset sequential zones on zoned block devices
+Date: Fri, 28 Oct 2016 16:19:35 +0800
+Message-ID: <201610281629.h0MiCYyl%fengguang.wu@intel.com>
+References: <1477641337-12321-9-git-send-email-damien.lemoal@wdc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <Damien.LeMoal@wdc.com>) id 1c02HD-0003EX-AD
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:12:35 +0000
-Received: from esa2.hgst.iphmx.com ([68.232.143.124])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c02H8-0000bd-Pa
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 28 Oct 2016 08:12:35 +0000
-In-Reply-To: <1477641424-12367-1-git-send-email-damien.lemoal@wdc.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: Damien Le Moal <damien.lemoal@wdc.com>, Shaun Tancheff <shaun@tancheff.com>, Hannes Reinecke <hare@suse.de>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: multipart/mixed; boundary="dDRMvlgZJXvWKvBx"
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1477641337-12321-9-git-send-email-damien.lemoal@wdc.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+Cc: kbuild-all@01.org, jaegeuk@kernel.org, yuchao0@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Hannes Reinecke <hare@suse.de>, Shaun Tancheff <shaun@tancheff.com>, Damien Le Moal <damien.lemoal@wdc.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-With the availability of the BLKREPORTZONE and BLKRESETZONE
-ioctls, there is no need for using SG_IO to discover zoned
-block devices characteristics. This simplifies the code.
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+--dDRMvlgZJXvWKvBx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Damien,
+
+[auto build test WARNING on v4.9-rc2]
+[cannot apply to f2fs/dev next-20161028]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+[Suggest to use git(>=2.9.0) format-patch --base=<commit> (or --base=auto for convenience) to record what (public, well-known) commit your patch series was built on]
+[Check https://git-scm.com/docs/git-format-patch for more information]
+
+url:    https://github.com/0day-ci/linux/commits/Damien-Le-Moal/f2fs-Zoned-block-device-support/20161028-160349
+config: x86_64-randconfig-x017-201643 (attached as .config)
+compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=x86_64 
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/f2fs/segment.c:20:0:
+   fs/f2fs/f2fs.h: In function 'get_blkz_type':
+   fs/f2fs/f2fs.h:2424:35: error: 'struct f2fs_sb_info' has no member named 'log_blocks_per_blkz'; did you mean 'log_blocks_per_seg'?
+     unsigned int zno = blkaddr >> sbi->log_blocks_per_blkz;
+                                      ^~
+   fs/f2fs/f2fs.h:2426:12: error: 'struct f2fs_sb_info' has no member named 'blkz_type'
+     return sbi->blkz_type[zno];
+               ^~
+   In file included from include/linux/linkage.h:4:0,
+                    from include/linux/fs.h:4,
+                    from fs/f2fs/segment.c:11:
+   fs/f2fs/segment.c: In function 'f2fs_issue_discard_zone':
+   fs/f2fs/segment.c:668:18: error: implicit declaration of function 'bdev_zone_size' [-Werror=implicit-function-declaration]
+     if (nr_sects != bdev_zone_size(bdev)) {
+                     ^
+   include/linux/compiler.h:149:30: note: in definition of macro '__trace_if'
+     if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
+                                 ^~~~
+>> fs/f2fs/segment.c:668:2: note: in expansion of macro 'if'
+     if (nr_sects != bdev_zone_size(bdev)) {
+     ^~
+   fs/f2fs/segment.c:683:7: error: 'BLK_ZONE_TYPE_CONVENTIONAL' undeclared (first use in this function)
+     case BLK_ZONE_TYPE_CONVENTIONAL:
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/segment.c:683:7: note: each undeclared identifier is reported only once for each function it appears in
+   fs/f2fs/segment.c:689:7: error: 'BLK_ZONE_TYPE_SEQWRITE_REQ' undeclared (first use in this function)
+     case BLK_ZONE_TYPE_SEQWRITE_REQ:
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/segment.c:690:7: error: 'BLK_ZONE_TYPE_SEQWRITE_PREF' undeclared (first use in this function)
+     case BLK_ZONE_TYPE_SEQWRITE_PREF:
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/f2fs/segment.c:691:10: error: implicit declaration of function 'blkdev_reset_zones' [-Werror=implicit-function-declaration]
+      return blkdev_reset_zones(bdev, sector,
+             ^~~~~~~~~~~~~~~~~~
+   In file included from fs/f2fs/segment.c:20:0:
+   fs/f2fs/f2fs.h: In function 'get_blkz_type':
+   fs/f2fs/f2fs.h:2427:1: warning: control reaches end of non-void function [-Wreturn-type]
+    }
+    ^
+   cc1: some warnings being treated as errors
+
+vim +/if +668 fs/f2fs/segment.c
+
+   652			bio->bi_private = be;
+   653			bio->bi_end_io = f2fs_submit_bio_wait_endio;
+   654			bio->bi_opf |= REQ_SYNC;
+   655			submit_bio(bio);
+   656		}
+   657	
+   658		return err;
+   659	}
+   660	
+   661	static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+   662						block_t blkstart, block_t blklen)
+   663	{
+   664		sector_t sector = SECTOR_FROM_BLOCK(blkstart);
+   665		sector_t nr_sects = SECTOR_FROM_BLOCK(blklen);
+   666		struct block_device *bdev = sbi->sb->s_bdev;
+   667	
+ > 668		if (nr_sects != bdev_zone_size(bdev)) {
+   669			f2fs_msg(sbi->sb, KERN_INFO,
+   670				 "Unaligned discard attempted (sector %llu + %llu)",
+   671				 (unsigned long long)sector,
+   672				 (unsigned long long)nr_sects);
+   673			return -EIO;
+   674		}
+   675	
+   676		/*
+
 ---
- configure.ac        |   2 +-
- include/f2fs_fs.h   | 107 ++++++---
- lib/Makefile.am     |   2 +-
- lib/libf2fs.c       |  40 +++-
- lib/libf2fs_zoned.c | 296 ++++++++++++++++++++++++
- lib/zbc.c           | 647 ----------------------------------------------------
- lib/zbc.h           | 361 -----------------------------
- 7 files changed, 404 insertions(+), 1051 deletions(-)
- create mode 100644 lib/libf2fs_zoned.c
- delete mode 100644 lib/zbc.c
- delete mode 100644 lib/zbc.h
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-diff --git a/configure.ac b/configure.ac
-index f519790..5655612 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -57,7 +57,7 @@ PKG_CHECK_MODULES([libuuid], [uuid])
- PKG_CHECK_MODULES([libselinux], [libselinux])
- 
- # Checks for header files.
--AC_CHECK_HEADERS([linux/fs.h fcntl.h mntent.h stdlib.h string.h \
-+AC_CHECK_HEADERS([linux/fs.h linux/blkzoned.h fcntl.h mntent.h stdlib.h string.h \
- 		sys/ioctl.h sys/mount.h unistd.h linux/falloc.h byteswap.h])
- 
- # Checks for typedefs, structures, and compiler characteristics.
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index b2b2d8e..363f47e 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -20,6 +20,10 @@
- #include <config.h>
- #endif
- 
-+#ifdef HAVE_LINUX_BLKZONED_H
-+#include <linux/blkzoned.h>
-+#endif
-+
- typedef u_int64_t	u64;
- typedef u_int32_t	u32;
- typedef u_int16_t	u16;
-@@ -229,32 +233,6 @@ enum f2fs_config_func {
- 	SLOAD,
- };
- 
--enum zbc_sk {
--	ZBC_E_ILLEGAL_REQUEST         = 0x5,
--	ZBC_E_DATA_PROTECT            = 0x7,
--	ZBC_E_ABORTED_COMMAND         = 0xB,
--};
--
--/**
-- * Additional sense code/Additional sense code qualifier.
-- */
--enum zbc_asc_ascq {
--	ZBC_E_INVALID_FIELD_IN_CDB                  = 0x2400,
--	ZBC_E_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE    = 0x2100,
--	ZBC_E_UNALIGNED_WRITE_COMMAND               = 0x2104,
--	ZBC_E_WRITE_BOUNDARY_VIOLATION              = 0x2105,
--	ZBC_E_ATTEMPT_TO_READ_INVALID_DATA          = 0x2106,
--	ZBC_E_READ_BOUNDARY_VIOLATION               = 0x2107,
--	ZBC_E_ZONE_IS_READ_ONLY                     = 0x2708,
--	ZBC_E_INSUFFICIENT_ZONE_RESOURCES           = 0x550E,
--};
--
--struct zbc_errno {
--	enum zbc_sk		sk;
--	enum zbc_asc_ascq	asc_ascq;
--};
--typedef struct zbc_errno zbc_errno_t;
--
- struct f2fs_configuration {
- 	u_int32_t sector_size;
- 	u_int32_t reserved_segments;
-@@ -300,12 +278,12 @@ struct f2fs_configuration {
- 	char *from_dir;
- 	char *mount_point;
- 
--	/* to detect zbc error */
-+	/* to handle zone block devices */
- 	int zoned_mode;
-+	int zoned_model;
- 	u_int32_t nr_zones;
--	u_int32_t nr_conventional;
--	size_t zone_sectors;
--	zbc_errno_t zbd_errno;
-+	u_int32_t nr_rnd_zones;
-+	size_t zone_blocks;
- } __attribute__((packed));
- 
- #ifdef CONFIG_64BIT
-@@ -910,7 +888,7 @@ struct f2fs_inline_dentry {
- 	__u8 reserved[INLINE_RESERVED_SIZE];
- 	struct f2fs_dir_entry dentry[NR_INLINE_DENTRY];
- 	__u8 filename[NR_INLINE_DENTRY][F2FS_SLOT_LEN];
--} __packed;
-+} __attribute__((packed));
- 
- /* file types used in inode_info->flags */
- enum FILE_TYPE {
-@@ -973,7 +951,72 @@ extern int dev_read_version(void *, __u64, size_t);
- extern void get_kernel_version(__u8 *);
- f2fs_hash_t f2fs_dentry_hash(const unsigned char *, int);
- 
--extern int zbc_scsi_report_zones(struct f2fs_configuration *);
-+#define F2FS_ZONED_NONE		0
-+#define F2FS_ZONED_HA		1
-+#define F2FS_ZONED_HM		2
-+
-+#ifdef HAVE_LINUX_BLKZONED_H
-+
-+#define blk_zone_type(z)        (z)->type
-+#define blk_zone_conv(z)	((z)->type == BLK_ZONE_TYPE_CONVENTIONAL)
-+#define blk_zone_seq_req(z)	((z)->type == BLK_ZONE_TYPE_SEQWRITE_REQ)
-+#define blk_zone_seq_pref(z)	((z)->type == BLK_ZONE_TYPE_SEQWRITE_PREF)
-+#define blk_zone_seq(z)		(blk_zone_seq_req(z) || blk_zone_seq_pref(z))
-+
-+static inline const char *
-+blk_zone_type_str(struct blk_zone *blkz)
-+{
-+	switch (blk_zone_type(blkz)) {
-+	case BLK_ZONE_TYPE_CONVENTIONAL:
-+		return( "Conventional" );
-+	case BLK_ZONE_TYPE_SEQWRITE_REQ:
-+		return( "Sequential-write-required" );
-+	case BLK_ZONE_TYPE_SEQWRITE_PREF:
-+		return( "Sequential-write-preferred" );
-+	}
-+	return( "Unknown-type" );
-+}
-+
-+#define blk_zone_cond(z)	(z)->cond
-+
-+static inline const char *
-+blk_zone_cond_str(struct blk_zone *blkz)
-+{
-+	switch (blk_zone_cond(blkz)) {
-+	case BLK_ZONE_COND_NOT_WP:
-+		return "Not-write-pointer";
-+	case BLK_ZONE_COND_EMPTY:
-+		return "Empty";
-+	case BLK_ZONE_COND_IMP_OPEN:
-+		return "Implicit-open";
-+	case BLK_ZONE_COND_EXP_OPEN:
-+		return "Explicit-open";
-+	case BLK_ZONE_COND_CLOSED:
-+		return "Closed";
-+	case BLK_ZONE_COND_READONLY:
-+		return "Read-only";
-+	case BLK_ZONE_COND_FULL:
-+		return "Full";
-+	case BLK_ZONE_COND_OFFLINE:
-+		return "Offline";
-+	}
-+	return "Unknown-cond";
-+}
-+
-+#define blk_zone_empty(z)	(blk_zone_cond(z) == BLK_ZONE_COND_EMPTY)
-+
-+#define blk_zone_sector(z)	(z)->start
-+#define blk_zone_length(z)	(z)->len
-+#define blk_zone_wp_sector(z)	(z)->wp
-+#define blk_zone_need_reset(z)	(int)(z)->reset
-+#define blk_zone_non_seq(z)	(int)(z)->non_seq
-+
-+#endif
-+
-+extern void f2fs_get_zoned_model(struct f2fs_configuration *c);
-+extern int f2fs_get_zone_blocks(struct f2fs_configuration *c);
-+extern int f2fs_check_zones(struct f2fs_configuration *c);
-+extern int f2fs_reset_zones(struct f2fs_configuration *c);
- 
- extern struct f2fs_configuration config;
- 
-diff --git a/lib/Makefile.am b/lib/Makefile.am
-index 91e4b4c..b26b404 100644
---- a/lib/Makefile.am
-+++ b/lib/Makefile.am
-@@ -2,7 +2,7 @@
- 
- lib_LTLIBRARIES = libf2fs.la
- 
--libf2fs_la_SOURCES = libf2fs.c libf2fs_io.c zbc.c
-+libf2fs_la_SOURCES = libf2fs.c libf2fs_io.c libf2fs_zoned.c
- libf2fs_la_CFLAGS = -Wall
- libf2fs_la_CPPFLAGS = -I$(top_srcdir)/include
- libf2fs_la_LDFLAGS = -version-info $(LIBF2FS_CURRENT):$(LIBF2FS_REVISION):$(LIBF2FS_AGE)
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index a73955d..48aea4b 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -489,6 +489,8 @@ void f2fs_init_configuration(struct f2fs_configuration *c)
- 	c->sector_size = DEFAULT_SECTOR_SIZE;
- 	c->sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
- 	c->blks_per_seg = DEFAULT_BLOCKS_PER_SEGMENT;
-+	c->zoned_mode = 0;
-+	c->zoned_model = F2FS_ZONED_NONE;
- 
- 	/* calculated by overprovision ratio */
- 	c->reserved_segments = 0;
-@@ -646,18 +648,38 @@ int f2fs_get_device_info(struct f2fs_configuration *c)
- 		return -1;
- 	}
- 
--	if (config.zoned_mode) {
--		if (zbc_scsi_report_zones(c)) {
--			MSG(0, "\tError: Not proper zoned block device\n");
-+	if (S_ISBLK(stat_buf.st_mode))
-+		f2fs_get_zoned_model(c);
-+	if (c->zoned_model == F2FS_ZONED_NONE) {
-+		config.zoned_mode = 0;
-+	} else {
-+
-+		if (f2fs_get_zone_blocks(c)) {
-+			MSG(0, "\tError: Failed to get number of blocks per zone\n");
-+ 			return -1;
-+ 		}
-+
-+		if (f2fs_check_zones(c)) {
-+			MSG(0, "\tError: Failed to check zone configuration\n");
- 			return -1;
- 		}
--		MSG(0, "Info: Zoned block device - ZONES = %u, CONV = %u, ZONE_SECTS = %lu\n",
--				c->nr_zones, c->nr_conventional,
--				c->zone_sectors);
--		if (c->segs_per_sec == 1)
--			c->segs_per_sec = c->zone_sectors /
--				c->sectors_per_blk / DEFAULT_BLOCKS_PER_SEGMENT;
-+
-+		MSG(0, "Info: Host-%s zoned block device:\n",
-+		    (c->zoned_model == F2FS_ZONED_HA) ? "aware" : "managed");
-+		MSG(0, "      %u zones, %u randomly writeable zones\n",
-+		    c->nr_zones, c->nr_rnd_zones);
-+		MSG(0, "      %lu blocks per zone\n",
-+		    c->zone_blocks);
-+
-+		/*
-+		 * Align sections to the device zone size
-+		 * and align F2FS zones to the device zones.
-+		 */
-+		c->segs_per_sec = c->zone_blocks / DEFAULT_BLOCKS_PER_SEGMENT;
-+		c->secs_per_zone = 1;
-+
- 	}
-+
- 	c->segs_per_zone = c->segs_per_sec * c->secs_per_zone;
- 
- 	MSG(0, "Info: Segments per section = %d\n", config.segs_per_sec);
-diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-new file mode 100644
-index 0000000..76cb3bd
---- /dev/null
-+++ b/lib/libf2fs_zoned.c
-@@ -0,0 +1,296 @@
-+/**
-+ * libf2fs_zoned.c
-+ *
-+ * Copyright (c) 2016 Western Digital Corporation.
-+ * Written by: Damien Le Moal <damien.lemoal@wdc.com>
-+ *
-+ * Dual licensed under the GPL or LGPL version 2 licenses.
-+ */
-+#define _LARGEFILE64_SOURCE
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <errno.h>
-+#include <unistd.h>
-+#include <fcntl.h>
-+#include <sys/stat.h>
-+#include <sys/ioctl.h>
-+#include <libgen.h>
-+
-+#include <f2fs_fs.h>
-+
-+#ifdef HAVE_LINUX_BLKZONED_H
-+
-+void f2fs_get_zoned_model(struct f2fs_configuration *c)
-+{
-+	char str[128];
-+	FILE *file;
-+
-+	/* Check that this is a zoned block device */
-+	snprintf(str, sizeof(str),
-+		 "/sys/block/%s/queue/zoned",
-+		 basename(c->device_name));
-+	file = fopen(str, "r");
-+	if (!file)
-+		goto not_zoned;
-+
-+	memset(str, 0, sizeof(str));
-+	fscanf(file, "%s", str);
-+	fclose(file);
-+
-+	if (strcmp(str, "host-aware") == 0) {
-+		c->zoned_model = F2FS_ZONED_HA;
-+		return;
-+	}
-+	if (strcmp(str, "host-managed") == 0) {
-+		c->zoned_model = F2FS_ZONED_HM;
-+		return;
-+	}
-+
-+not_zoned:
-+	c->zoned_model = F2FS_ZONED_NONE;
-+}
-+
-+int f2fs_get_zone_blocks(struct f2fs_configuration *c)
-+{
-+	uint64_t sectors;
-+	char str[128];
-+	FILE *file;
-+
-+	/* Get zone size */
-+	c->zone_blocks = 0;
-+
-+	snprintf(str, sizeof(str),
-+		 "/sys/block/%s/queue/chunk_sectors",
-+		 basename(c->device_name));
-+	file = fopen(str, "r");
-+	if (!file)
-+		return -1;
-+
-+	memset(str, 0, sizeof(str));
-+	fscanf(file, "%s", str);
-+	fclose(file);
-+
-+	sectors = atol(str);
-+	if (!sectors)
-+		return -1;
-+
-+	c->zone_blocks = sectors >> (F2FS_BLKSIZE_BITS - 9);
-+	sectors = (sectors << 9) / c->sector_size;
-+
-+	/*
-+	 * Total number of zones: there may
-+	 * be a last smaller runt zone.
-+	 */
-+	c->nr_zones = c->total_sectors / sectors;
-+	if (c->total_sectors % sectors)
-+		c->nr_zones++;
-+
-+	return 0;
-+}
-+
-+#define F2FS_REPORT_ZONES_BUFSZ	524288
-+
-+int f2fs_check_zones(struct f2fs_configuration *c)
-+{
-+	struct blk_zone_report *rep;
-+	struct blk_zone *blkz;
-+	unsigned int i, n = 0;
-+	u_int64_t total_sectors;
-+	u_int64_t sector;
-+	int last_is_conv = 1;
-+	int ret = -1;
-+
-+	rep = malloc(F2FS_REPORT_ZONES_BUFSZ);
-+	if (!rep) {
-+		ERR_MSG("No memory for report zones\n");
-+		return -ENOMEM;
-+	}
-+
-+	c->nr_rnd_zones = 0;
-+	sector = 0;
-+	total_sectors = (c->total_sectors * c->sector_size) >> 9;
-+
-+	while (sector < total_sectors) {
-+
-+		/* Get zone info */
-+		memset(rep, 0, F2FS_REPORT_ZONES_BUFSZ);
-+		rep->sector = sector;
-+		rep->nr_zones = (F2FS_REPORT_ZONES_BUFSZ - sizeof(struct blk_zone_report))
-+			/ sizeof(struct blk_zone);
-+
-+		ret = ioctl(c->fd, BLKREPORTZONE, rep);
-+		if (ret != 0) {
-+			ret = -errno;
-+			ERR_MSG("ioctl BLKREPORTZONE failed\n");
-+			goto out;
-+		}
-+
-+		if (!rep->nr_zones)
-+			break;
-+
-+		blkz = (struct blk_zone *)(rep + 1);
-+		for (i = 0; i < rep->nr_zones && sector < total_sectors; i++) {
-+
-+			if (blk_zone_cond(blkz) == BLK_ZONE_COND_READONLY ||
-+			    blk_zone_cond(blkz) == BLK_ZONE_COND_OFFLINE)
-+				last_is_conv = 0;
-+			if (blk_zone_conv(blkz) ||
-+			    blk_zone_seq_pref(blkz)) {
-+				if (last_is_conv)
-+					c->nr_rnd_zones++;
-+			} else {
-+				last_is_conv = 0;
-+			}
-+
-+			if (blk_zone_conv(blkz)) {
-+				DBG(2,
-+				    "Zone %05u: Conventional, cond 0x%x (%s), sector %llu, %llu sectors\n",
-+				    n,
-+				    blk_zone_cond(blkz),
-+				    blk_zone_cond_str(blkz),
-+				    blk_zone_sector(blkz),
-+				    blk_zone_length(blkz));
-+			} else {
-+				DBG(2,
-+				    "Zone %05u: type 0x%x (%s), cond 0x%x (%s), need_reset %d, "
-+				    "non_seq %d, sector %llu, %llu sectors, wp sector %llu\n",
-+				    n,
-+				    blk_zone_type(blkz),
-+				    blk_zone_type_str(blkz),
-+				    blk_zone_cond(blkz),
-+				    blk_zone_cond_str(blkz),
-+				    blk_zone_need_reset(blkz),
-+				    blk_zone_non_seq(blkz),
-+				    blk_zone_sector(blkz),
-+				    blk_zone_length(blkz),
-+				    blk_zone_wp_sector(blkz));
-+			}
-+
-+			sector = blk_zone_sector(blkz) + blk_zone_length(blkz);
-+			n++;
-+			blkz++;
-+		}
-+
-+	}
-+
-+	if (sector != total_sectors) {
-+		ERR_MSG("Invalid zones: last sector reported is %llu, expected %llu\n",
-+			(unsigned long long)(sector << 9) / c->sector_size,
-+			(unsigned long long)c->total_sectors);
-+		ret = -1;
-+		goto out;
-+	}
-+
-+	if (n != c->nr_zones) {
-+		ERR_MSG("Inconsistent number of zones: expected %u zones, got %u\n",
-+			c->nr_zones,
-+			n);
-+		ret = -1;
-+		goto out;
-+	}
-+
-+	if (c->zoned_model == F2FS_ZONED_HM &&
-+	    !c->nr_rnd_zones) {
-+		ERR_MSG("No conventional zone for super block\n");
-+		ret = -1;
-+	}
-+
-+out:
-+	free(rep);
-+	return ret;
-+}
-+
-+int f2fs_reset_zones(struct f2fs_configuration *c)
-+{
-+	struct blk_zone_report *rep;
-+	struct blk_zone *blkz;
-+	struct blk_zone_range range;
-+	u_int64_t total_sectors;
-+	u_int64_t sector;
-+	unsigned int i;
-+	int ret = -1;
-+
-+	rep = malloc(F2FS_REPORT_ZONES_BUFSZ);
-+	if (!rep) {
-+		ERR_MSG("No memory for report zones\n");
-+		return -1;
-+	}
-+
-+	sector = 0;
-+	total_sectors = (c->total_sectors * c->sector_size) >> 9;
-+	while (sector < total_sectors) {
-+
-+		/* Get zone info */
-+		memset(rep, 0, F2FS_REPORT_ZONES_BUFSZ);
-+		rep->sector = sector;
-+		rep->nr_zones = (F2FS_REPORT_ZONES_BUFSZ - sizeof(struct blk_zone_report))
-+			/ sizeof(struct blk_zone);
-+
-+		ret = ioctl(c->fd, BLKREPORTZONE, rep);
-+		if (ret != 0) {
-+			ret = -errno;
-+			ERR_MSG("ioctl BLKREPORTZONES failed\n");
-+			goto out;
-+		}
-+
-+		if (!rep->nr_zones)
-+			break;
-+
-+		blkz = (struct blk_zone *)(rep + 1);
-+		for (i = 0; i < rep->nr_zones && sector < total_sectors; i++) {
-+			if (blk_zone_seq(blkz) &&
-+			    !blk_zone_empty(blkz)) {
-+				/* Non empty sequential zone: reset */
-+				range.sector = blk_zone_sector(blkz);
-+				range.nr_sectors = blk_zone_length(blkz);
-+				ret = ioctl(c->fd, BLKRESETZONE, &range);
-+				if (ret != 0) {
-+					ERR_MSG("ioctl BLKRESETZONE failed\n");
-+					goto out;
-+				}
-+			}
-+			sector = blk_zone_sector(blkz) + blk_zone_length(blkz);
-+			blkz++;
-+		}
-+
-+	}
-+
-+out:
-+	free(rep);
-+	return 0;
-+}
-+
-+#else
-+
-+void f2fs_get_zoned_model(struct f2fs_configuration *c)
-+{
-+	c->zone_mode = 0;
-+	c->zoned_model = F2FS_ZONED_NONE;
-+}
-+
-+int f2fs_get_zone_blocks(struct f2fs_configuration *c)
-+{
-+	c->zone_mode = 0;
-+	c->nr_zones = 0;
-+	c->zone_blocks = 0;
-+	c->zoned_model = F2FS_ZONED_NONE;
-+
-+	return 0;
-+}
-+
-+int f2fs_check_zones(struct f2fs_configuration *c)
-+{
-+	ERR_MSG("Zoned block devices are not supported\n");
-+	return -1;
-+}
-+
-+int f2fs_reset_zones(struct f2fs_configuration *c)
-+{
-+	ERR_MSG("Zoned block devices are not supported\n");
-+	return -1;
-+}
-+
-+#endif
-+
-diff --git a/lib/zbc.c b/lib/zbc.c
-deleted file mode 100644
-index 6ec2fc7..0000000
---- a/lib/zbc.c
-+++ /dev/null
-@@ -1,647 +0,0 @@
--/*
-- * This file is mostly copied from libzbc.
-- *
-- * Copyright (C) 2009-2014, HGST, Inc.  All rights reserved.
-- *
-- * This software is distributed under the terms of the BSD 2-clause license,
-- * "as is," without technical support, and WITHOUT ANY WARRANTY, without
-- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-- * PURPOSE. You should have received a copy of the BSD 2-clause license along
-- * with libzbc. If not, see  <http://opensource.org/licenses/BSD-2-Clause>.
-- *
-- * Authors: Damien Le Moal (damien.lemoal@hgst.com)
-- *          Christophe Louargant (christophe.louargant@hgst.com)
-- *
-- * Integrated into f2fs-tools by:
-- *          Jaegeuk Kim (jaegeuk@kernel.org)
-- */
--
--#include <f2fs_fs.h>
--
--#include "zbc.h"
--
--static struct zbc_sg_cmd_s
--{
--
--    char                *cdb_cmd_name;
--    int                 cdb_opcode;
--    int                 cdb_sa;
--    size_t              cdb_length;
--    int			dir;
--
--} zbc_sg_cmd_list[ZBC_SG_CMD_NUM] = {
--
--    /* ZBC_SG_TEST_UNIT_READY */
--    {
--        "TEST UNIT READY",
--        ZBC_SG_TEST_UNIT_READY_CDB_OPCODE,
--        0,
--        ZBC_SG_TEST_UNIT_READY_CDB_LENGTH,
--	SG_DXFER_NONE
--    },
--
--    /* ZBC_SG_INQUIRY */
--    {
--        "INQUIRY",
--        ZBC_SG_INQUIRY_CDB_OPCODE,
--        0,
--        ZBC_SG_INQUIRY_CDB_LENGTH,
--	SG_DXFER_FROM_DEV
--    },
--
--    /* ZBC_SG_READ_CAPACITY */
--    {
--        "READ CAPACITY 16",
--        ZBC_SG_READ_CAPACITY_CDB_OPCODE,
--        ZBC_SG_READ_CAPACITY_CDB_SA,
--        ZBC_SG_READ_CAPACITY_CDB_LENGTH,
--	SG_DXFER_FROM_DEV
--    },
--
--    /* ZBC_SG_READ */
--    {
--        "READ 16",
--        ZBC_SG_READ_CDB_OPCODE,
--        0,
--        ZBC_SG_READ_CDB_LENGTH,
--	SG_DXFER_FROM_DEV
--    },
--
--    /* ZBC_SG_WRITE */
--    {
--        "WRITE 16",
--        ZBC_SG_WRITE_CDB_OPCODE,
--        0,
--        ZBC_SG_WRITE_CDB_LENGTH,
--	SG_DXFER_TO_DEV
--    },
--
--    /* ZBC_SG_SYNC_CACHE */
--    {
--        "SYNCHRONIZE CACHE 16",
--        ZBC_SG_SYNC_CACHE_CDB_OPCODE,
--        0,
--        ZBC_SG_SYNC_CACHE_CDB_LENGTH,
--	SG_DXFER_NONE
--    },
--
--    /* ZBC_SG_REPORT_ZONES */
--    {
--        "REPORT ZONES",
--        ZBC_SG_REPORT_ZONES_CDB_OPCODE,
--        ZBC_SG_REPORT_ZONES_CDB_SA,
--        ZBC_SG_REPORT_ZONES_CDB_LENGTH,
--	SG_DXFER_FROM_DEV
--    },
--
--    /* ZBC_SG_OPEN_ZONE */
--    {
--        "OPEN ZONE",
--        ZBC_SG_OPEN_ZONE_CDB_OPCODE,
--        ZBC_SG_OPEN_ZONE_CDB_SA,
--        ZBC_SG_OPEN_ZONE_CDB_LENGTH,
--	SG_DXFER_NONE
--    },
--
--    /* ZBC_SG_CLOSE_ZONE */
--    {
--        "CLOSE ZONE",
--        ZBC_SG_CLOSE_ZONE_CDB_OPCODE,
--        ZBC_SG_CLOSE_ZONE_CDB_SA,
--        ZBC_SG_CLOSE_ZONE_CDB_LENGTH,
--	SG_DXFER_NONE
--    },
--
--    /* ZBC_SG_FINISH_ZONE */
--    {
--        "FINISH ZONE",
--        ZBC_SG_FINISH_ZONE_CDB_OPCODE,
--        ZBC_SG_FINISH_ZONE_CDB_SA,
--        ZBC_SG_FINISH_ZONE_CDB_LENGTH,
--	SG_DXFER_NONE
--    },
--
--    /* ZBC_SG_RESET_WRITE_POINTER */
--    {
--        "RESET WRITE POINTER",
--        ZBC_SG_RESET_WRITE_POINTER_CDB_OPCODE,
--        ZBC_SG_RESET_WRITE_POINTER_CDB_SA,
--        ZBC_SG_RESET_WRITE_POINTER_CDB_LENGTH,
--	SG_DXFER_NONE
--    },
--
--    /* ZBC_SG_SET_ZONES */
--    {
--        "SET ZONES",
--        ZBC_SG_SET_ZONES_CDB_OPCODE,
--        ZBC_SG_SET_ZONES_CDB_SA,
--        ZBC_SG_SET_ZONES_CDB_LENGTH,
--	SG_DXFER_NONE
--    },
--
--    /* ZBC_SG_SET_WRITE_POINTER */
--    {
--        "SET WRITE POINTER",
--        ZBC_SG_SET_WRITE_POINTER_CDB_OPCODE,
--        ZBC_SG_SET_WRITE_POINTER_CDB_SA,
--        ZBC_SG_SET_WRITE_POINTER_CDB_LENGTH,
--	SG_DXFER_NONE
--    },
--
--    /* ZBC_SG_ATA12 */
--    {
--	"ATA 12",
--	ZBC_SG_ATA12_CDB_OPCODE,
--	0,
--        ZBC_SG_ATA12_CDB_LENGTH,
--	0
--    },
--
--    /* ZBC_SG_ATA16 */
--    {
--	"ATA 16",
--	ZBC_SG_ATA16_CDB_OPCODE,
--	0,
--        ZBC_SG_ATA16_CDB_LENGTH,
--	0
--    }
--};
--
--static void zbc_sg_cmd_set_bytes(uint8_t *cmd, void *buf, int bytes)
--{
--	uint8_t *v = (uint8_t *) buf;
--	int i;
--
--	for (i = 0; i < bytes; i++) {
--#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
--		/* The least significant byte is stored last */
--		cmd[bytes - i - 1] = v[i];
--#else
--		/* The most significant byte is stored first */
--		cmd[i] = v[i];
--#endif
--	}
--	return;
--}
--
--static void zbc_sg_cmd_get_bytes(uint8_t *val, union converter *conv, int bytes)
--{
--	uint8_t *v = (uint8_t *) val;
--	int i;
--
--	memset(conv, 0, sizeof(union converter));
--
--	for(i = 0; i < bytes; i++) {
--#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
--		conv->val_buf[bytes - i - 1] = v[i];
--#else
--		conv->val_buf[i] = v[i];
--#endif
--	}
--	return;
--}
--
--static inline void zbc_sg_cmd_set_int64(uint8_t *buf, uint64_t val)
--{
--	zbc_sg_cmd_set_bytes(buf, &val, 8);
--	return;
--}
--
--static inline void zbc_sg_cmd_set_int32(uint8_t *buf, uint32_t val)
--{
--	zbc_sg_cmd_set_bytes(buf, &val, 4);
--	return;
--}
--
--static inline uint32_t zbc_sg_cmd_get_int32(uint8_t *buf)
--{
--	union converter conv;
--
--	zbc_sg_cmd_get_bytes(buf, &conv, 4);
--	return conv.val32;
--}
--
--static inline uint64_t zbc_sg_cmd_get_int64(uint8_t *buf)
--{
--	union converter conv;
--
--	zbc_sg_cmd_get_bytes(buf, &conv, 8);
--	return( conv.val64 );
--
--}
--
--static void zbc_sg_cmd_destroy(zbc_sg_cmd_t *cmd)
--{
--	/* Free the command */
--	if (!cmd)
--		return;
--
--	if (cmd->out_buf && cmd->out_buf_needfree) {
--		free(cmd->out_buf);
--		cmd->out_buf = NULL;
--		cmd->out_bufsz = 0;
--	}
--	memset(cmd, 0, sizeof(*cmd));
--	return;
--}
--
--static int zbc_sg_cmd_init(zbc_sg_cmd_t *cmd, int cmd_code,
--				uint8_t *out_buf, size_t out_bufsz)
--{
--	int ret = 0;
--
--	if ((!cmd) || (cmd_code < 0) || (cmd_code >= ZBC_SG_CMD_NUM) ) {
--		ERR_MSG("Invalid command specified\n");
--		return -EINVAL;
--	}
--
--	/* Set command */
--	memset(cmd, 0, sizeof(zbc_sg_cmd_t));
--	cmd->code = cmd_code;
--	cmd->cdb_sz = zbc_sg_cmd_list[cmd_code].cdb_length;
--	cmd->cdb_opcode = zbc_sg_cmd_list[cmd_code].cdb_opcode;
--	cmd->cdb_sa = zbc_sg_cmd_list[cmd_code].cdb_sa;
--
--	/* Set output buffer */
--	if (out_buf) {
--		/* Set specified buffer */
--		if (!out_bufsz) {
--			ERR_MSG("Invalid 0 output buffer size\n");
--			ret = -EINVAL;
--			goto out;
--		}
--		cmd->out_buf = out_buf;
--		cmd->out_bufsz = out_bufsz;
--	} else if (out_bufsz) {
--		/* Allocate a buffer */
--		ret = posix_memalign((void **)&cmd->out_buf,
--				sysconf(_SC_PAGESIZE), out_bufsz);
--		if ( ret != 0 ) {
--			ERR_MSG("No memory for output buffer (%zu B)\n",
--					out_bufsz);
--			ret = -ENOMEM;
--			goto out;
--		}
--		memset(cmd->out_buf, 0, out_bufsz);
--		cmd->out_bufsz = out_bufsz;
--		cmd->out_buf_needfree = 1;
--	}
--
--	/* OK: setup SGIO header */
--	memset(&cmd->io_hdr, 0, sizeof(sg_io_hdr_t));
--
--	cmd->io_hdr.interface_id    = 'S';
--	cmd->io_hdr.timeout         = 20000;
--	cmd->io_hdr.flags           = 0; //SG_FLAG_DIRECT_IO;
--
--	cmd->io_hdr.cmd_len         = cmd->cdb_sz;
--	cmd->io_hdr.cmdp            = &cmd->cdb[0];
--
--	cmd->io_hdr.dxfer_direction = zbc_sg_cmd_list[cmd_code].dir;
--	cmd->io_hdr.dxfer_len       = cmd->out_bufsz;
--	cmd->io_hdr.dxferp          = cmd->out_buf;
--
--	cmd->io_hdr.mx_sb_len       = ZBC_SG_SENSE_MAX_LENGTH;
--	cmd->io_hdr.sbp             = cmd->sense_buf;
--out:
--	if (ret != 0)
--		zbc_sg_cmd_destroy(cmd);
--
--	return ret;
--}
--
--static char *zbc_sg_cmd_name(zbc_sg_cmd_t *cmd)
--{
--	char *name;
--
--	if ((cmd->code >= 0)
--			&& (cmd->code < ZBC_SG_CMD_NUM)) {
--		name = zbc_sg_cmd_list[cmd->code].cdb_cmd_name;
--	} else {
--		name = "(UNKNOWN COMMAND)";
--	}
--
--	return name;
--}
--
--static void zbc_sg_set_sense(struct f2fs_configuration *c, uint8_t *sense_buf)
--{
--	if (sense_buf == NULL) {
--		c->zbd_errno.sk       = 0x00;
--		c->zbd_errno.asc_ascq = 0x0000;
--	} else {
--		if ((sense_buf[0] & 0x7F) == 0x72
--				|| (sense_buf[0] & 0x7F) == 0x73) {
--			/* store sense key, ASC/ASCQ */
--			c->zbd_errno.sk       = sense_buf[1] & 0x0F;
--			c->zbd_errno.asc_ascq = ((int)sense_buf[2] << 8) |
--							(int)sense_buf[3];
--		} else if ((sense_buf[0] & 0x7F) == 0x70
--				|| (sense_buf[0] & 0x7F) == 0x71) {
--			/* store sense key, ASC/ASCQ */
--			c->zbd_errno.sk       = sense_buf[2] & 0x0F;
--			c->zbd_errno.asc_ascq = ((int)sense_buf[12] << 8) |
--							(int)sense_buf[13];
--		}
--	}
--	return;
--}
--
--static int zbc_sg_cmd_exec(struct f2fs_configuration *c, zbc_sg_cmd_t *cmd)
--{
--	int ret;
--
--	/* Send the SG_IO command */
--	ret = ioctl(c->fd, SG_IO, &cmd->io_hdr);
--	if (ret) {
--		ERR_MSG("SG_IO ioctl failed (%s)\n", strerror(errno));
--		goto out;
--	}
--
--	/* Reset errno */
--	zbc_sg_set_sense(c, NULL);
--
--	DBG(1, "Command %s done: status 0x%02x (0x%02x), host status 0x%04x, driver status 0x%04x (flags 0x%04x)\n",
--			zbc_sg_cmd_name(cmd),
--			(unsigned int)cmd->io_hdr.status,
--			(unsigned int)cmd->io_hdr.masked_status,
--			(unsigned int)cmd->io_hdr.host_status,
--			(unsigned int)zbc_sg_cmd_driver_status(cmd),
--			(unsigned int)zbc_sg_cmd_driver_flags(cmd));
--
--	/* Check status */
--	if (((cmd->code == ZBC_SG_ATA12) || (cmd->code == ZBC_SG_ATA16))
--			&& (cmd->cdb[2] & (1 << 5)) ) {
--
--		/* ATA command status */
--		if (cmd->io_hdr.status != ZBC_SG_CHECK_CONDITION) {
--			zbc_sg_set_sense(c, cmd->sense_buf);
--			ret = -EIO;
--			goto out;
--		}
--
--		if ((zbc_sg_cmd_driver_status(cmd) == ZBC_SG_DRIVER_SENSE)
--				&& (cmd->io_hdr.sb_len_wr > 21)
--				&& (cmd->sense_buf[21] != 0x50) ) {
--			zbc_sg_set_sense(c, cmd->sense_buf);
--			ret = -EIO;
--			goto out;
--		}
--		cmd->io_hdr.status = 0;
--	}
--
--	if (cmd->io_hdr.status
--			|| (cmd->io_hdr.host_status != ZBC_SG_DID_OK)
--			|| (zbc_sg_cmd_driver_status(cmd) &&
--			(zbc_sg_cmd_driver_status(cmd) != ZBC_SG_DRIVER_SENSE)) ) {
--
--		ERR_MSG("Command %s failed with status 0x%02x (0x%02x), host status 0x%04x, driver status 0x%04x (flags 0x%04x)\n",
--				zbc_sg_cmd_name(cmd),
--				(unsigned int)cmd->io_hdr.status,
--				(unsigned int)cmd->io_hdr.masked_status,
--				(unsigned int)cmd->io_hdr.host_status,
--				(unsigned int)zbc_sg_cmd_driver_status(cmd),
--				(unsigned int)zbc_sg_cmd_driver_flags(cmd));
--		zbc_sg_set_sense(c, cmd->sense_buf);
--		ret = -EIO;
--		goto out;
--	}
--
--	if (cmd->io_hdr.resid) {
--		ERR_MSG("Transfer missing %d B of data\n",
--				cmd->io_hdr.resid);
--		cmd->out_bufsz -= cmd->io_hdr.resid;
--	}
--out:
--	return ret;
--}
--
--#define ZBC_SCSI_REPORT_ZONES_BUFSZ     524288
--
--int zbc_scsi_report_zones(struct f2fs_configuration *c)
--{
--	zbc_sg_cmd_t cmd;
--	uint8_t *buf;
--	zbc_zone_t *z, *zones = NULL;
--	int i, buf_nz, ret;
--	size_t bufsz;
--	uint32_t idx = 0, nr_zones = 0;
--	uint64_t next_lba = 0;
--	int phase = 0;
--next:
--	bufsz = ZBC_ZONE_DESCRIPTOR_OFFSET;
--	if (phase) {
--		if (c->nr_zones - idx == 0)
--			return 0;
--
--		bufsz += (size_t)(c->nr_zones - idx) *
--					ZBC_ZONE_DESCRIPTOR_LENGTH;
--		if (bufsz > ZBC_SCSI_REPORT_ZONES_BUFSZ)
--			bufsz = ZBC_SCSI_REPORT_ZONES_BUFSZ;
--	}
--
--	/* For in kernel ATA translation: align to 512 B */
--	bufsz = (bufsz + 511) & ~511;
--
--	/* Allocate and intialize report zones command */
--	ret = zbc_sg_cmd_init(&cmd, ZBC_SG_REPORT_ZONES, NULL, bufsz);
--	if (ret) {
--		ERR_MSG("zbc_sg_cmd_init failed\n");
--		return ret;
--	}
--
--	/* Fill command CDB:
--	 * +=============================================================================+
--	 * |  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
--	 * |Byte |        |        |        |        |        |        |        |        |
--	 * |=====+==========================+============================================|
--	 * | 0   |                           Operation Code (95h)                        |
--	 * |-----+-----------------------------------------------------------------------|
--	 * | 1   |      Reserved            |       Service Action (00h)                 |
--	 * |-----+-----------------------------------------------------------------------|
--	 * | 2   | (MSB)                                                                 |
--	 * |- - -+---                        Zone Start LBA                           ---|
--	 * | 9   |                                                                 (LSB) |
--	 * |-----+-----------------------------------------------------------------------|
--	 * | 10  | (MSB)                                                                 |
--	 * |- - -+---                        Allocation Length                        ---|
--	 * | 13  |                                                                 (LSB) |
--	 * |-----+-----------------------------------------------------------------------|
--	 * | 14  |Partial |Reserved|                 Reporting Options                   |
--	 * |-----+-----------------------------------------------------------------------|
--	 * | 15  |                           Control                                     |
--	 * +=============================================================================+
--	 */
--	cmd.cdb[0] = ZBC_SG_REPORT_ZONES_CDB_OPCODE;
--	cmd.cdb[1] = ZBC_SG_REPORT_ZONES_CDB_SA;
--	zbc_sg_cmd_set_int64(&cmd.cdb[2], next_lba);
--	zbc_sg_cmd_set_int32(&cmd.cdb[10], (unsigned int) bufsz);
--	cmd.cdb[14] = 0;
--
--	/* Send the SG_IO command */
--	ret = zbc_sg_cmd_exec(c, &cmd);
--	if (ret != 0)
--		goto out;
--
--	if (cmd.out_bufsz < ZBC_ZONE_DESCRIPTOR_OFFSET) {
--		ERR_MSG("Not enough data received (need at least %d B, got %zu B)\n",
--				ZBC_ZONE_DESCRIPTOR_OFFSET,
--				cmd.out_bufsz);
--		ret = -EIO;
--		goto out;
--	}
--
--	/* Process output:
--	 * +=============================================================================+
--	 * |  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
--	 * |Byte |        |        |        |        |        |        |        |        |
--	 * |=====+=======================================================================|
--	 * |  0  | (MSB)                                                                 |
--	 * |- - -+---               Zone List Length (n - 64)                         ---|
--	 * |  3  |                                                                 (LSB) |
--	 * |-----+-----------------------------------------------------------------------|
--	 * |  4  |              Reserved             |               Same                |
--	 * |-----+-----------------------------------------------------------------------|
--	 * |  5  |                                                                       |
--	 * |- - -+---                        Reserved                                 ---|
--	 * |  7  |                                                                       |
--	 * |-----+-----------------------------------------------------------------------|
--	 * |  8  | (MSB)                                                                 |
--	 * |- - -+---                      Maximum LBA                                ---|
--	 * | 15  |                                                                 (LSB) |
--	 * |-----+-----------------------------------------------------------------------|
--	 * | 16  | (MSB)                                                                 |
--	 * |- - -+---                        Reserved                                 ---|
--	 * | 63  |                                                                 (LSB) |
--	 * |=====+=======================================================================|
--	 * |     |                       Vendor-Specific Parameters                      |
--	 * |=====+=======================================================================|
--	 * | 64  | (MSB)                                                                 |
--	 * |- - -+---                  Zone Descriptor [first]                        ---|
--	 * | 127 |                                                                 (LSB) |
--	 * |-----+-----------------------------------------------------------------------|
--	 * |                                    .                                        |
--	 * |                                    .                                        |
--	 * |                                    .                                        |
--	 * |-----+-----------------------------------------------------------------------|
--	 * |n-63 |                                                                       |
--	 * |- - -+---                   Zone Descriptor [last]                        ---|
--	 * | n   |                                                                       |
--	 * +=============================================================================+
--	 */
--
--	/* Get number of zones in result */
--	buf = (uint8_t *)cmd.out_buf;
--	nr_zones = zbc_sg_cmd_get_int32(buf) / ZBC_ZONE_DESCRIPTOR_LENGTH;
--
--	/* read # of zones and then get all the zone info */
--	if (phase == 0) {
--		c->nr_zones = nr_zones;
--		c->nr_conventional = 0;
--		zbc_sg_cmd_destroy(&cmd);
--		phase++;
--		goto next;
--	}
--
--	if (nr_zones > c->nr_zones - idx)
--		nr_zones = c->nr_zones - idx;
--
--	buf_nz = (cmd.out_bufsz - ZBC_ZONE_DESCRIPTOR_OFFSET) /
--						ZBC_ZONE_DESCRIPTOR_LENGTH;
--	if (nr_zones > buf_nz)
--		nr_zones = buf_nz;
--
--	if (!nr_zones) {
--		ERR_MSG("No more zones\n");
--		goto out;
--	}
--
--	/* Allocate zone array */
--	zones = (zbc_zone_t *)malloc(sizeof(zbc_zone_t) * nr_zones);
--	if (!zones) {
--		ERR_MSG("No memory\n");
--		goto out;
--	}
--	memset(zones, 0, sizeof(zbc_zone_t) * nr_zones);
--
--	/* Get zone descriptors:
--	 * +=============================================================================+
--	 * |  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
--	 * |Byte |        |        |        |        |        |        |        |        |
--	 * |=====+=======================================================================|
--	 * |  0  |             Reserved              |            Zone type              |
--	 * |-----+-----------------------------------------------------------------------|
--	 * |  1  |          Zone condition           |    Reserved     |non-seq |  Reset |
--	 * |-----+-----------------------------------------------------------------------|
--	 * |  2  |                                                                       |
--	 * |- - -+---                             Reserved                            ---|
--	 * |  7  |                                                                       |
--	 * |-----+-----------------------------------------------------------------------|
--	 * |  8  | (MSB)                                                                 |
--	 * |- - -+---                           Zone Length                           ---|
--	 * | 15  |                                                                 (LSB) |
--	 * |-----+-----------------------------------------------------------------------|
--	 * | 16  | (MSB)                                                                 |
--	 * |- - -+---                          Zone Start LBA                         ---|
--	 * | 23  |                                                                 (LSB) |
--	 * |-----+-----------------------------------------------------------------------|
--	 * | 24  | (MSB)                                                                 |
--	 * |- - -+---                         Write Pointer LBA                       ---|
--	 * | 31  |                                                                 (LSB) |
--	 * |-----+-----------------------------------------------------------------------|
--	 * | 32  |                                                                       |
--	 * |- - -+---                             Reserved                            ---|
--	 * | 63  |                                                                       |
--	 * +=============================================================================+
--	 */
--	buf += ZBC_ZONE_DESCRIPTOR_OFFSET;
--
--	for(i = 0; i < nr_zones; i++) {
--		zones[i].zbz_type = buf[0] & 0x0f;
--		zones[i].zbz_condition = (buf[1] >> 4) & 0x0f;
--		zones[i].zbz_length = zbc_sg_cmd_get_int64(&buf[8]);
--		zones[i].zbz_start = zbc_sg_cmd_get_int64(&buf[16]);
--		zones[i].zbz_write_pointer = zbc_sg_cmd_get_int64(&buf[24]);
--		zones[i].zbz_flags = buf[1] & 0x03;
--
--		buf += ZBC_ZONE_DESCRIPTOR_LENGTH;
--	}
--
--	for (i = 0; i < nr_zones; i++) {
--		z = &zones[i];
--		if ( zbc_zone_conventional(z) ) {
--			c->nr_conventional++;
--			DBG(1, "Zone %05d: type 0x%x (%s), cond 0x%x (%s), LBA %llu, %llu sectors, wp N/A\n",
--				i + idx,
--				zbc_zone_type(z),
--				zbc_zone_type_str(zbc_zone_type(z)),
--				zbc_zone_condition(z),
--				zbc_zone_condition_str(zbc_zone_condition(z)),
--				zbc_zone_start_lba(z),
--				zbc_zone_length(z));
--		} else {
--			DBG(1, "Zone %05d: type 0x%x (%s), cond 0x%x (%s), need_reset %d, non_seq %d, LBA %llu, %llu sectors, wp %llu\n",
--				i + idx,
--				zbc_zone_type(z),
--				zbc_zone_type_str(zbc_zone_type(z)),
--				zbc_zone_condition(z),
--				zbc_zone_condition_str(zbc_zone_condition(z)),
--				zbc_zone_need_reset(z),
--				zbc_zone_non_seq(z),
--				zbc_zone_start_lba(z),
--				zbc_zone_length(z),
--				zbc_zone_wp_lba(z));
--		}
--	}
--
--	idx += nr_zones;
--	next_lba = zones[nr_zones - 1].zbz_start + zones[nr_zones - 1].zbz_length;
--	c->zone_sectors = zones[nr_zones - 1].zbz_length;
--	phase++;
--	zbc_sg_cmd_destroy(&cmd);
--	free(zones);
--	goto next;
--out:
--	zbc_sg_cmd_destroy(&cmd);
--	return ret;
--}
-diff --git a/lib/zbc.h b/lib/zbc.h
-deleted file mode 100644
-index 15692c1..0000000
---- a/lib/zbc.h
-+++ /dev/null
-@@ -1,361 +0,0 @@
--/*
-- * This file is copied from libzbc.
-- *
-- * Copyright (C) 2009-2014, HGST, Inc.  All rights reserved.
-- *
-- * This software is distributed under the terms of the BSD 2-clause license,
-- * "as is," without technical support, and WITHOUT ANY WARRANTY, without
-- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-- * PURPOSE. You should have received a copy of the BSD 2-clause license along
-- * with libzbc. If not, see  <http://opensource.org/licenses/BSD-2-Clause>.
-- *
-- * Author: Damien Le Moal (damien.lemoal@hgst.com)
-- *         Christophe Louargant (christophe.louargant@hgst.com)
-- */
--
--#ifndef __LIBZBC_SG_H__
--#define __LIBZBC_SG_H__
--
--#include <stdio.h>
--#include <stdlib.h>
--#include <unistd.h>
--#include <string.h>
--#include <errno.h>
--#include <fcntl.h>
--#include <inttypes.h>
--#include <linux/types.h>
--#include <sys/types.h>
--#include <sys/ioctl.h>
--#include <scsi/scsi.h>
--#include <scsi/sg.h>
--
--#define zbc_error(format, args...)			\
--	fprintf(stderr, "[ERROR] " format, ##args)
--
--/**
-- * SG SCSI command names.
-- */
--enum {
--
--	ZBC_SG_TEST_UNIT_READY = 0,
--	ZBC_SG_INQUIRY,
--	ZBC_SG_READ_CAPACITY,
--	ZBC_SG_READ,
--	ZBC_SG_WRITE,
--	ZBC_SG_SYNC_CACHE,
--	ZBC_SG_REPORT_ZONES,
--	ZBC_SG_OPEN_ZONE,
--	ZBC_SG_CLOSE_ZONE,
--	ZBC_SG_FINISH_ZONE,
--	ZBC_SG_RESET_WRITE_POINTER,
--	ZBC_SG_SET_ZONES,
--	ZBC_SG_SET_WRITE_POINTER,
--	ZBC_SG_ATA12,
--	ZBC_SG_ATA16,
--
--	ZBC_SG_CMD_NUM,
--};
--
--/**
-- * Test unit ready command definition.
-- */
--#define ZBC_SG_TEST_UNIT_READY_CDB_OPCODE       0x00
--#define ZBC_SG_TEST_UNIT_READY_CDB_LENGTH       6
--#define ZBC_ZONE_DESCRIPTOR_LENGTH		64
--
--/**
-- * Number of bytes in the buffer before the first Zone Descriptor.
-- */
--#define ZBC_ZONE_DESCRIPTOR_OFFSET		64
--
--/**
-- * Inquiry command definition.
-- */
--#define ZBC_SG_INQUIRY_CDB_OPCODE               0x12
--#define ZBC_SG_INQUIRY_CDB_LENGTH               6
--#define ZBC_SG_INQUIRY_REPLY_LEN                96
--#define ZBC_SG_INQUIRY_REPLY_LEN_VPD_PAGE_B1    64
--#define ZBC_SG_INQUIRY_REPLY_LEN_VPD_PAGE_B6    64
--
--/**
-- * Read capacity command definition.
-- */
--#define ZBC_SG_READ_CAPACITY_CDB_OPCODE         0x9E
--#define ZBC_SG_READ_CAPACITY_CDB_SA             0x10
--#define ZBC_SG_READ_CAPACITY_CDB_LENGTH         16
--#define ZBC_SG_READ_CAPACITY_REPLY_LEN          32
--
--/**
-- * Read command definition.
-- */
--#define ZBC_SG_READ_CDB_OPCODE                  0x88
--#define ZBC_SG_READ_CDB_LENGTH                  16
--
--/**
-- * Write command definition.
-- */
--#define ZBC_SG_WRITE_CDB_OPCODE                 0x8A
--#define ZBC_SG_WRITE_CDB_LENGTH                 16
--
--/**
-- * Sync cache command definition.
-- */
--#define ZBC_SG_SYNC_CACHE_CDB_OPCODE            0x91
--#define ZBC_SG_SYNC_CACHE_CDB_LENGTH            16
--
--/**
-- * Report zones command definition.
-- */
--#define ZBC_SG_REPORT_ZONES_CDB_OPCODE          0x95
--#define ZBC_SG_REPORT_ZONES_CDB_SA              0x00
--#define ZBC_SG_REPORT_ZONES_CDB_LENGTH          16
--
--/**
-- * Open zone command definition.
-- */
--#define ZBC_SG_OPEN_ZONE_CDB_OPCODE             0x94
--#define ZBC_SG_OPEN_ZONE_CDB_SA                 0x03
--#define ZBC_SG_OPEN_ZONE_CDB_LENGTH             16
--
--/**
-- * Close zone command definition.
-- */
--#define ZBC_SG_CLOSE_ZONE_CDB_OPCODE            0x94
--#define ZBC_SG_CLOSE_ZONE_CDB_SA                0x01
--#define ZBC_SG_CLOSE_ZONE_CDB_LENGTH            16
--
--/**
-- * Finish zone command definition.
-- */
--#define ZBC_SG_FINISH_ZONE_CDB_OPCODE           0x94
--#define ZBC_SG_FINISH_ZONE_CDB_SA               0x02
--#define ZBC_SG_FINISH_ZONE_CDB_LENGTH           16
--
--/**
-- * Reset write pointer command definition.
-- */
--#define ZBC_SG_RESET_WRITE_POINTER_CDB_OPCODE   0x94
--#define ZBC_SG_RESET_WRITE_POINTER_CDB_SA       0x04
--#define ZBC_SG_RESET_WRITE_POINTER_CDB_LENGTH   16
--
--/**
-- * Set zones command definition.
-- */
--#define ZBC_SG_SET_ZONES_CDB_OPCODE             0x9F
--#define ZBC_SG_SET_ZONES_CDB_SA                 0x15
--#define ZBC_SG_SET_ZONES_CDB_LENGTH             16
--
--/**
-- * Set write pointer command definition.
-- */
--#define ZBC_SG_SET_WRITE_POINTER_CDB_OPCODE     0x9F
--#define ZBC_SG_SET_WRITE_POINTER_CDB_SA         0x16
--#define ZBC_SG_SET_WRITE_POINTER_CDB_LENGTH     16
--
--/**
-- * ATA pass through 12.
-- */
--#define ZBC_SG_ATA12_CDB_OPCODE			0xA1
--#define ZBC_SG_ATA12_CDB_LENGTH			12
--
--/**
-- * ATA pass through 16.
-- */
--#define ZBC_SG_ATA16_CDB_OPCODE			0x85
--#define ZBC_SG_ATA16_CDB_LENGTH			16
--
--/**
-- * Command sense buffer maximum length.
-- */
--#define ZBC_SG_SENSE_MAX_LENGTH                 64
--
--/**
-- * Maximum command CDB length.
-- */
--#define ZBC_SG_CDB_MAX_LENGTH                   16
--
--/**
-- * Status codes.
-- */
--#define ZBC_SG_CHECK_CONDITION      		0x02
--
--/**
-- * Host status codes.
-- */
--#define ZBC_SG_DID_OK 				0x00 /* No error */
--#define ZBC_SG_DID_NO_CONNECT 			0x01 /* Couldn't connect before timeout period */
--#define ZBC_SG_DID_BUS_BUSY 			0x02 /* BUS stayed busy through time out period */
--#define ZBC_SG_DID_TIME_OUT 			0x03 /* Timed out for other reason */
--#define ZBC_SG_DID_BAD_TARGET 			0x04 /* Bad target, device not responding? */
--#define ZBC_SG_DID_ABORT 			0x05 /* Told to abort for some other reason. */
--#define ZBC_SG_DID_PARITY 			0x06 /* Parity error. */
--#define ZBC_SG_DID_ERROR 			0x07 /* Internal error detected in the host adapter. */
--#define ZBC_SG_DID_RESET 			0x08 /* The SCSI bus (or this device) has been reset. */
--#define ZBC_SG_DID_BAD_INTR 			0x09 /* Got an unexpected interrupt */
--#define ZBC_SG_DID_PASSTHROUGH 			0x0a /* Forced command past mid-layer. */
--#define ZBC_SG_DID_SOFT_ERROR 			0x0b /* The low level driver wants a retry. */
--
--/**
-- * Driver status codes.
-- */
--#define ZBC_SG_DRIVER_OK 			0x00
--#define ZBC_SG_DRIVER_BUSY 			0x01
--#define ZBC_SG_DRIVER_SOFT 			0x02
--#define ZBC_SG_DRIVER_MEDIA 			0x03
--#define ZBC_SG_DRIVER_ERROR 			0x04
--#define ZBC_SG_DRIVER_INVALID 			0x05
--#define ZBC_SG_DRIVER_TIMEOUT 			0x06
--#define ZBC_SG_DRIVER_HARD 			0x07
--#define ZBC_SG_DRIVER_SENSE         		0x08
--#define ZBC_SG_DRIVER_STATUS_MASK   		0x0f
--
--/**
-- * Driver status code flags ('or'ed with code)
-- */
--#define ZBC_SG_DRIVER_SUGGEST_RETRY 		0x10
--#define ZBC_SG_DRIVER_SUGGEST_ABORT 		0x20
--#define ZBC_SG_DRIVER_SUGGEST_REMAP 		0x30
--#define ZBC_SG_DRIVER_SUGGEST_DIE 		0x40
--#define ZBC_SG_DRIVER_SUGGEST_SENSE 		0x80
--#define ZBC_SG_DRIVER_FLAGS_MASK   		0xf0
--
--/***** Type definitions *****/
--
--/**
-- * SG command descriptor. Used to process SCSI commands.
-- */
--typedef struct zbc_sg_cmd {
--
--	int                 code;
--
--	int                 cdb_opcode;
--	int                 cdb_sa;
--	size_t              cdb_sz;
--	uint8_t             cdb[ZBC_SG_CDB_MAX_LENGTH];
--
--	size_t              sense_bufsz;
--	uint8_t             sense_buf[ZBC_SG_SENSE_MAX_LENGTH];
--
--	int                 out_buf_needfree;
--	size_t              out_bufsz;
--	uint8_t             *out_buf;
--
--	sg_io_hdr_t         io_hdr;
--
--} zbc_sg_cmd_t;
--
--/**
-- * Zone descriptor.
-- */
--struct zbc_zone {
--
--	uint64_t                    zbz_length;
--	uint64_t                    zbz_start;
--	uint64_t                    zbz_write_pointer;
--
--	uint8_t                     zbz_type;
--	uint8_t                     zbz_condition;
--	uint8_t                     zbz_flags;
--
--	uint8_t                     __pad[5];
--
--};
--typedef struct zbc_zone zbc_zone_t;
--
--#define ZBC_FORCE_ATA_RW       	0x40000000
--#define zbc_open_flags(f)           ((f) & ~ZBC_FORCE_ATA_RW)
--
--/**
-- * Zone type.
-- */
--enum zbc_zone_type {
--	ZBC_ZT_CONVENTIONAL         = 0x01,
--	ZBC_ZT_SEQUENTIAL_REQ       = 0x02,
--	ZBC_ZT_SEQUENTIAL_PREF      = 0x03,
--};
--#define zbc_zone_type(z)                ((int)(z)->zbz_type)
--
--#define zbc_zone_conventional(z)        ((z)->zbz_type == ZBC_ZT_CONVENTIONAL)
--static inline const char *zbc_zone_type_str(enum zbc_zone_type type)
--{
--	switch( type ) {
--	case ZBC_ZT_CONVENTIONAL:
--		return( "Conventional" );
--	case ZBC_ZT_SEQUENTIAL_REQ:
--		return( "Sequential-write-required" );
--	case ZBC_ZT_SEQUENTIAL_PREF:
--		return( "Sequential-write-preferred" );
--	}
--	return( "Unknown-type" );
--}
--
--/**
-- * Zone condition.
-- */
--enum zbc_zone_condition {
--	ZBC_ZC_NOT_WP               = 0x00,
--	ZBC_ZC_EMPTY                = 0x01,
--	ZBC_ZC_IMP_OPEN             = 0x02,
--	ZBC_ZC_EXP_OPEN             = 0x03,
--	ZBC_ZC_CLOSED               = 0x04,
--	ZBC_ZC_RDONLY               = 0x0d,
--	ZBC_ZC_FULL                 = 0x0e,
--	ZBC_ZC_OFFLINE              = 0x0f,
--};
--
--/**
-- * zbc_zone_cond_str - returns a string describing a zone condition.
-- * @zone: (IN)  ZBC_ZC_NOT_WP, ZBC_ZC_EMPTY, ZBC_ZC_IMP_OPEN, ZBC_ZC_EXP_OPEN,
-- *              ZBC_ZC_CLOSED, ZBC_ZC_RDONLY, ZBC_ZC_FULL or ZBC_ZC_OFFLINE
-- *
-- * Returns a string describing a zone condition.
-- */
--static inline const char *zbc_zone_condition_str(enum zbc_zone_condition cond)
--{
--	switch( cond ) {
--	case ZBC_ZC_NOT_WP:
--		return "Not-write-pointer";
--	case ZBC_ZC_EMPTY:
--		return "Empty";
--	case ZBC_ZC_IMP_OPEN:
--		return "Implicit-open";
--	case ZBC_ZC_EXP_OPEN:
--		return "Explicit-open";
--	case ZBC_ZC_CLOSED:
--		return "Closed";
--	case ZBC_ZC_RDONLY:
--		return "Read-only";
--	case ZBC_ZC_FULL:
--		return "Full";
--	case ZBC_ZC_OFFLINE:
--		return "Offline";
--	}
--	return "Unknown-cond";
--}
--
--#define zbc_zone_condition(z)           ((int)(z)->zbz_condition)
--#define zbc_zone_start_lba(z)           ((unsigned long long)((z)->zbz_start))
--#define zbc_zone_length(z)              ((unsigned long long)((z)->zbz_length))
--#define zbc_zone_wp_lba(z)              ((unsigned long long)((z)->zbz_write_pointer))
--
--/**
-- * Zone flags: need reset, and non-seq write.
-- */
--enum zbc_zone_flags {
--	ZBC_ZF_NEED_RESET           = 0x0001,
--	ZBC_ZF_NON_SEQ              = 0x0002,
--};
--#define zbc_zone_need_reset(z)          (((z)->zbz_flags & ZBC_ZF_NEED_RESET) != 0)
--#define zbc_zone_non_seq(z)          	(((z)->zbz_flags & ZBC_ZF_NON_SEQ) != 0)
--
--#define zbc_sg_cmd_driver_status(cmd)		((cmd)->io_hdr.driver_status & ZBC_SG_DRIVER_STATUS_MASK)
--#define zbc_sg_cmd_driver_flags(cmd)		((cmd)->io_hdr.driver_status & ZBC_SG_DRIVER_FLAGS_MASK)
--
--union converter {
--	uint8_t         val_buf[8];
--	uint16_t        val16;
--	uint32_t        val32;
--	uint64_t        val64;
--};
--
--#endif /* __LIBZBC_SG_H__ */
--- 
-2.7.4
+--dDRMvlgZJXvWKvBx
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
-Western Digital Corporation (and its subsidiaries) E-mail Confidentiality Notice & Disclaimer:
+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
+Iq1azwEA
 
-This e-mail and any files transmitted with it may contain confidential or legally privileged information of WDC and/or its affiliates, and are intended solely for the use of the individual or entity to which they are addressed. If you are not the intended recipient, any disclosure, copying, distribution or any action taken or omitted to be taken in reliance on it, is prohibited. If you have received this e-mail in error, please notify the sender immediately and delete the e-mail in its entirety from your system.
-
-
-------------------------------------------------------------------------------
-The Command Line: Reinvented for Modern Developers
-Did the resurgence of CLI tooling catch you by surprise?
-Reconnect with the command line and become more productive. 
-Learn the new .NET and ASP.NET CLI. Get your free copy!
-http://sdm.link/telerik
+--dDRMvlgZJXvWKvBx--
