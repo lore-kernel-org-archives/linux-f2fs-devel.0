@@ -1,35 +1,68 @@
 From: Ming Lei <tom.leiming@gmail.com>
-Subject: [PATCH 20/60] f2fs: f2fs_read_end_io: comment on direct access to bvec table
-Date: Sat, 29 Oct 2016 16:08:19 +0800
-Message-ID: <1477728600-12938-21-git-send-email-tom.leiming@gmail.com>
+Subject: [PATCH 54/60] f2fs: convert to bio_for_each_segment_all_rd()
+Date: Sat, 29 Oct 2016 16:08:53 +0800
+Message-ID: <1477728600-12938-55-git-send-email-tom.leiming@gmail.com>
 References: <1477728600-12938-1-git-send-email-tom.leiming@gmail.com>
-Return-path: <linux-block-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1477728600-12938-1-git-send-email-tom.leiming@gmail.com>
-Sender: linux-block-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jens Axboe <axboe@fb.com>, linux-kernel@vger.kernel.org
 Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Ming Lei <tom.leiming@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 Signed-off-by: Ming Lei <tom.leiming@gmail.com>
 ---
- fs/f2fs/data.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/f2fs/data.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9ae194fd2fdb..24f6f6977d37 100644
+index 24f6f6977d37..04b1a5caf2d6 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -35,6 +35,10 @@ static void f2fs_read_end_io(struct bio *bio)
+@@ -33,6 +33,7 @@ static void f2fs_read_end_io(struct bio *bio)
+ {
+ 	struct bio_vec *bvec;
  	int i;
++	struct bvec_iter_all bia;
  
  #ifdef CONFIG_F2FS_FAULT_INJECTION
-+	/*
-+	 * It is still safe to retrieve the 1st page of the bio
-+	 * in this way after supporting multipage bvec.
-+	 */
- 	if (time_to_inject(F2FS_P_SB(bio->bi_io_vec->bv_page), FAULT_IO))
- 		bio->bi_error = -EIO;
- #endif
+ 	/*
+@@ -52,7 +53,7 @@ static void f2fs_read_end_io(struct bio *bio)
+ 		}
+ 	}
+ 
+-	bio_for_each_segment_all(bvec, bio, i) {
++	bio_for_each_segment_all_rd(bvec, bio, i, bia) {
+ 		struct page *page = bvec->bv_page;
+ 
+ 		if (!bio->bi_error) {
+@@ -72,8 +73,9 @@ static void f2fs_write_end_io(struct bio *bio)
+ 	struct f2fs_sb_info *sbi = bio->bi_private;
+ 	struct bio_vec *bvec;
+ 	int i;
++	struct bvec_iter_all bia;
+ 
+-	bio_for_each_segment_all(bvec, bio, i) {
++	bio_for_each_segment_all_rd(bvec, bio, i, bia) {
+ 		struct page *page = bvec->bv_page;
+ 
+ 		fscrypt_pullback_bio_page(&page, true);
+@@ -145,6 +147,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
+ 	struct bio_vec *bvec;
+ 	struct page *target;
+ 	int i;
++	struct bvec_iter_all bia;
+ 
+ 	if (!io->bio)
+ 		return false;
+@@ -152,7 +155,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
+ 	if (!inode && !page && !ino)
+ 		return true;
+ 
+-	bio_for_each_segment_all(bvec, io->bio, i) {
++	bio_for_each_segment_all_rd(bvec, io->bio, i, bia) {
+ 
+ 		if (bvec->bv_page->mapping)
+ 			target = bvec->bv_page;
 -- 
 2.7.4
-
