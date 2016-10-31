@@ -1,22 +1,34 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: report error of f2fs_fill_dentries
-Date: Sat, 29 Oct 2016 18:46:34 +0800
-Message-ID: <20161029104634.8959-1-yuchao0@huawei.com>
+From: "Huang\, Ying" <ying.huang@intel.com>
+Subject: Re: [LKP] [lkp] [f2fs] ec795418c4: fsmark.files_per_sec
+	-36.3% regression
+Date: Mon, 31 Oct 2016 11:14:57 +0800
+Message-ID: <87bmy15hvy.fsf@yhuang-dev.intel.com>
+References: <87vaz6yl8a.fsf@yhuang-mobile.sh.intel.com>
+	<20160812012238.GA47037@jaegeuk>
+	<CAC=cRTNtND+5f83p_yBecnx0iB5_6Q6xzbHdeY0tgrVaMRLSRQ@mail.gmail.com>
+	<20160827005257.GD88444@jaegeuk>
+	<20160827021334.eb3xpz57xvo37g5l@wfg-t540p.sh.intel.com>
+	<20160830023048.GA2088@jaegeuk>
+	<87pooqnr4t.fsf@yhuang-mobile.sh.intel.com>
+	<87fuoni3cx.fsf@yhuang-dev.intel.com> <20160926182353.GA33149@jaegeuk>
+	<8760pii2th.fsf@yhuang-dev.intel.com> <20160927014138.GB35593@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1c0RAc-0008BH-1U
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <ying.huang@intel.com>) id 1c133z-0007eV-27
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 29 Oct 2016 10:47:26 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c0RAW-0001or-Bk
+	Mon, 31 Oct 2016 03:15:07 +0000
+Received: from mga02.intel.com ([134.134.136.20])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c133x-00006j-KP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 29 Oct 2016 10:47:26 +0000
+	Mon, 31 Oct 2016 03:15:07 +0000
+In-Reply-To: <20160927014138.GB35593@jaegeuk> (Jaegeuk Kim's message of "Mon,
+	26 Sep 2016 18:41:38 -0700")
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,136 +38,98 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: LKP ML <lkp@01.org>, LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, "Huang,
+	Ying" <ying.huang@intel.com>, Fengguang Wu <fengguang.wu@intel.com>, huang ying <huang.ying.caritas@gmail.com>
 
-Report error of f2fs_fill_dentries to ->iterate_shared, otherwise when
-error ocurrs, user may just list part of dirents in target directory
-without any hints.
+Hi, Kim,
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/dir.c    | 21 ++++++++++++---------
- fs/f2fs/f2fs.h   |  2 +-
- fs/f2fs/inline.c |  6 ++++--
- 3 files changed, 17 insertions(+), 12 deletions(-)
+Jaegeuk Kim <jaegeuk@kernel.org> writes:
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index f3a4fce..bdee449 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -785,7 +785,7 @@ bool f2fs_empty_dir(struct inode *dir)
- 	return true;
- }
- 
--bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
-+int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 			unsigned int start_pos, struct fscrypt_str *fstr)
- {
- 	unsigned char d_type = DT_UNKNOWN;
-@@ -820,7 +820,7 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 						(u32)de->hash_code, 0,
- 						&de_name, fstr);
- 			if (err)
--				return true;
-+				return err;
- 
- 			de_name = *fstr;
- 			fstr->len = save_len;
-@@ -828,12 +828,12 @@ bool f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
- 
- 		if (!dir_emit(ctx, de_name.name, de_name.len,
- 					le32_to_cpu(de->ino), d_type))
--			return true;
-+			return 1;
- 
- 		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
- 		ctx->pos = start_pos + bit_pos;
- 	}
--	return false;
-+	return 0;
- }
- 
- static int f2fs_readdir(struct file *file, struct dir_context *ctx)
-@@ -872,17 +872,21 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 		dentry_page = get_lock_data_page(inode, n, false);
- 		if (IS_ERR(dentry_page)) {
- 			err = PTR_ERR(dentry_page);
--			if (err == -ENOENT)
-+			if (err == -ENOENT) {
-+				err = 0;
- 				continue;
--			else
-+			} else {
- 				goto out;
-+			}
- 		}
- 
- 		dentry_blk = kmap(dentry_page);
- 
- 		make_dentry_ptr(inode, &d, (void *)dentry_blk, 1);
- 
--		if (f2fs_fill_dentries(ctx, &d, n * NR_DENTRY_IN_BLOCK, &fstr)) {
-+		err = f2fs_fill_dentries(ctx, &d,
-+				n * NR_DENTRY_IN_BLOCK, &fstr);
-+		if (err) {
- 			kunmap(dentry_page);
- 			f2fs_put_page(dentry_page, 1);
- 			break;
-@@ -892,10 +896,9 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 		kunmap(dentry_page);
- 		f2fs_put_page(dentry_page, 1);
- 	}
--	err = 0;
- out:
- 	fscrypt_fname_free_buffer(&fstr);
--	return err;
-+	return err < 0 ? err : 0;
- }
- 
- static int f2fs_dir_open(struct inode *inode, struct file *filp)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a3d9db4..df0dbb3 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2034,7 +2034,7 @@ void set_de_type(struct f2fs_dir_entry *, umode_t);
- unsigned char get_de_type(struct f2fs_dir_entry *);
- struct f2fs_dir_entry *find_target_dentry(struct fscrypt_name *,
- 			f2fs_hash_t, int *, struct f2fs_dentry_ptr *);
--bool f2fs_fill_dentries(struct dir_context *, struct f2fs_dentry_ptr *,
-+int f2fs_fill_dentries(struct dir_context *, struct f2fs_dentry_ptr *,
- 			unsigned int, struct fscrypt_str *);
- void do_make_empty_dir(struct inode *, struct inode *,
- 			struct f2fs_dentry_ptr *);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index def731a..71d4842 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -612,6 +612,7 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
- 	struct f2fs_inline_dentry *inline_dentry = NULL;
- 	struct page *ipage = NULL;
- 	struct f2fs_dentry_ptr d;
-+	int err;
- 
- 	if (ctx->pos == NR_INLINE_DENTRY)
- 		return 0;
-@@ -624,11 +625,12 @@ int f2fs_read_inline_dir(struct file *file, struct dir_context *ctx,
- 
- 	make_dentry_ptr(inode, &d, (void *)inline_dentry, 2);
- 
--	if (!f2fs_fill_dentries(ctx, &d, 0, fstr))
-+	err = f2fs_fill_dentries(ctx, &d, 0, fstr);
-+	if (!err)
- 		ctx->pos = NR_INLINE_DENTRY;
- 
- 	f2fs_put_page(ipage, 1);
--	return 0;
-+	return err < 0 ? err : 0;
- }
- 
- int f2fs_inline_data_fiemap(struct inode *inode,
--- 
-2.8.2.311.gee88674
+> On Tue, Sep 27, 2016 at 08:50:02AM +0800, Huang, Ying wrote:
+>> Jaegeuk Kim <jaegeuk@kernel.org> writes:
+>> 
+>> > On Mon, Sep 26, 2016 at 02:26:06PM +0800, Huang, Ying wrote:
+>> >> Hi, Jaegeuk,
+>> >> 
+>> >> "Huang, Ying" <ying.huang@intel.com> writes:
+>> >> 
+>> >> > Jaegeuk Kim <jaegeuk@kernel.org> writes:
+>> >> >
+>> >> >> Hello,
+>> >> >>
+>> >> >> On Sat, Aug 27, 2016 at 10:13:34AM +0800, Fengguang Wu wrote:
+>> >> >>> Hi Jaegeuk,
+>> >> >>> 
+>> >> >>> > > >> > - [lkp] [f2fs] b93f771286: aim7.jobs-per-min -81.2% regression
+>> >> >>> > > >> >
+>> >> >>> > > >> > The disk is 4 12G ram disk, and setup RAID0 on them via mdadm.  The
+>> >> >>> > > >> > steps for aim7 is,
+>> >> >>> > > >> >
+>> >> >>> > > >> > cat > workfile <<EOF
+>> >> >>> > > >> > FILESIZE: 1M
+>> >> >>> > > >> > POOLSIZE: 10M
+>> >> >>> > > >> > 10 sync_disk_rw
+>> >> >>> > > >> > EOF
+>> >> >>> > > >> >
+>> >> >>> > > >> > (
+>> >> >>> > > >> >     echo $HOSTNAME
+>> >> >>> > > >> >     echo sync_disk_rw
+>> >> >>> > > >> >
+>> >> >>> > > >> >     echo 1
+>> >> >>> > > >> >     echo 600
+>> >> >>> > > >> >     echo 2
+>> >> >>> > > >> >     echo 600
+>> >> >>> > > >> >     echo 1
+>> >> >>> > > >> > ) | ./multitask -t &
+>> >> >>> > > >>
+>> >> >>> > > >> Any update on these 2 regressions?  Is the information is enough for you
+>> >> >>> > > >> to reproduce?
+>> >> >>> > > >
+>> >> >>> > > > Sorry, I've had no time to dig this due to business travel now.
+>> >> >>> > > > I'll check that when back to US.
+>> >> >>> > > 
+>> >> >>> > > Any update?
+>> >> >>> > 
+>> >> >>> > Sorry, how can I get multitask binary?
+>> >> >>> 
+>> >> >>> It's part of aim7, which can be downloaded here:
+>> >> >>> 
+>> >> >>> http://nchc.dl.sourceforge.net/project/aimbench/aim-suite7/Initial%20release/s7110.tar.Z
+>> >> >>
+>> >> >> Thank you for the codes.
+>> >> >>
+>> >> >> I've run this workload on the latest f2fs and compared performance having
+>> >> >> without the reported patch. (1TB nvme SSD, 16 cores, 16GB DRAM)
+>> >> >> Interestingly, I could find slight performance improvement rather than
+>> >> >> regression. :(
+>> >> >> Not sure how to reproduce this.
+>> >> >
+>> >> > I think the difference lies on disk used.  The ramdisk is used in the
+>> >> > original test, but it appears that your memory is too small to setup the
+>> >> > RAM disk for test.  So it may be impossible for you to reproduce the
+>> >> > test unless you can find more memory :)
+>> >> >
+>> >> > But we can help you to root cause the issue.  What additional data do
+>> >> > you want?  perf-profile data before and after the patch?
+>> >> 
+>> >> Any update to this regression?
+>> >
+>> > Sorry, no. But meanwhile, I've purchased more DRAMs. :)
+>> > Now I'm with 128GB DRAM. I can configure 64GB as pmem.
+>> > Is it worth to try the test again?
+>> 
+>> I think you are the decision maker for this.  You can judge whether the
+>> test is reasonable.  And we can adjust our test accordingly.
+>> 
+>> BTW: For this test, we use brd ram disk and raid to test.
+>
+> Okay, let me try this again.
+
+Any update on this?
+
+Best Regards,
+Huang, Ying
 
 
 ------------------------------------------------------------------------------
