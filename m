@@ -1,23 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: avoid infinite loop in the EIO case on
-	recover_orphan_inodes
-Date: Mon, 31 Oct 2016 16:30:27 -0700
-Message-ID: <20161031233027.25783-1-jaegeuk@kernel.org>
+Subject: Re: [PATCH 0/7] f2fs-tools: zoned block device support
+Date: Mon, 31 Oct 2016 20:46:18 -0700
+Message-ID: <20161101034618.GA30731@jaegeuk>
+References: <1477641424-12367-1-git-send-email-damien.lemoal@wdc.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1c1M2H-0007Ry-QE
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1c1Q1v-0002JF-Jw
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 31 Oct 2016 23:30:37 +0000
+	Tue, 01 Nov 2016 03:46:31 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c1M2G-0005M0-0j
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c1Q1t-0003mr-9x
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 31 Oct 2016 23:30:37 +0000
+	Tue, 01 Nov 2016 03:46:31 +0000
+Content-Disposition: inline
+In-Reply-To: <1477641424-12367-1-git-send-email-damien.lemoal@wdc.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,66 +29,67 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Damien Le Moal <damien.lemoal@wdc.com>
+Cc: Hannes Reinecke <hare@suse.de>, Shaun Tancheff <shaun@tancheff.com>, linux-f2fs-devel@lists.sourceforge.net
 
-This patch should fix an infinite loop case below.
+Hi Damien,
 
-F2FS-fs : inject IO error in f2fs_read_end_io+0xf3/0x120 [f2fs]
-F2FS-fs (nvme0n1p1): recover_orphan_inode: orphan failed (ino=39ac1a), run fsck to fix.
-...
-[<ffffffffc0b11ede>] sync_meta_pages+0xae/0x270 [f2fs]
-[<ffffffffc0b288dd>] ? flush_sit_entries+0x8d/0x960 [f2fs]
-[<ffffffffc0b13801>] write_checkpoint+0x361/0xf20 [f2fs]
-[<ffffffffb40e979d>] ? trace_hardirqs_on+0xd/0x10
-[<ffffffffc0b0a199>] ? f2fs_sync_fs+0x79/0x190 [f2fs]
-[<ffffffffc0b0a1a5>] f2fs_sync_fs+0x85/0x190 [f2fs]
-[<ffffffffc0b2560e>] f2fs_balance_fs_bg+0x7e/0x1c0 [f2fs]
-[<ffffffffc0b216c4>] f2fs_write_node_pages+0x34/0x320 [f2fs]
-[<ffffffffb41dff21>] do_writepages+0x21/0x30
-[<ffffffffb429edb1>] __writeback_single_inode+0x61/0x760
-[<ffffffffb490a937>] ? _raw_spin_unlock+0x27/0x40
-[<ffffffffb42a0805>] writeback_single_inode+0xd5/0x190
-[<ffffffffb42a0959>] write_inode_now+0x99/0xc0
-[<ffffffffb4289a16>] iput+0x1f6/0x2c0
-[<ffffffffc0b0e3be>] f2fs_fill_super+0xe0e/0x1300 [f2fs]
-[<ffffffffb426c394>] ? sget_userns+0x4f4/0x530
-[<ffffffffb426c692>] mount_bdev+0x182/0x1b0
-[<ffffffffc0b0d5b0>] ? f2fs_commit_super+0x100/0x100 [f2fs]
-[<ffffffffc0b0a375>] f2fs_mount+0x15/0x20 [f2fs]
-[<ffffffffb426d038>] mount_fs+0x38/0x170
-[<ffffffffb428ec9b>] vfs_kern_mount+0x6b/0x160
-[<ffffffffb4291d9e>] do_mount+0x1be/0xd60
-[<ffffffffb4291a57>] ? copy_mount_options+0xb7/0x220
-[<ffffffffb4292c54>] SyS_mount+0x94/0xd0
-[<ffffffffb490b345>] entry_SYSCALL_64_fastpath+0x23/0xc6
+I've resolved some conflicts in the patches, and finally integrated them on
+top of our dev branch.
+Could you take a look at them from the below url?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/super.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git/log/?h=dev
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 9749758..72603f1 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1889,6 +1889,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	mutex_lock(&sbi->umount_mutex);
- 	release_ino_entry(sbi, true);
- 	f2fs_leave_shrinker(sbi);
-+	/*
-+	 * Some dirty meta pages can be produced by recover_orphan_inodes()
-+	 * failed by EIO. Then, iput(node_inode) can trigger balance_fs_bg()
-+	 * followed by write_checkpoint() through f2fs_write_node_pages(), which
-+	 * falls into an infinite loop in sync_meta_pages().
-+	 */
-+	truncate_inode_pages_final(META_MAPPING(sbi));
- 	iput(sbi->node_inode);
- 	mutex_unlock(&sbi->umount_mutex);
- free_nm:
--- 
-2.8.3
+Thanks,
 
+On Fri, Oct 28, 2016 at 04:56:56PM +0900, Damien Le Moal wrote:
+> With the introduction of zoned block device support in the kernel, accessing
+> discovering if a block device is zoned and accessing its zone layout information
+> does not require using SG_IO anymore. The file /sys/block/<dev>/queue/zoned
+> indicates the device zone model and the ioctls BLKREPORTZONE and BLKRESETZONE
+> defined in include/uapi/linux/blkzoned.h allow manipulating zones more easily.
+> 
+> This patch series brings in support for this new interface in place of the
+> direct SG_IO-zbc commands. In addition, it enforces some formtating options
+> for host-managed zoned block devices and straighten device zone layout checks
+> to make sure that the device can be used.
+> 
+> Finally, as discard does not result in write pointer zone reset, the ioctl
+> BLKRESETZONE is used during formatting to properly initialize all sequential
+> zones of the device.
+> 
+> Damien Le Moal (7):
+>   f2fs-tools: Add executable files to .gitignore
+>   f2fs-tools: Use zoned block device terminology
+>   f2fs-tools: Introduce support for zoned block devices
+>   mkfs.f2fs: Check options for zoned block devices
+>   mkfs.f2fs: Reset sequential zones on device discard
+>   mkfs.f2fs: Check zoned block devices configuration
+>   fsck.f2fs: Check BLKZONED feature on mount
+> 
+>  .gitignore               |   4 +
+>  configure.ac             |   2 +-
+>  fsck/mount.c             |  11 +-
+>  include/f2fs_fs.h        | 111 +++++---
+>  lib/Makefile.am          |   2 +-
+>  lib/libf2fs.c            |  40 ++-
+>  lib/libf2fs_zoned.c      | 296 ++++++++++++++++++++++
+>  lib/zbc.c                | 647 -----------------------------------------------
+>  lib/zbc.h                | 361 --------------------------
+>  mkfs/f2fs_format.c       |  24 +-
+>  mkfs/f2fs_format_main.c  |  24 +-
+>  mkfs/f2fs_format_utils.c |   2 +
+>  12 files changed, 464 insertions(+), 1060 deletions(-)
+>  create mode 100644 lib/libf2fs_zoned.c
+>  delete mode 100644 lib/zbc.c
+>  delete mode 100644 lib/zbc.h
+> 
+> -- 
+> 2.7.4
+> 
+> Western Digital Corporation (and its subsidiaries) E-mail Confidentiality Notice & Disclaimer:
+> 
+> This e-mail and any files transmitted with it may contain confidential or legally privileged information of WDC and/or its affiliates, and are intended solely for the use of the individual or entity to which they are addressed. If you are not the intended recipient, any disclosure, copying, distribution or any action taken or omitted to be taken in reliance on it, is prohibited. If you have received this e-mail in error, please notify the sender immediately and delete the e-mail in its entirety from your system.
 
 ------------------------------------------------------------------------------
 Developer Access Program for Intel Xeon Phi Processors
