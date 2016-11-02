@@ -1,59 +1,139 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: hide a maybe-uninitialized warning
-Date: Wed, 2 Nov 2016 09:34:39 -0700
-Message-ID: <20161102163439.GA48728@jaegeuk>
-References: <20161102135226.2753644-1-arnd@arndb.de>
+Subject: Re: [PATCH 2/3] f2fs: use __set_page_dirty_nobuffers
+ directly
+Date: Wed, 2 Nov 2016 10:23:41 -0700
+Message-ID: <20161102172341.GB48728@jaegeuk>
+References: <20161021022847.55629-1-jaegeuk@kernel.org>
+	<20161021022847.55629-2-jaegeuk@kernel.org>
+	<4d3fd0f9-046e-82fc-3830-487a167e7700@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1c1zGQ-00073d-Dz
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Nov 2016 17:23:50 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c1zGP-0005Q4-BN
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Nov 2016 17:23:50 +0000
 Content-Disposition: inline
-In-Reply-To: <20161102135226.2753644-1-arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chao Yu <yuchao0@huawei.com>, Fan Li <fanofcode.li@samsung.com>, Weichao Guo <guoweichao@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <4d3fd0f9-046e-82fc-3830-487a167e7700@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Replaced with this.
-Thanks, Arnd & Chao, ;)
+On Wed, Nov 02, 2016 at 03:34:32PM +0800, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2016/10/21 10:28, Jaegeuk Kim wrote:
+> > This patch replaces the copied code with original generic function.
+> 
+> Will we plan to do further enhance inside f2fs_set_page_dirty_nobuffers, if we
+> don't it's better revert fe76b796fc5194cc3d57265002e3a748566d073f, as we don't
+> need to wrap __set_page_dirty_nobuffers.
 
-On Wed, Nov 02, 2016 at 02:52:15PM +0100, Arnd Bergmann wrote:
-> gcc is unsure about the use of last_ofs_in_node, which might happen
-> without a prior initialization:
+Urg. I was confused something here.
+Please ignore this patch. I won't merge this patch.
+
+> BTW, does the original patch make memory cgroup functionality problematic?
+
+I don't think there is a problem, since I just copied __set_page_dirty_buffers()
+except page_has_buffers' stuffs.
+
+Thank you for pointing this out. :)
+
 > 
-> fs/f2fs//git/arm-soc/fs/f2fs/data.c: In function ‘f2fs_map_blocks’:
-> fs/f2fs/data.c:799:54: warning: ‘last_ofs_in_node’ may be used uninitialized in this function [-Wmaybe-uninitialized]
->    if (prealloc && dn.ofs_in_node != last_ofs_in_node + 1) {
+> Thanks,
 > 
-> As pointed out by Chao Yu, the code is actually correct as 'prealloc'
-> is only set if the last_ofs_in_node has been set, the two always
-> get updated together.
-> 
-> This initializes last_ofs_in_node to dn.ofs_in_node for each
-> new dnode at the start of the 'next_block' loop, which at that
-> point is a correct initialization as well. I assume that compilers
-> that correctly track the contents of the variables and do not
-> warn about the condition also figure out that they can eliminate
-> the extra assignment here.
-> 
-> Fixes: 46008c6d4232 ("f2fs: support in batch multi blocks preallocation")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  fs/f2fs/data.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index a59ea8e60040..6f01aaddfce9 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -719,7 +719,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
->  	}
->  
->  	prealloc = 0;
-> -	ofs_in_node = dn.ofs_in_node;
-> +	last_ofs_in_node = ofs_in_node = dn.ofs_in_node;
->  	end_offset = ADDRS_PER_PAGE(dn.node_page, inode);
->  
->  next_block:
-> -- 
-> 2.9.0
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/data.c | 29 -----------------------------
+> >  fs/f2fs/f2fs.h |  6 +++++-
+> >  2 files changed, 5 insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 68edb47..3954315 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -1801,35 +1801,6 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+> >  	return 1;
+> >  }
+> >  
+> > -/*
+> > - * This was copied from __set_page_dirty_buffers which gives higher performance
+> > - * in very high speed storages. (e.g., pmem)
+> > - */
+> > -void f2fs_set_page_dirty_nobuffers(struct page *page)
+> > -{
+> > -	struct address_space *mapping = page->mapping;
+> > -	unsigned long flags;
+> > -
+> > -	if (unlikely(!mapping))
+> > -		return;
+> > -
+> > -	spin_lock(&mapping->private_lock);
+> > -	lock_page_memcg(page);
+> > -	SetPageDirty(page);
+> > -	spin_unlock(&mapping->private_lock);
+> > -
+> > -	spin_lock_irqsave(&mapping->tree_lock, flags);
+> > -	WARN_ON_ONCE(!PageUptodate(page));
+> > -	account_page_dirtied(page, mapping);
+> > -	radix_tree_tag_set(&mapping->page_tree,
+> > -			page_index(page), PAGECACHE_TAG_DIRTY);
+> > -	spin_unlock_irqrestore(&mapping->tree_lock, flags);
+> > -	unlock_page_memcg(page);
+> > -
+> > -	__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+> > -	return;
+> > -}
+> > -
+> >  static int f2fs_set_data_page_dirty(struct page *page)
+> >  {
+> >  	struct address_space *mapping = page->mapping;
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 168f939..b66a04c 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1960,6 +1960,11 @@ static inline unsigned long f2fs_find_next_bit(const void *addr,
+> >  	return find_next_bit(addr, size, offset + 2);
+> >  }
+> >  
+> > +static inline void f2fs_set_page_dirty_nobuffers(struct page *page)
+> > +{
+> > +	__set_page_dirty_nobuffers(page);
+> > +}
+> > +
+> >  #define get_inode_mode(i) \
+> >  	((is_inode_flag_set(i, FI_ACL_MODE)) ? \
+> >  	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
+> > @@ -2200,7 +2205,6 @@ struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
+> >  int do_write_data_page(struct f2fs_io_info *);
+> >  int f2fs_map_blocks(struct inode *, struct f2fs_map_blocks *, int, int);
+> >  int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
+> > -void f2fs_set_page_dirty_nobuffers(struct page *);
+> >  void f2fs_invalidate_page(struct page *, unsigned int, unsigned int);
+> >  int f2fs_release_page(struct page *, gfp_t);
+> >  #ifdef CONFIG_MIGRATION
+> > 
+
+------------------------------------------------------------------------------
+Developer Access Program for Intel Xeon Phi Processors
+Access to Intel Xeon Phi processor-based developer platforms.
+With one year of Intel Parallel Studio XE.
+Training and support from Colfax.
+Order your platform today. http://sdm.link/xeonphi
