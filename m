@@ -1,148 +1,101 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: return directly if block has been
- removed from the victim
-Date: Wed, 2 Nov 2016 15:19:27 +0800
-Message-ID: <ef2c3b03-8b2c-d64c-fbbf-b32737b423ea@huawei.com>
-References: <20161024033728.10780-1-heyunlei@huawei.com>
-	<20161026010926.GA4173@jaegeuk>
-	<5f96184b-43b9-871d-3c3b-32ef9e656449@huawei.com>
-	<20161027223453.GA18682@jaegeuk>
+Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: use __set_page_dirty_nobuffers
+ directly
+Date: Wed, 2 Nov 2016 15:34:32 +0800
+Message-ID: <4d3fd0f9-046e-82fc-3830-487a167e7700@huawei.com>
+References: <20161021022847.55629-1-jaegeuk@kernel.org>
+ <20161021022847.55629-2-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1c1ps5-0000yb-6Y
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Nov 2016 07:22:05 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c1prx-0004Cz-M9
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Nov 2016 07:22:05 +0000
-In-Reply-To: <20161027223453.GA18682@jaegeuk>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, heyunlei <heyunlei@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161021022847.55629-2-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2016/10/28 6:34, Jaegeuk Kim wrote:
-> On Wed, Oct 26, 2016 at 10:14:04AM +0800, heyunlei wrote:
->>
->>
->> On 2016/10/26 9:09, Jaegeuk Kim wrote:
->> Hi Kim,
->>> Hi Yunlei,
->>>
->>> On Mon, Oct 24, 2016 at 11:37:28AM +0800, Yunlei He wrote:
->>>> If one block has been to written to a new place, just return
->>>> in move data process.
->>>>
->>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>>> ---
->>>>  fs/f2fs/gc.c | 17 ++++++++++++-----
->>>>  1 file changed, 12 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>> index f35fca5..fc78f3e 100644
->>>> --- a/fs/f2fs/gc.c
->>>> +++ b/fs/f2fs/gc.c
->>>> @@ -545,7 +545,8 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->>>>  	return true;
->>>>  }
->>>>
->>>> -static void move_encrypted_block(struct inode *inode, block_t bidx)
->>>> +static void move_encrypted_block(struct inode *inode, block_t bidx,
->>>> +						unsigned int segno, int off)
->>>>  {
->>>>  	struct f2fs_io_info fio = {
->>>>  		.sbi = F2FS_I_SB(inode),
->>>> @@ -580,6 +581,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
->>>>  	 * don't cache encrypted data into meta inode until previous dirty
->>>>  	 * data were writebacked to avoid racing between GC and flush.
->>>>  	 */
->>>> +	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
->>>> +		goto out;
->>>
->>> This is done by gc_data_segment() before calling move function.
->>> Why do we need this again?
->>
->> gc_data_segment() check this without lock the data page. If this block
->> is written to a new place between check in gc_data_segment() and locked
->> the page, it will need to wait this page write back, and write it again,
->> it's unnecessary.
->>
->>>
->>>> +
->>>>  	f2fs_wait_on_page_writeback(page, DATA, true);
->>>>
->>>>  	get_node_info(fio.sbi, dn.nid, &ni);
->>>> @@ -646,7 +650,8 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
->>>>  	f2fs_put_page(page, 1);
->>>>  }
->>>>
->>>> -static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
->>>> +static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>>> +							unsigned int segno, int off)
->>>>  {
->>>>  	struct page *page;
->>>>
->>>> @@ -655,8 +660,10 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
->>>>  		return;
->>>>
->>>>  	if (gc_type == BG_GC) {
->>>> -		if (PageWriteback(page))
->>>
->>> Seems there is no reason to remove the existing writeback case.
->>> This is a BG_GC case and we don't need to proceed GC in this case.
->>    Here, PageWriteback(page) means two cases:
->> 1. write to this victim segment
->> 2. write to a new place
->>
->> In the first case, if we return directly, this victim bg_gc will fail
->> for some blocks are still valid.
-> 
-> It should be fine, and its main reason would be to avoid wait_on_page_writeback.
-> Next bg_gc will do better.
+Hi Jaegeuk,
 
-Agreed.
+On 2016/10/21 10:28, Jaegeuk Kim wrote:
+> This patch replaces the copied code with original generic function.
 
-Yunlei, I think it's better add this judgment condition after we grabbed locked
-data page for covering both background and foreground GC cases, instead of
-changing previous process logic.
+Will we plan to do further enhance inside f2fs_set_page_dirty_nobuffers, if we
+don't it's better revert fe76b796fc5194cc3d57265002e3a748566d073f, as we don't
+need to wrap __set_page_dirty_nobuffers.
+
+BTW, does the original patch make memory cgroup functionality problematic?
 
 Thanks,
 
 > 
-> Thanks,
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/data.c | 29 -----------------------------
+>  fs/f2fs/f2fs.h |  6 +++++-
+>  2 files changed, 5 insertions(+), 30 deletions(-)
 > 
-> ------------------------------------------------------------------------------
-> The Command Line: Reinvented for Modern Developers
-> Did the resurgence of CLI tooling catch you by surprise?
-> Reconnect with the command line and become more productive. 
-> Learn the new .NET and ASP.NET CLI. Get your free copy!
-> http://sdm.link/telerik
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 68edb47..3954315 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1801,35 +1801,6 @@ int f2fs_release_page(struct page *page, gfp_t wait)
+>  	return 1;
+>  }
+>  
+> -/*
+> - * This was copied from __set_page_dirty_buffers which gives higher performance
+> - * in very high speed storages. (e.g., pmem)
+> - */
+> -void f2fs_set_page_dirty_nobuffers(struct page *page)
+> -{
+> -	struct address_space *mapping = page->mapping;
+> -	unsigned long flags;
+> -
+> -	if (unlikely(!mapping))
+> -		return;
+> -
+> -	spin_lock(&mapping->private_lock);
+> -	lock_page_memcg(page);
+> -	SetPageDirty(page);
+> -	spin_unlock(&mapping->private_lock);
+> -
+> -	spin_lock_irqsave(&mapping->tree_lock, flags);
+> -	WARN_ON_ONCE(!PageUptodate(page));
+> -	account_page_dirtied(page, mapping);
+> -	radix_tree_tag_set(&mapping->page_tree,
+> -			page_index(page), PAGECACHE_TAG_DIRTY);
+> -	spin_unlock_irqrestore(&mapping->tree_lock, flags);
+> -	unlock_page_memcg(page);
+> -
+> -	__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+> -	return;
+> -}
+> -
+>  static int f2fs_set_data_page_dirty(struct page *page)
+>  {
+>  	struct address_space *mapping = page->mapping;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 168f939..b66a04c 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1960,6 +1960,11 @@ static inline unsigned long f2fs_find_next_bit(const void *addr,
+>  	return find_next_bit(addr, size, offset + 2);
+>  }
+>  
+> +static inline void f2fs_set_page_dirty_nobuffers(struct page *page)
+> +{
+> +	__set_page_dirty_nobuffers(page);
+> +}
+> +
+>  #define get_inode_mode(i) \
+>  	((is_inode_flag_set(i, FI_ACL_MODE)) ? \
+>  	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
+> @@ -2200,7 +2205,6 @@ struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
+>  int do_write_data_page(struct f2fs_io_info *);
+>  int f2fs_map_blocks(struct inode *, struct f2fs_map_blocks *, int, int);
+>  int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
+> -void f2fs_set_page_dirty_nobuffers(struct page *);
+>  void f2fs_invalidate_page(struct page *, unsigned int, unsigned int);
+>  int f2fs_release_page(struct page *, gfp_t);
+>  #ifdef CONFIG_MIGRATION
 > 
-> .
-> 
-
-
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today. http://sdm.link/xeonphi
