@@ -1,25 +1,28 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: replace a build-time warning with
- runtime WARN_ON
-Date: Wed, 2 Nov 2016 15:09:03 +0800
-Message-ID: <c0d9b688-0ac9-6b45-62cc-02e71f2aa331@huawei.com>
-References: <20161027153256.4121871-1-arnd@arndb.de>
+Subject: Re: [PATCH] f2fs: return directly if block has been
+ removed from the victim
+Date: Wed, 2 Nov 2016 15:19:27 +0800
+Message-ID: <ef2c3b03-8b2c-d64c-fbbf-b32737b423ea@huawei.com>
+References: <20161024033728.10780-1-heyunlei@huawei.com>
+	<20161026010926.GA4173@jaegeuk>
+	<5f96184b-43b9-871d-3c3b-32ef9e656449@huawei.com>
+	<20161027223453.GA18682@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1c1pgC-0000wt-LG
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1c1ps5-0000yb-6Y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Nov 2016 07:09:48 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c1pg9-0002Ud-0a
+	Wed, 02 Nov 2016 07:22:05 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1c1prx-0004Cz-M9
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Nov 2016 07:09:48 +0000
-In-Reply-To: <20161027153256.4121871-1-arnd@arndb.de>
+	Wed, 02 Nov 2016 07:22:05 +0000
+In-Reply-To: <20161027223453.GA18682@jaegeuk>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,46 +32,117 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Arnd Bergmann <arnd@arndb.de>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Weichao Guo <guoweichao@huawei.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, heyunlei <heyunlei@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-SGkgQXJuZCwgSmFlZ2V1aywKCkl0IGlzIHRyaXZpYWwsIGJ1dCBpdCdzIGJldHRlciBrZWVwIGNv
-bW1pdCAqdGl0bGUqLCBjb21taXQgbG9nIGFuZCBjb2RlCmNvbnNpc3RlbnQuIDopCgpUaGFua3Ms
-CgpPbiAyMDE2LzEwLzI3IDIzOjMyLCBBcm5kIEJlcmdtYW5uIHdyb3RlOgo+IGdjYyBpcyB1bnN1
-cmUgYWJvdXQgdGhlIHVzZSBvZiBsYXN0X29mc19pbl9ub2RlLCB3aGljaCBtaWdodCBoYXBwZW4K
-PiB3aXRob3V0IGEgcHJpb3IgaW5pdGlhbGl6YXRpb246Cj4gCj4gZnMvZjJmcy8vZ2l0L2FybS1z
-b2MvZnMvZjJmcy9kYXRhLmM6IEluIGZ1bmN0aW9uIOKAmGYyZnNfbWFwX2Jsb2Nrc+KAmToKPiBm
-cy9mMmZzL2RhdGEuYzo3OTk6NTQ6IHdhcm5pbmc6IOKAmGxhc3Rfb2ZzX2luX25vZGXigJkgbWF5
-IGJlIHVzZWQgdW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uIFstV21heWJlLXVuaW5pdGlh
-bGl6ZWRdCj4gICAgaWYgKHByZWFsbG9jICYmIGRuLm9mc19pbl9ub2RlICE9IGxhc3Rfb2ZzX2lu
-X25vZGUgKyAxKSB7Cj4gCj4gQXMgcG9pbnRlZCBvdXQgYnkgQ2hhbyBZdSwgdGhlIGNvZGUgaXMg
-YWN0dWFsbHkgY29ycmVjdCBhcyAncHJlYWxsb2MnCj4gaXMgb25seSBzZXQgaWYgdGhlIGxhc3Rf
-b2ZzX2luX25vZGUgaGFzIGJlZW4gc2V0LCB0aGUgdHdvIGFsd2F5cwo+IGdldCB1cGRhdGVkIHRv
-Z2V0aGVyLgo+IAo+IFRoaXMgaW5pdGlhbGl6ZXMgbGFzdF9vZnNfaW5fbm9kZSB0byBkbi5vZnNf
-aW5fbm9kZSBmb3IgZWFjaAo+IG5ldyBkbm9kZSBhdCB0aGUgc3RhcnQgb2YgdGhlICduZXh0X2Js
-b2NrJyBsb29wLCB3aGljaCBhdCB0aGF0Cj4gcG9pbnQgaXMgYSBjb3JyZWN0IGluaXRpYWxpemF0
-aW9uIGFzIHdlbGwuIEkgYXNzdW1lIHRoYXQgY29tcGlsZXJzCj4gdGhhdCBjb3JyZWN0bHkgdHJh
-Y2sgdGhlIGNvbnRlbnRzIG9mIHRoZSB2YXJpYWJsZXMgYW5kIGRvIG5vdAo+IHdhcm4gYWJvdXQg
-dGhlIGNvbmRpdGlvbiBhbHNvIGZpZ3VyZSBvdXQgdGhhdCB0aGV5IGNhbiBlbGltaW5hdGUKPiB0
-aGUgZXh0cmEgYXNzaWdubWVudCBoZXJlLgo+IAo+IEZpeGVzOiA0NjAwOGM2ZDQyMzIgKCJmMmZz
-OiBzdXBwb3J0IGluIGJhdGNoIG11bHRpIGJsb2NrcyBwcmVhbGxvY2F0aW9uIikKPiBTaWduZWQt
-b2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgo+IC0tLQo+ICBmcy9mMmZzL2Rh
-dGEuYyB8IDIgKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9u
-KC0pCj4gCj4gdjI6IHVzZSBzaW1wbGVyIHdvcmthcm91bmQsIGFzIGRpc2N1c3NlZCB3aXRoIENo
-YW8gWXUuCj4gCj4gZGlmZiAtLWdpdCBhL2ZzL2YyZnMvZGF0YS5jIGIvZnMvZjJmcy9kYXRhLmMK
-PiBpbmRleCA2OGVkYjQ3ZjVmNzEuLmNmNWVjMzlmOTA3ZCAxMDA2NDQKPiAtLS0gYS9mcy9mMmZz
-L2RhdGEuYwo+ICsrKyBiL2ZzL2YyZnMvZGF0YS5jCj4gQEAgLTcxMyw3ICs3MTMsNyBAQCBpbnQg
-ZjJmc19tYXBfYmxvY2tzKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmMmZzX21hcF9ibG9j
-a3MgKm1hcCwKPiAgCX0KPiAgCj4gIAlwcmVhbGxvYyA9IDA7Cj4gLQlvZnNfaW5fbm9kZSA9IGRu
-Lm9mc19pbl9ub2RlOwo+ICsJbGFzdF9vZnNfaW5fbm9kZSA9IG9mc19pbl9ub2RlID0gZG4ub2Zz
-X2luX25vZGU7Cj4gIAllbmRfb2Zmc2V0ID0gQUREUlNfUEVSX1BBR0UoZG4ubm9kZV9wYWdlLCBp
-bm9kZSk7Cj4gIAo+ICBuZXh0X2Jsb2NrOgo+IAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpEZXZl
-bG9wZXIgQWNjZXNzIFByb2dyYW0gZm9yIEludGVsIFhlb24gUGhpIFByb2Nlc3NvcnMKQWNjZXNz
-IHRvIEludGVsIFhlb24gUGhpIHByb2Nlc3Nvci1iYXNlZCBkZXZlbG9wZXIgcGxhdGZvcm1zLgpX
-aXRoIG9uZSB5ZWFyIG9mIEludGVsIFBhcmFsbGVsIFN0dWRpbyBYRS4KVHJhaW5pbmcgYW5kIHN1
-cHBvcnQgZnJvbSBDb2xmYXguCk9yZGVyIHlvdXIgcGxhdGZvcm0gdG9kYXkuIGh0dHA6Ly9zZG0u
-bGluay94ZW9ucGhpCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
-c291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3Rp
-bmZvL2xpbnV4LWYyZnMtZGV2ZWwK
+On 2016/10/28 6:34, Jaegeuk Kim wrote:
+> On Wed, Oct 26, 2016 at 10:14:04AM +0800, heyunlei wrote:
+>>
+>>
+>> On 2016/10/26 9:09, Jaegeuk Kim wrote:
+>> Hi Kim,
+>>> Hi Yunlei,
+>>>
+>>> On Mon, Oct 24, 2016 at 11:37:28AM +0800, Yunlei He wrote:
+>>>> If one block has been to written to a new place, just return
+>>>> in move data process.
+>>>>
+>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/gc.c | 17 ++++++++++++-----
+>>>>  1 file changed, 12 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>> index f35fca5..fc78f3e 100644
+>>>> --- a/fs/f2fs/gc.c
+>>>> +++ b/fs/f2fs/gc.c
+>>>> @@ -545,7 +545,8 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>>>>  	return true;
+>>>>  }
+>>>>
+>>>> -static void move_encrypted_block(struct inode *inode, block_t bidx)
+>>>> +static void move_encrypted_block(struct inode *inode, block_t bidx,
+>>>> +						unsigned int segno, int off)
+>>>>  {
+>>>>  	struct f2fs_io_info fio = {
+>>>>  		.sbi = F2FS_I_SB(inode),
+>>>> @@ -580,6 +581,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+>>>>  	 * don't cache encrypted data into meta inode until previous dirty
+>>>>  	 * data were writebacked to avoid racing between GC and flush.
+>>>>  	 */
+>>>> +	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+>>>> +		goto out;
+>>>
+>>> This is done by gc_data_segment() before calling move function.
+>>> Why do we need this again?
+>>
+>> gc_data_segment() check this without lock the data page. If this block
+>> is written to a new place between check in gc_data_segment() and locked
+>> the page, it will need to wait this page write back, and write it again,
+>> it's unnecessary.
+>>
+>>>
+>>>> +
+>>>>  	f2fs_wait_on_page_writeback(page, DATA, true);
+>>>>
+>>>>  	get_node_info(fio.sbi, dn.nid, &ni);
+>>>> @@ -646,7 +650,8 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+>>>>  	f2fs_put_page(page, 1);
+>>>>  }
+>>>>
+>>>> -static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
+>>>> +static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+>>>> +							unsigned int segno, int off)
+>>>>  {
+>>>>  	struct page *page;
+>>>>
+>>>> @@ -655,8 +660,10 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
+>>>>  		return;
+>>>>
+>>>>  	if (gc_type == BG_GC) {
+>>>> -		if (PageWriteback(page))
+>>>
+>>> Seems there is no reason to remove the existing writeback case.
+>>> This is a BG_GC case and we don't need to proceed GC in this case.
+>>    Here, PageWriteback(page) means two cases:
+>> 1. write to this victim segment
+>> 2. write to a new place
+>>
+>> In the first case, if we return directly, this victim bg_gc will fail
+>> for some blocks are still valid.
+> 
+> It should be fine, and its main reason would be to avoid wait_on_page_writeback.
+> Next bg_gc will do better.
+
+Agreed.
+
+Yunlei, I think it's better add this judgment condition after we grabbed locked
+data page for covering both background and foreground GC cases, instead of
+changing previous process logic.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> ------------------------------------------------------------------------------
+> The Command Line: Reinvented for Modern Developers
+> Did the resurgence of CLI tooling catch you by surprise?
+> Reconnect with the command line and become more productive. 
+> Learn the new .NET and ASP.NET CLI. Get your free copy!
+> http://sdm.link/telerik
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Developer Access Program for Intel Xeon Phi Processors
+Access to Intel Xeon Phi processor-based developer platforms.
+With one year of Intel Parallel Studio XE.
+Training and support from Colfax.
+Order your platform today. http://sdm.link/xeonphi
