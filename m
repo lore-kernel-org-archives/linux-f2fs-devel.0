@@ -1,54 +1,65 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: record inode updating status correctly
-Date: Wed, 2 Nov 2016 20:43:21 +0800
-Message-ID: <20161102124321.20874-1-yuchao0@huawei.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] f2fs: hide a maybe-uninitialized warning
+Date: Wed,  2 Nov 2016 14:52:15 +0100
+Message-ID: <20161102135226.2753644-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <arnd@arndb.de>) id 1c1vye-00040Z-Id
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Nov 2016 13:53:16 +0000
+Received: from mout.kundenserver.de ([217.72.192.74])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1c1vyc-0000Ra-MS for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 02 Nov 2016 13:53:16 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: Weichao Guo <guoweichao@huawei.com>, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-f2fs-devel@lists.sourceforge.net
 
-We should record updating status of inode only for living inode, for those
-unlinked inode it needs to clear its ino cache, otherwise after the ino
-was been reused, it will cause unneeded node page writing during ->fsync.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/inode.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 7b5e402..af06bda 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -377,6 +377,9 @@ void f2fs_evict_inode(struct inode *inode)
- 		goto no_delete;
- #endif
- 
-+	remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
-+	remove_ino_entry(sbi, inode->i_ino, UPDATE_INO);
-+
- 	sb_start_intwrite(inode->i_sb);
- 	set_inode_flag(inode, FI_NO_ALLOC);
- 	i_size_write(inode, 0);
-@@ -409,10 +412,12 @@ void f2fs_evict_inode(struct inode *inode)
- 	invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino, inode->i_ino);
- 	if (xnid)
- 		invalidate_mapping_pages(NODE_MAPPING(sbi), xnid, xnid);
--	if (is_inode_flag_set(inode, FI_APPEND_WRITE))
--		add_ino_entry(sbi, inode->i_ino, APPEND_INO);
--	if (is_inode_flag_set(inode, FI_UPDATE_WRITE))
--		add_ino_entry(sbi, inode->i_ino, UPDATE_INO);
-+	if (inode->i_nlink) {
-+		if (is_inode_flag_set(inode, FI_APPEND_WRITE))
-+			add_ino_entry(sbi, inode->i_ino, APPEND_INO);
-+		if (is_inode_flag_set(inode, FI_UPDATE_WRITE))
-+			add_ino_entry(sbi, inode->i_ino, UPDATE_INO);
-+	}
- 	if (is_inode_flag_set(inode, FI_FREE_NID)) {
- 		alloc_nid_failed(sbi, inode->i_ino);
- 		clear_inode_flag(inode, FI_FREE_NID);
--- 
-2.8.2.311.gee88674
+Z2NjIGlzIHVuc3VyZSBhYm91dCB0aGUgdXNlIG9mIGxhc3Rfb2ZzX2luX25vZGUsIHdoaWNoIG1p
+Z2h0IGhhcHBlbgp3aXRob3V0IGEgcHJpb3IgaW5pdGlhbGl6YXRpb246Cgpmcy9mMmZzLy9naXQv
+YXJtLXNvYy9mcy9mMmZzL2RhdGEuYzogSW4gZnVuY3Rpb24g4oCYZjJmc19tYXBfYmxvY2tz4oCZ
+Ogpmcy9mMmZzL2RhdGEuYzo3OTk6NTQ6IHdhcm5pbmc6IOKAmGxhc3Rfb2ZzX2luX25vZGXigJkg
+bWF5IGJlIHVzZWQgdW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uIFstV21heWJlLXVuaW5p
+dGlhbGl6ZWRdCiAgIGlmIChwcmVhbGxvYyAmJiBkbi5vZnNfaW5fbm9kZSAhPSBsYXN0X29mc19p
+bl9ub2RlICsgMSkgewoKQXMgcG9pbnRlZCBvdXQgYnkgQ2hhbyBZdSwgdGhlIGNvZGUgaXMgYWN0
+dWFsbHkgY29ycmVjdCBhcyAncHJlYWxsb2MnCmlzIG9ubHkgc2V0IGlmIHRoZSBsYXN0X29mc19p
+bl9ub2RlIGhhcyBiZWVuIHNldCwgdGhlIHR3byBhbHdheXMKZ2V0IHVwZGF0ZWQgdG9nZXRoZXIu
+CgpUaGlzIGluaXRpYWxpemVzIGxhc3Rfb2ZzX2luX25vZGUgdG8gZG4ub2ZzX2luX25vZGUgZm9y
+IGVhY2gKbmV3IGRub2RlIGF0IHRoZSBzdGFydCBvZiB0aGUgJ25leHRfYmxvY2snIGxvb3AsIHdo
+aWNoIGF0IHRoYXQKcG9pbnQgaXMgYSBjb3JyZWN0IGluaXRpYWxpemF0aW9uIGFzIHdlbGwuIEkg
+YXNzdW1lIHRoYXQgY29tcGlsZXJzCnRoYXQgY29ycmVjdGx5IHRyYWNrIHRoZSBjb250ZW50cyBv
+ZiB0aGUgdmFyaWFibGVzIGFuZCBkbyBub3QKd2FybiBhYm91dCB0aGUgY29uZGl0aW9uIGFsc28g
+ZmlndXJlIG91dCB0aGF0IHRoZXkgY2FuIGVsaW1pbmF0ZQp0aGUgZXh0cmEgYXNzaWdubWVudCBo
+ZXJlLgoKRml4ZXM6IDQ2MDA4YzZkNDIzMiAoImYyZnM6IHN1cHBvcnQgaW4gYmF0Y2ggbXVsdGkg
+YmxvY2tzIHByZWFsbG9jYXRpb24iKQpTaWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5k
+QGFybmRiLmRlPgotLS0KIGZzL2YyZnMvZGF0YS5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEg
+aW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZnMvZjJmcy9kYXRhLmMg
+Yi9mcy9mMmZzL2RhdGEuYwppbmRleCBhNTllYThlNjAwNDAuLjZmMDFhYWRkZmNlOSAxMDA2NDQK
+LS0tIGEvZnMvZjJmcy9kYXRhLmMKKysrIGIvZnMvZjJmcy9kYXRhLmMKQEAgLTcxOSw3ICs3MTks
+NyBAQCBpbnQgZjJmc19tYXBfYmxvY2tzKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmMmZz
+X21hcF9ibG9ja3MgKm1hcCwKIAl9CiAKIAlwcmVhbGxvYyA9IDA7Ci0Jb2ZzX2luX25vZGUgPSBk
+bi5vZnNfaW5fbm9kZTsKKwlsYXN0X29mc19pbl9ub2RlID0gb2ZzX2luX25vZGUgPSBkbi5vZnNf
+aW5fbm9kZTsKIAllbmRfb2Zmc2V0ID0gQUREUlNfUEVSX1BBR0UoZG4ubm9kZV9wYWdlLCBpbm9k
+ZSk7CiAKIG5leHRfYmxvY2s6Ci0tIAoyLjkuMAoKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpEZXZl
+bG9wZXIgQWNjZXNzIFByb2dyYW0gZm9yIEludGVsIFhlb24gUGhpIFByb2Nlc3NvcnMKQWNjZXNz
+IHRvIEludGVsIFhlb24gUGhpIHByb2Nlc3Nvci1iYXNlZCBkZXZlbG9wZXIgcGxhdGZvcm1zLgpX
+aXRoIG9uZSB5ZWFyIG9mIEludGVsIFBhcmFsbGVsIFN0dWRpbyBYRS4KVHJhaW5pbmcgYW5kIHN1
+cHBvcnQgZnJvbSBDb2xmYXguCk9yZGVyIHlvdXIgcGxhdGZvcm0gdG9kYXkuIGh0dHA6Ly9zZG0u
+bGluay94ZW9ucGhpCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMu
+c291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3Rp
+bmZvL2xpbnV4LWYyZnMtZGV2ZWwK
