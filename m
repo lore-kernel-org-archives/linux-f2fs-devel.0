@@ -1,25 +1,22 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs:return directly if block has been
- removed from the victim
-Date: Wed, 2 Nov 2016 19:54:15 +0800
-Message-ID: <9013f0ff-b341-e07e-d165-aee1c8acc4dd@huawei.com>
-References: <20161102104150.29358-1-heyunlei@huawei.com>
+Subject: [PATCH] f2fs: update inode updating status correctly
+Date: Wed, 2 Nov 2016 20:08:34 +0800
+Message-ID: <20161102120834.15178-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1c1u8B-00050d-G5
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1c1uMJ-0007LH-O5
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Nov 2016 11:54:59 +0000
-Received: from [119.145.14.65] (helo=szxga02-in.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c1u84-0000KS-C1
+	Wed, 02 Nov 2016 12:09:35 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1c1uMG-0003IW-4H
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 02 Nov 2016 11:54:59 +0000
-In-Reply-To: <20161102104150.29358-1-heyunlei@huawei.com>
+	Wed, 02 Nov 2016 12:09:35 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,81 +26,45 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
-Cc: heyunlei@huwei.com
+To: jaegeuk@kernel.org
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2016/11/2 18:41, Yunlei He wrote:
-> If one block has been to written to a new place, just return
-> in move data process. This patch check it again with holding
-> page lock.
-> 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/gc.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 9c18917..131e0fe 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -544,7 +544,8 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  	return true;
->  }
->  
-> -static void move_encrypted_block(struct inode *inode, block_t bidx)
-> +static void move_encrypted_block(struct inode *inode, block_t bidx,
-> +							unsigned int segno, int off)
->  {
->  	struct f2fs_io_info fio = {
->  		.sbi = F2FS_I_SB(inode),
-> @@ -579,6 +580,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
->  	 * don't cache encrypted data into meta inode until previous dirty
->  	 * data were writebacked to avoid racing between GC and flush.
->  	 */
-> +	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
-> +		goto out;
-> +
->  	f2fs_wait_on_page_writeback(page, DATA, true);
->  
->  	get_node_info(fio.sbi, dn.nid, &ni);
-> @@ -645,7 +649,8 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
->  	f2fs_put_page(page, 1);
->  }
->  
-> -static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
-> +static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
-> +							unsigned int segno, int off)
->  {
->  	struct page *page;
->  
-> @@ -670,6 +675,9 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
->  		bool is_dirty = PageDirty(page);
->  		int err;
->  
-> +		if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+We should record updating status of inode only for living inode, for those
+unlinked inode it needs to clear ino cache, otherwise after the ino of
+unlinked inode was been reused, it will cause unneeded node page writing
+during ->fsync.
 
-Better to do detection after get_lock_data_page?
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/inode.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Thanks,
-
-> +			goto out;
-> +
->  retry:
->  		set_page_dirty(page);
->  		f2fs_wait_on_page_writeback(page, DATA, true);
-> @@ -796,9 +804,9 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  			start_bidx = start_bidx_of_node(nofs, inode)
->  								+ ofs_in_node;
->  			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
-> -				move_encrypted_block(inode, start_bidx);
-> +				move_encrypted_block(inode, start_bidx, segno, off);
->  			else
-> -				move_data_page(inode, start_bidx, gc_type);
-> +				move_data_page(inode, start_bidx, gc_type, segno, off);
->  
->  			if (locked) {
->  				up_write(&fi->dio_rwsem[WRITE]);
-> 
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 7b5e402..36f8a9b 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -409,10 +409,15 @@ void f2fs_evict_inode(struct inode *inode)
+ 	invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino, inode->i_ino);
+ 	if (xnid)
+ 		invalidate_mapping_pages(NODE_MAPPING(sbi), xnid, xnid);
+-	if (is_inode_flag_set(inode, FI_APPEND_WRITE))
+-		add_ino_entry(sbi, inode->i_ino, APPEND_INO);
+-	if (is_inode_flag_set(inode, FI_UPDATE_WRITE))
+-		add_ino_entry(sbi, inode->i_ino, UPDATE_INO);
++	if (inode->i_nlink) {
++		if (is_inode_flag_set(inode, FI_APPEND_WRITE))
++			add_ino_entry(sbi, inode->i_ino, APPEND_INO);
++		if (is_inode_flag_set(inode, FI_UPDATE_WRITE))
++			add_ino_entry(sbi, inode->i_ino, UPDATE_INO);
++	} else {
++		remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
++		remove_ino_entry(sbi, inode->i_ino, UPDATE_INO);
++	}
+ 	if (is_inode_flag_set(inode, FI_FREE_NID)) {
+ 		alloc_nid_failed(sbi, inode->i_ino);
+ 		clear_inode_flag(inode, FI_FREE_NID);
+-- 
+2.8.2.311.gee88674
 
 
 ------------------------------------------------------------------------------
