@@ -1,7 +1,7 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: [PATCH 4/7] resize.f2fs: get latest free segments
-Date: Thu, 3 Nov 2016 10:26:59 -0700
-Message-ID: <20161103172659.GA76013@jaegeuk>
+Date: Thu, 3 Nov 2016 10:36:34 -0700
+Message-ID: <20161103173634.GA76264@jaegeuk>
 References: <20161103052846.72244-1-jaegeuk@kernel.org>
 	<20161103052846.72244-4-jaegeuk@kernel.org>
 	<911fa82d-b2b8-5d0f-c469-09f39c9624a5@huawei.com>
@@ -9,15 +9,15 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1c2M49-0000pF-3E
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1c2M49-0007KI-1Z
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Thu, 03 Nov 2016 17:44:41 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c2M48-0000bG-5v
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c2M48-0005FI-5d
 	for linux-f2fs-devel@lists.sourceforge.net;
 	Thu, 03 Nov 2016 17:44:41 +0000
 Content-Disposition: inline
@@ -60,18 +60,10 @@ On Thu, Nov 03, 2016 at 02:53:20PM +0800, heyunlei wrote:
 > by get_free_segments(sbi)o<
  Is it righto<
 
-In f2fs_defragment(),
- - flush_journal_entries()
- - migrate_blocks()
- - move_curseg_info()
- - zero-journal_entries()
- - write_curseg_info()
- - flush_sit_entries()
- - write_checkpoint()
-   - free_segment_count = get_free_segments()
-   - write cp pack
-
-Since I can't catch your point, could you please explain in more detail?
+Oh, I misread your point.
+Yup, but, this is to handle f2fs_defragment incompletion. In that case,
+resize.f2fs would call migrate_main() and finally rebuild_checkpoint() with
+wrong free_segments.
 
 > 
 > Thankso<
