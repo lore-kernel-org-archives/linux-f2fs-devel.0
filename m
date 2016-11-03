@@ -1,25 +1,27 @@
-From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 2/2] f2fs: don't skip recovering inode depend on
-	i_times
-Date: Fri,  4 Nov 2016 00:26:56 +0800
-Message-ID: <20161103162656.2982-2-chao@kernel.org>
-References: <20161103162656.2982-1-chao@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 4/7] resize.f2fs: get latest free segments
+Date: Thu, 3 Nov 2016 10:26:59 -0700
+Message-ID: <20161103172659.GA76013@jaegeuk>
+References: <20161103052846.72244-1-jaegeuk@kernel.org>
+	<20161103052846.72244-4-jaegeuk@kernel.org>
+	<911fa82d-b2b8-5d0f-c469-09f39c9624a5@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1c2KtC-00059B-Oj
+	(envelope-from <jaegeuk@kernel.org>) id 1c2M49-0000pF-3E
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 16:29:18 +0000
+	Thu, 03 Nov 2016 17:44:41 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c2KtB-0007mz-Ur
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c2M48-0000bG-5v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 16:29:18 +0000
-In-Reply-To: <20161103162656.2982-1-chao@kernel.org>
+	Thu, 03 Nov 2016 17:44:41 +0000
+Content-Disposition: inline
+In-Reply-To: <911fa82d-b2b8-5d0f-c469-09f39c9624a5@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,76 +31,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: heyunlei <heyunlei@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-From: Chao Yu <yuchao0@huawei.com>
+On Thu, Nov 03, 2016 at 02:53:20PM +0800, heyunlei wrote:
+> 
+> Hi, Kim
+> On 2016/11/3 13:28, Jaegeuk Kim wrote:
+> > The # of free segments can be changed by defragmentation.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fsck/resize.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fsck/resize.c b/fsck/resize.c
+> > index 5dc73a8..4813de7 100644
+> > --- a/fsck/resize.c
+> > +++ b/fsck/resize.c
+> > @@ -424,7 +424,7 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
+> >  	set_cp(overprov_segment_count, get_cp(overprov_segment_count) +
+> >  						get_cp(rsvd_segment_count));
+> > 
+> > -	free_segment_count = get_cp(free_segment_count);
+> > +	free_segment_count = get_free_segments(sbi);
+> 
+> f2fs_defragment will write a checkpoint and then update free_segment_count
+> by get_free_segments(sbi)o<
+ Is it righto<
 
-i_times of inode will be set with current system time which can be
-configured through 'date', so it's not safe to judge dnode block as
-garbage data depend on i_times.
+In f2fs_defragment(),
+ - flush_journal_entries()
+ - migrate_blocks()
+ - move_curseg_info()
+ - zero-journal_entries()
+ - write_curseg_info()
+ - flush_sit_entries()
+ - write_checkpoint()
+   - free_segment_count = get_free_segments()
+   - write cp pack
 
-Now, we have used enhanced 'cp_ver + cp' crc method to verify valid
-dnode block, so I expect recoverying invalid dnode is almost not
-possible.
+Since I can't catch your point, could you please explain in more detail?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/recovery.c | 31 +------------------------------
- 1 file changed, 1 insertion(+), 30 deletions(-)
+> 
+> Thankso<
 
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index d2ba4da..62523b2 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -196,32 +196,6 @@ static void recover_inode(struct inode *inode, struct page *page)
- 			ino_of_node(page), name);
- }
- 
--static bool is_same_inode(struct inode *inode, struct page *ipage)
--{
--	struct f2fs_inode *ri = F2FS_INODE(ipage);
--	struct timespec disk;
--
--	if (!IS_INODE(ipage))
--		return true;
--
--	disk.tv_sec = le64_to_cpu(ri->i_ctime);
--	disk.tv_nsec = le32_to_cpu(ri->i_ctime_nsec);
--	if (timespec_compare(&inode->i_ctime, &disk) > 0)
--		return false;
--
--	disk.tv_sec = le64_to_cpu(ri->i_atime);
--	disk.tv_nsec = le32_to_cpu(ri->i_atime_nsec);
--	if (timespec_compare(&inode->i_atime, &disk) > 0)
--		return false;
--
--	disk.tv_sec = le64_to_cpu(ri->i_mtime);
--	disk.tv_nsec = le32_to_cpu(ri->i_mtime_nsec);
--	if (timespec_compare(&inode->i_mtime, &disk) > 0)
--		return false;
--
--	return true;
--}
--
- static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
- {
- 	struct curseg_info *curseg;
-@@ -248,10 +222,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
- 			goto next;
- 
- 		entry = get_fsync_inode(head, ino_of_node(page));
--		if (entry) {
--			if (!is_same_inode(entry->inode, page))
--				goto next;
--		} else {
-+		if (!entry) {
- 			if (IS_INODE(page) && is_dent_dnode(page)) {
- 				err = recover_inode_page(sbi, page);
- 				if (err)
--- 
-2.10.1
-
+> >  	new_segment_count = get_newsb(segment_count_main) -
+> >  					get_sb(segment_count_main);
+> > 
+> > 
 
 ------------------------------------------------------------------------------
 Developer Access Program for Intel Xeon Phi Processors
