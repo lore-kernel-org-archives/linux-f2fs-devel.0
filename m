@@ -1,154 +1,89 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 2/3] f2fs: use __set_page_dirty_nobuffers
- directly
-Date: Thu, 3 Nov 2016 10:57:04 -0700
-Message-ID: <20161103175704.GB76264@jaegeuk>
-References: <20161021022847.55629-1-jaegeuk@kernel.org>
- <20161021022847.55629-2-jaegeuk@kernel.org>
- <4d3fd0f9-046e-82fc-3830-487a167e7700@huawei.com>
- <20161102172341.GB48728@jaegeuk>
- <13561186-caab-79b4-325f-6d0514aa289b@huawei.com>
+Subject: Re: [PATCH 2/2] f2fs: don't skip recovering inode depend on i_times
+Date: Thu, 3 Nov 2016 11:02:33 -0700
+Message-ID: <20161103180233.GC76264@jaegeuk>
+References: <20161103162656.2982-1-chao@kernel.org>
+ <20161103162656.2982-2-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <13561186-caab-79b4-325f-6d0514aa289b@huawei.com>
+In-Reply-To: <20161103162656.2982-2-chao@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, yuchao0@huawei.com, liushuoran@huawei.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Nov 03, 2016 at 05:50:34PM +0800, Chao Yu wrote:
-> On 2016/11/3 1:23, Jaegeuk Kim wrote:
-> > On Wed, Nov 02, 2016 at 03:34:32PM +0800, Chao Yu wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> On 2016/10/21 10:28, Jaegeuk Kim wrote:
-> >>> This patch replaces the copied code with original generic function.
-> >>
-> >> Will we plan to do further enhance inside f2fs_set_page_dirty_nobuffers, if we
-> >> don't it's better revert fe76b796fc5194cc3d57265002e3a748566d073f, as we don't
-> >> need to wrap __set_page_dirty_nobuffers.
-> > 
-> > Urg. I was confused something here.
-> > Please ignore this patch. I won't merge this patch.
+On Fri, Nov 04, 2016 at 12:26:56AM +0800, Chao Yu wrote:
+> From: Chao Yu <yuchao0@huawei.com>
 > 
-> Why? isn't __set_page_dirty_nobuffers more fit for f2fs' non-buffer management?
+> i_times of inode will be set with current system time which can be
+> configured through 'date', so it's not safe to judge dnode block as
+> garbage data depend on i_times.
 
-For a while ago, when I tried to improve the performance on pmem, I could hit
-that __set_page_dirty_buffers() slightly improved the bandwidth comparing to
-__set_page_dirty_nobuffers().
-
-When referencing the below comment written in __set_page_dirty_nobuffers(), it
-seems I could get that by adopting "top-down" approach instead of "bottom-up",
-which avoids lock contention as I guess. I couldn't do deep investigation on it
-though.
-
-/*
- * For address_spaces which do not use buffers.  Just tag the page as dirty in
- * its radix tree.
- *
- * This is also used when a single buffer is being dirtied: we want to set the
- * page dirty in that case, but not all the buffers.  This is a "bottom-up"
- * dirtying, whereas __set_page_dirty_buffers() is a "top-down" dirtying.
- *
- * The caller must ensure this doesn't race with truncation.  Most will simply
- * hold the page lock, but e.g. zap_pte_range() calls with the page mapped and
- * the pte lock held, which also locks out truncation.
- */
-
-So, I measured the performance again with fxmark on ramdisk, 8 cores, DWAL,
-bufferedio case. I got 2683158 works/sec w/ "top-down" over 2512609 works/sec w/
-"bottom-up".
+This is not to detect garbage data, but to skip redundant unchanged inode.
+Anyway, in the code part, looks good to me.
 
 Thanks,
 
 > 
-> Thanks,
+> Now, we have used enhanced 'cp_ver + cp' crc method to verify valid
+> dnode block, so I expect recoverying invalid dnode is almost not
+> possible.
 > 
-> > 
-> >> BTW, does the original patch make memory cgroup functionality problematic?
-> > 
-> > I don't think there is a problem, since I just copied __set_page_dirty_buffers()
-> > except page_has_buffers' stuffs.
-> > 
-> > Thank you for pointing this out. :)
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> ---
-> >>>  fs/f2fs/data.c | 29 -----------------------------
-> >>>  fs/f2fs/f2fs.h |  6 +++++-
-> >>>  2 files changed, 5 insertions(+), 30 deletions(-)
-> >>>
-> >>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >>> index 68edb47..3954315 100644
-> >>> --- a/fs/f2fs/data.c
-> >>> +++ b/fs/f2fs/data.c
-> >>> @@ -1801,35 +1801,6 @@ int f2fs_release_page(struct page *page, gfp_t wait)
-> >>>  	return 1;
-> >>>  }
-> >>>  
-> >>> -/*
-> >>> - * This was copied from __set_page_dirty_buffers which gives higher performance
-> >>> - * in very high speed storages. (e.g., pmem)
-> >>> - */
-> >>> -void f2fs_set_page_dirty_nobuffers(struct page *page)
-> >>> -{
-> >>> -	struct address_space *mapping = page->mapping;
-> >>> -	unsigned long flags;
-> >>> -
-> >>> -	if (unlikely(!mapping))
-> >>> -		return;
-> >>> -
-> >>> -	spin_lock(&mapping->private_lock);
-> >>> -	lock_page_memcg(page);
-> >>> -	SetPageDirty(page);
-> >>> -	spin_unlock(&mapping->private_lock);
-> >>> -
-> >>> -	spin_lock_irqsave(&mapping->tree_lock, flags);
-> >>> -	WARN_ON_ONCE(!PageUptodate(page));
-> >>> -	account_page_dirtied(page, mapping);
-> >>> -	radix_tree_tag_set(&mapping->page_tree,
-> >>> -			page_index(page), PAGECACHE_TAG_DIRTY);
-> >>> -	spin_unlock_irqrestore(&mapping->tree_lock, flags);
-> >>> -	unlock_page_memcg(page);
-> >>> -
-> >>> -	__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
-> >>> -	return;
-> >>> -}
-> >>> -
-> >>>  static int f2fs_set_data_page_dirty(struct page *page)
-> >>>  {
-> >>>  	struct address_space *mapping = page->mapping;
-> >>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>> index 168f939..b66a04c 100644
-> >>> --- a/fs/f2fs/f2fs.h
-> >>> +++ b/fs/f2fs/f2fs.h
-> >>> @@ -1960,6 +1960,11 @@ static inline unsigned long f2fs_find_next_bit(const void *addr,
-> >>>  	return find_next_bit(addr, size, offset + 2);
-> >>>  }
-> >>>  
-> >>> +static inline void f2fs_set_page_dirty_nobuffers(struct page *page)
-> >>> +{
-> >>> +	__set_page_dirty_nobuffers(page);
-> >>> +}
-> >>> +
-> >>>  #define get_inode_mode(i) \
-> >>>  	((is_inode_flag_set(i, FI_ACL_MODE)) ? \
-> >>>  	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
-> >>> @@ -2200,7 +2205,6 @@ struct page *get_new_data_page(struct inode *, struct page *, pgoff_t, bool);
-> >>>  int do_write_data_page(struct f2fs_io_info *);
-> >>>  int f2fs_map_blocks(struct inode *, struct f2fs_map_blocks *, int, int);
-> >>>  int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *, u64, u64);
-> >>> -void f2fs_set_page_dirty_nobuffers(struct page *);
-> >>>  void f2fs_invalidate_page(struct page *, unsigned int, unsigned int);
-> >>>  int f2fs_release_page(struct page *, gfp_t);
-> >>>  #ifdef CONFIG_MIGRATION
-> >>>
-> > 
-> > .
-> > 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/recovery.c | 31 +------------------------------
+>  1 file changed, 1 insertion(+), 30 deletions(-)
+> 
+> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+> index d2ba4da..62523b2 100644
+> --- a/fs/f2fs/recovery.c
+> +++ b/fs/f2fs/recovery.c
+> @@ -196,32 +196,6 @@ static void recover_inode(struct inode *inode, struct page *page)
+>  			ino_of_node(page), name);
+>  }
+>  
+> -static bool is_same_inode(struct inode *inode, struct page *ipage)
+> -{
+> -	struct f2fs_inode *ri = F2FS_INODE(ipage);
+> -	struct timespec disk;
+> -
+> -	if (!IS_INODE(ipage))
+> -		return true;
+> -
+> -	disk.tv_sec = le64_to_cpu(ri->i_ctime);
+> -	disk.tv_nsec = le32_to_cpu(ri->i_ctime_nsec);
+> -	if (timespec_compare(&inode->i_ctime, &disk) > 0)
+> -		return false;
+> -
+> -	disk.tv_sec = le64_to_cpu(ri->i_atime);
+> -	disk.tv_nsec = le32_to_cpu(ri->i_atime_nsec);
+> -	if (timespec_compare(&inode->i_atime, &disk) > 0)
+> -		return false;
+> -
+> -	disk.tv_sec = le64_to_cpu(ri->i_mtime);
+> -	disk.tv_nsec = le32_to_cpu(ri->i_mtime_nsec);
+> -	if (timespec_compare(&inode->i_mtime, &disk) > 0)
+> -		return false;
+> -
+> -	return true;
+> -}
+> -
+>  static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+>  {
+>  	struct curseg_info *curseg;
+> @@ -248,10 +222,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+>  			goto next;
+>  
+>  		entry = get_fsync_inode(head, ino_of_node(page));
+> -		if (entry) {
+> -			if (!is_same_inode(entry->inode, page))
+> -				goto next;
+> -		} else {
+> +		if (!entry) {
+>  			if (IS_INODE(page) && is_dent_dnode(page)) {
+>  				err = recover_inode_page(sbi, page);
+>  				if (err)
+> -- 
+> 2.10.1
