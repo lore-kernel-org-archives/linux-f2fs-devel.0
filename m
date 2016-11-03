@@ -1,22 +1,25 @@
 From: Chao Yu <chao@kernel.org>
-Subject: [PATCH 1/2] f2fs: fix wrong i_atime recovery
-Date: Fri,  4 Nov 2016 00:26:55 +0800
-Message-ID: <20161103162656.2982-1-chao@kernel.org>
+Subject: [PATCH 2/2] f2fs: don't skip recovering inode depend on
+	i_times
+Date: Fri,  4 Nov 2016 00:26:56 +0800
+Message-ID: <20161103162656.2982-2-chao@kernel.org>
+References: <20161103162656.2982-1-chao@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <chao@kernel.org>) id 1c2Kt9-0007Xl-E9
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <chao@kernel.org>) id 1c2KtC-00059B-Oj
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 16:29:15 +0000
+	Thu, 03 Nov 2016 16:29:18 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c2Kt8-0003Tn-Fi
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c2KtB-0007mz-Ur
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 16:29:15 +0000
+	Thu, 03 Nov 2016 16:29:18 +0000
+In-Reply-To: <20161103162656.2982-1-chao@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,35 +34,68 @@ Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 From: Chao Yu <yuchao0@huawei.com>
 
-Shouldn't update in-memory i_atime with on-disk i_mtime of inode when
-recovering inode.
+i_times of inode will be set with current system time which can be
+configured through 'date', so it's not safe to judge dnode block as
+garbage data depend on i_times.
 
-Shuoran found this bug which is hidden for a long time, honour is belong
-to him.
+Now, we have used enhanced 'cp_ver + cp' crc method to verify valid
+dnode block, so I expect recoverying invalid dnode is almost not
+possible.
 
-Signed-off-by: Shuoran Liu <liushuoran@huawei.com>
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/recovery.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/recovery.c | 31 +------------------------------
+ 1 file changed, 1 insertion(+), 30 deletions(-)
 
 diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 2fc84a9..d2ba4da 100644
+index d2ba4da..62523b2 100644
 --- a/fs/f2fs/recovery.c
 +++ b/fs/f2fs/recovery.c
-@@ -180,10 +180,10 @@ static void recover_inode(struct inode *inode, struct page *page)
+@@ -196,32 +196,6 @@ static void recover_inode(struct inode *inode, struct page *page)
+ 			ino_of_node(page), name);
+ }
  
- 	inode->i_mode = le16_to_cpu(raw->i_mode);
- 	f2fs_i_size_write(inode, le64_to_cpu(raw->i_size));
--	inode->i_atime.tv_sec = le64_to_cpu(raw->i_mtime);
-+	inode->i_atime.tv_sec = le64_to_cpu(raw->i_atime);
- 	inode->i_ctime.tv_sec = le64_to_cpu(raw->i_ctime);
- 	inode->i_mtime.tv_sec = le64_to_cpu(raw->i_mtime);
--	inode->i_atime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
-+	inode->i_atime.tv_nsec = le32_to_cpu(raw->i_atime_nsec);
- 	inode->i_ctime.tv_nsec = le32_to_cpu(raw->i_ctime_nsec);
- 	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+-static bool is_same_inode(struct inode *inode, struct page *ipage)
+-{
+-	struct f2fs_inode *ri = F2FS_INODE(ipage);
+-	struct timespec disk;
+-
+-	if (!IS_INODE(ipage))
+-		return true;
+-
+-	disk.tv_sec = le64_to_cpu(ri->i_ctime);
+-	disk.tv_nsec = le32_to_cpu(ri->i_ctime_nsec);
+-	if (timespec_compare(&inode->i_ctime, &disk) > 0)
+-		return false;
+-
+-	disk.tv_sec = le64_to_cpu(ri->i_atime);
+-	disk.tv_nsec = le32_to_cpu(ri->i_atime_nsec);
+-	if (timespec_compare(&inode->i_atime, &disk) > 0)
+-		return false;
+-
+-	disk.tv_sec = le64_to_cpu(ri->i_mtime);
+-	disk.tv_nsec = le32_to_cpu(ri->i_mtime_nsec);
+-	if (timespec_compare(&inode->i_mtime, &disk) > 0)
+-		return false;
+-
+-	return true;
+-}
+-
+ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ {
+ 	struct curseg_info *curseg;
+@@ -248,10 +222,7 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head)
+ 			goto next;
  
+ 		entry = get_fsync_inode(head, ino_of_node(page));
+-		if (entry) {
+-			if (!is_same_inode(entry->inode, page))
+-				goto next;
+-		} else {
++		if (!entry) {
+ 			if (IS_INODE(page) && is_dent_dnode(page)) {
+ 				err = recover_inode_page(sbi, page);
+ 				if (err)
 -- 
 2.10.1
 
