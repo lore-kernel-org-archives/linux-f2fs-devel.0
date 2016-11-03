@@ -1,24 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/7] f2fs-tools: fix end block addres when
-	finding free block
-Date: Wed,  2 Nov 2016 22:28:42 -0700
-Message-ID: <20161103052846.72244-3-jaegeuk@kernel.org>
+Subject: [PATCH 7/7] resize.f2fs: fill zeros for expanded ssa area
+Date: Wed,  2 Nov 2016 22:28:46 -0700
+Message-ID: <20161103052846.72244-7-jaegeuk@kernel.org>
 References: <20161103052846.72244-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1c2AaG-0007AV-GO
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1c2Aad-00062N-8X
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 05:29:04 +0000
+	Thu, 03 Nov 2016 05:29:27 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c2AaF-0005eY-Ng
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c2Aac-00056P-Cv
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 05:29:04 +0000
+	Thu, 03 Nov 2016 05:29:27 +0000
 In-Reply-To: <20161103052846.72244-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,38 +31,64 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch fixes wrong end_blkaddr condition for free block allocation.
+This will avoid wrong behavior after expanding volume.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/mount.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fsck/resize.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 47bb529..879dd52 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1547,16 +1547,18 @@ void flush_sit_entries(struct f2fs_sb_info *sbi)
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 4813de7..7691524 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -206,24 +206,37 @@ static void migrate_ssa(struct f2fs_sb_info *sbi,
+ 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
+ 	block_t old_sum_blkaddr = get_sb(ssa_blkaddr);
+ 	block_t new_sum_blkaddr = get_newsb(ssa_blkaddr);
+-	unsigned int segno;
++	block_t end_sum_blkaddr = get_newsb(main_blkaddr);
++	block_t blkaddr;
++	void *zero_block = calloc(BLOCK_SZ, 1);
++
++	ASSERT(zero_block);
  
- int find_next_free_block(struct f2fs_sb_info *sbi, u64 *to, int left, int type)
- {
-+	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	struct seg_entry *se;
- 	u32 segno;
- 	u64 offset;
- 	int not_enough = 0;
-+	u64 end_blkaddr = (get_sb(segment_count_main) <<
-+			get_sb(log_blocks_per_seg)) + get_sb(main_blkaddr);
+ 	if (offset && new_sum_blkaddr < old_sum_blkaddr + offset) {
+-		segno = offset;
+-		while (segno != TOTAL_SEGS(sbi)) {
+-			move_ssa(sbi, segno, new_sum_blkaddr + segno - offset);
+-			segno++;
++		blkaddr = new_sum_blkaddr;
++		while (blkaddr < end_sum_blkaddr) {
++			if (blkaddr - new_sum_blkaddr < TOTAL_SEGS(sbi))
++				move_ssa(sbi, offset, blkaddr);
++			else
++				dev_write_block(zero_block, blkaddr);
++			offset++;
++			blkaddr++;
+ 		}
+ 	} else {
+-		segno = TOTAL_SEGS(sbi) - 1;
+-		while (segno != offset - 1) {
+-			move_ssa(sbi, segno, new_sum_blkaddr + segno - offset);
+-			segno--;
++		blkaddr = end_sum_blkaddr - 1;
++		offset = TOTAL_SEGS(sbi) - 1;
++		while (blkaddr >= new_sum_blkaddr) {
++			if (blkaddr >= TOTAL_SEGS(sbi) + new_sum_blkaddr)
++				dev_write_block(zero_block, blkaddr);
++			else
++				move_ssa(sbi, offset--, blkaddr);
++			blkaddr--;
+ 		}
+ 	}
  
- 	if (get_free_segments(sbi) <= SM_I(sbi)->reserved_segments + 1)
- 		not_enough = 1;
+ 	DBG(0, "Info: Done to migrate SSA blocks: sum_blkaddr = 0x%x -> 0x%x\n",
+ 				old_sum_blkaddr, new_sum_blkaddr);
++	free(zero_block);
+ }
  
--	while (*to >= SM_I(sbi)->main_blkaddr &&
--			*to < F2FS_RAW_SUPER(sbi)->block_count) {
-+	while (*to >= SM_I(sbi)->main_blkaddr && *to < end_blkaddr) {
- 		segno = GET_SEGNO(sbi, *to);
- 		offset = OFFSET_IN_SEG(sbi, *to);
- 
+ static int shrink_nats(struct f2fs_sb_info *sbi,
 -- 
 2.8.3
 
