@@ -1,23 +1,22 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v3] f2fs:return directly if block has been
-	removed from the victim
-Date: Thu, 3 Nov 2016 10:06:20 +0800
-Message-ID: <20161103020620.32215-1-heyunlei@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 1/7] defrag.f2fs: return error for no space case
+Date: Wed,  2 Nov 2016 22:28:40 -0700
+Message-ID: <20161103052846.72244-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1c27KC-0005K9-Qv
+	(envelope-from <jaegeuk@kernel.org>) id 1c2Aa8-0005CC-SE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 02:00:16 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c27K7-0005jB-Kt
+	Thu, 03 Nov 2016 05:28:56 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c2Aa8-0005eP-0U
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 02:00:16 +0000
+	Thu, 03 Nov 2016 05:28:56 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,76 +26,33 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huwei.com
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-If one block has been to written to a new place, just return
-in move data process. This patch check it again with holding
-page lock.
+This returns error instead of assertion for resize.f2fs.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/gc.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ fsck/defrag.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 9c18917..b00bcf9 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -544,7 +544,8 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 	return true;
- }
+diff --git a/fsck/defrag.c b/fsck/defrag.c
+index 079e7a7..bea0293 100644
+--- a/fsck/defrag.c
++++ b/fsck/defrag.c
+@@ -78,8 +78,8 @@ int f2fs_defragment(struct f2fs_sb_info *sbi, u64 from, u64 len, u64 to, int lef
+ 			continue;
  
--static void move_encrypted_block(struct inode *inode, block_t bidx)
-+static void move_encrypted_block(struct inode *inode, block_t bidx,
-+							unsigned int segno, int off)
- {
- 	struct f2fs_io_info fio = {
- 		.sbi = F2FS_I_SB(inode),
-@@ -579,6 +580,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
- 	 * don't cache encrypted data into meta inode until previous dirty
- 	 * data were writebacked to avoid racing between GC and flush.
- 	 */
-+	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
-+		goto put_out;
-+
- 	f2fs_wait_on_page_writeback(page, DATA, true);
+ 		if (find_next_free_block(sbi, &target, left, se->type)) {
+-			ASSERT_MSG("Not enough space to migrate blocks");
+-			break;
++			MSG(0, "Not enough space to migrate blocks");
++			return -1;
+ 		}
  
- 	get_node_info(fio.sbi, dn.nid, &ni);
-@@ -645,7 +649,8 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
- 	f2fs_put_page(page, 1);
- }
- 
--static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
-+static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
-+							unsigned int segno, int off)
- {
- 	struct page *page;
- 
-@@ -653,6 +658,9 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
- 	if (IS_ERR(page))
- 		return;
- 
-+	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
-+		goto out;
-+
- 	if (gc_type == BG_GC) {
- 		if (PageWriteback(page))
- 			goto out;
-@@ -796,9 +804,9 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 			start_bidx = start_bidx_of_node(nofs, inode)
- 								+ ofs_in_node;
- 			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
--				move_encrypted_block(inode, start_bidx);
-+				move_encrypted_block(inode, start_bidx, segno, off);
- 			else
--				move_data_page(inode, start_bidx, gc_type);
-+				move_data_page(inode, start_bidx, gc_type, segno, off);
- 
- 			if (locked) {
- 				up_write(&fi->dio_rwsem[WRITE]);
+ 		if (migrate_block(sbi, idx, target)) {
 -- 
-2.10.1
+2.8.3
 
 
 ------------------------------------------------------------------------------
