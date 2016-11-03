@@ -1,24 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 5/7] sload.f2fs: not support to find or add files
-	in inline_dir directory
-Date: Wed,  2 Nov 2016 22:28:44 -0700
-Message-ID: <20161103052846.72244-5-jaegeuk@kernel.org>
+Subject: [PATCH 2/7] resize.f2fs: fix wrong end_blkaddr
+Date: Wed,  2 Nov 2016 22:28:41 -0700
+Message-ID: <20161103052846.72244-2-jaegeuk@kernel.org>
 References: <20161103052846.72244-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1c2AaS-00061S-RX
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1c2AaD-0005G6-8l
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 05:29:16 +0000
+	Thu, 03 Nov 2016 05:29:01 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c2AaS-0006ar-5V
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c2AaC-000259-Gs
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 03 Nov 2016 05:29:16 +0000
+	Thu, 03 Nov 2016 05:29:01 +0000
 In-Reply-To: <20161103052846.72244-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,44 +31,28 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Now, sload.f2fs doesn't support inline_dir.
+The end_blkaddr should add main area segments.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/dir.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ fsck/resize.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fsck/dir.c b/fsck/dir.c
-index 18b79bd..2009855 100644
---- a/fsck/dir.c
-+++ b/fsck/dir.c
-@@ -185,6 +185,12 @@ static int f2fs_find_entry(struct f2fs_sb_info *sbi,
- 	unsigned int max_depth;
- 	unsigned int level;
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 6a645e3..5dc73a8 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -563,8 +563,8 @@ int f2fs_resize(struct f2fs_sb_info *sbi)
+ 	old_main_blkaddr = get_sb(main_blkaddr);
+ 	new_main_blkaddr = get_newsb(main_blkaddr);
+ 	offset = new_main_blkaddr - old_main_blkaddr;
+-	end_blkaddr = (get_sb(segment_count) << get_sb(log_blocks_per_seg)) +
+-						get_sb(main_blkaddr);
++	end_blkaddr = (get_sb(segment_count_main) <<
++			get_sb(log_blocks_per_seg)) + get_sb(main_blkaddr);
  
-+	if (dir->i.i_inline & F2FS_INLINE_DENTRY) {
-+		ERR_MSG("Not support to find \"%s\" in inline_dir pino=%x\n",
-+				de->name, de->pino);
-+		return 0;
-+	}
-+
- 	max_depth = dir->i.i_current_depth;
- 	for (level = 0; level < max_depth; level ++) {
- 		if (find_in_level(sbi, dir, level, de))
-@@ -494,6 +500,13 @@ int f2fs_create(struct f2fs_sb_info *sbi, struct dentry *de)
- 			de->ino = 0;
- 		goto free_parent_dir;
- 	}
-+	if (parent->i.i_inline & F2FS_INLINE_DENTRY) {
-+		ERR_MSG("Not support adding \"%s\" in inline_dir pino=%x\n",
-+					de->name, de->pino);
-+		if (de->file_type == F2FS_FT_REG_FILE)
-+			de->ino = 0;
-+		goto free_parent_dir;
-+	}
- 
- 	child = calloc(BLOCK_SZ, 1);
- 	ASSERT(child);
+ 	if (old_main_blkaddr > new_main_blkaddr) {
+ 		MSG(0, "\tError: Support resize to expand only\n");
 -- 
 2.8.3
 
