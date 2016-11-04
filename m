@@ -1,78 +1,60 @@
-From: Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 2/2] fscrypto: don't use on-stack buffer for key derivation
-Date: Thu,  3 Nov 2016 15:03:02 -0700
-Message-ID: <1478210582-86338-2-git-send-email-ebiggers@google.com>
-References: <1478210582-86338-1-git-send-email-ebiggers@google.com>
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <1478210582-86338-1-git-send-email-ebiggers@google.com>
-Sender: linux-ext4-owner@vger.kernel.org
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org, tytso@mit.edu, jaegeuk@kernel.org, richard@nod.at, luto@kernel.org, Eric Biggers <ebiggers@google.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 2/2] f2fs: don't skip recovering inode depend
+	on i_times
+Date: Fri, 4 Nov 2016 16:30:09 +0800
+Message-ID: <b58aaf87-8ce4-12b1-c535-ea48d8eeee59@huawei.com>
+References: <20161103162656.2982-1-chao@kernel.org>
+	<20161103162656.2982-2-chao@kernel.org>
+	<20161103180233.GC76264@jaegeuk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1c2ZtY-0005sC-UP
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 04 Nov 2016 08:30:40 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1c2ZtT-000661-Cg
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 04 Nov 2016 08:30:40 +0000
+In-Reply-To: <20161103180233.GC76264@jaegeuk>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-With the new (in 4.9) option to use a virtually-mapped stack
-(CONFIG_VMAP_STACK), stack buffers cannot be used as input/output for
-the scatterlist crypto API because they may not be directly mappable to
-struct page.  get_crypt_info() was using a stack buffer to hold the
-output from the encryption operation used to derive the per-file key.
-Fix it by using a heap buffer.
+On 2016/11/4 2:02, Jaegeuk Kim wrote:
+> On Fri, Nov 04, 2016 at 12:26:56AM +0800, Chao Yu wrote:
+>> From: Chao Yu <yuchao0@huawei.com>
+>>
+>> i_times of inode will be set with current system time which can be
+>> configured through 'date', so it's not safe to judge dnode block as
+>> garbage data depend on i_times.
+> 
+> This is not to detect garbage data, but to skip redundant unchanged inode.
 
-This bug could most easily be observed in a CONFIG_DEBUG_SG kernel
-because this allowed the BUG in sg_set_buf() to be triggered.
+Oops, seems 807b1e1c8e08 ("f2fs: do not recover from previous remained wrong
+dnodes") did't describe like that. But after reading the codes, it looks like
+the purpose of this change is to skip unchanged inode. So, commit log in
+original is incorrect, right?
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/crypto/keyinfo.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+Thanks,
 
-diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
-index 82f0285..67fb6d8 100644
---- a/fs/crypto/keyinfo.c
-+++ b/fs/crypto/keyinfo.c
-@@ -185,7 +185,7 @@ int get_crypt_info(struct inode *inode)
- 	struct crypto_skcipher *ctfm;
- 	const char *cipher_str;
- 	int keysize;
--	u8 raw_key[FS_MAX_KEY_SIZE];
-+	u8 *raw_key = NULL;
- 	int res;
- 
- 	res = fscrypt_initialize();
-@@ -238,6 +238,15 @@ int get_crypt_info(struct inode *inode)
- 	if (res)
- 		goto out;
- 
-+	/*
-+	 * This cannot be a stack buffer because it is passed to the scatterlist
-+	 * crypto API as part of key derivation.
-+	 */
-+	res = -ENOMEM;
-+	raw_key = kmalloc(FS_MAX_KEY_SIZE, GFP_NOFS);
-+	if (!raw_key)
-+		goto out;
-+
- 	if (fscrypt_dummy_context_enabled(inode)) {
- 		memset(raw_key, 0x42, FS_AES_256_XTS_KEY_SIZE);
- 		goto got_key;
-@@ -276,7 +285,8 @@ int get_crypt_info(struct inode *inode)
- 	if (res)
- 		goto out;
- 
--	memzero_explicit(raw_key, sizeof(raw_key));
-+	kzfree(raw_key);
-+	raw_key = NULL;
- 	if (cmpxchg(&inode->i_crypt_info, NULL, crypt_info) != NULL) {
- 		put_crypt_info(crypt_info);
- 		goto retry;
-@@ -287,7 +297,7 @@ int get_crypt_info(struct inode *inode)
- 	if (res == -ENOKEY)
- 		res = 0;
- 	put_crypt_info(crypt_info);
--	memzero_explicit(raw_key, sizeof(raw_key));
-+	kzfree(raw_key);
- 	return res;
- }
- 
--- 
-2.8.0.rc3.226.g39d4020
 
+------------------------------------------------------------------------------
+Developer Access Program for Intel Xeon Phi Processors
+Access to Intel Xeon Phi processor-based developer platforms.
+With one year of Intel Parallel Studio XE.
+Training and support from Colfax.
+Order your platform today. http://sdm.link/xeonphi
