@@ -1,40 +1,97 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: assign segments correctly for direct_io
-Date: Fri,  4 Nov 2016 15:56:50 -0700
-Message-ID: <20161104225651.4618-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 2/2] f2fs: remove checkpoint in f2fs_freeze
+Date: Fri,  4 Nov 2016 15:56:51 -0700
+Message-ID: <20161104225651.4618-2-jaegeuk@kernel.org>
+References: <20161104225651.4618-1-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20161104225651.4618-1-jaegeuk@kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Previously, we assigned CURSEG_WARM_DATA for direct_io, but if we have two or
-four logs, we do not use that type at all.
-Let's fix it.
+The generic freeze_super() calls sync_filesystems() before f2fs_freeze().
+So, basically we don't need to do checkpoint in f2fs_freeze(). But, in xfs/068,
+it triggers circular locking problem below due to gc_mutex for checkpoint.
+
+======================================================
+[ INFO: possible circular locking dependency detected ]
+4.9.0-rc1+ #132 Tainted: G           OE
+-------------------------------------------------------
+
+1. wait for __sb_start_write() by
+
+ [<ffffffff9845f353>] dump_stack+0x85/0xc2
+ [<ffffffff980e80bf>] print_circular_bug+0x1cf/0x230
+ [<ffffffff980eb4d0>] __lock_acquire+0x19e0/0x1bc0
+ [<ffffffff980ebdcb>] lock_acquire+0x11b/0x220
+ [<ffffffffc08c7c3b>] ? f2fs_drop_inode+0x9b/0x160 [f2fs]
+ [<ffffffff9826bdd0>] __sb_start_write+0x130/0x200
+ [<ffffffffc08c7c3b>] ? f2fs_drop_inode+0x9b/0x160 [f2fs]
+ [<ffffffffc08c7c3b>] f2fs_drop_inode+0x9b/0x160 [f2fs]
+ [<ffffffff98289991>] iput+0x171/0x2c0
+ [<ffffffffc08cfccf>] f2fs_sync_inode_meta+0x3f/0xf0 [f2fs]
+ [<ffffffffc08cfe04>] block_operations+0x84/0x110 [f2fs]
+ [<ffffffffc08cff78>] write_checkpoint+0xe8/0xf20 [f2fs]
+ [<ffffffff980e979d>] ? trace_hardirqs_on+0xd/0x10
+ [<ffffffffc08c6de9>] ? f2fs_sync_fs+0x79/0x190 [f2fs]
+ [<ffffffff9803e9d9>] ? sched_clock+0x9/0x10
+ [<ffffffffc08c6de9>] ? f2fs_sync_fs+0x79/0x190 [f2fs]
+ [<ffffffffc08c6df5>] f2fs_sync_fs+0x85/0x190 [f2fs]
+ [<ffffffff982a4f90>] ? do_fsync+0x70/0x70
+ [<ffffffff982a4f90>] ? do_fsync+0x70/0x70
+ [<ffffffff982a4fb0>] sync_fs_one_sb+0x20/0x30
+ [<ffffffff9826ca3e>] iterate_supers+0xae/0x100
+ [<ffffffff982a50b5>] sys_sync+0x55/0x90
+ [<ffffffff9890b345>] entry_SYSCALL_64_fastpath+0x23/0xc6
+
+2. wait for sbi->gc_mutex by
+
+ [<ffffffff980ebdcb>] lock_acquire+0x11b/0x220
+ [<ffffffff989063d6>] mutex_lock_nested+0x76/0x3f0
+ [<ffffffffc08c6de9>] f2fs_sync_fs+0x79/0x190 [f2fs]
+ [<ffffffffc08c7a6c>] f2fs_freeze+0x1c/0x20 [f2fs]
+ [<ffffffff9826b6ef>] freeze_super+0xcf/0x190
+ [<ffffffff9827eebc>] do_vfs_ioctl+0x53c/0x6a0
+ [<ffffffff9827f099>] SyS_ioctl+0x79/0x90
+ [<ffffffff9890b345>] entry_SYSCALL_64_fastpath+0x23/0xc6
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 6ba4cd4..819209b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1501,8 +1501,12 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 	struct curseg_info *curseg;
- 	bool direct_io = (type == CURSEG_DIRECT_IO);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 12a4f3f..eca9aea 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -800,13 +800,17 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
  
--	type = direct_io ? CURSEG_WARM_DATA : type;
+ static int f2fs_freeze(struct super_block *sb)
+ {
+-	int err;
 -
-+	if (direct_io) {
-+		if (sbi->active_logs <= 4)
-+			type = CURSEG_HOT_DATA;
-+		else
-+			type = CURSEG_WARM_DATA;
-+	}
- 	curseg = CURSEG_I(sbi, type);
+ 	if (f2fs_readonly(sb))
+ 		return 0;
  
- 	mutex_lock(&curseg->curseg_mutex);
+-	err = f2fs_sync_fs(sb, 1);
+-	return err;
++	/* IO error happened before */
++	if (unlikely(f2fs_cp_error(F2FS_SB(sb))))
++		return -EIO;
++
++	/* must be clean, since sync_filesystem() was already called */
++	if (is_sbi_flag_set(F2FS_SB(sb), SBI_IS_DIRTY))
++		return -EINVAL;
++	return 0;
+ }
+ 
+ static int f2fs_unfreeze(struct super_block *sb)
+@@ -2152,3 +2156,4 @@ module_exit(exit_f2fs_fs)
+ MODULE_AUTHOR("Samsung Electronics's Praesto Team");
+ MODULE_DESCRIPTION("Flash Friendly File System");
+ MODULE_LICENSE("GPL");
++
 -- 
 2.8.3
+
