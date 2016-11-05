@@ -1,58 +1,53 @@
 From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 3/3 v2] f2fs: keep dirty inodes selectively for
- checkpoint
-Date: Sat, 5 Nov 2016 10:44:07 +0800
-Message-ID: <490443dd-f293-930b-55a8-0f94981e6e4b@kernel.org>
-References: <20161017215645.435-1-jaegeuk@kernel.org>
- <20161017215645.435-3-jaegeuk@kernel.org> <20161020022609.GA39988@jaegeuk>
+Subject: Re: [PATCH 2/2] f2fs: don't skip recovering inode depend on i_times
+Date: Sat, 5 Nov 2016 11:12:00 +0800
+Message-ID: <840e19dc-e2bf-b2f8-3256-ba49a3cc1ead@kernel.org>
+References: <20161103162656.2982-1-chao@kernel.org>
+ <20161103162656.2982-2-chao@kernel.org> <20161103180233.GC76264@jaegeuk>
+ <b58aaf87-8ce4-12b1-c535-ea48d8eeee59@huawei.com>
+ <20161104225352.GA3339@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161020022609.GA39988@jaegeuk>
+In-Reply-To: <20161104225352.GA3339@jaegeuk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, liushuoran@huawei.com
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2016/10/20 10:26, Jaegeuk Kim wrote:
-> Change log from v1:
->  o avoid performance regression
+On 2016/11/5 6:53, Jaegeuk Kim wrote:
+> On Fri, Nov 04, 2016 at 04:30:09PM +0800, Chao Yu wrote:
+>> On 2016/11/4 2:02, Jaegeuk Kim wrote:
+>>> On Fri, Nov 04, 2016 at 12:26:56AM +0800, Chao Yu wrote:
+>>>> From: Chao Yu <yuchao0@huawei.com>
+>>>>
+>>>> i_times of inode will be set with current system time which can be
+>>>> configured through 'date', so it's not safe to judge dnode block as
+>>>> garbage data depend on i_times.
+>>>
+>>> This is not to detect garbage data, but to skip redundant unchanged inode.
+>>
+>> Oops, seems 807b1e1c8e08 ("f2fs: do not recover from previous remained wrong
+>> dnodes") did't describe like that. But after reading the codes, it looks like
+>> the purpose of this change is to skip unchanged inode. So, commit log in
+>> original is incorrect, right?
 > 
->>From b34a3d3c4c3fa2d6e000acc99bc5216a247bd6cb Mon Sep 17 00:00:00 2001
-> From: Jaegeuk Kim <jaegeuk@kernel.org>
-> Date: Fri, 14 Oct 2016 11:51:23 -0700
-> Subject: [PATCH] f2fs: keep dirty inodes selectively for checkpoint
-> 
-> This is to avoid no free segment bug during checkpoint caused by a number of
-> dirty inodes.
-> 
-> The case was reported by Chao like this.
-> 
-> 1. mount with lazytime option
-> 2. fragment space
-> 3. touch all files in the image
-> 4. umount
-> 
-> In this case, we actually don't need to flush dirty inode to inode page during
-> checkpoint.
-> 
-> Reported-by: Chao Yu <chao@kernel.org>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Oh, right. This indicats both of purposes: stale data and detecting same inodes.
 
-Good job! IMO, main job of checkpoint is to keep filesystem being consistent,
-not flush dirty datas of vfs/fs as much as possible, if there are some
-restrictions for the interface like fsync, syncfs, sync, the caller of
-checkpoint() should do related job like marking lazytime inode I_DIRTY_SYNC or
-flush last data in dirty inode into filesystem's cache, and so on. :)
+Alright.
 
-BTW, can you change commit log a bit as below:
+> Let me just revert the original patch.
 
-1. mount with lazytime option
-2. fill 4k file until disk is full
-3. sync filesystem
-4. read all files in the image
-5. umount
+I can see that you have did reverting it in your git tree, but seems commit
+number is not right.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Could you please merge my updated v2 patch instead?
 
 Thanks,
+
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
