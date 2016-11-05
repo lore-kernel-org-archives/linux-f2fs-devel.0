@@ -1,65 +1,71 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 3/3 v2] f2fs: keep dirty inodes selectively
- for checkpoint
-Date: Sat, 5 Nov 2016 00:02:38 -0700
-Message-ID: <20161105070238.GB10986@jaegeuk>
-References: <20161017215645.435-1-jaegeuk@kernel.org>
- <20161017215645.435-3-jaegeuk@kernel.org>
- <20161020022609.GA39988@jaegeuk>
- <490443dd-f293-930b-55a8-0f94981e6e4b@kernel.org>
+From: Kent Overstreet <kent.overstreet@gmail.com>
+Subject: Re: [PATCH 1/2] fscrypto: don't use on-stack buffer for
+ filename encryption
+Date: Sat, 5 Nov 2016 07:13:49 -0800
+Message-ID: <20161105151349.e5ap547uno3hfit7@kmo-pixel>
+References: <1478210582-86338-1-git-send-email-ebiggers@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kent.overstreet@gmail.com>) id 1c32fP-0006BA-Kk
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 05 Nov 2016 15:13:59 +0000
+Received: from mail-pf0-f193.google.com ([209.85.192.193])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1c32fO-0005HF-S8
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 05 Nov 2016 15:13:59 +0000
+Received: by mail-pf0-f193.google.com with SMTP id y68so11070213pfb.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sat, 05 Nov 2016 08:13:58 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <490443dd-f293-930b-55a8-0f94981e6e4b@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <1478210582-86338-1-git-send-email-ebiggers@google.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Eric Biggers <ebiggers@google.com>
+Cc: tytso@mit.edu, richard@nod.at, linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org, luto@kernel.org, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, linux-ext4@vger.kernel.org
 
-On Sat, Nov 05, 2016 at 10:44:07AM +0800, Chao Yu wrote:
-> On 2016/10/20 10:26, Jaegeuk Kim wrote:
-> > Change log from v1:
-> >  o avoid performance regression
-> > 
-> >>From b34a3d3c4c3fa2d6e000acc99bc5216a247bd6cb Mon Sep 17 00:00:00 2001
-> > From: Jaegeuk Kim <jaegeuk@kernel.org>
-> > Date: Fri, 14 Oct 2016 11:51:23 -0700
-> > Subject: [PATCH] f2fs: keep dirty inodes selectively for checkpoint
-> > 
-> > This is to avoid no free segment bug during checkpoint caused by a number of
-> > dirty inodes.
-> > 
-> > The case was reported by Chao like this.
-> > 
-> > 1. mount with lazytime option
-> > 2. fragment space
-> > 3. touch all files in the image
-> > 4. umount
-> > 
-> > In this case, we actually don't need to flush dirty inode to inode page during
-> > checkpoint.
-> > 
-> > Reported-by: Chao Yu <chao@kernel.org>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+On Thu, Nov 03, 2016 at 03:03:01PM -0700, Eric Biggers wrote:
+> With the new (in 4.9) option to use a virtually-mapped stack
+> (CONFIG_VMAP_STACK), stack buffers cannot be used as input/output for
+> the scatterlist crypto API because they may not be directly mappable to
+> struct page.  For short filenames, fname_encrypt() was encrypting a
+> stack buffer holding the padded filename.  Fix it by encrypting the
+> filename in-place in the output buffer, thereby making the temporary
+> buffer unnecessary.
 > 
-> Good job! IMO, main job of checkpoint is to keep filesystem being consistent,
-> not flush dirty datas of vfs/fs as much as possible, if there are some
-> restrictions for the interface like fsync, syncfs, sync, the caller of
-> checkpoint() should do related job like marking lazytime inode I_DIRTY_SYNC or
-> flush last data in dirty inode into filesystem's cache, and so on. :)
+> This bug could most easily be observed in a CONFIG_DEBUG_SG kernel
+> because this allowed the BUG in sg_set_buf() to be triggered.
 > 
-> BTW, can you change commit log a bit as below:
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Okay, not a big deal.
+> -		alloc_buf = kmalloc(ciphertext_len, GFP_NOFS);
+> -		if (!alloc_buf)
+> -			return -ENOMEM;
+> -		workbuf = alloc_buf;
 
-> 
-> 1. mount with lazytime option
-> 2. fill 4k file until disk is full
-> 3. sync filesystem
-> 4. read all files in the image
-> 5. umount
-> 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> 
-> Thanks,
+Vmalloc memory does have struct pages - you just need to use vmalloc_to_page()
+instead of virt_to_page. Look at drivers/md/bcache/util.c bch_bio_map() if you
+want an example.
+
+It would be better to just fix the sg code to handle vmalloc memory, instead of
+adding a kmalloc() that can fail (and an error path that inevitably won't be
+tested).
+
+------------------------------------------------------------------------------
+Developer Access Program for Intel Xeon Phi Processors
+Access to Intel Xeon Phi processor-based developer platforms.
+With one year of Intel Parallel Studio XE.
+Training and support from Colfax.
+Order your platform today. http://sdm.link/xeonphi
