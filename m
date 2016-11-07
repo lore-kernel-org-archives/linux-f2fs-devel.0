@@ -1,81 +1,89 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] resize.f2fs: modify condition for resize
-Date: Mon, 7 Nov 2016 21:25:58 +0800
-Message-ID: <20161107132558.27636-1-heyunlei@huawei.com>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: [PATCH 2/2] fscrypto: don't use on-stack buffer for key
+ derivation
+Date: Mon, 7 Nov 2016 14:22:16 +0100
+Message-ID: <c6d016e1-2d3d-45cf-b7a6-e10a4434c1ea@nod.at>
+References: <1478210582-86338-1-git-send-email-ebiggers@google.com>
+ <1478210582-86338-2-git-send-email-ebiggers@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1c3jq2-0002hr-Dg
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Nov 2016 13:19:50 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c3jq0-0001He-Ih
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 07 Nov 2016 13:19:50 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huwei.com
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <1478210582-86338-2-git-send-email-ebiggers@google.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Eric Biggers <ebiggers@google.com>, linux-fsdevel@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org, tytso@mit.edu, jaegeuk@kernel.org, luto@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-it better to decide resize or not by sector num.
+On 03.11.2016 23:03, Eric Biggers wrote:
+> With the new (in 4.9) option to use a virtually-mapped stack
+> (CONFIG_VMAP_STACK), stack buffers cannot be used as input/output for
+> the scatterlist crypto API because they may not be directly mappable to
+> struct page.  get_crypt_info() was using a stack buffer to hold the
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fsck/main.c   | 4 ++--
- fsck/resize.c | 5 -----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+See 1/2. :-)
 
-diff --git a/fsck/main.c b/fsck/main.c
-index 7e8fdf3..64537cc 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -444,9 +444,9 @@ static int do_resize(struct f2fs_sb_info *sbi)
- 		return -1;
- 	}
- 
--	if (c.target_sectors ==
-+	if (c.target_sectors <=
- 			(get_sb(block_count) << get_sb(log_sectors_per_block))) {
--		ASSERT_MSG("Nothing to resize; it's same");
-+		ASSERT_MSG("Nothing to resize, now only support resize to expand\n");
- 		return -1;
- 	}
- 	return f2fs_resize(sbi);
-diff --git a/fsck/resize.c b/fsck/resize.c
-index 7691524..46aa30e 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -579,11 +579,6 @@ int f2fs_resize(struct f2fs_sb_info *sbi)
- 	end_blkaddr = (get_sb(segment_count_main) <<
- 			get_sb(log_blocks_per_seg)) + get_sb(main_blkaddr);
- 
--	if (old_main_blkaddr > new_main_blkaddr) {
--		MSG(0, "\tError: Support resize to expand only\n");
--		return -1;
--	}
--
- 	err = -EAGAIN;
- 	if (new_main_blkaddr < end_blkaddr) {
- 		err = f2fs_defragment(sbi, old_main_blkaddr, offset,
--- 
-2.10.1
+> output from the encryption operation used to derive the per-file key.
+> Fix it by using a heap buffer.
+> 
+> This bug could most easily be observed in a CONFIG_DEBUG_SG kernel
+> because this allowed the BUG in sg_set_buf() to be triggered.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/crypto/keyinfo.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
+> index 82f0285..67fb6d8 100644
+> --- a/fs/crypto/keyinfo.c
+> +++ b/fs/crypto/keyinfo.c
+> @@ -185,7 +185,7 @@ int get_crypt_info(struct inode *inode)
+>  	struct crypto_skcipher *ctfm;
+>  	const char *cipher_str;
+>  	int keysize;
+> -	u8 raw_key[FS_MAX_KEY_SIZE];
+> +	u8 *raw_key = NULL;
+>  	int res;
+>  
+>  	res = fscrypt_initialize();
+> @@ -238,6 +238,15 @@ int get_crypt_info(struct inode *inode)
+>  	if (res)
+>  		goto out;
+>  
+> +	/*
+> +	 * This cannot be a stack buffer because it is passed to the scatterlist
+> +	 * crypto API as part of key derivation.
+> +	 */
+> +	res = -ENOMEM;
+> +	raw_key = kmalloc(FS_MAX_KEY_SIZE, GFP_NOFS);
+> +	if (!raw_key)
+> +		goto out;
+> +
+>  	if (fscrypt_dummy_context_enabled(inode)) {
+>  		memset(raw_key, 0x42, FS_AES_256_XTS_KEY_SIZE);
+>  		goto got_key;
+> @@ -276,7 +285,8 @@ int get_crypt_info(struct inode *inode)
+>  	if (res)
+>  		goto out;
+>  
+> -	memzero_explicit(raw_key, sizeof(raw_key));
+> +	kzfree(raw_key);
+> +	raw_key = NULL;
+>  	if (cmpxchg(&inode->i_crypt_info, NULL, crypt_info) != NULL) {
+>  		put_crypt_info(crypt_info);
+>  		goto retry;
+> @@ -287,7 +297,7 @@ int get_crypt_info(struct inode *inode)
+>  	if (res == -ENOKEY)
+>  		res = 0;
+>  	put_crypt_info(crypt_info);
+> -	memzero_explicit(raw_key, sizeof(raw_key));
+> +	kzfree(raw_key);
+>  	return res;
+>  }
 
+Reviewed-by: Richard Weinberger <richard@nod.at>
 
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today. http://sdm.link/xeonphi
+Thanks,
+//richard
+
