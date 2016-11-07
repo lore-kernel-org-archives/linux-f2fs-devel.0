@@ -1,144 +1,107 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH 1/2] fscrypto: don't use on-stack buffer for filename
- encryption
-Date: Mon, 7 Nov 2016 14:15:37 +0100
-Message-ID: <5e29849c-158b-0492-380e-7dc9fbef95df@nod.at>
-References: <1478210582-86338-1-git-send-email-ebiggers@google.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH v4] f2fs:return directly if block has been
+	removed from the victim
+Date: Mon, 7 Nov 2016 21:22:31 +0800
+Message-ID: <20161107132231.27399-1-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <1478210582-86338-1-git-send-email-ebiggers@google.com>
-Sender: linux-ext4-owner@vger.kernel.org
-To: Eric Biggers <ebiggers@google.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org, tytso@mit.edu, jaegeuk@kernel.org, luto@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1c3jmc-00062A-DY
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 07 Nov 2016 13:16:18 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1c3jmX-0006u4-CZ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 07 Nov 2016 13:16:18 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: heyunlei@huwei.com
 
-On 03.11.2016 23:03, Eric Biggers wrote:
-> With the new (in 4.9) option to use a virtually-mapped stack
-> (CONFIG_VMAP_STACK), stack buffers cannot be used as input/output for
-> the scatterlist crypto API because they may not be directly mappable to
-> struct page.  For short filenames, fname_encrypt() was encrypting a
+If one block has been to written to a new place, just return
+in move data process. This patch check it again with holding
+page lock.
 
-As Kent and Andy pointed out, they are but here are dragons.
-The pages can be non-linear and on platforms with different cache architectures
-extra flush operations may be needed.
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/gc.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-> stack buffer holding the padded filename.  Fix it by encrypting the
-> filename in-place in the output buffer, thereby making the temporary
-> buffer unnecessary.
-> 
-> This bug could most easily be observed in a CONFIG_DEBUG_SG kernel
-> because this allowed the BUG in sg_set_buf() to be triggered.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/crypto/fname.c | 53 +++++++++++++++++++++--------------------------------
->  1 file changed, 21 insertions(+), 32 deletions(-)
-> 
-> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-> index 9a28133..9b774f4 100644
-> --- a/fs/crypto/fname.c
-> +++ b/fs/crypto/fname.c
-> @@ -39,65 +39,54 @@ static void fname_crypt_complete(struct crypto_async_request *req, int res)
->  static int fname_encrypt(struct inode *inode,
->  			const struct qstr *iname, struct fscrypt_str *oname)
->  {
-> -	u32 ciphertext_len;
->  	struct skcipher_request *req = NULL;
->  	DECLARE_FS_COMPLETION_RESULT(ecr);
->  	struct fscrypt_info *ci = inode->i_crypt_info;
->  	struct crypto_skcipher *tfm = ci->ci_ctfm;
->  	int res = 0;
->  	char iv[FS_CRYPTO_BLOCK_SIZE];
-> -	struct scatterlist src_sg, dst_sg;
-> +	struct scatterlist sg;
->  	int padding = 4 << (ci->ci_flags & FS_POLICY_FLAGS_PAD_MASK);
-> -	char *workbuf, buf[32], *alloc_buf = NULL;
-> -	unsigned lim;
-> +	unsigned int lim;
-> +	unsigned int cryptlen;
->  
->  	lim = inode->i_sb->s_cop->max_namelen(inode);
->  	if (iname->len <= 0 || iname->len > lim)
->  		return -EIO;
->  
-> -	ciphertext_len = max(iname->len, (u32)FS_CRYPTO_BLOCK_SIZE);
-> -	ciphertext_len = round_up(ciphertext_len, padding);
-> -	ciphertext_len = min(ciphertext_len, lim);
-> +	/*
-> +	 * Copy the filename to the output buffer for encrypting in-place and
-> +	 * pad it with the needed number of NUL bytes.
-> +	 */
-> +	cryptlen = max_t(unsigned int, iname->len, FS_CRYPTO_BLOCK_SIZE);
-> +	cryptlen = round_up(cryptlen, padding);
-> +	cryptlen = min(cryptlen, lim);
-> +	memcpy(oname->name, iname->name, iname->len);
-> +	memset(oname->name + iname->len, 0, cryptlen - iname->len);
->  
-> -	if (ciphertext_len <= sizeof(buf)) {
-> -		workbuf = buf;
-> -	} else {
-> -		alloc_buf = kmalloc(ciphertext_len, GFP_NOFS);
-> -		if (!alloc_buf)
-> -			return -ENOMEM;
-> -		workbuf = alloc_buf;
-> -	}
-> +	/* Initialize the IV */
-> +	memset(iv, 0, FS_CRYPTO_BLOCK_SIZE);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 9c18917..a7b2c13 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -544,7 +544,8 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 	return true;
+ }
+ 
+-static void move_encrypted_block(struct inode *inode, block_t bidx)
++static void move_encrypted_block(struct inode *inode, block_t bidx,
++							unsigned int segno, int off)
+ {
+ 	struct f2fs_io_info fio = {
+ 		.sbi = F2FS_I_SB(inode),
+@@ -565,6 +566,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+ 	if (!page)
+ 		return;
+ 
++	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
++		goto out;
++
+ 	set_new_dnode(&dn, inode, NULL, NULL, 0);
+ 	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
+ 	if (err)
+@@ -645,7 +649,8 @@ static void move_encrypted_block(struct inode *inode, block_t bidx)
+ 	f2fs_put_page(page, 1);
+ }
+ 
+-static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
++static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
++							unsigned int segno, int off)
+ {
+ 	struct page *page;
+ 
+@@ -653,6 +658,9 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type)
+ 	if (IS_ERR(page))
+ 		return;
+ 
++	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
++		goto out;
++
+ 	if (gc_type == BG_GC) {
+ 		if (PageWriteback(page))
+ 			goto out;
+@@ -796,9 +804,9 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+ 			start_bidx = start_bidx_of_node(nofs, inode)
+ 								+ ofs_in_node;
+ 			if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+-				move_encrypted_block(inode, start_bidx);
++				move_encrypted_block(inode, start_bidx, segno, off);
+ 			else
+-				move_data_page(inode, start_bidx, gc_type);
++				move_data_page(inode, start_bidx, gc_type, segno, off);
+ 
+ 			if (locked) {
+ 				up_write(&fi->dio_rwsem[WRITE]);
+-- 
+2.10.1
 
-You can initialize it with iv = {0} at the beginning such that you don't
-need the memset here.
 
-> -	/* Allocate request */
-> +	/* Set up the encryption request */
->  	req = skcipher_request_alloc(tfm, GFP_NOFS);
->  	if (!req) {
->  		printk_ratelimited(KERN_ERR
-> -			"%s: crypto_request_alloc() failed\n", __func__);
-> -		kfree(alloc_buf);
-> +			"%s: skcipher_request_alloc() failed\n", __func__);
->  		return -ENOMEM;
->  	}
->  	skcipher_request_set_callback(req,
->  			CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
->  			fname_crypt_complete, &ecr);
-> +	sg_init_one(&sg, oname->name, cryptlen);
-> +	skcipher_request_set_crypt(req, &sg, &sg, cryptlen, iv);
->  
-> -	/* Copy the input */
-> -	memcpy(workbuf, iname->name, iname->len);
-> -	if (iname->len < ciphertext_len)
-> -		memset(workbuf + iname->len, 0, ciphertext_len - iname->len);
-> -
-> -	/* Initialize IV */
-> -	memset(iv, 0, FS_CRYPTO_BLOCK_SIZE);
-> -
-> -	/* Create encryption request */
-> -	sg_init_one(&src_sg, workbuf, ciphertext_len);
-> -	sg_init_one(&dst_sg, oname->name, ciphertext_len);
-> -	skcipher_request_set_crypt(req, &src_sg, &dst_sg, ciphertext_len, iv);
-> +	/* Do the encryption */
->  	res = crypto_skcipher_encrypt(req);
->  	if (res == -EINPROGRESS || res == -EBUSY) {
-> +		/* Request is being completed asynchronously; wait for it */
->  		wait_for_completion(&ecr.completion);
->  		res = ecr.res;
->  	}
-> -	kfree(alloc_buf);
->  	skcipher_request_free(req);
->  	if (res < 0) {
->  		printk_ratelimited(KERN_ERR
-> @@ -105,7 +94,7 @@ static int fname_encrypt(struct inode *inode,
->  		return res;
->  	}
->  
-> -	oname->len = ciphertext_len;
-> +	oname->len = cryptlen;
->  	return 0;
->  }
-
-Reviewed-by: Richard Weinberger <richard@nod.at>
-
-Thanks,
-//richard
+------------------------------------------------------------------------------
+Developer Access Program for Intel Xeon Phi Processors
+Access to Intel Xeon Phi processor-based developer platforms.
+With one year of Intel Parallel Studio XE.
+Training and support from Colfax.
+Order your platform today. http://sdm.link/xeonphi
