@@ -1,1208 +1,675 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs-tools: support multiple devices
-Date: Wed,  9 Nov 2016 12:56:38 -0800
-Message-ID: <20161109205638.69997-1-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1c4ZvR-0001Om-To
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Nov 2016 20:56:53 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c4ZvP-00033R-6G
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Nov 2016 20:56:53 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs: support multiple devices
+Date: Wed,  9 Nov 2016 12:56:53 -0800
+Message-ID: <20161109205653.70061-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds an option to specify multiple devices for an f2fs instance.
+This patch implements multiple devices support for f2fs.
+Given multiple devices by mkfs.f2fs, f2fs shows them entirely as one big
+volume under one f2fs instance.
 
-Up to 7 devices in addition to the default device can be added.
+Internal block management is very simple, but we will modify block allocation
+and background GC policy to boost IO speed by exploiting them accoording to
+each device speed.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fsck/main.c              |   4 +-
- fsck/mount.c             |  34 +++++++++-
- include/f2fs_fs.h        |  57 +++++++++++-----
- lib/libf2fs.c            | 170 ++++++++++++++++++++++++++++++++---------------
- lib/libf2fs_io.c         |  62 +++++++++++++----
- lib/libf2fs_zoned.c      |  84 ++++++++++++-----------
- man/mkfs.f2fs.8          |   8 +++
- mkfs/f2fs_format.c       |  52 ++++++++++++---
- mkfs/f2fs_format_main.c  |  29 +++++++-
- mkfs/f2fs_format_utils.c |  21 ++++--
- mkfs/f2fs_format_utils.h |   1 +
- 11 files changed, 382 insertions(+), 140 deletions(-)
+ fs/f2fs/data.c          |  55 ++++++++++++++++---
+ fs/f2fs/f2fs.h          |  29 ++++++++--
+ fs/f2fs/segment.c       | 119 +++++++++++++++++++++++++++++------------
+ fs/f2fs/super.c         | 138 ++++++++++++++++++++++++++++++++++++++----------
+ include/linux/f2fs_fs.h |  10 +++-
+ 5 files changed, 277 insertions(+), 74 deletions(-)
 
-diff --git a/fsck/main.c b/fsck/main.c
-index 64537cc..39ef8d3 100644
---- a/fsck/main.c
-+++ b/fsck/main.c
-@@ -301,7 +301,7 @@ void f2fs_parse_options(int argc, char *argv[])
- 		else if (c.func == SLOAD)
- 			sload_usage();
- 	}
--	c.device_name = argv[optind];
-+	c.devices[0].path = strdup(argv[optind]);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 47ded0c..e2be24e 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -88,6 +88,46 @@ static void f2fs_write_end_io(struct bio *bio)
  }
  
- static void do_fsck(struct f2fs_sb_info *sbi)
-@@ -474,7 +474,7 @@ int main(int argc, char **argv)
+ /*
++ * Return true, if pre_bio's bdev is same as its target device.
++ */
++struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
++				block_t blk_addr, struct bio *bio)
++{
++	struct block_device *bdev = sbi->sb->s_bdev;
++	int i;
++
++	for (i = 0; i < sbi->s_ndevs; i++) {
++		if (FDEV(i).start_blk <= blk_addr &&
++					FDEV(i).end_blk >= blk_addr) {
++			blk_addr -= FDEV(i).start_blk;
++			bdev = FDEV(i).bdev;
++			break;
++		}
++	}
++	if (bio) {
++		bio->bi_bdev = bdev;
++		bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blk_addr);
++	}
++	return bdev;
++}
++
++int f2fs_target_device_index(struct f2fs_sb_info *sbi, block_t blkaddr)
++{
++	int i;
++
++	for (i = 0; i < sbi->s_ndevs; i++)
++		if (FDEV(i).start_blk <= blkaddr && FDEV(i).end_blk >= blkaddr)
++			return i;
++	return 0;
++}
++
++static bool __same_bdev(struct f2fs_sb_info *sbi,
++				block_t blk_addr, struct bio *bio)
++{
++	return f2fs_target_device(sbi, blk_addr, NULL) == bio->bi_bdev;
++}
++
++/*
+  * Low-level block read/write IO operations.
+  */
+ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
+@@ -97,8 +137,7 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
  
- 	f2fs_parse_options(argc, argv);
+ 	bio = f2fs_bio_alloc(npages);
  
--	if (f2fs_dev_is_umounted() < 0) {
-+	if (f2fs_devs_are_umounted() < 0) {
- 		if (!c.ro || c.func == DEFRAG) {
- 			MSG(0, "\tError: Not available on mounted device!\n");
- 			return -1;
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 9fcb008..6c29a1a 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -400,7 +400,7 @@ int sanity_check_raw_super(struct f2fs_super_block *sb, u64 offset)
- 		return -1;
+-	bio->bi_bdev = sbi->sb->s_bdev;
+-	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blk_addr);
++	f2fs_target_device(sbi, blk_addr, bio);
+ 	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
+ 	bio->bi_private = is_read ? NULL : sbi;
  
- 	/* Check zoned block device feature */
--	if (c.zoned_model == F2FS_ZONED_HM &&
-+	if (c.devices[0].zoned_model == F2FS_ZONED_HM &&
- 			!(sb->feature & cpu_to_le32(F2FS_FEATURE_BLKZONED))) {
- 		MSG(0, "\tMissing zoned block device feature\n");
- 		return -1;
-@@ -470,6 +470,7 @@ int init_sb_info(struct f2fs_sb_info *sbi)
+@@ -273,7 +312,8 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+ 	down_write(&io->io_rwsem);
+ 
+ 	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+-	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags)))
++	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
++			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
+@@ -965,7 +1005,6 @@ static struct bio *f2fs_grab_bio(struct inode *inode, block_t blkaddr,
  {
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	u64 total_sectors;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct fscrypt_ctx *ctx = NULL;
+-	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct bio *bio;
+ 
+ 	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode)) {
+@@ -983,8 +1022,7 @@ static struct bio *f2fs_grab_bio(struct inode *inode, block_t blkaddr,
+ 			fscrypt_release_ctx(ctx);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+-	bio->bi_bdev = bdev;
+-	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blkaddr);
++	f2fs_target_device(sbi, blkaddr, bio);
+ 	bio->bi_end_io = f2fs_read_end_io;
+ 	bio->bi_private = ctx;
+ 
+@@ -1079,7 +1117,8 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
+ 		 * This page will go to BIO.  Do we need to send this
+ 		 * BIO off first?
+ 		 */
+-		if (bio && (last_block_in_bio != block_nr - 1)) {
++		if (bio && (last_block_in_bio != block_nr - 1 ||
++			!__same_bdev(F2FS_I_SB(inode), block_nr, bio))) {
+ submit_and_realloc:
+ 			__submit_bio(F2FS_I_SB(inode), bio, DATA);
+ 			bio = NULL;
+@@ -1738,6 +1777,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 		return 0;
+ 	if (test_opt(F2FS_I_SB(inode), LFS))
+ 		return 0;
++	if (F2FS_I_SB(inode)->s_ndevs)
++		return 0;
+ 
+ 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9650514..1737c45 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -730,6 +730,20 @@ struct f2fs_bio_info {
+ 	struct rw_semaphore io_rwsem;	/* blocking op for bio */
+ };
+ 
++#define FDEV(i)				(sbi->devs[i])
++#define RDEV(i)				(raw_super->devs[i])
++struct f2fs_dev_info {
++	struct block_device *bdev;
++	char path[MAX_PATH_LEN];
++	unsigned int total_segments;
++	block_t start_blk;
++	block_t end_blk;
++#ifdef CONFIG_BLK_DEV_ZONED
++	unsigned int nr_blkz;			/* Total number of zones */
++	u8 *blkz_type;				/* Array of zones type */
++#endif
++};
++
+ enum inode_type {
+ 	DIR_INODE,			/* for dirty dir inode */
+ 	FILE_INODE,			/* for dirty regular/symlink inode */
+@@ -778,10 +792,8 @@ struct f2fs_sb_info {
+ #endif
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-	unsigned int nr_blkz;			/* Total number of zones */
+ 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+ 	unsigned int log_blocks_per_blkz;	/* log2 F2FS blocks per zone */
+-	u8 *blkz_type;				/* Array of zones type */
+ #endif
+ 
+ 	/* for node-related operations */
+@@ -897,6 +909,8 @@ struct f2fs_sb_info {
+ 
+ 	/* For shrinker support */
+ 	struct list_head s_list;
++	int s_ndevs;				/* number of devices */
++	struct f2fs_dev_info *devs;		/* for device list */
+ 	struct mutex umount_mutex;
+ 	unsigned int shrinker_run_no;
+ 
+@@ -2159,6 +2173,9 @@ void f2fs_submit_merged_bio_cond(struct f2fs_sb_info *, struct inode *,
+ void f2fs_flush_merged_bios(struct f2fs_sb_info *);
+ int f2fs_submit_page_bio(struct f2fs_io_info *);
+ void f2fs_submit_page_mbio(struct f2fs_io_info *);
++struct block_device *f2fs_target_device(struct f2fs_sb_info *,
++				block_t, struct bio *);
++int f2fs_target_device_index(struct f2fs_sb_info *, block_t);
+ void set_data_blkaddr(struct dnode_of_data *);
+ void f2fs_update_data_blkaddr(struct dnode_of_data *, block_t);
+ int reserve_new_blocks(struct dnode_of_data *, blkcnt_t);
+@@ -2446,11 +2463,15 @@ static inline int f2fs_sb_mounted_blkzoned(struct super_block *sb)
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+ static inline int get_blkz_type(struct f2fs_sb_info *sbi,
+-				block_t blkaddr)
++			struct block_device *bdev, block_t blkaddr)
+ {
+ 	unsigned int zno = blkaddr >> sbi->log_blocks_per_blkz;
 +	int i;
  
- 	sbi->log_sectors_per_block = get_sb(log_sectors_per_block);
- 	sbi->log_blocksize = get_sb(log_blocksize);
-@@ -486,6 +487,37 @@ int init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->meta_ino_num = get_sb(meta_ino);
- 	sbi->cur_victim_sec = NULL_SEGNO;
+-	return sbi->blkz_type[zno];
++	for (i = 0; i < sbi->s_ndevs; i++)
++		if (FDEV(i).bdev == bdev)
++			return FDEV(i).blkz_type[zno];
++	return -EINVAL;
+ }
+ #endif
  
-+	for (i = 0; i < MAX_DEVICES; i++) {
-+		if (!sb->devs[i].path[0])
-+			break;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7fb7dd3..ef727d1 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -403,6 +403,33 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 	}
+ }
+ 
++static int __submit_flush_wait(struct block_device *bdev)
++{
++	struct bio *bio = f2fs_bio_alloc(0);
++	int ret;
 +
-+		if (i) {
-+			c.devices[i].path = strdup((char *)sb->devs[i].path);
-+			if (get_device_info(i))
-+				ASSERT(0);
-+		} else {
-+			ASSERT(!strcmp((char *)sb->devs[i].path,
-+						(char *)c.devices[i].path));
++	bio_set_op_attrs(bio, REQ_OP_WRITE, WRITE_FLUSH);
++	bio->bi_bdev = bdev;
++	ret = submit_bio_wait(bio);
++	bio_put(bio);
++	return ret;
++}
++
++static int submit_flush_wait(struct f2fs_sb_info *sbi)
++{
++	int ret = __submit_flush_wait(sbi->sb->s_bdev);
++	int i;
++
++	if (sbi->s_ndevs && !ret) {
++		for (i = 1; i < sbi->s_ndevs; i++) {
++			ret = __submit_flush_wait(FDEV(i).bdev);
++			if (ret)
++				break;
++		}
++	}
++	return ret;
++}
++
+ static int issue_flush_thread(void *data)
+ {
+ 	struct f2fs_sb_info *sbi = data;
+@@ -413,25 +440,18 @@ static int issue_flush_thread(void *data)
+ 		return 0;
+ 
+ 	if (!llist_empty(&fcc->issue_list)) {
+-		struct bio *bio;
+ 		struct flush_cmd *cmd, *next;
+ 		int ret;
+ 
+-		bio = f2fs_bio_alloc(0);
+-
+ 		fcc->dispatch_list = llist_del_all(&fcc->issue_list);
+ 		fcc->dispatch_list = llist_reverse_order(fcc->dispatch_list);
+ 
+-		bio->bi_bdev = sbi->sb->s_bdev;
+-		bio_set_op_attrs(bio, REQ_OP_WRITE, WRITE_FLUSH);
+-		ret = submit_bio_wait(bio);
+-
++		ret = submit_flush_wait(sbi);
+ 		llist_for_each_entry_safe(cmd, next,
+ 					  fcc->dispatch_list, llnode) {
+ 			cmd->ret = ret;
+ 			complete(&cmd->wait);
+ 		}
+-		bio_put(bio);
+ 		fcc->dispatch_list = NULL;
+ 	}
+ 
+@@ -452,15 +472,11 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi)
+ 		return 0;
+ 
+ 	if (!test_opt(sbi, FLUSH_MERGE) || !atomic_read(&fcc->submit_flush)) {
+-		struct bio *bio = f2fs_bio_alloc(0);
+ 		int ret;
+ 
+ 		atomic_inc(&fcc->submit_flush);
+-		bio->bi_bdev = sbi->sb->s_bdev;
+-		bio_set_op_attrs(bio, REQ_OP_WRITE, WRITE_FLUSH);
+-		ret = submit_bio_wait(bio);
++		ret = submit_flush_wait(sbi);
+ 		atomic_dec(&fcc->submit_flush);
+-		bio_put(bio);
+ 		return ret;
+ 	}
+ 
+@@ -637,14 +653,18 @@ static void f2fs_submit_bio_wait_endio(struct bio *bio)
+ 
+ /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+-				block_t blkstart, block_t blklen)
++		struct block_device *bdev, block_t blkstart, block_t blklen)
+ {
+-	struct block_device *bdev = sbi->sb->s_bdev;
+ 	struct bio *bio = NULL;
+ 	int err;
+ 
+ 	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
+ 
++	if (sbi->s_ndevs) {
++		int devi = f2fs_target_device_index(sbi, blkstart);
++
++		blkstart -= FDEV(devi).start_blk;
++	}
+ 	err = __blkdev_issue_discard(bdev,
+ 				SECTOR_FROM_BLOCK(blkstart),
+ 				SECTOR_FROM_BLOCK(blklen),
+@@ -662,18 +682,24 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+-					block_t blkstart, block_t blklen)
++static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
++		struct block_device *bdev, block_t blkstart, block_t blklen)
+ {
+-	sector_t sector = SECTOR_FROM_BLOCK(blkstart);
+ 	sector_t nr_sects = SECTOR_FROM_BLOCK(blklen);
+-	struct block_device *bdev = sbi->sb->s_bdev;
++	sector_t sector;
++	int devi = 0;
+ 
+-	if (nr_sects != bdev_zone_size(bdev)) {
++	if (sbi->s_ndevs) {
++		devi = f2fs_target_device_index(sbi, blkstart);
++		blkstart -= FDEV(devi).start_blk;
++	}
++	sector = SECTOR_FROM_BLOCK(blkstart);
++
++	if (sector % bdev_zone_size(bdev) || nr_sects != bdev_zone_size(bdev)) {
+ 		f2fs_msg(sbi->sb, KERN_INFO,
+-			 "Unaligned discard attempted (sector %llu + %llu)",
+-			 (unsigned long long)sector,
+-			 (unsigned long long)nr_sects);
++			"(%d) %s: Unaligned discard attempted (block %x + %x)",
++			devi, sbi->s_ndevs ? FDEV(devi).path: "",
++			blkstart, blklen);
+ 		return -EIO;
+ 	}
+ 
+@@ -682,14 +708,12 @@ static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 	 * use regular discard if the drive supports it. For sequential
+ 	 * zones, reset the zone write pointer.
+ 	 */
+-	switch (get_blkz_type(sbi, blkstart)) {
++	switch (get_blkz_type(sbi, bdev, blkstart)) {
+ 
+ 	case BLK_ZONE_TYPE_CONVENTIONAL:
+ 		if (!blk_queue_discard(bdev_get_queue(bdev)))
+ 			return 0;
+-		return __f2fs_issue_discard_async(sbi, blkstart,
+-						  blklen);
+-
++		return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
+ 	case BLK_ZONE_TYPE_SEQWRITE_REQ:
+ 	case BLK_ZONE_TYPE_SEQWRITE_PREF:
+ 		trace_f2fs_issue_reset_zone(sbi->sb, blkstart);
+@@ -702,14 +726,45 @@ static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ }
+ #endif
+ 
++static int __issue_discard_async(struct f2fs_sb_info *sbi,
++		struct block_device *bdev, block_t blkstart, block_t blklen)
++{
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (f2fs_sb_mounted_blkzoned(sbi->sb) &&
++				bdev_zoned_model(bdev) != BLK_ZONED_NONE)
++		return __f2fs_issue_discard_zone(sbi, bdev, blkstart, blklen);
++#endif
++	return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
++}
++
+ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
+ 				block_t blkstart, block_t blklen)
+ {
++	sector_t start = blkstart, len = 0;
++	struct block_device *bdev;
+ 	struct seg_entry *se;
+ 	unsigned int offset;
+ 	block_t i;
++	int err = 0;
++
++	bdev = f2fs_target_device(sbi, blkstart, NULL);
++
++	for (i = blkstart; i < blkstart + blklen; i++, len++) {
++		if (i != start) {
++			struct block_device *bdev2 =
++				f2fs_target_device(sbi, i, NULL);
++
++			if (bdev2 != bdev) {
++				err = __issue_discard_async(sbi, bdev,
++						start, len);
++				if (err)
++					return err;
++				bdev = bdev2;
++				start = i;
++				len = 0;
++			}
++		}
+ 
+-	for (i = blkstart; i < blkstart + blklen; i++) {
+ 		se = get_seg_entry(sbi, GET_SEGNO(sbi, i));
+ 		offset = GET_BLKOFF_FROM_SEG0(sbi, i);
+ 
+@@ -717,11 +772,9 @@ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
+ 			sbi->discard_blks--;
+ 	}
+ 
+-#ifdef CONFIG_BLK_DEV_ZONED
+-	if (f2fs_sb_mounted_blkzoned(sbi->sb))
+-		return f2fs_issue_discard_zone(sbi, blkstart, blklen);
+-#endif
+-	return __f2fs_issue_discard_async(sbi, blkstart, blklen);
++	if (len)
++		err = __issue_discard_async(sbi, bdev, start, len);
++	return err;
+ }
+ 
+ static void __add_discard_entry(struct f2fs_sb_info *sbi,
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index eca9aea..4ccbb86 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -713,6 +713,19 @@ static void destroy_percpu_info(struct f2fs_sb_info *sbi)
+ 	percpu_counter_destroy(&sbi->total_valid_inode_count);
+ }
+ 
++static void destroy_device_list(struct f2fs_sb_info *sbi)
++{
++	int i;
++
++	for (i = 0; i < sbi->s_ndevs; i++) {
++		blkdev_put(FDEV(i).bdev, FMODE_EXCL);
++#ifdef CONFIG_BLK_DEV_ZONED
++		kfree(FDEV(i).blkz_type);
++#endif
++	}
++	kfree(sbi->devs);
++}
++
+ static void f2fs_put_super(struct super_block *sb)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+@@ -773,6 +786,8 @@ static void f2fs_put_super(struct super_block *sb)
+ 		crypto_free_shash(sbi->s_chksum_driver);
+ 	kfree(sbi->raw_super);
+ 
++	destroy_device_list(sbi);
++
+ 	destroy_percpu_info(sbi);
+ 	kfree(sbi);
+ }
+@@ -1516,9 +1531,9 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-static int init_blkz_info(struct f2fs_sb_info *sbi)
++static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
+ {
+-	struct block_device *bdev = sbi->sb->s_bdev;
++	struct block_device *bdev = FDEV(devi).bdev;
+ 	sector_t nr_sectors = bdev->bd_part->nr_sects;
+ 	sector_t sector = 0;
+ 	struct blk_zone *zones;
+@@ -1529,15 +1544,21 @@ static int init_blkz_info(struct f2fs_sb_info *sbi)
+ 	if (!f2fs_sb_mounted_blkzoned(sbi->sb))
+ 		return 0;
+ 
++	if (sbi->blocks_per_blkz && sbi->blocks_per_blkz !=
++				SECTOR_TO_BLOCK(bdev_zone_size(bdev)))
++		return -EINVAL;
+ 	sbi->blocks_per_blkz = SECTOR_TO_BLOCK(bdev_zone_size(bdev));
++	if (sbi->log_blocks_per_blkz && sbi->log_blocks_per_blkz !=
++				__ilog2_u32(sbi->blocks_per_blkz))
++		return -EINVAL;
+ 	sbi->log_blocks_per_blkz = __ilog2_u32(sbi->blocks_per_blkz);
+-	sbi->nr_blkz = SECTOR_TO_BLOCK(nr_sectors) >>
+-		sbi->log_blocks_per_blkz;
++	FDEV(devi).nr_blkz = SECTOR_TO_BLOCK(nr_sectors) >>
++					sbi->log_blocks_per_blkz;
+ 	if (nr_sectors & (bdev_zone_size(bdev) - 1))
+-		sbi->nr_blkz++;
++		FDEV(devi).nr_blkz++;
+ 
+-	sbi->blkz_type = kmalloc(sbi->nr_blkz, GFP_KERNEL);
+-	if (!sbi->blkz_type)
++	FDEV(devi).blkz_type = kmalloc(FDEV(devi).nr_blkz, GFP_KERNEL);
++	if (!FDEV(devi).blkz_type)
+ 		return -ENOMEM;
+ 
+ #define F2FS_REPORT_NR_ZONES   4096
+@@ -1562,7 +1583,7 @@ static int init_blkz_info(struct f2fs_sb_info *sbi)
+ 		}
+ 
+ 		for (i = 0; i < nr_zones; i++) {
+-			sbi->blkz_type[n] = zones[i].type;
++			FDEV(devi).blkz_type[n] = zones[i].type;
+ 			sector += zones[i].len;
+ 			n++;
+ 		}
+@@ -1666,6 +1687,77 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
+ 	return err;
+ }
+ 
++static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
++	int i;
++
++	for (i = 0; i < MAX_DEVICES; i++) {
++		if (!RDEV(i).path[0])
++			return 0;
++
++		if (i == 0) {
++			sbi->devs = kzalloc(sizeof(struct f2fs_dev_info) *
++						MAX_DEVICES, GFP_KERNEL);
++			if (!sbi->devs)
++				return -ENOMEM;
 +		}
 +
-+		c.devices[i].total_segments =
-+			le32_to_cpu(sb->devs[i].total_segments);
-+		if (i)
-+			c.devices[i].start_blkaddr =
-+				c.devices[i - 1].end_blkaddr + 1;
-+		c.devices[i].end_blkaddr = c.devices[i].start_blkaddr +
-+			c.devices[i].total_segments *
-+			c.blks_per_seg - 1;
-+		if (i == 0)
-+			c.devices[i].end_blkaddr += get_sb(segment0_blkaddr);
++		memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
++		FDEV(i).total_segments = le32_to_cpu(RDEV(i).total_segments);
++		if (i == 0) {
++			FDEV(i).start_blk = 0;
++			FDEV(i).end_blk = FDEV(i).start_blk +
++				(FDEV(i).total_segments <<
++				sbi->log_blocks_per_seg) - 1 +
++				le32_to_cpu(raw_super->segment0_blkaddr);
++		} else {
++			FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
++			FDEV(i).end_blk = FDEV(i).start_blk +
++				(FDEV(i).total_segments <<
++				sbi->log_blocks_per_seg) - 1;
++		}
 +
-+		c.ndevs = i + 1;
-+		MSG(0, "Info: Device[%d] : %s blkaddr = %"PRIx64"--%"PRIx64"\n",
-+				i, c.devices[i].path,
-+				c.devices[i].start_blkaddr,
-+				c.devices[i].end_blkaddr);
++		FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path,
++					sbi->sb->s_mode, sbi->sb->s_type);
++		if (IS_ERR(FDEV(i).bdev))
++			return PTR_ERR(FDEV(i).bdev);
++
++		/* to release errored devices */
++		sbi->s_ndevs = i + 1;
++
++#ifdef CONFIG_BLK_DEV_ZONED
++		if (bdev_zoned_model(FDEV(i).bdev) == BLK_ZONED_HM &&
++				!f2fs_sb_mounted_blkzoned(sbi->sb)) {
++			f2fs_msg(sbi->sb, KERN_ERR,
++				"Zoned block device feature not enabled\n");
++			return -EINVAL;
++		}
++		if (bdev_zoned_model(FDEV(i).bdev) != BLK_ZONED_NONE) {
++			if (init_blkz_info(sbi, i)) {
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"Failed to initialize F2FS blkzone information");
++				return -EINVAL;
++			}
++			f2fs_msg(sbi->sb, KERN_INFO,
++				"Mount Device [%2d]: %20s, %8u, %8x - %8x (zone: %s)",
++				i, FDEV(i).path,
++				FDEV(i).total_segments,
++				FDEV(i).start_blk, FDEV(i).end_blk,
++				bdev_zoned_model(FDEV(i).bdev) == BLK_ZONED_HA ?
++				"Host-aware" : "Host-managed");
++			continue;
++		}
++#endif
++		f2fs_msg(sbi->sb, KERN_INFO,
++			"Mount Device [%2d]: %20s, %8u, %8x - %8x",
++				i, FDEV(i).path,
++				FDEV(i).total_segments,
++				FDEV(i).start_blk, FDEV(i).end_blk);
++	}
++	return 0;
++}
++
+ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ {
+ 	struct f2fs_sb_info *sbi;
+@@ -1724,15 +1816,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 			 "Zoned block device support is not enabled\n");
+ 		goto free_sb_buf;
+ 	}
+-#else
+-	if (bdev_zoned_model(sb->s_bdev) == BLK_ZONED_HM &&
+-	    !f2fs_sb_mounted_blkzoned(sb)) {
+-		f2fs_msg(sb, KERN_ERR,
+-			 "Zoned block device feature not enabled\n");
+-		goto free_sb_buf;
+-	}
+ #endif
+-
+ 	default_options(sbi);
+ 	/* parse mount options */
+ 	options = kstrdup((const char *)data, GFP_KERNEL);
+@@ -1802,6 +1886,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto free_meta_inode;
+ 	}
+ 
++	/* Initialize device list */
++	err = f2fs_scan_devices(sbi);
++	if (err) {
++		f2fs_msg(sb, KERN_ERR, "Failed to find devices");
++		goto free_devices;
 +	}
 +
- 	total_sectors = get_sb(block_count) << sbi->log_sectors_per_block;
- 	MSG(0, "Info: total FS sectors = %"PRIu64" (%"PRIu64" MB)\n",
- 				total_sectors, total_sectors >>
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 78ea939..6233452 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -212,6 +212,8 @@ static inline uint64_t bswap_64(uint64_t val)
- #define BITS_PER_BYTE		8
- #define F2FS_SUPER_MAGIC	0xF2F52010	/* F2FS Magic Number */
- #define CHECKSUM_OFFSET		4092
+ 	sbi->total_valid_node_count =
+ 				le32_to_cpu(sbi->ckpt->valid_node_count);
+ 	percpu_counter_set(&sbi->total_valid_inode_count,
+@@ -1820,15 +1911,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	init_ino_entry_info(sbi);
+ 
+-#ifdef CONFIG_BLK_DEV_ZONED
+-	err = init_blkz_info(sbi);
+-	if (err) {
+-		f2fs_msg(sb, KERN_ERR,
+-			"Failed to initialize F2FS blkzone information");
+-		goto free_blkz;
+-	}
+-#endif
+-
+ 	/* setup f2fs internal modules */
+ 	err = build_segment_manager(sbi);
+ 	if (err) {
+@@ -2007,10 +2089,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	destroy_node_manager(sbi);
+ free_sm:
+ 	destroy_segment_manager(sbi);
+-#ifdef CONFIG_BLK_DEV_ZONED
+-free_blkz:
+-	kfree(sbi->blkz_type);
+-#endif
++free_devices:
++	destroy_device_list(sbi);
+ 	kfree(sbi->ckpt);
+ free_meta_inode:
+ 	make_bad_inode(sbi->meta_inode);
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 422630b..cea41a1 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -52,10 +52,17 @@
+ 
+ #define VERSION_LEN	256
+ #define MAX_VOLUME_NAME		512
 +#define MAX_PATH_LEN		64
 +#define MAX_DEVICES		8
  
- #define F2FS_BYTES_TO_BLK(bytes)    ((bytes) >> F2FS_BLKSIZE_BITS)
- #define F2FS_BLKSIZE_BITS 12
-@@ -233,10 +235,28 @@ enum f2fs_config_func {
- 	SLOAD,
- };
- 
--struct f2fs_configuration {
-+struct device_info {
-+	char *path;
-+	int32_t fd;
- 	u_int32_t sector_size;
-+	u_int64_t total_sectors;	/* got by get_device_info */
-+	u_int64_t start_blkaddr;
-+	u_int64_t end_blkaddr;
-+	u_int32_t total_segments;
-+
-+	/* to handle zone block devices */
-+	int zoned_model;
-+	u_int32_t nr_zones;
-+	u_int32_t nr_rnd_zones;
-+	size_t zone_blocks;
-+};
-+
-+struct f2fs_configuration {
- 	u_int32_t reserved_segments;
- 	u_int32_t new_reserved_segments;
-+	int zoned_mode;
-+	int zoned_model;
-+	size_t zone_blocks;
- 	double overprovision;
- 	double new_overprovision;
- 	u_int32_t cur_seg[6];
-@@ -244,7 +264,10 @@ struct f2fs_configuration {
- 	u_int32_t secs_per_zone;
- 	u_int32_t segs_per_zone;
- 	u_int32_t start_sector;
-+	u_int32_t total_segments;
-+	u_int32_t sector_size;
- 	u_int64_t total_sectors;
-+	u_int64_t wanted_total_sectors;
- 	u_int64_t target_sectors;
- 	u_int32_t sectors_per_blk;
- 	u_int32_t blks_per_seg;
-@@ -253,9 +276,10 @@ struct f2fs_configuration {
- 	__u8 version[VERSION_LEN + 1];
- 	char *vol_label;
- 	int heap;
--	int32_t fd, kd;
-+	int32_t kd;
- 	int32_t dump_fd;
--	char *device_name;
-+	struct device_info devices[MAX_DEVICES];
-+	int ndevs;
- 	char *extension_list;
- 	const char *rootdev_name;
- 	int dbg_lv;
-@@ -278,13 +302,6 @@ struct f2fs_configuration {
- 	/* sload parameters */
- 	char *from_dir;
- 	char *mount_point;
--
--	/* to handle zone block devices */
--	int zoned_mode;
--	int zoned_model;
--	u_int32_t nr_zones;
--	u_int32_t nr_rnd_zones;
--	size_t zone_blocks;
- } __attribute__((packed));
- 
- #ifdef CONFIG_64BIT
-@@ -443,6 +460,11 @@ enum {
  /*
   * For superblock
   */
 +struct f2fs_device {
 +	__u8 path[MAX_PATH_LEN];
 +	__le32 total_segments;
-+} __attribute__((packed));
++} __packed;
 +
  struct f2fs_super_block {
  	__le32 magic;			/* Magic Number */
  	__le16 major_ver;		/* Major Version */
-@@ -481,7 +503,8 @@ struct f2fs_super_block {
+@@ -94,7 +101,8 @@ struct f2fs_super_block {
  	__le32 feature;			/* defined features */
  	__u8 encryption_level;		/* versioning level for encryption */
  	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
 -	__u8 reserved[871];		/* valid reserved region */
 +	struct f2fs_device devs[MAX_DEVICES];	/* device list */
 +	__u8 reserved[327];		/* valid reserved region */
- } __attribute__((packed));
+ } __packed;
  
  /*
-@@ -933,8 +956,10 @@ extern u_int32_t f2fs_cal_crc32(u_int32_t, void *, int);
- extern int f2fs_crc_valid(u_int32_t blk_crc, void *buf, int len);
- 
- extern void f2fs_init_configuration(void);
--extern int f2fs_dev_is_umounted(void);
-+extern int f2fs_devs_are_umounted(void);
-+extern int f2fs_dev_is_umounted(char *);
- extern int f2fs_get_device_info(void);
-+extern int get_device_info(int);
- extern void f2fs_finalize_device(void);
- 
- extern int dev_read(void *, __u64, size_t);
-@@ -1014,10 +1039,10 @@ blk_zone_cond_str(struct blk_zone *blkz)
- 
- #endif
- 
--extern void f2fs_get_zoned_model();
--extern int f2fs_get_zone_blocks();
--extern int f2fs_check_zones();
--extern int f2fs_reset_zones();
-+extern void f2fs_get_zoned_model(int);
-+extern int f2fs_get_zone_blocks(int);
-+extern int f2fs_check_zones(int);
-+extern int f2fs_reset_zones(int);
- 
- extern struct f2fs_configuration c;
- 
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 0485448..74d4d82 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -541,13 +541,25 @@ const char *get_rootdev()
-  */
- void f2fs_init_configuration(void)
- {
-+	int i;
-+
-+	c.ndevs = 1;
- 	c.total_sectors = 0;
--	c.sector_size = DEFAULT_SECTOR_SIZE;
-+	c.sector_size = 0;
- 	c.sectors_per_blk = DEFAULT_SECTORS_PER_BLOCK;
- 	c.blks_per_seg = DEFAULT_BLOCKS_PER_SEGMENT;
- 	c.rootdev_name = get_rootdev();
-+	c.wanted_total_sectors = -1;
- 	c.zoned_mode = 0;
--	c.zoned_model = F2FS_ZONED_NONE;
-+	c.zoned_model = 0;
-+	c.zone_blocks = 0;
-+
-+	for (i = 0; i < MAX_DEVICES; i++) {
-+		memset(&c.devices[i], 0, sizeof(struct device_info));
-+		c.devices[i].sector_size = DEFAULT_SECTOR_SIZE;
-+		c.devices[i].end_blkaddr = -1;
-+		c.devices[i].zoned_model = F2FS_ZONED_NONE;
-+	}
- 
- 	/* calculated by overprovision ratio */
- 	c.reserved_segments = 0;
-@@ -557,9 +569,9 @@ void f2fs_init_configuration(void)
- 	c.segs_per_zone = 1;
- 	c.heap = 1;
- 	c.vol_label = "";
--	c.device_name = NULL;
- 	c.trim = 1;
- 	c.ro = 0;
-+	c.kd = -1;
- }
- 
- static int is_mounted(const char *mpt, const char *device)
-@@ -584,26 +596,26 @@ static int is_mounted(const char *mpt, const char *device)
- 	return mnt ? 1 : 0;
- }
- 
--int f2fs_dev_is_umounted(void)
-+int f2fs_dev_is_umounted(char *path)
- {
- 	struct stat st_buf;
- 	int is_rootdev = 0;
- 	int ret = 0;
- 
--	if (c.rootdev_name && !strcmp(c.device_name, c.rootdev_name))
-+	if (c.rootdev_name && !strcmp(path, c.rootdev_name))
- 		is_rootdev = 1;
- 
- 	/*
- 	 * try with /proc/mounts fist to detect RDONLY.
- 	 * f2fs_stop_checkpoint makes RO in /proc/mounts while RW in /etc/mtab.
- 	 */
--	ret = is_mounted("/proc/mounts", c.device_name);
-+	ret = is_mounted("/proc/mounts", path);
- 	if (ret) {
- 		MSG(0, "Info: Mounted device!\n");
- 		return -1;
- 	}
- 
--	ret = is_mounted(MOUNTED, c.device_name);
-+	ret = is_mounted(MOUNTED, path);
- 	if (ret) {
- 		MSG(0, "Info: Mounted device!\n");
- 		return -1;
-@@ -626,8 +638,8 @@ int f2fs_dev_is_umounted(void)
- 	 * If f2fs is umounted with -l, the process can still use
- 	 * the file system. In this case, we should not format.
- 	 */
--	if (stat(c.device_name, &st_buf) == 0 && S_ISBLK(st_buf.st_mode)) {
--		int fd = open(c.device_name, O_RDONLY | O_EXCL);
-+	if (stat(path, &st_buf) == 0 && S_ISBLK(st_buf.st_mode)) {
-+		int fd = open(path, O_RDONLY | O_EXCL);
- 
- 		if (fd >= 0) {
- 			close(fd);
-@@ -639,6 +651,16 @@ int f2fs_dev_is_umounted(void)
- 	return 0;
- }
- 
-+int f2fs_devs_are_umounted(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < c.ndevs; i++)
-+		if (f2fs_dev_is_umounted((char *)c.devices[i].path))
-+			return -1;
-+	return 0;
-+}
-+
- void get_kernel_version(__u8 *version)
- {
- 	int i;
-@@ -649,7 +671,7 @@ void get_kernel_version(__u8 *version)
- 	memset(version + i, 0, VERSION_LEN + 1 - i);
- }
- 
--int f2fs_get_device_info(void)
-+int get_device_info(int i)
- {
- 	int32_t fd = 0;
- 	uint32_t sector_size;
-@@ -663,18 +685,23 @@ int f2fs_get_device_info(void)
- 	unsigned char reply_buffer[96] = {0};
- 	unsigned char model_inq[6] = {MODELINQUIRY};
- #endif
--	u_int64_t wanted_total_sectors = c.total_sectors;
-+	struct device_info *dev = c.devices + i;
- 
--	fd = open(c.device_name, O_RDWR);
-+	fd = open((char *)dev->path, O_RDWR);
- 	if (fd < 0) {
- 		MSG(0, "\tError: Failed to open the device!\n");
- 		return -1;
- 	}
--	c.fd = fd;
- 
--	c.kd = open("/proc/version", O_RDONLY);
--	if (c.kd < 0)
--		MSG(0, "\tInfo: No support kernel version!\n");
-+	dev->fd = fd;
-+
-+	if (c.kd == -1) {
-+		c.kd = open("/proc/version", O_RDONLY);
-+		if (c.kd < 0) {
-+			MSG(0, "\tInfo: No support kernel version!\n");
-+			c.kd = -2;
-+		}
-+	}
- 
- 	if (fstat(fd, &stat_buf) < 0 ) {
- 		MSG(0, "\tError: Failed to get the device stat!\n");
-@@ -682,31 +709,26 @@ int f2fs_get_device_info(void)
- 	}
- 
- 	if (S_ISREG(stat_buf.st_mode)) {
--		c.total_sectors = stat_buf.st_size / c.sector_size;
-+		dev->total_sectors = stat_buf.st_size / dev->sector_size;
- 	} else if (S_ISBLK(stat_buf.st_mode)) {
--		if (ioctl(fd, BLKSSZGET, &sector_size) < 0) {
-+		if (ioctl(fd, BLKSSZGET, &sector_size) < 0)
- 			MSG(0, "\tError: Using the default sector size\n");
--		} else {
--			if (c.sector_size < sector_size) {
--				c.sector_size = sector_size;
--				c.sectors_per_blk = PAGE_SIZE / sector_size;
--			}
--		}
--
-+		else if (dev->sector_size < sector_size)
-+			dev->sector_size = sector_size;
- #ifdef BLKGETSIZE64
--		if (ioctl(fd, BLKGETSIZE64, &c.total_sectors) < 0) {
-+		if (ioctl(fd, BLKGETSIZE64, &dev->total_sectors) < 0) {
- 			MSG(0, "\tError: Cannot get the device size\n");
- 			return -1;
- 		}
--		c.total_sectors /= c.sector_size;
- #else
- 		if (ioctl(fd, BLKGETSIZE, &total_sectors) < 0) {
- 			MSG(0, "\tError: Cannot get the device size\n");
- 			return -1;
- 		}
--		total_sectors /= c.sector_size;
--		c.total_sectors = total_sectors;
-+		dev->total_sectors = total_sectors;
- #endif
-+		dev->total_sectors /= dev->sector_size;
-+
- 		if (ioctl(fd, HDIO_GETGEO, &geom) < 0)
- 			c.start_sector = 0;
- 		else
-@@ -723,10 +745,11 @@ int f2fs_get_device_info(void)
- 		io_hdr.cmdp = model_inq;
- 		io_hdr.timeout = 1000;
- 
--		if (!ioctl(fd,SG_IO,&io_hdr)) {
-+		if (!ioctl(fd, SG_IO, &io_hdr)) {
- 			int i = 16;
- 
--			MSG(0, "Info: Disk Model: ");
-+			MSG(0, "Info: [%s] Disk Model: ",
-+					dev->path);
- 			while (reply_buffer[i] != '`' && i < 80)
- 				printf("%c", reply_buffer[i++]);
- 			printf("\n");
-@@ -736,47 +759,87 @@ int f2fs_get_device_info(void)
- 		MSG(0, "\tError: Volume type is not supported!!!\n");
- 		return -1;
- 	}
--	if (wanted_total_sectors && wanted_total_sectors < c.total_sectors) {
--		MSG(0, "Info: total device sectors = %"PRIu64" (in %u bytes)\n",
--					c.total_sectors, c.sector_size);
--		c.total_sectors = wanted_total_sectors;
--	}
--	if (c.total_sectors * c.sector_size >
--		(u_int64_t)F2FS_MAX_SEGMENT * 2 * 1024 * 1024) {
--		MSG(0, "\tError: F2FS can support 16TB at most!!!\n");
-+
-+	if (!c.sector_size) {
-+		c.sector_size = dev->sector_size;
-+		c.sectors_per_blk = F2FS_BLKSIZE / c.sector_size;
-+	} else if (c.sector_size != c.devices[i].sector_size) {
-+		MSG(0, "\tError: Different sector sizes!!!\n");
- 		return -1;
- 	}
- 
- #ifndef WITH_ANDROID
- 	if (S_ISBLK(stat_buf.st_mode))
--		f2fs_get_zoned_model();
--	if (c.zoned_model == F2FS_ZONED_NONE) {
--		c.zoned_mode = 0;
--	} else {
--		if (f2fs_get_zone_blocks()) {
-+		f2fs_get_zoned_model(i);
-+
-+	if (dev->zoned_model != F2FS_ZONED_NONE) {
-+		if (dev->zoned_model == F2FS_ZONED_HM)
-+			c.zoned_model = F2FS_ZONED_HM;
-+
-+		if (f2fs_get_zone_blocks(i)) {
- 			MSG(0, "\tError: Failed to get number of blocks per zone\n");
- 			return -1;
- 		}
- 
--		if (f2fs_check_zones()) {
-+		if (f2fs_check_zones(i)) {
- 			MSG(0, "\tError: Failed to check zone configuration\n");
- 			return -1;
- 		}
- 		MSG(0, "Info: Host-%s zoned block device:\n",
--				(c.zoned_model == F2FS_ZONED_HA) ?
-+				(dev->zoned_model == F2FS_ZONED_HA) ?
- 					"aware" : "managed");
- 		MSG(0, "      %u zones, %u randomly writeable zones\n",
--				c.nr_zones, c.nr_rnd_zones);
-+				dev->nr_zones, dev->nr_rnd_zones);
- 		MSG(0, "      %lu blocks per zone\n",
--				c.zone_blocks);
--		/*
--		 * Align sections to the device zone size
--		 * and align F2FS zones to the device zones.
--		 */
-+				dev->zone_blocks);
-+	}
-+#endif
-+	c.total_sectors += dev->total_sectors;
-+	return 0;
-+}
-+
-+int f2fs_get_device_info(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < c.ndevs; i++)
-+		if (get_device_info(i))
-+			return -1;
-+
-+	if (c.wanted_total_sectors < c.total_sectors) {
-+		MSG(0, "Info: total device sectors = %"PRIu64" (in %u bytes)\n",
-+				c.total_sectors, c.sector_size);
-+		c.total_sectors = c.wanted_total_sectors;
-+		c.devices[0].total_sectors = c.total_sectors;
-+	}
-+	if (c.total_sectors * c.sector_size >
-+		(u_int64_t)F2FS_MAX_SEGMENT * 2 * 1024 * 1024) {
-+		MSG(0, "\tError: F2FS can support 16TB at most!!!\n");
-+		return -1;
-+	}
-+
-+	for (i = 0; i < c.ndevs; i++) {
-+		if (c.devices[i].zoned_model != F2FS_ZONED_NONE) {
-+			if (c.zone_blocks &&
-+				c.zone_blocks != c.devices[i].zone_blocks) {
-+				MSG(0, "\tError: not support different zone sizes!!!\n");
-+				return -1;
-+			}
-+			c.zone_blocks = c.devices[i].zone_blocks;
-+		}
-+	}
-+
-+	/*
-+	 * Align sections to the device zone size
-+	 * and align F2FS zones to the device zones.
-+	 */
-+	if (c.zone_blocks) {
- 		c.segs_per_sec = c.zone_blocks / DEFAULT_BLOCKS_PER_SEGMENT;
- 		c.secs_per_zone = 1;
-+	} else {
-+		c.zoned_mode = 0;
- 	}
--#endif
-+
- 	c.segs_per_zone = c.segs_per_sec * c.secs_per_zone;
- 
- 	MSG(0, "Info: Segments per section = %d\n", c.segs_per_sec);
-@@ -787,4 +850,3 @@ int f2fs_get_device_info(void)
- 					(c.sector_size >> 9)) >> 11);
- 	return 0;
- }
--
-diff --git a/lib/libf2fs_io.c b/lib/libf2fs_io.c
-index 1817c15..c09db36 100644
---- a/lib/libf2fs_io.c
-+++ b/lib/libf2fs_io.c
-@@ -25,6 +25,22 @@
- 
- struct f2fs_configuration c;
- 
-+static int __get_device_fd(__u64 *offset)
-+{
-+	__u64 blk_addr = *offset >> F2FS_BLKSIZE_BITS;
-+	int i;
-+
-+	for (i = 0; i < c.ndevs; i++) {
-+		if (c.devices[i].start_blkaddr <= blk_addr &&
-+				c.devices[i].end_blkaddr >= blk_addr) {
-+			*offset -=
-+				c.devices[i].start_blkaddr << F2FS_BLKSIZE_BITS;
-+			return c.devices[i].fd;
-+		}
-+	}
-+	return -1;
-+}
-+
- /*
-  * IO interfaces
-  */
-@@ -39,17 +55,26 @@ int dev_read_version(void *buf, __u64 offset, size_t len)
- 
- int dev_read(void *buf, __u64 offset, size_t len)
- {
--	if (lseek64(c.fd, (off64_t)offset, SEEK_SET) < 0)
-+	int fd = __get_device_fd(&offset);
-+
-+	if (fd < 0)
-+		return fd;
-+
-+	if (lseek64(fd, (off64_t)offset, SEEK_SET) < 0)
- 		return -1;
--	if (read(c.fd, buf, len) < 0)
-+	if (read(fd, buf, len) < 0)
- 		return -1;
- 	return 0;
- }
- 
- int dev_readahead(__u64 offset, size_t len)
- {
-+	int fd = __get_device_fd(&offset);
-+
-+	if (fd < 0)
-+		return fd;
- #ifdef POSIX_FADV_WILLNEED
--	return posix_fadvise(c.fd, offset, len, POSIX_FADV_WILLNEED);
-+	return posix_fadvise(fd, offset, len, POSIX_FADV_WILLNEED);
- #else
- 	return 0;
- #endif
-@@ -57,9 +82,14 @@ int dev_readahead(__u64 offset, size_t len)
- 
- int dev_write(void *buf, __u64 offset, size_t len)
- {
--	if (lseek64(c.fd, (off64_t)offset, SEEK_SET) < 0)
-+	int fd = __get_device_fd(&offset);
-+
-+	if (fd < 0)
-+		return fd;
-+
-+	if (lseek64(fd, (off64_t)offset, SEEK_SET) < 0)
- 		return -1;
--	if (write(c.fd, buf, len) < 0)
-+	if (write(fd, buf, len) < 0)
- 		return -1;
- 	return 0;
- }
-@@ -80,12 +110,17 @@ int dev_write_dump(void *buf, __u64 offset, size_t len)
- 
- int dev_fill(void *buf, __u64 offset, size_t len)
- {
-+	int fd = __get_device_fd(&offset);
-+
-+	if (fd < 0)
-+		return fd;
-+
- 	/* Only allow fill to zero */
- 	if (*((__u8*)buf))
- 		return -1;
--	if (lseek64(c.fd, (off64_t)offset, SEEK_SET) < 0)
-+	if (lseek64(fd, (off64_t)offset, SEEK_SET) < 0)
- 		return -1;
--	if (write(c.fd, buf, len) < 0)
-+	if (write(fd, buf, len) < 0)
- 		return -1;
- 	return 0;
- }
-@@ -107,15 +142,18 @@ int dev_reada_block(__u64 blk_addr)
- 
- void f2fs_finalize_device(void)
- {
-+	int i;
-+
- 	/*
- 	 * We should call fsync() to flush out all the dirty pages
- 	 * in the block device page cache.
- 	 */
--	if (fsync(c.fd) < 0)
--		MSG(0, "\tError: Could not conduct fsync!!!\n");
--
--	if (close(c.fd) < 0)
--		MSG(0, "\tError: Failed to close device file!!!\n");
-+	for (i = 0; i < c.ndevs; i++) {
-+		if (fsync(c.devices[i].fd) < 0)
-+			MSG(0, "\tError: Could not conduct fsync!!!\n");
- 
-+		if (close(c.devices[i].fd) < 0)
-+			MSG(0, "\tError: Failed to close device file!!!\n");
-+	}
- 	close(c.kd);
- }
-diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
-index 93b48f1..3c2186a 100644
---- a/lib/libf2fs_zoned.c
-+++ b/lib/libf2fs_zoned.c
-@@ -22,8 +22,9 @@
- 
- #ifdef HAVE_LINUX_BLKZONED_H
- 
--void f2fs_get_zoned_model()
-+void f2fs_get_zoned_model(int i)
- {
-+	struct device_info *dev = c.devices + i;
- 	char str[128];
- 	FILE *file;
- 	int res;
-@@ -31,7 +32,7 @@ void f2fs_get_zoned_model()
- 	/* Check that this is a zoned block device */
- 	snprintf(str, sizeof(str),
- 		 "/sys/block/%s/queue/zoned",
--		 basename(c.device_name));
-+		 basename(dev->path));
- 	file = fopen(str, "r");
- 	if (!file)
- 		goto not_zoned;
-@@ -44,31 +45,32 @@ void f2fs_get_zoned_model()
- 		goto not_zoned;
- 
- 	if (strcmp(str, "host-aware") == 0) {
--		c.zoned_model = F2FS_ZONED_HA;
-+		dev->zoned_model = F2FS_ZONED_HA;
- 		return;
- 	}
- 	if (strcmp(str, "host-managed") == 0) {
--		c.zoned_model = F2FS_ZONED_HM;
-+		dev->zoned_model = F2FS_ZONED_HM;
- 		return;
- 	}
- 
- not_zoned:
--	c.zoned_model = F2FS_ZONED_NONE;
-+	dev->zoned_model = F2FS_ZONED_NONE;
- }
- 
--int f2fs_get_zone_blocks()
-+int f2fs_get_zone_blocks(int i)
- {
-+	struct device_info *dev = c.devices + i;
- 	uint64_t sectors;
- 	char str[128];
- 	FILE *file;
- 	int res;
- 
- 	/* Get zone size */
--	c.zone_blocks = 0;
-+	dev->zone_blocks = 0;
- 
- 	snprintf(str, sizeof(str),
- 		 "/sys/block/%s/queue/chunk_sectors",
--		 basename(c.device_name));
-+		 basename(dev->path));
- 	file = fopen(str, "r");
- 	if (!file)
- 		return -1;
-@@ -84,24 +86,25 @@ int f2fs_get_zone_blocks()
- 	if (!sectors)
- 		return -1;
- 
--	c.zone_blocks = sectors >> (F2FS_BLKSIZE_BITS - 9);
-+	dev->zone_blocks = sectors >> (F2FS_BLKSIZE_BITS - 9);
- 	sectors = (sectors << 9) / c.sector_size;
- 
- 	/*
- 	 * Total number of zones: there may
- 	 * be a last smaller runt zone.
- 	 */
--	c.nr_zones = c.total_sectors / sectors;
--	if (c.total_sectors % sectors)
--		c.nr_zones++;
-+	dev->nr_zones = dev->total_sectors / sectors;
-+	if (dev->total_sectors % sectors)
-+		dev->nr_zones++;
- 
- 	return 0;
- }
- 
- #define F2FS_REPORT_ZONES_BUFSZ	524288
- 
--int f2fs_check_zones()
-+int f2fs_check_zones(int j)
- {
-+	struct device_info *dev = c.devices + j;
- 	struct blk_zone_report *rep;
- 	struct blk_zone *blkz;
- 	unsigned int i, n = 0;
-@@ -116,9 +119,9 @@ int f2fs_check_zones()
- 		return -ENOMEM;
- 	}
- 
--	c.nr_rnd_zones = 0;
-+	dev->nr_rnd_zones = 0;
- 	sector = 0;
--	total_sectors = (c.total_sectors * c.sector_size) >> 9;
-+	total_sectors = (dev->total_sectors * c.sector_size) >> 9;
- 
- 	while (sector < total_sectors) {
- 
-@@ -128,7 +131,7 @@ int f2fs_check_zones()
- 		rep->nr_zones = (F2FS_REPORT_ZONES_BUFSZ - sizeof(struct blk_zone_report))
- 			/ sizeof(struct blk_zone);
- 
--		ret = ioctl(c.fd, BLKREPORTZONE, rep);
-+		ret = ioctl(dev->fd, BLKREPORTZONE, rep);
- 		if (ret != 0) {
- 			ret = -errno;
- 			ERR_MSG("ioctl BLKREPORTZONE failed\n");
-@@ -147,7 +150,7 @@ int f2fs_check_zones()
- 			if (blk_zone_conv(blkz) ||
- 			    blk_zone_seq_pref(blkz)) {
- 				if (last_is_conv)
--					c.nr_rnd_zones++;
-+					dev->nr_rnd_zones++;
- 			} else {
- 				last_is_conv = 0;
- 			}
-@@ -180,26 +183,25 @@ int f2fs_check_zones()
- 			n++;
- 			blkz++;
- 		}
--
- 	}
- 
- 	if (sector != total_sectors) {
- 		ERR_MSG("Invalid zones: last sector reported is %llu, expected %llu\n",
- 			(unsigned long long)(sector << 9) / c.sector_size,
--			(unsigned long long)c.total_sectors);
-+			(unsigned long long)dev->total_sectors);
- 		ret = -1;
- 		goto out;
- 	}
- 
--	if (n != c.nr_zones) {
-+	if (n != dev->nr_zones) {
- 		ERR_MSG("Inconsistent number of zones: expected %u zones, got %u\n",
--			c.nr_zones, n);
-+			dev->nr_zones, n);
- 		ret = -1;
- 		goto out;
- 	}
- 
--	if (c.zoned_model == F2FS_ZONED_HM &&
--			!c.nr_rnd_zones) {
-+	if (dev->zoned_model == F2FS_ZONED_HM &&
-+			!dev->nr_rnd_zones) {
- 		ERR_MSG("No conventional zone for super block\n");
- 		ret = -1;
- 	}
-@@ -208,8 +210,9 @@ out:
- 	return ret;
- }
- 
--int f2fs_reset_zones()
-+int f2fs_reset_zones(int j)
- {
-+	struct device_info *dev = c.devices + j;
- 	struct blk_zone_report *rep;
- 	struct blk_zone *blkz;
- 	struct blk_zone_range range;
-@@ -225,7 +228,7 @@ int f2fs_reset_zones()
- 	}
- 
- 	sector = 0;
--	total_sectors = (c.total_sectors * c.sector_size) >> 9;
-+	total_sectors = (dev->total_sectors * c.sector_size) >> 9;
- 	while (sector < total_sectors) {
- 
- 		/* Get zone info */
-@@ -234,7 +237,7 @@ int f2fs_reset_zones()
- 		rep->nr_zones = (F2FS_REPORT_ZONES_BUFSZ - sizeof(struct blk_zone_report))
- 			/ sizeof(struct blk_zone);
- 
--		ret = ioctl(c.fd, BLKREPORTZONE, rep);
-+		ret = ioctl(dev->fd, BLKREPORTZONE, rep);
- 		if (ret != 0) {
- 			ret = -errno;
- 			ERR_MSG("ioctl BLKREPORTZONES failed\n");
-@@ -251,8 +254,9 @@ int f2fs_reset_zones()
- 				/* Non empty sequential zone: reset */
- 				range.sector = blk_zone_sector(blkz);
- 				range.nr_sectors = blk_zone_length(blkz);
--				ret = ioctl(c.fd, BLKRESETZONE, &range);
-+				ret = ioctl(dev->fd, BLKRESETZONE, &range);
- 				if (ret != 0) {
-+					ret = -errno;
- 					ERR_MSG("ioctl BLKRESETZONE failed\n");
- 					goto out;
- 				}
-@@ -260,39 +264,43 @@ int f2fs_reset_zones()
- 			sector = blk_zone_sector(blkz) + blk_zone_length(blkz);
- 			blkz++;
- 		}
--
- 	}
--
- out:
- 	free(rep);
--	return 0;
-+	if (!ret)
-+		MSG(0, "Info: Discarded %"PRIu64" MB\n", (sector << 9) >> 20);
-+	return ret;
- }
- 
- #else
- 
--void f2fs_get_zoned_model()
-+void f2fs_get_zoned_model(int i)
- {
-+	struct device_info *dev = c.devices + i;
-+
- 	c.zoned_mode = 0;
--	c.zoned_model = F2FS_ZONED_NONE;
-+	dev->zoned_model = F2FS_ZONED_NONE;
- }
- 
--int f2fs_get_zone_blocks()
-+int f2fs_get_zone_blocks(int i)
- {
-+	struct device_info *dev = c.devices + i;
-+
- 	c.zoned_mode = 0;
--	c.nr_zones = 0;
--	c.zone_blocks = 0;
--	c.zoned_model = F2FS_ZONED_NONE;
-+	dev->nr_zones = 0;
-+	dev->zone_blocks = 0;
-+	dev->zoned_model = F2FS_ZONED_NONE;
- 
- 	return 0;
- }
- 
--int f2fs_check_zones()
-+int f2fs_check_zones(int i)
- {
- 	ERR_MSG("Zoned block devices are not supported\n");
- 	return -1;
- }
- 
--int f2fs_reset_zones()
-+int f2fs_reset_zones(int i)
- {
- 	ERR_MSG("Zoned block devices are not supported\n");
- 	return -1;
-diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
-index 0e54fe8..bdb9755 100644
---- a/man/mkfs.f2fs.8
-+++ b/man/mkfs.f2fs.8
-@@ -12,6 +12,10 @@ mkfs.f2fs \- create an F2FS file system
- .I heap-based-allocation
- ]
- [
-+.B \-c
-+.I device
-+]
-+[
- .B \-l
- .I volume-label
- ]
-@@ -55,6 +59,10 @@ If the value is equal to 1, each of active log areas are initially
- assigned separately according to the whole volume size.
- The default value is 1.
- .TP
-+.BI \-c " device"
-+Build f2fs with this device additionally, so that user can see all
-+the devices as one big volume.
-+.TP
- .BI \-l " volume-label"
- Specify the volume label to the partition mounted as F2FS.
- .TP
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 3385a91..9a536f0 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -131,6 +131,7 @@ static int f2fs_prepare_super_block(void)
- 	u_int32_t sit_bitmap_size, max_sit_bitmap_size;
- 	u_int32_t max_nat_bitmap_size, max_nat_segments;
- 	u_int32_t total_zones;
-+	int i;
- 
- 	set_sb(magic, F2FS_SUPER_MAGIC);
- 	set_sb(major_ver, F2FS_MAJOR_VERSION);
-@@ -167,29 +168,59 @@ static int f2fs_prepare_super_block(void)
- 		c.start_sector * c.sector_size;
- 
- 	if (c.start_sector % c.sectors_per_blk) {
--		MSG(1, "\tWARN: Align start sector number to the page unit\n");
-+		MSG(1, "\t%s: Align start sector number to the page unit\n",
-+				c.zoned_mode ? "FAIL" : "WARN");
- 		MSG(1, "\ti.e., start sector: %d, ofs:%d (sects/page: %d)\n",
- 				c.start_sector,
- 				c.start_sector % c.sectors_per_blk,
- 				c.sectors_per_blk);
-+		if (c.zoned_mode)
-+			return -1;
- 	}
- 
--	set_sb(segment_count, (c.total_sectors * c.sector_size -
--				zone_align_start_offset) / segment_size_bytes /
--				c.segs_per_zone * c.segs_per_zone);
--
- 	set_sb(segment0_blkaddr, zone_align_start_offset / blk_size_bytes);
- 	sb->cp_blkaddr = sb->segment0_blkaddr;
- 
- 	MSG(0, "Info: zone aligned segment0 blkaddr: %u\n",
- 					get_sb(segment0_blkaddr));
- 
--	if (c.zoned_mode && get_sb(segment0_blkaddr) % c.zone_blocks) {
-+	if (c.zoned_mode && (get_sb(segment0_blkaddr) + c.start_sector /
-+					c.sectors_per_blk) % c.zone_blocks) {
- 		MSG(1, "\tError: Unaligned segment0 block address %u\n",
- 				get_sb(segment0_blkaddr));
- 		return -1;
- 	}
- 
-+	for (i = 0; i < c.ndevs; i++) {
-+		if (i == 0) {
-+			c.devices[i].total_segments =
-+				(c.devices[i].total_sectors *
-+				c.sector_size - zone_align_start_offset) /
-+				segment_size_bytes;
-+			c.devices[i].start_blkaddr = 0;
-+			c.devices[i].end_blkaddr = c.devices[i].total_segments *
-+						c.blks_per_seg - 1 +
-+						sb->segment0_blkaddr;
-+		} else {
-+			c.devices[i].total_segments =
-+				c.devices[i].total_sectors /
-+				(c.sectors_per_blk * c.blks_per_seg);
-+			c.devices[i].start_blkaddr =
-+					c.devices[i - 1].end_blkaddr + 1;
-+			c.devices[i].end_blkaddr = c.devices[i].start_blkaddr +
-+					c.devices[i].total_segments *
-+					c.blks_per_seg - 1;
-+		}
-+		if (c.ndevs > 1) {
-+			memcpy(sb->devs[i].path, c.devices[i].path, MAX_PATH_LEN);
-+			sb->devs[i].total_segments =
-+					cpu_to_le32(c.devices[i].total_segments);
-+		}
-+
-+		c.total_segments += c.devices[i].total_segments;
-+	}
-+	set_sb(segment_count, (c.total_segments / c.segs_per_zone *
-+						c.segs_per_zone));
- 	set_sb(segment_count_ckpt, F2FS_NUMBER_OF_CHECKPOINT_PACK);
- 
- 	set_sb(sit_blkaddr, get_sb(segment0_blkaddr) +
-@@ -286,9 +317,10 @@ static int f2fs_prepare_super_block(void)
- 		 */
- 		unsigned long main_blkzone = get_sb(main_blkaddr) / c.zone_blocks;
- 
--		if (c.nr_rnd_zones < main_blkzone) {
--			MSG(1, "\tError: Device does not have enough random "
--					"write zones for F2FS volume (%lu needed)",
-+		if (c.devices[0].zoned_model == F2FS_ZONED_HM &&
-+				c.devices[0].nr_rnd_zones < main_blkzone) {
-+			MSG(0, "\tError: Device does not have enough random "
-+					"write zones for F2FS volume (%lu needed)\n",
- 					main_blkzone);
- 			return -1;
- 		}
-@@ -969,7 +1001,7 @@ int f2fs_format_device(void)
- 	}
- 
- 	if (c.trim) {
--		err = f2fs_trim_device(c.fd, c.total_sectors * c.sector_size);
-+		err = f2fs_trim_devices();
- 		if (err < 0) {
- 			MSG(0, "\tError: Failed to trim whole device!!!\n");
- 			goto exit;
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 6fd2f2a..70ed77a 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -28,6 +28,7 @@ static void mkfs_usage()
- 	MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
- 	MSG(0, "[options]:\n");
- 	MSG(0, "  -a heap-based allocation [default:1]\n");
-+	MSG(0, "  -c [device path]\n");
- 	MSG(0, "  -d debug level [default:0]\n");
- 	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
- 	MSG(0, "  -l label\n");
-@@ -71,7 +72,7 @@ static void parse_feature(const char *features)
- 
- static void f2fs_parse_options(int argc, char *argv[])
- {
--	static const char *option_string = "qa:d:e:l:mo:O:s:z:t:";
-+	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:";
- 	int32_t option=0;
- 
- 	while ((option = getopt(argc,argv,option_string)) != EOF) {
-@@ -82,6 +83,14 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		case 'a':
- 			c.heap = atoi(optarg);
- 			break;
-+		case 'c':
-+			if (strlen(optarg) > MAX_PATH_LEN) {
-+				MSG(0, "Error: device path should be less than "
-+					"%d characters\n", MAX_PATH_LEN);
-+				mkfs_usage();
-+			}
-+			c.devices[c.ndevs++].path = strdup(optarg);
-+			break;
- 		case 'd':
- 			c.dbg_lv = atoi(optarg);
- 			break;
-@@ -125,7 +134,21 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		MSG(0, "\tError: Device not specified\n");
- 		mkfs_usage();
- 	}
--	c.device_name = argv[optind];
-+
-+	/* [0] : META, [1 to MAX_DEVICES + 1] : NODE/DATA */
-+	c.devices[0].path = strdup(argv[optind]);
-+	if (c.ndevs > MAX_DEVICES) {
-+		MSG(0, "\tError: Too many devices\n");
-+		mkfs_usage();
-+	}
-+
-+	if ((optind + 1) < argc) {
-+		if (c.ndevs > 1) {
-+			MSG(0, "\tError: Not support custom size on multi-devs.\n");
-+			mkfs_usage();
-+		}
-+		c.wanted_total_sectors = atoll(argv[optind+1]);
-+	}
- 
- 	if ((optind + 1) < argc)
- 		c.total_sectors = atoll(argv[optind+1]);
-@@ -142,7 +165,7 @@ int main(int argc, char *argv[])
- 
- 	f2fs_show_info();
- 
--	if (f2fs_dev_is_umounted() < 0) {
-+	if (f2fs_devs_are_umounted() < 0) {
- 		MSG(0, "\tError: Not available on mounted device!\n");
- 		return -1;
- 	}
-diff --git a/mkfs/f2fs_format_utils.c b/mkfs/f2fs_format_utils.c
-index d204bd4..fc80ec6 100644
---- a/mkfs/f2fs_format_utils.c
-+++ b/mkfs/f2fs_format_utils.c
-@@ -34,10 +34,13 @@
- #define BLKSECDISCARD	_IO(0x12,125)
- #endif
- 
--int f2fs_trim_device(int fd, u_int64_t bytes)
-+static int trim_device(int i)
- {
- 	unsigned long long range[2];
- 	struct stat stat_buf;
-+	struct device_info *dev = c.devices + i;
-+	u_int64_t bytes = dev->total_sectors * dev->sector_size;
-+	int fd = dev->fd;
- 
- 	if (fstat(fd, &stat_buf) < 0 ) {
- 		MSG(1, "\tError: Failed to get the device stat!!!\n");
-@@ -48,7 +51,7 @@ int f2fs_trim_device(int fd, u_int64_t bytes)
- 	range[1] = bytes;
- 
- #if defined(WITH_BLKDISCARD) && defined(BLKDISCARD)
--	MSG(0, "Info: Discarding device\n");
-+	MSG(0, "Info: [%s] Discarding device\n", dev->path);
- 	if (S_ISREG(stat_buf.st_mode)) {
- #if defined(HAVE_FALLOCATE) && defined(FALLOC_FL_PUNCH_HOLE)
- 		if (fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-@@ -58,8 +61,8 @@ int f2fs_trim_device(int fd, u_int64_t bytes)
- #endif
- 		return 0;
- 	} else if (S_ISBLK(stat_buf.st_mode)) {
--		if (c.zoned_mode)
--			return f2fs_reset_zones();
-+		if (dev->zoned_model != F2FS_ZONED_NONE)
-+			return f2fs_reset_zones(i);
- #ifdef BLKSECDISCARD
- 		if (ioctl(fd, BLKSECDISCARD, &range) < 0) {
- 			MSG(0, "Info: This device doesn't support BLKSECDISCARD\n");
-@@ -79,3 +82,13 @@ int f2fs_trim_device(int fd, u_int64_t bytes)
- #endif
- 	return 0;
- }
-+
-+int f2fs_trim_devices(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < c.ndevs; i++)
-+		if (trim_device(i))
-+			return -1;
-+	return 0;
-+}
-diff --git a/mkfs/f2fs_format_utils.h b/mkfs/f2fs_format_utils.h
-index ed28c58..274db7b 100644
---- a/mkfs/f2fs_format_utils.h
-+++ b/mkfs/f2fs_format_utils.h
-@@ -13,4 +13,5 @@
- extern struct f2fs_configuration c;
- 
- int f2fs_trim_device(int, u_int64_t);
-+int f2fs_trim_devices(void);
- int f2fs_format_device(void);
 -- 
 2.8.3
-
-
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today. http://sdm.link/xeonphi
