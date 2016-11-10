@@ -1,761 +1,248 @@
-From: Qu Wenruo <quwenruo@cn.fujitsu.com>
-Subject: Re: [PATCH] f2fs: support multiple devices
-Date: Thu, 10 Nov 2016 10:29:24 +0800
-Message-ID: <4ec4d8f2-da23-762d-ba81-12e76ed09793@cn.fujitsu.com>
-References: <20161109205653.70061-1-jaegeuk@kernel.org>
- <0D1876A8-BB77-4C1A-BE4F-B4A0E81DD4EA@dilger.ca>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: don't wait writeback for datas during checkpoint
+Date: Thu, 10 Nov 2016 19:40:03 +0800
+Message-ID: <20161110114003.90461-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <0D1876A8-BB77-4C1A-BE4F-B4A0E81DD4EA@dilger.ca>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Andreas Dilger <adilger@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lustre Development <lustre-devel@lists.lustre.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-btrfs <linux-btrfs@vger.kernel.org>, "Darrick J. Wong" <darrick.wong@oracle.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+Normally, while committing checkpoint, we will wait on all pages to be
+writebacked no matter the page is data or metadata, so in scenario where
+there are lots of data IO being submitted with metadata, we may suffer
+long latency for waiting writeback during checkpoint.
 
+Indeed, we only care about persistence for pages with metadata, but not
+pages with data, as file system consistent are only related to metadate,
+so in order to avoid encountering long latency in above scenario, let's
+recognize and reference metadata in submitted IOs, wait writeback only
+for metadatas.
 
-At 11/10/2016 06:57 AM, Andreas Dilger wrote:
-> On Nov 9, 2016, at 1:56 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->>
->> This patch implements multiple devices support for f2fs.
->> Given multiple devices by mkfs.f2fs, f2fs shows them entirely as one big
->> volume under one f2fs instance.
->>
->> Internal block management is very simple, but we will modify block
->> allocation and background GC policy to boost IO speed by exploiting them
->> accoording to each device speed.
->
-> How will you integrate this into FIEMAP, since it is now possible if a
-> file is split across multiple devices then it will return ambiguous block
-> numbers for a file.  I've been meaning to merge the FIEMAP handling in
-> Lustre to support multiple devices in a single filesystem, so that this
-> can be detected in userspace.
->
-> struct ll_fiemap_extent {
->         __u64 fe_logical;  /* logical offset in bytes for the start of
->                             * the extent from the beginning of the file
->                             */
->         __u64 fe_physical; /* physical offset in bytes for the start
->                             * of the extent from the beginning of the disk
->                             */
->         __u64 fe_length;   /* length in bytes for this extent */
->         __u64 fe_reserved64[2];
->         __u32 fe_flags;    /* FIEMAP_EXTENT_* flags for this extent */
->         __u32 fe_device;   /* device number for this extent */
->         __u32 fe_reserved[2];
-> };
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/data.c       |  9 +++++++--
+ fs/f2fs/debug.c      |  7 ++++---
+ fs/f2fs/f2fs.h       | 26 +++++++++++++++++++++++---
+ fs/f2fs/gc.c         |  2 ++
+ fs/f2fs/node.c       |  1 +
+ fs/f2fs/segment.c    |  2 ++
+ 7 files changed, 40 insertions(+), 9 deletions(-)
 
-Btrfs introduce a new layer for multi-device (even for single device).
-
-So fiemap returned by btrfs is never real device bytenr, but logical 
-address in btrfs logical address space.
-Much like traditional soft RAID.
-
->
-> This adds the 32-bit "fe_device" field, which would optionally be filled
-> in by the filesystem (zero otherwise).  It would return the kernel device
-> number (i.e. st_dev), or for network filesystem (with FIEMAP_EXTENT_NET
-> set) this could just return an integer device number since the device
-> number is meaningless (and may conflict) on a remote system.
->
-> Since AFAIK Btrfs also has multiple device support there are an increasing
-> number of places where this would be useful.
-
-AFAIK, btrfs multi-device is here due to scrub with its data/meta csum.
-
-Unlike device-mapper based multi-device, btrfs has csum so it can detect 
-which mirror is correct.
-This makes btrfs scrub a little better than soft raid.
-For example, for RAID1 if two mirror differs from each other, btrfs can 
-find the correct one and rewrite it into the other mirror.
-
-And further more, btrfs supports snapshot and is faster than 
-device-mapper based snapshot(LVM).
-This makes it a little more worthy to implement multi-device support in 
-btrfs.
-
-
-But for f2fs, no data csum, no snapshot.
-I don't really see the point to use so many codes to implement it, 
-especially we can use mdadm or LVM to implement it.
-
-
-Not to mention btrfs multi-device support still has quite a lot of bugs, 
-like scrub can corrupt correct data stripes.
-
-Personally speaking, I am not a fan of btrfs multi-device management, 
-despite the above advantage.
-As the complexity is really not worthy.
-(So I think XFS with LVM is much better than Btrfs considering the 
-stability)
-
-Thanks,
-Qu
->
-> Cheers, Andreas
->
->>
->> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->> ---
->> fs/f2fs/data.c          |  55 ++++++++++++++++---
->> fs/f2fs/f2fs.h          |  29 ++++++++--
->> fs/f2fs/segment.c       | 119 +++++++++++++++++++++++++++++------------
->> fs/f2fs/super.c         | 138 ++++++++++++++++++++++++++++++++++++++----------
->> include/linux/f2fs_fs.h |  10 +++-
->> 5 files changed, 277 insertions(+), 74 deletions(-)
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index 47ded0c..e2be24e 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -88,6 +88,46 @@ static void f2fs_write_end_io(struct bio *bio)
->> }
->>
->> /*
->> + * Return true, if pre_bio's bdev is same as its target device.
->> + */
->> +struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
->> +				block_t blk_addr, struct bio *bio)
->> +{
->> +	struct block_device *bdev = sbi->sb->s_bdev;
->> +	int i;
->> +
->> +	for (i = 0; i < sbi->s_ndevs; i++) {
->> +		if (FDEV(i).start_blk <= blk_addr &&
->> +					FDEV(i).end_blk >= blk_addr) {
->> +			blk_addr -= FDEV(i).start_blk;
->> +			bdev = FDEV(i).bdev;
->> +			break;
->> +		}
->> +	}
->> +	if (bio) {
->> +		bio->bi_bdev = bdev;
->> +		bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blk_addr);
->> +	}
->> +	return bdev;
->> +}
->> +
->> +int f2fs_target_device_index(struct f2fs_sb_info *sbi, block_t blkaddr)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < sbi->s_ndevs; i++)
->> +		if (FDEV(i).start_blk <= blkaddr && FDEV(i).end_blk >= blkaddr)
->> +			return i;
->> +	return 0;
->> +}
->> +
->> +static bool __same_bdev(struct f2fs_sb_info *sbi,
->> +				block_t blk_addr, struct bio *bio)
->> +{
->> +	return f2fs_target_device(sbi, blk_addr, NULL) == bio->bi_bdev;
->> +}
->> +
->> +/*
->>  * Low-level block read/write IO operations.
->>  */
->> static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
->> @@ -97,8 +137,7 @@ static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
->>
->> 	bio = f2fs_bio_alloc(npages);
->>
->> -	bio->bi_bdev = sbi->sb->s_bdev;
->> -	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blk_addr);
->> +	f2fs_target_device(sbi, blk_addr, bio);
->> 	bio->bi_end_io = is_read ? f2fs_read_end_io : f2fs_write_end_io;
->> 	bio->bi_private = is_read ? NULL : sbi;
->>
->> @@ -273,7 +312,8 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
->> 	down_write(&io->io_rwsem);
->>
->> 	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
->> -	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags)))
->> +	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
->> +			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
->> 		__submit_merged_bio(io);
->> alloc_new:
->> 	if (io->bio == NULL) {
->> @@ -965,7 +1005,6 @@ static struct bio *f2fs_grab_bio(struct inode *inode, block_t blkaddr,
->> {
->> 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->> 	struct fscrypt_ctx *ctx = NULL;
->> -	struct block_device *bdev = sbi->sb->s_bdev;
->> 	struct bio *bio;
->>
->> 	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode)) {
->> @@ -983,8 +1022,7 @@ static struct bio *f2fs_grab_bio(struct inode *inode, block_t blkaddr,
->> 			fscrypt_release_ctx(ctx);
->> 		return ERR_PTR(-ENOMEM);
->> 	}
->> -	bio->bi_bdev = bdev;
->> -	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blkaddr);
->> +	f2fs_target_device(sbi, blkaddr, bio);
->> 	bio->bi_end_io = f2fs_read_end_io;
->> 	bio->bi_private = ctx;
->>
->> @@ -1079,7 +1117,8 @@ static int f2fs_mpage_readpages(struct address_space *mapping,
->> 		 * This page will go to BIO.  Do we need to send this
->> 		 * BIO off first?
->> 		 */
->> -		if (bio && (last_block_in_bio != block_nr - 1)) {
->> +		if (bio && (last_block_in_bio != block_nr - 1 ||
->> +			!__same_bdev(F2FS_I_SB(inode), block_nr, bio))) {
->> submit_and_realloc:
->> 			__submit_bio(F2FS_I_SB(inode), bio, DATA);
->> 			bio = NULL;
->> @@ -1738,6 +1777,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->> 		return 0;
->> 	if (test_opt(F2FS_I_SB(inode), LFS))
->> 		return 0;
->> +	if (F2FS_I_SB(inode)->s_ndevs)
->> +		return 0;
->>
->> 	trace_f2fs_direct_IO_enter(inode, offset, count, rw);
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 9650514..1737c45 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -730,6 +730,20 @@ struct f2fs_bio_info {
->> 	struct rw_semaphore io_rwsem;	/* blocking op for bio */
->> };
->>
->> +#define FDEV(i)				(sbi->devs[i])
->> +#define RDEV(i)				(raw_super->devs[i])
->> +struct f2fs_dev_info {
->> +	struct block_device *bdev;
->> +	char path[MAX_PATH_LEN];
->> +	unsigned int total_segments;
->> +	block_t start_blk;
->> +	block_t end_blk;
->> +#ifdef CONFIG_BLK_DEV_ZONED
->> +	unsigned int nr_blkz;			/* Total number of zones */
->> +	u8 *blkz_type;				/* Array of zones type */
->> +#endif
->> +};
->> +
->> enum inode_type {
->> 	DIR_INODE,			/* for dirty dir inode */
->> 	FILE_INODE,			/* for dirty regular/symlink inode */
->> @@ -778,10 +792,8 @@ struct f2fs_sb_info {
->> #endif
->>
->> #ifdef CONFIG_BLK_DEV_ZONED
->> -	unsigned int nr_blkz;			/* Total number of zones */
->> 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
->> 	unsigned int log_blocks_per_blkz;	/* log2 F2FS blocks per zone */
->> -	u8 *blkz_type;				/* Array of zones type */
->> #endif
->>
->> 	/* for node-related operations */
->> @@ -897,6 +909,8 @@ struct f2fs_sb_info {
->>
->> 	/* For shrinker support */
->> 	struct list_head s_list;
->> +	int s_ndevs;				/* number of devices */
->> +	struct f2fs_dev_info *devs;		/* for device list */
->> 	struct mutex umount_mutex;
->> 	unsigned int shrinker_run_no;
->>
->> @@ -2159,6 +2173,9 @@ void f2fs_submit_merged_bio_cond(struct f2fs_sb_info *, struct inode *,
->> void f2fs_flush_merged_bios(struct f2fs_sb_info *);
->> int f2fs_submit_page_bio(struct f2fs_io_info *);
->> void f2fs_submit_page_mbio(struct f2fs_io_info *);
->> +struct block_device *f2fs_target_device(struct f2fs_sb_info *,
->> +				block_t, struct bio *);
->> +int f2fs_target_device_index(struct f2fs_sb_info *, block_t);
->> void set_data_blkaddr(struct dnode_of_data *);
->> void f2fs_update_data_blkaddr(struct dnode_of_data *, block_t);
->> int reserve_new_blocks(struct dnode_of_data *, blkcnt_t);
->> @@ -2446,11 +2463,15 @@ static inline int f2fs_sb_mounted_blkzoned(struct super_block *sb)
->>
->> #ifdef CONFIG_BLK_DEV_ZONED
->> static inline int get_blkz_type(struct f2fs_sb_info *sbi,
->> -				block_t blkaddr)
->> +			struct block_device *bdev, block_t blkaddr)
->> {
->> 	unsigned int zno = blkaddr >> sbi->log_blocks_per_blkz;
->> +	int i;
->>
->> -	return sbi->blkz_type[zno];
->> +	for (i = 0; i < sbi->s_ndevs; i++)
->> +		if (FDEV(i).bdev == bdev)
->> +			return FDEV(i).blkz_type[zno];
->> +	return -EINVAL;
->> }
->> #endif
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 7fb7dd3..ef727d1 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -403,6 +403,33 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
->> 	}
->> }
->>
->> +static int __submit_flush_wait(struct block_device *bdev)
->> +{
->> +	struct bio *bio = f2fs_bio_alloc(0);
->> +	int ret;
->> +
->> +	bio_set_op_attrs(bio, REQ_OP_WRITE, WRITE_FLUSH);
->> +	bio->bi_bdev = bdev;
->> +	ret = submit_bio_wait(bio);
->> +	bio_put(bio);
->> +	return ret;
->> +}
->> +
->> +static int submit_flush_wait(struct f2fs_sb_info *sbi)
->> +{
->> +	int ret = __submit_flush_wait(sbi->sb->s_bdev);
->> +	int i;
->> +
->> +	if (sbi->s_ndevs && !ret) {
->> +		for (i = 1; i < sbi->s_ndevs; i++) {
->> +			ret = __submit_flush_wait(FDEV(i).bdev);
->> +			if (ret)
->> +				break;
->> +		}
->> +	}
->> +	return ret;
->> +}
->> +
->> static int issue_flush_thread(void *data)
->> {
->> 	struct f2fs_sb_info *sbi = data;
->> @@ -413,25 +440,18 @@ static int issue_flush_thread(void *data)
->> 		return 0;
->>
->> 	if (!llist_empty(&fcc->issue_list)) {
->> -		struct bio *bio;
->> 		struct flush_cmd *cmd, *next;
->> 		int ret;
->>
->> -		bio = f2fs_bio_alloc(0);
->> -
->> 		fcc->dispatch_list = llist_del_all(&fcc->issue_list);
->> 		fcc->dispatch_list = llist_reverse_order(fcc->dispatch_list);
->>
->> -		bio->bi_bdev = sbi->sb->s_bdev;
->> -		bio_set_op_attrs(bio, REQ_OP_WRITE, WRITE_FLUSH);
->> -		ret = submit_bio_wait(bio);
->> -
->> +		ret = submit_flush_wait(sbi);
->> 		llist_for_each_entry_safe(cmd, next,
->> 					  fcc->dispatch_list, llnode) {
->> 			cmd->ret = ret;
->> 			complete(&cmd->wait);
->> 		}
->> -		bio_put(bio);
->> 		fcc->dispatch_list = NULL;
->> 	}
->>
->> @@ -452,15 +472,11 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi)
->> 		return 0;
->>
->> 	if (!test_opt(sbi, FLUSH_MERGE) || !atomic_read(&fcc->submit_flush)) {
->> -		struct bio *bio = f2fs_bio_alloc(0);
->> 		int ret;
->>
->> 		atomic_inc(&fcc->submit_flush);
->> -		bio->bi_bdev = sbi->sb->s_bdev;
->> -		bio_set_op_attrs(bio, REQ_OP_WRITE, WRITE_FLUSH);
->> -		ret = submit_bio_wait(bio);
->> +		ret = submit_flush_wait(sbi);
->> 		atomic_dec(&fcc->submit_flush);
->> -		bio_put(bio);
->> 		return ret;
->> 	}
->>
->> @@ -637,14 +653,18 @@ static void f2fs_submit_bio_wait_endio(struct bio *bio)
->>
->> /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
->> static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
->> -				block_t blkstart, block_t blklen)
->> +		struct block_device *bdev, block_t blkstart, block_t blklen)
->> {
->> -	struct block_device *bdev = sbi->sb->s_bdev;
->> 	struct bio *bio = NULL;
->> 	int err;
->>
->> 	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
->>
->> +	if (sbi->s_ndevs) {
->> +		int devi = f2fs_target_device_index(sbi, blkstart);
->> +
->> +		blkstart -= FDEV(devi).start_blk;
->> +	}
->> 	err = __blkdev_issue_discard(bdev,
->> 				SECTOR_FROM_BLOCK(blkstart),
->> 				SECTOR_FROM_BLOCK(blklen),
->> @@ -662,18 +682,24 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
->> }
->>
->> #ifdef CONFIG_BLK_DEV_ZONED
->> -static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
->> -					block_t blkstart, block_t blklen)
->> +static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
->> +		struct block_device *bdev, block_t blkstart, block_t blklen)
->> {
->> -	sector_t sector = SECTOR_FROM_BLOCK(blkstart);
->> 	sector_t nr_sects = SECTOR_FROM_BLOCK(blklen);
->> -	struct block_device *bdev = sbi->sb->s_bdev;
->> +	sector_t sector;
->> +	int devi = 0;
->>
->> -	if (nr_sects != bdev_zone_size(bdev)) {
->> +	if (sbi->s_ndevs) {
->> +		devi = f2fs_target_device_index(sbi, blkstart);
->> +		blkstart -= FDEV(devi).start_blk;
->> +	}
->> +	sector = SECTOR_FROM_BLOCK(blkstart);
->> +
->> +	if (sector % bdev_zone_size(bdev) || nr_sects != bdev_zone_size(bdev)) {
->> 		f2fs_msg(sbi->sb, KERN_INFO,
->> -			 "Unaligned discard attempted (sector %llu + %llu)",
->> -			 (unsigned long long)sector,
->> -			 (unsigned long long)nr_sects);
->> +			"(%d) %s: Unaligned discard attempted (block %x + %x)",
->> +			devi, sbi->s_ndevs ? FDEV(devi).path: "",
->> +			blkstart, blklen);
->> 		return -EIO;
->> 	}
->>
->> @@ -682,14 +708,12 @@ static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
->> 	 * use regular discard if the drive supports it. For sequential
->> 	 * zones, reset the zone write pointer.
->> 	 */
->> -	switch (get_blkz_type(sbi, blkstart)) {
->> +	switch (get_blkz_type(sbi, bdev, blkstart)) {
->>
->> 	case BLK_ZONE_TYPE_CONVENTIONAL:
->> 		if (!blk_queue_discard(bdev_get_queue(bdev)))
->> 			return 0;
->> -		return __f2fs_issue_discard_async(sbi, blkstart,
->> -						  blklen);
->> -
->> +		return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
->> 	case BLK_ZONE_TYPE_SEQWRITE_REQ:
->> 	case BLK_ZONE_TYPE_SEQWRITE_PREF:
->> 		trace_f2fs_issue_reset_zone(sbi->sb, blkstart);
->> @@ -702,14 +726,45 @@ static int f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
->> }
->> #endif
->>
->> +static int __issue_discard_async(struct f2fs_sb_info *sbi,
->> +		struct block_device *bdev, block_t blkstart, block_t blklen)
->> +{
->> +#ifdef CONFIG_BLK_DEV_ZONED
->> +	if (f2fs_sb_mounted_blkzoned(sbi->sb) &&
->> +				bdev_zoned_model(bdev) != BLK_ZONED_NONE)
->> +		return __f2fs_issue_discard_zone(sbi, bdev, blkstart, blklen);
->> +#endif
->> +	return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
->> +}
->> +
->> static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
->> 				block_t blkstart, block_t blklen)
->> {
->> +	sector_t start = blkstart, len = 0;
->> +	struct block_device *bdev;
->> 	struct seg_entry *se;
->> 	unsigned int offset;
->> 	block_t i;
->> +	int err = 0;
->> +
->> +	bdev = f2fs_target_device(sbi, blkstart, NULL);
->> +
->> +	for (i = blkstart; i < blkstart + blklen; i++, len++) {
->> +		if (i != start) {
->> +			struct block_device *bdev2 =
->> +				f2fs_target_device(sbi, i, NULL);
->> +
->> +			if (bdev2 != bdev) {
->> +				err = __issue_discard_async(sbi, bdev,
->> +						start, len);
->> +				if (err)
->> +					return err;
->> +				bdev = bdev2;
->> +				start = i;
->> +				len = 0;
->> +			}
->> +		}
->>
->> -	for (i = blkstart; i < blkstart + blklen; i++) {
->> 		se = get_seg_entry(sbi, GET_SEGNO(sbi, i));
->> 		offset = GET_BLKOFF_FROM_SEG0(sbi, i);
->>
->> @@ -717,11 +772,9 @@ static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
->> 			sbi->discard_blks--;
->> 	}
->>
->> -#ifdef CONFIG_BLK_DEV_ZONED
->> -	if (f2fs_sb_mounted_blkzoned(sbi->sb))
->> -		return f2fs_issue_discard_zone(sbi, blkstart, blklen);
->> -#endif
->> -	return __f2fs_issue_discard_async(sbi, blkstart, blklen);
->> +	if (len)
->> +		err = __issue_discard_async(sbi, bdev, start, len);
->> +	return err;
->> }
->>
->> static void __add_discard_entry(struct f2fs_sb_info *sbi,
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index eca9aea..4ccbb86 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -713,6 +713,19 @@ static void destroy_percpu_info(struct f2fs_sb_info *sbi)
->> 	percpu_counter_destroy(&sbi->total_valid_inode_count);
->> }
->>
->> +static void destroy_device_list(struct f2fs_sb_info *sbi)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < sbi->s_ndevs; i++) {
->> +		blkdev_put(FDEV(i).bdev, FMODE_EXCL);
->> +#ifdef CONFIG_BLK_DEV_ZONED
->> +		kfree(FDEV(i).blkz_type);
->> +#endif
->> +	}
->> +	kfree(sbi->devs);
->> +}
->> +
->> static void f2fs_put_super(struct super_block *sb)
->> {
->> 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
->> @@ -773,6 +786,8 @@ static void f2fs_put_super(struct super_block *sb)
->> 		crypto_free_shash(sbi->s_chksum_driver);
->> 	kfree(sbi->raw_super);
->>
->> +	destroy_device_list(sbi);
->> +
->> 	destroy_percpu_info(sbi);
->> 	kfree(sbi);
->> }
->> @@ -1516,9 +1531,9 @@ static int init_percpu_info(struct f2fs_sb_info *sbi)
->> }
->>
->> #ifdef CONFIG_BLK_DEV_ZONED
->> -static int init_blkz_info(struct f2fs_sb_info *sbi)
->> +static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
->> {
->> -	struct block_device *bdev = sbi->sb->s_bdev;
->> +	struct block_device *bdev = FDEV(devi).bdev;
->> 	sector_t nr_sectors = bdev->bd_part->nr_sects;
->> 	sector_t sector = 0;
->> 	struct blk_zone *zones;
->> @@ -1529,15 +1544,21 @@ static int init_blkz_info(struct f2fs_sb_info *sbi)
->> 	if (!f2fs_sb_mounted_blkzoned(sbi->sb))
->> 		return 0;
->>
->> +	if (sbi->blocks_per_blkz && sbi->blocks_per_blkz !=
->> +				SECTOR_TO_BLOCK(bdev_zone_size(bdev)))
->> +		return -EINVAL;
->> 	sbi->blocks_per_blkz = SECTOR_TO_BLOCK(bdev_zone_size(bdev));
->> +	if (sbi->log_blocks_per_blkz && sbi->log_blocks_per_blkz !=
->> +				__ilog2_u32(sbi->blocks_per_blkz))
->> +		return -EINVAL;
->> 	sbi->log_blocks_per_blkz = __ilog2_u32(sbi->blocks_per_blkz);
->> -	sbi->nr_blkz = SECTOR_TO_BLOCK(nr_sectors) >>
->> -		sbi->log_blocks_per_blkz;
->> +	FDEV(devi).nr_blkz = SECTOR_TO_BLOCK(nr_sectors) >>
->> +					sbi->log_blocks_per_blkz;
->> 	if (nr_sectors & (bdev_zone_size(bdev) - 1))
->> -		sbi->nr_blkz++;
->> +		FDEV(devi).nr_blkz++;
->>
->> -	sbi->blkz_type = kmalloc(sbi->nr_blkz, GFP_KERNEL);
->> -	if (!sbi->blkz_type)
->> +	FDEV(devi).blkz_type = kmalloc(FDEV(devi).nr_blkz, GFP_KERNEL);
->> +	if (!FDEV(devi).blkz_type)
->> 		return -ENOMEM;
->>
->> #define F2FS_REPORT_NR_ZONES   4096
->> @@ -1562,7 +1583,7 @@ static int init_blkz_info(struct f2fs_sb_info *sbi)
->> 		}
->>
->> 		for (i = 0; i < nr_zones; i++) {
->> -			sbi->blkz_type[n] = zones[i].type;
->> +			FDEV(devi).blkz_type[n] = zones[i].type;
->> 			sector += zones[i].len;
->> 			n++;
->> 		}
->> @@ -1666,6 +1687,77 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
->> 	return err;
->> }
->>
->> +static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
->> +{
->> +	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
->> +	int i;
->> +
->> +	for (i = 0; i < MAX_DEVICES; i++) {
->> +		if (!RDEV(i).path[0])
->> +			return 0;
->> +
->> +		if (i == 0) {
->> +			sbi->devs = kzalloc(sizeof(struct f2fs_dev_info) *
->> +						MAX_DEVICES, GFP_KERNEL);
->> +			if (!sbi->devs)
->> +				return -ENOMEM;
->> +		}
->> +
->> +		memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
->> +		FDEV(i).total_segments = le32_to_cpu(RDEV(i).total_segments);
->> +		if (i == 0) {
->> +			FDEV(i).start_blk = 0;
->> +			FDEV(i).end_blk = FDEV(i).start_blk +
->> +				(FDEV(i).total_segments <<
->> +				sbi->log_blocks_per_seg) - 1 +
->> +				le32_to_cpu(raw_super->segment0_blkaddr);
->> +		} else {
->> +			FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
->> +			FDEV(i).end_blk = FDEV(i).start_blk +
->> +				(FDEV(i).total_segments <<
->> +				sbi->log_blocks_per_seg) - 1;
->> +		}
->> +
->> +		FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path,
->> +					sbi->sb->s_mode, sbi->sb->s_type);
->> +		if (IS_ERR(FDEV(i).bdev))
->> +			return PTR_ERR(FDEV(i).bdev);
->> +
->> +		/* to release errored devices */
->> +		sbi->s_ndevs = i + 1;
->> +
->> +#ifdef CONFIG_BLK_DEV_ZONED
->> +		if (bdev_zoned_model(FDEV(i).bdev) == BLK_ZONED_HM &&
->> +				!f2fs_sb_mounted_blkzoned(sbi->sb)) {
->> +			f2fs_msg(sbi->sb, KERN_ERR,
->> +				"Zoned block device feature not enabled\n");
->> +			return -EINVAL;
->> +		}
->> +		if (bdev_zoned_model(FDEV(i).bdev) != BLK_ZONED_NONE) {
->> +			if (init_blkz_info(sbi, i)) {
->> +				f2fs_msg(sbi->sb, KERN_ERR,
->> +					"Failed to initialize F2FS blkzone information");
->> +				return -EINVAL;
->> +			}
->> +			f2fs_msg(sbi->sb, KERN_INFO,
->> +				"Mount Device [%2d]: %20s, %8u, %8x - %8x (zone: %s)",
->> +				i, FDEV(i).path,
->> +				FDEV(i).total_segments,
->> +				FDEV(i).start_blk, FDEV(i).end_blk,
->> +				bdev_zoned_model(FDEV(i).bdev) == BLK_ZONED_HA ?
->> +				"Host-aware" : "Host-managed");
->> +			continue;
->> +		}
->> +#endif
->> +		f2fs_msg(sbi->sb, KERN_INFO,
->> +			"Mount Device [%2d]: %20s, %8u, %8x - %8x",
->> +				i, FDEV(i).path,
->> +				FDEV(i).total_segments,
->> +				FDEV(i).start_blk, FDEV(i).end_blk);
->> +	}
->> +	return 0;
->> +}
->> +
->> static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->> {
->> 	struct f2fs_sb_info *sbi;
->> @@ -1724,15 +1816,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->> 			 "Zoned block device support is not enabled\n");
->> 		goto free_sb_buf;
->> 	}
->> -#else
->> -	if (bdev_zoned_model(sb->s_bdev) == BLK_ZONED_HM &&
->> -	    !f2fs_sb_mounted_blkzoned(sb)) {
->> -		f2fs_msg(sb, KERN_ERR,
->> -			 "Zoned block device feature not enabled\n");
->> -		goto free_sb_buf;
->> -	}
->> #endif
->> -
->> 	default_options(sbi);
->> 	/* parse mount options */
->> 	options = kstrdup((const char *)data, GFP_KERNEL);
->> @@ -1802,6 +1886,13 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->> 		goto free_meta_inode;
->> 	}
->>
->> +	/* Initialize device list */
->> +	err = f2fs_scan_devices(sbi);
->> +	if (err) {
->> +		f2fs_msg(sb, KERN_ERR, "Failed to find devices");
->> +		goto free_devices;
->> +	}
->> +
->> 	sbi->total_valid_node_count =
->> 				le32_to_cpu(sbi->ckpt->valid_node_count);
->> 	percpu_counter_set(&sbi->total_valid_inode_count,
->> @@ -1820,15 +1911,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>
->> 	init_ino_entry_info(sbi);
->>
->> -#ifdef CONFIG_BLK_DEV_ZONED
->> -	err = init_blkz_info(sbi);
->> -	if (err) {
->> -		f2fs_msg(sb, KERN_ERR,
->> -			"Failed to initialize F2FS blkzone information");
->> -		goto free_blkz;
->> -	}
->> -#endif
->> -
->> 	/* setup f2fs internal modules */
->> 	err = build_segment_manager(sbi);
->> 	if (err) {
->> @@ -2007,10 +2089,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->> 	destroy_node_manager(sbi);
->> free_sm:
->> 	destroy_segment_manager(sbi);
->> -#ifdef CONFIG_BLK_DEV_ZONED
->> -free_blkz:
->> -	kfree(sbi->blkz_type);
->> -#endif
->> +free_devices:
->> +	destroy_device_list(sbi);
->> 	kfree(sbi->ckpt);
->> free_meta_inode:
->> 	make_bad_inode(sbi->meta_inode);
->> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
->> index 422630b..cea41a1 100644
->> --- a/include/linux/f2fs_fs.h
->> +++ b/include/linux/f2fs_fs.h
->> @@ -52,10 +52,17 @@
->>
->> #define VERSION_LEN	256
->> #define MAX_VOLUME_NAME		512
->> +#define MAX_PATH_LEN		64
->> +#define MAX_DEVICES		8
->>
->> /*
->>  * For superblock
->>  */
->> +struct f2fs_device {
->> +	__u8 path[MAX_PATH_LEN];
->> +	__le32 total_segments;
->> +} __packed;
->> +
->> struct f2fs_super_block {
->> 	__le32 magic;			/* Magic Number */
->> 	__le16 major_ver;		/* Major Version */
->> @@ -94,7 +101,8 @@ struct f2fs_super_block {
->> 	__le32 feature;			/* defined features */
->> 	__u8 encryption_level;		/* versioning level for encryption */
->> 	__u8 encrypt_pw_salt[16];	/* Salt used for string2key algorithm */
->> -	__u8 reserved[871];		/* valid reserved region */
->> +	struct f2fs_device devs[MAX_DEVICES];	/* device list */
->> +	__u8 reserved[327];		/* valid reserved region */
->> } __packed;
->>
->> /*
->> --
->> 2.8.3
->
-> Cheers, Andreas
->
-
-
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 7bece59..bdf8a50 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1003,7 +1003,7 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
+ 	for (;;) {
+ 		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
+ 
+-		if (!atomic_read(&sbi->nr_wb_bios))
++		if (!get_pages(sbi, F2FS_WB_META))
+ 			break;
+ 
+ 		io_schedule_timeout(5*HZ);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 66d2aee..2fb1ffd 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -73,6 +73,7 @@ static void f2fs_write_end_io(struct bio *bio)
+ 
+ 	bio_for_each_segment_all(bvec, bio, i) {
+ 		struct page *page = bvec->bv_page;
++		bool is_meta = f2fs_is_meta_data(page);
+ 
+ 		fscrypt_pullback_bio_page(&page, true);
+ 
+@@ -80,9 +81,10 @@ static void f2fs_write_end_io(struct bio *bio)
+ 			mapping_set_error(page->mapping, -EIO);
+ 			f2fs_stop_checkpoint(sbi, true);
+ 		}
++		dec_page_count(sbi, is_meta ? F2FS_WB_META : F2FS_WB_DATA);
+ 		end_page_writeback(page);
+ 	}
+-	if (atomic_dec_and_test(&sbi->nr_wb_bios) &&
++	if (!get_pages(sbi, F2FS_WB_META) &&
+ 				wq_has_sleeper(&sbi->cp_wait))
+ 		wake_up(&sbi->cp_wait);
+ 
+@@ -111,7 +113,6 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+ 				struct bio *bio, enum page_type type)
+ {
+ 	if (!is_read_io(bio_op(bio))) {
+-		atomic_inc(&sbi->nr_wb_bios);
+ 		if (f2fs_sb_mounted_blkzoned(sbi->sb) &&
+ 			current->plug && (type == DATA || type == NODE))
+ 			blk_finish_plug(current->plug);
+@@ -272,6 +273,9 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+ 		verify_block_addr(sbi, fio->old_blkaddr);
+ 	verify_block_addr(sbi, fio->new_blkaddr);
+ 
++	if (!is_read)
++		inc_page_count(sbi, fio->is_meta ? F2FS_WB_META : F2FS_WB_DATA);
++
+ 	down_write(&io->io_rwsem);
+ 
+ 	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+@@ -1237,6 +1241,7 @@ static int f2fs_write_data_page(struct page *page,
+ 		.type = DATA,
+ 		.op = REQ_OP_WRITE,
+ 		.op_flags = (wbc->sync_mode == WB_SYNC_ALL) ? WRITE_SYNC : 0,
++		.is_meta = S_ISDIR(inode->i_mode),
+ 		.page = page,
+ 		.encrypted_page = NULL,
+ 	};
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 2fdf233..f2d87de 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -50,7 +50,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
+ 	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
+ 	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
+-	si->wb_bios = atomic_read(&sbi->nr_wb_bios);
++	si->nr_wb_meta = get_pages(sbi, F2FS_WB_META);
++	si->nr_wb_data = get_pages(sbi, F2FS_WB_DATA);
+ 	si->total_count = (int)sbi->user_block_count / sbi->blocks_per_seg;
+ 	si->rsvd_segs = reserved_segments(sbi);
+ 	si->overp_segs = overprovision_segments(sbi);
+@@ -313,8 +314,8 @@ static int stat_show(struct seq_file *s, void *v)
+ 		seq_printf(s, "  - Inner Struct Count: tree: %d(%d), node: %d\n",
+ 				si->ext_tree, si->zombie_tree, si->ext_node);
+ 		seq_puts(s, "\nBalancing F2FS Async:\n");
+-		seq_printf(s, "  - inmem: %4d, wb_bios: %4d\n",
+-			   si->inmem_pages, si->wb_bios);
++		seq_printf(s, "  - inmem: %4d, wb_meta: %4d, wb_data: %4d\n",
++			   si->inmem_pages, si->nr_wb_meta, si->nr_wb_data);
+ 		seq_printf(s, "  - nodes: %4d in %4d\n",
+ 			   si->ndirty_node, si->node_pages);
+ 		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 23a937f..95ad091 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -682,6 +682,8 @@ enum count_type {
+ 	F2FS_DIRTY_META,
+ 	F2FS_INMEM_PAGES,
+ 	F2FS_DIRTY_IMETA,
++	F2FS_WB_META,
++	F2FS_WB_DATA,
+ 	NR_COUNT_TYPE,
+ };
+ 
+@@ -715,6 +717,7 @@ struct f2fs_io_info {
+ 	enum page_type type;	/* contains DATA/NODE/META/META_FLUSH */
+ 	int op;			/* contains REQ_OP_ */
+ 	int op_flags;		/* rq_flag_bits */
++	bool is_meta;		/* checkpoint needs to wait its writeback */
+ 	block_t new_blkaddr;	/* new block address to be written */
+ 	block_t old_blkaddr;	/* old block address before Cow */
+ 	struct page *page;	/* page to be written */
+@@ -849,7 +852,6 @@ struct f2fs_sb_info {
+ 	block_t discard_blks;			/* discard command candidats */
+ 	block_t last_valid_block_count;		/* for recovery */
+ 	u32 s_next_generation;			/* for NFS support */
+-	atomic_t nr_wb_bios;			/* # of writeback bios */
+ 
+ 	/* # of pages, see count_type */
+ 	atomic_t nr_pages[NR_COUNT_TYPE];
+@@ -1193,6 +1195,23 @@ static inline int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
+ 	return 0;
+ }
+ 
++static inline bool f2fs_is_meta_data(struct page *page)
++{
++	struct address_space *mapping = page->mapping;
++	struct inode *inode;
++
++	/* it is bounce page of encrypted regular inode */
++	if (!mapping)
++		return false;
++
++	inode = mapping->host;
++	if (inode->i_ino ==  F2FS_NODE_INO(F2FS_I_SB(inode)) ||
++		inode->i_ino == F2FS_META_INO(F2FS_I_SB(inode)) ||
++		S_ISDIR(inode->i_mode))
++		return true;
++	return false;
++}
++
+ #define F2FS_DEFAULT_ALLOCATED_BLOCKS	1
+ 
+ /*
+@@ -1263,7 +1282,8 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+ {
+ 	atomic_inc(&sbi->nr_pages[count_type]);
+ 
+-	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES)
++	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
++		count_type == F2FS_WB_META || count_type == F2FS_WB_DATA)
+ 		return;
+ 
+ 	set_sbi_flag(sbi, SBI_IS_DIRTY);
+@@ -2219,7 +2239,7 @@ struct f2fs_stat_info {
+ 	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
+ 	int nats, dirty_nats, sits, dirty_sits, free_nids, alloc_nids;
+ 	int total_count, utilization;
+-	int bg_gc, wb_bios;
++	int bg_gc, nr_wb_meta, nr_wb_data;
+ 	int inline_xattr, inline_inode, inline_dir, orphans;
+ 	unsigned int valid_count, valid_node_count, valid_inode_count, discard_blks;
+ 	unsigned int bimodal, avg_vblocks;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index f8d8cc96a..6b762d4 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -554,6 +554,7 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
+ 		.type = DATA,
+ 		.op = REQ_OP_READ,
+ 		.op_flags = READ_SYNC,
++		.is_meta = true,
+ 		.encrypted_page = NULL,
+ 	};
+ 	struct dnode_of_data dn;
+@@ -674,6 +675,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 			.type = DATA,
+ 			.op = REQ_OP_WRITE,
+ 			.op_flags = WRITE_SYNC,
++			.is_meta = S_ISDIR(inode->i_mode),
+ 			.page = page,
+ 			.encrypted_page = NULL,
+ 		};
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index d58438f..3c7e00c 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1574,6 +1574,7 @@ static int f2fs_write_node_page(struct page *page,
+ 		.type = NODE,
+ 		.op = REQ_OP_WRITE,
+ 		.op_flags = (wbc->sync_mode == WB_SYNC_ALL) ? WRITE_SYNC : 0,
++		.is_meta = true,
+ 		.page = page,
+ 		.encrypted_page = NULL,
+ 	};
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 078c571..b34e20a 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -261,6 +261,7 @@ static int __commit_inmem_pages(struct inode *inode,
+ 		.type = DATA,
+ 		.op = REQ_OP_WRITE,
+ 		.op_flags = WRITE_SYNC | REQ_PRIO,
++		.is_meta = false,
+ 		.encrypted_page = NULL,
+ 	};
+ 	bool submit_bio = false;
+@@ -1573,6 +1574,7 @@ void write_meta_page(struct f2fs_sb_info *sbi, struct page *page)
+ 		.type = META,
+ 		.op = REQ_OP_WRITE,
+ 		.op_flags = WRITE_SYNC | REQ_META | REQ_PRIO,
++		.is_meta = true,
+ 		.old_blkaddr = page->index,
+ 		.new_blkaddr = page->index,
+ 		.page = page,
+-- 
+2.8.2.311.gee88674
