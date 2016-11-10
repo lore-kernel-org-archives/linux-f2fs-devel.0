@@ -1,37 +1,18 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: Re: [PATCH] f2fs: support multiple devices
-Date: Wed, 9 Nov 2016 15:05:11 -0800
-Message-ID: <20161109230511.GA16807@birch.djwong.org>
+Date: Wed, 9 Nov 2016 17:12:01 -0800
+Message-ID: <20161110011201.GA72134@jaegeuk>
 References: <20161109205653.70061-1-jaegeuk@kernel.org>
-	<0D1876A8-BB77-4C1A-BE4F-B4A0E81DD4EA@dilger.ca>
+ <0D1876A8-BB77-4C1A-BE4F-B4A0E81DD4EA@dilger.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <darrick.wong@oracle.com>) id 1c4bvs-0008At-Aa
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Nov 2016 23:05:28 +0000
-Received: from userp1040.oracle.com ([156.151.31.81])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c4bvq-0001SU-2j
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 09 Nov 2016 23:05:28 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <0D1876A8-BB77-4C1A-BE4F-B4A0E81DD4EA@dilger.ca>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andreas Dilger <adilger@dilger.ca>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-btrfs <linux-btrfs@vger.kernel.org>, Lustre Development <lustre-devel@lists.lustre.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lustre Development <lustre-devel@lists.lustre.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, linux-btrfs <linux-btrfs@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
 On Wed, Nov 09, 2016 at 03:57:53PM -0700, Andreas Dilger wrote:
 > On Nov 9, 2016, at 1:56 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
@@ -70,22 +51,20 @@ On Wed, Nov 09, 2016 at 03:57:53PM -0700, Andreas Dilger wrote:
 > set) this could just return an integer device number since the device
 > number is meaningless (and may conflict) on a remote system.
 
-Same field size and similar meaning as the the fmr_device field in
-GETFSMAP, at least for blockdev based filesystems.  Intriguing.... ;)
-
-For GETFSMAP the number in fmr_device is either a device-unique 32-bit
-cookie or the implementer can set a magic FMH_OF_DEV_T flags bit marking
-it as an actual dev_t.
-
-What's the fe_device number mean for network filesystems?  Magic unique
-number?
+Thank you for pointing this out. Indeed, I missed this case in this patch.
+The fe_device would be good to handle this. Is there a plan to merge that
+change? BTW, how about using __u64 given huge_encode_dev()?
 
 > Since AFAIK Btrfs also has multiple device support there are an increasing
 > number of places where this would be useful.
 
-Ditto XFS.
+That's cool!
+Actually, I think this'd be very versatile for different types of storages such
+as open-channel SSD and SMR; this patch already handles HM-SMR.
+In F2FS especially, background cleaner can migrate blocks seamlessly across the
+devices later.
 
---D
+Thanks,
 
 > 
 > Cheers, Andreas
@@ -750,12 +729,3 @@ Ditto XFS.
 > > 2.8.3
 > 
 > Cheers, Andreas
-
-
-
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today. http://sdm.link/xeonphi
