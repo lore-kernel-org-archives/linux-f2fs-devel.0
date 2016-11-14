@@ -1,25 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix to account total free nid correctly
-Date: Mon, 14 Nov 2016 12:45:57 -0800
-Message-ID: <20161114204557.GA28366@jaegeuk>
-References: <20161114112456.113074-1-yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: don't wait writeback for datas
+	during checkpoint
+Date: Mon, 14 Nov 2016 15:32:34 -0800
+Message-ID: <20161114233234.GA33697@jaegeuk>
+References: <20161114110412.110237-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1c6O8m-0005JL-F2
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1c6Qk2-0008Ef-1K
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 14 Nov 2016 20:46:08 +0000
+	Mon, 14 Nov 2016 23:32:46 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c6O8l-0001dK-AN
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c6Qjz-0002BI-9y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 14 Nov 2016 20:46:08 +0000
+	Mon, 14 Nov 2016 23:32:46 +0000
 Content-Disposition: inline
-In-Reply-To: <20161114112456.113074-1-yuchao0@huawei.com>
+In-Reply-To: <20161114110412.110237-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,121 +33,207 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <yuchao0@huawei.com>
 Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Nov 14, 2016 at 07:24:56PM +0800, Chao Yu wrote:
-> Thread A		Thread B		Thread C
-> - f2fs_create
->  - f2fs_new_inode
->   - f2fs_lock_op
->    - alloc_nid
->     alloc last nid
->   - f2fs_unlock_op
-> 			- f2fs_create
-> 			 - f2fs_new_inode
-> 			  - f2fs_lock_op
-> 			   - alloc_nid
-> 			    as node count still not
-> 			    be increased, we will
-> 			    loop in alloc_nid
-> 						- f2fs_write_node_pages
-> 						 - f2fs_balance_fs_bg
-> 						  - f2fs_sync_fs
-> 						   - write_checkpoint
-> 						    - block_operations
-> 						     - f2fs_lock_all
->  - f2fs_lock_op
-> 
-> While creating new inode, we do not allocate and account nid atomically,
-> so that when there is almost no free nids left, we may encounter deadloop
-> like above stack.
-> 
-> In order to avoid that, add nm_i::free_nid_cnt for accounting free nids
-> and do nid allocation atomically during node creation.
+Hi Chao,
 
-How about using nm_i::avaiable_nids for this?
-It seems that we don't need both of variables at the same time.
+On Mon, Nov 14, 2016 at 07:04:12PM +0800, Chao Yu wrote:
+> Normally, while committing checkpoint, we will wait on all pages to be
+> writebacked no matter the page is data or metadata, so in scenario where
+> there are lots of data IO being submitted with metadata, we may suffer
+> long latency for waiting writeback during checkpoint.
+> 
+> Indeed, we only care about persistence for pages with metadata, but not
+> pages with data, as file system consistent are only related to metadate,
+> so in order to avoid encountering long latency in above scenario, let's
+> recognize and reference metadata in submitted IOs, wait writeback only
+> for metadatas.
+
+Hmm, another concern comes, which is related to GCed data like below scenario.
+
+1. Write data X
+2. Sync
+3. Move data X by GC
+4. Checkpoint
+5. Power-cut
+
+In this case, we should guarantee data X which was migrated by GC during #3.
+If we don't care about end_io in #4 Checkpoint, we can lose the data after
+#5 Power-cut.
+
+Any idea?
 
 Thanks,
 
 > 
 > Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > ---
->  fs/f2fs/f2fs.h |  1 +
->  fs/f2fs/node.c | 19 +++++++++++++++----
->  2 files changed, 16 insertions(+), 4 deletions(-)
+>  fs/f2fs/checkpoint.c |  2 +-
+>  fs/f2fs/data.c       | 36 ++++++++++++++++++++++++++++++++----
+>  fs/f2fs/debug.c      |  7 ++++---
+>  fs/f2fs/f2fs.h       |  8 +++++---
+>  4 files changed, 42 insertions(+), 11 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 6de1fbf..9de6f20 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -551,6 +551,7 @@ struct f2fs_nm_info {
->  	struct radix_tree_root free_nid_root;/* root of the free_nid cache */
->  	struct list_head nid_list[MAX_NID_LIST];/* lists for free nids */
->  	unsigned int nid_cnt[MAX_NID_LIST];	/* the number of free node id */
-> +	unsigned int free_nid_cnt;	/* the number of total free nid */
->  	spinlock_t nid_list_lock;	/* protect nid lists ops */
->  	struct mutex build_lock;	/* lock for build free nids */
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index 7bece59..bdf8a50 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1003,7 +1003,7 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
+>  	for (;;) {
+>  		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
 >  
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index d58438f..e412d0e 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1885,11 +1885,13 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
->  		return false;
->  	}
->  #endif
-> -	if (unlikely(sbi->total_valid_node_count + 1 > nm_i->available_nids))
-> -		return false;
-> -
->  	spin_lock(&nm_i->nid_list_lock);
+> -		if (!atomic_read(&sbi->nr_wb_bios))
+> +		if (!get_pages(sbi, F2FS_WB_META))
+>  			break;
 >  
-> +	if (unlikely(nm_i->free_nid_cnt == 0)) {
-> +		spin_unlock(&nm_i->nid_list_lock);
+>  		io_schedule_timeout(5*HZ);
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 66d2aee..f52cec3 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -29,6 +29,26 @@
+>  #include "trace.h"
+>  #include <trace/events/f2fs.h>
+>  
+> +static bool f2fs_is_meta_data(struct page *page)
+> +{
+> +	struct address_space *mapping = page->mapping;
+> +	struct f2fs_sb_info *sbi;
+> +	struct inode *inode;
+> +
+> +	/* it is bounce page of encrypted regular inode */
+> +	if (!mapping)
 > +		return false;
+> +
+> +	inode = mapping->host;
+> +	sbi = F2FS_I_SB(inode);
+> +
+> +	if ((inode->i_ino == F2FS_META_INO(sbi) &&
+> +			page->index < MAIN_BLKADDR(sbi)) ||
+> +			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
+> +			S_ISDIR(inode->i_mode))
+> +		return true;
+> +	return false;
+> +}
+>  static void f2fs_read_end_io(struct bio *bio)
+>  {
+>  	struct bio_vec *bvec;
+> @@ -73,6 +93,7 @@ static void f2fs_write_end_io(struct bio *bio)
+>  
+>  	bio_for_each_segment_all(bvec, bio, i) {
+>  		struct page *page = bvec->bv_page;
+> +		bool is_meta = f2fs_is_meta_data(page);
+>  
+>  		fscrypt_pullback_bio_page(&page, true);
+>  
+> @@ -80,9 +101,10 @@ static void f2fs_write_end_io(struct bio *bio)
+>  			mapping_set_error(page->mapping, -EIO);
+>  			f2fs_stop_checkpoint(sbi, true);
+>  		}
+> +		dec_page_count(sbi, is_meta ? F2FS_WB_META : F2FS_WB_DATA);
+>  		end_page_writeback(page);
+>  	}
+> -	if (atomic_dec_and_test(&sbi->nr_wb_bios) &&
+> +	if (!get_pages(sbi, F2FS_WB_META) &&
+>  				wq_has_sleeper(&sbi->cp_wait))
+>  		wake_up(&sbi->cp_wait);
+>  
+> @@ -111,7 +133,6 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+>  				struct bio *bio, enum page_type type)
+>  {
+>  	if (!is_read_io(bio_op(bio))) {
+> -		atomic_inc(&sbi->nr_wb_bios);
+>  		if (f2fs_sb_mounted_blkzoned(sbi->sb) &&
+>  			current->plug && (type == DATA || type == NODE))
+>  			blk_finish_plug(current->plug);
+> @@ -272,6 +293,15 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+>  		verify_block_addr(sbi, fio->old_blkaddr);
+>  	verify_block_addr(sbi, fio->new_blkaddr);
+>  
+> +	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
+> +
+> +	if (!is_read) {
+> +		bool is_meta;
+> +
+> +		is_meta = f2fs_is_meta_data(bio_page);
+> +		inc_page_count(sbi, is_meta ? F2FS_WB_META : F2FS_WB_DATA);
 > +	}
 > +
->  	/* We should not use stale free nids created by build_free_nids */
->  	if (nm_i->nid_cnt[FREE_NID_LIST] && !on_build_free_nids(nm_i)) {
->  		f2fs_bug_on(sbi, list_empty(&nm_i->nid_list[FREE_NID_LIST]));
-> @@ -1900,6 +1902,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
->  		__remove_nid_from_list(sbi, i, FREE_NID_LIST, true);
->  		i->state = NID_ALLOC;
->  		__insert_nid_to_list(sbi, i, ALLOC_NID_LIST, false);
-> +		nm_i->free_nid_cnt--;
->  		spin_unlock(&nm_i->nid_list_lock);
->  		return true;
->  	}
-> @@ -1951,6 +1954,9 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
->  		i->state = NID_NEW;
->  		__insert_nid_to_list(sbi, i, FREE_NID_LIST, false);
->  	}
-> +
-> +	nm_i->free_nid_cnt++;
-> +
->  	spin_unlock(&nm_i->nid_list_lock);
+>  	down_write(&io->io_rwsem);
 >  
->  	if (need_free)
-> @@ -2222,8 +2228,12 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
->  		raw_nat_from_node_info(raw_ne, &ne->ni);
->  		nat_reset_flag(ne);
->  		__clear_nat_cache_dirty(NM_I(sbi), ne);
-> -		if (nat_get_blkaddr(ne) == NULL_ADDR)
-> +		if (nat_get_blkaddr(ne) == NULL_ADDR) {
->  			add_free_nid(sbi, nid, false);
-> +			spin_lock(&NM_I(sbi)->nid_list_lock);
-> +			NM_I(sbi)->free_nid_cnt++;
-> +			spin_unlock(&NM_I(sbi)->nid_list_lock);
-> +		}
+>  	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+> @@ -284,8 +314,6 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+>  		io->fio = *fio;
 >  	}
 >  
->  	if (to_journal)
-> @@ -2302,6 +2312,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
->  	nm_i->nid_cnt[FREE_NID_LIST] = 0;
->  	nm_i->nid_cnt[ALLOC_NID_LIST] = 0;
->  	nm_i->nat_cnt = 0;
-> +	nm_i->free_nid_cnt = nm_i->available_nids - sbi->total_valid_node_count;
->  	nm_i->ram_thresh = DEF_RAM_THRESHOLD;
->  	nm_i->ra_nid_pages = DEF_RA_NID_PAGES;
->  	nm_i->dirty_nats_ratio = DEF_DIRTY_NAT_RATIO_THRESHOLD;
+> -	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
+> -
+>  	if (bio_add_page(io->bio, bio_page, PAGE_SIZE, 0) <
+>  							PAGE_SIZE) {
+>  		__submit_merged_bio(io);
+> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+> index 2fdf233..f2d87de 100644
+> --- a/fs/f2fs/debug.c
+> +++ b/fs/f2fs/debug.c
+> @@ -50,7 +50,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+>  	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
+>  	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
+>  	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
+> -	si->wb_bios = atomic_read(&sbi->nr_wb_bios);
+> +	si->nr_wb_meta = get_pages(sbi, F2FS_WB_META);
+> +	si->nr_wb_data = get_pages(sbi, F2FS_WB_DATA);
+>  	si->total_count = (int)sbi->user_block_count / sbi->blocks_per_seg;
+>  	si->rsvd_segs = reserved_segments(sbi);
+>  	si->overp_segs = overprovision_segments(sbi);
+> @@ -313,8 +314,8 @@ static int stat_show(struct seq_file *s, void *v)
+>  		seq_printf(s, "  - Inner Struct Count: tree: %d(%d), node: %d\n",
+>  				si->ext_tree, si->zombie_tree, si->ext_node);
+>  		seq_puts(s, "\nBalancing F2FS Async:\n");
+> -		seq_printf(s, "  - inmem: %4d, wb_bios: %4d\n",
+> -			   si->inmem_pages, si->wb_bios);
+> +		seq_printf(s, "  - inmem: %4d, wb_meta: %4d, wb_data: %4d\n",
+> +			   si->inmem_pages, si->nr_wb_meta, si->nr_wb_data);
+>  		seq_printf(s, "  - nodes: %4d in %4d\n",
+>  			   si->ndirty_node, si->node_pages);
+>  		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 23a937f..4df301c 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -682,6 +682,8 @@ enum count_type {
+>  	F2FS_DIRTY_META,
+>  	F2FS_INMEM_PAGES,
+>  	F2FS_DIRTY_IMETA,
+> +	F2FS_WB_META,
+> +	F2FS_WB_DATA,
+>  	NR_COUNT_TYPE,
+>  };
+>  
+> @@ -849,7 +851,6 @@ struct f2fs_sb_info {
+>  	block_t discard_blks;			/* discard command candidats */
+>  	block_t last_valid_block_count;		/* for recovery */
+>  	u32 s_next_generation;			/* for NFS support */
+> -	atomic_t nr_wb_bios;			/* # of writeback bios */
+>  
+>  	/* # of pages, see count_type */
+>  	atomic_t nr_pages[NR_COUNT_TYPE];
+> @@ -1263,7 +1264,8 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+>  {
+>  	atomic_inc(&sbi->nr_pages[count_type]);
+>  
+> -	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES)
+> +	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
+> +		count_type == F2FS_WB_META || count_type == F2FS_WB_DATA)
+>  		return;
+>  
+>  	set_sbi_flag(sbi, SBI_IS_DIRTY);
+> @@ -2219,7 +2221,7 @@ struct f2fs_stat_info {
+>  	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
+>  	int nats, dirty_nats, sits, dirty_sits, free_nids, alloc_nids;
+>  	int total_count, utilization;
+> -	int bg_gc, wb_bios;
+> +	int bg_gc, nr_wb_meta, nr_wb_data;
+>  	int inline_xattr, inline_inode, inline_dir, orphans;
+>  	unsigned int valid_count, valid_node_count, valid_inode_count, discard_blks;
+>  	unsigned int bimodal, avg_vblocks;
 > -- 
 > 2.8.2.311.gee88674
 
