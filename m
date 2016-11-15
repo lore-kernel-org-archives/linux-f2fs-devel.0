@@ -1,70 +1,46 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: F2FS still EXPERIMENTAL
-Date: Tue, 15 Nov 2016 10:38:53 -0800
-Message-ID: <20161115183853.GA45096@jaegeuk>
-References: <e565c64ec1e345d9ae0e507880a5f2b5@SGPMBX1004.APAC.bosch.com>
-	<20161115062948.GA40446@jaegeuk>
-	<7d3b52f7cc84431f81748ccb2de9b4fe@SGPMBX1004.APAC.bosch.com>
+From: Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH 2/2] fscrypto: don't use on-stack buffer for key
+ derivation
+Date: Tue, 15 Nov 2016 10:53:09 -0800
+Message-ID: <20161115185309.GE127180@google.com>
+References: <1478210582-86338-1-git-send-email-ebiggers@google.com>
+ <1478210582-86338-2-git-send-email-ebiggers@google.com>
+ <20161115164704.5tzvm2g2x2fyetyu@thunk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1c6idK-0004D3-RN
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Nov 2016 18:39:02 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c6idJ-0003HH-NS
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 15 Nov 2016 18:39:02 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <7d3b52f7cc84431f81748ccb2de9b4fe@SGPMBX1004.APAC.bosch.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "HUANG Weller (CM/ESW12-CN)" <Weller.Huang@cn.bosch.com>
-Cc: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+In-Reply-To: <20161115164704.5tzvm2g2x2fyetyu@thunk.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-crypto@vger.kernel.org, jaegeuk@kernel.org, richard@nod.at, luto@kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue, Nov 15, 2016 at 09:59:25AM +0000, HUANG Weller (CM/ESW12-CN) wrote:
-> > Hello,
+On Tue, Nov 15, 2016 at 11:47:04AM -0500, Theodore Ts'o wrote:
+> On Thu, Nov 03, 2016 at 03:03:02PM -0700, Eric Biggers wrote:
+> > With the new (in 4.9) option to use a virtually-mapped stack
+> > (CONFIG_VMAP_STACK), stack buffers cannot be used as input/output for
+> > the scatterlist crypto API because they may not be directly mappable to
+> > struct page.  get_crypt_info() was using a stack buffer to hold the
+> > output from the encryption operation used to derive the per-file key.
+> > Fix it by using a heap buffer.
 > > 
-> > On Tue, Nov 15, 2016 at 05:45:12AM +0000, HUANG Weller (CM/ESW12-CN) wrote:
-> > > Hi  f2fs developers,
-> > >
-> > > I am working on the kernel 3.14. I found the  F2FS still EXPERIMENTAL.
-> > > Could you tell me from which kernel version the f2fs is stable version ?
+> > This bug could most easily be observed in a CONFIG_DEBUG_SG kernel
+> > because this allowed the BUG in sg_set_buf() to be triggered.
 > > 
-> > You can pick a backported f2fs from:
-> > 
-> > http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-stable.git
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
 > 
-> Thanks for your info. 
-> But I didn't see there is a branch for linux-3.14.y. Does it mean I could not use the f2fs-stable on 3.14 kernel ?
+> This commit is on the fscrypt and dev branches on ext4.git.
+> 
+>      	       	      	      	  - Ted
 
-Do you have a chance to change your kernel version?
+Hi Ted,
 
-I've been already maintaining 5 versions actively for android targets, so I'm
-not sure I can add one more kernel version for your experiment purpose. I guess
-it'd not much difficult to make v3.14 based on v3.18 in f2fs-stable.
+Would it make any sense to send these two patches to Linus for v4.9-rc6, given
+that they fix bugs introduced in 4.9 with the virtually-mapped stack feature?
+Or would you prefer to wait and have them go to 4.9 via stable?
+Note that CONFIG_VMAP_STACK defaults to y on x86_64.
 
 Thanks,
 
-> 
-> Huang Weller 
-> 
-> ------------------------------------------------------------------------------
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
+Eric
