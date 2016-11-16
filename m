@@ -1,7 +1,7 @@
 From: Chao Yu <yuchao0@huawei.com>
 Subject: Re: [PATCH v2] f2fs: don't wait writeback for datas during checkpoint
-Date: Wed, 16 Nov 2016 09:48:15 +0800
-Message-ID: <2e1b3ed7-f066-d44b-6e40-b8ee53f2eeda@huawei.com>
+Date: Wed, 16 Nov 2016 10:39:07 +0800
+Message-ID: <bb25da5b-8fa7-4317-040c-4beef6866d4d@huawei.com>
 References: <20161115113327.83100-1-yuchao0@huawei.com>
  <20161115200928.GB45096@jaegeuk>
 Mime-Version: 1.0
@@ -13,12 +13,6 @@ Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
-
-Hi Jaegeuk,
-
-Thanks for your review, I will clean up codes as you remind. :)
-
-Thanks,
 
 On 2016/11/16 4:09, Jaegeuk Kim wrote:
 > Hi Chao,
@@ -121,6 +115,12 @@ On 2016/11/16 4:09, Jaegeuk Kim wrote:
 >>  	bio_for_each_segment_all(bvec, bio, i) {
 >>  		struct page *page = bvec->bv_page;
 >> +		bool is_meta = f2fs_is_meta_data(page, true);
+
+In f2fs_submit_page_mbio, we get data type from bio_page that we will submit it
+later, so here it's better to get data type from page we submitted.
+
+Thanks,
+
 >>  
 >>  		fscrypt_pullback_bio_page(&page, true);
 >>  
