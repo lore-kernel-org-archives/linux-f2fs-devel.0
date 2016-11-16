@@ -1,311 +1,252 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: don't wait writeback for datas during checkpoint
-Date: Wed, 16 Nov 2016 10:39:07 +0800
-Message-ID: <bb25da5b-8fa7-4317-040c-4beef6866d4d@huawei.com>
-References: <20161115113327.83100-1-yuchao0@huawei.com>
- <20161115200928.GB45096@jaegeuk>
+Subject: [PATCH v3] f2fs: don't wait writeback for datas during checkpoint
+Date: Wed, 16 Nov 2016 10:41:20 +0800
+Message-ID: <20161116024120.61866-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161115200928.GB45096@jaegeuk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2016/11/16 4:09, Jaegeuk Kim wrote:
-> Hi Chao,
-> 
-> On Tue, Nov 15, 2016 at 07:33:27PM +0800, Chao Yu wrote:
->> Normally, while committing checkpoint, we will wait on all pages to be
->> writebacked no matter the page is data or metadata, so in scenario where
->> there are lots of data IO being submitted with metadata, we may suffer
->> long latency for waiting writeback during checkpoint.
->>
->> Indeed, we only care about persistence for pages with metadata, but not
->> pages with data, as file system consistent are only related to metadate,
->> so in order to avoid encountering long latency in above scenario, let's
->> recognize and reference metadata in submitted IOs, wait writeback only
->> for metadatas.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->> v2: cover GC + CP + sudden power-off case.
->>  fs/f2fs/checkpoint.c |  2 +-
->>  fs/f2fs/data.c       | 41 +++++++++++++++++++++++++++++++++++------
->>  fs/f2fs/debug.c      |  7 ++++---
->>  fs/f2fs/f2fs.h       |  8 +++++---
->>  fs/f2fs/file.c       |  2 --
->>  fs/f2fs/gc.c         |  2 --
->>  fs/f2fs/segment.c    |  1 -
->>  7 files changed, 45 insertions(+), 18 deletions(-)
->>
->> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->> index 7bece59..bdf8a50 100644
->> --- a/fs/f2fs/checkpoint.c
->> +++ b/fs/f2fs/checkpoint.c
->> @@ -1003,7 +1003,7 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
->>  	for (;;) {
->>  		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
->>  
->> -		if (!atomic_read(&sbi->nr_wb_bios))
->> +		if (!get_pages(sbi, F2FS_WB_META))
->>  			break;
->>  
->>  		io_schedule_timeout(5*HZ);
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index 66d2aee..e9b9d0f 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -22,6 +22,7 @@
->>  #include <linux/mm.h>
->>  #include <linux/memcontrol.h>
->>  #include <linux/cleancache.h>
->> +#include <linux/fscrypto.h>
->>  
->>  #include "f2fs.h"
->>  #include "node.h"
->> @@ -29,6 +30,30 @@
->>  #include "trace.h"
->>  #include <trace/events/f2fs.h>
->>  
->> +static bool f2fs_is_meta_data(struct page *page, bool clear_cold)
-> 
-> So, we'd better change the names to make all these clear.
-> How about?
-> 
-> 	__is_cp_guaranteed() ?
-> 
->> +{
->> +	struct address_space *mapping = page->mapping;
->> +	struct inode *inode;
->> +	struct f2fs_sb_info *sbi;
->> +	bool is_cold;
->> +
->> +	if (!mapping)
->> +		return false;
->> +
->> +	inode = mapping->host;
->> +	sbi = F2FS_I_SB(inode);
->> +
->> +	if (inode->i_ino == F2FS_META_INO(sbi) ||
->> +			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
-> 
-> 			is_cold_data(page) ||
-> 
->> +			S_ISDIR(inode->i_mode))
->> +		return true;
->> +
->> +	is_cold = is_cold_data(page);
->> +	if (is_cold && clear_cold)
->> +		clear_cold_data(page);
-> 
-> It looks an inappropriate place to do this. How about doing clear_cold_data()
-> out of this function in end_io.
-> 
->> +	return is_cold;
->> +}
->> +
->>  static void f2fs_read_end_io(struct bio *bio)
->>  {
->>  	struct bio_vec *bvec;
->> @@ -73,6 +98,7 @@ static void f2fs_write_end_io(struct bio *bio)
->>  
->>  	bio_for_each_segment_all(bvec, bio, i) {
->>  		struct page *page = bvec->bv_page;
->> +		bool is_meta = f2fs_is_meta_data(page, true);
+Normally, while committing checkpoint, we will wait on all pages to be
+writebacked no matter the page is data or metadata, so in scenario where
+there are lots of data IO being submitted with metadata, we may suffer
+long latency for waiting writeback during checkpoint.
 
-In f2fs_submit_page_mbio, we get data type from bio_page that we will submit it
-later, so here it's better to get data type from page we submitted.
+Indeed, we only care about persistence for pages with metadata, but not
+pages with data, as file system consistent are only related to metadate,
+so in order to avoid encountering long latency in above scenario, let's
+recognize and reference metadata in submitted IOs, wait writeback only
+for metadatas.
 
-Thanks,
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v3: clean up codes as Jaegeuk suggested.
+ fs/f2fs/checkpoint.c |  2 +-
+ fs/f2fs/data.c       | 37 +++++++++++++++++++++++++++++++------
+ fs/f2fs/debug.c      |  7 ++++---
+ fs/f2fs/f2fs.h       |  8 +++++---
+ fs/f2fs/file.c       |  2 --
+ fs/f2fs/gc.c         |  2 --
+ fs/f2fs/segment.c    |  1 -
+ 7 files changed, 41 insertions(+), 18 deletions(-)
 
->>  
->>  		fscrypt_pullback_bio_page(&page, true);
->>  
->> @@ -80,9 +106,10 @@ static void f2fs_write_end_io(struct bio *bio)
->>  			mapping_set_error(page->mapping, -EIO);
->>  			f2fs_stop_checkpoint(sbi, true);
->>  		}
->> +		dec_page_count(sbi, is_meta ? F2FS_WB_META : F2FS_WB_DATA);
-> 
-> 
-> #define WB_DATA_TYPE(p)	(__is_cp_guaranteed(p) ? F2FS_WB_CP_DATA : F2FS_WB_DATA)
-> 
-> 		dec_page_count(sbi, WB_DATA_TYPE(page));
-> 		clear_cold_data(page);
-> 
->>  		end_page_writeback(page);
->>  	}
->> -	if (atomic_dec_and_test(&sbi->nr_wb_bios) &&
->> +	if (!get_pages(sbi, F2FS_WB_META) &&
-> 
-> 	F2FS_WB_CP_DATA
-> 
->>  				wq_has_sleeper(&sbi->cp_wait))
->>  		wake_up(&sbi->cp_wait);
->>  
->> @@ -111,7 +138,6 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
->>  				struct bio *bio, enum page_type type)
->>  {
->>  	if (!is_read_io(bio_op(bio))) {
->> -		atomic_inc(&sbi->nr_wb_bios);
->>  		if (f2fs_sb_mounted_blkzoned(sbi->sb) &&
->>  			current->plug && (type == DATA || type == NODE))
->>  			blk_finish_plug(current->plug);
->> @@ -272,6 +298,13 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
->>  		verify_block_addr(sbi, fio->old_blkaddr);
->>  	verify_block_addr(sbi, fio->new_blkaddr);
->>  
->> +	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
->> +
->> +	if (!is_read) {
->> +		bool is_meta = f2fs_is_meta_data(bio_page, false);
->> +		inc_page_count(sbi, is_meta ? F2FS_WB_META : F2FS_WB_DATA);
-> 
-> 		inc_page_count(sbi, WB_DATA_TYPE(bio_page));
-> 
->> +	}
->> +
->>  	down_write(&io->io_rwsem);
->>  
->>  	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
->> @@ -284,8 +317,6 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
->>  		io->fio = *fio;
->>  	}
->>  
->> -	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
->> -
->>  	if (bio_add_page(io->bio, bio_page, PAGE_SIZE, 0) <
->>  							PAGE_SIZE) {
->>  		__submit_merged_bio(io);
->> @@ -1296,7 +1327,6 @@ static int f2fs_write_data_page(struct page *page,
->>  	if (err && err != -ENOENT)
->>  		goto redirty_out;
->>  
->> -	clear_cold_data(page);
->>  out:
->>  	inode_dec_dirty_pages(inode);
->>  	if (err)
->> @@ -1699,7 +1729,6 @@ static int f2fs_write_end(struct file *file,
->>  		goto unlock_out;
->>  
->>  	set_page_dirty(page);
->> -	clear_cold_data(page);
->>  
->>  	if (pos + copied > i_size_read(inode))
->>  		f2fs_i_size_write(inode, pos + copied);
->> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
->> index 2fdf233..f2d87de 100644
->> --- a/fs/f2fs/debug.c
->> +++ b/fs/f2fs/debug.c
->> @@ -50,7 +50,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
->>  	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
->>  	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
->>  	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
->> -	si->wb_bios = atomic_read(&sbi->nr_wb_bios);
->> +	si->nr_wb_meta = get_pages(sbi, F2FS_WB_META);
->> +	si->nr_wb_data = get_pages(sbi, F2FS_WB_DATA);
->>  	si->total_count = (int)sbi->user_block_count / sbi->blocks_per_seg;
->>  	si->rsvd_segs = reserved_segments(sbi);
->>  	si->overp_segs = overprovision_segments(sbi);
->> @@ -313,8 +314,8 @@ static int stat_show(struct seq_file *s, void *v)
->>  		seq_printf(s, "  - Inner Struct Count: tree: %d(%d), node: %d\n",
->>  				si->ext_tree, si->zombie_tree, si->ext_node);
->>  		seq_puts(s, "\nBalancing F2FS Async:\n");
->> -		seq_printf(s, "  - inmem: %4d, wb_bios: %4d\n",
->> -			   si->inmem_pages, si->wb_bios);
->> +		seq_printf(s, "  - inmem: %4d, wb_meta: %4d, wb_data: %4d\n",
->> +			   si->inmem_pages, si->nr_wb_meta, si->nr_wb_data);
->>  		seq_printf(s, "  - nodes: %4d in %4d\n",
->>  			   si->ndirty_node, si->node_pages);
->>  		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index f264c1b..f440848 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -682,6 +682,8 @@ enum count_type {
->>  	F2FS_DIRTY_META,
->>  	F2FS_INMEM_PAGES,
->>  	F2FS_DIRTY_IMETA,
->> +	F2FS_WB_META,
-> 
-> 	F2FS_WB_CP_DATA,
-> 
-> Thanks,
-> 
->> +	F2FS_WB_DATA,
->>  	NR_COUNT_TYPE,
->>  };
->>  
->> @@ -849,7 +851,6 @@ struct f2fs_sb_info {
->>  	block_t discard_blks;			/* discard command candidats */
->>  	block_t last_valid_block_count;		/* for recovery */
->>  	u32 s_next_generation;			/* for NFS support */
->> -	atomic_t nr_wb_bios;			/* # of writeback bios */
->>  
->>  	/* # of pages, see count_type */
->>  	atomic_t nr_pages[NR_COUNT_TYPE];
->> @@ -1263,7 +1264,8 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
->>  {
->>  	atomic_inc(&sbi->nr_pages[count_type]);
->>  
->> -	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES)
->> +	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
->> +		count_type == F2FS_WB_META || count_type == F2FS_WB_DATA)
->>  		return;
->>  
->>  	set_sbi_flag(sbi, SBI_IS_DIRTY);
->> @@ -2219,7 +2221,7 @@ struct f2fs_stat_info {
->>  	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
->>  	int nats, dirty_nats, sits, dirty_sits, free_nids, alloc_nids;
->>  	int total_count, utilization;
->> -	int bg_gc, wb_bios;
->> +	int bg_gc, nr_wb_meta, nr_wb_data;
->>  	int inline_xattr, inline_inode, inline_dir, orphans;
->>  	unsigned int valid_count, valid_node_count, valid_inode_count, discard_blks;
->>  	unsigned int bimodal, avg_vblocks;
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index e821c39..dd1c5c3 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -96,8 +96,6 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
->>  	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
->>  		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
->>  
->> -	/* if gced page is attached, don't write to cold segment */
->> -	clear_cold_data(page);
->>  out:
->>  	sb_end_pagefault(inode->i_sb);
->>  	f2fs_update_time(sbi, REQ_TIME);
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index 11ff05e..c4b3c32 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -695,8 +695,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>  			congestion_wait(BLK_RW_ASYNC, HZ/50);
->>  			goto retry;
->>  		}
->> -
->> -		clear_cold_data(page);
->>  	}
->>  out:
->>  	f2fs_put_page(page, 1);
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 078c571..d8aa703 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -290,7 +290,6 @@ static int __commit_inmem_pages(struct inode *inode,
->>  			/* record old blkaddr for revoking */
->>  			cur->old_addr = fio.old_blkaddr;
->>  
->> -			clear_cold_data(page);
->>  			submit_bio = true;
->>  		}
->>  		unlock_page(page);
->> -- 
->> 2.8.2.311.gee88674
-> 
-> .
-> 
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 7bece59..5039ed8 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1003,7 +1003,7 @@ static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
+ 	for (;;) {
+ 		prepare_to_wait(&sbi->cp_wait, &wait, TASK_UNINTERRUPTIBLE);
+ 
+-		if (!atomic_read(&sbi->nr_wb_bios))
++		if (!get_pages(sbi, F2FS_WB_CP_DATA))
+ 			break;
+ 
+ 		io_schedule_timeout(5*HZ);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 66d2aee..4115689 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -29,6 +29,28 @@
+ #include "trace.h"
+ #include <trace/events/f2fs.h>
+ 
++static bool __is_cp_guaranteed(struct page *page)
++{
++	struct address_space *mapping = page->mapping;
++	struct inode *inode;
++	struct f2fs_sb_info *sbi;
++
++	if (!mapping)
++		return false;
++
++	inode = mapping->host;
++	sbi = F2FS_I_SB(inode);
++
++	if (inode->i_ino == F2FS_META_INO(sbi) ||
++			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
++			S_ISDIR(inode->i_mode) ||
++			is_cold_data(page))
++		return true;
++	return false;
++}
++
++#define WB_DATA_TYPE(p)	(__is_cp_guaranteed(p) ? F2FS_WB_CP_DATA : F2FS_WB_DATA)
++
+ static void f2fs_read_end_io(struct bio *bio)
+ {
+ 	struct bio_vec *bvec;
+@@ -73,6 +95,7 @@ static void f2fs_write_end_io(struct bio *bio)
+ 
+ 	bio_for_each_segment_all(bvec, bio, i) {
+ 		struct page *page = bvec->bv_page;
++		enum count_type type = WB_DATA_TYPE(page);
+ 
+ 		fscrypt_pullback_bio_page(&page, true);
+ 
+@@ -80,9 +103,11 @@ static void f2fs_write_end_io(struct bio *bio)
+ 			mapping_set_error(page->mapping, -EIO);
+ 			f2fs_stop_checkpoint(sbi, true);
+ 		}
++		dec_page_count(sbi, type);
++		clear_cold_data(page);
+ 		end_page_writeback(page);
+ 	}
+-	if (atomic_dec_and_test(&sbi->nr_wb_bios) &&
++	if (!get_pages(sbi, F2FS_WB_CP_DATA) &&
+ 				wq_has_sleeper(&sbi->cp_wait))
+ 		wake_up(&sbi->cp_wait);
+ 
+@@ -111,7 +136,6 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+ 				struct bio *bio, enum page_type type)
+ {
+ 	if (!is_read_io(bio_op(bio))) {
+-		atomic_inc(&sbi->nr_wb_bios);
+ 		if (f2fs_sb_mounted_blkzoned(sbi->sb) &&
+ 			current->plug && (type == DATA || type == NODE))
+ 			blk_finish_plug(current->plug);
+@@ -272,6 +296,11 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+ 		verify_block_addr(sbi, fio->old_blkaddr);
+ 	verify_block_addr(sbi, fio->new_blkaddr);
+ 
++	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
++
++	if (!is_read)
++		inc_page_count(sbi, WB_DATA_TYPE(bio_page));
++
+ 	down_write(&io->io_rwsem);
+ 
+ 	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
+@@ -284,8 +313,6 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+ 		io->fio = *fio;
+ 	}
+ 
+-	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
+-
+ 	if (bio_add_page(io->bio, bio_page, PAGE_SIZE, 0) <
+ 							PAGE_SIZE) {
+ 		__submit_merged_bio(io);
+@@ -1296,7 +1323,6 @@ static int f2fs_write_data_page(struct page *page,
+ 	if (err && err != -ENOENT)
+ 		goto redirty_out;
+ 
+-	clear_cold_data(page);
+ out:
+ 	inode_dec_dirty_pages(inode);
+ 	if (err)
+@@ -1699,7 +1725,6 @@ static int f2fs_write_end(struct file *file,
+ 		goto unlock_out;
+ 
+ 	set_page_dirty(page);
+-	clear_cold_data(page);
+ 
+ 	if (pos + copied > i_size_read(inode))
+ 		f2fs_i_size_write(inode, pos + copied);
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 2fdf233..67a04d8 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -50,7 +50,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
+ 	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
+ 	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
+-	si->wb_bios = atomic_read(&sbi->nr_wb_bios);
++	si->nr_wb_cp_data = get_pages(sbi, F2FS_WB_CP_DATA);
++	si->nr_wb_data = get_pages(sbi, F2FS_WB_DATA);
+ 	si->total_count = (int)sbi->user_block_count / sbi->blocks_per_seg;
+ 	si->rsvd_segs = reserved_segments(sbi);
+ 	si->overp_segs = overprovision_segments(sbi);
+@@ -313,8 +314,8 @@ static int stat_show(struct seq_file *s, void *v)
+ 		seq_printf(s, "  - Inner Struct Count: tree: %d(%d), node: %d\n",
+ 				si->ext_tree, si->zombie_tree, si->ext_node);
+ 		seq_puts(s, "\nBalancing F2FS Async:\n");
+-		seq_printf(s, "  - inmem: %4d, wb_bios: %4d\n",
+-			   si->inmem_pages, si->wb_bios);
++		seq_printf(s, "  - inmem: %4d, wb_cp_data: %4d, wb_data: %4d\n",
++			   si->inmem_pages, si->nr_wb_cp_data, si->nr_wb_data);
+ 		seq_printf(s, "  - nodes: %4d in %4d\n",
+ 			   si->ndirty_node, si->node_pages);
+ 		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f264c1b..34405dc 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -682,6 +682,8 @@ enum count_type {
+ 	F2FS_DIRTY_META,
+ 	F2FS_INMEM_PAGES,
+ 	F2FS_DIRTY_IMETA,
++	F2FS_WB_CP_DATA,
++	F2FS_WB_DATA,
+ 	NR_COUNT_TYPE,
+ };
+ 
+@@ -849,7 +851,6 @@ struct f2fs_sb_info {
+ 	block_t discard_blks;			/* discard command candidats */
+ 	block_t last_valid_block_count;		/* for recovery */
+ 	u32 s_next_generation;			/* for NFS support */
+-	atomic_t nr_wb_bios;			/* # of writeback bios */
+ 
+ 	/* # of pages, see count_type */
+ 	atomic_t nr_pages[NR_COUNT_TYPE];
+@@ -1263,7 +1264,8 @@ static inline void inc_page_count(struct f2fs_sb_info *sbi, int count_type)
+ {
+ 	atomic_inc(&sbi->nr_pages[count_type]);
+ 
+-	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES)
++	if (count_type == F2FS_DIRTY_DATA || count_type == F2FS_INMEM_PAGES ||
++		count_type == F2FS_WB_CP_DATA || count_type == F2FS_WB_DATA)
+ 		return;
+ 
+ 	set_sbi_flag(sbi, SBI_IS_DIRTY);
+@@ -2219,7 +2221,7 @@ struct f2fs_stat_info {
+ 	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
+ 	int nats, dirty_nats, sits, dirty_sits, free_nids, alloc_nids;
+ 	int total_count, utilization;
+-	int bg_gc, wb_bios;
++	int bg_gc, nr_wb_cp_data, nr_wb_data;
+ 	int inline_xattr, inline_inode, inline_dir, orphans;
+ 	unsigned int valid_count, valid_node_count, valid_inode_count, discard_blks;
+ 	unsigned int bimodal, avg_vblocks;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index e821c39..dd1c5c3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -96,8 +96,6 @@ static int f2fs_vm_page_mkwrite(struct vm_area_struct *vma,
+ 	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
+ 		f2fs_wait_on_encrypted_page_writeback(sbi, dn.data_blkaddr);
+ 
+-	/* if gced page is attached, don't write to cold segment */
+-	clear_cold_data(page);
+ out:
+ 	sb_end_pagefault(inode->i_sb);
+ 	f2fs_update_time(sbi, REQ_TIME);
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 11ff05e..c4b3c32 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -695,8 +695,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 			congestion_wait(BLK_RW_ASYNC, HZ/50);
+ 			goto retry;
+ 		}
+-
+-		clear_cold_data(page);
+ 	}
+ out:
+ 	f2fs_put_page(page, 1);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 078c571..d8aa703 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -290,7 +290,6 @@ static int __commit_inmem_pages(struct inode *inode,
+ 			/* record old blkaddr for revoking */
+ 			cur->old_addr = fio.old_blkaddr;
+ 
+-			clear_cold_data(page);
+ 			submit_bio = true;
+ 		}
+ 		unlock_page(page);
+-- 
+2.8.2.311.gee88674
