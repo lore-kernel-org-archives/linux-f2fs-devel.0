@@ -1,22 +1,27 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v5] f2fs: fix to account total free nid correctly
-Date: Thu, 17 Nov 2016 20:53:11 +0800
-Message-ID: <20161117125311.68384-1-yuchao0@huawei.com>
+From: Brian Foster <bfoster@redhat.com>
+Subject: Re: [PATCH] generic/391: check inode metadata on
+ f{data}sync after power-cut
+Date: Thu, 17 Nov 2016 07:56:58 -0500
+Message-ID: <20161117125658.GA49658@bfoster.bfoster>
+References: <20161117032753.69315-1-jaegeuk@kernel.org>
+	<20161117083527.GY27776@eguan.usersys.redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1c7MCf-0001sa-Mu
+	(envelope-from <bfoster@redhat.com>) id 1c7MFY-00022q-Av
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Nov 2016 12:54:09 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c7MCb-0001Df-LZ
+	Thu, 17 Nov 2016 12:57:08 +0000
+Received: from mx1.redhat.com ([209.132.183.28])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1c7MFW-000129-GL
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Nov 2016 12:54:09 +0000
+	Thu, 17 Nov 2016 12:57:08 +0000
+Content-Disposition: inline
+In-Reply-To: <20161117083527.GY27776@eguan.usersys.redhat.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,142 +31,273 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Eryu Guan <eguan@redhat.com>
+Cc: linux-xfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Thread A		Thread B		Thread C
-- f2fs_create
- - f2fs_new_inode
-  - f2fs_lock_op
-   - alloc_nid
-    alloc last nid
-  - f2fs_unlock_op
-			- f2fs_create
-			 - f2fs_new_inode
-			  - f2fs_lock_op
-			   - alloc_nid
-			    as node count still not
-			    be increased, we will
-			    loop in alloc_nid
-						- f2fs_write_node_pages
-						 - f2fs_balance_fs_bg
-						  - f2fs_sync_fs
-						   - write_checkpoint
-						    - block_operations
-						     - f2fs_lock_all
- - f2fs_lock_op
+On Thu, Nov 17, 2016 at 04:35:27PM +0800, Eryu Guan wrote:
+> [cc'ed linux-xfs for inputs on a flush log issue]
+> 
+> On Wed, Nov 16, 2016 at 07:27:53PM -0800, Jaegeuk Kim wrote:
+> > This patch adds tests/generic/391 to test fsync and fdatasync with power-cuts.
+> > 
+> > The rule to check is:
+> > 1) fsync should guarantee all the inode metadata after power-cut,
+> > 2) fdatasync should guarantee i_size and i_blocks at least after power-cut.
+> > 
+> > Suggested-by: Chao Yu <yuchao0@huawei.com>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  tests/generic/391     | 125 ++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  tests/generic/391.out |  11 +++++
+> >  tests/generic/group   |   1 +
+> >  3 files changed, 137 insertions(+)
+> >  create mode 100644 tests/generic/391
+> >  create mode 100644 tests/generic/391.out
+> > 
+> > diff --git a/tests/generic/391 b/tests/generic/391
+> > new file mode 100644
+> > index 0000000..17c3fd3
+> > --- /dev/null
+> > +++ b/tests/generic/391
+> > @@ -0,0 +1,125 @@
+> > +#! /bin/bash
+> > +# FS QA Test 391
+> > +#
+> > +# Test inode's metadata after fsync or fdatasync calls.
+> > +# In the case of fsync, filesystem should recover all the inode metadata, while
+> > +# recovering i_blocks and i_size at least for fdatasync.
+> > +#
+> > +#-----------------------------------------------------------------------
+> > +# Copyright (c) 2016 Jaegeuk Kim.  All Rights Reserved.
+> > +#
+> > +# This program is free software; you can redistribute it and/or
+> > +# modify it under the terms of the GNU General Public License as
+> > +# published by the Free Software Foundation.
+> > +#
+> > +# This program is distributed in the hope that it would be useful,
+> > +# but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > +# GNU General Public License for more details.
+> > +#
+> > +# You should have received a copy of the GNU General Public License
+> > +# along with this program; if not, write the Free Software Foundation,
+> > +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+> > +#-----------------------------------------------------------------------
+> > +#
+> > +
+> > +seq=`basename $0`
+> > +seqres=$RESULT_DIR/$seq
+> > +echo "QA output created by $seq"
+> > +
+> > +here=`pwd`
+> > +tmp=/tmp/$$
+> > +status=1	# failure is the default!
+> > +trap "rm -f $tmp.*; exit \$status" 0 1 2 3 15
+> 
+> Better to follow the template and other tests on how to do cleanup, i.e.
+> trap _cleanup on exit and do real cleanups in it. e.g.
+> 
+> trap "_cleanup; exit \$status" 0 1 2 3 15
+> 
+> _cleanup()
+> {
+> 	cd /
+> 	rm -f $tmp.*
+> }
+> 
+> Not a big deal, but it's better to maintain consistency :)
+> 
+> > +
+> > +# get standard environment, filters and checks
+> > +. ./common/rc
+> > +. ./common/filter
+> > +. ./common/punch
+> > +
+> > +# real QA test starts here
+> > +_supported_fs generic
+> > +_supported_os Linux
+> > +
+> > +rm -f $seqres.full
+> > +_require_scratch
+> > +_require_scratch_shutdown
+> > +_require_xfs_io_command "fpunch"
+> > +
+> > +_scratch_mkfs >/dev/null 2>&1
+> > +_scratch_mount
+> > +
+> > +testfile=$SCRATCH_MNT/testfile
+> > +
+> > +# check inode metadata after shutdown
+> > +_check_inode_metadata()
+> 
+> No need to name local functions with the leading "_", that's for global
+> helper functions.
+> 
+> > +{
+> > +	src/godown $SCRATCH_MNT >> $seqres.full
+> > +	$XFS_IO_PROG -r -c "stat -v" $1 >$tmp.before
+> 
+> Shouldn't we call godown *after* xfs_io -c stat? I saw EIO on this
+> xfs_io command and all sub-tests reported stat diff.
+> 
 
-While creating new inode, we do not allocate and account nid atomically,
-so that when there is almost no free nids left, we may encounter deadloop
-like above stack.
+Yeah.. I haven't run the test, but I would expect pretty much anything
+to return an error after an fs shutdown.
 
-In order to avoid that, reuse nm_i::available_nids for accounting free nids
-and make nid allocation and counting being atomical during node creation.
+> And perhaps we need to flush the log on godown for XFS? i.e.
+> 
+> src/godown -f $SCRATCH_MNT >> $seqres.full
+> 
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h |  2 +-
- fs/f2fs/node.c | 34 +++++++++++++++++++++++++++++-----
- 2 files changed, 30 insertions(+), 6 deletions(-)
+I don't think this is necessary. The semantics of fsync() dictate that
+the fs do what is necessary to make the file persistent on disk. This
+means it is the fs responsibility to ensure the changes are logged on
+disk. Indeed, xfs_file_fsync() calls _xfs_log_force_lsn() to flush the
+log up to the most recent LSN that covered the inode in question.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 23a937f..f264c1b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -532,7 +532,7 @@ enum nid_list {
- struct f2fs_nm_info {
- 	block_t nat_blkaddr;		/* base disk address of NAT */
- 	nid_t max_nid;			/* maximum possible node ids */
--	nid_t available_nids;		/* maximum available node ids */
-+	nid_t available_nids;		/* # of available node ids */
- 	nid_t next_scan_nid;		/* the next nid to be scanned */
- 	unsigned int ram_thresh;	/* control the memory footprint */
- 	unsigned int ra_nid_pages;	/* # of nid pages to be readaheaded */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index d58438f..90342e6 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1885,11 +1885,13 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
- 		return false;
- 	}
- #endif
--	if (unlikely(sbi->total_valid_node_count + 1 > nm_i->available_nids))
--		return false;
--
- 	spin_lock(&nm_i->nid_list_lock);
- 
-+	if (unlikely(nm_i->available_nids == 0)) {
-+		spin_unlock(&nm_i->nid_list_lock);
-+		return false;
-+	}
-+
- 	/* We should not use stale free nids created by build_free_nids */
- 	if (nm_i->nid_cnt[FREE_NID_LIST] && !on_build_free_nids(nm_i)) {
- 		f2fs_bug_on(sbi, list_empty(&nm_i->nid_list[FREE_NID_LIST]));
-@@ -1900,6 +1902,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
- 		__remove_nid_from_list(sbi, i, FREE_NID_LIST, true);
- 		i->state = NID_ALLOC;
- 		__insert_nid_to_list(sbi, i, ALLOC_NID_LIST, false);
-+		nm_i->available_nids--;
- 		spin_unlock(&nm_i->nid_list_lock);
- 		return true;
- 	}
-@@ -1951,6 +1954,9 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
- 		i->state = NID_NEW;
- 		__insert_nid_to_list(sbi, i, FREE_NID_LIST, false);
- 	}
-+
-+	nm_i->available_nids++;
-+
- 	spin_unlock(&nm_i->nid_list_lock);
- 
- 	if (need_free)
-@@ -2150,6 +2156,19 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
- 			ne = grab_nat_entry(nm_i, nid);
- 			node_info_from_raw_nat(&ne->ni, &raw_ne);
- 		}
-+
-+		/*
-+		 * if a free nat in journal has not been used after last
-+		 * checkpoint, we should remove it from available nids,
-+		 * since later we will add it again.
-+		 */
-+		if (!get_nat_flag(ne, IS_DIRTY) &&
-+				le32_to_cpu(raw_ne.block_addr) == NULL_ADDR) {
-+			spin_lock(&nm_i->nid_list_lock);
-+			nm_i->available_nids--;
-+			spin_unlock(&nm_i->nid_list_lock);
-+		}
-+
- 		__set_nat_cache_dirty(nm_i, ne);
- 	}
- 	update_nats_in_cursum(journal, -i);
-@@ -2222,8 +2241,12 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 		raw_nat_from_node_info(raw_ne, &ne->ni);
- 		nat_reset_flag(ne);
- 		__clear_nat_cache_dirty(NM_I(sbi), ne);
--		if (nat_get_blkaddr(ne) == NULL_ADDR)
-+		if (nat_get_blkaddr(ne) == NULL_ADDR) {
- 			add_free_nid(sbi, nid, false);
-+			spin_lock(&NM_I(sbi)->nid_list_lock);
-+			NM_I(sbi)->available_nids++;
-+			spin_unlock(&NM_I(sbi)->nid_list_lock);
-+		}
- 	}
- 
- 	if (to_journal)
-@@ -2298,7 +2321,8 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
- 	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks;
- 
- 	/* not used nids: 0, node, meta, (and root counted as valid node) */
--	nm_i->available_nids = nm_i->max_nid - F2FS_RESERVED_NODE_NUM;
-+	nm_i->available_nids = nm_i->max_nid - sbi->total_valid_node_count -
-+							F2FS_RESERVED_NODE_NUM;
- 	nm_i->nid_cnt[FREE_NID_LIST] = 0;
- 	nm_i->nid_cnt[ALLOC_NID_LIST] = 0;
- 	nm_i->nat_cnt = 0;
--- 
-2.8.2.311.gee88674
+> Otherwise XFS fails all the "1024" & fsync tests (after I fixed the
+> godown & xfs_io order locally), fdatasync tests are fine.
+> 
+> @@ -1,8 +1,16 @@
+>  QA output created by 391
+>  ==== i_size 1024 test with fsync ====
+> +6c6
+> +< stat.blocks = 8200
+> +---
+> +> stat.blocks = 16256
+>  ==== i_size 4096 test with fsync ====
+>  ==== i_time test with fsync ====
+>  ==== fpunch 1024 test with fsync ====
+> +6c6
+> +< stat.blocks = 8208
+> +---
+> +> stat.blocks = 24576
+>  ==== fpunch 4096 test with fsync ====
+> 
+> Not sure if this is the expected behavior on XFS. cc'ed xfs list for
+> some inputs.
+> 
 
+Am I reading this correctly that you're seeing more blocks than
+expected? If so, preallocation perhaps?
+
+Brian
+
+> > +	_scratch_cycle_mount
+> > +	$XFS_IO_PROG -r -c "stat -v" $1 >$tmp.after
+> > +	diff $tmp.before $tmp.after >>$tmp.diff
+> 
+> I think $tmp.diff should be overwritten on each sub-test.
+> 
+> > +
+> > +	if [ "$2" = "fdatasync" ]; then
+> > +		cat $tmp.diff | grep stat.size
+> > +		cat $tmp.diff | grep stat.blocks
+> > +	else
+> > +		cat $tmp.diff
+> > +	fi
+> > +	cat $tmp.before >> $seqres.full
+> > +	cat $tmp.after >> $seqres.full
+> > +}
+> > +
+> > +# append XX KB with f{data}sync, followed by power-cut
+> > +_test_i_size()
+> > +{
+> > +	echo "==== i_size $2 test with $1 ===="
+> 
+> I find it's much easier to read the $seqres.full log if we append these
+> kind of logs to $seqres.full too, e.g.
+> 
+> 	echo "==== i_size $2 test with $1 ====" | tee -a $seqres.full
+> 
+> Thanks,
+> Eryu
+> 
+> > +	$XFS_IO_PROG -f -c "pwrite 0 4M"	\
+> > +			-c "fsync"		\
+> > +			-c "pwrite 4M $2"	\
+> > +			-c "$1"			\
+> > +			$testfile >/dev/null
+> > +	_check_inode_metadata $testfile $1
+> > +}
+> > +
+> > +# update times with f{data}sync, followed by power-cut
+> > +_test_i_time()
+> > +{
+> > +	echo "==== i_time test with $1 ===="
+> > +	$XFS_IO_PROG -f -c "pwrite 0 4M"	\
+> > +			-c "fsync"		\
+> > +			$testfile >/dev/null
+> > +	sleep 1
+> > +	touch $testfile
+> > +	$XFS_IO_PROG -c "$1"			\
+> > +			$testfile >/dev/null
+> > +	_check_inode_metadata $testfile $1
+> > +}
+> > +
+> > +# punch XX KB with f{data}sync, followed by power-cut
+> > +_test_punch()
+> > +{
+> > +	echo "==== fpunch $2 test with $1 ===="
+> > +	$XFS_IO_PROG -f -c "pwrite 0 4202496"	\
+> > +			-c "fsync"		\
+> > +			-c "fpunch 4194304 $2"\
+> > +			-c "$1"			\
+> > +			$testfile >/dev/null
+> > +
+> > +	_check_inode_metadata $testfile $1
+> > +}
+> > +
+> > +for i in fsync fdatasync
+> > +do
+> > +	_test_i_size $i 1024
+> > +	_test_i_size $i 4096
+> > +	_test_i_time $i
+> > +	_test_punch $i 1024
+> > +	_test_punch $i 4096
+> > +done
+> > +
+> > +rm -f $tmp.*
+> > +
+> > +# success, all done
+> > +status=0
+> > +exit
+> > diff --git a/tests/generic/391.out b/tests/generic/391.out
+> > new file mode 100644
+> > index 0000000..7c66776
+> > --- /dev/null
+> > +++ b/tests/generic/391.out
+> > @@ -0,0 +1,11 @@
+> > +QA output created by 391
+> > +==== i_size 1024 test with fsync ====
+> > +==== i_size 4096 test with fsync ====
+> > +==== i_time test with fsync ====
+> > +==== fpunch 1024 test with fsync ====
+> > +==== fpunch 4096 test with fsync ====
+> > +==== i_size 1024 test with fdatasync ====
+> > +==== i_size 4096 test with fdatasync ====
+> > +==== i_time test with fdatasync ====
+> > +==== fpunch 1024 test with fdatasync ====
+> > +==== fpunch 4096 test with fdatasync ====
+> > diff --git a/tests/generic/group b/tests/generic/group
+> > index 08007d7..9de3415 100644
+> > --- a/tests/generic/group
+> > +++ b/tests/generic/group
+> > @@ -392,3 +392,4 @@
+> >  387 auto clone
+> >  388 auto log metadata
+> >  389 auto quick acl
+> > +391 auto quick metadata
+> > -- 
+> > 2.8.3
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe fstests" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe fstests" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 ------------------------------------------------------------------------------
