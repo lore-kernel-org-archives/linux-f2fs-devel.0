@@ -1,282 +1,187 @@
-From: Eryu Guan <eguan@redhat.com>
-Subject: Re: [PATCH] generic/392: add a testcase to check some inline
- truncation behaviors
-Date: Thu, 17 Nov 2016 17:08:40 +0800
-Message-ID: <20161117090840.GZ27776@eguan.usersys.redhat.com>
-References: <20161117034715.71966-1-jaegeuk@kernel.org>
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: fix to account total free nid correctly
+Date: Thu, 17 Nov 2016 17:42:09 +0800
+Message-ID: <1baaeb63-4557-a209-3f6b-9090f44345e1@huawei.com>
+References: <20161114112456.113074-1-yuchao0@huawei.com>
+	<20161114204557.GA28366@jaegeuk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <fstests-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161117034715.71966-1-jaegeuk@kernel.org>
-Sender: fstests-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1c7JDR-0003H4-HC
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 17 Nov 2016 09:42:45 +0000
+Received: from [58.251.152.179] (helo=szxga05-in.huawei.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1c7JDP-0004x8-1h
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 17 Nov 2016 09:42:45 +0000
+In-Reply-To: <20161114204557.GA28366@jaegeuk>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Wed, Nov 16, 2016 at 07:47:15PM -0800, Jaegeuk Kim wrote:
-> This patch introduces a new testcase to test some small truncations to check
-> inline_data and its cached data are truncated correctly at the same time.
-> 
-> The inline_data feature was introduced in ext4 and f2fs as follows.
->  ext4 : http://lwn.net/Articles/468678/
->  f2fs : http://lwn.net/Articles/573408/
-> 
-> The basic idea is embedding small-sized file's data into relatively large
-> inode space.
-> In ext4, up to 132 bytes of data can be stored in 256 bytes-sized inode.
-> In f2fs, up to 3.4KB of data can be embedded into 4KB-sized inode block.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  tests/generic/392     | 127 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/392.out |  41 ++++++++++++++++
->  tests/generic/group   |   1 +
->  3 files changed, 169 insertions(+)
->  create mode 100644 tests/generic/392
->  create mode 100644 tests/generic/392.out
-> 
-> diff --git a/tests/generic/392 b/tests/generic/392
-> new file mode 100644
-> index 0000000..7282053
-> --- /dev/null
-> +++ b/tests/generic/392
-> @@ -0,0 +1,127 @@
-> +#! /bin/bash
-> +# FS QA Test No. generic/392
-> +#
-> +# Test some small truncations to check inline_data and its cached data are
-> +# truncated correctly at the same time.
-> +#
-> +# The inline_data feature was introduced in ext4 and f2fs as follows.
-> +#  ext4 : http://lwn.net/Articles/468678/
-> +#  f2fs : http://lwn.net/Articles/573408/
-> +#
-> +# The basic idea is embedding small-sized file's data into relatively large
-> +# inode space.
-> +# In ext4, up to 132 bytes of data can be stored in 256 bytes-sized inode.
-> +# In f2fs, up to 3.4KB of data can be embedded into 4KB-sized inode block.
-> +#
-> +#-----------------------------------------------------------------------
-> +# Copyright (c) 2014 Jaegeuk Kim.  All Rights Reserved.
-> +#
-> +# This program is free software; you can redistribute it and/or
-> +# modify it under the terms of the GNU General Public License as
-> +# published by the Free Software Foundation.
-> +#
-> +# This program is distributed in the hope that it would be useful,
-> +# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +# GNU General Public License for more details.
-> +#
-> +# You should have received a copy of the GNU General Public License
-> +# along with this program; if not, write the Free Software Foundation,
-> +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-> +#-----------------------------------------------------------------------
-> +#
-> +
-> +seq=`basename $0`
-> +seqres=$RESULT_DIR/$seq
-> +echo "QA output created by $seq"
-> +
-> +here=`pwd`
-> +tmp=/tmp/$$
-> +status=1	# failure is the default!
-> +trap "_cleanup; exit \$status" 0 1 2 3 15
-> +
-> +_cleanup()
-> +{
-> +    cd /
-> +    rm -f $tmp.*
-> +}
-> +
-> +# get standard environment, filters and checks
-> +. ./common/rc
-> +. ./common/filter
-> +
-> +_supported_fs generic
-> +_supported_os Linux
-> +_require_scratch
-> +
-> +testfile=$SCRATCH_MNT/testfile
-> +
-> +_scratch_mkfs > /dev/null 2>&1
-> +_scratch_mount
-> +
-> +# 1. make a file containing inline_data.
-> +# 2. "truncated 0"  is to check cached page #0 was truncated entirely.
-> +# 3. "truncated 50" is to check inline_data was truncated within its inode.
-> +$XFS_IO_PROG -t -f \
-> +	-c "pwrite -S 0x58 0 40" `# write    |XXXXXXXXXXXXXXXXXXXXXXXX|` \
-> +	-c "fsync"							 \
-> +	-c "truncate 0"          `# truncate |                        |` \
-> +	-c "truncate 50"         `# truncate |                        |` \
-> +$testfile | _filter_xfs_io
-> +
-> +echo "= truncate inline_data after #0 page was truncated entirely ="
-> +hexdump -C $testfile
-> +_scratch_remount
 
-_scratch_remount without any options is a no-op. Should be
-_scratch_cycle_mount?
 
-> +hexdump -C $testfile
-> +rm $testfile
-> +
-> +# 1. make a file containing inline_data.
-> +# 2. "truncated 0"     is to check cached page #0 was truncated entirely.
-> +# 3. "truncated 4096"  is to check inline_data was dismissed and truncated.
-> +$XFS_IO_PROG -t -f \
-> +	-c "pwrite -S 0x58 0 40" `# write    |XXXXXXXXXXXXXXXXXXXXXXXX|` \
-> +	-c "fsync"							 \
-> +	-c "truncate 0"          `# truncate |                        |` \
-> +	-c "truncate 4096"       `# truncate |                        |` \
-> +$testfile | _filter_xfs_io
-> +
-> +echo "= truncate dismissed inline_data after #0 page was truncated entirely ="
-> +hexdump -C $testfile
-> +_scratch_remount
-> +hexdump -C $testfile
-> +rm $testfile
-> +
-> +# 1. make a file containing inline_data.
-> +# 2. "truncated 4"   is to check cached page #0 was truncated partially.
-> +# 3. "truncated 50"  is to check inline_data was truncated within its inode.
-> +$XFS_IO_PROG -t -f \
-> +	-c "pwrite -S 0x58 0 40" `# write    |XXXXXXXXXXXXXXXXXXXXXXXX|` \
-> +	-c "fsync"							 \
-> +	-c "truncate 4"          `# truncate |XXXX                    |` \
-> +	-c "truncate 50"         `# truncate |XXXX                    |` \
-> +$testfile | _filter_xfs_io
-> +
-> +echo "= truncate inline_data after #0 page was truncated partially ="
-> +hexdump -C $testfile
-> +_scratch_remount
-> +hexdump -C $testfile
-> +rm $testfile
-> +
-> +# 1. make a file containing inline_data.
-> +# 2. "truncated 4"     is to check cached page #0 was truncated partially.
-> +# 3. "truncated 4096"  is to check inline_data was dismissed and truncated.
-> +$XFS_IO_PROG -t -f \
-> +	-c "pwrite -S 0x58 0 40" `# write    |XXXXXXXXXXXXXXXXXXXXXXXX|` \
-> +	-c "fsync"							 \
-> +	-c "truncate 4"          `# truncate |XXXX                    |` \
-> +	-c "truncate 4096"       `# truncate |XXXX                    |` \
-> +$testfile | _filter_xfs_io
-> +
-> +echo "= truncate dismissed inline_data after #0 page was truncated partially ="
-> +hexdump -C $testfile
-> +_scratch_remount
-> +hexdump -C $testfile
-> +rm $testfile
-> +
-> +status=0
-> +exit
-> diff --git a/tests/generic/392.out b/tests/generic/392.out
-> new file mode 100644
-> index 0000000..a041628
-> --- /dev/null
-> +++ b/tests/generic/392.out
-> @@ -0,0 +1,41 @@
-> +QA output created by 392
-> +wrote 40/40 bytes at offset 0
-> +XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-> += truncate inline_data after #0 page was truncated entirely =
-> +00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> +*
-> +00000032
+On 2016/11/15 4:45, Jaegeuk Kim wrote:
+> On Mon, Nov 14, 2016 at 07:24:56PM +0800, Chao Yu wrote:
+>> Thread A		Thread B		Thread C
+>> - f2fs_create
+>>  - f2fs_new_inode
+>>   - f2fs_lock_op
+>>    - alloc_nid
+>>     alloc last nid
+>>   - f2fs_unlock_op
+>> 			- f2fs_create
+>> 			 - f2fs_new_inode
+>> 			  - f2fs_lock_op
+>> 			   - alloc_nid
+>> 			    as node count still not
+>> 			    be increased, we will
+>> 			    loop in alloc_nid
+>> 						- f2fs_write_node_pages
+>> 						 - f2fs_balance_fs_bg
+>> 						  - f2fs_sync_fs
+>> 						   - write_checkpoint
+>> 						    - block_operations
+>> 						     - f2fs_lock_all
+>>  - f2fs_lock_op
+>>
+>> While creating new inode, we do not allocate and account nid atomically,
+>> so that when there is almost no free nids left, we may encounter deadloop
+>> like above stack.
+>>
+>> In order to avoid that, add nm_i::free_nid_cnt for accounting free nids
+>> and do nid allocation atomically during node creation.
+>
+> How about using nm_i::avaiable_nids for this?
+> It seems that we don't need both of variables at the same time.
+>
+> Thanks,
+>
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/f2fs.h |  1 +
+>>  fs/f2fs/node.c | 19 +++++++++++++++----
+>>  2 files changed, 16 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 6de1fbf..9de6f20 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -551,6 +551,7 @@ struct f2fs_nm_info {
+>>  	struct radix_tree_root free_nid_root;/* root of the free_nid cache */
+>>  	struct list_head nid_list[MAX_NID_LIST];/* lists for free nids */
+>>  	unsigned int nid_cnt[MAX_NID_LIST];	/* the number of free node id */
+>> +	unsigned int free_nid_cnt;	/* the number of total free nid */
+>>  	spinlock_t nid_list_lock;	/* protect nid lists ops */
+>>  	struct mutex build_lock;	/* lock for build free nids */
+>>
+>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+>> index d58438f..e412d0e 100644
+>> --- a/fs/f2fs/node.c
+>> +++ b/fs/f2fs/node.c
+>> @@ -1885,11 +1885,13 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+>>  		return false;
+>>  	}
+>>  #endif
+>> -	if (unlikely(sbi->total_valid_node_count + 1 > nm_i->available_nids))
+>> -		return false;
+>> -
+>>  	spin_lock(&nm_i->nid_list_lock);
+>>
+>> +	if (unlikely(nm_i->free_nid_cnt == 0)) {
+>> +		spin_unlock(&nm_i->nid_list_lock);
+>> +		return false;
+>> +	}
+>> +
+>>  	/* We should not use stale free nids created by build_free_nids */
+>>  	if (nm_i->nid_cnt[FREE_NID_LIST] && !on_build_free_nids(nm_i)) {
+>>  		f2fs_bug_on(sbi, list_empty(&nm_i->nid_list[FREE_NID_LIST]));
+>> @@ -1900,6 +1902,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+>>  		__remove_nid_from_list(sbi, i, FREE_NID_LIST, true);
+>>  		i->state = NID_ALLOC;
+>>  		__insert_nid_to_list(sbi, i, ALLOC_NID_LIST, false);
+>> +		nm_i->free_nid_cnt--;
+>>  		spin_unlock(&nm_i->nid_list_lock);
+>>  		return true;
+>>  	}
+>> @@ -1951,6 +1954,9 @@ void alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid)
+>>  		i->state = NID_NEW;
+>>  		__insert_nid_to_list(sbi, i, FREE_NID_LIST, false);
+>>  	}
+>> +
+>> +	nm_i->free_nid_cnt++;
+>> +
+>>  	spin_unlock(&nm_i->nid_list_lock);
+>>
+>>  	if (need_free)
+>> @@ -2222,8 +2228,12 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>>  		raw_nat_from_node_info(raw_ne, &ne->ni);
+>>  		nat_reset_flag(ne);
+>>  		__clear_nat_cache_dirty(NM_I(sbi), ne);
+>> -		if (nat_get_blkaddr(ne) == NULL_ADDR)
+>> +		if (nat_get_blkaddr(ne) == NULL_ADDR) {
+>>  			add_free_nid(sbi, nid, false);
+>> +			spin_lock(&NM_I(sbi)->nid_list_lock);
+>> +			NM_I(sbi)->free_nid_cnt++;
+Hi all,
+	Here, we should consider clean NULL_ADDR nat entry in journal.
 
-Seems the output is corrupted. Is it missing a "00000030  00 00" line?
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index dcfab29..b22ecb0 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -158,6 +158,13 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+         if (get_nat_flag(ne, IS_DIRTY))
+                 return;
 
-[root@localhost xfstests]# truncate -s 50 testfile
-[root@localhost xfstests]# hexdump -C testfile
-00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-*
-00000030  00 00                                             |..|
-00000032
++       if (ne->ni.blk_addr == NULL_ADDR) {
++               spin_lock(&nm_i->free_nid_list_lock);
++               nm_i->available_nids--;
++               spin_unlock(&nm_i->free_nid_list_lock);
++       }
++
++
 
-I tested with ext4 (with inline_data enabled and disabled), xfs and
-btrfs, they all fail in the same way.
+Thanks.
 
-The full diff:
+>> +			spin_unlock(&NM_I(sbi)->nid_list_lock);
+>> +		}
+>>  	}
+>>
+>>  	if (to_journal)
+>> @@ -2302,6 +2312,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+>>  	nm_i->nid_cnt[FREE_NID_LIST] = 0;
+>>  	nm_i->nid_cnt[ALLOC_NID_LIST] = 0;
+>>  	nm_i->nat_cnt = 0;
+>> +	nm_i->free_nid_cnt = nm_i->available_nids - sbi->total_valid_node_count;
+>>  	nm_i->ram_thresh = DEF_RAM_THRESHOLD;
+>>  	nm_i->ra_nid_pages = DEF_RA_NID_PAGES;
+>>  	nm_i->dirty_nats_ratio = DEF_DIRTY_NAT_RATIO_THRESHOLD;
+>> --
+>> 2.8.2.311.gee88674
+>
+> ------------------------------------------------------------------------------
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>
+> .
+>
 
-@@ -4,9 +4,11 @@
- = truncate inline_data after #0 page was truncated entirely =
- 00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
- *
-+00000030  00 00                                             |..|
- 00000032
- 00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
- *
-+00000030  00 00                                             |..|
- 00000032
- wrote 40/40 bytes at offset 0
- XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-@@ -23,10 +25,12 @@
- 00000000  58 58 58 58 00 00 00 00  00 00 00 00 00 00 00 00  |XXXX............|
- 00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
- *
-+00000030  00 00                                             |..|
- 00000032
- 00000000  58 58 58 58 00 00 00 00  00 00 00 00 00 00 00 00  |XXXX............|
- 00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
- *
-+00000030  00 00                                             |..|
- 00000032
- wrote 40/40 bytes at offset 0
- XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
 
-Thanks,
-Eryu
-
-> +00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> +*
-> +00000032
-> +wrote 40/40 bytes at offset 0
-> +XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-> += truncate dismissed inline_data after #0 page was truncated entirely =
-> +00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> +*
-> +00001000
-> +00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> +*
-> +00001000
-> +wrote 40/40 bytes at offset 0
-> +XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-> += truncate inline_data after #0 page was truncated partially =
-> +00000000  58 58 58 58 00 00 00 00  00 00 00 00 00 00 00 00  |XXXX............|
-> +00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> +*
-> +00000032
-> +00000000  58 58 58 58 00 00 00 00  00 00 00 00 00 00 00 00  |XXXX............|
-> +00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> +*
-> +00000032
-> +wrote 40/40 bytes at offset 0
-> +XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-> += truncate dismissed inline_data after #0 page was truncated partially =
-> +00000000  58 58 58 58 00 00 00 00  00 00 00 00 00 00 00 00  |XXXX............|
-> +00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> +*
-> +00001000
-> +00000000  58 58 58 58 00 00 00 00  00 00 00 00 00 00 00 00  |XXXX............|
-> +00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-> +*
-> +00001000
-> diff --git a/tests/generic/group b/tests/generic/group
-> index 9de3415..1b19010 100644
-> --- a/tests/generic/group
-> +++ b/tests/generic/group
-> @@ -393,3 +393,4 @@
->  388 auto log metadata
->  389 auto quick acl
->  391 auto quick metadata
-> +392 auto quick rw
-> -- 
-> 2.8.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe fstests" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+------------------------------------------------------------------------------
