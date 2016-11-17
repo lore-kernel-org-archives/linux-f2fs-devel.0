@@ -1,22 +1,22 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v4] f2fs: fix to account total free nid correctly
-Date: Thu, 17 Nov 2016 20:17:26 +0800
-Message-ID: <20161117121726.60747-1-yuchao0@huawei.com>
+Subject: [PATCH v5] f2fs: fix to account total free nid correctly
+Date: Thu, 17 Nov 2016 20:53:11 +0800
+Message-ID: <20161117125311.68384-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1c7LgT-0003N9-5j
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1c7MCf-0001sa-Mu
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Nov 2016 12:20:53 +0000
+	Thu, 17 Nov 2016 12:54:09 +0000
 Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c7LgP-0004O8-9g
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1c7MCb-0001Df-LZ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Nov 2016 12:20:53 +0000
+	Thu, 17 Nov 2016 12:54:09 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -60,7 +60,6 @@ and make nid allocation and counting being atomical during node creation.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v4: fix a bug which is found by Yunlei He and Pengyang Hou.
  fs/f2fs/f2fs.h |  2 +-
  fs/f2fs/node.c | 34 +++++++++++++++++++++++++++++-----
  2 files changed, 30 insertions(+), 6 deletions(-)
@@ -79,7 +78,7 @@ index 23a937f..f264c1b 100644
  	unsigned int ram_thresh;	/* control the memory footprint */
  	unsigned int ra_nid_pages;	/* # of nid pages to be readaheaded */
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index d58438f..ba27d5e 100644
+index d58438f..90342e6 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
 @@ -1885,11 +1885,13 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
@@ -128,10 +127,10 @@ index d58438f..ba27d5e 100644
 +		 * since later we will add it again.
 +		 */
 +		if (!get_nat_flag(ne, IS_DIRTY) &&
-+				nat_get_blkaddr(raw_ne) == NULL_ADDR) {
-+			spin_lock(&nm_i->free_nid_list_lock);
++				le32_to_cpu(raw_ne.block_addr) == NULL_ADDR) {
++			spin_lock(&nm_i->nid_list_lock);
 +			nm_i->available_nids--;
-+			spin_unlock(&nm_i->free_nid_list_lock);
++			spin_unlock(&nm_i->nid_list_lock);
 +		}
 +
  		__set_nat_cache_dirty(nm_i, ne);
