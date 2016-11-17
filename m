@@ -1,224 +1,148 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] generic/391: check inode metadata on
- f{data}sync after power-cut
-Date: Thu, 17 Nov 2016 11:20:51 -0800
-Message-ID: <20161117192051.GE74211@jaegeuk>
-References: <20161117032753.69315-1-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1c7SF2-0002Kd-PC
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Nov 2016 19:21:00 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1c7SF1-0000n5-R1
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 17 Nov 2016 19:21:00 +0000
-Content-Disposition: inline
-In-Reply-To: <20161117032753.69315-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-xfs@vger.kernel.org
+From: Eric Biggers <ebiggers@google.com>
+Subject: [PATCH] xfstests-bld: add f2fs support
+Date: Thu, 17 Nov 2016 11:52:33 -0800
+Message-ID: <1479412353-35154-1-git-send-email-ebiggers@google.com>
+Return-path: <fstests-owner@vger.kernel.org>
+Sender: fstests-owner@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Eric Biggers <ebiggers@google.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch adds tests/generic/391 to test fsync and fdatasync with power-cuts.
+Add basic f2fs support to xfstests-bld.  I am using this to verify that
+the encryption tests I am adding to xfstests pass on both ext4 and f2fs.
+It may be useful to f2fs developers too.  For now, only one
+configuration, "f2fs/default", is offered.
 
-The rule to check is:
-1) fsync should guarantee all the inode metadata after power-cut,
-2) fdatasync should guarantee i_size and i_blocks at least after power-cut.
+For the f2fs tests to work, it's required to build a kernel with f2fs
+support and build a rootfs with f2fs-tools installed.  For testing
+encryption, f2fs-tools must be v1.5.0 or later.
 
-Suggested-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+It was necessary to remove the /etc/fstab lines for /dev/vd[b-f] because
+they interfered with non-ext4 fsck.  They are not needed for the tests.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- tests/generic/391     | 136 ++++++++++++++++++++++++++++++++++++++++++++++++++
- tests/generic/391.out |  11 ++++
- tests/generic/group   |   1 +
- 3 files changed, 148 insertions(+)
- create mode 100644 tests/generic/391
- create mode 100644 tests/generic/391.out
+ kvm-xfstests/test-appliance/files/etc/fstab        |  5 --
+ .../test-appliance/files/root/fs/f2fs/cfg/all.list |  1 +
+ .../test-appliance/files/root/fs/f2fs/cfg/default  |  4 ++
+ .../test-appliance/files/root/fs/f2fs/config       | 62 ++++++++++++++++++++++
+ kvm-xfstests/util/parse_cli                        |  2 +-
+ 5 files changed, 68 insertions(+), 6 deletions(-)
+ create mode 100644 kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/all.list
+ create mode 100644 kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/default
+ create mode 100644 kvm-xfstests/test-appliance/files/root/fs/f2fs/config
 
-diff --git a/tests/generic/391 b/tests/generic/391
+diff --git a/kvm-xfstests/test-appliance/files/etc/fstab b/kvm-xfstests/test-appliance/files/etc/fstab
+index 864478b..27fb1df 100644
+--- a/kvm-xfstests/test-appliance/files/etc/fstab
++++ b/kvm-xfstests/test-appliance/files/etc/fstab
+@@ -5,9 +5,4 @@ proc            /proc           proc    defaults        0       0
+ tmpfs		/tmp		tmpfs	mode=1777	0	0
+ debugfs		/sys/kernel/debug debugfs defaults	0	0
+ /dev/rootfs	/	ext4    noatime 0 1
+-/dev/vdb	/vdb	ext4	defaults,noauto	0	0
+-/dev/vdc	/vdc ext4	defaults,noauto	0	0
+-/dev/vdd	/vdd ext4	defaults,noauto	0	0
+-/dev/vde	/vde ext4	defaults,noauto 0	0
+-/dev/vdf	/vdf ext4	defaults,noauto 0	0
+ /dev/vdg	/results ext4	defaults 0 2
+diff --git a/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/all.list b/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/all.list
 new file mode 100644
-index 0000000..2b95151
+index 0000000..4ad96d5
 --- /dev/null
-+++ b/tests/generic/391
-@@ -0,0 +1,136 @@
-+#! /bin/bash
-+# FS QA Test 391
++++ b/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/all.list
+@@ -0,0 +1 @@
++default
+diff --git a/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/default b/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/default
+new file mode 100644
+index 0000000..616a070
+--- /dev/null
++++ b/kvm-xfstests/test-appliance/files/root/fs/f2fs/cfg/default
+@@ -0,0 +1,4 @@
++SIZE=small
++export MKFS_OPTIONS=""
++export F2FS_MOUNT_OPTIONS=""
++TESTNAME="f2fs"
+diff --git a/kvm-xfstests/test-appliance/files/root/fs/f2fs/config b/kvm-xfstests/test-appliance/files/root/fs/f2fs/config
+new file mode 100644
+index 0000000..3cab963
+--- /dev/null
++++ b/kvm-xfstests/test-appliance/files/root/fs/f2fs/config
+@@ -0,0 +1,62 @@
 +#
-+# Test inode's metadata after fsync or fdatasync calls.
-+# In the case of fsync, filesystem should recover all the inode metadata, while
-+# recovering i_blocks and i_size at least for fdatasync.
-+#
-+#-----------------------------------------------------------------------
-+# Copyright (c) 2016 Jaegeuk Kim.  All Rights Reserved.
-+#
-+# This program is free software; you can redistribute it and/or
-+# modify it under the terms of the GNU General Public License as
-+# published by the Free Software Foundation.
-+#
-+# This program is distributed in the hope that it would be useful,
-+# but WITHOUT ANY WARRANTY; without even the implied warranty of
-+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+# GNU General Public License for more details.
-+#
-+# You should have received a copy of the GNU General Public License
-+# along with this program; if not, write the Free Software Foundation,
-+# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-+#-----------------------------------------------------------------------
++# Configuration file for f2fs
 +#
 +
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
++DEFAULT_MKFS_OPTIONS=""
 +
-+here=`pwd`
-+tmp=/tmp/$$
-+status=1	# failure is the default!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
++function check_filesystem()
 +{
-+	cd /
-+	rm -f $tmp.*
++    local dev="$1"
++    local ret
++
++    /sbin/fsck.f2fs -f "$dev"
++    ret="$?"
++    echo fsck.f2fs exited with status "$ret"
++    return "$ret"
 +}
 +
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+. ./common/punch
-+
-+# real QA test starts here
-+_supported_fs generic
-+_supported_os Linux
-+
-+rm -f $seqres.full
-+_require_scratch
-+_require_scratch_shutdown
-+_require_xfs_io_command "fpunch"
-+
-+_scratch_mkfs >/dev/null 2>&1
-+_scratch_mount
-+
-+testfile=$SCRATCH_MNT/testfile
-+
-+# check inode metadata after shutdown
-+check_inode_metadata()
++function format_filesystem()
 +{
-+	$XFS_IO_PROG -r -c "stat -v" $1 >$tmp.before
-+	src/godown $SCRATCH_MNT >> $seqres.full
-+	_scratch_cycle_mount
-+	$XFS_IO_PROG -r -c "stat -v" $1 >$tmp.after
++    local dev="$1"
++    local opts="$2"
 +
-+	if [ $FSTYP = xfs ]; then
-+		sed -i '/stat.blocks/d' $tmp.before
-+		sed -i '/stat.blocks/d' $tmp.after
-+	fi
-+	diff $tmp.before $tmp.after >$tmp.diff
++    /sbin/mkfs.f2fs -q $opts "$dev"
++    return $?
++}
 +
-+	if [ "$2" = "fdatasync" ]; then
-+		cat $tmp.diff | grep stat.size
-+		cat $tmp.diff | grep stat.blocks
++function setup_mount_opts()
++{
++    if test -n "$MNTOPTS" ; then
++	if test -n "$F2FS_MOUNT_OPTIONS" ; then
++	    F2FS_MOUNT_OPTIONS="$F2FS_MOUNT_OPTIONS,$MNTOPTS"
 +	else
-+		cat $tmp.diff $dont_care
++	    F2FS_MOUNT_OPTIONS="-o $MNTOPTS"
 +	fi
-+	cat $tmp.before >> $seqres.full
-+	cat $tmp.after >> $seqres.full
++    fi
 +}
 +
-+# append XX KB with f{data}sync, followed by power-cut
-+test_i_size()
++function get_mkfs_opts()
 +{
-+	echo "==== i_size $2 test with $1 ====" | tee -a $seqres.full
-+	$XFS_IO_PROG -f -c "pwrite 0 4M"	\
-+			-c "fsync"		\
-+			-c "pwrite 4M $2"	\
-+			-c "$1"			\
-+			$testfile >/dev/null
-+	check_inode_metadata $testfile $1
++    echo "$MKFS_OPTIONS"
 +}
 +
-+# update times with f{data}sync, followed by power-cut
-+test_i_time()
++function show_mkfs_opts()
 +{
-+	echo "==== i_time test with $1 ====" | tee -a $seqres.full
-+	$XFS_IO_PROG -f -c "pwrite 0 4M"	\
-+			-c "fsync"		\
-+			$testfile >/dev/null
-+	sleep 1
-+	touch $testfile
-+	$XFS_IO_PROG -c "$1"			\
-+			$testfile >/dev/null
-+	check_inode_metadata $testfile $1
++    echo MKFS_OPTIONS: "$MKFS_OPTIONS"
 +}
 +
-+# punch XX KB with f{data}sync, followed by power-cut
-+test_punch()
++function show_mount_opts()
 +{
-+	echo "==== fpunch $2 test with $1 ====" | tee -a $seqres.full
-+	$XFS_IO_PROG -f -c "pwrite 0 4202496"	\
-+			-c "fsync"		\
-+			-c "fpunch 4194304 $2"\
-+			-c "$1"			\
-+			$testfile >/dev/null
-+
-+	check_inode_metadata $testfile $1
++    echo F2FS_MOUNT_OPTIONS: "$F2FS_MOUNT_OPTIONS"
 +}
 +
-+for i in fsync fdatasync
-+do
-+	test_i_size $i 1024
-+	test_i_size $i 4096
-+	test_i_time $i
-+	test_punch $i 1024
-+	test_punch $i 4096
-+done
++function test_name_alias()
++{
++    echo "$1"
++}
 +
-+rm -f $tmp.*
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/generic/391.out b/tests/generic/391.out
-new file mode 100644
-index 0000000..7c66776
---- /dev/null
-+++ b/tests/generic/391.out
-@@ -0,0 +1,11 @@
-+QA output created by 391
-+==== i_size 1024 test with fsync ====
-+==== i_size 4096 test with fsync ====
-+==== i_time test with fsync ====
-+==== fpunch 1024 test with fsync ====
-+==== fpunch 4096 test with fsync ====
-+==== i_size 1024 test with fdatasync ====
-+==== i_size 4096 test with fdatasync ====
-+==== i_time test with fdatasync ====
-+==== fpunch 1024 test with fdatasync ====
-+==== fpunch 4096 test with fdatasync ====
-diff --git a/tests/generic/group b/tests/generic/group
-index 08007d7..9de3415 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -392,3 +392,4 @@
- 387 auto clone
- 388 auto log metadata
- 389 auto quick acl
-+391 auto quick metadata
++function reset_vars()
++{
++    unset F2FS_MOUNT_OPTIONS
++    unset MKFS_OPTIONS
++}
+diff --git a/kvm-xfstests/util/parse_cli b/kvm-xfstests/util/parse_cli
+index ea747be..b42c8ba 100644
+--- a/kvm-xfstests/util/parse_cli
++++ b/kvm-xfstests/util/parse_cli
+@@ -59,7 +59,7 @@ print_help ()
+ validate_test_name()
+ {
+     case "$1" in
+-	btrfs*|cifs*|ext4*|generic*|shared*|udf*|xfs*|overlay*) ;;
++	btrfs*|cifs*|ext4*|f2fs*|generic*|shared*|udf*|xfs*|overlay*) ;;
+ 	*)
+ 	    echo -e "Invalid test name: $1\n"
+ 	    print_help
 -- 
-2.8.3
-
-
-------------------------------------------------------------------------------
+2.8.0.rc3.226.g39d4020
