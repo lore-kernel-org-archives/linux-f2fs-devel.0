@@ -1,67 +1,176 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] xfstests-bld: add f2fs support
-Date: Thu, 17 Nov 2016 21:11:13 -0800
-Message-ID: <20161118051113.GA24878@jaegeuk>
-References: <1479412353-35154-1-git-send-email-ebiggers@google.com>
- <20161118043835.GA22707@jaegeuk>
- <20161118045157.nclslkbhumszrggz@thunk.org>
+From: Eryu Guan <eguan@redhat.com>
+Subject: Re: [PATCH v2] generic/391: check inode metadata on f{data}sync
+ after power-cut
+Date: Fri, 18 Nov 2016 14:39:43 +0800
+Message-ID: <20161118063943.GF27776@eguan.usersys.redhat.com>
+References: <20161117032753.69315-1-jaegeuk@kernel.org>
+ <20161117192051.GE74211@jaegeuk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <fstests-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20161118045157.nclslkbhumszrggz@thunk.org>
+In-Reply-To: <20161117192051.GE74211@jaegeuk>
 Sender: fstests-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Eric Biggers <ebiggers@google.com>, fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Nov 17, 2016 at 11:51:57PM -0500, Theodore Ts'o wrote:
-> On Thu, Nov 17, 2016 at 08:38:35PM -0800, Jaegeuk Kim wrote:
-> > > +    /sbin/fsck.f2fs -f "$dev"
-> > 
-> > Could you change to call fsck.f2fs instead of /sbin/xx?
-> > I'm almost finished to import f2fs-tools in xfstests-bld for kvm-xfstests.
-> > Given f2fs-tools from git, it seems /sbin/xx doesn't work.
+On Thu, Nov 17, 2016 at 11:20:51AM -0800, Jaegeuk Kim wrote:
+> This patch adds tests/generic/391 to test fsync and fdatasync with power-cuts.
 > 
-> So why won't /sbin/fsck.f2fs not work?  The /sbin/fsck driver does
-> assume that /sbin/fsck.<type> will work, and other file systems do
-> have hard links or put their actual file system checker there:
+> The rule to check is:
+> 1) fsync should guarantee all the inode metadata after power-cut,
+> 2) fdatasync should guarantee i_size and i_blocks at least after power-cut.
 > 
-> % ls /sbin/fsck.*
-> 36 /sbin/fsck.cramfs*  0 /sbin/fsck.ext3@     60 /sbin/fsck.fat*     4 /sbin/fsck.nfs*
-> 0 /sbin/fsck.exfat@    0 /sbin/fsck.ext4@     76 /sbin/fsck.minix*   0 /sbin/fsck.vfat@
-> 0 /sbin/fsck.ext2@     0 /sbin/fsck.ext4dev@   0 /sbin/fsck.msdos@   4 /sbin/fsck.xfs*
+> Suggested-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  tests/generic/391     | 136 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/391.out |  11 ++++
+>  tests/generic/group   |   1 +
+>  3 files changed, 148 insertions(+)
+>  create mode 100644 tests/generic/391
+>  create mode 100644 tests/generic/391.out
 > 
+> diff --git a/tests/generic/391 b/tests/generic/391
+> new file mode 100644
+> index 0000000..2b95151
+> --- /dev/null
+> +++ b/tests/generic/391
+> @@ -0,0 +1,136 @@
+> +#! /bin/bash
+> +# FS QA Test 391
+> +#
+> +# Test inode's metadata after fsync or fdatasync calls.
+> +# In the case of fsync, filesystem should recover all the inode metadata, while
+> +# recovering i_blocks and i_size at least for fdatasync.
+> +#
+> +#-----------------------------------------------------------------------
+> +# Copyright (c) 2016 Jaegeuk Kim.  All Rights Reserved.
+> +#
+> +# This program is free software; you can redistribute it and/or
+> +# modify it under the terms of the GNU General Public License as
+> +# published by the Free Software Foundation.
+> +#
+> +# This program is distributed in the hope that it would be useful,
+> +# but WITHOUT ANY WARRANTY; without even the implied warranty of
+> +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> +# GNU General Public License for more details.
+> +#
+> +# You should have received a copy of the GNU General Public License
+> +# along with this program; if not, write the Free Software Foundation,
+> +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+> +#-----------------------------------------------------------------------
+> +#
+> +
+> +seq=`basename $0`
+> +seqres=$RESULT_DIR/$seq
+> +echo "QA output created by $seq"
+> +
+> +here=`pwd`
+> +tmp=/tmp/$$
+> +status=1	# failure is the default!
+> +trap "_cleanup; exit \$status" 0 1 2 3 15
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -f $tmp.*
+> +}
+> +
+> +# get standard environment, filters and checks
+> +. ./common/rc
+> +. ./common/filter
+> +. ./common/punch
+> +
+> +# real QA test starts here
+> +_supported_fs generic
+> +_supported_os Linux
+> +
+> +rm -f $seqres.full
+> +_require_scratch
+> +_require_scratch_shutdown
+> +_require_xfs_io_command "fpunch"
+> +
+> +_scratch_mkfs >/dev/null 2>&1
+> +_scratch_mount
+> +
+> +testfile=$SCRATCH_MNT/testfile
+> +
+> +# check inode metadata after shutdown
+> +check_inode_metadata()
+> +{
+> +	$XFS_IO_PROG -r -c "stat -v" $1 >$tmp.before
+> +	src/godown $SCRATCH_MNT >> $seqres.full
+> +	_scratch_cycle_mount
+> +	$XFS_IO_PROG -r -c "stat -v" $1 >$tmp.after
+> +
+> +	if [ $FSTYP = xfs ]; then
+> +		sed -i '/stat.blocks/d' $tmp.before
+> +		sed -i '/stat.blocks/d' $tmp.after
+> +	fi
 
-IIUC, I guess it'd be okay if VM installed that as a package. I tried to add
-f2fs-tools repo likewise fio, I could't find /sbin/mkfs.f2fs, even if it was
-installed into bld/sbin/. Instead, bld/sbin/* were copied into xfstests/bin/
-in VM, which enables to execute mkfs.f2fs globally through $PATH.
+Blacklist some fs "randomly" seems not easy to maintain, at least we
+need some comments to explain why we do this.
 
-I set up an almost default kvm-xfstests, and I could see:
+I prefer the other way Brian suggested, i.e. truncate the file to
+correct size before the real fsync/fdatasync to remove any preallocated
+blocks past eof. I made the following update and test passed on XFS
+without problems, what do you think?
 
-# ls /sbin/mkfs*
-/sbin/mkfs	/sbin/mkfs.cramfs  /sbin/mkfs.ext3  /sbin/mkfs.ext4dev
-/sbin/mkfs.bfs	/sbin/mkfs.ext2    /sbin/mkfs.ext4  /sbin/mkfs.minix
-
-# ls /root/xfstests/bin/mkfs.*
-/root/xfstests/bin/mkfs.f2fs  /root/xfstests/bin/mkfs.xfs
-
-Let me know, if I'm missing something.
-
+--- a/tests/generic/391
++++ b/tests/generic/391
+@@ -65,10 +65,6 @@ check_inode_metadata()
+        _scratch_cycle_mount
+        $XFS_IO_PROG -r -c "stat -v" $1 >$tmp.after
+ 
+-       if [ $FSTYP = xfs ]; then
+-               sed -i '/stat.blocks/d' $tmp.before
+-               sed -i '/stat.blocks/d' $tmp.after
+-       fi
+        diff $tmp.before $tmp.after >$tmp.diff
+ 
+        if [ "$2" = "fdatasync" ]; then
+@@ -82,13 +78,19 @@ check_inode_metadata()
+ }
+ 
+ # append XX KB with f{data}sync, followed by power-cut
++# truncate file to the current size to avoid post-eof preallocated
++# blocks on XFS
+ test_i_size()
+ {
++       local len=$2
++       local base_len=$((4 * 1024 * 1024))
++       local new_len=$((base_len + len))
+        echo "==== i_size $2 test with $1 ====" | tee -a $seqres.full
+-       $XFS_IO_PROG -f -c "pwrite 0 4M"        \
+-                       -c "fsync"              \
+-                       -c "pwrite 4M $2"       \
+-                       -c "$1"                 \
++       $XFS_IO_PROG -f -c "pwrite 0 $base_len"         \
++                       -c "fsync"                      \
++                       -c "pwrite $base_len $len"      \
++                       -c "truncate $new_len"          \
++                       -c "$1"                         \
+                        $testfile >/dev/null
+        check_inode_metadata $testfile $1
+ }
+@@ -108,12 +110,15 @@ test_i_time()
+ }
+ 
+ # punch XX KB with f{data}sync, followed by power-cut
++# truncate file to the current size to avoid post-eof preallocated
++# blocks on XFS
+ test_punch()
+ {
+        echo "==== fpunch $2 test with $1 ====" | tee -a $seqres.full
+        $XFS_IO_PROG -f -c "pwrite 0 4202496"   \
+                        -c "fsync"              \
+-                       -c "fpunch 4194304 $2"\
++                       -c "fpunch 4194304 $2"  \
++                       -c "truncate 4202496"   \
+                        -c "$1"                 \
+                        $testfile >/dev/null
+ 
 Thanks,
-
-> 
-> > > +    /sbin/mkfs.f2fs -q $opts "$dev"
-> > 
-> > Ditto, mkfs.f2fs.
-> 
-> Ditto:
-> 
-> % ls /sbin/mkfs.*
->  28 /sbin/mkfs.bfs*	  0 /sbin/mkfs.ext3@	  76 /sbin/mkfs.minix*	352 /sbin/mkfs.xfs*
->  36 /sbin/mkfs.cramfs*	  0 /sbin/mkfs.ext4@	   0 /sbin/mkfs.msdos@
->   0 /sbin/mkfs.exfat@	  0 /sbin/mkfs.ext4dev@    0 /sbin/mkfs.ntfs@
->   0 /sbin/mkfs.ext2@	 36 /sbin/mkfs.fat*	   0 /sbin/mkfs.vfat@
-> 
-> 							- Ted
+Eryu
