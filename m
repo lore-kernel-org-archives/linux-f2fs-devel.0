@@ -1,130 +1,60 @@
-From: Eryu Guan <eguan@redhat.com>
-Subject: Re: [PATCH v2] generic/392: add a testcase to check some inline
- truncation behaviors
-Date: Fri, 18 Nov 2016 14:43:06 +0800
-Message-ID: <20161118064306.GG27776@eguan.usersys.redhat.com>
-References: <20161117034715.71966-1-jaegeuk@kernel.org>
- <20161117180436.GB74211@jaegeuk>
+From: Geliang Tang <geliangtang@gmail.com>
+Subject: [PATCH] f2fs: drop duplicate header timer.h
+Date: Fri, 18 Nov 2016 22:21:13 +0800
+Message-ID: <1da64aa76ff77a5f2e7a152cfa9776417ee29743.1479458784.git.geliangtang@gmail.com>
+References: <319a5803aac795e175306d4978134f0247cf87bc.1479457751.git.geliangtang@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <fstests-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161117180436.GB74211@jaegeuk>
-Sender: fstests-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <geliangtang@gmail.com>) id 1c7k3J-0004cM-Cq
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 18 Nov 2016 14:22:05 +0000
+Received: from mail-pg0-f67.google.com ([74.125.83.67])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1c7k3I-0002YD-Je
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 18 Nov 2016 14:22:05 +0000
+Received: by mail-pg0-f67.google.com with SMTP id e9so20450027pgc.1
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 18 Nov 2016 06:22:04 -0800 (PST)
+In-Reply-To: <319a5803aac795e175306d4978134f0247cf87bc.1479457751.git.geliangtang@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: Geliang Tang <geliangtang@gmail.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Thu, Nov 17, 2016 at 10:04:36AM -0800, Jaegeuk Kim wrote:
-> This patch introduces a new testcase to test some small truncations to check
-> inline_data and its cached data are truncated correctly at the same time.
-> 
-> The inline_data feature was introduced in ext4 and f2fs as follows.
->  ext4 : http://lwn.net/Articles/468678/
->  f2fs : http://lwn.net/Articles/573408/
-> 
-> The basic idea is embedding small-sized file's data into relatively large
-> inode space.
-> In ext4, up to 132 bytes of data can be stored in 256 bytes-sized inode.
-> In f2fs, up to 3.4KB of data can be embedded into 4KB-sized inode block.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  tests/generic/392     | 128 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/392.out |  45 ++++++++++++++++++
->  tests/generic/group   |   1 +
->  3 files changed, 174 insertions(+)
->  create mode 100644 tests/generic/392
->  create mode 100644 tests/generic/392.out
-> 
-> diff --git a/tests/generic/392 b/tests/generic/392
-> new file mode 100644
-> index 0000000..c45018a
-> --- /dev/null
-> +++ b/tests/generic/392
-> @@ -0,0 +1,128 @@
-> +#! /bin/bash
-> +# FS QA Test No. generic/392
-> +#
-> +# Test some small truncations to check inline_data and its cached data are
-> +# truncated correctly at the same time.
-> +#
-> +# The inline_data feature was introduced in ext4 and f2fs as follows.
-> +#  ext4 : http://lwn.net/Articles/468678/
-> +#  f2fs : http://lwn.net/Articles/573408/
-> +#
-> +# The basic idea is embedding small-sized file's data into relatively large
-> +# inode space.
-> +# In ext4, up to 132 bytes of data can be stored in 256 bytes-sized inode.
-> +# In f2fs, up to 3.4KB of data can be embedded into 4KB-sized inode block.
-> +#
-> +#-----------------------------------------------------------------------
-> +# Copyright (c) 2014 Jaegeuk Kim.  All Rights Reserved.
-> +#
-> +# This program is free software; you can redistribute it and/or
-> +# modify it under the terms of the GNU General Public License as
-> +# published by the Free Software Foundation.
-> +#
-> +# This program is distributed in the hope that it would be useful,
-> +# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +# GNU General Public License for more details.
-> +#
-> +# You should have received a copy of the GNU General Public License
-> +# along with this program; if not, write the Free Software Foundation,
-> +# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-> +#-----------------------------------------------------------------------
-> +#
-> +
-> +seq=`basename $0`
-> +seqres=$RESULT_DIR/$seq
-> +echo "QA output created by $seq"
-> +
-> +here=`pwd`
-> +tmp=/tmp/$$
-> +status=1	# failure is the default!
-> +trap "_cleanup; exit \$status" 0 1 2 3 15
-> +
-> +_cleanup()
-> +{
-> +    cd /
-> +    rm -f $tmp.*
-> +}
-> +
-> +# get standard environment, filters and checks
-> +. ./common/rc
-> +. ./common/filter
-> +
-> +_supported_fs generic
-> +_supported_os Linux
-> +_require_scratch
-> +
-> +testfile=$SCRATCH_MNT/testfile
-> +OD_CMD="od -A x -t x1z"
+Drop duplicate header timer.h from segment.c.
 
-This passed my test now. Thanks!
+Signed-off-by: Geliang Tang <geliangtang@gmail.com>
+---
+ fs/f2fs/segment.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> +
-> +_scratch_mkfs > /dev/null 2>&1
-> +_scratch_mount
-> +
-> +# 1. make a file containing inline_data.
-> +# 2. "truncated 0"  is to check cached page #0 was truncated entirely.
-> +# 3. "truncated 50" is to check inline_data was truncated within its inode.
-> +$XFS_IO_PROG -t -f \
-> +	-c "pwrite -S 0x58 0 40" `# write    |XXXXXXXXXXXXXXXXXXXXXXXX|` \
-> +	-c "fsync"							 \
-> +	-c "truncate 0"          `# truncate |                        |` \
-> +	-c "truncate 50"         `# truncate |                        |` \
-> +$testfile | _filter_xfs_io
-> +
-> +echo "= truncate inline_data after #0 page was truncated entirely ="
-> +$OD_CMD $testfile
-> +_scratch_remount
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 82c3ac4..98e5be4 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -16,7 +16,6 @@
+ #include <linux/kthread.h>
+ #include <linux/swap.h>
+ #include <linux/timer.h>
+-#include <linux/timer.h>
+ 
+ #include "f2fs.h"
+ #include "segment.h"
+-- 
+2.9.3
 
-Seems you missed my comments on this "_scratch_remount".
-_scratch_remount without any arguments is a no-op, do you mean
-_scratch_cycle_mount here?
 
-Thanks
-Eryu
+------------------------------------------------------------------------------
