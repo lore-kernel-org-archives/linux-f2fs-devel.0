@@ -1,23 +1,26 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH 1/2] fsck.f2fs add a simple check orphan inodes
-	in -p 1 mode
-Date: Sat, 19 Nov 2016 21:24:40 +0800
-Message-ID: <20161119132441.417-1-heyunlei@huawei.com>
+From: Nicolai Stange <nicstange@gmail.com>
+Subject: [PATCH] f2fs: set ->owner for debugfs status file's
+	file_operations
+Date: Sun, 20 Nov 2016 19:57:23 +0100
+Message-ID: <20161120185723.16778-1-nicstange@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1c85X3-0006gg-Sp
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <nicstange@gmail.com>) id 1c8XJC-000368-3u
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 19 Nov 2016 13:18:13 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c85X1-0001Kz-0n
+	Sun, 20 Nov 2016 18:57:46 +0000
+Received: from mail-wj0-f194.google.com ([209.85.210.194])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1c8XJB-0000JG-70
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 19 Nov 2016 13:18:13 +0000
+	Sun, 20 Nov 2016 18:57:46 +0000
+Received: by mail-wj0-f194.google.com with SMTP id kp2so2375315wjc.0
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sun, 20 Nov 2016 10:57:45 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,93 +30,67 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huwei.com
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: Martin Brandenburg <martin@omnibond.com>, Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, Nicolai Stange <nicstange@gmail.com>, Mike Marshall <hubcap@omnibond.com>
 
-This patch add a simple check orphan inodes in -p 1 mode
+The struct file_operations instance serving the f2fs/status debugfs file
+lacks an initialization of its ->owner.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+This means that although that file might have been opened, the f2fs module
+can still get removed. Any further operation on that opened file, releasing
+included,  will cause accesses to unmapped memory.
+
+Indeed, Mike Marshall reported the following:
+
+  BUG: unable to handle kernel paging request at ffffffffa0307430
+  IP: [<ffffffff8132a224>] full_proxy_release+0x24/0x90
+  <...>
+  Call Trace:
+   [] __fput+0xdf/0x1d0
+   [] ____fput+0xe/0x10
+   [] task_work_run+0x8e/0xc0
+   [] do_exit+0x2ae/0xae0
+   [] ? __audit_syscall_entry+0xae/0x100
+   [] ? syscall_trace_enter+0x1ca/0x310
+   [] do_group_exit+0x44/0xc0
+   [] SyS_exit_group+0x14/0x20
+   [] do_syscall_64+0x61/0x150
+   [] entry_SYSCALL64_slow_path+0x25/0x25
+  <...>
+  ---[ end trace f22ae883fa3ea6b8 ]---
+  Fixing recursive fault but reboot is needed!
+
+Fix this by initializing the f2fs/status file_operations' ->owner with
+THIS_MODULE.
+
+This will allow debugfs to grab a reference to the f2fs module upon any
+open on that file, thus preventing it from getting removed.
+
+Fixes: 902829aa0b72 ("f2fs: move proc files to debugfs")
+Reported-by: Mike Marshall <hubcap@omnibond.com>
+Reported-by: Martin Brandenburg <martin@omnibond.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Nicolai Stange <nicstange@gmail.com>
 ---
- fsck/fsck.c | 21 +++++++++++++++++++--
- fsck/fsck.h |  2 +-
- 2 files changed, 20 insertions(+), 3 deletions(-)
+Applicable to next-20161117. Compile-only tested.
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 0009ea4..fd28d94 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1494,7 +1494,7 @@ int fsck_chk_data_blk(struct f2fs_sb_info *sbi, u32 blk_addr,
- 	return 0;
+ fs/f2fs/debug.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 2fdf233..678733c 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -376,6 +376,7 @@ static int stat_open(struct inode *inode, struct file *file)
  }
  
--void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
-+int fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
- {
- 	u32 blk_cnt = 0;
- 	block_t start_blk, orphan_blkaddr, i, j;
-@@ -1503,7 +1503,7 @@ void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
- 	u32 entry_count;
- 
- 	if (!is_set_ckpt_flags(F2FS_CKPT(sbi), CP_ORPHAN_PRESENT_FLAG))
--		return;
-+		return 0;
- 
- 	start_blk = __start_cp_addr(sbi) + 1 + get_sb(cp_payload);
- 	orphan_blkaddr = __start_sum_addr(sbi) - 1 - get_sb(cp_payload);
-@@ -1524,7 +1524,18 @@ void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
- 		for (j = 0; j < entry_count; j++) {
- 			nid_t ino = le32_to_cpu(orphan_blk->ino[j]);
- 			DBG(1, "[%3d] ino [0x%x]\n", i, ino);
-+			struct node_info ni;
- 			blk_cnt = 1;
-+
-+			if (c.preen_mode == PREEN_MODE_1 && !c.fix_on) {
-+				get_node_info(sbi, ino, &ni);
-+				if (!IS_VALID_NID(sbi, ino) ||
-+						!IS_VALID_BLK_ADDR(sbi, ni.blk_addr))
-+					return -EINVAL;
-+
-+				continue;
-+			}
-+
- 			ret = fsck_chk_node_blk(sbi, NULL, ino, NULL,
- 					F2FS_FT_ORPHAN, TYPE_INODE, &blk_cnt,
- 					NULL);
-@@ -1547,6 +1558,8 @@ void fsck_chk_orphan_node(struct f2fs_sb_info *sbi)
- 	}
- 	free(orphan_blk);
- 	free(new_blk);
-+
-+	return 0;
- }
- 
- int fsck_chk_meta(struct f2fs_sb_info *sbi)
-@@ -1605,6 +1618,10 @@ int fsck_chk_meta(struct f2fs_sb_info *sbi)
- 		return -EINVAL;
- 	}
- 
-+	/* 4. check orphan inode simply */
-+	if (fsck_chk_orphan_node(sbi))
-+		return -EINVAL;
-+
- 	if (fsck->nat_valid_inode_cnt != le32_to_cpu(cp->valid_inode_count)) {
- 		ASSERT_MSG("valid inode does not match: nat_valid_inode_cnt %u,"
- 				" valid_inode_count %u",
-diff --git a/fsck/fsck.h b/fsck/fsck.h
-index 412e7b7..8785de8 100644
---- a/fsck/fsck.h
-+++ b/fsck/fsck.h
-@@ -109,7 +109,7 @@ enum seg_type {
- 
- struct selabel_handle;
- 
--extern void fsck_chk_orphan_node(struct f2fs_sb_info *);
-+extern int fsck_chk_orphan_node(struct f2fs_sb_info *);
- extern int fsck_chk_node_blk(struct f2fs_sb_info *, struct f2fs_inode *, u32,
- 		u8 *, enum FILE_TYPE, enum NODE_TYPE, u32 *,
- 		struct child_info *);
+ static const struct file_operations stat_fops = {
++	.owner = THIS_MODULE,
+ 	.open = stat_open,
+ 	.read = seq_read,
+ 	.llseek = seq_lseek,
 -- 
-2.10.1
+2.10.2
 
 
 ------------------------------------------------------------------------------
