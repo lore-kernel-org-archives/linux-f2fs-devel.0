@@ -1,210 +1,74 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH v5] generic/391: check inode metadata on
- f{data}sync after power-cut
-Date: Mon, 21 Nov 2016 12:02:49 -0800
-Message-ID: <20161121200249.GB66875@jaegeuk>
-References: <20161117032753.69315-1-jaegeuk@kernel.org>
- <20161117192051.GE74211@jaegeuk>
- <20161118194549.GE31226@jaegeuk>
- <20161119015745.GB45056@jaegeuk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] f2fs: fix 32-bit build
+Date: Tue, 22 Nov 2016 15:20:16 +0100
+Message-ID: <20161122142033.1680054-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <fstests-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161119015745.GB45056@jaegeuk>
-Sender: fstests-owner@vger.kernel.org
-To: fstests@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-xfs@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <arnd@arndb.de>) id 1c9Bwe-0008Kt-GH
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 22 Nov 2016 14:21:12 +0000
+Received: from mout.kundenserver.de ([212.227.126.131])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1c9Bwc-0003Uw-Uj for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 22 Nov 2016 14:21:12 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Damien Le Moal <damien.lemoal@wdc.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds tests/generic/391 to test fsync and fdatasync with power-cuts.
+The addition of multiple-device support broke CONFIG_BLK_DEV_ZONED
+on 32-bit machines because of a 64-bit division:
 
-The rule to check is:
-1) fsync should guarantee all the inode metadata after power-cut,
-2) fdatasync should guarantee i_size and i_blocks at least after power-cut.
+fs/f2fs/f2fs.o: In function `__issue_discard_async':
+extent_cache.c:(.text.__issue_discard_async+0xd4): undefined reference to `__aeabi_uldivmod'
 
-Note that, in XFS, it allocates more blocks when doing writes, so it should
-close the file before fsync in order to get actual i_blocks after power-cut.
-Or, it needs to do truncate the file with a specific size to turn it off
-at the beginning.
+Unfortunately, the sector number is usually a 64-bit number, and
+we probably can't guarantee that bdev_zone_size() returns a
+power-of-two number, so we actually have to do the expensive 64-bit
+operation to get the remainder.
 
-Suggested-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: 792b84b74b54 ("f2fs: support multiple devices")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- tests/generic/391     | 136 ++++++++++++++++++++++++++++++++++++++++++++++++++
- tests/generic/391.out |  11 ++++
- tests/generic/group   |   1 +
- 3 files changed, 148 insertions(+)
- create mode 100755 tests/generic/391
- create mode 100644 tests/generic/391.out
+ fs/f2fs/segment.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tests/generic/391 b/tests/generic/391
-new file mode 100755
-index 0000000..fd44a34
---- /dev/null
-+++ b/tests/generic/391
-@@ -0,0 +1,136 @@
-+#! /bin/bash
-+# FS QA Test 391
-+#
-+# Test inode's metadata after fsync or fdatasync calls.
-+# In the case of fsync, filesystem should recover all the inode metadata, while
-+# recovering i_blocks and i_size at least for fdatasync.
-+#
-+#-----------------------------------------------------------------------
-+# Copyright (c) 2016 Jaegeuk Kim.  All Rights Reserved.
-+#
-+# This program is free software; you can redistribute it and/or
-+# modify it under the terms of the GNU General Public License as
-+# published by the Free Software Foundation.
-+#
-+# This program is distributed in the hope that it would be useful,
-+# but WITHOUT ANY WARRANTY; without even the implied warranty of
-+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+# GNU General Public License for more details.
-+#
-+# You should have received a copy of the GNU General Public License
-+# along with this program; if not, write the Free Software Foundation,
-+# Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-+#-----------------------------------------------------------------------
-+#
-+
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+tmp=/tmp/$$
-+status=0	# failure will be detected in runtime!
-+trap "_cleanup; exit \$status" 0 1 2 3 15
-+
-+_cleanup()
-+{
-+	cd /
-+	rm -f $tmp.*
-+}
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+. ./common/filter
-+. ./common/punch
-+
-+# real QA test starts here
-+_supported_fs generic
-+_supported_os Linux
-+
-+rm -f $seqres.full
-+_require_scratch
-+_require_scratch_shutdown
-+_require_xfs_io_command "fpunch"
-+
-+_scratch_mkfs >/dev/null 2>&1
-+_scratch_mount
-+
-+testfile=$SCRATCH_MNT/testfile
-+
-+# check inode metadata after shutdown
-+check_inode_metadata()
-+{
-+	sync_mode=$1
-+
-+	# fsync or fdatasync
-+	if [ $sync_mode = "fsync" ]; then
-+		stat_opt='-c "b: %b s: %s a: %x m: %y c: %z"'
-+	else
-+		stat_opt='-c "b: %b s: %s"'
-+	fi
-+
-+	before=`stat "$stat_opt" $testfile`
-+
-+	$XFS_IO_PROG -c "$sync_mode" $testfile | _filter_xfs_io
-+	src/godown $SCRATCH_MNT | tee -a $seqres.full
-+	_scratch_cycle_mount
-+
-+	after=`stat "$stat_opt" $testfile`
-+
-+	if [ "$before" != "$after" ]; then
-+		echo "Before: $before"
-+		echo "After : $after"
-+		status=1;	# this is a failure!
-+	fi
-+	echo "Before: $before" >> $seqres.full
-+	echo "After : $after" >> $seqres.full
-+	rm $testfile
-+}
-+
-+# append XX KB with f{data}sync, followed by power-cut
-+test_i_size()
-+{
-+	echo "==== i_size $2 test with $1 ====" | tee -a $seqres.full
-+	$XFS_IO_PROG -f -c "truncate 4M"	\
-+			-c "pwrite 0 4M"	\
-+			-c "fsync"		\
-+			-c "pwrite 4M $2"	\
-+			$testfile >/dev/null
-+	check_inode_metadata $1
-+}
-+
-+# update times with f{data}sync, followed by power-cut
-+test_i_time()
-+{
-+	echo "==== i_time test with $1 ====" | tee -a $seqres.full
-+	$XFS_IO_PROG -f -c "truncate 4M"	\
-+			-c "pwrite 0 4M"	\
-+			-c "fsync"		\
-+			$testfile >/dev/null
-+	sleep 1
-+	touch $testfile
-+	check_inode_metadata $1
-+}
-+
-+# punch XX KB with f{data}sync, followed by power-cut
-+test_punch()
-+{
-+	echo "==== fpunch $2 test with $1 ====" | tee -a $seqres.full
-+	$XFS_IO_PROG -f -c "truncate 4202496"	\
-+			-c "pwrite 0 4202496"	\
-+			-c "fsync"		\
-+			-c "fpunch 4194304 $2"\
-+			$testfile >/dev/null
-+	check_inode_metadata $1
-+}
-+
-+for i in fsync fdatasync
-+do
-+	test_i_size $i 1024
-+	test_i_size $i 4096
-+	test_i_time $i
-+	test_punch $i 1024
-+	test_punch $i 4096
-+done
-+
-+exit
-diff --git a/tests/generic/391.out b/tests/generic/391.out
-new file mode 100644
-index 0000000..7c66776
---- /dev/null
-+++ b/tests/generic/391.out
-@@ -0,0 +1,11 @@
-+QA output created by 391
-+==== i_size 1024 test with fsync ====
-+==== i_size 4096 test with fsync ====
-+==== i_time test with fsync ====
-+==== fpunch 1024 test with fsync ====
-+==== fpunch 4096 test with fsync ====
-+==== i_size 1024 test with fdatasync ====
-+==== i_size 4096 test with fdatasync ====
-+==== i_time test with fdatasync ====
-+==== fpunch 1024 test with fdatasync ====
-+==== fpunch 4096 test with fdatasync ====
-diff --git a/tests/generic/group b/tests/generic/group
-index 08007d7..9de3415 100644
---- a/tests/generic/group
-+++ b/tests/generic/group
-@@ -392,3 +392,4 @@
- 387 auto clone
- 388 auto log metadata
- 389 auto quick acl
-+391 auto quick metadata
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 634834e5a232..e4c5497aa172 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -685,6 +685,7 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ {
+ 	sector_t nr_sects = SECTOR_FROM_BLOCK(blklen);
+ 	sector_t sector;
++	u32 rem;
+ 	int devi = 0;
+ 
+ 	if (sbi->s_ndevs) {
+@@ -693,7 +694,8 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 	}
+ 	sector = SECTOR_FROM_BLOCK(blkstart);
+ 
+-	if (sector % bdev_zone_size(bdev) || nr_sects != bdev_zone_size(bdev)) {
++	div_u64_rem(sector, bdev_zone_size(bdev), &rem);
++	if (rem || nr_sects != bdev_zone_size(bdev)) {
+ 		f2fs_msg(sbi->sb, KERN_INFO,
+ 			"(%d) %s: Unaligned discard attempted (block %x + %x)",
+ 			devi, sbi->s_ndevs ? FDEV(devi).path: "",
 -- 
-2.8.3
+2.9.0
+
+
+------------------------------------------------------------------------------
