@@ -1,42 +1,59 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: linux-next: Tree for Nov 23 (f2fs)
-Date: Wed, 23 Nov 2016 10:11:22 -0800
-Message-ID: <20161123181122.GA24137@jaegeuk>
-References: <20161123175848.5b56c35c@canb.auug.org.au>
- <320e8cf0-a0ee-8178-9aec-b8c0002ceb6d@infradead.org>
+Subject: Re: [PATCH] f2fs: fix 32-bit build
+Date: Wed, 23 Nov 2016 10:42:26 -0800
+Message-ID: <20161123184226.GB24137@jaegeuk>
+References: <20161122142033.1680054-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <320e8cf0-a0ee-8178-9aec-b8c0002ceb6d@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20161122142033.1680054-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Chao Yu <yuchao0@huawei.com>, Yunlei He <heyunlei@huawei.com>, Damien Le Moal <damien.lemoal@wdc.com>, Fan Li <fanofcode.li@samsung.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hello,
+Hi Arnd,
 
-On Wed, Nov 23, 2016 at 08:00:57AM -0800, Randy Dunlap wrote:
-> On 11/22/16 22:58, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20161122:
-> > 
-> 
-> on i386:
-> 
-> fs/built-in.o: In function `__issue_discard_async':
-> segment.c:(.text+0x5e2135): undefined reference to `__umoddi3'
-> 
-> or when built as a loadable module:
-> ERROR: "__umoddi3" [fs/f2fs/f2fs.ko] undefined!
-
-It seems Arnd's patch deals with this.
-I'll keep an eye on this.
+As Damien mentioned, is this fine to go, if you don't mind?
+I've confirmed that sd_zbc.c allows a power-of-two number only.
 
 Thanks,
 
-> 
-> 
-> -- 
-> ~Randy
+>From b709ff532daedc42526a46cb26860127f4959e01 Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 22 Nov 2016 15:20:16 +0100
+Subject: [PATCH] f2fs: fix 32-bit build
+
+The addition of multiple-device support broke CONFIG_BLK_DEV_ZONED
+on 32-bit machines because of a 64-bit division:
+
+fs/f2fs/f2fs.o: In function `__issue_discard_async':
+extent_cache.c:(.text.__issue_discard_async+0xd4): undefined reference to `__aeabi_uldivmod'
+
+Unfortunately, the sector number is usually a 64-bit number, and
+we guarantee that bdev_zone_size() returns a power-of-two number.
+
+Fixes: 792b84b74b54 ("f2fs: support multiple devices")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/segment.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index eaa0b40..d5141a0 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -693,7 +693,8 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
+ 	}
+ 	sector = SECTOR_FROM_BLOCK(blkstart);
+ 
+-	if (sector % bdev_zone_size(bdev) || nr_sects != bdev_zone_size(bdev)) {
++	if (sector & (bdev_zone_size(bdev) - 1) ||
++				nr_sects != bdev_zone_size(bdev)) {
+ 		f2fs_msg(sbi->sb, KERN_INFO,
+ 			"(%d) %s: Unaligned discard attempted (block %x + %x)",
+ 			devi, sbi->s_ndevs ? FDEV(devi).path: "",
+-- 
+2.8.3
