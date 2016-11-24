@@ -1,22 +1,25 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] resize.f2fs: fix an error in migrate_ssa
-Date: Thu, 24 Nov 2016 15:33:15 +0800
-Message-ID: <20161124073315.26936-1-heyunlei@huawei.com>
+From: k@vodka.home.kg
+Subject: fsck is broken on mips32 platform
+Date: Fri, 25 Nov 2016 01:30:35 +0300
+Message-ID: <56969233.20161125013035@vodka.home.kg>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1c9oQg-00080s-FC
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <k@vodka.home.kg>) id 1cA2nl-0002J6-Tj
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Nov 2016 07:26:46 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1c9oQZ-0003vB-S0
+	Thu, 24 Nov 2016 22:47:33 +0000
+Received: from mail.kotidze.in ([91.92.66.82])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cA2nk-0002fZ-Hc
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 24 Nov 2016 07:26:46 +0000
+	Thu, 24 Nov 2016 22:47:33 +0000
+Received: from private.domain by mail.kotidze.in with [XMail 1.27 ESMTP Server]
+	id <S1BA0> for <linux-f2fs-devel@lists.sourceforge.net> from
+	<k@vodka.home.kg>; Fri, 25 Nov 2016 01:30:38 +0300
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,78 +29,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+To: linux-f2fs-devel@lists.sourceforge.net
 
-This patch fix an error in migrate_ssa when resize with condition
-that offset is not zero && new_sum_blkaddr > old_sum_blkaddr + offset
+Hi !
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fsck/resize.c | 37 +++++++++++++++++++++++++++----------
- 1 file changed, 27 insertions(+), 10 deletions(-)
+I'm using f2fs on router Dlink dir-825 with openwrt/LEDE firmware.
+Its mips32 rel 2 big endian cpu.
 
-diff --git a/fsck/resize.c b/fsck/resize.c
-index 46aa30e..70dbef5 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -208,28 +208,45 @@ static void migrate_ssa(struct f2fs_sb_info *sbi,
- 	block_t new_sum_blkaddr = get_newsb(ssa_blkaddr);
- 	block_t end_sum_blkaddr = get_newsb(main_blkaddr);
- 	block_t blkaddr;
-+	unsigned int offset1 = offset;
-+	int ret = 1;
- 	void *zero_block = calloc(BLOCK_SZ, 1);
- 
- 	ASSERT(zero_block);
- 
--	if (offset && new_sum_blkaddr < old_sum_blkaddr + offset) {
--		blkaddr = new_sum_blkaddr;
--		while (blkaddr < end_sum_blkaddr) {
--			if (blkaddr - new_sum_blkaddr < TOTAL_SEGS(sbi))
--				move_ssa(sbi, offset, blkaddr);
--			else
--				dev_write_block(zero_block, blkaddr);
--			offset++;
--			blkaddr++;
-+	if (offset) {
-+		if (new_sum_blkaddr < old_sum_blkaddr + offset) {
-+			blkaddr = new_sum_blkaddr;
-+			while (blkaddr < end_sum_blkaddr) {
-+				if (blkaddr - new_sum_blkaddr < TOTAL_SEGS(sbi) - offset1)
-+					move_ssa(sbi, offset, blkaddr);
-+				else
-+					ret = dev_write_block(zero_block, blkaddr);
-+				ASSERT(ret >= 0);
-+				offset++;
-+				blkaddr++;
-+			}
-+		} else {
-+			blkaddr = end_sum_blkaddr - 1;
-+			offset = TOTAL_SEGS(sbi)-1;
-+			while (blkaddr >= new_sum_blkaddr) {
-+				if (blkaddr >= TOTAL_SEGS(sbi) - offset1 + new_sum_blkaddr)
-+					ret = dev_write_block(zero_block, blkaddr);
-+				else
-+					move_ssa(sbi, offset--, blkaddr);
-+				ASSERT(ret >= 0);
-+				blkaddr--;
-+			}
- 		}
- 	} else {
- 		blkaddr = end_sum_blkaddr - 1;
- 		offset = TOTAL_SEGS(sbi) - 1;
- 		while (blkaddr >= new_sum_blkaddr) {
- 			if (blkaddr >= TOTAL_SEGS(sbi) + new_sum_blkaddr)
--				dev_write_block(zero_block, blkaddr);
-+				ret = dev_write_block(zero_block, blkaddr);
- 			else
- 				move_ssa(sbi, offset--, blkaddr);
-+			ASSERT(ret >= 0);
- 			blkaddr--;
- 		}
- 	}
--- 
-2.10.1
+mkfs.f2fs - works
+mount - works
+fsck.f2fs - corrupts filesystem
+
+# i'm  trying  to fsck valid empty mountable f2fs partition i have just mkfs'ed
+fsck.f2fs /dev/sda2
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: sector size = 512
+Info: total sectors = 6508544 (3178 MB)
+Info: MKFS version
+  "Linux version 4.4.0-21-generic (buildd@lgw01-21) (gcc version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2) ) #37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016"
+Info: FSCK version
+  from "Linux version 4.4.0-21-generic (buildd@lgw01-21) (gcc version 5.3.1 20160413 (Ubuntu 5.3.1-14ubuntu2) ) #37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016"
+    to "Linux version 4.4.30 (vasya@nowhere) (gcc version 5.4.0 (LEDE GCC 5.4.0 r2084) ) #0 PREEMPT Thu Nov 3 07:34:38 2016"
+Info: superblock features = 0 : 
+Info: superblock encrypt level = 0, salt = 00000000000000000000000000000000
+Info: total FS sectors = 6508544 (3178 MB)
+Info: CKPT version = 1
+Info: checkpoint state = 5 :  compacted_summary unmount
+[ASSERT] (sanity_check_nid: 356)  --> nid is not valid. [0x3]
+
+NID[0x3] is unreachable
+[FSCK] Unreachable nat entries                        [Fail] [0x1]
+[FSCK] SIT valid block bitmap checking                [Fail]
+[FSCK] Hard link checking for regular file            [Ok..] [0x0]
+[FSCK] valid_block_count matching with CP             [Fail] [0x0]
+[FSCK] valid_node_count matcing with CP (de lookup)   [Fail] [0x0]
+[FSCK] valid_node_count matcing with CP (nat lookup)  [Ok..] [0x1]
+[FSCK] valid_inode_count matched with CP              [Fail] [0x0]
+[FSCK] free segment_count matched with CP             [Fail] [0x621]
+[FSCK] next block offset is free                      [Ok..]
+[FSCK] fixing SIT types
+[FSCK] other corrupted bugs                           [Fail]
+[FIX] (nullify_nat_entry:1688)  --> Remove nid [0x3] in nat journal
+
+After failed mount attempt :
+
+dmesg
+F2FS-fs (sda2): Failed to read root inode
+
+On x86 and ARM everything is ok
+
+f2fs-tools 1.7.0
+kernel 4.4.30
 
 
 ------------------------------------------------------------------------------
