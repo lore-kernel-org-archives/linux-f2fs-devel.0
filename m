@@ -1,72 +1,56 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: fix to determine start_cp_addr by sbi->cur_cp_pack
-Date: Thu, 24 Nov 2016 18:32:36 -0800
-Message-ID: <20161125023236.80473-1-jaegeuk@kernel.org>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Subject: [PATCH] mkfs.f2fs: give random checkpoint version
+Date: Thu, 24 Nov 2016 18:32:56 -0800
+Message-ID: <20161125023256.80540-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cA6K2-0005wi-J4
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 25 Nov 2016 02:33:06 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cA6K1-0005bD-V7
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 25 Nov 2016 02:33:06 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-We don't guarantee cp_addr is fixed by cp_version.
-This is to sync with f2fs-tools.
+This is to avoid wrong recovery during xfstests.
 
-Cc: stable@vger.kernel.org
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/checkpoint.c |  5 +++++
- fs/f2fs/f2fs.h       | 14 +++-----------
- 2 files changed, 8 insertions(+), 11 deletions(-)
+ mkfs/f2fs_format.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 54cc6a9..bf2f44c 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -789,6 +789,11 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 		f2fs_put_page(cur_page, 1);
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 9a536f0..d2254e7 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -507,7 +507,7 @@ static int f2fs_write_check_point_pack(void)
  	}
- done:
-+	if (cur_page == cp1)
-+		sbi->cur_cp_pack = 1;
-+	else
-+		sbi->cur_cp_pack = 2;
-+
- 	f2fs_put_page(cp1, 1);
- 	f2fs_put_page(cp2, 1);
- 	return 0;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 62383d2..e22e7e1 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -792,6 +792,7 @@ struct f2fs_sb_info {
  
- 	/* for checkpoint */
- 	struct f2fs_checkpoint *ckpt;		/* raw checkpoint pointer */
-+	int cur_cp_pack;			/* remain current cp pack */
- 	spinlock_t cp_lock;			/* for flag in ckpt */
- 	struct inode *meta_inode;		/* cache meta blocks */
- 	struct mutex cp_mutex;			/* checkpoint procedure lock */
-@@ -1352,19 +1353,10 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
- 
- static inline block_t __start_cp_addr(struct f2fs_sb_info *sbi)
- {
--	block_t start_addr;
--	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
--	unsigned long long ckpt_version = cur_cp_version(ckpt);
--
--	start_addr = le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_blkaddr);
-+	block_t start_addr = le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_blkaddr);
- 
--	/*
--	 * odd numbered checkpoint should at cp segment 0
--	 * and even segment must be at cp segment 1
--	 */
--	if (!(ckpt_version & 1))
-+	if (sbi->cur_cp_pack == 2)
- 		start_addr += sbi->blocks_per_seg;
--
- 	return start_addr;
- }
- 
+ 	/* 1. cp page 1 of checkpoint pack 1 */
+-	set_cp(checkpoint_ver, 1);
++	cp->checkpoint_ver = rand();
+ 	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
+ 	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
+ 	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
 -- 
 2.8.3
+
+
+------------------------------------------------------------------------------
