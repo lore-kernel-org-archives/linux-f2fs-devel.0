@@ -1,52 +1,54 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH] fscrypto: move ioctl processing more fully into common
- code
-Date: Sun, 27 Nov 2016 12:39:34 -0500
-Message-ID: <20161127173934.uz5cyjxuisainys4@thunk.org>
-References: <1476723246-47420-1-git-send-email-ebiggers@google.com>
- <20161127000901.wuyl6t6wp6qhmkrs@thunk.org>
- <20161127042048.GA34163@google.com>
+From: Junling Zheng <zhengjunling@huawei.com>
+Subject: [PATCH] resize.f2fs: correct the max segno in
+	migrate_main
+Date: Mon, 28 Nov 2016 14:37:03 +0800
+Message-ID: <1480315023-7787-1-git-send-email-zhengjunling@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161127042048.GA34163@google.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Eric Biggers <ebiggers@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <zhengjunling@huawei.com>) id 1cBFml-0003Vk-Gf
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Nov 2016 06:51:31 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cBFmj-0001LB-Ez
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 28 Nov 2016 06:51:31 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
 
-On Sat, Nov 26, 2016 at 08:20:48PM -0800, Eric Biggers wrote:
-> 
-> I guess I'm okay with that, since struct fscrypt_policy won't have any padding
-> bytes because its members are all bytes.  Plus it's marked __packed, though I
-> think that was a mistake given that the struct isn't stored on disk directly.
->
+Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
+---
+ fsck/resize.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It wouldn't have mattered if wasn't marked __packed, since the first
-four fields are __u8, and the master_key_descriptor is a 4 byte
-aligned __u8 array of size 8.
-
-The use of __packed in the fscrypt code came from Michael, and I
-suspect it's more of a Microsoft thing, since his previous experience
-was as the architect for Bitlocker.  It's actually pretty rare that we
-use __packed in Linux kernel sources in general, and in ext4
-specifically.
-
-Personally, I tend to depend on __uNN declaration and various
-assumptions that we make about "sane" packing rules which are assumed
-by the kernel.  See how the on-disk ext4 superblock is defined; that's
-not the only place where we make assumptions about sane structure
-packing, and anyone who tried porting Linux to a 18-bit or 36-bit
-architecture would have lots of other problems, even if a modern Linux
-kernel could be made small enough to fit in the memory available to a
-PDP-10 or a PDP-15. :-)
-
-We probably could remove a few of them, but I haven't bothered, since
-in general they aren't doing any harm.
-
-Cheers,
-
-					- Ted
+diff --git a/fsck/resize.c b/fsck/resize.c
+index 46aa30e..ba7bb88 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -143,7 +143,7 @@ static void migrate_main(struct f2fs_sb_info *sbi,
+ 
+ 	ASSERT(raw != NULL);
+ 
+-	for (i = TOTAL_SEGS(sbi); i >= 0; i--) {
++	for (i = TOTAL_SEGS(sbi) - 1; i >= 0; i--) {
+ 		se = get_seg_entry(sbi, i);
+ 		if (!se->valid_blocks)
+ 			continue;
+-- 
+2.7.4
 
 
+------------------------------------------------------------------------------
