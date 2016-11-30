@@ -1,98 +1,65 @@
-From: Junling Zheng <zhengjunling@huawei.com>
-Subject: [PATCH v2] resize.f2fs: fix the number of moved ssa
-	blocks in migrate_ssa
-Date: Wed, 30 Nov 2016 11:23:42 +0800
-Message-ID: <1480476222-16523-1-git-send-email-zhengjunling@huawei.com>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: [RFD] Common userspace tool for fscypto
+Date: Wed, 30 Nov 2016 09:27:28 +0100
+Message-ID: <3d354949-0051-3f3a-f8ac-8dd99e9adc0f@nod.at>
+References: <0bef3877-060e-b722-0354-3a5508219e23@nod.at>
+ <CA+POJK10M3_GhP_Ge4qkQF4gSNMUXVr5kem9Ak4EDmVRvRUg7g@mail.gmail.com>
+ <f9bc005b-4e25-d705-e091-5f930e4246b1@nod.at>
+ <CAKpBdu1+k94WmwxeZ2Hyu5=ifNprPA0YedRm2xps-ooyVHTwhg@mail.gmail.com>
+ <87d9b3aa-684d-856a-0dcd-f960923f2484@nod.at>
+ <20161130000407.GB107713@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <zhengjunling@huawei.com>) id 1cBviH-0000Jt-EB
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Nov 2016 03:37:41 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cBviE-0002cn-W6
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 30 Nov 2016 03:37:41 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+Return-path: <linux-ext4-owner@vger.kernel.org>
+In-Reply-To: <20161130000407.GB107713@google.com>
+Sender: linux-ext4-owner@vger.kernel.org
+To: Eric Biggers <ebiggers@google.com>
+Cc: Joe Richey <joerichey@google.com>, Michael Halcrow <mhalcrow@google.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, kzak@redhat.com, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, David Gstir <david@sigma-star.at>, Ext4 Developers List <linux-ext4@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If the offset passed in migrate_ssa is not zero, it means that there're
-offset segments of old main will disappear after migrating, then there're
-offset blocks of old ssa should be invalidated and removed accordingly.
-So, the number of moved ssa blocks should be: TOTAL_SEGS(sbi) - offset,
-and the expanded summary, which is filled with zero_blocks, should start
-from: new_sum_blkaddr + TOTAL_SEGS(sbi) - offset.
+Eric,
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Junling Zheng <zhengjunling@huawei.com>
----
- fsck/resize.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+On 30.11.2016 01:04, Eric Biggers wrote:
+> On Tue, Nov 29, 2016 at 10:59:28PM +0100, Richard Weinberger wrote:
+>>
+>> Do you also plan to address d/page cache related issues?
+>> i.e. when two users are logged into the system user rw
+>> is able to see decrypted file names and contents in /home/dags/
+>> if user dags installs a key and accessed a file.
+>>
+> 
+> As far as I know, there are no plans to make it possible for one user to see
+> plaintext while another user sees ciphertext.  Fundamentally, the dentry, inode,
+> and page caches are shared systemwide.  This cannot be changed by using
+> namespaces; it can only be changed by doing something like an ecryptfs-style
+> stacked mount where the plaintext and ciphertext are actually exposed by
+> different filesystems.  And it was a fundamental design goal of ext4 encryption
+> to not do a stacked mount.
 
-diff --git a/fsck/resize.c b/fsck/resize.c
-index ba7bb88..3e8fdd8 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -207,30 +207,33 @@ static void migrate_ssa(struct f2fs_sb_info *sbi,
- 	block_t old_sum_blkaddr = get_sb(ssa_blkaddr);
- 	block_t new_sum_blkaddr = get_newsb(ssa_blkaddr);
- 	block_t end_sum_blkaddr = get_newsb(main_blkaddr);
-+	block_t expand_sum_blkaddr = new_sum_blkaddr +
-+					TOTAL_SEGS(sbi) - offset;
- 	block_t blkaddr;
-+	int ret;
- 	void *zero_block = calloc(BLOCK_SZ, 1);
--
- 	ASSERT(zero_block);
- 
- 	if (offset && new_sum_blkaddr < old_sum_blkaddr + offset) {
- 		blkaddr = new_sum_blkaddr;
- 		while (blkaddr < end_sum_blkaddr) {
--			if (blkaddr - new_sum_blkaddr < TOTAL_SEGS(sbi))
--				move_ssa(sbi, offset, blkaddr);
--			else
--				dev_write_block(zero_block, blkaddr);
--			offset++;
--			blkaddr++;
-+			if (blkaddr < expand_sum_blkaddr)
-+				move_ssa(sbi, offset++, blkaddr++);
-+			else {
-+				ret = dev_write_block(zero_block, blkaddr++);
-+				ASSERT(ret >=0);
-+			}
- 		}
- 	} else {
- 		blkaddr = end_sum_blkaddr - 1;
- 		offset = TOTAL_SEGS(sbi) - 1;
- 		while (blkaddr >= new_sum_blkaddr) {
--			if (blkaddr >= TOTAL_SEGS(sbi) + new_sum_blkaddr)
--				dev_write_block(zero_block, blkaddr);
-+			if (blkaddr >= expand_sum_blkaddr) {
-+				ret = dev_write_block(zero_block, blkaddr--);
-+				ASSERT(ret >=0);
-+			}
- 			else
--				move_ssa(sbi, offset--, blkaddr);
--			blkaddr--;
-+				move_ssa(sbi, offset--, blkaddr--);
- 		}
- 	}
- 
--- 
-2.7.4
+Well, we could over-mount /home/rw with an empty directory for every user except rw.
 
+> So the expectation is that to restrict access by other users once a key has been
+> provisioned, file permissions should be used.
+> 
+>> Or files in /home/dags/ are still readable even after
+>> user dags purged the key.
+> 
+> If you revoke the key (with 'keyctl revoke') rather than unlink the key (with
+> 'keyctl unlink') then it actually does appear to work currently.  The difference
+> is that revoking the key is a modification of the key, whereas unlinking the key
+> is only removing a link to the key without affecting any links which the kernel
+> may have internally or which userspace may have in other keyrings.  Revocation
+> (but not unlinking) is detected by fscrypt_get_encryption_info() when someone
+> tries to open an encrypted file or directory.  There's also a d_revalidate
+> dentry operation which cause a dentry to be invalidated if it's a plaintext name
+> but the directory key is no longer valid, or if it's a ciphertext name but the
+> directory key is now valid.
 
-------------------------------------------------------------------------------
+Ahh, in my quick and dirty tests I've always used purge. Let me try revoke. :)
+
+BTW: This limitations needs to be clearly documented somewhere.
+Usually an user thinks that only she can access encrypted files...
+
+Thanks,
+//richard
