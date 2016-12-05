@@ -1,42 +1,43 @@
 From: Eric Biggers <ebiggers@google.com>
-Subject: Re: [RFD] Common userspace tool for fscypto
-Date: Fri, 2 Dec 2016 16:40:40 -0800
-Message-ID: <20161203004040.GB3508@google.com>
-References: <0bef3877-060e-b722-0354-3a5508219e23@nod.at>
- <CA+POJK10M3_GhP_Ge4qkQF4gSNMUXVr5kem9Ak4EDmVRvRUg7g@mail.gmail.com>
- <f9bc005b-4e25-d705-e091-5f930e4246b1@nod.at>
- <CAKpBdu1+k94WmwxeZ2Hyu5=ifNprPA0YedRm2xps-ooyVHTwhg@mail.gmail.com>
- <87d9b3aa-684d-856a-0dcd-f960923f2484@nod.at>
- <20161130000407.GB107713@google.com>
- <3d354949-0051-3f3a-f8ac-8dd99e9adc0f@nod.at>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3d354949-0051-3f3a-f8ac-8dd99e9adc0f@nod.at>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Richard Weinberger <richard@nod.at>
-Cc: Joe Richey <joerichey@google.com>, Michael Halcrow <mhalcrow@google.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, kzak@redhat.com, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, David Gstir <david@sigma-star.at>, Ext4 Developers List <linux-ext4@vger.kernel.org>, linux-f2fs-devel@lists.sourceforge.net, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH 0/5] fscrypt error code cleanup
+Date: Mon,  5 Dec 2016 11:12:43 -0800
+Message-ID: <1480965168-38747-1-git-send-email-ebiggers@google.com>
+Return-path: <linux-ext4-owner@vger.kernel.org>
+Sender: linux-ext4-owner@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Richard Weinberger <richard@nod.at>, David Gstir <david@sigma-star.at>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed, Nov 30, 2016 at 09:27:28AM +0100, Richard Weinberger wrote:
-> 
-> BTW: This limitations needs to be clearly documented somewhere.
-> Usually an user thinks that only she can access encrypted files...
-> 
-> Thanks,
-> //richard
+As suggested by Richard Weinberger, we need to agree on and document a clear set
+of fscrypt-related error codes.
 
-For what it's worth, I've been making a few updates to the public design
-document for ext4 encryption based on what's actually upstream now:
+I identified several cases where the error codes are not consistent between or
+within filesystems, or are ambiguous with other errors.  This patchset proposes
+several changes to resolve these problems.
 
-https://docs.google.com/document/d/1ft26lUQyuSpiu6VleP70_npaWdRfXFoNnB8JYnykNTg
+I believe we do still have some flexibility to make changes to these error codes
+since there are not many different users of filesystem-level encryption yet, and
+depending on these specific errors would be unusual.  There have also already
+been cases where some of these error codes have changed before.
 
-It still needs work, though.  It doesn't really answer the questions about
-access control and key revocation, for example, and of course now the upstream
-code isn't actually ext4 specific anymore.
+Currently this patchset depends on the following patch being applied first:
+"fscrypto: move ioctl processing more fully into common code"
 
-At some point it might be nice to write some in-tree documentation for fscrypto,
-e.g. a file Documentation/filesystems/fscrypto.txt.
+Eric Biggers (5):
+  fscrypt: use ENOKEY when file cannot be created w/o key
+  fscrypt: use ENOTDIR when setting encryption policy on nondirectory
+  fscrypt: use EEXIST when file already uses different policy
+  fscrypt: remove user-triggerable warning messages
+  fscrypt: pass up error codes from ->get_context()
 
-Eric
+ fs/crypto/fname.c  |  4 +--
+ fs/crypto/policy.c | 73 ++++++++++++++++++++----------------------------------
+ fs/ext4/ialloc.c   |  2 +-
+ fs/ext4/namei.c    |  4 ++-
+ fs/f2fs/dir.c      |  5 +++-
+ fs/f2fs/namei.c    |  4 +--
+ 6 files changed, 39 insertions(+), 53 deletions(-)
+
+-- 
+2.8.0.rc3.226.g39d4020
+
