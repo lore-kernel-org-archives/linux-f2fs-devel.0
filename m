@@ -1,68 +1,74 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/2] f2fs: detect wrong layout
-Date: Tue,  6 Dec 2016 17:16:24 -0800
-Message-ID: <20161207011625.15591-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 2/2] f2fs: free meta pages if sanity check for
+	ckpt is failed
+Date: Tue,  6 Dec 2016 17:16:25 -0800
+Message-ID: <20161207011625.15591-2-jaegeuk@kernel.org>
+References: <20161207011625.15591-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cEQqa-0007RW-3u
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 07 Dec 2016 01:16:36 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cEQqZ-0002ux-GT
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 07 Dec 2016 01:16:36 +0000
+In-Reply-To: <20161207011625.15591-1-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Previous mkfs.f2fs allows small partition inappropriately, so f2fs should detect
-that as well.
+This fixes missing freeing meta pages in the error case.
 
-Refer this in f2fs-tools.
-
-mkfs.f2fs: detect small partition by overprovision ratio and # of segments
-
-Reported-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.h |  2 ++
- fs/f2fs/super.c   | 11 +++++++++++
- 2 files changed, 13 insertions(+)
+ fs/f2fs/checkpoint.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 89ab4301ef02..9d44ce83acb2 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -18,6 +18,8 @@
- #define DEF_RECLAIM_PREFREE_SEGMENTS	5	/* 5% over total segments */
- #define DEF_MAX_RECLAIM_PREFREE_SEGMENTS	4096	/* 8GB in maximum */
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 35601b0d077f..698b13ae261c 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -770,7 +770,7 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
  
-+#define F2FS_MIN_SEGMENTS	9 /* SB + 2 (CP + SIT + NAT) + SSA + MAIN */
-+
- /* L: Logical segment # in volume, R: Relative segment # in main area */
- #define GET_L2R_SEGNO(free_i, segno)	(segno - free_i->start_segno)
- #define GET_R2L_SEGNO(free_i, segno)	(segno + free_i->start_segno)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 7591d2d7b612..1a526474b332 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1452,6 +1452,7 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	unsigned int total, fsmeta;
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
-+	unsigned int ovp_segments, reserved_segments;
+ 	/* Sanity checking of checkpoint */
+ 	if (sanity_check_ckpt(sbi))
+-		goto fail_no_cp;
++		goto free_fail_no_cp;
  
- 	total = le32_to_cpu(raw_super->segment_count);
- 	fsmeta = le32_to_cpu(raw_super->segment_count_ckpt);
-@@ -1463,6 +1464,16 @@ int sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 	if (unlikely(fsmeta >= total))
- 		return 1;
+ 	if (cur_page == cp1)
+ 		sbi->cur_cp_pack = 1;
+@@ -798,6 +798,9 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	f2fs_put_page(cp2, 1);
+ 	return 0;
  
-+	ovp_segments = le32_to_cpu(ckpt->overprov_segment_count);
-+	reserved_segments = le32_to_cpu(ckpt->rsvd_segment_count);
-+
-+	if (unlikely(fsmeta < F2FS_MIN_SEGMENTS ||
-+			ovp_segments == 0 || reserved_segments == 0)) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"Wrong layout: check mkfs.f2fs version");
-+		return 1;
-+	}
-+
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
- 		return 1;
++free_fail_no_cp:
++	f2fs_put_page(cp1, 1);
++	f2fs_put_page(cp2, 1);
+ fail_no_cp:
+ 	kfree(sbi->ckpt);
+ 	return -EINVAL;
 -- 
 2.11.0
+
+
+------------------------------------------------------------------------------
+Developer Access Program for Intel Xeon Phi Processors
+Access to Intel Xeon Phi processor-based developer platforms.
+With one year of Intel Parallel Studio XE.
+Training and support from Colfax.
+Order your platform today.http://sdm.link/xeonphi
