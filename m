@@ -1,75 +1,49 @@
-From: Michal Hocko <mhocko@kernel.org>
+From: Dave Chinner <david@fromorbit.com>
 Subject: Re: [RFC PATCH] mm: introduce kv[mz]alloc helpers
-Date: Thu, 8 Dec 2016 14:51:46 +0100
-Message-ID: <20161208135145.GD26530@dhcp22.suse.cz>
+Date: Fri, 9 Dec 2016 12:44:17 +1100
+Message-ID: <20161209014417.GN4326@dastard>
 References: <20161208103300.23217-1-mhocko@kernel.org>
- <86cabb7a-1756-4d12-7ba4-776f66f6bb86@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <owner-linux-mm@kvack.org>
 Content-Disposition: inline
-In-Reply-To: <86cabb7a-1756-4d12-7ba4-776f66f6bb86@redhat.com>
+In-Reply-To: <20161208103300.23217-1-mhocko@kernel.org>
 Sender: owner-linux-mm@kvack.org
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, Anatoly Stepanov <astepanov@cloudlinux.com>, LKML <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>, Theodore Ts'o <tytso@mit.edu>, kvm@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, Anatoly Stepanov <astepanov@cloudlinux.com>, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>, Paolo Bonzini <pbonzini@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>, Theodore Ts'o <tytso@mit.edu>, kvm@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu 08-12-16 14:00:20, David Hildenbrand wrote:
-> Am 08.12.2016 um 11:33 schrieb Michal Hocko:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > Using kmalloc with the vmalloc fallback for larger allocations is a
-> > common pattern in the kernel code. Yet we do not have any common helper
-> > for that and so users have invented their own helpers. Some of them are
-> > really creative when doing so. Let's just add kv[mz]alloc and make sure
-> > it is implemented properly. This implementation makes sure to not make
-> > a large memory pressure for > PAGE_SZE requests (__GFP_NORETRY) and also
-> > to not warn about allocation failures. This also rules out the OOM
-> > killer as the vmalloc is a more approapriate fallback than a disruptive
-> > user visible action.
-> > 
-> > This patch also changes some existing users and removes helpers which
-> > are specific for them. In some cases this is not possible (e.g.
-> > ext4_kvmalloc, libcfs_kvzalloc, __aa_kvmalloc) because those seems to be
-> > broken and require GFP_NO{FS,IO} context which is not vmalloc compatible
-> > in general (note that the page table allocation is GFP_KERNEL). Those
-> > need to be fixed separately.
-> > 
-> > apparmor has already claimed kv[mz]alloc so remove those and use
-> > __aa_kvmalloc instead to prevent from the naming clashes.
-> > 
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Mike Snitzer <snitzer@redhat.com>
-> > Cc: dm-devel@redhat.com
-> > Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> > Cc: "Theodore Ts'o" <tytso@mit.edu>
-> > Cc: kvm@vger.kernel.org
-> > Cc: linux-ext4@vger.kernel.org
-> > Cc: linux-f2fs-devel@lists.sourceforge.net
-> > Cc: linux-security-module@vger.kernel.org
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+On Thu, Dec 08, 2016 at 11:33:00AM +0100, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
 > 
-> I remember yet another similar user in arch/s390/kvm/kvm-s390.c
-> -> kvm_s390_set_skeys()
+> Using kmalloc with the vmalloc fallback for larger allocations is a
+> common pattern in the kernel code. Yet we do not have any common helper
+> for that and so users have invented their own helpers. Some of them are
+> really creative when doing so. Let's just add kv[mz]alloc and make sure
+> it is implemented properly. This implementation makes sure to not make
+> a large memory pressure for > PAGE_SZE requests (__GFP_NORETRY) and also
+> to not warn about allocation failures. This also rules out the OOM
+> killer as the vmalloc is a more approapriate fallback than a disruptive
+> user visible action.
 > 
-> ...
-> keys = kmalloc_array(args->count, sizeof(uint8_t),
->                      GFP_KERNEL | __GFP_NOWARN);
-> if (!keys)
->         vmalloc(sizeof(uint8_t) * args->count);
-> ...
-> 
-> would kvmalloc_array make sense? (it would even make the code here
-> less error prone and better to read)
+> This patch also changes some existing users and removes helpers which
+> are specific for them. In some cases this is not possible (e.g.
+> ext4_kvmalloc, libcfs_kvzalloc, __aa_kvmalloc) because those seems to be
+> broken and require GFP_NO{FS,IO} context which is not vmalloc compatible
+> in general (note that the page table allocation is GFP_KERNEL). Those
+> need to be fixed separately.
 
-Well, if there are more users like that then why not. I just do not want
-to duplicate the whole kmalloc API right now. The above could be
-trivially changed to kvmalloc(args->count * sizeof(uint8_t), GFP_KERNEL)
-so a special API might not be really needed. 
+See fs/xfs/kmem.c::kmem_zalloc_large(), which is XFS's version of
+kvmalloc() that is GFP_NOFS/GFP_NOIO safe. Any generic API for this
+functionality will have to play these memalloc_noio_save/
+memalloc_noio_restore games to ensure they are GFP_NOFS safe....
 
+Cheers,
+
+Dave.
 -- 
-Michal Hocko
-SUSE Labs
+Dave Chinner
+david@fromorbit.com
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
