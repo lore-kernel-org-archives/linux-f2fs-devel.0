@@ -1,24 +1,22 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] mkfs.f2fs: give random checkpoint version
-Date: Sat, 10 Dec 2016 15:42:55 +0800
-Message-ID: <e4549e48-142d-13ee-b224-2b59d8bef2a6@huawei.com>
-References: <20161125023256.80540-1-jaegeuk@kernel.org>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: fix a missing size change in f2fs_setattr
+Date: Sun, 11 Dec 2016 15:35:15 +0800
+Message-ID: <20161211073515.7412-1-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cFcJR-0006xH-6P
+	(envelope-from <heyunlei@huawei.com>) id 1cFybS-0002B7-Hs
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 10 Dec 2016 07:43:17 +0000
+	Sun, 11 Dec 2016 07:31:22 +0000
 Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cFcJP-0003VG-5x
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cFybO-0000R4-9U
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 10 Dec 2016 07:43:17 +0000
-In-Reply-To: <20161125023256.80540-1-jaegeuk@kernel.org>
+	Sun, 11 Dec 2016 07:31:22 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,41 +26,50 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+Cc: heyunlei@huwei.com
 
-Hi Jaegeuk,
+This patch fix a missing size change in f2fs_setattr
 
-On 2016/11/25 10:32, Jaegeuk Kim wrote:
-> This is to avoid wrong recovery during xfstests.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  mkfs/f2fs_format.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> index 9a536f0..d2254e7 100644
-> --- a/mkfs/f2fs_format.c
-> +++ b/mkfs/f2fs_format.c
-> @@ -507,7 +507,7 @@ static int f2fs_write_check_point_pack(void)
->  	}
->  
->  	/* 1. cp page 1 of checkpoint pack 1 */
-> -	set_cp(checkpoint_ver, 1);
-> +	cp->checkpoint_ver = rand();
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+---
+ fs/f2fs/file.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-I can see the last patch merged in upstream is:
-
-+	cp->checkpoint_ver = rand() | 0x1;
-
-Any difference and why don't we use set_cp?
-
-Thanks,
-
->  	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
->  	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
->  	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
-> 
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 4c87261..383b5c2 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -677,6 +677,7 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ {
+ 	struct inode *inode = d_inode(dentry);
+ 	int err;
++	bool size_changed = false;
+ 
+ 	err = setattr_prepare(dentry, attr);
+ 	if (err)
+@@ -707,6 +708,8 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 			}
+ 			inode->i_mtime = inode->i_ctime = current_time(inode);
+ 		}
++
++		size_changed = true;
+ 	}
+ 
+ 	__setattr_copy(inode, attr);
+@@ -719,8 +722,8 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 		}
+ 	}
+ 
+-	/* update attributes only */
+-	f2fs_mark_inode_dirty_sync(inode, false);
++	/* file size may changed here */
++	f2fs_mark_inode_dirty_sync(inode, size_changed);
+ 
+ 	/* inode change will produce dirty node pages flushed by checkpoint */
+ 	f2fs_balance_fs(F2FS_I_SB(inode), true);
+-- 
+2.10.1
 
 
 ------------------------------------------------------------------------------
