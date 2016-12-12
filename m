@@ -1,26 +1,26 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] mkfs.f2fs: give random checkpoint version
-Date: Mon, 12 Dec 2016 10:59:13 -0800
-Message-ID: <20161212185913.GB61413@jaegeuk.local>
-References: <20161125023256.80540-1-jaegeuk@kernel.org>
-	<e4549e48-142d-13ee-b224-2b59d8bef2a6@huawei.com>
+Subject: Re: [PATCH] f2fs: fix conflict between atomic_write and
+ truncate
+Date: Mon, 12 Dec 2016 11:18:51 -0800
+Message-ID: <20161212191851.GC61413@jaegeuk.local>
+References: <20161212131618.92800-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cGVoo-0001j6-61
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cGW7o-0004dW-NC
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Dec 2016 18:59:22 +0000
+	Mon, 12 Dec 2016 19:19:00 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cGVon-0006Cb-GC
+	(Exim 4.76) id 1cGW7n-0000UT-Jo
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Dec 2016 18:59:22 +0000
+	Mon, 12 Dec 2016 19:19:00 +0000
 Content-Disposition: inline
-In-Reply-To: <e4549e48-142d-13ee-b224-2b59d8bef2a6@huawei.com>
+In-Reply-To: <20161212131618.92800-1-houpengyang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,51 +30,60 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Hou Pengyang <houpengyang@huawei.com>
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+Hi Pengyang,
 
-On 12/10, Chao Yu wrote:
-> Hi Jaegeuk,
+On 12/12, Hou Pengyang wrote:
+> In fsync_node_pages path, after locking the last_page for setting dirty,
+> we should check if the page has been truncated. Or there may be a mem leak,
+> as this dirty last_page will NOT be found in next page-cache travese.
 > 
-> On 2016/11/25 10:32, Jaegeuk Kim wrote:
-> > This is to avoid wrong recovery during xfstests.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  mkfs/f2fs_format.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> > index 9a536f0..d2254e7 100644
-> > --- a/mkfs/f2fs_format.c
-> > +++ b/mkfs/f2fs_format.c
-> > @@ -507,7 +507,7 @@ static int f2fs_write_check_point_pack(void)
-> >  	}
-> >  
-> >  	/* 1. cp page 1 of checkpoint pack 1 */
-> > -	set_cp(checkpoint_ver, 1);
-> > +	cp->checkpoint_ver = rand();
+> This patch adds page->mapping checking, and will NOT rewrite the page if
+> it has been truncated.
 > 
-> I can see the last patch merged in upstream is:
+> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+> ---
+>  fs/f2fs/node.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> +	cp->checkpoint_ver = rand() | 0x1;
-> 
-> Any difference and why don't we use set_cp?
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index c1bbfdc..78c5b50 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1410,6 +1410,11 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>  			"Retry to write fsync mark: ino=%u, idx=%lx",
+>  					ino, last_page->index);
+>  		lock_page(last_page);
 
-In order to support old f2fs driver, we should at least keep the ordering
-by default, since such the version conversion would not be a normal case.
+We grabbed a reference count for this last_page, and thus, it won't be released.
+Something that I missed?
 
 Thanks,
 
+> +		if (unlikely(last_page->mapping != NODE_MAPPING(sbi))) {
+> +			unlock_page(last_page);
+> +			f2fs_put_page(last_page, 0);
+> +			goto out;
+> +		}
+>  		f2fs_wait_on_page_writeback(last_page, NODE, true);
+>  		set_page_dirty(last_page);
+>  		unlock_page(last_page);
+> -- 
+> 2.10.1
 > 
-> Thanks,
 > 
-> >  	set_cp(cur_node_segno[0], c.cur_seg[CURSEG_HOT_NODE]);
-> >  	set_cp(cur_node_segno[1], c.cur_seg[CURSEG_WARM_NODE]);
-> >  	set_cp(cur_node_segno[2], c.cur_seg[CURSEG_COLD_NODE]);
-> > 
+> ------------------------------------------------------------------------------
+> Developer Access Program for Intel Xeon Phi Processors
+> Access to Intel Xeon Phi processor-based developer platforms.
+> With one year of Intel Parallel Studio XE.
+> Training and support from Colfax.
+> Order your platform today.http://sdm.link/xeonphi
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most 
