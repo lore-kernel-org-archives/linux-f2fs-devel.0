@@ -1,70 +1,95 @@
-From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH] f2fs: fix conflict between atomic_write and
-	truncate
-Date: Mon, 12 Dec 2016 13:16:18 +0000
-Message-ID: <20161212131618.92800-1-houpengyang@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix to determine start_cp_addr by sbi->cur_cp_pack
+Date: Mon, 12 Dec 2016 10:56:14 -0800
+Message-ID: <20161212185614.GA61413@jaegeuk.local>
+References: <20161125023236.80473-1-jaegeuk@kernel.org>
+ <6ded2a84-51fb-ec54-2bcc-2b82c1f28b8f@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1cGQTW-0005Hx-7P
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Dec 2016 13:17:02 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cGQTQ-0001kJ-4p
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 12 Dec 2016 13:17:02 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <6ded2a84-51fb-ec54-2bcc-2b82c1f28b8f@huawei.com>
+Sender: stable-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, stable@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-In fsync_node_pages path, after locking the last_page for setting dirty,
-we should check if the page has been truncated. Or there may be a mem leak,
-as this dirty last_page will NOT be found in next page-cache travese.
+On 12/10, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> Let me try to understand this, in some cases, we can write a checkpoint pack
+> which has wrong cp_ver, like in 1st cp pack which has even version number or 2nd
+> cp pack which has odd version number, so if we load that kind of cp pack during
+> fill_super, we may load wrong summary data from another older cp pack which cp
+> version pointed to, is that right?
 
-This patch adds page->mapping checking, and will NOT rewrite the page if
-it has been truncated.
+Yup. Especially we can use __start_cp_addr() when finding summary blocks. So, I
+suspect it was able to cause missing summary blocks.
 
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
----
- fs/f2fs/node.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Thanks,
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index c1bbfdc..78c5b50 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1410,6 +1410,11 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			"Retry to write fsync mark: ino=%u, idx=%lx",
- 					ino, last_page->index);
- 		lock_page(last_page);
-+		if (unlikely(last_page->mapping != NODE_MAPPING(sbi))) {
-+			unlock_page(last_page);
-+			f2fs_put_page(last_page, 0);
-+			goto out;
-+		}
- 		f2fs_wait_on_page_writeback(last_page, NODE, true);
- 		set_page_dirty(last_page);
- 		unlock_page(last_page);
--- 
-2.10.1
-
-
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today.http://sdm.link/xeonphi
+> 
+> Thanks,
+> 
+> On 2016/11/25 10:32, Jaegeuk Kim wrote:
+> > We don't guarantee cp_addr is fixed by cp_version.
+> > This is to sync with f2fs-tools.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/checkpoint.c |  5 +++++
+> >  fs/f2fs/f2fs.h       | 14 +++-----------
+> >  2 files changed, 8 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> > index 54cc6a9..bf2f44c 100644
+> > --- a/fs/f2fs/checkpoint.c
+> > +++ b/fs/f2fs/checkpoint.c
+> > @@ -789,6 +789,11 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi)
+> >  		f2fs_put_page(cur_page, 1);
+> >  	}
+> >  done:
+> > +	if (cur_page == cp1)
+> > +		sbi->cur_cp_pack = 1;
+> > +	else
+> > +		sbi->cur_cp_pack = 2;
+> > +
+> >  	f2fs_put_page(cp1, 1);
+> >  	f2fs_put_page(cp2, 1);
+> >  	return 0;
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 62383d2..e22e7e1 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -792,6 +792,7 @@ struct f2fs_sb_info {
+> >  
+> >  	/* for checkpoint */
+> >  	struct f2fs_checkpoint *ckpt;		/* raw checkpoint pointer */
+> > +	int cur_cp_pack;			/* remain current cp pack */
+> >  	spinlock_t cp_lock;			/* for flag in ckpt */
+> >  	struct inode *meta_inode;		/* cache meta blocks */
+> >  	struct mutex cp_mutex;			/* checkpoint procedure lock */
+> > @@ -1352,19 +1353,10 @@ static inline void *__bitmap_ptr(struct f2fs_sb_info *sbi, int flag)
+> >  
+> >  static inline block_t __start_cp_addr(struct f2fs_sb_info *sbi)
+> >  {
+> > -	block_t start_addr;
+> > -	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+> > -	unsigned long long ckpt_version = cur_cp_version(ckpt);
+> > -
+> > -	start_addr = le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_blkaddr);
+> > +	block_t start_addr = le32_to_cpu(F2FS_RAW_SUPER(sbi)->cp_blkaddr);
+> >  
+> > -	/*
+> > -	 * odd numbered checkpoint should at cp segment 0
+> > -	 * and even segment must be at cp segment 1
+> > -	 */
+> > -	if (!(ckpt_version & 1))
+> > +	if (sbi->cur_cp_pack == 2)
+> >  		start_addr += sbi->blocks_per_seg;
+> > -
+> >  	return start_addr;
+> >  }
+> >  
+> > 
