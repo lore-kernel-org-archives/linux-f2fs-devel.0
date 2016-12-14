@@ -1,64 +1,22 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [RFC PATCH] mm: introduce kv[mz]alloc helpers
-Date: Wed, 14 Dec 2016 10:05:02 +0100
-Message-ID: <20161214090502.GC25573@dhcp22.suse.cz>
-References: <20161208103300.23217-1-mhocko@kernel.org>
- <20161213101451.GB10492@dhcp22.suse.cz>
- <C2C892CD-BAF7-4E72-927D-B79D95A9B7FA@dilger.ca>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL] f2fs update for 4.10
+Date: Wed, 14 Dec 2016 09:12:10 -0800
+Message-ID: <CA+55aFw4dRsn0dG2RO7sgKFDF--jjb8_ZgQg_ghL+tpDKH63Tw@mail.gmail.com>
+References: <20161212221548.GA4001@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <C2C892CD-BAF7-4E72-927D-B79D95A9B7FA@dilger.ca>
-Sender: owner-linux-mm@kvack.org
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: Linux MM <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, Anatoly Stepanov <astepanov@cloudlinux.com>, LKML <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>, Theodore Ts'o <tytso@mit.edu>, kvm@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org, Dave Chinner <david@fromorbit.com>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161212221548.GA4001@jaegeuk.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux FS Dev Mailing List <linux-fsdevel@vger.kernel.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue 13-12-16 13:55:46, Andreas Dilger wrote:
-> On Dec 13, 2016, at 3:14 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> > 
-> > Are there any more comments or objections to this patch? Is this a good
-> > start or kv[mz]alloc has to provide a way to cover GFP_NOFS users as
-> > well in the initial version.
-> 
-> I'm in favour of this cleanup as a starting point.  I definitely agree
-> that this same functionality is in use in a number of places and should
-> be consolidated.
-> 
-> The vmalloc() from GFP_NOFS can be addressed separately in later patches.
-> That is an issue for several filesystems, and while XFS works around this,
-> it would be better to lift that out of the filesystem code into the VM.
+On Mon, Dec 12, 2016 at 2:15 PM, Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>
+> Could you please consider this pull request?
 
-Well, my longer term plan is to change how GFP_NOFS is used from the fs
-code rather than tweak the VM layer. The current situation with the nofs
-is messy and confusing. In many contexts it is used without a good
-reason - just to be sure that nothing will break. I strongly believe
-that we should use a scope api [1] which marks whole regions of
-potentially reclaim dangerous code paths and all the allocations within
-that region will inherit the nofs protection automatically. That would
-solve the vmalloc(GFP_NOFS) problem as well. The route to get there is
-no short or easy. I am planning to repost the scope patchset hopefully
-soon with ext4 converted.
+Pulled. Mind double-checking my resolution wrt commit 70fd76140a6c
+("block,fs: use REQ_* flags directly")?
 
-[1] http://lkml.kernel.org/r/1461671772-1269-1-git-send-email-mhocko@kernel.org
-
-> Really, there are several of things about vmalloc() that could improve
-> if we decided to move it out of the dog house and allow it to become a
-> first class citizen, but that needs a larger discussion, and you can
-> already do a lot of cleanup with just the introduction of kvmalloc().
-> 
-> Since this is changing the ext4 code, you can add my:
-> 
-> Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-
-thanks!
--- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+                     Linus
