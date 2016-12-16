@@ -1,15 +1,14 @@
 From: Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH 3/3] fscrypt: consolidate fscrypt_has_permitted_context()
- checks
-Date: Fri, 16 Dec 2016 13:22:51 +0100
-Message-ID: <5de5b934-5709-ca29-c277-99d93539b1c0@nod.at>
+Subject: Re: [PATCH 2/3] fscrypt: fix renaming and linking special files
+Date: Fri, 16 Dec 2016 13:22:55 +0100
+Message-ID: <078aca9a-5239-18dd-6317-9d6f03c42770@nod.at>
 References: <1481829584-50218-1-git-send-email-ebiggers3@gmail.com>
- <1481829584-50218-3-git-send-email-ebiggers3@gmail.com>
+ <1481829584-50218-2-git-send-email-ebiggers3@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-ext4-owner@vger.kernel.org>
-In-Reply-To: <1481829584-50218-3-git-send-email-ebiggers3@gmail.com>
+In-Reply-To: <1481829584-50218-2-git-send-email-ebiggers3@gmail.com>
 Sender: linux-ext4-owner@vger.kernel.org
 To: Eric Biggers <ebiggers3@gmail.com>, linux-fsdevel@vger.kernel.org
 Cc: "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, David Gstir <david@sigma-star.at>, Eric Biggers <ebiggers@google.com>
@@ -18,27 +17,23 @@ List-Id: linux-f2fs-devel.lists.sourceforge.net
 On 15.12.2016 20:19, Eric Biggers wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> Now that fscrypt_has_permitted_context() compares the fscrypt_context
-> rather than the fscrypt_info when needed, it is no longer necessary to
-> delay fscrypt_has_permitted_context() from ->lookup() to ->open() for
-> regular files, as introduced in commit ff978b09f973 ("ext4 crypto: move
-> context consistency check to ext4_file_open()").  Therefore the check in
-> ->open(), along with the dget_parent() hack, can be removed.
+> Attempting to link a device node, named pipe, or socket file into an
+> encrypted directory through rename(2) or link(2) always failed with
+> EPERM.  This happened because fscrypt_permitted_context() saw that the
+> file was unencrypted and forbid creating the link.  This behavior was
+> unexpected because such files are never encrypted; only regular files,
+> directories, and symlinks can be encrypted.
 > 
-> It's also no longer necessary to check the file type before calling
-> fscrypt_has_permitted_context().
+> To fix this, make fscrypt_has_permitted_context() always return true on
+> special files.
 > 
-> This patch makes these changes for both ext4 and f2fs.
+> This will be covered by a test in my encryption xfstests patchset.
 > 
+> Fixes: 9bd8212f981e ("ext4 crypto: add encryption policy and password salt support")
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/ext4/file.c  | 12 ------------
->  fs/ext4/namei.c | 10 ++--------
->  fs/f2fs/file.c  | 15 +++++----------
->  fs/f2fs/namei.c |  7 ++-----
->  4 files changed, 9 insertions(+), 35 deletions(-)
 
-Can please also take care of UBIFS? :-)
+Reviewed-by: Richard Weinberger <richard@nod.at>
 
 Thanks,
 //richard
+
