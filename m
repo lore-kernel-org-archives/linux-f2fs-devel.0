@@ -1,87 +1,58 @@
-From: Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCH 5/9] xfs: use memalloc_nofs_{save,restore} instead of
- memalloc_noio*
-Date: Fri, 16 Dec 2016 11:38:11 -0500
-Message-ID: <20161216163811.GG8447@bfoster.bfoster>
-References: <20161215140715.12732-1-mhocko@kernel.org>
- <20161215140715.12732-6-mhocko@kernel.org>
+From: Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [PATCH 3/3] fscrypt: consolidate fscrypt_has_permitted_context()
+ checks
+Date: Fri, 16 Dec 2016 12:46:40 -0800
+Message-ID: <20161216204640.GA14264@gmail.com>
+References: <1481829584-50218-1-git-send-email-ebiggers3@gmail.com>
+ <1481829584-50218-3-git-send-email-ebiggers3@gmail.com>
+ <5de5b934-5709-ca29-c277-99d93539b1c0@nod.at>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20161215140715.12732-6-mhocko@kernel.org>
-Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+In-Reply-To: <5de5b934-5709-ca29-c277-99d93539b1c0@nod.at>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-fsdevel@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, David Gstir <david@sigma-star.at>, Eric Biggers <ebiggers@google.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Thu, Dec 15, 2016 at 03:07:11PM +0100, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
+On Fri, Dec 16, 2016 at 01:22:51PM +0100, Richard Weinberger wrote:
+> On 15.12.2016 20:19, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > Now that fscrypt_has_permitted_context() compares the fscrypt_context
+> > rather than the fscrypt_info when needed, it is no longer necessary to
+> > delay fscrypt_has_permitted_context() from ->lookup() to ->open() for
+> > regular files, as introduced in commit ff978b09f973 ("ext4 crypto: move
+> > context consistency check to ext4_file_open()").  Therefore the check in
+> > ->open(), along with the dget_parent() hack, can be removed.
+> > 
+> > It's also no longer necessary to check the file type before calling
+> > fscrypt_has_permitted_context().
+> > 
+> > This patch makes these changes for both ext4 and f2fs.
+> > 
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >  fs/ext4/file.c  | 12 ------------
+> >  fs/ext4/namei.c | 10 ++--------
+> >  fs/f2fs/file.c  | 15 +++++----------
+> >  fs/f2fs/namei.c |  7 ++-----
+> >  4 files changed, 9 insertions(+), 35 deletions(-)
 > 
-> kmem_zalloc_large and _xfs_buf_map_pages use memalloc_noio_{save,restore}
-> API to prevent from reclaim recursion into the fs because vmalloc can
-> invoke unconditional GFP_KERNEL allocations and these functions might be
-> called from the NOFS contexts. The memalloc_noio_save will enforce
-> GFP_NOIO context which is even weaker than GFP_NOFS and that seems to be
-> unnecessary. Let's use memalloc_nofs_{save,restore} instead as it should
-> provide exactly what we need here - implicit GFP_NOFS context.
+> Can please also take care of UBIFS? :-)
 > 
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->  fs/xfs/kmem.c    | 10 +++++-----
->  fs/xfs/xfs_buf.c |  8 ++++----
->  2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-...
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index f31ae592dcae..5c6f9bd4d8be 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -441,17 +441,17 @@ _xfs_buf_map_pages(
->  		bp->b_addr = NULL;
->  	} else {
->  		int retried = 0;
-> -		unsigned noio_flag;
-> +		unsigned nofs_flag;
->  
->  		/*
->  		 * vm_map_ram() will allocate auxillary structures (e.g.
->  		 * pagetables) with GFP_KERNEL, yet we are likely to be under
->  		 * GFP_NOFS context here. Hence we need to tell memory reclaim
-> -		 * that we are in such a context via PF_MEMALLOC_NOIO to prevent
-> +		 * that we are in such a context via PF_MEMALLOC_NOFS to prevent
->  		 * memory reclaim re-entering the filesystem here and
->  		 * potentially deadlocking.
->  		 */
-> -		noio_flag = memalloc_noio_save();
-> +		nofs_flag = memalloc_nofs_save();
->  		do {
->  			bp->b_addr = vm_map_ram(bp->b_pages, bp->b_page_count,
->  						-1, PAGE_KERNEL);
-> @@ -459,7 +459,7 @@ _xfs_buf_map_pages(
->  				break;
->  			vm_unmap_aliases();
->  		} while (retried++ <= 1);
-> -		memalloc_noio_restore(noio_flag);
-> +		memalloc_noio_restore(nofs_flag);
+> Thanks,
+> //richard
 
-memalloc_nofs_restore() ?
+Yes, I see that UBIFS encryption just got merged yesterday, so I'll send a
+version that updates UBIFS too.  And it seems the
+fscrypt_has_permitted_context() call in ubifs_lookup() is missing, so I'll add
+that too.
 
-Brian
+I'm wondering if it would make more sense to do a separate patch for each
+filesystem?  But in this case the filesystem changes are dependent on the prior
+patches to fs/crypto/, so they can't simply be sent through the per-filesystem
+trees unless each one merges in the fs/crypto/ changes too.
 
->  
->  		if (!bp->b_addr)
->  			return -ENOMEM;
-> -- 
-> 2.10.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Eric
