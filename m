@@ -1,42 +1,51 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [f2fs-dev][PATCH v2] f2fs: fix a problem of using memory after free
-Date: Mon, 19 Dec 2016 20:10:48 +0800
-Message-ID: <20161219121048.15452-1-heyunlei@huawei.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 2/9] xfs: introduce and use KM_NOLOCKDEP to silence
+ reclaim lockdep false positives
+Date: Tue, 20 Dec 2016 08:24:13 +1100
+Message-ID: <20161219212413.GN4326@dastard>
+References: <20161215140715.12732-1-mhocko@kernel.org>
+ <20161215140715.12732-3-mhocko@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: bintian.wang@huawei.com, heyunlei@huwei.com, fanofcode.li@samsung.com, stable@vger.kernel.org, houpengyang@huawei.com, Yunlei He <heyunlei@huawei.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20161215140715.12732-3-mhocko@kernel.org>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch fix a problem of using memory after free
-in function __try_merge_extent_node.
+On Thu, Dec 15, 2016 at 03:07:08PM +0100, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> Now that the page allocator offers __GFP_NOLOCKDEP let's introduce
+> KM_NOLOCKDEP alias for the xfs allocation APIs. While we are at it
+> also change KM_NOFS users introduced by b17cb364dbbb ("xfs: fix missing
+> KM_NOFS tags to keep lockdep happy") and use the new flag for them
+> instead. There is really no reason to make these allocations contexts
+> weaker just because of the lockdep which even might not be enabled
+> in most cases.
+> 
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Fixes: 0f825ee6e873 ("f2fs: add new interfaces for extent tree")
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/extent_cache.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+I'd suggest that it might be better to drop this patch for now -
+it's not necessary for the context flag changeover but does
+introduce a risk of regressions if the conversion is wrong.
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index 4db44da..e02c3d8 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -352,11 +352,12 @@ static struct extent_node *__try_merge_extent_node(struct inode *inode,
- 	}
- 
- 	if (next_ex && __is_front_mergeable(ei, &next_ex->ei)) {
--		if (en)
--			__release_extent_node(sbi, et, prev_ex);
- 		next_ex->ei.fofs = ei->fofs;
- 		next_ex->ei.blk = ei->blk;
- 		next_ex->ei.len += ei->len;
-+		if (en)
-+			__release_extent_node(sbi, et, prev_ex);
-+
- 		en = next_ex;
- 	}
- 
+Hence I think this is better as a completely separate series
+which audits and changes all the unnecessary KM_NOFS allocations
+in one go. I've never liked whack-a-mole style changes like this -
+do it once, do it properly....
+
+Cheers,
+
+Dave.
 -- 
-2.10.1
+Dave Chinner
+david@fromorbit.com
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
