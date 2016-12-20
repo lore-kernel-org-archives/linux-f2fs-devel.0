@@ -1,97 +1,79 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2 v2] f2fs: add a case of no need to read a
- page in write begin
-Date: Tue, 20 Dec 2016 10:03:25 -0800
-Message-ID: <20161220180325.GA1583@jaegeuk.local>
-References: <20161220031135.18754-1-heyunlei@huawei.com>
-	<20161220031135.18754-2-heyunlei@huawei.com>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH 2/9] xfs: introduce and use KM_NOLOCKDEP to silence
+ reclaim lockdep false positives
+Date: Wed, 21 Dec 2016 08:39:01 +1100
+Message-ID: <20161220213901.GQ4326@dastard>
+References: <20161215140715.12732-1-mhocko@kernel.org>
+ <20161215140715.12732-3-mhocko@kernel.org>
+ <20161219212413.GN4326@dastard>
+ <20161219220619.GA7296@birch.djwong.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cJOlG-0007a7-4e
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Dec 2016 18:03:38 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cJOlD-0000G2-OL
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Dec 2016 18:03:38 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
 Content-Disposition: inline
-In-Reply-To: <20161220031135.18754-2-heyunlei@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
-Cc: heyunlei@huwei.com, linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <20161219220619.GA7296@birch.djwong.org>
+Sender: owner-linux-mm@kvack.org
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 12/20, Yunlei He wrote:
-> If the range we write cover the whole valid data in the last page,
-> we do not need to read it.
+On Mon, Dec 19, 2016 at 02:06:19PM -0800, Darrick J. Wong wrote:
+> On Tue, Dec 20, 2016 at 08:24:13AM +1100, Dave Chinner wrote:
+> > On Thu, Dec 15, 2016 at 03:07:08PM +0100, Michal Hocko wrote:
+> > > From: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > Now that the page allocator offers __GFP_NOLOCKDEP let's introduce
+> > > KM_NOLOCKDEP alias for the xfs allocation APIs. While we are at it
+> > > also change KM_NOFS users introduced by b17cb364dbbb ("xfs: fix missing
+> > > KM_NOFS tags to keep lockdep happy") and use the new flag for them
+> > > instead. There is really no reason to make these allocations contexts
+> > > weaker just because of the lockdep which even might not be enabled
+> > > in most cases.
+> > > 
+> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > 
+> > I'd suggest that it might be better to drop this patch for now -
+> > it's not necessary for the context flag changeover but does
+> > introduce a risk of regressions if the conversion is wrong.
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/data.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 9ac2625..303873f 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -1715,6 +1715,9 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
->  	if (len == PAGE_SIZE || PageUptodate(page))
->  		return 0;
->  
-> +	if (!(pos & (PAGE_SIZE - 1)) && (pos + len) >= i_size_read(inode))
+> I was just about to write in that while I didn't see anything obviously
+> wrong with the NOFS removals, I also don't know for sure that we can't
+> end up recursively in those code paths (specifically the directory
+> traversal thing).
 
-I added here:
-		zero_user_segment(page, 0, PAGE_SIZE);
+The issue is with code paths that can be called from both inside and
+outside transaction context - lockdep complains when it sees an
+allocation path that is used with both GFP_NOFS and GFP_KERNEL
+context, as it doesn't know that the GFP_KERNEL usage is safe or
+not.
 
-Otherwise, xfstests/f2fs/001 gives a failure.
+So things like the directory buffer path, which can be called from
+readdir without a transaction context, have various KM_NOFS flags
+scattered through it so that lockdep doesn't get all upset every
+time readdir is called...
 
-Thanks,
+There are other cases like this - btree manipulation via bunmapi()
+can be called without transaction context to remove delayed alloc
+extents, and that puts all of the btree cursor and  incore extent
+list handling in the same boat (all those allocations are KM_NOFS),
+etc.
 
-> +		return 0;
-> +
->  	if (blkaddr == NEW_ADDR) {
->  		zero_user_segment(page, 0, PAGE_SIZE);
->  		SetPageUptodate(page);
-> @@ -1768,7 +1771,7 @@ static int f2fs_write_end(struct file *file,
->  	 * let generic_perform_write() try to copy data again through copied=0.
->  	 */
->  	if (!PageUptodate(page)) {
-> -		if (unlikely(copied != PAGE_SIZE))
-> +		if (unlikely(copied != len))
->  			copied = 0;
->  		else
->  			SetPageUptodate(page);
-> -- 
-> 2.10.1
-> 
-> 
-> ------------------------------------------------------------------------------
-> Developer Access Program for Intel Xeon Phi Processors
-> Access to Intel Xeon Phi processor-based developer platforms.
-> With one year of Intel Parallel Studio XE.
-> Training and support from Colfax.
-> Order your platform today.http://sdm.link/intel
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+So it's not really recursion that is the problem here - it's
+different allocation contexts that lockdep can't know about unless
+it's told about them. We've done that with KM_NOFS in the past; in
+future we should use this KM_NOLOCKDEP flag, though I'd prefer a
+better name for it. e.g. KM_NOTRANS to indicate that the allocation
+can occur both inside and outside of transaction context....
 
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today.http://sdm.link/intel
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
