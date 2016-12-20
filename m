@@ -1,71 +1,97 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [RFC PATCH] mm: introduce kv[mz]alloc helpers
-Date: Tue, 20 Dec 2016 09:38:22 -0800
-Message-ID: <1482255502.1984.21.camel@perches.com>
-References: <20161208103300.23217-1-mhocko@kernel.org>
-         <20161213101451.GB10492@dhcp22.suse.cz>
-         <1481666853.29291.33.camel@perches.com>
-         <20161214085916.GB25573@dhcp22.suse.cz>
-         <20161220135016.GH3769@dhcp22.suse.cz>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/2 v2] f2fs: add a case of no need to read a
+ page in write begin
+Date: Tue, 20 Dec 2016 10:03:25 -0800
+Message-ID: <20161220180325.GA1583@jaegeuk.local>
+References: <20161220031135.18754-1-heyunlei@huawei.com>
+	<20161220031135.18754-2-heyunlei@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <20161220135016.GH3769@dhcp22.suse.cz>
-Sender: owner-linux-security-module@vger.kernel.org
-To: Michal Hocko <mhocko@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, Anatoly Stepanov <astepanov@cloudlinux.com>, LKML <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>, Theodore Ts'o <tytso@mit.edu>, kvm@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org, Dave Chinner <david@fromorbit.com>, Al Viro <viro@zeniv.linux.org.uk>, Mikulas Patocka <mpatocka@redhat.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cJOlG-0007a7-4e
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 20 Dec 2016 18:03:38 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cJOlD-0000G2-OL
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 20 Dec 2016 18:03:38 +0000
+Content-Disposition: inline
+In-Reply-To: <20161220031135.18754-2-heyunlei@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Yunlei He <heyunlei@huawei.com>
+Cc: heyunlei@huwei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, 2016-12-20 at 14:50 +0100, Michal Hocko wrote:
-> On Wed 14-12-16 09:59:16, Michal Hocko wrote:
-> > On Tue 13-12-16 14:07:33, Joe Perches wrote:
-> > > On Tue, 2016-12-13 at 11:14 +0100, Michal Hocko wrote:
-> > > > Are there any more comments or objections to this patch? Is this a good
-> > > > start or kv[mz]alloc has to provide a way to cover GFP_NOFS users as
-> > > > well in the initial version.
-> > > 
-> > > Did Andrew Morton ever comment on this?
-> > > I believe he was the primary objector in the past.
-> > > 
-> > > Last I recollect was over a year ago:
-> > > 
-> > > https://lkml.org/lkml/2015/7/7/1050
-> > 
-> > Let me quote:
-> > : Sigh.  We've resisted doing this because vmalloc() is somewhat of a bad
-> > : thing, and we don't want to make it easy for people to do bad things.
-> > : 
-> > : And vmalloc is bad because a) it's slow and b) it does GFP_KERNEL
-> > : allocations for page tables and c) it is susceptible to arena
-> > : fragmentation.
-> > : 
-> > : We'd prefer that people fix their junk so it doesn't depend upon large
-> > : contiguous allocations.  This isn't userspace - kernel space is hostile
-> > : and kernel code should be robust.
-> > : 
-> > : So I dunno.  Should we continue to make it a bit more awkward to use
-> > : vmalloc()?  Probably that tactic isn't being very successful - people
-> > : will just go ahead and open-code it.  And given the surprising amount
-> > : of stuff you've placed in kvmalloc_node(), they'll implement it
-> > : incorrectly...
-> > : 
-> > : How about we compromise: add kvmalloc_node(), but include a BUG_ON("you
-> > : suck") to it?
-> > 
-> > While I agree with some of those points, the reality really sucks,
-> > though. We have tried the same tactic with __GFP_NOFAIL and failed as
-> > well. I guess we should just bite the bullet and provide an api which is
-> > so common that people keep reinventing their own ways around that, many
-> > times wrongly or suboptimally. BUG_ON("you suck") is just not going to
-> > help much I am afraid.
-> > 
-> > What do you think Andrew?
+On 12/20, Yunlei He wrote:
+> If the range we write cover the whole valid data in the last page,
+> we do not need to read it.
 > 
-> So what are we going to do about this patch?
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> ---
+>  fs/f2fs/data.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 9ac2625..303873f 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1715,6 +1715,9 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+>  	if (len == PAGE_SIZE || PageUptodate(page))
+>  		return 0;
+>  
+> +	if (!(pos & (PAGE_SIZE - 1)) && (pos + len) >= i_size_read(inode))
 
-Well if Andrew doesn't object again, it should probably be applied.
-Unless his silence here acts like a pocket-veto.
+I added here:
+		zero_user_segment(page, 0, PAGE_SIZE);
 
-Andrew?  Anything to add?
+Otherwise, xfstests/f2fs/001 gives a failure.
 
+Thanks,
+
+> +		return 0;
+> +
+>  	if (blkaddr == NEW_ADDR) {
+>  		zero_user_segment(page, 0, PAGE_SIZE);
+>  		SetPageUptodate(page);
+> @@ -1768,7 +1771,7 @@ static int f2fs_write_end(struct file *file,
+>  	 * let generic_perform_write() try to copy data again through copied=0.
+>  	 */
+>  	if (!PageUptodate(page)) {
+> -		if (unlikely(copied != PAGE_SIZE))
+> +		if (unlikely(copied != len))
+>  			copied = 0;
+>  		else
+>  			SetPageUptodate(page);
+> -- 
+> 2.10.1
+> 
+> 
+> ------------------------------------------------------------------------------
+> Developer Access Program for Intel Xeon Phi Processors
+> Access to Intel Xeon Phi processor-based developer platforms.
+> With one year of Intel Parallel Studio XE.
+> Training and support from Colfax.
+> Order your platform today.http://sdm.link/intel
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+
+------------------------------------------------------------------------------
+Developer Access Program for Intel Xeon Phi Processors
+Access to Intel Xeon Phi processor-based developer platforms.
+With one year of Intel Parallel Studio XE.
+Training and support from Colfax.
+Order your platform today.http://sdm.link/intel
