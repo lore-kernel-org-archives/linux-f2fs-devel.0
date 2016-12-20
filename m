@@ -1,25 +1,23 @@
 From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH 2/2 v2] f2fs: add a case of no need to read a
-	page in write begin
-Date: Tue, 20 Dec 2016 11:11:35 +0800
-Message-ID: <20161220031135.18754-2-heyunlei@huawei.com>
-References: <20161220031135.18754-1-heyunlei@huawei.com>
+Subject: [PATCH 1/2 v2] f2fs: fix a missing discard prefree
+	segments
+Date: Tue, 20 Dec 2016 11:11:34 +0800
+Message-ID: <20161220031135.18754-1-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1cJAmk-0006NZ-5b
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1cJAnb-0001Pt-3s
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Dec 2016 03:08:14 +0000
+	Tue, 20 Dec 2016 03:09:07 +0000
 Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cJAmg-0005u9-EB
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cJAna-0002gH-6a
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Dec 2016 03:08:14 +0000
-In-Reply-To: <20161220031135.18754-1-heyunlei@huawei.com>
+	Tue, 20 Dec 2016 03:09:07 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,37 +30,31 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: heyunlei@huwei.com
 
-If the range we write cover the whole valid data in the last page,
-we do not need to read it.
+If userspace issue a fstrim with a range not involve prefree segments,
+it will reuse these segments without discard. This patch fix it.
 
 Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/data.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/f2fs/segment.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9ac2625..303873f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1715,6 +1715,9 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 	if (len == PAGE_SIZE || PageUptodate(page))
- 		return 0;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 0738f48..a40a34b 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -916,7 +916,11 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
  
-+	if (!(pos & (PAGE_SIZE - 1)) && (pos + len) >= i_size_read(inode))
-+		return 0;
+ 		dirty_i->nr_dirty[PRE] -= end - start;
+ 
+-		if (force || !test_opt(sbi, DISCARD))
++		if (!test_opt(sbi, DISCARD))
++			continue;
 +
- 	if (blkaddr == NEW_ADDR) {
- 		zero_user_segment(page, 0, PAGE_SIZE);
- 		SetPageUptodate(page);
-@@ -1768,7 +1771,7 @@ static int f2fs_write_end(struct file *file,
- 	 * let generic_perform_write() try to copy data again through copied=0.
- 	 */
- 	if (!PageUptodate(page)) {
--		if (unlikely(copied != PAGE_SIZE))
-+		if (unlikely(copied != len))
- 			copied = 0;
- 		else
- 			SetPageUptodate(page);
++		if (force && start * sbi->blocks_per_seg >= cpc->trim_start &&
++						end * sbi->blocks_per_seg <= cpc->trim_end)
+ 			continue;
+ 
+ 		if (!test_opt(sbi, LFS) || sbi->segs_per_sec == 1) {
 -- 
 2.10.1
 
