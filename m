@@ -1,72 +1,68 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [RFC PATCH] mm: introduce kv[mz]alloc helpers
-Date: Tue, 20 Dec 2016 14:50:16 +0100
-Message-ID: <20161220135016.GH3769@dhcp22.suse.cz>
-References: <20161208103300.23217-1-mhocko@kernel.org>
- <20161213101451.GB10492@dhcp22.suse.cz>
- <1481666853.29291.33.camel@perches.com>
- <20161214085916.GB25573@dhcp22.suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20161214085916.GB25573@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, Anatoly Stepanov <astepanov@cloudlinux.com>, LKML <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>, Theodore Ts'o <tytso@mit.edu>, kvm@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org, Dave Chinner <david@fromorbit.com>, Al Viro <viro@zeniv.linux.org.uk>, Mikulas Patocka <mpatocka@redhat.com>, Joe Perches <joe@perches.com>
+From: Geliang Tang <geliangtang@gmail.com>
+Subject: [PATCH] f2fs: use rb_entry_safe
+Date: Tue, 20 Dec 2016 21:57:42 +0800
+Message-ID: <1e433cd03b01a3e89a22de5aa160b3442ff0cf16.1482222608.git.geliangtang@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc: Geliang Tang <geliangtang@gmail.com>, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Wed 14-12-16 09:59:16, Michal Hocko wrote:
-> On Tue 13-12-16 14:07:33, Joe Perches wrote:
-> > On Tue, 2016-12-13 at 11:14 +0100, Michal Hocko wrote:
-> > > Are there any more comments or objections to this patch? Is this a good
-> > > start or kv[mz]alloc has to provide a way to cover GFP_NOFS users as
-> > > well in the initial version.
-> > 
-> > Did Andrew Morton ever comment on this?
-> > I believe he was the primary objector in the past.
-> > 
-> > Last I recollect was over a year ago:
-> > 
-> > https://lkml.org/lkml/2015/7/7/1050
-> 
-> Let me quote:
-> : Sigh.  We've resisted doing this because vmalloc() is somewhat of a bad
-> : thing, and we don't want to make it easy for people to do bad things.
-> : 
-> : And vmalloc is bad because a) it's slow and b) it does GFP_KERNEL
-> : allocations for page tables and c) it is susceptible to arena
-> : fragmentation.
-> : 
-> : We'd prefer that people fix their junk so it doesn't depend upon large
-> : contiguous allocations.  This isn't userspace - kernel space is hostile
-> : and kernel code should be robust.
-> : 
-> : So I dunno.  Should we continue to make it a bit more awkward to use
-> : vmalloc()?  Probably that tactic isn't being very successful - people
-> : will just go ahead and open-code it.  And given the surprising amount
-> : of stuff you've placed in kvmalloc_node(), they'll implement it
-> : incorrectly...
-> : 
-> : How about we compromise: add kvmalloc_node(), but include a BUG_ON("you
-> : suck") to it?
-> 
-> While I agree with some of those points, the reality really sucks,
-> though. We have tried the same tactic with __GFP_NOFAIL and failed as
-> well. I guess we should just bite the bullet and provide an api which is
-> so common that people keep reinventing their own ways around that, many
-> times wrongly or suboptimally. BUG_ON("you suck") is just not going to
-> help much I am afraid.
-> 
-> What do you think Andrew?
+Use rb_entry_safe() instead of open-coding it.
 
-So what are we going to do about this patch?
+Signed-off-by: Geliang Tang <geliangtang@gmail.com>
+---
+ fs/f2fs/extent_cache.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
+
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 4db44da..f79bfb2 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -311,28 +311,24 @@ static struct extent_node *__lookup_extent_tree_ret(struct extent_tree *et,
+ 	tmp_node = parent;
+ 	if (parent && fofs > en->ei.fofs)
+ 		tmp_node = rb_next(parent);
+-	*next_ex = tmp_node ?
+-		rb_entry(tmp_node, struct extent_node, rb_node) : NULL;
++	*next_ex = rb_entry_safe(tmp_node, struct extent_node, rb_node);
+ 
+ 	tmp_node = parent;
+ 	if (parent && fofs < en->ei.fofs)
+ 		tmp_node = rb_prev(parent);
+-	*prev_ex = tmp_node ?
+-		rb_entry(tmp_node, struct extent_node, rb_node) : NULL;
++	*prev_ex = rb_entry_safe(tmp_node, struct extent_node, rb_node);
+ 	return NULL;
+ 
+ lookup_neighbors:
+ 	if (fofs == en->ei.fofs) {
+ 		/* lookup prev node for merging backward later */
+ 		tmp_node = rb_prev(&en->rb_node);
+-		*prev_ex = tmp_node ?
+-			rb_entry(tmp_node, struct extent_node, rb_node) : NULL;
++		*prev_ex = rb_entry_safe(tmp_node, struct extent_node, rb_node);
+ 	}
+ 	if (fofs == en->ei.fofs + en->ei.len - 1) {
+ 		/* lookup next node for merging frontward later */
+ 		tmp_node = rb_next(&en->rb_node);
+-		*next_ex = tmp_node ?
+-			rb_entry(tmp_node, struct extent_node, rb_node) : NULL;
++		*next_ex = rb_entry_safe(tmp_node, struct extent_node, rb_node);
+ 	}
+ 	return en;
+ }
+@@ -492,9 +488,8 @@ static unsigned int f2fs_update_extent_tree_range(struct inode *inode,
+ 		if (!next_en) {
+ 			struct rb_node *node = rb_next(&en->rb_node);
+ 
+-			next_en = node ?
+-				rb_entry(node, struct extent_node, rb_node)
+-				: NULL;
++			next_en = rb_entry_safe(node, struct extent_node,
++						rb_node);
+ 		}
+ 
+ 		if (parts)
 -- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+2.9.3
