@@ -1,67 +1,59 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH 1/2 v2] f2fs: fix a missing discard prefree
-	segments
-Date: Tue, 20 Dec 2016 11:11:34 +0800
-Message-ID: <20161220031135.18754-1-heyunlei@huawei.com>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 2/9] xfs: introduce and use KM_NOLOCKDEP to silence
+ reclaim lockdep false positives
+Date: Tue, 20 Dec 2016 09:38:18 +0100
+Message-ID: <20161220083818.GB3769@dhcp22.suse.cz>
+References: <20161215140715.12732-1-mhocko@kernel.org>
+ <20161215140715.12732-3-mhocko@kernel.org>
+ <20161219212413.GN4326@dastard>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1cJAnb-0001Pt-3s
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Dec 2016 03:09:07 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cJAna-0002gH-6a
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 20 Dec 2016 03:09:07 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: heyunlei@huwei.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20161219212413.GN4326@dastard>
+Sender: owner-linux-mm@kvack.org
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-If userspace issue a fstrim with a range not involve prefree segments,
-it will reuse these segments without discard. This patch fix it.
+On Tue 20-12-16 08:24:13, Dave Chinner wrote:
+> On Thu, Dec 15, 2016 at 03:07:08PM +0100, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > Now that the page allocator offers __GFP_NOLOCKDEP let's introduce
+> > KM_NOLOCKDEP alias for the xfs allocation APIs. While we are at it
+> > also change KM_NOFS users introduced by b17cb364dbbb ("xfs: fix missing
+> > KM_NOFS tags to keep lockdep happy") and use the new flag for them
+> > instead. There is really no reason to make these allocations contexts
+> > weaker just because of the lockdep which even might not be enabled
+> > in most cases.
+> > 
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> 
+> I'd suggest that it might be better to drop this patch for now -
+> it's not necessary for the context flag changeover but does
+> introduce a risk of regressions if the conversion is wrong.
+> 
+> Hence I think this is better as a completely separate series
+> which audits and changes all the unnecessary KM_NOFS allocations
+> in one go. I've never liked whack-a-mole style changes like this -
+> do it once, do it properly....
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/segment.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+OK, fair enough. I thought it might be better to have an example user so
+that others can follow but as you say, the risk of regression is really
+there and these kind of changes definitely need a throughout review.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 0738f48..a40a34b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -916,7 +916,11 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 		dirty_i->nr_dirty[PRE] -= end - start;
- 
--		if (force || !test_opt(sbi, DISCARD))
-+		if (!test_opt(sbi, DISCARD))
-+			continue;
-+
-+		if (force && start * sbi->blocks_per_seg >= cpc->trim_start &&
-+						end * sbi->blocks_per_seg <= cpc->trim_end)
- 			continue;
- 
- 		if (!test_opt(sbi, LFS) || sbi->segs_per_sec == 1) {
+I am not sure I will be able to post more of those changes because that
+requires an intimate knowledge of the fs so I hope somebody can take
+over there and follow up.
+
+Thanks!
 -- 
-2.10.1
+Michal Hocko
+SUSE Labs
 
-
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today.http://sdm.link/intel
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
