@@ -1,26 +1,28 @@
 From: Chao Yu <yuchao0@huawei.com>
 Subject: Re: [PATCH 1/2 v2] f2fs: fix a missing discard prefree
  segments
-Date: Wed, 21 Dec 2016 10:27:05 +0800
-Message-ID: <12c2b816-2bb5-d2c3-ee27-f81b95b25db2@huawei.com>
+Date: Wed, 21 Dec 2016 11:55:06 +0800
+Message-ID: <beeb2f7c-925a-000b-ac0c-17606e7e4f07@huawei.com>
 References: <20161220031135.18754-1-heyunlei@huawei.com>
 	<97a3d89d-1e79-7c44-6500-bc4fc25a5590@huawei.com>
+	<12c2b816-2bb5-d2c3-ee27-f81b95b25db2@huawei.com>
+	<be410fe3-5c3d-38dd-a62b-37dd8bfcff70@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cJWcp-0004Pr-H1
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cJY04-0003vo-NV
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 21 Dec 2016 02:27:27 +0000
+	Wed, 21 Dec 2016 03:55:32 +0000
 Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cJWcm-0003vD-RM
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cJY00-0007Gs-Na
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 21 Dec 2016 02:27:27 +0000
-In-Reply-To: <97a3d89d-1e79-7c44-6500-bc4fc25a5590@huawei.com>
+	Wed, 21 Dec 2016 03:55:32 +0000
+In-Reply-To: <be410fe3-5c3d-38dd-a62b-37dd8bfcff70@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,66 +32,101 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
+To: heyunlei <heyunlei@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
 Cc: heyunlei@huwei.com
 
-On 2016/12/21 10:02, Chao Yu wrote:
-> Hi Jaegeuk, Yunlei,
+On 2016/12/21 11:35, heyunlei wrote:
+> Hi Chao,
 > 
-> On 2016/12/20 11:11, Yunlei He wrote:
->> If userspace issue a fstrim with a range not involve prefree segments,
->> it will reuse these segments without discard. This patch fix it.
+> On 2016/12/21 10:27, Chao Yu wrote:
+>> On 2016/12/21 10:02, Chao Yu wrote:
+>>> Hi Jaegeuk, Yunlei,
+>>>
+>>> On 2016/12/20 11:11, Yunlei He wrote:
+>>>> If userspace issue a fstrim with a range not involve prefree segments,
+>>>> it will reuse these segments without discard. This patch fix it.
+>>>
+>>> >From v1 patch, I guess originally Yunlei wants to skip clearing prefree segments
+>>> which is not be included in fstrim range, now v2 patch doesn't follow the
+>>> original intention.
+>>>
+>>> So I guess below modification is enough:
+>>>
+>>> -		if (force || !test_opt(sbi, DISCARD))
+>>> +		if (!test_opt(sbi, DISCARD))
+>>>
+>>> Only we should consider is whether we would send redundant discards though
+>>> fstrim when small discard is on.
+>>
+>> Oh, below condition has handling redundant case, sorry for my wrong understanding.
+>>
+>> if (force && start * sbi->blocks_per_seg >= cpc->trim_start &&
+>> 	end * sbi->blocks_per_seg <= cpc->trim_end)
+>> 		continue;
+>>
+>> But should fix end boundary judegment as below:
+>> (end - 1) * sbi->blocks_per_seg <= cpc->trim_end
 > 
->>From v1 patch, I guess originally Yunlei wants to skip clearing prefree segments
-> which is not be included in fstrim range, now v2 patch doesn't follow the
-> original intention.
+> For example:  if start=0, end=2, it means that the first and second segment is prefree,
+> but the third segment is not.
 > 
-> So I guess below modification is enough:
-> 
-> -		if (force || !test_opt(sbi, DISCARD))
-> +		if (!test_opt(sbi, DISCARD))
-> 
-> Only we should consider is whether we would send redundant discards though
-> fstrim when small discard is on.
+> start block address of first segment = 0 * 512 = start * 512
+> end block address of secnod segment = (3-1) * 512 = end * 512
 
-Oh, below condition has handling redundant case, sorry for my wrong understanding.
+IIRC, if we want to trim [0, 1] segment during fstrim, and #0, #1 segment is
+prefree, so in fstrim:
+start = 0
+end = 2
+trim_start = 0
+trim_end = 1
 
-if (force && start * sbi->blocks_per_seg >= cpc->trim_start &&
-	end * sbi->blocks_per_seg <= cpc->trim_end)
-		continue;
-
-But should fix end boundary judegment as below:
-(end - 1) * sbi->blocks_per_seg <= cpc->trim_end
+So we should use (end - 1) to match trim_end, is that right?
 
 Thanks,
 
 > 
-> Thoughts?
+> So, boundary judgement has no problem?
+> 
+> Thanks.
 > 
 >>
->> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->> ---
->>  fs/f2fs/segment.c | 6 +++++-
->>  1 file changed, 5 insertions(+), 1 deletion(-)
+>> Thanks,
 >>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 0738f48..a40a34b 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -916,7 +916,11 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>  
->>  		dirty_i->nr_dirty[PRE] -= end - start;
->>  
->> -		if (force || !test_opt(sbi, DISCARD))
->> +		if (!test_opt(sbi, DISCARD))
->> +			continue;
->> +
->> +		if (force && start * sbi->blocks_per_seg >= cpc->trim_start &&
->> +						end * sbi->blocks_per_seg <= cpc->trim_end)
->>  			continue;
->>  
->>  		if (!test_opt(sbi, LFS) || sbi->segs_per_sec == 1) {
+>>>
+>>> Thoughts?
+>>>
+>>>>
+>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/segment.c | 6 +++++-
+>>>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 0738f48..a40a34b 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -916,7 +916,11 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>>
+>>>>  		dirty_i->nr_dirty[PRE] -= end - start;
+>>>>
+>>>> -		if (force || !test_opt(sbi, DISCARD))
+>>>> +		if (!test_opt(sbi, DISCARD))
+>>>> +			continue;
+>>>> +
+>>>> +		if (force && start * sbi->blocks_per_seg >= cpc->trim_start &&
+>>>> +						end * sbi->blocks_per_seg <= cpc->trim_end)
+>>>>  			continue;
+>>>>
+>>>>  		if (!test_opt(sbi, LFS) || sbi->segs_per_sec == 1) {
+>>>>
 >>
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
 
 
 ------------------------------------------------------------------------------
