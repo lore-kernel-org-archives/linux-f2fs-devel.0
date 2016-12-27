@@ -1,22 +1,24 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] f2fs: skip read if page has been uptodate
-Date: Tue, 27 Dec 2016 12:05:48 +0800
-Message-ID: <20161227040548.21541-1-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH] f2fs: skip read if page has been uptodate
+Date: Tue, 27 Dec 2016 20:04:44 +0800
+Message-ID: <853b0848-2997-e419-8faa-f41c4772f5eb@huawei.com>
+References: <20161227040548.21541-1-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1cLixH-0007ts-Ep
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cLqVJ-0007bq-RD
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 27 Dec 2016 04:01:39 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cLixE-0000Xw-S7
+	Tue, 27 Dec 2016 12:05:17 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cLqVE-0002v0-97
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 27 Dec 2016 04:01:39 +0000
+	Tue, 27 Dec 2016 12:05:17 +0000
+In-Reply-To: <20161227040548.21541-1-heyunlei@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,47 +28,54 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org, yuchao0@huawei.com
+To: Yunlei He <heyunlei@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org
 Cc: heyunlei@huwei.com
 
-This patch add a judgement before read, if the page has been
-uptodate, move the block directly.
+On 2016/12/27 12:05, Yunlei He wrote:
+> This patch add a judgement before read, if the page has been
+> uptodate, move the block directly.
+> 
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> ---
+>  fs/f2fs/gc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 88bfc3d..40776b4 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -602,6 +602,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
+>  		goto recover_block;
+>  	}
+>  
+> +	if (PageUptodate(fio.encrypted_page))
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
----
- fs/f2fs/gc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Seems we can't guarantee that the new allocated block address isn't been used by
+another GCed encrypted page last time with SSR mode, so the updated
+encrypted_page may contain other file's data?
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 88bfc3d..40776b4 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -602,6 +602,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
- 		goto recover_block;
- 	}
- 
-+	if (PageUptodate(fio.encrypted_page))
-+		goto skip_read;
-+
- 	err = f2fs_submit_page_bio(&fio);
- 	if (err)
- 		goto put_page_out;
-@@ -613,11 +616,13 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
- 		err = -EIO;
- 		goto put_page_out;
- 	}
-+
- 	if (unlikely(!PageUptodate(fio.encrypted_page))) {
- 		err = -EIO;
- 		goto put_page_out;
- 	}
- 
-+skip_read:
- 	set_page_dirty(fio.encrypted_page);
- 	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true);
- 	if (clear_page_dirty_for_io(fio.encrypted_page))
--- 
-2.10.1
+Thanks,
+
+> +		goto skip_read;
+> +
+>  	err = f2fs_submit_page_bio(&fio);
+>  	if (err)
+>  		goto put_page_out;
+> @@ -613,11 +616,13 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
+>  		err = -EIO;
+>  		goto put_page_out;
+>  	}
+> +
+>  	if (unlikely(!PageUptodate(fio.encrypted_page))) {
+>  		err = -EIO;
+>  		goto put_page_out;
+>  	}
+>  
+> +skip_read:
+>  	set_page_dirty(fio.encrypted_page);
+>  	f2fs_wait_on_page_writeback(fio.encrypted_page, DATA, true);
+>  	if (clear_page_dirty_for_io(fio.encrypted_page))
+> 
 
 
 ------------------------------------------------------------------------------
