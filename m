@@ -1,24 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 06/10] f2fs: show the max number of atomic
-	operations
-Date: Fri, 30 Dec 2016 10:51:13 -0800
-Message-ID: <20161230185117.3832-6-jaegeuk@kernel.org>
+Subject: [PATCH 04/10] f2fs: support IO alignment for DATA and
+	NODE writes
+Date: Fri, 30 Dec 2016 10:51:11 -0800
+Message-ID: <20161230185117.3832-4-jaegeuk@kernel.org>
 References: <20161230185117.3832-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cN2H9-0006CL-Rd
+	(envelope-from <jaegeuk@kernel.org>) id 1cN2H6-0006BB-4j
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Dec 2016 18:51:35 +0000
+	Fri, 30 Dec 2016 18:51:32 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cN2H8-0006es-07
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cN2H4-0003su-RN
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Dec 2016 18:51:35 +0000
+	Fri, 30 Dec 2016 18:51:32 +0000
 In-Reply-To: <20161230185117.3832-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,136 +32,259 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch adds to show the max number of atomic operations which are
-conducting concurrently.
+This patch implements IO alignment by filling dummy blocks in DATA and NODE
+write bios. If we can guarantee, for example, 32KB or 64KB for such the IOs,
+we can eliminate underlying dummy page problem which FTL conducts in order to
+close MLC or TLC partial written pages.
+
+Note that,
+ - it requires "-o mode=lfs".
+ - IO size should be power of 2, not exceed BIO_MAX_PAGES, 256.
+ - read IO is still 4KB.
+ - do checkpoint at fsync, if dummy NODE page was written.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/debug.c |  7 +++++++
- fs/f2fs/f2fs.h  | 17 +++++++++++++++++
- fs/f2fs/file.c  | 12 +++++++++---
- 3 files changed, 33 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c          | 55 +++++++++++++++++++++++++++++++++++++++++++++++--
+ fs/f2fs/f2fs.h          |  4 +++-
+ fs/f2fs/segment.c       |  9 ++++++--
+ fs/f2fs/segment.h       |  3 +++
+ fs/f2fs/super.c         | 13 +++++++++++-
+ include/linux/f2fs_fs.h |  6 ++++++
+ 6 files changed, 84 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index fbd5184140d0..29cdf0c1da1d 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -50,6 +50,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
- 	si->ndirty_files = sbi->ndirty_inode[FILE_INODE];
- 	si->ndirty_all = sbi->ndirty_inode[DIRTY_META];
- 	si->inmem_pages = get_pages(sbi, F2FS_INMEM_PAGES);
-+	si->aw_cnt = atomic_read(&sbi->aw_cnt);
-+	si->max_aw_cnt = atomic_read(&sbi->max_aw_cnt);
- 	si->nr_wb_cp_data = get_pages(sbi, F2FS_WB_CP_DATA);
- 	si->nr_wb_data = get_pages(sbi, F2FS_WB_DATA);
- 	si->total_count = (int)sbi->user_block_count / sbi->blocks_per_seg;
-@@ -256,6 +258,8 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->inline_dir);
- 		seq_printf(s, "  - Orphan Inode: %u\n",
- 			   si->orphans);
-+		seq_printf(s, "  - Atomic write count: %4d (Max. %4d)\n",
-+			   si->aw_cnt, si->max_aw_cnt);
- 		seq_printf(s, "\nMain area: %d segs, %d secs %d zones\n",
- 			   si->main_area_segs, si->main_area_sections,
- 			   si->main_area_zones);
-@@ -414,6 +418,9 @@ int f2fs_build_stats(struct f2fs_sb_info *sbi)
- 	atomic_set(&sbi->inline_dir, 0);
- 	atomic_set(&sbi->inplace_count, 0);
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 54da4e2f1318..f17df9f76d55 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -93,6 +93,17 @@ static void f2fs_write_end_io(struct bio *bio)
+ 		struct page *page = bvec->bv_page;
+ 		enum count_type type = WB_DATA_TYPE(page);
  
-+	atomic_set(&sbi->aw_cnt, 0);
-+	atomic_set(&sbi->max_aw_cnt, 0);
++		if (IS_DUMMY_WRITTEN_PAGE(page)) {
++			set_page_private(page, (unsigned long)NULL);
++			ClearPagePrivate(page);
++			unlock_page(page);
++			mempool_free(page, sbi->write_io_dummy);
 +
- 	mutex_lock(&f2fs_stat_mutex);
- 	list_add_tail(&si->stat_list, &f2fs_stat_list);
- 	mutex_unlock(&f2fs_stat_mutex);
++			if (unlikely(bio->bi_error))
++				f2fs_stop_checkpoint(sbi, true);
++			continue;
++		}
++
+ 		fscrypt_pullback_bio_page(&page, true);
+ 
+ 		if (unlikely(bio->bi_error)) {
+@@ -171,10 +182,42 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+ 				struct bio *bio, enum page_type type)
+ {
+ 	if (!is_read_io(bio_op(bio))) {
++		unsigned int start;
++
+ 		if (f2fs_sb_mounted_blkzoned(sbi->sb) &&
+ 			current->plug && (type == DATA || type == NODE))
+ 			blk_finish_plug(current->plug);
++
++		if (type != DATA && type != NODE)
++			goto submit_io;
++
++		start = bio->bi_iter.bi_size >> F2FS_BLKSIZE_BITS;
++		start %= F2FS_IO_SIZE(sbi);
++
++		if (start == 0)
++			goto submit_io;
++
++		/* fill dummy pages */
++		for (; start < F2FS_IO_SIZE(sbi); start++) {
++			struct page *page =
++				mempool_alloc(sbi->write_io_dummy,
++					GFP_NOIO | __GFP_ZERO | __GFP_NOFAIL);
++			f2fs_bug_on(sbi, !page);
++
++			SetPagePrivate(page);
++			set_page_private(page, (unsigned long)DUMMY_WRITTEN_PAGE);
++			lock_page(page);
++			if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE)
++				f2fs_bug_on(sbi, 1);
++		}
++		/*
++		 * In the NODE case, we lose next block address chain. So, we
++		 * need to do checkpoint in f2fs_sync_file.
++		 */
++		if (type == NODE)
++			set_sbi_flag(sbi, SBI_NEED_CP);
+ 	}
++submit_io:
+ 	trace_f2fs_submit_bio(sbi->sb, bio);
+ 	submit_bio(bio);
+ }
+@@ -316,13 +359,14 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	return 0;
+ }
+ 
+-void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
++int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+ {
+ 	struct f2fs_sb_info *sbi = fio->sbi;
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
+ 	struct f2fs_bio_info *io;
+ 	bool is_read = is_read_io(fio->op);
+ 	struct page *bio_page;
++	int err = 0;
+ 
+ 	io = is_read ? &sbi->read_io : &sbi->write_io[btype];
+ 
+@@ -343,6 +387,12 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+ 		__submit_merged_bio(io);
+ alloc_new:
+ 	if (io->bio == NULL) {
++		if ((fio->type == DATA || fio->type == NODE) &&
++				fio->new_blkaddr & F2FS_IO_SIZE_MASK(sbi)) {
++			err = -EAGAIN;
++			dec_page_count(sbi, WB_DATA_TYPE(bio_page));
++			goto out_fail;
++		}
+ 		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
+ 						BIO_MAX_PAGES, is_read);
+ 		io->fio = *fio;
+@@ -356,9 +406,10 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
+ 
+ 	io->last_block_in_bio = fio->new_blkaddr;
+ 	f2fs_trace_ios(fio, 0);
+-
++out_fail:
+ 	up_write(&io->io_rwsem);
+ 	trace_f2fs_submit_page_mbio(fio->page, fio);
++	return err;
+ }
+ 
+ static void __set_data_blkaddr(struct dnode_of_data *dn)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0d7eaddef4a0..bdcfe2a9b532 100644
+index 2da8c3aa0ce5..0d7eaddef4a0 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -884,6 +884,8 @@ struct f2fs_sb_info {
- 	atomic_t inline_xattr;			/* # of inline_xattr inodes */
- 	atomic_t inline_inode;			/* # of inline_data inodes */
- 	atomic_t inline_dir;			/* # of inline_dentry inodes */
-+	atomic_t aw_cnt;			/* # of atomic writes */
-+	atomic_t max_aw_cnt;			/* max # of atomic writes */
- 	int bg_gc;				/* background gc calls */
- 	unsigned int ndirty_inode[NR_INODE_TYPE];	/* # of dirty inodes */
- #endif
-@@ -2236,6 +2238,7 @@ struct f2fs_stat_info {
- 	int total_count, utilization;
- 	int bg_gc, nr_wb_cp_data, nr_wb_data;
- 	int inline_xattr, inline_inode, inline_dir, orphans;
-+	int aw_cnt, max_aw_cnt;
- 	unsigned int valid_count, valid_node_count, valid_inode_count, discard_blks;
- 	unsigned int bimodal, avg_vblocks;
- 	int util_free, util_valid, util_invalid;
-@@ -2307,6 +2310,17 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
- 		((sbi)->block_count[(curseg)->alloc_type]++)
- #define stat_inc_inplace_blocks(sbi)					\
- 		(atomic_inc(&(sbi)->inplace_count))
-+#define stat_inc_atomic_write(inode)					\
-+		(atomic_inc(&F2FS_I_SB(inode)->aw_cnt));
-+#define stat_dec_atomic_write(inode)					\
-+		(atomic_dec(&F2FS_I_SB(inode)->aw_cnt));
-+#define stat_update_max_atomic_write(inode)				\
-+	do {								\
-+		int cur = atomic_read(&F2FS_I_SB(inode)->aw_cnt);	\
-+		int max = atomic_read(&F2FS_I_SB(inode)->max_aw_cnt);	\
-+		if (cur > max)						\
-+			atomic_set(&F2FS_I_SB(inode)->max_aw_cnt, cur);	\
-+	} while (0)
- #define stat_inc_seg_count(sbi, type, gc_type)				\
- 	do {								\
- 		struct f2fs_stat_info *si = F2FS_STAT(sbi);		\
-@@ -2360,6 +2374,9 @@ void f2fs_destroy_root_stats(void);
- #define stat_dec_inline_inode(inode)
- #define stat_inc_inline_dir(inode)
- #define stat_dec_inline_dir(inode)
-+#define stat_inc_atomic_write(inode)
-+#define stat_dec_atomic_write(inode)
-+#define stat_update_max_atomic_write(inode)
- #define stat_inc_seg_type(sbi, curseg)
- #define stat_inc_block_count(sbi, curseg)
- #define stat_inc_inplace_blocks(sbi)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 49f10dce817d..826fefc05fb1 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1542,6 +1542,8 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- 	if (ret)
- 		clear_inode_flag(inode, FI_ATOMIC_FILE);
- out:
-+	stat_inc_atomic_write(inode);
-+	stat_update_max_atomic_write(inode);
- 	inode_unlock(inode);
- 	mnt_drop_write_file(filp);
- 	return ret;
-@@ -1571,9 +1573,11 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
- 			set_inode_flag(inode, FI_ATOMIC_FILE);
- 			goto err_out;
- 		}
-+		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
-+		stat_dec_atomic_write(inode);
-+	} else {
-+		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
- 	}
+@@ -792,6 +792,8 @@ struct f2fs_sb_info {
+ 	struct f2fs_bio_info read_io;			/* for read bios */
+ 	struct f2fs_bio_info write_io[NR_PAGE_TYPE];	/* for write bios */
+ 	struct mutex wio_mutex[NODE + 1];	/* bio ordering for NODE/DATA */
++	int write_io_size_bits;			/* Write IO size bits */
++	mempool_t *write_io_dummy;		/* Dummy pages */
+ 
+ 	/* for checkpoint */
+ 	struct f2fs_checkpoint *ckpt;		/* raw checkpoint pointer */
+@@ -2174,7 +2176,7 @@ void f2fs_submit_merged_bio_cond(struct f2fs_sb_info *, struct inode *,
+ 				struct page *, nid_t, enum page_type, int);
+ void f2fs_flush_merged_bios(struct f2fs_sb_info *);
+ int f2fs_submit_page_bio(struct f2fs_io_info *);
+-void f2fs_submit_page_mbio(struct f2fs_io_info *);
++int f2fs_submit_page_mbio(struct f2fs_io_info *);
+ struct block_device *f2fs_target_device(struct f2fs_sb_info *,
+ 				block_t, struct bio *);
+ int f2fs_target_device_index(struct f2fs_sb_info *, block_t);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 4e5ffe1d97e4..6d197f0c8151 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1604,15 +1604,20 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ {
+ 	int type = __get_segment_type(fio->page, fio->type);
++	int err;
+ 
+ 	if (fio->type == NODE || fio->type == DATA)
+ 		mutex_lock(&fio->sbi->wio_mutex[fio->type]);
 -
--	ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
- err_out:
- 	inode_unlock(inode);
- 	mnt_drop_write_file(filp);
-@@ -1652,8 +1656,10 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
++reallocate:
+ 	allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
+ 					&fio->new_blkaddr, sum, type);
  
- 	inode_lock(inode);
- 
--	if (f2fs_is_atomic_file(inode))
-+	if (f2fs_is_atomic_file(inode)) {
- 		drop_inmem_pages(inode);
-+		stat_dec_atomic_write(inode);
+ 	/* writeout dirty page into bdev */
+-	f2fs_submit_page_mbio(fio);
++	err = f2fs_submit_page_mbio(fio);
++	if (err == -EAGAIN) {
++		fio->old_blkaddr = fio->new_blkaddr;
++		goto reallocate;
 +	}
- 	if (f2fs_is_volatile_file(inode)) {
- 		clear_inode_flag(inode, FI_VOLATILE_FILE);
- 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+ 
+ 	if (fio->type == NODE || fio->type == DATA)
+ 		mutex_unlock(&fio->sbi->wio_mutex[fio->type]);
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 9d44ce83acb2..08f1455c812c 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -186,9 +186,12 @@ struct segment_allocation {
+  * the page is atomically written, and it is in inmem_pages list.
+  */
+ #define ATOMIC_WRITTEN_PAGE		((unsigned long)-1)
++#define DUMMY_WRITTEN_PAGE		((unsigned long)-2)
+ 
+ #define IS_ATOMIC_WRITTEN_PAGE(page)			\
+ 		(page_private(page) == (unsigned long)ATOMIC_WRITTEN_PAGE)
++#define IS_DUMMY_WRITTEN_PAGE(page)			\
++		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
+ 
+ struct inmem_pages {
+ 	struct list_head list;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 702638e21c76..692ff1b5adf5 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1763,6 +1763,8 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 				FDEV(i).total_segments,
+ 				FDEV(i).start_blk, FDEV(i).end_blk);
+ 	}
++	f2fs_msg(sbi->sb, KERN_INFO,
++			"IO Block Size: %8d KB", F2FS_IO_SIZE_KB(sbi));
+ 	return 0;
+ }
+ 
+@@ -1880,12 +1882,19 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	if (err)
+ 		goto free_options;
+ 
++	if (F2FS_IO_SIZE(sbi) > 1) {
++		sbi->write_io_dummy =
++			mempool_create_page_pool(F2FS_IO_SIZE(sbi) - 1, 0);
++		if (!sbi->write_io_dummy)
++			goto free_options;
++	}
++
+ 	/* get an inode for meta space */
+ 	sbi->meta_inode = f2fs_iget(sb, F2FS_META_INO(sbi));
+ 	if (IS_ERR(sbi->meta_inode)) {
+ 		f2fs_msg(sb, KERN_ERR, "Failed to read F2FS meta data inode");
+ 		err = PTR_ERR(sbi->meta_inode);
+-		goto free_options;
++		goto free_io_dummy;
+ 	}
+ 
+ 	err = get_valid_checkpoint(sbi);
+@@ -2103,6 +2112,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ free_meta_inode:
+ 	make_bad_inode(sbi->meta_inode);
+ 	iput(sbi->meta_inode);
++free_io_dummy:
++	mempool_destroy(sbi->write_io_dummy);
+ free_options:
+ 	destroy_percpu_info(sbi);
+ 	kfree(options);
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index cea41a124a80..f0748524ca8c 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -36,6 +36,12 @@
+ #define F2FS_NODE_INO(sbi)	(sbi->node_ino_num)
+ #define F2FS_META_INO(sbi)	(sbi->meta_ino_num)
+ 
++#define F2FS_IO_SIZE(sbi)	(1 << (sbi)->write_io_size_bits) /* Blocks */
++#define F2FS_IO_SIZE_KB(sbi)	(1 << ((sbi)->write_io_size_bits + 2)) /* KB */
++#define F2FS_IO_SIZE_BYTES(sbi)	(1 << ((sbi)->write_io_size_bits + 12)) /* B */
++#define F2FS_IO_SIZE_BITS(sbi)	((sbi)->write_io_size_bits) /* power of 2 */
++#define F2FS_IO_SIZE_MASK(sbi)	(F2FS_IO_SIZE(sbi) - 1)
++
+ /* This flag is used by node and meta inodes, and by recovery */
+ #define GFP_F2FS_ZERO		(GFP_NOFS | __GFP_ZERO)
+ #define GFP_F2FS_HIGH_ZERO	(GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
 -- 
 2.11.0
 
