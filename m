@@ -1,54 +1,92 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [RFC PATCH 5/5] fscrypt: pass up error codes from
-	->get_context()
-Date: Tue, 27 Dec 2016 22:26:44 -0500
-Message-ID: <20161228032644.hq5wi66y6rqlydka@thunk.org>
-References: <1480965168-38747-1-git-send-email-ebiggers@google.com>
-	<1480965168-38747-6-git-send-email-ebiggers@google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <tytso@thunk.org>) id 1cM4tB-0005I6-5w
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 28 Dec 2016 03:26:53 +0000
-Received: from imap.thunk.org ([74.207.234.97])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1cM4tA-0002NT-HE
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 28 Dec 2016 03:26:53 +0000
-Content-Disposition: inline
-In-Reply-To: <1480965168-38747-6-git-send-email-ebiggers@google.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Eric Biggers <ebiggers@google.com>
-Cc: David Gstir <david@sigma-star.at>, Richard Weinberger <richard@nod.at>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, linux-ext4@vger.kernel.org
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 02/10] f2fs: fix wrong tracepoints for op and op_flags
+Date: Fri, 30 Dec 2016 10:51:09 -0800
+Message-ID: <20161230185117.3832-2-jaegeuk@kernel.org>
+References: <20161230185117.3832-1-jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161230185117.3832-1-jaegeuk@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon, Dec 05, 2016 at 11:12:48AM -0800, Eric Biggers wrote:
-> It was possible for the ->get_context() operation to fail with a
-> specific error code, which was then not returned to the caller of
-> FS_IOC_SET_ENCRYPTION_POLICY or FS_IOC_GET_ENCRYPTION_POLICY.  Make sure
-> to pass through these error codes.  Also reorganize the code so that
-> ->get_context() only needs to be called one time when setting an
-> encryption policy, and handle contexts of unrecognized sizes more
-> appropriately.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+This patch fixes wrong tracepoints in terms of op and op_flags.
 
-Thanks, applied to the fscrypt branch.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ include/trace/events/f2fs.h | 41 +++++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
 
-					- Ted
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most 
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 01b3c9869a0d..4c942599581b 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -55,25 +55,34 @@ TRACE_DEFINE_ENUM(CP_DISCARD);
+ 		{ IPU,		"IN-PLACE" },				\
+ 		{ OPU,		"OUT-OF-PLACE" })
+ 
+-#define F2FS_BIO_FLAG_MASK(t)	(t & (REQ_RAHEAD | REQ_PREFLUSH | REQ_FUA))
+-#define F2FS_BIO_EXTRA_MASK(t)	(t & (REQ_META | REQ_PRIO))
+-
+-#define show_bio_type(op_flags)	show_bio_op_flags(op_flags), 		\
+-						show_bio_extra(op_flags)
++#define F2FS_OP_FLAGS (REQ_RAHEAD | REQ_SYNC | REQ_PREFLUSH | REQ_META |\
++			REQ_PRIO)
++#define F2FS_BIO_FLAG_MASK(t)	(t & F2FS_OP_FLAGS)
++
++#define show_bio_type(op,op_flags)	show_bio_op(op),		\
++						show_bio_op_flags(op_flags)
++
++#define show_bio_op(op)							\
++	__print_symbolic(op,						\
++		{ REQ_OP_READ,			"READ" },		\
++		{ REQ_OP_WRITE,			"WRITE" },		\
++		{ REQ_OP_FLUSH,			"FLUSH" },		\
++		{ REQ_OP_DISCARD,		"DISCARD" },		\
++		{ REQ_OP_ZONE_REPORT,		"ZONE_REPORT" },	\
++		{ REQ_OP_SECURE_ERASE,		"SECURE_ERASE" },	\
++		{ REQ_OP_ZONE_RESET,		"ZONE_RESET" },		\
++		{ REQ_OP_WRITE_SAME,		"WRITE_SAME" },		\
++		{ REQ_OP_WRITE_ZEROES,		"WRITE_ZEROES" })
+ 
+ #define show_bio_op_flags(flags)					\
+ 	__print_symbolic(F2FS_BIO_FLAG_MASK(flags),			\
+-		{ 0,			"WRITE" },			\
+-		{ REQ_RAHEAD, 		"READAHEAD" },			\
+-		{ REQ_SYNC, 		"REQ_SYNC" },			\
+-		{ REQ_PREFLUSH,		"REQ_PREFLUSH" },		\
+-		{ REQ_FUA,		"REQ_FUA" })
+-
+-#define show_bio_extra(type)						\
+-	__print_symbolic(F2FS_BIO_EXTRA_MASK(type),			\
++		{ REQ_RAHEAD, 		"(RA)" },			\
++		{ REQ_SYNC, 		"(S)" },			\
++		{ REQ_SYNC | REQ_PRIO,	"(SP)" },			\
+ 		{ REQ_META, 		"(M)" },			\
+-		{ REQ_PRIO, 		"(P)" },			\
+ 		{ REQ_META | REQ_PRIO,	"(MP)" },			\
++		{ REQ_SYNC | REQ_META | REQ_PRIO, "(SMP)" },		\
++		{ REQ_PREFLUSH | REQ_META | REQ_PRIO, "(FMP)" },	\
+ 		{ 0, " \b" })
+ 
+ #define show_data_type(type)						\
+@@ -753,7 +762,7 @@ DECLARE_EVENT_CLASS(f2fs__submit_page_bio,
+ 		(unsigned long)__entry->index,
+ 		(unsigned long long)__entry->old_blkaddr,
+ 		(unsigned long long)__entry->new_blkaddr,
+-		show_bio_type(__entry->op_flags),
++		show_bio_type(__entry->op, __entry->op_flags),
+ 		show_block_type(__entry->type))
+ );
+ 
+@@ -802,7 +811,7 @@ DECLARE_EVENT_CLASS(f2fs__submit_bio,
+ 
+ 	TP_printk("dev = (%d,%d), rw = %s%s, %s, sector = %lld, size = %u",
+ 		show_dev(__entry),
+-		show_bio_type(__entry->op_flags),
++		show_bio_type(__entry->op, __entry->op_flags),
+ 		show_block_type(__entry->type),
+ 		(unsigned long long)__entry->sector,
+ 		__entry->size)
+-- 
+2.11.0
