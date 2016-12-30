@@ -1,24 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 07/10] f2fs: don't allow encrypted operations
-	without keys
-Date: Fri, 30 Dec 2016 10:51:14 -0800
-Message-ID: <20161230185117.3832-7-jaegeuk@kernel.org>
+Subject: [PATCH 10/10] f2fs: return fs_trim if there is no
+	candidate
+Date: Fri, 30 Dec 2016 10:51:17 -0800
+Message-ID: <20161230185117.3832-10-jaegeuk@kernel.org>
 References: <20161230185117.3832-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cN2H9-0004EC-Uz
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cN2HE-00037m-7a
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Dec 2016 18:51:35 +0000
+	Fri, 30 Dec 2016 18:51:40 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cN2H9-0003t2-08
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cN2HD-0004jX-7r
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Dec 2016 18:51:35 +0000
+	Fri, 30 Dec 2016 18:51:40 +0000
 In-Reply-To: <20161230185117.3832-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,48 +30,126 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch fixes the renaming bug on encrypted filenames, which was pointed by
+If there is no candidate to submit discard command during f2sf_trim_fs, let's
+return without checkpoint.
 
- (ext4: don't allow encrypted operations without keys)
-
-Cc: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/namei.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/f2fs/checkpoint.c |  5 +++++
+ fs/f2fs/f2fs.h       |  1 +
+ fs/f2fs/segment.c    | 28 +++++++++++++++++++++++-----
+ 3 files changed, 29 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 51c4d6d78058..6d511d349198 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -663,6 +663,12 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	bool is_old_inline = f2fs_has_inline_dentry(old_dir);
- 	int err = -ENOENT;
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 917b5c5053ae..ccea40763d9d 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1249,6 +1249,11 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
  
-+	if ((f2fs_encrypted_inode(old_dir) &&
-+			!fscrypt_has_encryption_key(old_dir)) ||
-+			(f2fs_encrypted_inode(new_dir) &&
-+			!fscrypt_has_encryption_key(new_dir)))
-+		return -ENOKEY;
+ 	/* this is the case of multiple fstrims without any changes */
+ 	if (cpc->reason == CP_DISCARD) {
++		if (!exist_trim_candidates(sbi, cpc)) {
++			unblock_operations(sbi);
++			goto out;
++		}
 +
- 	if ((old_dir != new_dir) && f2fs_encrypted_inode(new_dir) &&
- 			!fscrypt_has_permitted_context(new_dir, old_inode)) {
- 		err = -EPERM;
-@@ -843,6 +849,12 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	int old_nlink = 0, new_nlink = 0;
- 	int err = -ENOENT;
+ 		if (NM_I(sbi)->dirty_nat_cnt == 0 &&
+ 				SIT_I(sbi)->dirty_sentries == 0 &&
+ 				prefree_segments(sbi) == 0) {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f2f40fce9d31..04d113f0d6bf 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2119,6 +2119,7 @@ void release_discard_addrs(struct f2fs_sb_info *);
+ int npages_for_summary_flush(struct f2fs_sb_info *, bool);
+ void allocate_new_segments(struct f2fs_sb_info *);
+ int f2fs_trim_fs(struct f2fs_sb_info *, struct fstrim_range *);
++bool exist_trim_candidates(struct f2fs_sb_info *, struct cp_control *);
+ struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
+ void update_meta_page(struct f2fs_sb_info *, void *, block_t);
+ void write_meta_page(struct f2fs_sb_info *, struct page *);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9a38424c3c1f..82078734f379 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -836,7 +836,8 @@ static void __add_discard_entry(struct f2fs_sb_info *sbi,
+ 	SM_I(sbi)->nr_discards += end - start;
+ }
  
-+	if ((f2fs_encrypted_inode(old_dir) &&
-+			!fscrypt_has_encryption_key(old_dir)) ||
-+			(f2fs_encrypted_inode(new_dir) &&
-+			!fscrypt_has_encryption_key(new_dir)))
-+		return -ENOKEY;
+-static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
++static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
++							bool check_only)
+ {
+ 	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
+ 	int max_blocks = sbi->blocks_per_seg;
+@@ -850,12 +851,12 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	int i;
+ 
+ 	if (se->valid_blocks == max_blocks || !f2fs_discard_en(sbi))
+-		return;
++		return false;
+ 
+ 	if (!force) {
+ 		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
+ 		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
+-			return;
++			return false;
+ 	}
+ 
+ 	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
+@@ -873,8 +874,12 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 					&& (end - start) < cpc->trim_minlen)
+ 			continue;
+ 
++		if (check_only)
++			return true;
 +
- 	if ((f2fs_encrypted_inode(old_dir) || f2fs_encrypted_inode(new_dir)) &&
- 			(old_dir != new_dir) &&
- 			(!fscrypt_has_permitted_context(new_dir, old_inode) ||
+ 		__add_discard_entry(sbi, cpc, se, start, end);
+ 	}
++	return false;
+ }
+ 
+ void release_discard_addrs(struct f2fs_sb_info *sbi)
+@@ -1455,6 +1460,19 @@ static const struct segment_allocation default_salloc_ops = {
+ 	.allocate_segment = allocate_segment_by_default,
+ };
+ 
++bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
++{
++	__u64 trim_start = cpc->trim_start;
++
++	mutex_lock(&SIT_I(sbi)->sentry_lock);
++	for (; trim_start <= cpc->trim_end; trim_start++)
++		if (add_discard_addrs(sbi, cpc, true))
++			break;
++	mutex_unlock(&SIT_I(sbi)->sentry_lock);
++
++	return trim_start <= cpc->trim_end;
++}
++
+ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ {
+ 	__u64 start = F2FS_BYTES_TO_BLK(range->start);
+@@ -2251,7 +2269,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 			/* add discard candidates */
+ 			if (cpc->reason != CP_DISCARD) {
+ 				cpc->trim_start = segno;
+-				add_discard_addrs(sbi, cpc);
++				add_discard_addrs(sbi, cpc, false);
+ 			}
+ 
+ 			if (to_journal) {
+@@ -2289,7 +2307,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		__u64 trim_start = cpc->trim_start;
+ 
+ 		for (; cpc->trim_start <= cpc->trim_end; cpc->trim_start++)
+-			add_discard_addrs(sbi, cpc);
++			add_discard_addrs(sbi, cpc, false);
+ 
+ 		cpc->trim_start = trim_start;
+ 	}
 -- 
 2.11.0
 
