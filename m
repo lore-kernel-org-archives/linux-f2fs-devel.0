@@ -1,25 +1,27 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 10/10] f2fs: return fs_trim if there is no
-	candidate
-Date: Fri, 30 Dec 2016 10:51:17 -0800
-Message-ID: <20161230185117.3832-10-jaegeuk@kernel.org>
-References: <20161230185117.3832-1-jaegeuk@kernel.org>
+From: "linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>
+Subject: [SPAM] Клиентскую базу? Mail: prodawez392@gmail.com Skype: prodawez390 т +79139230330 (whats\viber\telegr) Подробнее!
+Date: Fri, 30 Dec 2016 17:29:26 +0300
+Message-ID: <36CC5AD120F4DA69B5B0F945519EE375@lists.sourceforge.net>
+Reply-To: "linux-f2fs-devel@lists.sourceforge.net" <prodawez392@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cN2HE-00037m-7a
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Dec 2016 18:51:40 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cN2HD-0004jX-7r
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Dec 2016 18:51:40 +0000
-In-Reply-To: <20161230185117.3832-1-jaegeuk@kernel.org>
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <linux-f2fs-devel@lists.sourceforge.net>)
+	id 1cN4Up-00021G-AY for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 30 Dec 2016 21:13:51 +0000
+Received: from [177.55.158.19] (helo=frwsilcar.localdomain)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1cN4Uo-0005JB-EK for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 30 Dec 2016 21:13:51 +0000
+Received: from kfziuft (localhost [IPv6:::1])
+	by frwsilcar.localdomain (Postfix) with SMTP id ECFF15D908C
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 30 Dec 2016 08:30:04 -0200 (BRST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,131 +31,16 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-f2fs-devel@lists.sourceforge.net
 
-If there is no candidate to submit discard command during f2sf_trim_fs, let's
-return without checkpoint.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/checkpoint.c |  5 +++++
- fs/f2fs/f2fs.h       |  1 +
- fs/f2fs/segment.c    | 28 +++++++++++++++++++++++-----
- 3 files changed, 29 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 917b5c5053ae..ccea40763d9d 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1249,6 +1249,11 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	/* this is the case of multiple fstrims without any changes */
- 	if (cpc->reason == CP_DISCARD) {
-+		if (!exist_trim_candidates(sbi, cpc)) {
-+			unblock_operations(sbi);
-+			goto out;
-+		}
-+
- 		if (NM_I(sbi)->dirty_nat_cnt == 0 &&
- 				SIT_I(sbi)->dirty_sentries == 0 &&
- 				prefree_segments(sbi) == 0) {
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index f2f40fce9d31..04d113f0d6bf 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2119,6 +2119,7 @@ void release_discard_addrs(struct f2fs_sb_info *);
- int npages_for_summary_flush(struct f2fs_sb_info *, bool);
- void allocate_new_segments(struct f2fs_sb_info *);
- int f2fs_trim_fs(struct f2fs_sb_info *, struct fstrim_range *);
-+bool exist_trim_candidates(struct f2fs_sb_info *, struct cp_control *);
- struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
- void update_meta_page(struct f2fs_sb_info *, void *, block_t);
- void write_meta_page(struct f2fs_sb_info *, struct page *);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9a38424c3c1f..82078734f379 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -836,7 +836,8 @@ static void __add_discard_entry(struct f2fs_sb_info *sbi,
- 	SM_I(sbi)->nr_discards += end - start;
- }
- 
--static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-+static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
-+							bool check_only)
- {
- 	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
- 	int max_blocks = sbi->blocks_per_seg;
-@@ -850,12 +851,12 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	int i;
- 
- 	if (se->valid_blocks == max_blocks || !f2fs_discard_en(sbi))
--		return;
-+		return false;
- 
- 	if (!force) {
- 		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
- 		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
--			return;
-+			return false;
- 	}
- 
- 	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
-@@ -873,8 +874,12 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 					&& (end - start) < cpc->trim_minlen)
- 			continue;
- 
-+		if (check_only)
-+			return true;
-+
- 		__add_discard_entry(sbi, cpc, se, start, end);
- 	}
-+	return false;
- }
- 
- void release_discard_addrs(struct f2fs_sb_info *sbi)
-@@ -1455,6 +1460,19 @@ static const struct segment_allocation default_salloc_ops = {
- 	.allocate_segment = allocate_segment_by_default,
- };
- 
-+bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-+{
-+	__u64 trim_start = cpc->trim_start;
-+
-+	mutex_lock(&SIT_I(sbi)->sentry_lock);
-+	for (; trim_start <= cpc->trim_end; trim_start++)
-+		if (add_discard_addrs(sbi, cpc, true))
-+			break;
-+	mutex_unlock(&SIT_I(sbi)->sentry_lock);
-+
-+	return trim_start <= cpc->trim_end;
-+}
-+
- int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- {
- 	__u64 start = F2FS_BYTES_TO_BLK(range->start);
-@@ -2251,7 +2269,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 			/* add discard candidates */
- 			if (cpc->reason != CP_DISCARD) {
- 				cpc->trim_start = segno;
--				add_discard_addrs(sbi, cpc);
-+				add_discard_addrs(sbi, cpc, false);
- 			}
- 
- 			if (to_journal) {
-@@ -2289,7 +2307,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		__u64 trim_start = cpc->trim_start;
- 
- 		for (; cpc->trim_start <= cpc->trim_end; cpc->trim_start++)
--			add_discard_addrs(sbi, cpc);
-+			add_discard_addrs(sbi, cpc, false);
- 
- 		cpc->trim_start = trim_start;
- 	}
--- 
-2.11.0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most 
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+0KHQvtCx0LXRgNC10Lwg0LTQu9GPINCS0LDRgSDQsiDQuNC90YLQtdGA0L3QtdGCINCx0LDQt9GD
+INC00LDQvdC90YvRhSDQutC70LjQtdC90YLQvtCyIEVtYWlsOiBwcm9kYXdlejM5MkBnbWFpbC5j
+b20gU2t5cGU6IHByb2Rhd2V6MzkwINGC0LXQuyArNzkxMzkyMzAzMzAgKHdoYXRzYXBwXHZpYmVy
+XHRlbGVncmFtKSDQo9C30L3QsNC50YLQtSDQv9C+0LTRgNC+0LHQvdC10LUhIAoKLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0ZWNoIGNvbW11bml0eSBvbiBvbmUg
+b2YgdGhlIHdvcmxkJ3MgbW9zdCAKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hEb3Qub3JnISBo
+dHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1k
+ZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQv
+bGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
