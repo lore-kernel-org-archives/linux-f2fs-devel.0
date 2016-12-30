@@ -1,24 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 04/10] f2fs: support IO alignment for DATA and
-	NODE writes
-Date: Fri, 30 Dec 2016 10:51:11 -0800
-Message-ID: <20161230185117.3832-4-jaegeuk@kernel.org>
+Subject: [PATCH 08/10] f2fs: relax async discard commands more
+Date: Fri, 30 Dec 2016 10:51:15 -0800
+Message-ID: <20161230185117.3832-8-jaegeuk@kernel.org>
 References: <20161230185117.3832-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cN2H6-0006BB-4j
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cN2HB-000377-I6
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Dec 2016 18:51:32 +0000
+	Fri, 30 Dec 2016 18:51:37 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cN2H4-0003su-RN
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cN2HA-0004hK-J3
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 30 Dec 2016 18:51:32 +0000
+	Fri, 30 Dec 2016 18:51:37 +0000
 In-Reply-To: <20161230185117.3832-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,259 +31,159 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch implements IO alignment by filling dummy blocks in DATA and NODE
-write bios. If we can guarantee, for example, 32KB or 64KB for such the IOs,
-we can eliminate underlying dummy page problem which FTL conducts in order to
-close MLC or TLC partial written pages.
+This patch relaxes async discard commands to avoid waiting its end_io during
+checkpoint.
+Instead of waiting them during checkpoint, it will be done when actually reusing
+them.
 
-Note that,
- - it requires "-o mode=lfs".
- - IO size should be power of 2, not exceed BIO_MAX_PAGES, 256.
- - read IO is still 4KB.
- - do checkpoint at fsync, if dummy NODE page was written.
+Test on initial partition of nvme drive.
+
+ # time fstrim /mnt/test
+
+Before : 6.158s
+After : 4.822s
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c          | 55 +++++++++++++++++++++++++++++++++++++++++++++++--
- fs/f2fs/f2fs.h          |  4 +++-
- fs/f2fs/segment.c       |  9 ++++++--
- fs/f2fs/segment.h       |  3 +++
- fs/f2fs/super.c         | 13 +++++++++++-
- include/linux/f2fs_fs.h |  6 ++++++
- 6 files changed, 84 insertions(+), 6 deletions(-)
+ fs/f2fs/checkpoint.c |  3 ---
+ fs/f2fs/f2fs.h       |  4 +++-
+ fs/f2fs/segment.c    | 25 +++++++++++++++++++++----
+ fs/f2fs/super.c      |  3 +++
+ 4 files changed, 27 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 54da4e2f1318..f17df9f76d55 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -93,6 +93,17 @@ static void f2fs_write_end_io(struct bio *bio)
- 		struct page *page = bvec->bv_page;
- 		enum count_type type = WB_DATA_TYPE(page);
- 
-+		if (IS_DUMMY_WRITTEN_PAGE(page)) {
-+			set_page_private(page, (unsigned long)NULL);
-+			ClearPagePrivate(page);
-+			unlock_page(page);
-+			mempool_free(page, sbi->write_io_dummy);
-+
-+			if (unlikely(bio->bi_error))
-+				f2fs_stop_checkpoint(sbi, true);
-+			continue;
-+		}
-+
- 		fscrypt_pullback_bio_page(&page, true);
- 
- 		if (unlikely(bio->bi_error)) {
-@@ -171,10 +182,42 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
- 				struct bio *bio, enum page_type type)
- {
- 	if (!is_read_io(bio_op(bio))) {
-+		unsigned int start;
-+
- 		if (f2fs_sb_mounted_blkzoned(sbi->sb) &&
- 			current->plug && (type == DATA || type == NODE))
- 			blk_finish_plug(current->plug);
-+
-+		if (type != DATA && type != NODE)
-+			goto submit_io;
-+
-+		start = bio->bi_iter.bi_size >> F2FS_BLKSIZE_BITS;
-+		start %= F2FS_IO_SIZE(sbi);
-+
-+		if (start == 0)
-+			goto submit_io;
-+
-+		/* fill dummy pages */
-+		for (; start < F2FS_IO_SIZE(sbi); start++) {
-+			struct page *page =
-+				mempool_alloc(sbi->write_io_dummy,
-+					GFP_NOIO | __GFP_ZERO | __GFP_NOFAIL);
-+			f2fs_bug_on(sbi, !page);
-+
-+			SetPagePrivate(page);
-+			set_page_private(page, (unsigned long)DUMMY_WRITTEN_PAGE);
-+			lock_page(page);
-+			if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE)
-+				f2fs_bug_on(sbi, 1);
-+		}
-+		/*
-+		 * In the NODE case, we lose next block address chain. So, we
-+		 * need to do checkpoint in f2fs_sync_file.
-+		 */
-+		if (type == NODE)
-+			set_sbi_flag(sbi, SBI_NEED_CP);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 34bfe2b494ae..1a9ba69a22ba 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1254,7 +1254,6 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		f2fs_bug_on(sbi, prefree_segments(sbi));
+ 		flush_sit_entries(sbi, cpc);
+ 		clear_prefree_segments(sbi, cpc);
+-		f2fs_wait_all_discard_bio(sbi);
+ 		unblock_operations(sbi);
+ 		goto out;
  	}
-+submit_io:
- 	trace_f2fs_submit_bio(sbi->sb, bio);
- 	submit_bio(bio);
- }
-@@ -316,13 +359,14 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
- 	return 0;
- }
+@@ -1278,8 +1277,6 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	else
+ 		clear_prefree_segments(sbi, cpc);
  
--void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
-+int f2fs_submit_page_mbio(struct f2fs_io_info *fio)
- {
- 	struct f2fs_sb_info *sbi = fio->sbi;
- 	enum page_type btype = PAGE_TYPE_OF_BIO(fio->type);
- 	struct f2fs_bio_info *io;
- 	bool is_read = is_read_io(fio->op);
- 	struct page *bio_page;
-+	int err = 0;
- 
- 	io = is_read ? &sbi->read_io : &sbi->write_io[btype];
- 
-@@ -343,6 +387,12 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
- 		__submit_merged_bio(io);
- alloc_new:
- 	if (io->bio == NULL) {
-+		if ((fio->type == DATA || fio->type == NODE) &&
-+				fio->new_blkaddr & F2FS_IO_SIZE_MASK(sbi)) {
-+			err = -EAGAIN;
-+			dec_page_count(sbi, WB_DATA_TYPE(bio_page));
-+			goto out_fail;
-+		}
- 		io->bio = __bio_alloc(sbi, fio->new_blkaddr,
- 						BIO_MAX_PAGES, is_read);
- 		io->fio = *fio;
-@@ -356,9 +406,10 @@ void f2fs_submit_page_mbio(struct f2fs_io_info *fio)
- 
- 	io->last_block_in_bio = fio->new_blkaddr;
- 	f2fs_trace_ios(fio, 0);
+-	f2fs_wait_all_discard_bio(sbi);
 -
-+out_fail:
- 	up_write(&io->io_rwsem);
- 	trace_f2fs_submit_page_mbio(fio->page, fio);
-+	return err;
- }
+ 	unblock_operations(sbi);
+ 	stat_inc_cp_count(sbi->stat_info);
  
- static void __set_data_blkaddr(struct dnode_of_data *dn)
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2da8c3aa0ce5..0d7eaddef4a0 100644
+index bdcfe2a9b532..f2f40fce9d31 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -792,6 +792,8 @@ struct f2fs_sb_info {
- 	struct f2fs_bio_info read_io;			/* for read bios */
- 	struct f2fs_bio_info write_io[NR_PAGE_TYPE];	/* for write bios */
- 	struct mutex wio_mutex[NODE + 1];	/* bio ordering for NODE/DATA */
-+	int write_io_size_bits;			/* Write IO size bits */
-+	mempool_t *write_io_dummy;		/* Dummy pages */
+@@ -183,6 +183,8 @@ struct discard_entry {
  
- 	/* for checkpoint */
- 	struct f2fs_checkpoint *ckpt;		/* raw checkpoint pointer */
-@@ -2174,7 +2176,7 @@ void f2fs_submit_merged_bio_cond(struct f2fs_sb_info *, struct inode *,
- 				struct page *, nid_t, enum page_type, int);
- void f2fs_flush_merged_bios(struct f2fs_sb_info *);
- int f2fs_submit_page_bio(struct f2fs_io_info *);
--void f2fs_submit_page_mbio(struct f2fs_io_info *);
-+int f2fs_submit_page_mbio(struct f2fs_io_info *);
- struct block_device *f2fs_target_device(struct f2fs_sb_info *,
- 				block_t, struct bio *);
- int f2fs_target_device_index(struct f2fs_sb_info *, block_t);
+ struct bio_entry {
+ 	struct list_head list;
++	unsigned int start_segno;
++	unsigned int end_segno;
+ 	struct bio *bio;
+ 	struct completion event;
+ 	int error;
+@@ -2111,7 +2113,7 @@ void destroy_flush_cmd_control(struct f2fs_sb_info *, bool);
+ void invalidate_blocks(struct f2fs_sb_info *, block_t);
+ bool is_checkpointed_data(struct f2fs_sb_info *, block_t);
+ void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
+-void f2fs_wait_all_discard_bio(struct f2fs_sb_info *);
++void f2fs_wait_discard_bio(struct f2fs_sb_info *, unsigned int);
+ void clear_prefree_segments(struct f2fs_sb_info *, struct cp_control *);
+ void release_discard_addrs(struct f2fs_sb_info *);
+ int npages_for_summary_flush(struct f2fs_sb_info *, bool);
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 4e5ffe1d97e4..6d197f0c8151 100644
+index 6d197f0c8151..9a38424c3c1f 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -1604,15 +1604,20 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
- {
- 	int type = __get_segment_type(fio->page, fio->type);
-+	int err;
- 
- 	if (fio->type == NODE || fio->type == DATA)
- 		mutex_lock(&fio->sbi->wio_mutex[fio->type]);
--
-+reallocate:
- 	allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
- 					&fio->new_blkaddr, sum, type);
- 
- 	/* writeout dirty page into bdev */
--	f2fs_submit_page_mbio(fio);
-+	err = f2fs_submit_page_mbio(fio);
-+	if (err == -EAGAIN) {
-+		fio->old_blkaddr = fio->new_blkaddr;
-+		goto reallocate;
-+	}
- 
- 	if (fio->type == NODE || fio->type == DATA)
- 		mutex_unlock(&fio->sbi->wio_mutex[fio->type]);
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 9d44ce83acb2..08f1455c812c 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -186,9 +186,12 @@ struct segment_allocation {
-  * the page is atomically written, and it is in inmem_pages list.
-  */
- #define ATOMIC_WRITTEN_PAGE		((unsigned long)-1)
-+#define DUMMY_WRITTEN_PAGE		((unsigned long)-2)
- 
- #define IS_ATOMIC_WRITTEN_PAGE(page)			\
- 		(page_private(page) == (unsigned long)ATOMIC_WRITTEN_PAGE)
-+#define IS_DUMMY_WRITTEN_PAGE(page)			\
-+		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
- 
- struct inmem_pages {
- 	struct list_head list;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 702638e21c76..692ff1b5adf5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1763,6 +1763,8 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
- 				FDEV(i).total_segments,
- 				FDEV(i).start_blk, FDEV(i).end_blk);
- 	}
-+	f2fs_msg(sbi->sb, KERN_INFO,
-+			"IO Block Size: %8d KB", F2FS_IO_SIZE_KB(sbi));
- 	return 0;
+@@ -624,20 +624,24 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
  }
  
-@@ -1880,12 +1882,19 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (err)
- 		goto free_options;
+ static struct bio_entry *__add_bio_entry(struct f2fs_sb_info *sbi,
+-							struct bio *bio)
++			struct bio *bio, unsigned int start_segno,
++					unsigned int end_segno)
+ {
+ 	struct list_head *wait_list = &(SM_I(sbi)->wait_list);
+ 	struct bio_entry *be = f2fs_kmem_cache_alloc(bio_entry_slab, GFP_NOFS);
  
-+	if (F2FS_IO_SIZE(sbi) > 1) {
-+		sbi->write_io_dummy =
-+			mempool_create_page_pool(F2FS_IO_SIZE(sbi) - 1, 0);
-+		if (!sbi->write_io_dummy)
-+			goto free_options;
-+	}
+ 	INIT_LIST_HEAD(&be->list);
+ 	be->bio = bio;
++	be->start_segno = start_segno;
++	be->end_segno = end_segno;
+ 	init_completion(&be->event);
+ 	list_add_tail(&be->list, wait_list);
+ 
+ 	return be;
+ }
+ 
+-void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
++/* This should be covered by global mutex, &sit_i->sentry_lock */
++void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, unsigned int segno)
+ {
+ 	struct list_head *wait_list = &(SM_I(sbi)->wait_list);
+ 	struct bio_entry *be, *tmp;
+@@ -646,7 +650,15 @@ void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
+ 		struct bio *bio = be->bio;
+ 		int err;
+ 
+-		wait_for_completion_io(&be->event);
++		if (!completion_done(&be->event)) {
++			if ((be->start_segno >= segno &&
++					be->end_segno <= segno) ||
++					segno == NULL_SEGNO)
++				wait_for_completion_io(&be->event);
++			else
++				continue;
++		}
 +
- 	/* get an inode for meta space */
- 	sbi->meta_inode = f2fs_iget(sb, F2FS_META_INO(sbi));
- 	if (IS_ERR(sbi->meta_inode)) {
- 		f2fs_msg(sb, KERN_ERR, "Failed to read F2FS meta data inode");
- 		err = PTR_ERR(sbi->meta_inode);
--		goto free_options;
-+		goto free_io_dummy;
+ 		err = be->error;
+ 		if (err == -EOPNOTSUPP)
+ 			err = 0;
+@@ -674,6 +686,8 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+ 		struct block_device *bdev, block_t blkstart, block_t blklen)
+ {
+ 	struct bio *bio = NULL;
++	unsigned int start_segno = GET_SEGNO(sbi, blkstart);
++	unsigned int end_segno = GET_SEGNO(sbi, blkstart + blklen);
+ 	int err;
+ 
+ 	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
+@@ -688,7 +702,8 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+ 				SECTOR_FROM_BLOCK(blklen),
+ 				GFP_NOFS, 0, &bio);
+ 	if (!err && bio) {
+-		struct bio_entry *be = __add_bio_entry(sbi, bio);
++		struct bio_entry *be = __add_bio_entry(sbi, bio,
++					start_segno, end_segno);
+ 
+ 		bio->bi_private = be;
+ 		bio->bi_end_io = f2fs_submit_bio_wait_endio;
+@@ -1574,6 +1589,8 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+ 
+ 	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+ 
++	f2fs_wait_discard_bio(sbi, GET_SEGNO(sbi, *new_blkaddr));
++
+ 	/*
+ 	 * __add_sum_entry should be resided under the curseg_mutex
+ 	 * because, this function updates a summary entry in the
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index f3697f97e527..16e2bc5209bb 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -770,6 +770,9 @@ static void f2fs_put_super(struct super_block *sb)
+ 		write_checkpoint(sbi, &cpc);
  	}
  
- 	err = get_valid_checkpoint(sbi);
-@@ -2103,6 +2112,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- free_meta_inode:
- 	make_bad_inode(sbi->meta_inode);
- 	iput(sbi->meta_inode);
-+free_io_dummy:
-+	mempool_destroy(sbi->write_io_dummy);
- free_options:
- 	destroy_percpu_info(sbi);
- 	kfree(options);
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index cea41a124a80..f0748524ca8c 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -36,6 +36,12 @@
- #define F2FS_NODE_INO(sbi)	(sbi->node_ino_num)
- #define F2FS_META_INO(sbi)	(sbi->meta_ino_num)
- 
-+#define F2FS_IO_SIZE(sbi)	(1 << (sbi)->write_io_size_bits) /* Blocks */
-+#define F2FS_IO_SIZE_KB(sbi)	(1 << ((sbi)->write_io_size_bits + 2)) /* KB */
-+#define F2FS_IO_SIZE_BYTES(sbi)	(1 << ((sbi)->write_io_size_bits + 12)) /* B */
-+#define F2FS_IO_SIZE_BITS(sbi)	((sbi)->write_io_size_bits) /* power of 2 */
-+#define F2FS_IO_SIZE_MASK(sbi)	(F2FS_IO_SIZE(sbi) - 1)
++	/* be sure to wait for any on-going discard commands */
++	f2fs_wait_discard_bio(sbi, NULL_SEGNO);
 +
- /* This flag is used by node and meta inodes, and by recovery */
- #define GFP_F2FS_ZERO		(GFP_NOFS | __GFP_ZERO)
- #define GFP_F2FS_HIGH_ZERO	(GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
+ 	/* write_checkpoint can update stat informaion */
+ 	f2fs_destroy_stats(sbi);
+ 
 -- 
 2.11.0
 
