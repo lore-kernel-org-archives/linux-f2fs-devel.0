@@ -1,60 +1,42 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH] mm: introduce kv[mz]alloc helpers
-Date: Mon, 2 Jan 2017 17:02:50 +0100
-Message-ID: <20170102160249.GA11635@dhcp22.suse.cz>
-References: <20170102133700.1734-1-mhocko@kernel.org>
- <1483372522.1955.20.camel@perches.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: fix small discards when se->valid_blocks is zero
+Date: Tue, 3 Jan 2017 17:01:57 +0800
+Message-ID: <1483434117-24427-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <1483372522.1955.20.camel@perches.com>
-Sender: owner-linux-mm@kvack.org
-To: Joe Perches <joe@perches.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org, linux-ext4@vger.kernel.org, Anatoly Stepanov <astepanov@cloudlinux.com>, Paolo Bonzini <pbonzini@redhat.com>, Mike Snitzer <snitzer@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, yunlong.song@huawei.com
+Cc: bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Mon 02-01-17 07:55:22, Joe Perches wrote:
-> On Mon, 2017-01-02 at 14:37 +0100, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > Using kmalloc with the vmalloc fallback for larger allocations is a
-> > common pattern in the kernel code. Yet we do not have any common helper
-> > for that and so users have invented their own helpers. Some of them are
-> > really creative when doing so. Let's just add kv[mz]alloc and make sure
-> > it is implemented properly. This implementation makes sure to not make
-> > a large memory pressure for > PAGE_SZE requests (__GFP_NORETRY) and also
-> > to not warn about allocation failures. This also rules out the OOM
-> > killer as the vmalloc is a more approapriate fallback than a disruptive
-> > user visible action.
-> > 
-> > This patch also changes some existing users and removes helpers which
-> > are specific for them. In some cases this is not possible (e.g.
-> > ext4_kvmalloc, libcfs_kvzalloc, __aa_kvmalloc) because those seems to be
-> > broken and require GFP_NO{FS,IO} context which is not vmalloc compatible
-> > in general (note that the page table allocation is GFP_KERNEL). Those
-> > need to be fixed separately.
-> > 
-> > apparmor has already claimed kv[mz]alloc so remove those and use
-> > __aa_kvmalloc instead to prevent from the naming clashes.
-> 
-> I have no real objection but perhaps this would
-> be better done as 3 or more patches
-> 
-> o rename apparmor uses
-> o introduce generic
-> o conversions to generic
+In the small discard case, when se->valid_blocks is zero, the add_discard_addrs
+will directly return without __add_discard_entry. This will cause the file
+delete have no small discard. The case is like this:
 
-Whatever maintainers of the respective code prefer. I usually prefer to
-have newly introduced functions along with their users so that it is
-clear how they are used. The patch doesn't seem to be too large
-either...
+1. Allocate free 2M segment
+2. Write a file (size n blocks < 512) in that 2M segment, se->valid_blocks = n
+3. Delete that file, se->valid_blocks = 0, add_discard_addrs will return without
+sending any discard of that file, and forever due to cur_map[i] ^ ckpt_map[i] =
+0 after that checkpoint
+
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/segment.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 0738f48..8610f14 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -838,7 +838,7 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		return;
+ 
+ 	if (!force) {
+-		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
++		if (!test_opt(sbi, DISCARD) ||
+ 		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
+ 			return;
+ 	}
 -- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+1.8.5.2
