@@ -1,45 +1,99 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 02/10] f2fs: fix wrong tracepoints for op and
- op_flags
-Date: Wed, 4 Jan 2017 11:25:13 +0800
-Message-ID: <6793443b-f18b-3ba7-2a30-ef24aea88a4c@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 03/10] f2fs: add submit_bio tracepoint
+Date: Wed, 4 Jan 2017 11:32:53 +0800
+Message-ID: <5bb8933f-9b6e-cf61-beec-d328f41b4616@huawei.com>
 References: <20161230185117.3832-1-jaegeuk@kernel.org>
-	<20161230185117.3832-2-jaegeuk@kernel.org>
+ <20161230185117.3832-3-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cOcDD-0003JX-Uk
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 Jan 2017 03:26:03 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cOcDB-0007ZB-K7
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 Jan 2017 03:26:03 +0000
-In-Reply-To: <20161230185117.3832-2-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20161230185117.3832-3-jaegeuk@kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
+
+Hi Jaegeuk,
 
 On 2016/12/31 2:51, Jaegeuk Kim wrote:
-> This patch fixes wrong tracepoints in terms of op and op_flags.
+> This patch adds final submit_bio() tracepoint.
 > 
 > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/data.c              |  1 +
+>  include/trace/events/f2fs.h | 31 +++++++++++++++++++++++++++++++
+>  2 files changed, 32 insertions(+)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 2c5df1dc1479..54da4e2f1318 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -175,6 +175,7 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
+>  			current->plug && (type == DATA || type == NODE))
+>  			blk_finish_plug(current->plug);
+>  	}
+> +	trace_f2fs_submit_bio(sbi->sb, bio);
+>  	submit_bio(bio);
+>  }
+>  
+> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+> index 4c942599581b..094d92b52450 100644
+> --- a/include/trace/events/f2fs.h
+> +++ b/include/trace/events/f2fs.h
+> @@ -55,6 +55,8 @@ TRACE_DEFINE_ENUM(CP_DISCARD);
+>  		{ IPU,		"IN-PLACE" },				\
+>  		{ OPU,		"OUT-OF-PLACE" })
+>  
+> +#define F2FS_OP	(REQ_OP_READ | REQ_OP_RAHEAD | REQ_SYNC | REQ_PREFLUSH | REQ_META |\
+> +			REQ_PRIO)
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Needed?
 
+>  #define F2FS_OP_FLAGS (REQ_RAHEAD | REQ_SYNC | REQ_PREFLUSH | REQ_META |\
+>  			REQ_PRIO)
+>  #define F2FS_BIO_FLAG_MASK(t)	(t & F2FS_OP_FLAGS)
+> @@ -837,6 +839,35 @@ DEFINE_EVENT_CONDITION(f2fs__submit_bio, f2fs_submit_read_bio,
+>  	TP_CONDITION(bio)
+>  );
+>  
+> +TRACE_EVENT(f2fs_submit_bio,
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most 
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+Can we reuse f2fs__submit_bio class like f2fs_submit_{read,write}_bio?
+
+DEFINE_EVENT_CONDITION(f2fs__submit_bio, f2fs_submit_last_bio,
+
+Thanks,
+
+> +
+> +	TP_PROTO(struct super_block *sb, struct bio *bio),
+> +
+> +	TP_ARGS(sb, bio),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(dev_t,	dev)
+> +		__field(int,	op)
+> +		__field(int,	op_flags)
+> +		__field(sector_t,	sector)
+> +		__field(unsigned int,	size)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->dev		= sb->s_dev;
+> +		__entry->op		= bio->bi_opf & REQ_OP_MASK;
+> +		__entry->op_flags	= bio->bi_opf;
+> +		__entry->sector		= bio->bi_iter.bi_sector;
+> +		__entry->size		= bio->bi_iter.bi_size;
+> +	),
+> +
+> +	TP_printk("dev = (%d,%d), rw = %s%s, sector = %lld, size = %u",
+> +		show_dev(__entry),
+> +		show_bio_type(__entry->op, __entry->op_flags),
+> +		(unsigned long long)__entry->sector,
+> +		__entry->size)
+> +);
+> +
+>  TRACE_EVENT(f2fs_write_begin,
+>  
+>  	TP_PROTO(struct inode *inode, loff_t pos, unsigned int len,
+> 
+
