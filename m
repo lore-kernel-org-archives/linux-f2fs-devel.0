@@ -1,147 +1,78 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 03/10 v2] f2fs: add submit_bio tracepoint
-Date: Wed, 4 Jan 2017 15:35:06 -0800
-Message-ID: <20170104233506.GC1011@jaegeuk.local>
+Subject: Re: [PATCH 04/10] f2fs: support IO alignment for DATA
+ and NODE writes
+Date: Wed, 4 Jan 2017 15:44:44 -0800
+Message-ID: <20170104234444.GD1011@jaegeuk.local>
 References: <20161230185117.3832-1-jaegeuk@kernel.org>
- <20161230185117.3832-3-jaegeuk@kernel.org>
+	<20161230185117.3832-4-jaegeuk@kernel.org>
+	<7920f143-750a-69df-f4b3-eeac82c1014b@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cOvEj-0000TY-EJ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 04 Jan 2017 23:44:53 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cOvEi-0006mb-Nq
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 04 Jan 2017 23:44:53 +0000
 Content-Disposition: inline
-In-Reply-To: <20161230185117.3832-3-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <7920f143-750a-69df-f4b3-eeac82c1014b@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Change log from v1:
- - remove F2FS_OP
- - share single tracing structure, f2fs__bio
- - split f2fs_prepare_read/write_io and f2fs_submit_read/write_io
+On 01/04, Chao Yu wrote:
+> Hi Jaegeuk,
+> 
+> On 2016/12/31 2:51, Jaegeuk Kim wrote:
+> > This patch implements IO alignment by filling dummy blocks in DATA and NODE
+> > write bios. If we can guarantee, for example, 32KB or 64KB for such the IOs,
+> > we can eliminate underlying dummy page problem which FTL conducts in order to
+> > close MLC or TLC partial written pages.
+> > 
+> > Note that,
+> >  - it requires "-o mode=lfs".
+> >  - IO size should be power of 2, not exceed BIO_MAX_PAGES, 256.
+> >  - read IO is still 4KB.
+> >  - do checkpoint at fsync, if dummy NODE page was written.
+> 
+> Which scenario we can benefit from? Any numbers?
 
->From f5c6ab0f19fb627ebf28ab6a18c0a32b4c8f914f Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Wed, 21 Dec 2016 12:13:03 -0800
-Subject: [PATCH] f2fs: add submit_bio tracepoint
+I described it in the patch. This is not targetting for performance improvement
+for now, but to address the dummy page write problem in FTL so that we can later
+implement very simple host-level FTL on top of open-channel SSD.
 
-This patch adds final submit_bio() tracepoint.
+> I doubt that there are some potential side-effect points:
+>  - write amplification will be more serious than before
+>  - free space will be more fragmented since dummy blocks is separated in whole
+> address space
+>  - there is less chance to merge small(unaligned) IOs in block layer
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/data.c              | 12 ++++++++----
- include/trace/events/f2fs.h | 45 ++++++++++++++++++++++++++++++---------------
- 2 files changed, 38 insertions(+), 19 deletions(-)
+I agree, so I just added this as a mount option experimentally.
+One point would be that, if f2fs doesn't do this, FTL should do it. So I think,
+from the system point of view, f2fs is a better layer to do it.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 2c5df1dc1479..a06b2d187aec 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -175,6 +175,10 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
- 			current->plug && (type == DATA || type == NODE))
- 			blk_finish_plug(current->plug);
- 	}
-+	if (is_read_io(bio_op(bio)))
-+		trace_f2fs_submit_read_bio(sbi->sb, type, bio);
-+	else
-+		trace_f2fs_submit_write_bio(sbi->sb, type, bio);
- 	submit_bio(bio);
- }
- 
-@@ -185,12 +189,12 @@ static void __submit_merged_bio(struct f2fs_bio_info *io)
- 	if (!io->bio)
- 		return;
- 
-+	bio_set_op_attrs(io->bio, fio->op, fio->op_flags);
-+
- 	if (is_read_io(fio->op))
--		trace_f2fs_submit_read_bio(io->sbi->sb, fio, io->bio);
-+		trace_f2fs_prepare_read_bio(io->sbi->sb, fio->type, io->bio);
- 	else
--		trace_f2fs_submit_write_bio(io->sbi->sb, fio, io->bio);
--
--	bio_set_op_attrs(io->bio, fio->op, fio->op_flags);
-+		trace_f2fs_prepare_write_bio(io->sbi->sb, fio->type, io->bio);
- 
- 	__submit_bio(io->sbi, io->bio, fio->type);
- 	io->bio = NULL;
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 4c942599581b..04c527410ecc 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -784,12 +784,11 @@ DEFINE_EVENT_CONDITION(f2fs__submit_page_bio, f2fs_submit_page_mbio,
- 	TP_CONDITION(page->mapping)
- );
- 
--DECLARE_EVENT_CLASS(f2fs__submit_bio,
-+DECLARE_EVENT_CLASS(f2fs__bio,
- 
--	TP_PROTO(struct super_block *sb, struct f2fs_io_info *fio,
--						struct bio *bio),
-+	TP_PROTO(struct super_block *sb, int type, struct bio *bio),
- 
--	TP_ARGS(sb, fio, bio),
-+	TP_ARGS(sb, type, bio),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
-@@ -802,9 +801,9 @@ DECLARE_EVENT_CLASS(f2fs__submit_bio,
- 
- 	TP_fast_assign(
- 		__entry->dev		= sb->s_dev;
--		__entry->op		= fio->op;
--		__entry->op_flags	= fio->op_flags;
--		__entry->type		= fio->type;
-+		__entry->op		= bio_op(bio);
-+		__entry->op_flags	= bio->bi_opf;
-+		__entry->type		= type;
- 		__entry->sector		= bio->bi_iter.bi_sector;
- 		__entry->size		= bio->bi_iter.bi_size;
- 	),
-@@ -817,22 +816,38 @@ DECLARE_EVENT_CLASS(f2fs__submit_bio,
- 		__entry->size)
- );
- 
--DEFINE_EVENT_CONDITION(f2fs__submit_bio, f2fs_submit_write_bio,
-+DEFINE_EVENT_CONDITION(f2fs__bio, f2fs_prepare_write_bio,
-+
-+	TP_PROTO(struct super_block *sb, int type, struct bio *bio),
-+
-+	TP_ARGS(sb, type, bio),
-+
-+	TP_CONDITION(bio)
-+);
-+
-+DEFINE_EVENT_CONDITION(f2fs__bio, f2fs_prepare_read_bio,
-+
-+	TP_PROTO(struct super_block *sb, int type, struct bio *bio),
-+
-+	TP_ARGS(sb, type, bio),
-+
-+	TP_CONDITION(bio)
-+);
-+
-+DEFINE_EVENT_CONDITION(f2fs__bio, f2fs_submit_read_bio,
- 
--	TP_PROTO(struct super_block *sb, struct f2fs_io_info *fio,
--							struct bio *bio),
-+	TP_PROTO(struct super_block *sb, int type, struct bio *bio),
- 
--	TP_ARGS(sb, fio, bio),
-+	TP_ARGS(sb, type, bio),
- 
- 	TP_CONDITION(bio)
- );
- 
--DEFINE_EVENT_CONDITION(f2fs__submit_bio, f2fs_submit_read_bio,
-+DEFINE_EVENT_CONDITION(f2fs__bio, f2fs_submit_write_bio,
- 
--	TP_PROTO(struct super_block *sb, struct f2fs_io_info *fio,
--							struct bio *bio),
-+	TP_PROTO(struct super_block *sb, int type, struct bio *bio),
- 
--	TP_ARGS(sb, fio, bio),
-+	TP_ARGS(sb, type, bio),
- 
- 	TP_CONDITION(bio)
- );
--- 
-2.11.0
+Thanks,
+
+> 
+> Thoughts?
+> 
+> Thanks,
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most 
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
