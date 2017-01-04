@@ -1,120 +1,152 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH] mm: introduce kv[mz]alloc helpers
-Date: Tue, 3 Jan 2017 11:33:29 +0100
-Message-ID: <20170103103328.GE30111@dhcp22.suse.cz>
-References: <20170102133700.1734-1-mhocko@kernel.org>
- <74a00631-ab1f-b818-6608-1554bcd7cbc1@suse.cz>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: don't reserve block for empty file
+ when convert inline, page
+Date: Tue, 3 Jan 2017 17:23:28 -0800
+Message-ID: <20170104012328.GA16504@jaegeuk.local>
+References: <65c348f6-48ce-e810-72f4-0bf86c39d0b6@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cOaIj-0004Dz-O5
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 04 Jan 2017 01:23:37 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cOaIi-00013M-NO
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 04 Jan 2017 01:23:37 +0000
 Content-Disposition: inline
-In-Reply-To: <74a00631-ab1f-b818-6608-1554bcd7cbc1@suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org, linux-ext4@vger.kernel.org, Joe Perches <joe@perches.com>, Anatoly Stepanov <astepanov@cloudlinux.com>, Paolo Bonzini <pbonzini@redhat.com>, Mike Snitzer <snitzer@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <65c348f6-48ce-e810-72f4-0bf86c39d0b6@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Kinglong Mee <kinglongmee@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue 03-01-17 11:23:04, Vlastimil Babka wrote:
-> On 01/02/2017 02:37 PM, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > Using kmalloc with the vmalloc fallback for larger allocations is a
-> > common pattern in the kernel code. Yet we do not have any common helper
-> > for that and so users have invented their own helpers. Some of them are
-> > really creative when doing so. Let's just add kv[mz]alloc and make sure
-> > it is implemented properly. This implementation makes sure to not make
-> > a large memory pressure for > PAGE_SZE requests (__GFP_NORETRY) and also
-> > to not warn about allocation failures. This also rules out the OOM
-> > killer as the vmalloc is a more approapriate fallback than a disruptive
-> > user visible action.
-> > 
-> > This patch also changes some existing users and removes helpers which
-> > are specific for them. In some cases this is not possible (e.g.
-> > ext4_kvmalloc, libcfs_kvzalloc, __aa_kvmalloc) because those seems to be
-> > broken and require GFP_NO{FS,IO} context which is not vmalloc compatible
-> > in general (note that the page table allocation is GFP_KERNEL). Those
-> > need to be fixed separately.
-> > 
-> > apparmor has already claimed kv[mz]alloc so remove those and use
-> > __aa_kvmalloc instead to prevent from the naming clashes.
-> > 
-> > Changes since v1
-> > - define __vmalloc_node_flags for CONFIG_MMU=n
-> > 
-> > Cc: Anatoly Stepanov <astepanov@cloudlinux.com>
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Mike Snitzer <snitzer@redhat.com>
-> > Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> > Cc: "Theodore Ts'o" <tytso@mit.edu>
-> > Reviewed-by: Andreas Dilger <adilger@dilger.ca> # ext4 part
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+Hi Kinglong,
+
+On 01/02, Kinglong Mee wrote:
+> A test program gets the SEEK_DATA with two values between
+> a new created file and the exist file on f2fs filesystem. 
 > 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> (but with a small fix and suggestion below)
-
-Thanks!
-
+> F2FS filesystem,  (the first "test1" is a new file)
+> # ./lseektest /f2fs/test1
+> SEEK_DATA size != 0 (offset = 8192)
+> # ./lseektest /f2fs/test1
+> SEEK_DATA size != 0 (offset = 4096)
 > 
-> > --- a/mm/util.c
-> > +++ b/mm/util.c
-> > @@ -346,6 +346,46 @@ unsigned long vm_mmap(struct file *file, unsigned long addr,
-> >  }
-> >  EXPORT_SYMBOL(vm_mmap);
-> > 
-> > +/**
-> > + * kvmalloc_node - allocate contiguous memory from SLAB with vmalloc fallback
-> > + * @size: size of the request.
-> > + * @flags: gfp mask for the allocation - must be compatible with GFP_KERNEL.
-> > + * @node: numa node to allocate from
-> > + *
-> > + * Uses kmalloc to get the memory but if the allocation fails then falls back
-> > + * to the vmalloc allocator. Use kvfree for freeing the memory.
-> > + */
-> > +void *kvmalloc_node(size_t size, gfp_t flags, int node)
-> > +{
-> > +	gfp_t kmalloc_flags = flags;
-> > +	void *ret;
-> > +
-> > +	/*
-> > +	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
-> > +	 * so the given set of flags has to be compatible.
-> > +	 */
-> > +	WARN_ON((flags & GFP_KERNEL) != GFP_KERNEL);
+> PNFS filesystem, (the first "test1" is a new file)
+> # ./lseektest /pnfs/test1
+> SEEK_DATA size != 0 (offset = 4096)
+> # ./lseektest /pnfs/test1
+> SEEK_DATA size != 0 (offset = 4096)
 > 
-> Wouldn't a _ONCE be sufficient? It's unlikely that multiple wrong call sites
-> appear out of the blue, but we don't want to flood the log from a single
-> frequently called site. No strong feelings though.
-
-Fair enough, I will make it WARN_ON_ONCE. I wish WARN_ON_ONCE would be
-more clever, though. We can lose information about different call sites.
-I was thinking about how to deal with it and I stackdepot sounds like it
-could help here. But this is off-topic...
-
-> > +
-> > +	/*
-> > +	 * Make sure that larger requests are not too disruptive - no OOM
-> > +	 * killer and no allocation failure warnings as we have a fallback
-> > +	 */
-> > +	if (size > PAGE_SIZE)
-> > +		kmalloc_flags |= __GFP_NORETRY | __GFP_NOWARN;
-> > +
-> > +	ret = kmalloc_node(size, kmalloc_flags, node);
-> > +
-> > +	/*
-> > +	 * It doesn't really make sense to fallback to vmalloc for sub page
-> > +	 * requests
-> > +	 */
-> > +	if (ret || size < PAGE_SIZE)
+> # cat lseektest.c
 > 
-> This should be size <= PAGE_SIZE.
+> #include <stdio.h>
+> #include <string.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <errno.h>
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <fcntl.h>
+> 
+> #ifndef SEEK_DATA
+> #define SEEK_DATA      3
+> #define SEEK_HOLE      4
+> #endif
+> 
+> int main(int argc, char **argv)
+> {
+>         char *filename = argv[1];
+>         int offset = 1, i = 0, fd = -1;
+> 
+>         if (argc < 2) {
+>                 printf("Usage: %s f2fsfilename\n", argv[0]);
+>                 return -1;
+>         }
+> 
+>         /*
+>         if (!access(filename, F_OK) || errno != ENOENT) {
+>                 printf("Needs a new file for test, %m\n");
+>                 return -1;
+>         }*/
+> 
+>         fd = open(filename, O_RDWR | O_CREAT, 0777);
+>         if (fd < 0) {
+>                 printf("Create test file %s failed, %m\n", filename);
+>                 return -1;
+>         }
+> 
+>         for (i = 0; i < 20; i++) {
+>                 offset = 1 << i;
+>                 ftruncate(fd, 0);
+>                 lseek(fd, offset, SEEK_SET);
+>                 write(fd, "test", 5);
+>                 /* Get the alloc size by seek data equal zero*/
+>                 if (lseek(fd, 0, SEEK_DATA)) {
+>                         printf("SEEK_DATA size != 0 (offset = %d)\n", offset);
+>                         break;
+>                 }
+>         }
+> 
+>         close(fd);
+>         return 0;
+> }
+> 
+> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+> ---
+>  fs/f2fs/inline.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index e32a9e5..6c8d099 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -117,7 +117,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+>  	};
+>  	int dirty, err;
+>  
+> -	if (!f2fs_exist_data(dn->inode))
+> +	if (!f2fs_exist_data(dn->inode) || !i_size_read(dn->inode))
+>  		goto clear_out;
 
-You are right of course!
+The point is that f2fs_exist_data() should return true, since the file was
+truncated to 0. So, could you check this out?
+
+Thanks,
+
+---
+ fs/f2fs/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 826fefc05fb1..ba2021e01c33 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -570,6 +570,8 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
+ 	if (f2fs_has_inline_data(inode)) {
+ 		if (truncate_inline_inode(ipage, from))
+ 			set_page_dirty(ipage);
++		if (from == 0)
++			clear_inode_flag(inode, FI_DATA_EXIST);
+ 		f2fs_put_page(ipage, 1);
+ 		truncate_page = true;
+ 		goto out;
 -- 
-Michal Hocko
-SUSE Labs
+2.11.0
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most 
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
