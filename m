@@ -1,25 +1,24 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
 Subject: Re: [PATCH] f2fs: fix small discards when
 	se->valid_blocks is zero
-Date: Tue, 3 Jan 2017 17:55:10 -0800
-Message-ID: <20170104015510.GB16504@jaegeuk.local>
+Date: Wed, 4 Jan 2017 09:54:29 +0800
+Message-ID: <72699809-4316-0390-a09b-eb5d5fc70981@huawei.com>
 References: <1483434117-24427-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cOanP-0008C9-EX
+	(envelope-from <yuchao0@huawei.com>) id 1cOanG-0008Bd-Ol
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 Jan 2017 01:55:19 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cOanO-00080c-Fc
+	Wed, 04 Jan 2017 01:55:10 +0000
+Received: from szxga01-in.huawei.com ([58.251.152.64])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cOanA-0007nh-74
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 04 Jan 2017 01:55:19 +0000
-Content-Disposition: inline
+	Wed, 04 Jan 2017 01:55:10 +0000
 In-Reply-To: <1483434117-24427-1-git-send-email-yunlong.song@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -30,12 +29,10 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlong Song <yunlong.song@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, sylinux@163.com, linux-fsdevel@vger.kernel.org, chao@kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>, jaegeuk@kernel.org, cm224.lee@samsung.com, chao@kernel.org, sylinux@163.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Hi Yunlong,
-
-On 01/03, Yunlong Song wrote:
+On 2017/1/3 17:01, Yunlong Song wrote:
 > In the small discard case, when se->valid_blocks is zero, the add_discard_addrs
 > will directly return without __add_discard_entry. This will cause the file
 > delete have no small discard. The case is like this:
@@ -46,9 +43,7 @@ On 01/03, Yunlong Song wrote:
 > sending any discard of that file, and forever due to cur_map[i] ^ ckpt_map[i] =
 > 0 after that checkpoint
 
-During this checkpoint, that'll be discarded as a prefree segment, no?
-Note that, if this is a current segment, f2fs won't discard it until it is
-fully allocated.
+Wouldn't it be discarded as prefree segment?
 
 Thanks,
 
@@ -71,8 +66,8 @@ Thanks,
 >  		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
 >  			return;
 >  	}
-> -- 
-> 1.8.5.2
+> 
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most 
