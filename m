@@ -1,69 +1,41 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: fix small discards when se->valid_blocks is zero
-Date: Wed, 4 Jan 2017 11:59:27 +0800
-Message-ID: <586C731F.9020509@huawei.com>
-References: <1483434117-24427-1-git-send-email-yunlong.song@huawei.com>
- <20170104015510.GB16504@jaegeuk.local>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 04/10] f2fs: support IO alignment for DATA and
+ NODE writes
+Date: Wed, 4 Jan 2017 16:23:26 +0800
+Message-ID: <7920f143-750a-69df-f4b3-eeac82c1014b@huawei.com>
+References: <20161230185117.3832-1-jaegeuk@kernel.org>
+ <20161230185117.3832-4-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170104015510.GB16504@jaegeuk.local>
+In-Reply-To: <20161230185117.3832-4-jaegeuk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Kim,
-    Although the blocks of that file will finally be discarded when it is not current segment any more and almost fully invalidate,
-but the point is that the blocks of that file can only be discarded along with the whole segment now, which violates the meaning
-of small discard. Look at the case I said in last mail, if the segment which owns the deleted file has no more changing after the file
-deleting, and its validate blocks are perhaps over 95%, and it may not be easy to be selected as a gc victim. In this case, FTL can
-not know the "file delete" on time, and the invalidate blocks of that file can not be discarded in FTL layer on time.
+Hi Jaegeuk,
 
-On 2017/1/4 9:55, Jaegeuk Kim wrote:
-> Hi Yunlong,
->
-> On 01/03, Yunlong Song wrote:
->> In the small discard case, when se->valid_blocks is zero, the add_discard_addrs
->> will directly return without __add_discard_entry. This will cause the file
->> delete have no small discard. The case is like this:
->>
->> 1. Allocate free 2M segment
->> 2. Write a file (size n blocks < 512) in that 2M segment, se->valid_blocks = n
->> 3. Delete that file, se->valid_blocks = 0, add_discard_addrs will return without
->> sending any discard of that file, and forever due to cur_map[i] ^ ckpt_map[i] =
->> 0 after that checkpoint
-> During this checkpoint, that'll be discarded as a prefree segment, no?
-> Note that, if this is a current segment, f2fs won't discard it until it is
-> fully allocated.
->
-> Thanks,
->
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>  fs/f2fs/segment.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 0738f48..8610f14 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -838,7 +838,7 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>  		return;
->>  
->>  	if (!force) {
->> -		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
->> +		if (!test_opt(sbi, DISCARD) ||
->>  		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
->>  			return;
->>  	}
->> -- 
->> 1.8.5.2
-> .
->
+On 2016/12/31 2:51, Jaegeuk Kim wrote:
+> This patch implements IO alignment by filling dummy blocks in DATA and NODE
+> write bios. If we can guarantee, for example, 32KB or 64KB for such the IOs,
+> we can eliminate underlying dummy page problem which FTL conducts in order to
+> close MLC or TLC partial written pages.
+> 
+> Note that,
+>  - it requires "-o mode=lfs".
+>  - IO size should be power of 2, not exceed BIO_MAX_PAGES, 256.
+>  - read IO is still 4KB.
+>  - do checkpoint at fsync, if dummy NODE page was written.
 
+Which scenario we can benefit from? Any numbers?
 
--- 
+I doubt that there are some potential side-effect points:
+ - write amplification will be more serious than before
+ - free space will be more fragmented since dummy blocks is separated in whole
+address space
+ - there is less chance to merge small(unaligned) IOs in block layer
+
+Thoughts?
+
 Thanks,
-Yunlong Song
