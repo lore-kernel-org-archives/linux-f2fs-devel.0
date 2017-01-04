@@ -1,128 +1,107 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: [PATCH] mm: support __GFP_REPEAT in kvmalloc_node
-Date: Wed, 4 Jan 2017 19:12:30 +0100
-Message-ID: <20170104181229.GB10183@dhcp22.suse.cz>
-References: <20170102133700.1734-1-mhocko@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: fix small discards when se->valid_blocks is zero
+Date: Wed, 4 Jan 2017 14:36:18 -0800
+Message-ID: <20170104223618.GA1011@jaegeuk.local>
+References: <1483434117-24427-1-git-send-email-yunlong.song@huawei.com>
+ <20170104015510.GB16504@jaegeuk.local>
+ <586C731F.9020509@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170102133700.1734-1-mhocko@kernel.org>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org, linux-ext4@vger.kernel.org, Joe Perches <joe@perches.com>, Anatoly Stepanov <astepanov@cloudlinux.com>, Paolo Bonzini <pbonzini@redhat.com>, Mike Snitzer <snitzer@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>
+In-Reply-To: <586C731F.9020509@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>
+Cc: cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-While checking opencoded users I've encountered that vhost code would
-really like to use kvmalloc with __GFP_REPEAT [1] so the following patch
-adds support for __GFP_REPEAT and converts both vhost users.
+On 01/04, Yunlong Song wrote:
+> Hi Kim,
+>     Although the blocks of that file will finally be discarded when it is not current segment any more and almost fully invalidate,
+> but the point is that the blocks of that file can only be discarded along with the whole segment now, which violates the meaning
+> of small discard. Look at the case I said in last mail, if the segment which owns the deleted file has no more changing after the file
+> deleting, and its validate blocks are perhaps over 95%, and it may not be easy to be selected as a gc victim. In this case, FTL can
+> not know the "file delete" on time, and the invalidate blocks of that file can not be discarded in FTL layer on time.
 
-So currently I am sitting on 3 patches. I will wait for more feedback -
-especially about potential split ups or cleanups few more days and then
-repost the whole series.
+Correction: current active segment is also treated as a candidate for small
+discards in add_discard_addrs().
 
-[1] http://lkml.kernel.org/r/20170104150800.GO25453@dhcp22.suse.cz
+So, it seems you want to discard small invalid chunks in the current active
+segments, right? If so, how do you think this change?
+
 ---
->From 0b92e4d2e040524b878d4e7b9ee88fbad5284b33 Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Wed, 4 Jan 2017 18:01:39 +0100
-Subject: [PATCH] mm: support __GFP_REPEAT in kvmalloc_node
+ fs/f2fs/segment.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-vhost code uses __GFP_REPEAT when allocating vhost_virtqueue resp.
-vhost_vsock because it would really like to prefer kmalloc to the
-vmalloc fallback - see 23cc5a991c7a ("vhost-net: extend device
-allocation to vmalloc") for more context. Michael Tsirkin has also
-noted:
-"
-__GFP_REPEAT overhead is during allocation time.  Using vmalloc means all
-accesses are slowed down.  Allocation is not on data path, accesses are.
-"
-
-Let's teach kvmalloc_node to handle __GFP_REPEAT properly. There are two
-things to be careful about. First we should prevent from the OOM killer
-and so have to involve __GFP_NORETRY by default and secondly override
-__GFP_REPEAT for !costly order requests as the __GFP_REPEAT is ignored
-for !costly orders.
-
-This patch shouldn't introduce any functional change.
-
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- drivers/vhost/net.c   | 9 +++------
- drivers/vhost/vsock.c | 9 +++------
- mm/util.c             | 9 +++++++--
- 3 files changed, 13 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 5dc34653274a..105cd04c7414 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -797,12 +797,9 @@ static int vhost_net_open(struct inode *inode, struct file *f)
- 	struct vhost_virtqueue **vqs;
- 	int i;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 82078734f379..394a6fef7f82 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -853,11 +853,10 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+ 	if (se->valid_blocks == max_blocks || !f2fs_discard_en(sbi))
+ 		return false;
  
--	n = kmalloc(sizeof *n, GFP_KERNEL | __GFP_NOWARN | __GFP_REPEAT);
--	if (!n) {
--		n = vmalloc(sizeof *n);
--		if (!n)
--			return -ENOMEM;
+-	if (!force) {
+-		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
+-		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
+-			return false;
 -	}
-+	n = kvmalloc(sizeof *n, GFP_KERNEL | __GFP_REPEAT);
-+	if (!n)
-+		return -ENOMEM;
- 	vqs = kmalloc(VHOST_NET_VQ_MAX * sizeof(*vqs), GFP_KERNEL);
- 	if (!vqs) {
- 		kvfree(n);
-diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-index bbbf588540ed..7e0159867553 100644
---- a/drivers/vhost/vsock.c
-+++ b/drivers/vhost/vsock.c
-@@ -455,12 +455,9 @@ static int vhost_vsock_dev_open(struct inode *inode, struct file *file)
- 	/* This struct is large and allocation could fail, fall back to vmalloc
- 	 * if there is no other way.
- 	 */
--	vsock = kzalloc(sizeof(*vsock), GFP_KERNEL | __GFP_NOWARN | __GFP_REPEAT);
--	if (!vsock) {
--		vsock = vmalloc(sizeof(*vsock));
--		if (!vsock)
--			return -ENOMEM;
--	}
-+	vsock = kvmalloc(sizeof(*vsock), GFP_KERNEL | __GFP_REPEAT);
-+	if (!vsock)
-+		return -ENOMEM;
++	if (!force && (!test_opt(sbi, DISCARD) ||
++		(!se->valid_blocks && !IS_CURSEG(sbi, cpc->trim_start)) ||
++		SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards))
++		return false;
  
- 	vqs = kmalloc_array(ARRAY_SIZE(vsock->vqs), sizeof(*vqs), GFP_KERNEL);
- 	if (!vqs) {
-diff --git a/mm/util.c b/mm/util.c
-index 8e4ea6cbe379..a2bfb85e60e5 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -348,8 +348,13 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
- 	 * Make sure that larger requests are not too disruptive - no OOM
- 	 * killer and no allocation failure warnings as we have a fallback
- 	 */
--	if (size > PAGE_SIZE)
--		kmalloc_flags |= __GFP_NORETRY | __GFP_NOWARN;
-+	if (size > PAGE_SIZE) {
-+		kmalloc_flags |= __GFP_NOWARN;
-+
-+		if (!(kmalloc_flags & __GFP_REPEAT) ||
-+				(size <= PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
-+			kmalloc_flags |= __GFP_NORETRY;
-+	}
- 
- 	ret = kmalloc_node(size, kmalloc_flags, node);
- 
+ 	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
+ 	for (i = 0; i < entries; i++)
 -- 
 2.11.0
 
--- 
-Michal Hocko
-SUSE Labs
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+> 
+> On 2017/1/4 9:55, Jaegeuk Kim wrote:
+> > Hi Yunlong,
+> >
+> > On 01/03, Yunlong Song wrote:
+> >> In the small discard case, when se->valid_blocks is zero, the add_discard_addrs
+> >> will directly return without __add_discard_entry. This will cause the file
+> >> delete have no small discard. The case is like this:
+> >>
+> >> 1. Allocate free 2M segment
+> >> 2. Write a file (size n blocks < 512) in that 2M segment, se->valid_blocks = n
+> >> 3. Delete that file, se->valid_blocks = 0, add_discard_addrs will return without
+> >> sending any discard of that file, and forever due to cur_map[i] ^ ckpt_map[i] =
+> >> 0 after that checkpoint
+> > During this checkpoint, that'll be discarded as a prefree segment, no?
+> > Note that, if this is a current segment, f2fs won't discard it until it is
+> > fully allocated.
+> >
+> > Thanks,
+> >
+> >> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> >> ---
+> >>  fs/f2fs/segment.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> index 0738f48..8610f14 100644
+> >> --- a/fs/f2fs/segment.c
+> >> +++ b/fs/f2fs/segment.c
+> >> @@ -838,7 +838,7 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >>  		return;
+> >>  
+> >>  	if (!force) {
+> >> -		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
+> >> +		if (!test_opt(sbi, DISCARD) ||
+> >>  		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
+> >>  			return;
+> >>  	}
+> >> -- 
+> >> 1.8.5.2
+> > .
+> >
+> 
+> 
+> -- 
+> Thanks,
+> Yunlong Song
+> 
