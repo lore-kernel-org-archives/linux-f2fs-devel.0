@@ -1,84 +1,140 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 08/10] f2fs: relax async discard commands more
-Date: Fri, 6 Jan 2017 11:32:36 +0800
-Message-ID: <93ff6df9-65b1-552f-e5e9-a7e126cfc3a5@huawei.com>
-References: <20161230185117.3832-1-jaegeuk@kernel.org>
- <20161230185117.3832-8-jaegeuk@kernel.org>
- <a32a776f-00a3-740b-5b62-7137250f4531@huawei.com>
- <f450fd45-1cf9-1969-007e-7cd72b614e08@huawei.com>
- <20170105194604.GA2064@jaegeuk.local>
- <97193665-85ae-268f-c50c-8b29bc4b57c7@huawei.com>
- <20170106024238.GA6605@jaegeuk.local>
+From: Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] mm: support __GFP_REPEAT in kvmalloc_node
+Date: Fri, 6 Jan 2017 13:09:36 +0100
+Message-ID: <49b2c2de-5d50-1f61-5ddf-e72c52017534@suse.cz>
+References: <20170102133700.1734-1-mhocko@kernel.org>
+ <20170104181229.GB10183@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20170106024238.GA6605@jaegeuk.local>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20170104181229.GB10183@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>, Johannes Weiner <hannes@cmpxchg.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-security-module@vger.kernel.org, linux-ext4@vger.kernel.org, Joe Perches <joe@perches.com>, Anatoly Stepanov <astepanov@cloudlinux.com>, Paolo Bonzini <pbonzini@redhat.com>, Mike Snitzer <snitzer@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk,
-
-On 2017/1/6 10:42, Jaegeuk Kim wrote:
-> Hi Chao,
+On 01/04/2017 07:12 PM, Michal Hocko wrote:
+> While checking opencoded users I've encountered that vhost code would
+> really like to use kvmalloc with __GFP_REPEAT [1] so the following patch
+> adds support for __GFP_REPEAT and converts both vhost users.
 > 
-> On 01/06, Chao Yu wrote:
->> On 2017/1/6 3:46, Jaegeuk Kim wrote:
->>> On 01/05, Chao Yu wrote:
->>>> On 2017/1/4 17:29, Chao Yu wrote:
->>>>> On 2016/12/31 2:51, Jaegeuk Kim wrote:
->>>>>> This patch relaxes async discard commands to avoid waiting its end_io during
->>>>>> checkpoint.
->>>>>> Instead of waiting them during checkpoint, it will be done when actually reusing
->>>>>> them.
->>>>>>
->>>>>> Test on initial partition of nvme drive.
->>>>>>
->>>>>>  # time fstrim /mnt/test
->>>>>>
->>>>>> Before : 6.158s
->>>>>> After : 4.822s
->>>>>>
->>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>
->>>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>>>>
->>>>> One comment below,
->>>>
->>>> I still have a comment on this patch.
->>>>
->>>>>> -void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
->>>>>> +/* This should be covered by global mutex, &sit_i->sentry_lock */
->>>>>> +void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, unsigned int segno)
->>>>>>  {
->>>>>>  	struct list_head *wait_list = &(SM_I(sbi)->wait_list);
->>>>>>  	struct bio_entry *be, *tmp;
->>>>>> @@ -646,7 +650,15 @@ void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
->>>>>>  		struct bio *bio = be->bio;
->>>>>>  		int err;
->>>>>>  
->>>>>> -		wait_for_completion_io(&be->event);
->>>>>> +		if (!completion_done(&be->event)) {
->>>>>> +			if ((be->start_segno >= segno &&
->>>>>> +					be->end_segno <= segno) ||
->>>>>
->>>>> segno >= be->start_segno && segno < be->end_segno ?
->>
->> Still can not understand this judgment condition, we should wait completion of
->> discard command only when segno is locate in range of [start_segno, end_segno]?
->>
->> But now, this condition can be true only when segno, start_segno, end_segno have
->> equal value.
->>
->> Please correct me if I'm wrong.
+> So currently I am sitting on 3 patches. I will wait for more feedback -
+> especially about potential split ups or cleanups few more days and then
+> repost the whole series.
 > 
-> Urg. I rewrote it to use block addresses.
+> [1] http://lkml.kernel.org/r/20170104150800.GO25453@dhcp22.suse.cz
+> ---
+> From 0b92e4d2e040524b878d4e7b9ee88fbad5284b33 Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Wed, 4 Jan 2017 18:01:39 +0100
+> Subject: [PATCH] mm: support __GFP_REPEAT in kvmalloc_node
 > 
-> How about this?
+> vhost code uses __GFP_REPEAT when allocating vhost_virtqueue resp.
+> vhost_vsock because it would really like to prefer kmalloc to the
+> vmalloc fallback - see 23cc5a991c7a ("vhost-net: extend device
+> allocation to vmalloc") for more context. Michael Tsirkin has also
+> noted:
+> "
+> __GFP_REPEAT overhead is during allocation time.  Using vmalloc means all
+> accesses are slowed down.  Allocation is not on data path, accesses are.
+> "
+> 
+> Let's teach kvmalloc_node to handle __GFP_REPEAT properly. There are two
+> things to be careful about. First we should prevent from the OOM killer
+> and so have to involve __GFP_NORETRY by default and secondly override
+> __GFP_REPEAT for !costly order requests as the __GFP_REPEAT is ignored
+> for !costly orders.
+> 
+> This patch shouldn't introduce any functional change.
 
-Looks good to me. Nice work!
+Which is because the converted usages are always used for costly order,
+right.
 
-Thanks,
+> 
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  drivers/vhost/net.c   | 9 +++------
+>  drivers/vhost/vsock.c | 9 +++------
+>  mm/util.c             | 9 +++++++--
+>  3 files changed, 13 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> index 5dc34653274a..105cd04c7414 100644
+> --- a/drivers/vhost/net.c
+> +++ b/drivers/vhost/net.c
+> @@ -797,12 +797,9 @@ static int vhost_net_open(struct inode *inode, struct file *f)
+>  	struct vhost_virtqueue **vqs;
+>  	int i;
+>  
+> -	n = kmalloc(sizeof *n, GFP_KERNEL | __GFP_NOWARN | __GFP_REPEAT);
+> -	if (!n) {
+> -		n = vmalloc(sizeof *n);
+> -		if (!n)
+> -			return -ENOMEM;
+> -	}
+> +	n = kvmalloc(sizeof *n, GFP_KERNEL | __GFP_REPEAT);
+> +	if (!n)
+> +		return -ENOMEM;
+>  	vqs = kmalloc(VHOST_NET_VQ_MAX * sizeof(*vqs), GFP_KERNEL);
+>  	if (!vqs) {
+>  		kvfree(n);
+> diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+> index bbbf588540ed..7e0159867553 100644
+> --- a/drivers/vhost/vsock.c
+> +++ b/drivers/vhost/vsock.c
+> @@ -455,12 +455,9 @@ static int vhost_vsock_dev_open(struct inode *inode, struct file *file)
+>  	/* This struct is large and allocation could fail, fall back to vmalloc
+>  	 * if there is no other way.
+>  	 */
+> -	vsock = kzalloc(sizeof(*vsock), GFP_KERNEL | __GFP_NOWARN | __GFP_REPEAT);
+> -	if (!vsock) {
+> -		vsock = vmalloc(sizeof(*vsock));
+> -		if (!vsock)
+> -			return -ENOMEM;
+> -	}
+> +	vsock = kvmalloc(sizeof(*vsock), GFP_KERNEL | __GFP_REPEAT);
+> +	if (!vsock)
+> +		return -ENOMEM;
+>  
+>  	vqs = kmalloc_array(ARRAY_SIZE(vsock->vqs), sizeof(*vqs), GFP_KERNEL);
+>  	if (!vqs) {
+> diff --git a/mm/util.c b/mm/util.c
+> index 8e4ea6cbe379..a2bfb85e60e5 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -348,8 +348,13 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+>  	 * Make sure that larger requests are not too disruptive - no OOM
+>  	 * killer and no allocation failure warnings as we have a fallback
+>  	 */
+> -	if (size > PAGE_SIZE)
+> -		kmalloc_flags |= __GFP_NORETRY | __GFP_NOWARN;
+> +	if (size > PAGE_SIZE) {
+> +		kmalloc_flags |= __GFP_NOWARN;
+> +
+> +		if (!(kmalloc_flags & __GFP_REPEAT) ||
+> +				(size <= PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER))
+> +			kmalloc_flags |= __GFP_NORETRY;
 
+I think this would be more understandable for me if it was written in
+the opposite way, i.e. "if we have costly __GFP_REPEAT allocation, don't
+use __GFP_NORETRY", but nevermind, seems correct to me wrt current
+handling of both flags in the page allocator. And it serves as a good
+argument to have this wrapper in mm/ as we are hopefully more likely to
+keep it working as intended with future changes, than all the opencoded
+variants.
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+> +	}
+>  
+>  	ret = kmalloc_node(size, kmalloc_flags, node);
+>  
+> 
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
