@@ -1,22 +1,22 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 5/5] f2fs: check in-memory sit version bitmap
-Date: Sat, 7 Jan 2017 18:52:34 +0800
-Message-ID: <90c86a9f-64fa-5301-633d-d9bdfb811196@huawei.com>
+Subject: [PATCH 2/5] f2fs: introduce FI_ATOMIC_COMMIT
+Date: Sat, 7 Jan 2017 18:50:26 +0800
+Message-ID: <93594c54-a89b-d69b-d10b-8a44c781b665@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cPocG-00079k-OS
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cPocr-0007CP-Ez
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 07 Jan 2017 10:52:52 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cPoc8-0003yq-Th
+	Sat, 07 Jan 2017 10:53:29 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cPocl-00083h-OA
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 07 Jan 2017 10:52:52 +0000
+	Sat, 07 Jan 2017 10:53:29 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,115 +29,145 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch adds a mirror for sit version bitmap, and use it to detect
-in-memory bitmap corruption which may be caused by bit-transition of
-cache or memory overflow.
+This patch introduces a new flag to indicate inode status of doing atomic
+write committing, so that, we can keep atomic write status for inode
+during atomic committing, then we can skip GCing pages of atomic write inode,
+that avoids random GCed datas being mixed with current transaction, so
+isolation of transaction can be kept.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 16 ++++++++++++----
- fs/f2fs/segment.h | 18 ++++++++++++++++++
- 2 files changed, 30 insertions(+), 4 deletions(-)
+ fs/f2fs/data.c    |  2 +-
+ fs/f2fs/f2fs.h    |  6 ++++++
+ fs/f2fs/file.c    | 11 ++++++-----
+ fs/f2fs/gc.c      |  6 ++++++
+ fs/f2fs/segment.c | 10 +++++++---
+ 5 files changed, 26 insertions(+), 9 deletions(-)
 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 3732a1aae6f7..460d79905ad1 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1979,7 +1979,7 @@ static int f2fs_set_data_page_dirty(struct page *page)
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+
+-	if (f2fs_is_atomic_file(inode)) {
++	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
+ 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
+ 			register_inmem_page(inode, page);
+ 			return 1;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 841f1d4f6a00..72bff7d42ff5 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1643,6 +1643,7 @@ enum {
+ 	FI_UPDATE_WRITE,	/* inode has in-place-update data */
+ 	FI_NEED_IPU,		/* used for ipu per file */
+ 	FI_ATOMIC_FILE,		/* indicate atomic file */
++	FI_ATOMIC_COMMIT,	/* indicate the state of atomical committing */
+ 	FI_VOLATILE_FILE,	/* indicate volatile file */
+ 	FI_FIRST_BLOCK_WRITTEN,	/* indicate #0 data block was written */
+ 	FI_DROP_CACHE,		/* drop dirty page cache */
+@@ -1832,6 +1833,11 @@ static inline bool f2fs_is_atomic_file(struct inode *inode)
+ 	return is_inode_flag_set(inode, FI_ATOMIC_FILE);
+ }
+
++static inline bool f2fs_is_commit_atomic_write(struct inode *inode)
++{
++	return is_inode_flag_set(inode, FI_ATOMIC_COMMIT);
++}
++
+ static inline bool f2fs_is_volatile_file(struct inode *inode)
+ {
+ 	return is_inode_flag_set(inode, FI_VOLATILE_FILE);
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6c335180b9d8..e45522115b1c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1569,14 +1569,15 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 		goto err_out;
+
+ 	if (f2fs_is_atomic_file(inode)) {
+-		clear_inode_flag(inode, FI_ATOMIC_FILE);
+ 		ret = commit_inmem_pages(inode);
+-		if (ret) {
+-			set_inode_flag(inode, FI_ATOMIC_FILE);
++		if (ret)
+ 			goto err_out;
+-		}
++
+ 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+-		stat_dec_atomic_write(inode);
++		if (!ret) {
++			clear_inode_flag(inode, FI_ATOMIC_FILE);
++			stat_dec_atomic_write(inode);
++		}
+ 	} else {
+ 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+ 	}
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index f911a52470bb..357a78e72c87 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -571,6 +571,9 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
+ 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+ 		goto out;
+
++	if (f2fs_is_atomic_file(inode))
++		goto out;
++
+ 	set_new_dnode(&dn, inode, NULL, NULL, 0);
+ 	err = get_dnode_of_data(&dn, bidx, LOOKUP_NODE);
+ 	if (err)
+@@ -663,6 +666,9 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+ 	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+ 		goto out;
+
++	if (f2fs_is_atomic_file(inode))
++		goto out;
++
+ 	if (gc_type == BG_GC) {
+ 		if (PageWriteback(page))
+ 			goto out;
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index ec21ee1c61cd..bdb82b7ebb31 100644
+index fb7e591e62dc..fa8c0ae87d47 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -2346,7 +2346,7 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
- 	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	struct sit_info *sit_i;
- 	unsigned int sit_segs, start;
--	char *src_bitmap, *dst_bitmap;
-+	char *src_bitmap;
- 	unsigned int bitmap_size;
-
- 	/* allocate memory for SIT information */
-@@ -2408,17 +2408,22 @@ static int build_sit_info(struct f2fs_sb_info *sbi)
- 	bitmap_size = __bitmap_size(sbi, SIT_BITMAP);
- 	src_bitmap = __bitmap_ptr(sbi, SIT_BITMAP);
-
--	dst_bitmap = kmemdup(src_bitmap, bitmap_size, GFP_KERNEL);
--	if (!dst_bitmap)
-+	sit_i->sit_bitmap = kmemdup(src_bitmap, bitmap_size, GFP_KERNEL);
-+	if (!sit_i->sit_bitmap)
- 		return -ENOMEM;
-
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	sit_i->sit_bitmap_mir = kmemdup(src_bitmap, bitmap_size, GFP_KERNEL);
-+	if (!sit_i->sit_bitmap_mir)
-+		return -ENOMEM;
-+#endif
-+
- 	/* init SIT information */
- 	sit_i->s_ops = &default_salloc_ops;
-
- 	sit_i->sit_base_addr = le32_to_cpu(raw_super->sit_blkaddr);
- 	sit_i->sit_blocks = sit_segs << sbi->log_blocks_per_seg;
- 	sit_i->written_valid_blocks = 0;
--	sit_i->sit_bitmap = dst_bitmap;
- 	sit_i->bitmap_size = bitmap_size;
- 	sit_i->dirty_sentries = 0;
- 	sit_i->sents_per_block = SIT_ENTRY_PER_BLOCK;
-@@ -2824,6 +2829,9 @@ static void destroy_sit_info(struct f2fs_sb_info *sbi)
-
- 	SM_I(sbi)->sit_info = NULL;
- 	kfree(sit_i->sit_bitmap);
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	kfree(sit_i->sit_bitmap_mir);
-+#endif
- 	kfree(sit_i);
- }
-
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 9af95194db06..5cb5755c75d9 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -209,6 +209,9 @@ struct sit_info {
- 	block_t sit_blocks;		/* # of blocks used by SIT area */
- 	block_t written_valid_blocks;	/* # of valid blocks in main area */
- 	char *sit_bitmap;		/* SIT bitmap pointer */
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	char *sit_bitmap_mir;		/* SIT bitmap mirror */
-+#endif
- 	unsigned int bitmap_size;	/* SIT bitmap size */
-
- 	unsigned long *tmp_map;			/* bitmap for temporal use */
-@@ -423,6 +426,12 @@ static inline void get_sit_bitmap(struct f2fs_sb_info *sbi,
- 		void *dst_addr)
+@@ -242,12 +242,12 @@ void drop_inmem_pages(struct inode *inode)
  {
- 	struct sit_info *sit_i = SIT_I(sbi);
+ 	struct f2fs_inode_info *fi = F2FS_I(inode);
+
+-	clear_inode_flag(inode, FI_ATOMIC_FILE);
+-	stat_dec_atomic_write(inode);
+-
+ 	mutex_lock(&fi->inmem_lock);
+ 	__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+ 	mutex_unlock(&fi->inmem_lock);
 +
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	if (memcmp(sit_i->sit_bitmap, sit_i->sit_bitmap_mir,
-+						sit_i->bitmap_size))
-+		f2fs_bug_on(sbi, 1);
-+#endif
- 	memcpy(dst_addr, sit_i->sit_bitmap, sit_i->bitmap_size);
++	clear_inode_flag(inode, FI_ATOMIC_FILE);
++	stat_dec_atomic_write(inode);
  }
 
-@@ -643,6 +652,12 @@ static inline pgoff_t current_sit_addr(struct f2fs_sb_info *sbi,
+ static int __commit_inmem_pages(struct inode *inode,
+@@ -316,6 +316,8 @@ int commit_inmem_pages(struct inode *inode)
+ 	f2fs_balance_fs(sbi, true);
+ 	f2fs_lock_op(sbi);
 
- 	check_seg_range(sbi, start);
-
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	if (f2fs_test_bit(offset, sit_i->sit_bitmap) !=
-+			f2fs_test_bit(offset, sit_i->sit_bitmap_mir))
-+		f2fs_bug_on(sbi, 1);
-+#endif
++	set_inode_flag(inode, FI_ATOMIC_COMMIT);
 +
- 	/* calculate sit block address */
- 	if (f2fs_test_bit(offset, sit_i->sit_bitmap))
- 		blk_addr += sit_i->sit_blocks;
-@@ -668,6 +683,9 @@ static inline void set_to_next_sit(struct sit_info *sit_i, unsigned int start)
- 	unsigned int block_off = SIT_BLOCK_OFFSET(start);
+ 	mutex_lock(&fi->inmem_lock);
+ 	err = __commit_inmem_pages(inode, &revoke_list);
+ 	if (err) {
+@@ -337,6 +339,8 @@ int commit_inmem_pages(struct inode *inode)
+ 	}
+ 	mutex_unlock(&fi->inmem_lock);
 
- 	f2fs_change_bit(block_off, sit_i->sit_bitmap);
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	f2fs_change_bit(block_off, sit_i->sit_bitmap_mir);
-+#endif
++	clear_inode_flag(inode, FI_ATOMIC_COMMIT);
++
+ 	f2fs_unlock_op(sbi);
+ 	return err;
  }
-
- static inline unsigned long long get_mtime(struct f2fs_sb_info *sbi)
 -- 
 2.8.2.295.g3f1c1d0
 
