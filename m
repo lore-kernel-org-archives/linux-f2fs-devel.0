@@ -1,66 +1,38 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH 01/10] f2fs: reassign new segment for mode=lfs
-Date: Thu, 12 Jan 2017 19:03:05 +0800
-Message-ID: <3897b53f-2518-09c9-0836-22ffd8285195@huawei.com>
+Subject: Re: [PATCH 03/10 v2] f2fs: add submit_bio tracepoint
+Date: Thu, 12 Jan 2017 19:07:12 +0800
+Message-ID: <bfe8f369-79f6-1a8b-9983-33cdad7ec8a6@huawei.com>
 References: <20161230185117.3832-1-jaegeuk@kernel.org>
- <702b01ba-5fcb-01a2-0bad-65ea9005b834@huawei.com>
- <20170104224827.GB1011@jaegeuk.local>
+ <20161230185117.3832-3-jaegeuk@kernel.org>
+ <20170104233506.GC1011@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170104224827.GB1011@jaegeuk.local>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170104233506.GC1011@jaegeuk.local>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/1/5 6:48, Jaegeuk Kim wrote:
-> On 01/04, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> On 2016/12/31 2:51, Jaegeuk Kim wrote:
->>> Otherwise we can remain wrong curseg->next_blkoff, resulting in fsck failure.
->>
->> Could you explain more about this case?
+On 2017/1/5 7:35, Jaegeuk Kim wrote:
+> Change log from v1:
+>  - remove F2FS_OP
+>  - share single tracing structure, f2fs__bio
+>  - split f2fs_prepare_read/write_io and f2fs_submit_read/write_io
 > 
-> I remember that I hit an fsck failure when I was testing f2fs with an smr drive.
-> I didn't dig into the error, but the fact is that our roll-forward recovery
-> doesn't update current segment information at every time, but allocate a new
-> section at the end of the work like below.
-> I just enabled it for the LFS mode in order to avoid that failure.
+>>From f5c6ab0f19fb627ebf28ab6a18c0a32b4c8f914f Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Wed, 21 Dec 2016 12:13:03 -0800
+> Subject: [PATCH] f2fs: add submit_bio tracepoint
+> 
+> This patch adds final submit_bio() tracepoint.
 
-Alright, thanks for the explanation.
+More neat, looks good to me!
+
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/segment.c | 3 ---
->>>  1 file changed, 3 deletions(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index be9e4d244d75..4e5ffe1d97e4 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -1428,9 +1428,6 @@ void allocate_new_segments(struct f2fs_sb_info *sbi)
->>>  	unsigned int old_segno;
->>>  	int i;
->>>  
->>> -	if (test_opt(sbi, LFS))
->>> -		return;
->>> -
->>>  	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
->>>  		curseg = CURSEG_I(sbi, i);
->>>  		old_segno = curseg->segno;
->>>
-> 
-> .
-> 
