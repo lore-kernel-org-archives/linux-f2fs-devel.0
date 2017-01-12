@@ -1,76 +1,99 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/6] f2fs: reorganize stat information
-Date: Thu, 12 Jan 2017 14:44:03 -0800
-Message-ID: <20170112224407.54026-2-jaegeuk@kernel.org>
+Subject: [PATCH 6/6] f2fs: show # of on-going flush and discard bios
+Date: Thu, 12 Jan 2017 14:44:07 -0800
+Message-ID: <20170112224407.54026-6-jaegeuk@kernel.org>
 References: <20170112224407.54026-1-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cRo6W-0004u0-Bs
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Jan 2017 22:44:20 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cRo6V-00057j-JY
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Jan 2017 22:44:20 +0000
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 In-Reply-To: <20170112224407.54026-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch modifies stat information more clearly.
+This patch adds stat information for flush and discard commands.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/debug.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/f2fs/debug.c   | 7 +++++--
+ fs/f2fs/f2fs.h    | 3 ++-
+ fs/f2fs/segment.c | 4 ++++
+ 3 files changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 883f1ea9e0b6..cd338ca24941 100644
+index f9f6b0aeba02..e67cab2fafac 100644
 --- a/fs/f2fs/debug.c
 +++ b/fs/f2fs/debug.c
-@@ -258,8 +258,6 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->inline_dir);
- 		seq_printf(s, "  - Orphan Inode: %u\n",
- 			   si->orphans);
--		seq_printf(s, "  - Atomic write count: %4d (Max. %4d)\n",
--			   si->aw_cnt, si->max_aw_cnt);
- 		seq_printf(s, "\nMain area: %d segs, %d secs %d zones\n",
- 			   si->main_area_segs, si->main_area_sections,
- 			   si->main_area_zones);
-@@ -318,8 +316,10 @@ static int stat_show(struct seq_file *s, void *v)
+@@ -54,6 +54,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+ 	si->max_aw_cnt = atomic_read(&sbi->max_aw_cnt);
+ 	si->nr_wb_cp_data = get_pages(sbi, F2FS_WB_CP_DATA);
+ 	si->nr_wb_data = get_pages(sbi, F2FS_WB_DATA);
++	si->nr_flush = atomic_read(&SM_I(sbi)->fcc_info->submit_flush);
++	si->nr_discard = atomic_read(&SM_I(sbi)->dcc_info->submit_discard);
+ 	si->total_count = (int)sbi->user_block_count / sbi->blocks_per_seg;
+ 	si->rsvd_segs = reserved_segments(sbi);
+ 	si->overp_segs = overprovision_segments(sbi);
+@@ -318,8 +320,9 @@ static int stat_show(struct seq_file *s, void *v)
  		seq_printf(s, "  - Inner Struct Count: tree: %d(%d), node: %d\n",
  				si->ext_tree, si->zombie_tree, si->ext_node);
  		seq_puts(s, "\nBalancing F2FS Async:\n");
--		seq_printf(s, "  - inmem: %4d, wb_cp_data: %4d, wb_data: %4d\n",
--			   si->inmem_pages, si->nr_wb_cp_data, si->nr_wb_data);
-+		seq_printf(s, "  - IO (CP: %4d, Data: %4d)\n",
-+			   si->nr_wb_cp_data, si->nr_wb_data);
-+		seq_printf(s, "  - inmem: %4d, atomic IO: %4d (Max. %4d)\n",
-+			   si->inmem_pages, si->aw_cnt, si->max_aw_cnt);
+-		seq_printf(s, "  - IO (CP: %4d, Data: %4d)\n",
+-			   si->nr_wb_cp_data, si->nr_wb_data);
++		seq_printf(s, "  - IO (CP: %4d, Data: %4d, Flush: %4d, Discard: %4d)\n",
++			   si->nr_wb_cp_data, si->nr_wb_data,
++			   si->nr_flush, si->nr_discard);
+ 		seq_printf(s, "  - inmem: %4d, atomic IO: %4d (Max. %4d)\n",
+ 			   si->inmem_pages, si->aw_cnt, si->max_aw_cnt);
  		seq_printf(s, "  - nodes: %4d in %4d\n",
- 			   si->ndirty_node, si->node_pages);
- 		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ef5e3709c161..d51bc18e7292 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -201,6 +201,7 @@ struct discard_cmd_control {
+ 	wait_queue_head_t discard_wait_queue;	/* waiting queue for wake-up */
+ 	struct mutex cmd_lock;
+ 	int max_discards;			/* max. discards to be issued */
++	atomic_t submit_discard;		/* # of issued discard */
+ };
+ 
+ /* for the list of fsync inodes, used only during recovery */
+@@ -2254,7 +2255,7 @@ struct f2fs_stat_info {
+ 	unsigned int ndirty_dirs, ndirty_files, ndirty_all;
+ 	int nats, dirty_nats, sits, dirty_sits, free_nids, alloc_nids;
+ 	int total_count, utilization;
+-	int bg_gc, nr_wb_cp_data, nr_wb_data;
++	int bg_gc, nr_wb_cp_data, nr_wb_data, nr_flush, nr_discard;
+ 	int inline_xattr, inline_inode, inline_dir, orphans;
+ 	int aw_cnt, max_aw_cnt;
+ 	unsigned int valid_count, valid_node_count, valid_inode_count, discard_blks;
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 74364006bfa6..5a2d380182d9 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -653,6 +653,8 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *d
+ {
+ 	int err = dc->bio->bi_error;
+ 
++	atomic_dec(&(SM_I(sbi)->dcc_info->submit_discard));
++
+ 	if (err == -EOPNOTSUPP)
+ 		err = 0;
+ 
+@@ -678,6 +680,7 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 			if (dc->state == D_PREP) {
+ 				dc->state = D_SUBMIT;
+ 				submit_bio(dc->bio);
++				atomic_inc(&dcc->submit_discard);
+ 			}
+ 			wait_for_completion_io(&dc->wait);
+ 
+@@ -723,6 +726,7 @@ static int issue_discard_thread(void *data)
+ 		if (dc->state == D_PREP) {
+ 			dc->state = D_SUBMIT;
+ 			submit_bio(dc->bio);
++			atomic_inc(&dcc->submit_discard);
+ 			if (iter++ > DISCARD_ISSUE_RATE)
+ 				break;
+ 		} else if (dc->state == D_DONE) {
 -- 
 2.11.0
 
-
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today. http://sdm.link/xeonphi
