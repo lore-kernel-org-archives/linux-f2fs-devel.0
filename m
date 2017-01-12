@@ -1,120 +1,99 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH 4/8] xfs: use memalloc_nofs_{save,restore} instead of
- memalloc_noio*
-Date: Mon, 9 Jan 2017 12:59:07 -0800
-Message-ID: <20170109205907.GB14029@birch.djwong.org>
-References: <20170106141107.23953-1-mhocko@kernel.org>
- <20170106141107.23953-5-mhocko@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: make discard command directly
+Date: Wed, 11 Jan 2017 16:48:48 -0800
+Message-ID: <20170112004848.37202-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20170106141107.23953-5-mhocko@kernel.org>
-Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cRTZa-0005vS-Et
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 12 Jan 2017 00:48:58 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cRTZZ-0005EO-Fg
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 12 Jan 2017 00:48:58 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On Fri, Jan 06, 2017 at 03:11:03PM +0100, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> kmem_zalloc_large and _xfs_buf_map_pages use memalloc_noio_{save,restore}
-> API to prevent from reclaim recursion into the fs because vmalloc can
-> invoke unconditional GFP_KERNEL allocations and these functions might be
-> called from the NOFS contexts. The memalloc_noio_save will enforce
-> GFP_NOIO context which is even weaker than GFP_NOFS and that seems to be
-> unnecessary. Let's use memalloc_nofs_{save,restore} instead as it should
-> provide exactly what we need here - implicit GFP_NOFS context.
-> 
-> Changes since v1
-> - s@memalloc_noio_restore@memalloc_nofs_restore@ in _xfs_buf_map_pages
->   as per Brian Foster
-> 
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+This can reduce the backporting efforts.
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/segment.c | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
-> ---
->  fs/xfs/kmem.c    | 10 +++++-----
->  fs/xfs/xfs_buf.c |  8 ++++----
->  2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/xfs/kmem.c b/fs/xfs/kmem.c
-> index a76a05dae96b..d69ed5e76621 100644
-> --- a/fs/xfs/kmem.c
-> +++ b/fs/xfs/kmem.c
-> @@ -65,7 +65,7 @@ kmem_alloc(size_t size, xfs_km_flags_t flags)
->  void *
->  kmem_zalloc_large(size_t size, xfs_km_flags_t flags)
->  {
-> -	unsigned noio_flag = 0;
-> +	unsigned nofs_flag = 0;
->  	void	*ptr;
->  	gfp_t	lflags;
->  
-> @@ -80,14 +80,14 @@ kmem_zalloc_large(size_t size, xfs_km_flags_t flags)
->  	 * context via PF_MEMALLOC_NOIO to prevent memory reclaim re-entering
->  	 * the filesystem here and potentially deadlocking.
->  	 */
-> -	if ((current->flags & PF_MEMALLOC_NOFS) || (flags & KM_NOFS))
-> -		noio_flag = memalloc_noio_save();
-> +	if (flags & KM_NOFS)
-> +		nofs_flag = memalloc_nofs_save();
->  
->  	lflags = kmem_flags_convert(flags);
->  	ptr = __vmalloc(size, lflags | __GFP_HIGHMEM | __GFP_ZERO, PAGE_KERNEL);
->  
-> -	if ((current->flags & PF_MEMALLOC_NOFS) || (flags & KM_NOFS))
-> -		memalloc_noio_restore(noio_flag);
-> +	if (flags & KM_NOFS)
-> +		memalloc_nofs_restore(nofs_flag);
->  
->  	return ptr;
->  }
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index 7f0a01f7b592..8cb8dd4cdfd8 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -441,17 +441,17 @@ _xfs_buf_map_pages(
->  		bp->b_addr = NULL;
->  	} else {
->  		int retried = 0;
-> -		unsigned noio_flag;
-> +		unsigned nofs_flag;
->  
->  		/*
->  		 * vm_map_ram() will allocate auxillary structures (e.g.
->  		 * pagetables) with GFP_KERNEL, yet we are likely to be under
->  		 * GFP_NOFS context here. Hence we need to tell memory reclaim
-> -		 * that we are in such a context via PF_MEMALLOC_NOIO to prevent
-> +		 * that we are in such a context via PF_MEMALLOC_NOFS to prevent
->  		 * memory reclaim re-entering the filesystem here and
->  		 * potentially deadlocking.
->  		 */
-> -		noio_flag = memalloc_noio_save();
-> +		nofs_flag = memalloc_nofs_save();
->  		do {
->  			bp->b_addr = vm_map_ram(bp->b_pages, bp->b_page_count,
->  						-1, PAGE_KERNEL);
-> @@ -459,7 +459,7 @@ _xfs_buf_map_pages(
->  				break;
->  			vm_unmap_aliases();
->  		} while (retried++ <= 1);
-> -		memalloc_noio_restore(noio_flag);
-> +		memalloc_nofs_restore(nofs_flag);
->  
->  		if (!bp->b_addr)
->  			return -ENOMEM;
-> -- 
-> 2.11.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-ext4" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 0738f48293cc..ebfd5cd7619e 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -673,8 +673,8 @@ static void f2fs_submit_bio_wait_endio(struct bio *bio)
+ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+ 		struct block_device *bdev, block_t blkstart, block_t blklen)
+ {
++	struct bio_entry *be;
+ 	struct bio *bio = NULL;
+-	int err;
+ 
+ 	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
+ 
+@@ -683,20 +683,24 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+ 
+ 		blkstart -= FDEV(devi).start_blk;
+ 	}
+-	err = __blkdev_issue_discard(bdev,
+-				SECTOR_FROM_BLOCK(blkstart),
+-				SECTOR_FROM_BLOCK(blklen),
+-				GFP_NOFS, 0, &bio);
+-	if (!err && bio) {
+-		struct bio_entry *be = __add_bio_entry(sbi, bio);
+ 
+-		bio->bi_private = be;
+-		bio->bi_end_io = f2fs_submit_bio_wait_endio;
+-		bio->bi_opf |= REQ_SYNC;
+-		submit_bio(bio);
+-	}
++	if (!blk_queue_discard(bdev_get_queue(bdev)))
++		return 0;
+ 
+-	return err;
++	/* we always submit 4KB-aligned discard commands. */
++	bio = f2fs_bio_alloc(0);
++	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blkstart);
++	bio->bi_bdev = bdev;
++	bio_set_op_attrs(bio, REQ_OP_DISCARD, 0);
++	bio->bi_iter.bi_size = SECTOR_FROM_BLOCK(blklen) << 9;
++	bio->bi_end_io = f2fs_submit_bio_wait_endio;
++
++	be = __add_bio_entry(sbi, bio);
++
++	bio->bi_private = be;
++	bio->bi_opf |= REQ_SYNC;
++	submit_bio(bio);
++	return 0;
+ }
+ 
+ #ifdef CONFIG_BLK_DEV_ZONED
+-- 
+2.11.0
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+------------------------------------------------------------------------------
+Developer Access Program for Intel Xeon Phi Processors
+Access to Intel Xeon Phi processor-based developer platforms.
+With one year of Intel Parallel Studio XE.
+Training and support from Colfax.
+Order your platform today. http://sdm.link/xeonphi
