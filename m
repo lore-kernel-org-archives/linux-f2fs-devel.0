@@ -1,99 +1,66 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: make discard command directly
-Date: Wed, 11 Jan 2017 16:48:48 -0800
-Message-ID: <20170112004848.37202-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 01/10] f2fs: reassign new segment for mode=lfs
+Date: Thu, 12 Jan 2017 19:03:05 +0800
+Message-ID: <3897b53f-2518-09c9-0836-22ffd8285195@huawei.com>
+References: <20161230185117.3832-1-jaegeuk@kernel.org>
+ <702b01ba-5fcb-01a2-0bad-65ea9005b834@huawei.com>
+ <20170104224827.GB1011@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cRTZa-0005vS-Et
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Jan 2017 00:48:58 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cRTZZ-0005EO-Fg
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 12 Jan 2017 00:48:58 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170104224827.GB1011@jaegeuk.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This can reduce the backporting efforts.
+On 2017/1/5 6:48, Jaegeuk Kim wrote:
+> On 01/04, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2016/12/31 2:51, Jaegeuk Kim wrote:
+>>> Otherwise we can remain wrong curseg->next_blkoff, resulting in fsck failure.
+>>
+>> Could you explain more about this case?
+> 
+> I remember that I hit an fsck failure when I was testing f2fs with an smr drive.
+> I didn't dig into the error, but the fact is that our roll-forward recovery
+> doesn't update current segment information at every time, but allocate a new
+> section at the end of the work like below.
+> I just enabled it for the LFS mode in order to avoid that failure.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/segment.c | 30 +++++++++++++++++-------------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+Alright, thanks for the explanation.
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 0738f48293cc..ebfd5cd7619e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -673,8 +673,8 @@ static void f2fs_submit_bio_wait_endio(struct bio *bio)
- static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
- 		struct block_device *bdev, block_t blkstart, block_t blklen)
- {
-+	struct bio_entry *be;
- 	struct bio *bio = NULL;
--	int err;
- 
- 	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
- 
-@@ -683,20 +683,24 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
- 
- 		blkstart -= FDEV(devi).start_blk;
- 	}
--	err = __blkdev_issue_discard(bdev,
--				SECTOR_FROM_BLOCK(blkstart),
--				SECTOR_FROM_BLOCK(blklen),
--				GFP_NOFS, 0, &bio);
--	if (!err && bio) {
--		struct bio_entry *be = __add_bio_entry(sbi, bio);
- 
--		bio->bi_private = be;
--		bio->bi_end_io = f2fs_submit_bio_wait_endio;
--		bio->bi_opf |= REQ_SYNC;
--		submit_bio(bio);
--	}
-+	if (!blk_queue_discard(bdev_get_queue(bdev)))
-+		return 0;
- 
--	return err;
-+	/* we always submit 4KB-aligned discard commands. */
-+	bio = f2fs_bio_alloc(0);
-+	bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(blkstart);
-+	bio->bi_bdev = bdev;
-+	bio_set_op_attrs(bio, REQ_OP_DISCARD, 0);
-+	bio->bi_iter.bi_size = SECTOR_FROM_BLOCK(blklen) << 9;
-+	bio->bi_end_io = f2fs_submit_bio_wait_endio;
-+
-+	be = __add_bio_entry(sbi, bio);
-+
-+	bio->bi_private = be;
-+	bio->bi_opf |= REQ_SYNC;
-+	submit_bio(bio);
-+	return 0;
- }
- 
- #ifdef CONFIG_BLK_DEV_ZONED
--- 
-2.11.0
+Thanks,
 
-
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today. http://sdm.link/xeonphi
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/segment.c | 3 ---
+>>>  1 file changed, 3 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index be9e4d244d75..4e5ffe1d97e4 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -1428,9 +1428,6 @@ void allocate_new_segments(struct f2fs_sb_info *sbi)
+>>>  	unsigned int old_segno;
+>>>  	int i;
+>>>  
+>>> -	if (test_opt(sbi, LFS))
+>>> -		return;
+>>> -
+>>>  	for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
+>>>  		curseg = CURSEG_I(sbi, i);
+>>>  		old_segno = curseg->segno;
+>>>
+> 
+> .
+> 
