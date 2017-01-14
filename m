@@ -1,38 +1,20 @@
 From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH 6/6] f2fs: show # of on-going flush and
- discard bios
-Date: Sat, 14 Jan 2017 10:26:21 +0800
-Message-ID: <92d77ec4-affe-6411-46d3-27fc0edeaa23@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 6/6] f2fs: show # of on-going flush and discard
+ bios
+Date: Sat, 14 Jan 2017 15:27:03 +0800
+Message-ID: <464bb801-317b-0902-5234-11d2e620b453@huawei.com>
 References: <20170112224407.54026-1-jaegeuk@kernel.org>
-	<20170112224407.54026-6-jaegeuk@kernel.org>
+ <20170112224407.54026-6-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1cSE4S-0000NW-KC
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 14 Jan 2017 02:27:56 +0000
-Received: from [45.249.212.190] (helo=dggrg04-dlp.huawei.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cSE4P-00040t-Sz
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 14 Jan 2017 02:27:56 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170112224407.54026-6-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Jaegeuk Kim,
+Hi Jaegeuk,
 
 On 2017/1/13 6:44, Jaegeuk Kim wrote:
 > This patch adds stat information for flush and discard commands.
@@ -79,10 +61,6 @@ On 2017/1/13 6:44, Jaegeuk Kim wrote:
 >  	int max_discards;			/* max. discards to be issued */
 > +	atomic_t submit_discard;		/* # of issued discard */
 >  };
-
-Here, we need to initialize submit_discard.
-
-Thanks.
 >
 >  /* for the list of fsync inodes, used only during recovery */
 > @@ -2254,7 +2255,7 @@ struct f2fs_stat_info {
@@ -103,6 +81,9 @@ Thanks.
 >  	int err = dc->bio->bi_error;
 >
 > +	atomic_dec(&(SM_I(sbi)->dcc_info->submit_discard));
+Here submit_discard decrease will include discard command without bio submit.
+
+Thanks.
 > +
 >  	if (err == -EOPNOTSUPP)
 >  		err = 0;
@@ -124,11 +105,3 @@ Thanks.
 >  				break;
 >  		} else if (dc->state == D_DONE) {
 >
-
-
-------------------------------------------------------------------------------
-Developer Access Program for Intel Xeon Phi Processors
-Access to Intel Xeon Phi processor-based developer platforms.
-With one year of Intel Parallel Studio XE.
-Training and support from Colfax.
-Order your platform today. http://sdm.link/xeonphi
