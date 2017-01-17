@@ -1,69 +1,64 @@
-From: Michal Hocko <mhocko-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Theodore Ts'o <tytso@mit.edu>
 Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
-Date: Tue, 17 Jan 2017 16:18:17 +0100
-Message-ID: <20170117151817.GR19699@dhcp22.suse.cz>
+Date: Tue, 17 Jan 2017 10:59:16 -0500
+Message-ID: <20170117155916.dcizr65bwa6behe7@thunk.org>
 References: <20170106141107.23953-1-mhocko@kernel.org>
  <20170106141107.23953-9-mhocko@kernel.org>
  <20170117025607.frrcdbduthhutrzj@thunk.org>
  <20170117082425.GD19699@dhcp22.suse.cz>
+ <20170117151817.GR19699@dhcp22.suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <owner-linux-mm@kvack.org>
 Content-Disposition: inline
-In-Reply-To: <20170117082425.GD19699-2MMpYkNvuYDjFM9bn6wA6Q@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Theodore Ts'o <tytso-3s7WtUTddSA@public.gmane.org>, Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>
-Cc: linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Dave Chinner <david-FqsqvQoI3Ljby3iVrkZq2A@public.gmane.org>, djwong-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Chris Mason <clm-b10kYP2dOMg@public.gmane.org>, David Sterba <dsterba-AlSwsSmVLrQ@public.gmane.org>, ceph-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cluster-devel-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, logfs-PCqxUs/MD9bYtjvyW6yDsg@public.gmane.org, linux-xfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ext4-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-btrfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, reiserfs-devel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ntfs-dev-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-f2fs-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-afs-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170117151817.GR19699@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On Tue 17-01-17 09:24:25, Michal Hocko wrote:
-> On Mon 16-01-17 21:56:07, Theodore Ts'o wrote:
-> > On Fri, Jan 06, 2017 at 03:11:07PM +0100, Michal Hocko wrote:
-> > > From: Michal Hocko <mhocko-IBi9RG/b67k@public.gmane.org>
-> > > 
-> > > This reverts commit 216553c4b7f3e3e2beb4981cddca9b2027523928. Now that
-> > > the transaction context uses memalloc_nofs_save and all allocations
-> > > within the this context inherit GFP_NOFS automatically, there is no
-> > > reason to mark specific allocations explicitly.
-> > > 
-> > > This patch should not introduce any functional change. The main point
-> > > of this change is to reduce explicit GFP_NOFS usage inside ext4 code
-> > > to make the review of the remaining usage easier.
-> > > 
-> > > Signed-off-by: Michal Hocko <mhocko-IBi9RG/b67k@public.gmane.org>
-> > > Reviewed-by: Jan Kara <jack-AlSwsSmVLrQ@public.gmane.org>
-> > 
-> > Changes in the jbd2 layer aren't going to guarantee that
-> > memalloc_nofs_save() will be executed if we are running ext4 without a
-> > journal (aka in no journal mode).  And this is a *very* common
-> > configuration; it's how ext4 is used inside Google in our production
-> > servers.
+On Tue, Jan 17, 2017 at 04:18:17PM +0100, Michal Hocko wrote:
 > 
-> OK, I wasn't aware of that.
-> 
-> > So that means the earlier patches will probably need to be changed so
-> > the nOFS scope is done in the ext4_journal_{start,stop} functions in
-> > fs/ext4/ext4_jbd2.c.
-> 
-> I could definitely appreciated some help here. The call paths are rather
-> complex and I am not familiar with the code enough. On of the biggest
-> problem I have currently is that there doesn't seem to be an easy place
-> to store the old allocation context. 
+> OK, so I've been staring into the code and AFAIU current->journal_info
+> can contain my stored information. I could either hijack part of the
+> word as the ref counting is only consuming low 12b. But that looks too
+> ugly to live. Or I can allocate some placeholder.
 
-OK, so I've been staring into the code and AFAIU current->journal_info
-can contain my stored information. I could either hijack part of the
-word as the ref counting is only consuming low 12b. But that looks too
-ugly to live. Or I can allocate some placeholder.
+Yeah, I was looking at something similar.  Can you guarantee that the
+context will only take one or two bits?  (Looks like it only needs one
+bit ATM, even though at the moment you're storing the whole GFP mask,
+correct?)
 
-But before going to play with that I am really wondering whether we need
-all this with no journal at all. AFAIU what Jack told me it is the
-journal lock(s) which is the biggest problem from the reclaim recursion
-point of view. What would cause a deadlock in no journal mode?
+> But before going to play with that I am really wondering whether we need
+> all this with no journal at all. AFAIU what Jack told me it is the
+> journal lock(s) which is the biggest problem from the reclaim recursion
+> point of view. What would cause a deadlock in no journal mode?
 
--- 
-Michal Hocko
-SUSE Labs
+We still have the original problem for why we need GFP_NOFS even in
+ext2.  If we are in a writeback path, and we need to allocate memory,
+we don't want to recurse back into the file system's writeback path.
+Certainly not for the same inode, and while we could make it work if
+the mm was writing back another inode, or another superblock, there
+are also stack depth considerations that would make this be a bad
+idea.  So we do need to be able to assert GFP_NOFS even in no journal
+mode, and for any file system including ext2, for that matter.
+
+Because of the fact that we're going to have to play games with
+current->journal_info, maybe this is something that I should take
+responsibility for, and to go through the the ext4 tree after the main
+patch series go through?  Maybe you could use xfs and ext2 as sample
+(simple) implementations?
+
+My only ask is that the memalloc nofs context be a well defined N
+bits, where N < 16, and I'll find some place to put them (probably
+journal_info).
+
+Thanks,
+
+					- Ted
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
