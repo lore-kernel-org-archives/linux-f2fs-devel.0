@@ -1,49 +1,48 @@
-From: "kian" <sinteredbrakepad@motodios.net>
-Subject: [SPAM] sintered brake pad
-Date: Tue, 17 Jan 2017 02:51:47 +0800
-Message-ID: <E1cTCNm-0001cw-TS@sfs-ml-1.v29.ch3.sourceforge.com>
-Reply-To: kiankaplan@126.com
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
+Date: Mon, 16 Jan 2017 21:56:07 -0500
+Message-ID: <20170117025607.frrcdbduthhutrzj@thunk.org>
+References: <20170106141107.23953-1-mhocko@kernel.org>
+ <20170106141107.23953-9-mhocko@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <sinteredbrakepad@motodios.net>) id 1cTCNl-0001cj-JO
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 Jan 2017 18:51:53 +0000
-Received: from [222.73.48.240] (helo=PC201609101304)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1cTCNf-00081F-LN for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 16 Jan 2017 18:51:53 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20170106141107.23953-9-mhocko@kernel.org>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi
-We can supply high quality sintered brake pad In Racing,it can resist 1000 high Temperature,we have cheaper prices and good production
+On Fri, Jan 06, 2017 at 03:11:07PM +0100, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> This reverts commit 216553c4b7f3e3e2beb4981cddca9b2027523928. Now that
+> the transaction context uses memalloc_nofs_save and all allocations
+> within the this context inherit GFP_NOFS automatically, there is no
+> reason to mark specific allocations explicitly.
+> 
+> This patch should not introduce any functional change. The main point
+> of this change is to reduce explicit GFP_NOFS usage inside ext4 code
+> to make the review of the remaining usage easier.
+> 
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
- 
+Changes in the jbd2 layer aren't going to guarantee that
+memalloc_nofs_save() will be executed if we are running ext4 without a
+journal (aka in no journal mode).  And this is a *very* common
+configuration; it's how ext4 is used inside Google in our production
+servers.
 
-  
-expecting long term business with you !
+So that means the earlier patches will probably need to be changed so
+the nOFS scope is done in the ext4_journal_{start,stop} functions in
+fs/ext4/ext4_jbd2.c.
 
-If you need any items of brake pads  hopefully could reply us email.  we will do our best to support you   
+					- Ted
 
-Pls reply us offiicial mail box   kiankaplan@126.com
-
-best regards
-kian huang 
-Motodios limited
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
