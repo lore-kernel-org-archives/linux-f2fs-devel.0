@@ -1,221 +1,227 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH 1/2] f2fs-tools: correct endianness
-Date: Thu, 19 Jan 2017 11:03:40 +0800
-Message-ID: <20170119030341.12636-1-shengyong1@huawei.com>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
+Date: Thu, 19 Jan 2017 09:39:56 +0100
+Message-ID: <20170119083956.GE30786@dhcp22.suse.cz>
+References: <20170106141107.23953-1-mhocko@kernel.org>
+ <20170106141107.23953-9-mhocko@kernel.org>
+ <20170117025607.frrcdbduthhutrzj@thunk.org>
+ <20170117082425.GD19699@dhcp22.suse.cz>
+ <20170117151817.GR19699@dhcp22.suse.cz>
+ <20170117155916.dcizr65bwa6behe7@thunk.org>
+ <20170117161618.GT19699@dhcp22.suse.cz>
+ <20170117172925.GA2486@quack2.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1cU3C1-0007lE-2x
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Jan 2017 03:15:17 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cU3By-0006fQ-62
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Jan 2017 03:15:17 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: k@vodka.home.kg, piotr.karbowski@gmail.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20170117172925.GA2486@quack2.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Jan Kara <jack@suse.cz>
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-It is reported that fsck.f2fs behaves abnormally when running on MIPS32
-rel 2 big endian cpu, since incorrect endianness. So let's correct all
-endianess issues of f2fs-tools.
+On Tue 17-01-17 18:29:25, Jan Kara wrote:
+> On Tue 17-01-17 17:16:19, Michal Hocko wrote:
+> > > > But before going to play with that I am really wondering whether we need
+> > > > all this with no journal at all. AFAIU what Jack told me it is the
+> > > > journal lock(s) which is the biggest problem from the reclaim recursion
+> > > > point of view. What would cause a deadlock in no journal mode?
+> > > 
+> > > We still have the original problem for why we need GFP_NOFS even in
+> > > ext2.  If we are in a writeback path, and we need to allocate memory,
+> > > we don't want to recurse back into the file system's writeback path.
+> > 
+> > But we do not enter the writeback path from the direct reclaim. Or do
+> > you mean something other than pageout()'s mapping->a_ops->writepage?
+> > There is only try_to_release_page where we get back to the filesystems
+> > but I do not see any NOFS protection in ext4_releasepage.
+> 
+> Maybe to expand a bit: These days, direct reclaim can call ->releasepage()
+> callback, ->evict_inode() callback (and only for inodes with i_nlink > 0),
+> shrinkers. That's it. So the recursion possibilities are rather more limited
+> than they used to be several years ago and we likely do not need as much
+> GFP_NOFS protection as we used to.
 
-Reported-by: <k@vodka.home.kg>
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Thanks for making my remark more clear Jack! I would just want to add
+that I was playing with the patch below (it is basically
+GFP_NOFS->GFP_KERNEL for all allocations which trigger warning from the
+debugging patch which means they are called from within transaction) and
+it didn't hit the lockdep when running xfstests both with or without the
+enabled journal.
+
+So am I still missing something or the nojournal mode is safe and the
+current series is OK wrt. ext*?
+
+The following patch in its current form is WIP and needs a proper review
+before I post it.
 ---
- fsck/dir.c        |  6 +++---
- fsck/dump.c       | 10 +++++-----
- fsck/f2fs.h       |  4 ++--
- fsck/mount.c      | 12 ++++++------
- fsck/node.c       |  2 +-
- fsck/segment.c    |  3 ++-
- include/f2fs_fs.h |  8 +++++---
- 7 files changed, 24 insertions(+), 21 deletions(-)
+ fs/ext4/inode.c       |  4 ++--
+ fs/ext4/mballoc.c     | 14 +++++++-------
+ fs/ext4/xattr.c       |  2 +-
+ fs/jbd2/journal.c     |  4 ++--
+ fs/jbd2/revoke.c      |  2 +-
+ fs/jbd2/transaction.c |  2 +-
+ 6 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/fsck/dir.c b/fsck/dir.c
-index 2009855..d817d27 100644
---- a/fsck/dir.c
-+++ b/fsck/dir.c
-@@ -134,7 +134,7 @@ static int find_in_level(struct f2fs_sb_info *sbi,struct f2fs_node *dir,
- 	struct dnode_of_data dn = {0};
- 	void *dentry_blk;
- 	int max_slots = 214;
--	nid_t ino = dir->footer.ino;
-+	nid_t ino = le32_to_cpu(dir->footer.ino);
- 	f2fs_hash_t namehash;
- 	int ret = 0;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index b7d141c3b810..841cb8c4cb5e 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2085,7 +2085,7 @@ static int ext4_writepage(struct page *page,
+ 		return __ext4_journalled_writepage(page, len);
  
-@@ -191,7 +191,7 @@ static int f2fs_find_entry(struct f2fs_sb_info *sbi,
- 		return 0;
- 	}
+ 	ext4_io_submit_init(&io_submit, wbc);
+-	io_submit.io_end = ext4_init_io_end(inode, GFP_NOFS);
++	io_submit.io_end = ext4_init_io_end(inode, GFP_KERNEL);
+ 	if (!io_submit.io_end) {
+ 		redirty_page_for_writepage(wbc, page);
+ 		unlock_page(page);
+@@ -3794,7 +3794,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+ 	int err = 0;
  
--	max_depth = dir->i.i_current_depth;
-+	max_depth = le32_to_cpu(dir->i.i_current_depth);
- 	for (level = 0; level < max_depth; level ++) {
- 		if (find_in_level(sbi, dir, level, de))
- 			return 1;
-@@ -209,7 +209,7 @@ static void f2fs_update_dentry(nid_t ino, umode_t mode,
- 	int i;
+ 	page = find_or_create_page(mapping, from >> PAGE_SHIFT,
+-				   mapping_gfp_constraint(mapping, ~__GFP_FS));
++				   mapping_gfp_mask(mapping));
+ 	if (!page)
+ 		return -ENOMEM;
  
- 	de = &d->dentry[bit_pos];
--	de->name_len = len;
-+	de->name_len = cpu_to_le16(len);
- 	de->hash_code = name_hash;
- 	memcpy(d->filename[bit_pos], name, len);
- 	d->filename[bit_pos][len] = 0;
-diff --git a/fsck/dump.c b/fsck/dump.c
-index 8e7c85c..e9d442f 100644
---- a/fsck/dump.c
-+++ b/fsck/dump.c
-@@ -81,7 +81,7 @@ void nat_dump(struct f2fs_sb_info *sbi)
- 						"nid:%5u\tino:%5u\toffset:%5u"
- 						"\tblkaddr:%10u\tpack:%d\n",
- 						ni.nid, ni.ino,
--						node_block->footer.flag >>
-+						le32_to_cpu(node_block->footer.flag) >>
- 							OFFSET_BIT_SHIFT,
- 						ni.blk_addr, pack);
- 					ret = write(fd, buf, strlen(buf));
-@@ -100,7 +100,7 @@ void nat_dump(struct f2fs_sb_info *sbi)
- 					"nid:%5u\tino:%5u\toffset:%5u"
- 					"\tblkaddr:%10u\tpack:%d\n",
- 					ni.nid, ni.ino,
--					node_block->footer.flag >>
-+					le32_to_cpu(node_block->footer.flag) >>
- 						OFFSET_BIT_SHIFT,
- 					ni.blk_addr, pack);
- 				ret = write(fd, buf, strlen(buf));
-@@ -335,13 +335,13 @@ static void dump_inode_blk(struct f2fs_sb_info *sbi, u32 nid,
- 	for (i = 0; i < 5; i++) {
- 		if (i == 0 || i == 1)
- 			dump_node_blk(sbi, TYPE_DIRECT_NODE,
--					node_blk->i.i_nid[i], &ofs);
-+					le32_to_cpu(node_blk->i.i_nid[i]), &ofs);
- 		else if (i == 2 || i == 3)
- 			dump_node_blk(sbi, TYPE_INDIRECT_NODE,
--					node_blk->i.i_nid[i], &ofs);
-+					le32_to_cpu(node_blk->i.i_nid[i]), &ofs);
- 		else if (i == 4)
- 			dump_node_blk(sbi, TYPE_DOUBLE_INDIRECT_NODE,
--					node_blk->i.i_nid[i], &ofs);
-+					le32_to_cpu(node_blk->i.i_nid[i]), &ofs);
- 		else
- 			ASSERT(0);
- 	}
-diff --git a/fsck/f2fs.h b/fsck/f2fs.h
-index fbb878a..1ac28eb 100644
---- a/fsck/f2fs.h
-+++ b/fsck/f2fs.h
-@@ -361,7 +361,7 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
- static inline bool IS_VALID_NID(struct f2fs_sb_info *sbi, u32 nid)
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index d9fd184b049e..67b97cd6e3d6 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -1251,7 +1251,7 @@ ext4_mb_load_buddy_gfp(struct super_block *sb, ext4_group_t group,
+ static int ext4_mb_load_buddy(struct super_block *sb, ext4_group_t group,
+ 			      struct ext4_buddy *e4b)
  {
- 	return (nid <= (NAT_ENTRY_PER_BLOCK *
--			F2FS_RAW_SUPER(sbi)->segment_count_nat
-+			le32_to_cpu(F2FS_RAW_SUPER(sbi)->segment_count_nat)
- 			<< (sbi->log_blocks_per_seg - 1)));
+-	return ext4_mb_load_buddy_gfp(sb, group, e4b, GFP_NOFS);
++	return ext4_mb_load_buddy_gfp(sb, group, e4b, GFP_KERNEL);
  }
  
-@@ -369,7 +369,7 @@ static inline bool IS_VALID_BLK_ADDR(struct f2fs_sb_info *sbi, u32 addr)
+ static void ext4_mb_unload_buddy(struct ext4_buddy *e4b)
+@@ -2054,7 +2054,7 @@ static int ext4_mb_good_group(struct ext4_allocation_context *ac,
+ 
+ 	/* We only do this if the grp has never been initialized */
+ 	if (unlikely(EXT4_MB_GRP_NEED_INIT(grp))) {
+-		int ret = ext4_mb_init_group(ac->ac_sb, group, GFP_NOFS);
++		int ret = ext4_mb_init_group(ac->ac_sb, group, GFP_KERNEL);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -3600,7 +3600,7 @@ ext4_mb_new_inode_pa(struct ext4_allocation_context *ac)
+ 	BUG_ON(ac->ac_status != AC_STATUS_FOUND);
+ 	BUG_ON(!S_ISREG(ac->ac_inode->i_mode));
+ 
+-	pa = kmem_cache_alloc(ext4_pspace_cachep, GFP_NOFS);
++	pa = kmem_cache_alloc(ext4_pspace_cachep, GFP_KERNEL);
+ 	if (pa == NULL)
+ 		return -ENOMEM;
+ 
+@@ -3694,7 +3694,7 @@ ext4_mb_new_group_pa(struct ext4_allocation_context *ac)
+ 	BUG_ON(!S_ISREG(ac->ac_inode->i_mode));
+ 
+ 	BUG_ON(ext4_pspace_cachep == NULL);
+-	pa = kmem_cache_alloc(ext4_pspace_cachep, GFP_NOFS);
++	pa = kmem_cache_alloc(ext4_pspace_cachep, GFP_KERNEL);
+ 	if (pa == NULL)
+ 		return -ENOMEM;
+ 
+@@ -4479,7 +4479,7 @@ ext4_fsblk_t ext4_mb_new_blocks(handle_t *handle,
+ 		}
+ 	}
+ 
+-	ac = kmem_cache_zalloc(ext4_ac_cachep, GFP_NOFS);
++	ac = kmem_cache_zalloc(ext4_ac_cachep, GFP_KERNEL);
+ 	if (!ac) {
+ 		ar->len = 0;
+ 		*errp = -ENOMEM;
+@@ -4813,7 +4813,7 @@ void ext4_free_blocks(handle_t *handle, struct inode *inode,
+ 
+ 	/* __GFP_NOFAIL: retry infinitely, ignore TIF_MEMDIE and memcg limit. */
+ 	err = ext4_mb_load_buddy_gfp(sb, block_group, &e4b,
+-				     GFP_NOFS|__GFP_NOFAIL);
++				     GFP_KERNEL|__GFP_NOFAIL);
+ 	if (err)
+ 		goto error_return;
+ 
+@@ -4832,7 +4832,7 @@ void ext4_free_blocks(handle_t *handle, struct inode *inode,
+ 		 * to fail.
+ 		 */
+ 		new_entry = kmem_cache_alloc(ext4_free_data_cachep,
+-				GFP_NOFS|__GFP_NOFAIL);
++				GFP_KERNEL|__GFP_NOFAIL);
+ 		new_entry->efd_start_cluster = bit;
+ 		new_entry->efd_group = block_group;
+ 		new_entry->efd_count = count_clusters;
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 172317462238..f68e8c87f9f2 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1650,7 +1650,7 @@ ext4_xattr_cache_insert(struct mb_cache *ext4_mb_cache, struct buffer_head *bh)
+ 		       EXT4_XATTR_REFCOUNT_MAX;
+ 	int error;
+ 
+-	error = mb_cache_entry_create(ext4_mb_cache, GFP_NOFS, hash,
++	error = mb_cache_entry_create(ext4_mb_cache, GFP_KERNEL, hash,
+ 				      bh->b_blocknr, reusable);
+ 	if (error) {
+ 		if (error == -EBUSY)
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index 3a449150f834..bd29daa975a5 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -379,7 +379,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+ 	 */
+ 	J_ASSERT_BH(bh_in, buffer_jbddirty(bh_in));
+ 
+-	new_bh = alloc_buffer_head(GFP_NOFS|__GFP_NOFAIL);
++	new_bh = alloc_buffer_head(GFP_KERNEL|__GFP_NOFAIL);
+ 
+ 	/* keep subsequent assertions sane */
+ 	atomic_set(&new_bh->b_count, 1);
+@@ -2375,7 +2375,7 @@ static struct journal_head *journal_alloc_journal_head(void)
+ #ifdef CONFIG_JBD2_DEBUG
+ 	atomic_inc(&nr_journal_heads);
+ #endif
+-	ret = kmem_cache_zalloc(jbd2_journal_head_cache, GFP_NOFS);
++	ret = kmem_cache_zalloc(jbd2_journal_head_cache, GFP_KERNEL);
+ 	if (!ret) {
+ 		jbd_debug(1, "out of memory for journal_head\n");
+ 		pr_notice_ratelimited("ENOMEM in %s, retrying.\n", __func__);
+diff --git a/fs/jbd2/revoke.c b/fs/jbd2/revoke.c
+index cfc38b552118..c9c347468c5b 100644
+--- a/fs/jbd2/revoke.c
++++ b/fs/jbd2/revoke.c
+@@ -141,7 +141,7 @@ static int insert_revoke_hash(journal_t *journal, unsigned long long blocknr,
  {
- 	int i;
+ 	struct list_head *hash_list;
+ 	struct jbd2_revoke_record_s *record;
+-	gfp_t gfp_mask = GFP_NOFS;
++	gfp_t gfp_mask = GFP_KERNEL;
  
--	if (addr >= F2FS_RAW_SUPER(sbi)->block_count ||
-+	if (addr >= le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count) ||
- 				addr < SM_I(sbi)->main_blkaddr) {
- 		DBG(1, "block addr [0x%x]\n", addr);
- 		return 0;
-diff --git a/fsck/mount.c b/fsck/mount.c
-index 9fcb008..0144e97 100644
---- a/fsck/mount.c
-+++ b/fsck/mount.c
-@@ -1375,12 +1375,12 @@ void build_sit_area_bitmap(struct f2fs_sb_info *sbi)
- 		ptr += SIT_VBLOCK_MAP_SIZE;
- 
- 		if (se->valid_blocks == 0x0) {
--			if (sbi->ckpt->cur_node_segno[0] == segno ||
--					sbi->ckpt->cur_data_segno[0] == segno ||
--					sbi->ckpt->cur_node_segno[1] == segno ||
--					sbi->ckpt->cur_data_segno[1] == segno ||
--					sbi->ckpt->cur_node_segno[2] == segno ||
--					sbi->ckpt->cur_data_segno[2] == segno) {
-+			if (le32_to_cpu(sbi->ckpt->cur_node_segno[0]) == segno ||
-+				le32_to_cpu(sbi->ckpt->cur_data_segno[0]) == segno ||
-+				le32_to_cpu(sbi->ckpt->cur_node_segno[1]) == segno ||
-+				le32_to_cpu(sbi->ckpt->cur_data_segno[1]) == segno ||
-+				le32_to_cpu(sbi->ckpt->cur_node_segno[2]) == segno ||
-+				le32_to_cpu(sbi->ckpt->cur_data_segno[2]) == segno) {
- 				continue;
- 			} else {
- 				free_segs++;
-diff --git a/fsck/node.c b/fsck/node.c
-index c2f83b8..fe923e5 100644
---- a/fsck/node.c
-+++ b/fsck/node.c
-@@ -78,7 +78,7 @@ block_t new_node_block(struct f2fs_sb_info *sbi,
- 
- 	type = CURSEG_COLD_NODE;
- 	if (IS_DNODE(node_blk)) {
--		if (S_ISDIR(f2fs_inode->i.i_mode))
-+		if (S_ISDIR(le16_to_cpu(f2fs_inode->i.i_mode)))
- 			type = CURSEG_HOT_NODE;
- 		else
- 			type = CURSEG_WARM_NODE;
-diff --git a/fsck/segment.c b/fsck/segment.c
-index 9ce8bf5..6b2f6c1 100644
---- a/fsck/segment.c
-+++ b/fsck/segment.c
-@@ -80,7 +80,8 @@ static void f2fs_write_block(struct f2fs_sb_info *sbi, nid_t ino, void *buffer,
- 	ret = dev_read_block(inode, ni.blk_addr);
- 	ASSERT(ret >= 0);
- 
--	if (S_ISDIR(inode->i.i_mode) || S_ISLNK(inode->i.i_mode))
-+	if (S_ISDIR(le16_to_cpu(inode->i.i_mode)) ||
-+			S_ISLNK(le16_to_cpu(inode->i.i_mode)))
- 		ASSERT(0);
- 
- 	off_in_block = offset & ((1 << F2FS_BLKSIZE_BITS) - 1);
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 78ea939..ef34ca2 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -170,15 +170,17 @@ static inline uint64_t bswap_64(uint64_t val)
- #define DISP_u32(ptr, member)						\
- 	do {								\
- 		assert(sizeof((ptr)->member) <= 4);			\
--		printf("%-30s" "\t\t[0x%8x : %u]\n",		\
--			#member, ((ptr)->member), ((ptr)->member));	\
-+		printf("%-30s" "\t\t[0x%8x : %u]\n",			\
-+			#member, le32_to_cpu(((ptr)->member)),		\
-+			le32_to_cpu(((ptr)->member)));			\
- 	} while (0)
- 
- #define DISP_u64(ptr, member)						\
- 	do {								\
- 		assert(sizeof((ptr)->member) == 8);			\
- 		printf("%-30s" "\t\t[0x%8llx : %llu]\n",		\
--			#member, ((ptr)->member), ((ptr)->member));	\
-+			#member, le64_to_cpu(((ptr)->member)),		\
-+			le64_to_cpu(((ptr)->member)));			\
- 	} while (0)
- 
- #define DISP_utf(ptr, member)						\
+ 	if (journal_oom_retry)
+ 		gfp_mask |= __GFP_NOFAIL;
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index 35a5d3d76182..a7e50eb330a8 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -974,7 +974,7 @@ do_get_write_access(handle_t *handle, struct journal_head *jh,
+ 			JBUFFER_TRACE(jh, "allocate memory for buffer");
+ 			jbd_unlock_bh_state(bh);
+ 			frozen_buffer = jbd2_alloc(jh2bh(jh)->b_size,
+-						   GFP_NOFS | __GFP_NOFAIL);
++						   GFP_KERNEL | __GFP_NOFAIL);
+ 			goto repeat;
+ 		}
+ 		jh->b_frozen_data = frozen_buffer;
 -- 
-2.10.1
+2.11.0
 
+-- 
+Michal Hocko
+SUSE Labs
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
