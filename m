@@ -1,8 +1,8 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: fix a dead loop in f2fs_fiemap()
-Date: Sun, 22 Jan 2017 14:27:12 +0800
-Message-ID: <f09cfe87-866b-1ae4-a8ae-bb5c718712ef@huawei.com>
-References: <1485058862-19199-1-git-send-email-fangwei1@huawei.com>
+From: Kinglong Mee <kinglongmee@gmail.com>
+Subject: [f2fs-dev PATCH] mkfs.f2fs: fix a segfault when setting
+ more than 7 devices
+Date: Sun, 22 Jan 2017 17:16:39 +0800
+Message-ID: <7ea08c45-3ece-e894-5ca2-80d8a4ac9e0d@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,15 +10,17 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cVBcc-0000A0-Tn
+	(envelope-from <kinglongmee@gmail.com>) id 1cVEGf-0006tu-KV
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 22 Jan 2017 06:27:26 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cVBcX-0001WO-E5
+	Sun, 22 Jan 2017 09:16:57 +0000
+Received: from mail-pg0-f66.google.com ([74.125.83.66])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1cVEGe-0006dc-Nd
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 22 Jan 2017 06:27:26 +0000
-In-Reply-To: <1485058862-19199-1-git-send-email-fangwei1@huawei.com>
+	Sun, 22 Jan 2017 09:16:57 +0000
+Received: by mail-pg0-f66.google.com with SMTP id 204so10917216pge.2
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sun, 22 Jan 2017 01:16:56 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,40 +30,58 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Wei Fang <fangwei1@huawei.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/1/22 12:21, Wei Fang wrote:
-> A dead loop can be triggered in f2fs_fiemap() using the test case
-> as below:
-> 
-> 	...
-> 	fd = open();
-> 	fallocate(fd, 0, 0, 4294967296);
-> 	ioctl(fd, FS_IOC_FIEMAP, fiemap_buf);
-> 	...
-> 
-> It's caused by an overflow in __get_data_block():
-> 	...
-> 	bh->b_size = map.m_len << inode->i_blkbits;
-> 	...
-> map.m_len is an unsigned int, and bh->b_size is a size_t which is 64 bits
-> on 64 bits archtecture, type conversion from an unsigned int to a size_t
-> will result in an overflow.
-> 
-> In the above-mentioned case, bh->b_size will be zero, and f2fs_fiemap()
-> will call get_data_block() at block 0 again an again.
-> 
-> Fix this by adding a force conversion before left shift.
+[root@localhost f2fs-tools]# mkfs.f2fs -c /dev/sdb1 -c /dev/sdb1 -c /dev/sdb1 -c /dev/sdb1 -c /dev/sdb1 -c /dev/sdb1 -c /dev/sdb1 -c /dev/sdb1 -c /dev/sdb1 /dev/sdb1 
 
-Nice catch!
+kernel: mkfs.f2fs[9047]: segfault at 2b78a60f ip 0000000000401356 sp 00007fffde05c9c0 error 6 in mkfs.f2fs[400000+5000]
 
-> 
-> Signed-off-by: Wei Fang <fangwei1@huawei.com>
+Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+---
+ mkfs/f2fs_format_main.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Acked-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 70ed77a..db1dc94 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -28,7 +28,7 @@ static void mkfs_usage()
+ 	MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
+ 	MSG(0, "[options]:\n");
+ 	MSG(0, "  -a heap-based allocation [default:1]\n");
+-	MSG(0, "  -c [device path]\n");
++	MSG(0, "  -c [device path] up to 7 devices excepts meta device\n");
+ 	MSG(0, "  -d debug level [default:0]\n");
+ 	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
+ 	MSG(0, "  -l label\n");
+@@ -84,6 +84,11 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 			c.heap = atoi(optarg);
+ 			break;
+ 		case 'c':
++			if (c.ndevs >= MAX_DEVICES) {
++				MSG(0, "Error: Too many devices\n");
++				mkfs_usage();
++			}
++
+ 			if (strlen(optarg) > MAX_PATH_LEN) {
+ 				MSG(0, "Error: device path should be less than "
+ 					"%d characters\n", MAX_PATH_LEN);
+@@ -135,12 +140,8 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		mkfs_usage();
+ 	}
+ 
+-	/* [0] : META, [1 to MAX_DEVICES + 1] : NODE/DATA */
++	/* [0] : META, [1 to MAX_DEVICES - 1] : NODE/DATA */
+ 	c.devices[0].path = strdup(argv[optind]);
+-	if (c.ndevs > MAX_DEVICES) {
+-		MSG(0, "\tError: Too many devices\n");
+-		mkfs_usage();
+-	}
+ 
+ 	if ((optind + 1) < argc) {
+ 		if (c.ndevs > 1) {
+-- 
+2.9.3
 
 
 ------------------------------------------------------------------------------
