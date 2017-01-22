@@ -1,107 +1,69 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
-Date: Fri, 27 Jan 2017 10:37:35 +0100
-Message-ID: <20170127093735.GB4143@dhcp22.suse.cz>
-References: <20170117082425.GD19699@dhcp22.suse.cz>
- <20170117151817.GR19699@dhcp22.suse.cz>
- <20170117155916.dcizr65bwa6behe7@thunk.org>
- <20170117161618.GT19699@dhcp22.suse.cz>
- <20170117172925.GA2486@quack2.suse.cz>
- <20170119083956.GE30786@dhcp22.suse.cz>
- <20170119092236.GC2565@quack2.suse.cz>
- <20170119094405.GK30786@dhcp22.suse.cz>
- <20170126074455.GC8456@dhcp22.suse.cz>
- <20170127061318.xd2qxashbl4dajez@thunk.org>
+From: =?gb2312?B?WXUgWGluZyAo0M/T7ik=?= <Yu.Xing@spreadtrum.com>
+Subject: f2fs-tools support packing file into android image ?
+Date: Sun, 22 Jan 2017 02:20:23 +0000
+Message-ID: <e99b12d6c839419395deafc513bcc862@SHMBX01.spreadtrum.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20170127061318.xd2qxashbl4dajez@thunk.org>
-Sender: owner-linux-mm@kvack.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <Yu.Xing@spreadtrum.com>) id 1cV8SE-00069f-2c
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 22 Jan 2017 03:04:30 +0000
+Received: from [222.66.158.135] (helo=SHSQR01.spreadtrum.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cV8S3-0000bP-Ic
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 22 Jan 2017 03:04:30 +0000
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+	by SHSQR01.spreadtrum.com with ESMTP id v0M2LQmh064002
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Sun, 22 Jan 2017 10:21:26 +0800 (CST)
+	(envelope-from Yu.Xing@spreadtrum.com)
+Content-Language: zh-CN
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: "jpa@google.com" <jpa@google.com>, "drosen@google.com" <drosen@google.com>, "enh@google.com" <enh@google.com>, "salyzyn@google.com" <salyzyn@google.com>, "jeffv@google.com" <jeffv@google.com>"salyzyn@google.com" <salyzyn@google.com>, "ccross@android.com" <ccross@android.com>, "danalbert@google.com" <danalbert@google.com>
+Cc: "mdxy2014@gmail.com" <mdxy2014@gmail.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
 
-On Fri 27-01-17 01:13:18, Theodore Ts'o wrote:
-> On Thu, Jan 26, 2017 at 08:44:55AM +0100, Michal Hocko wrote:
-> > > > I'm convinced the current series is OK, only real life will tell us whether
-> > > > we missed something or not ;)
-> > > 
-> > > I would like to extend the changelog of "jbd2: mark the transaction
-> > > context with the scope GFP_NOFS context".
-> > > 
-> > > "
-> > > Please note that setups without journal do not suffer from potential
-> > > recursion problems and so they do not need the scope protection because
-> > > neither ->releasepage nor ->evict_inode (which are the only fs entry
-> > > points from the direct reclaim) can reenter a locked context which is
-> > > doing the allocation currently.
-> > > "
-> > 
-> > Could you comment on this Ted, please?
-> 
-> I guess....   so there still is one way this could screw us, and it's this reason for GFP_NOFS:
-> 
->         - to prevent from stack overflows during the reclaim because
-> 	          the allocation is performed from a deep context already
-> 
-> The writepages call stack can be pretty deep.  (Especially if we're
-> using ext4 in no journal mode over, say, iSCSI.)
-> 
-> How much stack space can get consumed by a reclaim?
+Hi 
 
-./scripts/stackusage with allyesconfig says:
+	Recently, I used the make_f2fs command to create android system.img/userdata.img/cache.img.
+	The tool from system/extras/f2fs_utils/
 
-./mm/page_alloc.c:3745  __alloc_pages_nodemask  264     static
-./mm/page_alloc.c:3531  __alloc_pages_slowpath  520     static
-./mm/vmscan.c:2946      try_to_free_pages       216     static
-./mm/vmscan.c:2753      do_try_to_free_pages    304     static
-./mm/vmscan.c:2517      shrink_node     	352     static
-./mm/vmscan.c:2317      shrink_node_memcg       560     static
-./mm/vmscan.c:1692      shrink_inactive_list    688     static
-./mm/vmscan.c:908       shrink_page_list        608     static
+	But I found the make_f2fs cannot packing file into image, so I can not apply the tool to format the system.img 
+	If we used the tool to format the system.img, it can format succeed, but when we mount the system.img to
+    target, there is no exist any files in the target directory!
 
-So this would be 3512 for the standard LRUs reclaim whether we have
-GFP_FS or not. shrink_page_list can recurse to releasepage but there is
-no NOFS protection there so it doesn't make much sense to check this
-path. So we are left with the slab shrinkers path
+	So currently,  this tool can support packing files into android image ? 
+	From make_ext4fs tool, I found this tool can packing the files into images with the target_out_directory arguments, 
+	as following:
 
-./mm/page_alloc.c:3745  __alloc_pages_nodemask  264     static
-./mm/page_alloc.c:3531  __alloc_pages_slowpath  520     static
-./mm/vmscan.c:2946      try_to_free_pages       216     static
-./mm/vmscan.c:2753      do_try_to_free_pages    304     static
-./mm/vmscan.c:2517      shrink_node     	352     static
-./mm/vmscan.c:427       shrink_slab     	336     static
-./fs/super.c:56 	super_cache_scan        104     static << here we have the NOFS protection
-./fs/dcache.c:1089      prune_dcache_sb 	152     static
-./fs/dcache.c:939       shrink_dentry_list      96      static
-./fs/dcache.c:509       __dentry_kill   	72      static
-./fs/dcache.c:323       dentry_unlink_inode     64      static
-./fs/inode.c:1527       iput    		80      static
-./fs/inode.c:532        evict   		72      static
+	make_ext4fs [ -l <len> ] [ -j <journal size> ] [ -b <block_size> ]
+    [ -g <blocks per group> ] [ -i <inodes> ] [ -I <inode size> ]
+    [ -L <label> ] [ -f ] [ -a <android mountpoint> ] [ -u ]
+    [ -S file_contexts ] [ -C fs_config ] [ -T timestamp ]
+    [ -z | -s ] [ -w ] [ -c ] [ -J ] [ -v ] [ -B <block_list_file> ]
+    <filename> [[<directory>] <target_out_directory>] 
 
-This is where the fs specific callbacks play role and I am not sure
-which paths can pass through for ext4 in the nojournal mode and how much
-of the stack this can eat. But currently we are at +536 wrt. NOFS
-context. This is quite a lot but still much less (2632 vs. 3512) than
-the regular reclaim. So there is quite some stack space to eat... I am
-wondering whether we have to really treat nojournal mode any special
-just because of the stack usage?
+	But make_f2fs tool cannot support this function, this tool only can support -l arguments , as following:
+	make_f2fs -l <len> <filename>
 
-If this ever turn out to be a problem and with the vmapped stacks we
-have good chances to get a proper stack traces on a potential overflow
-we can add the scope API around the problematic code path with the
-explanation why it is needed.
+	Also, if we want to include the selinux related, for make_ext4fs, we can used the -S arguments.
+	But for make_f2fs, we cannot , maybe add this function into make_f2fs tool ? 
 
-Does that make sense to you?
+	Can somebody help me to have a look at these questions?  Thanks a lot!
 
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Yu.xing 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
