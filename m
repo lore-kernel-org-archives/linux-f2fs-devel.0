@@ -1,50 +1,78 @@
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: [PATCH RESEND] fs: f2fs: Use ktime_get_real_seconds for
-	sit_info times
-Date: Sat, 21 Jan 2017 15:04:09 -0800
-Message-ID: <1485039849-17088-1-git-send-email-deepa.kernel@gmail.com>
+From: Wei Fang <fangwei1@huawei.com>
+Subject: [PATCH] f2fs: fix a dead loop in f2fs_fiemap()
+Date: Sun, 22 Jan 2017 12:21:02 +0800
+Message-ID: <1485058862-19199-1-git-send-email-fangwei1@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <y2038-bounces@lists.linaro.org>
-List-Unsubscribe: <https://lists.linaro.org/mailman/options/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/y2038/>
-List-Post: <mailto:y2038@lists.linaro.org>
-List-Help: <mailto:y2038-request@lists.linaro.org?subject=help>
-List-Subscribe: <https://lists.linaro.org/mailman/listinfo/y2038>,
- <mailto:y2038-request@lists.linaro.org?subject=subscribe>
-Errors-To: y2038-bounces@lists.linaro.org
-Sender: "Y2038" <y2038-bounces@lists.linaro.org>
-To: jaegeuk@kernel.org, cm224.lee@samsung.com, linux-f2fs-devel@lists.sourceforge.net
-Cc: y2038@lists.linaro.org, linux-kernel@vger.kernel.org, arnd@arndb.de
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <fangwei1@huawei.com>) id 1cV9em-0008WD-An
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 22 Jan 2017 04:21:32 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cV9ef-00013O-HM
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 22 Jan 2017 04:21:32 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Q1VSUkVOVF9USU1FX1NFQyBpcyBub3QgeTIwMzggc2FmZS4KClJlcGxhY2UgdXNlIG9mIENVUlJF
-TlRfVElNRV9TRUMgd2l0aCBrdGltZV9nZXRfcmVhbF9zZWNvbmRzCmluIHNlZ21lbnQgdGltZXN0
-YW1wcyB1c2VkIGJ5IEdDIGFsZ29yaXRobSBpbmNsdWRpbmcgdGhlCnNlZ21lbnQgbXRpbWUgdGlt
-ZXN0YW1wcy4KClNpZ25lZC1vZmYtYnk6IERlZXBhIERpbmFtYW5pIDxkZWVwYS5rZXJuZWxAZ21h
-aWwuY29tPgotLS0KIGZzL2YyZnMvc2VnbWVudC5jIHwgMiArLQogZnMvZjJmcy9zZWdtZW50Lmgg
-fCA1ICsrKy0tCiAyIGZpbGVzIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMo
-LSkKCmRpZmYgLS1naXQgYS9mcy9mMmZzL3NlZ21lbnQuYyBiL2ZzL2YyZnMvc2VnbWVudC5jCmlu
-ZGV4IGZiNTdhYjkuLjQ4ZWZkODggMTAwNjQ0Ci0tLSBhL2ZzL2YyZnMvc2VnbWVudC5jCisrKyBi
-L2ZzL2YyZnMvc2VnbWVudC5jCkBAIC0yNDIzLDcgKzI0MjMsNyBAQCBzdGF0aWMgaW50IGJ1aWxk
-X3NpdF9pbmZvKHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkKIAlzaXRfaS0+ZGlydHlfc2VudHJp
-ZXMgPSAwOwogCXNpdF9pLT5zZW50c19wZXJfYmxvY2sgPSBTSVRfRU5UUllfUEVSX0JMT0NLOwog
-CXNpdF9pLT5lbGFwc2VkX3RpbWUgPSBsZTY0X3RvX2NwdShzYmktPmNrcHQtPmVsYXBzZWRfdGlt
-ZSk7Ci0Jc2l0X2ktPm1vdW50ZWRfdGltZSA9IENVUlJFTlRfVElNRV9TRUMudHZfc2VjOworCXNp
-dF9pLT5tb3VudGVkX3RpbWUgPSBrdGltZV9nZXRfcmVhbF9zZWNvbmRzKCk7CiAJbXV0ZXhfaW5p
-dCgmc2l0X2ktPnNlbnRyeV9sb2NrKTsKIAlyZXR1cm4gMDsKIH0KZGlmZiAtLWdpdCBhL2ZzL2Yy
-ZnMvc2VnbWVudC5oIGIvZnMvZjJmcy9zZWdtZW50LmgKaW5kZXggNWNiNTc1NS4uY2Q0MGMzNCAx
-MDA2NDQKLS0tIGEvZnMvZjJmcy9zZWdtZW50LmgKKysrIGIvZnMvZjJmcy9zZWdtZW50LmgKQEAg
-LTY5MSw4ICs2OTEsOSBAQCBzdGF0aWMgaW5saW5lIHZvaWQgc2V0X3RvX25leHRfc2l0KHN0cnVj
-dCBzaXRfaW5mbyAqc2l0X2ksIHVuc2lnbmVkIGludCBzdGFydCkKIHN0YXRpYyBpbmxpbmUgdW5z
-aWduZWQgbG9uZyBsb25nIGdldF9tdGltZShzdHJ1Y3QgZjJmc19zYl9pbmZvICpzYmkpCiB7CiAJ
-c3RydWN0IHNpdF9pbmZvICpzaXRfaSA9IFNJVF9JKHNiaSk7Ci0JcmV0dXJuIHNpdF9pLT5lbGFw
-c2VkX3RpbWUgKyBDVVJSRU5UX1RJTUVfU0VDLnR2X3NlYyAtCi0JCQkJCQlzaXRfaS0+bW91bnRl
-ZF90aW1lOworCXRpbWU2NF90IG5vdyA9IGt0aW1lX2dldF9yZWFsX3NlY29uZHMoKTsKKworCXJl
-dHVybiBzaXRfaS0+ZWxhcHNlZF90aW1lICsgbm93IC0gc2l0X2ktPm1vdW50ZWRfdGltZTsKIH0K
-IAogc3RhdGljIGlubGluZSB2b2lkIHNldF9zdW1tYXJ5KHN0cnVjdCBmMmZzX3N1bW1hcnkgKnN1
-bSwgbmlkX3QgbmlkLAotLSAKMi43LjQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fClkyMDM4IG1haWxpbmcgbGlzdApZMjAzOEBsaXN0cy5saW5hcm8ub3Jn
-Cmh0dHBzOi8vbGlzdHMubGluYXJvLm9yZy9tYWlsbWFuL2xpc3RpbmZvL3kyMDM4Cg==
+A dead loop can be triggered in f2fs_fiemap() using the test case
+as below:
+
+	...
+	fd = open();
+	fallocate(fd, 0, 0, 4294967296);
+	ioctl(fd, FS_IOC_FIEMAP, fiemap_buf);
+	...
+
+It's caused by an overflow in __get_data_block():
+	...
+	bh->b_size = map.m_len << inode->i_blkbits;
+	...
+map.m_len is an unsigned int, and bh->b_size is a size_t which is 64 bits
+on 64 bits archtecture, type conversion from an unsigned int to a size_t
+will result in an overflow.
+
+In the above-mentioned case, bh->b_size will be zero, and f2fs_fiemap()
+will call get_data_block() at block 0 again an again.
+
+Fix this by adding a force conversion before left shift.
+
+Signed-off-by: Wei Fang <fangwei1@huawei.com>
+---
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 848d110..06cf0c5 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -961,7 +961,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
+ 	if (!err) {
+ 		map_bh(bh, inode->i_sb, map.m_pblk);
+ 		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
+-		bh->b_size = map.m_len << inode->i_blkbits;
++		bh->b_size = (u64)map.m_len << inode->i_blkbits;
+ 	}
+ 	return err;
+ }
+-- 
+2.4.11
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
