@@ -1,23 +1,26 @@
-From: Liu Xue <liuxueliu.liu@huawei.com>
-Subject: [PATCH] fsck.f2fs: always fix seg entry type if it is
-	not DATA
-Date: Tue, 24 Jan 2017 10:45:47 +0800
-Message-ID: <20170124024547.14406-1-liuxueliu.liu@huawei.com>
+From: Kinglong Mee <kinglongmee@gmail.com>
+Subject: [PATCH] mkfs.f2fs: fix bad assignment of total_sectors
+ for f2fs_configuration
+Date: Tue, 24 Jan 2017 10:42:53 +0800
+Message-ID: <130c919b-def1-33b1-0e16-e18e8de28d5c@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <liuxueliu.liu@huawei.com>) id 1cVqxS-0008KF-06
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1cVr4i-0004cP-Kc
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Jan 2017 02:35:42 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cVqxP-0000tY-Ex
+	Tue, 24 Jan 2017 02:43:12 +0000
+Received: from mail-it0-f65.google.com ([209.85.214.65])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1cVr4i-0001rf-0S
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 24 Jan 2017 02:35:41 +0000
+	Tue, 24 Jan 2017 02:43:12 +0000
+Received: by mail-it0-f65.google.com with SMTP id o138so12418835ito.3
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 23 Jan 2017 18:43:11 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,36 +30,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, piotr.karbowski@gmail.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-If the segment type and sum footer type are node, but its
-sit type is corrupted as cold data, this will always trigger
-type error crash in do_garbage_collect but not get fixed by fsck,
-so fix seg entry type when it is not DATA.
+wanted_total_sectors is introduced instead total_sectors,
+so that, the initialize is a fault, drop it.
 
-Reported-by: KARBOWSKI Piotr <piotr.karbowski@gmail.com>
-Signed-off-by: Liu Xue <liuxueliu.liu@huawei.com>
+Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- fsck/fsck.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mkfs/f2fs_format_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fsck/fsck.c b/fsck/fsck.c
-index 0e5aa7c..854c1e3 100644
---- a/fsck/fsck.c
-+++ b/fsck/fsck.c
-@@ -1843,7 +1843,8 @@ int check_sit_types(struct f2fs_sb_info *sbi)
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index db1dc94..5bb1faf 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -151,9 +151,6 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		c.wanted_total_sectors = atoll(argv[optind+1]);
+ 	}
  
- 		se = get_seg_entry(sbi, i);
- 		if (se->orig_type != se->type) {
--			if (se->orig_type == CURSEG_COLD_DATA) {
-+			if (se->orig_type == CURSEG_COLD_DATA &&
-+					se->type <= CURSEG_COLD_DATA) {
- 				se->type = se->orig_type;
- 			} else {
- 				FIX_MSG("Wrong segment type [0x%x] %x -> %x",
+-	if ((optind + 1) < argc)
+-		c.total_sectors = atoll(argv[optind+1]);
+-
+ 	if (c.zoned_mode)
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_BLKZONED);
+ }
 -- 
-2.10.1
+2.9.3
 
 
 ------------------------------------------------------------------------------
