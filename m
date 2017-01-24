@@ -1,24 +1,23 @@
-From: Alex <ambroxa@yahoo.it>
-Subject: f2fs_gc read and write continuously
-Date: Mon, 23 Jan 2017 18:00:25 +0000 (UTC)
-Message-ID: <1382755060.19135192.1485194425207@mail.yahoo.com>
-References: <1382755060.19135192.1485194425207.ref@mail.yahoo.com>
-Reply-To: Alex <ambroxa@yahoo.it>
+From: Liu Xue <liuxueliu.liu@huawei.com>
+Subject: [PATCH] fsck.f2fs: always fix seg entry type if it is
+	not DATA
+Date: Tue, 24 Jan 2017 10:45:47 +0800
+Message-ID: <20170124024547.14406-1-liuxueliu.liu@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <ambroxa@yahoo.it>) id 1cVjQW-0003M5-Lj
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <liuxueliu.liu@huawei.com>) id 1cVqxS-0008KF-06
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 23 Jan 2017 18:33:14 +0000
-Received: from omp1048.mail.ir2.yahoo.com ([212.82.98.111])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cVjQT-0004yC-BW
+	Tue, 24 Jan 2017 02:35:42 +0000
+Received: from szxga03-in.huawei.com ([119.145.14.66])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cVqxP-0000tY-Ex
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 23 Jan 2017 18:33:12 +0000
+	Tue, 24 Jan 2017 02:35:41 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -28,58 +27,37 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>
+To: jaegeuk@kernel.org, piotr.karbowski@gmail.com
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Some days ago I've installed in my Raspberry PI 3 (a small board armhf based) a Debian Jessie distro ("Raspbian") with kernel 4.4.38
+If the segment type and sum footer type are node, but its
+sit type is corrupted as cold data, this will always trigger
+type error crash in do_garbage_collect but not get fixed by fsck,
+so fix seg entry type when it is not DATA.
 
-I've installed the O.S. in a microSD card, a 32GB Samsung EVO+ formatted with F2FS
-Before this, the same system was running for 1 month with another microSD card (Sandisk Ultra) formatted with EXT4, without ANY problem. 
-Now I would like to see if F2FS can bring me some benefit.
+Reported-by: KARBOWSKI Piotr <piotr.karbowski@gmail.com>
+Signed-off-by: Liu Xue <liuxueliu.liu@huawei.com>
+---
+ fsck/fsck.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Using a Linux PC, I've simply copied with  rsync -axv  my Raspbian Jessie installation from old microSD to the new Samsung EVO+As said before, I've formatted the new root partition with F2FS instead of EXT4.
-All works very fine and the new Samsung EVO+ is really very very fast. I'm very happy with it.
+diff --git a/fsck/fsck.c b/fsck/fsck.c
+index 0e5aa7c..854c1e3 100644
+--- a/fsck/fsck.c
++++ b/fsck/fsck.c
+@@ -1843,7 +1843,8 @@ int check_sit_types(struct f2fs_sb_info *sbi)
+ 
+ 		se = get_seg_entry(sbi, i);
+ 		if (se->orig_type != se->type) {
+-			if (se->orig_type == CURSEG_COLD_DATA) {
++			if (se->orig_type == CURSEG_COLD_DATA &&
++					se->type <= CURSEG_COLD_DATA) {
+ 				se->type = se->orig_type;
+ 			} else {
+ 				FIX_MSG("Wrong segment type [0x%x] %x -> %x",
+-- 
+2.10.1
 
-But I've a strange issue that, I think, involves F2FS
-Raspberry board is equipped with a green LED that show microSD access. And now this green LED blink every second, like a metronome.
-
-I've disabled all daemons and running  iotop -a  for 30 minutes. Every 1 minute f2fs_gc process increase DISK_READ and DISK_WRITE counter about 2 MBytes.
-Swap is totally disabled.
-
-Example after about 10 minutes:
-  TID  PRIO  USER     DISK READ  DISK WRITE  SWAPIN     IO>    COMMAND                                                                                                                                                                        
-  210 be/4 root         27.04 M     33.77 M  0.00 %  0.30 % [f2fs_gc-179:2]
- 1048 be/4 root          0.00 B    584.00 K  0.00 %  0.10 % [kworker/u8:2]
- 1475 be/4 root          4.00 K      0.00 B  0.00 %  0.00 % -bash
-    1 be/4 root          0.00 B      0.00 B  0.00 %  0.00 % init
-    2 be/4 root          0.00 B      0.00 B  0.00 %  0.00 % [kthreadd]
-    3 be/4 root          0.00 B      0.00 B  0.00 %  0.00 % [ksoftirqd/0]
-    5 be/0 root          0.00 B      0.00 B  0.00 %  0.00 % [kworker/0:0H]
- 1030 be/0 root          0.00 B      0.00 B  0.00 %  0.00 % [kworker/0:1H]
-    7 be/4 root          0.00 B      0.00 B  0.00 %  0.00 % [rcu_sched]
-    8 be/4 root          0.00 B      0.00 B  0.00 %  0.00 % [rcu_bh]
-
-NO processes are running and I expect no data are written or read to/from microSD
-
-I've also disconnected for a while the ethernet network cable, but f2fs_gc still again to read and write without any reason.
-I've reinstalled the old microSD and made a iotop comparison: with EXT4 there are no accesses to the card and green LED is not blinking.
-Old and new system are identical except for root filesystem.
-
-
-I've tried to disable F2FS garbage collect modifying my /etc/fstab as:
-
-/dev/mmcblk0p2  /               f2fs    defaults,relatime,background_gc=off      0       1
-
-without any success. Nothing change. iotop show a lot of I/O activity by f2fs_gc process.
-
-
-
-Are iotop values dummy ? Are these real read/write to microSD  or not ?
-I'm very confused. Any suggestion or idea ?
-
-
-Thanks in advance for any infos.
-
-Best regards.
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
