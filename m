@@ -1,49 +1,83 @@
-From: "kian" <brakepads@motodios.net>
-Subject: [SPAM] motorbike brake pad
-Date: Thu, 26 Jan 2017 15:13:33 +0800
-Message-ID: <E1cWeFY-0007rL-CQ@sfs-ml-3.v29.ch3.sourceforge.com>
-Reply-To: kian@tracyelise.com
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
+Date: Thu, 26 Jan 2017 08:44:55 +0100
+Message-ID: <20170126074455.GC8456@dhcp22.suse.cz>
+References: <20170106141107.23953-9-mhocko@kernel.org>
+ <20170117025607.frrcdbduthhutrzj@thunk.org>
+ <20170117082425.GD19699@dhcp22.suse.cz>
+ <20170117151817.GR19699@dhcp22.suse.cz>
+ <20170117155916.dcizr65bwa6behe7@thunk.org>
+ <20170117161618.GT19699@dhcp22.suse.cz>
+ <20170117172925.GA2486@quack2.suse.cz>
+ <20170119083956.GE30786@dhcp22.suse.cz>
+ <20170119092236.GC2565@quack2.suse.cz>
+ <20170119094405.GK30786@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <brakepads@motodios.net>) id 1cWeFX-0007r0-0M
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 26 Jan 2017 07:13:39 +0000
-Received: from [220.188.179.179] (helo=PC201609101304)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
-	id 1cWeFV-0002AR-OH for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 26 Jan 2017 07:13:38 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20170119094405.GK30786@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi
-We can supply high quality sintered brake pad In Racing,it can resist 1000 high Temperature,we have cheaper prices and good production
+On Thu 19-01-17 10:44:05, Michal Hocko wrote:
+> On Thu 19-01-17 10:22:36, Jan Kara wrote:
+> > On Thu 19-01-17 09:39:56, Michal Hocko wrote:
+> > > On Tue 17-01-17 18:29:25, Jan Kara wrote:
+> > > > On Tue 17-01-17 17:16:19, Michal Hocko wrote:
+> > > > > > > But before going to play with that I am really wondering whether we need
+> > > > > > > all this with no journal at all. AFAIU what Jack told me it is the
+> > > > > > > journal lock(s) which is the biggest problem from the reclaim recursion
+> > > > > > > point of view. What would cause a deadlock in no journal mode?
+> > > > > > 
+> > > > > > We still have the original problem for why we need GFP_NOFS even in
+> > > > > > ext2.  If we are in a writeback path, and we need to allocate memory,
+> > > > > > we don't want to recurse back into the file system's writeback path.
+> > > > > 
+> > > > > But we do not enter the writeback path from the direct reclaim. Or do
+> > > > > you mean something other than pageout()'s mapping->a_ops->writepage?
+> > > > > There is only try_to_release_page where we get back to the filesystems
+> > > > > but I do not see any NOFS protection in ext4_releasepage.
+> > > > 
+> > > > Maybe to expand a bit: These days, direct reclaim can call ->releasepage()
+> > > > callback, ->evict_inode() callback (and only for inodes with i_nlink > 0),
+> > > > shrinkers. That's it. So the recursion possibilities are rather more limited
+> > > > than they used to be several years ago and we likely do not need as much
+> > > > GFP_NOFS protection as we used to.
+> > > 
+> > > Thanks for making my remark more clear Jack! I would just want to add
+> > > that I was playing with the patch below (it is basically
+> > > GFP_NOFS->GFP_KERNEL for all allocations which trigger warning from the
+> > > debugging patch which means they are called from within transaction) and
+> > > it didn't hit the lockdep when running xfstests both with or without the
+> > > enabled journal.
+> > > 
+> > > So am I still missing something or the nojournal mode is safe and the
+> > > current series is OK wrt. ext*?
+> > 
+> > I'm convinced the current series is OK, only real life will tell us whether
+> > we missed something or not ;)
+> 
+> I would like to extend the changelog of "jbd2: mark the transaction
+> context with the scope GFP_NOFS context".
+> 
+> "
+> Please note that setups without journal do not suffer from potential
+> recursion problems and so they do not need the scope protection because
+> neither ->releasepage nor ->evict_inode (which are the only fs entry
+> points from the direct reclaim) can reenter a locked context which is
+> doing the allocation currently.
+> "
 
- 
+Could you comment on this Ted, please?
+-- 
+Michal Hocko
+SUSE Labs
 
-  
-expecting long term business with you !
-
-If you need any items of brake pads  hopefully could reply us email.  we will do our best to support you   
-
-Pls reply us offiicial mail box   kian@tracyelise.com
-
-best regards
-kian huang 
-Motodios limited
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
