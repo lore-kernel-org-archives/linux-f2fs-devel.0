@@ -1,48 +1,49 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
-Date: Fri, 27 Jan 2017 11:40:42 -0500
-Message-ID: <20170127164042.2o3bnyopihcb224g@thunk.org>
-References: <20170117151817.GR19699@dhcp22.suse.cz>
- <20170117155916.dcizr65bwa6behe7@thunk.org>
- <20170117161618.GT19699@dhcp22.suse.cz>
- <20170117172925.GA2486@quack2.suse.cz>
- <20170119083956.GE30786@dhcp22.suse.cz>
- <20170119092236.GC2565@quack2.suse.cz>
- <20170119094405.GK30786@dhcp22.suse.cz>
- <20170126074455.GC8456@dhcp22.suse.cz>
- <20170127061318.xd2qxashbl4dajez@thunk.org>
- <20170127093735.GB4143@dhcp22.suse.cz>
+From: "kian" <kian@motodios.net>
+Subject: [SPAM] motorcycle  brake pad
+Date: Sat, 28 Jan 2017 01:23:30 +0800
+Message-ID: <E1cXAFH-0001Hq-HI@sfs-ml-3.v29.ch3.sourceforge.com>
+Reply-To: kiankaplan@126.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20170127093735.GB4143@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kian@motodios.net>) id 1cXAFG-0001Hj-M4
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 27 Jan 2017 17:23:30 +0000
+Received: from [115.28.83.30] (helo=PC201609101304)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtp (Exim 4.76)
+	id 1cXAFF-0008Kl-Dx for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 27 Jan 2017 17:23:30 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, Jan 27, 2017 at 10:37:35AM +0100, Michal Hocko wrote:
-> If this ever turn out to be a problem and with the vmapped stacks we
-> have good chances to get a proper stack traces on a potential overflow
-> we can add the scope API around the problematic code path with the
-> explanation why it is needed.
+Hi
+We can supply high quality sintered brake pad In Racing,it can resist 1000 high Temperature,we have cheaper prices and good production
 
-Yeah, or maybe we can automate it?  Can the reclaim code check how
-much stack space is left and do the right thing automatically?
+ 
 
-The reason why I'm nervous is that nojournal mode is not a common
-configuration, and "wait until production systems start failing" is
-not a strategy that I or many SRE-types find.... comforting.
+  
+expecting long term business with you !
 
-So if we can assure ourselves that the right thing will happen
-automatically, or that lockdep will detect a required GFP_NOFS when
-running tests, the happier I'll be.
+If you need any items of brake pads  hopefully could reply us email.  we will do our best to support you   
 
-					- Ted
+Pls reply us offiicial mail box  kiankaplan@126.com
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+best regards
+kian huang 
+Motodios limited
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
