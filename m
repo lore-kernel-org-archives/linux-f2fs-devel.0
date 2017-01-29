@@ -1,59 +1,79 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
-Date: Mon, 30 Jan 2017 09:12:10 +0100
-Message-ID: <20170130081210.GD8443@dhcp22.suse.cz>
-References: <20170117155916.dcizr65bwa6behe7@thunk.org>
- <20170117161618.GT19699@dhcp22.suse.cz>
- <20170117172925.GA2486@quack2.suse.cz>
- <20170119083956.GE30786@dhcp22.suse.cz>
- <20170119092236.GC2565@quack2.suse.cz>
- <20170119094405.GK30786@dhcp22.suse.cz>
- <20170126074455.GC8456@dhcp22.suse.cz>
- <20170127061318.xd2qxashbl4dajez@thunk.org>
- <20170127093735.GB4143@dhcp22.suse.cz>
- <20170127164042.2o3bnyopihcb224g@thunk.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: f2fs-tools support packing file into android image ?
+Date: Sun, 29 Jan 2017 13:12:09 +0900
+Message-ID: <20170129041209.GB65555@jaegeuk.local>
+References: <e99b12d6c839419395deafc513bcc862@SHMBX01.spreadtrum.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cXgql-0006RI-Mc
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 29 Jan 2017 04:12:23 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cXgqk-0000gL-IW
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 29 Jan 2017 04:12:23 +0000
 Content-Disposition: inline
-In-Reply-To: <20170127164042.2o3bnyopihcb224g@thunk.org>
-Sender: owner-linux-mm@kvack.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <e99b12d6c839419395deafc513bcc862@SHMBX01.spreadtrum.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Yu Xing =?utf-8?B?KOmCouWuhyk=?= <Yu.Xing@spreadtrum.com>
+Cc: "enh@google.com" <enh@google.com>, "drosen@google.com" <drosen@google.com>, "jeffv@google.com" <jeffv@google.com>, "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>, "mdxy2014@gmail.com" <mdxy2014@gmail.com>, "ccross@android.com" <ccross@android.com>, "jpa@google.com" <jpa@google.com>, "danalbert@google.com" <danalbert@google.com>, "salyzyn@google.com" <salyzyn@google.com>
 
-On Fri 27-01-17 11:40:42, Theodore Ts'o wrote:
-> On Fri, Jan 27, 2017 at 10:37:35AM +0100, Michal Hocko wrote:
-> > If this ever turn out to be a problem and with the vmapped stacks we
-> > have good chances to get a proper stack traces on a potential overflow
-> > we can add the scope API around the problematic code path with the
-> > explanation why it is needed.
-> 
-> Yeah, or maybe we can automate it?  Can the reclaim code check how
-> much stack space is left and do the right thing automatically?
-
-I am not sure how to do that. Checking for some magic value sounds quite
-fragile to me. It also sounds a bit strange to focus only on the reclaim
-while other code paths might suffer from the same problem.
-
-What is actually the deepest possible call chain from the slab reclaim
-where I stopped? I have tried to follow that path but hit the callback
-wall quite early.
- 
-> The reason why I'm nervous is that nojournal mode is not a common
-> configuration, and "wait until production systems start failing" is
-> not a strategy that I or many SRE-types find.... comforting.
-
-I understand that but I would be much more happier if we did the
-decision based on the actual data rather than a fear something would
-break down.
-
--- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+SGVsbG8sCgpPbiAwMS8yMiwgWXUgWGluZyAo6YKi5a6HKSB3cm90ZToKPiBIaSAKPiAKPiAJUmVj
+ZW50bHksIEkgdXNlZCB0aGUgbWFrZV9mMmZzIGNvbW1hbmQgdG8gY3JlYXRlIGFuZHJvaWQgc3lz
+dGVtLmltZy91c2VyZGF0YS5pbWcvY2FjaGUuaW1nLgo+IAlUaGUgdG9vbCBmcm9tIHN5c3RlbS9l
+eHRyYXMvZjJmc191dGlscy8KPiAKPiAJQnV0IEkgZm91bmQgdGhlIG1ha2VfZjJmcyBjYW5ub3Qg
+cGFja2luZyBmaWxlIGludG8gaW1hZ2UsIHNvIEkgY2FuIG5vdCBhcHBseSB0aGUgdG9vbCB0byBm
+b3JtYXQgdGhlIHN5c3RlbS5pbWcgCgpSZWNlbnQgZjJmcy10b29scyBzdXBwb3J0cyBzbG9hZC5m
+MmZzIGFuZCByZXNpemUuZjJmcyBmb3IgcHJvZHVjdGlvbiwgd2hpY2gKeW91IG1heSBuZWVkIHRv
+IGludGVncmF0ZSBpbnRvIG1ha2VfZjJmcy4gVGhlIHNsb2FkLmYyZnMgYnVpbGRzIGFuIGltYWdl
+IGZyb20KZXhpc3RpbmcgZmlsZXMvZGlyZWN0b3JpZXMsIGFuZCByZXNpemUuZjJmcyBjYW4gZXhw
+YW5kIHRoZSBleGlzdGluZyBmMmZzIGltYWdlCmludG8gZ2l2ZW4gdm9sdW1lIHNpemUuCgpUaGFu
+a3MsCgo+IAlJZiB3ZSB1c2VkIHRoZSB0b29sIHRvIGZvcm1hdCB0aGUgc3lzdGVtLmltZywgaXQg
+Y2FuIGZvcm1hdCBzdWNjZWVkLCBidXQgd2hlbiB3ZSBtb3VudCB0aGUgc3lzdGVtLmltZyB0bwo+
+ICAgICB0YXJnZXQsIHRoZXJlIGlzIG5vIGV4aXN0IGFueSBmaWxlcyBpbiB0aGUgdGFyZ2V0IGRp
+cmVjdG9yeSEKPiAKPiAJU28gY3VycmVudGx5LCAgdGhpcyB0b29sIGNhbiBzdXBwb3J0IHBhY2tp
+bmcgZmlsZXMgaW50byBhbmRyb2lkIGltYWdlID8gCj4gCUZyb20gbWFrZV9leHQ0ZnMgdG9vbCwg
+SSBmb3VuZCB0aGlzIHRvb2wgY2FuIHBhY2tpbmcgdGhlIGZpbGVzIGludG8gaW1hZ2VzIHdpdGgg
+dGhlIHRhcmdldF9vdXRfZGlyZWN0b3J5IGFyZ3VtZW50cywgCj4gCWFzIGZvbGxvd2luZzoKPiAK
+PiAJbWFrZV9leHQ0ZnMgWyAtbCA8bGVuPiBdIFsgLWogPGpvdXJuYWwgc2l6ZT4gXSBbIC1iIDxi
+bG9ja19zaXplPiBdCj4gICAgIFsgLWcgPGJsb2NrcyBwZXIgZ3JvdXA+IF0gWyAtaSA8aW5vZGVz
+PiBdIFsgLUkgPGlub2RlIHNpemU+IF0KPiAgICAgWyAtTCA8bGFiZWw+IF0gWyAtZiBdIFsgLWEg
+PGFuZHJvaWQgbW91bnRwb2ludD4gXSBbIC11IF0KPiAgICAgWyAtUyBmaWxlX2NvbnRleHRzIF0g
+WyAtQyBmc19jb25maWcgXSBbIC1UIHRpbWVzdGFtcCBdCj4gICAgIFsgLXogfCAtcyBdIFsgLXcg
+XSBbIC1jIF0gWyAtSiBdIFsgLXYgXSBbIC1CIDxibG9ja19saXN0X2ZpbGU+IF0KPiAgICAgPGZp
+bGVuYW1lPiBbWzxkaXJlY3Rvcnk+XSA8dGFyZ2V0X291dF9kaXJlY3Rvcnk+XSAKPiAKPiAJQnV0
+IG1ha2VfZjJmcyB0b29sIGNhbm5vdCBzdXBwb3J0IHRoaXMgZnVuY3Rpb24sIHRoaXMgdG9vbCBv
+bmx5IGNhbiBzdXBwb3J0IC1sIGFyZ3VtZW50cyAsIGFzIGZvbGxvd2luZzoKPiAJbWFrZV9mMmZz
+IC1sIDxsZW4+IDxmaWxlbmFtZT4KPiAKPiAJQWxzbywgaWYgd2Ugd2FudCB0byBpbmNsdWRlIHRo
+ZSBzZWxpbnV4IHJlbGF0ZWQsIGZvciBtYWtlX2V4dDRmcywgd2UgY2FuIHVzZWQgdGhlIC1TIGFy
+Z3VtZW50cy4KPiAJQnV0IGZvciBtYWtlX2YyZnMsIHdlIGNhbm5vdCAsIG1heWJlIGFkZCB0aGlz
+IGZ1bmN0aW9uIGludG8gbWFrZV9mMmZzIHRvb2wgPyAKPiAKPiAJQ2FuIHNvbWVib2R5IGhlbHAg
+bWUgdG8gaGF2ZSBhIGxvb2sgYXQgdGhlc2UgcXVlc3Rpb25zPyAgVGhhbmtzIGEgbG90IQo+IAo+
+IFl1LnhpbmcgCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gQ2hlY2sgb3V0IHRoZSB2aWJyYW50
+IHRlY2ggY29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0Cj4gZW5nYWdpbmcgdGVj
+aCBzaXRlcywgU2xhc2hEb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKPiBfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2
+ZWwgbWFpbGluZyBsaXN0Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQK
+PiBodHRwczovL2xpc3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZz
+LWRldmVsCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2gg
+Y29tbXVuaXR5IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMs
+IFNsYXNoRG90Lm9yZyEgaHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBs
+aXN0CkxpbnV4LWYyZnMtZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMu
+c291cmNlZm9yZ2UubmV0L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
