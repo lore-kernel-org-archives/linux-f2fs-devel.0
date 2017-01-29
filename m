@@ -1,25 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: enhance lookup xattr
-Date: Sun, 29 Jan 2017 12:58:31 +0900
-Message-ID: <20170129035831.GA65555@jaegeuk.local>
-References: <20170124123951.114223-1-yuchao0@huawei.com>
+Subject: Re: Unrecoverable FS errors
+Date: Sun, 29 Jan 2017 13:14:46 +0900
+Message-ID: <20170129041446.GC65555@jaegeuk.local>
+References: <29539c24-f249-41c6-aa1e-d7851140e20c@myway.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cXgde-0003t2-O4
+	(envelope-from <jaegeuk@kernel.org>) id 1cXgtI-0004Rf-Bv
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 29 Jan 2017 03:58:50 +0000
+	Sun, 29 Jan 2017 04:15:00 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cXgdd-0001y0-Tj
+	(Exim 4.76) id 1cXgtH-0003zG-GB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 29 Jan 2017 03:58:50 +0000
+	Sun, 29 Jan 2017 04:15:00 +0000
 Content-Disposition: inline
-In-Reply-To: <20170124123951.114223-1-yuchao0@huawei.com>
+In-Reply-To: <29539c24-f249-41c6-aa1e-d7851140e20c@myway.de>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,77 +29,54 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: V10lator <v10lator@myway.de>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Chao,
-
-On 01/24, Chao Yu wrote:
-
-...
-
->  
-> -	error = read_all_xattrs(inode, ipage, &base_addr);
-> +	error = lookup_all_xattrs(inode, ipage, index, len, name,
-> +				&entry, &base_addr);
->  	if (error)
->  		return error;
->  
-> -	entry = __find_xattr(base_addr, index, len, name);
-> -	if (IS_XATTR_LAST_ENTRY(entry)) {
-> -		error = -ENODATA;
-> -		goto cleanup;
-> -	}
-> -
-> -	size = le16_to_cpu(entry->e_value_size);
-> +	size = __le16_to_cpu(entry->e_value_size);
-
-Looks good to me, except __le16_to_cpu() here.
-Do we need to use this instead of le16_to_cpu()?
-
-Thanks,
-
->  
->  	if (buffer && size > buffer_size) {
->  		error = -ERANGE;
-> -		goto cleanup;
-> +		goto out;
->  	}
->  
-> +	pval = entry->e_name + entry->e_name_len;
-> +
->  	if (buffer) {
->  		char *pval = entry->e_name + entry->e_name_len;
->  		memcpy(buffer, pval, size);
->  	}
->  	error = size;
-> -
-> -cleanup:
-> +out:
->  	kzfree(base_addr);
->  	return error;
->  }
-> diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
-> index f990de20cdcd..d5a94928c116 100644
-> --- a/fs/f2fs/xattr.h
-> +++ b/fs/f2fs/xattr.h
-> @@ -72,9 +72,10 @@ struct f2fs_xattr_entry {
->  		for (entry = XATTR_FIRST_ENTRY(addr);\
->  				!IS_XATTR_LAST_ENTRY(entry);\
->  				entry = XATTR_NEXT_ENTRY(entry))
-> -
-> -#define MIN_OFFSET(i)	XATTR_ALIGN(inline_xattr_size(i) + PAGE_SIZE -	\
-> -				sizeof(struct node_footer) - sizeof(__u32))
-> +#define MAX_XATTR_BLOCK_SIZE	(PAGE_SIZE - sizeof(struct node_footer))
-> +#define VALID_XATTR_BLOCK_SIZE	(MAX_XATTR_BLOCK_SIZE - sizeof(__u32))
-> +#define MIN_OFFSET(i)		XATTR_ALIGN(inline_xattr_size(i) +	\
-> +						VALID_XATTR_BLOCK_SIZE)
->  
->  #define MAX_VALUE_LEN(i)	(MIN_OFFSET(i) -			\
->  				sizeof(struct f2fs_xattr_header) -	\
-> -- 
-> 2.8.2.295.g3f1c1d0
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+SGksCgpPbiAwMS8yNywgVjEwbGF0b3Igd3JvdGU6Cj4gSGksCj4gCj4gRmlyc3Qgb2ZmIGlmIHRo
+aXMgaXMgdGhlIHdyb25nIG1haWxpbmcgbGlzdCBwbGVhc2UgdGVsbCBtZSwgSSBqdXN0IGNvdWxk
+bid0IAo+IGZpbmQgYW55IG90aGVyIGZvciBmMmZzLgo+IAo+IEFyb3VuZCBhIHllYXIgKG1heWJl
+IGxvbmdlcikgYWdvIG15IGNvbXB1dGVyIGNyYXNoZWQsIHRoZSBvbmx5IHdheSB3YXMgYSAKPiBo
+YXJkIHJlc2V0IHdoaWNoIGNhdXNlZCBmMmZzIGNvcnJ1cHRpb25zLiBTaW5jZSB0aGVuIGZzY2su
+ZjJmcyAtZiBmaW5kcyAKPiBlcnJvcnMuIFRoZXNlIGFyZSBhbHdheXMgdGhlIHNhbWUgZXJyb3Jz
+LgoKV2hpY2ggdmVyc2lvbiBvZiBmc2NrLmYyZnMgZGlkIHlvdSB1c2U/Ckkgc3VzcGVjdCB0aGUg
+dmVyc2lvbiBtYXkgYmUgdG9vIG9sZC4gWW91IGNhbiBnZXQgdGhlIGxhdGVzdCBvbmUgZnJvbToK
+Cmh0dHA6Ly9naXQua2VybmVsLm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvamFlZ2V1ay9mMmZz
+LXRvb2xzLmdpdC9sb2cvP2g9ZGV2LXRlc3QKClRoYW5rcywKCj4gCj4gVG9kYXkgSSBub3RpY2Vk
+IG15IHBhY2thZ2UgbWFuYWdlciB1bmxpbmtpbmcgYSBkZWF0aCBsaW5rIGJ1dCB0aGF0IGZhaWxl
+ZCwgCj4gc28gSSBsb29rZWQgaW50byB0aGUgZGlyZWN0b3J5IGZvciBteXNlbGY6Cj4gCj4gbHMg
+L2V0Yy9zc2wvY2VydHMvIHwgZ3JlcCBFQkdfRWxla3Ryb25pawo+IEVCR19FbGVrdHJvbmlrX1Nl
+cnRpZmlrYV9IaXptZXRfU2HEn2xhecSxY8Sxc8SxLnBlbQo+IAo+IAo+IHNvIHRoZSBmaWxlIGlz
+IHRoZXJlLCBsZXQncyBsb29rIGNsb3NlcjoKPiAKPiAkIExBTkc9QyBscyAtbCAvZXRjL3NzbC9j
+ZXJ0cy8gfCBncmVwIEVCR19FbGVrdHJvbmlrCj4gbHM6IFp1Z3JpZmYgYXVmIAo+ICcvZXRjL3Nz
+bC9jZXJ0cy9FQkdfRWxla3Ryb25pa19TZXJ0aWZpa2FfSGl6bWV0X1NhxJ9sYXnEsWPEsXPEsS5w
+ZW0nIG5pY2h0IAo+IG3DtmdsaWNoOiBEYXRlaSBvZGVyIFZlcnplaWNobmlzIG5pY2h0IGdlZnVu
+ZGVuCj4gbD8/Pz8/Pz8/PyA/ID8gICAgPyAgICAgICAgID8gICAgICAgICAgICAgPyAKPiBFQkdf
+RWxla3Ryb25pa19TZXJ0aWZpa2FfSGl6bWV0X1NhxJ9sYXnEsWPEsXPEsS5wZW0KPiAKPiAKPiBE
+b2Vzbid0IGxvb2sgZ29vZC4gT25lIG1vcmUgdHJ5Ogo+IAo+ICQgTEFORz1DIGZpbGUgCj4gL2V0
+Yy9zc2wvY2VydHMvRUJHX0VsZWt0cm9uaWtfU2VydGlmaWthX0hpem1ldF9TYcSfbGF5xLFjxLFz
+xLEucGVtCj4gL2V0Yy9zc2wvY2VydHMvRUJHX0VsZWt0cm9uaWtfU2VydGlmaWthX0hpem1ldF9T
+YcSfbGF5xLFjxLFzxLEucGVtOiBjYW5ub3Qgb3BlbiAKPiBgL2V0Yy9zc2wvY2VydHMvRUJHX0Vs
+ZWt0cm9uaWtfU2VydGlmaWthX0hpem1ldF9TYcSfbGF5xLFjxLFzxLEucGVtJyAoTm8gc3VjaCAK
+PiBmaWxlIG9yIGRpcmVjdG9yeSkKPiAKPiAKPiBPa2F5LCBzbyB0aGUgZmlsZSBpcyBjbGVhcmx5
+IGNvcnJ1cHRlZC4gTGV0J3MgcmVtb3ZlIGl0Ogo+IAo+ICMgTEFORz1DIExDX0FMTD1DIHJtIAo+
+IC9ldGMvc3NsL2NlcnRzL0VCR19FbGVrdHJvbmlrX1NlcnRpZmlrYV9IaXptZXRfU2HEn2xhecSx
+Y8Sxc8SxLnBlbQo+IHJtOiBjYW5ub3QgcmVtb3ZlIAo+ICcvZXRjL3NzbC9jZXJ0cy9FQkdfRWxl
+a3Ryb25pa19TZXJ0aWZpa2FfSGl6bWV0X1NhJyQnXDMwNFwyMzcnJ2xheSckJ1wzMDRcMjYxJydj
+JyQnXDMwNFwyNjEnJ3MnJCdcMzA0XDI2MScnLnBlbSc6IAo+IE5vIHN1Y2ggZmlsZSBvciBkaXJl
+Y3RvcnkKPiAKPiAKPiAKPiBJcyB0aGVyZSBhbnl0aGluZyBJIGNhbiBkbyB0byByZW1vdmUgdGhh
+dCBmaWxlIChvciB0aGUgZGlyZWN0b3J5IGVudHJ5IGFzIEkgCj4gdGhpbmsgdGhlcmUgaXMgbm8g
+ZmlsZSkgPwo+IAo+IFRoYW5rcywKPiBUaG9tYXMgIlYxMGxhdG9yIiBSb2hsb2ZmCj4gCj4gLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tCj4gQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5
+IG9uIG9uZSBvZiB0aGUgd29ybGQncyBtb3N0Cj4gZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hE
+b3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKPiBfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwo+IExpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0
+Cj4gTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKPiBodHRwczovL2xpc3Rz
+LnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCgotLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0KQ2hlY2sgb3V0IHRoZSB2aWJyYW50IHRlY2ggY29tbXVuaXR5IG9uIG9u
+ZSBvZiB0aGUgd29ybGQncyBtb3N0CmVuZ2FnaW5nIHRlY2ggc2l0ZXMsIFNsYXNoRG90Lm9yZyEg
+aHR0cDovL3NkbS5saW5rL3NsYXNoZG90Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCkxpbnV4LWYyZnMtZGV2ZWwgbWFpbGluZyBsaXN0CkxpbnV4LWYyZnMt
+ZGV2ZWxAbGlzdHMuc291cmNlZm9yZ2UubmV0Cmh0dHBzOi8vbGlzdHMuc291cmNlZm9yZ2UubmV0
+L2xpc3RzL2xpc3RpbmZvL2xpbnV4LWYyZnMtZGV2ZWwK
