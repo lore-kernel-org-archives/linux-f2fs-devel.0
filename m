@@ -1,34 +1,105 @@
-From: David Lang <david@lang.hm>
-Subject: Re: [Cluster-devel] [PATCH 8/8] Revert "ext4: fix wrong gfp type
- under transaction"
-Date: Sat, 28 Jan 2017 00:17:04 -0800 (PST)
-Message-ID: <nycvar.QRO.7.75.62.1701280016010.6590@qynat-yncgbc>
-References: <20170117155916.dcizr65bwa6behe7@thunk.org> <20170117161618.GT19699@dhcp22.suse.cz> <20170117172925.GA2486@quack2.suse.cz> <20170119083956.GE30786@dhcp22.suse.cz> <20170119092236.GC2565@quack2.suse.cz> <20170119094405.GK30786@dhcp22.suse.cz>
- <20170126074455.GC8456@dhcp22.suse.cz> <20170127061318.xd2qxashbl4dajez@thunk.org> <20170127093735.GB4143@dhcp22.suse.cz> <20170127164042.2o3bnyopihcb224g@thunk.org> <20170128073215.GA19424@infradead.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: enhance lookup xattr
+Date: Sun, 29 Jan 2017 12:58:31 +0900
+Message-ID: <20170129035831.GA65555@jaegeuk.local>
+References: <20170124123951.114223-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20170128073215.GA19424@infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@kernel.org>, Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cXgde-0003t2-O4
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 29 Jan 2017 03:58:50 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cXgdd-0001y0-Tj
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 29 Jan 2017 03:58:50 +0000
+Content-Disposition: inline
+In-Reply-To: <20170124123951.114223-1-yuchao0@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Fri, 27 Jan 2017, Christoph Hellwig wrote:
+Hi Chao,
 
-> On Fri, Jan 27, 2017 at 11:40:42AM -0500, Theodore Ts'o wrote:
->> The reason why I'm nervous is that nojournal mode is not a common
->> configuration, and "wait until production systems start failing" is
->> not a strategy that I or many SRE-types find.... comforting.
->
-> What does SRE stand for?
+On 01/24, Chao Yu wrote:
 
-Site Reliability Engineer, a mix of operations and engineering (DevOps++)
+...
 
-David Lang
+>  
+> -	error = read_all_xattrs(inode, ipage, &base_addr);
+> +	error = lookup_all_xattrs(inode, ipage, index, len, name,
+> +				&entry, &base_addr);
+>  	if (error)
+>  		return error;
+>  
+> -	entry = __find_xattr(base_addr, index, len, name);
+> -	if (IS_XATTR_LAST_ENTRY(entry)) {
+> -		error = -ENODATA;
+> -		goto cleanup;
+> -	}
+> -
+> -	size = le16_to_cpu(entry->e_value_size);
+> +	size = __le16_to_cpu(entry->e_value_size);
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Looks good to me, except __le16_to_cpu() here.
+Do we need to use this instead of le16_to_cpu()?
+
+Thanks,
+
+>  
+>  	if (buffer && size > buffer_size) {
+>  		error = -ERANGE;
+> -		goto cleanup;
+> +		goto out;
+>  	}
+>  
+> +	pval = entry->e_name + entry->e_name_len;
+> +
+>  	if (buffer) {
+>  		char *pval = entry->e_name + entry->e_name_len;
+>  		memcpy(buffer, pval, size);
+>  	}
+>  	error = size;
+> -
+> -cleanup:
+> +out:
+>  	kzfree(base_addr);
+>  	return error;
+>  }
+> diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
+> index f990de20cdcd..d5a94928c116 100644
+> --- a/fs/f2fs/xattr.h
+> +++ b/fs/f2fs/xattr.h
+> @@ -72,9 +72,10 @@ struct f2fs_xattr_entry {
+>  		for (entry = XATTR_FIRST_ENTRY(addr);\
+>  				!IS_XATTR_LAST_ENTRY(entry);\
+>  				entry = XATTR_NEXT_ENTRY(entry))
+> -
+> -#define MIN_OFFSET(i)	XATTR_ALIGN(inline_xattr_size(i) + PAGE_SIZE -	\
+> -				sizeof(struct node_footer) - sizeof(__u32))
+> +#define MAX_XATTR_BLOCK_SIZE	(PAGE_SIZE - sizeof(struct node_footer))
+> +#define VALID_XATTR_BLOCK_SIZE	(MAX_XATTR_BLOCK_SIZE - sizeof(__u32))
+> +#define MIN_OFFSET(i)		XATTR_ALIGN(inline_xattr_size(i) +	\
+> +						VALID_XATTR_BLOCK_SIZE)
+>  
+>  #define MAX_VALUE_LEN(i)	(MIN_OFFSET(i) -			\
+>  				sizeof(struct f2fs_xattr_header) -	\
+> -- 
+> 2.8.2.295.g3f1c1d0
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
