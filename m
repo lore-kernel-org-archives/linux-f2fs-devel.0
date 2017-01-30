@@ -1,59 +1,59 @@
-From: V10lator <v10lator@myway.de>
-Subject: Re: Unrecoverable FS errors
-Date: Sun, 29 Jan 2017 19:14:10 +0100
-Message-ID: <f140bf03-3b2d-4e34-acec-423aa6323c19@myway.de>
-References: <29539c24-f249-41c6-aa1e-d7851140e20c@myway.de>
-	<20170129041446.GC65555@jaegeuk.local>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
+Date: Mon, 30 Jan 2017 09:12:10 +0100
+Message-ID: <20170130081210.GD8443@dhcp22.suse.cz>
+References: <20170117155916.dcizr65bwa6behe7@thunk.org>
+ <20170117161618.GT19699@dhcp22.suse.cz>
+ <20170117172925.GA2486@quack2.suse.cz>
+ <20170119083956.GE30786@dhcp22.suse.cz>
+ <20170119092236.GC2565@quack2.suse.cz>
+ <20170119094405.GK30786@dhcp22.suse.cz>
+ <20170126074455.GC8456@dhcp22.suse.cz>
+ <20170127061318.xd2qxashbl4dajez@thunk.org>
+ <20170127093735.GB4143@dhcp22.suse.cz>
+ <20170127164042.2o3bnyopihcb224g@thunk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <v10lator@myway.de>) id 1cXtzY-0002Ud-W4
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 29 Jan 2017 18:14:21 +0000
-Received: from mail-out.m-online.net ([212.18.0.10])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cXtzW-0001iT-DQ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 29 Jan 2017 18:14:20 +0000
-In-Reply-To: <20170129041446.GC65555@jaegeuk.local>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20170127164042.2o3bnyopihcb224g@thunk.org>
+Sender: owner-linux-mm@kvack.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-SGksCgpJIGNvbXBpbGVkIGFuZCB0cmllZCB0aGUgdmVyc2lvbiB5b3UgbGlua2VkLCBzYWRseSBp
-dCdzIHN0aWxsIHRoZSBzYW1lLgoKVGhhbmtzIGZvciB5b3VyIHN1cHBvcnQKCkFtIFNvbm50YWcs
-IDI5LiBKYW51YXIgMjAxNyAwNToxNDo0NiBDRVQgc2NocmllYiBKYWVnZXVrIEtpbToKPiBIaSwK
-Pgo+IE9uIDAxLzI3LCBWMTBsYXRvciB3cm90ZToKPj4gSGksCj4+IAo+PiBGaXJzdCBvZmYgaWYg
-dGhpcyBpcyB0aGUgd3JvbmcgbWFpbGluZyBsaXN0IHBsZWFzZSB0ZWxsIG1lLCBJIAo+PiBqdXN0
-IGNvdWxkbid0IAo+PiBmaW5kIGFueSBvdGhlciBmb3IgZjJmcy4KPj4gCj4+IEFyb3VuZCBhIHll
-YXIgKG1heWJlIGxvbmdlcikgYWdvIG15IGNvbXB1dGVyIGNyYXNoZWQsIHRoZSBvbmx5IHdheSB3
-YXMgYSAKPj4gaGFyZCByZXNldCB3aGljaCBjYXVzZWQgZjJmcyBjb3JydXB0aW9ucy4gU2luY2Ug
-dGhlbiBmc2NrLmYyZnMgLWYgZmluZHMgCj4+IGVycm9ycy4gVGhlc2UgYXJlIGFsd2F5cyB0aGUg
-c2FtZSBlcnJvcnMuCj4KPiBXaGljaCB2ZXJzaW9uIG9mIGZzY2suZjJmcyBkaWQgeW91IHVzZT8K
-PiBJIHN1c3BlY3QgdGhlIHZlcnNpb24gbWF5IGJlIHRvbyBvbGQuIFlvdSBjYW4gZ2V0IHRoZSBs
-YXRlc3Qgb25lIGZyb206Cj4KPiBodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJu
-ZWwvZ2l0L2phZWdldWsvZjJmcy10b29scy5naXQvbG9nLz9oPWRldi10ZXN0Cj4KPiBUaGFua3Ms
-Cj4KPj4gVG9kYXkgSSBub3RpY2VkIG15IHBhY2thZ2UgbWFuYWdlciB1bmxpbmtpbmcgYSBkZWF0
-aCBsaW5rIGJ1dCAKPj4gdGhhdCBmYWlsZWQsIAo+PiBzbyBJIGxvb2tlZCBpbnRvIHRoZSBkaXJl
-Y3RvcnkgZm9yIG15c2VsZjoKPj4gCj4+IGxzIC9ldGMvc3NsL2NlcnRzLyB8IGdyZXAgRUJHX0Vs
-ZWt0cm9uaWsKPj4gRUJHX0VsZWt0cm9uaWtfU2VydGlmaWthX0hpem1ldF9TYcSfbGF5xLFjxLFz
-xLEucGVtCj4+IAo+PiAKPj4gc28gdGhlIGZpbGUgaXMgdGhlcmUsIGxldCdzIGxvb2sgY2xvc2Vy
-OiAuLi4KPgo+CgoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkNoZWNrIG91dCB0aGUgdmlicmFudCB0
-ZWNoIGNvbW11bml0eSBvbiBvbmUgb2YgdGhlIHdvcmxkJ3MgbW9zdAplbmdhZ2luZyB0ZWNoIHNp
-dGVzLCBTbGFzaERvdC5vcmchIGh0dHA6Ly9zZG0ubGluay9zbGFzaGRvdApfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpMaW51eC1mMmZzLWRldmVsIG1haWxp
-bmcgbGlzdApMaW51eC1mMmZzLWRldmVsQGxpc3RzLnNvdXJjZWZvcmdlLm5ldApodHRwczovL2xp
-c3RzLnNvdXJjZWZvcmdlLm5ldC9saXN0cy9saXN0aW5mby9saW51eC1mMmZzLWRldmVsCg==
+On Fri 27-01-17 11:40:42, Theodore Ts'o wrote:
+> On Fri, Jan 27, 2017 at 10:37:35AM +0100, Michal Hocko wrote:
+> > If this ever turn out to be a problem and with the vmapped stacks we
+> > have good chances to get a proper stack traces on a potential overflow
+> > we can add the scope API around the problematic code path with the
+> > explanation why it is needed.
+> 
+> Yeah, or maybe we can automate it?  Can the reclaim code check how
+> much stack space is left and do the right thing automatically?
+
+I am not sure how to do that. Checking for some magic value sounds quite
+fragile to me. It also sounds a bit strange to focus only on the reclaim
+while other code paths might suffer from the same problem.
+
+What is actually the deepest possible call chain from the slab reclaim
+where I stopped? I have tried to follow that path but hit the callback
+wall quite early.
+ 
+> The reason why I'm nervous is that nojournal mode is not a common
+> configuration, and "wait until production systems start failing" is
+> not a strategy that I or many SRE-types find.... comforting.
+
+I understand that but I would be much more happier if we did the
+decision based on the actual data rather than a fear something would
+break down.
+
+-- 
+Michal Hocko
+SUSE Labs
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
