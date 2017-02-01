@@ -1,31 +1,27 @@
-From: KARBOWSKI Piotr <piotr.karbowski@gmail.com>
-Subject: f2fs corruption due to f2fs_gc crash.
-Date: Thu, 19 Jan 2017 18:33:00 +0100
-Message-ID: <ae02335a-e8ac-9891-5ebe-015315250899@gmail.com>
+From: V10lator <v10lator@myway.de>
+Subject: Re: Unrecoverable FS errors
+Date: Wed, 01 Feb 2017 18:59:05 +0100
+Message-ID: <0078de3b-fa1e-4f32-9424-68b0735ae87a@myway.de>
+References: <29539c24-f249-41c6-aa1e-d7851140e20c@myway.de>
+	<20170129041446.GC65555@jaegeuk.local>
+	<f140bf03-3b2d-4e34-acec-423aa6323c19@myway.de>
+	<20170130232252.GA1492@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <piotr.karbowski@gmail.com>) id 1cUGaE-0002TV-OZ
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <v10lator@myway.de>) id 1cYzBc-0005FW-2y
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Jan 2017 17:33:10 +0000
-Received: from mail-lf0-f43.google.com ([209.85.215.43])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1cUGaD-0002HL-LQ
+	Wed, 01 Feb 2017 17:59:16 +0000
+Received: from mail-out.m-online.net ([212.18.0.10])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cYzBZ-00067C-KY
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 19 Jan 2017 17:33:10 +0000
-Received: by mail-lf0-f43.google.com with SMTP id k86so41808854lfi.0
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Thu, 19 Jan 2017 09:33:09 -0800 (PST)
-Received: from 127.0.0.1 (host-81-190-232-7.dynamic.mm.pl. [81.190.232.7])
-	by smtp.googlemail.com with ESMTPSA id
-	87sm2219174lft.27.2017.01.19.09.33.01
-	for <linux-f2fs-devel@lists.sourceforge.net>
-	(version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-	Thu, 19 Jan 2017 09:33:02 -0800 (PST)
+	Wed, 01 Feb 2017 17:59:16 +0000
+In-Reply-To: <20170130232252.GA1492@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -35,83 +31,57 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hello,
-
-I am running a system with a microSD card, on the top of which a dmcrypt 
-luks is used, and f2fs on that.
-
-Every time I boot my system, fsck takes a fair amount of time to fix the 
-filesystem. Shortly after boot I can spot a f2fs_gc crash (I suppose 
-it's crash) in the kernel log.
-
-[    0.000000] CPU: 4 PID: 2286 Comm: f2fs_gc-253:6 Not tainted 4.9.4 #1
-[    0.000000] Hardware name: LENOVO 20AUA1FFPB/20AUA1FFPB, BIOS 
-J4ET87WW(1.87) 09/21/2016
-[    0.000000]  0000000000000000 ffffffff81452dd9 0000000000000000 
-0000000000000000
-[    0.000000]  ffffffff810b1099 0000000000000000 ffffc90005113da0 
-0000000000000007
-[    0.000000]  0000000000000006 0000000000000006 ffff880213bc8000 
-ffffffff813ef8a3
-[    0.000000] Call Trace:
-[    0.000000]  [<ffffffff81452dd9>] ? dump_stack+0x46/0x5d
-[    0.000000]  [<ffffffff810b1099>] ? __warn+0xb9/0xe0
-[    0.000000]  [<ffffffff813ef8a3>] ? do_garbage_collect+0xb03/0xbe0
-[    0.000000]  [<ffffffff810e184b>] ? dequeue_task_fair+0x5ab/0x1300
-[    0.000000]  [<ffffffff813efc1f>] ? f2fs_gc+0x15f/0x4b0
-[    0.000000]  [<ffffffff813f01f7>] ? gc_thread_func+0x287/0x360
-[    0.000000]  [<ffffffff8181cc63>] ? __schedule+0x173/0x5f0
-[    0.000000]  [<ffffffff810ea2c0>] ? wake_atomic_t_function+0x50/0x50
-[    0.000000]  [<ffffffff813eff70>] ? f2fs_gc+0x4b0/0x4b0
-[    0.000000]  [<ffffffff810b558e>] ? do_group_exit+0x2e/0xa0
-[    0.000000]  [<ffffffff810ccf39>] ? kthread+0xb9/0xd0
-[    0.000000]  [<ffffffff810cce80>] ? kthread_park+0x50/0x50
-[    0.000000]  [<ffffffff81820b12>] ? ret_from_fork+0x22/0x30
-[    0.000000] ---[ end trace c7ec9ea0d14d95b3 ]---
-[    0.000000] ------------[ cut here ]------------
-[    0.000000] WARNING: CPU: 0 PID: 2286 at fs/f2fs/gc.c:866 
-do_garbage_collect+0xb03/0xbe0
-[    0.000000] Modules linked in: ctr ccm algif_skcipher af_alg 
-ipt_MASQUERADE iptable_nat mmc_block arc4 rtsx_pci_sdmmc mmc_core 
-snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic iwlmvm 
-mac80211 snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm 
-snd_timer iwlwifi cfg80211 rtsx_pci mfd_core coretemp kvm_intel 
-thinkpad_acpi snd soundcore rfkill
-[    0.000000] CPU: 0 PID: 2286 Comm: f2fs_gc-253:6 Tainted: G        W 
-      4.9.4 #1
-[    0.000000] Hardware name: LENOVO 20AUA1FFPB/20AUA1FFPB, BIOS 
-J4ET87WW(1.87) 09/21/2016
-[    0.000000]  0000000000000000 ffffffff81452dd9 0000000000000000 
-0000000000000000
-[    0.000000]  ffffffff810b1099 0000000000000000 ffffc90005113da0 
-0000000000000008
-[    0.000000]  0000000000000007 0000000000000007 ffff880213bc8000 
-ffffffff813ef8a3
-[    0.000000] Call Trace:
-[    0.000000]  [<ffffffff81452dd9>] ? dump_stack+0x46/0x5d
-[    0.000000]  [<ffffffff810b1099>] ? __warn+0xb9/0xe0
-[    0.000000]  [<ffffffff813ef8a3>] ? do_garbage_collect+0xb03/0xbe0
-[    0.000000]  [<ffffffff810e184b>] ? dequeue_task_fair+0x5ab/0x1300
-[    0.000000]  [<ffffffff813efc1f>] ? f2fs_gc+0x15f/0x4b0
-[    0.000000]  [<ffffffff813f01f7>] ? gc_thread_func+0x287/0x360
-[    0.000000]  [<ffffffff8181cc63>] ? __schedule+0x173/0x5f0
-[    0.000000]  [<ffffffff810ea2c0>] ? wake_atomic_t_function+0x50/0x50
-[    0.000000]  [<ffffffff813eff70>] ? f2fs_gc+0x4b0/0x4b0
-[    0.000000]  [<ffffffff810b558e>] ? do_group_exit+0x2e/0xa0
-[    0.000000]  [<ffffffff810ccf39>] ? kthread+0xb9/0xd0
-[    0.000000]  [<ffffffff810cce80>] ? kthread_park+0x50/0x50
-[    0.000000]  [<ffffffff81820b12>] ? ret_from_fork+0x22/0x30
-[    0.000000] ---[ end trace c7ec9ea0d14d95b4 ]---
-
-
-I had this on kernel 4.8 and 4.9. I have another system, where I also 
-use f2fs over dmcrypt, but on ssd not microSD card and I see no problem 
-there. Could you please comment on this?
-
--- Piotr.
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+QW0gRGllbnN0YWcsIDMxLiBKYW51YXIgMjAxNyAwMDoyMjo1MiBDRVQgc2NocmllYiBKYWVnZXVr
+IEtpbToKPiBPbiAwMS8yOSwgVjEwbGF0b3Igd3JvdGU6Cj4+IEhpLAo+PiAKPj4gSSBjb21waWxl
+ZCBhbmQgdHJpZWQgdGhlIHZlcnNpb24geW91IGxpbmtlZCwgc2FkbHkgaXQncyBzdGlsbCB0aGUg
+c2FtZS4KPgo+IE9oLCB3YXMgdGhlcmUgbm8gcmVwb3J0ZWQgZXJyb3I/CgpZZXMgdGhlcmUgd2Fz
+LCBzb3JyeSBmb3Igbm90IHNob3dpbmcgZWFybGllcjoKCkluZm86IEZvcmNlIHRvIGZpeCBjb3Jy
+dXB0aW9uCkluZm86IFNlZ21lbnRzIHBlciBzZWN0aW9uID0gMQpJbmZvOiBTZWN0aW9ucyBwZXIg
+em9uZSA9IDEKSW5mbzogc2VjdG9yIHNpemUgPSA1MTIKSW5mbzogdG90YWwgc2VjdG9ycyA9IDI0
+Nzk2Nzc0NCAoMTIxMDc4IE1CKQpJbmZvOiBNS0ZTIHZlcnNpb24KICAiIgpJbmZvOiBGU0NLIHZl
+cnNpb24KICBmcm9tICJMaW51eCB2ZXJzaW9uIDQuOC4xNy1oYXJkZW5lZC1yMSAocm9vdEBrYWxp
+KSAoZ2NjIHZlcnNpb24gNS4zLjAgCihHZW50b28gSGFyZGVuZWQgNS4zLjAgcDEuMSwgcGllLTAu
+Ni41KSApICMzIFNNUCBQUkVFTVBUIFdlZCBGZWIgMSAxMzowMjowMiAKQ0VUIDIwMTciCiAgICB0
+byAiTGludXggdmVyc2lvbiA0LjguMTctaGFyZGVuZWQtcjEgKHJvb3RAa2FsaSkgKGdjYyB2ZXJz
+aW9uIDUuMy4wIAooR2VudG9vIEhhcmRlbmVkIDUuMy4wIHAxLjEsIHBpZS0wLjYuNSkgKSAjMyBT
+TVAgUFJFRU1QVCBXZWQgRmViIDEgMTM6MDI6MDIgCkNFVCAyMDE3IgpJbmZvOiBzdXBlcmJsb2Nr
+IGZlYXR1cmVzID0gMCA6IApJbmZvOiBzdXBlcmJsb2NrIGVuY3J5cHQgbGV2ZWwgPSAwLCBzYWx0
+ID0gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAKSW5mbzogdG90YWwgRlMgc2VjdG9y
+cyA9IDI0Nzk2Nzc0NCAoMTIxMDc4IE1CKQpJbmZvOiBDS1BUIHZlcnNpb24gPSAxODliYTYKSW5m
+bzogY2hlY2twb2ludCBzdGF0ZSA9IDEgOiAgdW5tb3VudApbQVNTRVJUXSAoZjJmc19jaGVja19k
+aXJlbnRfcG9zaXRpb246MTE1MikgIC0tPiBXcm9uZyBwb3NpdGlvbiBvZiBkaXJlbnQgCnBpbm86
+MTc1MzgxLCBuYW1lOk5ldExvY2tfQXJhbnlfPUNsYXNzX0dvbGQ9X0bFkXRhbsO6c8OtdHbDoW55
+LnBlbSwgbGV2ZWw6MSwgCmRpcl9sZXZlbDowLCBwZ29mczo0LCBjb3JyZWN0IHJhbmdlOlsyLCAz
+XQoKW0FTU0VSVF0gKGYyZnNfY2hlY2tfZGlyZW50X3Bvc2l0aW9uOjExNTIpICAtLT4gV3Jvbmcg
+cG9zaXRpb24gb2YgZGlyZW50IApwaW5vOjU1MjMzMywgbmFtZTpmci1CZXNhbsOnb24sIGxldmVs
+OjEsIGRpcl9sZXZlbDowLCBwZ29mczo0LCBjb3JyZWN0IApyYW5nZTpbMiwgM10KCltBU1NFUlRd
+IChmMmZzX2NoZWNrX2RpcmVudF9wb3NpdGlvbjoxMTUyKSAgLS0+IFdyb25nIHBvc2l0aW9uIG9m
+IGRpcmVudCAKcGlubzo1NTIzMzMsIG5hbWU6ZnItQWxlbsOnb24sIGxldmVsOjEsIGRpcl9sZXZl
+bDowLCBwZ29mczo1LCBjb3JyZWN0IApyYW5nZTpbMiwgM10KCltBU1NFUlRdIChmMmZzX2NoZWNr
+X2RpcmVudF9wb3NpdGlvbjoxMTUyKSAgLS0+IFdyb25nIHBvc2l0aW9uIG9mIGRpcmVudCAKcGlu
+bzo1OTk1NjYsIApuYW1lOlTDnELEsFRBS19VRUtBRV9Lw7ZrX1NlcnRpZmlrYV9IaXptZXRfU2HE
+n2xhecSxY8Sxc8SxXy1fU8O8csO8bV8zLmNydCwgbGV2ZWw6MSwgCmRpcl9sZXZlbDowLCBwZ29m
+czoyLCBjb3JyZWN0IHJhbmdlOls0LCA1XQoKCltGU0NLXSBVbnJlYWNoYWJsZSBuYXQgZW50cmll
+cyAgICAgICAgICAgICAgICAgICAgICAgIFtPay4uXSBbMHgwXQpbRlNDS10gU0lUIHZhbGlkIGJs
+b2NrIGJpdG1hcCBjaGVja2luZyAgICAgICAgICAgICAgICBbT2suLl0KW0ZTQ0tdIEhhcmQgbGlu
+ayBjaGVja2luZyBmb3IgcmVndWxhciBmaWxlICAgICAgICAgICAgW09rLi5dIFsweDk3XQpbRlND
+S10gdmFsaWRfYmxvY2tfY291bnQgbWF0Y2hpbmcgd2l0aCBDUCAgICAgICAgICAgICBbT2suLl0g
+WzB4MTZkMTE0MV0KW0ZTQ0tdIHZhbGlkX25vZGVfY291bnQgbWF0Y2luZyB3aXRoIENQIChkZSBs
+b29rdXApICAgW09rLi5dIFsweGY4NjlkXQpbRlNDS10gdmFsaWRfbm9kZV9jb3VudCBtYXRjaW5n
+IHdpdGggQ1AgKG5hdCBsb29rdXApICBbT2suLl0gWzB4Zjg2OWRdCltGU0NLXSB2YWxpZF9pbm9k
+ZV9jb3VudCBtYXRjaGVkIHdpdGggQ1AgICAgICAgICAgICAgIFtPay4uXSBbMHhjMDVkOV0KW0ZT
+Q0tdIGZyZWUgc2VnbWVudF9jb3VudCBtYXRjaGVkIHdpdGggQ1AgICAgICAgICAgICAgW09rLi5d
+IFsweDM0ZDBdCltGU0NLXSBuZXh0IGJsb2NrIG9mZnNldCBpcyBmcmVlICAgICAgICAgICAgICAg
+ICAgICAgIFtPay4uXQpbRlNDS10gZml4aW5nIFNJVCB0eXBlcwpbRlNDS10gb3RoZXIgY29ycnVw
+dGVkIGJ1Z3MgICAgICAgICAgICAgICAgICAgICAgICAgICBbRmFpbF0KCkRvbmUuCgo+IFRoZW4s
+IHdoaWNoIGtlcm5lbCB2ZXJzaW9uIGFyZSB5b3UgdXNpbmc/Cgo0LjguMTcKCi0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9m
+IHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hEb3Qub3JnISBodHRw
+Oi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
+bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
+dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
