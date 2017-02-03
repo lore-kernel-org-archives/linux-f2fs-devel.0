@@ -1,147 +1,62 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: Re: [PATCH] mkfs.f2fs: fix bad assignment of
- total_sectors for f2fs_configuration
-Date: Fri, 3 Feb 2017 17:40:10 +0800
-Message-ID: <58944FFA.5050907@huawei.com>
-References: <130c919b-def1-33b1-0e16-e18e8de28d5c@gmail.com>
-	<5886C4D0.8040601@huawei.com>
-	<40f1d2bb-4454-8d65-14ba-b258055cce80@gmail.com>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 8/8] Revert "ext4: fix wrong gfp type under transaction"
+Date: Fri, 3 Feb 2017 16:32:22 +0100
+Message-ID: <20170203153222.GH19325@dhcp22.suse.cz>
+References: <20170117161618.GT19699@dhcp22.suse.cz>
+ <20170117172925.GA2486@quack2.suse.cz>
+ <20170119083956.GE30786@dhcp22.suse.cz>
+ <20170119092236.GC2565@quack2.suse.cz>
+ <20170119094405.GK30786@dhcp22.suse.cz>
+ <20170126074455.GC8456@dhcp22.suse.cz>
+ <20170127061318.xd2qxashbl4dajez@thunk.org>
+ <20170127093735.GB4143@dhcp22.suse.cz>
+ <20170127164042.2o3bnyopihcb224g@thunk.org>
+ <20170130081210.GD8443@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1cZaMp-0004e9-QX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 03 Feb 2017 09:41:19 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cZaMd-00045E-Cs
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 03 Feb 2017 09:41:19 +0000
-In-Reply-To: <40f1d2bb-4454-8d65-14ba-b258055cce80@gmail.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kinglong Mee <kinglongmee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20170130081210.GD8443@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
+On Mon 30-01-17 09:12:10, Michal Hocko wrote:
+> On Fri 27-01-17 11:40:42, Theodore Ts'o wrote:
+> > On Fri, Jan 27, 2017 at 10:37:35AM +0100, Michal Hocko wrote:
+> > > If this ever turn out to be a problem and with the vmapped stacks we
+> > > have good chances to get a proper stack traces on a potential overflow
+> > > we can add the scope API around the problematic code path with the
+> > > explanation why it is needed.
+> > 
+> > Yeah, or maybe we can automate it?  Can the reclaim code check how
+> > much stack space is left and do the right thing automatically?
+> 
+> I am not sure how to do that. Checking for some magic value sounds quite
+> fragile to me. It also sounds a bit strange to focus only on the reclaim
+> while other code paths might suffer from the same problem.
+> 
+> What is actually the deepest possible call chain from the slab reclaim
+> where I stopped? I have tried to follow that path but hit the callback
+> wall quite early.
+>  
+> > The reason why I'm nervous is that nojournal mode is not a common
+> > configuration, and "wait until production systems start failing" is
+> > not a strategy that I or many SRE-types find.... comforting.
+> 
+> I understand that but I would be much more happier if we did the
+> decision based on the actual data rather than a fear something would
+> break down.
 
+ping on this. I would really like to move forward here and target 4.11
+merge window. Is your concern so serious to block this patch?
+-- 
+Michal Hocko
+SUSE Labs
 
-On 2/3/2017 4:08 PM, Kinglong Mee wrote:
-> On 1/24/2017 11:06, Sheng Yong wrote:
->> Hi, Kinglong
->>
->> On 1/24/2017 10:42 AM, Kinglong Mee wrote:
->>> wanted_total_sectors is introduced instead total_sectors,
->>> so that, the initialize is a fault, drop it.
->>>
->>> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
->>> ---
->>>  mkfs/f2fs_format_main.c | 3 ---
->>>  1 file changed, 3 deletions(-)
->>>
->>> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
->>> index db1dc94..5bb1faf 100644
->>> --- a/mkfs/f2fs_format_main.c
->>> +++ b/mkfs/f2fs_format_main.c
->>> @@ -151,9 +151,6 @@ static void f2fs_parse_options(int argc, char *argv[])
->>>  		c.wanted_total_sectors = atoll(argv[optind+1]);
->>>  	}
->>>  
->>> -	if ((optind + 1) < argc)
->>> -		c.total_sectors = atoll(argv[optind+1]);
->>> -
->> Here we get the number of sectors specified by user, so that we could
->> create an image based on a specific size. There seems no fault. Could
->> you please give more detail :)
-> 
-> Sorry for the late reply.
-> 
-> Commit de7e07e011 "f2fs-tools: support multiple devices" changes the using of
-> c.total_sectors, adds wanted_total_sectors instead it. 
-> c.total_sectors must be initialized as zero (drop the fault assignment).
-> 
-Right. My bad that I didn't catch up with the latest dev-test branch, I was
-reading the patch against dev branch :(
-
-thanks,
-Sheng
-
-> Used as, 
-> int get_device_info(struct device_info *dev)
-> ...
-> c.total_sectors += dev->total_sectors;
-> 
-> After that, mkfs.f2fs will fail with specified lager size than disk.
-> # fdisk -ls /dev/sdb1
-> 20970496
-> # mkfs.f2fs /dev/sdb1 209704961
-> 
->         F2FS-tools: mkfs.f2fs Ver: 1.7.0 (2017-01-13)
-> 
-> Info: Debug level = 0
-> Info: Trim is enabled
-> Info: [/dev/sdb1] Disk Model: VMware Virtual S1.0
-> Info: total device sectors = 251645953 (in 512 bytes)
-> Info: Segments per section = 1
-> Info: Sections per zone = 1
-> Info: sector size = 512
-> Info: total sectors = 209704961 (102395 MB)
-> Info: zone aligned segment0 blkaddr: 256
-> Info: format version with
->   "Linux version 4.10.0-rc6+ (root@localhost) (gcc version 6.3.1 20161221 (Red Hat 6.3.1-1) (GCC) ) #483 SMP Fri Feb 3 13:58:56 CST 2017"
-> Info: [/dev/sdb1] Discarding device
-> Info: This device doesn't support BLKSECDISCARD
-> Info: This device doesn't support BLKDISCARD
->         Error: Failed to create the root directory!!!
->         Error: Could not format the device!!!
-> 
-> With this patch, mkfs.f2fs success as,
-> #  mkfs.f2fs /dev/sdb1 209704961
-> 
->         F2FS-tools: mkfs.f2fs Ver: 1.7.0 (2017-01-13)
-> 
-> Info: Debug level = 0
-> Info: Trim is enabled
-> Info: [/dev/sdb1] Disk Model: VMware Virtual S1.0
-> Info: Segments per section = 1
-> Info: Sections per zone = 1
-> Info: sector size = 512
-> Info: total sectors = 41940992 (20479 MB)
-> Info: zone aligned segment0 blkaddr: 256
-> Info: format version with
->   "Linux version 4.10.0-rc6+ (root@localhost) (gcc version 6.3.1 20161221 (Red Hat 6.3.1-1) (GCC) ) #483 SMP Fri Feb 3 13:58:56 CST 2017"
-> Info: [/dev/sdb1] Discarding device
-> Info: This device doesn't support BLKSECDISCARD
-> Info: This device doesn't support BLKDISCARD
-> Info: Overprovision ratio = 1.400%
-> Info: Overprovision segments = 290 (GC reserved = 150)
-> Info: format successful
-> 
-> thanks,
-> Kinglong Mee
-> 
->> thanks,
->> Sheng
->>>  	if (c.zoned_mode)
->>>  		c.feature |= cpu_to_le32(F2FS_FEATURE_BLKZONED);
->>>  }
->>>
->>
->>
-> 
-> .
-> 
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
