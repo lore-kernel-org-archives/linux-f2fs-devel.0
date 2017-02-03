@@ -1,123 +1,188 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 5/5] f2fs: avoid out-of-order execution of atomic
-	writes
-Date: Fri,  3 Feb 2017 15:48:16 -0800
-Message-ID: <20170203234816.12723-5-jaegeuk@kernel.org>
+Subject: [PATCH 4/5] f2fs: move write_node_page above fsync_node_pages
+Date: Fri,  3 Feb 2017 15:48:15 -0800
+Message-ID: <20170203234816.12723-4-jaegeuk@kernel.org>
 References: <20170203234816.12723-1-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cZnal-0004EK-6Z
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 03 Feb 2017 23:48:35 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cZnak-0003rO-Ba
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 03 Feb 2017 23:48:35 +0000
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170203234816.12723-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-We need to flush data writes before flushing last node block writes by using
-FUA with PREFLUSH. We don't need to guarantee precedent node writes since if
-those are not written, we can't reach to the last node block when scanning
-node block chain during roll-forward recovery.
-Afterwards f2fs_wait_on_page_writeback guarantees all the IO submission to
-disk, which builds a valid node block chain.
+This patch just moves write_node_page and introduces an inner function.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c              |  3 ++-
- fs/f2fs/node.c              | 10 +++++++---
- include/trace/events/f2fs.h |  1 +
- 3 files changed, 10 insertions(+), 4 deletions(-)
+ fs/f2fs/node.c | 142 ++++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 74 insertions(+), 68 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 9c0f469cde13..a3808c49e326 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -278,7 +278,8 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- flush_out:
- 	remove_ino_entry(sbi, ino, UPDATE_INO);
- 	clear_inode_flag(inode, FI_UPDATE_WRITE);
--	ret = f2fs_issue_flush(sbi);
-+	if (!atomic)
-+		ret = f2fs_issue_flush(sbi);
- 	f2fs_update_time(sbi, REQ_TIME);
- out:
- 	trace_f2fs_sync_file_exit(inode, need_cp, datasync, ret);
 diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index f30cf1dec9a8..135a0233a201 100644
+index c573954571dd..f30cf1dec9a8 100644
 --- a/fs/f2fs/node.c
 +++ b/fs/f2fs/node.c
-@@ -1318,7 +1318,7 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
+@@ -1318,6 +1318,79 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
  	return last_page;
  }
  
--static int __write_node_page(struct page *page,
-+static int __write_node_page(struct page *page, bool atomic,
- 				struct writeback_control *wbc)
- {
- 	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
-@@ -1362,6 +1362,9 @@ static int __write_node_page(struct page *page,
- 		return 0;
- 	}
- 
-+	if (atomic)
-+		fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
++static int __write_node_page(struct page *page,
++				struct writeback_control *wbc)
++{
++	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
++	nid_t nid;
++	struct node_info ni;
++	struct f2fs_io_info fio = {
++		.sbi = sbi,
++		.type = NODE,
++		.op = REQ_OP_WRITE,
++		.op_flags = wbc_to_write_flags(wbc),
++		.page = page,
++		.encrypted_page = NULL,
++	};
 +
- 	set_page_writeback(page);
- 	fio.old_blkaddr = ni.blk_addr;
- 	write_node_page(nid, &fio);
-@@ -1388,7 +1391,7 @@ static int __write_node_page(struct page *page,
- static int f2fs_write_node_page(struct page *page,
- 				struct writeback_control *wbc)
- {
--	return __write_node_page(page, wbc);
-+	return __write_node_page(page, false, wbc);
- }
- 
++	trace_f2fs_writepage(page, NODE);
++
++	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
++		goto redirty_out;
++	if (unlikely(f2fs_cp_error(sbi)))
++		goto redirty_out;
++
++	/* get old block addr of this node page */
++	nid = nid_of_node(page);
++	f2fs_bug_on(sbi, page->index != nid);
++
++	if (wbc->for_reclaim) {
++		if (!down_read_trylock(&sbi->node_write))
++			goto redirty_out;
++	} else {
++		down_read(&sbi->node_write);
++	}
++
++	get_node_info(sbi, nid, &ni);
++
++	/* This page is already truncated */
++	if (unlikely(ni.blk_addr == NULL_ADDR)) {
++		ClearPageUptodate(page);
++		dec_page_count(sbi, F2FS_DIRTY_NODES);
++		up_read(&sbi->node_write);
++		unlock_page(page);
++		return 0;
++	}
++
++	set_page_writeback(page);
++	fio.old_blkaddr = ni.blk_addr;
++	write_node_page(nid, &fio);
++	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
++	dec_page_count(sbi, F2FS_DIRTY_NODES);
++	up_read(&sbi->node_write);
++
++	if (wbc->for_reclaim)
++		f2fs_submit_merged_bio_cond(sbi, page->mapping->host, 0,
++						page->index, NODE, WRITE);
++
++	unlock_page(page);
++
++	if (unlikely(f2fs_cp_error(sbi)))
++		f2fs_submit_merged_bio(sbi, NODE, WRITE);
++
++	return 0;
++
++redirty_out:
++	redirty_page_for_writepage(wbc, page);
++	return AOP_WRITEPAGE_ACTIVATE;
++}
++
++static int f2fs_write_node_page(struct page *page,
++				struct writeback_control *wbc)
++{
++	return __write_node_page(page, wbc);
++}
++
  int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
-@@ -1470,7 +1473,8 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ 			struct writeback_control *wbc, bool atomic)
+ {
+@@ -1397,7 +1470,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
  			if (!clear_page_dirty_for_io(page))
  				goto continue_unlock;
  
--			ret = __write_node_page(page, wbc);
-+			ret = __write_node_page(page, atomic &&
-+						page == last_page, wbc);
+-			ret = NODE_MAPPING(sbi)->a_ops->writepage(page, wbc);
++			ret = __write_node_page(page, wbc);
  			if (ret) {
  				unlock_page(page);
  				f2fs_put_page(last_page, 0);
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 04c527410ecc..82236792b50c 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -81,6 +81,7 @@ TRACE_DEFINE_ENUM(CP_DISCARD);
- 		{ REQ_SYNC | REQ_PRIO,	"(SP)" },			\
- 		{ REQ_META, 		"(M)" },			\
- 		{ REQ_META | REQ_PRIO,	"(MP)" },			\
-+		{ REQ_SYNC | REQ_PREFLUSH , "(SF)" },			\
- 		{ REQ_SYNC | REQ_META | REQ_PRIO, "(SMP)" },		\
- 		{ REQ_PREFLUSH | REQ_META | REQ_PRIO, "(FMP)" },	\
- 		{ 0, " \b" })
+@@ -1579,73 +1652,6 @@ int wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
+ 	return ret;
+ }
+ 
+-static int f2fs_write_node_page(struct page *page,
+-				struct writeback_control *wbc)
+-{
+-	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
+-	nid_t nid;
+-	struct node_info ni;
+-	struct f2fs_io_info fio = {
+-		.sbi = sbi,
+-		.type = NODE,
+-		.op = REQ_OP_WRITE,
+-		.op_flags = wbc_to_write_flags(wbc),
+-		.page = page,
+-		.encrypted_page = NULL,
+-	};
+-
+-	trace_f2fs_writepage(page, NODE);
+-
+-	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+-		goto redirty_out;
+-	if (unlikely(f2fs_cp_error(sbi)))
+-		goto redirty_out;
+-
+-	/* get old block addr of this node page */
+-	nid = nid_of_node(page);
+-	f2fs_bug_on(sbi, page->index != nid);
+-
+-	if (wbc->for_reclaim) {
+-		if (!down_read_trylock(&sbi->node_write))
+-			goto redirty_out;
+-	} else {
+-		down_read(&sbi->node_write);
+-	}
+-
+-	get_node_info(sbi, nid, &ni);
+-
+-	/* This page is already truncated */
+-	if (unlikely(ni.blk_addr == NULL_ADDR)) {
+-		ClearPageUptodate(page);
+-		dec_page_count(sbi, F2FS_DIRTY_NODES);
+-		up_read(&sbi->node_write);
+-		unlock_page(page);
+-		return 0;
+-	}
+-
+-	set_page_writeback(page);
+-	fio.old_blkaddr = ni.blk_addr;
+-	write_node_page(nid, &fio);
+-	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
+-	dec_page_count(sbi, F2FS_DIRTY_NODES);
+-	up_read(&sbi->node_write);
+-
+-	if (wbc->for_reclaim)
+-		f2fs_submit_merged_bio_cond(sbi, page->mapping->host, 0,
+-						page->index, NODE, WRITE);
+-
+-	unlock_page(page);
+-
+-	if (unlikely(f2fs_cp_error(sbi)))
+-		f2fs_submit_merged_bio(sbi, NODE, WRITE);
+-
+-	return 0;
+-
+-redirty_out:
+-	redirty_page_for_writepage(wbc, page);
+-	return AOP_WRITEPAGE_ACTIVATE;
+-}
+-
+ static int f2fs_write_node_pages(struct address_space *mapping,
+ 			    struct writeback_control *wbc)
+ {
 -- 
 2.11.0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
