@@ -1,27 +1,29 @@
-From: V10lator <v10lator@myway.de>
-Subject: Re: Unrecoverable FS errors
-Date: Wed, 01 Feb 2017 18:59:05 +0100
-Message-ID: <0078de3b-fa1e-4f32-9424-68b0735ae87a@myway.de>
-References: <29539c24-f249-41c6-aa1e-d7851140e20c@myway.de>
-	<20170129041446.GC65555@jaegeuk.local>
-	<f140bf03-3b2d-4e34-acec-423aa6323c19@myway.de>
-	<20170130232252.GA1492@jaegeuk.local>
+From: Kinglong Mee <kinglongmee@gmail.com>
+Subject: Re: [PATCH] mkfs.f2fs: fix bad assignment of
+ total_sectors for f2fs_configuration
+Date: Fri, 3 Feb 2017 16:08:48 +0800
+Message-ID: <40f1d2bb-4454-8d65-14ba-b258055cce80@gmail.com>
+References: <130c919b-def1-33b1-0e16-e18e8de28d5c@gmail.com>
+	<5886C4D0.8040601@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <v10lator@myway.de>) id 1cYzBc-0005FW-2y
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1cZYvV-0005i3-JI
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Feb 2017 17:59:16 +0000
-Received: from mail-out.m-online.net ([212.18.0.10])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cYzBZ-00067C-KY
+	Fri, 03 Feb 2017 08:09:01 +0000
+Received: from mail-io0-f195.google.com ([209.85.223.195])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1cZYvT-000880-NF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Feb 2017 17:59:16 +0000
-In-Reply-To: <20170130232252.GA1492@jaegeuk.local>
+	Fri, 03 Feb 2017 08:09:01 +0000
+Received: by mail-io0-f195.google.com with SMTP id 101so1559993iom.0
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 03 Feb 2017 00:08:59 -0800 (PST)
+In-Reply-To: <5886C4D0.8040601@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,57 +33,104 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Sheng Yong <shengyong1@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-QW0gRGllbnN0YWcsIDMxLiBKYW51YXIgMjAxNyAwMDoyMjo1MiBDRVQgc2NocmllYiBKYWVnZXVr
-IEtpbToKPiBPbiAwMS8yOSwgVjEwbGF0b3Igd3JvdGU6Cj4+IEhpLAo+PiAKPj4gSSBjb21waWxl
-ZCBhbmQgdHJpZWQgdGhlIHZlcnNpb24geW91IGxpbmtlZCwgc2FkbHkgaXQncyBzdGlsbCB0aGUg
-c2FtZS4KPgo+IE9oLCB3YXMgdGhlcmUgbm8gcmVwb3J0ZWQgZXJyb3I/CgpZZXMgdGhlcmUgd2Fz
-LCBzb3JyeSBmb3Igbm90IHNob3dpbmcgZWFybGllcjoKCkluZm86IEZvcmNlIHRvIGZpeCBjb3Jy
-dXB0aW9uCkluZm86IFNlZ21lbnRzIHBlciBzZWN0aW9uID0gMQpJbmZvOiBTZWN0aW9ucyBwZXIg
-em9uZSA9IDEKSW5mbzogc2VjdG9yIHNpemUgPSA1MTIKSW5mbzogdG90YWwgc2VjdG9ycyA9IDI0
-Nzk2Nzc0NCAoMTIxMDc4IE1CKQpJbmZvOiBNS0ZTIHZlcnNpb24KICAiIgpJbmZvOiBGU0NLIHZl
-cnNpb24KICBmcm9tICJMaW51eCB2ZXJzaW9uIDQuOC4xNy1oYXJkZW5lZC1yMSAocm9vdEBrYWxp
-KSAoZ2NjIHZlcnNpb24gNS4zLjAgCihHZW50b28gSGFyZGVuZWQgNS4zLjAgcDEuMSwgcGllLTAu
-Ni41KSApICMzIFNNUCBQUkVFTVBUIFdlZCBGZWIgMSAxMzowMjowMiAKQ0VUIDIwMTciCiAgICB0
-byAiTGludXggdmVyc2lvbiA0LjguMTctaGFyZGVuZWQtcjEgKHJvb3RAa2FsaSkgKGdjYyB2ZXJz
-aW9uIDUuMy4wIAooR2VudG9vIEhhcmRlbmVkIDUuMy4wIHAxLjEsIHBpZS0wLjYuNSkgKSAjMyBT
-TVAgUFJFRU1QVCBXZWQgRmViIDEgMTM6MDI6MDIgCkNFVCAyMDE3IgpJbmZvOiBzdXBlcmJsb2Nr
-IGZlYXR1cmVzID0gMCA6IApJbmZvOiBzdXBlcmJsb2NrIGVuY3J5cHQgbGV2ZWwgPSAwLCBzYWx0
-ID0gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAKSW5mbzogdG90YWwgRlMgc2VjdG9y
-cyA9IDI0Nzk2Nzc0NCAoMTIxMDc4IE1CKQpJbmZvOiBDS1BUIHZlcnNpb24gPSAxODliYTYKSW5m
-bzogY2hlY2twb2ludCBzdGF0ZSA9IDEgOiAgdW5tb3VudApbQVNTRVJUXSAoZjJmc19jaGVja19k
-aXJlbnRfcG9zaXRpb246MTE1MikgIC0tPiBXcm9uZyBwb3NpdGlvbiBvZiBkaXJlbnQgCnBpbm86
-MTc1MzgxLCBuYW1lOk5ldExvY2tfQXJhbnlfPUNsYXNzX0dvbGQ9X0bFkXRhbsO6c8OtdHbDoW55
-LnBlbSwgbGV2ZWw6MSwgCmRpcl9sZXZlbDowLCBwZ29mczo0LCBjb3JyZWN0IHJhbmdlOlsyLCAz
-XQoKW0FTU0VSVF0gKGYyZnNfY2hlY2tfZGlyZW50X3Bvc2l0aW9uOjExNTIpICAtLT4gV3Jvbmcg
-cG9zaXRpb24gb2YgZGlyZW50IApwaW5vOjU1MjMzMywgbmFtZTpmci1CZXNhbsOnb24sIGxldmVs
-OjEsIGRpcl9sZXZlbDowLCBwZ29mczo0LCBjb3JyZWN0IApyYW5nZTpbMiwgM10KCltBU1NFUlRd
-IChmMmZzX2NoZWNrX2RpcmVudF9wb3NpdGlvbjoxMTUyKSAgLS0+IFdyb25nIHBvc2l0aW9uIG9m
-IGRpcmVudCAKcGlubzo1NTIzMzMsIG5hbWU6ZnItQWxlbsOnb24sIGxldmVsOjEsIGRpcl9sZXZl
-bDowLCBwZ29mczo1LCBjb3JyZWN0IApyYW5nZTpbMiwgM10KCltBU1NFUlRdIChmMmZzX2NoZWNr
-X2RpcmVudF9wb3NpdGlvbjoxMTUyKSAgLS0+IFdyb25nIHBvc2l0aW9uIG9mIGRpcmVudCAKcGlu
-bzo1OTk1NjYsIApuYW1lOlTDnELEsFRBS19VRUtBRV9Lw7ZrX1NlcnRpZmlrYV9IaXptZXRfU2HE
-n2xhecSxY8Sxc8SxXy1fU8O8csO8bV8zLmNydCwgbGV2ZWw6MSwgCmRpcl9sZXZlbDowLCBwZ29m
-czoyLCBjb3JyZWN0IHJhbmdlOls0LCA1XQoKCltGU0NLXSBVbnJlYWNoYWJsZSBuYXQgZW50cmll
-cyAgICAgICAgICAgICAgICAgICAgICAgIFtPay4uXSBbMHgwXQpbRlNDS10gU0lUIHZhbGlkIGJs
-b2NrIGJpdG1hcCBjaGVja2luZyAgICAgICAgICAgICAgICBbT2suLl0KW0ZTQ0tdIEhhcmQgbGlu
-ayBjaGVja2luZyBmb3IgcmVndWxhciBmaWxlICAgICAgICAgICAgW09rLi5dIFsweDk3XQpbRlND
-S10gdmFsaWRfYmxvY2tfY291bnQgbWF0Y2hpbmcgd2l0aCBDUCAgICAgICAgICAgICBbT2suLl0g
-WzB4MTZkMTE0MV0KW0ZTQ0tdIHZhbGlkX25vZGVfY291bnQgbWF0Y2luZyB3aXRoIENQIChkZSBs
-b29rdXApICAgW09rLi5dIFsweGY4NjlkXQpbRlNDS10gdmFsaWRfbm9kZV9jb3VudCBtYXRjaW5n
-IHdpdGggQ1AgKG5hdCBsb29rdXApICBbT2suLl0gWzB4Zjg2OWRdCltGU0NLXSB2YWxpZF9pbm9k
-ZV9jb3VudCBtYXRjaGVkIHdpdGggQ1AgICAgICAgICAgICAgIFtPay4uXSBbMHhjMDVkOV0KW0ZT
-Q0tdIGZyZWUgc2VnbWVudF9jb3VudCBtYXRjaGVkIHdpdGggQ1AgICAgICAgICAgICAgW09rLi5d
-IFsweDM0ZDBdCltGU0NLXSBuZXh0IGJsb2NrIG9mZnNldCBpcyBmcmVlICAgICAgICAgICAgICAg
-ICAgICAgIFtPay4uXQpbRlNDS10gZml4aW5nIFNJVCB0eXBlcwpbRlNDS10gb3RoZXIgY29ycnVw
-dGVkIGJ1Z3MgICAgICAgICAgICAgICAgICAgICAgICAgICBbRmFpbF0KCkRvbmUuCgo+IFRoZW4s
-IHdoaWNoIGtlcm5lbCB2ZXJzaW9uIGFyZSB5b3UgdXNpbmc/Cgo0LjguMTcKCi0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQgdGVjaCBjb21tdW5pdHkgb24gb25lIG9m
-IHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBzaXRlcywgU2xhc2hEb3Qub3JnISBodHRw
-Oi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWlsaW5nIGxpc3QKTGludXgtZjJmcy1kZXZl
-bEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9saXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlz
-dHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
+On 1/24/2017 11:06, Sheng Yong wrote:
+> Hi, Kinglong
+> 
+> On 1/24/2017 10:42 AM, Kinglong Mee wrote:
+>> wanted_total_sectors is introduced instead total_sectors,
+>> so that, the initialize is a fault, drop it.
+>>
+>> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+>> ---
+>>  mkfs/f2fs_format_main.c | 3 ---
+>>  1 file changed, 3 deletions(-)
+>>
+>> diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+>> index db1dc94..5bb1faf 100644
+>> --- a/mkfs/f2fs_format_main.c
+>> +++ b/mkfs/f2fs_format_main.c
+>> @@ -151,9 +151,6 @@ static void f2fs_parse_options(int argc, char *argv[])
+>>  		c.wanted_total_sectors = atoll(argv[optind+1]);
+>>  	}
+>>  
+>> -	if ((optind + 1) < argc)
+>> -		c.total_sectors = atoll(argv[optind+1]);
+>> -
+> Here we get the number of sectors specified by user, so that we could
+> create an image based on a specific size. There seems no fault. Could
+> you please give more detail :)
+
+Sorry for the late reply.
+
+Commit de7e07e011 "f2fs-tools: support multiple devices" changes the using of
+c.total_sectors, adds wanted_total_sectors instead it. 
+c.total_sectors must be initialized as zero (drop the fault assignment).
+
+Used as, 
+int get_device_info(struct device_info *dev)
+...
+c.total_sectors += dev->total_sectors;
+
+After that, mkfs.f2fs will fail with specified lager size than disk.
+# fdisk -ls /dev/sdb1
+20970496
+# mkfs.f2fs /dev/sdb1 209704961
+
+        F2FS-tools: mkfs.f2fs Ver: 1.7.0 (2017-01-13)
+
+Info: Debug level = 0
+Info: Trim is enabled
+Info: [/dev/sdb1] Disk Model: VMware Virtual S1.0
+Info: total device sectors = 251645953 (in 512 bytes)
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: sector size = 512
+Info: total sectors = 209704961 (102395 MB)
+Info: zone aligned segment0 blkaddr: 256
+Info: format version with
+  "Linux version 4.10.0-rc6+ (root@localhost) (gcc version 6.3.1 20161221 (Red Hat 6.3.1-1) (GCC) ) #483 SMP Fri Feb 3 13:58:56 CST 2017"
+Info: [/dev/sdb1] Discarding device
+Info: This device doesn't support BLKSECDISCARD
+Info: This device doesn't support BLKDISCARD
+        Error: Failed to create the root directory!!!
+        Error: Could not format the device!!!
+
+With this patch, mkfs.f2fs success as,
+#  mkfs.f2fs /dev/sdb1 209704961
+
+        F2FS-tools: mkfs.f2fs Ver: 1.7.0 (2017-01-13)
+
+Info: Debug level = 0
+Info: Trim is enabled
+Info: [/dev/sdb1] Disk Model: VMware Virtual S1.0
+Info: Segments per section = 1
+Info: Sections per zone = 1
+Info: sector size = 512
+Info: total sectors = 41940992 (20479 MB)
+Info: zone aligned segment0 blkaddr: 256
+Info: format version with
+  "Linux version 4.10.0-rc6+ (root@localhost) (gcc version 6.3.1 20161221 (Red Hat 6.3.1-1) (GCC) ) #483 SMP Fri Feb 3 13:58:56 CST 2017"
+Info: [/dev/sdb1] Discarding device
+Info: This device doesn't support BLKSECDISCARD
+Info: This device doesn't support BLKDISCARD
+Info: Overprovision ratio = 1.400%
+Info: Overprovision segments = 290 (GC reserved = 150)
+Info: format successful
+
+thanks,
+Kinglong Mee
+
+> thanks,
+> Sheng
+>>  	if (c.zoned_mode)
+>>  		c.feature |= cpu_to_le32(F2FS_FEATURE_BLKZONED);
+>>  }
+>>
+> 
+> 
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
