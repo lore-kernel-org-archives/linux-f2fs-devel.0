@@ -1,188 +1,78 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/5] f2fs: move write_node_page above fsync_node_pages
-Date: Fri,  3 Feb 2017 15:48:15 -0800
-Message-ID: <20170203234816.12723-4-jaegeuk@kernel.org>
-References: <20170203234816.12723-1-jaegeuk@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170203234816.12723-1-jaegeuk@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH] f2fs-tools: release 1.8.0
+Date: Fri,  3 Feb 2017 16:15:52 -0800
+Message-ID: <20170204001552.13489-1-jaegeuk@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cZo1O-0005mA-Dq
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 04 Feb 2017 00:16:06 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cZo1L-0000k4-So
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 04 Feb 2017 00:16:06 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch just moves write_node_page and introduces an inner function.
+This release includes:
+ - enhance fsck.f2fs mostly.
+ - retrieve lost files from dump.f2fs.
+ - support zoned device and multiple devices.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/node.c | 142 ++++++++++++++++++++++++++++++---------------------------
- 1 file changed, 74 insertions(+), 68 deletions(-)
+ VERSION      | 4 ++--
+ configure.ac | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index c573954571dd..f30cf1dec9a8 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1318,6 +1318,79 @@ static struct page *last_fsync_dnode(struct f2fs_sb_info *sbi, nid_t ino)
- 	return last_page;
- }
+diff --git a/VERSION b/VERSION
+index 9376c2d..c520af0 100644
+--- a/VERSION
++++ b/VERSION
+@@ -1,2 +1,2 @@
+-1.7.0
+-2016-07-28
++1.8.0
++2017-02-03
+diff --git a/configure.ac b/configure.ac
+index b855afe..6a3f7c4 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -110,12 +110,12 @@ AC_CONFIG_FILES([
+ ])
  
-+static int __write_node_page(struct page *page,
-+				struct writeback_control *wbc)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
-+	nid_t nid;
-+	struct node_info ni;
-+	struct f2fs_io_info fio = {
-+		.sbi = sbi,
-+		.type = NODE,
-+		.op = REQ_OP_WRITE,
-+		.op_flags = wbc_to_write_flags(wbc),
-+		.page = page,
-+		.encrypted_page = NULL,
-+	};
-+
-+	trace_f2fs_writepage(page, NODE);
-+
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
-+		goto redirty_out;
-+	if (unlikely(f2fs_cp_error(sbi)))
-+		goto redirty_out;
-+
-+	/* get old block addr of this node page */
-+	nid = nid_of_node(page);
-+	f2fs_bug_on(sbi, page->index != nid);
-+
-+	if (wbc->for_reclaim) {
-+		if (!down_read_trylock(&sbi->node_write))
-+			goto redirty_out;
-+	} else {
-+		down_read(&sbi->node_write);
-+	}
-+
-+	get_node_info(sbi, nid, &ni);
-+
-+	/* This page is already truncated */
-+	if (unlikely(ni.blk_addr == NULL_ADDR)) {
-+		ClearPageUptodate(page);
-+		dec_page_count(sbi, F2FS_DIRTY_NODES);
-+		up_read(&sbi->node_write);
-+		unlock_page(page);
-+		return 0;
-+	}
-+
-+	set_page_writeback(page);
-+	fio.old_blkaddr = ni.blk_addr;
-+	write_node_page(nid, &fio);
-+	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
-+	dec_page_count(sbi, F2FS_DIRTY_NODES);
-+	up_read(&sbi->node_write);
-+
-+	if (wbc->for_reclaim)
-+		f2fs_submit_merged_bio_cond(sbi, page->mapping->host, 0,
-+						page->index, NODE, WRITE);
-+
-+	unlock_page(page);
-+
-+	if (unlikely(f2fs_cp_error(sbi)))
-+		f2fs_submit_merged_bio(sbi, NODE, WRITE);
-+
-+	return 0;
-+
-+redirty_out:
-+	redirty_page_for_writepage(wbc, page);
-+	return AOP_WRITEPAGE_ACTIVATE;
-+}
-+
-+static int f2fs_write_node_page(struct page *page,
-+				struct writeback_control *wbc)
-+{
-+	return __write_node_page(page, wbc);
-+}
-+
- int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			struct writeback_control *wbc, bool atomic)
- {
-@@ -1397,7 +1470,7 @@ int fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
- 			if (!clear_page_dirty_for_io(page))
- 				goto continue_unlock;
+ # export library version info for mkfs/libf2fs_format_la
+-AC_SUBST(FMT_CURRENT, 0)
+-AC_SUBST(FMT_REVISION, 2)
++AC_SUBST(FMT_CURRENT, 1)
++AC_SUBST(FMT_REVISION, 0)
+ AC_SUBST(FMT_AGE, 0)
  
--			ret = NODE_MAPPING(sbi)->a_ops->writepage(page, wbc);
-+			ret = __write_node_page(page, wbc);
- 			if (ret) {
- 				unlock_page(page);
- 				f2fs_put_page(last_page, 0);
-@@ -1579,73 +1652,6 @@ int wait_on_node_pages_writeback(struct f2fs_sb_info *sbi, nid_t ino)
- 	return ret;
- }
+ # export library version info for lib/libf2fs_la
+-AC_SUBST(LIBF2FS_CURRENT, 1)
++AC_SUBST(LIBF2FS_CURRENT, 2)
+ AC_SUBST(LIBF2FS_REVISION, 0)
+ AC_SUBST(LIBF2FS_AGE, 0)
  
--static int f2fs_write_node_page(struct page *page,
--				struct writeback_control *wbc)
--{
--	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
--	nid_t nid;
--	struct node_info ni;
--	struct f2fs_io_info fio = {
--		.sbi = sbi,
--		.type = NODE,
--		.op = REQ_OP_WRITE,
--		.op_flags = wbc_to_write_flags(wbc),
--		.page = page,
--		.encrypted_page = NULL,
--	};
--
--	trace_f2fs_writepage(page, NODE);
--
--	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
--		goto redirty_out;
--	if (unlikely(f2fs_cp_error(sbi)))
--		goto redirty_out;
--
--	/* get old block addr of this node page */
--	nid = nid_of_node(page);
--	f2fs_bug_on(sbi, page->index != nid);
--
--	if (wbc->for_reclaim) {
--		if (!down_read_trylock(&sbi->node_write))
--			goto redirty_out;
--	} else {
--		down_read(&sbi->node_write);
--	}
--
--	get_node_info(sbi, nid, &ni);
--
--	/* This page is already truncated */
--	if (unlikely(ni.blk_addr == NULL_ADDR)) {
--		ClearPageUptodate(page);
--		dec_page_count(sbi, F2FS_DIRTY_NODES);
--		up_read(&sbi->node_write);
--		unlock_page(page);
--		return 0;
--	}
--
--	set_page_writeback(page);
--	fio.old_blkaddr = ni.blk_addr;
--	write_node_page(nid, &fio);
--	set_node_addr(sbi, &ni, fio.new_blkaddr, is_fsync_dnode(page));
--	dec_page_count(sbi, F2FS_DIRTY_NODES);
--	up_read(&sbi->node_write);
--
--	if (wbc->for_reclaim)
--		f2fs_submit_merged_bio_cond(sbi, page->mapping->host, 0,
--						page->index, NODE, WRITE);
--
--	unlock_page(page);
--
--	if (unlikely(f2fs_cp_error(sbi)))
--		f2fs_submit_merged_bio(sbi, NODE, WRITE);
--
--	return 0;
--
--redirty_out:
--	redirty_page_for_writepage(wbc, page);
--	return AOP_WRITEPAGE_ACTIVATE;
--}
--
- static int f2fs_write_node_pages(struct address_space *mapping,
- 			    struct writeback_control *wbc)
- {
 -- 
 2.11.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
