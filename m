@@ -1,23 +1,31 @@
-From: Sheng Yong <shengyong1@huawei.com>
-Subject: [PATCH] resize.f2fs: correct checkpoint_ver of new
-	checkpoint
-Date: Sat, 4 Feb 2017 14:45:59 +0800
-Message-ID: <20170204064559.23476-1-shengyong1@huawei.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 5/6] f2fs: add a kernel thread to issue
+ discard commands asynchronously
+Date: Sun, 5 Feb 2017 00:59:47 -0800
+Message-ID: <20170205085947.GA25319@infradead.org>
+References: <20170112224407.54026-1-jaegeuk@kernel.org>
+	<20170112224407.54026-5-jaegeuk@kernel.org>
+	<20170113080159.GB31777@infradead.org>
+	<20170113191211.GB1301@jaegeuk.local>
+	<20170116173220.GA2199@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <shengyong1@huawei.com>) id 1cZuIQ-0003MF-TU
+	(envelope-from
+	<BATV+7c9ed557eb952ccf5513+4914+infradead.org+hch@bombadil.srs.infradead.org>)
+	id 1caIfv-0008OX-Jv for linux-f2fs-devel@lists.sourceforge.net;
+	Sun, 05 Feb 2017 08:59:59 +0000
+Received: from bombadil.infradead.org ([65.50.211.133])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1caIfu-0005IJ-HP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Feb 2017 06:58:06 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cZuIK-0001tj-IJ
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Feb 2017 06:58:06 +0000
+	Sun, 05 Feb 2017 08:59:59 +0000
+Content-Disposition: inline
+In-Reply-To: <20170116173220.GA2199@infradead.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,43 +35,25 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: guoweichao@huawei.com
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, axboe@kernel.dk, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-resize.f2fs rebuilds a new checkpoint at the new position. Its
-checkpoint_ver should be increased.
-
-Signed-off-by: Shuoran Liu <liushuoran@huawei.com>
-Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
----
- fsck/resize.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fsck/resize.c b/fsck/resize.c
-index 29cb1c0..4791f74 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -415,6 +415,7 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
- 			struct f2fs_super_block *new_sb, unsigned int offset)
- {
- 	struct f2fs_checkpoint *cp = F2FS_CKPT(sbi);
-+	unsigned long long cp_ver = get_cp(checkpoint_ver);
- 	struct f2fs_checkpoint *new_cp;
- 	struct f2fs_super_block *sb = F2FS_RAW_SUPER(sbi);
- 	unsigned int free_segment_count, new_segment_count;
-@@ -476,6 +477,7 @@ static void rebuild_checkpoint(struct f2fs_sb_info *sbi,
- 
- 	memcpy(new_cp, cp, (unsigned char *)cp->sit_nat_version_bitmap -
- 						(unsigned char *)cp);
-+	new_cp->checkpoint_ver = cpu_to_le64(cp_ver + 1);
- 
- 	crc = f2fs_cal_crc32(F2FS_SUPER_MAGIC, new_cp, CHECKSUM_OFFSET);
- 	*((__le32 *)((unsigned char *)new_cp + CHECKSUM_OFFSET)) = cpu_to_le32(crc);
--- 
-2.10.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+T24gTW9uLCBKYW4gMTYsIDIwMTcgYXQgMDk6MzI6MjBBTSAtMDgwMCwgQ2hyaXN0b3BoIEhlbGx3
+aWcgd3JvdGU6Cj4gT24gRnJpLCBKYW4gMTMsIDIwMTcgYXQgMTE6MTI6MTFBTSAtMDgwMCwgSmFl
+Z2V1ayBLaW0gd3JvdGU6Cj4gPiBQcmV2aW91c2x5LCBJJ3ZlIGRvbmUgdG8gaXNzdWUgZGlzY2Fy
+ZCBiaW9zIGFzeW5jaHJvbm91c2x5LiBCdXQgdGhlIHByb2JsZW0gdGhhdAo+ID4gSSd2ZSBnb3Qg
+aXMgdGhhdCB3YXMgbm90IGVub3VnaC4gV2hlbiB0ZXN0aW5nIG52bWUgU1NEIHdpdGggbm9vcCBJ
+TyBzY2hlZHVsZXIsCj4gPiBzdWJtaXRfYmlvKCkgd2FzIGJsb2NrZWQgYXQgZXZlcnkgOCBhc3lu
+YyBkaXNjYXJkIGJpb3MsIHJlc3VsdGluZyBpbiB2ZXJ5IHNsb3cKPiA+IGNoZWNrcG9pbnQgcHJv
+Y2VzcyB3aGljaCBibG9ja3MgbW9zdCBvZiBvdGhlciBGUyBvcGVyYXRpb25zLgo+IAo+IFdoZXJl
+IGRvZXMgaXQgYmxvY2s/ICBBcmUgeW91IHJ1bm5pbmcgb3V0IG9mIHJlcXVlc3Q/ICBXaGF0IGRy
+aXZlciBpcwo+IHRoaXMgb24gdG9wIG9mPwoKUGluZz8gIEknbSBjdXJyZW50bHkgc3BlbmRpbmcg
+YSBsb3Qgb2YgZWZmb3J0IG9uIGZzIGFuZCBibG9jayBk0ZZzY2FyZApjb2RlLCBhbmQgSSdkIGxp
+a2UgdG8gbWFrZSBzdXJlIHdlIGdldCBjb21tb24gaW5mcmFzdHJ1Y3R1cmUgaW5zdGVhZApvZiBs
+b2NhbCBoYWNrcy4KCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpDaGVjayBvdXQgdGhlIHZpYnJhbnQg
+dGVjaCBjb21tdW5pdHkgb24gb25lIG9mIHRoZSB3b3JsZCdzIG1vc3QKZW5nYWdpbmcgdGVjaCBz
+aXRlcywgU2xhc2hEb3Qub3JnISBodHRwOi8vc2RtLmxpbmsvc2xhc2hkb3QKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXgtZjJmcy1kZXZlbCBtYWls
+aW5nIGxpc3QKTGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQKaHR0cHM6Ly9s
+aXN0cy5zb3VyY2Vmb3JnZS5uZXQvbGlzdHMvbGlzdGluZm8vbGludXgtZjJmcy1kZXZlbAo=
