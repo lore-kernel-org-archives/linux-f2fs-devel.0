@@ -1,100 +1,79 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 4/6] xfs: use memalloc_nofs_{save,restore} instead of
- memalloc_noio*
-Date: Tue, 7 Feb 2017 09:51:50 +1100
-Message-ID: <20170206225150.GB12125@dastard>
-References: <20170206140718.16222-1-mhocko@kernel.org>
- <20170206140718.16222-5-mhocko@kernel.org>
- <20170206153923.GL2267@bombadil.infradead.org>
- <20170206174415.GA20731@dhcp22.suse.cz>
- <20170206183237.GE3580@birch.djwong.org>
- <20170206184743.GB20731@dhcp22.suse.cz>
+From: Kinglong Mee <kinglongmee@gmail.com>
+Subject: [PATCH] mkfs.f2fs: make sure clean all reset dnodes
+Date: Tue, 7 Feb 2017 10:43:09 +0800
+Message-ID: <7eb4aa73-bf37-5c62-20b7-3b74b7046337@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20170206184743.GB20731@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@kernel.org>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, djwong@kernel.org, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1cavkb-00080h-5i
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 07 Feb 2017 02:43:25 +0000
+Received: from mail-it0-f65.google.com ([209.85.214.65])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1cavkY-0003k4-Ut
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 07 Feb 2017 02:43:25 +0000
+Received: by mail-it0-f65.google.com with SMTP id 203so11019953ith.2
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Mon, 06 Feb 2017 18:43:22 -0800 (PST)
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-On Mon, Feb 06, 2017 at 07:47:43PM +0100, Michal Hocko wrote:
-> On Mon 06-02-17 10:32:37, Darrick J. Wong wrote:
-> > On Mon, Feb 06, 2017 at 06:44:15PM +0100, Michal Hocko wrote:
-> > > On Mon 06-02-17 07:39:23, Matthew Wilcox wrote:
-> > > > On Mon, Feb 06, 2017 at 03:07:16PM +0100, Michal Hocko wrote:
-> > > > > +++ b/fs/xfs/xfs_buf.c
-> > > > > @@ -442,17 +442,17 @@ _xfs_buf_map_pages(
-> > > > >  		bp->b_addr = NULL;
-> > > > >  	} else {
-> > > > >  		int retried = 0;
-> > > > > -		unsigned noio_flag;
-> > > > > +		unsigned nofs_flag;
-> > > > >  
-> > > > >  		/*
-> > > > >  		 * vm_map_ram() will allocate auxillary structures (e.g.
-> > > > >  		 * pagetables) with GFP_KERNEL, yet we are likely to be under
-> > > > >  		 * GFP_NOFS context here. Hence we need to tell memory reclaim
-> > > > > -		 * that we are in such a context via PF_MEMALLOC_NOIO to prevent
-> > > > > +		 * that we are in such a context via PF_MEMALLOC_NOFS to prevent
-> > > > >  		 * memory reclaim re-entering the filesystem here and
-> > > > >  		 * potentially deadlocking.
-> > > > >  		 */
-> > > > 
-> > > > This comment feels out of date ... how about:
-> > > 
-> > > which part is out of date?
-> > > 
-> > > > 
-> > > > 		/*
-> > > > 		 * vm_map_ram will allocate auxiliary structures (eg page
-> > > > 		 * tables) with GFP_KERNEL.  If that tries to reclaim memory
-> > > > 		 * by calling back into this filesystem, we may deadlock.
-> > > > 		 * Prevent that by setting the NOFS flag.
-> > > > 		 */
-> > > 
-> > > dunno, the previous wording seems clear enough to me. Maybe little bit
-> > > more chatty than yours but I am not sure this is worth changing.
-> > 
-> > I prefer to keep the "...yet we are likely to be under GFP_NOFS..."
-> > wording of the old comment because it captures the uncertainty of
-> > whether or not we actually are already under NOFS.  If someone actually
-> > has audited this code well enough to know for sure then yes let's change
-> > the comment, but I haven't gone that far.
-> 
-> I believe we can drop the memalloc_nofs_save then as well because either
-> we are called from a potentially dangerous context and thus we are in
-> the nofs scope we we do not need the protection at all.
+memset(raw_node, 0, F2FS_BLKSIZE) sets the next_blkaddr to zero,
+so that, only one reset dnode is cleaned always.
 
-No, absolutely not. "Belief" is not a sufficient justification for
-removing low level deadlock avoidance infrastructure. This code
-needs to remain in _xfs_buf_map_pages() until a full audit of the
-caller paths is done and we're 100% certain that there are no
-lurking deadlocks.
+Fixes: ad042d9194f5 "mkfs.f2fs: reset dnode with zeros",
+Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+---
+ mkfs/f2fs_format.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-For example, I'm pretty sure we can call into _xfs_buf_map_pages()
-outside of a transaction context but with an inode ILOCK held
-exclusively. If we then recurse into memory reclaim and try to run a
-transaction during reclaim, we have an inverted ILOCK vs transaction
-locking order. i.e. we are not allowed to call xfs_trans_reserve()
-with an ILOCK held as that can deadlock the log:  log full, locked
-inode pins tail of log, inode cannot be flushed because ILOCK is
-held by caller waiting for log space to become available....
-
-i.e. there are certain situations where holding a ILOCK is a
-deadlock vector. See xfs_lock_inodes() for an example of the lengths
-we go to avoid ILOCK based log deadlocks like this...
-
-Cheers,
-
-Dave.
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 3c13026..1b10e4f 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -775,6 +775,8 @@ static int f2fs_write_super_block(void)
+ #ifndef WITH_ANDROID
+ static int discard_obsolete_dnode(struct f2fs_node *raw_node, u_int64_t offset)
+ {
++	u_int64_t next_blkaddr = 0;
++
+ 	if (c.zoned_mode)
+ 		return 0;
+ 	do {
+@@ -787,6 +789,7 @@ static int discard_obsolete_dnode(struct f2fs_node *raw_node, u_int64_t offset)
+ 			return -1;
+ 		}
+ 
++		next_blkaddr = le32_to_cpu(raw_node->footer.next_blkaddr);
+ 		memset(raw_node, 0, F2FS_BLKSIZE);
+ 
+ 		DBG(1, "\tDiscard dnode, at offset 0x%08"PRIx64"\n", offset);
+@@ -794,7 +797,7 @@ static int discard_obsolete_dnode(struct f2fs_node *raw_node, u_int64_t offset)
+ 			MSG(1, "\tError: While discarding direct node!!!\n");
+ 			return -1;
+ 		}
+-		offset = le32_to_cpu(raw_node->footer.next_blkaddr);
++		offset = next_blkaddr;
+ 	} while (1);
+ 
+ 	return 0;
 -- 
-Dave Chinner
-david@fromorbit.com
+2.9.3
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
