@@ -1,28 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: introduce nid cache
-Date: Wed, 8 Feb 2017 17:28:40 -0800
-Message-ID: <20170209012840.GB10747@jaegeuk.local>
-References: <20170122095331.58427-1-yuchao0@huawei.com>
-	<20170124043500.GC1566@jaegeuk.local>
-	<452624a9-8b9a-843c-98df-00187a8f795a@huawei.com>
-	<5c8999e9-f405-7e23-0d1a-209b24f040d8@kernel.org>
+Subject: [PATCH] f2fs: show checkpoint version at mount time
+Date: Thu,  9 Feb 2017 15:55:43 -0800
+Message-ID: <20170209235543.20878-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cbdXW-0000rq-Lx
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cbyZ7-0001yN-Eg
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 09 Feb 2017 01:28:50 +0000
+	Thu, 09 Feb 2017 23:55:53 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cbdXV-0004p9-F7
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cbyZ6-0007KY-JB
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 09 Feb 2017 01:28:50 +0000
-Content-Disposition: inline
-In-Reply-To: <5c8999e9-f405-7e23-0d1a-209b24f040d8@kernel.org>
+	Thu, 09 Feb 2017 23:55:53 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,103 +26,32 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On 02/08, Chao Yu wrote:
-> On 2017/2/7 15:24, Chao Yu wrote:
-> > Hi Jaegeuk,
-> > 
-> > Happy Chinese New Year! :)
-> > 
-> > On 2017/1/24 12:35, Jaegeuk Kim wrote:
-> >> Hi Chao,
-> >>
-> >> On 01/22, Chao Yu wrote:
-> >>> In scenario of intensively node allocation, free nids will be ran out
-> >>> soon, then it needs to stop to load free nids by traversing NAT blocks,
-> >>> in worse case, if NAT blocks does not be cached in memory, it generates
-> >>> IOs which slows down our foreground operations.
-> >>>
-> >>> In order to speed up node allocation, in this patch we introduce a new
-> >>> option named "nid cache", when turns on this option, it will load all
-> >>> nat entries in NAT blocks when doing mount, and organize all free nids
-> >>> in a bitmap, for any operations related to free nid, we will query and
-> >>> set the new prebuilded bitmap instead of reading and lookuping NAT
-> >>> blocks, so performance of node allocation can be improved.
-> >>>
-> >>
-> >> How does this affect mount time and memory consumption?
-> > 
-> > Sorry for the delay.
-> > 
-> > Let me figure out some numbers later.
-> 
-> a. mount time
-> 
-> I choose slow device (Kingston 16GB SD card) to see how this option affect mount
-> time when there is not enough bandwidth in low level,
-> 
-> Before the test, I change readahead window size of NAT pages from FREE_NID_PAGES
-> * 8 to sbi->blocks_per_seg for better ra performance, so the result is:
-> 
-> time mount -t f2fs -o nid_cache /dev/sde /mnt/f2fs/
-> 
-> before:
-> real	0m0.204s
-> user	0m0.004s
-> sys	0m0.020s
-> 
-> after:
-> real	0m3.792s
+If we mounted f2fs successfully, let's show current checkpoint version.
 
-Oops, we can't accept this even only for 16GB, right? :(
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/super.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> user	0m0.000s
-> sys	0m0.140s
-> 
-> b. memory consumption
-> 
-> For 16GB size image, there is total 34 NAT pages, so memory footprint is:
-> 34 / 2 * 512 * 455 / 8 = 495040 bytes = 483.4 KB
-> 
-> Increasing of memory footprint is liner with total user valid blocks in image,
-> and at most it will eat 3900 * 8 * 455 / 8 = 1774500 bytes = 1732.9 KB
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 68a555b014cf..bd24a98cf5d4 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2100,6 +2100,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 			sbi->valid_super_block ? 1 : 2, err);
+ 	}
+ 
++	f2fs_msg(sbi->sb, KERN_NOTICE, "Mounted with checkpoint version = %llx",
++				cur_cp_version(F2FS_CKPT(sbi)));
+ 	f2fs_update_time(sbi, CP_TIME);
+ 	f2fs_update_time(sbi, REQ_TIME);
+ 	return 0;
+-- 
+2.11.0
 
-How about adding two bitmaps for whole NAT pages and storing the bitmaps in
-checkpoint pack, which needs at most two blocks additionally?
-
-1. full-assigned NAT bitmap, where 1 means there is no free nids.
-2. empty NAT bitmap, where 1 means whole there-in nids are free.
-
-With these bitmaps, build_free_nids() can scan from 0'th NAT block by:
-
-	if (full-assigned NAT)
-		skip;
-	else if (empty NAT)
-		add_free_nid(all);
-	else
-		read NAT page and add_free_nid();
-
-The flush_nat_entries() has to change its bitmaps accordingly.
-
-With this approach, I expect we can reuse nids as much as possible while
-getting cached NAT pages more effectively.
-
-Thanks,
-
-> 
-> Thanks,
-> 
-> > 
-> >> IMO, if those do not
-> >> raise huge concerns, we would be able to consider just replacing current free
-> >> nid list with this bitmap.
-> > 
-> > Yup, I agree with you.
-> > 
-> > Thanks,
-> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
