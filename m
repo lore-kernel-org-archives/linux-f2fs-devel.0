@@ -1,48 +1,60 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: enable inline_xattr by default
-Date: Mon, 13 Feb 2017 16:35:02 -0800
-Message-ID: <20170214003502.GB14533@jaegeuk.local>
-References: <20170208093945.24681-1-yuchao0@huawei.com>
+Subject: [PATCH 2/4] f2fs-tools: catch up up-to-date checkpoint
+	flag
+Date: Mon, 13 Feb 2017 18:05:18 -0800
+Message-ID: <20170214020520.18091-2-jaegeuk@kernel.org>
+References: <20170214020520.18091-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170208093945.24681-1-yuchao0@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cdSUs-0003B2-HJ
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 14 Feb 2017 02:05:38 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cdSUo-0006zj-HY
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 14 Feb 2017 02:05:38 +0000
+In-Reply-To: <20170214020520.18091-1-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Hi Chao,
+It needs to use up-to-date ckpt flag.
 
-On 02/08, Chao Yu wrote:
-> In android, since SElinux is enable, security policy will be appliedd for
-> each file, it stores in inode as an xattr entry, so it will take one 4k
-> size node block additionally for each file.
-> 
-> Let's enable inline_xattr by default in order to save storage space.
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ include/f2fs_fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Then, we need to add "noinline_xattr".
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 97ee297..44c5d61 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -514,6 +514,7 @@ struct f2fs_super_block {
+ /*
+  * For checkpoint
+  */
++#define CP_CRC_RECOVERY_FLAG	0x00000040
+ #define CP_FASTBOOT_FLAG	0x00000020
+ #define CP_FSCK_FLAG		0x00000010
+ #define CP_ERROR_FLAG		0x00000008
+-- 
+2.11.0
 
-Thanks,
 
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/super.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 68a555b014cf..e2f919d3096a 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1026,6 +1026,7 @@ static void default_options(struct f2fs_sb_info *sbi)
->  	sbi->active_logs = NR_CURSEG_TYPE;
->  
->  	set_opt(sbi, BG_GC);
-> +	set_opt(sbi, INLINE_XATTR);
->  	set_opt(sbi, INLINE_DATA);
->  	set_opt(sbi, INLINE_DENTRY);
->  	set_opt(sbi, EXTENT_CACHE);
-> -- 
-> 2.8.2.295.g3f1c1d0
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
