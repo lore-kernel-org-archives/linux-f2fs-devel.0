@@ -1,78 +1,54 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 3/3] f2fs: avoid reading NAT page by get_node_info
-Date: Mon, 13 Feb 2017 18:06:44 -0800
-Message-ID: <20170214020644.18189-3-jaegeuk@kernel.org>
-References: <20170214020644.18189-1-jaegeuk@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cdSWE-0003Fi-Jy
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 14 Feb 2017 02:07:02 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cdSWC-0004ic-Ak
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 14 Feb 2017 02:07:02 +0000
-In-Reply-To: <20170214020644.18189-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+Subject: [PATCH] f2fs: fix multiple f2fs_add_link() calls having same name
+Date: Tue, 14 Feb 2017 10:03:45 -0800
+Message-ID: <20170214180345.2074-1-jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, stable@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-We've not seen this buggy case for a long time, so it's time to avoid this
-unnecessary get_node_info() call which reading NAT page to cache nat entry.
+VFS uses f2fs_lookup() to decide f2fs_add_link() call during file creation.
+But, if there is a race condition, f2fs_add_link() can be called multiple
+times, resulting in multiple dentries with a same name. This patches fixes
+it by adding __f2fs_find_entry() in f2fs_add_link() path.
 
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/node.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ fs/f2fs/dir.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index e001d084667f..b63bdb85ad66 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1033,7 +1033,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
- 				unsigned int ofs, struct page *ipage)
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 827c5daef4fc..bc7c48839bec 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -643,14 +643,24 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
+ 				struct inode *inode, nid_t ino, umode_t mode)
  {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
--	struct node_info old_ni, new_ni;
-+	struct node_info new_ni;
- 	struct page *page;
+ 	struct fscrypt_name fname;
++	struct page *page;
++	struct f2fs_dir_entry *de;
  	int err;
  
-@@ -1049,12 +1049,11 @@ struct page *new_node_page(struct dnode_of_data *dn,
- 		goto fail;
- 	}
+ 	err = fscrypt_setup_filename(dir, name, 0, &fname);
+ 	if (err)
+ 		return err;
  
--	get_node_info(sbi, dn->nid, &old_ni);
+-	err = __f2fs_do_add_link(dir, &fname, inode, ino, mode);
 -
--	/* Reinitialize old_ni with new node page */
--	f2fs_bug_on(sbi, old_ni.blk_addr != NULL_ADDR);
--	new_ni = old_ni;
-+	new_ni.nid = dn->nid;
- 	new_ni.ino = dn->inode->i_ino;
-+	new_ni.blk_addr = NULL_ADDR;
-+	new_ni.flag = 0;
-+	new_ni.version = 0;
- 	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
- 
- 	f2fs_wait_on_page_writeback(page, NODE, true);
++	de = __f2fs_find_entry(dir, &fname, &page);
++	if (de) {
++		f2fs_dentry_kunmap(dir, page);
++		f2fs_put_page(page, 0);
++		err = -EEXIST;
++	} else if (!IS_ERR(page)) {
++		err = __f2fs_do_add_link(dir, &fname, inode, ino, mode);
++	} else {
++		err = PTR_ERR(page);
++	}
+ 	fscrypt_free_filename(&fname);
+ 	return err;
+ }
 -- 
 2.11.0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
