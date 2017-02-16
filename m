@@ -1,26 +1,59 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [RFC] add ovp valid_blocks check for bg gc victim to
- fg_gc
-Date: Thu, 16 Feb 2017 15:48:13 -0800
-Message-ID: <20170216234813.GA64229@jaegeuk.local>
-References: <20170216123431.14811-1-houpengyang@huawei.com>
+From: Daniel Black <daniel.black@au1.ibm.com>
+Subject: documentation for atomic writes,
+	encryption and other features
+Date: Fri, 17 Feb 2017 10:26:53 +1100
+Message-ID: <05f5a35f-0176-b9ff-77c9-268466e19750@au.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ceVml-0006NP-0E
+	(envelope-from <daniel.black@au1.ibm.com>) id 1ceX30-0001J0-EE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 16 Feb 2017 23:48:27 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ceVmh-0002ZE-0a
+	Fri, 17 Feb 2017 01:09:18 +0000
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ceX2y-0003Hj-Do
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 16 Feb 2017 23:48:26 +0000
-Content-Disposition: inline
-In-Reply-To: <20170216123431.14811-1-houpengyang@huawei.com>
+	Fri, 17 Feb 2017 01:09:18 +0000
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id
+	v1GNIstt111229 for <linux-f2fs-devel@lists.sourceforge.net>;
+	Thu, 16 Feb 2017 18:27:56 -0500
+Received: from e23smtp01.au.ibm.com (e23smtp01.au.ibm.com [202.81.31.143])
+	by mx0a-001b2d01.pphosted.com with ESMTP id 28n7mgn53n-1
+	(version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Thu, 16 Feb 2017 18:27:56 -0500
+Received: from localhost
+	by e23smtp01.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use
+	Only! Violators will be prosecuted
+	for <linux-f2fs-devel@lists.sourceforge.net> from
+	<daniel.black@au1.ibm.com>; Fri, 17 Feb 2017 09:27:53 +1000
+Received: from d23relay08.au.ibm.com (d23relay08.au.ibm.com [9.185.71.33])
+	by d23dlp01.au.ibm.com (Postfix) with ESMTP id 01F432CE8046
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 17 Feb 2017 10:27:51 +1100 (EST)
+Received: from d23av05.au.ibm.com (d23av05.au.ibm.com [9.190.234.119])
+	by d23relay08.au.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
+	v1GNRgWm7078096 for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 17 Feb 2017 10:27:50 +1100
+Received: from d23av05.au.ibm.com (localhost [127.0.0.1])
+	by d23av05.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVout) with ESMTP id
+	v1GNRIwX031127 for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 17 Feb 2017 10:27:18 +1100
+Received: from ozlabs.au.ibm.com (ozlabs.au.ibm.com [9.192.253.14])
+	by d23av05.au.ibm.com (8.14.4/8.14.4/NCO v10.0 AVin) with ESMTP id
+	v1GNRIN1030750 for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 17 Feb 2017 10:27:18 +1100
+Received: from hopper.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+	(using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+	(No client certificate requested)
+	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 2C93EA01AC
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Fri, 17 Feb 2017 10:26:54 +1100 (AEDT)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,140 +63,29 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Hou Pengyang <houpengyang@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Pengyang,
+I was looking at Documentation/filesystems/f2fs.txt trying to work out
+how to do atomic writes.
 
-Nice catch!
+I did find https://www.spinics.net/lists/kernel/msg1839691.html which
+contains some elements.
 
-I think fggc_threshold needs to be revised, and we need to consider about
-general victim selection as well.
+It seems F2FS_IOC_DB_OPEN might been replaced by
+F2FS_IOC_START_ATOMIC_WRITE looking at fs/f2fs/f2fs.h
 
-Could you take a look at this?
+I'd really like some documentation to be written in filesystems/f2fs.txt
+to aid the use of features that have been so diligently developed. I'd
+also like to know what happens when the atomic write size gets too big.
 
->From 23b265f5ca6405032d092e240c94a827f743e42b Mon Sep 17 00:00:00 2001
-From: Hou Pengyang <houpengyang@huawei.com>
-Date: Thu, 16 Feb 2017 12:34:31 +0000
-Subject: [PATCH] f2fs: add ovp valid_blocks check for bg gc victim to fg_gc
+After that perhaps it can be used in application like other storage
+systems e.g. https://jira.mariadb.org/browse/MDEV-11417
 
-For foreground gc, greedy algorithm should be adapted, which makes
-this formula work well:
+Keep up the good work.
 
-	(2 * (100 / config.overprovision + 1) + 6)
+Cheers,
 
-But currently, we fg_gc have a prior to select bg_gc victim segments to gc first,
-these victims are selected by cost-benefit algorithm, we can't guarantee such segments
-have the small valid blocks, which may destroy the f2fs rule, on the worstest case, would
-consume all the free segments.
-
-This patch fix this by add a filter in check_bg_victims, if segment's has # of valid blocks
-over overprovision ratio, skip such segments.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/f2fs.h    |  3 +++
- fs/f2fs/gc.c      | 22 ++++++++++++++++++++--
- fs/f2fs/segment.h |  9 +++++++++
- 3 files changed, 32 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index cc22dc458896..1c9f0cc8f027 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -888,6 +888,9 @@ struct f2fs_sb_info {
- 	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
- 	unsigned int cur_victim_sec;		/* current victim section num */
- 
-+	/* threshold for converting bg victims for fg */
-+	u64 fggc_threshold;
-+
- 	/* maximum # of trials to find a victim segment for SSR and GC */
- 	unsigned int max_victim_search;
- 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 88e5e7b10ab6..fd4e479820e6 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -166,7 +166,8 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
- 		p->ofs_unit = sbi->segs_per_sec;
- 	}
- 
--	if (p->max_search > sbi->max_victim_search)
-+	/* we need to check every dirty segments in the FG_GC case */
-+	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
- 		p->max_search = sbi->max_victim_search;
- 
- 	p->offset = sbi->last_victim[p->gc_mode];
-@@ -199,6 +200,10 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
- 	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
- 		if (sec_usage_check(sbi, secno))
- 			continue;
-+
-+		if (no_fggc_candidate(sbi, secno))
-+			continue;
-+
- 		clear_bit(secno, dirty_i->victim_secmap);
- 		return secno * sbi->segs_per_sec;
- 	}
-@@ -322,13 +327,15 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 			nsearched++;
- 		}
- 
--
- 		secno = GET_SECNO(sbi, segno);
- 
- 		if (sec_usage_check(sbi, secno))
- 			goto next;
- 		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
- 			goto next;
-+		if (gc_type == FG_GC && p.alloc_mode == LFS &&
-+					no_fggc_candidate(sbi, secno))
-+			goto next;
- 
- 		cost = get_gc_cost(sbi, segno, &p);
- 
-@@ -989,5 +996,16 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
- 
- void build_gc_manager(struct f2fs_sb_info *sbi)
- {
-+	u64 user_block_count, ovp_count, blocks_per_sec, th;
-+
- 	DIRTY_I(sbi)->v_ops = &default_v_ops;
-+
-+	/* threshold of # of valid blocks in a section for victims of FG_GC */
-+	user_block_count = sbi->user_block_count;
-+	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
-+	blocks_per_sec = sbi->blocks_per_seg * sbi->segs_per_sec;
-+
-+	th = user_block_count * 100 * blocks_per_sec /
-+			((user_block_count + ovp_count) * 100);
-+	sbi->fggc_threshold = th;
- }
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 5cb5755c75d9..f4020f141d83 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -716,6 +716,15 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
- 				- (base + 1) + type;
- }
- 
-+static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
-+						unsigned int secno)
-+{
-+	if (get_valid_blocks(sbi, secno, sbi->segs_per_sec) >=
-+						sbi->fggc_threshold)
-+		return true;
-+	return false;
-+}
-+
- static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
- {
- 	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
--- 
-2.11.0
+Daniel Black
 
 
 ------------------------------------------------------------------------------
