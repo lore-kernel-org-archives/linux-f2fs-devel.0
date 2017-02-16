@@ -1,271 +1,138 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: show actual device info in tracepoints
-Date: Wed, 15 Feb 2017 17:54:52 -0800
-Message-ID: <20170216015452.22441-2-jaegeuk@kernel.org>
-References: <20170216015452.22441-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix multiple f2fs_add_link() calls
+ having same name
+Date: Thu, 16 Feb 2017 11:37:14 +0800
+Message-ID: <05e24002-260a-a06e-10cb-cab6839d0330@huawei.com>
+References: <20170214180345.2074-1-jaegeuk@kernel.org>
+ <4fb2c86e-a50c-512f-2fa7-964540101138@huawei.com>
+ <20170215013947.GA5332@jaegeuk.local> <20170216011601.GA15475@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ceBHl-0003vd-2a
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 16 Feb 2017 01:55:05 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ceBHk-0002ZI-0P
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 16 Feb 2017 01:55:05 +0000
-In-Reply-To: <20170216015452.22441-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170216011601.GA15475@jaegeuk.local>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch shows actual device information in the tracepoints.
+On 2017/2/16 9:16, Jaegeuk Kim wrote:
+> On 02/14, Jaegeuk Kim wrote:
+>> On 02/15, Chao Yu wrote:
+>>> On 2017/2/15 2:03, Jaegeuk Kim wrote:
+>>>> VFS uses f2fs_lookup() to decide f2fs_add_link() call during file creation.
+>>>> But, if there is a race condition, f2fs_add_link() can be called multiple
+>>>> times, resulting in multiple dentries with a same name. This patches fixes
+>>>> it by adding __f2fs_find_entry() in f2fs_add_link() path.
+>>>
+>>> As during ->lookup, i_mutex will be held all the time, so there is no race
+>>> condition in between different file creators?
+>>
+>> Hehe, yup.
+>> I dropped this patch.
+> 
+> It turns out sdcardfs has a race condition between lookup and create, and it
+> calls vfs_create() twice. Workaround by f2fs would be needed for whole AOSP as
+> well. And I added to check current to avoid performance regression.
+> 
+> Thanks,
+> 
+>>From 2f433dbfa491550e666a3d08f5a59ac5bed42b0f Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Tue, 14 Feb 2017 09:54:37 -0800
+> Subject: [PATCH] f2fs: fix multiple f2fs_add_link() calls having same name
+> 
+> It turns out a stakable filesystem like sdcardfs in AOSP can trigger multiple
+> vfs_create() to lower filesystem. In that case, f2fs will add multiple dentries
+> having same name which breaks filesystem consistency.
+> 
+> Until upper layer fixes, let's work around by f2fs, which shows actually not
+> much performance regression.
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/dir.c  | 26 ++++++++++++++++++++++++--
+>  fs/f2fs/f2fs.h |  1 +
+>  2 files changed, 25 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 827c5daef4fc..4f5b3bb514c6 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -207,9 +207,11 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+>  		f2fs_put_page(dentry_page, 0);
+>  	}
+>  
+> +	/* This is to increase the speed of f2fs_create */
+>  	if (!de && room && F2FS_I(dir)->chash != namehash) {
+>  		F2FS_I(dir)->chash = namehash;
+>  		F2FS_I(dir)->clevel = level;
+> +		F2FS_I(dir)->task = current;
+>  	}
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/segment.c           | 10 ++++-----
- include/trace/events/f2fs.h | 49 ++++++++++++++++++++++++---------------------
- 2 files changed, 31 insertions(+), 28 deletions(-)
+Hash collision can happen on different file names, here, assignment of .task
+should be more accurately to prevent racing between lookup and creat, so how about:
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 0a1c737f2d79..008f971296f8 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -426,11 +426,11 @@ static int submit_flush_wait(struct f2fs_sb_info *sbi)
- 	int ret = __submit_flush_wait(sbi->sb->s_bdev);
- 	int i;
- 
--	trace_f2fs_issue_flush(sbi->sb, test_opt(sbi, NOBARRIER),
--					test_opt(sbi, FLUSH_MERGE));
--
- 	if (sbi->s_ndevs && !ret) {
- 		for (i = 1; i < sbi->s_ndevs; i++) {
-+			trace_f2fs_issue_flush(FDEV(i).bdev,
-+					test_opt(sbi, NOBARRIER),
-+					test_opt(sbi, FLUSH_MERGE));
- 			ret = __submit_flush_wait(FDEV(i).bdev);
- 			if (ret)
- 				break;
-@@ -758,7 +758,7 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
- 	block_t lblkstart = blkstart;
- 	int err;
- 
--	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
-+	trace_f2fs_issue_discard(bdev, blkstart, blklen);
- 
- 	if (sbi->s_ndevs) {
- 		int devi = f2fs_target_device_index(sbi, blkstart);
-@@ -815,7 +815,7 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
- 		return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
- 	case BLK_ZONE_TYPE_SEQWRITE_REQ:
- 	case BLK_ZONE_TYPE_SEQWRITE_PREF:
--		trace_f2fs_issue_reset_zone(sbi->sb, blkstart);
-+		trace_f2fs_issue_reset_zone(bdev, blkstart);
- 		return blkdev_reset_zones(bdev, sector,
- 					  nr_sects, GFP_NOFS);
- 	default:
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 82236792b50c..153572e256d6 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -6,8 +6,8 @@
- 
- #include <linux/tracepoint.h>
- 
--#define show_dev(entry)		MAJOR(entry->dev), MINOR(entry->dev)
--#define show_dev_ino(entry)	show_dev(entry), (unsigned long)entry->ino
-+#define show_dev(dev)		MAJOR(dev), MINOR(dev)
-+#define show_dev_ino(entry)	show_dev(entry->dev), (unsigned long)entry->ino
- 
- TRACE_DEFINE_ENUM(NODE);
- TRACE_DEFINE_ENUM(DATA);
-@@ -245,7 +245,7 @@ TRACE_EVENT(f2fs_sync_fs,
- 	),
- 
- 	TP_printk("dev = (%d,%d), superblock is %s, wait = %d",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		__entry->dirty ? "dirty" : "not dirty",
- 		__entry->wait)
- );
-@@ -544,7 +544,7 @@ TRACE_EVENT(f2fs_background_gc,
- 	),
- 
- 	TP_printk("dev = (%d,%d), wait_ms = %ld, prefree = %u, free = %u",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		__entry->wait_ms,
- 		__entry->prefree,
- 		__entry->free)
-@@ -586,7 +586,7 @@ TRACE_EVENT(f2fs_get_victim,
- 
- 	TP_printk("dev = (%d,%d), type = %s, policy = (%s, %s, %s), victim = %u "
- 		"ofs_unit = %u, pre_victim_secno = %d, prefree = %u, free = %u",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		show_data_type(__entry->type),
- 		show_gc_type(__entry->gc_type),
- 		show_alloc_mode(__entry->alloc_mode),
-@@ -723,7 +723,7 @@ TRACE_EVENT(f2fs_reserve_new_blocks,
- 	),
- 
- 	TP_printk("dev = (%d,%d), nid = %u, ofs_in_node = %u, count = %llu",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		(unsigned int)__entry->nid,
- 		__entry->ofs_in_node,
- 		(unsigned long long)__entry->count)
-@@ -793,6 +793,7 @@ DECLARE_EVENT_CLASS(f2fs__bio,
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
-+		__field(dev_t,	target)
- 		__field(int,	op)
- 		__field(int,	op_flags)
- 		__field(int,	type)
-@@ -802,6 +803,7 @@ DECLARE_EVENT_CLASS(f2fs__bio,
- 
- 	TP_fast_assign(
- 		__entry->dev		= sb->s_dev;
-+		__entry->target		= bio->bi_bdev->bd_dev;
- 		__entry->op		= bio_op(bio);
- 		__entry->op_flags	= bio->bi_opf;
- 		__entry->type		= type;
-@@ -809,8 +811,9 @@ DECLARE_EVENT_CLASS(f2fs__bio,
- 		__entry->size		= bio->bi_iter.bi_size;
- 	),
- 
--	TP_printk("dev = (%d,%d), rw = %s%s, %s, sector = %lld, size = %u",
--		show_dev(__entry),
-+	TP_printk("dev = (%d,%d)/(%d,%d), rw = %s%s, %s, sector = %lld, size = %u",
-+		show_dev(__entry->target),
-+		show_dev(__entry->dev),
- 		show_bio_type(__entry->op, __entry->op_flags),
- 		show_block_type(__entry->type),
- 		(unsigned long long)__entry->sector,
-@@ -1107,16 +1110,16 @@ TRACE_EVENT(f2fs_write_checkpoint,
- 	),
- 
- 	TP_printk("dev = (%d,%d), checkpoint for %s, state = %s",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		show_cpreason(__entry->reason),
- 		__entry->msg)
- );
- 
- TRACE_EVENT(f2fs_issue_discard,
- 
--	TP_PROTO(struct super_block *sb, block_t blkstart, block_t blklen),
-+	TP_PROTO(struct block_device *dev, block_t blkstart, block_t blklen),
- 
--	TP_ARGS(sb, blkstart, blklen),
-+	TP_ARGS(dev, blkstart, blklen),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
-@@ -1125,22 +1128,22 @@ TRACE_EVENT(f2fs_issue_discard,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev	= sb->s_dev;
-+		__entry->dev	= dev->bd_dev;
- 		__entry->blkstart = blkstart;
- 		__entry->blklen = blklen;
- 	),
- 
- 	TP_printk("dev = (%d,%d), blkstart = 0x%llx, blklen = 0x%llx",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		(unsigned long long)__entry->blkstart,
- 		(unsigned long long)__entry->blklen)
- );
- 
- TRACE_EVENT(f2fs_issue_reset_zone,
- 
--	TP_PROTO(struct super_block *sb, block_t blkstart),
-+	TP_PROTO(struct block_device *dev, block_t blkstart),
- 
--	TP_ARGS(sb, blkstart),
-+	TP_ARGS(dev, blkstart),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
-@@ -1148,21 +1151,21 @@ TRACE_EVENT(f2fs_issue_reset_zone,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev	= sb->s_dev;
-+		__entry->dev	= dev->bd_dev;
- 		__entry->blkstart = blkstart;
- 	),
- 
- 	TP_printk("dev = (%d,%d), reset zone at block = 0x%llx",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		(unsigned long long)__entry->blkstart)
- );
- 
- TRACE_EVENT(f2fs_issue_flush,
- 
--	TP_PROTO(struct super_block *sb, unsigned int nobarrier,
-+	TP_PROTO(struct block_device *dev, unsigned int nobarrier,
- 					unsigned int flush_merge),
- 
--	TP_ARGS(sb, nobarrier, flush_merge),
-+	TP_ARGS(dev, nobarrier, flush_merge),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,	dev)
-@@ -1171,13 +1174,13 @@ TRACE_EVENT(f2fs_issue_flush,
- 	),
- 
- 	TP_fast_assign(
--		__entry->dev	= sb->s_dev;
-+		__entry->dev	= dev->bd_dev;
- 		__entry->nobarrier = nobarrier;
- 		__entry->flush_merge = flush_merge;
- 	),
- 
- 	TP_printk("dev = (%d,%d), %s %s",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		__entry->nobarrier ? "skip (nobarrier)" : "issue",
- 		__entry->flush_merge ? " with flush_merge" : "")
- );
-@@ -1292,7 +1295,7 @@ TRACE_EVENT(f2fs_shrink_extent_tree,
- 	),
- 
- 	TP_printk("dev = (%d,%d), shrunk: node_cnt = %u, tree_cnt = %u",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		__entry->node_cnt,
- 		__entry->tree_cnt)
- );
-@@ -1339,7 +1342,7 @@ DECLARE_EVENT_CLASS(f2fs_sync_dirty_inodes,
- 	),
- 
- 	TP_printk("dev = (%d,%d), %s, dirty count = %lld",
--		show_dev(__entry),
-+		show_dev(__entry->dev),
- 		show_file_type(__entry->type),
- 		__entry->count)
- );
--- 
-2.11.0
+if (!de && room) {
+	.task = current;
+	if (chash != namehash) {
+		.chash = namehash;
+		.clevel = level;
+	}
+}
 
+Thanks,
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+>  
+>  	return de;
+> @@ -643,14 +645,34 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
+>  				struct inode *inode, nid_t ino, umode_t mode)
+>  {
+>  	struct fscrypt_name fname;
+> +	struct page *page = NULL;
+> +	struct f2fs_dir_entry *de = NULL;
+>  	int err;
+>  
+>  	err = fscrypt_setup_filename(dir, name, 0, &fname);
+>  	if (err)
+>  		return err;
+>  
+> -	err = __f2fs_do_add_link(dir, &fname, inode, ino, mode);
+> -
+> +	/*
+> +	 * An immature stakable filesystem shows a race condition between lookup
+> +	 * and create. If we have same task when doing lookup and create, it's
+> +	 * definitely fine as expected by VFS normally. Otherwise, let's just
+> +	 * verify on-disk dentry one more time, which guarantees filesystem
+> +	 * consistency more.
+> +	 */
+> +	if (current != F2FS_I(dir)->task) {
+> +		de = __f2fs_find_entry(dir, &fname, &page);
+> +		F2FS_I(dir)->task = NULL;
+> +	}
+> +	if (de) {
+> +		f2fs_dentry_kunmap(dir, page);
+> +		f2fs_put_page(page, 0);
+> +		err = -EEXIST;
+> +	} else if (!IS_ERR(page)) {
+> +		err = __f2fs_do_add_link(dir, &fname, inode, ino, mode);
+> +	} else {
+> +		err = PTR_ERR(page);
+> +	}
+>  	fscrypt_free_filename(&fname);
+>  	return err;
+>  }
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index d263dade5e4c..cc22dc458896 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -454,6 +454,7 @@ struct f2fs_inode_info {
+>  	atomic_t dirty_pages;		/* # of dirty pages */
+>  	f2fs_hash_t chash;		/* hash value of given file name */
+>  	unsigned int clevel;		/* maximum level of given file name */
+> +	struct task_struct *task;	/* lookup and create consistency */
+>  	nid_t i_xattr_nid;		/* node id that contains xattrs */
+>  	loff_t	last_disk_size;		/* lastly written file size */
+>  
+> 
