@@ -1,109 +1,124 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: introduce noinline_xattr mount option
-Date: Wed, 15 Feb 2017 10:34:45 +0800
-Message-ID: <20170215023445.9746-1-yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix multiple f2fs_add_link() calls
+ having same name
+Date: Wed, 15 Feb 2017 17:16:01 -0800
+Message-ID: <20170216011601.GA15475@jaegeuk.local>
+References: <20170214180345.2074-1-jaegeuk@kernel.org>
+ <4fb2c86e-a50c-512f-2fa7-964540101138@huawei.com>
+ <20170215013947.GA5332@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cdpR7-0007go-H7
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 15 Feb 2017 02:35:17 +0000
-Received: from szxga01-in.huawei.com ([58.251.152.64])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cdpR5-0002bu-86
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 15 Feb 2017 02:35:17 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170215013947.GA5332@jaegeuk.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-This patch introduces new mount option 'noinline_xattr', so we can disable
-inline xattr functionality which is already set as a default mount option.
+On 02/14, Jaegeuk Kim wrote:
+> On 02/15, Chao Yu wrote:
+> > On 2017/2/15 2:03, Jaegeuk Kim wrote:
+> > > VFS uses f2fs_lookup() to decide f2fs_add_link() call during file creation.
+> > > But, if there is a race condition, f2fs_add_link() can be called multiple
+> > > times, resulting in multiple dentries with a same name. This patches fixes
+> > > it by adding __f2fs_find_entry() in f2fs_add_link() path.
+> > 
+> > As during ->lookup, i_mutex will be held all the time, so there is no race
+> > condition in between different file creators?
+> 
+> Hehe, yup.
+> I dropped this patch.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+It turns out sdcardfs has a race condition between lookup and create, and it
+calls vfs_create() twice. Workaround by f2fs would be needed for whole AOSP as
+well. And I added to check current to avoid performance regression.
+
+Thanks,
+
+>From 2f433dbfa491550e666a3d08f5a59ac5bed42b0f Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Tue, 14 Feb 2017 09:54:37 -0800
+Subject: [PATCH] f2fs: fix multiple f2fs_add_link() calls having same name
+
+It turns out a stakable filesystem like sdcardfs in AOSP can trigger multiple
+vfs_create() to lower filesystem. In that case, f2fs will add multiple dentries
+having same name which breaks filesystem consistency.
+
+Until upper layer fixes, let's work around by f2fs, which shows actually not
+much performance regression.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- Documentation/filesystems/f2fs.txt |  1 +
- fs/f2fs/super.c                    | 11 +++++++++++
- 2 files changed, 12 insertions(+)
+ fs/f2fs/dir.c  | 26 ++++++++++++++++++++++++--
+ fs/f2fs/f2fs.h |  1 +
+ 2 files changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 8c8691b2b199..999341236979 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -125,6 +125,7 @@ active_logs=%u         Support configuring the number of active logs. In the
- disable_ext_identify   Disable the extension list configured by mkfs, so f2fs
-                        does not aware of cold files such as media files.
- inline_xattr           Enable the inline xattrs feature.
-+noinline_xattr         Disable the inline xattrs feature.
- inline_data            Enable the inline data feature: New created small(<~3.4k)
-                        files can be written into inode block.
- inline_dentry          Enable the inline dir feature: data in new created
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d09ebabc459a..95230f0c4eee 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -89,6 +89,7 @@ enum {
- 	Opt_active_logs,
- 	Opt_disable_ext_identify,
- 	Opt_inline_xattr,
-+	Opt_noinline_xattr,
- 	Opt_inline_data,
- 	Opt_inline_dentry,
- 	Opt_noinline_dentry,
-@@ -123,6 +124,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_active_logs, "active_logs=%u"},
- 	{Opt_disable_ext_identify, "disable_ext_identify"},
- 	{Opt_inline_xattr, "inline_xattr"},
-+	{Opt_noinline_xattr, "noinline_xattr"},
- 	{Opt_inline_data, "inline_data"},
- 	{Opt_inline_dentry, "inline_dentry"},
- 	{Opt_noinline_dentry, "noinline_dentry"},
-@@ -444,6 +446,9 @@ static int parse_options(struct super_block *sb, char *options)
- 		case Opt_inline_xattr:
- 			set_opt(sbi, INLINE_XATTR);
- 			break;
-+		case Opt_noinline_xattr:
-+			clear_opt(sbi, INLINE_XATTR);
-+			break;
- #else
- 		case Opt_user_xattr:
- 			f2fs_msg(sb, KERN_INFO,
-@@ -457,6 +462,10 @@ static int parse_options(struct super_block *sb, char *options)
- 			f2fs_msg(sb, KERN_INFO,
- 				"inline_xattr options not supported");
- 			break;
-+		case Opt_noinline_xattr:
-+			f2fs_msg(sb, KERN_INFO,
-+				"noinline_xattr options not supported");
-+			break;
- #endif
- #ifdef CONFIG_F2FS_FS_POSIX_ACL
- 		case Opt_acl:
-@@ -912,6 +921,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",nouser_xattr");
- 	if (test_opt(sbi, INLINE_XATTR))
- 		seq_puts(seq, ",inline_xattr");
-+	else
-+		seq_puts(seq, ",noinline_xattr");
- #endif
- #ifdef CONFIG_F2FS_FS_POSIX_ACL
- 	if (test_opt(sbi, POSIX_ACL))
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 827c5daef4fc..4f5b3bb514c6 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -207,9 +207,11 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 		f2fs_put_page(dentry_page, 0);
+ 	}
+ 
++	/* This is to increase the speed of f2fs_create */
+ 	if (!de && room && F2FS_I(dir)->chash != namehash) {
+ 		F2FS_I(dir)->chash = namehash;
+ 		F2FS_I(dir)->clevel = level;
++		F2FS_I(dir)->task = current;
+ 	}
+ 
+ 	return de;
+@@ -643,14 +645,34 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
+ 				struct inode *inode, nid_t ino, umode_t mode)
+ {
+ 	struct fscrypt_name fname;
++	struct page *page = NULL;
++	struct f2fs_dir_entry *de = NULL;
+ 	int err;
+ 
+ 	err = fscrypt_setup_filename(dir, name, 0, &fname);
+ 	if (err)
+ 		return err;
+ 
+-	err = __f2fs_do_add_link(dir, &fname, inode, ino, mode);
+-
++	/*
++	 * An immature stakable filesystem shows a race condition between lookup
++	 * and create. If we have same task when doing lookup and create, it's
++	 * definitely fine as expected by VFS normally. Otherwise, let's just
++	 * verify on-disk dentry one more time, which guarantees filesystem
++	 * consistency more.
++	 */
++	if (current != F2FS_I(dir)->task) {
++		de = __f2fs_find_entry(dir, &fname, &page);
++		F2FS_I(dir)->task = NULL;
++	}
++	if (de) {
++		f2fs_dentry_kunmap(dir, page);
++		f2fs_put_page(page, 0);
++		err = -EEXIST;
++	} else if (!IS_ERR(page)) {
++		err = __f2fs_do_add_link(dir, &fname, inode, ino, mode);
++	} else {
++		err = PTR_ERR(page);
++	}
+ 	fscrypt_free_filename(&fname);
+ 	return err;
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d263dade5e4c..cc22dc458896 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -454,6 +454,7 @@ struct f2fs_inode_info {
+ 	atomic_t dirty_pages;		/* # of dirty pages */
+ 	f2fs_hash_t chash;		/* hash value of given file name */
+ 	unsigned int clevel;		/* maximum level of given file name */
++	struct task_struct *task;	/* lookup and create consistency */
+ 	nid_t i_xattr_nid;		/* node id that contains xattrs */
+ 	loff_t	last_disk_size;		/* lastly written file size */
+ 
 -- 
-2.8.2.295.g3f1c1d0
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+2.11.0
