@@ -1,147 +1,171 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix multiple f2fs_add_link() calls
- having same name
-Date: Thu, 16 Feb 2017 09:28:19 -0800
-Message-ID: <20170216172819.GA32791@jaegeuk.local>
-References: <20170214180345.2074-1-jaegeuk@kernel.org>
- <4fb2c86e-a50c-512f-2fa7-964540101138@huawei.com>
- <20170215013947.GA5332@jaegeuk.local>
- <20170216011601.GA15475@jaegeuk.local>
- <05e24002-260a-a06e-10cb-cab6839d0330@huawei.com>
+Subject: Re: [RFC] add ovp valid_blocks check for bg gc victim to
+ fg_gc
+Date: Thu, 16 Feb 2017 15:48:13 -0800
+Message-ID: <20170216234813.GA64229@jaegeuk.local>
+References: <20170216123431.14811-1-houpengyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ceVml-0006NP-0E
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 16 Feb 2017 23:48:27 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ceVmh-0002ZE-0a
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 16 Feb 2017 23:48:26 +0000
 Content-Disposition: inline
-In-Reply-To: <05e24002-260a-a06e-10cb-cab6839d0330@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20170216123431.14811-1-houpengyang@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Hou Pengyang <houpengyang@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 02/16, Chao Yu wrote:
-> On 2017/2/16 9:16, Jaegeuk Kim wrote:
-> > On 02/14, Jaegeuk Kim wrote:
-> >> On 02/15, Chao Yu wrote:
-> >>> On 2017/2/15 2:03, Jaegeuk Kim wrote:
-> >>>> VFS uses f2fs_lookup() to decide f2fs_add_link() call during file creation.
-> >>>> But, if there is a race condition, f2fs_add_link() can be called multiple
-> >>>> times, resulting in multiple dentries with a same name. This patches fixes
-> >>>> it by adding __f2fs_find_entry() in f2fs_add_link() path.
-> >>>
-> >>> As during ->lookup, i_mutex will be held all the time, so there is no race
-> >>> condition in between different file creators?
-> >>
-> >> Hehe, yup.
-> >> I dropped this patch.
-> > 
-> > It turns out sdcardfs has a race condition between lookup and create, and it
-> > calls vfs_create() twice. Workaround by f2fs would be needed for whole AOSP as
-> > well. And I added to check current to avoid performance regression.
-> > 
-> > Thanks,
-> > 
-> >>From 2f433dbfa491550e666a3d08f5a59ac5bed42b0f Mon Sep 17 00:00:00 2001
-> > From: Jaegeuk Kim <jaegeuk@kernel.org>
-> > Date: Tue, 14 Feb 2017 09:54:37 -0800
-> > Subject: [PATCH] f2fs: fix multiple f2fs_add_link() calls having same name
-> > 
-> > It turns out a stakable filesystem like sdcardfs in AOSP can trigger multiple
-> > vfs_create() to lower filesystem. In that case, f2fs will add multiple dentries
-> > having same name which breaks filesystem consistency.
-> > 
-> > Until upper layer fixes, let's work around by f2fs, which shows actually not
-> > much performance regression.
-> > 
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/dir.c  | 26 ++++++++++++++++++++++++--
-> >  fs/f2fs/f2fs.h |  1 +
-> >  2 files changed, 25 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> > index 827c5daef4fc..4f5b3bb514c6 100644
-> > --- a/fs/f2fs/dir.c
-> > +++ b/fs/f2fs/dir.c
-> > @@ -207,9 +207,11 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
-> >  		f2fs_put_page(dentry_page, 0);
-> >  	}
-> >  
-> > +	/* This is to increase the speed of f2fs_create */
-> >  	if (!de && room && F2FS_I(dir)->chash != namehash) {
-> >  		F2FS_I(dir)->chash = namehash;
-> >  		F2FS_I(dir)->clevel = level;
-> > +		F2FS_I(dir)->task = current;
-> >  	}
-> 
-> Hash collision can happen on different file names, here, assignment of .task
-> should be more accurately to prevent racing between lookup and creat, so how about:
-> 
-> if (!de && room) {
-> 	.task = current;
-> 	if (chash != namehash) {
-> 		.chash = namehash;
-> 		.clevel = level;
-> 	}
-> }
+Hi Pengyang,
 
-Makes sense.
-Will apply that. ;)
+Nice catch!
 
-Thanks,
+I think fggc_threshold needs to be revised, and we need to consider about
+general victim selection as well.
 
-> 
-> Thanks,
-> 
-> >  
-> >  	return de;
-> > @@ -643,14 +645,34 @@ int __f2fs_add_link(struct inode *dir, const struct qstr *name,
-> >  				struct inode *inode, nid_t ino, umode_t mode)
-> >  {
-> >  	struct fscrypt_name fname;
-> > +	struct page *page = NULL;
-> > +	struct f2fs_dir_entry *de = NULL;
-> >  	int err;
-> >  
-> >  	err = fscrypt_setup_filename(dir, name, 0, &fname);
-> >  	if (err)
-> >  		return err;
-> >  
-> > -	err = __f2fs_do_add_link(dir, &fname, inode, ino, mode);
-> > -
-> > +	/*
-> > +	 * An immature stakable filesystem shows a race condition between lookup
-> > +	 * and create. If we have same task when doing lookup and create, it's
-> > +	 * definitely fine as expected by VFS normally. Otherwise, let's just
-> > +	 * verify on-disk dentry one more time, which guarantees filesystem
-> > +	 * consistency more.
-> > +	 */
-> > +	if (current != F2FS_I(dir)->task) {
-> > +		de = __f2fs_find_entry(dir, &fname, &page);
-> > +		F2FS_I(dir)->task = NULL;
-> > +	}
-> > +	if (de) {
-> > +		f2fs_dentry_kunmap(dir, page);
-> > +		f2fs_put_page(page, 0);
-> > +		err = -EEXIST;
-> > +	} else if (!IS_ERR(page)) {
-> > +		err = __f2fs_do_add_link(dir, &fname, inode, ino, mode);
-> > +	} else {
-> > +		err = PTR_ERR(page);
-> > +	}
-> >  	fscrypt_free_filename(&fname);
-> >  	return err;
-> >  }
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index d263dade5e4c..cc22dc458896 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -454,6 +454,7 @@ struct f2fs_inode_info {
-> >  	atomic_t dirty_pages;		/* # of dirty pages */
-> >  	f2fs_hash_t chash;		/* hash value of given file name */
-> >  	unsigned int clevel;		/* maximum level of given file name */
-> > +	struct task_struct *task;	/* lookup and create consistency */
-> >  	nid_t i_xattr_nid;		/* node id that contains xattrs */
-> >  	loff_t	last_disk_size;		/* lastly written file size */
-> >  
-> > 
+Could you take a look at this?
+
+>From 23b265f5ca6405032d092e240c94a827f743e42b Mon Sep 17 00:00:00 2001
+From: Hou Pengyang <houpengyang@huawei.com>
+Date: Thu, 16 Feb 2017 12:34:31 +0000
+Subject: [PATCH] f2fs: add ovp valid_blocks check for bg gc victim to fg_gc
+
+For foreground gc, greedy algorithm should be adapted, which makes
+this formula work well:
+
+	(2 * (100 / config.overprovision + 1) + 6)
+
+But currently, we fg_gc have a prior to select bg_gc victim segments to gc first,
+these victims are selected by cost-benefit algorithm, we can't guarantee such segments
+have the small valid blocks, which may destroy the f2fs rule, on the worstest case, would
+consume all the free segments.
+
+This patch fix this by add a filter in check_bg_victims, if segment's has # of valid blocks
+over overprovision ratio, skip such segments.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/f2fs.h    |  3 +++
+ fs/f2fs/gc.c      | 22 ++++++++++++++++++++--
+ fs/f2fs/segment.h |  9 +++++++++
+ 3 files changed, 32 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index cc22dc458896..1c9f0cc8f027 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -888,6 +888,9 @@ struct f2fs_sb_info {
+ 	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+ 	unsigned int cur_victim_sec;		/* current victim section num */
+ 
++	/* threshold for converting bg victims for fg */
++	u64 fggc_threshold;
++
+ 	/* maximum # of trials to find a victim segment for SSR and GC */
+ 	unsigned int max_victim_search;
+ 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 88e5e7b10ab6..fd4e479820e6 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -166,7 +166,8 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+ 		p->ofs_unit = sbi->segs_per_sec;
+ 	}
+ 
+-	if (p->max_search > sbi->max_victim_search)
++	/* we need to check every dirty segments in the FG_GC case */
++	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
+ 		p->max_search = sbi->max_victim_search;
+ 
+ 	p->offset = sbi->last_victim[p->gc_mode];
+@@ -199,6 +200,10 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+ 	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
+ 		if (sec_usage_check(sbi, secno))
+ 			continue;
++
++		if (no_fggc_candidate(sbi, secno))
++			continue;
++
+ 		clear_bit(secno, dirty_i->victim_secmap);
+ 		return secno * sbi->segs_per_sec;
+ 	}
+@@ -322,13 +327,15 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 			nsearched++;
+ 		}
+ 
+-
+ 		secno = GET_SECNO(sbi, segno);
+ 
+ 		if (sec_usage_check(sbi, secno))
+ 			goto next;
+ 		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
+ 			goto next;
++		if (gc_type == FG_GC && p.alloc_mode == LFS &&
++					no_fggc_candidate(sbi, secno))
++			goto next;
+ 
+ 		cost = get_gc_cost(sbi, segno, &p);
+ 
+@@ -989,5 +996,16 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+ 
+ void build_gc_manager(struct f2fs_sb_info *sbi)
+ {
++	u64 user_block_count, ovp_count, blocks_per_sec, th;
++
+ 	DIRTY_I(sbi)->v_ops = &default_v_ops;
++
++	/* threshold of # of valid blocks in a section for victims of FG_GC */
++	user_block_count = sbi->user_block_count;
++	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
++	blocks_per_sec = sbi->blocks_per_seg * sbi->segs_per_sec;
++
++	th = user_block_count * 100 * blocks_per_sec /
++			((user_block_count + ovp_count) * 100);
++	sbi->fggc_threshold = th;
+ }
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 5cb5755c75d9..f4020f141d83 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -716,6 +716,15 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+ 				- (base + 1) + type;
+ }
+ 
++static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
++						unsigned int secno)
++{
++	if (get_valid_blocks(sbi, secno, sbi->segs_per_sec) >=
++						sbi->fggc_threshold)
++		return true;
++	return false;
++}
++
+ static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
+ {
+ 	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
+-- 
+2.11.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
