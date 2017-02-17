@@ -1,27 +1,22 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs: remove unnecessary wait in
- write_begin
-Date: Fri, 17 Feb 2017 10:21:14 -0800
-Message-ID: <20170217182114.GA2951@jaegeuk.local>
-References: <20170217091639.29433-1-heyunlei@huawei.com>
-	<20170217091639.29433-2-heyunlei@huawei.com>
+Subject: [PATCH] f2fs: trace victim's cost selectecd by f2fs_gc
+Date: Fri, 17 Feb 2017 10:30:32 -0800
+Message-ID: <20170217183032.3059-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cen9o-0006fw-TF
+	(envelope-from <jaegeuk@kernel.org>) id 1cenIn-00071l-7K
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Feb 2017 18:21:24 +0000
+	Fri, 17 Feb 2017 18:30:41 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cen9m-00082T-CN
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cenIm-00046X-EQ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Feb 2017 18:21:24 +0000
-Content-Disposition: inline
-In-Reply-To: <20170217091639.29433-2-heyunlei@huawei.com>
+	Fri, 17 Feb 2017 18:30:41 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,72 +26,54 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On 02/17, Yunlei He wrote:
-> It has already waited page stable in grab_cache_page_write_begin,
-> so we remove this unnecessary wait.
+This patch adds min_cost of each victims.
 
-I also got a deadlock in my perf test, and I wrote another patch to resolve it
-by replacing grab_cache_page_write_begin() with pagecache_get_page().
-
->From 8baf724c638813ab8d2e9bad99f5b8683e788da3 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Fri, 17 Feb 2017 09:55:55 -0800
-Subject: [PATCH] f2fs: do not wait for writeback in write_begin
-
-Otherwise we can get livelock like below.
-
-[79880.428136] dbench          D    0 18405  18404 0x00000000
-[79880.428139] Call Trace:
-[79880.428142]  __schedule+0x219/0x6b0
-[79880.428144]  schedule+0x36/0x80
-[79880.428147]  schedule_timeout+0x243/0x2e0
-[79880.428152]  ? update_sd_lb_stats+0x16b/0x5f0
-[79880.428155]  ? ktime_get+0x3c/0xb0
-[79880.428157]  io_schedule_timeout+0xa6/0x110
-[79880.428161]  __lock_page+0xf7/0x130
-[79880.428164]  ? unlock_page+0x30/0x30
-[79880.428167]  pagecache_get_page+0x16b/0x250
-[79880.428171]  grab_cache_page_write_begin+0x20/0x40
-[79880.428182]  f2fs_write_begin+0xa2/0xdb0 [f2fs]
-[79880.428192]  ? f2fs_mark_inode_dirty_sync+0x16/0x30 [f2fs]
-[79880.428197]  ? kmem_cache_free+0x79/0x200
-[79880.428203]  ? __mark_inode_dirty+0x17f/0x360
-[79880.428206]  generic_perform_write+0xbb/0x190
-[79880.428213]  ? file_update_time+0xa4/0xf0
-[79880.428217]  __generic_file_write_iter+0x19b/0x1e0
-[79880.428226]  f2fs_file_write_iter+0x9c/0x180 [f2fs]
-[79880.428231]  __vfs_write+0xc5/0x140
-[79880.428235]  vfs_write+0xb2/0x1b0
-[79880.428238]  SyS_write+0x46/0xa0
-[79880.428242]  entry_SYSCALL_64_fastpath+0x1e/0xad
-
-Fixes: cae96a5c8ab6 ("f2fs: check io submission more precisely")
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/data.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ include/trace/events/f2fs.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8c61fa7fd27d..5f3bc98a387d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1759,7 +1759,12 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 			goto fail;
- 	}
- repeat:
--	page = grab_cache_page_write_begin(mapping, index, flags);
-+	/*
-+	 * Do not use grab_cache_page_write_begin() to avoid deadlock due to
-+	 * wait_for_stable_page. Will wait that below with our IO control.
-+	 */
-+	page = pagecache_get_page(mapping, index,
-+				FGP_LOCK | FGP_WRITE | FGP_CREAT, GFP_NOFS);
- 	if (!page) {
- 		err = -ENOMEM;
- 		goto fail;
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index 153572e256d6..ff31ccfb8111 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -565,6 +565,7 @@ TRACE_EVENT(f2fs_get_victim,
+ 		__field(int,	alloc_mode)
+ 		__field(int,	gc_mode)
+ 		__field(unsigned int,	victim)
++		__field(unsigned int,	cost)
+ 		__field(unsigned int,	ofs_unit)
+ 		__field(unsigned int,	pre_victim)
+ 		__field(unsigned int,	prefree)
+@@ -578,20 +579,23 @@ TRACE_EVENT(f2fs_get_victim,
+ 		__entry->alloc_mode	= p->alloc_mode;
+ 		__entry->gc_mode	= p->gc_mode;
+ 		__entry->victim		= p->min_segno;
++		__entry->cost		= p->min_cost;
+ 		__entry->ofs_unit	= p->ofs_unit;
+ 		__entry->pre_victim	= pre_victim;
+ 		__entry->prefree	= prefree;
+ 		__entry->free		= free;
+ 	),
+ 
+-	TP_printk("dev = (%d,%d), type = %s, policy = (%s, %s, %s), victim = %u "
+-		"ofs_unit = %u, pre_victim_secno = %d, prefree = %u, free = %u",
++	TP_printk("dev = (%d,%d), type = %s, policy = (%s, %s, %s), "
++		"victim = %u, cost = %u, ofs_unit = %u, "
++		"pre_victim_secno = %d, prefree = %u, free = %u",
+ 		show_dev(__entry->dev),
+ 		show_data_type(__entry->type),
+ 		show_gc_type(__entry->gc_type),
+ 		show_alloc_mode(__entry->alloc_mode),
+ 		show_victim_policy(__entry->gc_mode),
+ 		__entry->victim,
++		__entry->cost,
+ 		__entry->ofs_unit,
+ 		(int)__entry->pre_victim,
+ 		__entry->prefree,
 -- 
 2.11.0
 
