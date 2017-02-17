@@ -1,129 +1,123 @@
 From: Yunlong Song <yunlong.song@huawei.com>
-Subject: [PATCH 1/2] mkfs.f2fs: add option to set the value of reserved segments and overprovision segments
-Date: Fri, 17 Feb 2017 20:53:06 +0800
-Message-ID: <1487335987-32601-2-git-send-email-yunlong.song@huawei.com>
-References: <1487335987-32601-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH 0/2] Reduce the overprovision size a lot in f2fs
+Date: Fri, 17 Feb 2017 20:53:05 +0800
+Message-ID: <1487335987-32601-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1487335987-32601-1-git-send-email-yunlong.song@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: jaegeuk@kernel.org, cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, yunlong.song@huawei.com, miaoxie@huawei.com, zhouxiyu@huawei.com
 Cc: bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- include/f2fs_fs.h       |  3 +++
- lib/libf2fs.c           |  3 +++
- mkfs/f2fs_format.c      | 21 ++++++++++++++-------
- mkfs/f2fs_format_main.c | 10 +++++++++-
- 4 files changed, 29 insertions(+), 8 deletions(-)
+Rethink the meaning of reserved segments and overprovision segments in f2fs
 
-diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-index 97ee297..2a62660 100644
---- a/include/f2fs_fs.h
-+++ b/include/f2fs_fs.h
-@@ -304,6 +304,9 @@ struct f2fs_configuration {
- 	/* sload parameters */
- 	char *from_dir;
- 	char *mount_point;
-+
-+	u_int32_t force_rsvd;
-+	u_int32_t force_ovp;
- } __attribute__((packed));
- 
- #ifdef CONFIG_64BIT
-diff --git a/lib/libf2fs.c b/lib/libf2fs.c
-index 93d3da9..971fe99 100644
---- a/lib/libf2fs.c
-+++ b/lib/libf2fs.c
-@@ -573,6 +573,9 @@ void f2fs_init_configuration(void)
- 	c.trim = 1;
- 	c.ro = 0;
- 	c.kd = -1;
-+
-+	c.force_rsvd = 0;
-+	c.force_ovp = 0;
- }
- 
- static int is_mounted(const char *mpt, const char *device)
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 3c13026..42a7bd5 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -337,9 +337,12 @@ static int f2fs_prepare_super_block(void)
- 	if (c.overprovision == 0)
- 		c.overprovision = get_best_overprovision(sb);
- 
--	c.reserved_segments =
--			(2 * (100 / c.overprovision + 1) + 6)
--			* c.segs_per_sec;
-+	if (c.force_rsvd)
-+		c.reserved_segments = c.force_rsvd;
-+	else
-+		c.reserved_segments =
-+				(2 * (100 / c.overprovision + 1) + 6)
-+				* c.segs_per_sec;
- 
- 	if (c.overprovision == 0 || c.total_segments < F2FS_MIN_SEGMENTS ||
- 		(c.devices[0].total_sectors *
-@@ -522,13 +525,17 @@ static int f2fs_write_check_point_pack(void)
- 	set_cp(cur_data_blkoff[0], 1);
- 	set_cp(valid_block_count, 2);
- 	set_cp(rsvd_segment_count, c.reserved_segments);
--	set_cp(overprov_segment_count, (get_sb(segment_count_main) -
--			get_cp(rsvd_segment_count)) *
--			c.overprovision / 100);
-+	if (c.force_ovp)
-+		set_cp(overprov_segment_count, c.force_ovp);
-+	else
-+		set_cp(overprov_segment_count, (get_sb(segment_count_main) -
-+				get_cp(rsvd_segment_count)) *
-+				c.overprovision / 100);
- 	set_cp(overprov_segment_count, get_cp(overprov_segment_count) +
- 			get_cp(rsvd_segment_count));
- 
--	MSG(0, "Info: Overprovision ratio = %.3lf%%\n", c.overprovision);
-+	if (c.force_rsvd == 0 || c.force_ovp == 0)
-+		MSG(0, "Info: Overprovision ratio = %.3lf%%\n", c.overprovision);
- 	MSG(0, "Info: Overprovision segments = %u (GC reserved = %u)\n",
- 					get_cp(overprov_segment_count),
- 					c.reserved_segments);
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 5bb1faf..45c513b 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -39,6 +39,8 @@ static void mkfs_usage()
- 	MSG(0, "  -z # of sections per zone [default:1]\n");
- 	MSG(0, "  -t 0: nodiscard, 1: discard [default:1]\n");
- 	MSG(0, "  -m support zoned block device [default:0]\n");
-+	MSG(0, "  -r force set reserved segments\n");
-+	MSG(0, "  -R force set overprovision segments\n");
- 	MSG(0, "sectors: number of sectors. [default: determined by device size]\n");
- 	exit(1);
- }
-@@ -72,7 +74,7 @@ static void parse_feature(const char *features)
- 
- static void f2fs_parse_options(int argc, char *argv[])
- {
--	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:";
-+	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:r:R:";
- 	int32_t option=0;
- 
- 	while ((option = getopt(argc,argv,option_string)) != EOF) {
-@@ -128,6 +130,12 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		case 't':
- 			c.trim = atoi(optarg);
- 			break;
-+		case 'r':
-+			c.force_rsvd = atoi(optarg);
-+			break;
-+		case 'R':
-+			c.force_ovp = atoi(optarg);
-+			break;
- 		default:
- 			MSG(0, "\tError: Unknown option %c\n",option);
- 			mkfs_usage();
+The key issue is that flash FTL has already made overprovision itself, e.g. 7%,
+according to the difference between gigabyte (GB) and gibibyte (GiB). And this
+part can nenver be seen by the upper file system. The device capacity which it
+tells the upper file system is the other part which does not include the
+overprovision part, which means the whole device capacity that file system knows
+can "all" be used for write safely. The overprovision flash FTL has already reserved
+includes the needed capacity for garbage collection and other operations. So,
+filesystem can just take it easy and do not need to set the reserved segments and
+overprovision segments again in mkfs.f2fs.
+
+I want to explain more in detail. First, let's forget the section alignment
+issue in the following talk, since it is really not possible in real production
+case. As a result, f2fs does not need to behave like flash (i.e., new write
+must come after erase for a block page in flash).
+
+Take a look at the current design of mkfs.f2fs:
+
+	c.reserved_segments = (2 * (100 / c.overprovision + 1) + 6) * c.segs_per_sec;
+
+The original motivation may be like this:
+
+For example, if ovp is 20%, we select 5 victim segments to reclaim one free
+segment in the worst case. During this migration, we need additional 4 free
+segments to write valid blocks in the victim segments. Other remaining added
+segments are just to keep as a buffer to prepare any abnormal situation.
+
+But f2fs does not have to bahave like flash, so why do we need 4 more free segments
+here? For current codes of f2fs gc, we only need 1 free segment:
+
+Initial status: 1 free segment is needed
+
+  segment 0     segment 1     segment 2     segment 3     segment 4     segment 5
+|20% invalid| |20% invalid| |20% invalid| |20% invalid| |20% invalid|   | free |
+|80%   valid| |80%   valid| |80%   valid| |80%   valid| |80%   valid|   | free |
+
+
+step 1: segment 0 -> segment 5, free segment 0
+
+  segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+|    free   | |20% invalid| |20% invalid| |20% invalid| |20% invalid|   |20%  free|
+|    free   | |80%   valid| |80%   valid| |80%   valid| |80%   valid|   |80% valid|
+
+
+step 2: segment 1 -> segment 5 and segment 0, free segment 1
+
+  segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+|40%    free| |    free   | |20% invalid| |20% invalid| |20% invalid|   |20% valid|
+|60%   valid| |    free   | |80%   valid| |80%   valid| |80%   valid|   |80% valid|
+
+
+step 3: segment 2 -> segment 0 and segment 1, free segment 2
+
+  segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+|40%   valid| |60%    free| |    free   | |20% invalid| |20% invalid|   |20% valid|
+|60%   valid| |40%   valid| |    free   | |80%   valid| |80%   valid|   |80% valid|
+
+
+step 4: segment 3 -> segment 1 and segment 2, free segment 3
+
+  segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+|40%   valid| |60%   valid| |80%    free| |    free   | |20% invalid|   |20% valid|
+|60%   valid| |40%   valid| |20%   valid| |    free   | |80%   valid|   |80% valid|
+
+
+step 5: segment 4 -> segment 2, free segment 4
+
+  segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+|40%   valid| |60%   valid| |80%   valid| |    free   | |    free   |   |20% valid|
+|60%   valid| |40%   valid| |20%   valid| |    free   | |    free   |   |80% valid|
+
+done. Now there are 1 new free segment.
+
+If we change the f2fs gc codes in future, we can even let the initial 1 free
+segment go away, just copy valid data among the 5 segments themselves using SSR.
+
+So the previous formula:
+
+	c.reserved_segments = (2 * (100 / c.overprovision + 1) + 6) * c.segs_per_sec;
+
+is not needed, we can set reserved_segments to any value if we want, no matter
+what value c.overprovision is, just take it away from the formula.
+
+And take take a look at the overprov_segment_count in current design of
+mkfs.f2fs:
+
+set_cp(overprov_segment_count, (get_sb(segment_count_main) - get_cp(rsvd_segment_count)) * c.overprovision / 100);
+
+The original motivation may be like this:
+
+For example, if ovp is 20%, the worst case is that each segment is 20% invalid,
+then all the segments can not be selected as victim target for FTL GC, then
+there is (segment_count_main - rsvd_segment_count) * 20%, which are all invalid
+blocks and can not be used for write, thus we should regard this as
+overprovision segments, which can never be used by user. However, as we
+have explained above, all the device capacity which FTL tells f2fs can be used
+for write, so it is not correct to use this formula. In fact, we do not need to set
+the overprovision segments at all for this consideration.
+
+Yunlong Song (2):
+  mkfs.f2fs: add option to set the value of reserved segments
+    and overprovision segments
+  f2fs: fix the case when there is no free segment to allocate for
+    CURSEG_WARM_NODE
+
+ fs/f2fs/segment.c | 2 --
+ 1 file changed, 2 deletions(-)
+
 -- 
 1.8.5.2
