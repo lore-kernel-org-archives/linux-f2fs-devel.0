@@ -1,141 +1,126 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 0/2] Reduce the overprovision size a lot in f2fs
-Date: Fri, 17 Feb 2017 11:33:38 -0800
-Message-ID: <20170217193338.GD2951@jaegeuk.local>
-References: <1487335987-32601-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [RFC] add ovp valid_blocks check for bg gc victim to
+ fg_gc
+Date: Fri, 17 Feb 2017 12:17:32 -0800
+Message-ID: <20170217201732.GE2951@jaegeuk.local>
+References: <20170216123431.14811-1-houpengyang@huawei.com>
+	<20170216234813.GA64229@jaegeuk.local>
+	<58A660F2.1070201@huawei.com>
+	<20170217025411.GA79127@jaegeuk.local>
+	<58A685A7.3000601@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ceoyL-0004wW-Pf
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 17 Feb 2017 20:17:41 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ceoyK-0001xg-M7
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 17 Feb 2017 20:17:41 +0000
 Content-Disposition: inline
-In-Reply-To: <1487335987-32601-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>
-Cc: cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com, zhouxiyu@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <58A685A7.3000601@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Hou Pengyang <houpengyang@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Yunlong,
+On 02/17, Hou Pengyang wrote:
 
-On 02/17, Yunlong Song wrote:
-> Rethink the meaning of reserved segments and overprovision segments in f2fs
-> 
-> The key issue is that flash FTL has already made overprovision itself, e.g. 7%,
-> according to the difference between gigabyte (GB) and gibibyte (GiB). And this
-> part can nenver be seen by the upper file system. The device capacity which it
-> tells the upper file system is the other part which does not include the
-> overprovision part, which means the whole device capacity that file system knows
-> can "all" be used for write safely. The overprovision flash FTL has already reserved
-> includes the needed capacity for garbage collection and other operations. So,
-> filesystem can just take it easy and do not need to set the reserved segments and
-> overprovision segments again in mkfs.f2fs.
->
-> I want to explain more in detail. First, let's forget the section alignment
-> issue in the following talk, since it is really not possible in real production
-> case. As a result, f2fs does not need to behave like flash (i.e., new write
-> must come after erase for a block page in flash).
+...
 
-Simply say no, F2FS has nothing to do with FTL, and LFS acts like flash.
+> > > On 2017/2/17 7:48, Jaegeuk Kim wrote:
+> > > > +	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
+> > > 
+> > > About the ovp_count calculation,
+> > > 
+> > > in mkfs.f2fs, we get ovp_segment by
+> > > 
+> > >      set_cp(overprov_segment_count, (get_sb(segment_count_main) -
+> > >             get_cp(rsvd_segment_count)) *
+> > >              config.overprovision / 100);
+> > > 
+> > >      set_cp(overprov_segment_count, get_cp(overprov_segment_count) +
+> > >              get_cp(rsvd_segment_count));
+> > > 
+> > > where the overprov calculation is based on the space excluding the
+> > > rsvd segment, and the final overprov_segment is sum of the REAL
+> > > overprov segments and the rsvd ones.
+> > > 
+> > > So, when to calculate the overprov ratio, the rsvd segments should
+> > > be subtracted from the ckpt->overprov_semgents?
+> > 
+> > I just got calculation from fresh mounted image. What I could confirm was that
+> > user can see (main_segments - ovp_segments).
+> 
+> I add some log into mkfs.f2fs, and get the config.overprovision,
+> rsvd/ovrp segments, user_block_count, and use the mkfs.f2fs to formatting a
+> 512M disk, where:
+> 
+> config.overprovision: 10
+> 
+> ovrp : 50 segments(25600 blocks)
+> rsvd : 28 segments(14336 blocks)
+> user_block_count: 101376 blocks
+> 
+> Use ovrp/rsvd/user_block_count to get the ovrp ratio info reversely :
+> 
+> 1) user_block_count/(user_block_count + ovrp blocks)
+> 
+>   101376/(101376+25600) = 79%
+> 
+> 2) user_block_count/(user_block_count + ovrp_blocks - rsvd_blocks)
+> 
+>   101376/(101376+25600-14336) = 90% = 1-10%
+> 
+> By 2), 1-90%, we can get the original config.overprovion when mkfs.f2fs
+> So I think we should use 2) to calculate ovrp ratio. Anything I miss
+> in 2)?
 
-> Take a look at the current design of mkfs.f2fs:
-> 
-> 	c.reserved_segments = (2 * (100 / c.overprovision + 1) + 6) * c.segs_per_sec;
-> 
-> The original motivation may be like this:
-> 
-> For example, if ovp is 20%, we select 5 victim segments to reclaim one free
-> segment in the worst case. During this migration, we need additional 4 free
-> segments to write valid blocks in the victim segments. Other remaining added
-> segments are just to keep as a buffer to prepare any abnormal situation.
-> 
-> But f2fs does not have to bahave like flash, so why do we need 4 more free segments
-> here? For current codes of f2fs gc, we only need 1 free segment:
-> 
-> Initial status: 1 free segment is needed
-> 
->   segment 0     segment 1     segment 2     segment 3     segment 4     segment 5
-> |20% invalid| |20% invalid| |20% invalid| |20% invalid| |20% invalid|   | free |
-> |80%   valid| |80%   valid| |80%   valid| |80%   valid| |80%   valid|   | free |
-> 
-> 
-> step 1: segment 0 -> segment 5, free segment 0
+Yup, indeed 2) is correct, which I found my calcuation was wrong, and tried
+to verify with:
 
-Should be step 1: segment 0 -> segment 5, prefree segment 0
-Anyway,
+threshold = (main_segments - ovp_segments) / (main_segments - reserved_segments)
+            ------------------------------    ---------------------------------
+                User-visible space                  F2FS-writable space
+              (user_block_count) / (user_block_count + ovp_blocks - rsvd_blocks)
 
->   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
-> |    free   | |20% invalid| |20% invalid| |20% invalid| |20% invalid|   |20%  free|
-> |    free   | |80%   valid| |80%   valid| |80%   valid| |80%   valid|   |80% valid|
-> 
-> 
-> step 2: segment 1 -> segment 5 and segment 0, free segment 1
+For example,
 
-Here, we cannot use segment 0 to fill 60% to handle power-cut. If power-cut
-happens after this, we will lose prevous data in segment 0. That's why we're
-using prefree segments.
+1. 8GB
+ ovp reported by mkfs = 2.22%
+ main_segments = 4065
+ ovp_segments = 186
+ reserved_segments = 98
+ threshold = 500 (mine) vs. 502 (yours)
+
+ -> Actual ovp = (512-500) / 512 = 2.34%
+ -> reserved segments = 98 / 2 = 49 can cover 2.34%
+
+2. 64GB
+ ovp reported by mkfs = 0.78%
+ main_segments = 32581
+ ovp_segments = 516
+ reserved_segments = 264
+ threshold = 508 (mine) vs. 512 (yours)
+
+ -> Actual ovp = (512-508) / 512 = 0.78%
+ -> reserved segments = 264 / 2 = 132 can cover 0.78%
 
 Thanks,
 
-> 
->   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
-> |40%    free| |    free   | |20% invalid| |20% invalid| |20% invalid|   |20% valid|
-> |60%   valid| |    free   | |80%   valid| |80%   valid| |80%   valid|   |80% valid|
-> 
-> 
-> step 3: segment 2 -> segment 0 and segment 1, free segment 2
-> 
->   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
-> |40%   valid| |60%    free| |    free   | |20% invalid| |20% invalid|   |20% valid|
-> |60%   valid| |40%   valid| |    free   | |80%   valid| |80%   valid|   |80% valid|
-> 
-> 
-> step 4: segment 3 -> segment 1 and segment 2, free segment 3
-> 
->   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
-> |40%   valid| |60%   valid| |80%    free| |    free   | |20% invalid|   |20% valid|
-> |60%   valid| |40%   valid| |20%   valid| |    free   | |80%   valid|   |80% valid|
-> 
-> 
-> step 5: segment 4 -> segment 2, free segment 4
-> 
->   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
-> |40%   valid| |60%   valid| |80%   valid| |    free   | |    free   |   |20% valid|
-> |60%   valid| |40%   valid| |20%   valid| |    free   | |    free   |   |80% valid|
-> 
-> done. Now there are 1 new free segment.
-> 
-> If we change the f2fs gc codes in future, we can even let the initial 1 free
-> segment go away, just copy valid data among the 5 segments themselves using SSR.
-> 
-> So the previous formula:
-> 
-> 	c.reserved_segments = (2 * (100 / c.overprovision + 1) + 6) * c.segs_per_sec;
-> 
-> is not needed, we can set reserved_segments to any value if we want, no matter
-> what value c.overprovision is, just take it away from the formula.
-> 
-> And take take a look at the overprov_segment_count in current design of
-> mkfs.f2fs:
-> 
-> set_cp(overprov_segment_count, (get_sb(segment_count_main) - get_cp(rsvd_segment_count)) * c.overprovision / 100);
-> 
-> The original motivation may be like this:
-> 
-> For example, if ovp is 20%, the worst case is that each segment is 20% invalid,
-> then all the segments can not be selected as victim target for FTL GC, then
-> there is (segment_count_main - rsvd_segment_count) * 20%, which are all invalid
-> blocks and can not be used for write, thus we should regard this as
-> overprovision segments, which can never be used by user. However, as we
-> have explained above, all the device capacity which FTL tells f2fs can be used
-> for write, so it is not correct to use this formula. In fact, we do not need to set
-> the overprovision segments at all for this consideration.
-> 
-> Yunlong Song (2):
->   mkfs.f2fs: add option to set the value of reserved segments
->     and overprovision segments
->   f2fs: fix the case when there is no free segment to allocate for
->     CURSEG_WARM_NODE
-> 
->  fs/f2fs/segment.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> -- 
-> 1.8.5.2
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
