@@ -1,60 +1,129 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH 2/2] f2fs: remove unnecessary wait in write_begin
-Date: Fri, 17 Feb 2017 17:16:39 +0800
-Message-ID: <20170217091639.29433-2-heyunlei@huawei.com>
-References: <20170217091639.29433-1-heyunlei@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Subject: [PATCH 1/2] mkfs.f2fs: add option to set the value of reserved segments and overprovision segments
+Date: Fri, 17 Feb 2017 20:53:06 +0800
+Message-ID: <1487335987-32601-2-git-send-email-yunlong.song@huawei.com>
+References: <1487335987-32601-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1ceebN-0005n4-AF
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Feb 2017 09:13:17 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ceebM-0007as-Az
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Feb 2017 09:13:17 +0000
-In-Reply-To: <20170217091639.29433-1-heyunlei@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1487335987-32601-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org, cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, yunlong.song@huawei.com, miaoxie@huawei.com, zhouxiyu@huawei.com
+Cc: bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-It has already waited page stable in grab_cache_page_write_begin,
-so we remove this unnecessary wait.
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/data.c | 2 --
- 1 file changed, 2 deletions(-)
+ include/f2fs_fs.h       |  3 +++
+ lib/libf2fs.c           |  3 +++
+ mkfs/f2fs_format.c      | 21 ++++++++++++++-------
+ mkfs/f2fs_format_main.c | 10 +++++++++-
+ 4 files changed, 29 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8c61fa7..1201949 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1783,8 +1783,6 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 		}
- 	}
+diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
+index 97ee297..2a62660 100644
+--- a/include/f2fs_fs.h
++++ b/include/f2fs_fs.h
+@@ -304,6 +304,9 @@ struct f2fs_configuration {
+ 	/* sload parameters */
+ 	char *from_dir;
+ 	char *mount_point;
++
++	u_int32_t force_rsvd;
++	u_int32_t force_ovp;
+ } __attribute__((packed));
  
--	f2fs_wait_on_page_writeback(page, DATA, false);
--
- 	/* wait for GCed encrypted page writeback */
- 	if (f2fs_encrypted_inode(inode) && S_ISREG(inode->i_mode))
- 		f2fs_wait_on_encrypted_page_writeback(sbi, blkaddr);
+ #ifdef CONFIG_64BIT
+diff --git a/lib/libf2fs.c b/lib/libf2fs.c
+index 93d3da9..971fe99 100644
+--- a/lib/libf2fs.c
++++ b/lib/libf2fs.c
+@@ -573,6 +573,9 @@ void f2fs_init_configuration(void)
+ 	c.trim = 1;
+ 	c.ro = 0;
+ 	c.kd = -1;
++
++	c.force_rsvd = 0;
++	c.force_ovp = 0;
+ }
+ 
+ static int is_mounted(const char *mpt, const char *device)
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 3c13026..42a7bd5 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -337,9 +337,12 @@ static int f2fs_prepare_super_block(void)
+ 	if (c.overprovision == 0)
+ 		c.overprovision = get_best_overprovision(sb);
+ 
+-	c.reserved_segments =
+-			(2 * (100 / c.overprovision + 1) + 6)
+-			* c.segs_per_sec;
++	if (c.force_rsvd)
++		c.reserved_segments = c.force_rsvd;
++	else
++		c.reserved_segments =
++				(2 * (100 / c.overprovision + 1) + 6)
++				* c.segs_per_sec;
+ 
+ 	if (c.overprovision == 0 || c.total_segments < F2FS_MIN_SEGMENTS ||
+ 		(c.devices[0].total_sectors *
+@@ -522,13 +525,17 @@ static int f2fs_write_check_point_pack(void)
+ 	set_cp(cur_data_blkoff[0], 1);
+ 	set_cp(valid_block_count, 2);
+ 	set_cp(rsvd_segment_count, c.reserved_segments);
+-	set_cp(overprov_segment_count, (get_sb(segment_count_main) -
+-			get_cp(rsvd_segment_count)) *
+-			c.overprovision / 100);
++	if (c.force_ovp)
++		set_cp(overprov_segment_count, c.force_ovp);
++	else
++		set_cp(overprov_segment_count, (get_sb(segment_count_main) -
++				get_cp(rsvd_segment_count)) *
++				c.overprovision / 100);
+ 	set_cp(overprov_segment_count, get_cp(overprov_segment_count) +
+ 			get_cp(rsvd_segment_count));
+ 
+-	MSG(0, "Info: Overprovision ratio = %.3lf%%\n", c.overprovision);
++	if (c.force_rsvd == 0 || c.force_ovp == 0)
++		MSG(0, "Info: Overprovision ratio = %.3lf%%\n", c.overprovision);
+ 	MSG(0, "Info: Overprovision segments = %u (GC reserved = %u)\n",
+ 					get_cp(overprov_segment_count),
+ 					c.reserved_segments);
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 5bb1faf..45c513b 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -39,6 +39,8 @@ static void mkfs_usage()
+ 	MSG(0, "  -z # of sections per zone [default:1]\n");
+ 	MSG(0, "  -t 0: nodiscard, 1: discard [default:1]\n");
+ 	MSG(0, "  -m support zoned block device [default:0]\n");
++	MSG(0, "  -r force set reserved segments\n");
++	MSG(0, "  -R force set overprovision segments\n");
+ 	MSG(0, "sectors: number of sectors. [default: determined by device size]\n");
+ 	exit(1);
+ }
+@@ -72,7 +74,7 @@ static void parse_feature(const char *features)
+ 
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+-	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:";
++	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:r:R:";
+ 	int32_t option=0;
+ 
+ 	while ((option = getopt(argc,argv,option_string)) != EOF) {
+@@ -128,6 +130,12 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		case 't':
+ 			c.trim = atoi(optarg);
+ 			break;
++		case 'r':
++			c.force_rsvd = atoi(optarg);
++			break;
++		case 'R':
++			c.force_ovp = atoi(optarg);
++			break;
+ 		default:
+ 			MSG(0, "\tError: Unknown option %c\n",option);
+ 			mkfs_usage();
 -- 
-2.10.1
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+1.8.5.2
