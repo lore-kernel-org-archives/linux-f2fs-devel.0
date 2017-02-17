@@ -1,115 +1,141 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/2] f2fs: replace __get_victim by
- dirty_segments in FG_GC
-Date: Fri, 17 Feb 2017 11:15:04 -0800
-Message-ID: <20170217191504.GC2951@jaegeuk.local>
-References: <20170217091639.29433-1-heyunlei@huawei.com>
+Subject: Re: [PATCH 0/2] Reduce the overprovision size a lot in f2fs
+Date: Fri, 17 Feb 2017 11:33:38 -0800
+Message-ID: <20170217193338.GD2951@jaegeuk.local>
+References: <1487335987-32601-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cenzv-000096-L1
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Feb 2017 19:15:15 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cenzt-0006mr-E8
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 17 Feb 2017 19:15:15 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170217091639.29433-1-heyunlei@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Yunlei He <heyunlei@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <1487335987-32601-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>
+Cc: cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com, zhouxiyu@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Yunlei,
+Hi Yunlong,
 
-I also removed "segno = NULL_SEGNO;" in the beginning part near gc_more.
+On 02/17, Yunlong Song wrote:
+> Rethink the meaning of reserved segments and overprovision segments in f2fs
+> 
+> The key issue is that flash FTL has already made overprovision itself, e.g. 7%,
+> according to the difference between gigabyte (GB) and gibibyte (GiB). And this
+> part can nenver be seen by the upper file system. The device capacity which it
+> tells the upper file system is the other part which does not include the
+> overprovision part, which means the whole device capacity that file system knows
+> can "all" be used for write safely. The overprovision flash FTL has already reserved
+> includes the needed capacity for garbage collection and other operations. So,
+> filesystem can just take it easy and do not need to set the reserved segments and
+> overprovision segments again in mkfs.f2fs.
+>
+> I want to explain more in detail. First, let's forget the section alignment
+> issue in the following talk, since it is really not possible in real production
+> case. As a result, f2fs does not need to behave like flash (i.e., new write
+> must come after erase for a block page in flash).
+
+Simply say no, F2FS has nothing to do with FTL, and LFS acts like flash.
+
+> Take a look at the current design of mkfs.f2fs:
+> 
+> 	c.reserved_segments = (2 * (100 / c.overprovision + 1) + 6) * c.segs_per_sec;
+> 
+> The original motivation may be like this:
+> 
+> For example, if ovp is 20%, we select 5 victim segments to reclaim one free
+> segment in the worst case. During this migration, we need additional 4 free
+> segments to write valid blocks in the victim segments. Other remaining added
+> segments are just to keep as a buffer to prepare any abnormal situation.
+> 
+> But f2fs does not have to bahave like flash, so why do we need 4 more free segments
+> here? For current codes of f2fs gc, we only need 1 free segment:
+> 
+> Initial status: 1 free segment is needed
+> 
+>   segment 0     segment 1     segment 2     segment 3     segment 4     segment 5
+> |20% invalid| |20% invalid| |20% invalid| |20% invalid| |20% invalid|   | free |
+> |80%   valid| |80%   valid| |80%   valid| |80%   valid| |80%   valid|   | free |
+> 
+> 
+> step 1: segment 0 -> segment 5, free segment 0
+
+Should be step 1: segment 0 -> segment 5, prefree segment 0
+Anyway,
+
+>   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+> |    free   | |20% invalid| |20% invalid| |20% invalid| |20% invalid|   |20%  free|
+> |    free   | |80%   valid| |80%   valid| |80%   valid| |80%   valid|   |80% valid|
+> 
+> 
+> step 2: segment 1 -> segment 5 and segment 0, free segment 1
+
+Here, we cannot use segment 0 to fill 60% to handle power-cut. If power-cut
+happens after this, we will lose prevous data in segment 0. That's why we're
+using prefree segments.
 
 Thanks,
 
-On 02/17, Yunlei He wrote:
-> In FG_GC process, it will search victim section twice. This will
-> cause some dirty section with less valid blocks skip garbage
-> collection.
 > 
-> section # 26425 : valid blocks # 3
-> 142.037567: get_victim_by_default: victim 26425 : valid blocks # 3
-> 142.037585: f2fs_get_victim: dev = (259,30), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 26425 ofs_unit = 1, pre_victim_secno = 26425, prefree = 0, free = 244
-> 142.039494: f2fs_get_victim: dev = (259,30), type = Hot DATA, policy = (Background GC, SSR-mode, Greedy), victim = 19022 ofs_unit = 1, pre_victim_secno = 26425, prefree = 0, free = 24
-> 142.070247: new_curseg: Debug: alloc new segment 26746
-> 142.244341: f2fs_get_victim: dev = (259,30), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 26054 ofs_unit = 1, pre_victim_secno = 26054, prefree = 0, free = 243
-> 142.254475: do_garbage_collect: Debug: FG_GC, seg_freed = 1
-> 142.293131: f2fs_get_victim: dev = (259,30), type = Warm DATA, policy = (Background GC, SSR-mode, Greedy), victim = 23466 ofs_unit = 1, pre_victim_secno = -1, prefree = 0, free = 244
-> 142.319001: f2fs_get_victim: dev = (259,30), type = Warm DATA, policy = (Background GC, SSR-mode, Greedy), victim = 23467 ofs_unit = 1, pre_victim_secno = -1, prefree = 0, free = 244
-> 142.368879: get_victim_by_default: victim 26425 : valid blocks # 3
-> 142.368894: f2fs_get_victim: dev = (259,30), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 26425 ofs_unit = 1, pre_victim_secno = 26425, prefree = 0, free = 244
-> 142.378127: f2fs_get_victim: dev = (259,30), type = Hot DATA, policy = (Background GC, SSR-mode, Greedy), victim = 19612 ofs_unit = 1, pre_victim_secno = 26425, prefree = 0, free = 24
-> 142.416917: new_curseg: Debug: alloc new segment 26054
-> 142.656794: f2fs_get_victim: dev = (259,30), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 25404 ofs_unit = 1, pre_victim_secno = 25404, prefree = 0, free = 243
-> 142.662139: do_garbage_collect: Debug: FG_GC, seg_freed = 1
-> 142.684159: new_curseg: Debug: alloc new segment 25197
-> 142.685059: get_victim_by_default: victim 26425 : valid blocks # 3
-> 142.685079: f2fs_get_victim: dev = (259,30), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 26425 ofs_unit = 1, pre_victim_secno = 26425, prefree = 0, free = 243
-> 142.701427: f2fs_get_victim: dev = (259,30), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 26238 ofs_unit = 1, pre_victim_secno = 26238, prefree = 0, free = 243
-> 142.707105: do_garbage_collect: Debug: FG_GC, seg_freed = 1
-> 142.802444: f2fs_get_victim: dev = (259,30), type = Warm DATA, policy = (Background GC, SSR-mode, Greedy), victim = 23473 ofs_unit = 1, pre_victim_secno = -1, prefree = 0, free = 244
-> 142.804422: get_victim_by_default: victim 26425 : valid blocks # 3
-> 142.804443: f2fs_get_victim: dev = (259,30), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 26425 ofs_unit = 1, pre_victim_secno = 26425, prefree = 0, free = 244
-> 142.851567: f2fs_get_victim: dev = (259,30), type = Hot DATA, policy = (Background GC, SSR-mode, Greedy), victim = 19092 ofs_unit = 1, pre_victim_secno = 26425, prefree = 0, free = 24
-> 142.865014: new_curseg: Debug: alloc new segment 26238
-> 143.082245: f2fs_get_victim: dev = (259,30), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 26307 ofs_unit = 1, pre_victim_secno = 26307, prefree = 0, free = 244
-> 143.088252: do_garbage_collect: Debug: FG_GC, seg_freed = 1
-> 143.128307: new_curseg: Debug: alloc new segment 25404
-> 143.181846: get_victim_by_default: victim 26425 : valid blocks # 3
-> 143.181872: f2fs_get_victim: dev = (259,30), type = No TYPE, policy = (Foreground GC, LFS-mode, Greedy), victim = 26425 ofs_unit = 1, pre_victim_secno = 26425, prefree = 0, free = 244
+>   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+> |40%    free| |    free   | |20% invalid| |20% invalid| |20% invalid|   |20% valid|
+> |60%   valid| |    free   | |80%   valid| |80%   valid| |80%   valid|   |80% valid|
 > 
-> Signed-off-by: Yunlei He <heyunlei@huawei.com>
-> ---
->  fs/f2fs/gc.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 88e5e7b..74e1553 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -943,12 +943,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
->  		 * enough free sections, we should flush dent/node blocks and do
->  		 * garbage collections.
->  		 */
-> -		if (__get_victim(sbi, &segno, gc_type) ||
-> -						prefree_segments(sbi)) {
-> +		if (dirty_segments(sbi) || prefree_segments(sbi)) {
->  			ret = write_checkpoint(sbi, &cpc);
->  			if (ret)
->  				goto stop;
-> -			segno = NULL_SEGNO;
->  		} else if (has_not_enough_free_secs(sbi, 0, 0)) {
->  			ret = write_checkpoint(sbi, &cpc);
->  			if (ret)
-> @@ -959,7 +957,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
->  		goto stop;
->  	}
->  
-> -	if (segno == NULL_SEGNO && !__get_victim(sbi, &segno, gc_type))
-> +	if (!__get_victim(sbi, &segno, gc_type))
->  		goto stop;
->  	ret = 0;
->  
+> step 3: segment 2 -> segment 0 and segment 1, free segment 2
+> 
+>   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+> |40%   valid| |60%    free| |    free   | |20% invalid| |20% invalid|   |20% valid|
+> |60%   valid| |40%   valid| |    free   | |80%   valid| |80%   valid|   |80% valid|
+> 
+> 
+> step 4: segment 3 -> segment 1 and segment 2, free segment 3
+> 
+>   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+> |40%   valid| |60%   valid| |80%    free| |    free   | |20% invalid|   |20% valid|
+> |60%   valid| |40%   valid| |20%   valid| |    free   | |80%   valid|   |80% valid|
+> 
+> 
+> step 5: segment 4 -> segment 2, free segment 4
+> 
+>   segment 0     segment 1     segment 2     segment 3     segment 4      segment 5
+> |40%   valid| |60%   valid| |80%   valid| |    free   | |    free   |   |20% valid|
+> |60%   valid| |40%   valid| |20%   valid| |    free   | |    free   |   |80% valid|
+> 
+> done. Now there are 1 new free segment.
+> 
+> If we change the f2fs gc codes in future, we can even let the initial 1 free
+> segment go away, just copy valid data among the 5 segments themselves using SSR.
+> 
+> So the previous formula:
+> 
+> 	c.reserved_segments = (2 * (100 / c.overprovision + 1) + 6) * c.segs_per_sec;
+> 
+> is not needed, we can set reserved_segments to any value if we want, no matter
+> what value c.overprovision is, just take it away from the formula.
+> 
+> And take take a look at the overprov_segment_count in current design of
+> mkfs.f2fs:
+> 
+> set_cp(overprov_segment_count, (get_sb(segment_count_main) - get_cp(rsvd_segment_count)) * c.overprovision / 100);
+> 
+> The original motivation may be like this:
+> 
+> For example, if ovp is 20%, the worst case is that each segment is 20% invalid,
+> then all the segments can not be selected as victim target for FTL GC, then
+> there is (segment_count_main - rsvd_segment_count) * 20%, which are all invalid
+> blocks and can not be used for write, thus we should regard this as
+> overprovision segments, which can never be used by user. However, as we
+> have explained above, all the device capacity which FTL tells f2fs can be used
+> for write, so it is not correct to use this formula. In fact, we do not need to set
+> the overprovision segments at all for this consideration.
+> 
+> Yunlong Song (2):
+>   mkfs.f2fs: add option to set the value of reserved segments
+>     and overprovision segments
+>   f2fs: fix the case when there is no free segment to allocate for
+>     CURSEG_WARM_NODE
+> 
+>  fs/f2fs/segment.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
 > -- 
-> 2.10.1
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+> 1.8.5.2
