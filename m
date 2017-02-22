@@ -1,255 +1,249 @@
-From: Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH] fscrypt: remove broken support for detecting keyring key revocation
-Date: Tue, 21 Feb 2017 15:07:11 -0800
-Message-ID: <20170221230711.85222-1-ebiggers3@gmail.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Richard Weinberger <richard@nod.at>, Anand Jain <anand.jain@oracle.com>, Eric Biggers <ebiggers@google.com>, stable@vger.kernel.org
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [f2fs-dev] [PATCH 08/10] f2fs: relax async discard commands more
+Date: Wed, 22 Feb 2017 15:23:16 +0800
+Message-ID: <509c4a9c-5bf1-a699-7a9b-7d3494dc0861@huawei.com>
+References: <20161230185117.3832-1-jaegeuk@kernel.org>
+ <20161230185117.3832-8-jaegeuk@kernel.org>
+ <a32a776f-00a3-740b-5b62-7137250f4531@huawei.com>
+ <f450fd45-1cf9-1969-007e-7cd72b614e08@huawei.com>
+ <20170105194604.GA2064@jaegeuk.local>
+ <97193665-85ae-268f-c50c-8b29bc4b57c7@huawei.com>
+ <20170106024238.GA6605@jaegeuk.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20170106024238.GA6605@jaegeuk.local>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-From: Eric Biggers <ebiggers@google.com>
+On 2017/1/6 10:42, Jaegeuk Kim wrote:
+> Hi Chao,
+> 
+> On 01/06, Chao Yu wrote:
+>> On 2017/1/6 3:46, Jaegeuk Kim wrote:
+>>> On 01/05, Chao Yu wrote:
+>>>> On 2017/1/4 17:29, Chao Yu wrote:
+>>>>> On 2016/12/31 2:51, Jaegeuk Kim wrote:
+>>>>>> This patch relaxes async discard commands to avoid waiting its end_io during
+>>>>>> checkpoint.
+>>>>>> Instead of waiting them during checkpoint, it will be done when actually reusing
+>>>>>> them.
+>>>>>>
+>>>>>> Test on initial partition of nvme drive.
+>>>>>>
+>>>>>>  # time fstrim /mnt/test
+>>>>>>
+>>>>>> Before : 6.158s
+>>>>>> After : 4.822s
+>>>>>>
+>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>>
+>>>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>>>
+>>>>> One comment below,
+>>>>
+>>>> I still have a comment on this patch.
+>>>>
+>>>>>> -void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
+>>>>>> +/* This should be covered by global mutex, &sit_i->sentry_lock */
+>>>>>> +void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, unsigned int segno)
+>>>>>>  {
+>>>>>>  	struct list_head *wait_list = &(SM_I(sbi)->wait_list);
+>>>>>>  	struct bio_entry *be, *tmp;
+>>>>>> @@ -646,7 +650,15 @@ void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
+>>>>>>  		struct bio *bio = be->bio;
+>>>>>>  		int err;
+>>>>>>  
+>>>>>> -		wait_for_completion_io(&be->event);
+>>>>>> +		if (!completion_done(&be->event)) {
+>>>>>> +			if ((be->start_segno >= segno &&
+>>>>>> +					be->end_segno <= segno) ||
+>>>>>
+>>>>> segno >= be->start_segno && segno < be->end_segno ?
+>>
+>> Still can not understand this judgment condition, we should wait completion of
+>> discard command only when segno is locate in range of [start_segno, end_segno]?
+>>
+>> But now, this condition can be true only when segno, start_segno, end_segno have
+>> equal value.
+>>
+>> Please correct me if I'm wrong.
+> 
+> Urg. I rewrote it to use block addresses.
+> 
+> How about this?
+> 
+>>From fe24461eedd62815e0c56317f010a3a6e3004434 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Thu, 29 Dec 2016 14:07:53 -0800
+> Subject: [PATCH] f2fs: relax async discard commands more
+> 
+> This patch relaxes async discard commands to avoid waiting its end_io during
+> checkpoint.
+> Instead of waiting them during checkpoint, it will be done when actually reusing
+> them.
+> 
+> Test on initial partition of nvme drive.
+> 
+>  # time fstrim /mnt/test
+> 
+> Before : 6.158s
+> After : 4.822s
 
-Filesystem encryption ostensibly supported revoking a keyring key that
-had been used to "unlock" encrypted files, causing those files to become
-"locked" again.  This was, however, buggy for several reasons, the most
-severe of which was that when key revocation happened to be detected for
-an inode, its fscrypt_info was immediately freed, even while other
-threads could be using it for encryption or decryption concurrently.
-This could be exploited to crash the kernel or worse.
+We should wait for completion of all discard IOs in fstrim, since we can't
+guarantee discard command can be handled successfully by device after we return
+success to caller. Right?
 
-This patch fixes the use-after-free by removing the code which detects
-the keyring key having been revoked, invalidated, or expired.  Instead,
-an encrypted inode that is "unlocked" now simply remains unlocked until
-it is evicted from memory.  Note that this is no worse than the case for
-block device-level encryption, e.g. dm-crypt, and it still remains
-possible for a privileged user to evict unused pages, inodes, and
-dentries by running 'sync; echo 3 > /proc/sys/vm/drop_caches', or by
-simply unmounting the filesystem.  In fact, one of those actions was
-already needed anyway for key revocation to work even somewhat sanely.
-This change is not expected to break any applications.
+Thanks,
 
-In the future I'd like to implement a real API for fscrypt key
-revocation that interacts sanely with ongoing filesystem operations ---
-waiting for existing operations to complete and blocking new operations,
-and invalidating and sanitizing key material and plaintext from the VFS
-caches.  But this is a hard problem, and for now this bug must be fixed.
-
-This bug affected almost all versions of ext4, f2fs, and ubifs
-encryption, and it was potentially reachable in any kernel configured
-with encryption support (CONFIG_EXT4_ENCRYPTION=y,
-CONFIG_EXT4_FS_ENCRYPTION=y, CONFIG_F2FS_FS_ENCRYPTION=y, or
-CONFIG_UBIFS_FS_ENCRYPTION=y).  Note that older kernels did not use the
-shared fs/crypto/ code, but due to the potential security implications
-of this bug, it may still be worthwhile to backport this fix to them.
-
-Fixes: b7236e21d55f ("ext4 crypto: reorganize how we store keys in the inode")
-Cc: stable@vger.kernel.org # v4.2+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/crypto/crypto.c          | 10 +--------
- fs/crypto/fname.c           |  2 +-
- fs/crypto/fscrypt_private.h |  4 ----
- fs/crypto/keyinfo.c         | 52 ++++++++-------------------------------------
- 4 files changed, 11 insertions(+), 57 deletions(-)
-
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 02a7a9286449..6d6eca394d4d 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -327,7 +327,6 @@ EXPORT_SYMBOL(fscrypt_decrypt_page);
- static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
- {
- 	struct dentry *dir;
--	struct fscrypt_info *ci;
- 	int dir_has_key, cached_with_key;
- 
- 	if (flags & LOOKUP_RCU)
-@@ -339,18 +338,11 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
- 		return 0;
- 	}
- 
--	ci = d_inode(dir)->i_crypt_info;
--	if (ci && ci->ci_keyring_key &&
--	    (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
--					  (1 << KEY_FLAG_REVOKED) |
--					  (1 << KEY_FLAG_DEAD))))
--		ci = NULL;
--
- 	/* this should eventually be an flag in d_flags */
- 	spin_lock(&dentry->d_lock);
- 	cached_with_key = dentry->d_flags & DCACHE_ENCRYPTED_WITH_KEY;
- 	spin_unlock(&dentry->d_lock);
--	dir_has_key = (ci != NULL);
-+	dir_has_key = (d_inode(dir)->i_crypt_info != NULL);
- 	dput(dir);
- 
- 	/*
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 13052b85c393..37b49894c762 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -350,7 +350,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
- 		fname->disk_name.len = iname->len;
- 		return 0;
- 	}
--	ret = fscrypt_get_crypt_info(dir);
-+	ret = fscrypt_get_encryption_info(dir);
- 	if (ret && ret != -EOPNOTSUPP)
- 		return ret;
- 
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index fdbb8af32eaf..e39696e64494 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -67,7 +67,6 @@ struct fscrypt_info {
- 	u8 ci_filename_mode;
- 	u8 ci_flags;
- 	struct crypto_skcipher *ci_ctfm;
--	struct key *ci_keyring_key;
- 	u8 ci_master_key[FS_KEY_DESCRIPTOR_SIZE];
- };
- 
-@@ -101,7 +100,4 @@ extern int fscrypt_do_page_crypto(const struct inode *inode,
- extern struct page *fscrypt_alloc_bounce_page(struct fscrypt_ctx *ctx,
- 					      gfp_t gfp_flags);
- 
--/* keyinfo.c */
--extern int fscrypt_get_crypt_info(struct inode *);
--
- #endif /* _FSCRYPT_PRIVATE_H */
-diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
-index 02eb6b9e4438..cb3e82abf034 100644
---- a/fs/crypto/keyinfo.c
-+++ b/fs/crypto/keyinfo.c
-@@ -95,6 +95,7 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
- 	kfree(description);
- 	if (IS_ERR(keyring_key))
- 		return PTR_ERR(keyring_key);
-+	down_read(&keyring_key->sem);
- 
- 	if (keyring_key->type != &key_type_logon) {
- 		printk_once(KERN_WARNING
-@@ -102,11 +103,9 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
- 		res = -ENOKEY;
- 		goto out;
- 	}
--	down_read(&keyring_key->sem);
- 	ukp = user_key_payload(keyring_key);
- 	if (ukp->datalen != sizeof(struct fscrypt_key)) {
- 		res = -EINVAL;
--		up_read(&keyring_key->sem);
- 		goto out;
- 	}
- 	master_key = (struct fscrypt_key *)ukp->data;
-@@ -117,17 +116,11 @@ static int validate_user_key(struct fscrypt_info *crypt_info,
- 				"%s: key size incorrect: %d\n",
- 				__func__, master_key->size);
- 		res = -ENOKEY;
--		up_read(&keyring_key->sem);
- 		goto out;
- 	}
- 	res = derive_key_aes(ctx->nonce, master_key->raw, raw_key);
--	up_read(&keyring_key->sem);
--	if (res)
--		goto out;
--
--	crypt_info->ci_keyring_key = keyring_key;
--	return 0;
- out:
-+	up_read(&keyring_key->sem);
- 	key_put(keyring_key);
- 	return res;
- }
-@@ -169,12 +162,11 @@ static void put_crypt_info(struct fscrypt_info *ci)
- 	if (!ci)
- 		return;
- 
--	key_put(ci->ci_keyring_key);
- 	crypto_free_skcipher(ci->ci_ctfm);
- 	kmem_cache_free(fscrypt_info_cachep, ci);
- }
- 
--int fscrypt_get_crypt_info(struct inode *inode)
-+int fscrypt_get_encryption_info(struct inode *inode)
- {
- 	struct fscrypt_info *crypt_info;
- 	struct fscrypt_context ctx;
-@@ -184,21 +176,15 @@ int fscrypt_get_crypt_info(struct inode *inode)
- 	u8 *raw_key = NULL;
- 	int res;
- 
-+	if (inode->i_crypt_info)
-+		return 0;
-+
- 	res = fscrypt_initialize(inode->i_sb->s_cop->flags);
- 	if (res)
- 		return res;
- 
- 	if (!inode->i_sb->s_cop->get_context)
- 		return -EOPNOTSUPP;
--retry:
--	crypt_info = ACCESS_ONCE(inode->i_crypt_info);
--	if (crypt_info) {
--		if (!crypt_info->ci_keyring_key ||
--				key_validate(crypt_info->ci_keyring_key) == 0)
--			return 0;
--		fscrypt_put_encryption_info(inode, crypt_info);
--		goto retry;
--	}
- 
- 	res = inode->i_sb->s_cop->get_context(inode, &ctx, sizeof(ctx));
- 	if (res < 0) {
-@@ -229,7 +215,6 @@ int fscrypt_get_crypt_info(struct inode *inode)
- 	crypt_info->ci_data_mode = ctx.contents_encryption_mode;
- 	crypt_info->ci_filename_mode = ctx.filenames_encryption_mode;
- 	crypt_info->ci_ctfm = NULL;
--	crypt_info->ci_keyring_key = NULL;
- 	memcpy(crypt_info->ci_master_key, ctx.master_key_descriptor,
- 				sizeof(crypt_info->ci_master_key));
- 
-@@ -273,14 +258,8 @@ int fscrypt_get_crypt_info(struct inode *inode)
- 	if (res)
- 		goto out;
- 
--	kzfree(raw_key);
--	raw_key = NULL;
--	if (cmpxchg(&inode->i_crypt_info, NULL, crypt_info) != NULL) {
--		put_crypt_info(crypt_info);
--		goto retry;
--	}
--	return 0;
--
-+	if (cmpxchg(&inode->i_crypt_info, NULL, crypt_info) == NULL)
-+		crypt_info = NULL;
- out:
- 	if (res == -ENOKEY)
- 		res = 0;
-@@ -288,6 +267,7 @@ int fscrypt_get_crypt_info(struct inode *inode)
- 	kzfree(raw_key);
- 	return res;
- }
-+EXPORT_SYMBOL(fscrypt_get_encryption_info);
- 
- void fscrypt_put_encryption_info(struct inode *inode, struct fscrypt_info *ci)
- {
-@@ -305,17 +285,3 @@ void fscrypt_put_encryption_info(struct inode *inode, struct fscrypt_info *ci)
- 	put_crypt_info(ci);
- }
- EXPORT_SYMBOL(fscrypt_put_encryption_info);
--
--int fscrypt_get_encryption_info(struct inode *inode)
--{
--	struct fscrypt_info *ci = inode->i_crypt_info;
--
--	if (!ci ||
--		(ci->ci_keyring_key &&
--		 (ci->ci_keyring_key->flags & ((1 << KEY_FLAG_INVALIDATED) |
--					       (1 << KEY_FLAG_REVOKED) |
--					       (1 << KEY_FLAG_DEAD)))))
--		return fscrypt_get_crypt_info(inode);
--	return 0;
--}
--EXPORT_SYMBOL(fscrypt_get_encryption_info);
--- 
-2.11.0.483.g087da7b7c-goog
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c |  7 ++-----
+>  fs/f2fs/f2fs.h       |  4 +++-
+>  fs/f2fs/segment.c    | 23 +++++++++++++++++++----
+>  fs/f2fs/super.c      |  3 +++
+>  4 files changed, 27 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index f73ee9534d83..1a9ba69a22ba 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1254,7 +1254,6 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  		f2fs_bug_on(sbi, prefree_segments(sbi));
+>  		flush_sit_entries(sbi, cpc);
+>  		clear_prefree_segments(sbi, cpc);
+> -		f2fs_wait_all_discard_bio(sbi);
+>  		unblock_operations(sbi);
+>  		goto out;
+>  	}
+> @@ -1273,12 +1272,10 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  
+>  	/* unlock all the fs_lock[] in do_checkpoint() */
+>  	err = do_checkpoint(sbi, cpc);
+> -	if (err) {
+> +	if (err)
+>  		release_discard_addrs(sbi);
+> -	} else {
+> +	else
+>  		clear_prefree_segments(sbi, cpc);
+> -		f2fs_wait_all_discard_bio(sbi);
+> -	}
+>  
+>  	unblock_operations(sbi);
+>  	stat_inc_cp_count(sbi->stat_info);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index bdcfe2a9b532..e0db895fd84c 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -183,6 +183,8 @@ struct discard_entry {
+>  
+>  struct bio_entry {
+>  	struct list_head list;
+> +	block_t lstart;
+> +	block_t len;
+>  	struct bio *bio;
+>  	struct completion event;
+>  	int error;
+> @@ -2111,7 +2113,7 @@ void destroy_flush_cmd_control(struct f2fs_sb_info *, bool);
+>  void invalidate_blocks(struct f2fs_sb_info *, block_t);
+>  bool is_checkpointed_data(struct f2fs_sb_info *, block_t);
+>  void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
+> -void f2fs_wait_all_discard_bio(struct f2fs_sb_info *);
+> +void f2fs_wait_discard_bio(struct f2fs_sb_info *, block_t);
+>  void clear_prefree_segments(struct f2fs_sb_info *, struct cp_control *);
+>  void release_discard_addrs(struct f2fs_sb_info *);
+>  int npages_for_summary_flush(struct f2fs_sb_info *, bool);
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 485b9118b418..672bcdefe836 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -625,20 +625,23 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
+>  }
+>  
+>  static struct bio_entry *__add_bio_entry(struct f2fs_sb_info *sbi,
+> -							struct bio *bio)
+> +			struct bio *bio, block_t lstart, block_t len)
+>  {
+>  	struct list_head *wait_list = &(SM_I(sbi)->wait_list);
+>  	struct bio_entry *be = f2fs_kmem_cache_alloc(bio_entry_slab, GFP_NOFS);
+>  
+>  	INIT_LIST_HEAD(&be->list);
+>  	be->bio = bio;
+> +	be->lstart = lstart;
+> +	be->len = len;
+>  	init_completion(&be->event);
+>  	list_add_tail(&be->list, wait_list);
+>  
+>  	return be;
+>  }
+>  
+> -void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
+> +/* This should be covered by global mutex, &sit_i->sentry_lock */
+> +void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  {
+>  	struct list_head *wait_list = &(SM_I(sbi)->wait_list);
+>  	struct bio_entry *be, *tmp;
+> @@ -647,7 +650,15 @@ void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
+>  		struct bio *bio = be->bio;
+>  		int err;
+>  
+> -		wait_for_completion_io(&be->event);
+> +		if (!completion_done(&be->event)) {
+> +			if ((be->lstart <= blkaddr &&
+> +					blkaddr < be->lstart + be->len) ||
+> +					blkaddr == NULL_ADDR)
+> +				wait_for_completion_io(&be->event);
+> +			else
+> +				continue;
+> +		}
+> +
+>  		err = be->error;
+>  		if (err == -EOPNOTSUPP)
+>  			err = 0;
+> @@ -675,6 +686,7 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+>  		struct block_device *bdev, block_t blkstart, block_t blklen)
+>  {
+>  	struct bio *bio = NULL;
+> +	block_t lblkstart = blkstart;
+>  	int err;
+>  
+>  	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
+> @@ -689,7 +701,8 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+>  				SECTOR_FROM_BLOCK(blklen),
+>  				GFP_NOFS, 0, &bio);
+>  	if (!err && bio) {
+> -		struct bio_entry *be = __add_bio_entry(sbi, bio);
+> +		struct bio_entry *be = __add_bio_entry(sbi, bio,
+> +						lblkstart, blklen);
+>  
+>  		bio->bi_private = be;
+>  		bio->bi_end_io = f2fs_submit_bio_wait_endio;
+> @@ -1575,6 +1588,8 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+>  
+>  	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+>  
+> +	f2fs_wait_discard_bio(sbi, *new_blkaddr);
+> +
+>  	/*
+>  	 * __add_sum_entry should be resided under the curseg_mutex
+>  	 * because, this function updates a summary entry in the
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index f3697f97e527..461c29043aec 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -770,6 +770,9 @@ static void f2fs_put_super(struct super_block *sb)
+>  		write_checkpoint(sbi, &cpc);
+>  	}
+>  
+> +	/* be sure to wait for any on-going discard commands */
+> +	f2fs_wait_discard_bio(sbi, NULL_ADDR);
+> +
+>  	/* write_checkpoint can update stat informaion */
+>  	f2fs_destroy_stats(sbi);
+>  
+> 
