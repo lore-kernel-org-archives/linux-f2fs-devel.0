@@ -1,22 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/4] f2fs: avoid very large discard command
-Date: Wed, 22 Feb 2017 20:28:47 -0800
-Message-ID: <20170223042850.43456-1-jaegeuk@kernel.org>
+Subject: [PATCH 2/4] f2fs: much larger batched trim_fs job
+Date: Wed, 22 Feb 2017 20:28:48 -0800
+Message-ID: <20170223042850.43456-2-jaegeuk@kernel.org>
+References: <20170223042850.43456-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cgl1X-0008Ts-PZ
+	(envelope-from <jaegeuk@kernel.org>) id 1cgl1Z-0008UC-GL
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 04:28:59 +0000
+	Thu, 23 Feb 2017 04:29:01 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cgl1W-0006TX-RM
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cgl1Y-0003fi-ON
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 04:28:59 +0000
+	Thu, 23 Feb 2017 04:29:01 +0000
+In-Reply-To: <20170223042850.43456-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,43 +31,27 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch adds MAX_DISCARD_BLOCKS() to avoid issuing too much large single
-discard command.
+We have a kernel thread to issue discard commands, so we can increase the
+number of batched discard sections. By default, now it becomes 4GB range.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/f2fs.h    | 3 ++-
- fs/f2fs/segment.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/f2fs/f2fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d076b94530bc..5f3fe97df055 100644
+index 5f3fe97df055..8f3171f12fa5 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -133,7 +133,8 @@ enum {
+@@ -128,7 +128,7 @@ enum {
+ 	CP_DISCARD,
+ };
+ 
+-#define DEF_BATCHED_TRIM_SECTIONS	2
++#define DEF_BATCHED_TRIM_SECTIONS	2048
+ #define BATCHED_TRIM_SEGMENTS(sbi)	\
  		(SM_I(sbi)->trim_sections * (sbi)->segs_per_sec)
  #define BATCHED_TRIM_BLOCKS(sbi)	\
- 		(BATCHED_TRIM_SEGMENTS(sbi) << (sbi)->log_blocks_per_seg)
--
-+#define MAX_DISCARD_BLOCKS(sbi)						\
-+		((1 << (sbi)->log_blocks_per_seg) * (sbi)->segs_per_sec)
- #define DISCARD_ISSUE_RATE	8
- #define DEF_CP_INTERVAL			60	/* 60 secs */
- #define DEF_IDLE_INTERVAL		5	/* 5 secs */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index fe434cd872b4..567019940e9b 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -886,7 +886,8 @@ static void __add_discard_entry(struct f2fs_sb_info *sbi,
- 	if (!list_empty(head)) {
- 		last = list_last_entry(head, struct discard_entry, list);
- 		if (START_BLOCK(sbi, cpc->trim_start) + start ==
--						last->blkaddr + last->len) {
-+				last->blkaddr + last->len &&
-+				last->len < MAX_DISCARD_BLOCKS(sbi)) {
- 			last->len += end - start;
- 			goto done;
- 		}
 -- 
 2.11.0
 
