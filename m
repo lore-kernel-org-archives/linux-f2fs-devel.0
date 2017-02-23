@@ -1,107 +1,102 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: avoid reading NAT page by
- get_node_info
-Date: Thu, 23 Feb 2017 10:20:00 -0800
-Message-ID: <20170223182000.GA2026@jaegeuk.local>
-References: <20170214020644.18189-1-jaegeuk@kernel.org>
- <20170214020644.18189-3-jaegeuk@kernel.org>
- <c911629f-7c6c-00d3-3d94-8c6a9a5fb0ca@huawei.com>
+Subject: Re: [PATCH 1/4] f2fs: avoid very large discard command
+Date: Thu, 23 Feb 2017 10:41:27 -0800
+Message-ID: <20170223184127.GB2026@jaegeuk.local>
+References: <20170223042850.43456-1-jaegeuk@kernel.org>
+	<20170223101627.GA31074@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cgyKf-00081W-4O
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 23 Feb 2017 18:41:37 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cgyKd-0004z9-4Z
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 23 Feb 2017 18:41:37 +0000
 Content-Disposition: inline
-In-Reply-To: <c911629f-7c6c-00d3-3d94-8c6a9a5fb0ca@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20170223101627.GA31074@infradead.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 02/23, Chao Yu wrote:
-> On 2017/2/14 10:06, Jaegeuk Kim wrote:
-> > We've not seen this buggy case for a long time, so it's time to avoid this
-> > unnecessary get_node_info() call which reading NAT page to cache nat entry.
+On 02/23, Christoph Hellwig wrote:
+> On Wed, Feb 22, 2017 at 08:28:47PM -0800, Jaegeuk Kim wrote:
+> > This patch adds MAX_DISCARD_BLOCKS() to avoid issuing too much large single
+> > discard command.
+> 
+> Needs an explanation in the code on why this number was chosen.
+
+No need to add a trivial comment, since it's the section size which we can
+easily translate it.
+
+> In doubt I suspect it should be a quirk in the driver for the device,
+> and not something decided by the fs.
+
+The block allocator checks all the issued bios whether any of them contains
+the newly allocated address or not. If one large discard command was issued,
+it needs to wait for its completion, even if we want to allocate part of its
+address space.
+
+In addition, HM-SMR is required to issue discard/reset in a unit of section
+size.
+
+Thanks,
+
+> 
 > > 
 > > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > > ---
-> >  fs/f2fs/node.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
+> >  fs/f2fs/f2fs.h    | 3 ++-
+> >  fs/f2fs/segment.c | 3 ++-
+> >  2 files changed, 4 insertions(+), 2 deletions(-)
 > > 
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index e001d084667f..b63bdb85ad66 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -1033,7 +1033,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
-> >  				unsigned int ofs, struct page *ipage)
-> >  {
-> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-> > -	struct node_info old_ni, new_ni;
-> > +	struct node_info new_ni;
-> >  	struct page *page;
-> >  	int err;
-> >  
-> > @@ -1049,12 +1049,11 @@ struct page *new_node_page(struct dnode_of_data *dn,
-> >  		goto fail;
-> >  	}
-> >  
-> > -	get_node_info(sbi, dn->nid, &old_ni);
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index d076b94530bc..5f3fe97df055 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -133,7 +133,8 @@ enum {
+> >  		(SM_I(sbi)->trim_sections * (sbi)->segs_per_sec)
+> >  #define BATCHED_TRIM_BLOCKS(sbi)	\
+> >  		(BATCHED_TRIM_SEGMENTS(sbi) << (sbi)->log_blocks_per_seg)
 > > -
-> > -	/* Reinitialize old_ni with new node page */
-> > -	f2fs_bug_on(sbi, old_ni.blk_addr != NULL_ADDR);
-> 
-> What about keeping get_node_info covered with CONFIG_F2FS_CHECK_FS for
-> consistence as we just introduce two new free nid caches, I think it will be
-> helpful for detecting bugs of these new codes.
+> > +#define MAX_DISCARD_BLOCKS(sbi)						\
+> > +		((1 << (sbi)->log_blocks_per_seg) * (sbi)->segs_per_sec)
+> >  #define DISCARD_ISSUE_RATE	8
+> >  #define DEF_CP_INTERVAL			60	/* 60 secs */
+> >  #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index fe434cd872b4..567019940e9b 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -886,7 +886,8 @@ static void __add_discard_entry(struct f2fs_sb_info *sbi,
+> >  	if (!list_empty(head)) {
+> >  		last = list_last_entry(head, struct discard_entry, list);
+> >  		if (START_BLOCK(sbi, cpc->trim_start) + start ==
+> > -						last->blkaddr + last->len) {
+> > +				last->blkaddr + last->len &&
+> > +				last->len < MAX_DISCARD_BLOCKS(sbi)) {
+> >  			last->len += end - start;
+> >  			goto done;
+> >  		}
+> > -- 
+> > 2.11.0
+> > 
+> ---end quoted text---
 
-Good idea!
-I added it like this.
-
->From a60572a7e9826b26f9634073ba9178762a9e0e7a Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Mon, 13 Feb 2017 17:02:44 -0800
-Subject: [PATCH] f2fs: avoid reading NAT page by get_node_info
-
-We've not seen this buggy case for a long time, so it's time to avoid this
-unnecessary get_node_info() call which reading NAT page to cache nat entry.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/node.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index baef30e230d9..42bb6f3f4757 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1033,7 +1033,7 @@ struct page *new_node_page(struct dnode_of_data *dn,
- 				unsigned int ofs, struct page *ipage)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
--	struct node_info old_ni, new_ni;
-+	struct node_info new_ni;
- 	struct page *page;
- 	int err;
- 
-@@ -1048,13 +1048,15 @@ struct page *new_node_page(struct dnode_of_data *dn,
- 		err = -ENOSPC;
- 		goto fail;
- 	}
--
--	get_node_info(sbi, dn->nid, &old_ni);
--
--	/* Reinitialize old_ni with new node page */
--	f2fs_bug_on(sbi, old_ni.blk_addr != NULL_ADDR);
--	new_ni = old_ni;
-+#ifdef CONFIG_F2FS_CHECK_FS
-+	get_node_info(sbi, dn->nid, &new_ni);
-+	f2fs_bug_on(sbi, new_ni.blk_addr != NULL_ADDR);
-+#endif
-+	new_ni.nid = dn->nid;
- 	new_ni.ino = dn->inode->i_ino;
-+	new_ni.blk_addr = NULL_ADDR;
-+	new_ni.flag = 0;
-+	new_ni.version = 0;
- 	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
- 
- 	f2fs_wait_on_page_writeback(page, NODE, true);
--- 
-2.11.0
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
