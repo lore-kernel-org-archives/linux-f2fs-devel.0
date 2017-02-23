@@ -1,49 +1,34 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/4] mkfs.f2fs: make sure clean all reset
- dnodes
-Date: Thu, 23 Feb 2017 17:25:42 +0800
-Message-ID: <0bc48733-da21-5cf6-4135-5ed910223f54@huawei.com>
-References: <20170214020520.18091-1-jaegeuk@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH] vfs: hoist {XFS, EXT4}_IOC_{GOING, SHUT}DOWN
+ to the VFS
+Date: Thu, 23 Feb 2017 02:15:19 -0800
+Message-ID: <20170223101518.GA1769@jaegeuk.local>
+References: <20170223075230.GB5837@birch.djwong.org>
+ <e8ce1e4a-3333-39d1-b9bd-1464512aa125@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cgpeu-0003xT-N5
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 09:25:56 +0000
-Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cgpet-0004JR-GX
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 09:25:56 +0000
-In-Reply-To: <20170214020520.18091-1-jaegeuk@kernel.org>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <e8ce1e4a-3333-39d1-b9bd-1464512aa125@huawei.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Chao Yu <yuchao0@huawei.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@ZenIV.linux.org.uk>, Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/2/14 10:05, Jaegeuk Kim wrote:
-> From: Kinglong Mee <kinglongmee@gmail.com>
+Hello,
+
+On 02/23, Chao Yu wrote:
+> Hi Darrick,
 > 
-> memset(raw_node, 0, F2FS_BLKSIZE) sets the next_blkaddr to zero,
-> so that, only one reset dnode is cleaned always.
+> On 2017/2/23 15:52, Darrick J. Wong wrote:
+> > ext4 and XFS expose the same shutdown ioctl with the same parameters,
+> > so let's hoist the whole mess into the vfs headers.
 > 
-> Fixes: ad042d9194f5 "mkfs.f2fs: reset dnode with zeros",
-> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Could you cover f2fs in this patch since f2fs has already supported SHUTDOWN ioctl?
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+It's funny that I submitted a similar patch two years ago along with f2fs
+support.
 
+https://patchwork.kernel.org/patch/5814991/
 
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+Thanks,
