@@ -1,23 +1,24 @@
 From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH 2/3] f2fs: remove unsafe bitmap checking
-Date: Thu, 23 Feb 2017 09:18:06 +0000
-Message-ID: <20170223091807.36175-2-houpengyang@huawei.com>
+Subject: [PATCH 3/3] f2fs: skip dirty bitmap scanning when no
+	dirty segments
+Date: Thu, 23 Feb 2017 09:18:07 +0000
+Message-ID: <20170223091807.36175-3-houpengyang@huawei.com>
 References: <20170223091807.36175-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1cgpXg-0003Tp-Td
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <houpengyang@huawei.com>) id 1cgpXn-0004cY-9V
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 09:18:28 +0000
-Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cgpXe-0007Ul-Rd
+	Thu, 23 Feb 2017 09:18:35 +0000
+Received: from szxga02-in.huawei.com ([119.145.14.65])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cgpXl-0001Kl-DT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 09:18:28 +0000
+	Thu, 23 Feb 2017 09:18:35 +0000
 In-Reply-To: <20170223091807.36175-1-houpengyang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,48 +32,40 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-proc A:                      proc B:
-- writeback_sb_inodes
-- __writeback_single_inode   
-- do_writepages
-- f2fs_write_node_pages       
-- f2fs_balance_fs_bg         - write_checkpoint
-- build_free_nids            - flush_nat_entries
-- __build_free_nids          - __flush_nat_entry_set
-- ra_meta_pages              - get_next_nat_page
-- current_nat_addr           - set_to_next_nat
-[do nat_bitmap checking]     - f2fs_change_bit
-
-For proc A, nat_bitmap and nat_bitmap_mir would be compared without lock_op and 
-nm_i->nat_tree_lock, while proc B is changing nat_bitmap/nat_bitmap_ver in cp.
-
-So it is normal for nat_bitmap/nat_bitmap diffrence under such scenario.
-
-This patch fix this by removing the monitoring point.
-
-[Fix: 599a09b f2fs: check in-memory nat version bitmap]
 Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
 ---
- fs/f2fs/node.h | 6 ------
- 1 file changed, 6 deletions(-)
+ fs/f2fs/gc.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index d3d2893..3fc9c4b 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -209,12 +209,6 @@ static inline pgoff_t current_nat_addr(struct f2fs_sb_info *sbi, nid_t start)
- 		(seg_off << sbi->log_blocks_per_seg << 1) +
- 		(block_off & (sbi->blocks_per_seg - 1)));
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 6c996e3..eaf9e68 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -293,13 +293,22 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 	unsigned int secno, last_victim;
+ 	unsigned int last_segment = MAIN_SEGS(sbi);
+ 	unsigned int nsearched = 0;
++	int nr_dirty;
  
--#ifdef CONFIG_F2FS_CHECK_FS
--	if (f2fs_test_bit(block_off, nm_i->nat_bitmap) !=
--			f2fs_test_bit(block_off, nm_i->nat_bitmap_mir))
--		f2fs_bug_on(sbi, 1);
--#endif
+ 	mutex_lock(&dirty_i->seglist_lock);
+ 
+ 	p.alloc_mode = alloc_mode;
+-	select_policy(sbi, gc_type, type, &p);
 -
- 	if (f2fs_test_bit(block_off, nm_i->nat_bitmap))
- 		block_addr += sbi->blocks_per_seg;
+ 	p.min_segno = NULL_SEGNO;
++
++	if (alloc_mode == SSR)
++		nr_dirty = dirty_i->nr_dirty[type];
++	else
++		nr_dirty = dirty_i->nr_dirty[DIRTY];
++
++	if (!nr_dirty)
++		goto out;
++
++	select_policy(sbi, gc_type, type, &p);
+ 	p.min_cost = get_max_cost(sbi, &p);
  
+ 	if (p.max_search == 0)
 -- 
 2.10.1
 
