@@ -1,64 +1,43 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: clean up codes in f2fs_gc related with
- write_checkpoint
-Date: Thu, 23 Feb 2017 10:52:25 +0800
-Message-ID: <58AE4E69.1050104@huawei.com>
-References: <1487681028-19410-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 1/5] f2fs: show # of APPEND and UPDATE inodes
+Date: Thu, 23 Feb 2017 11:32:58 +0800
+Message-ID: <bd50e018-920f-46d5-7533-100121830a58@huawei.com>
+References: <20170203234816.12723-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1487681028-19410-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org, cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com
-Cc: bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cgk9Y-0005rx-Ka
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 23 Feb 2017 03:33:12 +0000
+Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cgk9W-0004ga-3P
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Thu, 23 Feb 2017 03:33:12 +0000
+In-Reply-To: <20170203234816.12723-1-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Ping...
+On 2017/2/4 7:48, Jaegeuk Kim wrote:
+> This patch shows cached # of APPEND and UPDATE inode entries.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Since has_not_enough_free_secs(sbi, 0, 0) must be true if has_not_enough_free_secs(sbi, sec_freed, 0) is true,
-write_checkpoint is sure to execute in both conditions, and segno is NULL_SEGNO in both conditions.
-
-On 2017/2/21 20:43, Yunlong Song wrote:
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/gc.c | 16 ++++------------
->  1 file changed, 4 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 88e5e7b..e5f2569 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -943,23 +943,15 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
->  		 * enough free sections, we should flush dent/node blocks and do
->  		 * garbage collections.
->  		 */
-> -		if (__get_victim(sbi, &segno, gc_type) ||
-> -						prefree_segments(sbi)) {
-> -			ret = write_checkpoint(sbi, &cpc);
-> -			if (ret)
-> -				goto stop;
-> -			segno = NULL_SEGNO;
-> -		} else if (has_not_enough_free_secs(sbi, 0, 0)) {
-> -			ret = write_checkpoint(sbi, &cpc);
-> -			if (ret)
-> -				goto stop;
-> -		}
-> +		ret = write_checkpoint(sbi, &cpc);
-> +		if (ret)
-> +			goto stop;
->  	} else if (gc_type == BG_GC && !background) {
->  		/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
->  		goto stop;
->  	}
->  
-> -	if (segno == NULL_SEGNO && !__get_victim(sbi, &segno, gc_type))
-> +	if (!__get_victim(sbi, &segno, gc_type))
->  		goto stop;
->  	ret = 0;
->  
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 
--- 
-Thanks,
-Yunlong Song
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
