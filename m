@@ -1,106 +1,42 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 2/2] f2fs:use fggc_set_cold_data instead of
- set_cold_data in fggc
-Date: Wed, 22 Feb 2017 16:39:57 -0800
-Message-ID: <20170223003957.GE4003@jaegeuk.local>
-References: <20170222102900.152902-1-houpengyang@huawei.com>
-	<20170222102900.152902-2-houpengyang@huawei.com>
+Subject: Re: [PATCH 1/3] f2fs: clean up codes in get_ssr_segment
+Date: Wed, 22 Feb 2017 16:41:14 -0800
+Message-ID: <20170223004114.GF4003@jaegeuk.local>
+References: <1487767851-819-1-git-send-email-yunlong.song@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cghS4-0000B6-70
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 00:40:08 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cghS2-0005cP-8i
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 00:40:08 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170222102900.152902-2-houpengyang@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Hou Pengyang <houpengyang@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+In-Reply-To: <1487767851-819-1-git-send-email-yunlong.song@huawei.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Yunlong Song <yunlong.song@huawei.com>
+Cc: cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Hi Pengyang,
+Hi Yunlong,
 
-On 02/22, Hou Pengyang wrote:
-> When no dirty colde segment for fggc ssr, we do NOT set_cold_data.
-
-The get_ssr_segment() finds a victim segment across all the hot/warm/cold data
-logs. When does this happen?
+This is NOT clean-up. What's your point here?
 
 Thanks,
 
-> 
-> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+On 02/22, Yunlong Song wrote:
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 > ---
->  fs/f2fs/gc.c | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
+>  fs/f2fs/segment.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 4ee749f..a0eed23 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -666,6 +666,25 @@ static void move_encrypted_block(struct inode *inode, block_t bidx,
->  	f2fs_put_page(page, 1);
->  }
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index df2ff5c..80997f5 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -1541,7 +1541,7 @@ static int get_ssr_segment(struct f2fs_sb_info *sbi, int type)
+>  	struct curseg_info *curseg = CURSEG_I(sbi, type);
+>  	const struct victim_selection *v_ops = DIRTY_I(sbi)->v_ops;
 >  
-> +/*
-> + * If NOT enough dirty cold data segments for fggc, fggc would consume
-> + * a valuable free segment, which would slow down the fggc procedure,
-> + * If there are NO COLD dirty segment, we do not set_cold_page.
-> + */
-> +static void fggc_set_cold_data(struct page *page)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_P_SB(page);
-> +	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-> +	int nr_cold_dirties;
-> +
-> +	mutex_lock(&dirty_i->seglist_lock);
-> +	nr_cold_dirties = dirty_i->nr_dirty[DIRTY_COLD_DATA];
-> +	mutex_unlock(&dirty_i->seglist_lock);
-> +
-> +	if (nr_cold_dirties)
-> +		set_cold_data(page);
-> +
-> +}
->  static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->  							unsigned int segno, int off)
->  {
-> @@ -706,7 +725,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->  			remove_dirty_inode(inode);
->  		}
+> -	if (IS_NODESEG(type) || !has_not_enough_free_secs(sbi, 0, 0))
+> +	if (IS_NODESEG(type))
+>  		return v_ops->get_victim(sbi,
+>  				&(curseg)->next_segno, BG_GC, type, SSR);
 >  
-> -		set_cold_data(page);
-> +		fggc_set_cold_data(page);
->  
->  		err = do_write_data_page(&fio);
->  		if (err == -ENOMEM && is_dirty) {
 > -- 
-> 2.10.1
-> 
-> 
-> ------------------------------------------------------------------------------
-> Check out the vibrant tech community on one of the world's most
-> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+> 1.8.5.2
