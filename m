@@ -1,32 +1,28 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 08/10] f2fs: relax async discard commands more
-Date: Thu, 23 Feb 2017 10:08:53 +0800
-Message-ID: <d215dd24-8681-a0a8-9178-154f430007c6@huawei.com>
+Subject: Re: [PATCH 10/10] f2fs: return fs_trim if there is no
+ candidate
+Date: Thu, 23 Feb 2017 10:12:12 +0800
+Message-ID: <57af549a-0e71-3181-ee0b-0f7c0a0bf87d@huawei.com>
 References: <20161230185117.3832-1-jaegeuk@kernel.org>
-	<20161230185117.3832-8-jaegeuk@kernel.org>
-	<a32a776f-00a3-740b-5b62-7137250f4531@huawei.com>
-	<f450fd45-1cf9-1969-007e-7cd72b614e08@huawei.com>
-	<20170105194604.GA2064@jaegeuk.local>
-	<97193665-85ae-268f-c50c-8b29bc4b57c7@huawei.com>
-	<20170106024238.GA6605@jaegeuk.local>
-	<509c4a9c-5bf1-a699-7a9b-7d3494dc0861@huawei.com>
-	<20170222211539.GA4003@jaegeuk.local>
+	<20161230185117.3832-10-jaegeuk@kernel.org>
+	<3ac2d369-bf84-13a6-713d-e5e6e1206993@huawei.com>
+	<20170222212639.GB4003@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cgiqL-0003l6-9F
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cgitV-0002jE-8P
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 02:09:17 +0000
-Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cgiqI-0001ID-U3
+	Thu, 23 Feb 2017 02:12:33 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cgitT-0006Ck-F7
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 02:09:17 +0000
-In-Reply-To: <20170222211539.GA4003@jaegeuk.local>
+	Thu, 23 Feb 2017 02:12:33 +0000
+In-Reply-To: <20170222212639.GB4003@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -39,100 +35,126 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/23 5:15, Jaegeuk Kim wrote:
-> On 02/22, Chao Yu wrote:
->> On 2017/1/6 10:42, Jaegeuk Kim wrote:
->>> Hi Chao,
->>>
->>> On 01/06, Chao Yu wrote:
->>>> On 2017/1/6 3:46, Jaegeuk Kim wrote:
->>>>> On 01/05, Chao Yu wrote:
->>>>>> On 2017/1/4 17:29, Chao Yu wrote:
->>>>>>> On 2016/12/31 2:51, Jaegeuk Kim wrote:
->>>>>>>> This patch relaxes async discard commands to avoid waiting its end_io during
->>>>>>>> checkpoint.
->>>>>>>> Instead of waiting them during checkpoint, it will be done when actually reusing
->>>>>>>> them.
->>>>>>>>
->>>>>>>> Test on initial partition of nvme drive.
->>>>>>>>
->>>>>>>>  # time fstrim /mnt/test
->>>>>>>>
->>>>>>>> Before : 6.158s
->>>>>>>> After : 4.822s
->>>>>>>>
->>>>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>>>>
->>>>>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>>>>>>
->>>>>>> One comment below,
->>>>>>
->>>>>> I still have a comment on this patch.
->>>>>>
->>>>>>>> -void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
->>>>>>>> +/* This should be covered by global mutex, &sit_i->sentry_lock */
->>>>>>>> +void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, unsigned int segno)
->>>>>>>>  {
->>>>>>>>  	struct list_head *wait_list = &(SM_I(sbi)->wait_list);
->>>>>>>>  	struct bio_entry *be, *tmp;
->>>>>>>> @@ -646,7 +650,15 @@ void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
->>>>>>>>  		struct bio *bio = be->bio;
->>>>>>>>  		int err;
->>>>>>>>  
->>>>>>>> -		wait_for_completion_io(&be->event);
->>>>>>>> +		if (!completion_done(&be->event)) {
->>>>>>>> +			if ((be->start_segno >= segno &&
->>>>>>>> +					be->end_segno <= segno) ||
->>>>>>>
->>>>>>> segno >= be->start_segno && segno < be->end_segno ?
->>>>
->>>> Still can not understand this judgment condition, we should wait completion of
->>>> discard command only when segno is locate in range of [start_segno, end_segno]?
->>>>
->>>> But now, this condition can be true only when segno, start_segno, end_segno have
->>>> equal value.
->>>>
->>>> Please correct me if I'm wrong.
->>>
->>> Urg. I rewrote it to use block addresses.
->>>
->>> How about this?
->>>
->>> >From fe24461eedd62815e0c56317f010a3a6e3004434 Mon Sep 17 00:00:00 2001
->>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>> Date: Thu, 29 Dec 2016 14:07:53 -0800
->>> Subject: [PATCH] f2fs: relax async discard commands more
->>>
->>> This patch relaxes async discard commands to avoid waiting its end_io during
->>> checkpoint.
->>> Instead of waiting them during checkpoint, it will be done when actually reusing
->>> them.
->>>
->>> Test on initial partition of nvme drive.
->>>
->>>  # time fstrim /mnt/test
->>>
->>> Before : 6.158s
->>> After : 4.822s
->>
->> We should wait for completion of all discard IOs in fstrim, since we can't
->> guarantee discard command can be handled successfully by device after we return
->> success to caller. Right?
+Hi Jaegeuk,
+
+On 2017/2/23 5:26, Jaegeuk Kim wrote:
+> Hi Chao,
 > 
-> Do we have to guarantee? I think trim commands just try to give a hint to flash
-> storage for its healthier status, since it doesn't hurt filesystem consistency
-> and device/filesystem can freely ignore the commands as well.
+> On 02/22, Chao Yu wrote:
+>> On 2016/12/31 2:51, Jaegeuk Kim wrote:
+>>> If there is no candidate to submit discard command during f2sf_trim_fs, let's
+>>> return without checkpoint.
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>
+>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>
+>> Please see comments below.
+>>
+>>> ---
+>>>  fs/f2fs/checkpoint.c |  5 +++++
+>>>  fs/f2fs/f2fs.h       |  1 +
+>>>  fs/f2fs/segment.c    | 28 +++++++++++++++++++++++-----
+>>>  3 files changed, 29 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>> index 917b5c5053ae..ccea40763d9d 100644
+>>> --- a/fs/f2fs/checkpoint.c
+>>> +++ b/fs/f2fs/checkpoint.c
+>>> @@ -1249,6 +1249,11 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>  
+>>>  	/* this is the case of multiple fstrims without any changes */
+>>>  	if (cpc->reason == CP_DISCARD) {
+>>> +		if (!exist_trim_candidates(sbi, cpc)) {
+>>> +			unblock_operations(sbi);
+>>> +			goto out;
+>>> +		}
+>>> +
+>>>  		if (NM_I(sbi)->dirty_nat_cnt == 0 &&
+>>>  				SIT_I(sbi)->dirty_sentries == 0 &&
+>>>  				prefree_segments(sbi) == 0) {
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index f2f40fce9d31..04d113f0d6bf 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -2119,6 +2119,7 @@ void release_discard_addrs(struct f2fs_sb_info *);
+>>>  int npages_for_summary_flush(struct f2fs_sb_info *, bool);
+>>>  void allocate_new_segments(struct f2fs_sb_info *);
+>>>  int f2fs_trim_fs(struct f2fs_sb_info *, struct fstrim_range *);
+>>> +bool exist_trim_candidates(struct f2fs_sb_info *, struct cp_control *);
+>>>  struct page *get_sum_page(struct f2fs_sb_info *, unsigned int);
+>>>  void update_meta_page(struct f2fs_sb_info *, void *, block_t);
+>>>  void write_meta_page(struct f2fs_sb_info *, struct page *);
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 9a38424c3c1f..82078734f379 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -836,7 +836,8 @@ static void __add_discard_entry(struct f2fs_sb_info *sbi,
+>>>  	SM_I(sbi)->nr_discards += end - start;
+>>>  }
+>>>  
+>>> -static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>> +static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+>>> +							bool check_only)
+>>>  {
+>>>  	int entries = SIT_VBLOCK_MAP_SIZE / sizeof(unsigned long);
+>>>  	int max_blocks = sbi->blocks_per_seg;
+>>> @@ -850,12 +851,12 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>  	int i;
+>>>  
+>>>  	if (se->valid_blocks == max_blocks || !f2fs_discard_en(sbi))
+>>> -		return;
+>>> +		return false;
+>>>  
+>>>  	if (!force) {
+>>>  		if (!test_opt(sbi, DISCARD) || !se->valid_blocks ||
+>>>  		    SM_I(sbi)->nr_discards >= SM_I(sbi)->max_discards)
+>>> -			return;
+>>> +			return false;
+>>>  	}
+>>>  
+>>>  	/* SIT_VBLOCK_MAP_SIZE should be multiple of sizeof(unsigned long) */
+>>> @@ -873,8 +874,12 @@ static void add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>  					&& (end - start) < cpc->trim_minlen)
+>>>  			continue;
+>>>  
+>>> +		if (check_only)
+>>> +			return true;
+>>> +
+>>>  		__add_discard_entry(sbi, cpc, se, start, end);
+>>>  	}
+>>> +	return false;
+>>>  }
+>>>  
+>>>  void release_discard_addrs(struct f2fs_sb_info *sbi)
+>>> @@ -1455,6 +1460,19 @@ static const struct segment_allocation default_salloc_ops = {
+>>>  	.allocate_segment = allocate_segment_by_default,
+>>>  };
+>>>  
+>>> +bool exist_trim_candidates(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>> +{
+>>> +	__u64 trim_start = cpc->trim_start;
+>>
+>> bool has_candidate = false;
+>>
+>>> +
+>>> +	mutex_lock(&SIT_I(sbi)->sentry_lock);
+>>> +	for (; trim_start <= cpc->trim_end; trim_start++)
+>>> +		if (add_discard_addrs(sbi, cpc, true))
+>>> +			break;
+>>
+>> for (; cpc->trim_start <= cpc->trim_end; cpc->trim_start++)
+>> 	if (add_discard_addrs(sbi, cpc, true)) {
+>> 		has_candidate = true;
+>> 		break;
+>> 	}
+> 
+> Why do we need to do like this in which needs additional variable with multiple
+> assignment?
 
-In manual of fstrim/BLKDISCARD, there is no explicit description that we should
-guarantee that discard ioctl being designed as synchronization, but trim
-interface in both block layer and most filesystems is designed as
-synchronization, so what about keep consistent with them now until there is
-requirement? then we can add a new async trim interface in ioctl.
-
-> If we want to guarantee discarding region, we may need to issue BLKSECDISCARD.
-
-Hmm.. I know that BLKSECDISCARD will trigger erasing operation in lower layer
-FTL, but now it is also being designed as synchronized interface.
+Because add_discard_addrs will check segment which cpc->trim_start points to,
+but if we do not increase cpc->trim_start in loop, we will always check one
+segment, right?
 
 Thanks,
 
@@ -140,155 +162,39 @@ Thanks,
 > Thanks,
 > 
 >>
+>> cpc->trim_start = trim_start;
+>>
+>>> +	mutex_unlock(&SIT_I(sbi)->sentry_lock);
+>>> +
+>>> +	return trim_start <= cpc->trim_end;
+>>
+>> return has_candidate;
+>>
 >> Thanks,
 >>
->>>
->>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/checkpoint.c |  7 ++-----
->>>  fs/f2fs/f2fs.h       |  4 +++-
->>>  fs/f2fs/segment.c    | 23 +++++++++++++++++++----
->>>  fs/f2fs/super.c      |  3 +++
->>>  4 files changed, 27 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>> index f73ee9534d83..1a9ba69a22ba 100644
->>> --- a/fs/f2fs/checkpoint.c
->>> +++ b/fs/f2fs/checkpoint.c
->>> @@ -1254,7 +1254,6 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>  		f2fs_bug_on(sbi, prefree_segments(sbi));
->>>  		flush_sit_entries(sbi, cpc);
->>>  		clear_prefree_segments(sbi, cpc);
->>> -		f2fs_wait_all_discard_bio(sbi);
->>>  		unblock_operations(sbi);
->>>  		goto out;
+>>> +}
+>>> +
+>>>  int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+>>>  {
+>>>  	__u64 start = F2FS_BYTES_TO_BLK(range->start);
+>>> @@ -2251,7 +2269,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>  			/* add discard candidates */
+>>>  			if (cpc->reason != CP_DISCARD) {
+>>>  				cpc->trim_start = segno;
+>>> -				add_discard_addrs(sbi, cpc);
+>>> +				add_discard_addrs(sbi, cpc, false);
+>>>  			}
+>>>  
+>>>  			if (to_journal) {
+>>> @@ -2289,7 +2307,7 @@ void flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>  		__u64 trim_start = cpc->trim_start;
+>>>  
+>>>  		for (; cpc->trim_start <= cpc->trim_end; cpc->trim_start++)
+>>> -			add_discard_addrs(sbi, cpc);
+>>> +			add_discard_addrs(sbi, cpc, false);
+>>>  
+>>>  		cpc->trim_start = trim_start;
 >>>  	}
->>> @@ -1273,12 +1272,10 @@ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>  
->>>  	/* unlock all the fs_lock[] in do_checkpoint() */
->>>  	err = do_checkpoint(sbi, cpc);
->>> -	if (err) {
->>> +	if (err)
->>>  		release_discard_addrs(sbi);
->>> -	} else {
->>> +	else
->>>  		clear_prefree_segments(sbi, cpc);
->>> -		f2fs_wait_all_discard_bio(sbi);
->>> -	}
->>>  
->>>  	unblock_operations(sbi);
->>>  	stat_inc_cp_count(sbi->stat_info);
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index bdcfe2a9b532..e0db895fd84c 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -183,6 +183,8 @@ struct discard_entry {
->>>  
->>>  struct bio_entry {
->>>  	struct list_head list;
->>> +	block_t lstart;
->>> +	block_t len;
->>>  	struct bio *bio;
->>>  	struct completion event;
->>>  	int error;
->>> @@ -2111,7 +2113,7 @@ void destroy_flush_cmd_control(struct f2fs_sb_info *, bool);
->>>  void invalidate_blocks(struct f2fs_sb_info *, block_t);
->>>  bool is_checkpointed_data(struct f2fs_sb_info *, block_t);
->>>  void refresh_sit_entry(struct f2fs_sb_info *, block_t, block_t);
->>> -void f2fs_wait_all_discard_bio(struct f2fs_sb_info *);
->>> +void f2fs_wait_discard_bio(struct f2fs_sb_info *, block_t);
->>>  void clear_prefree_segments(struct f2fs_sb_info *, struct cp_control *);
->>>  void release_discard_addrs(struct f2fs_sb_info *);
->>>  int npages_for_summary_flush(struct f2fs_sb_info *, bool);
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 485b9118b418..672bcdefe836 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -625,20 +625,23 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
->>>  }
->>>  
->>>  static struct bio_entry *__add_bio_entry(struct f2fs_sb_info *sbi,
->>> -							struct bio *bio)
->>> +			struct bio *bio, block_t lstart, block_t len)
->>>  {
->>>  	struct list_head *wait_list = &(SM_I(sbi)->wait_list);
->>>  	struct bio_entry *be = f2fs_kmem_cache_alloc(bio_entry_slab, GFP_NOFS);
->>>  
->>>  	INIT_LIST_HEAD(&be->list);
->>>  	be->bio = bio;
->>> +	be->lstart = lstart;
->>> +	be->len = len;
->>>  	init_completion(&be->event);
->>>  	list_add_tail(&be->list, wait_list);
->>>  
->>>  	return be;
->>>  }
->>>  
->>> -void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
->>> +/* This should be covered by global mutex, &sit_i->sentry_lock */
->>> +void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
->>>  {
->>>  	struct list_head *wait_list = &(SM_I(sbi)->wait_list);
->>>  	struct bio_entry *be, *tmp;
->>> @@ -647,7 +650,15 @@ void f2fs_wait_all_discard_bio(struct f2fs_sb_info *sbi)
->>>  		struct bio *bio = be->bio;
->>>  		int err;
->>>  
->>> -		wait_for_completion_io(&be->event);
->>> +		if (!completion_done(&be->event)) {
->>> +			if ((be->lstart <= blkaddr &&
->>> +					blkaddr < be->lstart + be->len) ||
->>> +					blkaddr == NULL_ADDR)
->>> +				wait_for_completion_io(&be->event);
->>> +			else
->>> +				continue;
->>> +		}
->>> +
->>>  		err = be->error;
->>>  		if (err == -EOPNOTSUPP)
->>>  			err = 0;
->>> @@ -675,6 +686,7 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
->>>  		struct block_device *bdev, block_t blkstart, block_t blklen)
->>>  {
->>>  	struct bio *bio = NULL;
->>> +	block_t lblkstart = blkstart;
->>>  	int err;
->>>  
->>>  	trace_f2fs_issue_discard(sbi->sb, blkstart, blklen);
->>> @@ -689,7 +701,8 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
->>>  				SECTOR_FROM_BLOCK(blklen),
->>>  				GFP_NOFS, 0, &bio);
->>>  	if (!err && bio) {
->>> -		struct bio_entry *be = __add_bio_entry(sbi, bio);
->>> +		struct bio_entry *be = __add_bio_entry(sbi, bio,
->>> +						lblkstart, blklen);
->>>  
->>>  		bio->bi_private = be;
->>>  		bio->bi_end_io = f2fs_submit_bio_wait_endio;
->>> @@ -1575,6 +1588,8 @@ void allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
->>>  
->>>  	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
->>>  
->>> +	f2fs_wait_discard_bio(sbi, *new_blkaddr);
->>> +
->>>  	/*
->>>  	 * __add_sum_entry should be resided under the curseg_mutex
->>>  	 * because, this function updates a summary entry in the
->>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index f3697f97e527..461c29043aec 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -770,6 +770,9 @@ static void f2fs_put_super(struct super_block *sb)
->>>  		write_checkpoint(sbi, &cpc);
->>>  	}
->>>  
->>> +	/* be sure to wait for any on-going discard commands */
->>> +	f2fs_wait_discard_bio(sbi, NULL_ADDR);
->>> +
->>>  	/* write_checkpoint can update stat informaion */
->>>  	f2fs_destroy_stats(sbi);
->>>  
 >>>
 >>
 >>
