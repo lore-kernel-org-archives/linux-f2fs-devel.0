@@ -1,25 +1,25 @@
-From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH 3/3] f2fs: skip dirty bitmap scanning when no
-	dirty segments
-Date: Thu, 23 Feb 2017 09:18:07 +0000
-Message-ID: <20170223091807.36175-3-houpengyang@huawei.com>
-References: <20170223091807.36175-1-houpengyang@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 3/5] f2fs: move flush tracepoint
+Date: Thu, 23 Feb 2017 17:22:36 +0800
+Message-ID: <755adba6-c415-2421-db69-5b2ee2c6a66d@huawei.com>
+References: <20170203234816.12723-1-jaegeuk@kernel.org>
+	<20170203234816.12723-3-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1cgpXn-0004cY-9V
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cgpbt-0003kX-Ay
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 09:18:35 +0000
-Received: from szxga02-in.huawei.com ([119.145.14.65])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cgpXl-0001Kl-DT
+	Thu, 23 Feb 2017 09:22:49 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cgpbs-00085P-FN
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 09:18:35 +0000
-In-Reply-To: <20170223091807.36175-1-houpengyang@huawei.com>
+	Thu, 23 Feb 2017 09:22:49 +0000
+In-Reply-To: <20170203234816.12723-3-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,45 +29,14 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
----
- fs/f2fs/gc.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+On 2017/2/4 7:48, Jaegeuk Kim wrote:
+> This patch moves the tracepoint location for flush command.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 6c996e3..eaf9e68 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -293,13 +293,22 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 	unsigned int secno, last_victim;
- 	unsigned int last_segment = MAIN_SEGS(sbi);
- 	unsigned int nsearched = 0;
-+	int nr_dirty;
- 
- 	mutex_lock(&dirty_i->seglist_lock);
- 
- 	p.alloc_mode = alloc_mode;
--	select_policy(sbi, gc_type, type, &p);
--
- 	p.min_segno = NULL_SEGNO;
-+
-+	if (alloc_mode == SSR)
-+		nr_dirty = dirty_i->nr_dirty[type];
-+	else
-+		nr_dirty = dirty_i->nr_dirty[DIRTY];
-+
-+	if (!nr_dirty)
-+		goto out;
-+
-+	select_policy(sbi, gc_type, type, &p);
- 	p.min_cost = get_max_cost(sbi, &p);
- 
- 	if (p.max_search == 0)
--- 
-2.10.1
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 
 ------------------------------------------------------------------------------
