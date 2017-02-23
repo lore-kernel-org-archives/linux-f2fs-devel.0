@@ -1,24 +1,24 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/4] f2fs: check discard alignment only for
-	SEQWRITE zones
-Date: Wed, 22 Feb 2017 20:28:50 -0800
-Message-ID: <20170223042850.43456-4-jaegeuk@kernel.org>
+Subject: [PATCH 3/4] f2fs: wait for discard completion after
+	submission
+Date: Wed, 22 Feb 2017 20:28:49 -0800
+Message-ID: <20170223042850.43456-3-jaegeuk@kernel.org>
 References: <20170223042850.43456-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cgl1c-0000gg-Tg
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cgl1b-0002nf-B2
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 04:29:04 +0000
+	Thu, 23 Feb 2017 04:29:03 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cgl1c-0003fr-4h
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cgl1a-0008Un-JL
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 04:29:04 +0000
+	Thu, 23 Feb 2017 04:29:03 +0000
 In-Reply-To: <20170223042850.43456-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -32,62 +32,56 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-For converntional zones, we don't need to align discard commands to exact zone
-size.
+We don't need to wait for each discard commands when unmounting the image.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ fs/f2fs/segment.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index d76e49c3d1b4..6fff1c58b3b1 100644
+index 567019940e9b..d76e49c3d1b4 100644
 --- a/fs/f2fs/segment.c
 +++ b/fs/f2fs/segment.c
-@@ -793,24 +793,13 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
- static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
- 		struct block_device *bdev, block_t blkstart, block_t blklen)
- {
--	sector_t nr_sects = SECTOR_FROM_BLOCK(blklen);
--	sector_t sector;
-+	sector_t sector, nr_sects;
- 	int devi = 0;
+@@ -676,8 +676,12 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+ 	struct list_head *wait_list = &(dcc->discard_cmd_list);
+ 	struct discard_cmd *dc, *tmp;
++	struct blk_plug plug;
  
- 	if (sbi->s_ndevs) {
- 		devi = f2fs_target_device_index(sbi, blkstart);
- 		blkstart -= FDEV(devi).start_blk;
- 	}
--	sector = SECTOR_FROM_BLOCK(blkstart);
--
--	if (sector & (bdev_zone_sectors(bdev) - 1) ||
--	    nr_sects != bdev_zone_sectors(bdev)) {
--		f2fs_msg(sbi->sb, KERN_INFO,
--			"(%d) %s: Unaligned discard attempted (block %x + %x)",
--			devi, sbi->s_ndevs ? FDEV(devi).path: "",
--			blkstart, blklen);
--		return -EIO;
--	}
- 
- 	/*
- 	 * We need to know the type of the zone: for conventional zones,
-@@ -825,6 +814,17 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
- 		return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
- 	case BLK_ZONE_TYPE_SEQWRITE_REQ:
- 	case BLK_ZONE_TYPE_SEQWRITE_PREF:
-+		sector = SECTOR_FROM_BLOCK(blkstart);
-+		nr_sects = SECTOR_FROM_BLOCK(blklen);
+ 	mutex_lock(&dcc->cmd_lock);
 +
-+		if (sector & (bdev_zone_sectors(bdev) - 1) ||
-+				nr_sects != bdev_zone_sectors(bdev)) {
-+			f2fs_msg(sbi->sb, KERN_INFO,
-+				"(%d) %s: Unaligned discard attempted (block %x + %x)",
-+				devi, sbi->s_ndevs ? FDEV(devi).path: "",
-+				blkstart, blklen);
-+			return -EIO;
++	blk_start_plug(&plug);
++
+ 	list_for_each_entry_safe(dc, tmp, wait_list, list) {
+ 
+ 		if (blkaddr == NULL_ADDR) {
+@@ -686,9 +690,6 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 				submit_bio(dc->bio);
+ 				atomic_inc(&dcc->submit_discard);
+ 			}
+-			wait_for_completion_io(&dc->wait);
+-
+-			__remove_discard_cmd(sbi, dc);
+ 			continue;
+ 		}
+ 
+@@ -699,6 +700,15 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 				__remove_discard_cmd(sbi, dc);
+ 		}
+ 	}
++	blk_finish_plug(&plug);
++
++	/* this comes from f2fs_put_super */
++	if (blkaddr == NULL_ADDR) {
++		list_for_each_entry_safe(dc, tmp, wait_list, list) {
++			wait_for_completion_io(&dc->wait);
++			__remove_discard_cmd(sbi, dc);
 +		}
- 		trace_f2fs_issue_reset_zone(bdev, blkstart);
- 		return blkdev_reset_zones(bdev, sector,
- 					  nr_sects, GFP_NOFS);
++	}
+ 	mutex_unlock(&dcc->cmd_lock);
+ }
+ 
 -- 
 2.11.0
 
