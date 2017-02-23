@@ -1,26 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 2/5] f2fs: check last page index in cached
- bio to decide submission
-Date: Thu, 23 Feb 2017 14:13:21 +0800
-Message-ID: <6736a03b-1096-ec92-8ccb-eb9ae5e3ae78@huawei.com>
-References: <20170203234816.12723-1-jaegeuk@kernel.org>
-	<20170203234816.12723-2-jaegeuk@kernel.org>
+Subject: Re: [PATCH] vfs: hoist {XFS, EXT4}_IOC_{GOING,
+	SHUT}DOWN to the VFS
+Date: Thu, 23 Feb 2017 16:54:47 +0800
+Message-ID: <e8ce1e4a-3333-39d1-b9bd-1464512aa125@huawei.com>
+References: <20170223075230.GB5837@birch.djwong.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cgmf1-0005JS-HD
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cgpB4-0003r3-Qa
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 06:13:51 +0000
-Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cgmez-0005p5-VJ
+	Thu, 23 Feb 2017 08:55:06 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cgpB3-0008SU-UP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 23 Feb 2017 06:13:51 +0000
-In-Reply-To: <20170203234816.12723-2-jaegeuk@kernel.org>
+	Thu, 23 Feb 2017 08:55:06 +0000
+In-Reply-To: <20170223075230.GB5837@birch.djwong.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,15 +29,18 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/4 7:48, Jaegeuk Kim wrote:
-> If the cached bio has the last page's index, then we need to submit it.
-> Otherwise, we don't need to submit it and can wait for further IO merges.
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Hi Darrick,
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+On 2017/2/23 15:52, Darrick J. Wong wrote:
+> ext4 and XFS expose the same shutdown ioctl with the same parameters,
+> so let's hoist the whole mess into the vfs headers.
+
+Could you cover f2fs in this patch since f2fs has already supported SHUTDOWN ioctl?
+
+Thanks,
 
 
 ------------------------------------------------------------------------------
