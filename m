@@ -1,96 +1,49 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 3/3] f2fs: provide more chance for node and data to get
- ssr segment
-Date: Fri, 24 Feb 2017 18:47:37 +0800
-Message-ID: <3d5479f0-8b52-97df-707b-816d1a7a1a44@huawei.com>
-References: <1487767851-819-1-git-send-email-yunlong.song@huawei.com>
- <1487767851-819-3-git-send-email-yunlong.song@huawei.com>
- <20170223011754.GH4003@jaegeuk.local>
- <3d4b064b-817f-402f-3eb5-df3ec7c06b44@huawei.com>
- <58AFFA91.2030904@huawei.com>
+Subject: Re: [PATCH 1/3] f2fs: init local extent_info to avoid
+ stale stack info in tp
+Date: Fri, 24 Feb 2017 19:09:49 +0800
+Message-ID: <5f0e441d-af45-5cbd-fb04-da9b198c384e@huawei.com>
+References: <20170223091807.36175-1-houpengyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <58AFFA91.2030904@huawei.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: chao@kernel.org, sylinux@163.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1chDlI-0001Rb-F6
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 24 Feb 2017 11:10:08 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1chDlF-00082g-L5
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 24 Feb 2017 11:10:08 +0000
+In-Reply-To: <20170223091807.36175-1-houpengyang@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Hou Pengyang <houpengyang@huawei.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/24 17:19, Yunlong Song wrote:
-> Hi Jaegeuk and Chao,
+On 2017/2/23 17:18, Hou Pengyang wrote:
+> To avoid such stale(fops, blk, len) info in f2fs_lookup_extent_tree_end tp
 > 
->     How about the question I pointed out in last mail:
->     Why not take "neighboring temperature" for ssr? For example, if type == CURSEG_COLD_DATA,
->     the new patch selects CURSEG_HOT_DATA first, why not select CURSEG_WARM_DATA first?
->     The patch I sent ensure this "neighboring temperature" for ssr. This is to reduce the influence of
->     mixing different levels of hot/code node types.
+> dio-23095 [005] ...1 17878.856859: f2fs_lookup_extent_tree_end: 
+> 			dev = (259,30), ino = 856, pgofs = 0, 
+> 			ext_info(fofs: 3441207040, blk: 4294967232, len: 3481143808)
+> 
+> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
 
-Agreed, I sent one patch for changing the policy of SSR, how do you think of it?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Thanks,
 
-> 
-> On 2017/2/24 17:05, Chao Yu wrote:
->> Hi Jaegeuk,
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> For your attached two patches.
->>
->> Thanks,
->>
->> On 2017/2/23 9:17, Jaegeuk Kim wrote:
->>> Hi Yunlong,
->>>
->>> I've been testing the similar patches as I attached.
->>>
->>> Thanks,
->>>
->>> On 02/22, Yunlong Song wrote:
->>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>>> ---
->>>>  fs/f2fs/segment.c | 9 +++++++++
->>>>  1 file changed, 9 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>> index 9d13743..5fe71b9 100644
->>>> --- a/fs/f2fs/segment.c
->>>> +++ b/fs/f2fs/segment.c
->>>> @@ -1540,12 +1540,17 @@ static int get_ssr_segment(struct f2fs_sb_info *sbi, int type)
->>>>  {
->>>>  	struct curseg_info *curseg = CURSEG_I(sbi, type);
->>>>  	const struct victim_selection *v_ops = DIRTY_I(sbi)->v_ops;
->>>> +	int old_type = type;
->>>>  
->>>>  	if (IS_NODESEG(type)) {
->>>>  		for (; type >= CURSEG_HOT_NODE; type--)
->>>>  			if (v_ops->get_victim(sbi, &(curseg)->next_segno,
->>>>  							BG_GC, type, SSR))
->>>>  				return 1;
->>>> +		for (type = old_type + 1; type <= CURSEG_COLD_NODE; type++)
->>>> +			if (v_ops->get_victim(sbi, &(curseg)->next_segno,
->>>> +							BG_GC, type, SSR))
->>>> +				return 1;
->>>>  		return 0;
->>>>  	}
->>>>  
->>>> @@ -1554,6 +1559,10 @@ static int get_ssr_segment(struct f2fs_sb_info *sbi, int type)
->>>>  		if (v_ops->get_victim(sbi, &(curseg)->next_segno,
->>>>  						BG_GC, type, SSR))
->>>>  			return 1;
->>>> +	for (type = old_type + 1; type <= CURSEG_COLD_DATA; type++)
->>>> +		if (v_ops->get_victim(sbi, &(curseg)->next_segno,
->>>> +						BG_GC, type, SSR))
->>>> +			return 1;
->>>>  	return 0;
->>>>  }
->>>>  
->>>> -- 
->>>> 1.8.5.2
->>
->> .
->>
-> 
-> 
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
