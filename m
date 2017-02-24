@@ -1,104 +1,89 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: change the codes of checking CP_CRC_RECOVERY_FLAG
- to macro
-Date: Fri, 24 Feb 2017 19:11:56 +0800
-Message-ID: <58B014FC.6090308@huawei.com>
-References: <1487930771-14491-1-git-send-email-yunlong.song@huawei.com>
- <096f8d0b-774c-2065-db96-dde455a4ec53@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 2/3] f2fs: remove unsafe bitmap checking
+Date: Fri, 24 Feb 2017 19:12:47 +0800
+Message-ID: <9b4cf979-75be-752d-775c-9f76f00d5788@huawei.com>
+References: <20170223091807.36175-1-houpengyang@huawei.com>
+	<20170223091807.36175-2-houpengyang@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <096f8d0b-774c-2065-db96-dde455a4ec53@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org, cm224.lee@samsung.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com
-Cc: bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1chDo7-0005CG-SA
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 24 Feb 2017 11:13:03 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1chDo6-0008OC-K5
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 24 Feb 2017 11:13:03 +0000
+In-Reply-To: <20170223091807.36175-2-houpengyang@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Hou Pengyang <houpengyang@huawei.com>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-I think we do not need to care about the CP_CRC_RECOVERY_FLAG status of old image, I mean we
-do not need to check the already-been-written node footer in the image, what we care about is the
-on-going-to-write node footer, which is used for recovery.
+On 2017/2/23 17:18, Hou Pengyang wrote:
+> proc A:                      proc B:
+> - writeback_sb_inodes
+> - __writeback_single_inode   
+> - do_writepages
+> - f2fs_write_node_pages       
+> - f2fs_balance_fs_bg         - write_checkpoint
+> - build_free_nids            - flush_nat_entries
+> - __build_free_nids          - __flush_nat_entry_set
+> - ra_meta_pages              - get_next_nat_page
+> - current_nat_addr           - set_to_next_nat
+> [do nat_bitmap checking]     - f2fs_change_bit
 
-If  CP_CRC_RECOVERY_FLAG is defined, then __set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG); is
-executed in each do_checkpoint actually, and CP will have that flag for each on-going-to-write node footer.
-I think the recovery process only needs to use the on-going-to-write node rather than the already-been-written
-node in the old image. The  already-been-written node in the old image should not appear in the node
-chain of recovery process, right?
+Both flows were protected by nat_tree_lock, so we don't need to worry about such
+case?
 
-On 2017/2/24 18:29, Chao Yu wrote:
-> On 2017/2/24 18:06, Yunlong Song wrote:
->> No need to check the "if" condition each time, just change it to macro codes.
-> We're going to check flag in CP, not just in code of f2fs.
->
-> Thanks,
->
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>  fs/f2fs/node.h    | 20 ++++++++++----------
->>  fs/f2fs/segment.c |  5 +++--
->>  2 files changed, 13 insertions(+), 12 deletions(-)
->>
->> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
->> index 3fc9c4b..3e5a58b 100644
->> --- a/fs/f2fs/node.h
->> +++ b/fs/f2fs/node.h
->> @@ -303,11 +303,11 @@ static inline void fill_node_footer_blkaddr(struct page *page, block_t blkaddr)
->>  	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
->>  	__u64 cp_ver = le64_to_cpu(ckpt->checkpoint_ver);
->>  
->> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
->> -		__u64 crc = le32_to_cpu(*((__le32 *)
->> -				((unsigned char *)ckpt + crc_offset)));
->> -		cp_ver |= (crc << 32);
->> -	}
->> +#ifdef CP_CRC_RECOVERY_FLAG
->> +	__u64 crc = le32_to_cpu(*((__le32 *)
->> +			((unsigned char *)ckpt + crc_offset)));
->> +	cp_ver |= (crc << 32);
->> +#endif
->>  	rn->footer.cp_ver = cpu_to_le64(cp_ver);
->>  	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
->>  }
->> @@ -318,11 +318,11 @@ static inline bool is_recoverable_dnode(struct page *page)
->>  	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
->>  	__u64 cp_ver = cur_cp_version(ckpt);
->>  
->> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
->> -		__u64 crc = le32_to_cpu(*((__le32 *)
->> -				((unsigned char *)ckpt + crc_offset)));
->> -		cp_ver |= (crc << 32);
->> -	}
->> +#ifdef CP_CRC_RECOVERY_FLAG
->> +	__u64 crc = le32_to_cpu(*((__le32 *)
->> +			((unsigned char *)ckpt + crc_offset)));
->> +	cp_ver |= (crc << 32);
->> +#endif
->>  	return cp_ver == cpver_of_node(page);
->>  }
->>  
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 9eb6d89..6c2e1ee 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -1573,9 +1573,10 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
->>  {
->>  	if (force)
->>  		new_curseg(sbi, type, true);
->> -	else if (!is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) &&
->> -					type == CURSEG_WARM_NODE)
->> +#ifndef CP_CRC_RECOVERY_FLAG
->> +	else if (type == CURSEG_WARM_NODE)
->>  		new_curseg(sbi, type, false);
->> +#endif
->>  	else if (need_SSR(sbi) && get_ssr_segment(sbi, type))
->>  		change_curseg(sbi, type, true);
->>  	else
->>
->
-> .
->
-
-
--- 
 Thanks,
-Yunlong Song
+
+> 
+> For proc A, nat_bitmap and nat_bitmap_mir would be compared without lock_op and 
+> nm_i->nat_tree_lock, while proc B is changing nat_bitmap/nat_bitmap_ver in cp.
+> 
+> So it is normal for nat_bitmap/nat_bitmap diffrence under such scenario.
+> 
+> This patch fix this by removing the monitoring point.
+> 
+> [Fix: 599a09b f2fs: check in-memory nat version bitmap]
+> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+> ---
+>  fs/f2fs/node.h | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index d3d2893..3fc9c4b 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -209,12 +209,6 @@ static inline pgoff_t current_nat_addr(struct f2fs_sb_info *sbi, nid_t start)
+>  		(seg_off << sbi->log_blocks_per_seg << 1) +
+>  		(block_off & (sbi->blocks_per_seg - 1)));
+>  
+> -#ifdef CONFIG_F2FS_CHECK_FS
+> -	if (f2fs_test_bit(block_off, nm_i->nat_bitmap) !=
+> -			f2fs_test_bit(block_off, nm_i->nat_bitmap_mir))
+> -		f2fs_bug_on(sbi, 1);
+> -#endif
+> -
+>  	if (f2fs_test_bit(block_off, nm_i->nat_bitmap))
+>  		block_addr += sbi->blocks_per_seg;
+>  
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
