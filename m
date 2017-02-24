@@ -1,144 +1,89 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: change the codes of checking CP_CRC_RECOVERY_FLAG
- to macro
-Date: Fri, 24 Feb 2017 10:12:35 -0800
-Message-ID: <20170224181235.GC39009@jaegeuk.local>
-References: <1487930771-14491-1-git-send-email-yunlong.song@huawei.com>
- <096f8d0b-774c-2065-db96-dde455a4ec53@huawei.com>
- <58B014FC.6090308@huawei.com>
- <3e2f166f-e532-a04b-d8dd-6b21d7243bc4@huawei.com>
- <58B01FC0.8060901@huawei.com>
+Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
+ segment but no prefree at BG_GC -> FG_GC
+Date: Fri, 24 Feb 2017 10:49:59 -0800
+Message-ID: <20170224184959.GD39009@jaegeuk.local>
+References: <20170224204357.220337-1-guoweichao@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1chKwT-0006vY-So
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 24 Feb 2017 18:50:09 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1chKwR-0003Qt-QC
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Fri, 24 Feb 2017 18:50:09 +0000
 Content-Disposition: inline
-In-Reply-To: <58B01FC0.8060901@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>
-Cc: Chao Yu <yuchao0@huawei.com>, cm224.lee@samsung.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <20170224204357.220337-1-guoweichao@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Weichao Guo <guoweichao@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 02/24, Yunlong Song wrote:
-> On 2017/2/24 19:37, Chao Yu wrote:
-> > On 2017/2/24 19:11, Yunlong Song wrote:
-> >> I think we do not need to care about the CP_CRC_RECOVERY_FLAG status of old image, I mean we
-> >> do not need to check the already-been-written node footer in the image, what we care about is the
-> >> on-going-to-write node footer, which is used for recovery.
-> >>
-> >> If  CP_CRC_RECOVERY_FLAG is defined, then __set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG); is
-> >> executed in each do_checkpoint actually, and CP will have that flag for each on-going-to-write node footer.
-> >> I think the recovery process only needs to use the on-going-to-write node rather than the already-been-written
-> >> node in the old image. The  already-been-written node in the old image should not appear in the node
-> >> chain of recovery process, right?
-> > Previously, we changed the disk layout of footer in node block, and then we
-> > applied new verifying approach which has better reliability in order to avoid
-> > chaining garbage node block.
-> >
-> > In order to distinguish old disk layout and the new one, we introduce
-> > CP_CRC_RECOVERY_FLAG, once a CP is triggered, we will tag current CP with the
-> > flag, and use new disk layout and new verifying approach for the following node
-> > block updating flow and abnormal power-cut recovery flow.
-> >
-> > For old image which has no CP_CRC_RECOVERY_FLAG flag been set, f2fs needs to use
-> > old disk layout and old verifying approach during recovery for the
-> > compatibility. So that's why we need to check the flag in CP here.
-> 
-> For the old disk layout, because we still use new approach to set CP_CRC_RECOVERY_FLAG in the node footer in each do_checkpoint,
-> then I think f2fs should also use new verifying approach during recovery rather than old verifying approach. What is the problem if
-> we do like this?
+Hi Weichao,
 
-This is to handle only one case in which:
+On 02/25, Weichao Guo wrote:
+> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
+> * a) BG_GC have made some progress, e.g.: some prefree segments.
+> * b) There is no victim and no prefree segment.
 
-1. uses old kernel without this flag,
-2. calls fsync and gets sudden power-cut,
-3. updates new kernel having this flag before mount.
+You missed
+  * c) has_not_enough_free_secs() introduced by
+      6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
 
-Then, if we do not check this flag at mount time, we will lose the last fsync'ed
-node blocks.
+And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
+mostly due to c) condition.
 
 Thanks,
 
 > 
-> > Thanks,
-> >
-> >> On 2017/2/24 18:29, Chao Yu wrote:
-> >>> On 2017/2/24 18:06, Yunlong Song wrote:
-> >>>> No need to check the "if" condition each time, just change it to macro codes.
-> >>> We're going to check flag in CP, not just in code of f2fs.
-> >>>
-> >>> Thanks,
-> >>>
-> >>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> >>>> ---
-> >>>>  fs/f2fs/node.h    | 20 ++++++++++----------
-> >>>>  fs/f2fs/segment.c |  5 +++--
-> >>>>  2 files changed, 13 insertions(+), 12 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-> >>>> index 3fc9c4b..3e5a58b 100644
-> >>>> --- a/fs/f2fs/node.h
-> >>>> +++ b/fs/f2fs/node.h
-> >>>> @@ -303,11 +303,11 @@ static inline void fill_node_footer_blkaddr(struct page *page, block_t blkaddr)
-> >>>>  	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
-> >>>>  	__u64 cp_ver = le64_to_cpu(ckpt->checkpoint_ver);
-> >>>>  
-> >>>> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
-> >>>> -		__u64 crc = le32_to_cpu(*((__le32 *)
-> >>>> -				((unsigned char *)ckpt + crc_offset)));
-> >>>> -		cp_ver |= (crc << 32);
-> >>>> -	}
-> >>>> +#ifdef CP_CRC_RECOVERY_FLAG
-> >>>> +	__u64 crc = le32_to_cpu(*((__le32 *)
-> >>>> +			((unsigned char *)ckpt + crc_offset)));
-> >>>> +	cp_ver |= (crc << 32);
-> >>>> +#endif
-> >>>>  	rn->footer.cp_ver = cpu_to_le64(cp_ver);
-> >>>>  	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
-> >>>>  }
-> >>>> @@ -318,11 +318,11 @@ static inline bool is_recoverable_dnode(struct page *page)
-> >>>>  	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
-> >>>>  	__u64 cp_ver = cur_cp_version(ckpt);
-> >>>>  
-> >>>> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
-> >>>> -		__u64 crc = le32_to_cpu(*((__le32 *)
-> >>>> -				((unsigned char *)ckpt + crc_offset)));
-> >>>> -		cp_ver |= (crc << 32);
-> >>>> -	}
-> >>>> +#ifdef CP_CRC_RECOVERY_FLAG
-> >>>> +	__u64 crc = le32_to_cpu(*((__le32 *)
-> >>>> +			((unsigned char *)ckpt + crc_offset)));
-> >>>> +	cp_ver |= (crc << 32);
-> >>>> +#endif
-> >>>>  	return cp_ver == cpver_of_node(page);
-> >>>>  }
-> >>>>  
-> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>> index 9eb6d89..6c2e1ee 100644
-> >>>> --- a/fs/f2fs/segment.c
-> >>>> +++ b/fs/f2fs/segment.c
-> >>>> @@ -1573,9 +1573,10 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
-> >>>>  {
-> >>>>  	if (force)
-> >>>>  		new_curseg(sbi, type, true);
-> >>>> -	else if (!is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) &&
-> >>>> -					type == CURSEG_WARM_NODE)
-> >>>> +#ifndef CP_CRC_RECOVERY_FLAG
-> >>>> +	else if (type == CURSEG_WARM_NODE)
-> >>>>  		new_curseg(sbi, type, false);
-> >>>> +#endif
-> >>>>  	else if (need_SSR(sbi) && get_ssr_segment(sbi, type))
-> >>>>  		change_curseg(sbi, type, true);
-> >>>>  	else
-> >>>>
-> >>> .
-> >>>
-> >>
-> >
-> > .
-> >
+> For case a), previously, we also check if there is a dirty segment for
+> infering blocks moving in last BG_GC. But dirty segments do not always
+> indicate that, BG_GC may just start and do not move any blocks at all.
+> Futhermore, skipping checkpoint if there are some dirty segments but no
+> prefree segments is OK.
+
+
 > 
+> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> ---
+>  fs/f2fs/gc.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 6c996e3..30d206a 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+>  		 * enough free sections, we should flush dent/node blocks and do
+>  		 * garbage collections.
+>  		 */
+> -		ret = write_checkpoint(sbi, &cpc);
+> +		if (prefree_segments(sbi))
+> +			ret = write_checkpoint(sbi, &cpc);
+> +		else if (!__get_victim(sbi, &segno, gc_type) {
+> +			segno = NULL_SEGNO;
+> +			ret = write_checkpoint(sbi, &cpc);
+> +		}
+>  		if (ret)
+>  			goto stop;
+>  	} else if (gc_type == BG_GC && !background) {
 > -- 
-> Thanks,
-> Yunlong Song
-> 
+> 2.10.1
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
