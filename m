@@ -1,26 +1,28 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
- segment but no prefree at BG_GC -> FG_GC
-Date: Fri, 24 Feb 2017 10:49:59 -0800
-Message-ID: <20170224184959.GD39009@jaegeuk.local>
-References: <20170224204357.220337-1-guoweichao@huawei.com>
+Subject: Re: [PATCH] f2fs: no need lock_op in
+ f2fs_write_inline_data
+Date: Fri, 24 Feb 2017 11:58:37 -0800
+Message-ID: <20170224195837.GE39009@jaegeuk.local>
+References: <20170223123120.18842-1-heyunlei@huawei.com>
+	<20170223194529.GE2026@jaegeuk.local>
+	<0e037d54-9f45-d38b-da91-b5765fa83a62@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1chKwT-0006vY-So
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1chM0s-00022x-OM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 24 Feb 2017 18:50:09 +0000
+	Fri, 24 Feb 2017 19:58:46 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1chKwR-0003Qt-QC
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1chM0r-00042E-H2
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Fri, 24 Feb 2017 18:50:09 +0000
+	Fri, 24 Feb 2017 19:58:46 +0000
 Content-Disposition: inline
-In-Reply-To: <20170224204357.220337-1-guoweichao@huawei.com>
+In-Reply-To: <0e037d54-9f45-d38b-da91-b5765fa83a62@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,59 +32,55 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Weichao Guo <guoweichao@huawei.com>
+To: heyunlei <heyunlei@huawei.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Weichao,
-
-On 02/25, Weichao Guo wrote:
-> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
-> * a) BG_GC have made some progress, e.g.: some prefree segments.
-> * b) There is no victim and no prefree segment.
-
-You missed
-  * c) has_not_enough_free_secs() introduced by
-      6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
-
-And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
-mostly due to c) condition.
-
-Thanks,
-
+On 02/24, heyunlei wrote:
+> Hi Jaegeuk,
 > 
-> For case a), previously, we also check if there is a dirty segment for
-> infering blocks moving in last BG_GC. But dirty segments do not always
-> indicate that, BG_GC may just start and do not move any blocks at all.
-> Futhermore, skipping checkpoint if there are some dirty segments but no
-> prefree segments is OK.
+> 	Can you explain more about this? Besides, how about inplace update?
 
+Oh, sorry. I confused it was the inline_data conversion. ;)
+Yup, we can avoid entire f2fs_lock_op like this. And we can avoid IPU as well,
+but it's quite difficult to detect that.
 
-> 
-> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-> ---
->  fs/f2fs/gc.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 6c996e3..30d206a 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
->  		 * enough free sections, we should flush dent/node blocks and do
->  		 * garbage collections.
->  		 */
-> -		ret = write_checkpoint(sbi, &cpc);
-> +		if (prefree_segments(sbi))
-> +			ret = write_checkpoint(sbi, &cpc);
-> +		else if (!__get_victim(sbi, &segno, gc_type) {
-> +			segno = NULL_SEGNO;
-> +			ret = write_checkpoint(sbi, &cpc);
-> +		}
->  		if (ret)
->  			goto stop;
->  	} else if (gc_type == BG_GC && !background) {
-> -- 
-> 2.10.1
+>From 146e4c1ca458b1e33bf7f658f8796a8763e67a4e Mon Sep 17 00:00:00 2001
+From: Yunlei He <heyunlei@huawei.com>
+Date: Thu, 23 Feb 2017 20:31:20 +0800
+Subject: [PATCH] f2fs: no need lock_op in f2fs_write_inline_data
+
+Similar as f2fs_write_inode, f2fs_write_inline_data just
+mark inode page dirty, so it's no need to write inline data
+under read lock of cp_rwsem.
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 80f9863dc4b0..9e51c5e40ce1 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1414,9 +1414,12 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 		goto redirty_out;
+ 
+ 	err = -EAGAIN;
+-	f2fs_lock_op(sbi);
+-	if (f2fs_has_inline_data(inode))
++	if (f2fs_has_inline_data(inode)) {
+ 		err = f2fs_write_inline_data(inode, page);
++		if (!err)
++			goto out;
++	}
++	f2fs_lock_op(sbi);
+ 	if (err == -EAGAIN)
+ 		err = do_write_data_page(&fio);
+ 	if (F2FS_I(inode)->last_disk_size < psize)
+-- 
+2.11.0
+
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
