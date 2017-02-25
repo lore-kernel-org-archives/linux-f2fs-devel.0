@@ -1,26 +1,29 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH V2] f2fs: introduce free nid bitmap
-Date: Sat, 25 Feb 2017 11:02:55 -0800
-Message-ID: <20170225190255.GD51627@jaegeuk.local>
-References: <20170223025349.104160-1-yuchao0@huawei.com>
-	<c13a289e-5d46-70f3-5f49-eb88864bfa3d@huawei.com>
+Subject: Re: [PATCH] f2fs: avoid unnecessary fg_gc
+Date: Sat, 25 Feb 2017 11:39:59 -0800
+Message-ID: <20170225193959.GE51627@jaegeuk.local>
+References: <20170224100135.70000-1-houpengyang@huawei.com>
+	<0486c0d4-541c-ee21-c598-6656a291a274@huawei.com>
+	<58B0E17C.1030306@huawei.com>
+	<20170225020733.GB50867@jaegeuk.local>
+	<ce5a4256-9275-eb89-e188-f5f200b8f77c@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1chhcW-0005zo-6J
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1chiCQ-0004HJ-3G
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 19:03:04 +0000
+	Sat, 25 Feb 2017 19:40:10 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1chhcU-0003sV-Ty
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1chiCP-0002aN-3R
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 19:03:04 +0000
+	Sat, 25 Feb 2017 19:40:10 +0000
 Content-Disposition: inline
-In-Reply-To: <c13a289e-5d46-70f3-5f49-eb88864bfa3d@huawei.com>
+In-Reply-To: <ce5a4256-9275-eb89-e188-f5f200b8f77c@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,88 +33,81 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: heyunlei <heyunlei@huawei.com>
+Cc: guoweichao@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 02/25, Chao Yu wrote:
-> Hi Jaegeuk,
+On 02/25, heyunlei wrote:
+> Hi all,
 > 
-> I added below diff code into this patch in order to fix incorrectly nid status
-> updating to reduce large latency of generic/251 in fstest, could you help to
-> review code below?
+> I am really confused by the condition below use sec_freed, is it always equal to zero?
 
-Understand the problem, and how about this?
+Seems it is always zero. Let's fix it together.
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 52db02396878..83b305689913 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1765,7 +1765,7 @@ static void __remove_nid_from_list(struct f2fs_sb_info *sbi,
- 		radix_tree_delete(&nm_i->free_nid_root, i->nid);
- }
- 
--static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
-+static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct free_nid *i;
-@@ -1774,14 +1774,14 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
- 
- 	/* 0 nid should not be used */
- 	if (unlikely(nid == 0))
--		return 0;
-+		return false;
- 
- 	if (build) {
- 		/* do not add allocated nids */
- 		ne = __lookup_nat_cache(nm_i, nid);
- 		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
- 				nat_get_blkaddr(ne) != NULL_ADDR))
--			return 0;
-+			return false;
+Pengyang,
+
+I merged your patches and finally got this.
+How do you think?
+
+>From d1c2206e4f245a8fedec3a8f21ad522b3b1b2d0c Mon Sep 17 00:00:00 2001
+From: Hou Pengyang <houpengyang@huawei.com>
+Date: Sat, 25 Feb 2017 03:57:38 +0000
+Subject: [PATCH] f2fs: avoid bggc->fggc when enough free segments are
+ avaliable after cp
+
+We use has_not_enough_free_secs to check if there are enough free segments,
+
+    	(free_sections(sbi) + freed) <=
+	        (node_secs + 2 * dent_secs + imeta_secs +
+			         reserved_sections(sbi) + needed);
+
+Under scenario with large number of dirty nodes, these nodes would be flushed
+during cp, as a result, right side of the inequality would be decreased, while
+left side stays unchanged if these nodes are flushed in SSR way, which means
+there are enough free segments after this cp.
+
+For this case, we just do a bggc instead of fggc.
+
+Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/gc.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 1af17c5af603..471ed899f639 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -954,21 +954,22 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+ 		goto stop;
  	}
  
- 	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
-@@ -1790,7 +1790,7 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
- 
- 	if (radix_tree_preload(GFP_NOFS)) {
- 		kmem_cache_free(free_nid_slab, i);
--		return 0;
-+		return false;
+-	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, sec_freed, 0)) {
+-		gc_type = FG_GC;
++	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0)) {
+ 		/*
+-		 * If there is no victim and no prefree segment but still not
+-		 * enough free sections, we should flush dent/node blocks and do
+-		 * garbage collections.
++		 * For example, if there are many prefree_segments below given
++		 * threshold, we can make them free by checkpoint. Then, we
++		 * secure free segments which doesn't need fggc any more.
+ 		 */
+ 		ret = write_checkpoint(sbi, &cpc);
+ 		if (ret)
+ 			goto stop;
+-	} else if (gc_type == BG_GC && !background) {
+-		/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
+-		goto stop;
++		if (has_not_enough_free_secs(sbi, 0, 0))
++			gc_type = FG_GC;
  	}
  
- 	spin_lock(&nm_i->nid_list_lock);
-@@ -1799,9 +1799,9 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
- 	radix_tree_preload_end();
- 	if (err) {
- 		kmem_cache_free(free_nid_slab, i);
--		return 0;
-+		return false;
- 	}
--	return 1;
-+	return true;
- }
- 
- static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
-@@ -1851,6 +1851,7 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
- 	i = start_nid % NAT_ENTRY_PER_BLOCK;
- 
- 	for (; i < NAT_ENTRY_PER_BLOCK; i++, start_nid++) {
-+		bool freed = false;
- 
- 		if (unlikely(start_nid >= nm_i->max_nid))
- 			break;
-@@ -1858,8 +1859,8 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
- 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
- 		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
- 		if (blk_addr == NULL_ADDR)
--			add_free_nid(sbi, start_nid, true);
--		update_free_nid_bitmap(sbi, start_nid, blk_addr == NULL_ADDR);
-+			freed = add_free_nid(sbi, start_nid, true);
-+		update_free_nid_bitmap(sbi, start_nid, freed);
- 	}
- }
- 
++	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
++	if (gc_type == BG_GC && !background)
++		goto stop;
+ 	if (!__get_victim(sbi, &segno, gc_type))
+ 		goto stop;
+ 	ret = 0;
 -- 
 2.11.0
 
