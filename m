@@ -1,26 +1,31 @@
-From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH] f2fs: new helper cur_cp_crc() getting crc in
-	f2fs_checkpoint
-Date: Sat, 25 Feb 2017 19:53:39 +0800
-Message-ID: <d042bff5-e707-d4e6-1bbf-429762d0a55a@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/3] f2fs: remove unsafe bitmap checking
+Date: Sat, 25 Feb 2017 10:11:10 -0800
+Message-ID: <20170225181110.GA51627@jaegeuk.local>
+References: <20170223091807.36175-1-houpengyang@huawei.com>
+	<20170223091807.36175-2-houpengyang@huawei.com>
+	<9b4cf979-75be-752d-775c-9f76f00d5788@huawei.com>
+	<20170224174541.GA39009@jaegeuk.local>
+	<695216f1-85e9-7c0e-fb1a-e53c04e113da@huawei.com>
+	<20170225020350.GA50867@jaegeuk.local>
+	<2b0358eb-988e-8c9e-a349-236199542598@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1chavO-0005V4-Dk
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1chgoV-0000Oc-2w
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 11:54:06 +0000
-Received: from mail-io0-f196.google.com ([209.85.223.196])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1chavN-0006f8-IO
+	Sat, 25 Feb 2017 18:11:23 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1chgoT-0008PZ-Qm
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 11:54:06 +0000
-Received: by mail-io0-f196.google.com with SMTP id w10so1324298iod.3
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 25 Feb 2017 03:54:05 -0800 (PST)
+	Sat, 25 Feb 2017 18:11:23 +0000
+Content-Disposition: inline
+In-Reply-To: <2b0358eb-988e-8c9e-a349-236199542598@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,118 +35,148 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-There are four places that getting the crc value in f2fs_checkpoint,
-just add a new helper cur_cp_crc for them.
+On 02/25, Chao Yu wrote:
+> On 2017/2/25 10:03, Jaegeuk Kim wrote:
+> > On 02/25, Chao Yu wrote:
+> >> On 2017/2/25 1:45, Jaegeuk Kim wrote:
+> >>> On 02/24, Chao Yu wrote:
+> >>>> On 2017/2/23 17:18, Hou Pengyang wrote:
+> >>>>> proc A:                      proc B:
+> >>>>> - writeback_sb_inodes
+> >>>>> - __writeback_single_inode   
+> >>>>> - do_writepages
+> >>>>> - f2fs_write_node_pages       
+> >>>>> - f2fs_balance_fs_bg         - write_checkpoint
+> >>>>> - build_free_nids            - flush_nat_entries
+> >>>>> - __build_free_nids          - __flush_nat_entry_set
+> >>>>> - ra_meta_pages              - get_next_nat_page
+> >>>>> - current_nat_addr           - set_to_next_nat
+> >>>>> [do nat_bitmap checking]     - f2fs_change_bit
+> >>>>
+> >>>> Both flows were protected by nat_tree_lock, so we don't need to worry about such
+> >>>> case?
+> >>>
+> >>> The nat_tree_lock doesn't cover ra_meta_pages in proc A.
+> >>
+> >> Can we cover ra_meta_pages in __build_free_nid with nat_tree_lock?
+> > 
+> > I don't think we need to do this only for the consistency check.
+> 
+> For improving efficiency of NAT block readahead, otherwise we will wast IO for
+> wrong NAT block in race condition.
 
-Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
----
- fs/f2fs/checkpoint.c |  3 +--
- fs/f2fs/f2fs.h       |  6 ++++++
- fs/f2fs/node.c       |  5 +----
- fs/f2fs/node.h       | 20 +++++++-------------
- 4 files changed, 15 insertions(+), 19 deletions(-)
+That should be an another topic about the hit ratio of all the ra_meta_pages()
+not limited nat pages here.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index cd71321..37a216b 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -682,8 +682,7 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
- 		return -EINVAL;
- 	}
- 
--	crc = le32_to_cpu(*((__le32 *)((unsigned char *)*cp_block
--							+ crc_offset)));
-+	crc = cur_cp_crc(*cp_block);
- 	if (!f2fs_crc_valid(sbi, crc, *cp_block, crc_offset)) {
- 		f2fs_msg(sbi->sb, KERN_WARNING, "invalid crc value");
- 		return -EINVAL;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8b6d496..79da17e 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1135,6 +1135,12 @@ static inline unsigned long long cur_cp_version(struct f2fs_checkpoint *cp)
- 	return le64_to_cpu(cp->checkpoint_ver);
- }
- 
-+static inline __u64 cur_cp_crc(struct f2fs_checkpoint *cp)
-+{
-+	size_t crc_offset = le32_to_cpu(cp->checksum_offset);
-+	return le32_to_cpu(*((__le32 *)((unsigned char *)cp + crc_offset)));
-+}
-+
- static inline bool __is_set_ckpt_flags(struct f2fs_checkpoint *cp, unsigned int f)
- {
- 	unsigned int ckpt_flags = le32_to_cpu(cp->ckpt_flags);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 8190329..1876288 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2540,9 +2540,6 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 	unsigned int nat_bits_bytes = nm_i->nat_blocks / BITS_PER_BYTE;
- 	unsigned int i;
- 	__u64 cp_ver = cur_cp_version(ckpt);
--	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
--	__u64 crc = le32_to_cpu(*((__le32 *)
--				((unsigned char *)ckpt + crc_offset)));
- 	block_t nat_bits_addr;
- 
- 	if (!enabled_nat_bits(sbi, NULL))
-@@ -2565,7 +2562,7 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 		f2fs_put_page(page, 1);
- 	}
- 
--	cp_ver |= (crc << 32);
-+	cp_ver |= (cur_cp_crc(ckpt) << 32);
- 	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
- 		disable_nat_bits(sbi, true);
- 		return 0;
-diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-index 3fc9c4b..2f9603f 100644
---- a/fs/f2fs/node.h
-+++ b/fs/f2fs/node.h
-@@ -300,14 +300,11 @@ static inline void fill_node_footer_blkaddr(struct page *page, block_t blkaddr)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(F2FS_P_SB(page));
- 	struct f2fs_node *rn = F2FS_NODE(page);
--	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
--	__u64 cp_ver = le64_to_cpu(ckpt->checkpoint_ver);
-+	__u64 cp_ver = cur_cp_version(ckpt);
-+
-+	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
-+		cp_ver |= (cur_cp_crc(ckpt) << 32);
- 
--	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
--		__u64 crc = le32_to_cpu(*((__le32 *)
--				((unsigned char *)ckpt + crc_offset)));
--		cp_ver |= (crc << 32);
--	}
- 	rn->footer.cp_ver = cpu_to_le64(cp_ver);
- 	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
- }
-@@ -315,14 +312,11 @@ static inline void fill_node_footer_blkaddr(struct page *page, block_t blkaddr)
- static inline bool is_recoverable_dnode(struct page *page)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(F2FS_P_SB(page));
--	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
- 	__u64 cp_ver = cur_cp_version(ckpt);
- 
--	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
--		__u64 crc = le32_to_cpu(*((__le32 *)
--				((unsigned char *)ckpt + crc_offset)));
--		cp_ver |= (crc << 32);
--	}
-+	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
-+		cp_ver |= (cur_cp_crc(ckpt) << 32);
-+
- 	return cp_ver == cpver_of_node(page);
- }
- 
--- 
-2.9.3
+Thanks,
 
+> 
+> Thanks,
+> 
+> > 
+> > Thanks,
+> > 
+> >>
+> >> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> >> index 819032961218..17ae737a958d 100644
+> >> --- a/fs/f2fs/node.c
+> >> +++ b/fs/f2fs/node.c
+> >> @@ -1997,12 +1997,12 @@ static void __build_free_nids(struct f2fs_sb_info *sbi,
+> >> bool sync, bool mount)
+> >>                         nid = idx * NAT_ENTRY_PER_BLOCK;
+> >>         }
+> >>
+> >> +       down_read(&nm_i->nat_tree_lock);
+> >> +
+> >>         /* readahead nat pages to be scanned */
+> >>         ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
+> >>                                                         META_NAT, true);
+> >>
+> >> -       down_read(&nm_i->nat_tree_lock);
+> >> -
+> >>         while (1) {
+> >>                 struct page *page = get_current_nat_page(sbi, nid);
+> >>
+> >> @@ -2033,10 +2033,10 @@ static void __build_free_nids(struct f2fs_sb_info *sbi,
+> >> bool sync, bool mount)
+> >>                         remove_free_nid(sbi, nid);
+> >>         }
+> >>         up_read(&curseg->journal_rwsem);
+> >> -       up_read(&nm_i->nat_tree_lock);
+> >>
+> >>         ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+> >>                                         nm_i->ra_nid_pages, META_NAT, false);
+> >> +       up_read(&nm_i->nat_tree_lock);
+> >>  }
+> >>
+> >>  void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+> >>
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>>>
+> >>>>> For proc A, nat_bitmap and nat_bitmap_mir would be compared without lock_op and 
+> >>>>> nm_i->nat_tree_lock, while proc B is changing nat_bitmap/nat_bitmap_ver in cp.
+> >>>>>
+> >>>>> So it is normal for nat_bitmap/nat_bitmap diffrence under such scenario.
+> >>>>>
+> >>>>> This patch fix this by removing the monitoring point.
+> >>>>>
+> >>>>> [Fix: 599a09b f2fs: check in-memory nat version bitmap]
+> >>>>> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+> >>>>> ---
+> >>>>>  fs/f2fs/node.h | 6 ------
+> >>>>>  1 file changed, 6 deletions(-)
+> >>>>>
+> >>>>> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> >>>>> index d3d2893..3fc9c4b 100644
+> >>>>> --- a/fs/f2fs/node.h
+> >>>>> +++ b/fs/f2fs/node.h
+> >>>>> @@ -209,12 +209,6 @@ static inline pgoff_t current_nat_addr(struct f2fs_sb_info *sbi, nid_t start)
+> >>>>>  		(seg_off << sbi->log_blocks_per_seg << 1) +
+> >>>>>  		(block_off & (sbi->blocks_per_seg - 1)));
+> >>>>>  
+> >>>>> -#ifdef CONFIG_F2FS_CHECK_FS
+> >>>>> -	if (f2fs_test_bit(block_off, nm_i->nat_bitmap) !=
+> >>>>> -			f2fs_test_bit(block_off, nm_i->nat_bitmap_mir))
+> >>>>> -		f2fs_bug_on(sbi, 1);
+> >>>>> -#endif
+> >>>>> -
+> >>>>>  	if (f2fs_test_bit(block_off, nm_i->nat_bitmap))
+> >>>>>  		block_addr += sbi->blocks_per_seg;
+> >>>>>  
+> >>>>>
+> >>>>
+> >>>>
+> >>>> ------------------------------------------------------------------------------
+> >>>> Check out the vibrant tech community on one of the world's most
+> >>>> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+> >>>> _______________________________________________
+> >>>> Linux-f2fs-devel mailing list
+> >>>> Linux-f2fs-devel@lists.sourceforge.net
+> >>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
