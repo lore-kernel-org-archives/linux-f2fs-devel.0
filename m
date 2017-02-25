@@ -1,26 +1,26 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH 2/3] f2fs: drop the duplicate pval in
-	f2fs_getxattr
-Date: Sat, 25 Feb 2017 19:23:40 +0800
-Message-ID: <3c7eac62-9873-b7fd-17e6-0bd592442130@gmail.com>
+Subject: [PATCH 3/3] f2fs: drop calling alloc_nid_failed when no
+ nid is allocated
+Date: Sat, 25 Feb 2017 19:23:46 +0800
+Message-ID: <77d8220f-8cf4-0af4-3390-cd28fbeb6437@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1chaS6-0004Jx-GC
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1chaSE-0004pX-8m
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 11:23:50 +0000
+	Sat, 25 Feb 2017 11:23:58 +0000
 Received: from mail-it0-f66.google.com ([209.85.214.66])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1chaS5-0002Zv-PW
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1chaSD-0003q0-Jk
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 11:23:50 +0000
-Received: by mail-it0-f66.google.com with SMTP id 203so6798501ith.2
+	Sat, 25 Feb 2017 11:23:58 +0000
+Received: by mail-it0-f66.google.com with SMTP id e137so6851764itc.0
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 25 Feb 2017 03:23:49 -0800 (PST)
+	Sat, 25 Feb 2017 03:23:57 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,33 +33,48 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Fixes: ba38c27eb9 ("f2fs: enhance lookup xattr")
+If hsize is less than or equal to inlien_size, and i_xattr_nid is valid, 
+the new_nid is not allocated (no alloc_nid is called).
+
+       if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
+                if (!alloc_nid(sbi, &new_nid))
+                        return -ENOSPC;
+
+Although it's harmless calling alloc_nid_failed, it's better drop them.
+
 Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- fs/f2fs/xattr.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/f2fs/xattr.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index dbfd5cb..7298a44 100644
+index 7298a44..fd9dc99 100644
 --- a/fs/f2fs/xattr.c
 +++ b/fs/f2fs/xattr.c
-@@ -467,7 +467,6 @@ int f2fs_getxattr(struct inode *inode, int index, const char *name,
- 	struct f2fs_xattr_entry *entry = NULL;
- 	int error = 0;
- 	unsigned int size, len;
--	char *pval;
- 	void *base_addr = NULL;
- 
- 	if (name == NULL)
-@@ -489,8 +488,6 @@ int f2fs_getxattr(struct inode *inode, int index, const char *name,
- 		goto out;
+@@ -428,19 +428,18 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+ 		/* no need to use xattr node block */
+ 		if (hsize <= inline_size) {
+ 			err = truncate_xattr_node(inode, ipage);
+-			alloc_nid_failed(sbi, new_nid);
++			f2fs_bug_on(sbi, new_nid);
+ 			return err;
+ 		}
  	}
  
--	pval = entry->e_name + entry->e_name_len;
--
- 	if (buffer) {
- 		char *pval = entry->e_name + entry->e_name_len;
- 		memcpy(buffer, pval, size);
+ 	/* write to xattr node block */
+ 	if (F2FS_I(inode)->i_xattr_nid) {
++		f2fs_bug_on(sbi, new_nid);
+ 		xpage = get_node_page(sbi, F2FS_I(inode)->i_xattr_nid);
+-		if (IS_ERR(xpage)) {
+-			alloc_nid_failed(sbi, new_nid);
++		if (IS_ERR(xpage))
+ 			return PTR_ERR(xpage);
+-		}
+-		f2fs_bug_on(sbi, new_nid);
++
+ 		f2fs_wait_on_page_writeback(xpage, NODE, true);
+ 	} else {
+ 		struct dnode_of_data dn;
 -- 
 2.9.3
 
