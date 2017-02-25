@@ -1,25 +1,29 @@
-From: Hou Pengyang <houpengyang@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid unnecessary fg_gc
-Date: Sat, 25 Feb 2017 09:44:28 +0800
-Message-ID: <58B0E17C.1030306@huawei.com>
-References: <20170224100135.70000-1-houpengyang@huawei.com>
-	<0486c0d4-541c-ee21-c598-6656a291a274@huawei.com>
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: no need lock_op in
+ f2fs_write_inline_data
+Date: Sat, 25 Feb 2017 09:58:58 +0800
+Message-ID: <1eeed01e-f9f9-1406-cadb-eaf7938b8fa2@huawei.com>
+References: <20170223123120.18842-1-heyunlei@huawei.com>
+	<20170223194529.GE2026@jaegeuk.local>
+	<0e037d54-9f45-d38b-da91-b5765fa83a62@huawei.com>
+	<20170224195837.GE39009@jaegeuk.local>
+	<ffdfdb1c-4a33-2d81-7776-2fd001cc85ec@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1chRPy-0005Lh-IC
+	(envelope-from <heyunlei@huawei.com>) id 1chRfD-0005sm-GQ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 01:45:02 +0000
-Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1chRPx-0004ig-0n
+	Sat, 25 Feb 2017 02:00:47 +0000
+Received: from [45.249.212.191] (helo=dggrg05-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1chRfB-0005JM-TE
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 01:45:02 +0000
-In-Reply-To: <0486c0d4-541c-ee21-c598-6656a291a274@huawei.com>
+	Sat, 25 Feb 2017 02:00:47 +0000
+In-Reply-To: <ffdfdb1c-4a33-2d81-7776-2fd001cc85ec@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,52 +33,30 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: guoweichao@huawei.com, jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/24 18:28, Chao Yu wrote:
-> On 2017/2/24 18:01, Hou Pengyang wrote:
->> Under scenerio with large number of dirty nodes, and these nodes are flushed
->> in SSR mode during cp. enough free segemts now, no need to do fggc.
->
-> We'd better break out of GC flow once we encounter cp error, so additional
-> condition judgment is not needed.
->
+Hi Chao,
+	Can we add below to avoid this case?
 
-In (ret || !has_not_enough_free_secs(sbi, sec_freed, 0)),
-if cp return error(NOT zero), flow will goto stop directly without 
-has_not_enough_free_secs checking;
-if cp return ok(zero), has_not_enough_free_secs would be checked.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 80f9863..c4f3db0 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1695,6 +1695,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
 
-Thanks,
+         if (f2fs_has_inline_data(inode)) {
+                 if (pos + len <= MAX_INLINE_DATA) {
++                       dn.node_changed = true;
+                         read_inline_data(page, ipage);
+                         set_inode_flag(inode, FI_DATA_EXIST);
+                         if (inode->i_nlink)
 
-> Thanks,
->
->>
->> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
->> ---
->>   fs/f2fs/gc.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index 6c996e3..41bdfb7 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -959,7 +959,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
->>   		 * garbage collections.
->>   		 */
->>   		ret = write_checkpoint(sbi, &cpc);
->> -		if (ret)
->> +		if (ret || !has_not_enough_free_secs(sbi, sec_freed, 0))
->>   			goto stop;
->>   	} else if (gc_type == BG_GC && !background) {
->>   		/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
->>
->
->
-> .
->
+Thanks.
 
+On 2017/2/25 8:59, Chao Yu wrote:
+> Seems when there is a large number of dirty inline data in page cache, then
+> trigger intensively writeback and CP can run out of free space?
 
 
 ------------------------------------------------------------------------------
