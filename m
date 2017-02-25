@@ -1,153 +1,93 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: change the codes of checking CP_CRC_RECOVERY_FLAG
- to macro
-Date: Sat, 25 Feb 2017 08:54:17 +0800
-Message-ID: <71197ae9-6a47-ceb5-8cc0-5c7798c7cd90@huawei.com>
-References: <1487930771-14491-1-git-send-email-yunlong.song@huawei.com>
- <096f8d0b-774c-2065-db96-dde455a4ec53@huawei.com>
- <58B014FC.6090308@huawei.com>
- <3e2f166f-e532-a04b-d8dd-6b21d7243bc4@huawei.com>
- <58B01FC0.8060901@huawei.com> <20170224181235.GC39009@jaegeuk.local>
+Subject: Re: [PATCH] f2fs: no need lock_op in
+ f2fs_write_inline_data
+Date: Sat, 25 Feb 2017 08:59:34 +0800
+Message-ID: <ffdfdb1c-4a33-2d81-7776-2fd001cc85ec@huawei.com>
+References: <20170223123120.18842-1-heyunlei@huawei.com>
+	<20170223194529.GE2026@jaegeuk.local>
+	<0e037d54-9f45-d38b-da91-b5765fa83a62@huawei.com>
+	<20170224195837.GE39009@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20170224181235.GC39009@jaegeuk.local>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Yunlong Song <yunlong.song@huawei.com>
-Cc: cm224.lee@samsung.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1chQiJ-0005rZ-Ek
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 00:59:55 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1chQiI-0001xc-7v
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 00:59:55 +0000
+In-Reply-To: <20170224195837.GE39009@jaegeuk.local>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>, heyunlei <heyunlei@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/25 2:12, Jaegeuk Kim wrote:
-> On 02/24, Yunlong Song wrote:
->> On 2017/2/24 19:37, Chao Yu wrote:
->>> On 2017/2/24 19:11, Yunlong Song wrote:
->>>> I think we do not need to care about the CP_CRC_RECOVERY_FLAG status of old image, I mean we
->>>> do not need to check the already-been-written node footer in the image, what we care about is the
->>>> on-going-to-write node footer, which is used for recovery.
->>>>
->>>> If  CP_CRC_RECOVERY_FLAG is defined, then __set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG); is
->>>> executed in each do_checkpoint actually, and CP will have that flag for each on-going-to-write node footer.
->>>> I think the recovery process only needs to use the on-going-to-write node rather than the already-been-written
->>>> node in the old image. The  already-been-written node in the old image should not appear in the node
->>>> chain of recovery process, right?
->>> Previously, we changed the disk layout of footer in node block, and then we
->>> applied new verifying approach which has better reliability in order to avoid
->>> chaining garbage node block.
->>>
->>> In order to distinguish old disk layout and the new one, we introduce
->>> CP_CRC_RECOVERY_FLAG, once a CP is triggered, we will tag current CP with the
->>> flag, and use new disk layout and new verifying approach for the following node
->>> block updating flow and abnormal power-cut recovery flow.
->>>
->>> For old image which has no CP_CRC_RECOVERY_FLAG flag been set, f2fs needs to use
->>> old disk layout and old verifying approach during recovery for the
->>> compatibility. So that's why we need to check the flag in CP here.
+On 2017/2/25 3:58, Jaegeuk Kim wrote:
+> On 02/24, heyunlei wrote:
+>> Hi Jaegeuk,
 >>
->> For the old disk layout, because we still use new approach to set CP_CRC_RECOVERY_FLAG in the node footer in each do_checkpoint,
->> then I think f2fs should also use new verifying approach during recovery rather than old verifying approach. What is the problem if
->> we do like this?
+>> 	Can you explain more about this? Besides, how about inplace update?
 > 
-> This is to handle only one case in which:
-> 
-> 1. uses old kernel without this flag,
-> 2. calls fsync and gets sudden power-cut,
-> 3. updates new kernel having this flag before mount.
-> 
-> Then, if we do not check this flag at mount time, we will lose the last fsync'ed
-> node blocks.
+> Oh, sorry. I confused it was the inline_data conversion. ;)
+> Yup, we can avoid entire f2fs_lock_op like this. And we can avoid IPU as well,
+> but it's quite difficult to detect that.
 
-Yup, thanks for the explanation. :)
+Seems when there is a large number of dirty inline data in page cache, then
+trigger intensively writeback and CP can run out of free space?
 
 Thanks,
 
 > 
-> Thanks,
+>>From 146e4c1ca458b1e33bf7f658f8796a8763e67a4e Mon Sep 17 00:00:00 2001
+> From: Yunlei He <heyunlei@huawei.com>
+> Date: Thu, 23 Feb 2017 20:31:20 +0800
+> Subject: [PATCH] f2fs: no need lock_op in f2fs_write_inline_data
 > 
->>
->>> Thanks,
->>>
->>>> On 2017/2/24 18:29, Chao Yu wrote:
->>>>> On 2017/2/24 18:06, Yunlong Song wrote:
->>>>>> No need to check the "if" condition each time, just change it to macro codes.
->>>>> We're going to check flag in CP, not just in code of f2fs.
->>>>>
->>>>> Thanks,
->>>>>
->>>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>>>>> ---
->>>>>>  fs/f2fs/node.h    | 20 ++++++++++----------
->>>>>>  fs/f2fs/segment.c |  5 +++--
->>>>>>  2 files changed, 13 insertions(+), 12 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
->>>>>> index 3fc9c4b..3e5a58b 100644
->>>>>> --- a/fs/f2fs/node.h
->>>>>> +++ b/fs/f2fs/node.h
->>>>>> @@ -303,11 +303,11 @@ static inline void fill_node_footer_blkaddr(struct page *page, block_t blkaddr)
->>>>>>  	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
->>>>>>  	__u64 cp_ver = le64_to_cpu(ckpt->checkpoint_ver);
->>>>>>  
->>>>>> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
->>>>>> -		__u64 crc = le32_to_cpu(*((__le32 *)
->>>>>> -				((unsigned char *)ckpt + crc_offset)));
->>>>>> -		cp_ver |= (crc << 32);
->>>>>> -	}
->>>>>> +#ifdef CP_CRC_RECOVERY_FLAG
->>>>>> +	__u64 crc = le32_to_cpu(*((__le32 *)
->>>>>> +			((unsigned char *)ckpt + crc_offset)));
->>>>>> +	cp_ver |= (crc << 32);
->>>>>> +#endif
->>>>>>  	rn->footer.cp_ver = cpu_to_le64(cp_ver);
->>>>>>  	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
->>>>>>  }
->>>>>> @@ -318,11 +318,11 @@ static inline bool is_recoverable_dnode(struct page *page)
->>>>>>  	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
->>>>>>  	__u64 cp_ver = cur_cp_version(ckpt);
->>>>>>  
->>>>>> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
->>>>>> -		__u64 crc = le32_to_cpu(*((__le32 *)
->>>>>> -				((unsigned char *)ckpt + crc_offset)));
->>>>>> -		cp_ver |= (crc << 32);
->>>>>> -	}
->>>>>> +#ifdef CP_CRC_RECOVERY_FLAG
->>>>>> +	__u64 crc = le32_to_cpu(*((__le32 *)
->>>>>> +			((unsigned char *)ckpt + crc_offset)));
->>>>>> +	cp_ver |= (crc << 32);
->>>>>> +#endif
->>>>>>  	return cp_ver == cpver_of_node(page);
->>>>>>  }
->>>>>>  
->>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>> index 9eb6d89..6c2e1ee 100644
->>>>>> --- a/fs/f2fs/segment.c
->>>>>> +++ b/fs/f2fs/segment.c
->>>>>> @@ -1573,9 +1573,10 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
->>>>>>  {
->>>>>>  	if (force)
->>>>>>  		new_curseg(sbi, type, true);
->>>>>> -	else if (!is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) &&
->>>>>> -					type == CURSEG_WARM_NODE)
->>>>>> +#ifndef CP_CRC_RECOVERY_FLAG
->>>>>> +	else if (type == CURSEG_WARM_NODE)
->>>>>>  		new_curseg(sbi, type, false);
->>>>>> +#endif
->>>>>>  	else if (need_SSR(sbi) && get_ssr_segment(sbi, type))
->>>>>>  		change_curseg(sbi, type, true);
->>>>>>  	else
->>>>>>
->>>>> .
->>>>>
->>>>
->>>
->>> .
->>>
->>
->>
->> -- 
->> Thanks,
->> Yunlong Song
->>
+> Similar as f2fs_write_inode, f2fs_write_inline_data just
+> mark inode page dirty, so it's no need to write inline data
+> under read lock of cp_rwsem.
 > 
-> .
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/data.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 80f9863dc4b0..9e51c5e40ce1 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1414,9 +1414,12 @@ static int __write_data_page(struct page *page, bool *submitted,
+>  		goto redirty_out;
+>  
+>  	err = -EAGAIN;
+> -	f2fs_lock_op(sbi);
+> -	if (f2fs_has_inline_data(inode))
+> +	if (f2fs_has_inline_data(inode)) {
+>  		err = f2fs_write_inline_data(inode, page);
+> +		if (!err)
+> +			goto out;
+> +	}
+> +	f2fs_lock_op(sbi);
+>  	if (err == -EAGAIN)
+>  		err = do_write_data_page(&fio);
+>  	if (F2FS_I(inode)->last_disk_size < psize)
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
