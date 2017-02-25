@@ -1,73 +1,121 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: change the codes of checking
- CP_CRC_RECOVERY_FLAG to macro
-Date: Sat, 25 Feb 2017 10:46:19 -0800
-Message-ID: <20170225184619.GC51627@jaegeuk.local>
-References: <1487930771-14491-1-git-send-email-yunlong.song@huawei.com>
- <1488009678-17334-1-git-send-email-yunlong.song@huawei.com>
+Subject: Re: [PATCH V2] f2fs: introduce free nid bitmap
+Date: Sat, 25 Feb 2017 11:02:55 -0800
+Message-ID: <20170225190255.GD51627@jaegeuk.local>
+References: <20170223025349.104160-1-yuchao0@huawei.com>
+	<c13a289e-5d46-70f3-5f49-eb88864bfa3d@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1chhcW-0005zo-6J
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 19:03:04 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1chhcU-0003sV-Ty
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 19:03:04 +0000
 Content-Disposition: inline
-In-Reply-To: <1488009678-17334-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>
-Cc: cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <c13a289e-5d46-70f3-5f49-eb88864bfa3d@huawei.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 02/25, Yunlong Song wrote:
-> No need to check the "if" condition each time, just change it to macro codes.
+On 02/25, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/node.h    | 10 +++++-----
->  fs/f2fs/segment.c |  5 +++--
->  2 files changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-> index 3fc9c4b..caebb23 100644
-> --- a/fs/f2fs/node.h
-> +++ b/fs/f2fs/node.h
-> @@ -303,11 +303,11 @@ static inline void fill_node_footer_blkaddr(struct page *page, block_t blkaddr)
->  	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
->  	__u64 cp_ver = le64_to_cpu(ckpt->checkpoint_ver);
->  
-> -	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG)) {
-> -		__u64 crc = le32_to_cpu(*((__le32 *)
-> -				((unsigned char *)ckpt + crc_offset)));
-> -		cp_ver |= (crc << 32);
-> -	}
-> +#ifdef CP_CRC_RECOVERY_FLAG
+> I added below diff code into this patch in order to fix incorrectly nid status
+> updating to reduce large latency of generic/251 in fstest, could you help to
+> review code below?
 
-NAK.
-This is not a kernel config, nor a recommendable coding style.
-Moreover, it is simply able to be defined through header file in old kernel.
+Understand the problem, and how about this?
 
-Thanks,
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 52db02396878..83b305689913 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1765,7 +1765,7 @@ static void __remove_nid_from_list(struct f2fs_sb_info *sbi,
+ 		radix_tree_delete(&nm_i->free_nid_root, i->nid);
+ }
+ 
+-static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
++static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 	struct free_nid *i;
+@@ -1774,14 +1774,14 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
+ 
+ 	/* 0 nid should not be used */
+ 	if (unlikely(nid == 0))
+-		return 0;
++		return false;
+ 
+ 	if (build) {
+ 		/* do not add allocated nids */
+ 		ne = __lookup_nat_cache(nm_i, nid);
+ 		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
+ 				nat_get_blkaddr(ne) != NULL_ADDR))
+-			return 0;
++			return false;
+ 	}
+ 
+ 	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
+@@ -1790,7 +1790,7 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
+ 
+ 	if (radix_tree_preload(GFP_NOFS)) {
+ 		kmem_cache_free(free_nid_slab, i);
+-		return 0;
++		return false;
+ 	}
+ 
+ 	spin_lock(&nm_i->nid_list_lock);
+@@ -1799,9 +1799,9 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
+ 	radix_tree_preload_end();
+ 	if (err) {
+ 		kmem_cache_free(free_nid_slab, i);
+-		return 0;
++		return false;
+ 	}
+-	return 1;
++	return true;
+ }
+ 
+ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
+@@ -1851,6 +1851,7 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 	i = start_nid % NAT_ENTRY_PER_BLOCK;
+ 
+ 	for (; i < NAT_ENTRY_PER_BLOCK; i++, start_nid++) {
++		bool freed = false;
+ 
+ 		if (unlikely(start_nid >= nm_i->max_nid))
+ 			break;
+@@ -1858,8 +1859,8 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
+ 		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
+ 		if (blk_addr == NULL_ADDR)
+-			add_free_nid(sbi, start_nid, true);
+-		update_free_nid_bitmap(sbi, start_nid, blk_addr == NULL_ADDR);
++			freed = add_free_nid(sbi, start_nid, true);
++		update_free_nid_bitmap(sbi, start_nid, freed);
+ 	}
+ }
+ 
+-- 
+2.11.0
 
-> +	__u64 crc = le32_to_cpu(*((__le32 *)
-> +			((unsigned char *)ckpt + crc_offset)));
-> +	cp_ver |= (crc << 32);
-> +#endif
->  	rn->footer.cp_ver = cpu_to_le64(cp_ver);
->  	rn->footer.next_blkaddr = cpu_to_le32(blkaddr);
->  }
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 9eb6d89..6c2e1ee 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1573,9 +1573,10 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
->  {
->  	if (force)
->  		new_curseg(sbi, type, true);
-> -	else if (!is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) &&
-> -					type == CURSEG_WARM_NODE)
-> +#ifndef CP_CRC_RECOVERY_FLAG
-> +	else if (type == CURSEG_WARM_NODE)
->  		new_curseg(sbi, type, false);
-> +#endif
->  	else if (need_SSR(sbi) && get_ssr_segment(sbi, type))
->  		change_curseg(sbi, type, true);
->  	else
-> -- 
-> 1.8.5.2
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
