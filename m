@@ -1,29 +1,28 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: avoid unnecessary fg_gc
-Date: Sat, 25 Feb 2017 11:39:59 -0800
-Message-ID: <20170225193959.GE51627@jaegeuk.local>
-References: <20170224100135.70000-1-houpengyang@huawei.com>
-	<0486c0d4-541c-ee21-c598-6656a291a274@huawei.com>
-	<58B0E17C.1030306@huawei.com>
-	<20170225020733.GB50867@jaegeuk.local>
-	<ce5a4256-9275-eb89-e188-f5f200b8f77c@huawei.com>
+Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
+ segment but no prefree at BG_GC -> FG_GC
+Date: Sat, 25 Feb 2017 11:56:03 -0800
+Message-ID: <20170225195603.GF51627@jaegeuk.local>
+References: <20170224204357.220337-1-guoweichao@huawei.com>
+	<20170224184959.GD39009@jaegeuk.local>
+	<e3da3ac3-39d5-3880-2e38-ab523a7781ec@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1chiCQ-0004HJ-3G
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1chiRw-0005kd-KD
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 19:40:10 +0000
+	Sat, 25 Feb 2017 19:56:12 +0000
 Received: from mail.kernel.org ([198.145.29.136])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1chiCP-0002aN-3R
+	(Exim 4.76) id 1chiRv-0004ot-JL
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 19:40:10 +0000
+	Sat, 25 Feb 2017 19:56:12 +0000
 Content-Disposition: inline
-In-Reply-To: <ce5a4256-9275-eb89-e188-f5f200b8f77c@huawei.com>
+In-Reply-To: <e3da3ac3-39d5-3880-2e38-ab523a7781ec@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,84 +32,87 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>
-Cc: guoweichao@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: guoweichao <guoweichao@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 02/25, heyunlei wrote:
-> Hi all,
+On 02/25, guoweichao wrote:
+> Hi Jaegeuk,
 > 
-> I am really confused by the condition below use sec_freed, is it always equal to zero?
+> I regard no enough free sections as a precondition when talking about
+> BG_GC -> FG_GC. I mean that for both case a) and b) I mentioned has no enough
+> free sections implicitly. 
+> 
+> On 2017/2/25 2:49, Jaegeuk Kim wrote:
+> > Hi Weichao,
+> > 
+> > On 02/25, Weichao Guo wrote:
+> >> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
+> >> * a) BG_GC have made some progress, e.g.: some prefree segments.
+> >> * b) There is no victim and no prefree segment.
+> > 
+> > You missed
+> >   * c) has_not_enough_free_secs() introduced by
+> >       6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
+> As we have enabled SSR for warm node(5b6c6be2d8 ("f2fs: use SSR for warm node as well")),
+> I think inline data floods should not be a problem in most cases.
+> > 
+> > And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
+> > mostly due to c) condition.
+> As inline data floods is an extreme case, and there is little possibility caused panic
+> for inline data floods now, there should be lots of chance to skip checkpoint. I mean
+> that we can make some accurate inline data floods checking before writing checkpoint.
 
-Seems it is always zero. Let's fix it together.
+For now, the safest way is our first option. So, I decided to start with doing
+checkpoint due to previous inline_data flooding issue even though it's an
+extreme case under SSR.
 
-Pengyang,
+Anyway, I agree that we need to find a way to detect when to avoid checkpoint.
 
-I merged your patches and finally got this.
-How do you think?
+Thanks,
 
->From d1c2206e4f245a8fedec3a8f21ad522b3b1b2d0c Mon Sep 17 00:00:00 2001
-From: Hou Pengyang <houpengyang@huawei.com>
-Date: Sat, 25 Feb 2017 03:57:38 +0000
-Subject: [PATCH] f2fs: avoid bggc->fggc when enough free segments are
- avaliable after cp
-
-We use has_not_enough_free_secs to check if there are enough free segments,
-
-    	(free_sections(sbi) + freed) <=
-	        (node_secs + 2 * dent_secs + imeta_secs +
-			         reserved_sections(sbi) + needed);
-
-Under scenario with large number of dirty nodes, these nodes would be flushed
-during cp, as a result, right side of the inequality would be decreased, while
-left side stays unchanged if these nodes are flushed in SSR way, which means
-there are enough free segments after this cp.
-
-For this case, we just do a bggc instead of fggc.
-
-Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/gc.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 1af17c5af603..471ed899f639 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -954,21 +954,22 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
- 		goto stop;
- 	}
- 
--	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, sec_freed, 0)) {
--		gc_type = FG_GC;
-+	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0)) {
- 		/*
--		 * If there is no victim and no prefree segment but still not
--		 * enough free sections, we should flush dent/node blocks and do
--		 * garbage collections.
-+		 * For example, if there are many prefree_segments below given
-+		 * threshold, we can make them free by checkpoint. Then, we
-+		 * secure free segments which doesn't need fggc any more.
- 		 */
- 		ret = write_checkpoint(sbi, &cpc);
- 		if (ret)
- 			goto stop;
--	} else if (gc_type == BG_GC && !background) {
--		/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
--		goto stop;
-+		if (has_not_enough_free_secs(sbi, 0, 0))
-+			gc_type = FG_GC;
- 	}
- 
-+	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
-+	if (gc_type == BG_GC && !background)
-+		goto stop;
- 	if (!__get_victim(sbi, &segno, gc_type))
- 		goto stop;
- 	ret = 0;
--- 
-2.11.0
-
+> > 
+> > Thanks,
+> > 
+> >>
+> >> For case a), previously, we also check if there is a dirty segment for
+> >> infering blocks moving in last BG_GC. But dirty segments do not always
+> >> indicate that, BG_GC may just start and do not move any blocks at all.
+> >> Futhermore, skipping checkpoint if there are some dirty segments but no
+> >> prefree segments is OK.
+> > 
+> > 
+> >>
+> >> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> >> ---
+> >>  fs/f2fs/gc.c | 7 ++++++-
+> >>  1 file changed, 6 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >> index 6c996e3..30d206a 100644
+> >> --- a/fs/f2fs/gc.c
+> >> +++ b/fs/f2fs/gc.c
+> >> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+> >>  		 * enough free sections, we should flush dent/node blocks and do
+> >>  		 * garbage collections.
+> >>  		 */
+> >> -		ret = write_checkpoint(sbi, &cpc);
+> >> +		if (prefree_segments(sbi))
+> >> +			ret = write_checkpoint(sbi, &cpc);
+> >> +		else if (!__get_victim(sbi, &segno, gc_type) {
+> >> +			segno = NULL_SEGNO;
+> >> +			ret = write_checkpoint(sbi, &cpc);
+> >> +		}
+> >>  		if (ret)
+> >>  			goto stop;
+> >>  	} else if (gc_type == BG_GC && !background) {
+> >> -- 
+> >> 2.10.1
+> > 
+> > .
+> > 
+> 
+> Thanks,
+> Weichao
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
