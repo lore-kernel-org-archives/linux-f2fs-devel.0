@@ -1,112 +1,201 @@
-From: Hou Pengyang <houpengyang@huawei.com>
-Subject: Re: [PATCH] f2fs: avoid unnecessary fg_gc
-Date: Sat, 25 Feb 2017 10:54:41 +0800
-Message-ID: <58B0F1F1.4040207@huawei.com>
-References: <20170224100135.70000-1-houpengyang@huawei.com>
-	<0486c0d4-541c-ee21-c598-6656a291a274@huawei.com>
-	<58B0E17C.1030306@huawei.com>
-	<20170225020733.GB50867@jaegeuk.local>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: show simple call stack in fault injection message
+Date: Sat, 25 Feb 2017 11:08:28 +0800
+Message-ID: <20170225030828.5583-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1chSVt-00032U-BI
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 02:55:13 +0000
-Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1chSVp-0004sy-KK
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 02:55:13 +0000
-In-Reply-To: <20170225020733.GB50867@jaegeuk.local>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: guoweichao@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 2017/2/25 10:07, Jaegeuk Kim wrote:
-> On 02/25, Hou Pengyang wrote:
->> On 2017/2/24 18:28, Chao Yu wrote:
->>> On 2017/2/24 18:01, Hou Pengyang wrote:
->>>> Under scenerio with large number of dirty nodes, and these nodes are flushed
->>>> in SSR mode during cp. enough free segemts now, no need to do fggc.
->>>
->>> We'd better break out of GC flow once we encounter cp error, so additional
->>> condition judgment is not needed.
->>>
->>
->> In (ret || !has_not_enough_free_secs(sbi, sec_freed, 0)),
->> if cp return error(NOT zero), flow will goto stop directly without
->> has_not_enough_free_secs checking;
->> if cp return ok(zero), has_not_enough_free_secs would be checked.
->
-> Well, I think it'd be fine to do one gc by a background thread.
->
-Currently we decide whether convert a bggc to fggc by:
+Previously kernel message can show that in which function we do the
+injection, but unfortunately, most of the caller are the same, for
+tracking more information of injection path, it needs to show upper
+caller's name. This patch supports that ability.
 
-if (gc_type == BG_GC && has_not_enough_free_secs(sbi, sec_freed, 0)) { 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c |  1 +
+ fs/f2fs/data.c       |  4 +++-
+ fs/f2fs/dir.c        |  4 +++-
+ fs/f2fs/f2fs.h       | 20 +++++++++++++-------
+ fs/f2fs/gc.c         |  4 +++-
+ fs/f2fs/inode.c      |  4 +++-
+ fs/f2fs/node.c       |  4 +++-
+ fs/f2fs/segment.c    |  4 +++-
+ 8 files changed, 32 insertions(+), 13 deletions(-)
 
-          gc_type = FG_GC;
-
-So how about move up write_checkpoint before gc_type = FG_GC, like:
-
-if (gc_type == BG_GC && has_not_enough_free_secs(sbi, sec_freed, 0)) {
-          write_checkpoint;
-	 if still has_not_enough_free_secs:
-               gc_type = FG_GC;
-          else
-               stay BG_GC;
-
-Thanks,
-
-> Thanks,
->
->>
->> Thanks,
->>
->>> Thanks,
->>>
->>>>
->>>> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
->>>> ---
->>>>    fs/f2fs/gc.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>> index 6c996e3..41bdfb7 100644
->>>> --- a/fs/f2fs/gc.c
->>>> +++ b/fs/f2fs/gc.c
->>>> @@ -959,7 +959,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
->>>>    		 * garbage collections.
->>>>    		 */
->>>>    		ret = write_checkpoint(sbi, &cpc);
->>>> -		if (ret)
->>>> +		if (ret || !has_not_enough_free_secs(sbi, sec_freed, 0))
->>>>    			goto stop;
->>>>    	} else if (gc_type == BG_GC && !background) {
->>>>    		/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
->>>>
->>>
->>>
->>> .
->>>
->>
->
-> .
->
-
-
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index cd7132121573..04d7c244c0f0 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -494,6 +494,7 @@ int acquire_orphan_inode(struct f2fs_sb_info *sbi)
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_ORPHAN)) {
+ 		spin_unlock(&im->ino_lock);
++		f2fs_show_injection_info(FAULT_ORPHAN);
+ 		return -ENOSPC;
+ 	}
+ #endif
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 9e51c5e40ce1..b0a2e3faabb2 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -55,8 +55,10 @@ static void f2fs_read_end_io(struct bio *bio)
+ 	int i;
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+-	if (time_to_inject(F2FS_P_SB(bio->bi_io_vec->bv_page), FAULT_IO))
++	if (time_to_inject(F2FS_P_SB(bio->bi_io_vec->bv_page), FAULT_IO)) {
++		f2fs_show_injection_info(FAULT_IO);
+ 		bio->bi_error = -EIO;
++	}
+ #endif
+ 
+ 	if (f2fs_bio_encrypted(bio)) {
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 54aa30ee028f..295a223ae11e 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -549,8 +549,10 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+ 
+ start:
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+-	if (time_to_inject(F2FS_I_SB(dir), FAULT_DIR_DEPTH))
++	if (time_to_inject(F2FS_I_SB(dir), FAULT_DIR_DEPTH)) {
++		f2fs_show_injection_info(FAULT_DIR_DEPTH);
+ 		return -ENOSPC;
++	}
+ #endif
+ 	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH))
+ 		return -ENOSPC;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 8b6d49642a15..6a31b36e59bc 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -954,6 +954,10 @@ struct f2fs_sb_info {
+ };
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
++#define f2fs_show_injection_info(type)				\
++	printk("%sF2FS-fs : inject %s in %s of %pF\n",		\
++		KERN_INFO, fault_name[type],			\
++		__func__, __builtin_return_address(0))
+ static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
+ {
+ 	struct f2fs_fault_info *ffi = &sbi->fault_info;
+@@ -967,10 +971,6 @@ static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
+ 	atomic_inc(&ffi->inject_ops);
+ 	if (atomic_read(&ffi->inject_ops) >= ffi->inject_rate) {
+ 		atomic_set(&ffi->inject_ops, 0);
+-		printk("%sF2FS-fs : inject %s in %pF\n",
+-				KERN_INFO,
+-				fault_name[type],
+-				__builtin_return_address(0));
+ 		return true;
+ 	}
+ 	return false;
+@@ -1279,8 +1279,10 @@ static inline bool inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 	blkcnt_t diff;
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+-	if (time_to_inject(sbi, FAULT_BLOCK))
++	if (time_to_inject(sbi, FAULT_BLOCK)) {
++		f2fs_show_injection_info(FAULT_BLOCK);
+ 		return false;
++	}
+ #endif
+ 	/*
+ 	 * let's increase this in prior to actual block count change in order
+@@ -1520,8 +1522,10 @@ static inline struct page *f2fs_grab_cache_page(struct address_space *mapping,
+ 	if (page)
+ 		return page;
+ 
+-	if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_ALLOC))
++	if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_ALLOC)) {
++		f2fs_show_injection_info(FAULT_PAGE_ALLOC);
+ 		return NULL;
++	}
+ #endif
+ 	if (!for_write)
+ 		return grab_cache_page(mapping, index);
+@@ -1997,8 +2001,10 @@ static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
+ 					size_t size, gfp_t flags)
+ {
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+-	if (time_to_inject(sbi, FAULT_KMALLOC))
++	if (time_to_inject(sbi, FAULT_KMALLOC)) {
++		f2fs_show_injection_info(FAULT_KMALLOC);
+ 		return NULL;
++	}
+ #endif
+ 	return kmalloc(size, flags);
+ }
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 6c996e39b59a..8be5144da8e6 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -48,8 +48,10 @@ static int gc_thread_func(void *data)
+ 		}
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+-		if (time_to_inject(sbi, FAULT_CHECKPOINT))
++		if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
++			f2fs_show_injection_info(FAULT_CHECKPOINT);
+ 			f2fs_stop_checkpoint(sbi, false);
++		}
+ #endif
+ 
+ 		/*
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index af06bda51a54..24bb8213d974 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -373,8 +373,10 @@ void f2fs_evict_inode(struct inode *inode)
+ 		goto no_delete;
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+-	if (time_to_inject(sbi, FAULT_EVICT_INODE))
++	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
++		f2fs_show_injection_info(FAULT_EVICT_INODE);
+ 		goto no_delete;
++	}
+ #endif
+ 
+ 	remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 819032961218..52db02396878 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2057,8 +2057,10 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+ 	struct free_nid *i = NULL;
+ retry:
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+-	if (time_to_inject(sbi, FAULT_ALLOC_NID))
++	if (time_to_inject(sbi, FAULT_ALLOC_NID)) {
++		f2fs_show_injection_info(FAULT_ALLOC_NID);
+ 		return false;
++	}
+ #endif
+ 	spin_lock(&nm_i->nid_list_lock);
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 3a8a4d9888f1..9006d8ed6f52 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -352,8 +352,10 @@ int commit_inmem_pages(struct inode *inode)
+ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+ {
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+-	if (time_to_inject(sbi, FAULT_CHECKPOINT))
++	if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
++		f2fs_show_injection_info(FAULT_CHECKPOINT);
+ 		f2fs_stop_checkpoint(sbi, false);
++	}
+ #endif
+ 
+ 	if (!need)
+-- 
+2.8.2.295.g3f1c1d0
