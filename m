@@ -1,41 +1,108 @@
-From: Yunlong Song <yunlong.song@huawei.com>
-Subject: Re: [PATCH] f2fs: change the codes of checking CP_CRC_RECOVERY_FLAG
- to macro
-Date: Sat, 25 Feb 2017 16:10:45 +0800
-Message-ID: <58B13C05.50900@huawei.com>
-References: <1487930771-14491-1-git-send-email-yunlong.song@huawei.com>
- <096f8d0b-774c-2065-db96-dde455a4ec53@huawei.com>
- <58B014FC.6090308@huawei.com>
- <3e2f166f-e532-a04b-d8dd-6b21d7243bc4@huawei.com>
- <58B01FC0.8060901@huawei.com> <20170224181235.GC39009@jaegeuk.local>
+From: guoweichao <guoweichao@huawei.com>
+Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
+ segment but no prefree at BG_GC -> FG_GC
+Date: Sat, 25 Feb 2017 16:20:49 +0800
+Message-ID: <e3da3ac3-39d5-3880-2e38-ab523a7781ec@huawei.com>
+References: <20170224204357.220337-1-guoweichao@huawei.com>
+	<20170224184959.GD39009@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20170224181235.GC39009@jaegeuk.local>
-Sender: linux-fsdevel-owner@vger.kernel.org
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+	helo=mx.sourceforge.net)
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <guoweichao@huawei.com>) id 1chXbM-00068N-Pr
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 08:21:12 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1chXbL-0001Pe-BV
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 08:21:12 +0000
+In-Reply-To: <20170224184959.GD39009@jaegeuk.local>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, cm224.lee@samsung.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/25 2:12, Jaegeuk Kim wrote:
+Hi Jaegeuk,
 
+I regard no enough free sections as a precondition when talking about
+BG_GC -> FG_GC. I mean that for both case a) and b) I mentioned has no enough
+free sections implicitly. 
+
+On 2017/2/25 2:49, Jaegeuk Kim wrote:
+> Hi Weichao,
 > 
-> This is to handle only one case in which:
+> On 02/25, Weichao Guo wrote:
+>> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
+>> * a) BG_GC have made some progress, e.g.: some prefree segments.
+>> * b) There is no victim and no prefree segment.
 > 
-> 1. uses old kernel without this flag,
-> 2. calls fsync and gets sudden power-cut,
-> 3. updates new kernel having this flag before mount.
+> You missed
+>   * c) has_not_enough_free_secs() introduced by
+>       6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
+As we have enabled SSR for warm node(5b6c6be2d8 ("f2fs: use SSR for warm node as well")),
+I think inline data floods should not be a problem in most cases.
 > 
-> Then, if we do not check this flag at mount time, we will lose the last fsync'ed
-> node blocks.
+> And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
+> mostly due to c) condition.
+As inline data floods is an extreme case, and there is little possibility caused panic
+for inline data floods now, there should be lots of chance to skip checkpoint. I mean
+that we can make some accurate inline data floods checking before writing checkpoint.
+> 
+> Thanks,
+> 
+>>
+>> For case a), previously, we also check if there is a dirty segment for
+>> infering blocks moving in last BG_GC. But dirty segments do not always
+>> indicate that, BG_GC may just start and do not move any blocks at all.
+>> Futhermore, skipping checkpoint if there are some dirty segments but no
+>> prefree segments is OK.
+> 
+> 
+>>
+>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+>> ---
+>>  fs/f2fs/gc.c | 7 ++++++-
+>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index 6c996e3..30d206a 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+>>  		 * enough free sections, we should flush dent/node blocks and do
+>>  		 * garbage collections.
+>>  		 */
+>> -		ret = write_checkpoint(sbi, &cpc);
+>> +		if (prefree_segments(sbi))
+>> +			ret = write_checkpoint(sbi, &cpc);
+>> +		else if (!__get_victim(sbi, &segno, gc_type) {
+>> +			segno = NULL_SEGNO;
+>> +			ret = write_checkpoint(sbi, &cpc);
+>> +		}
+>>  		if (ret)
+>>  			goto stop;
+>>  	} else if (gc_type == BG_GC && !background) {
+>> -- 
+>> 2.10.1
+> 
+> .
 > 
 
-So I just send a v2 patch to only change to macro in fill_node_footer_blkaddr and
-allocate_segment_by_default, these two functions are called frequently, so it is
-better to use macro code. And I remain the original checking code in is_recoverable_dnode,
-this function is called only once after mount, it's OK.
-
--- 
 Thanks,
-Yunlong Song
+Weichao
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
