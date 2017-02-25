@@ -1,75 +1,148 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: add F2FS_DIRTY_DATA to has_not_enough_free_secs
- and need_SSR
-Date: Fri, 24 Feb 2017 12:07:23 -0800
-Message-ID: <20170224200723.GG39009@jaegeuk.local>
-References: <1487940393-26654-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 2/3] f2fs: remove unsafe bitmap checking
+Date: Sat, 25 Feb 2017 08:52:58 +0800
+Message-ID: <695216f1-85e9-7c0e-fb1a-e53c04e113da@huawei.com>
+References: <20170223091807.36175-1-houpengyang@huawei.com>
+	<20170223091807.36175-2-houpengyang@huawei.com>
+	<9b4cf979-75be-752d-775c-9f76f00d5788@huawei.com>
+	<20170224174541.GA39009@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1487940393-26654-1-git-send-email-yunlong.song@huawei.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Yunlong Song <yunlong.song@huawei.com>
-Cc: cm224.lee@samsung.com, yuchao0@huawei.com, chao@kernel.org, sylinux@163.com, miaoxie@huawei.com, bintian.wang@huawei.com, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1chQc0-0005bs-KE
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 00:53:24 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1chQbv-0006ww-QC
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 00:53:24 +0000
+In-Reply-To: <20170224174541.GA39009@jaegeuk.local>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 02/24, Yunlong Song wrote:
-> Currently, it miss the part of F2FS_DIRTY_DATA to check whether there is enough
-> free segments for the "reserved_sections" originally set in the mkfs.f2fs. As a
-> result, it will use the reserved_sections part to write dirty data, and has to
-> do gc_more to free a lot of sections together next time. This will cost much
-> time to do so many fggc. So let's add the F2FS_DIRTY_DATA part and do a few gc
-> gradually each time, which will avoid to do a large number of gc at the same time.
+On 2017/2/25 1:45, Jaegeuk Kim wrote:
+> On 02/24, Chao Yu wrote:
+>> On 2017/2/23 17:18, Hou Pengyang wrote:
+>>> proc A:                      proc B:
+>>> - writeback_sb_inodes
+>>> - __writeback_single_inode   
+>>> - do_writepages
+>>> - f2fs_write_node_pages       
+>>> - f2fs_balance_fs_bg         - write_checkpoint
+>>> - build_free_nids            - flush_nat_entries
+>>> - __build_free_nids          - __flush_nat_entry_set
+>>> - ra_meta_pages              - get_next_nat_page
+>>> - current_nat_addr           - set_to_next_nat
+>>> [do nat_bitmap checking]     - f2fs_change_bit
+>>
+>> Both flows were protected by nat_tree_lock, so we don't need to worry about such
+>> case?
 > 
-> And this will also make sure the pre-set "reserved_sections" is not used all the
-> time and can be used anytime for gc when ssr segments are not enough.
+> The nat_tree_lock doesn't cover ra_meta_pages in proc A.
 
-Not sure any side effect of this patch. Let's investigate more severely how to
-trigger SSR more eagerly in order to avoid write_checkpoint.
+Can we cover ra_meta_pages in __build_free_nid with nat_tree_lock?
 
-Thanks,
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 819032961218..17ae737a958d 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1997,12 +1997,12 @@ static void __build_free_nids(struct f2fs_sb_info *sbi,
+bool sync, bool mount)
+                        nid = idx * NAT_ENTRY_PER_BLOCK;
+        }
+
++       down_read(&nm_i->nat_tree_lock);
++
+        /* readahead nat pages to be scanned */
+        ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
+                                                        META_NAT, true);
+
+-       down_read(&nm_i->nat_tree_lock);
+-
+        while (1) {
+                struct page *page = get_current_nat_page(sbi, nid);
+
+@@ -2033,10 +2033,10 @@ static void __build_free_nids(struct f2fs_sb_info *sbi,
+bool sync, bool mount)
+                        remove_free_nid(sbi, nid);
+        }
+        up_read(&curseg->journal_rwsem);
+-       up_read(&nm_i->nat_tree_lock);
+
+        ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+                                        nm_i->ra_nid_pages, META_NAT, false);
++       up_read(&nm_i->nat_tree_lock);
+ }
+
+ void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+
 
 > 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/segment.h | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> Thanks,
 > 
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index f4020f1..44f2a46 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -490,12 +490,13 @@ static inline bool need_SSR(struct f2fs_sb_info *sbi)
->  	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
->  	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
->  	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
-> +	int data_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DATA);
->  
->  	if (test_opt(sbi, LFS))
->  		return false;
->  
->  	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
-> -						reserved_sections(sbi) + 1);
-> +						data_secs + reserved_sections(sbi) + 1);
->  }
->  
->  static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
-> @@ -504,13 +505,14 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
->  	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
->  	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
->  	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
-> +	int data_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DATA);
->  
->  	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
->  		return false;
->  
->  	return (free_sections(sbi) + freed) <=
->  		(node_secs + 2 * dent_secs + imeta_secs +
-> -		reserved_sections(sbi) + needed);
-> +		data_secs + reserved_sections(sbi) + needed);
->  }
->  
->  static inline bool excess_prefree_segs(struct f2fs_sb_info *sbi)
-> -- 
-> 1.8.5.2
+>>
+>> Thanks,
+>>
+>>>
+>>> For proc A, nat_bitmap and nat_bitmap_mir would be compared without lock_op and 
+>>> nm_i->nat_tree_lock, while proc B is changing nat_bitmap/nat_bitmap_ver in cp.
+>>>
+>>> So it is normal for nat_bitmap/nat_bitmap diffrence under such scenario.
+>>>
+>>> This patch fix this by removing the monitoring point.
+>>>
+>>> [Fix: 599a09b f2fs: check in-memory nat version bitmap]
+>>> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+>>> ---
+>>>  fs/f2fs/node.h | 6 ------
+>>>  1 file changed, 6 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+>>> index d3d2893..3fc9c4b 100644
+>>> --- a/fs/f2fs/node.h
+>>> +++ b/fs/f2fs/node.h
+>>> @@ -209,12 +209,6 @@ static inline pgoff_t current_nat_addr(struct f2fs_sb_info *sbi, nid_t start)
+>>>  		(seg_off << sbi->log_blocks_per_seg << 1) +
+>>>  		(block_off & (sbi->blocks_per_seg - 1)));
+>>>  
+>>> -#ifdef CONFIG_F2FS_CHECK_FS
+>>> -	if (f2fs_test_bit(block_off, nm_i->nat_bitmap) !=
+>>> -			f2fs_test_bit(block_off, nm_i->nat_bitmap_mir))
+>>> -		f2fs_bug_on(sbi, 1);
+>>> -#endif
+>>> -
+>>>  	if (f2fs_test_bit(block_off, nm_i->nat_bitmap))
+>>>  		block_addr += sbi->blocks_per_seg;
+>>>  
+>>>
+>>
+>>
+>> ------------------------------------------------------------------------------
+>> Check out the vibrant tech community on one of the world's most
+>> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
