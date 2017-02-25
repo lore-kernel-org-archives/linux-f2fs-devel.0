@@ -1,26 +1,26 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH 3/3] f2fs: drop calling alloc_nid_failed when no
- nid is allocated
-Date: Sat, 25 Feb 2017 19:23:46 +0800
-Message-ID: <77d8220f-8cf4-0af4-3390-cd28fbeb6437@gmail.com>
+Subject: [PATCH] f2fs: update the comment of default nr_pages to
+	skipping
+Date: Sat, 25 Feb 2017 19:32:21 +0800
+Message-ID: <d484159d-9849-60f0-5317-c7d53fad2bb7@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1chaSE-0004pX-8m
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1chaaX-0004d2-96
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 11:23:58 +0000
-Received: from mail-it0-f66.google.com ([209.85.214.66])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1chaSD-0003q0-Jk
+	Sat, 25 Feb 2017 11:32:33 +0000
+Received: from mail-io0-f195.google.com ([209.85.223.195])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1chaaW-0002nC-C1
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 25 Feb 2017 11:23:58 +0000
-Received: by mail-it0-f66.google.com with SMTP id e137so6851764itc.0
+	Sat, 25 Feb 2017 11:32:33 +0000
+Received: by mail-io0-f195.google.com with SMTP id w10so1292608iod.3
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 25 Feb 2017 03:23:57 -0800 (PST)
+	Sat, 25 Feb 2017 03:32:32 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,48 +33,27 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-If hsize is less than or equal to inlien_size, and i_xattr_nid is valid, 
-the new_nid is not allocated (no alloc_nid is called).
-
-       if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
-                if (!alloc_nid(sbi, &new_nid))
-                        return -ENOSPC;
-
-Although it's harmless calling alloc_nid_failed, it's better drop them.
-
+Fixes: 2c237ebaa4 ("f2fs: avoid writing node/metapages during writes")
 Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- fs/f2fs/xattr.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/f2fs/segment.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index 7298a44..fd9dc99 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -428,19 +428,18 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
- 		/* no need to use xattr node block */
- 		if (hsize <= inline_size) {
- 			err = truncate_xattr_node(inode, ipage);
--			alloc_nid_failed(sbi, new_nid);
-+			f2fs_bug_on(sbi, new_nid);
- 			return err;
- 		}
- 	}
- 
- 	/* write to xattr node block */
- 	if (F2FS_I(inode)->i_xattr_nid) {
-+		f2fs_bug_on(sbi, new_nid);
- 		xpage = get_node_page(sbi, F2FS_I(inode)->i_xattr_nid);
--		if (IS_ERR(xpage)) {
--			alloc_nid_failed(sbi, new_nid);
-+		if (IS_ERR(xpage))
- 			return PTR_ERR(xpage);
--		}
--		f2fs_bug_on(sbi, new_nid);
-+
- 		f2fs_wait_on_page_writeback(xpage, NODE, true);
- 	} else {
- 		struct dnode_of_data dn;
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index f4020f1..5e8ad42 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -736,8 +736,8 @@ static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
+  * It is very important to gather dirty pages and write at once, so that we can
+  * submit a big bio without interfering other data writes.
+  * By default, 512 pages for directory data,
+- * 512 pages (2MB) * 3 for three types of nodes, and
+- * max_bio_blocks for meta are set.
++ * 512 pages (2MB) * 8 for nodes, and
++ * 256 pages * 8 for meta are set.
+  */
+ static inline int nr_pages_to_skip(struct f2fs_sb_info *sbi, int type)
+ {
 -- 
 2.9.3
 
