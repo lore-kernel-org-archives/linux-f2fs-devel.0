@@ -1,201 +1,470 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: show simple call stack in fault injection message
-Date: Sat, 25 Feb 2017 11:08:28 +0800
-Message-ID: <20170225030828.5583-1-yuchao0@huawei.com>
+Subject: Re: [PATCH 2/3] f2fs: add bitmaps for empty or full NAT
+ blocks
+Date: Sat, 25 Feb 2017 11:26:10 +0800
+Message-ID: <9c15f4dc-37ab-d94d-c62e-0aded8ea848f@huawei.com>
+References: <20170214020644.18189-1-jaegeuk@kernel.org>
+	<20170214020644.18189-2-jaegeuk@kernel.org>
+	<1ecf0acf-2ae7-c547-6d7b-350bd356d48c@huawei.com>
+	<20170223225449.GG2026@jaegeuk.local>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, chao@kernel.org, Chao Yu <yuchao0@huawei.com>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1chT03-00031d-Es
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 03:26:23 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1chSzz-0000CH-6O
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Sat, 25 Feb 2017 03:26:23 +0000
+In-Reply-To: <20170223225449.GG2026@jaegeuk.local>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-Previously kernel message can show that in which function we do the
-injection, but unfortunately, most of the caller are the same, for
-tracking more information of injection path, it needs to show upper
-caller's name. This patch supports that ability.
+On 2017/2/24 6:54, Jaegeuk Kim wrote:
+> On 02/23, Chao Yu wrote:
+>> On 2017/2/14 10:06, Jaegeuk Kim wrote:
+>>> This patches adds bitmaps to represent empty or full NAT blocks containing
+>>> free nid entries.
+>>>
+>>> If we can find valid crc|cp_ver in the last block of checkpoint pack, we'll
+>>> use these bitmaps when building free nids. In order to avoid checkpointing
+>>> burden, up-to-date bitmaps will be flushed only during umount time. So,
+>>> normally we can get this gain, but when power-cut happens, we rely on fsck.f2fs
+>>> which recovers this bitmap again.
+>>>
+>>> After this patch, we build free nids from nid #0 at mount time to make more
+>>> full NAT blocks, but in runtime, we check empty NAT blocks to load free nids
+>>> without loading any NAT pages from disk.
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/checkpoint.c    |  29 +++++++-
+>>>  fs/f2fs/debug.c         |   1 +
+>>>  fs/f2fs/f2fs.h          |  23 +++++-
+>>>  fs/f2fs/node.c          | 188 +++++++++++++++++++++++++++++++++++++++++++-----
+>>>  fs/f2fs/segment.c       |   2 +-
+>>>  include/linux/f2fs_fs.h |   1 +
+>>>  6 files changed, 224 insertions(+), 20 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>>> index 042f8d9afe44..783c5c3f16a4 100644
+>>> --- a/fs/f2fs/checkpoint.c
+>>> +++ b/fs/f2fs/checkpoint.c
+>>> @@ -1024,6 +1024,10 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>  
+>>>  	spin_lock(&sbi->cp_lock);
+>>>  
+>>> +	if (ckpt->cp_pack_total_block_count >
+>>> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
+>>> +		disable_nat_bits(sbi, false);
+>>
+>> I think we need to drop nat full/empty bitmap only if there is no enough space
+>> in CP area while doing umount, otherwise we can keep this in memory.
+> 
+> Yup.
+> 
+>>
+>>> +
+>>>  	if (cpc->reason == CP_UMOUNT)
+>>>  		__set_ckpt_flags(ckpt, CP_UMOUNT_FLAG);
+>>>  	else
+>>> @@ -1136,6 +1140,29 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>  
+>>>  	start_blk = __start_cp_next_addr(sbi);
+>>>  
+>>> +	/* write nat bits */
+> 
+> ...
+> 
+>>> +static int scan_nat_bits(struct f2fs_sb_info *sbi)
+>>> +{
+>>> +	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>> +	struct page *page;
+>>> +	unsigned int i = 0;
+>>> +	nid_t target = FREE_NID_PAGES * NAT_ENTRY_PER_BLOCK;
+>>> +	nid_t nid;
+>>> +
+>>> +	if (!is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG))
+>>> +		return -EAGAIN;
+>>> +
+>>> +	down_read(&nm_i->nat_tree_lock);
+>>> +check_empty:
+>>> +	i = find_next_bit_le(nm_i->empty_nat_bits, nm_i->nat_blocks, i);
+>>> +	if (i >= nm_i->nat_blocks) {
+>>> +		i = 0;
+>>> +		goto check_partial;
+>>> +	}
+>>> +
+>>> +	for (nid = i * NAT_ENTRY_PER_BLOCK; nid < (i + 1) * NAT_ENTRY_PER_BLOCK;
+>>> +									nid++) {
+>>> +		if (unlikely(nid >= nm_i->max_nid))
+>>> +			break;
+>>> +		add_free_nid(sbi, nid, true);
+>>> +	}
+>>> +
+>>> +	if (nm_i->nid_cnt[FREE_NID_LIST] >= target)
+>>> +		goto out;
+>>> +	i++;
+>>> +	goto check_empty;
+>>> +
+>>> +check_partial:
+>>> +	i = find_next_zero_bit_le(nm_i->full_nat_bits, nm_i->nat_blocks, i);
+>>> +	if (i >= nm_i->nat_blocks) {
+>>> +		disable_nat_bits(sbi, true);
+>>
+>> Can this happen in real world? Should be a bug in somewhere?
+> 
+> It happens, since current design handles full_nat_bits optionally in order
+> to avoid scanning a whole NAT page to set it back as 1 from 0.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/checkpoint.c |  1 +
- fs/f2fs/data.c       |  4 +++-
- fs/f2fs/dir.c        |  4 +++-
- fs/f2fs/f2fs.h       | 20 +++++++++++++-------
- fs/f2fs/gc.c         |  4 +++-
- fs/f2fs/inode.c      |  4 +++-
- fs/f2fs/node.c       |  4 +++-
- fs/f2fs/segment.c    |  4 +++-
- 8 files changed, 32 insertions(+), 13 deletions(-)
+All 0 value in full_nat_bits means the NAT block has at least one free nid,
+right? so if we traverse all such NAT blocks, and still haven't collect enough
+*target* number of free nids, we don't have to disable nat bit cache, we can
+just break out here.
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index cd7132121573..04d7c244c0f0 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -494,6 +494,7 @@ int acquire_orphan_inode(struct f2fs_sb_info *sbi)
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_ORPHAN)) {
- 		spin_unlock(&im->ino_lock);
-+		f2fs_show_injection_info(FAULT_ORPHAN);
- 		return -ENOSPC;
- 	}
- #endif
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9e51c5e40ce1..b0a2e3faabb2 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -55,8 +55,10 @@ static void f2fs_read_end_io(struct bio *bio)
- 	int i;
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--	if (time_to_inject(F2FS_P_SB(bio->bi_io_vec->bv_page), FAULT_IO))
-+	if (time_to_inject(F2FS_P_SB(bio->bi_io_vec->bv_page), FAULT_IO)) {
-+		f2fs_show_injection_info(FAULT_IO);
- 		bio->bi_error = -EIO;
-+	}
- #endif
- 
- 	if (f2fs_bio_encrypted(bio)) {
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 54aa30ee028f..295a223ae11e 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -549,8 +549,10 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 
- start:
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--	if (time_to_inject(F2FS_I_SB(dir), FAULT_DIR_DEPTH))
-+	if (time_to_inject(F2FS_I_SB(dir), FAULT_DIR_DEPTH)) {
-+		f2fs_show_injection_info(FAULT_DIR_DEPTH);
- 		return -ENOSPC;
-+	}
- #endif
- 	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH))
- 		return -ENOSPC;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8b6d49642a15..6a31b36e59bc 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -954,6 +954,10 @@ struct f2fs_sb_info {
- };
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
-+#define f2fs_show_injection_info(type)				\
-+	printk("%sF2FS-fs : inject %s in %s of %pF\n",		\
-+		KERN_INFO, fault_name[type],			\
-+		__func__, __builtin_return_address(0))
- static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
- {
- 	struct f2fs_fault_info *ffi = &sbi->fault_info;
-@@ -967,10 +971,6 @@ static inline bool time_to_inject(struct f2fs_sb_info *sbi, int type)
- 	atomic_inc(&ffi->inject_ops);
- 	if (atomic_read(&ffi->inject_ops) >= ffi->inject_rate) {
- 		atomic_set(&ffi->inject_ops, 0);
--		printk("%sF2FS-fs : inject %s in %pF\n",
--				KERN_INFO,
--				fault_name[type],
--				__builtin_return_address(0));
- 		return true;
- 	}
- 	return false;
-@@ -1279,8 +1279,10 @@ static inline bool inc_valid_block_count(struct f2fs_sb_info *sbi,
- 	blkcnt_t diff;
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--	if (time_to_inject(sbi, FAULT_BLOCK))
-+	if (time_to_inject(sbi, FAULT_BLOCK)) {
-+		f2fs_show_injection_info(FAULT_BLOCK);
- 		return false;
-+	}
- #endif
- 	/*
- 	 * let's increase this in prior to actual block count change in order
-@@ -1520,8 +1522,10 @@ static inline struct page *f2fs_grab_cache_page(struct address_space *mapping,
- 	if (page)
- 		return page;
- 
--	if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_ALLOC))
-+	if (time_to_inject(F2FS_M_SB(mapping), FAULT_PAGE_ALLOC)) {
-+		f2fs_show_injection_info(FAULT_PAGE_ALLOC);
- 		return NULL;
-+	}
- #endif
- 	if (!for_write)
- 		return grab_cache_page(mapping, index);
-@@ -1997,8 +2001,10 @@ static inline void *f2fs_kmalloc(struct f2fs_sb_info *sbi,
- 					size_t size, gfp_t flags)
- {
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--	if (time_to_inject(sbi, FAULT_KMALLOC))
-+	if (time_to_inject(sbi, FAULT_KMALLOC)) {
-+		f2fs_show_injection_info(FAULT_KMALLOC);
- 		return NULL;
-+	}
- #endif
- 	return kmalloc(size, flags);
- }
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 6c996e39b59a..8be5144da8e6 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -48,8 +48,10 @@ static int gc_thread_func(void *data)
- 		}
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--		if (time_to_inject(sbi, FAULT_CHECKPOINT))
-+		if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
-+			f2fs_show_injection_info(FAULT_CHECKPOINT);
- 			f2fs_stop_checkpoint(sbi, false);
-+		}
- #endif
- 
- 		/*
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index af06bda51a54..24bb8213d974 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -373,8 +373,10 @@ void f2fs_evict_inode(struct inode *inode)
- 		goto no_delete;
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--	if (time_to_inject(sbi, FAULT_EVICT_INODE))
-+	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
-+		f2fs_show_injection_info(FAULT_EVICT_INODE);
- 		goto no_delete;
-+	}
- #endif
- 
- 	remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 819032961218..52db02396878 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2057,8 +2057,10 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
- 	struct free_nid *i = NULL;
- retry:
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--	if (time_to_inject(sbi, FAULT_ALLOC_NID))
-+	if (time_to_inject(sbi, FAULT_ALLOC_NID)) {
-+		f2fs_show_injection_info(FAULT_ALLOC_NID);
- 		return false;
-+	}
- #endif
- 	spin_lock(&nm_i->nid_list_lock);
- 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 3a8a4d9888f1..9006d8ed6f52 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -352,8 +352,10 @@ int commit_inmem_pages(struct inode *inode)
- void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- {
- #ifdef CONFIG_F2FS_FAULT_INJECTION
--	if (time_to_inject(sbi, FAULT_CHECKPOINT))
-+	if (time_to_inject(sbi, FAULT_CHECKPOINT)) {
-+		f2fs_show_injection_info(FAULT_CHECKPOINT);
- 		f2fs_stop_checkpoint(sbi, false);
-+	}
- #endif
- 
- 	if (!need)
--- 
-2.8.2.295.g3f1c1d0
+Thanks,
+
+> 
+>>
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	nid = i * NAT_ENTRY_PER_BLOCK;
+>>> +	page = get_current_nat_page(sbi, nid);
+>>> +	scan_nat_page(sbi, page, nid);
+>>> +	f2fs_put_page(page, 1);
+>>> +
+>>> +	if (nm_i->nid_cnt[FREE_NID_LIST] < target) {
+>>> +		i++;
+>>> +		goto check_partial;
+>>> +	}
+>>> +out:
+>>> +	up_read(&nm_i->nat_tree_lock);
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+>>>  {
+>>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+>>> @@ -1854,6 +1911,20 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync)
+>>>  	if (!sync && !available_free_memory(sbi, FREE_NIDS))
+>>>  		return;
+>>>  
+>>> +	/* try to find free nids with nat_bits */
+>>> +	if (!mount && !scan_nat_bits(sbi) && nm_i->nid_cnt[FREE_NID_LIST])
+>>> +		return;
+>>> +
+>>> +	/* find next valid candidate */
+>>
+>> This is just for mount case?
+> 
+> Yup, it reuses free nids in dirty NAT blocks, so that we can make them as full
+> NAT pages.
+> 
+> Thanks,
+> 
+>>
+>>> +	if (is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG)) {
+>>> +		int idx = find_next_zero_bit_le(nm_i->full_nat_bits,
+>>> +					nm_i->nat_blocks, 0);
+>>> +		if (idx >= nm_i->nat_blocks)
+>>> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>> +		else
+>>> +			nid = idx * NAT_ENTRY_PER_BLOCK;
+>>> +	}
+>>> +
+>>>  	/* readahead nat pages to be scanned */
+>>>  	ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nid), FREE_NID_PAGES,
+>>>  							META_NAT, true);
+>>> @@ -1896,10 +1967,10 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync)
+>>>  					nm_i->ra_nid_pages, META_NAT, false);
+>>>  }
+>>>  
+>>> -void build_free_nids(struct f2fs_sb_info *sbi, bool sync)
+>>> +void build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+>>>  {
+>>>  	mutex_lock(&NM_I(sbi)->build_lock);
+>>> -	__build_free_nids(sbi, sync);
+>>> +	__build_free_nids(sbi, sync, mount);
+>>>  	mutex_unlock(&NM_I(sbi)->build_lock);
+>>>  }
+>>>  
+>>> @@ -1941,7 +2012,7 @@ bool alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
+>>>  	spin_unlock(&nm_i->nid_list_lock);
+>>>  
+>>>  	/* Let's scan nat pages and its caches to get free nids */
+>>> -	build_free_nids(sbi, true);
+>>> +	build_free_nids(sbi, true, false);
+>>>  	goto retry;
+>>>  }
+>>>  
+>>> @@ -2233,8 +2304,39 @@ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+>>>  	list_add_tail(&nes->set_list, head);
+>>>  }
+>>>  
+>>> +void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+>>> +						struct page *page)
+>>> +{
+>>> +	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>> +	unsigned int nat_index = start_nid / NAT_ENTRY_PER_BLOCK;
+>>> +	struct f2fs_nat_block *nat_blk = page_address(page);
+>>> +	int valid = 0;
+>>> +	int i;
+>>> +
+>>> +	if (!is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG))
+>>> +		return;
+>>> +
+>>> +	for (i = 0; i < NAT_ENTRY_PER_BLOCK; i++) {
+>>> +		if (start_nid == 0 && i == 0)
+>>> +			valid++;
+>>> +		if (nat_blk->entries[i].block_addr)
+>>> +			valid++;
+>>> +	}
+>>> +	if (valid == 0) {
+>>> +		test_and_set_bit_le(nat_index, nm_i->empty_nat_bits);
+>>> +		test_and_clear_bit_le(nat_index, nm_i->full_nat_bits);
+>>
+>> set_bit_le/clear_bit_le
+>>
+>>> +		return;
+>>> +	}
+>>> +
+>>> +	test_and_clear_bit_le(nat_index, nm_i->empty_nat_bits);
+>>
+>> ditto
+>>
+>>> +	if (valid == NAT_ENTRY_PER_BLOCK)
+>>> +		test_and_set_bit_le(nat_index, nm_i->full_nat_bits);
+>>> +	else
+>>> +		test_and_clear_bit_le(nat_index, nm_i->full_nat_bits);
+>>
+>> ditto
+>>
+>>> +}
+>>> +
+>>>  static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>>> -					struct nat_entry_set *set)
+>>> +		struct nat_entry_set *set, struct cp_control *cpc)
+>>>  {
+>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+>>>  	struct f2fs_journal *journal = curseg->journal;
+>>> @@ -2249,7 +2351,8 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>>>  	 * #1, flush nat entries to journal in current hot data summary block.
+>>>  	 * #2, flush nat entries to nat page.
+>>>  	 */
+>>> -	if (!__has_cursum_space(journal, set->entry_cnt, NAT_JOURNAL))
+>>> +	if (cpc->reason == CP_UMOUNT ||
+>>
+>> if ((cpc->reason == CP_UMOUNT && is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG)) ||
+>>
+>>> +		!__has_cursum_space(journal, set->entry_cnt, NAT_JOURNAL))
+>>>  		to_journal = false;
+>>>  
+>>>  	if (to_journal) {
+>>> @@ -2289,10 +2392,12 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>>>  		}
+>>>  	}
+>>>  
+>>> -	if (to_journal)
+>>> +	if (to_journal) {
+>>>  		up_write(&curseg->journal_rwsem);
+>>> -	else
+>>> +	} else {
+>>> +		__update_nat_bits(sbi, start_nid, page);
+>>>  		f2fs_put_page(page, 1);
+>>> +	}
+>>>  
+>>>  	f2fs_bug_on(sbi, set->entry_cnt);
+>>>  
+>>> @@ -2303,7 +2408,7 @@ static void __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>>>  /*
+>>>   * This function is called during the checkpointing process.
+>>>   */
+>>> -void flush_nat_entries(struct f2fs_sb_info *sbi)
+>>> +void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>>  {
+>>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>>  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+>>> @@ -2324,7 +2429,8 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+>>>  	 * entries, remove all entries from journal and merge them
+>>>  	 * into nat entry set.
+>>>  	 */
+>>> -	if (!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
+>>> +	if (cpc->reason == CP_UMOUNT ||
+>>
+>> if ((cpc->reason == CP_UMOUNT && is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG)) ||
+>>
+>>> +		!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
+>>>  		remove_nats_in_journal(sbi);
+>>>  
+>>>  	while ((found = __gang_lookup_nat_set(nm_i,
+>>> @@ -2338,27 +2444,72 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+>>>  
+>>>  	/* flush dirty nats in nat entry set */
+>>>  	list_for_each_entry_safe(set, tmp, &sets, set_list)
+>>> -		__flush_nat_entry_set(sbi, set);
+>>> +		__flush_nat_entry_set(sbi, set, cpc);
+>>>  
+>>>  	up_write(&nm_i->nat_tree_lock);
+>>>  
+>>>  	f2fs_bug_on(sbi, nm_i->dirty_nat_cnt);
+>>>  }
+>>>  
+>>> +static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+>>> +{
+>>> +	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+>>> +	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>> +	unsigned int nat_bits_bytes = nm_i->nat_blocks / BITS_PER_BYTE;
+>>> +	unsigned int i;
+>>> +	__u64 cp_ver = le64_to_cpu(ckpt->checkpoint_ver);
+>>
+>> __u64 cp_ver = cur_cp_version(ckpt);
+>>
+>> Thanks,
+>>
+>>> +	size_t crc_offset = le32_to_cpu(ckpt->checksum_offset);
+>>> +	__u64 crc = le32_to_cpu(*((__le32 *)
+>>> +				((unsigned char *)ckpt + crc_offset)));
+>>> +	block_t nat_bits_addr;
+>>> +
+>>> +	if (!is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG))
+>>> +		return 0;
+>>> +
+>>> +	nm_i->nat_bits_blocks = F2FS_BYTES_TO_BLK((nat_bits_bytes << 1) + 8 +
+>>> +						F2FS_BLKSIZE - 1);
+>>> +	nm_i->nat_bits = kzalloc(nm_i->nat_bits_blocks << F2FS_BLKSIZE_BITS,
+>>> +						GFP_KERNEL);
+>>> +	if (!nm_i->nat_bits)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	nat_bits_addr = __start_cp_addr(sbi) + sbi->blocks_per_seg -
+>>> +						nm_i->nat_bits_blocks;
+>>> +	for (i = 0; i < nm_i->nat_bits_blocks; i++) {
+>>> +		struct page *page = get_meta_page(sbi, nat_bits_addr++);
+>>> +
+>>> +		memcpy(nm_i->nat_bits + (i << F2FS_BLKSIZE_BITS),
+>>> +					page_address(page), F2FS_BLKSIZE);
+>>> +		f2fs_put_page(page, 1);
+>>> +	}
+>>> +
+>>> +	cp_ver |= (crc << 32);
+>>> +	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
+>>> +		disable_nat_bits(sbi, true);
+>>> +		return 0;
+>>> +	}
+>>> +
+>>> +	nm_i->full_nat_bits = nm_i->nat_bits + 8;
+>>> +	nm_i->empty_nat_bits = nm_i->full_nat_bits + nat_bits_bytes;
+>>> +
+>>> +	f2fs_msg(sbi->sb, KERN_NOTICE, "Found nat_bits in checkpoint");
+>>> +	return 0;
+>>> +}
+>>> +
+>>>  static int init_node_manager(struct f2fs_sb_info *sbi)
+>>>  {
+>>>  	struct f2fs_super_block *sb_raw = F2FS_RAW_SUPER(sbi);
+>>>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+>>>  	unsigned char *version_bitmap;
+>>> -	unsigned int nat_segs, nat_blocks;
+>>> +	unsigned int nat_segs;
+>>> +	int err;
+>>>  
+>>>  	nm_i->nat_blkaddr = le32_to_cpu(sb_raw->nat_blkaddr);
+>>>  
+>>>  	/* segment_count_nat includes pair segment so divide to 2. */
+>>>  	nat_segs = le32_to_cpu(sb_raw->segment_count_nat) >> 1;
+>>> -	nat_blocks = nat_segs << le32_to_cpu(sb_raw->log_blocks_per_seg);
+>>> -
+>>> -	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nat_blocks;
+>>> +	nm_i->nat_blocks = nat_segs << le32_to_cpu(sb_raw->log_blocks_per_seg);
+>>> +	nm_i->max_nid = NAT_ENTRY_PER_BLOCK * nm_i->nat_blocks;
+>>>  
+>>>  	/* not used nids: 0, node, meta, (and root counted as valid node) */
+>>>  	nm_i->available_nids = nm_i->max_nid - sbi->total_valid_node_count -
+>>> @@ -2392,6 +2543,10 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+>>>  	if (!nm_i->nat_bitmap)
+>>>  		return -ENOMEM;
+>>>  
+>>> +	err = __get_nat_bitmaps(sbi);
+>>> +	if (err)
+>>> +		return err;
+>>> +
+>>>  #ifdef CONFIG_F2FS_CHECK_FS
+>>>  	nm_i->nat_bitmap_mir = kmemdup(version_bitmap, nm_i->bitmap_size,
+>>>  					GFP_KERNEL);
+>>> @@ -2414,7 +2569,7 @@ int build_node_manager(struct f2fs_sb_info *sbi)
+>>>  	if (err)
+>>>  		return err;
+>>>  
+>>> -	build_free_nids(sbi, true);
+>>> +	build_free_nids(sbi, true, true);
+>>>  	return 0;
+>>>  }
+>>>  
+>>> @@ -2473,6 +2628,7 @@ void destroy_node_manager(struct f2fs_sb_info *sbi)
+>>>  	up_write(&nm_i->nat_tree_lock);
+>>>  
+>>>  	kfree(nm_i->nat_bitmap);
+>>> +	kfree(nm_i->nat_bits);
+>>>  #ifdef CONFIG_F2FS_CHECK_FS
+>>>  	kfree(nm_i->nat_bitmap_mir);
+>>>  #endif
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index df2ff5cfe8f4..8e1ec248c653 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -386,7 +386,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+>>>  	if (!available_free_memory(sbi, FREE_NIDS))
+>>>  		try_to_free_nids(sbi, MAX_FREE_NIDS);
+>>>  	else
+>>> -		build_free_nids(sbi, false);
+>>> +		build_free_nids(sbi, false, false);
+>>>  
+>>>  	if (!is_idle(sbi))
+>>>  		return;
+>>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+>>> index f0748524ca8c..1c92ace2e8f8 100644
+>>> --- a/include/linux/f2fs_fs.h
+>>> +++ b/include/linux/f2fs_fs.h
+>>> @@ -114,6 +114,7 @@ struct f2fs_super_block {
+>>>  /*
+>>>   * For checkpoint
+>>>   */
+>>> +#define CP_NAT_BITS_FLAG	0x00000080
+>>>  #define CP_CRC_RECOVERY_FLAG	0x00000040
+>>>  #define CP_FASTBOOT_FLAG	0x00000020
+>>>  #define CP_FSCK_FLAG		0x00000010
+>>>
+>>
+>>
+>> ------------------------------------------------------------------------------
+>> Check out the vibrant tech community on one of the world's most
+>> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> .
+> 
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
