@@ -1,25 +1,26 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH] f2fs: use MAX_FREE_NIDS for the free nids target
-Date: Sun, 26 Feb 2017 20:47:16 +0800
-Message-ID: <8facba63-3a92-85a0-4257-9122fcb19fcd@gmail.com>
+Subject: [PATCH] mkfs.f2fs: check filesystem overwrite before
+	formatting
+Date: Sun, 26 Feb 2017 21:29:48 +0800
+Message-ID: <6a5dfce4-eadc-bc1b-8435-47ab47dfc0ae@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1chyEf-0000Kz-Df
+	(envelope-from <kinglongmee@gmail.com>) id 1chytv-00024N-Nt
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 26 Feb 2017 12:47:33 +0000
-Received: from mail-io0-f193.google.com ([209.85.223.193])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1chyEe-0003zV-NE
+	Sun, 26 Feb 2017 13:30:11 +0000
+Received: from mail-it0-f66.google.com ([209.85.214.66])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1chytu-0007va-Ie
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 26 Feb 2017 12:47:33 +0000
-Received: by mail-io0-f193.google.com with SMTP id w10so3204882iod.3
+	Sun, 26 Feb 2017 13:30:11 +0000
+Received: by mail-it0-f66.google.com with SMTP id 203so8881839ith.2
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 26 Feb 2017 04:47:32 -0800 (PST)
+	Sun, 26 Feb 2017 05:30:04 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,62 +33,204 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-F2FS has define MAX_FREE_NIDS for maximum of cached free nids target.
-
-#define MAX_FREE_NIDS   (NAT_ENTRY_PER_BLOCK * FREE_NID_PAGES)
+Mkfs.f2fs doesn't check the overwrite of exist filesystem.
+Avoid formatting an exist filesystem by mistake, a notice is important.
+The code is modified from xfsprogs.
 
 Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- fs/f2fs/node.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ configure.ac            | 20 +++++++++--
+ mkfs/Makefile.am        |  4 +--
+ mkfs/f2fs_format_main.c | 89 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 108 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 6d43095..9284f65 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1870,7 +1870,6 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
- 	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
- 	struct f2fs_journal *journal = curseg->journal;
- 	unsigned int i, idx;
--	unsigned int target = FREE_NID_PAGES * NAT_ENTRY_PER_BLOCK;
+diff --git a/configure.ac b/configure.ac
+index 6a3f7c4..d6de43b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -48,8 +48,11 @@ AC_CHECK_HEADERS_ONCE([
+ # Test configure options.
+ AC_ARG_WITH([selinux],
+ 	AS_HELP_STRING([--without-selinux],
+-	  [Ignore presence of libselinux and disable selinux support])
+-)
++	  [Ignore presence of libselinux and disable selinux support]))
++
++AC_ARG_WITH([blkid],
++	AS_HELP_STRING([--without-blkid],
++	  [Ignore presence of libblkid and disable blkid support]))
  
- 	down_read(&nm_i->nat_tree_lock);
+ # Checks for programs.
+ AC_PROG_CC
+@@ -74,6 +77,19 @@ AS_IF([test "x$have_selinux" = "xyes"],
+ 	)]
+ )
  
-@@ -1886,7 +1885,7 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
- 			nid = i * NAT_ENTRY_PER_BLOCK + idx;
- 			add_free_nid(sbi, nid, true);
++AS_IF([test "x$with_blkid" != "xno"],
++	[PKG_CHECK_MODULES([libblkid], [blkid],
++	                   [have_blkid=yes], [have_blkid=no])],
++	[have_blkid=no]
++)
++
++AS_IF([test "x$have_blkid" = "xyes"],
++	[AC_DEFINE([HAVE_LIBBLKID], [1], [Use blkid])],
++	[AS_IF([test "x$with_blkid" = "xyes"],
++		[AC_MSG_ERROR([blkid support requested but libblkid not found])]
++	)]
++)
++
+ # Checks for header files.
+ AC_CHECK_HEADERS([linux/fs.h linux/blkzoned.h fcntl.h mntent.h stdlib.h string.h \
+ 		sys/ioctl.h sys/mount.h unistd.h linux/falloc.h byteswap.h])
+diff --git a/mkfs/Makefile.am b/mkfs/Makefile.am
+index 8b4c16c..162a0cf 100644
+--- a/mkfs/Makefile.am
++++ b/mkfs/Makefile.am
+@@ -1,10 +1,10 @@
+ ## Makefile.am
  
--			if (nm_i->nid_cnt[FREE_NID_LIST] >= target)
-+			if (nm_i->nid_cnt[FREE_NID_LIST] >= MAX_FREE_NIDS)
- 				goto out;
- 		}
- 	}
-@@ -1912,7 +1911,6 @@ static int scan_nat_bits(struct f2fs_sb_info *sbi)
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 	struct page *page;
- 	unsigned int i = 0;
--	nid_t target = FREE_NID_PAGES * NAT_ENTRY_PER_BLOCK;
- 	nid_t nid;
+-AM_CPPFLAGS = ${libuuid_CFLAGS} -I$(top_srcdir)/include
++AM_CPPFLAGS = ${libuuid_CFLAGS} ${libblkid_CFLAGS} -I$(top_srcdir)/include
+ AM_CFLAGS = -Wall -DWITH_BLKDISCARD
+ sbin_PROGRAMS = mkfs.f2fs
+ mkfs_f2fs_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c f2fs_format_utils.h $(top_srcdir)/include/f2fs_fs.h
+-mkfs_f2fs_LDADD = ${libuuid_LIBS} $(top_builddir)/lib/libf2fs.la
++mkfs_f2fs_LDADD = ${libuuid_LIBS} ${libblkid_LIBS} $(top_builddir)/lib/libf2fs.la
  
- 	if (!enabled_nat_bits(sbi, NULL))
-@@ -1933,7 +1931,7 @@ static int scan_nat_bits(struct f2fs_sb_info *sbi)
- 		add_free_nid(sbi, nid, true);
- 	}
+ lib_LTLIBRARIES = libf2fs_format.la
+ libf2fs_format_la_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c
+diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
+index 5bb1faf..b26256d 100644
+--- a/mkfs/f2fs_format_main.c
++++ b/mkfs/f2fs_format_main.c
+@@ -18,10 +18,16 @@
+ #include <time.h>
+ #include <uuid/uuid.h>
  
--	if (nm_i->nid_cnt[FREE_NID_LIST] >= target)
-+	if (nm_i->nid_cnt[FREE_NID_LIST] >= MAX_FREE_NIDS)
- 		goto out;
- 	i++;
- 	goto check_empty;
-@@ -1951,7 +1949,7 @@ static int scan_nat_bits(struct f2fs_sb_info *sbi)
- 	scan_nat_page(sbi, page, nid);
- 	f2fs_put_page(page, 1);
++#include "config.h"
++#ifdef HAVE_LIBBLKID
++#  include <blkid/blkid.h>
++#endif
++
+ #include "f2fs_fs.h"
+ #include "f2fs_format_utils.h"
  
--	if (nm_i->nid_cnt[FREE_NID_LIST] < target) {
-+	if (nm_i->nid_cnt[FREE_NID_LIST] < MAX_FREE_NIDS) {
- 		i++;
- 		goto check_partial;
- 	}
+ extern struct f2fs_configuration c;
++static int force_overwrite = 0;
+ 
+ static void mkfs_usage()
+ {
+@@ -72,7 +78,7 @@ static void parse_feature(const char *features)
+ 
+ static void f2fs_parse_options(int argc, char *argv[])
+ {
+-	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:";
++	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:f";
+ 	int32_t option=0;
+ 
+ 	while ((option = getopt(argc,argv,option_string)) != EOF) {
+@@ -128,6 +134,9 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		case 't':
+ 			c.trim = atoi(optarg);
+ 			break;
++		case 'f':
++			force_overwrite = 1;
++			break;
+ 		default:
+ 			MSG(0, "\tError: Unknown option %c\n",option);
+ 			mkfs_usage();
+@@ -155,6 +164,79 @@ static void f2fs_parse_options(int argc, char *argv[])
+ 		c.feature |= cpu_to_le32(F2FS_FEATURE_BLKZONED);
+ }
+ 
++#ifdef HAVE_LIBBLKID
++static int f2fs_dev_is_overwrite(const char *device)
++{
++	const char	*type;
++	blkid_probe	pr = NULL;
++	int		ret = -1;
++
++	if (!device || !*device)
++		return 0;
++
++	pr = blkid_new_probe_from_filename(device);
++	if (!pr)
++		goto out;
++
++	ret = blkid_probe_enable_partitions(pr, 1);
++	if (ret < 0)
++		goto out;
++
++	ret = blkid_do_fullprobe(pr);
++	if (ret < 0)
++		goto out;
++
++	/*
++	 * Blkid returns 1 for nothing found and 0 when it finds a signature,
++	 * but we want the exact opposite, so reverse the return value here.
++	 *
++	 * In addition print some useful diagnostics about what actually is
++	 * on the device.
++	 */
++	if (ret) {
++		ret = 0;
++		goto out;
++	}
++
++	if (!blkid_probe_lookup_value(pr, "TYPE", &type, NULL)) {
++		MSG(0, "\t%s appears to contain an existing filesystem (%s).\n",
++			device, type);
++	} else if (!blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL)) {
++		MSG(0, "\t%s appears to contain a partition table (%s).\n",
++			device, type);
++	} else {
++		MSG(0, "\t%s appears to contain something weird according to blkid\n",
++			device);
++	}
++	ret = 1;
++out:
++	if (pr)
++		blkid_free_probe(pr);
++	if (ret == -1)
++		MSG(0, "\tprobe of %s failed, cannot detect existing filesystem.\n",
++			device);
++	return ret;
++}
++
++static int f2fs_check_overwrite(void)
++{
++	int i;
++
++	for (i = 0; i < c.ndevs; i++)
++		if (f2fs_dev_is_overwrite((char *)c.devices[i].path))
++			return -1;
++	return 0;
++}
++
++#else
++
++static int f2fs_check_overwrite(void)
++{
++	return 0;
++}
++
++#endif /* HAVE_LIBBLKID */
++
+ int main(int argc, char *argv[])
+ {
+ 	f2fs_init_configuration();
+@@ -163,6 +245,11 @@ int main(int argc, char *argv[])
+ 
+ 	f2fs_show_info();
+ 
++	if (!force_overwrite && f2fs_check_overwrite()) {
++		MSG(0, "\tUse the -f option to force overwrite.\n");
++		return -1;
++	}
++
+ 	if (f2fs_devs_are_umounted() < 0) {
+ 		MSG(0, "\tError: Not available on mounted device!\n");
+ 		return -1;
 -- 
 2.9.3
 
