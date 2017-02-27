@@ -1,146 +1,79 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH 1/1] f2fs: Fix zoned block device support
-Date: Mon, 27 Feb 2017 10:49:16 -0800
-Message-ID: <20170227184916.GB2296@jaegeuk.local>
-References: <20170227115249.19556-1-masato.suzuki@wdc.com>
+Subject: [PATCH] f2fs: avoid to issue redundant discard commands
+Date: Mon, 27 Feb 2017 13:43:55 -0800
+Message-ID: <20170227214355.8405-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170227115249.19556-1-masato.suzuki@wdc.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Masato Suzuki <masato.suzuki@wdc.com>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ciT5R-0000u4-Vp
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 Feb 2017 21:44:05 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ciT5Q-0001En-2J
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 27 Feb 2017 21:44:05 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Damien Le Moal <damien.lemoal@wdc.com>, stable@vger.kernel.org
 
-Hello,
+If segs_per_sec is over 1 like under SMR, previously f2fs issues discard
+commands redundantly on the same section, since we didn't move end position
+for the previous discard command.
 
-On 02/27, Masato Suzuki wrote:
-> The introduction of the multi-device feature partially broke the support
-> for zoned block devices. In the function f2fs_scan_devices, sbi->devs
-> allocation and initialization is skipped in the case of a single device
-> mount. This result in no device information structure being allocated
-> for the device. This is fine if the device is a regular device, but in
-> the case of a zoned block device, the device zone type array is not
-> initialized, which causes the function __f2fs_issue_discard_zone to fail
-> as get_blkz_type is unable to determine the zone type of a section.
-> 
-> Fix this by always allocating and initializing the sbi->devs device
-> information array even in the case of a single device if that device is
-> zoned. For this particular case, make sure to obtain a reference on the
-> single device so that the call to blkdev_put() in destroy_device_list
-> operates as expected.
-> 
-> Signed-off-by: Masato Suzuki <masato.suzuki@wdc.com>
+E.g.,
 
-Thank you for the patch.
-I've added:
+                       start  end
+                         |    |
+      prefree_bitmap = [01111100111100]
 
-Fixes: 3c62be17d4f562f4 ("f2fs: support multiple devices")
-Cc: <stable@vger.kernel.org> # v4.10
+And, after issue discard for this section,
+                             end      start
+                              |        |
+      prefree_bitmap = [01111100111100]
 
-Thanks,
+Select this section again by searching from (end + 1),
+                             start  end
+                                |   |
+      prefree_bitmap = [01111100111100]
 
-> Acked-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->  fs/f2fs/super.c | 67 +++++++++++++++++++++++++++++++++++++--------------------
->  1 file changed, 44 insertions(+), 23 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 46fd30d..287fcbd 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1698,36 +1698,55 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
->  static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
->  {
->  	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
-> +	unsigned int max_devices = MAX_DEVICES;
->  	int i;
->  
-> -	for (i = 0; i < MAX_DEVICES; i++) {
-> -		if (!RDEV(i).path[0])
-> +	/* Initialize single device information */
-> +	if (!RDEV(0).path[0]) {
-> +		if (!bdev_is_zoned(sbi->sb->s_bdev))
->  			return 0;
-> +		max_devices = 1;
-> +	}
->  
-> -		if (i == 0) {
-> -			sbi->devs = kzalloc(sizeof(struct f2fs_dev_info) *
-> -						MAX_DEVICES, GFP_KERNEL);
-> -			if (!sbi->devs)
-> -				return -ENOMEM;
-> -		}
-> +	/*
-> +	 * Initialize multiple devices information, or single
-> +	 * zoned block device information.
-> +	 */
-> +	sbi->devs = kcalloc(max_devices, sizeof(struct f2fs_dev_info),
-> +				GFP_KERNEL);
-> +	if (!sbi->devs)
-> +		return -ENOMEM;
->  
-> -		memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
-> -		FDEV(i).total_segments = le32_to_cpu(RDEV(i).total_segments);
-> -		if (i == 0) {
-> -			FDEV(i).start_blk = 0;
-> -			FDEV(i).end_blk = FDEV(i).start_blk +
-> -				(FDEV(i).total_segments <<
-> -				sbi->log_blocks_per_seg) - 1 +
-> -				le32_to_cpu(raw_super->segment0_blkaddr);
-> -		} else {
-> -			FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
-> -			FDEV(i).end_blk = FDEV(i).start_blk +
-> -				(FDEV(i).total_segments <<
-> -				sbi->log_blocks_per_seg) - 1;
-> -		}
-> +	for (i = 0; i < max_devices; i++) {
->  
-> -		FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path,
-> +		if (i > 0 && !RDEV(i).path[0])
-> +			break;
-> +
-> +		if (max_devices == 1) {
-> +			/* Single zoned block device mount */
-> +			FDEV(0).bdev =
-> +				blkdev_get_by_dev(sbi->sb->s_bdev->bd_dev,
->  					sbi->sb->s_mode, sbi->sb->s_type);
-> +		} else {
-> +			/* Multi-device mount */
-> +			memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
-> +			FDEV(i).total_segments =
-> +				le32_to_cpu(RDEV(i).total_segments);
-> +			if (i == 0) {
-> +				FDEV(i).start_blk = 0;
-> +				FDEV(i).end_blk = FDEV(i).start_blk +
-> +				    (FDEV(i).total_segments <<
-> +				    sbi->log_blocks_per_seg) - 1 +
-> +				    le32_to_cpu(raw_super->segment0_blkaddr);
-> +			} else {
-> +				FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
-> +				FDEV(i).end_blk = FDEV(i).start_blk +
-> +					(FDEV(i).total_segments <<
-> +					sbi->log_blocks_per_seg) - 1;
-> +			}
-> +			FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path,
-> +					sbi->sb->s_mode, sbi->sb->s_type);
-> +		}
->  		if (IS_ERR(FDEV(i).bdev))
->  			return PTR_ERR(FDEV(i).bdev);
->  
-> @@ -1747,6 +1766,8 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
->  					"Failed to initialize F2FS blkzone information");
->  				return -EINVAL;
->  			}
-> +			if (max_devices == 1)
-> +				break;
->  			f2fs_msg(sbi->sb, KERN_INFO,
->  				"Mount Device [%2d]: %20s, %8u, %8x - %8x (zone: %s)",
->  				i, FDEV(i).path,
-> -- 
-> 2.9.3
-> 
-> Western Digital Corporation (and its subsidiaries) E-mail Confidentiality Notice & Disclaimer:
-> 
-> This e-mail and any files transmitted with it may contain confidential or legally privileged information of WDC and/or its affiliates, and are intended solely for the use of the individual or entity to which they are addressed. If you are not the intended recipient, any disclosure, copying, distribution or any action taken or omitted to be taken in reliance on it, is prohibited. If you have received this e-mail in error, please notify the sender immediately and delete the e-mail in its entirety from your system.
+Fixes: 36abef4e796d38 ("f2fs: introduce mode=lfs mount option")
+Cc: <stable@vger.kernel.org>
+Cc: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/segment.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 9006d8ed6f52..4bd7a8b19332 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1036,6 +1036,8 @@ void clear_prefree_segments(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		start = start_segno + sbi->segs_per_sec;
+ 		if (start < end)
+ 			goto next;
++		else
++			end = start - 1;
+ 	}
+ 	mutex_unlock(&dirty_i->seglist_lock);
+ 
+-- 
+2.11.0
+
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
