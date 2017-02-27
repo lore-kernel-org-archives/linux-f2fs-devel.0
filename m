@@ -1,23 +1,23 @@
 From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH 3/3] f2fs: fix a plint compile warning
-Date: Mon, 27 Feb 2017 13:02:59 +0000
-Message-ID: <20170227130259.19987-3-houpengyang@huawei.com>
+Subject: [PATCH 2/3] f2fs: add f2fs_drop_inode tracepoint
+Date: Mon, 27 Feb 2017 13:02:58 +0000
+Message-ID: <20170227130259.19987-2-houpengyang@huawei.com>
 References: <20170227130259.19987-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1ciKxj-00082B-E7
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <houpengyang@huawei.com>) id 1ciKxo-0002eY-SP
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 13:03:35 +0000
+	Mon, 27 Feb 2017 13:03:40 +0000
 Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ciKxc-0004Z1-1Z
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ciKxc-0003kv-4P
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 13:03:35 +0000
+	Mon, 27 Feb 2017 13:03:40 +0000
 In-Reply-To: <20170227130259.19987-1-houpengyang@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
@@ -31,27 +31,57 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-fix such pclint warning:
-...
-Loss of precision (arg. no. 2) (unsigned long long to unsigned int))
-
 Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
 ---
- fs/f2fs/gc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/super.c             | 7 +++++--
+ include/trace/events/f2fs.h | 7 +++++++
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 023f043..418fd98 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1009,6 +1009,6 @@ void build_gc_manager(struct f2fs_sb_info *sbi)
- 	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
- 	blocks_per_sec = sbi->blocks_per_seg * sbi->segs_per_sec;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 751e106..746296e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -624,6 +624,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
  
--	sbi->fggc_threshold = div_u64((main_count - ovp_count) * blocks_per_sec,
-+	sbi->fggc_threshold = div64_u64((main_count - ovp_count) * blocks_per_sec,
- 					(main_count - resv_count));
+ static int f2fs_drop_inode(struct inode *inode)
+ {
++	int ret;
+ 	/*
+ 	 * This is to avoid a deadlock condition like below.
+ 	 * writeback_single_inode(inode)
+@@ -656,10 +657,12 @@ static int f2fs_drop_inode(struct inode *inode)
+ 			spin_lock(&inode->i_lock);
+ 			atomic_dec(&inode->i_count);
+ 		}
++		trace_f2fs_drop_inode(inode, 0);
+ 		return 0;
+ 	}
+-
+-	return generic_drop_inode(inode);
++	ret = generic_drop_inode(inode);
++	trace_f2fs_drop_inode(inode, ret);
++	return ret;
  }
+ 
+ int f2fs_inode_dirtied(struct inode *inode, bool sync)
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index ff31ccf..c80fcad0 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -315,6 +315,13 @@ DEFINE_EVENT(f2fs__inode_exit, f2fs_unlink_exit,
+ 	TP_ARGS(inode, ret)
+ );
+ 
++DEFINE_EVENT(f2fs__inode_exit, f2fs_drop_inode,
++
++	TP_PROTO(struct inode *inode, int ret),
++
++	TP_ARGS(inode, ret)
++);
++
+ DEFINE_EVENT(f2fs__inode, f2fs_truncate,
+ 
+ 	TP_PROTO(struct inode *inode),
 -- 
 2.10.1
 
