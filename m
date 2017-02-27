@@ -1,24 +1,22 @@
 From: Hou Pengyang <houpengyang@huawei.com>
-Subject: [PATCH 2/3] f2fs: add f2fs_drop_inode tracepoint
-Date: Mon, 27 Feb 2017 13:02:58 +0000
-Message-ID: <20170227130259.19987-2-houpengyang@huawei.com>
-References: <20170227130259.19987-1-houpengyang@huawei.com>
+Subject: [PATCH 1/3] f2fs: fix a memleak issue
+Date: Mon, 27 Feb 2017 13:02:57 +0000
+Message-ID: <20170227130259.19987-1-houpengyang@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1ciKxo-0002eY-SP
+	(envelope-from <houpengyang@huawei.com>) id 1ciKxk-0002e8-CU
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 13:03:40 +0000
+	Mon, 27 Feb 2017 13:03:36 +0000
 Received: from szxga03-in.huawei.com ([119.145.14.66])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ciKxc-0003kv-4P
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ciKxg-0002Vv-PA
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 13:03:40 +0000
-In-Reply-To: <20170227130259.19987-1-houpengyang@huawei.com>
+	Mon, 27 Feb 2017 13:03:36 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,57 +29,29 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org, yuchao0@huawei.com
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
+[fix: ae75f0ca76 f2fs: introduce free nid bitmap]
 Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
 ---
- fs/f2fs/super.c             | 7 +++++--
- include/trace/events/f2fs.h | 7 +++++++
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ fs/f2fs/node.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 751e106..746296e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -624,6 +624,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 6d43095..353c01d 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2650,8 +2650,11 @@ int init_free_nid_cache(struct f2fs_sb_info *sbi)
  
- static int f2fs_drop_inode(struct inode *inode)
- {
-+	int ret;
- 	/*
- 	 * This is to avoid a deadlock condition like below.
- 	 * writeback_single_inode(inode)
-@@ -656,10 +657,12 @@ static int f2fs_drop_inode(struct inode *inode)
- 			spin_lock(&inode->i_lock);
- 			atomic_dec(&inode->i_count);
- 		}
-+		trace_f2fs_drop_inode(inode, 0);
- 		return 0;
- 	}
--
--	return generic_drop_inode(inode);
-+	ret = generic_drop_inode(inode);
-+	trace_f2fs_drop_inode(inode, ret);
-+	return ret;
+ 	nm_i->nat_block_bitmap = f2fs_kvzalloc(nm_i->nat_blocks / 8,
+ 								GFP_KERNEL);
+-	if (!nm_i->nat_block_bitmap)
++	if (!nm_i->nat_block_bitmap) {
++		kvfree(nm_i->free_nid_bitmap);
+ 		return -ENOMEM;
++	}
++
+ 	return 0;
  }
  
- int f2fs_inode_dirtied(struct inode *inode, bool sync)
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index ff31ccf..c80fcad0 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -315,6 +315,13 @@ DEFINE_EVENT(f2fs__inode_exit, f2fs_unlink_exit,
- 	TP_ARGS(inode, ret)
- );
- 
-+DEFINE_EVENT(f2fs__inode_exit, f2fs_drop_inode,
-+
-+	TP_PROTO(struct inode *inode, int ret),
-+
-+	TP_ARGS(inode, ret)
-+);
-+
- DEFINE_EVENT(f2fs__inode, f2fs_truncate,
- 
- 	TP_PROTO(struct inode *inode),
 -- 
 2.10.1
 
