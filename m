@@ -1,26 +1,29 @@
-From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH] mkfs.f2fs: check filesystem overwrite before
-	formatting
-Date: Sun, 26 Feb 2017 21:29:48 +0800
-Message-ID: <6a5dfce4-eadc-bc1b-8435-47ab47dfc0ae@gmail.com>
+From: Hou Pengyang <houpengyang@huawei.com>
+Subject: Re: [PATCH] f2fs: avoid unnecessary fg_gc
+Date: Mon, 27 Feb 2017 09:59:09 +0800
+Message-ID: <58B387ED.8080700@huawei.com>
+References: <20170224100135.70000-1-houpengyang@huawei.com>
+	<0486c0d4-541c-ee21-c598-6656a291a274@huawei.com>
+	<58B0E17C.1030306@huawei.com>
+	<20170225020733.GB50867@jaegeuk.local>
+	<ce5a4256-9275-eb89-e188-f5f200b8f77c@huawei.com>
+	<20170225193959.GE51627@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1chytv-00024N-Nt
+	(envelope-from <houpengyang@huawei.com>) id 1ciAb9-0007nr-9U
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 26 Feb 2017 13:30:11 +0000
-Received: from mail-it0-f66.google.com ([209.85.214.66])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1chytu-0007va-Ie
+	Mon, 27 Feb 2017 01:59:35 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ciAb6-0002Yz-J8
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 26 Feb 2017 13:30:11 +0000
-Received: by mail-it0-f66.google.com with SMTP id 203so8881839ith.2
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 26 Feb 2017 05:30:04 -0800 (PST)
+	Mon, 27 Feb 2017 01:59:35 +0000
+In-Reply-To: <20170225193959.GE51627@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,208 +34,87 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+Cc: guoweichao@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Mkfs.f2fs doesn't check the overwrite of exist filesystem.
-Avoid formatting an exist filesystem by mistake, a notice is important.
-The code is modified from xfsprogs.
+On 2017/2/26 3:39, Jaegeuk Kim wrote:
+> On 02/25, heyunlei wrote:
+>> Hi all,
+>>
+>> I am really confused by the condition below use sec_freed, is it always equal to zero?
+>
+> Seems it is always zero. Let's fix it together.
+>
+> Pengyang,
+>
+> I merged your patches and finally got this.
+> How do you think?
+>
+Seems OK to me :)
 
-Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
----
- configure.ac            | 20 +++++++++--
- mkfs/Makefile.am        |  4 +--
- mkfs/f2fs_format_main.c | 89 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 108 insertions(+), 5 deletions(-)
+Thanks,
 
-diff --git a/configure.ac b/configure.ac
-index 6a3f7c4..d6de43b 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -48,8 +48,11 @@ AC_CHECK_HEADERS_ONCE([
- # Test configure options.
- AC_ARG_WITH([selinux],
- 	AS_HELP_STRING([--without-selinux],
--	  [Ignore presence of libselinux and disable selinux support])
--)
-+	  [Ignore presence of libselinux and disable selinux support]))
-+
-+AC_ARG_WITH([blkid],
-+	AS_HELP_STRING([--without-blkid],
-+	  [Ignore presence of libblkid and disable blkid support]))
- 
- # Checks for programs.
- AC_PROG_CC
-@@ -74,6 +77,19 @@ AS_IF([test "x$have_selinux" = "xyes"],
- 	)]
- )
- 
-+AS_IF([test "x$with_blkid" != "xno"],
-+	[PKG_CHECK_MODULES([libblkid], [blkid],
-+	                   [have_blkid=yes], [have_blkid=no])],
-+	[have_blkid=no]
-+)
-+
-+AS_IF([test "x$have_blkid" = "xyes"],
-+	[AC_DEFINE([HAVE_LIBBLKID], [1], [Use blkid])],
-+	[AS_IF([test "x$with_blkid" = "xyes"],
-+		[AC_MSG_ERROR([blkid support requested but libblkid not found])]
-+	)]
-+)
-+
- # Checks for header files.
- AC_CHECK_HEADERS([linux/fs.h linux/blkzoned.h fcntl.h mntent.h stdlib.h string.h \
- 		sys/ioctl.h sys/mount.h unistd.h linux/falloc.h byteswap.h])
-diff --git a/mkfs/Makefile.am b/mkfs/Makefile.am
-index 8b4c16c..162a0cf 100644
---- a/mkfs/Makefile.am
-+++ b/mkfs/Makefile.am
-@@ -1,10 +1,10 @@
- ## Makefile.am
- 
--AM_CPPFLAGS = ${libuuid_CFLAGS} -I$(top_srcdir)/include
-+AM_CPPFLAGS = ${libuuid_CFLAGS} ${libblkid_CFLAGS} -I$(top_srcdir)/include
- AM_CFLAGS = -Wall -DWITH_BLKDISCARD
- sbin_PROGRAMS = mkfs.f2fs
- mkfs_f2fs_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c f2fs_format_utils.h $(top_srcdir)/include/f2fs_fs.h
--mkfs_f2fs_LDADD = ${libuuid_LIBS} $(top_builddir)/lib/libf2fs.la
-+mkfs_f2fs_LDADD = ${libuuid_LIBS} ${libblkid_LIBS} $(top_builddir)/lib/libf2fs.la
- 
- lib_LTLIBRARIES = libf2fs_format.la
- libf2fs_format_la_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 5bb1faf..b26256d 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -18,10 +18,16 @@
- #include <time.h>
- #include <uuid/uuid.h>
- 
-+#include "config.h"
-+#ifdef HAVE_LIBBLKID
-+#  include <blkid/blkid.h>
-+#endif
-+
- #include "f2fs_fs.h"
- #include "f2fs_format_utils.h"
- 
- extern struct f2fs_configuration c;
-+static int force_overwrite = 0;
- 
- static void mkfs_usage()
- {
-@@ -72,7 +78,7 @@ static void parse_feature(const char *features)
- 
- static void f2fs_parse_options(int argc, char *argv[])
- {
--	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:";
-+	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:f";
- 	int32_t option=0;
- 
- 	while ((option = getopt(argc,argv,option_string)) != EOF) {
-@@ -128,6 +134,9 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		case 't':
- 			c.trim = atoi(optarg);
- 			break;
-+		case 'f':
-+			force_overwrite = 1;
-+			break;
- 		default:
- 			MSG(0, "\tError: Unknown option %c\n",option);
- 			mkfs_usage();
-@@ -155,6 +164,79 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		c.feature |= cpu_to_le32(F2FS_FEATURE_BLKZONED);
- }
- 
-+#ifdef HAVE_LIBBLKID
-+static int f2fs_dev_is_overwrite(const char *device)
-+{
-+	const char	*type;
-+	blkid_probe	pr = NULL;
-+	int		ret = -1;
-+
-+	if (!device || !*device)
-+		return 0;
-+
-+	pr = blkid_new_probe_from_filename(device);
-+	if (!pr)
-+		goto out;
-+
-+	ret = blkid_probe_enable_partitions(pr, 1);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = blkid_do_fullprobe(pr);
-+	if (ret < 0)
-+		goto out;
-+
-+	/*
-+	 * Blkid returns 1 for nothing found and 0 when it finds a signature,
-+	 * but we want the exact opposite, so reverse the return value here.
-+	 *
-+	 * In addition print some useful diagnostics about what actually is
-+	 * on the device.
-+	 */
-+	if (ret) {
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	if (!blkid_probe_lookup_value(pr, "TYPE", &type, NULL)) {
-+		MSG(0, "\t%s appears to contain an existing filesystem (%s).\n",
-+			device, type);
-+	} else if (!blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL)) {
-+		MSG(0, "\t%s appears to contain a partition table (%s).\n",
-+			device, type);
-+	} else {
-+		MSG(0, "\t%s appears to contain something weird according to blkid\n",
-+			device);
-+	}
-+	ret = 1;
-+out:
-+	if (pr)
-+		blkid_free_probe(pr);
-+	if (ret == -1)
-+		MSG(0, "\tprobe of %s failed, cannot detect existing filesystem.\n",
-+			device);
-+	return ret;
-+}
-+
-+static int f2fs_check_overwrite(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < c.ndevs; i++)
-+		if (f2fs_dev_is_overwrite((char *)c.devices[i].path))
-+			return -1;
-+	return 0;
-+}
-+
-+#else
-+
-+static int f2fs_check_overwrite(void)
-+{
-+	return 0;
-+}
-+
-+#endif /* HAVE_LIBBLKID */
-+
- int main(int argc, char *argv[])
- {
- 	f2fs_init_configuration();
-@@ -163,6 +245,11 @@ int main(int argc, char *argv[])
- 
- 	f2fs_show_info();
- 
-+	if (!force_overwrite && f2fs_check_overwrite()) {
-+		MSG(0, "\tUse the -f option to force overwrite.\n");
-+		return -1;
-+	}
-+
- 	if (f2fs_devs_are_umounted() < 0) {
- 		MSG(0, "\tError: Not available on mounted device!\n");
- 		return -1;
--- 
-2.9.3
+>>From d1c2206e4f245a8fedec3a8f21ad522b3b1b2d0c Mon Sep 17 00:00:00 2001
+> From: Hou Pengyang <houpengyang@huawei.com>
+> Date: Sat, 25 Feb 2017 03:57:38 +0000
+> Subject: [PATCH] f2fs: avoid bggc->fggc when enough free segments are
+>   avaliable after cp
+>
+> We use has_not_enough_free_secs to check if there are enough free segments,
+>
+>      	(free_sections(sbi) + freed) <=
+> 	        (node_secs + 2 * dent_secs + imeta_secs +
+> 			         reserved_sections(sbi) + needed);
+>
+> Under scenario with large number of dirty nodes, these nodes would be flushed
+> during cp, as a result, right side of the inequality would be decreased, while
+> left side stays unchanged if these nodes are flushed in SSR way, which means
+> there are enough free segments after this cp.
+>
+> For this case, we just do a bggc instead of fggc.
+>
+> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>   fs/f2fs/gc.c | 17 +++++++++--------
+>   1 file changed, 9 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 1af17c5af603..471ed899f639 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -954,21 +954,22 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+>   		goto stop;
+>   	}
+>
+> -	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> -		gc_type = FG_GC;
+> +	if (gc_type == BG_GC && has_not_enough_free_secs(sbi, 0, 0)) {
+>   		/*
+> -		 * If there is no victim and no prefree segment but still not
+> -		 * enough free sections, we should flush dent/node blocks and do
+> -		 * garbage collections.
+> +		 * For example, if there are many prefree_segments below given
+> +		 * threshold, we can make them free by checkpoint. Then, we
+> +		 * secure free segments which doesn't need fggc any more.
+>   		 */
+>   		ret = write_checkpoint(sbi, &cpc);
+>   		if (ret)
+>   			goto stop;
+> -	} else if (gc_type == BG_GC && !background) {
+> -		/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
+> -		goto stop;
+> +		if (has_not_enough_free_secs(sbi, 0, 0))
+> +			gc_type = FG_GC;
+>   	}
+>
+> +	/* f2fs_balance_fs doesn't need to do BG_GC in critical path. */
+> +	if (gc_type == BG_GC && !background)
+> +		goto stop;
+>   	if (!__get_victim(sbi, &segno, gc_type))
+>   		goto stop;
+>   	ret = 0;
+>
+
 
 
 ------------------------------------------------------------------------------
