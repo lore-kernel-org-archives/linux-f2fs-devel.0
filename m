@@ -1,27 +1,28 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 3/3] f2fs: drop calling alloc_nid_failed when
- no nid is allocated
-Date: Mon, 27 Feb 2017 11:16:51 +0800
-Message-ID: <110ba95d-3aa9-089c-f335-d456c7b9916f@huawei.com>
-References: <77d8220f-8cf4-0af4-3390-cd28fbeb6437@gmail.com>
-	<e1626669-e3bb-c2a4-f8bd-5b882332b033@huawei.com>
-	<bd012d3e-e8c1-60c9-46d6-0d0c156c49e2@gmail.com>
+Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
+ segment but no prefree at BG_GC -> FG_GC
+Date: Mon, 27 Feb 2017 11:25:21 +0800
+Message-ID: <b95af89a-de0c-1242-bf0e-8782eff797f1@huawei.com>
+References: <20170224204357.220337-1-guoweichao@huawei.com>
+	<20170224184959.GD39009@jaegeuk.local>
+	<e3da3ac3-39d5-3880-2e38-ab523a7781ec@huawei.com>
+	<20170225195603.GF51627@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1ciBod-0004Pg-4S
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1ciBwa-0007fA-7N
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 03:17:35 +0000
-Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ciBob-0003bA-NT
+	Mon, 27 Feb 2017 03:25:48 +0000
+Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ciBwW-0000yZ-O9
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 03:17:35 +0000
-In-Reply-To: <bd012d3e-e8c1-60c9-46d6-0d0c156c49e2@gmail.com>
+	Mon, 27 Feb 2017 03:25:48 +0000
+In-Reply-To: <20170225195603.GF51627@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,82 +32,97 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kinglong Mee <kinglongmee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, guoweichao <guoweichao@huawei.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/27 11:08, Kinglong Mee wrote:
-> On 2/27/2017 10:21, Chao Yu wrote:
->> On 2017/2/25 19:23, Kinglong Mee wrote:
->>> If hsize is less than or equal to inlien_size, and i_xattr_nid is valid, 
->>> the new_nid is not allocated (no alloc_nid is called).
->>>
->>>        if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
->>>                 if (!alloc_nid(sbi, &new_nid))
->>>                         return -ENOSPC;
->>>
->>> Although it's harmless calling alloc_nid_failed, it's better drop them.
->>>
->>> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
->>> ---
->>>  fs/f2fs/xattr.c | 9 ++++-----
->>>  1 file changed, 4 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
->>> index 7298a44..fd9dc99 100644
->>> --- a/fs/f2fs/xattr.c
->>> +++ b/fs/f2fs/xattr.c
->>> @@ -428,19 +428,18 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
->>>  		/* no need to use xattr node block */
->>>  		if (hsize <= inline_size) {
->>>  			err = truncate_xattr_node(inode, ipage);
->>> -			alloc_nid_failed(sbi, new_nid);
+On 2017/2/26 3:56, Jaegeuk Kim wrote:
+> On 02/25, guoweichao wrote:
+>> Hi Jaegeuk,
 >>
->> Should keep this since new_nid was assigned above?
+>> I regard no enough free sections as a precondition when talking about
+>> BG_GC -> FG_GC. I mean that for both case a) and b) I mentioned has no enough
+>> free sections implicitly. 
+>>
+>> On 2017/2/25 2:49, Jaegeuk Kim wrote:
+>>> Hi Weichao,
+>>>
+>>> On 02/25, Weichao Guo wrote:
+>>>> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
+>>>> * a) BG_GC have made some progress, e.g.: some prefree segments.
+>>>> * b) There is no victim and no prefree segment.
+>>>
+>>> You missed
+>>>   * c) has_not_enough_free_secs() introduced by
+>>>       6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
+>> As we have enabled SSR for warm node(5b6c6be2d8 ("f2fs: use SSR for warm node as well")),
+>> I think inline data floods should not be a problem in most cases.
+>>>
+>>> And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
+>>> mostly due to c) condition.
+>> As inline data floods is an extreme case, and there is little possibility caused panic
+>> for inline data floods now, there should be lots of chance to skip checkpoint. I mean
+>> that we can make some accurate inline data floods checking before writing checkpoint.
 > 
-> alloc_nid is called when, 
+> For now, the safest way is our first option. So, I decided to start with doing
+> checkpoint due to previous inline_data flooding issue even though it's an
+> extreme case under SSR.
 > 
-> 
-> 403         if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
-> 404                 if (!alloc_nid(sbi, &new_nid))
-> 405                         return -ENOSPC;
-> 
-> if (hsize <= inline_size), alloc_nid isn't called.
+> Anyway, I agree that we need to find a way to detect when to avoid checkpoint.
 
-You're right, I can confirm that. :)
+Hi all,
+
+I proposed a approach before, can you please check that one?
+
+https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg03632.html
 
 Thanks,
 
 > 
-> thanks,
-> Kinglong Mee
->>
->>> +			f2fs_bug_on(sbi, new_nid);
->>>  			return err;
->>>  		}
->>>  	}
->>>  
->>>  	/* write to xattr node block */
->>>  	if (F2FS_I(inode)->i_xattr_nid) {
->>> +		f2fs_bug_on(sbi, new_nid);
->>>  		xpage = get_node_page(sbi, F2FS_I(inode)->i_xattr_nid);
->>> -		if (IS_ERR(xpage)) {
->>> -			alloc_nid_failed(sbi, new_nid);
->>> +		if (IS_ERR(xpage))
->>>  			return PTR_ERR(xpage);
->>> -		}
->>> -		f2fs_bug_on(sbi, new_nid);
->>
->> Cleanup here looks good to me.
->>
->> Thanks,
->>
->>> +
->>>  		f2fs_wait_on_page_writeback(xpage, NODE, true);
->>>  	} else {
->>>  		struct dnode_of_data dn;
+> Thanks,
+> 
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> For case a), previously, we also check if there is a dirty segment for
+>>>> infering blocks moving in last BG_GC. But dirty segments do not always
+>>>> indicate that, BG_GC may just start and do not move any blocks at all.
+>>>> Futhermore, skipping checkpoint if there are some dirty segments but no
+>>>> prefree segments is OK.
+>>>
+>>>
+>>>>
+>>>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/gc.c | 7 ++++++-
+>>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>> index 6c996e3..30d206a 100644
+>>>> --- a/fs/f2fs/gc.c
+>>>> +++ b/fs/f2fs/gc.c
+>>>> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+>>>>  		 * enough free sections, we should flush dent/node blocks and do
+>>>>  		 * garbage collections.
+>>>>  		 */
+>>>> -		ret = write_checkpoint(sbi, &cpc);
+>>>> +		if (prefree_segments(sbi))
+>>>> +			ret = write_checkpoint(sbi, &cpc);
+>>>> +		else if (!__get_victim(sbi, &segno, gc_type) {
+>>>> +			segno = NULL_SEGNO;
+>>>> +			ret = write_checkpoint(sbi, &cpc);
+>>>> +		}
+>>>>  		if (ret)
+>>>>  			goto stop;
+>>>>  	} else if (gc_type == BG_GC && !background) {
+>>>> -- 
+>>>> 2.10.1
+>>>
+>>> .
 >>>
 >>
->>
+>> Thanks,
+>> Weichao
 > 
 > .
 > 
