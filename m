@@ -1,140 +1,146 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
- segment but no prefree at BG_GC -> FG_GC
-Date: Mon, 27 Feb 2017 10:05:28 -0800
-Message-ID: <20170227180528.GA2296@jaegeuk.local>
-References: <20170224204357.220337-1-guoweichao@huawei.com>
-	<20170224184959.GD39009@jaegeuk.local>
-	<e3da3ac3-39d5-3880-2e38-ab523a7781ec@huawei.com>
-	<20170225195603.GF51627@jaegeuk.local>
-	<b95af89a-de0c-1242-bf0e-8782eff797f1@huawei.com>
+Subject: Re: [PATCH 1/1] f2fs: Fix zoned block device support
+Date: Mon, 27 Feb 2017 10:49:16 -0800
+Message-ID: <20170227184916.GB2296@jaegeuk.local>
+References: <20170227115249.19556-1-masato.suzuki@wdc.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ciPg5-00011S-Sz
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 18:05:41 +0000
-Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ciPg1-0005bc-F6
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 18:05:41 +0000
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <b95af89a-de0c-1242-bf0e-8782eff797f1@huawei.com>
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, guoweichao <guoweichao@huawei.com>
+In-Reply-To: <20170227115249.19556-1-masato.suzuki@wdc.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Masato Suzuki <masato.suzuki@wdc.com>
+Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-On 02/27, Chao Yu wrote:
-> On 2017/2/26 3:56, Jaegeuk Kim wrote:
-> > On 02/25, guoweichao wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> I regard no enough free sections as a precondition when talking about
-> >> BG_GC -> FG_GC. I mean that for both case a) and b) I mentioned has no enough
-> >> free sections implicitly. 
-> >>
-> >> On 2017/2/25 2:49, Jaegeuk Kim wrote:
-> >>> Hi Weichao,
-> >>>
-> >>> On 02/25, Weichao Guo wrote:
-> >>>> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
-> >>>> * a) BG_GC have made some progress, e.g.: some prefree segments.
-> >>>> * b) There is no victim and no prefree segment.
-> >>>
-> >>> You missed
-> >>>   * c) has_not_enough_free_secs() introduced by
-> >>>       6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
-> >> As we have enabled SSR for warm node(5b6c6be2d8 ("f2fs: use SSR for warm node as well")),
-> >> I think inline data floods should not be a problem in most cases.
-> >>>
-> >>> And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
-> >>> mostly due to c) condition.
-> >> As inline data floods is an extreme case, and there is little possibility caused panic
-> >> for inline data floods now, there should be lots of chance to skip checkpoint. I mean
-> >> that we can make some accurate inline data floods checking before writing checkpoint.
-> > 
-> > For now, the safest way is our first option. So, I decided to start with doing
-> > checkpoint due to previous inline_data flooding issue even though it's an
-> > extreme case under SSR.
-> > 
-> > Anyway, I agree that we need to find a way to detect when to avoid checkpoint.
-> 
-> Hi all,
-> 
-> I proposed a approach before, can you please check that one?
-> 
-> https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg03632.html
+Hello,
 
-Oh, right, let's take a look at this. ;)
+On 02/27, Masato Suzuki wrote:
+> The introduction of the multi-device feature partially broke the support
+> for zoned block devices. In the function f2fs_scan_devices, sbi->devs
+> allocation and initialization is skipped in the case of a single device
+> mount. This result in no device information structure being allocated
+> for the device. This is fine if the device is a regular device, but in
+> the case of a zoned block device, the device zone type array is not
+> initialized, which causes the function __f2fs_issue_discard_zone to fail
+> as get_blkz_type is unable to determine the zone type of a section.
+> 
+> Fix this by always allocating and initializing the sbi->devs device
+> information array even in the case of a single device if that device is
+> zoned. For this particular case, make sure to obtain a reference on the
+> single device so that the call to blkdev_put() in destroy_device_list
+> operates as expected.
+> 
+> Signed-off-by: Masato Suzuki <masato.suzuki@wdc.com>
+
+Thank you for the patch.
+I've added:
+
+Fixes: 3c62be17d4f562f4 ("f2fs: support multiple devices")
+Cc: <stable@vger.kernel.org> # v4.10
 
 Thanks,
 
+> Acked-by: Damien Le Moal <damien.lemoal@wdc.com>
+> ---
+>  fs/f2fs/super.c | 67 +++++++++++++++++++++++++++++++++++++--------------------
+>  1 file changed, 44 insertions(+), 23 deletions(-)
 > 
-> Thanks,
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 46fd30d..287fcbd 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1698,36 +1698,55 @@ int f2fs_commit_super(struct f2fs_sb_info *sbi, bool recover)
+>  static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+>  {
+>  	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
+> +	unsigned int max_devices = MAX_DEVICES;
+>  	int i;
+>  
+> -	for (i = 0; i < MAX_DEVICES; i++) {
+> -		if (!RDEV(i).path[0])
+> +	/* Initialize single device information */
+> +	if (!RDEV(0).path[0]) {
+> +		if (!bdev_is_zoned(sbi->sb->s_bdev))
+>  			return 0;
+> +		max_devices = 1;
+> +	}
+>  
+> -		if (i == 0) {
+> -			sbi->devs = kzalloc(sizeof(struct f2fs_dev_info) *
+> -						MAX_DEVICES, GFP_KERNEL);
+> -			if (!sbi->devs)
+> -				return -ENOMEM;
+> -		}
+> +	/*
+> +	 * Initialize multiple devices information, or single
+> +	 * zoned block device information.
+> +	 */
+> +	sbi->devs = kcalloc(max_devices, sizeof(struct f2fs_dev_info),
+> +				GFP_KERNEL);
+> +	if (!sbi->devs)
+> +		return -ENOMEM;
+>  
+> -		memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
+> -		FDEV(i).total_segments = le32_to_cpu(RDEV(i).total_segments);
+> -		if (i == 0) {
+> -			FDEV(i).start_blk = 0;
+> -			FDEV(i).end_blk = FDEV(i).start_blk +
+> -				(FDEV(i).total_segments <<
+> -				sbi->log_blocks_per_seg) - 1 +
+> -				le32_to_cpu(raw_super->segment0_blkaddr);
+> -		} else {
+> -			FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
+> -			FDEV(i).end_blk = FDEV(i).start_blk +
+> -				(FDEV(i).total_segments <<
+> -				sbi->log_blocks_per_seg) - 1;
+> -		}
+> +	for (i = 0; i < max_devices; i++) {
+>  
+> -		FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path,
+> +		if (i > 0 && !RDEV(i).path[0])
+> +			break;
+> +
+> +		if (max_devices == 1) {
+> +			/* Single zoned block device mount */
+> +			FDEV(0).bdev =
+> +				blkdev_get_by_dev(sbi->sb->s_bdev->bd_dev,
+>  					sbi->sb->s_mode, sbi->sb->s_type);
+> +		} else {
+> +			/* Multi-device mount */
+> +			memcpy(FDEV(i).path, RDEV(i).path, MAX_PATH_LEN);
+> +			FDEV(i).total_segments =
+> +				le32_to_cpu(RDEV(i).total_segments);
+> +			if (i == 0) {
+> +				FDEV(i).start_blk = 0;
+> +				FDEV(i).end_blk = FDEV(i).start_blk +
+> +				    (FDEV(i).total_segments <<
+> +				    sbi->log_blocks_per_seg) - 1 +
+> +				    le32_to_cpu(raw_super->segment0_blkaddr);
+> +			} else {
+> +				FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
+> +				FDEV(i).end_blk = FDEV(i).start_blk +
+> +					(FDEV(i).total_segments <<
+> +					sbi->log_blocks_per_seg) - 1;
+> +			}
+> +			FDEV(i).bdev = blkdev_get_by_path(FDEV(i).path,
+> +					sbi->sb->s_mode, sbi->sb->s_type);
+> +		}
+>  		if (IS_ERR(FDEV(i).bdev))
+>  			return PTR_ERR(FDEV(i).bdev);
+>  
+> @@ -1747,6 +1766,8 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+>  					"Failed to initialize F2FS blkzone information");
+>  				return -EINVAL;
+>  			}
+> +			if (max_devices == 1)
+> +				break;
+>  			f2fs_msg(sbi->sb, KERN_INFO,
+>  				"Mount Device [%2d]: %20s, %8u, %8x - %8x (zone: %s)",
+>  				i, FDEV(i).path,
+> -- 
+> 2.9.3
 > 
-> > 
-> > Thanks,
-> > 
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> For case a), previously, we also check if there is a dirty segment for
-> >>>> infering blocks moving in last BG_GC. But dirty segments do not always
-> >>>> indicate that, BG_GC may just start and do not move any blocks at all.
-> >>>> Futhermore, skipping checkpoint if there are some dirty segments but no
-> >>>> prefree segments is OK.
-> >>>
-> >>>
-> >>>>
-> >>>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-> >>>> ---
-> >>>>  fs/f2fs/gc.c | 7 ++++++-
-> >>>>  1 file changed, 6 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> >>>> index 6c996e3..30d206a 100644
-> >>>> --- a/fs/f2fs/gc.c
-> >>>> +++ b/fs/f2fs/gc.c
-> >>>> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
-> >>>>  		 * enough free sections, we should flush dent/node blocks and do
-> >>>>  		 * garbage collections.
-> >>>>  		 */
-> >>>> -		ret = write_checkpoint(sbi, &cpc);
-> >>>> +		if (prefree_segments(sbi))
-> >>>> +			ret = write_checkpoint(sbi, &cpc);
-> >>>> +		else if (!__get_victim(sbi, &segno, gc_type) {
-> >>>> +			segno = NULL_SEGNO;
-> >>>> +			ret = write_checkpoint(sbi, &cpc);
-> >>>> +		}
-> >>>>  		if (ret)
-> >>>>  			goto stop;
-> >>>>  	} else if (gc_type == BG_GC && !background) {
-> >>>> -- 
-> >>>> 2.10.1
-> >>>
-> >>> .
-> >>>
-> >>
-> >> Thanks,
-> >> Weichao
-> > 
-> > .
-> > 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+> Western Digital Corporation (and its subsidiaries) E-mail Confidentiality Notice & Disclaimer:
+> 
+> This e-mail and any files transmitted with it may contain confidential or legally privileged information of WDC and/or its affiliates, and are intended solely for the use of the individual or entity to which they are addressed. If you are not the intended recipient, any disclosure, copying, distribution or any action taken or omitted to be taken in reliance on it, is prohibited. If you have received this e-mail in error, please notify the sender immediately and delete the e-mail in its entirety from your system.
