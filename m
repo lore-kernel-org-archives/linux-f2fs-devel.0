@@ -1,32 +1,31 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: avoid unnecessary fg_gc
-Date: Mon, 27 Feb 2017 15:40:43 -0800
-Message-ID: <20170227234043.GB9644@jaegeuk.local>
-References: <20170224100135.70000-1-houpengyang@huawei.com>
-	<0486c0d4-541c-ee21-c598-6656a291a274@huawei.com>
-	<58B0E17C.1030306@huawei.com>
-	<20170225020733.GB50867@jaegeuk.local>
-	<ce5a4256-9275-eb89-e188-f5f200b8f77c@huawei.com>
-	<20170225193959.GE51627@jaegeuk.local>
-	<58B387ED.8080700@huawei.com>
-	<094e099e-e97d-8eaa-fdcf-e62434f4b4f0@huawei.com>
+Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
+ segment but no prefree at BG_GC -> FG_GC
+Date: Mon, 27 Feb 2017 15:49:38 -0800
+Message-ID: <20170227234938.GC9644@jaegeuk.local>
+References: <20170224204357.220337-1-guoweichao@huawei.com>
+	<20170224184959.GD39009@jaegeuk.local>
+	<e3da3ac3-39d5-3880-2e38-ab523a7781ec@huawei.com>
+	<20170225195603.GF51627@jaegeuk.local>
+	<b95af89a-de0c-1242-bf0e-8782eff797f1@huawei.com>
+	<20170227180528.GA2296@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1ciUuS-0007fH-Pc
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1ciV36-0008Dp-S2
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 23:40:52 +0000
+	Mon, 27 Feb 2017 23:49:48 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1ciUuR-0001IK-SV
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1ciV35-0005vj-M3
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 23:40:52 +0000
+	Mon, 27 Feb 2017 23:49:48 +0000
 Content-Disposition: inline
-In-Reply-To: <094e099e-e97d-8eaa-fdcf-e62434f4b4f0@huawei.com>
+In-Reply-To: <20170227180528.GA2296@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,46 +35,123 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: heyunlei <heyunlei@huawei.com>
-Cc: guoweichao@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: guoweichao <guoweichao@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 02/27, heyunlei wrote:
-> Hi Jaegeuk,
-> 
-> On 2017/2/27 9:59, Hou Pengyang wrote:
-> > We use has_not_enough_free_secs to check if there are enough free segments,
+On 02/27, Jaegeuk Kim wrote:
+> On 02/27, Chao Yu wrote:
+> > On 2017/2/26 3:56, Jaegeuk Kim wrote:
+> > > On 02/25, guoweichao wrote:
+> > >> Hi Jaegeuk,
+> > >>
+> > >> I regard no enough free sections as a precondition when talking about
+> > >> BG_GC -> FG_GC. I mean that for both case a) and b) I mentioned has no enough
+> > >> free sections implicitly. 
+> > >>
+> > >> On 2017/2/25 2:49, Jaegeuk Kim wrote:
+> > >>> Hi Weichao,
+> > >>>
+> > >>> On 02/25, Weichao Guo wrote:
+> > >>>> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
+> > >>>> * a) BG_GC have made some progress, e.g.: some prefree segments.
+> > >>>> * b) There is no victim and no prefree segment.
+> > >>>
+> > >>> You missed
+> > >>>   * c) has_not_enough_free_secs() introduced by
+> > >>>       6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
+> > >> As we have enabled SSR for warm node(5b6c6be2d8 ("f2fs: use SSR for warm node as well")),
+> > >> I think inline data floods should not be a problem in most cases.
+> > >>>
+> > >>> And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
+> > >>> mostly due to c) condition.
+> > >> As inline data floods is an extreme case, and there is little possibility caused panic
+> > >> for inline data floods now, there should be lots of chance to skip checkpoint. I mean
+> > >> that we can make some accurate inline data floods checking before writing checkpoint.
+> > > 
+> > > For now, the safest way is our first option. So, I decided to start with doing
+> > > checkpoint due to previous inline_data flooding issue even though it's an
+> > > extreme case under SSR.
+> > > 
+> > > Anyway, I agree that we need to find a way to detect when to avoid checkpoint.
 > > 
-> >          (free_sections(sbi) + freed) <=
-> >             (node_secs + 2 * dent_secs + imeta_secs +
-> >                      reserved_sections(sbi) + needed);
+> > Hi all,
+> > 
+> > I proposed a approach before, can you please check that one?
+> > 
+> > https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg03632.html
 > 
-> Now node SSR is enable, how can we change this condition simply as:
-> 
-> 	(free_sections(sbi) + freed) <= reserved_sections(sbi)
+> Oh, right, let's take a look at this. ;)
 
-Currently, we can't guarantee successful SSR allocation all the time.
-
-> If dirty node pages can find SSR segment, write it in SSR mode,
-> 
-> or it will consume free segments, and then we do FG_GC.
-> 
-> 
-> 
-> Another thing is that each process has a chance to do FG_GC, it's no problem
-> 
-> for all normal processes, but may be not a good thing for a process within
-> 
-> certain limits such as lower priority, with bound cpu to do FG_GC. Maybe it
-> 
-> will block system for a long time. So what can we do to improve this?
-
-Could you please elaborate this in more detail?
+Hmm, I just read this patch again, and realized it doesn't quite address the
+current issue. This patch flushes inline_data inodes in background, which does
+not guarantee this worst case. The key idea would be how to measure the space
+we can do SSR and use it in has_not_enough_free_secs().
 
 Thanks,
 
 > 
-> Thanks.
+> Thanks,
 > 
+> > 
+> > Thanks,
+> > 
+> > > 
+> > > Thanks,
+> > > 
+> > >>>
+> > >>> Thanks,
+> > >>>
+> > >>>>
+> > >>>> For case a), previously, we also check if there is a dirty segment for
+> > >>>> infering blocks moving in last BG_GC. But dirty segments do not always
+> > >>>> indicate that, BG_GC may just start and do not move any blocks at all.
+> > >>>> Futhermore, skipping checkpoint if there are some dirty segments but no
+> > >>>> prefree segments is OK.
+> > >>>
+> > >>>
+> > >>>>
+> > >>>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> > >>>> ---
+> > >>>>  fs/f2fs/gc.c | 7 ++++++-
+> > >>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+> > >>>>
+> > >>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > >>>> index 6c996e3..30d206a 100644
+> > >>>> --- a/fs/f2fs/gc.c
+> > >>>> +++ b/fs/f2fs/gc.c
+> > >>>> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+> > >>>>  		 * enough free sections, we should flush dent/node blocks and do
+> > >>>>  		 * garbage collections.
+> > >>>>  		 */
+> > >>>> -		ret = write_checkpoint(sbi, &cpc);
+> > >>>> +		if (prefree_segments(sbi))
+> > >>>> +			ret = write_checkpoint(sbi, &cpc);
+> > >>>> +		else if (!__get_victim(sbi, &segno, gc_type) {
+> > >>>> +			segno = NULL_SEGNO;
+> > >>>> +			ret = write_checkpoint(sbi, &cpc);
+> > >>>> +		}
+> > >>>>  		if (ret)
+> > >>>>  			goto stop;
+> > >>>>  	} else if (gc_type == BG_GC && !background) {
+> > >>>> -- 
+> > >>>> 2.10.1
+> > >>>
+> > >>> .
+> > >>>
+> > >>
+> > >> Thanks,
+> > >> Weichao
+> > > 
+> > > .
+> > > 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
