@@ -1,25 +1,22 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: fix to enlarge size of write_io_dummy
-	mempool
-Date: Mon, 27 Feb 2017 18:43:13 +0800
-Message-ID: <20170227104313.33980-2-yuchao0@huawei.com>
-References: <20170227104313.33980-1-yuchao0@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: remove redundant set_page_dirty()
+Date: Mon, 27 Feb 2017 18:59:53 +0800
+Message-ID: <20170227105953.799-1-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1ciImU-0004mA-2J
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1ciIyS-00024s-8I
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 10:43:50 +0000
+	Mon, 27 Feb 2017 10:56:12 +0000
 Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ciImT-0002Fu-3O
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ciIyQ-00060Q-Jo
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 10:43:50 +0000
-In-Reply-To: <20170227104313.33980-1-yuchao0@huawei.com>
+	Mon, 27 Feb 2017 10:56:12 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,32 +26,31 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-It needs to double cache size of write_io_dummy mempool, otherwise we may
-run out of cache in scenraio of Data/Node IOs were issued concurrently.
+This patch remove redundant set_page_dirty in truncate_blocks
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/file.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 53305880c455..7571eb297b21 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1929,7 +1929,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	if (F2FS_IO_SIZE(sbi) > 1) {
- 		sbi->write_io_dummy =
--			mempool_create_page_pool(F2FS_IO_SIZE(sbi) - 1, 0);
-+			mempool_create_page_pool(2 * (F2FS_IO_SIZE(sbi) - 1), 0);
- 		if (!sbi->write_io_dummy)
- 			goto free_options;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 36c1565..c6ca00c 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -567,8 +567,7 @@ int truncate_blocks(struct inode *inode, u64 from, bool lock)
  	}
+ 
+ 	if (f2fs_has_inline_data(inode)) {
+-		if (truncate_inline_inode(ipage, from))
+-			set_page_dirty(ipage);
++		truncate_inline_inode(ipage, from);
+ 		if (from == 0)
+ 			clear_inode_flag(inode, FI_DATA_EXIST);
+ 		f2fs_put_page(ipage, 1);
 -- 
-2.8.2.295.g3f1c1d0
+2.10.1
 
 
 ------------------------------------------------------------------------------
