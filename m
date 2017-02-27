@@ -1,26 +1,27 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH V2] f2fs: introduce free nid bitmap
-Date: Mon, 27 Feb 2017 11:11:21 +0800
-Message-ID: <78bcc379-08b5-063f-d2a5-ce1740499a71@huawei.com>
-References: <20170223025349.104160-1-yuchao0@huawei.com>
-	<c13a289e-5d46-70f3-5f49-eb88864bfa3d@huawei.com>
-	<20170225190255.GD51627@jaegeuk.local>
+Subject: Re: [PATCH 3/3] f2fs: drop calling alloc_nid_failed when
+ no nid is allocated
+Date: Mon, 27 Feb 2017 11:16:51 +0800
+Message-ID: <110ba95d-3aa9-089c-f335-d456c7b9916f@huawei.com>
+References: <77d8220f-8cf4-0af4-3390-cd28fbeb6437@gmail.com>
+	<e1626669-e3bb-c2a4-f8bd-5b882332b033@huawei.com>
+	<bd012d3e-e8c1-60c9-46d6-0d0c156c49e2@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1ciBjK-0007BD-Hu
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1ciBod-0004Pg-4S
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 03:12:06 +0000
+	Mon, 27 Feb 2017 03:17:35 +0000
 Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ciBjJ-0002rP-BK
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ciBob-0003bA-NT
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 03:12:06 +0000
-In-Reply-To: <20170225190255.GD51627@jaegeuk.local>
+	Mon, 27 Feb 2017 03:17:35 +0000
+In-Reply-To: <bd012d3e-e8c1-60c9-46d6-0d0c156c49e2@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,98 +31,84 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Kinglong Mee <kinglongmee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/26 3:02, Jaegeuk Kim wrote:
-> On 02/25, Chao Yu wrote:
->> Hi Jaegeuk,
+On 2017/2/27 11:08, Kinglong Mee wrote:
+> On 2/27/2017 10:21, Chao Yu wrote:
+>> On 2017/2/25 19:23, Kinglong Mee wrote:
+>>> If hsize is less than or equal to inlien_size, and i_xattr_nid is valid, 
+>>> the new_nid is not allocated (no alloc_nid is called).
+>>>
+>>>        if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
+>>>                 if (!alloc_nid(sbi, &new_nid))
+>>>                         return -ENOSPC;
+>>>
+>>> Although it's harmless calling alloc_nid_failed, it's better drop them.
+>>>
+>>> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+>>> ---
+>>>  fs/f2fs/xattr.c | 9 ++++-----
+>>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+>>> index 7298a44..fd9dc99 100644
+>>> --- a/fs/f2fs/xattr.c
+>>> +++ b/fs/f2fs/xattr.c
+>>> @@ -428,19 +428,18 @@ static inline int write_all_xattrs(struct inode *inode, __u32 hsize,
+>>>  		/* no need to use xattr node block */
+>>>  		if (hsize <= inline_size) {
+>>>  			err = truncate_xattr_node(inode, ipage);
+>>> -			alloc_nid_failed(sbi, new_nid);
 >>
->> I added below diff code into this patch in order to fix incorrectly nid status
->> updating to reduce large latency of generic/251 in fstest, could you help to
->> review code below?
+>> Should keep this since new_nid was assigned above?
 > 
-> Understand the problem, and how about this?
+> alloc_nid is called when, 
 > 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 52db02396878..83b305689913 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -1765,7 +1765,7 @@ static void __remove_nid_from_list(struct f2fs_sb_info *sbi,
->  		radix_tree_delete(&nm_i->free_nid_root, i->nid);
->  }
->  
-> -static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
-> +static bool add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
->  {
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	struct free_nid *i;
-> @@ -1774,14 +1774,14 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
->  
->  	/* 0 nid should not be used */
->  	if (unlikely(nid == 0))
-> -		return 0;
-> +		return false;
->  
->  	if (build) {
->  		/* do not add allocated nids */
->  		ne = __lookup_nat_cache(nm_i, nid);
->  		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
->  				nat_get_blkaddr(ne) != NULL_ADDR))
-> -			return 0;
-> +			return false;
->  	}
->  
->  	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
-> @@ -1790,7 +1790,7 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
->  
->  	if (radix_tree_preload(GFP_NOFS)) {
->  		kmem_cache_free(free_nid_slab, i);
-> -		return 0;
-> +		return false;
+> 
+> 403         if (hsize > inline_size && !F2FS_I(inode)->i_xattr_nid)
+> 404                 if (!alloc_nid(sbi, &new_nid))
+> 405                         return -ENOSPC;
+> 
+> if (hsize <= inline_size), alloc_nid isn't called.
 
-If there is no memory, actually current free nid is still available, we need to
-return true (or other value -1?), then caller can set free_nid_bitmap correctly.
-
->  	}
->  
->  	spin_lock(&nm_i->nid_list_lock);
-> @@ -1799,9 +1799,9 @@ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
->  	radix_tree_preload_end();
->  	if (err) {
->  		kmem_cache_free(free_nid_slab, i);
-> -		return 0;
-> +		return false;
-
-ditto.
+You're right, I can confirm that. :)
 
 Thanks,
 
->  	}
-> -	return 1;
-> +	return true;
->  }
->  
->  static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
-> @@ -1851,6 +1851,7 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
->  	i = start_nid % NAT_ENTRY_PER_BLOCK;
->  
->  	for (; i < NAT_ENTRY_PER_BLOCK; i++, start_nid++) {
-> +		bool freed = false;
->  
->  		if (unlikely(start_nid >= nm_i->max_nid))
->  			break;
-> @@ -1858,8 +1859,8 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
->  		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
->  		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
->  		if (blk_addr == NULL_ADDR)
-> -			add_free_nid(sbi, start_nid, true);
-> -		update_free_nid_bitmap(sbi, start_nid, blk_addr == NULL_ADDR);
-> +			freed = add_free_nid(sbi, start_nid, true);
-> +		update_free_nid_bitmap(sbi, start_nid, freed);
->  	}
->  }
->  
+> 
+> thanks,
+> Kinglong Mee
+>>
+>>> +			f2fs_bug_on(sbi, new_nid);
+>>>  			return err;
+>>>  		}
+>>>  	}
+>>>  
+>>>  	/* write to xattr node block */
+>>>  	if (F2FS_I(inode)->i_xattr_nid) {
+>>> +		f2fs_bug_on(sbi, new_nid);
+>>>  		xpage = get_node_page(sbi, F2FS_I(inode)->i_xattr_nid);
+>>> -		if (IS_ERR(xpage)) {
+>>> -			alloc_nid_failed(sbi, new_nid);
+>>> +		if (IS_ERR(xpage))
+>>>  			return PTR_ERR(xpage);
+>>> -		}
+>>> -		f2fs_bug_on(sbi, new_nid);
+>>
+>> Cleanup here looks good to me.
+>>
+>> Thanks,
+>>
+>>> +
+>>>  		f2fs_wait_on_page_writeback(xpage, NODE, true);
+>>>  	} else {
+>>>  		struct dnode_of_data dn;
+>>>
+>>
+>>
+> 
+> .
 > 
 
 
