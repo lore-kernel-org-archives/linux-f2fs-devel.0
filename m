@@ -1,23 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: fix memory leak of write_io_dummy
-	mempool during umount
-Date: Mon, 27 Feb 2017 18:43:12 +0800
-Message-ID: <20170227104313.33980-1-yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: fix to enlarge size of write_io_dummy
+	mempool
+Date: Mon, 27 Feb 2017 18:43:13 +0800
+Message-ID: <20170227104313.33980-2-yuchao0@huawei.com>
+References: <20170227104313.33980-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1ciImS-0003Nr-S8
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1ciImU-0004mA-2J
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 10:43:48 +0000
-Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ciImP-0000EU-9R
+	Mon, 27 Feb 2017 10:43:50 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ciImT-0002Fu-3O
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 27 Feb 2017 10:43:48 +0000
+	Mon, 27 Feb 2017 10:43:50 +0000
+In-Reply-To: <20170227104313.33980-1-yuchao0@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,24 +32,27 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: jaegeuk@kernel.org
 Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
+It needs to double cache size of write_io_dummy mempool, otherwise we may
+run out of cache in scenraio of Data/Node IOs were issued concurrently.
+
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
  fs/f2fs/super.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 751e1068db17..53305880c455 100644
+index 53305880c455..7571eb297b21 100644
 --- a/fs/f2fs/super.c
 +++ b/fs/f2fs/super.c
-@@ -818,7 +818,7 @@ static void f2fs_put_super(struct super_block *sb)
- 	kfree(sbi->raw_super);
+@@ -1929,7 +1929,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
  
- 	destroy_device_list(sbi);
--
-+	mempool_destroy(sbi->write_io_dummy);
- 	destroy_percpu_info(sbi);
- 	kfree(sbi);
- }
+ 	if (F2FS_IO_SIZE(sbi) > 1) {
+ 		sbi->write_io_dummy =
+-			mempool_create_page_pool(F2FS_IO_SIZE(sbi) - 1, 0);
++			mempool_create_page_pool(2 * (F2FS_IO_SIZE(sbi) - 1), 0);
+ 		if (!sbi->write_io_dummy)
+ 			goto free_options;
+ 	}
 -- 
 2.8.2.295.g3f1c1d0
 
