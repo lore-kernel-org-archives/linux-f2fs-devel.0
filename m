@@ -1,31 +1,29 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
- segment but no prefree at BG_GC -> FG_GC
-Date: Tue, 28 Feb 2017 18:51:34 +0800
-Message-ID: <c577a659-0c5c-56a3-0f3e-73b9fbb319ff@huawei.com>
-References: <20170224204357.220337-1-guoweichao@huawei.com>
-	<20170224184959.GD39009@jaegeuk.local>
-	<e3da3ac3-39d5-3880-2e38-ab523a7781ec@huawei.com>
-	<20170225195603.GF51627@jaegeuk.local>
-	<b95af89a-de0c-1242-bf0e-8782eff797f1@huawei.com>
-	<20170227180528.GA2296@jaegeuk.local>
-	<20170227234938.GC9644@jaegeuk.local>
+Subject: Re: [PATCH 2/3 v2] f2fs: add bitmaps for empty or full
+ NAT blocks
+Date: Tue, 28 Feb 2017 18:52:57 +0800
+Message-ID: <c7ab59db-cb8e-381d-01c7-135e7027893b@huawei.com>
+References: <20170214020644.18189-1-jaegeuk@kernel.org>
+	<20170214020644.18189-2-jaegeuk@kernel.org>
+	<20170223225813.GH2026@jaegeuk.local>
+	<05bf84ed-1e63-3dd0-9c9d-a7b483a8a602@huawei.com>
+	<20170228053336.GA11561@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cifO2-0005z3-CP
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cifQD-0000eM-BJ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 Feb 2017 10:52:06 +0000
-Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	Tue, 28 Feb 2017 10:54:21 +0000
+Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
 	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cifNz-00079z-QC
+	(Exim 4.76) id 1cifQB-0007Qe-Sw
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 Feb 2017 10:52:06 +0000
-In-Reply-To: <20170227234938.GC9644@jaegeuk.local>
+	Tue, 28 Feb 2017 10:54:21 +0000
+In-Reply-To: <20170228053336.GA11561@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -36,134 +34,57 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: guoweichao <guoweichao@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/28 7:49, Jaegeuk Kim wrote:
-> On 02/27, Jaegeuk Kim wrote:
->> On 02/27, Chao Yu wrote:
->>> On 2017/2/26 3:56, Jaegeuk Kim wrote:
->>>> On 02/25, guoweichao wrote:
->>>>> Hi Jaegeuk,
->>>>>
->>>>> I regard no enough free sections as a precondition when talking about
->>>>> BG_GC -> FG_GC. I mean that for both case a) and b) I mentioned has no enough
->>>>> free sections implicitly. 
->>>>>
->>>>> On 2017/2/25 2:49, Jaegeuk Kim wrote:
->>>>>> Hi Weichao,
->>>>>>
->>>>>> On 02/25, Weichao Guo wrote:
->>>>>>> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
->>>>>>> * a) BG_GC have made some progress, e.g.: some prefree segments.
->>>>>>> * b) There is no victim and no prefree segment.
->>>>>>
->>>>>> You missed
->>>>>>   * c) has_not_enough_free_secs() introduced by
->>>>>>       6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
->>>>> As we have enabled SSR for warm node(5b6c6be2d8 ("f2fs: use SSR for warm node as well")),
->>>>> I think inline data floods should not be a problem in most cases.
->>>>>>
->>>>>> And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
->>>>>> mostly due to c) condition.
->>>>> As inline data floods is an extreme case, and there is little possibility caused panic
->>>>> for inline data floods now, there should be lots of chance to skip checkpoint. I mean
->>>>> that we can make some accurate inline data floods checking before writing checkpoint.
->>>>
->>>> For now, the safest way is our first option. So, I decided to start with doing
->>>> checkpoint due to previous inline_data flooding issue even though it's an
->>>> extreme case under SSR.
->>>>
->>>> Anyway, I agree that we need to find a way to detect when to avoid checkpoint.
->>>
->>> Hi all,
->>>
->>> I proposed a approach before, can you please check that one?
->>>
->>> https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg03632.html
+On 2017/2/28 13:33, Jaegeuk Kim wrote:
+> On 02/28, Chao Yu wrote:
+>> On 2017/2/24 6:58, Jaegeuk Kim wrote:
+>>> @@ -2326,7 +2431,8 @@ void flush_nat_entries(struct f2fs_sb_info *sbi)
+>>>  	 * entries, remove all entries from journal and merge them
+>>>  	 * into nat entry set.
+>>>  	 */
+>>> -	if (!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
+>>> +	if (cpc->reason == CP_UMOUNT ||
 >>
->> Oh, right, let's take a look at this. ;)
+>> enabled_nat_bits(sbi, cpc)
 > 
-> Hmm, I just read this patch again, and realized it doesn't quite address the
-> current issue. This patch flushes inline_data inodes in background, which does
-> not guarantee this worst case. The key idea would be how to measure the space
+> Thanks.
+> I added another patch to fix this.
 
-Hmm.. Maybe we can cover worst case by moving judgment condition and flushing
-operation into f2fs_balance_fs.
-
-> we can do SSR and use it in has_not_enough_free_secs().
-
-We need to stat usage of slack free space accurately both for data/node, right?
+I'm OK with this change. Thanks, :)
 
 Thanks,
 
 > 
-> Thanks,
+>>From b15f7112c3daced4c7f70c4d5fcba9013743cb6b Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Mon, 27 Feb 2017 21:28:53 -0800
+> Subject: [PATCH] f2fs: avoid to flush nat journal entries
 > 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>> For case a), previously, we also check if there is a dirty segment for
->>>>>>> infering blocks moving in last BG_GC. But dirty segments do not always
->>>>>>> indicate that, BG_GC may just start and do not move any blocks at all.
->>>>>>> Futhermore, skipping checkpoint if there are some dirty segments but no
->>>>>>> prefree segments is OK.
->>>>>>
->>>>>>
->>>>>>>
->>>>>>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
->>>>>>> ---
->>>>>>>  fs/f2fs/gc.c | 7 ++++++-
->>>>>>>  1 file changed, 6 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>>>> index 6c996e3..30d206a 100644
->>>>>>> --- a/fs/f2fs/gc.c
->>>>>>> +++ b/fs/f2fs/gc.c
->>>>>>> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
->>>>>>>  		 * enough free sections, we should flush dent/node blocks and do
->>>>>>>  		 * garbage collections.
->>>>>>>  		 */
->>>>>>> -		ret = write_checkpoint(sbi, &cpc);
->>>>>>> +		if (prefree_segments(sbi))
->>>>>>> +			ret = write_checkpoint(sbi, &cpc);
->>>>>>> +		else if (!__get_victim(sbi, &segno, gc_type) {
->>>>>>> +			segno = NULL_SEGNO;
->>>>>>> +			ret = write_checkpoint(sbi, &cpc);
->>>>>>> +		}
->>>>>>>  		if (ret)
->>>>>>>  			goto stop;
->>>>>>>  	} else if (gc_type == BG_GC && !background) {
->>>>>>> -- 
->>>>>>> 2.10.1
->>>>>>
->>>>>> .
->>>>>>
->>>>>
->>>>> Thanks,
->>>>> Weichao
->>>>
->>>> .
->>>>
->>
->> ------------------------------------------------------------------------------
->> Check out the vibrant tech community on one of the world's most
->> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> This patch adds a missing condition which flushes nat journal entries
+> unnecessarily introduced by:
 > 
-> .
+>     f2fs: add bitmaps for empty or full NAT blocks
+> 
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/node.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index b3aead4c5a0f..94967171dee8 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -2513,7 +2513,7 @@ void flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	 * entries, remove all entries from journal and merge them
+>  	 * into nat entry set.
+>  	 */
+> -	if (cpc->reason == CP_UMOUNT ||
+> +	if (enabled_nat_bits(sbi, cpc) ||
+>  		!__has_cursum_space(journal, nm_i->dirty_nat_cnt, NAT_JOURNAL))
+>  		remove_nats_in_journal(sbi);
+>  
 > 
 
 
