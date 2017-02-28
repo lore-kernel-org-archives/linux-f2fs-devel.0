@@ -1,25 +1,30 @@
-From: Hou Pengyang <houpengyang@huawei.com>
-Subject: Re: [PATCH 1/3] f2fs: fix a memleak issue
-Date: Tue, 28 Feb 2017 10:06:31 +0800
-Message-ID: <58B4DB27.2090709@huawei.com>
-References: <20170227130259.19987-1-houpengyang@huawei.com>
-	<072cd19e-773a-af22-01bd-84d219b670c3@gmail.com>
+From: heyunlei <heyunlei@huawei.com>
+Subject: Re: [PATCH] f2fs: avoid unnecessary fg_gc
+Date: Tue, 28 Feb 2017 10:06:58 +0800
+Message-ID: <e42bf3e4-7fd6-61d4-4688-e52e32eaa2e7@huawei.com>
+References: <20170224100135.70000-1-houpengyang@huawei.com>
+	<0486c0d4-541c-ee21-c598-6656a291a274@huawei.com>
+	<58B0E17C.1030306@huawei.com> <20170225020733.GB50867@jaegeuk.local>
+	<ce5a4256-9275-eb89-e188-f5f200b8f77c@huawei.com>
+	<20170225193959.GE51627@jaegeuk.local> <58B387ED.8080700@huawei.com>
+	<094e099e-e97d-8eaa-fdcf-e62434f4b4f0@huawei.com>
+	<20170227234043.GB9644@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <houpengyang@huawei.com>) id 1ciXBl-0003of-Ej
+	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1ciXCQ-00054D-6P
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 Feb 2017 02:06:53 +0000
-Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ciXBk-0003So-3i
+	Tue, 28 Feb 2017 02:07:34 +0000
+Received: from [45.249.212.191] (helo=dggrg05-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ciXCO-0003No-Pi
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 28 Feb 2017 02:06:53 +0000
-In-Reply-To: <072cd19e-773a-af22-01bd-84d219b670c3@gmail.com>
+	Tue, 28 Feb 2017 02:07:34 +0000
+In-Reply-To: <20170227234043.GB9644@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -29,53 +34,62 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kinglong Mee <kinglongmee@gmail.com>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: guoweichao@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/2/27 21:52, Kinglong Mee wrote:
-> On 2/27/2017 21:02, Hou Pengyang wrote:
->> [fix: ae75f0ca76 f2fs: introduce free nid bitmap]
->> Signed-off-by: Hou Pengyang <houpengyang@huawei.com>
->> ---
->>   fs/f2fs/node.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
+
+
+On 2017/2/28 7:40, Jaegeuk Kim wrote:
+> On 02/27, heyunlei wrote:
+>> Hi Jaegeuk,
 >>
->> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->> index 6d43095..353c01d 100644
->> --- a/fs/f2fs/node.c
->> +++ b/fs/f2fs/node.c
->> @@ -2650,8 +2650,11 @@ int init_free_nid_cache(struct f2fs_sb_info *sbi)
+>> On 2017/2/27 9:59, Hou Pengyang wrote:
+>>> We use has_not_enough_free_secs to check if there are enough free segments,
+>>>
+>>>          (free_sections(sbi) + freed) <=
+>>>             (node_secs + 2 * dent_secs + imeta_secs +
+>>>                      reserved_sections(sbi) + needed);
 >>
->>   	nm_i->nat_block_bitmap = f2fs_kvzalloc(nm_i->nat_blocks / 8,
->>   								GFP_KERNEL);
->> -	if (!nm_i->nat_block_bitmap)
->> +	if (!nm_i->nat_block_bitmap) {
->> +		kvfree(nm_i->free_nid_bitmap);
->>   		return -ENOMEM;
->> +	}
->> +
->>   	return 0;
->>   }
+>> Now node SSR is enable, how can we change this condition simply as:
+>>
+>> 	(free_sections(sbi) + freed) <= reserved_sections(sbi)
 >
-> If building node manager fail, destroy_node_manager will be called,
-> I think there isn't any memory leak exist, right?
->
->          err = build_node_manager(sbi);
->          if (err) {
->                  f2fs_msg(sb, KERN_ERR,
->                          "Failed to initialize F2FS node manager");
->                  goto free_nm;
->          }
->
->
-Yup, I missed it :)
-Thank you,
+> Currently, we can't guarantee successful SSR allocation all the time.
 
-> thanks,
-> Kinglong Mee
+Okay, thanks.
 >
+>> If dirty node pages can find SSR segment, write it in SSR mode,
+>>
+>> or it will consume free segments, and then we do FG_GC.
+>>
+>>
+>>
+>> Another thing is that each process has a chance to do FG_GC, it's no problem
+>>
+>> for all normal processes, but may be not a good thing for a process within
+>>
+>> certain limits such as lower priority, with bound cpu to do FG_GC. Maybe it
+>>
+>> will block system for a long time. So what can we do to improve this?
 >
+> Could you please elaborate this in more detail?
 
+System bind lots of background processes to one or two cpus. In some corner case,
+
+thread need to do FG GC will compete with other background processes. FG GC can
+
+not be completed in time and then blocks other processes.
+
+Thanks.
+>
+> Thanks,
+>
+>>
+>> Thanks.
+>>
+>
+> .
+>
 
 
 ------------------------------------------------------------------------------
