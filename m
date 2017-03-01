@@ -1,23 +1,23 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH RFC] f2fs: combine nat_bits and free_nid_bitmap
-	cache
-Date: Wed, 1 Mar 2017 17:10:13 +0800
-Message-ID: <20170301091013.82838-1-yuchao0@huawei.com>
+From: Yunlei He <heyunlei@huawei.com>
+Subject: [PATCH] f2fs: skip writeback meta pages if cp_mutex
+	acquire failed
+Date: Wed, 1 Mar 2017 17:21:26 +0800
+Message-ID: <20170301092126.8816-1-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cj0HO-0005Rc-Kk
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1cj0OC-0003P4-8J
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Mar 2017 09:10:38 +0000
-Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
+	Wed, 01 Mar 2017 09:17:40 +0000
+Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
 	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cj0HN-0002G6-61
+	(Exim 4.76) id 1cj0OA-0003IF-4C
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Mar 2017 09:10:38 +0000
+	Wed, 01 Mar 2017 09:17:40 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -27,177 +27,43 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
 
-Both nat_bits cache and free_nid_bitmap cache provide same functionality
-as a intermediate cache between free nid cache and disk, but with
-different granularity of indicating free nid range, and different
-persistence policy. nat_bits cache provides better persistence ability,
-and free_nid_bitmap provides better granularity.
+Skip writeback meta pages if cp_mutex lock acquire failed, cp will
+flush dirty pages instead.
 
-In this patch we combine advantage of both caches, so finally policy of
-the intermediate cache would be:
-- init: load free nid status from nat_bits into free_nid_bitmap
-- lookup: scan free_nid_bitmap before load NAT blocks
-- update: update free_nid_bitmap in real-time
-- persistence: udpate and persist nat_bits in checkpoint
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
 ---
- fs/f2fs/node.c | 109 +++++++++++++++++++++------------------------------------
- 1 file changed, 39 insertions(+), 70 deletions(-)
+ fs/f2fs/checkpoint.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 1a759d45b7e4..6c027b6833f4 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -338,9 +338,6 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 		set_nat_flag(e, IS_CHECKPOINTED, false);
- 	__set_nat_cache_dirty(nm_i, e);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 0339daf..5ce24b1 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -275,13 +275,15 @@ static int f2fs_write_meta_pages(struct address_space *mapping,
+ 		get_pages(sbi, F2FS_DIRTY_META) < nr_pages_to_skip(sbi, META))
+ 		goto skip_write;
  
--	if (enabled_nat_bits(sbi, NULL) && new_blkaddr == NEW_ADDR)
--		clear_bit_le(NAT_BLOCK_OFFSET(ni->nid), nm_i->empty_nat_bits);
--
- 	/* update fsync_mark if its inode nat entry is still alive */
- 	if (ni->nid != ni->ino)
- 		e = __lookup_nat_cache(nm_i, ni->ino);
-@@ -1920,58 +1917,6 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
- 	up_read(&nm_i->nat_tree_lock);
- }
+-	trace_f2fs_writepages(mapping->host, wbc, META);
++	/* if locked failed, cp will flush dirty pages instead */
++	if (mutex_trylock(&sbi->cp_mutex)) {
++		diff = nr_pages_to_write(sbi, META, wbc);
++		written = sync_meta_pages(sbi, META, wbc->nr_to_write);
++	} else
++		goto skip_write;
  
--static int scan_nat_bits(struct f2fs_sb_info *sbi)
--{
--	struct f2fs_nm_info *nm_i = NM_I(sbi);
--	struct page *page;
--	unsigned int i = 0;
--	nid_t nid;
--
--	if (!enabled_nat_bits(sbi, NULL))
--		return -EAGAIN;
--
--	down_read(&nm_i->nat_tree_lock);
--check_empty:
--	i = find_next_bit_le(nm_i->empty_nat_bits, nm_i->nat_blocks, i);
--	if (i >= nm_i->nat_blocks) {
--		i = 0;
--		goto check_partial;
--	}
--
--	for (nid = i * NAT_ENTRY_PER_BLOCK; nid < (i + 1) * NAT_ENTRY_PER_BLOCK;
--									nid++) {
--		if (unlikely(nid >= nm_i->max_nid))
--			break;
--		add_free_nid(sbi, nid, true);
--	}
--
--	if (nm_i->nid_cnt[FREE_NID_LIST] >= MAX_FREE_NIDS)
--		goto out;
--	i++;
--	goto check_empty;
--
--check_partial:
--	i = find_next_zero_bit_le(nm_i->full_nat_bits, nm_i->nat_blocks, i);
--	if (i >= nm_i->nat_blocks) {
--		disable_nat_bits(sbi, true);
--		up_read(&nm_i->nat_tree_lock);
--		return -EINVAL;
--	}
--
--	nid = i * NAT_ENTRY_PER_BLOCK;
--	page = get_current_nat_page(sbi, nid);
--	scan_nat_page(sbi, page, nid);
--	f2fs_put_page(page, 1);
--
--	if (nm_i->nid_cnt[FREE_NID_LIST] < MAX_FREE_NIDS) {
--		i++;
--		goto check_partial;
--	}
--out:
--	up_read(&nm_i->nat_tree_lock);
--	return 0;
--}
--
- static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
-@@ -1993,21 +1938,6 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
- 
- 		if (nm_i->nid_cnt[FREE_NID_LIST])
- 			return;
--
--		/* try to find free nids with nat_bits */
--		if (!scan_nat_bits(sbi) && nm_i->nid_cnt[FREE_NID_LIST])
--			return;
--	}
--
--	/* find next valid candidate */
--	if (enabled_nat_bits(sbi, NULL)) {
--		int idx = find_next_zero_bit_le(nm_i->full_nat_bits,
--					nm_i->nat_blocks, 0);
--
--		if (idx >= nm_i->nat_blocks)
--			set_sbi_flag(sbi, SBI_NEED_FSCK);
--		else
--			nid = idx * NAT_ENTRY_PER_BLOCK;
- 	}
- 
- 	/* readahead nat pages to be scanned */
-@@ -2590,6 +2520,41 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+-	/* if mounting is failed, skip writing node pages */
+-	mutex_lock(&sbi->cp_mutex);
+-	diff = nr_pages_to_write(sbi, META, wbc);
+-	written = sync_meta_pages(sbi, META, wbc->nr_to_write);
+ 	mutex_unlock(&sbi->cp_mutex);
++	trace_f2fs_writepages(mapping->host, wbc, META);
+ 	wbc->nr_to_write = max((long)0, wbc->nr_to_write - written - diff);
  	return 0;
- }
- 
-+inline void load_free_nid_bitmap(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	unsigned int i = 0;
-+	nid_t nid, last_nid;
-+
-+	for (i = 0; i < nm_i->nat_blocks; i++) {
-+		i = find_next_bit_le(nm_i->empty_nat_bits, nm_i->nat_blocks, i);
-+		if (i >= nm_i->nat_blocks)
-+			break;
-+
-+		set_bit_le(i, nm_i->nat_block_bitmap);
-+
-+		nid = i * NAT_ENTRY_PER_BLOCK;
-+		last_nid = (i + 1) * NAT_ENTRY_PER_BLOCK;
-+
-+		for (; nid < last_nid; nid++)
-+			update_free_nid_bitmap(sbi, nid, true, true);
-+	}
-+
-+	for (i = 0; i < nm_i->nat_blocks; i++) {
-+		i = find_next_bit_le(nm_i->full_nat_bits, nm_i->nat_blocks, i);
-+		if (i >= nm_i->nat_blocks)
-+			break;
-+
-+		set_bit_le(i, nm_i->nat_block_bitmap);
-+
-+		nid = i * NAT_ENTRY_PER_BLOCK;
-+		last_nid = (i + 1) * NAT_ENTRY_PER_BLOCK;
-+
-+		for (; nid < last_nid; nid++)
-+			update_free_nid_bitmap(sbi, nid, false, true);
-+	}
-+}
-+
- static int init_node_manager(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *sb_raw = F2FS_RAW_SUPER(sbi);
-@@ -2672,6 +2637,10 @@ int init_free_nid_cache(struct f2fs_sb_info *sbi)
- 
- 	spin_lock_init(&nm_i->free_nid_lock);
- 
-+	/* load free nid status from nat_bits table */
-+	if (enabled_nat_bits(sbi, NULL))
-+		load_free_nid_bitmap(sbi);
-+
- 	return 0;
- }
  
 -- 
-2.8.2.295.g3f1c1d0
+2.10.1
 
 
 ------------------------------------------------------------------------------
