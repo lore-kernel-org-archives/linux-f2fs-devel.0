@@ -1,33 +1,27 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
- segment but no prefree at BG_GC -> FG_GC
-Date: Wed, 1 Mar 2017 11:24:17 -0800
-Message-ID: <20170301192417.GA18600@jaegeuk.local>
-References: <20170224204357.220337-1-guoweichao@huawei.com>
-	<20170224184959.GD39009@jaegeuk.local>
-	<e3da3ac3-39d5-3880-2e38-ab523a7781ec@huawei.com>
-	<20170225195603.GF51627@jaegeuk.local>
-	<b95af89a-de0c-1242-bf0e-8782eff797f1@huawei.com>
-	<20170227180528.GA2296@jaegeuk.local>
-	<20170227234938.GC9644@jaegeuk.local>
-	<c577a659-0c5c-56a3-0f3e-73b9fbb319ff@huawei.com>
+Subject: Re: [PATCH] f2fs: fix an error return value in
+ truncate_partial_data_page
+Date: Wed, 1 Mar 2017 11:32:50 -0800
+Message-ID: <20170301193250.GB18600@jaegeuk.local>
+References: <20170228123241.5070-1-heyunlei@huawei.com>
+	<98366c6a-4bcd-44cc-4143-a22a359db63d@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cj9rR-0006Tr-UK
+	(envelope-from <jaegeuk@kernel.org>) id 1cj9ze-0006p3-Mu
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Mar 2017 19:24:29 +0000
+	Wed, 01 Mar 2017 19:32:58 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cj9rQ-0003OF-4v
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cj9zd-0005XL-SX
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Mar 2017 19:24:29 +0000
+	Wed, 01 Mar 2017 19:32:58 +0000
 Content-Disposition: inline
-In-Reply-To: <c577a659-0c5c-56a3-0f3e-73b9fbb319ff@huawei.com>
+In-Reply-To: <98366c6a-4bcd-44cc-4143-a22a359db63d@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -38,139 +32,42 @@ List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Chao Yu <yuchao0@huawei.com>
-Cc: guoweichao <guoweichao@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 02/28, Chao Yu wrote:
-> On 2017/2/28 7:49, Jaegeuk Kim wrote:
-> > On 02/27, Jaegeuk Kim wrote:
-> >> On 02/27, Chao Yu wrote:
-> >>> On 2017/2/26 3:56, Jaegeuk Kim wrote:
-> >>>> On 02/25, guoweichao wrote:
-> >>>>> Hi Jaegeuk,
-> >>>>>
-> >>>>> I regard no enough free sections as a precondition when talking about
-> >>>>> BG_GC -> FG_GC. I mean that for both case a) and b) I mentioned has no enough
-> >>>>> free sections implicitly. 
-> >>>>>
-> >>>>> On 2017/2/25 2:49, Jaegeuk Kim wrote:
-> >>>>>> Hi Weichao,
-> >>>>>>
-> >>>>>> On 02/25, Weichao Guo wrote:
-> >>>>>>> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
-> >>>>>>> * a) BG_GC have made some progress, e.g.: some prefree segments.
-> >>>>>>> * b) There is no victim and no prefree segment.
-> >>>>>>
-> >>>>>> You missed
-> >>>>>>   * c) has_not_enough_free_secs() introduced by
-> >>>>>>       6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
-> >>>>> As we have enabled SSR for warm node(5b6c6be2d8 ("f2fs: use SSR for warm node as well")),
-> >>>>> I think inline data floods should not be a problem in most cases.
-> >>>>>>
-> >>>>>> And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
-> >>>>>> mostly due to c) condition.
-> >>>>> As inline data floods is an extreme case, and there is little possibility caused panic
-> >>>>> for inline data floods now, there should be lots of chance to skip checkpoint. I mean
-> >>>>> that we can make some accurate inline data floods checking before writing checkpoint.
-> >>>>
-> >>>> For now, the safest way is our first option. So, I decided to start with doing
-> >>>> checkpoint due to previous inline_data flooding issue even though it's an
-> >>>> extreme case under SSR.
-> >>>>
-> >>>> Anyway, I agree that we need to find a way to detect when to avoid checkpoint.
-> >>>
-> >>> Hi all,
-> >>>
-> >>> I proposed a approach before, can you please check that one?
-> >>>
-> >>> https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg03632.html
-> >>
-> >> Oh, right, let's take a look at this. ;)
+On 03/01, Chao Yu wrote:
+> On 2017/2/28 20:32, Yunlei He wrote:
+> > This patch fix a error return value in truncate_partial_data_page
 > > 
-> > Hmm, I just read this patch again, and realized it doesn't quite address the
-> > current issue. This patch flushes inline_data inodes in background, which does
-> > not guarantee this worst case. The key idea would be how to measure the space
+> > Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> > ---
+> >  fs/f2fs/file.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> > index c6ca00c..c186d75 100644
+> > --- a/fs/f2fs/file.c
+> > +++ b/fs/f2fs/file.c
+> > @@ -529,7 +529,7 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
+> >  
+> >  	page = get_lock_data_page(inode, index, true);
+> >  	if (IS_ERR(page))
+> > -		return 0;
+> > +		return page;
 > 
-> Hmm.. Maybe we can cover worst case by moving judgment condition and flushing
-> operation into f2fs_balance_fs.
-> 
-> > we can do SSR and use it in has_not_enough_free_secs().
-> 
-> We need to stat usage of slack free space accurately both for data/node, right?
+> return PTR_ERR(page);
 
-Yup.
+Do we need this?
+
+return PTR_ERR(page) == -ENOENT ? 0 : PTR_ERR(page);
+
 Thanks,
 
 > 
 > Thanks,
 > 
-> > 
-> > Thanks,
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>>
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>>
-> >>>>>>>
-> >>>>>>> For case a), previously, we also check if there is a dirty segment for
-> >>>>>>> infering blocks moving in last BG_GC. But dirty segments do not always
-> >>>>>>> indicate that, BG_GC may just start and do not move any blocks at all.
-> >>>>>>> Futhermore, skipping checkpoint if there are some dirty segments but no
-> >>>>>>> prefree segments is OK.
-> >>>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
-> >>>>>>> ---
-> >>>>>>>  fs/f2fs/gc.c | 7 ++++++-
-> >>>>>>>  1 file changed, 6 insertions(+), 1 deletion(-)
-> >>>>>>>
-> >>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> >>>>>>> index 6c996e3..30d206a 100644
-> >>>>>>> --- a/fs/f2fs/gc.c
-> >>>>>>> +++ b/fs/f2fs/gc.c
-> >>>>>>> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
-> >>>>>>>  		 * enough free sections, we should flush dent/node blocks and do
-> >>>>>>>  		 * garbage collections.
-> >>>>>>>  		 */
-> >>>>>>> -		ret = write_checkpoint(sbi, &cpc);
-> >>>>>>> +		if (prefree_segments(sbi))
-> >>>>>>> +			ret = write_checkpoint(sbi, &cpc);
-> >>>>>>> +		else if (!__get_victim(sbi, &segno, gc_type) {
-> >>>>>>> +			segno = NULL_SEGNO;
-> >>>>>>> +			ret = write_checkpoint(sbi, &cpc);
-> >>>>>>> +		}
-> >>>>>>>  		if (ret)
-> >>>>>>>  			goto stop;
-> >>>>>>>  	} else if (gc_type == BG_GC && !background) {
-> >>>>>>> -- 
-> >>>>>>> 2.10.1
-> >>>>>>
-> >>>>>> .
-> >>>>>>
-> >>>>>
-> >>>>> Thanks,
-> >>>>> Weichao
-> >>>>
-> >>>> .
-> >>>>
-> >>
-> >> ------------------------------------------------------------------------------
-> >> Check out the vibrant tech community on one of the world's most
-> >> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
-> >> _______________________________________________
-> >> Linux-f2fs-devel mailing list
-> >> Linux-f2fs-devel@lists.sourceforge.net
-> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> > 
-> > .
+> >  truncate_out:
+> >  	f2fs_wait_on_page_writeback(page, DATA, true);
+> >  	zero_user(page, offset, PAGE_SIZE - offset);
 > > 
 
 ------------------------------------------------------------------------------
