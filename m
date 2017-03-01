@@ -1,28 +1,33 @@
-From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: Re: [PATCH RFC] f2fs: combine nat_bits and
- free_nid_bitmap cache
-Date: Wed, 1 Mar 2017 21:09:14 +0800
-Message-ID: <adb9cc53-17fb-6693-4762-ceb8d0974ea6@gmail.com>
-References: <20170301091013.82838-1-yuchao0@huawei.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH] f2fs: skip checkpoint if having a dirty
+ segment but no prefree at BG_GC -> FG_GC
+Date: Wed, 1 Mar 2017 11:24:17 -0800
+Message-ID: <20170301192417.GA18600@jaegeuk.local>
+References: <20170224204357.220337-1-guoweichao@huawei.com>
+	<20170224184959.GD39009@jaegeuk.local>
+	<e3da3ac3-39d5-3880-2e38-ab523a7781ec@huawei.com>
+	<20170225195603.GF51627@jaegeuk.local>
+	<b95af89a-de0c-1242-bf0e-8782eff797f1@huawei.com>
+	<20170227180528.GA2296@jaegeuk.local>
+	<20170227234938.GC9644@jaegeuk.local>
+	<c577a659-0c5c-56a3-0f3e-73b9fbb319ff@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1cj40X-0006Wa-T4
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cj9rR-0006Tr-UK
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Mar 2017 13:09:29 +0000
-Received: from mail-it0-f66.google.com ([209.85.214.66])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1cj40W-0000z6-3D
+	Wed, 01 Mar 2017 19:24:29 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cj9rQ-0003OF-4v
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 01 Mar 2017 13:09:29 +0000
-Received: by mail-it0-f66.google.com with SMTP id r141so4850924ita.1
-	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Wed, 01 Mar 2017 05:09:28 -0800 (PST)
-In-Reply-To: <20170301091013.82838-1-yuchao0@huawei.com>
+	Wed, 01 Mar 2017 19:24:29 +0000
+Content-Disposition: inline
+In-Reply-To: <c577a659-0c5c-56a3-0f3e-73b9fbb319ff@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -32,184 +37,141 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Chao Yu <yuchao0@huawei.com>, jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: Chao Yu <yuchao0@huawei.com>
+Cc: guoweichao <guoweichao@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
 
-On 3/1/2017 17:10, Chao Yu wrote:
-> Both nat_bits cache and free_nid_bitmap cache provide same functionality
-> as a intermediate cache between free nid cache and disk, but with
-> different granularity of indicating free nid range, and different
-> persistence policy. nat_bits cache provides better persistence ability,
-> and free_nid_bitmap provides better granularity.
+On 02/28, Chao Yu wrote:
+> On 2017/2/28 7:49, Jaegeuk Kim wrote:
+> > On 02/27, Jaegeuk Kim wrote:
+> >> On 02/27, Chao Yu wrote:
+> >>> On 2017/2/26 3:56, Jaegeuk Kim wrote:
+> >>>> On 02/25, guoweichao wrote:
+> >>>>> Hi Jaegeuk,
+> >>>>>
+> >>>>> I regard no enough free sections as a precondition when talking about
+> >>>>> BG_GC -> FG_GC. I mean that for both case a) and b) I mentioned has no enough
+> >>>>> free sections implicitly. 
+> >>>>>
+> >>>>> On 2017/2/25 2:49, Jaegeuk Kim wrote:
+> >>>>>> Hi Weichao,
+> >>>>>>
+> >>>>>> On 02/25, Weichao Guo wrote:
+> >>>>>>> When turning to FG_GC from BG_GC, we need to write checkpoint in 2 cases:
+> >>>>>>> * a) BG_GC have made some progress, e.g.: some prefree segments.
+> >>>>>>> * b) There is no victim and no prefree segment.
+> >>>>>>
+> >>>>>> You missed
+> >>>>>>   * c) has_not_enough_free_secs() introduced by
+> >>>>>>       6e17bfbc75a5cb ("f2fs: fix to overcome inline_data floods")
+> >>>>> As we have enabled SSR for warm node(5b6c6be2d8 ("f2fs: use SSR for warm node as well")),
+> >>>>> I think inline data floods should not be a problem in most cases.
+> >>>>>>
+> >>>>>> And, Yunlong pointed that we can't find a case to avoid write_checkpoint()
+> >>>>>> mostly due to c) condition.
+> >>>>> As inline data floods is an extreme case, and there is little possibility caused panic
+> >>>>> for inline data floods now, there should be lots of chance to skip checkpoint. I mean
+> >>>>> that we can make some accurate inline data floods checking before writing checkpoint.
+> >>>>
+> >>>> For now, the safest way is our first option. So, I decided to start with doing
+> >>>> checkpoint due to previous inline_data flooding issue even though it's an
+> >>>> extreme case under SSR.
+> >>>>
+> >>>> Anyway, I agree that we need to find a way to detect when to avoid checkpoint.
+> >>>
+> >>> Hi all,
+> >>>
+> >>> I proposed a approach before, can you please check that one?
+> >>>
+> >>> https://www.mail-archive.com/linux-f2fs-devel@lists.sourceforge.net/msg03632.html
+> >>
+> >> Oh, right, let's take a look at this. ;)
+> > 
+> > Hmm, I just read this patch again, and realized it doesn't quite address the
+> > current issue. This patch flushes inline_data inodes in background, which does
+> > not guarantee this worst case. The key idea would be how to measure the space
 > 
-> In this patch we combine advantage of both caches, so finally policy of
-> the intermediate cache would be:
-> - init: load free nid status from nat_bits into free_nid_bitmap
-> - lookup: scan free_nid_bitmap before load NAT blocks
+> Hmm.. Maybe we can cover worst case by moving judgment condition and flushing
+> operation into f2fs_balance_fs.
+> 
+> > we can do SSR and use it in has_not_enough_free_secs().
+> 
+> We need to stat usage of slack free space accurately both for data/node, right?
 
-Why not scan the full_nat_bits/empty_nat_bits before load NAT blocks here?
-If after an objects shrinker, the cached free nid will be empty quickly.
+Yup.
+Thanks,
 
-thanks,
-Kinglong Mee
-
-> - update: update free_nid_bitmap in real-time
-> - persistence: udpate and persist nat_bits in checkpoint
 > 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/node.c | 109 +++++++++++++++++++++------------------------------------
->  1 file changed, 39 insertions(+), 70 deletions(-)
+> Thanks,
 > 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 1a759d45b7e4..6c027b6833f4 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -338,9 +338,6 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
->  		set_nat_flag(e, IS_CHECKPOINTED, false);
->  	__set_nat_cache_dirty(nm_i, e);
->  
-> -	if (enabled_nat_bits(sbi, NULL) && new_blkaddr == NEW_ADDR)
-> -		clear_bit_le(NAT_BLOCK_OFFSET(ni->nid), nm_i->empty_nat_bits);
-> -
->  	/* update fsync_mark if its inode nat entry is still alive */
->  	if (ni->nid != ni->ino)
->  		e = __lookup_nat_cache(nm_i, ni->ino);
-> @@ -1920,58 +1917,6 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
->  	up_read(&nm_i->nat_tree_lock);
->  }
->  
-> -static int scan_nat_bits(struct f2fs_sb_info *sbi)
-> -{
-> -	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> -	struct page *page;
-> -	unsigned int i = 0;
-> -	nid_t nid;
-> -
-> -	if (!enabled_nat_bits(sbi, NULL))
-> -		return -EAGAIN;
-> -
-> -	down_read(&nm_i->nat_tree_lock);
-> -check_empty:
-> -	i = find_next_bit_le(nm_i->empty_nat_bits, nm_i->nat_blocks, i);
-> -	if (i >= nm_i->nat_blocks) {
-> -		i = 0;
-> -		goto check_partial;
-> -	}
-> -
-> -	for (nid = i * NAT_ENTRY_PER_BLOCK; nid < (i + 1) * NAT_ENTRY_PER_BLOCK;
-> -									nid++) {
-> -		if (unlikely(nid >= nm_i->max_nid))
-> -			break;
-> -		add_free_nid(sbi, nid, true);
-> -	}
-> -
-> -	if (nm_i->nid_cnt[FREE_NID_LIST] >= MAX_FREE_NIDS)
-> -		goto out;
-> -	i++;
-> -	goto check_empty;
-> -
-> -check_partial:
-> -	i = find_next_zero_bit_le(nm_i->full_nat_bits, nm_i->nat_blocks, i);
-> -	if (i >= nm_i->nat_blocks) {
-> -		disable_nat_bits(sbi, true);
-> -		up_read(&nm_i->nat_tree_lock);
-> -		return -EINVAL;
-> -	}
-> -
-> -	nid = i * NAT_ENTRY_PER_BLOCK;
-> -	page = get_current_nat_page(sbi, nid);
-> -	scan_nat_page(sbi, page, nid);
-> -	f2fs_put_page(page, 1);
-> -
-> -	if (nm_i->nid_cnt[FREE_NID_LIST] < MAX_FREE_NIDS) {
-> -		i++;
-> -		goto check_partial;
-> -	}
-> -out:
-> -	up_read(&nm_i->nat_tree_lock);
-> -	return 0;
-> -}
-> -
->  static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
->  {
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> @@ -1993,21 +1938,6 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
->  
->  		if (nm_i->nid_cnt[FREE_NID_LIST])
->  			return;
-> -
-> -		/* try to find free nids with nat_bits */
-> -		if (!scan_nat_bits(sbi) && nm_i->nid_cnt[FREE_NID_LIST])
-> -			return;
-> -	}
-> -
-> -	/* find next valid candidate */
-> -	if (enabled_nat_bits(sbi, NULL)) {
-> -		int idx = find_next_zero_bit_le(nm_i->full_nat_bits,
-> -					nm_i->nat_blocks, 0);
-> -
-> -		if (idx >= nm_i->nat_blocks)
-> -			set_sbi_flag(sbi, SBI_NEED_FSCK);
-> -		else
-> -			nid = idx * NAT_ENTRY_PER_BLOCK;
->  	}
->  
->  	/* readahead nat pages to be scanned */
-> @@ -2590,6 +2520,41 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
->  	return 0;
->  }
->  
-> +inline void load_free_nid_bitmap(struct f2fs_sb_info *sbi)
-> +{
-> +	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> +	unsigned int i = 0;
-> +	nid_t nid, last_nid;
-> +
-> +	for (i = 0; i < nm_i->nat_blocks; i++) {
-> +		i = find_next_bit_le(nm_i->empty_nat_bits, nm_i->nat_blocks, i);
-> +		if (i >= nm_i->nat_blocks)
-> +			break;
-> +
-> +		set_bit_le(i, nm_i->nat_block_bitmap);
-> +
-> +		nid = i * NAT_ENTRY_PER_BLOCK;
-> +		last_nid = (i + 1) * NAT_ENTRY_PER_BLOCK;
-> +
-> +		for (; nid < last_nid; nid++)
-> +			update_free_nid_bitmap(sbi, nid, true, true);
-> +	}
-> +
-> +	for (i = 0; i < nm_i->nat_blocks; i++) {
-> +		i = find_next_bit_le(nm_i->full_nat_bits, nm_i->nat_blocks, i);
-> +		if (i >= nm_i->nat_blocks)
-> +			break;
-> +
-> +		set_bit_le(i, nm_i->nat_block_bitmap);
-> +
-> +		nid = i * NAT_ENTRY_PER_BLOCK;
-> +		last_nid = (i + 1) * NAT_ENTRY_PER_BLOCK;
-> +
-> +		for (; nid < last_nid; nid++)
-> +			update_free_nid_bitmap(sbi, nid, false, true);
-> +	}
-> +}
-> +
->  static int init_node_manager(struct f2fs_sb_info *sbi)
->  {
->  	struct f2fs_super_block *sb_raw = F2FS_RAW_SUPER(sbi);
-> @@ -2672,6 +2637,10 @@ int init_free_nid_cache(struct f2fs_sb_info *sbi)
->  
->  	spin_lock_init(&nm_i->free_nid_lock);
->  
-> +	/* load free nid status from nat_bits table */
-> +	if (enabled_nat_bits(sbi, NULL))
-> +		load_free_nid_bitmap(sbi);
-> +
->  	return 0;
->  }
->  
-> 
+> > 
+> > Thanks,
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>>>>
+> >>>>>> Thanks,
+> >>>>>>
+> >>>>>>>
+> >>>>>>> For case a), previously, we also check if there is a dirty segment for
+> >>>>>>> infering blocks moving in last BG_GC. But dirty segments do not always
+> >>>>>>> indicate that, BG_GC may just start and do not move any blocks at all.
+> >>>>>>> Futhermore, skipping checkpoint if there are some dirty segments but no
+> >>>>>>> prefree segments is OK.
+> >>>>>>
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Signed-off-by: Weichao Guo <guoweichao@huawei.com>
+> >>>>>>> ---
+> >>>>>>>  fs/f2fs/gc.c | 7 ++++++-
+> >>>>>>>  1 file changed, 6 insertions(+), 1 deletion(-)
+> >>>>>>>
+> >>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >>>>>>> index 6c996e3..30d206a 100644
+> >>>>>>> --- a/fs/f2fs/gc.c
+> >>>>>>> +++ b/fs/f2fs/gc.c
+> >>>>>>> @@ -958,7 +958,12 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background)
+> >>>>>>>  		 * enough free sections, we should flush dent/node blocks and do
+> >>>>>>>  		 * garbage collections.
+> >>>>>>>  		 */
+> >>>>>>> -		ret = write_checkpoint(sbi, &cpc);
+> >>>>>>> +		if (prefree_segments(sbi))
+> >>>>>>> +			ret = write_checkpoint(sbi, &cpc);
+> >>>>>>> +		else if (!__get_victim(sbi, &segno, gc_type) {
+> >>>>>>> +			segno = NULL_SEGNO;
+> >>>>>>> +			ret = write_checkpoint(sbi, &cpc);
+> >>>>>>> +		}
+> >>>>>>>  		if (ret)
+> >>>>>>>  			goto stop;
+> >>>>>>>  	} else if (gc_type == BG_GC && !background) {
+> >>>>>>> -- 
+> >>>>>>> 2.10.1
+> >>>>>>
+> >>>>>> .
+> >>>>>>
+> >>>>>
+> >>>>> Thanks,
+> >>>>> Weichao
+> >>>>
+> >>>> .
+> >>>>
+> >>
+> >> ------------------------------------------------------------------------------
+> >> Check out the vibrant tech community on one of the world's most
+> >> engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+> >> _______________________________________________
+> >> Linux-f2fs-devel mailing list
+> >> Linux-f2fs-devel@lists.sourceforge.net
+> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
+> > .
+> > 
 
 ------------------------------------------------------------------------------
 Check out the vibrant tech community on one of the world's most
