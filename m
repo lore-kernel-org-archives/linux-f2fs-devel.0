@@ -1,22 +1,23 @@
-From: Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH v2] f2fs: add a punch discard command function
-Date: Thu, 2 Mar 2017 10:36:20 +0800
-Message-ID: <20170302023620.13337-1-heyunlei@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: correct cp_ver for compatibility to old
+	image
+Date: Thu, 2 Mar 2017 11:22:33 +0800
+Message-ID: <20170302032233.89189-1-yuchao0@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1cjGXk-00016u-Fz
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cjHKb-0007Dk-0C
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Mar 2017 02:32:36 +0000
-Received: from [45.249.212.187] (helo=dggrg01-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cjGXi-0000Eh-4P
+	Thu, 02 Mar 2017 03:23:05 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cjHKZ-0001L7-MF
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Mar 2017 02:32:36 +0000
+	Thu, 02 Mar 2017 03:23:04 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -26,55 +27,34 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org, yuchao0@huawei.com, linux-f2fs-devel@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-This patch add a function to punch discard command if one segment
-reuse before discard. Split this segment from multi-segments discard
-range, and discard the left bigger range.
+There is no CP_CRC_RECOVERY_FLAG tagged in checkpoint pack, calculate
+cp_version as old format.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/segment.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ fs/f2fs/node.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 4bd7a8b..1e1d5d3 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -672,6 +672,22 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *d
- 	kmem_cache_free(discard_cmd_slab, dc);
- }
- 
-+static void __punch_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *dc, block_t blkaddr)
-+{
-+	block_t end_block = START_BLOCK(sbi, GET_SEGNO(sbi, blkaddr) + 1);
-+
-+	if (dc->lstart + dc->len <= end_block) {
-+		__remove_discard_cmd(sbi, dc);
-+		return;
-+	}
-+
-+	if (blkaddr - dc->lstart < dc->lstart + dc->len - end_block) {
-+		dc->lstart = end_block;
-+		dc->len -= (end_block - dc->lstart);
-+	} else
-+		dc->len = blkaddr - dc->lstart;
-+}
-+
- /* This should be covered by global mutex, &sit_i->sentry_lock */
- void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
- {
-@@ -708,7 +724,7 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
- 	if (blkaddr == NULL_ADDR) {
- 		list_for_each_entry_safe(dc, tmp, wait_list, list) {
- 			wait_for_completion_io(&dc->wait);
--			__remove_discard_cmd(sbi, dc);
-+			__punch_discard_cmd(sbi, dc, blkaddr);
- 		}
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 6c027b6833f4..0d46404ca769 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2507,7 +2507,9 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+ 		f2fs_put_page(page, 1);
  	}
- 	mutex_unlock(&dcc->cmd_lock);
+ 
+-	cp_ver |= (cur_cp_crc(ckpt) << 32);
++	if (__is_set_ckpt_flags(ckpt, CP_CRC_RECOVERY_FLAG))
++		cp_ver |= (cur_cp_crc(ckpt) << 32);
++
+ 	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
+ 		disable_nat_bits(sbi, true);
+ 		return 0;
 -- 
-2.10.1
+2.8.2.295.g3f1c1d0
 
 
 ------------------------------------------------------------------------------
