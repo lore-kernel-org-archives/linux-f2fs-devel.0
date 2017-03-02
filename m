@@ -1,27 +1,27 @@
 From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH] f2fs: fix an error return value in
- truncate_partial_data_page
-Date: Thu, 2 Mar 2017 10:00:04 +0800
-Message-ID: <3446caf6-449f-de05-602b-a3ebed732175@huawei.com>
-References: <20170228123241.5070-1-heyunlei@huawei.com>
-	<98366c6a-4bcd-44cc-4143-a22a359db63d@huawei.com>
-	<20170301193250.GB18600@jaegeuk.local>
+Subject: Re: [PATCH] f2fs: add a modify discard command function
+Date: Thu, 2 Mar 2017 10:07:32 +0800
+Message-ID: <e2f77bb7-8bbb-6a93-85a1-5ad52b769661@huawei.com>
+References: <20170227071943.32195-1-heyunlei@huawei.com>
+	<20170227230805.GC9106@jaegeuk.local>
+	<6b67a9d1-645f-9dea-6fda-9324f7ac0cac@huawei.com>
+	<20170301194844.GD18600@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1cjG2o-0005Bs-4x
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <heyunlei@huawei.com>) id 1cjG9y-0004Es-KO
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Mar 2017 02:00:38 +0000
+	Thu, 02 Mar 2017 02:08:02 +0000
 Received: from [45.249.212.191] (helo=dggrg05-dlp.huawei.com)
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cjG2l-0007Kq-PS
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cjG9x-0006G2-He
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Thu, 02 Mar 2017 02:00:38 +0000
-In-Reply-To: <20170301193250.GB18600@jaegeuk.local>
+	Thu, 02 Mar 2017 02:08:02 +0000
+In-Reply-To: <20170301194844.GD18600@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,51 +31,88 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-
 Hi Jaegeuk,
-On 2017/3/2 3:32, Jaegeuk Kim wrote:
-> On 03/01, Chao Yu wrote:
->> On 2017/2/28 20:32, Yunlei He wrote:
->>> This patch fix a error return value in truncate_partial_data_page
->>>
->>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>> ---
->>>  fs/f2fs/file.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>> index c6ca00c..c186d75 100644
->>> --- a/fs/f2fs/file.c
->>> +++ b/fs/f2fs/file.c
->>> @@ -529,7 +529,7 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
->>>
->>>  	page = get_lock_data_page(inode, index, true);
->>>  	if (IS_ERR(page))
->>> -		return 0;
->>> +		return page;
+
+On 2017/3/2 3:48, Jaegeuk Kim wrote:
+> On 02/28, heyunlei wrote:
+>> Hi Jaegeuk,
 >>
->> return PTR_ERR(page);
+>> On 2017/2/28 7:08, Jaegeuk Kim wrote:
+>>> On 02/27, Yunlei He wrote:
+>>>> This patch add a function to modify discard command if one segment
+>>>> reuse before discard. Split this segment from multi-segments discard
+>>>> range, and discard the left bigger range.
+>>>
+>>> Now MAX_DISCARD_BLOCKS() is set to section size, so there will be no
+>>> multi-sections discard range. Am I missing some cases?
+>>
+>> I think MAX_DISCARD_BLOCKS() just limit small discard and fstrim, f2fs
+>>
+>> can still send multi-segments discard range if prefree segments is continuous.
 >
-> Do we need this?
-
-Yes, you are right, we need this if file has holes.
-
-Thanks.
-
+> Got it.
+> Comments below.
 >
-> return PTR_ERR(page) == -ENOENT ? 0 : PTR_ERR(page);
+>>>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/segment.c | 18 +++++++++++++++++-
+>>>>  1 file changed, 17 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 9006d8e..5af736b 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -672,6 +672,22 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *d
+>>>>  	kmem_cache_free(discard_cmd_slab, dc);
+>>>>  }
+>>>>
+>>>> +static void __modify_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *dc, block_t blkaddr)
+>
+> How about modifying the name "modify" to "punch"?
+>
+>>>> +{
+>>>> +	block_t end_block = START_BLOCK(sbi, GET_SEGNO(sbi, blkaddr) + 1);
+>>>> +
+>>>> +	if (dc->lstart + dc->len <= end_block) {
+>>>> +		 __remove_discard_cmd(sbi, dc);
+>>>> +		return;
+>>>> +	}
+>>>> +
+>>>> +	if (dc->lstart - blkaddr < dc->lstart + dc->len - end_block) {
+>
+> The blkaddr is larger than or equal to dc->lstart all the time, resulting in
+> overflow?
+
+Yes, here should be if (blkaddr - dc->lstart < dc->lstart + dc->len - end_block)
+
 >
 > Thanks,
 >
->>
->> Thanks,
->>
->>>  truncate_out:
->>>  	f2fs_wait_on_page_writeback(page, DATA, true);
->>>  	zero_user(page, offset, PAGE_SIZE - offset);
+>>>> +		dc->lstart = end_block;
+>>>> +		dc->len -= (end_block - dc->lstart);
+>>>> +	} else
+>>>> +		dc->len = blkaddr - dc->lstart;
+>>>> +}
+>>>> +
+>>>>  /* This should be covered by global mutex, &sit_i->sentry_lock */
+>>>>  void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+>>>>  {
+>>>> @@ -699,7 +715,7 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+>>>>  			if (dc->state == D_SUBMIT)
+>>>>  				wait_for_completion_io(&dc->wait);
+>>>>  			else
+>>>> -				__remove_discard_cmd(sbi, dc);
+>>>> +				__modify_discard_cmd(sbi, dc, blkaddr);
+>>>>  		}
+>>>>  	}
+>>>>  	blk_finish_plug(&plug);
+>>>> --
+>>>> 2.10.1
+>>>
+>>> .
 >>>
 >
 > .
