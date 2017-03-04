@@ -1,8 +1,8 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH v2 1/2] mkfs.f2fs: make the help messages and
-	manpages clearer
-Date: Sat, 4 Mar 2017 21:18:09 +0800
-Message-ID: <f52908ae-1265-9620-9280-3c74645acaf4@gmail.com>
+Subject: [PATCH 2/2] f2fs: avoid new_inode's flags overwrite the
+	old_node
+Date: Sat, 4 Mar 2017 21:44:04 +0800
+Message-ID: <fdfcad9e-36e6-a163-e42b-abe414c2ca9d@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -10,17 +10,17 @@ Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
 Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1ck9a0-0004yy-8o
+	(envelope-from <kinglongmee@gmail.com>) id 1ck9yw-0006CR-OM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Mar 2017 13:18:36 +0000
-Received: from mail-it0-f67.google.com ([209.85.214.67])
+	Sat, 04 Mar 2017 13:44:22 +0000
+Received: from mail-io0-f194.google.com ([209.85.223.194])
 	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ck9Zz-00035n-BY
+	(Exim 4.76) id 1ck9yv-0006OO-Tz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sat, 04 Mar 2017 13:18:36 +0000
-Received: by mail-it0-f67.google.com with SMTP id 68so5068928itg.0
+	Sat, 04 Mar 2017 13:44:22 +0000
+Received: by mail-io0-f194.google.com with SMTP id f103so9420728ioi.2
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sat, 04 Mar 2017 05:18:35 -0800 (PST)
+	Sat, 04 Mar 2017 05:44:21 -0800 (PST)
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,101 +33,69 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Add some missing options in manpages, also order those options.
+Note, rename with old_inode (enc_name) and new_inode (no_enc_name),
+the result will be old_indoe(enc_name) and new_inode(enc_name).
+
+Needs swap the enc_name flags?
+If needed, this patch needs update of clear the flags.
+otherwise, this patch only fix the logic with any result changing.
 
 Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- man/mkfs.f2fs.8         | 37 +++++++++++++++++++++++++++----------
- mkfs/f2fs_format_main.c |  6 +++---
- 2 files changed, 30 insertions(+), 13 deletions(-)
+ fs/f2fs/namei.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
-index bdb9755..f7bcad4 100644
---- a/man/mkfs.f2fs.8
-+++ b/man/mkfs.f2fs.8
-@@ -63,34 +63,51 @@ The default value is 1.
- Build f2fs with this device additionally, so that user can see all
- the devices as one big volume.
- .TP
-+.BI \-d " debug-level"
-+Specify the level of debugging options.
-+The default number is 0, which shows basic debugging messages.
-+.TP
-+.BI \-e " extension-list"
-+Specify a file extension list in order f2fs to treat them as cold files.
-+The data of files having those extensions will be stored to the cold log.
-+The default list includes most of multimedia file extensions such as jpg, gif,
-+mpeg, mkv, and so on.
-+.TP
- .BI \-l " volume-label"
- Specify the volume label to the partition mounted as F2FS.
- .TP
-+.BI \-m
-+Specify f2fs filesystem to supports the block zoned feature.
-+Without it, the filesystem isn't supports the feature.
-+.TP
- .BI \-o " overprovision-ratio-percentage"
- Specify the percentage over the volume size for overprovision area. This area
- is hidden to users, and utilized by F2FS cleaner. If not specified, the best
- number will be assigned automatically accoring to the partition size.
- .TP
-+.BI \-O " feature-list"
-+Specify a feature list in order f2fs filesystem will supports.
-+e.g "encrypt" and so on.
-+.TP
-+.BI \-q
-+Quiet mode.
-+With it, mkfs.f2fs does not show any messages include the basic messages.
-+.TP
- .BI \-s " #-of-segments-per-section"
- Specify the number of segments per section. A section consists of
- multiple consecutive segments, and is the unit of garbage collection.
- The default number is 1, which means one segment is assigned to a section.
- .TP
-+.BI \-t " nodiscard/discard"
-+Specify 1 or 0 to enable/disable discard policy.
-+If the value is equal to 1, discard policy is enabled, otherwise is disable.
-+The default value is 1.
-+.TP
- .BI \-z " #-of-sections-per-zone"
- Specify the number of sections per zone. A zone consists of multiple sections.
- F2FS allocates segments for active logs with separated zones as much as possible.
- The default number is 1, which means a zone consists of one section.
- .TP
--.BI \-e " extension-list"
--Specify a file extension list in order f2fs to treat them as cold files.
--The data of files having those extensions will be stored to the cold log.
--The default list includes most of multimedia file extensions such as jpg, gif,
--mpeg, mkv, and so on.
--.TP
--.BI \-d " debug-level"
--Specify the level of debugging options.
--The default number is 0, which shows basic debugging messages.
--.TP
- .SH AUTHOR
- This version of
- .B mkfs.f2fs
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 5bb1faf..0ac87ed 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -32,13 +32,13 @@ static void mkfs_usage()
- 	MSG(0, "  -d debug level [default:0]\n");
- 	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
- 	MSG(0, "  -l label\n");
-+	MSG(0, "  -m support zoned block device [default:0]\n");
- 	MSG(0, "  -o overprovision ratio [default:5]\n");
--	MSG(0, "  -O set feature\n");
-+	MSG(0, "  -O [feature list] e.g. \"encrypt\"\n");
- 	MSG(0, "  -q quiet mode\n");
- 	MSG(0, "  -s # of segments per section [default:1]\n");
--	MSG(0, "  -z # of sections per zone [default:1]\n");
- 	MSG(0, "  -t 0: nodiscard, 1: discard [default:1]\n");
--	MSG(0, "  -m support zoned block device [default:0]\n");
-+	MSG(0, "  -z # of sections per zone [default:1]\n");
- 	MSG(0, "sectors: number of sectors. [default: determined by device size]\n");
- 	exit(1);
- }
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 3231a0a..db2ab7f 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -846,6 +846,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	struct page *old_page, *new_page;
+ 	struct f2fs_dir_entry *old_dir_entry = NULL, *new_dir_entry = NULL;
+ 	struct f2fs_dir_entry *old_entry, *new_entry;
++	bool old_inode_enc = false, new_inode_enc = false;
+ 	int old_nlink = 0, new_nlink = 0;
+ 	int err = -ENOENT;
+ 
+@@ -917,17 +918,16 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	f2fs_lock_op(sbi);
+ 
++	old_inode_enc = file_enc_name(old_inode);
++	new_inode_enc = file_enc_name(new_inode);
++
+ 	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
+ 	if (err)
+ 		goto out_unlock;
+-	if (file_enc_name(new_inode))
+-		file_set_enc_name(old_inode);
+ 
+ 	err = update_dent_inode(new_inode, old_inode, &old_dentry->d_name);
+ 	if (err)
+ 		goto out_undo;
+-	if (file_enc_name(old_inode))
+-		file_set_enc_name(new_inode);
+ 
+ 	/* update ".." directory entry info of old dentry */
+ 	if (old_dir_entry)
+@@ -942,6 +942,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	down_write(&F2FS_I(old_inode)->i_sem);
+ 	file_lost_pino(old_inode);
++	if (new_inode_enc)
++		file_set_enc_name(old_inode);
+ 	up_write(&F2FS_I(old_inode)->i_sem);
+ 
+ 	old_dir->i_ctime = current_time(old_dir);
+@@ -957,6 +959,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	down_write(&F2FS_I(new_inode)->i_sem);
+ 	file_lost_pino(new_inode);
++	if (old_inode_enc)
++		file_set_enc_name(new_inode);
+ 	up_write(&F2FS_I(new_inode)->i_sem);
+ 
+ 	new_dir->i_ctime = current_time(new_dir);
 -- 
 2.9.3
 
