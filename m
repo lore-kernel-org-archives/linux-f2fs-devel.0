@@ -1,95 +1,69 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 4/7] mm: introduce memalloc_nofs_{save,restore} API
-Date: Mon, 6 Mar 2017 13:22:14 -0800
-Message-ID: <20170306132214.1769368301d9e671e1bc68be@linux-foundation.org>
-References: <20170306131408.9828-1-mhocko@kernel.org>
-	<20170306131408.9828-5-mhocko@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 2/2] f2fs: don't overwrite node block by SSR
+Date: Mon,  6 Mar 2017 13:51:02 -0800
+Message-ID: <20170306215102.3807-2-jaegeuk@kernel.org>
+References: <20170306215102.3807-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20170306131408.9828-5-mhocko@kernel.org>
-Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cl0XB-0003Dj-Hc
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 06 Mar 2017 21:51:13 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cl0XA-00071x-Nj
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 06 Mar 2017 21:51:13 +0000
+In-Reply-To: <20170306215102.3807-1-jaegeuk@kernel.org>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On Mon,  6 Mar 2017 14:14:05 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+This patch fixes that SSR can overwrite previous warm node block consisting of
+a node chain since the last checkpoint.
 
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> GFP_NOFS context is used for the following 5 reasons currently
-> 	- to prevent from deadlocks when the lock held by the allocation
-> 	  context would be needed during the memory reclaim
-> 	- to prevent from stack overflows during the reclaim because
-> 	  the allocation is performed from a deep context already
-> 	- to prevent lockups when the allocation context depends on
-> 	  other reclaimers to make a forward progress indirectly
-> 	- just in case because this would be safe from the fs POV
-> 	- silence lockdep false positives
-> 
-> Unfortunately overuse of this allocation context brings some problems
-> to the MM. Memory reclaim is much weaker (especially during heavy FS
-> metadata workloads), OOM killer cannot be invoked because the MM layer
-> doesn't have enough information about how much memory is freeable by the
-> FS layer.
-> 
-> In many cases it is far from clear why the weaker context is even used
-> and so it might be used unnecessarily. We would like to get rid of
-> those as much as possible. One way to do that is to use the flag in
-> scopes rather than isolated cases. Such a scope is declared when really
-> necessary, tracked per task and all the allocation requests from within
-> the context will simply inherit the GFP_NOFS semantic.
-> 
-> Not only this is easier to understand and maintain because there are
-> much less problematic contexts than specific allocation requests, this
-> also helps code paths where FS layer interacts with other layers (e.g.
-> crypto, security modules, MM etc...) and there is no easy way to convey
-> the allocation context between the layers.
-> 
-> Introduce memalloc_nofs_{save,restore} API to control the scope
-> of GFP_NOFS allocation context. This is basically copying
-> memalloc_noio_{save,restore} API we have for other restricted allocation
-> context GFP_NOIO. The PF_MEMALLOC_NOFS flag already exists and it is
-> just an alias for PF_FSTRANS which has been xfs specific until recently.
-> There are no more PF_FSTRANS users anymore so let's just drop it.
-> 
-> PF_MEMALLOC_NOFS is now checked in the MM layer and drops __GFP_FS
-> implicitly same as PF_MEMALLOC_NOIO drops __GFP_IO. memalloc_noio_flags
-> is renamed to current_gfp_context because it now cares about both
-> PF_MEMALLOC_NOFS and PF_MEMALLOC_NOIO contexts. Xfs code paths preserve
-> their semantic. kmem_flags_convert() doesn't need to evaluate the flag
-> anymore.
-> 
-> This patch shouldn't introduce any functional changes.
-> 
-> Let's hope that filesystems will drop direct GFP_NOFS (resp. ~__GFP_FS)
-> usage as much as possible and only use a properly documented
-> memalloc_nofs_{save,restore} checkpoints where they are appropriate.
-> 
-> ....
->
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -210,8 +210,16 @@ struct vm_area_struct;
->   *
->   * GFP_NOIO will use direct reclaim to discard clean pages or slab pages
->   *   that do not require the starting of any physical IO.
-> + *   Please try to avoid using this flag directly and instead use
-> + *   memalloc_noio_{save,restore} to mark the whole scope which cannot
-> + *   perform any IO with a short explanation why. All allocation requests
-> + *   will inherit GFP_NOIO implicitly.
->   *
->   * GFP_NOFS will use direct reclaim but will not use any filesystem interfaces.
-> + *   Please try to avoid using this flag directly and instead use
-> + *   memalloc_nofs_{save,restore} to mark the whole scope which cannot/shouldn't
-> + *   recurse into the FS layer with a short explanation why. All allocation
-> + *   requests will inherit GFP_NOFS implicitly.
+Fixes: 5b6c6be2d878 ("f2fs: use SSR for warm node as well")
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/segment.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-I wonder if these are worth a checkpatch rule.
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 2ae36d04d03e..684b869e1861 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1177,6 +1177,12 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
+ 		if (f2fs_discard_en(sbi) &&
+ 			!f2fs_test_and_set_bit(offset, se->discard_map))
+ 			sbi->discard_blks--;
++
++		/* don't overwrite by SSR to keep node chain */
++		if (se->type == CURSEG_WARM_NODE) {
++			if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
++				se->ckpt_valid_blocks++;
++		}
+ 	} else {
+ 		if (!f2fs_test_and_clear_bit(offset, se->cur_valid_map)) {
+ #ifdef CONFIG_F2FS_CHECK_FS
+-- 
+2.11.0
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+------------------------------------------------------------------------------
+Announcing the Oxford Dictionaries API! The API offers world-renowned
+dictionary content that is easy and intuitive to access. Sign up for an
+account today to start using our lexical data to power your apps and
+projects. Get started today and enter our developer competition.
+http://sdm.link/oxford
