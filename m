@@ -1,64 +1,201 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 7/8] Revert "ext4: avoid deadlocks in the writeback path
- by using sb_getblk_gfp"
-Date: Mon, 6 Mar 2017 12:59:15 +0100
-Message-ID: <20170306115915.GB27953@dhcp22.suse.cz>
-References: <20170106141107.23953-1-mhocko@kernel.org>
- <20170106141107.23953-8-mhocko@kernel.org>
- <20170117030118.727jqyamjhojzajb@thunk.org>
- <20170117075450.GC19699@dhcp22.suse.cz>
+From: Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: combine nat_bits and free_nid_bitmap
+	cache
+Date: Mon, 6 Mar 2017 21:12:41 +0800
+Message-ID: <20170306131241.36042-1-yuchao0@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20170117075450.GC19699@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <yuchao0@huawei.com>) id 1cksRv-0006gZ-U1
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 06 Mar 2017 13:13:15 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1cksRt-0001Me-8a
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Mon, 06 Mar 2017 13:13:15 +0000
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: jaegeuk@kernel.org
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
-On Tue 17-01-17 08:54:50, Michal Hocko wrote:
-> On Mon 16-01-17 22:01:18, Theodore Ts'o wrote:
-> > On Fri, Jan 06, 2017 at 03:11:06PM +0100, Michal Hocko wrote:
-> > > From: Michal Hocko <mhocko@suse.com>
-> > > 
-> > > This reverts commit c45653c341f5c8a0ce19c8f0ad4678640849cb86 because
-> > > sb_getblk_gfp is not really needed as
-> > > sb_getblk
-> > >   __getblk_gfp
-> > >     __getblk_slow
-> > >       grow_buffers
-> > >         grow_dev_page
-> > > 	  gfp_mask = mapping_gfp_constraint(inode->i_mapping, ~__GFP_FS) | gfp
-> > > 
-> > > so __GFP_FS is cleared unconditionally and therefore the above commit
-> > > didn't have any real effect in fact.
-> > > 
-> > > This patch should not introduce any functional change. The main point
-> > > of this change is to reduce explicit GFP_NOFS usage inside ext4 code to
-> > > make the review of the remaining usage easier.
-> > > 
-> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > 
-> > If I'm not mistaken, this patch is not dependent on any of the other
-> > patches in this series (and the other patches are not dependent on
-> > this one).  Hence, I could take this patch via the ext4 tree, correct?
-> 
-> Yes, that is correct
+Both nat_bits cache and free_nid_bitmap cache provide same functionality
+as a intermediate cache between free nid cache and disk, but with
+different granularity of indicating free nid range, and different
+persistence policy. nat_bits cache provides better persistence ability,
+and free_nid_bitmap provides better granularity.
 
-Hi Ted,
-this doesn't seem to be in any of the branches [1]. I plan to resend the
-whole scope nofs series, should I add this to the pile or you are going
-to route it via your tree?
+In this patch we combine advantage of both caches, so finally policy of
+the intermediate cache would be:
+- init: load free nid status from nat_bits into free_nid_bitmap
+- lookup: scan free_nid_bitmap before load NAT blocks
+- update: update free_nid_bitmap in real-time
+- persistence: udpate and persist nat_bits in checkpoint
 
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/node.c | 105 +++++++++++++++++++--------------------------------------
+ 1 file changed, 35 insertions(+), 70 deletions(-)
+
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 1a759d45b7e4..625b46bc55ad 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -338,9 +338,6 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
+ 		set_nat_flag(e, IS_CHECKPOINTED, false);
+ 	__set_nat_cache_dirty(nm_i, e);
+ 
+-	if (enabled_nat_bits(sbi, NULL) && new_blkaddr == NEW_ADDR)
+-		clear_bit_le(NAT_BLOCK_OFFSET(ni->nid), nm_i->empty_nat_bits);
+-
+ 	/* update fsync_mark if its inode nat entry is still alive */
+ 	if (ni->nid != ni->ino)
+ 		e = __lookup_nat_cache(nm_i, ni->ino);
+@@ -1920,58 +1917,6 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
+ 	up_read(&nm_i->nat_tree_lock);
+ }
+ 
+-static int scan_nat_bits(struct f2fs_sb_info *sbi)
+-{
+-	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct page *page;
+-	unsigned int i = 0;
+-	nid_t nid;
+-
+-	if (!enabled_nat_bits(sbi, NULL))
+-		return -EAGAIN;
+-
+-	down_read(&nm_i->nat_tree_lock);
+-check_empty:
+-	i = find_next_bit_le(nm_i->empty_nat_bits, nm_i->nat_blocks, i);
+-	if (i >= nm_i->nat_blocks) {
+-		i = 0;
+-		goto check_partial;
+-	}
+-
+-	for (nid = i * NAT_ENTRY_PER_BLOCK; nid < (i + 1) * NAT_ENTRY_PER_BLOCK;
+-									nid++) {
+-		if (unlikely(nid >= nm_i->max_nid))
+-			break;
+-		add_free_nid(sbi, nid, true);
+-	}
+-
+-	if (nm_i->nid_cnt[FREE_NID_LIST] >= MAX_FREE_NIDS)
+-		goto out;
+-	i++;
+-	goto check_empty;
+-
+-check_partial:
+-	i = find_next_zero_bit_le(nm_i->full_nat_bits, nm_i->nat_blocks, i);
+-	if (i >= nm_i->nat_blocks) {
+-		disable_nat_bits(sbi, true);
+-		up_read(&nm_i->nat_tree_lock);
+-		return -EINVAL;
+-	}
+-
+-	nid = i * NAT_ENTRY_PER_BLOCK;
+-	page = get_current_nat_page(sbi, nid);
+-	scan_nat_page(sbi, page, nid);
+-	f2fs_put_page(page, 1);
+-
+-	if (nm_i->nid_cnt[FREE_NID_LIST] < MAX_FREE_NIDS) {
+-		i++;
+-		goto check_partial;
+-	}
+-out:
+-	up_read(&nm_i->nat_tree_lock);
+-	return 0;
+-}
+-
+ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+@@ -1993,21 +1938,6 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ 
+ 		if (nm_i->nid_cnt[FREE_NID_LIST])
+ 			return;
+-
+-		/* try to find free nids with nat_bits */
+-		if (!scan_nat_bits(sbi) && nm_i->nid_cnt[FREE_NID_LIST])
+-			return;
+-	}
+-
+-	/* find next valid candidate */
+-	if (enabled_nat_bits(sbi, NULL)) {
+-		int idx = find_next_zero_bit_le(nm_i->full_nat_bits,
+-					nm_i->nat_blocks, 0);
+-
+-		if (idx >= nm_i->nat_blocks)
+-			set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		else
+-			nid = idx * NAT_ENTRY_PER_BLOCK;
+ 	}
+ 
+ 	/* readahead nat pages to be scanned */
+@@ -2590,6 +2520,38 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+ 	return 0;
+ }
+ 
++inline void load_free_nid_bitmap(struct f2fs_sb_info *sbi)
++{
++	struct f2fs_nm_info *nm_i = NM_I(sbi);
++	unsigned int i = 0;
++	nid_t nid, last_nid;
++
++	if (!enabled_nat_bits(sbi, NULL))
++		return;
++
++	for (i = 0; i < nm_i->nat_blocks; i++) {
++		i = find_next_bit_le(nm_i->empty_nat_bits, nm_i->nat_blocks, i);
++		if (i >= nm_i->nat_blocks)
++			break;
++
++		__set_bit_le(i, nm_i->nat_block_bitmap);
++
++		nid = i * NAT_ENTRY_PER_BLOCK;
++		last_nid = (i + 1) * NAT_ENTRY_PER_BLOCK;
++
++		for (; nid < last_nid; nid++)
++			update_free_nid_bitmap(sbi, nid, true, true);
++	}
++
++	for (i = 0; i < nm_i->nat_blocks; i++) {
++		i = find_next_bit_le(nm_i->full_nat_bits, nm_i->nat_blocks, i);
++		if (i >= nm_i->nat_blocks)
++			break;
++
++		__set_bit_le(i, nm_i->nat_block_bitmap);
++	}
++}
++
+ static int init_node_manager(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_super_block *sb_raw = F2FS_RAW_SUPER(sbi);
+@@ -2691,6 +2653,9 @@ int build_node_manager(struct f2fs_sb_info *sbi)
+ 	if (err)
+ 		return err;
+ 
++	/* load free nid status from nat_bits table */
++	load_free_nid_bitmap(sbi);
++
+ 	build_free_nids(sbi, true, true);
+ 	return 0;
+ }
 -- 
-Michal Hocko
-SUSE Labs
+2.8.2.295.g3f1c1d0
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+------------------------------------------------------------------------------
+Check out the vibrant tech community on one of the world's most
+engaging tech sites, SlashDot.org! http://sdm.link/slashdot
