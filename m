@@ -1,24 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/2] f2fs: don't overwrite node block by SSR
-Date: Mon,  6 Mar 2017 13:51:02 -0800
-Message-ID: <20170306215102.3807-2-jaegeuk@kernel.org>
-References: <20170306215102.3807-1-jaegeuk@kernel.org>
+Subject: [PATCH 1/2] f2fs: don't need to invalidate wrong node
+	page
+Date: Mon,  6 Mar 2017 13:51:01 -0800
+Message-ID: <20170306215102.3807-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
 	helo=mx.sourceforge.net)
-	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1cl0XB-0003Dj-Hc
+	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cl0XA-0001MN-JZ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 06 Mar 2017 21:51:13 +0000
+	Mon, 06 Mar 2017 21:51:12 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cl0XA-00071x-Nj
+	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cl0X9-0004ua-DS
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 06 Mar 2017 21:51:13 +0000
-In-Reply-To: <20170306215102.3807-1-jaegeuk@kernel.org>
+	Mon, 06 Mar 2017 21:51:12 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,32 +30,30 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-This patch fixes that SSR can overwrite previous warm node block consisting of
-a node chain since the last checkpoint.
+If f2fs_new_inode() is failed, the bad inode will invalidate 0'th node page
+during f2fs_evict_inode(), which doesn't need to do.
 
-Fixes: 5b6c6be2d878 ("f2fs: use SSR for warm node as well")
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/segment.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/f2fs/inode.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 2ae36d04d03e..684b869e1861 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1177,6 +1177,12 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 		if (f2fs_discard_en(sbi) &&
- 			!f2fs_test_and_set_bit(offset, se->discard_map))
- 			sbi->discard_blks--;
-+
-+		/* don't overwrite by SSR to keep node chain */
-+		if (se->type == CURSEG_WARM_NODE) {
-+			if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
-+				se->ckpt_valid_blocks++;
-+		}
- 	} else {
- 		if (!f2fs_test_and_clear_bit(offset, se->cur_valid_map)) {
- #ifdef CONFIG_F2FS_CHECK_FS
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 24bb8213d974..ef8610bf950f 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -411,7 +411,10 @@ void f2fs_evict_inode(struct inode *inode)
+ 	stat_dec_inline_dir(inode);
+ 	stat_dec_inline_inode(inode);
+ 
+-	invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino, inode->i_ino);
++	/* ino == 0, if f2fs_new_inode() was failed t*/
++	if (inode->i_ino)
++		invalidate_mapping_pages(NODE_MAPPING(sbi), inode->i_ino,
++							inode->i_ino);
+ 	if (xnid)
+ 		invalidate_mapping_pages(NODE_MAPPING(sbi), xnid, xnid);
+ 	if (inode->i_nlink) {
 -- 
 2.11.0
 
