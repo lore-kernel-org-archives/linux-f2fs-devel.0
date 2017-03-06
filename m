@@ -1,201 +1,155 @@
-From: Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: combine nat_bits and free_nid_bitmap
-	cache
-Date: Mon, 6 Mar 2017 21:12:41 +0800
-Message-ID: <20170306131241.36042-1-yuchao0@huawei.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
-	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1cksRv-0006gZ-U1
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 06 Mar 2017 13:13:15 +0000
-Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1cksRt-0001Me-8a
-	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 06 Mar 2017 13:13:15 +0000
-List-Id: <linux-f2fs-devel.lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
-List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
-List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
-	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: jaegeuk@kernel.org
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+From: Michal Hocko <mhocko@kernel.org>
+Subject: [PATCH 1/7] lockdep: teach lockdep about memalloc_noio_save
+Date: Mon,  6 Mar 2017 14:14:02 +0100
+Message-ID: <20170306131408.9828-2-mhocko@kernel.org>
+References: <20170306131408.9828-1-mhocko@kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20170306131408.9828-1-mhocko@kernel.org>
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Nikolay Borisov <nborisov@suse.com>, Michal Hocko <mhocko@suse.com>, Michal Hocko <mhocko@suse.cz>, "Peter Zijlstra (Intel)" <peterz@infradead.org>
+List-Id: linux-f2fs-devel.lists.sourceforge.net
 
-Both nat_bits cache and free_nid_bitmap cache provide same functionality
-as a intermediate cache between free nid cache and disk, but with
-different granularity of indicating free nid range, and different
-persistence policy. nat_bits cache provides better persistence ability,
-and free_nid_bitmap provides better granularity.
+From: Nikolay Borisov <nborisov@suse.com>
 
-In this patch we combine advantage of both caches, so finally policy of
-the intermediate cache would be:
-- init: load free nid status from nat_bits into free_nid_bitmap
-- lookup: scan free_nid_bitmap before load NAT blocks
-- update: update free_nid_bitmap in real-time
-- persistence: udpate and persist nat_bits in checkpoint
+Commit 21caf2fc1931 ("mm: teach mm by current context info to not do I/O
+during memory allocation") added the memalloc_noio_(save|restore) functions
+to enable people to modify the MM behavior by disabling I/O during memory
+allocation. This was further extended in Fixes: 934f3072c17c ("mm: clear
+__GFP_FS when PF_MEMALLOC_NOIO is set"). memalloc_noio_* functions prevent
+allocation paths recursing back into the filesystem without explicitly
+changing the flags for every allocation site. However, lockdep hasn't been
+keeping up with the changes and it entirely misses handling the memalloc_noio
+adjustments. Instead, it is left to the callers of __lockdep_trace_alloc to
+call the function after they have shaven the respective GFP flags which
+can lead to false positives:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+[  644.173373] =================================
+[  644.174012] [ INFO: inconsistent lock state ]
+[  644.174012] 4.10.0-nbor #134 Not tainted
+[  644.174012] ---------------------------------
+[  644.174012] inconsistent {IN-RECLAIM_FS-W} -> {RECLAIM_FS-ON-W} usage.
+[  644.174012] fsstress/3365 [HC0[0]:SC0[0]:HE1:SE1] takes:
+[  644.174012]  (&xfs_nondir_ilock_class){++++?.}, at: [<ffffffff8136f231>] xfs_ilock+0x141/0x230
+[  644.174012] {IN-RECLAIM_FS-W} state was registered at:
+[  644.174012]   __lock_acquire+0x62a/0x17c0
+[  644.174012]   lock_acquire+0xc5/0x220
+[  644.174012]   down_write_nested+0x4f/0x90
+[  644.174012]   xfs_ilock+0x141/0x230
+[  644.174012]   xfs_reclaim_inode+0x12a/0x320
+[  644.174012]   xfs_reclaim_inodes_ag+0x2c8/0x4e0
+[  644.174012]   xfs_reclaim_inodes_nr+0x33/0x40
+[  644.174012]   xfs_fs_free_cached_objects+0x19/0x20
+[  644.174012]   super_cache_scan+0x191/0x1a0
+[  644.174012]   shrink_slab+0x26f/0x5f0
+[  644.174012]   shrink_node+0xf9/0x2f0
+[  644.174012]   kswapd+0x356/0x920
+[  644.174012]   kthread+0x10c/0x140
+[  644.174012]   ret_from_fork+0x31/0x40
+[  644.174012] irq event stamp: 173777
+[  644.174012] hardirqs last  enabled at (173777): [<ffffffff8105b440>] __local_bh_enable_ip+0x70/0xc0
+[  644.174012] hardirqs last disabled at (173775): [<ffffffff8105b407>] __local_bh_enable_ip+0x37/0xc0
+[  644.174012] softirqs last  enabled at (173776): [<ffffffff81357e2a>] _xfs_buf_find+0x67a/0xb70
+[  644.174012] softirqs last disabled at (173774): [<ffffffff81357d8b>] _xfs_buf_find+0x5db/0xb70
+[  644.174012]
+[  644.174012] other info that might help us debug this:
+[  644.174012]  Possible unsafe locking scenario:
+[  644.174012]
+[  644.174012]        CPU0
+[  644.174012]        ----
+[  644.174012]   lock(&xfs_nondir_ilock_class);
+[  644.174012]   <Interrupt>
+[  644.174012]     lock(&xfs_nondir_ilock_class);
+[  644.174012]
+[  644.174012]  *** DEADLOCK ***
+[  644.174012]
+[  644.174012] 4 locks held by fsstress/3365:
+[  644.174012]  #0:  (sb_writers#10){++++++}, at: [<ffffffff81208d04>] mnt_want_write+0x24/0x50
+[  644.174012]  #1:  (&sb->s_type->i_mutex_key#12){++++++}, at: [<ffffffff8120ea2f>] vfs_setxattr+0x6f/0xb0
+[  644.174012]  #2:  (sb_internal#2){++++++}, at: [<ffffffff8138185c>] xfs_trans_alloc+0xfc/0x140
+[  644.174012]  #3:  (&xfs_nondir_ilock_class){++++?.}, at: [<ffffffff8136f231>] xfs_ilock+0x141/0x230
+[  644.174012]
+[  644.174012] stack backtrace:
+[  644.174012] CPU: 0 PID: 3365 Comm: fsstress Not tainted 4.10.0-nbor #134
+[  644.174012] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  644.174012] Call Trace:
+[  644.174012]  dump_stack+0x85/0xc9
+[  644.174012]  print_usage_bug.part.37+0x284/0x293
+[  644.174012]  ? print_shortest_lock_dependencies+0x1b0/0x1b0
+[  644.174012]  mark_lock+0x27e/0x660
+[  644.174012]  mark_held_locks+0x66/0x90
+[  644.174012]  lockdep_trace_alloc+0x6f/0xd0
+[  644.174012]  kmem_cache_alloc_node_trace+0x3a/0x2c0
+[  644.174012]  ? vm_map_ram+0x2a1/0x510
+[  644.174012]  vm_map_ram+0x2a1/0x510
+[  644.174012]  ? vm_map_ram+0x46/0x510
+[  644.174012]  _xfs_buf_map_pages+0x77/0x140
+[  644.174012]  xfs_buf_get_map+0x185/0x2a0
+[  644.174012]  xfs_attr_rmtval_set+0x233/0x430
+[  644.174012]  xfs_attr_leaf_addname+0x2d2/0x500
+[  644.174012]  xfs_attr_set+0x214/0x420
+[  644.174012]  xfs_xattr_set+0x59/0xb0
+[  644.174012]  __vfs_setxattr+0x76/0xa0
+[  644.174012]  __vfs_setxattr_noperm+0x5e/0xf0
+[  644.174012]  vfs_setxattr+0xae/0xb0
+[  644.174012]  ? __might_fault+0x43/0xa0
+[  644.174012]  setxattr+0x15e/0x1a0
+[  644.174012]  ? __lock_is_held+0x53/0x90
+[  644.174012]  ? rcu_read_lock_sched_held+0x93/0xa0
+[  644.174012]  ? rcu_sync_lockdep_assert+0x2f/0x60
+[  644.174012]  ? __sb_start_write+0x130/0x1d0
+[  644.174012]  ? mnt_want_write+0x24/0x50
+[  644.174012]  path_setxattr+0x8f/0xc0
+[  644.174012]  SyS_lsetxattr+0x11/0x20
+[  644.174012]  entry_SYSCALL_64_fastpath+0x23/0xc6
+
+Let's fix this by making lockdep explicitly do the shaving of respective
+GFP flags.
+
+Fixes: 934f3072c17c ("mm: clear __GFP_FS when PF_MEMALLOC_NOIO is set")
+Acked-by: Michal Hocko <mhocko@suse.cz>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
- fs/f2fs/node.c | 105 +++++++++++++++++++--------------------------------------
- 1 file changed, 35 insertions(+), 70 deletions(-)
+ kernel/locking/lockdep.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 1a759d45b7e4..625b46bc55ad 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -338,9 +338,6 @@ static void set_node_addr(struct f2fs_sb_info *sbi, struct node_info *ni,
- 		set_nat_flag(e, IS_CHECKPOINTED, false);
- 	__set_nat_cache_dirty(nm_i, e);
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 12e38c213b70..25c33dcd86d7 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -30,6 +30,7 @@
+ #include <linux/sched.h>
+ #include <linux/sched/clock.h>
+ #include <linux/sched/task.h>
++#include <linux/sched/mm.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/proc_fs.h>
+@@ -2863,6 +2864,8 @@ static void __lockdep_trace_alloc(gfp_t gfp_mask, unsigned long flags)
+ 	if (unlikely(!debug_locks))
+ 		return;
  
--	if (enabled_nat_bits(sbi, NULL) && new_blkaddr == NEW_ADDR)
--		clear_bit_le(NAT_BLOCK_OFFSET(ni->nid), nm_i->empty_nat_bits);
--
- 	/* update fsync_mark if its inode nat entry is still alive */
- 	if (ni->nid != ni->ino)
- 		e = __lookup_nat_cache(nm_i, ni->ino);
-@@ -1920,58 +1917,6 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
- 	up_read(&nm_i->nat_tree_lock);
- }
++	gfp_mask = memalloc_noio_flags(gfp_mask);
++
+ 	/* no reclaim without waiting on it */
+ 	if (!(gfp_mask & __GFP_DIRECT_RECLAIM))
+ 		return;
+@@ -3854,7 +3857,7 @@ EXPORT_SYMBOL_GPL(lock_unpin_lock);
  
--static int scan_nat_bits(struct f2fs_sb_info *sbi)
--{
--	struct f2fs_nm_info *nm_i = NM_I(sbi);
--	struct page *page;
--	unsigned int i = 0;
--	nid_t nid;
--
--	if (!enabled_nat_bits(sbi, NULL))
--		return -EAGAIN;
--
--	down_read(&nm_i->nat_tree_lock);
--check_empty:
--	i = find_next_bit_le(nm_i->empty_nat_bits, nm_i->nat_blocks, i);
--	if (i >= nm_i->nat_blocks) {
--		i = 0;
--		goto check_partial;
--	}
--
--	for (nid = i * NAT_ENTRY_PER_BLOCK; nid < (i + 1) * NAT_ENTRY_PER_BLOCK;
--									nid++) {
--		if (unlikely(nid >= nm_i->max_nid))
--			break;
--		add_free_nid(sbi, nid, true);
--	}
--
--	if (nm_i->nid_cnt[FREE_NID_LIST] >= MAX_FREE_NIDS)
--		goto out;
--	i++;
--	goto check_empty;
--
--check_partial:
--	i = find_next_zero_bit_le(nm_i->full_nat_bits, nm_i->nat_blocks, i);
--	if (i >= nm_i->nat_blocks) {
--		disable_nat_bits(sbi, true);
--		up_read(&nm_i->nat_tree_lock);
--		return -EINVAL;
--	}
--
--	nid = i * NAT_ENTRY_PER_BLOCK;
--	page = get_current_nat_page(sbi, nid);
--	scan_nat_page(sbi, page, nid);
--	f2fs_put_page(page, 1);
--
--	if (nm_i->nid_cnt[FREE_NID_LIST] < MAX_FREE_NIDS) {
--		i++;
--		goto check_partial;
--	}
--out:
--	up_read(&nm_i->nat_tree_lock);
--	return 0;
--}
--
- static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ void lockdep_set_current_reclaim_state(gfp_t gfp_mask)
  {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
-@@ -1993,21 +1938,6 @@ static void __build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
- 
- 		if (nm_i->nid_cnt[FREE_NID_LIST])
- 			return;
--
--		/* try to find free nids with nat_bits */
--		if (!scan_nat_bits(sbi) && nm_i->nid_cnt[FREE_NID_LIST])
--			return;
--	}
--
--	/* find next valid candidate */
--	if (enabled_nat_bits(sbi, NULL)) {
--		int idx = find_next_zero_bit_le(nm_i->full_nat_bits,
--					nm_i->nat_blocks, 0);
--
--		if (idx >= nm_i->nat_blocks)
--			set_sbi_flag(sbi, SBI_NEED_FSCK);
--		else
--			nid = idx * NAT_ENTRY_PER_BLOCK;
- 	}
- 
- 	/* readahead nat pages to be scanned */
-@@ -2590,6 +2520,38 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 	return 0;
+-	current->lockdep_reclaim_gfp = gfp_mask;
++	current->lockdep_reclaim_gfp = memalloc_noio_flags(gfp_mask);
  }
  
-+inline void load_free_nid_bitmap(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	unsigned int i = 0;
-+	nid_t nid, last_nid;
-+
-+	if (!enabled_nat_bits(sbi, NULL))
-+		return;
-+
-+	for (i = 0; i < nm_i->nat_blocks; i++) {
-+		i = find_next_bit_le(nm_i->empty_nat_bits, nm_i->nat_blocks, i);
-+		if (i >= nm_i->nat_blocks)
-+			break;
-+
-+		__set_bit_le(i, nm_i->nat_block_bitmap);
-+
-+		nid = i * NAT_ENTRY_PER_BLOCK;
-+		last_nid = (i + 1) * NAT_ENTRY_PER_BLOCK;
-+
-+		for (; nid < last_nid; nid++)
-+			update_free_nid_bitmap(sbi, nid, true, true);
-+	}
-+
-+	for (i = 0; i < nm_i->nat_blocks; i++) {
-+		i = find_next_bit_le(nm_i->full_nat_bits, nm_i->nat_blocks, i);
-+		if (i >= nm_i->nat_blocks)
-+			break;
-+
-+		__set_bit_le(i, nm_i->nat_block_bitmap);
-+	}
-+}
-+
- static int init_node_manager(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_super_block *sb_raw = F2FS_RAW_SUPER(sbi);
-@@ -2691,6 +2653,9 @@ int build_node_manager(struct f2fs_sb_info *sbi)
- 	if (err)
- 		return err;
- 
-+	/* load free nid status from nat_bits table */
-+	load_free_nid_bitmap(sbi);
-+
- 	build_free_nids(sbi, true, true);
- 	return 0;
- }
+ void lockdep_clear_current_reclaim_state(void)
 -- 
-2.8.2.295.g3f1c1d0
+2.11.0
 
-
-------------------------------------------------------------------------------
-Check out the vibrant tech community on one of the world's most
-engaging tech sites, SlashDot.org! http://sdm.link/slashdot
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
