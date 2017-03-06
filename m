@@ -1,26 +1,29 @@
 From: Kinglong Mee <kinglongmee@gmail.com>
-Subject: [PATCH v3 2/2] mkfs.f2fs: check overwrite before make
-	filesystem
-Date: Sun, 5 Mar 2017 21:05:01 +0800
-Message-ID: <a8a36843-106b-0531-a544-94822e95e0b0@gmail.com>
+Subject: [PATCH] f2fs: sync the enc name flags with disk level
+	filename
+Date: Mon, 6 Mar 2017 14:57:22 +0800
+Message-ID: <7b158dd2-9b72-bf75-e0c0-29cb364d24ea@gmail.com>
+References: <fdfcad9e-36e6-a163-e42b-abe414c2ca9d@gmail.com>
+	<eda73163-e95f-6c40-05e1-673eba87a530@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-1.v43.ch3.sourceforge.com ([172.29.43.191]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <kinglongmee@gmail.com>) id 1ckVqd-0005kh-Eq
+	(envelope-from <kinglongmee@gmail.com>) id 1ckmaQ-0004ZF-6V
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 05 Mar 2017 13:05:15 +0000
-Received: from mail-it0-f66.google.com ([209.85.214.66])
-	by sog-mx-1.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
-	(Exim 4.76) id 1ckVqc-0008QM-7j
+	Mon, 06 Mar 2017 06:57:38 +0000
+Received: from mail-it0-f67.google.com ([209.85.214.67])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1ckmaP-0004SO-2i
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Sun, 05 Mar 2017 13:05:15 +0000
-Received: by mail-it0-f66.google.com with SMTP id w185so6893202ita.3
+	Mon, 06 Mar 2017 06:57:38 +0000
+Received: by mail-it0-f67.google.com with SMTP id g138so377075itb.0
 	for <linux-f2fs-devel@lists.sourceforge.net>;
-	Sun, 05 Mar 2017 05:05:14 -0800 (PST)
+	Sun, 05 Mar 2017 22:57:37 -0800 (PST)
+In-Reply-To: <eda73163-e95f-6c40-05e1-673eba87a530@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,242 +36,224 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Mkfs.f2fs doesn't check the overwrite of exist filesystem.
-Avoid formatting an exist filesystem by mistake, a notice is important.
-The code is modified from xfsprogs.
+A cross rename between two encrypted files, the disk level filenames 
+aren't updated for the file_enc_name(to) checking.
 
-v3, add the missing update of SYNOPSIS
-v2, add the manpages description of -f.
+Also, cross rename between encrypted file and non-encrypted file under
+a non-encrypted file, the enc name flags should update at same time
+as the disk level filename.
 
+This patch,
+1. make sure update the disk level filename in update_dent_inode,
+2. a new function exchange_dent_inode for the disk-level filename update,
+3. only set the enc name flags in init_inode_metadata.
+
+Fixes: e7d5545285ed ("f2fs crypto: add filename encryption for roll-forward recovery")
 Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 ---
- configure.ac            | 20 +++++++++--
- man/mkfs.f2fs.8         |  8 +++++
- mkfs/Makefile.am        |  4 +--
- mkfs/f2fs_format_main.c | 90 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 117 insertions(+), 5 deletions(-)
+ fs/f2fs/dir.c    | 91 ++++++++++++++++++++++++++++++++++++++++++++++++++++----
+ fs/f2fs/f2fs.h   |  1 +
+ fs/f2fs/inline.c |  2 --
+ fs/f2fs/namei.c  | 19 ++----------
+ 4 files changed, 88 insertions(+), 25 deletions(-)
 
-diff --git a/configure.ac b/configure.ac
-index 6a3f7c4..d6de43b 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -48,8 +48,11 @@ AC_CHECK_HEADERS_ONCE([
- # Test configure options.
- AC_ARG_WITH([selinux],
- 	AS_HELP_STRING([--without-selinux],
--	  [Ignore presence of libselinux and disable selinux support])
--)
-+	  [Ignore presence of libselinux and disable selinux support]))
-+
-+AC_ARG_WITH([blkid],
-+	AS_HELP_STRING([--without-blkid],
-+	  [Ignore presence of libblkid and disable blkid support]))
- 
- # Checks for programs.
- AC_PROG_CC
-@@ -74,6 +77,19 @@ AS_IF([test "x$have_selinux" = "xyes"],
- 	)]
- )
- 
-+AS_IF([test "x$with_blkid" != "xno"],
-+	[PKG_CHECK_MODULES([libblkid], [blkid],
-+	                   [have_blkid=yes], [have_blkid=no])],
-+	[have_blkid=no]
-+)
-+
-+AS_IF([test "x$have_blkid" = "xyes"],
-+	[AC_DEFINE([HAVE_LIBBLKID], [1], [Use blkid])],
-+	[AS_IF([test "x$with_blkid" = "xyes"],
-+		[AC_MSG_ERROR([blkid support requested but libblkid not found])]
-+	)]
-+)
-+
- # Checks for header files.
- AC_CHECK_HEADERS([linux/fs.h linux/blkzoned.h fcntl.h mntent.h stdlib.h string.h \
- 		sys/ioctl.h sys/mount.h unistd.h linux/falloc.h byteswap.h])
-diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
-index 3ae9f3a..c2f9c86 100644
---- a/man/mkfs.f2fs.8
-+++ b/man/mkfs.f2fs.8
-@@ -24,6 +24,9 @@ mkfs.f2fs \- create an F2FS file system
- .I extension-list
- ]
- [
-+.B \-f
-+]
-+[
- .B \-l
- .I volume-label
- ]
-@@ -87,6 +90,11 @@ The data of files having those extensions will be stored to the cold log.
- The default list includes most of multimedia file extensions such as jpg, gif,
- mpeg, mkv, and so on.
- .TP
-+.BI \-f
-+Force overwrite when an existing filesystem is detected on the device.
-+By default, mkfs.f2fs will not write to the device if it suspects that
-+there is a filesystem or partition table on the device already.
-+.TP
- .BI \-l " volume-label"
- Specify the volume label to the partition mounted as F2FS.
- .TP
-diff --git a/mkfs/Makefile.am b/mkfs/Makefile.am
-index 8b4c16c..162a0cf 100644
---- a/mkfs/Makefile.am
-+++ b/mkfs/Makefile.am
-@@ -1,10 +1,10 @@
- ## Makefile.am
- 
--AM_CPPFLAGS = ${libuuid_CFLAGS} -I$(top_srcdir)/include
-+AM_CPPFLAGS = ${libuuid_CFLAGS} ${libblkid_CFLAGS} -I$(top_srcdir)/include
- AM_CFLAGS = -Wall -DWITH_BLKDISCARD
- sbin_PROGRAMS = mkfs.f2fs
- mkfs_f2fs_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c f2fs_format_utils.h $(top_srcdir)/include/f2fs_fs.h
--mkfs_f2fs_LDADD = ${libuuid_LIBS} $(top_builddir)/lib/libf2fs.la
-+mkfs_f2fs_LDADD = ${libuuid_LIBS} ${libblkid_LIBS} $(top_builddir)/lib/libf2fs.la
- 
- lib_LTLIBRARIES = libf2fs_format.la
- libf2fs_format_la_SOURCES = f2fs_format_main.c f2fs_format.c f2fs_format_utils.c
-diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-index 0ac87ed..482506a 100644
---- a/mkfs/f2fs_format_main.c
-+++ b/mkfs/f2fs_format_main.c
-@@ -18,10 +18,16 @@
- #include <time.h>
- #include <uuid/uuid.h>
- 
-+#include "config.h"
-+#ifdef HAVE_LIBBLKID
-+#  include <blkid/blkid.h>
-+#endif
-+
- #include "f2fs_fs.h"
- #include "f2fs_format_utils.h"
- 
- extern struct f2fs_configuration c;
-+static int force_overwrite = 0;
- 
- static void mkfs_usage()
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 295a223..b1bb0b1 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -337,17 +337,93 @@ static void init_dent_inode(const struct qstr *name, struct page *ipage)
+ int update_dent_inode(struct inode *inode, struct inode *to,
+ 					const struct qstr *name)
  {
-@@ -31,6 +37,7 @@ static void mkfs_usage()
- 	MSG(0, "  -c [device path] up to 7 devices excepts meta device\n");
- 	MSG(0, "  -d debug level [default:0]\n");
- 	MSG(0, "  -e [extension list] e.g. \"mp3,gif,mov\"\n");
-+	MSG(0, "  -f force overwrite the exist filesystem\n");
- 	MSG(0, "  -l label\n");
- 	MSG(0, "  -m support zoned block device [default:0]\n");
- 	MSG(0, "  -o overprovision ratio [default:5]\n");
-@@ -72,7 +79,7 @@ static void parse_feature(const char *features)
+-	struct page *page;
++	struct page *topage = NULL, *page;
++	struct f2fs_inode *tori;
++	struct qstr newname = *name;
++	int err = 0;
  
- static void f2fs_parse_options(int argc, char *argv[])
- {
--	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:";
-+	static const char *option_string = "qa:c:d:e:l:mo:O:s:z:t:f";
- 	int32_t option=0;
+-	if (file_enc_name(to))
++	if (file_enc_name(to) && (inode == to))
+ 		return 0;
  
- 	while ((option = getopt(argc,argv,option_string)) != EOF) {
-@@ -128,6 +135,9 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		case 't':
- 			c.trim = atoi(optarg);
- 			break;
-+		case 'f':
-+			force_overwrite = 1;
-+			break;
- 		default:
- 			MSG(0, "\tError: Unknown option %c\n",option);
- 			mkfs_usage();
-@@ -155,6 +165,79 @@ static void f2fs_parse_options(int argc, char *argv[])
- 		c.feature |= cpu_to_le32(F2FS_FEATURE_BLKZONED);
- }
+ 	page = get_node_page(F2FS_I_SB(inode), inode->i_ino);
+ 	if (IS_ERR(page))
+ 		return PTR_ERR(page);
  
-+#ifdef HAVE_LIBBLKID
-+static int f2fs_dev_is_overwrite(const char *device)
+-	init_dent_inode(name, page);
++	file_clear_enc_name(inode);
++	if (file_enc_name(to)) {
++		topage = get_node_page(F2FS_I_SB(to), to->i_ino);
++		if (IS_ERR(topage)) {
++			f2fs_put_page(page, 1);
++			return PTR_ERR(topage);
++		}
++
++		tori = F2FS_INODE(topage);
++		newname.name = tori->i_name;
++		newname.len = tori->i_namelen;
++
++		file_set_enc_name(inode);
++	}
++
++	init_dent_inode(&newname, page);
++
+ 	f2fs_put_page(page, 1);
++	if (file_enc_name(to))
++		f2fs_put_page(topage, 1);
++
++	return err;
++}
++
++int exchange_dent_inode(struct inode *src, struct inode *dst,
++			const struct qstr *srcname, const struct qstr *dstname)
 +{
-+	const char	*type;
-+	blkid_probe	pr = NULL;
-+	int		ret = -1;
++	struct page *srcpage = NULL, *dstpage = NULL;
++	char tmp_srcname[F2FS_NAME_LEN], tmp_dstname[F2FS_NAME_LEN];
++	struct qstr new_srcname = *srcname;
++	struct qstr new_dstname = *dstname;
 +
-+	if (!device || !*device)
++	if (src == dst)
 +		return 0;
 +
-+	pr = blkid_new_probe_from_filename(device);
-+	if (!pr)
-+		goto out;
++	srcpage = get_node_page(F2FS_I_SB(src), src->i_ino);
++	if (IS_ERR(srcpage))
++		return PTR_ERR(srcpage);
 +
-+	ret = blkid_probe_enable_partitions(pr, 1);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = blkid_do_fullprobe(pr);
-+	if (ret < 0)
-+		goto out;
-+
-+	/*
-+	 * Blkid returns 1 for nothing found and 0 when it finds a signature,
-+	 * but we want the exact opposite, so reverse the return value here.
-+	 *
-+	 * In addition print some useful diagnostics about what actually is
-+	 * on the device.
-+	 */
-+	if (ret) {
-+		ret = 0;
-+		goto out;
++	dstpage = get_node_page(F2FS_I_SB(dst), dst->i_ino);
++	if (IS_ERR(dstpage)) {
++		f2fs_put_page(srcpage, 1);
++		return PTR_ERR(dstpage);
 +	}
 +
-+	if (!blkid_probe_lookup_value(pr, "TYPE", &type, NULL)) {
-+		MSG(0, "\t%s appears to contain an existing filesystem (%s).\n",
-+			device, type);
-+	} else if (!blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL)) {
-+		MSG(0, "\t%s appears to contain a partition table (%s).\n",
-+			device, type);
-+	} else {
-+		MSG(0, "\t%s appears to contain something weird according to blkid\n",
-+			device);
++	f2fs_wait_on_page_writeback(srcpage, NODE, true);
++	f2fs_wait_on_page_writeback(dstpage, NODE, true);
++
++	file_clear_enc_name(dst);
++	if (file_enc_name(src)) {
++		struct f2fs_inode *srcri = F2FS_INODE(srcpage);
++
++		memcpy(tmp_srcname, srcri->i_name, srcri->i_namelen);
++		new_srcname.name = tmp_srcname;
++		new_srcname.len = srcri->i_namelen;
++
++		file_set_enc_name(dst);
 +	}
-+	ret = 1;
-+out:
-+	if (pr)
-+		blkid_free_probe(pr);
-+	if (ret == -1)
-+		MSG(0, "\tprobe of %s failed, cannot detect existing filesystem.\n",
-+			device);
-+	return ret;
-+}
 +
-+static int f2fs_check_overwrite(void)
-+{
-+	int i;
++	file_clear_enc_name(src);
++	if (file_enc_name(dst)) {
++		struct f2fs_inode *dstri = F2FS_INODE(dstpage);
 +
-+	for (i = 0; i < c.ndevs; i++)
-+		if (f2fs_dev_is_overwrite((char *)c.devices[i].path))
-+			return -1;
-+	return 0;
-+}
++		memcpy(tmp_dstname, dstri->i_name, dstri->i_namelen);
++		new_dstname.name = tmp_dstname;
++		new_dstname.len = dstri->i_namelen;
 +
-+#else
++		file_set_enc_name(src);
++	}
 +
-+static int f2fs_check_overwrite(void)
-+{
-+	return 0;
-+}
++	init_dent_inode(&new_dstname, srcpage);
++	init_dent_inode(&new_srcname, dstpage);
 +
-+#endif /* HAVE_LIBBLKID */
-+
- int main(int argc, char *argv[])
- {
- 	f2fs_init_configuration();
-@@ -163,6 +246,11 @@ int main(int argc, char *argv[])
++	f2fs_put_page(srcpage, 1);
++	f2fs_put_page(dstpage, 1);
  
- 	f2fs_show_info();
+ 	return 0;
+ }
+@@ -435,9 +511,14 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+ 		set_cold_node(inode, page);
+ 	}
  
-+	if (!force_overwrite && f2fs_check_overwrite()) {
-+		MSG(0, "\tUse the -f option to force overwrite.\n");
-+		return -1;
+-	if (new_name)
++	if (new_name) {
+ 		init_dent_inode(new_name, page);
+ 
++		file_clear_enc_name(inode);
++		if (f2fs_encrypted_inode(dir))
++			file_set_enc_name(inode);
 +	}
 +
- 	if (f2fs_devs_are_umounted() < 0) {
- 		MSG(0, "\tError: Not available on mounted device!\n");
- 		return -1;
+ 	/*
+ 	 * This file should be checkpointed during fsync.
+ 	 * We lost i_pino from now on.
+@@ -596,8 +677,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+ 			err = PTR_ERR(page);
+ 			goto fail;
+ 		}
+-		if (f2fs_encrypted_inode(dir))
+-			file_set_enc_name(inode);
+ 	}
+ 
+ 	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7e29249..52ea953 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -440,6 +440,7 @@ struct f2fs_map_blocks {
+ #define file_clear_encrypt(inode) clear_file(inode, FADVISE_ENCRYPT_BIT)
+ #define file_enc_name(inode)	is_file(inode, FADVISE_ENC_NAME_BIT)
+ #define file_set_enc_name(inode) set_file(inode, FADVISE_ENC_NAME_BIT)
++#define file_clear_enc_name(inode) clear_file(inode, FADVISE_ENC_NAME_BIT)
+ #define file_keep_isize(inode)	is_file(inode, FADVISE_KEEP_SIZE_BIT)
+ #define file_set_keep_isize(inode) set_file(inode, FADVISE_KEEP_SIZE_BIT)
+ 
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index e32a9e5..41fe27d 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -527,8 +527,6 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
+ 			err = PTR_ERR(page);
+ 			goto fail;
+ 		}
+-		if (f2fs_encrypted_inode(dir))
+-			file_set_enc_name(inode);
+ 	}
+ 
+ 	f2fs_wait_on_page_writeback(ipage, NODE, true);
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 3231a0a..57050ff 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -779,8 +779,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	down_write(&F2FS_I(old_inode)->i_sem);
+ 	file_lost_pino(old_inode);
+-	if (new_inode && file_enc_name(new_inode))
+-		file_set_enc_name(old_inode);
+ 	up_write(&F2FS_I(old_inode)->i_sem);
+ 
+ 	old_inode->i_ctime = current_time(old_inode);
+@@ -917,17 +915,10 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	f2fs_lock_op(sbi);
+ 
+-	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
++	err = exchange_dent_inode(old_inode, new_inode,
++				  &old_dentry->d_name, &new_dentry->d_name);
+ 	if (err)
+ 		goto out_unlock;
+-	if (file_enc_name(new_inode))
+-		file_set_enc_name(old_inode);
+-
+-	err = update_dent_inode(new_inode, old_inode, &old_dentry->d_name);
+-	if (err)
+-		goto out_undo;
+-	if (file_enc_name(old_inode))
+-		file_set_enc_name(new_inode);
+ 
+ 	/* update ".." directory entry info of old dentry */
+ 	if (old_dir_entry)
+@@ -972,12 +963,6 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
+ 		f2fs_sync_fs(sbi->sb, 1);
+ 	return 0;
+-out_undo:
+-	/*
+-	 * Still we may fail to recover name info of f2fs_inode here
+-	 * Drop it, once its name is set as encrypted
+-	 */
+-	update_dent_inode(old_inode, old_inode, &old_dentry->d_name);
+ out_unlock:
+ 	f2fs_unlock_op(sbi);
+ out_new_dir:
 -- 
 2.9.3
 
