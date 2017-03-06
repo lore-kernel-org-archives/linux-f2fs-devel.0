@@ -1,26 +1,25 @@
 From: Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 1/2] f2fs: fix the fault of checking
- F2FS_LINK_MAX for rename inode
-Date: Mon, 6 Mar 2017 18:54:43 +0800
-Message-ID: <6b0fad9a-93ca-3a3a-1990-e55a82668ede@huawei.com>
-References: <02f41895-ea36-df3c-1295-46fa960b20bd@gmail.com>
-	<5aa9764c-4885-0054-9e6b-53e9b0f41691@gmail.com>
+Subject: Re: [PATCH 2/2] f2fs: avoid new_inode's flags overwrite
+ the old_node
+Date: Mon, 6 Mar 2017 19:06:28 +0800
+Message-ID: <82efe5bc-bd78-9fe3-dc22-373f09939a6b@huawei.com>
+References: <fdfcad9e-36e6-a163-e42b-abe414c2ca9d@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <yuchao0@huawei.com>) id 1ckqIB-0003g5-1Q
+	(envelope-from <yuchao0@huawei.com>) id 1ckqTW-0004B3-5u
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 06 Mar 2017 10:55:03 +0000
-Received: from [45.249.212.189] (helo=dggrg03-dlp.huawei.com)
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1ckqI8-000456-Tt
+	Mon, 06 Mar 2017 11:06:46 +0000
+Received: from [45.249.212.188] (helo=dggrg02-dlp.huawei.com)
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.76) id 1ckqTT-0006Ga-VZ
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Mon, 06 Mar 2017 10:55:03 +0000
-In-Reply-To: <5aa9764c-4885-0054-9e6b-53e9b0f41691@gmail.com>
+	Mon, 06 Mar 2017 11:06:46 +0000
+In-Reply-To: <fdfcad9e-36e6-a163-e42b-abe414c2ca9d@gmail.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,36 +29,82 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kinglong Mee <kinglongmee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+To: Kinglong Mee <kinglongmee@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On 2017/3/4 21:48, Kinglong Mee wrote:
-> The parent directory's nlink will change, not the inode.
-> 
-> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+On 2017/3/4 21:44, Kinglong Mee wrote:
+> Note, rename with old_inode (enc_name) and new_inode (no_enc_name),
+> the result will be old_indoe(enc_name) and new_inode(enc_name).
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+IIRC, we don't allow rename files in different dirs that:
+1. One dir is encrypted, another is not encrypted;
+2. or src/dst dir has different encryption policy.
+
+So that will not happen, right?
 
 Thanks,
 
+> 
+> Needs swap the enc_name flags?
+> If needed, this patch needs update of clear the flags.
+> otherwise, this patch only fix the logic with any result changing.
+> 
+> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
 > ---
->  fs/f2fs/namei.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  fs/f2fs/namei.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
 > 
 > diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 0eda022..3231a0a 100644
+> index 3231a0a..db2ab7f 100644
 > --- a/fs/f2fs/namei.c
 > +++ b/fs/f2fs/namei.c
-> @@ -908,8 +908,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->  		old_nlink = old_dir_entry ? -1 : 1;
->  		new_nlink = -old_nlink;
->  		err = -EMLINK;
-> -		if ((old_nlink > 0 && old_inode->i_nlink >= F2FS_LINK_MAX) ||
-> -			(new_nlink > 0 && new_inode->i_nlink >= F2FS_LINK_MAX))
-> +		if ((old_nlink > 0 && old_dir->i_nlink >= F2FS_LINK_MAX) ||
-> +			(new_nlink > 0 && new_dir->i_nlink >= F2FS_LINK_MAX))
->  			goto out_new_dir;
->  	}
+> @@ -846,6 +846,7 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  	struct page *old_page, *new_page;
+>  	struct f2fs_dir_entry *old_dir_entry = NULL, *new_dir_entry = NULL;
+>  	struct f2fs_dir_entry *old_entry, *new_entry;
+> +	bool old_inode_enc = false, new_inode_enc = false;
+>  	int old_nlink = 0, new_nlink = 0;
+>  	int err = -ENOENT;
 >  
+> @@ -917,17 +918,16 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  
+>  	f2fs_lock_op(sbi);
+>  
+> +	old_inode_enc = file_enc_name(old_inode);
+> +	new_inode_enc = file_enc_name(new_inode);
+> +
+>  	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
+>  	if (err)
+>  		goto out_unlock;
+> -	if (file_enc_name(new_inode))
+> -		file_set_enc_name(old_inode);
+>  
+>  	err = update_dent_inode(new_inode, old_inode, &old_dentry->d_name);
+>  	if (err)
+>  		goto out_undo;
+> -	if (file_enc_name(old_inode))
+> -		file_set_enc_name(new_inode);
+>  
+>  	/* update ".." directory entry info of old dentry */
+>  	if (old_dir_entry)
+> @@ -942,6 +942,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  
+>  	down_write(&F2FS_I(old_inode)->i_sem);
+>  	file_lost_pino(old_inode);
+> +	if (new_inode_enc)
+> +		file_set_enc_name(old_inode);
+>  	up_write(&F2FS_I(old_inode)->i_sem);
+>  
+>  	old_dir->i_ctime = current_time(old_dir);
+> @@ -957,6 +959,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  
+>  	down_write(&F2FS_I(new_inode)->i_sem);
+>  	file_lost_pino(new_inode);
+> +	if (old_inode_enc)
+> +		file_set_enc_name(new_inode);
+>  	up_write(&F2FS_I(new_inode)->i_sem);
+>  
+>  	new_dir->i_ctime = current_time(new_dir);
 > 
 
 
