@@ -1,29 +1,23 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH v2] f2fs: sync the enc name flags with disk
-	level filename
-Date: Tue, 7 Mar 2017 11:30:29 -0800
-Message-ID: <20170307193029.GA2499@jaegeuk.local>
-References: <fdfcad9e-36e6-a163-e42b-abe414c2ca9d@gmail.com>
-	<eda73163-e95f-6c40-05e1-673eba87a530@gmail.com>
-	<7b158dd2-9b72-bf75-e0c0-29cb364d24ea@gmail.com>
-	<f3794fb1-256b-049a-1146-cdffa5e8c5d5@gmail.com>
+Subject: [PATCH 1/4] f2fs: fix wrong error injection for
+	evict_inode
+Date: Tue,  7 Mar 2017 14:13:00 -0800
+Message-ID: <20170307221303.6757-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1clKoh-000525-Sn
+	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1clNM2-0007pS-FD
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 07 Mar 2017 19:30:39 +0000
+	Tue, 07 Mar 2017 22:13:14 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1clKog-0002xA-Cd
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1clNM1-0007G7-FM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 07 Mar 2017 19:30:39 +0000
-Content-Disposition: inline
-In-Reply-To: <f3794fb1-256b-049a-1146-cdffa5e8c5d5@gmail.com>
+	Tue, 07 Mar 2017 22:13:14 +0000
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,287 +27,52 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kinglong Mee <kinglongmee@gmail.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Hi Kinglong,
-
-Can we make a testcase in xfstests to check this clearly?
-1. creat A under encrypted dir
-2. rename A to B
-3. fsync B
-4. power-cut
-
-Is this your concern?
-
-Hmm, on-disk filename is used when doing roll-forward recovery, and it seems
-there is a hole in try_to_fix_pino() to recover its pino without filename.
-
-Like this?
-
->From 7efde035d9f930fc63c30b25327e870b021750f3 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Tue, 7 Mar 2017 11:22:45 -0800
-Subject: [PATCH] f2fS: don't allow to get pino when filename is encrypted
-
-After renaming an encrypted file, we have no way to get its
-encrypted filename from its dentry.
+The previous one was not a proper location to inject an error, since there
+is no point to get errors. Instead, we can emulate EIO during truncation,
+and the below logic should handle it correctly.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/file.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/inode.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index e0b2378f8519..852195b3bcce 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -110,6 +110,9 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
- {
- 	struct dentry *dentry;
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index ef8610bf950f..2520fa72b23f 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -372,13 +372,6 @@ void f2fs_evict_inode(struct inode *inode)
+ 	if (inode->i_nlink || is_bad_inode(inode))
+ 		goto no_delete;
  
-+	if (file_enc_name(inode))
-+		return 0;
-+
- 	inode = igrab(inode);
- 	dentry = d_find_any_alias(inode);
- 	iput(inode);
+-#ifdef CONFIG_F2FS_FAULT_INJECTION
+-	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
+-		f2fs_show_injection_info(FAULT_EVICT_INODE);
+-		goto no_delete;
+-	}
+-#endif
+-
+ 	remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
+ 	remove_ino_entry(sbi, inode->i_ino, UPDATE_INO);
+ 
+@@ -389,6 +382,12 @@ void f2fs_evict_inode(struct inode *inode)
+ 	if (F2FS_HAS_BLOCKS(inode))
+ 		err = f2fs_truncate(inode);
+ 
++#ifdef CONFIG_F2FS_FAULT_INJECTION
++	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
++		f2fs_show_injection_info(FAULT_EVICT_INODE);
++		err = -EIO;
++	}
++#endif
+ 	if (!err) {
+ 		f2fs_lock_op(sbi);
+ 		err = remove_inode_page(inode);
 -- 
 2.11.0
 
-
-On 03/06, Kinglong Mee wrote:
-> A cross rename between two encrypted files, the disk level filenames
-> aren't updated for the file_enc_name(to) checking.
-> 
-> Also, cross rename between encrypted file and non-encrypted file under
-> a non-encrypted file, the enc name flags should update at same time
-> as the disk level filename.
-> 
-> This patch,
-> 1. make sure update the disk level filename in update_dent_inode,
-> 2. a new function exchange_dent_inode for the disk-level filename update,
-> 3. only set the enc name flags in init_inode_metadata.
-> 
-> v2, add the missing function define of exchange_dent_inode in f2fs.h
-> 
-> Fixes: e7d5545285ed ("f2fs crypto: add filename encryption for roll-forward recovery")
-> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
-> ---
->  fs/f2fs/dir.c    | 91 ++++++++++++++++++++++++++++++++++++++++++++++++++++----
->  fs/f2fs/f2fs.h   |  3 ++
->  fs/f2fs/inline.c |  2 --
->  fs/f2fs/namei.c  | 19 ++----------
->  4 files changed, 90 insertions(+), 25 deletions(-)
-> 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index 295a223..b1bb0b1 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -337,17 +337,93 @@ static void init_dent_inode(const struct qstr *name, struct page *ipage)
->  int update_dent_inode(struct inode *inode, struct inode *to,
->  					const struct qstr *name)
->  {
-> -	struct page *page;
-> +	struct page *topage = NULL, *page;
-> +	struct f2fs_inode *tori;
-> +	struct qstr newname = *name;
-> +	int err = 0;
->  
-> -	if (file_enc_name(to))
-> +	if (file_enc_name(to) && (inode == to))
->  		return 0;
->  
->  	page = get_node_page(F2FS_I_SB(inode), inode->i_ino);
->  	if (IS_ERR(page))
->  		return PTR_ERR(page);
->  
-> -	init_dent_inode(name, page);
-> +	file_clear_enc_name(inode);
-> +	if (file_enc_name(to)) {
-> +		topage = get_node_page(F2FS_I_SB(to), to->i_ino);
-> +		if (IS_ERR(topage)) {
-> +			f2fs_put_page(page, 1);
-> +			return PTR_ERR(topage);
-> +		}
-> +
-> +		tori = F2FS_INODE(topage);
-> +		newname.name = tori->i_name;
-> +		newname.len = tori->i_namelen;
-> +
-> +		file_set_enc_name(inode);
-> +	}
-> +
-> +	init_dent_inode(&newname, page);
-> +
->  	f2fs_put_page(page, 1);
-> +	if (file_enc_name(to))
-> +		f2fs_put_page(topage, 1);
-> +
-> +	return err;
-> +}
-> +
-> +int exchange_dent_inode(struct inode *src, struct inode *dst,
-> +			const struct qstr *srcname, const struct qstr *dstname)
-> +{
-> +	struct page *srcpage = NULL, *dstpage = NULL;
-> +	char tmp_srcname[F2FS_NAME_LEN], tmp_dstname[F2FS_NAME_LEN];
-> +	struct qstr new_srcname = *srcname;
-> +	struct qstr new_dstname = *dstname;
-> +
-> +	if (src == dst)
-> +		return 0;
-> +
-> +	srcpage = get_node_page(F2FS_I_SB(src), src->i_ino);
-> +	if (IS_ERR(srcpage))
-> +		return PTR_ERR(srcpage);
-> +
-> +	dstpage = get_node_page(F2FS_I_SB(dst), dst->i_ino);
-> +	if (IS_ERR(dstpage)) {
-> +		f2fs_put_page(srcpage, 1);
-> +		return PTR_ERR(dstpage);
-> +	}
-> +
-> +	f2fs_wait_on_page_writeback(srcpage, NODE, true);
-> +	f2fs_wait_on_page_writeback(dstpage, NODE, true);
-> +
-> +	file_clear_enc_name(dst);
-> +	if (file_enc_name(src)) {
-> +		struct f2fs_inode *srcri = F2FS_INODE(srcpage);
-> +
-> +		memcpy(tmp_srcname, srcri->i_name, srcri->i_namelen);
-> +		new_srcname.name = tmp_srcname;
-> +		new_srcname.len = srcri->i_namelen;
-> +
-> +		file_set_enc_name(dst);
-> +	}
-> +
-> +	file_clear_enc_name(src);
-> +	if (file_enc_name(dst)) {
-> +		struct f2fs_inode *dstri = F2FS_INODE(dstpage);
-> +
-> +		memcpy(tmp_dstname, dstri->i_name, dstri->i_namelen);
-> +		new_dstname.name = tmp_dstname;
-> +		new_dstname.len = dstri->i_namelen;
-> +
-> +		file_set_enc_name(src);
-> +	}
-> +
-> +	init_dent_inode(&new_dstname, srcpage);
-> +	init_dent_inode(&new_srcname, dstpage);
-> +
-> +	f2fs_put_page(srcpage, 1);
-> +	f2fs_put_page(dstpage, 1);
->  
->  	return 0;
->  }
-> @@ -435,9 +511,14 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
->  		set_cold_node(inode, page);
->  	}
->  
-> -	if (new_name)
-> +	if (new_name) {
->  		init_dent_inode(new_name, page);
->  
-> +		file_clear_enc_name(inode);
-> +		if (f2fs_encrypted_inode(dir))
-> +			file_set_enc_name(inode);
-> +	}
-> +
->  	/*
->  	 * This file should be checkpointed during fsync.
->  	 * We lost i_pino from now on.
-> @@ -596,8 +677,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
->  			err = PTR_ERR(page);
->  			goto fail;
->  		}
-> -		if (f2fs_encrypted_inode(dir))
-> -			file_set_enc_name(inode);
->  	}
->  
->  	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 7e29249..ce24fe9 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -440,6 +440,7 @@ struct f2fs_map_blocks {
->  #define file_clear_encrypt(inode) clear_file(inode, FADVISE_ENCRYPT_BIT)
->  #define file_enc_name(inode)	is_file(inode, FADVISE_ENC_NAME_BIT)
->  #define file_set_enc_name(inode) set_file(inode, FADVISE_ENC_NAME_BIT)
-> +#define file_clear_enc_name(inode) clear_file(inode, FADVISE_ENC_NAME_BIT)
->  #define file_keep_isize(inode)	is_file(inode, FADVISE_KEEP_SIZE_BIT)
->  #define file_set_keep_isize(inode) set_file(inode, FADVISE_KEEP_SIZE_BIT)
->  
-> @@ -2101,6 +2102,8 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
->  			struct page *page, struct inode *inode);
->  int update_dent_inode(struct inode *inode, struct inode *to,
->  			const struct qstr *name);
-> +int exchange_dent_inode(struct inode *src, struct inode *dst,
-> +			const struct qstr *srcname, const struct qstr *dstname);
->  void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
->  			const struct qstr *name, f2fs_hash_t name_hash,
->  			unsigned int bit_pos);
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index e32a9e5..41fe27d 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -527,8 +527,6 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
->  			err = PTR_ERR(page);
->  			goto fail;
->  		}
-> -		if (f2fs_encrypted_inode(dir))
-> -			file_set_enc_name(inode);
->  	}
->  
->  	f2fs_wait_on_page_writeback(ipage, NODE, true);
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 3231a0a..57050ff 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -779,8 +779,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
->  
->  	down_write(&F2FS_I(old_inode)->i_sem);
->  	file_lost_pino(old_inode);
-> -	if (new_inode && file_enc_name(new_inode))
-> -		file_set_enc_name(old_inode);
->  	up_write(&F2FS_I(old_inode)->i_sem);
->  
->  	old_inode->i_ctime = current_time(old_inode);
-> @@ -917,17 +915,10 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->  
->  	f2fs_lock_op(sbi);
->  
-> -	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
-> +	err = exchange_dent_inode(old_inode, new_inode,
-> +				  &old_dentry->d_name, &new_dentry->d_name);
->  	if (err)
->  		goto out_unlock;
-> -	if (file_enc_name(new_inode))
-> -		file_set_enc_name(old_inode);
-> -
-> -	err = update_dent_inode(new_inode, old_inode, &old_dentry->d_name);
-> -	if (err)
-> -		goto out_undo;
-> -	if (file_enc_name(old_inode))
-> -		file_set_enc_name(new_inode);
->  
->  	/* update ".." directory entry info of old dentry */
->  	if (old_dir_entry)
-> @@ -972,12 +963,6 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
->  		f2fs_sync_fs(sbi->sb, 1);
->  	return 0;
-> -out_undo:
-> -	/*
-> -	 * Still we may fail to recover name info of f2fs_inode here
-> -	 * Drop it, once its name is set as encrypted
-> -	 */
-> -	update_dent_inode(old_inode, old_inode, &old_dentry->d_name);
->  out_unlock:
->  	f2fs_unlock_op(sbi);
->  out_new_dir:
-> -- 
-> 2.9.3
 
 ------------------------------------------------------------------------------
 Announcing the Oxford Dictionaries API! The API offers world-renowned
