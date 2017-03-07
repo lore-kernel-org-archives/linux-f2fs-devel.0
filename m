@@ -1,65 +1,323 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 4/7] mm: introduce memalloc_nofs_{save,restore} API
-Date: Tue, 7 Mar 2017 16:09:56 +0100
-Message-ID: <20170307150956.GM28642@dhcp22.suse.cz>
-References: <20170306131408.9828-1-mhocko@kernel.org>
- <20170306131408.9828-5-mhocko@kernel.org>
- <20170306132214.1769368301d9e671e1bc68be@linux-foundation.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs: sync the enc name flags with disk
+	level filename
+Date: Tue, 7 Mar 2017 11:30:29 -0800
+Message-ID: <20170307193029.GA2499@jaegeuk.local>
+References: <fdfcad9e-36e6-a163-e42b-abe414c2ca9d@gmail.com>
+	<eda73163-e95f-6c40-05e1-673eba87a530@gmail.com>
+	<7b158dd2-9b72-bf75-e0c0-29cb364d24ea@gmail.com>
+	<f3794fb1-256b-049a-1146-cdffa5e8c5d5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
+	helo=mx.sourceforge.net)
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1clKoh-000525-Sn
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 07 Mar 2017 19:30:39 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1clKog-0002xA-Cd
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Tue, 07 Mar 2017 19:30:39 +0000
 Content-Disposition: inline
-In-Reply-To: <20170306132214.1769368301d9e671e1bc68be@linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>, djwong@kernel.org, Theodore Ts'o <tytso@mit.edu>, Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.cz>, Jan Kara <jack@suse.cz>, ceph-devel@vger.kernel.org, cluster-devel@redhat.com, linux-nfs@vger.kernel.org, logfs@logfs.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mtd@lists.infradead.org, reiserfs-devel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, linux-f2fs-devel@lists.sourceforge.net, linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, Vlastimil Babka <vbabka@suse.cz>
-List-Id: linux-f2fs-devel.lists.sourceforge.net
+In-Reply-To: <f3794fb1-256b-049a-1146-cdffa5e8c5d5@gmail.com>
+List-Id: <linux-f2fs-devel.lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux-f2fs-devel>
+List-Post: <mailto:linux-f2fs-devel@lists.sourceforge.net>
+List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
+	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
+To: Kinglong Mee <kinglongmee@gmail.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Mon 06-03-17 13:22:14, Andrew Morton wrote:
-> On Mon,  6 Mar 2017 14:14:05 +0100 Michal Hocko <mhocko@kernel.org> wrote:
-[...]
-> > --- a/include/linux/gfp.h
-> > +++ b/include/linux/gfp.h
-> > @@ -210,8 +210,16 @@ struct vm_area_struct;
-> >   *
-> >   * GFP_NOIO will use direct reclaim to discard clean pages or slab pages
-> >   *   that do not require the starting of any physical IO.
-> > + *   Please try to avoid using this flag directly and instead use
-> > + *   memalloc_noio_{save,restore} to mark the whole scope which cannot
-> > + *   perform any IO with a short explanation why. All allocation requests
-> > + *   will inherit GFP_NOIO implicitly.
-> >   *
-> >   * GFP_NOFS will use direct reclaim but will not use any filesystem interfaces.
-> > + *   Please try to avoid using this flag directly and instead use
-> > + *   memalloc_nofs_{save,restore} to mark the whole scope which cannot/shouldn't
-> > + *   recurse into the FS layer with a short explanation why. All allocation
-> > + *   requests will inherit GFP_NOFS implicitly.
-> 
-> I wonder if these are worth a checkpatch rule.
+Hi Kinglong,
 
-I am not really sure, to be honest. This may easilly end up people
-replacing
+Can we make a testcase in xfstests to check this clearly?
+1. creat A under encrypted dir
+2. rename A to B
+3. fsync B
+4. power-cut
 
-do_alloc(GFP_NOFS)
+Is this your concern?
 
-with
+Hmm, on-disk filename is used when doing roll-forward recovery, and it seems
+there is a hole in try_to_fix_pino() to recover its pino without filename.
 
-memalloc_nofs_save()
-do_alloc(GFP_KERNEL)
-memalloc_nofs_restore()
+Like this?
 
-which doesn't make any sense of course. From my experience, people tend
-to do stupid things just to silent checkpatch warnings very often.
-Moreover I believe we need to do the transition to the new api first
-before we can push back on the explicit GFP_NOFS usage. Maybe then we
-can think about the a checkpatch warning.
+>From 7efde035d9f930fc63c30b25327e870b021750f3 Mon Sep 17 00:00:00 2001
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Date: Tue, 7 Mar 2017 11:22:45 -0800
+Subject: [PATCH] f2fS: don't allow to get pino when filename is encrypted
 
+After renaming an encrypted file, we have no way to get its
+encrypted filename from its dentry.
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index e0b2378f8519..852195b3bcce 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -110,6 +110,9 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
+ {
+ 	struct dentry *dentry;
+ 
++	if (file_enc_name(inode))
++		return 0;
++
+ 	inode = igrab(inode);
+ 	dentry = d_find_any_alias(inode);
+ 	iput(inode);
 -- 
-Michal Hocko
-SUSE Labs
+2.11.0
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+
+On 03/06, Kinglong Mee wrote:
+> A cross rename between two encrypted files, the disk level filenames
+> aren't updated for the file_enc_name(to) checking.
+> 
+> Also, cross rename between encrypted file and non-encrypted file under
+> a non-encrypted file, the enc name flags should update at same time
+> as the disk level filename.
+> 
+> This patch,
+> 1. make sure update the disk level filename in update_dent_inode,
+> 2. a new function exchange_dent_inode for the disk-level filename update,
+> 3. only set the enc name flags in init_inode_metadata.
+> 
+> v2, add the missing function define of exchange_dent_inode in f2fs.h
+> 
+> Fixes: e7d5545285ed ("f2fs crypto: add filename encryption for roll-forward recovery")
+> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+> ---
+>  fs/f2fs/dir.c    | 91 ++++++++++++++++++++++++++++++++++++++++++++++++++++----
+>  fs/f2fs/f2fs.h   |  3 ++
+>  fs/f2fs/inline.c |  2 --
+>  fs/f2fs/namei.c  | 19 ++----------
+>  4 files changed, 90 insertions(+), 25 deletions(-)
+> 
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 295a223..b1bb0b1 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -337,17 +337,93 @@ static void init_dent_inode(const struct qstr *name, struct page *ipage)
+>  int update_dent_inode(struct inode *inode, struct inode *to,
+>  					const struct qstr *name)
+>  {
+> -	struct page *page;
+> +	struct page *topage = NULL, *page;
+> +	struct f2fs_inode *tori;
+> +	struct qstr newname = *name;
+> +	int err = 0;
+>  
+> -	if (file_enc_name(to))
+> +	if (file_enc_name(to) && (inode == to))
+>  		return 0;
+>  
+>  	page = get_node_page(F2FS_I_SB(inode), inode->i_ino);
+>  	if (IS_ERR(page))
+>  		return PTR_ERR(page);
+>  
+> -	init_dent_inode(name, page);
+> +	file_clear_enc_name(inode);
+> +	if (file_enc_name(to)) {
+> +		topage = get_node_page(F2FS_I_SB(to), to->i_ino);
+> +		if (IS_ERR(topage)) {
+> +			f2fs_put_page(page, 1);
+> +			return PTR_ERR(topage);
+> +		}
+> +
+> +		tori = F2FS_INODE(topage);
+> +		newname.name = tori->i_name;
+> +		newname.len = tori->i_namelen;
+> +
+> +		file_set_enc_name(inode);
+> +	}
+> +
+> +	init_dent_inode(&newname, page);
+> +
+>  	f2fs_put_page(page, 1);
+> +	if (file_enc_name(to))
+> +		f2fs_put_page(topage, 1);
+> +
+> +	return err;
+> +}
+> +
+> +int exchange_dent_inode(struct inode *src, struct inode *dst,
+> +			const struct qstr *srcname, const struct qstr *dstname)
+> +{
+> +	struct page *srcpage = NULL, *dstpage = NULL;
+> +	char tmp_srcname[F2FS_NAME_LEN], tmp_dstname[F2FS_NAME_LEN];
+> +	struct qstr new_srcname = *srcname;
+> +	struct qstr new_dstname = *dstname;
+> +
+> +	if (src == dst)
+> +		return 0;
+> +
+> +	srcpage = get_node_page(F2FS_I_SB(src), src->i_ino);
+> +	if (IS_ERR(srcpage))
+> +		return PTR_ERR(srcpage);
+> +
+> +	dstpage = get_node_page(F2FS_I_SB(dst), dst->i_ino);
+> +	if (IS_ERR(dstpage)) {
+> +		f2fs_put_page(srcpage, 1);
+> +		return PTR_ERR(dstpage);
+> +	}
+> +
+> +	f2fs_wait_on_page_writeback(srcpage, NODE, true);
+> +	f2fs_wait_on_page_writeback(dstpage, NODE, true);
+> +
+> +	file_clear_enc_name(dst);
+> +	if (file_enc_name(src)) {
+> +		struct f2fs_inode *srcri = F2FS_INODE(srcpage);
+> +
+> +		memcpy(tmp_srcname, srcri->i_name, srcri->i_namelen);
+> +		new_srcname.name = tmp_srcname;
+> +		new_srcname.len = srcri->i_namelen;
+> +
+> +		file_set_enc_name(dst);
+> +	}
+> +
+> +	file_clear_enc_name(src);
+> +	if (file_enc_name(dst)) {
+> +		struct f2fs_inode *dstri = F2FS_INODE(dstpage);
+> +
+> +		memcpy(tmp_dstname, dstri->i_name, dstri->i_namelen);
+> +		new_dstname.name = tmp_dstname;
+> +		new_dstname.len = dstri->i_namelen;
+> +
+> +		file_set_enc_name(src);
+> +	}
+> +
+> +	init_dent_inode(&new_dstname, srcpage);
+> +	init_dent_inode(&new_srcname, dstpage);
+> +
+> +	f2fs_put_page(srcpage, 1);
+> +	f2fs_put_page(dstpage, 1);
+>  
+>  	return 0;
+>  }
+> @@ -435,9 +511,14 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
+>  		set_cold_node(inode, page);
+>  	}
+>  
+> -	if (new_name)
+> +	if (new_name) {
+>  		init_dent_inode(new_name, page);
+>  
+> +		file_clear_enc_name(inode);
+> +		if (f2fs_encrypted_inode(dir))
+> +			file_set_enc_name(inode);
+> +	}
+> +
+>  	/*
+>  	 * This file should be checkpointed during fsync.
+>  	 * We lost i_pino from now on.
+> @@ -596,8 +677,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+>  			err = PTR_ERR(page);
+>  			goto fail;
+>  		}
+> -		if (f2fs_encrypted_inode(dir))
+> -			file_set_enc_name(inode);
+>  	}
+>  
+>  	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 7e29249..ce24fe9 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -440,6 +440,7 @@ struct f2fs_map_blocks {
+>  #define file_clear_encrypt(inode) clear_file(inode, FADVISE_ENCRYPT_BIT)
+>  #define file_enc_name(inode)	is_file(inode, FADVISE_ENC_NAME_BIT)
+>  #define file_set_enc_name(inode) set_file(inode, FADVISE_ENC_NAME_BIT)
+> +#define file_clear_enc_name(inode) clear_file(inode, FADVISE_ENC_NAME_BIT)
+>  #define file_keep_isize(inode)	is_file(inode, FADVISE_KEEP_SIZE_BIT)
+>  #define file_set_keep_isize(inode) set_file(inode, FADVISE_KEEP_SIZE_BIT)
+>  
+> @@ -2101,6 +2102,8 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
+>  			struct page *page, struct inode *inode);
+>  int update_dent_inode(struct inode *inode, struct inode *to,
+>  			const struct qstr *name);
+> +int exchange_dent_inode(struct inode *src, struct inode *dst,
+> +			const struct qstr *srcname, const struct qstr *dstname);
+>  void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *d,
+>  			const struct qstr *name, f2fs_hash_t name_hash,
+>  			unsigned int bit_pos);
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index e32a9e5..41fe27d 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -527,8 +527,6 @@ int f2fs_add_inline_entry(struct inode *dir, const struct qstr *new_name,
+>  			err = PTR_ERR(page);
+>  			goto fail;
+>  		}
+> -		if (f2fs_encrypted_inode(dir))
+> -			file_set_enc_name(inode);
+>  	}
+>  
+>  	f2fs_wait_on_page_writeback(ipage, NODE, true);
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 3231a0a..57050ff 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -779,8 +779,6 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  
+>  	down_write(&F2FS_I(old_inode)->i_sem);
+>  	file_lost_pino(old_inode);
+> -	if (new_inode && file_enc_name(new_inode))
+> -		file_set_enc_name(old_inode);
+>  	up_write(&F2FS_I(old_inode)->i_sem);
+>  
+>  	old_inode->i_ctime = current_time(old_inode);
+> @@ -917,17 +915,10 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  
+>  	f2fs_lock_op(sbi);
+>  
+> -	err = update_dent_inode(old_inode, new_inode, &new_dentry->d_name);
+> +	err = exchange_dent_inode(old_inode, new_inode,
+> +				  &old_dentry->d_name, &new_dentry->d_name);
+>  	if (err)
+>  		goto out_unlock;
+> -	if (file_enc_name(new_inode))
+> -		file_set_enc_name(old_inode);
+> -
+> -	err = update_dent_inode(new_inode, old_inode, &old_dentry->d_name);
+> -	if (err)
+> -		goto out_undo;
+> -	if (file_enc_name(old_inode))
+> -		file_set_enc_name(new_inode);
+>  
+>  	/* update ".." directory entry info of old dentry */
+>  	if (old_dir_entry)
+> @@ -972,12 +963,6 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
+>  	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
+>  		f2fs_sync_fs(sbi->sb, 1);
+>  	return 0;
+> -out_undo:
+> -	/*
+> -	 * Still we may fail to recover name info of f2fs_inode here
+> -	 * Drop it, once its name is set as encrypted
+> -	 */
+> -	update_dent_inode(old_inode, old_inode, &old_dentry->d_name);
+>  out_unlock:
+>  	f2fs_unlock_op(sbi);
+>  out_new_dir:
+> -- 
+> 2.9.3
+
+------------------------------------------------------------------------------
+Announcing the Oxford Dictionaries API! The API offers world-renowned
+dictionary content that is easy and intuitive to access. Sign up for an
+account today to start using our lexical data to power your apps and
+projects. Get started today and enter our developer competition.
+http://sdm.link/oxford
