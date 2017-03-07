@@ -1,23 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 1/4] f2fs: fix wrong error injection for
-	evict_inode
-Date: Tue,  7 Mar 2017 14:13:00 -0800
-Message-ID: <20170307221303.6757-1-jaegeuk@kernel.org>
+Subject: [PATCH 3/4] f2fs: show more precise message on orphan
+	recovery failure
+Date: Tue,  7 Mar 2017 14:13:02 -0800
+Message-ID: <20170307221303.6757-3-jaegeuk@kernel.org>
+References: <20170307221303.6757-1-jaegeuk@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
 	by sfs-ml-4.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1clNM2-0007pS-FD
+	(envelope-from <jaegeuk@kernel.org>) id 1clNM4-0007pp-IM
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 07 Mar 2017 22:13:14 +0000
+	Tue, 07 Mar 2017 22:13:16 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1clNM1-0007G7-FM
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1clNM3-0007YE-TR
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Tue, 07 Mar 2017 22:13:14 +0000
+	Tue, 07 Mar 2017 22:13:16 +0000
+In-Reply-To: <20170307221303.6757-1-jaegeuk@kernel.org>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,46 +32,26 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 Cc: Jaegeuk Kim <jaegeuk@kernel.org>
 
-The previous one was not a proper location to inject an error, since there
-is no point to get errors. Instead, we can emulate EIO during truncation,
-and the below logic should handle it correctly.
+This case is not caused by fsck.f2fs. User needs to retry mount.
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/inode.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ fs/f2fs/checkpoint.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index ef8610bf950f..2520fa72b23f 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -372,13 +372,6 @@ void f2fs_evict_inode(struct inode *inode)
- 	if (inode->i_nlink || is_bad_inode(inode))
- 		goto no_delete;
- 
--#ifdef CONFIG_F2FS_FAULT_INJECTION
--	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
--		f2fs_show_injection_info(FAULT_EVICT_INODE);
--		goto no_delete;
--	}
--#endif
--
- 	remove_ino_entry(sbi, inode->i_ino, APPEND_INO);
- 	remove_ino_entry(sbi, inode->i_ino, UPDATE_INO);
- 
-@@ -389,6 +382,12 @@ void f2fs_evict_inode(struct inode *inode)
- 	if (F2FS_HAS_BLOCKS(inode))
- 		err = f2fs_truncate(inode);
- 
-+#ifdef CONFIG_F2FS_FAULT_INJECTION
-+	if (time_to_inject(sbi, FAULT_EVICT_INODE)) {
-+		f2fs_show_injection_info(FAULT_EVICT_INODE);
-+		err = -EIO;
-+	}
-+#endif
- 	if (!err) {
- 		f2fs_lock_op(sbi);
- 		err = remove_inode_page(inode);
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 91734cc13f71..36ccc30ed54b 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -568,7 +568,7 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ 	if (ni.blk_addr != NULL_ADDR) {
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 		f2fs_msg(sbi->sb, KERN_WARNING,
+-			"%s: orphan failed (ino=%x), run fsck to fix.",
++			"%s: orphan failed (ino=%x) by kernel, retry mount.",
+ 				__func__, ino);
+ 		return -EIO;
+ 	}
 -- 
 2.11.0
 
