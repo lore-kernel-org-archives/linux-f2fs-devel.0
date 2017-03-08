@@ -1,26 +1,32 @@
-From: heyunlei <heyunlei@huawei.com>
-Subject: Re: [PATCH v2] f2fs: add a punch discard command function
-Date: Wed, 8 Mar 2017 15:33:28 +0800
-Message-ID: <a21e8bec-e02a-5c01-95fa-a536454efbc7@huawei.com>
-References: <20170302023620.13337-1-heyunlei@huawei.com>
-	<20170308013612.GD2499@jaegeuk.local>
-	<20170308024954.GB11351@jaegeuk.local>
+From: Kinglong Mee <kinglongmee@gmail.com>
+Subject: Re: [PATCH v2] f2fs: sync the enc name flags with disk
+	level filename
+Date: Wed, 8 Mar 2017 18:56:22 +0800
+Message-ID: <71b63777-c504-30d2-014b-718eb31b62c3@gmail.com>
+References: <fdfcad9e-36e6-a163-e42b-abe414c2ca9d@gmail.com>
+	<eda73163-e95f-6c40-05e1-673eba87a530@gmail.com>
+	<7b158dd2-9b72-bf75-e0c0-29cb364d24ea@gmail.com>
+	<f3794fb1-256b-049a-1146-cdffa5e8c5d5@gmail.com>
+	<20170307193029.GA2499@jaegeuk.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
-	by sfs-ml-3.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <heyunlei@huawei.com>) id 1clW7J-00083j-Ml
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <kinglongmee@gmail.com>) id 1clZGo-0003lj-5m
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 08 Mar 2017 07:34:37 +0000
-Received: from [45.249.212.191] (helo=dggrg05-dlp.huawei.com)
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:RC4-SHA:128)
-	(Exim 4.76) id 1clW7G-0004ck-Vv
+	Wed, 08 Mar 2017 10:56:38 +0000
+Received: from mail-it0-f66.google.com ([209.85.214.66])
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES128-SHA:128)
+	(Exim 4.76) id 1clZGn-00061R-Bw
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 08 Mar 2017 07:34:37 +0000
-In-Reply-To: <20170308024954.GB11351@jaegeuk.local>
+	Wed, 08 Mar 2017 10:56:38 +0000
+Received: by mail-it0-f66.google.com with SMTP id w185so4434284ita.3
+	for <linux-f2fs-devel@lists.sourceforge.net>;
+	Wed, 08 Mar 2017 02:56:37 -0800 (PST)
+In-Reply-To: <20170307193029.GA2499@jaegeuk.local>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -33,94 +39,100 @@ Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
 To: Jaegeuk Kim <jaegeuk@kernel.org>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi Jaegeuk,
+On 3/8/2017 03:30, Jaegeuk Kim wrote:
+> Hi Kinglong,
+> 
+> Can we make a testcase in xfstests to check this clearly?
+> 1. creat A under encrypted dir
+> 2. rename A to B
+> 3. fsync B
+> 4. power-cut
+> 
+> Is this your concern?
 
-On 2017/3/8 10:49, Jaegeuk Kim wrote:
-> On 03/07, Jaegeuk Kim wrote:
->> Hi Yunlei,
->>
->> On 03/02, Yunlei He wrote:
->>> This patch add a function to punch discard command if one segment
->>> reuse before discard. Split this segment from multi-segments discard
->>> range, and discard the left bigger range.
->>>
->>> Signed-off-by: Yunlei He <heyunlei@huawei.com>
->>> ---
->>>  fs/f2fs/segment.c | 18 +++++++++++++++++-
->>>  1 file changed, 17 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 4bd7a8b..1e1d5d3 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -672,6 +672,22 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *d
->>>  	kmem_cache_free(discard_cmd_slab, dc);
->>>  }
->>>
->>> +static void __punch_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *dc, block_t blkaddr)
->>> +{
->>> +	block_t end_block = START_BLOCK(sbi, GET_SEGNO(sbi, blkaddr) + 1);
->>> +
->>> +	if (dc->lstart + dc->len <= end_block) {
->>> +		__remove_discard_cmd(sbi, dc);
->>> +		return;
->>> +	}
->>> +
->>> +	if (blkaddr - dc->lstart < dc->lstart + dc->len - end_block) {
->>> +		dc->lstart = end_block;
->>> +		dc->len -= (end_block - dc->lstart);
->>
->> I just missed one thing which we already have a bio to submit later. So, in
->> order to do this, we should manage dc->bio as well.
->> Let me think about whole flow again.
->
-> Please take a look at:
->
-> http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test&id=ef63d148d469f249622afe9e89fc273848ee427b
-> http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test&id=eea59dd279d5d34eb8d9652b7af1bd9e45a3b69e
+Yes, it is.
+If B isn't exist, rename A to B means create a new A (unlink the old).
+B is exist, the inode (include disk node) will be replace by A, but,
+for the file_enc_name, the disk i_name/i_namelen isn't updated.
 
-It looks good to me.
+For the rename, A and B lost there parent, so the 3 step will cause checkpoint, 
+after that, everything is updated to disk (with the unchanged filename), 
+so that the 4 step of power-cut can't cause a roll_forward.
 
-Thanks.
->
-> Thanks,
->
->>
->> Thanks,
->>
->>> +	} else
->>> +		dc->len = blkaddr - dc->lstart;
->>> +}
->>> +
->>>  /* This should be covered by global mutex, &sit_i->sentry_lock */
->>>  void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
->>>  {
->>> @@ -708,7 +724,7 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
->>>  	if (blkaddr == NULL_ADDR) {
->>>  		list_for_each_entry_safe(dc, tmp, wait_list, list) {
->>>  			wait_for_completion_io(&dc->wait);
->>> -			__remove_discard_cmd(sbi, dc);
->>> +			__punch_discard_cmd(sbi, dc, blkaddr);
->>>  		}
->>>  	}
->>>  	mutex_unlock(&dcc->cmd_lock);
->>> --
->>> 2.10.1
->>
->> ------------------------------------------------------------------------------
->> Announcing the Oxford Dictionaries API! The API offers world-renowned
->> dictionary content that is easy and intuitive to access. Sign up for an
->> account today to start using our lexical data to power your apps and
->> projects. Get started today and enter our developer competition.
->> http://sdm.link/oxford
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
->
-> .
->
+If fsync A for flags the inode and then rename as,
+1. creat A and B under encrypted dir
+2. fsync A          (after rename, B will be unlink)
+3. rename A to B
+4. godown 
+5. umount/mount
 
+A roll_forward (recover_dentry) happens, the result is same as after setp1,
+that's not my needs.
+
+For the IS_CHECKPOINTED flag, after a new created file sync to the disk,
+it's cleared, and never appears again, after that a roll_forward of 
+recover_dentry will never happen (it means the disk i_name will not be
+used forever). Am I right?
+
+If that's right, next update_dent_inode after file created is useless,
+we can remove them include the FADVISE_ENC_NAME_BIT.
+
+> 
+> Hmm, on-disk filename is used when doing roll-forward recovery, and it seems
+> there is a hole in try_to_fix_pino() to recover its pino without filename.
+> 
+> Like this?
+> 
+>>From 7efde035d9f930fc63c30b25327e870b021750f3 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Tue, 7 Mar 2017 11:22:45 -0800
+> Subject: [PATCH] f2fS: don't allow to get pino when filename is encrypted
+> 
+> After renaming an encrypted file, we have no way to get its
+> encrypted filename from its dentry.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/file.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index e0b2378f8519..852195b3bcce 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -110,6 +110,9 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
+>  {
+>  	struct dentry *dentry;
+>  
+> +	if (file_enc_name(inode))
+> +		return 0;
+> +
+>  	inode = igrab(inode);
+>  	dentry = d_find_any_alias(inode);
+>  	iput(inode);
+> 
+
+The renamed inode will lost their parent ino, and try to fix it when fsync.
+With the file_enc_name checking, get_parent_ino return 0 without parent ino
+for encrypted inode, after that the FADVISE_COLD_BIT will exist forever, 
+fsync the encrypted inode causing do_checkpoint every time.
+
+static void try_to_fix_pino(struct inode *inode)
+{
+        struct f2fs_inode_info *fi = F2FS_I(inode);
+        nid_t pino;
+
+        down_write(&fi->i_sem);
+        if (file_wrong_pino(inode) && inode->i_nlink == 1 &&
+                        get_parent_ino(inode, &pino)) {
+                f2fs_i_pino_write(inode, pino);
+                file_got_pino(inode);
+        }
+        up_write(&fi->i_sem);
+}
+
+thanks,
+Kinglong Mee
 
 ------------------------------------------------------------------------------
 Announcing the Oxford Dictionaries API! The API offers world-renowned
