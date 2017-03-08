@@ -1,27 +1,28 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] f2fs: allocate a bio for discarding when
- actually issuing it
-Date: Wed, 8 Mar 2017 07:03:11 -0800
-Message-ID: <20170308150311.GA17999@infradead.org>
-References: <20170308023333.15034-1-jaegeuk@kernel.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH v2] f2fs: add a punch discard command function
+Date: Wed, 8 Mar 2017 13:33:44 -0800
+Message-ID: <20170308213344.GA5483@jaegeuk.local>
+References: <20170302023620.13337-1-heyunlei@huawei.com>
+	<20170308013612.GD2499@jaegeuk.local>
+	<20170308024954.GB11351@jaegeuk.local>
+	<a21e8bec-e02a-5c01-95fa-a536454efbc7@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
+Received: from sog-mx-3.v43.ch3.sourceforge.com ([172.29.43.193]
 	helo=mx.sourceforge.net)
-	by sfs-ml-2.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from
-	<BATV+cc8de9cad2b7078a312a+4945+infradead.org+hch@bombadil.srs.infradead.org>)
-	id 1cld7d-0003MK-S4 for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 08 Mar 2017 15:03:25 +0000
-Received: from bombadil.infradead.org ([65.50.211.133])
-	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1cld7c-0005rF-Ba
+	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
+	(envelope-from <jaegeuk@kernel.org>) id 1cljDW-00047Y-Hz
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 08 Mar 2017 15:03:25 +0000
+	Wed, 08 Mar 2017 21:33:54 +0000
+Received: from mail.kernel.org ([198.145.29.136])
+	by sog-mx-3.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1cljDV-0005aR-A6
+	for linux-f2fs-devel@lists.sourceforge.net;
+	Wed, 08 Mar 2017 21:33:54 +0000
 Content-Disposition: inline
-In-Reply-To: <20170308023333.15034-1-jaegeuk@kernel.org>
+In-Reply-To: <a21e8bec-e02a-5c01-95fa-a536454efbc7@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -31,233 +32,104 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+To: heyunlei <heyunlei@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net
 
-On Tue, Mar 07, 2017 at 06:33:33PM -0800, Jaegeuk Kim wrote:
-> Let's allocate a bio when issuing discard commands later.
+On 03/08, heyunlei wrote:
+> Hi Jaegeuk,
+> 
+> On 2017/3/8 10:49, Jaegeuk Kim wrote:
+> > On 03/07, Jaegeuk Kim wrote:
+> > > Hi Yunlei,
+> > > 
+> > > On 03/02, Yunlei He wrote:
+> > > > This patch add a function to punch discard command if one segment
+> > > > reuse before discard. Split this segment from multi-segments discard
+> > > > range, and discard the left bigger range.
+> > > > 
+> > > > Signed-off-by: Yunlei He <heyunlei@huawei.com>
+> > > > ---
+> > > >  fs/f2fs/segment.c | 18 +++++++++++++++++-
+> > > >  1 file changed, 17 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > > > index 4bd7a8b..1e1d5d3 100644
+> > > > --- a/fs/f2fs/segment.c
+> > > > +++ b/fs/f2fs/segment.c
+> > > > @@ -672,6 +672,22 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *d
+> > > >  	kmem_cache_free(discard_cmd_slab, dc);
+> > > >  }
+> > > > 
+> > > > +static void __punch_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *dc, block_t blkaddr)
+> > > > +{
+> > > > +	block_t end_block = START_BLOCK(sbi, GET_SEGNO(sbi, blkaddr) + 1);
+> > > > +
+> > > > +	if (dc->lstart + dc->len <= end_block) {
+> > > > +		__remove_discard_cmd(sbi, dc);
+> > > > +		return;
+> > > > +	}
+> > > > +
+> > > > +	if (blkaddr - dc->lstart < dc->lstart + dc->len - end_block) {
+> > > > +		dc->lstart = end_block;
+> > > > +		dc->len -= (end_block - dc->lstart);
+> > > 
+> > > I just missed one thing which we already have a bio to submit later. So, in
+> > > order to do this, we should manage dc->bio as well.
+> > > Let me think about whole flow again.
+> > 
+> > Please take a look at:
+> > 
+> > http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test&id=ef63d148d469f249622afe9e89fc273848ee427b
+> > http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test&id=eea59dd279d5d34eb8d9652b7af1bd9e45a3b69e
+> 
+> It looks good to me.
 
-Does this solve the issue with your queue stalls?
+One more bug fix.
+
+http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test&id=bd9c4619e81d42c7df1758b6841fd0909840c687
+
+Thanks,
 
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/f2fs.h    |   4 +-
->  fs/f2fs/segment.c | 113 ++++++++++++++++++++++++++++--------------------------
->  2 files changed, 62 insertions(+), 55 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index a58c2e43bd2a..870bb4d9bc65 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -197,10 +197,12 @@ enum {
->  struct discard_cmd {
->  	struct list_head list;		/* command list */
->  	struct completion wait;		/* compleation */
-> +	struct block_device *bdev;	/* bdev */
->  	block_t lstart;			/* logical start address */
-> +	block_t start;			/* actual start address in dev */
->  	block_t len;			/* length */
-> -	struct bio *bio;		/* bio */
->  	int state;			/* state */
-> +	int error;			/* bio error */
->  };
->  
->  struct discard_cmd_control {
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 50c65cc4645a..d8f9e6c895cd 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -636,7 +636,8 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
->  }
->  
->  static void __add_discard_cmd(struct f2fs_sb_info *sbi,
-> -			struct bio *bio, block_t lstart, block_t len)
-> +		struct block_device *bdev, block_t lstart,
-> +		block_t start, block_t len)
->  {
->  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
->  	struct list_head *cmd_list = &(dcc->discard_cmd_list);
-> @@ -644,9 +645,9 @@ static void __add_discard_cmd(struct f2fs_sb_info *sbi,
->  
->  	dc = f2fs_kmem_cache_alloc(discard_cmd_slab, GFP_NOFS);
->  	INIT_LIST_HEAD(&dc->list);
-> -	dc->bio = bio;
-> -	bio->bi_private = dc;
-> +	dc->bdev = bdev;
->  	dc->lstart = lstart;
-> +	dc->start = start;
->  	dc->len = len;
->  	dc->state = D_PREP;
->  	init_completion(&dc->wait);
-> @@ -658,22 +659,66 @@ static void __add_discard_cmd(struct f2fs_sb_info *sbi,
->  
->  static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *dc)
->  {
-> -	int err = dc->bio->bi_error;
-> -
->  	if (dc->state == D_DONE)
->  		atomic_dec(&(SM_I(sbi)->dcc_info->submit_discard));
->  
-> -	if (err == -EOPNOTSUPP)
-> -		err = 0;
-> +	if (dc->error == -EOPNOTSUPP)
-> +		dc->error = 0;
->  
-> -	if (err)
-> +	if (dc->error)
->  		f2fs_msg(sbi->sb, KERN_INFO,
-> -				"Issue discard failed, ret: %d", err);
-> -	bio_put(dc->bio);
-> +				"Issue discard failed, ret: %d", dc->error);
->  	list_del(&dc->list);
->  	kmem_cache_free(discard_cmd_slab, dc);
->  }
->  
-> +static void f2fs_submit_discard_endio(struct bio *bio)
-> +{
-> +	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
-> +
-> +	complete(&dc->wait);
-> +	dc->error = bio->bi_error;
-> +	dc->state = D_DONE;
-> +	bio_put(bio);
-> +}
-> +
-> +/* this function is copied from blkdev_issue_discard from block/blk-lib.c */
-> +static int __submit_discard_cmd(struct discard_cmd *dc)
-> +{
-> +	struct bio *bio = NULL;
-> +	int err;
-> +
-> +	err = __blkdev_issue_discard(dc->bdev,
-> +				SECTOR_FROM_BLOCK(dc->start),
-> +				SECTOR_FROM_BLOCK(dc->len),
-> +				GFP_NOFS, 0, &bio);
-> +	if (!err && bio) {
-> +		bio->bi_private = dc;
-> +		bio->bi_end_io = f2fs_submit_discard_endio;
-> +		bio->bi_opf |= REQ_SYNC;
-> +		submit_bio(bio);
-> +	}
-> +	dc->state = D_SUBMIT;
-> +	return err;
-> +}
-> +
-> +static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
-> +		struct block_device *bdev, block_t blkstart, block_t blklen)
-> +{
-> +	block_t lblkstart = blkstart;
-> +
-> +	trace_f2fs_issue_discard(bdev, blkstart, blklen);
-> +
-> +	if (sbi->s_ndevs) {
-> +		int devi = f2fs_target_device_index(sbi, blkstart);
-> +
-> +		blkstart -= FDEV(devi).start_blk;
-> +	}
-> +	__add_discard_cmd(sbi, bdev, lblkstart, blkstart, blklen);
-> +	wake_up(&SM_I(sbi)->dcc_info->discard_wait_queue);
-> +	return 0;
-> +}
-> +
->  /* This should be covered by global mutex, &sit_i->sentry_lock */
->  void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
->  {
-> @@ -690,8 +735,7 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
->  
->  		if (blkaddr == NULL_ADDR) {
->  			if (dc->state == D_PREP) {
-> -				dc->state = D_SUBMIT;
-> -				submit_bio(dc->bio);
-> +				__submit_discard_cmd(dc);
->  				atomic_inc(&dcc->submit_discard);
->  			}
->  			continue;
-> @@ -716,14 +760,6 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
->  	mutex_unlock(&dcc->cmd_lock);
->  }
->  
-> -static void f2fs_submit_discard_endio(struct bio *bio)
-> -{
-> -	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
-> -
-> -	complete(&dc->wait);
-> -	dc->state = D_DONE;
-> -}
-> -
->  static int issue_discard_thread(void *data)
->  {
->  	struct f2fs_sb_info *sbi = data;
-> @@ -742,8 +778,7 @@ static int issue_discard_thread(void *data)
->  	mutex_lock(&dcc->cmd_lock);
->  	list_for_each_entry_safe(dc, tmp, cmd_list, list) {
->  		if (dc->state == D_PREP) {
-> -			dc->state = D_SUBMIT;
-> -			submit_bio(dc->bio);
-> +			__submit_discard_cmd(dc);
->  			atomic_inc(&dcc->submit_discard);
->  			if (iter++ > DISCARD_ISSUE_RATE)
->  				break;
-> @@ -763,36 +798,6 @@ static int issue_discard_thread(void *data)
->  	goto repeat;
->  }
->  
-> -
-> -/* this function is copied from blkdev_issue_discard from block/blk-lib.c */
-> -static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
-> -		struct block_device *bdev, block_t blkstart, block_t blklen)
-> -{
-> -	struct bio *bio = NULL;
-> -	block_t lblkstart = blkstart;
-> -	int err;
-> -
-> -	trace_f2fs_issue_discard(bdev, blkstart, blklen);
-> -
-> -	if (sbi->s_ndevs) {
-> -		int devi = f2fs_target_device_index(sbi, blkstart);
-> -
-> -		blkstart -= FDEV(devi).start_blk;
-> -	}
-> -	err = __blkdev_issue_discard(bdev,
-> -				SECTOR_FROM_BLOCK(blkstart),
-> -				SECTOR_FROM_BLOCK(blklen),
-> -				GFP_NOFS, 0, &bio);
-> -	if (!err && bio) {
-> -		bio->bi_end_io = f2fs_submit_discard_endio;
-> -		bio->bi_opf |= REQ_SYNC;
-> -
-> -		__add_discard_cmd(sbi, bio, lblkstart, blklen);
-> -		wake_up(&SM_I(sbi)->dcc_info->discard_wait_queue);
-> -	}
-> -	return err;
-> -}
-> -
->  #ifdef CONFIG_BLK_DEV_ZONED
->  static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
->  		struct block_device *bdev, block_t blkstart, block_t blklen)
-> @@ -816,7 +821,7 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
->  	case BLK_ZONE_TYPE_CONVENTIONAL:
->  		if (!blk_queue_discard(bdev_get_queue(bdev)))
->  			return 0;
-> -		return __f2fs_issue_discard_async(sbi, bdev, lblkstart, blklen);
-> +		return __queue_discard_cmd(sbi, bdev, lblkstart, blklen);
->  	case BLK_ZONE_TYPE_SEQWRITE_REQ:
->  	case BLK_ZONE_TYPE_SEQWRITE_PREF:
->  		sector = SECTOR_FROM_BLOCK(blkstart);
-> @@ -848,7 +853,7 @@ static int __issue_discard_async(struct f2fs_sb_info *sbi,
->  				bdev_zoned_model(bdev) != BLK_ZONED_NONE)
->  		return __f2fs_issue_discard_zone(sbi, bdev, blkstart, blklen);
->  #endif
-> -	return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
-> +	return __queue_discard_cmd(sbi, bdev, blkstart, blklen);
->  }
->  
->  static int f2fs_issue_discard(struct f2fs_sb_info *sbi,
-> -- 
-> 2.11.0
-> 
----end quoted text---
+> Thanks.
+> > 
+> > Thanks,
+> > 
+> > > 
+> > > Thanks,
+> > > 
+> > > > +	} else
+> > > > +		dc->len = blkaddr - dc->lstart;
+> > > > +}
+> > > > +
+> > > >  /* This should be covered by global mutex, &sit_i->sentry_lock */
+> > > >  void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+> > > >  {
+> > > > @@ -708,7 +724,7 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+> > > >  	if (blkaddr == NULL_ADDR) {
+> > > >  		list_for_each_entry_safe(dc, tmp, wait_list, list) {
+> > > >  			wait_for_completion_io(&dc->wait);
+> > > > -			__remove_discard_cmd(sbi, dc);
+> > > > +			__punch_discard_cmd(sbi, dc, blkaddr);
+> > > >  		}
+> > > >  	}
+> > > >  	mutex_unlock(&dcc->cmd_lock);
+> > > > --
+> > > > 2.10.1
+> > > 
+> > > ------------------------------------------------------------------------------
+> > > Announcing the Oxford Dictionaries API! The API offers world-renowned
+> > > dictionary content that is easy and intuitive to access. Sign up for an
+> > > account today to start using our lexical data to power your apps and
+> > > projects. Get started today and enter our developer competition.
+> > > http://sdm.link/oxford
+> > > _______________________________________________
+> > > Linux-f2fs-devel mailing list
+> > > Linux-f2fs-devel@lists.sourceforge.net
+> > > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
+> > .
+> > 
 
 ------------------------------------------------------------------------------
 Announcing the Oxford Dictionaries API! The API offers world-renowned
