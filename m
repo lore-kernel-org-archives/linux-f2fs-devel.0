@@ -1,26 +1,25 @@
 From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [PATCH] f2fs: fix the fault of calculating blkstart
-	twice
-Date: Tue, 7 Mar 2017 17:11:13 -0800
-Message-ID: <20170308011113.GC2499@jaegeuk.local>
-References: <9f3a4202-11cb-5861-838c-ebbc94b71554@gmail.com>
+Subject: Re: [PATCH v2] f2fs: add a punch discard command function
+Date: Tue, 7 Mar 2017 17:36:12 -0800
+Message-ID: <20170308013612.GD2499@jaegeuk.local>
+References: <20170302023620.13337-1-heyunlei@huawei.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-f2fs-devel-bounces@lists.sourceforge.net>
-Received: from sog-mx-4.v43.ch3.sourceforge.com ([172.29.43.194]
+Received: from sog-mx-2.v43.ch3.sourceforge.com ([172.29.43.192]
 	helo=mx.sourceforge.net)
 	by sfs-ml-1.v29.ch3.sourceforge.com with esmtp (Exim 4.76)
-	(envelope-from <jaegeuk@kernel.org>) id 1clQ8R-0003aw-K2
+	(envelope-from <jaegeuk@kernel.org>) id 1clQWc-0004Yd-48
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 08 Mar 2017 01:11:23 +0000
+	Wed, 08 Mar 2017 01:36:22 +0000
 Received: from mail.kernel.org ([198.145.29.136])
-	by sog-mx-4.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
-	(Exim 4.76) id 1clQ8Q-0007T3-N6
+	by sog-mx-2.v43.ch3.sourceforge.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.76) id 1clQWb-0007qq-0n
 	for linux-f2fs-devel@lists.sourceforge.net;
-	Wed, 08 Mar 2017 01:11:23 +0000
+	Wed, 08 Mar 2017 01:36:22 +0000
 Content-Disposition: inline
-In-Reply-To: <9f3a4202-11cb-5861-838c-ebbc94b71554@gmail.com>
+In-Reply-To: <20170302023620.13337-1-heyunlei@huawei.com>
 List-Id: <linux-f2fs-devel.lists.sourceforge.net>
 List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=unsubscribe>
@@ -30,83 +29,66 @@ List-Help: <mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=help>
 List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel>,
 	<mailto:linux-f2fs-devel-request@lists.sourceforge.net?subject=subscribe>
 Errors-To: linux-f2fs-devel-bounces@lists.sourceforge.net
-To: Kinglong Mee <kinglongmee@gmail.com>
+To: Yunlei He <heyunlei@huawei.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net
 
-Hi,
+Hi Yunlei,
 
-On 03/04, Kinglong Mee wrote:
-> When the zone type is BLK_ZONE_TYPE_CONVENTIONAL, the blkstart is 
-> calculated twice.
+On 03/02, Yunlei He wrote:
+> This patch add a function to punch discard command if one segment
+> reuse before discard. Split this segment from multi-segments discard
+> range, and discard the left bigger range.
 > 
-> Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
+> Signed-off-by: Yunlei He <heyunlei@huawei.com>
 > ---
->  fs/f2fs/segment.c | 22 +++++++++-------------
->  1 file changed, 9 insertions(+), 13 deletions(-)
+>  fs/f2fs/segment.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
 > 
 > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 4bd7a8b..ed181d1 100644
+> index 4bd7a8b..1e1d5d3 100644
 > --- a/fs/f2fs/segment.c
 > +++ b/fs/f2fs/segment.c
-> @@ -772,11 +772,6 @@ static int __f2fs_issue_discard_async(struct f2fs_sb_info *sbi,
+> @@ -672,6 +672,22 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *d
+>  	kmem_cache_free(discard_cmd_slab, dc);
+>  }
 >  
->  	trace_f2fs_issue_discard(bdev, blkstart, blklen);
->  
-> -	if (sbi->s_ndevs) {
-> -		int devi = f2fs_target_device_index(sbi, blkstart);
-> -
-> -		blkstart -= FDEV(devi).start_blk;
-> -	}
+> +static void __punch_discard_cmd(struct f2fs_sb_info *sbi, struct discard_cmd *dc, block_t blkaddr)
+> +{
+> +	block_t end_block = START_BLOCK(sbi, GET_SEGNO(sbi, blkaddr) + 1);
+> +
+> +	if (dc->lstart + dc->len <= end_block) {
+> +		__remove_discard_cmd(sbi, dc);
+> +		return;
+> +	}
+> +
+> +	if (blkaddr - dc->lstart < dc->lstart + dc->len - end_block) {
+> +		dc->lstart = end_block;
+> +		dc->len -= (end_block - dc->lstart);
 
-No, you can't do this, since the blkstart will be used for dc->lstart.
-So, it needs to do like this?
+I just missed one thing which we already have a bio to submit later. So, in
+order to do this, we should manage dc->bio as well.
+Let me think about whole flow again.
 
->From 01cfee96f3568590ba58f6d2b36150dce7054491 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Tue, 7 Mar 2017 16:32:35 -0800
-Subject: [PATCH] f2fs: fix the fault of calculating blkstart twice
+Thanks,
 
-When the zone type is BLK_ZONE_TYPE_CONVENTIONAL, the blkstart is
-calculated twice.
-
-Signed-off-by: Kinglong Mee <kinglongmee@gmail.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/segment.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 401f25de80fb..2c512c6aa6f3 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -818,11 +818,6 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
- 	sector_t sector, nr_sects;
- 	int devi = 0;
- 
--	if (sbi->s_ndevs) {
--		devi = f2fs_target_device_index(sbi, blkstart);
--		blkstart -= FDEV(devi).start_blk;
--	}
--
- 	/*
- 	 * We need to know the type of the zone: for conventional zones,
- 	 * use regular discard if the drive supports it. For sequential
-@@ -836,6 +831,12 @@ static int __f2fs_issue_discard_zone(struct f2fs_sb_info *sbi,
- 		return __f2fs_issue_discard_async(sbi, bdev, blkstart, blklen);
- 	case BLK_ZONE_TYPE_SEQWRITE_REQ:
- 	case BLK_ZONE_TYPE_SEQWRITE_PREF:
-+
-+		if (sbi->s_ndevs) {
-+			devi = f2fs_target_device_index(sbi, blkstart);
-+			blkstart -= FDEV(devi).start_blk;
-+		}
-+
- 		sector = SECTOR_FROM_BLOCK(blkstart);
- 		nr_sects = SECTOR_FROM_BLOCK(blklen);
- 
--- 
-2.11.0
-
+> +	} else
+> +		dc->len = blkaddr - dc->lstart;
+> +}
+> +
+>  /* This should be covered by global mutex, &sit_i->sentry_lock */
+>  void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  {
+> @@ -708,7 +724,7 @@ void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  	if (blkaddr == NULL_ADDR) {
+>  		list_for_each_entry_safe(dc, tmp, wait_list, list) {
+>  			wait_for_completion_io(&dc->wait);
+> -			__remove_discard_cmd(sbi, dc);
+> +			__punch_discard_cmd(sbi, dc, blkaddr);
+>  		}
+>  	}
+>  	mutex_unlock(&dcc->cmd_lock);
+> -- 
+> 2.10.1
 
 ------------------------------------------------------------------------------
 Announcing the Oxford Dictionaries API! The API offers world-renowned
